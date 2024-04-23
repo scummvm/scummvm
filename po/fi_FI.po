@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-23 14:50+0000\n"
+"POT-Creation-Date: 2024-04-23 19:09+0000\n"
 "PO-Revision-Date: 2024-04-22 23:42+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -3076,7 +3076,7 @@ msgstr "<Huono arvo>"
 
 #. I18N: Abbreviation for 'bytes' as data size
 #. I18N: Hardware key
-#: common/util.cpp:183 backends/platform/3ds/osystem-events.cpp:48
+#: common/util.cpp:183 backends/platform/3ds/osystem-events.cpp:46
 #: backends/platform/ds/osystem_ds.cpp:173
 #: backends/platform/sdl/miyoo/miyoo.cpp:61
 #: backends/platform/sdl/miyoo/miyoo.cpp:88
@@ -3281,7 +3281,7 @@ msgstr "~J~atka"
 msgid "~L~oad"
 msgstr "~L~ataa"
 
-#: engines/dialogs.cpp:71 backends/platform/3ds/options-dialog.cpp:45
+#: engines/dialogs.cpp:71
 msgid "~S~ave"
 msgstr "~T~allenna"
 
@@ -4138,7 +4138,7 @@ msgid "Right Shoulder"
 msgstr "Oikea olka"
 
 #: backends/keymapper/hardware-input.cpp:266
-#: backends/platform/3ds/osystem-events.cpp:57
+#: backends/platform/3ds/osystem-events.cpp:55
 #: backends/platform/ds/osystem_ds.cpp:180
 #: backends/platform/sdl/miyoo/miyoo.cpp:74
 #: backends/platform/sdl/miyoo/miyoo.cpp:101
@@ -4149,7 +4149,7 @@ msgid "D-pad Up"
 msgstr "D-pad ylös"
 
 #: backends/keymapper/hardware-input.cpp:267
-#: backends/platform/3ds/osystem-events.cpp:58
+#: backends/platform/3ds/osystem-events.cpp:56
 #: backends/platform/ds/osystem_ds.cpp:181
 #: backends/platform/sdl/miyoo/miyoo.cpp:75
 #: backends/platform/sdl/miyoo/miyoo.cpp:102
@@ -4160,7 +4160,7 @@ msgid "D-pad Down"
 msgstr "D-pad alas"
 
 #: backends/keymapper/hardware-input.cpp:268
-#: backends/platform/3ds/osystem-events.cpp:59
+#: backends/platform/3ds/osystem-events.cpp:57
 #: backends/platform/ds/osystem_ds.cpp:182
 #: backends/platform/sdl/miyoo/miyoo.cpp:76
 #: backends/platform/sdl/miyoo/miyoo.cpp:103
@@ -4171,7 +4171,7 @@ msgid "D-pad Left"
 msgstr "D-pad vasemmalle"
 
 #: backends/keymapper/hardware-input.cpp:269
-#: backends/platform/3ds/osystem-events.cpp:60
+#: backends/platform/3ds/osystem-events.cpp:58
 #: backends/platform/ds/osystem_ds.cpp:183
 #: backends/platform/sdl/miyoo/miyoo.cpp:77
 #: backends/platform/sdl/miyoo/miyoo.cpp:104
@@ -4432,43 +4432,39 @@ msgstr "Yhtään tiedostoa ei siirretty!"
 msgid "Uploaded successfully!"
 msgstr "Lähetetty onnistuneesti!"
 
-#: backends/platform/3ds/options-dialog.cpp:44 engines/scumm/dialogs.cpp:284
-msgid "~C~lose"
-msgstr "~S~ulje"
-
-#: backends/platform/3ds/options-dialog.cpp:47
+#: backends/platform/3ds/options.cpp:64
 msgid "Show mouse cursor"
 msgstr "Näytä hiiren kursori"
 
-#: backends/platform/3ds/options-dialog.cpp:50
+#: backends/platform/3ds/options.cpp:65
 msgid "Snap to edges"
 msgstr "Tartu reunoihin"
 
-#: backends/platform/3ds/options-dialog.cpp:53
+#: backends/platform/3ds/options.cpp:66
 msgid "Stretch to fit"
 msgstr "Venytä ikkunaan"
 
-#: backends/platform/3ds/options-dialog.cpp:56
+#: backends/platform/3ds/options.cpp:68
 msgid "Use Screen:"
 msgstr "Käytettävä näyttö:"
 
-#: backends/platform/3ds/options-dialog.cpp:58
+#: backends/platform/3ds/options.cpp:70
 msgctxt "3ds-screen"
 msgid "Top"
 msgstr "Yläosa"
 
-#: backends/platform/3ds/options-dialog.cpp:59
+#: backends/platform/3ds/options.cpp:71
 msgctxt "3ds-screen"
 msgid "Bottom"
 msgstr "Alaosa"
 
-#: backends/platform/3ds/options-dialog.cpp:60
+#: backends/platform/3ds/options.cpp:72
 msgctxt "3ds-screen"
 msgid "Both"
 msgstr "Molempia"
 
 #. I18N: Hardware key
-#: backends/platform/3ds/osystem-events.cpp:47
+#: backends/platform/3ds/osystem-events.cpp:45
 #: backends/platform/ds/osystem_ds.cpp:172
 #: backends/platform/sdl/miyoo/miyoo.cpp:59
 #: backends/platform/sdl/miyoo/miyoo.cpp:86
@@ -4478,7 +4474,7 @@ msgid "A"
 msgstr "A"
 
 #. I18N: Hardware key
-#: backends/platform/3ds/osystem-events.cpp:49
+#: backends/platform/3ds/osystem-events.cpp:47
 #: backends/platform/ds/osystem_ds.cpp:174
 #: backends/platform/sdl/miyoo/miyoo.cpp:63
 #: backends/platform/sdl/miyoo/miyoo.cpp:90
@@ -4488,7 +4484,7 @@ msgid "X"
 msgstr "X"
 
 #. I18N: Hardware key
-#: backends/platform/3ds/osystem-events.cpp:50
+#: backends/platform/3ds/osystem-events.cpp:48
 #: backends/platform/ds/osystem_ds.cpp:175
 #: backends/platform/sdl/miyoo/miyoo.cpp:65
 #: backends/platform/sdl/miyoo/miyoo.cpp:92
@@ -4500,7 +4496,7 @@ msgstr "Y"
 #. I18N: Hardware key
 #. I18N: Return key
 #. I18N: Select party member command in Might & Magic 1
-#: backends/platform/3ds/osystem-events.cpp:51
+#: backends/platform/3ds/osystem-events.cpp:49
 #: backends/platform/ds/osystem_ds.cpp:176
 #: backends/platform/sdl/miyoo/miyoo.cpp:67
 #: backends/platform/sdl/miyoo/miyoo.cpp:94
@@ -4511,7 +4507,7 @@ msgid "Select"
 msgstr "Valitse"
 
 #. I18N: Hardware key
-#: backends/platform/3ds/osystem-events.cpp:52
+#: backends/platform/3ds/osystem-events.cpp:50
 #: backends/platform/ds/osystem_ds.cpp:177
 #: backends/platform/sdl/miyoo/miyoo.cpp:69
 #: backends/platform/sdl/miyoo/miyoo.cpp:96
@@ -4520,18 +4516,18 @@ msgstr "Valitse"
 msgid "Start"
 msgstr "Aloita"
 
-#: backends/platform/3ds/osystem-events.cpp:53
+#: backends/platform/3ds/osystem-events.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:56
 msgid "ZL"
 msgstr "ZL"
 
-#: backends/platform/3ds/osystem-events.cpp:54
+#: backends/platform/3ds/osystem-events.cpp:52
 #: backends/platform/sdl/switch/switch.cpp:57
 msgid "ZR"
 msgstr "ZR"
 
 #. I18N: Hardware key
-#: backends/platform/3ds/osystem-events.cpp:55
+#: backends/platform/3ds/osystem-events.cpp:53
 #: backends/platform/ds/osystem_ds.cpp:178
 #: backends/platform/sdl/miyoo/miyoo.cpp:71
 #: backends/platform/sdl/miyoo/miyoo.cpp:98
@@ -4542,7 +4538,7 @@ msgid "L"
 msgstr "L"
 
 #. I18N: Hardware key
-#: backends/platform/3ds/osystem-events.cpp:56
+#: backends/platform/3ds/osystem-events.cpp:54
 #: backends/platform/ds/osystem_ds.cpp:179
 #: backends/platform/sdl/miyoo/miyoo.cpp:73
 #: backends/platform/sdl/miyoo/miyoo.cpp:100
@@ -4552,32 +4548,28 @@ msgstr "L"
 msgid "R"
 msgstr "R"
 
-#: backends/platform/3ds/osystem-events.cpp:65
+#: backends/platform/3ds/osystem-events.cpp:63
 msgid "C-Pad X"
 msgstr "C-Pad X"
 
-#: backends/platform/3ds/osystem-events.cpp:66
+#: backends/platform/3ds/osystem-events.cpp:64
 msgid "C-Pad Y"
 msgstr "C-Pad Y"
 
-#: backends/platform/3ds/osystem-events.cpp:71
+#: backends/platform/3ds/osystem-events.cpp:69
 #: backends/platform/ds/osystem_ds.cpp:192
 msgid "Touch"
 msgstr "Kosketus"
 
-#: backends/platform/3ds/osystem-events.cpp:311
+#: backends/platform/3ds/osystem-events.cpp:309
 msgid "Toggle Drag Mode"
 msgstr "Raahaustila päälle / pois"
 
-#: backends/platform/3ds/osystem-events.cpp:316
+#: backends/platform/3ds/osystem-events.cpp:314
 msgid "Toggle Magnify Mode"
 msgstr "Suurennustila päälle/pois"
 
-#: backends/platform/3ds/osystem-events.cpp:321
-msgid "Open 3DS Settings"
-msgstr "Avaa 3DS asetukset"
-
-#: backends/platform/3ds/osystem-events.cpp:359
+#: backends/platform/3ds/osystem-events.cpp:349
 msgid ""
 "Magnify Mode Off. Reactivating Drag Mode.\n"
 "Returning to Launcher..."
@@ -4585,27 +4577,27 @@ msgstr ""
 "Suurennustila poissa. Siirrytään raahaystilaan.\n"
 "Palataan pelivalitsimeen..."
 
-#: backends/platform/3ds/osystem-events.cpp:361
+#: backends/platform/3ds/osystem-events.cpp:351
 msgid "Magnify Mode Off. Returning to Launcher..."
 msgstr "Suurennustila poissa. Palataan pelivalitsimeen..."
 
-#: backends/platform/3ds/osystem-events.cpp:395
+#: backends/platform/3ds/osystem-events.cpp:385
 msgid "Hover Mode"
 msgstr "Leijutila"
 
-#: backends/platform/3ds/osystem-events.cpp:399
+#: backends/platform/3ds/osystem-events.cpp:389
 msgid "Drag Mode"
 msgstr "Raahaustila"
 
-#: backends/platform/3ds/osystem-events.cpp:401
+#: backends/platform/3ds/osystem-events.cpp:391
 msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
 msgstr "Raahaustilaan ei voi siirtyä suurennustilasta"
 
-#: backends/platform/3ds/osystem-events.cpp:408
+#: backends/platform/3ds/osystem-events.cpp:398
 msgid "Magnify Mode cannot be activated in menus."
 msgstr "Suurennustilaa ei voi aktivoida valikoissa."
 
-#: backends/platform/3ds/osystem-events.cpp:411
+#: backends/platform/3ds/osystem-events.cpp:401
 msgid ""
 "Magnify Mode can only be activated\n"
 " when both screens are enabled."
@@ -4613,23 +4605,23 @@ msgstr ""
 "Suurennustilan voi aktivoida vain\n"
 " jos molemmat näytöt ovat päällä."
 
-#: backends/platform/3ds/osystem-events.cpp:413
+#: backends/platform/3ds/osystem-events.cpp:403
 msgid "In-game resolution too small to magnify."
 msgstr "Pelin resoluutio on liian pieni suurennettavaksi."
 
-#: backends/platform/3ds/osystem-events.cpp:419
+#: backends/platform/3ds/osystem-events.cpp:409
 msgid "Magnify Mode On. Switching to Hover Mode..."
 msgstr "Suurennustila päällä. Vaihdetaan leijutilaan..."
 
-#: backends/platform/3ds/osystem-events.cpp:421
+#: backends/platform/3ds/osystem-events.cpp:411
 msgid "Magnify Mode On"
 msgstr "Suurennustila päällä"
 
-#: backends/platform/3ds/osystem-events.cpp:428
+#: backends/platform/3ds/osystem-events.cpp:418
 msgid "Magnify Mode Off. Reactivating Drag Mode..."
 msgstr "Suurennustila poissa. Siirrytään raahaustilaan..."
 
-#: backends/platform/3ds/osystem-events.cpp:430
+#: backends/platform/3ds/osystem-events.cpp:420
 msgid "Magnify Mode Off"
 msgstr "Suurennustila poissa"
 
@@ -9203,6 +9195,10 @@ msgstr "E~d~ellinen"
 msgid "~N~ext"
 msgstr "Se~u~raava"
 
+#: engines/scumm/dialogs.cpp:284
+msgid "~C~lose"
+msgstr "~S~ulje"
+
 #: engines/scumm/dialogs.cpp:965
 msgid "Speech Only"
 msgstr "Vain puhe"
@@ -11943,6 +11939,9 @@ msgstr ""
 "ladata Liberation Fonts -paketin tai GNU FreeFont -paketin. Tarvitset kaikki "
 "fontit paketista jonka valitset, i.e. LiberationMono, LiberationSans ja "
 "LiberationSerif, tai FreeMono, FreeSans ja FreeSerif riippuen valinnastasi."
+
+#~ msgid "Open 3DS Settings"
+#~ msgstr "Avaa 3DS asetukset"
 
 #, fuzzy
 #~| msgid "Very large"
