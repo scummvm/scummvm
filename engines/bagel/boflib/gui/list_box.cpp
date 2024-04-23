@@ -44,9 +44,6 @@ CBofListBox::CBofListBox() {
 	m_nItemHeight = TEXT_ITEM_HEIGHT;
 	m_nState = LISTBOX_NORMAL;
 
-#if BOF_MAC
-	m_nTextFont = applFont;
-#endif
 	// Initialized the selected item
 	ClearSelection();
 }
@@ -446,10 +443,6 @@ ErrorCode CBofListBox::RepaintAll() {
 
 			m_pWork->UnLock();
 		}
-
-#if BOF_MAC
-		InvalidateRect(nullptr);
-#endif
 
 		// Reset the font
 		SetFont(nCurFont);

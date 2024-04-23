@@ -115,14 +115,6 @@ ErrorCode CBagRestoreDialog::Attach() {
 		cBmp.Paint(m_pBackdrop, 152, 400);
 	}
 
-#if BOF_MAC
-
-	// please to call explicitly
-	if (GetBackdrop()) {
-		PaintBackdrop();
-	}
-#endif
-
 	// Build all our buttons
 	for (i = 0; i < NUM_RESTORE_BTNS; i++) {
 		Assert(m_pButtons[i] == nullptr);
@@ -137,11 +129,6 @@ ErrorCode CBagRestoreDialog::Attach() {
 
 			m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
 
-#if BOF_MAC
-			// make this our own custom window such that no frame is drawn
-			// around the window/button
-			m_pButtons[i]->SetCustomWindow(true);
-#endif
 			m_pButtons[i]->Create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
 			m_pButtons[i]->Show();
 		} else {
@@ -282,25 +269,11 @@ ErrorCode CBagRestoreDialog::Detach() {
 void CBagRestoreDialog::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
-#if !BOF_MAC
 	PaintBackdrop(pRect);
-#endif
 
 	if (m_pListBox != nullptr) {
 		m_pListBox->RepaintAll();
 	}
-
-#if BOF_MAC
-	if (GetBackdrop()) {
-		PaintBackdrop();
-	}
-
-	for (int i = 0; i < NUM_RESTORE_BTNS; i++) {
-		if (m_pButtons[i] != nullptr) {
-			m_pButtons[i]->Paint();
-		}
-	}
-#endif
 
 	if (m_pText != nullptr) {
 		m_pText->Display(this);

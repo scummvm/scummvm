@@ -40,23 +40,11 @@ namespace Bagel {
 
 #define BOFDISP 0
 
-#if BOF_MAC && USEDRAWSPROCKET
-CGrafPtr gBackBuffer;
-#endif
-
 CBofApp *CBofApp::m_pBofApp;
-
-char g_szCopyright[] = "Copyright(C) 1996 Boffo Games, Inc.  All rights reserved.";
-
-
-#if BOF_MAC && USEDRAWSPROCKET
-void InitDSpContextAttributes(DSpContextAttributes *inAttributes);
-#endif
 
 CBofApp::CBofApp() {
 	StartupCode();
 }
-
 
 CBofApp::CBofApp(const char *pszAppName) {
 	StartupCode();

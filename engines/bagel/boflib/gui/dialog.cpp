@@ -131,53 +131,6 @@ ErrorCode CBofDialog::Create(const char *pszName, int x, int y, int nWidth, int 
 	delete _surface;
 	_surface = new Graphics::ManagedSurface(*g_engine->_screen, stRect);
 
-#if BOF_MAC
-	byte szBuf[256];
-	Rect stRect = {y, x, y + nHeight, x + nWidth};
-
-	// If this is a child window then convert it's area to global coordinates
-	//
-	if (pParent != nullptr) {
-
-		stRect.left += pParent->GetWindowRect().left;
-		stRect.right += pParent->GetWindowRect().left;
-		stRect.top += pParent->GetWindowRect().top;
-		stRect.bottom += pParent->GetWindowRect().top;
-	}
-
-	strcpy((char *)szBuf, m_szTitle);
-	StrCToPascal((char *)szBuf);
-
-	int     winType = plainDBox;
-	if (IsCustomWindow() == true) {
-		winType = (16 * 1000) + 0;
-	}
-
-	if ((m_pWindow = NewCWindow(nullptr, &stRect, szBuf, false, winType, WindowPtr(-1), false, 0)) != nullptr) {
-
-		SetPort(m_pWindow);
-
-		m_cWindowRect.top = stRect.top;
-		m_cWindowRect.left = stRect.left;
-		m_cWindowRect.bottom = stRect.bottom - 1;
-		m_cWindowRect.right = stRect.right - 1;
-
-		m_cRect.SetRect(0, 0, m_cWindowRect.Width() - 1, m_cWindowRect.Height() - 1);
-
-		SelectPalette(CBofApp::GetApp()->GetPalette());
-
-		// center this dialog box
-		Center();
-
-		// save what the background behind the dialog box looks like
-		SaveBackground();
-
-	} else {
-		ReportError(ERR_UNKNOWN, "Unable to NewCWindow(%s)", pszName);
-	}
-
-#endif
-
 	return m_errCode;
 }
 
@@ -346,14 +299,6 @@ int CBofDialog::DoModal() {
 
 	UpdateWindow();
 
-#if BOF_MAC
-	RgnHandle cursorRgn = ::NewRgn();       // Need a mouse region
-	CBofRect cRect(0, 0, 0, 0);
-	EventRecord event;
-
-	RectRgn(cursorRgn, &(cRect.GetMacRect()));
-#endif
-
 	// Start our own message loop (simulate Modal)
 	_bEndDialog = false;
 
@@ -362,30 +307,10 @@ int CBofDialog::DoModal() {
 	Graphics::FrameLimiter limiter(g_system, 60);
 
 	while (!_bEndDialog && !g_engine->shouldQuit() && (CBofError::GetErrorCount() < MAX_ERRORS)) {
-#if BOF_MAC
-
-		// if there is a message for a window, then process it
-		//
-		if (WaitNextEvent(everyEvent, &event, 0xFFFFFFFF, cursorRgn) != 0) {
-
-			// Convert the Mac event into a message our CBofWindows can handle.
-			// HandleMacEvent returns true when QUIT message is received.
-			//
-			// call our own instance of HandleMacEvent
-			if (HandleMacEvent(&event))
-				break;
-		}
-
-		//  Make sure to check out our timers.
-		CBofWindow::HandleMacTimers();
-#endif
 		CBofSound::AudioTask();
 		CBofTimer::HandleTimers();
 
 		if (IsCreated()) {
-#if BOF_MAC && PALETTESHIFTFIX
-			CBofWindow::CheckPaletteShiftList();
-#endif
 			OnMainLoop();
 		}
 
@@ -396,9 +321,6 @@ int CBofDialog::DoModal() {
 		limiter.startFrame();
 	}
 
-#if BOF_MAC
-	DisposeRgn(cursorRgn);          // get rid of cursor rgn
-#endif
 	if (pLastActive != nullptr) {
 		pLastActive->SetActive();
 	} else {
@@ -407,56 +329,6 @@ int CBofDialog::DoModal() {
 
 	return _nReturnValue;
 }
-
-#if BOF_MAC
-bool CBofDialog::HandleMacEvent(EventRecord *pEvent) {
-	switch (pEvent->what) {
-
-	case keyUp:
-		break;
-
-	case autoKey:
-	case keyDown:
-		break;
-
-	case updateEvt:
-		break;
-
-	case mouseDown:
-	case mouseUp:
-
-		// If not in our window, then reject it.
-		//
-
-#ifdef SPACEBAR
-#else
-		Rect    modalRect = m_cWindowRect.GetMacRect();
-
-		if (!PtInRect(pEvent->where, &modalRect)) {
-			if (pEvent->what == mouseDown)
-				SysBeep(10);
-			return false;
-		}
-		modalRect.left = modalRect.left;
-		break;
-#endif
-
-	case app3Evt:
-		break;
-
-	case activateEvt:
-		break;
-
-	case osEvt:
-		break;
-
-	default:
-		break;
-	}
-
-	return CBofWindow::HandleMacEvent(pEvent);
-}
-#endif
 
 ///////////////////////////////////////////////////////////////////
 // Virtual functions that the user can override if they want to

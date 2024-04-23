@@ -99,20 +99,6 @@ namespace Bagel {
 #define INTSIZE 2
 #endif
 
-
-/*
-* Inline assembly on?
-*/
-#if BOF_MAC || BOF_WINMAC
-#define BOF_USE_ASM 0
-#else
-#ifdef NO_ASM
-#define BOF_USE_ASM 0
-#else
-#define BOF_USE_ASM 1
-#endif
-#endif
-
 /*
 * Accept Microsoft's new debug macro
 */

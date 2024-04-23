@@ -32,11 +32,7 @@
 namespace Bagel {
 
 #define USER_OPTIONS "UserOptions"
-#if BOF_MAC || BOF_WINMAC
-#define WAVE_VOLUME  "SndVolume"
-#else
 #define WAVE_VOLUME  "WaveVolume"
-#endif
 
 #define BROWN_SCROLL_BKGD   "SLIDER.BMP"
 #define BROWN_SCROLL_THMB   "THUMB.BMP"
@@ -210,13 +206,6 @@ ErrorCode CBagOptWindow::Attach() {
 	CBofPalette *pPal = m_pBackdrop->GetPalette();
 	CBofApp::GetApp()->SetPalette(pPal);
 
-#if BOF_MAC
-	// painting a backdrop is a really good idea right now...
-	if (GetBackdrop()) {
-		PaintBackdrop();
-	}
-#endif
-
 	// Paint stuff
 	if (m_pBackdrop != nullptr) {
 		CBofBitmap cBmp(BuildSysDir("MUSICVOL.BMP"), pPal);
@@ -257,11 +246,6 @@ ErrorCode CBagOptWindow::Attach() {
 
 			m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
 
-#if BOF_MAC
-			// make this our own custom window such that no frame is drawn
-			// around the window/button
-			m_pButtons[i]->SetCustomWindow(true);
-#endif
 			m_pButtons[i]->Create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
 			m_pButtons[i]->Show();
 		} else {
@@ -587,11 +571,6 @@ void CBagOptWindow::SaveOutNewSettings() {
 
 	CBofSound::SetVolume(m_cSystemData.m_nMusicVolume, m_cSystemData.m_nSoundVolume);
 	CBagPanWindow::SetPanSpeed(m_cSystemData.m_nPanSpeed);
-
-#if BOF_MAC || BOF_WINMAC
-	if (pApp)
-		pApp->Commit();
-#endif
 
 	m_bDirty = false;
 }

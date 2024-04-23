@@ -415,51 +415,6 @@ public:
 	 */
 	void handleEvents();
 
-#if BOF_MAC
-	virtual void Enable() {
-		m_bEnabled = true;
-	}
-	virtual void Disable() {
-		m_bEnabled = false;
-	}
-
-	static CBofWindow *FromMacWindow(WindowPtr pWindow);
-
-	/**
-	 * Handles specified Event
-	 */
-	static bool HandleMacEvent(EventRecord *pEvent);
-	static void HandleMacTimers();
-
-	WindowPtr GetMacWindow() {
-		return m_pWindow;
-	}
-
-	bool IsVisible() {
-		return m_bVisible;
-	}
-	bool IsEnabled() {
-		return m_bEnabled;
-	}
-	bool IsCreated() {
-		return m_pWindow != nullptr;
-	}
-
-	void SetFocus() {
-		SetActive();
-	}
-
-	void UpdateWindow() {
-		HandleUpdate();
-	}
-	void SetCustomWindow(bool isCustom) {
-		m_bCustomMacWindow = isCustom;
-	}
-	bool IsCustomWindow() {
-		return m_bCustomMacWindow;
-	}
-#endif
-
 	virtual void OnKeyHit(uint32 lKey, uint32 lRepCount);
 	void FillWindow(byte iColor);
 	void FillRect(CBofRect *pRect, byte iColor);
@@ -485,32 +440,8 @@ protected:
 
 	virtual void OnActivate();
 	virtual void OnDeActivate();
-#if BOF_MAC
-	static void HandleOSEvt(EventRecord *);
-	static bool HandleApp3Evt(EventRecord *);
-	static void HandleActivateEvt(EventRecord *);
-	static void HandleMouseUp(EventRecord *);
-	static void HandleMouseDown(EventRecord *);
-	static void HandleUpdateEvt(EventRecord *);
-	static void HandleKeyDown(EventRecord *);
-#endif
-
-	// Internal routines
-	//
-#if BOF_WINMAC
-	/** Selects and Realizes specified palette into current DC
-	 * @param pPal      Palette to select
-	 * @return          success/failure
-	 */
-	bool SetMacPalette(CBofPalette *pPalette);
-#endif
-
-#if BOF_MAC
-	void HandleUpdate();
-#endif
 
 	// Window Data
-	//
 	char m_szTitle[MAX_TITLE] = { 0 };	// Title of window
 	CBofRect m_cWindowRect;				// Screen based area of this window
 	CBofRect m_cRect;					// Window-based area of this window
@@ -529,23 +460,6 @@ protected:
 	CBofPoint m_cPrevMouseDown;
 	static int _mouseX;
 	static int _mouseY;
-
-#if BOF_MAC
-	static CBofWindow *m_pCapturedWindow;
-	CBofWindow *m_pPrevActiveWindow;
-	CBofWindow *m_pLastCapture;
-	WindowPtr m_pWindow;
-	bool m_bEnabled;
-	bool m_bVisible;
-	bool m_bCustomMacWindow;
-
-public:
-#if PALETTESHIFTFIX
-	static CBofList<PaletteShiftItem> *m_pPaletteShiftList;
-	static void AddToPaletteShiftList(ITEMTYPE inItemID, int32 inItemOfInterest, int32 inAssociatedItem = 0);
-	static void CheckPaletteShiftList();
-#endif
-#endif
 };
 
 class CBofMessage : public CBofObject {
@@ -562,47 +476,7 @@ public:
 	BofCallback m_pCallBack;
 	uint32 m_nID;
 	uint32 m_nInterval;
-
-#if BOF_MAC
-	uint32 m_lLastTime;
-#endif
 };
-
-#if BOF_MAC
-class STBofScreen {
-public:
-	STBofScreen(Rect *);
-	~STBofScreen();
-
-private:
-	Rect m_screenRect;
-};
-
-// preserve the mac port.
-
-class STBofPort {
-public:
-	STBofPort(WindowPtr);
-	~STBofPort();
-
-private:
-	short m_nCheckCookie;
-	Boolean m_bNewPort;
-	WindowPtr m_pSavePort;
-};
-
-#endif
-
-class STBofFont {
-public:
-	STBofFont(int);
-	~STBofFont();
-};
-
-// Global Routines
-#if BOF_MAC || BOF_WINMAC
-// void    SetPaintWhite(bool bWhite);
-#endif
 
 extern CBofWindow *g_pHackWindow;
 

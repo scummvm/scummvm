@@ -26,10 +26,6 @@
 #include "bagel/boflib/gui/window.h"
 #include "bagel/boflib/string.h"
 
-#if BOF_MAC
-#include <TextEdit.h>
-#endif
-
 namespace Bagel {
 
 class CBofEditText : public CBofWindow {

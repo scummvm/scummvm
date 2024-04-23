@@ -96,11 +96,6 @@ void CBagNextCDDialog::OnPaint(CBofRect *pRect) {
 		m_pBackdrop->Paint(this, pRect, pRect, 1);
 	}
 
-	// Paint to stop it showing up behind backdrop
-#if BOF_MAC
-	m_pButton->Paint();
-#endif
-
 	_bHavePainted = true;
 
 	ValidateAnscestors();

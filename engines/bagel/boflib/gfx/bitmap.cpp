@@ -154,26 +154,8 @@ ErrorCode CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 
 		// Set this bitmap's palette
 		SetPalette(pPalette, m_bOwnPalette);
-
-#if BOF_MAC || BOF_WINMAC || BOF_WIN16
-		// set this bitmap's palette
-		SetPalette(pPalette, m_bOwnPalette);
-
-		m_nDX = (int)m_cBitmapInfo.m_cInfoHeader.biWidth;
-		m_nDY = (int)ABS(m_cBitmapInfo.m_cInfoHeader.biHeight);
-		m_nScanDX = (m_nDX + 3) & ~3;
-		m_bTopDown = (m_cBitmapInfo.m_cInfoHeader.biHeight < 0);
-		if (m_bPrivateBmp == false) {
-			if ((m_pBits = (byte *)BofAlloc((int32)m_nScanDX * m_nDY)) != nullptr) {
-			} else {
-				ReportError(ERR_MEMORY, "Unable to allocate %ld bytes for m_pBits", (int32)m_nScanDX * m_nDY);
-			}
-		} else {
-			Assert(m_pBits != nullptr);
-		}
-
-#endif // BOF_MAC
 	}
+
 	return m_errCode;
 }
 
@@ -1236,31 +1218,9 @@ ErrorCode PaintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofRect *pD
 		if (pDstRect == nullptr)
 			pDstRect = &cRect;
 
-		// For this one draw, make sure that the right palette is
-		// in place.
-#if BOF_MAC
-		CBofPalette *pPal = (pPalette == nullptr ? pBmp->GetPalette() : pPalette);
-		CBofPalette *pSavePalette = nullptr;
-		CBofApp *pApp = nullptr;
-		if (pPal) {
-			pApp = CBofApp::GetApp();
-			if (pApp) {
-				pSavePalette = pApp->GetPalette();
-				pApp->SetPalette(pPal);
-			}
-		}
-#endif
-
 		errCode = pBmp->Paint(pWindow, pDstRect, pSrcRect, nMaskColor);
 
 		delete pBmp;
-
-		// Restore the previous palette
-#if BOF_MAC
-		if (pSavePalette) {
-			pApp->SetPalette(pSavePalette);
-		}
-#endif
 
 	} else {
 		errCode = ERR_MEMORY;
@@ -1296,38 +1256,6 @@ ErrorCode PaintBitmap(CBofBitmap *pBitmap, const char *pszFileName, CBofRect *pD
 
 	return errCode;
 }
-
-
-//	Routine that takes a palette and a grafport and synchronizes
-//	their color definitions.  Makes the current grafport the
-//  exact same as the palette passed. not currently
-//  used.
-#if BOF_MAC || BOF_WINMAC
-#if SYNCPALETTES
-void SynchronizeColorTables(PaletteHandle pPalette, CGrafPtr cGrafPtr) {
-	PixMapHandle        pmh = cGrafPtr->portPixMap;
-	CTabHandle          clutH = (*pmh)->pmTable;
-
-	Assert((*pmh)->pixelSize == 8);
-	Assert((*clutH)->ctSize == 255);
-	Assert((*pPalette)->pmEntries == 256);
-
-	if (pPalette == nullptr)
-		return;
-
-	ColorSpecPtr cTable = (*clutH)->ctTable;
-	HLock((Handle) clutH);
-
-	for (int i = 0; i < 256; i++) {
-		cTable[i].rgb.red = (*pPalette)->pmInfo[i].ciRGB.red;
-		cTable[i].rgb.green = (*pPalette)->pmInfo[i].ciRGB.green;
-		cTable[i].rgb.blue = (*pPalette)->pmInfo[i].ciRGB.blue;
-	}
-
-	HUnlock((Handle) clutH);
-}
-#endif
-#endif
 
 void CBofBitmap::FlipVerticalFast() {
 	m_bTopDown = !m_bTopDown;

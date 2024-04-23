@@ -95,11 +95,6 @@ void CBagRestartDialog::OnInitDialog() {
 
 			m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
 
-#if BOF_MAC
-			// make this our own custom window such that no frame is drawn
-			// around the window/button
-			m_pButtons[i]->SetCustomWindow(true);
-#endif
 			m_pButtons[i]->Create(g_stRestartButtons[i].m_pszName, g_stRestartButtons[i].m_nLeft, g_stRestartButtons[i].m_nTop, g_stRestartButtons[i].m_nWidth, g_stRestartButtons[i].m_nHeight, this, g_stRestartButtons[i].m_nID);
 			m_pButtons[i]->Show();
 		} else {
@@ -107,13 +102,6 @@ void CBagRestartDialog::OnInitDialog() {
 			break;
 		}
 	}
-
-#if BOF_MAC
-	if (m_pButtons[0])
-		m_pButtons[0]->SetState(BUTTON_UP, true);
-	if (m_pButtons[1])
-		m_pButtons[1]->SetState(BUTTON_UP, true);
-#endif
 
 	// Show System cursor
 	CBagCursor::ShowSystemCursor();
@@ -147,14 +135,6 @@ void CBagRestartDialog::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	PaintBackdrop(pRect);
-
-#if BOF_MAC
-	for (int i = 0; i < NUM_RESTART_BTNS; i++) {
-		if (m_pButtons[i]) {
-			m_pButtons[i]->Paint();
-		}
-	}
-#endif
 
 	ValidateAnscestors();
 }

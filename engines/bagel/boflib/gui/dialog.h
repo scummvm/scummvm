@@ -141,9 +141,6 @@ public:
 	int GetReturnValue() const {
 		return _nReturnValue;
 	}
-#if BOF_MAC
-	bool        HandleMacEvent(EventRecord *pEvent);
-#endif
 };
 
 } // namespace Bagel

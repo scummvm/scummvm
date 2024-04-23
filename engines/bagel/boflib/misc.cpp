@@ -177,61 +177,8 @@ void EncryptPartial(void *pBuf, int32 fullSize, int32 lBytes, const char *pszPas
 	}
 }
 
-#if BOF_MAC
-//	Takes a fully qualified directory specification and returns the
-//  FSSpec record.
-void FSSpecFromPath(char *pszPath, FSSpec *fspec) {
-	OSErr oserr = noErr;
-	Str255 szFullPath;
-
-	strcpy((char *)szFullPath, pszPath);
-	StrCToPascal((char *)szFullPath);
-
-	FSMakeFSSpec(0, 0, szFullPath, fspec);
-}
-#endif
-
 int MapWindowsPointSize(int pointSize) {
-	int mappedPointSize = pointSize;
-#if BOF_MAC
-	switch (pointSize) {
-	case 8:
-		mappedPointSize = 6;
-		break;
-	case 10:
-		mappedPointSize = 8;
-		break;
-	case 12:
-		mappedPointSize = 10;
-		break;
-	case 14:
-	case 15:
-	case 16:
-		mappedPointSize = 12;
-		break;
-	case 18:
-		mappedPointSize = 14;
-		break;
-	case 20:
-		mappedPointSize = 16;
-		break;
-	case 24:
-		mappedPointSize = 18;
-		break;
-	case 28:
-		mappedPointSize = 18;
-		break;
-	case 36:
-		mappedPointSize = 24;
-		break;
-	default:
-#if DEVELOPMENT
-		DebugStr("\pMapWindowsPointSize invalid size");
-#endif
-		break;
-	}
-#endif
-	return mappedPointSize;
+	return pointSize;
 }
 
 } // namespace Bagel
