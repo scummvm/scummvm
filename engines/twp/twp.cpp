@@ -256,7 +256,7 @@ void TwpEngine::clickedAt(const Math::Vector2d &scrPos) {
 				cancelSentence(_actor);
 				if (_actor->_room == _room)
 					Object::walk(_actor, roomPos);
-				_hud->_verb = _hud->actorSlot(_actor)->verbs[0];
+				_hud->selectVerb(_hud->actorSlot(_actor)->verbs[0]);
 				_holdToMove = true;
 			}
 
@@ -801,7 +801,7 @@ static void setVerbAction(int verbSlot) {
 	ActorSlot *slot = g_twp->_hud->actorSlot(g_twp->_actor);
 	if (!slot)
 		return;
-	g_twp->_hud->_verb = slot->verbs[verbSlot];
+	g_twp->_hud->selectVerb(slot->verbs[verbSlot]);
 }
 
 Common::Error TwpEngine::run() {
@@ -1330,7 +1330,7 @@ void TwpEngine::enterRoom(Common::SharedPtr<Room> room, Common::SharedPtr<Object
 	_room->setOverlay(Color(0.f, 0.f, 0.f, 0.f));
 	_camera->setBounds(Rectf::fromMinMax(Math::Vector2d(), _room->_roomSize));
 	if (_actor && _hud->actorSlot(_actor))
-		_hud->_verb = _hud->actorSlot(_actor)->verbs[0];
+		_hud->selectVerb(_hud->actorSlot(_actor)->verbs[0]);
 
 	// move current actor to the new room
 	Math::Vector2d camPos;
@@ -1620,7 +1620,9 @@ void TwpEngine::resetVerb() {
 }
 
 bool TwpEngine::callVerb(Common::SharedPtr<Object> actor, VerbId verbId, Common::SharedPtr<Object> noun1, Common::SharedPtr<Object> noun2) {
-	sqcall("onObjectClick", noun1->_table);
+	if (noun1) {
+		sqcall("onObjectClick", noun1->_table);
+	}
 
 	// Called after the actor has walked to the object.
 	Common::String name = !actor ? "currentActor" : actor->_key;
@@ -1632,13 +1634,13 @@ bool TwpEngine::callVerb(Common::SharedPtr<Object> actor, VerbId verbId, Common:
 	debugC(kDebugGame, "callVerb(%s,%s,%s,%s)", name.c_str(), verbFuncName.c_str(), noun1name.c_str(), noun2name.c_str());
 
 	// test if object became untouchable
-	if (!noun1->inInventory() && !noun1->isTouchable())
+	if (noun1 && !noun1->inInventory() && !noun1->isTouchable())
 		return false;
 	if (noun2 && !noun2->inInventory() && !noun2->isTouchable())
 		return false;
 
 	// check if verb is use and object can be used with or in or on
-	if ((verbId.id == VERB_USE) && !noun2) {
+	if (noun1 && (verbId.id == VERB_USE) && !noun2) {
 		_useFlag = noun1->useFlag();
 		if (_useFlag != UseFlag::ufNone) {
 			_noun1 = noun1;
@@ -1651,7 +1653,7 @@ bool TwpEngine::callVerb(Common::SharedPtr<Object> actor, VerbId verbId, Common:
 			debugC(kDebugGame, "set use flag to ufGiveTo");
 			_useFlag = UseFlag::ufGiveTo;
 			_noun1 = noun1;
-		} else {
+		} else if (noun1) {
 			bool handled = false;
 			if (sqrawexists(noun2->_table, verbFuncName)) {
 				debugC(kDebugGame, "call %s on %s", verbFuncName.c_str(), noun2->_key.c_str());
@@ -1673,7 +1675,12 @@ bool TwpEngine::callVerb(Common::SharedPtr<Object> actor, VerbId verbId, Common:
 		return false;
 	}
 
-	if (!noun2) {
+	if (!noun1) {
+		HSQOBJECT emptyTable;
+		sq_resetobject(&emptyTable);
+		debugC(kDebugGame, "call defaultObject.%s", verbFuncName.c_str());
+		sqcall(_defaultObj, verbFuncName.c_str(), emptyTable, emptyTable);
+	} else if (!noun2) {
 		if (sqrawexists(noun1->_table, verbFuncName)) {
 			int count = sqparamCount(getVm(), noun1->_table, verbFuncName);
 			debugC(kDebugGame, "call %s.%s", noun1->_key.c_str(), verbFuncName.c_str());

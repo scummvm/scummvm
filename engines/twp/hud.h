@@ -54,7 +54,7 @@ struct Verb {
 	Common::String fun;
 	Common::String text;
 	Common::String key;
-	int flags{};
+	int flags = 0;
 
 	Verb();
 	Verb(VerbId id, const Common::String &image, const Common::String &fun, const Common::String &text, const Common::String &key, int flags = 0);
@@ -112,6 +112,7 @@ public:
 	void update(float elapsed, const Math::Vector2d &pos, Common::SharedPtr<Object> hotspot, bool mouseClick);
 
 	void setVisible(bool visible) override;
+	void selectVerb(const Verb &verb);
 
 private:
 	void drawCore(const Math::Matrix4 &trsf) final;
