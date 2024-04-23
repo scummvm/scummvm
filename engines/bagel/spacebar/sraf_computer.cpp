@@ -62,15 +62,9 @@ namespace SpaceBar {
 // Buyer bids summary
 #define kFirstMineralColumn 12
 
-#if BOF_MAC
-#define kBuyerBidsPointSize     10
-#define kOtherPointSize         10
-#define kMineralColWidth        5
-#else
 #define kBuyerBidsPointSize     14
 #define kOtherPointSize         13
 #define kMineralColWidth        4
-#endif
 
 #define kBuyerBidsPointWidth                6
 #define kLineItemHeight kBuyerBidsPointSize + 4
@@ -81,11 +75,7 @@ namespace SpaceBar {
 #define kActivateFooterStr2  "not fit on the screen, scroll up or down one line using up-arrow and"
 #define kActivateFooterStr3  "down-arrow.  Scroll up or down a page using page-up or page-down."
 
-#if BOF_MAC
-#define kBuyerBidsHeaderStr  "BUYER       Zn   Ba   Rg   Ut   Pn   Sz    0   H20  LH   CH   ME   TE   AS   PD   ACCEPT"
-#else
 #define kBuyerBidsHeaderStr  "BUYER      Zn  Ba  Rg  Ut  Pn  Sz   0  H20 LH  CH  ME  TE  AS  PD   ACCEPT"
-#endif
 #define kBuyerBidsMessage1   "Click on any buyer to see their biography.  Click in the 'ACCEPT' column "
 #define kBuyerBidsMessage2   "to incorporate that buyer into the current offer."
 
@@ -847,14 +837,6 @@ bool SrafComputer::VerifyDispatchTeam() {
 
 
 SrafComputer::~SrafComputer() {
-	// If we haven't detached yet, do that here.  The reason we do the
-	// detach here is to avoid a palette shift... if we do it at the time
-	// that we hit the "return to main" button then we get a really ugly
-	// palette shift while we return to the bar.
-#if BOF_MAC
-	Detach();
-#endif
-
 	// These lists are persistent across turning the computer on and off, so
 	// delete them only at the end of the game, not when you turn on/off the
 	// computer (attach/detach)
@@ -1175,11 +1157,6 @@ void SrafComputer::SetOff() {
 		m_pButtons[ON_BUTTON]->Show();
 
 		SetFocus();
-#if BOF_MAC
-		// whenever dealing with the on/off button, make sure to
-		// paint the new bitmap.
-		m_pButtons[ON_BUTTON]->Paint(nullptr);
-#endif
 	}
 
 	DeleteListBox();
@@ -1197,11 +1174,7 @@ ErrorCode SrafComputer::CreateListBox() {
 	if (m_pLBox == nullptr) {
 		// We need to create one
 		if ((m_pLBox = new CBofListBox) != nullptr) {
-#if BOF_MAC
-			// make this our own custom window such that no frame is drawn
-			// around the window/button
-			m_pLBox->SetCustomWindow(true);
-#endif
+
 			error = m_pLBox->Create("ListBox", &gCompDisplay, this);
 			if (error != ERR_NONE) {
 				return error;
@@ -2037,15 +2010,6 @@ void SrafComputer::ActivateAudioSettings() {
 		m_pLBox->AddToTail(sStr, false);
 	}
 
-	// Right now audio volume control is a mac specific feature
-#if BOF_MAC
-	sStr = " ";
-	m_pLBox->AddToTail(sStr, false);
-
-	sStr = "TO ADJUST VOLUME, DEPRESS COMMAND-ARROW-UP OR COMMAND-ARROW-DOWN";
-	m_pLBox->AddToTail(sStr, false);
-#endif
-
 	// Show the list box
 	m_pLBox->Show();
 
@@ -2147,11 +2111,6 @@ void SrafComputer::DoShowChowButtons() {
 	} else {
 		m_pButtons[ORDER_SNACK_BUTTON]->Hide();
 	}
-
-	// Added test for PALETTESHIFTFIX
-#if BOF_MAC && PALETTESHIFTFIX
-	CBofWindow::CheckPaletteShiftList();
-#endif
 }
 
 void SrafComputer::ActivateCheckTeams() {
@@ -3072,19 +3031,11 @@ void SrafComputer::OnListDispatchTeam() {
 		if (nElementIndex >= 0 && nElementIndex < NUM_STAFFERS) {
 			CBofRect    cStaffNames(cTeamMembersRect.left + kStandardIndentation * kBuyerBidsPointWidth,
 			                        cTeamMembersRect.top,
-#if BOF_MAC
-			                        cTeamMembersRect.left + (kStandardIndentation + kMaxStafferNameLen) * kBuyerBidsPointWidth,
-#else
 			                        cTeamMembersRect.left + (kStandardIndentation + kMaxStafferNameLen) * kBuyerBidsPointWidth + 60,
-#endif
 			                        cTeamMembersRect.bottom);
 			CBofRect    cStaffInclude((kTeamIncludeColumn - kStandardIndentation) * kBuyerBidsPointWidth,
 			                          cTeamMembersRect.top,
-#if BOF_MAC
-			                          (kTeamIncludeColumn + kStandardIndentation) * kBuyerBidsPointWidth,
-#else
 			                          cTeamMembersRect.right,
-#endif
 			                          cTeamMembersRect.bottom);
 
 			//  If in the staff names column, then show the biography
@@ -3737,12 +3688,8 @@ void SrafComputer::OnListCodeWords() {
 	cCol1Rect.bottom = cCol2Rect.bottom = cCol3Rect.bottom = cCol4Rect.bottom = 1000;
 #else
 
-#if BOF_MAC
-	nTextWidth = ::CharWidth('a');
-#else
 	nTextWidth = 8;         // ??? brian, just guessing at the width of a
 	// monowidth font would be
-#endif
 	CBofRect        cCol1Rect(0,
 	                          gCompDisplay.top,
 	                          (kGroup1Col2 - 5) * nTextWidth,
@@ -4818,16 +4765,8 @@ int SrafTextScreen::CreateTextScreen(CBofWindow *pParent) {
 	szLocalBuff[0] = '\0';
 	CBofString  sStr(szLocalBuff, 256);
 
-#if BOF_MAC
-	::GetPort(&m_pSavePort);
-#endif
 	// Create our parent window
-
-#if BOF_MAC
-	Create("Sraffin Text", &gTextWindow, nullptr, 0);
-#else
 	Create("Sraffin Text", &gTextWindow, pParent, 0);
-#endif
 
 	// Needs the computer bitmap for a backdrop
 	SetBackdrop(SrafComputer::GetComputerBackdrop(), false);
@@ -4847,11 +4786,6 @@ int SrafTextScreen::CreateTextScreen(CBofWindow *pParent) {
 
 		m_pOKButton->LoadBitmaps(pUp, pDown, pFocus, pDis);
 
-#if BOF_MAC
-		// make this our own custom window such that no frame is drawn
-		// around the window/button
-		m_pOKButton->SetCustomWindow(true);
-#endif
 		m_pOKButton->Create(g_stButtons[DONE_BUTTON].m_pszName,
 		                    g_stButtons[DONE_BUTTON].m_nLeft,
 		                    g_stButtons[DONE_BUTTON].m_nTop,
@@ -4892,15 +4826,6 @@ void SrafTextScreen::DisplayTextScreen() {
 }
 
 SrafTextScreen::~SrafTextScreen() {
-	// Restore the background if we have one.
-#if BOF_MAC
-	::SetPort(m_pSavePort);
-
-	if (m_pSaveBackground) {
-		m_pSaveBackground->Paint(this, &gTextWindow);
-	}
-#endif
-
 	// Trash everything!
 	if (m_pTextBox) {
 		delete m_pTextBox;
@@ -4916,11 +4841,6 @@ SrafTextScreen::~SrafTextScreen() {
 	if (m_pSaveActiveWin) {
 		m_pSaveActiveWin->SetFocus();
 	}
-
-#if BOF_MAC
-	// Display text screen is gone by-bye...
-	gTextScreenFrontmost = false;
-#endif
 }
 
 // Called to delete our text object

@@ -162,10 +162,6 @@ ErrorCode CBofDataFile::Create() {
 		stHeaderInfo.m_lNumRecs = m_lNumRecs = 0;
 		stHeaderInfo.m_lAddress = HEAD_INFO::size();
 
-#if BOF_WINMAC || BOF_MAC
-		SwapHeadInfo(&stHeaderInfo);
-#endif
-
 		// Create the file
 		if (CBofFile::Create(m_szFileName, m_lFlags) == ERR_NONE) {
 			// Write empty header info
@@ -238,11 +234,6 @@ ErrorCode CBofDataFile::ReadHeader() {
 			// Determine number of records in file
 			HEAD_INFO stHeaderInfo;
 			if (Read(stHeaderInfo) == ERR_NONE) {
-
-#if BOF_WINMAC || BOF_MAC
-				SwapHeadInfo(&stHeaderInfo);
-#endif
-
 				m_lNumRecs = stHeaderInfo.m_lNumRecs;
 				m_lHeaderStart = stHeaderInfo.m_lAddress;
 
@@ -276,9 +267,7 @@ ErrorCode CBofDataFile::ReadHeader() {
 
 							if (errCode == ERR_NONE) {
 								uint32 lCrc = CalculateCRC(&m_pHeader->m_lOffset, 4 * m_lNumRecs);
-#if BOF_WINMAC || BOF_MAC
-								SwapHeaderRec(m_pHeader, m_lNumRecs);
-#endif
+
 								if (lCrc != stHeaderInfo.m_lFootCrc) {
 									LogError(BuildString("Error: '%s' has invalid footer", m_szFileName));
 									m_errCode = ERR_CRC;
@@ -329,19 +318,11 @@ ErrorCode CBofDataFile::WriteHeader() {
 			stHeaderInfo.m_lNumRecs = m_lNumRecs;
 			stHeaderInfo.m_lAddress = m_lHeaderStart;
 			stHeaderInfo.m_lFlags = m_lFlags;
-#if BOF_WINMAC || BOF_MAC
-			// Swap all the header recs before going to disk...
-			SwapHeaderRec(m_pHeader, m_lNumRecs);
-#endif
 			stHeaderInfo.m_lFootCrc = CalculateCRC(&m_pHeader->m_lOffset, 4 * m_lNumRecs);
 
 			// Seek to front of file to write header info
 			SeekToBeginning();
 
-#if BOF_WINMAC || BOF_MAC
-			// before going to disk, swap!
-			SwapHeadInfo(&stHeaderInfo);
-#endif
 			if (Write(stHeaderInfo) == ERR_NONE) {
 				// Seek to start of where header is to be written
 				Seek(m_lHeaderStart);
@@ -365,10 +346,6 @@ ErrorCode CBofDataFile::WriteHeader() {
 				LogError(BuildString("Error writing header to file '%s'", m_szFileName));
 				m_errCode = ERR_FWRITE;
 			}
-#if BOF_WINMAC || BOF_MAC
-			// Swap all the header recs before going to disk...
-			SwapHeaderRec(m_pHeader, m_lNumRecs);
-#endif
 		}
 	}
 

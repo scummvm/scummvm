@@ -408,15 +408,9 @@ ErrorCode CBibbleWindow::Attach() {
 			pDis = LoadBitmap(BuildDir(g_stButtons[i].m_pszDisabled), pPal);
 
 			m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
-#if BOF_MAC
-			// Make this our own custom window such that no frame is drawn
-			// around the window/button
-			m_pButtons[i]->SetCustomWindow(true);
-#endif
 			m_pButtons[i]->Create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
-#if !BOF_MAC
 			m_pButtons[i]->Show();
-#endif
+
 		} else {
 			ReportError(ERR_MEMORY);
 			break;
@@ -433,15 +427,6 @@ ErrorCode CBibbleWindow::Attach() {
 	m_pSelected = nullptr;
 
 	Show();
-
-#if BOF_MAC
-	// Show all our buttons after doing the
-	for (int i = 0; i < BIBBLE_NUM_BUTTONS; i++) {
-		if (m_pButtons[i] != nullptr) {
-			m_pButtons[i]->Show();
-		}
-	}
-#endif
 
 	UpdateWindow();
 
@@ -604,16 +589,6 @@ void CBibbleWindow::OnPaint(CBofRect *pRect) {
 		if (m_pCreditsText != nullptr) {
 			m_pCreditsText->Display(this);
 		}
-
-#if BOF_MAC
-		// out here in mac land, we need to layer out windows appropriately,
-		// so make sure our buttons are on top.
-		for (int i = 0; i < BIBBLE_NUM_BUTTONS; i++) {
-			if (m_pButtons[i] != nullptr) {
-				m_pButtons[i]->Paint();
-			}
-		}
-#endif
 	}
 }
 

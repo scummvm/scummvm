@@ -164,15 +164,6 @@ void SBarSlotWnd::OnPaint(CBofRect *pRect) {
 			PaintBackdrop();
 
 		UpdateText();
-
-#if BOF_MAC
-		// Must show buttons after bringing the window frontmost
-		for (int i = 0; i < NUM_SLOTBUTT; i++) {
-			if (m_pSlotButs[i] != nullptr) {
-				m_pSlotButs[i]->Show();
-			}
-		}
-#endif
 	}
 }
 
@@ -213,16 +204,8 @@ ErrorCode  SBarSlotWnd::Attach() {
 				pDis = LoadBitmap(BuildSlotDir(g_stButtons[i].m_pszDisabled), pPal);
 
 				m_pSlotButs[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
-
-#if BOF_MAC
-				// this will be a mac custom window thus not having the
-				// black frame drawn around it.
-				m_pSlotButs[i]->SetCustomWindow(true);
-#endif
 				m_pSlotButs[i]->Create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
-#if !BOF_MAC
 				m_pSlotButs[i]->Show();
-#endif
 			}
 		}
 
@@ -314,14 +297,6 @@ ErrorCode  SBarSlotWnd::Attach() {
 
 		Show();
 
-		// must show buttons after bringing the window frontmost
-#if BOF_MAC
-		for (i = 0; i < NUM_SLOTBUTT; i++) {
-			if (m_pSlotButs[i] != nullptr) {
-				m_pSlotButs[i]->Show();
-			}
-		}
-#endif
 		InvalidateRect(nullptr);
 		UpdateWindow();
 	}
