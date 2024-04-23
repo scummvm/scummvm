@@ -797,6 +797,13 @@ void TwpEngine::updateSettingVars() {
 	sqcall("setSettingVar", "ransome_unbeeped", ConfMan.getBool("ransomeUnbeeped") && _pack->containsDLC());
 }
 
+static void setVerbAction(int verbSlot) {
+	ActorSlot *slot = g_twp->_hud->actorSlot(g_twp->_actor);
+	if (!slot)
+		return;
+	g_twp->_hud->_verb = slot->verbs[verbSlot];
+}
+
 Common::Error TwpEngine::run() {
 	const Common::String &gameTarget = ConfMan.getActiveDomainName();
 	AchMan.setActiveDomain(getMetaEngine()->getAchievementsInfo(gameTarget));
@@ -948,6 +955,17 @@ Common::Error TwpEngine::run() {
 					break;
 				case TwpAction::kShowHotspots:
 					_hotspotMarker->setVisible(!_hotspotMarker->isVisible());
+					break;
+				case TwpAction::kOpenAction:
+				case TwpAction::kCloseAction:
+				case TwpAction::kGiveAction:
+				case TwpAction::kPickUpAction:
+				case TwpAction::kLookAtAction:
+				case TwpAction::kTalkToAction:
+				case TwpAction::kPushAction:
+				case TwpAction::kPullAction:
+				case TwpAction::kUseAction:
+					setVerbAction(1 + (int)e.customType - (int)TwpAction::kOpenAction);
 					break;
 				}
 				break;

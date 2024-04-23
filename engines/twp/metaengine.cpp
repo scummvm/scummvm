@@ -161,8 +161,16 @@ Common::Array<Common::Keymap *> TwpMetaEngine::initKeymaps(const char *target) c
 		{"SELECTPREVACTOR", _s("Select Previous Actor"), Twp::kSelectPreviousActor, "9"},
 		{"SKIPTEXT", _s("Skip Text"), Twp::kSkipText, "PERIOD"},
 		{"SHOWHOTSPOTS", _s("Show hotspots"), Twp::kShowHotspots, "TAB"},
-		{0, 0, Twp::kSkipCutscene, 0},
-	};
+		{"OPEN", _s("Open action"), Twp::kOpenAction, "q"},
+		{"CLOSE", _s("Close action"), Twp::kCloseAction, "a"},
+		{"GIVE", _s("Give action"), Twp::kGiveAction, "z"},
+		{"PICKUP", _s("Pick up action"), Twp::kPickUpAction, "w"},
+		{"LOOKAT", _s("Look at action"), Twp::kLookAtAction, "s"},
+		{"TALKTO", _s("Talk to action"), Twp::kTalkToAction, "x"},
+		{"PUSH", _s("Push action"), Twp::kPushAction, "e"},
+		{"PULL", _s("Pull action"), Twp::kPullAction, "d"},
+		{"USE", _s("Use action"), Twp::kUseAction, "c"},
+		{0, 0, Twp::kSkipCutscene, 0}};
 
 	Common::Action *act;
 	for (int i = 0; actions[i].name; i++) {

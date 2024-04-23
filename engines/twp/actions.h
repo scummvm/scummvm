@@ -41,7 +41,16 @@ enum TwpAction {
 	kSelectPreviousActor,
 	kSelectNextActor,
 	kSkipText,
-	kShowHotspots
+	kShowHotspots,
+	kOpenAction,
+	kCloseAction,
+	kGiveAction,
+	kPickUpAction,
+	kLookAtAction,
+	kTalkToAction,
+	kPushAction,
+	kPullAction,
+	kUseAction
 };
 
 }
