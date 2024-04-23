@@ -656,7 +656,7 @@ bool GGPackDecoder::open(Common::SeekableReadStream *s, const XorKey &key) {
 		int offset = (int)file["offset"]->asIntegerNumber();
 		int size = (int)file["size"]->asIntegerNumber();
 		_entries[filename] = GGPackEntry{offset, size};
-		debug(kDebugGGPack, "filename: %s, off: %d, size: %d", filename.c_str(), offset, size);
+		debugC(kDebugGGPack, "filename: %s, off: %d, size: %d", filename.c_str(), offset, size);
 	}
 
 	return true;
