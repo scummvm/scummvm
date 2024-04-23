@@ -185,6 +185,9 @@ add_steam 1642970
 #ASYLUM games:
 add_steam 284050
 
+#TWP games:
+add_steam 569860
+
 #TODO: check for 7zip, since it produces smaller files
 
 touch --date="2000-01-01 00:00:00" gen/* static/*
