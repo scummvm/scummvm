@@ -1201,6 +1201,20 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// TODO: This one might also do a skip
 			continue;
 		}
+		else if (opcode1 == 0x10) {
+			// Trigger a walk to action
+			// TODO: Compare function for what exactly it does
+			// TODO: Check what the first value does
+			uint32 objectID = Func9F4D_32() - 0x400;
+			int16 x = (int16)Func9F4D_16();
+			int16 y = (int16)Func9F4D_16();
+
+			View1 *currentView = (View1 *)_engine->findView("View1");
+			// TODO: Need to be able to address the character objects by ID, now relying
+			// on the fact that they were added in a specific order
+			Character *c = currentView->characters[1];
+			c->StartLerpTo(Common::Point(x, y), 2 * 1000);
+		}
 
 		if (opcode1 == 0x0a) {
 			ScriptPrintString();
