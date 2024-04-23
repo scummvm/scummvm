@@ -229,11 +229,7 @@ ErrorCode CMainWindow::Attach() {
 				if (!m_pEvtSDev->IsAttached())
 					m_pEvtSDev->Attach();
 
-#if BOF_MAC
-				SetTimer(EVAL_EXPR, 1000);  // nullptr for now, will not play music.
-#else
 				SetTimer(EVAL_EXPR, 1000);
-#endif
 				g_bPauseTimer = false;
 
 			} else {
@@ -243,12 +239,8 @@ ErrorCode CMainWindow::Attach() {
 				// we just need to re-associate the parent
 				// window and reset the timer
 				m_pEvtSDev->SetAssociateWnd(this);
-
-#if BOF_MAC
-				SetTimer(EVAL_EXPR, 1000);  // nullptr for now, will not play music.
-#else
 				SetTimer(EVAL_EXPR, 1000);
-#endif
+
 				g_bPauseTimer = false;
 			}
 		}

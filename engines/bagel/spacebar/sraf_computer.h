@@ -93,12 +93,7 @@ public:
 	int m_nMeetingTime = 0;
 };
 
-class SrafTextScreen :
-#if BOF_MAC
-	public CBofWindow {
-#else
-	public CBofDialog {
-#endif
+class SrafTextScreen : public CBofDialog {
 private:
 	static CBofWindow *m_pSaveActiveWin;
 

@@ -121,9 +121,7 @@ void VilInitFilters(CBofBitmap *pBmp) {
 		StrReplaceChar(buff, '\n', ' ');
 		StrReplaceChar(buff, '\r', ' ');
 		pTipBmp = new CBofBitmap((nfile.GetLength() + 1) * 7, 20, pBmp->GetPalette());
-#if BOF_MAC
-		pTipBmp->FillRect(nullptr, COLOR_WHITE);
-#endif
+
 		CBofRect rct(0, 0, (nfile.GetLength() + 1) * 7, 20);
 		PaintText(pTipBmp, &rct, buff, VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(107, 0, 255), JUSTIFY_LEFT, FORMAT_DEFAULT);
 		nfile.Close();

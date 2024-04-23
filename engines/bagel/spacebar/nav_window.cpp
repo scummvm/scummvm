@@ -48,10 +48,6 @@ namespace SpaceBar {
 // New background bmps are black, so text will be white
 #define NAVTEXT_COLOR         RGB(255,255,255)
 
-#if BOF_MAC
-const char *MakeDir(const char *pszFile);
-#endif
-
 struct ST_BUTTONS {
 	const char *m_pszName;
 	const char *m_pszUp;

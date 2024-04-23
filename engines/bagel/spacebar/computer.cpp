@@ -132,15 +132,6 @@ void  SBarComputer::OnPaint(CBofRect *pRect) {
 	// Paint the backdrop
 	if (GetBackdrop())
 		PaintBackdrop();
-
-	// The backdrop is not painted with the state of the
-	// on/off button taken into consideration... handle that here.
-
-#if BOF_MAC
-	if (m_eMode == DRINKMODE) {
-		m_pButtons[ONBUT]->Paint(nullptr);
-	}
-#endif
 }
 
 ErrorCode SBarComputer::Attach() {
@@ -528,28 +519,15 @@ void SBarComputer::OnBofListBox(CBofObject * /*pListBox*/, int nItemIndex) {
 		m_pButtons[ORDER]->Show();
 		m_pButtons[LISTD]->Show();
 
-		// Paint to this button immediately, this minimizes the white
-		// flash of bringing the window frontmost.
-#if BOF_MAC
-		m_pButtons[ORDER]->Paint(nullptr);
-		m_pButtons[LISTD]->Paint(nullptr);
-#endif
 		m_pDrinkBox->RepaintAll();
 
 	} else {
 		m_nIngSelect = nItemIndex;
 		// Prevents the white flash when the show window is performed
 		m_pButtons[LISTI]->Select();
-
 		m_pButtons[LISTI]->Show();
-		// Paint to this button immediately, this minimizes the white
-		// flash of bringing the window frontmost.
-#if BOF_MAC
-		m_pButtons[LISTI]->Paint(nullptr);
-#endif
 
 		m_pIngBox->RepaintAll();
-
 	}
 
 #if !TWOLISTS
@@ -558,9 +536,6 @@ void SBarComputer::OnBofListBox(CBofObject * /*pListBox*/, int nItemIndex) {
 		m_pLBox->RepaintAll();
 #endif
 
-#if !BOF_MAC
-#else
-#endif
 	ValidateAnscestors(nullptr);
 	if (m_eMode == DRINKMODE) {
 		m_pButtons[LISTD]->InvalidateRect(nullptr);
@@ -656,9 +631,6 @@ void SBarComputer::SetDrink() {
 
 		m_pButtons[DRINKS]->Hide();
 		m_pButtons[INGRED]->Show();
-#if BOF_MAC
-		m_pButtons[INGRED]->Paint(nullptr);
-#endif
 
 		//m_nIngSelect = -1;
 		m_pButtons[LISTI]->Hide();
@@ -669,23 +641,12 @@ void SBarComputer::SetDrink() {
 
 		m_pButtons[PGUP]->Show();
 		m_pButtons[PGDOWN]->Show();
-#if BOF_MAC
-		m_pButtons[PGUP]->Paint(nullptr);
-		m_pButtons[PGDOWN]->Paint(nullptr);
-#endif
-
 		m_pButtons[BCBACK]->Hide();
 
 		if (m_nDrinkSelect != -1) {
 			// Prevents the white flash when the show window is performed
 			m_pButtons[LISTD]->Select();
-
 			m_pButtons[LISTD]->Show();
-			// Paint to this button immediately, this minimizes the white
-			// flash of bringing the window frontmost.
-#if BOF_MAC
-			m_pButtons[LISTD]->Paint(nullptr);
-#endif
 		}
 
 		m_pIngBox->Hide();
@@ -729,12 +690,6 @@ void SBarComputer::SetIng() {
 		m_pButtons[INGRED]->Hide();
 		m_pButtons[DRINKS]->Show();
 
-		// Paint to this button immediately, this minimizes the white
-		// flash of bringing the window frontmost.
-#if BOF_MAC
-		m_pButtons[DRINKS]->Paint(nullptr);
-#endif
-
 		// Hide list drink ingrediant button
 		m_pButtons[LISTD]->Hide();
 
@@ -746,21 +701,9 @@ void SBarComputer::SetIng() {
 		m_pButtons[PGDOWN]->Show();
 		m_pButtons[BCBACK]->Hide();
 
-#if BOF_MAC
-		// Paint to this button immediately
-		m_pButtons[PGUP]->Paint(nullptr);
-		m_pButtons[PGDOWN]->Paint(nullptr);
-#endif
-
 		if (m_nIngSelect != -1) {
 			m_pButtons[LISTI]->Select();
 			m_pButtons[LISTI]->Show();
-
-#if BOF_MAC
-			// Paint to this button immediately, this minimizes the white
-			// flash of bringing the window frontmost.
-			m_pButtons[LISTI]->Paint(nullptr);
-#endif
 		}
 
 		m_pDrinkBox->Hide();
@@ -812,12 +755,6 @@ void SBarComputer::SetList() {
 		m_pButtons[PGDOWN]->Hide();
 		m_pButtons[BCBACK]->Show();
 
-		// Paint to this button immediately, this minimizes the white
-		// flash of bringing the window frontmost.
-#if BOF_MAC
-		m_pButtons[BCBACK]->Paint(nullptr);
-#endif
-
 		m_pButtons[LISTD]->Hide();
 		m_pButtons[LISTI]->Hide();
 
@@ -864,14 +801,11 @@ void SBarComputer::Order() {
 				CBofBitmap saveBackground(640, 480, (CBofPalette *)nullptr, false);
 				saveBackground.CaptureScreen(this, &_compTextWindow);
 				PaintBeveledText(this, &_compTextWindow, szBroke, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
-#if BOF_MAC
-				while (!::Button())
-					;
-				::FlushEvents(everyEvent, 0);       // swallow the mousedown, don't want it processed
-#else
+
 				WaitForInput();
-#endif
+
 				saveBackground.Paint(this, &_compTextWindow);
+
 			} else {
 				CBagStorageDev *pSoldierSDev = nullptr;
 				pSoldierSDev = SDEVMNGR->GetStorageDevice("SOLDIER_WLD");
@@ -906,13 +840,8 @@ void SBarComputer::Order() {
 					}
 					if (bRefuse) {
 						PaintBeveledText(this, &_compTextWindow, szRefuse, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
-#if BOF_MAC
-						while (!::Button())
-							;
-						::FlushEvents(everyEvent, 0);       // swallow the mousedown, don't want it processed
-#else
 						WaitForInput();
-#endif
+
 						saveBackgroundTwo.Paint(this, &_compTextWindow);
 					}
 				}

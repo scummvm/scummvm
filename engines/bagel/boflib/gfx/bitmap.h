@@ -121,15 +121,6 @@ protected:
 
 	BITMAP_EX m_cBitmapInfo;
 
-#if BOF_WINDOWS && !BOF_WINMAC
-#elif BOF_MAC || BOF_WINMAC
-
-	static PixMapHandle m_stPixMap; // bit map to pixel map
-#if SYNCPALETTES
-	GrafPtr m_oldGrafPort;          // original grafport
-	GrafPtr m_newGrafPort;          // original grafport
-#endif
-#endif
 	Graphics::ManagedSurface _bitmap;
 
 	byte *m_pBits = nullptr;
@@ -363,11 +354,6 @@ public:
 	 * @return          Error return code
 	 */
 	ErrorCode Paint1To1(CBofBitmap *pBmp);
-
-#if BOF_WINDOWS && !BOF_WINMAC
-#elif BOF_MAC || BOF_WINMAC
-	PixMapHandle GetMacPixMap();
-#endif
 
 	/** Copy specified section of screen (or window) to bitmap.
 	 * @param pWnd      Window to capture
