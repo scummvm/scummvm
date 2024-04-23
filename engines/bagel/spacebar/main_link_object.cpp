@@ -42,8 +42,8 @@ void CMainLinkObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) 
 		}
 
 		// Set the link position for the storage device we are about to jump to
-		CBagStorageDev *pDestWin;
-		if ((pDestWin = SDEVMNGR->GetStorageDevice(GetFileName())) != nullptr) {
+		CBagStorageDev *pDestWin = SDEVMNGR->GetStorageDevice(GetFileName());
+		if (pDestWin != nullptr) {
 			pDestWin->SetLoadFilePos(GetDstLoc());
 		}
 

@@ -127,7 +127,7 @@ void VilInitFilters(CBofBitmap *pBmp) {
 		nfile.Close();
 		delete buff;
 
-		// Grafitti bitmap.
+		// Graffiti bitmap.
 		//
 		char szBString[256];
 		CBofString cBString(szBString, 256);
@@ -278,8 +278,6 @@ static void GetVilVars() {
 
 // Vildroid filter.
 static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
-	char szVBuff2[256];
-
 	if (!initDone) {
 		VilInitFilters(pBmp);
 	}
@@ -319,6 +317,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		}
 
 		// Display chance of precipitation.
+		char szVBuff2[256];
 		Common::sprintf_s(szVBuff2, "%s%d.%d%%", kPrecipString, g_pPrecip->GetNumValue(), g_pPrecDecimal->GetNumValue());
 		CBofRect cleanRect((g_engine->viewRect.right - 250), g_engine->viewRect.top, g_engine->viewRect.right - 5, g_engine->viewRect.top + 20);
 		PaintText(pBmp, &cleanRect, szVBuff2, VILDROIDSTATSTEXTSIZE, TEXT_BOLD, RGB(0, 255, 6), JUSTIFY_RIGHT, FORMAT_DEFAULT);
@@ -618,8 +617,6 @@ static bool TriFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 // Zzazzlvision filter.
 static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
-	CBagVar *pVar;
-
 	char szZBuff[256];
 	CBofString zStr(szZBuff, 256);
 	bool bZzazzlVision = false;
@@ -637,7 +634,8 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	}
 
 	zStr = "ZZAZZLVISION";
-	if ((pVar = VARMNGR->GetVariable(zStr)) != nullptr) {
+	CBagVar *pVar = VARMNGR->GetVariable(zStr);
+	if (pVar != nullptr) {
 
 		bZzazzlVision = true;
 		if (pVar->GetNumValue() > 0) {
@@ -646,9 +644,9 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			int dy = g_engine->viewRect.Height() / 3; // + 1;
 			CBofPalette *pPal = pBmp->GetPalette();
 
-			CBofBitmap *pMiniBitmap;
+			CBofBitmap *pMiniBitmap = new CBofBitmap(dx, dy, pPal);
 
-			if ((pMiniBitmap = new CBofBitmap(dx, dy, pPal)) != nullptr) {
+			if (pMiniBitmap != nullptr) {
 				CBofRect dstRect(g_engine->viewRect);
 				CBofRect srcRect = pMiniBitmap->GetRect();
 				pBmp->Paint(pMiniBitmap, &srcRect, &dstRect);
@@ -656,8 +654,9 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				CBofRect &filterRect = CMainWindow::GetFilterRect();
 				filterRect.SetRect(g_engine->viewRect.left, g_engine->viewRect.top, g_engine->viewRect.left + dx, g_engine->viewRect.top + dy);
 
-				int i, j, x, y = g_engine->viewRect.top;
-				for (i = 0; i < 3; ++i) {
+				int j, x;
+				int y = g_engine->viewRect.top;
+				for (int i = 0; i < 3; ++i) {
 					if (i == 1) {
 						j = 0;
 						x = g_engine->viewRect.left;
@@ -703,16 +702,15 @@ static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	if (VARMNGR->GetVariable(hStr)->GetNumValue() > 0) {
 		bHallucinating = true;
 		CBofPalette *pPal = pBmp->GetPalette();
-		pPal = pBmp->GetPalette();
 		CBofBitmap *pTempBitmap = new CBofBitmap(g_engine->viewRect.Width(), g_engine->viewRect.Height(), pPal);
 		CBofRect tempRect = pTempBitmap->GetRect();
 		CBofRect srcRect(g_engine->viewRect);
 		CBofRect dstRect = tempRect;
 		pBmp->Paint(pTempBitmap, &dstRect, &srcRect);   // Copy the Screen's Bmp into Temp
 		int nShiftAmount = 0;
-		int y;                          // Step through strips of bmp
-
-		for (y = tempRect.top; y < tempRect.bottom; y += 4) {
+		
+		// Step through strips of bmp
+		for (int y = tempRect.top; y < tempRect.bottom; y += 4) {
 			srcRect.SetRect(0, y, tempRect.right - nShiftAmount, y + 4); // Get everything over one
 			dstRect.SetRect(g_engine->viewRect.left + nShiftAmount, g_engine->viewRect.top + y,
 			                g_engine->viewRect.right, (g_engine->viewRect.top + y) + 4);
@@ -786,20 +784,17 @@ static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			// to be white and pixels which are not black be black.
 			int nWidth = g_engine->viewRect.Width();
 			int nHeight = g_engine->viewRect.Height();
-			int i, j;
 
 			// Need to lock down this bitmap to make sure we can get it's bits
 			pBmp->Lock();
 
-			for (i = 0; i < nHeight; i++) {
+			for (int i = 0; i < nHeight; i++) {
 				byte *pPixel = pBmp->GetPixelAddress(g_engine->viewRect.left, g_engine->viewRect.top + i);
 
 				// Fix this such that it uses predefined constants, makes for much
 				// better lightning on the mac.
-				for (j = 0; j < nWidth; j++, pPixel++) {
-					if (*pPixel == COLOR_BLACK) {
-						*pPixel = COLOR_BLACK;
-					} else {
+				for (int j = 0; j < nWidth; j++, pPixel++) {
+					if (*pPixel != COLOR_BLACK) {
 						*pPixel = COLOR_WHITE;
 					}
 				}
