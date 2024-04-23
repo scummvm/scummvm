@@ -573,16 +573,6 @@ ErrorCode CBagStorageDev::LoadFile(const CBofString &sWldName) {
 
 	MACROREPLACE(sWldFileName);
 
-#if BOF_MAC
-	// ios::nocreate does not appear to be defined in the mac
-	// cw8 iostreams environment, so make sure that the file exists before
-	// opening it, otherwise it will create the file.
-
-	if (FileExists(sWldFileName) == false) {
-		return false;
-	}
-#endif
-
 	// Force buffer to be big enough so that the entire script
 	// is pre-loaded
 	int nLength = FileLength(sWldFileName);
@@ -1102,13 +1092,7 @@ CBagObject *CBagStorageDev::OnNewUserObject(const CBofString &str) {
 }
 
 void CBagStorageDev::OnSetFilter(bool (*filterFunction)(const uint16 nFilterid, CBofBitmap *, CBofRect *)) {
-#if BOF_MAC && __POWERPC__
-	m_pBitmapFilter = NewRoutineDescriptor((ProcPtr) filterFunction,
-	                                       uppFilterProcInfo,
-	                                       GetCurrentArchitecture());
-#else
 	m_pBitmapFilter = filterFunction;
-#endif
 }
 
 FilterFunction CBagStorageDev::GetFilter() {
@@ -1128,12 +1112,7 @@ ErrorCode CBagStorageDev::PreFilter(CBofBitmap *pBmp, CBofRect *pRect, CBofList<
 			fillRect = &viewPortRect;
 		}
 
-#if BOF_MAC || BOF_WINMAC
-		// need our transparent color to be white
-		pBmp->FillRect(fillRect, RGB(255, 255, 255));
-#else
 		pBmp->FillRect(fillRect, RGB(0, 0, 0));
-#endif
 	}
 
 	// Let pda know that we've been prefiltered
@@ -1249,11 +1228,7 @@ ErrorCode CBagStorageDevWnd::Attach() {
 			if (!m_pEvtSDev->IsAttached())
 				m_pEvtSDev->Attach();
 
-#if BOF_MAC
-			SetTimer(EVAL_EXPR, 1000);  // null for now, will not play music.
-#else
 			SetTimer(EVAL_EXPR, 1000);
-#endif
 			g_bPauseTimer = false;
 
 		} else {
@@ -1261,11 +1236,7 @@ ErrorCode CBagStorageDevWnd::Attach() {
 			// We just need to re-associate the parent window and reset the timer
 			m_pEvtSDev->SetAssociateWnd(this);
 
-#if BOF_MAC
-			SetTimer(EVAL_EXPR, 1000);  // null for now, will not play music.
-#else
 			SetTimer(EVAL_EXPR, 1000);
-#endif
 			g_bPauseTimer = false;
 		}
 	}
@@ -1418,13 +1389,7 @@ ErrorCode CBagStorageDevWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 	if (IsFiltered()) {
 		uint16 nFilterId = GetFilterId();
-#if BOF_MAC && __POWERPC__
-		CallUniversalProc(m_pBitmapFilter,
-		                  uppFilterProcInfo,
-		                  nFilterId, pBmp, pRect);
-#else
 		(*m_pBitmapFilter)(nFilterId, pBmp, pRect);
-#endif
 	}
 
 	return m_errCode;
@@ -1475,16 +1440,6 @@ ErrorCode CBagStorageDevWnd::LoadFile(const CBofString &sFile) {
 
 	MACROREPLACE(sWldFile);
 
-#if BOF_MAC
-	// ios::nocreate does not appear to be defined in the mac
-	// cw8 iostreams environment, so make sure that the file exists before
-	// opening it, otherwise it will create the file.
-
-	if (FileExists(sWldFile) == false) {
-		ReportError(ERR_FFIND, "Could not find file %s", sWldFile.GetBuffer());
-	}
-
-#endif
 	// Force buffer to be big enough so that the entire script
 	// is pre-loaded
 	int nLength = FileLength(sWldFile);
@@ -1668,13 +1623,7 @@ ErrorCode CBagStorageDevDlg::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 	if (IsFiltered()) {
 		uint16 nFilterId = GetFilterId();
-#if BOF_MAC && __POWERPC__
-		CallUniversalProc(m_pBitmapFilter,
-		                  uppFilterProcInfo,
-		                  nFilterId, pBmp, pRect);
-#else
 		(*m_pBitmapFilter)(nFilterId, pBmp, pRect);
-#endif
 	}
 
 	return m_errCode;
@@ -1767,16 +1716,6 @@ ErrorCode CBagStorageDevDlg::LoadFile(const CBofString &sFile) {
 		sWldFile = sFile;
 
 	MACROREPLACE(sWldFile);
-
-#if BOF_MAC
-	// ios::nocreate does not appear to be defined in the mac
-	// cw8 iostreams environment, so make sure that the file exists before
-	// opening it, otherwise it will create the file.
-
-	if (FileExists(sWldFile) == false) {
-		return ERR_FOPEN;
-	}
-#endif
 
 	// Force buffer to be big enough so that the entire script is pre-loaded
 	int nLength = FileLength(sWldFile);

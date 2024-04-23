@@ -70,20 +70,7 @@ public:
 };
 
 // Filter function function prototype.
-//
-// for power pc, just pretend our filter function is upp
-#if BOF_MAC && __POWERPC__
-typedef UniversalProcPtr FilterFunction;
-#else
 typedef bool (*FilterFunction)(const uint16 nFilterId, CBofBitmap *, CBofRect *);
-#endif
-
-// Callbacks are a little tricky for powerpc...
-#if BOF_MAC && __POWERPC__
-enum {
-	uppFilterProcInfo = kRegisterBased | REGISTER_ROUTINE_PARAMETER(1, kRegisterD0, SIZE_CODE(sizeof(uint16))) | REGISTER_ROUTINE_PARAMETER(2, kRegisterA0, SIZE_CODE(sizeof(CBofBitmap *))) | REGISTER_ROUTINE_PARAMETER(3, kRegisterA1, SIZE_CODE(sizeof(CBofRect *)))
-};
-#endif
 
 /**
  * CBagPanWindow is a window that contains a slide bitmap object.  It has specialize

@@ -28,10 +28,6 @@
 #include "bagel/baglib/rp_object.h"
 #include "bagel/boflib/gfx/text.h"
 
-#if BOF_MAC
-#include <mac.h>
-#endif
-
 namespace Bagel {
 
 #define CTEXT_WHITE RGB(255, 255, 255)

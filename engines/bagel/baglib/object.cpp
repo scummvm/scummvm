@@ -23,10 +23,6 @@
 #include "bagel/baglib/menu_dlg.h"
 #include "bagel/baglib/master_win.h"
 
-#if BOF_MAC
-#include <ctype.h>
-#endif
-
 namespace Bagel {
 
 extern bool g_bNoMenu;

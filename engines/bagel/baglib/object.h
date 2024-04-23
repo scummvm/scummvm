@@ -81,12 +81,6 @@ class CBagStorageDev;
 
 CBofString GetStringTypeOfObject(BAG_OBJECT_TYPE n);
 
-#if BOF_MAC && __POWERPC__
-enum {
-	uppCBagObjectProcInfo = kRegisterBased | REGISTER_ROUTINE_PARAMETER(1, kRegisterD0, SIZE_CODE(sizeof(int))) | REGISTER_ROUTINE_PARAMETER(2, kRegisterA0, SIZE_CODE(sizeof(void *)))
-};
-#endif
-
 /**
  * CBofBagObject is an object that can be place within the slide window.
  */
@@ -142,15 +136,9 @@ public:
 		return false;
 	}
 
-#if BOF_MAC && __POWERPC__
-	virtual UniversalProcPtr GetCallBack() {
-		return nullptr;
-	}
-#else
 	virtual BAGFUNCPTR GetCallBack() {
 		return nullptr;
 	}
-#endif
 
 	// Run Object is called when there is no callback and the item was selected
 	virtual bool RunObject();

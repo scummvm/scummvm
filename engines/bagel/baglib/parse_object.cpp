@@ -183,10 +183,6 @@ int CBagParseObject::GetAlphaNumFromStream(bof_ifstream &istr, CBofString &sStr)
 		//  bDone = true;
 		// } else
 		if (Common::isAlnum(ch) || ch == '_' || ch == '-' || ch == '\\' || ch == '/' || ch == '.' || ch == ':' || ch == '$' || ch == 39 || ch == '~') {
-#if BOF_MAC
-			if (ch == '\\')
-				ch = ':';
-#endif
 			sStr += ch;
 		} else {
 			bDone = true;

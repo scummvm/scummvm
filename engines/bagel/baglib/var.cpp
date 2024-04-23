@@ -25,11 +25,6 @@
 #include "bagel/baglib/storage_dev_win.h"
 #include "bagel/bagel.h"
 
-#if BOF_MAC
-#include <ctype.h> // need ctype to get numeric macros
-#include <mac.h>   // need ctype to get itoa macros
-#endif
-
 namespace Bagel {
 
 static int HASHVAR(const char *p, int l);

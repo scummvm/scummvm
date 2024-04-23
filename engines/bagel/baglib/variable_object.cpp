@@ -23,10 +23,6 @@
 #include "bagel/baglib/master_win.h"
 #include "bagel/baglib/var.h"
 
-#if BOF_MAC
-#include <mac.h>
-#endif
-
 namespace Bagel {
 
 CBagVariableObject::CBagVariableObject() : CBagObject() {
@@ -167,42 +163,7 @@ PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 
 	return PARSING_DONE;
 }
-int CBagVariableObject::MapWindowsPointSize(int pointSize) {
-	int mappedPointSize = pointSize;
-#if BOF_MAC
-	switch (pointSize) {
-	case 8:
-		mappedPointSize = 6;
-		break;
-	case 10:
-		mappedPointSize = 8;
-		break;
-	case 12:
-		mappedPointSize = 10;
-		break;
-	case 14:
-		mappedPointSize = 12;
-		break;
-	case 16:
-		mappedPointSize = 12;
-		break;
-	case 18:
-		mappedPointSize = 14;
-		break;
-	case 20:
-		mappedPointSize = 16;
-		break;
-	default:
-#if DEVELOPMENT
-		DebugStr("\pMapWindowsPointSize invalid size");
-#else
-		MacMessageBox("MapWindowsPointSize invalid size", nullptr);
-#endif
-		break;
-	}
-#endif
-	return mappedPointSize;
-}
+
 ErrorCode CBagVariableObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int) {
 	ErrorCode rc = ERR_NONE;
 	CBagVar *xVar = VARMNGR->GetVariable(GetFileName());
@@ -221,7 +182,7 @@ ErrorCode CBagVariableObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *p
 			pt.x += 5;
 
 		CBofRect r(pt, pSrcRect->Size());
-		rc = PaintText(pBmp, &r, xVar->GetValue(), MapWindowsPointSize(m_nPointSize), TEXT_NORMAL, m_nFGColor);
+		rc = PaintText(pBmp, &r, xVar->GetValue(), MapFontPointSize(m_nPointSize), TEXT_NORMAL, m_nFGColor);
 
 		// Don't need to redraw!
 		SetDirty(false);
@@ -236,7 +197,7 @@ ErrorCode CBagVariableObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *p
 	if (IsAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
 		CBofRect r(pt, pSrcRect->Size());
 
-		rc = PaintText(pWnd, &r, xVar->GetValue(), MapWindowsPointSize(m_nPointSize), TEXT_NORMAL, m_nFGColor);
+		rc = PaintText(pWnd, &r, xVar->GetValue(), MapFontPointSize(m_nPointSize), TEXT_NORMAL, m_nFGColor);
 	
 		// Don't need to redraw!
 		SetDirty(false);
