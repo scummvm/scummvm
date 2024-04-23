@@ -83,11 +83,10 @@ Screen::~Screen() {
 }
 
 void Screen::init() {
-	Graphics::PixelFormat SCREEN_FORMAT(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	Common::Point size(SCREEN_WIDTH * settings._scale, SCREEN_HEIGHT * settings._scale);
 
-	initGraphics(size.x, size.y, &SCREEN_FORMAT);
-	create(size.x, size.y, SCREEN_FORMAT);
+	initGraphics(size.x, size.y, nullptr);
+	create(size.x, size.y, g_system->getScreenFormat());
 
 	loadMouseCursors();
 	screenLoadGraphicsFromConf();
@@ -1344,7 +1343,7 @@ Image *Screen::screenScale(Image *src, int scale, int n, int filter) {
 		dest = (*scalerGet("point"))(src, scale, n);
 
 	if (!dest)
-		dest = Image::duplicate(src);
+		dest = Image::duplicate(src, src->format());
 
 	if (isTransparent)
 		dest->setTransparentIndex(transparentIndex);
@@ -1366,7 +1365,7 @@ Image *Screen::screenScaleDown(Image *src, int scale) {
 
 	src->alphaOff();
 
-	dest = Image::create(src->width() / scale, src->height() / scale, src->isIndexed(), Image::HARDWARE);
+	dest = Image::create(src->width() / scale, src->height() / scale, src->format());
 	if (!dest)
 		return nullptr;
 

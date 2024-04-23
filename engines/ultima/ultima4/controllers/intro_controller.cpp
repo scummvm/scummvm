@@ -189,7 +189,7 @@ IntroController::IntroController() : Controller(1),
 	Common::fill(&_questionTree[0], &_questionTree[15], -1);
 
 	// Setup a separate image surface for rendering the animated map on
-	_mapScreen = Image::create(g_screen->w, g_screen->h, false, Image::HARDWARE);
+	_mapScreen = Image::create(g_screen->w, g_screen->h, g_screen->format);
 	_mapArea.setDest(_mapScreen);
 
 	// initialize menus
@@ -1493,8 +1493,7 @@ void IntroController::getTitleSourceData() {
 			_titles[i]._srcImage = Image::create(
 				_titles[i]._rw * info->_prescale,
 				_titles[i]._rh * info->_prescale,
-			    info->_image->isIndexed() && _titles[i]._method != MAP,
-				Image::HARDWARE);
+				_titles[i]._method == MAP ? _mapScreen->format() : info->_image->format());
 			if (_titles[i]._srcImage->isIndexed())
 				_titles[i]._srcImage->setPaletteFromImage(info->_image);
 
@@ -1590,14 +1589,12 @@ void IntroController::getTitleSourceData() {
 		if (_titles[i]._srcImage)
 			_titles[i]._srcImage->alphaOff();
 
-		bool indexed = info->_image->isIndexed() && _titles[i]._method != MAP;
 		// create the initial animation frame
 		_titles[i]._destImage = Image::create(
 			2 + (_titles[i]._prescaled ? SCALED(_titles[i]._rw) : _titles[i]._rw) * info->_prescale ,
-		    2 + (_titles[i]._prescaled ? SCALED(_titles[i]._rh) : _titles[i]._rh) * info->_prescale,
-		    indexed,
-			Image::HARDWARE);
-		if (indexed)
+			2 + (_titles[i]._prescaled ? SCALED(_titles[i]._rh) : _titles[i]._rh) * info->_prescale,
+			_titles[i]._method == MAP ? _mapScreen->format() : info->_image->format());
+		if (_titles[i]._destImage->isIndexed())
 			_titles[i]._destImage->setPaletteFromImage(info->_image);
 	}
 

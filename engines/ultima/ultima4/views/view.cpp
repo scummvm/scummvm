@@ -81,7 +81,7 @@ void View::drawHighlighted() {
 	Image *screen = imageMgr->get("screen")->_image;
 
 	Image *tmp = Image::create(SCALED(_highlightBounds.width()),
-		SCALED(_highlightBounds.height()), false, Image::SOFTWARE);
+		SCALED(_highlightBounds.height()), screen->format());
 	if (!tmp)
 		return;
 
