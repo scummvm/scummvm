@@ -90,13 +90,8 @@ PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 		//
 		//  COLOR n - n color index
 		//
-#if BOF_MAC
-#define CTEXT_YELLOW RGB(0xFC, 0xF3, 0x05)
-#define CTEXT_WHITE RGB(255, 255, 255)
-#else
 #define CTEXT_YELLOW RGB(255, 255, 0)
 #define CTEXT_WHITE RGB(255, 255, 255)
-#endif
 		case 'C': {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
