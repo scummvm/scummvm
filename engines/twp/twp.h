@@ -191,7 +191,6 @@ private:
 	unique_ptr<Vm> _vm;
 
 public:
-	Graphics::Screen *_screen = nullptr;
 	unique_ptr<GGPackSet> _pack;
 	unique_ptr<ResManager> _resManager;
 	Common::Array<Common::SharedPtr<Room> > _rooms;
