@@ -47,11 +47,7 @@ void CBagPanWindow::initialize() {
 CBagPanWindow::CBagPanWindow() : CBagStorageDevWnd() {
 	CBofRect tmpRect;
 
-#if BOF_MAC || BOF_WINMAC
-	m_xVeiwPortPos = CBofPoint(66, 20);
-#else
 	m_xVeiwPortPos = CBofPoint(0, 20);
-#endif
 	m_xMovementRect.SetRectEmpty();
 
 	m_nCorrection = CBagMasterWin::GetCorrection();
@@ -721,19 +717,7 @@ void CBagPanWindow::OnWindowPosChanging(WindowPos *lpwndpos) {
 		lpwndpos->cx = xSlideBmpRect.Width();
 	if (lpwndpos->cy > xSlideBmpRect.Height() + MENUNBORDER)
 		lpwndpos->cy = xSlideBmpRect.Height() + MENUNBORDER;
-
-#ifdef RMS_PORT
-	CBagStorageDevWnd::OnWindowPosChanging(lpwndpos);
-#endif // RMS_PORT
 }
-
-
-#if !BOF_MAC
-int32 CBagPanWindow::OnDefWinProc(uint32 nMessage, int16 wParam, int32 lParam) {
-	return 0;
-}
-#endif
-
 
 void CBagPanWindow::FlushInputEvents() {
 	g_system->getEventManager()->purgeKeyboardEvents();

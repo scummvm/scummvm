@@ -214,13 +214,7 @@ public:
 	void OnKeyHit(uint32 lKey, uint32 lRepCount);
 	void OnSize(uint32 nType, int cx, int cy);
 	void OnWindowPosChanging(WindowPos *lpwndpos);
-#if !BOF_MAC && defined(PAINT_TIMER)
-	void OnTimer(uint32);
-#endif
-#if !BOF_MAC
-	// Undefined on mac
-	int32 OnDefWinProc(uint32 nMessage, int16 wParam, int32 lParam);
-#endif
+
 	ErrorCode OnCursorUpdate(int nCurrObj);
 
 	static CBagPDA *m_pPDABmp; // Pointer to the PDA object

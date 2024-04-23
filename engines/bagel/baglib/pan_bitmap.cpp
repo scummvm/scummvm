@@ -180,20 +180,7 @@ void CBagPanBitmap::GenerateCosineTable() {
 		m_pCosineTable = nullptr;
 	}
 
-#if BOF_MAC
-	Assert(m_nNumDegrees <= 720);
-	if (m_nNumDegrees <= 90) {
-		m_pCosineTable = new CBofFixed[90];
-	} else {
-		if (m_nNumDegrees <= 360) {
-			m_pCosineTable = new CBofFixed[360];
-		} else {
-			m_pCosineTable = new CBofFixed[720];
-		}
-	}
-#else
 	m_pCosineTable = new CBofFixed[m_nNumDegrees];
-#endif
 
 	for (int i = 0; i < m_nNumDegrees; i++) {
 		double inArea = (double)(offset + i * nWidth) / viewWidth;

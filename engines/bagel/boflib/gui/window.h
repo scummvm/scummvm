@@ -25,7 +25,6 @@
 
 #include "common/list.h"
 #include "common/events.h"
-#include "bagel/boflib/boffo.h"
 #include "bagel/boflib/array.h"
 #include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/error.h"

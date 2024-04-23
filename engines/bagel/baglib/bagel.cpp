@@ -181,12 +181,6 @@ ErrorCode CBagel::InitLocalFilePaths() {
 
 ErrorCode CBagel::VerifyCDInDrive(int nDiskID, const char *pszWaveFile) {
 	Assert(IsValidObject(this));
-#if BOF_MAC
-	bool        bEjectDisk = false;
-	VolumeParam vInfo;
-	OSErr       oserr = noErr;
-	CBofWindow *pBlackWin = nullptr;
-#endif
 
 	if (m_pGameReg->m_nNumberOfCDs > 0) {
 		char szBuf[MAX_DIRPATH];
@@ -215,122 +209,13 @@ ErrorCode CBagel::VerifyCDInDrive(int nDiskID, const char *pszWaveFile) {
 				BofPlaySound(pszWaveFile, SOUND_WAVE | SOUND_ASYNCH);
 			}
 
-#if BOF_MAC
-			int16 nVRefNum = GetVolumeFromPath(g_cHomeDir.GetBuffer());
-			bEjectDisk = true;
-
-			// If we get no disk to eject, then just check and see
-			// if a disk that we know about is present.  If it is, then spit it
-			// out for the user.
-			if (nVRefNum == 0) {
-				for (int ii = DISK_1; ii <= DISK_3; ii++) {
-					if (ii != nDiskID) {
-						char szDiskName[256];
-
-						Common::sprintf_s(szDiskName, "SBDISK%d:", ii);
-						nVRefNum = GetVolumeFromPath(szDiskName);
-						if (nVRefNum != 0) {
-							break;
-						}
-					}
-				}
-			}
-
-			if (nVRefNum) {
-				oserr = UnmountAndEject(nullptr, nVRefNum);
-
-				if (oserr != noErr) {
-					LogError(BuildString("Unable to eject mac volume, err = %d", oserr));
-				}
-			}
-#endif
-
-#if BOF_MAC
-			if (pBlackWin == nullptr) {
-				pBlackWin = new CBofWindow();
-				if (pBlackWin) {
-					pBlackWin->Create("BLACK", 0, 0, 640, 480, CBofApp::GetApp()->GetMainWindow(), 0);
-					pBlackWin->FillWindow(COLOR_BLACK);
-				}
-			}
-			ShowNextCDDialog(pBlackWin, nDiskID);
-#else
 			if (g_pHackWindow == nullptr) {
 				ShowNextCDDialog(m_pMainWnd, nDiskID);
 			} else {
 				ShowNextCDDialog(g_pHackWindow, nDiskID);
 			}
-#endif
-
-#if BOF_MAC
-			if (m_pMainWnd) {
-				pBlackWin->FillWindow(COLOR_BLACK);
-#if PALETTESHIFTFIX
-				::ShowWindow(pBlackWin->GetMacWindow());
-				::SelectWindow(pBlackWin->GetMacWindow());
-#else
-				pBlackWin->Show();
-#endif
-			}
-
-			short attempts = 0;
-			SetWatchCursor();
-			do {
-				long        finalTicks;
-				char        szNewVol[MAX_DIRPATH];
-
-				Common::strcpy_s(szNewVol, g_cHomeDir.GetBuffer());
-				StrCToPascal(szNewVol);
-
-				// wait a half a second, give some time to the system and check
-				// and see if our disk is mounted yet.
-				::Delay(30, &finalTicks);
-				SPINANDWAIT(10);
-				vInfo.ioCompletion = 0;
-				vInfo.ioVolIndex = -1;
-				vInfo.ioNamePtr = (StringPtr)szNewVol;
-				vInfo.ioVRefNum = 0;
-				oserr = ::PBGetVInfoSync((ParmBlkPtr)&vInfo);
-				attempts++;
-
-			} while (oserr != noErr && attempts < 20);
-			::InitCursor();
-#endif
 		}
 	}
-
-#if BOF_MAC
-	if (bEjectDisk) {
-		if (pBlackWin) {
-
-			char szBuf[256];
-			Common::strcpy_s(szBuf, LOADINGBMP);
-			CBofString cStr(szBuf, 256);
-			MACROREPLACE(cStr);
-
-			CBofRect cRect;
-			cRect.left = (640 - 180) / 2;
-			cRect.top = (480 - 50) / 2;
-			cRect.right = cRect.left + 180 - 1;
-			cRect.bottom = cRect.top + 50 - 1;
-
-			PaintBitmap(pBlackWin, cStr, &cRect);
-
-			delete pBlackWin;
-			pBlackWin = nullptr;
-		}
-
-		CBagMasterWin::SetActiveCursor(6);
-	}
-
-	// new home dir...
-	SetCurrentDisk(nDiskID);
-	DISKREPLACE(m_szCDPath);
-
-	g_cHomeDir = m_szCDPath;
-	SetCurrentDir(m_szCDPath);
-
-#endif
 
 	return m_errCode;
 }

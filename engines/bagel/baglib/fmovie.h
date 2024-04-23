@@ -23,8 +23,6 @@
 #ifndef BAGEL_BAGLIB_FMOVIE_H
 #define BAGEL_BAGLIB_FMOVIE_H
 
-#include "bagel/boflib/boffo.h"
-
 #include "graphics/managed_surface.h"
 #include "video/smk_decoder.h"
 #include "bagel/boflib/gui/dialog.h"

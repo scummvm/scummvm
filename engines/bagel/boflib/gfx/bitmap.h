@@ -24,7 +24,6 @@
 #define BAGEL_BOFLIB_GFX_BMP_H
 
 #include "graphics/managed_surface.h"
-#include "bagel/boflib/boffo.h"
 #include "bagel/boflib/cache.h"
 #include "bagel/boflib/error.h"
 #include "bagel/boflib/object.h"
@@ -40,13 +39,8 @@ namespace Bagel {
 //
 #define NOT_TRANSPARENT -1
 
-#if BOF_MAC || BOF_WINMAC
-#define COLOR_WHITE 0
-#define COLOR_BLACK 255
-#else
 #define COLOR_WHITE 255
 #define COLOR_BLACK 0
-#endif
 
 #define CBMP_FADE_SPEED 10
 #define CBMP_FADE_SIZE 4
