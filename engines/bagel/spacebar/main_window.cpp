@@ -35,7 +35,7 @@ namespace SpaceBar {
 #define THUDWLD         "THUD_WLD"
 
 SBarThud *CMainWindow::m_pThudBmp = nullptr;    // Pointer to the WEILD object
-int CMainWindow::m_nInstances = 0;      // Numver of space bar windows
+int CMainWindow::m_nInstances = 0;      // Number of space bar windows
 bool CMainWindow::m_bZzazzlVision = false;
 CBofRect *CMainWindow::m_xFilterRect;
 bool CMainWindow::chipdisp;
@@ -52,8 +52,6 @@ void CMainWindow::shutdown() {
 }
 
 CMainWindow::CMainWindow(const char *sCommandLine) {
-	CBofString WndClass;
-	CBofRect tmpRect;
 	CBofString sCommLine;
 
 	m_cLastLoc.x = 1195;
@@ -89,8 +87,7 @@ CMainWindow::~CMainWindow() {
 
 ErrorCode CMainWindow::Attach() {
 	CBofRect        tmpRect(0, 0, PAN_WIDTH - 1, PAN_HEIGHT - 1);
-	CBofRect        rView;
-	CBagStorageDev *pSDev;
+
 	chipdisp = false;
 	pause = 0;
 
@@ -100,7 +97,7 @@ ErrorCode CMainWindow::Attach() {
 
 	g_bAllowPaint = true;
 
-	pSDev = SDEVMNGR->GetStorageDevice(GetPrevSDev());
+	CBagStorageDev *pSDev = SDEVMNGR->GetStorageDevice(GetPrevSDev());
 	if (pSDev && pSDev->GetDeviceType() == SDEV_ZOOMPDA) {
 		bForegroundObj = false;
 	}
@@ -112,11 +109,12 @@ ErrorCode CMainWindow::Attach() {
 	CBofString s = GetName();
 	Create(s.GetBuffer(), &tmpRect, CBagel::GetBagApp()->GetMasterWnd());
 
-	// Associtate this window with callbacks so that any public member function can
+	// Associate this window with callbacks so that any public member function can
 	// be accessed by objects inserted into this class.
 	SetAssociateWnd(this);
 
 	// Assume we will use the view we had last time.
+	CBofRect rView;
 	rView.SetRect(m_cLastLoc.x, m_cLastLoc.y, m_cLastLoc.x - 1, m_cLastLoc.y - 1);
 	if (g_engine->g_bUseInitLoc) {
 		rView.SetRect(g_engine->g_cInitLoc.x, g_engine->g_cInitLoc.y,
@@ -139,7 +137,8 @@ ErrorCode CMainWindow::Attach() {
 
 	if (m_nGameMode == VRPLAYMODE && bForegroundObj == true) {
 		if (!m_pThudBmp) {
-			if ((pSDev = SDEVMNGR->GetStorageDevice(THUDWLD)) != nullptr) {
+			pSDev = SDEVMNGR->GetStorageDevice(THUDWLD);
+			if (pSDev != nullptr) {
 				m_pThudBmp = (SBarThud *)pSDev;
 				m_pThudBmp->SetAssociateWnd(this);
 				if (!m_pThudBmp->IsAttached())
@@ -156,7 +155,8 @@ ErrorCode CMainWindow::Attach() {
 		}
 
 		if (!m_pWieldBmp) {
-			if ((pSDev = SDEVMNGR->GetStorageDevice(WIELDWLD)) != nullptr) {
+			pSDev = SDEVMNGR->GetStorageDevice(WIELDWLD);
+			if (pSDev != nullptr) {
 				m_pWieldBmp = (CBagWield *)pSDev;
 				m_pWieldBmp->SetAssociateWnd(this);
 				if (!m_pWieldBmp->IsAttached())
@@ -183,7 +183,8 @@ ErrorCode CMainWindow::Attach() {
 
 		// Create the PDA for the game
 		if (!m_pPDABmp) {
-			if ((pSDev = SDEVMNGR->GetStorageDevice(PDAWLD)) != nullptr) {
+			pSDev = SDEVMNGR->GetStorageDevice(PDAWLD);
+			if (pSDev != nullptr) {
 				m_pPDABmp = (CBagPDA *)pSDev;
 				CBofRect r(0, 0, 300, 200);
 				m_pPDABmp->SetAssociateWnd(this);
@@ -221,7 +222,8 @@ ErrorCode CMainWindow::Attach() {
 		m_pPDABmp->AttachActiveObjects();
 
 		// If this world file contains an evt_wld
-		if ((pSDev = SDEVMNGR->GetStorageDevice("EVT_WLD")) != nullptr) {
+		pSDev = SDEVMNGR->GetStorageDevice("EVT_WLD");
+		if (pSDev != nullptr) {
 			// Have we allocated one yet ?
 			if (m_pEvtSDev == nullptr) {
 				m_pEvtSDev = (CBagEventSDev *)pSDev;
@@ -296,7 +298,7 @@ ErrorCode CMainWindow::Attach() {
 
 
 ErrorCode CMainWindow::Detach() {
-	// If this was a closup then save the leaving position
+	// If this was a closeup then save the leaving position
 	m_cLastLoc = GetViewPort().TopLeft();
 
 	CBagPanWindow::Detach();
@@ -370,8 +372,8 @@ void CMainWindow::CorrectZzazzlePoint(CBofPoint *p) {
 	CBofRect r(x + dx, y + dy, x + dx + dx, y + dy + dy);
 
 	// Attempt to make all squares active in zzazzlvision
-	int i, j;
-	for (i = 0; i < 3; ++i) {
+	int j;
+	for (int i = 0; i < 3; ++i) {
 		if (i == 1) {
 			// Center row
 			x = m_xFilterRect->left;
@@ -450,22 +452,9 @@ ErrorCode CMainWindow::SetLoadFilePos(const CBofPoint dstLoc) {
 }
 
 
-// Get the setting of the ZzazzlVision variable.
-bool CMainWindow::GetZzazzlVision() {
-	return m_bZzazzlVision;
-}
-
-// Set the ZzazzlVision variable.  Return the old setting to the caller.
-bool CMainWindow::SetZzazzlVision(bool newValue) {
-	bool previousValue = m_bZzazzlVision;
-
+// Set the ZzazzlVision variable.
+void CMainWindow::SetZzazzlVision(bool newValue) {
 	m_bZzazzlVision = newValue;
-	return previousValue;
-}
-
-// Handles objects menus
-void *fCObjectHandler(int /*nRefId*/, void *pvInfo) {
-	return nullptr;
 }
 
 } // namespace SpaceBar
