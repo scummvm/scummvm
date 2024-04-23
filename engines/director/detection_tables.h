@@ -8759,8 +8759,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("noddyfair", "", "Noddy PC.exe", "c612aa43e7ef55aa4fd2e1085fb1ef7a", 2197822, 850),
 
-	WINGAME1_l("norgesjakten", "", "STARTW95.EXE", "13b9b8939b4d35841805f97b9b298216", 2293279, Common::NB_NOR, 850),
-
 	MACGAME2_l("okay2000", "", "Start",	   "8c1b4ddb1adff89deaba119f7cf8df7b", 195159,
 							   "TITEL.DXR",  "6190d0e21cb88e9f37afce89b41aa8ff", 1187527, Common::DE_DEU, 800),
 	WINGAME1_l("okay2000", "", "Ok0032.exe", "70a7b053c1a60617d3baace061fcba54", 3565692, Common::DE_DEU, 800),
