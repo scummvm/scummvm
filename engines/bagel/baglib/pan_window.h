@@ -124,13 +124,6 @@ public:
 		return m_nPanSpeed;
 	}
 
-#if BOF_MAC
-	// We need to be able to call activate view and deactivate view outside
-	// of the on_timer mechanism, use these methods to do it.
-	void OnActivate();
-	void OnDeActivate();
-#endif
-
 	virtual void Enable();
 	virtual void Disable();
 
@@ -211,9 +204,6 @@ public:
 
 	uint32 Benchmark();
 
-protected:
-	bool CheckMessages();
-
 public:
 	static void FlushInputEvents();
 
@@ -248,20 +238,12 @@ public:
 	bool ActivatePDA();
 
 	void WaitForPDA() {
-#if BOF_MAC
-		{
-			// Make sure our grafport is current
-			STBofPort stSave(GetMacWindow());
-#endif
-			// Make sure we have a non-null pda
-			while (m_pPDABmp && m_pPDABmp->IsActivating()) {
-				SetPreFilterPan(true);
-				m_pPDABmp->SetDirty(true);
-				PaintScreen();
-			}
-#if BOF_MAC
+		// Make sure we have a non-null pda
+		while (m_pPDABmp && m_pPDABmp->IsActivating()) {
+			SetPreFilterPan(true);
+			m_pPDABmp->SetDirty(true);
+			PaintScreen();
 		}
-#endif
 	}
 };
 

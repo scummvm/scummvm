@@ -229,9 +229,6 @@ protected:
 	// Data members
 	const BagelReg *m_pGameReg = nullptr;
 
-#if BOF_MAC
-	static int16 m_nVRefNum;
-#endif
 	int m_nNumRetries = 20;
 	int m_nInstallCode = 0;
 

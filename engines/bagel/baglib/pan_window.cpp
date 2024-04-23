@@ -163,10 +163,6 @@ CBagPanWindow::~CBagPanWindow() {
 		m_pVeiwPortBitmap = nullptr;
 	}
 
-#if BOF_MAC || BOF_WINMAC
-	m_pPalette = nullptr;
-#endif
-
 	CBofSprite::CloseLibrary();		// Free the off screen bitmap
 
 	delete m_pFGObjectList;
@@ -237,13 +233,7 @@ ErrorCode CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 			if (IsFiltered()) {
 				uint16 nFilterId = GetFilterId();
-#if BOF_MAC && __POWERPC__
-				CallUniversalProc(m_pBitmapFilter,
-				                  uppFilterProcInfo,
-				                  nFilterId, pBmp, pRect);
-#else
 				(*m_pBitmapFilter)(nFilterId, pBmp, pRect);
-#endif
 			}
 
 
@@ -273,13 +263,7 @@ ErrorCode CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 			if (IsFiltered()) {
 				uint16 nFilterId = GetFilterId();
 				bool bFiltered = false;
-#if BOF_MAC && __POWERPC__
-				bFiltered = CallUniversalProc(m_pBitmapFilter,
-				                              uppFilterProcInfo,
-				                              nFilterId, pBmp, pRect);
-#else
 				bFiltered = (*m_pBitmapFilter)(nFilterId, pBmp, pRect);
-#endif
 
 				if (bFiltered) {
 					SetPreFilterPan(true);
@@ -427,68 +411,14 @@ void CBagPanWindow::DeActivateView() {
 	}
 }
 
-bool CBagPanWindow::CheckMessages() {
-	bool bEndTask = false;
-
-#ifdef SCUMMVM_TODO
-#if BOF_MAC
-#if DEVELOPMENT
-	DebugStr("\pCBagPanWindow::CheckMessages not yet implemented");
-#else
-	MacMessageBox("CBagPanWindow::CheckMessages not yet implemented", nullptr);
-#endif
-#else
-	MSG msg;
-
-#ifndef RMS_PORT
-	if (PeekMessage(&msg, nullptr, MM_MCINOTIFY, MM_MCINOTIFY, PM_REMOVE)) {
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
-#else
-	if (PeekMessage(&msg, nullptr, WM_CREATE, WM_MOUSELAST, PM_REMOVE)) {
-		if (msg.message == WM_CLOSE || msg.message == WM_QUIT) {
-			bEndTask = true;
-		} else {
-			if (!PreTranslateMessage(&msg))
-				DispatchMessage(&msg);
-		}
-	}
-#endif
-#endif
-#endif
-
-	return bEndTask;
-}
-
-
 void CBagPanWindow::Enable() {
 	ActivateView();
-
-#if BOF_MAC
-	// Don't know how this tin can ran so long without doing this.
-	m_bEnabled = true;
-#endif
 }
 
 void CBagPanWindow::Disable() {
 	FlushAllMessages();
 	DeActivateView();
-
-#if BOF_MAC
-	m_bEnabled = false;
-#endif
 }
-
-#if BOF_MAC
-void CBagPanWindow::OnActivate() {
-	Enable();
-}
-
-void CBagPanWindow::OnDeActivate() {
-	Disable();
-}
-#endif
 
 ErrorCode CBagPanWindow::OnCursorUpdate(int nCurrObj) {
 	Assert(IsValidObject(this));
@@ -744,20 +674,6 @@ void CBagPanWindow::OnSize(uint32 nType, int cx, int cy) {
 #endif
 		xMaxPanBmpRect.SetRect(0, 0, DEF_WIDTH, DEF_HEIGHT);
 
-#if BOF_MAC     // seems to work fine...
-	cx = DEF_WIDTH;
-	cy = DEF_HEIGHT;
-#elif SCUMMVM_TODO
-	if (nType == SIZE_MAXIMIZED) {
-		//    Window has been maximized.
-		cx = DEF_WIDTH;
-		cy = DEF_HEIGHT;
-	} else if (nType == SIZE_MINIMIZED) {
-		//   Window has been minimized.
-
-	}
-
-#endif
 	CBofPoint vp;
 	CBofSize  vs = CBofSize(cx, cy);
 

@@ -60,7 +60,9 @@ public:
 	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int);
 	ErrorCode Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int);
 
-	int MapWindowsPointSize(int);
+	int MapFontPointSize(int size) const {
+		return size;
+	}
 };
 
 } // namespace Bagel

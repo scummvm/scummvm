@@ -28,21 +28,7 @@
 #include "bagel/boflib/file_functions.h"
 #include "bagel/boflib/log.h"
 
-#if BOF_MAC
-#include <quickdraw.h>
-#include <qdoffscreen.h>
-#include <files.h>
-#include <mac.h>
-#endif
-
 namespace Bagel {
-
-#if BOF_MAC
-#define SPINANDWAIT(n) {EventRecord event;                                              \
-                        for (int jj = 0; jj < n; jj++) {                                \
-                            ::WaitNextEvent (everyEvent, &event, 0xFFFFFFFF, nullptr);      \
-                        }}
-#endif
 
 // Static member variables.
 static unsigned stringHashFunction(const CBofString &s) {
@@ -53,10 +39,6 @@ CBofVHashTable<CBofString, HASHTABLESIZE> *CBagel::m_pCacheFileList;
 // Initialize global variables.
 //
 CBofWindow *g_pHackWindow;
-
-#if BOF_MAC
-int16 CBagel::m_nVRefNum = 0;
-#endif
 
 CBagel::CBagel(const BagelReg *pGameReg) {
 	Assert(pGameReg != nullptr);
@@ -191,46 +173,6 @@ ErrorCode CBagel::InitLocalFilePaths() {
 
 	// Check for Installed state of game
 	GetOption("Startup", "InstallCode", &m_nInstallCode, BAG_INSTALL_DEFAULT);
-
-#if BOF_MAC
-	// Try to make m_szInstallPath an absolute pathname (if it isn't already)
-	// everything appears to work OK if we don't do this, but I'm trying to err on the
-	// side of caution.
-
-	if (m_szInstallPath[0] == ':') {
-		char szPathName[256];
-		byte *pStr;
-
-		// set up pathname
-		Common::strcpy_s(szPathName, m_szInstallPath);
-
-		// convert C string to Pascal String - IN PLACE
-		pStr = (byte *)StrCToPascal(szPathName);
-
-		FSSpec theFSSpec;
-
-		errCode = FSMakeFSSpec(0, 0, pStr, &theFSSpec);
-		if (errCode == ERR_NONE) {
-			short fullPathLength;
-			Handle fullPath;
-
-			errCode = FSpGetFullPath(&theFSSpec, &fullPathLength, &fullPath);
-
-			if (errCode == ERR_NONE && fullPathLength < MAX_DIRPATH) {
-				Assert(fullPath != nullptr);
-				BlockMoveData(*fullPath, m_szInstallPath, fullPathLength);
-				m_szInstallPath[fullPathLength] = 0;
-				::DisposeHandle(fullPath);
-			} else {
-				LogError("Couldn't build full path name for relative InstallPath");
-			}
-		} else {
-			LogError("Couldn't find relative InstallPath.");
-		}
-	}
-
-	SetInstallPath(m_szInstallPath);
-#endif
 
 	return m_errCode;
 }
@@ -456,12 +398,6 @@ void CBagel::ShowNextCDDialog(CBofWindow *pParentWin, int nCDID) {
 	cNextCDDialog.Center();
 
 	cNextCDDialog.DoModal();
-#if BOF_MAC
-	cNextCDDialog.Hide();
-#if PALETTESHIFTFIX
-	CBofWindow::CheckPaletteShiftList();
-#endif
-#endif
 }
 
 } // namespace Bagel

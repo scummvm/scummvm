@@ -71,11 +71,6 @@ CBagMovieObject::~CBagMovieObject() {
 	}
 }
 
-#if BOF_MAC
-#pragma profile off // movies are skewing our profiling
-// data, since we don't have control over it, don't
-// include it.
-#endif
 bool CBagMovieObject::RunObject() {
 	CBagPDA *pPDA = nullptr;
 	CBofWindow *pNewWin = nullptr;
@@ -108,22 +103,6 @@ bool CBagMovieObject::RunObject() {
 		                   MOVIE = 3
 		                 } nMovFileType;
 		CBofString sBaseStr = sFileName.Left(nExt);
-
-#if BOF_MAC
-		// just temporary, trying to get the diskid right for multiple
-		// game disks
-		int nDiskID = CBagel::GetBagApp()->GetMasterWnd()->GetDiskID();
-		if (nDiskID > 0 && nDiskID < 4) {
-			char szFirst6[7];
-
-			BofMemCopy(szFirst6, sBaseStr.GetBuffer(), 6);
-			szFirst6[6] = 0;
-			::UpperText(szFirst6, 6);
-			if (memcmp(szFirst6, "SBDISK", 6) == 0) {
-				sBaseStr.ReplaceCharAt(6, nDiskID + '0');
-			}
-		}
-#endif
 
 		if (sFileName.Find(".smk") > 0 || sFileName.Find(".SMK") > 0) {
 			nMovFileType = MOVFILETYPE::MOVIE;
@@ -202,19 +181,8 @@ bool CBagMovieObject::RunObject() {
 				// If we have a movie playing in the zoom pda, then black out
 				// the background.  Examine movies will always play with a black background
 				// on the mac (prevents a palette shift).
-
-#if BOF_MAC
-				pNewWin = new CBofWindow();
-				if (pNewWin) {
-					pNewWin->Create("BLACK", 0, 0, 640, 480, CBofApp::GetApp()->GetMainWindow(), 0);
-					pNewWin->FillWindow(COLOR_BLACK);
-				}
-
-				// set the first frame to be black so that we don't get a palette shift.
-				CBagExam *pMovie = new CBagExam(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow(), sFileName, &r, false, true, m_xDisplayType == EXAMINE);
-#else
 				CBagExam *pMovie = new CBagExam(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow(), sFileName, &r);
-#endif
+
 				if (pMovie) {
 					// If there is an associated sound file, then start it up here.
 					CBagSoundObject *pSObj = GetAssociatedSound();
@@ -238,13 +206,6 @@ bool CBagMovieObject::RunObject() {
 						pSObj->Detach();
 					}
 				}
-
-#if BOF_MAC
-				if (pNewWin) {
-					delete pNewWin;
-					pNewWin = nullptr;
-				}
-#endif
 			} else {
 				bool bActivated = false;
 				CBofRect r(80, 10, 80 + 480 - 1, 10 + 360 - 1);
@@ -360,11 +321,7 @@ bool CBagMovieObject::RunObject() {
 
 						} else {
 							// Otherwise, just play the movie normally
-#if BOF_MAC
-							pMovie = new CBofMovie(CBofApp::GetApp()->GetMainWindow(), sFileName, &r, false, (m_xDisplayType != PDAMSG), (m_xDisplayType == EXAMINE || m_bFlyThru == true));
-#else
 							pMovie = new CBofMovie(CBofApp::GetApp()->GetMainWindow(), sFileName, &r);
-#endif
 						}
 
 						if (pMovie && pMovie->ErrorOccurred() == false) {
@@ -390,10 +347,6 @@ bool CBagMovieObject::RunObject() {
 
 				// Put the pda down if we brought it up. (8638)
 				if (m_xDisplayType != DISP_TYPE::ASYNCH_PDAMSG && bActivated) {
-#if BOF_MAC
-					// make sure the window is up before we drop the pda
-					((CBagPanWindow *)pMainWin)->Show();
-#endif
 					((CBagPanWindow *)pMainWin)->DeactivatePDA();
 					((CBagPanWindow *)pMainWin)->WaitForPDA();
 				}
@@ -421,25 +374,6 @@ bool CBagMovieObject::RunObject() {
 				LogError(BuildString("Movie SOUND file could not be read: %s.  Where? Not in Kansas ...", sFileName.GetBuffer()));
 			}
 		} else if (nMovFileType == MOVFILETYPE::TEXT) {
-#if BOF_MAC
-			bool isOpen = false;
-			if (FileExists(sFileName)) {
-				ifstream fpTest(sFileName, 0);
-				if (fpTest.is_open()) {
-					isOpen = true;
-					char str[255];
-					fpTest.getline(str, 255);
-
-					BofMessageBox(str, "Incoming Message...");
-					fpTest.close();
-					rc = true;
-				}
-			}
-
-			if (isOpen == false) {
-				LogError(BuildString("Movie TEXT file could not be read: %s.  Why? because we like you ...", sFileName.GetBuffer()));
-			}
-#else
 			Common::File f;
 			if (f.open(sFileName.GetBuffer())) {
 				Common::String line = f.readLine();
@@ -450,7 +384,6 @@ bool CBagMovieObject::RunObject() {
 			} else {
 				LogError(BuildString("Movie TEXT file could not be read: %s.  Why? because we like you ...", sFileName.GetBuffer()));
 			}
-#endif
 		}
 
 		rc = CBagObject::RunObject();
@@ -458,10 +391,6 @@ bool CBagMovieObject::RunObject() {
 
 	return rc;
 }
-
-#if BOF_MAC
-#pragma profile reset
-#endif
 
 PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 	bool nObjectUpdated = false;

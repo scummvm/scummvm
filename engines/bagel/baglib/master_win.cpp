@@ -51,11 +51,7 @@ namespace Bagel {
 #define LOADINGBMP "$SBARDIR\\GENERAL\\SYSTEM\\LOADING.BMP"
 
 #define USER_OPTIONS "UserOptions"
-#if BOF_MAC || BOF_WINMAC
-#define WAVE_VOLUME "SndVolume"
-#else
 #define WAVE_VOLUME "WaveVolume"
-#endif
 
 // Global vars
 //
@@ -331,24 +327,8 @@ ErrorCode CBagMasterWin::NewGame() {
 		MACROREPLACE(cInitWld);
 	}
 
-#if BOF_MAC && __profile__ && PROFILE_LOADTIME
-	OSErr oserr = ::ProfilerInit(collectSummary, bestTimeBase, 300, 20);
-	Assert(oserr == noErr);
-	::ProfilerSetStatus(true);
-#endif
-
 	LoadGlobalVars(GLOBALWORLD);
 	LoadFile(cInitWld, "", true);
-
-#if BOF_MAC && __profile__ && PROFILE_LOADTIME
-	::ProfilerSetStatus(false);
-#if __POWERPC__
-	::ProfilerDump("\pMacintosh HD:spacebar_ppc.prof");
-#else
-	::ProfilerDump("\pMacintosh HD:spacebar_68k.prof");
-#endif
-	::ProfilerTerm();
-#endif
 
 	return m_errCode;
 }
@@ -956,9 +936,6 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 				GetIntFromStream(fpInput, n);
 				m_nDiskID = (uint16)n;
 
-#if BOF_MAC
-				SetCurrentDisk(m_nDiskID);
-#endif
 				LogInfo(BuildString("DISKID = %d", m_nDiskID));
 
 			} else {
@@ -976,17 +953,7 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 
 		case REMARK: {
 			char s[255];
-#if BOF_MAC
-			// There's a bug in the mac streams code where if the
-			// first char that ".Get" is the delimiter (/r or /n) then the
-			// next call to get will cause an EOF to be returned.
-
-			char ch = fpInput.peek();
-			if (ch == '\r' || ch == '\n')
-				fpInput.EatWhite();
-			else
-#endif
-				fpInput.Get(s, 255);
+			fpInput.Get(s, 255);
 			break;
 		}
 
@@ -1121,11 +1088,7 @@ void CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 		break;
 
 	case BKEY_SPACE:
-#if BOF_MAC
-		if (g_bWaitOK || true) {
-#else
 		if (g_bWaitOK) {
-#endif
 			g_bWaitOK = false;
 
 			// Play the tick-tock sound
@@ -1861,11 +1824,8 @@ int CBagMasterWin::GetWaveVolume() {
 	int nWaveVol = VOLUME_INDEX_DEFAULT;
 	CBagel *pApp = CBagel::GetBagApp();
 	if (pApp != nullptr) {
-#if BOF_MAC
 		pApp->GetOption(USER_OPTIONS, WAVE_VOLUME, &nWaveVol, VOLUME_INDEX_DEFAULT);
-#else
-		pApp->GetOption(USER_OPTIONS, WAVE_VOLUME, &nWaveVol, VOLUME_INDEX_DEFAULT);
-#endif
+
 		if (nWaveVol < VOLUME_INDEX_MIN || nWaveVol > VOLUME_INDEX_MAX) {
 			nWaveVol = VOLUME_INDEX_DEFAULT;
 		}
