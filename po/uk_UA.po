@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-23 11:37+0000\n"
+"POT-Creation-Date: 2024-04-23 14:50+0000\n"
 "PO-Revision-Date: 2024-04-07 14:34+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -6426,7 +6426,7 @@ msgstr "Перемкнути режим бою"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:874 engines/twp/metaengine.cpp:138
+#: engines/scumm/metaengine.cpp:874 engines/twp/metaengine.cpp:147
 #: engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr "Пропустити ролік"
@@ -10900,67 +10900,67 @@ msgstr ""
 msgid "Ransome *unbeeped* (DLC)"
 msgstr ""
 
-#: engines/twp/metaengine.cpp:139
+#: engines/twp/metaengine.cpp:148
 msgid "Select Actor 1"
 msgstr "Вибрати Актора 1"
 
-#: engines/twp/metaengine.cpp:140
+#: engines/twp/metaengine.cpp:149
 msgid "Select Actor 2"
 msgstr "Вибрати Актора 2"
 
-#: engines/twp/metaengine.cpp:141
+#: engines/twp/metaengine.cpp:150
 msgid "Select Actor 3"
 msgstr "Вибрати Актора 3"
 
-#: engines/twp/metaengine.cpp:142
+#: engines/twp/metaengine.cpp:151
 msgid "Select Actor 4"
 msgstr "Вибрати Актора 4"
 
-#: engines/twp/metaengine.cpp:143
+#: engines/twp/metaengine.cpp:152
 msgid "Select Actor 5"
 msgstr "Вибрати Актора 5"
 
-#: engines/twp/metaengine.cpp:144
+#: engines/twp/metaengine.cpp:153
 msgid "Select Actor 6"
 msgstr "Вибрати Актора 6"
 
-#: engines/twp/metaengine.cpp:145
+#: engines/twp/metaengine.cpp:154
 msgid "Select Choice 1"
 msgstr "Вибрати Опцію 1"
 
-#: engines/twp/metaengine.cpp:146
+#: engines/twp/metaengine.cpp:155
 msgid "Select Choice 2"
 msgstr "Вибрати Опцію 2"
 
-#: engines/twp/metaengine.cpp:147
+#: engines/twp/metaengine.cpp:156
 msgid "Select Choice 3"
 msgstr "Вибрати Опцію 3"
 
-#: engines/twp/metaengine.cpp:148
+#: engines/twp/metaengine.cpp:157
 msgid "Select Choice 4"
 msgstr "Вибрати Опцію 4"
 
-#: engines/twp/metaengine.cpp:149
+#: engines/twp/metaengine.cpp:158
 msgid "Select Choice 5"
 msgstr "Вибрати Опцію 5"
 
-#: engines/twp/metaengine.cpp:150
+#: engines/twp/metaengine.cpp:159
 msgid "Select Choice 6"
 msgstr "Вибрати Опцію 6"
 
-#: engines/twp/metaengine.cpp:151
+#: engines/twp/metaengine.cpp:160
 msgid "Select Next Actor"
 msgstr "Вибрати наступного Актора"
 
-#: engines/twp/metaengine.cpp:152
+#: engines/twp/metaengine.cpp:161
 msgid "Select Previous Actor"
 msgstr "Вибрати попереднього Актора"
 
-#: engines/twp/metaengine.cpp:153
+#: engines/twp/metaengine.cpp:162
 msgid "Skip Text"
 msgstr "Пропустити текст"
 
-#: engines/twp/metaengine.cpp:154
+#: engines/twp/metaengine.cpp:163
 msgid "Show hotspots"
 msgstr "Показувати гарячі точки"
 

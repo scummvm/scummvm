@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-23 11:37+0000\n"
+"POT-Creation-Date: 2024-04-23 14:50+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -6030,7 +6030,7 @@ msgstr "Ativar/desativar combate"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:874 engines/twp/metaengine.cpp:138
+#: engines/scumm/metaengine.cpp:874 engines/twp/metaengine.cpp:147
 #: engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr "Ignorar filme"
@@ -10412,89 +10412,89 @@ msgstr ""
 msgid "Ransome *unbeeped* (DLC)"
 msgstr ""
 
-#: engines/twp/metaengine.cpp:139
+#: engines/twp/metaengine.cpp:148
 #, fuzzy
 #| msgid "Select Group by"
 msgid "Select Actor 1"
 msgstr "Agrupar por"
 
-#: engines/twp/metaengine.cpp:140
+#: engines/twp/metaengine.cpp:149
 #, fuzzy
 #| msgid "Select Group by"
 msgid "Select Actor 2"
 msgstr "Agrupar por"
 
-#: engines/twp/metaengine.cpp:141
+#: engines/twp/metaengine.cpp:150
 #, fuzzy
 #| msgid "Select Group by"
 msgid "Select Actor 3"
 msgstr "Agrupar por"
 
-#: engines/twp/metaengine.cpp:142
+#: engines/twp/metaengine.cpp:151
 #, fuzzy
 #| msgid "Select Group by"
 msgid "Select Actor 4"
 msgstr "Agrupar por"
 
-#: engines/twp/metaengine.cpp:143
+#: engines/twp/metaengine.cpp:152
 #, fuzzy
 #| msgid "Select Group by"
 msgid "Select Actor 5"
 msgstr "Agrupar por"
 
-#: engines/twp/metaengine.cpp:144
+#: engines/twp/metaengine.cpp:153
 #, fuzzy
 #| msgid "Select Group by"
 msgid "Select Actor 6"
 msgstr "Agrupar por"
 
-#: engines/twp/metaengine.cpp:145
+#: engines/twp/metaengine.cpp:154
 #, fuzzy
 msgid "Select Choice 1"
 msgstr "Selecione um tema"
 
-#: engines/twp/metaengine.cpp:146
+#: engines/twp/metaengine.cpp:155
 #, fuzzy
 msgid "Select Choice 2"
 msgstr "Selecione um tema"
 
-#: engines/twp/metaengine.cpp:147
+#: engines/twp/metaengine.cpp:156
 #, fuzzy
 msgid "Select Choice 3"
 msgstr "Selecione um tema"
 
-#: engines/twp/metaengine.cpp:148
+#: engines/twp/metaengine.cpp:157
 #, fuzzy
 msgid "Select Choice 4"
 msgstr "Selecione um tema"
 
-#: engines/twp/metaengine.cpp:149
+#: engines/twp/metaengine.cpp:158
 #, fuzzy
 msgid "Select Choice 5"
 msgstr "Selecione um tema"
 
-#: engines/twp/metaengine.cpp:150
+#: engines/twp/metaengine.cpp:159
 #, fuzzy
 msgid "Select Choice 6"
 msgstr "Selecione um tema"
 
-#: engines/twp/metaengine.cpp:151
+#: engines/twp/metaengine.cpp:160
 #, fuzzy
 msgid "Select Next Actor"
 msgstr "Selecione um tema"
 
-#: engines/twp/metaengine.cpp:152
+#: engines/twp/metaengine.cpp:161
 #, fuzzy
 msgid "Select Previous Actor"
 msgstr "Ação seguinte"
 
-#: engines/twp/metaengine.cpp:153
+#: engines/twp/metaengine.cpp:162
 #, fuzzy
 #| msgid "Skip text"
 msgid "Skip Text"
 msgstr "Saltar texto"
 
-#: engines/twp/metaengine.cpp:154
+#: engines/twp/metaengine.cpp:163
 #, fuzzy
 #| msgid "Show hints"
 msgid "Show hotspots"
