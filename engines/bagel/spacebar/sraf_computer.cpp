@@ -424,18 +424,27 @@ static ST_BUTTONS g_stButtons[NUM_SRAFCOMPBUTT] = {
 	{ "Order Snack", "snackup.bmp", "snackdn.bmp", "snackup.bmp", "snackup.bmp", 225, 445, 200, 30, ORDER_SNACK_BUTTON }
 };
 
-static AUDIOITEM g_stAudioSetting[NUM_MUSICAL_SCORES] = {
+static AUDIOITEM g_audioTracks[NUM_MUSICAL_SCORES] = {
 	{ "Harpsichord Invention #1", "J. S. Bach",     "Earth",      "SRAFFAN1.MID", nullptr },
 	{ "Jazz Theme #44981",        "Urgon-Thmo",     "Thelbia",    "SRAFFAN2.MID", nullptr },
 	{ "Bamboo Breeze",            "H. Fugimachi",   "Earth",      "SRAFFAN3.MID", nullptr },
 	{ "Power of Crystal, OP. 12", "Brak-44",        "H'poctyl",   "SRAFFAN4.MID", nullptr },
 	{ "String Quartet",           "J. Salesin",     "Earth",      "SRAFFAN5.MID", nullptr },
-#if BOF_MAC
-	{ "Chicken Dance",            "Unknown Origin", "Mars",       "CHIKDANC.MID", nullptr },
-#else
 	{ "The Womp Song",            "The Womps",      "Armpit IV",  "SRAFFAN6.MID", nullptr },
-#endif
-	{ "Mixed Selections",         " ",    " ",       nullptr,        nullptr },
+	{ "Mixed Selections",         " ",              " ",          nullptr,        nullptr },
+};
+static AUDIOITEM g_chickenDance = \
+	{ "Chicken Dance",            "Unknown Origin", "Mars",       "CHIKDANC.MID", nullptr };
+// Pointers to the g_audioTracks entries. For the Mac, The Womp Song
+// is replaced with the Chicken Dance
+static AUDIOITEM *g_stAudioSetting[NUM_MUSICAL_SCORES] = {
+	&g_audioTracks[0],
+	&g_audioTracks[1],
+	&g_audioTracks[2],
+	&g_audioTracks[3],
+	&g_audioTracks[4],
+	&g_audioTracks[5],
+	&g_audioTracks[6]
 };
 
 static OFFERINGITEM g_stOfferings[NUM_OFFERINGS] = {
@@ -855,9 +864,9 @@ SrafComputer::~SrafComputer() {
 	// destruct them in the destructor.
 
 	for (int i = 0; i < (NUM_MUSICAL_SCORES - 1); i++) {
-		if (g_stAudioSetting[i].m_pMidiTrack != nullptr) {
-			delete g_stAudioSetting[i].m_pMidiTrack;
-			g_stAudioSetting[i].m_pMidiTrack = nullptr;
+		if (g_stAudioSetting[i]->m_pMidiTrack != nullptr) {
+			delete g_stAudioSetting[i]->m_pMidiTrack;
+			g_stAudioSetting[i]->m_pMidiTrack = nullptr;
 		}
 	}
 
@@ -913,11 +922,15 @@ ErrorCode SrafComputer::Attach() {
 		Assert(m_pMainList != nullptr);
 		FillMain();
 
+		// If we're on the Mac version, slot in the Chicken Dance song
+		if (g_engine->getPlatform() == Common::kPlatformMacintosh)
+			g_stAudioSetting[5] = &g_chickenDance;
+
 		// Bring in all our audio tracks
 		for (i = 0; i < (NUM_MUSICAL_SCORES - 1); i++) {
-			if (g_stAudioSetting[i].m_pMidiTrack == nullptr) {
-				g_stAudioSetting[i].m_pMidiTrack = new CBofSound(this, BuildAudioDir(g_stAudioSetting[i].m_pszAudioFile), SOUND_MIDI | SOUND_ASYNCH | SOUND_LOOP, 32000);
-				Assert(g_stAudioSetting[i].m_pMidiTrack != nullptr);
+			if (g_stAudioSetting[i]->m_pMidiTrack == nullptr) {
+				g_stAudioSetting[i]->m_pMidiTrack = new CBofSound(this, BuildAudioDir(g_stAudioSetting[i]->m_pszAudioFile), SOUND_MIDI | SOUND_ASYNCH | SOUND_LOOP, 32000);
+				Assert(g_stAudioSetting[i]->m_pMidiTrack != nullptr);
 			}
 		}
 
@@ -1994,12 +2007,12 @@ void SrafComputer::ActivateAudioSettings() {
 
 	// Walk through the titles and build the list
 	for (int i = 0; i < NUM_MUSICAL_SCORES; i++) {
-		sStr = g_stAudioSetting[i].m_pszTitle;
+		sStr = g_stAudioSetting[i]->m_pszTitle;
 
-		Common::strcpy_s(szRightCol, g_stAudioSetting[i].m_pszAuthor);
+		Common::strcpy_s(szRightCol, g_stAudioSetting[i]->m_pszAuthor);
 		AlignAtColumn(sStr, szRightCol, kAudioAuthorCol);
 
-		Common::strcpy_s(szRightCol, g_stAudioSetting[i].m_pszPlanet);
+		Common::strcpy_s(szRightCol, g_stAudioSetting[i]->m_pszPlanet);
 		AlignAtColumn(sStr, szRightCol, kAudioPlanetCol);
 
 		m_pLBox->AddToTail(sStr, false);
@@ -3084,7 +3097,7 @@ void SrafComputer::OnListAudioSettings() {
 	// Start the new track (will stop any track playing)
 	//
 	// Add a selection for random play.
-	if (g_stAudioSetting[nTrackSelection].m_pszAudioFile == nullptr) {
+	if (g_stAudioSetting[nTrackSelection]->m_pszAudioFile == nullptr) {
 		m_bRandomAudio = true;
 		CBagVar *pVar = VARMNGR->GetVariable("SRATURNCOUNT");
 		m_nRandomTime = pVar->GetNumValue();
@@ -3094,8 +3107,8 @@ void SrafComputer::OnListAudioSettings() {
 	}
 
 	// Now start playing...
-	if (g_stAudioSetting[nTrackSelection].m_pMidiTrack != nullptr) {
-		g_stAudioSetting[nTrackSelection].m_pMidiTrack->Play();
+	if (g_stAudioSetting[nTrackSelection]->m_pMidiTrack != nullptr) {
+		g_stAudioSetting[nTrackSelection]->m_pMidiTrack->Play();
 	}
 
 	// If state changes, then change the button also
@@ -4682,8 +4695,8 @@ void SrafComputer::IncrementTurnCount() {
 		int nTrackSelection = g_engine->getRandomNumber() % (NUM_MUSICAL_SCORES - 1);
 
 		// Now start playing...
-		if (g_stAudioSetting[nTrackSelection].m_pMidiTrack != nullptr) {
-			g_stAudioSetting[nTrackSelection].m_pMidiTrack->Play();
+		if (g_stAudioSetting[nTrackSelection]->m_pMidiTrack != nullptr) {
+			g_stAudioSetting[nTrackSelection]->m_pMidiTrack->Play();
 		}
 		m_nRandomTime += kRandomPlayTime;
 	}

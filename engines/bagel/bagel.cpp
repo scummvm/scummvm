@@ -122,6 +122,10 @@ Common::String BagelEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+Common::Platform BagelEngine::getPlatform() const {
+	return _gameDescription->platform;
+}
+
 bool BagelEngine::isDemo() const {
 	return (_gameDescription->flags & ADGF_DEMO) != 0;
 }
