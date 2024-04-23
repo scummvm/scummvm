@@ -28,10 +28,6 @@
 namespace Bagel {
 namespace SpaceBar {
 
-// Handles the objects floating sub-menus
-extern void *fCObjectHandler(int nRefId, void *pvInfo);
-
-
 class CMainLinkObject : public CBagLinkObject {
 public:
 	bool m_bClickedOn;

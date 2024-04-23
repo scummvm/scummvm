@@ -33,7 +33,6 @@ namespace SpaceBar {
  * functions for handling slide bitmaps and slide objects.
  */
 class SBarInventoryWindow : public CBagStorageDevWnd {
-private:
 public:
 	SBarInventoryWindow();
 	~SBarInventoryWindow();

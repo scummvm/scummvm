@@ -26,10 +26,7 @@
 #include "bagel/boflib/gfx/palette.h"
 #include "bagel/baglib/pan_window.h"
 #include "bagel/baglib/menu_dlg.h"
-#include "bagel/boflib/list.h"
 #include "bagel/baglib/pda.h"
-#include "bagel/baglib/wield.h"
-#include "bagel/spacebar/inv.h"
 #include "bagel/spacebar/thud.h"
 
 namespace Bagel {
@@ -80,8 +77,7 @@ public:
 
 	ErrorCode Attach();
 	ErrorCode Detach();
-	static bool GetZzazzlVision();
-	static bool SetZzazzlVision(bool newValue);
+	static void SetZzazzlVision(bool newValue);
 	static CBofRect &GetFilterRect() {
 		return *m_xFilterRect;
 	}
