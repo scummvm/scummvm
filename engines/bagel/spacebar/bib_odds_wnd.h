@@ -23,7 +23,6 @@
 #ifndef BAGEL_SPACEBAR_BIB_ODDS_WND_H
 #define BAGEL_SPACEBAR_BIB_ODDS_WND_H
 
-#include "bagel/boflib/gui/window.h"
 #include "bagel/baglib/chat_wnd.h"
 
 namespace Bagel {
@@ -37,7 +36,7 @@ public:
 	virtual ~SBarBibOddsWnd();
 
 	virtual ErrorCode Attach();        // Save wielded cursor
-	virtual ErrorCode Detach();        // This function detachs the background and nessasary bitmaps
+	virtual ErrorCode Detach();        // This function detachs the background and necessary bitmaps
 
 	void OnMouseMove(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
 	void OnKeyHit(uint32 lKey, uint32 lRepCount);

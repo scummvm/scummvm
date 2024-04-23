@@ -43,15 +43,13 @@ SBarBibOddsWnd::~SBarBibOddsWnd() {
 }
 
 ErrorCode SBarBibOddsWnd::Detach() {
-	int nPayIdx = 0;
-
 	for (int i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
 
 		// The sprite object start in the script at 500
 		CBagObject *pObj = GetObject(500 + i);
 
 		if (pObj != nullptr) {
-			nPayIdx = pObj->GetState();
+			int nPayIdx = pObj->GetState();
 			g_engine->g_cBetAreas[i].m_nPayOff1 = PAY_OFFS[nPayIdx].m_nPay1;
 			g_engine->g_cBetAreas[i].m_nPayOff2 = PAY_OFFS[nPayIdx].m_nPay2;
 		}
@@ -128,7 +126,7 @@ ErrorCode SBarBibOddsWnd::Attach() {
 		}
 	}
 
-	// Don't call CBagChatWnd::Attach() - We are overriding it's behavoir
+	// Don't call CBagChatWnd::Attach() - We are overriding it's behavior
 	if (CBagStorageDevWnd::Attach() == ERR_NONE) {
 		Show();
 		InvalidateRect(nullptr);
