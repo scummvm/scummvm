@@ -292,7 +292,7 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		redraw();
 	} else if (msg.ascii == (uint16)'s') {
 		// g_engine->ExecuteScript(g_engine->_scriptStream);
-		// g_engine->RunScriptExecutor();
+		g_engine->RunScriptExecutor();
 		// Also test the lerping
 		characters[0]->StartLerpTo(Common::Point(200, 100), 5000);
 	} else if (msg.ascii == (uint16)'i') {
@@ -464,7 +464,11 @@ void View1::DrawSprite(uint16 x, uint16 y, uint16 width, uint16 height, byte* da
 		for (int currentY = 0; currentY < height; currentY++) {
 			uint8 val = data[currentY * width + currentX];
 			if (val != 0) {
-				s.setPixel(x + currentX, y + currentY, val);
+				int finalX = x + currentX;
+				int finalY = y + currentY;
+				if (finalX >= 0 && finalX < s.w && finalY >= 0 && finalY < s.h) {
+					s.setPixel(x + currentX, y + currentY, val);
+				}
 			}
 		}
 	}
