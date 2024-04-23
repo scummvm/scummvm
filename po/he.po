@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-21 20:32+0000\n"
+"POT-Creation-Date: 2024-04-23 11:37+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -3527,11 +3527,11 @@ msgstr "תיבת דו-שיח לניבוי קלט"
 msgid "Confirm"
 msgstr "אישור"
 
-#: engines/metaengine.cpp:402
+#: engines/metaengine.cpp:407
 msgid "Autosave on"
 msgstr "שמירה אוטומטית מופעלת"
 
-#: engines/metaengine.cpp:402
+#: engines/metaengine.cpp:407
 msgid "Autosave off"
 msgstr "שמירה אוטומטית כבויה"
 

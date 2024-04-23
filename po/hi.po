@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-21 20:32+0000\n"
+"POT-Creation-Date: 2024-04-23 11:37+0000\n"
 "PO-Revision-Date: 2023-12-06 11:16+0000\n"
 "Last-Translator: Aditya Mohan <adityamurali003@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -3439,11 +3439,11 @@ msgstr ""
 msgid "Confirm"
 msgstr ""
 
-#: engines/metaengine.cpp:402
+#: engines/metaengine.cpp:407
 msgid "Autosave on"
 msgstr ""
 
-#: engines/metaengine.cpp:402
+#: engines/metaengine.cpp:407
 msgid "Autosave off"
 msgstr ""
 

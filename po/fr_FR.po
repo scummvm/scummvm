@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-21 20:32+0000\n"
+"POT-Creation-Date: 2024-04-23 11:37+0000\n"
 "PO-Revision-Date: 2024-04-22 11:10+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -3700,11 +3700,11 @@ msgstr "Dialogue de saisie prédictive"
 msgid "Confirm"
 msgstr "Confirmer"
 
-#: engines/metaengine.cpp:402
+#: engines/metaengine.cpp:407
 msgid "Autosave on"
 msgstr "Sauvegarde auto activée"
 
-#: engines/metaengine.cpp:402
+#: engines/metaengine.cpp:407
 msgid "Autosave off"
 msgstr "Sauvegarde auto désactivée"
 

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-21 20:32+0000\n"
+"POT-Creation-Date: 2024-04-23 11:37+0000\n"
 "PO-Revision-Date: 2024-04-07 14:34+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -3645,11 +3645,11 @@ msgstr "Діалог предиктивного вводу"
 msgid "Confirm"
 msgstr "Підтвердити"
 
-#: engines/metaengine.cpp:402
+#: engines/metaengine.cpp:407
 msgid "Autosave on"
 msgstr "Автозбереження увімкнено"
 
-#: engines/metaengine.cpp:402
+#: engines/metaengine.cpp:407
 msgid "Autosave off"
 msgstr "Автозбереження вимкнено"
 

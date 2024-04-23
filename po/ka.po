@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-21 20:32+0000\n"
+"POT-Creation-Date: 2024-04-23 11:37+0000\n"
 "PO-Revision-Date: 2024-04-05 14:42+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -3384,11 +3384,11 @@ msgstr ""
 msgid "Confirm"
 msgstr "დადასტურება"
 
-#: engines/metaengine.cpp:402
+#: engines/metaengine.cpp:407
 msgid "Autosave on"
 msgstr "ავტოშენახვა ჩართ"
 
-#: engines/metaengine.cpp:402
+#: engines/metaengine.cpp:407
 msgid "Autosave off"
 msgstr "ავტოშენახვა გამორთ"
 

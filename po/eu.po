@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-21 20:32+0000\n"
+"POT-Creation-Date: 2024-04-23 11:37+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -3624,12 +3624,12 @@ msgstr ""
 msgid "Confirm"
 msgstr ""
 
-#: engines/metaengine.cpp:402
+#: engines/metaengine.cpp:407
 #, fuzzy
 msgid "Autosave on"
 msgstr "Autogordetzea:"
 
-#: engines/metaengine.cpp:402
+#: engines/metaengine.cpp:407
 #, fuzzy
 msgid "Autosave off"
 msgstr "Autogordetzea:"
