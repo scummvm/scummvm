@@ -1226,9 +1226,9 @@ void Script::ScriptExecutor::ExecuteScript() {
 			Func9F4D(throwaway1, throwaway2);
 		
 		} else if (opcode1 == 0x18) {
-			// Original code sets the position to the end, let's try
-			// seeking to the start here, but keep this in mind in case of inconsistencies
-			_stream->seek(0, SEEK_SET);
+			// Set the stream to the end and let the calling code figure out that we are done
+			// for this run
+			_stream->seek(_stream->size(), SEEK_SET);
 			requestCallback = true;
 			return;
 		}
@@ -2483,7 +2483,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 	void ScriptExecutor::Run() {
 		do {
 			ExecuteScript();
-			if (_stream->eos()) {
+			if (_stream->pos() == _stream->size()) {
 				break;
 			}
 		} while (requestCallback);
@@ -2497,7 +2497,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 
 		// TODO: Not looped for now
 		uint16 executingObjectIndex = 1;
-		GameObject *obj = GameObjects::instance().Objects[executingObjectIndex];
+		GameObject *obj = GameObjects::instance().Objects[executingObjectIndex-1];
 		if (obj->Script.size() != 0) {
 			// TODO: Memory leak
 			SetScript(new Common::MemoryReadStream(obj->Script.data(), obj->Script.size()));

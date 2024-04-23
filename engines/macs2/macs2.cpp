@@ -307,7 +307,7 @@ void Macs2Engine::readResourceFile() {
 		}
 		// Read the object script
 		// The offset is calculated at l0037_0C9D - also see above for adjustmnets
-		addressOffset = 0x17FA + (0xC + 0x04) + i * 0xC;
+		addressOffset = 0x17F8 + (0xC + 0x04) + i * 0xC;
 		_fileStream->seek(addressOffset, SEEK_SET);
 
 		objectOffset = _fileStream->readUint32LE();
