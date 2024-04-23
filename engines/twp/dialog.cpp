@@ -19,10 +19,12 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "twp/twp.h"
 #include "twp/detection.h"
 #include "twp/dialog.h"
 #include "twp/motor.h"
+#include "twp/resmanager.h"
 #include "twp/squtil.h"
 #include "twp/tsv.h"
 
@@ -243,7 +245,7 @@ void Dialog::update(float dt) {
 		for (size_t i = 0; i < MAXDIALOGSLOTS; i++) {
 			DialogSlot *slot = &_slots[i];
 			if (slot->_isValid) {
-				Rectf rect = Rectf::fromPosAndSize(slot->getPos() - Math::Vector2d(0.f, -slot->_text.getBounds().getY() / 2.f), slot->_text.getBounds());
+				Rectf rect = Rectf::fromPosAndSize(slot->getPos() - Math::Vector2d(0.f, -slot->getSize().getY() / 2.f), slot->getSize());
 				bool over = rect.contains(_mousePos);
 				if (rect.r.w > (SCREEN_WIDTH - SLOTMARGIN)) {
 					if (over) {
@@ -445,7 +447,11 @@ void Dialog::addSlot(Common::SharedPtr<YStatement> stmt) {
 		slot->_text.setText(Common::String::format("● %s", text(choice->_text).c_str()));
 		slot->_stmt = stmt;
 		slot->_dlg = this;
-		slot->setPos(Math::Vector2d(SLOTMARGIN, SLOTMARGIN + slot->_text.getBounds().getY() * (MAXCHOICES - numSlots())));
+		Math::Vector2d slotSize(slot->_text.getBounds());
+		float slotHeight = slotSize.getY() - 3.f;
+		slot->setSize({slotSize.getX(), slotHeight});
+		const float y = slotHeight * (MAXCHOICES - numSlots() - 2);
+		slot->setPos(Math::Vector2d(SLOTMARGIN, y));
 		slot->_isValid = true;
 	}
 }
@@ -466,6 +472,15 @@ void Dialog::clearSlots() {
 }
 
 void Dialog::drawCore(const Math::Matrix4 &trsf) {
+	if (_state == WaitingForChoice) {
+		// draw HUD background
+		SpriteSheet *gameSheet = g_twp->_resManager->spriteSheet("GameSheet");
+		const SpriteSheetFrame &backingFrame = gameSheet->getFrame("ui_backing_tall");
+		Texture *gameTexture = g_twp->_resManager->texture(gameSheet->meta.image);
+		float alpha = 0.33f; // prefs(UiBackingAlpha);
+		g_twp->getGfx().drawSprite(backingFrame.frame, *gameTexture, Color(0, 0, 0, alpha * getAlpha()), trsf);
+	}
+
 	for (auto &_slot : _slots) {
 		DialogSlot *slot = &_slot;
 		if (slot->_isValid) {

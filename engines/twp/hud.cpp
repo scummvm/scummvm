@@ -204,16 +204,10 @@ void Hud::update(float elapsed, const Math::Vector2d &pos, Common::SharedPtr<Obj
 
 	if (_fadeTime > 2.f) {
 		_fadeTime = 2.f;
-		if (!_fadeIn) {
-			setVisible(false);
-		}
 	}
 
 	if (_fadeIn) {
 		float alpha = MIN(_fadeTime, 2.0f) / 2.0f;
-		setAlpha(alpha);
-	} else {
-		float alpha = MAX(2.0f - _fadeTime, 0.0f) / 2.0f;
 		setAlpha(alpha);
 	}
 }
@@ -221,9 +215,7 @@ void Hud::update(float elapsed, const Math::Vector2d &pos, Common::SharedPtr<Obj
 void Hud::setVisible(bool visible) {
 	if (_fadeIn != visible) {
 		_fadeIn = visible;
-		if (visible) {
-			Node::setVisible(visible);
-		}
+		Node::setVisible(visible);
 		_fadeTime = 0;
 	}
 }

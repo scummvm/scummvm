@@ -32,7 +32,7 @@
 #define MAXDIALOGSLOTS 9
 #define MAXCHOICES 6
 #define SLIDINGSPEED 25.f
-#define SLOTMARGIN 8.f
+#define SLOTMARGIN 4.f
 
 namespace Twp {
 
@@ -53,7 +53,7 @@ struct DialogContext {
 	Common::String actor;
 	Common::String dialogName;
 	bool parrot = true;
-	int limit = MAXDIALOGSLOTS;
+	int limit = MAXCHOICES;
 };
 
 enum DialogState {
