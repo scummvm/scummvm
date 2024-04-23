@@ -88,12 +88,12 @@ public:
 	virtual void OnKeyHit(uint32 lKey, uint32 nRepCount);
 
 	/**
-	 * This function attachs the background and nessasary bitmaps
+	 * This function attaches the background and necessary bitmaps
 	 */
 	virtual ErrorCode Attach();
 
 	/**
-	 * This function detachs the background and nessasary bitmaps
+	 * This function detaches the background and necessary bitmaps
 	 */
 	virtual ErrorCode Detach();
 
