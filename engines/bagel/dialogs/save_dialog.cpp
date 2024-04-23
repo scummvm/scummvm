@@ -96,10 +96,6 @@ CBagSaveDialog::CBagSaveDialog() {
 	for (int i = 0; i < NUM_BUTTONS; i++) {
 		m_pButtons[i] = nullptr;
 	}
-
-#if BOF_MAC
-	m_bResetFocus = false;
-#endif
 }
 
 ErrorCode CBagSaveDialog::Attach() {
@@ -284,19 +280,6 @@ void CBagSaveDialog::OnPaint(CBofRect *pRect) {
 		m_pListBox->RepaintAll();
 	}
 
-	// Paint the backdrop and the buttons
-#if BOF_MAC
-	//if (GetBackdrop()) {
-	//    PaintBackdrop();
-	//}
-
-	for (int i = 0; i < NUM_BUTTONS; i++) {
-		if (m_pButtons[i] != nullptr) {
-			m_pButtons[i]->Paint();
-		}
-	}
-#endif
-
 	ValidateAnscestors();
 }
 
@@ -362,12 +345,6 @@ void CBagSaveDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 
 	default:
 		CBofDialog::OnKeyHit(lKey, nRepCount);
-		// Pass off to our edit text item.
-#if BOF_MAC
-		if (m_pEditText) {
-			m_pEditText->Key(lKey);
-		}
-#endif
 		break;
 	}
 }
@@ -454,8 +431,6 @@ void CBagSaveDialog::OnBofListBox(CBofObject * /*pObject*/, int nItemIndex) {
 	}
 }
 
-
-#if !USE_CBAGDIALOG
 void CBagSaveDialog::OnInitDialog() {
 	Assert(IsValidObject(this));
 
@@ -463,17 +438,5 @@ void CBagSaveDialog::OnInitDialog() {
 
 	Attach();
 }
-#endif
-
-#if BOF_MAC
-void CBagSaveDialog::OnMainLoop() {
-	// Check to see if we need to reset our focus
-
-	if (m_bResetFocus) {
-		SetFocus();
-		m_bResetFocus = false;
-	}
-}
-#endif
 
 } // namespace Bagel

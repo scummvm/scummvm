@@ -94,11 +94,7 @@ ErrorCode CBofDataFile::SetFile(const char *pszFileName, uint32 lFlags, const ch
 	// Remember the flags
 	m_lFlags = lFlags;
 
-#if BOF_MAC
-	Common::strcpy_s(m_szFileName, pszFileName);
-#else
 	if (FileGetFullPath(m_szFileName, pszFileName) != nullptr) {
-#endif
 		if (Open() == ERR_NONE) {
 
 			// Read header block
@@ -109,11 +105,10 @@ ErrorCode CBofDataFile::SetFile(const char *pszFileName, uint32 lFlags, const ch
 				Close();
 			}
 		}
-#if !BOF_MAC
 	} else {
 		ReportError(ERR_FFIND, "Could not build full path to %s", pszFileName);
-}
-#endif
+	}
+
 	return m_errCode;
 }
 
@@ -692,14 +687,6 @@ ErrorCode CBofDataFile::AddRecord(void *pBuf, int32 lLength, bool bUpdateHeader,
 
 			if (m_errCode == ERR_NONE) {
 				m_lNumRecs++;
-
-#if BOF_MAC && DEVELOPMENT && !__POWERPC__
-				// there is a metrowerks code generation bug in the new
-				// [] operator.  Just put a debug statement here so we're sure to examine
-				// it next time we run this code.
-
-				DebugStr("\ppTmpHeader = new HEADER_REC[(int)m_lNumRecs]");
-#endif
 
 				HEADER_REC *pTmpHeader = new HEADER_REC[(int)m_lNumRecs];
 				if (pTmpHeader != nullptr) {

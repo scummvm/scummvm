@@ -96,18 +96,4 @@ void MemReplaceChar(byte *pBuf, byte chOld, byte chNew, int32 lSize) {
 	}
 }
 
-#if BOF_MAC
-char *StrCToPascal(char *pszBuffer) {
-	Assert(pszBuffer != nullptr);
-
-	int n = strlen(pszBuffer);
-	Assert(n < 256);
-
-	memmove(pszBuffer + 1, pszBuffer, n);
-	*pszBuffer = (char)n;
-
-	return pszBuffer;
-}
-#endif
-
 } // namespace Bagel

@@ -38,10 +38,6 @@ CBofTimerPacket *CBofWindow::m_pTimerList = nullptr;
 int CBofWindow::_mouseX = 0;
 int CBofWindow::_mouseY = 0;
 
-#if BOF_MAC
-CBofWindow *CBofWindow::m_pCapturedWindow = nullptr;
-#endif
-
 CBofWindow::CBofWindow() {
 	if (m_pActiveWindow == nullptr)
 		m_pActiveWindow = this;
@@ -122,18 +118,7 @@ void CBofWindow::ValidateAnscestors(CBofRect *pRect) {
 	// Validate all anscestors
 	pParent = _parent;
 	while (pParent != nullptr) {
-#if BOF_MAC || BOF_WINMAC
-		//  On the mac, we have to make sure that
-		//  the grafport is our current grafport (i.e. the window
-		//  that we are validating).
-
-		if (pParent->m_pWindow) {
-#endif
-			pParent->ValidateRect(pRect);
-
-#if BOF_MAC || BOF_WINMAC
-		}
-#endif
+		pParent->ValidateRect(pRect);
 		pParent = pParent->GetParent();
 	}
 }
@@ -163,47 +148,6 @@ ErrorCode CBofWindow::Create(const char *pszName, int x, int y, int nWidth, int 
 
 	delete _surface;
 	_surface = new Graphics::ManagedSurface(*g_engine->_screen, stRect);
-
-#if BOF_MAC
-	byte szBuf[256];
-	Rect stRect = {y, x, y + nHeight, x + nWidth};
-
-	// If this is a child window then convert it's area to global coordinates
-	//
-	if (pParent != nullptr) {
-
-		stRect.left += pParent->GetWindowRect().left;
-		stRect.right += pParent->GetWindowRect().left;
-		stRect.top += pParent->GetWindowRect().top;
-		stRect.bottom += pParent->GetWindowRect().top;
-	}
-
-	strcpy((char *)szBuf, m_szTitle);
-	StrCToPascal((char *)szBuf);
-
-	int winType = plainDBox;
-	if (IsCustomWindow() == true) {
-		winType = (16 * 1000) + 0;
-	}
-
-	if ((m_pWindow = NewCWindow(nullptr, &stRect, szBuf, false, winType, WindowPtr(-1), false, 0)) != nullptr) {
-
-		// SetWRefCon(m_pWindow, this);
-
-		SetPort(m_pWindow);
-
-		// ForeColor(blackColor);
-		// BackColor(whiteColor);
-		// PenNormal();
-
-		// set this window's global coordinates
-		m_cWindowRect = stRect;
-
-	} else {
-		ReportError(ERR_UNKNOWN, "Unable to NewCWindow(%s)", pszName);
-	}
-
-#endif
 
 	if (!ErrorOccurred()) {
 		CBofPalette *pPalette;
@@ -332,10 +276,7 @@ void CBofWindow::ReSize(CBofRect *pRect, bool bRepaint) {
 }
 
 void CBofWindow::Select() {
-#if BOF_MAC
-	::SelectWindow(m_pWindow);
-	::SetPort(m_pWindow);
-#endif
+	// No implementation in ScummVM
 }
 
 void CBofWindow::Show() {
@@ -364,29 +305,7 @@ void CBofWindow::Hide() {
 void CBofWindow::PostMessage(uint32 nMessage, uint32 lParam1, uint32 lParam2) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
-
-#if BOF_MAC
-
-	CBofMessage *pMessage;
-
-	// Create a user defined message.
-	// NOTE: This message will be deleted by HandleMacEvent()
-	//
-	if ((pMessage = new CBofMessage) != nullptr) {
-
-		pMessage->m_pWindow = this;
-		pMessage->m_nMessage = nMessage;
-		pMessage->m_lParam1 = lParam1;
-		pMessage->m_lParam2 = lParam2;
-
-		PostEvent(app3Evt, (int32)pMessage);
-	}
-#endif
 }
-
-#if BOF_MAC
-#define GETTIME() (uint32)(16.66 * TickCount())
-#endif
 
 void CBofWindow::SetTimer(uint32 nID, uint32 nInterval, BofCallback pCallBack) {
 	Assert(IsValidObject(this));
@@ -500,43 +419,17 @@ void CBofWindow::CheckTimers() {
 }
 
 void CBofWindow::ScreenToClient(CBofPoint *pPoint) {
-	Assert(IsValidObject(this));
-
-	Assert(pPoint != nullptr);
-
-#if BOF_MAC
-	// make sure that our frontmost window is our current
-	// grafport.
-
-	Point stPoint;
-	GrafPtr savePort;
-
-	//::GetPort (&savePort);
-	//::SetPort (m_pWindow);
-
-	stPoint.v = pPoint->y;
-	stPoint.h = pPoint->x;
-
-	GlobalToLocal(&stPoint);
-
-	//::SetPort (savePort);
-
-	pPoint->y = stPoint.v;
-	pPoint->x = stPoint.h;
-#endif
+	// Not needed in ScummVM
 }
 
 void CBofWindow::ClientToScreen(CBofPoint *pPoint) {
-	Assert(IsValidObject(this));
-
-	Assert(pPoint != nullptr);
+	// Not needed in ScummVM
 }
 
 CBofRect CBofWindow::GetClientRect() {
 	Assert(IsValidObject(this));
 
 	CBofRect cRect(0, 0, m_cRect.Width() - 1, m_cRect.Height() - 1);
-
 	return cRect;
 }
 
@@ -570,25 +463,10 @@ void CBofWindow::FlushAllMessages() {
 	// Make sure this is a valid window
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
-
-#if BOF_MAC
-	FlushEvents(0xFFFF, 0);
-#endif
 }
 
 void CBofWindow::ValidateRect(const CBofRect *pRect) {
-#if BOF_MAC
-	{
-		// set current port... don't require caller to do this.
-		STBofPort stSavePort(GetMacWindow());
-		if (pRect == nullptr)
-			pRect = &m_cRect;
-
-		Rect stRect = {pRect->left, pRect->top, pRect->right + 1, pRect->bottom + 1};
-
-		::ValidRect(&stRect);
-	}
-#endif
+	// No implementation in ScummVM
 }
 
 void CBofWindow::InvalidateRect(const CBofRect *pRect) {
@@ -658,112 +536,7 @@ ErrorCode CBofWindow::PaintBackdrop(CBofRect *pRect, int nTransparentColor) {
 void CBofWindow::SelectPalette(CBofPalette *pPal) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
-
-	if (pPal != nullptr) {
-		Assert(IsValidObject(pPal));
-
-#if BOF_MAC
-		Assert(pPal != nullptr);
-		Assert(m_pWindow != nullptr);
-		PaletteHandle newPH = pPal->GetPalette();
-
-		// have seen newPH nullptr, if it is, the default 256 colors
-		// of the game are used (see 'pltt' resource)
-		if (newPH != nullptr) {
-			Assert((*newPH)->pmEntries == 256);
-			Assert(GetHandleSize((Handle)newPH) != 0);
-
-			// palette shift fix... take all the calls that cause palette shifts
-			// and move them as close to the onscreen rendering code as possible, this will
-			// minimize the shift... but not eliminate it.
-
-#if PALETTESHIFTFIX
-			// simplified using AddToPaletteShiftList
-
-			AddToPaletteShiftList(SETPALETTE, (int32)newPH, (int32)m_pWindow);
-#else
-			::SetPalette(m_pWindow, newPH, false);
-#endif
-		}
-#endif
-	}
 }
-
-#if BOF_WINMAC
-bool CBofWindow::SetMacPalette(CBofPalette *pPalette) {
-	Assert(IsValidObject(this));
-	Assert(pPalette != nullptr);
-	Assert(pPalette->GetPalette() != nullptr);
-
-	WindowPtr myWindow;
-	CGrafPtr pThisPort;
-	GrafPtr pSavePort;
-	PALETTEENTRY PalEntries[256];
-	int i;
-	OSErr err;
-	static PaletteHandle hMainMacPal = nullptr;
-	PaletteHandle hOldMainMacPal;
-	HWND hMainWnd;
-	HPALETTE hMainPal;
-	CTabHandle hMainCLUT;
-
-	hMainWnd = m_hWnd;
-	hMainPal = (HPALETTE)pPalette->GetPalette();
-
-	myWindow = GetWrapperWindow(hMainWnd);
-	pThisPort = (CGrafPtr)myWindow;
-
-	GetPort(&pSavePort);
-	SetPort((GrafPort *)pThisPort);
-
-	LockPixels(pThisPort->portPixMap);
-	hMainCLUT = (**(*pThisPort).portPixMap).pmTable;
-	UnlockPixels(pThisPort->portPixMap);
-	err = HandToHand((char ***)&hMainCLUT);
-	if (err != noErr) {
-		SetPort(pSavePort);
-		return false;
-	}
-
-	::GetPaletteEntries(hMainPal, 0, 256, PalEntries);
-	for (i = 0; i < (*hMainCLUT)->ctSize; i++) {
-		(*hMainCLUT)->ctTable[i].rgb.red = (uint16)((PalEntries[i].peRed * 0xFFFF) / 0xFF);
-		(*hMainCLUT)->ctTable[i].rgb.green = (uint16)((PalEntries[i].peGreen * 0xFFFF) / 0xFF);
-		(*hMainCLUT)->ctTable[i].rgb.blue = (uint16)((PalEntries[i].peBlue * 0xFFFF) / 0xFF);
-		(*hMainCLUT)->ctTable[i].value = (int16)i;
-
-		PalEntries[i].peFlags = (byte)(PC_EXPLICIT | i);
-	}
-	::SetPaletteEntries(hMainPal, 0, 256, PalEntries);
-
-	(*hMainCLUT)->ctFlags = 0x4000;
-	(*hMainCLUT)->ctSeed = GetCTSeed();
-
-	hOldMainMacPal = hMainMacPal;
-	hMainMacPal = NewPalette(256, hMainCLUT, pmExplicit | pmTolerant, 0x0000);
-	if (hMainMacPal == nullptr) {
-		DisposCTable(hMainCLUT);
-		SetPort(pSavePort);
-		return false;
-
-	} else {
-
-		if (hOldMainMacPal && (hOldMainMacPal = ::GetPalette(myWindow)) != nullptr)
-			DisposePalette(hOldMainMacPal);
-	}
-
-	SetPalette((WindowPtr) - 1, hMainMacPal, true);
-
-	SetPalette(myWindow, hMainMacPal, true);
-	ActivatePalette(myWindow);
-
-	SetPort(pSavePort);
-
-	g_bRealizePalette = false;
-
-	return true;
-}
-#endif
 
 Graphics::ManagedSurface *CBofWindow::getSurface() {
 	return _surface;
@@ -985,234 +758,9 @@ void CBofWindow::FillWindow(byte iColor) {
 }
 
 void CBofWindow::FillRect(CBofRect *pRect, byte iColor) {
-#if BOF_MAC || BOF_WINMAC
-	// On the mac, we'll just draw directly into the graphics port that
-	// is being used by the window.
-	WindowPtr pWindow = GetMacWindow();
-	STBofPort stSavePort(pWindow);
-	Pattern cPat;
-
-	// make sure we don't get a white flash
-	LMSetPaintWhite(false);
-
-	for (int i = 0; i < 8; i++) {
-		((char *)&cPat)[i] = iColor;
-	}
-
-	Rect theRect;
-
-	if (pRect == nullptr)
-		theRect = pWindow->portRect;
-	else
-		theRect = pRect->GetMacRect();
-
-	RgnHandle theRgn = ::NewRgn();
-	WindowPtr pFWindow = ::FrontWindow();
-	::ShowWindow(pWindow);
-
-	::GetClip(theRgn);
-	::ClipRect(&theRect);
-
-	::FillRect(&theRect, &cPat);
-
-	::SetClip(theRgn);
-	::DisposeRgn(theRgn);
-
-	if (pFWindow != nullptr)
-		::ShowWindow(pFWindow);
-#else
-	// Slow, but should work fine
 	CBofBitmap cBmp(Width(), Height(), CBofApp::GetApp()->GetPalette());
 	cBmp.FillRect(pRect, iColor);
 	cBmp.Paint(this, 0, 0);
-#endif
-}
-
-#if BOF_WINMAC
-WindowPtr CBofWindow::GetMacWindow() {
-	Assert(IsValidObject(this));
-
-	WindowPtr pWindow;
-
-	if ((pWindow = GetWrapperWindow(m_hWnd)) == nullptr) {
-		pWindow = GetWrapperContainerWindow(m_hWnd);
-	}
-	return pWindow;
-}
-#endif
-
-#if BOF_MAC
-
-STBofScreen::STBofScreen(Rect *parentWindRect) {
-	GDHandle screenGD;
-	GWorldPtr curWorld;
-
-	GetGWorld(&curWorld, &screenGD);
-	Rect winRect = *parentWindRect;
-
-	m_screenRect = (*(*screenGD)->gdPMap)->bounds;
-
-	(*(*screenGD)->gdPMap)->bounds = winRect;
-	(*screenGD)->gdRect = winRect;
-}
-
-STBofScreen::~STBofScreen() {
-	GDHandle screenGD;
-	GWorldPtr curWorld;
-
-	GetGWorld(&curWorld, &screenGD);
-
-	(*(*screenGD)->gdPMap)->bounds = m_screenRect;
-	(*screenGD)->gdRect = m_screenRect;
-}
-
-// used to switch to the port that we really need to update
-// and restore when we're done.
-STBofPort::STBofPort(WindowPtr pMacWindow) {
-	m_bNewPort = false;
-	::GetPort(&m_pSavePort);
-
-	if (m_pSavePort != pMacWindow && pMacWindow != nullptr) {
-		m_nCheckCookie = m_pSavePort->device;
-		m_bNewPort = true;
-		::SetPort(pMacWindow);
-	}
-}
-
-STBofPort::~STBofPort() {
-	bool bValid = true;
-	if (m_bNewPort) {
-
-#if true
-		CBofWindow *pWnd = CBofWindow::FromMacWindow(m_pSavePort);
-		if (pWnd == nullptr || pWnd->GetMacWindow() == nullptr) {
-			bValid = false;
-		}
-#else
-
-		// check to make sure this is a valid window.
-		if (m_pSavePort->portBits.rowBytes & 0x8000) {
-			if (GetHandleSize((Handle)((CGrafPtr)m_pSavePort)->portPixMap) == 0) {
-				bValid = false;
-			}
-		} else {
-			if (GetPtrSize((Ptr)m_pSavePort->portBits.baseAddr) == 0) {
-				bValid = false;
-			}
-		}
-#endif
-
-		// Don't bother with these debug messages as they are a fairly common
-		// occurrence (it will get triggered whenever a mouse down/up causes
-		// a window to go away, such as with popup menus).
-#if DEVELOPMENT
-#if DISPLAYINVGRAFPORT
-		if (bValid == false) {
-			DebugStr("\pSTBofPort::~STBofPort is restoring an invalid grafport...");
-		}
-#endif
-#endif
-
-		if (m_nCheckCookie != m_pSavePort->device) {
-#if DEVELOPMENT
-			DebugStr("\pSTBofPort::~STBofPort ran into a weird situation...");
-#endif
-		} else {
-			if (bValid == true) {
-				::SetPort(m_pSavePort);
-			}
-		}
-	}
-}
-
-// need to have routines to have more than a single
-// active object.
-
-bool CBofWindow::IsInActiveList() {
-	CBofWindow *pactive = m_pActiveWindow;
-
-	while (pactive) {
-		if (pactive == this) {
-			return true;
-		}
-		pactive = pactive->m_pPrevActiveWindow;
-	}
-
-	return false;
-}
-
-void CBofWindow::SetActive() {
-
-	if (m_pActiveWindow != this) {
-		if (m_pActiveWindow == nullptr) {
-			m_pActiveWindow = this;
-		} else {
-			if (!IsInActiveList()) {
-				CBofWindow *pactive = m_pActiveWindow;
-				m_pActiveWindow = this;
-				m_pActiveWindow->m_pPrevActiveWindow = pactive;
-			} else {
-				// it's in the active list, but it's not at the front...
-				// find it and bring it to the front.
-				CBofWindow *prevActive = m_pActiveWindow;
-				CBofWindow *pActive = m_pActiveWindow->m_pPrevActiveWindow;
-
-				while (pActive) {
-					if (pActive == this) {
-						prevActive->m_pPrevActiveWindow = pActive->m_pPrevActiveWindow;
-						pActive->m_pPrevActiveWindow = m_pActiveWindow;
-						m_pActiveWindow = pActive;
-						return;
-					}
-					prevActive = pActive;
-					pActive = pActive->m_pPrevActiveWindow;
-				}
-			}
-		}
-	}
-}
-
-void CBofWindow::RemoveFromActiveList() {
-
-	// Should ALWAYS be the first object in the list.
-
-	CBofWindow *prevActive = m_pActiveWindow;
-	CBofWindow *pActive = (m_pActiveWindow == nullptr ? nullptr : m_pActiveWindow->m_pPrevActiveWindow);
-
-	if (m_pActiveWindow == this) {
-		m_pActiveWindow = m_pActiveWindow->m_pPrevActiveWindow;
-	} else {
-		while (pActive) {
-			if (pActive == this) {
-				prevActive->m_pPrevActiveWindow = pActive->m_pPrevActiveWindow;
-				break;
-			} else {
-				prevActive = pActive;
-				pActive = pActive->m_pPrevActiveWindow;
-			}
-		}
-	}
-}
-
-#endif
-
-STBofFont::STBofFont(int nFont) {
-#if BOF_MAC
-	GrafPtr curPort;
-
-	::GetPort(&curPort);
-	m_nSaveFont = curPort->txFont;
-
-	::TextFont(nFont);
-#else
-#endif
-}
-
-STBofFont::~STBofFont() {
-#if BOF_MAC
-	::TextFont(m_nSaveFont);
-#else
-#endif
 }
 
 } // namespace Bagel

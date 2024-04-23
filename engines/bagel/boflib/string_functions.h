@@ -62,15 +62,6 @@ extern void MemReplaceChar(byte *pBuf, byte chOld, byte chNew, int32 lSize);
  */
 extern char *StrReplaceStr(char *pszBuf, const char *pszTok1, const char *pszTok2);
 
-#if BOF_MAC
-/**
- * Converts nullptr-terminated string to a Pascal string
- * @param pszBuffer Pointer to string to convert
- * @return          Pointer to converted string
- */
-char *StrCToPascal(char *pszBuffer);
-#endif
-
 } // namespace Bagel
 
 #endif

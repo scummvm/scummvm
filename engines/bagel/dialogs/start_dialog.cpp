@@ -136,14 +136,6 @@ void CBagStartDialog::OnPaint(CBofRect *pRect) {
 
 	PaintBackdrop(pRect);
 
-#if BOF_MAC
-	for (int i = 0; i < NUM_START_BTNS; i++) {
-		if (m_pButtons[i] != nullptr) {
-			m_pButtons[i]->Paint();
-		}
-	}
-#endif
-
 	ValidateAnscestors();
 }
 
