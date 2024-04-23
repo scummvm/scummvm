@@ -798,6 +798,9 @@ void TwpEngine::updateSettingVars() {
 }
 
 Common::Error TwpEngine::run() {
+	const Common::String &gameTarget = ConfMan.getActiveDomainName();
+	AchMan.setActiveDomain(getMetaEngine()->getAchievementsInfo(gameTarget));
+
 	initGraphics3d(SCREEN_WIDTH, SCREEN_HEIGHT);
 	_screen = new Graphics::Screen(SCREEN_WIDTH, SCREEN_HEIGHT);
 

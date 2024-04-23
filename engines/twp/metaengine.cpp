@@ -31,6 +31,7 @@
 #include "gui/ThemeEval.h"
 #include "image/png.h"
 #include "twp/twp.h"
+#include "twp/achievements_tables.h"
 #include "twp/detection.h"
 #include "twp/metaengine.h"
 #include "twp/detection.h"
@@ -70,6 +71,14 @@ void TwpMetaEngine::registerDefaultSettings(const Common::String &) const {
 	ConfMan.registerDefault("hudSentence", false);
 	ConfMan.registerDefault("ransomeUnbeeped", false);
 	ConfMan.registerDefault("language", "en");
+}
+
+Common::AchievementsPlatform TwpMetaEngine::getAchievementsPlatform(const Common::String &target) const {
+	return Common::STEAM_ACHIEVEMENTS;
+}
+
+const Common::AchievementDescriptionList *TwpMetaEngine::getAchievementDescriptionList() const {
+	return Twp::achievementDescriptionList;
 }
 
 static Common::String getDesc(const Twp::SaveGame &savegame) {

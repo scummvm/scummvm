@@ -42,11 +42,14 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	void registerDefaultSettings(const Common::String &) const override;
 
+	Common::AchievementsPlatform getAchievementsPlatform(const Common::String &target) const override;
+	const Common::AchievementDescriptionList *getAchievementDescriptionList() const override;
+
 	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 
-	virtual Common::Array<Common::Keymap *> initKeymaps(const char *target) const override;
+	Common::Array<Common::Keymap *> initKeymaps(const char *target) const override;
 
-	virtual void getSavegameThumbnail(Graphics::Surface &thumb) override;
+	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 };
 
 #endif // TWP_METAENGINE_H

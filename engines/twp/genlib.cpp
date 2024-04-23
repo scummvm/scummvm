@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/crc.h"
 #include "twp/twp.h"
 #include "twp/detection.h"
@@ -364,8 +365,14 @@ static SQInteger getPrivatePref(HSQUIRRELVM v) {
 	Common::String key;
 	if (SQ_FAILED(sqget(v, 2, key))) {
 		return sq_throwerror(v, "failed to get key");
-		// } else if (g_twp->getPrefs().hasPrivPref(key)) {
-		// 	return sqpush(v, g_twp->getPrefs().privPrefAsJson(key));
+	} else if (ConfMan.hasKey(key)) {
+		Common::String value = ConfMan.get(key);
+		char *errpos;
+		int ivalue = (int)strtol(value.c_str(), &errpos, 0);
+		if (value.c_str() == errpos) {
+			return sqpush(v, ConfMan.get(key));
+		}
+		return sqpush(v, ivalue);
 	} else if (sq_gettop(v) == 3) {
 		HSQOBJECT obj;
 		sq_getstackobj(v, 3, &obj);
@@ -492,20 +499,40 @@ static SQInteger loadArray(HSQUIRRELVM v) {
 }
 
 static SQInteger markAchievement(HSQUIRRELVM v) {
-	// TODO: markAchievement
-	warning("markAchievement not implemented");
+	Common::String id;
+	if (SQ_FAILED(sqget(v, 2, id)))
+		return sq_throwerror(v, "failed to get id");
+
+	SQInteger numArgs = sq_gettop(v);
+	switch (numArgs) {
+	case 2:
+		AchMan.setAchievement(id);
+		break;
+	case 4: {
+		SQInteger count, total;
+		if (SQ_FAILED(sqget(v, 3, count)))
+			return sq_throwerror(v, "failed to get count");
+		if (SQ_FAILED(sqget(v, 4, total)))
+			return sq_throwerror(v, "failed to get total");
+		AchMan.setStatInt(Common::String::format("ST%s", id.substr(3).c_str()), count);
+		if (count == total) {
+			AchMan.setAchievement(id);
+		}
+	} break;
+	default:
+		error("TODO: markAchievement not implemented");
+		break;
+	}
 	return 0;
 }
 
 static SQInteger markProgress(HSQUIRRELVM v) {
-	// TODO: markProgress
-	warning("markProgress not implemented");
+	warning("TODO: markProgress not implemented");
 	return 0;
 }
 
 static SQInteger markStat(HSQUIRRELVM v) {
-	// TODO: markStat
-	warning("markStat not implemented");
+	warning("TODO: markStat not implemented");
 	return 0;
 }
 
@@ -669,7 +696,30 @@ static SQInteger setDebugger(HSQUIRRELVM v) {
 }
 
 static SQInteger setPrivatePref(HSQUIRRELVM v) {
-	// TODO: setPrivatePref
+	Common::String key;
+	if (SQ_FAILED(sqget(v, 2, key))) {
+		return sq_throwerror(v, _SC("failed to get key"));
+	}
+	SQObjectType type = sq_gettype(v, 3);
+	switch (type) {
+	case SQObjectType::OT_STRING: {
+		Common::String str;
+		if (SQ_FAILED(sqget(v, 3, str))) {
+			return sq_throwerror(v, _SC("failed to get str"));
+		}
+		ConfMan.set(key, str);
+		return 0;
+	}
+	case SQObjectType::OT_INTEGER:
+		SQInteger integer;
+		if (SQ_FAILED(sqget(v, 3, integer))) {
+			return sq_throwerror(v, _SC("failed to get integer"));
+		}
+		ConfMan.setInt(key, (int)integer);
+		return 0;
+	default:
+		break;
+	}
 	warning("setPrivatePref not implemented");
 	return 0;
 }
