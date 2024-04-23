@@ -159,6 +159,18 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 			debug("- 9F4D results: %.4x %.4x", out1, out2);
 			return;
 		}
+	} else if (value == 0x2) {
+		// TODO: We should actually look up the cursor mode and the interacted object
+		// Hardcoding for now
+		out1 = out2 = 0x0000;
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		return;
+	} else if (value == 0x3) {
+		// TODO: We should actually look up the cursor mode and the interacted object
+		// Hardcoding for now
+		out1 = out2 = 0x0000;
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		return;
 	// l0037_A050:
 	} else if (value == 0x4) {
 		// TODO: What's the difference to 0x27?
