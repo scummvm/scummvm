@@ -13,3 +13,4 @@ Terminal=false
 Type=Application
 Categories=Game;AdventureGame;
 StartupNotify=false
+StartupWMClass=scummvm
