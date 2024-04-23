@@ -28,8 +28,15 @@
 
 namespace Bagel {
 
-CBagVar CBagExpression::m_xTempVar("CBagExpr::TempVar", "", false);            // used as a default param
+CBagVar *CBagExpression::m_xTempVar;	// Used as a default param
 
+void CBagExpression::initialize() {
+	m_xTempVar = new CBagVar("CBagExpr::TempVar", "", false);            // used as a default param
+}
+
+void CBagExpression::shutdown() {
+	delete m_xTempVar;
+}
 
 CBagExpression::CBagExpression(CBagExpression *pPrevExpr, bool bPrevNeg) {
 	m_bNegative = false;

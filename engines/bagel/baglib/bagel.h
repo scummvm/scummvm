@@ -89,7 +89,6 @@ struct BagelReg {
 
 class CBagel : public CBofOptions, public CBofApp {
 public:
-	CBagel();
 	CBagel(const BagelReg *pGameReg);
 	~CBagel();
 
