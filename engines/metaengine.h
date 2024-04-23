@@ -494,6 +494,15 @@ public:
 	};
 
 	/**
+	 * Return the achievements platform to use for the specified target.
+	 *
+	 * @param target  Name of a config manager target.
+	 *
+	 * @return The achievements platform to use for an engine plugin and target.
+	 */
+	virtual Common::AchievementsPlatform getAchievementsPlatform(const Common::String &target) const;
+
+	/**
 	 * Return a list of achievement descriptions for the specified target.
 	 *
 	 * @param target  Name of a config manager target.
