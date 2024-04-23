@@ -66,6 +66,11 @@ public:
 	Common::String getGameId() const;
 
 	/**
+	 * Return the game's platform
+	 */
+	Common::Platform getPlatform() const;
+
+	/**
 	 * Return whether it's a demo
 	 */
 	bool isDemo() const;
