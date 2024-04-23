@@ -778,6 +778,7 @@ protected:
 
 	int16 _baseWidth, _baseHeight;
 	float _scaleFactor;
+	bool _needScaleRefresh = false;
 
 	/** Font info. */
 	const Graphics::Font *_font;

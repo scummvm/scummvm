@@ -305,6 +305,10 @@ const char *ThemeEngine::findModeConfigName(GraphicsMode mode) {
 void ThemeEngine::setBaseResolution(int w, int h, float s) {
 	_baseWidth = w;
 	_baseHeight = h;
+
+	if (s != _scaleFactor)
+		_needScaleRefresh = true;
+
 	_scaleFactor = s;
 
 	_parser->setBaseResolution(w, h, s);
@@ -377,7 +381,7 @@ void ThemeEngine::clearAll() {
 void ThemeEngine::refresh() {
 
 	// Flush all bitmaps if the overlay pixel format changed.
-	if (_overlayFormat != _system->getOverlayFormat()) {
+	if (_overlayFormat != _system->getOverlayFormat() || _needScaleRefresh) {
 		for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i) {
 			Graphics::ManagedSurface *surf = i->_value;
 			if (surf) {
@@ -386,6 +390,8 @@ void ThemeEngine::refresh() {
 			}
 		}
 		_bitmaps.clear();
+
+		_needScaleRefresh = false;
 	}
 
 	init();
