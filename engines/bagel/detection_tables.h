@@ -40,7 +40,17 @@ const ADGameDescription gameDescriptions[] = {
 
 	{
 		"spacebar",
-		"Demo",
+		"Small Demo",
+		AD_ENTRY1s("wld/bar.wld", "47b51863dfaba358843c152a78da664e", 13187),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DEMO,
+		GUIO1(GUIO_NONE)
+	},
+
+	{
+		"spacebar",
+		"Medium Demo",
 		AD_ENTRY1s("wld/bar.wld", "4d6a0926484e1660035af0ed4004a47f", 27495),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
