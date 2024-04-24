@@ -51,9 +51,7 @@ void CMainWindow::shutdown() {
 	delete m_xFilterRect;
 }
 
-CMainWindow::CMainWindow(const char *sCommandLine) {
-	CBofString sCommLine;
-
+CMainWindow::CMainWindow() {
 	m_cLastLoc.x = 1195;
 	m_cLastLoc.y = 105;
 
@@ -62,8 +60,6 @@ CMainWindow::CMainWindow(const char *sCommandLine) {
 
 	m_nInstances++;
 
-	if (sCommandLine)
-		sCommLine = sCommandLine;
 	m_nGameMode = VRPLAYMODE;
 }
 
@@ -86,7 +82,7 @@ CMainWindow::~CMainWindow() {
 #define PAN_HEIGHT 480
 
 ErrorCode CMainWindow::Attach() {
-	CBofRect        tmpRect(0, 0, PAN_WIDTH - 1, PAN_HEIGHT - 1);
+	CBofRect tmpRect(0, 0, PAN_WIDTH - 1, PAN_HEIGHT - 1);
 
 	chipdisp = false;
 	pause = 0;
@@ -342,9 +338,9 @@ void CMainWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	if (lKey == BKEY_SCRL_LOCK) {               // Get a scroll lock hit
 		if (GetFilterId() == 0x08) {            // If we're in zzazzl filter
 			m_bZzazzlVision = !m_bZzazzlVision; // toggle the paint zzazzl flag
-			CBagVar *pVar;
+			CBagVar *pVar = VARMNGR->GetVariable("ZZAZZLVISION");
 
-			if ((pVar = VARMNGR->GetVariable("ZZAZZLVISION")) != nullptr) {
+			if (pVar != nullptr) {
 				pVar->SetValue(m_bZzazzlVision ? 1 : 0);
 			}
 		}

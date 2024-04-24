@@ -48,7 +48,7 @@ static const char *GetBuildVersion() {
 	return BuildString("Version: %s, %s", __DATE__, __TIME__);
 }
 
-CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &namestr, const CBofString &typestr) {
+CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &typestr) {
 	Assert(IsValidObject(this));
 
 	CBagStorageDev *pSDev;
@@ -117,14 +117,14 @@ CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &namestr, const
 
 		// delineate cic's
 	} else if (!typestr.Find("CIC")) {
-		if ((pSDev = new GAMEWINDOW(namestr)) != nullptr) {
+		if ((pSDev = new GAMEWINDOW()) != nullptr) {
 			pSDev->SetCloseup(true);
 			pSDev->SetCIC(true);
 			pSDev->SetExitOnEdge(80);
 		}
 
 	} else if (!typestr.Find("CLOSEUP")) {
-		if ((pSDev = new GAMEWINDOW(namestr)) != nullptr) {
+		if ((pSDev = new GAMEWINDOW()) != nullptr) {
 			pSDev->SetCloseup(true);
 			pSDev->SetExitOnEdge(80);
 		}
@@ -145,22 +145,19 @@ CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &namestr, const
 		pSDev = new CBagLog();
 
 	} else {
-		pSDev = new GAMEWINDOW(namestr);
+		pSDev = new GAMEWINDOW();
 	}
 
 	return pSDev;
 }
 
 
-CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &namestr, int nType) {
+CBagStorageDev *CSBarMasterWin::OnNewStorageDev(int nType) {
 	Assert(IsValidObject(this));
 
-	CBagStorageDev *pSDev;
-
-	pSDev = nullptr;
+	CBagStorageDev *pSDev = nullptr;
 
 	switch (nType) {
-
 	case SDEV_PDA:
 		pSDev = new CBagPDA();
 		break;
@@ -178,12 +175,12 @@ CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &namestr, int n
 		break;
 
 	case SDEV_CLOSEP:
-		pSDev = new GAMEWINDOW(namestr);
+		pSDev = new GAMEWINDOW();
 		pSDev->SetExitOnEdge(10);
 		break;
 
 	case SDEV_WND:
-		pSDev = new GAMEWINDOW(namestr);
+		pSDev = new GAMEWINDOW();
 		break;
 
 	default:
@@ -256,11 +253,7 @@ void CSBarMasterWin::OnNewFilter(CBagStorageDev *pSDev, const int nType) {
 
 	switch (nType) {
 	case SDEV_PDA:
-		break;
-
 	case SDEV_WIELD:
-		break;
-
 	case SDEV_BMP:
 		break;
 

@@ -29,7 +29,6 @@ namespace SpaceBar {
 #define GAMEWINDOW          CMainWindow
 
 #define TOKEN_GAME_SDEV     "<default>"
-#define CLASS_GAME_SDEV     CMainWindow
 
 #define TOKEN_SDEV_1        "INV"
 #define CLASS_SDEV_1        CBagInv
