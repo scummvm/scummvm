@@ -954,16 +954,16 @@ Common::Error TwpEngine::run() {
 				case TwpAction::kShowHotspots:
 					_hotspotMarker->setVisible(!_hotspotMarker->isVisible());
 					break;
-				case TwpAction::kOpenAction:
-				case TwpAction::kCloseAction:
-				case TwpAction::kGiveAction:
-				case TwpAction::kPickUpAction:
-				case TwpAction::kLookAtAction:
-				case TwpAction::kTalkToAction:
-				case TwpAction::kPushAction:
-				case TwpAction::kPullAction:
-				case TwpAction::kUseAction:
-					setVerbAction(1 + (int)e.customType - (int)TwpAction::kOpenAction);
+				case TwpAction::kOpen:
+				case TwpAction::kClose:
+				case TwpAction::kGive:
+				case TwpAction::kPickUp:
+				case TwpAction::kLookAt:
+				case TwpAction::kTalkTo:
+				case TwpAction::kPush:
+				case TwpAction::kPull:
+				case TwpAction::kUse:
+					setVerbAction(1 + (int)e.customType - (int)TwpAction::kOpen);
 					break;
 				}
 				break;
