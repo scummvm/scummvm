@@ -19,11 +19,11 @@
  *
  */
 
+#include "common/engine_data.h"
 #include "engines/engine.h"
 #include "graphics/fonts/ttf.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
-#include "mm/shared/utils/engine_data.h"
 #include "mm/shared/utils/strings.h"
 #include "graphics/fontman.h"
 
@@ -56,7 +56,7 @@ void Globals::createBlankButton() {
 bool Globals::load(bool isEnhanced) {
 	// Initialise engine data for the game
 	Common::U32String errMsg;
-	if (!load_engine_data("mm1", 1, 0, errMsg)) {
+	if (!Common::load_engine_data("mm.dat", "mm1", 1, 0, errMsg)) {
 		GUIErrorMessage(errMsg);
 		return false;
 	}

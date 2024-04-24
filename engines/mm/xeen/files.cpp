@@ -21,13 +21,13 @@
 
 #include "common/scummsys.h"
 #include "common/archive.h"
+#include "common/engine_data.h"
 #include "common/memstream.h"
 #include "common/substream.h"
 #include "common/textconsole.h"
 #include "mm/xeen/xeen.h"
 #include "mm/xeen/files.h"
 #include "mm/xeen/saves.h"
-#include "mm/shared/utils/engine_data.h"
 
 namespace MM {
 namespace Xeen {
@@ -69,7 +69,7 @@ bool FileManager::setup() {
 
 	// Set up the engine data file
 	Common::U32String errMsg;
-	if (!MM::load_engine_data("xeen", 1, 1, errMsg)) {
+	if (!Common::load_engine_data("mm.dat", "xeen", 1, 1, errMsg)) {
 		GUIErrorMessage(errMsg);
 		return false;
 	}

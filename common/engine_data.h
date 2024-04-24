@@ -20,35 +20,41 @@
  */
 
 /**
- * Provides convenient access to a subfolder within the engine data
- * zip file for the mm engine, by mapping it into ScummVM's filesystem.
- * You simply specify the subfolder for your game, and the contents of
- * that folder will be mapped in so you can calling Common::File::open
- * with their filenames directly like file1.png or data/file1.png,
- * depending on the useDataPrefix flag passed in the function below.
+ * Provides support for a simplified way of creating a data file for
+ * an engine using a standard zip file, and mapping it into ScummVM's
+ * filesystem.
+ * 
+ * This allows contents of the zip file to be accessed by calling
+ * Common::File::open with their filenames directly, like file1.png
+ * or data/file1.png.
  *
- * The mm engine has an associated data zip file whose contents are
- * in /devtools/create_mm/files/. Each game has their own subfolder
- * within it, and as part of the release process, this folder will be
- * zipped up as a file 'mm.dat', and included with ScummVM releases.
- *
+ * You should create a folder named /devtools/create_<engine>/files to
+ * put your engine's files within, with any necessary extraction code
+ * in /devtools/create_<engine>/, that will save the files in files/
+ * 
  * For development purposes, if you go the Game Options dialog for a
- * game in the ScummVM launcher, and set the extra path to
- * /devtools/create_mm, the engine will access the files directly
- * without requiring you to keep regenerating mm.dat.
+ * game in the ScummVM launcher, and set the Extra Path in the Paths
+ * tab to /devtools/create_<engine>, the engine will access the files
+ * directly without requiring you to keep regenerating a data file.
+ * And when you're finished, and want to create a final data file,
+ * you can zip up the files/ folder, rename the .zip to have a .dat
+ * extension, and save it in /dists/engine-data.
  *
+ * For example, the mm engine has it's files in /devtools/create_mm/files,
+ * and it's contents are zipped up and saved as /dists/engine-data/mm.dat.
  */
 
-#ifndef MM_UTILS_ENGINE_DATA_H
-#define MM_UTILS_ENGINE_DATA_H
+#ifndef COMMON_ENGINE_DATA_H
+#define COMMON_ENGINE_DATA_H
 
-#include "common/str.h"
+#include "common/path.h"
 
-namespace MM {
+namespace Common {
 
 /**
  * Loads the engine data file and maps it into the filessystem
  * so that the files within it can be opened as normal files.
+ * @param datFilename	.dat filename
  * @param subfolder		Subfolder in the engine data for the game
  * @param reqMajorVersion	Required major version number the
  * folder contents need to be (as specified in version.txt)
@@ -58,10 +64,10 @@ namespace MM {
  * ScummVM as a 'data' subfolder, to differentiate them from files
  * directly in the game folder. If false, the default, then filenames\
  */
-extern bool load_engine_data(const Common::String &subfolder,
-	int reqMajorVersion, int reqMinorVersion,
+extern bool load_engine_data(const Common::Path &datFilename,
+	const Common::String &subfolder, int reqMajorVersion, int reqMinorVersion,
 	Common::U32String &errorMsg, bool useDataPrefix = false);
 
-} // namespace MM
+} // namespace Common
 
 #endif
