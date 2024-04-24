@@ -87,16 +87,14 @@ const char *BuildSlotDir(const char *pszFile);
 static bool g_bFix = false;
 
 SBarSlotWnd::SBarSlotWnd() : CBagStorageDevWnd() {
-	int i, j;
-
-	for (i = 0; i < NUM_SLOTBUTT; i++) {
+	for (int i = 0; i < NUM_SLOTBUTT; i++) {
 		m_pSlotButs[i] = nullptr;
 	}
 
 	// Init all our slotbmp
-	for (i = 0; i < SLOT_NUM; i++) {
+	for (int i = 0; i < SLOT_NUM; i++) {
 		m_cSlots[i].m_nIdx = g_engine->getRandomNumber() % SLOT_BMP_NUM;
-		for (j = 0; j < SLOT_BMP_NUM; j++) {
+		for (int j = 0; j < SLOT_BMP_NUM; j++) {
 			m_cSlots[i].m_pSlotBmp[j] = nullptr;
 		}
 	}
@@ -172,9 +170,6 @@ void SBarSlotWnd::OnMainLoop() {
 }
 
 ErrorCode  SBarSlotWnd::Attach() {
-	CBofPalette *pPal;
-	int i;
-
 	m_bPaused = false;
 	m_bLose = false;
 	m_bFixBet = false;
@@ -189,19 +184,19 @@ ErrorCode  SBarSlotWnd::Attach() {
 	if (CBagStorageDevWnd::Attach() == ERR_NONE) {
 		// Must have a valid backdrop by now
 		Assert(m_pBackdrop != nullptr);
-		pPal = m_pBackdrop->GetPalette();
+		CBofPalette *pPal = m_pBackdrop->GetPalette();
 
 		m_bFixBmp = new CBofBitmap(BuildSlotDir(FIXBMP));
 
 		// Build all our buttons
-		for (i = 0; i < NUM_SLOTBUTT; i++) {
-			if ((m_pSlotButs[i] = new CBofBmpButton) != nullptr) {
-				CBofBitmap *pUp, *pDown, *pFocus, *pDis;
+		for (int i = 0; i < NUM_SLOTBUTT; i++) {
 
-				pUp = LoadBitmap(BuildSlotDir(g_stButtons[i].m_pszUp), pPal);
-				pDown = LoadBitmap(BuildSlotDir(g_stButtons[i].m_pszDown), pPal);
-				pFocus = LoadBitmap(BuildSlotDir(g_stButtons[i].m_pszFocus), pPal);
-				pDis = LoadBitmap(BuildSlotDir(g_stButtons[i].m_pszDisabled), pPal);
+			m_pSlotButs[i] = new CBofBmpButton;
+			if (m_pSlotButs[i] != nullptr) {
+				CBofBitmap *pUp = LoadBitmap(BuildSlotDir(g_stButtons[i].m_pszUp), pPal);
+				CBofBitmap *pDown = LoadBitmap(BuildSlotDir(g_stButtons[i].m_pszDown), pPal);
+				CBofBitmap *pFocus = LoadBitmap(BuildSlotDir(g_stButtons[i].m_pszFocus), pPal);
+				CBofBitmap *pDis = LoadBitmap(BuildSlotDir(g_stButtons[i].m_pszDisabled), pPal);
 
 				m_pSlotButs[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
 				m_pSlotButs[i]->Create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
@@ -221,7 +216,7 @@ ErrorCode  SBarSlotWnd::Attach() {
 		m_pSlotButs[GO]->Hide();
 
 		// Build all our slotbmp
-		for (i = 0; i < SLOT_NUM; i++) {
+		for (int i = 0; i < SLOT_NUM; i++) {
 			m_cSlots[i].m_nIdx = g_engine->getRandomNumber() % SLOT_BMP_NUM;
 			for (int j = 0; j < SLOT_BMP_NUM; j++) {
 				m_cSlots[i].m_pSlotBmp[j] = new CBofBitmap(BuildSlotDir(g_stSlotBmps[i].m_pszName[j]), pPal);
@@ -240,7 +235,8 @@ ErrorCode  SBarSlotWnd::Attach() {
 		m_nBet = 0;
 
 		// Setup the Credit text fields
-		if ((m_pCredText = new CBofText) != nullptr) {
+		m_pCredText = new CBofText;
+		if (m_pCredText != nullptr) {
 			CBofRect cRect(CreditRect.left, CreditRect.top, CreditRect.right, CreditRect.bottom);
 			m_pCredText->SetupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
 			m_pCredText->SetColor(RGB(255, 255, 255));
@@ -257,7 +253,8 @@ ErrorCode  SBarSlotWnd::Attach() {
 		// Make sure that we don't already have one
 		Assert(m_pBetText == nullptr);
 
-		if ((m_pBetText = new CBofText) != nullptr) {
+		m_pBetText = new CBofText;
+		if (m_pBetText != nullptr) {
 			CBofRect cRect(BetRect.left, BetRect.top, BetRect.right, BetRect.bottom);
 			m_pBetText->SetupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
 			m_pBetText->SetColor(RGB(255, 255, 255));
@@ -274,7 +271,8 @@ ErrorCode  SBarSlotWnd::Attach() {
 		// Make sure that we don't already have one
 		Assert(m_pOddsText == nullptr);
 
-		if ((m_pOddsText = new CBofText) != nullptr) {
+		m_pOddsText = new CBofText;
+		if (m_pOddsText != nullptr) {
 			CBofRect cRect(OddRect.left, OddRect.top, OddRect.right, OddRect.bottom);
 			m_pOddsText->SetupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
 			m_pOddsText->SetColor(RGB(255, 255, 255));
@@ -292,8 +290,8 @@ ErrorCode  SBarSlotWnd::Attach() {
 		UpdateWindow();
 	}
 
-
-	if ((m_pBkgSnd = new CBofSound(this, BuildSlotDir(CASINO_AUDIO), SOUND_MIX, 99999)) != nullptr) {
+	m_pBkgSnd = new CBofSound(this, BuildSlotDir(CASINO_AUDIO), SOUND_MIX, 99999);
+	if (m_pBkgSnd != nullptr) {
 		m_pBkgSnd->Play();
 	} else {
 		ReportError(ERR_MEMORY);
@@ -305,9 +303,6 @@ ErrorCode  SBarSlotWnd::Attach() {
 }
 
 ErrorCode SBarSlotWnd::Detach() {
-	CBagVar *pVar;
-	int i, j;
-
 	CBofCursor::Hide();
 
 	// Put any credits left in machine back into you credit chip.
@@ -316,7 +311,7 @@ ErrorCode SBarSlotWnd::Detach() {
 	}
 
 	// Write out new value of nuggets
-	pVar = VARMNGR->GetVariable("NUGGETS");
+	CBagVar *pVar = VARMNGR->GetVariable("NUGGETS");
 	if (pVar)
 		pVar->SetValue(m_nCredit);
 
@@ -334,7 +329,7 @@ ErrorCode SBarSlotWnd::Detach() {
 	}
 
 	// Destroy all buttons
-	for (i = 0; i < NUM_SLOTBUTT; i++) {
+	for (int i = 0; i < NUM_SLOTBUTT; i++) {
 		if (m_pSlotButs[i] != nullptr) {
 			delete m_pSlotButs[i];
 			m_pSlotButs[i] = nullptr;
@@ -342,11 +337,10 @@ ErrorCode SBarSlotWnd::Detach() {
 	}
 
 	// Destroy all our slotbmp
-	for (i = 0; i < SLOT_NUM; i++) {
+	for (int i = 0; i < SLOT_NUM; i++) {
 		m_cSlots[i].m_nIdx = 0;
 
-		for (j = 0; j < SLOT_BMP_NUM; j++) {
-
+		for (int j = 0; j < SLOT_BMP_NUM; j++) {
 			if (m_cSlots[i].m_pSlotBmp[j]) {
 				delete m_cSlots[i].m_pSlotBmp[j];
 				m_cSlots[i].m_pSlotBmp[j] = nullptr;
@@ -431,7 +425,7 @@ void SBarSlotWnd::BetAll() {
 		m_nCredit = 0;
 
 		// Check and see if we need to show the GO button
-		if (m_nBet && !(m_pSlotButs[GO]->IsVisible()))
+		if (m_nBet && !m_pSlotButs[GO]->IsVisible())
 			m_pSlotButs[GO]->Show();
 
 		UpdateText();
@@ -472,9 +466,7 @@ void SBarSlotWnd::FixBet() {
 }
 
 void SBarSlotWnd::Go() {
-	int i;
-
-	for (i = 0; i < SLOT_NUM; i++) {
+	for (int i = 0; i < SLOT_NUM; i++) {
 		m_cSlots[i].m_nIdx = g_engine->getRandomNumber() % SLOT_BMP_NUM;
 		InvalidateRect(&(m_cSlots[i].m_cSlotRect));
 	}
@@ -502,7 +494,6 @@ void SBarSlotWnd::Go() {
 }
 
 void SBarSlotWnd::CalcOutcome() {
-	int i, j;
 	int nMatch = 0;
 	int nMatchVal = 0;
 	int nGeo = 0;
@@ -514,8 +505,8 @@ void SBarSlotWnd::CalcOutcome() {
 	m_nPayOff2 = 0;
 
 	// Get number of matching slots
-	for (i = 0; i < SLOT_NUM; i++) {
-		for (j = i + 1; j < SLOT_NUM; j++) {
+	for (int i = 0; i < SLOT_NUM; i++) {
+		for (int j = i + 1; j < SLOT_NUM; j++) {
 			if (m_cSlots[i].m_nIdx == m_cSlots[j].m_nIdx) {
 				nMatch++;
 				nMatchVal = m_cSlots[i].m_nIdx;
@@ -534,10 +525,10 @@ void SBarSlotWnd::CalcOutcome() {
 		PairPays(nMatchVal);
 	else {
 		// Check for special trio
-		for (i = 0; i < SLOT_NUM; i++) {
+		for (int i = 0; i < SLOT_NUM; i++) {
 			if (m_cSlots[i].m_nIdx < 3) // Geometric Trio
 				nGeo++;
-			if (m_cSlots[i].m_nIdx >= 3 && m_cSlots[i].m_nIdx < 6) // Celestrial Trio
+			if (m_cSlots[i].m_nIdx >= 3 && m_cSlots[i].m_nIdx < 6) // Celestial Trio
 				nCelest++;
 			if (m_cSlots[i].m_nIdx >= 6) // Lucky Trio
 				nLuck++;
@@ -558,7 +549,8 @@ void SBarSlotWnd::CalcOutcome() {
 	// Do we have a winner ?
 	if (m_nPayOff1 > 0) {
 		// Play winning audio
-		if ((m_pWinSound = new CBofSound(this, BuildSlotDir(WINAUDIO), SOUND_MIX, 1)) != nullptr) {
+		m_pWinSound = new CBofSound(this, BuildSlotDir(WINAUDIO), SOUND_MIX, 1);
+		if (m_pWinSound != nullptr) {
 			m_pWinSound->Play();
 		} else {
 			ReportError(ERR_MEMORY);
@@ -680,14 +672,8 @@ void SBarSlotWnd::SlideSlots() {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
-
-		int i;
 		int nIncrement = 30;	// Number of pixels to move
 		int nMaskClr = CBagel::GetBagApp()->GetChromaColor();
-		CBofBitmap *pCurBmp;
-		CBofRect        BmpRect;
-		CBofRect        SrcRect;
-		CBofRect        DestRect;
 
 		// Erase Previous game
 		CBofRect cRect(219, 12, 626, 276);
@@ -696,13 +682,13 @@ void SBarSlotWnd::SlideSlots() {
 		}
 
 		// Slot #1
-		pCurBmp = m_cSlots[0].m_pSlotBmp[m_cSlots[0].m_nIdx];
-		BmpRect = pCurBmp->GetRect();
-		SrcRect = BmpRect;
+		CBofBitmap *pCurBmp = m_cSlots[0].m_pSlotBmp[m_cSlots[0].m_nIdx];
+		CBofRect BmpRect = pCurBmp->GetRect();
+		CBofRect SrcRect = BmpRect;
 		SrcRect.left = SrcRect.right;
-		DestRect = m_cSlots[0].m_cSlotRect;
+		CBofRect DestRect = m_cSlots[0].m_cSlotRect;
 
-		for (i = 1; SrcRect.left > BmpRect.left; i++) {
+		for (int i = 1; SrcRect.left > BmpRect.left; i++) {
 			Sleep(30);
 
 			SrcRect.left = SrcRect.right - (i * nIncrement);
@@ -724,7 +710,7 @@ void SBarSlotWnd::SlideSlots() {
 		SrcRect.top = SrcRect.bottom;
 		DestRect = m_cSlots[1].m_cSlotRect;
 
-		for (i = 1; SrcRect.top > BmpRect.top; i++) {
+		for (int i = 1; SrcRect.top > BmpRect.top; i++) {
 			Sleep(30);
 
 			SrcRect.top = SrcRect.bottom - (i * nIncrement);
@@ -746,7 +732,7 @@ void SBarSlotWnd::SlideSlots() {
 		SrcRect.right = SrcRect.left;
 		DestRect = m_cSlots[2].m_cSlotRect;
 
-		for (i = 1; SrcRect.right < BmpRect.right; i++) {
+		for (int i = 1; SrcRect.right < BmpRect.right; i++) {
 			Sleep(30);
 
 			SrcRect.right = SrcRect.left + (i * nIncrement);
@@ -767,7 +753,7 @@ void SBarSlotWnd::SlideSlots() {
 		SrcRect.bottom = SrcRect.top;
 		DestRect = m_cSlots[3].m_cSlotRect;
 
-		for (i = 1; SrcRect.bottom < BmpRect.bottom; i++) {
+		for (int i = 1; SrcRect.bottom < BmpRect.bottom; i++) {
 			Sleep(30);
 
 			SrcRect.bottom = SrcRect.top + (i * nIncrement);
@@ -846,9 +832,7 @@ void SBarSlotWnd::OnBofButton(CBofObject *pObject, int nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
-	CBofButton *pButton;
-
-	pButton = (CBofButton *)pObject;
+	CBofButton *pButton = (CBofButton *)pObject;
 
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
@@ -902,18 +886,18 @@ void SBarSlotWnd::OnBofButton(CBofObject *pObject, int nState) {
 			Close();
 			break;
 
-		case SLOTHELP:
+		case SLOTHELP: {
 			LogInfo("\tClicked Help");
 
-			CBagel *pApp;
-			CBagMasterWin *pWin;
-
-			if ((pApp = CBagel::GetBagApp()) != nullptr) {
-				if ((pWin = pApp->GetMasterWnd()) != nullptr) {
+			CBagel *pApp = CBagel::GetBagApp();
+			if (pApp != nullptr) {
+				CBagMasterWin *pWin = pApp->GetMasterWnd();
+				if (pWin != nullptr) {
 					m_bPaused = true;
 					pWin->OnHelp(BuildSlotDir("SLOT.TXT"));
 					m_bPaused = false;
 				}
+			}
 			}
 			break;
 

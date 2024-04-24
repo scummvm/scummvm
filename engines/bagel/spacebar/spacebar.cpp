@@ -95,7 +95,8 @@ ErrorCode SpaceBarEngine::initialize() {
 			// Init sound system
 			InitializeSoundSystem(1, 22050, 8);
 
-			if ((pBmp = new CBofBitmap(_masterWin->Width(), _masterWin->Height(), m_pPalette)) != nullptr) {
+			pBmp = new CBofBitmap(_masterWin->Width(), _masterWin->Height(), m_pPalette);
+			if (pBmp != nullptr) {
 				pBmp->FillRect(nullptr, COLOR_BLACK);
 			} else {
 				ReportError(ERR_MEMORY, "Unable to allocate a CBofBitmap");
@@ -120,12 +121,11 @@ ErrorCode SpaceBarEngine::initialize() {
 				bRestart = false;
 
 				CBagStartDialog cDlg(BuildSysDir("START.BMP"), nullptr, _masterWin);
-				int nRetVal;
 
 				CBofWindow *pLastWin = g_pHackWindow;
 				g_pHackWindow = &cDlg;
 
-				nRetVal = cDlg.DoModal();
+				int nRetVal = cDlg.DoModal();
 
 				g_pHackWindow = pLastWin;
 
@@ -197,7 +197,7 @@ ErrorCode SpaceBarEngine::initialize() {
 				if (shouldQuit())
 					goto exit;
 
-				// Start a new game (In entry vestible)
+				// Start a new game (In entry vestibule)
 				_masterWin->NewGame();
 			}
 
@@ -207,8 +207,8 @@ ErrorCode SpaceBarEngine::initialize() {
 	}
 
 exit:
-	if (pBmp != nullptr)
-		delete pBmp;
+
+	delete pBmp;
 
 	return m_errCode;
 }
