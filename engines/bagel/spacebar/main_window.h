@@ -72,7 +72,7 @@ public:
 	static void initialize();
 	static void shutdown();
 
-	CMainWindow(const char *sCommandLine = nullptr);
+	CMainWindow();
 	virtual ~CMainWindow();
 
 	ErrorCode Attach();

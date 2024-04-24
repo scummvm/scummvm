@@ -36,8 +36,8 @@ namespace SpaceBar {
  */
 class CSBarMasterWin : public CBagMasterWin {
 public:
-	virtual CBagStorageDev *OnNewStorageDev(const CBofString &namestr, const CBofString &typestr);
-	virtual CBagStorageDev *OnNewStorageDev(const CBofString &namestr, int nType);
+	virtual CBagStorageDev *OnNewStorageDev(const CBofString &typestr);
+	virtual CBagStorageDev *OnNewStorageDev(int nType);
 
 	virtual void OnKeyHit(uint32 lKey, uint32 lRepCount);
 

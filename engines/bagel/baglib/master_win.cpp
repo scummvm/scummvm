@@ -457,7 +457,7 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 			cFile.Read(pBuf, nLength);
 			cFile.Close();
 
-			CBagMasterWin::LoadFileFromStream(fpInput, sStartWldName, true);
+			CBagMasterWin::LoadFileFromStream(fpInput, sStartWldName);
 
 			BofFree(pBuf);
 		}
@@ -654,7 +654,7 @@ ErrorCode CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 	return m_errCode;
 }
 
-ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool /*bAttach*/) {
+ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName) {
 	char szLocalStr[256];
 	szLocalStr[0] = 0;
 	CBofRect rRect;
@@ -723,7 +723,7 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 
 				fpInput.EatWhite();
 			}
-			pSDev = OnNewStorageDev(namestr, typestr);
+			pSDev = OnNewStorageDev(typestr);
 			if (!pSDev) {
 				LogError(BuildString("FAILED on open of storage device %s : %s", namestr.GetBuffer(), typestr.GetBuffer()));
 				return ERR_UNKNOWN;
@@ -1422,7 +1422,7 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 		m_pGameWindow->SetOnUpdate(true);
 }
 
-ErrorCode CBagMasterWin::Run(const char * /*pszCommandLine*/) {
+ErrorCode CBagMasterWin::Run() {
 	return m_errCode;
 }
 

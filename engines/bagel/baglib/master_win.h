@@ -89,7 +89,7 @@ public:
 
 	CBagMasterWin();
 	virtual ~CBagMasterWin();
-	virtual ErrorCode Run(const char *sCommandLine = nullptr);
+	virtual ErrorCode Run();
 
 	void Close();
 
@@ -145,7 +145,7 @@ public:
 	ErrorCode LoadFile(const CBofString &sWldName, const CBofString &sStartWldName, bool bRestart = false, bool bSetStart = true);
 
 	ErrorCode SaveFile(const CBofString &sWldName);
-	ErrorCode LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach = false);
+	ErrorCode LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName);
 	ErrorCode LoadGlobalVars(const CBofString &sWldName);
 
 	ErrorCode SetCurrFadeIn(int nFade) {
@@ -175,8 +175,8 @@ public:
 		return m_pVariableList;
 	}
 
-	virtual CBagStorageDev *OnNewStorageDev(const CBofString &namestr, const CBofString &typestr) = 0;
-	virtual CBagStorageDev *OnNewStorageDev(const CBofString &namestr, int nType) = 0;
+	virtual CBagStorageDev *OnNewStorageDev(const CBofString &typestr) = 0;
+	virtual CBagStorageDev *OnNewStorageDev(int nType) = 0;
 
 	virtual void OnNewFilter(CBagStorageDev *, const CBofString &typestr) = 0;
 	virtual void OnNewFilter(CBagStorageDev *pSDev, const int nType) = 0;
