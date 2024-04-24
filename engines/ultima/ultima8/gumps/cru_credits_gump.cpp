@@ -52,7 +52,8 @@ CruCreditsGump::CruCreditsGump(Common::SeekableReadStream *txtrs,
 		_timer(0), _background(nullptr), _nextScreenStart(0), _screenNo(-1)
 {
 	Image::BitmapDecoder decoder;
-	_background = RenderSurface::CreateSecondaryRenderSurface(640, 480);
+	Graphics::Screen *sc = Ultima8Engine::get_instance()->getScreen();
+	_background = new RenderSurface(640, 480, sc->format);
 
 	uint32 color = TEX32_PACK_RGB(0, 0, 0);
 	_background->fill32(color, 0, 0, 640, 480); // black background

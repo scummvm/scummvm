@@ -748,8 +748,8 @@ void Debugger::dumpCurrentMap() {
 	CurrentMap *currentMap = World::get_instance()->getCurrentMap();
 	currentMap->setWholeMapFast();
 
-	RenderSurface *s = RenderSurface::CreateSecondaryRenderSurface(awidth,
-		aheight);
+	Graphics::Screen *screen = Ultima8Engine::get_instance()->getScreen();
+	RenderSurface *s = new RenderSurface(awidth, aheight, screen->format);
 
 	debugPrintf("Rendering map...\n");
 
@@ -1830,7 +1830,8 @@ bool Debugger::cmdBenchmarkRenderSurface(int argc, const char **argv) {
 	GameData *gamedata = GameData::get_instance();
 	Shape *s = gamedata->getMainShapes()->getShape(shapenum);
 
-	RenderSurface *surface = RenderSurface::CreateSecondaryRenderSurface(320, 200);
+	Graphics::Screen *screen = Ultima8Engine::get_instance()->getScreen();
+	RenderSurface *surface = new RenderSurface(320, 200, screen->format);
 	surface->BeginPainting();
 
 	uint32 start, end;

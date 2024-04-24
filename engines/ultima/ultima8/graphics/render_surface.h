@@ -60,8 +60,8 @@ private:
 	void SetPixelsPointer();
 
 public:
-	//! Create a SecondaryRenderSurface with an associated Texture object
-	static RenderSurface *CreateSecondaryRenderSurface(uint32 width, uint32 height);
+	// Create a render surface
+	RenderSurface(int width, int height, const Graphics::PixelFormat &format);
 
 	// Create from a managed surface
 	RenderSurface(Graphics::ManagedSurface *s, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);

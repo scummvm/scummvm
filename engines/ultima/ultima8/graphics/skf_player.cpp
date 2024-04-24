@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima.h"
+#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/graphics/skf_player.h"
 #include "ultima/ultima8/convert/u8/convert_shape_u8.h"
@@ -78,7 +79,8 @@ SKFPlayer::SKFPlayer(Common::SeekableReadStream *rs, int width, int height, bool
 	parseEventList(eventlist);
 	delete eventlist;
 
-	_buffer = RenderSurface::CreateSecondaryRenderSurface(_width, _height);
+	Graphics::Screen *screen = Ultima8Engine::get_instance()->getScreen();
+	_buffer = new RenderSurface(_width, _height, screen->format);
 }
 
 SKFPlayer::~SKFPlayer() {

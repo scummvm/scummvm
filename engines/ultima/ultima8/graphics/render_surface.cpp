@@ -19,18 +19,27 @@
  *
  */
 
-#include "ultima/ultima8/misc/debugger.h"
+#include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/palette.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/graphics/texture.h"
-#include "ultima/ultima8/ultima8.h"
-#include "common/system.h"
 #include "graphics/blit.h"
-#include "graphics/screen.h"
 
 namespace Ultima {
 namespace Ultima8 {
+
+RenderSurface::RenderSurface(int width, int height, const Graphics::PixelFormat &format) :
+		_pixels(nullptr), _ox(0), _oy(0), _pitch(0),
+		_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0),
+		_disposeAfterUse(DisposeAfterUse::YES) {
+
+	_surface = new Graphics::ManagedSurface(width, height, format);
+	_clipWindow.setWidth(_surface->w);
+	_clipWindow.setHeight(_surface->h);
+
+	SetPixelsPointer();
+}
 
 RenderSurface::RenderSurface(Graphics::ManagedSurface *s, DisposeAfterUse::Flag disposeAfterUse) :
 		_pixels(nullptr), _ox(0), _oy(0), _pitch(0),
@@ -556,14 +565,6 @@ void RenderSurface::MaskedBlit(const Graphics::ManagedSurface &src, const Common
 	} else {
 		error("MaskedBlit not supported from %d bpp to %d bpp", src.format.bpp(), _surface->format.bpp());
 	}
-}
-
-// Create a SecondaryRenderSurface with an associated Texture object
-RenderSurface *RenderSurface::CreateSecondaryRenderSurface(uint32 width, uint32 height) {
-	const Graphics::PixelFormat &format = Ultima8Engine::get_instance()->getScreen()->format;
-
-	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface(width, height, format);
-	return new RenderSurface(surface);
 }
 
 namespace {

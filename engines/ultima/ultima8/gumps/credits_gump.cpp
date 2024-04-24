@@ -24,6 +24,7 @@
 
 #include "ultima/ultima8/gumps/credits_gump.h"
 
+#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/texture.h"
@@ -71,12 +72,14 @@ CreditsGump::~CreditsGump() {
 void CreditsGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
+	Graphics::Screen *screen = Ultima8Engine::get_instance()->getScreen();
 	uint32 width = 256;
 	uint32 height = 280;
-	_scroll[0] = RenderSurface::CreateSecondaryRenderSurface(width, height);
-	_scroll[1] = RenderSurface::CreateSecondaryRenderSurface(width, height);
-	_scroll[2] = RenderSurface::CreateSecondaryRenderSurface(width, height);
-	_scroll[3] = RenderSurface::CreateSecondaryRenderSurface(width, height);
+
+	_scroll[0] = new RenderSurface(width, height, screen->format);
+	_scroll[1] = new RenderSurface(width, height, screen->format);
+	_scroll[2] = new RenderSurface(width, height, screen->format);
+	_scroll[3] = new RenderSurface(width, height, screen->format);
 
 	uint32 color = TEX32_PACK_RGB(0, 0, 0);
 	_scroll[0]->fill32(color, 0, 0, width, height); // black background

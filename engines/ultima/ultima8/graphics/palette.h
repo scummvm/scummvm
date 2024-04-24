@@ -25,6 +25,10 @@
 #include "graphics/palette.h"
 #include "ultima/ultima8/graphics/pal_transforms.h"
 
+namespace Common {
+class ReadStream;
+}
+
 namespace Ultima {
 namespace Ultima8 {
 
