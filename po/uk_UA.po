@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-23 20:20+0000\n"
+"POT-Creation-Date: 2024-04-24 20:33+0000\n"
 "PO-Revision-Date: 2024-04-07 14:34+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -515,7 +515,7 @@ msgstr "Завантаження закінчено, завантажено %d �
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:492
 #: engines/scumm/help.cpp:127 engines/scumm/help.cpp:142
 #: engines/scumm/help.cpp:167 engines/scumm/help.cpp:195
-#: engines/scumm/help.cpp:213
+#: engines/scumm/help.cpp:213 engines/twp/metaengine.cpp:165
 msgid "Close"
 msgstr "Закрити"
 
@@ -7371,7 +7371,7 @@ msgstr "Рухатись направо"
 #: engines/scumm/help.cpp:172 engines/scumm/help.cpp:202
 #: engines/scumm/help.cpp:217 engines/scumm/help.cpp:228
 #: engines/scumm/help.cpp:254 engines/sky/metaengine.cpp:94
-#: engines/wintermute/keymapper_tables.h:140
+#: engines/twp/metaengine.cpp:172 engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:1552
 msgid "Use"
 msgstr "Використати"
@@ -9611,24 +9611,24 @@ msgid "Main game controls:"
 msgstr "Основні опції керування:"
 
 #: engines/scumm/help.cpp:123 engines/scumm/help.cpp:138
-#: engines/scumm/help.cpp:163
+#: engines/scumm/help.cpp:163 engines/twp/metaengine.cpp:170
 msgid "Push"
 msgstr "Штовхати"
 
 #: engines/scumm/help.cpp:124 engines/scumm/help.cpp:139
-#: engines/scumm/help.cpp:164
+#: engines/scumm/help.cpp:164 engines/twp/metaengine.cpp:171
 msgid "Pull"
 msgstr "Тягнути"
 
 #: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
 #: engines/scumm/help.cpp:165 engines/scumm/help.cpp:201
-#: engines/scumm/help.cpp:211
+#: engines/scumm/help.cpp:211 engines/twp/metaengine.cpp:166
 msgid "Give"
 msgstr "Дати"
 
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
 #: engines/scumm/help.cpp:166 engines/scumm/help.cpp:194
-#: engines/scumm/help.cpp:212
+#: engines/scumm/help.cpp:212 engines/twp/metaengine.cpp:164
 msgid "Open"
 msgstr "Відкрити"
 
@@ -9665,7 +9665,8 @@ msgstr "Іти до"
 
 #: engines/scumm/help.cpp:145 engines/scumm/help.cpp:170
 #: engines/scumm/help.cpp:199 engines/scumm/help.cpp:214
-#: engines/scumm/help.cpp:231 engines/wintermute/keymapper_tables.h:134
+#: engines/scumm/help.cpp:231 engines/twp/metaengine.cpp:167
+#: engines/wintermute/keymapper_tables.h:134
 #: engines/wintermute/keymapper_tables.h:1546
 msgid "Pick up"
 msgstr "Підібрати"
@@ -9752,13 +9753,14 @@ msgid "pull (Yank)"
 msgstr "тягнути (Смикнути)"
 
 #: engines/scumm/help.cpp:200 engines/scumm/help.cpp:216
-#: engines/scumm/help.cpp:252 engines/wintermute/keymapper_tables.h:128
+#: engines/scumm/help.cpp:252 engines/twp/metaengine.cpp:169
+#: engines/wintermute/keymapper_tables.h:128
 #: engines/wintermute/keymapper_tables.h:1558
 msgid "Talk to"
 msgstr "Говорити до"
 
 #: engines/scumm/help.cpp:203 engines/scumm/help.cpp:215
-#: engines/wintermute/keymapper_tables.h:122
+#: engines/twp/metaengine.cpp:168 engines/wintermute/keymapper_tables.h:122
 #: engines/wintermute/keymapper_tables.h:1534
 msgid "Look at"
 msgstr "Глянути на"
@@ -10960,60 +10962,6 @@ msgstr "Пропустити текст"
 msgid "Show hotspots"
 msgstr "Показувати гарячі точки"
 
-#: engines/twp/metaengine.cpp:164
-#, fuzzy
-#| msgid "Next action"
-msgid "Open action"
-msgstr "Наступна дія"
-
-#: engines/twp/metaengine.cpp:165
-#, fuzzy
-#| msgid "Next action"
-msgid "Close action"
-msgstr "Наступна дія"
-
-#: engines/twp/metaengine.cpp:166
-#, fuzzy
-#| msgid "Next action"
-msgid "Give action"
-msgstr "Наступна дія"
-
-#: engines/twp/metaengine.cpp:167
-#, fuzzy
-#| msgid "Previous action"
-msgid "Pick up action"
-msgstr "Попередня дія"
-
-#: engines/twp/metaengine.cpp:168
-#, fuzzy
-#| msgid "Look at"
-msgid "Look at action"
-msgstr "Глянути на"
-
-#: engines/twp/metaengine.cpp:169
-#, fuzzy
-#| msgid "Talk to"
-msgid "Talk to action"
-msgstr "Говорити до"
-
-#: engines/twp/metaengine.cpp:170
-#, fuzzy
-#| msgid "Previous action"
-msgid "Push action"
-msgstr "Попередня дія"
-
-#: engines/twp/metaengine.cpp:171
-#, fuzzy
-#| msgid "Previous action"
-msgid "Pull action"
-msgstr "Попередня дія"
-
-#: engines/twp/metaengine.cpp:172
-#, fuzzy
-#| msgid "Next action"
-msgid "Use action"
-msgstr "Наступна дія"
-
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
 msgstr "Ввімкнути пропуск кадрів"
@@ -11983,6 +11931,51 @@ msgstr ""
 "завантажити Liberation Fonts, або пакет GNU FreeFont. Вам будуть потрібні "
 "всі шрифти з пакету, який ви оберете, тобто, LiberationMono, LiberationSans "
 "та LiberationSerif, або FreeMono, FreeSans та FreeSerif відповідно."
+
+#, fuzzy
+#~| msgid "Next action"
+#~ msgid "Open action"
+#~ msgstr "Наступна дія"
+
+#, fuzzy
+#~| msgid "Next action"
+#~ msgid "Close action"
+#~ msgstr "Наступна дія"
+
+#, fuzzy
+#~| msgid "Next action"
+#~ msgid "Give action"
+#~ msgstr "Наступна дія"
+
+#, fuzzy
+#~| msgid "Previous action"
+#~ msgid "Pick up action"
+#~ msgstr "Попередня дія"
+
+#, fuzzy
+#~| msgid "Look at"
+#~ msgid "Look at action"
+#~ msgstr "Глянути на"
+
+#, fuzzy
+#~| msgid "Talk to"
+#~ msgid "Talk to action"
+#~ msgstr "Говорити до"
+
+#, fuzzy
+#~| msgid "Previous action"
+#~ msgid "Push action"
+#~ msgstr "Попередня дія"
+
+#, fuzzy
+#~| msgid "Previous action"
+#~ msgid "Pull action"
+#~ msgstr "Попередня дія"
+
+#, fuzzy
+#~| msgid "Next action"
+#~ msgid "Use action"
+#~ msgstr "Наступна дія"
 
 #~ msgid "Open 3DS Settings"
 #~ msgstr "Відкрити налаштування 3DS"
