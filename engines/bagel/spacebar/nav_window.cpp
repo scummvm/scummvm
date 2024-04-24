@@ -25,7 +25,6 @@
 #include "bagel/boflib/file_functions.h"
 #include "bagel/boflib/log.h"
 #include "bagel/boflib/sound.h"
-#include "bagel/boflib/misc.h"
 #include "bagel/boflib/std_keys.h"
 
 namespace Bagel {
@@ -258,8 +257,8 @@ ErrorCode CNavWindow::Attach() {
 	m_pOldPal = CBofApp::GetApp()->GetPalette();
 	m_pPal = m_pBackdrop->GetPalette()->CopyPalette();
 	CBofApp::GetApp()->SetPalette(m_pPal);
-
-	if ((m_pCurLoc = new CBofSprite) != nullptr) {
+	m_pCurLoc = new CBofSprite;
+	if (m_pCurLoc != nullptr) {
 		m_pCurLoc->LoadSprite(MakeDir(CUR_LOC), 2);
 		m_pCurLoc->SetMaskColor(MASK_COLOR);
 		m_pCurLoc->SetZOrder(SPRITE_TOPMOST);
@@ -273,16 +272,15 @@ ErrorCode CNavWindow::Attach() {
 
 	// Build all our buttons
 	for (i = 0; i < 2; i++) {
-		if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
-			CBofBitmap *pUp, *pDown, *pFocus, *pDis;
+		m_pButtons[i] = new CBofBmpButton;
+		if (m_pButtons[i] != nullptr) {
 
-			pUp = LoadBitmap(MakeDir(g_NavButtons[i].m_pszUp), m_pPal);
-			pDown = LoadBitmap(MakeDir(g_NavButtons[i].m_pszDown), m_pPal);
-			pFocus = LoadBitmap(MakeDir(g_NavButtons[i].m_pszFocus), m_pPal);
-			pDis = LoadBitmap(MakeDir(g_NavButtons[i].m_pszDisabled), m_pPal);
+			CBofBitmap *pUp = LoadBitmap(MakeDir(g_NavButtons[i].m_pszUp), m_pPal);
+			CBofBitmap *pDown = LoadBitmap(MakeDir(g_NavButtons[i].m_pszDown), m_pPal);
+			CBofBitmap *pFocus = LoadBitmap(MakeDir(g_NavButtons[i].m_pszFocus), m_pPal);
+			CBofBitmap *pDis = LoadBitmap(MakeDir(g_NavButtons[i].m_pszDisabled), m_pPal);
 
 			m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
-
 			m_pButtons[i]->Create(g_NavButtons[i].m_pszName, g_NavButtons[i].m_nLeft, g_NavButtons[i].m_nTop, g_NavButtons[i].m_nWidth, g_NavButtons[i].m_nHeight, this, g_NavButtons[i].m_nID);
 			m_pButtons[i]->Show();
 		} else {
@@ -548,14 +546,15 @@ void CNavWindow::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 
-	CBofBitmap *pBmp;
-
 	// Render offscreen
-	if (m_pBackdrop != nullptr && (pBmp = GetWorkBmp()) != nullptr) {
-		m_pBackdrop->Paint(pBmp, pRect, pRect);
+	if (m_pBackdrop != nullptr) {
+		CBofBitmap *pBmp = GetWorkBmp();
+		if (pBmp != nullptr) {
+			m_pBackdrop->Paint(pBmp, pRect, pRect);
 
-		// Now update the screen
-		pBmp->Paint(this, pRect, pRect);
+			// Now update the screen
+			pBmp->Paint(this, pRect, pRect);
+		}
 	}
 
 	SetTimer(777, 200, nullptr);
@@ -567,150 +566,149 @@ void CNavWindow::OnPaint(CBofRect *pRect) {
 void CNavWindow::RefreshData() {
 	Assert(IsValidObject(this));
 
-	CBofBitmap *pBmp;
-	CBofRect cRect(440, 0, 639, 439);
-	char    szBuf[100];
-	int     i = 0;
+	if (m_pBackdrop == nullptr)
+		return;
 
 	// Render offscreen
-	if (m_pBackdrop != nullptr && (pBmp = GetWorkBmp()) != nullptr) {
-		CBofBitmap cBmp(200, 440, m_pPal);
-		pBmp->Paint(&cBmp, 0, 0, &cRect);
+	CBofBitmap *pBmp = GetWorkBmp();
+	if (pBmp == nullptr)
+		return;
 
-		cRect.SetRect(0, 10, 199, 25);
-		PaintText(&cBmp, &cRect, BuildString("Current Port of call:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.left += 10;       // Indent this section
-		cRect.top += 15;
-		cRect.bottom += 15;
-		PaintText(&cBmp, &cRect, BuildString("%s", m_pPortName->GetBuffer()), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.left -= 10;       // Un-indent
+	CBofRect cRect(440, 0, 639, 439);
+	CBofBitmap cBmp(200, 440, m_pPal);
+	pBmp->Paint(&cBmp, 0, 0, &cRect);
 
-		// Leave blank space before next section
-		cRect.top += 30;
-		cRect.bottom += 30;
+	cRect.SetRect(0, 10, 199, 25);
+	PaintText(&cBmp, &cRect, BuildString("Current Port of call:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	cRect.left += 10;       // Indent this section
+	cRect.top += 15;
+	cRect.bottom += 15;
+	PaintText(&cBmp, &cRect, BuildString("%s", m_pPortName->GetBuffer()), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	cRect.left -= 10;       // Un-indent
 
-		PaintText(&cBmp, &cRect, BuildString("Current Manifest:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	// Leave blank space before next section
+	cRect.top += 30;
+	cRect.bottom += 30;
 
-		cRect.left += 10;       // Indent this section
-		while (m_pLevel[i].Name != nullptr) {
-			if (m_pLevel[i].cargo.m_pszCargo != nullptr && m_pLevel[i].cargo.m_bUsed) {
-				cRect.top += 15;
-				cRect.bottom += 15;
-				if (m_pLevel[i].cargo.Weight != 1)
-					Common::sprintf_s(szBuf, "%3d tons of %s", m_pLevel[i].cargo.Weight, m_pLevel[i].cargo.m_pszCargo/*, m_pLevel[i].Name*/);
-				else
-					Common::sprintf_s(szBuf, "%3d ton of %s", m_pLevel[i].cargo.Weight, m_pLevel[i].cargo.m_pszCargo/*, m_pLevel[i].Name*/);
-				PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-				cRect.top += 15;
-				cRect.bottom += 15;
-				Common::sprintf_s(szBuf, "    for %s", m_pLevel[i].Name);
-				PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-			};
-			i++;
+	PaintText(&cBmp, &cRect, BuildString("Current Manifest:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+
+	cRect.left += 10;       // Indent this section
+	char szBuf[100];
+	int i = 0;
+	while (m_pLevel[i].Name != nullptr) {
+		if (m_pLevel[i].cargo.m_pszCargo != nullptr && m_pLevel[i].cargo.m_bUsed) {
+			cRect.top += 15;
+			cRect.bottom += 15;
+			if (m_pLevel[i].cargo.Weight != 1)
+				Common::sprintf_s(szBuf, "%3d tons of %s", m_pLevel[i].cargo.Weight, m_pLevel[i].cargo.m_pszCargo/*, m_pLevel[i].Name*/);
+			else
+				Common::sprintf_s(szBuf, "%3d ton of %s", m_pLevel[i].cargo.Weight, m_pLevel[i].cargo.m_pszCargo/*, m_pLevel[i].Name*/);
+			PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+			cRect.top += 15;
+			cRect.bottom += 15;
+			Common::sprintf_s(szBuf, "    for %s", m_pLevel[i].Name);
+			PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 		};
-		cRect.left -= 10;		// Un-indent
+		i++;
+	};
+	cRect.left -= 10;		// Un-indent
 
-		// Leave blank space before next section
-		cRect.top += 30;
-		cRect.bottom += 30;
+	// Leave blank space before next section
+	cRect.top += 30;
+	cRect.bottom += 30;
 
-		PaintText(&cBmp, &cRect, BuildString("Current Fuel:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.left += 10;       // Indent this section
-		cRect.top += 15;
-		cRect.bottom += 15;
-		if (m_fuel != 1)
-			PaintText(&cBmp, &cRect, BuildString("%3d tons", m_fuel), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		else
-			PaintText(&cBmp, &cRect, BuildString("%3d ton", m_fuel), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.left -= 10;       // Un-indent
+	PaintText(&cBmp, &cRect, BuildString("Current Fuel:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	cRect.left += 10;       // Indent this section
+	cRect.top += 15;
+	cRect.bottom += 15;
+	if (m_fuel != 1)
+		PaintText(&cBmp, &cRect, BuildString("%3d tons", m_fuel), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	else
+		PaintText(&cBmp, &cRect, BuildString("%3d ton", m_fuel), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	cRect.left -= 10;       // Un-indent
 
-		// Leave blank space before next section
-		cRect.top += 30;
-		cRect.bottom += 30;
+	// Leave blank space before next section
+	cRect.top += 30;
+	cRect.bottom += 30;
 
-		PaintText(&cBmp, &cRect, BuildString("Current Tonnage:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.top += 15;
-		cRect.bottom += 15;
+	PaintText(&cBmp, &cRect, BuildString("Current Tonnage:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	cRect.top += 15;
+	cRect.bottom += 15;
 
-		cRect.left += 10;       // Indent this section
-		if (m_cargo != 1)
-			Common::sprintf_s(szBuf, "%3d tons Cargo", m_cargo);
-		else
-			Common::sprintf_s(szBuf, "%3d ton Cargo", m_cargo);
-		PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.top += 15;
-		cRect.bottom += 15;
-		if (m_ship != 1)
-			Common::sprintf_s(szBuf, "%3d tons Ship", m_ship);
-		else
-			Common::sprintf_s(szBuf, "%3d ton Ship", m_ship);
-		PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.top += 15;
-		cRect.bottom += 15;
-		if (m_fuel != 1)
-			Common::sprintf_s(szBuf, "%3d tons Fuel", m_fuel);
-		else
-			Common::sprintf_s(szBuf, "%3d ton Fuel", m_fuel);
-		PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.top += 15;
-		cRect.bottom += 15;
-		Common::sprintf_s(szBuf, "%3d tons TOTAL", (m_ship + m_fuel + m_cargo));
-		PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.left -= 10;       // Un-indent
+	cRect.left += 10;       // Indent this section
+	if (m_cargo != 1)
+		Common::sprintf_s(szBuf, "%3d tons Cargo", m_cargo);
+	else
+		Common::sprintf_s(szBuf, "%3d ton Cargo", m_cargo);
+	PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	cRect.top += 15;
+	cRect.bottom += 15;
+	if (m_ship != 1)
+		Common::sprintf_s(szBuf, "%3d tons Ship", m_ship);
+	else
+		Common::sprintf_s(szBuf, "%3d ton Ship", m_ship);
+	PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	cRect.top += 15;
+	cRect.bottom += 15;
+	if (m_fuel != 1)
+		Common::sprintf_s(szBuf, "%3d tons Fuel", m_fuel);
+	else
+		Common::sprintf_s(szBuf, "%3d ton Fuel", m_fuel);
+	PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	cRect.top += 15;
+	cRect.bottom += 15;
+	Common::sprintf_s(szBuf, "%3d tons TOTAL", m_ship + m_fuel + m_cargo);
+	PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	cRect.left -= 10;       // Un-indent
 
-		cRect.top += 30;
-		cRect.bottom += 30;
-		Common::sprintf_s(szBuf, "Simulation Level:");
-		PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.left += 10;       // Indent
-		cRect.top += 15;
-		cRect.bottom += 15;
-		Common::sprintf_s(szBuf, "%s", g_LevelTitle[m_level]);
-		PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.left -= 10;       // Un-indent
-		cBmp.Paint(this, 443, 0);
-	}
+	cRect.top += 30;
+	cRect.bottom += 30;
+	Common::sprintf_s(szBuf, "Simulation Level:");
+	PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	cRect.left += 10;       // Indent
+	cRect.top += 15;
+	cRect.bottom += 15;
+	Common::sprintf_s(szBuf, "%s", g_LevelTitle[m_level]);
+	PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	cRect.left -= 10;       // Un-indent
+	cBmp.Paint(this, 443, 0);
 }
 
 void CNavWindow::OnBofButton(CBofObject *pObject, int nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
-	CBofButton *pButton;
+	if (nState != BUTTON_CLICKED)
+		return;
 
-	pButton = (CBofButton *)pObject;
-
-	if (nState == BUTTON_CLICKED) {
-
-		switch (pButton->GetControlID()) {
-
-		case QUIT: {
-			LogInfo("\tClicked Quit");
-			VARMNGR->GetVariable("NPLAYEDNAV")->SetBoolValue(true);
-			Close();
-			break;
-		}
-		case HELP: {
-			LogInfo("\tClicked Help");
-
-			CBagel *pApp;
-			CBagMasterWin *pWin;
-
-			KillTimer(777);
-			if ((pApp = CBagel::GetBagApp()) != nullptr) {
-				if ((pWin = pApp->GetMasterWnd()) != nullptr) {
-					pWin->OnHelp(MakeDir("NAVHELP.TXT"));
-				}
-			}
-			break;
-		}
-
-		default:
-			LogWarning(BuildString("Clicked Unknown Button with ID %d", pButton->GetControlID()));
-			break;
-		}
-
+	CBofButton *pButton = (CBofButton *)pObject;
+	switch (pButton->GetControlID()) {
+	case QUIT: {
+		LogInfo("\tClicked Quit");
+		VARMNGR->GetVariable("NPLAYEDNAV")->SetBoolValue(true);
+		Close();
+		break;
 	}
+	case HELP: {
+		LogInfo("\tClicked Help");
+
+		CBagel *pApp;
+		CBagMasterWin *pWin;
+
+		KillTimer(777);
+		if ((pApp = CBagel::GetBagApp()) != nullptr) {
+			if ((pWin = pApp->GetMasterWnd()) != nullptr) {
+				pWin->OnHelp(MakeDir("NAVHELP.TXT"));
+			}
+		}
+		break;
+	}
+
+	default:
+		LogWarning(BuildString("Clicked Unknown Button with ID %d", pButton->GetControlID()));
+		break;
+	}
+
 }
 
 
@@ -847,7 +845,7 @@ void CNavWindow::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 void CNavWindow::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	Assert(IsValidObject(this));
 
-	if ((lKey == BKEY_ALT_q) || (lKey == BKEY_ALT_F4)) {
+	if (lKey == BKEY_ALT_q || lKey == BKEY_ALT_F4) {
 		VARMNGR->GetVariable("NPLAYEDNAV")->SetBoolValue(true);
 		Close();
 	}
@@ -860,7 +858,7 @@ void CNavWindow::OnTimer(uint32 tId) {
 }
 
 void CNavWindow::OnPinna() {
-	if ((*m_pCurPos == *m_pPinna)) {
+	if (*m_pCurPos == *m_pPinna) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pPinna);
@@ -884,7 +882,7 @@ void CNavWindow::OnPinna() {
 }
 
 void CNavWindow::OnHpoctyl() {
-	if ((*m_pCurPos == *m_pHpoctyl)) {
+	if (*m_pCurPos == *m_pHpoctyl) {
 
 		*m_pPortName = "H'poctyl";
 		if (g_Level[1].cargo.m_pszCargo != nullptr && g_Level[1].cargo.m_bUsed) {
@@ -942,7 +940,7 @@ void CNavWindow::OnHpoctyl() {
 
 
 void CNavWindow::OnArmpit() {
-	if ((*m_pCurPos == *m_pArmpit)) {
+	if (*m_pCurPos == *m_pArmpit) {
 
 		delete m_pCurPos;
 		m_pCurPos = new CBofRect(*m_pArmpit);
@@ -952,7 +950,7 @@ void CNavWindow::OnArmpit() {
 			m_cargo -= 56;
 		}
 
-	} else if ((*m_pCurPos == *m_pHpoctyl)) {
+	} else if (*m_pCurPos == *m_pHpoctyl) {
 
 		delete m_pCurPos;
 		m_pCurPos = new CBofRect(*m_pArmpit);
@@ -962,7 +960,7 @@ void CNavWindow::OnArmpit() {
 			m_cargo -= 56;
 		}
 		CalcFuel(3.2);
-	} else if ((*m_pCurPos == *m_pPinna)) {
+	} else if (*m_pCurPos == *m_pPinna) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pArmpit);
@@ -972,7 +970,7 @@ void CNavWindow::OnArmpit() {
 			m_cargo -= 56;
 		}
 		CalcFuel(1.5);
-	} else if ((*m_pCurPos == *m_pKarkas)) {
+	} else if (*m_pCurPos == *m_pKarkas) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pArmpit);
@@ -988,24 +986,24 @@ void CNavWindow::OnArmpit() {
 }
 
 void CNavWindow::OnYzore() {
-	if ((*m_pCurPos == *m_pYzore)) {
+	if (*m_pCurPos == *m_pYzore) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		*m_pPortName = "Yzore";
 		m_pCurPos = new CBofRect(*m_pYzore);
-	} else if ((*m_pCurPos == *m_pKarkas)) {
+	} else if (*m_pCurPos == *m_pKarkas) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pYzore);
 		*m_pPortName = "Yzore";
 		CalcFuel(2.6);
-	} else if ((*m_pCurPos == *m_pFruufnia)) {
+	} else if (*m_pCurPos == *m_pFruufnia) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pYzore);
 		*m_pPortName = "Yzore";
 		CalcFuel(4.0);
-	} else if ((*m_pCurPos == *m_pBulbus)) {
+	} else if (*m_pCurPos == *m_pBulbus) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pYzore);
@@ -1022,25 +1020,25 @@ void CNavWindow::OnBulbus() {
 		m_pCurPos = nullptr;
 		*m_pPortName = "Bulbus";
 		m_pCurPos = new CBofRect(*m_pBulbus);
-	} else if ((*m_pCurPos == *m_pHpoctyl)) {
+	} else if (*m_pCurPos == *m_pHpoctyl) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pBulbus);
 		*m_pPortName = "Bulbus";
 		CalcFuel(2.8);
-	} else if ((*m_pCurPos == *m_pYzore)) {
+	} else if (*m_pCurPos == *m_pYzore) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pBulbus);
 		*m_pPortName = "Bulbus";
 		CalcFuel(1.2);
-	} else if ((*m_pCurPos == *m_pDingle)) {
+	} else if (*m_pCurPos == *m_pDingle) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pBulbus);
 		*m_pPortName = "Bulbus";
 		CalcFuel(1.9);
-	} else if ((*m_pCurPos == *m_pFruufnia)) {
+	} else if (*m_pCurPos == *m_pFruufnia) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pBulbus);
@@ -1057,13 +1055,13 @@ void CNavWindow::OnDingle() {
 		m_pCurPos = nullptr;
 		*m_pPortName = "Dingle";
 		m_pCurPos = new CBofRect(*m_pDingle);
-	} else if ((*m_pCurPos == *m_pHpoctyl)) {
+	} else if (*m_pCurPos == *m_pHpoctyl) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pDingle);
 		*m_pPortName = "Dingle";
 		CalcFuel(2.4);
-	} else if ((*m_pCurPos == *m_pBulbus)) {
+	} else if (*m_pCurPos == *m_pBulbus) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pDingle);
@@ -1075,7 +1073,7 @@ void CNavWindow::OnDingle() {
 }
 
 void CNavWindow::OnKarkas() {
-	if ((*m_pCurPos == *m_pKarkas)) {
+	if (*m_pCurPos == *m_pKarkas) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		*m_pPortName = "Karkas";
@@ -1179,7 +1177,7 @@ void CNavWindow::OnWilbur() {
 }
 
 void CNavWindow::OnMcKelvey() {
-	if ((*m_pCurPos == *m_pMcKelvey)) {
+	if (*m_pCurPos == *m_pMcKelvey) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		*m_pPortName = "McKelvey";
@@ -1208,7 +1206,7 @@ void CNavWindow::OnMcKelvey() {
 }
 
 void CNavWindow::OnMedge() {
-	if ((*m_pCurPos == *m_pMedge)) {
+	if (*m_pCurPos == *m_pMedge) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pMedge);
@@ -1243,7 +1241,7 @@ void CNavWindow::OnMedge() {
 }
 
 void CNavWindow::OnWall() {
-	if ((*m_pCurPos == *m_pWall)) {
+	if (*m_pCurPos == *m_pWall) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		*m_pPortName = "Wall";
@@ -1284,7 +1282,7 @@ void CNavWindow::OnWall() {
 }
 
 void CNavWindow::OnWoo() {
-	if ((*m_pCurPos == *m_pWoo)) {
+	if (*m_pCurPos == *m_pWoo) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		*m_pPortName = "Woo";
@@ -1313,7 +1311,7 @@ void CNavWindow::OnWoo() {
 }
 
 void CNavWindow::OnRoman() {
-	if ((*m_pCurPos == *m_pRoman)) {
+	if (*m_pCurPos == *m_pRoman) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		*m_pPortName = "Roman";
@@ -1374,7 +1372,7 @@ void CNavWindow::CalcFuel(double hf) {
 	Assert(IsValidObject(this));
 	CBofRect cRect(0, 0, 439, 439);
 
-	m_fuel -= (int)((m_ship + m_fuel + m_cargo) * (hf) * (.01));
+	m_fuel -= (int)((m_ship + m_fuel + m_cargo) * hf * .01);
 
 	if (m_cargo == 0) {
 		m_pCurLoc->EraseSprite(this);
@@ -1468,7 +1466,7 @@ void CNavWindow::CalcFuel(double hf) {
 }
 
 void CNavWindow::OnWeed() {
-	if ((*m_pCurPos == *m_pWeed)) {
+	if (*m_pCurPos == *m_pWeed) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		*m_pPortName = "Weed";
@@ -1497,7 +1495,7 @@ void CNavWindow::OnWeed() {
 }
 
 void CNavWindow::OnBok() {
-	if ((*m_pCurPos == *m_pBok)) {
+	if (*m_pCurPos == *m_pBok) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pBok);
@@ -1522,7 +1520,7 @@ void CNavWindow::OnBok() {
 }
 
 void CNavWindow::OnPizer() {
-	if ((*m_pCurPos == *m_pPizer)) {
+	if (*m_pCurPos == *m_pPizer) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
 		m_pCurPos = new CBofRect(*m_pPizer);
