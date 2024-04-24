@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-23 19:09+0000\n"
+"POT-Creation-Date: 2024-04-23 20:20+0000\n"
 "PO-Revision-Date: 2024-03-21 21:40+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -10006,6 +10006,50 @@ msgstr ""
 #| msgid "Show hints"
 msgid "Show hotspots"
 msgstr "顯示提示"
+
+#: engines/twp/metaengine.cpp:164
+#, fuzzy
+#| msgid "Options"
+msgid "Open action"
+msgstr "選項"
+
+#: engines/twp/metaengine.cpp:165
+#, fuzzy
+#| msgid "Close popup"
+msgid "Close action"
+msgstr "关闭弹出窗口"
+
+#: engines/twp/metaengine.cpp:166
+#, fuzzy
+#| msgid "Game Options"
+msgid "Give action"
+msgstr "遊戲選項"
+
+#: engines/twp/metaengine.cpp:167
+msgid "Pick up action"
+msgstr ""
+
+#: engines/twp/metaengine.cpp:168
+#, fuzzy
+#| msgid "Look Down"
+msgid "Look at action"
+msgstr "往下看"
+
+#: engines/twp/metaengine.cpp:169
+msgid "Talk to action"
+msgstr ""
+
+#: engines/twp/metaengine.cpp:170
+msgid "Push action"
+msgstr ""
+
+#: engines/twp/metaengine.cpp:171
+msgid "Pull action"
+msgstr ""
+
+#: engines/twp/metaengine.cpp:172
+msgid "Use action"
+msgstr ""
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"

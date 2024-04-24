@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-23 19:09+0000\n"
+"POT-Creation-Date: 2024-04-23 20:20+0000\n"
 "PO-Revision-Date: 2023-12-06 11:16+0000\n"
 "Last-Translator: Aditya Mohan <adityamurali003@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -10064,6 +10064,52 @@ msgstr ""
 #, fuzzy
 msgid "Show hotspots"
 msgstr "छिपी हुई files दिखाये"
+
+#: engines/twp/metaengine.cpp:164
+#, fuzzy
+#| msgid "Options"
+msgid "Open action"
+msgstr "विकल्प(O)..."
+
+#: engines/twp/metaengine.cpp:165
+#, fuzzy
+msgid "Close action"
+msgstr "पिछला (P)"
+
+#: engines/twp/metaengine.cpp:166
+#, fuzzy
+msgid "Give action"
+msgstr "पिछला (P)"
+
+#: engines/twp/metaengine.cpp:167
+#, fuzzy
+msgid "Pick up action"
+msgstr "पिछला (P)"
+
+#: engines/twp/metaengine.cpp:168
+#, fuzzy
+#| msgid "Look at"
+msgid "Look at action"
+msgstr "ऊपर देखो"
+
+#: engines/twp/metaengine.cpp:169
+msgid "Talk to action"
+msgstr ""
+
+#: engines/twp/metaengine.cpp:170
+#, fuzzy
+msgid "Push action"
+msgstr "पिछला (P)"
+
+#: engines/twp/metaengine.cpp:171
+#, fuzzy
+msgid "Pull action"
+msgstr "पिछला (P)"
+
+#: engines/twp/metaengine.cpp:172
+#, fuzzy
+msgid "Use action"
+msgstr "पिछला (P)"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"

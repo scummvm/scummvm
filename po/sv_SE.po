@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-23 19:09+0000\n"
+"POT-Creation-Date: 2024-04-23 20:20+0000\n"
 "PO-Revision-Date: 2023-12-09 22:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -10627,6 +10627,53 @@ msgstr "Skippa text"
 #| msgid "Show hints"
 msgid "Show hotspots"
 msgstr "Visa ledtrådar"
+
+#: engines/twp/metaengine.cpp:164
+#, fuzzy
+msgid "Open action"
+msgstr "~F~öregående"
+
+#: engines/twp/metaengine.cpp:165
+#, fuzzy
+msgid "Close action"
+msgstr "~F~öregående"
+
+#: engines/twp/metaengine.cpp:166
+#, fuzzy
+msgid "Give action"
+msgstr "~F~öregående"
+
+#: engines/twp/metaengine.cpp:167
+#, fuzzy
+msgid "Pick up action"
+msgstr "~F~öregående"
+
+#: engines/twp/metaengine.cpp:168
+#, fuzzy
+#| msgid "Look at"
+msgid "Look at action"
+msgstr "Titta på"
+
+#: engines/twp/metaengine.cpp:169
+#, fuzzy
+#| msgid "Talk to"
+msgid "Talk to action"
+msgstr "Tala med"
+
+#: engines/twp/metaengine.cpp:170
+#, fuzzy
+msgid "Push action"
+msgstr "~F~öregående"
+
+#: engines/twp/metaengine.cpp:171
+#, fuzzy
+msgid "Pull action"
+msgstr "~F~öregående"
+
+#: engines/twp/metaengine.cpp:172
+#, fuzzy
+msgid "Use action"
+msgstr "~F~öregående"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"

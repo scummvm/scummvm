@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-23 19:09+0000\n"
+"POT-Creation-Date: 2024-04-23 20:20+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -10549,6 +10549,60 @@ msgstr "דלג על טקסט"
 #| msgid "Show hints"
 msgid "Show hotspots"
 msgstr "הצגת רמזים"
+
+#: engines/twp/metaengine.cpp:164
+#, fuzzy
+#| msgid "Next action"
+msgid "Open action"
+msgstr "פעולה הבאה"
+
+#: engines/twp/metaengine.cpp:165
+#, fuzzy
+#| msgid "Next action"
+msgid "Close action"
+msgstr "פעולה הבאה"
+
+#: engines/twp/metaengine.cpp:166
+#, fuzzy
+#| msgid "Next action"
+msgid "Give action"
+msgstr "פעולה הבאה"
+
+#: engines/twp/metaengine.cpp:167
+#, fuzzy
+#| msgid "Previous action"
+msgid "Pick up action"
+msgstr "פעולה קודמת"
+
+#: engines/twp/metaengine.cpp:168
+#, fuzzy
+#| msgid "Look at"
+msgid "Look at action"
+msgstr "להסתכל על"
+
+#: engines/twp/metaengine.cpp:169
+#, fuzzy
+#| msgid "Talk to"
+msgid "Talk to action"
+msgstr "לדבר ל"
+
+#: engines/twp/metaengine.cpp:170
+#, fuzzy
+#| msgid "Previous action"
+msgid "Push action"
+msgstr "פעולה קודמת"
+
+#: engines/twp/metaengine.cpp:171
+#, fuzzy
+#| msgid "Previous action"
+msgid "Pull action"
+msgstr "פעולה קודמת"
+
+#: engines/twp/metaengine.cpp:172
+#, fuzzy
+#| msgid "Next action"
+msgid "Use action"
+msgstr "פעולה הבאה"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"

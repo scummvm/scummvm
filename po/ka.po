@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-23 19:09+0000\n"
+"POT-Creation-Date: 2024-04-23 20:20+0000\n"
 "PO-Revision-Date: 2024-04-05 14:42+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -9932,6 +9932,58 @@ msgstr "შემდეგის გამოტოვება"
 #: engines/twp/metaengine.cpp:163
 msgid "Show hotspots"
 msgstr "ჰოტსპოტების ჩვენება"
+
+#: engines/twp/metaengine.cpp:164
+#, fuzzy
+#| msgid "Options"
+msgid "Open action"
+msgstr "პარამეტრები"
+
+#: engines/twp/metaengine.cpp:165
+#, fuzzy
+#| msgid "Close popup"
+msgid "Close action"
+msgstr "მხტუნარას დახურვა"
+
+#: engines/twp/metaengine.cpp:166
+#, fuzzy
+#| msgid "Game Options"
+msgid "Give action"
+msgstr "თამაშის მორგება"
+
+#: engines/twp/metaengine.cpp:167
+#, fuzzy
+#| msgid "Pick up"
+msgid "Pick up action"
+msgstr "აღება"
+
+#: engines/twp/metaengine.cpp:168
+#, fuzzy
+#| msgid "Look at"
+msgid "Look at action"
+msgstr "შეხედე"
+
+#: engines/twp/metaengine.cpp:169
+#, fuzzy
+#| msgid "Talk to"
+msgid "Talk to action"
+msgstr "დაელაპარაკე"
+
+#: engines/twp/metaengine.cpp:170
+msgid "Push action"
+msgstr ""
+
+#: engines/twp/metaengine.cpp:171
+#, fuzzy
+#| msgid "TV emulation"
+msgid "Pull action"
+msgstr "ტელევიზორის ემულაცია"
+
+#: engines/twp/metaengine.cpp:172
+#, fuzzy
+#| msgid "Action"
+msgid "Use action"
+msgstr "ქმედება"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"

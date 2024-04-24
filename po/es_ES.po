@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-23 19:09+0000\n"
+"POT-Creation-Date: 2024-04-23 20:20+0000\n"
 "PO-Revision-Date: 2024-04-22 17:18+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -11144,6 +11144,60 @@ msgstr "Omitir texto"
 #: engines/twp/metaengine.cpp:163
 msgid "Show hotspots"
 msgstr "Mostrar zonas de interés"
+
+#: engines/twp/metaengine.cpp:164
+#, fuzzy
+#| msgid "Next action"
+msgid "Open action"
+msgstr "Siguiente acción"
+
+#: engines/twp/metaengine.cpp:165
+#, fuzzy
+#| msgid "Next action"
+msgid "Close action"
+msgstr "Siguiente acción"
+
+#: engines/twp/metaengine.cpp:166
+#, fuzzy
+#| msgid "Next action"
+msgid "Give action"
+msgstr "Siguiente acción"
+
+#: engines/twp/metaengine.cpp:167
+#, fuzzy
+#| msgid "Previous action"
+msgid "Pick up action"
+msgstr "Acción anterior"
+
+#: engines/twp/metaengine.cpp:168
+#, fuzzy
+#| msgid "Look at"
+msgid "Look at action"
+msgstr "Mirar"
+
+#: engines/twp/metaengine.cpp:169
+#, fuzzy
+#| msgid "Talk to"
+msgid "Talk to action"
+msgstr "Hablar con"
+
+#: engines/twp/metaengine.cpp:170
+#, fuzzy
+#| msgid "Previous action"
+msgid "Push action"
+msgstr "Acción anterior"
+
+#: engines/twp/metaengine.cpp:171
+#, fuzzy
+#| msgid "Previous action"
+msgid "Pull action"
+msgstr "Acción anterior"
+
+#: engines/twp/metaengine.cpp:172
+#, fuzzy
+#| msgid "Next action"
+msgid "Use action"
+msgstr "Siguiente acción"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"

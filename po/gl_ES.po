@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-23 19:09+0000\n"
+"POT-Creation-Date: 2024-04-23 20:20+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -10688,6 +10688,53 @@ msgstr "Omitir texto"
 #, fuzzy
 msgid "Show hotspots"
 msgstr "Mostrar ficheiros ocultos"
+
+#: engines/twp/metaengine.cpp:164
+#, fuzzy
+msgid "Open action"
+msgstr "~A~nterior"
+
+#: engines/twp/metaengine.cpp:165
+#, fuzzy
+msgid "Close action"
+msgstr "~A~nterior"
+
+#: engines/twp/metaengine.cpp:166
+#, fuzzy
+msgid "Give action"
+msgstr "~A~nterior"
+
+#: engines/twp/metaengine.cpp:167
+#, fuzzy
+msgid "Pick up action"
+msgstr "~A~nterior"
+
+#: engines/twp/metaengine.cpp:168
+#, fuzzy
+#| msgid "Look at"
+msgid "Look at action"
+msgstr "Mirar"
+
+#: engines/twp/metaengine.cpp:169
+#, fuzzy
+#| msgid "Talk to"
+msgid "Talk to action"
+msgstr "Falar con"
+
+#: engines/twp/metaengine.cpp:170
+#, fuzzy
+msgid "Push action"
+msgstr "~A~nterior"
+
+#: engines/twp/metaengine.cpp:171
+#, fuzzy
+msgid "Pull action"
+msgstr "~A~nterior"
+
+#: engines/twp/metaengine.cpp:172
+#, fuzzy
+msgid "Use action"
+msgstr "~A~nterior"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"

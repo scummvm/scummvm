@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-23 19:09+0000\n"
+"POT-Creation-Date: 2024-04-23 20:20+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -10580,6 +10580,53 @@ msgstr "Hopp over tekst"
 #, fuzzy
 msgid "Show hotspots"
 msgstr "Vis skjulte filer"
+
+#: engines/twp/metaengine.cpp:164
+#, fuzzy
+msgid "Open action"
+msgstr "~F~orrige"
+
+#: engines/twp/metaengine.cpp:165
+#, fuzzy
+msgid "Close action"
+msgstr "~F~orrige"
+
+#: engines/twp/metaengine.cpp:166
+#, fuzzy
+msgid "Give action"
+msgstr "~F~orrige"
+
+#: engines/twp/metaengine.cpp:167
+#, fuzzy
+msgid "Pick up action"
+msgstr "~F~orrige"
+
+#: engines/twp/metaengine.cpp:168
+#, fuzzy
+#| msgid "Look at"
+msgid "Look at action"
+msgstr "Se på"
+
+#: engines/twp/metaengine.cpp:169
+#, fuzzy
+#| msgid "Talk to"
+msgid "Talk to action"
+msgstr "Snakk til"
+
+#: engines/twp/metaengine.cpp:170
+#, fuzzy
+msgid "Push action"
+msgstr "~F~orrige"
+
+#: engines/twp/metaengine.cpp:171
+#, fuzzy
+msgid "Pull action"
+msgstr "~F~orrige"
+
+#: engines/twp/metaengine.cpp:172
+#, fuzzy
+msgid "Use action"
+msgstr "~F~orrige"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"

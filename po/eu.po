@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-23 19:09+0000\n"
+"POT-Creation-Date: 2024-04-23 20:20+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -10697,6 +10697,53 @@ msgstr "Testua saltatu"
 #, fuzzy
 msgid "Show hotspots"
 msgstr "Erakutsi fitxategi ezkutuak"
+
+#: engines/twp/metaengine.cpp:164
+#, fuzzy
+msgid "Open action"
+msgstr "~A~urrekoa"
+
+#: engines/twp/metaengine.cpp:165
+#, fuzzy
+msgid "Close action"
+msgstr "~A~urrekoa"
+
+#: engines/twp/metaengine.cpp:166
+#, fuzzy
+msgid "Give action"
+msgstr "~A~urrekoa"
+
+#: engines/twp/metaengine.cpp:167
+#, fuzzy
+msgid "Pick up action"
+msgstr "~A~urrekoa"
+
+#: engines/twp/metaengine.cpp:168
+#, fuzzy
+#| msgid "Look at"
+msgid "Look at action"
+msgstr "Begiratu"
+
+#: engines/twp/metaengine.cpp:169
+#, fuzzy
+#| msgid "Talk to"
+msgid "Talk to action"
+msgstr "Hitz egin"
+
+#: engines/twp/metaengine.cpp:170
+#, fuzzy
+msgid "Push action"
+msgstr "~A~urrekoa"
+
+#: engines/twp/metaengine.cpp:171
+#, fuzzy
+msgid "Pull action"
+msgstr "~A~urrekoa"
+
+#: engines/twp/metaengine.cpp:172
+#, fuzzy
+msgid "Use action"
+msgstr "~A~urrekoa"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"

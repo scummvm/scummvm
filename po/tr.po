@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-23 19:09+0000\n"
+"POT-Creation-Date: 2024-04-23 20:20+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -10361,6 +10361,48 @@ msgstr ""
 msgid "Show hotspots"
 msgstr "Gizli dosyaları göster"
 
+#: engines/twp/metaengine.cpp:164
+#, fuzzy
+msgid "Open action"
+msgstr "A~y~arlar..."
+
+#: engines/twp/metaengine.cpp:165
+#, fuzzy
+#| msgid "Choose an action to map"
+msgid "Close action"
+msgstr "Eşleştirme için bir işlem seç"
+
+#: engines/twp/metaengine.cpp:166
+#, fuzzy
+msgid "Give action"
+msgstr "A~y~arlar..."
+
+#: engines/twp/metaengine.cpp:167
+msgid "Pick up action"
+msgstr ""
+
+#: engines/twp/metaengine.cpp:168
+#, fuzzy
+msgid "Look at action"
+msgstr "Aşağı"
+
+#: engines/twp/metaengine.cpp:169
+msgid "Talk to action"
+msgstr ""
+
+#: engines/twp/metaengine.cpp:170
+msgid "Push action"
+msgstr ""
+
+#: engines/twp/metaengine.cpp:171
+msgid "Pull action"
+msgstr ""
+
+#: engines/twp/metaengine.cpp:172
+#, fuzzy
+msgid "Use action"
+msgstr "Aktif"
+
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
 msgstr ""
@@ -11521,9 +11563,6 @@ msgstr ""
 
 #~ msgid "Press the key to associate"
 #~ msgstr "Eşleştirmek için bir tuşa basın"
-
-#~ msgid "Choose an action to map"
-#~ msgstr "Eşleştirme için bir işlem seç"
 
 #~ msgid "Keys"
 #~ msgstr "Tuşlar"
