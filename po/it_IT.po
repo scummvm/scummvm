@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-04-23 20:20+0000\n"
-"PO-Revision-Date: 2024-04-01 09:12+0000\n"
+"PO-Revision-Date: 2024-04-24 16:32+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -1332,7 +1332,7 @@ msgstr "Seleziona un criterio per raggruppare i titoli"
 
 #: gui/launcher.cpp:262
 msgid "Click here to see Help"
-msgstr ""
+msgstr "Clicca per visualizzare l'aiuto"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
 #: gui/launcher.cpp:266 engines/dialogs.cpp:91
@@ -11132,58 +11132,40 @@ msgid "Show hotspots"
 msgstr "Mostra aree interattive"
 
 #: engines/twp/metaengine.cpp:164
-#, fuzzy
-#| msgid "Next action"
 msgid "Open action"
-msgstr "Azione successiva"
+msgstr "Azione: Apri"
 
 #: engines/twp/metaengine.cpp:165
-#, fuzzy
-#| msgid "Next action"
 msgid "Close action"
-msgstr "Azione successiva"
+msgstr "Azione: Chiudi"
 
 #: engines/twp/metaengine.cpp:166
-#, fuzzy
-#| msgid "Next action"
 msgid "Give action"
-msgstr "Azione successiva"
+msgstr "Azione: Dai"
 
 #: engines/twp/metaengine.cpp:167
-#, fuzzy
-#| msgid "Previous action"
 msgid "Pick up action"
-msgstr "Azione precedente"
+msgstr "Azione: Raccogli"
 
 #: engines/twp/metaengine.cpp:168
-#, fuzzy
-#| msgid "Look at"
 msgid "Look at action"
-msgstr "Esamina"
+msgstr "Azione: Guarda"
 
 #: engines/twp/metaengine.cpp:169
-#, fuzzy
-#| msgid "Talk to"
 msgid "Talk to action"
-msgstr "Parla con"
+msgstr "Azione: Parla"
 
 #: engines/twp/metaengine.cpp:170
-#, fuzzy
-#| msgid "Previous action"
 msgid "Push action"
-msgstr "Azione precedente"
+msgstr "Azione: Premi"
 
 #: engines/twp/metaengine.cpp:171
-#, fuzzy
-#| msgid "Previous action"
 msgid "Pull action"
-msgstr "Azione precedente"
+msgstr "Azione: Tira"
 
 #: engines/twp/metaengine.cpp:172
-#, fuzzy
-#| msgid "Next action"
 msgid "Use action"
-msgstr "Azione successiva"
+msgstr "Azione: Usa"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
