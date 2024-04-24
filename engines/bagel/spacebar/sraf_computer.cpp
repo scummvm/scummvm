@@ -803,7 +803,7 @@ bool SrafComputer::VerifyDispatchTeam() {
 			}
 		}
 
-		// Redraw the screen with the meeting with column colapsed and
+		// Redraw the screen with the meeting with column collapsed and
 		// the checkmarks out of the staffer columns.  This assures that
 		// any screen capture will come back to us ready for display to the
 		// user.
@@ -822,9 +822,7 @@ bool SrafComputer::VerifyDispatchTeam() {
 		NotifyBoss(sStr, pTeamItem->m_nTeamCaptain);
 
 		// All done with our team item, trash it.
-		if (bValidTeam && pTeamItem != nullptr) {
-			delete pTeamItem;
-		}
+		delete pTeamItem;
 
 		UpdateWindow();
 	}
@@ -2507,7 +2505,7 @@ int SrafComputer::GetAdjustedIndex(int nListToSearch, int nElementIndex, bool bS
 
 		for (int i = 0; i <= NUM_OTHER_PARTYS; i++) {
 			// Get all consecutive that are not available.
-			while (g_stOtherPartys[i].m_bAvailable == false && i <= NUM_OTHER_PARTYS) {
+			while (i <= NUM_OTHER_PARTYS && g_stOtherPartys[i].m_bAvailable == false) {
 				nTotalNotAvail++;
 				i++;
 			}
@@ -2526,7 +2524,7 @@ int SrafComputer::GetAdjustedIndex(int nListToSearch, int nElementIndex, bool bS
 
 		for (int i = 0; i <= NUM_BUYERS; i++) {
 			// get all consecutive that are not available.
-			while (g_stSellerNames[i].m_bAvailable == false && i <= NUM_SELLERS) {
+			while (i <= NUM_SELLERS && g_stSellerNames[i].m_bAvailable == false) {
 				nTotalNotAvail++;
 				i++;
 			}
@@ -2545,7 +2543,7 @@ int SrafComputer::GetAdjustedIndex(int nListToSearch, int nElementIndex, bool bS
 
 		for (int i = 0; i <= NUM_BUYERS; i++) {
 			// Get all consecutive that are not available.
-			while (g_stBuyerBids[i].m_bAvailable == false && i <= NUM_BUYERS) {
+			while (i <= NUM_BUYERS && g_stBuyerBids[i].m_bAvailable == false) {
 				nTotalNotAvail++;
 				i++;
 			}
@@ -2564,7 +2562,7 @@ int SrafComputer::GetAdjustedIndex(int nListToSearch, int nElementIndex, bool bS
 
 		for (int i = 0; i <= NUM_BUYERS; i++) {
 			// Get all consecutive that are not available.
-			while (g_staffers[i].m_bAvailable == false && i <= NUM_STAFFERS) {
+			while (i <= NUM_STAFFERS && g_staffers[i].m_bAvailable == false) {
 				nTotalNotAvail++;
 				i++;
 			}
@@ -2776,8 +2774,6 @@ void SrafComputer::OnListDispatchTeam() {
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
 	int nElementIndex;
-	int nPreceedingHeaders = 0;
-	int nListToCheck = 0;
 
 	// First two entries in list mean nothing to us...
 	if (m_nSelection < 2)
@@ -2795,6 +2791,8 @@ void SrafComputer::OnListDispatchTeam() {
 		CBofRect    cMeetMember(0, 0, cMeetWithRect.left + kStandardDoubleIndentation * kBuyerBidsPointWidth, cMeetWithRect.bottom);
 		int         nMeetMember = -1;
 		bool        bInMeetMemberColumn = false;
+		int         nPreceedingHeaders = 0;
+		int         nListToCheck = 0;
 
 		switch (gDispatchCurState) {
 		case 0:
@@ -3362,28 +3360,29 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 				}
 			case DORK44: {
 				// Negotiating team must be at least half female.
-				int     nMale = 0;
-				int     nFemale = 0;
 				if (teamListItem.m_nMeetWithID == DORK44) {
+					int nMale = 0;
+					int nFemale = 0;
+
 					for (int k = 0; k < NUM_STAFFERS; k++) {
 						switch (k) {
 						case 0:
-							nMale += (teamListItem.m_nFlags & mNorg72 ? 1 : 0);
+							nMale += (teamListItem.m_nFlags & mNorg72) ? 1 : 0;
 							break;
 						case 1:
-							nFemale += (teamListItem.m_nFlags & mPnurth81 ? 1 : 0);
+							nFemale += (teamListItem.m_nFlags & mPnurth81) ? 1 : 0;
 							break;
 						case 2:
-							nFemale += (teamListItem.m_nFlags & mZig64 ? 1 : 0);
+							nFemale += (teamListItem.m_nFlags & mZig64) ? 1 : 0;
 							break;
 						case 3:
-							nFemale += (teamListItem.m_nFlags & mLentil24 ? 1 : 0);
+							nFemale += (teamListItem.m_nFlags & mLentil24) ? 1 : 0;
 							break;
 						case 4:
-							nMale += (teamListItem.m_nFlags & mVargas20 ? 1 : 0);
+							nMale += (teamListItem.m_nFlags & mVargas20) ? 1 : 0;
 							break;
 						case 5:
-							nMale += (teamListItem.m_nFlags & mChurg53 ? 1 : 0);
+							nMale += (teamListItem.m_nFlags & mChurg53) ? 1 : 0;
 							break;
 						}
 					}
