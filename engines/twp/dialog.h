@@ -47,6 +47,9 @@ public:
 	Text _text;
 	Common::SharedPtr<YStatement> _stmt;
 	Dialog *_dlg = nullptr;
+	float _shakeTime = 0.f;
+	bool _over = false;
+	Common::ScopedPtr<Motor> _shake;
 };
 
 struct DialogContext {

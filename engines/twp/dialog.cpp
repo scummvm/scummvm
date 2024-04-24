@@ -248,6 +248,23 @@ void Dialog::update(float dt) {
 			if (slot->_isValid) {
 				Rectf rect = Rectf::fromPosAndSize(slot->getPos() - Math::Vector2d(0.f, -slot->getSize().getY() / 2.f), slot->getSize());
 				bool over = rect.contains(_mousePos);
+				// shake choice when cursor is over
+				if ((slot->_shakeTime > 0.0f) && slot->_shake) {
+					slot->_shake->update(dt);
+					slot->_shakeTime -= dt;
+					if (slot->_shakeTime < 0.f) {
+						slot->_shakeTime = 0.f;
+					}
+				}
+				if (over && !slot->_over && slot->_shakeTime < 0.1f) {
+					slot->_shakeTime = 0.25f;
+					slot->_shake = Common::ScopedPtr<Motor>(new Shake(slot, 0.6f));
+					slot->_over = over;
+				}
+				if (!over) {
+					slot->_over = false;
+				}
+				// slide choice text wen text is too large
 				if (rect.r.w > (SCREEN_WIDTH - SLOTMARGIN)) {
 					if (over) {
 						if ((rect.r.w + slot->getPos().getX()) > (SCREEN_WIDTH - SLOTMARGIN)) {
@@ -490,9 +507,9 @@ void Dialog::drawCore(const Math::Matrix4 &trsf) {
 		DialogSlot *slot = &_slot;
 		if (slot->_isValid) {
 			Color c = slot->_text.getColor();
-			Math::Matrix4 t(trsf);
+			Math::Matrix4 t(slot->getTrsf(trsf));
 			float alpha = CLIP(6.f * (fadeTime - slotNum * slotDelay), 0.f, 1.f);
-			t.translate(Math::Vector3d(slot->getPos().getX(), slot->getPos().getY() + (6.f * alpha), 0.f));
+			t.translate(Math::Vector3d(0.f, (6.f * alpha), 0.f));
 			slot->_text.setColor(Color::withAlpha(c, alpha));
 			slot->_text.draw(g_twp->getGfx(), t);
 			slotNum++;
