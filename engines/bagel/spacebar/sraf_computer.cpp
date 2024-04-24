@@ -2725,7 +2725,6 @@ void SrafComputer::OnListBuyerBids() {
 		return;
 	}
 
-#if USETEXTWIDTHS
 	char szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
 
@@ -2740,12 +2739,6 @@ void SrafComputer::OnListBuyerBids() {
 	CBofPoint       cStartPoint(cDummyRect.right, 0);
 	cAcceptBidRect.OffsetRect(cStartPoint);
 	cAcceptBidRect.bottom = 1000;
-#else
-	CBofRect    cAcceptBidRect(kFirstMineralColumn * kBuyerBidsPointWidth + NUM_MINERALS * kBuyerBidsPointWidth * kMineralColWidth,
-	                           kLineItemHeight,
-	                           gCompDisplay.right,
-	                           (kLineItemHeight + 1) * NUM_BUYERS);
-#endif
 
 	//  Based on the location of the mouse determine if we should check/uncheck
 	//  the "accept bid" field or present a bio on he who was checked.
@@ -3668,8 +3661,6 @@ void SrafComputer::OnListCodeWords() {
 		return;
 	}
 
-#if USETEXTWIDTHS
-
 	// Calculate the text width based on the attributes of the text
 	// rather than guessing to where they are.
 	AlignAtColumn(sStr, "", kGroup1Col2);
@@ -3694,30 +3685,6 @@ void SrafComputer::OnListCodeWords() {
 
 	// Extend each rectangle to the bottom of the screen.
 	cCol1Rect.bottom = cCol2Rect.bottom = cCol3Rect.bottom = cCol4Rect.bottom = 1000;
-#else
-
-	nTextWidth = 8;         // ??? brian, just guessing at the width of a
-	// monowidth font would be
-	CBofRect        cCol1Rect(0,
-	                          gCompDisplay.top,
-	                          (kGroup1Col2 - 5) * nTextWidth,
-	                          gCompDisplay.bottom);
-
-	CBofRect        cCol2Rect(kGroup1Col2 * nTextWidth,
-	                          gCompDisplay.top,
-	                          (kGroup1Col2 + 10) * nTextWidth,
-	                          999);
-
-	CBofRect        cCol3Rect(kGroup2Col1 * nTextWidth,
-	                          gCompDisplay.top,
-	                          (kGroup2Col1 + 10) * nTextWidth,
-	                          999);
-
-	CBofRect        cCol4Rect(kGroup2Col2 * nTextWidth,
-	                          gCompDisplay.top,
-	                          (kGroup2Col2 + 10) * nTextWidth,
-	                          999);
-#endif
 
 	// Figure out which words were picked
 

@@ -40,8 +40,6 @@ namespace SpaceBar {
 #define szBroke "You have insufficient funds for that purchase."
 #define szRefuse "The computer politely informs you that the House has a policy against two-fisted drinking."
 
-#define TWOLISTS (1)
-
 struct ST_BUTTONS {
 	const char *m_pszName;
 	const char *m_pszUp;
@@ -77,12 +75,8 @@ SBarComputer::SBarComputer() : CBagStorageDevWnd(),
 		_compDisplay(165, 36, 430, 220), _compTextWindow(0, 0, 639, 21) {
 	m_pDrinkBuff = nullptr;
 	m_pIngBuff = nullptr;
-#if TWOLISTS
 	m_pDrinkBox = nullptr;
 	m_pIngBox = nullptr;
-#else
-	m_pLBox = nullptr;
-#endif
 	m_pTBox = nullptr;
 	m_pDrinkList = nullptr;
 	m_pIngList = nullptr;
@@ -510,12 +504,6 @@ void SBarComputer::OnBofListBox(CBofObject * /*pListBox*/, int nItemIndex) {
 		m_pIngBox->RepaintAll();
 	}
 
-#if !TWOLISTS
-	// Highlight
-	if (m_pLBox)
-		m_pLBox->RepaintAll();
-#endif
-
 	ValidateAnscestors(nullptr);
 	if (m_eMode == DRINKMODE) {
 		m_pButtons[LISTD]->InvalidateRect(nullptr);
@@ -553,12 +541,8 @@ void SBarComputer::SetOff() {
 
 		m_nDrinkSelect = -1;
 
-#if TWOLISTS
 		m_pDrinkBox->Hide();
 		m_pIngBox->Hide();
-#else
-		DeleteListBox();
-#endif
 
 		DeleteTextBox();
 
@@ -584,23 +568,6 @@ void SBarComputer::SetOff() {
 
 void SBarComputer::SetDrink() {
 	if (m_eMode != DRINKMODE) {
-#if !TWOLISTS
-		ErrorCode error = CreateListBox();
-		Assert(error == ERR_NONE);
-
-		int numItems = m_pDrinkList->GetCount();
-
-		// populate listbox
-		for (int i = 0; i < numItems; ++i) {
-			SBarCompItem CompItem = m_pDrinkList->GetNodeItem(i);
-			//CBofString cText(CompItem.m_pItem);
-			// m_pLBox->AddToTail( cText, true);
-			m_pLBox->AddToTail(CBofString(CompItem.m_pItem), false);
-		}
-		// show list box
-		m_nSelection = -1;
-#endif
-
 		DeleteTextBox();
 
 		// Prevents the white flash when the show window is performed
@@ -641,22 +608,6 @@ void SBarComputer::SetIng() {
 	if (m_eMode != INGMODE) {
 		DeleteTextBox();
 
-#if !TWOLISTS
-		ErrorCode error = CreateListBox();
-		Assert(error == ERR_NONE);
-
-		int numItems = m_pIngList->GetCount();
-
-		// populate listbox
-		for (int i = 0; i < numItems; ++i) {
-			SBarCompItem CompItem = m_pIngList->GetNodeItem(i);
-			m_pLBox->AddToTail(CBofString(CompItem.m_pItem), false);
-		}
-
-		// show list box
-		m_nSelection = -1;
-#endif
-
 		// Prevents the white flash when the show window is performed
 		m_pButtons[DRINKS]->Select();
 
@@ -695,12 +646,8 @@ void SBarComputer::SetIng() {
 
 void SBarComputer::SetList() {
 	if (m_eMode != LISTMODE) {
-#if TWOLISTS
 		m_pDrinkBox->Hide();
 		m_pIngBox->Hide();
-#else
-		m_pLBox->Hide();
-#endif
 
 		SBarCompItem CompItem;
 		if (m_eMode == DRINKMODE) {
@@ -821,7 +768,6 @@ void SBarComputer::Order() {
 }
 
 void SBarComputer::PageUp() {
-#if TWOLISTS
 	if (m_eMode == DRINKMODE) {
 		if (m_pDrinkBox) {
 			m_pDrinkBox->PageUp();
@@ -831,15 +777,9 @@ void SBarComputer::PageUp() {
 			m_pIngBox->PageUp();
 		}
 	}
-#else
-	if (m_pLBox) {
-		m_pLBox->PageUp();
-	}
-#endif
 }
 
 void SBarComputer::PageDown() {
-#if TWOLISTS
 	if (m_eMode == DRINKMODE) {
 		if (m_pDrinkBox) {
 			m_pDrinkBox->PageDown();
@@ -849,11 +789,6 @@ void SBarComputer::PageDown() {
 			m_pIngBox->PageDown();
 		}
 	}
-#else
-	if (m_pLBox) {
-		m_pLBox->PageDown();
-	}
-#endif
 }
 
 void SBarComputer::OnBofButton(CBofObject *pObject, int nState) {
@@ -924,7 +859,6 @@ void SBarComputer::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 
 	switch (lKey) {
 	case BKEY_UP:
-#if TWOLISTS
 		if (m_eMode == DRINKMODE) {
 			if (m_pDrinkBox) {
 				m_pDrinkBox->LineUp();
@@ -932,66 +866,36 @@ void SBarComputer::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 		} else if (m_pIngBox) {
 			m_pIngBox->LineUp();
 		}
-#else
-		if (m_pLBox != nullptr) {
-			m_pLBox->LineUp();
-		}
-#endif
-
 		break;
 
 	case BKEY_DOWN:
-#if TWOLISTS
 		if (m_eMode == DRINKMODE) {
-
 			if (m_pDrinkBox) {
 				m_pDrinkBox->LineDown();
 			}
 		} else if (m_pIngBox) {
 			m_pIngBox->LineDown();
 		}
-#else
-		if (m_pLBox != nullptr) {
-			m_pLBox->LineDown();
-		}
-#endif
 		break;
 
 	case BKEY_PAGEUP:
-
-#if TWOLISTS
 		if (m_eMode == DRINKMODE) {
-
 			if (m_pDrinkBox) {
 				m_pDrinkBox->PageUp();
 			}
-
 		} else if (m_pIngBox) {
 			m_pIngBox->PageUp();
 		}
-#else
-		if (m_pLBox != nullptr) {
-			m_pLBox->PageUp();
-		}
-#endif
-
 		break;
 
 	case BKEY_PAGEDOWN:
-#if TWOLISTS
 		if (m_eMode == DRINKMODE) {
-
 			if (m_pDrinkBox) {
 				m_pDrinkBox->PageDown();
 			}
 		} else if (m_pIngBox) {
 			m_pIngBox->PageDown();
 		}
-#else
-		if (m_pLBox != nullptr) {
-			m_pLBox->PageDown();
-		}
-#endif
 		break;
 
 	default:
