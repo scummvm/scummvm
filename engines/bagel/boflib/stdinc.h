@@ -99,17 +99,7 @@ struct WindowPos {
  */
 extern void BofAssert(bool bExpression, int nLine, const char *pszSourceFile, const char *pszTimeStamp);
 
-#ifdef _DEBUG
 #define Assert(f) assert(f)
-#else
-
-#ifdef __TIMESTAMP__
-#define Assert(f) BofAssert(f, __LINE__, __FILE__, __TIMESTAMP__)
-#else
-#define Assert(f) BofAssert(f, __LINE__, __FILE__, nullptr)
-#endif /* __TIMESTAMP__ */
-
-#endif /* _DEBUG */
 
 } // namespace Bagel
 

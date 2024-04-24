@@ -117,14 +117,7 @@ bool CBagSoundObject::RunObject() {
 
 			if (m_wFlags & SOUND_MIDI)
 				m_pMidiSound = m_pSound;
-		}
-#ifndef BOF_FINAL_RELEASE
-		//
-		// This would be much cooler if it were a cast to another object type and
-		// then a run.  But this is a quicker fix.
-		//
-		else { /* if no sound */
-
+		} else { /* if no sound */
 			if (!(m_wFlags & SOUND_MIDI)) {
 
 				int nExt = GetFileName().GetLength() - 4; // ".EXT"
@@ -149,7 +142,6 @@ bool CBagSoundObject::RunObject() {
 				}
 			}
 		}
-#endif
 	}
 
 	return CBagObject::RunObject();

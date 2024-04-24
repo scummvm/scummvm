@@ -23,11 +23,7 @@
 #ifndef BAGEL_BAGLIB_PAN_BITMAP_H
 #define BAGEL_BAGLIB_PAN_BITMAP_H
 
-#ifdef COMPRESSED
-#include "bagel/boflib/gfx/compressed_bitmap.h"
-#else
 #include "bagel/boflib/gfx/bitmap.h"
-#endif
 #include "bagel/boflib/fixed.h"
 
 namespace Bagel {
@@ -35,13 +31,7 @@ namespace Bagel {
 #define MAXDIVVIEW (12.8 / 3)     // Ratio for 480x380 Screen
 #define DEFFOV (360 / MAXDIVVIEW) //    1TO1 Paint FOV
 
-class CBagPanBitmap :
-#ifdef COMPRESSED
-	public CBofCompressedBitmap
-#else
-	public CBofBitmap
-#endif
-{
+class CBagPanBitmap : public CBofBitmap {
 public:
 	enum Direction {
 		kDirNONE = 0x0,
