@@ -53,9 +53,9 @@ protected:
 	CBagVar *m_pPlayingVar;
 	CBagVar *m_pDiscVar;
 
-	double              m_fTimerDiff;
-	double              m_fTimer;
-	int                 m_nStartTime;
+	double   m_fTimerDiff;
+	double   m_fTimer;
+	int      m_nStartTime;
 
 public:
 	SBarVidWnd();

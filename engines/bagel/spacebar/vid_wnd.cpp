@@ -306,31 +306,37 @@ const char *BuildVidDir(const char *pszFile) {
 void SBarVidBut::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *pInfo) {
 	switch (GetRefId()) {
 
-	case VID_PLAY_BUT:
+	case VID_PLAY_BUT: {
+		SBarVidWnd *vidWnd = (SBarVidWnd *)pInfo;
+		if (vidWnd->HasDisc()) {
+			vidWnd->SetPlayMode(1);
+			vidWnd->SetInc(PLAY_INC);
+		}
+		} break;
 
-		if (((SBarVidWnd *)pInfo)->HasDisc()) {
-			((SBarVidWnd *)pInfo)->SetPlayMode(1);
-			((SBarVidWnd *)pInfo)->SetInc(PLAY_INC);
+	case VID_FF_BUT: {
+		SBarVidWnd *vidWnd = (SBarVidWnd *)pInfo;
+		if (vidWnd->HasDisc()) {
+			vidWnd->SetPlayMode(2);
+			vidWnd->SetInc(FF_INC);
+		}
 		}
 		break;
 
-	case VID_FF_BUT:
-		if (((SBarVidWnd *)pInfo)->HasDisc()) {
-			((SBarVidWnd *)pInfo)->SetPlayMode(2);
-			((SBarVidWnd *)pInfo)->SetInc(FF_INC);
+	case VID_REW_BUT: {
+		SBarVidWnd *vidWnd = (SBarVidWnd *)pInfo;
+		if (vidWnd->HasDisc()) {
+			vidWnd->SetPlayMode(3);
+			vidWnd->SetInc(REW_INC);
+		}
 		}
 		break;
 
-	case VID_REW_BUT:
-		if (((SBarVidWnd *)pInfo)->HasDisc()) {
-			((SBarVidWnd *)pInfo)->SetPlayMode(3);
-			((SBarVidWnd *)pInfo)->SetInc(REW_INC);
+	case VID_STOP_BUT: {
+		SBarVidWnd *vidWnd = (SBarVidWnd *)pInfo;
+		vidWnd->SetPlayMode(0);
+		vidWnd->SetInc(0);
 		}
-		break;
-
-	case VID_STOP_BUT:
-		((SBarVidWnd *)pInfo)->SetPlayMode(0);
-		((SBarVidWnd *)pInfo)->SetInc(0);
 		break;
 
 	default:
