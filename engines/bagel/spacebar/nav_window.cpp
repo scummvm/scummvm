@@ -692,12 +692,11 @@ void CNavWindow::OnBofButton(CBofObject *pObject, int nState) {
 	case HELP: {
 		LogInfo("\tClicked Help");
 
-		CBagel *pApp;
-		CBagMasterWin *pWin;
-
 		KillTimer(777);
-		if ((pApp = CBagel::GetBagApp()) != nullptr) {
-			if ((pWin = pApp->GetMasterWnd()) != nullptr) {
+		CBagel *pApp = CBagel::GetBagApp();
+		if (pApp != nullptr) {
+			CBagMasterWin *pWin = pApp->GetMasterWnd();
+			if (pWin != nullptr) {
 				pWin->OnHelp(MakeDir("NAVHELP.TXT"));
 			}
 		}
@@ -1384,7 +1383,7 @@ void CNavWindow::CalcFuel(double hf) {
 		// WORKAROUND: m_pBackdrop shares it's palette with m_pCurLoc,
 		// so as the backdrop is changed, don't free the palette
 		m_pBackdrop->SetIsOwnPalette(false);
-		bool isDone = m_level == 3;
+		bool isDone = (m_level == 3);
 
 		if (m_level == 3) {
 			VARMNGR->GetVariable("NPASSEDTEST")->SetBoolValue(true);
