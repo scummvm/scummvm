@@ -40,7 +40,7 @@ public:
 	~Map();
 
 	bool generateNewMap();
-	bool generateMapWithInfo(uint8 generator, int seed, int mapSize, int tileset, int energy, int terrain, int water);
+	bool generateMapWithInfo(Common::String encodedMap, uint8 generator, int seed, int mapSize, int tileset, int energy, int terrain, int water);
 	Common::SeekableReadStream *substituteFile(const byte *fileName);
 
 	void deleteMap();
@@ -77,8 +77,8 @@ public:
 		return _mapGenerated;
 	}
 
-	Common::String getHash() const {
-		return _mapHash;
+	Common::String getEncodedMap() const {
+		return _encodedMap;
 	}
 
 private:
@@ -99,7 +99,7 @@ private:
 
 	bool _mapGenerated;
 	MapFile *_generatedMap;
-	Common::String _mapHash;
+	Common::String _encodedMap;
 
 	Common::SeekableReadStream *makeWiz();
 };

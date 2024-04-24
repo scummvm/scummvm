@@ -80,7 +80,7 @@ Net::Net(ScummEngine_v90he *vm) : _latencyTime(1), _fakeLatency(false), _vm(vm) 
 	_mapEnergy = 0;
 	_mapTerrain = 0;
 	_mapWater = 0;
-	_mapHash = Common::String();
+	_encodedMap = Common::String();
 
 	_hostPort = 0;
 
@@ -147,6 +147,7 @@ int Net::hostGame(char *sessionName, char *userName) {
 int Net::joinGame(Common::String IP, char *userName) {
 	debugC(DEBUG_NETWORK, "Net::joinGame(\"%s\", \"%s\")", IP.c_str(), userName); // PN_JoinTCPIPGame
 	Address address = getAddressFromString(IP);
+	bool getGeneratedMap = false;
 
 	bool isLocal = false;
 	// TODO: 20-bit block address (172.16.0.0 – 172.31.255.255)
@@ -182,14 +183,12 @@ int Net::joinGame(Common::String IP, char *userName) {
 			if (address.host == "255.255.255.255")
 				address.host = _sessions[0].host;
 			address.port = _sessions[0].port;
+			getGeneratedMap = _sessions[0].getGeneratedMap;
 
-			if (_gameName == "moonbase" && _sessions[0].mapGenerator > 0) {
-				generateMoonbaseMap(_sessions[0]);
-			}
 			stopQuerySessions();
 		}
 		// We got our address and port, attempt connection:
-		if (connectToSession(address.host, address.port)) {
+		if (connectToSession(address.host, address.port, getGeneratedMap)) {
 			// Connected, add our user.
 			return addUser(userName, userName);
 		} else {
@@ -202,13 +201,29 @@ int Net::joinGame(Common::String IP, char *userName) {
 	return 0;
 }
 
-bool Net::connectToSession(Common::String address, int port) {
+bool Net::connectToSession(Common::String address, int port, bool queryGeneratedMap) {
 	if (_hostPort)
 		_sessionHost = _enet->connectToHost("0.0.0.0", _hostPort, address, port);
 	else
 		_sessionHost = _enet->connectToHost(address, port);
 	if (!_sessionHost)
 		return false;
+
+	if (_gameName == "moonbase" && queryGeneratedMap) {
+		Common::String queryMap = Common::String("{\"cmd\":\"query_map\"}");
+
+		_sessionHost->send(queryMap.c_str(), 0, 0, true);
+
+		uint tickCount = 0;
+		while (_vm->_moonbase->_map->getGenerator() > 0) {
+			remoteReceiveData();
+			// Wait for five seconds for map data before giving up
+			tickCount += 5;
+			g_system->delayMillis(5);
+			if (tickCount >= 5000)
+				break;
+		}
+	}
 
 	return true;
 }
@@ -305,10 +320,10 @@ int Net::createSession(char *name) {
 			_mapEnergy = map->getEnergy();
 			_mapTerrain = map->getTerrain();
 			_mapWater = map->getWater();
-			_mapHash = map->getHash();
+			_encodedMap = map->getEncodedMap();
 			mapData = Common::String::format(
-				"{\"generator\":%d,\"seed\":%d,\"size\":%d,\"tileset\":%d,\"energy\":%d,\"terrain\":%d,\"water\":%d,\"hash\":\"%s\"}",
-				_mapGenerator, _mapSeed, _mapSize, _mapTileset, _mapEnergy, _mapTerrain, _mapWater, _mapHash.c_str());
+				"{\"generator\":%d,\"seed\":%d,\"size\":%d,\"tileset\":%d,\"energy\":%d,\"terrain\":%d,\"water\":%d,\"data\":\"%s\"}",
+				_mapGenerator, _mapSeed, _mapSize, _mapTileset, _mapEnergy, _mapTerrain, _mapWater, _encodedMap.c_str());
 		}
 	}
 
@@ -410,7 +425,7 @@ int Net::doJoinSession(Session session) {
 		generateMoonbaseMap(session);
 	}
 
-	bool success = connectToSession(session.host, session.port);
+	bool success = connectToSession(session.host, session.port, session.getGeneratedMap);
 	if (!success) {
 		if (!session.local) {
 			// Start up a relay session with the host.
@@ -446,23 +461,7 @@ int Net::doJoinSession(Session session) {
 }
 
 void Net::generateMoonbaseMap(Session session) {
-	uint8 mapAttempts = 0;
-	bool mapGenerated = false;
-	// Generate the host's map.
-	while (!mapGenerated) {
-		_vm->_moonbase->_map->generateMapWithInfo(session.mapGenerator, session.mapSeed, session.mapSize, session.mapTileset, session.mapEnergy, session.mapTerrain, session.mapWater);
-		if (_vm->_moonbase->_map->getHash() == session.mapHash) {
-			mapGenerated = true;
-		} else {
-			warning("NETWORK: Maps does not match, trying again...");
-			mapAttempts++;
-			if (mapAttempts == 10) {
-				// Maps are not matching... Give up.
-				warning("NETWORK: Unable to generate the host's map exactly. You may need to tell the host to disband and rehost the session. Continuing on, but expect mismatched stuff.");
-				mapGenerated = true;
-			}
-		}
-	}
+	_vm->_moonbase->_map->generateMapWithInfo(session.encodedMap, session.mapGenerator, session.mapSeed, session.mapSize, session.mapTileset, session.mapEnergy, session.mapTerrain, session.mapWater);
 }
 
 int Net::joinSession(int sessionIndex) {
@@ -545,7 +544,7 @@ int Net::endSession() {
 	_mapEnergy = 0;
 	_mapTerrain = 0;
 	_mapWater = 0;
-	_mapHash = "";
+	_encodedMap = "";
 
 	return 1;
 }
@@ -1033,7 +1032,7 @@ void Net::handleSessionServerData(Common::String data) {
 						if (mapData.contains("generator") && mapData.contains("seed") &&
 							mapData.contains("size") && mapData.contains("tileset") &&
 							mapData.contains("energy") && mapData.contains("terrain") &&
-							mapData.contains("water") && mapData.contains("hash")) {
+							mapData.contains("water") && mapData.contains("data")) {
 							session.mapGenerator = mapData["generator"]->asIntegerNumber();
 							session.mapSeed = mapData["seed"]->asIntegerNumber();
 							session.mapSize = mapData["size"]->asIntegerNumber();
@@ -1041,7 +1040,7 @@ void Net::handleSessionServerData(Common::String data) {
 							session.mapEnergy = mapData["energy"]->asIntegerNumber();
 							session.mapTerrain = mapData["terrain"]->asIntegerNumber();
 							session.mapWater = mapData["water"]->asIntegerNumber();
-							session.mapHash = mapData["hash"]->asString();
+							session.encodedMap = mapData["data"]->asString();
 						}
 					}
 					_sessions.push_back(session);
@@ -1145,16 +1144,9 @@ void Net::handleBroadcastData(Common::String data, Common::String host, int port
 		if (command == "get_session") {
 			// Session query.
 			if (_sessionHost) {
-				Common::String mapData = "{}";
-				if (_gameName == "moonbase" && _mapGenerator > 0) {
-					// Send over map data
-					mapData = Common::String::format(
-						"{\"generator\":%d,\"seed\":%d,\"size\":%d,\"tileset\":%d,\"energy\":%d,\"terrain\":%d,\"water\":%d,\"hash\":\"%s\"}",
-						_mapGenerator, _mapSeed, _mapSize, _mapTileset, _mapEnergy, _mapTerrain, _mapWater, _mapHash.c_str());
-				}
 				Common::String resp = Common::String::format(
-					"{\"cmd\":\"session_resp\",\"game\":\"%s\",\"version\":\"%s\",\"id\":%d,\"name\":\"%s\",\"players\":%d,\"map_data\":%s}",
-					_gameName.c_str(), _gameVersion.c_str(), _sessionId, _sessionName.c_str(), getTotalPlayers(), mapData.c_str());
+					"{\"cmd\":\"session_resp\",\"game\":\"%s\",\"version\":\"%s\",\"id\":%d,\"name\":\"%s\",\"players\":%d,\"generated_map\":%s}",
+					_gameName.c_str(), _gameVersion.c_str(), _sessionId, _sessionName.c_str(), getTotalPlayers(), _mapGenerator > 0 ? "true" : "false");
 
 				// Send this through the session host instead of the broadcast socket
 				// because that will send the correct port to connect to.
@@ -1207,21 +1199,8 @@ void Net::handleBroadcastData(Common::String data, Common::String host, int port
 				session.players = players;
 				session.timestamp = g_system->getMillis();
 
-				if (_gameName == "moonbase" && root.contains("map_data")) {
-					Common::JSONObject mapData = root["map_data"]->asObject();
-					if (mapData.contains("generator") && mapData.contains("seed") &&
-						mapData.contains("size") && mapData.contains("tileset") &&
-						mapData.contains("energy") && mapData.contains("terrain") &&
-						mapData.contains("water") && mapData.contains("hash")) {
-						session.mapGenerator = mapData["generator"]->asIntegerNumber();
-						session.mapSeed = mapData["seed"]->asIntegerNumber();
-						session.mapSize = mapData["size"]->asIntegerNumber();
-						session.mapTileset = mapData["tileset"]->asIntegerNumber();
-						session.mapEnergy = mapData["energy"]->asIntegerNumber();
-						session.mapTerrain = mapData["terrain"]->asIntegerNumber();
-						session.mapWater = mapData["water"]->asIntegerNumber();
-						session.mapHash = mapData["hash"]->asString();
-					}
+				if (_gameName == "moonbase" && root.contains("generated_map")) {
+					session.getGeneratedMap = root["generated_map"]->asBool();
 				}
 
 				_sessions.push_back(session);
@@ -1353,6 +1332,28 @@ void Net::remoteReceiveData() {
 						handleGameDataHost(json, peerIndex);
 					else
 						handleGameData(json, peerIndex);
+				} else if (_isHost && command == "query_map" && _gameName == "moonbase" && _mapGenerator > 0) {
+					// LAN connection wants generated map data
+					Common::String resp = Common::String::format(
+						"{\"cmd\":\"map_data\",\"generator\":%d,\"seed\":%d,\"size\":%d,\"tileset\":%d,\"energy\":%d,\"terrain\":%d,\"water\":%d,\"data\":\"%s\"}",
+						_mapGenerator, _mapSeed, _mapSize, _mapTileset, _mapEnergy, _mapTerrain, _mapWater, _encodedMap.c_str());
+					_sessionHost->send(resp.c_str(), peerIndex);
+				} else if (!_isHost && command == "map_data" && _gameName == "moonbase") {
+					if (root.contains("generator") && root.contains("seed") &&
+						root.contains("size") && root.contains("tileset") &&
+						root.contains("energy") && root.contains("terrain") &&
+						root.contains("water") && root.contains("data")) {
+						uint8 mapGenerator = root["generator"]->asIntegerNumber();
+						int mapSeed = root["seed"]->asIntegerNumber();
+						int mapSize = root["size"]->asIntegerNumber();
+						int mapTileset = root["tileset"]->asIntegerNumber();
+						int mapEnergy = root["energy"]->asIntegerNumber();
+						int mapTerrain = root["terrain"]->asIntegerNumber();
+						int mapWater = root["water"]->asIntegerNumber();
+						Common::String encodedMap = root["data"]->asString();
+
+						_vm->_moonbase->_map->generateMapWithInfo(encodedMap, mapGenerator, mapSeed, mapSize, mapTileset, mapEnergy, mapTerrain, mapWater);
+					}
 				}
 			}
 			if (_sessionHost)
