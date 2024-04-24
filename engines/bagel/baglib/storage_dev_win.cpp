@@ -629,9 +629,6 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 
 		// Get Operator SET or HOLD or RUN; on none RUN is default
 		GetAlphaNumFromStream(fpInput, sWorkStr);
-		if (fpInput.GetLineNumber() == 5067) {
-			warning("TODO");
-		}
 
 		if (sWorkStr.IsEmpty()) {
 			ParseAlertBox(fpInput, "Error in line No Operator:", __FILE__, __LINE__);

@@ -62,25 +62,31 @@ CBofRect CBagVariableObject::GetRect() {
 //   Takes in info and then removes the relative information and returns the info
 //   without the relevant info.
 PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
+	int nChanged;
+	bool nObjectUpdated = false;
+	char ch;
+
 	while (!istr.eof()) {
+		nChanged = 0;
+
 		istr.EatWhite();
 
-		char ch = (char)istr.peek();
-		switch (ch) {
-
+		switch (ch = (char)istr.peek()) {
 		//
-		//  SIZE n - n point size of the txt
+		// SIZE n - n point size of the txt
 		//
 		case 'S': {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256);
+			CBofString sStr(szLocalStr, 256);		// jwl 08.28.96 performance improvement
 
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("SIZE")) {
 				istr.EatWhite();
 				GetIntFromStream(istr, m_nPointSize);
+				nObjectUpdated = true;
+				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -88,14 +94,14 @@ PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 		break;
 
 		//
-		//  COLOR n - n color index
+		// COLOR n - n color index
 		//
-#define CTEXT_YELLOW RGB(255, 255, 0)
-#define CTEXT_WHITE RGB(255, 255, 255)
+		#define		CTEXT_YELLOW		RGB(255,255,0)
+		#define     CTEXT_WHITE			RGB(255,255,255)
 		case 'C': {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256);
+			CBofString sStr(szLocalStr, 256);		// jwl 08.28.96 performance improvement
 
 			GetAlphaNumFromStream(istr, sStr);
 
@@ -104,55 +110,41 @@ PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				GetIntFromStream(istr, nColor);
 				switch (nColor) {
-				case 0:
-					m_nFGColor = RGB(0, 0, 0);
-					break; // black
-				case 1:
-					m_nFGColor = RGB(255, 0, 0);
-					break;
-				case 2:
-					m_nFGColor = CTEXT_YELLOW;
-					break; // yellow
-				case 3:
-					m_nFGColor = RGB(0, 255, 0);
-					break;
-				case 4:
-					m_nFGColor = RGB(0, 255, 255);
-					break;
-				case 5:
-					m_nFGColor = RGB(0, 0, 255);
-					break;
-				case 6:
-					m_nFGColor = RGB(255, 0, 255);
-					break;
-				case 7:
-					m_nFGColor = CTEXT_WHITE;
-					break; // white
+				case 0:	m_nFGColor = RGB(0, 0, 0); break;							// black
+				case 1:	m_nFGColor = RGB(255, 0, 0); break;
+				case 2:	m_nFGColor = CTEXT_YELLOW; break;						// yellow
+				case 3:	m_nFGColor = RGB(0, 255, 0); break;
+				case 4:	m_nFGColor = RGB(0, 255, 255); break;
+				case 5:	m_nFGColor = RGB(0, 0, 255); break;
+				case 6:	m_nFGColor = RGB(255, 0, 255); break;
+				case 7:	m_nFGColor = CTEXT_WHITE; break;						// white
 				default:
 					break;
 				}
+				nObjectUpdated = true;
+				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
+			break;
 		}
-		break;
 
 		//
-		//  No match return from funtion
+		// No match return from funtion
 		//
-		default: {
-			PARSE_CODES rc = CBagObject::SetInfo(istr);
-			if (rc == PARSING_DONE) {
+		default:
+			PARSE_CODES rc;
+			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
 				return PARSING_DONE;
+			} else if (rc == UPDATED_OBJECT) {
+				nObjectUpdated = true;
+			} else if (!nChanged) {
+				if (nObjectUpdated)
+					return UPDATED_OBJECT;
+				else
+					return UNKNOWN_TOKEN;
 			}
-
-			if (rc == UPDATED_OBJECT) {
-				return PARSING_DONE;
-			}
-
-			return UNKNOWN_TOKEN;
-		}
-		break;
+			break;
 		}
 	}
 

@@ -256,14 +256,8 @@ CBofPoint GetMousePos() {
 
 
 void BofMessageBox(const char *pszTitle, const char *pszMessage) {
-	CBofCursor::Show();
-
-#if BOF_MAC
-	MacMessageBox(pszTitle, pszMessage);
-#else
-#endif
-
-	CBofCursor::Hide();
+	Common::String msg = Common::String::format("%s - %s", pszTitle, pszMessage);
+	g_engine->errorDialog(msg.c_str());
 }
 
 } // namespace Bagel
