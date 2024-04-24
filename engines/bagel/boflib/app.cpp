@@ -192,10 +192,6 @@ ErrorCode CBofApp::PreShutDown() {
 }
 
 ErrorCode CBofApp::PostShutDown() {
-#if BOFDISP
-	CBofDisplayObject::CleanUp();
-#endif
-
 	if (m_pWindow != nullptr) {
 		delete m_pWindow;
 		m_pWindow = nullptr;
