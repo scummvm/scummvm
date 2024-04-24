@@ -48,7 +48,6 @@
 #include "bagel/boflib/gfx/cursor.h"
 #include "bagel/boflib/error.h"
 #include "bagel/boflib/sound.h"
-#include "bagel/boflib/gfx/cursor.h"
 #include "bagel/boflib/gfx/palette.h"
 #include "bagel/boflib/gfx/sprite.h"
 #include "bagel/boflib/gui/window.h"

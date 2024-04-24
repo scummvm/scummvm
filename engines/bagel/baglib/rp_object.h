@@ -28,7 +28,6 @@
 #include "bagel/baglib/expression.h"
 #include "bagel/baglib/movie_object.h"
 #include "bagel/baglib/text_object.h"
-#include "bagel/baglib/variable_object.h"
 
 namespace Bagel {
 

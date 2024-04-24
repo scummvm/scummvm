@@ -29,7 +29,6 @@
 #include "bagel/boflib/gui/scroll_bar.h"
 #include "bagel/boflib/gui/button.h"
 #include "bagel/boflib/gui/edit_text.h"
-#include "bagel/boflib/string.h"
 
 namespace Bagel {
 

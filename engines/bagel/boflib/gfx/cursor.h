@@ -23,10 +23,8 @@
 #ifndef BAGEL_BOFLIB_GFX_CURSOR_H
 #define BAGEL_BOFLIB_GFX_CURSOR_H
 
-#include "graphics/managed_surface.h"
 #include "bagel/boflib/error.h"
 #include "bagel/boflib/object.h"
-#include "graphics/cursorman.h"
 
 namespace Bagel {
 

@@ -28,7 +28,6 @@
 #include "bagel/baglib/res.h"
 #include "bagel/boflib/gfx/bitmap.h"
 #include "bagel/boflib/string.h"
-#include "bagel/boflib/res.h"
 #include "bagel/baglib/parse_object.h"
 
 namespace Bagel {

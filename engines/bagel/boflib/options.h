@@ -24,6 +24,7 @@
 #define BAGEL_BOFLIB_OPTIONS_H
 
 #include "common/stream.h"
+
 #include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/llist.h"
 #include "bagel/boflib/object.h"

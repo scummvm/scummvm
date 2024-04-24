@@ -24,7 +24,6 @@
 #define BAGEL_BAGLIB_CREDITS_DIALOG_H
 
 #include "bagel/boflib/gui/dialog.h"
-#include "bagel/boflib/gui/button.h"
 #include "bagel/boflib/gfx/text.h"
 
 namespace Bagel {
