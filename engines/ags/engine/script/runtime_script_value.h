@@ -417,9 +417,9 @@ public:
 	uint8_t     ReadByte() const;
 	int16_t     ReadInt16() const;
 	int32_t     ReadInt32() const;
-	bool        WriteByte(uint8_t val);
-	bool        WriteInt16(int16_t val);
-	bool        WriteInt32(int32_t val);
+	void        WriteByte(uint8_t val);
+	void        WriteInt16(int16_t val);
+	void        WriteInt32(int32_t val);
 
 	// Convert to most simple pointer type by resolving RValue ptrs and applying offsets;
 	// non pointer types are left unmodified
