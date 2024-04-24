@@ -51,7 +51,11 @@ void lzw_decompress(uint8_t *data, size_t data_sz, int image_bpp, Shared::Stream
 // Saves bitmap with an optional palette compressed by LZW
 void save_lzw(Shared::Stream *out, const Shared::Bitmap *bmpp, const RGB(*pal)[256] = nullptr);
 // Loads bitmap decompressing
-Shared::Bitmap *load_lzw(Shared::Stream *in, int dst_bpp, RGB(*pal)[256] = nullptr);
+Shared::Bitmap *load_lzw(Shared::Stream *in, int dst_bpp, RGB (*pal)[256] = nullptr);
+
+// Deflate compression
+void deflate_compress(const uint8_t *data, size_t data_sz, int image_bpp, Shared::Stream *out);
+void inflate_decompress(uint8_t *data, size_t data_sz, int image_bpp, Shared::Stream *in, size_t in_sz);
 
 } // namespace AGS3
 
