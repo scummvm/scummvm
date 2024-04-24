@@ -22,12 +22,13 @@
 #include "bagel/baglib/help.h"
 #include "bagel/boflib/file.h"
 #include "bagel/baglib/bagel.h"
+#include "bagel/boflib/file_functions.h"
 #include "bagel/boflib/log.h"
 #include "bagel/boflib/std_keys.h"
 
 namespace Bagel {
 
-#define TEST 1
+#define RULES_DIR "$SBARDIR\\GENERAL\\RULES\\"
 
 #define HELP_OK_X  257
 #define HELP_OK_Y  377
@@ -83,10 +84,6 @@ ErrorCode CBagHelp::Attach() {
 	// Insert ours
 	pPal = m_pBackdrop->GetPalette();
 	CBofApp::GetApp()->SetPalette(pPal);
-
-#if !TEST
-	CBagStorageDevWnd::Attach();
-#endif
 
 	if ((m_pOKButton = new CBofBmpButton) != nullptr) {
 		CBofBitmap *pUp, *pDown, *pFocus, *pDis;
@@ -161,7 +158,7 @@ ErrorCode CBagHelp::Attach() {
 		ReportError(ERR_MEMORY, "Unable to allocate %d bytes to read %s.", lSize, m_cTextFile.GetBuffer());
 	}
 
-	CBofCursor::Show();
+	CBagCursor::ShowSystemCursor();
 
 	return m_errCode;
 }
@@ -170,7 +167,7 @@ ErrorCode CBagHelp::Attach() {
 ErrorCode CBagHelp::Detach() {
 	Assert(IsValidObject(this));
 
-	CBofCursor::Hide();
+	CBagCursor::HideSystemCursor();
 
 	if (m_pTextBox != nullptr) {
 		delete m_pTextBox;
@@ -290,16 +287,7 @@ void CBagHelp::OnBofButton(CBofObject *pObject, int nFlags) {
 }
 
 const char *BuildHelpDir(const char *pszFile) {
-	Assert(pszFile != nullptr);
-
-	static char szBuf[MAX_DIRPATH];
-
-	Common::sprintf_s(szBuf, "$SBARDIR%sGENERAL%sRULES%s%s", PATH_DELIMETER, PATH_DELIMETER, PATH_DELIMETER, pszFile);
-
-	CBofString cTemp(szBuf, MAX_DIRPATH);
-	MACROREPLACE(cTemp);
-
-	return &szBuf[0];
+	return formPath(RULES_DIR, pszFile);
 }
 
 void CBagHelp::OnInitDialog() {
