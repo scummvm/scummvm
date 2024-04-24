@@ -28,10 +28,7 @@
 #include "bagel/boflib/gui/dialog.h"
 #include "bagel/boflib/rect.h"
 #include "bagel/boflib/error.h"
-#include "bagel/boflib/object.h"
 #include "bagel/boflib/gfx/palette.h"
-#include "bagel/boflib/llist.h"
-#include "bagel/baglib/storage_dev_win.h"
 
 namespace Bagel {
 

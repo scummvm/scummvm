@@ -25,7 +25,6 @@
 
 #include "bagel/baglib/object.h"
 #include "bagel/baglib/expression.h"
-#include "bagel/boflib/stdinc.h"
 
 namespace Bagel {
 

@@ -23,7 +23,6 @@
 #ifndef BAGEL_BAGLIB_BASE_PDA_H
 #define BAGEL_BAGLIB_BASE_PDA_H
 
-#include "bagel/boflib/stdinc.h"
 #include "bagel/baglib/storage_dev_bmp.h"
 
 namespace Bagel {

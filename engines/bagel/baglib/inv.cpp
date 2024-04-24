@@ -24,7 +24,6 @@
 #include "bagel/baglib/movie_object.h"
 #include "bagel/baglib/master_win.h"
 #include "bagel/baglib/zoom_pda.h"
-#include "bagel/boflib/sound.h"
 #include "bagel/baglib/pda.h"
 
 namespace Bagel {

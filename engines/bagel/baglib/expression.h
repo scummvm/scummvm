@@ -25,7 +25,6 @@
 
 #include "bagel/baglib/parse_object.h"
 #include "bagel/baglib/var.h"
-#include "bagel/boflib/string.h"
 #include "bagel/boflib/list.h"
 
 namespace Bagel {
