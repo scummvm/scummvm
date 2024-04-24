@@ -42,22 +42,22 @@ public:
 	virtual ~CBagVariableObject();
 
 	// Return true if the Object had members that are properly initialized/de-initialized
-	ErrorCode Attach();
-	ErrorCode Detach();
+	ErrorCode Attach() override;
+	ErrorCode Detach() override;
 
-	CBofRect GetRect();
+	CBofRect GetRect() override;
 
 	CBofSize GetSize() {
 		return m_xSize;
 	}
 
-	void SetSize(const CBofSize &xSize) {
+	void SetSize(const CBofSize &xSize) override {
 		m_xSize = xSize;
 	}
 
 	PARSE_CODES SetInfo(bof_ifstream &istr) override;
 
-	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int);
+	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int) override;
 	ErrorCode Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int);
 
 	int MapFontPointSize(int size) const {
