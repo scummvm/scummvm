@@ -965,16 +965,27 @@ Common::Error TwpEngine::run() {
 				case TwpAction::kUse:
 					setVerbAction(1 + (int)e.customType - (int)TwpAction::kOpen);
 					break;
-				}
+				default:
 				break;
+				}
 			} break;
 			case Common::EVENT_KEYDOWN:
 				switch (e.kbd.keycode) {
 				case Common::KEYCODE_LEFT:
-					_speed = MAX(_speed - 1, 1);
+					if(_control)
+						_speed = MAX(_speed - 1, 1);
+					_cursor.holdLeft = true;
 					break;
 				case Common::KEYCODE_RIGHT:
-					_speed = MIN(_speed + 1, 8);
+					if(_control)
+						_speed = MIN(_speed + 1, 8);
+					_cursor.holdRight = true;
+					break;
+				case Common::KEYCODE_UP:
+					_cursor.holdUp = true;
+					break;
+				case Common::KEYCODE_DOWN:
+					_cursor.holdDown = true;
 					break;
 				case Common::KEYCODE_LCTRL:
 					_control = true;
@@ -985,6 +996,18 @@ Common::Error TwpEngine::run() {
 				break;
 			case Common::EVENT_KEYUP:
 				switch (e.kbd.keycode) {
+				case Common::KEYCODE_LEFT:
+					_cursor.holdLeft = false;
+					break;
+				case Common::KEYCODE_RIGHT:
+					_cursor.holdRight = false;
+					break;
+				case Common::KEYCODE_UP:
+					_cursor.holdUp = false;
+					break;
+				case Common::KEYCODE_DOWN:
+					_cursor.holdDown = false;
+					break;
 				case Common::KEYCODE_LCTRL:
 					_control = false;
 					break;
@@ -1043,6 +1066,20 @@ Common::Error TwpEngine::run() {
 			default:
 				break;
 			}
+		}
+
+		const float mouseMoveSpeed = 4.f;
+		if(_cursor.holdLeft) {
+			_cursor.pos.setX(MAX(_cursor.pos.getX() - mouseMoveSpeed, 0.f));
+		}
+		if(_cursor.holdRight) {
+			_cursor.pos.setX(MIN(_cursor.pos.getX() + mouseMoveSpeed, (float)SCREEN_WIDTH));
+		}
+		if(_cursor.holdUp) {
+			_cursor.pos.setY(MAX(_cursor.pos.getY() - mouseMoveSpeed, 0.f));
+		}
+		if(_cursor.holdDown) {
+			_cursor.pos.setY(MIN(_cursor.pos.getY() + mouseMoveSpeed, (float)SCREEN_HEIGHT));
 		}
 
 		uint32 newTime = _system->getMillis();

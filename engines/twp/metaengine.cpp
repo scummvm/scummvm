@@ -21,6 +21,7 @@
 
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/action.h"
+#include "backends/keymapper/standard-actions.h"
 #include "common/translation.h"
 #include "common/savefile.h"
 #include "engines/advancedDetector.h"
@@ -142,41 +143,58 @@ Common::Array<Common::Keymap *> TwpMetaEngine::initKeymaps(const char *target) c
 		const char *name;
 		const char *desc;
 		Twp::TwpAction action;
-		const char *input;
+		char inputs[32];
+		Common::EventType event;
+		Common::KeyCode key;
 	} actions[] = {
-		{"SKIPCUTSCENE", _s("Skip cutscene"), Twp::kSkipCutscene, "ESCAPE"},
-		{"SELECTACTOR1", _s("Select Actor 1"), Twp::kSelectActor1, "1"},
-		{"SELECTACTOR2", _s("Select Actor 2"), Twp::kSelectActor2, "2"},
-		{"SELECTACTOR3", _s("Select Actor 3"), Twp::kSelectActor3, "3"},
-		{"SELECTACTOR4", _s("Select Actor 4"), Twp::kSelectActor4, "4"},
-		{"SELECTACTOR5", _s("Select Actor 5"), Twp::kSelectActor5, "5"},
-		{"SELECTACTOR6", _s("Select Actor 6"), Twp::kSelectActor6, "6"},
-		{"SELECTCHOICE1", _s("Select Choice 1"), Twp::kSelectChoice1, "1"},
-		{"SELECTCHOICE2", _s("Select Choice 2"), Twp::kSelectChoice2, "2"},
-		{"SELECTCHOICE3", _s("Select Choice 3"), Twp::kSelectChoice3, "3"},
-		{"SELECTCHOICE4", _s("Select Choice 4"), Twp::kSelectChoice4, "4"},
-		{"SELECTCHOICE5", _s("Select Choice 5"), Twp::kSelectChoice5, "5"},
-		{"SELECTCHOICE6", _s("Select Choice 6"), Twp::kSelectChoice6, "6"},
-		{"SELECTNEXTACTOR", _s("Select Next Actor"), Twp::kSelectNextActor, "0"},
-		{"SELECTPREVACTOR", _s("Select Previous Actor"), Twp::kSelectPreviousActor, "9"},
-		{"SKIPTEXT", _s("Skip Text"), Twp::kSkipText, "PERIOD"},
-		{"SHOWHOTSPOTS", _s("Show hotspots"), Twp::kShowHotspots, "TAB"},
-		{"OPEN", _s("Open"), Twp::kOpen, "q"},
-		{"CLOSE", _s("Close"), Twp::kClose, "a"},
-		{"GIVE", _s("Give"), Twp::kGive, "z"},
-		{"PICKUP", _s("Pick up"), Twp::kPickUp, "w"},
-		{"LOOKAT", _s("Look at"), Twp::kLookAt, "s"},
-		{"TALKTO", _s("Talk to"), Twp::kTalkTo, "x"},
-		{"PUSH", _s("Push"), Twp::kPush, "e"},
-		{"PULL", _s("Pull"), Twp::kPull, "d"},
-		{"USE", _s("Use"), Twp::kUse, "c"},
-		{0, 0, Twp::kSkipCutscene, 0}};
+		{"ACTION", _s("Action"), Twp::kDefaultAction, "MOUSE_LEFT|JOY_A|RETURN", Common::EVENT_LBUTTONDOWN, Common::KEYCODE_INVALID},
+		{Common::kStandardActionMoveLeft, _s("Left"), Twp::kMoveLeft, "LEFT|JOY_LEFT", Common::EVENT_INVALID, Common::KEYCODE_LEFT},
+		{Common::kStandardActionMoveRight, _s("Right"), Twp::kMoveRight, "RIGHT|JOY_RIGHT", Common::EVENT_INVALID, Common::KEYCODE_RIGHT},
+		{Common::kStandardActionMoveUp, _s("Up"), Twp::kMoveUp, "UP|JOY_UP", Common::EVENT_INVALID, Common::KEYCODE_UP},
+		{Common::kStandardActionMoveDown, _s("Down"), Twp::kMoveDown, "DOWN|JOY_DOWN", Common::EVENT_INVALID, Common::KEYCODE_DOWN},
+		{"SKIPCUTSCENE", _s("Skip cutscene"), Twp::kSkipCutscene, "ESCAPE", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"SELECTACTOR1", _s("Select Actor 1"), Twp::kSelectActor1, "1", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"SELECTACTOR2", _s("Select Actor 2"), Twp::kSelectActor2, "2", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"SELECTACTOR3", _s("Select Actor 3"), Twp::kSelectActor3, "3", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"SELECTACTOR4", _s("Select Actor 4"), Twp::kSelectActor4, "4", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"SELECTACTOR5", _s("Select Actor 5"), Twp::kSelectActor5, "5", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"SELECTACTOR6", _s("Select Actor 6"), Twp::kSelectActor6, "6", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"SELECTCHOICE1", _s("Select Choice 1"), Twp::kSelectChoice1, "1", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"SELECTCHOICE2", _s("Select Choice 2"), Twp::kSelectChoice2, "2", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"SELECTCHOICE3", _s("Select Choice 3"), Twp::kSelectChoice3, "3", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"SELECTCHOICE4", _s("Select Choice 4"), Twp::kSelectChoice4, "4", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"SELECTCHOICE5", _s("Select Choice 5"), Twp::kSelectChoice5, "5", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"SELECTCHOICE6", _s("Select Choice 6"), Twp::kSelectChoice6, "6", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"SELECTNEXTACTOR", _s("Select Next Actor"), Twp::kSelectNextActor, "0", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"SELECTPREVACTOR", _s("Select Previous Actor"), Twp::kSelectPreviousActor, "9", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"SKIPTEXT", _s("Skip Text"), Twp::kSkipText, "MOUSE_MIDDLE|PERIOD", Common::EVENT_MBUTTONDOWN, Common::KEYCODE_INVALID},
+		{"SHOWHOTSPOTS", _s("Show hotspots"), Twp::kShowHotspots, "TAB", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"OPEN", _s("Open"), Twp::kOpen, "q", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"CLOSE", _s("Close"), Twp::kClose, "a", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"GIVE", _s("Give"), Twp::kGive, "z", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"PICKUP", _s("Pick up"), Twp::kPickUp, "w", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"LOOKAT", _s("Look at"), Twp::kLookAt, "s", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"TALKTO", _s("Talk to"), Twp::kTalkTo, "x", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"PUSH", _s("Push"), Twp::kPush, "e", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"PULL", _s("Pull"), Twp::kPull, "d", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"USE", _s("Use"), Twp::kUse, "c", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{0, 0, Twp::kSkipCutscene, {}, Common::EVENT_INVALID, Common::KEYCODE_INVALID}};
 
 	Common::Action *act;
 	for (int i = 0; actions[i].name; i++) {
 		act = new Common::Action(actions[i].name, _(actions[i].desc));
 		act->setCustomEngineActionEvent(actions[i].action);
-		act->addDefaultInputMapping(actions[i].input);
+		char *strToken = strtok(actions[i].inputs, "|");
+		while (strToken) {
+			act->addDefaultInputMapping(strToken);
+			strToken = strtok(nullptr, "|");
+		}
+		if (actions[i].event != Common::EVENT_INVALID) {
+			act->setEvent(actions[i].event);
+		}
+		if (actions[i].key != Common::KEYCODE_INVALID) {
+			act->setKeyEvent(actions[i].key);
+		}
 		engineKeyMap->addAction(act);
 	}
 

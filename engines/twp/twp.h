@@ -234,6 +234,10 @@ public:
 		bool oldRightDown = false;
 		bool rightDown = false;
 		int doubleClick = false;
+		bool holdLeft = false;
+		bool holdRight = false;
+		bool holdUp = false;
+		bool holdDown = false;
 
 		void update() {
 			oldLeftDown = leftDown;
