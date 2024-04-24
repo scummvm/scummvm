@@ -66,7 +66,9 @@ private:
 		int mapEnergy = 0;
 		int mapTerrain = 0;
 		int mapWater = 0;
-		Common::String mapHash;
+		Common::String encodedMap;
+		// Used to query map data over LAN.
+		bool getGeneratedMap = false;
 	};
 	/**
 	 * Converts a formatted string into an Address object.
@@ -369,13 +371,14 @@ private:
 	 *
 	 * @param address Address of a session to connect to.
 	 * @param port Port number of a session to connect to.
+	 * @param queryGeneratedMap Querys generated map data for Moonbase Commander (currently only used for LAN connections).
 	 * @retval true on success
 	 * @retval false on failure.
 	 *
 	 * @see joinGame
 	 * @see doJoinSession
 	 */
-	bool connectToSession(Common::String address, int port);
+	bool connectToSession(Common::String address, int port, bool queryGeneratedMap);
 
 	/**
 	 * Method that actually attemps to join a session.
@@ -560,7 +563,7 @@ private:
 	int _mapEnergy;
 	int _mapTerrain;
 	int _mapWater;
-	Common::String _mapHash;
+	Common::String _encodedMap;
 
 	bool _isShuttingDown;
 

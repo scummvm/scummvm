@@ -22,7 +22,7 @@
 #include "common/compression/deflate.h"
 #include "common/config-manager.h"
 
-#include "common/md5.h"
+#include "common/base64.h"
 
 #include "common/memstream.h"
 #include "common/bufferedstream.h"
@@ -49,7 +49,7 @@ Map::Map(ScummEngine_v100he *vm) : _vm(vm), _rnd("moonbase") {
 	_terrain = -1;
 	_water = -1;
 
-	_mapHash = Common::String();
+	_encodedMap = Common::String();
 }
 
 Map::~Map() {
@@ -72,73 +72,91 @@ bool Map::generateNewMap() {
 	// map (or to debug with a prefixed seed).
 	_rnd.generateNewSeed();
 
-	int mapSize = 0;
 	if (ConfMan.hasKey("map_size"))
-		mapSize = ConfMan.getInt("map_size");
-	if (mapSize < 4 || mapSize > 10)
+		_size = ConfMan.getInt("map_size");
+	if (_size < 4 || _size > 10)
 		// Don't randomly pick nonstandard map sizes.
-		mapSize = _rnd.getRandomNumberRngSigned(4, 8);
+		_size = _rnd.getRandomNumberRngSigned(4, 8);
 
-	mapSize *= 8;
+	_size *= 8;
 
-	uint8 generator = 0;
 	if (ConfMan.hasKey("map_algorithm"))
-		generator = ConfMan.getInt("map_algorithm");
-	if (generator < SPIFF_GEN || generator > KATTON_GEN)
-		generator = _rnd.getRandomNumberRng(1, 2);
+		_generator = ConfMan.getInt("map_algorithm");
+	if (_generator < SPIFF_GEN || _generator > KATTON_GEN)
+		_generator = _rnd.getRandomNumberRng(1, 2);
 
-	int tileSet = 0;
 	if (ConfMan.hasKey("map_tileset"))
-		tileSet = ConfMan.getInt("map_tileset");
-	if (tileSet < 1 || tileSet > 6)
-		tileSet = _rnd.getRandomNumberRngSigned(1, 6);
+		_tileset = ConfMan.getInt("map_tileset");
+	if (_tileset < 1 || _tileset > 6)
+		_tileset = _rnd.getRandomNumberRngSigned(1, 6);
 
-	if (!strcmp(_vm->_game.variant, "Demo") && (tileSet == 1 ||
-		tileSet == 3 || tileSet == 5)) {
+	if (!strcmp(_vm->_game.variant, "Demo") && (_tileset == 1 ||
+		_tileset == 3 || _tileset == 5)) {
 		// Demo version only has tilesets 1, 2, 4 and 6.
 		switch (_rnd.getRandomNumber(3)) {
 		case 0:
-			tileSet = 1;
+			_tileset = 1;
 			break;
 		case 1:
-			tileSet = 2;
+			_tileset = 2;
 			break;
 		case 2:
-			tileSet = 4;
+			_tileset = 4;
 			break;
 		default:
-			tileSet = 6;
+			_tileset = 6;
 		}
 	}
 
-	int energy = -1;
 	if (ConfMan.hasKey("map_energy"))
-		energy = ConfMan.getInt("map_energy");
-	if (energy < 0 || energy > 6)
+		_energy = ConfMan.getInt("map_energy");
+	if (_energy < 0 || _energy > 6)
 		// Only use [2, 3, 4] of the legal [0, 1, 2, 3, 4, 5, 6]
-		energy = _rnd.getRandomNumberRngSigned(2, 4);
+		_energy = _rnd.getRandomNumberRngSigned(2, 4);
 
-	int terrain = -1;
 	if (ConfMan.hasKey("map_terrain"))
-		terrain = ConfMan.getInt("map_terrain");
-	if (terrain < 0 || terrain > 6)
+		_terrain = ConfMan.getInt("map_terrain");
+	if (_terrain < 0 || _terrain > 6)
 		// Only use [2, 3, 4] of the legal [0, 1, 2, 3, 4, 5, 6]
-		terrain = _rnd.getRandomNumberRngSigned(2, 4);
+		_terrain = _rnd.getRandomNumberRngSigned(2, 4);
 
-	int water = -1;
 	if (ConfMan.hasKey("map_water"))
-		water = ConfMan.getInt("map_water");
-	if (water < 0 || water > 6)
+		_water = ConfMan.getInt("map_water");
+	if (_water < 0 || _water > 6)
 		// Only use [2, 3, 4] of the legal [0, 1, 2, 3, 4, 5, 6]
-		water = _rnd.getRandomNumberRngSigned(2, 4);
+		_water = _rnd.getRandomNumberRngSigned(2, 4);
 
 	// 32767 is RAND_MAX on Windows
 	int seed = _rnd.getRandomNumber(32767);
 
-	return generateMapWithInfo(generator, seed, mapSize, tileSet, energy, terrain, water);
+	debug(1, "Map: Generating new map with info: generator = %d, seed = %d, size = %d, tileset = %d , energy = %d, terrain = %d, water = %d.", _generator, getSeed(), _size, _tileset, _energy, _terrain, _water);
+	switch (_generator) {
+	case SPIFF_GEN:
+	{
+		SpiffGenerator spiff = SpiffGenerator(seed);
+		_generatedMap = spiff.generateMap(_water, _tileset, _size, _energy, _terrain);
+		break;
+	}
+	case KATTON_GEN:
+	{
+		KattonGenerator katton = KattonGenerator(seed);
+		_generatedMap = katton.generateMap(_water, _tileset, _size, _energy, _terrain);
+		break;
+	}
+	default:
+		error("Map: Got unknown generator: %d", _generator);
+		return false;
+	}
+
+	// Encode the newly generated map file into base64 to transmit over the wire:
+	_encodedMap = Common::b64EncodeData(_generatedMap, sizeof(MapFile));
+	debug(2, "Map: Base64: %s", _encodedMap.c_str());
+
+	_mapGenerated = true;
+	return true;
 }
 
-bool Map::generateMapWithInfo(uint8 generator, int seed, int mapSize, int tileset, int energy, int terrain, int water) {
+bool Map::generateMapWithInfo(Common::String encodedMap, uint8 generator, int seed, int mapSize, int tileset, int energy, int terrain, int water) {
 	deleteMap();
 
 	_generator = generator;
@@ -148,32 +166,18 @@ bool Map::generateMapWithInfo(uint8 generator, int seed, int mapSize, int tilese
 	_energy = energy;
 	_terrain = terrain;
 	_water = water;
+	_encodedMap = encodedMap;
 
-	debug(1, "Map: Generating new map with info: generator = %d, seed = %d, mapSize = %d, tileset = %d , energy = %d, terrain = %d, water = %d.", generator, getSeed(), mapSize, tileset, energy, terrain, water);
-	switch (generator) {
-	case SPIFF_GEN:
-	{
-		SpiffGenerator spiff = SpiffGenerator(seed);
-		_generatedMap = spiff.generateMap(water, tileset, mapSize, energy, terrain);
-		break;
-	}
-	case KATTON_GEN:
-	{
-		KattonGenerator katton = KattonGenerator(seed);
-		_generatedMap = katton.generateMap(water, tileset, mapSize, energy, terrain);
-		break;
-	}
-	default:
-		error("Map: Got unknown generator: %d", generator);
+	// Decode base64 encoded map file
+	debug(1, "Map: Generating map with base64: encodedMap: %s, generator = %d, seed = %d, mapSize = %d, tileset = %d , energy = %d, terrain = %d, water = %d.", encodedMap.c_str(), generator, getSeed(), mapSize, tileset, energy, terrain, water);
+	_generatedMap = new MapFile();
+	bool success = Common::b64DecodeData(encodedMap, _generatedMap);
+	if (!success) {
+		warning("Map: Error has occured when decoding map data from base64");
 		return false;
 	}
-
-	// Compute MD5 hash of the newly generated map file:
-	Common::MemoryReadStream mapStream = Common::MemoryReadStream((byte *)_generatedMap, sizeof(MapFile));
-	_mapHash = Common::computeStreamMD5AsString(mapStream, 0);
-	debug(1, "Map: MD5: %s", _mapHash.c_str());
-
 	_mapGenerated = true;
+
 	return true;
 }
 
@@ -188,10 +192,10 @@ void Map::deleteMap() {
 		_size = 0;
 		_seed = 0;
 		_tileset = 0;
-		_energy = 0;
-		_terrain = 0;
-		_water = 0;
-		_mapHash = "";
+		_energy = -1;
+		_terrain = -1;
+		_water = -1;
+		_encodedMap = "";
 		debug(1, "Map: Deleted.");
 	}
 }
