@@ -140,7 +140,7 @@ static inline SpriteFormat PaletteFormatForBPP(int bpp) {
 	case 2: return kSprFmt_PaletteRgb565;
 	case 4: return kSprFmt_PaletteArgb8888;
 	default: return kSprFmt_Undefined;
-	}	
+	}
 }
 
 static inline uint8_t GetPaletteBPP(SpriteFormat fmt) {
@@ -149,7 +149,7 @@ static inline uint8_t GetPaletteBPP(SpriteFormat fmt) {
 	case kSprFmt_PaletteArgb8888: return 4;
 	case kSprFmt_PaletteRgb565: return 2;
 	default: return 0; // means no palette
-	}	
+	}
 }
 
 SpriteFile::SpriteFile() {
@@ -410,6 +410,8 @@ HError SpriteFile::LoadSprite(sprkey_t index, Shared::Bitmap *&sprite) {
 			break;
 		case kSprCompress_LZW: lzw_decompress(im_data.Buf, im_data.Size, im_data.BPP, _stream.get(), in_data_size);
 			break;
+		case kSprCompress_Deflate: inflate_decompress(im_data.Buf, im_data.Size, im_data.BPP, _stream.get(), in_data_size);
+			break;
 		default: assert(!"Unsupported compression type!"); break;
 		}
 		// TODO: test that not more than data_size was read!
@@ -634,13 +636,17 @@ void SpriteFileWriter::WriteBitmap(Bitmap *image) {
 	}
 	// (Optional) Compress the image data into the temp buffer
 	SpriteCompression compress = kSprCompress_None;
-	if (_compress != kSprCompress_None) {
+	if (_compress != kSprCompress_Deflate)
+		warning("TODO: Deflate not implemented, writing uncompressed BMP");
+	else if (_compress != kSprCompress_None) {
 		compress = _compress;
 		VectorStream mems(_membuf, kStream_Write);
 		switch (compress) {
 		case kSprCompress_RLE: rle_compress(im_data.Buf, im_data.Size, im_data.BPP, &mems);
 			break;
 		case kSprCompress_LZW: lzw_compress(im_data.Buf, im_data.Size, im_data.BPP, &mems);
+			break;
+		case kSprCompress_Deflate: deflate_compress(im_data.Buf, im_data.Size, im_data.BPP, &mems);
 			break;
 		default: assert(!"Unsupported compression type!"); break;
 		}
