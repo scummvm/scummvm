@@ -36,17 +36,18 @@ CBagBmpObject::~CBagBmpObject() {
 }
 
 ErrorCode CBagBmpObject::Attach(CBofPalette *pPalette) {
-	if ((m_xBmp = new CBofBitmap(GetFileName(), pPalette)) == nullptr) {
+	m_xBmp = new CBofBitmap(GetFileName(), pPalette);
+	if (m_xBmp == nullptr) {
 		BofMessageBox(m_xBmp->GetFileName(), __FILE__);
 	}
 	return CBagObject::Attach();
 }
 
 ErrorCode CBagBmpObject::Detach() {
-	if (m_xBmp) {
-		delete m_xBmp;
-		m_xBmp = nullptr;
-	}
+
+	delete m_xBmp;
+	m_xBmp = nullptr;
+
 	return CBagObject::Detach();
 }
 
@@ -62,8 +63,9 @@ ErrorCode CBagBmpObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRe
 	if (m_xBmp) {
 		m_nTrans = nMaskColor;
 		return m_xBmp->Paint(pWnd, pt.x, pt.y, pSrcRect, nMaskColor);
-	} else
-		return ERR_NONE;
+	}
+
+	return ERR_NONE;
 }
 
 ErrorCode CBagBmpObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
@@ -79,11 +81,14 @@ ErrorCode CBagBmpObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRe
 				pSrcRect->top -= pt.y;
 				pt.y = 0;
 			}
-			int offset;
-			if ((offset = pSrcRect->right + pt.x - s.cx) >= 0) {
+
+			int offset = pSrcRect->right + pt.x - s.cx;
+			if (offset >= 0) {
 				pSrcRect->right -= offset + 1;
 			}
-			if ((offset = pSrcRect->bottom + pt.y - s.cy) >= 0) {
+
+			offset = pSrcRect->bottom + pt.y - s.cy;
+			if (offset >= 0) {
 				pSrcRect->bottom -= offset + 1;
 			}
 		}
@@ -101,9 +106,9 @@ bool CBagBmpObject::IsInside(const CBofPoint &xPoint) {
 			int y = xPoint.y - GetRect().top;
 			int c = m_xBmp->ReadPixel(x, y);
 			return c != m_nTrans;
-		} else {
-			return true;
 		}
+
+		return true;
 	}
 
 	return false;
