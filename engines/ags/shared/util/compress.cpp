@@ -31,6 +31,8 @@
 #include "ags/shared/util/bbop.h"
 #endif
 
+#include "common/compression/deflate.h"
+
 namespace AGS3 {
 
 using namespace AGS::Shared;
@@ -427,6 +429,16 @@ Bitmap *load_lzw(Stream *in, int dst_bpp, RGB(*pal)[256]) {
 		in->Seek(end_pos, kSeekBegin);
 
 	return bmm;
+}
+
+void deflate_compress(const uint8_t *data, size_t data_sz, int /*image_bpp*/, Stream *out) {
+	// TODO
+}
+
+void inflate_decompress(uint8_t *data, size_t data_sz, int /*image_bpp*/, Stream *in, size_t in_sz) {
+	std::vector<uint8_t> in_buf(in_sz);
+	in->Read(in_buf.data(), in_sz);
+	Common::inflateZlib(data, (unsigned long)data_sz, in_buf.data(), in_sz);
 }
 
 } // namespace AGS3
