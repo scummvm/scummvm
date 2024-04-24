@@ -40,18 +40,13 @@ SBarThud::~SBarThud() {
 }
 
 ErrorCode SBarThud::LoadFile(const CBofString &sFile) {
-	ErrorCode error;
-
-	error = CBagStorageDev::LoadFile(sFile);
-
+	ErrorCode error = CBagStorageDev::LoadFile(sFile);
 	return error;
-
 }
 
 ErrorCode SBarThud::Attach() {
-	ErrorCode rc;
 	int        nActiveObj = 0;
-	rc = CBagStorageDevBmp::Attach();
+	ErrorCode rc = CBagStorageDevBmp::Attach();
 
 	// save a copy of the you icon
 	m_xYouBmp = new CBofBitmap(GetBackgroundName());
@@ -71,7 +66,7 @@ ErrorCode SBarThud::Attach() {
 		if (nActiveObj > 1) {
 			pObj->Detach();
 			nActiveObj--;
-			// This can be removed latere
+			// This can be removed later
 			Assert(nActiveObj < 2);
 		}
 	}
