@@ -64,10 +64,6 @@ namespace Bagel {
 
 BagelEngine *g_engine;
 
-// TODO: Globals needing refactor
-bool g_bGetVilVars;
-
-
 BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 	_gameDescription(gameDesc), _randomSource("Bagel") {
 	g_engine = this;

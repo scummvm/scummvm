@@ -103,8 +103,6 @@ static CBagVar *g_pTDig2 = nullptr;
 static CBagVar *g_pTDig3 = nullptr;
 static CBagVar *g_pTDig4 = nullptr;
 
-bool g_bGetVilVars = true;
-
 // Filter initialization code.
 //
 void VilInitFilters(CBofBitmap *pBmp) {
@@ -283,9 +281,9 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	}
 
 	// If get vars for 1st time
-	if (g_bGetVilVars) {
+	if (g_engine->g_bGetVilVars) {
 		GetVilVars();
-		g_bGetVilVars = false;
+		g_engine->g_bGetVilVars = false;
 	}
 
 	if (pRect != nullptr) {

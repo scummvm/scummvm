@@ -55,7 +55,6 @@ namespace Bagel {
 
 // Global vars
 //
-extern bool g_bGetVilVars;
 extern CBofWindow *g_pHackWindow;
 static bool g_bAllowRestore = false;
 
@@ -344,7 +343,7 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 	static bool bPainted = false;
 
 	// Make sure we get a new set of vildroid filter variables
-	g_bGetVilVars = true;
+	g_engine->g_bGetVilVars = true;
 
 	// Reset the Queued sound slot volumes back to default
 	CBofSound::ResetQVolumes();
