@@ -24,11 +24,9 @@
 #include "common/file.h"
 #include "common/translation.h"
 #include "common/compression/unzip.h"
-#include "mm/shared/utils/engine_data.h"
+#include "common/engine_data.h"
 
-#define DATA_FILENAME "mm.dat"
-
-namespace MM {
+namespace Common {
 
 class DataArchiveMember : public Common::ArchiveMember {
 private:
@@ -254,7 +252,7 @@ Common::FSNode DataArchiveProxy::getNode(const Common::Path &name) const {
 
 /*------------------------------------------------------------------------*/
 
-bool load_engine_data(const Common::String &subfolder, int reqMajorVersion,
+bool load_engine_data(const Common::Path &datFilename, const Common::String &subfolder, int reqMajorVersion,
 		int reqMinorVersion, Common::U32String &errorMsg, bool useDataPrefix) {
 	Common::Archive *dataArchive = nullptr;
 	Common::File f;
@@ -271,11 +269,11 @@ bool load_engine_data(const Common::String &subfolder, int reqMajorVersion,
 
 #endif
 	if (!f.isOpen()) {
-		if (!Common::File::exists(DATA_FILENAME) ||
-			(dataArchive = Common::makeZipArchive(DATA_FILENAME)) == 0 ||
+		if (!Common::File::exists(datFilename) ||
+			(dataArchive = Common::makeZipArchive(datFilename)) == 0 ||
 			!f.open(Common::Path(Common::String::format("%s/version.txt", subfolder.c_str())), *dataArchive)) {
 			delete dataArchive;
-			errorMsg = Common::U32String::format(_("Could not locate engine data %s"), DATA_FILENAME);
+			errorMsg = Common::U32String::format(_("Could not locate engine data %s"), datFilename.toString().c_str());
 			return false;
 		}
 	}
@@ -311,4 +309,4 @@ bool load_engine_data(const Common::String &subfolder, int reqMajorVersion,
 	return true;
 }
 
-} // namespace MM
+} // namespace Common

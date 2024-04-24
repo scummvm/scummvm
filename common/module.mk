@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	coroutines.o \
 	dbcs-str.o \
 	debug.o \
+	engine_data.o \
 	error.o \
 	events.o \
 	file.o \
