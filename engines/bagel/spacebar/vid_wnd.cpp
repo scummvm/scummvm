@@ -84,14 +84,12 @@ SBarVidWnd::~SBarVidWnd() {
 ErrorCode SBarVidWnd::Attach() {
 	Assert(IsValidObject(this));
 
-	CBagVar *pVar;
-
 	if (CMainWindow::Attach() == ERR_NONE) {
 		m_pDiscVar = VARMNGR->GetVariable("CUR_VDISC");
 		m_pTimerVar = VARMNGR->GetVariable("CUR_VTIME");
 
-		// What time does the murder occurr?
-		pVar = VARMNGR->GetVariable("VDISC_EVTIME");
+		// What time does the murder occur?
+		CBagVar *pVar = VARMNGR->GetVariable("VDISC_EVTIME");
 		if (pVar != nullptr) {
 			m_nStartTime = pVar->GetNumValue();
 			m_nStartTime -= 180;
@@ -100,12 +98,15 @@ ErrorCode SBarVidWnd::Attach() {
 		if (m_pTimerVar != nullptr) {
 			m_fTimer = m_pTimerVar->GetNumValue();
 		}
+
 		if (m_pMovie != nullptr) {
 			m_pMovie->Detach();
 			delete m_pMovie;
 			m_pMovie = nullptr;
 		}
-		if ((m_pMovie = new CBagCharacterObject) != nullptr) {
+
+		m_pMovie = new CBagCharacterObject;
+		if (m_pMovie != nullptr) {
 			m_pMovie->SetFileName(BuildVidDir("BRNL.SMK"));
 			m_pMovie->SetPosition(CBofPoint(209, 10));
 			m_pMovie->Attach();
@@ -116,9 +117,9 @@ ErrorCode SBarVidWnd::Attach() {
 
 		m_fTimerDiff = 0;
 
-		if ((m_pPlayingVar = VARMNGR->GetVariable("VDISC_PLAYING")) != nullptr) {
-			int nMode;
-			nMode = m_pPlayingVar->GetNumValue();
+		m_pPlayingVar = VARMNGR->GetVariable("VDISC_PLAYING");
+		if (m_pPlayingVar != nullptr) {
+			int nMode = m_pPlayingVar->GetNumValue();
 
 			switch (nMode) {
 			case 1:
@@ -153,9 +154,8 @@ ErrorCode SBarVidWnd::Detach() {
 		m_pMovie = nullptr;
 	}
 
-	CBagVar *pTimerVar;
-
-	if ((pTimerVar = VARMNGR->GetVariable("CUR_VTIME")) != nullptr) {
+	CBagVar *pTimerVar = VARMNGR->GetVariable("CUR_VTIME");
+	if (pTimerVar != nullptr) {
 		pTimerVar->SetValue((int)m_fTimer);
 	}
 
@@ -180,9 +180,7 @@ void SBarVidWnd::SetPlayMode(int nMode) {
 	// reflect that in the script.
 	if (nMode != 0 && m_pDiscVar != nullptr) {
 		if (m_pDiscVar->GetNumValue() == 2) {
-			CBagVar *pVar;
-
-			pVar = VARMNGR->GetVariable("VIDDISC_SEEN");
+			CBagVar *pVar = VARMNGR->GetVariable("VIDDISC_SEEN");
 			if (pVar != nullptr) {
 				pVar->SetValue(1);
 			}
@@ -194,28 +192,20 @@ void SBarVidWnd::SetPlayMode(int nMode) {
 bool SBarVidWnd::HasDisc() {
 	Assert(IsValidObject(this));
 
-	bool bHaveDisc;
-
 	// If either disk is in the vid player
-	bHaveDisc = false;
-	if (m_pDiscVar != nullptr) {
-
-		if (m_pDiscVar->GetNumValue() != 0) {
-			bHaveDisc = true;
-		}
+	bool bHaveDisc = false;
+	if ((m_pDiscVar != nullptr) && (m_pDiscVar->GetNumValue() != 0)) {
+		bHaveDisc = true;
 	}
 
 	return bHaveDisc;
 }
 
 int SBarVidWnd::GetFrame(double fTime, int nUseDisc) {
-	int i, nFrame;
-
-	nFrame = 0;
+	int nFrame = 0;
 
 	fTime -= m_nStartTime;
-
-	for (i = 0; i < NUM_FRAME_TYPES; i++) {
+	for (int i = 0; i < NUM_FRAME_TYPES; i++) {
 
 		if (g_stFrames[i].m_nUseDisc == nUseDisc || (g_stFrames[i].m_nUseDisc == 0)) {
 
@@ -267,10 +257,8 @@ ErrorCode SBarVidWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 		CBofRect cRect(344, 195, 462, 210);
 		char szBuf[12];
-		int nHr, nMn, nSc, nTimer;
-		int nFrame, nDisc;
 
-		nDisc = 1;
+		int nDisc = 1;
 		if (m_pDiscVar != nullptr) {
 			nDisc = m_pDiscVar->GetNumValue();
 			Assert(nDisc != 0);
@@ -280,7 +268,7 @@ ErrorCode SBarVidWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		// Show current image of video (based on time)
 		//
 
-		nFrame = GetFrame(m_fTimer, nDisc);
+		int nFrame = GetFrame(m_fTimer, nDisc);
 
 		m_pMovie->SetCurrentFrame(nFrame);
 		m_pMovie->Update(pBmp, m_pMovie->GetPosition());
@@ -288,10 +276,10 @@ ErrorCode SBarVidWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		//
 		// Display current time for that image
 		//
-		nTimer = (int)m_fTimer;
-		nHr = nTimer / 10000;
-		nMn = (nTimer - (nHr * 10000)) / 100;
-		nSc = nTimer - ((nHr * 10000) + (nMn * 100));
+		int nTimer = (int)m_fTimer;
+		int nHr = nTimer / 10000;
+		int nMn = (nTimer - (nHr * 10000)) / 100;
+		int nSc = nTimer - ((nHr * 10000) + (nMn * 100));
 
 		Common::sprintf_s(szBuf, "%02d:%02d:%02d", nHr, nMn, nSc);
 
@@ -304,9 +292,7 @@ ErrorCode SBarVidWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 CBagObject *SBarVidWnd::OnNewButtonObject(const CBofString &) {
 	Assert(IsValidObject(this));
 
-	SBarVidBut *pVidButtObj;
-
-	pVidButtObj = new SBarVidBut();
+	SBarVidBut *pVidButtObj = new SBarVidBut();
 
 	return pVidButtObj;
 }
