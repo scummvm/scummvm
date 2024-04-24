@@ -851,6 +851,7 @@ begin_credits("Credits");
 					add_person("Ben Castricum", "", "");
 				end_section();
 				begin_section("Finnish");
+					add_person("Linus Virtanen", "", "");
 					add_person("Toni Saarela", "catnose", "");
 					add_person("Timo Mikkolainen", "timpii", "");
 				end_section();

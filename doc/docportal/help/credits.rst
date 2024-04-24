@@ -2150,6 +2150,8 @@ Finnish
 .. list-table::
    :widths: 35 65
 
+   * - Linus Virtanen
+     -
    * - Toni Saarela
      -
    * - Timo Mikkolainen

@@ -1033,6 +1033,7 @@ static const char *const credits[] = {
 "C0""Ben Castricum",
 "",
 "C1""Finnish",
+"C0""Linus Virtanen",
 "C0""Toni Saarela",
 "C0""Timo Mikkolainen",
 "",
