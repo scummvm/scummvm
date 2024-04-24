@@ -46,14 +46,9 @@ public:
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
-	void RenderSurfaceChanged(RenderSurface *surf);
-
 	static void SetFadedModal(bool set) {
 		_fadedModal = set;
 	}
-
-protected:
-	void RenderSurfaceChanged() override;
 };
 
 } // End of namespace Ultima8

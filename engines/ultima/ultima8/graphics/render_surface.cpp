@@ -26,7 +26,6 @@
 #include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/ultima8.h"
 #include "common/system.h"
-#include "engines/util.h"
 #include "graphics/blit.h"
 #include "graphics/screen.h"
 
@@ -557,35 +556,6 @@ void RenderSurface::MaskedBlit(const Graphics::ManagedSurface &src, const Common
 	} else {
 		error("MaskedBlit not supported from %d bpp to %d bpp", src.format.bpp(), _surface->format.bpp());
 	}
-}
-
-//
-// RenderSurface::SetVideoMode()
-//
-// Desc: Create a standard RenderSurface
-// Returns: Created RenderSurface or 0
-//
-
-RenderSurface *RenderSurface::SetVideoMode(uint32 width, uint32 height) {
-	Common::List<Graphics::PixelFormat> tryModes = g_system->getSupportedFormats();
-	for (Common::List<Graphics::PixelFormat>::iterator g = tryModes.begin(); g != tryModes.end(); ++g) {
-		if (g->bytesPerPixel != 2 && g->bytesPerPixel != 4) {
-			g = tryModes.reverse_erase(g);
-		}
-	}
-
-	initGraphics(width, height, tryModes);
-
-	Graphics::PixelFormat format = g_system->getScreenFormat();
-	if (format.bytesPerPixel != 2 && format.bytesPerPixel != 4) {
-		error("Only 16 bit and 32 bit video modes supported");
-	}
-
-	// Set up blitting surface
-	Graphics::ManagedSurface *surface = new Graphics::Screen(width, height, format);
-	assert(surface);
-
-	return new RenderSurface(surface);
 }
 
 // Create a SecondaryRenderSurface with an associated Texture object

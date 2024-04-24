@@ -56,18 +56,15 @@ private:
 	Graphics::ManagedSurface *_surface;
 	DisposeAfterUse::Flag _disposeAfterUse;
 
-	// Create from a managed surface
-	RenderSurface(Graphics::ManagedSurface *s, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
-
 	// Update the Pixels Pointer
 	void SetPixelsPointer();
 
 public:
-	//! Create a standard RenderSurface
-	static RenderSurface *SetVideoMode(uint32 width, uint32 height);
-
 	//! Create a SecondaryRenderSurface with an associated Texture object
 	static RenderSurface *CreateSecondaryRenderSurface(uint32 width, uint32 height);
+
+	// Create from a managed surface
+	RenderSurface(Graphics::ManagedSurface *s, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 	~RenderSurface();
 

@@ -70,26 +70,6 @@ void DesktopGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool sca
 	}
 }
 
-void DesktopGump::RenderSurfaceChanged(RenderSurface *surf) {
-	// Resize the desktop gump to match the RenderSurface
-	Rect new_dims;
-	surf->GetSurfaceDims(new_dims);
-	_dims.setWidth(new_dims.width());
-	_dims.setHeight(new_dims.height());
-
-	Gump::RenderSurfaceChanged();
-}
-
-void DesktopGump::RenderSurfaceChanged() {
-	// Resize the desktop gump to match the parent
-	Rect new_dims;
-	_parent->GetDims(new_dims);
-	_dims.setWidth(new_dims.width());
-	_dims.setHeight(new_dims.height());
-
-	Gump::RenderSurfaceChanged();
-}
-
 void DesktopGump::saveData(Common::WriteStream *ws) {
 	warning("Trying to save DesktopGump");
 }

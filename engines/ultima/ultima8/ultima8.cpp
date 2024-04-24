@@ -26,6 +26,7 @@
 #include "gui/saveload.h"
 #include "image/png.h"
 #include "engines/dialogs.h"
+#include "engines/util.h"
 
  // TODO: !! a lot of these includes are just for some hacks... clean up sometime
 #include "ultima/ultima8/conf/config_file_manager.h"
@@ -347,7 +348,6 @@ Common::Error Ultima8Engine::startup() {
 	debug(MM_INFO, "-- Pentagram Initialized -- ");
 
 	if (setupGame()) {
-		GraphicSysInit();
 		Common::Error result = startupGame();
 		if (result.getCode() != Common::kNoError)
 			return result;
@@ -737,26 +737,32 @@ void Ultima8Engine::GraphicSysInit() {
 
 		delete _screen;
 	}
-	_screen = nullptr;
 
 	// Set Screen Resolution
 	debugN(MM_INFO, "Setting Video Mode %dx%d...\n", width, height);
 
-	RenderSurface *new_screen = RenderSurface::SetVideoMode(width, height);
-
-	if (!new_screen) {
-		warning("Unable to set new video mode. Trying %dx%d", U8_DEFAULT_SCREEN_WIDTH, U8_DEFAULT_SCREEN_HEIGHT);
-		new_screen = RenderSurface::SetVideoMode(U8_DEFAULT_SCREEN_WIDTH, U8_DEFAULT_SCREEN_HEIGHT);
+	Common::List<Graphics::PixelFormat> tryModes = g_system->getSupportedFormats();
+	for (Common::List<Graphics::PixelFormat>::iterator g = tryModes.begin(); g != tryModes.end(); ++g) {
+		if (g->bytesPerPixel != 2 && g->bytesPerPixel != 4) {
+			g = tryModes.reverse_erase(g);
+		}
 	}
 
-	if (!new_screen) {
-		error("Unable to set video mode");
+	initGraphics(width, height, tryModes);
+
+	Graphics::PixelFormat format = g_system->getScreenFormat();
+	if (format.bytesPerPixel != 2 && format.bytesPerPixel != 4) {
+		error("Only 16 bit and 32 bit video modes supported");
 	}
+
+	// Set up blitting surface
+	Graphics::ManagedSurface *surface = new Graphics::Screen(width, height, format);
+	_screen = new RenderSurface(surface);
 
 	if (_desktopGump) {
-		_paletteManager->PixelFormatChanged(new_screen->getRawSurface()->format);
-		static_cast<DesktopGump *>(_desktopGump)->RenderSurfaceChanged(new_screen);
-		_screen = new_screen;
+		_paletteManager->PixelFormatChanged(format);
+		_desktopGump->SetDims(Rect(0, 0, width, height));
+		_desktopGump->RenderSurfaceChanged();
 		paint();
 		return;
 	}
@@ -770,7 +776,6 @@ void Ultima8Engine::GraphicSysInit() {
 		_inverterGump->InitGump(0);
 	}
 
-	_screen = new_screen;
 
 	// Show the splash screen immediately now that the screen has been set up
 	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
@@ -779,7 +784,7 @@ void Ultima8Engine::GraphicSysInit() {
 		showSplashScreen();
 	}
 
-	_paletteManager = new PaletteManager(new_screen->getRawSurface()->format);
+	_paletteManager = new PaletteManager(format);
 
 	ConfMan.registerDefault("fadedModal", true);
 	bool faded_modal = ConfMan.getBool("fadedModal");
