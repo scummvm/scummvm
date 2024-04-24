@@ -28,8 +28,6 @@
 
 namespace Bagel {
 
-#define INCLUDE_RP_AND_VP true
-
 class CBagLogResidue : public CBagTextObject {
 protected:
 	int m_nSdevWidth;
@@ -129,7 +127,6 @@ public:
 		m_sSusRoom = sProp;
 	}
 
-#if INCLUDE_RP_AND_VP
 	void SetSusVP(bool bVal) {
 		bVal == false ? SetState(GetState() & ~mSusVoicePrinted) : SetState(GetState() | mSusVoicePrinted);
 	}
@@ -143,7 +140,6 @@ public:
 	bool GetSusRP() {
 		return (GetState() & mSusResiduePrinted) != 0;
 	}
-#endif
 
 	void SetSusChecked(bool bVal) {
 		bVal == false ? SetState(GetState() & ~mSusChecked) : SetState(GetState() | mSusChecked);

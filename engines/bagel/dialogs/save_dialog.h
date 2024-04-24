@@ -52,9 +52,7 @@ public:
 		m_nBufSize = nLength;
 	}
 
-#if 1
-	virtual void OnInitDialog();
-#endif
+	void OnInitDialog() override;
 
 protected:
 	virtual void OnPaint(CBofRect *pRect);

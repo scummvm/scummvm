@@ -236,10 +236,6 @@ ErrorCode CBofBitmap::Paint(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect *pSrc
 	Assert(IsValidObject(this));
 	Assert(pWnd != nullptr);
 
-#if PALETTESHIFTFIX
-	CBofWindow::CheckPaletteShiftList();
-#endif
-
 	Graphics::ManagedSurface *dstSurf = pWnd->getSurface();
 	CBofRect cDestRect(0, 0, m_nDX - 1, m_nDY - 1), cSourceRect(0, 0, m_nDX - 1, m_nDY - 1);
 

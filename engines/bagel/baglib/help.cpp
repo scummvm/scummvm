@@ -89,7 +89,6 @@ ErrorCode CBagHelp::Attach() {
 #endif
 
 	if ((m_pOKButton = new CBofBmpButton) != nullptr) {
-
 		CBofBitmap *pUp, *pDown, *pFocus, *pDis;
 
 		pUp = LoadBitmap(BuildHelpDir(HELP_OK_UP), pPal);

@@ -223,9 +223,8 @@ bool CBagCommandObject::RunObject() {
 			}
 
 		} else if (GetFileName() == "SETQVOL") {
-#if BOF_WINDOWS
 			CBofSound::SetQVol(GetPosition().x, GetPosition().y);
-#endif
+
 		} else if (GetFileName() == "TURN") {
 
 			// Cause 1 turn to go by

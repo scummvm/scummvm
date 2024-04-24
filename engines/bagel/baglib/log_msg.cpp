@@ -709,12 +709,10 @@ void CBagLogSuspect::SetProperty(const CBofString &sProp, int nVal) {
 
 		if (!sProp.Find("CHECKED"))
 			SetSusChecked(bVal == 2 ? !GetSusChecked() : bVal);
-#if INCLUDE_RP_AND_VP
 		else if (!sProp.Find("VP"))
 			SetSusVP(bVal == 2 ? !GetSusVP() : bVal);
 		else if (!sProp.Find("RP"))
 			SetSusRP(bVal == 2 ? !GetSusRP() : bVal);
-#endif
 		else
 			CBagObject::SetProperty(sProp, nVal);
 	}
@@ -724,13 +722,12 @@ void CBagLogSuspect::SetProperty(const CBofString &sProp, int nVal) {
 int CBagLogSuspect::GetProperty(const CBofString &sProp) {
 	if (!sProp.Find("CHECKED"))
 		return GetSusChecked();
-#if INCLUDE_RP_AND_VP
+
 	if (!sProp.Find("VP"))
 		return GetSusVP();
 
 	if (!sProp.Find("RP"))
 		return GetSusRP();
-#endif
 
 	return CBagObject::GetProperty(sProp);
 }
@@ -747,14 +744,11 @@ ErrorCode CBagLogSuspect::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 	CBofString sSusChecked(szSusChecked, 256);
 
 	// Remove all the references to the jamming and voice printer state
-
-#if INCLUDE_RP_AND_VP
 	char szSusVP[256];
 	char szSusRP[256];
 
 	CBofString sSusVP(szSusVP, 256);
 	CBofString sSusRP(szSusRP, 256);
-#endif
 
 	if (GetSusChecked())
 		sSusChecked = "Y";
@@ -773,7 +767,6 @@ ErrorCode CBagLogSuspect::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 
 	SetFont(FONT_MONO);
 
-#if INCLUDE_RP_AND_VP
 	SetText(BuildString(" %-5.5s %-17.17s %-12.12s %-20.20s %-4.4s %-4.4s",
 	                    sSusChecked.GetBuffer(),
 	                    m_sSusName.GetBuffer(),
@@ -781,13 +774,6 @@ ErrorCode CBagLogSuspect::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 	                    m_sSusRoom.GetBuffer(),
 	                    sSusVP.GetBuffer(),
 	                    sSusRP.GetBuffer()));
-#else
-	SetText(BuildString(" %-5.5s %-17.17s %-12.12s %-20.20s",
-	                    sSusChecked.GetBuffer(),
-	                    m_sSusName.GetBuffer(),
-	                    m_sSusSpecies.GetBuffer(),
-	                    m_sSusRoom.GetBuffer()));
-#endif
 
 	return CBagTextObject::Update(pBmp, pt, pSrcRect, nMaskColor);
 }
