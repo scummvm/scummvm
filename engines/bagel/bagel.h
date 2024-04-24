@@ -53,6 +53,7 @@ public:
 	CBagMasterWin *_masterWin = nullptr;
 	CBofPoint g_cInitLoc;       // This is the initial location for the next new pan (only option at this point)
 	bool g_bUseInitLoc = false;
+	bool g_bGetVilVars = true;
 
 public:
 	BagelEngine(OSystem *syst, const ADGameDescription *gameDesc);
