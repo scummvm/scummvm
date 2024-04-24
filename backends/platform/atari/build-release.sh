@@ -30,7 +30,6 @@ then
 	--disable-translation \
 	--disable-eventrecorder \
 	--disable-tts \
-	--disable-bink \
 	--opengl-mode=none \
 	--enable-verbose-build \
 	--enable-text-console \
