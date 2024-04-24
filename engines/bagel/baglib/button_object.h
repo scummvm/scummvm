@@ -90,8 +90,9 @@ public:
 		if (m_vpFunc) {
 			m_vpFunc((int)GetRefId(), m_vpFuncInfo);
 			return true;
-		} else
-			return false;
+		}
+
+		return false;
 	}
 
 	void OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);

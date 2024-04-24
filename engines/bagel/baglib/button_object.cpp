@@ -143,13 +143,13 @@ void CBagButtonObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info)
 	if ((m_xButtonType == SLIDER) && m_bDragging) {
 
 		// Snap to place
-		CBofPoint mLoc;
 		CBofPoint NewPoint = GetPosition();
 
 		// Get the mouse point relative to the pan window
 		CBagPanWindow *pWnd = (CBagPanWindow *)info;
 		CBofRect r = pWnd->GetSlideBitmap()->GetCurrView();
 
+		CBofPoint mLoc;
 		mLoc.x = xPoint->x + r.left - pWnd->GetViewPortPos().x;
 		mLoc.y = xPoint->y + r.top - pWnd->GetViewPortPos().y;
 
