@@ -149,8 +149,6 @@ public:
 	void OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
 	void OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
 	void OnMainLoop();
-	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /* nMaskColor */ = -1);
-	void EraseBackdrop();
 	void OnPaint(CBofRect *pRect);
 	void OnBofButton(CBofObject *, int);
 	void OnBofListBox(CBofObject *pListBox, int nItemIndex);
@@ -163,7 +161,6 @@ public:
 	void DeleteListBox();
 
 	ErrorCode CreateListBox();
-	ErrorCode CreateTextBox();
 
 	void FillMain();
 
@@ -195,8 +192,6 @@ public:
 	void InitCurrentEMail();
 	void InitAudioSettings();
 	void InitRoboButler();
-	void InitCheckTeams();
-	void InitCodeWords();
 
 	void OnListMainScreen();
 	void OnListDealSummary();
@@ -322,7 +317,7 @@ protected:
 
 	CBofString *m_pszGroup1Word;
 	CBofString *m_pszGroup2Word;
-	bool                m_bSrafAttached;
+	bool m_bSrafAttached;
 
 	static bool m_bSwonzaEnlightened;
 	static int m_nStartingTime;
