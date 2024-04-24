@@ -19,11 +19,6 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/debug-channels.h"
-#include "common/events.h"
-#include "common/system.h"
-#include "graphics/palette.h"
 #include "bagel/bagel.h"
 #include "bagel/detection.h"
 #include "bagel/music.h"

@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/system.h"
 #include "common/savefile.h"
 #include "bagel/console.h"
 #include "bagel/baglib/var.h"

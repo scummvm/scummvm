@@ -19,8 +19,6 @@
  *
  */
 
-#include "audio/mididrv.h"
-#include "audio/midiparser.h"
 #include "audio/midiparser_qt.h"
 
 #include "bagel/music.h"
