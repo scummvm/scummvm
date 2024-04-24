@@ -55,7 +55,7 @@ public:
 		m_xSize = xSize;
 	}
 
-	PARSE_CODES SetInfo(bof_ifstream &istr);
+	PARSE_CODES SetInfo(bof_ifstream &istr) override;
 
 	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int);
 	ErrorCode Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int);

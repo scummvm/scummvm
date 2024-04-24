@@ -110,6 +110,12 @@ public:
 
 	int Get(char *pch, int nCount, char delim = '\n') {
 		get(pch, nCount, delim);
+
+		if (delim == '\n') {
+			m_nLineNumber++;
+			m_sLineString = "";
+		}
+
 		return 0;
 	}
 
