@@ -22,13 +22,7 @@
 #ifndef BAGEL_H
 #define BAGEL_H
 
-#include "common/scummsys.h"
-#include "common/error.h"
 #include "common/random.h"
-#include "common/serializer.h"
-#include "engines/engine.h"
-#include "engines/savestate.h"
-#include "graphics/screen.h"
 
 #include "bagel/detection.h"
 #include "bagel/music.h"
