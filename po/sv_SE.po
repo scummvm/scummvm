@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-24 20:33+0000\n"
+"POT-Creation-Date: 2024-04-24 21:28+0000\n"
 "PO-Revision-Date: 2023-12-09 22:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -528,7 +528,7 @@ msgstr "Nedladdning klar, laddade ner %d paket, %s %S"
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:492
 #: engines/scumm/help.cpp:127 engines/scumm/help.cpp:142
 #: engines/scumm/help.cpp:167 engines/scumm/help.cpp:195
-#: engines/scumm/help.cpp:213 engines/twp/metaengine.cpp:165
+#: engines/scumm/help.cpp:213 engines/twp/metaengine.cpp:173
 msgid "Close"
 msgstr "Stäng"
 
@@ -962,7 +962,8 @@ msgstr "Använd"
 #: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:473
 #: engines/grim/grim.cpp:554 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
 #: engines/scumm/metaengine.cpp:848 engines/twine/metaengine.cpp:465
-#: engines/twine/metaengine.cpp:532 engines/wintermute/keymapper_tables.h:1290
+#: engines/twine/metaengine.cpp:532 engines/twp/metaengine.cpp:153
+#: engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
 #: engines/wintermute/keymapper_tables.h:1449
 #: engines/wintermute/keymapper_tables.h:1920
@@ -976,7 +977,8 @@ msgstr "Upp"
 #: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:478
 #: engines/grim/grim.cpp:559 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
 #: engines/scumm/metaengine.cpp:815 engines/twine/metaengine.cpp:472
-#: engines/twine/metaengine.cpp:540 engines/wintermute/keymapper_tables.h:1296
+#: engines/twine/metaengine.cpp:540 engines/twp/metaengine.cpp:154
+#: engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
 #: engines/wintermute/keymapper_tables.h:1456
 #: engines/wintermute/keymapper_tables.h:1926
@@ -990,7 +992,7 @@ msgstr "Ned"
 #: engines/grim/grim.cpp:483 engines/grim/grim.cpp:564 engines/icb/icb.cpp:78
 #: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:828
 #: engines/twine/metaengine.cpp:487 engines/twine/metaengine.cpp:555
-#: engines/wintermute/keymapper_tables.h:320
+#: engines/twp/metaengine.cpp:151 engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
 #: engines/wintermute/keymapper_tables.h:1385
 #: engines/wintermute/keymapper_tables.h:1908
@@ -1005,7 +1007,7 @@ msgstr "Vänster"
 #: engines/grim/grim.cpp:488 engines/grim/grim.cpp:569 engines/icb/icb.cpp:83
 #: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:835
 #: engines/twine/metaengine.cpp:479 engines/twine/metaengine.cpp:548
-#: engines/wintermute/keymapper_tables.h:326
+#: engines/twp/metaengine.cpp:152 engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
 #: engines/wintermute/keymapper_tables.h:1391
 #: engines/wintermute/keymapper_tables.h:1914
@@ -6044,7 +6046,7 @@ msgstr "Ljud av/på"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:874 engines/twp/metaengine.cpp:147
+#: engines/scumm/metaengine.cpp:874 engines/twp/metaengine.cpp:155
 #: engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr "Skippa scen"
@@ -6499,7 +6501,7 @@ msgid ""
 " See %s"
 msgstr ""
 
-#: engines/dragons/metaengine.cpp:137
+#: engines/dragons/metaengine.cpp:137 engines/twp/metaengine.cpp:150
 #, fuzzy
 msgid "Action"
 msgstr "Aktiv"
@@ -7034,7 +7036,7 @@ msgstr "Flytta till höger"
 #: engines/scumm/help.cpp:172 engines/scumm/help.cpp:202
 #: engines/scumm/help.cpp:217 engines/scumm/help.cpp:228
 #: engines/scumm/help.cpp:254 engines/sky/metaengine.cpp:94
-#: engines/twp/metaengine.cpp:172 engines/wintermute/keymapper_tables.h:140
+#: engines/twp/metaengine.cpp:180 engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:1552
 msgid "Use"
 msgstr "Använd"
@@ -9241,24 +9243,24 @@ msgid "Main game controls:"
 msgstr "Huvudkontroller:"
 
 #: engines/scumm/help.cpp:123 engines/scumm/help.cpp:138
-#: engines/scumm/help.cpp:163 engines/twp/metaengine.cpp:170
+#: engines/scumm/help.cpp:163 engines/twp/metaengine.cpp:178
 msgid "Push"
 msgstr "Tryck"
 
 #: engines/scumm/help.cpp:124 engines/scumm/help.cpp:139
-#: engines/scumm/help.cpp:164 engines/twp/metaengine.cpp:171
+#: engines/scumm/help.cpp:164 engines/twp/metaengine.cpp:179
 msgid "Pull"
 msgstr "Dra"
 
 #: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
 #: engines/scumm/help.cpp:165 engines/scumm/help.cpp:201
-#: engines/scumm/help.cpp:211 engines/twp/metaengine.cpp:166
+#: engines/scumm/help.cpp:211 engines/twp/metaengine.cpp:174
 msgid "Give"
 msgstr "Ge"
 
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
 #: engines/scumm/help.cpp:166 engines/scumm/help.cpp:194
-#: engines/scumm/help.cpp:212 engines/twp/metaengine.cpp:164
+#: engines/scumm/help.cpp:212 engines/twp/metaengine.cpp:172
 msgid "Open"
 msgstr "Öppna"
 
@@ -9295,7 +9297,7 @@ msgstr "Gå till"
 
 #: engines/scumm/help.cpp:145 engines/scumm/help.cpp:170
 #: engines/scumm/help.cpp:199 engines/scumm/help.cpp:214
-#: engines/scumm/help.cpp:231 engines/twp/metaengine.cpp:167
+#: engines/scumm/help.cpp:231 engines/twp/metaengine.cpp:175
 #: engines/wintermute/keymapper_tables.h:134
 #: engines/wintermute/keymapper_tables.h:1546
 msgid "Pick up"
@@ -9384,14 +9386,14 @@ msgid "pull (Yank)"
 msgstr "Dra"
 
 #: engines/scumm/help.cpp:200 engines/scumm/help.cpp:216
-#: engines/scumm/help.cpp:252 engines/twp/metaengine.cpp:169
+#: engines/scumm/help.cpp:252 engines/twp/metaengine.cpp:177
 #: engines/wintermute/keymapper_tables.h:128
 #: engines/wintermute/keymapper_tables.h:1558
 msgid "Talk to"
 msgstr "Tala med"
 
 #: engines/scumm/help.cpp:203 engines/scumm/help.cpp:215
-#: engines/twp/metaengine.cpp:168 engines/wintermute/keymapper_tables.h:122
+#: engines/twp/metaengine.cpp:176 engines/wintermute/keymapper_tables.h:122
 #: engines/wintermute/keymapper_tables.h:1534
 msgid "Look at"
 msgstr "Titta på"
@@ -10535,96 +10537,96 @@ msgstr ""
 msgid "Ransome *unbeeped* (DLC)"
 msgstr ""
 
-#: engines/twp/metaengine.cpp:148
+#: engines/twp/metaengine.cpp:156
 #, fuzzy
 #| msgid "Select Group by"
 msgid "Select Actor 1"
 msgstr "Välj grupp utifrån"
 
-#: engines/twp/metaengine.cpp:149
+#: engines/twp/metaengine.cpp:157
 #, fuzzy
 #| msgid "Select Group by"
 msgid "Select Actor 2"
 msgstr "Välj grupp utifrån"
 
-#: engines/twp/metaengine.cpp:150
+#: engines/twp/metaengine.cpp:158
 #, fuzzy
 #| msgid "Select Group by"
 msgid "Select Actor 3"
 msgstr "Välj grupp utifrån"
 
-#: engines/twp/metaengine.cpp:151
+#: engines/twp/metaengine.cpp:159
 #, fuzzy
 #| msgid "Select Group by"
 msgid "Select Actor 4"
 msgstr "Välj grupp utifrån"
 
-#: engines/twp/metaengine.cpp:152
+#: engines/twp/metaengine.cpp:160
 #, fuzzy
 #| msgid "Select Group by"
 msgid "Select Actor 5"
 msgstr "Välj grupp utifrån"
 
-#: engines/twp/metaengine.cpp:153
+#: engines/twp/metaengine.cpp:161
 #, fuzzy
 #| msgid "Select Group by"
 msgid "Select Actor 6"
 msgstr "Välj grupp utifrån"
 
-#: engines/twp/metaengine.cpp:154
+#: engines/twp/metaengine.cpp:162
 #, fuzzy
 #| msgid "Select shader"
 msgid "Select Choice 1"
 msgstr "Välj shader"
 
-#: engines/twp/metaengine.cpp:155
+#: engines/twp/metaengine.cpp:163
 #, fuzzy
 #| msgid "Select shader"
 msgid "Select Choice 2"
 msgstr "Välj shader"
 
-#: engines/twp/metaengine.cpp:156
+#: engines/twp/metaengine.cpp:164
 #, fuzzy
 #| msgid "Select shader"
 msgid "Select Choice 3"
 msgstr "Välj shader"
 
-#: engines/twp/metaengine.cpp:157
+#: engines/twp/metaengine.cpp:165
 #, fuzzy
 #| msgid "Select shader"
 msgid "Select Choice 4"
 msgstr "Välj shader"
 
-#: engines/twp/metaengine.cpp:158
+#: engines/twp/metaengine.cpp:166
 #, fuzzy
 #| msgid "Select shader"
 msgid "Select Choice 5"
 msgstr "Välj shader"
 
-#: engines/twp/metaengine.cpp:159
+#: engines/twp/metaengine.cpp:167
 #, fuzzy
 #| msgid "Select shader"
 msgid "Select Choice 6"
 msgstr "Välj shader"
 
-#: engines/twp/metaengine.cpp:160
+#: engines/twp/metaengine.cpp:168
 #, fuzzy
 #| msgid "Select next music record"
 msgid "Select Next Actor"
 msgstr "Spela nästa musikskiva"
 
-#: engines/twp/metaengine.cpp:161
+#: engines/twp/metaengine.cpp:169
 #, fuzzy
 msgid "Select Previous Actor"
 msgstr "~F~öregående"
 
-#: engines/twp/metaengine.cpp:162
+#: engines/twp/metaengine.cpp:170
 #, fuzzy
 #| msgid "Skip text"
 msgid "Skip Text"
 msgstr "Skippa text"
 
-#: engines/twp/metaengine.cpp:163
+#: engines/twp/metaengine.cpp:171
 #, fuzzy
 #| msgid "Show hints"
 msgid "Show hotspots"
