@@ -230,6 +230,7 @@ private:
 	Common::SharedPtr<YLabel> _lbl;
 	DialogSlot _slots[MAXDIALOGSLOTS];
 	Math::Vector2d _mousePos;
+	float _fadeTime = 0.f;
 };
 
 } // namespace Twp

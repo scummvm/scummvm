@@ -233,6 +233,7 @@ void Dialog::start(const Common::String &actor, const Common::String &name, cons
 }
 
 void Dialog::update(float dt) {
+	_fadeTime += dt;
 	switch (_state) {
 	case DialogState::None:
 		break;
@@ -358,6 +359,7 @@ void Dialog::gotoNextLabel() {
 
 void Dialog::updateChoiceStates() {
 	_state = WaitingForChoice;
+	_fadeTime = 0.f;
 	for (auto &_slot : _slots) {
 		DialogSlot *slot = &_slot;
 		if (slot->_isValid) {
@@ -481,12 +483,19 @@ void Dialog::drawCore(const Math::Matrix4 &trsf) {
 		g_twp->getGfx().drawSprite(backingFrame.frame, *gameTexture, Color(0, 0, 0, alpha * getAlpha()), trsf);
 	}
 
+	const float slotDelay = 0.1f;
+	float fadeTime = MIN(_fadeTime, 1.0f + slotDelay * MAXCHOICES);
+	int slotNum = 0;
 	for (auto &_slot : _slots) {
 		DialogSlot *slot = &_slot;
 		if (slot->_isValid) {
+			Color c = slot->_text.getColor();
 			Math::Matrix4 t(trsf);
-			t.translate(Math::Vector3d(slot->getPos().getX(), slot->getPos().getY(), 0.f));
+			float alpha = CLIP(6.f * (fadeTime - slotNum * slotDelay), 0.f, 1.f);
+			t.translate(Math::Vector3d(slot->getPos().getX(), slot->getPos().getY() + (6.f * alpha), 0.f));
+			slot->_text.setColor(Color::withAlpha(c, alpha));
 			slot->_text.draw(g_twp->getGfx(), t);
+			slotNum++;
 		}
 	}
 }
