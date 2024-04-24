@@ -52,12 +52,7 @@ const CBofRect CBagPanBitmap::GetMaxView(CBofSize s) {
 }
 
 CBagPanBitmap::CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, const CBofRect &xViewSize) :
-#ifdef COMPRESSED
-	CBofCompressedBitmap(pszFileName, pPalette)
-#else
-	CBofBitmap(pszFileName, pPalette, true)
-#endif
-{
+		CBofBitmap(pszFileName, pPalette, true) {
 	int nW = Width();
 	int nH = Height();
 
@@ -107,12 +102,7 @@ CBagPanBitmap::CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, con
 }
 
 CBagPanBitmap::CBagPanBitmap(int dx, int dy, CBofPalette *pPalette, const CBofRect &xViewSize) :
-#ifdef COMPRESSED
-	CBofCompressedBitmap(dx, dy, pPalette)
-#else
-	CBofBitmap(dx, dy, pPalette)
-#endif
-{
+		CBofBitmap(dx, dy, pPalette) {
 	int nW = Width();
 	int nH = Height();
 
@@ -330,13 +320,7 @@ ErrorCode CBagPanBitmap::Paint(CBofBitmap *pBmp, const CBofPoint xDstOffset) {
 	CBofRect srcRect = m_xCurrView;
 	int nW = Width();
 	int viewWidth = m_xCurrView.Width();
-#ifdef RESIZEABLE
-	double viewAngle = 3.14159 * (double)viewWidth / nW;
-	double rescaleFactor = viewAngle / m_xFOVAngle;
-	srcRect.right = m_xCurrView.left + (int)(viewWidth / rescaleFactor);
-#else
 	srcRect.right = m_xCurrView.left + viewWidth - 1;
-#endif
 	int nOffset = srcRect.right - nW;
 
 	dstRect.top = xDstOffset.y;
@@ -350,16 +334,9 @@ ErrorCode CBagPanBitmap::Paint(CBofBitmap *pBmp, const CBofPoint xDstOffset) {
 	if (nOffset > 0) {
 		CBofRect srcRect2 = srcRect;
 		srcRect2.left = 0;
-
-#ifdef RESIZEABLE
-		srcRect2.right = nOffset / rescaleFactor;
-		dstRect.right = xDstOffset.x + viewWidth;
-		dstRect.left = dstRect.right - nOffset * rescaleFactor;
-#else
 		srcRect2.right = nOffset;
 		dstRect.right = xDstOffset.x + viewWidth - 1;
 		dstRect.left = dstRect.right - nOffset;
-#endif
 
 		CBofBitmap::Paint(pBmp, &dstRect, &srcRect2);
 

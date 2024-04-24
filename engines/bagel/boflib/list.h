@@ -194,8 +194,6 @@ public:
 	 * @returns     Returns the number of linked items in this linked list.
 	 */
 	int GetActualCount() const {
-#ifndef RELEASE_BUILD
-
 		size_t nCount = 0;
 		CBofListNode<T> *pNode = m_pHead;
 		while (pNode != nullptr) {
@@ -205,7 +203,6 @@ public:
 
 		// There should be no discrepancy
 		assert(m_nNumItems == nCount);
-#endif
 
 		return m_nNumItems;
 	}

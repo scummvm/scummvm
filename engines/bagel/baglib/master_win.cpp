@@ -1429,12 +1429,6 @@ ErrorCode CBagMasterWin::Run(const char * /*pszCommandLine*/) {
 void CBagMasterWin::SetActiveCursor(int iCursor) {
 	Assert(iCursor >= 0 && iCursor < MAX_CURSORS);
 
-#ifdef BOF_DEBUG
-	if (iCursor < 0 || iCursor >= MAX_CURSORS) {
-		LogError(BuildString("Bad cursor ID: %d", iCursor));
-	}
-#endif
-
 	if (m_cCursorList[iCursor] != nullptr) {
 		m_cCursorList[iCursor]->SetCurrent();
 		m_nCurCursor = iCursor;

@@ -663,11 +663,10 @@ void CBagPanWindow::OnSize(uint32 nType, int cx, int cy) {
 	//
 	const int nRange = 16;
 	CBofRect xMaxPanBmpRect;
-#ifndef STRETCHTOBACK
+
 	if (m_pSlideBitmap)
 		xMaxPanBmpRect = m_pSlideBitmap->GetMaxView();
 	else
-#endif
 		xMaxPanBmpRect.SetRect(0, 0, DEF_WIDTH, DEF_HEIGHT);
 
 	CBofPoint vp;

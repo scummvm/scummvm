@@ -52,10 +52,6 @@ public:
 
 enum PARSE_CODES { PARSING_DONE = 0, UPDATED_OBJECT, UNKNOWN_TOKEN };
 
-#ifdef BAG_DEBUG
-static ofstream g_fParseLog;
-#endif
-
 class CBagParseObject {
 public:
 	enum KEYWORDS {
