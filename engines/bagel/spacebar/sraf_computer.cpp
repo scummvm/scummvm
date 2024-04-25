@@ -2687,9 +2687,9 @@ void SrafComputer::OnListBuyerBids() {
 	CBofRect        cAcceptBidRect = CalculateTextRect(this, &sStr, kBuyerBidsPointSize, FONT_MONO);
 
 	AlignAtColumn(sStr, "", kFirstMineralColumn + NUM_MINERALS * kMineralColWidth);
-	CBofRect        cDummyRect = CalculateTextRect(this, &sStr, kBuyerBidsPointSize, FONT_MONO);
+	CBofRect cDummyRect = CalculateTextRect(this, &sStr, kBuyerBidsPointSize, FONT_MONO);
 
-	CBofPoint       cStartPoint(cDummyRect.right, 0);
+	CBofPoint cStartPoint(cDummyRect.right, 0);
 	cAcceptBidRect.OffsetRect(cStartPoint);
 	cAcceptBidRect.bottom = 1000;
 
@@ -2701,8 +2701,7 @@ void SrafComputer::OnListBuyerBids() {
 		g_stBuyerBids[index].m_bAccept = !g_stBuyerBids[index].m_bAccept;
 
 		// Redraw with the new one checked/unchecked
-		CBofString cStr = m_pLBox->GetText(m_nSelection);
-		cStr = BuildBidString(index);
+		CBofString cStr = BuildBidString(index);
 		m_pLBox->SetText(m_nSelection, cStr);
 		if (g_stBuyerBids[index].m_bAccept) {
 			m_pLBox->SetTextLineColor(m_nSelection, m_cTextLineColor);
@@ -2952,7 +2951,7 @@ void SrafComputer::OnListDispatchTeam() {
 
 		// If we have to uncheck a column, do that here.
 		if (nMeetMember != -1) {
-			int     nThisItemAt = GetAdjustedIndex(nListToCheck, nMeetMember, false) + 3 + nPreceedingHeaders;
+			int nThisItemAt = GetAdjustedIndex(nListToCheck, nMeetMember, false) + 3 + nPreceedingHeaders;
 			sStr = m_pLBox->GetText(nThisItemAt);
 			sStr.ReplaceCharAt(kStandardIndentation + 1, ' ');
 			m_pLBox->SetText(nThisItemAt, sStr);
@@ -2980,11 +2979,11 @@ void SrafComputer::OnListDispatchTeam() {
 	if (cTeamMembersRect.PtInRect(cPoint)) {
 		nElementIndex = m_nSelection - 2; // two header lines before data starts
 		if (nElementIndex >= 0 && nElementIndex < NUM_STAFFERS) {
-			CBofRect    cStaffNames(cTeamMembersRect.left + kStandardIndentation * kBuyerBidsPointWidth,
+			CBofRect cStaffNames(cTeamMembersRect.left + kStandardIndentation * kBuyerBidsPointWidth,
 			                        cTeamMembersRect.top,
 			                        cTeamMembersRect.left + (kStandardIndentation + kMaxStafferNameLen) * kBuyerBidsPointWidth + 60,
 			                        cTeamMembersRect.bottom);
-			CBofRect    cStaffInclude((kTeamIncludeColumn - kStandardIndentation) * kBuyerBidsPointWidth,
+			CBofRect cStaffInclude((kTeamIncludeColumn - kStandardIndentation) * kBuyerBidsPointWidth,
 			                          cTeamMembersRect.top,
 			                          cTeamMembersRect.right,
 			                          cTeamMembersRect.bottom);
@@ -3161,7 +3160,7 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 
 	// Meeting not done yet, let 'em know it.
 	if (bDone == false) {
-		if ((teamListItem.m_nDispatchTime + teamListItem.m_nMeetingTime) > pVar->GetNumValue()) {
+		if (teamListItem.m_nDispatchTime + teamListItem.m_nMeetingTime > pVar->GetNumValue()) {
 			bDone = true;
 			bTimeElapsed = false;
 
@@ -3173,7 +3172,7 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 		}
 	}
 
-	// If swonza has already been enlightened to the plans for the planet,
+	// If Swonza has already been enlightened to the plans for the planet,
 	// then reject this meeting right away.
 	if (bDone == false) {
 		if (m_bSwonzaEnlightened &&
@@ -3212,47 +3211,39 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 	// There are many more cases, which we'll handle as they come up.
 
 	// Norg and Lentil can't work together, automatic failure
-	if (bDone == false) {
-		if ((teamListItem.m_nFlags & mNorg72) && (teamListItem.m_nFlags & mLentil24)) {
-			bDone = true;
-			if (teamListItem.m_nFlags & mStafferMale) {
-				pszFailureFile = kGSM8SraMaleStr;
-			} else {
-				pszFailureFile = kGSM8SraFemStr;
-			}
+	if ((bDone == false)  && (teamListItem.m_nFlags & mNorg72) && (teamListItem.m_nFlags & mLentil24)) {
+		bDone = true;
+		if (teamListItem.m_nFlags & mStafferMale) {
+			pszFailureFile = kGSM8SraMaleStr;
+		} else {
+			pszFailureFile = kGSM8SraFemStr;
 		}
 	}
 
 	// Need to have someone who can hold their voltage {Norg, Lentil and Churg}
-	if (bDone == false) {
-		if (!((teamListItem.m_nFlags & mNorg72) || (teamListItem.m_nFlags & mLentil24) || (teamListItem.m_nFlags & mChurg53))) {
-			bDone = true;
-			if (teamListItem.m_nFlags & mStafferMale) {
-				pszFailureFile = kGSM7SraMaleStr;
-			} else {
-				pszFailureFile = kGSM7SraFemStr;
-			}
+	if ((bDone == false) && !((teamListItem.m_nFlags & mNorg72) || (teamListItem.m_nFlags & mLentil24) || (teamListItem.m_nFlags & mChurg53))) {
+		bDone = true;
+		if (teamListItem.m_nFlags & mStafferMale) {
+			pszFailureFile = kGSM7SraMaleStr;
+		} else {
+			pszFailureFile = kGSM7SraFemStr;
 		}
 	}
 
 	// - Pnurth must be teamed up with Lentil, Vargas or Churg (still learning)
-	if (bDone == false) {
-		if ((teamListItem.m_nFlags & mPnurth81) &&
-		        !((teamListItem.m_nFlags & mLentil24) ||
-		          (teamListItem.m_nFlags & mVargas20) ||
-		          (teamListItem.m_nFlags & mChurg53))) {
-			bDone = true;
-			if (teamListItem.m_nFlags & mStafferMale) {
-				if (nTeamMembers == 1) {
-					pszFailureFile = kGSM20SraMaleStr;
-				} else {
-					pszFailureFile = kGSM15SraMaleStr;
-				}
-			} else if (nTeamMembers == 1) {
-				pszFailureFile = kGSM20SraFemStr;
+	if ((bDone == false)  && (teamListItem.m_nFlags & mPnurth81) &&
+		        !((teamListItem.m_nFlags & mLentil24) || (teamListItem.m_nFlags & mVargas20) || (teamListItem.m_nFlags & mChurg53))) {
+		bDone = true;
+		if (teamListItem.m_nFlags & mStafferMale) {
+			if (nTeamMembers == 1) {
+				pszFailureFile = kGSM20SraMaleStr;
 			} else {
-				pszFailureFile = kGSM15SraFemStr;
+				pszFailureFile = kGSM15SraMaleStr;
 			}
+		} else if (nTeamMembers == 1) {
+			pszFailureFile = kGSM20SraFemStr;
+		} else {
+			pszFailureFile = kGSM15SraFemStr;
 		}
 	}
 
@@ -3265,9 +3256,9 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 		if (teamListItem.m_nFlags & mOtherParty) {
 			switch (teamListItem.m_nMeetWithID) {
 			case SWONZA5:
-				// swonza-5 is a sucker, but norg is not trustworthy, so if he tells, then
+				// Swonza-5 is a sucker, but Norg is not trustworthy, so if he tells, then
 				// the flashback is over, well, not really, but it can't be won without
-				// swonza-5 on board.
+				// Swonza-5 on board.
 				if (teamListItem.m_nFlags & mNorg72) {
 					m_bSwonzaEnlightened = true;
 					if (nTeamMembers == 1) {
@@ -3490,7 +3481,7 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 		if (pszFailureFile == nullptr && (teamListItem.m_nFlags & mSeller)) {
 			switch (teamListItem.m_nMeetWithID) {
 			case IRK4:
-				// Irk can't be talked down and will only talk to deven in person
+				// Irk can't be talked down and will only talk to Deven in person
 				if (teamListItem.m_nFlags & mStafferMale) {
 					pszFailureFile = kGSM14SraMaleStr;
 				} else {
@@ -3498,7 +3489,7 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 				}
 				break;
 			case QUOSH23:
-				// Quosh can't be talked down and will only talk to deven in person
+				// Quosh can't be talked down and will only talk to Deven in person
 				if (teamListItem.m_nFlags & mStafferMale) {
 					pszFailureFile = kGSM13SraMaleStr;
 				} else {
@@ -3509,7 +3500,7 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 				// Yeef can be talked down but requires a really sharp negotiating
 				// team.
 				//
-				// if they've already talked yeef down, then reply with
+				// if they've already talked Yeef down, then reply with
 				// a fail message.
 				if (nTeamStrength >= YEEF8_REQUIRED_TEAM_STRENGTH && g_stSellerNames[YEEF8].m_nAmount != kYeefTalkedDownAmount) {
 					g_stSellerNames[YEEF8].m_nAmount = kYeefTalkedDownAmount;
@@ -3770,59 +3761,62 @@ void SrafComputer::DisplayTextScreen(CBofString &sStr) {
 
 	m_pTextOnlyScreen = new SrafTextScreen(sStr);
 
-	if (m_pTextOnlyScreen != nullptr) {
-		m_pTextOnlyScreen->CreateTextScreen(this);
+	if (m_pTextOnlyScreen == nullptr)
+		return;
 
-		m_pTextOnlyScreen->DoModal();
-		delete m_pTextOnlyScreen;
-		m_pTextOnlyScreen = nullptr;
+	m_pTextOnlyScreen->CreateTextScreen(this);
 
-		// if we have a list, then return focus to it.
-		if (m_pLBox) {
-			m_pLBox->SetFocus();
-		}
+	m_pTextOnlyScreen->DoModal();
+	delete m_pTextOnlyScreen;
+	m_pTextOnlyScreen = nullptr;
 
-		gTextScreenFrontmost = false;
+	// if we have a list, then return focus to it.
+	if (m_pLBox) {
+		m_pLBox->SetFocus();
 	}
+
+	gTextScreenFrontmost = false;
 }
 
 void SrafComputer::OnButtonMainScreen(CBofButton *pButton, int nState) {
-	if (nState == BUTTON_CLICKED) {
-		switch (pButton->GetControlID()) {
-		case ON_BUTTON:
-			SetOn();
-			break;
-		case OFF_BUTTON:
-			SetOff();
-			break;
-		case QUIT_BUTTON:
-			SetQuit();
-			break;
-		default:
-			break;
-		}
+	if (nState != BUTTON_CLICKED)
+		return;
+	
+	switch (pButton->GetControlID()) {
+	case ON_BUTTON:
+		SetOn();
+		break;
+	case OFF_BUTTON:
+		SetOff();
+		break;
+	case QUIT_BUTTON:
+		SetQuit();
+		break;
+	default:
+		break;
 	}
 }
 
 void SrafComputer::OnButtonDealSummary(CBofButton *pButton, int nState) {
-	if (nState == BUTTON_CLICKED) {
-		switch (pButton->GetControlID()) {
-		case RETURN_TO_MAIN_BUTTON:
+	if (nState != BUTTON_CLICKED)
+		return;
+
+	switch (pButton->GetControlID()) {
+	case RETURN_TO_MAIN_BUTTON:
+		m_pButtons[SUBMIT_BUTTON]->Hide();
+		ActivateMainScreen();
+		break;
+
+	case SUBMIT_BUTTON:
+		if (OnButtonSubmitOffer()) {
 			m_pButtons[SUBMIT_BUTTON]->Hide();
-			ActivateMainScreen();
-			break;
-
-		case SUBMIT_BUTTON:
-			if (OnButtonSubmitOffer()) {
-				m_pButtons[SUBMIT_BUTTON]->Hide();
-				m_pButtons[RETURN_TO_MAIN_BUTTON]->Hide();
-				ActivateCodeWords();
-			}
-			break;
-
-		default:
-			break;
+			m_pButtons[RETURN_TO_MAIN_BUTTON]->Hide();
+			ActivateCodeWords();
 		}
+		break;
+
+	default:
+		break;
 	}
 }
 
@@ -3851,11 +3845,9 @@ bool SrafComputer::OnButtonSubmitOffer() {
 	// Check that all the terms have been resolved for the buyers... all we really
 	// need to check here is the environmentalists.
 
-	if (bOfferAccepted) {
-		if (g_stOtherPartys[ENVIRONMENTALISTS].m_nPaymentAmount == -1) {
-			Common::strcpy_s(szFailureReason, kszUnresolvedEnriro);
-			bOfferAccepted = false;
-		}
+	if (bOfferAccepted && (g_stOtherPartys[ENVIRONMENTALISTS].m_nPaymentAmount == -1)) {
+		Common::strcpy_s(szFailureReason, kszUnresolvedEnriro);
+		bOfferAccepted = false;
 	}
 
 	// If we didn't fail because of the seller, let's now check the buyer
@@ -3957,10 +3949,8 @@ bool SrafComputer::OnButtonSubmitOffer() {
 						if (g_stBuyerBids[j].m_bAccept) {
 							if (g_stBuyerBids[j].m_nFlags & mBuyerMale) {
 								nMale++;
-							} else {
-								if (g_stBuyerBids[j].m_nFlags & mBuyerFemale) {
-									nFemale++;
-								}
+							} else if (g_stBuyerBids[j].m_nFlags & mBuyerFemale) {
+								nFemale++;
 							}
 						}
 					}
@@ -4028,74 +4018,47 @@ bool SrafComputer::OnButtonSubmitOffer() {
 }
 
 void SrafComputer::OnButtonBuyerBids(CBofButton *pButton, int nState) {
-	if (nState == BUTTON_CLICKED) {
-		switch (pButton->GetControlID()) {
-		case RETURN_TO_MAIN_BUTTON:
-			ActivateMainScreen();
-			break;
+	if (nState != BUTTON_CLICKED)
+		return;
 
-		case DISPLAY_KEY_BUTTON: {
-			char szLocalBuff[256];
-			szLocalBuff[0] = '\0';
-			CBofString sStr(szLocalBuff, 256);
+	switch (pButton->GetControlID()) {
+	case RETURN_TO_MAIN_BUTTON:
+		ActivateMainScreen();
+		break;
 
-			sStr = BuildSrafDir("KEYINFO.TXT");
-			DisplayTextScreen(sStr);
-			break;
-		}
+	case DISPLAY_KEY_BUTTON: {
+		char szLocalBuff[256];
+		szLocalBuff[0] = '\0';
+		CBofString sStr(szLocalBuff, 256);
 
-		default:
-			break;
-		}
+		sStr = BuildSrafDir("KEYINFO.TXT");
+		DisplayTextScreen(sStr);
+		break;
+	}
+
+	default:
+		break;
 	}
 }
 
 void SrafComputer::OnButtonDealBackground(CBofButton *pButton, int nState) {
-	if (nState == BUTTON_CLICKED) {
-		switch (pButton->GetControlID()) {
-		case RETURN_TO_MAIN_BUTTON:
-			ActivateMainScreen();
-			break;
-		default:
-			break;
-		}
-	}
+	if ((nState == BUTTON_CLICKED) && (pButton->GetControlID() == RETURN_TO_MAIN_BUTTON))
+		ActivateMainScreen();
 }
 
 void SrafComputer::OnButtonSellerBios(CBofButton *pButton, int nState) {
-	if (nState == BUTTON_CLICKED) {
-		switch (pButton->GetControlID()) {
-		case RETURN_TO_MAIN_BUTTON:
-			ActivateMainScreen();
-			break;
-		default:
-			break;
-		}
-	}
+	if ((nState == BUTTON_CLICKED) && (pButton->GetControlID() == RETURN_TO_MAIN_BUTTON))
+		ActivateMainScreen();
 }
 
 void SrafComputer::OnButtonOtherBios(CBofButton *pButton, int nState) {
-	if (nState == BUTTON_CLICKED) {
-		switch (pButton->GetControlID()) {
-		case RETURN_TO_MAIN_BUTTON:
-			ActivateMainScreen();
-			break;
-		default:
-			break;
-		}
-	}
+	if ((nState == BUTTON_CLICKED) && (pButton->GetControlID() == RETURN_TO_MAIN_BUTTON))
+		ActivateMainScreen();
 }
 
 void SrafComputer::OnButtonStaffBios(CBofButton *pButton, int nState) {
-	if (nState == BUTTON_CLICKED) {
-		switch (pButton->GetControlID()) {
-		case RETURN_TO_MAIN_BUTTON:
-			ActivateMainScreen();
-			break;
-		default:
-			break;
-		}
-	}
+	if ((nState == BUTTON_CLICKED) && (pButton->GetControlID() == RETURN_TO_MAIN_BUTTON))
+		ActivateMainScreen();
 }
 
 void SrafComputer::OnButtonDispatchTeam(CBofButton *pButton, int nState) {
@@ -4287,49 +4250,44 @@ int SrafComputer::GetTeamGender(int nFlags) {
 }
 
 void SrafComputer::OnButtonCurrentEMail(CBofButton *pButton, int nState) {
-	if (nState == BUTTON_CLICKED) {
-		switch (pButton->GetControlID()) {
-		case RETURN_TO_MAIN_BUTTON:
-			ActivateMainScreen();
-			break;
-		default:
-			break;
-		}
-	}
+	if ((nState == BUTTON_CLICKED) && (pButton->GetControlID() == RETURN_TO_MAIN_BUTTON))
+		ActivateMainScreen();
 }
 
 void SrafComputer::OnButtonAudioSettings(CBofButton *pButton, int nState) {
-	if (nState == BUTTON_CLICKED) {
-		switch (pButton->GetControlID()) {
-		case RETURN_TO_MAIN_BUTTON:
-			ActivateMainScreen();
-			break;
-		case NO_MUSIC_BUTTON:
-			CBofSound::StopSounds();
-			m_pButtons[NO_MUSIC_BUTTON]->Hide();
-			ActivateMainScreen();
-			break;
-		default:
-			break;
-		}
+	if (nState != BUTTON_CLICKED)
+		return;
+
+	switch (pButton->GetControlID()) {
+	case RETURN_TO_MAIN_BUTTON:
+		ActivateMainScreen();
+		break;
+	case NO_MUSIC_BUTTON:
+		CBofSound::StopSounds();
+		m_pButtons[NO_MUSIC_BUTTON]->Hide();
+		ActivateMainScreen();
+		break;
+	default:
+		break;
 	}
 }
 
 void SrafComputer::OnButtonRoboButler(CBofButton *pButton, int nState) {
-	if (nState == BUTTON_CLICKED) {
-		switch (pButton->GetControlID()) {
-		case RETURN_TO_MAIN_BUTTON:
-			ActivateMainScreen();
-			break;
-		case ORDER_BEVERAGE_BUTTON:
-			DoOrderBeverage();
-			break;
-		case ORDER_SNACK_BUTTON:
-			DoOrderSnack();
-			break;
-		default:
-			break;
-		}
+	if (nState != BUTTON_CLICKED)
+		return;
+	
+	switch (pButton->GetControlID()) {
+	case RETURN_TO_MAIN_BUTTON:
+		ActivateMainScreen();
+		break;
+	case ORDER_BEVERAGE_BUTTON:
+		DoOrderBeverage();
+		break;
+	case ORDER_SNACK_BUTTON:
+		DoOrderSnack();
+		break;
+	default:
+		break;
 	}
 }
 
@@ -4366,30 +4324,16 @@ void SrafComputer::DoOrderSnack() {
 }
 
 void SrafComputer::OnButtonCheckTeams(CBofButton *pButton, int nState) {
-	if (nState == BUTTON_CLICKED) {
-		switch (pButton->GetControlID()) {
-		case RETURN_TO_MAIN_BUTTON:
-			ActivateMainScreen();
-			break;
-		default:
-			break;
-		}
-	}
+	if ((nState == BUTTON_CLICKED) && (pButton->GetControlID() == RETURN_TO_MAIN_BUTTON))
+		ActivateMainScreen();
 }
 
 void SrafComputer::OnButtonCodeWords(CBofButton *pButton, int nState) {
-	if (nState == BUTTON_CLICKED) {
-		switch (pButton->GetControlID()) {
-		case DONE_BUTTON:
-			// Normally we'd return to the main screen, but in this instance, we're
-			// done with the flashback... that is, as long as they've picked two
-			// code words.
-			OnButtonFinished(true);
-			break;
-
-		default:
-			break;
-		}
+	if ((nState == BUTTON_CLICKED) && (pButton->GetControlID() == DONE_BUTTON)) {
+		// Normally we'd return to the main screen, but in this instance, we're
+		// done with the flashback... that is, as long as they've picked two
+		// code words.
+		OnButtonFinished(true);
 	}
 }
 
