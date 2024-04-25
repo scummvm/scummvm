@@ -62,7 +62,7 @@ public:
 
 	Picture *_picture = nullptr;
 	Graphics::Surface *_ditheredImg;
-	Graphics::FloodFill *_matte;
+	Graphics::Surface *_matte;
 
 	uint16 _pitch;
 	uint16 _regX;

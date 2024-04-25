@@ -106,7 +106,7 @@ void Window::invertChannel(Channel *channel, const Common::Rect &destRect) {
 			const byte *msk = mask ? (const byte *)mask->getBasePtr(xoff, yoff + i) : nullptr;
 
 			for (int j = 0; j < srcRect.width(); j++, src++)
-				if (!mask || (msk && !(*msk++)))
+				if (!mask || (msk && (*msk++)))
 					*src = _wm->inverter(*src);
 		}
 	} else {
@@ -116,7 +116,7 @@ void Window::invertChannel(Channel *channel, const Common::Rect &destRect) {
 			const uint32 *msk = mask ? (const uint32 *)mask->getBasePtr(xoff, yoff + i) : nullptr;
 
 			for (int j = 0; j < srcRect.width(); j++, src++)
-				if (!mask || (msk && !(*msk++)))
+				if (!mask || (msk && (*msk++)))
 					*src = _wm->inverter(*src);
 		}
 	}

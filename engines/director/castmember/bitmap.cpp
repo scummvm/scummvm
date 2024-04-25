@@ -215,8 +215,10 @@ BitmapCastMember::~BitmapCastMember() {
 		delete _ditheredImg;
 	}
 
-	if (_matte)
+	if (_matte) {
+		_matte->free();
 		delete _matte;
+	}
 }
 
 Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) {
@@ -466,21 +468,34 @@ void BitmapCastMember::createMatte(Common::Rect &bbox) {
 	if (!colorFound) {
 		debugC(1, kDebugImages, "BitmapCastMember::createMatte(): No white color for matte image");
 	} else {
-		delete _matte;
+		if (_matte) {
+			_matte->free();
+			delete _matte;
+		}
 
-		_matte = new Graphics::FloodFill(&tmp, whiteColor, 0, true);
+		Graphics::FloodFill matteFill(&tmp, whiteColor, 0, true);
 
 		for (int yy = 0; yy < tmp.h; yy++) {
-			_matte->addSeed(0, yy);
-			_matte->addSeed(tmp.w - 1, yy);
+			matteFill.addSeed(0, yy);
+			matteFill.addSeed(tmp.w - 1, yy);
 		}
 
 		for (int xx = 0; xx < tmp.w; xx++) {
-			_matte->addSeed(xx, 0);
-			_matte->addSeed(xx, tmp.h - 1);
+			matteFill.addSeed(xx, 0);
+			matteFill.addSeed(xx, tmp.h - 1);
 		}
 
-		_matte->fillMask();
+		matteFill.fillMask();
+		Graphics::Surface *matteSurf = matteFill.getMask();
+		// convert the mask to the same surface format used for 1bpp bitmaps.
+		// this uses the director palette scheme, so white is 0x00 and black is 0xff.
+		_matte = new Graphics::Surface();
+		_matte->create(matteSurf->w, matteSurf->h, Graphics::PixelFormat::createFormatCLUT8());
+		for (int y = 0; y < matteSurf->h; y++) {
+			for (int x = 0; x < matteSurf->w; x++) {
+				_matte->setPixel(x, y, matteSurf->getPixel(x, y) ? 0x00 : 0xff);
+			}
+		}
 		_noMatte = false;
 	}
 
@@ -494,12 +509,11 @@ Graphics::Surface *BitmapCastMember::getMatte(Common::Rect &bbox) {
 	}
 
 	// check for the scale matte
-	Graphics::Surface *surface = _matte ? _matte->getMask() : nullptr;
-	if (surface && (surface->w != bbox.width() || surface->h != bbox.height())) {
+	if (_matte && (_matte->w != bbox.width() || _matte->h != bbox.height())) {
 		createMatte(bbox);
 	}
 
-	return _matte ? _matte->getMask() : nullptr;
+	return _matte;
 }
 
 Common::String BitmapCastMember::formatInfo() {

@@ -45,6 +45,9 @@ public:
 
 	DirectorPlotData getPlotData();
 	const Graphics::Surface *getMask(bool forceMatte = false);
+
+	bool isBboxDeterminedByChannel();
+	Common::Point getPosition(bool unstretched = false);
 	// Return the area of screen to be used for drawing content.
 	Common::Rect getBbox(bool unstretched = false);
 
