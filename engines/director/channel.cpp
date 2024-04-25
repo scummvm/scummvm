@@ -24,7 +24,9 @@
 #include "director/score.h"
 #include "director/cast.h"
 #include "director/channel.h"
+#include "director/picture.h"
 #include "director/sprite.h"
+#include "director/types.h"
 #include "director/window.h"
 #include "director/castmember/castmember.h"
 #include "director/castmember/bitmap.h"
@@ -186,16 +188,48 @@ const Graphics::Surface *Channel::getMask(bool forceMatte) {
 		CastMemberID maskID(_sprite->_castId.member + 1, _sprite->_castId.castLib);
 		CastMember *member = g_director->getCurrentMovie()->getCastMember(maskID);
 
-		if (member && member->_initialRect == _sprite->_cast->_initialRect) {
-			Graphics::MacWidget *widget = member->createWidget(bbox, this, _sprite->_spriteType);
-			if (_mask)
+		if (member) {
+			if (member->_type != kCastBitmap) {
+				warning("Channel::getMask(): Requested cast mask %s, but type is %s, not bitmap", maskID.asString().c_str(), castType2str(member->_type));
+				return nullptr;
+			}
+			BitmapCastMember *bitmap = (BitmapCastMember *)member;
+			if (bitmap->_bitsPerPixel != 1) {
+				warning("Channel::getMask(): Requested cast mask %s, but bitmap isn't 1bpp", maskID.asString().c_str());
+				return nullptr;
+			}
+
+			if (_mask) {
 				delete _mask;
-			_mask = new Graphics::ManagedSurface();
-			_mask->copyFrom(*widget->getSurface());
-			delete widget;
-			return &_mask->rawSurface();
+				_mask = nullptr;
+			}
+			if (bitmap->_picture) {
+				// reposition channel bounding box, so origin is at registration offset
+				Common::Point originPos = getPosition();
+				bbox.translate(-originPos.x, -originPos.y);
+				// create new mask surface, with the exact dimensions of the channel.
+				_mask = new Graphics::ManagedSurface(bbox.width(), bbox.height());
+				// get the bounding box of the mask image (origin at registration offset)
+				Common::Rect destRect = bitmap->getBbox();
+				// get position of channel's registration offset (origin at top left)
+				Common::Point channelRegOffset(-bbox.left, -bbox.top);
+				// move destination rect to sit at the channel's registration offset
+				destRect.translate(channelRegOffset.x, channelRegOffset.y);
+				Common::Point destOrigin(destRect.left, destRect.top);
+				// clip the destination rect so it is contained within the mask bounds
+				destRect.clip(_mask->getBounds());
+				// make a copy of the destination rect with the origin at the top left of the mask bitmap
+				Common::Rect srcRect = destRect;
+				srcRect.translate(-destOrigin.x, -destOrigin.y);
+				debugC(8, kDebugImages, "Channel::getMask(): cast mask %s, orig %dx%d, dest %dx%d, crop %d,%d %dx%d",  maskID.asString().c_str(), bitmap->_picture->_surface.w, bitmap->_picture->_surface.h, bbox.width(), bbox.height(), destRect.left, destRect.top, destRect.width(), destRect.height());
+				_mask->copyRectToSurface(bitmap->_picture->_surface, destRect.left, destRect.top, srcRect);
+				return &_mask->rawSurface();
+			} else {
+				warning("Channel::getMask(): Requested cast mask %s, but no picture found", maskID.asString().c_str());
+				return nullptr;
+			}
 		} else {
-			warning("Channel::getMask(): Requested cast mask, but no matching mask was found");
+			warning("Channel::getMask(): Requested cast mask %s, but was not found", maskID.asString().c_str());
 			return nullptr;
 		}
 	}
@@ -267,7 +301,7 @@ bool Channel::isMouseIn(const Common::Point &pos) {
 	if (_sprite->_ink == kInkTypeMatte) {
 		if (_sprite->_cast && _sprite->_cast->_type == kCastBitmap) {
 			Graphics::Surface *matte = ((BitmapCastMember *)_sprite->_cast)->getMatte(bbox);
-			return matte ? !(*(byte *)(matte->getBasePtr(pos.x - bbox.left, pos.y - bbox.top))) : true;
+			return matte ? *(byte *)(matte->getBasePtr(pos.x - bbox.left, pos.y - bbox.top)) : true;
 		}
 	}
 
@@ -295,7 +329,7 @@ bool Channel::isMatteIntersect(Channel *channel) {
 			const byte *your = (const byte *)yourMatte->getBasePtr(intersectRect.left - yourBbox.left, i - yourBbox.top);
 
 			for (int j = intersectRect.left; j < intersectRect.right; j++, my++, your++)
-				if (!*my && !*your)
+				if (*my && *your)
 					return true;
 		}
 	}
@@ -325,7 +359,7 @@ bool Channel::isMatteWithin(Channel *channel) {
 			const byte *your = (const byte *)yourMatte->getBasePtr(intersectRect.left - yourBbox.left, i - yourBbox.top);
 
 			for (int j = intersectRect.left; j < intersectRect.right; j++, my++, your++)
-				if (*my && !*your)
+				if (!*my && *your)
 					return false;
 		}
 
@@ -354,15 +388,19 @@ bool Channel::isVideoDirectToStage() {
 	return ((DigitalVideoCastMember *)_sprite->_cast)->_directToStage;
 }
 
-Common::Rect Channel::getBbox(bool unstretched) {
+bool Channel::isBboxDeterminedByChannel() {
 	bool isShape = _sprite->_cast && _sprite->_cast->_type == kCastShape;
 	// Use the dimensions and position in the Channel:
 	// - if the sprite is of a shape, or
 	// - if the sprite has the puppet flag enabled
 	// Otherwise, use the Sprite dimensions and position (i.e. taken from the
 	// frame data in the Score).
+	return (isShape || _sprite->_puppet || _sprite->_moveable);
+}
+
+Common::Rect Channel::getBbox(bool unstretched) {
 	// Setting unstretched to true always returns the Sprite dimensions.
-	bool useOverride = (isShape || _sprite->_puppet || _sprite->_moveable) && !unstretched;
+	bool useOverride = isBboxDeterminedByChannel() && !unstretched;
 
 	Common::Rect result(
 		useOverride ? _width : _sprite->_width,
@@ -376,11 +414,18 @@ Common::Rect Channel::getBbox(bool unstretched) {
 	// The origin of the rect should be at the registration offset,
 	// e.g. for bitmap sprites this defaults to the centre.
 	// Now we move the rect to the correct spot.
-	result.translate(
+	Common::Point startPos = getPosition(unstretched);
+	result.translate(startPos.x, startPos.y);
+	return result;
+}
+
+Common::Point Channel::getPosition(bool unstretched) {
+	bool useOverride = isBboxDeterminedByChannel() && !unstretched;
+
+	return Common::Point(
 		useOverride ? _currentPoint.x : _sprite->_startPoint.x,
 		useOverride ? _currentPoint.y : _sprite->_startPoint.y
 	);
-	return result;
 }
 
 void Channel::setCast(CastMemberID memberID) {

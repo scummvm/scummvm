@@ -681,34 +681,22 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 
 	srcPoint.y = abs(srcRect.top - destRect.top);
 	for (int i = 0; i < destRect.height(); i++, srcPoint.y++) {
-		if (d->_wm->_pixelformat.bytesPerPixel == 1) {
-			srcPoint.x = abs(srcRect.left - destRect.left);
-			const byte *msk = mask ? (const byte *)mask->getBasePtr(srcPoint.x, srcPoint.y) : nullptr;
+		srcPoint.x = abs(srcRect.left - destRect.left);
+		const byte *msk = mask ? (const byte *)mask->getBasePtr(srcPoint.x, srcPoint.y) : nullptr;
 
-			for (int j = 0; j < destRect.width(); j++, srcPoint.x++) {
-				if (!srfClip.contains(srcPoint)) {
-					failedBoundsCheck = true;
-					continue;
-				}
-
-				if (!mask || (msk && !(*msk++))) {
-					(d->getInkDrawPixel())(destRect.left + j, destRect.top + i,
-											preprocessColor(*((byte *)srf->getBasePtr(srcPoint.x, srcPoint.y))), this);
-				}
+		for (int j = 0; j < destRect.width(); j++, srcPoint.x++) {
+			if (!srfClip.contains(srcPoint)) {
+				failedBoundsCheck = true;
+				continue;
 			}
-		} else {
-			srcPoint.x = abs(srcRect.left - destRect.left);
-			const uint32 *msk = mask ? (const uint32 *)mask->getBasePtr(srcPoint.x, srcPoint.y) : nullptr;
 
-			for (int j = 0; j < destRect.width(); j++, srcPoint.x++) {
-				if (!srfClip.contains(srcPoint)) {
-					failedBoundsCheck = true;
-					continue;
-				}
-
-				if (!mask || (msk && !(*msk++))) {
+			if (!mask || (msk && (*msk++))) {
+				if (d->_wm->_pixelformat.bytesPerPixel == 1) {
 					(d->getInkDrawPixel())(destRect.left + j, destRect.top + i,
-											preprocessColor(*((uint32 *)srf->getBasePtr(srcPoint.x, srcPoint.y))), this);
+										preprocessColor(*((byte *)srf->getBasePtr(srcPoint.x, srcPoint.y))), this);
+				} else {
+					(d->getInkDrawPixel())(destRect.left + j, destRect.top + i,
+										preprocessColor(*((uint32 *)srf->getBasePtr(srcPoint.x, srcPoint.y))), this);
 				}
 			}
 		}
