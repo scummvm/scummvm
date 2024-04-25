@@ -82,7 +82,7 @@ void Cursor::readFromCast(Datum cursorCasts) {
 	_usePalette = false;
 	_keyColor = 3;
 
-	resetCursor(Graphics::kMacCursorCustom, true, cursorCasts);
+	resetCursor(Graphics::kMacCursorCustom, true, Datum(cursorId.member));
 
 	BitmapCastMember *cursorBitmap = (BitmapCastMember *)cursorCast;
 	BitmapCastMember *maskBitmap = (BitmapCastMember *)maskCast;
