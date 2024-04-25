@@ -257,14 +257,12 @@ ErrorCode CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 						pr = &r;
 					}
 				}
-			} else {
-				if (loc.y < m_nDeactiveHeight) {
-					loc.y += m_nMoveDist;
-					if (pSrcRect) {
-						CBofRect r = *pSrcRect;
-						pSrcRect->top -= m_nMoveDist;
-						pr = &r;
-					}
+			} else if (loc.y < m_nDeactiveHeight) {
+				loc.y += m_nMoveDist;
+				if (pSrcRect) {
+					CBofRect r = *pSrcRect;
+					pSrcRect->top -= m_nMoveDist;
+					pr = &r;
 				}
 			}
 
@@ -299,12 +297,10 @@ ErrorCode CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 			if (bIsMovieWaiting == true) {
 				RunWaitingMovie();
 			}
-		} else {
+		} else if (m_ePdaMode == MOOMODE) {
 			// If we're playing a pda movie, then make sure we continue to update.
-			if (m_ePdaMode == MOOMODE) {
-				bMoviePlaying = true;
-				bUpdate = true;
-			}
+			bMoviePlaying = true;
+			bUpdate = true;
 		}
 
 		// If the official decree from on high has been given to update, do so!
@@ -318,14 +314,10 @@ ErrorCode CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 		if (IsActivating() || bWandAnimating || bMoviePlaying) {
 			CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
 			((CBagPanWindow *)pMainWin)->SetPreFilterPan(true);
-		} else {
+		} else if (!IsActivated() && (SBBasePda::m_ePdaMode != MAPMODE)) {
 			// If it is not activated, then don't bother redrawing it or the objects
 			// inside of it.
-			if (!IsActivated()) {
-				if (SBBasePda::m_ePdaMode != MAPMODE) {
-					SetDirty(false);
-				}
-			}
+			SetDirty(false);
 		}
 	}
 
@@ -342,7 +334,9 @@ bool CBagPDA::IsInside(const CBofPoint &xPoint) {
 			int y = xPoint.y - GetRect().top;
 			int c = pSrcBmp->ReadPixel(x, y);
 			return (c != m_nMaskColor);
-		} else return true;
+		}
+
+		return true;
 	}
 	return false;
 }
@@ -361,55 +355,55 @@ void CBagPDA::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 		}
 		return;
 
+	}
+
+	// Else, call the default func
+	CBofPoint RealPt = DevPtToViewPort(*xPoint);
+
+	if (m_xCurDisplay && m_xCurDisplay->GetRect().PtInRect(RealPt)) {
+		m_xCurDisplay->OnLButtonUp(nFlags, &RealPt, info);
 	} else {
-		// Else, call the default func
-		CBofPoint RealPt = DevPtToViewPort(*xPoint);
+		// if not in the PDA view port then check and make sure it is activated.
+		if (SBBasePda::m_ePdaMode == INVMODE && !IsActivated()) {
+			if (IsInside(*xPoint)) {
+				// Make sure the entire screen gets redrawn for an activate
+				((CBagPanWindow *)pMainWin)->SetPreFilterPan(true);
 
-		if (m_xCurDisplay && m_xCurDisplay->GetRect().PtInRect(RealPt)) {
-			m_xCurDisplay->OnLButtonUp(nFlags, &RealPt, info);
-		} else {
-			// if not in the PDA view port then check and make sure it is activated.
-			if (SBBasePda::m_ePdaMode == INVMODE && !IsActivated()) {
-				if (IsInside(*xPoint)) {
-					// Make sure the entire screen gets redrawn for an activate
-					((CBagPanWindow *)pMainWin)->SetPreFilterPan(true);
-
-					Activate();
-					SetDirty(true);
-				}
-				return;
+				Activate();
+				SetDirty(true);
 			}
-
-			// If it's in one of the buttons, then pass it off to the
-			// sdev bmp code.
-			if (IsActivated()) {
-				bool bButtonHit = false;
-				CBofList<CBagObject *> *pList = GetObjectList();
-				int  nCount = (pList == nullptr ? 0 : pList->GetCount());
-
-				// Go through all the buttons and see if we hit any of them.
-				for (int i = 0; i < nCount; i++) {
-					CBagObject *pObj = pList->GetNodeItem(i);
-					if (pObj->GetType() == BUTTONOBJ && pObj->GetRect().PtInRect(RealPt)) {
-						bButtonHit = true;
-						break;
-					}
-				}
-
-				// Deactivate the PDA if we didn't hit a button.
-				if (bButtonHit || m_ePdaMode == NOMODE) {
-					CBagStorageDevBmp::OnLButtonUp(nFlags, xPoint, info);
-				} else {
-					((CBagPanWindow *)pMainWin)->SetPreFilterPan(true);
-					Deactivate();
-				}
-			}
+			return;
 		}
 
-		// After a change of state, check if we should be flashing our
-		// zoom button or not.
-		HandleZoomButton(false);
+		// If it's in one of the buttons, then pass it off to the
+		// sdev bmp code.
+		if (IsActivated()) {
+			bool bButtonHit = false;
+			CBofList<CBagObject *> *pList = GetObjectList();
+			int  nCount = (pList == nullptr ? 0 : pList->GetCount());
+
+			// Go through all the buttons and see if we hit any of them.
+			for (int i = 0; i < nCount; i++) {
+				CBagObject *pObj = pList->GetNodeItem(i);
+				if (pObj->GetType() == BUTTONOBJ && pObj->GetRect().PtInRect(RealPt)) {
+					bButtonHit = true;
+					break;
+				}
+			}
+
+			// Deactivate the PDA if we didn't hit a button.
+			if (bButtonHit || m_ePdaMode == NOMODE) {
+				CBagStorageDevBmp::OnLButtonUp(nFlags, xPoint, info);
+			} else {
+				((CBagPanWindow *)pMainWin)->SetPreFilterPan(true);
+				Deactivate();
+			}
+		}
 	}
+
+	// After a change of state, check if we should be flashing our
+	// zoom button or not.
+	HandleZoomButton(false);
 }
 
 void CBagPDA::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *info) {
@@ -493,22 +487,20 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 
 				m_bFlashing = true;
 			}
-		} else {
-			if (m_bFlashing) {
-				// Don't allow AttachActiveObjects() to be called in here
-				g_bAllowAAO = false;
-				pPda->DeactivateLocalObject(pZoomFlash);
-				pPda->ActivateLocalObject(pZoomRegular);
-				g_bAllowAAO = true;
+		} else if (m_bFlashing) {
+			// Don't allow AttachActiveObjects() to be called in here
+			g_bAllowAAO = false;
+			pPda->DeactivateLocalObject(pZoomFlash);
+			pPda->ActivateLocalObject(pZoomRegular);
+			g_bAllowAAO = true;
 
-				pZoomFlash->SetActive(false);
-				pZoomRegular->SetActive(true);
+			pZoomFlash->SetActive(false);
+			pZoomRegular->SetActive(true);
 
-				pZoomFlash->SetAnimated(false);
-				pZoomFlash->SetAlwaysUpdate(false);
+			pZoomFlash->SetAnimated(false);
+			pZoomFlash->SetAlwaysUpdate(false);
 
-				m_bFlashing = false;
-			}
+			m_bFlashing = false;
 		}
 	}
 }

@@ -290,18 +290,14 @@ bool CBagCharacterObject::DoAdvance() {
 						_smacker->rewind();
 						_smacker->start();
 					}
+				} else if (((int)_smacker->getCurFrame() == m_nEndFrame) || (_smacker->getCurFrame() == 1)) {
+					if (m_nNumOfLoops > 0)
+						m_nNumOfLoops--; // decrement num of loops
+
+					// Get next frame, will loop to beginning
+					SetFrame(m_nStartFrame);
 				} else {
-					if (((int)_smacker->getCurFrame() == m_nEndFrame) ||
-							(_smacker->getCurFrame() == 1)) {
-						if (m_nNumOfLoops > 0)
-							m_nNumOfLoops--; // decrement num of loops
-
-						// Get next frame, will loop to beginning
-						SetFrame(m_nStartFrame);
-
-					} else {
-						SetFrame(_smacker->getCurFrame() - 2); // HACK: Reverse playback
-					}
+					SetFrame(_smacker->getCurFrame() - 2); // HACK: Reverse playback
 				}
 			}
 		} else if (m_bFirstFrame) {

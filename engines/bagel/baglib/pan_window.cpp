@@ -322,25 +322,23 @@ ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 							// Handle non-modal movies also...
 							if (pCharObj->GetNumOfLoops() == 1) {
 								SetPreFilterPan(true);
-							} else {
-								if (pObj->IsAttached() &&                       // don't care if it's not running...
+							} else if (pObj->IsAttached() &&                       // don't care if it's not running...
 								        (pCharObj->IsStationary() == false) &&
 								        (pCharObj->GetNumOfLoops() != 0) &&     // Plays multiple or infinite (fly == -1)
 								        ((pObj->GetRect().Width() != 480) &&
 								         (pObj->GetRect().Height() != 360))) {
 
-									// Redraw everything inside of the closeup... but not the PDA...
-									// only want to redraw the closeup, not everything else.
-									//
-									// if our prefilter pan is already dirty, then don't mess with dirty
-									// object list.
+								// Redraw everything inside of the closeup... but not the PDA...
+								// only want to redraw the closeup, not everything else.
+								//
+								// if our prefilter pan is already dirty, then don't mess with dirty
+								// object list.
 
-									bool b = PreFilterPan();
-									SetPreFilterPan(true);
+								bool b = PreFilterPan();
+								SetPreFilterPan(true);
 
-									if (!b) {
-										SetDirtyAllObjects(false);
-									}
+								if (!b) {
+									SetDirtyAllObjects(false);
 								}
 							}
 						}

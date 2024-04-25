@@ -330,10 +330,8 @@ void *SBBasePda::fPdaButtonHandler(int nRefId, void *pvInfo) {
 void SBBasePda::SynchronizePDAState() {
 	if (m_ePDAPos == PDADOWN && IsActivated()) {
 		Deactivate();
-	} else {
-		if (m_ePDAPos == PDAUP && IsActivated() == false) {
-			Activate();
-		}
+	} else if (m_ePDAPos == PDAUP && IsActivated() == false) {
+		Activate();
 	}
 }
 
@@ -412,20 +410,14 @@ void SBBasePda::GetPDAState() {
 		// If we saved during a movie, then restore to map mode.
 		if (sPDAState.Find("MAP") != -1 || sPDAState.Find("MOO") != -1) {
 			m_ePdaMode = MAPMODE;
+		} else if (sPDAState.Find("INV") != -1) {
+			m_ePdaMode = INVMODE;
+		} else if (sPDAState.Find("LOG") != -1) {
+			m_ePdaMode = LOGMODE;
+		} else if (sPDAState.Find("MOO") != -1) {
+			m_ePdaMode = MOOMODE;
 		} else {
-			if (sPDAState.Find("INV") != -1) {
-				m_ePdaMode = INVMODE;
-			} else {
-				if (sPDAState.Find("LOG") != -1) {
-					m_ePdaMode = LOGMODE;
-				} else {
-					if (sPDAState.Find("MOO") != -1) {
-						m_ePdaMode = MOOMODE;
-					} else {
-						m_ePdaMode = NOMODE;
-					}
-				}
-			}
+			m_ePdaMode = NOMODE;
 		}
 	}
 

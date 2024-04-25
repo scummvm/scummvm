@@ -326,22 +326,18 @@ ErrorCode CBofScrollBar::Paint(CBofRect *pDirtyRect) {
 					cPoint = m_cLeftBtnRect.TopLeft();
 					m_pLeftBtnDn->Paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
 
-				} else {
-					if (m_pLeftBtnUp != nullptr) {
-						cPoint = m_cLeftBtnRect.TopLeft();
-						m_pLeftBtnUp->Paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
-					}
+				} else if (m_pLeftBtnUp != nullptr) {
+					cPoint = m_cLeftBtnRect.TopLeft();
+					m_pLeftBtnUp->Paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
 				}
 
 				if ((m_nScrollState == 4) && (m_pRightBtnDn != nullptr)) {
 					cPoint = m_cRightBtnRect.TopLeft();
 					m_pRightBtnDn->Paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
 
-				} else {
-					if (m_pRightBtnUp != nullptr) {
-						cPoint = m_cRightBtnRect.TopLeft();
-						m_pRightBtnUp->Paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
-					}
+				} else if (m_pRightBtnUp != nullptr) {
+					cPoint = m_cRightBtnRect.TopLeft();
+					m_pRightBtnUp->Paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
 				}
 
 				m_cThumbPos.x = (int)(((int32)(m_nScrollWidth - m_cThumbSize.cx) * m_nPos) / (m_nRange - 1)) + m_nOffset;
