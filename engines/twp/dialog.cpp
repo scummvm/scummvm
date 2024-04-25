@@ -246,7 +246,7 @@ void Dialog::update(float dt) {
 		for (size_t i = 0; i < MAXDIALOGSLOTS; i++) {
 			DialogSlot *slot = &_slots[i];
 			if (slot->_isValid) {
-				Rectf rect = Rectf::fromPosAndSize(slot->getPos() - Math::Vector2d(0.f, -slot->getSize().getY() / 2.f), slot->getSize());
+				Rectf rect = Rectf::fromPosAndSize(slot->getPos() - Math::Vector2d(0.f, -slot->getSize().getY() / 2.f), Math::Vector2d(SCREEN_WIDTH - SLOTMARGIN, slot->getSize().getY()));
 				bool over = rect.contains(_mousePos);
 				// shake choice when cursor is over
 				if ((slot->_shakeTime > 0.0f) && slot->_shake) {
@@ -265,12 +265,13 @@ void Dialog::update(float dt) {
 					slot->_over = false;
 				}
 				// slide choice text wen text is too large
-				if (rect.r.w > (SCREEN_WIDTH - SLOTMARGIN)) {
+				const float width = slot->getSize().getX();
+				if (width > (SCREEN_WIDTH - SLOTMARGIN)) {
 					if (over) {
-						if ((rect.r.w + slot->getPos().getX()) > (SCREEN_WIDTH - SLOTMARGIN)) {
+						if ((width + slot->getPos().getX()) > (SCREEN_WIDTH - SLOTMARGIN)) {
 							slot->setPos(Math::Vector2d(slot->getPos().getX() - SLIDINGSPEED * dt, slot->getPos().getY()));
-							if ((rect.r.w + slot->getPos().getX()) < (SCREEN_WIDTH - SLOTMARGIN)) {
-								slot->setPos(Math::Vector2d((SCREEN_WIDTH - SLOTMARGIN) - rect.r.w, slot->getPos().getY()));
+							if ((width + slot->getPos().getX()) < (SCREEN_WIDTH - SLOTMARGIN)) {
+								slot->setPos(Math::Vector2d((SCREEN_WIDTH - SLOTMARGIN) - width, slot->getPos().getY()));
 							}
 						}
 					} else if (slot->getPos().getX() < SLOTMARGIN) {
