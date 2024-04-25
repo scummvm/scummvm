@@ -529,11 +529,15 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops) {
 			engine->getInventory()->open();
 			warning("TODO: Check leave scene and open inventory scene op");
 			break;
-		case kSceneOpMoveItemsBetweenScenes:
-			// Move all items from source scene to the dest scene.
-			// scene numbers are in globals.
-			error("TODO: Implement move items between scenes op");
+		case kSceneOpMoveItemsBetweenScenes: {
+			int16 fromScene = engine->getGameGlobals()->getGlobal(0x55);
+			int16 toScene = engine->getGameGlobals()->getGlobal(0x54);
+			for (auto &item : engine->getGDSScene()->getGameItems()) {
+				if (item._inSceneNum == fromScene)
+					item._inSceneNum = toScene;
+			}
 			break;
+		}
 		case kSceneOpShowClock:
 			engine->setShowClock(true);
 			break;
@@ -633,7 +637,7 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 bool SDSScene::_dlgWithFlagLo8IsClosing = false;;
 DialogFlags SDSScene::_sceneDialogFlags = kDlgFlagNone;
 
-SDSScene::SDSScene() : _num(-1), _dragItem(nullptr) {
+SDSScene::SDSScene() : _num(-1), _dragItem(nullptr), _shouldClearDlg(false) {
 }
 
 bool SDSScene::load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor) {
@@ -787,7 +791,8 @@ bool SDSScene::checkDialogActive() {
 
 	_sceneDialogFlags = kDlgFlagNone;
 
-	bool someFlag = true; // ((g_gameStateFlag_41f6 | UINT_39e5_41f8) & 6) != 0); ??
+	bool clearDlgFlag = _shouldClearDlg; // ((g_gameStateFlag_41f6 | UINT_39e5_41f8) & 6) != 0); ??
+	_shouldClearDlg = false;
 
 	for (auto &dlg : _dialogs) {
 		if (!dlg.hasFlag(kDlgFlagVisible))
@@ -796,9 +801,12 @@ bool SDSScene::checkDialogActive() {
 		if (!dlg._state)
 			dlg._state.reset(new DialogState());
 
+		// FIXME: double-check this logic.
+		// Mark finished if we are manually clearing *or* the timer has expired.
 		bool finished = false;
-		if (dlg._state->_hideTime && dlg._state->_hideTime < timeNow) {
-			finished = someFlag;
+		if (dlg._state->_hideTime &&
+			((dlg._state->_hideTime < timeNow && clearDlgFlag) || timeNow > dlg._state->_hideTime)) {
+			finished = true;
 		}
 
 		bool no_options = false;
@@ -842,10 +850,12 @@ bool SDSScene::checkDialogActive() {
 void SDSScene::drawActiveDialogBgs(Graphics::ManagedSurface *dst) {
 	for (auto &dlg : _dialogs) {
 		if (dlg.hasFlag(kDlgFlagVisible) && !dlg.hasFlag(kDlgFlagOpening)) {
-			assert(dlg._state);
 			dlg.draw(dst, kDlgDrawStageBackground);
-			dlg.clearFlag(kDlgFlagHi20);
-			dlg.setFlag(kDlgFlagHi40);
+			// FIXME: Original clears Hi20 and sets Hi40 here, but with our
+			// call sequence that means the time never works right in
+			// drawAndUpdateDialogs??
+			//dlg.clearFlag(kDlgFlagHi20);
+			//dlg.setFlag(kDlgFlagHi40);
 		}
 	}
 }
@@ -964,9 +974,7 @@ void SDSScene::mouseMoved(const Common::Point &pt) {
 void SDSScene::mouseLDown(const Common::Point &pt) {
 	Dialog *dlg = getVisibleDialog();
 	if (dlg) {
-		// HACK: Check for dialog action selection! for now, just close
-		// it here to make game playable.
-		dlg->clear();
+		_shouldClearDlg = true;
 		return;
 	}
 

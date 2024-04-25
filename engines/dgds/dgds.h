@@ -83,6 +83,7 @@ private:
 	DgdsGameId _gameId;
 	Graphics::ManagedSurface _bottomBuffer;
 	Graphics::ManagedSurface _topBuffer;
+	bool _topBufferUsed;
 	SDSScene *_scene;
 	GDSScene *_gdsScene;
 	Menu *_menu;
@@ -117,7 +118,8 @@ public:
 
 	DgdsGameId getGameId() { return _gameId; }
 
-	Graphics::ManagedSurface &getTopBuffer() { return _topBuffer; }
+	Graphics::ManagedSurface &getTopBuffer();
+	const Graphics::ManagedSurface &getTopBuffer() const { return _topBuffer; }
 	Graphics::ManagedSurface &getBottomBuffer() { return _bottomBuffer; }
 	Common::SeekableReadStream *getResource(const Common::String &name, bool ignorePatches);
 	ResourceManager *getResourceManager() { return _resource; }

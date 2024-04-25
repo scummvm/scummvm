@@ -72,7 +72,7 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_soundPlayer(nullptr), _decompressor(nullptr), _scene(nullptr),
 	_gdsScene(nullptr), _resource(nullptr), _gamePals(nullptr), _gameGlobals(nullptr),
 	_detailLevel(kDgdsDetailHigh), _textSpeed(1), _justChangedScene1(false), _justChangedScene2(false),
-	_random("dgds"), _currentCursor(-1) {
+	_random("dgds"), _currentCursor(-1), _topBufferUsed(false) {
 	syncSoundSettings();
 
 	_platform = gameDesc->platform;
@@ -133,6 +133,10 @@ bool DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
 	if (sceneNum == _scene->getNum()) {
 		warning("Tried to change from scene %d to itself, doing nothing.", sceneNum);
 		return false;
+	}
+	
+	if (sceneNum != 2 && _scene->getNum() != 2 && _inventory->isOpen()) {
+		_inventory->close();
 	}
 
 	const Common::String sceneFile = Common::String::format("S%d.SDS", sceneNum);
@@ -209,6 +213,14 @@ void DgdsEngine::checkDrawInventoryButton() {
 	int y = SCREEN_HEIGHT - _icons->height(2) - 5;
 	static const Common::Rect drawWin(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	_icons->drawBitmap(2, x, y, drawWin, _resData);
+}
+
+Graphics::ManagedSurface &DgdsEngine::getTopBuffer() {
+	if (_topBufferUsed) {
+		_topBuffer.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		_topBufferUsed = false;
+	}
+	return _topBuffer;
 }
 
 Common::Error DgdsEngine::run() {
@@ -297,7 +309,7 @@ Common::Error DgdsEngine::run() {
 	//getDebugger()->attach();
 
 	debug("Parsed Inv Request:\n%s", invRequestData.dump().c_str());
-	//debug("Parsed VCR Request:\n%s", vcrRequestData.dump().c_str());
+	debug("Parsed VCR Request:\n%s", vcrRequestData.dump().c_str());
 
 	bool moveToNext = false;
 	bool triggerMenu = false;
@@ -446,7 +458,7 @@ Common::Error DgdsEngine::run() {
 			}
 
 			_resData.transBlitFrom(_topBuffer);
-			_topBuffer.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+			_topBufferUsed = true;
 
 			if (!_inventory->isOpen()) {
 				_gdsScene->drawItems(_resData);

@@ -95,12 +95,12 @@ enum SceneOpCode {
 	kSceneOp100 = 100,			// args: none.
 	kSceneOpMeanwhile = 101,	// args: none. Clears screen and displays "meanwhile".
 	kSceneOp102 = 102,			// args: none.
-	kSceneOp103 = 103,			// args: none.
+	kSceneOp103 = 103,			// args: none. Something about "boy am I tired"?
 	kSceneOp104 = 104,			// args: none.
 	kSceneOp105 = 105,			// args: none. Draw some number at 141, 56
 	kSceneOp106 = 106,			// args: none. Draw some number at 42, 250
-	kSceneOpOpenPlaySkipIntroMenu = 107, // args: none.  Show the "Play Introduction" / "Skip Introduction" menu.  Dragon only??
-	kSceneOp108 = 108,			// args: none.
+	kSceneOpOpenPlaySkipIntroMenu = 107, // args: none.  DRAGON: Show menu 50, the "Play Introduction" / "Skip Introduction" menu.
+	kSceneOp108 = 108,			// args: none. DRAGON: Show menu 46, the "Before arcade maybe you better save your game" menu.
 };
 
 struct SceneOp {
@@ -324,6 +324,7 @@ private:
 	//uint _field15_0x33;
 
 	GameItem *_dragItem;
+	bool _shouldClearDlg;
 
 	static bool _dlgWithFlagLo8IsClosing;
 	static DialogFlags _sceneDialogFlags;

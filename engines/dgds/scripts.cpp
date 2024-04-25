@@ -158,8 +158,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 			break;
 		_vm->_soundPlayer->stopMusic();
 		break;
-	case 0x0ff0: { // REFRESH:	void
-	} break;
+	case 0x0ff0: // REFRESH:	void
+		break;
 	case 0x1020: // SET DELAY:	    i:int   [0..n]
 		// Delay of 240 should be 2 seconds, so this is in quarter-frames.
 		// TODO: Probably should do this accounting (as well as timeCut and dialogs)
@@ -195,7 +195,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		seq._currentGetPutId = ivals[0];
 		break;
 	case 0x1200: // GOTO
-		_vm->adsInterpreter()->setGotoTarget(ivals[0]);
+		_vm->adsInterpreter()->setGotoTarget(findGOTOTarget(env, seq, ivals[0]));
 		break;
 	case 0x1300: // PLAY SFX    i:int - eg [72], found in Dragon + HoC intro
 		if (seq._executed) // this is a one-shot op.
@@ -235,11 +235,10 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 			// bring that down a bit to use less cpu.
 			// Speed 4 should complete fade in 2 seconds (eg, Dynamix logo fade)
 
-			// TODO: this is a pretty bad way to do it - maybe should pump messages at least.
+			// TODO: this is a pretty bad way to do it - should pump messages in this loop?
 			for (int i = 0; i < 320; i += ivals[3]) {
 				int fade = MIN(i / 5, 63);
 				_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2], fade * 4);
-				g_system->copyRectToScreen(_vm->_resData.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 				g_system->updateScreen();
 				g_system->delayMillis(5);
 			}
@@ -249,10 +248,10 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 	case 0x4120: { // FADE IN:	colorno,ncolors,targetcol,speed:byte
 		if (seq._executed) // this is a one-shot op.
 			break;
-		// blt first?
+		// blt first to make the initial fade-in work
 		_vm->_resData.blitFrom(_vm->getBottomBuffer());
 		_vm->_resData.transBlitFrom(_vm->getTopBuffer());
-		_vm->getTopBuffer().fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		g_system->copyRectToScreen(_vm->_resData.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 		if (ivals[3] == 0) {
 			_vm->getGamePals()->setPalette();
@@ -260,7 +259,6 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 			for (int i = 320; i > 0; i -= ivals[3]) {
 				int fade = MAX(0, MIN(i / 5, 63));
 				_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2], fade * 4);
-				g_system->copyRectToScreen(_vm->_resData.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 				g_system->updateScreen();
 				g_system->delayMillis(5);
 			}
@@ -384,9 +382,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 	case 0xf010: { // LOAD SCR:	filename:str
 		if (seq._executed) // this is a one-shot op
 			break;
-		Image *tmp = new Image(_vm->getResourceManager(), _vm->getDecompressor());
-		tmp->drawScreen(sval, _vm->getBottomBuffer());
-		delete tmp;
+		Image tmp = Image(_vm->getResourceManager(), _vm->getDecompressor());
+		tmp.drawScreen(sval, _vm->getBottomBuffer());
 		break;
 	}
 	case 0xf020: // LOAD BMP:	filename:str
@@ -519,8 +516,12 @@ bool TTMInterpreter::run(TTMEnviro &env, struct TTMSeq &seq) {
 	return true;
 }
 
-int32 TTMInterpreter::findGOTOTarget(TTMEnviro &env, TTMSeq &seq) {
-	error("TODO: implement TTMInterpreter::findGOTOTarget");
+int32 TTMInterpreter::findGOTOTarget(TTMEnviro &env, TTMSeq &seq, int16 frame) {
+	for (int32 i = 0; i < (int)env._frameOffsets.size(); i++) {
+		if (env._frameOffsets[i] == frame)
+			return i;
+	}
+	return -1;
 }
 
 void TTMInterpreter::findAndAddSequences(TTMEnviro &env, Common::Array<TTMSeq> &seqArray) {
@@ -1030,7 +1031,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		} else if (runCount < 0) {
 			// Negative run count sets the cut time
 			seq->_timeCut = g_engine->getTotalPlayTime() + runCount;
-			// Should this be *10 like delays?
+			// TODO: Should this be *10 like delays?
 			warning("TODO: check handling of negative runcount %d", runCount);
 			seq->_runFlag = kRunTypeTimeLimited;
 		} else {

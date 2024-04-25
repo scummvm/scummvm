@@ -265,7 +265,6 @@ void Sound::playPCSound(uint num, const Common::Array<uint32> &sizeArray, const 
 	} else {
 		warning("Sound: Requested to play %d but only have %d tracks", num, dataArray.size());
 	}
-	
 }
 
 void Sound::stopMusic() {
