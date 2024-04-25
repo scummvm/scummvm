@@ -1214,6 +1214,10 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// on the fact that they were added in a specific order
 			Character *c = currentView->characters[1];
 			c->StartLerpTo(Common::Point(x, y), 2 * 1000);
+			break;
+		} else if (opcode1 == 0x11) {
+			// Wait for last movement to be finished
+
 		}
 
 		if (opcode1 == 0x0a) {
@@ -1259,20 +1263,6 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Check how this suspension is really handled
 			requestCallback = true;
 
-		} else if (opcode1 == 0x10) {
-			// l0037_DE72:
-			// call	far 0037h:0B843h
-			// TBC: This should be the walk to
-			// TODO: Mocked reads to advance the file correctly
-			// TODO: These might be conditional so they might break
-			// for another example
-			uint16 throwaway1;
-			uint16 throwaway2;
-			Func9F4D(throwaway1, throwaway2);
-			Func9F4D(throwaway1, throwaway2);
-			Func9F4D(throwaway1, throwaway2);
-
-			requestCallback = true;
 		} else if (opcode1 == 0x11) {
 			// l0037_DE81:
 			// TODO: Probably setting the mouse cursor mode
