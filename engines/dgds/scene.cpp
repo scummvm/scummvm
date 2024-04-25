@@ -511,7 +511,8 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops) {
 			break;
 		case kSceneOpOpenInventory:
 			engine->getInventory()->open();
-			break;
+			// This implicitly changes scene num
+			return false;
 		case kSceneOpShowDlg:
 			showDialog(op._args[0]);
 			break;
@@ -527,8 +528,9 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops) {
 		}
 		case kSceneOpLeaveSceneAndOpenInventory:
 			engine->getInventory()->open();
+			// This implicitly changes scene num
 			warning("TODO: Check leave scene and open inventory scene op");
-			break;
+			return false;
 		case kSceneOpMoveItemsBetweenScenes: {
 			int16 fromScene = engine->getGameGlobals()->getGlobal(0x55);
 			int16 toScene = engine->getGameGlobals()->getGlobal(0x54);
