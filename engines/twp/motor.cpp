@@ -371,6 +371,10 @@ void TalkingBase::setDuration(const Common::String &text) {
 	_duration = MAX(duration, sayLineMinTime);
 }
 
+float TalkingBase::getTalkSpeed() const {
+	return _actor->_sound ? 1.f : (ConfMan.getInt("talkspeed") + 1) / 60.f;
+}
+
 Talking::Talking(Common::SharedPtr<Object> obj, const Common::StringArray &texts, const Color &color) : TalkingBase(obj, 0.f) {
 	_color = color;
 	_texts.assign(texts.begin() + 1, texts.end());
@@ -412,7 +416,7 @@ void Talking::onUpdate(float elapsed) {
 	if (!isEnabled())
 		return;
 
-	_elapsed += elapsed;
+	_elapsed += elapsed * getTalkSpeed();
 	if (_actor->_sound) {
 		if (!g_twp->_audio->playing(_actor->_sound)) {
 			debugC(kDebugGame, "talking %s audio stopped", _actor->_key.c_str());
@@ -644,7 +648,7 @@ void SayLineAt::onUpdate(float elapsed) {
 	if (!isEnabled())
 		return;
 
-	_elapsed += elapsed;
+	_elapsed += elapsed * getTalkSpeed();
 	if (_actor && _actor->_sound) {
 		if (!g_twp->_audio->playing(_actor->_sound)) {
 			debugC(kDebugGame, "talking %s audio stopped", _actor->_key.c_str());

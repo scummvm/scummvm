@@ -258,6 +258,7 @@ protected:
 	int onTalkieId(int id);
 	int loadActorSpeech(const Common::String &name);
 	void setDuration(const Common::String &text);
+	float getTalkSpeed() const;
 
 protected:
 	Common::SharedPtr<Object> _actor;
