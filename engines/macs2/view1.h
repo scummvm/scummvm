@@ -47,6 +47,7 @@ private:
 		Macs2::GameObject *GameObject;
 		// TODO: Will need time handling
 	Macs2::AnimFrame *GetCurrentAnimationFrame();
+		Macs2::AnimFrame *GetCurrentPortrait();
 		void StartLerpTo(const Common::Point &target, uint32 duration);
 		void Update();
 	};
