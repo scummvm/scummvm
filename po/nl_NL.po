@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-25 00:36+0000\n"
+"POT-Creation-Date: 2024-04-25 03:46+0000\n"
 "PO-Revision-Date: 2024-03-24 18:22+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -7781,13 +7781,13 @@ msgid ""
 msgstr ""
 
 #: engines/mm/shared/utils/engine_data.cpp:278
-#: engines/ultima/shared/engine/data_archive.cpp:86
+#: engines/ultima/shared/engine/data_archive.cpp:88
 #, c-format
 msgid "Could not locate engine data %s"
 msgstr "Kan de '%s' engine data file niet vinden"
 
 #: engines/mm/shared/utils/engine_data.cpp:296
-#: engines/ultima/shared/engine/data_archive.cpp:104
+#: engines/ultima/shared/engine/data_archive.cpp:106
 #, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr "Verouderde versie engine data. Verwacht werd %d.%d maar vond %d.%d"
