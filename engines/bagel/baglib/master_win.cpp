@@ -856,14 +856,10 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 
 				if (sStr.Find("MAP") != -1) {
 					SBBasePda::SetPDAMode(MAPMODE);
-				} else {
-					if (sStr.Find("INV") != -1) {
-						SBBasePda::SetPDAMode(INVMODE);
-					} else {
-						if (sStr.Find("LOG") != -1) {
-							SBBasePda::SetPDAMode(LOGMODE);
-						}
-					}
+				} else if (sStr.Find("INV") != -1) {
+					SBBasePda::SetPDAMode(INVMODE);
+				} else if (sStr.Find("LOG") != -1) {
+					SBBasePda::SetPDAMode(LOGMODE);
 				}
 				LogInfo(BuildString("PDASTATE = %s", szPDAState));
 			}

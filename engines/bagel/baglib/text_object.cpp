@@ -508,17 +508,13 @@ bool CBagTextObject::RunObject() {
 					Assert(zRect.Height() > 0 && zRect.Height() < 480);
 					Assert(zRect.Width() > 0 && zRect.Width() < 640);
 					cDlg.Move(80, zRect.bottom - cRect.Height(), true); // xxx
+				} else if ((pPDA != nullptr) && (pPDA->IsActivated() || pPDA->IsActivating())) {
+					cDlg.Move(80, 10, true);
+
 				} else {
-					if ((pPDA != nullptr) && (pPDA->IsActivated() || pPDA->IsActivating())) {
-						cDlg.Move(80, 10, true);
-
-					} else {
-						int x, y;
-
-						x = 80;
-						y = 360 + 10 - cRect.Height();
-						cDlg.Move(x, y, true);
-					}
+					int x = 80;
+					int y = 360 + 10 - cRect.Height();
+					cDlg.Move(x, y, true);
 				}
 				g_bPauseTimer = true;
 				cDlg.DoModal();
@@ -531,15 +527,10 @@ bool CBagTextObject::RunObject() {
 }
 
 int MapFont(int nFont) {
-	switch (nFont) {
-
-	case 0:
+	if (nFont == 0)
 		return FONT_MONO;
 
-	case 1:
-	default:
-		return FONT_DEFAULT;
-	}
+	return FONT_DEFAULT;
 }
 
 void CBagTextObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *pv) {

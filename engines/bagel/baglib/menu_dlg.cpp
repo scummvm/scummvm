@@ -115,66 +115,62 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 	if ((GetObjectList()->GetCount() == 1) && (GetObjectList()->GetTail()->GetNodeItem()->GetType() == TEXTOBJ) && (((CBagTextObject *)GetObjectList()->GetTail()->GetNodeItem())->IsCaption())) {
 		nBaseMenuLocX = 0;
 
-	} else {
-		if (nNumCalls == 1 && m_pUniversalObjectList && m_pUniversalObjectList != GetObjectList()) {
-			for (int i = 0; i < m_pUniversalObjectList->GetCount(); ++i) {
+	} else if (nNumCalls == 1 && m_pUniversalObjectList && m_pUniversalObjectList != GetObjectList()) {
+		for (int i = 0; i < m_pUniversalObjectList->GetCount(); ++i) {
 
-				pObj = m_pUniversalObjectList->GetNodeItem(i);
+			pObj = m_pUniversalObjectList->GetNodeItem(i);
 
-				if (pObj->IsLocal() && (!pObj->GetExpression() || pObj->GetExpression()->Evaluate(pObj->IsNegative()))) {
-					// Only attach if not attached
-					if (pObj->IsAttached() == false) {
-						pObj->Attach();
+			if (pObj->IsLocal() && (!pObj->GetExpression() || pObj->GetExpression()->Evaluate(pObj->IsNegative()))) {
+				// Only attach if not attached
+				if (pObj->IsAttached() == false) {
+					pObj->Attach();
 
-						// Otherwise, we need to re-calculate the size of the text object,
-						// since we are gonna trash is with our own values soon.
+					// Otherwise, we need to re-calculate the size of the text object,
+					// since we are gonna trash is with our own values soon.
 
+				} else if (pObj->GetType() == TEXTOBJ) {
+					((CBagTextObject *)pObj)->RecalcTextRect(((CBagTextObject *)pObj)->IsCaption());
+				}
+
+				if (!pObj->IsImmediateRun()) {
+					// Get the next menu items pos
+					objSize = pObj->GetRect();
+
+					if (menuSize.cx < (objSize.Width() + menuLoc.x))
+						menuSize.cx = (objSize.Width() + menuLoc.x);
+					if (menuSize.cy < (objSize.Height() + menuLoc.y))
+						menuSize.cy = (objSize.Height() + menuLoc.y);
+
+					pObj->SetPosition(menuLoc);
+					pObj->SetHighlight(false);
+
+					if (!nMenuCount && (pObj->GetType() == TEXTOBJ)) {
+						menuLoc.y += objSize.Height();
 					} else {
-						if (pObj->GetType() == TEXTOBJ) {
-							((CBagTextObject *)pObj)->RecalcTextRect(((CBagTextObject *)pObj)->IsCaption());
-						}
+						menuLoc.x += objSize.Width();
 					}
 
-					if (!pObj->IsImmediateRun()) {
-						// Get the next menu items pos
-						objSize = pObj->GetRect();
+					xObjList.AddToTail(pObj);
 
-						if (menuSize.cx < (objSize.Width() + menuLoc.x))
-							menuSize.cx = (objSize.Width() + menuLoc.x);
-						if (menuSize.cy < (objSize.Height() + menuLoc.y))
-							menuSize.cy = (objSize.Height() + menuLoc.y);
+					nMenuCount++;
+				} else {
+					nRunItems++;
+					pObj->RunObject();
 
-						pObj->SetPosition(menuLoc);
-						pObj->SetHighlight(false);
-
-						if (!nMenuCount && (pObj->GetType() == TEXTOBJ)) {
-							menuLoc.y += objSize.Height();
-						} else {
-							menuLoc.x += objSize.Width();
-						}
-
-						xObjList.AddToTail(pObj);
-
-						nMenuCount++;
-					} else {
-						nRunItems++;
-						pObj->RunObject();
-
-						// This detach may cause problems in the future, if it does delete it
-						// Some object may not work if detached for example midi sound
-						pObj->Detach();
-					}
+					// This detach may cause problems in the future, if it does delete it
+					// Some object may not work if detached for example midi sound
+					pObj->Detach();
 				}
 			}
+		}
 
-			// Start non-wield menu on next row
-			menuLoc.y += objSize.Height();
+		// Start non-wield menu on next row
+		menuLoc.y += objSize.Height();
 
-			nNumWieldChoices = xObjList.GetCount();
+		nNumWieldChoices = xObjList.GetCount();
 
-			if (nNumWieldChoices != 0) {
-				cWieldMenuSize = menuSize;
-			}
+		if (nNumWieldChoices != 0) {
+			cWieldMenuSize = menuSize;
 		}
 	}
 
@@ -192,10 +188,8 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 				// Otherwise, we need to re-calculate the size of the text object,
 				// since we are gonna trash is with our own values soon.
 
-			} else {
-				if (pObj->GetType() == TEXTOBJ) {
-					((CBagTextObject *)pObj)->RecalcTextRect(((CBagTextObject *)pObj)->IsCaption());
-				}
+			} else if (pObj->GetType() == TEXTOBJ) {
+				((CBagTextObject *)pObj)->RecalcTextRect(((CBagTextObject *)pObj)->IsCaption());
 			}
 
 			if (!pObj->IsImmediateRun()) {
@@ -482,13 +476,11 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 				if (nNumCalls == 1 && pCurSDEV->IsCustom() == false) {
 					VARMNGR->IncrementTimers();
 				}
-			} else if (bCaption) {
+			} else if (bCaption && (nNumCalls == 2)) {
 				// Selecting this menu item causes a turn to go by
-				if (nNumCalls == 2) {
-					dlg.m_pSelectedObject = nullptr;
-					if (pCurSDEV->IsCustom() == false) {
-						VARMNGR->IncrementTimers();
-					}
+				dlg.m_pSelectedObject = nullptr;
+				if (pCurSDEV->IsCustom() == false) {
+					VARMNGR->IncrementTimers();
 				}
 			}
 		}
@@ -619,8 +611,7 @@ void CBagMenuDlg::OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 			r.OffsetRect(-r.left, -r.top);
 			if (r.PtInRect(*pPoint)) {
 				CBagStorageDevDlg::OnLButtonUp(nFlags, pPoint);
-				if ((m_pSelectedObject = GetLActiveObject()) != nullptr) {
-				}
+				m_pSelectedObject = GetLActiveObject();
 			}
 
 		} else {

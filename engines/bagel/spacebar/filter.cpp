@@ -354,7 +354,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			switch (chipID) {
 			case 0: {
 				break;
-			};
+			}
 			case 1: {
 				if (pChipBmp != nullptr)
 					delete pChipBmp;
@@ -397,7 +397,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				CMainWindow::chipdisp = true;
 				delete buff;
 				break;
-			};
+			}
 			case 2: {
 				if (pChipBmp != nullptr)
 					delete pChipBmp;
@@ -440,7 +440,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				CMainWindow::chipdisp = true;
 				delete buff;
 				break;
-			};
+			}
 			case 3: {
 				if (pChipBmp != nullptr) {
 					delete pChipBmp;
@@ -448,137 +448,135 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				}
 				CMainWindow::chipdisp = true;
 				break;
-			};
-			};
+			}
+			}
+		} else if (g_pDChipID->GetNumValue() == 3) {
+			CBofRect txtRect(g_engine->viewRect);
+			uint32 lDiff;
+			uint32 timer = GetTimer();
+
+			if (waitCount == 0)
+				waitCount = timer;
+
+			lDiff = (timer - waitCount) / 1000;
+
+			switch (lDiff) {
+			case 0:
+			case 1:
+				PaintText(pBmp, &txtRect, "VIMM chip accepted", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
+				break;
+
+			case 2:
+			case 3:
+				PaintText(pBmp, &txtRect, "Mark IV OS initialized", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
+				break;
+
+			case 4:
+			case 5:
+				PaintText(pBmp, &txtRect, "Reading flashbank....", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
+				break;
+
+			case 6:
+			case 7:
+				PaintText(pBmp, &txtRect, "Process completed", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
+				break;
+
+			case 8:
+			case 9:
+				PaintText(pBmp, &txtRect, "1. General Knowledge", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
+				break;
+
+			case 10:
+			case 11:
+				PaintText(pBmp, &txtRect, "2. Vildroid History", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
+				break;
+
+			case 12:
+			case 13:
+				PaintText(pBmp, &txtRect, "3. Recipe DataBank J12", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
+				break;
+
+			case 14:
+			case 15:
+				PaintText(pBmp, &txtRect, "4. Personal Database C238-87565", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
+				break;
+
+			case 16:
+			case 17:
+				PaintText(pBmp, &txtRect, "5. Veebleball Strategy Kit", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
+				break;
+
+			case 18:
+			case 19:
+				PaintText(pBmp, &txtRect, "6. Termite Infestation", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
+				break;
+
+			case 20:
+			case 21:
+				PaintText(pBmp, &txtRect, "7. Latex Glove Sizing Chart", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
+				break;
+
+			case 22:
+			case 23:
+				PaintText(pBmp, &txtRect, "8. Cleaning Dead Bugs Out From Behind Storm Windows", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
+				break;
+
+			case 24:
+			case 25:
+				PaintText(pBmp, &txtRect, "9. Algorithms 1233B thru 1245DD: 12 Steps to Whiter Tiles", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
+				break;
+
+			case 26:
+			case 27:
+			case 28:
+			case 29: {
+				PaintText(pBmp, &txtRect,
+					BuildString("You have been assigned Maintenance Mode PIN: %d%d%d%d",
+					g_pTDig1->GetNumValue(), g_pTDig2->GetNumValue(),
+					g_pTDig3->GetNumValue(), g_pTDig4->GetNumValue()),
+					VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0),
+					JUSTIFY_CENTER, FORMAT_TOP_CENTER);
+				break;
+			}
+
+			default: {
+				CMainWindow::chipdisp = false;
+				waitCount = 0;
+				g_pDChipID->SetValue(0);
+				break;
+			}
+
+			}
+
 		} else {
-			if (g_pDChipID->GetNumValue() == 3) {
-				CBofRect txtRect(g_engine->viewRect);
-				uint32 lDiff;
-				uint32 timer = GetTimer();
+			// Chip is Green or Blue (ID 1 or 2)
+			if (pChipBmp != nullptr) {
+				int rdef = g_engine->viewRect.Width() - VILDROIDCHIPTEXTWIDTH;
+				int tdef = g_engine->viewRect.Height() - 300;
+				CBofRect tmprct(0, 0, VILDROIDCHIPTEXTWIDTH, 300);                 // (tdef/2)
 
-				if (waitCount == 0)
-					waitCount = timer;
+				pChipBmp->Paint(pBmp, ((rdef / 2) + g_engine->viewRect.left), (tdef + g_engine->viewRect.top), &tmprct, 0);
+			}
 
-				lDiff = (timer - waitCount) / 1000;
+			if (waitCount == 0)
+				waitCount = GetTimer();
 
-				switch (lDiff) {
-				case 0:
-				case 1:
-					PaintText(pBmp, &txtRect, "VIMM chip accepted", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
-					break;
+			if ((GetTimer() - waitCount) > 15000) {
+				CMainWindow::chipdisp = false;
+				waitCount = 0;
+				g_pDChipID->SetValue(0);
 
-				case 2:
-				case 3:
-					PaintText(pBmp, &txtRect, "Mark IV OS initialized", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
-					break;
-
-				case 4:
-				case 5:
-					PaintText(pBmp, &txtRect, "Reading flashbank....", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
-					break;
-
-				case 6:
-				case 7:
-					PaintText(pBmp, &txtRect, "Process completed", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
-					break;
-
-				case 8:
-				case 9:
-					PaintText(pBmp, &txtRect, "1. General Knowledge", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
-					break;
-
-				case 10:
-				case 11:
-					PaintText(pBmp, &txtRect, "2. Vildroid History", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
-					break;
-
-				case 12:
-				case 13:
-					PaintText(pBmp, &txtRect, "3. Recipe DataBank J12", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
-					break;
-
-				case 14:
-				case 15:
-					PaintText(pBmp, &txtRect, "4. Personal Database C238-87565", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
-					break;
-
-				case 16:
-				case 17:
-					PaintText(pBmp, &txtRect, "5. Veebleball Strategy Kit", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
-					break;
-
-				case 18:
-				case 19:
-					PaintText(pBmp, &txtRect, "6. Termite Infestation", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
-					break;
-
-				case 20:
-				case 21:
-					PaintText(pBmp, &txtRect, "7. Latex Glove Sizing Chart", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
-					break;
-
-				case 22:
-				case 23:
-					PaintText(pBmp, &txtRect, "8. Cleaning Dead Bugs Out From Behind Storm Windows", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
-					break;
-
-				case 24:
-				case 25:
-					PaintText(pBmp, &txtRect, "9. Algorithms 1233B thru 1245DD: 12 Steps to Whiter Tiles", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
-					break;
-
-				case 26:
-				case 27:
-				case 28:
-				case 29: {
-					PaintText(pBmp, &txtRect,
-						BuildString("You have been assigned Maintenance Mode PIN: %d%d%d%d",
-						g_pTDig1->GetNumValue(), g_pTDig2->GetNumValue(),
-						g_pTDig3->GetNumValue(), g_pTDig4->GetNumValue()),
-						VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0),
-						JUSTIFY_CENTER, FORMAT_TOP_CENTER);
-					break;
-				}
-
-				default: {
-					CMainWindow::chipdisp = false;
-					waitCount = 0;
-					g_pDChipID->SetValue(0);
-					break;
-				}
-
-				}
-
-			} else {
-				// Chip is Green or Blue (ID 1 or 2)
-				if (pChipBmp != nullptr) {
-					int rdef = g_engine->viewRect.Width() - VILDROIDCHIPTEXTWIDTH;
-					int tdef = g_engine->viewRect.Height() - 300;
-					CBofRect tmprct(0, 0, VILDROIDCHIPTEXTWIDTH, 300);                 // (tdef/2)
-
-					pChipBmp->Paint(pBmp, ((rdef / 2) + g_engine->viewRect.left), (tdef + g_engine->viewRect.top), &tmprct, 0);
-				}
-
-				if (waitCount == 0)
-					waitCount = GetTimer();
-
-				if ((GetTimer() - waitCount) > 15000) {
-					CMainWindow::chipdisp = false;
-					waitCount = 0;
-					g_pDChipID->SetValue(0);
-
-					char szCString[256];
-					CBofString cString(szCString, 256);
-					cString = DISCEJECTSOUND;
-					MACROREPLACE(cString);
-					BofPlaySound(cString, SOUND_WAVE | SOUND_MIX);
-					CBagStorageDev *pWieldSDev = nullptr;
-					pWieldSDev = SDEVMNGR->GetStorageDevice("BWIELD_WLD");
-					if (chipID == 1)
-						pWieldSDev->ActivateLocalObject("GREENCHIP");
-					else
-						pWieldSDev->ActivateLocalObject("BLUECHIP");
-				}
+				char szCString[256];
+				CBofString cString(szCString, 256);
+				cString = DISCEJECTSOUND;
+				MACROREPLACE(cString);
+				BofPlaySound(cString, SOUND_WAVE | SOUND_MIX);
+				CBagStorageDev *pWieldSDev = nullptr;
+				pWieldSDev = SDEVMNGR->GetStorageDevice("BWIELD_WLD");
+				if (chipID == 1)
+					pWieldSDev->ActivateLocalObject("GREENCHIP");
+				else
+					pWieldSDev->ActivateLocalObject("BLUECHIP");
 			}
 		}
 	}

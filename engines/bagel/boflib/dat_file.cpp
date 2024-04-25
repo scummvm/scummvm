@@ -191,10 +191,8 @@ ErrorCode CBofDataFile::Open() {
 				if (m_lFlags & CDF_SAVEFILE) {
 					if (m_lFlags & CDF_CREATE)
 						Create();
-				} else {
-					if (!FileExists(m_szFileName))
-						Create();
-				}
+				} else if (!FileExists(m_szFileName))
+					Create();
 			}
 
 			if (_stream == nullptr) {

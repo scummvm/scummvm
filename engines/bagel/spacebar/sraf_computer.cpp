@@ -793,14 +793,12 @@ bool SrafComputer::VerifyDispatchTeam() {
 		if (nMeetOthers != -1) {
 			g_stOtherPartys[nMeetOthers].m_bMeetWith = false;
 			g_stOtherPartys[nMeetOthers].m_bAvailable = false;
+		} else if (nMeetSellers != -1) {
+			g_stSellerNames[nMeetSellers].m_bMeetWith = false;
+			g_stSellerNames[nMeetSellers].m_bAvailable = false;
 		} else {
-			if (nMeetSellers != -1) {
-				g_stSellerNames[nMeetSellers].m_bMeetWith = false;
-				g_stSellerNames[nMeetSellers].m_bAvailable = false;
-			} else {
-				g_stBuyerBids[nMeetBuyers].m_bMeetWith = false;
-				g_stBuyerBids[nMeetBuyers].m_bAvailable = false;
-			}
+			g_stBuyerBids[nMeetBuyers].m_bMeetWith = false;
+			g_stBuyerBids[nMeetBuyers].m_bAvailable = false;
 		}
 
 		// Redraw the screen with the meeting with column collapsed and
@@ -2879,19 +2877,18 @@ void SrafComputer::OnListDispatchTeam() {
 				if (cMeetBio.PtInRect(cPoint)) {        // If so, bring up biography.
 					sStr = BuildSrafDir(g_stSellerNames[nElementIndex].m_pszSellerBio);
 					DisplayTextScreen(sStr);
-				} else {
-					if (cMeetMember.PtInRect(cPoint)) {         // If so, put a checkmark in that column.
+				} else if (cMeetMember.PtInRect(cPoint)) {
+					// If so, put a checkmark in that column.
 
-						// Uncheck any member we already have checked, this is a singular operation
-						if ((nMeetMember = GetMeetMember(nListToCheck)) != -1) {
-							g_stSellerNames[nMeetMember].m_bMeetWith = false;
-						}
+					// Uncheck any member we already have checked, this is a singular operation
+					if ((nMeetMember = GetMeetMember(nListToCheck)) != -1) {
+						g_stSellerNames[nMeetMember].m_bMeetWith = false;
+					}
 
-						// Now put the check mark in the column for the new guy to meet
-						if (nMeetMember != nElementIndex) {
-							g_stSellerNames[nElementIndex].m_bMeetWith = true;
-							bInMeetMemberColumn = true;
-						}
+					// Now put the check mark in the column for the new guy to meet
+					if (nMeetMember != nElementIndex) {
+						g_stSellerNames[nElementIndex].m_bMeetWith = true;
+						bInMeetMemberColumn = true;
 					}
 				}
 			}
@@ -4176,26 +4173,22 @@ void SrafComputer::NotifyBoss(CBofString &sSoundFile, int nStafferID) {         
 		CBofCursor::Hide();
 		BofPlaySound(sSoundFile.GetBuffer(), SOUND_WAVE);
 		CBofCursor::Show();
-	} else {
-		if (sSoundFile.Find(".TXT") ||
-		        sSoundFile.Find(".txt")) {
+	} else if (sSoundFile.Find(".TXT") || sSoundFile.Find(".txt")) {
+		// Make sure the file is there, read it in to our own buffer.
+		CBofFile fTxtFile(sSoundFile, CBF_BINARY | CBF_READONLY);
+		char *pszBuf;
+		int nLength = fTxtFile.GetLength();
 
-			// Make sure the file is there, read it in to our own buffer.
-			CBofFile fTxtFile(sSoundFile, CBF_BINARY | CBF_READONLY);
-			char *pszBuf;
-			int nLength = fTxtFile.GetLength();
+		if (nLength != 0 && (pszBuf = (char *)BofAlloc(nLength + 1)) != nullptr) {
+			BofMemSet(pszBuf, 0, nLength + 1);
+			fTxtFile.Read(pszBuf, nLength);
 
-			if (nLength != 0 && (pszBuf = (char *)BofAlloc(nLength + 1)) != nullptr) {
-				BofMemSet(pszBuf, 0, nLength + 1);
-				fTxtFile.Read(pszBuf, nLength);
-
-				// Put it up on the screen
-				DisplayMessage(pszBuf);
-				BofFree(pszBuf);
-				fTxtFile.Close();
-			} else {
-				ReportError(ERR_MEMORY, "Could not read %s into memory", sSoundFile.GetBuffer());
-			}
+			// Put it up on the screen
+			DisplayMessage(pszBuf);
+			BofFree(pszBuf);
+			fTxtFile.Close();
+		} else {
+			ReportError(ERR_MEMORY, "Could not read %s into memory", sSoundFile.GetBuffer());
 		}
 	}
 
