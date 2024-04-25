@@ -47,12 +47,12 @@ public:
 		} r;
 	};
 
-	inline float left() { return r.x; }
-	inline float right() { return r.x + r.w; }
-	inline float top() { return r.y + r.h; }
-	inline float bottom() { return r.y; }
+	inline float left() const { return r.x; }
+	inline float right() const { return r.x + r.w; }
+	inline float top() const { return r.y + r.h; }
+	inline float bottom() const { return r.y; }
 
-	bool contains(const Math::Vector2d &pos) {
+	bool contains(const Math::Vector2d &pos) const {
 		return pos.getX() >= r.x && pos.getX() <= (r.x + r.w) && pos.getY() >= r.y && pos.getY() <= r.y + r.h;
 	}
 };

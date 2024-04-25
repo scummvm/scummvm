@@ -105,16 +105,20 @@ TwpEngine::~TwpEngine() {
 	_mixer->stopAll();
 }
 
-Math::Vector2d TwpEngine::winToScreen(const Math::Vector2d &pos) {
+Math::Vector2d TwpEngine::winToScreen(const Math::Vector2d &pos) const {
 	return Math::Vector2d(pos.getX(), SCREEN_HEIGHT - pos.getY());
 }
 
-Math::Vector2d TwpEngine::roomToScreen(const Math::Vector2d &pos) {
+Math::Vector2d TwpEngine::screenToWin(const Math::Vector2d &pos) const {
+	return Math::Vector2d(pos.getX(), SCREEN_HEIGHT - pos.getY());
+}
+
+Math::Vector2d TwpEngine::roomToScreen(const Math::Vector2d &pos) const {
 	Math::Vector2d screenSize = _room->getScreenSize();
 	return Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT) * (pos - _gfx.cameraPos()) / screenSize;
 }
 
-Math::Vector2d TwpEngine::screenToRoom(const Math::Vector2d &pos) {
+Math::Vector2d TwpEngine::screenToRoom(const Math::Vector2d &pos) const {
 	Math::Vector2d screenSize = _room->getScreenSize();
 	return (pos * screenSize) / Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT) + _gfx.cameraPos();
 }
@@ -966,26 +970,34 @@ Common::Error TwpEngine::run() {
 					setVerbAction(1 + (int)e.customType - (int)TwpAction::kOpen);
 					break;
 				default:
-				break;
+					break;
 				}
 			} break;
 			case Common::EVENT_KEYDOWN:
 				switch (e.kbd.keycode) {
 				case Common::KEYCODE_LEFT:
-					if(_control)
+					if (_control)
 						_speed = MAX(_speed - 1, 1);
 					_cursor.holdLeft = true;
 					break;
 				case Common::KEYCODE_RIGHT:
-					if(_control)
+					if (_control)
 						_speed = MIN(_speed + 1, 8);
 					_cursor.holdRight = true;
 					break;
 				case Common::KEYCODE_UP:
-					_cursor.holdUp = true;
+					if (_dialog->getState() == WaitingForChoice) {
+						_cursor.pos = screenToWin(_dialog->getPreviousChoicePos(winToScreen(_cursor.pos)));
+					} else {
+						_cursor.holdUp = true;
+					}
 					break;
 				case Common::KEYCODE_DOWN:
-					_cursor.holdDown = true;
+					if (_dialog->getState() == WaitingForChoice) {
+						_cursor.pos = screenToWin(_dialog->getNextChoicePos(winToScreen(_cursor.pos)));
+					} else {
+						_cursor.holdDown = true;
+					}
 					break;
 				case Common::KEYCODE_LCTRL:
 					_control = true;
@@ -1069,16 +1081,16 @@ Common::Error TwpEngine::run() {
 		}
 
 		const float mouseMoveSpeed = 4.f;
-		if(_cursor.holdLeft) {
+		if (_cursor.holdLeft) {
 			_cursor.pos.setX(MAX(_cursor.pos.getX() - mouseMoveSpeed, 0.f));
 		}
-		if(_cursor.holdRight) {
+		if (_cursor.holdRight) {
 			_cursor.pos.setX(MIN(_cursor.pos.getX() + mouseMoveSpeed, (float)SCREEN_WIDTH));
 		}
-		if(_cursor.holdUp) {
+		if (_cursor.holdUp) {
 			_cursor.pos.setY(MAX(_cursor.pos.getY() - mouseMoveSpeed, 0.f));
 		}
-		if(_cursor.holdDown) {
+		if (_cursor.holdDown) {
 			_cursor.pos.setY(MIN(_cursor.pos.getY() + mouseMoveSpeed, (float)SCREEN_HEIGHT));
 		}
 

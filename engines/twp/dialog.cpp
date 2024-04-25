@@ -517,4 +517,50 @@ void Dialog::drawCore(const Math::Matrix4 &trsf) {
 	}
 }
 
+int Dialog::getActiveSlot(const Math::Vector2d &pos) const {
+	int index = -1;
+	int num = 0;
+	for (int i = 0; i < MAXDIALOGSLOTS; i++) {
+		const DialogSlot *slot = &_slots[i];
+		if (!slot->_isValid)
+			continue;
+		const Math::Vector2d p = slot->getPos();
+		const Math::Vector2d s = slot->getSize();
+		const Rectf r(p.getX(), p.getY() + s.getY() / 2.f, s.getX(), s.getY());
+		if (r.contains(pos)) {
+			index = num;
+		}
+		num++;
+	}
+	return index;
+}
+
+Math::Vector2d Dialog::getChoicePos(int index) const {
+	int n = 0;
+	for (int i = 0; i < MAXDIALOGSLOTS; i++) {
+		const DialogSlot *slot = &_slots[i];
+		if (!slot->_isValid)
+			continue;
+		if (n == index) {
+			Math::Vector2d p(slot->getPos());
+			Math::Vector2d s(slot->getSize());
+			return Math::Vector2d(p.getX() + s.getX() / 2.f, p.getY() + s.getY() + 8.f);
+		}
+		n++;
+	}
+	return Math::Vector2d();
+}
+
+Math::Vector2d Dialog::getNextChoicePos(const Math::Vector2d &pos) {
+	int index = getActiveSlot(pos);
+	index = MIN(index + 1, numSlots() - 1);
+	return getChoicePos(index);
+}
+
+Math::Vector2d Dialog::getPreviousChoicePos(const Math::Vector2d &pos) {
+	int index = getActiveSlot(pos);
+	index = MAX(index - 1, 0);
+	return getChoicePos(index);
+}
+
 } // namespace Twp

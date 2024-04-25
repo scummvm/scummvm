@@ -132,9 +132,10 @@ public:
 	bool canSaveAutosaveCurrently() override { return false; }
 	void capture(Graphics::Surface &surface, int width, int height);
 
-	Math::Vector2d winToScreen(const Math::Vector2d &pos);
-	Math::Vector2d roomToScreen(const Math::Vector2d &pos);
-	Math::Vector2d screenToRoom(const Math::Vector2d &pos);
+	Math::Vector2d winToScreen(const Math::Vector2d &pos) const;
+	Math::Vector2d screenToWin(const Math::Vector2d &pos) const;
+	Math::Vector2d roomToScreen(const Math::Vector2d &pos) const;
+	Math::Vector2d screenToRoom(const Math::Vector2d &pos) const;
 
 	void setActor(Common::SharedPtr<Object> actor, bool userSelected = false);
 	Common::SharedPtr<Object> objAt(const Math::Vector2d &pos);

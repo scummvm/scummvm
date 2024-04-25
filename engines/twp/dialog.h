@@ -195,6 +195,8 @@ public:
 	DialogState getState() const { return _state; }
 
 	void setMousePos(const Math::Vector2d &pos) { _mousePos = pos; }
+	Math::Vector2d getNextChoicePos(const Math::Vector2d &pos);
+	Math::Vector2d getPreviousChoicePos(const Math::Vector2d &pos);
 
 	void start(const Common::String &actor, const Common::String &name, const Common::String &node);
 	void selectLabel(int line, const Common::String &name);
@@ -217,6 +219,9 @@ private:
 	void addSlot(Common::SharedPtr<YStatement> stmt);
 	int numSlots() const;
 	void clearSlots();
+
+	Math::Vector2d getChoicePos(int index) const;
+	int getActiveSlot(const Math::Vector2d &pos) const;
 
 	virtual void drawCore(const Math::Matrix4 &trsf) override final;
 
