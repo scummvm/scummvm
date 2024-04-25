@@ -60,6 +60,20 @@
 	kFeatures640x480, // Adibou 3 actually uses 800x600 resolution (kFeatures800x600) would be required, this change will be applied when the Game is supported.
 	0, 0, 0
 },
+{
+	{
+
+		"adibou3",
+		_s("Missing game code"), // Adiboo 3 3.10 (shipped with Nature Application) (Engine: DEV7 version 1.3.0.0)
+		AD_ENTRY1s("b3_common.stk", "13360fa1d7298c2f06abeba244485a45", 552447),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures640x480, // Adibou 3 actually uses 800x600 resolution (kFeatures800x600) would be required, this change will be applied when the Game is supported.
+	0,0,0
+},
 
 // -- German: Adiboo 3 --
 
@@ -107,13 +121,26 @@
 	kFeatures640x480, // Adibou 3 actually uses 800x600 resolution (kFeatures800x600) would be required, this change will be applied when the Game is supported.
 	0,0,0
 },
-
 {
 	{
 
 		"adibou3",
 		_s("Missing game code"), // Adiboo 3 3.10 (shipped with English Application) (Engine: DEV7 version 1.3.0.0)
 		AD_ENTRY1s("b3_common.stk", "fc3a619b44366ded7027bc458d34be6a", 554569),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures640x480, // Adibou 3 actually uses 800x600 resolution (kFeatures800x600) would be required, this change will be applied when the Game is supported.
+	0,0,0
+},
+{
+	{
+
+		"adibou3",
+		_s("Missing game code"), // Adiboo 3 3.10 (shipped with Nature Application) (Engine: DEV7 version 1.3.0.0)
+		AD_ENTRY1s("b3_common.stk", "814d8edb015969618dbcc670b18fcfb4", 554569),
 		DE_DEU,
 		kPlatformWindows,
 		ADGF_UNSUPPORTED,
