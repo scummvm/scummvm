@@ -539,9 +539,17 @@ void View1::DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, 
 }
 
 void View1::DrawCharacters(Graphics::ManagedSurface &s) {
+	int i = -1;
 	for (auto current : characters) {
-		AnimFrame* frame = current->GetCurrentAnimationFrame();
-		DrawSprite(current->Position - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s);
+		// AnimFrame* frame = current->GetCurrentAnimationFrame();
+		
+		i++;
+		if (i == 0) {
+			continue;
+		}
+		AnimFrame *frame = current->GetCurrentPortrait();
+		// DrawSprite(current->Position - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s);
+		DrawSprite(Common::Point(50, 50), frame->Width, frame->Height, frame->Data, s);
 	}
 }
 
@@ -550,6 +558,16 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	Common::MemoryReadStream stream(this->GameObject->Blobs[0x2].data(), this->GameObject->Blobs[0x2].size());
 	// TODO: Need to check how the offset really is calculated by the game code
 	stream.seek(0x1C, SEEK_SET);
+	result->ReadFromStream(&stream);
+	return result;
+	// TODO: Think about proper memory management
+}
+
+Macs2::AnimFrame *Character::GetCurrentPortrait() {
+	AnimFrame *result = new AnimFrame();
+	Common::MemoryReadStream stream(this->GameObject->Blobs[17].data(), this->GameObject->Blobs[17].size());
+	// TODO: Need to check how the offset really is calculated by the game code
+	stream.seek(35, SEEK_SET);
 	result->ReadFromStream(&stream);
 	return result;
 	// TODO: Think about proper memory management
