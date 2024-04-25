@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "ags/engine/ac/game_setup.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_audio.h"
@@ -95,10 +94,11 @@ void PlayVideo(const char *name, int skip, int scr_flags) {
 	if (_G(debug_flags) & DBG_NOVIDEO)
 		return;
 
-	// WORKAROUND: This video uses an unsupported codec and
+	// WORKAROUND: for Donna Avenger of Blood
+	// This video uses an unsupported codec and
 	// the decoder current implementation doesn't allow to
 	// continue gracefully
-	if (ConfMan.get("gameid") == "donnaavengerofblood" &&
+	if (!strcmp(_GP(game).guid, "{8e357476-2d9a-4233-b7cf-431ca727035a}") &&
 		!strcmp(name, "terminus")) {
 		warning("Skipped unsupported \'terminus\' video");
 		return;
