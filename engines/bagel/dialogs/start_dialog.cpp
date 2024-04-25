@@ -94,11 +94,8 @@ void CBagStartDialog::OnInitDialog() {
 
 	// Disable the restore button if there are no saved games
 	CBagel *pApp = CBagel::GetBagApp();
-	if (pApp != nullptr) {
-
-		if (!g_engine->savesExist())
-			_buttons[0]->SetState(BUTTON_DISABLED);
-	}
+	if ((pApp != nullptr) && !g_engine->savesExist())
+		_buttons[0]->SetState(BUTTON_DISABLED);
 
 	// Show System cursor
 	CBagCursor::ShowSystemCursor();
@@ -153,24 +150,24 @@ void CBagStartDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
-	if (nFlags == BUTTON_CLICKED) {
-		CBofBmpButton *pButton = (CBofBmpButton *)pObject;
-		int nId = pButton->GetControlID();
+	if (nFlags != BUTTON_CLICKED)
+		return;
 
-		if (nId == RESTORE_BTN) {
-			CBagel *pApp = CBagel::GetBagApp();
-			if (pApp != nullptr) {
-				CBagMasterWin *pWin = pApp->GetMasterWnd();
+	CBofBmpButton *pButton = (CBofBmpButton *)pObject;
+	int nId = pButton->GetControlID();
 
-				if ((pWin != nullptr) && pWin->ShowRestoreDialog(this)) {
-					Close();
-				}
+	if (nId == RESTORE_BTN) {
+		CBagel *pApp = CBagel::GetBagApp();
+		if (pApp != nullptr) {
+			CBagMasterWin *pWin = pApp->GetMasterWnd();
+
+			if ((pWin != nullptr) && pWin->ShowRestoreDialog(this)) {
+				Close();
 			}
-		} else {
-			SetReturnValue(nId);
-
-			Close();
 		}
+	} else {
+		SetReturnValue(nId);
+		Close();
 	}
 }
 

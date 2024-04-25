@@ -129,19 +129,13 @@ void CBagQuitDialog::OnPaint(CBofRect *pRect) {
 void CBagQuitDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
-	switch (lKey) {
-
-	// Cancel
-	//
-	case BKEY_ESC:
+	if (lKey == BKEY_ESC) {
+		// Cancel
+		//
 		SetReturnValue(CANCEL_BTN);
 		Close();
-		break;
-
-	default:
+	} else 
 		CBofDialog::OnKeyHit(lKey, nRepCount);
-		break;
-	}
 }
 
 
@@ -149,28 +143,29 @@ void CBagQuitDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
-	if (nFlags == BUTTON_CLICKED) {
-		CBofBmpButton *pButton = (CBofBmpButton *)pObject;
+	if (nFlags != BUTTON_CLICKED)
+		return;
 
-		if (pButton != nullptr) {
-			int nId = pButton->GetControlID();
+	CBofBmpButton *pButton = (CBofBmpButton *)pObject;
 
-			bool bQuit = true;
-			if (nId == SAVE_BTN) {
-				CBagel *pApp = CBagel::GetBagApp();
-				if (pApp != nullptr) {
-					CBagMasterWin *pWin = pApp->GetMasterWnd();
-					if (pWin != nullptr) {
+	if (pButton != nullptr) {
+		int nId = pButton->GetControlID();
 
-						bQuit = pWin->ShowSaveDialog(this, false);
-					}
+		bool bQuit = true;
+		if (nId == SAVE_BTN) {
+			CBagel *pApp = CBagel::GetBagApp();
+			if (pApp != nullptr) {
+				CBagMasterWin *pWin = pApp->GetMasterWnd();
+				if (pWin != nullptr) {
+
+					bQuit = pWin->ShowSaveDialog(this, false);
 				}
 			}
+		}
 
-			if (bQuit) {
-				SetReturnValue(nId);
-				Close();
-			}
+		if (bQuit) {
+			SetReturnValue(nId);
+			Close();
 		}
 	}
 }

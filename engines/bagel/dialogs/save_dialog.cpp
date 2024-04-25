@@ -210,6 +210,7 @@ ErrorCode CBagSaveDialog::Attach() {
 		if (m_pEditText != nullptr) {
 			m_pEditText->SetFocus();
 		}
+
 		if (m_pListBox != nullptr) {
 			m_pListBox->SetSelectedItem(m_nSelectedItem, false);
 
@@ -218,10 +219,8 @@ ErrorCode CBagSaveDialog::Attach() {
 				m_pListBox->ScrollTo(m_nSelectedItem - 8);
 			}
 		}
-	} else {
-		if (m_pButtons[0] != nullptr) {
-			m_pButtons[0]->SetState(BUTTON_DISABLED);
-		}
+	} else if (m_pButtons[0] != nullptr) {
+		m_pButtons[0]->SetState(BUTTON_DISABLED);
 	}
 
 	CBagCursor::ShowSystemCursor();
@@ -348,50 +347,51 @@ void CBagSaveDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
-	if (nFlags == BUTTON_CLICKED) {
-		CBofBmpButton *pButton = (CBofBmpButton *)pObject;
+	if (nFlags != BUTTON_CLICKED)
+		return;
+	
+	CBofBmpButton *pButton = (CBofBmpButton *)pObject;
 
-		switch (pButton->GetControlID()) {
-		// Do actual save
-		case SAVE_BTN:
-			SetReturnValue(SAVE_BTN);
-			SaveAndClose();
-			break;
+	switch (pButton->GetControlID()) {
+	// Do actual save
+	case SAVE_BTN:
+		SetReturnValue(SAVE_BTN);
+		SaveAndClose();
+		break;
 
-		// Cancel without saving
-		case CANCEL_BTN:
-			SetReturnValue(CANCEL_BTN);
-			Close();
-			break;
+	// Cancel without saving
+	case CANCEL_BTN:
+		SetReturnValue(CANCEL_BTN);
+		Close();
+		break;
 
-		case LINEUP_BTN:
-			if (m_pListBox != nullptr) {
-				m_pListBox->LineUp();
-			}
-			break;
-
-		case LINEDN_BTN:
-			if (m_pListBox != nullptr) {
-				m_pListBox->LineDown();
-			}
-			break;
-
-		case PAGEUP_BTN:
-			if (m_pListBox != nullptr) {
-				m_pListBox->PageUp();
-			}
-			break;
-
-		case PAGEDN_BTN:
-			if (m_pListBox != nullptr) {
-				m_pListBox->PageDown();
-			}
-			break;
-
-		default:
-			LogWarning(BuildString("Save/Restore: Unknown button: %d", pButton->GetControlID()));
-			break;
+	case LINEUP_BTN:
+		if (m_pListBox != nullptr) {
+			m_pListBox->LineUp();
 		}
+		break;
+
+	case LINEDN_BTN:
+		if (m_pListBox != nullptr) {
+			m_pListBox->LineDown();
+		}
+		break;
+
+	case PAGEUP_BTN:
+		if (m_pListBox != nullptr) {
+			m_pListBox->PageUp();
+		}
+		break;
+
+	case PAGEDN_BTN:
+		if (m_pListBox != nullptr) {
+			m_pListBox->PageDown();
+		}
+		break;
+
+	default:
+		LogWarning(BuildString("Save/Restore: Unknown button: %d", pButton->GetControlID()));
+		break;
 	}
 }
 
@@ -416,10 +416,8 @@ void CBagSaveDialog::OnBofListBox(CBofObject * /*pObject*/, int nItemIndex) {
 		m_nSelectedItem = nItemIndex;
 	}
 
-	if (m_nSelectedItem != -1) {
-		if ((m_pButtons[0] != nullptr) && (m_pButtons[0]->GetState() == BUTTON_DISABLED)) {
-			m_pButtons[0]->SetState(BUTTON_UP, true);
-		}
+	if ((m_nSelectedItem != -1) && (m_pButtons[0] != nullptr) && (m_pButtons[0]->GetState() == BUTTON_DISABLED)) {
+		m_pButtons[0]->SetState(BUTTON_UP, true);
 	}
 }
 
@@ -427,7 +425,6 @@ void CBagSaveDialog::OnInitDialog() {
 	Assert(IsValidObject(this));
 
 	CBofDialog::OnInitDialog();
-
 	Attach();
 }
 

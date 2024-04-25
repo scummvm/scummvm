@@ -257,32 +257,31 @@ void CBagHelp::OnBofButton(CBofObject *pObject, int nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
-	CBofBmpButton *pButton;
+	if (nFlags != BUTTON_CLICKED)
+		return;
 
-	pButton = (CBofBmpButton *)pObject;
+	CBofBmpButton *pButton = (CBofBmpButton *)pObject;
 
-	if (nFlags == BUTTON_CLICKED) {
-		switch (pButton->GetControlID()) {
-		case HELP_OK_ID:
-			Close();
-			break;
+	switch (pButton->GetControlID()) {
+	case HELP_OK_ID:
+		Close();
+		break;
 
-		case HELP_PU_ID:
-			if (m_pTextBox != nullptr) {
-				m_pTextBox->PageUp();
-			}
-			break;
-
-		case HELP_PD_ID:
-			if (m_pTextBox != nullptr) {
-				m_pTextBox->PageDown();
-			}
-			break;
-
-		default:
-			LogWarning("Unknown button");
-			break;
+	case HELP_PU_ID:
+		if (m_pTextBox != nullptr) {
+			m_pTextBox->PageUp();
 		}
+		break;
+
+	case HELP_PD_ID:
+		if (m_pTextBox != nullptr) {
+			m_pTextBox->PageDown();
+		}
+		break;
+
+	default:
+		LogWarning("Unknown button");
+		break;
 	}
 }
 

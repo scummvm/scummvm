@@ -586,116 +586,117 @@ void CBibbleWindow::OnBofButton(CBofObject *pObject, int nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
+	if (nState != BUTTON_CLICKED)
+		return;
+	
 	CBofButton *pButton = (CBofButton *)pObject;
 
-	if (nState == BUTTON_CLICKED) {
-		int nBet = 0;
+	int nBet = 0;
 
-		switch (pButton->GetControlID()) {
-		case BIBBLE_BUTTON_READY:
-			LogInfo("\tClicked READY button");
-			PlayGame();
-			break;
+	switch (pButton->GetControlID()) {
+	case BIBBLE_BUTTON_READY:
+		LogInfo("\tClicked READY button");
+		PlayGame();
+		break;
 
-		case BIBBLE_BUTTON_BET1:
-			LogInfo("\tClicked BET 1");
-			nBet = MIN((int)m_nNumCredits, 1);
-			break;
+	case BIBBLE_BUTTON_BET1:
+		LogInfo("\tClicked BET 1");
+		nBet = MIN((int)m_nNumCredits, 1);
+		break;
 
-		case BIBBLE_BUTTON_BET5:
-			LogInfo("\tClicked BET 5");
-			nBet = MIN((int)m_nNumCredits, 5);
-			break;
+	case BIBBLE_BUTTON_BET5:
+		LogInfo("\tClicked BET 5");
+		nBet = MIN((int)m_nNumCredits, 5);
+		break;
 
-		case BIBBLE_BUTTON_BET10:
-			LogInfo("\tClicked BET 10");
-			nBet = MIN((int)m_nNumCredits, 10);
-			break;
+	case BIBBLE_BUTTON_BET10:
+		LogInfo("\tClicked BET 10");
+		nBet = MIN((int)m_nNumCredits, 10);
+		break;
 
-		case BIBBLE_BUTTON_BET50:
-			LogInfo("\tClicked BET 50");
-			nBet = MIN((int)m_nNumCredits, 50);
-			break;
+	case BIBBLE_BUTTON_BET50:
+		LogInfo("\tClicked BET 50");
+		nBet = MIN((int)m_nNumCredits, 50);
+		break;
 
-		case BIBBLE_BUTTON_BET100:
-			LogInfo("\tClicked BET 100");
-			nBet = MIN((int)m_nNumCredits, 100);
-			break;
+	case BIBBLE_BUTTON_BET100:
+		LogInfo("\tClicked BET 100");
+		nBet = MIN((int)m_nNumCredits, 100);
+		break;
 
-		case BIBBLE_BUTTON_BET500:
-			LogInfo("\tClicked BET 500");
-			nBet = MIN((int)m_nNumCredits, 500);
-			break;
+	case BIBBLE_BUTTON_BET500:
+		LogInfo("\tClicked BET 500");
+		nBet = MIN((int)m_nNumCredits, 500);
+		break;
 
-		case BIBBLE_BUTTON_BET1000:
-			LogInfo("\tClicked BET 1000");
-			nBet = MIN((int)m_nNumCredits, 1000);
-			break;
+	case BIBBLE_BUTTON_BET1000:
+		LogInfo("\tClicked BET 1000");
+		nBet = MIN((int)m_nNumCredits, 1000);
+		break;
 
-		case BIBBLE_BUTTON_BET5000:
-			LogInfo("\tClicked BET 5000");
-			nBet = MIN((int)m_nNumCredits, 5000);
-			break;
+	case BIBBLE_BUTTON_BET5000:
+		LogInfo("\tClicked BET 5000");
+		nBet = MIN((int)m_nNumCredits, 5000);
+		break;
 
-		case BIBBLE_BUTTON_CLEARBET:
-			LogInfo("\tClicked Clear Bet");
+	case BIBBLE_BUTTON_CLEARBET:
+		LogInfo("\tClicked Clear Bet");
+		if (m_pSelected != nullptr) {
+			nBet -= m_pSelected->m_nBet;
+		}
+		break;
+
+	case BIBBLE_BUTTON_QUIT:
+		LogInfo("\tClicked Quit");
+		Close();
+		break;
+
+	case BIBBLE_BUTTON_HELP: {
+		LogInfo("\tClicked Help");
+
+		CBagel *pApp = CBagel::GetBagApp();
+		if (pApp != nullptr) {
+			CBagMasterWin *pWin = pApp->GetMasterWnd();
+			if (pWin != nullptr) {
+				pWin->OnHelp(BuildDir("BIBBLE.TXT"));
+			}
+		}
+		break;
+	}
+
+	default:
+		LogWarning(BuildString("Clicked Unknown Button with ID %d", pButton->GetControlID()));
+		break;
+	}
+
+	if (nBet != 0) {
+		if (m_nNumCredits < MAX_AMOUNT) {
 			if (m_pSelected != nullptr) {
-				nBet -= m_pSelected->m_nBet;
-			}
-			break;
-
-		case BIBBLE_BUTTON_QUIT:
-			LogInfo("\tClicked Quit");
-			Close();
-			break;
-
-		case BIBBLE_BUTTON_HELP: {
-			LogInfo("\tClicked Help");
-
-			CBagel *pApp = CBagel::GetBagApp();
-			if (pApp != nullptr) {
-				CBagMasterWin *pWin = pApp->GetMasterWnd();
-				if (pWin != nullptr) {
-					pWin->OnHelp(BuildDir("BIBBLE.TXT"));
-				}
-			}
-			break;
-		}
-
-		default:
-			LogWarning(BuildString("Clicked Unknown Button with ID %d", pButton->GetControlID()));
-			break;
-		}
-
-		if (nBet != 0) {
-			if (m_nNumCredits < MAX_AMOUNT) {
-				if (m_pSelected != nullptr) {
-					LogInfo(BuildString("\tHave %d Credits, Betting %d credits", m_nNumCredits, nBet));
-					m_nNumCredits -= nBet;
-					m_pSelected->m_nBet += nBet;
-					LogInfo(BuildString("\t%d Credits remaining.", m_nNumCredits));
-					Highlight(m_pSelected, HIGHLIGHT_COLOR);
-				}
-
-			} else {
-				// The user is not allowed to make anymore bets
-				char szBuf[256];
-				Common::strcpy_s(szBuf, "The bonkier apologizes, explaining that in light of your winning streak, the house can no longer accept your bets.");
-				CBofString cString(szBuf, 256);
-
-				CBofRect cRect(0, 440, 640 - 1, 480 - 1);
-
-				CBofBitmap cBmp(cRect.Width(), cRect.Height(), (CBofPalette *)nullptr, false);
-				cBmp.CaptureScreen(this, &cRect);
-
-				PaintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
-				WaitForInput();
-
-				cBmp.Paint(this, &cRect);
+				LogInfo(BuildString("\tHave %d Credits, Betting %d credits", m_nNumCredits, nBet));
+				m_nNumCredits -= nBet;
+				m_pSelected->m_nBet += nBet;
+				LogInfo(BuildString("\t%d Credits remaining.", m_nNumCredits));
+				Highlight(m_pSelected, HIGHLIGHT_COLOR);
 			}
 
-			DisplayCredits();
+		} else {
+			// The user is not allowed to make anymore bets
+			char szBuf[256];
+			Common::strcpy_s(szBuf, "The bonkier apologizes, explaining that in light of your winning streak, the house can no longer accept your bets.");
+			CBofString cString(szBuf, 256);
+
+			CBofRect cRect(0, 440, 640 - 1, 480 - 1);
+
+			CBofBitmap cBmp(cRect.Width(), cRect.Height(), (CBofPalette *)nullptr, false);
+			cBmp.CaptureScreen(this, &cRect);
+
+			PaintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
+			WaitForInput();
+
+			cBmp.Paint(this, &cRect);
 		}
+
+		DisplayCredits();
 	}
 }
 
