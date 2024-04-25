@@ -21,10 +21,30 @@
 
 #include "common/config-manager.h"
 #include "twp/twp.h"
+#include "twp/motor.h"
 #include "twp/hud.h"
 #include "twp/resmanager.h"
 
 namespace Twp {
+
+class ShakeVerb : public Motor {
+public:
+	virtual ~ShakeVerb() {}
+	ShakeVerb(VerbSlot *slot, float amount) : _slot(slot), _amount(amount) {}
+
+private:
+	virtual void onUpdate(float elapsed) override {
+		_shakeTime += 40.f * elapsed;
+		_elapsed += elapsed;
+		_slot->_shakeOffset = Math::Vector2d(_amount * cos(_shakeTime + 0.3f), _amount * sin(_shakeTime));
+	}
+
+private:
+	VerbSlot *_slot = nullptr;
+	float _amount = 0.f;
+	float _shakeTime = 0.f;
+	float _elapsed = 0.f;
+};
 
 Verb::Verb() = default;
 
@@ -175,22 +195,17 @@ void Hud::drawCore(const Math::Matrix4 &trsf) {
 	_shader._normalColor = slot->verbUiColors.verbHighlight;
 	_shader._highlightColor = slot->verbUiColors.verbHighlightTint;
 
-	bool isOver = false;
 	for (int i = 1; i < MAX_VERBS; i++) {
-		const Verb &verb = slot->verbs[i];
-		if (verb.image.size() > 0) {
-			const SpriteSheetFrame &verbFrame = verbSheet->getFrame(Common::String::format("%s%s_%s", verb.image.c_str(), verbSuffix.c_str(), lang.c_str()));
-			bool over = verbFrame.spriteSourceSize.contains(_mousePos.getX(), _mousePos.getY());
-			isOver |= over;
-			Color color = (over || (verb.id.id == _defaultVerbId)) ? verbHighlight : verbColor;
-			if (_mouseClick && over) {
-				selectVerb(verb);
-			}
-			drawSprite(verbFrame, verbTexture, Color::withAlpha(color, getAlpha()), trsf);
+		const VerbSlot &verbSlot = slot->verbSlots[i];
+		if (verbSlot._verb.image.size() > 0) {
+			const SpriteSheetFrame &verbFrame = verbSheet->getFrame(Common::String::format("%s%s_%s", verbSlot._verb.image.c_str(), verbSuffix.c_str(), lang.c_str()));
+			Color color = (verbSlot._over || (verbSlot._verb.id.id == _defaultVerbId)) ? verbHighlight : verbColor;
+			Math::Matrix4 t(trsf);
+			t.translate(Math::Vector3d(verbSlot._shakeOffset.getX(), verbSlot._shakeOffset.getY(), 0.f));
+			drawSprite(verbFrame, verbTexture, Color::withAlpha(color, getAlpha()), t);
 		}
 	}
 	g_twp->getGfx().use(saveShader);
-	_over = isOver;
 }
 
 void Hud::update(float elapsed, const Math::Vector2d &pos, Common::SharedPtr<Object> hotspot, bool mouseClick) {
@@ -210,6 +225,42 @@ void Hud::update(float elapsed, const Math::Vector2d &pos, Common::SharedPtr<Obj
 		float alpha = MIN(_fadeTime, 2.0f) / 2.0f;
 		setAlpha(alpha);
 	}
+
+	ActorSlot *slot = actorSlot(_actor);
+	if (!slot)
+		return;
+
+	bool retroVerbs = ConfMan.getBool("retroVerbs");
+	Common::String lang = ConfMan.get("language");
+	Common::String verbSuffix = retroVerbs ? "_retro" : "";
+	SpriteSheet *verbSheet = g_twp->_resManager->spriteSheet("VerbSheet");
+	bool isOver = false;
+	for (int i = 1; i < MAX_VERBS; i++) {
+		VerbSlot &verbSlot = slot->verbSlots[i];
+		if (verbSlot._verb.image.size() > 0) {
+			const SpriteSheetFrame &verbFrame = verbSheet->getFrame(Common::String::format("%s%s_%s", verbSlot._verb.image.c_str(), verbSuffix.c_str(), lang.c_str()));
+			bool over = verbFrame.spriteSourceSize.contains(_mousePos.getX(), _mousePos.getY());
+			// shake choice when cursor is over
+			if ((verbSlot._shakeTime > 0.0f) && verbSlot._shake) {
+				verbSlot._shake->update(elapsed);
+				verbSlot._shakeTime -= elapsed;
+				if (verbSlot._shakeTime < 0.f) {
+					verbSlot._shakeTime = 0.f;
+				}
+			}
+			if (over && !verbSlot._over && verbSlot._shakeTime < 0.1f) {
+				verbSlot._shakeTime = 0.25f;
+				verbSlot._shake = Common::ScopedPtr<Motor>(new ShakeVerb(&verbSlot, 1.2f));
+				verbSlot._over = over;
+			}
+			verbSlot._over = over;
+			isOver |= over;
+			if (_mouseClick && over) {
+				selectVerb(verbSlot._verb);
+			}
+		}
+	}
+	_over = isOver;
 }
 
 void Hud::setVisible(bool visible) {

@@ -898,7 +898,7 @@ static SQInteger objectValidVerb(HSQUIRRELVM v) {
 	if (g_twp->_actor) {
 		ActorSlot *slot = g_twp->_hud->actorSlot(g_twp->_actor);
 		for (int i = 0; i < MAX_VERBS; i++) {
-			Verb *vb = &slot->verbs[i];
+			const Verb *vb = &slot->verbSlots[i]._verb;
 			if (vb->id.id == verb) {
 				if (sqrawexists(obj->_table, vb->fun)) {
 					sqpush(v, true);

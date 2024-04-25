@@ -259,7 +259,7 @@ void TwpEngine::clickedAt(const Math::Vector2d &scrPos) {
 				cancelSentence(_actor);
 				if (_actor->_room == _room)
 					Object::walk(_actor, roomPos);
-				_hud->selectVerb(_hud->actorSlot(_actor)->verbs[0]);
+				_hud->selectVerb(_hud->actorSlot(_actor)->verbSlots[0]._verb);
 				_holdToMove = true;
 			}
 
@@ -804,7 +804,7 @@ static void setVerbAction(int verbSlot) {
 	ActorSlot *slot = g_twp->_hud->actorSlot(g_twp->_actor);
 	if (!slot)
 		return;
-	g_twp->_hud->selectVerb(slot->verbs[verbSlot]);
+	g_twp->_hud->selectVerb(slot->verbSlots[verbSlot]._verb);
 }
 
 Common::Error TwpEngine::run() {
@@ -1377,7 +1377,7 @@ void TwpEngine::enterRoom(Common::SharedPtr<Room> room, Common::SharedPtr<Object
 	_room->setOverlay(Color(0.f, 0.f, 0.f, 0.f));
 	_camera->setBounds(Rectf::fromMinMax(Math::Vector2d(), _room->_roomSize));
 	if (_actor && _hud->actorSlot(_actor))
-		_hud->selectVerb(_hud->actorSlot(_actor)->verbs[0]);
+		_hud->selectVerb(_hud->actorSlot(_actor)->verbSlots[0]._verb);
 
 	// move current actor to the new room
 	Math::Vector2d camPos;
@@ -1663,7 +1663,7 @@ void TwpEngine::resetVerb() {
 	_noun1 = nullptr;
 	_noun2 = nullptr;
 	_useFlag = UseFlag::ufNone;
-	_hud->_verb = _hud->actorSlot(_actor)->verbs[0];
+	_hud->_verb = _hud->actorSlot(_actor)->verbSlots[0]._verb;
 }
 
 bool TwpEngine::callVerb(Common::SharedPtr<Object> actor, VerbId verbId, Common::SharedPtr<Object> noun1, Common::SharedPtr<Object> noun2) {
@@ -1677,7 +1677,7 @@ bool TwpEngine::callVerb(Common::SharedPtr<Object> actor, VerbId verbId, Common:
 	Common::String noun2name = !noun2 ? "null" : noun2->_key;
 	ActorSlot *slot = _hud->actorSlot(actor);
 	Verb *verb = slot->getVerb(verbId.id);
-	Common::String verbFuncName = verb ? verb->fun : slot->verbs[0].fun;
+	Common::String verbFuncName = verb ? verb->fun : slot->verbSlots[0]._verb.fun;
 	debugC(kDebugGame, "callVerb(%s,%s,%s,%s)", name.c_str(), verbFuncName.c_str(), noun1name.c_str(), noun2name.c_str());
 
 	// test if object became untouchable

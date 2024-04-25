@@ -312,7 +312,7 @@ static SQInteger findScreenPosition(HSQUIRRELVM v) {
 		if (!actorSlot)
 			return 0;
 		for (int i = 1; i < MAX_VERBS; i++) {
-			Verb vb = actorSlot->verbs[i];
+			const Verb &vb = actorSlot->verbSlots[i]._verb;
 			if (vb.id.id == verb) {
 				SpriteSheet *verbSheet = g_twp->_resManager->spriteSheet("VerbSheet");
 				const SpriteSheetFrame *verbFrame = &verbSheet->getFrame(Common::String::format("%s_en", vb.image.c_str()));
@@ -763,7 +763,7 @@ static SQInteger setVerb(HSQUIRRELVM v) {
 	debugC(kDebugGenScript, "setVerb %lld, %lld, %lld, %s", actorSlot, verbSlot, id, text.c_str());
 	VerbId verbId;
 	verbId.id = id;
-	g_twp->_hud->_actorSlots[actorSlot - 1].verbs[verbSlot] = Verb(verbId, image, fun, text, key, flags);
+	g_twp->_hud->_actorSlots[actorSlot - 1].verbSlots[verbSlot]._verb = Verb(verbId, image, fun, text, key, flags);
 	return 0;
 }
 
