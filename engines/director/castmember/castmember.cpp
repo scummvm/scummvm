@@ -228,6 +228,7 @@ bool CastMember::setField(int field, const Datum &d) {
 			return false;
 		}
 		castInfo->name = d.asString();
+		_cast->rebuildCastNameCache();
 		return true;
 	case kTheRect:
 		warning("CastMember::setField(): Attempt to set read-only field \"%s\" of cast %d", g_lingo->field2str(field), _castId);

@@ -636,6 +636,10 @@ void Cast::loadCast() {
 		}
 	}
 
+	// The CastMemberInfo data should be loaded by now,
+	// set up the cache used for cast member name lookups.
+	rebuildCastNameCache();
+
 	// For D4+ we may request to force Lingo scripts and skip precompiled bytecode
 	if (_version >= kFileVer400 && !debugChannelSet(-1, kDebugNoBytecode)) {
 		// Try to load script context
@@ -1301,21 +1305,6 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		// fallthrough
 	case 2:
 		ci->name = castInfo.strings[1].readString();
-
-		if (!ci->name.empty()) {
-			// Multiple casts can have the same name. In director only the first one is used.
-			if (!_castsNames.contains(ci->name)) {
-				_castsNames[ci->name] = id;
-			}
-
-			// Store name with type
-			Common::String cname = Common::String::format("%s:%d", ci->name.c_str(), member->_type);
-			if (!_castsNames.contains(cname)) {
-				_castsNames[cname] = id;
-			} else {
-				debugC(4, kDebugLoading, "Cast::loadCastInfo(): duplicate cast name: %s for castIDs: %s %s", cname.c_str(), numToCastNum(id), numToCastNum(_castsNames[ci->name]));
-			}
-		}
 		// fallthrough
 	case 1:
 		ci->script = castInfo.strings[0].readString(false);
@@ -1509,6 +1498,27 @@ Common::String Cast::formatCastSummary(int castId = -1) {
 		result += "\n";
 	}
 	return result;
+}
+
+void Cast::rebuildCastNameCache() {
+	_castsNames.clear();
+	for (auto &it : _castsInfo) {
+		if (!it._value->name.empty()) {
+			// Multiple casts can have the same name. In director only the earliest one is used for lookups.
+			if (!_castsNames.contains(it._value->name) || (_castsNames.getVal(it._value->name) > it._key)) {
+				_castsNames[it._value->name] = it._key;
+			}
+
+			// Store name with type
+			CastMember *member = _loadedCast->getVal(it._key);
+			Common::String cname = Common::String::format("%s:%d", it._value->name.c_str(), member->_type);
+			if (!_castsNames.contains(cname) || (_castsNames.getVal(cname) > it._key)) {
+				_castsNames[cname] = it._key;
+			} else {
+				debugC(4, kDebugLoading, "Cast::rebuildCastNameCache(): duplicate cast name: %s for castIDs: %s %s", cname.c_str(), numToCastNum(it._key), numToCastNum(_castsNames[it._value->name]));
+			}
+		}
+	}
 }
 
 } // End of namespace Director
