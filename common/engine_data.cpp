@@ -269,9 +269,12 @@ bool load_engine_data(const Common::Path &datFilename, const Common::String &sub
 
 #endif
 	if (!f.isOpen()) {
+		Common::String versionFile = subfolder.empty() ? "version.txt" :
+			Common::String::format("%s/version.txt", subfolder.c_str());
+
 		if (!Common::File::exists(datFilename) ||
 			(dataArchive = Common::makeZipArchive(datFilename)) == 0 ||
-			!f.open(Common::Path(Common::String::format("%s/version.txt", subfolder.c_str())), *dataArchive)) {
+			!f.open(Common::Path(versionFile), *dataArchive)) {
 			delete dataArchive;
 			errorMsg = Common::U32String::format(_("Could not locate engine data %s"), datFilename.toString().c_str());
 			return false;

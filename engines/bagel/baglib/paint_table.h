@@ -23,7 +23,7 @@
 #ifndef BAGEL_BAGLIB_PAINT_TABLE_H
 #define BAGEL_BAGLIB_PAINT_TABLE_H
 
-#include "common/scummsys.h"
+#include "common/stream.h"
 
 namespace Bagel {
 
@@ -33,6 +33,14 @@ struct stripEnds {
 };
 
 extern stripEnds STRIP_POINTS[153][120];
+
+class PaintTable {
+public:
+	/**
+	 * Loads the data used for the pseudo-3d projection of panning windows
+	 */
+	static void initialize(Common::SeekableReadStream &src);
+};
 
 } // namespace Bagel
 

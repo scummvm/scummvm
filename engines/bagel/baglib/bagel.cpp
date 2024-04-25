@@ -19,10 +19,13 @@
  *
  */
 
+#include "common/engine_data.h"
+#include "common/file.h"
 #include "bagel/baglib/bagel.h"
 #include "bagel/boflib/sound.h"
 #include "bagel/dialogs/next_cd_dialog.h"
 #include "bagel/dialogs/opt_window.h"
+#include "bagel/baglib/paint_table.h"
 #include "bagel/boflib/misc.h"
 #include "bagel/boflib/debug.h"
 #include "bagel/boflib/file_functions.h"
@@ -114,6 +117,23 @@ ErrorCode CBagel::initialize() {
 	Assert(m_pGameReg != nullptr);
 
 	CBofApp::initialize();
+
+	// Initialise engine data for the game
+	Common::U32String errMsg;
+	if (!Common::load_engine_data("bagel.dat", "", 1, 0, errMsg)) {
+		Common::String msg(errMsg);
+		BofMessageBox("Engine Data", msg.c_str());
+		m_errCode = ERR_FREAD;
+		return m_errCode;
+	}
+
+	Common::File paintTable;
+	if (!paintTable.open("paint_table.txt")) {
+		BofMessageBox("Engine Data", "Invalid Paint Table");
+		m_errCode = ERR_FREAD;
+		return m_errCode;
+	}
+	PaintTable::initialize(paintTable);
 
 	GetOption("UserOptions", "WrongCDRetries", &m_nNumRetries, 20);
 	if (m_nNumRetries < 1) {
