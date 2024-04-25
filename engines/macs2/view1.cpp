@@ -541,15 +541,12 @@ void View1::DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, 
 void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 	int i = -1;
 	for (auto current : characters) {
-		// AnimFrame* frame = current->GetCurrentAnimationFrame();
+		AnimFrame* frame = current->GetCurrentAnimationFrame();
 		
-		i++;
-		if (i == 0) {
-			continue;
-		}
-		AnimFrame *frame = current->GetCurrentPortrait();
-		// DrawSprite(current->Position - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s);
-		DrawSprite(Common::Point(50, 50), frame->Width, frame->Height, frame->Data, s);
+		
+		// AnimFrame *frame = current->GetCurrentPortrait();
+		DrawSprite(current->Position - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s);
+		// DrawSprite(Common::Point(50, 50), frame->Width, frame->Height, frame->Data, s);
 	}
 }
 
