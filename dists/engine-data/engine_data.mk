@@ -1,6 +1,9 @@
 ifdef ENABLE_ACCESS
 DIST_FILES_LIST += dists/engine-data/access.dat
 endif
+ifdef ENABLE_BAGEL
+DIST_FILES_LIST += dists/engine-data/bagel.dat
+endif
 ifdef ENABLE_CRYO
 DIST_FILES_LIST += dists/engine-data/cryo.dat
 endif

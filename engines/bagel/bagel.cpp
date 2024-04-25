@@ -34,6 +34,7 @@
 #include "bagel/baglib/menu_dlg.h"
 #include "bagel/baglib/moo.h"
 #include "bagel/dialogs/opt_window.h"
+#include "bagel/baglib/paint_table.h"
 #include "bagel/baglib/pan_window.h"
 #include "bagel/baglib/parse_object.h"
 #include "bagel/baglib/pda.h"
