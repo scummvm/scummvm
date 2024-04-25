@@ -388,19 +388,19 @@ typedef struct {
 			dst[j] = src[j]; \
 	} else { \
 		for (i = 0, j = 0; i < count; i++, j += pitch) \
-			dst[j] = READ_UINT32(src+j); \
+			dst[j] = READ_UINT32(src + j); \
 	}
 
 #define COPY_8_PIXELS(dst, src, count, pitch) \
 	if (IS_ALIGNED(src, 4)) { \
 		for (i = 0, j = 0; i < count; i++, j += pitch) {\
 			dst[j] = src[j]; \
-			dst[j+1] = src[j+1]; \
+			dst[j + 1] = src[j + 1]; \
 		} \
 	} else { \
 		for (i = 0, j = 0; i < count; i++, j += pitch) { \
-			dst[j] = READ_UINT32(src+j); \
-			dst[j+1] = READ_UINT32(src+j+1); \
+			dst[j] = READ_UINT32(src + j); \
+			dst[j + 1] = READ_UINT32(src + j + 1); \
 		} \
 	}
 
