@@ -447,7 +447,21 @@ bool Ultima8Engine::setupGame() {
 Common::Error Ultima8Engine::startupGame() {
 	debug(MM_INFO, "-- Initializing Game: %s --", _gameInfo->_name.c_str());
 
-	GraphicSysInit();
+	if (ConfMan.hasKey("usehighres")) {
+		_highRes = ConfMan.getBool("usehighres");
+	}
+
+	if (GAME_IS_U8) {
+		ConfMan.registerDefault("width", _highRes ? U8_HIRES_SCREEN_WIDTH : U8_DEFAULT_SCREEN_WIDTH);
+		ConfMan.registerDefault("height", _highRes ? U8_HIRES_SCREEN_HEIGHT : U8_DEFAULT_SCREEN_HEIGHT);
+	} else {
+		ConfMan.registerDefault("width", _highRes ? CRUSADER_HIRES_SCREEN_WIDTH : CRUSADER_DEFAULT_SCREEN_WIDTH);
+		ConfMan.registerDefault("height", _highRes ? CRUSADER_HIRES_SCREEN_HEIGHT : CRUSADER_DEFAULT_SCREEN_HEIGHT);
+	}
+
+	int width = ConfMan.getInt("width");
+	int height = ConfMan.getInt("height");
+	changeVideoMode(width, height);
 
 	_gameData = new GameData(_gameInfo);
 
@@ -713,22 +727,7 @@ void Ultima8Engine::paint() {
 		screen->update();
 }
 
-void Ultima8Engine::GraphicSysInit() {
-	if (ConfMan.hasKey("usehighres")) {
-		_highRes = ConfMan.getBool("usehighres");
-	}
-
-	if (GAME_IS_U8) {
-		ConfMan.registerDefault("width", _highRes ? U8_HIRES_SCREEN_WIDTH : U8_DEFAULT_SCREEN_WIDTH);
-		ConfMan.registerDefault("height", _highRes ? U8_HIRES_SCREEN_HEIGHT : U8_DEFAULT_SCREEN_HEIGHT);
-	} else {
-		ConfMan.registerDefault("width", _highRes ? CRUSADER_HIRES_SCREEN_WIDTH : CRUSADER_DEFAULT_SCREEN_WIDTH);
-		ConfMan.registerDefault("height", _highRes ? CRUSADER_HIRES_SCREEN_HEIGHT : CRUSADER_DEFAULT_SCREEN_HEIGHT);
-	}
-
-	int width = ConfMan.getInt("width");
-	int height = ConfMan.getInt("height");
-
+void Ultima8Engine::changeVideoMode(int width, int height) {
 	if (_screen) {
 		Rect old_dims;
 		_screen->GetSurfaceDims(old_dims);
@@ -776,7 +775,6 @@ void Ultima8Engine::GraphicSysInit() {
 		_inverterGump->InitGump(0);
 	}
 
-
 	// Show the splash screen immediately now that the screen has been set up
 	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 	if (saveSlot == -1) {
@@ -791,13 +789,6 @@ void Ultima8Engine::GraphicSysInit() {
 	DesktopGump::SetFadedModal(faded_modal);
 
 	paint();
-}
-
-void Ultima8Engine::changeVideoMode(int width, int height) {
-	//if (width > 0) width = ConfMan.getInt("width");
-	//if (height > 0) height = ConfMan.getInt("height");
-
-	GraphicSysInit();
 }
 
 void Ultima8Engine::handleEvent(const Common::Event &event) {

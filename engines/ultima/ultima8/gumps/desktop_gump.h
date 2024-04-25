@@ -40,6 +40,8 @@ public:
 	DesktopGump(int32 x, int32 y, int32 width, int32 height);
 	~DesktopGump() override;
 
+	void RenderSurfaceChanged() override;
+
 	void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
 	void PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
 

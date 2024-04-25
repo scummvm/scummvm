@@ -158,9 +158,6 @@ private:
 	//! Does a Full reset of the Engine (including shutting down Video)
 //	void fullReset();
 
-	// called depending upon command line arguments
-	void GraphicSysInit(); // starts/restarts the graphics subsystem
-
 	void handleDelayedEvents();
 
 	bool pollEvent(Common::Event &event);
