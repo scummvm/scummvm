@@ -165,6 +165,45 @@
 	kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
+{
+	{
+		"adi2",
+		"Adi 2.5",
+		AD_ENTRY1s("adi2.stk", "be80ec9c50d750b3713df6b44b74e345", 16918998),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_CD,
+		GUIO1(GUIO_NOASPECT)
+	},
+	kFeatures640x400,
+	"adi2.stk", "ediintro.tot", 0
+},
+{
+	{
+		"adi2",
+		"Adi 2.6",
+		AD_ENTRY1s("adi2.stk", "4ab5a6d75c6a863706fa156da72d0cf3", 16919534),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_CD,
+		GUIO1(GUIO_NOASPECT)
+	},
+	kFeatures640x400,
+	"adi2.stk", "ediintro.tot", 0
+},
+{
+	{
+		"adi2",
+		"Adi 2.6",
+		AD_ENTRY1s("adi2.stk", "e02f8adaef95a668e31a0bc4ce3ba178", 17914610),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_CD,
+		GUIO1(GUIO_NOASPECT)
+	},
+	kFeatures640x400,
+	"adi2.stk", "ediintro.tot", 0
+},
 
 // -- Spanish: Adi --
 
