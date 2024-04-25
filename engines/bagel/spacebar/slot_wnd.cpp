@@ -772,49 +772,42 @@ void SBarSlotWnd::SlideSlots() {
 
 void SBarSlotWnd::UpdateText() {
 	Assert(IsValidObject(this));
+	if (ErrorOccurred())
+		return;
 
-	if (!ErrorOccurred()) {
-		if (m_nPayOff1 > 0) {
-			if (m_pOddsText != nullptr) {
-				m_pOddsText->SetText(BuildString("%d:%d", m_nPayOff1, m_nPayOff2));
-			}
+	if (m_nPayOff1 > 0 && m_pOddsText != nullptr) {
+		m_pOddsText->SetText(BuildString("%d:%d", m_nPayOff1, m_nPayOff2));
+	}
+
+	if (m_pCredText != nullptr) {
+		m_pCredText->SetText(BuildString("%d", m_nCredit));
+		m_pCredText->Display(this);
+	}
+
+	// Update bet
+	if (m_pBetText != nullptr) {
+		m_pBetText->SetText(BuildString("%d", m_nBet));
+		m_pBetText->Display(this);
+	}
+
+	if (m_bLose) {
+
+		if (m_pLoseBmp != nullptr) {
+			m_pLoseBmp->Paint(this, 401, 125);
 		}
 
-		if (m_pCredText != nullptr) {
-			m_pCredText->SetText(BuildString("%d", m_nCredit));
-			m_pCredText->Display(this);
+		if (m_pOddsText != nullptr) {
+			m_pOddsText->SetText("");
 		}
 
-		// Update bet
-		if (m_pBetText != nullptr) {
-			m_pBetText->SetText(BuildString("%d", m_nBet));
-			m_pBetText->Display(this);
+	} else if (m_nBet && !g_bFix) {
+		// Check and see if we need to show the GO button
+		if (m_pSlotButs[GO] != nullptr) {
+			m_pSlotButs[GO]->Show();
+			m_pSlotButs[GO]->Paint();
 		}
-
-		if (m_bLose) {
-
-			if (m_pLoseBmp != nullptr) {
-				m_pLoseBmp->Paint(this, 401, 125);
-			}
-
-			if (m_pOddsText != nullptr) {
-				m_pOddsText->SetText("");
-			}
-
-		} else {
-			// Check and see if we need to show the GO button
-			if (m_nBet && !g_bFix) {
-				if (m_pSlotButs[GO] != nullptr) {
-					m_pSlotButs[GO]->Show();
-					m_pSlotButs[GO]->Paint();
-				}
-
-			} else {
-				if (m_pOddsText != nullptr) {
-					m_pOddsText->Display(this);
-				}
-			}
-		}
+	} else if (m_pOddsText != nullptr) {
+		m_pOddsText->Display(this);
 	}
 }
 
@@ -832,79 +825,80 @@ void SBarSlotWnd::OnBofButton(CBofObject *pObject, int nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
+	if (nState != BUTTON_CLICKED)
+		return;
+
 	CBofButton *pButton = (CBofButton *)pObject;
 
-	if (nState == BUTTON_CLICKED) {
-		switch (pButton->GetControlID()) {
-		case ONE:
-			AddBet(1);
-			break;
-		case FOUR:
-			AddBet(4);
-			break;
-		case SEVEN:
-			AddBet(7);
-			break;
-		case TEN:
-			AddBet(10);
-			break;
-		case FORTY:
-			AddBet(40);
-			break;
-		case SEVENTY:
-			AddBet(70);
-			break;
-		case OHNDRD:
-			AddBet(100);
-			break;
-		case RHNDRD:
-			AddBet(400);
-			break;
-		case SHNDRD:
-			AddBet(700);
-			break;
-		case OTHSND:
-			AddBet(1000);
-			break;
-		case RTHSND:
-			AddBet(4000);
-			break;
-		case STHSND:
-			AddBet(7000);
-			break;
-		case CLRBET:
-			ClrBet();
-			break;
-		case BETALL:
-			BetAll();
-			break;
-		case GO:
-			Go();
-			break;
-		case SLOTQUIT:
-			LogInfo("\tClicked Quit");
-			Close();
-			break;
+	switch (pButton->GetControlID()) {
+	case ONE:
+		AddBet(1);
+		break;
+	case FOUR:
+		AddBet(4);
+		break;
+	case SEVEN:
+		AddBet(7);
+		break;
+	case TEN:
+		AddBet(10);
+		break;
+	case FORTY:
+		AddBet(40);
+		break;
+	case SEVENTY:
+		AddBet(70);
+		break;
+	case OHNDRD:
+		AddBet(100);
+		break;
+	case RHNDRD:
+		AddBet(400);
+		break;
+	case SHNDRD:
+		AddBet(700);
+		break;
+	case OTHSND:
+		AddBet(1000);
+		break;
+	case RTHSND:
+		AddBet(4000);
+		break;
+	case STHSND:
+		AddBet(7000);
+		break;
+	case CLRBET:
+		ClrBet();
+		break;
+	case BETALL:
+		BetAll();
+		break;
+	case GO:
+		Go();
+		break;
+	case SLOTQUIT:
+		LogInfo("\tClicked Quit");
+		Close();
+		break;
 
-		case SLOTHELP: {
-			LogInfo("\tClicked Help");
+	case SLOTHELP: {
+		LogInfo("\tClicked Help");
 
-			CBagel *pApp = CBagel::GetBagApp();
-			if (pApp != nullptr) {
-				CBagMasterWin *pWin = pApp->GetMasterWnd();
-				if (pWin != nullptr) {
-					m_bPaused = true;
-					pWin->OnHelp(BuildSlotDir("SLOT.TXT"));
-					m_bPaused = false;
-				}
+		CBagel *pApp = CBagel::GetBagApp();
+		if (pApp != nullptr) {
+			CBagMasterWin *pWin = pApp->GetMasterWnd();
+			if (pWin != nullptr) {
+				m_bPaused = true;
+				pWin->OnHelp(BuildSlotDir("SLOT.TXT"));
+				m_bPaused = false;
 			}
-			}
-			break;
-
-		default:
-			LogWarning(BuildString("Clicked Unknown Button with ID %d", pButton->GetControlID()));
-			break;
 		}
+		}
+		break;
+
+	default:
+		LogWarning(BuildString("Clicked Unknown Button with ID %d", pButton->GetControlID()));
+		break;
 	}
 }
 

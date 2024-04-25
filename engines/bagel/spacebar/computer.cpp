@@ -535,6 +535,7 @@ void SBarComputer::SetOff() {
 		if (m_pDrinkBox != nullptr) {
 			m_pDrinkBox->SetSelectedItem(-1, false);
 		}
+		
 		if (m_pIngBox != nullptr) {
 			m_pIngBox->SetSelectedItem(-1, false);
 		}
@@ -754,6 +755,7 @@ void SBarComputer::Order() {
 						pVar->SetValue(nCredits - 1);
 						pVar2->SetValue(1);
 					}
+					
 					if (bRefuse) {
 						PaintBeveledText(this, &_compTextWindow, szRefuse, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
 						WaitForInput();
@@ -772,10 +774,8 @@ void SBarComputer::PageUp() {
 		if (m_pDrinkBox) {
 			m_pDrinkBox->PageUp();
 		}
-	} else {
-		if (m_pIngBox) {
-			m_pIngBox->PageUp();
-		}
+	} else if (m_pIngBox) {
+		m_pIngBox->PageUp();
 	}
 }
 
@@ -784,10 +784,8 @@ void SBarComputer::PageDown() {
 		if (m_pDrinkBox) {
 			m_pDrinkBox->PageDown();
 		}
-	} else {
-		if (m_pIngBox) {
-			m_pIngBox->PageDown();
-		}
+	} else if (m_pIngBox) {
+		m_pIngBox->PageDown();
 	}
 }
 
@@ -795,65 +793,67 @@ void SBarComputer::OnBofButton(CBofObject *pObject, int nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
+	if (nState != BUTTON_CLICKED)
+		return;
+
 	CBofButton *pButton = (CBofButton *)pObject;
 
-	if (nState == BUTTON_CLICKED) {
-		switch (pButton->GetControlID()) {
-		case OFFBUT:
-			SetOn();
-			break;
-		case ONBUT:
-			SetOff();
-			break;
-		case DRINKS:
-			SetDrink();
-			break;
-		case INGRED:
-			SetIng();
-			break;
-		case LISTD:
-			SetList();
-			break;
-		case LISTI:
-			SetList();
-			break;
-		case ORDER:
-			Order();
-			break;
-		case PGUP:
-			PageUp();
-			break;
-		case PGDOWN:
-			PageDown();
-			break;
-		case BCBACK:
-			Back();
-			break;
-		case BCQUIT:
-			LogInfo("\tClicked Quit");
-			Close();
-			break;
+	switch (pButton->GetControlID()) {
+	case OFFBUT:
+		SetOn();
+		break;
+	case ONBUT:
+		SetOff();
+		break;
+	case DRINKS:
+		SetDrink();
+		break;
+	case INGRED:
+		SetIng();
+		break;
+	case LISTD:
+		SetList();
+		break;
+	case LISTI:
+		SetList();
+		break;
+	case ORDER:
+		Order();
+		break;
+	case PGUP:
+		PageUp();
+		break;
+	case PGDOWN:
+		PageDown();
+		break;
+	case BCBACK:
+		Back();
+		break;
+	case BCQUIT:
+		LogInfo("\tClicked Quit");
+		Close();
+		break;
 
-		case BCHELP: {
-			LogInfo("\tClicked Help");
+	case BCHELP: {
+		LogInfo("\tClicked Help");
 
-			CBagel *pApp = CBagel::GetBagApp();
+		CBagel *pApp = CBagel::GetBagApp();
 
-			if (pApp != nullptr) {
-				CBagMasterWin *pWin = pApp->GetMasterWnd();
-				if (pWin != nullptr) {
-					pWin->OnHelp(BuildBarcDir("BARCOMP.TXT"));
-				}
+		if (pApp != nullptr) {
+			CBagMasterWin *pWin = pApp->GetMasterWnd();
+			if (pWin != nullptr) {
+				pWin->OnHelp(BuildBarcDir("BARCOMP.TXT"));
 			}
-			}
-			break;
-
-		default:
-			LogWarning(BuildString("Clicked Unknown Button with ID %d", pButton->GetControlID()));
-			break;
 		}
+		}
+		break;
+
+	default:
+		LogWarning(BuildString("Clicked Unknown Button with ID %d", pButton->GetControlID()));
+		break;
 	}
 }
+
 void SBarComputer::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 

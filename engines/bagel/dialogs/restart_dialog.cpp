@@ -193,54 +193,55 @@ void CBagRestartDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
-	if (nFlags == BUTTON_CLICKED) {
-		CBofBmpButton *pButton = (CBofBmpButton *)pObject;
+	if (nFlags != BUTTON_CLICKED)
+		return;
 
-		switch (pButton->GetControlID()) {
+	CBofBmpButton *pButton = (CBofBmpButton *)pObject;
 
-		// Cancel
-		case CANCEL_BTN: {
-			Close();
-			break;
-		}
+	switch (pButton->GetControlID()) {
 
-		// Restart a new game
-		case RESTART_BTN: {
-			CBagel *pApp = CBagel::GetBagApp();
-			if (pApp != nullptr) {
-				CBagMasterWin *pWin = pApp->GetMasterWnd();
-				if (pWin != nullptr) {
+	// Cancel
+	case CANCEL_BTN: {
+		Close();
+		break;
+	}
 
-					char szBuf[256];
-					Common::strcpy_s(szBuf, LOADINGBMP);
-					CBofString cStr(szBuf, 256);
-					MACROREPLACE(cStr);
+	// Restart a new game
+	case RESTART_BTN: {
+		CBagel *pApp = CBagel::GetBagApp();
+		if (pApp != nullptr) {
+			CBagMasterWin *pWin = pApp->GetMasterWnd();
+			if (pWin != nullptr) {
 
-					CBofRect cRect;
-					cRect.left = (640 - 180) / 2;
-					cRect.top = (480 - 50) / 2;
-					cRect.right = cRect.left + 180 - 1;
-					cRect.bottom = cRect.top + 50 - 1;
+				char szBuf[256];
+				Common::strcpy_s(szBuf, LOADINGBMP);
+				CBofString cStr(szBuf, 256);
+				MACROREPLACE(cStr);
 
-					CBofCursor::Hide();
-					PaintBitmap(this, cStr, &cRect);
+				CBofRect cRect;
+				cRect.left = (640 - 180) / 2;
+				cRect.top = (480 - 50) / 2;
+				cRect.right = cRect.left + 180 - 1;
+				cRect.bottom = cRect.top + 50 - 1;
 
-					pWin->NewGame();
-					CBofCursor::Show();
+				CBofCursor::Hide();
+				PaintBitmap(this, cStr, &cRect);
 
-					KillBackground();
+				pWin->NewGame();
+				CBofCursor::Show();
 
-					_nReturnValue = RESTART_BTN;
-					OnClose();
-				}
+				KillBackground();
+
+				_nReturnValue = RESTART_BTN;
+				OnClose();
 			}
-			break;
 		}
+		break;
+	}
 
-		default:
-			LogWarning(BuildString("Restart/Restore: Unknown button: %d", pButton->GetControlID()));
-			break;
-		}
+	default:
+		LogWarning(BuildString("Restart/Restore: Unknown button: %d", pButton->GetControlID()));
+		break;
 	}
 }
 

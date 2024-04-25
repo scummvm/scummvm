@@ -355,50 +355,50 @@ void CBagRestoreDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
-	if (nFlags == BUTTON_CLICKED) {
+	if (nFlags != BUTTON_CLICKED)
+		return;
 
-		CBofBmpButton *pButton = (CBofBmpButton *)pObject;
+	CBofBmpButton *pButton = (CBofBmpButton *)pObject;
 
-		switch (pButton->GetControlID()) {
+	switch (pButton->GetControlID()) {
 
-		// Do actual save
-		case RESTORE_BTN:
-			RestoreAndClose();
-			break;
+	// Do actual save
+	case RESTORE_BTN:
+		RestoreAndClose();
+		break;
 
-		// Cancel without saving
-		case CANCEL_BTN:
-			Close();
-			break;
+	// Cancel without saving
+	case CANCEL_BTN:
+		Close();
+		break;
 
-		case LINEUP_BTN:
-			if (m_pListBox != nullptr) {
-				m_pListBox->LineUp();
-			}
-			break;
-
-		case LINEDN_BTN:
-			if (m_pListBox != nullptr) {
-				m_pListBox->LineDown();
-			}
-			break;
-
-		case PAGEUP_BTN:
-			if (m_pListBox != nullptr) {
-				m_pListBox->PageUp();
-			}
-			break;
-
-		case PAGEDN_BTN:
-			if (m_pListBox != nullptr) {
-				m_pListBox->PageDown();
-			}
-			break;
-
-		default:
-			LogWarning(BuildString("Save/Restore: Unknown button: %d", pButton->GetControlID()));
-			break;
+	case LINEUP_BTN:
+		if (m_pListBox != nullptr) {
+			m_pListBox->LineUp();
 		}
+		break;
+
+	case LINEDN_BTN:
+		if (m_pListBox != nullptr) {
+			m_pListBox->LineDown();
+		}
+		break;
+
+	case PAGEUP_BTN:
+		if (m_pListBox != nullptr) {
+			m_pListBox->PageUp();
+		}
+		break;
+
+	case PAGEDN_BTN:
+		if (m_pListBox != nullptr) {
+			m_pListBox->PageDown();
+		}
+		break;
+
+	default:
+		LogWarning(BuildString("Save/Restore: Unknown button: %d", pButton->GetControlID()));
+		break;
 	}
 }
 
@@ -432,10 +432,8 @@ void CBagRestoreDialog::OnBofListBox(CBofObject *pObject, int nItemIndex) {
 			RestoreAndClose();
 		}
 
-	} else {
-		if ((m_pButtons[0] != nullptr) && (m_pButtons[0]->GetState() != BUTTON_DISABLED)) {
-			m_pButtons[0]->SetState(BUTTON_DISABLED, true);
-		}
+	} else if ((m_pButtons[0] != nullptr) && (m_pButtons[0]->GetState() != BUTTON_DISABLED)) {
+		m_pButtons[0]->SetState(BUTTON_DISABLED, true);
 	}
 }
 

@@ -4062,16 +4062,17 @@ void SrafComputer::OnButtonStaffBios(CBofButton *pButton, int nState) {
 }
 
 void SrafComputer::OnButtonDispatchTeam(CBofButton *pButton, int nState) {
-	if (nState == BUTTON_CLICKED) {
-		switch (pButton->GetControlID()) {
-		case RETURN_TO_MAIN_BUTTON:
-			ActivateMainScreen();
-			break;
-		case DISPATCH_TEAM_BUTTON:
-			VerifyDispatchTeam();
-		default:
-			break;
-		}
+	if (nState != BUTTON_CLICKED)
+		return;
+
+	switch (pButton->GetControlID()) {
+	case RETURN_TO_MAIN_BUTTON:
+		ActivateMainScreen();
+		break;
+	case DISPATCH_TEAM_BUTTON:
+		VerifyDispatchTeam();
+	default:
+		break;
 	}
 }
 
@@ -4681,15 +4682,9 @@ void SrafTextScreen::OnBofButton(CBofObject *pObject, int nState) {
 
 	CBofButton *pButton = (CBofButton *)pObject;
 
-	if (nState == BUTTON_CLICKED) {
-		switch (pButton->GetControlID()) {
-		case DONE_BUTTON:
-			Close();
-			SrafComputer::SetMainScreen();
-			break;
-		default:
-			break;
-		}
+	if (nState == BUTTON_CLICKED && pButton->GetControlID() == DONE_BUTTON) {
+		Close();
+		SrafComputer::SetMainScreen();
 	}
 }
 
