@@ -55,7 +55,7 @@ public:
 	Common::Array<Common::Rect> _getPutAreas;
 	Common::Array<Common::SharedPtr<Graphics::ManagedSurface>> _getPutSurfaces;
 	int _scriptPals[6];
-	Common::String _strings[6];
+	Common::String _strings[10];
 };
 
 enum TTMRunType {
@@ -148,7 +148,7 @@ public:
 
 protected:
 	void handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval);
-	int32 findGOTOTarget(TTMEnviro &env, TTMSeq &seq);
+	int32 findGOTOTarget(TTMEnviro &env, TTMSeq &seq, int16 frame);
 
 	DgdsEngine *_vm;
 };

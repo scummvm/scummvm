@@ -127,6 +127,9 @@ void Dialog::drawType2(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 	if (colonpos != Common::String::npos) {
 		title = _str.substr(0, colonpos);
 		txt = _str.substr(colonpos + 1);
+		// Most have a CR after the colon? trim it to remove a blank line.
+		if (txt.size() && txt[0] == '\r')
+			txt = txt.substr(1);
 	} else {
 		txt = _str;
 	}
@@ -139,6 +142,7 @@ void Dialog::drawType2(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 		if (!title.empty()) {
 			// TODO: Maybe should measure the font?
 			_state->_loc.y += 10;
+			_state->_loc.height -= 10;
 			RequestData::drawHeader(dst, _rect.x, _rect.y, _rect.width, 4, title);
 		}
 
@@ -151,6 +155,9 @@ void Dialog::drawType2(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 
 		RequestData::drawCorners(dst, 19, _state->_loc.x - 2, _state->_loc.y - 2,
 								_state->_loc.width + 4, _state->_loc.height + 4);
+
+		_state->_loc.x += 8;
+		_state->_loc.width -= 16;
 
 	} else if (stage == kDlgDrawFindSelectionPointXY) {
 		drawFindSelectionXY();
@@ -416,7 +423,7 @@ void Dialog::drawForeground(Graphics::ManagedSurface *dst, uint16 fontcol, const
 	const int h = font->getFontHeight();
 	font->wordWrapText(txt, _state->_loc.width, lines);
 
-	int ystart = _state->_loc.y + (_state->_loc.height - lines.size() * h) / 2;
+	int ystart = _state->_loc.y + (_state->_loc.height - (int)lines.size() * h) / 2;
 
 	int x = _state->_loc.x;
 	if (hasFlag(kDlgFlagLeftJust)) {
@@ -509,7 +516,10 @@ struct DialogAction *Dialog::pickAction(bool isClosing) {
 	struct DialogAction *retval = nullptr;
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	if (/* some game flags?? && */isClosing) {
-		return &_action[engine->getRandom().getRandomNumber(_action.size() - 1)];
+		if (_action.empty())
+			return nullptr;
+		else
+			return &_action[engine->getRandom().getRandomNumber(_action.size() - 1)];
 	}
 	assert(_state);
 	const Common::Point lastMouse = engine->getLastMouse();
