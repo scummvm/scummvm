@@ -135,10 +135,11 @@ int Player::getMusicTimer() const {
 }
 
 bool Player::isFadingOut() const {
-	int i;
-	for (i = 0; i < ARRAYSIZE(_parameterFaders); ++i) {
-		if (_parameterFaders[i].param == ParameterFader::pfVolume && (_parameterFaders[i].incr || _parameterFaders[i].ifrac))
-			return true;
+	for (int i = 0; i < ARRAYSIZE(_parameterFaders); ++i) {
+		const ParameterFader &p = _parameterFaders[i];
+		if (p.param == ParameterFader::pfVolume &&
+			_volume + p.cntdwn * p.incr + ((p.irem + p.cntdwn * p.ifrac) / p.ttime) * p.dir == 0)
+				return true;
 	}
 	return false;
 }

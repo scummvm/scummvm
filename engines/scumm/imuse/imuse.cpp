@@ -705,6 +705,18 @@ int IMuseInternal::stopAllSounds_internal() {
 }
 
 int IMuseInternal::getSoundStatus_internal(int sound, bool ignoreFadeouts) const {
+	if (_game_id != GID_MONKEY2) {
+		// The whole fadeout checking / ignoring is not present in any of the original
+		// drivers, but necessary as a WORKAROUND for a bug in Monkey Island 2 that also
+		// happens with the original interpreter (bug no. 385: "No music if room
+		// transition is too fast"). The bug is caused by sloppy scripting, but probably
+		// wouldn't ever be seen on machines of that era, when the loading time for a
+		// room change would take longer than the fadeout time.
+		// Since the code is objectively wrong and the workaround is not known to be
+		// needed elsewhere, we restrict it to Monkey Island 2.
+		ignoreFadeouts = false;
+	}
+
 	const Player *player = _players;
 	for (int i = ARRAYSIZE(_players); i; i--, player++) {
 		if (player->isActive() && (!ignoreFadeouts || !player->isFadingOut())) {
