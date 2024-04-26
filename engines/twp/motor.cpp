@@ -372,7 +372,7 @@ void TalkingBase::setDuration(const Common::String &text) {
 }
 
 float TalkingBase::getTalkSpeed() const {
-	return _actor->_sound ? 1.f : (ConfMan.getInt("talkspeed") + 1) / 60.f;
+	return (_actor && _actor->_sound) ? 1.f : (ConfMan.getInt("talkspeed") + 1) / 60.f;
 }
 
 Talking::Talking(Common::SharedPtr<Object> obj, const Common::StringArray &texts, const Color &color) : TalkingBase(obj, 0.f) {
