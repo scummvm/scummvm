@@ -66,6 +66,7 @@ struct VerbSlot {
 	Common::ScopedPtr<Motor> _shake;
 	Math::Vector2d _shakeOffset;
 	bool _over = false;
+	bool _hightlight = false;
 
 	VerbSlot() {}
 	VerbSlot(Verb verb) : _verb(verb) {}

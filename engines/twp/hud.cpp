@@ -199,7 +199,7 @@ void Hud::drawCore(const Math::Matrix4 &trsf) {
 		const VerbSlot &verbSlot = slot->verbSlots[i];
 		if (verbSlot._verb.image.size() > 0) {
 			const SpriteSheetFrame &verbFrame = verbSheet->getFrame(Common::String::format("%s%s_%s", verbSlot._verb.image.c_str(), verbSuffix.c_str(), lang.c_str()));
-			Color color = (verbSlot._over || (verbSlot._verb.id.id == _defaultVerbId)) ? verbHighlight : verbColor;
+			Color color = (verbSlot._over || (verbSlot._hightlight)) ? verbHighlight : verbColor;
 			Math::Matrix4 t(trsf);
 			t.translate(Math::Vector3d(verbSlot._shakeOffset.getX(), verbSlot._shakeOffset.getY(), 0.f));
 			drawSprite(verbFrame, verbTexture, Color::withAlpha(color, getAlpha()), t);
@@ -234,12 +234,20 @@ void Hud::update(float elapsed, const Math::Vector2d &pos, Common::SharedPtr<Obj
 	Common::String lang = ConfMan.get("language");
 	Common::String verbSuffix = retroVerbs ? "_retro" : "";
 	SpriteSheet *verbSheet = g_twp->_resManager->spriteSheet("VerbSheet");
+
+	// get the verb to highlight
+	int defaultVerbId = slot->verbSlots[0]._verb.id.id;
+	if (g_twp->_noun1 && (this->_verb.id.id == slot->verbSlots[0]._verb.id.id)) {
+		defaultVerbId = g_twp->_noun1->defaultVerbId();
+	}
+
 	bool isOver = false;
 	for (int i = 1; i < MAX_VERBS; i++) {
 		VerbSlot &verbSlot = slot->verbSlots[i];
 		if (verbSlot._verb.image.size() > 0) {
 			const SpriteSheetFrame &verbFrame = verbSheet->getFrame(Common::String::format("%s%s_%s", verbSlot._verb.image.c_str(), verbSuffix.c_str(), lang.c_str()));
 			bool over = verbFrame.spriteSourceSize.contains(_mousePos.getX(), _mousePos.getY());
+			verbSlot._hightlight = (verbSlot._verb.id.id == defaultVerbId);
 			// shake choice when cursor is over
 			if ((verbSlot._shakeTime > 0.0f) && verbSlot._shake) {
 				verbSlot._shake->update(elapsed);
