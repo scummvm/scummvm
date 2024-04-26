@@ -46,7 +46,7 @@ public:
 	ErrorCode SetWorkBmp();
 	ErrorCode KillWorkBmp();
 
-	CBofRect GetRect() {
+	CBofRect getRect() {
 		return CBagStorageDev::GetRect();
 	}
 	void SetRect(const CBofRect &xRect) {
@@ -86,8 +86,8 @@ public:
 		return true;
 	}
 
-	virtual ErrorCode Attach();
-	virtual ErrorCode Detach();
+	virtual ErrorCode attach();
+	virtual ErrorCode detach();
 
 	virtual ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);
 

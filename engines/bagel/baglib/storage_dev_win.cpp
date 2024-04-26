@@ -226,7 +226,7 @@ ErrorCode CBagStorageDev::ActivateLocalObject(CBagObject  *pObj) {
 		pObj->SetLocal();
 		if (!pObj->IsActive() && (!pObj->GetExpression() || pObj->GetExpression()->Evaluate(pObj->IsNegative()))) {
 			pObj->SetActive();
-			pObj->Attach();
+			pObj->attach();
 
 			// Preform an update and arrange objects in the storage device
 			if (g_bAllowAAO) {
@@ -255,7 +255,7 @@ ErrorCode CBagStorageDev::DeactivateLocalObject(CBagObject *pObj) {
 		pObj->SetLocal(false);
 		if (pObj->IsActive()) {
 			pObj->SetActive(false);
-			pObj->Detach();
+			pObj->detach();
 		}
 	} else  {
 		errCode = ERR_FFIND;
@@ -282,13 +282,13 @@ CBofPoint CBagStorageDev::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 
 		int     nBackWidth = GetBackground()->Width();
 		int     nBackHeight = GetBackground()->Height();
-		int     nObjWidth = pObj->GetRect().Width();
-		int     nObjHeight = pObj->GetRect().Height();
+		int     nObjWidth = pObj->getRect().Width();
+		int     nObjHeight = pObj->getRect().Height();
 
 		// Check to see if the whole object can fit in, if it can't wrap
 		if (NextPos.x > (nBackWidth - nObjWidth)) {
 			NextPos.x = 0;
-			NextPos.y += pObj->GetRect().Height();
+			NextPos.y += pObj->getRect().Height();
 		}
 		pObj->SetPosition(NextPos);
 
@@ -301,7 +301,7 @@ CBofPoint CBagStorageDev::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 
 		SetNumFloatPages(nPageNum);
 
-		NextPos.x += pObj->GetRect().Width();
+		NextPos.x += pObj->getRect().Width();
 	}
 
 	return NextPos;
@@ -327,7 +327,7 @@ ErrorCode CBagStorageDev::AttachActiveObjects() {
 				if (pObj->IsLocal() && (!pObj->GetExpression() || pObj->GetExpression()->Evaluate(pObj->IsNegative()))) {
 					if (!pObj->IsAttached()) {
 						pObj->SetActive();
-						pObj->Attach();
+						pObj->attach();
 					}
 
 					// If we have already painted the storage device once
@@ -351,7 +351,7 @@ ErrorCode CBagStorageDev::AttachActiveObjects() {
 
 					if (pObj->GetType() != SOUNDOBJ || !((CBagSoundObject *)pObj)->IsPlaying()) {
 						pObj->SetActive(false);
-						pObj->Detach();
+						pObj->detach();
 					}
 				}
 			} else
@@ -376,7 +376,7 @@ ErrorCode CBagStorageDev::DetachActiveObjects() {
 					// If this object is not removed from memory, then
 					// make sure it is drawn next time it is activated.
 					pObj->SetDirty(true);
-					pObj->Detach();
+					pObj->detach();
 				}
 			} else
 				errCode = ERR_FFIND;
@@ -429,7 +429,7 @@ ErrorCode CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *
 		for (int i = 0; i < nCount; ++i) {
 			CBagObject *pObj = GetObjectByPos(i);
 			if (pObj->IsAttached()) {
-				CBofRect xBmpRect = pObj->GetRect();
+				CBofRect xBmpRect = pObj->getRect();
 				CBofPoint pt = xBmpRect.TopLeft();
 				xBmpRect.OffsetRect(-pt.x, -pt.y);
 
@@ -443,7 +443,7 @@ ErrorCode CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *
 				}
 
 				// if it is visible update it
-				if (pObj->GetRect().PtInRect(*m_xCursorLocation)) {
+				if (pObj->getRect().PtInRect(*m_xCursorLocation)) {
 					pObj->OnMouseOver(0, *m_xCursorLocation, this);
 					bMouseOverObj = true;
 				}  // if on screen
@@ -666,7 +666,7 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 
 		if (!sWorkStr.Find("BKG")) {
 			SetInfo(fpInput);
-			if (bAttach && Attach()) {
+			if (bAttach && attach()) {
 				Assert(false);
 			}
 
@@ -964,7 +964,7 @@ PARSE_CODES CBagStorageDev::SetInfo(bof_ifstream &fpInput) {
 }
 
 
-ErrorCode CBagStorageDev::Attach() {
+ErrorCode CBagStorageDev::attach() {
 	// Assume no error
 	ErrorCode errCode = ERR_NONE;
 
@@ -985,7 +985,7 @@ ErrorCode CBagStorageDev::Attach() {
 }
 
 
-ErrorCode CBagStorageDev::Detach() {
+ErrorCode CBagStorageDev::detach() {
 	// Must force people to not use a bad App's palette
 	CBofApp::GetApp()->SetPalette(nullptr);
 	SetBackground(nullptr);
@@ -1166,7 +1166,7 @@ CBagStorageDevWnd::~CBagStorageDevWnd() {
 }
 
 
-ErrorCode CBagStorageDevWnd::Attach() {
+ErrorCode CBagStorageDevWnd::attach() {
 	char szLocalBuff[256];
 	CBofString s(szLocalBuff, 256);
 
@@ -1223,7 +1223,7 @@ ErrorCode CBagStorageDevWnd::Attach() {
 			m_pEvtSDev = (CBagEventSDev *)pSDev;
 			m_pEvtSDev->SetAssociateWnd(this);
 			if (!m_pEvtSDev->IsAttached())
-				m_pEvtSDev->Attach();
+				m_pEvtSDev->attach();
 
 			SetTimer(EVAL_EXPR, 1000);
 			g_bPauseTimer = false;
@@ -1276,14 +1276,14 @@ void CBagStorageDevWnd::OnTimer(uint32 nEventID) {
 }
 
 
-ErrorCode CBagStorageDevWnd::Detach() {
+ErrorCode CBagStorageDevWnd::detach() {
 	DetachActiveObjects();
 
 	CBofApp::GetApp()->SetPalette(nullptr);
 
 	SetBackground(nullptr);
 	CBofSprite::CloseLibrary();
-	CBagStorageDev::Detach();
+	CBagStorageDev::detach();
 
 	KillTimer(EVAL_EXPR);
 
@@ -1572,10 +1572,10 @@ CBagStorageDevDlg::CBagStorageDevDlg() : CBofDialog() {
 }
 
 
-ErrorCode CBagStorageDevDlg::Attach() {
+ErrorCode CBagStorageDevDlg::attach() {
 	Assert(IsValidObject(this));
 
-	CBagStorageDev::Attach();
+	CBagStorageDev::attach();
 
 	char szLocalBuff[256];
 	CBofString s(szLocalBuff, 256);

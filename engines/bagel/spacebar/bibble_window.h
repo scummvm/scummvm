@@ -79,8 +79,8 @@ class CBibbleWindow : public CBagStorageDevWnd {
 public:
 	CBibbleWindow();
 
-	virtual ErrorCode Attach();
-	virtual ErrorCode Detach();
+	virtual ErrorCode attach();
+	virtual ErrorCode detach();
 
 	virtual void OnBofButton(CBofObject *pButton, int nState);
 	virtual void OnClose();

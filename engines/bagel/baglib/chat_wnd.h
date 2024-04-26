@@ -35,7 +35,7 @@ public:
 	 * Called to overload new set backgrounds. Calls the set backdrop pure
 	 * virtual function by default.
 	 */
-	virtual ErrorCode Attach();
+	virtual ErrorCode attach();
 	virtual void OnTimer(uint32 nTimerId);
 	virtual void OnMouseMove(uint32 nFlags, CBofPoint *pPos, void * = nullptr);
 };

@@ -292,13 +292,13 @@ ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 
 		for (int i = 0; i < nCount; ++i) {
 			CBagObject *pObj = list->GetNodeItem(i);
-			CBofRect xIntrRect;
-			CBofRect xBmpRect = pObj->GetRect();
+			CBofRect xBmpRect = pObj->getRect();
 
-			// If it is a panorama we have to chech for exceeded bounds
+			// If it is a panorama we have to check for exceeded bounds
 			if (!pObj->IsForeGround() && (nW > 1024) && (viewRect.right > nW) && (xBmpRect.left < (nW / 2)))
 				xBmpRect.OffsetRect(nW, 0);
 
+			CBofRect xIntrRect;
 			if (xIntrRect.IntersectRect(&viewRect, &xBmpRect) || pObj->IsForeGround() || pObj->IsModal()) {
 				CBofPoint pt = xBmpRect.TopLeft();
 				if (!pObj->IsForeGround()) {
@@ -325,8 +325,8 @@ ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 							} else if (pObj->IsAttached() &&                       // don't care if it's not running...
 								        (pCharObj->IsStationary() == false) &&
 								        (pCharObj->GetNumOfLoops() != 0) &&     // Plays multiple or infinite (fly == -1)
-								        ((pObj->GetRect().Width() != 480) &&
-								         (pObj->GetRect().Height() != 360))) {
+								        ((pObj->getRect().Width() != 480) &&
+								         (pObj->getRect().Height() != 360))) {
 
 								// Redraw everything inside of the closeup... but not the PDA...
 								// only want to redraw the closeup, not everything else.
@@ -350,7 +350,7 @@ ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 					pUpdateArea->AddToTail(xIntrRect);
 				}
 
-				if (pObj->GetRect().PtInRect(xCursorLocation)) {
+				if (pObj->getRect().PtInRect(xCursorLocation)) {
 					pObj->OnMouseOver(0, xCursorLocation, this);
 					nMouseOverObj = i;
 				}
@@ -542,7 +542,7 @@ void CBagPanWindow::OnMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 			if (pOverObj->GetRefName().Find("BPDA_WLD") != -1) {
 				CBagPDA *pPda = (CBagPDA *)SDEVMNGR->GetStorageDevice(pOverObj->GetRefName());
 				if (pPda != nullptr) {
-					CBofRect cRect = pOverObj->GetRect();
+					CBofRect cRect = pOverObj->getRect();
 					nCursorID = pPda->GetProperCursor(xPoint, cRect);
 				}
 			}
@@ -617,7 +617,7 @@ void CBagPanWindow::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 			if (nCount != 0) {
 				for (int i = 0; i < nCount; ++i) {
 					CBagObject *pObj = m_pFGObjectList->GetNodeItem(i);
-					CBofRect xBmpRect = pObj->GetRect();
+					CBofRect xBmpRect = pObj->getRect();
 					if (xBmpRect.PtInRect(*xPoint)) {
 						pObj->OnObjInteraction(pActObj, this);
 					}

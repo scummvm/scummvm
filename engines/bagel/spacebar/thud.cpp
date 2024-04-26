@@ -44,9 +44,9 @@ ErrorCode SBarThud::LoadFile(const CBofString &sFile) {
 	return error;
 }
 
-ErrorCode SBarThud::Attach() {
+ErrorCode SBarThud::attach() {
 	int        nActiveObj = 0;
-	ErrorCode rc = CBagStorageDevBmp::Attach();
+	ErrorCode rc = CBagStorageDevBmp::attach();
 
 	// save a copy of the you icon
 	m_xYouBmp = new CBofBitmap(GetBackgroundName());
@@ -64,7 +64,7 @@ ErrorCode SBarThud::Attach() {
 
 		// Detach all activated objects after the first
 		if (nActiveObj > 1) {
-			pObj->Detach();
+			pObj->detach();
 			nActiveObj--;
 			// This can be removed later
 			Assert(nActiveObj < 2);
@@ -77,15 +77,15 @@ ErrorCode SBarThud::Attach() {
 	return rc;
 }
 
-ErrorCode SBarThud::Detach() {
+ErrorCode SBarThud::detach() {
 	if (m_xYouBmp) {
 		delete m_xYouBmp;
 		m_xYouBmp = nullptr;
 	}
 
 	// Write one function in sdevbmp
-	CBagStorageDev::Detach();
-	return CBagBmpObject::Detach();
+	CBagStorageDev::detach();
+	return CBagBmpObject::detach();
 }
 
 

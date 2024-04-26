@@ -34,23 +34,23 @@ CBagVariableObject::CBagVariableObject() : CBagObject() {
 }
 
 CBagVariableObject::~CBagVariableObject() {
-	Detach();
+	detach();
 }
 
-ErrorCode CBagVariableObject::Attach() {
+ErrorCode CBagVariableObject::attach() {
 	CBagVar *xVar = VARMNGR->GetVariable(GetFileName());
 
 	if (xVar && !GetRefName().IsEmpty())
 		xVar->SetValue(GetRefName());
 
-	return CBagObject::Attach();
+	return CBagObject::attach();
 }
 
-ErrorCode CBagVariableObject::Detach() {
-	return CBagObject::Detach();
+ErrorCode CBagVariableObject::detach() {
+	return CBagObject::detach();
 }
 
-CBofRect CBagVariableObject::GetRect() {
+CBofRect CBagVariableObject::getRect() {
 	CBofPoint p = GetPosition();
 	CBofSize s = GetSize();
 	CBofRect r = CBofRect(p, s);

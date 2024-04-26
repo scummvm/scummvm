@@ -1213,7 +1213,7 @@ ErrorCode CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 		LogInfo(BuildString("Switching to SDEV: %s", sWorkStr.GetBuffer()));
 
 		if (m_pGameWindow) {
-			m_pGameWindow->Detach();
+			m_pGameWindow->detach();
 
 			//  If the new storage device is equal to the last windows previous
 			//  lets not go in a circle
@@ -1241,7 +1241,7 @@ ErrorCode CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 		// Reset paints
 		g_bAllowPaint = true;
 
-		pSDev->Attach();
+		pSDev->attach();
 
 		pSDev->SetFadeId((uint16)nFadeId);
 		m_nFadeIn = 0;
@@ -1394,10 +1394,10 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 
 		if (pSDev) {
 			if (m_pGameWindow) {
-				m_pGameWindow->Detach();
+				m_pGameWindow->detach();
 			}
 
-			pSDev->Attach();
+			pSDev->attach();
 			pSDev->SetPreFilterPan(true);
 
 			m_pGameWindow = (CBagStorageDevWnd *)pSDev;

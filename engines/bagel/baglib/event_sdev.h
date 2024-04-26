@@ -42,7 +42,7 @@ public:
 	 * Called to overload new set backgrounds.  Calls the set backdrop pure
 	 * virtual function by default.
 	 */
-	virtual ErrorCode Attach();
+	virtual ErrorCode attach();
 
 	virtual ErrorCode SetBackground(CBofBitmap * /*pBmp*/) {
 		return ERR_NONE;

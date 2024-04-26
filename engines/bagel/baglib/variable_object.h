@@ -42,16 +42,16 @@ public:
 	virtual ~CBagVariableObject();
 
 	// Return true if the Object had members that are properly initialized/de-initialized
-	ErrorCode Attach() override;
-	ErrorCode Detach() override;
+	ErrorCode attach() override;
+	ErrorCode detach() override;
 
-	CBofRect GetRect() override;
+	CBofRect getRect() override;
 
 	CBofSize GetSize() {
 		return m_xSize;
 	}
 
-	void SetSize(const CBofSize &xSize) override {
+	void setSize(const CBofSize &xSize) override {
 		m_xSize = xSize;
 	}
 

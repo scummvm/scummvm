@@ -150,8 +150,8 @@ public:
 	}
 
 	// Return true if the Object had members that are properly initialized/de-initialized
-	virtual ErrorCode Attach();
-	virtual ErrorCode Detach();
+	virtual ErrorCode attach();
+	virtual ErrorCode detach();
 
 	BAG_OBJECT_TYPE GetType() {
 		return (BAG_OBJECT_TYPE)m_xObjType;
@@ -162,7 +162,7 @@ public:
 
 	// Object can be moved within a sceene
 	virtual bool IsInside(const CBofPoint &xPoint) {
-		return GetRect().PtInRect(xPoint);
+		return getRect().PtInRect(xPoint);
 	}
 
 	// Object can be moved within a sceene
@@ -338,7 +338,7 @@ public:
 	virtual int GetState() {
 		return m_nState;
 	}
-	virtual CBofRect GetRect() {
+	virtual CBofRect getRect() {
 		return CBofRect(m_nX, m_nY, m_nX - 1, m_nY - 1);
 	}
 
@@ -355,7 +355,7 @@ public:
 	virtual void SetFileName(const CBofString &s) {
 		m_sFileName = s;
 	}
-	virtual void SetSize(const CBofSize &) {}
+	virtual void setSize(const CBofSize &) {}
 	virtual void SetRefId(int id) {
 		Assert(id >= 0 && id <= 0xFFFF);
 		m_nId = (uint16)id;

@@ -58,12 +58,12 @@ public:
 	CBagTextObject();
 	virtual ~CBagTextObject();
 
-	CBofRect GetRect();
+	CBofRect getRect();
 
 	CBofSize GetSize() const {
 		return CBofSize(m_nDX, m_nDY);
 	}
-	void SetSize(const CBofSize &xSize) {
+	void setSize(const CBofSize &xSize) {
 		m_nDX = (int16)xSize.cx;
 		m_nDY = (int16)xSize.cy;
 	}
@@ -115,8 +115,8 @@ public:
 
 	virtual ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 
-	ErrorCode Attach();
-	ErrorCode Detach();
+	ErrorCode attach();
+	ErrorCode detach();
 
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 

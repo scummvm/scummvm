@@ -64,7 +64,7 @@ protected:
 public:
 	CBagRestoreDialog();
 
-	virtual ErrorCode Attach();
+	virtual ErrorCode attach();
 	virtual ErrorCode Detach();
 
 	ST_BAGEL_SAVE *GetSaveGameBuffer(int &nLength) {

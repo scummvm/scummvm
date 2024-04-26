@@ -60,8 +60,8 @@ public:
 	virtual ~CBagButtonObject();
 
 	// Return true if the Object had members that are properly initialized/de-initialized
-	ErrorCode Attach();
-	ErrorCode Detach();
+	ErrorCode attach();
+	ErrorCode detach();
 
 	BUTTON_TYPE GetButtonType() {
 		return m_xButtonType;
@@ -101,7 +101,7 @@ public:
 
 	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
 
-	void SetSize(const CBofSize &xSize);
+	void setSize(const CBofSize &xSize);
 
 	void SetProperty(const CBofString &sProp, int nVal);
 	int GetProperty(const CBofString &sProp);

@@ -27,8 +27,8 @@ namespace Bagel {
 
 bool CBagEventSDev::m_bEvalTurnEvents;
 
-ErrorCode CBagEventSDev::Attach() {
-	ErrorCode errCode = CBagStorageDev::Attach();
+ErrorCode CBagEventSDev::attach() {
+	ErrorCode errCode = CBagStorageDev::attach();
 
 	// Set the firstpaint flag and attach objects to allow
 	// for immediate run objects to run
@@ -61,7 +61,7 @@ ErrorCode CBagEventSDev::EvaluateExpressions() {
 				if (pObj->GetExpression() == nullptr || pObj->GetExpression()->Evaluate(pObj->IsNegative())) {
 					if (!pObj->IsAttached()) {
 						pObj->SetActive();
-						pObj->Attach();
+						pObj->attach();
 					}
 					if (pObj->IsImmediateRun())
 						pObj->RunObject();
@@ -69,7 +69,7 @@ ErrorCode CBagEventSDev::EvaluateExpressions() {
 				} else if (pObj->IsAttached()) {
 					if (pObj->GetType() != SOUNDOBJ || !((CBagSoundObject *)pObj)->IsPlaying()) {
 						pObj->SetActive(false);
-						pObj->Detach();
+						pObj->detach();
 					}
 				}
 			} else
@@ -99,14 +99,14 @@ ErrorCode CBagTurnEventSDev::EvaluateExpressions() {
 				if (pObj->GetExpression() == nullptr || pObj->GetExpression()->Evaluate(pObj->IsNegative())) {
 					if (!pObj->IsAttached()) {
 						pObj->SetActive();
-						pObj->Attach();
+						pObj->attach();
 					}
 					if (pObj->IsImmediateRun())
 						pObj->RunObject();
 				} else if (pObj->IsAttached()) {
 					if (pObj->GetType() != SOUNDOBJ || !((CBagSoundObject *)pObj)->IsPlaying()) {
 						pObj->SetActive(false);
-						pObj->Detach();
+						pObj->detach();
 					}
 				}
 			} else

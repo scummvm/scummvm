@@ -34,7 +34,7 @@ class CBagHelp : public CBofDialog {
 public:
 	CBagHelp();
 
-	virtual ErrorCode Attach();
+	virtual ErrorCode attach();
 	virtual ErrorCode Detach();
 	virtual void OnInitDialog();
 

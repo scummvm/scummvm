@@ -78,13 +78,13 @@ SBarVidWnd::SBarVidWnd() {
 SBarVidWnd::~SBarVidWnd() {
 	Assert(IsValidObject(this));
 
-	Detach();
+	detach();
 }
 
-ErrorCode SBarVidWnd::Attach() {
+ErrorCode SBarVidWnd::attach() {
 	Assert(IsValidObject(this));
 
-	if (CMainWindow::Attach() == ERR_NONE) {
+	if (CMainWindow::attach() == ERR_NONE) {
 		m_pDiscVar = VARMNGR->GetVariable("CUR_VDISC");
 		m_pTimerVar = VARMNGR->GetVariable("CUR_VTIME");
 
@@ -100,7 +100,7 @@ ErrorCode SBarVidWnd::Attach() {
 		}
 
 		if (m_pMovie != nullptr) {
-			m_pMovie->Detach();
+			m_pMovie->detach();
 			delete m_pMovie;
 			m_pMovie = nullptr;
 		}
@@ -109,7 +109,7 @@ ErrorCode SBarVidWnd::Attach() {
 		if (m_pMovie != nullptr) {
 			m_pMovie->SetFileName(BuildVidDir("BRNL.SMK"));
 			m_pMovie->SetPosition(CBofPoint(209, 10));
-			m_pMovie->Attach();
+			m_pMovie->attach();
 
 		} else {
 			ReportError(ERR_MEMORY);
@@ -145,11 +145,11 @@ ErrorCode SBarVidWnd::Attach() {
 }
 
 
-ErrorCode SBarVidWnd::Detach() {
+ErrorCode SBarVidWnd::detach() {
 	Assert(IsValidObject(this));
 
 	if (m_pMovie != nullptr) {
-		m_pMovie->Detach();
+		m_pMovie->detach();
 		delete m_pMovie;
 		m_pMovie = nullptr;
 	}
@@ -163,7 +163,7 @@ ErrorCode SBarVidWnd::Detach() {
 	m_pPlayingVar = nullptr;
 	m_pDiscVar = nullptr;
 
-	CMainWindow::Detach();
+	CMainWindow::detach();
 
 	return m_errCode;
 }

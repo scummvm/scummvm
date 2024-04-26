@@ -57,10 +57,10 @@ CBagCharacterObject::CBagCharacterObject() : CBagObject() {
 }
 
 CBagCharacterObject::~CBagCharacterObject() {
-	Detach();
+	detach();
 }
 
-ErrorCode CBagCharacterObject::Attach() {
+ErrorCode CBagCharacterObject::attach() {
 	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString filename(szLocalBuff, 256);
@@ -149,10 +149,10 @@ ErrorCode CBagCharacterObject::Attach() {
 	// Get chroma from main app now
 	m_nCharTransColor = CBagel::GetBagApp()->GetChromaColor();
 
-	return CBagObject::Attach();
+	return CBagObject::attach();
 }
 
-ErrorCode CBagCharacterObject::Detach() {
+ErrorCode CBagCharacterObject::detach() {
 	if (m_bSaveState) {
 		// Save off the state/frame information as we detach
 		// so that we can recreate the scene when we attach again
@@ -185,7 +185,7 @@ ErrorCode CBagCharacterObject::Detach() {
 		m_pPDAWand = nullptr;
 	}
 
-	return CBagObject::Detach();
+	return CBagObject::detach();
 }
 
 bool CBagCharacterObject::RefreshCurrFrame() {
@@ -214,7 +214,7 @@ bool CBagCharacterObject::RefreshCurrFrame() {
 	return bNewFrame;
 }
 
-CBofRect CBagCharacterObject::GetRect() {
+CBofRect CBagCharacterObject::getRect() {
 	CBofPoint p = GetPosition();
 	CBofSize s;
 
@@ -322,10 +322,10 @@ bool CBagCharacterObject::DoAdvance() {
 }
 
 bool CBagCharacterObject::IsInside(const CBofPoint &xPoint) {
-	if (GetRect().PtInRect(xPoint) && m_nCharTransColor >= 0) {
+	if (getRect().PtInRect(xPoint) && m_nCharTransColor >= 0) {
 		if (m_pBmpBuf) {
-			int x = xPoint.x - GetRect().left;
-			int y = xPoint.y - GetRect().top;
+			int x = xPoint.x - getRect().left;
+			int y = xPoint.y - getRect().top;
 			int c = m_pBmpBuf->ReadPixel(x, y);
 			return (c != m_nCharTransColor);
 		}
@@ -359,7 +359,7 @@ ErrorCode CBagCharacterObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *
 	// If we have more frames advance this, else exit and detach if needed
 	if (!bDoAdvance && m_bExitAtEnd) {
 		// Run the ending objects
-		Detach();
+		detach();
 	}
 
 	if (m_pBmpBuf) {

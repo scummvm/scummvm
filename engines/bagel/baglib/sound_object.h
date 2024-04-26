@@ -53,14 +53,14 @@ public:
 	ErrorCode NewSound(CBofWindow *pWin);
 
 	// Return true if the Object had members that are properly initialized/de-initialized
-	ErrorCode Attach() {
-		return Attach((CBofWindow *)CBagel::GetBagApp()->GetMasterWnd() /*CBofApp::GetApp()->GetMainWindow()*/);
+	ErrorCode attach() {
+		return attach((CBofWindow *)CBagel::GetBagApp()->GetMasterWnd());
 	}
-	ErrorCode Attach(CBofWindow *pWnd);
+	ErrorCode attach(CBofWindow *pWnd);
 	bool IsAttached() {
 		return m_pSound != nullptr;
 	}
-	ErrorCode Detach();
+	ErrorCode detach();
 
 	CBofSound *GetLastMidi() {
 		return m_pMidiSound;

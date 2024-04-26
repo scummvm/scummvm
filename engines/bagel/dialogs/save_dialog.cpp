@@ -98,7 +98,7 @@ CBagSaveDialog::CBagSaveDialog() {
 	}
 }
 
-ErrorCode CBagSaveDialog::Attach() {
+ErrorCode CBagSaveDialog::attach() {
 	Assert(IsValidObject(this));
 
 	// Save off the current game's palette
@@ -425,7 +425,7 @@ void CBagSaveDialog::OnInitDialog() {
 	Assert(IsValidObject(this));
 
 	CBofDialog::OnInitDialog();
-	Attach();
+	attach();
 }
 
 } // namespace Bagel

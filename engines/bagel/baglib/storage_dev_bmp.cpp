@@ -42,15 +42,15 @@ CBagStorageDevBmp::~CBagStorageDevBmp() {
 	KillWorkBmp();
 }
 
-ErrorCode CBagStorageDevBmp::Attach() {
+ErrorCode CBagStorageDevBmp::attach() {
 	m_nMaskColor = CBagel::GetBagApp()->GetChromaColor();
-	return CBagStorageDev::Attach();
+	return CBagStorageDev::attach();
 }
 
 
-ErrorCode CBagStorageDevBmp::Detach() {
+ErrorCode CBagStorageDevBmp::detach() {
 	KillWorkBmp();
-	return CBagStorageDev::Detach();
+	return CBagStorageDev::detach();
 }
 
 ErrorCode CBagStorageDevBmp::SetBackground(CBofBitmap *pBmp) {
@@ -103,10 +103,10 @@ CBofPoint CBagStorageDevBmp::GetScaledPt(CBofPoint xPoint) {
 	CBofRect        SDevDstRect;
 	CBofRect        SDevSrcRect;
 	CBofPoint           pt;
-	CBofRect        rDestRect = GetRect();
+	CBofRect        rDestRect = getRect();
 
-	SDevDstRect = GetRect();                // Get the destination (screen) rect
-	SDevSrcRect = CBagBmpObject::GetRect(); // Get the source (origin) rect
+	SDevDstRect = getRect();                // Get the destination (screen) rect
+	SDevSrcRect = CBagBmpObject::getRect(); // Get the source (origin) rect
 
 	pt.x = m_cSrcRect.Width() * xPoint.x / rDestRect.Width();
 	pt.y = m_cSrcRect.Height() * xPoint.y / rDestRect.Height();
@@ -129,7 +129,7 @@ const CBofPoint CBagStorageDevBmp::DevPtToViewPort(const CBofPoint &xPoint) {
 	CBofPoint p;
 
 	// Get the storage device rect
-	CBofRect SDevDstRect = GetRect();
+	CBofRect SDevDstRect = getRect();
 
 	// move point relative to storage device top, left
 	p.x = xPoint.x - SDevDstRect.left;

@@ -56,8 +56,8 @@ public:
 	virtual ErrorCode LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach);
 	virtual bool       OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev);
 
-	virtual ErrorCode  Attach();
-	virtual ErrorCode  Detach();
+	virtual ErrorCode  attach();
+	virtual ErrorCode  detach();
 
 	virtual ErrorCode ActivateLocalObject(CBagObject *pObj);
 	virtual ErrorCode DeactivateLocalObject(CBagObject *pObj);

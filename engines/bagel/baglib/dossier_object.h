@@ -53,8 +53,8 @@ public:
 	 */
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	ErrorCode Attach();
-	ErrorCode Detach();
+	ErrorCode attach();
+	ErrorCode detach();
 
 	virtual ErrorCode Update(CBofBitmap *, CBofPoint, CBofRect * = nullptr, int = -1);
 
@@ -67,7 +67,7 @@ public:
 	CBofString &GetDossierLine() {
 		return m_sIndexLine;
 	}
-	CBofRect GetRect();
+	CBofRect getRect();
 
 	void SetNotActive(bool b) {
 		m_bNotActive = b;

@@ -223,12 +223,12 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 
 // Implement attach and detach just so we can set our own attributes
 
-ErrorCode CBagDossierObject::Attach() {
-	ErrorCode ec = CBagTextObject::Attach();
+ErrorCode CBagDossierObject::attach() {
+	ErrorCode ec = CBagTextObject::attach();
 
 	// Keep track of the original text rectangle (for the dossier).
 	if (m_bDosRectInit == false) {
-		m_cDossierRect = CBagTextObject::GetRect();
+		m_cDossierRect = CBagTextObject::getRect();
 		m_bDosRectInit = true;
 	}
 
@@ -237,8 +237,8 @@ ErrorCode CBagDossierObject::Attach() {
 	return ec;
 }
 
-ErrorCode CBagDossierObject::Detach() {
-	ErrorCode ec = CBagTextObject::Detach();
+ErrorCode CBagDossierObject::detach() {
+	ErrorCode ec = CBagTextObject::detach();
 
 	SetVisible(false); // Make this invisible, don't want it redrawn.
 	return ec;
@@ -262,7 +262,7 @@ ErrorCode CBagDossierObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pS
 		// paint the text file.
 		SetPSText(nullptr);
 
-		CBagTextObject::Attach();
+		CBagTextObject::attach();
 
 		m_bDossierSet = true;
 	}
@@ -270,7 +270,7 @@ ErrorCode CBagDossierObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pS
 	return CBagTextObject::Update(pBmp, pt, pSrcRect, n);
 }
 
-CBofRect CBagDossierObject::GetRect() {
+CBofRect CBagDossierObject::getRect() {
 	CBofRect r;
 	CBofPoint p = GetPosition();
 

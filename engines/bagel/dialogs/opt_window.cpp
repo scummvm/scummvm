@@ -198,7 +198,7 @@ void CBagOptWindow::OnPaint(CBofRect *pRect) {
 	ValidateAnscestors();
 }
 
-ErrorCode CBagOptWindow::Attach() {
+ErrorCode CBagOptWindow::attach() {
 	// Save off the current game's palette
 	m_pSavePalette = CBofApp::GetApp()->GetPalette();
 
@@ -641,7 +641,7 @@ void CBagOptWindow::OnInitDialog() {
 
 	CBofDialog::OnInitDialog();
 
-	Attach();
+	attach();
 }
 
 void CBagOptWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {

@@ -56,7 +56,7 @@ CBagMovieObject::CBagMovieObject() {
 }
 
 CBagMovieObject::~CBagMovieObject() {
-	Detach();
+	detach();
 
 	// Could still by lying around in the pda movie queue,
 	// Make sure it has been removed.
@@ -188,7 +188,7 @@ bool CBagMovieObject::RunObject() {
 					CBagSoundObject *pSObj = GetAssociatedSound();
 					if (pSObj) {
 						if (pSObj->IsAttached() == false) {
-							pSObj->Attach();
+							pSObj->attach();
 						}
 						pSObj->RunObject();
 					}
@@ -203,7 +203,7 @@ bool CBagMovieObject::RunObject() {
 
 					// As soon as we're done, detach (this will also stop the sound).
 					if (pSObj) {
-						pSObj->Detach();
+						pSObj->detach();
 					}
 				}
 			} else {

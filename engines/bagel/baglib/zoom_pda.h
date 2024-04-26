@@ -39,8 +39,8 @@ public:
 	SBZoomPda(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), bool bActivated = true);
 	static void initialize();
 
-	virtual ErrorCode Attach();
-	virtual ErrorCode Detach();
+	virtual ErrorCode attach();
+	virtual ErrorCode detach();
 
 	virtual ErrorCode LoadFile(const CBofString &sFile);
 	virtual void OnMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);

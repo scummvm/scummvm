@@ -144,8 +144,8 @@ public:
 	SrafComputer();
 	virtual ~SrafComputer();
 	virtual void OnKeyHit(uint32 lKey, uint32 nRepCount);
-	virtual ErrorCode Attach();
-	virtual ErrorCode Detach();
+	virtual ErrorCode attach();
+	virtual ErrorCode detach();
 	void OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
 	void OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
 	void OnMainLoop();

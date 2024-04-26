@@ -42,7 +42,7 @@ SBarBibOddsWnd::SBarBibOddsWnd() : CBagChatWnd() {
 SBarBibOddsWnd::~SBarBibOddsWnd() {
 }
 
-ErrorCode SBarBibOddsWnd::Detach() {
+ErrorCode SBarBibOddsWnd::detach() {
 	for (int i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
 
 		// The sprite object start in the script at 500
@@ -60,7 +60,7 @@ ErrorCode SBarBibOddsWnd::Detach() {
 		m_pWieldedObject = nullptr;
 	}
 
-	return CBagChatWnd::Detach();
+	return CBagChatWnd::detach();
 }
 
 void SBarBibOddsWnd::OnKeyHit(uint32 lKey, uint32 lRepCount) {
@@ -116,7 +116,7 @@ void SBarBibOddsWnd::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 	CBagStorageDevWnd::OnMouseMove(nFlags, pPoint);
 }
 
-ErrorCode SBarBibOddsWnd::Attach() {
+ErrorCode SBarBibOddsWnd::attach() {
 	Assert(IsValidObject(this));
 
 	// If we have something wielded, put it on hold for now.
@@ -126,8 +126,8 @@ ErrorCode SBarBibOddsWnd::Attach() {
 		}
 	}
 
-	// Don't call CBagChatWnd::Attach() - We are overriding it's behavior
-	if (CBagStorageDevWnd::Attach() == ERR_NONE) {
+	// Don't call CBagChatWnd::attach() - We are overriding it's behavior
+	if (CBagStorageDevWnd::attach() == ERR_NONE) {
 		Show();
 		InvalidateRect(nullptr);
 		UpdateWindow();

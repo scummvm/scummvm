@@ -307,8 +307,8 @@ public:
 		return m_sBackgroundName;
 	}
 
-	virtual ErrorCode Attach(); // This function attaches the background and necessary bitmaps
-	virtual ErrorCode Detach(); // This function attaches the background and necessary bitmaps
+	virtual ErrorCode attach(); // This function attaches the background and necessary bitmaps
+	virtual ErrorCode detach(); // This function attaches the background and necessary bitmaps
 
 	virtual ErrorCode Close();
 
@@ -428,8 +428,8 @@ public:
 		m_pEvtSDev = nullptr;
 	}
 
-	virtual ErrorCode Attach(); // This function attaches the background and necessary bitmaps
-	virtual ErrorCode Detach(); // This function attaches the background and necessary bitmaps
+	virtual ErrorCode attach(); // This function attaches the background and necessary bitmaps
+	virtual ErrorCode detach(); // This function attaches the background and necessary bitmaps
 
 	virtual ErrorCode Close();
 	virtual ErrorCode RunModal(CBagObject *pObj);
@@ -528,7 +528,7 @@ public:
 	ErrorCode Create(const char *pszName, int x = 0, int y = 0, int nWidth = USE_DEFAULT, int nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 	ErrorCode Create(const char *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
-	virtual ErrorCode Attach(); // This function attaches the background and necessary bitmaps
+	virtual ErrorCode attach(); // This function attaches the background and necessary bitmaps
 
 	virtual ErrorCode Close();
 

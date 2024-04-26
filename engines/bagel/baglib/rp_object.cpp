@@ -113,7 +113,7 @@ CBagRPObject::CBagRPObject() {
 CBagRPObject::~CBagRPObject() {
 	// If still attached, then detach
 	if (IsAttached()) {
-		Detach();
+		detach();
 	}
 
 	// Explicitly delete everything in the list
@@ -393,7 +393,7 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-ErrorCode CBagRPObject::Attach() {
+ErrorCode CBagRPObject::attach() {
 	// Add this object to the list of objects in the RPO queue.
 
 	if (m_pRPList == nullptr) {
@@ -404,12 +404,12 @@ ErrorCode CBagRPObject::Attach() {
 
 	m_pRPList->AddToTail(this);
 
-	ErrorCode ec = CBagObject::Attach();
+	ErrorCode ec = CBagObject::attach();
 
 	// If we haven't initialized this guys original rectangle, then do it
 	// here.
 	if (m_bOrigRectInit == false) {
-		m_cOrigRect = GetRect();
+		m_cOrigRect = getRect();
 	}
 
 	// Start this object off as invisible (so that we don't receive update events).
@@ -445,7 +445,7 @@ ErrorCode CBagRPObject::Attach() {
 	return ec;
 }
 
-ErrorCode CBagRPObject::Detach() {
+ErrorCode CBagRPObject::detach() {
 	// Turn off our current object
 	if (m_pCurRPObject == this) {
 		m_pCurRPObject = nullptr;
@@ -473,7 +473,7 @@ ErrorCode CBagRPObject::Detach() {
 
 	// Don't really need to do anything here since the destructor will trash the
 	// entire list.
-	return CBagObject::Detach();
+	return CBagObject::detach();
 }
 
 // Have a dossier name and expression for a touched object
@@ -778,7 +778,7 @@ bool CBagRPObject::RunObject() {
 ErrorCode CBagRPObject::Update(CBofBitmap *pBmp, CBofPoint /*pt*/, CBofRect * /*pSrcRect*/, int) {
 	if (GetLogState() == RP_RESULTS) {
 		if (m_pDescObj) {
-			CBofRect txRect = m_pDescObj->GetRect();
+			CBofRect txRect = m_pDescObj->getRect();
 			CBofPoint txPt = txRect.TopLeft();
 			m_pDescObj->Update(pBmp, txPt, &txRect, 0);
 		}
@@ -856,7 +856,7 @@ bool CBagRPObject::ActivateRPObject() {
 	// This object might not be attached since it is not a local object in the
 	// log storage device
 	if (!m_pDescObj->IsAttached()) {
-		m_pDescObj->Attach();
+		m_pDescObj->attach();
 	}
 	m_pDescObj->SetVisible(); // Show this guy
 

@@ -73,7 +73,7 @@ CBagHelp::CBagHelp() {
 	SetFlags(0);
 }
 
-ErrorCode CBagHelp::Attach() {
+ErrorCode CBagHelp::attach() {
 	Assert(IsValidObject(this));
 
 	CBofPalette *pPal;
@@ -294,7 +294,7 @@ void CBagHelp::OnInitDialog() {
 
 	CBofDialog::OnInitDialog();
 
-	Attach();
+	attach();
 }
 
 } // namespace Bagel

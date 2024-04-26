@@ -43,10 +43,10 @@ CBagSpriteObject::CBagSpriteObject() : CBagObject() {
 }
 
 CBagSpriteObject::~CBagSpriteObject() {
-	Detach();
+	detach();
 }
 
-ErrorCode CBagSpriteObject::Attach() {
+ErrorCode CBagSpriteObject::attach() {
 	// If it's not already attached
 	if (!IsAttached()) {
 		// Could not already have a sprite
@@ -87,15 +87,15 @@ ErrorCode CBagSpriteObject::Attach() {
 		}
 	}
 
-	return CBagObject::Attach();
+	return CBagObject::attach();
 }
 
-ErrorCode CBagSpriteObject::Detach() {
+ErrorCode CBagSpriteObject::detach() {
 	if (m_xSprite != nullptr) {
 		delete m_xSprite;
 		m_xSprite = nullptr;
 	}
-	return CBagObject::Detach();
+	return CBagObject::detach();
 }
 
 void CBagSpriteObject::SetCels(int nCels) {
@@ -110,7 +110,7 @@ void CBagSpriteObject::SetPosition(const CBofPoint &pos) {
 		m_xSprite->SetPosition(pos.x, pos.y);
 }
 
-CBofRect CBagSpriteObject::GetRect() {
+CBofRect CBagSpriteObject::getRect() {
 	CBofPoint p = GetPosition();
 	CBofSize s;
 	if (m_xSprite)
@@ -252,10 +252,10 @@ ErrorCode CBagSpriteObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, i
 }
 
 bool CBagSpriteObject::IsInside(const CBofPoint &xPoint) {
-	if (m_xSprite && GetRect().PtInRect(xPoint)) {
+	if (m_xSprite && getRect().PtInRect(xPoint)) {
 		if (IsTransparent()) {
-			int x = xPoint.x - GetRect().left;
-			int y = xPoint.y - GetRect().top;
+			int x = xPoint.x - getRect().left;
+			int y = xPoint.y - getRect().top;
 			int c = m_xSprite->ReadPixel(x, y);
 			int d = m_xSprite->GetMaskColor();
 			return (c != d);

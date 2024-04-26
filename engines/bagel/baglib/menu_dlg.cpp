@@ -123,7 +123,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			if (pObj->IsLocal() && (!pObj->GetExpression() || pObj->GetExpression()->Evaluate(pObj->IsNegative()))) {
 				// Only attach if not attached
 				if (pObj->IsAttached() == false) {
-					pObj->Attach();
+					pObj->attach();
 
 					// Otherwise, we need to re-calculate the size of the text object,
 					// since we are gonna trash is with our own values soon.
@@ -134,7 +134,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 				if (!pObj->IsImmediateRun()) {
 					// Get the next menu items pos
-					objSize = pObj->GetRect();
+					objSize = pObj->getRect();
 
 					if (menuSize.cx < (objSize.Width() + menuLoc.x))
 						menuSize.cx = (objSize.Width() + menuLoc.x);
@@ -159,7 +159,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 					// This detach may cause problems in the future, if it does delete it
 					// Some object may not work if detached for example midi sound
-					pObj->Detach();
+					pObj->detach();
 				}
 			}
 		}
@@ -183,7 +183,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 		if (pObj->IsLocal() && (!pObj->GetExpression() || pObj->GetExpression()->Evaluate(pObj->IsNegative()))) {
 			// Only attach if not attached
 			if (pObj->IsAttached() == false) {
-				pObj->Attach();
+				pObj->attach();
 
 				// Otherwise, we need to re-calculate the size of the text object,
 				// since we are gonna trash is with our own values soon.
@@ -194,7 +194,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 			if (!pObj->IsImmediateRun()) {
 				// Get the next menu items pos
-				objSize = pObj->GetRect();
+				objSize = pObj->getRect();
 
 				// If it is a text object increment next position by its height
 				if (pObj->GetType() == TEXTOBJ) {
@@ -304,7 +304,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 		if ((nNumItems == 1) && (xObjList.GetTail()->GetNodeItem()->GetType() == TEXTOBJ) && (((CBagTextObject *)xObjList.GetTail()->GetNodeItem())->IsCaption())) {
 			while (nNumWieldChoices-- != 0) {
 				pObj = xObjList.RemoveHead();
-				pObj->Detach();
+				pObj->detach();
 			}
 
 			// If we are not using the wield menu with this menu, then
@@ -333,7 +333,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			if (bTextOnly) {
 				while (nNumWieldChoices-- != 0) {
 					pObj = xObjList.RemoveHead();
-					pObj->Detach();
+					pObj->detach();
 				}
 
 				// If we are not using the wield menu with this menu, then
@@ -381,7 +381,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 						cy = ((CBagTextObject *)pObj)->GetSize().cy + 2;
 					}
 
-					pObj->SetSize(CBofSize(cx, cy));
+					pObj->setSize(CBofSize(cx, cy));
 
 					// Need to move the menus up when have a wielded item, but
 					// not displaying the wield menu
@@ -402,7 +402,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 			if (pPDA != nullptr && (pPDA->IsActivated() && bZoomed == false)) {
 				if (!pPDA->IsInside(cMouseDown)) {
-					CBofRect cPDARect = pPDA->GetRect();
+					CBofRect cPDARect = pPDA->getRect();
 
 					tmpRect.OffsetRect(0, (tmpRect.bottom > cPDARect.top ? cPDARect.top - tmpRect.bottom : 0));
 
@@ -463,7 +463,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			dlg.Destroy();
 
 			for (int i = 0; i < GetObjectCount(); ++i) {
-				GetObjectByPos(i)->Detach();
+				GetObjectByPos(i)->detach();
 			}
 
 			// If our current storage device is "AS CUSTOM" then don't allow
@@ -494,7 +494,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 bool CBagMenu::AddItem(CBagObject *pObj, void *( * /*func*/)(int, void *), void * /*info*/) {
 	pObj->SetPosition(CBofPoint(0, m_nY));
 
-	m_nY = (int16)(m_nY + (int16)(pObj->GetRect().Height() + 1));
+	m_nY = (int16)(m_nY + (int16)(pObj->getRect().Height() + 1));
 	AddObject(pObj);
 
 	return true;

@@ -32,26 +32,26 @@ CBagBmpObject::CBagBmpObject() : CBagObject() {
 }
 
 CBagBmpObject::~CBagBmpObject() {
-	Detach();
+	detach();
 }
 
-ErrorCode CBagBmpObject::Attach(CBofPalette *pPalette) {
+ErrorCode CBagBmpObject::attach(CBofPalette *pPalette) {
 	m_xBmp = new CBofBitmap(GetFileName(), pPalette);
 	if (m_xBmp == nullptr) {
 		BofMessageBox(m_xBmp->GetFileName(), __FILE__);
 	}
-	return CBagObject::Attach();
+	return CBagObject::attach();
 }
 
-ErrorCode CBagBmpObject::Detach() {
+ErrorCode CBagBmpObject::detach() {
 
 	delete m_xBmp;
 	m_xBmp = nullptr;
 
-	return CBagObject::Detach();
+	return CBagObject::detach();
 }
 
-CBofRect CBagBmpObject::GetRect() {
+CBofRect CBagBmpObject::getRect() {
 	CBofPoint p = GetPosition();
 	CBofSize s;
 	if (m_xBmp)
@@ -100,10 +100,10 @@ ErrorCode CBagBmpObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRe
 }
 
 bool CBagBmpObject::IsInside(const CBofPoint &xPoint) {
-	if (m_xBmp && GetRect().PtInRect(xPoint)) {
+	if (m_xBmp && getRect().PtInRect(xPoint)) {
 		if (m_nTrans >= 0) {
-			int x = xPoint.x - GetRect().left;
-			int y = xPoint.y - GetRect().top;
+			int x = xPoint.x - getRect().left;
+			int y = xPoint.y - getRect().top;
 			int c = m_xBmp->ReadPixel(x, y);
 			return c != m_nTrans;
 		}

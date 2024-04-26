@@ -66,10 +66,10 @@ public:
 	static void initialize();
 
 	// Return true if the Object had members that are properly initialized/de-initialized
-	ErrorCode Attach();
-	ErrorCode Detach();
+	ErrorCode attach();
+	ErrorCode detach();
 
-	CBofRect GetRect();
+	CBofRect getRect();
 
 	virtual ErrorCode Update(CBofWindow * /*pWnd*/, CBofPoint /*pt*/, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 	virtual ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
