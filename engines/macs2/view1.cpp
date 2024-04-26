@@ -586,6 +586,13 @@ void Character::Update() {
 	bool isDone = endTime < g_events->currentMillis;
 	if (isDone) {
 		IsLerping = false;
+
+		// Check if we need to execute the script
+		// TODO: Consider which run function to use
+		if (ExecuteScriptOnFinishLerp) {
+			ExecuteScriptOnFinishLerp = false;
+			g_engine->RunScriptExecutor();
+		}
 		return;
 	}
 

@@ -31,9 +31,12 @@ namespace Macs2 {
 		int CurrentSceneIndex;
 
 		// TODO: Handle properly as a field of the scene 
-		class Common::MemoryReadStream* CurrentSceneScript; 
+		class Common::MemoryReadStream* CurrentSceneScript;
+
+		class Common::MemoryReadStream *CurrentSceneStrings;
 
 		class Common::MemoryReadStream *ReadSceneScript(uint16 sceneIndex, Common::MemoryReadStream *fileStream);
+		class Common::MemoryReadStream *ReadSceneStrings(uint16 sceneIndex, Common::MemoryReadStream *fileStream);
 	};
 
 class GameObject {

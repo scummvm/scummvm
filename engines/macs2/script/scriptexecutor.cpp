@@ -1214,13 +1214,22 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// on the fact that they were added in a specific order
 			Character *c = currentView->characters[1];
 			c->StartLerpTo(Common::Point(x, y), 2 * 1000);
-			break;
 		} else if (opcode1 == 0x11) {
 			// Wait for last movement to be finished
-
+			// Trigger a walk to action
+			// TODO: Compare function for what exactly it does
+			// TODO: Check what the first value does
+			uint32 objectID = Func9F4D_32() - 0x400;
+			View1 *currentView = (View1 *)_engine->findView("View1");
+			// TODO: Need to be able to address the character objects by ID, now relying
+			// on the fact that they were added in a specific order
+			Character *c = currentView->characters[1];
+			c->ExecuteScriptOnFinishLerp = true;
+			requestCallback = false;
+			return;
 		}
 
-		if (opcode1 == 0x0a) {
+		else if (opcode1 == 0x0a) {
 			ScriptPrintString();
 			// TODO: Proper end handling
 			break;
@@ -1253,29 +1262,17 @@ void Script::ScriptExecutor::ExecuteScript() {
 		if (opcode1 == 0x0E) {
 			FuncB6BE();
 		} else if (opcode1 == 0x0F) {
-			// TBC: This should be disabling the mouse cursor again
+			// This is a timer for waiting to advance
 			// TODO: Mocked reads to advance the file correctly
 			// TODO: These might be conditional so they might break
 			// for another example
-			uint16 throwaway1;
-			uint16 throwaway2;
-			Func9F4D(throwaway1, throwaway2);
-			// TODO: Check how this suspension is really handled
-			requestCallback = true;
-
-		} else if (opcode1 == 0x11) {
-			// l0037_DE81:
-			// TODO: Probably setting the mouse cursor mode
-			// But also some data written - make a note to review it
-			// TODO: Mocked reads to advance the file correctly
-			// TODO: These might be conditional so they might break
-			// for another example
-			uint16 throwaway1;
-			uint16 throwaway2;
-			Func9F4D(throwaway1, throwaway2);
-			// TBC That we stop execution here
+			uint16 duration = Func9F4D_16();
+			requestCallback = false;
+			// TODO: Need to figure out the units/duration of the timer
+			StartTimer(duration * 1000);
 			break;
-		} else if (opcode1 == 0x12) {
+		}
+		else if (opcode1 == 0x12) {
 			// TODO: Working assumption is that this adjusts something about pathfinding data
 			uint16 throwaway1;
 			uint16 throwaway2;
@@ -2593,6 +2590,22 @@ void Script::ScriptExecutor::ExecuteScript() {
 
 	void ScriptExecutor::SetScript(Common::MemoryReadStream *stream) {
 		_stream = stream;
+	}
+
+	void ScriptExecutor::tick() {
+		if (isTimerActive) {
+			if (g_engine->currentMillis > timerEndMillis) {
+				isTimerActive = false;
+				// TODO: Think about if this is the right way of executing it, or maybe we rather need
+				// to use RUn
+				ExecuteScript();
+			}
+		}
+	}
+
+	void ScriptExecutor::StartTimer(uint32 duration) {
+		isTimerActive = true;
+		timerEndMillis = g_engine->currentMillis + duration;
 	}
 
 } // namespace Script
