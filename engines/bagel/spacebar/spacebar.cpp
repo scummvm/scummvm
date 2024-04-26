@@ -155,7 +155,7 @@ ErrorCode SpaceBarEngine::initialize() {
 
 			if (bRestart) {
 				// Should we show the intro movies?
-				GetOption("Startup", "ShowLogo", &bShowLogo, true);
+				getOption("Startup", "ShowLogo", &bShowLogo, true);
 
 				// Play intro movies, logo screens, etc...
 				if (bShowLogo) {
@@ -254,7 +254,7 @@ Common::Error SpaceBarEngine::run() {
 
 	// Run the app
 	if (!ErrorOccurred() && !shouldQuit() && _masterWin)
-		RunApp();
+		runApp();
 
 	// shutdown
 	PreShutDown();

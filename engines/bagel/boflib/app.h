@@ -31,7 +31,7 @@
 
 namespace Bagel {
 
-#define MAX_APPNAME 128
+#define MAX_APP_NAME 128
 #define DEFAULT_MAINLOOPS   1
 #define kReallyFastPPC 50
 #define kReallySlowPPC 200
@@ -47,7 +47,7 @@ protected:
 	void StartupCode();
 	void ShutDownCode();
 
-	char m_szAppName[MAX_APPNAME] = { 0 };
+	char m_szAppName[MAX_APP_NAME] = { 0 };
 	CBofList<CBofCursor> m_cCursorList;
 	CBofCursor m_cDefaultCursor;
 
@@ -75,7 +75,7 @@ public:
 
 	// These functions can be overridden by the child class
 	virtual ErrorCode initialize();
-	virtual ErrorCode RunApp();
+	virtual ErrorCode runApp();
 	virtual ErrorCode shutdown();
 
 	void SetAppName(const char *pszNewAppName) {

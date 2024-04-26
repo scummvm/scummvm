@@ -183,7 +183,7 @@ bool CBagLinkObject::RunObject() {
 
 	CBagMasterWin::SetActiveCursor(6);
 
-	CBagStorageDevWnd *pSDev1 = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev();
+	CBagStorageDevWnd *pSDev1 = CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev();
 
 	// Set the link position for the storage device we are about to jump to
 	CBagStorageDev *pDestWin;
@@ -191,13 +191,13 @@ bool CBagLinkObject::RunObject() {
 		pDestWin->SetLoadFilePos(GetDstLoc());
 	}
 
-	CBagMasterWin *pMasterWin = CBagel::GetBagApp()->GetMasterWnd();
+	CBagMasterWin *pMasterWin = CBagel::GetBagApp()->getMasterWnd();
 	if (pMasterWin) {
 		pMasterWin->SetCurrFadeIn(m_nFade);
 		pMasterWin->SetStorageDev(cStr);
 	}
 
-	CBagStorageDevWnd *pSDev2 = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev();
+	CBagStorageDevWnd *pSDev2 = CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev();
 	if (!pSDev1->IsCloseup() && !pSDev2->IsCloseup()) {
 		VARMNGR->IncrementTimers();
 	}

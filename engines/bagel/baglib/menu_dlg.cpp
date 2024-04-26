@@ -66,7 +66,7 @@ CBagMenu::CBagMenu() {
 
 		CBagel *pBagel = (CBagel *)CBagel::GetApp();
 		if (pBagel != nullptr) {
-			pBagel->GetOption("UserOptions", "TextDelay", &m_nDefaultDelay, DELAY_DEFAULT);
+			pBagel->getOption("UserOptions", "TextDelay", &m_nDefaultDelay, DELAY_DEFAULT);
 
 			if (m_nDefaultDelay < 0) {
 				m_nDefaultDelay = -1;
@@ -469,7 +469,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 			// If our current storage device is "AS CUSTOM" then don't allow
 			// the timer to get incremented.
-			CBagStorageDev *pCurSDEV = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev();
+			CBagStorageDev *pCurSDEV = CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev();
 			if (pObj != nullptr) {
 				pObj->RunCallBack();
 

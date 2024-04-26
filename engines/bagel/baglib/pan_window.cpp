@@ -121,7 +121,7 @@ CBofPalette *CBagPanWindow::SetSlidebitmap(const CBofString &xSlideBmp, const CB
 			// Set the bagel crap
 			m_pPalette = m_pSlideBitmap->GetPalette();
 			CBofApp::GetApp()->SetPalette(m_pPalette);
-			CBagel::GetBagApp()->GetMasterWnd()->SelectPalette(m_pPalette);
+			CBagel::GetBagApp()->getMasterWnd()->SelectPalette(m_pPalette);
 			CBofApp::GetApp()->GetMainWindow()->SelectPalette(m_pPalette);
 			SelectPalette(m_pPalette);
 

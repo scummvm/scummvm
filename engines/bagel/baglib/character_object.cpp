@@ -147,7 +147,7 @@ ErrorCode CBagCharacterObject::attach() {
 	RefreshCurrFrame();
 
 	// Get chroma from main app now
-	m_nCharTransColor = CBagel::GetBagApp()->GetChromaColor();
+	m_nCharTransColor = CBagel::GetBagApp()->getChromaColor();
 
 	return CBagObject::attach();
 }
@@ -554,7 +554,7 @@ void CBagCharacterObject::SetNumOfLoops(int n) {
 	if (IsModal() && IsAttached()) {
 		CBagStorageDevWnd *pWin;
 
-		if ((pWin = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()) != nullptr) {
+		if ((pWin = CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev()) != nullptr) {
 			pWin->RunModal(this);
 		}
 	}

@@ -346,7 +346,7 @@ ErrorCode CBagLog::PlayMsgQue() {
 		pPda = SDEVMNGR->GetStorageDevice("BPDA_WLD");
 
 		// If we're in a closeup, then don't play the message!
-		CBagStorageDev *pSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev();
+		CBagStorageDev *pSDev = CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev();
 		bool bPlayMsg = true;
 
 		if (pSDev != nullptr) {

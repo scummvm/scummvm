@@ -103,7 +103,7 @@ ErrorCode CMainWindow::attach() {
 
 	// Create the window
 	CBofString s = GetName();
-	Create(s.GetBuffer(), &tmpRect, CBagel::GetBagApp()->GetMasterWnd());
+	Create(s.GetBuffer(), &tmpRect, CBagel::GetBagApp()->getMasterWnd());
 
 	// Associate this window with callbacks so that any public member function can
 	// be accessed by objects inserted into this class.
@@ -123,7 +123,7 @@ ErrorCode CMainWindow::attach() {
 	CBofPalette *bofpal = SetSlidebitmap(GetBackgroundName(), rView);
 	SetPalPtr(bofpal);
 
-	CBagel::GetBagApp()->GetMasterWnd()->SelectPalette(bofpal);
+	CBagel::GetBagApp()->getMasterWnd()->SelectPalette(bofpal);
 	CBofApp::GetApp()->SetPalette(bofpal);
 
 	ActivateView();

@@ -37,7 +37,7 @@ namespace Bagel {
 static unsigned stringHashFunction(const CBofString &s) {
 	return s.Hash();
 }
-CBofVHashTable<CBofString, HASHTABLESIZE> *CBagel::m_pCacheFileList;
+CBofVHashTable<CBofString, HASH_TABLE_SIZE> *CBagel::m_pCacheFileList;
 
 // Initialize global variables.
 //
@@ -45,9 +45,9 @@ CBofWindow *g_pHackWindow;
 
 CBagel::CBagel(const BagelReg *pGameReg) {
 	Assert(pGameReg != nullptr);
-	m_pCacheFileList = new CBofVHashTable<CBofString, HASHTABLESIZE>(&stringHashFunction);
+	m_pCacheFileList = new CBofVHashTable<CBofString, HASH_TABLE_SIZE>(&stringHashFunction);
 
-	RegisterGame(pGameReg);
+	registerGame(pGameReg);
 }
 
 CBagel::~CBagel() {
@@ -67,7 +67,7 @@ CBagel::~CBagel() {
 	m_pGameReg = nullptr;
 }
 
-void CBagel::RegisterGame(const BagelReg *pGameReg) {
+void CBagel::registerGame(const BagelReg *pGameReg) {
 	Assert(IsValidObject(this));
 	m_pGameReg = pGameReg;
 
@@ -77,35 +77,35 @@ void CBagel::RegisterGame(const BagelReg *pGameReg) {
 	// Use registration info to init this game object
 	if (pGameReg != nullptr) {
 		// Keep application name
-		SetAppName(pGameReg->m_pszGameName);
+		setAppName(pGameReg->_gameName);
 
 		// Load this game's .ini file
-		if (pGameReg->m_pszOptionFile != nullptr)
-			LoadOptionFile(pGameReg->m_pszOptionFile);
+		if (pGameReg->_optionFile != nullptr)
+			LoadOptionFile(pGameReg->_optionFile);
 	}
 }
 
-ErrorCode CBagel::SetOption(const char *pszSection, const char *pszOption, const char *pszValue) {
+ErrorCode CBagel::setOption(const char *pszSection, const char *pszOption, const char *pszValue) {
 	Assert(IsValidObject(this));
 	return WriteSetting(pszSection, pszOption, pszValue);
 }
 
-ErrorCode CBagel::SetOption(const char *pszSection, const char *pszOption, int nValue) {
+ErrorCode CBagel::setOption(const char *pszSection, const char *pszOption, int nValue) {
 	Assert(IsValidObject(this));
 	return WriteSetting(pszSection, pszOption, nValue);
 }
 
-ErrorCode CBagel::GetOption(const char *pszSection, const char *pszOption, char *pszValue, const char *pszDefault, uint32 nSize) {
+ErrorCode CBagel::getOption(const char *pszSection, const char *pszOption, char *pszValue, const char *pszDefault, uint32 nSize) {
 	Assert(IsValidObject(this));
 	return ReadSetting(pszSection, pszOption, pszValue, pszDefault, nSize);
 }
 
-ErrorCode CBagel::GetOption(const char *pszSection, const char *pszOption, int *pValue, int nDefault) {
+ErrorCode CBagel::getOption(const char *pszSection, const char *pszOption, int *pValue, int nDefault) {
 	Assert(IsValidObject(this));
 	return ReadSetting(pszSection, pszOption, pValue, nDefault);
 }
 
-ErrorCode CBagel::GetOption(const char *pszSection, const char *pszOption, bool *pValue, int nDefault) {
+ErrorCode CBagel::getOption(const char *pszSection, const char *pszOption, bool *pValue, int nDefault) {
 	Assert(IsValidObject(this));
 	return ReadSetting(pszSection, pszOption, pValue, nDefault);
 }
@@ -113,7 +113,7 @@ ErrorCode CBagel::GetOption(const char *pszSection, const char *pszOption, bool 
 ErrorCode CBagel::initialize() {
 	Assert(IsValidObject(this));
 
-	// Game must already be registered with RegisterGame()
+	// Game must already be registered with registerGame()
 	Assert(m_pGameReg != nullptr);
 
 	CBofApp::initialize();
@@ -135,7 +135,7 @@ ErrorCode CBagel::initialize() {
 	}
 	PaintTable::initialize(paintTable);
 
-	GetOption("UserOptions", "WrongCDRetries", &m_nNumRetries, 20);
+	getOption("UserOptions", "WrongCDRetries", &m_nNumRetries, 20);
 	if (m_nNumRetries < 1) {
 		m_nNumRetries = 100;
 	}
@@ -155,13 +155,13 @@ ErrorCode CBagel::initialize() {
 	return m_errCode;
 }
 
-ErrorCode CBagel::RunApp() {
+ErrorCode CBagel::runApp() {
 	Assert(IsValidObject(this));
 
 	// The main game window must have been created by now
 	Assert(m_pMainWnd != nullptr);
 
-	return CBofApp::RunApp();
+	return CBofApp::runApp();
 }
 
 ErrorCode CBagel::shutdown() {
@@ -180,29 +180,19 @@ ErrorCode CBagel::shutdown() {
 }
 
 
-ErrorCode CBagel::SetActiveCursor(int nCurs) {
-	Assert(nCurs >= 0 && nCurs < MAX_CURSORS);
-
-	CBagMasterWin::SetActiveCursor(nCurs);
-
-	return ERR_NONE;
-}
-
 ErrorCode CBagel::InitLocalFilePaths() {
 	Assert(IsValidObject(this));
 
 	// Check for Installed state of game
-	GetOption("Startup", "InstallCode", &m_nInstallCode, BAG_INSTALL_DEFAULT);
+	getOption("Startup", "InstallCode", &m_nInstallCode, BAG_INSTALL_DEFAULT);
 
 	return m_errCode;
 }
 
-#define LOADINGBMP          "$SBARDIR\\GENERAL\\SYSTEM\\LOADING.BMP"
-
 ErrorCode CBagel::VerifyCDInDrive(int nDiskID, const char *pszWaveFile) {
 	Assert(IsValidObject(this));
 
-	if (m_pGameReg->m_nNumberOfCDs > 0) {
+	if (m_pGameReg->_numberOfCDs > 0) {
 		char szBuf[MAX_DIRPATH];
 
 		// Find the drive that this disk is in
@@ -248,11 +238,10 @@ ErrorCode CBagel::VerifyRequirements() {
 }
 
 bool MACROREPLACE(CBofString &s) {
-	char *p;
-
 	// Remove any homedir prefix. In ScummVM, all paths are relative
 	// to the game folder automatically
-	if ((p = strstr(s.GetBuffer(), HOMEDIR_TOKEN)) != nullptr)
+	char *p = strstr(s.GetBuffer(), HOMEDIR_TOKEN);
+	if (p != nullptr)
 		s = p + strlen(HOMEDIR_TOKEN) + 1;
 
 	// Replace any backslashes with forward slashes
@@ -265,14 +254,10 @@ bool MACROREPLACE(CBofString &s) {
 
 void CBagel::ShowNextCDDialog(CBofWindow *pParentWin, int nCDID) {
 	CBagNextCDDialog cNextCDDialog;
-	CBofRect cRect;
 
 	// Use specified bitmap as this dialog's image
-	CBofBitmap *pBmp;
-	CBofPalette *pPal;
-
-	pPal = nullptr;
-	pBmp = nullptr;
+	CBofPalette *pPal = nullptr;
+	CBofBitmap *pBmp = nullptr;
 
 	switch (nCDID) {
 
@@ -296,7 +281,7 @@ void CBagel::ShowNextCDDialog(CBofWindow *pParentWin, int nCDID) {
 
 	cNextCDDialog.SetBackdrop(pBmp);
 
-	cRect = cNextCDDialog.GetBackdrop()->GetRect();
+	CBofRect cRect = cNextCDDialog.GetBackdrop()->GetRect();
 
 	// Create the dialog box
 	cNextCDDialog.Create("NextCD", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pParentWin);

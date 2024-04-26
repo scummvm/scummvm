@@ -66,7 +66,7 @@ ErrorCode CBofOptions::Load() {
 	Assert(IsValidObject(this));
 
 	// Assume no error
-	 ErrorCode errCode = ERR_NONE;
+	ErrorCode errCode = ERR_NONE;
 
 	// Free any previous option info
 	Release();

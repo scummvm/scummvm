@@ -840,7 +840,7 @@ void SBarComputer::OnBofButton(CBofObject *pObject, int nState) {
 		CBagel *pApp = CBagel::GetBagApp();
 
 		if (pApp != nullptr) {
-			CBagMasterWin *pWin = pApp->GetMasterWnd();
+			CBagMasterWin *pWin = pApp->getMasterWnd();
 			if (pWin != nullptr) {
 				pWin->OnHelp(BuildBarcDir("BARCOMP.TXT"));
 			}
