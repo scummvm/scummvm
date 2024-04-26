@@ -21,7 +21,7 @@
 
 #include "bagel/baglib/dossier_object.h"
 #include "bagel/baglib/rp_object.h"
-#include "bagel/baglib/bagel.h"
+#include "bagel/baglib/master_win.h"
 
 namespace Bagel {
 

@@ -22,6 +22,7 @@
 #include "bagel/baglib/help.h"
 #include "bagel/boflib/file.h"
 #include "bagel/baglib/bagel.h"
+#include "bagel/baglib/master_win.h"
 #include "bagel/boflib/file_functions.h"
 #include "bagel/boflib/log.h"
 #include "bagel/boflib/std_keys.h"

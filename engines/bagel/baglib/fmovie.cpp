@@ -21,9 +21,9 @@
 
 #include "bagel/baglib/fmovie.h"
 #include "bagel/boflib/string.h"
-#include "bagel/boflib/gfx/cursor.h"
 #include "bagel/boflib/gfx/palette.h"
 #include "bagel/boflib/app.h"
+#include "bagel/baglib/master_win.h"
 #include "bagel/baglib/pan_window.h"
 #include "bagel/boflib/misc.h"
 #include "bagel/boflib/std_keys.h"

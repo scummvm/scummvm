@@ -19,11 +19,13 @@
  *
  */
 
+#include "bagel/baglib/button_object.h"
+#include "bagel/baglib/master_win.h"
+#include "bagel/baglib/time_object.h"
+#include "bagel/baglib/rp_object.h"
+#include "bagel/baglib/wield.h"
 #include "bagel/baglib/zoom_pda.h"
 #include "bagel/boflib/app.h"
-#include "bagel/baglib/wield.h"
-#include "bagel/baglib/button_object.h"
-#include "bagel/baglib/rp_object.h"
 
 namespace Bagel {
 

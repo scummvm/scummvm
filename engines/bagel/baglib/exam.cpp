@@ -22,6 +22,7 @@
 #include "bagel/baglib/exam.h"
 #include "bagel/dialogs/opt_window.h"
 #include "bagel/baglib/bagel.h"
+#include "bagel/baglib/master_win.h"
 
 namespace Bagel {
 
