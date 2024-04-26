@@ -250,7 +250,7 @@ CBofPoint CBagDossierObject::ArrangeFloater(CBofPoint nPos, CBagObject * /*pObj*
 }
 
 // Called to splash one of these guys to the screen
-ErrorCode CBagDossierObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int n) {
+ErrorCode CBagDossierObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int n) {
 	if (m_bShowIndex) {
 		if (m_bDossierSet == false) {
 			// Set the text to be the index line.
@@ -267,7 +267,7 @@ ErrorCode CBagDossierObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pS
 		m_bDossierSet = true;
 	}
 
-	return CBagTextObject::Update(pBmp, pt, pSrcRect, n);
+	return CBagTextObject::update(pBmp, pt, pSrcRect, n);
 }
 
 CBofRect CBagDossierObject::getRect() {

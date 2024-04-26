@@ -99,7 +99,7 @@ public:
 	void OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	bool OnMouseMove(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void *);
 
-	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
+	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
 
 	void setSize(const CBofSize &xSize);
 

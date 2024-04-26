@@ -157,11 +157,11 @@ ErrorCode CBagWield::DeactivateLocalObject(CBagObject *pObj) {
 }
 
 
-ErrorCode CBagWield::Update(CBofBitmap *pBmp, CBofPoint /*cPoint*/, CBofRect * /*pSrcRect*/, int /*nMaskColor*/) {
+ErrorCode CBagWield::update(CBofBitmap *pBmp, CBofPoint /*cPoint*/, CBofRect * /*pSrcRect*/, int /*nMaskColor*/) {
 	Assert(pBmp != nullptr);
 
 	// If this object is visible
-	if (IsVisible() && IsAttached()) {
+	if (IsVisible() && isAttached()) {
 
 		CBofBitmap *pYouIcon = GetBackground();
 		if (pYouIcon != nullptr) {

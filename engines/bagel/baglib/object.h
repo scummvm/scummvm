@@ -161,7 +161,7 @@ public:
 	}
 
 	// Object can be moved within a sceene
-	virtual bool IsInside(const CBofPoint &xPoint) {
+	virtual bool isInside(const CBofPoint &xPoint) {
 		return getRect().PtInRect(xPoint);
 	}
 
@@ -388,7 +388,7 @@ public:
 		return nErrID;
 	}
 
-	virtual ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
+	virtual ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
 
 	virtual bool OnObjInteraction(CBagObject * /*pObj*/, CBagStorageDev * /*pSDev*/) {
 		return false;

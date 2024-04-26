@@ -113,7 +113,7 @@ public:
 	 */
 	void RecalcTextRect(bool bTextFromFile);
 
-	virtual ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
+	virtual ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 
 	ErrorCode attach();
 	ErrorCode detach();

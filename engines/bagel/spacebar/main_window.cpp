@@ -137,7 +137,7 @@ ErrorCode CMainWindow::attach() {
 			if (pSDev != nullptr) {
 				m_pThudBmp = (SBarThud *)pSDev;
 				m_pThudBmp->SetAssociateWnd(this);
-				if (!m_pThudBmp->IsAttached())
+				if (!m_pThudBmp->isAttached())
 					m_pThudBmp->attach();
 				InsertFGObjects(m_pThudBmp);
 				m_pThudBmp->SetVisible(true);
@@ -155,7 +155,7 @@ ErrorCode CMainWindow::attach() {
 			if (pSDev != nullptr) {
 				m_pWieldBmp = (CBagWield *)pSDev;
 				m_pWieldBmp->SetAssociateWnd(this);
-				if (!m_pWieldBmp->IsAttached())
+				if (!m_pWieldBmp->isAttached())
 					m_pWieldBmp->attach();
 
 				if (m_pWieldBmp->getRect().IsRectEmpty()) {
@@ -186,7 +186,7 @@ ErrorCode CMainWindow::attach() {
 				m_pPDABmp->SetAssociateWnd(this);
 				m_pPDABmp->SetRect(r);
 				r = GetClientRect();
-				if (!m_pPDABmp->IsAttached())
+				if (!m_pPDABmp->isAttached())
 					m_pPDABmp->attach();
 
 				// Allow the script to specify the increment height.
@@ -224,7 +224,7 @@ ErrorCode CMainWindow::attach() {
 			if (m_pEvtSDev == nullptr) {
 				m_pEvtSDev = (CBagEventSDev *)pSDev;
 				m_pEvtSDev->SetAssociateWnd(this);
-				if (!m_pEvtSDev->IsAttached())
+				if (!m_pEvtSDev->isAttached())
 					m_pEvtSDev->attach();
 
 				SetTimer(EVAL_EXPR, 1000);
@@ -354,7 +354,7 @@ void CMainWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 void CMainWindow::CorrectZzazzlePoint(CBofPoint *p) {
 	// Don't correct this boy if he's inside the PDA.
 	CBagPDA *pPDA = (CBagPDA *)SDEVMNGR->GetStorageDevice("BPDA_WLD");
-	if (pPDA && pPDA->IsInside(*p)) {
+	if (pPDA && pPDA->isInside(*p)) {
 		return;
 	}
 

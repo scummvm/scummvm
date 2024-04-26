@@ -80,7 +80,7 @@ ErrorCode CBagInv::ActivateLocalObject(const CBofString &sName) {
 			if ((pVar != nullptr) && (pVar->GetNumValue() == 0)) {
 				CBagMovieObject *pMovie = (CBagMovieObject *)GetObject(FIRSSTASHMOV);
 				if (pMovie) {
-					if (pMovie->IsAttached() == false) {
+					if (pMovie->isAttached() == false) {
 						pMovie->attach();
 						pMovie->SetVisible();
 					}

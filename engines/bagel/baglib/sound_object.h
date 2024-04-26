@@ -57,7 +57,7 @@ public:
 		return attach((CBofWindow *)CBagel::getBagApp()->getMasterWnd());
 	}
 	ErrorCode attach(CBofWindow *pWnd);
-	bool IsAttached() {
+	bool isAttached() {
 		return m_pSound != nullptr;
 	}
 	ErrorCode detach();

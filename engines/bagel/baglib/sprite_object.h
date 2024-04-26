@@ -45,12 +45,12 @@ public:
 
 	ErrorCode attach();
 	ErrorCode detach();
-	bool IsAttached() {
+	bool isAttached() {
 		return m_xSprite != nullptr;
 	}
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	bool IsInside(const CBofPoint &xPoint);
+	bool isInside(const CBofPoint &xPoint);
 
 	int GetWieldCursor() {
 		return m_nWieldCursor;
@@ -75,7 +75,7 @@ public:
 	void SetCels(int nCels);
 	virtual void SetPosition(const CBofPoint &pos);
 
-	virtual ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
+	virtual ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
 	virtual ErrorCode Update(CBofWindow *pWnd, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 
 	void SetProperty(const CBofString &sProp, int nVal);

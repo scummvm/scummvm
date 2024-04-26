@@ -71,7 +71,7 @@ public:
 	 * @param pSrcRect      Clip rect of the object to be painted
 	 * @param nMaskColor    Mask color for the object
 	*/
-	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /* nMaskColor */ = -1);
+	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /* nMaskColor */ = -1);
 
 	/**
 	 * Called to overload specific types of sprite objects
@@ -107,7 +107,7 @@ public:
 	 */
 	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *info = nullptr);
 
-	bool IsInside(const CBofPoint &xPoint);
+	bool isInside(const CBofPoint &xPoint);
 
 	CBagObject *OnNewUserObject(const CBofString &sInit);
 

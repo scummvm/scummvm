@@ -151,11 +151,11 @@ PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-ErrorCode CBagVariableObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int) {
+ErrorCode CBagVariableObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int) {
 	ErrorCode rc = ERR_NONE;
 	CBagVar *xVar = VARMNGR->GetVariable(GetFileName());
 
-	if (IsAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
+	if (isAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
 		// FIXME: Offset for the last accessed time and # times counter in
 		// entryway computer terminal. Otherwise, there's no space between
 		// them and the preceding text
@@ -181,7 +181,7 @@ ErrorCode CBagVariableObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *p
 	ErrorCode rc = ERR_NONE;
 	CBagVar *xVar = VARMNGR->GetVariable(GetFileName());
 
-	if (IsAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
+	if (isAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
 		CBofRect r(pt, pSrcRect->Size());
 
 		rc = PaintText(pWnd, &r, xVar->GetValue(), MapFontPointSize(m_nPointSize), TEXT_NORMAL, m_nFGColor);

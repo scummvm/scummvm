@@ -57,7 +57,7 @@ public:
 
 	PARSE_CODES SetInfo(bof_ifstream &istr) override;
 
-	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int) override;
+	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int) override;
 	ErrorCode Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int);
 
 	int MapFontPointSize(int size) const {

@@ -187,7 +187,7 @@ bool CBagMovieObject::RunObject() {
 					// If there is an associated sound file, then start it up here.
 					CBagSoundObject *pSObj = GetAssociatedSound();
 					if (pSObj) {
-						if (pSObj->IsAttached() == false) {
+						if (pSObj->isAttached() == false) {
 							pSObj->attach();
 						}
 						pSObj->RunObject();

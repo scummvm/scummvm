@@ -325,7 +325,7 @@ ErrorCode CBagStorageDev::AttachActiveObjects() {
 			CBagObject *pObj = GetObjectByPos(i);
 			if (pObj != nullptr) {
 				if (pObj->IsLocal() && (!pObj->GetExpression() || pObj->GetExpression()->Evaluate(pObj->IsNegative()))) {
-					if (!pObj->IsAttached()) {
+					if (!pObj->isAttached()) {
 						pObj->SetActive();
 						pObj->attach();
 					}
@@ -347,7 +347,7 @@ ErrorCode CBagStorageDev::AttachActiveObjects() {
 					if (pObj->IsFloating()) {
 						nArrangePos = ArrangeFloater(nArrangePos, pObj);
 					}
-				} else if (pObj->IsAttached()) {
+				} else if (pObj->isAttached()) {
 
 					if (pObj->GetType() != SOUNDOBJ || !((CBagSoundObject *)pObj)->IsPlaying()) {
 						pObj->SetActive(false);
@@ -372,7 +372,7 @@ ErrorCode CBagStorageDev::DetachActiveObjects() {
 		for (int i = 0; i < nCount; ++i) {
 			CBagObject *pObj = GetObjectByPos(i);
 			if (pObj != nullptr) {
-				if (pObj->IsAttached()) {
+				if (pObj->isAttached()) {
 					// If this object is not removed from memory, then
 					// make sure it is drawn next time it is activated.
 					pObj->SetDirty(true);
@@ -428,7 +428,7 @@ ErrorCode CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *
 
 		for (int i = 0; i < nCount; ++i) {
 			CBagObject *pObj = GetObjectByPos(i);
-			if (pObj->IsAttached()) {
+			if (pObj->isAttached()) {
 				CBofRect xBmpRect = pObj->getRect();
 				CBofPoint pt = xBmpRect.TopLeft();
 				xBmpRect.OffsetRect(-pt.x, -pt.y);
@@ -437,7 +437,7 @@ ErrorCode CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *
 					if (pBmp) {
 						// Only update dirty objects...
 						if (pObj->IsDirty() || pObj->IsAlwaysUpdate()) {
-							pObj->Update(pBmp, pt, &xBmpRect);
+							pObj->update(pBmp, pt, &xBmpRect);
 						}
 					}
 				}
@@ -870,7 +870,7 @@ CBagObject *CBagStorageDev::GetObject(int nRefId, bool bActiveOnly) {
 	for (int i = 0; i < nListLen; ++i) {
 		CBagObject *pObj = GetObjectByPos(i);
 
-		if ((pObj->GetRefId() == nRefId) && (!bActiveOnly || (pObj->IsActive() && pObj->IsAttached())))
+		if ((pObj->GetRefId() == nRefId) && (!bActiveOnly || (pObj->IsActive() && pObj->isAttached())))
 			return pObj;
 	}
 
@@ -927,7 +927,7 @@ CBagObject *CBagStorageDev::GetObject(const CBofPoint &xPoint, bool bActiveOnly)
 		for (int i = nCount - 1; i >= 0; --i) {
 			CBagObject *pObj = GetObjectByPos(i);
 
-			if (pObj->IsInside(xPoint) && (!bActiveOnly || (pObj->IsActive() && pObj->IsAttached())))
+			if (pObj->isInside(xPoint) && (!bActiveOnly || (pObj->IsActive() && pObj->isAttached())))
 				return pObj;
 		}
 	}
@@ -1222,7 +1222,7 @@ ErrorCode CBagStorageDevWnd::attach() {
 		if (m_pEvtSDev == nullptr) {
 			m_pEvtSDev = (CBagEventSDev *)pSDev;
 			m_pEvtSDev->SetAssociateWnd(this);
-			if (!m_pEvtSDev->IsAttached())
+			if (!m_pEvtSDev->isAttached())
 				m_pEvtSDev->attach();
 
 			SetTimer(EVAL_EXPR, 1000);
@@ -1512,7 +1512,7 @@ void CBagStorageDevWnd::OnMouseMove(uint32 n, CBofPoint *pPoint, void *) {
 				// Change cursor as long as it's not a link to a closeup, or
 				// link to another Pan, or a text menu, or button.
 				//
-				if (pObj->IsAttached() && pObj->IsInside(cCursorLocation)) {
+				if (pObj->isAttached() && pObj->isInside(cCursorLocation)) {
 					int nCursor = pObj->GetOverCursor();
 					if (!bWield || (nCursor == 2 || nCursor == 5 || nCursor == 55 || pObj->GetType() == TEXTOBJ || pObj->GetType() == BUTTONOBJ)) {
 						CBagMasterWin::SetActiveCursor(nCursor);

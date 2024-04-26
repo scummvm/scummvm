@@ -35,13 +35,13 @@ void CBagMoo::initialize() {
 	m_eSavePDAPos = UNINITIALIZED;
 }
 
-ErrorCode CBagMoo::Update(CBofBitmap *pBmp, CBofPoint /*pt*/, CBofRect *pSrcRect, int nMaskColor) {
+ErrorCode CBagMoo::update(CBofBitmap *pBmp, CBofPoint /*pt*/, CBofRect *pSrcRect, int nMaskColor) {
 	ErrorCode    ec = ERR_NONE;
 
 	if (m_pMovie) {
 		// Update the movie, assume only unzoomed pda right now
 		CBofPoint cPos(116, 61);
-		ec = m_pMovie->Update(pBmp, cPos, pSrcRect, nMaskColor);
+		ec = m_pMovie->update(pBmp, cPos, pSrcRect, nMaskColor);
 
 		// If we're done or we encountered an error, then roll over and die.
 		if (ec != ERR_NONE || m_pMovie->IsModalDone()) {

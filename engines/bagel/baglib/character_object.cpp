@@ -321,7 +321,7 @@ bool CBagCharacterObject::DoAdvance() {
 	return bDoAdvance;
 }
 
-bool CBagCharacterObject::IsInside(const CBofPoint &xPoint) {
+bool CBagCharacterObject::isInside(const CBofPoint &xPoint) {
 	if (getRect().PtInRect(xPoint) && m_nCharTransColor >= 0) {
 		if (m_pBmpBuf) {
 			int x = xPoint.x - getRect().left;
@@ -350,7 +350,7 @@ ErrorCode CBagCharacterObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *
 	return ERR_NONE;
 }
 
-ErrorCode CBagCharacterObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, int /*nMaskColor*/) {
+ErrorCode CBagCharacterObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, int /*nMaskColor*/) {
 	// Get the original position for character
 	CBofPoint OrigPos = GetPosition();
 
@@ -551,7 +551,7 @@ void CBagCharacterObject::SetNumOfLoops(int n) {
 	}
 
 	// If this character is modal run until done looping
-	if (IsModal() && IsAttached()) {
+	if (IsModal() && isAttached()) {
 		CBagStorageDevWnd *pWin;
 
 		if ((pWin = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev()) != nullptr) {
@@ -654,7 +654,7 @@ void CBagCharacterObject::SetPDAWand(CBagCharacterObject *pWand) {
 }
 
 bool CBagCharacterObject::PDAWandAnimating() {
-	if (m_pPDAWand == nullptr || !m_pPDAWand->IsAttached()) {
+	if (m_pPDAWand == nullptr || !m_pPDAWand->isAttached()) {
 		CBagStorageDev *pPda = SDEVMNGR->GetStorageDevice("BPDA_WLD");
 		if (pPda != nullptr) {
 			CBagCharacterObject *pWand = (CBagCharacterObject *)pPda->GetObject("WANDANIM");

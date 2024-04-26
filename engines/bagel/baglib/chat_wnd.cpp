@@ -64,7 +64,7 @@ void CBagChatWnd::OnMouseMove(uint32 nFlags, CBofPoint *pPos, void *) {
 				((CBagTextObject *)pObj)->SetColor(4);
 				pObj->SetDirty(true);
 
-				if (pObj->IsAttached() && pObj->IsInside(*pPos)) {
+				if (pObj->isAttached() && pObj->isInside(*pPos)) {
 					((CBagTextObject *)pObj)->SetColor(8);
 				}
 			}

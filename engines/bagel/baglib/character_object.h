@@ -72,14 +72,14 @@ public:
 	CBofRect getRect();
 
 	virtual ErrorCode Update(CBofWindow * /*pWnd*/, CBofPoint /*pt*/, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
-	virtual ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
+	virtual ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
 
 	bool DoAdvance();
 	void UpdatePosition();
 	bool RefreshCurrFrame();
 
 	virtual bool RunObject();
-	virtual bool IsInside(const CBofPoint &xPoint);
+	virtual bool isInside(const CBofPoint &xPoint);
 
 	void ArrangeFrames();
 

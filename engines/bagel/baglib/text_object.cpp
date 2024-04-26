@@ -71,7 +71,7 @@ CBofRect CBagTextObject::getRect() {
 	return r;
 }
 
-ErrorCode CBagTextObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int) {
+ErrorCode CBagTextObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int) {
 	Assert(IsValidObject(this));
 	Assert(pBmp != nullptr);
 	Assert(pSrcRect != nullptr);
@@ -79,7 +79,7 @@ ErrorCode CBagTextObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 	// assume no error
 	 ErrorCode errCode = ERR_NONE;
 
-	if ((pBmp != nullptr) && IsAttached() && !(GetText().IsEmpty())) {
+	if ((pBmp != nullptr) && isAttached() && !(GetText().IsEmpty())) {
 
 		if (pBmp->GetRect().PtInRect(pt)) {
 
@@ -492,7 +492,7 @@ bool CBagTextObject::RunObject() {
 				CBagMenuDlg cDlg;
 				cDlg.Create(pParent, pPal, &cRect);
 	
-				Update(cDlg.GetBackdrop(), cPoint, &cRect);
+				update(cDlg.GetBackdrop(), cPoint, &cRect);
 
 				CBagPDA *pPDA = nullptr;
 				sStr = "BPDA_WLD";
