@@ -263,6 +263,8 @@ void Macs2Engine::readResourceFile() {
 	uint16 firstSceneIndex = _fileStream->readUint16LE();
 	Scenes::instance().CurrentSceneIndex = firstSceneIndex;
 	Scenes::instance().CurrentSceneScript = Scenes::instance().ReadSceneScript(firstSceneIndex, _fileStream);
+	Scenes::instance().CurrentSceneStrings = Scenes::instance().ReadSceneStrings(firstSceneIndex, _fileStream);
+	auto strings = DecodeStrings(Scenes::instance().CurrentSceneStrings, 0, 4);
 	_scriptExecutor->SetScript(Scenes::instance().CurrentSceneScript);
 
 	// for (int i = 1; i < 0x200; i++) {
@@ -1140,6 +1142,11 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	s.syncAsUint32LE(dummy);
 
 	return Common::kNoError;
+}
+
+bool Macs2Engine::tick() {
+	_scriptExecutor->tick();
+	return Events::tick();
 }
 
 void GlyphData::ReadFromeFile(Common::File &file) {
