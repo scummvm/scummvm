@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-25 03:46+0000\n"
+"POT-Creation-Date: 2024-04-26 21:03+0000\n"
 "PO-Revision-Date: 2023-12-06 11:16+0000\n"
 "Last-Translator: Aditya Mohan <adityamurali003@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -936,7 +936,7 @@ msgstr ""
 #: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:473
 #: engines/grim/grim.cpp:554 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
 #: engines/scumm/metaengine.cpp:848 engines/twine/metaengine.cpp:465
-#: engines/twine/metaengine.cpp:532 engines/twp/metaengine.cpp:153
+#: engines/twine/metaengine.cpp:532 engines/twp/metaengine.cpp:154
 #: engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
 #: engines/wintermute/keymapper_tables.h:1449
@@ -951,7 +951,7 @@ msgstr "ऊपर"
 #: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:478
 #: engines/grim/grim.cpp:559 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
 #: engines/scumm/metaengine.cpp:815 engines/twine/metaengine.cpp:472
-#: engines/twine/metaengine.cpp:540 engines/twp/metaengine.cpp:154
+#: engines/twine/metaengine.cpp:540 engines/twp/metaengine.cpp:155
 #: engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
 #: engines/wintermute/keymapper_tables.h:1456
@@ -966,7 +966,7 @@ msgstr "नीचे"
 #: engines/grim/grim.cpp:483 engines/grim/grim.cpp:564 engines/icb/icb.cpp:78
 #: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:828
 #: engines/twine/metaengine.cpp:487 engines/twine/metaengine.cpp:555
-#: engines/twp/metaengine.cpp:151 engines/wintermute/keymapper_tables.h:320
+#: engines/twp/metaengine.cpp:152 engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
 #: engines/wintermute/keymapper_tables.h:1385
 #: engines/wintermute/keymapper_tables.h:1908
@@ -981,7 +981,7 @@ msgstr "बाएँ"
 #: engines/grim/grim.cpp:488 engines/grim/grim.cpp:569 engines/icb/icb.cpp:83
 #: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:835
 #: engines/twine/metaengine.cpp:479 engines/twine/metaengine.cpp:548
-#: engines/twp/metaengine.cpp:152 engines/wintermute/keymapper_tables.h:326
+#: engines/twp/metaengine.cpp:153 engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
 #: engines/wintermute/keymapper_tables.h:1391
 #: engines/wintermute/keymapper_tables.h:1914
@@ -5812,7 +5812,7 @@ msgstr ""
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:874 engines/twp/metaengine.cpp:155
+#: engines/scumm/metaengine.cpp:874 engines/twp/metaengine.cpp:156
 #: engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr ""
@@ -9977,40 +9977,40 @@ msgstr ""
 msgid "Ransome *unbeeped* (DLC)"
 msgstr ""
 
-#: engines/twp/metaengine.cpp:156
+#: engines/twp/metaengine.cpp:151
 #, fuzzy
 #| msgid "Select shader"
-msgid "Select Actor 1"
+msgid "Select highlighted verb"
 msgstr "Shader चुनें"
 
 #: engines/twp/metaengine.cpp:157
 #, fuzzy
 #| msgid "Select shader"
-msgid "Select Actor 2"
+msgid "Select Actor 1"
 msgstr "Shader चुनें"
 
 #: engines/twp/metaengine.cpp:158
 #, fuzzy
 #| msgid "Select shader"
-msgid "Select Actor 3"
+msgid "Select Actor 2"
 msgstr "Shader चुनें"
 
 #: engines/twp/metaengine.cpp:159
 #, fuzzy
 #| msgid "Select shader"
-msgid "Select Actor 4"
+msgid "Select Actor 3"
 msgstr "Shader चुनें"
 
 #: engines/twp/metaengine.cpp:160
 #, fuzzy
 #| msgid "Select shader"
-msgid "Select Actor 5"
+msgid "Select Actor 4"
 msgstr "Shader चुनें"
 
 #: engines/twp/metaengine.cpp:161
 #, fuzzy
 #| msgid "Select shader"
-msgid "Select Actor 6"
+msgid "Select Actor 5"
 msgstr "Shader चुनें"
 
 #: engines/twp/metaengine.cpp:162
@@ -11051,6 +11051,11 @@ msgstr ""
 "हैं। आपको अपने चुने पैकेज के सारे फॉन्ट की आवश्यकता होगी, यानी की Liberation fonts से "
 "LiberationMono, LiberationSans और LiberationSerif, या GNU FreeFont से "
 "FreeMono, FreeSans और FreeSerif."
+
+#, fuzzy
+#~| msgid "Select shader"
+#~ msgid "Select Actor 6"
+#~ msgstr "Shader चुनें"
 
 #, fuzzy
 #~| msgid "Options"
