@@ -24,6 +24,7 @@
 #include "bagel/dialogs/opt_window.h"
 #include "bagel/baglib/log_msg.h"
 #include "bagel/baglib/bagel.h"
+#include "bagel/baglib/master_win.h"
 #include "bagel/baglib/moo.h"
 #include "bagel/baglib/storage_dev_win.h"
 #include "bagel/baglib/wield.h"

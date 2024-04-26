@@ -21,6 +21,7 @@
 
 #include "bagel/baglib/sprite_object.h"
 #include "bagel/baglib/bagel.h"
+#include "bagel/baglib/master_win.h"
 #include "bagel/baglib/storage_dev_win.h"
 
 namespace Bagel {

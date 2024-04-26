@@ -21,6 +21,7 @@
 
 #include "bagel/baglib/wield.h"
 #include "bagel/baglib/menu_dlg.h"
+#include "bagel/baglib/master_win.h"
 #include "bagel/baglib/sprite_object.h"
 #include "bagel/baglib/bagel.h"
 

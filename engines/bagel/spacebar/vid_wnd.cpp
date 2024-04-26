@@ -22,6 +22,7 @@
 #include "bagel/spacebar/vid_wnd.h"
 #include "bagel/spacebar/main_window.h"
 #include "bagel/baglib/bagel.h"
+#include "bagel/baglib/master_win.h"
 #include "bagel/boflib/file_functions.h"
 #include "bagel/boflib/stdinc.h"
 

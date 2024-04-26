@@ -22,6 +22,7 @@
 #include "bagel/dialogs/restart_dialog.h"
 #include "bagel/baglib/bagel.h"
 #include "bagel/baglib/buttons.h"
+#include "bagel/baglib/master_win.h"
 #include "bagel/boflib/log.h"
 #include "bagel/boflib/std_keys.h"
 #include "bagel/dialogs/opt_window.h"

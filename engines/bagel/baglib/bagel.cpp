@@ -26,7 +26,7 @@
 #include "bagel/dialogs/next_cd_dialog.h"
 #include "bagel/dialogs/opt_window.h"
 #include "bagel/baglib/paint_table.h"
-#include "bagel/boflib/misc.h"
+#include "bagel/baglib/master_win.h"
 #include "bagel/boflib/debug.h"
 #include "bagel/boflib/file_functions.h"
 #include "bagel/boflib/log.h"
