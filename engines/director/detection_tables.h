@@ -137,6 +137,12 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "draculassecret",		"Dracula's Secret" },
 	{ "easternmind",		"Eastern Mind: The Lost Souls of Tong Nou" },
 	{ "eddieminx",			"Eddie & Minx: Waking Up the Magic" },
+	{ "egbingo",			"eGames Galaxy of Games: Bingo Master" },
+	{ "egjewel",			"eGames Galaxy of Games: Jewel Jam" },
+	{ "egpeggy",			"eGames Galaxy of Games: Peggy's Party" },
+	{ "egplayground",		"eGames Galaxy of Games: Playground" },
+	{ "egsnowboard",		"eGames Galaxy of Games: Snowboard Sheri" },
+	{ "egwendy",			"eGames Galaxy of Games: Wendi's Word Game" },
 	{ "elmopreschool",		"Elmo's Preschool" },
 	{ "elroybug",			"Elroy Goes Bugzerk" },
 	{ "elroycostume",		"Elroy's Costume Closet" },
@@ -6245,6 +6251,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("edmark", "", "DEMO.EXE",	  "2e62abdad839e42068afdcd0644d7dcf", 917547,
 						   "MAININT",	  "1e995592236894b843c3853906bbee1d", 2935876, 500),
 
+	WINGAME1("egjewel", "", "wcsup.dll", "t:b05f9720561eea331dc5f9916698e688", 1912675, 500),
+	WINGAME1("egpeggy", "", "wcsup.dll", "t:c49572b3e8ca3a565e2ccbb32110a4a0", 1850711, 500),
+	WINGAME1("egplayground", "", "wcsup.dll", "t:5109f6c5784eef5c9244dc11eacf4beb", 2163489, 500),
+
 	// Original Mac filename is 江口寿史
 	MACGAME1_l("eguchi", "", "xn--6or4a778bbur", "552992fb31c736ca67ffd403096596d6", 719653, Common::JA_JPN, 501),
 	WINGAME1_l("eguchi", "", "EGU32.EXE", "38b75ecdedf662326fe4931a68ae60cd", 1410078, Common::JA_JPN, 501),
@@ -7361,6 +7371,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// https://web.archive.org/web/20000623024147/http://www.eddieandminx.com/demo.htm
 	// Map demo found on Disc Inferno from APC magazine (Australia), Dec 1999
 	WINDEMO1("eddieminx", "Map Demo", "mapgame.exe", "518a98696fe1122e08410b0f157f21bf", 5876875, 602),
+
+	WINGAME1("egbingo", "", "wcsup.dll", "t:66e3453072a8b17112e19e7ed80d7bcd", 4893667, 600),
+	WINGAME1("egsnowboard", "", "wcsup.dll", "t:9baa7e1c5151d66d4f287a01f4aba790", 2196349, 600),
+	WINGAME1("egwendy", "", "wcsup.dll", "t:cf595fd98c2fd789217acbf97f03a724", 2037619, 600),
 
 	MACGAME1("egypt", "", "Egypt", "0944b962ebb00f4b5d5149d220f8449b", 114142, 702),
 
