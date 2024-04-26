@@ -463,6 +463,10 @@ Common::Error Ultima8Engine::startupGame() {
 	int height = ConfMan.getInt("height");
 	changeVideoMode(width, height);
 
+	// Show the splash screen immediately now that the screen has been set up
+	_mouse->setMouseCursor(Mouse::MOUSE_NONE);
+	showSplashScreen();
+
 	_gameData = new GameData(_gameInfo);
 
 	if (_gameInfo->_type == GameInfo::GAME_U8) {
@@ -758,35 +762,20 @@ void Ultima8Engine::changeVideoMode(int width, int height) {
 	Graphics::ManagedSurface *surface = new Graphics::Screen(width, height, format);
 	_screen = new RenderSurface(surface);
 
-	if (_desktopGump) {
+	if (!_paletteManager) {
+		_paletteManager = new PaletteManager(format);
+	} else {
 		_paletteManager->PixelFormatChanged(format);
+	}
+
+	if (!_desktopGump) {
+		_desktopGump = new DesktopGump(0, 0, width, height);
+		_desktopGump->InitGump(0);
+		_desktopGump->MakeFocus();
+	} else {
 		_desktopGump->SetDims(Rect(0, 0, width, height));
 		_desktopGump->RenderSurfaceChanged();
-		paint();
-		return;
 	}
-
-	_desktopGump = new DesktopGump(0, 0, width, height);
-	_desktopGump->InitGump(0);
-	_desktopGump->MakeFocus();
-
-	if (GAME_IS_U8) {
-		_inverterGump = new InverterGump(0, 0, width, height);
-		_inverterGump->InitGump(0);
-	}
-
-	// Show the splash screen immediately now that the screen has been set up
-	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
-	if (saveSlot == -1) {
-		_mouse->setMouseCursor(Mouse::MOUSE_NONE);
-		showSplashScreen();
-	}
-
-	_paletteManager = new PaletteManager(format);
-
-	ConfMan.registerDefault("fadedModal", true);
-	bool faded_modal = ConfMan.getBool("fadedModal");
-	DesktopGump::SetFadedModal(faded_modal);
 
 	paint();
 }
@@ -1087,6 +1076,10 @@ void Ultima8Engine::setupCoreGumps() {
 	_desktopGump = new DesktopGump(0, 0, dims.width(), dims.height());
 	_desktopGump->InitGump(0);
 	_desktopGump->MakeFocus();
+
+	ConfMan.registerDefault("fadedModal", true);
+	bool faded_modal = ConfMan.getBool("fadedModal");
+	DesktopGump::SetFadedModal(faded_modal);
 
 	if (GAME_IS_U8) {
 		debugN(MM_INFO, "Creating Inverter...\n");
