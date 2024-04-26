@@ -5739,6 +5739,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("vusic", "Demo", "VUSIC The Screen Raver", "5bbb193a8785c70abe2a4d86b99e1536", 283291, 403),
 	WINDEMO1("vusic", "Demo", "VUSIC.EXE", "ff2c0a776d5f0c9aa5bc115d3b36676b", 693375, 400),
 
+	MACGAME2_l("wallobee", "", "xn--u9j9exa4dyd1jh4lp602begzc", "0666ae690e459d3d0d91800ebd94de46", 290780,
+								   "001a", "85c99656df8d4f04eee2379c5c1e1020", 2469832, Common::JA_JPN, 402),
+
 	// Original filename 'ワロビージャックの大冒険<デモ>'
 	MACDEMO2_l("wallobee", "Demo", "xn--baa0pja0512dela6bueub9gshf1k1a1rt742c060a2x4u", "0666ae690e459d3d0d91800ebd94de46", 290780,
 								   "001b.mov", "2b49fe4e49f9e846fb6e78f92e9a296d", 6675, Common::JA_JPN, 402),
