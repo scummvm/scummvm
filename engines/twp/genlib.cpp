@@ -346,19 +346,72 @@ static SQInteger frameCounter(HSQUIRRELVM v) {
 static SQInteger getUserPref(HSQUIRRELVM v) {
 	Common::String key;
 	if (SQ_FAILED(sqget(v, 2, key))) {
-		return sq_throwerror(v, "failed to get key");
+		return sq_throwerror(v, _SC("failed to get key"));
 	}
-	// TODO: use ConfMan to search for key
+	SQInteger numArgs = sq_gettop(v) - 1;
+	// is there a fault value as argument ?
+	if (numArgs > 1) {
+		SQObjectType type = sq_gettype(v, 3);
+		if (type == SQObjectType::OT_STRING) {
+			Common::String str;
+			sqget(v, 3, str);
+			sqpush(v, ConfMan.hasKey(key) ? ConfMan.get(key) : str);
+			return 1;
+		}
+		if (type == SQObjectType::OT_INTEGER) {
+			SQInteger integer;
+			sqget(v, 3, integer);
+			if (ConfMan.hasKey(key)) {
+				Common::String value = ConfMan.get(key);
+				bool bValue = false;
+				if (parseBool(value, bValue)) {
+					sqpush(v, bValue);
+					return 1;
+				}
+				sqpush(v, ConfMan.getInt(key));
+				return 1;
+			}
 
-	// if configuration
-	int numArgs = sq_gettop(v);
-	if (numArgs == 3) {
-		HSQOBJECT obj;
-		sq_getstackobj(v, 3, &obj);
-		sqpush(v, obj);
+			sqpush(v, integer);
+			return 1;
+		}
+		if (type == SQObjectType::OT_FLOAT) {
+			SQFloat fl;
+			sqget(v, 3, fl);
+			sqpush(v, ConfMan.hasKey(key) ? atof(ConfMan.get(key).c_str()) : fl);
+			return 1;
+		}
+		return sq_throwerror(v, _SC("failed to get user preferences"));
+	}
+
+	if (ConfMan.hasKey(key)) {
+		Common::String value = ConfMan.get(key);
+		bool isNumber = !value.empty();
+		bool isFloat = false;
+		for (size_t i = 0; i < value.size(); i++) {
+			if (!isFloat && value[i] == '.') {
+				isFloat = true;
+				continue;
+			}
+			if (!Common::isDigit(value[i])) {
+				isNumber = false;
+				break;
+			}
+		}
+		if (!isNumber) {
+			sqpush(v, value);
+			return 1;
+		}
+		if (isFloat) {
+			sqpush(v, atof(value.c_str()));
+			return 1;
+		}
+		sqpush(v, (SQInteger)atol(value.c_str()));
 		return 1;
 	}
-	return 0;
+
+	sq_pushnull(v);
+	return 1;
 }
 
 static SQInteger getPrivatePref(HSQUIRRELVM v) {
@@ -725,7 +778,30 @@ static SQInteger setPrivatePref(HSQUIRRELVM v) {
 }
 
 static SQInteger setUserPref(HSQUIRRELVM v) {
-	// TODO: setUserPref
+	Common::String key;
+	if (SQ_FAILED(sqget(v, 2, key))) {
+		return sq_throwerror(v, _SC("failed to get key"));
+	}
+	SQObjectType type = sq_gettype(v, 3);
+	switch (type) {
+	case SQObjectType::OT_STRING: {
+		Common::String str;
+		if (SQ_FAILED(sqget(v, 3, str))) {
+			return sq_throwerror(v, _SC("failed to get str"));
+		}
+		ConfMan.set(key, str);
+		return 0;
+	}
+	case SQObjectType::OT_INTEGER:
+		SQInteger integer;
+		if (SQ_FAILED(sqget(v, 3, integer))) {
+			return sq_throwerror(v, _SC("failed to get integer"));
+		}
+		ConfMan.setInt(key, (int)integer);
+		return 0;
+	default:
+		break;
+	}
 	warning("setUserPref not implemented");
 	return 0;
 }
