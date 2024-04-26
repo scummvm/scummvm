@@ -128,34 +128,34 @@ public:
 
 	/**
 	 * Reads value for the specified option
-	 * @param pszSection        Section in .INI file
-	 * @param pszOption         Option to update
-	 * @param pszValue          destination buffer for read value
-	 * @param pszDefault        Default value if not exists
-	 * @param nSize             Max length of pszValue buffer
+	 * @param section        Section in .INI file
+	 * @param option         Option to update
+	 * @param stringValue          destination buffer for read value
+	 * @param defaultValue        Default value if not exists
+	 * @param nSize             Max length of stringValue buffer
 	 * @return                  Error return code
 	 */
-	ErrorCode ReadSetting(const char *pszSection, const char *pszOption, char *pszValue, const char *pszDefault, uint32 nSize);
+	ErrorCode ReadSetting(const char *section, const char *option, char *stringValue, const char *defaultValue, uint32 nSize);
 
 	/**
 	 * Reads value for the specified option
-	 * @param pszSection        Section in .INI file
-	 * @param pszOption         Option to update
+	 * @param section        Section in .INI file
+	 * @param option         Option to update
 	 * @param nValue            Pointer to write value to
-	 * @param nDefault          Default value if not exists
+	 * @param defaultValue          Default value if not exists
 	 * @return                  Error return code
 	 */
-	ErrorCode ReadSetting(const char *pszSection, const char *pszOption, int *nValue, int nDefault);
+	ErrorCode ReadSetting(const char *section, const char *option, int *nValue, int defaultValue);
 
 	/**
 	 * Reads value for the specified option
-	 * @param pszSection        Section in .INI file
-	 * @param pszOption         Option to update
-	 * @param nValue            Pointer to write value to
-	 * @param nDefault          Default value if not exists
+	 * @param section        Section in .INI file
+	 * @param option         Option to update
+	 * @param boolValue            Pointer to write value to
+	 * @param defaultValue          Default value if not exists
 	 * @return                  Error return code
 	 */
-	ErrorCode ReadSetting(const char *pszSection, const char *pszOption, bool *nValue, bool nDefault);
+	ErrorCode ReadSetting(const char *section, const char *option, bool *boolValue, bool defaultValue);
 
 	/**
 	 * Loads current .INI options file

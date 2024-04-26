@@ -837,7 +837,7 @@ void SBarComputer::OnBofButton(CBofObject *pObject, int nState) {
 	case BCHELP: {
 		LogInfo("\tClicked Help");
 
-		CBagel *pApp = CBagel::GetBagApp();
+		CBagel *pApp = CBagel::getBagApp();
 
 		if (pApp != nullptr) {
 			CBagMasterWin *pWin = pApp->getMasterWnd();

@@ -27,7 +27,6 @@
 #include "bagel/boflib/gui/window.h"
 #include "bagel/boflib/options.h"
 #include "bagel/boflib/error.h"
-#include "bagel/boflib/gfx/cursor.h"
 #include "bagel/boflib/list.h"
 #include "bagel/boflib/string.h"
 #include "bagel/boflib/vhash_table.h"
@@ -38,11 +37,8 @@ namespace Bagel {
 // Note: Best performance is achieved if this value is a prime number!
 //
 #define HASH_TABLE_SIZE 131
-
 #define MAX_APP_NAME 128
-
 #define PATH_DELIMETER "/"
-
 #define DISK_1 1
 
 #define BAG_INSTALL_NONE 0 /* play entire game from where it was executed */
@@ -77,14 +73,14 @@ struct BagelReg {
 
 class CBagel : public CBofOptions, public CBofApp {
 public:
-	CBagel(const BagelReg *pGameReg);
+	CBagel(const BagelReg *gameReg);
 	~CBagel();
 
 	/**
 	 * Registers game information for this game object
-	 * @param pGameReg      Game registration info
+	 * @param gameReg      Game registration info
 	 */
-	void registerGame(const BagelReg *pGameReg);
+	void registerGame(const BagelReg *gameReg);
 
 	// these functions must be provided by the child class
 	//
@@ -108,62 +104,62 @@ public:
 
 	/**
 	 * Sets specified user option in associated .INI file
-	 * @param pszSection        .INI section to write to
-	 * @param pszOption         Option to add/update
-	 * @param pszValue          New value of option
-	 * @return                  Error return code
+	 * @param section        .INI section to write to
+	 * @param option         Option to add/update
+	 * @param stringValue    New value of option
+	 * @return               Error return code
 	 */
-	ErrorCode setOption(const char *pszSection, const char *pszOption, const char *pszValue);
+	ErrorCode setOption(const char *section, const char *option, const char *stringValue);
 
 	/**
 	 * Sets specified user option in associated .INI file
-	 * @param pszSection        .INI section to write to
-	 * @param pszOption         Option to add/update
-	 * @param nValue            New value of option
-	 * @return                  Error return code
+	 * @param section        .INI section to write to
+	 * @param option         Option to add/update
+	 * @param intValue       New value of option
+	 * @return               Error return code
 	 */
-	ErrorCode setOption(const char *pszSection, const char *pszOption, int nValue);
+	ErrorCode setOption(const char *section, const char *option, int intValue);
 
 	/**
 	 * Gets specified user option from associated .INI file
-	 * @param pszSection        .INI section to read from
-	 * @param pszOption         Option to retrieve
-	 * @param pszValue          Buffer to hold value
-	 * @param pszDefault        Default value if option not found
-	 * @param nSize             Length of the pszValue buffer
-	 * @return                  Error return code
+	 * @param section        .INI section to read from
+	 * @param option         Option to retrieve
+	 * @param stringValue    Buffer to hold value
+	 * @param defaultValue   Default value if option not found
+	 * @param size           Length of the stringValue buffer
+	 * @return               Error return code
 	*/
-	ErrorCode getOption(const char *pszSection, const char *pszOption, char *pszValue, const char *pszDefault, uint32 nSize);
+	ErrorCode getOption(const char *section, const char *option, char *stringValue, const char *defaultValue, uint32 size);
 
 	/**
 	 * Gets specified user option from associated .INI file
-	 * @param pszSection        .INI section to read from
-	 * @param pszOption         Option to retrieve
-	 * @param nValue            Buffer to hold value
-	 * @param nDefault          Default value if option not found
-	 * @return                  Error return code
+	 * @param section        .INI section to read from
+	 * @param option         Option to retrieve
+	 * @param intValue       Buffer to hold value
+	 * @param defaultValue   Default value if option not found
+	 * @return               Error return code
 	 */
-	ErrorCode getOption(const char *pszSection, const char *pszOption, int *nValue, int nDefault);
+	ErrorCode getOption(const char *section, const char *option, int *intValue, int defaultValue);
 
 	/**
 	 * Gets specified user option from associated .INI file
-	 * @param pszSection        .INI section to read from
-	 * @param pszOption         Option to retrieve
-	 * @param nValue            Buffer to hold value
-	 * @param nDefault          Default value if option not found
-	 * @return                  Error return code
+	 * @param section        .INI section to read from
+	 * @param option         Option to retrieve
+	 * @param boolValue      Buffer to hold value
+	 * @param defaultValue   Default value if option not found
+	 * @return               Error return code
 	 */
-	ErrorCode getOption(const char *pszSection, const char *pszOption, bool *nValue, int nDefault);
+	ErrorCode getOption(const char *section, const char *option, bool *boolValue, int defaultValue);
 
-	void setAppName(const char *pszNewAppName) {
-		Common::strcpy_s(m_szAppName, pszNewAppName);
+	void setAppName(const char *newAppName) {
+		Common::strcpy_s(m_szAppName, newAppName);
 	}
 
 	CBagMasterWin *getMasterWnd() {
 		return (CBagMasterWin *)m_pMainWnd;
 	}
 
-	static CBagel *GetBagApp() {
+	static CBagel *getBagApp() {
 		return (CBagel *)m_pBofApp;
 	}
 
@@ -173,16 +169,16 @@ public:
 
 	/**
 	 * Checks to make sure the Game CD is in the drive
-	 * @param nDiskID       Disk number
-	 * @param pszWaveFile   Filename
+	 * @param diskId		Disk number
+	 * @param waveFile		Filename
 	 * @return              Error return code
 	 */
-	ErrorCode VerifyCDInDrive(int nDiskID = DISK_1, const char *pszWaveFile = nullptr);
+	ErrorCode verifyCDInDrive(int diskId = DISK_1, const char *waveFile = nullptr);
 
-	static void ShowNextCDDialog(CBofWindow *pParentWin, int nCDID);
+	static void showNextCDDialog(CBofWindow *parentWin, int diskId);
 
-	static CBofVHashTable<CBofString, HASH_TABLE_SIZE> *GetCacheFileList() {
-		return m_pCacheFileList;
+	static CBofVHashTable<CBofString, HASH_TABLE_SIZE> *getCacheFileList() {
+		return _cacheFileList;
 	}
 
 protected:
@@ -190,27 +186,23 @@ protected:
 	 * initialize full path names to files stored on local disk
 	 * @return          Error return code
 	 */
-	ErrorCode InitLocalFilePaths();
-	ErrorCode InitGraphics();
+	ErrorCode initLocalFilePaths();
 
 	/**
 	 * Checks system resources, determining if user has the minimum
 	 * system requirements to play this game.
 	 * @return          Error return code
 	 */
-	ErrorCode VerifyRequirements();
+	ErrorCode verifyRequirements();
 
 	// Data members
-	const BagelReg *m_pGameReg = nullptr;
+	const BagelReg *_gameReg = nullptr;
 
-	int m_nNumRetries = 20;
-	int m_nInstallCode = 0;
-
-	CBofString m_lpCmdLine;
-	CBofCursor m_cCursor;
+	int _numRetries = 20;
+	int _installCode = 0;
 
 private:
-	static CBofVHashTable<CBofString, HASH_TABLE_SIZE> *m_pCacheFileList;
+	static CBofVHashTable<CBofString, HASH_TABLE_SIZE> *_cacheFileList;
 };
 
 } // namespace Bagel

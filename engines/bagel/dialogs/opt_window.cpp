@@ -405,7 +405,7 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 		CBagel *pApp;
 		switch (pButton->GetControlID()) {
 		case HELP_ID:
-			pApp = CBagel::GetBagApp();
+			pApp = CBagel::getBagApp();
 			if (pApp != nullptr) {
 				pWin = pApp->getMasterWnd();
 				if ((pWin != nullptr) && pWin->GetCurrentGameWindow() != nullptr) {
@@ -415,7 +415,7 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 			break;
 
 		case CREDITS_ID:
-			pApp = CBagel::GetBagApp();
+			pApp = CBagel::getBagApp();
 			if (pApp != nullptr) {
 				pWin = pApp->getMasterWnd();
 				if (pWin != nullptr) {
@@ -433,7 +433,7 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 			break;
 
 		case QUIT_ID: {
-			pApp = CBagel::GetBagApp();
+			pApp = CBagel::getBagApp();
 			if (pApp != nullptr) {
 				pWin = pApp->getMasterWnd();
 				if ((pWin != nullptr) &&  pWin->ShowQuitDialog(this)) {
@@ -448,7 +448,7 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 		}
 
 		case SAVE_ID: {
-			pApp = CBagel::GetBagApp();
+			pApp = CBagel::getBagApp();
 			if (pApp != nullptr) {
 				pWin = pApp->getMasterWnd();
 				if (pWin != nullptr) {
@@ -460,7 +460,7 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 		}
 
 		case RESTORE_ID: {
-			pApp = CBagel::GetBagApp();
+			pApp = CBagel::getBagApp();
 			if (pApp != nullptr) {
 				pWin = pApp->getMasterWnd();
 				if ((pWin != nullptr) && pWin->ShowRestoreDialog(this)) {
@@ -475,7 +475,7 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 		}
 
 		case RESTART_ID: {
-			pApp = CBagel::GetBagApp();
+			pApp = CBagel::getBagApp();
 			if (pApp != nullptr) {
 				pWin = pApp->getMasterWnd();
 				if ((pWin != nullptr) && pWin->ShowRestartDialog(this)) {
@@ -539,7 +539,7 @@ void CBagOptWindow::OnBofScrollBar(CBofObject *pObj, int nPos) {
 void CBagOptWindow::SaveOutNewSettings() {
 	Assert(IsValidObject(this));
 
-	CBagel *pApp = CBagel::GetBagApp();
+	CBagel *pApp = CBagel::getBagApp();
 
 	// Write out current system settings
 	if (pApp != nullptr) {
@@ -578,7 +578,7 @@ void CBagOptWindow::SaveOutNewSettings() {
 void CBagOptWindow::LoadIniSettings() {
 	Assert(IsValidObject(this));
 
-	CBagel *pApp = CBagel::GetBagApp();
+	CBagel *pApp = CBagel::getBagApp();
 
 	// Read in current system settings
 	if (pApp != nullptr) {
@@ -653,7 +653,7 @@ void CBagOptWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	switch (lKey) {
 	// Help
 	case BKEY_F1:
-		pApp = CBagel::GetBagApp();
+		pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
 			pWin = pApp->getMasterWnd();
 			if ((pWin != nullptr) && (pWin->GetCurrentGameWindow() != nullptr)) {
@@ -666,7 +666,7 @@ void CBagOptWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	case BKEY_ALT_s:
 	case BKEY_F2:
 	case BKEY_SAVE:
-		pApp = CBagel::GetBagApp();
+		pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
 			pWin = pApp->getMasterWnd();
 			if (pWin != nullptr) {
@@ -678,7 +678,7 @@ void CBagOptWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	// Restore
 	case BKEY_ALT_r:
 	case BKEY_RESTORE:
-		pApp = CBagel::GetBagApp();
+		pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
 			pWin = pApp->getMasterWnd();
 			if ((pWin != nullptr) && pWin->ShowRestoreDialog(this)) {
@@ -693,7 +693,7 @@ void CBagOptWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 
 	// Restart
 	case BKEY_F12:
-		pApp = CBagel::GetBagApp();
+		pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
 			pWin = pApp->getMasterWnd();
 			if ((pWin != nullptr) && pWin->ShowRestartDialog(this)) {
@@ -709,7 +709,7 @@ void CBagOptWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	// Quit
 	case BKEY_ALT_F4:
 	case BKEY_ALT_q: {
-		pApp = CBagel::GetBagApp();
+		pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
 			pWin = pApp->getMasterWnd();
 			if ((pWin != nullptr) && pWin->ShowQuitDialog(this)) {

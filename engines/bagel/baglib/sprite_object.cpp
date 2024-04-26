@@ -56,7 +56,7 @@ ErrorCode CBagSpriteObject::attach() {
 		if ((m_xSprite = new CBofSprite()) != nullptr) {
 			if (m_xSprite->LoadSprite(GetFileName(), GetCels()) != false && (m_xSprite->Width() != 0) && (m_xSprite->Height() != 0)) {
 				if (IsTransparent()) {
-					int nMaskColor = CBagel::GetBagApp()->getChromaColor();
+					int nMaskColor = CBagel::getBagApp()->getChromaColor();
 
 					m_xSprite->SetMaskColor(nMaskColor);
 				}
@@ -74,7 +74,7 @@ ErrorCode CBagSpriteObject::attach() {
 				SetProperty("CURR_CEL", GetState());
 
 				// This might add something to the PDA, make sure it gets redrawn.
-				CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev());
+				CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev());
 
 				if (pMainWin != nullptr) {
 					pMainWin->SetPreFilterPan(true);

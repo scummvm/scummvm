@@ -654,7 +654,7 @@ void CBibbleWindow::OnBofButton(CBofObject *pObject, int nState) {
 	case BIBBLE_BUTTON_HELP: {
 		LogInfo("\tClicked Help");
 
-		CBagel *pApp = CBagel::GetBagApp();
+		CBagel *pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
 			CBagMasterWin *pWin = pApp->getMasterWnd();
 			if (pWin != nullptr) {

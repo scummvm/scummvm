@@ -317,7 +317,7 @@ ErrorCode CBagMasterWin::NewGame() {
 	// Inits for a New Game
 	m_bObjSave = false;
 
-	CBagel *pApp = CBagel::GetBagApp();
+	CBagel *pApp = CBagel::getBagApp();
 	// Find the starting .WLD file name
 	if (pApp != nullptr) {
 		pApp->getOption("Startup", "WLDFile", sWorkStr, STARTWORLD, 255);
@@ -463,11 +463,10 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 		}
 
 		// Possibly need to switch CDs
-		CBagel *pBagApp = CBagel::GetBagApp();
+		CBagel *pBagApp = CBagel::getBagApp();
 		if (pBagApp != nullptr) {
-			m_errCode = pBagApp->VerifyCDInDrive(m_nDiskID, m_cCDChangeAudio.GetBuffer());
-			if (m_errCode != ERR_NONE ||
-					g_engine->shouldQuit()) {
+			m_errCode = pBagApp->verifyCDInDrive(m_nDiskID, m_cCDChangeAudio.GetBuffer());
+			if (m_errCode != ERR_NONE || g_engine->shouldQuit()) {
 				Close();
 				return m_errCode;
 			}
@@ -1442,7 +1441,7 @@ void CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 	// 1st, wipe it
 	BofMemSet(pSaveBuf, 0, sizeof(ST_BAGEL_SAVE));
 
-	CBagel *pApp = CBagel::GetBagApp();
+	CBagel *pApp = CBagel::getBagApp();
 	if (pApp != nullptr) {
 		CBagMasterWin *pWin = pApp->getMasterWnd();
 		if (pWin != nullptr) {
@@ -1776,7 +1775,7 @@ bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 bool CBagMasterWin::GetFlyThru() {
 	bool bFlyThrusOn = true;
-	CBagel *pApp = CBagel::GetBagApp();
+	CBagel *pApp = CBagel::getBagApp();
 	if (pApp != nullptr) {
 		pApp->getOption(USER_OPTIONS, "FlyThroughs", &bFlyThrusOn, true);
 	}
@@ -1786,7 +1785,7 @@ bool CBagMasterWin::GetFlyThru() {
 
 int CBagMasterWin::GetMidiVolume() {
 	int nMidiVol = VOLUME_INDEX_DEFAULT;
-	CBagel *pApp = CBagel::GetBagApp();
+	CBagel *pApp = CBagel::getBagApp();
 	if (pApp != nullptr) {
 		pApp->getOption(USER_OPTIONS, "MidiVolume", &nMidiVol, VOLUME_INDEX_DEFAULT);
 		if (nMidiVol < VOLUME_INDEX_MIN || nMidiVol > VOLUME_INDEX_MAX) {
@@ -1799,7 +1798,7 @@ int CBagMasterWin::GetMidiVolume() {
 
 void CBagMasterWin::SetMidiVolume(int nVol) {
 	Assert(nVol >= VOLUME_INDEX_MIN && nVol <= VOLUME_INDEX_MAX);
-	CBagel *pApp = CBagel::GetBagApp();
+	CBagel *pApp = CBagel::getBagApp();
 
 	if (pApp != nullptr) {
 		pApp->setOption(USER_OPTIONS, "MidiVolume", nVol);
@@ -1811,7 +1810,7 @@ void CBagMasterWin::SetMidiVolume(int nVol) {
 
 int CBagMasterWin::GetWaveVolume() {
 	int nWaveVol = VOLUME_INDEX_DEFAULT;
-	CBagel *pApp = CBagel::GetBagApp();
+	CBagel *pApp = CBagel::getBagApp();
 	if (pApp != nullptr) {
 		pApp->getOption(USER_OPTIONS, WAVE_VOLUME, &nWaveVol, VOLUME_INDEX_DEFAULT);
 
@@ -1825,7 +1824,7 @@ int CBagMasterWin::GetWaveVolume() {
 
 void CBagMasterWin::SetWaveVolume(int nVol) {
 	Assert(nVol >= VOLUME_INDEX_MIN && nVol <= VOLUME_INDEX_MAX);
-	CBagel *pApp = CBagel::GetBagApp();
+	CBagel *pApp = CBagel::getBagApp();
 
 	if (pApp != nullptr) {
 		pApp->setOption(USER_OPTIONS, WAVE_VOLUME, nVol);
@@ -1837,7 +1836,7 @@ void CBagMasterWin::SetWaveVolume(int nVol) {
 
 int CBagMasterWin::GetCorrection() {
 	int nCorrection = DEFAULT_CORRECTION;
-	CBagel *pApp = CBagel::GetBagApp();
+	CBagel *pApp = CBagel::getBagApp();
 	if (pApp != nullptr) {
 		pApp->getOption(USER_OPTIONS, "Correction", &nCorrection, DEFAULT_CORRECTION);
 
@@ -1890,7 +1889,7 @@ void CBagMasterWin::SetCorrection(int nCorrection) {
 		break;
 	}
 
-	CBagel *pApp = CBagel::GetBagApp();
+	CBagel *pApp = CBagel::getBagApp();
 	if (pApp != nullptr) {
 		pApp->setOption(USER_OPTIONS, "Correction", nActualCorr);
 	}
@@ -1898,7 +1897,7 @@ void CBagMasterWin::SetCorrection(int nCorrection) {
 
 int CBagMasterWin::GetPanSpeed() {
 	int n = 1;
-	CBagel *pApp = CBagel::GetBagApp();
+	CBagel *pApp = CBagel::getBagApp();
 	if (pApp != nullptr) {
 		pApp->getOption(USER_OPTIONS, "PanSpeed", &n, 1);
 
@@ -1912,7 +1911,7 @@ int CBagMasterWin::GetPanSpeed() {
 
 void CBagMasterWin::SetPanSpeed(int nSpeed) {
 	Assert(nSpeed >= 0 && nSpeed <= 5);
-	CBagel *pApp = CBagel::GetBagApp();
+	CBagel *pApp = CBagel::getBagApp();
 
 	if (pApp != nullptr) {
 		pApp->setOption(USER_OPTIONS, "PanSpeed", nSpeed);
@@ -1921,7 +1920,7 @@ void CBagMasterWin::SetPanSpeed(int nSpeed) {
 
 bool CBagMasterWin::GetPanimations() {
 	bool bPanims = 0;
-	CBagel *pApp = CBagel::GetBagApp();
+	CBagel *pApp = CBagel::getBagApp();
 	if (pApp != nullptr) {
 		pApp->getOption(USER_OPTIONS, "Panimations", &bPanims, true);
 	}
@@ -1930,7 +1929,7 @@ bool CBagMasterWin::GetPanimations() {
 }
 
 void CBagMasterWin::SetPanimations(bool bPanims) {
-	CBagel *pApp = CBagel::GetBagApp();
+	CBagel *pApp = CBagel::getBagApp();
 
 	if (pApp != nullptr) {
 		pApp->setOption(USER_OPTIONS, "Panimations", bPanims);
@@ -1962,7 +1961,7 @@ void CBagMasterWin::MuteToggle() {
 }
 
 void CBagMasterWin::ForcePaintScreen() {
-	CBagel *pApp = CBagel::GetBagApp();
+	CBagel *pApp = CBagel::getBagApp();
 	if (pApp != nullptr) {
 		CBagMasterWin *pWin = pApp->getMasterWnd();
 		if (pWin != nullptr) {

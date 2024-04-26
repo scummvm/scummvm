@@ -148,7 +148,7 @@ void CBagRestartDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 
 	// Start a new game
 	case BKEY_ENTER: {
-		CBagel *pApp = CBagel::GetBagApp();
+		CBagel *pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
 			CBagMasterWin *pWin = pApp->getMasterWnd();
 			if (pWin != nullptr) {
@@ -209,7 +209,7 @@ void CBagRestartDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 
 	// Restart a new game
 	case RESTART_BTN: {
-		CBagel *pApp = CBagel::GetBagApp();
+		CBagel *pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
 			CBagMasterWin *pWin = pApp->getMasterWnd();
 			if (pWin != nullptr) {

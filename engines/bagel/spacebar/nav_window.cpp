@@ -693,7 +693,7 @@ void CNavWindow::OnBofButton(CBofObject *pObject, int nState) {
 		LogInfo("\tClicked Help");
 
 		KillTimer(777);
-		CBagel *pApp = CBagel::GetBagApp();
+		CBagel *pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
 			CBagMasterWin *pWin = pApp->getMasterWnd();
 			if (pWin != nullptr) {

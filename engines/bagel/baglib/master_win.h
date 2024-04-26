@@ -35,8 +35,8 @@
 
 namespace Bagel {
 
-#define SDEVMNGR CBagel::GetBagApp()->getMasterWnd()->GetStorageDevManager()
-#define VARMNGR CBagel::GetBagApp()->getMasterWnd()->GetVariableManager()
+#define SDEVMNGR CBagel::getBagApp()->getMasterWnd()->GetStorageDevManager()
+#define VARMNGR CBagel::getBagApp()->getMasterWnd()->GetVariableManager()
 
 class CBagStorageDevManager;
 class CBagStorageDevWnd;

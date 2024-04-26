@@ -37,17 +37,17 @@ namespace Bagel {
 static unsigned stringHashFunction(const CBofString &s) {
 	return s.Hash();
 }
-CBofVHashTable<CBofString, HASH_TABLE_SIZE> *CBagel::m_pCacheFileList;
+CBofVHashTable<CBofString, HASH_TABLE_SIZE> *CBagel::_cacheFileList;
 
 // Initialize global variables.
 //
 CBofWindow *g_pHackWindow;
 
-CBagel::CBagel(const BagelReg *pGameReg) {
-	Assert(pGameReg != nullptr);
-	m_pCacheFileList = new CBofVHashTable<CBofString, HASH_TABLE_SIZE>(&stringHashFunction);
+CBagel::CBagel(const BagelReg *gameReg) {
+	Assert(gameReg != nullptr);
+	_cacheFileList = new CBofVHashTable<CBofString, HASH_TABLE_SIZE>(&stringHashFunction);
 
-	registerGame(pGameReg);
+	registerGame(gameReg);
 }
 
 CBagel::~CBagel() {
@@ -57,64 +57,64 @@ CBagel::~CBagel() {
 	Release();
 
 	// Empty the file cache.
-	if (m_pCacheFileList) {
-		delete m_pCacheFileList;
-		m_pCacheFileList = nullptr;
+	if (_cacheFileList) {
+		delete _cacheFileList;
+		_cacheFileList = nullptr;
 	}
 
 	m_szAppName[0] = '\0';
 	m_pMainWnd = nullptr;
-	m_pGameReg = nullptr;
+	_gameReg = nullptr;
 }
 
-void CBagel::registerGame(const BagelReg *pGameReg) {
+void CBagel::registerGame(const BagelReg *gameReg) {
 	Assert(IsValidObject(this));
-	m_pGameReg = pGameReg;
+	_gameReg = gameReg;
 
 	// Init statics
 	g_pHackWindow = nullptr;
 
 	// Use registration info to init this game object
-	if (pGameReg != nullptr) {
+	if (gameReg != nullptr) {
 		// Keep application name
-		setAppName(pGameReg->_gameName);
+		setAppName(gameReg->_gameName);
 
 		// Load this game's .ini file
-		if (pGameReg->_optionFile != nullptr)
-			LoadOptionFile(pGameReg->_optionFile);
+		if (gameReg->_optionFile != nullptr)
+			LoadOptionFile(gameReg->_optionFile);
 	}
 }
 
-ErrorCode CBagel::setOption(const char *pszSection, const char *pszOption, const char *pszValue) {
+ErrorCode CBagel::setOption(const char *section, const char *option, const char *stringValue) {
 	Assert(IsValidObject(this));
-	return WriteSetting(pszSection, pszOption, pszValue);
+	return WriteSetting(section, option, stringValue);
 }
 
-ErrorCode CBagel::setOption(const char *pszSection, const char *pszOption, int nValue) {
+ErrorCode CBagel::setOption(const char *section, const char *option, int intValue) {
 	Assert(IsValidObject(this));
-	return WriteSetting(pszSection, pszOption, nValue);
+	return WriteSetting(section, option, intValue);
 }
 
-ErrorCode CBagel::getOption(const char *pszSection, const char *pszOption, char *pszValue, const char *pszDefault, uint32 nSize) {
+ErrorCode CBagel::getOption(const char *section, const char *option, char *stringValue, const char *defaultValue, uint32 size) {
 	Assert(IsValidObject(this));
-	return ReadSetting(pszSection, pszOption, pszValue, pszDefault, nSize);
+	return ReadSetting(section, option, stringValue, defaultValue, size);
 }
 
-ErrorCode CBagel::getOption(const char *pszSection, const char *pszOption, int *pValue, int nDefault) {
+ErrorCode CBagel::getOption(const char *section, const char *option, int *pValue, int defaultValue) {
 	Assert(IsValidObject(this));
-	return ReadSetting(pszSection, pszOption, pValue, nDefault);
+	return ReadSetting(section, option, pValue, defaultValue);
 }
 
-ErrorCode CBagel::getOption(const char *pszSection, const char *pszOption, bool *pValue, int nDefault) {
+ErrorCode CBagel::getOption(const char *section, const char *option, bool *pValue, int defaultValue) {
 	Assert(IsValidObject(this));
-	return ReadSetting(pszSection, pszOption, pValue, nDefault);
+	return ReadSetting(section, option, pValue, defaultValue);
 }
 
 ErrorCode CBagel::initialize() {
 	Assert(IsValidObject(this));
 
 	// Game must already be registered with registerGame()
-	Assert(m_pGameReg != nullptr);
+	Assert(_gameReg != nullptr);
 
 	CBofApp::initialize();
 
@@ -135,9 +135,9 @@ ErrorCode CBagel::initialize() {
 	}
 	PaintTable::initialize(paintTable);
 
-	getOption("UserOptions", "WrongCDRetries", &m_nNumRetries, 20);
-	if (m_nNumRetries < 1) {
-		m_nNumRetries = 100;
+	getOption("UserOptions", "WrongCDRetries", &_numRetries, 20);
+	if (_numRetries < 1) {
+		_numRetries = 100;
 	}
 
 	LogInfo("Initializing BAGEL");
@@ -146,10 +146,10 @@ ErrorCode CBagel::initialize() {
 	CBofCursor::Hide();
 
 	// Initialize local game paths
-	InitLocalFilePaths();
+	initLocalFilePaths();
 
 	// Check for adequate system resources
-	VerifyRequirements();
+	verifyRequirements();
 
 	// Child class must instantiate the Main Window
 	return m_errCode;
@@ -180,24 +180,24 @@ ErrorCode CBagel::shutdown() {
 }
 
 
-ErrorCode CBagel::InitLocalFilePaths() {
+ErrorCode CBagel::initLocalFilePaths() {
 	Assert(IsValidObject(this));
 
 	// Check for Installed state of game
-	getOption("Startup", "InstallCode", &m_nInstallCode, BAG_INSTALL_DEFAULT);
+	getOption("Startup", "InstallCode", &_installCode, BAG_INSTALL_DEFAULT);
 
 	return m_errCode;
 }
 
-ErrorCode CBagel::VerifyCDInDrive(int nDiskID, const char *pszWaveFile) {
+ErrorCode CBagel::verifyCDInDrive(int diskId, const char *waveFile) {
 	Assert(IsValidObject(this));
 
-	if (m_pGameReg->_numberOfCDs > 0) {
+	if (_gameReg->_numberOfCDs > 0) {
 		char szBuf[MAX_DIRPATH];
 
 		// Find the drive that this disk is in
-		Common::sprintf_s(szBuf, "DISK%d", nDiskID);
-		Common::sprintf_s(szBuf, "$SBARDIR%sDISK%d", PATH_DELIMETER, nDiskID);
+		Common::sprintf_s(szBuf, "DISK%d", diskId);
+		Common::sprintf_s(szBuf, "$SBARDIR%sDISK%d", PATH_DELIMETER, diskId);
 
 		CBofString cString(szBuf, MAX_DIRPATH);
 		MACROREPLACE(cString);
@@ -209,20 +209,20 @@ ErrorCode CBagel::VerifyCDInDrive(int nDiskID, const char *pszWaveFile) {
 			// the drive, or Abort.
 			LogInfo(BuildString("Unable to find game's DiskID as '%s'", cString.GetBuffer()));
 
-			if (i++ > m_nNumRetries) {
+			if (i++ > _numRetries) {
 				ReportError(ERR_FFIND, "Could not recover from missing CD");
 				break;
 			}
 
 			// Play the Zelda "Alias, you should insert disk 1 at this time."
-			if (i == 1 && pszWaveFile != nullptr) {
-				BofPlaySound(pszWaveFile, SOUND_WAVE | SOUND_ASYNCH);
+			if (i == 1 && waveFile != nullptr) {
+				BofPlaySound(waveFile, SOUND_WAVE | SOUND_ASYNCH);
 			}
 
 			if (g_pHackWindow == nullptr) {
-				ShowNextCDDialog(m_pMainWnd, nDiskID);
+				showNextCDDialog(m_pMainWnd, diskId);
 			} else {
-				ShowNextCDDialog(g_pHackWindow, nDiskID);
+				showNextCDDialog(g_pHackWindow, diskId);
 			}
 		}
 	}
@@ -230,9 +230,9 @@ ErrorCode CBagel::VerifyCDInDrive(int nDiskID, const char *pszWaveFile) {
 	return m_errCode;
 }
 
-ErrorCode CBagel::VerifyRequirements() {
+ErrorCode CBagel::verifyRequirements() {
 	Assert(IsValidObject(this));
-	Assert(m_pGameReg != nullptr);
+	Assert(_gameReg != nullptr);
 
 	return m_errCode;
 }
@@ -252,14 +252,14 @@ bool MACROREPLACE(CBofString &s) {
 }
 
 
-void CBagel::ShowNextCDDialog(CBofWindow *pParentWin, int nCDID) {
+void CBagel::showNextCDDialog(CBofWindow *parentWin, int diskId) {
 	CBagNextCDDialog cNextCDDialog;
 
 	// Use specified bitmap as this dialog's image
 	CBofPalette *pPal = nullptr;
 	CBofBitmap *pBmp = nullptr;
 
-	switch (nCDID) {
+	switch (diskId) {
 
 	case 1:
 		pBmp = Bagel::LoadBitmap(BuildSysDir("DISK1.BMP"), pPal);
@@ -284,7 +284,7 @@ void CBagel::ShowNextCDDialog(CBofWindow *pParentWin, int nCDID) {
 	CBofRect cRect = cNextCDDialog.GetBackdrop()->GetRect();
 
 	// Create the dialog box
-	cNextCDDialog.Create("NextCD", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pParentWin);
+	cNextCDDialog.Create("NextCD", cRect.left, cRect.top, cRect.Width(), cRect.Height(), parentWin);
 	cNextCDDialog.Center();
 
 	cNextCDDialog.DoModal();
