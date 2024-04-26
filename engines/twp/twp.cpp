@@ -902,7 +902,6 @@ Common::Error TwpEngine::run() {
 				case TwpAction::kSelectActor3:
 				case TwpAction::kSelectActor4:
 				case TwpAction::kSelectActor5:
-				case TwpAction::kSelectActor6:
 					if (_actorSwitcher._mode == asOn) {
 						int index = (TwpAction)e.customType - kSelectActor1;
 						ActorSlot *slot = &_hud->_actorSlots[index];

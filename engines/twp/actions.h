@@ -36,7 +36,6 @@ enum TwpAction {
 	kSelectActor3,
 	kSelectActor4,
 	kSelectActor5,
-	kSelectActor6,
 	kSelectChoice1,
 	kSelectChoice2,
 	kSelectChoice3,

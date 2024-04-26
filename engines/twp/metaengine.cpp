@@ -158,7 +158,6 @@ Common::Array<Common::Keymap *> TwpMetaEngine::initKeymaps(const char *target) c
 		{"SELECTACTOR3", _s("Select Actor 3"), Twp::kSelectActor3, "3", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
 		{"SELECTACTOR4", _s("Select Actor 4"), Twp::kSelectActor4, "4", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
 		{"SELECTACTOR5", _s("Select Actor 5"), Twp::kSelectActor5, "5", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
-		{"SELECTACTOR6", _s("Select Actor 6"), Twp::kSelectActor6, "6", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
 		{"SELECTCHOICE1", _s("Select Choice 1"), Twp::kSelectChoice1, "1", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
 		{"SELECTCHOICE2", _s("Select Choice 2"), Twp::kSelectChoice2, "2", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
 		{"SELECTCHOICE3", _s("Select Choice 3"), Twp::kSelectChoice3, "3", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
