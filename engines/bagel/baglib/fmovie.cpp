@@ -88,6 +88,9 @@ bool CBagFMovie::Open(const char *sFilename, CBofRect *pBounds) {
 			// Center the movie to the parent window
 			CenterRect();
 
+		// Paint the image to the screen.
+		m_pFilterBmp->Paint(this, 0, 0);
+
 		return true;
 	}
 
@@ -154,10 +157,6 @@ bool CBagFMovie::OpenMovie(const char *sFilename) {
 			}
 		}
 	}
-
-	// Paint the image to the screen.
-	m_pFilterBmp->Paint(this, 0, 0);
-
 
 	return true;
 }
