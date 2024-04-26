@@ -159,7 +159,7 @@ void CBagStartDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 	if (nId == RESTORE_BTN) {
 		CBagel *pApp = CBagel::GetBagApp();
 		if (pApp != nullptr) {
-			CBagMasterWin *pWin = pApp->GetMasterWnd();
+			CBagMasterWin *pWin = pApp->getMasterWnd();
 
 			if ((pWin != nullptr) && pWin->ShowRestoreDialog(this)) {
 				Close();

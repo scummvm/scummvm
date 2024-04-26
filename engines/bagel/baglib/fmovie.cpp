@@ -147,7 +147,7 @@ bool CBagFMovie::OpenMovie(const char *sFilename) {
 	CBagMasterWin *pWnd;
 	CBagStorageDevWnd *pSDevWnd;
 	FilterFunction pFilterFunction;
-	if ((pWnd = CBagel::GetBagApp()->GetMasterWnd()) != nullptr) {
+	if ((pWnd = CBagel::GetBagApp()->getMasterWnd()) != nullptr) {
 		if ((pSDevWnd = pWnd->GetCurrentStorageDev()) != nullptr) {
 			if (pSDevWnd->IsFiltered()) {
 				uint16 nFilterId = pSDevWnd->GetFilterId();
@@ -190,7 +190,7 @@ void CBagFMovie::OnMainLoop() {
 
 			m_pBmpBuf->Paint1To1(m_pFilterBmp);
 
-			if ((pWnd = CBagel::GetBagApp()->GetMasterWnd()) != nullptr) {
+			if ((pWnd = CBagel::GetBagApp()->getMasterWnd()) != nullptr) {
 				if ((pSDevWnd = pWnd->GetCurrentStorageDev()) != nullptr) {
 					if (pSDevWnd->IsFiltered()) {
 						uint16 nFilterId = pSDevWnd->GetFilterId();

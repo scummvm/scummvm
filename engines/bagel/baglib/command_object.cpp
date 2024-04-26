@@ -56,20 +56,20 @@ bool CBagCommandObject::RunObject() {
 
 		// Check if these items should be replaced by the current sdev
 		if (!sSrcSDev.IsEmpty() && !sSrcSDev.Find(CURRSDEV_TOKEN)) {
-			sSrcSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()->GetName();
+			sSrcSDev = CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev()->GetName();
 		}
 
 		if (!sDstSDev.IsEmpty() && !sDstSDev.Find(CURRSDEV_TOKEN)) {
-			sDstSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()->GetName();
+			sDstSDev = CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev()->GetName();
 		}
 
 		// Check if these items should be replaced by the previous sdev
 		if (!sSrcSDev.IsEmpty() && !sSrcSDev.Find(PREVSDEV_TOKEN)) {
-			sSrcSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()->GetPrevSDev();
+			sSrcSDev = CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev()->GetPrevSDev();
 		}
 
 		if (!sDstSDev.IsEmpty() && !sDstSDev.Find(PREVSDEV_TOKEN)) {
-			sDstSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()->GetPrevSDev();
+			sDstSDev = CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev()->GetPrevSDev();
 		}
 
 		if (GetFileName() == "REMOVE") {
@@ -113,7 +113,7 @@ bool CBagCommandObject::RunObject() {
 			Assert(nSlot >= 0 && nSlot < 8);
 
 		} else if (GetFileName() == "CLOSE") {
-			CBagStorageDevWnd *pSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev();
+			CBagStorageDevWnd *pSDev = CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev();
 			pSDev->Close();
 
 		} else if (GetFileName() == "UPDATE") {
@@ -122,7 +122,7 @@ bool CBagCommandObject::RunObject() {
 			if (!bUpdate) {
 				bUpdate = true;
 
-				CBagStorageDevWnd *pSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev();
+				CBagStorageDevWnd *pSDev = CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev();
 				pSDev->AttachActiveObjects();
 
 				bUpdate = false;
@@ -137,7 +137,7 @@ bool CBagCommandObject::RunObject() {
 				bEventLoop = true;
 
 				CBagStorageDev *pSDev;
-				if ((pSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()) != nullptr) {
+				if ((pSDev = CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev()) != nullptr) {
 					if (pSDev->GetDeviceType() == SDEV_GAMEWIN) {
 						CBagPanWindow *pWin;
 						pWin = (CBagPanWindow *)pSDev;
@@ -163,7 +163,7 @@ bool CBagCommandObject::RunObject() {
 			// Get a pointer to the current game window
 			CBagStorageDevWnd *pWin;
 
-			if ((pWin = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()) != nullptr) {
+			if ((pWin = CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev()) != nullptr) {
 				pWin->PaintScreen(nullptr);
 			}
 
@@ -181,7 +181,7 @@ bool CBagCommandObject::RunObject() {
 			}
 
 		} else if (GetFileName() == "DEATH") {
-			CBagel::GetBagApp()->GetMasterWnd()->PostUserMessage(WM_DIE, 0);
+			CBagel::GetBagApp()->getMasterWnd()->PostUserMessage(WM_DIE, 0);
 			g_bAllowPaint = false;
 
 		} else if (GetFileName() == "GOPAINT") {
@@ -190,7 +190,7 @@ bool CBagCommandObject::RunObject() {
 		} else if (GetFileName() == "DEACTIVATEPDA") {
 
 			// Get a pointer to the current game window
-			CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
+			CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev());
 
 			// Pull down the PDA (if it exists)
 			if (pMainWin->GetDeviceType() == SDEV_GAMEWIN) {
@@ -202,7 +202,7 @@ bool CBagCommandObject::RunObject() {
 			if (CBagMasterWin::GetFlyThru()) {
 				CBagMasterWin::SetActiveCursor(6);
 				CBagStorageDev *pSDev;
-				if ((pSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()) != nullptr) {
+				if ((pSDev = CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev()) != nullptr) {
 					if (pSDev->GetDeviceType() == SDEV_GAMEWIN) {
 						CBagPanWindow *pWin;
 						pWin = (CBagPanWindow *)pSDev;
@@ -214,7 +214,7 @@ bool CBagCommandObject::RunObject() {
 		} else if (GetFileName() == "ROTATETO") {
 			CBagMasterWin::SetActiveCursor(6);
 			CBagStorageDev *pSDev;
-			if ((pSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()) != nullptr) {
+			if ((pSDev = CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev()) != nullptr) {
 				if (pSDev->GetDeviceType() == SDEV_GAMEWIN) {
 					CBagPanWindow *pWin;
 					pWin = (CBagPanWindow *)pSDev;
@@ -257,12 +257,12 @@ bool CBagCommandObject::RunObject() {
 		} else if (GetFileName() == "SAVESTACK") {
 			CBagMasterWin *pWin;
 
-			if ((pWin = CBagel::GetBagApp()->GetMasterWnd()) != nullptr) {
+			if ((pWin = CBagel::GetBagApp()->getMasterWnd()) != nullptr) {
 				pWin->SaveSDevStack();
 			}
 
 		} else if (GetFileName() == "DEATH2") {
-			CBagel::GetBagApp()->GetMasterWnd()->PostUserMessage(WM_DIE, 2);
+			CBagel::GetBagApp()->getMasterWnd()->PostUserMessage(WM_DIE, 2);
 			g_bAllowPaint = false;
 
 		} else if (GetFileName() == "ENTRYTHUD") { // Thud
@@ -270,7 +270,7 @@ bool CBagCommandObject::RunObject() {
 			CBofRect tmpRect(60, 50, 137, 70);
 			CBofString cStr("$SBARDIR\\GENERAL\\POPUP\\THUDPOP.BMP");
 			MACROREPLACE(cStr);
-			dlg.Create(cStr, CBagel::GetBagApp()->GetMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
+			dlg.Create(cStr, CBagel::GetBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
 			dlg.DoModal();
 			dlg.Destroy();
 
@@ -279,7 +279,7 @@ bool CBagCommandObject::RunObject() {
 			CBofRect tmpRect(35, 48, 114, 69);
 			CBofString cStr("$SBARDIR\\GENERAL\\POPUP\\FLEEDAT.BMP");
 			MACROREPLACE(cStr);
-			dlg.Create(cStr, CBagel::GetBagApp()->GetMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
+			dlg.Create(cStr, CBagel::GetBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
 			dlg.DoModal();
 			dlg.Destroy();
 
@@ -288,7 +288,7 @@ bool CBagCommandObject::RunObject() {
 			CBofRect tmpRect(60, 49, 138, 68);
 			CBofString cStr("$SBARDIR\\GENERAL\\POPUP\\CLICKPOP.BMP");
 			MACROREPLACE(cStr);
-			dlg.Create(cStr, CBagel::GetBagApp()->GetMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
+			dlg.Create(cStr, CBagel::GetBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
 			dlg.DoModal();
 			dlg.Destroy();
 
@@ -297,7 +297,7 @@ bool CBagCommandObject::RunObject() {
 			CBofRect tmpRect(35, 49, 114, 68);
 			CBofString cStr("$SBARDIR\\GENERAL\\POPUP\\CLICKDAT.BMP");
 			MACROREPLACE(cStr);
-			dlg.Create(cStr, CBagel::GetBagApp()->GetMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
+			dlg.Create(cStr, CBagel::GetBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
 			dlg.DoModal();
 			dlg.Destroy();
 
@@ -306,12 +306,12 @@ bool CBagCommandObject::RunObject() {
 			CBofRect tmpRect(10, 48, 189, 69);
 			CBofString cStr("$SBARDIR\\GENERAL\\POPUP\\DEVENPOP.BMP");
 			MACROREPLACE(cStr);
-			dlg.Create(cStr, CBagel::GetBagApp()->GetMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect, true);
+			dlg.Create(cStr, CBagel::GetBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect, true);
 			dlg.DoModal();
 			dlg.Destroy();
 
 		} else if (GetFileName() == "SNAPTO") {
-			CBagStorageDev *pSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev();
+			CBagStorageDev *pSDev = CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev();
 			if (pSDev != nullptr) {
 				if (pSDev->GetDeviceType() == SDEV_GAMEWIN) {
 					CBagPanWindow *pWin= (CBagPanWindow *)pSDev;
@@ -345,7 +345,7 @@ bool CBagCommandObject::RunObject() {
 
 		} else if (GetFileName() == "ACTIVATEPDA") {
 			// Get a pointer to the current game window
-			CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
+			CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev());
 			// Pull up the PDA (if it exists)
 			//
 			if (pMainWin->GetDeviceType() == SDEV_GAMEWIN) {
@@ -364,7 +364,7 @@ bool CBagCommandObject::RunObject() {
 			g_bRestoreObjList = false;
 
 		} else if (GetFileName() == "WIN") {
-			CBagMasterWin *pMainWin = CBagel::GetBagApp()->GetMasterWnd();
+			CBagMasterWin *pMainWin = CBagel::GetBagApp()->getMasterWnd();
 
 			if (pMainWin != nullptr) {
 				CBofBitmap cBmp(640, 480, CBofApp::GetApp()->GetPalette());
@@ -387,7 +387,7 @@ bool CBagCommandObject::RunObject() {
 			pMainWin->ShowCreditsDialog(pMainWin);
 
 			// Exit the game
-			CBagel::GetBagApp()->GetMasterWnd()->Close();
+			CBagel::GetBagApp()->getMasterWnd()->Close();
 			g_engine->quitGame();
 
 		} else if (GetFileName() == "BREAK") {

@@ -78,7 +78,7 @@ bool CBagMovieObject::RunObject() {
 	bool bZoomed = (pPDAz == nullptr ? false : pPDAz->GetZoomed());
 
 	// Get a pointer to the current game window
-	CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
+	CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev());
 
 	bool rc = true;
 	if (!m_bFlyThru || CBagMasterWin::GetFlyThru()) {
@@ -145,7 +145,7 @@ bool CBagMovieObject::RunObject() {
 #endif
 
 			bool isFiltered = false;
-			CBagMasterWin *pWnd = CBagel::GetBagApp()->GetMasterWnd();
+			CBagMasterWin *pWnd = CBagel::GetBagApp()->getMasterWnd();
 			CBagStorageDevWnd *pSDevWnd = (pWnd ? pWnd->GetCurrentStorageDev() : nullptr);
 
 			// Get the pda here, we need it so much anyway.
@@ -181,7 +181,7 @@ bool CBagMovieObject::RunObject() {
 				// If we have a movie playing in the zoom pda, then black out
 				// the background.  Examine movies will always play with a black background
 				// on the mac (prevents a palette shift).
-				CBagExam *pMovie = new CBagExam(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow(), sFileName, &r);
+				CBagExam *pMovie = new CBagExam(CBagel::GetBagApp()->getMasterWnd()->GetCurrentGameWindow(), sFileName, &r);
 
 				if (pMovie) {
 					// If there is an associated sound file, then start it up here.
@@ -193,7 +193,7 @@ bool CBagMovieObject::RunObject() {
 						pSObj->RunObject();
 					}
 
-					CBofWindow *wnd = CBagel::GetBagApp()->GetMasterWnd();
+					CBofWindow *wnd = CBagel::GetBagApp()->getMasterWnd();
 					pMovie->Show();
 					CBofApp::GetApp()->GetMainWindow()->FlushAllMessages();
 					wnd->FlushAllMessages();
@@ -545,7 +545,7 @@ bool CBagMovieObject::AsynchPDAMovieCanPlay() {
 	sStr = "BPDA_WLD";
 	CBagPDA *pPDA = (CBagPDA *)SDEVMNGR->GetStorageDevice(sStr);
 
-	CBagPanWindow *pMainWin = (CBagPanWindow *)(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow());
+	CBagPanWindow *pMainWin = (CBagPanWindow *)(CBagel::GetBagApp()->getMasterWnd()->GetCurrentGameWindow());
 
 	// Queue this message if any one of a variety of things is happening.
 	Assert(pPDA != nullptr);

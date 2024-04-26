@@ -422,7 +422,7 @@ ErrorCode CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *
 	int         nCount        = GetObjectCount();
 
 	if (nCount) {
-		CBofWindow *pWnd1 = CBagel::GetBagApp()->GetMasterWnd();
+		CBofWindow *pWnd1 = CBagel::GetBagApp()->getMasterWnd();
 		if (pWnd1)
 			pWnd1->ScreenToClient(&*m_xCursorLocation);
 
@@ -511,7 +511,7 @@ void CBagStorageDev::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 		return;
 	}
 
-	sCurrSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()->GetName();
+	sCurrSDev = CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev()->GetName();
 
 	*m_xCursorLocation = *xPoint;
 	CBofPoint xCursorLocation = DevPtToViewPort(*xPoint);
@@ -538,7 +538,7 @@ void CBagStorageDev::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 
 		CBagel *pApp = CBagel::GetBagApp();
 		if (pApp != nullptr) {
-			CBagPanWindow *pWin = (CBagPanWindow *)pApp->GetMasterWnd();
+			CBagPanWindow *pWin = (CBagPanWindow *)pApp->getMasterWnd();
 			if (pWin != nullptr) {
 				if (pWin->m_pWieldBmp != nullptr) {
 					pObj = pWin->m_pWieldBmp->GetCurrObj();
@@ -554,7 +554,7 @@ void CBagStorageDev::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 
 	SetLActivity(kMouseNONE);
 
-	if (g_bAAOk && (sCurrSDev == (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()->GetName()))) {
+	if (g_bAAOk && (sCurrSDev == (CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev()->GetName()))) {
 		AttachActiveObjects();
 	}
 
@@ -991,7 +991,7 @@ ErrorCode CBagStorageDev::detach() {
 	SetBackground(nullptr);
 
 	// Notify the main window that we need to redraw the background filter.
-	CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
+	CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev());
 	if (pMainWin != nullptr) {
 		((CBagPanWindow *)pMainWin)->SetPreFilterPan(true);
 	}
@@ -1197,10 +1197,10 @@ ErrorCode CBagStorageDevWnd::attach() {
 			CBofRect r = pBmp->GetRect();
 
 			if (r.Width() && r.Height()) {
-				Create(s.GetBuffer(), &r, CBagel::GetBagApp()->GetMasterWnd());
+				Create(s.GetBuffer(), &r, CBagel::GetBagApp()->getMasterWnd());
 
 			} else {
-				Create(s.GetBuffer(), nullptr, CBagel::GetBagApp()->GetMasterWnd());
+				Create(s.GetBuffer(), nullptr, CBagel::GetBagApp()->getMasterWnd());
 			}
 
 			Show();
@@ -1293,7 +1293,7 @@ ErrorCode CBagStorageDevWnd::detach() {
 }
 
 ErrorCode CBagStorageDevWnd::Close() {
-	CBagel::GetBagApp()->GetMasterWnd()->SetStorageDev(GetPrevSDev(), false);
+	CBagel::GetBagApp()->getMasterWnd()->SetStorageDev(GetPrevSDev(), false);
 
 	return m_errCode;
 }
@@ -1587,10 +1587,10 @@ ErrorCode CBagStorageDevDlg::attach() {
 		r = pBmp->GetRect();
 
 	if (r.Width() && r.Height()) {
-		Create(s.GetBuffer(), &r, CBagel::GetBagApp()->GetMasterWnd());
+		Create(s.GetBuffer(), &r, CBagel::GetBagApp()->getMasterWnd());
 
 	} else {
-		Create(s.GetBuffer(), nullptr, CBagel::GetBagApp()->GetMasterWnd());
+		Create(s.GetBuffer(), nullptr, CBagel::GetBagApp()->getMasterWnd());
 	}
 
 	SetPreFilterPan(true);

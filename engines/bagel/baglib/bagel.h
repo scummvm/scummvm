@@ -34,28 +34,18 @@
 
 namespace Bagel {
 
-// If a definition of the hash table size for the file cache has not been supplied
-// via the compiler's command line, set a default hash table size here.  Note:
-// Best performance is achieved if this value is a prime number!
+// Set a default hash table size here.
+// Note: Best performance is achieved if this value is a prime number!
 //
-#ifndef HASHTABLESIZE
-#define HASHTABLESIZE 131
-#endif
+#define HASH_TABLE_SIZE 131
 
-#define MAX_APPNAME 128
+#define MAX_APP_NAME 128
 
 #define PATH_DELIMETER "/"
 
 #define DISK_1 1
-#define DISK_2 2
-#define DISK_3 3
-#define DISK_4 4
 
 #define BAG_INSTALL_NONE 0 /* play entire game from where it was executed */
-#define BAG_INSTALL_MIN 1  /* minimal use of hard disk */
-#define BAG_INSTALL_MED 2  /* medium use of hard disk */
-#define BAG_INSTALL_MAX 3  /* substantial use of hard disk */
-
 #define BAG_INSTALL_DEFAULT BAG_INSTALL_NONE
 
 #define HOMEDIR_TOKEN "$SBARDIR" /* Change this to $HOMEDIR  */
@@ -74,15 +64,15 @@ class CBagMasterWin;
  * Initialization structure fot CBagel app
  */
 struct BagelReg {
-	const char *m_pszGameName;		// Game Name. Ex: "The Space Bar"
-	const char *m_pszGamePath;		// Relative path for the CD: "\\SPACEBAR"
-	const char *m_pszOptionFile;	// This game's INI file name
-	const char *m_pszSaveGameFile;	// name of save game Index file.
-	uint32 m_lRamRequired;			// ammount of free RAM needed to play game
-	int32 m_nNumberOfCDs;			// # of CDs used by this game
-	int m_nRequiredDepth;			// Required bits per pixel to play game
-	int m_nRequiredWidth;			// minimum screen width for game
-	int m_nRequiredHeight;			// minimum screen height for game
+	const char *_gameName;		// Game Name. Ex: "The Space Bar"
+	const char *_gamePath;		// Relative path for the CD: "\\SPACEBAR"
+	const char *_optionFile;	// This game's INI file name
+	const char *_saveGameFile;	// Name of save game Index file.
+	uint32 _ramRequired;		// Amount of free RAM needed to play game
+	int32 _numberOfCDs;			// # of CDs used by this game
+	int _requiredDepth;			// Required bits per pixel to play game
+	int _requiredWidth;			// Minimum screen width for game
+	int _requiredHeight;		// Minimum screen height for game
 };
 
 class CBagel : public CBofOptions, public CBofApp {
@@ -94,7 +84,7 @@ public:
 	 * Registers game information for this game object
 	 * @param pGameReg      Game registration info
 	 */
-	void RegisterGame(const BagelReg *pGameReg);
+	void registerGame(const BagelReg *pGameReg);
 
 	// these functions must be provided by the child class
 	//
@@ -108,7 +98,7 @@ public:
 	 * Provides main message loop (MainEventLoop)
 	 * @return          Error return Code.
 	 */
-	ErrorCode RunApp() override;
+	ErrorCode runApp() override;
 
 	/**
 	 * Performs cleanup and destruction of Bagel object
@@ -117,25 +107,25 @@ public:
 	ErrorCode shutdown() override;
 
 	/**
-	 * Sets specified user option in assocciated .INI file
+	 * Sets specified user option in associated .INI file
 	 * @param pszSection        .INI section to write to
 	 * @param pszOption         Option to add/update
 	 * @param pszValue          New value of option
 	 * @return                  Error return code
 	 */
-	ErrorCode SetOption(const char *pszSection, const char *pszOption, const char *pszValue);
+	ErrorCode setOption(const char *pszSection, const char *pszOption, const char *pszValue);
 
 	/**
-	 * Sets specified user option in assocciated .INI file
+	 * Sets specified user option in associated .INI file
 	 * @param pszSection        .INI section to write to
 	 * @param pszOption         Option to add/update
 	 * @param nValue            New value of option
 	 * @return                  Error return code
 	 */
-	ErrorCode SetOption(const char *pszSection, const char *pszOption, int nValue);
+	ErrorCode setOption(const char *pszSection, const char *pszOption, int nValue);
 
 	/**
-	 * Gets specified user option from assocciated .INI file
+	 * Gets specified user option from associated .INI file
 	 * @param pszSection        .INI section to read from
 	 * @param pszOption         Option to retrieve
 	 * @param pszValue          Buffer to hold value
@@ -143,45 +133,33 @@ public:
 	 * @param nSize             Length of the pszValue buffer
 	 * @return                  Error return code
 	*/
-	ErrorCode GetOption(const char *pszSection, const char *pszOption, char *pszValue, const char *pszDefault, uint32 nSize);
+	ErrorCode getOption(const char *pszSection, const char *pszOption, char *pszValue, const char *pszDefault, uint32 nSize);
 
 	/**
-	 * Gets specified user option from assocciated .INI file
+	 * Gets specified user option from associated .INI file
 	 * @param pszSection        .INI section to read from
 	 * @param pszOption         Option to retrieve
 	 * @param nValue            Buffer to hold value
 	 * @param nDefault          Default value if option not found
 	 * @return                  Error return code
 	 */
-	ErrorCode GetOption(const char *pszSection, const char *pszOption, int *nValue, int nDefault);
+	ErrorCode getOption(const char *pszSection, const char *pszOption, int *nValue, int nDefault);
 
 	/**
-	 * Gets specified user option from assocciated .INI file
+	 * Gets specified user option from associated .INI file
 	 * @param pszSection        .INI section to read from
 	 * @param pszOption         Option to retrieve
 	 * @param nValue            Buffer to hold value
 	 * @param nDefault          Default value if option not found
 	 * @return                  Error return code
 	 */
-	ErrorCode GetOption(const char *pszSection, const char *pszOption, bool *nValue, int nDefault);
+	ErrorCode getOption(const char *pszSection, const char *pszOption, bool *nValue, int nDefault);
 
-	void SetAppName(const char *pszNewAppName) {
+	void setAppName(const char *pszNewAppName) {
 		Common::strcpy_s(m_szAppName, pszNewAppName);
 	}
 
-	const char *GetAppName() {
-		return (const char *)m_szAppName;
-	}
-
-	CBofWindow *GetMainWindow() {
-		return m_pMainWnd;
-	}
-
-	const char *GetOptionsFileName() {
-		return (const char *)m_szFileName;
-	}
-
-	CBagMasterWin *GetMasterWnd() {
+	CBagMasterWin *getMasterWnd() {
 		return (CBagMasterWin *)m_pMainWnd;
 	}
 
@@ -189,11 +167,9 @@ public:
 		return (CBagel *)m_pBofApp;
 	}
 
-	int GetChromaColor() {
+	int getChromaColor() {
 		return DEFAULT_CHROMA_COLOR;
 	}
-
-	static ErrorCode SetActiveCursor(int nCurs);
 
 	/**
 	 * Checks to make sure the Game CD is in the drive
@@ -205,7 +181,7 @@ public:
 
 	static void ShowNextCDDialog(CBofWindow *pParentWin, int nCDID);
 
-	static CBofVHashTable<CBofString, HASHTABLESIZE> *GetCacheFileList() {
+	static CBofVHashTable<CBofString, HASH_TABLE_SIZE> *GetCacheFileList() {
 		return m_pCacheFileList;
 	}
 
@@ -234,7 +210,7 @@ protected:
 	CBofCursor m_cCursor;
 
 private:
-	static CBofVHashTable<CBofString, HASHTABLESIZE> *m_pCacheFileList;
+	static CBofVHashTable<CBofString, HASH_TABLE_SIZE> *m_pCacheFileList;
 };
 
 } // namespace Bagel

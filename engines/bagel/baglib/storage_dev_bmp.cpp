@@ -43,7 +43,7 @@ CBagStorageDevBmp::~CBagStorageDevBmp() {
 }
 
 ErrorCode CBagStorageDevBmp::attach() {
-	m_nMaskColor = CBagel::GetBagApp()->GetChromaColor();
+	m_nMaskColor = CBagel::GetBagApp()->getChromaColor();
 	return CBagStorageDev::attach();
 }
 

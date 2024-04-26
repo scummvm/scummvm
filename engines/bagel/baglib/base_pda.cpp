@@ -280,9 +280,7 @@ bool SBBasePda::MsgLight() {
 void *SBBasePda::fPdaButtonHandler(int nRefId, void *pvInfo) {
 	Assert(pvInfo != nullptr);
 
-	SBBasePda *pPDA;
-
-	pPDA = (SBBasePda *)pvInfo;
+	SBBasePda *pPDA = (SBBasePda *)pvInfo;
 
 	switch (nRefId) {
 	case MAP:
@@ -298,11 +296,10 @@ void *SBBasePda::fPdaButtonHandler(int nRefId, void *pvInfo) {
 		break;
 
 	case SYSTEM: {
-		CBagel *pApp;
-		if ((pApp = CBagel::GetBagApp()) != nullptr) {
-
-			CBagMasterWin *pWnd;
-			if ((pWnd = pApp->GetMasterWnd()) != nullptr) {
+		CBagel *pApp = CBagel::GetBagApp();
+		if (pApp != nullptr) {
+			CBagMasterWin *pWnd = pApp->getMasterWnd();
+			if (pWnd != nullptr) {
 				pWnd->PostUserMessage(WM_SHOWSYSTEMDLG, 0);
 			}
 		}
@@ -439,9 +436,6 @@ void SBBasePda::GetPDAState() {
 
 int SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
 	int nWieldCursor = CBagWield::GetWieldCursor();
-	CBofRect cRect;
-	CBofList<CBagObject *> *pList;
-	CBofPoint pt;
 
 	// Assume can't click
 	int nCursorID = NULLCURSOR;
@@ -453,7 +447,7 @@ int SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
 	case NOMODE:
 	case MOOMODE:
 		if (m_xMapWnd) {
-			cRect = m_xMapWnd->getRect() + pdaRect.TopLeft();
+			CBofRect cRect = m_xMapWnd->getRect() + pdaRect.TopLeft();
 			if (cRect.PtInRect(xPoint)) {
 				if (nWieldCursor >= 0) {
 					return nWieldCursor;
@@ -473,12 +467,12 @@ int SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
 		// mousedowning on.
 		if (m_xCurDisplay) {
 			CBagObject *pOverObj = nullptr;
-			cRect = m_xCurDisplay->getRect() + pdaRect.TopLeft();
+			CBofRect cRect = m_xCurDisplay->getRect() + pdaRect.TopLeft();
 			if (cRect.PtInRect(xPoint)) {
-				CBofRect lRect;
 				// Go through the list of inventory items and see if we're over any of them
 				// in particular.
-				if ((pList = m_xCurDisplay->GetObjectList()) != nullptr) {
+				CBofList<CBagObject *> *pList = m_xCurDisplay->GetObjectList();
+				if (pList != nullptr) {
 					// Localize pda view rect
 					cRect = m_xCurDisplay->getRect() + pdaRect.TopLeft();
 
@@ -486,7 +480,7 @@ int SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
 					for (int i = 0; i < nCount; ++i) {
 						CBagObject *pObj = pList->GetNodeItem(i);
 						if (pObj->IsActive()) {
-							lRect = pObj->getRect() + cRect.TopLeft();      // localize icon rectangle
+							CBofRect lRect = pObj->getRect() + cRect.TopLeft();      // localize icon rectangle
 							if (lRect.PtInRect(xPoint)) {
 								pOverObj = pObj;
 							}

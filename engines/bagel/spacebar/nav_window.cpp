@@ -695,7 +695,7 @@ void CNavWindow::OnBofButton(CBofObject *pObject, int nState) {
 		KillTimer(777);
 		CBagel *pApp = CBagel::GetBagApp();
 		if (pApp != nullptr) {
-			CBagMasterWin *pWin = pApp->GetMasterWnd();
+			CBagMasterWin *pWin = pApp->getMasterWnd();
 			if (pWin != nullptr) {
 				pWin->OnHelp(MakeDir("NAVHELP.TXT"));
 			}

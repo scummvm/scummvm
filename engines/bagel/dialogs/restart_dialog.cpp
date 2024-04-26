@@ -150,7 +150,7 @@ void CBagRestartDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	case BKEY_ENTER: {
 		CBagel *pApp = CBagel::GetBagApp();
 		if (pApp != nullptr) {
-			CBagMasterWin *pWin = pApp->GetMasterWnd();
+			CBagMasterWin *pWin = pApp->getMasterWnd();
 			if (pWin != nullptr) {
 
 				char szBuf[256];
@@ -211,7 +211,7 @@ void CBagRestartDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 	case RESTART_BTN: {
 		CBagel *pApp = CBagel::GetBagApp();
 		if (pApp != nullptr) {
-			CBagMasterWin *pWin = pApp->GetMasterWnd();
+			CBagMasterWin *pWin = pApp->getMasterWnd();
 			if (pWin != nullptr) {
 
 				char szBuf[256];

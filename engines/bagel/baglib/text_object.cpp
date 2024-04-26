@@ -477,7 +477,7 @@ bool CBagTextObject::RunObject() {
 
 		CBagel *pApp = CBagel::GetBagApp();
 		if (pApp != nullptr) {
-			CBagMasterWin *pWin = pApp->GetMasterWnd();
+			CBagMasterWin *pWin = pApp->getMasterWnd();
 			if (pWin != nullptr) {
 				CBagStorageDevWnd *pParent = pWin->GetCurrentStorageDev();
 
@@ -554,7 +554,7 @@ void CBagTextObject::RecalcTextRect(bool bTextFromFile) {
 	Assert(m_psText != nullptr);
 
 	// The window where the object are displayed
-	CBagPanWindow *pPanWin = (CBagPanWindow *)(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow());
+	CBagPanWindow *pPanWin = (CBagPanWindow *)(CBagel::GetBagApp()->getMasterWnd()->GetCurrentGameWindow());
 	if (bTextFromFile) {
 		if (pPanWin->GetDeviceType() == SDEV_GAMEWIN) {
 			ViewRect = pPanWin->GetViewPort();

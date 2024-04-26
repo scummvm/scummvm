@@ -117,7 +117,7 @@ ErrorCode CBofApp::initialize() {
 }
 
 
-ErrorCode CBofApp::RunApp() {
+ErrorCode CBofApp::runApp() {
 	int nCount = m_nIterations;
 
 	// Acquire and dispatch messages until we need to quit, or too many errors

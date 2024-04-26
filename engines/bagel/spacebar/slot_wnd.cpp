@@ -149,7 +149,7 @@ void SBarSlotWnd::OnPaint(CBofRect *pRect) {
 		for (int i = 0; i < SLOT_NUM; i++) {
 
 			if (m_cSlots[i].m_pSlotBmp[m_cSlots[i].m_nIdx] != nullptr) {
-				m_cSlots[i].m_pSlotBmp[m_cSlots[i].m_nIdx]->Paint(pBackBmp, &m_cSlots[i].m_cSlotRect, nullptr, CBagel::GetBagApp()->GetChromaColor());
+				m_cSlots[i].m_pSlotBmp[m_cSlots[i].m_nIdx]->Paint(pBackBmp, &m_cSlots[i].m_cSlotRect, nullptr, CBagel::GetBagApp()->getChromaColor());
 			}
 		}
 
@@ -673,7 +673,7 @@ void SBarSlotWnd::SlideSlots() {
 
 	if (!ErrorOccurred()) {
 		int nIncrement = 30;	// Number of pixels to move
-		int nMaskClr = CBagel::GetBagApp()->GetChromaColor();
+		int nMaskClr = CBagel::GetBagApp()->getChromaColor();
 
 		// Erase Previous game
 		CBofRect cRect(219, 12, 626, 276);
@@ -886,7 +886,7 @@ void SBarSlotWnd::OnBofButton(CBofObject *pObject, int nState) {
 
 		CBagel *pApp = CBagel::GetBagApp();
 		if (pApp != nullptr) {
-			CBagMasterWin *pWin = pApp->GetMasterWnd();
+			CBagMasterWin *pWin = pApp->getMasterWnd();
 			if (pWin != nullptr) {
 				m_bPaused = true;
 				pWin->OnHelp(BuildSlotDir("SLOT.TXT"));
