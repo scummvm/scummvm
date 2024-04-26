@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -20,32 +19,45 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_AREA_OBJECT_H
-#define BAGEL_BAGLIB_AREA_OBJECT_H
-
-#include "bagel/baglib/object.h"
+#include "bagel/baglib/area_object.h"
 
 namespace Bagel {
 
-/**
- * CBagAreaObject is an object that can be placed within the slide window.
- */
-class CBagAreaObject : public CBagObject {
-private:
-	CBofSize _xSize;
-	CBofSize getSize() const;
+/* Private methods*/
 
-public:
-	CBagAreaObject();
-	~CBagAreaObject();
+CBofSize CBagAreaObject::getSize() const {
+	return _xSize;
+}
 
-	ErrorCode attach();
-	ErrorCode detach();
+/* Public methods*/
 
-	CBofRect getRect();
-	void setSize(const CBofSize &xSize);
-};
+CBagAreaObject::CBagAreaObject() {
+	m_xObjType = AREAOBJ;
+	SetVisible(false);
+	SetOverCursor(4);
+}
+
+CBagAreaObject::~CBagAreaObject() {
+	detach();
+}
+
+ErrorCode CBagAreaObject::attach() {
+	return CBagObject::attach();
+}
+
+ErrorCode CBagAreaObject::detach() {
+	return CBagObject::detach();
+}
+
+CBofRect CBagAreaObject::getRect() {
+	CBofPoint p = GetPosition();
+	CBofSize s = getSize();
+	CBofRect r = CBofRect(p, s);
+	return r;
+}
+
+void CBagAreaObject::setSize(const CBofSize &xSize) {
+	_xSize = xSize;
+}
 
 } // namespace Bagel
-
-#endif

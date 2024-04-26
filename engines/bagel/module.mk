@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	console.o \
 	metaengine.o \
 	music.o \
+	baglib/area_object.o \
 	baglib/bagel.o \
 	baglib/base_pda.o \
 	baglib/bmp_object.o \
