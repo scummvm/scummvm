@@ -71,8 +71,6 @@ namespace Bagel {
 #define MIDI_VOL_ID    12
 #define WAVE_VOL_ID    13
 
-extern const char *BuildSysDir(const char *pszFile);
-
 struct ST_BUTTONS {
 	const char *m_pszName;
 	const char *m_pszUp;
