@@ -72,9 +72,9 @@ CBagVar::CBagVar(const CBofString &sName, const CBofString &sValue, bool bAddToL
 }
 
 CBagVar::~CBagVar() {
-	if (CBagel::GetBagApp() &&
-	        CBagel::GetBagApp()->getMasterWnd() &&
-	        CBagel::GetBagApp()->getMasterWnd()->GetVariableManager())
+	if (CBagel::getBagApp() &&
+		CBagel::getBagApp()->getMasterWnd() &&
+		CBagel::getBagApp()->getMasterWnd()->GetVariableManager())
 		VARMNGR->UnRegisterVariable(this);
 }
 
@@ -104,16 +104,16 @@ const CBofString &CBagVar::GetValue() {
 	// Check if these items should be replaced by the current sdev
 	if (!m_sVarName.IsEmpty() && !m_sVarName.Find(CURRSDEV_TOKEN)) {
 		CBofString CurrSDev;
-		if (CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev()) {
-			m_sVarValue = CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev()->GetName();
+		if (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev()) {
+			m_sVarValue = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev()->GetName();
 		}
 	} else {
 
 		// Check if these items should be replaced by the previous sdev
 		if (!m_sVarName.IsEmpty() && !m_sVarName.Find(PREVSDEV_TOKEN)) {
 			CBofString CurrSDev;
-			if (CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev()) {
-				m_sVarValue = CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev()->GetPrevSDev();
+			if (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev()) {
+				m_sVarValue = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev()->GetPrevSDev();
 			}
 		}
 	}
@@ -374,7 +374,7 @@ CBagVar *CBagVarManager::GetVariable(const CBofString &sName) {
 void CBagVar::SetName(const CBofString &s) {
 	m_sVarName = s;
 
-	CBagel *pApp = CBagel::GetBagApp();
+	CBagel *pApp = CBagel::getBagApp();
 	if (pApp) {
 		CBagMasterWin *pMainWin = pApp->getMasterWnd();
 

@@ -54,7 +54,7 @@ public:
 
 	// Return true if the Object had members that are properly initialized/de-initialized
 	ErrorCode attach() {
-		return attach((CBofWindow *)CBagel::GetBagApp()->getMasterWnd());
+		return attach((CBofWindow *)CBagel::getBagApp()->getMasterWnd());
 	}
 	ErrorCode attach(CBofWindow *pWnd);
 	bool IsAttached() {

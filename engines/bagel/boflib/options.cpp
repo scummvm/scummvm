@@ -207,18 +207,18 @@ ErrorCode CBofOptions::WriteSetting(const char *pszSection, const char *pszVar, 
 	return errCode;
 }
 
-ErrorCode CBofOptions::ReadSetting(const char *pszSection, const char *pszOption, char *pszValue, const char *pszDefault, uint32 nMaxLen) {
-	// Can't acess nullptr pointers
-	Assert(pszSection != nullptr);
-	Assert(pszOption != nullptr);
-	Assert(pszValue != nullptr);
-	Assert(pszDefault != nullptr);
+ErrorCode CBofOptions::ReadSetting(const char *section, const char *option, char *stringValue, const char *defaultValue, uint32 maxLen) {
+	// Can't access nullptr pointers
+	Assert(section != nullptr);
+	Assert(option != nullptr);
+	Assert(stringValue != nullptr);
+	Assert(defaultValue != nullptr);
 
 	// If ConfMan has a key of a given name, no matter the section,
 	// than it takes precedence over any INI file value
-	if (ConfMan.hasKey(pszOption)) {
-		Common::String str = ConfMan.get(pszOption);
-		Common::strcpy_s(pszValue, nMaxLen, str.c_str());
+	if (ConfMan.hasKey(option)) {
+		Common::String str = ConfMan.get(option);
+		Common::strcpy_s(stringValue, maxLen, str.c_str());
 		return ERR_NONE;
 	}
 
@@ -228,10 +228,10 @@ ErrorCode CBofOptions::ReadSetting(const char *pszSection, const char *pszOption
 	ErrorCode errCode = ERR_NONE;
 
 	// Assume we will need to use the default setting
-	Common::strcpy_s(pszValue, nMaxLen, pszDefault);
+	Common::strcpy_s(stringValue, maxLen, defaultValue);
 
 	// Try to find this option
-	COption *pOption = FindOption(pszSection, pszOption);
+	COption *pOption = FindOption(section, option);
 	if (pOption != nullptr) {
 		Assert(strlen(pOption->m_szBuf) < MAX_OPTION_LEN);
 
@@ -248,10 +248,10 @@ ErrorCode CBofOptions::ReadSetting(const char *pszSection, const char *pszOption
 			p++;
 
 			if (strlen(p) > 0)
-				Common::strcpy_s(pszValue, nMaxLen, p);
+				Common::strcpy_s(stringValue, maxLen, p);
 
 		} else {
-			LogError(BuildString("Error in %s, section: %s, entry: %s", m_szFileName, pszSection, pszOption));
+			LogError(BuildString("Error in %s, section: %s, entry: %s", m_szFileName, section, option));
 			errCode = ERR_FTYPE;
 		}
 	}
@@ -259,44 +259,44 @@ ErrorCode CBofOptions::ReadSetting(const char *pszSection, const char *pszOption
 	return errCode;
 }
 
-ErrorCode CBofOptions::ReadSetting(const char *pszSection, const char *pszOption, int *pValue, int nDefault) {
-	Assert(pszSection != nullptr);
-	Assert(pszOption != nullptr);
-	Assert(pValue != nullptr);
+ErrorCode CBofOptions::ReadSetting(const char *section, const char *option, int *intValue, int defaultValue) {
+	Assert(section != nullptr);
+	Assert(option != nullptr);
+	Assert(intValue != nullptr);
 
 	// If ConfMan has a key of a given name, no matter the section,
 	// than it takes precedence over any INI file value
-	if (ConfMan.hasKey(pszOption)) {
-		*pValue = ConfMan.getInt(pszOption);
+	if (ConfMan.hasKey(option)) {
+		*intValue = ConfMan.getInt(option);
 		return ERR_NONE;
 	}
 
 	char szDefault[20], szBuf[20];
 
-	Common::sprintf_s(szDefault, "%d", nDefault);
-	ErrorCode errCode = ReadSetting(pszSection, pszOption, szBuf, szDefault, 20);
+	Common::sprintf_s(szDefault, "%d", defaultValue);
+	ErrorCode errCode = ReadSetting(section, option, szBuf, szDefault, 20);
 
-	if (pValue != nullptr)
-		*pValue = atoi(szBuf);
+	if (intValue != nullptr)
+		*intValue = atoi(szBuf);
 
 	return errCode;
 }
 
-ErrorCode CBofOptions::ReadSetting(const char *pszSection, const char *pszOption, bool *nValue, bool nDefault) {
-	Assert(pszSection != nullptr);
-	Assert(pszOption != nullptr);
-	Assert(nValue != nullptr);
+ErrorCode CBofOptions::ReadSetting(const char *section, const char *option, bool *boolValue, bool defaultValue) {
+	Assert(section != nullptr);
+	Assert(option != nullptr);
+	Assert(boolValue != nullptr);
 
 	// If ConfMan has a key of a given name, no matter the section,
 	// than it takes precedence over any INI file value
-	if (ConfMan.hasKey(pszOption)) {
-		*nValue = ConfMan.getBool(pszOption);
+	if (ConfMan.hasKey(option)) {
+		*boolValue = ConfMan.getBool(option);
 		return ERR_NONE;
 	}
 
 	int v;
-	ErrorCode errCode = ReadSetting(pszSection, pszOption, &v, nDefault);
-	*nValue = v != 0;
+	ErrorCode errCode = ReadSetting(section, option, &v, defaultValue);
+	*boolValue = v != 0;
 	return errCode;
 }
 
@@ -329,8 +329,6 @@ COption *CBofOptions::FindOption(const char *pszSection, const char *pszVar) {
 	Assert(*pszSection != '\0');
 	Assert(*pszVar != '\0');
 
-	COption *pOption;
-
 	// Assume we won't find the option
 	COption *pFound = nullptr;
 
@@ -338,8 +336,7 @@ COption *CBofOptions::FindOption(const char *pszSection, const char *pszVar) {
 	COption *pStart;
 
 	if ((pStart = FindSection(pszSection)) != nullptr) {
-
-		pOption = (COption *)pStart->GetNext();
+		COption *pOption = (COption *)pStart->GetNext();
 		while (pOption != nullptr) {
 			if (pOption->m_szBuf[0] == '[') {
 				// this option was not found

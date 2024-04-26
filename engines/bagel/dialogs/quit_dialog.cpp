@@ -154,7 +154,7 @@ void CBagQuitDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 
 		bool bQuit = true;
 		if (nId == SAVE_BTN) {
-			CBagel *pApp = CBagel::GetBagApp();
+			CBagel *pApp = CBagel::getBagApp();
 			if (pApp != nullptr) {
 				CBagMasterWin *pWin = pApp->getMasterWnd();
 				if (pWin != nullptr) {

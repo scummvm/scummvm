@@ -129,7 +129,7 @@ ErrorCode CBagPDA::attach() {
 
 	// Calculate the position for the pda
 	CBofRect bmpRect = GetBitmap()->GetRect();
-	CBofWindow *pGameWin = CBagel::GetBagApp()->getMasterWnd()->GetCurrentGameWindow();
+	CBofWindow *pGameWin = CBagel::getBagApp()->getMasterWnd()->GetCurrentGameWindow();
 	CBofRect GameRect = pGameWin->GetRect();
 
 	// When the pda is active it should sit flush with the bottom of the screen
@@ -312,7 +312,7 @@ ErrorCode CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 		bool bWandAnimating = CBagCharacterObject::PDAWandAnimating();
 
 		if (IsActivating() || bWandAnimating || bMoviePlaying) {
-			CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev());
+			CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev());
 			((CBagPanWindow *)pMainWin)->SetPreFilterPan(true);
 		} else if (!IsActivated() && (SBBasePda::m_ePdaMode != MAPMODE)) {
 			// If it is not activated, then don't bother redrawing it or the objects
@@ -342,7 +342,7 @@ bool CBagPDA::IsInside(const CBofPoint &xPoint) {
 }
 
 void CBagPDA::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
-	CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev());
+	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev());
 
 	if (!IsActivated() && m_ePdaMode != INVMODE) {          // if the PDA is not active, activate it
 		if (IsInside(*xPoint)) {

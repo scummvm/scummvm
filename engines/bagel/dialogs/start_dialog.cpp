@@ -93,7 +93,7 @@ void CBagStartDialog::OnInitDialog() {
 	}
 
 	// Disable the restore button if there are no saved games
-	CBagel *pApp = CBagel::GetBagApp();
+	CBagel *pApp = CBagel::getBagApp();
 	if ((pApp != nullptr) && !g_engine->savesExist())
 		_buttons[0]->SetState(BUTTON_DISABLED);
 
@@ -157,7 +157,7 @@ void CBagStartDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 	int nId = pButton->GetControlID();
 
 	if (nId == RESTORE_BTN) {
-		CBagel *pApp = CBagel::GetBagApp();
+		CBagel *pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
 			CBagMasterWin *pWin = pApp->getMasterWnd();
 

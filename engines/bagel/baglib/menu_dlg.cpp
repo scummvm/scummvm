@@ -469,7 +469,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 			// If our current storage device is "AS CUSTOM" then don't allow
 			// the timer to get incremented.
-			CBagStorageDev *pCurSDEV = CBagel::GetBagApp()->getMasterWnd()->GetCurrentStorageDev();
+			CBagStorageDev *pCurSDEV = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
 			if (pObj != nullptr) {
 				pObj->RunCallBack();
 

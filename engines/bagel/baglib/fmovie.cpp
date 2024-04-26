@@ -98,7 +98,6 @@ bool CBagFMovie::Open(const char *sFilename, CBofRect *pBounds) {
 }
 
 bool CBagFMovie::OpenMovie(const char *sFilename) {
-	bool bRepaint;
 	Assert(sFilename[0] != '\0');
 
 	if (m_pSmk) {
@@ -138,20 +137,18 @@ bool CBagFMovie::OpenMovie(const char *sFilename) {
 			m_pBmpBuf->getSurface().blitFrom(*frame);
 		}
 	}
-	bRepaint = true;
+	bool bRepaint = true;
 
 	m_xBounds = CBofRect(0, 0, (uint16)m_pBmpBuf->Width() - 1, (uint16)m_pBmpBuf->Height() - 1);
 	ReSize(&m_xBounds, bRepaint);
 
-	// Filter the bitmap.
-	CBagMasterWin *pWnd;
-	CBagStorageDevWnd *pSDevWnd;
-	FilterFunction pFilterFunction;
-	if ((pWnd = CBagel::GetBagApp()->getMasterWnd()) != nullptr) {
-		if ((pSDevWnd = pWnd->GetCurrentStorageDev()) != nullptr) {
+	CBagMasterWin *pWnd = CBagel::getBagApp()->getMasterWnd();
+	if (pWnd != nullptr) {
+		CBagStorageDevWnd *pSDevWnd = pWnd->GetCurrentStorageDev();
+		if (pSDevWnd != nullptr) {
 			if (pSDevWnd->IsFiltered()) {
 				uint16 nFilterId = pSDevWnd->GetFilterId();
-				pFilterFunction = pSDevWnd->GetFilter();
+				FilterFunction pFilterFunction = pSDevWnd->GetFilter();
 				m_pBmpBuf->Paint(m_pFilterBmp);
 				(*pFilterFunction)(nFilterId, m_pFilterBmp, &m_xBounds);
 			}
@@ -183,20 +180,16 @@ void CBagFMovie::OnMainLoop() {
 				m_pBmpBuf->getSurface().blitFrom(*frame);
 			}
 
-			// Filter the bitmap.
-			CBagMasterWin *pWnd;
-			CBagStorageDevWnd *pSDevWnd;
-			FilterFunction pFilterFunction;
-
 			m_pBmpBuf->Paint1To1(m_pFilterBmp);
 
-			if ((pWnd = CBagel::GetBagApp()->getMasterWnd()) != nullptr) {
-				if ((pSDevWnd = pWnd->GetCurrentStorageDev()) != nullptr) {
-					if (pSDevWnd->IsFiltered()) {
-						uint16 nFilterId = pSDevWnd->GetFilterId();
-						pFilterFunction = pSDevWnd->GetFilter();
-						(*pFilterFunction)(nFilterId, m_pFilterBmp, &m_xBounds);
-					}
+			// Filter the bitmap.
+			CBagMasterWin *pWnd = CBagel::getBagApp()->getMasterWnd();
+			if (pWnd != nullptr) {
+				CBagStorageDevWnd *pSDevWnd = pWnd->GetCurrentStorageDev();
+				if ((pSDevWnd != nullptr) && pSDevWnd->IsFiltered()) {
+					uint16 nFilterId = pSDevWnd->GetFilterId();
+					FilterFunction pFilterFunction = pSDevWnd->GetFilter();
+					(*pFilterFunction)(nFilterId, m_pFilterBmp, &m_xBounds);
 				}
 			}
 
@@ -212,18 +205,15 @@ void CBagFMovie::OnMainLoop() {
 						m_pSmk->start();
 					}
 				}
-			} else if (m_eMovStatus == REVERSE) {
-				if ((m_pSmk->getCurFrame() == 0) || (m_pSmk->getCurFrame() == 1)) {
-					if (m_bLoop == false) {
-						OnMovieDone();
-					} else {
-						SeekToEnd();
-						//m_pSmk->start();
-					}
+			} else if ((m_eMovStatus == REVERSE) && ((m_pSmk->getCurFrame() == 0) || (m_pSmk->getCurFrame() == 1))) {
+				if (m_bLoop == false) {
+					OnMovieDone();
 				} else {
-					SetFrame(m_pSmk->getCurFrame() - 2); // HACK: Reverse playback
+					SeekToEnd();
 				}
-			}// REVERSE
+			} else {
+				SetFrame(m_pSmk->getCurFrame() - 2); // HACK: Reverse playback
+			}
 
 		}// !STOPPED
 	} // !SMACKWAIT
@@ -283,12 +273,10 @@ void CBagFMovie::OnMovieDone() {
 
 
 bool CBagFMovie::Play(bool bLoop, bool bEscCanStop) {
-	bool bSuccess;
-
 	m_bEscCanStop = bEscCanStop;
 	m_bLoop = bLoop;
 
-	bSuccess = Play();
+	bool bSuccess = Play();
 
 	GetParent()->Disable();
 	GetParent()->FlushAllMessages();
@@ -316,12 +304,10 @@ bool CBagFMovie::Play() {
 }
 
 bool CBagFMovie::Reverse(bool bLoop, bool bEscCanStop) {
-	bool bSuccess = true;
-
 	m_bEscCanStop = bEscCanStop;
 	m_bLoop = bLoop;
 
-	bSuccess = Reverse();
+	bool bSuccess = Reverse();
 
 	GetParent()->Disable();
 	GetParent()->FlushAllMessages();
@@ -406,21 +392,16 @@ void CBagFMovie::OnReSize(CBofSize *) {
 }
 
 bool CBagFMovie::CenterRect() {
-	CBofRect cBofRect;
-	RECT rcParentRect, rcMovieBounds;
-	int ClientWidth, ClientHeight;
-	int MovieWidth = 0;
-	int MovieHeight = 0;
-
-	cBofRect = GetParent()->GetClientRect();
-	rcParentRect = cBofRect.GetWinRect();
-	ClientWidth = rcParentRect.right - rcParentRect.left;
-	ClientHeight = rcParentRect.bottom - rcParentRect.top;
+	CBofRect cBofRect = GetParent()->GetClientRect();
+	RECT rcParentRect = cBofRect.GetWinRect();
+	int ClientWidth = rcParentRect.right - rcParentRect.left;
+	int ClientHeight = rcParentRect.bottom - rcParentRect.top;
 
 	// Get Movies width and height
-	MovieWidth = m_pSmk->getWidth();
-	MovieHeight = m_pSmk->getHeight();
+	int MovieWidth = m_pSmk->getWidth();
+	int MovieHeight = m_pSmk->getHeight();
 
+	RECT rcMovieBounds;
 	rcMovieBounds.left = (ClientWidth - MovieWidth) / 2;
 	rcMovieBounds.top = (ClientHeight - MovieHeight) / 2;
 	rcMovieBounds.right = rcMovieBounds.left + MovieWidth;

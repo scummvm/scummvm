@@ -296,7 +296,7 @@ void *SBBasePda::fPdaButtonHandler(int nRefId, void *pvInfo) {
 		break;
 
 	case SYSTEM: {
-		CBagel *pApp = CBagel::GetBagApp();
+		CBagel *pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
 			CBagMasterWin *pWnd = pApp->getMasterWnd();
 			if (pWnd != nullptr) {
