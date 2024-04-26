@@ -45,6 +45,9 @@ private:
 	public:
 	Common::Point Position;
 		Macs2::GameObject *GameObject;
+
+	// Set by opcode 11h
+	bool ExecuteScriptOnFinishLerp;
 		// TODO: Will need time handling
 	Macs2::AnimFrame *GetCurrentAnimationFrame();
 		Macs2::AnimFrame *GetCurrentPortrait();

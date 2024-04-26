@@ -47,6 +47,9 @@ class Macs2Engine;
 
 			private:
 
+			bool isTimerActive = false;
+			uint32 timerEndMillis;
+
 			// [1014h] global - current assumption is that this is set when we run
 			// the script for the scene initialization and reset when we run when the
 			// scene is active
@@ -120,6 +123,10 @@ class Macs2Engine;
 			void Run();
 
 			void SetScript(Common::MemoryReadStream *stream);
+
+			void tick();
+
+			void StartTimer(uint32 duration);
 
 	};
 }	// namespace Script

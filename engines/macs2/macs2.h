@@ -246,6 +246,8 @@ public:
 		Common::Serializer s(stream, nullptr);
 		return syncGame(s);
 	}
+
+	virtual bool tick();
 };
 
 extern Macs2Engine *g_engine;
