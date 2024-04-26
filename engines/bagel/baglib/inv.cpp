@@ -50,7 +50,7 @@ ErrorCode CBagInv::ActivateLocalObject(const CBofString &sName) {
 	// Don't do any wand animation if we are zoomed.
 	pZPDA = (SBZoomPda *)SDEVMNGR->GetStorageDevice("BPDAZ_WLD");
 	Assert(pZPDA != nullptr);
-	bZoomed = (pZPDA ? pZPDA->GetZoomed() : false);
+	bZoomed = (pZPDA ? pZPDA->getZoomed() : false);
 
 	if (pPda && bZoomed == false) {
 		pWand = (CBagCharacterObject *)pPda->GetObject("WANDANIM");
@@ -107,7 +107,7 @@ ErrorCode CBagInv::DeactivateLocalObject(const CBofString &sName) {
 	// Don't do any wand animation if we are zoomed.
 	pZPDA = (SBZoomPda *)SDEVMNGR->GetStorageDevice("BPDAZ_WLD");
 	Assert(pZPDA != nullptr);
-	bZoomed = (pZPDA ? pZPDA->GetZoomed() : false);
+	bZoomed = (pZPDA ? pZPDA->getZoomed() : false);
 
 	if (pPda && bZoomed == false) {
 		pWand = (CBagCharacterObject *)pPda->GetObject("WANDANIM");

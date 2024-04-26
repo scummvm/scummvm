@@ -32,190 +32,190 @@
 namespace Bagel {
 
 // Init static members
-PDAMODE SBBasePda::m_ePdaMode;
-PDAPOS SBBasePda::m_ePDAPos;
-PDAMODE SBBasePda::m_eHoldMode;
+PDAMODE SBBasePda::_pdaMode;
+PDAPOS SBBasePda::_pdaPos;
+PDAMODE SBBasePda::_holdMode;
 
 void SBBasePda::initialize() {
-	m_ePdaMode = NOMODE;
-	m_ePDAPos = UNINITIALIZED;
-	m_eHoldMode = NOMODE;
+	_pdaMode = NOMODE;
+	_pdaPos = UNINITIALIZED;
+	_holdMode = NOMODE;
 }
 
-SBBasePda::SBBasePda(CBofWindow *pParent, const CBofRect & /* xRect*/, bool bActivated) {
-	m_bActivated = bActivated;
-	m_bActivating = false;
-	m_nMoveDist = 13;
-	m_nNumMoves = 10;
+SBBasePda::SBBasePda(CBofWindow *parent, const CBofRect & /* xRect*/, bool activated) {
+	_activated = activated;
+	_activating = false;
+	_moveDist = 13;
+	_numMoves = 10;
 
-	m_pParent = pParent;
-	m_xMooWnd = nullptr;
-	m_xInvWnd = nullptr;
-	m_xMapWnd = nullptr;
-	m_xLogWnd = nullptr;
+	_parent = parent;
+	_mooWnd = nullptr;
+	_invWnd = nullptr;
+	_mapWnd = nullptr;
+	_logWnd = nullptr;
 
-	m_xCurDisplay = nullptr;
+	_curDisplay = nullptr;
 
 	// Other classes need to know if we're zoomed
-	SetZoomed(false);
+	setZoomed(false);
 }
 
 SBBasePda::~SBBasePda() {
-	m_xInvWnd = nullptr;
-	m_xMapWnd = nullptr;
-	m_xLogWnd = nullptr;
-	m_xMooWnd = nullptr;
+	_invWnd = nullptr;
+	_mapWnd = nullptr;
+	_logWnd = nullptr;
+	_mooWnd = nullptr;
 }
 
-bool SBBasePda::HideCurDisplay() {
-	SynchronizePDAState();
+bool SBBasePda::hideCurDisplay() {
+	synchronizePdaState();
 
-	if (m_xCurDisplay) {
+	if (_curDisplay) {
 		// If we have an inventory window
-		m_xCurDisplay->SetVisible(false);
+		_curDisplay->SetVisible(false);
 
 		// Hold this info.
-		m_xHoldDisplay = m_xCurDisplay;
-		m_eHoldMode = SBBasePda::m_ePdaMode;
+		_holdDisplay = _curDisplay;
+		_holdMode = SBBasePda::_pdaMode;
 
-		m_xCurDisplay = nullptr;
-		SBBasePda::m_ePdaMode = NOMODE;
-		SetPDAState();
+		_curDisplay = nullptr;
+		SBBasePda::_pdaMode = NOMODE;
+		setPdaState();
 		return true;
 	}
 
 	return false;
 }
 
-bool SBBasePda::RestoreCurDisplay() {
-	SynchronizePDAState();
+bool SBBasePda::restoreCurDisplay() {
+	synchronizePdaState();
 
 	// If we saved a display
-	if (m_xHoldDisplay) {
+	if (_holdDisplay) {
 		// Restore the display info.
-		m_xCurDisplay = m_xHoldDisplay;
-		SBBasePda::m_ePdaMode = m_eHoldMode;
+		_curDisplay = _holdDisplay;
+		SBBasePda::_pdaMode = _holdMode;
 
-		m_xCurDisplay->SetVisible(true);
-		SetPDAState();
+		_curDisplay->SetVisible(true);
+		setPdaState();
 		return true;
 	}
 
 	return false;
 }
 
-bool SBBasePda::HideMovie() {
-	SynchronizePDAState();
+bool SBBasePda::hideMovie() {
+	synchronizePdaState();
 
-	if (m_xMooWnd) {  // if we have an inventory window
+	if (_mooWnd) {  // if we have an inventory window
 
-		m_xMooWnd->SetVisible(false);
-		m_xCurDisplay = nullptr;
-		SBBasePda::m_ePdaMode = NOMODE;
-		SetPDAState();
+		_mooWnd->SetVisible(false);
+		_curDisplay = nullptr;
+		SBBasePda::_pdaMode = NOMODE;
+		setPdaState();
 		return true;
 	}
 
 	return false;
 }
 
-bool SBBasePda::ShowMovie() {
-	SynchronizePDAState();
+bool SBBasePda::showMovie() {
+	synchronizePdaState();
 
 	// if we're already playing a movie, then return false
-	if (m_ePdaMode == MOOMODE) {
+	if (_pdaMode == MOOMODE) {
 		return false;
 	}
 
-	if (m_xMooWnd) {
-		if (m_xCurDisplay)
-			m_xCurDisplay->SetVisible(false);       // Turn off the current display
+	if (_mooWnd) {
+		if (_curDisplay)
+			_curDisplay->SetVisible(false);       // Turn off the current display
 
 		// Save the current PDA mode so we can return to it when done.
-		((CBagMoo *)m_xMooWnd)->SavePDAMode(m_ePdaMode);
-		((CBagMoo *)m_xMooWnd)->SavePDAPosition(m_ePDAPos);
+		((CBagMoo *)_mooWnd)->SavePDAMode(_pdaMode);
+		((CBagMoo *)_mooWnd)->SavePDAPosition(_pdaPos);
 
-		m_xMooWnd->SetVisible(true);                // Turn on the inventory
+		_mooWnd->SetVisible(true);                // Turn on the inventory
 
 		// set the current display object
-		m_xCurDisplay = m_xMooWnd;                 // Set the current display = Inventory
-		SBBasePda::m_ePdaMode = MOOMODE;
-		SetPDAState();
+		_curDisplay = _mooWnd;                 // Set the current display = Inventory
+		SBBasePda::_pdaMode = MOOMODE;
+		setPdaState();
 
 		// Set default state of movie to don't deactivate PDA
-		SetDeactivate(false);
+		setDeactivate(false);
 
 		return true;
 	}
 	return false;
 }
 
-void SBBasePda::StopMovie(bool bResetPDA) {
-	if (m_xMooWnd && m_xMooWnd == m_xCurDisplay) {
-		((CBagMoo *)m_xMooWnd)->StopMovie(bResetPDA);
+void SBBasePda::stopMovie(bool bResetPDA) {
+	if (_mooWnd && _mooWnd == _curDisplay) {
+		((CBagMoo *)_mooWnd)->StopMovie(bResetPDA);
 	}
 }
 
-bool SBBasePda::SetMovie(CBofString &s) {
-	if (m_xMooWnd) {
-		((CBagMoo *)m_xMooWnd)->SetPDAMovie(s);
+bool SBBasePda::setMovie(CBofString &movieName) {
+	if (_mooWnd) {
+		((CBagMoo *)_mooWnd)->SetPDAMovie(movieName);
 		return true;
 	}
 	return false;
 }
 
-bool SBBasePda::HideInventory() {
-	SynchronizePDAState();
+bool SBBasePda::hideInventory() {
+	synchronizePdaState();
 
 	// if we have an inventory window
-	if (m_xInvWnd) {
-		m_xInvWnd->SetVisible(false);
-		m_xCurDisplay = nullptr;
-		SBBasePda::m_ePdaMode = NOMODE;
-		SetPDAState();
+	if (_invWnd) {
+		_invWnd->SetVisible(false);
+		_curDisplay = nullptr;
+		SBBasePda::_pdaMode = NOMODE;
+		setPdaState();
 		return true;
 	}
 
 	return false;
 }
 
-bool SBBasePda::ShowInventory() {
-	SynchronizePDAState();
-	StopMovie(false);		// if a movie is playing, then stop it.
+bool SBBasePda::showInventory() {
+	synchronizePdaState();
+	stopMovie(false);		// if a movie is playing, then stop it.
 
 	// If we have an inventory window
-	if (m_xInvWnd) {
-		if (m_xCurDisplay)
-			m_xCurDisplay->SetVisible(false);	// Turn off the current display
+	if (_invWnd) {
+		if (_curDisplay)
+			_curDisplay->SetVisible(false);	// Turn off the current display
 
-		m_xInvWnd->SetVisible(true);			// Turn on the inventory
+		_invWnd->SetVisible(true);			// Turn on the inventory
 
 		// set the current display object
-		m_xCurDisplay = m_xInvWnd;				// Set the current display = Inventory
-		SBBasePda::m_ePdaMode = INVMODE;
-		SetPDAState();
+		_curDisplay = _invWnd;				// Set the current display = Inventory
+		SBBasePda::_pdaMode = INVMODE;
+		setPdaState();
 		return true;
 	}
 
 	return false;
 }
 
-bool SBBasePda::ShowMap() {
-	SynchronizePDAState();
-	StopMovie(false);		// If a movie is playing, then stop it.
+bool SBBasePda::showMap() {
+	synchronizePdaState();
+	stopMovie(false);		// If a movie is playing, then stop it.
 
 	// if we have a map window
-	if (m_xMapWnd)  {
-		if (m_xCurDisplay)
-			m_xCurDisplay->SetVisible(false);	// Turn off the current display
+	if (_mapWnd)  {
+		if (_curDisplay)
+			_curDisplay->SetVisible(false);	// Turn off the current display
 
-		m_xMapWnd->SetVisible(true);			// Turn on the map
+		_mapWnd->SetVisible(true);			// Turn on the map
 
 		// set the current display object
-		m_xCurDisplay = m_xMapWnd;				// Set the current display = Map
-		SBBasePda::m_ePdaMode = MAPMODE;
-		m_xMapWnd->AttachActiveObjects();
-		SetPDAState();
+		_curDisplay = _mapWnd;				// Set the current display = Map
+		SBBasePda::_pdaMode = MAPMODE;
+		_mapWnd->AttachActiveObjects();
+		setPdaState();
 
 		return true;
 	}
@@ -223,44 +223,44 @@ bool SBBasePda::ShowMap() {
 	return false;
 }
 
-bool SBBasePda::HideMap() {
-	SynchronizePDAState();
+bool SBBasePda::hideMap() {
+	synchronizePdaState();
 
 	// if we have a map window
-	if (m_xMapWnd) {
+	if (_mapWnd) {
 		// Turn off the Map
-		m_xMapWnd->SetVisible(false);
+		_mapWnd->SetVisible(false);
 
 		// set the current display to nullptr
-		m_xCurDisplay = nullptr;
-		SetPDAState();
-		SBBasePda::m_ePdaMode = NOMODE;
+		_curDisplay = nullptr;
+		setPdaState();
+		SBBasePda::_pdaMode = NOMODE;
 		return true;
 	}
 
 	return false;
 }
 
-bool SBBasePda::ShowLog() {
+bool SBBasePda::showLog() {
 	if (CBagStorageDevWnd::m_pEvtSDev != nullptr) {
 		CBagStorageDevWnd::m_pEvtSDev->EvaluateExpressions();
 	}
 
-	SynchronizePDAState();
-	StopMovie(false);		// If a movie is playing, then stop it.
+	synchronizePdaState();
+	stopMovie(false);		// If a movie is playing, then stop it.
 
 	// if we have a map window
-	if (m_xLogWnd) {
-		if (m_xCurDisplay)
-			m_xCurDisplay->SetVisible(false);	// Turn off the current display
+	if (_logWnd) {
+		if (_curDisplay)
+			_curDisplay->SetVisible(false);	// Turn off the current display
 
-		m_xLogWnd->SetVisible(true);			// Turn on the map
+		_logWnd->SetVisible(true);			// Turn on the map
 
 		// Set the current display object
-		m_xCurDisplay = m_xLogWnd;				// Set the current display = Map
-		SBBasePda::m_ePdaMode = LOGMODE;
-		m_xLogWnd->AttachActiveObjects();
-		SetPDAState();
+		_curDisplay = _logWnd;				// Set the current display = Map
+		SBBasePda::_pdaMode = LOGMODE;
+		_logWnd->AttachActiveObjects();
+		setPdaState();
 
 		return true;
 	}
@@ -268,10 +268,10 @@ bool SBBasePda::ShowLog() {
 	return false;
 }
 
-bool SBBasePda::MsgLight() {
+bool SBBasePda::msgLight() {
 	// If we have a map window
-	if (m_xLogWnd) {
-		((CBagLog *)m_xLogWnd)->PlayMsgQue();
+	if (_logWnd) {
+		((CBagLog *)_logWnd)->PlayMsgQue();
 	}
 
 	return true;
@@ -283,19 +283,19 @@ void *SBBasePda::fPdaButtonHandler(int nRefId, void *pvInfo) {
 	SBBasePda *pPDA = (SBBasePda *)pvInfo;
 
 	switch (nRefId) {
-	case MAP:
-		pPDA->ShowMap();
+	case PDA_MAP:
+		pPDA->showMap();
 		break;
 
-	case STASH:
-		pPDA->ShowInventory();
+	case PDA_STASH:
+		pPDA->showInventory();
 		break;
 
-	case ZOOM:
-		pPDA->Zoom();
+	case PDA_ZOOM:
+		pPDA->zoom();
 		break;
 
-	case SYSTEM: {
+	case PDA_SYSTEM: {
 		CBagel *pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
 			CBagMasterWin *pWnd = pApp->getMasterWnd();
@@ -306,16 +306,16 @@ void *SBBasePda::fPdaButtonHandler(int nRefId, void *pvInfo) {
 		break;
 	}
 
-	case LOG:
-		pPDA->ShowLog();
+	case PDA_LOG:
+		pPDA->showLog();
 		break;
 
-	case OFF:
-		pPDA->Deactivate();
+	case PDA_OFF:
+		pPDA->deactivate();
 		break;
 
-	case MSGLIGHT:
-		pPDA->MsgLight();
+	case PDA_MSGLIGHT:
+		pPDA->msgLight();
 		break;
 
 	default:
@@ -325,15 +325,15 @@ void *SBBasePda::fPdaButtonHandler(int nRefId, void *pvInfo) {
 	return pvInfo;
 }
 
-void SBBasePda::SynchronizePDAState() {
-	if (m_ePDAPos == PDADOWN && IsActivated()) {
-		Deactivate();
-	} else if (m_ePDAPos == PDAUP && IsActivated() == false) {
-		Activate();
+void SBBasePda::synchronizePdaState() {
+	if (_pdaPos == PDADOWN && isActivated()) {
+		deactivate();
+	} else if (_pdaPos == PDAUP && isActivated() == false) {
+		activate();
 	}
 }
 
-void SBBasePda::SetPDAState() {
+void SBBasePda::setPdaState() {
 	const char *pPDAMode;
 	const char *pPDAPos;
 
@@ -350,7 +350,7 @@ void SBBasePda::SetPDAState() {
 	// Save the pda state and position
 	pVar = VARMNGR->GetVariable(pPDAMode);
 	if (pVar != nullptr) {
-		switch (m_ePdaMode) {
+		switch (_pdaMode) {
 		case NOMODE:
 			pVar->SetValue("NOMODE");
 			break;
@@ -371,7 +371,7 @@ void SBBasePda::SetPDAState() {
 
 	pVar = VARMNGR->GetVariable(pPDAPos);
 	if (pVar != nullptr) {
-		switch (m_ePDAPos) {
+		switch (_pdaPos) {
 		case PDAUP:
 			pVar->SetValue("UP");
 			break;
@@ -384,7 +384,7 @@ void SBBasePda::SetPDAState() {
 	}
 }
 
-void SBBasePda::GetPDAState() {
+void SBBasePda::getPdaState() {
 	char szLocalBuff[256];
 	CBofString sPDAState(szLocalBuff, 256);
 	const char *pPDAMode;
@@ -407,15 +407,15 @@ void SBBasePda::GetPDAState() {
 		// Now set the internal PDA state based on this info.
 		// If we saved during a movie, then restore to map mode.
 		if (sPDAState.Find("MAP") != -1 || sPDAState.Find("MOO") != -1) {
-			m_ePdaMode = MAPMODE;
+			_pdaMode = MAPMODE;
 		} else if (sPDAState.Find("INV") != -1) {
-			m_ePdaMode = INVMODE;
+			_pdaMode = INVMODE;
 		} else if (sPDAState.Find("LOG") != -1) {
-			m_ePdaMode = LOGMODE;
+			_pdaMode = LOGMODE;
 		} else if (sPDAState.Find("MOO") != -1) {
-			m_ePdaMode = MOOMODE;
+			_pdaMode = MOOMODE;
 		} else {
-			m_ePdaMode = NOMODE;
+			_pdaMode = NOMODE;
 		}
 	}
 
@@ -424,9 +424,9 @@ void SBBasePda::GetPDAState() {
 	if (pVar) {
 		sPDAState = pVar->GetValue();
 		if (sPDAState.Find("UP") != -1) {
-			m_ePDAPos = PDAUP;
+			_pdaPos = PDAUP;
 		} else {
-			m_ePDAPos = PDADOWN;
+			_pdaPos = PDADOWN;
 		}
 	}
 }
@@ -434,7 +434,7 @@ void SBBasePda::GetPDAState() {
 #define NULLCURSOR 0
 #define HANDCURSOR 1
 
-int SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
+int SBBasePda::getProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
 	int nWieldCursor = CBagWield::GetWieldCursor();
 
 	// Assume can't click
@@ -442,12 +442,12 @@ int SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
 
 	// If we're in the map, return the nullptr cursor, if on the pda but not in the
 	// map window, return the hand.  Same rules for nomode.
-	switch (m_ePdaMode) {
+	switch (_pdaMode) {
 	case MAPMODE:
 	case NOMODE:
 	case MOOMODE:
-		if (m_xMapWnd) {
-			CBofRect cRect = m_xMapWnd->getRect() + pdaRect.TopLeft();
+		if (_mapWnd) {
+			CBofRect cRect = _mapWnd->getRect() + pdaRect.TopLeft();
 			if (cRect.PtInRect(xPoint)) {
 				if (nWieldCursor >= 0) {
 					return nWieldCursor;
@@ -461,20 +461,20 @@ int SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
 	case INVMODE:
 	case LOGMODE:
 		// Make sure our cur display is synchronized.
-		Assert(m_ePdaMode == INVMODE ? m_xCurDisplay == m_xInvWnd : m_xCurDisplay == m_xLogWnd);
+		Assert(_pdaMode == INVMODE ? _curDisplay == _invWnd : _curDisplay == _logWnd);
 
 		// If we have a display, then parouse it's list and see if we're over something worth
 		// mousedowning on.
-		if (m_xCurDisplay) {
+		if (_curDisplay) {
 			CBagObject *pOverObj = nullptr;
-			CBofRect cRect = m_xCurDisplay->getRect() + pdaRect.TopLeft();
+			CBofRect cRect = _curDisplay->getRect() + pdaRect.TopLeft();
 			if (cRect.PtInRect(xPoint)) {
 				// Go through the list of inventory items and see if we're over any of them
 				// in particular.
-				CBofList<CBagObject *> *pList = m_xCurDisplay->GetObjectList();
+				CBofList<CBagObject *> *pList = _curDisplay->GetObjectList();
 				if (pList != nullptr) {
 					// Localize pda view rect
-					cRect = m_xCurDisplay->getRect() + pdaRect.TopLeft();
+					cRect = _curDisplay->getRect() + pdaRect.TopLeft();
 
 					int nCount = pList->GetCount();
 					for (int i = 0; i < nCount; ++i) {
@@ -488,7 +488,7 @@ int SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
 					}
 				}
 
-				if (m_ePdaMode == LOGMODE) {
+				if (_pdaMode == LOGMODE) {
 					if (pOverObj) {
 						return pOverObj->GetOverCursor();
 					}
@@ -497,7 +497,7 @@ int SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
 					}
 				}
 
-				if (m_ePdaMode == INVMODE) {
+				if (_pdaMode == INVMODE) {
 					if (nWieldCursor >= 0) {
 						return nWieldCursor;
 					}
@@ -516,36 +516,36 @@ int SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
 	return nCursorID;
 }
 
-CBofRect SBBasePda::GetViewRect() {
-	return (m_xCurDisplay == nullptr ? CBofRect() : m_xCurDisplay->getRect());
+CBofRect SBBasePda::getViewRect() {
+	return (_curDisplay == nullptr ? CBofRect() : _curDisplay->getRect());
 }
 
-ErrorCode SBBasePda::AttachActiveObjects() {
+ErrorCode SBBasePda::attachActiveObjects() {
 	if (CBagStorageDevWnd::m_pEvtSDev != nullptr) {
 		CBagStorageDevWnd::m_pEvtSDev->EvaluateExpressions();
 	}
 
-	if (m_xMooWnd)
-		m_xMooWnd->AttachActiveObjects();
-	if (m_xInvWnd)
-		m_xInvWnd->AttachActiveObjects();
-	if (m_xMapWnd)
-		m_xMapWnd->AttachActiveObjects();
-	if (m_xLogWnd)
-		m_xLogWnd->AttachActiveObjects();
+	if (_mooWnd)
+		_mooWnd->AttachActiveObjects();
+	if (_invWnd)
+		_invWnd->AttachActiveObjects();
+	if (_mapWnd)
+		_mapWnd->AttachActiveObjects();
+	if (_logWnd)
+		_logWnd->AttachActiveObjects();
 
 	return ERR_NONE;
 }
 
-ErrorCode SBBasePda::DetachActiveObjects() {
-	if (m_xMooWnd)
-		m_xMooWnd->DetachActiveObjects();
-	if (m_xInvWnd)
-		m_xInvWnd->DetachActiveObjects();
-	if (m_xMapWnd)
-		m_xMapWnd->DetachActiveObjects();
-	if (m_xLogWnd)
-		m_xLogWnd->DetachActiveObjects();
+ErrorCode SBBasePda::detachActiveObjects() {
+	if (_mooWnd)
+		_mooWnd->DetachActiveObjects();
+	if (_invWnd)
+		_invWnd->DetachActiveObjects();
+	if (_mapWnd)
+		_mapWnd->DetachActiveObjects();
+	if (_logWnd)
+		_logWnd->DetachActiveObjects();
 
 	return ERR_NONE;
 }

@@ -41,7 +41,7 @@ CBofVHashTable<CBofString, HASH_TABLE_SIZE> *CBagel::_cacheFileList;
 
 // Initialize global variables.
 //
-CBofWindow *g_pHackWindow;
+CBofWindow *g_hackWindow;
 
 CBagel::CBagel(const BagelReg *gameReg) {
 	Assert(gameReg != nullptr);
@@ -72,7 +72,7 @@ void CBagel::registerGame(const BagelReg *gameReg) {
 	_gameReg = gameReg;
 
 	// Init statics
-	g_pHackWindow = nullptr;
+	g_hackWindow = nullptr;
 
 	// Use registration info to init this game object
 	if (gameReg != nullptr) {
@@ -100,14 +100,14 @@ ErrorCode CBagel::getOption(const char *section, const char *option, char *strin
 	return ReadSetting(section, option, stringValue, defaultValue, size);
 }
 
-ErrorCode CBagel::getOption(const char *section, const char *option, int *pValue, int defaultValue) {
+ErrorCode CBagel::getOption(const char *section, const char *option, int *intValue, int defaultValue) {
 	Assert(IsValidObject(this));
-	return ReadSetting(section, option, pValue, defaultValue);
+	return ReadSetting(section, option, intValue, defaultValue);
 }
 
-ErrorCode CBagel::getOption(const char *section, const char *option, bool *pValue, int defaultValue) {
+ErrorCode CBagel::getOption(const char *section, const char *option, bool *boolValue, int defaultValue) {
 	Assert(IsValidObject(this));
-	return ReadSetting(section, option, pValue, defaultValue);
+	return ReadSetting(section, option, boolValue, defaultValue);
 }
 
 ErrorCode CBagel::initialize() {
@@ -219,10 +219,10 @@ ErrorCode CBagel::verifyCDInDrive(int diskId, const char *waveFile) {
 				BofPlaySound(waveFile, SOUND_WAVE | SOUND_ASYNCH);
 			}
 
-			if (g_pHackWindow == nullptr) {
+			if (g_hackWindow == nullptr) {
 				showNextCDDialog(m_pMainWnd, diskId);
 			} else {
-				showNextCDDialog(g_pHackWindow, diskId);
+				showNextCDDialog(g_hackWindow, diskId);
 			}
 		}
 	}

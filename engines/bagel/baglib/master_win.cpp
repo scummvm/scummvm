@@ -55,7 +55,7 @@ namespace Bagel {
 
 // Global vars
 //
-extern CBofWindow *g_pHackWindow;
+extern CBofWindow *g_hackWindow;
 static bool g_bAllowRestore = false;
 
 bool g_bRestoreObjList = true;
@@ -180,15 +180,15 @@ ErrorCode CBagMasterWin::ShowSystemDialog(bool bSaveBackground) {
 		// Create the dialog box
 		cOptionDialog.Create("System Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), this);
 
-		CBofWindow *pLastWin = g_pHackWindow;
-		g_pHackWindow = &cOptionDialog;
+		CBofWindow *pLastWin = g_hackWindow;
+		g_hackWindow = &cOptionDialog;
 
 		g_bPauseTimer = true;
 		int nReturnValue = cOptionDialog.DoModal();
 		g_bPauseTimer = false;
 		cOptionDialog.Detach();
 
-		g_pHackWindow = pLastWin;
+		g_hackWindow = pLastWin;
 
 		LogInfo("Exiting System Screen");
 
@@ -854,11 +854,11 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 				GetAlphaNumFromStream(fpInput, sStr);
 
 				if (sStr.Find("MAP") != -1) {
-					SBBasePda::SetPDAMode(MAPMODE);
+					SBBasePda::setPdaMode(MAPMODE);
 				} else if (sStr.Find("INV") != -1) {
-					SBBasePda::SetPDAMode(INVMODE);
+					SBBasePda::setPdaMode(INVMODE);
 				} else if (sStr.Find("LOG") != -1) {
-					SBBasePda::SetPDAMode(LOGMODE);
+					SBBasePda::setPdaMode(LOGMODE);
 				}
 				LogInfo(BuildString("PDASTATE = %s", szPDAState));
 			}
@@ -1266,8 +1266,8 @@ bool CBagMasterWin::ShowRestartDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 		CBagRestartDialog cDlg(m_cSysScreen.GetBuffer(), nullptr, pWin);
 
-		CBofWindow *pLastWin = g_pHackWindow;
-		g_pHackWindow = &cDlg;
+		CBofWindow *pLastWin = g_hackWindow;
+		g_hackWindow = &cDlg;
 
 		// Don't allow save of background
 		if (!bSaveBkg) {
@@ -1280,7 +1280,7 @@ bool CBagMasterWin::ShowRestartDialog(CBofWindow *pWin, bool bSaveBkg) {
 		int nReturn = cDlg.DoModal();
 		g_bPauseTimer = bSaveTimer;
 
-		g_pHackWindow = pLastWin;
+		g_hackWindow = pLastWin;
 
 		LogInfo("Exiting Restart Screen");
 
@@ -1324,14 +1324,14 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 
 		CBagStartDialog cDlg(szBuf, nullptr, this);
 
-		CBofWindow *pLastWin = g_pHackWindow;
-		g_pHackWindow = &cDlg;
+		CBofWindow *pLastWin = g_hackWindow;
+		g_hackWindow = &cDlg;
 
 		g_bAllowRestore = true;
 		int nRetVal = cDlg.DoModal();
 		g_bAllowRestore = false;
 
-		g_pHackWindow = pLastWin;
+		g_hackWindow = pLastWin;
 
 		// Hide that dialog
 		cBmp.Paint(this, 0, 0);
@@ -1747,8 +1747,8 @@ bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 		// Create the dialog box
 		cRestoreDialog.Create("Restore Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pWin);
 
-		CBofWindow *pLastWin = g_pHackWindow;
-		g_pHackWindow = &cRestoreDialog;
+		CBofWindow *pLastWin = g_hackWindow;
+		g_hackWindow = &cRestoreDialog;
 
 		bool bSaveTimer = g_bPauseTimer;
 		g_bPauseTimer = true;
@@ -1760,7 +1760,7 @@ bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 		bRestored = (!cRestoreDialog.ErrorOccurred() && cRestoreDialog.Restored());
 		cRestoreDialog.Destroy();
 
-		g_pHackWindow = pLastWin;
+		g_hackWindow = pLastWin;
 
 		CBofSound::ResumeSounds();
 

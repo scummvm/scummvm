@@ -524,7 +524,7 @@ int CBagRPObject::RunRPQueue() {
 	}
 
 	// The first part of this static should only run if the log is frontmost.
-	if (SBBasePda::GetPDAMode() == LOGMODE) {
+	if (SBBasePda::getPdaMode() == LOGMODE) {
 		// If our script switched us to the main menu, then make sure that we
 		// have a chance to deactivate anything that we have active.
 		RPSTATES prevRPState = m_eRPMode;
@@ -1464,12 +1464,12 @@ void CBagRPObject::ShowPDALog() {
 	if (Zoomed()) {
 		SBZoomPda *pZoomPDA = (SBZoomPda *)SDEVMNGR->GetStorageDevice(PDAZWLD);
 		if (pZoomPDA) {
-			pZoomPDA->ShowLog();
+			pZoomPDA->showLog();
 		}
 	} else {
 		CBagPDA *pPDA = (CBagPDA *)SDEVMNGR->GetStorageDevice(PDAWLD);
 		if (pPDA) {
-			pPDA->ShowLog();
+			pPDA->showLog();
 		}
 	}
 }
@@ -1480,7 +1480,7 @@ bool CBagRPObject::Zoomed() {
 		return false;
 	}
 
-	return pPDA->GetZoomed();
+	return pPDA->getZoomed();
 }
 
 bool CBagRPObject::initialize() {

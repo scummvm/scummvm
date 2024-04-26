@@ -209,10 +209,10 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 					CBagTextObject *pTXObj = (CBagTextObject *)pObj;
 					if (pTXObj->IsCaption()) {
 						SBZoomPda *pZPDA = (SBZoomPda *)SDEVMNGR->GetStorageDevice("BPDAZ_WLD");
-						if (pZPDA && pZPDA->GetZoomed()) {
+						if (pZPDA && pZPDA->getZoomed()) {
 							bZoomed = true;
 
-							wndRect = pZPDA->GetViewRect();
+							wndRect = pZPDA->getViewRect();
 						}
 					}
 
@@ -401,7 +401,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			// a bit... unless of course the mousedown occurred in the PDA itself.
 			CBagPDA *pPDA = (CBagPDA *)SDEVMNGR->GetStorageDevice("BPDA_WLD");
 
-			if (pPDA != nullptr && (pPDA->IsActivated() && bZoomed == false)) {
+			if (pPDA != nullptr && (pPDA->isActivated() && bZoomed == false)) {
 				if (!pPDA->IsInside(cMouseDown)) {
 					CBofRect cPDARect = pPDA->getRect();
 
@@ -432,7 +432,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 				// If the PDA is currently active, then we have to put the caption elsewhere,
 				// or deactivate the PDA (if PDA zoomed, just place at bottom.
-				if (CBagPanWindow::m_pPDABmp != nullptr && CBagPanWindow::m_pPDABmp->IsActivated() && bZoomed == false) {
+				if (CBagPanWindow::m_pPDABmp != nullptr && CBagPanWindow::m_pPDABmp->isActivated() && bZoomed == false) {
 					dlg.Move(wndRect.left, wndRect.top, true);
 				} else {
 					dlg.Move(tmpRect.left, tmpRect.top, true);

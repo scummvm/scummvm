@@ -95,20 +95,20 @@ void CBagMoo::StopMovie(bool bResetPDA) {
 			// Assume this marks the end of the movie.
 			switch (m_eSavePDAMode) {
 			case MAPMODE:
-				pPDA->ShowMap();
+				pPDA->showMap();
 				break;
 
 			case INVMODE:
-				pPDA->ShowInventory();
+				pPDA->showInventory();
 				break;
 
 			case LOGMODE:
-				pPDA->ShowLog();
+				pPDA->showLog();
 				break;
 
 			case NOMODE:
 			default:
-				pPDA->HideMovie();
+				pPDA->hideMovie();
 				break;
 			}
 		}
@@ -121,9 +121,9 @@ void CBagMoo::StopMovie(bool bResetPDA) {
 	}
 
 	// If we're done playing, then deactivate the PDA.
-	if (pPDA && pPDA->GetDeactivate() == true) {
-		if (pPDA->IsActivated()) {
-			pPDA->Deactivate();
+	if (pPDA && pPDA->getDeactivate() == true) {
+		if (pPDA->isActivated()) {
+			pPDA->deactivate();
 		}
 	}
 }

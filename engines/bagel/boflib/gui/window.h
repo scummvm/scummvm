@@ -477,7 +477,7 @@ public:
 	uint32 m_nInterval;
 };
 
-extern CBofWindow *g_pHackWindow;
+extern CBofWindow *g_hackWindow;
 
 } // namespace Bagel
 
