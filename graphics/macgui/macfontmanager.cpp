@@ -531,14 +531,23 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 			if (pFont != _uniFonts.end()) {
 				font = pFont->_value;
 			} else {
-				font = Graphics::loadTTFFontFromArchive("FreeSans.ttf", macFont->getSize(), Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeMonochrome);
-				_uniFonts[macFont->getSize()] = font;
+				int newId = macFont->getId();
+				int newSlant = macFont->getSlant();
+				int familyId = getFamilyId(newId, newSlant);
+				if (_fontInfo.contains(familyId)) {
+					font = Graphics::loadTTFFontFromArchive(_fontInfo[familyId]->name, macFont->getSize(), Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeMonochrome);
+					_uniFonts[macFont->getSize()] = font;
+				} else {
+					font = Graphics::loadTTFFontFromArchive("FreeSans.ttf", macFont->getSize(), Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeMonochrome);
+					_uniFonts[macFont->getSize()] = font;
+				}
 			}
 		} else {
 			int newId = macFont->getId();
 			int newSlant = macFont->getSlant();
 			int familyId = getFamilyId(newId, newSlant);
 			font = Graphics::loadTTFFontFromArchive(_fontInfo[familyId]->name, macFont->getSize(), Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeMonochrome);
+			_uniFonts[macFont->getSize()] = font;
 		}
 	}
 #endif
