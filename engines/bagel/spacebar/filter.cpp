@@ -103,6 +103,8 @@ static CBagVar *g_pTDig2 = nullptr;
 static CBagVar *g_pTDig3 = nullptr;
 static CBagVar *g_pTDig4 = nullptr;
 
+static uint32 waitCount;
+
 // Filter initialization code.
 //
 void VilInitFilters(CBofBitmap *pBmp) {
