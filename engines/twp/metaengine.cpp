@@ -148,6 +148,7 @@ Common::Array<Common::Keymap *> TwpMetaEngine::initKeymaps(const char *target) c
 		Common::KeyCode key;
 	} actions[] = {
 		{"ACTION", _s("Action"), Twp::kDefaultAction, "MOUSE_LEFT|JOY_A|RETURN", Common::EVENT_LBUTTONDOWN, Common::KEYCODE_INVALID},
+		{"SELECTHIGHLIGHTEDVERB", _s("Select highlighted verb"), Twp::kSelectHighlightedVerb, "MOUSE_RIGHT|JOY_X", Common::EVENT_RBUTTONDOWN, Common::KEYCODE_INVALID},
 		{Common::kStandardActionMoveLeft, _s("Left"), Twp::kMoveLeft, "LEFT|JOY_LEFT", Common::EVENT_INVALID, Common::KEYCODE_LEFT},
 		{Common::kStandardActionMoveRight, _s("Right"), Twp::kMoveRight, "RIGHT|JOY_RIGHT", Common::EVENT_INVALID, Common::KEYCODE_RIGHT},
 		{Common::kStandardActionMoveUp, _s("Up"), Twp::kMoveUp, "UP|JOY_UP", Common::EVENT_INVALID, Common::KEYCODE_UP},
@@ -166,7 +167,7 @@ Common::Array<Common::Keymap *> TwpMetaEngine::initKeymaps(const char *target) c
 		{"SELECTCHOICE6", _s("Select Choice 6"), Twp::kSelectChoice6, "6", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
 		{"SELECTNEXTACTOR", _s("Select Next Actor"), Twp::kSelectNextActor, "0", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
 		{"SELECTPREVACTOR", _s("Select Previous Actor"), Twp::kSelectPreviousActor, "9", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
-		{"SKIPTEXT", _s("Skip Text"), Twp::kSkipText, "MOUSE_MIDDLE|PERIOD", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"SKIPTEXT", _s("Skip Text"), Twp::kSkipText, "MOUSE_MIDDLE|PERIOD|JOY_Y", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
 		{"SHOWHOTSPOTS", _s("Show hotspots"), Twp::kShowHotspots, "TAB", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
 		{"OPEN", _s("Open"), Twp::kOpen, "q", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
 		{"CLOSE", _s("Close"), Twp::kClose, "a", Common::EVENT_INVALID, Common::KEYCODE_INVALID},

@@ -26,6 +26,7 @@ namespace Twp {
 
 enum TwpAction {
 	kDefaultAction,
+	kSelectHighlightedVerb,
 	kMoveLeft,
 	kMoveRight,
 	kMoveUp,
