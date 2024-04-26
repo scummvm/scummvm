@@ -87,7 +87,7 @@ public:
 		m_bAttached = false;
 		return ERR_NONE;
 	}
-	virtual bool IsAttached() {
+	virtual bool isAttached() {
 		return m_bAttached;
 	}
 

@@ -107,7 +107,7 @@ public:
 
 	virtual bool RunObject();
 
-	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int);
+	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int);
 
 	virtual void OnLButtonUp(uint32, CBofPoint *, void * = nullptr);
 

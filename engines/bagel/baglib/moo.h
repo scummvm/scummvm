@@ -41,7 +41,7 @@ public:
 	virtual ~CBagMoo();
 	static void initialize();
 
-	virtual ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);
+	virtual ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);
 
 	// Grab the button event of the bagbmobj and send them to the cbagsdev
 	void OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * /*info*/) {}

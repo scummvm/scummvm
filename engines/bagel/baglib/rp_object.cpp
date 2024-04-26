@@ -112,7 +112,7 @@ CBagRPObject::CBagRPObject() {
 
 CBagRPObject::~CBagRPObject() {
 	// If still attached, then detach
-	if (IsAttached()) {
+	if (isAttached()) {
 		detach();
 	}
 
@@ -775,12 +775,12 @@ bool CBagRPObject::RunObject() {
 #define REVIEWDOSZ "REVIEWDOSZ"
 #define REVIEWDOS "REVIEWDOS"
 
-ErrorCode CBagRPObject::Update(CBofBitmap *pBmp, CBofPoint /*pt*/, CBofRect * /*pSrcRect*/, int) {
+ErrorCode CBagRPObject::update(CBofBitmap *pBmp, CBofPoint /*pt*/, CBofRect * /*pSrcRect*/, int) {
 	if (GetLogState() == RP_RESULTS) {
 		if (m_pDescObj) {
 			CBofRect txRect = m_pDescObj->getRect();
 			CBofPoint txPt = txRect.TopLeft();
-			m_pDescObj->Update(pBmp, txPt, &txRect, 0);
+			m_pDescObj->update(pBmp, txPt, &txRect, 0);
 		}
 	}
 
@@ -855,7 +855,7 @@ bool CBagRPObject::ActivateRPObject() {
 
 	// This object might not be attached since it is not a local object in the
 	// log storage device
-	if (!m_pDescObj->IsAttached()) {
+	if (!m_pDescObj->isAttached()) {
 		m_pDescObj->attach();
 	}
 	m_pDescObj->SetVisible(); // Show this guy
@@ -1396,7 +1396,7 @@ void CBagRPObject::ShowRPReview() {
 				// We know this object is attached, but it might not be visible.
 				if (pRPObj->m_pObjectName) {
 
-					bool bIsAttached = pRPObj->m_pObjectName->IsAttached();
+					bool bIsAttached = pRPObj->m_pObjectName->isAttached();
 					if (bIsAttached == false) {
 						pLogWld->ActivateLocalObject(pRPObj->m_pObjectName);
 					}

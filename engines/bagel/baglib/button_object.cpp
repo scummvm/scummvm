@@ -263,7 +263,7 @@ bool CBagButtonObject::OnMouseMove(uint32 /*nFlags*/, CBofPoint xPoint, void *in
 	return true;
 }
 
-ErrorCode CBagButtonObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
+ErrorCode CBagButtonObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	bool bDirty = false;
 
 	if (m_xButtonType == PUSH) {
@@ -326,7 +326,7 @@ ErrorCode CBagButtonObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSr
 	}
 
 	if (GetSprite() && ((GetSprite()->GetCelCount() > 1) || IsVisible())) {
-		ErrorCode err = CBagSpriteObject::Update(pBmp, pt, pSrcRect, nMaskColor);
+		ErrorCode err = CBagSpriteObject::update(pBmp, pt, pSrcRect, nMaskColor);
 		SetDirty(bDirty);
 		return err;
 	}

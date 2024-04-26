@@ -49,7 +49,7 @@ CBagSpriteObject::~CBagSpriteObject() {
 
 ErrorCode CBagSpriteObject::attach() {
 	// If it's not already attached
-	if (!IsAttached()) {
+	if (!isAttached()) {
 		// Could not already have a sprite
 		Assert(m_xSprite == nullptr);
 
@@ -213,7 +213,7 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-ErrorCode CBagSpriteObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, int) {
+ErrorCode CBagSpriteObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, int) {
 	if (m_xSprite) {
 		bool b = true;
 		int nFrameInterval = GetFrameRate();
@@ -252,7 +252,7 @@ ErrorCode CBagSpriteObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, i
 	return ERR_NONE;
 }
 
-bool CBagSpriteObject::IsInside(const CBofPoint &xPoint) {
+bool CBagSpriteObject::isInside(const CBofPoint &xPoint) {
 	if (m_xSprite && getRect().PtInRect(xPoint)) {
 		if (IsTransparent()) {
 			int x = xPoint.x - getRect().left;

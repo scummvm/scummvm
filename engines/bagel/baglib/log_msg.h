@@ -38,7 +38,7 @@ public:
 
 	void setSize(const CBofSize &xSize);
 
-	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
+	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 };
 
 #define mMsgTimeMask 0x3FFF
@@ -54,7 +54,7 @@ public:
 	CBagLogMsg(int nSdevWidth);
 	virtual ~CBagLogMsg() {}
 
-	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
+	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 
 	/**
 	 * Takes in info and then removes the relative information and returns the info
@@ -107,7 +107,7 @@ public:
 	CBagLogSuspect(int nSdevWidth);
 	virtual ~CBagLogSuspect() {}
 
-	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
+	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 
 	void setSize(const CBofSize &xSize);
 
@@ -211,7 +211,7 @@ public:
 	// Need private setinfo so we can parse energy detector fields
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	ErrorCode Update(CBofBitmap *, CBofPoint, CBofRect *, int);
+	ErrorCode update(CBofBitmap *, CBofPoint, CBofRect *, int);
 
 	ErrorCode attach();
 
@@ -248,7 +248,7 @@ public:
 
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
+	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 };
 
 } // namespace Bagel

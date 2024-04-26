@@ -54,7 +54,7 @@ public:
 	 */
 	ErrorCode attach();
 	ErrorCode detach();
-	bool IsAttached() {
+	bool isAttached() {
 		return m_xDig1 != nullptr;
 	}
 
@@ -77,7 +77,7 @@ public:
 	 * to the first 4 digits of the variable if the variable is less the 4 digits
 	 * the time is padded with 0's if it is greater the 4 we truncate to remaining digits
 	 */
-	virtual ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
+	virtual ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
 	virtual ErrorCode Update(CBofWindow *pWnd, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 
 	void SetVariable(const CBofString &sProp) {

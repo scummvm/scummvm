@@ -123,7 +123,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 			if (pObj->IsLocal() && (!pObj->GetExpression() || pObj->GetExpression()->Evaluate(pObj->IsNegative()))) {
 				// Only attach if not attached
-				if (pObj->IsAttached() == false) {
+				if (pObj->isAttached() == false) {
 					pObj->attach();
 
 					// Otherwise, we need to re-calculate the size of the text object,
@@ -183,7 +183,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 		if (pObj->IsLocal() && (!pObj->GetExpression() || pObj->GetExpression()->Evaluate(pObj->IsNegative()))) {
 			// Only attach if not attached
-			if (pObj->IsAttached() == false) {
+			if (pObj->isAttached() == false) {
 				pObj->attach();
 
 				// Otherwise, we need to re-calculate the size of the text object,
@@ -402,7 +402,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			CBagPDA *pPDA = (CBagPDA *)SDEVMNGR->GetStorageDevice("BPDA_WLD");
 
 			if (pPDA != nullptr && (pPDA->isActivated() && bZoomed == false)) {
-				if (!pPDA->IsInside(cMouseDown)) {
+				if (!pPDA->isInside(cMouseDown)) {
 					CBofRect cPDARect = pPDA->getRect();
 
 					tmpRect.OffsetRect(0, (tmpRect.bottom > cPDARect.top ? cPDARect.top - tmpRect.bottom : 0));

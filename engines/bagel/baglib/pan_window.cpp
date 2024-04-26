@@ -311,7 +311,7 @@ ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 				// Only update dirty objects...
 				if (pObj->IsDirty() || pObj->IsAlwaysUpdate()) {
 					if (!(pObj->GetType() == TEXTOBJ && ((CBagTextObject *)pObj)->IsCaption() && pObj->IsImmediateRun())) {
-						pObj->Update(pBmp, pt, &xIntrRect);
+						pObj->update(pBmp, pt, &xIntrRect);
 
 						// If we're in a closeup and we have a character animation
 						// playing, then make sure we redraw
@@ -322,7 +322,7 @@ ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 							// Handle non-modal movies also...
 							if (pCharObj->GetNumOfLoops() == 1) {
 								SetPreFilterPan(true);
-							} else if (pObj->IsAttached() &&                       // don't care if it's not running...
+							} else if (pObj->isAttached() &&                       // don't care if it's not running...
 								        (pCharObj->IsStationary() == false) &&
 								        (pCharObj->GetNumOfLoops() != 0) &&     // Plays multiple or infinite (fly == -1)
 								        ((pObj->getRect().Width() != 480) &&
@@ -528,7 +528,7 @@ void CBagPanWindow::OnMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 		for (int i = 0; i < nCount; ++i) {
 			CBagObject *pObj = pList->GetNodeItem(i);
 
-			if (pObj->IsInside(xPoint)) {
+			if (pObj->isInside(xPoint)) {
 				pOverObj = pObj;
 			}
 		}
@@ -575,7 +575,7 @@ void CBagPanWindow::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 		for (int i = 0; i < nCount; ++i) {
 			CBagObject *pObj = m_pFGObjectList->GetNodeItem(i);
 
-			if (pObj->IsInside(*xPoint)) {
+			if (pObj->isInside(*xPoint)) {
 				pObj->OnLButtonDown(nFlags, xPoint, this);
 				return;
 			}
@@ -636,7 +636,7 @@ void CBagPanWindow::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 			if (nCount != 0) {
 				for (int i = nCount - 1; i >= 0; --i) {
 					CBagObject *pObj = m_pFGObjectList->GetNodeItem(i);
-					if (pObj->IsInside(*xPoint)) {
+					if (pObj->isInside(*xPoint)) {
 						pObj->OnLButtonUp(nFlags, xPoint, this);
 						return;
 					}

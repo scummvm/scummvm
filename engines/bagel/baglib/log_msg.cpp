@@ -144,39 +144,39 @@ void CBagLog::ArrangePages() {
 	int nFirstPage = 1;
 
 	if (nCurPage > nFirstPage && nCurPage < nLastPage) {
-		if (pUpObj->IsAttached() == false) {
+		if (pUpObj->isAttached() == false) {
 			pUpObj->SetActive();
 			pUpObj->attach();
 		}
-		if (pDownObj->IsAttached() == false) {
+		if (pDownObj->isAttached() == false) {
 			pDownObj->SetActive();
 			pDownObj->attach();
 		}
 	} else if (nCurPage == nFirstPage && nCurPage == nLastPage) {
-		if (pUpObj->IsAttached()) {
+		if (pUpObj->isAttached()) {
 			pUpObj->SetActive(false);
 			pUpObj->detach();
 		}
-		if (pDownObj->IsAttached()) {
+		if (pDownObj->isAttached()) {
 			pDownObj->SetActive(false);
 			pDownObj->detach();
 		}
 	} else if (nCurPage <= nFirstPage) {
-		if (pUpObj->IsAttached()) {
+		if (pUpObj->isAttached()) {
 			pUpObj->SetActive(false);
 			pUpObj->detach();
 		}
-		if (pDownObj->IsAttached() == false) {
+		if (pDownObj->isAttached() == false) {
 			pDownObj->SetActive();
 			pDownObj->attach();
 		}
 	} else if (nCurPage >= nLastPage) {
-		if (pUpObj->IsAttached() == false) {
+		if (pUpObj->isAttached() == false) {
 			pUpObj->SetActive();
 			pUpObj->attach();
 		}
 
-		if (pDownObj->IsAttached()) {
+		if (pDownObj->isAttached()) {
 			pDownObj->SetActive(false);
 			pDownObj->detach();
 		}
@@ -315,7 +315,7 @@ ErrorCode CBagLog::ActivateLocalObject(CBagObject *pObj) {
 				pMsgLight = (CBagButtonObject *)pPda->GetObject("MSGLIGHT");
 
 				if (pMsgLight) {
-					if (!pMsgLight->IsAttached()) {
+					if (!pMsgLight->isAttached()) {
 						pMsgLight->SetActive();
 						pMsgLight->attach();
 					}
@@ -361,7 +361,7 @@ ErrorCode CBagLog::PlayMsgQue() {
 
 				CBagMovieObject *pMovie = (CBagMovieObject *)GetObject(OVERRIDEMOVIE);
 				if (pMovie) {
-					if (pMovie->IsAttached() == false) {
+					if (pMovie->isAttached() == false) {
 						pMovie->attach();
 						pMovie->SetVisible();
 					}
@@ -543,7 +543,7 @@ int CBagLogMsg::GetProperty(const CBofString &sProp) {
 	return CBagObject::GetProperty(sProp);
 }
 
-ErrorCode CBagLogMsg::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
+ErrorCode CBagLogMsg::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	// We could use a variable here, translate it's value if that's the case.
 	if (GetMsgTime() == 0) {
 		CBagVar *pVar = VARMNGR->GetVariable(m_sMsgTimeStr);
@@ -558,11 +558,11 @@ ErrorCode CBagLogMsg::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect,
 	SetFont(FONT_MONO);
 	SetText(BuildString("%-30s%02d:%02d", m_sMsgSendee.GetBuffer(), nHr, nMn));
 
-	return CBagTextObject::Update(pBmp, pt, pSrcRect, nMaskColor);
+	return CBagTextObject::update(pBmp, pt, pSrcRect, nMaskColor);
 }
 
-ErrorCode CBagLogResidue::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
-	return CBagTextObject::Update(pBmp, pt, pSrcRect, nMaskColor);
+ErrorCode CBagLogResidue::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
+	return CBagTextObject::update(pBmp, pt, pSrcRect, nMaskColor);
 }
 
 CBagLogSuspect::CBagLogSuspect(int nSdevWidth) : CBagTextObject() {
@@ -739,7 +739,7 @@ void CBagLogSuspect::setSize(const CBofSize &xSize) {
 }
 
 
-ErrorCode CBagLogSuspect::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
+ErrorCode CBagLogSuspect::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	char szSusChecked[256];
 	CBofString sSusChecked(szSusChecked, 256);
 
@@ -775,7 +775,7 @@ ErrorCode CBagLogSuspect::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 	                    sSusVP.GetBuffer(),
 	                    sSusRP.GetBuffer()));
 
-	return CBagTextObject::Update(pBmp, pt, pSrcRect, nMaskColor);
+	return CBagTextObject::update(pBmp, pt, pSrcRect, nMaskColor);
 }
 
 // Energy detector objects, this should be pretty straightforward.
@@ -905,13 +905,13 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-ErrorCode CBagEnergyDetectorObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
+ErrorCode CBagEnergyDetectorObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	// Don't draw until we're attached
-	if (IsAttached() == false) {
+	if (isAttached() == false) {
 		return ERR_NONE;
 	}
 
-	return CBagTextObject::Update(pBmp, pt, pSrcRect, nMaskColor);
+	return CBagTextObject::update(pBmp, pt, pSrcRect, nMaskColor);
 }
 
 ErrorCode CBagEnergyDetectorObject::attach() {
@@ -1079,8 +1079,8 @@ PARSE_CODES CBagLogClue::SetInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-ErrorCode CBagLogClue::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
-	return CBagTextObject::Update(pBmp, pt, pSrcRect, nMaskColor);
+ErrorCode CBagLogClue::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
+	return CBagTextObject::update(pBmp, pt, pSrcRect, nMaskColor);
 }
 
 } // namespace Bagel

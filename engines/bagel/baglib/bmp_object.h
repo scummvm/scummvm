@@ -32,12 +32,12 @@ namespace Bagel {
  */
 class CBagBmpObject : public CBagObject {
 private:
-	CBofBitmap *m_xBmp;
-	int m_nTrans;
+	CBofBitmap *_bmp;
+	int _transparency;
 
 protected:
-	void SetBitmap(CBofBitmap *pBmp) {
-		m_xBmp = pBmp;
+	void setBitmap(CBofBitmap *bmp) {
+		_bmp = bmp;
 	}
 
 public:
@@ -47,21 +47,23 @@ public:
 	ErrorCode attach() {
 		return attach(nullptr);
 	}
-	ErrorCode attach(CBofPalette *pPalette);
+
+	ErrorCode attach(CBofPalette *palette);
 	ErrorCode detach();
-	bool IsAttached() {
-		return m_xBmp != nullptr;
+	
+	bool isAttached() {
+		return _bmp != nullptr;
 	}
 
-	bool IsInside(const CBofPoint &xPoint);
+	bool isInside(const CBofPoint &pt);
 
-	CBofBitmap *GetBitmap() {
-		return m_xBmp;
+	CBofBitmap *getBitmap() {
+		return _bmp;
 	}
 	CBofRect getRect();
 
-	virtual ErrorCode Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);
-	virtual ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);
+	virtual ErrorCode update(CBofWindow *wnd, CBofPoint pt, CBofRect *srcRect = nullptr, int maskColor = -1);
+	virtual ErrorCode update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect = nullptr, int maskColor = -1);
 };
 
 } // namespace Bagel

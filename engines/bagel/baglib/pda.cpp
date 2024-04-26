@@ -128,7 +128,7 @@ ErrorCode CBagPDA::attach() {
 	getPdaState();
 
 	// Calculate the position for the pda
-	CBofRect bmpRect = GetBitmap()->GetRect();
+	CBofRect bmpRect = getBitmap()->GetRect();
 	CBofWindow *pGameWin = CBagel::getBagApp()->getMasterWnd()->GetCurrentGameWindow();
 	CBofRect GameRect = pGameWin->GetRect();
 
@@ -198,7 +198,7 @@ ErrorCode CBagPDA::attach() {
 
 void CBagPDA::SetPosInWindow(int cx, int cy, int nDist) {
 	CBofPoint pt;
-	CBofBitmap *pBmp = GetBitmap();
+	CBofBitmap *pBmp = getBitmap();
 
 	if (pBmp) {
 		CBofRect bmpRect = pBmp->GetRect();
@@ -236,7 +236,7 @@ bool CBagPDA::showInventory() {
 	return true;
 }
 
-ErrorCode CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int /* nMaskColor */) {
+ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int /* nMaskColor */) {
 	// Update the zoom button (it might need to blink).
 	HandleZoomButton(false);
 	ErrorCode errCode = ERR_NONE;
@@ -305,7 +305,7 @@ ErrorCode CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 
 		// If the official decree from on high has been given to update, do so!
 		if (bUpdate) {
-			errCode = CBagStorageDevBmp::Update(pBmp, pt, pr, m_nMaskColor);
+			errCode = CBagStorageDevBmp::update(pBmp, pt, pr, m_nMaskColor);
 		}
 
 		// If the PDA is activating then redraw our black background
@@ -325,8 +325,8 @@ ErrorCode CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 }
 
 
-bool CBagPDA::IsInside(const CBofPoint &xPoint) {
-	CBofBitmap *pSrcBmp = GetBitmap();
+bool CBagPDA::isInside(const CBofPoint &xPoint) {
+	CBofBitmap *pSrcBmp = getBitmap();
 
 	if (getRect().PtInRect(xPoint) && m_nMaskColor >= 0) {
 		if (pSrcBmp) {
@@ -345,7 +345,7 @@ void CBagPDA::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev());
 
 	if (!isActivated() && _pdaMode != INVMODE) {          // if the PDA is not active, activate it
-		if (IsInside(*xPoint)) {
+		if (isInside(*xPoint)) {
 			// Make sure the entire screen gets redrawn for an activate
 			((CBagPanWindow *)pMainWin)->SetPreFilterPan(true);
 
@@ -365,7 +365,7 @@ void CBagPDA::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 	} else {
 		// if not in the PDA view port then check and make sure it is activated.
 		if (SBBasePda::_pdaMode == INVMODE && !isActivated()) {
-			if (IsInside(*xPoint)) {
+			if (isInside(*xPoint)) {
 				// Make sure the entire screen gets redrawn for an activate
 				((CBagPanWindow *)pMainWin)->SetPreFilterPan(true);
 
@@ -434,7 +434,7 @@ bool  CBagPDA::PaintFGObjects(CBofBitmap *pBmp) {
 		MakeListDirty(_curDisplay->GetObjectList());
 
 		CBofRect tmp = getRect();
-		_curDisplay->Update(pBmp, GetPosition(), &tmp);
+		_curDisplay->update(pBmp, GetPosition(), &tmp);
 	}
 
 	return true;

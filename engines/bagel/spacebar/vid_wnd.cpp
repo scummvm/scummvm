@@ -272,7 +272,7 @@ ErrorCode SBarVidWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		int nFrame = GetFrame(m_fTimer, nDisc);
 
 		m_pMovie->SetCurrentFrame(nFrame);
-		m_pMovie->Update(pBmp, m_pMovie->GetPosition());
+		m_pMovie->update(pBmp, m_pMovie->GetPosition());
 
 		//
 		// Display current time for that image

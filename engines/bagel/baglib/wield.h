@@ -55,7 +55,7 @@ public:
 		m_nWieldCursor = n;
 	}
 
-	virtual ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);
+	virtual ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);
 
 	virtual ErrorCode LoadFile(const CBofString &sFile);
 	virtual bool OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev);

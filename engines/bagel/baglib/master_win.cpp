@@ -1477,7 +1477,7 @@ void CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 						pSaveBuf->m_stVarList[j].m_bTimer = (byte)pVar->IsTimer();
 						pSaveBuf->m_stVarList[j].m_bRandom = (byte)pVar->IsRandom();
 						pSaveBuf->m_stVarList[j].m_bNumeric = (byte)pVar->IsNumeric();
-						pSaveBuf->m_stVarList[j].m_bAttached = (byte)pVar->IsAttached();
+						pSaveBuf->m_stVarList[j].m_bAttached = (byte)pVar->isAttached();
 						pSaveBuf->m_stVarList[j].m_bUsed = 1;
 						j++;
 

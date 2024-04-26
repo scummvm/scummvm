@@ -73,13 +73,13 @@ public:
 
 	ErrorCode SetBackground(CBofBitmap *pBmp);
 	CBofBitmap *GetBackground() {
-		return GetBitmap();
+		return getBitmap();
 	}
 
 	virtual ErrorCode LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach = true);
 
-	virtual bool IsAttached() {
-		return CBagBmpObject::IsAttached();
+	virtual bool isAttached() {
+		return CBagBmpObject::isAttached();
 	}
 
 	virtual bool PaintFGObjects(CBofBitmap *) {
@@ -89,7 +89,7 @@ public:
 	virtual ErrorCode attach();
 	virtual ErrorCode detach();
 
-	virtual ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);
+	virtual ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);
 
 	/**
 	 * Called on the mouse left button up of the bagbmobj

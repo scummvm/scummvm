@@ -26,7 +26,7 @@ namespace Bagel {
 
 CBagBmpObject::CBagBmpObject() : CBagObject() {
 	m_xObjType = BMPOBJ;
-	m_xBmp = nullptr;
+	_bmp = nullptr;
 	SetOverCursor(1);
 	SetTimeless(true);
 }
@@ -35,77 +35,76 @@ CBagBmpObject::~CBagBmpObject() {
 	detach();
 }
 
-ErrorCode CBagBmpObject::attach(CBofPalette *pPalette) {
-	m_xBmp = new CBofBitmap(GetFileName(), pPalette);
-	if (m_xBmp == nullptr) {
-		BofMessageBox(m_xBmp->GetFileName(), __FILE__);
+ErrorCode CBagBmpObject::attach(CBofPalette *palette) {
+	_bmp = new CBofBitmap(GetFileName(), palette);
+	if (_bmp == nullptr) {
+		BofMessageBox(_bmp->GetFileName(), __FILE__);
 	}
 	return CBagObject::attach();
 }
 
 ErrorCode CBagBmpObject::detach() {
-
-	delete m_xBmp;
-	m_xBmp = nullptr;
+	delete _bmp;
+	_bmp = nullptr;
 
 	return CBagObject::detach();
 }
 
 CBofRect CBagBmpObject::getRect() {
-	CBofPoint p = GetPosition();
-	CBofSize s;
-	if (m_xBmp)
-		s = m_xBmp->GetSize();
-	return CBofRect(p, s);
+	CBofPoint curPos = GetPosition();
+	CBofSize size;
+	if (_bmp)
+		size = _bmp->GetSize();
+	return CBofRect(curPos, size);
 }
 
-ErrorCode CBagBmpObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
-	if (m_xBmp) {
-		m_nTrans = nMaskColor;
-		return m_xBmp->Paint(pWnd, pt.x, pt.y, pSrcRect, nMaskColor);
+ErrorCode CBagBmpObject::update(CBofWindow *wnd, CBofPoint pt, CBofRect *srcRect, int maskColor) {
+	if (_bmp) {
+		_transparency = maskColor;
+		return _bmp->Paint(wnd, pt.x, pt.y, srcRect, maskColor);
 	}
 
 	return ERR_NONE;
 }
 
-ErrorCode CBagBmpObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
-	if (pBmp) {
-		m_nTrans = nMaskColor;
-		if (pSrcRect) {
-			CBofSize s = pBmp->GetSize();
+ErrorCode CBagBmpObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect, int maskColor) {
+	if (bmp) {
+		_transparency = maskColor;
+		if (srcRect) {
+			CBofSize size = bmp->GetSize();
 			if (pt.x < 0) {
-				pSrcRect->left -= pt.x;
+				srcRect->left -= pt.x;
 				pt.x = 0;
 			}
 			if (pt.y < 0) {
-				pSrcRect->top -= pt.y;
+				srcRect->top -= pt.y;
 				pt.y = 0;
 			}
 
-			int offset = pSrcRect->right + pt.x - s.cx;
+			int offset = srcRect->right + pt.x - size.cx;
 			if (offset >= 0) {
-				pSrcRect->right -= offset + 1;
+				srcRect->right -= offset + 1;
 			}
 
-			offset = pSrcRect->bottom + pt.y - s.cy;
+			offset = srcRect->bottom + pt.y - size.cy;
 			if (offset >= 0) {
-				pSrcRect->bottom -= offset + 1;
+				srcRect->bottom -= offset + 1;
 			}
 		}
-		if (m_xBmp->Paint(pBmp, pt.x, pt.y, pSrcRect, nMaskColor))
+		if (_bmp->Paint(bmp, pt.x, pt.y, srcRect, maskColor))
 			return ERR_UNKNOWN;
 	}
 
 	return ERR_NONE;
 }
 
-bool CBagBmpObject::IsInside(const CBofPoint &xPoint) {
-	if (m_xBmp && getRect().PtInRect(xPoint)) {
-		if (m_nTrans >= 0) {
-			int x = xPoint.x - getRect().left;
-			int y = xPoint.y - getRect().top;
-			int c = m_xBmp->ReadPixel(x, y);
-			return c != m_nTrans;
+bool CBagBmpObject::isInside(const CBofPoint &pt) {
+	if (_bmp && getRect().PtInRect(pt)) {
+		if (_transparency >= 0) {
+			int x = pt.x - getRect().left;
+			int y = pt.y - getRect().top;
+			int color = _bmp->ReadPixel(x, y);
+			return color != _transparency;
 		}
 
 		return true;

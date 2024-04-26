@@ -55,15 +55,15 @@ ErrorCode CBagStorageDevBmp::detach() {
 
 ErrorCode CBagStorageDevBmp::SetBackground(CBofBitmap *pBmp) {
 	if (pBmp != nullptr) {
-		SetBitmap(pBmp);
+		setBitmap(pBmp);
 		SetWorkBmp();
 	} else {
 		// Hope and pray that this is the right thing to do
-		if (GetBitmap()) {
-			delete GetBitmap();
+		if (getBitmap()) {
+			delete getBitmap();
 		}
 
-		SetBitmap(nullptr);
+		setBitmap(nullptr);
 		KillWorkBmp();
 	}
 
@@ -138,13 +138,13 @@ const CBofPoint CBagStorageDevBmp::DevPtToViewPort(const CBofPoint &xPoint) {
 	return p;
 }
 
-ErrorCode CBagStorageDevBmp::Update(CBofBitmap *pBmp, CBofPoint /*xPoint*/, CBofRect * /*pSrcRect*/, int /*nMaskColor*/) {
+ErrorCode CBagStorageDevBmp::update(CBofBitmap *pBmp, CBofPoint /*xPoint*/, CBofRect * /*pSrcRect*/, int /*nMaskColor*/) {
 	CBofBitmap *pSrcBmp = nullptr;
 
 	// if this object is visible
-	if (IsVisible() && IsAttached()) {
+	if (IsVisible() && isAttached()) {
 		// Paint the storage device
-		if ((pSrcBmp = GetBitmap()) != nullptr) {
+		if ((pSrcBmp = getBitmap()) != nullptr) {
 			Assert(GetWorkBmp() != nullptr);
 			// Erase everything from the background
 			GetWorkBmp()->Paint(pSrcBmp);

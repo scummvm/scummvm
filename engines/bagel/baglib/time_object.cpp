@@ -254,7 +254,7 @@ PARSE_CODES CBagTimeObject::SetInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-ErrorCode CBagTimeObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, int) {
+ErrorCode CBagTimeObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, int) {
 	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sTimeString(szLocalBuff, 256);
@@ -263,7 +263,7 @@ ErrorCode CBagTimeObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pS
 	CBagVar *xVar = VARMNGR->GetVariable(m_sVariable);
 
 	// If everything looks good
-	if (IsAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
+	if (isAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
 		int nTimeVal = xVar->GetNumValue();
 		sTimeString = BuildString("%04d", nTimeVal);
 		char sDigString[2] = "0";
@@ -314,7 +314,7 @@ ErrorCode CBagTimeObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, int
 	CBagVar *xVar = VARMNGR->GetVariable(m_sVariable);
 
 	// If everything looks good
-	if (IsAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
+	if (isAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
 		int nTimeVal = xVar->GetNumValue();
 		sTimeString = BuildString("%04d", nTimeVal);
 		char sDigString[2] = "0";

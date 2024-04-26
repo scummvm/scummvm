@@ -116,7 +116,7 @@ ErrorCode CBagObject::detach() {
 	return CBagParseObject::detach();
 }
 
-ErrorCode CBagObject::Update(CBofBitmap * /*pBmp*/, CPoint /*pt*/, CRect * /*pSrcRect*/, int /*nMaskColor*/) {
+ErrorCode CBagObject::update(CBofBitmap * /*pBmp*/, CPoint /*pt*/, CRect * /*pSrcRect*/, int /*nMaskColor*/) {
 	return ERR_NONE;
 }
 
