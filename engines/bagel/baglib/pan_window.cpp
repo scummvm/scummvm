@@ -543,7 +543,7 @@ void CBagPanWindow::OnMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 				CBagPDA *pPda = (CBagPDA *)SDEVMNGR->GetStorageDevice(pOverObj->GetRefName());
 				if (pPda != nullptr) {
 					CBofRect cRect = pOverObj->getRect();
-					nCursorID = pPda->GetProperCursor(xPoint, cRect);
+					nCursorID = pPda->getProperCursor(xPoint, cRect);
 				}
 			}
 
@@ -789,9 +789,9 @@ bool CBagPanWindow::DeactivatePDA() {
 	// If we have a PDA
 	if (m_pPDABmp) {
 		// and the pda is active
-		if (m_pPDABmp->IsActivated()) {
+		if (m_pPDABmp->isActivated()) {
 			// deactivate it
-			m_pPDABmp->Deactivate();
+			m_pPDABmp->deactivate();
 
 			return true;        // PDA successfully deactivated
 		}
@@ -803,8 +803,8 @@ bool CBagPanWindow::ActivatePDA() {
 	// If we have a BMP
 	if (m_pPDABmp) {
 		// and the pda is not active
-		if (!m_pPDABmp->IsActivated() || m_pPDABmp->IsActivating()) {
-			m_pPDABmp->Activate();  // activate it
+		if (!m_pPDABmp->isActivated() || m_pPDABmp->isActivating()) {
+			m_pPDABmp->activate();  // activate it
 
 			return true;            // PDA successfully activated
 		}
@@ -849,7 +849,7 @@ ErrorCode CBagPanWindow::AttachActiveObjects() {
 	CBagStorageDev::AttachActiveObjects();
 
 	if (m_pPDABmp != nullptr) {
-		m_pPDABmp->AttachActiveObjects();
+		m_pPDABmp->attachActiveObjects();
 	}
 
 	return m_errCode;

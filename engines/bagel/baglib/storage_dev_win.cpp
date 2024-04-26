@@ -55,8 +55,8 @@ namespace Bagel {
 
 // Globals (hacks)
 bool g_bAllowPaint = true;
-bool g_bAAOk = true;            // Prevent AttachActiveObjects() after a RUN LNK
-bool g_bAllowAAO = true;        // Prevent AttachActiveObjects() after a RUN LNK
+bool g_bAAOk = true;            // Prevent attachActiveObjects() after a RUN LNK
+bool g_bAllowAAO = true;        // Prevent attachActiveObjects() after a RUN LNK
 CBagStorageDevWnd *g_pLastWindow = nullptr;
 extern bool g_bPauseTimer;
 extern bool g_bWaitOK;

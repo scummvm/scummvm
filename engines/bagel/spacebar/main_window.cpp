@@ -215,7 +215,7 @@ ErrorCode CMainWindow::attach() {
 			InsertFGObjects(m_pPDABmp);
 		}
 
-		m_pPDABmp->AttachActiveObjects();
+		m_pPDABmp->attachActiveObjects();
 
 		// If this world file contains an evt_wld
 		pSDev = SDEVMNGR->GetStorageDevice("EVT_WLD");

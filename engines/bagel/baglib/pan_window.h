@@ -220,20 +220,20 @@ public:
 	static CBagPDA *m_pPDABmp; // Pointer to the PDA object
 
 	/**
-	 * Deactivate the PDA by calling the PDA->Deactivate() directly.
+	 * Deactivate the PDA by calling the PDA->deactivate() directly.
 	 * This is called from the PDA ON/OFF button
 	 */
 	bool DeactivatePDA();
 
 	/**
-	 * Activate the PDA by calling the PDA->Deactivate() directly.
+	 * Activate the PDA by calling the PDA->deactivate() directly.
 	 * This is called on a mouse down anywhere on the deactivated PDA.
 	 */
 	bool ActivatePDA();
 
 	void WaitForPDA() {
 		// Make sure we have a non-null pda
-		while (m_pPDABmp && m_pPDABmp->IsActivating()) {
+		while (m_pPDABmp && m_pPDABmp->isActivating()) {
 			SetPreFilterPan(true);
 			m_pPDABmp->SetDirty(true);
 			PaintScreen();

@@ -58,7 +58,7 @@ ErrorCode SBZoomPda::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		// been instructed to.
 
 		if (PreFilterPan()) {
-			PreFilter(pBmp, pRect, (m_xCurDisplay == nullptr ? nullptr : m_xCurDisplay->GetObjectList()));
+			PreFilter(pBmp, pRect, (_curDisplay == nullptr ? nullptr : _curDisplay->GetObjectList()));
 
 			// Paint our storage device the first time through and the next time
 			// through, this takes care of multiple text drawing problems (trust me!).
@@ -77,8 +77,8 @@ ErrorCode SBZoomPda::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 		// Paint the inventory or Map to backdrop
 		if (bUpdate) {
-			if (m_xCurDisplay != nullptr) {
-				m_xCurDisplay->Update(pBmp, m_xCurDisplay->GetPosition(), pRect);
+			if (_curDisplay != nullptr) {
+				_curDisplay->Update(pBmp, _curDisplay->GetPosition(), pRect);
 			}
 		}
 	}
@@ -88,37 +88,37 @@ ErrorCode SBZoomPda::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 ErrorCode SBZoomPda::LoadFile(const CBofString &sFile) {
 	ErrorCode error = CBagStorageDev::LoadFile(sFile);
-	RemoveObject(m_xMooWnd);
-	RemoveObject(m_xInvWnd);
-	RemoveObject(m_xMapWnd);
-	RemoveObject(m_xLogWnd);
+	RemoveObject(_mooWnd);
+	RemoveObject(_invWnd);
+	RemoveObject(_mapWnd);
+	RemoveObject(_logWnd);
 
 	return error;
 }
 
 ErrorCode SBZoomPda::detach() {
-	bool bLogZoomed = (m_xLogWnd == m_xCurDisplay);
+	bool bLogZoomed = (_logWnd == _curDisplay);
 
 	// Other classes need to know if we're zoomed
-	SetZoomed(false);
-	if (m_xInvWnd) {
-		m_xInvWnd->detach();
-		m_xInvWnd = nullptr;
+	setZoomed(false);
+	if (_invWnd) {
+		_invWnd->detach();
+		_invWnd = nullptr;
 	}
 
-	if (m_xMooWnd) {
-		m_xMooWnd->detach();
-		m_xMooWnd = nullptr;
+	if (_mooWnd) {
+		_mooWnd->detach();
+		_mooWnd = nullptr;
 	}
 
-	if (m_xMapWnd) {
-		m_xMapWnd->detach();
-		m_xMapWnd = nullptr;
+	if (_mapWnd) {
+		_mapWnd->detach();
+		_mapWnd = nullptr;
 	}
 
-	if (m_xLogWnd) {
-		m_xLogWnd->detach();
-		m_xLogWnd = nullptr;
+	if (_logWnd) {
+		_logWnd->detach();
+		_logWnd = nullptr;
 	}
 
 	// Since the regular PDA does not have a detach method (it doesn't get
@@ -136,83 +136,83 @@ ErrorCode SBZoomPda::detach() {
 
 ErrorCode SBZoomPda::attach() {
 	// Other classes need to know if we're zoomed
-	SetZoomed(true);
+	setZoomed(true);
 
 	ErrorCode rc = CBagStorageDevWnd::attach();
 	if (rc == ERR_NONE) {
 		CBagStorageDev *pSDev;
-		if (!m_xMooWnd) {
+		if (!_mooWnd) {
 			pSDev = SDEVMNGR->GetStorageDevice(ZOOMMOOWLD);
 
 			if (pSDev != nullptr) {
-				m_xMooWnd = (CBagStorageDevBmp *)pSDev;
-				m_xMooWnd->SetAssociateWnd(GetAssociateWnd());
-				m_xMooWnd->SetTransparent(false);
-				m_xMooWnd->SetVisible(false);
-				rc = m_xMooWnd->attach();
+				_mooWnd = (CBagStorageDevBmp *)pSDev;
+				_mooWnd->SetAssociateWnd(GetAssociateWnd());
+				_mooWnd->SetTransparent(false);
+				_mooWnd->SetVisible(false);
+				rc = _mooWnd->attach();
 			}
 		} else {
 			// Already attached just update
-			m_xMooWnd->AttachActiveObjects();
+			_mooWnd->AttachActiveObjects();
 		}
 
-		if (!m_xInvWnd) {
+		if (!_invWnd) {
 			pSDev = SDEVMNGR->GetStorageDevice(ZOOMINVWLD);
 			if (pSDev != nullptr) {
-				m_xInvWnd = (CBagStorageDevBmp *)pSDev;
-				m_xInvWnd->SetAssociateWnd(GetAssociateWnd());
+				_invWnd = (CBagStorageDevBmp *)pSDev;
+				_invWnd->SetAssociateWnd(GetAssociateWnd());
 
-				m_xInvWnd->SetTransparent(false);
-				m_xInvWnd->SetVisible(false);
-				rc = m_xInvWnd->attach();
+				_invWnd->SetTransparent(false);
+				_invWnd->SetVisible(false);
+				rc = _invWnd->attach();
 			} else {
 				BofMessageBox("No PDA INVENTORY found", __FILE__);
 				rc = ERR_UNKNOWN;
 			}
 		} else {
 			// Already attached just update
-			m_xInvWnd->AttachActiveObjects();
+			_invWnd->AttachActiveObjects();
 		}
 
-		if (!m_xMapWnd) {
+		if (!_mapWnd) {
 			pSDev = SDEVMNGR->GetStorageDevice(ZOOMMAPWLD);
 			if (pSDev != nullptr) {
-				m_xMapWnd = (CBagStorageDevBmp *)pSDev;
-				m_xMapWnd->SetAssociateWnd(GetAssociateWnd());
+				_mapWnd = (CBagStorageDevBmp *)pSDev;
+				_mapWnd->SetAssociateWnd(GetAssociateWnd());
 
-				m_xMapWnd->SetTransparent(false);
-				m_xMapWnd->SetVisible(false);
-				rc = m_xMapWnd->attach();
+				_mapWnd->SetTransparent(false);
+				_mapWnd->SetVisible(false);
+				rc = _mapWnd->attach();
 			} else {
 				BofMessageBox("No PDA MAP found", __FILE__);
 				rc = ERR_UNKNOWN;
 			}
 		} else {
 			// Already attached just update
-			m_xMapWnd->AttachActiveObjects();
+			_mapWnd->AttachActiveObjects();
 		}
 
-		if (!m_xLogWnd) {
+		if (!_logWnd) {
 			pSDev = SDEVMNGR->GetStorageDevice(ZOOMLOGWLD);
 			if (pSDev != nullptr) {
-				m_xLogWnd = (CBagStorageDevBmp *)pSDev;
-				m_xLogWnd->SetAssociateWnd(GetAssociateWnd());
+				_logWnd = (CBagStorageDevBmp *)pSDev;
+				_logWnd->SetAssociateWnd(GetAssociateWnd());
 
-				m_xLogWnd->SetTransparent(false);
-				m_xLogWnd->SetVisible(false);
-				rc = m_xLogWnd->attach();
+				_logWnd->SetTransparent(false);
+				_logWnd->SetVisible(false);
+				rc = _logWnd->attach();
 			}
 		} else {
 			// Already attached just update
-			m_xLogWnd->AttachActiveObjects();
+			_logWnd->AttachActiveObjects();
 		}
 
-		if (m_ePdaMode == INVMODE) {
-			ShowInventory();
-		} else if (m_ePdaMode == MAPMODE) {
-			ShowMap();
-		} else if (m_ePdaMode == LOGMODE) {
-			ShowLog();
+		if (_pdaMode == INVMODE) {
+			showInventory();
+		} else if (_pdaMode == MAPMODE) {
+			showMap();
+		} else if (_pdaMode == LOGMODE) {
+			showLog();
 		}
 
 		Show();
@@ -249,7 +249,7 @@ void SBZoomPda::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	} else {
 		SetLActivity(kMouseNONE);
 
-		if (m_xCurDisplay) {
+		if (_curDisplay) {
 			CBofRect offset = CBagStorageDev::GetRect();
 			xPoint->x -= offset.TopLeft().x;
 			xPoint->y -= offset.TopLeft().y;
@@ -258,12 +258,12 @@ void SBZoomPda::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 			// to the button handling routine, this assures that if we go from one screen
 			// to the next, then we'll get redrawn.
 			SetPreFilterPan(true);
-			MakeListDirty(m_xCurDisplay->GetObjectList());
+			MakeListDirty(_curDisplay->GetObjectList());
 
-			m_xCurDisplay->OnLButtonUp(nFlags, xPoint, nullptr);
+			_curDisplay->OnLButtonUp(nFlags, xPoint, nullptr);
 		} else {
 			// We have no mode yet, then pass it to the default method
-			if (m_ePdaMode == NOMODE) {
+			if (_pdaMode == NOMODE) {
 				CBagStorageDevWnd::OnLButtonUp(nFlags, xPoint);
 			}
 		}
@@ -287,7 +287,7 @@ void SBZoomPda::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 		CBagMasterWin::SetActiveCursor(10);
 	} else {
 		CBofRect cRect = GetBackdrop()->GetRect();
-		CBagMasterWin::SetActiveCursor(GetProperCursor(*pPoint, cRect));
+		CBagMasterWin::SetActiveCursor(getProperCursor(*pPoint, cRect));
 	}
 }
 
@@ -295,7 +295,7 @@ void SBZoomPda::OnMainLoop() {
 	uint32 nCurTime = GetTimer();
 
 	// Force an update every 1/4 second
-	if (m_ePdaMode == INVMODE || m_ePdaMode == MAPMODE) {
+	if (_pdaMode == INVMODE || _pdaMode == MAPMODE) {
 		if (nCurTime > (g_lZoomPDALastUpdate + 250)) {
 			g_lZoomPDALastUpdate = nCurTime;
 
@@ -306,13 +306,13 @@ void SBZoomPda::OnMainLoop() {
 	CBagStorageDevWnd::OnMainLoop();
 }
 
-ErrorCode SBZoomPda::AttachActiveObjects() {
-	SBBasePda::AttachActiveObjects();
+ErrorCode SBZoomPda::attachActiveObjects() {
+	SBBasePda::attachActiveObjects();
 	return CBagStorageDevWnd::AttachActiveObjects();
 }
 
-ErrorCode SBZoomPda::DetachActiveObjects() {
-	SBBasePda::DetachActiveObjects();
+ErrorCode SBZoomPda::detachActiveObjects() {
+	SBBasePda::detachActiveObjects();
 
 	return CBagStorageDevWnd::DetachActiveObjects();
 }

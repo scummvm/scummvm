@@ -129,7 +129,7 @@ public:
 	static bool IsMovieWaiting();
 
 	static bool IsMoviePlaying() {
-		return m_ePdaMode == MOOMODE;
+		return _pdaMode == MOOMODE;
 	}
 
 	static void RunWaitingMovie();
@@ -137,25 +137,25 @@ public:
 	/**
 	 * SHow the inventory
 	*/
-	virtual bool ShowInventory();
+	virtual bool showInventory();
 
 	/**
 	 * Hide the inventory
 	 */
-	virtual bool HideInventory();
+	virtual bool hideInventory();
 
 	/**
 	 * Hide the current display
 	 */
-	virtual bool HideCurDisplay();
+	virtual bool hideCurDisplay();
 
 	/**
 	 * Restore display
 	 */
-	virtual bool RestoreCurDisplay();
+	virtual bool restoreCurDisplay();
 
-	virtual ErrorCode AttachActiveObjects();
-	virtual ErrorCode DetachActiveObjects();
+	virtual ErrorCode attachActiveObjects();
+	virtual ErrorCode detachActiveObjects();
 
 	/**
 	 * Handle switching back and forth from our flashing zoom button

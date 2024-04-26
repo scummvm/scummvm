@@ -357,7 +357,7 @@ bool CBagCommandObject::RunObject() {
 			// Get a pointer to the current game window
 			CBagPDA *pPDA = (CBagPDA *)SDEVMNGR->GetStorageDevice("BPDA_WLD");
 			if (pPDA) {
-				pPDA->ShowLog();
+				pPDA->showLog();
 			}
 
 		} else if (GetFileName() == "OBJLIST") {

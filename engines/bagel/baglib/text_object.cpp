@@ -504,12 +504,12 @@ bool CBagTextObject::RunObject() {
 				sStr = "BPDAZ_WLD";
 				pPDAZ = (SBZoomPda *)SDEVMNGR->GetStorageDevice(sStr);
 
-				if (pPDAZ && pPDAZ->GetZoomed() == true) {
-					CBofRect zRect = pPDAZ->GetViewRect();
+				if (pPDAZ && pPDAZ->getZoomed() == true) {
+					CBofRect zRect = pPDAZ->getViewRect();
 					Assert(zRect.Height() > 0 && zRect.Height() < 480);
 					Assert(zRect.Width() > 0 && zRect.Width() < 640);
 					cDlg.Move(80, zRect.bottom - cRect.Height(), true); // xxx
-				} else if ((pPDA != nullptr) && (pPDA->IsActivated() || pPDA->IsActivating())) {
+				} else if ((pPDA != nullptr) && (pPDA->isActivated() || pPDA->isActivating())) {
 					cDlg.Move(80, 10, true);
 
 				} else {

@@ -56,8 +56,8 @@ public:
 	void OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
 	virtual ErrorCode OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
 
-	virtual ErrorCode AttachActiveObjects();
-	virtual ErrorCode DetachActiveObjects();
+	virtual ErrorCode attachActiveObjects();
+	virtual ErrorCode detachActiveObjects();
 };
 
 } // namespace Bagel

@@ -27,14 +27,14 @@
 
 namespace Bagel {
 
-#define MAP (100)
-#define STASH (101)
-#define ZOOM (102)
-#define SYSTEM (103)
-#define LOG (104)
-#define OFF (105)
-#define MSGLIGHT (110)
-#define ZOOMFLASH "ZOOMFLASH"
+#define PDA_MAP (100)
+#define PDA_STASH (101)
+#define PDA_ZOOM (102)
+#define PDA_SYSTEM (103)
+#define PDA_LOG (104)
+#define PDA_OFF (105)
+#define PDA_MSGLIGHT (110)
+#define PDA_ZOOMFLASH "ZOOMFLASH"
 
 enum PDAMODE {
 	NOMODE,
@@ -52,170 +52,168 @@ enum PDAPOS {
 class SBBasePda {
 protected:
 	// All PDA's in the game should share the same mode
-	static PDAMODE m_ePdaMode;
-	static PDAPOS m_ePDAPos;
-	int m_nNumMoves;
-	int m_bActivating;
-	bool m_bActivated;
-	int m_nMoveDist;
-	CBagStorageDevBmp *m_xMooWnd;     // Pointer to the PDAMOVIE object
-	CBagStorageDevBmp *m_xInvWnd;     // Pointer to the inventory object
-	CBagStorageDevBmp *m_xMapWnd;     // Pointer to the Map object
-	CBagStorageDevBmp *m_xLogWnd;     // Pointer to the Map object
-	CBagStorageDevBmp *m_xCurDisplay; // Pointer to the object currently displayed in PDA
-	CBofWindow *m_pParent;
-	bool m_bZoomed;
-	bool m_bDeactivate; // should we deactivate when done w/movie?
+	static PDAMODE _pdaMode;
+	static PDAPOS _pdaPos;
+	int _numMoves;
+	int _activating;
+	bool _activated;
+	int _moveDist;
+	CBagStorageDevBmp *_mooWnd;     // Pointer to the PDAMOVIE object
+	CBagStorageDevBmp *_invWnd;     // Pointer to the inventory object
+	CBagStorageDevBmp *_mapWnd;     // Pointer to the Map object
+	CBagStorageDevBmp *_logWnd;     // Pointer to the Map object
+	CBagStorageDevBmp *_curDisplay; // Pointer to the object currently displayed in PDA
+	CBofWindow *_parent;
+	bool _zoomed;
+	bool _deactivate; // should we deactivate when done w/movie?
 
 	// hold this info for restore method
-	CBagStorageDevBmp *m_xHoldDisplay;
-	static PDAMODE m_eHoldMode;
+	CBagStorageDevBmp *_holdDisplay;
+	static PDAMODE _holdMode;
 
 public:
-	SBBasePda(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), bool bActivated = false);
+	SBBasePda(CBofWindow *parent = nullptr, const CBofRect &rect = CBofRect(), bool activated = false);
 	virtual ~SBBasePda();
 	static void initialize();
 
 	/**
 	 * Allows PDA mode to be set by script
 	 */
-	static void SetPDAMode(PDAMODE ePDAMode) {
-		m_ePdaMode = ePDAMode;
+	static void setPdaMode(PDAMODE pdaMode) {
+		_pdaMode = pdaMode;
 	}
-	static PDAMODE GetPDAMode() {
-		return m_ePdaMode;
+	static PDAMODE getPdaMode() {
+		return _pdaMode;
 	}
-	bool IsActivated() {
-		return m_bActivating ? !m_bActivated : m_bActivated;
+	bool isActivated() {
+		return _activating ? !_activated : _activated;
 	}
-	bool IsActivating() {
-		return m_bActivating;
+	bool isActivating() {
+		return _activating;
 	}
 
-	virtual ErrorCode AttachActiveObjects();
-	virtual ErrorCode DetachActiveObjects();
+	virtual ErrorCode attachActiveObjects();
+	virtual ErrorCode detachActiveObjects();
 
 	/**
 	 * Sync starting options
 	 */
-	void SynchronizePDAState();
+	void synchronizePdaState();
 
-	bool Deactivate() {
-		if (!m_bActivating) {
-			m_bActivating = m_nNumMoves;
-			m_bActivated = false;
+	bool deactivate() {
+		if (!_activating) {
+			_activating = _numMoves;
+			_activated = false;
 		}
 
-		m_ePDAPos = PDADOWN;
-		SetPDAState();
+		_pdaPos = PDADOWN;
+		setPdaState();
 		return true;
 	}
 
-	bool Activate() {
-		if (!m_bActivating) {
-			m_bActivating = m_nNumMoves;
-			m_bActivated = true;
+	bool activate() {
+		if (!_activating) {
+			_activating = _numMoves;
+			_activated = true;
 		}
 
-		m_ePDAPos = PDAUP;
-		SetPDAState();
+		_pdaPos = PDAUP;
+		setPdaState();
 		return true;
 	}
 
 	/**
 	 * Show the inventory
 	 */
-	virtual bool ShowInventory();
+	virtual bool showInventory();
 
 	/**
 	 * Hide the inventory
 	 */
-	virtual bool HideInventory();
+	virtual bool hideInventory();
 
 	/**
 	 * Show the movie window
 	 */
-	virtual bool ShowMovie();
+	virtual bool showMovie();
 
 	/**
 	 * Hide the movie window
 	 */
-	virtual bool HideMovie();
+	virtual bool hideMovie();
 
 	/**
 	 * Set the movie to play
-	 * @param s         Movie filename
-	 * @return          Success/failure
+	 * @param movieName   Movie filename
+	 * @return            Success/failure
 	 */
-	bool SetMovie(CBofString &s); // Set the movie
+	bool setMovie(CBofString &movieName);
 
 	/**
 	 * Stops any playing movie
 	 */
-	void StopMovie(bool);
+	void stopMovie(bool);
 
-	void SetDeactivate(bool b = false) {
-		m_bDeactivate = b;
+	void setDeactivate(bool b = false) {
+		_deactivate = b;
 	}
-	bool GetDeactivate() {
-		return m_bDeactivate;
+	
+	bool getDeactivate() {
+		return _deactivate;
 	}
 
 	/**
 	 * Show the map
 	 */
-	virtual bool ShowMap();
+	virtual bool showMap();
 
 	/**
 	 * Hide the map
 	 */
-	virtual bool HideMap();
+	virtual bool hideMap();
 
 	/**
 	 * Zoom the current display
 	 */
-	virtual bool Zoom() {
+	virtual bool zoom() {
 		return true;
 	}
 
-	virtual bool ShowLog();
+	virtual bool showLog();
 
-	virtual bool MsgLight();
+	virtual bool msgLight();
 
 	/**
-	 * Hide the current display and reset the m_xCurDisplay to nullptr
+	 * Hide the current display and reset the _curDisplay to nullptr
 	 * @return      Success/failure
 	 */
-	virtual bool HideCurDisplay();
+	virtual bool hideCurDisplay();
 
 	/**
-	 * Hide the current display and reset the m_xCurDisplay to nullptr
+	 * Hide the current display and reset the _curDisplay to nullptr
 	 * @return      Success/Failure
 	 */
-	virtual bool RestoreCurDisplay();
+	virtual bool restoreCurDisplay();
 
 	static void *fPdaButtonHandler(int /* nRefId */, void *pvInfo);
 
-	void SetPDAState();
-	void GetPDAState();
+	void setPdaState();
+	void getPdaState();
 
-	void SetZoomed(bool b = false) {
-		m_bZoomed = b;
+	void setZoomed(bool newVal) {
+		_zoomed = newVal;
 	}
-	bool GetZoomed() {
-		return m_bZoomed;
+	bool getZoomed() {
+		return _zoomed;
 	}
 
-	int GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect);
+	int getProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect);
 
 	/**
 	 * Returns the background rect
 	 */
-	CBofRect GetViewRect();
+	CBofRect getViewRect();
 };
-
-#define GLOBALTOLOCAL 0
-#define LOCALTOGLOBAL 1
 
 } // namespace Bagel
 

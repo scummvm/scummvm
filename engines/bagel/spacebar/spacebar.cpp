@@ -122,12 +122,12 @@ ErrorCode SpaceBarEngine::initialize() {
 
 				CBagStartDialog cDlg(BuildSysDir("START.BMP"), nullptr, _masterWin);
 
-				CBofWindow *pLastWin = g_pHackWindow;
-				g_pHackWindow = &cDlg;
+				CBofWindow *pLastWin = g_hackWindow;
+				g_hackWindow = &cDlg;
 
 				int nRetVal = cDlg.DoModal();
 
-				g_pHackWindow = pLastWin;
+				g_hackWindow = pLastWin;
 
 				switch (nRetVal) {
 				case RESTORE_BTN:

@@ -75,7 +75,7 @@ bool CBagMovieObject::RunObject() {
 	CBagPDA *pPDA = nullptr;
 	CBofWindow *pNewWin = nullptr;
 	SBZoomPda *pPDAz = (SBZoomPda *)SDEVMNGR->GetStorageDevice("BPDAZ_WLD");
-	bool bZoomed = (pPDAz == nullptr ? false : pPDAz->GetZoomed());
+	bool bZoomed = (pPDAz == nullptr ? false : pPDAz->getZoomed());
 
 	// Get a pointer to the current game window
 	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev());
@@ -227,11 +227,11 @@ bool CBagMovieObject::RunObject() {
 					if (pMainWin->GetDeviceType() == SDEV_GAMEWIN) {
 						// If the pda is going up or down, then wait for it
 						// To do its thing before attempting to activate it.
-						if (pPDA->IsActivating()) {
+						if (pPDA->isActivating()) {
 							((CBagPanWindow *)pMainWin)->WaitForPDA();
 						}
 
-						if (pPDA->IsActivated() == false) {
+						if (pPDA->isActivated() == false) {
 							bActivated = ((CBagPanWindow *)pMainWin)->ActivatePDA();
 							((CBagPanWindow *)pMainWin)->WaitForPDA();
 						}
@@ -295,8 +295,8 @@ bool CBagMovieObject::RunObject() {
 					if (m_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
 						// Tell our PDA to switch gears to do asynch movie time.
 						if (pPDA) {
-							if (pPDA->ShowMovie()) {       // Returns false if another movie playing
-								pPDA->SetMovie(sFileName); // Set the movie to play
+							if (pPDA->showMovie()) {       // Returns false if another movie playing
+								pPDA->setMovie(sFileName); // Set the movie to play
 							}
 						} else {
 							LogError(BuildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.GetBuffer()));
@@ -326,7 +326,7 @@ bool CBagMovieObject::RunObject() {
 
 						if (pMovie && pMovie->ErrorOccurred() == false) {
 							// Stop any asnych movies already playing
-							pPDA->StopMovie(true);
+							pPDA->stopMovie(true);
 							pMovie->Show();
 							CBofApp::GetApp()->GetMainWindow()->FlushAllMessages();
 							pWnd->FlushAllMessages();
@@ -353,7 +353,7 @@ bool CBagMovieObject::RunObject() {
 
 				// If we're asynch, then let it know to deactivate when done playing.
 				if (m_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
-					pPDA->SetDeactivate(bActivated);
+					pPDA->setDeactivate(bActivated);
 				}
 			}
 
@@ -552,10 +552,10 @@ bool CBagMovieObject::AsynchPDAMovieCanPlay() {
 	Assert(pPDAz != nullptr);
 
 	if (pPDA && pPDAz) {
-		if (pPDAz->GetZoomed() ||              // We're zoomed
+		if (pPDAz->getZoomed() ||              // We're zoomed
 		        (pMainWin->IsCIC() && !IsDontOverride()) || // We're in a character closeup
 		        CBofSound::SoundsPlayingNotOver() ||        // A sound is playing
-		        pPDA->GetPDAMode() == MOOMODE) {            // An asynch movie is already playing
+		        pPDA->getPdaMode() == MOOMODE) {            // An asynch movie is already playing
 			bCanPlay = false;
 		}
 	}

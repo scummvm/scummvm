@@ -76,7 +76,7 @@ static const ST_BUTTONS g_stButtons[NUM_RESTORE_BTNS] = {
 	{ "PageDn", "pagednup.bmp", "pagedndn.bmp", "pagednup.bmp", "pagedngr.bmp", 490, 215, 25, 25, PAGEDN_BTN}
 };
 
-extern CBofWindow *g_pHackWindow;
+extern CBofWindow *g_hackWindow;
 extern int g_nSelectedSlot;
 
 
