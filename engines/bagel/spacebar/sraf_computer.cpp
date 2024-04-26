@@ -893,8 +893,8 @@ void SrafComputer::OnPaint(CBofRect *pRect) {
 	}
 }
 
-ErrorCode SrafComputer::Attach() {
-	ErrorCode rc = CBagStorageDevWnd::Attach();
+ErrorCode SrafComputer::attach() {
+	ErrorCode rc = CBagStorageDevWnd::attach();
 
 	if (rc == ERR_NONE) {
 		// Build our main menu list
@@ -977,7 +977,7 @@ ErrorCode SrafComputer::Attach() {
 	return ERR_NONE;
 }
 
-ErrorCode SrafComputer::Detach() {
+ErrorCode SrafComputer::detach() {
 	// Computer gets turned off
 	m_eMode = SCOFF;
 
@@ -1039,7 +1039,7 @@ ErrorCode SrafComputer::Detach() {
 		m_pTeamList = nullptr;
 	}
 
-	CBagStorageDevWnd::Detach();
+	CBagStorageDevWnd::detach();
 
 	return ERR_NONE;
 }

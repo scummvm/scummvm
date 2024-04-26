@@ -27,10 +27,10 @@ namespace Bagel {
 CBagChatWnd::CBagChatWnd() : CBagStorageDevWnd() {
 }
 
-ErrorCode CBagChatWnd::Attach() {
+ErrorCode CBagChatWnd::attach() {
 	Assert(IsValidObject(this));
 
-	if (CBagStorageDevWnd::Attach() == ERR_NONE) {
+	if (CBagStorageDevWnd::attach() == ERR_NONE) {
 		Show();
 		InvalidateRect(nullptr);
 		UpdateWindow();

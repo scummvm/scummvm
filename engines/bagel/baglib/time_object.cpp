@@ -39,10 +39,10 @@ CBagTimeObject::CBagTimeObject() : CBagObject() {
 }
 
 CBagTimeObject::~CBagTimeObject() {
-	Detach();
+	detach();
 }
 
-ErrorCode CBagTimeObject::Attach() {
+ErrorCode CBagTimeObject::attach() {
 	CBofPoint p = CBagObject::GetPosition();
 
 	if ((m_xDig1 = new CBofSprite()) != nullptr) {
@@ -126,10 +126,10 @@ ErrorCode CBagTimeObject::Attach() {
 		ReportError(ERR_MEMORY, "Could not allocate  Dig4 sprite");
 	}
 
-	return CBagObject::Attach();
+	return CBagObject::attach();
 }
 
-ErrorCode CBagTimeObject::Detach() {
+ErrorCode CBagTimeObject::detach() {
 	if (m_xDig1) {
 		delete m_xDig1;
 		m_xDig1 = nullptr;
@@ -151,7 +151,7 @@ ErrorCode CBagTimeObject::Detach() {
 		m_xDig4 = nullptr;
 	}
 
-	return CBagObject::Detach();
+	return CBagObject::detach();
 }
 
 void CBagTimeObject::SetCels(int nCels) {
@@ -173,7 +173,7 @@ void CBagTimeObject::SetPosition(const CBofPoint &pos) {
 	CBagObject::SetPosition(pos);
 }
 
-CBofRect CBagTimeObject::GetRect() {
+CBofRect CBagTimeObject::getRect() {
 	CBofPoint p = GetPosition();
 	CBofSize s;
 

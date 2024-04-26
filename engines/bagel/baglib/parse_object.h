@@ -79,11 +79,11 @@ public:
 	virtual ~CBagParseObject() {}
 	static void initialize();
 
-	virtual ErrorCode Attach() {
+	virtual ErrorCode attach() {
 		m_bAttached = true;
 		return ERR_NONE;
 	}
-	virtual ErrorCode Detach() {
+	virtual ErrorCode detach() {
 		m_bAttached = false;
 		return ERR_NONE;
 	}

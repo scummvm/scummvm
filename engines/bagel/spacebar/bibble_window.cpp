@@ -238,7 +238,7 @@ CBibbleWindow::CBibbleWindow() {
 	SetCloseup(true);
 }
 
-ErrorCode CBibbleWindow::Attach() {
+ErrorCode CBibbleWindow::attach() {
 	Assert(IsValidObject(this));
 
 	const int nBibbleYPos[BIBBLE_NUM_BIBBLES] = {
@@ -259,9 +259,9 @@ ErrorCode CBibbleWindow::Attach() {
 		SHOUT_4
 	};
 
-	LogInfo("\tCBibbleWindow::Attach()");
+	LogInfo("\tCBibbleWindow::attach()");
 
-	CBagStorageDevWnd::Attach();
+	CBagStorageDevWnd::attach();
 
 	g_bWaitOK = false;
 
@@ -428,10 +428,10 @@ ErrorCode CBibbleWindow::Attach() {
 }
 
 
-ErrorCode CBibbleWindow::Detach() {
+ErrorCode CBibbleWindow::detach() {
 	Assert(IsValidObject(this));
 
-	LogInfo("\tCBibbleWindow::Detach()");
+	LogInfo("\tCBibbleWindow::detach()");
 
 	CBagCursor::HideSystemCursor();
 
@@ -512,7 +512,7 @@ ErrorCode CBibbleWindow::Detach() {
 
 	g_bWaitOK = true;
 
-	CBagStorageDevWnd::Detach();
+	CBagStorageDevWnd::detach();
 
 	// Playing BibbleBonk has made 1 turn go by.
 	VARMNGR->IncrementTimers();

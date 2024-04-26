@@ -81,7 +81,7 @@ ErrorCode CBagInv::ActivateLocalObject(const CBofString &sName) {
 				CBagMovieObject *pMovie = (CBagMovieObject *)GetObject(FIRSSTASHMOV);
 				if (pMovie) {
 					if (pMovie->IsAttached() == false) {
-						pMovie->Attach();
+						pMovie->attach();
 						pMovie->SetVisible();
 					}
 

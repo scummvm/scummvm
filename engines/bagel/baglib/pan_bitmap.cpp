@@ -183,7 +183,6 @@ ErrorCode CBagPanBitmap::Paint(CBofWindow * /*pWnd*/, const CBofPoint /*xDstOffs
 }
 
 CBofRect CBagPanBitmap::GetWarpSrcRect() {
-	//CBofRect r = GetRect();
 	int nH2 = Height() >> 1;
 
 	return CBofRect(m_xCurrView.left,
@@ -214,7 +213,7 @@ CBofPoint CBagPanBitmap::WarpedPoint(CBofPoint &xPoint) {
 
 ErrorCode CBagPanBitmap::PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, const CBofRect &srcRect, const int offset, CBofBitmap *pSrcBmp, const CBofRect &preSrcRect) {
 	int nH2 = m_nDY >> 1;
-	int nWidth = 1 << m_nCorrWidth; // It may no longer be nessasary to store corr witdh as a shift arg
+	int nWidth = 1 << m_nCorrWidth; // It may no longer be necessary to store corr width as a shift arg
 	CBofFixed *pSrcHeight = &m_pCosineTable[offset >> m_nCorrWidth];
 	CBofFixed srcTop = preSrcRect.top + srcRect.top - nH2;
 	CBofFixed srcBottom = preSrcRect.top + srcRect.bottom - nH2;
@@ -421,13 +420,13 @@ void CBagPanBitmap::NormalizeViewSize() {
 		if ((m_xCurrView.Height() >= nH) || (m_xCurrView.Height() <= 0))
 			m_xCurrView.bottom = m_xCurrView.top + nH - 1;
 
-		// The Base coords of CurrView must exist within the rectange
+		// The Base coords of CurrView must exist within the rectangle
 		while (m_xCurrView.left < 0)
 			m_xCurrView.OffsetRect(nW, 0);
 		while (m_xCurrView.left >= nW)
 			m_xCurrView.OffsetRect(-1 * nW, 0);
 	} else { // Not a panorama
-		// The Base coords of CurrView must exist within the rectange
+		// The Base coords of CurrView must exist within the rectangle
 		if (m_xCurrView.left < 0)
 			m_xCurrView.OffsetRect(-m_xCurrView.left, 0);
 		else if (m_xCurrView.right > nW)

@@ -36,7 +36,7 @@ public:
 	CBagLogResidue(int nSdevWidth);
 	virtual ~CBagLogResidue() {}
 
-	void SetSize(const CBofSize &xSize);
+	void setSize(const CBofSize &xSize);
 
 	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 };
@@ -62,7 +62,7 @@ public:
 	 */
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	void SetSize(const CBofSize &xSize);
+	void setSize(const CBofSize &xSize);
 
 	void SetProperty(const CBofString &sProp, int nVal);
 	int GetProperty(const CBofString &sProp);
@@ -109,7 +109,7 @@ public:
 
 	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 
-	void SetSize(const CBofSize &xSize);
+	void setSize(const CBofSize &xSize);
 
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 	// PARSE_CODES          SetInfo(CBofFile&);
@@ -213,7 +213,7 @@ public:
 
 	ErrorCode Update(CBofBitmap *, CBofPoint, CBofRect *, int);
 
-	ErrorCode Attach();
+	ErrorCode attach();
 
 	void SetMsgTime(int &nVal) {
 		SetState(nVal);
@@ -244,7 +244,7 @@ public:
 	CBagLogClue(const CBofString &sInit, int nSdevWidth, int nPointSize);
 	virtual ~CBagLogClue() {}
 
-	ErrorCode Attach();
+	ErrorCode attach();
 
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 

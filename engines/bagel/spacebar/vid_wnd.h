@@ -69,8 +69,8 @@ public:
 	bool                HasDisc();
 	int                 GetFrame(double fTime, int nUseDisc);
 
-	virtual ErrorCode  Attach();
-	virtual ErrorCode  Detach();
+	virtual ErrorCode  attach();
+	virtual ErrorCode  detach();
 
 	ErrorCode          OnRender(CBofBitmap *pBmp, CBofRect *pRect);
 

@@ -180,11 +180,11 @@ CNavWindow::CNavWindow() {
 	m_bNavAttached = false;
 }
 
-ErrorCode CNavWindow::Attach() {
+ErrorCode CNavWindow::attach() {
 	Assert(IsValidObject(this));
 
-	LogInfo("\tCNavWindow::Attach()");
-	CBagStorageDevWnd::Attach();
+	LogInfo("\tCNavWindow::attach()");
+	CBagStorageDevWnd::attach();
 
 	m_level = 0;
 
@@ -304,7 +304,7 @@ ErrorCode CNavWindow::Attach() {
 }
 
 
-ErrorCode CNavWindow::Detach() {
+ErrorCode CNavWindow::detach() {
 	Assert(IsValidObject(this));
 
 	// If attached
@@ -319,7 +319,7 @@ ErrorCode CNavWindow::Detach() {
 		m_bNavAttached = false;
 	}
 
-	LogInfo("\tCNavWindow::Detach()");
+	LogInfo("\tCNavWindow::detach()");
 
 	CBofApp::GetApp()->SetPalette(m_pOldPal);
 
@@ -531,7 +531,7 @@ ErrorCode CNavWindow::Detach() {
 
 	KillBackdrop();
 
-	CBagStorageDevWnd::Detach();
+	CBagStorageDevWnd::detach();
 
 	return m_errCode;
 }

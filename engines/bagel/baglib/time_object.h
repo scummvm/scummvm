@@ -52,8 +52,8 @@ public:
 	/**
 	 * Create all 5 sprite objects for the clock and set their positions
 	 */
-	ErrorCode Attach();
-	ErrorCode Detach();
+	ErrorCode attach();
+	ErrorCode detach();
 	bool IsAttached() {
 		return m_xDig1 != nullptr;
 	}
@@ -64,7 +64,7 @@ public:
 	 */
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	CBofRect GetRect();
+	CBofRect getRect();
 	int GetCels() {
 		return m_nCels;
 	}

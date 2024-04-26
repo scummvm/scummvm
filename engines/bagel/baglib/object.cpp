@@ -106,14 +106,14 @@ CBagObject::~CBagObject() {
 	m_psName = nullptr;
 }
 
-ErrorCode CBagObject::Attach() {
+ErrorCode CBagObject::attach() {
 	SetVisible();
-	return CBagParseObject::Attach();
+	return CBagParseObject::attach();
 }
 
-ErrorCode CBagObject::Detach() {
+ErrorCode CBagObject::detach() {
 	SetVisible(false);
-	return CBagParseObject::Detach();
+	return CBagParseObject::detach();
 }
 
 ErrorCode CBagObject::Update(CBofBitmap * /*pBmp*/, CPoint /*pt*/, CRect * /*pSrcRect*/, int /*nMaskColor*/) {
@@ -254,7 +254,7 @@ PARSE_CODES CBagObject::SetInfo(bof_ifstream &istr) {
 			GetRectFromStream(istr, r);
 			SetPosition(r.TopLeft());
 			if (r.Width() && r.Height())
-				SetSize(CSize(r.Width(), r.Height()));
+				setSize(CSize(r.Width(), r.Height()));
 			break;
 		}
 		//
@@ -347,7 +347,7 @@ void CBagObject::OnLButtonUp(uint32 nFlags, CBofPoint * /*xPoint*/, void *) {
 		pWnd->ScreenToClient(&pt);
 
 		// Just send the mouse pos
-		CRect r = GetRect();
+		CRect r = getRect();
 		GetMenuPtr()->TrackPopupMenu(nFlags, pt.x, pt.y, pWnd, nullptr, &r);
 
 	} else {

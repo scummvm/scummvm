@@ -60,8 +60,8 @@ public:
 	virtual ErrorCode LoadFile(const CBofString &sFile);
 	virtual bool OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev);
 
-	virtual ErrorCode Attach();
-	virtual ErrorCode Detach();
+	virtual ErrorCode attach();
+	virtual ErrorCode detach();
 
 	virtual ErrorCode ActivateLocalObject(CBagObject *pObj);
 	virtual ErrorCode DeactivateLocalObject(CBagObject *pObj);

@@ -45,8 +45,8 @@ ErrorCode CBagWield::LoadFile(const CBofString &sFile) {
 	return error;
 }
 
-ErrorCode CBagWield::Attach() {
-	CBagStorageDevBmp::Attach();
+ErrorCode CBagWield::attach() {
+	CBagStorageDevBmp::attach();
 
 	// Take care of objects being held
 	int nObjects = 0;
@@ -61,7 +61,7 @@ ErrorCode CBagWield::Attach() {
 				ActivateLocalObject(pObj);
 
 			} else {
-				pObj->Detach();
+				pObj->detach();
 			}
 		}
 	}
@@ -69,9 +69,9 @@ ErrorCode CBagWield::Attach() {
 	return m_errCode;
 }
 
-ErrorCode CBagWield::Detach() {
-	CBagStorageDev::Detach();
-	return CBagBmpObject::Detach();
+ErrorCode CBagWield::detach() {
+	CBagStorageDev::detach();
+	return CBagBmpObject::detach();
 }
 
 bool CBagWield::OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {

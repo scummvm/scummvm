@@ -128,10 +128,10 @@ void  SBarComputer::OnPaint(CBofRect *pRect) {
 		PaintBackdrop();
 }
 
-ErrorCode SBarComputer::Attach() {
+ErrorCode SBarComputer::attach() {
 	LogInfo("Attaching SBarComputer...");
 
-	ErrorCode rc = CBagStorageDevWnd::Attach();
+	ErrorCode rc = CBagStorageDevWnd::attach();
 	if (rc == ERR_NONE) {
 		g_bWaitOK = false;
 
@@ -186,7 +186,7 @@ ErrorCode SBarComputer::Attach() {
 	return rc;
 }
 
-ErrorCode SBarComputer::Detach() {
+ErrorCode SBarComputer::detach() {
 	CBagCursor::HideSystemCursor();
 
 	if (m_pDrinkBuff != nullptr) {
@@ -226,7 +226,7 @@ ErrorCode SBarComputer::Detach() {
 
 	m_eMode = OFFMODE;
 
-	CBagStorageDevWnd::Detach();
+	CBagStorageDevWnd::detach();
 
 	// Going into mr drinkmaster makes 1 turn go by
 	VARMNGR->IncrementTimers();

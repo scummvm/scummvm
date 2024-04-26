@@ -94,28 +94,28 @@ ErrorCode SBZoomPda::LoadFile(const CBofString &sFile) {
 	return error;
 }
 
-ErrorCode SBZoomPda::Detach() {
+ErrorCode SBZoomPda::detach() {
 	bool bLogZoomed = (m_xLogWnd == m_xCurDisplay);
 
 	// Other classes need to know if we're zoomed
 	SetZoomed(false);
 	if (m_xInvWnd) {
-		m_xInvWnd->Detach();
+		m_xInvWnd->detach();
 		m_xInvWnd = nullptr;
 	}
 
 	if (m_xMooWnd) {
-		m_xMooWnd->Detach();
+		m_xMooWnd->detach();
 		m_xMooWnd = nullptr;
 	}
 
 	if (m_xMapWnd) {
-		m_xMapWnd->Detach();
+		m_xMapWnd->detach();
 		m_xMapWnd = nullptr;
 	}
 
 	if (m_xLogWnd) {
-		m_xLogWnd->Detach();
+		m_xLogWnd->detach();
 		m_xLogWnd = nullptr;
 	}
 
@@ -127,16 +127,16 @@ ErrorCode SBZoomPda::Detach() {
 
 	CBagRPObject::SynchronizeRPObjects(bLogZoomed);
 
-	CBagStorageDevWnd::Detach();
+	CBagStorageDevWnd::detach();
 
 	return ERR_NONE;
 }
 
-ErrorCode SBZoomPda::Attach() {
+ErrorCode SBZoomPda::attach() {
 	// Other classes need to know if we're zoomed
 	SetZoomed(true);
 
-	ErrorCode rc = CBagStorageDevWnd::Attach();
+	ErrorCode rc = CBagStorageDevWnd::attach();
 	if (rc == ERR_NONE) {
 		CBagStorageDev *pSDev;
 		if (!m_xMooWnd) {
@@ -147,7 +147,7 @@ ErrorCode SBZoomPda::Attach() {
 				m_xMooWnd->SetAssociateWnd(GetAssociateWnd());
 				m_xMooWnd->SetTransparent(false);
 				m_xMooWnd->SetVisible(false);
-				rc = m_xMooWnd->Attach();
+				rc = m_xMooWnd->attach();
 			}
 		} else {
 			// Already attached just update
@@ -162,7 +162,7 @@ ErrorCode SBZoomPda::Attach() {
 
 				m_xInvWnd->SetTransparent(false);
 				m_xInvWnd->SetVisible(false);
-				rc = m_xInvWnd->Attach();
+				rc = m_xInvWnd->attach();
 			} else {
 				BofMessageBox("No PDA INVENTORY found", __FILE__);
 				rc = ERR_UNKNOWN;
@@ -180,7 +180,7 @@ ErrorCode SBZoomPda::Attach() {
 
 				m_xMapWnd->SetTransparent(false);
 				m_xMapWnd->SetVisible(false);
-				rc = m_xMapWnd->Attach();
+				rc = m_xMapWnd->attach();
 			} else {
 				BofMessageBox("No PDA MAP found", __FILE__);
 				rc = ERR_UNKNOWN;
@@ -198,7 +198,7 @@ ErrorCode SBZoomPda::Attach() {
 
 				m_xLogWnd->SetTransparent(false);
 				m_xLogWnd->SetVisible(false);
-				rc = m_xLogWnd->Attach();
+				rc = m_xLogWnd->attach();
 			}
 		} else {
 			// Already attached just update

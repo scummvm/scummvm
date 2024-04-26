@@ -28,11 +28,11 @@
 namespace Bagel {
 
 /**
- * CBagAreaObject is an object that can be place within the slide window.
+ * CBagAreaObject is an object that can be placed within the slide window.
  */
 class CBagAreaObject : public CBagObject {
 private:
-	CBofSize m_xSize;
+	CBofSize _xSize;
 
 public:
 	CBagAreaObject() {
@@ -42,30 +42,30 @@ public:
 	}
 
 	~CBagAreaObject() {
-		Detach();
+		detach();
 	}
 
-	ErrorCode Attach() {
-		return CBagObject::Attach();
+	ErrorCode attach() {
+		return CBagObject::attach();
 	}
 
-	ErrorCode Detach() {
-		return CBagObject::Detach();
+	ErrorCode detach() {
+		return CBagObject::detach();
 	}
 
-	CBofRect GetRect() {
+	CBofRect getRect() {
 		CBofPoint p = GetPosition();
-		CBofSize s = GetSize();
+		CBofSize s = getSize();
 		CBofRect r = CBofRect(p, s);
 		return r;
 	}
 
-	CBofSize GetSize() const {
-		return m_xSize;
+	CBofSize getSize() const {
+		return _xSize;
 	}
 
-	void SetSize(const CBofSize &xSize) {
-		m_xSize = xSize;
+	void setSize(const CBofSize &xSize) {
+		_xSize = xSize;
 	}
 };
 

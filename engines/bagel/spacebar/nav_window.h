@@ -53,8 +53,8 @@ class CNavWindow : public CBagStorageDevWnd {
 public:
 	CNavWindow();
 
-	ErrorCode Attach() override;
-	ErrorCode Detach() override;
+	ErrorCode attach() override;
+	ErrorCode detach() override;
 
 	void OnBofButton(CBofObject *pButton, int nState) override;
 

@@ -44,19 +44,19 @@ CBagButtonObject::CBagButtonObject() {
 }
 
 CBagButtonObject::~CBagButtonObject() {
-	Detach();
+	detach();
 }
 
-ErrorCode CBagButtonObject::Attach() {
-	ErrorCode rc = CBagSpriteObject::Attach();
+ErrorCode CBagButtonObject::attach() {
+	ErrorCode rc = CBagSpriteObject::attach();
 
 	if (GetSprite()) {
 		GetSprite()->SetAnimated(false);
 	}
 
 	if (m_xButtonType == VLEVER || m_xButtonType == HLEVER) {
-		m_MidPoint.x = GetRect().TopLeft().x + (GetRect().Width() / 2);
-		m_MidPoint.y = GetRect().TopLeft().y + (GetRect().Height() / 2);
+		m_MidPoint.x = getRect().TopLeft().x + (getRect().Width() / 2);
+		m_MidPoint.y = getRect().TopLeft().y + (getRect().Height() / 2);
 	}
 
 	if (GetSprite()->GetCelCount() == 1 && m_xButtonType != SLIDER) {
@@ -75,8 +75,8 @@ ErrorCode CBagButtonObject::Attach() {
 	return rc;
 }
 
-ErrorCode CBagButtonObject::Detach() {
-	return CBagSpriteObject::Detach();
+ErrorCode CBagButtonObject::detach() {
+	return CBagSpriteObject::detach();
 }
 
 extern bool g_bNoMenu;
@@ -247,7 +247,7 @@ bool CBagButtonObject::OnMouseMove(uint32 /*nFlags*/, CBofPoint xPoint, void *in
 
 	if (m_xButtonType == PUSH) {
 		if (GetSprite() && (GetSprite()->GetCelCount() > 1)) {
-			if (!this->GetRect().PtInRect(xPoint) &&
+			if (!this->getRect().PtInRect(xPoint) &&
 			        m_bActive && !m_bActiveUp) {
 				m_bActiveUp = true;
 			}
@@ -333,11 +333,11 @@ ErrorCode CBagButtonObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSr
 	return m_errCode;
 }
 
-void CBagButtonObject::SetSize(const CBofSize &xSize) {
+void CBagButtonObject::setSize(const CBofSize &xSize) {
 	if (m_xButtonType == SLIDER)
 		m_SlideRect = CBofRect(GetPosition(), xSize);
 
-	CBagSpriteObject::SetSize(xSize);
+	CBagSpriteObject::setSize(xSize);
 }
 
 PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {

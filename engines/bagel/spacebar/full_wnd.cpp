@@ -32,7 +32,7 @@ SBarFullWnd::SBarFullWnd() {
 	m_bAllowEventWorld = true;
 }
 
-ErrorCode SBarFullWnd::Attach() {
+ErrorCode SBarFullWnd::attach() {
 	Assert(IsValidObject(this));
 
 	// If we have something wielded, put it on hold for now.
@@ -43,7 +43,7 @@ ErrorCode SBarFullWnd::Attach() {
 		}
 	}
 
-	if (CBagStorageDevWnd::Attach() == ERR_NONE) {
+	if (CBagStorageDevWnd::attach() == ERR_NONE) {
 		if (!m_bAllowEventWorld) {
 			g_bWaitOK = false;
 		}
@@ -56,8 +56,8 @@ ErrorCode SBarFullWnd::Attach() {
 	return m_errCode;
 }
 
-ErrorCode SBarFullWnd::Detach() {
-	CBagStorageDevWnd::Detach();
+ErrorCode SBarFullWnd::detach() {
+	CBagStorageDevWnd::detach();
 
 	if (m_pWieldedObject) {
 		SDEVMNGR->AddObject(CBagPanWindow::m_pWieldBmp->GetName(), m_pWieldedObject->GetRefName());

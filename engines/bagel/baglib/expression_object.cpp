@@ -39,7 +39,7 @@ CBagExpressionObject::~CBagExpressionObject() {
 		delete m_xExpression;
 		m_xExpression = nullptr;
 	}
-	Detach();
+	detach();
 }
 
 bool CBagExpressionObject::RunObject() {

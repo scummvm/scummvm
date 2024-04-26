@@ -77,7 +77,7 @@ ErrorCode CBagMoo::SetPDAMovie(CBofString &s) {
 		m_pMovie->SetFileName(s);
 
 		// Attach this bad baby...
-		ec = m_pMovie->Attach();
+		ec = m_pMovie->attach();
 		if (ec == ERR_NONE) {
 			m_pMovie->SetModal(false);
 			m_pMovie->SetNumOfLoops(1);
@@ -115,7 +115,7 @@ void CBagMoo::StopMovie(bool bResetPDA) {
 	}
 
 	if (m_pMovie) {
-		m_pMovie->Detach();
+		m_pMovie->detach();
 		delete m_pMovie;
 		m_pMovie = nullptr;
 	}

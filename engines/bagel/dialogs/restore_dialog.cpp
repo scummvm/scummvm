@@ -87,7 +87,7 @@ CBagRestoreDialog::CBagRestoreDialog() {
 	g_nSelectedSlot = -1;
 }
 
-ErrorCode CBagRestoreDialog::Attach() {
+ErrorCode CBagRestoreDialog::attach() {
 	Assert(IsValidObject(this));
 
 	m_bRestored = false;
@@ -442,7 +442,7 @@ void CBagRestoreDialog::OnInitDialog() {
 
 	CBofDialog::OnInitDialog();
 
-	Attach();
+	attach();
 }
 
 } // namespace Bagel

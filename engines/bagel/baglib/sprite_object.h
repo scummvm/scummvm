@@ -43,8 +43,8 @@ public:
 	CBagSpriteObject();
 	virtual ~CBagSpriteObject();
 
-	ErrorCode Attach();
-	ErrorCode Detach();
+	ErrorCode attach();
+	ErrorCode detach();
 	bool IsAttached() {
 		return m_xSprite != nullptr;
 	}
@@ -62,7 +62,7 @@ public:
 	CBofSprite *GetSprite() {
 		return m_xSprite;
 	}
-	CBofRect GetRect();
+	CBofRect getRect();
 	int GetCels() {
 		return m_nCels;
 	}

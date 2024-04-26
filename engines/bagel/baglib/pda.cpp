@@ -120,9 +120,9 @@ ErrorCode CBagPDA::LoadFile(const CBofString &sFile) {
 #define MAPWLD      "MAP_WLD"
 #define LOGWLD      "LOG_WLD"
 
-ErrorCode CBagPDA::Attach() {
+ErrorCode CBagPDA::attach() {
 	CBagStorageDev *pSDev;
-	ErrorCode rc = CBagStorageDevBmp::Attach();
+	ErrorCode rc = CBagStorageDevBmp::attach();
 
 	// Get PDA state info
 	GetPDAState();
@@ -144,7 +144,7 @@ ErrorCode CBagPDA::Attach() {
 			m_xMooWnd->SetAssociateWnd(GetAssociateWnd());
 			m_xMooWnd->SetTransparent(false);
 			m_xMooWnd->SetVisible(false);
-			rc = m_xMooWnd->Attach();
+			rc = m_xMooWnd->attach();
 		}
 	}
 
@@ -155,7 +155,7 @@ ErrorCode CBagPDA::Attach() {
 
 			m_xInvWnd->SetTransparent(false);
 			m_xInvWnd->SetVisible(false);
-			rc = m_xInvWnd->Attach();
+			rc = m_xInvWnd->attach();
 		} else {
 			BofMessageBox("No PDA INVENTORY found", __FILE__);
 			rc = ERR_UNKNOWN;
@@ -169,7 +169,7 @@ ErrorCode CBagPDA::Attach() {
 
 			m_xMapWnd->SetTransparent(false);
 			m_xMapWnd->SetVisible(false);
-			rc = m_xMapWnd->Attach();
+			rc = m_xMapWnd->attach();
 		} else {
 			BofMessageBox("No PDA MAP found", __FILE__);
 			rc = ERR_UNKNOWN;
@@ -182,7 +182,7 @@ ErrorCode CBagPDA::Attach() {
 
 			m_xLogWnd->SetTransparent(false);
 			m_xLogWnd->SetVisible(false);
-			rc = m_xLogWnd->Attach();
+			rc = m_xLogWnd->attach();
 		}
 	}
 	if (m_ePdaMode == INVMODE) {
@@ -328,10 +328,10 @@ ErrorCode CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 bool CBagPDA::IsInside(const CBofPoint &xPoint) {
 	CBofBitmap *pSrcBmp = GetBitmap();
 
-	if (GetRect().PtInRect(xPoint) && m_nMaskColor >= 0) {
+	if (getRect().PtInRect(xPoint) && m_nMaskColor >= 0) {
 		if (pSrcBmp) {
-			int x = xPoint.x - GetRect().left;
-			int y = xPoint.y - GetRect().top;
+			int x = xPoint.x - getRect().left;
+			int y = xPoint.y - getRect().top;
 			int c = pSrcBmp->ReadPixel(x, y);
 			return (c != m_nMaskColor);
 		}
@@ -360,7 +360,7 @@ void CBagPDA::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 	// Else, call the default func
 	CBofPoint RealPt = DevPtToViewPort(*xPoint);
 
-	if (m_xCurDisplay && m_xCurDisplay->GetRect().PtInRect(RealPt)) {
+	if (m_xCurDisplay && m_xCurDisplay->getRect().PtInRect(RealPt)) {
 		m_xCurDisplay->OnLButtonUp(nFlags, &RealPt, info);
 	} else {
 		// if not in the PDA view port then check and make sure it is activated.
@@ -385,7 +385,7 @@ void CBagPDA::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 			// Go through all the buttons and see if we hit any of them.
 			for (int i = 0; i < nCount; i++) {
 				CBagObject *pObj = pList->GetNodeItem(i);
-				if (pObj->GetType() == BUTTONOBJ && pObj->GetRect().PtInRect(RealPt)) {
+				if (pObj->GetType() == BUTTONOBJ && pObj->getRect().PtInRect(RealPt)) {
 					bButtonHit = true;
 					break;
 				}
@@ -433,7 +433,7 @@ bool  CBagPDA::PaintFGObjects(CBofBitmap *pBmp) {
 		// this assures that all objects will be updated (that are active).
 		MakeListDirty(m_xCurDisplay->GetObjectList());
 
-		CBofRect tmp = GetRect();
+		CBofRect tmp = getRect();
 		m_xCurDisplay->Update(pBmp, GetPosition(), &tmp);
 	}
 

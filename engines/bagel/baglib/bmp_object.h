@@ -44,11 +44,11 @@ public:
 	CBagBmpObject();
 	virtual ~CBagBmpObject();
 
-	ErrorCode Attach() {
-		return Attach(nullptr);
+	ErrorCode attach() {
+		return attach(nullptr);
 	}
-	ErrorCode Attach(CBofPalette *pPalette);
-	ErrorCode Detach();
+	ErrorCode attach(CBofPalette *pPalette);
+	ErrorCode detach();
 	bool IsAttached() {
 		return m_xBmp != nullptr;
 	}
@@ -58,7 +58,7 @@ public:
 	CBofBitmap *GetBitmap() {
 		return m_xBmp;
 	}
-	CBofRect GetRect();
+	CBofRect getRect();
 
 	virtual ErrorCode Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);
 	virtual ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);

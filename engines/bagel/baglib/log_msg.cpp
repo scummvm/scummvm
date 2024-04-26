@@ -84,7 +84,7 @@ CBofPoint CBagLog::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 		xFloatRect.bottom -= (nBorderSize / 2);
 
 		// calculate what page the whole object belongs on
-		int nPageNum = ((NextPos.y + pObj->GetRect().Height()) / xFloatRect.Height());
+		int nPageNum = ((NextPos.y + pObj->getRect().Height()) / xFloatRect.Height());
 		// page numbering is 1-N
 		nPageNum++;
 		SetNumFloatPages(nPageNum);
@@ -106,12 +106,12 @@ CBofPoint CBagLog::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 
 		// Calculate the position for the next floater
 		// This will get sent back to the calling func
-		NextPos.x += pObj->GetRect().Width();
+		NextPos.x += pObj->getRect().Width();
 
 		// Check to see if the whole object can fit in width, if it can't wrap
-		if (NextPos.x > (xFloatRect.Width() - pObj->GetRect().Width())) {
+		if (NextPos.x > (xFloatRect.Width() - pObj->getRect().Width())) {
 			NextPos.x = 0;
-			NextPos.y += pObj->GetRect().Height();
+			NextPos.y += pObj->getRect().Height();
 		}
 	}
 
@@ -146,39 +146,39 @@ void CBagLog::ArrangePages() {
 	if (nCurPage > nFirstPage && nCurPage < nLastPage) {
 		if (pUpObj->IsAttached() == false) {
 			pUpObj->SetActive();
-			pUpObj->Attach();
+			pUpObj->attach();
 		}
 		if (pDownObj->IsAttached() == false) {
 			pDownObj->SetActive();
-			pDownObj->Attach();
+			pDownObj->attach();
 		}
 	} else if (nCurPage == nFirstPage && nCurPage == nLastPage) {
 		if (pUpObj->IsAttached()) {
 			pUpObj->SetActive(false);
-			pUpObj->Detach();
+			pUpObj->detach();
 		}
 		if (pDownObj->IsAttached()) {
 			pDownObj->SetActive(false);
-			pDownObj->Detach();
+			pDownObj->detach();
 		}
 	} else if (nCurPage <= nFirstPage) {
 		if (pUpObj->IsAttached()) {
 			pUpObj->SetActive(false);
-			pUpObj->Detach();
+			pUpObj->detach();
 		}
 		if (pDownObj->IsAttached() == false) {
 			pDownObj->SetActive();
-			pDownObj->Attach();
+			pDownObj->attach();
 		}
 	} else if (nCurPage >= nLastPage) {
 		if (pUpObj->IsAttached() == false) {
 			pUpObj->SetActive();
-			pUpObj->Attach();
+			pUpObj->attach();
 		}
 
 		if (pDownObj->IsAttached()) {
 			pDownObj->SetActive(false);
-			pDownObj->Detach();
+			pDownObj->detach();
 		}
 	}
 
@@ -232,7 +232,7 @@ ErrorCode CBagLog::ReleaseMsg() {
 
 CBagObject *CBagLog::OnNewUserObject(const CBofString &sInit) {
 	CBagTextObject *LogObj = nullptr;
-	CBofRect cSDevRect = GetRect();
+	CBofRect cSDevRect = getRect();
 	CBofString  sDevName = GetName();
 	int     nPntSize = 10;
 
@@ -317,7 +317,7 @@ ErrorCode CBagLog::ActivateLocalObject(CBagObject *pObj) {
 				if (pMsgLight) {
 					if (!pMsgLight->IsAttached()) {
 						pMsgLight->SetActive();
-						pMsgLight->Attach();
+						pMsgLight->attach();
 					}
 
 					// Make sure this guy always gets updated regardless of its
@@ -362,7 +362,7 @@ ErrorCode CBagLog::PlayMsgQue() {
 				CBagMovieObject *pMovie = (CBagMovieObject *)GetObject(OVERRIDEMOVIE);
 				if (pMovie) {
 					if (pMovie->IsAttached() == false) {
-						pMovie->Attach();
+						pMovie->attach();
 						pMovie->SetVisible();
 					}
 					pMovie->RunObject();
@@ -376,7 +376,7 @@ ErrorCode CBagLog::PlayMsgQue() {
 			CBagObject *pObj = m_pQueued_Msgs->RemoveHead();
 
 			if (pObj) {
-				CRect  r = GetRect();
+				CRect  r = getRect();
 
 				errCode = CBagStorageDev::ActivateLocalObject(pObj);
 				CBagMenu *pObjMenu = pObj->GetMenuPtr();
@@ -422,8 +422,8 @@ CBagLogResidue::CBagLogResidue(int nSdevWidth) : CBagTextObject() {
 	m_bTitle = true;
 }
 
-void CBagLogResidue::SetSize(const CBofSize &xSize) {
-	CBagTextObject::SetSize(CBofSize(m_nSdevWidth, xSize.cy));
+void CBagLogResidue::setSize(const CBofSize &xSize) {
+	CBagTextObject::setSize(CBofSize(m_nSdevWidth, xSize.cy));
 }
 
 CBagLogMsg::CBagLogMsg(int nSdevWidth) : CBagTextObject() {
@@ -435,8 +435,8 @@ CBagLogMsg::CBagLogMsg(int nSdevWidth) : CBagTextObject() {
 	SetMsgPlayed(false);
 }
 
-void CBagLogMsg::SetSize(const CBofSize &xSize) {
-	CBagTextObject::SetSize(CBofSize(m_nSdevWidth, xSize.cy));
+void CBagLogMsg::setSize(const CBofSize &xSize) {
+	CBagTextObject::setSize(CBofSize(m_nSdevWidth, xSize.cy));
 }
 
 PARSE_CODES CBagLogMsg::SetInfo(bof_ifstream &istr) {
@@ -733,8 +733,8 @@ int CBagLogSuspect::GetProperty(const CBofString &sProp) {
 }
 
 
-void CBagLogSuspect::SetSize(const CBofSize &xSize) {
-	CBagTextObject::SetSize(CBofSize(m_nSdevWidth, xSize.cy));
+void CBagLogSuspect::setSize(const CBofSize &xSize) {
+	CBagTextObject::setSize(CBofSize(m_nSdevWidth, xSize.cy));
 
 }
 
@@ -914,7 +914,7 @@ ErrorCode CBagEnergyDetectorObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofR
 	return CBagTextObject::Update(pBmp, pt, pSrcRect, nMaskColor);
 }
 
-ErrorCode CBagEnergyDetectorObject::Attach() {
+ErrorCode CBagEnergyDetectorObject::attach() {
 	Assert(IsValidObject(this));
 
 	int nMsgTime;
@@ -961,7 +961,7 @@ ErrorCode CBagEnergyDetectorObject::Attach() {
 	SetText(BuildString("%02d:%02d %6.6s %s  %-35.35s", nHr, nMn, zStr.GetBuffer(), "zhaps", causeStr.GetBuffer()));
 	RecalcTextRect(false);
 
-	return CBagObject::Attach();
+	return CBagObject::attach();
 }
 
 CBagLogClue::CBagLogClue(const CBofString &sInit, int nSdevWidth, int nPointSize) : CBagTextObject() {
@@ -982,14 +982,14 @@ CBagLogClue::CBagLogClue(const CBofString &sInit, int nSdevWidth, int nPointSize
 	SetFloating();
 }
 
-ErrorCode CBagLogClue::Attach() {
+ErrorCode CBagLogClue::attach() {
 	char szFormatStr[256];
 	char szClueStr[256];
 	CBofString cFormat(szFormatStr, 256);
 
 	Assert(IsValidObject(this));
 
-	ErrorCode ec = CBagTextObject::Attach();
+	ErrorCode ec = CBagTextObject::attach();
 
 	// Get what is defined in the script.
 	cFormat = GetFileName();

@@ -105,8 +105,8 @@ public:
 	virtual void        OnBofButton(CBofObject *pButton, int nState);
 	virtual void        OnMainLoop();
 
-	virtual ErrorCode  Attach();	// This function attachs the background and nessasary bitmaps
-	virtual ErrorCode  Detach();	// This function detachs the background and nessasary bitmaps
+	virtual ErrorCode  attach();	// This function attachs the background and nessasary bitmaps
+	virtual ErrorCode  detach();	// This function detachs the background and nessasary bitmaps
 
 	void                AddBet(int nBetVal);
 	void                BetAll();

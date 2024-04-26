@@ -102,8 +102,8 @@ public:
 
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	ErrorCode Attach();
-	ErrorCode Detach();
+	ErrorCode attach();
+	ErrorCode detach();
 
 	virtual bool RunObject();
 

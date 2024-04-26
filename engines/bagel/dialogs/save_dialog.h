@@ -38,7 +38,7 @@ class CBagSaveDialog : public CBofDialog {
 public:
 	CBagSaveDialog();
 
-	virtual ErrorCode Attach();
+	virtual ErrorCode attach();
 	virtual ErrorCode Detach();
 
 	byte *GetSaveGameBuffer(int &nLength) {

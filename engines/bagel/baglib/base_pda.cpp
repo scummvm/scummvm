@@ -452,7 +452,7 @@ int SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
 	case NOMODE:
 	case MOOMODE:
 		if (m_xMapWnd) {
-			cRect = m_xMapWnd->GetRect() + pdaRect.TopLeft();
+			cRect = m_xMapWnd->getRect() + pdaRect.TopLeft();
 			if (cRect.PtInRect(xPoint)) {
 				if (nWieldCursor >= 0) {
 					return nWieldCursor;
@@ -472,20 +472,20 @@ int SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
 		// mousedowning on.
 		if (m_xCurDisplay) {
 			CBagObject *pOverObj = nullptr;
-			cRect = m_xCurDisplay->GetRect() + pdaRect.TopLeft();
+			cRect = m_xCurDisplay->getRect() + pdaRect.TopLeft();
 			if (cRect.PtInRect(xPoint)) {
 				CBofRect lRect;
 				// Go through the list of inventory items and see if we're over any of them
 				// in particular.
 				if ((pList = m_xCurDisplay->GetObjectList()) != nullptr) {
 					// Localize pda view rect
-					cRect = m_xCurDisplay->GetRect() + pdaRect.TopLeft();
+					cRect = m_xCurDisplay->getRect() + pdaRect.TopLeft();
 
 					int nCount = pList->GetCount();
 					for (int i = 0; i < nCount; ++i) {
 						CBagObject *pObj = pList->GetNodeItem(i);
 						if (pObj->IsActive()) {
-							lRect = pObj->GetRect() + cRect.TopLeft();      // localize icon rectangle
+							lRect = pObj->getRect() + cRect.TopLeft();      // localize icon rectangle
 							if (lRect.PtInRect(xPoint)) {
 								pOverObj = pObj;
 							}
@@ -522,7 +522,7 @@ int SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
 }
 
 CBofRect SBBasePda::GetViewRect() {
-	return (m_xCurDisplay == nullptr ? CBofRect() : m_xCurDisplay->GetRect());
+	return (m_xCurDisplay == nullptr ? CBofRect() : m_xCurDisplay->getRect());
 }
 
 ErrorCode SBBasePda::AttachActiveObjects() {

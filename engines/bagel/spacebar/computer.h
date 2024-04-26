@@ -90,12 +90,12 @@ public:
 	/**
 	 * This function attaches the background and necessary bitmaps
 	 */
-	virtual ErrorCode Attach();
+	virtual ErrorCode attach();
 
 	/**
 	 * This function detaches the background and necessary bitmaps
 	 */
-	virtual ErrorCode Detach();
+	virtual ErrorCode detach();
 
 	ErrorCode CreateDrinksListBox();
 	ErrorCode CreateIngListBox();

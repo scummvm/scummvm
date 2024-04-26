@@ -38,10 +38,10 @@ CBagLinkObject::CBagLinkObject() {
 }
 
 CBagLinkObject::~CBagLinkObject() {
-	Detach();
+	detach();
 }
 
-CBofRect CBagLinkObject::GetRect() {
+CBofRect CBagLinkObject::getRect() {
 	CBofPoint p = GetPosition();
 	CBofSize  s = GetSize();
 	CBofRect r = CBofRect(p, s);

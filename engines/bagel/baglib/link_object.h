@@ -49,7 +49,7 @@ public:
 	// Return true if the Object had members that are properly initialized/de-initialized
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	CBofRect GetRect();
+	CBofRect getRect();
 
 	CBofSize GetSize() const {
 		return m_xSize;
@@ -61,7 +61,7 @@ public:
 		return m_xSrcLocation;
 	}
 
-	void SetSize(const CBofSize &xSize) {
+	void setSize(const CBofSize &xSize) {
 		m_xSize = xSize;
 	}
 	void SetDstLoc(CBofPoint xLoc) {

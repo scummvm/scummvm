@@ -40,7 +40,6 @@ public:
 	enum class DISP_TYPE { MOVIE, EXAMINE, PDAMSG, ASYNCH_PDAMSG };
 
 private:
-	// CBofSize          m_xSize;
 	DISP_TYPE m_xDisplayType;
 	byte m_bFlyThru;
 	int16 m_nAsynchFlags;
@@ -60,9 +59,6 @@ public:
 		return m_pSndObj;
 	}
 
-	// Return true if the Object had members that are properly initialized/de-initialized
-	// ErrorCode           Attach();
-	// ErrorCode           Detach();
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
 	virtual bool RunObject();

@@ -75,8 +75,8 @@ public:
 	CMainWindow();
 	virtual ~CMainWindow();
 
-	ErrorCode Attach();
-	ErrorCode Detach();
+	ErrorCode attach();
+	ErrorCode detach();
 	static void SetZzazzlVision(bool newValue);
 	static CBofRect &GetFilterRect() {
 		return *m_xFilterRect;

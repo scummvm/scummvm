@@ -81,7 +81,7 @@ CMainWindow::~CMainWindow() {
 #define PAN_WIDTH 640
 #define PAN_HEIGHT 480
 
-ErrorCode CMainWindow::Attach() {
+ErrorCode CMainWindow::attach() {
 	CBofRect tmpRect(0, 0, PAN_WIDTH - 1, PAN_HEIGHT - 1);
 
 	chipdisp = false;
@@ -138,7 +138,7 @@ ErrorCode CMainWindow::Attach() {
 				m_pThudBmp = (SBarThud *)pSDev;
 				m_pThudBmp->SetAssociateWnd(this);
 				if (!m_pThudBmp->IsAttached())
-					m_pThudBmp->Attach();
+					m_pThudBmp->attach();
 				InsertFGObjects(m_pThudBmp);
 				m_pThudBmp->SetVisible(true);
 			}
@@ -156,9 +156,9 @@ ErrorCode CMainWindow::Attach() {
 				m_pWieldBmp = (CBagWield *)pSDev;
 				m_pWieldBmp->SetAssociateWnd(this);
 				if (!m_pWieldBmp->IsAttached())
-					m_pWieldBmp->Attach();
+					m_pWieldBmp->attach();
 
-				if (m_pWieldBmp->GetRect().IsRectEmpty()) {
+				if (m_pWieldBmp->getRect().IsRectEmpty()) {
 					CBofRect r(0, 380, 0 + 100 - 1, 380 + 100 - 1);
 					m_pWieldBmp->SetRect(r);
 					r = GetClientRect();
@@ -187,7 +187,7 @@ ErrorCode CMainWindow::Attach() {
 				m_pPDABmp->SetRect(r);
 				r = GetClientRect();
 				if (!m_pPDABmp->IsAttached())
-					m_pPDABmp->Attach();
+					m_pPDABmp->attach();
 
 				// Allow the script to specify the increment height.
 				CBagVar *pVar = VARMNGR->GetVariable("PDAINCREMENT");
@@ -225,7 +225,7 @@ ErrorCode CMainWindow::Attach() {
 				m_pEvtSDev = (CBagEventSDev *)pSDev;
 				m_pEvtSDev->SetAssociateWnd(this);
 				if (!m_pEvtSDev->IsAttached())
-					m_pEvtSDev->Attach();
+					m_pEvtSDev->attach();
 
 				SetTimer(EVAL_EXPR, 1000);
 				g_bPauseTimer = false;
@@ -293,11 +293,11 @@ ErrorCode CMainWindow::Attach() {
 }
 
 
-ErrorCode CMainWindow::Detach() {
+ErrorCode CMainWindow::detach() {
 	// If this was a closeup then save the leaving position
 	m_cLastLoc = GetViewPort().TopLeft();
 
-	CBagPanWindow::Detach();
+	CBagPanWindow::detach();
 
 	UnSetSlidebitmap();
 

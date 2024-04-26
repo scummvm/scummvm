@@ -54,7 +54,7 @@ public:
 	virtual ~CBagPDA();
 	static void initialize();
 
-	virtual ErrorCode Attach();
+	virtual ErrorCode attach();
 
 	/**
 	 * Positions the PDA centered vertically and window

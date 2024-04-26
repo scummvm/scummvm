@@ -169,7 +169,7 @@ void SBarSlotWnd::OnMainLoop() {
 	// Do nothing
 }
 
-ErrorCode  SBarSlotWnd::Attach() {
+ErrorCode  SBarSlotWnd::attach() {
 	m_bPaused = false;
 	m_bLose = false;
 	m_bFixBet = false;
@@ -181,7 +181,7 @@ ErrorCode  SBarSlotWnd::Attach() {
 	}
 
 
-	if (CBagStorageDevWnd::Attach() == ERR_NONE) {
+	if (CBagStorageDevWnd::attach() == ERR_NONE) {
 		// Must have a valid backdrop by now
 		Assert(m_pBackdrop != nullptr);
 		CBofPalette *pPal = m_pBackdrop->GetPalette();
@@ -302,7 +302,7 @@ ErrorCode  SBarSlotWnd::Attach() {
 	return m_errCode;
 }
 
-ErrorCode SBarSlotWnd::Detach() {
+ErrorCode SBarSlotWnd::detach() {
 	CBofCursor::Hide();
 
 	// Put any credits left in machine back into you credit chip.
@@ -376,7 +376,7 @@ ErrorCode SBarSlotWnd::Detach() {
 		m_pOddsText = nullptr;
 	}
 
-	CBagStorageDevWnd::Detach();
+	CBagStorageDevWnd::detach();
 
 	// One turn has gone by
 	VARMNGR->IncrementTimers();

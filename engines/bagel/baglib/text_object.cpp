@@ -60,10 +60,10 @@ CBagTextObject::~CBagTextObject() {
 		delete m_psInitInfo;
 		m_psInitInfo = nullptr;
 	}
-	Detach();
+	detach();
 }
 
-CBofRect CBagTextObject::GetRect() {
+CBofRect CBagTextObject::getRect() {
 	CBofPoint p = GetPosition();
 	CBofSize s = GetSize();
 	CBofRect r = CBofRect(p, s);
@@ -132,7 +132,7 @@ ErrorCode CBagTextObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 	return errCode;
 }
 
-ErrorCode CBagTextObject::Attach() {
+ErrorCode CBagTextObject::attach() {
 	Assert(IsValidObject(this));
 
 	if (!GetFileName().Right(4).Find(".TXT") || !GetFileName().Right(4).Find(".txt")) {
@@ -212,10 +212,10 @@ ErrorCode CBagTextObject::Attach() {
 		pRPObj->SetTimeSet(false);
 	}
 
-	return CBagObject::Attach();
+	return CBagObject::attach();
 }
 
-ErrorCode CBagTextObject::Detach() {
+ErrorCode CBagTextObject::detach() {
 	Assert(IsValidObject(this));
 
 	if (m_psText != nullptr) {
@@ -223,7 +223,7 @@ ErrorCode CBagTextObject::Detach() {
 		m_psText = nullptr;
 	}
 
-	return CBagObject::Detach();
+	return CBagObject::detach();
 }
 
 const CBofString &CBagTextObject::GetText() {
@@ -468,10 +468,10 @@ bool CBagTextObject::RunObject() {
 
 	if (m_bCaption && IsImmediateRun()) {
 
-		// Re-Attach this object to get any change in a variable
+		// Re-attach this object to get any change in a variable
 		// (Must be using the VAR token).
 		if (m_bReAttach) {
-			Attach();
+			attach();
 		}
 
 		CBagel *pApp = CBagel::GetBagApp();
@@ -480,7 +480,7 @@ bool CBagTextObject::RunObject() {
 			if (pWin != nullptr) {
 				CBagStorageDevWnd *pParent = pWin->GetCurrentStorageDev();
 
-				CBofRect cRect(80, 10, 80 + 480 /*- 1 */, 10 + GetRect().Height() - 1 + 5);
+				CBofRect cRect(80, 10, 80 + 480 /*- 1 */, 10 + getRect().Height() - 1 + 5);
 				CBofPoint cPoint(0, 0);
 
 				CBofPalette *pPal = pApp->GetPalette();
@@ -589,7 +589,7 @@ void CBagTextObject::RecalcTextRect(bool bTextFromFile) {
 	} else {
 		cSize.cx = stTextSize.cx + 9;
 		cSize.cy = stTextSize.cy + (m_bTitle ? 0 : 7);
-		SetSize(cSize);
+		setSize(cSize);
 	}
 
 	if (bTextFromFile) {
@@ -616,7 +616,7 @@ void CBagTextObject::RecalcTextRect(bool bTextFromFile) {
 		// Add a little space at the bottom
 		cDisplaySize.cy += 5;
 
-		SetSize(cDisplaySize);
+		setSize(cDisplaySize);
 	}
 }
 

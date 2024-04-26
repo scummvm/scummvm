@@ -47,7 +47,7 @@ class CBagOptWindow : public CBofDialog {
 public:
 	CBagOptWindow();
 
-	virtual ErrorCode Attach();
+	virtual ErrorCode attach();
 	virtual ErrorCode Detach();
 
 	/**
