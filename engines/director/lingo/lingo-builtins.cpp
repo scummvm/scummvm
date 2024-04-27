@@ -2049,7 +2049,9 @@ void LB::b_duplicate(int nargs) {
 	}
 
 	Score *score = movie->getScore();
+	// force redraw any sprites
 	score->refreshPointersForCastMemberID(*to.u.cast);
+	b_updateStage(0);
 	g_lingo->push(Datum(to.u.cast->member));
 }
 
