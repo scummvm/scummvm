@@ -33,7 +33,7 @@ namespace Bagel {
 
 class CBagRestartDialog : public CBofDialog {
 public:
-	CBagRestartDialog(const char *pszFileName, CBofRect *pRect, CBofWindow *pWin);
+	CBagRestartDialog(const char *pszFileName, CBofWindow *pWin);
 
 	virtual void OnInitDialog();
 

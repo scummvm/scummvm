@@ -46,7 +46,7 @@ protected:
 	void OnKeyHit(uint32 lKey, uint32 lRepCount) override;
 
 public:
-	CBagStartDialog(const char *pszFileName, CBofRect *pRect, CBofWindow *pWin);
+	CBagStartDialog(const char *pszFileName, CBofWindow *pWin);
 
 	void OnInitDialog() override;
 };
