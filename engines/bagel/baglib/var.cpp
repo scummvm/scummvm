@@ -144,7 +144,7 @@ void CBagVar::Increment() {
 		SetValue(GetNumValue() + 1);
 }
 
-PARSE_CODES CBagVar::SetInfo(bof_ifstream &istr) {
+PARSE_CODES CBagVar::setInfo(bof_ifstream &istr) {
 	Assert(IsValidObject(this));
 
 	char szLocalStr[256];

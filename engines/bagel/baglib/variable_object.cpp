@@ -58,10 +58,9 @@ CBofRect CBagVariableObject::getRect() {
 }
 
 //
-//   SetInfo(bof_ifstream& istr)
 //   Takes in info and then removes the relative information and returns the info
 //   without the relevant info.
-PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
+PARSE_CODES CBagVariableObject::setInfo(bof_ifstream &istr) {
 	int nChanged;
 	bool nObjectUpdated = false;
 	char ch;
@@ -134,7 +133,7 @@ PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 		//
 		default:
 			PARSE_CODES rc;
-			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
+			if ((rc = CBagObject::setInfo(istr)) == PARSING_DONE) {
 				return PARSING_DONE;
 			} else if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;

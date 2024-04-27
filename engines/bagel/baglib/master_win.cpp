@@ -620,7 +620,7 @@ ErrorCode CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 					case VARIABLE: {
 						CBagVar *pVar = new CBagVar;
 						fpInput.EatWhite();
-						pVar->SetInfo(fpInput);
+						pVar->setInfo(fpInput);
 						pVar->SetGlobal();
 						break;
 					}
@@ -941,7 +941,7 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 			CBagVar *xVar = new CBagVar;
 			// LogInfo("New global variable");
 			fpInput.EatWhite();
-			xVar->SetInfo(fpInput);
+			xVar->setInfo(fpInput);
 			break;
 		}
 

@@ -135,7 +135,7 @@ public:
 		return false;
 	}
 
-	virtual BAGFUNCPTR GetCallBack() {
+	virtual BAGFUNCPTR getCallBack() {
 		return nullptr;
 	}
 
@@ -381,7 +381,7 @@ public:
 	 * UPDATED_OBJECT   if something has changed
 	 * PARSING_DONE     if done processing
 	 */
-	virtual PARSE_CODES SetInfo(bof_ifstream &istr);
+	virtual PARSE_CODES setInfo(bof_ifstream &istr);
 
 	virtual int HandleError(int nErrID) {
 		Assert(!nErrID);

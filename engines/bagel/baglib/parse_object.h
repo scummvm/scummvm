@@ -91,7 +91,7 @@ public:
 		return m_bAttached;
 	}
 
-	virtual PARSE_CODES SetInfo(bof_ifstream &) {
+	virtual PARSE_CODES setInfo(bof_ifstream &) {
 		return PARSING_DONE;
 	}
 

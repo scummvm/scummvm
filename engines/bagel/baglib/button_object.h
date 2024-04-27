@@ -33,62 +33,61 @@ namespace Bagel {
 class CBagButtonObject : public CBagSpriteObject {
 public:
 	enum BUTTON_TYPE {
-		PUSH = 0,
-		CHECKBOX = 1,
-		HLEVER = 2,
-		VLEVER = 3,
-		DIAL = 4,
-		SLIDER = 5
+		BTN_PUSH = 0,
+		BTN_CHECKBOX = 1,
+		BTN_HLEVER = 2,
+		BTN_VLEVER = 3,
+		BTN_DIAL = 4,
+		BTN_SLIDER = 5
 	};
 
 private:
-	bool m_bDragging;
-	CBofRect m_SlideRect;
-	int m_nNumPos;
+	bool _dragging;
+	CBofRect _slideRect;
+	int _numPos;
 
-	BUTTON_TYPE m_xButtonType;
-	bool m_bActiveDown;
-	bool m_bActiveUp;
-	bool m_bActive;
+	BUTTON_TYPE _buttonType;
+	bool _activeDown;
+	bool _activeUp;
+	bool _active;
 
-	CBofPoint m_MidPoint;
-	BAGFUNCPTR m_vpFunc; // Function
-	void *m_vpFuncInfo; // Data to be passed to the function
+	CBofPoint _midPoint;
+	BAGFUNCPTR _callbackFct;
+	void *_callbackInfo; // Data to be passed to the function
 
 public:
 	CBagButtonObject();
 	virtual ~CBagButtonObject();
 
-	// Return true if the Object had members that are properly initialized/de-initialized
 	ErrorCode attach();
 	ErrorCode detach();
 
-	BUTTON_TYPE GetButtonType() {
-		return m_xButtonType;
+	BUTTON_TYPE getButtonType() {
+		return _buttonType;
 	}
 
 	/**
 	 * Takes in info and then removes the relative information and returns
 	 * the info without the relevant info.
 	 */
-	PARSE_CODES SetInfo(bof_ifstream & /*istr*/);
+	PARSE_CODES setInfo(bof_ifstream &istr);
 	virtual bool RunObject();
 
 	// Callback function functionality - probably can be phased out
-	void SetCallBack(BAGFUNCPTR func, void *vpFuncInfo = nullptr) {
-		m_vpFunc = func;
-		m_vpFuncInfo = vpFuncInfo;
+	void SetCallBack(BAGFUNCPTR func, void *funcInfo) {
+		_callbackFct = func;
+		_callbackInfo = funcInfo;
 	}
-	virtual BAGFUNCPTR GetCallBack() {
-		return m_vpFunc;
+	virtual BAGFUNCPTR getCallBack() {
+		return _callbackFct;
 	}
 
 	void *GetCallBackInfo() {
-		return m_vpFuncInfo;
+		return _callbackInfo;
 	}
 	virtual bool RunCallBack() {
-		if (m_vpFunc) {
-			m_vpFunc((int)GetRefId(), m_vpFuncInfo);
+		if (_callbackFct) {
+			_callbackFct((int)GetRefId(), _callbackInfo);
 			return true;
 		}
 

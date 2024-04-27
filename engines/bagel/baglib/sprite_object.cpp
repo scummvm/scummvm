@@ -120,10 +120,9 @@ CBofRect CBagSpriteObject::getRect() {
 }
 
 //
-// SetInfo(bof_ifstream& istr)
 //   Takes in info and then removes the relative information and returns the info
 //   without the relevant info.
-PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
+PARSE_CODES CBagSpriteObject::setInfo(bof_ifstream &istr) {
 	bool nObjectUpdated = false;
 
 	while (!istr.eof()) {
@@ -192,7 +191,7 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 		//  no match return from funtion
 		//
 		default: {
-			PARSE_CODES rc = CBagObject::SetInfo(istr);
+			PARSE_CODES rc = CBagObject::setInfo(istr);
 			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
 			}

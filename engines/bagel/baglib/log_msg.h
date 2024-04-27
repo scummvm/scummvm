@@ -33,12 +33,12 @@ protected:
 	int m_nSdevWidth;
 
 public:
-	CBagLogResidue(int nSdevWidth);
+	CBagLogResidue(int sdevWidth);
 	virtual ~CBagLogResidue() {}
 
-	void setSize(const CBofSize &xSize);
+	void setSize(const CBofSize &size);
 
-	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
+	ErrorCode update(CBofBitmap *bmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 };
 
 #define mMsgTimeMask 0x3FFF
@@ -51,21 +51,21 @@ protected:
 	int m_nSdevWidth;
 
 public:
-	CBagLogMsg(int nSdevWidth);
+	CBagLogMsg(int sdevWidth);
 	virtual ~CBagLogMsg() {}
 
-	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
+	ErrorCode update(CBofBitmap *bmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 
 	/**
 	 * Takes in info and then removes the relative information and returns the info
 	 * without the relevant info.
 	 */
-	PARSE_CODES SetInfo(bof_ifstream &istr);
+	PARSE_CODES setInfo(bof_ifstream &istr);
 
-	void setSize(const CBofSize &xSize);
+	void setSize(const CBofSize &size);
 
-	void SetProperty(const CBofString &sProp, int nVal);
-	int GetProperty(const CBofString &sProp);
+	void SetProperty(const CBofString &prop, int val);
+	int GetProperty(const CBofString &prop);
 
 	void SetMsgSendee(const CBofString &sProp) {
 		m_sMsgSendee = sProp;
@@ -104,18 +104,17 @@ protected:
 	CBofString m_sSusRoom;
 
 public:
-	CBagLogSuspect(int nSdevWidth);
+	CBagLogSuspect(int sdevWidth);
 	virtual ~CBagLogSuspect() {}
 
-	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
+	ErrorCode update(CBofBitmap *bmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 
-	void setSize(const CBofSize &xSize);
+	void setSize(const CBofSize &size);
 
-	PARSE_CODES SetInfo(bof_ifstream &istr);
-	// PARSE_CODES          SetInfo(CBofFile&);
+	PARSE_CODES setInfo(bof_ifstream &istr);
 
-	void SetProperty(const CBofString &sProp, int nVal);
-	int GetProperty(const CBofString &sProp);
+	void SetProperty(const CBofString &prop, int val);
+	int GetProperty(const CBofString &prop);
 
 	void SetSusName(const CBofString &sProp) {
 		m_sSusName = sProp;
@@ -163,7 +162,7 @@ public:
 		m_bLastFloatPage = nullptr;
 	}
 
-	virtual CBagObject *OnNewUserObject(const CBofString &sInit);
+	virtual CBagObject *OnNewUserObject(const CBofString &initStr);
 
 	/**
 	 * This is different for the log sdev Object are just queued for insertion
@@ -171,7 +170,7 @@ public:
 	 * to the sdev when the message light is clicked
 	 * @return      Error result code
 	 */
-	virtual ErrorCode ActivateLocalObject(CBagObject *pObj);
+	virtual ErrorCode ActivateLocalObject(CBagObject *bagObj);
 
 	/**
 	 * Releases and deletes all the objects in the list
@@ -195,7 +194,7 @@ public:
 	CBofPoint ArrangeFloater(CBofPoint nPos, CBagObject *pObj);
 
 	int GetCurFltPage();
-	void SetCurFltPage(int nFltPage);
+	void SetCurFltPage(int fltPage);
 
 	static void ArrangePages();
 	static void InitArrangePages() {
@@ -209,7 +208,7 @@ public:
 	virtual ~CBagEnergyDetectorObject();
 
 	// Need private setinfo so we can parse energy detector fields
-	PARSE_CODES SetInfo(bof_ifstream &istr);
+	PARSE_CODES setInfo(bof_ifstream &istr);
 
 	ErrorCode update(CBofBitmap *, CBofPoint, CBofRect *, int);
 
@@ -246,7 +245,7 @@ public:
 
 	ErrorCode attach();
 
-	PARSE_CODES SetInfo(bof_ifstream &istr);
+	PARSE_CODES setInfo(bof_ifstream &istr);
 
 	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 };

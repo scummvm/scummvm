@@ -299,7 +299,7 @@ public:
 		return m_pAssociateWnd;
 	}
 
-	virtual PARSE_CODES SetInfo(bof_ifstream &fpInput); // This function call the pure virt set background
+	virtual PARSE_CODES setInfo(bof_ifstream &fpInput); // This function call the pure virt set background
 
 	virtual ErrorCode SetBackground(CBofBitmap *pBmp) = 0; // This could be eliminated but is kept in to insure good class usage
 	virtual CBofBitmap *GetBackground() = 0;                // Think about it, you can figure this out

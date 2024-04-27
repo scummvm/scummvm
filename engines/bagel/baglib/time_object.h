@@ -62,7 +62,7 @@ public:
 	 * Takes in info and then removes the relative information and returns the info
 	 * without the relevant info.
 	 */
-	PARSE_CODES SetInfo(bof_ifstream &istr);
+	PARSE_CODES setInfo(bof_ifstream &istr);
 
 	CBofRect getRect();
 	int GetCels() {

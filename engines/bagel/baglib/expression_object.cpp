@@ -69,7 +69,7 @@ bool CBagExpressionObject::RunObject() {
 	return CBagObject::RunObject();
 }
 
-PARSE_CODES CBagExpressionObject::SetInfo(bof_ifstream &istr) {
+PARSE_CODES CBagExpressionObject::setInfo(bof_ifstream &istr) {
 	bool nObjectUpdated = false;
 
 	while (!istr.eof()) {
@@ -81,7 +81,7 @@ PARSE_CODES CBagExpressionObject::SetInfo(bof_ifstream &istr) {
 		case '(': {
 			m_xExpression = new CBagExpression();
 			if (m_xExpression) {
-				m_xExpression->SetInfo(istr);
+				m_xExpression->setInfo(istr);
 				nObjectUpdated = true;
 			} else {
 				// there was an error
@@ -91,7 +91,7 @@ PARSE_CODES CBagExpressionObject::SetInfo(bof_ifstream &istr) {
 		//  No match return from function
 		//
 		default: {
-			PARSE_CODES rc = CBagObject::SetInfo(istr);
+			PARSE_CODES rc = CBagObject::setInfo(istr);
 			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
 			}
