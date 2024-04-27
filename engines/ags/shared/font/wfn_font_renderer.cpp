@@ -32,22 +32,12 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-static unsigned char GetCharCode(unsigned char wanted_code, const WFNFont *font) {
-	return wanted_code < font->GetCharCount() ? wanted_code : '?';
-}
-
 void WFNFontRenderer::AdjustYCoordinateForFont(int *ycoord, int fontNumber) {
 	// Do nothing
 }
 
 void WFNFontRenderer::EnsureTextValidForFont(char *text, int fontNumber) {
-	const WFNFont *font = _fontData[fontNumber].Font;
-	// replace any extended characters with question marks
-	for (; *text; ++text) {
-		if ((unsigned char)*text >= font->GetCharCount()) {
-			*text = '?';
-		}
-	}
+	// Do nothing
 }
 
 int WFNFontRenderer::GetTextWidth(const char *text, int fontNumber) {
@@ -55,9 +45,8 @@ int WFNFontRenderer::GetTextWidth(const char *text, int fontNumber) {
 	const FontRenderParams &params = _fontData[fontNumber].Params;
 	int text_width = 0;
 
-	for (; *text; ++text) {
-		const WFNChar &wfn_char = font->GetChar(GetCharCode(*text, font));
-		text_width += wfn_char.Width;
+	for (int code = ugetxc(&text); code; code = ugetxc(&text)) {
+		text_width += font->GetChar(code).Width;
 	}
 	return text_width * params.SizeMultiplier;
 }
@@ -67,11 +56,9 @@ int WFNFontRenderer::GetTextHeight(const char *text, int fontNumber) {
 	const FontRenderParams &params = _fontData[fontNumber].Params;
 	int max_height = 0;
 
-	for (; *text; ++text) {
-		const WFNChar &wfn_char = font->GetChar(GetCharCode(*text, font));
-		const uint16_t height = wfn_char.Height;
-		if (height > max_height)
-			max_height = height;
+	for (int code = ugetxc(&text); code; code = ugetxc(&text)) {
+		const uint16_t height = font->GetChar(code).Height;
+		max_height = std::max(max_height, static_cast<int>(height));
 	}
 	return max_height * params.SizeMultiplier;
 }
@@ -90,8 +77,8 @@ void WFNFontRenderer::RenderText(const char *text, int fontNumber, BITMAP *desti
 	// NOTE: allegro's putpixel ignores clipping (optimization),
 	// so we'll have to accommodate for that ourselves
 	Rect clip = ds.GetClip();
-	for (; *text; ++text)
-		x += RenderChar(&ds, x, y, clip, font->GetChar(GetCharCode(*text, font)), params.SizeMultiplier, colour);
+	for (int code = ugetxc(&text); code; code = ugetxc(&text))
+		x += RenderChar(&ds, x, y, clip, font->GetChar(code), params.SizeMultiplier, colour);
 
 	set_our_eip(oldeip);
 }
