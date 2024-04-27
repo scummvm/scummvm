@@ -45,7 +45,7 @@ void WFNChar::RestrictToBytes(size_t bytes) {
 		Height = static_cast<uint16_t>(bytes / GetRowByteCount());
 }
 
-const WFNChar &WFNFont::GetChar(uint8_t code) const {
+const WFNChar &WFNFont::GetChar(uint16_t code) const {
 	return code < _refs.size() ? *_refs[code] : _G(emptyChar);
 }
 
