@@ -37,6 +37,7 @@ void DarkEngine::loadAssetsAtariFullGame() {
 	loadMessagesVariableSize(stream, 0x3f6f, 66);
 	loadPalettes(stream, 0x205e6);
 	loadGlobalObjects(stream, 0x32f6, 24);
+	loadSoundsFx(stream, 0x266e8, 11);
 
 	for (auto &it : _areaMap) {
 		addWalls(it._value);

@@ -407,6 +407,11 @@ void FreescapeEngine::playSoundFx(int index, bool sync) {
 		return;
 	}
 
+	if (index >= int(_soundsFx.size())) {
+		debugC(1, kFreescapeDebugMedia, "WARNING: Sound %d not available", index);
+		return;
+	}
+
 	int size = _soundsFx[index]->size;
 	int sampleRate = _soundsFx[index]->sampleRate;
 	byte *data = _soundsFx[index]->data;
