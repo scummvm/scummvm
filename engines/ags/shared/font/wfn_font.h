@@ -90,7 +90,7 @@ public:
 	}
 
 	// Get WFN character for the given code; if the character is missing, returns empty character
-	const WFNChar &GetChar(uint8_t code) const;
+	const WFNChar &GetChar(uint16_t code) const;
 
 	void Clear();
 	// Reads WFNFont object, using data_size bytes from stream; if data_size = 0,
