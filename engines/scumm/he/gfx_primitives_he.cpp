@@ -214,8 +214,8 @@ void Wiz::pgClippedThickLineDraw(WizSimpleBitmap *destBM, int asx, int asy, int 
 
 	// Now we can compute the corner points...
 
-	int *xPoints = new int[4];
-	int *yPoints = new int[4];
+	int xPoints[4];
+	int yPoints[4];
 
 	xPoints[aSortOrder[0]] = asx - iCompDX;
 	yPoints[aSortOrder[0]] = asy - iCompDY;
