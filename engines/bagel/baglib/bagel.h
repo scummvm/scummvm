@@ -173,7 +173,7 @@ public:
 	 * @param waveFile		Filename
 	 * @return              Error return code
 	 */
-	ErrorCode verifyCDInDrive(int diskId = DISK_1, const char *waveFile = nullptr);
+	ErrorCode verifyCDInDrive(int diskId, const char *waveFile);
 
 	static void showNextCDDialog(CBofWindow *parentWin, int diskId);
 
