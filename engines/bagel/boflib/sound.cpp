@@ -236,6 +236,7 @@ void CBofSound::SetVolume(int nMidiVolume, int nWaveVolume) {
 
 	// Set master Midi volume
 	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, VOLUME_SVM(nMidiVolume));
+	g_engine->_midi->setVolume(VOLUME_SVM(nMidiVolume));
 }
 
 
