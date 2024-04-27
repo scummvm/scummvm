@@ -27,12 +27,12 @@ namespace Bagel {
 CBagBmpObject::CBagBmpObject() : CBagObject() {
 	m_xObjType = BMPOBJ;
 	_bmp = nullptr;
-	SetOverCursor(1);
+	CBagObject::SetOverCursor(1);
 	SetTimeless(true);
 }
 
 CBagBmpObject::~CBagBmpObject() {
-	detach();
+	CBagBmpObject::detach();
 }
 
 ErrorCode CBagBmpObject::attach(CBofPalette *palette) {

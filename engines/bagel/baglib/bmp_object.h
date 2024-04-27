@@ -44,26 +44,26 @@ public:
 	CBagBmpObject();
 	virtual ~CBagBmpObject();
 
-	ErrorCode attach() {
+	ErrorCode attach() override {
 		return attach(nullptr);
 	}
 
 	ErrorCode attach(CBofPalette *palette);
-	ErrorCode detach();
+	ErrorCode detach() override;
 	
-	bool isAttached() {
+	bool isAttached() override {
 		return _bmp != nullptr;
 	}
 
-	bool isInside(const CBofPoint &pt);
+	bool isInside(const CBofPoint &pt) override;
 
 	CBofBitmap *getBitmap() {
 		return _bmp;
 	}
-	CBofRect getRect();
+	CBofRect getRect() override;
 
 	virtual ErrorCode update(CBofWindow *wnd, CBofPoint pt, CBofRect *srcRect = nullptr, int maskColor = -1);
-	virtual ErrorCode update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect = nullptr, int maskColor = -1);
+	ErrorCode update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect = nullptr, int maskColor = -1) override;
 };
 
 } // namespace Bagel
