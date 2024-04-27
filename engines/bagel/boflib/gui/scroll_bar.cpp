@@ -134,11 +134,11 @@ ErrorCode CBofScrollBar::SetText(const char *pszText, int nJustify) {
 }
 
 
-ErrorCode CBofScrollBar::SetPos(const int nPos, bool bRepaint) {
+ErrorCode CBofScrollBar::SetPos(const int nPos, bool bRepaint, bool isInitial) {
 	Assert(IsValidObject(this));
 
 	// Save old position
-	int nOriginalPos = m_nPos;
+	int nOriginalPos = m_nPos;		
 
 	m_nPos = nPos;
 	if (nPos < m_nMin)
@@ -171,7 +171,7 @@ ErrorCode CBofScrollBar::SetPos(const int nPos, bool bRepaint) {
 	}
 
 	// If the thumb actually moved, then tell our parent about it
-	if (m_nPos != nOriginalPos) {
+	if (m_nPos != nOriginalPos && !isInitial) {
 		_parent->OnBofScrollBar(this, m_nPos);
 	}
 
