@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "bagel/dialogs/opt_window.h"
 #include "bagel/dialogs/save_dialog.h"
 #include "bagel/baglib/bagel.h"
@@ -32,7 +33,6 @@
 namespace Bagel {
 
 #define USER_OPTIONS "UserOptions"
-#define WAVE_VOLUME  "WaveVolume"
 
 #define BROWN_SCROLL_BKGD   "SLIDER.BMP"
 #define BROWN_SCROLL_THMB   "THUMB.BMP"
@@ -346,16 +346,16 @@ void CBagOptWindow::PutDialogData() {
 	Assert(IsValidObject(this));
 
 	if (m_pMidiVolumeScroll != nullptr)
-		m_pMidiVolumeScroll->SetPos(m_cSystemData.m_nMusicVolume);
+		m_pMidiVolumeScroll->SetPos(m_cSystemData.m_nMusicVolume, true, true);
 
 	if (m_pWaveVolumeScroll != nullptr)
-		m_pWaveVolumeScroll->SetPos(m_cSystemData.m_nSoundVolume);
+		m_pWaveVolumeScroll->SetPos(m_cSystemData.m_nSoundVolume, true, true);
 
 	if (m_pCorrectionScroll != nullptr)
-		m_pCorrectionScroll->SetPos(m_cSystemData.m_nCorrection);
+		m_pCorrectionScroll->SetPos(m_cSystemData.m_nCorrection, true, true);
 
 	if (m_pPanSpeedScroll != nullptr)
-		m_pPanSpeedScroll->SetPos(m_cSystemData.m_nPanSpeed);
+		m_pPanSpeedScroll->SetPos(m_cSystemData.m_nPanSpeed, true, true);
 
 	if (m_pFlythroughs != nullptr)
 		m_pFlythroughs->SetCheck(m_cSystemData.m_bFlythroughs);
@@ -540,15 +540,16 @@ void CBagOptWindow::SaveOutNewSettings() {
 	CBagel *pApp = CBagel::getBagApp();
 
 	// Write out current system settings
-	if (pApp != nullptr) {
-		pApp->setOption(USER_OPTIONS, "Panimations", m_cSystemData.m_bPanimations);
-		pApp->setOption(USER_OPTIONS, "FlyThroughs", m_cSystemData.m_bFlythroughs);
+	ConfMan.setBool("Panimations", m_cSystemData.m_bPanimations);
+	ConfMan.setBool("FlyThroughs", m_cSystemData.m_bFlythroughs);
 
-		pApp->setOption(USER_OPTIONS, "Correction", 6 - m_cSystemData.m_nCorrection);
-		pApp->setOption(USER_OPTIONS, "PanSpeed", m_cSystemData.m_nPanSpeed);
-		pApp->setOption(USER_OPTIONS, "MidiVolume", m_cSystemData.m_nMusicVolume);
-		pApp->setOption(USER_OPTIONS, WAVE_VOLUME, m_cSystemData.m_nSoundVolume);
+	ConfMan.setInt("Correction", 6 - m_cSystemData.m_nCorrection);
+	ConfMan.setInt("PanSpeed", m_cSystemData.m_nPanSpeed);
+	ConfMan.setInt("music_volume", VOLUME_SVM(m_cSystemData.m_nMusicVolume));
+	ConfMan.setInt("sfx_volume", VOLUME_SVM(m_cSystemData.m_nSoundVolume));
+	ConfMan.flushToDisk();
 
+	if (pApp) {
 		CBagMasterWin *pWin = pApp->getMasterWnd();
 
 		// Set current Pan correction
@@ -575,48 +576,35 @@ void CBagOptWindow::SaveOutNewSettings() {
 
 void CBagOptWindow::LoadIniSettings() {
 	Assert(IsValidObject(this));
+	int nTemp;
 
-	CBagel *pApp = CBagel::getBagApp();
+	ConfMan.registerDefault("Panimations", true);
+	ConfMan.registerDefault("FlyThroughs", true);
+	ConfMan.registerDefault("Correction", 2);
+	ConfMan.registerDefault("PanSpeed", 1);
 
 	// Read in current system settings
-	if (pApp != nullptr) {
-		int nTemp;
+	m_cSystemData.m_bPanimations = ConfMan.getBool("Panimations");
+	m_cSystemData.m_bFlythroughs = ConfMan.getBool("FlyThroughs");
 
-		pApp->getOption(USER_OPTIONS, "Panimations", &m_cSystemData.m_bPanimations, true);
-		pApp->getOption(USER_OPTIONS, "FlyThroughs", &m_cSystemData.m_bFlythroughs, true);
+	nTemp = ConfMan.getInt("Correction");
+	if (nTemp < 0 || nTemp > 6)
+		nTemp = 2;
+	m_cSystemData.m_nCorrection = 6 - nTemp;
 
-		// Correction
-		pApp->getOption(USER_OPTIONS, "Correction", &nTemp, 2);
+	// Pan speed
+	nTemp = ConfMan.getInt("PanSpeed");
+	if (nTemp < 0 || nTemp > 5)
+		nTemp = 1;
+	m_cSystemData.m_nPanSpeed = nTemp;
 
-		if (nTemp < 0 || nTemp > 6)
-			nTemp = 2;
+	// Midi Volume
+	int musVolume = ConfMan.getBool("music_mute") ? 0 : CLIP(ConfMan.getInt("music_volume"), 0, 255);
+	m_cSystemData.m_nMusicVolume = SVM_VOLUME(musVolume);
 
-		m_cSystemData.m_nCorrection = 6 - nTemp;
-
-		// Pan speed
-		pApp->getOption(USER_OPTIONS, "PanSpeed", &nTemp, 1);
-
-		if (nTemp < 0 || nTemp > 5)
-			nTemp = 1;
-		m_cSystemData.m_nPanSpeed = nTemp;
-
-		// Midi Volume
-		pApp->getOption(USER_OPTIONS, "MidiVolume", &nTemp, VOLUME_DEFAULT);
-
-		if ((nTemp < VOLUME_MIN) || (nTemp > VOLUME_MAX)) {
-			nTemp = VOLUME_DEFAULT;
-		}
-		m_cSystemData.m_nMusicVolume = nTemp;
-
-		// Digital Audio Volume
-		pApp->getOption(USER_OPTIONS, WAVE_VOLUME, &nTemp, VOLUME_DEFAULT);
-
-		if ((nTemp < VOLUME_MIN) || (nTemp > VOLUME_MAX)) {
-			nTemp = VOLUME_DEFAULT;
-		}
-
-		m_cSystemData.m_nSoundVolume = nTemp;
-	}
+	// Digital Audio Volume
+	int sfxVolume = ConfMan.getBool("sfx_mute") ? 0 : CLIP(ConfMan.getInt("sfx_volume"), 0, 255);
+	m_cSystemData.m_nSoundVolume = SVM_VOLUME(sfxVolume);
 }
 
 void CBagOptWindow::ReturnToDefaults() {
