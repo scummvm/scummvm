@@ -427,6 +427,11 @@ void Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 
 			_cowFile.read(compSample, sampleFileSize);
 			_speechSize = getSpeechSize(compSample, sampleFileSize);
+
+			// Force alignment on sample size (bug #15094)...
+			if ((_speechSize % 2) != 0)
+				_speechSize += 1;
+
 			_speechSample = (byte *)malloc(_speechSize);
 
 			if (_speechSample) {
