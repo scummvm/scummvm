@@ -159,14 +159,10 @@ Ultima8Engine::~Ultima8Engine() {
 }
 
 Common::Error Ultima8Engine::run() {
-	Common::Error result;
-	if (initialize()) {
-		result = startup();
-		if (result.getCode() == Common::kNoError)
-			result = runGame();
-
+	Common::Error result = initialize();
+	if (result.getCode() == Common::kNoError) {
+		result = runGame();
 		deinitialize();
-		shutdown();
 	}
 
 	return result;
@@ -179,7 +175,9 @@ void Ultima8Engine::initializePath(const Common::FSNode& gamePath) {
 	SearchMan.addSubDirectoryMatching(gamePath, "data", 0, 4);
 }
 
-bool Ultima8Engine::initialize() {
+Common::Error Ultima8Engine::initialize() {
+	debug(MM_INFO, "-- Initializing Pentagram --");
+
 	// Call syncSoundSettings to get default volumes set
 	syncSoundSettings();
 
@@ -187,14 +185,196 @@ bool Ultima8Engine::initialize() {
 	Common::Archive *archive = Common::makeZipArchive("ultima8.dat");
 	if (!archive) {
 		GUIErrorMessageFormat(_("Unable to locate the '%s' engine data file."), "ultima8.dat");
-		return false;
+		return Common::kPathDoesNotExist;
 	}
 	SearchMan.add("ultima8.dat", archive);
 
-	return true;
+	setDebugger(new Debugger());
+
+	_gameInfo = nullptr;
+	_configFileMan = new ConfigFileManager();
+	_fontManager = new FontManager();
+	_kernel = new Kernel();
+
+	//!! move this elsewhere
+	_kernel->addProcessLoader("DelayProcess",
+							  ProcessLoader<DelayProcess>::load);
+	_kernel->addProcessLoader("GravityProcess",
+							  ProcessLoader<GravityProcess>::load);
+	_kernel->addProcessLoader("AvatarGravityProcess",
+							  ProcessLoader<AvatarGravityProcess>::load);
+	_kernel->addProcessLoader("PaletteFaderProcess",
+							  ProcessLoader<PaletteFaderProcess>::load);
+	_kernel->addProcessLoader("TeleportToEggProcess",
+							  ProcessLoader<TeleportToEggProcess>::load);
+	_kernel->addProcessLoader("ActorAnimProcess",
+							  ProcessLoader<ActorAnimProcess>::load);
+	_kernel->addProcessLoader("TargetedAnimProcess",
+							  ProcessLoader<TargetedAnimProcess>::load);
+	_kernel->addProcessLoader("AvatarMoverProcess", // parent class for backward compatibility
+							  ProcessLoader<U8AvatarMoverProcess>::load);
+	_kernel->addProcessLoader("U8AvatarMoverProcess",
+							  ProcessLoader<U8AvatarMoverProcess>::load);
+	_kernel->addProcessLoader("CruAvatarMoverProcess",
+							  ProcessLoader<CruAvatarMoverProcess>::load);
+	_kernel->addProcessLoader("QuickAvatarMoverProcess",
+							  ProcessLoader<QuickAvatarMoverProcess>::load);
+	_kernel->addProcessLoader("PathfinderProcess",
+							  ProcessLoader<PathfinderProcess>::load);
+	_kernel->addProcessLoader("CruPathfinderProcess",
+							  ProcessLoader<CruPathfinderProcess>::load);
+	_kernel->addProcessLoader("SpriteProcess",
+							  ProcessLoader<SpriteProcess>::load);
+	_kernel->addProcessLoader("CameraProcess",
+							  ProcessLoader<CameraProcess>::load);
+	_kernel->addProcessLoader("MusicProcess", // parent class name for save game backwards-compatibility.
+							  ProcessLoader<U8MusicProcess>::load);
+	_kernel->addProcessLoader("U8MusicProcess",
+							  ProcessLoader<U8MusicProcess>::load);
+	_kernel->addProcessLoader("RemorseMusicProcess", // name was changed, keep this for backward-compatibility.
+							  ProcessLoader<CruMusicProcess>::load);
+	_kernel->addProcessLoader("CruMusicProcess",
+							  ProcessLoader<CruMusicProcess>::load);
+	_kernel->addProcessLoader("AudioProcess",
+							  ProcessLoader<AudioProcess>::load);
+	_kernel->addProcessLoader("EggHatcherProcess",
+							  ProcessLoader<EggHatcherProcess>::load);
+	_kernel->addProcessLoader("UCProcess",
+							  ProcessLoader<UCProcess>::load);
+	_kernel->addProcessLoader("GumpNotifyProcess",
+							  ProcessLoader<GumpNotifyProcess>::load);
+	_kernel->addProcessLoader("ResurrectionProcess",
+							  ProcessLoader<ResurrectionProcess>::load);
+	_kernel->addProcessLoader("DeleteActorProcess",
+		ProcessLoader<DestroyItemProcess>::load);  // YES, this is intentional
+	_kernel->addProcessLoader("DestroyItemProcess",
+							  ProcessLoader<DestroyItemProcess>::load);
+	_kernel->addProcessLoader("SplitItemProcess",
+							  ProcessLoader<SplitItemProcess>::load);
+	_kernel->addProcessLoader("ClearFeignDeathProcess",
+							  ProcessLoader<ClearFeignDeathProcess>::load);
+	_kernel->addProcessLoader("LoiterProcess",
+							  ProcessLoader<LoiterProcess>::load);
+	_kernel->addProcessLoader("AvatarDeathProcess",
+							  ProcessLoader<AvatarDeathProcess>::load);
+	_kernel->addProcessLoader("GrantPeaceProcess",
+							  ProcessLoader<GrantPeaceProcess>::load);
+	_kernel->addProcessLoader("CombatProcess",
+							  ProcessLoader<CombatProcess>::load);
+	_kernel->addProcessLoader("FireballProcess",
+							  ProcessLoader<FireballProcess>::load);
+	_kernel->addProcessLoader("HealProcess",
+							  ProcessLoader<HealProcess>::load);
+	_kernel->addProcessLoader("SchedulerProcess",
+							  ProcessLoader<SchedulerProcess>::load);
+	_kernel->addProcessLoader("InverterProcess",
+							  ProcessLoader<InverterProcess>::load);
+	_kernel->addProcessLoader("ActorBarkNotifyProcess",
+							  ProcessLoader<ActorBarkNotifyProcess>::load);
+	_kernel->addProcessLoader("AmbushProcess",
+							  ProcessLoader<AmbushProcess>::load);
+	_kernel->addProcessLoader("TargetReticleProcess",
+							  ProcessLoader<TargetReticleProcess>::load);
+	_kernel->addProcessLoader("SurrenderProcess",
+							  ProcessLoader<SurrenderProcess>::load);
+	_kernel->addProcessLoader("CruHealerProcess",
+							  ProcessLoader<CruHealerProcess>::load);
+	_kernel->addProcessLoader("BatteryChargerProcess",
+							  ProcessLoader<BatteryChargerProcess>::load);
+	_kernel->addProcessLoader("CycleProcess",
+							  ProcessLoader<CycleProcess>::load);
+	_kernel->addProcessLoader("GuardProcess",
+							  ProcessLoader<GuardProcess>::load);
+	_kernel->addProcessLoader("SnapProcess",
+							  ProcessLoader<SnapProcess>::load);
+	_kernel->addProcessLoader("CrosshairProcess",
+							  ProcessLoader<CrosshairProcess>::load);
+	_kernel->addProcessLoader("ItemSelectionProcess",
+							  ProcessLoader<ItemSelectionProcess>::load);
+	_kernel->addProcessLoader("PaceProcess",
+							  ProcessLoader<PaceProcess>::load);
+	_kernel->addProcessLoader("SuperSpriteProcess",
+							  ProcessLoader<SuperSpriteProcess>::load);
+	_kernel->addProcessLoader("AttackProcess",
+							  ProcessLoader<AttackProcess>::load);
+	_kernel->addProcessLoader("AutoFirerProcess",
+							  ProcessLoader<AutoFirerProcess>::load);
+	_kernel->addProcessLoader("BoboBoomerProcess",
+							  ProcessLoader<BoboBoomerProcess>::load);
+	_kernel->addProcessLoader("RollingThunderProcess",
+							  ProcessLoader<RollingThunderProcess>::load);
+
+	_objectManager = new ObjectManager();
+	_mouse = new Mouse();
+
+	// Audio Mixer
+	_audioMixer = new AudioMixer(_mixer);
+
+	debug(MM_INFO, "-- Pentagram Initialized -- ");
+
+	if (setupGame()) {
+		Common::Error result = startupGame();
+		if (result.getCode() != Common::kNoError)
+			return result;
+	} else {
+		// Couldn't setup the game, should never happen?
+		warning("game failed to initialize");
+	}
+	paint();
+	return Common::kNoError;
 }
 
 void Ultima8Engine::deinitialize() {
+	debug(MM_INFO, "-- Shutting down Game -- ");
+
+	// Save config here....
+
+	// reset mouse cursor
+	_mouse->popAllCursors();
+	_mouse->pushMouseCursor(Mouse::MOUSE_NORMAL);
+
+	delete _world;
+	_world = nullptr;
+
+	_objectManager->reset();
+
+	delete _ucMachine;
+	_ucMachine = nullptr;
+
+	_kernel->reset();
+	_paletteManager->reset();
+	_fontManager->resetGameFonts();
+
+	delete _game;
+	_game = nullptr;
+
+	delete _gameData;
+	_gameData = nullptr;
+
+	if (_audioMixer) {
+		_audioMixer->closeMidiOutput();
+		_audioMixer->reset();
+		delete _audioMixer;
+		_audioMixer = nullptr;
+	}
+
+	_desktopGump = nullptr;
+	_gameMapGump = nullptr;
+	_inverterGump = nullptr;
+
+	_timeOffset = -(int32)Kernel::get_instance()->getFrameNum();
+	_saveCount = 0;
+	_hasCheated = false;
+
+	_configFileMan->clearRoot("bindings");
+	_configFileMan->clearRoot("language");
+	_configFileMan->clearRoot("weapons");
+	_configFileMan->clearRoot("armour");
+	_configFileMan->clearRoot("monsters");
+	_configFileMan->clearRoot("game");
+	_gameInfo = nullptr;
+
+	debug(MM_INFO, "-- Game Shutdown -- ");
 }
 
 void Ultima8Engine::pauseEngineIntern(bool pause) {
@@ -220,143 +400,6 @@ bool Ultima8Engine::hasFeature(EngineFeature f) const {
 
 Common::Language Ultima8Engine::getLanguage() const {
 	return _gameDescription->desc.language;
-}
-
-Common::Error Ultima8Engine::startup() {
-	setDebugger(new Debugger());
-	debug(MM_INFO, "-- Initializing Pentagram --");
-
-	_gameInfo = nullptr;
-	_configFileMan = new ConfigFileManager();
-	_fontManager = new FontManager();
-	_kernel = new Kernel();
-
-	//!! move this elsewhere
-	_kernel->addProcessLoader("DelayProcess",
-		ProcessLoader<DelayProcess>::load);
-	_kernel->addProcessLoader("GravityProcess",
-		ProcessLoader<GravityProcess>::load);
-	_kernel->addProcessLoader("AvatarGravityProcess",
-		ProcessLoader<AvatarGravityProcess>::load);
-	_kernel->addProcessLoader("PaletteFaderProcess",
-		ProcessLoader<PaletteFaderProcess>::load);
-	_kernel->addProcessLoader("TeleportToEggProcess",
-		ProcessLoader<TeleportToEggProcess>::load);
-	_kernel->addProcessLoader("ActorAnimProcess",
-		ProcessLoader<ActorAnimProcess>::load);
-	_kernel->addProcessLoader("TargetedAnimProcess",
-		ProcessLoader<TargetedAnimProcess>::load);
-	_kernel->addProcessLoader("AvatarMoverProcess", // parent class for backward compatibility
-		ProcessLoader<U8AvatarMoverProcess>::load);
-	_kernel->addProcessLoader("U8AvatarMoverProcess",
-		ProcessLoader<U8AvatarMoverProcess>::load);
-	_kernel->addProcessLoader("CruAvatarMoverProcess",
-		ProcessLoader<CruAvatarMoverProcess>::load);
-	_kernel->addProcessLoader("QuickAvatarMoverProcess",
-		ProcessLoader<QuickAvatarMoverProcess>::load);
-	_kernel->addProcessLoader("PathfinderProcess",
-		ProcessLoader<PathfinderProcess>::load);
-	_kernel->addProcessLoader("CruPathfinderProcess",
-		ProcessLoader<CruPathfinderProcess>::load);
-	_kernel->addProcessLoader("SpriteProcess",
-		ProcessLoader<SpriteProcess>::load);
-	_kernel->addProcessLoader("CameraProcess",
-		ProcessLoader<CameraProcess>::load);
-	_kernel->addProcessLoader("MusicProcess", // parent class name for save game backwards-compatibility.
-		ProcessLoader<U8MusicProcess>::load);
-	_kernel->addProcessLoader("U8MusicProcess",
-		ProcessLoader<U8MusicProcess>::load);
-	_kernel->addProcessLoader("RemorseMusicProcess", // name was changed, keep this for backward-compatibility.
-		ProcessLoader<CruMusicProcess>::load);
-	_kernel->addProcessLoader("CruMusicProcess",
-		ProcessLoader<CruMusicProcess>::load);
-	_kernel->addProcessLoader("AudioProcess",
-		ProcessLoader<AudioProcess>::load);
-	_kernel->addProcessLoader("EggHatcherProcess",
-		ProcessLoader<EggHatcherProcess>::load);
-	_kernel->addProcessLoader("UCProcess",
-		ProcessLoader<UCProcess>::load);
-	_kernel->addProcessLoader("GumpNotifyProcess",
-		ProcessLoader<GumpNotifyProcess>::load);
-	_kernel->addProcessLoader("ResurrectionProcess",
-		ProcessLoader<ResurrectionProcess>::load);
-	_kernel->addProcessLoader("DeleteActorProcess",
-		ProcessLoader<DestroyItemProcess>::load);  // YES, this is intentional
-	_kernel->addProcessLoader("DestroyItemProcess",
-		ProcessLoader<DestroyItemProcess>::load);
-	_kernel->addProcessLoader("SplitItemProcess",
-		ProcessLoader<SplitItemProcess>::load);
-	_kernel->addProcessLoader("ClearFeignDeathProcess",
-		ProcessLoader<ClearFeignDeathProcess>::load);
-	_kernel->addProcessLoader("LoiterProcess",
-		ProcessLoader<LoiterProcess>::load);
-	_kernel->addProcessLoader("AvatarDeathProcess",
-		ProcessLoader<AvatarDeathProcess>::load);
-	_kernel->addProcessLoader("GrantPeaceProcess",
-		ProcessLoader<GrantPeaceProcess>::load);
-	_kernel->addProcessLoader("CombatProcess",
-		ProcessLoader<CombatProcess>::load);
-	_kernel->addProcessLoader("FireballProcess",
-		ProcessLoader<FireballProcess>::load);
-	_kernel->addProcessLoader("HealProcess",
-		ProcessLoader<HealProcess>::load);
-	_kernel->addProcessLoader("SchedulerProcess",
-		ProcessLoader<SchedulerProcess>::load);
-	_kernel->addProcessLoader("InverterProcess",
-		ProcessLoader<InverterProcess>::load);
-	_kernel->addProcessLoader("ActorBarkNotifyProcess",
-		ProcessLoader<ActorBarkNotifyProcess>::load);
-	_kernel->addProcessLoader("AmbushProcess",
-		ProcessLoader<AmbushProcess>::load);
-	_kernel->addProcessLoader("TargetReticleProcess",
-		ProcessLoader<TargetReticleProcess>::load);
-	_kernel->addProcessLoader("SurrenderProcess",
-		ProcessLoader<SurrenderProcess>::load);
-	_kernel->addProcessLoader("CruHealerProcess",
-		ProcessLoader<CruHealerProcess>::load);
-	_kernel->addProcessLoader("BatteryChargerProcess",
-		ProcessLoader<BatteryChargerProcess>::load);
-	_kernel->addProcessLoader("CycleProcess",
-		ProcessLoader<CycleProcess>::load);
-	_kernel->addProcessLoader("GuardProcess",
-		ProcessLoader<GuardProcess>::load);
-	_kernel->addProcessLoader("SnapProcess",
-		ProcessLoader<SnapProcess>::load);
-	_kernel->addProcessLoader("CrosshairProcess",
-		ProcessLoader<CrosshairProcess>::load);
-	_kernel->addProcessLoader("ItemSelectionProcess",
-		ProcessLoader<ItemSelectionProcess>::load);
-	_kernel->addProcessLoader("PaceProcess",
-		ProcessLoader<PaceProcess>::load);
-	_kernel->addProcessLoader("SuperSpriteProcess",
-		ProcessLoader<SuperSpriteProcess>::load);
-	_kernel->addProcessLoader("AttackProcess",
-		ProcessLoader<AttackProcess>::load);
-	_kernel->addProcessLoader("AutoFirerProcess",
-		ProcessLoader<AutoFirerProcess>::load);
-	_kernel->addProcessLoader("BoboBoomerProcess",
-		ProcessLoader<BoboBoomerProcess>::load);
-	_kernel->addProcessLoader("RollingThunderProcess",
-		ProcessLoader<RollingThunderProcess>::load);
-
-	_objectManager = new ObjectManager();
-	_mouse = new Mouse();
-
-	// Audio Mixer
-	_audioMixer = new AudioMixer(_mixer);
-
-	debug(MM_INFO, "-- Pentagram Initialized -- ");
-
-	if (setupGame()) {
-		Common::Error result = startupGame();
-		if (result.getCode() != Common::kNoError)
-			return result;
-	} else {
-		// Couldn't setup the game, should never happen?
-		warning("game failed to initialize");
-	}
-	paint();
-	return Common::kNoError;
 }
 
 bool Ultima8Engine::setupGame() {
@@ -546,59 +589,6 @@ Common::Error Ultima8Engine::startupGame() {
 
 	debug(MM_INFO, "-- Game Initialized --");
 	return Common::kNoError;
-}
-
-void Ultima8Engine::shutdown() {
-	debug(MM_INFO, "-- Shutting down Game -- ");
-
-	// Save config here....
-
-	// reset mouse cursor
-	_mouse->popAllCursors();
-	_mouse->pushMouseCursor(Mouse::MOUSE_NORMAL);
-
-	delete _world;
-	_world = nullptr;
-
-	_objectManager->reset();
-
-	delete _ucMachine;
-	_ucMachine = nullptr;
-
-	_kernel->reset();
-	_paletteManager->reset();
-	_fontManager->resetGameFonts();
-
-	delete _game;
-	_game = nullptr;
-
-	delete _gameData;
-	_gameData = nullptr;
-
-	if (_audioMixer) {
-		_audioMixer->closeMidiOutput();
-		_audioMixer->reset();
-		delete _audioMixer;
-		_audioMixer = nullptr;
-	}
-
-	_desktopGump = nullptr;
-	_gameMapGump = nullptr;
-	_inverterGump = nullptr;
-
-	_timeOffset = -(int32)Kernel::get_instance()->getFrameNum();
-	_saveCount = 0;
-	_hasCheated = false;
-
-	_configFileMan->clearRoot("bindings");
-	_configFileMan->clearRoot("language");
-	_configFileMan->clearRoot("weapons");
-	_configFileMan->clearRoot("armour");
-	_configFileMan->clearRoot("monsters");
-	_configFileMan->clearRoot("game");
-	_gameInfo = nullptr;
-
-	debug(MM_INFO, "-- Game Shutdown -- ");
 }
 
 //
