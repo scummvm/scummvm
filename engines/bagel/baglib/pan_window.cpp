@@ -731,10 +731,9 @@ uint32 CBagPanWindow::RotateTo(CBofPoint xPoint, int nRate) {
 
 	if (m_pSlideBitmap && (xPoint.x != -1) && (xPoint.y != -1)) {
 		CBofRect r = m_pSlideBitmap->GetCurrView();
-		CBofPoint xCurrPos;
 
 		for (;;) {
-			xCurrPos = r.TopLeft();
+			CBofPoint xCurrPos = r.TopLeft();
 			int x = (xPoint.x - xCurrPos.x);
 			int y = (xPoint.y - xCurrPos.y);
 
@@ -786,28 +785,22 @@ uint32 CBagPanWindow::Benchmark() {
 }
 
 bool CBagPanWindow::DeactivatePDA() {
-	// If we have a PDA
-	if (m_pPDABmp) {
-		// and the pda is active
-		if (m_pPDABmp->isActivated()) {
-			// deactivate it
-			m_pPDABmp->deactivate();
+	// If we have a PDA and the pda is active
+	if (m_pPDABmp && m_pPDABmp->isActivated()) {
+		// deactivate it
+		m_pPDABmp->deactivate();
 
-			return true;        // PDA successfully deactivated
-		}
+		return true;        // PDA successfully deactivated
 	}
 	return false;               // PDA already deactivated
 }
 
 bool CBagPanWindow::ActivatePDA() {
-	// If we have a BMP
-	if (m_pPDABmp) {
-		// and the pda is not active
-		if (!m_pPDABmp->isActivated() || m_pPDABmp->isActivating()) {
-			m_pPDABmp->activate();  // activate it
+	// If we have a BMP and the pda is not active
+	if (m_pPDABmp&& (!m_pPDABmp->isActivated() || m_pPDABmp->isActivating())) {
+		m_pPDABmp->activate();  // activate it
 
-			return true;            // PDA successfully activated
-		}
+		return true;            // PDA successfully activated
 	}
 
 	return false;                   // PDA already activated
