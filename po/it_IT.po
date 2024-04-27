@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-04-27 03:28+0000\n"
-"PO-Revision-Date: 2024-04-24 16:32+0000\n"
+"PO-Revision-Date: 2024-04-27 14:00+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -11072,10 +11072,8 @@ msgid "Ransome *unbeeped* (DLC)"
 msgstr "Ransome *debippato* (DLC)"
 
 #: engines/twp/metaengine.cpp:151
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select highlighted verb"
-msgstr "Seleziona uno shader"
+msgstr "Seleziona verbo evidenziato"
 
 #: engines/twp/metaengine.cpp:157
 msgid "Select Actor 1"
