@@ -226,13 +226,18 @@ bool Debugger::cmdLoadOriginal(int argc, const char **argv) {
 			Common::String::format("%s%.2d.SAV", prefix[idx], strToInt(argv[2])));
 		Common::File f;
 
+		debugPrintf("Trying to open - %s\n", fsNode.getPath().toString().c_str());
+
 		if (f.open(fsNode)) {
 			archives[idx]->load(f);
 			f.close();
 		} else {
-			archives[idx]->reset(cc[idx]);
+			debugPrintf("Could not open.\n");
+			return true;
 		}
 	}
+
+	debugPrintf("Savegame loaded.\n");
 
 	// TODO: Figure out to set correct side from original saves
 	files.setGameCc(_vm->getGameID() == GType_DarkSide ? 1 : 0);
