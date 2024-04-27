@@ -235,6 +235,7 @@ bool CBofApp::consolePlayVideo(const Common::Path &path) {
 	delete _consoleVideo;
 
 	_consoleVideo = new Video::SmackerDecoder();
+	_consoleVideo->setSoundType(Audio::Mixer::kSFXSoundType);
 	if (_consoleVideo->loadFile(path)) {
 		_consoleVideo->start();
 		return true;

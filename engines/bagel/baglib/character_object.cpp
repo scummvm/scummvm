@@ -70,6 +70,7 @@ ErrorCode CBagCharacterObject::attach() {
 
 	// Open the smacker file
 	Video::SmackerDecoder *decoder = new Video::SmackerDecoder();
+	decoder->setSoundType(Audio::Mixer::kSFXSoundType);
 	if (!decoder->loadFile(filename.GetBuffer())) {
 		LogError(BuildString("CHAR SmackOpen failed: %s ", filename.GetBuffer()));
 		return ERR_FOPEN;

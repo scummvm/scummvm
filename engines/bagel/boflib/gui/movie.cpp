@@ -95,6 +95,7 @@ bool CBofMovie::OpenMovie(const char *sFilename) {
 		CloseMovie();
 	}
 	m_pSmk = new Video::SmackerDecoder();
+	m_pSmk->setSoundType(Audio::Mixer::kSFXSoundType);
 
 	if (!m_pSmk->loadFile(sFilename)) {
 		// Opened failed
