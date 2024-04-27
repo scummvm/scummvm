@@ -241,11 +241,10 @@ void CBagTextObject::SetText(const CBofString &s) {
 	RecalcTextRect(!GetFileName().Right(4).Find(".TXT") || !GetFileName().Right(4).Find(".txt"));
 }
 
-// SetInfo(bof_ifstream& istr)
 //   Takes in info and then removes the relative information and returns the info
 //   without the relevant info.
 //
-PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
+PARSE_CODES CBagTextObject::setInfo(bof_ifstream &istr) {
 	bool nObjectUpdated = false;
 
 	while (!istr.eof()) {
@@ -384,7 +383,7 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 		//
 		default: {
 			PARSE_CODES rc;
-			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
+			if ((rc = CBagObject::setInfo(istr)) == PARSING_DONE) {
 				return PARSING_DONE;
 			}
 

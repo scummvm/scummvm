@@ -94,7 +94,7 @@ public:
 	CBagVar *GetVariable(int nPos);
 	OPERATION GetOperation(int nPos);
 
-	PARSE_CODES SetInfo(bof_ifstream &istr);
+	PARSE_CODES setInfo(bof_ifstream &istr);
 	ErrorCode GetOperatorFromStream(bof_ifstream &istr, OPERATION &xOper);
 
 	CBagExpression *GetPrevExpression() {

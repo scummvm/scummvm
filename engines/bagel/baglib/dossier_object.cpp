@@ -53,7 +53,7 @@ CBagDossierObject::CBagDossierObject() {
 CBagDossierObject::~CBagDossierObject() {
 }
 
-PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
+PARSE_CODES CBagDossierObject::setInfo(bof_ifstream &istr) {
 	bool nObjectUpdated = false;
 	char szLocalStr[256];
 	CBofString sStr(szLocalStr, 256);
@@ -201,7 +201,7 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 		//  no match return from funtion
 		//
 		default:
-			PARSE_CODES rc = CBagObject::SetInfo(istr);
+			PARSE_CODES rc = CBagObject::setInfo(istr);
 			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
 			}

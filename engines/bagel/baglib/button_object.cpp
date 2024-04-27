@@ -28,16 +28,17 @@ namespace Bagel {
 
 CBagButtonObject::CBagButtonObject() {
 	m_xObjType = BUTTONOBJ;
-	m_xButtonType = PUSH;
+	_buttonType = BTN_PUSH;
 
-	SetState(0); // Set to first cel
+	// Set to first cel
+	CBagObject::SetState(0);
 
-	m_bActive = false;
-	m_bActiveDown = false;
-	m_bActiveUp = false;
+	_active = false;
+	_activeDown = false;
+	_activeUp = false;
 
-	m_nNumPos = 0;
-	m_bDragging = false;
+	_numPos = 0;
+	_dragging = false;
 	SetCallBack(nullptr, nullptr);
 	SetAlwaysUpdate(true);
 
@@ -45,7 +46,7 @@ CBagButtonObject::CBagButtonObject() {
 }
 
 CBagButtonObject::~CBagButtonObject() {
-	detach();
+	CBagButtonObject::detach();
 }
 
 ErrorCode CBagButtonObject::attach() {
@@ -55,21 +56,21 @@ ErrorCode CBagButtonObject::attach() {
 		GetSprite()->SetAnimated(false);
 	}
 
-	if (m_xButtonType == VLEVER || m_xButtonType == HLEVER) {
-		m_MidPoint.x = getRect().TopLeft().x + (getRect().Width() / 2);
-		m_MidPoint.y = getRect().TopLeft().y + (getRect().Height() / 2);
+	if (_buttonType == BTN_VLEVER || _buttonType == BTN_HLEVER) {
+		_midPoint.x = getRect().TopLeft().x + (getRect().Width() / 2);
+		_midPoint.y = getRect().TopLeft().y + (getRect().Height() / 2);
 	}
 
-	if (GetSprite()->GetCelCount() == 1 && m_xButtonType != SLIDER) {
+	if (GetSprite()->GetCelCount() == 1 && _buttonType != BTN_SLIDER) {
 		// Only given down state
 		SetVisible(false);
 	}
 
 	// If this is a slider button make sure it is in the correct position
-	if (m_xButtonType == SLIDER) {
+	if (_buttonType == BTN_SLIDER) {
 		CBofPoint NewPoint = GetPosition();
-		int xIncrement = m_SlideRect.Width() / (m_nNumPos - 1);
-		NewPoint.x = m_SlideRect.left + (GetState() * xIncrement);
+		int xIncrement = _slideRect.Width() / (_numPos - 1);
+		NewPoint.x = _slideRect.left + (GetState() * xIncrement);
 		SetPosition(NewPoint);
 	}
 
@@ -86,17 +87,18 @@ bool CBagButtonObject::RunObject() {
 	// Reset wield
 	g_bNoMenu = false;
 
-	if (m_xButtonType == PUSH) {
+	if (_buttonType == BTN_PUSH) {
 
-		if (m_bActive && !m_bActiveUp) {
-			m_bActiveUp = true;
+		if (_active && !_activeUp) {
+			_activeUp = true;
 		}
 		if (GetSprite() && (GetSprite()->GetCelCount() == 1)) {
 			// Only given down state
 			SetVisible(false);
 		}
 
-		SetState(0); // Set to first cel
+		// Set to first cel
+		SetState(0);
 	}
 
 	RunCallBack();
@@ -105,30 +107,31 @@ bool CBagButtonObject::RunObject() {
 }
 
 void CBagButtonObject::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *xPoint, void *) {
-	if (m_xButtonType == PUSH) {
-		if (!m_bActive && !m_bActiveDown) {
-			m_bActiveDown = true;
-			m_bActive = true;
+	if (_buttonType == BTN_PUSH) {
+		if (!_active && !_activeDown) {
+			_activeDown = true;
+			_active = true;
 		}
 		if (GetSprite() && (GetSprite()->GetCelCount() == 1)) {
 			// Only given down state
 			SetVisible();
 		}
 
-		SetState(1); // Set to clicked down
+		// Set to clicked down
+		SetState(1);
 
-	} else if (m_xButtonType == HLEVER || m_xButtonType == VLEVER) {
-		if (!m_bActiveDown && !m_bActiveUp) {
-			if ((m_xButtonType == HLEVER && xPoint->x > m_MidPoint.x) || // right of midpoint
-			        (m_xButtonType == VLEVER && xPoint->y > m_MidPoint.y)) { // below midpoint
-				m_bActiveDown = true;
+	} else if (_buttonType == BTN_HLEVER || _buttonType == BTN_VLEVER) {
+		if (!_activeDown && !_activeUp) {
+			if ((_buttonType == BTN_HLEVER && xPoint->x > _midPoint.x) || // right of midpoint
+			        (_buttonType == BTN_VLEVER && xPoint->y > _midPoint.y)) { // below midpoint
+				_activeDown = true;
 			} else {
-				m_bActiveUp = true;
+				_activeUp = true;
 			}
 		}
 
-	} else if (m_xButtonType == SLIDER) {
-		m_bDragging = true;
+	} else if (_buttonType == BTN_SLIDER) {
+		_dragging = true;
 	}
 
 	SetDirty();
@@ -141,7 +144,7 @@ void CBagButtonObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info)
 		pMainWin->SetPreFilterPan(true);
 	}
 
-	if ((m_xButtonType == SLIDER) && m_bDragging) {
+	if ((_buttonType == BTN_SLIDER) && _dragging) {
 
 		// Snap to place
 		CBofPoint NewPoint = GetPosition();
@@ -154,12 +157,12 @@ void CBagButtonObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info)
 		mLoc.x = xPoint->x + r.left - pWnd->GetViewPortPos().x;
 		mLoc.y = xPoint->y + r.top - pWnd->GetViewPortPos().y;
 
-		int xIncrement = m_SlideRect.Width() / (m_nNumPos - 1);
+		int xIncrement = _slideRect.Width() / (_numPos - 1);
 
-		int slidePos = m_SlideRect.left;
+		int slidePos = _slideRect.left;
 		int i;
-		for (i = 0; (i < m_nNumPos) && (slidePos < mLoc.x); i++)
-			slidePos = m_SlideRect.left + (i * xIncrement);
+		for (i = 0; (i < _numPos) && (slidePos < mLoc.x); i++)
+			slidePos = _slideRect.left + (i * xIncrement);
 
 		// We Went too far
 		i--;
@@ -168,36 +171,36 @@ void CBagButtonObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info)
 		if ((i > 0) && (slidePos - mLoc.x > mLoc.x - (slidePos - xIncrement)))
 			i--; // Go back one
 
-		NewPoint.x = m_SlideRect.left + (i * xIncrement);
-		if (NewPoint.x < m_SlideRect.left) {
-			NewPoint.x = m_SlideRect.left;
-		} else if (NewPoint.x > m_SlideRect.right) {
-			NewPoint.x = m_SlideRect.right;
+		NewPoint.x = _slideRect.left + (i * xIncrement);
+		if (NewPoint.x < _slideRect.left) {
+			NewPoint.x = _slideRect.left;
+		} else if (NewPoint.x > _slideRect.right) {
+			NewPoint.x = _slideRect.right;
 		}
 
 		SetPosition(NewPoint);
 		if (i < 0) {
 			i = 0;
-		} else if (i >= m_nNumPos) {
-			i = m_nNumPos - 1;
+		} else if (i >= _numPos) {
+			i = _numPos - 1;
 		}
 
 		SetState(i);
-		m_bDragging = false;
+		_dragging = false;
 
-	} else if (m_xButtonType == CHECKBOX) {
+	} else if (_buttonType == BTN_CHECKBOX) {
 
-		if (!m_bActive) {
-			m_bActive = true;
-			m_bActiveDown = !m_bActiveDown;
+		if (!_active) {
+			_active = true;
+			_activeDown = !_activeDown;
 
 			if (GetSprite() && (GetSprite()->GetCelCount() == 1)) {
 				// Only given down state
-				SetVisible(m_bActiveDown);
-				m_bActive = false;
+				SetVisible(_activeDown);
+				_active = false;
 			}
 
-			if (m_bActiveDown)
+			if (_activeDown)
 				SetState(1);
 			else
 				SetState(0);
@@ -212,8 +215,8 @@ void CBagButtonObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info)
 bool CBagButtonObject::OnMouseMove(uint32 /*nFlags*/, CBofPoint xPoint, void *info) {
 	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev());
 
-	if (m_xButtonType == SLIDER && m_bDragging) {
-		if (!m_SlideRect.IsRectEmpty()) {
+	if (_buttonType == BTN_SLIDER && _dragging) {
+		if (!_slideRect.IsRectEmpty()) {
 			if (pMainWin != nullptr) {
 				pMainWin->SetPreFilterPan(true);
 			}
@@ -230,27 +233,27 @@ bool CBagButtonObject::OnMouseMove(uint32 /*nFlags*/, CBofPoint xPoint, void *in
 			int NewXPos = mLoc.x;
 
 			// Constrict Dragging to width of slidebar
-			if (NewXPos > m_SlideRect.right)
-				NewXPos = m_SlideRect.right;
-			if (NewXPos < m_SlideRect.left)
-				NewXPos = m_SlideRect.left;
+			if (NewXPos > _slideRect.right)
+				NewXPos = _slideRect.right;
+			if (NewXPos < _slideRect.left)
+				NewXPos = _slideRect.left;
 
 			NewPoint.x = NewXPos;
 			SetPosition(NewPoint);
 
 			// We need to set the state here as well as LButtonUP
 			// because there is a chance we won't get it
-			int xIncrement = m_SlideRect.Width() / (m_nNumPos - 1);
-			int i = (NewPoint.x - m_SlideRect.left) / xIncrement;
+			int xIncrement = _slideRect.Width() / (_numPos - 1);
+			int i = (NewPoint.x - _slideRect.left) / xIncrement;
 			SetState(i);
 		}
 	}
 
-	if (m_xButtonType == PUSH) {
+	if (_buttonType == BTN_PUSH) {
 		if (GetSprite() && (GetSprite()->GetCelCount() > 1)) {
 			if (!this->getRect().PtInRect(xPoint) &&
-			        m_bActive && !m_bActiveUp) {
-				m_bActiveUp = true;
+			        _active && !_activeUp) {
+				_activeUp = true;
 			}
 		}
 		if (GetSprite() && (GetSprite()->GetCelCount() == 1)) { // Only given down state
@@ -266,39 +269,39 @@ bool CBagButtonObject::OnMouseMove(uint32 /*nFlags*/, CBofPoint xPoint, void *in
 ErrorCode CBagButtonObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	bool bDirty = false;
 
-	if (m_xButtonType == PUSH) {
+	if (_buttonType == BTN_PUSH) {
 
 		if (GetSprite() && (GetSprite()->GetCelCount() > 1)) {
 
-			if (m_bActive) { // If the button is doing something
-				if (m_bActiveDown) {
+			if (_active) { // If the button is doing something
+				if (_activeDown) {
 					GetSprite()->NextCel(); //  Increment frame
 					// If this is animated, the bring it back up immediately
 					if (GetSprite()->GetCelIndex() == GetSprite()->GetCelCount() - 1 || GetSprite()->GetAnimated()) {
-						m_bActiveDown = false;
+						_activeDown = false;
 					}
-				} else if (m_bActiveUp) {   // else (going back up)
+				} else if (_activeUp) {   // else (going back up)
 					GetSprite()->PrevCel(); //  decrement frame
 					// If this is animated, the let it go immediately
 					if (GetSprite()->GetCelIndex() == 0 || GetSprite()->GetAnimated()) {
-						m_bActiveUp = false;
-						m_bActive = false;
+						_activeUp = false;
+						_active = false;
 					}
 				}
 			}
 		}
 
-	} else if (m_xButtonType == CHECKBOX) {
-		if (GetSprite() && (GetSprite()->GetCelCount() > 1) && m_bActive) {
-			if (m_bActiveDown) {
+	} else if (_buttonType == BTN_CHECKBOX) {
+		if (GetSprite() && (GetSprite()->GetCelCount() > 1) && _active) {
+			if (_activeDown) {
 				GetSprite()->NextCel(); // Increment frame
 				if (GetSprite()->GetCelIndex() == GetSprite()->GetCelCount() - 1) {
-					m_bActive = false;
+					_active = false;
 				}
 			} else {                    // else (going back up)
 				GetSprite()->PrevCel(); // decrement frame
 				if (GetSprite()->GetCelIndex() == 0) {
-					m_bActive = false;
+					_active = false;
 				}
 			}
 		}
@@ -308,17 +311,17 @@ ErrorCode CBagButtonObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSr
 		// background of the closeup).
 		bDirty = true;
 
-	} else if (m_xButtonType == HLEVER || m_xButtonType == VLEVER) {
+	} else if (_buttonType == BTN_HLEVER || _buttonType == BTN_VLEVER) {
 
 		if (GetSprite() && (GetSprite()->GetCelCount() > 1)) {
-			if (m_bActiveDown) {
+			if (_activeDown) {
 				if (GetSprite()->GetCelIndex() < (GetSprite()->GetCelCount() - 1))
 					GetSprite()->NextCel();
-				m_bActiveDown = false;
-			} else if (m_bActiveUp) {
+				_activeDown = false;
+			} else if (_activeUp) {
 				if (GetSprite()->GetCelIndex() > 0)
 					GetSprite()->PrevCel();
-				m_bActiveUp = false;
+				_activeUp = false;
 			}
 
 			SetState(GetSprite()->GetCelIndex());
@@ -335,13 +338,13 @@ ErrorCode CBagButtonObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSr
 }
 
 void CBagButtonObject::setSize(const CBofSize &xSize) {
-	if (m_xButtonType == SLIDER)
-		m_SlideRect = CBofRect(GetPosition(), xSize);
+	if (_buttonType == BTN_SLIDER)
+		_slideRect = CBofRect(GetPosition(), xSize);
 
 	CBagSpriteObject::setSize(xSize);
 }
 
-PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
+PARSE_CODES CBagButtonObject::setInfo(bof_ifstream &istr) {
 	bool nObjectUpdated = false;
 
 	while (!istr.eof()) {
@@ -355,8 +358,8 @@ PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
 			istr.Get();
 			GetIntFromStream(istr, cels);
 
-			if (m_xButtonType == SLIDER)
-				m_nNumPos = cels;
+			if (_buttonType == BTN_SLIDER)
+				_numPos = cels;
 			else
 				SetCels(cels);
 			nObjectUpdated = true;
@@ -400,22 +403,22 @@ PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 				if (!sStr.Find("PUSH")) {
-					m_xButtonType = PUSH;
+					_buttonType = BTN_PUSH;
 					nObjectUpdated = true;
 				} else if (!sStr.Find("CHECKBOX")) {
-					m_xButtonType = CHECKBOX;
+					_buttonType = BTN_CHECKBOX;
 					nObjectUpdated = true;
 				} else if (!sStr.Find("HLEVER")) {
-					m_xButtonType = HLEVER;
+					_buttonType = BTN_HLEVER;
 					nObjectUpdated = true;
 				} else if (!sStr.Find("VLEVER")) {
-					m_xButtonType = VLEVER;
+					_buttonType = BTN_VLEVER;
 					nObjectUpdated = true;
 				} else if (!sStr.Find("DIAL")) {
-					m_xButtonType = DIAL;
+					_buttonType = BTN_DIAL;
 					nObjectUpdated = true;
 				} else if (!sStr.Find("SLIDER")) {
-					m_xButtonType = SLIDER;
+					_buttonType = BTN_SLIDER;
 					nObjectUpdated = true;
 				} else {
 					PutbackStringOnStream(istr, sStr);
@@ -431,7 +434,7 @@ PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
 		// No match return from function
 		//
 		default: {
-			PARSE_CODES rc = CBagObject::SetInfo(istr);
+			PARSE_CODES rc = CBagObject::setInfo(istr);
 			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
 			}
@@ -455,16 +458,16 @@ PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
 void CBagButtonObject::SetProperty(const CBofString &sProp, int nVal) {
 	if (!sProp.Find("STATE")) {
 		if (GetSprite()) {
-			if (m_xButtonType == CHECKBOX) {
-				m_bActive = true;
+			if (_buttonType == BTN_CHECKBOX) {
+				_active = true;
 				if (nVal == 0)
-					m_bActiveDown = false;
+					_activeDown = false;
 				else
-					m_bActiveDown = true;
+					_activeDown = true;
 
 				if (GetSprite() && (GetSprite()->GetCelCount() == 1)) { // Only given down state
-					SetVisible(m_bActiveDown);
-					m_bActive = false;
+					SetVisible(_activeDown);
+					_active = false;
 				}
 
 				if (nVal == 0)
@@ -472,10 +475,10 @@ void CBagButtonObject::SetProperty(const CBofString &sProp, int nVal) {
 				else
 					SetState(1);
 			} else {
-				if (m_xButtonType == SLIDER) {
+				if (_buttonType == BTN_SLIDER) {
 					CBofPoint cPos = GetPosition();
 
-					cPos.x = m_SlideRect.left + (nVal * (m_SlideRect.Width() / (m_nNumPos - 1)));
+					cPos.x = _slideRect.left + (nVal * (_slideRect.Width() / (_numPos - 1)));
 					SetPosition(cPos);
 					SetDirty(true);
 				}

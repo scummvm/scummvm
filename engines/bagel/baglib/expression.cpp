@@ -561,7 +561,7 @@ bool CBagExpression::OnOr(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResul
 }
 
 
-PARSE_CODES CBagExpression::SetInfo(bof_ifstream &istr) {
+PARSE_CODES CBagExpression::setInfo(bof_ifstream &istr) {
 	char szBuf[256];
 	szBuf[0] = 0;
 	CBofString sStr(szBuf, 256);
@@ -572,7 +572,6 @@ PARSE_CODES CBagExpression::SetInfo(bof_ifstream &istr) {
 
 	PARSE_CODES rc = PARSING_DONE;
 	bool bDone = false;
-	OPERATION xOper;
 
 	while (!bDone && rc == PARSING_DONE) {
 		istr.EatWhite();
@@ -601,6 +600,7 @@ PARSE_CODES CBagExpression::SetInfo(bof_ifstream &istr) {
 			istr.EatWhite();
 			ch = istr.peek();
 			while ((ch != ')') && rc == PARSING_DONE) {
+				OPERATION xOper;
 				GetOperatorFromStream(istr, xOper);
 				if (xOper == NONE) {
 					rc = UNKNOWN_TOKEN;

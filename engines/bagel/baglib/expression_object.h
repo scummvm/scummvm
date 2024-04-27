@@ -41,7 +41,7 @@ public:
 	virtual ~CBagExpressionObject();
 
 	virtual bool RunObject();
-	virtual PARSE_CODES SetInfo(bof_ifstream &istr);
+	virtual PARSE_CODES setInfo(bof_ifstream &istr);
 
 	bool IsConditional() const {
 		return m_bConditional;

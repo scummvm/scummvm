@@ -187,7 +187,7 @@ CBofRect CBagTimeObject::getRect() {
 	return CBofRect(p, s);
 }
 
-PARSE_CODES CBagTimeObject::SetInfo(bof_ifstream &istr) {
+PARSE_CODES CBagTimeObject::setInfo(bof_ifstream &istr) {
 	bool nObjectUpdated = false;
 
 	while (!istr.eof()) {
@@ -232,7 +232,7 @@ PARSE_CODES CBagTimeObject::SetInfo(bof_ifstream &istr) {
 
 		// No match return from funtion
 		default: {
-			PARSE_CODES rc = CBagObject::SetInfo(istr);
+			PARSE_CODES rc = CBagObject::setInfo(istr);
 			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
 			}

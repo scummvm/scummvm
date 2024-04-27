@@ -636,7 +636,7 @@ void CBagMenuDlg::OnMouseMove(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 		CBagMasterWin::SetActiveCursor(pObj->GetOverCursor());
 
 		if (pObj != GetLActiveObject()) {
-			if (pObj->GetCallBack() || pObj->GetMenuPtr()) {
+			if (pObj->getCallBack() || pObj->GetMenuPtr()) {
 
 				pObj->SetHighlight();
 				if (GetLActiveObject())

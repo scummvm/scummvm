@@ -147,7 +147,7 @@ bool CBagSoundObject::RunObject() {
 	return CBagObject::RunObject();
 }
 
-PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
+PARSE_CODES CBagSoundObject::setInfo(bof_ifstream &istr) {
 	bool nObjectUpdated = false;
 
 	while (!istr.eof()) {
@@ -283,7 +283,7 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 		//  No match return from funtion
 		//
 		default: {
-			PARSE_CODES rc = CBagObject::SetInfo(istr);
+			PARSE_CODES rc = CBagObject::setInfo(istr);
 			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
 			}

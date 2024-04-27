@@ -665,7 +665,7 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 		CBagObject *pObj = nullptr;
 
 		if (!sWorkStr.Find("BKG")) {
-			SetInfo(fpInput);
+			setInfo(fpInput);
 			if (bAttach && attach()) {
 				Assert(false);
 			}
@@ -719,7 +719,7 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 			CBagExpression *pExp = new CBagExpression(pActiveExpr, bPrevNeg);
 
 			Assert(pExp != nullptr);
-			pExp->SetInfo(fpInput);
+			pExp->setInfo(fpInput);
 			if (!m_pExpressionList)
 				m_pExpressionList = new CBofList<CBagExpression * >;
 			Assert(m_pExpressionList != nullptr);
@@ -813,7 +813,7 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 				pObj->SetImmediateRun();
 			}
 
-			pObj->SetInfo(fpInput);
+			pObj->setInfo(fpInput);
 			pObj->SetExpression(pActiveExpr);
 
 			AddObject(pObj);
@@ -939,7 +939,7 @@ void CBagStorageDev::HandleError(ErrorCode errCode) {
 }
 
 
-PARSE_CODES CBagStorageDev::SetInfo(bof_ifstream &fpInput) {
+PARSE_CODES CBagStorageDev::setInfo(bof_ifstream &fpInput) {
 	char szStr[256];
 	szStr[0] = 0;
 	CBofString str(szStr, 256);

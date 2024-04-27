@@ -161,7 +161,7 @@ bool CBagObject::RunObject() {
 	return true;
 }
 
-PARSE_CODES CBagObject::SetInfo(bof_ifstream &istr) {
+PARSE_CODES CBagObject::setInfo(bof_ifstream &istr) {
 	PARSE_CODES rc = UNKNOWN_TOKEN;
 
 	while (!istr.eof()) {

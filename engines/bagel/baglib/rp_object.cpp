@@ -172,7 +172,7 @@ CBagRPObject::~CBagRPObject() {
 	m_pCurBarPage = nullptr;
 }
 
-PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
+PARSE_CODES CBagRPObject::setInfo(bof_ifstream &istr) {
 	bool nObjectUpdated = false;
 	char szLocalStr[256];
 	CBofString sStr(szLocalStr, 256);
@@ -223,7 +223,7 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 					if ((char)istr.peek() == '(') {
 						px = new CBagExpression();
 						if (px) {
-							px->SetInfo(istr);
+							px->setInfo(istr);
 						}
 					}
 
@@ -336,7 +336,7 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 				nObjectUpdated = true;
 
 				m_pDescObj = new CBagTextObject();
-				if (m_pDescObj && m_pDescObj->SetInfo(istr) == PARSING_DONE) {
+				if (m_pDescObj && m_pDescObj->setInfo(istr) == PARSING_DONE) {
 					return PARSING_DONE;
 				}
 			} else {
@@ -373,7 +373,7 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 
 		default: {
 			PARSE_CODES rc;
-			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
+			if ((rc = CBagObject::setInfo(istr)) == PARSING_DONE) {
 				return PARSING_DONE;
 			}
 

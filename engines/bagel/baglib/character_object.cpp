@@ -374,7 +374,7 @@ ErrorCode CBagCharacterObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *
 	return ERR_NONE;
 }
 
-PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
+PARSE_CODES CBagCharacterObject::setInfo(bof_ifstream &istr) {
 	bool    nObjectUpdated = false;
 
 	while (!istr.eof()) {
@@ -505,7 +505,7 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 
 		// No match return from funtion
 		default: {
-			PARSE_CODES rc = CBagObject::SetInfo(istr);
+			PARSE_CODES rc = CBagObject::setInfo(istr);
 			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
 			}

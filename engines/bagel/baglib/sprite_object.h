@@ -48,7 +48,7 @@ public:
 	bool isAttached() {
 		return m_xSprite != nullptr;
 	}
-	PARSE_CODES SetInfo(bof_ifstream &istr);
+	PARSE_CODES setInfo(bof_ifstream &istr);
 
 	bool isInside(const CBofPoint &xPoint);
 

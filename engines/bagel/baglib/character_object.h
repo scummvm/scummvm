@@ -116,7 +116,7 @@ public:
 	void SetEndFrame(int n);
 	void SetCurrentFrame(int n);
 
-	PARSE_CODES SetInfo(bof_ifstream &istr);
+	PARSE_CODES setInfo(bof_ifstream &istr);
 
 	void SetProperty(const CBofString &sProp, int nVal);
 	int GetProperty(const CBofString &sProp);
