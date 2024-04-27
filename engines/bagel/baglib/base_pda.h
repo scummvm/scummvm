@@ -100,27 +100,8 @@ public:
 	 */
 	void synchronizePdaState();
 
-	bool deactivate() {
-		if (!_activating) {
-			_activating = _numMoves;
-			_activated = false;
-		}
-
-		_pdaPos = PDADOWN;
-		setPdaState();
-		return true;
-	}
-
-	bool activate() {
-		if (!_activating) {
-			_activating = _numMoves;
-			_activated = true;
-		}
-
-		_pdaPos = PDAUP;
-		setPdaState();
-		return true;
-	}
+	void activate();
+	void deactivate();
 
 	/**
 	 * Show the inventory
@@ -152,9 +133,9 @@ public:
 	/**
 	 * Stops any playing movie
 	 */
-	void stopMovie(bool);
+	void stopMovie(bool bResetPDA);
 
-	void setDeactivate(bool b = false) {
+	void setDeactivate(bool b) {
 		_deactivate = b;
 	}
 	
@@ -195,7 +176,7 @@ public:
 	 */
 	virtual bool restoreCurDisplay();
 
-	static void *fPdaButtonHandler(int /* nRefId */, void *pvInfo);
+	static void *fPdaButtonHandler(int refId, void *info);
 
 	void setPdaState();
 	void getPdaState();
@@ -207,7 +188,7 @@ public:
 		return _zoomed;
 	}
 
-	int getProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect);
+	int getProperCursor(const CBofPoint &pos, CBofRect &pdaRect);
 
 	/**
 	 * Returns the background rect

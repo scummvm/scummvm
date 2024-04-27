@@ -121,10 +121,8 @@ void CBagMoo::StopMovie(bool bResetPDA) {
 	}
 
 	// If we're done playing, then deactivate the PDA.
-	if (pPDA && pPDA->getDeactivate() == true) {
-		if (pPDA->isActivated()) {
-			pPDA->deactivate();
-		}
+	if (pPDA && pPDA->getDeactivate() == true && pPDA->isActivated()) {
+		pPDA->deactivate();
 	}
 }
 
