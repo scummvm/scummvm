@@ -106,7 +106,7 @@ bool CBagButtonObject::RunObject() {
 	return CBagObject::RunObject();
 }
 
-void CBagButtonObject::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *xPoint, void *) {
+void CBagButtonObject::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *point, void *) {
 	if (_buttonType == BTN_PUSH) {
 		if (!_active && !_activeDown) {
 			_activeDown = true;
@@ -122,8 +122,8 @@ void CBagButtonObject::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *xPoint, void 
 
 	} else if (_buttonType == BTN_HLEVER || _buttonType == BTN_VLEVER) {
 		if (!_activeDown && !_activeUp) {
-			if ((_buttonType == BTN_HLEVER && xPoint->x > _midPoint.x) || // right of midpoint
-			        (_buttonType == BTN_VLEVER && xPoint->y > _midPoint.y)) { // below midpoint
+			if ((_buttonType == BTN_HLEVER && point->x > _midPoint.x) || // right of midpoint
+			        (_buttonType == BTN_VLEVER && point->y > _midPoint.y)) { // below midpoint
 				_activeDown = true;
 			} else {
 				_activeUp = true;
@@ -137,7 +137,7 @@ void CBagButtonObject::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *xPoint, void 
 	SetDirty();
 }
 
-void CBagButtonObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
+void CBagButtonObject::OnLButtonUp(uint32 flags, CBofPoint *point, void *extraInfo) {
 	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev());
 
 	if (pMainWin != nullptr) {
@@ -145,17 +145,16 @@ void CBagButtonObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info)
 	}
 
 	if ((_buttonType == BTN_SLIDER) && _dragging) {
-
 		// Snap to place
 		CBofPoint NewPoint = GetPosition();
 
 		// Get the mouse point relative to the pan window
-		CBagPanWindow *pWnd = (CBagPanWindow *)info;
+		CBagPanWindow *pWnd = (CBagPanWindow *)extraInfo;
 		CBofRect r = pWnd->GetSlideBitmap()->GetCurrView();
 
 		CBofPoint mLoc;
-		mLoc.x = xPoint->x + r.left - pWnd->GetViewPortPos().x;
-		mLoc.y = xPoint->y + r.top - pWnd->GetViewPortPos().y;
+		mLoc.x = point->x + r.left - pWnd->GetViewPortPos().x;
+		mLoc.y = point->y + r.top - pWnd->GetViewPortPos().y;
 
 		int xIncrement = _slideRect.Width() / (_numPos - 1);
 
@@ -209,10 +208,10 @@ void CBagButtonObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info)
 
 	SetDirty();
 
-	CBagSpriteObject::OnLButtonUp(nFlags, xPoint, info);
+	CBagSpriteObject::OnLButtonUp(flags, point, extraInfo);
 }
 
-bool CBagButtonObject::OnMouseMove(uint32 /*nFlags*/, CBofPoint xPoint, void *info) {
+bool CBagButtonObject::OnMouseMove(uint32 /*nFlags*/, CBofPoint point, void *extraInfo) {
 	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev());
 
 	if (_buttonType == BTN_SLIDER && _dragging) {
@@ -224,11 +223,11 @@ bool CBagButtonObject::OnMouseMove(uint32 /*nFlags*/, CBofPoint xPoint, void *in
 
 			CBofPoint mLoc;
 			CBofPoint NewPoint = GetPosition();
-			CBagPanWindow *pWnd = (CBagPanWindow *)info;
+			CBagPanWindow *pWnd = (CBagPanWindow *)extraInfo;
 			CBofRect r = pWnd->GetSlideBitmap()->GetCurrView();
 
-			mLoc.x = xPoint.x + r.left - pWnd->GetViewPortPos().x;
-			mLoc.y = xPoint.y + r.top - pWnd->GetViewPortPos().y;
+			mLoc.x = point.x + r.left - pWnd->GetViewPortPos().x;
+			mLoc.y = point.y + r.top - pWnd->GetViewPortPos().y;
 
 			int NewXPos = mLoc.x;
 
@@ -251,7 +250,7 @@ bool CBagButtonObject::OnMouseMove(uint32 /*nFlags*/, CBofPoint xPoint, void *in
 
 	if (_buttonType == BTN_PUSH) {
 		if (GetSprite() && (GetSprite()->GetCelCount() > 1)) {
-			if (!this->getRect().PtInRect(xPoint) &&
+			if (!this->getRect().PtInRect(point) &&
 			        _active && !_activeUp) {
 				_activeUp = true;
 			}
@@ -266,7 +265,7 @@ bool CBagButtonObject::OnMouseMove(uint32 /*nFlags*/, CBofPoint xPoint, void *in
 	return true;
 }
 
-ErrorCode CBagButtonObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
+ErrorCode CBagButtonObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect, int maskColor) {
 	bool bDirty = false;
 
 	if (_buttonType == BTN_PUSH) {
@@ -329,7 +328,7 @@ ErrorCode CBagButtonObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSr
 	}
 
 	if (GetSprite() && ((GetSprite()->GetCelCount() > 1) || IsVisible())) {
-		ErrorCode err = CBagSpriteObject::update(pBmp, pt, pSrcRect, nMaskColor);
+		ErrorCode err = CBagSpriteObject::update(bmp, pt, srcRect, maskColor);
 		SetDirty(bDirty);
 		return err;
 	}
@@ -337,11 +336,11 @@ ErrorCode CBagButtonObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSr
 	return m_errCode;
 }
 
-void CBagButtonObject::setSize(const CBofSize &xSize) {
+void CBagButtonObject::setSize(const CBofSize &size) {
 	if (_buttonType == BTN_SLIDER)
-		_slideRect = CBofRect(GetPosition(), xSize);
+		_slideRect = CBofRect(GetPosition(), size);
 
-	CBagSpriteObject::setSize(xSize);
+	CBagSpriteObject::setSize(size);
 }
 
 PARSE_CODES CBagButtonObject::setInfo(bof_ifstream &istr) {
@@ -455,12 +454,12 @@ PARSE_CODES CBagButtonObject::setInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-void CBagButtonObject::SetProperty(const CBofString &sProp, int nVal) {
-	if (!sProp.Find("STATE")) {
+void CBagButtonObject::SetProperty(const CBofString &prop, int val) {
+	if (!prop.Find("STATE")) {
 		if (GetSprite()) {
 			if (_buttonType == BTN_CHECKBOX) {
 				_active = true;
-				if (nVal == 0)
+				if (val == 0)
 					_activeDown = false;
 				else
 					_activeDown = true;
@@ -470,7 +469,7 @@ void CBagButtonObject::SetProperty(const CBofString &sProp, int nVal) {
 					_active = false;
 				}
 
-				if (nVal == 0)
+				if (val == 0)
 					SetState(0);
 				else
 					SetState(1);
@@ -478,31 +477,31 @@ void CBagButtonObject::SetProperty(const CBofString &sProp, int nVal) {
 				if (_buttonType == BTN_SLIDER) {
 					CBofPoint cPos = GetPosition();
 
-					cPos.x = _slideRect.left + (nVal * (_slideRect.Width() / (_numPos - 1)));
+					cPos.x = _slideRect.left + (val * (_slideRect.Width() / (_numPos - 1)));
 					SetPosition(cPos);
 					SetDirty(true);
 				}
-				SetState(nVal);
-				GetSprite()->SetCel(nVal);
+				SetState(val);
+				GetSprite()->SetCel(val);
 			}
 		}
-	} else if (!sProp.Find("CURR_CEL")) {
-		SetState(nVal);
+	} else if (!prop.Find("CURR_CEL")) {
+		SetState(val);
 		if (GetSprite())
-			GetSprite()->SetCel(nVal);
+			GetSprite()->SetCel(val);
 	} else
-		CBagObject::SetProperty(sProp, nVal);
+		CBagObject::SetProperty(prop, val);
 }
 
-int CBagButtonObject::GetProperty(const CBofString &sProp) {
-	if (!sProp.Find("CURR_CEL")) {
+int CBagButtonObject::GetProperty(const CBofString &prop) {
+	if (!prop.Find("CURR_CEL")) {
 		if (GetSprite()) {
 			return GetSprite()->GetCelIndex();
 		}
 		return 0;
 	}
 
-	return CBagObject::GetProperty(sProp);
+	return CBagObject::GetProperty(prop);
 }
 
 } // namespace Bagel

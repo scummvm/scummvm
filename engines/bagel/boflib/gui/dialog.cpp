@@ -67,8 +67,7 @@ CBofDialog::CBofDialog(const char *pszFileName, CBofRect *pRect, CBofWindow *pPa
 	}
 
 	// Create the dialog box
-	if (Create("DialogBox", pRect->left, pRect->top, pRect->Width(), pRect->Height(), pParent, nID) == ERR_NONE) {
-	}
+	Create("DialogBox", pRect->left, pRect->top, pRect->Width(), pRect->Height(), pParent, nID);
 }
 
 
@@ -92,8 +91,7 @@ CBofDialog::CBofDialog(CBofBitmap *pImage, CBofRect *pRect, CBofWindow *pParent,
 		pRect = &cRect;
 	}
 
-	if (Create("DialogBox", pRect->left, pRect->top, pRect->Width(), pRect->Width(), pParent, nID) == ERR_NONE) {
-	}
+	Create("DialogBox", pRect->left, pRect->top, pRect->Width(), pRect->Width(), pParent, nID);
 }
 
 
@@ -167,13 +165,12 @@ void CBofDialog::OnClose() {
 	Assert(IsValidObject(this));
 
 	// Release any capture/focus that was active
-	Bagel::CBofApp *app = CBofApp::GetApp();
+	CBofApp *app = CBofApp::GetApp();
 	app->setCaptureControl(nullptr);
 	app->setFocusControl(nullptr);
 
 	if (_parent != nullptr) {
-		CBofWindow *pParent;
-		pParent = _parent;
+		CBofWindow *pParent = _parent;
 		pParent->Enable();
 
 		// The parent window MUST now be enabled
@@ -235,16 +232,13 @@ ErrorCode CBofDialog::SaveBackground() {
 	Assert(IsValidObject(this));
 
 	if (_lFlags & BOFDLG_SAVEBACKGND) {
-
 		CBofPalette *pPalette = CBofApp::GetApp()->GetPalette();
 
 		// Remove any previous background
-		if (_pDlgBackground != nullptr) {
-			delete _pDlgBackground;
-		}
-
+		delete _pDlgBackground;
 		// Save a copy of the background
-		if ((_pDlgBackground = new CBofBitmap(Width(), Height(), pPalette)) != nullptr) {
+		_pDlgBackground = new CBofBitmap(Width(), Height(), pPalette);
+		if (_pDlgBackground != nullptr) {
 			_pDlgBackground->CaptureScreen(this, &m_cRect);
 			_pDlgBackground->SetReadOnly(true);
 
@@ -260,10 +254,8 @@ ErrorCode CBofDialog::SaveBackground() {
 
 
 ErrorCode CBofDialog::KillBackground() {
-	if (_pDlgBackground != nullptr) {
-		delete _pDlgBackground;
-		_pDlgBackground = nullptr;
-	}
+	delete _pDlgBackground;
+	_pDlgBackground = nullptr;
 
 	return m_errCode;
 }
@@ -271,7 +263,6 @@ ErrorCode CBofDialog::KillBackground() {
 
 void CBofDialog::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
-
 	Assert(pRect != nullptr);
 
 	if (_bFirstTime) {
