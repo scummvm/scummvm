@@ -33,9 +33,6 @@ namespace Bagel {
 
 #define CTEXT_WHITE RGB(255, 255, 255)
 
-// Local prototypes...
-int MapFont(int nFont);
-
 extern bool g_bPauseTimer;
 
 CBagTextObject::CBagTextObject() : CBagObject() {

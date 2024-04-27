@@ -158,8 +158,8 @@ private:
 	}
 
 protected:
-	size_t m_nNumItems;
-	size_t m_nItemsAllocated;
+	uint32 m_nNumItems;
+	uint32 m_nItemsAllocated;
 	CBofListNode<T> *m_pHead;       // pointer to head of list
 	CBofListNode<T> *m_pTail;       // pointer to tail of list
 
@@ -194,7 +194,7 @@ public:
 	 * @returns     Returns the number of linked items in this linked list.
 	 */
 	int GetActualCount() const {
-		size_t nCount = 0;
+		uint32 nCount = 0;
 		CBofListNode<T> *pNode = m_pHead;
 		while (pNode != nullptr) {
 			nCount++;
@@ -227,7 +227,6 @@ public:
 
 		return pNode->GetNodeItem();
 	}
-
 
 	void SetNodeItem(int nNodeIndex, T tNewItem) {
 		CBofListNode<T> *pNode = GetNode(nNodeIndex);
@@ -361,7 +360,7 @@ public:
 		// One less item in list
 		m_nNumItems--;
 
-		assert(m_nNumItems >= 0);
+		//assert(m_nNumItems >= 0);
 
 		if (pNode != nullptr) {
 
