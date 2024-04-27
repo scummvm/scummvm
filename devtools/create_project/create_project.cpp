@@ -335,6 +335,10 @@ int main(int argc, char *argv[]) {
 		setup.useStaticDetection = false;
 	}
 
+	if (!getFeatureBuildState("detection-static", setup.features)) {
+		setup.useStaticDetection = false;
+	}
+
 	// HACK: Vorbis and Tremor can not be enabled simultaneously
 	if (getFeatureBuildState("tremor", setup.features)) {
 		setFeatureBuildState("vorbis", setup.features, false);
