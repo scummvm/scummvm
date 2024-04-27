@@ -1360,7 +1360,8 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 		CBofString sWldScript(szLocalBuff, 256);
 
 		// User info is an index into an array of temporary string buffers
-		Assert(lParam >= 0 && lParam < NUM_MSG_STRINGS);
+		//Assert(lParam >= 0);
+		Assert(lParam < NUM_MSG_STRINGS);
 		sWldScript = g_szString[(int)lParam];
 
 		char szStartWld[256];
@@ -1386,7 +1387,8 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 		CBofString cStr;
 
 		// User info is an index into an array of tempory string buffers
-		Assert(lParam >= 0 && lParam < NUM_MSG_STRINGS);
+		//Assert(lParam >= 0);
+		Assert(lParam < NUM_MSG_STRINGS);
 		cStr = g_szString[(int)lParam];
 
 		CBagStorageDev *pSDev = m_pStorageDeviceList->GetStorageDevice(cStr);
