@@ -1264,7 +1264,7 @@ bool CBagMasterWin::ShowRestartDialog(CBofWindow *pWin, bool bSaveBkg) {
 			pWin = this;
 		}
 
-		CBagRestartDialog cDlg(m_cSysScreen.GetBuffer(), nullptr, pWin);
+		CBagRestartDialog cDlg(m_cSysScreen.GetBuffer(), pWin);
 
 		CBofWindow *pLastWin = g_hackWindow;
 		g_hackWindow = &cDlg;
@@ -1322,7 +1322,7 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 			Common::strcpy_s(szBuf, BuildSysDir("START.BMP"));
 		}
 
-		CBagStartDialog cDlg(szBuf, nullptr, this);
+		CBagStartDialog cDlg(szBuf, this);
 
 		CBofWindow *pLastWin = g_hackWindow;
 		g_hackWindow = &cDlg;

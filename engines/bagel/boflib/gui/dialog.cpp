@@ -41,7 +41,7 @@ CBofDialog::CBofDialog() {
 }
 
 
-CBofDialog::CBofDialog(const char *pszFileName, CBofRect *pRect, CBofWindow *pParent, const uint32 nID, const uint32 lFlags) {
+CBofDialog::CBofDialog(const char *pszFileName, CBofWindow *pParent, const uint32 nID, const uint32 lFlags) {
 	Assert(pszFileName != nullptr);
 	Assert(pParent != nullptr);
 
@@ -60,40 +60,12 @@ CBofDialog::CBofDialog(const char *pszFileName, CBofRect *pRect, CBofWindow *pPa
 		SetBackdrop(pBmp);
 	}
 
-	if (pRect == nullptr) {
-		Assert(m_pBackdrop != nullptr);
-		CBofRect cRect = m_pBackdrop->GetRect();
-		pRect = &cRect;
-	}
+	Assert(m_pBackdrop != nullptr);
+	CBofRect cRect = m_pBackdrop->GetRect();
 
 	// Create the dialog box
-	Create("DialogBox", pRect->left, pRect->top, pRect->Width(), pRect->Height(), pParent, nID);
+	Create("DialogBox", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pParent, nID);
 }
-
-
-CBofDialog::CBofDialog(CBofBitmap *pImage, CBofRect *pRect, CBofWindow *pParent, const uint32 nID, const uint32 lFlags) {
-	Assert(pImage != nullptr);
-	Assert(pParent != nullptr);
-
-	// Inits
-	_pDlgBackground = nullptr;
-	_bFirstTime = true;
-	_bTempBitmap = false;
-	_lFlags = lFlags;
-	_bEndDialog = false;
-	_bHavePainted = false;
-
-	SetBackdrop(pImage);
-
-	if (pRect == nullptr) {
-		Assert(m_pBackdrop != nullptr);
-		CBofRect cRect = m_pBackdrop->GetRect();
-		pRect = &cRect;
-	}
-
-	Create("DialogBox", pRect->left, pRect->top, pRect->Width(), pRect->Width(), pParent, nID);
-}
-
 
 CBofDialog::~CBofDialog() {
 	Assert(IsValidObject(this));

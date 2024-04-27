@@ -49,8 +49,8 @@ static const ST_BUTTONS g_stStartButtons[NUM_START_BTNS] = {
 };
 
 
-CBagStartDialog::CBagStartDialog(const char *pszFileName, CBofRect *pRect, CBofWindow *pWin)
-		: CBofDialog(pszFileName, pRect, pWin) {
+CBagStartDialog::CBagStartDialog(const char *pszFileName, CBofWindow *pWin)
+		: CBofDialog(pszFileName, pWin) {
 	// Inits
 	_lFlags &= ~BOFDLG_SAVEBACKGND;
 	Common::fill(_buttons, _buttons + NUM_START_BTNS, (CBofBmpButton *)nullptr);

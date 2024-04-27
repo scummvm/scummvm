@@ -50,8 +50,8 @@ static const ST_BUTTONS g_stRestartButtons[NUM_RESTART_BTNS] = {
 };
 
 
-CBagRestartDialog::CBagRestartDialog(const char *pszFileName, CBofRect *pRect, CBofWindow *pWin)
-	: CBofDialog(pszFileName, pRect, pWin) {
+CBagRestartDialog::CBagRestartDialog(const char *pszFileName, CBofWindow *pWin)
+	: CBofDialog(pszFileName, pWin) {
 	// Inits
 	m_pSavePalette = nullptr;
 	_nReturnValue = -1;
