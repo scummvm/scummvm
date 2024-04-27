@@ -75,10 +75,10 @@ struct ST_SLOTBMPS {
 };
 
 static ST_SLOTBMPS g_stSlotBmps[SLOT_NUM] = {
-	{"bgnst1.bmp", "bgnsq1.bmp", "bgnsc1.bmp", "bgnsn1.bmp", "bgnss1.bmp", "bgnsm1.bmp", "bgnse1.bmp", "bgnsa1.bmp", "bgnsh1.bmp" },
-	{"bgnst3.bmp", "bgnsq3.bmp", "bgnsc3.bmp", "bgnsn3.bmp", "bgnss3.bmp", "bgnsm3.bmp", "bgnse3.bmp", "bgnsa3.bmp", "bgnsh3.bmp" },
-	{"bgnst4.bmp", "bgnsq4.bmp", "bgnsc4.bmp", "bgnsn4.bmp", "bgnss4.bmp", "bgnsm4.bmp", "bgnse4.bmp", "bgnsa4.bmp", "bgnsh4.bmp" },
-	{"bgnst2.bmp", "bgnsq2.bmp", "bgnsc2.bmp", "bgnsn2.bmp", "bgnss2.bmp", "bgnsm2.bmp", "bgnse2.bmp", "bgnsa2.bmp", "bgnsh2.bmp" }
+	{{"bgnst1.bmp", "bgnsq1.bmp", "bgnsc1.bmp", "bgnsn1.bmp", "bgnss1.bmp", "bgnsm1.bmp", "bgnse1.bmp", "bgnsa1.bmp", "bgnsh1.bmp" }},
+	{{"bgnst3.bmp", "bgnsq3.bmp", "bgnsc3.bmp", "bgnsn3.bmp", "bgnss3.bmp", "bgnsm3.bmp", "bgnse3.bmp", "bgnsa3.bmp", "bgnsh3.bmp" }},
+	{{"bgnst4.bmp", "bgnsq4.bmp", "bgnsc4.bmp", "bgnsn4.bmp", "bgnss4.bmp", "bgnsm4.bmp", "bgnse4.bmp", "bgnsa4.bmp", "bgnsh4.bmp" }},
+	{{"bgnst2.bmp", "bgnsq2.bmp", "bgnsc2.bmp", "bgnsn2.bmp", "bgnss2.bmp", "bgnsm2.bmp", "bgnse2.bmp", "bgnsa2.bmp", "bgnsh2.bmp" }}
 };
 
 // Local functions
