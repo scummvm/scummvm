@@ -20,7 +20,10 @@
  */
 
 #include "common/file.h"
+#include "common/savefile.h"
+#include "common/str.h"
 #include "common/system.h"
+#include "gui/filebrowser-dialog.h"
 #include "video/qt_decoder.h"
 
 #include "director/director.h"
@@ -501,7 +504,7 @@ void MMovieXObj::m_getMovieRate(int nargs) {
 void MMovieXObj::m_setMovieRate(int nargs) {
 	g_lingo->printSTUBWithArglist("MMovieXObj::m_setMovieRate", nargs);
 	if (nargs != 1) {
-		warning("MMovieXObj::m_setMovieRate: expecting 4 arguments!");
+		warning("MMovieXObj::m_setMovieRate: expecting 4 arguments");
 		g_lingo->dropStack(nargs);
 		g_lingo->push(Datum(0));
 		return;
@@ -513,8 +516,118 @@ void MMovieXObj::m_setMovieRate(int nargs) {
 
 XOBJSTUB(MMovieXObj::m_flushEvents, 0)
 XOBJSTUB(MMovieXObj::m_invalidateRect, 0)
-XOBJSTUB(MMovieXObj::m_readFile, "")
-XOBJSTUB(MMovieXObj::m_writeFile, "")
+
+void MMovieXObj::m_readFile(int nargs) {
+	g_lingo->printSTUBWithArglist("MMovieXObj::m_readFile", nargs);
+	if (nargs != 2) {
+		warning("MMovieXObj::m_readFile(): expecting 2 argument");
+	}
+	Common::SaveFileManager *saves = g_system->getSavefileManager();
+	bool scramble = (bool)g_lingo->pop().asInt();
+	Common::String origPath = g_lingo->pop().asString();
+	Common::String path = origPath;
+
+	Common::String prefix = g_director->getTargetName() + '-';
+	Common::String result;
+	if (origPath.empty()) {
+		Common::String mask = prefix + "*.txt";
+
+		GUI::FileBrowserDialog browser(nullptr, "txt", GUI::kFBModeLoad, mask.c_str());
+		if (browser.runModal() <= 0) {
+			debugC(5, kDebugXObj, "MMovieXObj::m_readFile(): read cancelled by modal");
+			g_lingo->push(result);
+		}
+		path = browser.getResult();
+
+	} else {
+		path = lastPathComponent(origPath, g_director->_dirSeparator);
+		if (path.hasSuffixIgnoreCase(".txt"))
+			path += ".txt";
+	}
+	if (!path.hasPrefixIgnoreCase(prefix)) {
+		path = prefix + path;
+	}
+
+	Common::SeekableReadStream *stream = saves->openForLoading(path);
+	if (stream) {
+		debugC(5, kDebugXObj, "MMovieXObj::m_readFile(): opening file %s as %s from the saves dir", origPath.c_str(), path.c_str());
+	} else {
+		Common::File *f = new Common::File;
+		Common::Path location = findPath(origPath);
+		if (!location.empty() && f->open(location)) {
+			debugC(5, kDebugXObj, "MMovieXObj::m_readFile(): opening file %s from the game dir", origPath.c_str());
+			stream = (Common::SeekableReadStream *)f;
+		} else {
+			delete f;
+		}
+	}
+
+	if (stream) {
+		while (!stream->eos() && !stream->err()) {
+			byte ch = stream->readByte();
+			if (scramble) // remove unbreakable encryption
+				ch ^= 0xa5;
+			result += ch;
+		}
+		delete stream;
+	} else {
+		warning("MMovieXObj::m_readFile(): file %s not found", origPath.c_str());
+	}
+
+	g_lingo->push(result);
+}
+
+void MMovieXObj::m_writeFile(int nargs) {
+	g_lingo->printSTUBWithArglist("MMovieXObj::m_writeFile", nargs);
+	if (nargs != 3) {
+		warning("MMovieXObj::m_writeFile(): expecting 3 arguments");
+	}
+	Common::SaveFileManager *saves = g_system->getSavefileManager();
+	bool scramble = (bool)g_lingo->pop().asInt();
+	Common::String data = g_lingo->pop().asString();
+	Common::String origPath = g_lingo->pop().asString();
+	Common::String path = origPath;
+	Common::String result;
+
+	Common::String prefix = g_director->getTargetName() + '-';
+	if (origPath.empty()) {
+		Common::String mask = prefix + "*.txt";
+
+		GUI::FileBrowserDialog browser(nullptr, "txt", GUI::kFBModeSave, mask.c_str());
+		if (browser.runModal() <= 0) {
+			debugC(5, kDebugXObj, "MMovieXObj::m_writeFile(): write cancelled by modal");
+			g_lingo->push(result);
+		}
+		path = browser.getResult();
+
+	} else {
+		path = lastPathComponent(origPath, g_director->_dirSeparator);
+		if (path.hasSuffixIgnoreCase(".txt"))
+			path += ".txt";
+	}
+	if (!path.hasPrefixIgnoreCase(prefix)) {
+		path = prefix + path;
+	}
+
+	Common::SeekableWriteStream *stream = saves->openForSaving(path);
+
+	if (stream) {
+		debugC(5, kDebugXObj, "MMovieXObj::m_writeFile(): opening file %s as %s from the saves dir", origPath.c_str(), path.c_str());
+		for (auto &it : data) {
+			byte ch = it;
+			if (scramble) // apply world's greatest encryption
+				ch ^= 0xa5;
+			stream->writeByte(ch);
+		}
+		stream->finalize();
+		delete stream;
+	} else {
+		warning("MMovieXObj::m_writeFile(): file %s not found", origPath.c_str());
+	}
+
+	g_lingo->push(result);
+}
+
 XOBJSTUB(MMovieXObj::m_copyFile, 0)
 XOBJSTUB(MMovieXObj::m_copyFileCont, 0)
 XOBJSTUB(MMovieXObj::m_freeSpace, 0)
