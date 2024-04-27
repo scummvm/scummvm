@@ -45,7 +45,6 @@ private:
 
 public:
 	CBagVar();
-	CBagVar(CBagVar &xVar);
 	CBagVar(const CBofString &sName, const CBofString &sValue, bool bAddToList);
 	virtual ~CBagVar();
 

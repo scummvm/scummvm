@@ -45,17 +45,6 @@ CBagVar::CBagVar() {
 	VARMNGR->RegisterVariable(this);
 }
 
-CBagVar::CBagVar(CBagVar &xVar) {
-	SetName(xVar.GetName());
-	SetValue(xVar.GetValue());
-	m_xVarType = xVar.GetType();
-	SetConstant(xVar.IsConstant());
-	SetReference(xVar.IsReference());
-	SetTimer(xVar.IsTimer());
-	SetRandom(false);
-	SetGlobal(false);
-}
-
 CBagVar::CBagVar(const CBofString &sName, const CBofString &sValue, bool bAddToList) {
 	SetConstant(false);
 	SetReference(false);
