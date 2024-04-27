@@ -627,7 +627,7 @@ bool Wiz::moonbaseLayeredWizHitTest(int32 *outValue, int32 *optionalOutActualVal
 	}
 
 	if (optionalOutActualValue) {
-		*optionalOutActualValue = pixel;
+		*optionalOutActualValue = (int32)((uint16)pixel);
 	}
 
 	return true;
