@@ -137,10 +137,20 @@ bool Moonbase::setFOWImage(int image) {
 	_fowAnimationFrames = (nStates + FOW_ANIM_FRAME_COUNT - 1) / FOW_ANIM_FRAME_COUNT;
 
 	_vm->_wiz->getWizImageDim(_fowImage, (nStates - 1), _fowTileW, _fowTileH);
-	// TODO: _fowBlackMode = !_vm->_wiz->isWizPixelNonTransparent(_fowImage, nStates - 1, 0, 0, 0);
+
+	bool sizeIndicatorWasBlack = true;
+	int32 hitTestValue = 0;
+	int32 pixelValue = 0;
+
+	_vm->_wiz->moonbaseLayeredWizHitTest(
+		&hitTestValue, &pixelValue, _fowImage, (nStates - 1), 0, 0, 0, 0);
+
+	sizeIndicatorWasBlack = (pixelValue == 0);
 
 	if (ConfMan.hasKey("EnableFOWRects"))
 		_fowBlackMode = (ConfMan.getInt("EnableFOWRects") == 1);
+	else
+		_fowBlackMode = sizeIndicatorWasBlack;
 
 	return true;
 }
@@ -363,16 +373,16 @@ void Moonbase::renderFOW(WizMultiTypeBitmap *destSurface) {
 	int halfTileHeight = _fowTileH / 2;
 	int cx2 = MIN<int>(_fowClipX2, (int)(destSurface->width - 1));
 	int cy2 = MIN<int>(_fowClipY2, (int)(destSurface->height - 1));
-	
+
 	for (int ry = 0; ry < _fowVh; ry++) {
 		int realYPos = yPos;
-	
+
 		for (int i = 0; i < 2; i++) {
 			const int32 *renderTable = outerRenderTable;
 			outerRenderTable += dataOffset;
-	
+
 			int xPos = ixPos;
-	
+
 			for (int rx = 0; rx < _fowVw; rx++) {
 				int state = *renderTable++;
 	
@@ -384,35 +394,35 @@ void Moonbase::renderFOW(WizMultiTypeBitmap *destSurface) {
 						for (; count < countLeft; count++) {
 							if (*(renderTable + count) != 2)
 								break;
-	
+
 							renderTable++;
 							rx++;
 						}
 						count++;
-	
+
 						int x1 = xPos;
 						int y1 = realYPos;
-	
+
 						xPos += _fowTileW * count;
 						int x2 = (xPos - 1);
 						int y2 = ((y1 + halfTileHeight) - 1);
-	
+
 						x1 = MAX(0, x1);
 						y1 = MAX(0, y1);
 						x2 = MIN(x2, cx2);
 						y2 = MIN(y2, cy2);
-	
+
 						if ((x2 >= x1) && (y2 >= y1) && (x1 <= _fowClipX2) && (y1 <= _fowClipY2))
 							blackRect_16bpp(destSurface, x1, y1, x2, y2);
 					} else {
 						int subState;
-	
+
 						if ((subState = *renderTable++) != 0)
 							renderFOWState(destSurface, xPos, yPos, (subState + _fowFrameBaseNumber));
-	
+
 						if ((subState = *renderTable++) != 0)
 							renderFOWState(destSurface, xPos, yPos, (subState + _fowFrameBaseNumber));
-	
+
 						xPos += _fowTileW;
 					}
 				} else {

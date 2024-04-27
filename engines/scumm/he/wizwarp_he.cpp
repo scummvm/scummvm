@@ -819,8 +819,8 @@ void Wiz::warpProcessDrawSpansSampled(WizSimpleBitmap *dstBitmap, const WizSimpl
 	WizRawPixel16 *dst16 = (WizRawPixel16 *)dstBitmap->bufferPtr;
 
 	int sw = srcBitmap->bitmapWidth;
-	int src_x_limit = (srcBitmap->bitmapWidth - 1);
-	int src_y_limit = (srcBitmap->bitmapHeight - 1);
+	int srcXLimit = (srcBitmap->bitmapWidth - 1);
+	int srcYLimit = (srcBitmap->bitmapHeight - 1);
 
 	// Process all of the spans in this span collection...
 	for (int yCounter = count; --yCounter >= 0;) {
@@ -838,26 +838,26 @@ void Wiz::warpProcessDrawSpansSampled(WizSimpleBitmap *dstBitmap, const WizSimpl
 		int yStep = drawSpans->ySrcStep;
 
 		// Figure out the sample rect for this "slope"...
-		int sample_cx = (WARP_FROM_FRAC(xStep));
-		int sample_cy = (WARP_FROM_FRAC(yStep));
+		int sampleCx = (WARP_FROM_FRAC(xStep));
+		int sampleCy = (WARP_FROM_FRAC(yStep));
 
-		if (sample_cx < 0) {
-			sample_cx = -sample_cx;
+		if (sampleCx < 0) {
+			sampleCx = -sampleCx;
 		}
 
-		if (sample_cy < 0) {
-			sample_cy = -sample_cy;
+		if (sampleCy < 0) {
+			sampleCy = -sampleCy;
 		}
 
 		// Make the sampling area square using the largest delta...
-		if (sample_cx > sample_cy) {
-			sample_cy = sample_cx;
+		if (sampleCx > sampleCy) {
+			sampleCy = sampleCx;
 		} else {
-			sample_cx = sample_cy;
+			sampleCx = sampleCy;
 		}
 
-		int sample_x_offset = sample_cx;
-		int sample_y_offset = sample_cy;
+		int sampleXOffset = sampleCx;
+		int sampleYOffset = sampleCy;
 
 		// Process all pixels covered by this "span"...
 		for (int xCounter = drawSpans->dstWidth; --xCounter >= 0;) {
@@ -871,14 +871,14 @@ void Wiz::warpProcessDrawSpansSampled(WizSimpleBitmap *dstBitmap, const WizSimpl
 				int sx1 = sx;
 				int sy1 = sy;
 
-				int sx2 = sx + sample_x_offset;
-				int sy2 = sy + sample_y_offset;
+				int sx2 = sx + sampleXOffset;
+				int sy2 = sy + sampleYOffset;
 
 				// Clip the source sample coords to the bitmap limits...
-				sx1 = MAX<int>(0, MIN<int>(src_x_limit, sx1));
-				sy1 = MAX<int>(0, MIN<int>(src_y_limit, sy1));
-				sx2 = MAX<int>(0, MIN<int>(src_x_limit, sx2));
-				sy2 = MAX<int>(0, MIN<int>(src_y_limit, sy2));
+				sx1 = MAX<int>(0, MIN<int>(srcXLimit, sx1));
+				sy1 = MAX<int>(0, MIN<int>(srcYLimit, sy1));
+				sx2 = MAX<int>(0, MIN<int>(srcXLimit, sx2));
+				sy2 = MAX<int>(0, MIN<int>(srcYLimit, sy2));
 
 				// Now that the clipping is done figure out the sampling area...
 				int sxc = ((sx2 - sx1) + 1);
@@ -887,30 +887,30 @@ void Wiz::warpProcessDrawSpansSampled(WizSimpleBitmap *dstBitmap, const WizSimpl
 
 				// Sample pixels from the source potential sampling area...
 				if (total > 1) {
-					int total_R, total_G, total_B;
+					int totalR, totalG, totalB;
 					const WizRawPixel *samplePtr = (const WizRawPixel *)(src16 + ((sw * sy1) + sx1));
 
-					rawPixelExtractComponents(*samplePtr, total_R, total_G, total_B);
+					rawPixelExtractComponents(*samplePtr, totalR, totalG, totalB);
 
 					int sampleStep = sw - sxc;
 					++total;
 
-					for (int i = 0; i < syc; sy++) {
-						for (int j = 0; j < sxc; j++) {
+					for (sy = 0; sy < syc; sy++) {
+						for (sx = 0; sx < sxc; sx++) {
 							int r, g, b;
 
-							WizRawPixel src_color = *samplePtr++;
-							rawPixelExtractComponents(src_color, r, g, b);
+							WizRawPixel srcColor = *samplePtr++;
+							rawPixelExtractComponents(srcColor, r, g, b);
 
-							total_R += r;
-							total_G += g;
-							total_B += b;
+							totalR += r;
+							totalG += g;
+							totalB += b;
 						}
 
 						samplePtr += sampleStep;
 					}
 
-					rawPixelPackComponents(*dst16, total_R / total, total_G / total, total_B / total);
+					rawPixelPackComponents(*dst16, totalR / total, totalG / total, totalB / total);
 				} else {
 					*dst16 = (*(src16 + (sw * sy1) + sx1));
 				}
@@ -932,8 +932,8 @@ void Wiz::warpProcessDrawSpansTransparentSampled(WizSimpleBitmap *dstBitmap, con
 	WizRawPixel16 *dst16 = (WizRawPixel16 *)dstBitmap->bufferPtr;
 
 	int sw = srcBitmap->bitmapWidth;
-	int src_x_limit = (srcBitmap->bitmapWidth - 1);
-	int src_y_limit = (srcBitmap->bitmapHeight - 1);
+	int srcXLimit = (srcBitmap->bitmapWidth - 1);
+	int srcYLimit = (srcBitmap->bitmapHeight - 1);
 	
 	// Process all of the spans in this span collection...
 	for (int yCounter = count; --yCounter >= 0;) {
@@ -951,34 +951,34 @@ void Wiz::warpProcessDrawSpansTransparentSampled(WizSimpleBitmap *dstBitmap, con
 		int yStep = drawSpans->ySrcStep;
 
 		// Figure out the sample rect for this "slope"...
-		int sample_cx = (WARP_FROM_FRAC(xStep));
-		int sample_cy = (WARP_FROM_FRAC(yStep));
+		int sampleCx = (WARP_FROM_FRAC(xStep));
+		int sampleCy = (WARP_FROM_FRAC(yStep));
 
-		if (sample_cx < 0) {
-			sample_cx = -sample_cx;
+		if (sampleCx < 0) {
+			sampleCx = -sampleCx;
 		}
 
-		if (sample_cy < 0) {
-			sample_cy = -sample_cy;
+		if (sampleCy < 0) {
+			sampleCy = -sampleCy;
 		}
 
 		// Make the sampling area square using the largest delta...
-		if (sample_cx > sample_cy) {
-			sample_cy = sample_cx;
+		if (sampleCx > sampleCy) {
+			sampleCy = sampleCx;
 		} else {
-			sample_cx = sample_cy;
+			sampleCx = sampleCy;
 		}
 
-		int sample_x_offset = sample_cx;
-		int sample_y_offset = sample_cy;
+		int sampleXOffset = sampleCx;
+		int sampleYOffset = sampleCy;
 
 		// Process all pixels covered by this "span"...
 		for (int xCounter = drawSpans->dstWidth; --xCounter >= 0;) {
 			if (!_uses16BitColor) {
-				WizRawPixel src_color = (*(src8 + (sw * WARP_FROM_FRAC(yOffset)) + WARP_FROM_FRAC(xOffset)));
+				WizRawPixel srcColor = (*(src8 + (sw * WARP_FROM_FRAC(yOffset)) + WARP_FROM_FRAC(xOffset)));
 
-				if (src_color != transparentColor) {
-					*dst8++ = src_color;
+				if (srcColor != transparentColor) {
+					*dst8++ = srcColor;
 				} else {
 					dst8++;
 				}
@@ -991,14 +991,14 @@ void Wiz::warpProcessDrawSpansTransparentSampled(WizSimpleBitmap *dstBitmap, con
 				int sx1 = sx;
 				int sy1 = sy;
 
-				int sx2 = sx + sample_x_offset;
-				int sy2 = sy + sample_y_offset;
+				int sx2 = sx + sampleXOffset;
+				int sy2 = sy + sampleYOffset;
 
 				// Clip the source sample coords to the bitmap limits...
-				sx1 = MAX<int>(0, MIN<int>(src_x_limit, sx1));
-				sy1 = MAX<int>(0, MIN<int>(src_y_limit, sy1));
-				sx2 = MAX<int>(0, MIN<int>(src_x_limit, sx2));
-				sy2 = MAX<int>(0, MIN<int>(src_y_limit, sy2));
+				sx1 = MAX<int>(0, MIN<int>(srcXLimit, sx1));
+				sy1 = MAX<int>(0, MIN<int>(srcYLimit, sy1));
+				sx2 = MAX<int>(0, MIN<int>(srcXLimit, sx2));
+				sy2 = MAX<int>(0, MIN<int>(srcYLimit, sy2));
 
 				// Now that the clipping is done figure out the sampling area...
 				int sxc = ((sx2 - sx1) + 1);
@@ -1007,35 +1007,35 @@ void Wiz::warpProcessDrawSpansTransparentSampled(WizSimpleBitmap *dstBitmap, con
 
 				// Sample pixels from the source potential sampling area...
 				if (total > 1) {
-					int total_R, total_G, total_B;
+					int totalR, totalG, totalB;
 
 					const WizRawPixel *samplePtr = (const WizRawPixel *)(src16 + ((sw * sy1) + sx1));
 
-					WizRawPixel first_color = (*(src16 + (sw * sy1) + sx1));
+					WizRawPixel firstColor = (*(src16 + (sw * sy1) + sx1));
 
-					if (first_color != transparentColor) {
-						rawPixelExtractComponents(*samplePtr, total_R, total_G, total_B);
+					if (firstColor != transparentColor) {
+						rawPixelExtractComponents(*samplePtr, totalR, totalG, totalB);
 						++total;
 					} else {
-						total_R = 0;
-						total_G = 0;
-						total_B = 0;
+						totalR = 0;
+						totalG = 0;
+						totalB = 0;
 					}
 
 					int sampleStep = sw - sxc;
 
-					for (int i = 0; i < syc; i++) {
-						for (int j = 0; j < sxc; j++) {
-							WizRawPixel src_color = *samplePtr++;
+					for (sy = 0; sy < syc; sy++) {
+						for (sx = 0; sx < sxc; sx++) {
+							WizRawPixel srcColor = *samplePtr++;
 
-							if (src_color != transparentColor) {
+							if (srcColor != transparentColor) {
 								int r, g, b;
 
-								rawPixelExtractComponents(src_color, r, g, b);
+								rawPixelExtractComponents(srcColor, r, g, b);
 
-								total_R += r;
-								total_G += g;
-								total_B += b;
+								totalR += r;
+								totalG += g;
+								totalB += b;
 
 							} else {
 								--total;
@@ -1046,22 +1046,22 @@ void Wiz::warpProcessDrawSpansTransparentSampled(WizSimpleBitmap *dstBitmap, con
 					}
 
 					if (total) {
-						WizRawPixel src_color;
+						WizRawPixel srcColor;
 
-						rawPixelPackComponents(src_color, total_R / total, total_G / total, total_B / total);
+						rawPixelPackComponents(srcColor, totalR / total, totalG / total, totalB / total);
 
-						if (transparentColor != src_color) {
-							*dst16 = src_color;
+						if (transparentColor != srcColor) {
+							*dst16 = srcColor;
 						} else {
 							*dst16 = 4;
 						}
 					}
 
 				} else {
-					WizRawPixel src_color = (*(src16 + (sw * sy1) + sx1));
+					WizRawPixel srcColor = (*(src16 + (sw * sy1) + sx1));
 
-					if (src_color != transparentColor) {
-						*dst16 = src_color;
+					if (srcColor != transparentColor) {
+						*dst16 = srcColor;
 					}
 				}
 

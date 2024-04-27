@@ -349,7 +349,6 @@ void ScummEngine_v80he::o80_drawWizPolygon() {
  * @param color	the id of an actor, wizimage or color (low bit) & flag (high bit)
  */
 void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int step, int type, int color) {
-	// TODO
 	if (step < 0) {
 		step = -step;
 	}
