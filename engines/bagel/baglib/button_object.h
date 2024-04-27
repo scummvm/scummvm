@@ -98,12 +98,12 @@ public:
 	void OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	bool OnMouseMove(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void *);
 
-	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
+	ErrorCode update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect = nullptr, int /*nMaskColor*/ = -1);
 
-	void setSize(const CBofSize &xSize);
+	void setSize(const CBofSize &size);
 
-	void SetProperty(const CBofString &sProp, int nVal);
-	int GetProperty(const CBofString &sProp);
+	void SetProperty(const CBofString &prop, int val);
+	int GetProperty(const CBofString &prop);
 };
 
 } // namespace Bagel
