@@ -34,8 +34,6 @@ namespace Bagel {
 
 #define NUM_RESTORE_BTNS 6
 
-const char *BuildSysDir(const char *pszFile);
-
 class CBagRestoreDialog : public CBofDialog {
 private:
 	ErrorCode RestoreAndClose();
