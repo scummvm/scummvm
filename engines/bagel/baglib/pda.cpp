@@ -341,7 +341,7 @@ bool CBagPDA::isInside(const CBofPoint &xPoint) {
 	return false;
 }
 
-void CBagPDA::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
+void CBagPDA::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev());
 
 	if (!isActivated() && _pdaMode != INVMODE) {          // if the PDA is not active, activate it
@@ -361,7 +361,7 @@ void CBagPDA::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 	CBofPoint RealPt = DevPtToViewPort(*xPoint);
 
 	if (_curDisplay && _curDisplay->getRect().PtInRect(RealPt)) {
-		_curDisplay->OnLButtonUp(nFlags, &RealPt, info);
+		_curDisplay->onLButtonUp(nFlags, &RealPt, info);
 	} else {
 		// if not in the PDA view port then check and make sure it is activated.
 		if (SBBasePda::_pdaMode == INVMODE && !isActivated()) {
@@ -393,7 +393,7 @@ void CBagPDA::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 
 			// Deactivate the PDA if we didn't hit a button.
 			if (bButtonHit || _pdaMode == NOMODE) {
-				CBagStorageDevBmp::OnLButtonUp(nFlags, xPoint, info);
+				CBagStorageDevBmp::onLButtonUp(nFlags, xPoint, info);
 			} else {
 				((CBagPanWindow *)pMainWin)->SetPreFilterPan(true);
 				deactivate();
@@ -406,14 +406,14 @@ void CBagPDA::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 	HandleZoomButton(false);
 }
 
-void CBagPDA::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *info) {
+void CBagPDA::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *info) {
 	// All we want to do here is if we had a mouse down on our
 	// zoom button, then make sure we have the real zoom button current (that
 	// is, if we have the inventory front and center).
 
 	HandleZoomButton(true);
 
-	CBagStorageDevBmp::OnLButtonDown(nFlags, xPoint, info);
+	CBagStorageDevBmp::onLButtonDown(nFlags, xPoint, info);
 }
 
 CBagObject *CBagPDA::OnNewButtonObject(const CBofString &) {
@@ -421,7 +421,7 @@ CBagObject *CBagPDA::OnNewButtonObject(const CBofString &) {
 
 	PdaButtObj = new CBagButtonObject();
 
-	PdaButtObj->SetCallBack(fPdaButtonHandler, (SBBasePda *)this);
+	PdaButtObj->setCallBack(fPdaButtonHandler, (SBBasePda *)this);
 
 	return PdaButtObj;
 }
@@ -543,7 +543,7 @@ void CBagPDA::RunWaitingMovie() {
 				if (pMObj->AsynchPDAMovieCanPlay()) {
 					m_bSoundsPaused = true;
 					CSound::PauseSounds();              // pause all sounds
-					pMObj->RunObject();
+					pMObj->runObject();
 					RemoveFromMovieQueue(pMObj);
 				}
 			}

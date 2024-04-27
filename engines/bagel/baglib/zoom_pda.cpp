@@ -228,13 +228,13 @@ ErrorCode SBZoomPda::attach() {
 
 CBagObject *SBZoomPda::OnNewButtonObject(const CBofString &) {
 	CBagButtonObject *PdaButtObj = new CBagButtonObject();
-	PdaButtObj->SetCallBack(fPdaButtonHandler, (SBBasePda *)this);
+	PdaButtObj->setCallBack(fPdaButtonHandler, (SBBasePda *)this);
 
 	return PdaButtObj;
 }
 
 void SBZoomPda::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
-	// Need to override the CBagStorageDevWnd::OnLButtonUp(nFlags, xPoint)
+	// Need to override the CBagStorageDevWnd::onLButtonUp(nFlags, xPoint)
 	// to do our own thing.
 
 	*m_xCursorLocation = *xPoint;
@@ -243,7 +243,7 @@ void SBZoomPda::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	CBagObject *pObj = GetObject(xCursorLocation, true);
 	if (pObj != nullptr) {
 		if (pObj->IsActive()) {
-			pObj->OnLButtonUp(nFlags, xPoint);
+			pObj->onLButtonUp(nFlags, xPoint);
 			SetLActiveObject(pObj);
 		}
 	} else {
@@ -260,7 +260,7 @@ void SBZoomPda::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 			SetPreFilterPan(true);
 			MakeListDirty(_curDisplay->GetObjectList());
 
-			_curDisplay->OnLButtonUp(nFlags, xPoint, nullptr);
+			_curDisplay->onLButtonUp(nFlags, xPoint, nullptr);
 		} else {
 			// We have no mode yet, then pass it to the default method
 			if (_pdaMode == NOMODE) {

@@ -304,7 +304,7 @@ const char *BuildVidDir(const char *pszFile) {
 }
 
 
-void SBarVidBut::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *pInfo) {
+void SBarVidBut::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *pInfo) {
 	switch (GetRefId()) {
 
 	case VID_PLAY_BUT: {
@@ -344,7 +344,7 @@ void SBarVidBut::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *pInfo) {
 		break;
 	}
 
-	CBagButtonObject::OnLButtonUp(nFlags, xPoint, pInfo);
+	CBagButtonObject::onLButtonUp(nFlags, xPoint, pInfo);
 }
 
 } // namespace SpaceBar

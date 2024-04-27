@@ -92,12 +92,12 @@ public:
 	/**
 	 * Called on the mouse left button down
 	 * Is the PDA is deactivated mouse down activates the PDA
-	 * else it call CBagStorageDevBmp::OnLButtonDown
+	 * else it calls CBagStorageDevBmp::onLButtonDown
 	 * @param nFlags        Flags
 	 * @param xPoint        X, Y position
 	 * @param info          Optional info
 	 */
-	void OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info = nullptr);
+	void onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info = nullptr);
 
 	/**
 	 * Called on the mouse left button down
@@ -105,7 +105,7 @@ public:
 	 * @param xPoint        X, Y position
 	 * @param info          Optional info
 	 */
-	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *info = nullptr);
+	virtual void onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *info = nullptr);
 
 	bool isInside(const CBofPoint &xPoint);
 

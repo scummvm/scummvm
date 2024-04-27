@@ -64,7 +64,7 @@ ErrorCode CBagEventSDev::EvaluateExpressions() {
 						pObj->attach();
 					}
 					if (pObj->IsImmediateRun())
-						pObj->RunObject();
+						pObj->runObject();
 
 				} else if (pObj->isAttached()) {
 					if (pObj->GetType() != SOUNDOBJ || !((CBagSoundObject *)pObj)->IsPlaying()) {
@@ -102,7 +102,7 @@ ErrorCode CBagTurnEventSDev::EvaluateExpressions() {
 						pObj->attach();
 					}
 					if (pObj->IsImmediateRun())
-						pObj->RunObject();
+						pObj->runObject();
 				} else if (pObj->isAttached()) {
 					if (pObj->GetType() != SOUNDOBJ || !((CBagSoundObject *)pObj)->IsPlaying()) {
 						pObj->SetActive(false);

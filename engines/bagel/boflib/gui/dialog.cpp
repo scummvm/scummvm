@@ -70,10 +70,8 @@ CBofDialog::CBofDialog(const char *pszFileName, CBofWindow *pParent, const uint3
 CBofDialog::~CBofDialog() {
 	Assert(IsValidObject(this));
 
-	if (_pDlgBackground != nullptr) {
-		delete _pDlgBackground;
-		_pDlgBackground = nullptr;
-	}
+	delete _pDlgBackground;
+	_pDlgBackground = nullptr;
 }
 
 
@@ -115,11 +113,9 @@ ErrorCode CBofDialog::Create(const char *pszName, CBofRect *pRect, CBofWindow *p
 	int nWidth = USE_DEFAULT;
 	int nHeight = USE_DEFAULT;
 
-	if (pRect == nullptr) {
-		if (m_pBackdrop != nullptr) {
-			cRect = m_pBackdrop->GetRect();
-			pRect = &cRect;
-		}
+	if ((pRect == nullptr) && (m_pBackdrop != nullptr)) {
+		cRect = m_pBackdrop->GetRect();
+		pRect = &cRect;
 	}
 
 	if (pRect != nullptr) {
@@ -153,13 +149,11 @@ void CBofDialog::OnClose() {
 	if (_lFlags & BOFDLG_SAVEBACKGND) {
 		PaintBackground();
 
-	} else {
+	} else if (_parent != nullptr) {
 		// Need to validate the portion of the parent window that we obscured
 		// (but that we also have already repainted)
 		// Otherwise, we need to cause the parent to repaint itself
-		if (_parent != nullptr) {
-			_parent->InvalidateRect(nullptr);
-		}
+		_parent->InvalidateRect(nullptr);
 	}
 
 	CBofWindow::OnClose();

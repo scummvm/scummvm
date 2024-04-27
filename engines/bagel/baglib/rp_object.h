@@ -105,11 +105,11 @@ public:
 	ErrorCode attach();
 	ErrorCode detach();
 
-	virtual bool RunObject();
+	virtual bool runObject();
 
 	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int);
 
-	virtual void OnLButtonUp(uint32, CBofPoint *, void * = nullptr);
+	virtual void onLButtonUp(uint32, CBofPoint *, void * = nullptr);
 
 	void SetTouchedDos(CBofString &s, CBagExpression *x);
 	void SetUntouchedDos(CBofString &s, CBagExpression *x);

@@ -35,7 +35,7 @@ public:
 
 	CMainLinkObject();
 
-	void OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) override;
+	void onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) override;
 };
 
 } // namespace SpaceBar

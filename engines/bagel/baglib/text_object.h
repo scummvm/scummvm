@@ -88,7 +88,7 @@ public:
 		m_nTextFont = nFont;
 	}
 
-	virtual bool RunObject();
+	virtual bool runObject();
 
 	const CBofString *GetInitInfo() const {
 		return m_psInitInfo;
@@ -120,8 +120,8 @@ public:
 
 	PARSE_CODES setInfo(bof_ifstream &istr);
 
-	void SetProperty(const CBofString &sProp, int nVal);
-	int GetProperty(const CBofString &sProp);
+	void setProperty(const CBofString &sProp, int nVal);
+	int getProperty(const CBofString &sProp);
 
 	bool IsCaption() const {
 		return m_bCaption;
@@ -135,7 +135,7 @@ public:
 	}
 
 	// Wxtra stuff to handle mouse downs on floaters in the log pda/residue printing code.
-	virtual void OnLButtonUp(uint32, CBofPoint *, void * = nullptr);
+	virtual void onLButtonUp(uint32, CBofPoint *, void * = nullptr);
 
 	void SetRPObject(CBagObject *prp) {
 		m_pRPObject = prp;

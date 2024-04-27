@@ -335,7 +335,7 @@ ErrorCode CBagStorageDev::AttachActiveObjects() {
 
 						if (m_bFirstPaint == false) {
 
-							pObj->RunObject();
+							pObj->runObject();
 
 							if (pObj->GetType() == LINKOBJ) {
 								break;
@@ -471,7 +471,7 @@ void CBagStorageDev::OnMouseMove(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 	*m_xCursorLocation = *xPoint;
 
 	if (GetLActiveObject() && GetLActivity()) {
-		GetLActiveObject()->OnMouseMove(nFlags, *xPoint, vpInfo);
+		GetLActiveObject()->onMouseMove(nFlags, *xPoint, vpInfo);
 	}
 }
 
@@ -493,7 +493,7 @@ void CBagStorageDev::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *vpInf
 
 	CBagObject *pObj = GetObject(xCursorLocation, true);
 	if ((pObj != nullptr) && (pObj->IsActive())) {
-		pObj->OnLButtonDown(nFlags, xPoint, vpInfo);
+		pObj->onLButtonDown(nFlags, xPoint, vpInfo);
 		SetLActivity(kMouseDRAGGING);
 	}
 
@@ -523,7 +523,7 @@ void CBagStorageDev::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 
 		g_bNoMenu = false;
 		if (pObj->IsActive()) {
-			pObj->OnLButtonUp(nFlags, xPoint, vpInfo);
+			pObj->onLButtonUp(nFlags, xPoint, vpInfo);
 
 			if (g_bNoMenu) {
 				g_bNoMenu = false;
@@ -543,7 +543,7 @@ void CBagStorageDev::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 				if (pWin->m_pWieldBmp != nullptr) {
 					pObj = pWin->m_pWieldBmp->GetCurrObj();
 					if ((pObj != nullptr) && pObj->IsActive()) {
-						pObj->OnLButtonUp(nFlags, xPoint, vpInfo);
+						pObj->onLButtonUp(nFlags, xPoint, vpInfo);
 						SetLActiveObject(pObj);
 						m_bHandledUpEvent = true;
 					}
@@ -1954,7 +1954,7 @@ int CBagStorageDevManager::GetObjectValue(const CBofString &sObject, const CBofS
 		if (pSDev) {
 			CBagObject *pObj = pSDev->GetObject(sObject);
 			if (pObj != nullptr)
-				return pObj->GetProperty(sProperty);
+				return pObj->getProperty(sProperty);
 		}
 	}
 
@@ -1975,7 +1975,7 @@ void CBagStorageDevManager::SetObjectValue(const CBofString &sObject, const CBof
 		if (pSDev) {
 			CBagObject *pObj = pSDev->GetObject(sObject);
 			if (pObj != nullptr) {
-				pObj->SetProperty(sProperty, nValue);
+				pObj->setProperty(sProperty, nValue);
 			}
 		}
 	}

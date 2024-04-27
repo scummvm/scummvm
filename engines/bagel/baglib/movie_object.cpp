@@ -71,7 +71,7 @@ CBagMovieObject::~CBagMovieObject() {
 	}
 }
 
-bool CBagMovieObject::RunObject() {
+bool CBagMovieObject::runObject() {
 	CBagPDA *pPDA = nullptr;
 	CBofWindow *pNewWin = nullptr;
 	SBZoomPda *pPDAz = (SBZoomPda *)SDEVMNGR->GetStorageDevice("BPDAZ_WLD");
@@ -190,7 +190,7 @@ bool CBagMovieObject::RunObject() {
 						if (pSObj->isAttached() == false) {
 							pSObj->attach();
 						}
-						pSObj->RunObject();
+						pSObj->runObject();
 					}
 
 					CBofWindow *wnd = CBagel::getBagApp()->getMasterWnd();
@@ -386,7 +386,7 @@ bool CBagMovieObject::RunObject() {
 			}
 		}
 
-		rc = CBagObject::RunObject();
+		rc = CBagObject::runObject();
 	}
 
 	return rc;

@@ -64,8 +64,8 @@ public:
 
 	void setSize(const CBofSize &size);
 
-	void SetProperty(const CBofString &prop, int val);
-	int GetProperty(const CBofString &prop);
+	void setProperty(const CBofString &prop, int val);
+	int getProperty(const CBofString &prop);
 
 	void SetMsgSendee(const CBofString &sProp) {
 		m_sMsgSendee = sProp;
@@ -113,8 +113,8 @@ public:
 
 	PARSE_CODES setInfo(bof_ifstream &istr);
 
-	void SetProperty(const CBofString &prop, int val);
-	int GetProperty(const CBofString &prop);
+	void setProperty(const CBofString &prop, int val);
+	int getProperty(const CBofString &prop);
 
 	void SetSusName(const CBofString &sProp) {
 		m_sSusName = sProp;

@@ -91,7 +91,7 @@ ErrorCode CBagSoundObject::detach() {
 	return CBagObject::detach();
 }
 
-bool CBagSoundObject::RunObject() {
+bool CBagSoundObject::runObject() {
 	if (((m_wFlags & SOUND_MIDI) && CBagMasterWin::GetMidi()) || (((m_wFlags & SOUND_WAVE) || (m_wFlags & SOUND_MIX)) && CBagMasterWin::GetDigitalAudio())) {
 
 		if (m_pSound && m_pMidiSound != m_pSound) {
@@ -144,7 +144,7 @@ bool CBagSoundObject::RunObject() {
 		}
 	}
 
-	return CBagObject::RunObject();
+	return CBagObject::runObject();
 }
 
 PARSE_CODES CBagSoundObject::setInfo(bof_ifstream &istr) {
@@ -390,7 +390,7 @@ void CBagSoundObject::SetNumOfLoops(int n) {
 	m_nLoops = n; // Only have ability to set at creation of BofSound
 }
 
-int CBagSoundObject::GetProperty(const CBofString &sProp) {
+int CBagSoundObject::getProperty(const CBofString &sProp) {
 	if (!sProp.Find("VOLUME")) {
 		return GetVolume();
 
@@ -410,10 +410,10 @@ int CBagSoundObject::GetProperty(const CBofString &sProp) {
 		return m_nLoops;
 	}
 
-	return CBagObject::GetProperty(sProp);
+	return CBagObject::getProperty(sProp);
 }
 
-void CBagSoundObject::SetProperty(const CBofString &sProp, int nVal) {
+void CBagSoundObject::setProperty(const CBofString &sProp, int nVal) {
 	if (!sProp.Find("VOLUME")) {
 		SetVolume(nVal);
 
@@ -427,7 +427,7 @@ void CBagSoundObject::SetProperty(const CBofString &sProp, int nVal) {
 	} else if (!sProp.Find("LOOP")) {
 		SetNumOfLoops(nVal);
 	} else {
-		CBagObject::SetProperty(sProp, nVal);
+		CBagObject::setProperty(sProp, nVal);
 	}
 }
 

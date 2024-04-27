@@ -43,7 +43,7 @@ CBagCommandObject::CBagCommandObject() {
 	SetTimeless(true);
 }
 
-bool CBagCommandObject::RunObject() {
+bool CBagCommandObject::runObject() {
 	static int nIteration = 0;
 	bool rc = false;
 
@@ -399,7 +399,7 @@ bool CBagCommandObject::RunObject() {
 			ReportError(ERR_UNKNOWN, "Invalid RUN COMMAND = %s", (const char *)GetFileName());
 		}
 
-		rc = CBagObject::RunObject();
+		rc = CBagObject::runObject();
 
 		nIteration--;
 	}

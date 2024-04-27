@@ -74,7 +74,7 @@ public:
 		m_nOutline = nColor;
 	}
 
-	virtual bool RunObject();
+	virtual bool runObject();
 };
 
 } // namespace Bagel

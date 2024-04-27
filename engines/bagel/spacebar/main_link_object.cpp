@@ -33,7 +33,7 @@ CMainLinkObject::CMainLinkObject()
 }
 
 
-void CMainLinkObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
+void CMainLinkObject::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 	CMainWindow *pWnd = (CMainWindow *)info;
 
 	if (pWnd && pWnd->GameMode() == CMainWindow::VRPLAYMODE) {
@@ -47,7 +47,7 @@ void CMainLinkObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) 
 			pDestWin->SetLoadFilePos(GetDstLoc());
 		}
 
-		CBagLinkObject::OnLButtonUp(nFlags, xPoint);
+		CBagLinkObject::onLButtonUp(nFlags, xPoint);
 	}
 }
 

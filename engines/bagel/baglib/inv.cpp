@@ -85,7 +85,7 @@ ErrorCode CBagInv::ActivateLocalObject(const CBofString &sName) {
 						pMovie->SetVisible();
 					}
 
-					pMovie->RunObject();
+					pMovie->runObject();
 				}
 
 				pVar->SetValue(1);

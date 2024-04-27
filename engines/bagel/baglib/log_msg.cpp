@@ -364,7 +364,7 @@ ErrorCode CBagLog::PlayMsgQue() {
 					pMovie->attach();
 					pMovie->SetVisible();
 				}
-				pMovie->RunObject();
+				pMovie->runObject();
 			}
 		}
 
@@ -380,7 +380,7 @@ ErrorCode CBagLog::PlayMsgQue() {
 				CBagMenu *pObjMenu = pObj->GetMenuPtr();
 				if (pObjMenu)
 					pObjMenu->TrackPopupMenu(0, 0, 0, CBofApp::GetApp()->GetMainWindow(), nullptr, &r);
-				pObj->RunObject();
+				pObj->runObject();
 				pObj->SetMsgWaiting(false);
 
 				// Mark this guy as played...
@@ -516,17 +516,17 @@ PARSE_CODES CBagLogMsg::setInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-void CBagLogMsg::SetProperty(const CBofString &prop, int val) {
+void CBagLogMsg::setProperty(const CBofString &prop, int val) {
 	if (!prop.Find("TIME")) {
 		SetMsgTime(val);
 	} else if (!prop.Find("PLAYED")) {
 		SetMsgPlayed(val);
 	}
 
-	CBagObject::SetProperty(prop, val);
+	CBagObject::setProperty(prop, val);
 }
 
-int CBagLogMsg::GetProperty(const CBofString &prop) {
+int CBagLogMsg::getProperty(const CBofString &prop) {
 	if (!prop.Find("TIME"))
 		return GetMsgTime();
 
@@ -536,7 +536,7 @@ int CBagLogMsg::GetProperty(const CBofString &prop) {
 		return (bPlayed ? 1 : 0);
 	}
 
-	return CBagObject::GetProperty(prop);
+	return CBagObject::getProperty(prop);
 }
 
 ErrorCode CBagLogMsg::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect, int maskColor) {
@@ -663,7 +663,7 @@ PARSE_CODES CBagLogSuspect::setInfo(bof_ifstream &istr) {
 
 	return PARSING_DONE;
 }
-void CBagLogSuspect::SetProperty(const CBofString &prop, int val) {
+void CBagLogSuspect::setProperty(const CBofString &prop, int val) {
 	if (!prop.Find("ROOM")) {
 		switch (val) {
 		case 1:  // BAP
@@ -710,12 +710,12 @@ void CBagLogSuspect::SetProperty(const CBofString &prop, int val) {
 		else if (!prop.Find("RP"))
 			SetSusRP(bVal == 2 ? !GetSusRP() : bVal);
 		else
-			CBagObject::SetProperty(prop, val);
+			CBagObject::setProperty(prop, val);
 	}
 }
 
 
-int CBagLogSuspect::GetProperty(const CBofString &prop) {
+int CBagLogSuspect::getProperty(const CBofString &prop) {
 	if (!prop.Find("CHECKED"))
 		return GetSusChecked();
 
@@ -725,7 +725,7 @@ int CBagLogSuspect::GetProperty(const CBofString &prop) {
 	if (!prop.Find("RP"))
 		return GetSusRP();
 
-	return CBagObject::GetProperty(prop);
+	return CBagObject::getProperty(prop);
 }
 
 

@@ -78,7 +78,7 @@ public:
 	void UpdatePosition();
 	bool RefreshCurrFrame();
 
-	virtual bool RunObject();
+	virtual bool runObject();
 	virtual bool isInside(const CBofPoint &xPoint);
 
 	void ArrangeFrames();
@@ -118,8 +118,8 @@ public:
 
 	PARSE_CODES setInfo(bof_ifstream &istr);
 
-	void SetProperty(const CBofString &sProp, int nVal);
-	int GetProperty(const CBofString &sProp);
+	void setProperty(const CBofString &sProp, int nVal);
+	int getProperty(const CBofString &sProp);
 
 	// Remember the pda wand, we'll need to know about it and
 	// it's total number of frames.
