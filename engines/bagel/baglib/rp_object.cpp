@@ -722,14 +722,14 @@ bool CBagRPObject::AddToMsgQueue(CBagRPObject *pRPObj) {
 
 // If we get called to run this guy, then run the movie and post the results,
 // if any.
-bool CBagRPObject::RunObject() {
+bool CBagRPObject::runObject() {
 	bool bMoviePlayed = false;
 
 	// If we have a movie, which we should, run it!
 	//only play the movie the first time through!
 	bool bLocalMoviePlayed = false;
 	if (m_pMovieObj && m_bMoviePlayed == false) {
-		bMoviePlayed = m_pMovieObj->RunObject();
+		bMoviePlayed = m_pMovieObj->runObject();
 		m_bMoviePlayed = true;
 		bLocalMoviePlayed = true;
 	}
@@ -963,7 +963,7 @@ void CBagRPObject::DeactivateRPReview() {
 	}
 }
 
-void CBagRPObject::OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * /*pv*/) {
+void CBagRPObject::onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * /*pv*/) {
 	// Deactivate everything in the rp list
 	HideRPReview();
 
@@ -971,7 +971,7 @@ void CBagRPObject::OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void *
 	SetLogState(RP_RESULTS);
 	SetLogPages(1);
 
-	RunObject();
+	runObject();
 }
 
 void CBagRPObject::EvaluateDossiers() {

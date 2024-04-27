@@ -59,8 +59,8 @@ public:
 	CBagButtonObject();
 	virtual ~CBagButtonObject();
 
-	ErrorCode attach();
-	ErrorCode detach();
+	ErrorCode attach() override;
+	ErrorCode detach() override;
 
 	BUTTON_TYPE getButtonType() {
 		return _buttonType;
@@ -70,22 +70,24 @@ public:
 	 * Takes in info and then removes the relative information and returns
 	 * the info without the relevant info.
 	 */
-	PARSE_CODES setInfo(bof_ifstream &istr);
-	virtual bool RunObject();
+	PARSE_CODES setInfo(bof_ifstream &istr) override;
+	bool runObject() override;
 
 	// Callback function functionality - probably can be phased out
-	void SetCallBack(BAGFUNCPTR func, void *funcInfo) {
+	void setCallBack(BAGFUNCPTR func, void *funcInfo) {
 		_callbackFct = func;
 		_callbackInfo = funcInfo;
 	}
-	virtual BAGFUNCPTR getCallBack() {
+
+	BAGFUNCPTR getCallBack() override {
 		return _callbackFct;
 	}
 
-	void *GetCallBackInfo() {
+	void *getCallBackInfo() {
 		return _callbackInfo;
 	}
-	virtual bool RunCallBack() {
+
+	bool runCallBack() override {
 		if (_callbackFct) {
 			_callbackFct((int)GetRefId(), _callbackInfo);
 			return true;
@@ -94,16 +96,16 @@ public:
 		return false;
 	}
 
-	void OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
-	void OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
-	bool OnMouseMove(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void *);
+	void onLButtonDown(uint32 /*nFlags*/, CBofPoint *point, void *) override;
+	void onLButtonUp(uint32 flags, CBofPoint *point, void *extraInfo) override;
+	bool onMouseMove(uint32 /*nFlags*/, CBofPoint point, void *extraInfo) override;
 
-	ErrorCode update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect = nullptr, int /*nMaskColor*/ = -1);
+	ErrorCode update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect = nullptr, int maskColor = -1) override;
 
-	void setSize(const CBofSize &size);
+	void setSize(const CBofSize &size) override;
 
-	void SetProperty(const CBofString &prop, int val);
-	int GetProperty(const CBofString &prop);
+	void setProperty(const CBofString &prop, int val) override;
+	int getProperty(const CBofString &prop) override;
 };
 
 } // namespace Bagel

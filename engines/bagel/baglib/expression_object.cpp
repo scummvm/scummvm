@@ -42,7 +42,7 @@ CBagExpressionObject::~CBagExpressionObject() {
 	detach();
 }
 
-bool CBagExpressionObject::RunObject() {
+bool CBagExpressionObject::runObject() {
 	if (m_xExpression != nullptr) {
 		CBagVar xVar;
 		m_xExpression->Evaluate(false, xVar);
@@ -66,7 +66,7 @@ bool CBagExpressionObject::RunObject() {
 		}
 	}
 
-	return CBagObject::RunObject();
+	return CBagObject::runObject();
 }
 
 PARSE_CODES CBagExpressionObject::setInfo(bof_ifstream &istr) {

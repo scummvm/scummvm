@@ -437,7 +437,7 @@ void CBagTextObject::SetColor(int nColor) {
 	}
 }
 
-void CBagTextObject::SetProperty(const CBofString &sProp, int nVal) {
+void CBagTextObject::setProperty(const CBofString &sProp, int nVal) {
 	if (!sProp.Find("SIZE"))
 		SetPointSize(nVal);
 	else if (!sProp.Find("FONT"))
@@ -445,10 +445,10 @@ void CBagTextObject::SetProperty(const CBofString &sProp, int nVal) {
 	else if (!sProp.Find("COLOR"))
 		SetColor(nVal);
 	else
-		CBagObject::SetProperty(sProp, nVal);
+		CBagObject::setProperty(sProp, nVal);
 }
 
-int CBagTextObject::GetProperty(const CBofString &sProp) {
+int CBagTextObject::getProperty(const CBofString &sProp) {
 	if (!sProp.Find("SIZE"))
 		return GetPointSize();
 	if (!sProp.Find("FONT"))
@@ -456,10 +456,10 @@ int CBagTextObject::GetProperty(const CBofString &sProp) {
 	if (!sProp.Find("COLOR"))
 		return GetColor();
 
-	return CBagObject::GetProperty(sProp);
+	return CBagObject::getProperty(sProp);
 }
 
-bool CBagTextObject::RunObject() {
+bool CBagTextObject::runObject() {
 	char szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
 
@@ -530,16 +530,16 @@ int MapFont(int nFont) {
 	return FONT_DEFAULT;
 }
 
-void CBagTextObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *pv) {
+void CBagTextObject::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *pv) {
 	// If there's a residue printing object, then hand this guy off to
 	// him, otherwise, call back to Cbagobj.
 	CBagRPObject *pRPObj = (CBagRPObject *)GetRPObject();
 	if (pRPObj) {
-		pRPObj->OnLButtonUp(nFlags, xPoint, pv);
+		pRPObj->onLButtonUp(nFlags, xPoint, pv);
 		return;
 	}
 
-	CBagObject::OnLButtonUp(nFlags, xPoint, pv);
+	CBagObject::onLButtonUp(nFlags, xPoint, pv);
 }
 
 void CBagTextObject::RecalcTextRect(bool bTextFromFile) {

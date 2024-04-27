@@ -336,8 +336,8 @@ bool CBagCharacterObject::isInside(const CBofPoint &xPoint) {
 	return false;
 }
 
-bool CBagCharacterObject::RunObject() {
-	CBagObject::RunObject();
+bool CBagCharacterObject::runObject() {
+	CBagObject::runObject();
 	return false;
 }
 
@@ -615,7 +615,7 @@ void CBagCharacterObject::SetFrame(int n) {
 	}
 }
 
-void CBagCharacterObject::SetProperty(const CBofString &sProp, int nVal) {
+void CBagCharacterObject::setProperty(const CBofString &sProp, int nVal) {
 	if (!sProp.Find("LOOP"))
 		SetNumOfLoops(nVal);
 	else if (!sProp.Find("SPEED"))
@@ -627,10 +627,10 @@ void CBagCharacterObject::SetProperty(const CBofString &sProp, int nVal) {
 	else if (!sProp.Find("CURR_FRAME"))    // This one will not work currently
 		SetCurrentFrame(nVal);
 	else
-		CBagObject::SetProperty(sProp, nVal);
+		CBagObject::setProperty(sProp, nVal);
 }
 
-int CBagCharacterObject::GetProperty(const CBofString &sProp) {
+int CBagCharacterObject::getProperty(const CBofString &sProp) {
 	if (!sProp.Find("LOOP"))
 		return GetNumOfLoops();
 
@@ -646,7 +646,7 @@ int CBagCharacterObject::GetProperty(const CBofString &sProp) {
 	if (!sProp.Find("CURR_FRAME"))    // This one will not work currently
 		return GetCurrentFrame();
 
-	return CBagObject::GetProperty(sProp);
+	return CBagObject::getProperty(sProp);
 }
 
 void CBagCharacterObject::SetPDAWand(CBagCharacterObject *pWand) {

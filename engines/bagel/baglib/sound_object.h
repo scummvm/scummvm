@@ -95,15 +95,15 @@ public:
 	}
 	void SetQueue(bool b = true);
 
-	virtual bool RunObject();
+	virtual bool runObject();
 
 	void SetVolume(int nVol);
 	int GetVolume();
 
 	void SetNumOfLoops(int n);
 
-	int GetProperty(const CBofString &sProp);
-	void SetProperty(const CBofString &sProp, int nVal);
+	int getProperty(const CBofString &sProp);
+	void setProperty(const CBofString &sProp, int nVal);
 
 	/**
 	 * Takes in info and then removes the relative information and returns

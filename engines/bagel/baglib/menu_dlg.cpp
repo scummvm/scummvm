@@ -156,7 +156,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 					nMenuCount++;
 				} else {
 					nRunItems++;
-					pObj->RunObject();
+					pObj->runObject();
 
 					// This detach may cause problems in the future, if it does delete it
 					// Some object may not work if detached for example midi sound
@@ -275,7 +275,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 			} else {
 				nRunItems++;
-				pObj->RunObject();
+				pObj->runObject();
 				if (pObj->GetType() == LINKOBJ) {
 					g_bAAOk = false;
 				}
@@ -471,7 +471,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			// the timer to get incremented.
 			CBagStorageDev *pCurSDEV = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
 			if (pObj != nullptr) {
-				pObj->RunCallBack();
+				pObj->runCallBack();
 
 				// Selecting this menu item causes a turn to go by
 				if (nNumCalls == 1 && pCurSDEV->IsCustom() == false) {
@@ -619,7 +619,7 @@ void CBagMenuDlg::OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 			CBofPoint pt = DevPtToViewPort(*pPoint);
 			m_pSelectedObject = GetObject(pt);
 			if (m_pSelectedObject != nullptr) {
-				m_pSelectedObject->OnLButtonUp(nFlags, pPoint);
+				m_pSelectedObject->onLButtonUp(nFlags, pPoint);
 			}
 		}
 

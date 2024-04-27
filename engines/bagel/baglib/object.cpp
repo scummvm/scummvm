@@ -120,7 +120,7 @@ ErrorCode CBagObject::update(CBofBitmap * /*pBmp*/, CPoint /*pt*/, CRect * /*pSr
 	return ERR_NONE;
 }
 
-int CBagObject::GetProperty(const CBofString &sProp) {
+int CBagObject::getProperty(const CBofString &sProp) {
 	if (!sProp.Find("STATE"))
 		return GetState();
 	else if (!sProp.Find("MODAL"))
@@ -129,7 +129,7 @@ int CBagObject::GetProperty(const CBofString &sProp) {
 		return 0;
 }
 
-void CBagObject::SetProperty(const CBofString &sProp, int nVal) {
+void CBagObject::setProperty(const CBofString &sProp, int nVal) {
 	if (!sProp.Find("STATE"))
 		SetState(nVal);
 	else if (!sProp.Find("TIMELESS")) {
@@ -152,7 +152,7 @@ void CBagObject::SetProperty(BAG_OBJECT_PROPERTIES xProp, bool bVal) {
 		m_nProperties &= ~xProp;
 }
 
-bool CBagObject::RunObject() {
+bool CBagObject::runObject() {
 	if (IsTimeless())
 		return true;
 
@@ -328,7 +328,7 @@ PARSE_CODES CBagObject::setInfo(bof_ifstream &istr) {
 			break;
 
 		//
-		//  no match return from funtion
+		//  no match return from function
 		//
 		default:
 			istr.putback(ch);
@@ -339,7 +339,7 @@ PARSE_CODES CBagObject::setInfo(bof_ifstream &istr) {
 	return rc;
 }
 
-void CBagObject::OnLButtonUp(uint32 nFlags, CBofPoint * /*xPoint*/, void *) {
+void CBagObject::onLButtonUp(uint32 nFlags, CBofPoint * /*xPoint*/, void *) {
 	if (GetMenuPtr()) {
 
 		CBofPoint pt = GetMousePos();
@@ -354,19 +354,19 @@ void CBagObject::OnLButtonUp(uint32 nFlags, CBofPoint * /*xPoint*/, void *) {
 		g_bNoMenu = true;
 	}
 
-	RunObject();
+	runObject();
 }
 
-bool CBagObject::OnMouseMove(uint32 /*nFlags*/, CPoint /*xPoint*/, void *) {
+bool CBagObject::onMouseMove(uint32 /*nFlags*/, CPoint /*xPoint*/, void *) {
 	return false;
 }
 
 const CBofString &CBagObject::GetRefName() {
 	if (m_psName) {
 		return *m_psName;
-	} else {
-		return _emptyString;
 	}
+
+	return _emptyString;
 }
 
 // Since we have an inordinate number of bag objects that replicate the

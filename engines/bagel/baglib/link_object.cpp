@@ -159,7 +159,7 @@ PARSE_CODES CBagLinkObject::setInfo(bof_ifstream &istr) {
 }
 
 
-bool CBagLinkObject::RunObject() {
+bool CBagLinkObject::runObject() {
 	// Reset Wield
 	g_bNoMenu = false;
 
@@ -201,7 +201,7 @@ bool CBagLinkObject::RunObject() {
 		VARMNGR->IncrementTimers();
 	}
 
-	return CBagObject::RunObject();
+	return CBagObject::runObject();
 }
 
 } // namespace Bagel

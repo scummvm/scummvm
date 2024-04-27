@@ -71,7 +71,7 @@ ErrorCode CBagSpriteObject::attach() {
 				else
 					m_xSprite->SetPosition(p.x, p.y);
 
-				SetProperty("CURR_CEL", GetState());
+				setProperty("CURR_CEL", GetState());
 
 				// This might add something to the PDA, make sure it gets redrawn.
 				CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev());
@@ -266,7 +266,7 @@ bool CBagSpriteObject::isInside(const CBofPoint &xPoint) {
 	return false;
 }
 
-void CBagSpriteObject::SetProperty(const CBofString &sProp, int nVal) {
+void CBagSpriteObject::setProperty(const CBofString &sProp, int nVal) {
 	if (!sProp.Find("STATE")) {
 		SetState(nVal);
 		if (m_xSprite)
@@ -276,10 +276,10 @@ void CBagSpriteObject::SetProperty(const CBofString &sProp, int nVal) {
 		if (m_xSprite)
 			m_xSprite->SetCel(nVal);
 	} else
-		CBagObject::SetProperty(sProp, nVal);
+		CBagObject::setProperty(sProp, nVal);
 }
 
-int CBagSpriteObject::GetProperty(const CBofString &sProp) {
+int CBagSpriteObject::getProperty(const CBofString &sProp) {
 	if (!sProp.Find("CURR_CEL")) {
 		if (m_xSprite) {
 			return m_xSprite->GetCelIndex();
@@ -287,7 +287,7 @@ int CBagSpriteObject::GetProperty(const CBofString &sProp) {
 		return 0;
 	}
 
-	return CBagObject::GetProperty(sProp);
+	return CBagObject::getProperty(sProp);
 }
 
 void CBagSpriteObject::SetAnimated(bool b) {

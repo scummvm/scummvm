@@ -576,7 +576,7 @@ void CBagPanWindow::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 			CBagObject *pObj = m_pFGObjectList->GetNodeItem(i);
 
 			if (pObj->isInside(*xPoint)) {
-				pObj->OnLButtonDown(nFlags, xPoint, this);
+				pObj->onLButtonDown(nFlags, xPoint, this);
 				return;
 			}
 		}
@@ -600,7 +600,7 @@ void CBagPanWindow::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	if ((pActObj != nullptr) && (nMA == kMouseDRAGGING) &&
 			(pActObj->GetType() == BUTTONOBJ) &&
 			(((CBagButtonObject *)pActObj)->getButtonType() == CBagButtonObject::BTN_SLIDER)) {
-		pActObj->OnLButtonUp(nFlags, xPoint, this);
+		pActObj->onLButtonUp(nFlags, xPoint, this);
 
 		// We are not dragging a slider anymore
 		SetLActivity(kMouseNONE);
@@ -637,7 +637,7 @@ void CBagPanWindow::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 				for (int i = nCount - 1; i >= 0; --i) {
 					CBagObject *pObj = m_pFGObjectList->GetNodeItem(i);
 					if (pObj->isInside(*xPoint)) {
-						pObj->OnLButtonUp(nFlags, xPoint, this);
+						pObj->onLButtonUp(nFlags, xPoint, this);
 						return;
 					}
 				}

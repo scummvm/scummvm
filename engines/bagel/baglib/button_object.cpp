@@ -39,7 +39,7 @@ CBagButtonObject::CBagButtonObject() {
 
 	_numPos = 0;
 	_dragging = false;
-	SetCallBack(nullptr, nullptr);
+	setCallBack(nullptr, nullptr);
 	SetAlwaysUpdate(true);
 
 	SetTimeless(true);
@@ -83,7 +83,7 @@ ErrorCode CBagButtonObject::detach() {
 
 extern bool g_bNoMenu;
 
-bool CBagButtonObject::RunObject() {
+bool CBagButtonObject::runObject() {
 	// Reset wield
 	g_bNoMenu = false;
 
@@ -101,12 +101,12 @@ bool CBagButtonObject::RunObject() {
 		SetState(0);
 	}
 
-	RunCallBack();
+	runCallBack();
 
-	return CBagObject::RunObject();
+	return CBagObject::runObject();
 }
 
-void CBagButtonObject::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *point, void *) {
+void CBagButtonObject::onLButtonDown(uint32 /*nFlags*/, CBofPoint *point, void *) {
 	if (_buttonType == BTN_PUSH) {
 		if (!_active && !_activeDown) {
 			_activeDown = true;
@@ -137,7 +137,7 @@ void CBagButtonObject::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *point, void *
 	SetDirty();
 }
 
-void CBagButtonObject::OnLButtonUp(uint32 flags, CBofPoint *point, void *extraInfo) {
+void CBagButtonObject::onLButtonUp(uint32 flags, CBofPoint *point, void *extraInfo) {
 	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev());
 
 	if (pMainWin != nullptr) {
@@ -208,10 +208,10 @@ void CBagButtonObject::OnLButtonUp(uint32 flags, CBofPoint *point, void *extraIn
 
 	SetDirty();
 
-	CBagSpriteObject::OnLButtonUp(flags, point, extraInfo);
+	CBagSpriteObject::onLButtonUp(flags, point, extraInfo);
 }
 
-bool CBagButtonObject::OnMouseMove(uint32 /*nFlags*/, CBofPoint point, void *extraInfo) {
+bool CBagButtonObject::onMouseMove(uint32 /*nFlags*/, CBofPoint point, void *extraInfo) {
 	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev());
 
 	if (_buttonType == BTN_SLIDER && _dragging) {
@@ -454,7 +454,7 @@ PARSE_CODES CBagButtonObject::setInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-void CBagButtonObject::SetProperty(const CBofString &prop, int val) {
+void CBagButtonObject::setProperty(const CBofString &prop, int val) {
 	if (!prop.Find("STATE")) {
 		if (GetSprite()) {
 			if (_buttonType == BTN_CHECKBOX) {
@@ -490,10 +490,10 @@ void CBagButtonObject::SetProperty(const CBofString &prop, int val) {
 		if (GetSprite())
 			GetSprite()->SetCel(val);
 	} else
-		CBagObject::SetProperty(prop, val);
+		CBagObject::setProperty(prop, val);
 }
 
-int CBagButtonObject::GetProperty(const CBofString &prop) {
+int CBagButtonObject::getProperty(const CBofString &prop) {
 	if (!prop.Find("CURR_CEL")) {
 		if (GetSprite()) {
 			return GetSprite()->GetCelIndex();
@@ -501,7 +501,7 @@ int CBagButtonObject::GetProperty(const CBofString &prop) {
 		return 0;
 	}
 
-	return CBagObject::GetProperty(prop);
+	return CBagObject::getProperty(prop);
 }
 
 } // namespace Bagel

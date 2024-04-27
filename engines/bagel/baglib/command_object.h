@@ -45,7 +45,7 @@ public:
 	 */
 	PARSE_CODES setInfo(bof_ifstream &istr);
 
-	virtual bool RunObject();
+	virtual bool runObject();
 };
 
 } // namespace Bagel

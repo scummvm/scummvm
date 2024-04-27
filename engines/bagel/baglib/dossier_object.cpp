@@ -284,7 +284,7 @@ CBofRect CBagDossierObject::getRect() {
 	return r;
 }
 
-void CBagDossierObject::OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * /*pInfo*/) {
+void CBagDossierObject::onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * /*pInfo*/) {
 	// If this is an inactive object (such as "plus residue too old" or "negative")
 	// then ignore the mousedown.
 

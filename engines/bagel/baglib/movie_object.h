@@ -61,7 +61,7 @@ public:
 
 	PARSE_CODES setInfo(bof_ifstream &istr);
 
-	virtual bool RunObject();
+	virtual bool runObject();
 
 	// Return true if this asynch zelda movie can play right now
 	bool AsynchPDAMovieCanPlay();

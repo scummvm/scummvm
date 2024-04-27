@@ -78,8 +78,8 @@ public:
 	virtual ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
 	virtual ErrorCode Update(CBofWindow *pWnd, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 
-	void SetProperty(const CBofString &sProp, int nVal);
-	int GetProperty(const CBofString &sProp);
+	void setProperty(const CBofString &sProp, int nVal);
+	int getProperty(const CBofString &sProp);
 
 	int GetFrameRate() {
 		return m_nMaxFrameRate;

@@ -131,7 +131,7 @@ public:
 	}
 
 	// Callback function functionality - probably can be phased out
-	virtual bool RunCallBack() {
+	virtual bool runCallBack() {
 		return false;
 	}
 
@@ -140,7 +140,7 @@ public:
 	}
 
 	// Run Object is called when there is no callback and the item was selected
-	virtual bool RunObject();
+	virtual bool runObject();
 
 	void SetExpression(CBagExpression *pExpr) {
 		m_pEvalExpr = pExpr;
@@ -294,8 +294,8 @@ public:
 	}
 	virtual void SetInitInfo(const CBofString &) {}
 
-	virtual int GetProperty(const CBofString &sProp);
-	virtual void SetProperty(const CBofString &, int nVal);
+	virtual int getProperty(const CBofString &sProp);
+	virtual void setProperty(const CBofString &, int nVal);
 
 	bool IsDirty() {
 		return m_bDirty != 0;
@@ -394,10 +394,10 @@ public:
 		return false;
 	}
 
-	virtual void OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr) {}
-	virtual void OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr); //{ } run menu if available
+	virtual void onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr) {}
+	virtual void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr); //{ } run menu if available
 	// virtual bool        OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr);    //{ return false; }
-	virtual bool OnMouseMove(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr); //{ return false; }
+	virtual bool onMouseMove(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr); //{ return false; }
 	virtual bool OnMouseOver(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr) {
 		return false;
 	}
