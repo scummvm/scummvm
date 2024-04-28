@@ -250,7 +250,14 @@ namespace Macs2 {
 
 	void View1::clearStringBox() {
 		_isShowingStringBox = false;
+		speakingCharacter = nullptr;
 		redraw();
+		if (_continueScriptAfterUI) {
+			_continueScriptAfterUI = false;
+			// TODO: Check which one it should be
+			g_engine->RunScriptExecutor();
+		}
+		
 	}
 
 	void View1::startFading() {
@@ -266,6 +273,10 @@ namespace Macs2 {
 	bool View1::msgMouseDown(const MouseDownMessage& msg)
 	{
 		if (msg._button == MouseMessage::MB_LEFT) {
+			if (_isShowingStringBox) {
+				clearStringBox();
+				return true;
+			}
 			uint32 value = getSurface().getPixel(msg._pos.x, msg._pos.y);
 			g_system->setWindowCaption(Common::String::format("%u,%u: %u", msg._pos.x, msg._pos.y, value));
 			g_engine->CalculatePath(Common::Point(154, 136), Common::Point(msg._pos.x, msg._pos.y));
@@ -562,6 +573,7 @@ void View1::ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 	// TODO: Need to reset this
 	// TODO: Add position: position.x, position.y,
 	setStringBox(strings);
+	_continueScriptAfterUI = true;
 }
 
 Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
