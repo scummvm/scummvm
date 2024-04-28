@@ -42,39 +42,56 @@
 
 namespace Director {
 
-const char *UnitTest::xlibName = "UnitTest";
-const char *UnitTest::fileNames[] = {
+const char *UnitTestXObj::xlibName = "UnitTest";
+const char *UnitTestXObj::fileNames[] = {
 	"UnitTest",
 	0
 };
 
-static BuiltinProto builtins[] = {
-	{ "UTScreenshot", UnitTest::m_UTScreenshot, 0, 1, 400, HBLTIN },
-	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
+static MethodProto xlibMethods[] = {
+	{ "new",				UnitTestXObj::m_new,				 0, 0,	400 },	// D4
+	{ "screenshot",			UnitTestXObj::m_screenshot,			 1, 1,  400 },	// D4
+	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void UnitTest::open(ObjectType type, const Common::Path &path) {
-	g_lingo->initBuiltIns(builtins);
+void UnitTestXObj::open(ObjectType type, const Common::Path &path) {
+	if (type == kXObj) {
+		UnitTestXObject::initMethods(xlibMethods);
+		UnitTestXObject *xobj = new UnitTestXObject(kXObj);
+		g_lingo->exposeXObject(xlibName, xobj);
+	}
 }
 
-void UnitTest::close(ObjectType type) {
-	g_lingo->cleanupBuiltIns(builtins);
+void UnitTestXObj::close(ObjectType type) {
+	if (type == kXObj) {
+		UnitTestXObject::cleanupMethods();
+		g_lingo->_globalvars[xlibName] = Datum();
+	}
 }
 
-void UnitTest::m_UTScreenshot(int nargs) {
+UnitTestXObject::UnitTestXObject(ObjectType ObjectType) :Object<UnitTestXObject>("UnitTest") {
+	_objType = ObjectType;
+}
+
+void UnitTestXObj::m_new(int nargs) {
+	g_lingo->push(g_lingo->_state->me);
+}
+
+void UnitTestXObj::m_screenshot(int nargs) {
 	Common::String filenameBase = g_director->getCurrentMovie()->getArchive()->getFileName();
 	if (filenameBase.hasSuffixIgnoreCase(".dir"))
 		filenameBase = filenameBase.substr(0, filenameBase.size() - 4);
 
 	if (nargs > 1) {
 		g_lingo->dropStack(nargs - 1);
+		nargs = 1;
 	}
 	if (nargs == 1) {
 		Datum name = g_lingo->pop();
 		if (name.type == STRING) {
 			filenameBase = *name.u.s;
 		} else if (name.type != VOID) {
-			warning("UnitTest::b_UTScreenshot(): expected string for arg 1, ignoring");
+			warning("UnitTestXObj::m_screenshot(): expected string for arg 1, ignoring");
 		}
 	}
 
@@ -99,7 +116,7 @@ void UnitTest::m_UTScreenshot(int nargs) {
 
 	Common::SeekableWriteStream *stream = file.createWriteStream();
 	if (!stream) {
-		warning("UnitTest::b_UTScreenshot(): could not open file %s", file.getPath().toString(Common::Path::kNativeSeparator).c_str());
+		warning("UnitTestXObj::m_screenshot(): could not open file %s", file.getPath().toString(Common::Path::kNativeSeparator).c_str());
 		return;
 	}
 
@@ -114,7 +131,7 @@ void UnitTest::m_UTScreenshot(int nargs) {
 	success = Image::writeBMP(*stream, *windowSurface);
 #endif
 	if (!success) {
-		warning("UnitTest::b_UTScreenshot(): error writing screenshot data to file %s", file.getPath().toString(Common::Path::kNativeSeparator).c_str());
+		warning("UnitTestXObj::m_screenshot(): error writing screenshot data to file %s", file.getPath().toString(Common::Path::kNativeSeparator).c_str());
 	}
 	stream->finalize();
 	delete stream;
