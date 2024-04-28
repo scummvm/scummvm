@@ -102,13 +102,6 @@ namespace AGS3 {
 #define LEGACY_MAX_SPRITES_V25  6000
 #define LEGACY_MAX_SPRITES      30000
 
-#if AGS_PLATFORM_OS_WINDOWS
-#define AGS_INLINE inline
-#else
-// the linux compiler won't allow extern inline
-#define AGS_INLINE
-#endif
-
 // The game to screen coordinate conversion multiplier in hi-res type games
 #define HIRES_COORD_MULTIPLIER 2
 
