@@ -907,6 +907,17 @@ public:
 	virtual void *getOpenGLProcAddress(const char *name) const { return nullptr; }
 #endif
 
+#if defined(USE_IMGUI)
+	/**
+	 * Set the address for ImGui rendering callback
+	 *
+	 * This is only supported on select backends desktop oriented
+	 *
+	 * @param render The function pointer called while rendering on screen
+	 */
+	virtual void setImGuiRenderCallback(void(*render)()) { }
+#endif
+
 	/**
 	 * Load the specified shader.
 	 *

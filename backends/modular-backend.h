@@ -67,6 +67,9 @@ public:
 	int getDefaultGraphicsMode() const override;
 	bool setGraphicsMode(int mode, uint flags = kGfxModeNoFlags) override;
 	int getGraphicsMode() const override;
+#if defined(USE_IMGUI)
+	void setImGuiRenderCallback(void(*render)()) override final;
+#endif
 	bool setShader(const Common::Path &name) override final;
 	const GraphicsMode *getSupportedStretchModes() const override final;
 	int getDefaultStretchMode() const override final;

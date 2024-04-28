@@ -48,6 +48,9 @@ public:
 	virtual int getDefaultGraphicsMode() const { return 0; }
 	virtual bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags) { return (mode == 0); }
 	virtual int getGraphicsMode() const { return 0; }
+#if defined(USE_IMGUI)
+	virtual void setImGuiRenderCallback(void(*render)()) { }
+#endif
 	virtual bool setShader(const Common::Path &fileName) { return false; }
 	virtual const OSystem::GraphicsMode *getSupportedStretchModes() const {
 		static const OSystem::GraphicsMode noStretchModes[] = {{"NONE", "Normal", 0}, {nullptr, nullptr, 0 }};
@@ -113,11 +116,6 @@ public:
 
 	virtual void saveScreenshot() {}
 	virtual bool lockMouse(bool lock) { return false; }
-
-	virtual void setImGuiRenderCallback(void(*render)()) { _imGuiRender = render; }
-
-protected:
-	void(*_imGuiRender)() = nullptr;
 };
 
 #endif

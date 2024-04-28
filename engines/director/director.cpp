@@ -291,10 +291,7 @@ Common::Error DirectorEngine::run() {
 
 #ifdef USE_IMGUI
 	onImGuiInit();
-	ModularGraphicsBackend *gfxBackend = dynamic_cast<ModularGraphicsBackend *>(_system);
-	if (gfxBackend) {
-		gfxBackend->getGraphicsManager()->setImGuiRenderCallback(onImGuiRender);
-	}
+	_system->setImGuiRenderCallback(onImGuiRender);
 #endif
 
 	bool loop = true;
@@ -324,6 +321,7 @@ Common::Error DirectorEngine::run() {
 	}
 
 #ifdef USE_IMGUI
+	_system->setImGuiRenderCallback(nullptr);
 	onImGuiCleanup();
 #endif
 
