@@ -980,14 +980,14 @@ Common::Error TwpEngine::run() {
 					break;
 				case Common::KEYCODE_UP:
 					if (_dialog->getState() == WaitingForChoice) {
-						_cursor.pos = screenToWin(_dialog->getPreviousChoicePos(winToScreen(_cursor.pos)));
+						_moveCursorTo.reset(new MoveCursorTo(screenToWin(_dialog->getPreviousChoicePos(winToScreen(_cursor.pos))), 0.1f));
 					} else {
 						_cursor.holdUp = true;
 					}
 					break;
 				case Common::KEYCODE_DOWN:
 					if (_dialog->getState() == WaitingForChoice) {
-						_cursor.pos = screenToWin(_dialog->getNextChoicePos(winToScreen(_cursor.pos)));
+						_moveCursorTo.reset(new MoveCursorTo(screenToWin(_dialog->getNextChoicePos(winToScreen(_cursor.pos))), 0.1f));
 					} else {
 						_cursor.holdDown = true;
 					}
