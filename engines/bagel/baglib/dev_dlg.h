@@ -48,12 +48,12 @@ public:
 	ErrorCode create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CBofRect *rect, bool useExtraFl = false);
 	void paintText();
 	void setText(CBofString &, CBofRect *);
-	void onKeyHit(uint32 keyCode, uint32 repCount);
+	void onKeyHit(uint32 keyCode, uint32 repCount) override;
 
-	virtual void onMouseMove(uint32 flags, CBofPoint *point, void * = nullptr);
-	virtual void onLButtonUp(uint32 flags, CBofPoint *point, void * = nullptr);
-	virtual void onClose();
-	virtual ErrorCode onRender(CBofBitmap *bmp, CBofRect *rect = nullptr);
+	void onMouseMove(uint32 flags, CBofPoint *point, void * = nullptr) override;
+	void onLButtonUp(uint32 flags, CBofPoint *point, void * = nullptr) override;
+	void onClose() override;
+	ErrorCode onRender(CBofBitmap *bmp, CBofRect *rect = nullptr) override;
 };
 
 } // namespace Bagel
