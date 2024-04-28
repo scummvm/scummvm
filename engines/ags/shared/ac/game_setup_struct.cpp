@@ -351,25 +351,17 @@ void GameSetupStruct::ReadAudioClips_Aligned(Shared::Stream *in, size_t count) {
 	}
 }
 
-void GameSetupStruct::ReadFromSaveGame_v321(Stream *in, GameDataVersion data_ver, char *gswas, ccScript *compsc, CharacterInfo *chwas,
-											WordsDictionary *olddict, std::vector<String> &mesbk) {
+void GameSetupStruct::ReadFromSaveGame_v321(Stream *in) {
 	ReadInvInfo_Aligned(in);
 	ReadMouseCursors_Aligned(in);
 
-	if (data_ver <= kGameVersion_272) {
+	if (_G(loaded_game_file_version) <= kGameVersion_272) {
 		for (int i = 0; i < numinvitems; ++i)
 			intrInv[i]->ReadTimesRunFromSave_v321(in);
 		for (int i = 0; i < numcharacters; ++i)
 			intrChar[i]->ReadTimesRunFromSave_v321(in);
 	}
 
-	// restore pointer members
-	globalscript = gswas;
-	compiled_script = compsc;
-	chars = chwas;
-	dict = olddict;
-	for (size_t i = 0; i < MAXGLOBALMES; ++i)
-		messages[i] = mesbk[i];
 	in->ReadArrayOfInt32(&options[0], OPT_HIGHESTOPTION_321 + 1);
 	options[OPT_LIPSYNCTEXT] = in->ReadByte();
 
