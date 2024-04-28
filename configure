@@ -6775,12 +6775,31 @@ echo "$_discord"
 #
 echocheck "ImGui"
 
-if test "$_opengl" = yes ; then
-  define_in_config_if_yes "$_imgui" 'USE_IMGUI'
-  echo "$_imgui"
+if test "$_imgui" != no ; then
+	if test "$_opengl" = yes ; then
+		case $_backend in
+			sdl)
+				if test "$_sdlMajorVersionNumber" -ge 2 ; then
+					_imgui=yes
+					echo "yes"
+				else
+					_imgui=no
+					echo "no (backend unsupported)"
+				fi
+				;;
+			*)
+				# For now, only SDL supports ImGui
+				_imgui=no
+				echo "no (backend unsupported)"
+				;;
+		esac
+	else
+		echo "no (requires OpenGL)"
+	fi
 else
-  echo "no (requires OpenGL)"
+	echo "$_imgui"
 fi
+define_in_config_if_yes "$_imgui" 'USE_IMGUI'
 
 #
 # Enable vkeybd / event recorder
