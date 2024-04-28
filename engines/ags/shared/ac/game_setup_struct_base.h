@@ -30,6 +30,7 @@
 #define AGS_SHARED_AC_GAME_SETUP_STRUCT_BASE_H
 
 #include "ags/lib/allegro.h" // RGB
+#include "ags/lib/std/memory.h"
 #include "ags/lib/std/vector.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/ac/game_struct_defines.h"
@@ -79,7 +80,7 @@ struct GameSetupStructBase {
 	int               invhotdotsprite;
 	int32_t           reserved[NUM_INTS_RESERVED];
 	String			  messages[MAXGLOBALMES];
-	WordsDictionary *dict;
+	std::unique_ptr<WordsDictionary> dict;
 	char *globalscript;
 	std::vector<CharacterInfo> chars;
 	ccScript *compiled_script;

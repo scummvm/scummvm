@@ -191,8 +191,8 @@ void GameSetupStruct::read_interaction_scripts(Shared::Stream *in, GameDataVersi
 
 void GameSetupStruct::read_words_dictionary(Shared::Stream *in) {
 	if (load_dictionary) {
-		dict = new WordsDictionary();
-		read_dictionary(dict, in);
+		dict.reset(new WordsDictionary());
+		read_dictionary(dict.get(), in);
 	}
 }
 
