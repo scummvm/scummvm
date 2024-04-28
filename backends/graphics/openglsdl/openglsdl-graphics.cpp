@@ -305,6 +305,12 @@ void OpenGLSdlGraphicsManager::updateScreen() {
 		--_ignoreResizeEvents;
 	}
 
+#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+	if (_imGuiRender) {
+		_forceRedraw = true;
+	}
+#endif
+
 	OpenGLGraphicsManager::updateScreen();
 }
 
