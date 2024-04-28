@@ -103,7 +103,7 @@ public:
 	Common::Rect getCastMemberInitialRect(int castId);
 	void setCastMemberModified(int castId);
 	CastMember *setCastMember(int castId, CastMember *cast);
-	bool duplicateCastMember(CastMember *source, int targetId);
+	bool duplicateCastMember(CastMember *source, CastMemberInfo *info, int targetId);
 	bool eraseCastMember(int castId);
 	CastMember *getCastMember(int castId, bool load = true);
 	CastMember *getCastMemberByNameAndType(const Common::String &name, CastType type);

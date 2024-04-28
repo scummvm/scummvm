@@ -186,6 +186,10 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, BitmapCastMember &
 	source.load();
 	_loaded = true;
 
+	_initialRect = source._initialRect;
+	_boundingRect = source._boundingRect;
+	_children = source._children;
+
 	_picture = source._picture ? new Picture(*source._picture) : nullptr;
 	_ditheredImg = nullptr;
 	_matte = nullptr;

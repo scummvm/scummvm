@@ -452,19 +452,32 @@ bool Movie::eraseCastMember(CastMemberID memberID) {
 }
 
 bool Movie::duplicateCastMember(CastMemberID source, CastMemberID target) {
-	CastMember *sourceMember = getCastMember(source);
-	if (sourceMember) {
-		if (_casts.contains(target.castLib)) {
-			Cast *cast = _casts.getVal(target.castLib);
-			debugC(3, kDebugLoading, "Movie::DuplicateCastMember(): copying cast data from %s to %s (%s)", source.asString().c_str(), target.asString().c_str(), castType2str(sourceMember->_type));
-			return cast->duplicateCastMember(sourceMember, target.member);
-		} else {
-			warning("Movie::duplicateCastMember(): couldn't find destination castLib %d", target.castLib);
+	Cast *sourceCast = nullptr;
+	Cast *targetCast = nullptr;
+	if (_casts.contains(target.castLib)) {
+		if (_casts[target.castLib]->getCastMember(source.member)) {
+			sourceCast = _casts[target.castLib];
+		} else if (_sharedCast && _sharedCast->getCastMember(source.member)) {
+			sourceCast = _sharedCast;
 		}
-	} else {
-		warning("Movie::duplicateCastMember(): couldn't find source cast member %s", source.asString().c_str());
 	}
-
+	// for shared + movie casts, duplications from the shared cast should be
+	// in the shared cast namespace
+	if (source.castLib == target.castLib) {
+		targetCast = sourceCast;
+	} else if (_casts.contains(target.castLib)) {
+		targetCast = _casts.getVal(target.castLib);
+	}
+	if (!sourceCast) {
+		warning("Movie::duplicateCastMember(): couldn't find source cast member %s", source.asString().c_str());
+	} else if (!targetCast) {
+		warning("Movie::duplicateCastMember(): couldn't find destination castLib %d", target.castLib);
+	} else {
+		CastMember *sourceMember = sourceCast->getCastMember(source.member);
+		CastMemberInfo *sourceInfo = sourceCast->getCastMemberInfo(source.member);
+		debugC(3, kDebugLoading, "Movie::DuplicateCastMember(): copying cast data from %s to %s (%s)", source.asString().c_str(), target.asString().c_str(), castType2str(sourceMember->_type));
+		return targetCast->duplicateCastMember(sourceMember, sourceInfo, target.member);
+	}
 	return false;
 }
 

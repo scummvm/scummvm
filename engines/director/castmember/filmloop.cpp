@@ -53,6 +53,11 @@ FilmLoopCastMember::FilmLoopCastMember(Cast *cast, uint16 castId, FilmLoopCastMe
 	// force a load so we can copy the cast resource information
 	source.load();
 	_loaded = true;
+
+	_initialRect = source._initialRect;
+	_boundingRect = source._boundingRect;
+	_children = source._children;
+
 	_enableSound = source._enableSound;
 	_crop = source._crop;
 	_center = source._center;
