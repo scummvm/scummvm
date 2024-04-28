@@ -665,7 +665,9 @@ void OpenGLGraphicsManager::updateScreen() {
 	    && !_osdMessageSurface && !_osdIconSurface
 #endif
 	    ) {
+#if !defined(USE_IMGUI)
 		return;
+#endif
 	}
 
 	// Update changes to textures.
@@ -1759,9 +1761,9 @@ bool OpenGLGraphicsManager::saveScreenshot(const Common::Path &filename) const {
 
 	Common::Array<uint8> pixels;
 	pixels.resize(lineSize * height);
-#ifdef EMSCRIPTEN	
+#ifdef EMSCRIPTEN
 	// WebGL doesn't support GL_RGB, see https://registry.khronos.org/webgl/specs/latest/1.0/#5.14.12:
-	// "Only two combinations of format and type are accepted. The first is format RGBA and type UNSIGNED_BYTE. 
+	// "Only two combinations of format and type are accepted. The first is format RGBA and type UNSIGNED_BYTE.
 	// The second is an implementation-chosen format. " and the implementation-chosen formats are buggy:
 	// https://github.com/KhronosGroup/WebGL/issues/2747
 	GL_CALL(glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, &pixels.front()));

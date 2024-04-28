@@ -149,6 +149,12 @@ MODULE_OBJS = \
 	lingo/xlibs/yasix.o \
 	lingo/xtras/scrnutil.o
 
+ifdef USE_IMGUI
+MODULE_OBJS += \
+	debugtools.o \
+
+endif
+
 # HACK: Skip this when including the file for detection objects.
 ifeq "$(USE_RULES)" "1"
 director-grammar:

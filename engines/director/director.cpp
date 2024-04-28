@@ -19,6 +19,9 @@
  *
  */
 
+#include "backends/modular-backend.h"
+#include "backends/graphics/graphics.h"
+
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/tokenizer.h"
@@ -28,6 +31,7 @@
 
 #include "director/director.h"
 #include "director/debugger.h"
+#include "director/debugtools.h"
 #include "director/archive.h"
 #include "director/cast.h"
 #include "director/movie.h"
@@ -285,6 +289,14 @@ Common::Error DirectorEngine::run() {
 		g_system->updateScreen();
 	}
 
+#ifdef USE_IMGUI
+	onImGuiInit();
+	ModularGraphicsBackend *gfxBackend = dynamic_cast<ModularGraphicsBackend *>(_system);
+	if (gfxBackend) {
+		gfxBackend->getGraphicsManager()->setImGuiRenderCallback(onImGuiRender);
+	}
+#endif
+
 	bool loop = true;
 
 	while (loop) {
@@ -310,6 +322,10 @@ Common::Error DirectorEngine::run() {
 		draw();
 		g_director->delayMillis(10);
 	}
+
+#ifdef USE_IMGUI
+	onImGuiCleanup();
+#endif
 
 	return Common::kNoError;
 }

@@ -98,10 +98,6 @@ TwpEngine::TwpEngine(OSystem *syst, const TwpGameDescription *gameDesc)
 }
 
 TwpEngine::~TwpEngine() {
-#ifdef USE_IMGUI
-	onImGuiCleanup();
-#endif
-
 	_mixer->stopAll();
 }
 
@@ -778,14 +774,6 @@ void TwpEngine::draw(RenderTexture *outTexture) {
 
 	// imgui render
 	_gfx.use(nullptr);
-
-#ifdef USE_IMGUI
-	ModularGraphicsBackend *sdl_g_system = dynamic_cast<ModularGraphicsBackend *>(_system);
-	if (sdl_g_system) {
-		sdl_g_system->getGraphicsManager()->renderImGui(onImGuiRender);
-	}
-#endif
-
 	_system->updateScreen();
 }
 
@@ -884,6 +872,10 @@ Common::Error TwpEngine::run() {
 
 #ifdef USE_IMGUI
 	onImGuiInit();
+	ModularGraphicsBackend *gfxBackend = dynamic_cast<ModularGraphicsBackend *>(_system);
+	if (gfxBackend) {
+		gfxBackend->getGraphicsManager()->setImGuiRenderCallback(onImGuiRender);
+	}
 #endif
 
 	// Simple event handling loop
@@ -1109,6 +1101,10 @@ Common::Error TwpEngine::run() {
 			_system->delayMillis(10 - delta);
 		}
 	}
+
+#ifdef USE_IMGUI
+	onImGuiCleanup();
+#endif
 
 	return Common::kNoError;
 }

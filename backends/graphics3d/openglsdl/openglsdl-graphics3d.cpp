@@ -658,19 +658,6 @@ OpenGL::FrameBuffer *OpenGLSdlGraphics3dManager::createFramebuffer(uint width, u
 	}
 }
 
-#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
-void OpenGLSdlGraphics3dManager::renderImGui(void(*render)()) {
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplSDL2_NewFrame(_window->getSDLWindow());
-
-	ImGui::NewFrame();
-	render();
-	ImGui::Render();
-
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-}
-#endif
-
 void OpenGLSdlGraphics3dManager::updateScreen() {
 
 	GLint prevStateViewport[4];
@@ -700,7 +687,20 @@ void OpenGLSdlGraphics3dManager::updateScreen() {
 		SdlGraphicsManager::saveScreenshot();
 		_queuedScreenshot = false;
 	}
-#endif 
+#endif
+
+#ifdef USE_IMGUI
+	if (_imGuiRender) {
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplSDL2_NewFrame(_window->getSDLWindow());
+
+		ImGui::NewFrame();
+		_imGuiRender();
+		ImGui::Render();
+
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	}
+#endif
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_GL_SwapWindow(_window->getSDLWindow());
@@ -862,9 +862,9 @@ bool OpenGLSdlGraphics3dManager::saveScreenshot(const Common::Path &filename) co
 
 	Common::Array<uint8> pixels;
 	pixels.resize(lineSize * height);
-#ifdef EMSCRIPTEN	
+#ifdef EMSCRIPTEN
 	// WebGL doesn't support GL_RGB, see https://registry.khronos.org/webgl/specs/latest/1.0/#5.14.12:
-	// "Only two combinations of format and type are accepted. The first is format RGBA and type UNSIGNED_BYTE. 
+	// "Only two combinations of format and type are accepted. The first is format RGBA and type UNSIGNED_BYTE.
 	// The second is an implementation-chosen format. " and the implementation-chosen formats are buggy:
 	// https://github.com/KhronosGroup/WebGL/issues/2747
 	glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, &pixels.front());

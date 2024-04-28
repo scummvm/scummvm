@@ -114,7 +114,10 @@ public:
 	virtual void saveScreenshot() {}
 	virtual bool lockMouse(bool lock) { return false; }
 
-	virtual void renderImGui(void(*render)()) {}
+	virtual void setImGuiRenderCallback(void(*render)()) { _imGuiRender = render; }
+
+protected:
+	void(*_imGuiRender)() = nullptr;
 };
 
 #endif

@@ -34,6 +34,11 @@
 #include "common/translation.h"
 #endif
 
+#ifdef USE_IMGUI
+#include "backends/imgui/backends/imgui_impl_sdl2_scummvm.h"
+#include "backends/imgui/backends/imgui_impl_opengl3_scummvm.h"
+#endif
+
 OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, SdlWindow *window)
 	: SdlGraphicsManager(eventSource, window), _lastRequestedHeight(0),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -191,6 +196,15 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, 
 
 OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
+
+#ifdef USE_IMGUI
+	if (_glContext) {
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplSDL2_Shutdown();
+		ImGui::DestroyContext();
+	}
+#endif
+
 	notifyContextDestroy();
 	SDL_GL_DeleteContext(_glContext);
 #else
@@ -315,7 +329,7 @@ void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 		currentWidth = width;
 		currentHeight = height;
 	}
-	
+
 	debug(3, "req: %d x %d  cur: %d x %d, scale: %f", width, height, currentWidth, currentHeight, dpiScale);
 
 	if (ConfMan.getBool("force_resize", Common::ConfigManager::kApplicationDomain)) {
@@ -442,7 +456,21 @@ void OpenGLSdlGraphicsManager::refreshScreen() {
 		SdlGraphicsManager::saveScreenshot();
 		_queuedScreenshot = false;
 	}
-#endif 
+#endif
+
+#ifdef USE_IMGUI
+	if(_imGuiRender) {
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplSDL2_NewFrame(_window->getSDLWindow());
+
+		ImGui::NewFrame();
+		_imGuiRender();
+		ImGui::Render();
+
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	}
+#endif
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_GL_SwapWindow(_window->getSDLWindow());
 #else
@@ -521,6 +549,12 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	if (_glContext) {
 		notifyContextDestroy();
 
+#ifdef USE_IMGUI
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplSDL2_Shutdown();
+		ImGui::DestroyContext();
+#endif
+
 		SDL_GL_DeleteContext(_glContext);
 		_glContext = nullptr;
 	}
@@ -568,6 +602,17 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	if (!_glContext) {
 		return false;
 	}
+
+#ifdef USE_IMGUI
+	// Setup Dear ImGui
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGui_ImplSDL2_InitForOpenGL(_window->getSDLWindow(), _glContext);
+	ImGui_ImplOpenGL3_Init("#version 110");
+	ImGui::StyleColorsDark();
+	ImGuiIO &io = ImGui::GetIO();
+	io.IniFilename = nullptr;
+#endif
 
 	if (SDL_GL_SetSwapInterval(_vsync ? 1 : 0)) {
 		warning("Unable to %s VSync: %s", _vsync ? "enable" : "disable", SDL_GetError());
