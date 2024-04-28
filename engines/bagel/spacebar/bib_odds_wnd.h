@@ -39,7 +39,7 @@ public:
 	virtual ErrorCode detach();        // This function detaches the background and necessary bitmaps
 
 	void onMouseMove(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
-	void OnKeyHit(uint32 lKey, uint32 lRepCount);
+	void onKeyHit(uint32 lKey, uint32 lRepCount);
 
 	static void initialize();
 	static CBagObject *m_pWieldedObject;

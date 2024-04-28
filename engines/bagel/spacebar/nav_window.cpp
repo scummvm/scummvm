@@ -841,7 +841,7 @@ void CNavWindow::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 }
 
 
-void CNavWindow::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
+void CNavWindow::onKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	Assert(IsValidObject(this));
 
 	if (lKey == BKEY_ALT_q || lKey == BKEY_ALT_F4) {

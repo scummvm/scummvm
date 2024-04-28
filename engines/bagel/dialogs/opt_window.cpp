@@ -630,7 +630,7 @@ void CBagOptWindow::OnInitDialog() {
 	attach();
 }
 
-void CBagOptWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
+void CBagOptWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 	Assert(IsValidObject(this));
 
 	CBagMasterWin *pWin;
@@ -714,7 +714,7 @@ void CBagOptWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 		break;
 
 	default:
-		CBofDialog::OnKeyHit(lKey, lRepCount);
+		CBofDialog::onKeyHit(lKey, lRepCount);
 		break;
 	}
 }

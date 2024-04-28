@@ -164,8 +164,8 @@ CBagPanWindow::~CBagPanWindow() {
 	delete m_pFGObjectList;
 }
 
-void CBagPanWindow::OnClose() {
-	CBagStorageDevWnd::OnClose();
+void CBagPanWindow::onClose() {
+	CBagStorageDevWnd::onClose();
 
 	DestroyWindow();				// Destruct the main window
 }
@@ -428,7 +428,7 @@ ErrorCode CBagPanWindow::OnCursorUpdate(int nCurrObj) {
 	return m_errCode;
 }
 
-void CBagPanWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
+void CBagPanWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 	Assert(IsValidObject(this));
 
 	if (m_pSlideBitmap != nullptr) {
@@ -475,7 +475,7 @@ void CBagPanWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 		}
 	}
 
-	CBagStorageDevWnd::OnKeyHit(lKey, lRepCount);
+	CBagStorageDevWnd::onKeyHit(lKey, lRepCount);
 }
 
 void CBagPanWindow::onMouseMove(uint32 nFlags, CBofPoint *p, void *) {
@@ -593,7 +593,7 @@ void CBagPanWindow::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 	}
 }
 
-void CBagPanWindow::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
+void CBagPanWindow::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	MOUSE_ACTIVITY  nMA = GetLActivity();
 	CBagObject *pActObj = GetLActiveObject();
 
@@ -644,7 +644,7 @@ void CBagPanWindow::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 			}
 		}
 
-		CBagStorageDevWnd::OnLButtonUp(nFlags, xPoint);
+		CBagStorageDevWnd::onLButtonUp(nFlags, xPoint);
 	}
 }
 

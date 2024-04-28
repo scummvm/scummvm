@@ -700,7 +700,7 @@ void CBibbleWindow::OnBofButton(CBofObject *pObject, int nState) {
 	}
 }
 
-void CBibbleWindow::OnClose() {
+void CBibbleWindow::onClose() {
 	g_engine->quitGame();
 }
 
@@ -1088,7 +1088,7 @@ void CBibbleWindow::OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 }
 
 
-void CBibbleWindow::OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
+void CBibbleWindow::onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
 	Assert(IsValidObject(this));
 }
 
@@ -1188,7 +1188,7 @@ ErrorCode CBibbleWindow::UnHighlight(CBetArea *pArea) {
 	return m_errCode;
 }
 
-void CBibbleWindow::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
+void CBibbleWindow::onKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	Assert(IsValidObject(this));
 
 	if (lKey == BKEY_ESC)

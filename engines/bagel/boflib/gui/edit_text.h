@@ -35,7 +35,7 @@ private:
 
 protected:
 	void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
-	void OnKeyHit(uint32 lKey, uint32 lRepCount) override;
+	void onKeyHit(uint32 lKey, uint32 lRepCount) override;
 
 public:
 	CBofEditText() {}

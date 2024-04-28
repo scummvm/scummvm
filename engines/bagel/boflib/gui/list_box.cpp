@@ -229,7 +229,7 @@ void CBofListBox::OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 }
 
 
-void CBofListBox::OnKeyHit(uint32 lKey, uint32 lRepCount) {
+void CBofListBox::onKeyHit(uint32 lKey, uint32 lRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {
@@ -261,7 +261,7 @@ void CBofListBox::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 		// Call the previous windows onkeyhit
 		CBofWindow *pParent = GetParent();
 		if (pParent && pParent != this) {
-			pParent->OnKeyHit(lKey, lRepCount);
+			pParent->onKeyHit(lKey, lRepCount);
 		}
 		break;
 	}

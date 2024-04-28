@@ -295,7 +295,7 @@ void CBagSaveDialog::SaveAndClose() {
 }
 
 
-void CBagSaveDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
+void CBagSaveDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {
@@ -335,7 +335,7 @@ void CBagSaveDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 		break;
 
 	default:
-		CBofDialog::OnKeyHit(lKey, nRepCount);
+		CBofDialog::onKeyHit(lKey, nRepCount);
 		break;
 	}
 }

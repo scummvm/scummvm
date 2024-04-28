@@ -305,7 +305,7 @@ ErrorCode CBagRestoreDialog::RestoreAndClose() {
 	return m_errCode;
 }
 
-void CBagRestoreDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
+void CBagRestoreDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {
@@ -346,7 +346,7 @@ void CBagRestoreDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 		break;
 
 	default:
-		CBofDialog::OnKeyHit(lKey, nRepCount);
+		CBofDialog::onKeyHit(lKey, nRepCount);
 		break;
 	}
 }

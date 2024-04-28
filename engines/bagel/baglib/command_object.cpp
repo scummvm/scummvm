@@ -263,7 +263,7 @@ bool CBagCommandObject::runObject() {
 			CBofString bmpName("$SBARDIR\\GENERAL\\POPUP\\THUDPOP.BMP");
 			MACROREPLACE(bmpName);
 			CDevDlg dlg;
-			dlg.Create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
+			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
 			dlg.DoModal();
 			dlg.Destroy();
 
@@ -272,7 +272,7 @@ bool CBagCommandObject::runObject() {
 			CBofString bmpName("$SBARDIR\\GENERAL\\POPUP\\FLEEDAT.BMP");
 			MACROREPLACE(bmpName);
 			CDevDlg dlg;
-			dlg.Create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
+			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
 			dlg.DoModal();
 			dlg.Destroy();
 
@@ -281,7 +281,7 @@ bool CBagCommandObject::runObject() {
 			CBofString bmpName("$SBARDIR\\GENERAL\\POPUP\\CLICKPOP.BMP");
 			MACROREPLACE(bmpName);
 			CDevDlg dlg;
-			dlg.Create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
+			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
 			dlg.DoModal();
 			dlg.Destroy();
 
@@ -290,7 +290,7 @@ bool CBagCommandObject::runObject() {
 			CBofString bmpName("$SBARDIR\\GENERAL\\POPUP\\CLICKDAT.BMP");
 			MACROREPLACE(bmpName);
 			CDevDlg dlg;
-			dlg.Create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
+			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
 			dlg.DoModal();
 			dlg.Destroy();
 
@@ -299,7 +299,7 @@ bool CBagCommandObject::runObject() {
 			CBofString bmpName("$SBARDIR\\GENERAL\\POPUP\\DEVENPOP.BMP");
 			MACROREPLACE(bmpName);
 			CDevDlg dlg;
-			dlg.Create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect, true);
+			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect, true);
 			dlg.DoModal();
 			dlg.Destroy();
 

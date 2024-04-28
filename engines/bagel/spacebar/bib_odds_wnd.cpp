@@ -63,7 +63,7 @@ ErrorCode SBarBibOddsWnd::detach() {
 	return CBagChatWnd::detach();
 }
 
-void SBarBibOddsWnd::OnKeyHit(uint32 lKey, uint32 lRepCount) {
+void SBarBibOddsWnd::onKeyHit(uint32 lKey, uint32 lRepCount) {
 	CBagVar *pVar = VARMNGR->GetVariable("TORSOSTATE");
 
 	if (pVar != nullptr) {
@@ -109,7 +109,7 @@ void SBarBibOddsWnd::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 		}
 	}
 
-	CBagChatWnd::OnKeyHit(lKey, lRepCount);
+	CBagChatWnd::onKeyHit(lKey, lRepCount);
 }
 
 void SBarBibOddsWnd::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {

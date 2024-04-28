@@ -122,7 +122,7 @@ void CBagStorageDevBmp::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *in
 }
 
 void CBagStorageDevBmp::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
-	CBagStorageDev::OnLButtonUp(nFlags, xPoint, info);
+	CBagStorageDev::onLButtonUp(nFlags, xPoint, info);
 }
 
 const CBofPoint CBagStorageDevBmp::DevPtToViewPort(const CBofPoint &xPoint) {

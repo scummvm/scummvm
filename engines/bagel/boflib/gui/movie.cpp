@@ -136,7 +136,7 @@ bool CBofMovie::OpenMovie(const char *sFilename) {
 	return true;
 }
 
-void  CBofMovie::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
+void  CBofMovie::onKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	if (m_bEscCanStop && lKey == BKEY_ESC) {
 		// Clean up and exit
 		m_bLoop = false;
@@ -201,9 +201,9 @@ void  CBofMovie::CloseMovie() {
 	}
 }
 
-void  CBofMovie::OnClose() {
+void  CBofMovie::onClose() {
 	CloseMovie();
-	CBofDialog::OnClose();
+	CBofDialog::onClose();
 }
 
 void CBofMovie::OnMovieDone() {

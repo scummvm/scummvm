@@ -159,7 +159,7 @@ bool CBagFMovie::OpenMovie(const char *sFilename) {
 	return true;
 }
 
-void CBagFMovie::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
+void CBagFMovie::onKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	if (m_bEscCanStop && lKey == BKEY_ESC) {
 		// Clean up and exit
 		m_bLoop = false;
@@ -256,9 +256,9 @@ void CBagFMovie::CloseMovie() {
 }
 
 
-void CBagFMovie::OnClose() {
+void CBagFMovie::onClose() {
 	CloseMovie();
-	CBofDialog::OnClose();
+	CBofDialog::onClose();
 }
 
 

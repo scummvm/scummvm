@@ -54,7 +54,7 @@ protected:
 	virtual ErrorCode KillBackground();
 
 	virtual void OnPaint(CBofRect *pRect);
-	virtual void OnClose();
+	virtual void onClose();
 	virtual void OnInitDialog();
 
 public:

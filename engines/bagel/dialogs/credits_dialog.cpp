@@ -191,7 +191,7 @@ int CBagCreditsDialog::LinesPerPage() {
 	return n;
 }
 
-void CBagCreditsDialog::OnClose() {
+void CBagCreditsDialog::onClose() {
 	Assert(IsValidObject(this));
 
 	if (m_pCreditsBmp != nullptr) {
@@ -216,7 +216,7 @@ void CBagCreditsDialog::OnClose() {
 
 	KillBackdrop();
 
-	CBofDialog::OnClose();
+	CBofDialog::onClose();
 
 	// Can have cursor back now
 	CursorMan.showMouse(true);
@@ -236,7 +236,7 @@ void CBagCreditsDialog::OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*pPoint*/,
 	NextScreen();
 }
 
-void CBagCreditsDialog::OnKeyHit(uint32 /*lKey*/, uint32 /*nRepCount*/) {
+void CBagCreditsDialog::onKeyHit(uint32 /*lKey*/, uint32 /*nRepCount*/) {
 	Assert(IsValidObject(this));
 
 	NextScreen();

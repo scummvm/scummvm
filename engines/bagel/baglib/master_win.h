@@ -185,8 +185,8 @@ public:
 
 	void OnUserMessage(uint32 nMessage, uint32 lParam) override;
 
-	void OnKeyHit(uint32 lKey, uint32 lRepCount) override;
-	void OnClose() override;
+	void onKeyHit(uint32 lKey, uint32 lRepCount) override;
+	void onClose() override;
 
 	ST_OBJ *GetObjList() {
 		return m_pObjList;

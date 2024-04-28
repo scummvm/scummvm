@@ -600,18 +600,18 @@ ErrorCode CBagMenuDlg::Create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRec
 }
 
 
-void CBagMenuDlg::OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
+void CBagMenuDlg::onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 	// We are ignoring all input until the dialog is actually visible
 	if (m_bAcceptInput) {
 		m_pSelectedObject = nullptr;
 
-		OnClose();
+		onClose();
 
 		if (m_bMultipleDialogs) {
 			CBofRect r = GetWindowRect();
 			r.OffsetRect(-r.left, -r.top);
 			if (r.PtInRect(*pPoint)) {
-				CBagStorageDevDlg::OnLButtonUp(nFlags, pPoint);
+				CBagStorageDevDlg::onLButtonUp(nFlags, pPoint);
 				m_pSelectedObject = GetLActiveObject();
 			}
 

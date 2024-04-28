@@ -29,196 +29,191 @@ namespace Bagel {
 
 #define MENU_DFLT_HEIGHT 20
 
-CDevDlg::CDevDlg(int nButtonX, int nButtonY) {
-	m_pTitleText = nullptr;
-	m_nButtonX = nButtonX;
-	m_nButtonY = nButtonY;
-	m_achGuess[0] = '\0';
-	m_nGuessCount = 0;
-	m_bUseExtra = false;
+CDevDlg::CDevDlg(int nButtonX, int buttonY) {
+	_titleText = nullptr;
+	_buttonX = nButtonX;
+	_buttonY = buttonY;
+	_achGuess[0] = '\0';
+	_guessCount = 0;
+	_useExtraFl = false;
 }
 
 CDevDlg::~CDevDlg() {
-	if (m_pTitleText != nullptr) {
-		delete m_pTitleText;
-		m_pTitleText = nullptr;
+	if (_titleText != nullptr) {
+		delete _titleText;
+		_titleText = nullptr;
 	}
 }
 
-ErrorCode CDevDlg::Create(const char *pszBmp, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *pRect, bool bUseEx) {
+ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CBofRect *rect, bool useExtraFl) {
 	Assert(IsValidObject(this));
-	Assert(pszBmp != nullptr);
-	Assert(pWnd != nullptr);
-	Assert(pPal != nullptr);
-	Assert(pRect != nullptr);
+	Assert(bmp != nullptr);
+	Assert(wnd != nullptr);
+	Assert(pal != nullptr);
+	Assert(rect != nullptr);
 
-	CBofString str = "CDevDlg";
-	CBofRect cDlgRect, r, txtRect;
+	_useExtraFl = useExtraFl;
 
-	m_bUseExtra = bUseEx;
-
-	if (!pRect) {
-		r = pWnd->GetWindowRect();
+	CBofRect r;
+	if (!rect) {
+		r = wnd->GetWindowRect();
 		r.OffsetRect(-r.left, -r.top);
 		r.bottom = r.top + MENU_DFLT_HEIGHT;
 	} else {
-		r = *pRect;
+		r = *rect;
 	}
 
-	if ((m_pGuessText = new CBofText()) != nullptr) {
-		m_pGuessText->SetupText(pRect, JUSTIFY_LEFT);
+	_guessText = new CBofText();
+	if (_guessText != nullptr) {
+		_guessText->SetupText(rect, JUSTIFY_LEFT);
 	}
 
-	m_nGuessCount = 0;
-	Common::fill(m_achGuess, m_achGuess + MAX_CHARS, 0);
+	_guessCount = 0;
+	Common::fill(_achGuess, _achGuess + ACH_GUESS_MAX_CHARS, 0);
 
-	CBofBitmap *pBmp = nullptr;
+	CBofBitmap *bitmap = nullptr;
 
-	if (pszBmp != nullptr) {
-
-		if ((pBmp = new CBofBitmap(pszBmp, pPal)) != nullptr) {
-
-		} else {
+	if (bmp != nullptr) {
+		bitmap = new CBofBitmap(bmp, pal);
+		if (bitmap == nullptr) {
 			ReportError(ERR_MEMORY);
 		}
-
 	}
 
 	// Fall back to original dialog on failure
-	if (pBmp == nullptr) {
-		if ((pBmp = new CBofBitmap(200, 100, pPal)) != nullptr) {
-			Assert(pPal != nullptr);
+	if (bitmap == nullptr) {
+		bitmap = new CBofBitmap(200, 100, pal);
+		if (bitmap != nullptr) {
+			Assert(pal != nullptr);
 
-			pBmp->FillRect(nullptr, pPal->GetNearestIndex(RGB(92, 92, 92)) /*RGB(0,0,0)*/);
+			bitmap->FillRect(nullptr, pal->GetNearestIndex(RGB(92, 92, 92)));
 
-			CBofRect rect(pBmp->GetRect());
-			pBmp->DrawRect(&rect, pPal->GetNearestIndex(RGB(0, 0, 0)) /*RGB(0,0,0)*/);
-			pBmp->FillRect(pRect, pPal->GetNearestIndex(RGB(255, 255, 255)));
+			CBofRect bmpRect(bitmap->GetRect());
+			bitmap->DrawRect(&bmpRect, pal->GetNearestIndex(RGB(0, 0, 0)));
+			bitmap->FillRect(rect, pal->GetNearestIndex(RGB(255, 255, 255)));
 
 		} else {
 			ReportError(ERR_MEMORY);
 		}
 	}
 
-	Assert(pBmp != nullptr);
-	CBofRect rect(pBmp->GetRect());
-
-	CBagStorageDevDlg::Create(str, &rect, pWnd, 0);
+	Assert(bitmap != nullptr);
+	CBofRect bmpRect(bitmap->GetRect());
+	CBofString className = "CDevDlg";
+	CBagStorageDevDlg::Create(className, &bmpRect, wnd, 0);
 	Center();
-	SetBackdrop(pBmp);
+	SetBackdrop(bitmap);
 
 	return m_errCode;
 }
 
-void CDevDlg::OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
+void CDevDlg::onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
 }
 
 void CDevDlg::onMouseMove(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
 }
 
-void CDevDlg::OnClose() {
+void CDevDlg::onClose() {
 	Assert(IsValidObject(this));
 
-	CBagVar *pVar;
-	if ((pVar = VARMNGR->GetVariable("DIALOGRETURN")) != nullptr) {
+	CBagVar *varDialogReturn = VARMNGR->GetVariable("DIALOGRETURN");
+	if (varDialogReturn != nullptr) {
 		// If we need to parse the input for 2 words (Deven-7 Code words)
-		if (m_bUseExtra) {
+		if (_useExtraFl) {
 			// Find the break
-			char *p;
-			if (((p = strchr(m_achGuess, ',')) != nullptr) || ((p = strchr(m_achGuess, ' ')) != nullptr)) {
-				CBagVar *pVarEx;
-
+			char *p = strchr(_achGuess, ',');
+			if ((p != nullptr) || ((p = strchr(_achGuess, ' ')) != nullptr)) {
 				*p = '\0';
 				p++;
 
 				// Set variable 2 (DIALOGRETURN2)
-				if ((pVarEx = VARMNGR->GetVariable("DIALOGRETURN2")) != nullptr) {
-					pVarEx->SetValue(p);
+				CBagVar *varDialogReturn2 = VARMNGR->GetVariable("DIALOGRETURN2");
+				if (varDialogReturn2 != nullptr) {
+					varDialogReturn2->SetValue(p);
 				}
 			}
 		}
 
 		// Set variable 1 (DIALOGRETURN)
-		pVar->SetValue(m_achGuess);
+		varDialogReturn->SetValue(_achGuess);
 	}
 
-	if (m_pGuessText != nullptr) {     // last text area
-		delete m_pGuessText;
-		m_pGuessText = nullptr;
-	}
+	delete _guessText;
+	_guessText = nullptr;
 
-	CBagStorageDevDlg::OnClose();
+	CBagStorageDevDlg::onClose();
 }
 
-void CDevDlg::OnKeyHit(uint32 lKeyCode, uint32 nRepCount) {
+void CDevDlg::onKeyHit(uint32 keyCode, uint32 repCount) {
 	Assert(IsValidObject(this));
 
-	if (m_nGuessCount < MAX_CHARS) {
-		bool bPaintGuess = false;
+	if (_guessCount < ACH_GUESS_MAX_CHARS) {
+		bool paintGuessFl = false;
 		const char *const MISC_KEYS = " \'$,-%.";
 
-		if (Common::isAlnum(lKeyCode) || strchr(MISC_KEYS, lKeyCode)) {
-			m_achGuess[m_nGuessCount] = toupper(lKeyCode);
-			m_nGuessCount++;
-			bPaintGuess = true;
+		if (Common::isAlnum(keyCode) || strchr(MISC_KEYS, keyCode)) {
+			_achGuess[_guessCount] = toupper(keyCode);
+			_guessCount++;
+			paintGuessFl = true;
 
-		} else if (lKeyCode == BKEY_BACK && (m_nGuessCount - 1) >= 0) {
-			m_nGuessCount--;
-			m_achGuess[m_nGuessCount] = 0;
-			bPaintGuess = true;
+		} else if (keyCode == BKEY_BACK && (_guessCount - 1) >= 0) {
+			_guessCount--;
+			_achGuess[_guessCount] = 0;
+			paintGuessFl = true;
 		}
 
-		if (bPaintGuess) {
-			PaintText();
+		if (paintGuessFl) {
+			paintText();
 		}
 
 		// Close dialog box when enter key is hit
-		if (lKeyCode ==  BKEY_ENTER) {
-			OnClose();
+		if (keyCode ==  BKEY_ENTER) {
+			onClose();
 		}
 	}
 
 	// If it maxes out, clear it
-	if (m_nGuessCount >= MAX_CHARS) {
-		Common::fill(m_achGuess, m_achGuess + MAX_CHARS, 0);
-		m_nGuessCount = 0;
+	if (_guessCount >= ACH_GUESS_MAX_CHARS) {
+		Common::fill(_achGuess, _achGuess + ACH_GUESS_MAX_CHARS, 0);
+		_guessCount = 0;
 	}
 
-	CBagStorageDevDlg::OnKeyHit(lKeyCode, nRepCount);
+	CBagStorageDevDlg::onKeyHit(keyCode, repCount);
 }
 
-void CDevDlg::PaintText() {
+void CDevDlg::paintText() {
 	Assert(IsValidObject(this));
 
-	char achTemp[MAX_CHARS];
-	snprintf(achTemp, MAX_CHARS, "%s", m_achGuess);
+	char achTemp[ACH_GUESS_MAX_CHARS];
+	snprintf(achTemp, ACH_GUESS_MAX_CHARS, "%s", _achGuess);
 
-	m_pGuessText->Display(GetBackdrop(), achTemp, 16, TEXT_MEDIUM);
+	_guessText->Display(GetBackdrop(), achTemp, 16, TEXT_MEDIUM);
 }
 
-void CDevDlg::SetText(CBofString &tStr, CBofRect *pcRect) {
+void CDevDlg::setText(CBofString &text, CBofRect *textRect) {
 	Assert(IsValidObject(this));
 
-	if ((m_pTitleText = new CBofText) != nullptr) {
-		m_pTitleText->SetupText(pcRect, JUSTIFY_CENTER, FORMAT_DEFAULT);
-		m_pTitleText->SetColor(RGB(255, 255, 255));
-		m_pTitleText->SetSize(FONT_14POINT);
-		m_pTitleText->SetWeight(TEXT_BOLD);
-		m_pTitleText->SetText(tStr);
+	_titleText = new CBofText;
+	if (_titleText != nullptr) {
+		_titleText->SetupText(textRect, JUSTIFY_CENTER, FORMAT_DEFAULT);
+		_titleText->SetColor(RGB(255, 255, 255));
+		_titleText->SetSize(FONT_14POINT);
+		_titleText->SetWeight(TEXT_BOLD);
+		_titleText->SetText(text);
 	}
 }
 
 // Override on render to do the painting, but call the default anyway.
-ErrorCode CDevDlg::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
+ErrorCode CDevDlg::onRender(CBofBitmap *bmp, CBofRect *rect) {
 	Assert(IsValidObject(this));
 
-	ErrorCode err = CBagStorageDevDlg::OnRender(pBmp, pRect);
+	ErrorCode errCode = CBagStorageDevDlg::onRender(bmp, rect);
 
-	if (m_pTitleText != nullptr) {
-		m_pTitleText->Display(GetBackdrop());
+	if (_titleText != nullptr) {
+		_titleText->Display(GetBackdrop());
 	}
 
-	return err;
+	return errCode;
 }
 
 } // namespace Bagel

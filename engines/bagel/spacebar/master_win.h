@@ -39,7 +39,7 @@ public:
 	virtual CBagStorageDev *OnNewStorageDev(const CBofString &typestr);
 	virtual CBagStorageDev *OnNewStorageDev(int nType);
 
-	virtual void OnKeyHit(uint32 lKey, uint32 lRepCount);
+	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
 
 	void OnNewFilter(CBagStorageDev *pSDev, const CBofString &typestr);
 	void OnNewFilter(CBagStorageDev *pSDev, const int nType);

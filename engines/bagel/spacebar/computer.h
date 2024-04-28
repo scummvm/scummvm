@@ -85,7 +85,7 @@ public:
 	void OnBofListBox(CBofObject *pListBox, int nItemIndex);
 
 	virtual void OnBofButton(CBofObject *pButton, int nState);
-	virtual void OnKeyHit(uint32 lKey, uint32 nRepCount);
+	virtual void onKeyHit(uint32 lKey, uint32 nRepCount);
 
 	/**
 	 * This function attaches the background and necessary bitmaps
@@ -138,7 +138,7 @@ public:
 	void EraseBackdrop();
 
 	void OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {}
-	void OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {}
+	void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {}
 
 	void onMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
 };
