@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-27 03:28+0000\n"
+"POT-Creation-Date: 2024-04-28 12:00+0000\n"
 "PO-Revision-Date: 2024-04-27 22:42+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -4001,37 +4001,37 @@ msgstr "Preencher janela"
 msgid "Fit to window (4:3)"
 msgstr "Ajustar à janela (4:3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:742
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:787
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Resolução: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:786
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:831
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2654
 msgid "Active graphics filter:"
 msgstr "Filtros gráficos ativos:"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:807
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:852
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2688
 msgid "Enabled aspect ratio correction"
 msgstr "Correção de proporção habilitada"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:809
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:854
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2694
 msgid "Disabled aspect ratio correction"
 msgstr "Correção de proporção desabilitada"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:822
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:867
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2710
 msgid "Filtering enabled"
 msgstr "Filtragem habilitada"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:824
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:869
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2712
 msgid "Filtering disabled"
 msgstr "Filtragem desabilitada"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:850
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:895
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2739
 msgid "Stretch mode"
 msgstr "Modo de preenchimento"

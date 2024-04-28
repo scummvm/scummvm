@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-27 03:28+0000\n"
+"POT-Creation-Date: 2024-04-28 12:00+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -3854,37 +3854,37 @@ msgstr "מתיחה לחלון"
 msgid "Fit to window (4:3)"
 msgstr "התאמה לחלון (4: 3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:742
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:787
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "רזולוציה: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:786
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:831
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2654
 msgid "Active graphics filter:"
 msgstr "מסנן גרפי פעיל:"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:807
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:852
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2688
 msgid "Enabled aspect ratio correction"
 msgstr "תיקון יחס ממדים מופעל"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:809
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:854
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2694
 msgid "Disabled aspect ratio correction"
 msgstr "תיקון יחס ממדים מושבת"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:822
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:867
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2710
 msgid "Filtering enabled"
 msgstr "סינון מופעל"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:824
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:869
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2712
 msgid "Filtering disabled"
 msgstr "הסינון מושבת"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:850
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:895
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2739
 msgid "Stretch mode"
 msgstr "מצב מתיחה"
