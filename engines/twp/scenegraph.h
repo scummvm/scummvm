@@ -36,6 +36,8 @@
 
 namespace Twp {
 
+class Motor;
+
 // Represents a node in a scene graph.
 class Node {
 public:
@@ -318,6 +320,10 @@ private:
 	bool _down = false;
 	Common::SharedPtr<Object> _obj;
 	Common::Rect _itemRects[NUMOBJECTS];
+	Common::ScopedPtr<Motor> _shake[NUMOBJECTS];
+	bool _inventoryOver[NUMOBJECTS];
+	Math::Vector2d _shakeOffset[NUMOBJECTS];
+	float _shakeTime[NUMOBJECTS];
 	Common::Rect _arrowUpRect;
 	Common::Rect _arrowDnRect;
 	float _jiggleTime = 0.f;
