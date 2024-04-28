@@ -30,15 +30,15 @@ namespace Bagel {
 
 class CBagDossierObject : public CBagTextObject {
 private:
-	CBofString m_sIndexLine;
-	CBofRect m_cIndexRect;
-	CBofRect m_cDossierRect;
-	CBagObject *m_pRPObj;
+	CBofString _indexLine;
+	CBofRect _indexRect;
+	CBofRect _dossierRect;
+	CBagObject *_residuePrintedObject;
 
-	bool m_bDossierSet : 1;
-	bool m_bNotActive : 1;
-	bool m_bShowIndex : 1;
-	bool m_bDosRectInit : 1;
+	bool _dossierSetFl : 1;
+	bool _notActiveFl : 1;
+	bool _showIndexFl : 1;
+	bool _dosRectInitFl : 1;
 
 public:
 	CBofString m_sSuspectVar;
@@ -51,46 +51,46 @@ public:
 	 * Takes in info and then removes the relative information and returns
 	 * the info without the relevant info.
 	 */
-	PARSE_CODES setInfo(bof_ifstream &istr);
+	PARSE_CODES setInfo(bof_ifstream &istr) override;
 
-	ErrorCode attach();
-	ErrorCode detach();
+	ErrorCode attach() override;
+	ErrorCode detach() override;
 
-	virtual ErrorCode update(CBofBitmap *, CBofPoint, CBofRect * = nullptr, int = -1);
+	ErrorCode update(CBofBitmap *, CBofPoint, CBofRect * = nullptr, int = -1) override;
 
-	virtual void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr); //{ return false; } run menu if available
+	void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr) override; // run menu if available
 
 	/**
 	 * Arrange the float rects for the script rpo objects
 	 */
-	CBofPoint ArrangeFloater(CBofPoint nPos, CBagObject *pObj);
-	CBofString &GetDossierLine() {
-		return m_sIndexLine;
+	CBofPoint arrangeFloater(CBofPoint pos, CBagObject *pObj);
+	CBofString &getDossierLine() {
+		return _indexLine;
 	}
-	CBofRect getRect();
+	CBofRect getRect() override;
 
-	void SetNotActive(bool b) {
-		m_bNotActive = b;
+	void setNotActive(bool b) {
+		_notActiveFl = b;
 	}
-	bool GetNotActive() {
-		return m_bNotActive;
+	bool getNotActive() const {
+		return _notActiveFl;
 	}
 
-	void ActivateDosObject(CBagLog *pLogWld);
-	void DeactivateDosObject(CBagLog *pLogWld);
+	void activateDosObject(CBagLog *logWld);
+	void deactivateDosObject(CBagLog *logWld);
 
-	void SetRPObj(CBagObject *p) {
-		m_pRPObj = p;
+	void setResiduePrintedObject(CBagObject *p) {
+		_residuePrintedObject = p;
 	};
-	CBagObject *GetRPObj() {
-		return m_pRPObj;
+	CBagObject *getResiduePrintedObject() const {
+		return _residuePrintedObject;
 	};
 
-	static void DeactivateCurDossier();
-	void ShowDosText();
+	static void deactivateCurDossier();
+	void showDosText();
 
 	static void initialize();
-	static CBagDossierObject *m_pCurDossier;
+	static CBagDossierObject *_curDossier;
 };
 
 } // namespace Bagel
