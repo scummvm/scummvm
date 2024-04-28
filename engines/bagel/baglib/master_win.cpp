@@ -58,7 +58,7 @@ namespace Bagel {
 extern CBofWindow *g_hackWindow;
 static bool g_bAllowRestore = false;
 
-bool g_bRestoreObjList = true;
+bool g_restoreObjectListFl = true;
 
 #define NUM_MSG_STRINGS 3
 static int g_nString = 0;
@@ -483,7 +483,7 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 		SetActiveCursor(0);
 		CBagWield::SetWieldCursor(-1);
 
-		if (g_bRestoreObjList) {
+		if (g_restoreObjectListFl) {
 
 			if (bRestore && m_bObjSave) {
 				Assert(m_pStorageDeviceList != nullptr);
@@ -499,7 +499,7 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 				m_bObjSave = false;
 			}
 		}
-		g_bRestoreObjList = true;
+		g_restoreObjectListFl = true;
 
 		// If a start wld is passed in then use it
 		if (!sStartWldName.IsEmpty()) {
@@ -1238,7 +1238,7 @@ ErrorCode CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 			pSDev->SetFadeId((uint16)m_nFadeIn);
 
 		// Reset paints
-		g_bAllowPaint = true;
+		g_allowPaintFl = true;
 
 		pSDev->attach();
 
@@ -2101,7 +2101,7 @@ ErrorCode WaitForInput() {
 void CBagMasterWin::Close() {
 	Assert(IsValidObject(this));
 
-	g_bAllowPaint = false;
+	g_allowPaintFl = false;
 }
 
 void CBagMasterWin::RestoreActiveMessages(CBagStorageDevManager *pSDevManager) {

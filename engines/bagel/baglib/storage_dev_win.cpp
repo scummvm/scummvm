@@ -54,9 +54,9 @@
 namespace Bagel {
 
 // Globals (hacks)
-bool g_bAllowPaint = true;
+bool g_allowPaintFl = true;
 bool g_bAAOk = true;            // Prevent attachActiveObjects() after a RUN LNK
-bool g_bAllowAAO = true;        // Prevent attachActiveObjects() after a RUN LNK
+bool g_allowArrangeObjectsFl = true;        // Prevent attachActiveObjects() after a RUN LNK
 CBagStorageDevWnd *g_pLastWindow = nullptr;
 extern bool g_bPauseTimer;
 extern bool g_bWaitOK;
@@ -81,9 +81,9 @@ static int gLastBackgroundUpdate = 0;
 #define kCursWidth 55
 
 void CBagStorageDev::initialize() {
-	g_bAllowPaint = true;
+	g_allowPaintFl = true;
 	g_bAAOk = true;
-	g_bAllowAAO = true;
+	g_allowArrangeObjectsFl = true;
 	g_pLastWindow = nullptr;
 
 	m_xCursorLocation = new CBofPoint();
@@ -229,7 +229,7 @@ ErrorCode CBagStorageDev::ActivateLocalObject(CBagObject  *pObj) {
 			pObj->attach();
 
 			// Preform an update and arrange objects in the storage device
-			if (g_bAllowAAO) {
+			if (g_allowArrangeObjectsFl) {
 				AttachActiveObjects();
 			}
 		}
@@ -1354,7 +1354,7 @@ ErrorCode CBagStorageDevWnd::PaintScreen(CBofRect *pRect) {
 	if (m_pBackdrop != nullptr) {
 		OnRender(m_pBackdrop, pRect);
 
-		if (g_bAllowPaint) {
+		if (g_allowPaintFl) {
 			m_pBackdrop->Paint(this, pRect, pRect);
 		}
 	}
@@ -1406,7 +1406,7 @@ ErrorCode CBagStorageDevWnd::RunModal(CBagObject *pObj) {
 				// Make sure we redraw each and every frame!
 				SetPreFilterPan(true);
 				OnRender(pBmp, nullptr);
-				if (g_bAllowPaint) {
+				if (g_allowPaintFl) {
 					pBmp->Paint(this, 0, 0);
 				}
 
@@ -1679,7 +1679,7 @@ ErrorCode CBagStorageDevDlg::PaintScreen(CBofRect *pRect) {
 				CBofRect wrect(GetWindowRect());
 				m_pBackdrop->Paint(pBmp, &wrect, nullptr);
 
-				if (g_bAllowPaint) {
+				if (g_allowPaintFl) {
 					pBmp->Paint(pWin, pRect, pRect);
 				}
 			}
