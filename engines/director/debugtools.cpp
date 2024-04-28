@@ -31,7 +31,13 @@ void onImGuiInit() {
 }
 
 void onImGuiRender() {
-	Director::Lingo* lingo = g_director->getLingo();
+	if (!debugChannelSet(-1, kDebugImGui)) {
+		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse;
+		return;
+	}
+
+	ImGui::GetIO().ConfigFlags &= ~(ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse);
+	Director::Lingo *lingo = g_director->getLingo();
 
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(120, 120), ImGuiCond_FirstUseEver);
@@ -51,4 +57,4 @@ void onImGuiRender() {
 
 void onImGuiCleanup() {
 }
-} // namespace Twp
+} // namespace Director

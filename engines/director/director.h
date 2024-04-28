@@ -85,6 +85,7 @@ enum {
 	kDebugConsole,
 	kDebugXObj,
 	kDebugLingoThe,
+	kDebugImGui,
 };
 
 enum {
