@@ -267,6 +267,7 @@ public:
 	unique_ptr<HotspotMarkerNode> _hotspotMarker;
 	unique_ptr<FadeShader> _fadeShader;
 	unique_ptr<LightingNode> _lightingNode;
+	unique_ptr<Motor> _moveCursorTo;
 
 private:
 	Gfx _gfx;

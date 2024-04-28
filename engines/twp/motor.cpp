@@ -675,4 +675,16 @@ void Jiggle::onUpdate(float elapsed) {
 	_node->setRotationOffset(_amount * sin(_jiggleTime));
 }
 
+MoveCursorTo::MoveCursorTo(const Math::Vector2d &pos, float time)
+	: _pos(pos),
+	  _tween(g_twp->_cursor.pos, pos, time, intToInterpolationMethod(IK_LINEAR)) {
+}
+
+void MoveCursorTo::onUpdate(float elapsed) {
+	_tween.update(elapsed);
+	g_twp->_cursor.pos = _tween.current();
+	if (!_tween.running())
+		disable();
+}
+
 } // namespace Twp

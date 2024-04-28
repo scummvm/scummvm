@@ -319,6 +319,19 @@ private:
 	float _jiggleTime = 0.f;
 };
 
+class MoveCursorTo : public Motor {
+public:
+	MoveCursorTo(const Math::Vector2d &pos, float time);
+	virtual ~MoveCursorTo() {}
+
+private:
+	virtual void onUpdate(float elapsed) override;
+
+private:
+	Tween<Math::Vector2d> _tween;
+	Math::Vector2d _pos;
+};
+
 } // namespace Twp
 
 #endif

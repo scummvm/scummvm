@@ -715,8 +715,16 @@ static SQInteger moveCursorTo(HSQUIRRELVM v) {
 	if (SQ_FAILED(sqget(v, 4, t)))
 		return sq_throwerror(v, "Failed to get time");
 
-	g_twp->_cursor.pos = Math::Vector2d(x, y);
-	// TODO: use time
+	Math::Vector2d pos;
+	if (g_twp->_room) {
+		pos = g_twp->roomToScreen(Math::Vector2d(x, y));
+	} else {
+		pos = g_twp->screenToWin(Math::Vector2d(x, y));
+	}
+	pos.setX(CLIP(pos.getX(), 0.f, (float)SCREEN_WIDTH));
+	pos.setY(CLIP(pos.getY(), 0.f, (float)SCREEN_HEIGHT));
+	pos = g_twp->screenToWin(pos);
+	g_twp->_moveCursorTo = Common::ScopedPtr<Motor>(new MoveCursorTo(pos, t));
 	return 0;
 }
 

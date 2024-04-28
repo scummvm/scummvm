@@ -455,6 +455,8 @@ void TwpEngine::update(float elapsed) {
 	_noOverride->update(elapsed);
 	if (_talking)
 		_talking->update(elapsed);
+	if (_moveCursorTo)
+		_moveCursorTo->update(elapsed);
 
 	// update mouse pos
 	Math::Vector2d scrPos = winToScreen(_cursor.pos);
@@ -569,7 +571,7 @@ void TwpEngine::update(float elapsed) {
 	bool isNotInDialog = _dialog->getState() == DialogState::None;
 	for (auto it = threads.begin(); it != threads.end(); it++) {
 		Common::SharedPtr<Thread> thread(*it);
-		if ((isNotInDialog || !thread->isGlobal()) && thread->update(elapsed)) {
+		if ((isNotInDialog || !thread->isGlobal() || !thread->_pauseable) && thread->update(elapsed)) {
 			threadsToRemove.push_back(thread);
 		}
 	}
