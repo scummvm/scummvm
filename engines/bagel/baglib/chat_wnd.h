@@ -35,9 +35,9 @@ public:
 	 * Called to overload new set backgrounds. Calls the set backdrop pure
 	 * virtual function by default.
 	 */
-	virtual ErrorCode attach();
-	virtual void OnTimer(uint32 nTimerId);
-	virtual void OnMouseMove(uint32 nFlags, CBofPoint *pPos, void * = nullptr);
+	ErrorCode attach() override;
+	void onTimer(uint32 timerId) override;
+	void onMouseMove(uint32 flags, CBofPoint *pos, void * = nullptr) override;
 };
 
 } // namespace Bagel

@@ -276,10 +276,10 @@ void SBZoomPda::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	}
 }
 
-void SBZoomPda::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
+void SBZoomPda::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 
-	CBagStorageDev::OnMouseMove(nFlags, pPoint, GetAssociateWnd());
+	CBagStorageDev::onMouseMove(nFlags, pPoint, GetAssociateWnd());
 
 
 	// This should be on update cursor virtual func

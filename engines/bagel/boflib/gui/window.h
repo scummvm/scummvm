@@ -171,7 +171,7 @@ public:
 	void PostUserMessage(uint32 nMessage, uint32 lExtraInfo);
 
 	/**
-	 * Sets a timer which calls specified callback (or OnTimer)
+	 * Sets a timer which calls specified callback (or onTimer)
 	 * @param nID           ID of timer to set
 	 * @param nInterval     Number of milliseconds till event
 	 * @param pCallBack     Function to call when time is up
@@ -376,7 +376,7 @@ public:
 
 	virtual void OnMCINotify(uint32 lParam1, uint32 lParam2);
 
-	virtual void OnTimer(uint32 nTimerId);
+	virtual void onTimer(uint32 nTimerId);
 
 	/**
 	 * Handles a pending ScummVM event
@@ -422,7 +422,7 @@ protected:
 	CBofWindow *_parent = nullptr;	// Pointer to parent window
 	Array<CBofWindow *> _children;	// Child element pointers
 
-	virtual void OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void onMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void OnLButtonDblClk(uint32 nFlags, CBofPoint *pPoint);

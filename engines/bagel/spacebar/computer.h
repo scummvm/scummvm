@@ -131,7 +131,7 @@ public:
 
 	void OnMainLoop();
 
-	virtual void OnTimer(uint32 /*nTimerID*/) {
+	virtual void onTimer(uint32 /*nTimerID*/) {
 	}
 
 	void OnPaint(CBofRect *pRect);
@@ -140,7 +140,7 @@ public:
 	void OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {}
 	void OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {}
 
-	void OnMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
+	void onMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
 };
 
 } // namespace SpaceBar

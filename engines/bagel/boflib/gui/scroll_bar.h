@@ -111,8 +111,8 @@ protected:
 	virtual void OnPaint(CBofRect *pDirtyRect);
 	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual void OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual void OnTimer(uint32);
+	virtual void onMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void onTimer(uint32);
 
 	//
 	// Data members

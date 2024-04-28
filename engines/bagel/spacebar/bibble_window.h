@@ -102,7 +102,7 @@ protected:
 
 	virtual void OnPaint(CBofRect *pRect);
 	virtual void OnMainLoop();
-	virtual void OnTimer(uint32 /*nTimerID*/) {
+	virtual void onTimer(uint32 /*nTimerID*/) {
 		// Do nothing
 	}
 

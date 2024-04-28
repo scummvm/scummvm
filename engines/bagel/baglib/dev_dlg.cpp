@@ -113,7 +113,7 @@ ErrorCode CDevDlg::Create(const char *pszBmp, CBofWindow *pWnd, CBofPalette *pPa
 void CDevDlg::OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
 }
 
-void CDevDlg::OnMouseMove(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
+void CDevDlg::onMouseMove(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
 }
 
 void CDevDlg::OnClose() {

@@ -627,7 +627,7 @@ void CBagMenuDlg::OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 	}
 }
 
-void CBagMenuDlg::OnMouseMove(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
+void CBagMenuDlg::onMouseMove(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	CBagMasterWin::SetActiveCursor(0);
 	CBagObject *pObj = GetObject(*pPoint);
 	if (pObj != nullptr) {
@@ -647,7 +647,7 @@ void CBagMenuDlg::OnMouseMove(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	}
 }
 
-void CBagMenuDlg::OnTimer(uint32 nID) {
+void CBagMenuDlg::onTimer(uint32 nID) {
 	Assert(IsValidObject(this));
 
 	switch (nID) {

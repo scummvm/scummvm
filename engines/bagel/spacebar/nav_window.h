@@ -64,7 +64,7 @@ protected:
 
 	void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
 	void OnKeyHit(uint32 lKey, uint32 lRepCount) override;
-	void OnTimer(uint32 tId) override;
+	void onTimer(uint32 tId) override;
 	void OnPaint(CBofRect *pRect) override;
 	void OnMainLoop() override;
 

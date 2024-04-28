@@ -478,13 +478,13 @@ void CBagPanWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	CBagStorageDevWnd::OnKeyHit(lKey, lRepCount);
 }
 
-void CBagPanWindow::OnMouseMove(uint32 nFlags, CBofPoint *p, void *) {
+void CBagPanWindow::onMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 	Assert(IsValidObject(this));
 	Assert(p != nullptr);
 
 	CBofPoint xPoint = *p;
 
-	CBagStorageDevWnd::OnMouseMove(nFlags, &xPoint);
+	CBagStorageDevWnd::onMouseMove(nFlags, &xPoint);
 
 	if (!IsCloseup()) {
 		if (m_pSlideBitmap != nullptr) {

@@ -126,7 +126,7 @@ public:
 	void                SlideSlots();
 
 	void                OnPaint(CBofRect *pRect);
-	void                OnTimer(uint32 nTimerId);
+	void                onTimer(uint32 nTimerId);
 	void                OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	void                OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {
 	}

@@ -904,9 +904,9 @@ void SBarComputer::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	}
 }
 
-void SBarComputer::OnMouseMove(uint32 nFlags, CBofPoint *xPoint, void *) {
+void SBarComputer::onMouseMove(uint32 nFlags, CBofPoint *xPoint, void *) {
 	// Let CBagStorageDevWnd check for EXIT area
-	CBagStorageDevWnd::OnMouseMove(nFlags, xPoint);
+	CBagStorageDevWnd::onMouseMove(nFlags, xPoint);
 }
 
 const char *BuildBarcDir(const char *pszFile) {

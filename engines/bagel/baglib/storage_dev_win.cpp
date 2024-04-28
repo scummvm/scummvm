@@ -467,7 +467,7 @@ ErrorCode CBagStorageDev::NoObjectsUnderMouse() {
 	return ERR_NONE;
 }
 
-void CBagStorageDev::OnMouseMove(uint32 nFlags, CBofPoint *xPoint, void *vpInfo) {
+void CBagStorageDev::onMouseMove(uint32 nFlags, CBofPoint *xPoint, void *vpInfo) {
 	*m_xCursorLocation = *xPoint;
 
 	if (GetLActiveObject() && GetLActivity()) {
@@ -1241,7 +1241,7 @@ ErrorCode CBagStorageDevWnd::attach() {
 	return m_errCode;
 }
 
-void CBagStorageDevWnd::OnTimer(uint32 nEventID) {
+void CBagStorageDevWnd::onTimer(uint32 nEventID) {
 	Assert(IsValidObject(this));
 	static bool bAlready = false;
 
@@ -1473,8 +1473,8 @@ void CBagStorageDevWnd::OnClose() {
 	DestroyWindow();                            // destruct the main window
 }
 
-void CBagStorageDevWnd::OnMouseMove(uint32 n, CBofPoint *pPoint, void *) {
-	CBagStorageDev::OnMouseMove(n, pPoint, GetAssociateWnd());
+void CBagStorageDevWnd::onMouseMove(uint32 n, CBofPoint *pPoint, void *) {
+	CBagStorageDev::onMouseMove(n, pPoint, GetAssociateWnd());
 
 	if (CBagCursor::isSystemCursorVisible())
 		return;
@@ -1787,8 +1787,8 @@ void CBagStorageDevDlg::OnClose() {
 	}
 }
 
-void CBagStorageDevDlg::OnMouseMove(uint32 n, CBofPoint *xPoint, void *) {
-	CBagStorageDev::OnMouseMove(n, xPoint, GetAssociateWnd());
+void CBagStorageDevDlg::onMouseMove(uint32 n, CBofPoint *xPoint, void *) {
+	CBagStorageDev::onMouseMove(n, xPoint, GetAssociateWnd());
 }
 
 void CBagStorageDevDlg::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {

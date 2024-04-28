@@ -43,7 +43,7 @@ public:
 	virtual ErrorCode detach();
 
 	virtual ErrorCode LoadFile(const CBofString &sFile);
-	virtual void OnMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
+	virtual void onMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
 
 	/**
 	 * Called to overload specific types of sprite objects

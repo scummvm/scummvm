@@ -50,7 +50,7 @@ public:
 	void SetText(CBofString &, CBofRect *);
 	void OnKeyHit(uint32 lKey, uint32 lRepCount);
 
-	virtual void OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void onMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void OnClose();
 	virtual ErrorCode OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);

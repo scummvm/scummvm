@@ -116,7 +116,7 @@ public:
 	void OnKeyHit(uint32 lKey, uint32 lRepCount);
 	void OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
 	void OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
-	void OnMouseMove(uint32 nFlags, CBofPoint *p, void * = nullptr);
+	void onMouseMove(uint32 nFlags, CBofPoint *p, void * = nullptr);
 };
 
 } // namespace SpaceBar

@@ -38,7 +38,7 @@ public:
 	virtual ErrorCode attach();        // Save wielded cursor
 	virtual ErrorCode detach();        // This function detaches the background and necessary bitmaps
 
-	void OnMouseMove(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
+	void onMouseMove(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
 	void OnKeyHit(uint32 lKey, uint32 lRepCount);
 
 	static void initialize();
