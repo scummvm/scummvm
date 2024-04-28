@@ -12,6 +12,11 @@ For a more comprehensive changelog of the latest experimental code, see:
   - Fixed GLSL version parsing on some OpenGL ES2 platforms.
   - Added optional dependency for libopenmpt for sound.
 
+ AGS:
+  - Syncronized with upstream AGS 3.6.0.58
+  - Fixed glitchy staircase in old Maniac Mansion Mania episodes, caused by
+    imperfect pathfinding.
+
  MM:
    - Added MT32/LAPC-1 support for Xeen engine.
    - Fixed Xeen regression which caused some sound effects to stop abruptly.
