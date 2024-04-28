@@ -61,9 +61,6 @@ protected:
 
 	void SaveAndClose();
 
-	// Data
-	//
-	ST_SAVEDGAME_HEADER m_stGameInfo;
 	CBofBmpButton *m_pButtons[NUM_BUTTONS];
 	CBofScrollBar *m_pScrollBar;
 

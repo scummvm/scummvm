@@ -83,12 +83,10 @@ CBagSaveDialog::CBagSaveDialog() {
 	LogInfo("Constructing CBagSaveDialog");
 	g_nSelectedSlot = -1;
 
-	// Inits
 	m_pListBox = nullptr;
 	m_pEditText = nullptr;
 	m_pScrollBar = nullptr;
 	m_nSelectedItem = -1;
-	BofMemSet(&m_stGameInfo, 0, sizeof(ST_SAVEDGAME_HEADER));
 	m_pSaveBuf = nullptr;
 	m_nBufSize = 0;
 	m_pSavePalette = nullptr;
