@@ -42,6 +42,9 @@ namespace Macs2 {
 class GameObject {
 public:
 
+	// Index of the object, starting at 1
+	uint16 Index;
+
 	// These are the values read by the code around l0037_082D:
 	Common::Point Position;
 	uint16 SceneIndex;

@@ -1212,7 +1212,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 			View1 *currentView = (View1 *)_engine->findView("View1");
 			// TODO: Need to be able to address the character objects by ID, now relying
 			// on the fact that they were added in a specific order
-			Character *c = currentView->characters[1];
+			Character *c = currentView->GetCharacterByIndex(objectID);
 			c->StartLerpTo(Common::Point(x, y), 2 * 1000);
 		} else if (opcode1 == 0x11) {
 			// Wait for last movement to be finished
@@ -1223,7 +1223,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 			View1 *currentView = (View1 *)_engine->findView("View1");
 			// TODO: Need to be able to address the character objects by ID, now relying
 			// on the fact that they were added in a specific order
-			Character *c = currentView->characters[1];
+			Character *c = currentView->GetCharacterByIndex(objectID);
 			c->ExecuteScriptOnFinishLerp = true;
 			requestCallback = false;
 			return;
@@ -1249,6 +1249,9 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Need to handle negative numbers here
 
 			View1 *currentView = (View1 *)_engine->findView("View1");
+			if (currentView->GetCharacterByIndex(objectID) != nullptr) {
+				continue;
+			}
 			// TODO: Figure out how to create the list properly
 			Character *c = new Character();
 			c->GameObject = GameObjects::instance().Objects[objectID - 1];
@@ -1300,6 +1303,23 @@ void Script::ScriptExecutor::ExecuteScript() {
 			_stream->seek(_stream->size(), SEEK_SET);
 			requestCallback = true;
 			return;
+		} else if (opcode1 == 0x1b) {
+			// TODO: No idea yet what this does, it seems to be around move commands in some cases,
+			// and seems to go along with 1e
+			uint32 objectID = Func9F4D_32();
+			Func9F4D_32();
+			Func9F4D_32();
+			// TODO: Still need to check if the object is actually already living in the scene at game start
+
+			continue;
+		} else if (opcode1 == 0x1c) {
+			// Working assumption is that this has something to do with guarding against executing
+			// object scripts, it only changes the value of global [102Ah]
+			continue;
+		} else if (opcode1 == 0x1d) {
+			// Working assumption is that this has something to do with guarding against executing
+			// object scripts, it only changes the value of global [102Ah]
+			continue;
 		}
 		else if (opcode1 == 0x22) {
 			// TODO: Properly implement fn0037_C2C4 proc
@@ -1339,6 +1359,24 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Figure out what this does - it seems to again write data to a
 			// hotspot's data
 			FuncC8E4();
+		} else if (opcode1 == 0x2A) {
+			// TODO: Not sure what this is about, current hypothesis is that this is loading object
+			// data for an object not yet added to the scene
+			uint32 objectID = Func9F4D_32() - 0x400;
+			Func9F4D_32();
+			Func9F4D_32();
+			ReadByte();
+
+			View1 *currentView = (View1 *)_engine->findView("View1");
+			// TODO: Need to check if this object is really added to the scene like this
+			Character *c = new Character();
+			c->GameObject = GameObjects::instance().Objects[objectID - 1];
+			// TODO: DRY principle
+			// c->Position = c->GameObject->Position = Common::Point(x, y);
+			// c->GameObject->SceneIndex = sceneID;
+			currentView->characters.push_back(c);
+			continue;
+			
 		} else if (opcode1 == 0x3E) {
 			// TODO: Seems to have no visual difference
 		} else if (opcode1 == 0x40) {
