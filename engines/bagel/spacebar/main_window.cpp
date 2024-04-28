@@ -91,7 +91,7 @@ ErrorCode CMainWindow::attach() {
 	// we don't want any foreground objects.
 	bool bForegroundObj = true;
 
-	g_bAllowPaint = true;
+	g_allowPaintFl = true;
 
 	CBagStorageDev *pSDev = SDEVMNGR->GetStorageDevice(GetPrevSDev());
 	if (pSDev && pSDev->GetDeviceType() == SDEV_ZOOMPDA) {

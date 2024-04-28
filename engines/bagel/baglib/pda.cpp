@@ -34,7 +34,7 @@ bool CBagPDA::m_bFlashing;
 bool CBagPDA::m_bSoundsPaused;
 CBofList<CBagMovieObject *> *CBagPDA::m_pMovieList;
 
-extern bool g_bAllowAAO;
+extern bool g_allowArrangeObjectsFl;
 static bool g_bAutoUpdate;
 
 void CBagPDA::initialize() {
@@ -473,10 +473,10 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 			// Make the zoom button blink, to indicate more icons
 			if (m_bFlashing == false) {
 				// Don't allow attachActiveObjects() to be called in here
-				g_bAllowAAO = false;
+				g_allowArrangeObjectsFl = false;
 				pPda->ActivateLocalObject(pZoomFlash);
 				pPda->DeactivateLocalObject(pZoomRegular);
-				g_bAllowAAO = true;
+				g_allowArrangeObjectsFl = true;
 
 				pZoomFlash->SetActive(true);
 				pZoomRegular->SetActive(false);
@@ -488,10 +488,10 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 			}
 		} else if (m_bFlashing) {
 			// Don't allow attachActiveObjects() to be called in here
-			g_bAllowAAO = false;
+			g_allowArrangeObjectsFl = false;
 			pPda->DeactivateLocalObject(pZoomFlash);
 			pPda->ActivateLocalObject(pZoomRegular);
-			g_bAllowAAO = true;
+			g_allowArrangeObjectsFl = true;
 
 			pZoomFlash->SetActive(false);
 			pZoomRegular->SetActive(true);

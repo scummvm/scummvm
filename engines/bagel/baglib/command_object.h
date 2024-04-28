@@ -32,9 +32,9 @@ namespace Bagel {
  */
 class CBagCommandObject : public CBagObject {
 private:
-	CBofString m_sObjName;
-	CBofString m_sSrcSDev;
-	CBofString m_sDstSDev;
+	CBofString _objName;
+	CBofString _srcSDev;
+	CBofString _destSDev;
 
 public:
 	CBagCommandObject();
@@ -43,9 +43,9 @@ public:
 	 * Takes in info and then removes the relative information
 	 * and returns the info without the relevant info.
 	 */
-	PARSE_CODES setInfo(bof_ifstream &istr);
+	PARSE_CODES setInfo(bof_ifstream &istr) override;
 
-	virtual bool runObject();
+	bool runObject() override;
 };
 
 } // namespace Bagel
