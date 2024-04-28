@@ -71,23 +71,23 @@ public:
 	 * @param pSrcRect      Clip rect of the object to be painted
 	 * @param nMaskColor    Mask color for the object
 	*/
-	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /* nMaskColor */ = -1);
+	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /* nMaskColor */ = -1) override;
 
 	/**
 	 * Called to overload specific types of sprite objects
 	 * @param pBmp          Bitmap
 	 * @return              Success/failure
 	 */
-	virtual bool PaintFGObjects(CBofBitmap *pBmp);
+	virtual bool PaintFGObjects(CBofBitmap *pBmp) override;
 
-	virtual ErrorCode LoadFile(const CBofString &sFile);
+	virtual ErrorCode LoadFile(const CBofString &sFile) override;
 
 	/**
 	 * Called to overload specific types of sprite objects
 	 * @param sInit     Init
 	 * @return          Pointer to the new object
 	 */
-	CBagObject *OnNewButtonObject(const CBofString &sInit);
+	CBagObject *OnNewButtonObject(const CBofString &sInit) override;
 
 	/**
 	 * Called on the mouse left button down
@@ -97,7 +97,7 @@ public:
 	 * @param xPoint        X, Y position
 	 * @param info          Optional info
 	 */
-	void onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info = nullptr);
+	void onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info = nullptr) override;
 
 	/**
 	 * Called on the mouse left button down
@@ -105,11 +105,11 @@ public:
 	 * @param xPoint        X, Y position
 	 * @param info          Optional info
 	 */
-	virtual void onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *info = nullptr);
+	virtual void onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *info = nullptr) override;
 
-	bool isInside(const CBofPoint &xPoint);
+	bool isInside(const CBofPoint &xPoint) override;
 
-	CBagObject *OnNewUserObject(const CBofString &sInit);
+	CBagObject *OnNewUserObject(const CBofString &sInit) override;
 
 	/**
 	 * Allow the movie code to queue up asynch pda messages
@@ -137,25 +137,25 @@ public:
 	/**
 	 * SHow the inventory
 	*/
-	virtual bool showInventory();
+	virtual bool showInventory() override;
 
 	/**
 	 * Hide the inventory
 	 */
-	virtual bool hideInventory();
+	virtual bool hideInventory() override;
 
 	/**
 	 * Hide the current display
 	 */
-	virtual bool hideCurDisplay();
+	virtual bool hideCurDisplay() override;
 
 	/**
 	 * Restore display
 	 */
-	virtual bool restoreCurDisplay();
+	virtual bool restoreCurDisplay() override;
 
-	virtual ErrorCode attachActiveObjects();
-	virtual ErrorCode detachActiveObjects();
+	virtual ErrorCode attachActiveObjects() override;
+	virtual ErrorCode detachActiveObjects() override;
 
 	/**
 	 * Handle switching back and forth from our flashing zoom button
