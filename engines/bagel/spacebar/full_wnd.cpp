@@ -68,12 +68,12 @@ ErrorCode SBarFullWnd::detach() {
 	return ERR_NONE;
 }
 
-void SBarFullWnd::OnTimer(uint32 nTimerId) {
+void SBarFullWnd::onTimer(uint32 nTimerId) {
 	Assert(IsValidObject(this));
 
 	// If allowing EVENT_WLD to execute
 	if (m_bAllowEventWorld) {
-		CBagStorageDevWnd::OnTimer(nTimerId);
+		CBagStorageDevWnd::onTimer(nTimerId);
 
 	} else {
 		// Otherwise, don't allow turns to pass
@@ -81,8 +81,8 @@ void SBarFullWnd::OnTimer(uint32 nTimerId) {
 	}
 }
 
-void SBarFullWnd::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
-	CBagStorageDevWnd::OnMouseMove(nFlags, pPoint);
+void SBarFullWnd::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
+	CBagStorageDevWnd::onMouseMove(nFlags, pPoint);
 }
 
 } // namespace SpaceBar

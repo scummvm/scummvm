@@ -89,12 +89,12 @@ public:
 	ErrorCode Create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRect *cRect = nullptr, uint32 nStyle = 0);
 
 	// virtual void OnClose();
-	virtual void OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void onMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 
 	virtual void OnDeActivate();
 
-	virtual void OnTimer(uint32 nID);
+	virtual void onTimer(uint32 nID);
 	virtual void OnPaint(CBofRect *pRect);
 };
 

@@ -850,7 +850,7 @@ void CNavWindow::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	}
 }
 
-void CNavWindow::OnTimer(uint32 tId) {
+void CNavWindow::onTimer(uint32 tId) {
 	if (tId == 777) {
 		m_pCurLoc->PaintSprite(this, m_pCurPos->left, m_pCurPos->top);
 	}

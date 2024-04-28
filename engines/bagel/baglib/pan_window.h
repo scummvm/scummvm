@@ -208,7 +208,7 @@ public:
 	static void FlushInputEvents();
 
 	void OnClose();
-	void OnMouseMove(uint32 nFlags, CBofPoint *p, void * = nullptr);
+	void onMouseMove(uint32 nFlags, CBofPoint *p, void * = nullptr);
 	void OnLButtonDown(uint32 nFlags, CBofPoint *point, void * = nullptr);
 	void OnLButtonUp(uint32 nFlags, CBofPoint *point, void * = nullptr);
 	void OnKeyHit(uint32 lKey, uint32 lRepCount);

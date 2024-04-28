@@ -141,7 +141,7 @@ bool CBagCommandObject::runObject() {
 					if (pSDev->GetDeviceType() == SDEV_GAMEWIN) {
 						CBagPanWindow *pWin;
 						pWin = (CBagPanWindow *)pSDev;
-						pWin->OnTimer(EVAL_EXPR);
+						pWin->onTimer(EVAL_EXPR);
 					}
 				}
 				bEventLoop = false;

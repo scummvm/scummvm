@@ -811,7 +811,7 @@ void SBarSlotWnd::UpdateText() {
 	}
 }
 
-void SBarSlotWnd::OnTimer(uint32 /*nTimerId*/) {
+void SBarSlotWnd::onTimer(uint32 /*nTimerId*/) {
 }
 
 void SBarSlotWnd::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {

@@ -405,7 +405,7 @@ void CBofWindow::CheckTimers() {
 				if (timer._callback) {
 					(timer._callback)(timer._id, this);
 				} else {
-					OnTimer(timer._id);
+					onTimer(timer._id);
 				}
 
 				// Flag to restart scanning through the timer list
@@ -545,7 +545,7 @@ Graphics::ManagedSurface *CBofWindow::getSurface() {
 
 // Default version of these virtual functions don't do anything
 //
-void CBofWindow::OnMouseMove(uint32, CBofPoint *, void *) {}
+void CBofWindow::onMouseMove(uint32, CBofPoint *, void *) {}
 
 void CBofWindow::OnLButtonDown(uint32, CBofPoint *, void *) {}
 void CBofWindow::OnLButtonUp(uint32, CBofPoint *, void *) {}
@@ -559,7 +559,7 @@ void CBofWindow::OnKeyHit(uint32, uint32) {}
 
 void CBofWindow::OnReSize(CBofSize *) {}
 void CBofWindow::OnPaint(CBofRect *) {}
-void CBofWindow::OnTimer(uint32) {}
+void CBofWindow::onTimer(uint32) {}
 
 void CBofWindow::OnClose() {}
 
@@ -645,7 +645,7 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 
 	switch ((int)event.type) {
 	case Common::EVENT_MOUSEMOVE:
-		OnMouseMove(0, &mousePos);
+		onMouseMove(0, &mousePos);
 		break;
 
 	case Common::EVENT_LBUTTONDOWN:

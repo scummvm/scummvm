@@ -328,7 +328,7 @@ public:
 	virtual ErrorCode LoadFile(const CBofString &sFile);
 	virtual ErrorCode LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach = true);
 
-	virtual void OnMouseMove(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
+	virtual void onMouseMove(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	virtual ErrorCode OnMouseOver(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	virtual void OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	virtual void OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
@@ -433,7 +433,7 @@ public:
 
 	virtual ErrorCode Close();
 	virtual ErrorCode RunModal(CBagObject *pObj);
-	virtual void OnTimer(uint32 nTimerId);
+	virtual void onTimer(uint32 nTimerId);
 
 	void SetOnUpdate(bool bVal = true) {
 		m_bOnUpdate = bVal;
@@ -477,7 +477,7 @@ public:
 	virtual void OnPaint(CBofRect *);
 	virtual void OnMainLoop();
 	void OnClose();
-	void OnMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
+	void onMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
 	void OnLButtonDown(uint32 nFlags, CBofPoint *point, void * = nullptr);
 	void OnLButtonUp(uint32 nFlags, CBofPoint *point, void * = nullptr);
 
@@ -544,7 +544,7 @@ public:
 
 	virtual void OnPaint(CBofRect *);
 	virtual void OnClose();
-	void OnMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
+	void onMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
 	void OnLButtonDown(uint32 nFlags, CBofPoint *point, void * = nullptr);
 	void OnLButtonUp(uint32 nFlags, CBofPoint *point, void * = nullptr);
 };

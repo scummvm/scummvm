@@ -112,8 +112,8 @@ void SBarBibOddsWnd::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	CBagChatWnd::OnKeyHit(lKey, lRepCount);
 }
 
-void SBarBibOddsWnd::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
-	CBagStorageDevWnd::OnMouseMove(nFlags, pPoint);
+void SBarBibOddsWnd::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
+	CBagStorageDevWnd::onMouseMove(nFlags, pPoint);
 }
 
 ErrorCode SBarBibOddsWnd::attach() {

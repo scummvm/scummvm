@@ -480,7 +480,7 @@ void CBofScrollBar::OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 }
 
 
-void CBofScrollBar::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
+void CBofScrollBar::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 
 	if (m_bMouseCaptured) {
@@ -491,7 +491,7 @@ void CBofScrollBar::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 		}
 	}
 
-	CBofWindow::OnMouseMove(nFlags, pPoint);
+	CBofWindow::onMouseMove(nFlags, pPoint);
 }
 
 
@@ -502,7 +502,7 @@ void CBofScrollBar::SetRepeatTimer(uint32 nTimerInt) {
 }
 
 
-void CBofScrollBar::OnTimer(uint32 nWhichTimer) {
+void CBofScrollBar::onTimer(uint32 nWhichTimer) {
 	Assert(IsValidObject(this));
 
 	CBofRect cLeftPageRect, cRightPageRect;

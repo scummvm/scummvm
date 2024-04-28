@@ -39,37 +39,37 @@ ErrorCode CBagChatWnd::attach() {
 	return m_errCode;
 }
 
-void CBagChatWnd::OnTimer(uint32 /*nTimerId*/) {
+void CBagChatWnd::onTimer(uint32 /*nTimerId*/) {
 	Assert(IsValidObject(this));
 }
 
-void CBagChatWnd::OnMouseMove(uint32 nFlags, CBofPoint *pPos, void *) {
+void CBagChatWnd::onMouseMove(uint32 flags, CBofPoint *pos, void *) {
 	Assert(IsValidObject(this));
-	Assert(pPos != nullptr);
+	Assert(pos != nullptr);
 
 	// Use default behavior 1st
-	CBagStorageDevWnd::OnMouseMove(nFlags, pPos);
+	CBagStorageDevWnd::onMouseMove(flags, pos);
 
 	// If over a chat choice, then highlight it
-	CBofList<CBagObject *> *pList;
+	CBofList<CBagObject *> *bagObjectList;
 
 	// Run thru background object list and find if the cursor is over an object
-	if ((pList = GetObjectList()) != nullptr) {
+	if ((bagObjectList = GetObjectList()) != nullptr) {
 		// Go thru list backwards to find the 1st top-most object
-		CBofListNode<CBagObject *> *pNode = pList->GetTail();
-		while (pNode != nullptr) {
-			CBagObject *pObj = pNode->GetNodeItem();
+		CBofListNode<CBagObject *> *currNode = bagObjectList->GetTail();
+		while (currNode != nullptr) {
+			CBagObject *currNodeItem = currNode->GetNodeItem();
 
-			if (pObj->GetType() == TEXTOBJ) {
-				((CBagTextObject *)pObj)->SetColor(4);
-				pObj->SetDirty(true);
+			if (currNodeItem->GetType() == TEXTOBJ) {
+				((CBagTextObject *)currNodeItem)->SetColor(4);
+				currNodeItem->SetDirty(true);
 
-				if (pObj->isAttached() && pObj->isInside(*pPos)) {
-					((CBagTextObject *)pObj)->SetColor(8);
+				if (currNodeItem->isAttached() && currNodeItem->isInside(*pos)) {
+					((CBagTextObject *)currNodeItem)->SetColor(8);
 				}
 			}
 
-			pNode = pNode->m_pPrev;
+			currNode = currNode->m_pPrev;
 		}
 	}
 }

@@ -393,7 +393,7 @@ void CMainWindow::CorrectZzazzlePoint(CBofPoint *p) {
 }
 
 
-void CMainWindow::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
+void CMainWindow::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
@@ -405,7 +405,7 @@ void CMainWindow::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 				CorrectZzazzlePoint(pPoint);
 		}
 
-		CBagPanWindow::OnMouseMove(nFlags, pPoint);
+		CBagPanWindow::onMouseMove(nFlags, pPoint);
 	}
 }
 
