@@ -665,9 +665,7 @@ void OpenGLGraphicsManager::updateScreen() {
 	    && !_osdMessageSurface && !_osdIconSurface
 #endif
 	    ) {
-#if !defined(USE_IMGUI)
 		return;
-#endif
 	}
 
 	// Update changes to textures.
