@@ -25,6 +25,7 @@
 #include "common/savefile.h"
 #include "common/scummsys.h"
 #include "twine/menu/menu.h"
+#include "twine/shared.h"
 
 namespace TwinE {
 
@@ -68,7 +69,7 @@ private:
 	 * 107: Set to 1 after Twinsen kills yellow groboclone in the Citadel Island Tavern (after the Tavern has
 	 * been closed down). Makes the Tavern open again and groboclone not appear any more.
 	 */
-	uint8 _listFlagGame[NUM_GAME_FLAGS];
+	int16 _listFlagGame[NUM_GAME_FLAGS];
 	// only lba1 - lba2 uses 253 gameflag
 	int16 _gameChapter = 0;
 
@@ -138,6 +139,16 @@ public:
 	int32 _numChoices = 0;   // numOfOptionsInChoice
 	TextId _choiceAnswer = TextId::kNone; // inGameMenuAnswer
 
+	void setDarts(int16 value) {
+		setGameFlag(InventoryItems::kiDart, value);
+	}
+
+	void addDart() {
+		int16 old = _listFlagGame[InventoryItems::kiDart];
+		++old;
+		setGameFlag(InventoryItems::kiDart, old);
+	}
+
 	inline bool inventoryDisabled() const {
 		return hasGameFlag(GAMEFLAG_INVENTORY_DISABLED) != 0;
 	}
@@ -167,7 +178,7 @@ public:
 
 	uint8 hasGameFlag(uint8 index) const;
 
-	void setGameFlag(uint8 index, uint8 value);
+	void setGameFlag(uint8 index, int16 value);
 
 	int16 setKeys(int16 value);
 	int16 setGas(int16 value);

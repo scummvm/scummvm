@@ -100,9 +100,8 @@ public:
 	 * @param z sound generating entity z position
 	 * @param actorIdx
 	 */
-	// HQ_MixSample
-	void playSample(int32 index, int32 repeat = 1, int32 x = 128, int32 y = 128, int32 z = 128, int32 actorIdx = -1);
-	void playSample(int32 index, int32 repeat, const IVec3 &pos, int32 actorIdx = -1) {
+	void playSample(int32 index, int32 repeat = 1, int32 x = 128, int32 y = 128, int32 z = 128, int32 actorIdx = -1); // HQ_3D_MixSample
+	void playSample(int32 index, int32 repeat, const IVec3 &pos, int32 actorIdx = -1) { // HQ_MixSample
 		playSample(index, repeat, pos.x, pos.y, pos.z, actorIdx);
 	}
 
@@ -121,10 +120,10 @@ public:
 	int32 getActorChannel(int32 index);
 
 	/** Stops a specific sample */
-	void stopSample(int32 index);
+	void stopSample(int32 index); // HQ_StopOneSample
 
 	/** Check if a sample is playing */
-	int32 isSamplePlaying(int32 index);
+	int32 isSamplePlaying(int32 index); // IsSamplePlaying
 
 	/** Play VOX sample */
 	bool playVoxSample(const TextEntry *text);

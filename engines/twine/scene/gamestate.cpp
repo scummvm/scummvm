@@ -229,6 +229,10 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 
 bool GameState::saveGame(Common::WriteStream *file) {
 	debug(2, "Save game");
+	if (!_engine->isLBA1()) {
+		warning("Saving not implemented for lba2");
+		return false;
+	}
 	if (_engine->_menuOptions->_saveGameName[0] == '\0') {
 		Common::strlcpy(_engine->_menuOptions->_saveGameName, "TwinEngineSave", sizeof(_engine->_menuOptions->_saveGameName));
 	}
@@ -296,7 +300,7 @@ int16 GameState::getChapter() const {
 	return _listFlagGame[253];
 }
 
-void GameState::setGameFlag(uint8 index, uint8 value) {
+void GameState::setGameFlag(uint8 index, int16 value) {
 	if (_listFlagGame[index] == value) {
 		return;
 	}

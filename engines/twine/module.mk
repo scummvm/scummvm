@@ -30,11 +30,14 @@ MODULE_OBJS := \
 	scene/animations.o \
 	scene/buggy.o \
 	scene/collision.o \
+	scene/dart.o \
 	scene/extra.o \
 	scene/gamestate.o \
 	scene/grid.o \
 	scene/movements.o \
+	scene/rain.o \
 	scene/scene.o \
+	scene/wagon.o \
 	\
 	script/script_life.o \
 	script/script_move.o \

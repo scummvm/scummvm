@@ -148,13 +148,45 @@ void Scene::setBonusParameterFlags(ActorStruct *act, uint16 bonusFlags) {
 	}
 }
 
+bool Scene::loadSceneCubeXY(int numcube, int *cubex, int *cubey) {
+	uint8 *scene = nullptr;
+	// numcube+1 because at 0 is SizeCube.MAX (size of the largest .SCC)
+	const int32 sceneSize = HQR::getAllocEntry(&scene, Resources::HQR_SCENE_FILE, numcube + 1);
+	if (sceneSize <= 0) {
+		return false;
+	}
+	Common::MemoryReadStream stream(scene, sceneSize, DisposeAfterUse::YES);
+
+	*cubex = *cubey = 0;
+
+	// World info: INFO_WORLD
+	const uint8 island = stream.readByte();
+
+	// Used only for 3DExt
+	const int32 x = stream.readByte();
+	const int32 y = stream.readByte();
+
+	/*uint8 shadowlvl =*/stream.readByte();
+	/*uint8 modelaby =*/stream.readByte();
+	const uint8 cubemode = stream.readByte();
+
+	if (cubemode == CUBE_EXTERIEUR && island == _island && ABS(x - _currentCubeX) <= 1 && ABS(y - _currentCubeY) <= 1) {
+		*cubex = x;
+		*cubey = y;
+
+		return true;
+	}
+	return false;
+}
+
 bool Scene::loadSceneLBA2() {
 	Common::MemoryReadStream stream(_currentScene, _currentSceneSize);
-	_sceneTextBank = (TextBankId)stream.readByte();
-	/*int8 currentCubeX =*/ stream.readSByte();
-	/*int8 currentCubeY =*/ stream.readSByte();
-	/*int8 shadowLevel =*/ stream.readSByte();
-	/*int8 modeLabyrinthe =*/ stream.readSByte();
+	_island = stream.readByte();
+	_sceneTextBank = (TextBankId)_island;
+	_currentCubeX = stream.readByte();
+	_currentCubeY = stream.readByte();
+	_shadowLevel = stream.readByte();
+	_modeLabyrinthe = stream.readByte();
 	_isOutsideScene = stream.readByte();
 
 	/*uint8 n =*/ stream.readByte();

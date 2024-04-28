@@ -254,30 +254,31 @@ enum class ShapeType {
 
 /** Control mode types */
 enum class ControlMode {
-	kNoMove = 0,
-	kManual = 1,
-	kFollow = 2,
-	kTrack = 3,
-	kFollow2 = 4,
-	kTrackAttack = 5,
-	kSameXZ = 6,
-	kRandom = 7, // kPinguin in lba2
+	kNoMove = 0,      // NO_MOVE
+	kManual = 1,      // MOVE_MANUAL
+	kFollow = 2,      // MOVE_FOLLOW
+	kTrack = 3,       // MOVE_TRACK
+	kFollow2 = 4,     // MOVE_FOLLOW_2
+	kTrackAttack = 5, // MOVE_TRACK_ATTACK
+	kSameXZ = 6,      // MOVE_SAME_XZ
+	kRandom = 7,      //
+	kPinguin = 7,     // MOVE_PINGOUIN kRandom doesn't exist in lba2 ()
 	// lba2
-	kWagon = 8,
-	kCircle = 9, // Beta = Tangent lines to circles
-	kCircle2 = 10,
-	kSameXYBeta = 11,
-	kBuggy = 12,
-	kBuggyManual = 13
+	kWagon = 8,       // MOVE_WAGON
+	kCircle = 9,      // MOVE_CIRCLE Beta = Tangent lines to circles
+	kCircle2 = 10,    // MOVE_CIRCLE2 Beta = Facing the flag
+	kSameXYBeta = 11, // MOVE_SAME_XZ_BETA
+	kBuggy = 12,      // MOVE_BUGGY
+	kBuggyManual = 13 // MOVE_BUGGY_MANUAL
 };
 
 enum class AnimationTypes {
 	kAnimNone = -1,
-	kStanding = 0,
-	kForward = 1,
-	kBackward = 2,
-	kTurnLeft = 3,
-	kTurnRight = 4,
+	kStanding = 0,  // GEN_ANIM_RIEN
+	kForward = 1,   // GEN_ANIM_MARCHE
+	kBackward = 2,  // GEN_ANIM_RECULE
+	kTurnLeft = 3,  // GEN_ANIM_GAUCHE
+	kTurnRight = 4, // GEN_ANIM_DROITE
 	kHit = 5,
 	kBigHit = 6,
 	kFall = 7,
@@ -297,6 +298,7 @@ enum class AnimationTypes {
 	kDrawn = 21,
 	kHit2 = 22,
 	kSabreAttack = 23,
+	kPush = 27, // GEN_ANIM_POUSSE
 	kSabreUnknown = 24,
 	kCarStarting = 303,
 	kCarDriving = 304,
@@ -307,7 +309,7 @@ enum class AnimationTypes {
 };
 
 enum class AnimType {
-	kAnimationTypeRepeat = 0,
+	kAnimationTypeRepeat = 0, // ANIM_REPEAT
 	kAnimationThen = 1,
 	// play animation and let animExtra follow as next animation
 	// if there is already a next animation set - replace the value
@@ -332,12 +334,28 @@ enum class AnimType {
  * @note The values must match the @c TextId indices
  */
 enum class HeroBehaviourType {
-	kNormal = 0,
-	kAthletic = 1,
-	kAggressive = 2,
-	kDiscrete = 3,
-	kProtoPack = 4
+	kNormal = 0,          // C_NORMAL
+	kAthletic = 1,        // C_SPORTIF
+	kAggressive = 2,      // C_AGRESSIF
+	kDiscrete = 3,        // C_DISCRET
+	kProtoPack = 4,       // C_PROTOPACK
+#if 0
+	kDOUBLE = 5,          // C_DOUBLE Twinsen + Zoé
+	kCONQUE = 6,          // C_CONQUE Conque
+	kSCAPH_INT_NORM = 7,  // C_SCAPH_INT_NORM Scaphandre Interieur Normal
+	kJETPACK = 8,         // C_JETPACK SuperJetPack
+	kSCAPH_INT_SPOR = 9,  // C_SCAPH_INT_SPOR Scaphandre Interieur Sportif
+	kSCAPH_EXT_NORM = 10, // C_SCAPH_EXT_NORM Scaphandre Exterieur Normal
+	kSCAPH_EXT_SPOR = 11, // C_SCAPH_EXT_SPOR Scaphandre Exterieur Sportif
+	kBUGGY = 12,          // C_BUGGY Conduite du buggy
+	kSKELETON = 13,       // C_SKELETON Squelette Electrique
+#endif
+	kMax
 };
+
+// lba2
+#define CUBE_INTERIEUR	0
+#define	CUBE_EXTERIEUR	1
 
 /**
  * 0: tunic + medallion
@@ -349,14 +367,27 @@ enum class HeroBehaviourType {
  * 6: snowboard (WARNING, this can crash the game when you change behavior)
  */
 enum class BodyType {
-	btNone = -1,
-	btNormal = 0,
-	btTunic = 1,
-	btSabre = 2,
-	btPrisonSuit = 3,
-	btNurseSuit = 4,
-	btHorn = 5,
-	btSnowboard = 6
+	btNone = -1,  // Lba1/Lba2 NO_BODY (255)
+	btNormal = 0, // Lba1/Lba2 GEN_BODY_NORMAL
+	btTunic = 1,  // Lba1/Lba2 GEN_BODY_TUNIQUE
+	btSabre = 2,  // Lba1/Lba2 GEN_BODY_SABRE
+
+	btPrisonSuit = 3, // Lba1
+	btNurseSuit = 4,  // Lba1
+	btHorn = 5,       // Lba1
+	btSnowboard = 6,  // Lba1
+
+	btBlowTube = 3,  // Lba2 GEN_BODY_SARBACANE
+	btSarbatron = 4, // Lba2 GEN_BODY_SARBATRON
+	btGlove = 5,     // Lba2 GEN_BODY_GANT
+
+	btLaserPistole = 6, // Lba2 GEN_BODY_PISTOLASER
+	btMage = 7,         // Lba2 GEN_BODY_MAGE
+	btMageBlowtube = 8, // Lba2 GEN_BODY_MAGE_SARBACANE
+	btBodyFire = 9,     // Lba2 GEN_BODY_FEU
+	btTunicTir = 10,    // Lba2 GEN_BODY_TUNIQUE_TIR
+	btMageTir = 11,     // Lba2 GEN_BODY_MAGE_TIR
+	btLabyrinth = 12    // Lba2 GEN_BODY_LABYRINTHE
 };
 
 enum class ExtraSpecialType {
@@ -603,35 +634,37 @@ enum class TextId : int16 {
 };
 
 enum InventoryItems {
-	kiHolomap = 0,
-	kiMagicBall = 1,
-	kiUseSabre = 2,
-	kiGawleysHorn = 3,
-	kiTunic = 4,
-	kiBookOfBu = 5,
-	kSendellsMedallion = 6,
-	kFlaskOfClearWater = 7,
-	kRedCard = 8,
-	kBlueCard = 9,
-	kIDCard = 10,
-	kMrMiesPass = 11,
-	kiProtoPack = 12,
-	kSnowboard = 13,
-	kiPenguin = 14,
-	kGasItem = 15,
-	kPirateFlag = 16,
-	kMagicFlute = 17,
-	kSpaceGuitar = 18,
-	kHairDryer = 19,
-	kAncesteralKey = 20,
-	kBottleOfSyrup = 21,
-	kEmptyBottle = 22,
-	kFerryTicket = 23,
-	kKeypad = 24,
-	kCoffeeCan = 25,
-	kiBonusList = 26,
-	kiCloverLeaf = 27,
-	MaxInventoryItems = 28
+	kiHolomap = 0,             // lba1/lba2
+	kiMagicBall = 1,           // lba1/lba2
+	kiUseSabre = 2,            // lba1
+	kiDart = 2,                // lba2
+	kiGawleysHorn = 3,         // lba1
+	kiTunic = 4,               // lba1/lba2
+	kiBookOfBu = 5,            // lba1
+	kSendellsMedallion = 6,    // lba1
+	kFlaskOfClearWater = 7,    // lba1
+	kRedCard = 8,              // lba1
+	kBlueCard = 9,             // lba1
+	kIDCard = 10,              // lba1
+	kMrMiesPass = 11,          // lba1
+	kiProtoPack = 12,          // lba1/lba2
+	kSnowboard = 13,           // lba1
+	kiPenguin = 14,            // lba1/lba2
+	kGasItem = 15,             // lba1/lba2 (GazoGem)
+	kPirateFlag = 16,          // lba1
+	kMagicFlute = 17,          // lba1
+	kSpaceGuitar = 18,         // lba1
+	kHairDryer = 19,           // lba1
+	kAncesteralKey = 20,       // lba1
+	kBottleOfSyrup = 21,       // lba1
+	kEmptyBottle = 22,         // lba1
+	kFerryTicket = 23,         // lba1
+	kKeypad = 24,              // lba1
+	kCoffeeCan = 25,           // lba1
+	kiBonusList = 26,          // lba1
+	kiCloverLeaf = 27,         // lba1
+	MaxInventoryItems = 28,    // lba1
+	MaxInventoryItemsLba2 = 40 // lba2
 };
 
 struct TwineResource {

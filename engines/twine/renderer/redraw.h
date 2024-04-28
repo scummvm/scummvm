@@ -28,20 +28,24 @@
 
 namespace TwinE {
 
+// MAX_INCRUST_DISP
 #define OVERLAY_MAX_ENTRIES 10
 
 enum class OverlayType {
-	koSprite = 0,
-	koNumber = 1,
-	koNumberRange = 2,
-	koInventoryItem = 3,
-	koText = 4,
-	koInventory = 5, // lba2
-	koSysText = 6, // lba2
-	koFlash = 7, //lba2
-	koRain = 8, //lba2
+	koSprite = 0,        // INCRUST_SPRITE
+	koNumber = 1,        // INCRUST_NUM
+	koNumberRange = 2,   // INCRUST_CMPT
+	koInventoryItem = 3, // INCRUST_OBJ
+	koText = 4,          // INCRUST_TEXT
+	koInventory = 5,     // lba2 (INCRUST_INVENTORY)
+	koSysText = 6,       // lba2 (INCRUST_SYS_TEXT)
+	koFlash = 7,         // lba2 (INCRUST_ECLAIR)
+	koRain = 8,          // lba2 (INCRUST_PLUIE)
 	koMax
 };
+
+// lba2
+#define INCRUST_YCLIP (1 << 8)
 
 enum class OverlayPosType {
 	koNormal = 0,

@@ -20,14 +20,16 @@
  */
 
 #include "twine/script/script_life_v2.h"
-#include "twine/renderer/redraw.h"
-#include "twine/renderer/screens.h"
 #include "twine/audio/sound.h"
+#include "twine/movies.h"
+#include "twine/renderer/redraw.h"
 #include "twine/renderer/renderer.h"
+#include "twine/renderer/screens.h"
 #include "twine/resources/resources.h"
 #include "twine/scene/actor.h"
-#include "twine/movies.h"
+#include "twine/scene/buggy.h"
 #include "twine/scene/movements.h"
+#include "twine/scene/wagon.h"
 #include "twine/script/script_move_v2.h"
 #include "twine/shared.h"
 #include "twine/twine.h"
@@ -784,6 +786,25 @@ int32 ScriptLifeV2::lSET_RAIL(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lINVERSE_BETA(TwinEEngine *engine, LifeScriptContext &ctx) {
+	ctx.actor->_beta = ClampAngle(ctx.actor->_beta + LBAAngles::ANGLE_180);
+
+	if (ctx.actor->_controlMode == ControlMode::kWagon) {
+#if 0
+		ctx.actor->Info1 = 1; // reinit speed wagon
+
+		// to be clean
+		APtObj = ctx.actor;
+
+		// SizeSHit contains the number of the brick under the wagon
+		// test front axle position
+		engine->_wagon->AdjustEssieuWagonAvant(ctx.actor->SizeSHit);
+		// test rear axle position
+		engine->_wagon->AdjustEssieuWagonArriere(ctx.actor->SizeSHit);
+#endif
+	}
+
+	// To tell an object that it is no longer being carried by me
+	engine->_actor->processActorCarrier(ctx.actorIdx);
 	return -1;
 }
 

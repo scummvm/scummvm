@@ -292,6 +292,7 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 		_engine->_animations->initAnim(AnimationTypes::kHide, AnimType::kAnimationTypeRepeat, AnimationTypes::kAnimInvalid, actorIdx);
 		break;
 	case HeroBehaviourType::kProtoPack:
+	case HeroBehaviourType::kMax:
 		break;
 	}
 	return executeAction;

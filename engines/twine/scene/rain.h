@@ -19,61 +19,33 @@
  *
  */
 
-#ifndef TWINE_SCENE_BUGGY_H
-#define TWINE_SCENE_BUGGY_H
+#ifndef TWINE_SCENE_RAIN_H
+#define TWINE_SCENE_RAIN_H
 
-#include "common/scummsys.h"
-#include "twine/input.h"
 #include "twine/scene/actor.h"
-
-#define BUGGY_PRESENT 0x80
-#define NUM_BUGGY ((uint8)(NumBuggy & ~(BUGGY_PRESENT)))
-#define IsBuggyPresent() (NumBuggy & BUGGY_PRESENT)
+#include "twine/twine.h"
 
 namespace TwinE {
 
-class Buggy {
+class Rain {
 private:
 	TwinEEngine *_engine;
-	int32 Gear = 0;
-	int32 TimerGear;
 
 public:
-#define MAX_BUGGYS 2
-	struct S_ONE_WHEEL {
-		int32 Angle;
-		int32 X;
-		int32 Y;
-		int32 Z;
+	struct T_RAIN {
+		int32 XRain;
+		int32 YRain;
+		int32 ZRain;
+		int32 Timer;
 	};
 
-	typedef struct {
-		int32 X;
-		int32 Y;
-		int32 Z;
-		int32 Cube;
-		int32 Beta;
-		int32 Alpha;
-		int32 Gamma;
-		S_ONE_WHEEL Wheel[4];
-		int32 BetaWheel;
-		int32 SpeedInc;
-		int32 SpeedRot;
-		int32 Speed;
-		int32 LastTimer;
-	} S_BUGGY;
+	Rain(TwinEEngine *engine) : _engine(engine) {}
 
-	// TODO: rename and hide
-	S_BUGGY ListBuggy[MAX_BUGGYS];
-	uint8 NumBuggy;
-
-	Buggy(TwinEEngine *engine) : _engine(engine) {}
-	void initBuggy(uint8 numobj, uint32 flaginit);
-	void resetBuggy();
-	void takeBuggy();
-	void leaveBuggy(HeroBehaviourType behaviour);
-	void doAnimBuggy(ActorStruct *ptrobj);
-	void moveBuggy(ActorStruct *ptrobj);
+	void InitOneRain(T_RAIN *pt);
+	void InitRain();
+	void GereRain();
+	void ClearImpactRain();
+	void AffRain();
 };
 
 } // namespace TwinE

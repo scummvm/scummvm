@@ -28,8 +28,8 @@
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/system.h"
-#include "common/textconsole.h"
 #include "common/text-to-speech.h"
+#include "common/textconsole.h"
 #include "engines/metaengine.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
@@ -45,12 +45,12 @@
 #include "twine/debugger/debug_grid.h"
 #include "twine/debugger/debug_scene.h"
 #include "twine/detection.h"
-#include "twine/movies.h"
 #include "twine/holomap.h"
 #include "twine/input.h"
 #include "twine/menu/interface.h"
 #include "twine/menu/menu.h"
 #include "twine/menu/menuoptions.h"
+#include "twine/movies.h"
 #include "twine/renderer/redraw.h"
 #include "twine/renderer/renderer.h"
 #include "twine/renderer/screens.h"
@@ -60,11 +60,14 @@
 #include "twine/scene/animations.h"
 #include "twine/scene/buggy.h"
 #include "twine/scene/collision.h"
+#include "twine/scene/dart.h"
 #include "twine/scene/extra.h"
 #include "twine/scene/gamestate.h"
 #include "twine/scene/grid.h"
 #include "twine/scene/movements.h"
+#include "twine/scene/rain.h"
 #include "twine/scene/scene.h"
+#include "twine/scene/wagon.h"
 #include "twine/script/script_life_v1.h"
 #include "twine/script/script_life_v2.h"
 #include "twine/script/script_move_v1.h"
@@ -129,7 +132,7 @@ void TwineScreen::update() {
 		const int left = CLIP<int>(_engine->_redraw->_sceneryViewX - maxW / 4, 0, maxW / 2);
 		const int top = CLIP<int>(_engine->_redraw->_sceneryViewY - maxH / 4, 0, maxH / 2);
 		const Common::Rect srcRect(left, top, left + maxW / 2, top + maxH / 2);
-		const Common::Rect& destRect = zoomWorkVideoBuffer.getBounds();
+		const Common::Rect &destRect = zoomWorkVideoBuffer.getBounds();
 		zoomWorkVideoBuffer.blitFrom(*this, srcRect, destRect);
 		blitFrom(zoomWorkVideoBuffer);
 		// TODO: we need to redraw everything because we just modified the screen buffer itself
@@ -209,6 +212,9 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 		_scriptLife = new ScriptLifeV2(this);
 		_scriptMove = new ScriptMoveV2(this);
 		_buggy = new Buggy(this);
+		_dart = new Dart(this);
+		_rain = new Rain(this);
+		_wagon = new Wagon(this);
 	}
 	_holomap = new Holomap(this);
 	_sound = new Sound(this);
@@ -356,7 +362,7 @@ Common::Error TwinEEngine::run() {
 			_state = EngineState::Menu;
 			break;
 		case EngineState::Menu:
-		#if 0
+#if 0
 			// this will enter the game and execute the commands in the file "debug"
 			_gameState->initEngineVars();
 			_text->textClipSmall();
@@ -366,9 +372,9 @@ Common::Error TwinEEngine::run() {
 				debug("Failed to execute debug file before entering the scene");
 			}
 			gameEngineLoop();
-		#else
+#else
 			_state = _menu->run();
-		#endif
+#endif
 			break;
 		}
 	}
@@ -569,7 +575,7 @@ void TwinEEngine::playIntro() {
 	bool abort = false;
 
 	if (isLBA2()) {
-		//abort |= _screens->loadImageDelay(_resources->activisionLogo(), 7);
+		// abort |= _screens->loadImageDelay(_resources->activisionLogo(), 7);
 		abort |= _screens->loadImageDelay(_resources->eaLogo(), 7);
 	}
 
@@ -851,9 +857,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 	if (_scene->_needChangeScene > -1) {
 		if (!isMod() && isDemo() && isLBA1()) {
 			// the demo only has these scenes
-			if (_scene->_needChangeScene != LBA1SceneId::Citadel_Island_Prison
-			 && _scene->_needChangeScene != LBA1SceneId::Citadel_Island_outside_the_citadel
-			 && _scene->_needChangeScene != LBA1SceneId::Citadel_Island_near_the_tavern) {
+			if (_scene->_needChangeScene != LBA1SceneId::Citadel_Island_Prison && _scene->_needChangeScene != LBA1SceneId::Citadel_Island_outside_the_citadel && _scene->_needChangeScene != LBA1SceneId::Citadel_Island_near_the_tavern) {
 				// TODO: PlayMidiFile(6);
 				return true;
 			}
@@ -910,11 +914,11 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		// Process behaviour menu
 		const bool behaviourMenu = _input->isActionActive(TwinEActionType::BehaviourMenu, false);
 		if ((behaviourMenu ||
-		     _input->isActionActive(TwinEActionType::QuickBehaviourNormal, false) ||
-		     _input->isActionActive(TwinEActionType::QuickBehaviourAthletic, false) ||
-		     _input->isActionActive(TwinEActionType::QuickBehaviourAggressive, false) ||
-		     _input->isActionActive(TwinEActionType::QuickBehaviourDiscreet, false)) &&
-		    _scene->_sceneHero->_body != -1 && _scene->_sceneHero->_controlMode == ControlMode::kManual) {
+			 _input->isActionActive(TwinEActionType::QuickBehaviourNormal, false) ||
+			 _input->isActionActive(TwinEActionType::QuickBehaviourAthletic, false) ||
+			 _input->isActionActive(TwinEActionType::QuickBehaviourAggressive, false) ||
+			 _input->isActionActive(TwinEActionType::QuickBehaviourDiscreet, false)) &&
+			_scene->_sceneHero->_body != -1 && _scene->_sceneHero->_controlMode == ControlMode::kManual) {
 			if (_input->isActionActive(TwinEActionType::QuickBehaviourNormal, false)) {
 				_actor->_heroBehaviour = HeroBehaviourType::kNormal;
 			} else if (_input->isActionActive(TwinEActionType::QuickBehaviourAthletic, false)) {
@@ -1266,9 +1270,9 @@ void TwinEEngine::drawText(int32 x, int32 y, const Common::String &text, bool ce
 		return;
 	}
 	font->drawString(&_frontVideoBuffer, text,
-	                 x, y, width,
-	                 _frontVideoBuffer.format.RGBToColor(255, 255, 255),
-	                 center ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft, 0, true);
+					 x, y, width,
+					 _frontVideoBuffer.format.RGBToColor(255, 255, 255),
+					 center ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft, 0, true);
 }
 
 Common::Language TwinEEngine::getGameLang() const {

@@ -116,6 +116,8 @@ void Actor::setBehaviour(HeroBehaviourType behaviour) {
 		_heroBehaviour = behaviour;
 		sceneHero->_entityDataPtr = &_heroEntityPROTOPACK;
 		break;
+	case HeroBehaviourType::kMax:
+		break;
 	}
 
 	const BodyType bodyIdx = sceneHero->_genBody;
@@ -366,6 +368,56 @@ void Actor::giveExtraBonus(int32 actorIdx) {
 		_engine->_extra->addExtraBonus(pos, LBAAngles::ANGLE_70, angle, bonusSprite, actor->_bonusAmount);
 		_engine->_sound->playSample(Samples::ItemPopup, 1, pos, actorIdx);
 	}
+}
+
+// Lba2
+#define	START_AROUND_BETA	1024
+#define	END_AROUND_BETA		3072
+#define	STEP_AROUND_BETA	128	// 16 pos testees
+#define GetAngle2D(x0, z0, x1, z1) GetAngleVector2D((x1) - (x0), (z1) - (z0))
+
+void Actor::posObjectAroundAnother(uint8 numsrc, uint8 numtopos) {
+#if 0
+	ActorStruct *objsrc;
+	ActorStruct *objtopos;
+	int32 beta, dist, dist2;
+	int32 step;
+
+	objsrc = _engine->_scene->getActor(numsrc);
+	objtopos = _engine->_scene->getActor(numtopos);
+
+	int32 xb = objsrc->Obj.X;
+	int32 zb = objsrc->Obj.Z;
+
+	objtopos->Obj.Y = objsrc->Obj.Y;
+
+	dist = MAX(objsrc->XMin, objsrc->XMax);
+	dist = MAX(dist, objsrc->ZMin);
+	dist = MAX(dist, objsrc->ZMax);
+
+	dist2 = MAX(objtopos->XMin, objtopos->XMax);
+	dist2 = MAX(dist2, objtopos->ZMin);
+	dist2 = MAX(dist2, objtopos->ZMax);
+
+	dist += dist / 2 + dist2 + dist2 / 2;
+
+	beta = ClampAngle(objsrc->Obj.Beta + START_AROUND_BETA);
+
+	for (step = 0; step < (4096 / STEP_AROUND_BETA); step++, beta += STEP_AROUND_BETA) {
+		beta &= 4095;
+		_engine->_renderer->rotate(0, dist, beta);
+
+		objtopos->Obj.X = xb + X0;
+		objtopos->Obj.Z = zb + Z0;
+
+		if (_engine->_collision->checkValidObjPos(numtopos, numsrc)) {
+			// accepte position
+			break;
+		}
+	}
+
+	objtopos->Obj.Beta = ClampAngle(GetAngle2D(xb, zb, objtopos->Obj.X, objtopos->Obj.Z));
+#endif
 }
 
 void ActorStruct::loadModel(int32 modelIndex, bool lba1) {

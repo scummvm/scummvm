@@ -77,7 +77,7 @@ struct StaticFlagsStruct {
 	// take smaller value for bound, or if not set take average for bound
 	uint32 bUseMiniZv : 1;                  // 0x008000 MINI_ZV - square on smaller dimension (if 3D object)
 	uint32 bHasInvalidPosition : 1;         // 0x010000
-	uint32 bNoElectricShock : 1;            // 0x020000
+	uint32 bNoElectricShock : 1;            // 0x020000 NO_CHOC
 	uint32 bHasSpriteAnim3D : 1;            // 0x040000
 	uint32 bNoPreClipping : 1;              // 0x080000
 	uint32 bHasZBuffer : 1;                 // 0x100000
@@ -142,7 +142,7 @@ struct BonusParameter {
  *
  * Such as characters, doors, moving plataforms, invisible actors, ...
  */
-class ActorStruct {
+class ActorStruct { // T_OBJET
 private:
 	ShapeType _col = ShapeType::kNone; // collision
 	bool _brickCausesDamage = false;
@@ -150,8 +150,8 @@ private:
 	EntityData _entityData;
 
 public:
-	StaticFlagsStruct _staticFlags;
-	DynamicFlagsStruct _workFlags;
+	StaticFlagsStruct _staticFlags; // Flags
+	DynamicFlagsStruct _workFlags;  // WorkFlags
 
 	inline ShapeType brickShape() const { return _col; }
 	inline void setCollision(ShapeType shapeType) {
@@ -188,7 +188,7 @@ public:
 	BonusParameter _bonusParameter;
 	int32 _beta = 0; // facing angle of actor. Minumum is 0 (SW). Going counter clock wise (BETA in original sources)
 	int32 _speed = 40; // SRot - speed of movement
-	ControlMode _controlMode = ControlMode::kNoMove;
+	ControlMode _controlMode = ControlMode::kNoMove; // Move
 	int32 _delayInMillis = 0;
 	int32 _cropLeft = 0;      // Info
 	int32 _cropTop = 0;       // Info1
@@ -235,6 +235,8 @@ public:
 	AnimType _flagAnim = AnimType::kAnimationTypeRepeat;
 	int32 _spriteActorRotation = 0;
 	uint8 _brickSound = 0U; // CodeJeu
+	int32 SampleAlways = 0; // lba2
+	uint8 SampleVolume = 0; // lba2
 
 	BoundingBox _boundingBox; // Xmin, YMin, Zmin, Xmax, Ymax, Zmax
 	ActorMoveStruct realAngle;
@@ -326,7 +328,7 @@ public:
 	 * Set hero behaviour
 	 * @param behaviour behaviour value to set
 	 */
-	void setBehaviour(HeroBehaviourType behaviour);
+	void setBehaviour(HeroBehaviourType behaviour); // SetComportement
 
 	/**
 	 * Initialize 3D actor
@@ -357,10 +359,13 @@ public:
 	void hitObj(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit, int32 angle);
 
 	/** Process actor carrier */
-	void processActorCarrier(int32 actorIdx);
+	void processActorCarrier(int32 actorIdx); // CheckCarrier
 
 	/** Process actor extra bonus */
 	void giveExtraBonus(int32 actorIdx);
+
+	// Lba2
+	void posObjectAroundAnother(uint8 numsrc, uint8 numtopos); // PosObjetAroundAnother
 };
 
 } // namespace TwinE
