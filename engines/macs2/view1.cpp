@@ -382,7 +382,7 @@ void View1::draw() {
 		showStringBox(_drawnStringBox);
 		if (speakingCharacter != nullptr) {
 			// TODO: Improve addressing of the memory
-			AnimFrame *frame = speakingCharacter->GetCurrentAnimationFrame();
+			AnimFrame *frame = speakingCharacter->GetCurrentPortrait();
 
 			DrawSprite(Common::Point(0xa, 0xa), frame->Width, frame->Height, frame->Data, s);
 		}
