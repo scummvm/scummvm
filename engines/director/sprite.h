@@ -98,7 +98,7 @@ public:
 	SpriteType _spriteType;
 	byte _inkData;
 	InkType _ink;
-	uint16 _trails;
+	bool _trails;
 
 	CastMemberID _castId;
 	uint16 _pattern;
@@ -124,7 +124,7 @@ public:
 	byte _blend;
 
 	byte _volume;
-	byte _stretch;
+	bool _stretch;
 };
 
 } // End of namespace Director

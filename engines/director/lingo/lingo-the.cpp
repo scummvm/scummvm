@@ -1400,13 +1400,13 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d = channel->_stopTime;
 		break;
 	case kTheStretch:
-		d = sprite->_stretch;
+		d = (sprite->_stretch ? 1 : 0);
 		break;
 	case kTheTop:
 		d = channel->getBbox().top;
 		break;
 	case kTheTrails:
-		d = sprite->_trails;
+		d = (sprite->_trails ? 1 : 0);
 		break;
 	case kTheType:
 		d = sprite->_spriteType;
@@ -1676,10 +1676,10 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			warning("Setting stopTime for non-digital video");
 		break;
 	case kTheStretch:
-		if (d.asInt() != sprite->_stretch) {
+		if ((d.asInt() != 0) != sprite->_stretch) {
 			g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
 
-			sprite->_stretch = d.asInt();
+			sprite->_stretch = (d.asInt() != 0);
 			channel->_dirty = true;
 
 			channel->_width = sprite->_width;
@@ -1687,7 +1687,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheTrails:
-		sprite->_trails = d.asInt();
+		sprite->_trails = (d.asInt() ? true : false);
 		break;
 	case kTheType:
 		if (d.asInt() != sprite->_spriteType) {

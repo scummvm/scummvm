@@ -48,7 +48,7 @@ Sprite::Sprite(Frame *frame) {
 	_spriteType = kInactiveSprite;
 	_inkData = 0;
 	_ink = kInkTypeCopy;
-	_trails = 0;
+	_trails = false;
 
 	_matte = nullptr;
 	_cast = nullptr;
@@ -67,7 +67,7 @@ Sprite::Sprite(Frame *frame) {
 	_blend = 0;
 
 	_volume = 0;
-	_stretch = 0;
+	_stretch = false;
 }
 
 Sprite& Sprite::operator=(const Sprite &sprite) {

@@ -331,8 +331,8 @@ void readSpriteDataD2(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 				sprite._inkData = stream.readByte();
 
 				sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
-				sprite._trails = sprite._inkData & 0x40 ? 1 : 0;
-				sprite._stretch = sprite._inkData & 0x80 ? 1 : 0;
+				sprite._trails = sprite._inkData & 0x40 ? true : false;
+				sprite._stretch = sprite._inkData & 0x80 ? true : false;
 			}
 			break;
 		case 6:
@@ -639,8 +639,8 @@ void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 				sprite._inkData = stream.readByte();
 
 				sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
-				sprite._trails = sprite._inkData & 0x40 ? 1 : 0;
-				sprite._stretch = sprite._inkData & 0x80 ? 1 : 0;
+				sprite._trails = sprite._inkData & 0x40 ? true : false;
+				sprite._stretch = sprite._inkData & 0x80 ? true : false;
 			}
 			break;
 		case 6:
@@ -923,8 +923,8 @@ void readSpriteDataD5(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 				sprite._inkData = stream.readByte();
 
 				sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
-				sprite._trails = sprite._inkData & 0x40 ? 1 : 0;
-				sprite._stretch = sprite._inkData & 0x80 ? 1 : 0;
+				sprite._trails = sprite._inkData & 0x40 ? true : false;
+				sprite._stretch = sprite._inkData & 0x80 ? true : false;
 			}
 			break;
 		case 2:
@@ -1125,8 +1125,8 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			sprite._inkData = inkData;
 
 			sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
-			sprite._trails = sprite._inkData & 0x40 ? 1 : 0;
-			sprite._stretch = sprite._inkData & 0x80 ? 1 : 0;
+			sprite._trails = sprite._inkData & 0x40 ? true : false;
+			sprite._stretch = sprite._inkData & 0x80 ? true : false;
 			}
 			break;
 		case 2: {

@@ -180,7 +180,7 @@ void FilmLoopCastMember::loadFilmLoopDataD2(Common::SeekableReadStreamEndian &st
 				}
 
 				sprite._spriteType = kCastMemberSprite;
-				sprite._stretch = 1;
+				sprite._stretch = true;
 
 				uint16 needSize = MIN((uint16)(nextStart - offset), segSize);
 				int startPosition = stream.pos() - channelOffset;
@@ -294,7 +294,7 @@ void FilmLoopCastMember::loadFilmLoopDataD4(Common::SeekableReadStreamEndian &st
 					}
 				}
 
-				sprite._stretch = 1;
+				sprite._stretch = true;
 
 				uint16 needSize = MIN((uint16)(nextStart - offset), segSize);
 				int startPosition = stream.pos() - channelOffset;
