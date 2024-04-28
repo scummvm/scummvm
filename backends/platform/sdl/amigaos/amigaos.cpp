@@ -160,6 +160,7 @@ void OSystem_AmigaOS::initBackend() {
 	}
 	if (!ConfMan.hasKey("savepath")) {
 		ConfMan.setPath("savepath", "saves/");
+	}
 	if (!ConfMan.hasKey("themepath")) {
 		ConfMan.setPath("themepath", "themes/");
 	}
