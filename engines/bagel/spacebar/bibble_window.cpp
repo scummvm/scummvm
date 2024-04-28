@@ -422,7 +422,7 @@ ErrorCode CBibbleWindow::attach() {
 
 	UpdateWindow();
 
-	CBagCursor::ShowSystemCursor();
+	CBagCursor::showSystemCursor();
 
 	return m_errCode;
 }
@@ -433,7 +433,7 @@ ErrorCode CBibbleWindow::detach() {
 
 	LogInfo("\tCBibbleWindow::detach()");
 
-	CBagCursor::HideSystemCursor();
+	CBagCursor::hideSystemCursor();
 
 	// Remove any unused credits from the table, and put them back into your
 	// Credit Chip

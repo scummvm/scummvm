@@ -181,13 +181,13 @@ ErrorCode SBarComputer::attach() {
 		UpdateWindow();
 	}
 
-	CBagCursor::ShowSystemCursor();
+	CBagCursor::showSystemCursor();
 
 	return rc;
 }
 
 ErrorCode SBarComputer::detach() {
-	CBagCursor::HideSystemCursor();
+	CBagCursor::hideSystemCursor();
 
 	if (m_pDrinkBuff != nullptr) {
 		delete m_pDrinkBuff;

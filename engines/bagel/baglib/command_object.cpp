@@ -35,7 +35,7 @@
 namespace Bagel {
 
 extern bool g_restoreObjectListFl;
-extern bool g_allowArrangeObjectsFl;
+extern bool g_allowAttachActiveObjectsFl;
 
 CBagCommandObject::CBagCommandObject() {
 	m_xObjType = COMMANDOBJ;
@@ -85,9 +85,9 @@ bool CBagCommandObject::runObject() {
 
 		} else if (GetFileName() == "INSERT2") {
 			if (!_objName.IsEmpty() && !dstSDev.IsEmpty()) {
-				g_allowArrangeObjectsFl = false;
+				g_allowAttachActiveObjectsFl = false;
 				SDEVMNGR->AddObject(dstSDev, _objName);
-				g_allowArrangeObjectsFl = true;
+				g_allowAttachActiveObjectsFl = true;
 			}
 
 		} else if (GetFileName() == "INSERT") {

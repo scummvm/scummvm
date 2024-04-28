@@ -33,89 +33,89 @@ class CSystemCursor;
 
 class CBagCursor : public CBofObject, public CBofError {
 private:
-	char m_szFileName[MAX_FNAME];
-	CBofBitmap *m_pBmp;
-	int m_nX;
-	int m_nY;
-	bool m_bSharedPal;
-	bool m_bWieldCursor;
+	char _fileName[MAX_FNAME];
+	CBofBitmap *_bitmap;
+	int _x;
+	int _y;
+	bool _sharedPalFl;
+	bool _wieldCursorFl;
 
 protected:
-	static CBagCursor *m_pCurrentCursor;
+	static CBagCursor *_currentCursor;
 	static CSystemCursor *_systemCursor;
 
 public:
 	CBagCursor();
-	CBagCursor(CBofBitmap *pBmp);
-	CBagCursor(const char *pszFileName, bool bSharedPal = false);
+	CBagCursor(CBofBitmap *bmp);
+	CBagCursor(const char *fileName, bool sharedPalFl = false);
 	static void initialize();
 	static void shutdown();
-	static void ShowSystemCursor();
-	static void HideSystemCursor() {
-		m_pCurrentCursor = nullptr;
+	static void showSystemCursor();
+	static void hideSystemCursor() {
+		_currentCursor = nullptr;
 	}
 
 	~CBagCursor();
 
-	void SetHotSpot(int x, int y) {
-		m_nX = x;
-		m_nY = y;
+	void setHotspot(int x, int y) {
+		_x = x;
+		_y = y;
 	}
-	void SetHotSpot(CBofPoint cPoint) {
-		SetHotSpot(cPoint.x, cPoint.y);
+	void setHotspot(CBofPoint point) {
+		setHotspot(point.x, point.y);
 	}
-	CBofPoint GetHotSpot() {
-		return CBofPoint(m_nX, m_nY);
-	}
-
-	int GetX() {
-		return m_nX;
-	}
-	int GetY() {
-		return m_nY;
+	CBofPoint getHotspot() const {
+		return CBofPoint(_x, _y);
 	}
 
-	ErrorCode Load() {
-		return Load(m_szFileName);
+	int getX() const {
+		return _x;
 	}
-	ErrorCode Load(CBofBitmap *pBmp);
-	ErrorCode Load(const char *pszFileName, CBofPalette *pPal = nullptr);
-
-	void UnLoad();
-
-	CBofBitmap *GetImage() {
-		return m_pBmp;
-	}
-	ErrorCode SetImage(CBofBitmap *pBmp) {
-		return Load(pBmp);
+	int getY() const {
+		return _y;
 	}
 
-	static CBagCursor *GetCurrent() {
-		return m_pCurrentCursor;
+	ErrorCode load() {
+		return load(_fileName);
+	}
+	ErrorCode load(CBofBitmap *bmp);
+	ErrorCode load(const char *fileName, CBofPalette *pal = nullptr);
+
+	void unLoad();
+
+	CBofBitmap *getImage() const {
+		return _bitmap;
+	}
+	ErrorCode setImage(CBofBitmap *bmp) {
+		return load(bmp);
+	}
+
+	static CBagCursor *getCurrent() {
+		return _currentCursor;
 	}
 
 	static bool isSystemCursorVisible() {
-		return m_pCurrentCursor && m_pCurrentCursor->isSystemCursor();
+		return _currentCursor && _currentCursor->isSystemCursor();
 	}
 
 	/**
 	 * Flag whether this is a wielded cursor or not
 	 */
-	void SetWieldCursor(bool b = false) {
-		m_bWieldCursor = b;
+	void setWieldCursor(bool b) {
+		_wieldCursorFl = b;
 	}
 	bool IsWieldCursor() const {
-		return m_bWieldCursor;
+		return _wieldCursorFl;
 	}
 
-	void Show() {
-		SetCurrent();
+	void show() {
+		setCurrent();
 	}
-	void Hide() {
-		m_pCurrentCursor = nullptr;
+	void hide() {
+		_currentCursor = nullptr;
 	}
 
-	virtual void SetCurrent();
+	virtual void setCurrent();
 	virtual bool isSystemCursor() const {
 		return false;
 	}
@@ -126,8 +126,8 @@ public:
 	CSystemCursor() : CBagCursor() {
 	}
 
-	void SetCurrent() override;
-	virtual bool isSystemCursor() const override {
+	void setCurrent() override;
+	bool isSystemCursor() const override {
 		return true;
 	}
 };

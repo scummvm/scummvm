@@ -140,7 +140,7 @@ CBagOptWindow::CBagOptWindow() {
 ErrorCode CBagOptWindow::Detach() {
 	Assert(IsValidObject(this));
 
-	CBagCursor::HideSystemCursor();
+	CBagCursor::hideSystemCursor();
 
 	// Save any changes that the user made
 	SaveOutNewSettings();
@@ -337,7 +337,7 @@ ErrorCode CBagOptWindow::attach() {
 
 	PutDialogData();
 
-	CBagCursor::ShowSystemCursor();
+	CBagCursor::showSystemCursor();
 
 	return m_errCode;
 }

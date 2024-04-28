@@ -68,13 +68,13 @@ void CBagNextCDDialog::OnInitDialog() {
 	}
 
 	// Show System cursor
-	CBagCursor::ShowSystemCursor();
+	CBagCursor::showSystemCursor();
 }
 
 void CBagNextCDDialog::OnClose() {
 	Assert(IsValidObject(this));
 
-	CBagCursor::HideSystemCursor();
+	CBagCursor::hideSystemCursor();
 
 	// Destroy my buttons
 	if (m_pButton != nullptr) {
