@@ -576,9 +576,9 @@ int CBagRPObject::RunRPQueue() {
 				case RP_READ_DOSSIER: {
 					CBagDossierObject *pDObj = m_pActivateThisGuy->GetActiveDossier();
 					if (pDObj) {
-						pDObj->ShowDosText();
+						pDObj->showDosText();
 						// Special case, make sure the trail back to the rp obj is clearly marked
-						pDObj->SetRPObj(m_pActivateThisGuy);
+						pDObj->setResiduePrintedObject(m_pActivateThisGuy);
 					}
 					break;
 				}
@@ -838,14 +838,14 @@ bool CBagRPObject::ActivateRPObject() {
 
 		// By default, include the dossier in the list
 		if (pDosObj->m_bDisplayDossier) {
-			pDosObj->m_pDossier->ActivateDosObject(pLogWld);
+			pDosObj->m_pDossier->activateDosObject(pLogWld);
 		}
 
 		// Give it a back pointer so that it can find the parent res print object
 		//
 		// We must do this here as this will point to the object that just got
 		// residue printed.
-		pDosObj->m_pDossier->SetRPObj(this);
+		pDosObj->m_pDossier->setResiduePrintedObject(this);
 	}
 
 	ShowPDALog();
@@ -884,7 +884,7 @@ void CBagRPObject::DeactivateRPObject() {
 
 	for (int i = 0; i < nCount; i++) {
 		pDosLObj = m_pTouchedList->GetNodeItem(i);
-		pDosLObj->m_pDossier->DeactivateDosObject(pLogWld);
+		pDosLObj->m_pDossier->deactivateDosObject(pLogWld);
 	}
 
 	if (m_pTouchedList != m_pUntouchedList) {
@@ -892,7 +892,7 @@ void CBagRPObject::DeactivateRPObject() {
 
 		for (int i = 0; i < nCount; i++) {
 			pDosLObj = m_pUntouchedList->GetNodeItem(i);
-			pDosLObj->m_pDossier->DeactivateDosObject(pLogWld);
+			pDosLObj->m_pDossier->deactivateDosObject(pLogWld);
 		}
 	}
 
@@ -1510,7 +1510,7 @@ bool CBagRPObject::initialize() {
 		//
 		// We must do this here as this will point to the object that just got
 		// residue printed.
-		pDosObj->m_pDossier->SetRPObj(this);
+		pDosObj->m_pDossier->setResiduePrintedObject(this);
 	}
 
 	if (bDoUntouched) {
@@ -1526,7 +1526,7 @@ bool CBagRPObject::initialize() {
 			//
 			// We must do this here as this will point to the object that just got
 			// residue printed.
-			pDosObj->m_pDossier->SetRPObj(this);
+			pDosObj->m_pDossier->setResiduePrintedObject(this);
 		}
 	}
 

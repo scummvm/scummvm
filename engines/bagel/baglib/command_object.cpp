@@ -241,7 +241,7 @@ bool CBagCommandObject::runObject() {
 
 		} else if (GetFileName() == "RP_DEACTIVATE_DOSSIER") {
 			// Execute any waiting residue printing results.
-			CBagDossierObject::DeactivateCurDossier();
+			CBagDossierObject::deactivateCurDossier();
 
 		} else if (GetFileName() == "RP_ACTIVATE_REVIEW") {
 			// Execute any waiting residue printing results.
