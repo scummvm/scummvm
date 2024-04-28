@@ -281,6 +281,7 @@ void Macs2Engine::readResourceFile() {
 
 		_fileStream->seek(objectOffset, SEEK_SET);
 		GameObject *gameObject = new GameObject();
+		gameObject->Index = i;
 
 		// This loading happens around the l0037_082D: mark
 		uint16 x = _fileStream->readUint16LE();

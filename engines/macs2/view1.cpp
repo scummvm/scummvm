@@ -27,8 +27,16 @@
 #include <graphics/cursorman.h>
 
 namespace Macs2 {
-
-	View1::View1() : UIElement("View1") {
+Character *View1::GetCharacterByIndex(uint16 index) {
+	// TODO: Consider a map
+	for (Character *c : characters) {
+		if (c->GameObject->Index == index) {
+			return c;
+		}
+	}
+	return nullptr;
+}
+View1::View1() : UIElement("View1") {
 		_backgroundSurface = g_engine->_bgImageShip;
 		int mode = (int)g_engine->_cursorMode;
 		CursorMan.replaceCursor(g_engine->_cursorData[mode], g_engine->_cursorWidths[mode], g_engine->_cursorHeights[mode], g_engine->_cursorWidths[mode] >> 1, g_engine->_cursorHeights[0] >> 1, 0);
@@ -569,7 +577,7 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 
 void View1::ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::String> &strings, const Common::Point &position, bool onRightSide) {
 	// TODO: Handle setting up the updated drawing better
-	speakingCharacter = characters[characterIndex - 1];
+	speakingCharacter = GetCharacterByIndex(characterIndex);
 	// TODO: Need to reset this
 	// TODO: Add position: position.x, position.y,
 	setStringBox(strings);
@@ -589,8 +597,13 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 Macs2::AnimFrame *Character::GetCurrentPortrait() {
 	AnimFrame *result = new AnimFrame();
 	Common::MemoryReadStream stream(this->GameObject->Blobs[17].data(), this->GameObject->Blobs[17].size());
-	// TODO: Need to check how the offset really is calculated by the game code
-	stream.seek(35, SEEK_SET);
+	// TODO: Need to check how the offset really is calculated by the game code, this will not hold
+	if (GameObject->Index == 2) {
+		stream.seek(35, SEEK_SET);
+	} else {
+		stream.seek(36, SEEK_SET);
+	}
+	
 	result->ReadFromStream(&stream);
 	return result;
 	// TODO: Think about proper memory management
