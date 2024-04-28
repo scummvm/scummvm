@@ -76,6 +76,8 @@ private:
 
 	bool _isShowingInventory = false;
 
+	Character *speakingCharacter = nullptr;
+
 
 	Graphics::ManagedSurface _backgroundSurface;
 
@@ -129,6 +131,8 @@ public:
 	void DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, uint16 scaling, byte *data, Graphics::ManagedSurface &s);
 
 	void DrawCharacters(Graphics::ManagedSurface &s);
+
+	void ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::String> &strings, const Common::Point &position, bool onRightSide = false);
 };
 
 } // namespace Macs2
