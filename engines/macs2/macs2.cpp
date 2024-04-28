@@ -264,7 +264,6 @@ void Macs2Engine::readResourceFile() {
 	Scenes::instance().CurrentSceneIndex = firstSceneIndex;
 	Scenes::instance().CurrentSceneScript = Scenes::instance().ReadSceneScript(firstSceneIndex, _fileStream);
 	Scenes::instance().CurrentSceneStrings = Scenes::instance().ReadSceneStrings(firstSceneIndex, _fileStream);
-	auto strings = DecodeStrings(Scenes::instance().CurrentSceneStrings, 0, 4);
 	_scriptExecutor->SetScript(Scenes::instance().CurrentSceneScript);
 
 	// for (int i = 1; i < 0x200; i++) {

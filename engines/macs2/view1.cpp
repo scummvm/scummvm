@@ -380,6 +380,13 @@ void View1::draw() {
 	// drawStringBackground(50, 50, 100, 50);
 	if (_isShowingStringBox) {
 		showStringBox(_drawnStringBox);
+		if (speakingCharacter != nullptr) {
+			// TODO: Improve addressing of the memory
+			AnimFrame *frame = speakingCharacter->GetCurrentAnimationFrame();
+			Graphics::ManagedSurface s = getSurface();
+
+			DrawSprite(Common::Point(0xa, 0xa), frame->Width, frame->Height, frame->Data, s);
+		}
 	}
 
 	// Draw all glyphs
@@ -548,6 +555,13 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		DrawSprite(current->Position - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s);
 		// DrawSprite(Common::Point(50, 50), frame->Width, frame->Height, frame->Data, s);
 	}
+}
+
+void View1::ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::String> &strings, const Common::Point &position, bool onRightSide) {
+	// TODO: Handle setting up the updated drawing better
+	// 
+	// TODO: Add position: position.x, position.y,
+	setStringBox(strings);
 }
 
 Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
