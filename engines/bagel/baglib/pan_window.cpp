@@ -320,11 +320,11 @@ ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 						// Only in closeups
 						if (!m_pSlideBitmap->IsPan() && pObj->GetType() == CHAROBJ) {
 							// Handle non-modal movies also...
-							if (pCharObj->GetNumOfLoops() == 1) {
+							if (pCharObj->getNumberOfLoops() == 1) {
 								SetPreFilterPan(true);
 							} else if (pObj->isAttached() &&                       // don't care if it's not running...
-								        (pCharObj->IsStationary() == false) &&
-								        (pCharObj->GetNumOfLoops() != 0) &&     // Plays multiple or infinite (fly == -1)
+								        (pCharObj->isStationary() == false) &&
+								        (pCharObj->getNumberOfLoops() != 0) &&     // Plays multiple or infinite (fly == -1)
 								        ((pObj->getRect().Width() != 480) &&
 								         (pObj->getRect().Height() != 360))) {
 

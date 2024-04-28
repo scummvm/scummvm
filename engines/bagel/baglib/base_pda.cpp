@@ -294,7 +294,7 @@ bool SBBasePda::msgLight() {
 	return true;
 }
 
-void *SBBasePda::fPdaButtonHandler(int refId, void *info) {
+void *SBBasePda::pdaButtonHandler(int refId, void *info) {
 	Assert(info != nullptr);
 
 	SBBasePda *curPda = (SBBasePda *)info;

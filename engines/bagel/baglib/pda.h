@@ -54,18 +54,18 @@ public:
 	virtual ~CBagPDA();
 	static void initialize();
 
-	virtual ErrorCode attach();
+	ErrorCode attach() override;
 
 	/**
 	 * Positions the PDA centered vertically and window
-	 * @param width     Width of area to center pda
-	 * @param height    Height of area to place pda
+	 * @param cx        x position
+	 * @param cy        y position
 	 * @param nDist     Distance to bring move PDA
 	 */
 	void SetPosInWindow(int cx, int cy, int nDist = PDA_INCREMENT);
 
 	/**
-	 * Update the PDA to the screen and then call CBagStorageDevBmp Update
+	 * Update the PDA to the screen and then call CBagStorageDevBmp update
 	 * @param pBmp          Background bitmap to paint to
 	 * @param pt            Offset into bitmap
 	 * @param pSrcRect      Clip rect of the object to be painted

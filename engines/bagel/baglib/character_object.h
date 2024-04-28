@@ -28,106 +28,98 @@
 
 namespace Bagel {
 
-// By setting BININMEMORY to true, we preload all the bin files needed
-// for a specific world thus freeing the main loop of having to
-#define BININMEMORY true
-
 class CBagCharacterObject : public CBagObject {
 protected:
 	Video::SmackerDecoder *_smacker = nullptr;
-	CBofBitmap *m_pBmpBuf = nullptr;
-	int m_nCharTransColor = 0;
+	CBofBitmap *_bmpBuf = nullptr;
+	int _charTransColor = 0;
 
-	char *m_pBinBuf = nullptr;
-	int32 m_nBinBufLen = 0;
+	char *_binBuf = nullptr;
+	int32 _binBufLen = 0;
 
-	int m_nPlaybackSpeed = 0;
-	int m_nNumOfLoops = 0;
-	int m_nStartFrame = 0;
-	int m_nEndFrame = 0;
+	int _playbackSpeed = 0;
+	int _numOfLoops = 0;
+	int _startFrame = 0;
+	int _endFrame = 0;
 
-	bool m_bExitAtEnd : 1;
-	bool m_bFirstFrame : 1;
+	bool _exitAtEnd : 1;
+	bool _firstFrame : 1;
 
-	bool m_bSaveState : 1; // Flag to save the state/frame of the character
-	bool m_bPanim : 1;     // If affected by Panimations On/Off setting
+	bool _saveState : 1; // Flag to save the state/frame of the character
+	bool _pAnim : 1;     // If affected by Panimations On/Off setting
 
-	int m_nPrevFrame = 0;
+	int _prevFrame = 0;
 
-	void SetFrame(int n);
+	void setFrame(int n);
 
 	// Keep track of the PDA wand and the number of frames it has
-	static CBagCharacterObject *m_pPDAWand;
-	static bool m_bPDAAnimating;
+	static CBagCharacterObject *_pdaWand;
+	static bool _pdaAnimating;
 
 public:
 	CBagCharacterObject();
 	virtual ~CBagCharacterObject();
 	static void initialize();
 
-	// Return true if the Object had members that are properly initialized/de-initialized
-	ErrorCode attach();
-	ErrorCode detach();
+	// Return ERR_NONE if the Object had members that are properly initialized/de-initialized
+	ErrorCode attach() override;
+	ErrorCode detach() override;
 
-	CBofRect getRect();
+	CBofRect getRect() override;
 
-	virtual ErrorCode Update(CBofWindow * /*pWnd*/, CBofPoint /*pt*/, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
-	virtual ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
+	ErrorCode update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect = nullptr, int maskColor = -1) override;
 
-	bool DoAdvance();
-	void UpdatePosition();
-	bool RefreshCurrFrame();
+	bool doAdvance();
+	void updatePosition();
+	bool refreshCurrentFrame();
 
-	virtual bool runObject();
-	virtual bool isInside(const CBofPoint &xPoint);
+	bool runObject() override;
+	bool isInside(const CBofPoint &point) override;
 
-	void ArrangeFrames();
+	void arrangeFrames();
 
-	int GetNumOfLoops() const {
-		return m_nNumOfLoops;
+	int getNumberOfLoops() const {
+		return _numOfLoops;
 	}
-	int GetPlaybackSpeed() const {
-		return m_nPlaybackSpeed;
+	int getPlaybackSpeed() const {
+		return _playbackSpeed;
 	}
-	int GetStartFrame() const {
-		return m_nStartFrame;
+	int getStartFrame() const {
+		return _startFrame;
 	}
-	int GetEndFrame() const {
-		return m_nEndFrame;
+	int getEndFrame() const {
+		return _endFrame;
 	}
-	int GetCurrentFrame() const {
+	int getCurrentFrame() const {
 		return (_smacker != nullptr) ? _smacker->getCurFrame() : -1;
 	}
 
-	bool IsModalDone() {
-		return !m_nNumOfLoops;
+	bool isModalDone() override {
+		return !_numOfLoops;
 	}
 
-	bool IsPanim() {
-		return m_bPanim;
+	bool isPanim() const {
+		return _pAnim;
 	}
-	void SetPanim(bool b = true) {
-		m_bPanim = b;
-	}
+	
+	void setNumOfLoops(int n);
+	void setPlaybackSpeed(int n);
+	void setStartFrame(int n);
+	void setEndFrame(int n);
+	void setCurrentFrame(int n);
 
-	void SetNumOfLoops(int n);
-	void SetPlaybackSpeed(int n);
-	void SetStartFrame(int n);
-	void SetEndFrame(int n);
-	void SetCurrentFrame(int n);
+	PARSE_CODES setInfo(bof_ifstream &istr) override;
 
-	PARSE_CODES setInfo(bof_ifstream &istr);
-
-	void setProperty(const CBofString &sProp, int nVal);
-	int getProperty(const CBofString &sProp);
+	void setProperty(const CBofString &prop, int val) override;
+	int getProperty(const CBofString &prop) override;
 
 	// Remember the pda wand, we'll need to know about it and
 	// it's total number of frames.
-	static void SetPDAWand(CBagCharacterObject *pWand);
-	static bool PDAWandAnimating();
+	static void setPdaWand(CBagCharacterObject *pdaWand);
+	static bool pdaWandAnimating();
 
-	bool IsStationary() const {
-		return m_pBinBuf != nullptr;
+	bool isStationary() const {
+		return _binBuf != nullptr;
 	}
 };
 

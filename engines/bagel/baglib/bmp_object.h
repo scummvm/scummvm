@@ -62,7 +62,6 @@ public:
 	}
 	CBofRect getRect() override;
 
-	virtual ErrorCode update(CBofWindow *wnd, CBofPoint pt, CBofRect *srcRect = nullptr, int maskColor = -1);
 	ErrorCode update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect = nullptr, int maskColor = -1) override;
 };
 

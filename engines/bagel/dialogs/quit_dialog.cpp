@@ -22,7 +22,7 @@
 #include "bagel/dialogs/quit_dialog.h"
 #include "bagel/dialogs/opt_window.h"
 #include "bagel/baglib/cursor.h"
-#include "bagel/baglib/buttons.h"
+#include "bagel/baglib/button_object.h"
 #include "bagel/baglib/bagel.h"
 #include "bagel/baglib/master_win.h"
 #include "bagel/boflib/std_keys.h"

@@ -21,7 +21,7 @@
  */
 
 #include "bagel/baglib/master_win.h"
-#include "bagel/baglib/buttons.h"
+#include "bagel/baglib/button_object.h"
 #include "bagel/dialogs/credits_dialog.h"
 #include "bagel/dialogs/quit_dialog.h"
 #include "bagel/baglib/help.h"

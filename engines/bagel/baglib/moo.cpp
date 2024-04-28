@@ -44,7 +44,7 @@ ErrorCode CBagMoo::update(CBofBitmap *pBmp, CBofPoint /*pt*/, CBofRect *pSrcRect
 		ec = m_pMovie->update(pBmp, cPos, pSrcRect, nMaskColor);
 
 		// If we're done or we encountered an error, then roll over and die.
-		if (ec != ERR_NONE || m_pMovie->IsModalDone()) {
+		if (ec != ERR_NONE || m_pMovie->isModalDone()) {
 			StopMovie(true);
 		}
 	}
@@ -80,7 +80,7 @@ ErrorCode CBagMoo::SetPDAMovie(CBofString &s) {
 		ec = m_pMovie->attach();
 		if (ec == ERR_NONE) {
 			m_pMovie->SetModal(false);
-			m_pMovie->SetNumOfLoops(1);
+			m_pMovie->setNumOfLoops(1);
 		}
 	}
 

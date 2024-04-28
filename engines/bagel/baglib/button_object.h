@@ -27,6 +27,17 @@
 
 namespace Bagel {
 
+#define SAVE_BTN 0
+#define CANCEL_BTN 1
+#define RESTORE_BTN 2
+#define RESTART_BTN 3
+#define QUIT_BTN 4
+
+#define LINEUP_BTN 10
+#define LINEDN_BTN 11
+#define PAGEUP_BTN 12
+#define PAGEDN_BTN 13
+
 /**
  * CBagButtonObject is an object that can be place within the slide window.
  */

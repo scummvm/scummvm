@@ -1402,7 +1402,7 @@ ErrorCode CBagStorageDevWnd::RunModal(CBagObject *pObj) {
 		CBofBitmap *pBmp = GetBackdrop();
 
 		if (pBmp != nullptr) {
-			while (!g_engine->shouldQuit() && !pObj->IsModalDone()) {
+			while (!g_engine->shouldQuit() && !pObj->isModalDone()) {
 				// Make sure we redraw each and every frame!
 				SetPreFilterPan(true);
 				OnRender(pBmp, nullptr);
