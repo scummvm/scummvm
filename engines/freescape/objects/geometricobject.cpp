@@ -22,6 +22,8 @@
 // Based on Phantasma code by Thomas Harte (2013),
 // available at https://github.com/TomHarte/Phantasma/ (MIT)
 
+#include "common/system.h"
+
 #include "freescape/objects/geometricobject.h"
 
 namespace Freescape {
@@ -119,6 +121,7 @@ GeometricObject::GeometricObject(
 	const Math::Vector3d &origin_,
 	const Math::Vector3d &size_,
 	Common::Array<uint8> *colours_,
+	Common::Array<uint8> *ecolours_,
 	Common::Array<uint16> *ordinates_,
 	FCLInstructionVector conditionInstructions_,
 	Common::String conditionSource_) {
@@ -143,6 +146,12 @@ GeometricObject::GeometricObject(
 	if (colours_)
 		_colours = colours_;
 
+	_ecolours = nullptr;
+
+	if (ecolours_)
+		_ecolours = ecolours_;
+
+	_cyclingColors = false; // This needs to be set manually
 	_ordinates = nullptr;
 	_initialOrdinates = nullptr;
 
@@ -230,11 +239,15 @@ void GeometricObject::restoreOrdinates() {
 
 Object *GeometricObject::duplicate() {
 	Common::Array<uint8> *coloursCopy = nullptr;
+	Common::Array<uint8> *ecoloursCopy = nullptr;
 	Common::Array<uint16> *ordinatesCopy = nullptr;
 	FCLInstructionVector *conditionCopy = nullptr;
 
 	if (_colours)
 		coloursCopy = new Common::Array<uint8>(*_colours);
+
+	if (_ecolours)
+		ecoloursCopy = new Common::Array<uint8>(*_ecolours);
 
 	if (_ordinates)
 		ordinatesCopy = new Common::Array<uint16>(*_ordinates);
@@ -249,6 +262,7 @@ Object *GeometricObject::duplicate() {
 		_origin,
 		_size,
 		coloursCopy,
+		ecoloursCopy,
 		ordinatesCopy,
 		*conditionCopy,
 		_conditionSource);
@@ -413,17 +427,25 @@ bool GeometricObject::collides(const Math::AABB &boundingBox_) {
 }
 
 void GeometricObject::draw(Renderer *gfx) {
+	if (_cyclingColors) {
+		if (g_system->getMillis() % 10 == 0)
+			for (uint i = 0; i < _colours->size(); i++) {
+				(*_colours)[i] = ((*_colours)[i] + 1) % 0xf;
+				(*_ecolours)[i] = ((*_ecolours)[i] + 1) % 0xf;
+			}
+	}
+
 	if (this->getType() == kCubeType) {
-		gfx->renderCube(_origin, _size, _colours);
+		gfx->renderCube(_origin, _size, _colours, _ecolours);
 	} else if (this->getType() == kRectangleType) {
-		gfx->renderRectangle(_origin, _size, _colours);
+		gfx->renderRectangle(_origin, _size, _colours, _ecolours);
 	} else if (isPyramid(this->getType())) {
-		gfx->renderPyramid(_origin, _size, _ordinates, _colours, this->getType());
+		gfx->renderPyramid(_origin, _size, _ordinates, _colours, _ecolours, this->getType());
 	} else if (this->isPlanar() && _type <= 14) {
 		if (this->getType() == kTriangleType)
 			assert(_ordinates->size() == 9);
 
-		gfx->renderPolygon(_origin, _size, _ordinates, _colours);
+		gfx->renderPolygon(_origin, _size, _ordinates, _colours, _ecolours);
 	}
 }
 

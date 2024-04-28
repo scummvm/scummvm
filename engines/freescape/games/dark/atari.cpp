@@ -44,6 +44,16 @@ void DarkEngine::loadAssetsAtariFullGame() {
 		addECDs(it._value);
 		addSkanner(it._value);
 	}
+
+	GeometricObject *obj = nullptr;
+	obj = (GeometricObject *)_areaMap[15]->objectWithID(18);
+	assert(obj);
+	obj->_cyclingColors = true;
+
+	obj = (GeometricObject *)_areaMap[15]->objectWithID(26);
+	assert(obj);
+	obj->_cyclingColors = true;
+
 }
 
 } // End of namespace Freescape

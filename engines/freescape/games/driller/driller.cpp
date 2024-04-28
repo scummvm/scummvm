@@ -86,7 +86,7 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 
 	Math::Vector3d drillBaseOrigin = Math::Vector3d(0, 0, 0);
 	Math::Vector3d drillBaseSize = Math::Vector3d(3, 2, 3);
-	_drillBase = new GeometricObject(kCubeType, 0, 0, drillBaseOrigin, drillBaseSize, nullptr, nullptr, FCLInstructionVector(), "");
+	_drillBase = new GeometricObject(kCubeType, 0, 0, drillBaseOrigin, drillBaseSize, nullptr, nullptr, nullptr, FCLInstructionVector(), "");
 	assert(!_drillBase->isDestroyed() && !_drillBase->isInvisible());
 
 	if (isDemo()) {

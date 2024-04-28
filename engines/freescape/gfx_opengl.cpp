@@ -284,7 +284,7 @@ void OpenGLRenderer::renderPlayerShootRay(byte color, const Common::Point positi
 void OpenGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, byte color) {
 	uint8 r1, g1, b1, r2, g2, b2;
 	byte *stipple = nullptr;
-	getRGBAt(color, r1, g1, b1, r2, g2, b2, stipple);
+	getRGBAt(color, 0, r1, g1, b1, r2, g2, b2, stipple);
 
 	int triangleAmount = 20;
 	float twicePi = (float)(2.0 * M_PI);
@@ -447,7 +447,7 @@ void OpenGLRenderer::polygonOffset(bool enabled) {
 
 void OpenGLRenderer::setStippleData(byte *data) {
 	if (!data)
-		return;
+		data = _defaultStippleArray;
 
 	_variableStippleArray = data;
 	//for (int i = 0; i < 128; i++)
@@ -490,7 +490,7 @@ void OpenGLRenderer::clear(uint8 r, uint8 g, uint8 b, bool ignoreViewport) {
 void OpenGLRenderer::drawFloor(uint8 color) {
 	uint8 r1, g1, b1, r2, g2, b2;
 	byte *stipple;
-	assert(getRGBAt(color, r1, g1, b1, r2, g2, b2, stipple)); // TODO: move check inside this function
+	assert(getRGBAt(color, 0, r1, g1, b1, r2, g2, b2, stipple)); // TODO: move check inside this function
 	glColor3ub(r1, g1, b1);
 
 	glEnableClientState(GL_VERTEX_ARRAY);

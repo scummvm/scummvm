@@ -262,7 +262,7 @@ void TinyGLRenderer::clear(uint8 r, uint8 g, uint8 b, bool ignoreViewport) {
 void TinyGLRenderer::drawFloor(uint8 color) {
 	uint8 r1, g1, b1, r2, g2, b2;
 	byte *stipple = nullptr;
-	assert(getRGBAt(color, r1, g1, b1, r2, g2, b2, stipple)); // TODO: move check inside this function
+	assert(getRGBAt(color, 0, r1, g1, b1, r2, g2, b2, stipple)); // TODO: move check inside this function
 	tglColor3ub(r1, g1, b1);
 
 	tglEnableClientState(TGL_VERTEX_ARRAY);

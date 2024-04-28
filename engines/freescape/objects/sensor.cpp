@@ -50,14 +50,14 @@ Sensor::Sensor(
 	_isShooting = false;
 }
 
-Object *Sensor::duplicate() { 
-	Sensor *sensor = new Sensor(_objectID, _origin, _rotation, (*_colours)[0], _firingInterval, _firingRange, _axis, _flags, _condition, _conditionSource);  
+Object *Sensor::duplicate() {
+	Sensor *sensor = new Sensor(_objectID, _origin, _rotation, (*_colours)[0], _firingInterval, _firingRange, _axis, _flags, _condition, _conditionSource);
 	return sensor;
 }
 
 void Sensor::draw(Freescape::Renderer *gfx) {
 	Math::Vector3d origin(_origin.x() - 1, _origin.y() - 1, _origin.z() - 1);
-	gfx->renderCube(_origin, _size, _colours);
+	gfx->renderCube(_origin, _size, _colours, nullptr);
 }
 
 bool Sensor::playerDetected(const Math::Vector3d &position, Area *area) {

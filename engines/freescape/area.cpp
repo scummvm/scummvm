@@ -325,6 +325,7 @@ bool Area::checkInSight(const Math::Ray &ray, float maxDistance) {
 			Math::Vector3d(maxDistance / 30, maxDistance / 30, maxDistance / 30), // size
 			nullptr,
 			nullptr,
+			nullptr,
 			FCLInstructionVector(),
 			"");
 
@@ -402,6 +403,7 @@ void Area::addFloor() {
 		Math::Vector3d(-maxSize, -3, -maxSize),      // Position
 		Math::Vector3d(maxSize * 4, 1, maxSize * 4), // size
 		gColors,
+		nullptr,
 		nullptr,
 		FCLInstructionVector());
 	(*_objectsByID)[id] = obj;

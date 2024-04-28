@@ -337,6 +337,11 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		// read the appropriate number of colours
 		int numberOfColours = GeometricObject::numberOfColoursForObjectOfType(objectType);
 		Common::Array<uint8> *colours = new Common::Array<uint8>;
+		Common::Array<uint8> *ecolours = nullptr;
+
+		if (!isDriller() && (isAmiga() || isAtariST()))
+			ecolours = new Common::Array<uint8>;
+
 		debugC(1, kFreescapeDebugParser, "Number of colors: %d", numberOfColours / 2);
 		uint8 entry;
 		for (uint8 colour = 0; colour < numberOfColours / 2; colour++) {
@@ -353,14 +358,18 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 
 			colours->push_back(entry);
 			debugC(1, kFreescapeDebugParser, "color[%d] = %x", 2 * colour, entry);
-			if (!isDriller() && (isAmiga() || isAtariST()))
+			if (!isDriller() && (isAmiga() || isAtariST())) {
+				ecolours->push_back(extraData & 0xf);
 				debugC(1, kFreescapeDebugParser, "ecolor[%d] = %x", 2 * colour, extraData & 0xf);
+			}
 
 			entry = data >> 4;
 			colours->push_back(entry);
 			debugC(1, kFreescapeDebugParser, "color[%d] = %x", 2 * colour + 1, entry);
-			if (!isDriller() && (isAmiga() || isAtariST()))
+			if (!isDriller() && (isAmiga() || isAtariST())) {
+				ecolours->push_back(extraData >> 4);
 				debugC(1, kFreescapeDebugParser, "ecolor[%d] = %x", 2 * colour + 1, extraData >> 4);
+			}
 
 			byteSizeOfObject--;
 		}
@@ -408,6 +417,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 			position,
 			32 * v, // size
 			colours,
+			ecolours,
 			ordinates,
 			instructions,
 			conditionSource);

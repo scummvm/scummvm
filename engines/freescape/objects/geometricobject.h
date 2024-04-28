@@ -45,6 +45,7 @@ public:
 		const Math::Vector3d &origin,
 		const Math::Vector3d &size,
 		Common::Array<uint8> *colours,
+		Common::Array<uint8> *ecolours,
 		Common::Array<uint16> *ordinates,
 		FCLInstructionVector conditionInstructions,
 		Common::String conditionSource = "");
@@ -60,12 +61,14 @@ public:
 	void draw(Freescape::Renderer *gfx) override;
 	bool isDrawable() override;
 	bool isPlanar() override;
+	bool _cyclingColors;
 
 	Common::String _conditionSource;
 	FCLInstructionVector _condition;
 
 private:
 	Common::Array<uint8> *_colours;
+	Common::Array<uint8> *_ecolours;
 	Common::Array<uint16> *_ordinates;
 	Common::Array<uint16> *_initialOrdinates;
 };

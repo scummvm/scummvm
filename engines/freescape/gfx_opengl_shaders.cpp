@@ -298,7 +298,7 @@ void OpenGLShaderRenderer::renderPlayerShootRay(byte color, const Common::Point 
 void OpenGLShaderRenderer::drawCelestialBody(Math::Vector3d position, float radius, byte color) {
 	uint8 r1, g1, b1, r2, g2, b2;
 	byte *stipple = nullptr;
-	getRGBAt(color, r1, g1, b1, r2, g2, b2, stipple);
+	getRGBAt(color, 0, r1, g1, b1, r2, g2, b2, stipple);
 
 	useColor(r1, g1, b1);
 
