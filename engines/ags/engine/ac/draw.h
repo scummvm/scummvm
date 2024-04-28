@@ -216,22 +216,22 @@ void setpal();
 // This conversion is done before anything else (like moving from room to
 // viewport on screen, or scaling game further in the window by the graphic
 // renderer).
-AGS_INLINE int get_fixed_pixel_size(int pixels);
+int get_fixed_pixel_size(int pixels);
 // coordinate conversion data,script ---> final game resolution
-extern AGS_INLINE int data_to_game_coord(int coord);
-extern AGS_INLINE void data_to_game_coords(int *x, int *y);
-extern AGS_INLINE void data_to_game_round_up(int *x, int *y);
+extern int data_to_game_coord(int coord);
+extern void data_to_game_coords(int *x, int *y);
+extern void data_to_game_round_up(int *x, int *y);
 // coordinate conversion final game resolution ---> data,script
-extern AGS_INLINE int game_to_data_coord(int coord);
-extern AGS_INLINE void game_to_data_coords(int &x, int &y);
-extern AGS_INLINE int game_to_data_round_up(int coord);
+extern int game_to_data_coord(int coord);
+extern void game_to_data_coords(int &x, int &y);
+extern int game_to_data_round_up(int coord);
 // convert contextual data coordinates to final game resolution
-extern AGS_INLINE void ctx_data_to_game_coord(int &x, int &y, bool hires_ctx);
-extern AGS_INLINE void ctx_data_to_game_size(int &x, int &y, bool hires_ctx);
-extern AGS_INLINE int ctx_data_to_game_size(int size, bool hires_ctx);
-extern AGS_INLINE int game_to_ctx_data_size(int size, bool hires_ctx);
+extern void ctx_data_to_game_coord(int &x, int &y, bool hires_ctx);
+extern void ctx_data_to_game_size(int &x, int &y, bool hires_ctx);
+extern int ctx_data_to_game_size(int size, bool hires_ctx);
+extern int game_to_ctx_data_size(int size, bool hires_ctx);
 // This function converts game coordinates coming from script to the actual game resolution.
-extern AGS_INLINE void defgame_to_finalgame_coords(int &x, int &y);
+extern void defgame_to_finalgame_coords(int &x, int &y);
 
 // Creates bitmap of a format compatible with the gfxdriver;
 // if col_depth is 0, uses game's native color depth.

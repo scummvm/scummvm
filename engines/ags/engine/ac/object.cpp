@@ -56,7 +56,7 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-AGS_INLINE bool is_valid_object(int obj_id) {
+bool is_valid_object(int obj_id) {
 	return (obj_id >= 0) && (static_cast<uint32_t>(obj_id) < _G(croom)->numobj);
 }
 
