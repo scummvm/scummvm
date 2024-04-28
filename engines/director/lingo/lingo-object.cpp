@@ -276,7 +276,7 @@ static struct XLibProto {
 	{ SoundJam::fileNames,				SoundJam::open,				SoundJam::close,			kXObj,					400 },	// D4
 	{ SpaceMgr::fileNames,				SpaceMgr::open,				SpaceMgr::close,			kXObj,					400 },	// D4
 	{ StageTCXObj::fileNames,			StageTCXObj::open,			StageTCXObj::close,			kXObj,					400 },	// D4
-	{ UnitTest::fileNames,				UnitTest::open,				UnitTest::close,			kXObj,					400 },	// D4
+	{ UnitTestXObj::fileNames,			UnitTestXObj::open,			UnitTestXObj::close,		kXObj,					400 },	// D4
 	{ VMisOnXFCN::fileNames,			VMisOnXFCN::open,			VMisOnXFCN::close,			kXObj,					400 },	// D4
 	{ ValkyrieXObj::fileNames,			ValkyrieXObj::open,			ValkyrieXObj::close,		kXObj,					400 },	// D4
 	{ VideodiscXObj::fileNames,			VideodiscXObj::open,		VideodiscXObj::close,		kXObj,					200 },	// D2
