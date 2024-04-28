@@ -2598,10 +2598,10 @@ void ScummEngine::showMainMenu() {
 
 	// A little bit of hackery: since we handle the main loop a little bit
 	// differently (basically we start from a different position, but the order
-	// remains the same), we call CHARSET_1() here to refresh the dialog texts
+	// remains the same), we call displayDialog() here to refresh the dialog texts
 	// immediately and avoid getting a frame in which their color is wrong...
 	if (_game.version == 7)
-		CHARSET_1();
+		displayDialog();
 
 	if (_game.version < 7 && !hasLoadedState) {
 		restoreSurfacesPostGUI();

@@ -1616,7 +1616,7 @@ protected:
 
 	virtual bool handleNextCharsetCode(Actor *a, int *c);
 	virtual void drawSentence() {}
-	virtual void CHARSET_1();
+	virtual void displayDialog();
 	bool newLine();
 	void drawString(int a, const byte *msg);
 	virtual void fakeBidiString(byte *ltext, bool ignoreVerb, int ltextSize) const;

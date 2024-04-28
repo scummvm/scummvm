@@ -3032,7 +3032,7 @@ void ScummEngine_v7::actorTalk(const byte *msg) {
 		_string[0].wrapping = true;
 	}
 
-	CHARSET_1();
+	displayDialog();
 
 	if (!usingOldSystem) {
 		if (_game.version == 8)
@@ -3052,7 +3052,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 	// I have commented out this workaround, since it did cause another
 	// bug (#11480). It is not okay to skip the stopTalk() calls here.
 	// Instead, I have added two checks from LOOM DOS EGA disasm (one
-	// below and one in CHARSET_1()).
+	// below and one in displayDialog()).
 	// WORKAROUND for bugs #985 and #990
 	/*if (_game.id == GID_LOOM) {
 		if (!*_charsetBuffer)
@@ -3079,7 +3079,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 			if (_game.heversion != 0)
 				((ActorHE *)a)->_heTalking = true;
 			// The second check is from LOOM DOS EGA disasm. It prevents weird speech animations
-			// with empty strings (bug #990). The same code is present in CHARSET_1(). The FM-Towns
+			// with empty strings (bug #990). The same code is present in displayDialog(). The FM-Towns
 			// versions don't have such code, but I do not get the weird speech animations either.
 			// So apparently it is not needed there.
 			if (!_string[0].no_talk_anim && !(_game.id == GID_LOOM && _game.platform != Common::kPlatformFMTowns && !*_charsetBuffer)) {
@@ -3113,7 +3113,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 	if (VAR_CHARCOUNT != 0xFF)
 		VAR(VAR_CHARCOUNT) = 0;
 	_haveActorSpeechMsg = true;
-	CHARSET_1();
+	displayDialog();
 }
 
 void Actor::runActorTalkScript(int f) {

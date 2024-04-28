@@ -377,7 +377,7 @@ void ScummEngine_v2::decodeParseString() {
 		c &= 0x7f;
 
 		if (c < 8) {
-			// Special codes as seen in CHARSET_1 etc. My guess is that they
+			// Special codes as seen in displayDialog etc. My guess is that they
 			// have a similar function as the corresponding embedded stuff in modern
 			// games. Hence for now we convert them to the modern format.
 			// This might allow us to reuse the existing code.

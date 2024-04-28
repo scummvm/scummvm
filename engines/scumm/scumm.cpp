@@ -2645,10 +2645,10 @@ void ScummEngine::scummLoop(int delta) {
 	if (VAR_EGO != 0xFF)
 		oldEgo = VAR(VAR_EGO);
 
-	// In V1-V3 games, CHARSET_1 is called much earlier than in newer games.
+	// In V1-V3 games, displayDialog is called much earlier than in newer games.
 	// See also bug #987 for a case were this makes a difference.
 	if (_game.version <= 3)
-		CHARSET_1();
+		displayDialog();
 
 	processInput();
 
@@ -2756,14 +2756,14 @@ load_game:
 
 	if (_currentRoom == 0) {
 		if (_game.version > 3)
-			CHARSET_1();
+			displayDialog();
 		drawDirtyScreenParts();
 	} else {
 		walkActors();
 		moveCamera();
 		updateObjectStates();
 		if (_game.version > 3)
-			CHARSET_1();
+			displayDialog();
 
 		scummLoop_handleDrawing();
 

@@ -550,7 +550,7 @@ bool ScummEngine::newLine() {
 			// the original code it seems that setting _nextLeft to 0 is the right thing to do here.
 			_nextLeft = /*_game.version >= 6 ? _string[0].xpos :*/ 0;
 
-		// See CHARSET_1() for more context about the following Sega CD code.
+		// See displayDialog() for more context about the following Sega CD code.
 		if (_game.platform == Common::kPlatformSegaCD) {
 			// Clip 16 pixels away from the right
 			if (_nextLeft + stringWidth > (_screenWidth - 16)) {
@@ -940,7 +940,7 @@ void ScummEngine_v2::drawSentence() {
 	drawString(2, (byte *)string);
 }
 
-void ScummEngine::CHARSET_1() {
+void ScummEngine::displayDialog() {
 	Actor *a;
 	if (_game.heversion >= 60 && _haveMsg == 3) {
 		stopTalk();
@@ -960,7 +960,7 @@ void ScummEngine::CHARSET_1() {
 
 	a = nullptr;
 	if (getTalkingActor() != 0xFF)
-		a = derefActorSafe(getTalkingActor(), "CHARSET_1");
+		a = derefActorSafe(getTalkingActor(), "displayDialog");
 
 	if (a && _string[0].overhead) {
 		int s;
