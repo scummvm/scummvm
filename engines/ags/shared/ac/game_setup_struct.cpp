@@ -56,7 +56,6 @@ void GameSetupStruct::Free() {
 	intrChar.clear();
 	charScripts.clear();
 	charProps.clear();
-	numcharacters = 0;
 
 	// TODO: find out if it really needs to begin with 1 here?
 	for (size_t i = 1; i < (size_t)MAX_INV; i++) {
@@ -161,6 +160,7 @@ void GameSetupStruct::WriteInvInfo_Aligned(Stream *out) {
 }
 
 HGameFileError GameSetupStruct::read_cursors(Shared::Stream *in) {
+	mcurs.resize(numcursors);
 	ReadMouseCursors_Aligned(in);
 	return HGameFileError::None();
 }
@@ -197,7 +197,6 @@ void GameSetupStruct::read_words_dictionary(Shared::Stream *in) {
 }
 
 void GameSetupStruct::ReadMouseCursors_Aligned(Stream *in) {
-	mcurs.resize(numcursors);
 	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (int iteratorCount = 0; iteratorCount < numcursors; ++iteratorCount) {
 		mcurs[iteratorCount].ReadFromFile(&align_s);
@@ -217,7 +216,7 @@ void GameSetupStruct::WriteMouseCursors_Aligned(Stream *out) {
 // Reading Part 2
 
 void GameSetupStruct::read_characters(Shared::Stream *in) {
-	chars = new CharacterInfo[numcharacters];
+	chars.resize(numcharacters);
 
 	ReadCharacters_Aligned(in, false);
 }
