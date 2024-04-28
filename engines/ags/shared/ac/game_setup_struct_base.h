@@ -19,10 +19,18 @@
  *
  */
 
+//
+//=============================================================================
+//
+// GameSetupStructBase is a base class for main game data.
+//
+//=============================================================================
+
 #ifndef AGS_SHARED_AC_GAME_SETUP_STRUCT_BASE_H
 #define AGS_SHARED_AC_GAME_SETUP_STRUCT_BASE_H
 
 #include "ags/lib/allegro.h" // RGB
+#include "ags/lib/std/vector.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/ac/game_struct_defines.h"
 #include "ags/shared/util/string.h"
@@ -73,7 +81,7 @@ struct GameSetupStructBase {
 	String			  messages[MAXGLOBALMES];
 	WordsDictionary *dict;
 	char *globalscript;
-	CharacterInfo *chars;
+	std::vector<CharacterInfo> chars;
 	ccScript *compiled_script;
 
 	// TODO: refactor to not have this as struct members
@@ -87,6 +95,7 @@ struct GameSetupStructBase {
 
 	GameSetupStructBase();
 	~GameSetupStructBase();
+
 	void Free();
 	void SetDefaultResolution(GameResolutionType type);
 	void SetDefaultResolution(Size game_res);
