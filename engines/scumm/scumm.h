@@ -1823,7 +1823,7 @@ public:
 	byte VAR_ACTIVE_OBJECT2 = 0xFF;
 
 	// HE specific variables
-	byte VAR_REDRAW_ALL_ACTORS = 0xFF;		// Used in setActorRedrawFlags()
+	byte VAR_ALWAYS_REDRAW_ACTORS = 0xFF;		// Used in setActorRedrawFlags()
 	byte VAR_SKIP_RESET_TALK_ACTOR = 0xFF;	// Used in setActorCostume()
 
 	byte VAR_SOUND_CHANNEL = 0xFF;				// Used in o_startSound()

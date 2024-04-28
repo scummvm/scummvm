@@ -861,8 +861,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		break;
 	}
 	case SO_ERASE: // 	// (HE 90+)
-		k = pop();
-		a->setHEFlag(1, k);
+		a->setActorEraseType(pop());
 		break;
 	case SO_COSTUME:
 		a->setActorCostume(pop());

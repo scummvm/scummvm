@@ -322,7 +322,7 @@ void ScummEngine_v80he::setupScummVars() {
 	VAR_NUM_SOUND_CHANNELS = 88;
 	VAR_COLOR_DEPTH = 89;
 	VAR_COLOR_BLACK = 93;
-	VAR_REDRAW_ALL_ACTORS = 95;
+	VAR_ALWAYS_REDRAW_ACTORS = 95;
 }
 
 void ScummEngine_v90he::setupScummVars() {

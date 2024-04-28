@@ -404,8 +404,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		a->initActor(0);
 		break;
 	case SO_ERASE:
-		k = pop();
-		a->setHEFlag(1, k);
+		a->setActorEraseType(pop());
 		break;
 	case SO_NAME:
 		copyScriptString(string, sizeof(string));

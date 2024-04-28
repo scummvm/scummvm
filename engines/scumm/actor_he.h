@@ -27,6 +27,8 @@
 
 namespace Scumm {
 
+#define ACTOR_GENERAL_FLAG_IGNORE_ERASE 0x00000001
+
  struct HEEraseAuxEntry {
 	int actor;
 	int32 x1, y1, x2, y2;
@@ -62,7 +64,7 @@ public:
 
 	void drawActorToBackBuf(int x, int y);
 
-	void setHEFlag(int bit, int set);
+	void setActorEraseType(int eraseValue);
 
 	void setCondition(int slot, int set);
 	bool isConditionSet(int slot) const;
@@ -79,7 +81,7 @@ public:
 
 	bool _heNoTalkAnimation;
 	bool _heTalking;
-	byte _heFlags;
+	byte _generalFlags;
 
 	int _auxActor;
 	int32 _auxEraseX1, _auxEraseY1, _auxEraseX2, _auxEraseY2;

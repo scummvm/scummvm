@@ -132,7 +132,7 @@ void ActorHE::initActor(int mode) {
 
 	_heShadow = 0;
 	_hePaletteNum = 0;
-	_heFlags = 0;
+	_generalFlags = 0;
 	_heTalking = false;
 
 	if (_vm->_game.heversion >= 61)
@@ -2347,6 +2347,25 @@ void ScummEngine::processActors() {
 			} else {
 				a->drawActorCostume();
 				a->animateCostume();
+
+				if (_game.heversion >= 80) {
+					if (VAR_ALWAYS_REDRAW_ACTORS != 0xFF && VAR(VAR_ALWAYS_REDRAW_ACTORS) != 0)
+						continue;
+				}
+
+				if (_game.heversion >= 71) {
+					// Check if this new actor eclipsed another one...
+					for (int i = 0; i < _gdi->_numStrips; i++) {
+						int strip = _screenStartStrip + i;
+						if (testGfxAnyUsageBits(strip)) {
+							for (int j = 1; j < _numActors; j++) {
+								if (testGfxUsageBit(strip, j) && testGfxOtherUsageBits(strip, j)) {
+									_actors[j]->_needRedraw = true;
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -2840,7 +2859,7 @@ void ScummEngine::setActorRedrawFlags() {
 
 	// Redraw all actors if a full redraw was requested.
 	// Also redraw all actors in COMI (see bug #1825 for details).
-	if (_fullRedraw || _game.version == 8 || (VAR_REDRAW_ALL_ACTORS != 0xFF && VAR(VAR_REDRAW_ALL_ACTORS) != 0)) {
+	if (_fullRedraw || _game.version == 8 || (VAR_ALWAYS_REDRAW_ACTORS != 0xFF && VAR(VAR_ALWAYS_REDRAW_ACTORS) != 0)) {
 		for (j = 1; j < _numActors; j++) {
 			_actors[j]->_needRedraw = true;
 		}
@@ -2873,7 +2892,7 @@ void ScummEngine::resetActorBgs() {
 		clearGfxUsageBit(strip, USAGE_BIT_DIRTY);
 		clearGfxUsageBit(strip, USAGE_BIT_RESTORED);
 		for (j = 1; j < _numActors; j++) {
-			if (_game.heversion != 0 && ((ActorHE *)_actors[j])->_heFlags & 1)
+			if (_game.heversion != 0 && (((ActorHE *)_actors[j])->_generalFlags & ACTOR_GENERAL_FLAG_IGNORE_ERASE) != 0)
 				continue;
 
 			if (testGfxUsageBit(strip, j) &&
@@ -3473,12 +3492,16 @@ bool Actor_v2::isPlayer() {
 	return (_vm->_game.id == GID_MANIAC && _vm->_game.version == 1) ? (_number == _vm->VAR(_vm->VAR_EGO)) : (_vm->VAR(42) <= _number && _number <= _vm->VAR(43));
 }
 
-void ActorHE::setHEFlag(int bit, int set) {
-	// Note that condition is inverted
-	if (!set) {
-		_heFlags |= bit;
+void ActorHE::setActorEraseType(int eraseValue) {
+	if (eraseValue) {
+		_generalFlags &= ~ACTOR_GENERAL_FLAG_IGNORE_ERASE;
 	} else {
-		_heFlags &= ~bit;
+		_generalFlags |= ACTOR_GENERAL_FLAG_IGNORE_ERASE;
+	}
+
+	if (_vm->_game.heversion > 99 || _vm->_isHE995) {
+		_needBgReset = true;
+		_needRedraw = true;
 	}
 }
 
