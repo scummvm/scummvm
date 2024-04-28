@@ -189,6 +189,10 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, TextCastMember &source
 	source.load();
 	_loaded = true;
 
+	_initialRect = source._initialRect;
+	_boundingRect = source._boundingRect;
+	_children = source._children;
+
 	_borderSize = source._borderSize;
 	_gutterSize = source._gutterSize;
 	_boxShadow = source._boxShadow;

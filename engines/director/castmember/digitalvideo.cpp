@@ -86,6 +86,10 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Digita
 	_type = kCastDigitalVideo;
 	_loaded = source._loaded;
 
+	_initialRect = source._initialRect;
+	_boundingRect = source._boundingRect;
+	_children = source._children;
+
 	_filename = source._filename;
 
 	_vflags = source._vflags;

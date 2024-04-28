@@ -234,7 +234,7 @@ CastMember *Cast::setCastMember(int castId, CastMember *cast) {
 	return cast;
 }
 
-bool Cast::duplicateCastMember(CastMember *source, int targetId) {
+bool Cast::duplicateCastMember(CastMember *source, CastMemberInfo *info, int targetId) {
 	if (_loadedCast->contains(targetId)) {
 		eraseCastMember(targetId);
 	}
@@ -277,6 +277,10 @@ bool Cast::duplicateCastMember(CastMember *source, int targetId) {
 		break;
 	}
 
+	if (info) {
+		CastMemberInfo *newInfo = new CastMemberInfo(*info);
+		_castsInfo[targetId] = newInfo;
+	}
 	setCastMember(targetId, target);
 	return true;
 }
@@ -286,9 +290,14 @@ bool Cast::eraseCastMember(int castId) {
 		CastMember *member = _loadedCast->getVal(castId);
 		delete member;
 		_loadedCast->erase(castId);
+
+		if (_castsInfo.contains(castId)) {
+			CastMemberInfo *info = _castsInfo.getVal(castId);
+			delete info;
+			_castsInfo.erase(castId);
+		}
 		return true;
 	}
-
 	return false;
 }
 
