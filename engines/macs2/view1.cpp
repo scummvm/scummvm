@@ -383,7 +383,6 @@ void View1::draw() {
 		if (speakingCharacter != nullptr) {
 			// TODO: Improve addressing of the memory
 			AnimFrame *frame = speakingCharacter->GetCurrentAnimationFrame();
-			Graphics::ManagedSurface s = getSurface();
 
 			DrawSprite(Common::Point(0xa, 0xa), frame->Width, frame->Height, frame->Data, s);
 		}
@@ -559,7 +558,8 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 
 void View1::ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::String> &strings, const Common::Point &position, bool onRightSide) {
 	// TODO: Handle setting up the updated drawing better
-	// 
+	speakingCharacter = characters[characterIndex - 1];
+	// TODO: Need to reset this
 	// TODO: Add position: position.x, position.y,
 	setStringBox(strings);
 }
