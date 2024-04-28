@@ -1278,6 +1278,7 @@ public:
 
 	int _screenStartStrip = 0, _screenEndStrip = 0;
 	int _screenTop = 0;
+	bool _forceBannerVirtScreen = false;
 
 	// For Mac versions of 320x200 games:
 	// these versions rendered at 640x480 without any aspect ratio correction;

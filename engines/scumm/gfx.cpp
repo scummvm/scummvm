@@ -338,7 +338,7 @@ void ScummEngine::initScreens(int b, int h) {
 	int i;
 	int adj = 0;
 
-	for (i = 0; i < 3; i++) {
+	for (i = 0; i < 4; i++) {
 		_res->nukeResource(rtBuffer, i + 1);
 		_res->nukeResource(rtBuffer, i + 5);
 	}
@@ -360,18 +360,15 @@ void ScummEngine::initScreens(int b, int h) {
 		clearTextSurface();
 	}
 
-	if (!getResourceAddress(rtBuffer, 4)) {
-		// Since the size of screen 3 is fixed, there is no need to reallocate
-		// it if its size changed.
-		// Not sure what it is good for, though. I think it may have been used
-		// in pre-V7 for the games messages (like 'Pause', Yes/No dialogs,
-		// version display, etc.). I don't know about V7, maybe the same is the
-		// case there. If so, we could probably just remove it completely.
-		if (_game.version >= 7) {
-			initVirtScreen(kUnkVirtScreen, (_screenHeight / 2) - 10, _screenWidth, 13, false, false);
-		} else {
-			initVirtScreen(kUnkVirtScreen, 80, _screenWidth, 13, false, false);
-		}
+	if (_game.version >= 7) {
+		initVirtScreen(kBannerVirtScreen, (_screenHeight / 2) - 10, _screenWidth, 13, false, false);
+	} else if (_game.platform == Common::kPlatformFMTowns) {
+		// HACK: The original only ever renders in 640x480 mode. The banners' top and bottom borders are exactly one unscaled pixel high. This will
+		// still allow the text to fit in nicely. It does not work with scaled (2 pixel height) borders, though. So we add two extra pixels...
+		int bannerHeight = (_textSurfaceMultiplier == 1) ? 12 : 20;
+		initVirtScreen(kBannerVirtScreen, (b + adj + h) / 2 - bannerHeight / _textSurfaceMultiplier, _screenWidth * _textSurfaceMultiplier, bannerHeight, false, false);
+	} else {
+		initVirtScreen(kBannerVirtScreen, 80, _screenWidth, 12, false, false);
 	}
 
 	if ((_game.platform == Common::kPlatformNES) && (h != _screenHeight)) {
@@ -379,7 +376,7 @@ void ScummEngine::initScreens(int b, int h) {
 		// Otherwise we would have to do lots of coordinate adjustments all over
 		// the code.
 		adj = 16;
-		initVirtScreen(kUnkVirtScreen, 0, _screenWidth, adj, false, false);
+		initVirtScreen(kBannerVirtScreen, 0, _screenWidth, adj, false, false);
 	}
 
 	initVirtScreen(kMainVirtScreen, b + adj, _screenWidth, h - b, true, true);
@@ -462,6 +459,9 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int 
 VirtScreen *ScummEngine::findVirtScreen(int y) {
 	VirtScreen *vs = _virtscr;
 	int i;
+
+	if (_forceBannerVirtScreen)
+		return &vs[3];
 
 	for (i = 0; i < 3; i++, vs++) {
 		if (y >= vs->topline && y < vs->topline + vs->h) {
@@ -609,7 +609,13 @@ void ScummEngine::updateDirtyScreen(VirtScreenNumber slot) {
 				w += 8;
 				continue;
 			}
-			drawStripToScreen(vs, start * 8, w, top, bottom);
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+			if (_game.platform == Common::kPlatformFMTowns && vs->number == kBannerVirtScreen) {
+				int scl = _textSurfaceMultiplier;
+				towns_drawStripToScreen(vs, start * 8 * scl, (vs->topline + top) * scl, start * 8 * scl, top * scl, w * scl, bottom - top);
+			} else 
+#endif
+				drawStripToScreen(vs, start * 8, w, top, bottom);
 			w = 8;
 		}
 		start = i + 1;
@@ -1565,6 +1571,16 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 		} else {
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 			if (_game.platform == Common::kPlatformFMTowns) {
+				if (_game.version == 3 && vs->number != kTextVirtScreen) {
+					// The original FM-Towns v3 interpreter overdraws both width
+					// and height by 1 pixel. I don't know if it is voluntary or
+					// not, so I have added safety checks.
+					if (x + width < vs->w)
+						width++;
+					if (y + height < vs->h)
+						height++;
+				}
+
 				color = ((color & 0x0f) << 4) | (color & 0x0f);
 				byte *mask = (byte *)_textSurface.getBasePtr(x * _textSurfaceMultiplier, (y - _screenTop + vs->topline) * _textSurfaceMultiplier);
 				fill(mask, _textSurface.pitch, color, width * _textSurfaceMultiplier, height * _textSurfaceMultiplier, _textSurface.format.bytesPerPixel);
@@ -1585,11 +1601,6 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 }
 
 void ScummEngine::drawLine(int x1, int y1, int x2, int y2, int color) {
-	if (_game.platform == Common::kPlatformFMTowns) {
-		drawBox(x1, y1, x2, y2, color);
-		return;
-	}
-
 	int effColor, black, white;
 	int effX1, effY1;
 	int width, height, widthAccumulator, heightAccumulator, horizontalStrips, originalHeight;
@@ -1667,12 +1678,17 @@ void ScummEngine::drawLine(int x1, int y1, int x2, int y2, int color) {
 
 void ScummEngine::drawPixel(VirtScreen *vs, int x, int y, int16 color, bool useBackbuffer) {
 	int factor = _isIndy4Jap ? 0 : 8;
+	int wScale = (vs->number == kBannerVirtScreen && _textSurfaceMultiplier == 2) ? 2 : 1;
 	if (x >= 0 && y >= 0 && _screenWidth + factor > x && _screenHeight > y) {
-		if (useBackbuffer)
+		if (useBackbuffer) {
 			*(vs->getBackPixels(x, y + _screenTop - vs->topline)) = color;
-		else
-			*(vs->getPixels(x, y + _screenTop - vs->topline)) = color;
-		markRectAsDirty(vs->number, x, x + 1, y + _screenTop - vs->topline, y + 1 + _screenTop - vs->topline);
+		} else {
+			// Is it elegant to do the kBannerVirtScreen horizontal scaling here like this? Certainly not,
+			// but it is just what the original interpreter does. So it will at least not break anything.
+			for (int i = 0; i < wScale; ++i)
+				*(vs->getPixels(x * wScale + i, y + _screenTop - vs->topline)) = color;
+		}
+		markRectAsDirty(vs->number, x * wScale, (x + 1) * wScale, y + _screenTop - vs->topline, y + 1 + _screenTop - vs->topline);
 	}
 }
 

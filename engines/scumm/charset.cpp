@@ -971,6 +971,10 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 #endif
 		)
 		drawBits1(*vs, _left + vs->xstart, drawTop, charPtr, drawTop, origWidth, origHeight);
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	else if (_vm->_game.platform == Common::kPlatformFMTowns && vs->number == kBannerVirtScreen)
+		drawBits1(*vs, _left * _vm->_textSurfaceMultiplier, drawTop * _vm->_textSurfaceMultiplier, charPtr, drawTop, origWidth, origHeight);
+#endif
 	else
 		drawBits1(_vm->_textSurface, _left * _vm->_textSurfaceMultiplier, _top * _vm->_textSurfaceMultiplier, charPtr, drawTop, origWidth, origHeight);
 

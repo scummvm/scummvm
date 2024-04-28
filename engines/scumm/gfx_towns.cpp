@@ -36,7 +36,7 @@ void ScummEngine::towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, in
 		return;
 
 	assert(_textSurface.getPixels());
-	int m = _textSurfaceMultiplier;
+	int m = (vs->number == kBannerVirtScreen) ? 1 : _textSurfaceMultiplier;
 
 	const uint8 *src1 = vs->getPixels(srcX, srcY);
 	const uint8 *src2 = (uint8 *)_textSurface.getBasePtr(srcX * m, (srcY + vs->topline - _screenTop) * m);
@@ -51,7 +51,7 @@ void ScummEngine::towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, in
 	int sp1 = vs->pitch - (width * vs->format.bytesPerPixel);
 	int sp2 = _textSurface.pitch - width * m;
 
-	if (vs->number == kMainVirtScreen || _game.id == GID_INDY3 || _game.id == GID_ZAK) {
+	if (vs->number == kMainVirtScreen || ((_game.id == GID_INDY3 || _game.id == GID_ZAK) && vs->number != kBannerVirtScreen)) {
 		if (_outputPixelFormat.bytesPerPixel == 2) {
 			for (int h = 0; h < height; ++h) {
 				uint16 *dst1tmp = dst1a;
@@ -111,35 +111,38 @@ void ScummEngine::towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, in
 				error ("ScummEngine::towns_drawStripToScreen(): Unexpected text surface multiplier %d", m);
 			}
 
-			dst1 = dst2;
-			const uint8 *src3 = src2;
-
-			if (m == 2) {
+			if (vs->number == kBannerVirtScreen) {
 				dst2 += lp1;
-				src3 += lp1;
-				for (int w = 0; w < (width << 1); ++w) {
-					t = *dst1;
-					s2 = *src2++;
-					s3 = *src3++;
-					*dst2++ = (s3 | (t & _townsLayer2Mask[s3]));
-					*dst1++ = (s2 | (t & _townsLayer2Mask[s2]));
-				}
-			} else if (m== 1) {
-				dst2 += width;
-				src3 += width;
-				for (int w = 0; w < width; ++w) {
-					t = *dst1;
-					s2 = *src2++;
-					*dst1++ = (s2 | (t & _townsLayer2Mask[s2]));
-				}
+				dst1 = dst2;
 			} else {
-				error ("ScummEngine::towns_drawStripToScreen(): Unexpected text surface multiplier %d", m);
+				const uint8 *src3 = src2;
+				dst1 = dst2;
+				if (m == 2) {
+					dst2 += lp1;
+					src3 += lp1;
+					for (int w = 0; w < (width << 1); ++w) {
+						t = *dst1;
+						s2 = *src2++;
+						s3 = *src3++;
+						*dst2++ = (s3 | (t & _townsLayer2Mask[s3]));
+						*dst1++ = (s2 | (t & _townsLayer2Mask[s2]));
+					}
+				} else if (m == 1) {
+					dst2 += width;
+					src3 += width;
+					for (int w = 0; w < width; ++w) {
+						t = *dst1;
+						s2 = *src2++;
+						*dst1++ = (s2 | (t & _townsLayer2Mask[s2]));
+					}
+				} else {
+					error("ScummEngine::towns_drawStripToScreen(): Unexpected text surface multiplier %d", m);
+				}
+				src2 = src3 + sp2;
+				dst1 = dst2 + dp2;
+				dst2 += dp2;
 			}
-
 			src1 += sp1;
-			src2 = src3 + sp2;
-			dst1 = dst2 + dp2;
-			dst2 += dp2;
 		}
 	}
 

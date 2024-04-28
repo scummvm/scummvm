@@ -246,7 +246,6 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 				_bannerSaveYStart /= _textSurfaceMultiplier;
 			}
 #endif
-
 			memcpy(
 				_bannerMem,
 				&_virtscr[kMainVirtScreen].getPixels(0, _screenTop)[rowSize * _bannerSaveYStart],
@@ -437,7 +436,6 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 	int startingPointY;
 	int boxColor;
 	int textXPos, textYPos;
-	bool isV3Towns = (_game.platform == Common::kPlatformFMTowns && _game.version == 3);
 
 	_messageBannerActive = true;
 
@@ -459,89 +457,51 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 	// Pause the engine
 	PauseToken pt = pauseEngine();
 
+	_forceBannerVirtScreen = true;
+
 	// Backup the current charsetId...
 	int oldId = _charset->getCurID();
 	_charset->setCurID(_game.version > 3 ? 1 : 0);
 
 	// Take all the necessary measurements for the box which
 	// will contain the string...
-	bannerMsgHeight = getGUIStringHeight(bannerMsg) + 3;
+	bannerMsgHeight = _virtscr[kBannerVirtScreen].h;
 	bannerMsgWidth = getGUIStringWidth(bannerMsg);
 	if (bannerMsgWidth < 100)
 		bannerMsgWidth = 100;
 
-	startingPointY = 80;
+	startingPointY = _virtscr[kBannerVirtScreen].topline;
 
 	boxColor = 0;
 	textXPos = _screenWidth / 2;
-	textYPos = startingPointY + 2;
+	textYPos = startingPointY + 2 / _textSurfaceMultiplier;
 
-	if (isV3Towns) {
+	if (_game.platform == Common::kPlatformFMTowns) {
+		// We replicate an original text centering bug here. The function that measures
+		// the text width in Indy 3 FM-Towns JP adds 10 pixels to the width for each
+		// character (instead of 8, like the other FM-Towns games do it). Fortunately,
+		// that text width measuring function is only used here...
+		if (_game.id == GID_INDY3 && _useCJKMode)
+			bannerMsgWidth = MIN<int>(bannerMsgWidth * 10 / 8, (_screenWidth - 10));
+
 		boxColor = 8;
-		textXPos = (320 - bannerMsgWidth) / 2;
-		textYPos = 2 + (_virtscr[kMainVirtScreen].h + _virtscr[kMainVirtScreen].topline - (bannerMsgHeight - 6)) / 2;
+		textXPos = (_screenWidth - bannerMsgWidth) / 2;
 
-		// Game specific corrections
-		if (_game.id == GID_INDY3)
-			textXPos += 8;
-		if (_game.id == GID_LOOM)
-			textYPos -= 8;
-
-		startingPointY = textYPos - 2;
-
-		if (_useCJKMode) {
-			textXPos -= _game.id == GID_INDY3 ? 34 : 8;
-		}
-
-		_bannerSaveYStart = startingPointY;
-	} else {
-		_bannerSaveYStart = startingPointY - (_game.version == 4 ? 2 : _virtscr[kMainVirtScreen].topline);
-	}
-
-	// Save the pixels which will be overwritten by the banner,
-	// so that we can restore them later...
-	if (!_bannerMem) {
-		int rowSize = _screenWidth + (_game.version == 4 ? 8 : 0);
-
-		// FM-Towns games draw the banner on the text surface, so let's save that
-#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-		if (_game.platform == Common::kPlatformFMTowns && !_textSurfBannerMem) {
-			rowSize *= _textSurfaceMultiplier;
-			startingPointY *= _textSurfaceMultiplier;
-			_textSurfBannerMemSize = (bannerMsgHeight + 2) * rowSize * _textSurfaceMultiplier;
-			_textSurfBannerMem = (byte *)malloc(_textSurfBannerMemSize * sizeof(byte));
-			if (_textSurfBannerMem) {
-				memcpy(
-					_textSurfBannerMem,
-					&((byte *)_textSurface.getBasePtr(0, _screenTop * _textSurfaceMultiplier))[rowSize * startingPointY],
-					_textSurfBannerMemSize);
-			}
-
-			// We're going to use these same values for saving the
-			// virtual screen surface, so let's un-multiply them...
-			rowSize /= _textSurfaceMultiplier;
-			startingPointY /= _textSurfaceMultiplier;
-		}
-#endif
-
-		_bannerMemSize = (bannerMsgHeight + 2) * (rowSize);
-		_bannerMem = (byte *)malloc(_bannerMemSize * sizeof(byte));
-		if (_bannerMem) {
-			memcpy(
-				_bannerMem,
-				&_virtscr[kMainVirtScreen].getPixels(0, _screenTop)[rowSize * _bannerSaveYStart],
-				_bannerMemSize);
-		}
+		// Loom and Zak FM-Towns do this in drawChar(). Indy 3 doesn't.
+		if (_game.id != GID_INDY3 && _useCJKMode)
+			textXPos -= 8;
 	}
 
 	// Draw the GUI control
-	drawBox(0, startingPointY, _screenWidth - 1, startingPointY + bannerMsgHeight, boxColor);
-	drawBox(0, startingPointY, _screenWidth - 1, startingPointY, color);
-	drawBox(0, startingPointY + bannerMsgHeight, _screenWidth - 1, startingPointY + bannerMsgHeight, color);
+	memset(_virtscr[kBannerVirtScreen].getBasePtr(0, 0), boxColor, _virtscr[kBannerVirtScreen].w * _virtscr[kBannerVirtScreen].h);
+	drawLine(0, startingPointY, _screenWidth - 1, startingPointY, color);
+	drawLine(0, startingPointY + bannerMsgHeight - 1, _screenWidth - 1, startingPointY + bannerMsgHeight - 1, color);
+	drawGUIText(bannerMsg, nullptr, textXPos, textYPos, color, _game.platform != Common::kPlatformFMTowns);
 
-	drawGUIText(bannerMsg, nullptr, textXPos, textYPos, color, !isV3Towns);
+	_forceBannerVirtScreen = false;
 
-	ScummEngine::drawDirtyScreenParts();
+	drawDirtyScreenParts();
+	updateDirtyScreen(kBannerVirtScreen);
 
 	// Wait until the engine receives a new Keyboard or Mouse input,
 	// unless we have specified a positive waitTime: in that case, the banner
@@ -550,7 +510,10 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 	bool leftBtnPressed = false, rightBtnPressed = false;
 	if (waitTime) {
 		waitForBannerInput(waitTime, ks, leftBtnPressed, rightBtnPressed);
-		clearBanner();
+		memset(_virtscr[kBannerVirtScreen].getBasePtr(0, 0), 0, _virtscr[kBannerVirtScreen].w * _virtscr[kBannerVirtScreen].h);
+		_virtscr[kBannerVirtScreen].setDirtyRange(0, _virtscr[kBannerVirtScreen].h);
+		updateDirtyScreen(kBannerVirtScreen);
+		_virtscr[kMainVirtScreen].setDirtyRange(startingPointY - _virtscr[kMainVirtScreen].topline, startingPointY - _virtscr[kMainVirtScreen].topline + _virtscr[kBannerVirtScreen].h);
 	}
 
 	// Restore the text surface...

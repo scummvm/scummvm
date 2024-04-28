@@ -638,7 +638,6 @@ void ScummEngine::checkExecVerbs() {
 		}
 
 		VirtScreen *zone = findVirtScreen(_mouse.y);
-		// This could be kUnkVirtScreen.
 		// Fixes bug #2773: "MANIACNES: Crash on click in speechtext-area"
 		if (!zone)
 			return;
@@ -723,7 +722,6 @@ void ScummEngine_v2::checkExecVerbs() {
 		const byte code = _mouseAndKeyboardStat & MBS_LEFT_CLICK ? 1 : 2;
 		const int inventoryArea = (_game.platform == Common::kPlatformNES) ? 48: 32;
 
-		// This could be kUnkVirtScreen.
 		// Fixes bug #2773: "MANIACNES: Crash on click in speechtext-area"
 		if (!zone)
 			return;
