@@ -72,16 +72,59 @@ typedef void (*KBDVEC)(void *);
 extern "C" KBDVEC atari_old_kbdvec;
 extern "C" KBDVEC atari_old_mousevec;
 
-extern "C" void atari_200hz_init();
-extern "C" void atari_200hz_shutdown();
-extern "C" volatile uint32 counter_200hz;
-
 extern void nf_init(void);
 extern void nf_print(const char* msg);
 
 static int s_app_id = -1;
 
+static volatile uint32 counter_200hz;
+
 static bool exit_already_called = false;
+
+static long atari_200hz_init(void)
+{
+	__asm__ __volatile__(
+	"\tmove		%%sr,-(%%sp)\n"
+	"\tor.w		#0x700,%%sr\n"
+
+	"\tmove.l	0x114.w,old_200hz\n"
+	"\tmove.l	#my_200hz,0x114.w\n"
+
+	"\tmove		(%%sp)+,%%sr\n"
+	"\tjbra		1f\n"
+
+	"\tdc.l		0x58425241\n" /* "XBRA" */
+	"\tdc.l		0x5343554d\n" /* "SCUM" */
+"old_200hz:\n"
+	"\tdc.l		0\n"
+"my_200hz:\n"
+	"\taddq.l	#1,%0\n"
+
+	"\tmove.l	old_200hz(%%pc),-(%%sp)\n"
+	"\trts\n"
+"1:\n"
+	: /* output */
+	: "m"(counter_200hz) /* inputs */
+	: "memory", "cc");
+
+	return 0;
+}
+
+static long atari_200hz_shutdown(void)
+{
+	__asm__ __volatile__(
+	"\tmove		%%sr,-(%%sp)\n"
+	"\tor.w		#0x700,%%sr\n"
+
+	"\tmove.l	old_200hz,0x114.w\n"
+
+	"\tmove		(%%sp)+,%%sr\n"
+	: /* output */
+	: /* inputs */
+	: "memory", "cc");
+
+	return 0;
+}
 
 static void critical_restore() {
 	extern void AtariAudioShutdown();
