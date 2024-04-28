@@ -77,8 +77,7 @@ void GameSetupStructBase::Free() {
 	}
 	delete[] load_messages;
 	load_messages = nullptr;
-	delete dict;
-	dict = nullptr;
+	dict.reset();
 	delete globalscript;
 	globalscript = nullptr;
 	delete compiled_script;
