@@ -165,6 +165,18 @@ void ManagedObjectPool::RunGarbageCollection() {
 	ManagedObjectLog("Ran garbage collection");
 }
 
+int ManagedObjectPool::Add(int handle, const char *address, ICCDynamicObject *callback, ScriptValueType obj_type)
+{
+    auto &o = objects[handle];
+    assert(!o.isUsed());
+
+    o = ManagedObject(obj_type, handle, address, callback);
+
+    handleByAddress.insert({address, handle});
+    ManagedObjectLog("Allocated managed object type=%s, handle=%d, addr=%08X", callback->GetType(), handle, address);
+    return handle;
+}
+
 int ManagedObjectPool::AddObject(const char *address, ICCDynamicObject *callback, ScriptValueType obj_type) {
 	int32_t handle;
 
@@ -178,17 +190,9 @@ int ManagedObjectPool::AddObject(const char *address, ICCDynamicObject *callback
 		}
 	}
 
-	auto &o = objects[handle];
-	assert(!o.isUsed());
-
-	o = ManagedObject(obj_type, handle, address, callback);
-
-	handleByAddress.insert({ address, o.handle });
 	objectCreationCounter++;
-	ManagedObjectLog("Allocated managed object handle=%d, type=%s", handle, callback->GetType());
-	return o.handle;
+	return Add(handle, address, callback, obj_type);
 }
-
 
 int ManagedObjectPool::AddUnserializedObject(const char *address, ICCDynamicObject *callback, ScriptValueType obj_type, int handle) {
 	if (handle < 0) {
@@ -199,14 +203,7 @@ int ManagedObjectPool::AddUnserializedObject(const char *address, ICCDynamicObje
 		objects.resize(handle + 1024, ManagedObject());
 	}
 
-	auto &o = objects[handle];
-	assert(!o.isUsed());
-
-	o = ManagedObject(obj_type, handle, address, callback);
-
-	handleByAddress.insert({ address, o.handle });
-	ManagedObjectLog("Allocated unserialized managed object handle=%d, type=%s", o.handle, callback->GetType());
-	return o.handle;
+	return Add(handle, address, callback, obj_type);
 }
 
 void ManagedObjectPool::WriteToDisk(Stream *out) {

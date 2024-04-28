@@ -80,6 +80,7 @@ private:
 	std::vector<ManagedObject> objects;
 	std::unordered_map<const char *, int32_t, Pointer_Hash> handleByAddress;
 
+	int Add(int handle, const char *address, ICCDynamicObject *callback, ScriptValueType obj_type);
 	int Remove(ManagedObject &o, bool force = false);
 	void RunGarbageCollection();
 
