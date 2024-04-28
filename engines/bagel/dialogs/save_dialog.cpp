@@ -21,7 +21,7 @@
 
 #include "bagel/dialogs/save_dialog.h"
 #include "bagel/baglib/bagel.h"
-#include "bagel/baglib/buttons.h"
+#include "bagel/baglib/button_object.h"
 #include "bagel/bagel.h"
 #include "bagel/boflib/log.h"
 #include "bagel/boflib/std_keys.h"
@@ -53,16 +53,16 @@ const char *BuildSysDir(const char *pszFile);
 #define LIST_FONT_SIZE  12
 
 struct ST_BUTTONS {
-	const char *m_pszName;
-	const char *m_pszUp;
-	const char *m_pszDown;
-	const char *m_pszFocus;
-	const char *m_pszDisabled;
-	int m_nLeft;
-	int m_nTop;
-	int m_nWidth;
-	int m_nHeight;
-	int m_nID;
+	const char *_name;
+	const char *_up;
+	const char *_down;
+	const char *_focus;
+	const char *_disabled;
+	int _left;
+	int _top;
+	int _width;
+	int _height;
+	int _id;
 };
 
 static const ST_BUTTONS g_stButtons[NUM_BUTTONS] = {
@@ -123,14 +123,14 @@ ErrorCode CBagSaveDialog::attach() {
 		if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
 			CBofBitmap *pUp, *pDown, *pFocus, *pDis;
 
-			pUp = LoadBitmap(BuildSysDir(g_stButtons[i].m_pszUp), pPal);
-			pDown = LoadBitmap(BuildSysDir(g_stButtons[i].m_pszDown), pPal);
-			pFocus = LoadBitmap(BuildSysDir(g_stButtons[i].m_pszFocus), pPal);
-			pDis = LoadBitmap(BuildSysDir(g_stButtons[i].m_pszDisabled), pPal);
+			pUp = LoadBitmap(BuildSysDir(g_stButtons[i]._up), pPal);
+			pDown = LoadBitmap(BuildSysDir(g_stButtons[i]._down), pPal);
+			pFocus = LoadBitmap(BuildSysDir(g_stButtons[i]._focus), pPal);
+			pDis = LoadBitmap(BuildSysDir(g_stButtons[i]._disabled), pPal);
 
 			m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
 
-			m_pButtons[i]->Create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
+			m_pButtons[i]->Create(g_stButtons[i]._name, g_stButtons[i]._left, g_stButtons[i]._top, g_stButtons[i]._width, g_stButtons[i]._height, this, g_stButtons[i]._id);
 			m_pButtons[i]->Show();
 		} else {
 			ReportError(ERR_MEMORY);

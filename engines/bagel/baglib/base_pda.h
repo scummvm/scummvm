@@ -176,7 +176,7 @@ public:
 	 */
 	virtual bool restoreCurDisplay();
 
-	static void *fPdaButtonHandler(int refId, void *info);
+	static void *pdaButtonHandler(int refId, void *info);
 
 	void setPdaState();
 	void getPdaState();

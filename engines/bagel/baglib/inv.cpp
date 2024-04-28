@@ -57,13 +57,13 @@ ErrorCode CBagInv::ActivateLocalObject(const CBofString &sName) {
 		pPDAReally = (CBagPDA *)pPda;
 
 		if (pWand) {
-			pWand->SetPlaybackSpeed(1);
-			pWand->SetNumOfLoops(1);
+			pWand->setPlaybackSpeed(1);
+			pWand->setNumOfLoops(1);
 
 			// Let our character anim know that this is our PDA Wand,
 			// it will need to let the pda update code know that
 			// it needs to get redrawn.
-			CBagCharacterObject::SetPDAWand(pWand);
+			CBagCharacterObject::setPdaWand(pWand);
 			pPDAReally->SetDirty(true);
 		}
 	}
@@ -112,11 +112,11 @@ ErrorCode CBagInv::DeactivateLocalObject(const CBofString &sName) {
 	if (pPda && bZoomed == false) {
 		pWand = (CBagCharacterObject *)pPda->GetObject("WANDANIM");
 		if (pWand) {
-			pWand->SetPlaybackSpeed(-1);
-			pWand->SetNumOfLoops(1);
+			pWand->setPlaybackSpeed(-1);
+			pWand->setNumOfLoops(1);
 
 			// Let it know our ending frame is 0, not 1.
-			pWand->SetEndFrame(0);
+			pWand->setEndFrame(0);
 		}
 	}
 

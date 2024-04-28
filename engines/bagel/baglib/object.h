@@ -186,7 +186,7 @@ public:
 	void SetModal(bool b = true) {
 		SetProperty(MODAL, b);
 	}
-	virtual bool IsModalDone() {
+	virtual bool isModalDone() {
 		return true;
 	}
 	//  Is object visible within sceene

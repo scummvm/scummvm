@@ -123,10 +123,11 @@ ErrorCode CBagObject::update(CBofBitmap * /*pBmp*/, CPoint /*pt*/, CRect * /*pSr
 int CBagObject::getProperty(const CBofString &sProp) {
 	if (!sProp.Find("STATE"))
 		return GetState();
-	else if (!sProp.Find("MODAL"))
+
+	if (!sProp.Find("MODAL"))
 		return IsModal();
-	else
-		return 0;
+
+	return 0;
 }
 
 void CBagObject::setProperty(const CBofString &sProp, int nVal) {

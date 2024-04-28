@@ -58,15 +58,6 @@ CBofRect CBagBmpObject::getRect() {
 	return CBofRect(curPos, size);
 }
 
-ErrorCode CBagBmpObject::update(CBofWindow *wnd, CBofPoint pt, CBofRect *srcRect, int maskColor) {
-	if (_bmp) {
-		_transparency = maskColor;
-		return _bmp->Paint(wnd, pt.x, pt.y, srcRect, maskColor);
-	}
-
-	return ERR_NONE;
-}
-
 ErrorCode CBagBmpObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect, int maskColor) {
 	if (bmp) {
 		_transparency = maskColor;

@@ -30,41 +30,42 @@
 
 namespace Bagel {
 
-CBagCharacterObject *CBagCharacterObject::m_pPDAWand;
-bool CBagCharacterObject::m_bPDAAnimating;
+CBagCharacterObject *CBagCharacterObject::_pdaWand;
+bool CBagCharacterObject::_pdaAnimating;
 
 void CBagCharacterObject::initialize() {
-	m_pPDAWand = nullptr;
-	m_bPDAAnimating = false;
+	_pdaWand = nullptr;
+	_pdaAnimating = false;
 }
 
 CBagCharacterObject::CBagCharacterObject() : CBagObject() {
 	m_xObjType = CHAROBJ;
-	m_pBmpBuf = nullptr;
-	m_pBinBuf = nullptr;
-	m_nCharTransColor = -1;
-	SetOverCursor(0);   // Default is now the nullptr cursor
+	_bmpBuf = nullptr;
+	_binBuf = nullptr;
+	_charTransColor = -1;
+	// Default is now the nullptr cursor
+	CBagObject::SetOverCursor(0);
 	SetTimeless(true);
-	m_nStartFrame = -1;
-	m_nEndFrame = -1;
-	m_nPlaybackSpeed = 1;
-	m_nNumOfLoops = -1;
-	m_bExitAtEnd = false;
-	m_nPrevFrame = -1;
-	m_bFirstFrame = true;
-	m_bPanim = false;
-	m_bSaveState = false;
+	_startFrame = -1;
+	_endFrame = -1;
+	_playbackSpeed = 1;
+	_numOfLoops = -1;
+	_exitAtEnd = false;
+	_prevFrame = -1;
+	_firstFrame = true;
+	_pAnim = false;
+	_saveState = false;
 }
 
 CBagCharacterObject::~CBagCharacterObject() {
-	detach();
+	CBagCharacterObject::detach();
 }
 
 ErrorCode CBagCharacterObject::attach() {
-	char szLocalBuff[256];
-	szLocalBuff[0] = '\0';
-	CBofString filename(szLocalBuff, 256);
-	CBofPalette *pSmackPal = CBofApp::GetApp()->GetPalette();
+	char localBuff[256];
+	localBuff[0] = '\0';
+	CBofString filename(localBuff, 256);
+	CBofPalette *smackPal = CBofApp::GetApp()->GetPalette();
 
 	filename = GetFileName();
 
@@ -79,31 +80,31 @@ ErrorCode CBagCharacterObject::attach() {
 	_smacker = decoder;
 
 	// Create an offscreen bitmap to decompress smacker into
-	m_bFirstFrame = true;
+	_firstFrame = true;
 
-	m_pBmpBuf = new CBofBitmap(_smacker->getWidth(), _smacker->getHeight(), pSmackPal);
+	_bmpBuf = new CBofBitmap(_smacker->getWidth(), _smacker->getHeight(), smackPal);
 
-	if ((pSmackPal != nullptr) && (m_pBmpBuf != nullptr)) {
-		m_pBmpBuf->FillRect(nullptr, pSmackPal->GetNearestIndex(RGB(255, 255, 255)));
+	if ((smackPal != nullptr) && (_bmpBuf != nullptr)) {
+		_bmpBuf->FillRect(nullptr, smackPal->GetNearestIndex(RGB(255, 255, 255)));
 	}
 
 	// Create the text filename
 	filename.MakeUpper();
 	filename.ReplaceStr(".SMK", ".BIN");
 
-	if (m_pBinBuf != nullptr) {
-		BofFree(m_pBinBuf);
-		m_pBinBuf = nullptr;
+	if (_binBuf != nullptr) {
+		BofFree(_binBuf);
+		_binBuf = nullptr;
 	}
 
 	// Does file exist
 	if (FileExists(filename.GetBuffer())) {
 		CBofFile cInputFile(filename.GetBuffer());
 
-		m_nBinBufLen = cInputFile.GetLength();
+		_binBufLen = cInputFile.GetLength();
 
-		if ((m_pBinBuf = (char *)BofAlloc(m_nBinBufLen + 1)) != nullptr) {
-			cInputFile.Read(m_pBinBuf, m_nBinBufLen);
+		if ((_binBuf = (char *)BofAlloc(_binBufLen + 1)) != nullptr) {
+			cInputFile.Read(_binBuf, _binBufLen);
 
 		} else {
 			ReportError(ERR_MEMORY);
@@ -111,50 +112,50 @@ ErrorCode CBagCharacterObject::attach() {
 	}
 
 	// Set the start and stop frames if still default.
-	if (m_nPlaybackSpeed > 0) {
+	if (_playbackSpeed > 0) {
 		// Forward playback
-		if (m_nStartFrame == -1)
-			m_nStartFrame = 0;
-		if (m_nEndFrame == -1)
-			m_nEndFrame = _smacker->getFrameCount() - 1;
+		if (_startFrame == -1)
+			_startFrame = 0;
+		if (_endFrame == -1)
+			_endFrame = _smacker->getFrameCount() - 1;
 
 	} else {
 		// Reverse playback
-		if (m_nEndFrame == -1)
-			m_nEndFrame = 1;
-		if (m_nStartFrame == -1)
-			m_nStartFrame = _smacker->getFrameCount();
+		if (_endFrame == -1)
+			_endFrame = 1;
+		if (_startFrame == -1)
+			_startFrame = _smacker->getFrameCount();
 
 		//_smacker->setReverse(true); // TODO: Not supported by SMK
 	}
 
-	if (m_bSaveState) {
+	if (_saveState) {
 		// Get the current state for this object
 		int nState = GetState();
 
 		// If the state is not the default(0) then move to the correct frame
 		if (nState != 0)
-			SetFrame(nState + 1);
+			setFrame(nState + 1);
 	}
 
-	if (m_nNumOfLoops != 0) {
+	if (_numOfLoops != 0) {
 		_smacker->start();
 	} else {
 		_smacker->stop();
 	}
 
 	SetVisible(true);
-	UpdatePosition();
-	RefreshCurrFrame();
+	updatePosition();
+	refreshCurrentFrame();
 
 	// Get chroma from main app now
-	m_nCharTransColor = CBagel::getBagApp()->getChromaColor();
+	_charTransColor = CBagel::getBagApp()->getChromaColor();
 
 	return CBagObject::attach();
 }
 
 ErrorCode CBagCharacterObject::detach() {
-	if (m_bSaveState) {
+	if (_saveState) {
 		// Save off the state/frame information as we detach
 		// so that we can recreate the scene when we attach again
 		if (_smacker != nullptr) {
@@ -162,8 +163,8 @@ ErrorCode CBagCharacterObject::detach() {
 		}
 	} else {
 		// Decrement current loop from happening again
-		if (m_nNumOfLoops > 0)
-			m_nNumOfLoops--;
+		if (_numOfLoops > 0)
+			_numOfLoops--;
 	}
 
 	if (_smacker != nullptr) {
@@ -172,62 +173,62 @@ ErrorCode CBagCharacterObject::detach() {
 		_smacker = nullptr;
 	}
 
-	if (m_pBmpBuf != nullptr) {
-		delete m_pBmpBuf;
-		m_pBmpBuf = nullptr;
+	if (_bmpBuf != nullptr) {
+		delete _bmpBuf;
+		_bmpBuf = nullptr;
 	}
 
-	if (m_pBinBuf != nullptr) {
-		BofFree(m_pBinBuf);
-		m_pBinBuf = nullptr;
+	if (_binBuf != nullptr) {
+		BofFree(_binBuf);
+		_binBuf = nullptr;
 	}
 
-	if (this == m_pPDAWand) {
-		m_pPDAWand = nullptr;
+	if (this == _pdaWand) {
+		_pdaWand = nullptr;
 	}
 
 	return CBagObject::detach();
 }
 
-bool CBagCharacterObject::RefreshCurrFrame() {
-	bool bNewFrame = true;
+bool CBagCharacterObject::refreshCurrentFrame() {
+	bool newFrameFl = true;
 
-	if (m_pBmpBuf != nullptr) {
+	if (_bmpBuf != nullptr) {
 		if (_smacker != nullptr) {
 			// Decode the next frame
 			const Graphics::Surface *surf = _smacker->decodeNextFrame();
 			if (surf) {
-				Graphics::ManagedSurface &destSurf = *m_pBmpBuf;
+				Graphics::ManagedSurface &destSurf = *_bmpBuf;
 
 				// Copy the decoded frame into the offscreen bitmap
 				destSurf.setPalette(_smacker->getPalette(), 0, 256);
 				destSurf.blitFrom(*surf);
 			} else {
-				bNewFrame = false;
+				newFrameFl = false;
 			}
 
 		} else {
 			// Return false so we don't update our position
-			bNewFrame = false;
+			newFrameFl = false;
 		}
 	}
 
-	return bNewFrame;
+	return newFrameFl;
 }
 
 CBofRect CBagCharacterObject::getRect() {
-	CBofPoint p = GetPosition();
-	CBofSize s;
+	CBofPoint pos = GetPosition();
+	CBofSize size;
 
-	if (m_pBmpBuf)
-		s = m_pBmpBuf->GetSize();
+	if (_bmpBuf)
+		size = _bmpBuf->GetSize();
 
-	return CBofRect(p, s);
+	return CBofRect(pos, size);
 }
 
-void CBagCharacterObject::UpdatePosition() {
+void CBagCharacterObject::updatePosition() {
 	// We have an input file
-	if (m_pBinBuf != nullptr && _smacker != nullptr) {
+	if (_binBuf != nullptr && _smacker != nullptr) {
 		// Seek to correct place in the file
 		int frame = _smacker->getCurFrame();
 
@@ -239,96 +240,96 @@ void CBagCharacterObject::UpdatePosition() {
 		// Read from our memory buffer rather than going to
 		// disk for the position of the smack dudes.
 		// Check that we are going to fit
-		if (lSeekPos + (int32)(2 * sizeof(int32)) <= m_nBinBufLen) {
-			int xpos = READ_LE_INT32(&m_pBinBuf[lSeekPos]);
+		if (lSeekPos + (int32)(2 * sizeof(int32)) <= _binBufLen) {
+			int xPos = READ_LE_INT32(&_binBuf[lSeekPos]);
 			lSeekPos += sizeof(int32);
 
-			int ypos = READ_LE_INT32(&m_pBinBuf[lSeekPos]);
+			int yPos = READ_LE_INT32(&_binBuf[lSeekPos]);
 			lSeekPos += sizeof(int32);
 
 			// A valid number was read
-			if ((xpos > -1) && (ypos > -1)) {
-				CBofPoint cNewLoc(xpos, ypos);
-				SetPosition(cNewLoc);
+			if ((xPos > -1) && (yPos > -1)) {
+				CBofPoint newPos(xPos, yPos);
+				SetPosition(newPos);
 			}
 		}
 	}
 }
 
-bool CBagCharacterObject::DoAdvance() {
+bool CBagCharacterObject::doAdvance() {
 	// Assume we're not advancing
-	bool bDoAdvance = false;
-	bool bPDAWand = (this == m_pPDAWand);
+	bool doAdvanceFl = false;
+	bool pdaWandFl = (this == _pdaWand);
 
-	if (bPDAWand) {
-		m_bPDAAnimating = false;
+	if (pdaWandFl) {
+		_pdaAnimating = false;
 	}
 
 	// If we are done looping just return with false
-	if (!m_nNumOfLoops)
+	if (!_numOfLoops)
 		return false;
 
 	// If we got a background bitmap
-	if (m_pBmpBuf != nullptr) {
+	if (_bmpBuf != nullptr) {
 		// If This Panimation is modal, or Panimations are ON, then get next frame.
-		if (IsModal() || !m_bPanim || CBagMasterWin::GetPanimations()) {
+		if (IsModal() || !_pAnim || CBagMasterWin::GetPanimations()) {
 			if (_smacker->needsUpdate()) {
-				bDoAdvance = true;
+				doAdvanceFl = true;
 
 				// Paint the current frame to the BMP
-				if (RefreshCurrFrame()) {
+				if (refreshCurrentFrame()) {
 					// Get the current frame in the correct place
-					UpdatePosition();
+					updatePosition();
 				}
 
-				if (m_nPlaybackSpeed > 0) {
+				if (_playbackSpeed > 0) {
 					// We've looped
-					if ((int)_smacker->getCurFrame() == m_nEndFrame) {
-						if (m_nNumOfLoops > 0)
-							m_nNumOfLoops--; // decrement num of loops
+					if (_smacker->getCurFrame() == _endFrame) {
+						if (_numOfLoops > 0)
+							_numOfLoops--; // decrement num of loops
 
 						// Get next frame, will loop to beginning
 						_smacker->rewind();
 						_smacker->start();
 					}
-				} else if (((int)_smacker->getCurFrame() == m_nEndFrame) || (_smacker->getCurFrame() == 1)) {
-					if (m_nNumOfLoops > 0)
-						m_nNumOfLoops--; // decrement num of loops
+				} else if ((_smacker->getCurFrame() == _endFrame) || (_smacker->getCurFrame() == 1)) {
+					if (_numOfLoops > 0)
+						_numOfLoops--; // decrement num of loops
 
 					// Get next frame, will loop to beginning
-					SetFrame(m_nStartFrame);
+					setFrame(_startFrame);
 				} else {
-					SetFrame(_smacker->getCurFrame() - 2); // HACK: Reverse playback
+					setFrame(_smacker->getCurFrame() - 2); // HACK: Reverse playback
 				}
 			}
-		} else if (m_bFirstFrame) {
+		} else if (_firstFrame) {
 			// Only play the first frame
-			m_bFirstFrame = false;
+			_firstFrame = false;
 
 			// Get the current frame in the correct place
-			UpdatePosition();
+			updatePosition();
 
 			// Paint the current frame to the BMP
-			RefreshCurrFrame();
+			refreshCurrentFrame();
 		}
 
 	}
 
 	// We got a Bitmap
-	if (bPDAWand) {
-		m_bPDAAnimating = bDoAdvance;
+	if (pdaWandFl) {
+		_pdaAnimating = doAdvanceFl;
 	}
 
-	return bDoAdvance;
+	return doAdvanceFl;
 }
 
-bool CBagCharacterObject::isInside(const CBofPoint &xPoint) {
-	if (getRect().PtInRect(xPoint) && m_nCharTransColor >= 0) {
-		if (m_pBmpBuf) {
-			int x = xPoint.x - getRect().left;
-			int y = xPoint.y - getRect().top;
-			int c = m_pBmpBuf->ReadPixel(x, y);
-			return (c != m_nCharTransColor);
+bool CBagCharacterObject::isInside(const CBofPoint &point) {
+	if (getRect().PtInRect(point) && _charTransColor >= 0) {
+		if (_bmpBuf) {
+			int x = point.x - getRect().left;
+			int y = point.y - getRect().top;
+			int color = _bmpBuf->ReadPixel(x, y);
+			return (color != _charTransColor);
 		}
 
 		return true;
@@ -342,116 +343,107 @@ bool CBagCharacterObject::runObject() {
 	return false;
 }
 
-ErrorCode CBagCharacterObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
-	DoAdvance();  // Advance to next frame
-
-	if (m_pBmpBuf)
-		return m_pBmpBuf->Paint(pWnd, pt.x, pt.y, pSrcRect, nMaskColor);
-
-	return ERR_NONE;
-}
-
-ErrorCode CBagCharacterObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, int /*nMaskColor*/) {
+ErrorCode CBagCharacterObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect * /*srcRect, unused*/, int /*maskColor, unused*/) {
 	// Get the original position for character
-	CBofPoint OrigPos = GetPosition();
+	CBofPoint originalPos = GetPosition();
 
-	bool bDoAdvance = DoAdvance();
+	bool doAdvanceFl = doAdvance();
 
 	// If we have more frames advance this, else exit and detach if needed
-	if (!bDoAdvance && m_bExitAtEnd) {
+	if (!doAdvanceFl && _exitAtEnd) {
 		// Run the ending objects
 		detach();
 	}
 
-	if (m_pBmpBuf) {
+	if (_bmpBuf) {
 		// Get the new position for the character
-		CBofPoint NewPos = GetPosition();
+		CBofPoint newPos = GetPosition();
 		// Get access to the current sDev
 
 		// Paint in the new pos
-		return m_pBmpBuf->Paint(pBmp, (pt.x + (NewPos.x - OrigPos.x)), (pt.y + (NewPos.y - OrigPos.y)), nullptr, m_nCharTransColor);
+		return _bmpBuf->Paint(bmp, (pt.x + (newPos.x - originalPos.x)), (pt.y + (newPos.y - originalPos.y)), nullptr, _charTransColor);
 	}
 
 	return ERR_NONE;
 }
 
 PARSE_CODES CBagCharacterObject::setInfo(bof_ifstream &istr) {
-	bool    nObjectUpdated = false;
+	bool objectUpdatedFl = false;
 
 	while (!istr.eof()) {
 		char ch = (char)istr.peek();
 		switch (ch) {
 		//  SAVESTATE - Maintain the state of the character
 		case 'K': {
-			char szLocalStr[256];
-			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256);
+			char localStr[256];
+			localStr[0] = 0;
+			CBofString str(localStr, 256);
 
-			GetAlphaNumFromStream(istr, sStr);
+			GetAlphaNumFromStream(istr, str);
 
-			if (!sStr.Find("KEEPSTATE")) {
+			if (!str.Find("KEEPSTATE")) {
 				istr.EatWhite();
 
-				m_bSaveState = true;
+				_saveState = true;
 
-				nObjectUpdated = true;
+				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				PutbackStringOnStream(istr, str);
 			}
 			break;
 		}
 
 		//  LOOP n - n number of times to loop (-1 infinate)
 		case 'L': {
-			char szLocalStr[256];
-			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256);
+			char localStr[256];
+			localStr[0] = 0;
+			CBofString str(localStr, 256);
 
-			GetAlphaNumFromStream(istr, sStr);
+			GetAlphaNumFromStream(istr, str);
 
-			if (!sStr.Find("LOOP")) {
+			if (!str.Find("LOOP")) {
 				istr.EatWhite();
-				GetIntFromStream(istr, m_nNumOfLoops);
-				nObjectUpdated = true;
+				GetIntFromStream(istr, _numOfLoops);
+				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				PutbackStringOnStream(istr, str);
 			}
 			break;
 		}
 
 		//  SPEED n - n pace of playback (negative is backward), (0 to hold at current frame)
 		case 'S': {
-			char szLocalStr[256];
-			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256);
+			char localStr[256];
+			localStr[0] = 0;
+			CBofString str(localStr, 256);
 
-			GetAlphaNumFromStream(istr, sStr);
+			GetAlphaNumFromStream(istr, str);
 
-			if (!sStr.Find("SPEED")) {
+			if (!str.Find("SPEED")) {
 				istr.EatWhite();
-				GetIntFromStream(istr, m_nPlaybackSpeed);
-				nObjectUpdated = true;
+				GetIntFromStream(istr, _playbackSpeed);
+				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				PutbackStringOnStream(istr, str);
 			}
 			break;
 		}
 
 		//  EXITATEND - detach at end of looping (call run after objects)
 		case 'E': {
-			char szLocalStr[256];
-			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256);
+			char localStr[256];
+			localStr[0] = 0;
+			CBofString str(localStr, 256);
 
-			GetAlphaNumFromStream(istr, sStr);
+			GetAlphaNumFromStream(istr, str);
 
-			if (!sStr.Find("EXITATEND")) {
+			if (!str.Find("EXITATEND")) {
 				istr.EatWhite();
 
-				m_bExitAtEnd = true;
-				nObjectUpdated = true;
+				_exitAtEnd = true;
+				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				PutbackStringOnStream(istr, str);
 			}
 			break;
 		}
@@ -459,18 +451,18 @@ PARSE_CODES CBagCharacterObject::setInfo(bof_ifstream &istr) {
 		//  PANIM - Specifies if this object should be affected by the user
 		// option Panimations On/Off
 		case 'P': {
-			CBofString sStr;
+			CBofString str;
 
-			GetAlphaNumFromStream(istr, sStr);
+			GetAlphaNumFromStream(istr, str);
 
-			if (!sStr.Find("PANIM")) {
+			if (!str.Find("PANIM")) {
 				istr.EatWhite();
 
-				m_bPanim = true;
-				nObjectUpdated = true;
+				_pAnim = true;
+				objectUpdatedFl = true;
 
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				PutbackStringOnStream(istr, str);
 			}
 
 			break;
@@ -478,33 +470,33 @@ PARSE_CODES CBagCharacterObject::setInfo(bof_ifstream &istr) {
 
 		//  FRAME [start, end]- start and end frames of the move
 		case 'F': {
-			char szLocalStr[256];
-			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256);
+			char localStr[256];
+			localStr[0] = 0;
+			CBofString str(localStr, 256);
 
-			GetAlphaNumFromStream(istr, sStr);
+			GetAlphaNumFromStream(istr, str);
 
-			if (!sStr.Find("FRAME")) {
+			if (!str.Find("FRAME")) {
 				CBofRect r;
 				istr.EatWhite();
 
 				GetRectFromStream(istr, r);
 
-				m_nStartFrame = r.left;
-				m_nEndFrame = r.top;
+				_startFrame = r.left;
+				_endFrame = r.top;
 
 				if (r.Width() && r.Height()) {
 					// error of some type
 				}
 
-				nObjectUpdated = true;
+				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				PutbackStringOnStream(istr, str);
 			}
 			break;
 		}
 
-		// No match return from funtion
+		// No match return from function
 		default: {
 			PARSE_CODES rc = CBagObject::setInfo(istr);
 			if (rc == PARSING_DONE) {
@@ -512,9 +504,9 @@ PARSE_CODES CBagCharacterObject::setInfo(bof_ifstream &istr) {
 			}
 
 			if (rc == UPDATED_OBJECT) {
-				nObjectUpdated = true;
+				objectUpdatedFl = true;
 			} else { // rc==UNKNOWN_TOKEN
-				if (nObjectUpdated)
+				if (objectUpdatedFl)
 					return UPDATED_OBJECT;
 
 				return UNKNOWN_TOKEN;
@@ -527,24 +519,24 @@ PARSE_CODES CBagCharacterObject::setInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-void CBagCharacterObject::ArrangeFrames() {
-	int start = GetStartFrame();
-	int end = GetEndFrame();
+void CBagCharacterObject::arrangeFrames() {
+	int start = getStartFrame();
+	int end = getEndFrame();
 
-	if (m_nPlaybackSpeed < 0) {
-		m_nStartFrame = MAX(start, end);
-		m_nEndFrame = MIN(start, end);
+	if (_playbackSpeed < 0) {
+		_startFrame = MAX(start, end);
+		_endFrame = MIN(start, end);
 	} else {
-		m_nStartFrame = MIN(start, end);
-		m_nEndFrame = MAX(start, end);
+		_startFrame = MIN(start, end);
+		_endFrame = MAX(start, end);
 	}
 }
 
 
-void CBagCharacterObject::SetNumOfLoops(int n) {
-	m_nNumOfLoops = n;
+void CBagCharacterObject::setNumOfLoops(int n) {
+	_numOfLoops = n;
 	if (_smacker != nullptr) {
-		if (m_nNumOfLoops != 0) {
+		if (_numOfLoops != 0) {
 			_smacker->start();
 		} else {
 			_smacker->stop();
@@ -553,59 +545,59 @@ void CBagCharacterObject::SetNumOfLoops(int n) {
 
 	// If this character is modal run until done looping
 	if (IsModal() && isAttached()) {
-		CBagStorageDevWnd *pWin;
+		CBagStorageDevWnd *win = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
 
-		if ((pWin = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev()) != nullptr) {
-			pWin->RunModal(this);
+		if (win != nullptr) {
+			win->RunModal(this);
 		}
 	}
 }
 
-void CBagCharacterObject::SetPlaybackSpeed(int n) {
-	if (m_nPlaybackSpeed != n) {
+void CBagCharacterObject::setPlaybackSpeed(int n) {
+	if (_playbackSpeed != n) {
 		if (n < 0) {
-			m_nStartFrame++;
-			m_nEndFrame++;
+			_startFrame++;
+			_endFrame++;
 		} else {
-			m_nStartFrame--;
-			m_nEndFrame--;
+			_startFrame--;
+			_endFrame--;
 		}
 
-		m_nPlaybackSpeed = n;
-		ArrangeFrames();
-		SetCurrentFrame(GetStartFrame());
+		_playbackSpeed = n;
+		arrangeFrames();
+		setCurrentFrame(getStartFrame());
 	}
 }
 
-void CBagCharacterObject::SetStartFrame(int n) {
-	ArrangeFrames();
-	m_nStartFrame = n;
-	ArrangeFrames();
+void CBagCharacterObject::setStartFrame(int n) {
+	arrangeFrames();
+	_startFrame = n;
+	arrangeFrames();
 }
 
-void CBagCharacterObject::SetEndFrame(int n) {
-	ArrangeFrames();
-	m_nEndFrame = n;
-	ArrangeFrames();
+void CBagCharacterObject::setEndFrame(int n) {
+	arrangeFrames();
+	_endFrame = n;
+	arrangeFrames();
 }
 
-void CBagCharacterObject::SetCurrentFrame(int n) {
+void CBagCharacterObject::setCurrentFrame(int n) {
 	// Make sure that it is within specified values?
 	//
 	// Due to some distinctly bogus code that manipulates the
 	// start and end frame, the current frame passed in can be negative, which
 	// will cause slacker-smacker to go toes up, handle that here.
 
-	SetFrame(n);
+	setFrame(n);
 
-	// Added UpdatePosition() because if any movies go backwards, and use
+	// Added updatePosition() because if any movies go backwards, and use
 	// a .BIN file, then it would not have worked.
-	UpdatePosition();
+	updatePosition();
 
-	RefreshCurrFrame();
+	refreshCurrentFrame();
 }
 
-void CBagCharacterObject::SetFrame(int n) {
+void CBagCharacterObject::setFrame(int n) {
 	// Make sure that it is within specified values?
 	if (_smacker != nullptr) {
 		if (n == (int)_smacker->getFrameCount()) {
@@ -616,56 +608,56 @@ void CBagCharacterObject::SetFrame(int n) {
 	}
 }
 
-void CBagCharacterObject::setProperty(const CBofString &sProp, int nVal) {
-	if (!sProp.Find("LOOP"))
-		SetNumOfLoops(nVal);
-	else if (!sProp.Find("SPEED"))
-		SetPlaybackSpeed(nVal);
-	else if (!sProp.Find("START_FRAME"))
-		SetStartFrame(nVal);
-	else if (!sProp.Find("END_FRAME"))
-		SetEndFrame(nVal);
-	else if (!sProp.Find("CURR_FRAME"))    // This one will not work currently
-		SetCurrentFrame(nVal);
+void CBagCharacterObject::setProperty(const CBofString &prop, int val) {
+	if (!prop.Find("LOOP"))
+		setNumOfLoops(val);
+	else if (!prop.Find("SPEED"))
+		setPlaybackSpeed(val);
+	else if (!prop.Find("START_FRAME"))
+		setStartFrame(val);
+	else if (!prop.Find("END_FRAME"))
+		setEndFrame(val);
+	else if (!prop.Find("CURR_FRAME"))    // This one will not work currently
+		setCurrentFrame(val);
 	else
-		CBagObject::setProperty(sProp, nVal);
+		CBagObject::setProperty(prop, val);
 }
 
-int CBagCharacterObject::getProperty(const CBofString &sProp) {
-	if (!sProp.Find("LOOP"))
-		return GetNumOfLoops();
+int CBagCharacterObject::getProperty(const CBofString &prop) {
+	if (!prop.Find("LOOP"))
+		return getNumberOfLoops();
 
-	if (!sProp.Find("SPEED"))
-		return GetPlaybackSpeed();
+	if (!prop.Find("SPEED"))
+		return getPlaybackSpeed();
 
-	if (!sProp.Find("START_FRAME"))
-		return GetStartFrame();
+	if (!prop.Find("START_FRAME"))
+		return getStartFrame();
 
-	if (!sProp.Find("END_FRAME"))
-		return GetEndFrame();
+	if (!prop.Find("END_FRAME"))
+		return getEndFrame();
 
-	if (!sProp.Find("CURR_FRAME"))    // This one will not work currently
-		return GetCurrentFrame();
+	if (!prop.Find("CURR_FRAME"))    // This one will not work currently
+		return getCurrentFrame();
 
-	return CBagObject::getProperty(sProp);
+	return CBagObject::getProperty(prop);
 }
 
-void CBagCharacterObject::SetPDAWand(CBagCharacterObject *pWand) {
-	m_pPDAWand = pWand;
+void CBagCharacterObject::setPdaWand(CBagCharacterObject *pdaWand) {
+	_pdaWand = pdaWand;
 }
 
-bool CBagCharacterObject::PDAWandAnimating() {
-	if (m_pPDAWand == nullptr || !m_pPDAWand->isAttached()) {
-		CBagStorageDev *pPda = SDEVMNGR->GetStorageDevice("BPDA_WLD");
-		if (pPda != nullptr) {
-			CBagCharacterObject *pWand = (CBagCharacterObject *)pPda->GetObject("WANDANIM");
-			if (pWand != nullptr) {
-				CBagCharacterObject::SetPDAWand(pWand);
+bool CBagCharacterObject::pdaWandAnimating() {
+	if (_pdaWand == nullptr || !_pdaWand->isAttached()) {
+		CBagStorageDev *pda = SDEVMNGR->GetStorageDevice("BPDA_WLD");
+		if (pda != nullptr) {
+			CBagCharacterObject *wand = (CBagCharacterObject *)pda->GetObject("WANDANIM");
+			if (wand != nullptr) {
+				CBagCharacterObject::setPdaWand(wand);
 			}
 		}
 	}
 
-	return m_bPDAAnimating;
+	return _pdaAnimating;
 }
 
 } // namespace Bagel

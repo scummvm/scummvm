@@ -271,7 +271,7 @@ ErrorCode SBarVidWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 		int nFrame = GetFrame(m_fTimer, nDisc);
 
-		m_pMovie->SetCurrentFrame(nFrame);
+		m_pMovie->setCurrentFrame(nFrame);
 		m_pMovie->update(pBmp, m_pMovie->GetPosition());
 
 		//

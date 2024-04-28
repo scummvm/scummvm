@@ -228,7 +228,7 @@ ErrorCode SBZoomPda::attach() {
 
 CBagObject *SBZoomPda::OnNewButtonObject(const CBofString &) {
 	CBagButtonObject *PdaButtObj = new CBagButtonObject();
-	PdaButtObj->setCallBack(fPdaButtonHandler, (SBBasePda *)this);
+	PdaButtObj->setCallBack(pdaButtonHandler, (SBBasePda *)this);
 
 	return PdaButtObj;
 }

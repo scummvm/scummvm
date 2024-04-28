@@ -197,22 +197,23 @@ ErrorCode CBagPDA::attach() {
 }
 
 void CBagPDA::SetPosInWindow(int cx, int cy, int nDist) {
-	CBofPoint pt;
 	CBofBitmap *pBmp = getBitmap();
 
-	if (pBmp) {
-		CBofRect bmpRect = pBmp->GetRect();
+	if (!pBmp)
+		return;
 
-		_moveDist = nDist;
-		pt.x = (cx - bmpRect.Width()) / 2;
+	CBofRect bmpRect = pBmp->GetRect();
 
-		if (_activated)
-			pt.y = cy - bmpRect.Height();
-		else
-			pt.y = cy - bmpRect.Height() + _moveDist * _numMoves;
+	_moveDist = nDist;
+	CBofPoint pt;
+	pt.x = (cx - bmpRect.Width()) / 2;
 
-		SetRect(CBofRect(pt.x, pt.y, pt.x + pBmp->Width() - 1, pt.y + pBmp->Height() - 1));
-	}
+	if (_activated)
+		pt.y = cy - bmpRect.Height();
+	else
+		pt.y = cy - bmpRect.Height() + _moveDist * _numMoves;
+
+	SetRect(CBofRect(pt.x, pt.y, pt.x + pBmp->Width() - 1, pt.y + pBmp->Height() - 1));
 }
 
 bool CBagPDA::hideCurDisplay() {
@@ -309,7 +310,7 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 		}
 
 		// If the PDA is activating then redraw our black background
-		bool bWandAnimating = CBagCharacterObject::PDAWandAnimating();
+		bool bWandAnimating = CBagCharacterObject::pdaWandAnimating();
 
 		if (isActivating() || bWandAnimating || bMoviePlaying) {
 			CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev());
@@ -421,7 +422,7 @@ CBagObject *CBagPDA::OnNewButtonObject(const CBofString &) {
 
 	PdaButtObj = new CBagButtonObject();
 
-	PdaButtObj->setCallBack(fPdaButtonHandler, (SBBasePda *)this);
+	PdaButtObj->setCallBack(pdaButtonHandler, (SBBasePda *)this);
 
 	return PdaButtObj;
 }

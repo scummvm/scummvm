@@ -22,7 +22,7 @@
 #include "bagel/dialogs/restore_dialog.h"
 #include "bagel/dialogs/save_dialog.h"
 #include "bagel/baglib/bagel.h"
-#include "bagel/baglib/buttons.h"
+#include "bagel/baglib/button_object.h"
 #include "bagel/boflib/sound.h"
 #include "bagel/dialogs/opt_window.h"
 #include "bagel/bagel.h"
