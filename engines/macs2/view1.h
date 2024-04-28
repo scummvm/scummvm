@@ -73,6 +73,7 @@ private:
 	// TODO: Probably the start of a mode enum
 	bool _isShowingStringBox = false;
 	Common::StringArray _drawnStringBox;
+	bool _continueScriptAfterUI = false;
 
 	bool _isShowingInventory = false;
 
