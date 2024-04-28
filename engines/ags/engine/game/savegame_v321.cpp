@@ -459,15 +459,6 @@ HSaveError restore_save_data_v321(Stream *in, GameDataVersion data_ver, const Pr
 	restore_game_play(in, data_ver, r_data);
 	ReadMoveList_Aligned(in);
 
-	// save pointer members before reading
-	char *gswas = _GP(game).globalscript;
-	ccScript *compsc = _GP(game).compiled_script;
-	CharacterInfo *chwas = _GP(game).chars;
-	WordsDictionary *olddict = _GP(game).dict;
-	std::vector<String> mesbk(MAXGLOBALMES);
-	for (size_t i = 0; i < MAXGLOBALMES; ++i)
-		mesbk[i] = _GP(game).messages[i];
-
 	// List of game objects, used to compare with the save contents
 	struct ObjectCounts {
 		int CharacterCount = _GP(game).numcharacters;
@@ -489,7 +480,7 @@ HSaveError restore_save_data_v321(Stream *in, GameDataVersion data_ver, const Pr
 		!AssertGameContent(err, objwas.ViewCount, _GP(game).numviews, "Views"))
 		return err;
 
-	_GP(game).ReadFromSaveGame_v321(in, data_ver, gswas, compsc, chwas, olddict, mesbk);
+	_GP(game).ReadFromSaveGame_v321(in);
 
 	// Modified custom properties are read separately to keep existing save format
 	_GP(play).ReadCustomProperties_v340(in, data_ver);
