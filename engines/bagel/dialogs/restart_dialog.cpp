@@ -109,7 +109,7 @@ void CBagRestartDialog::OnInitDialog() {
 }
 
 
-void CBagRestartDialog::OnClose() {
+void CBagRestartDialog::onClose() {
 	Assert(IsValidObject(this));
 
 	CBagCursor::hideSystemCursor();
@@ -122,7 +122,7 @@ void CBagRestartDialog::OnClose() {
 		}
 	}
 
-	CBofDialog::OnClose();
+	CBofDialog::onClose();
 
 	if (_nReturnValue != RESTART_BTN) {
 		CBofApp::GetApp()->SetPalette(m_pSavePalette);
@@ -141,7 +141,7 @@ void CBagRestartDialog::OnPaint(CBofRect *pRect) {
 }
 
 
-void CBagRestartDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
+void CBagRestartDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {
@@ -173,7 +173,7 @@ void CBagRestartDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 				KillBackground();
 
 				_nReturnValue = RESTART_BTN;
-				OnClose();
+				onClose();
 			}
 		}
 		break;
@@ -185,7 +185,7 @@ void CBagRestartDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 		break;
 
 	default:
-		CBofDialog::OnKeyHit(lKey, nRepCount);
+		CBofDialog::onKeyHit(lKey, nRepCount);
 		break;
 	}
 }
@@ -234,7 +234,7 @@ void CBagRestartDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 				KillBackground();
 
 				_nReturnValue = RESTART_BTN;
-				OnClose();
+				onClose();
 			}
 		}
 		break;

@@ -154,7 +154,7 @@ public:
 	void ReSize(CBofRect *pRect, bool bRepaint = false);
 
 	void Close() {
-		OnClose();
+		onClose();
 	}
 
 	/**
@@ -414,7 +414,7 @@ public:
 	 */
 	void handleEvents();
 
-	virtual void OnKeyHit(uint32 lKey, uint32 lRepCount);
+	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
 	void FillWindow(byte iColor);
 	void FillRect(CBofRect *pRect, byte iColor);
 
@@ -424,7 +424,7 @@ protected:
 
 	virtual void onMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual void OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void OnLButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
 
 	virtual void OnRButtonDown(uint32 nFlags, CBofPoint *pPoint);
@@ -433,7 +433,7 @@ protected:
 
 	virtual void OnReSize(CBofSize *pSize);
 	virtual void OnPaint(CBofRect *pRect);
-	virtual void OnClose();
+	virtual void onClose();
 
 	virtual void OnUserMessage(uint32 nMessage, uint32 lParam);
 

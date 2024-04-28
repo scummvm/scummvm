@@ -1045,13 +1045,13 @@ ErrorCode SrafComputer::detach() {
 }
 
 
-void SrafComputer::OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void *) {
+void SrafComputer::onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void *) {
 }
 
 void SrafComputer::OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void *) {
 }
 
-void SrafComputer::OnKeyHit(uint32 lKey, uint32 nRepCount) {
+void SrafComputer::onKeyHit(uint32 lKey, uint32 nRepCount) {
 	switch (lKey) {
 	case BKEY_BACK:                 // Temporary, go back to main screen.
 		DeleteListBox();
@@ -1069,7 +1069,7 @@ void SrafComputer::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 		break;
 
 	default:
-		CBagStorageDevWnd::OnKeyHit(lKey, nRepCount);
+		CBagStorageDevWnd::onKeyHit(lKey, nRepCount);
 		break;
 	}
 }
@@ -4655,8 +4655,8 @@ SrafTextScreen::~SrafTextScreen() {
 
 // Called to delete our text object
 
-void SrafTextScreen::OnClose() {
-	CBofDialog::OnClose();
+void SrafTextScreen::onClose() {
+	CBofDialog::onClose();
 
 	// Set the backdrop to nullptr so that it doesn't get trashed (we borrowed it from
 	// the sraf computer.

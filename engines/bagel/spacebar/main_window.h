@@ -111,10 +111,10 @@ public:
 
 	ErrorCode OnCursorUpdate(int nCurrObj);
 
-	void OnClose();
+	void onClose();
 	void OnSize(uint32 nType, int cx, int cy);
-	void OnKeyHit(uint32 lKey, uint32 lRepCount);
-	void OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
+	void onKeyHit(uint32 lKey, uint32 lRepCount);
+	void onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
 	void OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
 	void onMouseMove(uint32 nFlags, CBofPoint *p, void * = nullptr);
 };

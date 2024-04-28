@@ -438,7 +438,7 @@ int CBofScrollBar::PointToPos(CBofPoint *pPoint) {
 }
 
 
-void CBofScrollBar::OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
+void CBofScrollBar::onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 
 	if (m_bMouseCaptured) {
@@ -476,7 +476,7 @@ void CBofScrollBar::OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 		m_nScrollState = 0;
 	}
 
-	CBofWindow::OnLButtonUp(nFlags, pPoint);
+	CBofWindow::onLButtonUp(nFlags, pPoint);
 }
 
 

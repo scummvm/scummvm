@@ -234,7 +234,7 @@ void CBofButton::OnLButtonDown(uint32, CBofPoint *pPoint, void *) {
 }
 
 
-void CBofButton::OnLButtonUp(uint32, CBofPoint *pPoint, void *) {
+void CBofButton::onLButtonUp(uint32, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
@@ -265,7 +265,7 @@ void CBofRadioButton::OnLButtonDown(uint32, CBofPoint *pPoint, void *) {
 }
 
 
-void CBofRadioButton::OnLButtonUp(uint32, CBofPoint *pPoint, void *) {
+void CBofRadioButton::onLButtonUp(uint32, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 }
@@ -361,7 +361,7 @@ void CBofCheckButton::OnLButtonDown(uint32, CBofPoint *pPoint, void *) {
 }
 
 
-void CBofCheckButton::OnLButtonUp(uint32, CBofPoint *pPoint, void *) {
+void CBofCheckButton::onLButtonUp(uint32, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
@@ -629,7 +629,7 @@ void CBofBmpButton::OnLButtonDown(uint32, CBofPoint *pPoint, void *) {
 }
 
 
-void CBofBmpButton::OnLButtonUp(uint32, CBofPoint *pPoint, void *) {
+void CBofBmpButton::onLButtonUp(uint32, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 

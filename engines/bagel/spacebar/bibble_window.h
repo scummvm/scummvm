@@ -83,7 +83,7 @@ public:
 	virtual ErrorCode detach();
 
 	virtual void OnBofButton(CBofObject *pButton, int nState);
-	virtual void OnClose();
+	virtual void onClose();
 
 protected:
 	ErrorCode PlayGame();
@@ -96,9 +96,9 @@ protected:
 	ErrorCode UnHighlight(CBetArea *pArea);
 
 	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual void OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void OnLButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
-	virtual void OnKeyHit(uint32 lKey, uint32 lRepCount);
+	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
 
 	virtual void OnPaint(CBofRect *pRect);
 	virtual void OnMainLoop();

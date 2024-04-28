@@ -55,7 +55,7 @@ protected:
 	virtual bool    Play();
 	virtual bool    Reverse();
 
-	virtual void    OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) {
+	virtual void    onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) {
 		OnButtonUp(nFlags, pPoint);
 	}
 	virtual void    OnRButtonUp(uint32 nFlags, CBofPoint *pPoint) {
@@ -64,9 +64,9 @@ protected:
 	virtual void    OnButtonUp(uint32 nFlags, CBofPoint *pPoint);
 	virtual void    OnPaint(CBofRect *pRect);
 	virtual void    OnMovieDone();
-	virtual void    OnClose();
+	virtual void    onClose();
 	virtual void    OnMainLoop();
-	virtual void    OnKeyHit(uint32 lKey, uint32 lRepCount);
+	virtual void    onKeyHit(uint32 lKey, uint32 lRepCount);
 
 public:
 

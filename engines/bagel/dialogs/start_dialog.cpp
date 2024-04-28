@@ -102,7 +102,7 @@ void CBagStartDialog::OnInitDialog() {
 }
 
 
-void CBagStartDialog::OnClose() {
+void CBagStartDialog::onClose() {
 	Assert(IsValidObject(this));
 
 	CBagCursor::hideSystemCursor();
@@ -117,7 +117,7 @@ void CBagStartDialog::OnClose() {
 
 	KillBackground();
 
-	CBofDialog::OnClose();
+	CBofDialog::onClose();
 }
 
 
@@ -130,7 +130,7 @@ void CBagStartDialog::OnPaint(CBofRect *pRect) {
 }
 
 
-void CBagStartDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
+void CBagStartDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {
@@ -140,7 +140,7 @@ void CBagStartDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 		break;
 
 	default:
-		CBofDialog::OnKeyHit(lKey, nRepCount);
+		CBofDialog::onKeyHit(lKey, nRepCount);
 		break;
 	}
 }

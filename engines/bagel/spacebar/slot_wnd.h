@@ -128,7 +128,7 @@ public:
 	void                OnPaint(CBofRect *pRect);
 	void                onTimer(uint32 nTimerId);
 	void                OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	void                OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {
+	void                onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {
 	}
 };
 

@@ -233,7 +233,7 @@ CBagObject *SBZoomPda::OnNewButtonObject(const CBofString &) {
 	return PdaButtObj;
 }
 
-void SBZoomPda::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
+void SBZoomPda::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	// Need to override the CBagStorageDevWnd::onLButtonUp(nFlags, xPoint)
 	// to do our own thing.
 
@@ -264,7 +264,7 @@ void SBZoomPda::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 		} else {
 			// We have no mode yet, then pass it to the default method
 			if (_pdaMode == NOMODE) {
-				CBagStorageDevWnd::OnLButtonUp(nFlags, xPoint);
+				CBagStorageDevWnd::onLButtonUp(nFlags, xPoint);
 			}
 		}
 	}

@@ -36,9 +36,9 @@ public:
 
 protected:
 	virtual void OnPaint(CBofRect *pRect);
-	virtual void OnClose();
+	virtual void onClose();
 
-	virtual void OnKeyHit(uint32 lKey, uint32 lRepCount);
+	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
 	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 
 	virtual void OnMainLoop();

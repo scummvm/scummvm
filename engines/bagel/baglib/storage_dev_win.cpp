@@ -503,7 +503,7 @@ void CBagStorageDev::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *vpInf
 bool g_bNoMenu = false;
 
 
-void CBagStorageDev::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo) {
+void CBagStorageDev::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo) {
 	char szLocalBuff[256];
 	CBofString sCurrSDev(szLocalBuff, 256);
 
@@ -1468,8 +1468,8 @@ ErrorCode CBagStorageDevWnd::LoadFile(const CBofString &sFile) {
 }
 
 
-void CBagStorageDevWnd::OnClose() {
-	CBofWindow::OnClose();
+void CBagStorageDevWnd::onClose() {
+	CBofWindow::onClose();
 	DestroyWindow();                            // destruct the main window
 }
 
@@ -1537,7 +1537,7 @@ void CBagStorageDevWnd::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) 
 	CBofWindow::OnLButtonDown(nFlags, xPoint);
 }
 
-void CBagStorageDevWnd::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
+void CBagStorageDevWnd::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	// If asynch movie playing in PDA don't react to mouse down (8033)
 	// if it's not a wait cursor, then allow the user to access that hotspot.
 	if (CBagPDA::IsMoviePlaying() && CBagMasterWin::GetActiveCursor() == 6) {
@@ -1552,13 +1552,13 @@ void CBagStorageDevWnd::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 		Close();
 
 	} else {
-		CBagStorageDev::OnLButtonUp(nFlags, xPoint, GetAssociateWnd());
-		CBofWindow::OnLButtonUp(nFlags, xPoint);
+		CBagStorageDev::onLButtonUp(nFlags, xPoint, GetAssociateWnd());
+		CBofWindow::onLButtonUp(nFlags, xPoint);
 	}
 }
 
-void CBagStorageDevWnd::OnKeyHit(uint32 lKey, uint32 nRepCount) {
-	CBofWindow::OnKeyHit(lKey, nRepCount);
+void CBagStorageDevWnd::onKeyHit(uint32 lKey, uint32 nRepCount) {
+	CBofWindow::onKeyHit(lKey, nRepCount);
 }
 
 
@@ -1612,7 +1612,7 @@ ErrorCode CBagStorageDevDlg::Close() {
 }
 
 
-ErrorCode CBagStorageDevDlg::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
+ErrorCode CBagStorageDevDlg::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pBmp != nullptr);
 
@@ -1675,7 +1675,7 @@ ErrorCode CBagStorageDevDlg::PaintScreen(CBofRect *pRect) {
 					pWin->OnRender(pBmp, pRect);
 				}
 
-				OnRender(m_pBackdrop, pRect);
+				onRender(m_pBackdrop, pRect);
 				CBofRect wrect(GetWindowRect());
 				m_pBackdrop->Paint(pBmp, &wrect, nullptr);
 
@@ -1750,7 +1750,7 @@ ErrorCode CBagStorageDevDlg::Create(const char *pszName, CBofRect *pRect, CBofWi
 }
 
 
-void CBagStorageDevDlg::OnClose() {
+void CBagStorageDevDlg::onClose() {
 	if (_pDlgBackground != nullptr) {
 		delete _pDlgBackground;
 		_pDlgBackground = nullptr;
@@ -1770,7 +1770,7 @@ void CBagStorageDevDlg::OnClose() {
 		}
 	}
 
-	CBofDialog::OnClose();
+	CBofDialog::onClose();
 
 	Destroy();		// Destruct the main window
 
@@ -1796,10 +1796,10 @@ void CBagStorageDevDlg::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) 
 	CBofDialog::OnLButtonDown(nFlags, xPoint);
 }
 
-void CBagStorageDevDlg::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
+void CBagStorageDevDlg::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	if (CBofDialog::GetRect().PtInRect(*xPoint)) {
-		CBagStorageDev::OnLButtonUp(nFlags, xPoint, GetAssociateWnd());
-		CBofDialog::OnLButtonUp(nFlags, xPoint);
+		CBagStorageDev::onLButtonUp(nFlags, xPoint, GetAssociateWnd());
+		CBofDialog::onLButtonUp(nFlags, xPoint);
 	} else  {
 		Close();
 	}

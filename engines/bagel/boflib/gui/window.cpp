@@ -548,20 +548,20 @@ Graphics::ManagedSurface *CBofWindow::getSurface() {
 void CBofWindow::onMouseMove(uint32, CBofPoint *, void *) {}
 
 void CBofWindow::OnLButtonDown(uint32, CBofPoint *, void *) {}
-void CBofWindow::OnLButtonUp(uint32, CBofPoint *, void *) {}
+void CBofWindow::onLButtonUp(uint32, CBofPoint *, void *) {}
 void CBofWindow::OnLButtonDblClk(uint32, CBofPoint *) {}
 
 void CBofWindow::OnRButtonDown(uint32, CBofPoint *) {}
 void CBofWindow::OnRButtonUp(uint32, CBofPoint *) {}
 void CBofWindow::OnRButtonDblClk(uint32, CBofPoint *) {}
 
-void CBofWindow::OnKeyHit(uint32, uint32) {}
+void CBofWindow::onKeyHit(uint32, uint32) {}
 
 void CBofWindow::OnReSize(CBofSize *) {}
 void CBofWindow::OnPaint(CBofRect *) {}
 void CBofWindow::onTimer(uint32) {}
 
-void CBofWindow::OnClose() {}
+void CBofWindow::onClose() {}
 
 void CBofWindow::OnBofButton(CBofObject *, int) {}
 void CBofWindow::OnBofScrollBar(CBofObject *, int) {}
@@ -659,7 +659,7 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 		break;
 
 	case Common::EVENT_LBUTTONUP:
-		OnLButtonUp(0, &mousePos);
+		onLButtonUp(0, &mousePos);
 		break;
 
 	case Common::EVENT_RBUTTONDOWN:
@@ -680,13 +680,13 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 		uint32 lNewKey;
 
 		if ((lNewKey = TranslateKey(event)) != BKEY_UNKNOWN) {
-			OnKeyHit(lNewKey, event.kbdRepeat ? 1 : 0);
+			onKeyHit(lNewKey, event.kbdRepeat ? 1 : 0);
 		}
 		break;
 
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 		if (event.customType != KEYBIND_NONE)
-			OnKeyHit((event.customType == KEYBIND_WAIT)
+			onKeyHit((event.customType == KEYBIND_WAIT)
 				? BKEY_SPACE : BKEY_SCRL_LOCK, 0);
 		break;
 
@@ -696,7 +696,7 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 		break;
 
 	case Common::EVENT_QUIT:
-		OnClose();
+		onClose();
 		break;
 
 	default:

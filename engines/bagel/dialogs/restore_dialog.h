@@ -55,7 +55,7 @@ protected:
 	void OnBofButton(CBofObject *pObject, int nState) override;
 	void OnBofListBox(CBofObject *pObject, int nItemIndex) override;
 
-	void OnKeyHit(uint32 lKey, uint32 lRepCount) override;
+	void onKeyHit(uint32 lKey, uint32 lRepCount) override;
 
 public:
 	CBagRestoreDialog();

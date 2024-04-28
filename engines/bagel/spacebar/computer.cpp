@@ -854,7 +854,7 @@ void SBarComputer::OnBofButton(CBofObject *pObject, int nState) {
 	}
 }
 
-void SBarComputer::OnKeyHit(uint32 lKey, uint32 nRepCount) {
+void SBarComputer::onKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {
@@ -899,7 +899,7 @@ void SBarComputer::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 		break;
 
 	default:
-		CBagStorageDevWnd::OnKeyHit(lKey, nRepCount);
+		CBagStorageDevWnd::onKeyHit(lKey, nRepCount);
 		break;
 	}
 }

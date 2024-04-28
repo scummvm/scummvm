@@ -63,7 +63,7 @@ protected:
 	void CalcFuel(double hf);
 
 	void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
-	void OnKeyHit(uint32 lKey, uint32 lRepCount) override;
+	void onKeyHit(uint32 lKey, uint32 lRepCount) override;
 	void onTimer(uint32 tId) override;
 	void OnPaint(CBofRect *pRect) override;
 	void OnMainLoop() override;

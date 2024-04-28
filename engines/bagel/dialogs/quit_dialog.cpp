@@ -98,7 +98,7 @@ void CBagQuitDialog::OnInitDialog() {
 }
 
 
-void CBagQuitDialog::OnClose() {
+void CBagQuitDialog::onClose() {
 	Assert(IsValidObject(this));
 
 	CBagCursor::hideSystemCursor();
@@ -114,7 +114,7 @@ void CBagQuitDialog::OnClose() {
 	if (_nReturnValue == QUIT_BTN || _nReturnValue == SAVE_BTN)
 		KillBackground();
 
-	CBofDialog::OnClose();
+	CBofDialog::onClose();
 }
 
 
@@ -127,7 +127,7 @@ void CBagQuitDialog::OnPaint(CBofRect *pRect) {
 }
 
 
-void CBagQuitDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
+void CBagQuitDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	if (lKey == BKEY_ESC) {
@@ -136,7 +136,7 @@ void CBagQuitDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 		SetReturnValue(CANCEL_BTN);
 		Close();
 	} else 
-		CBofDialog::OnKeyHit(lKey, nRepCount);
+		CBofDialog::onKeyHit(lKey, nRepCount);
 }
 
 

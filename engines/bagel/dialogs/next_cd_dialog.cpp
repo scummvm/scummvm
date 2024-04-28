@@ -71,7 +71,7 @@ void CBagNextCDDialog::OnInitDialog() {
 	CBagCursor::showSystemCursor();
 }
 
-void CBagNextCDDialog::OnClose() {
+void CBagNextCDDialog::onClose() {
 	Assert(IsValidObject(this));
 
 	CBagCursor::hideSystemCursor();
@@ -82,7 +82,7 @@ void CBagNextCDDialog::OnClose() {
 		m_pButton = nullptr;
 	}
 
-	CBofDialog::OnClose();
+	CBofDialog::onClose();
 }
 
 void CBagNextCDDialog::OnPaint(CBofRect *pRect) {
@@ -101,7 +101,7 @@ void CBagNextCDDialog::OnPaint(CBofRect *pRect) {
 	ValidateAnscestors();
 }
 
-void CBagNextCDDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
+void CBagNextCDDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {
@@ -112,7 +112,7 @@ void CBagNextCDDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 		break;
 
 	default:
-		CBofDialog::OnKeyHit(lKey, nRepCount);
+		CBofDialog::onKeyHit(lKey, nRepCount);
 		break;
 	}
 }

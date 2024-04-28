@@ -215,7 +215,7 @@ void CBagHelp::OnPaint(CBofRect *pRect) {
 }
 
 
-void CBagHelp::OnKeyHit(uint32 lKey, uint32 nRepCount) {
+void CBagHelp::onKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {
@@ -248,7 +248,7 @@ void CBagHelp::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 		Close();
 
 	default:
-		CBofDialog::OnKeyHit(lKey, nRepCount);
+		CBofDialog::onKeyHit(lKey, nRepCount);
 		break;
 	}
 }

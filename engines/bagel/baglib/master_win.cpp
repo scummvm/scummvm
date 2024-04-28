@@ -1056,7 +1056,7 @@ ErrorCode CBagMasterWin::OnHelp(const CBofString &sHelpFile, bool /*bSaveBkg*/, 
 
 bool g_bWaitOK = false;
 
-void CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
+void CBagMasterWin::onKeyHit(uint32 lKey, uint32 lRepCount) {
 	Assert(IsValidObject(this));
 
 	int nVol;
@@ -1146,18 +1146,18 @@ void CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	// Default action
 	default:
 		if (m_pGameWindow)
-			m_pGameWindow->OnKeyHit(lKey, lRepCount);
+			m_pGameWindow->onKeyHit(lKey, lRepCount);
 		break;
 	}
 
-	CBofWindow::OnKeyHit(lKey, lRepCount);
+	CBofWindow::onKeyHit(lKey, lRepCount);
 }
 
-void CBagMasterWin::OnClose() {
+void CBagMasterWin::onClose() {
 	Assert(IsValidObject(this));
 
 	if (m_pGameWindow)
-		m_pGameWindow->OnClose();
+		m_pGameWindow->onClose();
 
 	g_engine->quitGame();
 }

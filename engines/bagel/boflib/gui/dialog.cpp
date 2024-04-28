@@ -129,7 +129,7 @@ ErrorCode CBofDialog::Create(const char *pszName, CBofRect *pRect, CBofWindow *p
 }
 
 
-void CBofDialog::OnClose() {
+void CBofDialog::onClose() {
 	Assert(IsValidObject(this));
 
 	// Release any capture/focus that was active
@@ -156,7 +156,7 @@ void CBofDialog::OnClose() {
 		_parent->InvalidateRect(nullptr);
 	}
 
-	CBofWindow::OnClose();
+	CBofWindow::onClose();
 
 	// Stop our personal message loop
 	_bEndDialog = true;

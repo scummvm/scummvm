@@ -39,10 +39,10 @@ public:
 
 protected:
 	virtual void OnPaint(CBofRect *pRect);
-	virtual void OnClose();
+	virtual void onClose();
 	virtual void OnBofButton(CBofObject *pObject, int nState);
 
-	virtual void OnKeyHit(uint32 lKey, uint32 lRepCount);
+	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
 
 	// Data
 	//
@@ -57,10 +57,10 @@ public:
 
 protected:
 	virtual void OnPaint(CBofRect *pRect);
-	virtual void OnClose();
+	virtual void onClose();
 	virtual void OnBofButton(CBofObject *pObject, int nState);
 
-	virtual void OnKeyHit(uint32 lKey, uint32 lRepCount);
+	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
 
 	// Data
 	CBofBmpButton *m_pButton;
@@ -74,9 +74,9 @@ public:
 
 protected:
 	virtual void OnPaint(CBofRect *pRect);
-	virtual void OnClose();
+	virtual void onClose();
 
-	virtual void OnKeyHit(uint32 lKey, uint32 lRepCount);
+	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
 	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 
 	virtual void OnMainLoop();

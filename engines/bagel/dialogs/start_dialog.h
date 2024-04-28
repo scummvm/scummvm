@@ -40,10 +40,10 @@ private:
 
 protected:
 	void OnPaint(CBofRect *pRect) override;
-	void OnClose() override;
+	void onClose() override;
 	void OnBofButton(CBofObject *pObject, int nState) override;
 
-	void OnKeyHit(uint32 lKey, uint32 lRepCount) override;
+	void onKeyHit(uint32 lKey, uint32 lRepCount) override;
 
 public:
 	CBagStartDialog(const char *pszFileName, CBofWindow *pWin);

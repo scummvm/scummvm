@@ -113,7 +113,7 @@ public:
 	void DisplayTextScreen();
 
 	void OnBofButton(CBofObject *, int) override;
-	void OnClose() override;
+	void onClose() override;
 	void OnPaint(CBofRect * pRect) override;
 };
 
@@ -143,11 +143,11 @@ class SrafComputer : public CBagStorageDevWnd {
 public:
 	SrafComputer();
 	virtual ~SrafComputer();
-	virtual void OnKeyHit(uint32 lKey, uint32 nRepCount);
+	virtual void onKeyHit(uint32 lKey, uint32 nRepCount);
 	virtual ErrorCode attach();
 	virtual ErrorCode detach();
 	void OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
-	void OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
+	void onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
 	void OnMainLoop();
 	void OnPaint(CBofRect *pRect);
 	void OnBofButton(CBofObject *, int);

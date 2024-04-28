@@ -28,32 +28,32 @@
 
 namespace Bagel {
 
-#define MAX_CHARS 40
+#define ACH_GUESS_MAX_CHARS 40
 
 class CDevDlg : public CBagStorageDevDlg {
 private:
 	// for text entry:
-	char m_achGuess[MAX_CHARS + 2];
-	CBofText *m_pGuessText;
-	int m_nGuessCount;
-	int m_nButtonX;
-	int m_nButtonY;
-	bool m_bUseExtra;
-	CBofText *m_pTitleText;
+	char _achGuess[ACH_GUESS_MAX_CHARS + 2];
+	CBofText *_guessText;
+	int _guessCount;
+	int _buttonX;
+	int _buttonY;
+	bool _useExtraFl;
+	CBofText *_titleText;
 
 public:
-	CDevDlg(int nButtonX = -1, int nButtonY = -1);
+	CDevDlg(int buttonX = -1, int buttonY = -1);
 	~CDevDlg();
 
-	ErrorCode Create(const char *pszBmp, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *pRect, bool bUseEx = false);
-	void PaintText();
-	void SetText(CBofString &, CBofRect *);
-	void OnKeyHit(uint32 lKey, uint32 lRepCount);
+	ErrorCode create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CBofRect *rect, bool useExtraFl = false);
+	void paintText();
+	void setText(CBofString &, CBofRect *);
+	void onKeyHit(uint32 keyCode, uint32 repCount);
 
-	virtual void onMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual void OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual void OnClose();
-	virtual ErrorCode OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
+	virtual void onMouseMove(uint32 flags, CBofPoint *point, void * = nullptr);
+	virtual void onLButtonUp(uint32 flags, CBofPoint *point, void * = nullptr);
+	virtual void onClose();
+	virtual ErrorCode onRender(CBofBitmap *bmp, CBofRect *rect = nullptr);
 };
 
 } // namespace Bagel

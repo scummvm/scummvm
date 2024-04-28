@@ -328,7 +328,7 @@ ErrorCode CMainWindow::OnCursorUpdate(int nCurrObj) {
 }
 
 
-void CMainWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
+void CMainWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 	// Terminate app on ALT_Q
 	if ((lKey == BKEY_ALT_q) || (lKey == BKEY_ALT_F4)) {
 		Close();
@@ -346,7 +346,7 @@ void CMainWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 		}
 	} else {
 		// Default action
-		CBagPanWindow::OnKeyHit(lKey, lRepCount);
+		CBagPanWindow::onKeyHit(lKey, lRepCount);
 	}
 }
 
@@ -410,13 +410,13 @@ void CMainWindow::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 }
 
 
-void CMainWindow::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
+void CMainWindow::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	if (GetFilterId() & 0x08) {
 		if (m_bZzazzlVision)                // If zzazzl paint is toggled on
 			CorrectZzazzlePoint(xPoint);
 	}
 
-	CBagPanWindow::OnLButtonUp(nFlags, xPoint);
+	CBagPanWindow::onLButtonUp(nFlags, xPoint);
 }
 
 
@@ -429,8 +429,8 @@ void CMainWindow::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 	CBagPanWindow::OnLButtonDown(nFlags, xPoint);
 }
 
-void CMainWindow::OnClose() {
-	CBagPanWindow::OnClose();       // Destruct the main window
+void CMainWindow::onClose() {
+	CBagPanWindow::onClose();       // Destruct the main window
 }
 
 

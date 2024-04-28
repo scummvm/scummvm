@@ -83,7 +83,7 @@ protected:
 
 	virtual void OnBofScrollBar(CBofObject *pObject, int nPos);
 	virtual void OnBofButton(CBofObject *pObject, int nState);
-	virtual void OnKeyHit(uint32 lKey, uint32 lRepCount);
+	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
 
 	// Data members
 	//
