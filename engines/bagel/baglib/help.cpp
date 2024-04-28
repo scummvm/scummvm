@@ -159,7 +159,7 @@ ErrorCode CBagHelp::attach() {
 		ReportError(ERR_MEMORY, "Unable to allocate %d bytes to read %s.", lSize, m_cTextFile.GetBuffer());
 	}
 
-	CBagCursor::ShowSystemCursor();
+	CBagCursor::showSystemCursor();
 
 	return m_errCode;
 }
@@ -168,7 +168,7 @@ ErrorCode CBagHelp::attach() {
 ErrorCode CBagHelp::Detach() {
 	Assert(IsValidObject(this));
 
-	CBagCursor::HideSystemCursor();
+	CBagCursor::hideSystemCursor();
 
 	if (m_pTextBox != nullptr) {
 		delete m_pTextBox;

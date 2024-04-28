@@ -94,14 +94,14 @@ void CBagQuitDialog::OnInitDialog() {
 	}
 
 	// Show System cursor
-	CBagCursor::ShowSystemCursor();
+	CBagCursor::showSystemCursor();
 }
 
 
 void CBagQuitDialog::OnClose() {
 	Assert(IsValidObject(this));
 
-	CBagCursor::HideSystemCursor();
+	CBagCursor::hideSystemCursor();
 
 	// Destroy all buttons
 	for (int i = 0; i < NUM_QUIT_BUTTONS; i++) {

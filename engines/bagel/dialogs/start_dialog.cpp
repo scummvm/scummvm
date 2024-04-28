@@ -98,14 +98,14 @@ void CBagStartDialog::OnInitDialog() {
 		_buttons[0]->SetState(BUTTON_DISABLED);
 
 	// Show System cursor
-	CBagCursor::ShowSystemCursor();
+	CBagCursor::showSystemCursor();
 }
 
 
 void CBagStartDialog::OnClose() {
 	Assert(IsValidObject(this));
 
-	CBagCursor::HideSystemCursor();
+	CBagCursor::hideSystemCursor();
 
 	// Destroy all buttons
 	for (int i = 0; i < NUM_START_BTNS; i++) {

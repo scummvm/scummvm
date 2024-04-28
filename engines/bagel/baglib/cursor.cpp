@@ -50,11 +50,11 @@ static const byte ARROW_CURSOR[CURSOR_W * CURSOR_H] = {
 };
 static const byte CURSOR_PALETTE[] = { 0x80, 0x80, 0x80, 0, 0, 0, 0xff, 0xff, 0xff };
 
-CBagCursor *CBagCursor::m_pCurrentCursor;
+CBagCursor *CBagCursor::_currentCursor;
 CSystemCursor *CBagCursor::_systemCursor;
 
 void CBagCursor::initialize() {
-	m_pCurrentCursor = nullptr;
+	_currentCursor = nullptr;
 	_systemCursor = new CSystemCursor();
 }
 
@@ -62,91 +62,89 @@ void CBagCursor::shutdown() {
 	delete _systemCursor;
 }
 
-void CBagCursor::ShowSystemCursor() {
-	_systemCursor->SetCurrent();
+void CBagCursor::showSystemCursor() {
+	_systemCursor->setCurrent();
 }
 
 
 CBagCursor::CBagCursor() {
-	m_pBmp = nullptr;
-	m_nX = 0;
-	m_nY = 0;
-	m_bSharedPal = false;
+	_bitmap = nullptr;
+	_x = 0;
+	_y = 0;
+	_sharedPalFl = false;
 
 	// Default is that this is not a wielded cursor
-	SetWieldCursor(false);
+	setWieldCursor(false);
 }
 
-CBagCursor::CBagCursor(CBofBitmap *pBmp) {
-	m_pBmp = nullptr;
-	m_nX = 0;
-	m_nY = 0;
-	m_bSharedPal = false;
+CBagCursor::CBagCursor(CBofBitmap *bmp) {
+	_bitmap = nullptr;
+	_x = 0;
+	_y = 0;
+	_sharedPalFl = false;
 
-	Load(pBmp);
+	load(bmp);
 
 	// Default is that this is not a wielded cursor
-	SetWieldCursor(false);
+	setWieldCursor(false);
 }
 
-CBagCursor::CBagCursor(const char *pszFileName, bool bSharedPal) {
-	Assert(pszFileName != nullptr);
+CBagCursor::CBagCursor(const char *fileName, bool sharedPalFl) {
+	Assert(fileName != nullptr);
 
-	m_pBmp = nullptr;
-	m_nX = 0;
-	m_nY = 0;
-	m_bSharedPal = bSharedPal;
-	strncpy(m_szFileName, pszFileName, MAX_FNAME - 1);
+	_bitmap = nullptr;
+	_x = 0;
+	_y = 0;
+	_sharedPalFl = sharedPalFl;
+	strncpy(_fileName, fileName, MAX_FNAME - 1);
 
 	// Default is that this is not a wielded cursor
-	SetWieldCursor(false);
+	setWieldCursor(false);
 }
 
 CBagCursor::~CBagCursor() {
 	Assert(IsValidObject(this));
 
-	UnLoad();
+	unLoad();
 }
 
-ErrorCode CBagCursor::Load(CBofBitmap *pBmp) {
+ErrorCode CBagCursor::load(CBofBitmap *bmp) {
 	Assert(IsValidObject(this));
-	Assert(pBmp != nullptr);
+	Assert(bmp != nullptr);
 
-	UnLoad();
+	unLoad();
 
-	m_pBmp = pBmp;
+	_bitmap = bmp;
 
 	return m_errCode;
 }
 
-ErrorCode CBagCursor::Load(const char *pszFileName, CBofPalette *pPal) {
+ErrorCode CBagCursor::load(const char *fileName, CBofPalette *pal) {
 	Assert(IsValidObject(this));
-	Assert(pszFileName != nullptr);
+	Assert(fileName != nullptr);
 
-	UnLoad();
+	unLoad();
 
-	m_pBmp = LoadBitmap(pszFileName, pPal, m_bSharedPal);
+	_bitmap = LoadBitmap(fileName, pal, _sharedPalFl);
 
 	return m_errCode;
 }
 
-void CBagCursor::UnLoad() {
+void CBagCursor::unLoad() {
 	Assert(IsValidObject(this));
 
-	if (m_pBmp != nullptr) {
-		delete m_pBmp;
-		m_pBmp = nullptr;
-	}
+	delete _bitmap;
+	_bitmap = nullptr;
 }
 
-void CBagCursor::SetCurrent() {
-	m_pCurrentCursor = this;
-	CursorMan.replaceCursorPalette(m_pBmp->GetPalette()->GetData(), 0, PALETTE_COUNT);
-	CursorMan.replaceCursor(m_pBmp->getSurface(), m_nX, m_nY, 1);
+void CBagCursor::setCurrent() {
+	_currentCursor = this;
+	CursorMan.replaceCursorPalette(_bitmap->GetPalette()->GetData(), 0, PALETTE_COUNT);
+	CursorMan.replaceCursor(_bitmap->getSurface(), _x, _y, 1);
 }
 
-void CSystemCursor::SetCurrent() {
-	m_pCurrentCursor = this;
+void CSystemCursor::setCurrent() {
+	_currentCursor = this;
 
 	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 	CursorMan.replaceCursorPalette(CURSOR_PALETTE, 0, ARRAYSIZE(CURSOR_PALETTE) / 3);

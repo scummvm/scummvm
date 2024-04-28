@@ -221,7 +221,7 @@ ErrorCode CBagSaveDialog::attach() {
 		m_pButtons[0]->SetState(BUTTON_DISABLED);
 	}
 
-	CBagCursor::ShowSystemCursor();
+	CBagCursor::showSystemCursor();
 
 	return m_errCode;
 }
@@ -229,7 +229,7 @@ ErrorCode CBagSaveDialog::attach() {
 ErrorCode CBagSaveDialog::Detach() {
 	Assert(IsValidObject(this));
 
-	CBagCursor::HideSystemCursor();
+	CBagCursor::hideSystemCursor();
 
 	if (m_pScrollBar != nullptr) {
 		delete m_pScrollBar;

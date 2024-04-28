@@ -956,7 +956,7 @@ ErrorCode SrafComputer::attach() {
 		UpdateWindow();
 
 		// Finally, use our regular system cursor, not the custom ones
-		CBagCursor::ShowSystemCursor();
+		CBagCursor::showSystemCursor();
 
 		// Bring in all the external variables
 		RestoreSraffanVars();
@@ -983,7 +983,7 @@ ErrorCode SrafComputer::detach() {
 
 	// Get rid of the system cursor
 	if (m_bSrafAttached) {
-		CBagCursor::HideSystemCursor();
+		CBagCursor::hideSystemCursor();
 		m_bSrafAttached = false;
 	}
 

@@ -56,7 +56,7 @@ namespace Bagel {
 // Globals (hacks)
 bool g_allowPaintFl = true;
 bool g_bAAOk = true;            // Prevent attachActiveObjects() after a RUN LNK
-bool g_allowArrangeObjectsFl = true;        // Prevent attachActiveObjects() after a RUN LNK
+bool g_allowAttachActiveObjectsFl = true;        // Prevent attachActiveObjects() after a RUN LNK
 CBagStorageDevWnd *g_pLastWindow = nullptr;
 extern bool g_bPauseTimer;
 extern bool g_bWaitOK;
@@ -83,7 +83,7 @@ static int gLastBackgroundUpdate = 0;
 void CBagStorageDev::initialize() {
 	g_allowPaintFl = true;
 	g_bAAOk = true;
-	g_allowArrangeObjectsFl = true;
+	g_allowAttachActiveObjectsFl = true;
 	g_pLastWindow = nullptr;
 
 	m_xCursorLocation = new CBofPoint();
@@ -229,7 +229,7 @@ ErrorCode CBagStorageDev::ActivateLocalObject(CBagObject  *pObj) {
 			pObj->attach();
 
 			// Preform an update and arrange objects in the storage device
-			if (g_allowArrangeObjectsFl) {
+			if (g_allowAttachActiveObjectsFl) {
 				AttachActiveObjects();
 			}
 		}

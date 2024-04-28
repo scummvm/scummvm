@@ -296,7 +296,7 @@ ErrorCode CNavWindow::attach() {
 	BofPlaySound(MakeDir(WELCOME_SND), SOUND_WAVE);
 	CSound::WaitWaveSounds();
 
-	CBagCursor::ShowSystemCursor();
+	CBagCursor::showSystemCursor();
 
 	m_bNavAttached = true;
 
@@ -311,7 +311,7 @@ ErrorCode CNavWindow::detach() {
 	if (m_bNavAttached) {
 
 		// Get rid of the system cursor
-		CBagCursor::HideSystemCursor();
+		CBagCursor::hideSystemCursor();
 
 		// One turn has gone by
 		VARMNGR->IncrementTimers();

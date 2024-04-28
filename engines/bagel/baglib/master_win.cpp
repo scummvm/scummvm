@@ -476,7 +476,7 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 		// Only load the cursors that are not wield cursors
 		for (int i = 0; i < MAX_CURSORS; i++) {
 			if (m_cCursorList[i] != nullptr) {
-				m_cCursorList[i]->Load();
+				m_cCursorList[i]->load();
 			}
 		}
 
@@ -818,7 +818,7 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 
 				CBagCursor *pCursor = new CBagCursor(sStr, bUseShared);
 				if (pCursor != nullptr) {
-					pCursor->SetHotSpot(x, y);
+					pCursor->setHotspot(x, y);
 
 					Assert(nId >= 0 && nId < MAX_CURSORS);
 
@@ -830,7 +830,7 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 
 					// Set the wielded cursor status (needed for
 					// a load time optimization)
-					pCursor->SetWieldCursor(bIsWieldCursor);
+					pCursor->setWieldCursor(bIsWieldCursor);
 
 				} else {
 					ReportError(ERR_MEMORY, "Could not allocate a CBagCursor");
@@ -1427,7 +1427,7 @@ void CBagMasterWin::SetActiveCursor(int iCursor) {
 	Assert(iCursor >= 0 && iCursor < MAX_CURSORS);
 
 	if (m_cCursorList[iCursor] != nullptr) {
-		m_cCursorList[iCursor]->SetCurrent();
+		m_cCursorList[iCursor]->setCurrent();
 		m_nCurCursor = iCursor;
 	}
 }

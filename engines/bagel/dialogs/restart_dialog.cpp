@@ -105,14 +105,14 @@ void CBagRestartDialog::OnInitDialog() {
 	}
 
 	// Show System cursor
-	CBagCursor::ShowSystemCursor();
+	CBagCursor::showSystemCursor();
 }
 
 
 void CBagRestartDialog::OnClose() {
 	Assert(IsValidObject(this));
 
-	CBagCursor::HideSystemCursor();
+	CBagCursor::hideSystemCursor();
 
 	// Destroy all buttons
 	for (int i = 0; i < NUM_RESTART_BTNS; i++) {
