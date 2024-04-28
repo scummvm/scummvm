@@ -150,12 +150,6 @@ OpenGLSdlGraphics3dManager::OpenGLSdlGraphics3dManager(SdlEventSource *eventSour
 }
 
 OpenGLSdlGraphics3dManager::~OpenGLSdlGraphics3dManager() {
-#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplSDL2_Shutdown();
-	ImGui::DestroyContext();
-#endif
-
 	closeOverlay();
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	deinitializeRenderer();
@@ -333,9 +327,7 @@ void OpenGLSdlGraphics3dManager::setupScreen() {
 		}
 	}
 
-	// Clear the GL context when going from / to the launcher
-	SDL_GL_DeleteContext(_glContext);
-	_glContext = nullptr;
+	deinitializeRenderer();
 
 	if (needsWindowReset) {
 		_window->destroyWindow();
@@ -473,19 +465,6 @@ void OpenGLSdlGraphics3dManager::initializeOpenGLContext() const {
 	if (SDL_GL_SetSwapInterval(_vsync ? 1 : 0)) {
 		warning("Unable to %s VSync: %s", _vsync ? "enable" : "disable", SDL_GetError());
 	}
-
-#ifdef USE_IMGUI
-	if (!_imguiInit) {
-		// Setup Dear ImGui
-		IMGUI_CHECKVERSION();
-		ImGui::CreateContext();
-		ImGui_ImplSDL2_InitForOpenGL(_window->getSDLWindow(), _glContext);
-		ImGui_ImplOpenGL3_Init("#version 110");
-		ImGui::StyleColorsDark();
-		ImGuiIO &io = ImGui::GetIO();
-		io.IniFilename = nullptr;
-	}
-#endif
 #endif
 }
 
@@ -577,6 +556,17 @@ bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint ga
 				_glContext = SDL_GL_CreateContext(_window->getSDLWindow());
 				if (_glContext) {
 					clear = true;
+
+#ifdef USE_IMGUI
+					// Setup Dear ImGui
+					IMGUI_CHECKVERSION();
+					ImGui::CreateContext();
+					ImGui_ImplSDL2_InitForOpenGL(_window->getSDLWindow(), _glContext);
+					ImGui_ImplOpenGL3_Init("#version 110");
+					ImGui::StyleColorsDark();
+					ImGuiIO &io = ImGui::GetIO();
+					io.IniFilename = nullptr;
+#endif
 				}
 			}
 
@@ -615,9 +605,6 @@ bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint ga
 		return false;
 
 	initializeOpenGLContext();
-#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
-	_imguiInit = true;
-#endif
 
 	if (clear)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -832,6 +819,14 @@ void OpenGLSdlGraphics3dManager::showSystemMouseCursor(bool visible) {
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 void OpenGLSdlGraphics3dManager::deinitializeRenderer() {
+#ifdef USE_IMGUI
+	if (_glContext) {
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplSDL2_Shutdown();
+		ImGui::DestroyContext();
+	}
+#endif
+
 	SDL_GL_DeleteContext(_glContext);
 	_glContext = nullptr;
 }

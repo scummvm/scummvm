@@ -120,7 +120,6 @@ protected:
 	int _glContextProfileMask, _glContextMajor, _glContextMinor;
 	SDL_GLContext _glContext;
 	void deinitializeRenderer();
-	bool _imguiInit = false;
 #endif
 
 	OpenGL::ContextType _glContextType;
