@@ -249,42 +249,42 @@ Bitmap *CopyScreenIntoBitmap(int width, int height, bool at_native_res) {
 
 // Multiplies up the number of pixels depending on the current
 // resolution, to give a relatively fixed size at any game res
-AGS_INLINE int get_fixed_pixel_size(int pixels) {
+int get_fixed_pixel_size(int pixels) {
 	return pixels * _GP(game).GetRelativeUIMult();
 }
 
-AGS_INLINE int data_to_game_coord(int coord) {
+int data_to_game_coord(int coord) {
 	return coord * _GP(game).GetDataUpscaleMult();
 }
 
-AGS_INLINE void data_to_game_coords(int *x, int *y) {
+void data_to_game_coords(int *x, int *y) {
 	const int mul = _GP(game).GetDataUpscaleMult();
 	x[0] *= mul;
 	y[0] *= mul;
 }
 
-AGS_INLINE void data_to_game_round_up(int *x, int *y) {
+void data_to_game_round_up(int *x, int *y) {
 	const int mul = _GP(game).GetDataUpscaleMult();
 	x[0] = x[0] * mul + (mul - 1);
 	y[0] = y[0] * mul + (mul - 1);
 }
 
-AGS_INLINE int game_to_data_coord(int coord) {
+int game_to_data_coord(int coord) {
 	return coord / _GP(game).GetDataUpscaleMult();
 }
 
-AGS_INLINE void game_to_data_coords(int &x, int &y) {
+void game_to_data_coords(int &x, int &y) {
 	const int mul = _GP(game).GetDataUpscaleMult();
 	x /= mul;
 	y /= mul;
 }
 
-AGS_INLINE int game_to_data_round_up(int coord) {
+int game_to_data_round_up(int coord) {
 	const int mul = _GP(game).GetDataUpscaleMult();
 	return (coord / mul) + (mul - 1);
 }
 
-AGS_INLINE void ctx_data_to_game_coord(int &x, int &y, bool hires_ctx) {
+void ctx_data_to_game_coord(int &x, int &y, bool hires_ctx) {
 	if (hires_ctx && !_GP(game).IsLegacyHiRes()) {
 		x /= HIRES_COORD_MULTIPLIER;
 		y /= HIRES_COORD_MULTIPLIER;
@@ -294,7 +294,7 @@ AGS_INLINE void ctx_data_to_game_coord(int &x, int &y, bool hires_ctx) {
 	}
 }
 
-AGS_INLINE void ctx_data_to_game_size(int &w, int &h, bool hires_ctx) {
+void ctx_data_to_game_size(int &w, int &h, bool hires_ctx) {
 	if (hires_ctx && !_GP(game).IsLegacyHiRes()) {
 		w = MAX(1, (w / HIRES_COORD_MULTIPLIER));
 		h = MAX(1, (h / HIRES_COORD_MULTIPLIER));
@@ -304,7 +304,7 @@ AGS_INLINE void ctx_data_to_game_size(int &w, int &h, bool hires_ctx) {
 	}
 }
 
-AGS_INLINE int ctx_data_to_game_size(int size, bool hires_ctx) {
+int ctx_data_to_game_size(int size, bool hires_ctx) {
 	if (hires_ctx && !_GP(game).IsLegacyHiRes())
 		return MAX(1, (size / HIRES_COORD_MULTIPLIER));
 	if (!hires_ctx && _GP(game).IsLegacyHiRes())
@@ -312,7 +312,7 @@ AGS_INLINE int ctx_data_to_game_size(int size, bool hires_ctx) {
 	return size;
 }
 
-AGS_INLINE int game_to_ctx_data_size(int size, bool hires_ctx) {
+int game_to_ctx_data_size(int size, bool hires_ctx) {
 	if (hires_ctx && !_GP(game).IsLegacyHiRes())
 		return size * HIRES_COORD_MULTIPLIER;
 	else if (!hires_ctx && _GP(game).IsLegacyHiRes())
@@ -320,7 +320,7 @@ AGS_INLINE int game_to_ctx_data_size(int size, bool hires_ctx) {
 	return size;
 }
 
-AGS_INLINE void defgame_to_finalgame_coords(int &x, int &y) {
+void defgame_to_finalgame_coords(int &x, int &y) {
 	// Note we support only upscale now
 	x *= _GP(game).GetScreenUpscaleMult();
 	y *= _GP(game).GetScreenUpscaleMult();

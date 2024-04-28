@@ -75,9 +75,9 @@ void  croom_ptr_clear();
 // between data and room coordinates.
 //
 // coordinate conversion data ---> room ---> mask
-extern AGS_INLINE int room_to_mask_coord(int coord);
+extern int room_to_mask_coord(int coord);
 // coordinate conversion mask ---> room ---> data
-extern AGS_INLINE int mask_to_room_coord(int coord);
+extern int mask_to_room_coord(int coord);
 
 struct MoveList;
 // Convert move path from room's mask resolution to room resolution
