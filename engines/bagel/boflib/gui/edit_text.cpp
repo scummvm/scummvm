@@ -68,7 +68,7 @@ ErrorCode CBofEditText::create(const char *pszName, int x, int y,
 	m_nID = nControlID;
 
 	// Remember the name of this window
-	Common::strcpy_s(m_szTitle, pszName);
+	Common::strcpy_s(_szTitle, pszName);
 
 	// Retain screen coordinates for this window
 	m_cWindowRect.SetRect(x, y, x + nWidth - 1, y + nHeight - 1);
@@ -79,9 +79,9 @@ ErrorCode CBofEditText::create(const char *pszName, int x, int y,
 	}
 
 	// Retain local coordinates (based on own window)
-	m_cRect.SetRect(0, 0, m_cWindowRect.Width() - 1, m_cWindowRect.Height() - 1);
+	_cRect.SetRect(0, 0, m_cWindowRect.Width() - 1, m_cWindowRect.Height() - 1);
 
-	return m_errCode;
+	return _errCode;
 }
 
 void CBofEditText::SetText(const char *pszString) {
@@ -106,7 +106,7 @@ void CBofEditText::onPaint(CBofRect *pRect) {
 	if (!_text.IsEmpty()) {
 		CBofString tmp = _text + "|";
 
-		PaintText(this, &m_cRect, tmp.GetBuffer(),
+		PaintText(this, &_cRect, tmp.GetBuffer(),
 			12, 0, CTEXT_COLOR,
 			JUSTIFY_LEFT,
 			FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE);
@@ -127,7 +127,7 @@ void CBofEditText::onKeyHit(uint32 lKey, uint32 lRepCount) {
 		CBofString tmp = _text + lKey;
 		CBofRect rect = CalculateTextRect(this, &tmp, 12, 0);
 
-		if ((m_cRect.Width() - rect.Width()) > 10) {
+		if ((_cRect.Width() - rect.Width()) > 10) {
 			SetText(tmp);
 		}
 	

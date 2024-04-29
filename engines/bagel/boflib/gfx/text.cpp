@@ -92,7 +92,7 @@ void CBofText::InitializeFields() {
 
 	m_cPosition = CBofPoint(0, 0);
 	m_cSize = CBofSize(0, 0);
-	m_cRect.SetRect(0, 0, 0, 0);
+	_cRect.SetRect(0, 0, 0, 0);
 
 	m_cShadowColor = RGB(0, 0, 0);
 	m_nShadow_DX = 0;
@@ -115,9 +115,9 @@ ErrorCode CBofText::SetupText(const CBofRect *pRect, int nJustify, uint32 nForma
 	m_nJustify = nJustify;
 
 	// Setup the fields for location and size of the text area
-	m_cRect = *pRect;
-	m_cSize.cx = m_cRect.Width();
-	m_cSize.cy = m_cRect.Height();
+	_cRect = *pRect;
+	m_cSize.cx = _cRect.Width();
+	m_cSize.cy = _cRect.Height();
 
 	if (m_pWork != nullptr) {
 		delete m_pWork;
@@ -143,7 +143,7 @@ ErrorCode CBofText::SetupText(const CBofRect *pRect, int nJustify, uint32 nForma
 		ReportError(ERR_MEMORY, "Could not allocate a (%d x %d) CBofBitmap", m_cSize.cx, m_cSize.cy);
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBofText::SetupTextOpt(const CBofRect *pRect, int nJustify, uint32 nFormatFlags) {
@@ -154,11 +154,11 @@ ErrorCode CBofText::SetupTextOpt(const CBofRect *pRect, int nJustify, uint32 nFo
 	m_nFormatFlags = nFormatFlags;
 
 	// Setup the fields for location and size of the text area
-	m_cRect = *pRect;
-	m_cSize.cx = m_cRect.Width();
-	m_cSize.cy = m_cRect.Height();
+	_cRect = *pRect;
+	m_cSize.cx = _cRect.Width();
+	m_cSize.cy = _cRect.Height();
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBofText::Erase(CBofWindow *pWnd) {
@@ -167,10 +167,10 @@ ErrorCode CBofText::Erase(CBofWindow *pWnd) {
 
 	if (m_pBackground != nullptr && m_bSaved) {
 		// Simply splat the background art back where it came from
-		m_errCode = m_pBackground->paint(pWnd, &m_cRect);
+		_errCode = m_pBackground->paint(pWnd, &_cRect);
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBofText::Erase(CBofBitmap *pBmp) {
@@ -179,10 +179,10 @@ ErrorCode CBofText::Erase(CBofBitmap *pBmp) {
 
 	if (m_pBackground != nullptr && m_bSaved) {
 		// Simply splat the background art back where it came from
-		m_errCode = m_pBackground->paint(pBmp, &m_cRect);
+		_errCode = m_pBackground->paint(pBmp, &_cRect);
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBofText::Display(CBofWindow *pWnd, const char *pszText, const int nSize, const int nWeight, const RGBCOLOR cColor, int nFont) {
@@ -193,7 +193,7 @@ ErrorCode CBofText::Display(CBofWindow *pWnd, const char *pszText, const int nSi
 
 	m_cTextColor = cColor;
 
-	return DisplayText(pWnd, pszText, &m_cRect, nSize, nWeight, false, nFont);
+	return DisplayText(pWnd, pszText, &_cRect, nSize, nWeight, false, nFont);
 }
 
 ErrorCode CBofText::Display(CBofWindow *pWnd) {
@@ -216,7 +216,7 @@ ErrorCode CBofText::Display(CBofBitmap *pBmp, const char *pszText, const int nSi
 
 	m_cTextColor = cColor;
 
-	return DisplayText(pBmp, pszText, &m_cRect, nSize, nWeight, false, nFont);
+	return DisplayText(pBmp, pszText, &_cRect, nSize, nWeight, false, nFont);
 }
 
 ErrorCode CBofText::DisplayShadowed(CBofWindow *pWnd, const char *pszText, const int nSize, const int nWeight, const RGBCOLOR cColor, const RGBCOLOR cShadow, const int nDX, const int nDY, int nFont) {
@@ -228,7 +228,7 @@ ErrorCode CBofText::DisplayShadowed(CBofWindow *pWnd, const char *pszText, const
 	m_nShadow_DX = nDX;
 	m_nShadow_DY = nDY;
 
-	return DisplayText(pWnd, pszText, &m_cRect, nSize, nWeight, true, nFont);
+	return DisplayText(pWnd, pszText, &_cRect, nSize, nWeight, true, nFont);
 }
 
 ErrorCode CBofText::DisplayShadowed(CBofBitmap *pBmp, const char *pszText, const int nSize, const int nWeight, const RGBCOLOR cColor, const RGBCOLOR cShadow, const int nDX, const int nDY, int nFont) {
@@ -240,7 +240,7 @@ ErrorCode CBofText::DisplayShadowed(CBofBitmap *pBmp, const char *pszText, const
 	m_nShadow_DX = nDX;
 	m_nShadow_DY = nDY;
 
-	return DisplayText(pBmp, pszText, &m_cRect, nSize, nWeight, true, nFont);
+	return DisplayText(pBmp, pszText, &_cRect, nSize, nWeight, true, nFont);
 }
 
 ErrorCode CBofText::DisplayText(CBofWindow *pWnd, const char *pszText, CBofRect *pRect, const int nSize, const int nWeight, const bool bShadowed, int nFont) {
@@ -267,7 +267,7 @@ ErrorCode CBofText::DisplayText(CBofWindow *pWnd, const char *pszText, CBofRect 
 
 	m_pWork->paint(pWnd, pRect);
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBofText::DisplayText(CBofBitmap *pBmp, const char *pszText, CBofRect *pRect, const int nSize, const int nWeight, const bool bShadowed, int nFont) {
@@ -294,7 +294,7 @@ ErrorCode CBofText::DisplayText(CBofBitmap *pBmp, const char *pszText, CBofRect 
 
 	m_pWork->paint(pBmp, pRect);
 
-	return m_errCode;
+	return _errCode;
 }
 
 Graphics::Font *CBofText::getFont(int nFont, int nSize, int nWeight) {
@@ -400,7 +400,7 @@ ErrorCode CBofText::DisplayTextEx(CBofBitmap *pBmp, const char *pszText, CBofRec
 		shadowRect.top += font->getFontHeight();
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 void CBofText::displayLine(Graphics::Font *font, Graphics::ManagedSurface &surface,

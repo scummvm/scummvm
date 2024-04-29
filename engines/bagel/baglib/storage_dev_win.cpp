@@ -1238,7 +1238,7 @@ ErrorCode CBagStorageDevWnd::attach() {
 		}
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 void CBagStorageDevWnd::onTimer(uint32 nEventID) {
@@ -1289,13 +1289,13 @@ ErrorCode CBagStorageDevWnd::detach() {
 
 	Destroy();
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBagStorageDevWnd::Close() {
 	CBagel::getBagApp()->getMasterWnd()->SetStorageDev(GetPrevSDev(), false);
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -1307,7 +1307,7 @@ ErrorCode CBagStorageDevWnd::setBackground(CBofBitmap *pBmp) {
 		KillBackdrop();
 		KillWorkBmp();
 	}
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -1321,7 +1321,7 @@ ErrorCode CBagStorageDevWnd::SetWorkBmp() {
 		pBmp->paint(m_pWorkBmp);
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -1331,7 +1331,7 @@ ErrorCode CBagStorageDevWnd::KillWorkBmp() {
 		m_pWorkBmp = nullptr;
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 void CBagStorageDevWnd::onPaint(CBofRect *) {
@@ -1364,7 +1364,7 @@ ErrorCode CBagStorageDevWnd::PaintScreen(CBofRect *pRect) {
 		AttachActiveObjects();
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -1389,7 +1389,7 @@ ErrorCode CBagStorageDevWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		(*m_pBitmapFilter)(nFilterId, pBmp, pRect);
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -1416,13 +1416,13 @@ ErrorCode CBagStorageDevWnd::RunModal(CBagObject *pObj) {
 		}
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 
 
 ErrorCode CBagStorageDevWnd::PaintObjects(CBofList<CBagObject *> * /*list*/, CBofBitmap * /*pBmp*/, CBofRect & /*viewRect*/, CBofList<CBofRect> * /*pUpdateArea*/, bool /*tempVar*/) {
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBagStorageDevWnd::LoadFile(const CBofString &sFile) {
@@ -1464,7 +1464,7 @@ ErrorCode CBagStorageDevWnd::LoadFile(const CBofString &sFile) {
 
 	// Add everything to the window
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -1599,7 +1599,7 @@ ErrorCode CBagStorageDevDlg::attach() {
 
 	Destroy();
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -1608,7 +1608,7 @@ ErrorCode CBagStorageDevDlg::Close() {
 
 	CBofDialog::Close();
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -1623,7 +1623,7 @@ ErrorCode CBagStorageDevDlg::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		(*m_pBitmapFilter)(nFilterId, pBmp, pRect);
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -1693,12 +1693,12 @@ ErrorCode CBagStorageDevDlg::PaintScreen(CBofRect *pRect) {
 		AttachActiveObjects();
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 
 ErrorCode CBagStorageDevDlg::PaintObjects(CBofList<CBagObject *> * /*list*/, CBofBitmap * /*pBmp*/, CBofRect & /*viewRect*/, CBofList<CBofRect> * /*pUpdateArea*/, bool /*tempVar*/) {
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -1734,7 +1734,7 @@ ErrorCode CBagStorageDevDlg::LoadFile(const CBofString &sFile) {
 	}
 
 	// Add everything to the window
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBagStorageDevDlg::create(const char *pszName, int x, int y, int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {

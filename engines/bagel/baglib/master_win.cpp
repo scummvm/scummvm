@@ -198,7 +198,7 @@ ErrorCode CBagMasterWin::ShowSystemDialog(bool bSaveBackground) {
 		}
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBagMasterWin::ShowCreditsDialog(CBofWindow *pWin, bool bSaveBkg) {
@@ -237,7 +237,7 @@ ErrorCode CBagMasterWin::ShowCreditsDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 	LogInfo("Exiting Credits Screen");
 
-	return m_errCode;
+	return _errCode;
 }
 
 bool CBagMasterWin::ShowQuitDialog(CBofWindow *pWin, bool bSaveBackground) {
@@ -329,7 +329,7 @@ ErrorCode CBagMasterWin::NewGame() {
 	LoadGlobalVars(GLOBALWORLD);
 	LoadFile(cInitWld, "", true);
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &sStartWldName, bool bRestart, bool bSetStart) {
@@ -465,10 +465,10 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 		// Possibly need to switch CDs
 		CBagel *pBagApp = CBagel::getBagApp();
 		if (pBagApp != nullptr) {
-			m_errCode = pBagApp->verifyCDInDrive(m_nDiskID, m_cCDChangeAudio.GetBuffer());
-			if (m_errCode != ERR_NONE || g_engine->shouldQuit()) {
+			_errCode = pBagApp->verifyCDInDrive(m_nDiskID, m_cCDChangeAudio.GetBuffer());
+			if (_errCode != ERR_NONE || g_engine->shouldQuit()) {
 				Close();
-				return m_errCode;
+				return _errCode;
 			}
 		}
 
@@ -518,7 +518,7 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 	}
 	LogInfo(BuildString("Time to Load %s, %ld ms", sWldFileName.GetBuffer(), TimerStop()));
 
-	return m_errCode;
+	return _errCode;
 }
 
 void CBagMasterWin::SaveSDevStack() {
@@ -650,7 +650,7 @@ ErrorCode CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 		}
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName) {
@@ -960,7 +960,7 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 	} // While not eof
 
 	// Add everything to the window
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBagMasterWin::SetStorageDev(const CBofString &sWldName, bool bEntry) {
@@ -1051,7 +1051,7 @@ ErrorCode CBagMasterWin::OnHelp(const CBofString &sHelpFile, bool /*bSaveBkg*/, 
 		cHelp.Detach();
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 bool g_bWaitOK = false;
@@ -1246,7 +1246,7 @@ ErrorCode CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 		m_nFadeIn = 0;
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 bool CBagMasterWin::ShowRestartDialog(CBofWindow *pWin, bool bSaveBkg) {
@@ -1420,7 +1420,7 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 }
 
 ErrorCode CBagMasterWin::Run() {
-	return m_errCode;
+	return _errCode;
 }
 
 void CBagMasterWin::SetActiveCursor(int iCursor) {

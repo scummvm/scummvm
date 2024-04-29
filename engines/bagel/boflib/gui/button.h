@@ -42,12 +42,12 @@ namespace Bagel {
 #define BUTTON_UNCHECKED BUTTON_OFF
 
 struct ST_COLORSCHEME {
-	RGBCOLOR m_cFace;
-	RGBCOLOR m_cHighlight;
-	RGBCOLOR m_cShadow;
-	RGBCOLOR m_cText;
-	RGBCOLOR m_cTextDisabled;
-	RGBCOLOR m_cOutline;
+	RGBCOLOR _cFace;
+	RGBCOLOR _cHighlight;
+	RGBCOLOR _cShadow;
+	RGBCOLOR _cText;
+	RGBCOLOR _cTextDisabled;
+	RGBCOLOR _cOutline;
 };
 
 class CBofButton : public CBofWindow {
@@ -65,7 +65,7 @@ public:
 
 	ErrorCode setState(int nNewState, bool bRepaintNow = true);
 	int getState() {
-		return (m_nState);
+		return _nState;
 	}
 
 protected:
@@ -73,14 +73,14 @@ protected:
 	void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
 	void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
 
-	RGBCOLOR m_cFaceColor;
-	RGBCOLOR m_cHighlightColor;
-	RGBCOLOR m_cShadowColor;
-	RGBCOLOR m_cTextColor;
-	RGBCOLOR m_cTextDisabledColor;
-	RGBCOLOR m_cOutlineColor;
+	RGBCOLOR _cFaceColor;
+	RGBCOLOR _cHighlightColor;
+	RGBCOLOR _cShadowColor;
+	RGBCOLOR _cTextColor;
+	RGBCOLOR _cTextDisabledColor;
+	RGBCOLOR _cOutlineColor;
 
-	int m_nState;
+	int _nState;
 };
 
 class CBofRadioButton : public CBofButton {
@@ -96,7 +96,7 @@ class CBofCheckButton : public CBofButton {
 public:
 	ErrorCode SetCheck(bool bChecked);
 	bool GetCheck() {
-		return (m_nState == BUTTON_CHECKED);
+		return (_nState == BUTTON_CHECKED);
 	}
 
 	virtual ErrorCode paint(CBofRect *pRect = nullptr);
@@ -122,11 +122,11 @@ public:
 
 	ErrorCode setState(int nNewState, bool bRepaintNow = true);
 	int getState() {
-		return (m_nState);
+		return _nState;
 	}
 
 	CBofBitmap *getButtonBmp() {
-		return m_pButtonUp;
+		return _pButtonUp;
 	}
 
 protected:
@@ -134,14 +134,14 @@ protected:
 	virtual void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 
-	CBofBitmap *m_pButtonUp;
-	CBofBitmap *m_pButtonDown;
-	CBofBitmap *m_pButtonFocus;
-	CBofBitmap *m_pButtonDisabled;
+	CBofBitmap *_pButtonUp;
+	CBofBitmap *_pButtonDown;
+	CBofBitmap *_pButtonFocus;
+	CBofBitmap *_pButtonDisabled;
 
-	CBofBitmap *m_pBackground;
-	int m_nState;
-	int m_nMaskColor;
+	CBofBitmap *_pBackground;
+	int _nState;
+	int _nMaskColor;
 };
 
 } // namespace Bagel

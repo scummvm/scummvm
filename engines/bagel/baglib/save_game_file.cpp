@@ -31,7 +31,7 @@ namespace Bagel {
 #define WORLDDIR "$SBARDIR\\WLD\\%s"
 
 void ST_SAVEDGAME_HEADER::synchronize(Common::Serializer &s) {
-	s.syncBytes((byte *)m_szTitle, MAX_SAVETITLE);
+	s.syncBytes((byte *)_szTitle, MAX_SAVETITLE);
 	s.syncBytes((byte *)m_szUserName, MAX_USERNAME);
 	s.syncAsUint32LE(m_bUsed);
 }
@@ -161,7 +161,7 @@ ErrorCode CBagSaveGameFile::WriteSavedGame() {
 
 	// Set up header fields
 	ST_SAVEDGAME_HEADER header;
-	Common::strcpy_s(header.m_szTitle, "ScummVM Save");
+	Common::strcpy_s(header._szTitle, "ScummVM Save");
 	Common::strcpy_s(header.m_szUserName, "ScummVM User");
 	header.m_bUsed = 1;
 
@@ -176,7 +176,7 @@ ErrorCode CBagSaveGameFile::WriteSavedGame() {
 	// Add the record
 	AddRecord(stream.getData(), stream.size(), true, 0);
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBagSaveGameFile::ReadSavedGame(int32 slotNum) {
@@ -187,7 +187,7 @@ ErrorCode CBagSaveGameFile::ReadSavedGame(int32 slotNum) {
 		int32 lSize = GetRecSize(lRecNum);
 
 		if (lSize == ST_SAVEDGAME_HEADER::size()) {
-			m_errCode = ERR_FREAD;
+			_errCode = ERR_FREAD;
 		} else {
 			byte *pBuf = (byte *)BofAlloc(lSize);
 			assert(pBuf);
@@ -214,10 +214,10 @@ ErrorCode CBagSaveGameFile::ReadSavedGame(int32 slotNum) {
 			g_engine->_masterWin->DoRestore(&saveData);
 		}
 	} else {
-		m_errCode = ERR_FREAD;
+		_errCode = ERR_FREAD;
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBagSaveGameFile::ReadTitle(int32 lSlot, ST_SAVEDGAME_HEADER *pSavedGame) {
@@ -248,7 +248,7 @@ ErrorCode CBagSaveGameFile::ReadTitle(int32 lSlot, ST_SAVEDGAME_HEADER *pSavedGa
 		ReportError(ERR_UNKNOWN, "Unable to find saved game #%ld in %s", lSlot, m_szFileName);
 	}
 
-	return(m_errCode);
+	return(_errCode);
 }
 
 ErrorCode CBagSaveGameFile::ReadTitleOnly(int32 lSlot, char *pGameTitle) {
@@ -271,7 +271,7 @@ ErrorCode CBagSaveGameFile::ReadTitleOnly(int32 lSlot, char *pGameTitle) {
 		ReportError(ERR_UNKNOWN, "Unable to find saved game #%ld in %s", lSlot, m_szFileName);
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 

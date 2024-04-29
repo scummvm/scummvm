@@ -163,7 +163,7 @@ ErrorCode CBofListBox::DelItem(int nIndex, bool bRepaint) {
 		RepaintAll();
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBofListBox::DeleteAll(bool bRepaint) {
@@ -187,7 +187,7 @@ ErrorCode CBofListBox::DeleteAll(bool bRepaint) {
 		RepaintAll();
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -308,7 +308,7 @@ ErrorCode CBofListBox::ScrollTo(const int nLine) {
 		RepaintAll();
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -347,14 +347,14 @@ ErrorCode CBofListBox::SaveBackground() {
 			_parent->GetBackdrop()->paint(m_pBackdrop, &cRect, &m_cWindowRect);
 
 		} else {
-			m_pBackdrop->CaptureScreen(this, &m_cRect);
+			m_pBackdrop->CaptureScreen(this, &_cRect);
 		}
 
 	} else {
 		ReportError(ERR_MEMORY, "Unable to allocate a %d x %d CBofBitmap", Width(), Height());
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBofListBox::CreateWorkArea() {
@@ -372,7 +372,7 @@ ErrorCode CBofListBox::CreateWorkArea() {
 		}
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -448,7 +448,7 @@ ErrorCode CBofListBox::RepaintAll() {
 		SetFont(nCurFont);
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -520,7 +520,7 @@ ErrorCode CBofListBox::RepaintItem(int nIndex) {
 		SetFont(nCurFont);
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 

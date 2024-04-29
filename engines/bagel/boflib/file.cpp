@@ -77,7 +77,7 @@ ErrorCode CBofFile::create(const char *pszFileName, uint32 lFlags) {
 		ReportError(ERR_FOPEN, "Unable to create %s", m_szFileName);
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBofFile::Open(const char *pszFileName, uint32 lFlags) {
@@ -99,7 +99,7 @@ ErrorCode CBofFile::Open(const char *pszFileName, uint32 lFlags) {
 	m_lFlags = lFlags;
 
 	if (_stream)
-		return m_errCode;
+		return _errCode;
 
 	if ((lFlags & CBF_CREATE) && ((lFlags & CBF_SAVEFILE) ||
 			!Common::File::exists(pszFileName))) {
@@ -131,7 +131,7 @@ ErrorCode CBofFile::Open(const char *pszFileName, uint32 lFlags) {
 		}
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 void CBofFile::Close() {
@@ -175,7 +175,7 @@ ErrorCode CBofFile::Read(void *pDestBuf, int32 lBytes) {
 		}
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBofFile::Write(const void *pSrcBuf, int32 lBytes) {
@@ -210,7 +210,7 @@ ErrorCode CBofFile::Write(const void *pSrcBuf, int32 lBytes) {
 		LogWarning("Attempt to write to a file that is not open");
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBofFile::SetPosition(uint32 lPos) {
@@ -231,7 +231,7 @@ ErrorCode CBofFile::SetPosition(uint32 lPos) {
 			ReportError(ERR_FSEEK, "Unable to seek to %ld", lPos);
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 uint32 CBofFile::GetPosition() {
@@ -261,7 +261,7 @@ ErrorCode CBofFile::SeekToEnd() {
 	else
 		error("Seek in closed file");
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBofFile::SetLength(uint32 /*lNewLength*/) {
@@ -269,7 +269,7 @@ ErrorCode CBofFile::SetLength(uint32 /*lNewLength*/) {
 
 	LogWarning("CBofFile::SetLength() is not yet supported");
 
-	return m_errCode;
+	return _errCode;
 }
 
 uint32 CBofFile::GetLength() {

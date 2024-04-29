@@ -135,7 +135,7 @@ ErrorCode CBofWindow::create(const char *pszName, int x, int y, int nWidth, int 
 	m_nID = nControlID;
 
 	// Remember the name of this window
-	strncpy(m_szTitle, pszName, MAX_TITLE);
+	strncpy(_szTitle, pszName, MAX_TITLE);
 
 	// Retain screen coordinates for this window
 	m_cWindowRect.SetRect(x, y, x + nWidth - 1, y + nHeight - 1);
@@ -156,16 +156,16 @@ ErrorCode CBofWindow::create(const char *pszName, int x, int y, int nWidth, int 
 		}
 
 		// Retain local coordinates (based on own window)
-		m_cRect.SetRect(0, 0, m_cWindowRect.Width() - 1, m_cWindowRect.Height() - 1);
+		_cRect.SetRect(0, 0, m_cWindowRect.Width() - 1, m_cWindowRect.Height() - 1);
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 void CBofWindow::UpdateWindow() {
 	if (_visible) {
 		if (IsVisible())
-			onPaint(&m_cRect);
+			onPaint(&_cRect);
 
 		for (uint i = 0; i < _children.size(); ++i)
 			_children[i]->UpdateWindow();
@@ -202,13 +202,13 @@ ErrorCode CBofWindow::create(const char *pszName, const CBofRect *pRect, CBofWin
 }
 
 void CBofWindow::ReleaseCapture() {
-	m_bCaptured = false;
+	_bCaptured = false;
 	if (HasCapture())
 		CBofApp::GetApp()->setCaptureControl(nullptr);
 }
 
 void CBofWindow::SetCapture() {
-	m_bCaptured = true;
+	_bCaptured = true;
 	CBofApp::GetApp()->setCaptureControl(this);
 }
 
@@ -254,7 +254,7 @@ void CBofWindow::Move(const int x, const int y, bool bRepaint) {
 	Assert(IsCreated());
 
 	// We now have a new position (in screen coordinates)
-	m_cWindowRect.SetRect(x, y, x + m_cRect.Width() - 1, y + m_cRect.Height() - 1);
+	m_cWindowRect.SetRect(x, y, x + _cRect.Width() - 1, y + _cRect.Height() - 1);
 
 	// Recreate the surface at the new screen position
 	delete _surface;
@@ -268,7 +268,7 @@ void CBofWindow::ReSize(CBofRect *pRect, bool bRepaint) {
 
 	// We now have a new position (in screen coordinates)
 	m_cWindowRect = *pRect;
-	m_cRect.SetRect(0, 0, m_cWindowRect.Width() - 1, m_cWindowRect.Height() - 1);
+	_cRect.SetRect(0, 0, m_cWindowRect.Width() - 1, m_cWindowRect.Height() - 1);
 
 	// Recreate the surface at the new screen position
 	delete _surface;
@@ -287,7 +287,7 @@ void CBofWindow::Show() {
 
 		if (IsCreated()) {
 			_visible = true;
-			InvalidateRect(&m_cRect);
+			InvalidateRect(&_cRect);
 		}
 	}
 }
@@ -429,7 +429,7 @@ void CBofWindow::ClientToScreen(CBofPoint *pPoint) {
 CBofRect CBofWindow::GetClientRect() {
 	Assert(IsValidObject(this));
 
-	CBofRect cRect(0, 0, m_cRect.Width() - 1, m_cRect.Height() - 1);
+	CBofRect cRect(0, 0, _cRect.Width() - 1, _cRect.Height() - 1);
 	return cRect;
 }
 
@@ -486,7 +486,7 @@ ErrorCode CBofWindow::SetBackdrop(CBofBitmap *pNewBitmap, bool bRefresh) {
 		m_pBackdrop->paint(this, 0, 0);
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBofWindow::SetBackdrop(const char *pszFileName, bool bRefresh) {
@@ -506,7 +506,7 @@ ErrorCode CBofWindow::SetBackdrop(const char *pszFileName, bool bRefresh) {
 		ReportError(ERR_MEMORY, "Could not allocate a new CBofBitmap");
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 void CBofWindow::KillBackdrop() {
@@ -523,14 +523,14 @@ ErrorCode CBofWindow::PaintBackdrop(CBofRect *pRect, int nTransparentColor) {
 
 	if (m_pBackdrop != nullptr) {
 		if (pRect == nullptr) {
-			m_errCode = m_pBackdrop->paint(this, &m_cRect, nullptr, nTransparentColor);
+			_errCode = m_pBackdrop->paint(this, &_cRect, nullptr, nTransparentColor);
 
 		} else {
-			m_errCode = m_pBackdrop->paint(this, pRect, pRect, nTransparentColor);
+			_errCode = m_pBackdrop->paint(this, pRect, pRect, nTransparentColor);
 		}
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 void CBofWindow::SelectPalette(CBofPalette *pPal) {

@@ -133,7 +133,7 @@ ErrorCode SBarBibOddsWnd::attach() {
 		UpdateWindow();
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 } // namespace SpaceBar

@@ -67,7 +67,7 @@ ErrorCode CBagStorageDevBmp::setBackground(CBofBitmap *pBmp) {
 		KillWorkBmp();
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBagStorageDevBmp::SetWorkBmp() {
@@ -80,7 +80,7 @@ ErrorCode CBagStorageDevBmp::SetWorkBmp() {
 		pBmp->paint(m_pWorkBmp);
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBagStorageDevBmp::KillWorkBmp() {
@@ -89,7 +89,7 @@ ErrorCode CBagStorageDevBmp::KillWorkBmp() {
 		m_pWorkBmp = nullptr;
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBagStorageDevBmp::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach) {
@@ -170,7 +170,7 @@ ErrorCode CBagStorageDevBmp::update(CBofBitmap *pBmp, CBofPoint /*xPoint*/, CBof
 		AttachActiveObjects();
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 } // namespace Bagel

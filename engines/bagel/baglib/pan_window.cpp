@@ -183,7 +183,7 @@ ErrorCode CBagPanWindow::RunModal(CBagObject *pObj) {
 		SetPreFilterPan(true);
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
@@ -275,7 +275,7 @@ ErrorCode CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		}
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CBofRect &viewRect, CBofList<CBofRect> *pUpdateArea, bool tempVar) {
@@ -376,7 +376,7 @@ ErrorCode CBagPanWindow::InsertFGObjects(CBagObject *pBmp) {
 
 	m_pFGObjectList->AddToTail(pBmp);
 
-	return m_errCode;
+	return _errCode;
 }
 
 CBagObject *CBagPanWindow::GetFGObjects(const CBofString &sObjName) {
@@ -425,7 +425,7 @@ ErrorCode CBagPanWindow::OnCursorUpdate(int nCurrObj) {
 		CBagMasterWin::SetActiveCursor(CBagWield::GetWieldCursor());
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 void CBagPanWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
@@ -845,7 +845,7 @@ ErrorCode CBagPanWindow::AttachActiveObjects() {
 		m_pPDABmp->attachActiveObjects();
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 } // namespace Bagel

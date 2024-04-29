@@ -210,7 +210,7 @@ exit:
 
 	delete pBmp;
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode SpaceBarEngine::shutdown() {
@@ -219,7 +219,7 @@ ErrorCode SpaceBarEngine::shutdown() {
 	// No more Sound System
 	ShutDownSoundSystem();
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -231,7 +231,7 @@ ErrorCode SpaceBarEngine::InitializeSoundSystem(uint16 nChannels, uint32 nFreq, 
 
 ErrorCode SpaceBarEngine::ShutDownSoundSystem() {
 	_mixer->stopAll();
-	return m_errCode;
+	return _errCode;
 }
 
 

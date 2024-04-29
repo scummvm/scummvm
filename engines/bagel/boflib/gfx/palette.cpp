@@ -95,13 +95,13 @@ ErrorCode CBofPalette::LoadPalette(const char *pszFileName, uint16 nFlags) {
 		const byte *src = decoder.getPalette();
 		Common::copy(src, src + _palette._numColors * 3, _palette._data);
 
-		m_errCode = ERR_NONE;
+		_errCode = ERR_NONE;
 
 	} else {
-		m_errCode = ERR_FREAD;
+		_errCode = ERR_FREAD;
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 void CBofPalette::ReleasePalette() {

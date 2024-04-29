@@ -300,7 +300,7 @@ ErrorCode CNavWindow::attach() {
 
 	m_bNavAttached = true;
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -533,7 +533,7 @@ ErrorCode CNavWindow::detach() {
 
 	CBagStorageDevWnd::detach();
 
-	return m_errCode;
+	return _errCode;
 }
 
 

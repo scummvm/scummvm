@@ -289,7 +289,7 @@ ErrorCode CMainWindow::attach() {
 
 	m_pBackdrop->paint(this, 0, 0);
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -307,7 +307,7 @@ ErrorCode CMainWindow::detach() {
 	// all our foreground objects (remove from memory).
 	DeleteFGObjects();
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -444,7 +444,7 @@ ErrorCode CMainWindow::SetLoadFilePos(const CBofPoint dstLoc) {
 		m_cLastLoc = dstLoc;
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 

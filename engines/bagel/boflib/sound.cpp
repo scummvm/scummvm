@@ -246,7 +246,7 @@ bool CBofSound::Play(uint32 dwBeginHere, uint32 TimeFormatFlag) {
 	// Assume failure
 	bool bSuccess = false;
 
-	if (m_errCode == ERR_NONE) {
+	if (_errCode == ERR_NONE) {
 		// We must be attached to a valid window
 		Assert((m_pWnd != nullptr) || (m_pMainWnd != nullptr));
 
@@ -939,7 +939,7 @@ ErrorCode CBofSound::PlayWAV() {
 		}
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 

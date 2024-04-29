@@ -41,19 +41,19 @@ ErrorCode CBofCursor::Load() {
 	// kill any previous cursor
 	UnLoad();
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBofCursor::UnLoad() {
 	Assert(IsValidObject(this));
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBofCursor::Set() {
 	Assert(IsValidObject(this));
 
-	return m_errCode;
+	return _errCode;
 }
 
 // TODO: This controlled the "Windows cursor" in the original game

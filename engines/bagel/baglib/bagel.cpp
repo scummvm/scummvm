@@ -123,15 +123,15 @@ ErrorCode CBagel::initialize() {
 	if (!Common::load_engine_data("bagel.dat", "", 1, 0, errMsg)) {
 		Common::String msg(errMsg);
 		BofMessageBox("Engine Data", msg.c_str());
-		m_errCode = ERR_FREAD;
-		return m_errCode;
+		_errCode = ERR_FREAD;
+		return _errCode;
 	}
 
 	Common::File paintTable;
 	if (!paintTable.open("paint_table.txt")) {
 		BofMessageBox("Engine Data", "Invalid Paint Table");
-		m_errCode = ERR_FREAD;
-		return m_errCode;
+		_errCode = ERR_FREAD;
+		return _errCode;
 	}
 	PaintTable::initialize(paintTable);
 
@@ -152,7 +152,7 @@ ErrorCode CBagel::initialize() {
 	verifyRequirements();
 
 	// Child class must instantiate the Main Window
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBagel::runApp() {
@@ -186,7 +186,7 @@ ErrorCode CBagel::initLocalFilePaths() {
 	// Check for Installed state of game
 	getOption("Startup", "InstallCode", &_installCode, BAG_INSTALL_DEFAULT);
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBagel::verifyCDInDrive(int diskId, const char *waveFile) {
@@ -227,14 +227,14 @@ ErrorCode CBagel::verifyCDInDrive(int diskId, const char *waveFile) {
 		}
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBagel::verifyRequirements() {
 	Assert(IsValidObject(this));
 	Assert(_gameReg != nullptr);
 
-	return m_errCode;
+	return _errCode;
 }
 
 bool MACROREPLACE(CBofString &s) {

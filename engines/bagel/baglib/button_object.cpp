@@ -333,7 +333,7 @@ ErrorCode CBagButtonObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcR
 		return err;
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 void CBagButtonObject::setSize(const CBofSize &size) {

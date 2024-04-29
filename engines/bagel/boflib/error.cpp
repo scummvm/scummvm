@@ -54,7 +54,7 @@ ErrorCode CBofError::m_errGlobal;
 
 
 CBofError::CBofError() {
-	m_errCode = ERR_NONE;
+	_errCode = ERR_NONE;
 }
 
 void CBofError::initialize() {
@@ -63,7 +63,7 @@ void CBofError::initialize() {
 }
 
 void CBofError::ReportError(ErrorCode errCode, const char *format, ...) {
-	if ((m_errCode = errCode) != ERR_NONE) {
+	if ((_errCode = errCode) != ERR_NONE) {
 		Common::String buf;
 
 		// Set global last error

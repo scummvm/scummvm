@@ -83,7 +83,7 @@ ErrorCode SBZoomPda::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		}
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode SBZoomPda::LoadFile(const CBofString &sFile) {

@@ -130,7 +130,7 @@ ErrorCode CBofScrollBar::SetText(const char *pszText, int nJustify) {
 		}
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -175,7 +175,7 @@ ErrorCode CBofScrollBar::SetPos(const int nPos, bool bRepaint, bool isInitial) {
 		_parent->OnBofScrollBar(this, m_nPos);
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -294,7 +294,7 @@ ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, 
 		}
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -302,7 +302,7 @@ ErrorCode CBofScrollBar::paint(CBofRect *pDirtyRect) {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
-		CBofRect cRect(0, 0, m_cRect.Width() - 1, m_cRect.Height() - 1);
+		CBofRect cRect(0, 0, _cRect.Width() - 1, _cRect.Height() - 1);
 		CBofPoint cPoint(0, 0);
 
 		if (pDirtyRect == nullptr) {
@@ -364,7 +364,7 @@ ErrorCode CBofScrollBar::paint(CBofRect *pDirtyRect) {
 		}
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -430,7 +430,7 @@ int CBofScrollBar::PointToPos(CBofPoint *pPoint) {
 
 	int nPos = m_nPos;
 
-	if (m_cRect.PtInRect(*pPoint)) {
+	if (_cRect.PtInRect(*pPoint)) {
 		nPos = (pPoint->x - m_nOffset) / (int)(m_nScrollWidth / m_nRange);
 	}
 
