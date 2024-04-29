@@ -52,6 +52,10 @@ private:
 	Macs2::AnimFrame *GetCurrentAnimationFrame();
 		Macs2::AnimFrame *GetCurrentPortrait();
 		void StartLerpTo(const Common::Point &target, uint32 duration);
+		// Handles setting this character up to send an event to the script executor when finished
+		// and will send the event right away in case the last movement is already done
+		// TODO: Check if the code also handles it this way
+		void RegisterWaitForMovementFinishedEvent();
 		void Update();
 	};
 
