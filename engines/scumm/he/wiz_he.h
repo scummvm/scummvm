@@ -656,21 +656,21 @@ public:
 	 */
 
 	bool drawMoonbaseLayeredWiz(
-		byte *pDstBitmapData, int nDstWidth, int nDstHeight, int nDstPitch,
-		int nDstFormat, int nDstBpp, byte *pWizImageData,
-		int x, const int y, int state, int clip_x1, int clip_y1, int clip_x2, int clip_y2,
-		uint32 dwFlags, uint32 dwConditionBits, byte *p8BppToXBppClut, byte *pAltSourceBuffer);
+		byte *dstBitmapData, int dstWidth, int dstHeight, int dstPitch,
+		int dstFormat, int dstBpp, byte *wizImageData,
+		int x, const int y, int state, int clipX1, int clipY1, int clipX2, int clipY2,
+		uint32 flags, uint32 conditionBits, byte *ptr8BppToXBppClut, byte *altSourceBuffer);
 
 	void handleCompositeDrawMoonbaseImage(
 		WizRawBitmap *bitmapPtr, WizImage *wizPtr, byte *compositeInfoBlockPtr,
 		int x, int y, Common::Rect *srcRect, Common::Rect *clipRect,
 		int32 flags, uint32 conditionBits, int32 outerSizeX, int32 outerSizeY,
-		WizRawPixel16 *p8BppToXBppClut, byte *pAltSourceBuffer);
+		WizRawPixel16 *ptr8BppToXBppClut, byte *altSourceBuffer);
 
 	void drawMoonbaseImageEx(
 		WizRawBitmap *bitmapPtr, WizImage *wizPtr, int x, int y, int state,
 		Common::Rect *clipRectPtr, int32 flags, Common::Rect *optionalSrcRect,
-		uint32 conditionBits, WizRawPixel16 *p8BppToXBppClut, byte *pAltSourceBuffer);
+		uint32 conditionBits, WizRawPixel16 *ptr8BppToXBppClut, byte *altSourceBuffer);
 
 	bool getRawMoonbaseBitmapInfoForState(WizRawBitmap *bitmapPtr, WizImage *wizPtr, int state);
 	void rawMoonbaseBitmapBlit(WizRawBitmap *dstBitmap, Common::Rect *dstRectPtr, WizRawBitmap *srcBitmap, Common::Rect *srcRectPtr);
