@@ -390,7 +390,7 @@ ErrorCode CBofListBox::repaintAll() {
 		if (_pWork != nullptr) {
 			_pWork->lock();
 
-			int nIndexedColor = _pWork->getPalette()->GetNearestIndex(_cTextColor);
+			int nIndexedColor = _pWork->getPalette()->getNearestIndex(_cTextColor);
 
 			// prepare the background
 			//
@@ -465,7 +465,7 @@ ErrorCode CBofListBox::repaintItem(int nIndex) {
 			int i = nIndex - _n1stVisible;
 
 			createWorkArea();
-			int nIndexedColor = _pWork->getPalette()->GetNearestIndex(_cTextColor);
+			int nIndexedColor = _pWork->getPalette()->getNearestIndex(_cTextColor);
 
 			_pWork->lock();
 

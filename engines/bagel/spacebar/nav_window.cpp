@@ -255,7 +255,7 @@ ErrorCode CNavWindow::attach() {
 	m_pCurPos = new CBofRect(*m_pYzore);
 
 	m_pOldPal = CBofApp::GetApp()->getPalette();
-	m_pPal = _pBackdrop->getPalette()->CopyPalette();
+	m_pPal = _pBackdrop->getPalette()->copyPalette();
 	CBofApp::GetApp()->setPalette(m_pPal);
 	m_pCurLoc = new CBofSprite;
 	if (m_pCurLoc != nullptr) {

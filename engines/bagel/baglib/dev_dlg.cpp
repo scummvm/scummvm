@@ -86,11 +86,11 @@ ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CB
 		if (bitmap != nullptr) {
 			Assert(pal != nullptr);
 
-			bitmap->fillRect(nullptr, pal->GetNearestIndex(RGB(92, 92, 92)));
+			bitmap->fillRect(nullptr, pal->getNearestIndex(RGB(92, 92, 92)));
 
 			CBofRect bmpRect(bitmap->getRect());
-			bitmap->drawRect(&bmpRect, pal->GetNearestIndex(RGB(0, 0, 0)));
-			bitmap->fillRect(rect, pal->GetNearestIndex(RGB(255, 255, 255)));
+			bitmap->drawRect(&bmpRect, pal->getNearestIndex(RGB(0, 0, 0)));
+			bitmap->fillRect(rect, pal->getNearestIndex(RGB(255, 255, 255)));
 
 		} else {
 			ReportError(ERR_MEMORY);

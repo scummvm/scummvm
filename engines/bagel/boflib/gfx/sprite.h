@@ -166,7 +166,7 @@ public:
 	static void OpenLibrary(CBofPalette *pPal);
 	static void CloseLibrary();
 
-	static void SetSharedPalette(CBofPalette *pPalette);
+	static void setSharedPalette(CBofPalette *pPalette);
 
 	static CBofSprite *GetSpriteChain() {
 		return m_pSpriteChain;

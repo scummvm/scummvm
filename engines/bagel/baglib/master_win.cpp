@@ -879,7 +879,7 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 				MACROREPLACE(sStr);
 
 				// Read the palette in and keep it hanging around for later use
-				CBofPalette::SetSharedPalette(sStr);
+				CBofPalette::setSharedPalette(sStr);
 
 				LogInfo(BuildString("SHAREDPAL = %s", sStr.GetBuffer()));
 			}
@@ -1993,9 +1993,9 @@ ErrorCode PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString &
 	}
 
 	if (pPal != nullptr) {
-		cBmp.fillRect(nullptr, pPal->GetNearestIndex(RGB(92, 92, 92)));
+		cBmp.fillRect(nullptr, pPal->getNearestIndex(RGB(92, 92, 92)));
 
-		cBmp.drawRect(&r, pPal->GetNearestIndex(RGB(0, 0, 0)));
+		cBmp.drawRect(&r, pPal->getNearestIndex(RGB(0, 0, 0)));
 	} else {
 		cBmp.fillRect(nullptr, COLOR_BLACK);
 	}
@@ -2048,9 +2048,9 @@ ErrorCode PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &
 	}
 
 	if (pPal != nullptr) {
-		cBmp.fillRect(nullptr, pPal->GetNearestIndex(RGB(92, 92, 92)));
+		cBmp.fillRect(nullptr, pPal->getNearestIndex(RGB(92, 92, 92)));
 
-		cBmp.drawRect(&r, pPal->GetNearestIndex(RGB(0, 0, 0)));
+		cBmp.drawRect(&r, pPal->getNearestIndex(RGB(0, 0, 0)));
 	} else {
 		cBmp.fillRect(nullptr, COLOR_BLACK);
 	}

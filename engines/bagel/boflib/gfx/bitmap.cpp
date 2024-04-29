@@ -628,7 +628,7 @@ ErrorCode CBofBitmap::captureScreen(CBofWindow *pWnd, CBofRect *pSrcRect, CBofRe
 		if (!_bUseBackdrop || pBackdrop == nullptr) {
 			Graphics::Surface tmp;
 			tmp.copyFrom(*pWnd->getSurface());
-			_bitmap.blitFrom(tmp.convertTo(_bitmap.format, nullptr, 0, _pPalette->GetData(), PALETTE_COUNT),
+			_bitmap.blitFrom(tmp.convertTo(_bitmap.format, nullptr, 0, _pPalette->getData(), PALETTE_COUNT),
 				cSrcRect,
 				cDestRect);
 			tmp.free();
@@ -656,7 +656,7 @@ void CBofBitmap::setPalette(CBofPalette *pBofPalette, bool bOwnPalette) {
 			_bOwnPalette = bOwnPalette;
 			_pPalette = pBofPalette;
 
-			_bitmap.setPalette(_pPalette->GetData(), 0, PALETTE_COUNT);
+			_bitmap.setPalette(_pPalette->getData(), 0, PALETTE_COUNT);
 		}
 	}
 }
@@ -848,7 +848,7 @@ CBofBitmap *CBofBitmap::extractBitmap(CBofRect *pRect) {
 		CBofPalette *pPalette = getPalette();
 		if (pPalette != nullptr) {
 			if (_bOwnPalette) {
-				pPalette = pPalette->CopyPalette();
+				pPalette = pPalette->copyPalette();
 			}
 
 			if ((pNewBmp = new CBofBitmap(pRect->width(), pRect->height(), pPalette, _bOwnPalette)) != nullptr) {
@@ -1181,7 +1181,7 @@ CBofBitmap *loadBitmap(const char *pszFileName, CBofPalette *pPalette, bool bUse
 	// If no palette was passed in and a shared palette was requested, then
 	// use our default one established by "SHAREDPAL=" in the script
 	if (bUseShared && pPalette == nullptr) {
-		pUsePal = CBofPalette::GetSharedPalette();
+		pUsePal = CBofPalette::getSharedPalette();
 	}
 
 	CBofBitmap *pBmp = new CBofBitmap(pszFileName, pUsePal);
@@ -1256,7 +1256,7 @@ Graphics::ManagedSurface CBofBitmap::getSurface() {
 	s.h = _nDY;
 	s.pitch = _nScanDX;
 	s.format = Graphics::PixelFormat::createFormatCLUT8();
-	s.setPalette(_pPalette->GetData(), 0, PALETTE_COUNT);
+	s.setPalette(_pPalette->getData(), 0, PALETTE_COUNT);
 	s.setPixels(_pBits);
 
 	return s;

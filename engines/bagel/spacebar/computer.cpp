@@ -428,7 +428,7 @@ ErrorCode SBarComputer::CreateDrinksListBox() {
 			m_pDrinkBox->setItemHeight(20);
 
 			CBofPalette *pPal = _pBackdrop->getPalette();
-			byte PalIdx = pPal->GetNearestIndex(RGB(255, 0, 0));
+			byte PalIdx = pPal->getNearestIndex(RGB(255, 0, 0));
 
 			m_pDrinkBox->setHighlightColor(pPal->getColor(PalIdx));
 
@@ -463,7 +463,7 @@ ErrorCode SBarComputer::CreateIngListBox() {
 			m_pIngBox->setItemHeight(20);
 
 			CBofPalette *pPal = _pBackdrop->getPalette();
-			byte PalIdx = pPal->GetNearestIndex(RGB(255, 0, 0));
+			byte PalIdx = pPal->getNearestIndex(RGB(255, 0, 0));
 
 			m_pIngBox->setHighlightColor(pPal->getColor(PalIdx));
 

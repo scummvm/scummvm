@@ -90,7 +90,7 @@ void CBofApp::ShutDownCode() {
 	CBofWindow::shutdown();
 
 	// Kill any shared palette
-	CBofPalette::SetSharedPalette(nullptr);
+	CBofPalette::setSharedPalette(nullptr);
 
 	if (g_pDebugOptions != nullptr) {
 		delete g_pDebugOptions;
@@ -103,7 +103,7 @@ ErrorCode CBofApp::PreInit() {
 	if ((m_pPalette == nullptr) && (m_pDefPalette == nullptr)) {
 		m_pDefPalette = new CBofPalette();
 		if (m_pDefPalette != nullptr) {
-			m_pDefPalette->CreateDefault();
+			m_pDefPalette->createDefault();
 			setPalette(m_pDefPalette);
 		}
 	}

@@ -116,7 +116,7 @@ public:
 		return m_pNext;
 	}
 
-	void *GetData() const {
+	void *getData() const {
 		return m_pData;
 	}
 	void PutData(void *pObj) {

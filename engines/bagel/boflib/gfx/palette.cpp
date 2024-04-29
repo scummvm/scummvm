@@ -29,16 +29,16 @@
 
 namespace Bagel {
 
-CBofPalette *CBofPalette::m_pSharedPalette;
-char CBofPalette::m_szSharedPalFile[MAX_FNAME];
+CBofPalette *CBofPalette::_pSharedPalette;
+char CBofPalette::_szSharedPalFile[MAX_FNAME];
 
 HPALETTE::HPALETTE(int16 numColors) : _numColors(numColors) {
 	Common::fill(&_data[0], &_data[PALETTE_SIZE], 0);
 }
 
 void CBofPalette::initialize() {
-	m_pSharedPalette = nullptr;
-	m_szSharedPalFile[0] = '\0';
+	_pSharedPalette = nullptr;
+	_szSharedPalFile[0] = '\0';
 }
 
 CBofPalette::CBofPalette() {
@@ -49,7 +49,7 @@ CBofPalette::CBofPalette(const char *pszFileName) {
 	Common::fill(&_palette._data[0], &_palette._data[PALETTE_SIZE], 0);
 	Assert(pszFileName != nullptr);
 
-	LoadPalette(pszFileName);
+	loadPalette(pszFileName);
 }
 
 CBofPalette::CBofPalette(const HPALETTE &hPalette) {
@@ -77,7 +77,7 @@ void CBofPalette::setPalette(const HPALETTE &hPalette) {
 	_palette = hPalette;
 }
 
-ErrorCode CBofPalette::LoadPalette(const char *pszFileName, uint16 nFlags) {
+ErrorCode CBofPalette::loadPalette(const char *pszFileName, uint16 nFlags) {
 	Assert(IsValidObject(this));
 
 	// Validate input
@@ -108,13 +108,13 @@ void CBofPalette::ReleasePalette() {
 	Common::fill(_palette._data, _palette._data + PALETTE_SIZE, 0);
 }
 
-CBofPalette *CBofPalette::CopyPalette() {
+CBofPalette *CBofPalette::copyPalette() {
 	Assert(IsValidObject(this));
 
 	return nullptr;
 }
 
-byte CBofPalette::GetNearestIndex(RGBCOLOR stRGB) {
+byte CBofPalette::getNearestIndex(RGBCOLOR stRGB) {
 	Graphics::PaletteLookup lookup(_palette._data, PALETTE_COUNT);
 	return lookup.findBestColor(GetRed(stRGB), GetGreen(stRGB), GetBlue(stRGB));
 }
@@ -126,7 +126,7 @@ RGBCOLOR CBofPalette::getColor(byte nIndex) {
 	return cColor;
 }
 
-ErrorCode CBofPalette::CreateDefault(uint16 nFlags) {
+ErrorCode CBofPalette::createDefault(uint16 nFlags) {
 	Assert(IsValidObject(this));
 
 	byte *pal = _palette._data;
@@ -136,29 +136,29 @@ ErrorCode CBofPalette::CreateDefault(uint16 nFlags) {
 	return ERR_NONE;
 }
 
-ErrorCode CBofPalette::SetSharedPalette(const char *pszFileName) {
-	if (m_pSharedPalette != nullptr) {
-		delete m_pSharedPalette;
-		m_pSharedPalette = nullptr;
+ErrorCode CBofPalette::setSharedPalette(const char *pszFileName) {
+	if (_pSharedPalette != nullptr) {
+		delete _pSharedPalette;
+		_pSharedPalette = nullptr;
 	}
 
 	// Save name of file used to get the shared palette
 	if (pszFileName != nullptr) {
-		Common::strcpy_s(m_szSharedPalFile, pszFileName);
+		Common::strcpy_s(_szSharedPalFile, pszFileName);
 	}
 
 	return ERR_NONE;
 }
 
-CBofPalette *CBofPalette::GetSharedPalette() {
+CBofPalette *CBofPalette::getSharedPalette() {
 	// Do we need to load the shared palette?
-	if (m_pSharedPalette == nullptr) {
-		if (FileExists(m_szSharedPalFile)) {
-			m_pSharedPalette = new CBofPalette(m_szSharedPalFile);
+	if (_pSharedPalette == nullptr) {
+		if (FileExists(_szSharedPalFile)) {
+			_pSharedPalette = new CBofPalette(_szSharedPalFile);
 		}
 	}
 
-	return m_pSharedPalette;
+	return _pSharedPalette;
 }
 
 } // namespace Bagel
