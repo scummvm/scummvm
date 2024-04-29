@@ -53,48 +53,48 @@ public:
 
 	ErrorCode setPos(const int nPos, bool bRepaint = true, bool isInitial = false);
 	int getPos() {
-		return m_nPos;
+		return _nPos;
 	}
 
 	ErrorCode lineLeft() {
-		return setPos(m_nPos - m_nLineDelta);
+		return setPos(_nPos - _nLineDelta);
 	}
 	ErrorCode lineRight() {
-		return setPos(m_nPos + m_nLineDelta);
+		return setPos(_nPos + _nLineDelta);
 	}
 	ErrorCode pageLeft() {
-		return setPos(m_nPos - m_nPageDelta);
+		return setPos(_nPos - _nPageDelta);
 	}
 	ErrorCode pageRight() {
-		return setPos(m_nPos + m_nPageDelta);
+		return setPos(_nPos + _nPageDelta);
 	}
 
 	ErrorCode home() {
-		return setPos(m_nMin);
+		return setPos(_nMin);
 	}
 	ErrorCode end() {
-		return setPos(m_nMax);
+		return setPos(_nMax);
 	}
 
 	int getScrollMin() {
-		return m_nMin;
+		return _nMin;
 	}
 	int getScrollMax() {
-		return m_nMax;
+		return _nMax;
 	}
 
 	void setLineDelta(const int nDelta) {
-		m_nLineDelta = nDelta;
+		_nLineDelta = nDelta;
 	}
 	int getLineDelta() {
-		return m_nLineDelta;
+		return _nLineDelta;
 	}
 
 	void setPageDelta(const int nDelta) {
-		m_nPageDelta = nDelta;
+		_nPageDelta = nDelta;
 	}
 	int getPageDelta() {
-		return m_nPageDelta;
+		return _nPageDelta;
 	}
 
 	void getScrollRange(int &nMin, int &nMax);
@@ -117,36 +117,36 @@ protected:
 	//
 	// Data members
 	//
-	CBofBitmap *m_pLeftBtnUp;
-	CBofBitmap *m_pRightBtnUp;
-	CBofBitmap *m_pLeftBtnDn;
-	CBofBitmap *m_pRightBtnDn;
-	CBofSprite *m_pThumb;
+	CBofBitmap *_pLeftBtnUp;
+	CBofBitmap *_pRightBtnUp;
+	CBofBitmap *_pLeftBtnDn;
+	CBofBitmap *_pRightBtnDn;
+	CBofSprite *_pThumb;
 
-	CBofRect m_cLeftBtnRect;
-	CBofRect m_cRightBtnRect;
+	CBofRect _cLeftBtnRect;
+	CBofRect _cRightBtnRect;
 
-	int m_nMin;
-	int m_nMax;
-	int m_nPos;
-	int m_nLineDelta;
-	int m_nPageDelta;
+	int _nMin;
+	int _nMax;
+	int _nPos;
+	int _nLineDelta;
+	int _nPageDelta;
 
-	CBofText *m_pScrollText;
-	char m_szScrollText[MAX_TEXT];
+	CBofText *_pScrollText;
+	char _szScrollText[MAX_TEXT];
 
-	CBofSize m_cThumbSize;
-	CBofSize m_cBkSize;
+	CBofSize _cThumbSize;
+	CBofSize _cBkSize;
 
-	int m_nOffset;
-	int m_nScrollWidth;
-	int m_nRange;
-	bool m_bMouseCaptured;
-	CBofPoint m_cCurPoint;
-	CBofPoint m_cThumbPos;
-	int m_nScrollState;
-	uint32 m_nTimerCount;
-	bool m_bHavePainted;
+	int _nOffset;
+	int _nScrollWidth;
+	int _nRange;
+	bool _bMouseCaptured;
+	CBofPoint _cCurPoint;
+	CBofPoint _cThumbPos;
+	int _nScrollState;
+	uint32 _nTimerCount;
+	bool _bHavePainted;
 };
 
 } // namespace Bagel
