@@ -24,26 +24,26 @@
 
 namespace Bagel {
 
-CBofRect *CBofSprite::m_cDirtyRect;
-CBofSprite *CBofSprite::m_pSpriteChain = nullptr;          // Pointer to chain of linked sprites
-CBofSprite *CBofSprite::m_pTouchedSprite = nullptr;        // Pointer to sprite overlapped during painting
-CBofBitmap *CBofSprite::m_pWorkBmp = nullptr;              // Offscreen work area
-CBofPalette *CBofSprite::m_pSharedPalette = nullptr;       // Shared palette for ALL sprites
-int CBofSprite::m_nWorkDX = 0;
-int CBofSprite::m_nWorkDY = 0;
+CBofRect *CBofSprite::_cDirtyRect;
+CBofSprite *CBofSprite::_pSpriteChain = nullptr;          // Pointer to chain of linked sprites
+CBofSprite *CBofSprite::_pTouchedSprite = nullptr;        // Pointer to sprite overlapped during painting
+CBofBitmap *CBofSprite::_pWorkBmp = nullptr;              // Offscreen work area
+CBofPalette *CBofSprite::_pSharedPalette = nullptr;       // Shared palette for ALL sprites
+int CBofSprite::_nWorkDX = 0;
+int CBofSprite::_nWorkDY = 0;
 
 void CBofSprite::initialize() {
-	m_cDirtyRect = new CBofRect();
-	m_pSpriteChain = nullptr;
-	m_pTouchedSprite = nullptr;
-	m_pWorkBmp = nullptr;
-	m_pSharedPalette = nullptr;
-	m_nWorkDX = 0;
-	m_nWorkDY = 0;
+	_cDirtyRect = new CBofRect();
+	_pSpriteChain = nullptr;
+	_pTouchedSprite = nullptr;
+	_pWorkBmp = nullptr;
+	_pSharedPalette = nullptr;
+	_nWorkDX = 0;
+	_nWorkDY = 0;
 }
 
 void CBofSprite::shutdown() {
-	delete m_cDirtyRect;
+	delete _cDirtyRect;
 }
 
 void CBofSprite::openLibrary(CBofPalette *pPal) {
@@ -64,28 +64,28 @@ void CBofSprite::closeLibrary() {
 
 	tearDownWorkArea();
 
-	m_pSharedPalette = nullptr;
+	_pSharedPalette = nullptr;
 }
 
 
 CBofSprite::CBofSprite() {
-	m_pImage = nullptr;                                 // No initial bitmap image for the sprite
+	_pImage = nullptr;                                 // No initial bitmap image for the sprite
 
-	m_cSize = CBofSize(0, 0);                           // There is no size to the sprite image
+	_cSize = CBofSize(0, 0);                           // There is no size to the sprite image
 	_cRect.SetRectEmpty();                             // Rectangular bounds not yet defined
 
-	m_cImageRect = _cRect;                             // Image rectangle starts same as display bounds
-	m_cPosition = CBofPoint(0, 0);                      // Default position to upper left corner of display
-	m_bPositioned = false;                              // Not yet positioned
-	m_bDuplicated = false;                              // Not sharing resources with other sprites
-	m_nZOrder = SPRITE_TOPMOST;                         // Default to top most in fore/back ground order
-	m_nCelCount = 1;                                    // Number of frames in animated cel strip
-	m_nCelID = m_nCelCount - 1;                         // Cel identifier not pointing at a cel
-	m_bAnimated = false;                                // Not initially animated
-	m_bLinked = false;                                  // Not initially linked into the sprite chain
+	_cImageRect = _cRect;                             // Image rectangle starts same as display bounds
+	_cPosition = CBofPoint(0, 0);                      // Default position to upper left corner of display
+	_bPositioned = false;                              // Not yet positioned
+	_bDuplicated = false;                              // Not sharing resources with other sprites
+	_nZOrder = SPRITE_TOPMOST;                         // Default to top most in fore/back ground order
+	_nCelCount = 1;                                    // Number of frames in animated cel strip
+	_nCelID = _nCelCount - 1;                         // Cel identifier not pointing at a cel
+	_bAnimated = false;                                // Not initially animated
+	_bLinked = false;                                  // Not initially linked into the sprite chain
 
-	m_nMaskColor = NOT_TRANSPARENT;                     // Default to NO transparency
-	m_bReadOnly = true;
+	_nMaskColor = NOT_TRANSPARENT;                     // Default to NO transparency
+	_bReadOnly = true;
 
 	setBlockAdvance(false);                             // Default always advance next sprite
 }
@@ -103,27 +103,27 @@ CBofSprite::~CBofSprite() {
 void CBofSprite::linkSprite() {
 	Assert(IsValidObject(this));
 
-	if (!m_bLinked) {
+	if (!_bLinked) {
 		// Set for linked into chain
-		m_bLinked = true;
+		_bLinked = true;
 
-		if (m_pSpriteChain != nullptr) {
-			switch (m_nZOrder) {
+		if (_pSpriteChain != nullptr) {
+			switch (_nZOrder) {
 			case SPRITE_TOPMOST:
-				m_pSpriteChain->addToTail(this);
+				_pSpriteChain->addToTail(this);
 				break;
 
 			case SPRITE_HINDMOST:
-				m_pSpriteChain->addToHead(this);
-				m_pSpriteChain = this;
+				_pSpriteChain->addToHead(this);
+				_pSpriteChain = this;
 				break;
 
 			default: {
 				CBofSprite *pSprite;
-				CBofSprite *pLastSprite = pSprite = m_pSpriteChain;
-				while (pSprite != nullptr && pSprite->m_nZOrder > m_nZOrder) {
+				CBofSprite *pLastSprite = pSprite = _pSpriteChain;
+				while (pSprite != nullptr && pSprite->_nZOrder > _nZOrder) {
 					pLastSprite = pSprite;
-					pSprite = (CBofSprite *)pSprite->m_pNext;
+					pSprite = (CBofSprite *)pSprite->_pNext;
 				}
 				pLastSprite->Insert(this);
 				break;
@@ -131,11 +131,11 @@ void CBofSprite::linkSprite() {
 			}
 
 		} else {
-			m_pSpriteChain = this;
+			_pSpriteChain = this;
 		}
 
-		// m_pSpriteChain must always point to the head of the linked list
-		Assert(m_pSpriteChain == (CBofSprite *)m_pSpriteChain->GetHead());
+		// _pSpriteChain must always point to the head of the linked list
+		Assert(_pSpriteChain == (CBofSprite *)_pSpriteChain->GetHead());
 	}
 }
 
@@ -143,12 +143,12 @@ void CBofSprite::linkSprite() {
 void CBofSprite::unlinkSprite() {
 	Assert(IsValidObject(this));
 
-	if (m_bLinked) {
+	if (_bLinked) {
 		// Set for not linked into chain
-		m_bLinked = false;
+		_bLinked = false;
 
-		if (m_pSpriteChain == this)
-			m_pSpriteChain = (CBofSprite *)m_pNext;
+		if (_pSpriteChain == this)
+			_pSpriteChain = (CBofSprite *)_pNext;
 
 		Delete();
 	}
@@ -171,15 +171,15 @@ bool CBofSprite::setupWorkArea(int dx, int dy) {
 	bool bSuccess = false;
 
 	// Do we already have a work area?
-	if (m_pWorkBmp != nullptr) {
+	if (_pWorkBmp != nullptr) {
 		// Yes, so lets tear it down before we start a new one
 		tearDownWorkArea();
 	}
 
 	// Create an offscreen bitmap where we do all the work;
-	if ((m_pWorkBmp = new CBofBitmap(dx, dy, m_pSharedPalette)) != nullptr) {
-		m_nWorkDX = dx;
-		m_nWorkDY = dy;
+	if ((_pWorkBmp = new CBofBitmap(dx, dy, _pSharedPalette)) != nullptr) {
+		_nWorkDX = dx;
+		_nWorkDY = dy;
 		bSuccess = true;
 	}
 
@@ -188,9 +188,9 @@ bool CBofSprite::setupWorkArea(int dx, int dy) {
 
 
 void CBofSprite::tearDownWorkArea() {
-	if (m_pWorkBmp != nullptr) {
-		delete m_pWorkBmp;
-		m_pWorkBmp = nullptr;
+	if (_pWorkBmp != nullptr) {
+		delete _pWorkBmp;
+		_pWorkBmp = nullptr;
 	}
 }
 
@@ -216,19 +216,19 @@ bool CBofSprite::duplicateSprite(CBofSprite *pSprite) {
 	Assert(pSprite != nullptr);
 
 	if (pSprite != nullptr) {
-		pSprite->m_pImage = m_pImage;
+		pSprite->_pImage = _pImage;
 
 		pSprite->_cRect = _cRect;
-		pSprite->m_cImageRect = m_cImageRect;
-		pSprite->m_cSize = m_cSize;
-		pSprite->m_cPosition = m_cPosition;
-		pSprite->m_nZOrder = m_nZOrder;
-		pSprite->m_nCelID = m_nCelID;
-		pSprite->m_nCelCount = m_nCelCount;
-		pSprite->m_bAnimated = m_bAnimated;
-		pSprite->m_nMaskColor = m_nMaskColor;
+		pSprite->_cImageRect = _cImageRect;
+		pSprite->_cSize = _cSize;
+		pSprite->_cPosition = _cPosition;
+		pSprite->_nZOrder = _nZOrder;
+		pSprite->_nCelID = _nCelID;
+		pSprite->_nCelCount = _nCelCount;
+		pSprite->_bAnimated = _bAnimated;
+		pSprite->_nMaskColor = _nMaskColor;
 
-		pSprite->m_bDuplicated = true;		// Mark it as a sprite with shared resources
+		pSprite->_bDuplicated = true;		// Mark it as a sprite with shared resources
 
 		return true;
 	}
@@ -243,7 +243,7 @@ bool CBofSprite::loadSprite(const char *pszPathName, int nCels) {
 	Assert(nCels >= 1);
 
 	// Create an object for the sprite's image
-	CBofBitmap *pBitmap = new CBofBitmap(pszPathName, m_pSharedPalette);
+	CBofBitmap *pBitmap = new CBofBitmap(pszPathName, _pSharedPalette);
 	if (pBitmap != nullptr) {
 		return loadSprite(pBitmap, nCels);
 	}
@@ -261,22 +261,22 @@ bool CBofSprite::loadSprite(CBofBitmap *pBitmap, int nCels) {
 
 	clearImage();			// Clear out any/all existing bitmaps, palettes,
 
-	m_pImage = pBitmap;		// Save pointer to bitmap
+	_pImage = pBitmap;		// Save pointer to bitmap
 
-	pBitmap->setReadOnly(m_bReadOnly);
+	pBitmap->setReadOnly(_bReadOnly);
 
-	m_cSize = pBitmap->getSize();
+	_cSize = pBitmap->getSize();
 
-	_cRect.SetRect(0, 0, m_cSize.cx - 1, m_cSize.cy - 1);
-	m_cImageRect.SetRect(0, 0, m_cSize.cx - 1, m_cSize.cy - 1);
-	m_nCelCount = 1;
-	m_nCelID = m_nCelCount - 1;
+	_cRect.SetRect(0, 0, _cSize.cx - 1, _cSize.cy - 1);
+	_cImageRect.SetRect(0, 0, _cSize.cx - 1, _cSize.cy - 1);
+	_nCelCount = 1;
+	_nCelID = _nCelCount - 1;
 
 	if (nCels != 1) {
 		setupCels(nCels);
 
 		// Assume it's animated
-		m_bAnimated = true;
+		_bAnimated = true;
 	}
 
 	return true;			// Return success
@@ -287,15 +287,15 @@ bool CBofSprite::setupCels(const int nCels) {
 	Assert(IsValidObject(this));
 	Assert(nCels > 0);
 
-	m_nCelCount = nCels;                                        // Set cel count
-	m_nCelID = m_nCelCount - 1;                                 // No current cel
-	int nStripWidth = m_cSize.cx;                               // Temp place toRetain cell strip pixel length
-	m_cSize.cx /= nCels;                                        // Calculate width of a cel
+	_nCelCount = nCels;                                        // Set cel count
+	_nCelID = _nCelCount - 1;                                 // No current cel
+	int nStripWidth = _cSize.cx;                               // Temp place toRetain cell strip pixel length
+	_cSize.cx /= nCels;                                        // Calculate width of a cel
 
-	if (m_cSize.cx * nCels == nStripWidth) {                    // Verify we have an even multiple
-		_cRect.right = _cRect.left + m_cSize.cx;              // Reset sprite rectangular bounds
-		_cRect.bottom = _cRect.top + m_cSize.cy;              // ... based on cel dimensions
-		m_cImageRect.SetRect(0, 0, m_cSize.cx - 1, m_cSize.cy - 1); // Set bounds for first cel in strip
+	if (_cSize.cx * nCels == nStripWidth) {                    // Verify we have an even multiple
+		_cRect.right = _cRect.left + _cSize.cx;              // Reset sprite rectangular bounds
+		_cRect.bottom = _cRect.top + _cSize.cy;              // ... based on cel dimensions
+		_cImageRect.SetRect(0, 0, _cSize.cx - 1, _cSize.cy - 1); // Set bounds for first cel in strip
 		return true;
 	}
 
@@ -307,13 +307,13 @@ void CBofSprite::nextCel() {
 	Assert(IsValidObject(this));
 
 	// verify old cel id
-	Assert(m_nCelID >= 0 && m_nCelID < m_nCelCount);
+	Assert(_nCelID >= 0 && _nCelID < _nCelCount);
 
 	if (getBlockAdvance() == false) {
-		if (++m_nCelID >= m_nCelCount)
-			m_nCelID = 0;
+		if (++_nCelID >= _nCelCount)
+			_nCelID = 0;
 
-		setCel(m_nCelID);
+		setCel(_nCelID);
 	}
 }
 
@@ -322,12 +322,12 @@ void CBofSprite::prevCel() {
 	Assert(IsValidObject(this));
 
 	// verify old cel id
-	Assert(m_nCelID >= 0 && m_nCelID < m_nCelCount);
+	Assert(_nCelID >= 0 && _nCelID < _nCelCount);
 
-	if (--m_nCelID < 0)
-		m_nCelID = m_nCelCount - 1;
+	if (--_nCelID < 0)
+		_nCelID = _nCelCount - 1;
 
-	setCel(m_nCelID);
+	setCel(_nCelID);
 }
 
 
@@ -379,24 +379,24 @@ void CBofSprite::batchPaint(const int x, const int y) {
 	CBofRect cDstRect;
 
 	// Default to no sprite being overlapped by this painting operation
-	m_pTouchedSprite = nullptr;
+	_pTouchedSprite = nullptr;
 
 	// Calculate destination rectangle
-	cDstRect.SetRect(x, y, x + m_cSize.cx - 1, y + m_cSize.cy - 1);
+	cDstRect.SetRect(x, y, x + _cSize.cx - 1, y + _cSize.cy - 1);
 
 	// Add the destination position to the dirty rectangle list
 	addToDirtyRect(&cDstRect);
 
 	// If the sprite is already on screen, then we must also add it's old
 	// current location to the dirty rect list so that it is erase properly
-	if (m_bPositioned)  {
+	if (_bPositioned)  {
 		addToDirtyRect(&_cRect);
 	}
 
 	// Now establish the sprite's new position
 	setPosition(x, y);
 
-	if (m_bAnimated && (m_nCelCount > 1))
+	if (_bAnimated && (_nCelCount > 1))
 		// Advance to the next cel in the strip
 		nextCel();
 }
@@ -415,18 +415,18 @@ bool CBofSprite::updateDirtyRect(CBofWindow *pWnd, CBofSprite *pPrimarySprite) {
 	CBofBitmap *pBackdrop = pWnd->getBackdrop();
 	if (pBackdrop != nullptr) {
 
-		CBofRect *pRect = m_cDirtyRect;
+		CBofRect *pRect = _cDirtyRect;
 		if (pRect->width() != 0 && pRect->height() != 0) {
 			// Need a work area
-			CBofBitmap *pWork = m_pWorkBmp;
+			CBofBitmap *pWork = _pWorkBmp;
 			int dx = pRect->width();
 			int dy = pRect->height();
 
 			bool bTempWorkArea = false;
-			if ((pWork == nullptr) || (dx > m_nWorkDX) || (dy > m_nWorkDY)) {
+			if ((pWork == nullptr) || (dx > _nWorkDX) || (dy > _nWorkDY)) {
 
 				bTempWorkArea = true;
-				pWork = new CBofBitmap(dx, dy, m_pSharedPalette);
+				pWork = new CBofBitmap(dx, dy, _pSharedPalette);
 			}
 			pWork->lock();
 
@@ -435,25 +435,25 @@ bool CBofSprite::updateDirtyRect(CBofWindow *pWnd, CBofSprite *pPrimarySprite) {
 
 			// Only need to search the sprite list if current sprite is linked
 			CBofSprite *pSprite = pPrimarySprite;
-			if (pPrimarySprite == nullptr || pPrimarySprite->m_bLinked) {
-				pSprite = m_pSpriteChain;
+			if (pPrimarySprite == nullptr || pPrimarySprite->_bLinked) {
+				pSprite = _pSpriteChain;
 			}
 
 			CBofRect cRect, cSrcRect;
 			// Run thru the sprite list
 			while (pSprite != nullptr) {
 				// and paint each partial sprite overlap to the work area
-				if (pSprite->m_bPositioned && cRect.IntersectRect(&pSprite->_cRect, pRect)) {
+				if (pSprite->_bPositioned && cRect.IntersectRect(&pSprite->_cRect, pRect)) {
 					if (pPrimarySprite != pSprite)
-						m_pTouchedSprite = pSprite;
+						_pTouchedSprite = pSprite;
 
 					cSrcRect = cRect - pSprite->_cRect.TopLeft();
-					cSrcRect += pSprite->m_cImageRect.TopLeft();
+					cSrcRect += pSprite->_cImageRect.TopLeft();
 					cRect -= pRect->TopLeft();
 
-					pSprite->m_pImage->paint(pWork, &cRect, &cSrcRect, pSprite->m_nMaskColor);
+					pSprite->_pImage->paint(pWork, &cRect, &cSrcRect, pSprite->_nMaskColor);
 				}
-				pSprite = (CBofSprite *)pSprite->m_pNext;
+				pSprite = (CBofSprite *)pSprite->_pNext;
 			}
 
 			// Paint final outcome to the screen
@@ -484,25 +484,25 @@ bool CBofSprite::updateDirtyRect(CBofBitmap *pBmp, CBofSprite *pPrimarySprite) {
 
 	// Only need to search the sprite list if current sprite is linked
 	CBofSprite *pSprite = pPrimarySprite;
-	if (pPrimarySprite == nullptr || pPrimarySprite->m_bLinked) {
-		pSprite = m_pSpriteChain;
+	if (pPrimarySprite == nullptr || pPrimarySprite->_bLinked) {
+		pSprite = _pSpriteChain;
 	}
 
 	CBofRect cRect;
 	// Run thru the sprite list
 	while (pSprite != nullptr) {
 		// and paint each partial sprite overlap to the work area
-		if (pSprite->m_bPositioned && cRect.IntersectRect(&pSprite->_cRect, pRect)) {
+		if (pSprite->_bPositioned && cRect.IntersectRect(&pSprite->_cRect, pRect)) {
 
 			if (pPrimarySprite != pSprite)
-				m_pTouchedSprite = pSprite;
+				_pTouchedSprite = pSprite;
 
 			CBofRect cSrcRect = cRect - pSprite->_cRect.TopLeft();
-			cSrcRect += pSprite->m_cImageRect.TopLeft();
+			cSrcRect += pSprite->_cImageRect.TopLeft();
 
-			pSprite->m_pImage->paint(pBmp, &cRect, &cSrcRect, pSprite->m_nMaskColor);
+			pSprite->_pImage->paint(pBmp, &cRect, &cSrcRect, pSprite->_nMaskColor);
 		}
-		pSprite = (CBofSprite *)pSprite->m_pNext;
+		pSprite = (CBofSprite *)pSprite->_pNext;
 	}
 
 	clearDirtyRect();
@@ -516,12 +516,12 @@ void CBofSprite::addToDirtyRect(CBofRect *pRect) {
 
 	CBofRect cRect;
 
-	if (m_cDirtyRect->IsRectEmpty()) {
+	if (_cDirtyRect->IsRectEmpty()) {
 		cRect = *pRect;
 	} else {
-		cRect.UnionRect(m_cDirtyRect, pRect);
+		cRect.UnionRect(_cDirtyRect, pRect);
 	}
-	*m_cDirtyRect = cRect;
+	*_cDirtyRect = cRect;
 }
 
 
@@ -529,20 +529,20 @@ void CBofSprite::setCel(const int nCelID) {
 	Assert(IsValidObject(this));
 
 	// All sprites must have at least 1 frame
-	Assert(m_nCelCount > 0);
+	Assert(_nCelCount > 0);
 
-	if (m_nCelID != nCelID) {
-		m_nCelID = nCelID % m_nCelCount;
-		if ((m_nCelID != 0) && (nCelID < 0)) {
-			m_nCelID = m_nCelCount + m_nCelID;
+	if (_nCelID != nCelID) {
+		_nCelID = nCelID % _nCelCount;
+		if ((_nCelID != 0) && (nCelID < 0)) {
+			_nCelID = _nCelCount + _nCelID;
 		}
 	}
 
 	// Verify new cel id
-	Assert(m_nCelID >= 0 && m_nCelID < m_nCelCount);
+	Assert(_nCelID >= 0 && _nCelID < _nCelCount);
 
-	m_cImageRect.left = m_nCelID * m_cSize.cx;
-	m_cImageRect.right = m_cImageRect.left + m_cSize.cx;
+	_cImageRect.left = _nCelID * _cSize.cx;
+	_cImageRect.right = _cImageRect.left + _cSize.cx;
 }
 
 bool CBofSprite::eraseSprite(CBofWindow *pWnd) {
@@ -557,8 +557,8 @@ bool CBofSprite::eraseSprite(CBofWindow *pWnd) {
 
 
 void CBofSprite::batchErase() {
-	if (m_bPositioned) {
-		m_bPositioned = false;
+	if (_bPositioned) {
+		_bPositioned = false;
 
 		addToDirtyRect(&_cRect);
 	}
@@ -579,7 +579,7 @@ bool CBofSprite::testInterception(CBofSprite *pTestSprite, CBofPoint *pPoint) {
 			if (overlapRect.IntersectRect(&_cRect, &pTestSprite->_cRect)) {
 				// ... and if that succeeds, see if we
 				// ... have image masks that overlap
-				if ((m_nMaskColor == NOT_TRANSPARENT) || (pTestSprite->m_nMaskColor == NOT_TRANSPARENT) || spritesOverlap(pTestSprite, pPoint)) {
+				if ((_nMaskColor == NOT_TRANSPARENT) || (pTestSprite->_nMaskColor == NOT_TRANSPARENT) || spritesOverlap(pTestSprite, pPoint)) {
 					return true;
 				}
 			}
@@ -611,7 +611,7 @@ CBofSprite *CBofSprite::interception(CBofRect *pNewRect, CBofSprite *pTestSprite
 		}
 
 		// Fetch next sprite in chain for testing
-		pSprite = (CBofSprite *)pSprite->m_pNext;
+		pSprite = (CBofSprite *)pSprite->_pNext;
 	}
 
 	return nullptr;
@@ -628,7 +628,7 @@ CBofSprite *CBofSprite::interception(CBofSprite *pTestSprite) {
 		if (testInterception(pSprite, nullptr))		// ... testing against each sprite in turn
 			return pSprite;							// found an interception
 
-		pSprite = (CBofSprite *)pSprite->m_pNext;	// fetch next sprite in chain for testing
+		pSprite = (CBofSprite *)pSprite->_pNext;	// fetch next sprite in chain for testing
 	}
 
 	return nullptr;
@@ -648,30 +648,30 @@ bool CBofSprite::spritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint) {
 		int32 dx = overlapRect.width();
 		int32 dy = overlapRect.height();
 
-		int32 x1 = overlapRect.left - _cRect.left + m_cImageRect.left;
-		int32 y1 = overlapRect.top - _cRect.top + m_cImageRect.top;
+		int32 x1 = overlapRect.left - _cRect.left + _cImageRect.left;
+		int32 y1 = overlapRect.top - _cRect.top + _cImageRect.top;
 
-		int32 x2 = overlapRect.left - pSprite->_cRect.left + pSprite->m_cImageRect.left;
-		int32 y2 = overlapRect.top - pSprite->_cRect.top + pSprite->m_cImageRect.top;
+		int32 x2 = overlapRect.left - pSprite->_cRect.left + pSprite->_cImageRect.left;
+		int32 y2 = overlapRect.top - pSprite->_cRect.top + pSprite->_cImageRect.top;
 
-		int32 dx1 = m_pImage->widthBytes();
-		int32 dx2 = pSprite->m_pImage->widthBytes();
+		int32 dx1 = _pImage->widthBytes();
+		int32 dx2 = pSprite->_pImage->widthBytes();
 
-		byte m1 = (byte)m_nMaskColor;
-		byte m2 = (byte)pSprite->m_nMaskColor;
+		byte m1 = (byte)_nMaskColor;
+		byte m2 = (byte)pSprite->_nMaskColor;
 
 		// Lock down these bitmaps
-		m_pImage->lock();
-		pSprite->m_pImage->lock();
+		_pImage->lock();
+		pSprite->_pImage->lock();
 
-		byte *pDib1 = (byte *)m_pImage->getPixelAddress((int)x1, (int)y1);
-		byte *pDib2 = (byte *)pSprite->m_pImage->getPixelAddress((int)x2, (int)y2);
+		byte *pDib1 = (byte *)_pImage->getPixelAddress((int)x1, (int)y1);
+		byte *pDib2 = (byte *)pSprite->_pImage->getPixelAddress((int)x2, (int)y2);
 
-		if (!m_pImage->isTopDown()) {
+		if (!_pImage->isTopDown()) {
 			dx1 = -dx1;
 		}
 
-		if (!pSprite->m_pImage->isTopDown()) {
+		if (!pSprite->_pImage->isTopDown()) {
 			dx2 = -dx2;
 		}
 
@@ -701,8 +701,8 @@ bool CBofSprite::spritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint) {
 
 endroutine:
 	// Don't need access to these bitmaps any more
-	pSprite->m_pImage->unlock();
-	m_pImage->unlock();
+	pSprite->_pImage->unlock();
+	_pImage->unlock();
 
 	return bHit;
 }
@@ -713,10 +713,10 @@ void CBofSprite::setPosition(int x, int y) {
 
 	// Now have a real location establish the new location of the sprite
 	// and setup the bitmap's bounding rectangle
-	m_bPositioned = true;
-	m_cPosition.x = x;
-	m_cPosition.y = y;
-	_cRect.SetRect(m_cPosition.x, m_cPosition.y, m_cPosition.x + m_cSize.cx - 1, m_cPosition.y + m_cSize.cy - 1);
+	_bPositioned = true;
+	_cPosition.x = x;
+	_cPosition.y = y;
+	_cRect.SetRect(_cPosition.x, _cPosition.y, _cPosition.x + _cSize.cx - 1, _cPosition.y + _cSize.cy - 1);
 }
 
 
@@ -724,16 +724,16 @@ bool CBofSprite::cropImage(CBofWindow *pWnd, CBofRect *pRect, bool bUpdateNow) {
 	Assert(IsValidObject(this));
 	Assert(pWnd != nullptr);
 	Assert(pRect != nullptr);
-	Assert(m_pImage != nullptr);
+	Assert(_pImage != nullptr);
 
-	if (m_nMaskColor != NOT_TRANSPARENT) {
+	if (_nMaskColor != NOT_TRANSPARENT) {
 
 		CBofRect myRect = *pRect; // Offset crop area by image rect
-		myRect.left += m_cImageRect.left;
-		myRect.right += m_cImageRect.left;
-		CBofRect cDestRect = myRect + m_cPosition;
+		myRect.left += _cImageRect.left;
+		myRect.right += _cImageRect.left;
+		CBofRect cDestRect = myRect + _cPosition;
 
-		m_pImage->fillRect(&myRect, (byte)m_nMaskColor);
+		_pImage->fillRect(&myRect, (byte)_nMaskColor);
 
 		if (bUpdateNow) {
 			CBofBitmap *pBackdrop = pWnd->getBackdrop();
@@ -750,29 +750,29 @@ bool CBofSprite::cropImage(CBofWindow *pWnd, CBofRect *pRect, bool bUpdateNow) {
 void CBofSprite::clearImage() {
 	Assert(IsValidObject(this));
 
-	if (!m_bDuplicated && (m_pImage != nullptr)) {
-		delete m_pImage;
+	if (!_bDuplicated && (_pImage != nullptr)) {
+		delete _pImage;
 	}
 
-	m_pImage = nullptr;
+	_pImage = nullptr;
 }
 
 
 void CBofSprite::setSharedPalette(CBofPalette *pPal) {
 	Assert(pPal != nullptr);
 
-	m_pSharedPalette = pPal;
+	_pSharedPalette = pPal;
 }
 
 void CBofSprite::setZOrder(int nValue) {
 	Assert(IsValidObject(this));
 	Assert(nValue >= SPRITE_TOPMOST && nValue <= SPRITE_HINDMOST);
 
-	m_nZOrder = nValue;
+	_nZOrder = nValue;
 
 	// Relinking this sprite after setting it's new Z-Order will
 	// add the sprite to the correct Z-Order sorted location (Insertion Sort)
-	if (m_bLinked) {
+	if (_bLinked) {
 		unlinkSprite();
 		linkSprite();
 	}

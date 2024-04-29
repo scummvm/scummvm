@@ -891,7 +891,7 @@ CBagObject *CBagStorageDev::GetObject(const CBofString &sName, bool bActiveOnly)
 			break;
 		}
 
-		pNode = pNode->m_pNext;
+		pNode = pNode->_pNext;
 	}
 	if (bActiveOnly && (pObjFound != nullptr) && !pObjFound->IsActive())
 		pObjFound = nullptr;
@@ -1835,7 +1835,7 @@ ErrorCode CBagStorageDevManager::UnRegisterStorageDev(CBagStorageDev *pSDev) {
 			break;
 		}
 
-		pList = pList->m_pNext;
+		pList = pList->_pNext;
 	}
 	return ERR_NONE;
 }

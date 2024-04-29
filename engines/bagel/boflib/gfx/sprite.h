@@ -80,11 +80,11 @@ public:
 	bool cropImage(CBofWindow *pWnd, CBofRect *pRect, bool bUpdateNow = true);
 
 	bool refreshSprite(CBofBitmap *pBmp) {
-		return paintSprite(pBmp, m_cPosition.x, m_cPosition.y);
+		return paintSprite(pBmp, _cPosition.x, _cPosition.y);
 	}
 
 	bool refreshSprite(CBofWindow *pWnd) {
-		return paintSprite(pWnd, m_cPosition.x, m_cPosition.y);
+		return paintSprite(pWnd, _cPosition.x, _cPosition.y);
 	}
 
 	bool eraseSprite(CBofWindow *pWnd);
@@ -97,11 +97,11 @@ public:
 	CBofSprite *interception(CBofSprite *pTestSprite);
 
 	CBofSprite *interception() {
-		return interception(m_pSpriteChain);
+		return interception(_pSpriteChain);
 	}
 
 	CBofSprite *interception(CBofRect *newRect) {
-		return interception(newRect, m_pSpriteChain);
+		return interception(newRect, _pSpriteChain);
 	}
 
 	bool testInterception(CBofSprite *pSprite, CBofPoint *pPoint = nullptr);
@@ -109,11 +109,11 @@ public:
 	void setPosition(int x, int y);
 
 	CBofPoint getPosition() const {
-		return m_cPosition;
+		return _cPosition;
 	}
 
 	CBofSize getSize() const {
-		return m_cSize;
+		return _cSize;
 	}
 
 	CBofRect getRect() const {
@@ -129,38 +129,38 @@ public:
 	}
 
 	void setMaskColor(int nColor) {
-		m_nMaskColor = nColor;
+		_nMaskColor = nColor;
 	}
 
 	int getMaskColor() const {
-		return m_nMaskColor;
+		return _nMaskColor;
 	}
 
 	byte readPixel(int x, int y) const {
-		return m_pImage->readPixel(x, y);
+		return _pImage->readPixel(x, y);
 	}
 
 	void setZOrder(int nValue);
 
 	int getCelCount() const {
-		return m_nCelCount;
+		return _nCelCount;
 	}
 	int getCelIndex() const {
-		return m_nCelID;
+		return _nCelID;
 	}
 
 	void setAnimated(bool bAnimated) {
-		m_bAnimated = bAnimated;
+		_bAnimated = bAnimated;
 	}
 	bool getAnimated() const {
-		return m_bAnimated;
+		return _bAnimated;
 	}
 
 	void linkSprite();
 	void unlinkSprite();
 
 	const char *getFileName() const {
-		return m_pImage->getFileName();
+		return _pImage->getFileName();
 	}
 
 	static void openLibrary(CBofPalette *pPal);
@@ -169,18 +169,18 @@ public:
 	static void setSharedPalette(CBofPalette *pPalette);
 
 	static CBofSprite *getSpriteChain() {
-		return m_pSpriteChain;
+		return _pSpriteChain;
 	}
 
 	static bool updateDirtyRect(CBofWindow *pWnd, CBofSprite *pSprite = nullptr);
 	static bool updateDirtyRect(CBofBitmap *pBmp, CBofSprite *pSprite = nullptr);
 	static void addToDirtyRect(CBofRect *pRect);
 	static void clearDirtyRect() {
-		m_cDirtyRect->SetRectEmpty();
+		_cDirtyRect->SetRectEmpty();
 	}
 
 	static CBofRect *getDirtyRect() {
-		return m_cDirtyRect;
+		return _cDirtyRect;
 	}
 
 	static void flushSpriteChain();
@@ -192,44 +192,44 @@ public:
 	// next cell advancement
 
 	void setBlockAdvance(bool b = true) {
-		m_bBlockAdvance = b;
+		_bBlockAdvance = b;
 	}
 	bool getBlockAdvance() const {
-		return m_bBlockAdvance;
+		return _bBlockAdvance;
 	}
 
 private:
 	void clearImage();
 
 	bool spritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint = nullptr);
-	bool m_bBlockAdvance; // Allow block next cell.
+	bool _bBlockAdvance; // Allow block next cell.
 public:
-	CBofBitmap *m_pImage; // Bitmap for the sprite
+	CBofBitmap *_pImage; // Bitmap for the sprite
 
 protected:
-	CBofPoint m_cPosition; // Upper left corner of sprite on display
-	CBofSize m_cSize;      // dx/dy size of the sprite bitmap
+	CBofPoint _cPosition; // Upper left corner of sprite on display
+	CBofSize _cSize;      // dx/dy size of the sprite bitmap
 	CBofRect _cRect;      // Bounding rectangle on display
-	CBofRect m_cImageRect; // Bounding rectangle within image bitmap
+	CBofRect _cImageRect; // Bounding rectangle within image bitmap
 
-	int m_nMaskColor; // Transparent color index for this sprite
-	int m_nZOrder;    // Foreground / background order
-	int m_nCelID;     // Index of current cel image
-	int m_nCelCount;  // Number of cels in the animation strip
+	int _nMaskColor; // Transparent color index for this sprite
+	int _nZOrder;    // Foreground / background order
+	int _nCelID;     // Index of current cel image
+	int _nCelCount;  // Number of cels in the animation strip
 
-	bool m_bDuplicated : 1; // Shares bitmaps with some other sprite
-	bool m_bPositioned : 1; // Whether sprite has been positioned yet
-	bool m_bAnimated : 1;   // Whether cel advance occurs when painting
-	bool m_bLinked : 1;     // Whether sprite is linked into the chain
-	bool m_bReadOnly : 1;   // Whether image is read only or not
+	bool _bDuplicated : 1; // Shares bitmaps with some other sprite
+	bool _bPositioned : 1; // Whether sprite has been positioned yet
+	bool _bAnimated : 1;   // Whether cel advance occurs when painting
+	bool _bLinked : 1;     // Whether sprite is linked into the chain
+	bool _bReadOnly : 1;   // Whether image is read only or not
 
-	static CBofRect *m_cDirtyRect;
-	static CBofSprite *m_pSpriteChain;    // Pointer to linked chain of sprites
-	static CBofSprite *m_pTouchedSprite;  // Sprite touched during painting operation
-	static CBofBitmap *m_pWorkBmp;        // Offscreen work area
-	static CBofPalette *m_pSharedPalette; // Shared palette for ALL sprites
-	static int m_nWorkDX;
-	static int m_nWorkDY;
+	static CBofRect *_cDirtyRect;
+	static CBofSprite *_pSpriteChain;    // Pointer to linked chain of sprites
+	static CBofSprite *_pTouchedSprite;  // Sprite touched during painting operation
+	static CBofBitmap *_pWorkBmp;        // Offscreen work area
+	static CBofPalette *_pSharedPalette; // Shared palette for ALL sprites
+	static int _nWorkDX;
+	static int _nWorkDY;
 };
 
 } // namespace Bagel

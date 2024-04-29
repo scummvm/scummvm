@@ -88,7 +88,7 @@ public:
 	void stop();
 
 	CBofSound *GetNext() {
-		return (CBofSound *)m_pNext;
+		return (CBofSound *)_pNext;
 	}
 	CBofSound *GetPrev() {
 		return (CBofSound *)m_pPrev;
