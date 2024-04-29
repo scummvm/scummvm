@@ -218,15 +218,15 @@ public:
 	void validateAnscestors(CBofRect *pRect = nullptr);
 
 	static CBofWindow *getActiveWindow() {
-		return m_pActiveWindow;
+		return _pActiveWindow;
 	}
 
 	void setActive() {
-		m_pActiveWindow = this;
+		_pActiveWindow = this;
 	}
 
 	static CBofWindow *getWindowList() {
-		return m_pWindowList;
+		return _pWindowList;
 	}
 
 	CBofRect getWindowRect() const {
@@ -241,18 +241,18 @@ public:
 	int width() const {
 		return _cRect.width();
 	}
-	int Height() const {
-		return _cRect.Height();
+	int height() const {
+		return _cRect.height();
 	}
 
-	void ScreenToClient(CBofPoint *pPoint);
-	void ClientToScreen(CBofPoint *pPoint);
+	void screenToClient(CBofPoint *pPoint);
+	void clientToScreen(CBofPoint *pPoint);
 
 	/**
 	 * Selects and Realizes specified palette into current DC
 	 * @param pPal      Palette to select
 	 */
-	void SelectPalette(CBofPalette *pPal);
+	void selectPalette(CBofPalette *pPal);
 
 	/**
 	 * Associates a new background bitmap to this window
@@ -260,7 +260,7 @@ public:
 	 * @param bRefresh      true if should repaint now
 	 * @return              Error return code
 	 */
-	ErrorCode SetBackdrop(CBofBitmap *pBitmap, bool bRefresh = false);
+	ErrorCode setBackdrop(CBofBitmap *pBitmap, bool bRefresh = false);
 
 	/**
 	 * Associates a new background bitmap to this window
@@ -268,113 +268,113 @@ public:
 	 * @param bRefresh      true if should repaint now
 	 * @return              Error return code
 	 */
-	ErrorCode SetBackdrop(const char *pszBmpFile, bool bRefresh = false);
+	ErrorCode setBackdrop(const char *pszBmpFile, bool bRefresh = false);
 
-	void ClearBackdrop() {
+	void clearBackdrop() {
 		_pBackdrop = nullptr;
 	}
 
-	CBofBitmap *GetBackdrop() {
+	CBofBitmap *getBackdrop() {
 		return _pBackdrop;
 	}
 
-	bool HasBackdrop() {
+	bool hasBackdrop() {
 		return _pBackdrop != nullptr;
 	}
 
 	/**
 	 * Deletes the background bitmap associated with this window
 	 */
-	void KillBackdrop();
+	void killBackdrop();
 
 	/**
 	 * Updates the specified section of the background bitmap
 	 * @param pRect     Area of bitmap to update on screen
 	 * @return          Error return code
 	 */
-	ErrorCode PaintBackdrop(CBofRect *pRect = nullptr, int nTransparentColor = -1);
+	ErrorCode paintBackdrop(CBofRect *pRect = nullptr, int nTransparentColor = -1);
 
-	void SetControlID(uint32 nID) {
-		m_nID = nID;
+	void setControlID(uint32 nID) {
+		_nID = nID;
 	}
-	uint32 GetControlID() {
-		return m_nID;
-	}
-
-	void SetBkColor(RGBCOLOR cColor) {
-		m_cBkColor = cColor;
-	}
-	RGBCOLOR GetBkColor() {
-		return m_cBkColor;
+	uint32 getControlID() {
+		return _nID;
 	}
 
-	void SetFgColor(RGBCOLOR cColor) {
-		m_cFgColor = cColor;
+	void setBkColor(RGBCOLOR cColor) {
+		_cBkColor = cColor;
 	}
-	RGBCOLOR GetFgColor() {
-		return m_cFgColor;
+	RGBCOLOR getBkColor() {
+		return _cBkColor;
 	}
 
-	void SetPrevMouseDown(CBofPoint p) {
-		m_cPrevMouseDown = p;
+	void setFgColor(RGBCOLOR cColor) {
+		_cFgColor = cColor;
 	}
-	CBofPoint GetPrevMouseDown() {
-		return m_cPrevMouseDown;
+	RGBCOLOR getFgColor() {
+		return _cFgColor;
+	}
+
+	void setPrevMouseDown(CBofPoint p) {
+		_cPrevMouseDown = p;
+	}
+	CBofPoint getPrevMouseDown() {
+		return _cPrevMouseDown;
 	}
 
 	/**
 	 * Sets mouse capture for this window
 	 */
-	void SetCapture();
+	void setCapture();
 
 	/**
 	 * Release mouse capture for this window
 	 */
-	void ReleaseCapture();
+	void releaseCapture();
 
 	/**
 	 * Returns true if the control is capturing mouse events
 	 */
-	bool HasCapture() const;
+	bool hasCapture() const;
 
 	/**
 	 * Sets the focus on a control for keyboard input
 	 */
-	void SetFocus();
+	void setFocus();
 
 	/**
 	 * Releases focus from an edit control
 	 */
-	void ReleaseFocus();
+	void releaseFocus();
 
 	/**
 	 * Returns true if the control has focus
 	 */
-	bool HasFocus() const;
+	bool hasFocus() const;
 
-	void FlushAllMessages();
+	void flushAllMessages();
 
 	/**
 	 * Adds specified rectangle to dirty rect list for this window
 	 * @param pRect     Rectangle to add to dirty list
 	 */
-	void ValidateRect(const CBofRect *pRect);
+	void validateRect(const CBofRect *pRect);
 
 	/**
 	 * Removes specified rectangle from dirty rect for this window
 	 * @param pRect     Rectangle to remove from dirty list
 	 */
-	void InvalidateRect(const CBofRect *pRect);
+	void invalidateRect(const CBofRect *pRect);
 
-	virtual void OnBofButton(CBofObject *pButton, int nExtraInfo);
-	virtual void OnBofScrollBar(CBofObject *pButton, int nNewPos);
-	virtual void OnBofListBox(CBofObject *pListBox, int nItemIndex);
+	virtual void onBofButton(CBofObject *pButton, int nExtraInfo);
+	virtual void onBofScrollBar(CBofObject *pButton, int nNewPos);
+	virtual void onBofListBox(CBofObject *pListBox, int nItemIndex);
 	virtual void onMainLoop();
 
-	virtual void OnSoundNotify(CBofObject *pObject, uint32 lParam2);
-	virtual void OnMovieNotify(uint32 lParam1, uint32 lParam2);
+	virtual void onSoundNotify(CBofObject *pObject, uint32 lParam2);
+	virtual void onMovieNotify(uint32 lParam1, uint32 lParam2);
 
-	virtual void OnMCINotify(uint32 lParam1, uint32 lParam2);
+	virtual void onMCINotify(uint32 lParam1, uint32 lParam2);
 
 	virtual void onTimer(uint32 nTimerId);
 
@@ -386,26 +386,26 @@ public:
 
 	Graphics::ManagedSurface *getSurface();
 
-	bool IsCreated() const {
+	bool isCreated() const {
 		return _surface != nullptr;
 	}
 
 	virtual void enable() {
 		_enabled = true;
-		UpdateWindow();
+		updateWindow();
 	}
 	virtual void disable() {
 		_enabled = false;
-		UpdateWindow();
+		updateWindow();
 	}
-	bool IsVisible() const {
+	bool isVisible() const {
 		return _visible;
 	}
 	bool isEnabled() const {
 		return _enabled;
 	}
 
-	void UpdateWindow();
+	void updateWindow();
 
 	void setParent(CBofWindow *parent);
 
@@ -415,8 +415,8 @@ public:
 	void handleEvents();
 
 	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
-	void FillWindow(byte iColor);
-	void FillRect(CBofRect *pRect, byte iColor);
+	void fillWindow(byte iColor);
+	void fillRect(CBofRect *pRect, byte iColor);
 
 protected:
 	CBofWindow *_parent = nullptr;	// Pointer to parent window
@@ -427,54 +427,54 @@ protected:
 	virtual void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void onLButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
 
-	virtual void OnRButtonDown(uint32 nFlags, CBofPoint *pPoint);
+	virtual void onRButtonDown(uint32 nFlags, CBofPoint *pPoint);
 	virtual void onRButtonUp(uint32 nFlags, CBofPoint *pPoint);
-	virtual void OnRButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
+	virtual void onRButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
 
 	virtual void onReSize(CBofSize *pSize);
 	virtual void onPaint(CBofRect *pRect);
 	virtual void onClose();
 
-	virtual void OnUserMessage(uint32 nMessage, uint32 lParam);
+	virtual void onUserMessage(uint32 nMessage, uint32 lParam);
 
-	virtual void OnActivate();
-	virtual void OnDeActivate();
+	virtual void onActivate();
+	virtual void onDeActivate();
 
 	// Window Data
 	char _szTitle[MAX_TITLE] = { 0 };	// Title of window
 	CBofRect _cWindowRect;				// Screen based area of this window
 	CBofRect _cRect;					// Window-based area of this window
 	CBofBitmap *_pBackdrop = nullptr;  // Backdrop bitmap
-	uint32 m_nID = 0;						// ID of this window
+	uint32 _nID = 0;						// ID of this window
 
-	RGBCOLOR m_cBkColor = RGB(255, 255, 255);
-	RGBCOLOR m_cFgColor = RGB(0, 0, 0);
+	RGBCOLOR _cBkColor = RGB(255, 255, 255);
+	RGBCOLOR _cFgColor = RGB(0, 0, 0);
 
 	bool _bCaptured = false;
 	Graphics::ManagedSurface *_surface = nullptr;
 
-	static CBofWindow *m_pWindowList;
-	static CBofWindow *m_pActiveWindow;
-	static CBofTimerPacket *m_pTimerList;
-	CBofPoint m_cPrevMouseDown;
+	static CBofWindow *_pWindowList;
+	static CBofWindow *_pActiveWindow;
+	static CBofTimerPacket *_pTimerList;
+	CBofPoint _cPrevMouseDown;
 	static int _mouseX;
 	static int _mouseY;
 };
 
 class CBofMessage : public CBofObject {
 public:
-	CBofWindow *m_pWindow; // destination window for message
-	uint32 m_nMessage;      // message to send (usually WM_USER)
-	uint32 m_lParam1;       // user defined info
-	uint32 m_lParam2;       // more user defined info
+	CBofWindow *_pWindow; // destination window for message
+	uint32 _nMessage;      // message to send (usually WM_USER)
+	uint32 _lParam1;       // user defined info
+	uint32 _lParam2;       // more user defined info
 };
 
 class CBofTimerPacket : public CBofObject, public CLList {
 public:
-	CBofWindow *m_pOwnerWindow;
-	BofCallback m_pCallBack;
-	uint32 m_nID;
-	uint32 m_nInterval;
+	CBofWindow *_pOwnerWindow;
+	BofCallback _pCallBack;
+	uint32 _nID;
+	uint32 _nInterval;
 };
 
 extern CBofWindow *g_hackWindow;

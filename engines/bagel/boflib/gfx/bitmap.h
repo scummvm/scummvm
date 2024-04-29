@@ -245,7 +245,7 @@ public:
 		return (m_nScanDX);
 	}
 
-	int Height() {
+	int height() {
 		return (m_nDY);
 	}
 
@@ -459,7 +459,7 @@ public:
 	 * @param cRect     Pointer to rectangle Coordinates
 	 * @param iColor    Color of rectangle
 	 */
-	void FillRect(CBofRect *cRect, byte iColor);
+	void fillRect(CBofRect *cRect, byte iColor);
 
 	void FlipVerticalFast();
 

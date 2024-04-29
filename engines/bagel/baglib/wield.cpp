@@ -161,7 +161,7 @@ ErrorCode CBagWield::update(CBofBitmap *pBmp, CBofPoint /*cPoint*/, CBofRect * /
 	Assert(pBmp != nullptr);
 
 	// If this object is visible
-	if (IsVisible() && isAttached()) {
+	if (isVisible() && isAttached()) {
 
 		CBofBitmap *pYouIcon = getBackground();
 		if (pYouIcon != nullptr) {

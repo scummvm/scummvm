@@ -58,7 +58,7 @@ ErrorCode CBagButtonObject::attach() {
 
 	if (_buttonType == BTN_VLEVER || _buttonType == BTN_HLEVER) {
 		_midPoint.x = getRect().TopLeft().x + (getRect().width() / 2);
-		_midPoint.y = getRect().TopLeft().y + (getRect().Height() / 2);
+		_midPoint.y = getRect().TopLeft().y + (getRect().height() / 2);
 	}
 
 	if (GetSprite()->GetCelCount() == 1 && _buttonType != BTN_SLIDER) {
@@ -327,7 +327,7 @@ ErrorCode CBagButtonObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcR
 		}
 	}
 
-	if (GetSprite() && ((GetSprite()->GetCelCount() > 1) || IsVisible())) {
+	if (GetSprite() && ((GetSprite()->GetCelCount() > 1) || isVisible())) {
 		ErrorCode err = CBagSpriteObject::update(bmp, pt, srcRect, maskColor);
 		SetDirty(bDirty);
 		return err;

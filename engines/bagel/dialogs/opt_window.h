@@ -81,8 +81,8 @@ protected:
 	virtual void onPaint(CBofRect *pRect);
 	virtual void onInitDialog();
 
-	virtual void OnBofScrollBar(CBofObject *pObject, int nPos);
-	virtual void OnBofButton(CBofObject *pObject, int nState);
+	virtual void onBofScrollBar(CBofObject *pObject, int nPos);
+	virtual void onBofButton(CBofObject *pObject, int nState);
 	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
 
 	// Data members

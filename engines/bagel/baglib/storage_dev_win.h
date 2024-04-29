@@ -458,7 +458,7 @@ public:
 
 	virtual ErrorCode setBackground(CBofBitmap *pBmp);
 	virtual CBofBitmap *getBackground() {
-		return GetBackdrop();
+		return getBackdrop();
 	}
 	virtual CBofBitmap *GetWorkBmp() {
 		return m_pWorkBmp;
@@ -514,13 +514,13 @@ public:
 
 	virtual ErrorCode setBackground(CBofBitmap *pBmp) {
 		if (pBmp)
-			return SetBackdrop(pBmp);
+			return setBackdrop(pBmp);
 		else
-			KillBackdrop();
+			killBackdrop();
 		return ERR_NONE;
 	}
 	virtual CBofBitmap *getBackground() {
-		return GetBackdrop();
+		return getBackdrop();
 	}
 
 	virtual ErrorCode LoadFile(const CBofString &sWldFile);

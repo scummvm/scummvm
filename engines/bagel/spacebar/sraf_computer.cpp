@@ -177,7 +177,7 @@ struct ST_BUTTONS {
 	int m_nTop;
 	int m_nWidth;
 	int m_nHeight;
-	int m_nID;
+	int _nID;
 
 };
 
@@ -822,7 +822,7 @@ bool SrafComputer::VerifyDispatchTeam() {
 		// All done with our team item, trash it.
 		delete pTeamItem;
 
-		UpdateWindow();
+		updateWindow();
 	}
 
 	return bValidTeam;
@@ -871,19 +871,19 @@ void SrafComputer::onMainLoop() {
 }
 
 void SrafComputer::onPaint(CBofRect *pRect) {
-	if (GetBackdrop()) {
+	if (getBackdrop()) {
 		Assert(GetWorkBmp() != nullptr);
 
 		// erase everything from the background
-		GetWorkBmp()->paint(GetBackdrop(), pRect, pRect);
+		GetWorkBmp()->paint(getBackdrop(), pRect, pRect);
 
 		// paint all the objects to the background
-		PaintStorageDevice(nullptr, GetBackdrop(), pRect);
+		PaintStorageDevice(nullptr, getBackdrop(), pRect);
 	}
 
 	// Paint the backdrop
-	if (GetBackdrop()) {
-		PaintBackdrop();
+	if (getBackdrop()) {
+		paintBackdrop();
 	}
 
 	if (m_eMode == SCOFF) {
@@ -930,7 +930,7 @@ ErrorCode SrafComputer::attach() {
 				CBofBitmap *pDis = LoadBitmap(BuildSrafDir(g_stButtons[i].m_pszDisabled), pPal);
 
 				m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
-				m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
+				m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i]._nID);
 				if (i != QUIT_BUTTON)
 					m_pButtons[i]->hide();
 			}
@@ -953,7 +953,7 @@ ErrorCode SrafComputer::attach() {
 		SetOn();
 
 		show();
-		UpdateWindow();
+		updateWindow();
 
 		// Finally, use our regular system cursor, not the custom ones
 		CBagCursor::showSystemCursor();
@@ -1075,7 +1075,7 @@ void SrafComputer::onKeyHit(uint32 lKey, uint32 nRepCount) {
 }
 
 
-void SrafComputer::OnBofButton(CBofObject *pObject, int nState) {
+void SrafComputer::onBofButton(CBofObject *pObject, int nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -1144,12 +1144,12 @@ void SrafComputer::SetOff() {
 		m_pButtons[OFF_BUTTON]->hide();
 		m_pButtons[ON_BUTTON]->show();
 
-		SetFocus();
+		setFocus();
 	}
 
 	DeleteListBox();
-	InvalidateRect(&gCompDisplay);
-	UpdateWindow();
+	invalidateRect(&gCompDisplay);
+	updateWindow();
 }
 
 void SrafComputer::SetQuit() {
@@ -1179,7 +1179,7 @@ ErrorCode SrafComputer::CreateListBox() {
 	m_pLBox->setTextColor(m_cTextColor);
 	m_pLBox->setHighlightColor(m_cTextHiliteColor);
 	m_pLBox->setFont(FONT_MONO);
-	m_pLBox->SetFocus();
+	m_pLBox->setFocus();
 
 	return error;
 }
@@ -1207,7 +1207,7 @@ void SrafComputer::FillMain() {
 	}
 }
 
-void SrafComputer::OnBofListBox(CBofObject * /*pListBox*/, int nItemIndex) {
+void SrafComputer::onBofListBox(CBofObject * /*pListBox*/, int nItemIndex) {
 	m_nSelection = nItemIndex;
 
 	// Do all kinds of neat things based on our current screen.
@@ -1256,7 +1256,7 @@ void SrafComputer::OnBofListBox(CBofObject * /*pListBox*/, int nItemIndex) {
 	}
 
 	IncrementTurnCount();
-	UpdateWindow();
+	updateWindow();
 }
 
 void SrafComputer::ActivateDealSummary() {
@@ -1278,8 +1278,8 @@ void SrafComputer::ActivateDealSummary() {
 	DeactivateMainScreen();
 
 	// Make sure we start with the correct computer background
-	if (GetBackdrop()) {
-		PaintBackdrop();
+	if (getBackdrop()) {
+		paintBackdrop();
 	}
 
 	// Retrieve IRK's and QUOSH's terms
@@ -1453,8 +1453,8 @@ void SrafComputer::ActivateBuyerBids() {
 	Assert(error == ERR_NONE);
 
 	// Make sure we start with the correct computer background
-	if (GetBackdrop()) {
-		PaintBackdrop();
+	if (getBackdrop()) {
+		paintBackdrop();
 	}
 
 	// Put up the column header
@@ -1546,8 +1546,8 @@ void SrafComputer::ActivateSellerBios() {
 	DeactivateMainScreen();
 
 	// Make sure we start with the correct computer background
-	if (GetBackdrop()) {
-		PaintBackdrop();
+	if (getBackdrop()) {
+		paintBackdrop();
 	}
 
 	// Load up the main list now with our deal summary data.
@@ -1591,8 +1591,8 @@ void SrafComputer::ActivateOtherBios() {
 	DeactivateMainScreen();
 
 	// Make sure we start with the correct computer background
-	if (GetBackdrop()) {
-		PaintBackdrop();
+	if (getBackdrop()) {
+		paintBackdrop();
 	}
 
 	// Load up the main list now with our deal summary data.
@@ -1635,8 +1635,8 @@ void SrafComputer::ActivateStaffBios() {
 	DeactivateMainScreen();
 
 	// Make sure we start with the correct computer background
-	if (GetBackdrop()) {
-		PaintBackdrop();
+	if (getBackdrop()) {
+		paintBackdrop();
 	}
 
 	// Load up the main list now with our deal summary data.
@@ -1679,8 +1679,8 @@ void SrafComputer::ActivateDispatchTeam() {
 	Assert(error == ERR_NONE);
 
 	// Make sure we start with the correct computer background
-	if (GetBackdrop()) {
-		PaintBackdrop();
+	if (getBackdrop()) {
+		paintBackdrop();
 	}
 
 	RecalcDispatchList(gDispatchCurState);
@@ -1902,8 +1902,8 @@ void SrafComputer::ActivateCurrentEMail() {
 	Assert(error == ERR_NONE);
 
 	// Make sure we start with the correct computer background
-	if (GetBackdrop()) {
-		PaintBackdrop();
+	if (getBackdrop()) {
+		paintBackdrop();
 	}
 
 	// Put up the column header and a blank line
@@ -1957,8 +1957,8 @@ void SrafComputer::ActivateAudioSettings() {
 	Assert(error == ERR_NONE);
 
 	// Make sure we start with the correct computer background
-	if (GetBackdrop()) {
-		PaintBackdrop();
+	if (getBackdrop()) {
+		paintBackdrop();
 	}
 
 	// Put up the column header and a blank line
@@ -2021,8 +2021,8 @@ void SrafComputer::ActivateRoboButler() {
 	Assert(error == ERR_NONE);
 
 	// Make sure we start with the correct computer background
-	if (GetBackdrop()) {
-		PaintBackdrop();
+	if (getBackdrop()) {
+		paintBackdrop();
 	}
 
 	// Put up the column header and a blank line
@@ -2049,7 +2049,7 @@ void SrafComputer::ActivateRoboButler() {
 	m_pButtons[QUIT_BUTTON]->hide();
 
 	DoShowChowButtons();
-	UpdateWindow();
+	updateWindow();
 }
 
 void SrafComputer::DoShowChowButtons() {
@@ -2113,8 +2113,8 @@ void SrafComputer::ActivateCheckTeams() {
 	Assert(error == ERR_NONE);
 
 	// Make sure we start with the correct computer background
-	if (GetBackdrop()) {
-		PaintBackdrop();
+	if (getBackdrop()) {
+		paintBackdrop();
 	}
 
 	// Put up the column header and a blank line
@@ -2373,8 +2373,8 @@ void SrafComputer::ActivateCodeWords() {
 	DeactivateMainScreen();
 
 	// Make sure we start with the correct computer background
-	if (GetBackdrop()) {
-		PaintBackdrop();
+	if (getBackdrop()) {
+		paintBackdrop();
 	}
 
 	// Load up the main list now with our deal summary data.
@@ -2425,7 +2425,7 @@ void SrafComputer::ActivateCodeWords() {
 	m_pButtons[DONE_BUTTON]->show();
 	m_pButtons[QUIT_BUTTON]->hide();
 
-	UpdateWindow();
+	updateWindow();
 }
 
 
@@ -2668,7 +2668,7 @@ void SrafComputer::OnListDealSummary() {
 }
 
 void SrafComputer::OnListBuyerBids() {
-	CBofPoint   cPoint = GetPrevMouseDown();	// Already in local coords
+	CBofPoint   cPoint = getPrevMouseDown();	// Already in local coords
 	int         index = m_nSelection - 1;
 
 	// Make sure that this is not out of range.
@@ -2758,15 +2758,15 @@ void SrafComputer::OnListStaffBios() {
 }
 
 void SrafComputer::OnListDispatchTeam() {
-	CBofPoint   cPoint = GetPrevMouseDown();	// Already in local coords
+	CBofPoint   cPoint = getPrevMouseDown();	// Already in local coords
 	CBofRect    cMeetWithRect(0,
 	                          0,
 	                          (kTeamMemberColumn - kStandardIndentation) * kBuyerBidsPointWidth,
-	                          gCompDisplay.Height());
+	                          gCompDisplay.height());
 	CBofRect    cTeamMembersRect((kTeamMemberColumn - kStandardIndentation) * kBuyerBidsPointWidth,
 	                             0,
 	                             gCompDisplay.width(),
-	                             gCompDisplay.Height());
+	                             gCompDisplay.height());
 	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
@@ -3608,7 +3608,7 @@ void SrafComputer::OnListCodeWords() {
 
 	const char *pszWord = nullptr;
 	int         nWordGroup = 0;
-	CBofPoint   cPoint = GetPrevMouseDown();        // already in local coords
+	CBofPoint   cPoint = getPrevMouseDown();        // already in local coords
 
 	// Find the rect that it was in.
 	if (cCol1Rect.PtInRect(cPoint)) {
@@ -3676,8 +3676,8 @@ void SrafComputer::ActivateMainScreen() {
 
 	show();
 
-	if (GetBackdrop()) {
-		PaintBackdrop();
+	if (getBackdrop()) {
+		paintBackdrop();
 	}
 
 	HideAllButtons();
@@ -3727,7 +3727,7 @@ void SrafComputer::ActivateMainScreen() {
 	// Show list box
 	m_pLBox->show();
 
-	UpdateWindow();
+	updateWindow();
 }
 
 
@@ -3769,7 +3769,7 @@ void SrafComputer::DisplayTextScreen(CBofString &sStr) {
 
 	// if we have a list, then return focus to it.
 	if (m_pLBox) {
-		m_pLBox->SetFocus();
+		m_pLBox->setFocus();
 	}
 
 	gTextScreenFrontmost = false;
@@ -3779,7 +3779,7 @@ void SrafComputer::OnButtonMainScreen(CBofButton *pButton, int nState) {
 	if (nState != BUTTON_CLICKED)
 		return;
 
-	switch (pButton->GetControlID()) {
+	switch (pButton->getControlID()) {
 	case ON_BUTTON:
 		SetOn();
 		break;
@@ -3798,7 +3798,7 @@ void SrafComputer::OnButtonDealSummary(CBofButton *pButton, int nState) {
 	if (nState != BUTTON_CLICKED)
 		return;
 
-	switch (pButton->GetControlID()) {
+	switch (pButton->getControlID()) {
 	case RETURN_TO_MAIN_BUTTON:
 		m_pButtons[SUBMIT_BUTTON]->hide();
 		ActivateMainScreen();
@@ -4018,7 +4018,7 @@ void SrafComputer::OnButtonBuyerBids(CBofButton *pButton, int nState) {
 	if (nState != BUTTON_CLICKED)
 		return;
 
-	switch (pButton->GetControlID()) {
+	switch (pButton->getControlID()) {
 	case RETURN_TO_MAIN_BUTTON:
 		ActivateMainScreen();
 		break;
@@ -4039,22 +4039,22 @@ void SrafComputer::OnButtonBuyerBids(CBofButton *pButton, int nState) {
 }
 
 void SrafComputer::OnButtonDealBackground(CBofButton *pButton, int nState) {
-	if ((nState == BUTTON_CLICKED) && (pButton->GetControlID() == RETURN_TO_MAIN_BUTTON))
+	if ((nState == BUTTON_CLICKED) && (pButton->getControlID() == RETURN_TO_MAIN_BUTTON))
 		ActivateMainScreen();
 }
 
 void SrafComputer::OnButtonSellerBios(CBofButton *pButton, int nState) {
-	if ((nState == BUTTON_CLICKED) && (pButton->GetControlID() == RETURN_TO_MAIN_BUTTON))
+	if ((nState == BUTTON_CLICKED) && (pButton->getControlID() == RETURN_TO_MAIN_BUTTON))
 		ActivateMainScreen();
 }
 
 void SrafComputer::OnButtonOtherBios(CBofButton *pButton, int nState) {
-	if ((nState == BUTTON_CLICKED) && (pButton->GetControlID() == RETURN_TO_MAIN_BUTTON))
+	if ((nState == BUTTON_CLICKED) && (pButton->getControlID() == RETURN_TO_MAIN_BUTTON))
 		ActivateMainScreen();
 }
 
 void SrafComputer::OnButtonStaffBios(CBofButton *pButton, int nState) {
-	if ((nState == BUTTON_CLICKED) && (pButton->GetControlID() == RETURN_TO_MAIN_BUTTON))
+	if ((nState == BUTTON_CLICKED) && (pButton->getControlID() == RETURN_TO_MAIN_BUTTON))
 		ActivateMainScreen();
 }
 
@@ -4062,7 +4062,7 @@ void SrafComputer::OnButtonDispatchTeam(CBofButton *pButton, int nState) {
 	if (nState != BUTTON_CLICKED)
 		return;
 
-	switch (pButton->GetControlID()) {
+	switch (pButton->getControlID()) {
 	case RETURN_TO_MAIN_BUTTON:
 		ActivateMainScreen();
 		break;
@@ -4136,7 +4136,7 @@ void SrafComputer::NotifyBoss(CBofString &sSoundFile, int nStafferID) {         
 
 	// Allow for no staffer screen
 	if (nStafferID != -1) {
-		pSaveBackground = new CBofBitmap(gTextWindow.width(), gTextWindow.Height(), (CBofPalette *)nullptr, false);
+		pSaveBackground = new CBofBitmap(gTextWindow.width(), gTextWindow.height(), (CBofPalette *)nullptr, false);
 		Assert(pSaveBackground != nullptr);
 
 		if (pSaveBackground == nullptr) {
@@ -4244,7 +4244,7 @@ int SrafComputer::GetTeamGender(int nFlags) {
 }
 
 void SrafComputer::OnButtonCurrentEMail(CBofButton *pButton, int nState) {
-	if ((nState == BUTTON_CLICKED) && (pButton->GetControlID() == RETURN_TO_MAIN_BUTTON))
+	if ((nState == BUTTON_CLICKED) && (pButton->getControlID() == RETURN_TO_MAIN_BUTTON))
 		ActivateMainScreen();
 }
 
@@ -4252,7 +4252,7 @@ void SrafComputer::OnButtonAudioSettings(CBofButton *pButton, int nState) {
 	if (nState != BUTTON_CLICKED)
 		return;
 
-	switch (pButton->GetControlID()) {
+	switch (pButton->getControlID()) {
 	case RETURN_TO_MAIN_BUTTON:
 		ActivateMainScreen();
 		break;
@@ -4270,7 +4270,7 @@ void SrafComputer::OnButtonRoboButler(CBofButton *pButton, int nState) {
 	if (nState != BUTTON_CLICKED)
 		return;
 
-	switch (pButton->GetControlID()) {
+	switch (pButton->getControlID()) {
 	case RETURN_TO_MAIN_BUTTON:
 		ActivateMainScreen();
 		break;
@@ -4318,12 +4318,12 @@ void SrafComputer::DoOrderSnack() {
 }
 
 void SrafComputer::OnButtonCheckTeams(CBofButton *pButton, int nState) {
-	if ((nState == BUTTON_CLICKED) && (pButton->GetControlID() == RETURN_TO_MAIN_BUTTON))
+	if ((nState == BUTTON_CLICKED) && (pButton->getControlID() == RETURN_TO_MAIN_BUTTON))
 		ActivateMainScreen();
 }
 
 void SrafComputer::OnButtonCodeWords(CBofButton *pButton, int nState) {
-	if ((nState == BUTTON_CLICKED) && (pButton->GetControlID() == DONE_BUTTON)) {
+	if ((nState == BUTTON_CLICKED) && (pButton->getControlID() == DONE_BUTTON)) {
 		// Normally we'd return to the main screen, but in this instance, we're
 		// done with the flashback... that is, as long as they've picked two
 		// code words.
@@ -4389,13 +4389,13 @@ void SrafComputer::DisplayMessage(const char *szMsg) {
 
 		// if we have a list, then return focus to it.
 		if (m_pLBox) {
-			m_pLBox->SetFocus();
+			m_pLBox->setFocus();
 		}
 
 		gTextScreenFrontmost = false;
 	}
 
-	UpdateWindow();
+	updateWindow();
 }
 
 
@@ -4539,7 +4539,7 @@ CBofBitmap *SrafComputer::GetComputerBackdrop() {
 	}
 
 	SrafComputer *srafComp = m_pHead;
-	return srafComp->GetBackdrop();
+	return srafComp->getBackdrop();
 }
 
 
@@ -4580,7 +4580,7 @@ int SrafTextScreen::CreateTextScreen(CBofWindow *pParent) {
 	create("Sraffin Text", &gTextWindow, pParent, 0);
 
 	// Needs the computer bitmap for a backdrop
-	SetBackdrop(SrafComputer::GetComputerBackdrop(), false);
+	setBackdrop(SrafComputer::GetComputerBackdrop(), false);
 
 	Assert(_pBackdrop != nullptr);
 	CBofPalette *pPal = _pBackdrop->GetPalette();
@@ -4602,7 +4602,7 @@ int SrafTextScreen::CreateTextScreen(CBofWindow *pParent) {
 		                    g_stButtons[DONE_BUTTON].m_nWidth,
 		                    g_stButtons[DONE_BUTTON].m_nHeight,
 		                    this,
-		                    g_stButtons[DONE_BUTTON].m_nID);
+		                    g_stButtons[DONE_BUTTON]._nID);
 	}
 
 	Assert(m_pOKButton != nullptr);
@@ -4625,10 +4625,10 @@ int SrafTextScreen::CreateTextScreen(CBofWindow *pParent) {
 void SrafTextScreen::DisplayTextScreen() {
 	show();
 
-	if (GetBackdrop())
-		PaintBackdrop();
+	if (getBackdrop())
+		paintBackdrop();
 
-	SetFocus();
+	setFocus();
 
 	m_pOKButton->show();
 
@@ -4649,7 +4649,7 @@ SrafTextScreen::~SrafTextScreen() {
 
 	// Make sure the underlying window gets focus back
 	if (m_pSaveActiveWin) {
-		m_pSaveActiveWin->SetFocus();
+		m_pSaveActiveWin->setFocus();
 	}
 }
 
@@ -4660,7 +4660,7 @@ void SrafTextScreen::onClose() {
 
 	// Set the backdrop to nullptr so that it doesn't get trashed (we borrowed it from
 	// the sraf computer.
-	ClearBackdrop();
+	clearBackdrop();
 }
 
 void SrafTextScreen::onPaint(CBofRect * /*pRect*/) {
@@ -4669,13 +4669,13 @@ void SrafTextScreen::onPaint(CBofRect * /*pRect*/) {
 	validateAnscestors();
 }
 
-void SrafTextScreen::OnBofButton(CBofObject *pObject, int nState) {
+void SrafTextScreen::onBofButton(CBofObject *pObject, int nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
 	CBofButton *pButton = (CBofButton *)pObject;
 
-	if (nState == BUTTON_CLICKED && pButton->GetControlID() == DONE_BUTTON) {
+	if (nState == BUTTON_CLICKED && pButton->getControlID() == DONE_BUTTON) {
 		close();
 		SrafComputer::SetMainScreen();
 	}

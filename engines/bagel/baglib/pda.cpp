@@ -133,9 +133,9 @@ ErrorCode CBagPDA::attach() {
 	CBofRect GameRect = pGameWin->getRect();
 
 	// When the pda is active it should sit flush with the bottom of the screen
-	m_nActiveHeight = GameRect.Height() - bmpRect.Height();
+	m_nActiveHeight = GameRect.height() - bmpRect.height();
 	// When it is deactivated it should be the active height less the total movement distance
-	m_nDeactiveHeight = GameRect.Height() - (bmpRect.Height() - (_moveDist * _numMoves));
+	m_nDeactiveHeight = GameRect.height() - (bmpRect.height() - (_moveDist * _numMoves));
 
 	// Should be allowed to not find one.
 	if (!_mooWnd) {
@@ -209,11 +209,11 @@ void CBagPDA::setPosInWindow(int cx, int cy, int nDist) {
 	pt.x = (cx - bmpRect.width()) / 2;
 
 	if (_activated)
-		pt.y = cy - bmpRect.Height();
+		pt.y = cy - bmpRect.height();
 	else
-		pt.y = cy - bmpRect.Height() + _moveDist * _numMoves;
+		pt.y = cy - bmpRect.height() + _moveDist * _numMoves;
 
-	SetRect(CBofRect(pt.x, pt.y, pt.x + pBmp->width() - 1, pt.y + pBmp->Height() - 1));
+	SetRect(CBofRect(pt.x, pt.y, pt.x + pBmp->width() - 1, pt.y + pBmp->height() - 1));
 }
 
 bool CBagPDA::hideCurDisplay() {

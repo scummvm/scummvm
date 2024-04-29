@@ -190,7 +190,7 @@ public:
 		return true;
 	}
 	//  Is object visible within sceene
-	bool IsVisible() {
+	bool isVisible() {
 		return IsProperty(VISIBLE);
 	}
 	void SetVisible(bool b = true) {

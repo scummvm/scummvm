@@ -71,7 +71,7 @@ private:
 
 	bool m_bStretchToScreen;                 // Whether or not the backdrop is painted full screen
 	bool m_bPaintToBackdrop;                 // Whether or not the backdrop is a extra paint surface
-	// Access via CSprite::GetBackdrop()
+	// Access via CSprite::getBackdrop()
 	CBofList<CBagObject *> *m_pFGObjectList; // Objects to be painted to the window
 
 	// CPoint              m_xCursorLocation;           // Current cursor location in bmp.

@@ -254,8 +254,8 @@ PARSE_CODES CBagObject::setInfo(bof_ifstream &istr) {
 			istr.putback(ch);
 			getRectFromStream(istr, r);
 			setPosition(r.TopLeft());
-			if (r.width() && r.Height())
-				setSize(CSize(r.width(), r.Height()));
+			if (r.width() && r.height())
+				setSize(CSize(r.width(), r.height()));
 			break;
 		}
 		//
@@ -345,7 +345,7 @@ void CBagObject::onLButtonUp(uint32 nFlags, CBofPoint * /*xPoint*/, void *) {
 
 		CBofPoint pt = GetMousePos();
 		CBofWindow *pWnd = CBofApp::GetApp()->GetMainWindow();
-		pWnd->ScreenToClient(&pt);
+		pWnd->screenToClient(&pt);
 
 		// Just send the mouse pos
 		CRect r = getRect();

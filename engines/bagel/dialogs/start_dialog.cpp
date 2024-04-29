@@ -39,7 +39,7 @@ struct ST_BUTTONS {
 	int m_nTop;
 	int m_nWidth;
 	int m_nHeight;
-	int m_nID;
+	int _nID;
 };
 
 static const ST_BUTTONS g_stStartButtons[NUM_START_BTNS] = {
@@ -83,7 +83,7 @@ void CBagStartDialog::onInitDialog() {
 			CBofBitmap *pDis = LoadBitmap(BuildSysDir(g_stStartButtons[i].m_pszDisabled), pPal);
 
 			_buttons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
-			_buttons[i]->create(g_stStartButtons[i].m_pszName, g_stStartButtons[i].m_nLeft, g_stStartButtons[i].m_nTop, g_stStartButtons[i].m_nWidth, g_stStartButtons[i].m_nHeight, this, g_stStartButtons[i].m_nID);
+			_buttons[i]->create(g_stStartButtons[i].m_pszName, g_stStartButtons[i].m_nLeft, g_stStartButtons[i].m_nTop, g_stStartButtons[i].m_nWidth, g_stStartButtons[i].m_nHeight, this, g_stStartButtons[i]._nID);
 			_buttons[i]->show();
 
 		} else {
@@ -124,7 +124,7 @@ void CBagStartDialog::onClose() {
 void CBagStartDialog::onPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
-	PaintBackdrop(pRect);
+	paintBackdrop(pRect);
 
 	validateAnscestors();
 }
@@ -146,7 +146,7 @@ void CBagStartDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 }
 
 
-void CBagStartDialog::OnBofButton(CBofObject *pObject, int nFlags) {
+void CBagStartDialog::onBofButton(CBofObject *pObject, int nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -154,7 +154,7 @@ void CBagStartDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 		return;
 
 	CBofBmpButton *pButton = (CBofBmpButton *)pObject;
-	int nId = pButton->GetControlID();
+	int nId = pButton->getControlID();
 
 	if (nId == RESTORE_BTN) {
 		CBagel *pApp = CBagel::getBagApp();

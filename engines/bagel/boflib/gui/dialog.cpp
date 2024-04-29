@@ -57,14 +57,14 @@ CBofDialog::CBofDialog(const char *pszFileName, CBofWindow *pParent, const uint3
 
 	if (pBmp != nullptr) {
 		// Use specified bitmap as this dialog's image
-		SetBackdrop(pBmp);
+		setBackdrop(pBmp);
 	}
 
 	Assert(_pBackdrop != nullptr);
 	CBofRect cRect = _pBackdrop->getRect();
 
 	// Create the dialog box
-	create("DialogBox", cRect.left, cRect.top, cRect.width(), cRect.Height(), pParent, nID);
+	create("DialogBox", cRect.left, cRect.top, cRect.width(), cRect.height(), pParent, nID);
 }
 
 CBofDialog::~CBofDialog() {
@@ -84,7 +84,7 @@ ErrorCode CBofDialog::create(const char *pszName, int x, int y, int nWidth, int 
 
 	// Inits
 	_parent = pParent;
-	m_nID = nControlID;
+	_nID = nControlID;
 
 	// Remember the name of this window
 	strncpy(_szTitle, pszName, MAX_TITLE);
@@ -122,7 +122,7 @@ ErrorCode CBofDialog::create(const char *pszName, CBofRect *pRect, CBofWindow *p
 		x = pRect->left;
 		y = pRect->top;
 		nWidth = pRect->width();
-		nHeight = pRect->Height();
+		nHeight = pRect->height();
 	}
 
 	return create(pszName, x, y, nWidth, nHeight, pParent, nControlID);
@@ -153,7 +153,7 @@ void CBofDialog::onClose() {
 		// Need to validate the portion of the parent window that we obscured
 		// (but that we also have already repainted)
 		// Otherwise, we need to cause the parent to repaint itself
-		_parent->InvalidateRect(nullptr);
+		_parent->invalidateRect(nullptr);
 	}
 
 	CBofWindow::onClose();
@@ -174,8 +174,8 @@ ErrorCode CBofDialog::paint(CBofRect *pRect) {
 	_bFirstTime = false;
 
 	// Paint the dialog (uses bitmap instead of standard windows dialog)
-	if (HasBackdrop()) {
-		PaintBackdrop(pRect, COLOR_WHITE);
+	if (hasBackdrop()) {
+		paintBackdrop(pRect, COLOR_WHITE);
 	}
 
 	return _errCode;
@@ -203,13 +203,13 @@ ErrorCode CBofDialog::saveBackground() {
 		// Remove any previous background
 		delete _pDlgBackground;
 		// Save a copy of the background
-		_pDlgBackground = new CBofBitmap(width(), Height(), pPalette);
+		_pDlgBackground = new CBofBitmap(width(), height(), pPalette);
 		if (_pDlgBackground != nullptr) {
 			_pDlgBackground->CaptureScreen(this, &_cRect);
 			_pDlgBackground->SetReadOnly(true);
 
 		} else {
-			ReportError(ERR_MEMORY, "Unable to allocate a new CBofBitmap(%d x %d)", width(), Height());
+			ReportError(ERR_MEMORY, "Unable to allocate a new CBofBitmap(%d x %d)", width(), height());
 		}
 	}
 
@@ -245,7 +245,7 @@ int CBofDialog::doModal() {
 	Assert(IsValidObject(this));
 
 	// The dialog box must have been successfully created first
-	Assert(IsCreated());
+	Assert(isCreated());
 
 	CBofWindow *pLastActive = getActiveWindow();
 	setActive();
@@ -254,7 +254,7 @@ int CBofDialog::doModal() {
 	// Display the window
 	show();
 
-	UpdateWindow();
+	updateWindow();
 
 	// Start our own message loop (simulate Modal)
 	_bEndDialog = false;
@@ -267,7 +267,7 @@ int CBofDialog::doModal() {
 		CBofSound::AudioTask();
 		CBofTimer::HandleTimers();
 
-		if (IsCreated()) {
+		if (isCreated()) {
 			onMainLoop();
 		}
 
@@ -281,7 +281,7 @@ int CBofDialog::doModal() {
 	if (pLastActive != nullptr) {
 		pLastActive->setActive();
 	} else {
-		m_pActiveWindow = nullptr;
+		_pActiveWindow = nullptr;
 	}
 
 	return _nReturnValue;

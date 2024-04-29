@@ -172,7 +172,7 @@ ErrorCode CBofScrollBar::setPos(const int nPos, bool bRepaint, bool isInitial) {
 
 	// If the thumb actually moved, then tell our parent about it
 	if (_nPos != nOriginalPos && !isInitial) {
-		_parent->OnBofScrollBar(this, _nPos);
+		_parent->onBofScrollBar(this, _nPos);
 	}
 
 	return _errCode;
@@ -215,8 +215,8 @@ ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, 
 			_pThumb = nullptr;
 		}
 
-		KillBackdrop();
-		SetBackdrop(pszBack);
+		killBackdrop();
+		setBackdrop(pszBack);
 
 		CBofPalette *pPalette = CBofApp::GetApp()->GetPalette();
 
@@ -239,7 +239,7 @@ ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, 
 		if (pszLeftBtnUp != nullptr) {
 			if ((_pLeftBtnUp = new CBofBitmap(pszLeftBtnUp, pPalette)) != nullptr) {
 				cPoint.x = 0;
-				cPoint.y = (_pBackdrop->Height() / 2) - (_pLeftBtnUp->Height() / 2);
+				cPoint.y = (_pBackdrop->height() / 2) - (_pLeftBtnUp->height() / 2);
 
 				_cLeftBtnRect = _pLeftBtnUp->getRect() + cPoint;
 
@@ -259,7 +259,7 @@ ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, 
 		if (pszRightBtnUp != nullptr) {
 			if ((_pRightBtnUp = new CBofBitmap(pszRightBtnUp, pPalette)) != nullptr) {
 				cPoint.x = _pBackdrop->width() - _pRightBtnUp->width();
-				cPoint.y = (_pBackdrop->Height() / 2) - (_pRightBtnUp->Height() / 2);
+				cPoint.y = (_pBackdrop->height() / 2) - (_pRightBtnUp->height() / 2);
 				_cRightBtnRect = _pLeftBtnUp->getRect() + cPoint;
 
 				_nScrollWidth -= _cRightBtnRect.width();
@@ -302,7 +302,7 @@ ErrorCode CBofScrollBar::paint(CBofRect *pDirtyRect) {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
-		CBofRect cRect(0, 0, _cRect.width() - 1, _cRect.Height() - 1);
+		CBofRect cRect(0, 0, _cRect.width() - 1, _cRect.height() - 1);
 		CBofPoint cPoint(0, 0);
 
 		if (pDirtyRect == nullptr) {
@@ -415,7 +415,7 @@ void CBofScrollBar::onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
 
 	if (!bDoNothing) {
 		_bMouseCaptured = true;
-		SetCapture();
+		setCapture();
 		if (_nScrollState != 5)
 			setTimer(BMP_SCROLL_TIMER, _nTimerCount);
 	}
@@ -444,7 +444,7 @@ void CBofScrollBar::onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 	if (_bMouseCaptured) {
 		killTimer(BMP_SCROLL_TIMER);
 		_bMouseCaptured = false;
-		ReleaseCapture();
+		releaseCapture();
 
 		int x, y;
 
@@ -456,7 +456,7 @@ void CBofScrollBar::onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 		case 1:
 			if (_pLeftBtnUp != nullptr) {
 				x = 0;
-				y = (int)(_cBkSize.cy / 2) - (int)(_cLeftBtnRect.Height() / 2);
+				y = (int)(_cBkSize.cy / 2) - (int)(_cLeftBtnRect.height() / 2);
 				_pLeftBtnUp->paint(this, x, y, nullptr, COLOR_WHITE);
 			}
 			break;
@@ -464,7 +464,7 @@ void CBofScrollBar::onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 		case 4:
 			if (_pRightBtnUp != nullptr) {
 				x = _cBkSize.cx - _cRightBtnRect.width();
-				y = (int)(_cBkSize.cy / 2) - (int)(_cRightBtnRect.Height() / 2);
+				y = (int)(_cBkSize.cy / 2) - (int)(_cRightBtnRect.height() / 2);
 				_pRightBtnUp->paint(this, x, y, nullptr, COLOR_WHITE);
 			}
 			break;

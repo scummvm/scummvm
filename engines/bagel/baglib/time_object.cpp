@@ -47,7 +47,7 @@ ErrorCode CBagTimeObject::attach() {
 	CBofPoint p = CBagObject::getPosition();
 
 	if ((m_xDig1 = new CBofSprite()) != nullptr) {
-		if (m_xDig1->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xDig1->width() != 0) && (m_xDig1->Height() != 0)) {
+		if (m_xDig1->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xDig1->width() != 0) && (m_xDig1->height() != 0)) {
 			m_xDig1->SetAnimated(false);
 			m_xDig1->setPosition(p.x, p.y);
 
@@ -62,7 +62,7 @@ ErrorCode CBagTimeObject::attach() {
 	}
 	if ((m_xDig2 = new CBofSprite()) != nullptr) {
 
-		if (m_xDig2->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xDig2->width() != 0) && (m_xDig2->Height() != 0)) {
+		if (m_xDig2->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xDig2->width() != 0) && (m_xDig2->height() != 0)) {
 
 			m_xDig2->SetAnimated(false);
 
@@ -79,7 +79,7 @@ ErrorCode CBagTimeObject::attach() {
 	}
 	if ((m_xColon = new CBofSprite()) != nullptr) {
 
-		if (m_xColon->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xColon->width() != 0) && (m_xColon->Height() != 0)) {
+		if (m_xColon->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xColon->width() != 0) && (m_xColon->height() != 0)) {
 
 			m_xColon->SetAnimated(false);
 			// The time sprite should start with 0 and go to 9 followed by the :
@@ -96,7 +96,7 @@ ErrorCode CBagTimeObject::attach() {
 	}
 	if ((m_xDig3 = new CBofSprite()) != nullptr) {
 
-		if (m_xDig3->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xDig3->width() != 0) && (m_xDig3->Height() != 0)) {
+		if (m_xDig3->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xDig3->width() != 0) && (m_xDig3->height() != 0)) {
 
 			m_xDig3->SetAnimated(false);
 
@@ -112,7 +112,7 @@ ErrorCode CBagTimeObject::attach() {
 	}
 	if ((m_xDig4 = new CBofSprite()) != nullptr) {
 
-		if (m_xDig4->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xDig4->width() != 0) && (m_xDig4->Height() != 0)) {
+		if (m_xDig4->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xDig4->width() != 0) && (m_xDig4->height() != 0)) {
 
 			m_xDig4->SetAnimated(false);
 

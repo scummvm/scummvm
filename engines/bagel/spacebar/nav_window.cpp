@@ -57,7 +57,7 @@ struct ST_BUTTONS {
 	int m_nTop;
 	int m_nWidth;
 	int m_nHeight;
-	int m_nID;
+	int _nID;
 
 };
 
@@ -281,7 +281,7 @@ ErrorCode CNavWindow::attach() {
 			CBofBitmap *pDis = LoadBitmap(MakeDir(g_NavButtons[i].m_pszDisabled), m_pPal);
 
 			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
-			m_pButtons[i]->create(g_NavButtons[i].m_pszName, g_NavButtons[i].m_nLeft, g_NavButtons[i].m_nTop, g_NavButtons[i].m_nWidth, g_NavButtons[i].m_nHeight, this, g_NavButtons[i].m_nID);
+			m_pButtons[i]->create(g_NavButtons[i].m_pszName, g_NavButtons[i].m_nLeft, g_NavButtons[i].m_nTop, g_NavButtons[i].m_nWidth, g_NavButtons[i].m_nHeight, this, g_NavButtons[i]._nID);
 			m_pButtons[i]->show();
 		} else {
 			ReportError(ERR_MEMORY);
@@ -290,7 +290,7 @@ ErrorCode CNavWindow::attach() {
 	}
 
 	show();
-	UpdateWindow();
+	updateWindow();
 	setTimer(777, 200, nullptr);
 
 	BofPlaySound(MakeDir(WELCOME_SND), SOUND_WAVE);
@@ -529,7 +529,7 @@ ErrorCode CNavWindow::detach() {
 	// Close sprite lib
 	CBofSprite::CloseLibrary();
 
-	KillBackdrop();
+	killBackdrop();
 
 	CBagStorageDevWnd::detach();
 
@@ -674,7 +674,7 @@ void CNavWindow::RefreshData() {
 	cBmp.paint(this, 443, 0);
 }
 
-void CNavWindow::OnBofButton(CBofObject *pObject, int nState) {
+void CNavWindow::onBofButton(CBofObject *pObject, int nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -682,7 +682,7 @@ void CNavWindow::OnBofButton(CBofObject *pObject, int nState) {
 		return;
 
 	CBofButton *pButton = (CBofButton *)pObject;
-	switch (pButton->GetControlID()) {
+	switch (pButton->getControlID()) {
 	case QUIT: {
 		LogInfo("\tClicked Quit");
 		VARMNGR->GetVariable("NPLAYEDNAV")->SetBoolValue(true);
@@ -704,7 +704,7 @@ void CNavWindow::OnBofButton(CBofObject *pObject, int nState) {
 	}
 
 	default:
-		LogWarning(BuildString("Clicked Unknown Button with ID %d", pButton->GetControlID()));
+		LogWarning(BuildString("Clicked Unknown Button with ID %d", pButton->getControlID()));
 		break;
 	}
 
@@ -1445,9 +1445,9 @@ void CNavWindow::CalcFuel(double hf) {
 			*m_pPortName = "McKelvey";
 		}
 
-		InvalidateRect(&cRect);
+		invalidateRect(&cRect);
 		if (!isDone)
-			UpdateWindow();
+			updateWindow();
 
 		// WORKAROUND: Restore owns palette flag back again
 		_pBackdrop->SetIsOwnPalette(true);

@@ -171,7 +171,7 @@ struct ST_BUTTONS {
 	int m_nTop;
 	int m_nWidth;
 	int m_nHeight;
-	int m_nID;
+	int _nID;
 
 };
 
@@ -400,7 +400,7 @@ ErrorCode CBibbleWindow::attach() {
 			CBofBitmap *pDis = LoadBitmap(BuildDir(g_stButtons[i].m_pszDisabled), pPal);
 
 			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
-			m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
+			m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i]._nID);
 			m_pButtons[i]->show();
 
 		} else {
@@ -420,7 +420,7 @@ ErrorCode CBibbleWindow::attach() {
 
 	show();
 
-	UpdateWindow();
+	updateWindow();
 
 	CBagCursor::showSystemCursor();
 
@@ -508,7 +508,7 @@ ErrorCode CBibbleWindow::detach() {
 	// Close sprite lib
 	CBofSprite::CloseLibrary();
 
-	KillBackdrop();
+	killBackdrop();
 
 	g_bWaitOK = true;
 
@@ -562,7 +562,7 @@ void CBibbleWindow::onPaint(CBofRect *pRect) {
 			char szBuf[20];
 			Common::sprintf_s(szBuf, "%d", g_engine->g_cBetAreas[i].m_nBet);
 			cRect = g_engine->g_cBetAreas[i]._cRect;
-			cRect.top += cRect.Height() / 2;
+			cRect.top += cRect.height() / 2;
 
 			PaintText(pBmp, &cRect, szBuf, 16, TEXT_NORMAL, CTEXT_COLOR, JUSTIFY_RIGHT, FORMAT_BOT_RIGHT);
 		}
@@ -582,7 +582,7 @@ void CBibbleWindow::onPaint(CBofRect *pRect) {
 }
 
 
-void CBibbleWindow::OnBofButton(CBofObject *pObject, int nState) {
+void CBibbleWindow::onBofButton(CBofObject *pObject, int nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -593,7 +593,7 @@ void CBibbleWindow::OnBofButton(CBofObject *pObject, int nState) {
 
 	int nBet = 0;
 
-	switch (pButton->GetControlID()) {
+	switch (pButton->getControlID()) {
 	case BIBBLE_BUTTON_READY:
 		LogInfo("\tClicked READY button");
 		PlayGame();
@@ -665,7 +665,7 @@ void CBibbleWindow::OnBofButton(CBofObject *pObject, int nState) {
 	}
 
 	default:
-		LogWarning(BuildString("Clicked Unknown Button with ID %d", pButton->GetControlID()));
+		LogWarning(BuildString("Clicked Unknown Button with ID %d", pButton->getControlID()));
 		break;
 	}
 
@@ -687,7 +687,7 @@ void CBibbleWindow::OnBofButton(CBofObject *pObject, int nState) {
 
 			CBofRect cRect(0, 440, 640 - 1, 480 - 1);
 
-			CBofBitmap cBmp(cRect.width(), cRect.Height(), (CBofPalette *)nullptr, false);
+			CBofBitmap cBmp(cRect.width(), cRect.height(), (CBofPalette *)nullptr, false);
 			cBmp.CaptureScreen(this, &cRect);
 
 			PaintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
@@ -1128,7 +1128,7 @@ ErrorCode CBibbleWindow::Highlight(CBetArea *pArea, byte nColor) {
 	Assert(IsValidObject(this));
 	Assert(pArea != nullptr);
 
-	CBofBitmap cBmp(pArea->_cRect.width(), pArea->_cRect.Height(), _pBackdrop->GetPalette());
+	CBofBitmap cBmp(pArea->_cRect.width(), pArea->_cRect.height(), _pBackdrop->GetPalette());
 
 	Assert(_pBackdrop != nullptr);
 	CBofRect r = cBmp.getRect();
@@ -1150,7 +1150,7 @@ ErrorCode CBibbleWindow::Highlight(CBetArea *pArea, byte nColor) {
 
 	Common::sprintf_s(szBuf, "%d", pArea->m_nBet);
 	cRect = cBmp.getRect();
-	cRect.top += cRect.Height() / 2;
+	cRect.top += cRect.height() / 2;
 
 	PaintText(&cBmp, &cRect, szBuf, 16, TEXT_NORMAL, CTEXT_COLOR, JUSTIFY_RIGHT, FORMAT_BOT_RIGHT);
 
@@ -1165,7 +1165,7 @@ ErrorCode CBibbleWindow::UnHighlight(CBetArea *pArea) {
 	Assert(IsValidObject(this));
 	Assert(pArea != nullptr);
 
-	CBofBitmap cBmp(pArea->_cRect.width(), pArea->_cRect.Height(), _pBackdrop->GetPalette());
+	CBofBitmap cBmp(pArea->_cRect.width(), pArea->_cRect.height(), _pBackdrop->GetPalette());
 
 	Assert(_pBackdrop != nullptr);
 
@@ -1178,7 +1178,7 @@ ErrorCode CBibbleWindow::UnHighlight(CBetArea *pArea) {
 
 	Common::sprintf_s(szBuf, "%d", pArea->m_nBet);
 	CBofRect cRect = cBmp.getRect();
-	cRect.top += cRect.Height() / 2;
+	cRect.top += cRect.height() / 2;
 
 	PaintText(&cBmp, &cRect, szBuf, 16, TEXT_NORMAL, CTEXT_COLOR, JUSTIFY_RIGHT, FORMAT_BOT_RIGHT);
 

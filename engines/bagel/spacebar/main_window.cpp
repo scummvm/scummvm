@@ -123,7 +123,7 @@ ErrorCode CMainWindow::attach() {
 	CBofPalette *bofpal = SetSlidebitmap(GetBackgroundName(), rView);
 	SetPalPtr(bofpal);
 
-	CBagel::getBagApp()->getMasterWnd()->SelectPalette(bofpal);
+	CBagel::getBagApp()->getMasterWnd()->selectPalette(bofpal);
 	CBofApp::GetApp()->SetPalette(bofpal);
 
 	ActivateView();
@@ -145,7 +145,7 @@ ErrorCode CMainWindow::attach() {
 		}
 
 		if (m_pThudBmp && (CBagObject *)nullptr == GetFGObjects(CBofString(THUDWLD))) {
-			CBofRect r(1, tmpRect.Height() - 101, 101, tmpRect.Height() - 1);
+			CBofRect r(1, tmpRect.height() - 101, 101, tmpRect.height() - 1);
 			m_pThudBmp->SetAssociateWnd(this);
 			InsertFGObjects(m_pThudBmp);
 		}
@@ -193,10 +193,10 @@ ErrorCode CMainWindow::attach() {
 				CBagVar *pVar = VARMNGR->GetVariable("PDAINCREMENT");
 				if (pVar) {
 					g_nPDAIncrement = pVar->GetNumValue();
-					m_pPDABmp->setPosInWindow(r.width(), r.Height(), g_nPDAIncrement);
+					m_pPDABmp->setPosInWindow(r.width(), r.height(), g_nPDAIncrement);
 				} else {
 					g_nPDAIncrement = PDA_INCREMENT;
-					m_pPDABmp->setPosInWindow(r.width(), r.Height(), g_nPDAIncrement);
+					m_pPDABmp->setPosInWindow(r.width(), r.height(), g_nPDAIncrement);
 				}
 				InsertFGObjects(m_pPDABmp);
 				DeactivatePDA();
@@ -255,7 +255,7 @@ ErrorCode CMainWindow::attach() {
 		}
 	}
 
-	OnSize(0, tmpRect.width() - 1, tmpRect.Height() - 1);
+	OnSize(0, tmpRect.width() - 1, tmpRect.height() - 1);
 
 	// Set the first paint to true so the objects
 	// won't run until the window is ready
@@ -362,7 +362,7 @@ void CMainWindow::CorrectZzazzlePoint(CBofPoint *p) {
 		return;
 
 	int dx = m_xFilterRect->width();
-	int dy = m_xFilterRect->Height();
+	int dy = m_xFilterRect->height();
 	int x = m_xFilterRect->left;
 	int y = m_xFilterRect->top;
 	CBofRect r(x + dx, y + dy, x + dx + dx, y + dy + dy);

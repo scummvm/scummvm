@@ -112,7 +112,7 @@ public:
 	int CreateTextScreen(CBofWindow *pParent = nullptr);
 	void DisplayTextScreen();
 
-	void OnBofButton(CBofObject *, int) override;
+	void onBofButton(CBofObject *, int) override;
 	void onClose() override;
 	void onPaint(CBofRect * pRect) override;
 };
@@ -150,8 +150,8 @@ public:
 	void onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
 	void onMainLoop();
 	void onPaint(CBofRect *pRect);
-	void OnBofButton(CBofObject *, int);
-	void OnBofListBox(CBofObject *pListBox, int nItemIndex);
+	void onBofButton(CBofObject *, int);
+	void onBofListBox(CBofObject *pListBox, int nItemIndex);
 	void SetOn();
 	void SetOff();
 	void SetQuit();

@@ -338,7 +338,7 @@ bool CBofSprite::PaintSprite(CBofWindow *pWnd, const int x, const int y) {
 	Assert(pWnd != nullptr);
 
 	// The window MUST have a backdrop
-	Assert(pWnd->GetBackdrop() != nullptr);
+	Assert(pWnd->getBackdrop() != nullptr);
 
 	Batchpaint(x, y);
 
@@ -406,21 +406,21 @@ bool CBofSprite::UpdateDirtyRect(CBofWindow *pWnd, CBofSprite *pPrimarySprite) {
 
 	// The window MUST have a backdrop associated with it.  If that's not feasible, then
 	// use CSprites instead of CBofSprites
-	Assert(pWnd->GetBackdrop() != nullptr);
+	Assert(pWnd->getBackdrop() != nullptr);
 
 	//
 	// Repaint the contents of the specified rectangle
 	//
 
-	CBofBitmap *pBackdrop = pWnd->GetBackdrop();
+	CBofBitmap *pBackdrop = pWnd->getBackdrop();
 	if (pBackdrop != nullptr) {
 
 		CBofRect *pRect = m_cDirtyRect;
-		if (pRect->width() != 0 && pRect->Height() != 0) {
+		if (pRect->width() != 0 && pRect->height() != 0) {
 			// Need a work area
 			CBofBitmap *pWork = m_pWorkBmp;
 			int dx = pRect->width();
-			int dy = pRect->Height();
+			int dy = pRect->height();
 
 			bool bTempWorkArea = false;
 			if ((pWork == nullptr) || (dx > m_nWorkDX) || (dy > m_nWorkDY)) {
@@ -457,7 +457,7 @@ bool CBofSprite::UpdateDirtyRect(CBofWindow *pWnd, CBofSprite *pPrimarySprite) {
 			}
 
 			// Paint final outcome to the screen
-			cSrcRect.SetRect(0, 0, pRect->width() - 1, pRect->Height() - 1);
+			cSrcRect.SetRect(0, 0, pRect->width() - 1, pRect->height() - 1);
 			pWork->paint(pWnd, pRect, &cSrcRect);
 
 			pWork->UnLock();
@@ -646,7 +646,7 @@ bool CBofSprite::SpritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint) {
 	CBofRect overlapRect;
 	if (overlapRect.IntersectRect(&_cRect, &pSprite->_cRect)) {
 		int32 dx = overlapRect.width();
-		int32 dy = overlapRect.Height();
+		int32 dy = overlapRect.height();
 
 		int32 x1 = overlapRect.left - _cRect.left + m_cImageRect.left;
 		int32 y1 = overlapRect.top - _cRect.top + m_cImageRect.top;
@@ -733,10 +733,10 @@ bool CBofSprite::CropImage(CBofWindow *pWnd, CBofRect *pRect, bool bUpdateNow) {
 		myRect.right += m_cImageRect.left;
 		CBofRect cDestRect = myRect + m_cPosition;
 
-		m_pImage->FillRect(&myRect, (byte)m_nMaskColor);
+		m_pImage->fillRect(&myRect, (byte)m_nMaskColor);
 
 		if (bUpdateNow) {
-			CBofBitmap *pBackdrop = pWnd->GetBackdrop();
+			CBofBitmap *pBackdrop = pWnd->getBackdrop();
 			if (pBackdrop != nullptr) {
 				pBackdrop->paint(pWnd, &cDestRect, &myRect);
 			}

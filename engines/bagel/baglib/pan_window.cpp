@@ -121,23 +121,23 @@ CBofPalette *CBagPanWindow::SetSlidebitmap(const CBofString &xSlideBmp, const CB
 			// Set the bagel crap
 			m_pPalette = m_pSlideBitmap->GetPalette();
 			CBofApp::GetApp()->SetPalette(m_pPalette);
-			CBagel::getBagApp()->getMasterWnd()->SelectPalette(m_pPalette);
-			CBofApp::GetApp()->GetMainWindow()->SelectPalette(m_pPalette);
-			SelectPalette(m_pPalette);
+			CBagel::getBagApp()->getMasterWnd()->selectPalette(m_pPalette);
+			CBofApp::GetApp()->GetMainWindow()->selectPalette(m_pPalette);
+			selectPalette(m_pPalette);
 
 			CBofSprite::OpenLibrary(m_pPalette);
 
 			m_pSlideBitmap->setCorrWidth(m_nCorrection);
 
 			CBofBitmap *pBackDropBitmap = new CBofBitmap(DEF_WIDTH + 1, DEF_HEIGHT + 1, m_pPalette);
-			if (!pBackDropBitmap || pBackDropBitmap->Height() <= 0 || pBackDropBitmap->width() <= 0) {
+			if (!pBackDropBitmap || pBackDropBitmap->height() <= 0 || pBackDropBitmap->width() <= 0) {
 				ReportError(ERR_FOPEN, "Error opening bitmap");
 			}
-			m_pVeiwPortBitmap = new CBofBitmap(DEF_WIDTH + 1, m_pSlideBitmap->Height() + 1, m_pPalette);
-			if (!m_pVeiwPortBitmap || !m_pVeiwPortBitmap->Height() || !m_pVeiwPortBitmap->width()) {
+			m_pVeiwPortBitmap = new CBofBitmap(DEF_WIDTH + 1, m_pSlideBitmap->height() + 1, m_pPalette);
+			if (!m_pVeiwPortBitmap || !m_pVeiwPortBitmap->height() || !m_pVeiwPortBitmap->width()) {
 				ReportError(ERR_FOPEN);
 			}
-			SetBackdrop(pBackDropBitmap);
+			setBackdrop(pBackDropBitmap);
 
 			move(cRect.left, cRect.top);
 
@@ -326,7 +326,7 @@ ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 								        (pCharObj->isStationary() == false) &&
 								        (pCharObj->getNumberOfLoops() != 0) &&     // Plays multiple or infinite (fly == -1)
 								        ((pObj->getRect().width() != 480) &&
-								         (pObj->getRect().Height() != 360))) {
+								         (pObj->getRect().height() != 360))) {
 
 								// Redraw everything inside of the closeup... but not the PDA...
 								// only want to redraw the closeup, not everything else.
@@ -410,7 +410,7 @@ void CBagPanWindow::enable() {
 }
 
 void CBagPanWindow::disable() {
-	FlushAllMessages();
+	flushAllMessages();
 	DeActivateView();
 }
 
@@ -677,8 +677,8 @@ void CBagPanWindow::OnSize(uint32 nType, int cx, int cy) {
 	if (GetSlideBitmap()->width() > 480)
 		vs.cy = 3 * vs.cx / 4;
 
-	if (vs.cy > xMaxPanBmpRect.Height())
-		vs.cy = xMaxPanBmpRect.Height();
+	if (vs.cy > xMaxPanBmpRect.height())
+		vs.cy = xMaxPanBmpRect.height();
 
 	SetViewPortSize(vs);
 
@@ -712,8 +712,8 @@ void CBagPanWindow::OnWindowPosChanging(WindowPos *lpwndpos) {
 
 	if (lpwndpos->cx > xSlideBmpRect.width())
 		lpwndpos->cx = xSlideBmpRect.width();
-	if (lpwndpos->cy > xSlideBmpRect.Height() + MENUNBORDER)
-		lpwndpos->cy = xSlideBmpRect.Height() + MENUNBORDER;
+	if (lpwndpos->cy > xSlideBmpRect.height() + MENUNBORDER)
+		lpwndpos->cy = xSlideBmpRect.height() + MENUNBORDER;
 }
 
 void CBagPanWindow::FlushInputEvents() {

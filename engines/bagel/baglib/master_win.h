@@ -183,7 +183,7 @@ public:
 
 	virtual ErrorCode OnHelp(const CBofString &sHelpFile, bool bSaveBkg = true, CBofWindow *pParent = nullptr);
 
-	void OnUserMessage(uint32 nMessage, uint32 lParam) override;
+	void onUserMessage(uint32 nMessage, uint32 lParam) override;
 
 	void onKeyHit(uint32 lKey, uint32 lRepCount) override;
 	void onClose() override;

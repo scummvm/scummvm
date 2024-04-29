@@ -139,14 +139,14 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 					if (menuSize.cx < (objSize.width() + menuLoc.x))
 						menuSize.cx = (objSize.width() + menuLoc.x);
-					if (menuSize.cy < (objSize.Height() + menuLoc.y))
-						menuSize.cy = (objSize.Height() + menuLoc.y);
+					if (menuSize.cy < (objSize.height() + menuLoc.y))
+						menuSize.cy = (objSize.height() + menuLoc.y);
 
 					pObj->setPosition(menuLoc);
 					pObj->SetHighlight(false);
 
 					if (!nMenuCount && (pObj->GetType() == TEXTOBJ)) {
-						menuLoc.y += objSize.Height();
+						menuLoc.y += objSize.height();
 					} else {
 						menuLoc.x += objSize.width();
 					}
@@ -166,7 +166,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 		}
 
 		// Start non-wield menu on next row
-		menuLoc.y += objSize.Height();
+		menuLoc.y += objSize.height();
 
 		nNumWieldChoices = xObjList.GetCount();
 
@@ -217,12 +217,12 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 					}
 
 					if (bTextOnly) {
-						if (wndRect.Height() <= (objSize.Height() + menuLoc.y)) {
+						if (wndRect.height() <= (objSize.height() + menuLoc.y)) {
 							menuLoc.y = 1;
 							nBaseMenuLocX += (menuSize.cx + 2);
 							menuLoc.x = nBaseMenuLocX + 1;
 						}
-					} else if (wndRect.Height() <= ((objSize.Height() + menuLoc.y) + 41)) {
+					} else if (wndRect.height() <= ((objSize.height() + menuLoc.y) + 41)) {
 							menuLoc.y = 1;
 							nBaseMenuLocX += (menuSize.cx + 2);
 							menuLoc.x = nBaseMenuLocX;
@@ -232,16 +232,16 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 					menuLoc.x = (1 + nBaseMenuLocX);
 					if (menuSize.cx < (objSize.width() + menuLoc.x))
 						menuSize.cx = (objSize.width() + menuLoc.x);
-					if (menuSize.cy < (objSize.Height() + menuLoc.y))
-						menuSize.cy = (objSize.Height() + menuLoc.y);
+					if (menuSize.cy < (objSize.height() + menuLoc.y))
+						menuSize.cy = (objSize.height() + menuLoc.y);
 					pObj->setPosition(menuLoc);
 					pObj->SetHighlight(false);
 
 					menuLoc.x = (1 + nBaseMenuLocX);
-					menuLoc.y += (objSize.Height() + 1);
+					menuLoc.y += (objSize.height() + 1);
 				} else {
 					// Increment next position by its width
-					if (wndRect.Height() <= (objSize.Height() + menuLoc.y)) {
+					if (wndRect.height() <= (objSize.height() + menuLoc.y)) {
 						menuLoc.y = 1;
 						nBaseMenuLocX += (menuSize.cx + 2);
 						menuLoc.x = nBaseMenuLocX;
@@ -252,8 +252,8 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 					// Continue to grow menu size to max required
 					if (menuSize.cx < (objSize.width() + menuLoc.x))
 						menuSize.cx = (objSize.width() + menuLoc.x);
-					if (menuSize.cy < (objSize.Height() + menuLoc.y))
-						menuSize.cy = (objSize.Height() + menuLoc.y);
+					if (menuSize.cy < (objSize.height() + menuLoc.y))
+						menuSize.cy = (objSize.height() + menuLoc.y);
 
 					pObj->setPosition(menuLoc);
 					pObj->SetHighlight(false);
@@ -261,7 +261,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 					if ((nObjectPal < 0) && ((pObj->GetType() == BMPOBJ) || (pObj->GetType() == SPRITEOBJ)))
 						nObjectPal = i;
 					menuLoc.x += objSize.width();
-					tmpVal = objSize.Height();//save the obj height for use later if we get a text obj
+					tmpVal = objSize.height();//save the obj height for use later if we get a text obj
 				}
 
 				if (pObj->IsNoMenu()) {
@@ -286,7 +286,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 	// If we ran something and there are no other menu items just return
 	if (!(nRunItems && !nMenuCount)) {
 		if (nMenuCount) {
-			menuLoc.y += objSize.Height();
+			menuLoc.y += objSize.height();
 			menuLoc.x = 1;
 			nMenuCount = 0;
 		}
@@ -495,7 +495,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 bool CBagMenu::AddItem(CBagObject *pObj, void *( * /*func*/)(int, void *), void * /*info*/) {
 	pObj->setPosition(CBofPoint(0, m_nY));
 
-	m_nY = (int16)(m_nY + (int16)(pObj->getRect().Height() + 1));
+	m_nY = (int16)(m_nY + (int16)(pObj->getRect().height() + 1));
 	AddObject(pObj);
 
 	return true;
@@ -587,13 +587,13 @@ ErrorCode CBagMenuDlg::create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRec
 
 	CBagStorageDevDlg::create("Menu", &r, pWnd, 0);
 
-	CBofBitmap *pBmp = new CBofBitmap(r.width(), r.Height(), pPal);
+	CBofBitmap *pBmp = new CBofBitmap(r.width(), r.height(), pPal);
 	if (pBmp != nullptr) {
 		r.OffsetRect(-r.left, -r.top);
 		Assert(pPal != nullptr);
-		pBmp->FillRect(&r, pPal->GetNearestIndex(RGB(82, 82, 82)) /*RGB(0,0,0)*/);
+		pBmp->fillRect(&r, pPal->GetNearestIndex(RGB(82, 82, 82)) /*RGB(0,0,0)*/);
 		pBmp->DrawRect(&r, pPal->GetNearestIndex(RGB(0, 0, 0)) /*RGB(0,0,0)*/);
-		SetBackdrop(pBmp);
+		setBackdrop(pBmp);
 	}
 
 	return _errCode;
@@ -678,7 +678,7 @@ void CBagMenuDlg::onPaint(CBofRect *pRect) {
 	CBagPanWindow::FlushInputEvents();
 }
 
-void CBagMenuDlg::OnDeActivate() {
+void CBagMenuDlg::onDeActivate() {
 	Assert(IsValidObject(this));
 
 	close();

@@ -106,7 +106,7 @@ public:
 	int screenWidth() const {
 		return m_nScreenDX;
 	}
-	int ScreenHeight() const {
+	int screenHeight() const {
 		return m_nScreenDY;
 	}
 	int ScreenDepth() const {

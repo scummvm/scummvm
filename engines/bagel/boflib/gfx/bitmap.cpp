@@ -226,7 +226,7 @@ ErrorCode CBofBitmap::paint(CBofWindow *pWnd, int x, int y, CBofRect *pSrcRect, 
 	CBofRect cRect(x, y, x + m_nDX - 1, y + m_nDY - 1);
 
 	if (pSrcRect != nullptr) {
-		cRect.SetRect(x, y, x + pSrcRect->width() - 1, y + pSrcRect->Height() - 1);
+		cRect.SetRect(x, y, x + pSrcRect->width() - 1, y + pSrcRect->height() - 1);
 	}
 
 	return paint(pWnd, &cRect, pSrcRect, nMaskColor);
@@ -241,12 +241,12 @@ ErrorCode CBofBitmap::paint(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect *pSrc
 
 	if (_errCode == ERR_NONE) {
 		if (pDstRect != nullptr) {
-			Assert((pDstRect->width() > 0) && (pDstRect->Height() > 0));
+			Assert((pDstRect->width() > 0) && (pDstRect->height() > 0));
 			cDestRect = *pDstRect;
 		}
 
 		if (pSrcRect != nullptr) {
-			Assert((pSrcRect->width() > 0) && (pSrcRect->Height() > 0));
+			Assert((pSrcRect->width() > 0) && (pSrcRect->height() > 0));
 			cSourceRect = *pSrcRect;
 		}
 
@@ -272,29 +272,29 @@ ErrorCode CBofBitmap::PaintMaskBackdrop(CBofWindow *pWnd, CBofRect *pDstRect, CB
 	Assert(pWnd != nullptr);
 
 	// This function requires the use of a backdrop
-	Assert(pWnd->GetBackdrop() != nullptr);
+	Assert(pWnd->getBackdrop() != nullptr);
 
 	CBofRect cDestRect(0, 0, m_nDX - 1, m_nDY - 1), cSourceRect(0, 0, m_nDX - 1, m_nDY - 1);
 
 	if (_errCode == ERR_NONE) {
 
 		if (pDstRect != nullptr) {
-			Assert((pDstRect->width() > 0) && (pDstRect->Height() > 0));
+			Assert((pDstRect->width() > 0) && (pDstRect->height() > 0));
 			cDestRect = *pDstRect;
 		}
 
 		if (pSrcRect != nullptr) {
-			Assert((pSrcRect->width() > 0) && (pSrcRect->Height() > 0));
+			Assert((pSrcRect->width() > 0) && (pSrcRect->height() > 0));
 
 			cSourceRect = *pSrcRect;
 		}
 
-		CBofBitmap cTempBitmap(cSourceRect.width(), cSourceRect.Height(), m_pPalette);
+		CBofBitmap cTempBitmap(cSourceRect.width(), cSourceRect.height(), m_pPalette);
 		CBofBitmap *pBackdrop;
 
 		// Use the backdrop to get the background instead of trying to
 		// capture the screen
-		if ((pBackdrop = pWnd->GetBackdrop()) != nullptr) {
+		if ((pBackdrop = pWnd->getBackdrop()) != nullptr) {
 			CBofRect cTempRect = cTempBitmap.getRect();
 			pBackdrop->paint(&cTempBitmap, &cTempRect, &cDestRect);
 		}
@@ -315,7 +315,7 @@ ErrorCode CBofBitmap::paint(CBofBitmap *pBmp, int x, int y, CBofRect *pSrcRect, 
 	CBofRect cRect(x, y, x + m_nDX - 1, y + m_nDY - 1);
 
 	if (pSrcRect != nullptr) {
-		cRect.SetRect(x, y, x + pSrcRect->width() - 1, y + pSrcRect->Height() - 1);
+		cRect.SetRect(x, y, x + pSrcRect->width() - 1, y + pSrcRect->height() - 1);
 	}
 
 	return paint(pBmp, &cRect, pSrcRect, nMaskColor);
@@ -330,12 +330,12 @@ ErrorCode CBofBitmap::paint(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSrc
 
 	if (!ErrorOccurred() && !pBmp->ErrorOccurred()) {
 		if (pDstRect != nullptr) {
-			Assert((pDstRect->width() > 0) && (pDstRect->Height() > 0));
+			Assert((pDstRect->width() > 0) && (pDstRect->height() > 0));
 			cDestRect = *pDstRect;
 		}
 
 		if (pSrcRect != nullptr) {
-			Assert((pSrcRect->width() > 0) && (pSrcRect->Height() > 0));
+			Assert((pSrcRect->width() > 0) && (pSrcRect->height() > 0));
 			cSourceRect = *pSrcRect;
 		}
 
@@ -425,9 +425,9 @@ ErrorCode CBofBitmap::PaintStretch4(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRe
 		byte *pDestBits = pBmp->m_pBits;
 		byte *pSrcBits = m_pBits;
 
-		int32 dy = pSrcRect->Height();
+		int32 dy = pSrcRect->height();
 
-		int32 nDstHeight = pDstRect->Height();
+		int32 nDstHeight = pDstRect->height();
 
 		int32 x1 = pSrcRect->left;
 		int32 y1 = pSrcRect->top;
@@ -544,9 +544,9 @@ ErrorCode CBofBitmap::PaintStretchOpt(CBofBitmap *pBmp, CBofRect *pDstRect, CBof
 		byte *pDestBits = pBmp->m_pBits;
 		byte *pSrcBits = m_pBits;
 
-		int32 dy = pSrcRect->Height();
+		int32 dy = pSrcRect->height();
 
-		int32 nDstHeight = pDstRect->Height();
+		int32 nDstHeight = pDstRect->height();
 
 		int32 x1 = pSrcRect->left;
 		int32 y1 = pSrcRect->top;
@@ -622,7 +622,7 @@ ErrorCode CBofBitmap::CaptureScreen(CBofWindow *pWnd, CBofRect *pSrcRect, CBofRe
 		}
 
 		cSrcRect = *pSrcRect;
-		CBofBitmap *pBackdrop = pWnd->GetBackdrop();
+		CBofBitmap *pBackdrop = pWnd->getBackdrop();
 
 		// If we're capturing the screen, we have to convert the format first.
 		if (!m_bUseBackdrop || pBackdrop == nullptr) {
@@ -772,7 +772,7 @@ void CBofBitmap::DrawRect(CBofRect *pRect, byte iColor) {
 	}
 }
 
-void CBofBitmap::FillRect(CBofRect *pRect, byte iColor) {
+void CBofBitmap::fillRect(CBofRect *pRect, byte iColor) {
 	Assert(IsValidObject(this));
 
 	if (_errCode == ERR_NONE) {
@@ -852,7 +852,7 @@ CBofBitmap *CBofBitmap::ExtractBitmap(CBofRect *pRect) {
 				pPalette = pPalette->CopyPalette();
 			}
 
-			if ((pNewBmp = new CBofBitmap(pRect->width(), pRect->Height(), pPalette, m_bOwnPalette)) != nullptr) {
+			if ((pNewBmp = new CBofBitmap(pRect->width(), pRect->height(), pPalette, m_bOwnPalette)) != nullptr) {
 				paint(pNewBmp, 0, 0, pRect);
 			} else {
 				LogFatal("Unable to allocate a new CBofBitmap");
@@ -928,7 +928,7 @@ ErrorCode CBofBitmap::scrollUp(int nPixels, CBofRect *pRect) {
 		int32 x = pRect->left;
 		int32 y = pRect->top;
 		int32 dx = pRect->width();
-		int32 dy = pRect->Height();
+		int32 dy = pRect->height();
 
 		// Height must be valid or we're hosed
 		Assert(dy > 0);
@@ -1103,7 +1103,7 @@ ErrorCode CBofBitmap::Curtain(CBofWindow *pWnd, int nSpeed, int nMaskColor) {
 		CBofRect cRect;
 
 		int nWidth = pWnd->width();
-		int nHeight = pWnd->Height();
+		int nHeight = pWnd->height();
 
 		for (int i = 0; i < nHeight; i += nSpeed) {
 			cRect.SetRect(0, i, nWidth - 1, i + nSpeed - 1);
@@ -1138,7 +1138,7 @@ ErrorCode CBofBitmap::FadeLines(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect *
 		int x1 = pDstRect->left;
 		int y1 = pDstRect->top;
 		int nWidth1 = pDstRect->width();
-		int nHeight1 = pDstRect->Height();
+		int nHeight1 = pDstRect->height();
 
 		int x2 = pSrcRect->left;
 		int y2 = pSrcRect->top;

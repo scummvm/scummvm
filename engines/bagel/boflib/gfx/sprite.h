@@ -120,8 +120,8 @@ public:
 		return _cRect;
 	}
 
-	int Height() const {
-		return _cRect.Height();
+	int height() const {
+		return _cRect.height();
 	}
 
 	int width() const {

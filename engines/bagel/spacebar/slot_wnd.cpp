@@ -47,7 +47,7 @@ struct ST_BUTTONS {
 	int m_nTop;
 	int m_nWidth;
 	int m_nHeight;
-	int m_nID;
+	int _nID;
 };
 
 static ST_BUTTONS g_stButtons[NUM_SLOTBUTT] = {
@@ -135,7 +135,7 @@ void SBarSlotWnd::onPaint(CBofRect *pRect) {
 		CBofBitmap *pBackBmp;
 
 		//Paint the storage device
-		if ((pBackBmp = GetBackdrop()) != nullptr) {
+		if ((pBackBmp = getBackdrop()) != nullptr) {
 			Assert(GetWorkBmp() != nullptr);
 
 			// Erase everything from the background
@@ -158,8 +158,8 @@ void SBarSlotWnd::onPaint(CBofRect *pRect) {
 		}
 
 		// Paint the backdrop
-		if (GetBackdrop())
-			PaintBackdrop();
+		if (getBackdrop())
+			paintBackdrop();
 
 		UpdateText();
 	}
@@ -199,7 +199,7 @@ ErrorCode  SBarSlotWnd::attach() {
 				CBofBitmap *pDis = LoadBitmap(BuildSlotDir(g_stButtons[i].m_pszDisabled), pPal);
 
 				m_pSlotButs[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
-				m_pSlotButs[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
+				m_pSlotButs[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i]._nID);
 				m_pSlotButs[i]->show();
 			}
 		}
@@ -286,8 +286,8 @@ ErrorCode  SBarSlotWnd::attach() {
 
 		show();
 
-		InvalidateRect(nullptr);
-		UpdateWindow();
+		invalidateRect(nullptr);
+		updateWindow();
 	}
 
 	m_pBkgSnd = new CBofSound(this, BuildSlotDir(CASINO_AUDIO), SOUND_MIX, 99999);
@@ -392,7 +392,7 @@ void SBarSlotWnd::AddBet(int nBetVal) {
 			m_nCredit -= nBetVal;
 
 			// Check and see if we need to show the GO button
-			if (m_nBet && !(m_pSlotButs[GO]->IsVisible())) {
+			if (m_nBet && !(m_pSlotButs[GO]->isVisible())) {
 				m_pSlotButs[GO]->show();
 			}
 			m_nPayOff1 = 0;
@@ -408,7 +408,7 @@ void SBarSlotWnd::AddBet(int nBetVal) {
 
 		CBofRect cRect(0, 440, 640 - 1, 480 - 1);
 
-		CBofBitmap cBmp(cRect.width(), cRect.Height(), (CBofPalette *)nullptr, false);
+		CBofBitmap cBmp(cRect.width(), cRect.height(), (CBofPalette *)nullptr, false);
 		cBmp.CaptureScreen(this, &cRect);
 
 		PaintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
@@ -425,7 +425,7 @@ void SBarSlotWnd::BetAll() {
 		m_nCredit = 0;
 
 		// Check and see if we need to show the GO button
-		if (m_nBet && !m_pSlotButs[GO]->IsVisible())
+		if (m_nBet && !m_pSlotButs[GO]->isVisible())
 			m_pSlotButs[GO]->show();
 
 		UpdateText();
@@ -438,7 +438,7 @@ void SBarSlotWnd::BetAll() {
 
 		CBofRect cRect(0, 440, 640 - 1, 480 - 1);
 
-		CBofBitmap cBmp(cRect.width(), cRect.Height(), (CBofPalette *)nullptr, false);
+		CBofBitmap cBmp(cRect.width(), cRect.height(), (CBofPalette *)nullptr, false);
 		cBmp.CaptureScreen(this, &cRect);
 
 		PaintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
@@ -468,7 +468,7 @@ void SBarSlotWnd::FixBet() {
 void SBarSlotWnd::Go() {
 	for (int i = 0; i < SLOT_NUM; i++) {
 		m_cSlots[i].m_nIdx = g_engine->getRandomNumber() % SLOT_BMP_NUM;
-		InvalidateRect(&(m_cSlots[i].m_cSlotRect));
+		invalidateRect(&(m_cSlots[i].m_cSlotRect));
 	}
 
 	SlideSlots();
@@ -483,7 +483,7 @@ void SBarSlotWnd::Go() {
 
 	UpdateText();
 
-	UpdateWindow();
+	updateWindow();
 	g_bFix = false;
 
 	if (m_bFixBet && m_nBet != 0) {
@@ -697,7 +697,7 @@ void SBarSlotWnd::SlideSlots() {
 			if (SrcRect.left < BmpRect.left)
 				SrcRect.left = BmpRect.left;
 
-			cRect.SetRect(DestRect.left, DestRect.top, DestRect.left + SrcRect.width() - 1, DestRect.top + SrcRect.Height() - 1);
+			cRect.SetRect(DestRect.left, DestRect.top, DestRect.left + SrcRect.width() - 1, DestRect.top + SrcRect.height() - 1);
 
 			pCurBmp->PaintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
 		}
@@ -719,7 +719,7 @@ void SBarSlotWnd::SlideSlots() {
 			if (SrcRect.top < BmpRect.top)
 				SrcRect.top = BmpRect.top;
 
-			cRect.SetRect(DestRect.left, DestRect.top, DestRect.left + SrcRect.width() - 1, DestRect.top + SrcRect.Height() - 1);
+			cRect.SetRect(DestRect.left, DestRect.top, DestRect.left + SrcRect.width() - 1, DestRect.top + SrcRect.height() - 1);
 			pCurBmp->PaintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
 		}
 
@@ -741,7 +741,7 @@ void SBarSlotWnd::SlideSlots() {
 			if (SrcRect.right > BmpRect.right)
 				SrcRect.right = BmpRect.right;
 
-			cRect.SetRect(DestRect.right - SrcRect.width() + 1, DestRect.top, DestRect.right, DestRect.top + SrcRect.Height() - 1);
+			cRect.SetRect(DestRect.right - SrcRect.width() + 1, DestRect.top, DestRect.right, DestRect.top + SrcRect.height() - 1);
 			pCurBmp->PaintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
 		}
 		m_pSlotSound->play();
@@ -762,7 +762,7 @@ void SBarSlotWnd::SlideSlots() {
 			if (SrcRect.bottom > BmpRect.bottom)
 				SrcRect.bottom = BmpRect.bottom;
 
-			cRect.SetRect(DestRect.left, DestRect.bottom - SrcRect.Height() + 1, DestRect.left + SrcRect.width() - 1, DestRect.bottom);
+			cRect.SetRect(DestRect.left, DestRect.bottom - SrcRect.height() + 1, DestRect.left + SrcRect.width() - 1, DestRect.bottom);
 			pCurBmp->PaintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
 		}
 
@@ -817,11 +817,11 @@ void SBarSlotWnd::onTimer(uint32 /*nTimerId*/) {
 void SBarSlotWnd::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	if (FixRect.PtInRect(*pPoint)) {
 		FixBet();
-		InvalidateRect(&FixRect);
+		invalidateRect(&FixRect);
 	}
 }
 
-void SBarSlotWnd::OnBofButton(CBofObject *pObject, int nState) {
+void SBarSlotWnd::onBofButton(CBofObject *pObject, int nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -830,7 +830,7 @@ void SBarSlotWnd::OnBofButton(CBofObject *pObject, int nState) {
 
 	CBofButton *pButton = (CBofButton *)pObject;
 
-	switch (pButton->GetControlID()) {
+	switch (pButton->getControlID()) {
 	case ONE:
 		AddBet(1);
 		break;
@@ -897,7 +897,7 @@ void SBarSlotWnd::OnBofButton(CBofObject *pObject, int nState) {
 		break;
 
 	default:
-		LogWarning(BuildString("Clicked Unknown Button with ID %d", pButton->GetControlID()));
+		LogWarning(BuildString("Clicked Unknown Button with ID %d", pButton->getControlID()));
 		break;
 	}
 }

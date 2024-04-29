@@ -129,8 +129,8 @@ ErrorCode SBarBibOddsWnd::attach() {
 	// Don't call CBagChatWnd::attach() - We are overriding it's behavior
 	if (CBagStorageDevWnd::attach() == ERR_NONE) {
 		show();
-		InvalidateRect(nullptr);
-		UpdateWindow();
+		invalidateRect(nullptr);
+		updateWindow();
 	}
 
 	return _errCode;

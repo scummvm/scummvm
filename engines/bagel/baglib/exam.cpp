@@ -36,7 +36,7 @@ bool CBagExam::initExam() {
 	}
 
 	getParent()->disable();
-	getParent()->FlushAllMessages();
+	getParent()->flushAllMessages();
 
 	markBegEnd();
 	setRotationRects();

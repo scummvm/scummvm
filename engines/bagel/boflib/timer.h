@@ -58,10 +58,10 @@ public:
 	}
 
 	void SetID(uint32 nID)                {
-		m_nID = nID;
+		_nID = nID;
 	}
 	uint32 GetID()                    {
-		return (m_nID);
+		return (_nID);
 	}
 
 	void SetInterval(uint32 nInterval)    {
@@ -99,7 +99,7 @@ protected:
 public:
 
 	uint32       m_lLastTime;
-	uint32        m_nID;
+	uint32        _nID;
 	uint32        m_nInterval;
 	BofCallback m_pCallBack;
 	void       *m_lUserInfo;
