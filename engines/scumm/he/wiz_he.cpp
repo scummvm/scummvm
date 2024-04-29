@@ -2316,12 +2316,15 @@ void Wiz::ensureNativeFormatImageForState(int image, int state) {
 
 		int newCompType = compType;
 		switch (compType) {
-		case kWCTNone16Bpp:
-			newCompType += kWCTNone16BppBigEndian - kWCTNone16Bpp;
-			break;
-		case kWCTTRLE16Bpp:
-			newCompType += kWCTTRLE16BppBigEndian - kWCTTRLE16Bpp;
-			break;
+		// These were in the original but they appear to be dead code.
+		// Not removing these just yet...
+		// 
+		// case kWCTNone16Bpp:
+		// 	newCompType += kWCTNone16BppBigEndian - kWCTNone16Bpp;
+		// 	break;
+		// case kWCTTRLE16Bpp:
+		// 	newCompType += kWCTTRLE16BppBigEndian - kWCTTRLE16Bpp;
+		// 	break;
 		case kWCTNone16BppBigEndian:
 			newCompType -= kWCTNone16BppBigEndian - kWCTNone16Bpp;
 			break;
