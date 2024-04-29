@@ -47,23 +47,23 @@ protected:
 
 	virtual ErrorCode  initialize(CBofWindow *pParent);
 
-	virtual bool    OpenMovie(const char *sFilename);
-	virtual void    CloseMovie();
+	virtual bool    openMovie(const char *sFilename);
+	virtual void    closeMovie();
 
 	virtual void    onReSize(CBofSize *pSize);
 
-	virtual bool    Play();
-	virtual bool    Reverse();
+	virtual bool    play();
+	virtual bool    reverse();
 
 	virtual void    onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) {
 		onButtonUp(nFlags, pPoint);
 	}
-	virtual void    OnRButtonUp(uint32 nFlags, CBofPoint *pPoint) {
+	virtual void    onRButtonUp(uint32 nFlags, CBofPoint *pPoint) {
 		onButtonUp(nFlags, pPoint);
 	}
 	virtual void    onButtonUp(uint32 nFlags, CBofPoint *pPoint);
 	virtual void    onPaint(CBofRect *pRect);
-	virtual void    OnMovieDone();
+	virtual void    onMovieDone();
 	virtual void    onClose();
 	virtual void    onMainLoop();
 	virtual void    onKeyHit(uint32 lKey, uint32 lRepCount);
@@ -73,34 +73,34 @@ public:
 	CBofMovie(CBofWindow *pParent = nullptr, const char *pszFilename = nullptr, CBofRect *pBounds = nullptr, bool bStretch = false, bool bUseNewPalette = true, bool bBlackOutWindow = false);
 	~CBofMovie();
 
-	virtual bool        Open(const char *sFilename = nullptr, CBofRect *pBounds = nullptr);
+	virtual bool        open(const char *sFilename = nullptr, CBofRect *pBounds = nullptr);
 
-	virtual bool        Play(bool bLoop,  bool bEscCanStop = true);
-	virtual bool        Reverse(bool bLoop,  bool bEscCanStop = true);
-	virtual bool        Pause();
-	virtual bool        Stop();
+	virtual bool        play(bool bLoop,  bool bEscCanStop = true);
+	virtual bool        reverse(bool bLoop,  bool bEscCanStop = true);
+	virtual bool        pause();
+	virtual bool        stop();
 
-	virtual MVSTATUS    Status() {
+	virtual MVSTATUS    status() {
 		return m_eMovStatus;
 	}
 
-	virtual bool        SeekToStart();
-	virtual bool        SeekToEnd();
+	virtual bool        seekToStart();
+	virtual bool        seekToEnd();
 
-	virtual uint32       GetFrame();
-	virtual bool        SetFrame(uint32 dwFrameNum);
+	virtual uint32      getFrame();
+	virtual bool        setFrame(uint32 dwFrameNum);
 
-	virtual bool        CenterRect();
+	virtual bool        centerRect();
 
-	Graphics::ManagedSurface *GetSmackBuffer()  {
+	Graphics::ManagedSurface *getSmackBuffer()  {
 		return m_pSbuf;
 	}
-	Video::SmackerDecoder *GetSmackMovie()   {
+	Video::SmackerDecoder *getSmackMovie()   {
 		return m_pSmk;
 	}
 };
 
-ErrorCode BofPlayMovie(CBofWindow *pParent, const char *pszMovieFile, CBofRect *pRect = nullptr);
+ErrorCode bofPlayMovie(CBofWindow *pParent, const char *pszMovieFile, CBofRect *pRect = nullptr);
 
 } // namespace Bagel
 

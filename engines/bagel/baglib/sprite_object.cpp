@@ -39,7 +39,7 @@ CBagSpriteObject::CBagSpriteObject() : CBagObject() {
 	SetTimeless(true);
 
 	// implement sprite framerates
-	SetFrameRate(0);
+	setFrameRate(0);
 	m_nLastUpdate = 0;
 }
 
@@ -179,7 +179,7 @@ PARSE_CODES CBagSpriteObject::setInfo(bof_ifstream &istr) {
 
 				// The framerate is expressed in frames/second, so do some division
 				// here to store the number of milliseconds.
-				SetFrameRate(1000 / nFrameRate);
+				setFrameRate(1000 / nFrameRate);
 
 				nObjectUpdated = true;
 			} else {
@@ -215,7 +215,7 @@ PARSE_CODES CBagSpriteObject::setInfo(bof_ifstream &istr) {
 ErrorCode CBagSpriteObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, int) {
 	if (m_xSprite) {
 		bool b = true;
-		int nFrameInterval = GetFrameRate();
+		int nFrameInterval = getFrameRate();
 
 		if (nFrameInterval != 0) {
 			uint32 nCurTime = GetTimer();

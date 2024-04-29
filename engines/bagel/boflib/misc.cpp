@@ -36,7 +36,7 @@ void TimerStart() {
 	lStart = g_system->getMillis();
 }
 
-uint32 TimerStop() {
+uint32 timerStop() {
 	return g_system->getMillis() - lStart;
 }
 

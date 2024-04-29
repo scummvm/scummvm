@@ -64,7 +64,7 @@ public:
 	virtual bool runObject();
 
 	// Return true if this asynch zelda movie can play right now
-	bool AsynchPDAMovieCanPlay();
+	bool asynchPDAMovieCanPlay();
 
 	// Special routines for handling asynch zelda movies
 	void SetDontQueue() {

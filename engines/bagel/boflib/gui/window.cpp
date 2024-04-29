@@ -552,7 +552,7 @@ void CBofWindow::onLButtonUp(uint32, CBofPoint *, void *) {}
 void CBofWindow::onLButtonDblClk(uint32, CBofPoint *) {}
 
 void CBofWindow::OnRButtonDown(uint32, CBofPoint *) {}
-void CBofWindow::OnRButtonUp(uint32, CBofPoint *) {}
+void CBofWindow::onRButtonUp(uint32, CBofPoint *) {}
 void CBofWindow::OnRButtonDblClk(uint32, CBofPoint *) {}
 
 void CBofWindow::onKeyHit(uint32, uint32) {}
@@ -673,7 +673,7 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 		break;
 
 	case Common::EVENT_RBUTTONUP:
-		OnRButtonUp(0, &mousePos);
+		onRButtonUp(0, &mousePos);
 		break;
 
 	case Common::EVENT_KEYDOWN:

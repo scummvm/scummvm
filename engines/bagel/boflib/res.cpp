@@ -46,7 +46,7 @@ ErrorCode CBofStringTable::Load(const char *pszFileName) {
 	Release();
 
 	// Open this string file
-	Open(pszFileName);
+	open(pszFileName);
 
 	m_lBufSize = GetLength();
 

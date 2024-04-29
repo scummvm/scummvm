@@ -67,7 +67,7 @@ public:
 	}
 
 	bool                HasDisc();
-	int                 GetFrame(double fTime, int nUseDisc);
+	int                 getFrame(double fTime, int nUseDisc);
 
 	virtual ErrorCode  attach();
 	virtual ErrorCode  detach();

@@ -164,7 +164,7 @@ ErrorCode SpaceBarEngine::initialize() {
 
 					// Play the movie only if it exists
 					if (FileExists(cString.GetBuffer())) {
-						BofPlayMovie(_masterWin, cString.GetBuffer());
+						bofPlayMovie(_masterWin, cString.GetBuffer());
 						if (pBmp != nullptr) {
 							pBmp->paint(_masterWin, 0, 0);
 						}
@@ -175,7 +175,7 @@ ErrorCode SpaceBarEngine::initialize() {
 					cString = LOGOSMK2;
 					MACROREPLACE(cString);
 					if (FileExists(cString.GetBuffer())) {
-						BofPlayMovie(_masterWin, cString.GetBuffer());
+						bofPlayMovie(_masterWin, cString.GetBuffer());
 						if (pBmp != nullptr) {
 							pBmp->paint(_masterWin, 0, 0);
 						}
@@ -188,7 +188,7 @@ ErrorCode SpaceBarEngine::initialize() {
 					MACROREPLACE(cString);
 
 					if (FileExists(cString.GetBuffer())) {
-						BofPlayMovie(_masterWin, cString.GetBuffer());
+						bofPlayMovie(_masterWin, cString.GetBuffer());
 						if (pBmp != nullptr) {
 							pBmp->paint(_masterWin, 0, 0);
 						}

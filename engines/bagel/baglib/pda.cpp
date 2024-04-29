@@ -541,7 +541,7 @@ void CBagPDA::RunWaitingMovie() {
 		if (nCount > 0) {
 			for (int i = 0; i < nCount; i++) {
 				CBagMovieObject *pMObj = m_pMovieList->GetNodeItem(i);
-				if (pMObj->AsynchPDAMovieCanPlay()) {
+				if (pMObj->asynchPDAMovieCanPlay()) {
 					m_bSoundsPaused = true;
 					CSound::PauseSounds();              // pause all sounds
 					pMObj->runObject();

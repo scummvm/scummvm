@@ -292,7 +292,7 @@ ErrorCode  SBarSlotWnd::attach() {
 
 	m_pBkgSnd = new CBofSound(this, BuildSlotDir(CASINO_AUDIO), SOUND_MIX, 99999);
 	if (m_pBkgSnd != nullptr) {
-		m_pBkgSnd->Play();
+		m_pBkgSnd->play();
 	} else {
 		ReportError(ERR_MEMORY);
 	}
@@ -316,7 +316,7 @@ ErrorCode SBarSlotWnd::detach() {
 		pVar->SetValue(m_nCredit);
 
 	if (m_pBkgSnd->IsPlaying()) {
-		m_pBkgSnd->Stop();
+		m_pBkgSnd->stop();
 	}
 	if (m_pBkgSnd != nullptr) {
 		delete m_pBkgSnd;
@@ -551,7 +551,7 @@ void SBarSlotWnd::CalcOutcome() {
 		// Play winning audio
 		m_pWinSound = new CBofSound(this, BuildSlotDir(WINAUDIO), SOUND_MIX, 1);
 		if (m_pWinSound != nullptr) {
-			m_pWinSound->Play();
+			m_pWinSound->play();
 		} else {
 			ReportError(ERR_MEMORY);
 		}
@@ -701,7 +701,7 @@ void SBarSlotWnd::SlideSlots() {
 
 			pCurBmp->PaintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
 		}
-		m_pSlotSound->Play();
+		m_pSlotSound->play();
 
 		// Slot #2
 		pCurBmp = m_cSlots[1].m_pSlotBmp[m_cSlots[1].m_nIdx];
@@ -723,7 +723,7 @@ void SBarSlotWnd::SlideSlots() {
 			pCurBmp->PaintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
 		}
 
-		m_pSlotSound->Play();
+		m_pSlotSound->play();
 
 		// Slot #3
 		pCurBmp = m_cSlots[2].m_pSlotBmp[m_cSlots[2].m_nIdx];
@@ -744,7 +744,7 @@ void SBarSlotWnd::SlideSlots() {
 			cRect.SetRect(DestRect.right - SrcRect.Width() + 1, DestRect.top, DestRect.right, DestRect.top + SrcRect.Height() - 1);
 			pCurBmp->PaintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
 		}
-		m_pSlotSound->Play();
+		m_pSlotSound->play();
 
 		// Slot #4
 		pCurBmp = m_cSlots[3].m_pSlotBmp[m_cSlots[3].m_nIdx];
@@ -766,7 +766,7 @@ void SBarSlotWnd::SlideSlots() {
 			pCurBmp->PaintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
 		}
 
-		m_pSlotSound->Play();
+		m_pSlotSound->play();
 	}
 }
 

@@ -64,24 +64,24 @@ protected:
 	 * Open the movie file, center it in parent, rewind it, and realize it's
 	 * palette in the background.
 	 */
-	virtual bool OpenMovie(const char *sFilename);
+	virtual bool openMovie(const char *sFilename);
 
 	/**
 	 * Close the MCI Device file
 	 */
-	virtual void CloseMovie();
+	virtual void closeMovie();
 
 	virtual void onReSize(CBofSize *pSize) {};
 
-	virtual bool Play();
-	virtual bool Reverse();
+	virtual bool play();
+	virtual bool reverse();
 
 	virtual void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) {
 		OnButtonUp(nFlags, pPoint);
 	}
 	virtual void OnButtonUp(uint32 nFlags, CBofPoint *pPoint);
 	virtual void onPaint(CBofRect *pRect);
-	virtual void OnMovieDone();
+	virtual void onMovieDone();
 	virtual void onClose();
 	virtual void onMainLoop();
 
@@ -109,31 +109,31 @@ public:
 	 * Open the movie file, place it @ pBounds, rewind it, and realize it's
 	 * palette in the background.
 	 */
-	virtual bool Open(const char *sFilename = nullptr, CBofRect *pBounds = nullptr);
+	virtual bool open(const char *sFilename = nullptr, CBofRect *pBounds = nullptr);
 
-	virtual bool Play(bool bLoop, bool bEscCanStop = true);
-	virtual bool Reverse(bool bLoop, bool bEscCanStop = true);
-	virtual bool Pause();
-	virtual bool Stop();
+	virtual bool play(bool bLoop, bool bEscCanStop = true);
+	virtual bool reverse(bool bLoop, bool bEscCanStop = true);
+	virtual bool pause();
+	virtual bool stop();
 
-	virtual MVSTATUS Status() {
+	virtual MVSTATUS status() {
 		return m_eMovStatus;
 	}
 
-	virtual bool SeekToStart();
-	virtual bool SeekToEnd();
+	virtual bool seekToStart();
+	virtual bool seekToEnd();
 
-	virtual uint32 GetFrame();
-	virtual bool SetFrame(uint32 dwFrameNum);
+	virtual uint32 getFrame();
+	virtual bool setFrame(uint32 dwFrameNum);
 
-	virtual bool CenterRect();
+	virtual bool centerRect();
 
 	// Need to access members from outside of class for
 	// performance optimization.
-	Graphics::ManagedSurface *GetSmackBuffer() {
+	Graphics::ManagedSurface *getSmackBuffer() {
 		return m_pSbuf;
 	}
-	Video::VideoDecoder *GetSmackMovie() {
+	Video::VideoDecoder *getSmackMovie() {
 		return m_pSmk;
 	}
 };

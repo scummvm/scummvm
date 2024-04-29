@@ -124,7 +124,7 @@ public:
 	 * @param pszFileName       Filename
 	 * @param lFlags            Access flags
 	 */
-	ErrorCode Open(const char *pszFileName, uint32 lFlags = CBF_DEFAULT);
+	ErrorCode open(const char *pszFileName, uint32 lFlags = CBF_DEFAULT);
 
 	/**
 	 * Creates specified file
@@ -181,7 +181,7 @@ public:
 	 * Sets the file pointer to the end of the file
 	 * @return      Error code
 	 */
-	ErrorCode SeekToEnd();
+	ErrorCode seekToEnd();
 
 	/**
 	 * Sets the current file-seek position to that specified

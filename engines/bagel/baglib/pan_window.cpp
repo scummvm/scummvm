@@ -778,7 +778,7 @@ uint32 CBagPanWindow::Benchmark() {
 	TimerStart();
 	for (int i = 0; i < 50; i++)
 		PaintScreen();
-	uint32 dTime = TimerStop();
+	uint32 dTime = timerStop();
 
 	ActivateView();
 	return dTime;

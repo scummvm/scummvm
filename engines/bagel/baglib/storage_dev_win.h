@@ -247,10 +247,10 @@ public:
 		m_sPrevSDev = str;
 	}
 
-	bool GetCloseOnOpen() {
+	bool getCloseOnOpen() {
 		return m_bCloseOnOpen;
 	}
-	void SetCloseOnOpen(bool bVal) {
+	void setCloseOnOpen(bool bVal) {
 		m_bCloseOnOpen = bVal;
 	}
 

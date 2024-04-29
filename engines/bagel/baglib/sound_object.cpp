@@ -97,7 +97,7 @@ bool CBagSoundObject::runObject() {
 		if (m_pSound && m_pMidiSound != m_pSound) {
 
 			m_pSound->SetQSlot(getState());
-			m_pSound->Play();
+			m_pSound->play();
 
 			// If waiting until this sound finishes
 			if (m_bWait) {
@@ -109,7 +109,7 @@ bool CBagSoundObject::runObject() {
 					CBofSound::AudioTask();
 
 					if (limiter.frame()) {
-						m_pSound->Stop();
+						m_pSound->stop();
 						break;
 					}
 				}
@@ -354,7 +354,7 @@ void CBagSoundObject::SetPlaying(bool bVal) {
 			if (m_pSound && m_pMidiSound != m_pSound) {
 
 				m_pSound->SetQSlot(getState());
-				m_pSound->Play();
+				m_pSound->play();
 
 				// If we are supposed to wait until this audio finishes
 				if (m_bWait) {
@@ -366,7 +366,7 @@ void CBagSoundObject::SetPlaying(bool bVal) {
 						CBofSound::AudioTask();
 
 						if (limiter.frame()) {
-							m_pSound->Stop();
+							m_pSound->stop();
 							break;
 						}
 					}
@@ -378,7 +378,7 @@ void CBagSoundObject::SetPlaying(bool bVal) {
 		} else {
 
 			if (m_pSound) {
-				m_pSound->Stop();
+				m_pSound->stop();
 				if (m_wFlags & SOUND_MIDI)
 					m_pMidiSound = nullptr;
 			}

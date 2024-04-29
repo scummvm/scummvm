@@ -38,7 +38,7 @@ extern void TimerStart();
  * Stops the timer started by TimerStart, returns time elapsed.
  * @return      Number of MilliSeconds elapsed since call to TimerStart
  */
-extern uint32 TimerStop();
+extern uint32 timerStop();
 
 /**
  * Returns the current elapsed time in milliseconds
