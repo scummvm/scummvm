@@ -213,7 +213,7 @@ ErrorCode CBofFile::Write(const void *pSrcBuf, int32 lBytes) {
 	return _errCode;
 }
 
-ErrorCode CBofFile::SetPosition(uint32 lPos) {
+ErrorCode CBofFile::setPosition(uint32 lPos) {
 	Assert(IsValidObject(this));
 
 	// Only supports files up to 2Gig
@@ -234,7 +234,7 @@ ErrorCode CBofFile::SetPosition(uint32 lPos) {
 	return _errCode;
 }
 
-uint32 CBofFile::GetPosition() {
+uint32 CBofFile::getPosition() {
 	Assert(IsValidObject(this));
 
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_stream);
@@ -245,7 +245,7 @@ uint32 CBofFile::GetPosition() {
 	if (ws)
 		return ws->pos();
 
-	error("GetPosition on closed file");
+	error("getPosition on closed file");
 }
 
 ErrorCode CBofFile::seekToEnd() {

@@ -68,10 +68,10 @@ ErrorCode CBagButtonObject::attach() {
 
 	// If this is a slider button make sure it is in the correct position
 	if (_buttonType == BTN_SLIDER) {
-		CBofPoint NewPoint = GetPosition();
+		CBofPoint NewPoint = getPosition();
 		int xIncrement = _slideRect.Width() / (_numPos - 1);
 		NewPoint.x = _slideRect.left + (getState() * xIncrement);
-		SetPosition(NewPoint);
+		setPosition(NewPoint);
 	}
 
 	return rc;
@@ -146,7 +146,7 @@ void CBagButtonObject::onLButtonUp(uint32 flags, CBofPoint *point, void *extraIn
 
 	if ((_buttonType == BTN_SLIDER) && _dragging) {
 		// Snap to place
-		CBofPoint NewPoint = GetPosition();
+		CBofPoint NewPoint = getPosition();
 
 		// Get the mouse point relative to the pan window
 		CBagPanWindow *pWnd = (CBagPanWindow *)extraInfo;
@@ -177,7 +177,7 @@ void CBagButtonObject::onLButtonUp(uint32 flags, CBofPoint *point, void *extraIn
 			NewPoint.x = _slideRect.right;
 		}
 
-		SetPosition(NewPoint);
+		setPosition(NewPoint);
 		if (i < 0) {
 			i = 0;
 		} else if (i >= _numPos) {
@@ -222,7 +222,7 @@ bool CBagButtonObject::onMouseMove(uint32 /*nFlags*/, CBofPoint point, void *ext
 			SetDirty();
 
 			CBofPoint mLoc;
-			CBofPoint NewPoint = GetPosition();
+			CBofPoint NewPoint = getPosition();
 			CBagPanWindow *pWnd = (CBagPanWindow *)extraInfo;
 			CBofRect r = pWnd->GetSlideBitmap()->GetCurrView();
 
@@ -238,7 +238,7 @@ bool CBagButtonObject::onMouseMove(uint32 /*nFlags*/, CBofPoint point, void *ext
 				NewXPos = _slideRect.left;
 
 			NewPoint.x = NewXPos;
-			SetPosition(NewPoint);
+			setPosition(NewPoint);
 
 			// We need to set the state here as well as LButtonUP
 			// because there is a chance we won't get it
@@ -338,7 +338,7 @@ ErrorCode CBagButtonObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcR
 
 void CBagButtonObject::setSize(const CBofSize &size) {
 	if (_buttonType == BTN_SLIDER)
-		_slideRect = CBofRect(GetPosition(), size);
+		_slideRect = CBofRect(getPosition(), size);
 
 	CBagSpriteObject::setSize(size);
 }
@@ -475,10 +475,10 @@ void CBagButtonObject::setProperty(const CBofString &prop, int val) {
 					setState(1);
 			} else {
 				if (_buttonType == BTN_SLIDER) {
-					CBofPoint cPos = GetPosition();
+					CBofPoint cPos = getPosition();
 
 					cPos.x = _slideRect.left + (val * (_slideRect.Width() / (_numPos - 1)));
-					SetPosition(cPos);
+					setPosition(cPos);
 					SetDirty(true);
 				}
 				setState(val);

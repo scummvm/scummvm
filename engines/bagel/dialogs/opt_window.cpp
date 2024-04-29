@@ -273,7 +273,7 @@ ErrorCode CBagOptWindow::attach() {
 		m_pMidiVolumeScroll->create("", &cRect, this, MIDI_VOL_ID);
 
 		m_pMidiVolumeScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
-		m_pMidiVolumeScroll->SetScrollRange(VOLUME_MIN, VOLUME_MAX, true);
+		m_pMidiVolumeScroll->setScrollRange(VOLUME_MIN, VOLUME_MAX, true);
 		m_pMidiVolumeScroll->Show();
 
 	} else {
@@ -286,7 +286,7 @@ ErrorCode CBagOptWindow::attach() {
 		m_pWaveVolumeScroll->create("", &cRect, this, WAVE_VOL_ID);
 
 		m_pWaveVolumeScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
-		m_pWaveVolumeScroll->SetScrollRange(VOLUME_MIN, VOLUME_MAX, true);
+		m_pWaveVolumeScroll->setScrollRange(VOLUME_MIN, VOLUME_MAX, true);
 		m_pWaveVolumeScroll->Show();
 
 	} else {
@@ -299,7 +299,7 @@ ErrorCode CBagOptWindow::attach() {
 		m_pCorrectionScroll->create("", &cRect, this, CORRECTION_ID);
 
 		m_pCorrectionScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
-		m_pCorrectionScroll->SetScrollRange(0, 6, true);
+		m_pCorrectionScroll->setScrollRange(0, 6, true);
 		m_pCorrectionScroll->Show();
 
 	} else {
@@ -312,7 +312,7 @@ ErrorCode CBagOptWindow::attach() {
 		m_pPanSpeedScroll->create("", &cRect, this, PANSPEED_ID);
 
 		m_pPanSpeedScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
-		m_pPanSpeedScroll->SetScrollRange(0, 5, true);
+		m_pPanSpeedScroll->setScrollRange(0, 5, true);
 		m_pPanSpeedScroll->Show();
 
 	} else {
@@ -346,16 +346,16 @@ void CBagOptWindow::PutDialogData() {
 	Assert(IsValidObject(this));
 
 	if (m_pMidiVolumeScroll != nullptr)
-		m_pMidiVolumeScroll->SetPos(m_cSystemData.m_nMusicVolume, true, true);
+		m_pMidiVolumeScroll->setPos(m_cSystemData.m_nMusicVolume, true, true);
 
 	if (m_pWaveVolumeScroll != nullptr)
-		m_pWaveVolumeScroll->SetPos(m_cSystemData.m_nSoundVolume, true, true);
+		m_pWaveVolumeScroll->setPos(m_cSystemData.m_nSoundVolume, true, true);
 
 	if (m_pCorrectionScroll != nullptr)
-		m_pCorrectionScroll->SetPos(m_cSystemData.m_nCorrection, true, true);
+		m_pCorrectionScroll->setPos(m_cSystemData.m_nCorrection, true, true);
 
 	if (m_pPanSpeedScroll != nullptr)
-		m_pPanSpeedScroll->SetPos(m_cSystemData.m_nPanSpeed, true, true);
+		m_pPanSpeedScroll->setPos(m_cSystemData.m_nPanSpeed, true, true);
 
 	if (m_pFlythroughs != nullptr)
 		m_pFlythroughs->SetCheck(m_cSystemData.m_bFlythroughs);
@@ -368,19 +368,19 @@ void CBagOptWindow::GetDialogData() {
 	Assert(IsValidObject(this));
 
 	if (m_pMidiVolumeScroll != nullptr) {
-		m_cSystemData.m_nMusicVolume = m_pMidiVolumeScroll->GetPos();
+		m_cSystemData.m_nMusicVolume = m_pMidiVolumeScroll->getPos();
 	}
 
 	if (m_pWaveVolumeScroll != nullptr) {
-		m_cSystemData.m_nSoundVolume = m_pWaveVolumeScroll->GetPos();
+		m_cSystemData.m_nSoundVolume = m_pWaveVolumeScroll->getPos();
 	}
 
 	if (m_pCorrectionScroll != nullptr) {
-		m_cSystemData.m_nCorrection = m_pCorrectionScroll->GetPos();
+		m_cSystemData.m_nCorrection = m_pCorrectionScroll->getPos();
 	}
 
 	if (m_pPanSpeedScroll != nullptr) {
-		m_cSystemData.m_nPanSpeed = m_pPanSpeedScroll->GetPos();
+		m_cSystemData.m_nPanSpeed = m_pPanSpeedScroll->getPos();
 	}
 
 	if (m_pPanimations != nullptr) {

@@ -51,62 +51,62 @@ public:
 
 	ErrorCode loadBitmaps(const char *pszBack, const char *pszThumb, const char *pszLeftUp = nullptr, const char *pszRightUp = nullptr, const char *pszLeftDown = nullptr, const char *pszRightDown = nullptr);
 
-	ErrorCode SetPos(const int nPos, bool bRepaint = true, bool isInitial = false);
-	int GetPos() {
-		return (m_nPos);
+	ErrorCode setPos(const int nPos, bool bRepaint = true, bool isInitial = false);
+	int getPos() {
+		return m_nPos;
 	}
 
-	ErrorCode LineLeft() {
-		return (SetPos(m_nPos - m_nLineDelta));
+	ErrorCode lineLeft() {
+		return setPos(m_nPos - m_nLineDelta);
 	}
-	ErrorCode LineRight() {
-		return (SetPos(m_nPos + m_nLineDelta));
+	ErrorCode lineRight() {
+		return setPos(m_nPos + m_nLineDelta);
 	}
-	ErrorCode PageLeft() {
-		return (SetPos(m_nPos - m_nPageDelta));
+	ErrorCode pageLeft() {
+		return setPos(m_nPos - m_nPageDelta);
 	}
-	ErrorCode PageRight() {
-		return (SetPos(m_nPos + m_nPageDelta));
-	}
-
-	ErrorCode Home() {
-		return (SetPos(m_nMin));
-	}
-	ErrorCode End() {
-		return (SetPos(m_nMax));
+	ErrorCode pageRight() {
+		return setPos(m_nPos + m_nPageDelta);
 	}
 
-	int GetScrollMin() {
-		return (m_nMin);
+	ErrorCode home() {
+		return setPos(m_nMin);
 	}
-	int GetScrollMax() {
-		return (m_nMax);
+	ErrorCode end() {
+		return setPos(m_nMax);
 	}
 
-	void SetLineDelta(const int nDelta) {
+	int getScrollMin() {
+		return m_nMin;
+	}
+	int getScrollMax() {
+		return m_nMax;
+	}
+
+	void setLineDelta(const int nDelta) {
 		m_nLineDelta = nDelta;
 	}
-	int GetLineDelta() {
-		return (m_nLineDelta);
+	int getLineDelta() {
+		return m_nLineDelta;
 	}
 
-	void SetPageDelta(const int nDelta) {
+	void setPageDelta(const int nDelta) {
 		m_nPageDelta = nDelta;
 	}
-	int GetPageDelta() {
-		return (m_nPageDelta);
+	int getPageDelta() {
+		return m_nPageDelta;
 	}
 
-	void GetScrollRange(int &nMin, int &nMax);
-	void SetScrollRange(int nMin, int nMax, bool bRepaint = true);
+	void getScrollRange(int &nMin, int &nMax);
+	void setScrollRange(int nMin, int nMax, bool bRepaint = true);
 
 	ErrorCode setText(const char *pszText, int nFlags = JUSTIFY_CENTER);
 
-	void SetRepeatTimer(uint32 nMilliSeconds);
+	void setRepeatTimer(uint32 nMilliSeconds);
 	ErrorCode paint(CBofRect *pRect = nullptr);
 
 protected:
-	int PointToPos(CBofPoint *pPoint);
+	int pointToPos(CBofPoint *pPoint);
 
 	virtual void onPaint(CBofRect *pDirtyRect);
 	virtual void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);

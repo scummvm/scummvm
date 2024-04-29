@@ -78,7 +78,7 @@ ErrorCode SBZoomPda::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		// Paint the inventory or Map to backdrop
 		if (bUpdate) {
 			if (_curDisplay != nullptr) {
-				_curDisplay->update(pBmp, _curDisplay->GetPosition(), pRect);
+				_curDisplay->update(pBmp, _curDisplay->getPosition(), pRect);
 			}
 		}
 	}

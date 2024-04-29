@@ -134,7 +134,7 @@ ErrorCode CBofScrollBar::setText(const char *pszText, int nJustify) {
 }
 
 
-ErrorCode CBofScrollBar::SetPos(const int nPos, bool bRepaint, bool isInitial) {
+ErrorCode CBofScrollBar::setPos(const int nPos, bool bRepaint, bool isInitial) {
 	Assert(IsValidObject(this));
 
 	// Save old position
@@ -179,7 +179,7 @@ ErrorCode CBofScrollBar::SetPos(const int nPos, bool bRepaint, bool isInitial) {
 }
 
 
-void CBofScrollBar::GetScrollRange(int &nMin, int &nMax) {
+void CBofScrollBar::getScrollRange(int &nMin, int &nMax) {
 	Assert(IsValidObject(this));
 
 	nMin = m_nMin;
@@ -187,7 +187,7 @@ void CBofScrollBar::GetScrollRange(int &nMin, int &nMax) {
 }
 
 
-void CBofScrollBar::SetScrollRange(int nMin, int nMax, bool bRepaint) {
+void CBofScrollBar::setScrollRange(int nMin, int nMax, bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	m_nMin = nMin;
@@ -385,7 +385,7 @@ void CBofScrollBar::onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
 		m_nScrollState = 1;
 
 		// Set new thumb position
-		SetPos(m_nPos - m_nLineDelta, true);
+		setPos(m_nPos - m_nLineDelta, true);
 
 	} else if (m_pThumb->GetRect().PtInRect(*pPoint)) {
 		m_nScrollState = 5;
@@ -394,20 +394,20 @@ void CBofScrollBar::onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
 		m_nScrollState = 2;
 
 		// Set new thumb position
-		SetPos(m_nPos - m_nPageDelta, true);
+		setPos(m_nPos - m_nPageDelta, true);
 
 	} else if (cRightPageRect.PtInRect(*pPoint)) {
 		m_nScrollState = 3;
 
 		// Set new thumb position
-		SetPos(m_nPos + m_nPageDelta, true);
+		setPos(m_nPos + m_nPageDelta, true);
 
 	} else if (m_pRightBtnUp != nullptr && m_cRightBtnRect.PtInRect(*pPoint)) {
 		// Let timer know what happened
 		m_nScrollState = 4;
 
 		// Set new thumb position
-		SetPos(m_nPos + m_nLineDelta, true);
+		setPos(m_nPos + m_nLineDelta, true);
 
 	} else {
 		bDoNothing = true;
@@ -424,7 +424,7 @@ void CBofScrollBar::onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
 }
 
 
-int CBofScrollBar::PointToPos(CBofPoint *pPoint) {
+int CBofScrollBar::pointToPos(CBofPoint *pPoint) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
@@ -450,7 +450,7 @@ void CBofScrollBar::onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 
 		switch (m_nScrollState) {
 		case 5:
-			SetPos(PointToPos(pPoint));
+			setPos(pointToPos(pPoint));
 			break;
 
 		case 1:
@@ -487,7 +487,7 @@ void CBofScrollBar::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 		m_cCurPoint = *pPoint;
 
 		if (m_nScrollState == 5) {
-			SetPos(PointToPos(pPoint));
+			setPos(pointToPos(pPoint));
 		}
 	}
 
@@ -495,7 +495,7 @@ void CBofScrollBar::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 }
 
 
-void CBofScrollBar::SetRepeatTimer(uint32 nTimerInt) {
+void CBofScrollBar::setRepeatTimer(uint32 nTimerInt) {
 	Assert(IsValidObject(this));
 
 	m_nTimerCount = nTimerInt;
@@ -512,16 +512,16 @@ void CBofScrollBar::onTimer(uint32 nWhichTimer) {
 
 	if (nWhichTimer == BMP_SCROLL_TIMER) {
 		if ((m_nScrollState == 1) && m_cLeftBtnRect.PtInRect(m_cCurPoint)) {
-			LineLeft();
+			lineLeft();
 
 		} else if ((m_nScrollState == 2) && cLeftPageRect.PtInRect(m_cCurPoint)) {
-			PageLeft();
+			pageLeft();
 
 		} else if ((m_nScrollState == 3) && cRightPageRect.PtInRect(m_cCurPoint)) {
-			PageRight();
+			pageRight();
 
 		} else if ((m_nScrollState == 4) && m_cRightBtnRect.PtInRect(m_cCurPoint)) {
-			LineRight();
+			lineRight();
 		}
 	}
 }

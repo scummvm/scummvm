@@ -166,7 +166,7 @@ public:
 	 * @return      Error code
 	 */
 	ErrorCode Seek(uint32 lPos) {
-		return (SetPosition(lPos));
+		return (setPosition(lPos));
 	}
 
 	/**
@@ -174,7 +174,7 @@ public:
 	 * @return      Error code
 	 */
 	ErrorCode SeekToBeginning() {
-		return (SetPosition(0));
+		return (setPosition(0));
 	}
 
 	/**
@@ -187,12 +187,12 @@ public:
 	 * Sets the current file-seek position to that specified
 	 * @param lPos      New position
 	 */
-	ErrorCode SetPosition(uint32 lPos);
+	ErrorCode setPosition(uint32 lPos);
 
 	/**
 	 * Retrieves the current seek position
 	 */
-	uint32 GetPosition();
+	uint32 getPosition();
 
 	/**
 	 * Set the length of a file

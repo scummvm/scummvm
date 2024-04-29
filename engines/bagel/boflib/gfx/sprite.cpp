@@ -394,7 +394,7 @@ void CBofSprite::Batchpaint(const int x, const int y) {
 	}
 
 	// Now establish the sprite's new position
-	SetPosition(x, y);
+	setPosition(x, y);
 
 	if (m_bAnimated && (m_nCelCount > 1))
 		// Advance to the next cel in the strip
@@ -708,7 +708,7 @@ endroutine:
 }
 
 
-void CBofSprite::SetPosition(int x, int y) {
+void CBofSprite::setPosition(int x, int y) {
 	Assert(IsValidObject(this));
 
 	// Now have a real location establish the new location of the sprite

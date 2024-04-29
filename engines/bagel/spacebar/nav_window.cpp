@@ -264,7 +264,7 @@ ErrorCode CNavWindow::attach() {
 		m_pCurLoc->SetZOrder(SPRITE_TOPMOST);
 		m_pCurLoc->SetAnimated(true);
 		m_pCurLoc->LinkSprite();
-		m_pCurLoc->SetPosition(m_pCurPos->left, m_pCurPos->top);
+		m_pCurLoc->setPosition(m_pCurPos->left, m_pCurPos->top);
 
 	} else {
 		ReportError(ERR_MEMORY);

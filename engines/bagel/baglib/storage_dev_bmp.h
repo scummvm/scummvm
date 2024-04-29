@@ -52,11 +52,11 @@ public:
 	void SetRect(const CBofRect &xRect) {
 		CBagStorageDev::SetRect(xRect);
 	}
-	CBofPoint GetPosition() {
-		return CBagStorageDev::GetPosition();
+	CBofPoint getPosition() {
+		return CBagStorageDev::getPosition();
 	}
-	void SetPosition(const CBofPoint &pos) {
-		CBagStorageDev::SetPosition(pos);
+	void setPosition(const CBofPoint &pos) {
+		CBagStorageDev::setPosition(pos);
 	}
 
 	bool GetTransparent() {

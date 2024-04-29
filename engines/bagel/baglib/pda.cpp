@@ -196,7 +196,7 @@ ErrorCode CBagPDA::attach() {
 	return rc;
 }
 
-void CBagPDA::SetPosInWindow(int cx, int cy, int nDist) {
+void CBagPDA::setPosInWindow(int cx, int cy, int nDist) {
 	CBofBitmap *pBmp = getBitmap();
 
 	if (!pBmp)
@@ -246,7 +246,7 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 
 		if (_activating) {
 
-			CBofPoint loc = GetPosition();
+			CBofPoint loc = getPosition();
 			_activating--;
 
 			if (_activated) {
@@ -267,7 +267,7 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 				}
 			}
 
-			SetPosition(loc);
+			setPosition(loc);
 
 			pt = loc;
 		}
@@ -435,7 +435,7 @@ bool  CBagPDA::PaintFGObjects(CBofBitmap *pBmp) {
 		MakeListDirty(_curDisplay->GetObjectList());
 
 		CBofRect tmp = getRect();
-		_curDisplay->update(pBmp, GetPosition(), &tmp);
+		_curDisplay->update(pBmp, getPosition(), &tmp);
 	}
 
 	return true;

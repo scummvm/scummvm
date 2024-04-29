@@ -167,7 +167,7 @@ CBagStorageDev::~CBagStorageDev() {
 }
 
 
-void CBagStorageDev::SetPosition(const CBofPoint &pos) {
+void CBagStorageDev::setPosition(const CBofPoint &pos) {
 	CBofRect OrigRect = GetRect();                  // Get the destination (screen) rect
 
 	m_cDestRect.SetRect(pos.x, pos.y,
@@ -290,7 +290,7 @@ CBofPoint CBagStorageDev::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 			NextPos.x = 0;
 			NextPos.y += pObj->getRect().Height();
 		}
-		pObj->SetPosition(NextPos);
+		pObj->setPosition(NextPos);
 
 		// Always round this figure up...
 

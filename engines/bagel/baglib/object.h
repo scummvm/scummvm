@@ -326,7 +326,7 @@ public:
 		m_bNoMenu = (byte)b;
 	}
 
-	virtual CBofPoint GetPosition() {
+	virtual CBofPoint getPosition() {
 		return CBofPoint(m_nX, m_nY);
 	}
 	virtual int GetRefId() {
@@ -370,7 +370,7 @@ public:
 	virtual void SetMenuPtr(CBagMenu *pm) {
 		m_pMenu = pm;
 	}
-	virtual void SetPosition(const CBofPoint &pos) {
+	virtual void setPosition(const CBofPoint &pos) {
 		m_nX = (int16)pos.x;
 		m_nY = (int16)pos.y;
 	}

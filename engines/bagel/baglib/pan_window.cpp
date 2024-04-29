@@ -563,7 +563,7 @@ void CBagPanWindow::onMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 
 	if (m_bDraggingObject) {
 		pObj = m_pFGObjectList->GetNodeItem(m_pFGObjectList->GetCount() - 1);
-		pObj->SetPosition(xPoint);
+		pObj->setPosition(xPoint);
 	}
 
 	*m_xCursorLocation = xPoint;
@@ -588,7 +588,7 @@ void CBagPanWindow::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 
 	if (nMA && pActObj && pActObj->IsMovable()) {
 		m_bDraggingObject = true;
-		m_bDraggingStart = pActObj->GetPosition();
+		m_bDraggingStart = pActObj->getPosition();
 		m_pFGObjectList->addToTail(pActObj);
 	}
 }
@@ -624,8 +624,8 @@ void CBagPanWindow::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 				}
 			}
 
-			if (pActObj->GetPosition() != m_bDraggingStart) {
-				pActObj->SetPosition(m_bDraggingStart);
+			if (pActObj->getPosition() != m_bDraggingStart) {
+				pActObj->setPosition(m_bDraggingStart);
 				bMoved = true;
 			}
 		}

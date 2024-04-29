@@ -351,7 +351,7 @@ ErrorCode CBibbleWindow::attach() {
 	// Dup the bibbles
 	for (int i = 0; i < BIBBLE_NUM_BIBBLES; i++) {
 		if ((m_pBibble[i] = m_pMasterBibble->DuplicateSprite()) != nullptr) {
-			m_pBibble[i]->SetPosition(nBibbleXPos[i], nBibbleYPos[i]);
+			m_pBibble[i]->setPosition(nBibbleXPos[i], nBibbleYPos[i]);
 			m_pBibble[i]->LinkSprite();
 
 		} else {
@@ -540,7 +540,7 @@ void CBibbleWindow::onPaint(CBofRect *pRect) {
 		// Paint the bibbles - just sitting there
 		for (int i = 0; i < BIBBLE_NUM_BIBBLES; i++) {
 			if (m_pBibble[i] != nullptr) {
-				m_pBibble[i]->PaintSprite(pBmp, m_pBibble[i]->GetPosition());
+				m_pBibble[i]->PaintSprite(pBmp, m_pBibble[i]->getPosition());
 			}
 		}
 
@@ -854,7 +854,7 @@ ErrorCode CBibbleWindow::BonkBibble(int nBibbleID, int nShouts) {
 			m_pBall->EraseSprite(this);
 
 			for (int i = 0; i < pBibble->GetCelCount(); i++) {
-				pBibble->PaintSprite(this, pBibble->GetPosition());
+				pBibble->PaintSprite(this, pBibble->getPosition());
 
 				if (i == START_YELL) {
 					// Start shouting

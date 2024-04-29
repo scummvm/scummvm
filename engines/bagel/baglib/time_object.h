@@ -70,7 +70,7 @@ public:
 	}
 
 	void SetCels(int nCels);
-	virtual void SetPosition(const CBofPoint &pos);
+	virtual void setPosition(const CBofPoint &pos);
 
 	/**
 	 * Read in the value of the associated variable and set the time equal

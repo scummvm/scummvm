@@ -520,13 +520,13 @@ ErrorCode CBofDataFile::WriteRecord(int32 lRecNum, void *pBuf, int32 lSize, bool
 				// While there is data to move
 				while (lBufLength > 0) {
 					// Seek to beginning of the source for this chunk
-					SetPosition(pRecInfo->m_lOffset + pRecInfo->m_lLength + lBufLength - lChunkSize);
+					setPosition(pRecInfo->m_lOffset + pRecInfo->m_lLength + lBufLength - lChunkSize);
 
 					// Read the chunk
 					Read(pTmpBuf, lChunkSize);
 
 					// Seek to this chunks new positon (offset by 'lDiff' bytes)
-					SetPosition(pRecInfo->m_lOffset + pRecInfo->m_lLength + lBufLength - lChunkSize + lDiff);
+					setPosition(pRecInfo->m_lOffset + pRecInfo->m_lLength + lBufLength - lChunkSize + lDiff);
 
 					// Write chunk to new position
 					Write(pTmpBuf, lChunkSize);

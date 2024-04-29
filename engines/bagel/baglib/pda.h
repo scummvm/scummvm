@@ -62,7 +62,7 @@ public:
 	 * @param cy        y position
 	 * @param nDist     Distance to bring move PDA
 	 */
-	void SetPosInWindow(int cx, int cy, int nDist = PDA_INCREMENT);
+	void setPosInWindow(int cx, int cy, int nDist = PDA_INCREMENT);
 
 	/**
 	 * Update the PDA to the screen and then call CBagStorageDevBmp update

@@ -131,7 +131,7 @@ ErrorCode CBagWield::ActivateLocalObject(CBagObject *pObj) {
 		// menu.  Do this by causing the wielded item to not have a location
 		// on the You icon. (It's rectangle will appear empty)
 		CBofPoint cPos(2056, 2056);
-		pObj->SetPosition(cPos);
+		pObj->setPosition(cPos);
 		pObj->SetFloating(false);
 
 		errCode = CBagStorageDev::ActivateLocalObject(pObj);
@@ -165,7 +165,7 @@ ErrorCode CBagWield::update(CBofBitmap *pBmp, CBofPoint /*cPoint*/, CBofRect * /
 
 		CBofBitmap *pYouIcon = getBackground();
 		if (pYouIcon != nullptr) {
-			pYouIcon->paint(pBmp, GetPosition().x, GetPosition().y, nullptr, DEFAULT_CHROMA_COLOR);
+			pYouIcon->paint(pBmp, getPosition().x, getPosition().y, nullptr, DEFAULT_CHROMA_COLOR);
 			SetDirty(false);
 		}
 	}
