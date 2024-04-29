@@ -65,9 +65,9 @@ ErrorCode CBagCharacterObject::attach() {
 	char localBuff[256];
 	localBuff[0] = '\0';
 	CBofString filename(localBuff, 256);
-	CBofPalette *smackPal = CBofApp::GetApp()->GetPalette();
+	CBofPalette *smackPal = CBofApp::GetApp()->getPalette();
 
-	filename = GetFileName();
+	filename = getFileName();
 
 	// Open the smacker file
 	Video::SmackerDecoder *decoder = new Video::SmackerDecoder();
@@ -221,7 +221,7 @@ CBofRect CBagCharacterObject::getRect() {
 	CBofSize size;
 
 	if (_bmpBuf)
-		size = _bmpBuf->GetSize();
+		size = _bmpBuf->getSize();
 
 	return CBofRect(pos, size);
 }
@@ -328,7 +328,7 @@ bool CBagCharacterObject::isInside(const CBofPoint &point) {
 		if (_bmpBuf) {
 			int x = point.x - getRect().left;
 			int y = point.y - getRect().top;
-			int color = _bmpBuf->ReadPixel(x, y);
+			int color = _bmpBuf->readPixel(x, y);
 			return (color != _charTransColor);
 		}
 

@@ -66,21 +66,21 @@ void CBagStartDialog::onInitDialog() {
 	CBofSound::StopSounds();
 
 	// Save off the current game's palette
-	_savePalette = CBofApp::GetApp()->GetPalette();
+	_savePalette = CBofApp::GetApp()->getPalette();
 
 	// Insert ours
-	CBofPalette *pPal = _pBackdrop->GetPalette();
-	CBofApp::GetApp()->SetPalette(pPal);
+	CBofPalette *pPal = _pBackdrop->getPalette();
+	CBofApp::GetApp()->setPalette(pPal);
 
 	// Build all our buttons
 	for (int i = 0; i < NUM_START_BTNS; i++) {
 		Assert(_buttons[i] == nullptr);
 
 		if ((_buttons[i] = new CBofBmpButton) != nullptr) {
-			CBofBitmap *pUp = LoadBitmap(BuildSysDir(g_stStartButtons[i].m_pszUp), pPal);
-			CBofBitmap *pDown = LoadBitmap(BuildSysDir(g_stStartButtons[i].m_pszDown), pPal);
-			CBofBitmap *pFocus = LoadBitmap(BuildSysDir(g_stStartButtons[i].m_pszFocus), pPal);
-			CBofBitmap *pDis = LoadBitmap(BuildSysDir(g_stStartButtons[i].m_pszDisabled), pPal);
+			CBofBitmap *pUp = loadBitmap(BuildSysDir(g_stStartButtons[i].m_pszUp), pPal);
+			CBofBitmap *pDown = loadBitmap(BuildSysDir(g_stStartButtons[i].m_pszDown), pPal);
+			CBofBitmap *pFocus = loadBitmap(BuildSysDir(g_stStartButtons[i].m_pszFocus), pPal);
+			CBofBitmap *pDis = loadBitmap(BuildSysDir(g_stStartButtons[i].m_pszDisabled), pPal);
 
 			_buttons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 			_buttons[i]->create(g_stStartButtons[i].m_pszName, g_stStartButtons[i].m_nLeft, g_stStartButtons[i].m_nTop, g_stStartButtons[i].m_nWidth, g_stStartButtons[i].m_nHeight, this, g_stStartButtons[i]._nID);

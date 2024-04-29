@@ -124,7 +124,7 @@ ErrorCode CMainWindow::attach() {
 	SetPalPtr(bofpal);
 
 	CBagel::getBagApp()->getMasterWnd()->selectPalette(bofpal);
-	CBofApp::GetApp()->SetPalette(bofpal);
+	CBofApp::GetApp()->setPalette(bofpal);
 
 	ActivateView();
 	CBofSound::AudioTask();
@@ -274,15 +274,15 @@ ErrorCode CMainWindow::attach() {
 
 		switch (nFade) {
 		case 1:
-			_pBackdrop->FadeIn(this);
+			_pBackdrop->fadeIn(this);
 			break;
 
 		case 2:
-			_pBackdrop->Curtain(this);
+			_pBackdrop->curtain(this);
 			break;
 
 		case 3:
-			_pBackdrop->FadeLines(this);
+			_pBackdrop->fadeLines(this);
 			break;
 		}
 	}

@@ -36,9 +36,9 @@ CBagBmpObject::~CBagBmpObject() {
 }
 
 ErrorCode CBagBmpObject::attach(CBofPalette *palette) {
-	_bmp = new CBofBitmap(GetFileName(), palette);
+	_bmp = new CBofBitmap(getFileName(), palette);
 	if (_bmp == nullptr) {
-		BofMessageBox(_bmp->GetFileName(), __FILE__);
+		BofMessageBox(_bmp->getFileName(), __FILE__);
 	}
 	return CBagObject::attach();
 }
@@ -54,7 +54,7 @@ CBofRect CBagBmpObject::getRect() {
 	CBofPoint curPos = getPosition();
 	CBofSize size;
 	if (_bmp)
-		size = _bmp->GetSize();
+		size = _bmp->getSize();
 	return CBofRect(curPos, size);
 }
 
@@ -62,7 +62,7 @@ ErrorCode CBagBmpObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect
 	if (bmp) {
 		_transparency = maskColor;
 		if (srcRect) {
-			CBofSize size = bmp->GetSize();
+			CBofSize size = bmp->getSize();
 			if (pt.x < 0) {
 				srcRect->left -= pt.x;
 				pt.x = 0;
@@ -94,7 +94,7 @@ bool CBagBmpObject::isInside(const CBofPoint &pt) {
 		if (_transparency >= 0) {
 			int x = pt.x - getRect().left;
 			int y = pt.y - getRect().top;
-			int color = _bmp->ReadPixel(x, y);
+			int color = _bmp->readPixel(x, y);
 			return color != _transparency;
 		}
 

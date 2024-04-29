@@ -104,7 +104,7 @@ public:
 	**/
 	ErrorCode LoadOptionFile(const char *pszFile);
 
-	const char *GetFileName() const {
+	const char *getFileName() const {
 		return ((const char *)m_szFileName);
 	}
 

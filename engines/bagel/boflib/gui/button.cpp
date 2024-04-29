@@ -86,7 +86,7 @@ ErrorCode CBofButton::paint(CBofRect *) {
 		int nWidth, nHeight;
 		int i, left, right, top, bottom;
 
-		pPalette = CBofApp::GetApp()->GetPalette();
+		pPalette = CBofApp::GetApp()->getPalette();
 
 		nWidth = _cRect.width();
 		nHeight = _cRect.height();
@@ -114,16 +114,16 @@ ErrorCode CBofButton::paint(CBofRect *) {
 		byte c2 = iHighlight;
 
 		for (i = 1; i <= 3; i++) {
-			cBmp.Line(left + i, bottom - i, right - i, bottom - i, c1);
-			cBmp.Line(right - i, bottom - i, right - i, top + i - 1, c1);
+			cBmp.line(left + i, bottom - i, right - i, bottom - i, c1);
+			cBmp.line(right - i, bottom - i, right - i, top + i - 1, c1);
 		}
 
 		for (i = 1; i <= 3; i++) {
-			cBmp.Line(left + i, bottom - i, left + i, top + i - 1, c2);
-			cBmp.Line(left + i, top + i - 1, right - i, top + i - 1, c2);
+			cBmp.line(left + i, bottom - i, left + i, top + i - 1, c2);
+			cBmp.line(left + i, top + i - 1, right - i, top + i - 1, c2);
 		}
 
-		cBmp.DrawRect(&_cRect, pPalette->GetNearestIndex(_cOutlineColor));
+		cBmp.drawRect(&_cRect, pPalette->GetNearestIndex(_cOutlineColor));
 
 		// Create a temporary text object
 		CBofRect cTempRect(3, 3, _cRect.right - 3, _cRect.bottom - 3);
@@ -142,7 +142,7 @@ ErrorCode CBofButton::paint(CBofRect *) {
 		cText.display(&cBmp, _szTitle, BUTTON_TEXT_SIZE, TEXT_NORMAL, cTextColor);
 
 		if (_nState == BUTTON_FOCUS) {
-			cBmp.DrawRect(&cTempRect, pPalette->GetNearestIndex(_cOutlineColor));
+			cBmp.drawRect(&cTempRect, pPalette->GetNearestIndex(_cOutlineColor));
 		}
 
 		// Now we can update the window
@@ -277,7 +277,7 @@ ErrorCode CBofRadioButton::paint(CBofRect *) {
 	// Only continue if this button is visible
 	if (isVisible() && (_parent != nullptr) && _parent->isVisible()) {
 
-		CBofPalette *pPalette = CBofApp::GetApp()->GetPalette();
+		CBofPalette *pPalette = CBofApp::GetApp()->getPalette();
 
 		int nWidth = _cRect.width();
 		int nHeight = _cRect.height();
@@ -299,26 +299,26 @@ ErrorCode CBofRadioButton::paint(CBofRect *) {
 		int nRadius = 7;
 		int x = nRadius + RADIO_BOX_OFFSET_DX;
 		int y = nHeight / 2;
-		cBmp.Circle(x, y, (uint16)nRadius, iShadow);
+		cBmp.circle(x, y, (uint16)nRadius, iShadow);
 		nRadius--;
-		cBmp.Circle(x, y, (uint16)nRadius, iShadow);
+		cBmp.circle(x, y, (uint16)nRadius, iShadow);
 
 		// Create a temporary text object
 		CBofRect cTempRect(20, RADIO_BOX_OFFSET_DY, _cRect.right, _cRect.bottom - RADIO_BOX_OFFSET_DY);
 		if (_nState == BUTTON_DOWN) {
 			nRadius = 1;
-			cBmp.Circle(x, y, (uint16)nRadius, iHighlight);
+			cBmp.circle(x, y, (uint16)nRadius, iHighlight);
 			nRadius = 2;
-			cBmp.Circle(x, y, (uint16)nRadius, iHighlight);
+			cBmp.circle(x, y, (uint16)nRadius, iHighlight);
 			nRadius = 3;
-			cBmp.Circle(x, y, (uint16)nRadius, iHighlight);
+			cBmp.circle(x, y, (uint16)nRadius, iHighlight);
 			nRadius = 4;
-			cBmp.Circle(x, y, (uint16)nRadius, iHighlight);
+			cBmp.circle(x, y, (uint16)nRadius, iHighlight);
 		}
 		CBofText cText(&cTempRect, JUSTIFY_LEFT);
 
 		// Put a box around the whole button
-		cBmp.DrawRect(&_cRect, pPalette->GetNearestIndex(_cOutlineColor));
+		cBmp.drawRect(&_cRect, pPalette->GetNearestIndex(_cOutlineColor));
 
 		// Show text disabled if button is disabled
 
@@ -327,7 +327,7 @@ ErrorCode CBofRadioButton::paint(CBofRect *) {
 
 		// If button has focus, then put a box around the text
 		if (_nState == BUTTON_FOCUS) {
-			cBmp.DrawRect(&cTempRect, pPalette->GetNearestIndex(_cOutlineColor));
+			cBmp.drawRect(&cTempRect, pPalette->GetNearestIndex(_cOutlineColor));
 		}
 
 		// Now we can update the window
@@ -375,7 +375,7 @@ ErrorCode CBofCheckButton::paint(CBofRect *) {
 	// Only continue if this button is visible
 	if (isVisible() && (_parent != nullptr) && _parent->isVisible()) {
 
-		CBofPalette *pPalette = CBofApp::GetApp()->GetPalette();
+		CBofPalette *pPalette = CBofApp::GetApp()->getPalette();
 
 		int nWidth = _cRect.width();
 		int nHeight = _cRect.height();
@@ -396,13 +396,13 @@ ErrorCode CBofCheckButton::paint(CBofRect *) {
 		// Draw the check box (centered vertically)
 		int y = ((nHeight - CHECK_BOX_SIZE) / 2);
 		CBofRect cTempRect(CHECK_BOX_OFFSET_DX, y, CHECK_BOX_SIZE + CHECK_BOX_OFFSET_DX - 1, y + CHECK_BOX_SIZE - 1);
-		cBmp.DrawRect(&cTempRect, iShadow);
+		cBmp.drawRect(&cTempRect, iShadow);
 
 		// if button is in DOWN/ON state, then put an X in the box
 		//
 		if (_nState == BUTTON_DOWN) {
-			cBmp.Line(cTempRect.left, cTempRect.top, cTempRect.right, cTempRect.bottom, iShadow);
-			cBmp.Line(cTempRect.left, cTempRect.bottom, cTempRect.right, cTempRect.top, iShadow);
+			cBmp.line(cTempRect.left, cTempRect.top, cTempRect.right, cTempRect.bottom, iShadow);
+			cBmp.line(cTempRect.left, cTempRect.bottom, cTempRect.right, cTempRect.top, iShadow);
 		}
 
 		// Create a temporary text object
@@ -410,7 +410,7 @@ ErrorCode CBofCheckButton::paint(CBofRect *) {
 		CBofText cText(&cTempRect, JUSTIFY_LEFT);
 
 		// Put a box around the whole button
-		cBmp.DrawRect(&_cRect, pPalette->GetNearestIndex(_cOutlineColor));
+		cBmp.drawRect(&_cRect, pPalette->GetNearestIndex(_cOutlineColor));
 
 		// Print text into button
 		//
@@ -418,7 +418,7 @@ ErrorCode CBofCheckButton::paint(CBofRect *) {
 
 		// If button has focus, then put a box around the text
 		if (_nState == BUTTON_FOCUS) {
-			cBmp.DrawRect(&cTempRect, pPalette->GetNearestIndex(_cOutlineColor));
+			cBmp.drawRect(&cTempRect, pPalette->GetNearestIndex(_cOutlineColor));
 		}
 
 		// Now we can update the window
@@ -489,7 +489,7 @@ ErrorCode CBofBmpButton::paint(CBofRect *) {
 
 	// Only continue if this button is visible
 	if (isVisible() && (_parent != nullptr) && _parent->isVisible()) {
-		CBofPalette *pPalette = _pButtonUp->GetPalette();
+		CBofPalette *pPalette = _pButtonUp->getPalette();
 
 		int nWidth = _cRect.width();
 		int nHeight = _cRect.height();
@@ -566,16 +566,16 @@ ErrorCode CBofBmpButton::loadBitmaps(CBofPalette *pPalette, const char *pszUp, c
 
 	// Load each of the bitmaps that represent the button state
 	if ((_pButtonUp = new CBofBitmap(pszUp, pPalette)) != nullptr) {
-		_pButtonUp->SetReadOnly(true);
+		_pButtonUp->setReadOnly(true);
 	}
 	if ((_pButtonDown = new CBofBitmap(pszDown, pPalette)) != nullptr) {
-		_pButtonDown->SetReadOnly(true);
+		_pButtonDown->setReadOnly(true);
 	}
 	if ((_pButtonFocus = new CBofBitmap(pszFocus, pPalette)) != nullptr) {
-		_pButtonFocus->SetReadOnly(true);
+		_pButtonFocus->setReadOnly(true);
 	}
 	if ((_pButtonDisabled = new CBofBitmap(pszDisabled, pPalette)) != nullptr) {
-		_pButtonDisabled->SetReadOnly(true);
+		_pButtonDisabled->setReadOnly(true);
 	}
 
 	return _errCode;

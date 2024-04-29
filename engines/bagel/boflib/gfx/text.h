@@ -164,7 +164,7 @@ public:
 	RGBCOLOR getColor() const {
 		return m_cTextColor;
 	}
-	int GetSize() const {
+	int getSize() const {
 		return m_nCurSize;
 	}
 	int getWeight() const {

@@ -988,7 +988,7 @@ ErrorCode CBagLogClue::attach() {
 	ErrorCode ec = CBagTextObject::attach();
 
 	// Get what is defined in the script.
-	cFormat = GetFileName();
+	cFormat = getFileName();
 
 	// Replace '$' with '%' (% is an illegal character embedded in a clue string).
 	cFormat.ReplaceChar('_', ' ');

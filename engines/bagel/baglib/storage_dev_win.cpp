@@ -987,7 +987,7 @@ ErrorCode CBagStorageDev::attach() {
 
 ErrorCode CBagStorageDev::detach() {
 	// Must force people to not use a bad App's palette
-	CBofApp::GetApp()->SetPalette(nullptr);
+	CBofApp::GetApp()->setPalette(nullptr);
 	setBackground(nullptr);
 
 	// Notify the main window that we need to redraw the background filter.
@@ -1190,8 +1190,8 @@ ErrorCode CBagStorageDevWnd::attach() {
 			setBackground(pBmp);
 
 			// Set the bagel crap
-			CBofPalette *pPalette = pBmp->GetPalette();
-			CBofApp::GetApp()->SetPalette(pPalette);
+			CBofPalette *pPalette = pBmp->getPalette();
+			CBofApp::GetApp()->setPalette(pPalette);
 			CBofSprite::OpenLibrary(pPalette);
 
 			CBofRect r = pBmp->getRect();
@@ -1279,7 +1279,7 @@ void CBagStorageDevWnd::onTimer(uint32 nEventID) {
 ErrorCode CBagStorageDevWnd::detach() {
 	DetachActiveObjects();
 
-	CBofApp::GetApp()->SetPalette(nullptr);
+	CBofApp::GetApp()->setPalette(nullptr);
 
 	setBackground(nullptr);
 	CBofSprite::CloseLibrary();
@@ -1317,7 +1317,7 @@ ErrorCode CBagStorageDevWnd::SetWorkBmp() {
 
 	CBofBitmap *pBmp = getBackground();
 	if (pBmp != nullptr) {
-		m_pWorkBmp = new CBofBitmap(pBmp->width(), pBmp->height(), pBmp->GetPalette());
+		m_pWorkBmp = new CBofBitmap(pBmp->width(), pBmp->height(), pBmp->getPalette());
 		pBmp->paint(m_pWorkBmp);
 	}
 

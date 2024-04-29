@@ -84,7 +84,7 @@ bool CBagMovieObject::runObject() {
 	if (!m_bFlyThru || CBagMasterWin::GetFlyThru()) {
 		rc = false;
 
-		CBofString sFileName = GetFileName();
+		CBofString sFileName = getFileName();
 		int nExt = sFileName.GetLength() - 4; // ".EXT"
 
 		if (nExt <= 0) {

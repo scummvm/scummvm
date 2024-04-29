@@ -53,7 +53,7 @@ CBofDialog::CBofDialog(const char *pszFileName, CBofWindow *pParent, const uint3
 	_bEndDialog = false;
 	_bHavePainted = false;
 
-	CBofBitmap *pBmp = LoadBitmap(pszFileName);
+	CBofBitmap *pBmp = loadBitmap(pszFileName);
 
 	if (pBmp != nullptr) {
 		// Use specified bitmap as this dialog's image
@@ -198,15 +198,15 @@ ErrorCode CBofDialog::saveBackground() {
 	Assert(IsValidObject(this));
 
 	if (_lFlags & BOFDLG_SAVEBACKGND) {
-		CBofPalette *pPalette = CBofApp::GetApp()->GetPalette();
+		CBofPalette *pPalette = CBofApp::GetApp()->getPalette();
 
 		// Remove any previous background
 		delete _pDlgBackground;
 		// Save a copy of the background
 		_pDlgBackground = new CBofBitmap(width(), height(), pPalette);
 		if (_pDlgBackground != nullptr) {
-			_pDlgBackground->CaptureScreen(this, &_cRect);
-			_pDlgBackground->SetReadOnly(true);
+			_pDlgBackground->captureScreen(this, &_cRect);
+			_pDlgBackground->setReadOnly(true);
 
 		} else {
 			ReportError(ERR_MEMORY, "Unable to allocate a new CBofBitmap(%d x %d)", width(), height());

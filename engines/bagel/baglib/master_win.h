@@ -148,7 +148,7 @@ public:
 	ErrorCode LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName);
 	ErrorCode LoadGlobalVars(const CBofString &sWldName);
 
-	ErrorCode SetCurrFadeIn(int nFade) {
+	ErrorCode SetCurrfadeIn(int nFade) {
 		m_nFadeIn = nFade;
 		return ERR_NONE;
 	}

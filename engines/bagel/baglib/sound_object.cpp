@@ -68,7 +68,7 @@ ErrorCode CBagSoundObject::NewSound(CBofWindow *pWin) {
 
 	KillSound();
 
-	if ((m_pSound = new CBofSound(pWin, GetFileName(), m_wFlags, m_nLoops)) != nullptr) {
+	if ((m_pSound = new CBofSound(pWin, getFileName(), m_wFlags, m_nLoops)) != nullptr) {
 		m_pSound->SetVolume(m_nVol);
 		m_pSound->SetQSlot(getState());
 
@@ -120,14 +120,14 @@ bool CBagSoundObject::runObject() {
 		} else { /* if no sound */
 			if (!(m_wFlags & SOUND_MIDI)) {
 
-				int nExt = GetFileName().GetLength() - 4; // ".EXT"
+				int nExt = getFileName().GetLength() - 4; // ".EXT"
 
 				if (nExt <= 0) {
 					LogError("Sound does not have a file name or proper extension.  Please write better scripts.");
 					return false;
 				}
 
-				CBofString sBaseStr = GetFileName().Left(nExt) + ".TXT";
+				CBofString sBaseStr = getFileName().Left(nExt) + ".TXT";
 
 				Common::File f;
 				if (FileExists(sBaseStr) && f.open(sBaseStr.GetBuffer())) {
@@ -137,7 +137,7 @@ bool CBagSoundObject::runObject() {
 					f.close();
 					return true;
 				} else {
-					LogError(BuildString("Sound TEXT file could not be read: %s.  Why? because we like you ...", GetFileName().GetBuffer()));
+					LogError(BuildString("Sound TEXT file could not be read: %s.  Why? because we like you ...", getFileName().GetBuffer()));
 					return false;
 				}
 			}

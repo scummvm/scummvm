@@ -47,7 +47,7 @@ public:
 
 	CBofRect getRect() override;
 
-	CBofSize GetSize() {
+	CBofSize getSize() {
 		return m_xSize;
 	}
 

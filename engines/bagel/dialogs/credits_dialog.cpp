@@ -97,7 +97,7 @@ void CBagCreditsDialog::onInitDialog() {
 	m_iScreen = 0;
 
 	Assert(_pBackdrop != nullptr);
-	pPal = _pBackdrop->GetPalette();
+	pPal = _pBackdrop->getPalette();
 	selectPalette(pPal);
 	g_b1 = true;
 
@@ -124,7 +124,7 @@ ErrorCode CBagCreditsDialog::LoadNextTextFile() {
 	}
 
 	// Create a new work area
-	if ((m_pCreditsBmp = new CBofBitmap(cRect.width(), cRect.height() + LINE_HEIGHT + 2, _pBackdrop->GetPalette())) != nullptr) {
+	if ((m_pCreditsBmp = new CBofBitmap(cRect.width(), cRect.height() + LINE_HEIGHT + 2, _pBackdrop->getPalette())) != nullptr) {
 		m_pCreditsBmp->fillRect(nullptr, MY_MASK_COLOR);
 
 		// Kill any previous work area
@@ -132,7 +132,7 @@ ErrorCode CBagCreditsDialog::LoadNextTextFile() {
 			delete m_pSaveBmp;
 		}
 
-		if ((m_pSaveBmp = new CBofBitmap(m_pCreditsBmp->width(), m_pCreditsBmp->height(), _pBackdrop->GetPalette())) != nullptr) {
+		if ((m_pSaveBmp = new CBofBitmap(m_pCreditsBmp->width(), m_pCreditsBmp->height(), _pBackdrop->getPalette())) != nullptr) {
 			CBofRect tmpRect = m_pSaveBmp->getRect();
 			_pBackdrop->paint(m_pSaveBmp, &tmpRect, &cRect);
 
@@ -289,7 +289,7 @@ ErrorCode CBagCreditsDialog::DisplayCredits() {
 			// Strip off top layer so it won't wrap around
 			int i;
 			for (i = 0; i < PIX_SCROLL_DY; i++) {
-				m_pCreditsBmp->Line(0, i, m_pCreditsBmp->width() - 1, i, MY_MASK_COLOR);
+				m_pCreditsBmp->line(0, i, m_pCreditsBmp->width() - 1, i, MY_MASK_COLOR);
 			}
 
 			// Scroll text up 1 pixel
@@ -316,7 +316,7 @@ ErrorCode CBagCreditsDialog::NextScreen() {
 		CBofBitmap *pBmp;
 
 		// Load next screen (flushes previous backdrop)
-		if ((pBmp = Bagel::LoadBitmap(BuildSysDir(g_cScreen[m_iScreen].m_pszBackground))) != nullptr) {
+		if ((pBmp = Bagel::loadBitmap(BuildSysDir(g_cScreen[m_iScreen].m_pszBackground))) != nullptr) {
 			setBackdrop(pBmp);
 			g_b1 = true;
 		}

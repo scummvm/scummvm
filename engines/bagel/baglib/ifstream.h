@@ -139,7 +139,7 @@ public:
 	int GetLineNumber() const {
 		return m_nLineNumber;
 	}
-	int GetSize() const {
+	int getSize() const {
 		return m_nLength;
 	}
 	const CBofString &GetLineString() {

@@ -63,7 +63,7 @@ CBagTextObject::~CBagTextObject() {
 
 CBofRect CBagTextObject::getRect() {
 	CBofPoint p = getPosition();
-	CBofSize s = GetSize();
+	CBofSize s = getSize();
 	CBofRect r = CBofRect(p, s);
 	return r;
 }
@@ -105,13 +105,13 @@ ErrorCode CBagTextObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 				r.bottom -= 5;
 
 				for (i = 1; i <= 3; i++) {
-					pBmp->Line(left + i, bottom - i, right - i, bottom - i, c1);
-					pBmp->Line(right - i, bottom - i, right - i, top + i - 1, c1);
+					pBmp->line(left + i, bottom - i, right - i, bottom - i, c1);
+					pBmp->line(right - i, bottom - i, right - i, top + i - 1, c1);
 				}
 
 				for (i = 1; i <= 3; i++) {
-					pBmp->Line(left + i, bottom - i, left + i, top + i - 1, c2);
-					pBmp->Line(left + i, top + i - 1, right - i, top + i - 1, c2);
+					pBmp->line(left + i, bottom - i, left + i, top + i - 1, c2);
+					pBmp->line(left + i, top + i - 1, right - i, top + i - 1, c2);
 				}
 				nPointSize = 16;
 				nFormat = FORMAT_TOP_LEFT;
@@ -133,7 +133,7 @@ ErrorCode CBagTextObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 ErrorCode CBagTextObject::attach() {
 	Assert(IsValidObject(this));
 
-	if (!GetFileName().Right(4).Find(".TXT") || !GetFileName().Right(4).Find(".txt")) {
+	if (!getFileName().Right(4).Find(".TXT") || !getFileName().Right(4).Find(".txt")) {
 		// Prevent memory leak
 		if (m_psText != nullptr) {
 			delete m_psText;
@@ -143,7 +143,7 @@ ErrorCode CBagTextObject::attach() {
 		// Allocate a new string
 		m_psText = new CBofString;
 		if (m_psText != nullptr) {
-			CBofFile fpTextFile(GetFileName());
+			CBofFile fpTextFile(getFileName());
 
 			if (!fpTextFile.ErrorOccurred()) {
 				// Allocate the buffers
@@ -190,7 +190,7 @@ ErrorCode CBagTextObject::attach() {
 
 		// Allocate a new string
 		if ((m_psText = new CBofString) != nullptr) {
-			*m_psText = GetFileName();
+			*m_psText = getFileName();
 
 			// Replace any underscores with spaces
 			m_psText->ReplaceChar('_', ' ');
@@ -228,7 +228,7 @@ const CBofString &CBagTextObject::getText() {
 	if (m_psText)
 		return *m_psText;
 
-	return GetFileName();
+	return getFileName();
 }
 
 void CBagTextObject::setText(const CBofString &s) {
@@ -238,7 +238,7 @@ void CBagTextObject::setText(const CBofString &s) {
 		SetFileName(s);
 	}
 
-	RecalcTextRect(!GetFileName().Right(4).Find(".TXT") || !GetFileName().Right(4).Find(".txt"));
+	RecalcTextRect(!getFileName().Right(4).Find(".TXT") || !getFileName().Right(4).Find(".txt"));
 }
 
 //   Takes in info and then removes the relative information and returns the info
@@ -296,7 +296,7 @@ PARSE_CODES CBagTextObject::setInfo(bof_ifstream &istr) {
 
 				// WORKAROUND: Reduce the font size of Cilia's full-screen log
 				// in ScummVM so that it fits on the screen
-				if (m_nPointSize == 28 && istr.GetSize() == 359105)
+				if (m_nPointSize == 28 && istr.getSize() == 359105)
 					m_nPointSize = 26;
 
 			} else {
@@ -480,7 +480,7 @@ bool CBagTextObject::runObject() {
 				CBofRect cRect(80, 10, 80 + 480 /*- 1 */, 10 + getRect().height() - 1 + 5);
 				CBofPoint cPoint(0, 0);
 
-				CBofPalette *pPal = pApp->GetPalette();
+				CBofPalette *pPal = pApp->getPalette();
 				CBofBitmap cBmp(cRect.width(), cRect.height(), pPal);
 
 				cBmp.fillRect(nullptr, pPal->GetNearestIndex(RGB(92, 92, 92)));

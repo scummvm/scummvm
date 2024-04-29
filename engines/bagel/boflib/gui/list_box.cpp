@@ -340,14 +340,14 @@ ErrorCode CBofListBox::saveBackground() {
 
 	killBackground();
 
-	if ((_pBackdrop = new CBofBitmap(width(), height(), CBofApp::GetApp()->GetPalette())) != nullptr) {
+	if ((_pBackdrop = new CBofBitmap(width(), height(), CBofApp::GetApp()->getPalette())) != nullptr) {
 		if ((_parent != nullptr) && (_parent->getBackdrop() != nullptr)) {
 			CBofRect cRect = _pBackdrop->getRect();
 
 			_parent->getBackdrop()->paint(_pBackdrop, &cRect, &_cWindowRect);
 
 		} else {
-			_pBackdrop->CaptureScreen(this, &_cRect);
+			_pBackdrop->captureScreen(this, &_cRect);
 		}
 
 	} else {
@@ -367,7 +367,7 @@ ErrorCode CBofListBox::createWorkArea() {
 	if (_pWork == nullptr) {
 		Assert(_pBackdrop != nullptr);
 
-		if ((_pWork = new CBofBitmap(width(), height(), _pBackdrop->GetPalette())) == nullptr) {
+		if ((_pWork = new CBofBitmap(width(), height(), _pBackdrop->getPalette())) == nullptr) {
 			ReportError(ERR_MEMORY, "Unable to allocate a %d x %d CBofBitmap", width(), height());
 		}
 	}
@@ -390,7 +390,7 @@ ErrorCode CBofListBox::repaintAll() {
 		if (_pWork != nullptr) {
 			_pWork->lock();
 
-			int nIndexedColor = _pWork->GetPalette()->GetNearestIndex(_cTextColor);
+			int nIndexedColor = _pWork->getPalette()->GetNearestIndex(_cTextColor);
 
 			// prepare the background
 			//
@@ -434,7 +434,7 @@ ErrorCode CBofListBox::repaintAll() {
 					}
 
 					CBofPoint bl(cRect.BottomLeft()), br(cRect.BottomRight());
-					_pWork->Line(&bl, &br, (byte)nIndexedColor);
+					_pWork->line(&bl, &br, (byte)nIndexedColor);
 				}
 			}
 
@@ -465,7 +465,7 @@ ErrorCode CBofListBox::repaintItem(int nIndex) {
 			int i = nIndex - _n1stVisible;
 
 			createWorkArea();
-			int nIndexedColor = _pWork->GetPalette()->GetNearestIndex(_cTextColor);
+			int nIndexedColor = _pWork->getPalette()->GetNearestIndex(_cTextColor);
 
 			_pWork->lock();
 
@@ -508,7 +508,7 @@ ErrorCode CBofListBox::repaintItem(int nIndex) {
 				          getFont());
 			}
 			CBofPoint bl(cRect.BottomLeft()), br(cRect.BottomRight());
-			_pWork->Line(&bl, &br, (byte)nIndexedColor);
+			_pWork->line(&bl, &br, (byte)nIndexedColor);
 
 			// Show final image on screen
 			_pWork->paint(this, &cRect, &cRect);

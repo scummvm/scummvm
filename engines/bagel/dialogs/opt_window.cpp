@@ -182,7 +182,7 @@ ErrorCode CBagOptWindow::Detach() {
 		m_pPanSpeedScroll = nullptr;
 	}
 
-	CBofApp::GetApp()->SetPalette(m_pSavePalette);
+	CBofApp::GetApp()->setPalette(m_pSavePalette);
 
 	return _errCode;
 }
@@ -198,11 +198,11 @@ void CBagOptWindow::onPaint(CBofRect *pRect) {
 
 ErrorCode CBagOptWindow::attach() {
 	// Save off the current game's palette
-	m_pSavePalette = CBofApp::GetApp()->GetPalette();
+	m_pSavePalette = CBofApp::GetApp()->getPalette();
 
 	// Insert ours
-	CBofPalette *pPal = _pBackdrop->GetPalette();
-	CBofApp::GetApp()->SetPalette(pPal);
+	CBofPalette *pPal = _pBackdrop->getPalette();
+	CBofApp::GetApp()->setPalette(pPal);
 
 	// Paint stuff
 	if (_pBackdrop != nullptr) {
@@ -237,10 +237,10 @@ ErrorCode CBagOptWindow::attach() {
 		if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
 			CBofBitmap *pUp, *pDown, *pFocus, *pDis;
 
-			pUp = LoadBitmap(BuildSysDir(g_stButtons[i].m_pszUp), pPal);
-			pDown = LoadBitmap(BuildSysDir(g_stButtons[i].m_pszDown), pPal);
-			pFocus = LoadBitmap(BuildSysDir(g_stButtons[i].m_pszFocus), pPal);
-			pDis = LoadBitmap(BuildSysDir(g_stButtons[i].m_pszDisabled), pPal);
+			pUp = loadBitmap(BuildSysDir(g_stButtons[i].m_pszUp), pPal);
+			pDown = loadBitmap(BuildSysDir(g_stButtons[i].m_pszDown), pPal);
+			pFocus = loadBitmap(BuildSysDir(g_stButtons[i].m_pszFocus), pPal);
+			pDis = loadBitmap(BuildSysDir(g_stButtons[i].m_pszDisabled), pPal);
 
 			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 

@@ -343,7 +343,7 @@ public:
 	}
 
 	virtual const CBofString &
-	GetFileName() {
+	getFileName() {
 		return m_sFileName;
 	}
 	CBagMenu *GetMenuPtr() {

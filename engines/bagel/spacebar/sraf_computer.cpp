@@ -918,16 +918,16 @@ ErrorCode SrafComputer::attach() {
 
 		// Must have a valid backdrop by now
 		Assert(_pBackdrop != nullptr);
-		CBofPalette *pPal = _pBackdrop->GetPalette();
+		CBofPalette *pPal = _pBackdrop->getPalette();
 
 		for (int i = 0; i < NUM_SRAFCOMPBUTT; i++) {
 			m_pButtons[i] = new CBofBmpButton;
 			if (m_pButtons[i] != nullptr) {
 
-				CBofBitmap *pUp = LoadBitmap(BuildSrafDir(g_stButtons[i].m_pszUp), pPal);
-				CBofBitmap *pDown = LoadBitmap(BuildSrafDir(g_stButtons[i].m_pszDown), pPal);
-				CBofBitmap *pFocus = LoadBitmap(BuildSrafDir(g_stButtons[i].m_pszFocus), pPal);
-				CBofBitmap *pDis = LoadBitmap(BuildSrafDir(g_stButtons[i].m_pszDisabled), pPal);
+				CBofBitmap *pUp = loadBitmap(BuildSrafDir(g_stButtons[i].m_pszUp), pPal);
+				CBofBitmap *pDown = loadBitmap(BuildSrafDir(g_stButtons[i].m_pszDown), pPal);
+				CBofBitmap *pFocus = loadBitmap(BuildSrafDir(g_stButtons[i].m_pszFocus), pPal);
+				CBofBitmap *pDis = loadBitmap(BuildSrafDir(g_stButtons[i].m_pszDisabled), pPal);
 
 				m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 				m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i]._nID);
@@ -4143,7 +4143,7 @@ void SrafComputer::NotifyBoss(CBofString &sSoundFile, int nStafferID) {         
 			return;
 		}
 
-		pSaveBackground->CaptureScreen(this, &gTextWindow);
+		pSaveBackground->captureScreen(this, &gTextWindow);
 
 		if (m_pStafferBmp[nStafferID] == nullptr) {
 			char        szLocalBuff[256];
@@ -4583,16 +4583,16 @@ int SrafTextScreen::CreateTextScreen(CBofWindow *pParent) {
 	setBackdrop(SrafComputer::GetComputerBackdrop(), false);
 
 	Assert(_pBackdrop != nullptr);
-	CBofPalette *pPal = _pBackdrop->GetPalette();
+	CBofPalette *pPal = _pBackdrop->getPalette();
 	// Create our OK button
 
 	m_pOKButton = new CBofBmpButton;
 	if (m_pOKButton != nullptr) {
 
-		CBofBitmap *pUp = LoadBitmap(BuildSrafDir(g_stButtons[DONE_BUTTON].m_pszUp), pPal);
-		CBofBitmap *pDown = LoadBitmap(BuildSrafDir(g_stButtons[DONE_BUTTON].m_pszDown), pPal);
-		CBofBitmap *pFocus = LoadBitmap(BuildSrafDir(g_stButtons[DONE_BUTTON].m_pszFocus), pPal);
-		CBofBitmap *pDis = LoadBitmap(BuildSrafDir(g_stButtons[DONE_BUTTON].m_pszDisabled), pPal);
+		CBofBitmap *pUp = loadBitmap(BuildSrafDir(g_stButtons[DONE_BUTTON].m_pszUp), pPal);
+		CBofBitmap *pDown = loadBitmap(BuildSrafDir(g_stButtons[DONE_BUTTON].m_pszDown), pPal);
+		CBofBitmap *pFocus = loadBitmap(BuildSrafDir(g_stButtons[DONE_BUTTON].m_pszFocus), pPal);
+		CBofBitmap *pDis = loadBitmap(BuildSrafDir(g_stButtons[DONE_BUTTON].m_pszDisabled), pPal);
 
 		m_pOKButton->loadBitmaps(pUp, pDown, pFocus, pDis);
 

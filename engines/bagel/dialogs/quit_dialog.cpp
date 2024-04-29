@@ -64,7 +64,7 @@ void CBagQuitDialog::onInitDialog() {
 	setReturnValue(-1);
 
 	Assert(_pBackdrop != nullptr);
-	CBofPalette *pPal = _pBackdrop->GetPalette();
+	CBofPalette *pPal = _pBackdrop->getPalette();
 	selectPalette(pPal);
 
 	// Paint the SaveList Box onto the background
@@ -78,10 +78,10 @@ void CBagQuitDialog::onInitDialog() {
 		Assert(m_pButtons[i] == nullptr);
 
 		if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
-			CBofBitmap *pUp = LoadBitmap(BuildSysDir(g_stQuitButtons[i].m_pszUp), pPal);
-			CBofBitmap *pDown = LoadBitmap(BuildSysDir(g_stQuitButtons[i].m_pszDown), pPal);
-			CBofBitmap *pFocus = LoadBitmap(BuildSysDir(g_stQuitButtons[i].m_pszFocus), pPal);
-			CBofBitmap *pDis = LoadBitmap(BuildSysDir(g_stQuitButtons[i].m_pszDisabled), pPal);
+			CBofBitmap *pUp = loadBitmap(BuildSysDir(g_stQuitButtons[i].m_pszUp), pPal);
+			CBofBitmap *pDown = loadBitmap(BuildSysDir(g_stQuitButtons[i].m_pszDown), pPal);
+			CBofBitmap *pFocus = loadBitmap(BuildSysDir(g_stQuitButtons[i].m_pszFocus), pPal);
+			CBofBitmap *pDis = loadBitmap(BuildSysDir(g_stQuitButtons[i].m_pszDisabled), pPal);
 
 			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 

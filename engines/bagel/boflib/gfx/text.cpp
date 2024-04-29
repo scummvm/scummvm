@@ -129,7 +129,7 @@ ErrorCode CBofText::SetupText(const CBofRect *pRect, int nJustify, uint32 nForma
 	}
 
 	CBofPalette *pPalette;
-	pPalette = CBofApp::GetApp()->GetPalette();
+	pPalette = CBofApp::GetApp()->getPalette();
 
 	// Create a bitmap to serve as our work area as we output text
 	if ((m_pWork = new CBofBitmap(m_cSize.cx, m_cSize.cy, pPalette)) != nullptr) {
@@ -255,9 +255,9 @@ ErrorCode CBofText::DisplayText(CBofWindow *pWnd, const char *pszText, CBofRect 
 	Assert(m_pWork != nullptr);
 
 	if (!m_bSaved) {
-		CBofBitmap::SetUseBackdrop(true);
-		m_pBackground->CaptureScreen(pWnd, pRect);
-		CBofBitmap::SetUseBackdrop(false);
+		CBofBitmap::setUseBackdrop(true);
+		m_pBackground->captureScreen(pWnd, pRect);
+		CBofBitmap::setUseBackdrop(false);
 		m_bSaved = true;
 	}
 
@@ -387,12 +387,12 @@ ErrorCode CBofText::DisplayTextEx(CBofBitmap *pBmp, const char *pszText, CBofRec
 		const Common::U32String &line = lines[i];
 
 		if (bShadowed) {
-			color = CBofApp::GetApp()->GetPalette()->GetNearestIndex(m_cShadowColor);
+			color = CBofApp::GetApp()->getPalette()->GetNearestIndex(m_cShadowColor);
 			displayLine(font, surface, line, shadowRect.left, shadowRect.top,
 				shadowRect.width(), color, align);
 		}
 
-		color = CBofApp::GetApp()->GetPalette()->GetNearestIndex(m_cTextColor);
+		color = CBofApp::GetApp()->getPalette()->GetNearestIndex(m_cTextColor);
 		displayLine(font, surface, line, newRect.left, newRect.top,
 			newRect.width(), color, align);
 

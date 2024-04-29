@@ -254,9 +254,9 @@ ErrorCode CNavWindow::attach() {
 	m_pLevel = g_Level;
 	m_pCurPos = new CBofRect(*m_pYzore);
 
-	m_pOldPal = CBofApp::GetApp()->GetPalette();
-	m_pPal = _pBackdrop->GetPalette()->CopyPalette();
-	CBofApp::GetApp()->SetPalette(m_pPal);
+	m_pOldPal = CBofApp::GetApp()->getPalette();
+	m_pPal = _pBackdrop->getPalette()->CopyPalette();
+	CBofApp::GetApp()->setPalette(m_pPal);
 	m_pCurLoc = new CBofSprite;
 	if (m_pCurLoc != nullptr) {
 		m_pCurLoc->LoadSprite(MakeDir(CUR_LOC), 2);
@@ -275,10 +275,10 @@ ErrorCode CNavWindow::attach() {
 		m_pButtons[i] = new CBofBmpButton;
 		if (m_pButtons[i] != nullptr) {
 
-			CBofBitmap *pUp = LoadBitmap(MakeDir(g_NavButtons[i].m_pszUp), m_pPal);
-			CBofBitmap *pDown = LoadBitmap(MakeDir(g_NavButtons[i].m_pszDown), m_pPal);
-			CBofBitmap *pFocus = LoadBitmap(MakeDir(g_NavButtons[i].m_pszFocus), m_pPal);
-			CBofBitmap *pDis = LoadBitmap(MakeDir(g_NavButtons[i].m_pszDisabled), m_pPal);
+			CBofBitmap *pUp = loadBitmap(MakeDir(g_NavButtons[i].m_pszUp), m_pPal);
+			CBofBitmap *pDown = loadBitmap(MakeDir(g_NavButtons[i].m_pszDown), m_pPal);
+			CBofBitmap *pFocus = loadBitmap(MakeDir(g_NavButtons[i].m_pszFocus), m_pPal);
+			CBofBitmap *pDis = loadBitmap(MakeDir(g_NavButtons[i].m_pszDisabled), m_pPal);
 
 			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 			m_pButtons[i]->create(g_NavButtons[i].m_pszName, g_NavButtons[i].m_nLeft, g_NavButtons[i].m_nTop, g_NavButtons[i].m_nWidth, g_NavButtons[i].m_nHeight, this, g_NavButtons[i]._nID);
@@ -321,7 +321,7 @@ ErrorCode CNavWindow::detach() {
 
 	LogInfo("\tCNavWindow::detach()");
 
-	CBofApp::GetApp()->SetPalette(m_pOldPal);
+	CBofApp::GetApp()->setPalette(m_pOldPal);
 
 	if (m_pPal != nullptr) {
 		delete m_pPal;
@@ -1382,7 +1382,7 @@ void CNavWindow::CalcFuel(double hf) {
 
 		// WORKAROUND: _pBackdrop shares it's palette with m_pCurLoc,
 		// so as the backdrop is changed, don't free the palette
-		_pBackdrop->SetIsOwnPalette(false);
+		_pBackdrop->setIsOwnPalette(false);
 		bool isDone = (m_level == 3);
 
 		if (m_level == 3) {
@@ -1450,7 +1450,7 @@ void CNavWindow::CalcFuel(double hf) {
 			updateWindow();
 
 		// WORKAROUND: Restore owns palette flag back again
-		_pBackdrop->SetIsOwnPalette(true);
+		_pBackdrop->setIsOwnPalette(true);
 	}
 
 	if (m_fuel <= 0) {

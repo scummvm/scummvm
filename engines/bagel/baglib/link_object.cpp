@@ -43,7 +43,7 @@ CBagLinkObject::~CBagLinkObject() {
 
 CBofRect CBagLinkObject::getRect() {
 	CBofPoint p = getPosition();
-	CBofSize  s = GetSize();
+	CBofSize  s = getSize();
 	CBofRect r = CBofRect(p, s);
 	return r;
 }
@@ -167,12 +167,12 @@ bool CBagLinkObject::runObject() {
 	szBuf[0] = '\0';
 	CBofString cStr(szBuf, 256);
 
-	cStr = GetFileName();
+	cStr = getFileName();
 
 	// If this is a special link (using the last known sdev stack),
 	// then find it's value, and use that instead.
-	if (GetFileName().Find("$LASTWORLD") != -1) {
-		cStr = GetFileName();
+	if (getFileName().Find("$LASTWORLD") != -1) {
+		cStr = getFileName();
 
 		CBagVar *pVar = VARMNGR->GetVariable("$LASTWORLD");
 		if (pVar != nullptr) {
@@ -192,7 +192,7 @@ bool CBagLinkObject::runObject() {
 
 	CBagMasterWin *pMasterWin = CBagel::getBagApp()->getMasterWnd();
 	if (pMasterWin) {
-		pMasterWin->SetCurrFadeIn(m_nFade);
+		pMasterWin->SetCurrfadeIn(m_nFade);
 		pMasterWin->SetStorageDev(cStr);
 	}
 

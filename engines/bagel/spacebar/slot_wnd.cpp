@@ -184,7 +184,7 @@ ErrorCode  SBarSlotWnd::attach() {
 	if (CBagStorageDevWnd::attach() == ERR_NONE) {
 		// Must have a valid backdrop by now
 		Assert(_pBackdrop != nullptr);
-		CBofPalette *pPal = _pBackdrop->GetPalette();
+		CBofPalette *pPal = _pBackdrop->getPalette();
 
 		m_bFixBmp = new CBofBitmap(BuildSlotDir(FIXBMP));
 
@@ -193,10 +193,10 @@ ErrorCode  SBarSlotWnd::attach() {
 
 			m_pSlotButs[i] = new CBofBmpButton;
 			if (m_pSlotButs[i] != nullptr) {
-				CBofBitmap *pUp = LoadBitmap(BuildSlotDir(g_stButtons[i].m_pszUp), pPal);
-				CBofBitmap *pDown = LoadBitmap(BuildSlotDir(g_stButtons[i].m_pszDown), pPal);
-				CBofBitmap *pFocus = LoadBitmap(BuildSlotDir(g_stButtons[i].m_pszFocus), pPal);
-				CBofBitmap *pDis = LoadBitmap(BuildSlotDir(g_stButtons[i].m_pszDisabled), pPal);
+				CBofBitmap *pUp = loadBitmap(BuildSlotDir(g_stButtons[i].m_pszUp), pPal);
+				CBofBitmap *pDown = loadBitmap(BuildSlotDir(g_stButtons[i].m_pszDown), pPal);
+				CBofBitmap *pFocus = loadBitmap(BuildSlotDir(g_stButtons[i].m_pszFocus), pPal);
+				CBofBitmap *pDis = loadBitmap(BuildSlotDir(g_stButtons[i].m_pszDisabled), pPal);
 
 				m_pSlotButs[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 				m_pSlotButs[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i]._nID);
@@ -409,7 +409,7 @@ void SBarSlotWnd::AddBet(int nBetVal) {
 		CBofRect cRect(0, 440, 640 - 1, 480 - 1);
 
 		CBofBitmap cBmp(cRect.width(), cRect.height(), (CBofPalette *)nullptr, false);
-		cBmp.CaptureScreen(this, &cRect);
+		cBmp.captureScreen(this, &cRect);
 
 		PaintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
 		WaitForInput();
@@ -439,7 +439,7 @@ void SBarSlotWnd::BetAll() {
 		CBofRect cRect(0, 440, 640 - 1, 480 - 1);
 
 		CBofBitmap cBmp(cRect.width(), cRect.height(), (CBofPalette *)nullptr, false);
-		cBmp.CaptureScreen(this, &cRect);
+		cBmp.captureScreen(this, &cRect);
 
 		PaintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
 		WaitForInput();
@@ -699,7 +699,7 @@ void SBarSlotWnd::SlideSlots() {
 
 			cRect.SetRect(DestRect.left, DestRect.top, DestRect.left + SrcRect.width() - 1, DestRect.top + SrcRect.height() - 1);
 
-			pCurBmp->PaintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
+			pCurBmp->paintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
 		}
 		m_pSlotSound->play();
 
@@ -720,7 +720,7 @@ void SBarSlotWnd::SlideSlots() {
 				SrcRect.top = BmpRect.top;
 
 			cRect.SetRect(DestRect.left, DestRect.top, DestRect.left + SrcRect.width() - 1, DestRect.top + SrcRect.height() - 1);
-			pCurBmp->PaintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
+			pCurBmp->paintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
 		}
 
 		m_pSlotSound->play();
@@ -742,7 +742,7 @@ void SBarSlotWnd::SlideSlots() {
 				SrcRect.right = BmpRect.right;
 
 			cRect.SetRect(DestRect.right - SrcRect.width() + 1, DestRect.top, DestRect.right, DestRect.top + SrcRect.height() - 1);
-			pCurBmp->PaintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
+			pCurBmp->paintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
 		}
 		m_pSlotSound->play();
 
@@ -763,7 +763,7 @@ void SBarSlotWnd::SlideSlots() {
 				SrcRect.bottom = BmpRect.bottom;
 
 			cRect.SetRect(DestRect.left, DestRect.bottom - SrcRect.height() + 1, DestRect.left + SrcRect.width() - 1, DestRect.bottom);
-			pCurBmp->PaintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
+			pCurBmp->paintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
 		}
 
 		m_pSlotSound->play();

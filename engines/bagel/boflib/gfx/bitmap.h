@@ -164,7 +164,7 @@ public:
 	 * Allocates the structures needed for a CBofBitmap
 	 * @param       Palette to be assigned into this bitmap
 	 */
-	ErrorCode BuildBitmap(CBofPalette *pPalette);
+	ErrorCode buildBitmap(CBofPalette *pPalette);
 
 	/**
 	 * Loads the specified bitmap from disk
@@ -172,12 +172,12 @@ public:
 	 * @param pPalette      Palette
 	 * @return              Error return code
 	 */
-	ErrorCode LoadBitmap(const char *pszFileName, CBofPalette *pPalette);
+	ErrorCode loadBitmap(const char *pszFileName, CBofPalette *pPalette);
 
 	/**
 	 * Frees the data used by this bitmap
 	 */
-	void ReleaseBitmap();
+	void releaseBitmap();
 
 	//
 	// Palette routines
@@ -188,17 +188,17 @@ public:
 	 * @param pBofPalette   Pointer to CBofPalette to be assigned
 	 * @param bOwnPalette   true if bitmap is to own this palette
 	 */
-	void SetPalette(CBofPalette *pPalette, bool bOwnPalette = false);
+	void setPalette(CBofPalette *pPalette, bool bOwnPalette = false);
 
-	CBofPalette *GetPalette() {
+	CBofPalette *getPalette() {
 		return m_pPalette;
 	}
 
-	bool IsOwnPalette() {
+	bool isOwnPalette() {
 		return m_bOwnPalette;
 	}
 
-	void SetIsOwnPalette(bool own) {
+	void setIsOwnPalette(bool own) {
 		m_bOwnPalette = own;
 	}
 
@@ -212,41 +212,41 @@ public:
 	 * @param y     Row in m_pBits
 	 * @return      Address of (x,y) in bitmap surface
 	 */
-	byte *GetPixelAddress(int x, int y);
-	byte *GetPixelAddress(CBofPoint *pPoint) {
-		return (GetPixelAddress(pPoint->x, pPoint->y));
+	byte *getPixelAddress(int x, int y);
+	byte *getPixelAddress(CBofPoint *pPoint) {
+		return getPixelAddress(pPoint->x, pPoint->y);
 	}
 
-	CBofSize GetSize() {
-		return (CBofSize(m_nDX, m_nDY));
+	CBofSize getSize() {
+		return CBofSize(m_nDX, m_nDY);
 	}
 
 	CBofRect getRect() {
-		return (CBofRect(0, 0, m_nDX - 1, m_nDY - 1));
+		return CBofRect(0, 0, m_nDX - 1, m_nDY - 1);
 	}
 
-	void SetReadOnly(bool bReadOnly) {
+	void setReadOnly(bool bReadOnly) {
 		m_bReadOnly = bReadOnly;
 	}
 
-	bool GetReadOnly() {
-		return (m_bReadOnly);
+	bool getReadOnly() {
+		return m_bReadOnly;
 	}
 
-	bool IsTopDown() {
-		return (m_bTopDown);
+	bool isTopDown() {
+		return m_bTopDown;
 	}
 
 	int width() {
-		return (m_nDX);
+		return m_nDX;
 	}
 
-	int WidthBytes() {
-		return (m_nScanDX);
+	int widthBytes() {
+		return m_nScanDX;
 	}
 
 	int height() {
-		return (m_nDY);
+		return m_nDY;
 	}
 
 	operator Graphics::ManagedSurface &() {
@@ -259,7 +259,7 @@ public:
 	 * Returns current bitmap's filename (if any)
 	 * @return      Pointer to bitmap's filename
 	 */
-	const char *GetFileName();
+	const char *getFileName();
 
 	//
 	// Drawing routines
@@ -293,7 +293,7 @@ public:
 	 * @param nMaskColor    Transparency color
 	 * @return              Error return code
 	 */
-	ErrorCode PaintMaskBackdrop(CBofWindow *pWnd, CBofRect *pDstRect = nullptr, CBofRect *pSrcRect = nullptr, int nMaskColor = NOT_TRANSPARENT);
+	ErrorCode paintMaskBackdrop(CBofWindow *pWnd, CBofRect *pDstRect = nullptr, CBofRect *pSrcRect = nullptr, int nMaskColor = NOT_TRANSPARENT);
 
 	/**
 	 * Paints some or all of the bitmap directly to the screen
@@ -331,7 +331,7 @@ public:
 	 * @param pSrcRect      Source rectangle from bitmap
 	 * @return              Error return code
 	 */
-	ErrorCode PaintStretch4(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSrcRect);
+	ErrorCode paintStretch4(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSrcRect);
 
 	/**
 	 * Stretches a multiple of 4 pixel wide strips from source to destination
@@ -340,14 +340,14 @@ public:
 	 * @param pSrcRect      Source rectangle from bitmap
 	 * @return              Error return code
 	 */
-	ErrorCode PaintStretchOpt(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSrcRect, int nOptSize);
+	ErrorCode paintStretchOpt(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSrcRect, int nOptSize);
 
 	/**
 	 * Paints some or all of the bitmap directly to the screen
 	 * @param pBmp      Destination bitmap to paint to
 	 * @return          Error return code
 	 */
-	ErrorCode Paint1To1(CBofBitmap *pBmp);
+	ErrorCode paint1To1(CBofBitmap *pBmp);
 
 	/** Copy specified section of screen (or window) to bitmap.
 	 * @param pWnd      Window to capture
@@ -355,14 +355,14 @@ public:
 	 * @param pDstRect  Destination area to copy image to
 	 * @return          Error return code
 	 */
-	ErrorCode CaptureScreen(CBofWindow *pWnd, CBofRect *pSrcRect, CBofRect *pDstRect = nullptr);
+	ErrorCode captureScreen(CBofWindow *pWnd, CBofRect *pSrcRect, CBofRect *pDstRect = nullptr);
 
 	/**
 	 * Creates a new bitmap based on a section of current bitmap
 	 * @param pRect     Section of bitmap to extract
 	 * @return          New bitmap
 	 */
-	CBofBitmap *ExtractBitmap(CBofRect *pRect);
+	CBofBitmap *extractBitmap(CBofRect *pRect);
 
 	/**
 	 * Performs a "Fade" onto the specified window
@@ -374,10 +374,10 @@ public:
 	 * @param nSpeed        Speed for fade (not implemented yet)
 	 * @return              Error return code
 	 */
-	ErrorCode FadeIn(CBofWindow *pWnd, int x = 0, int y = 0, int nMaskColor = NOT_TRANSPARENT, int nBlockSize = CBMP_FADE_SIZE, int nSpeed = CBMP_FADE_SPEED);
+	ErrorCode fadeIn(CBofWindow *pWnd, int x = 0, int y = 0, int nMaskColor = NOT_TRANSPARENT, int nBlockSize = CBMP_FADE_SIZE, int nSpeed = CBMP_FADE_SPEED);
 
-	ErrorCode Curtain(CBofWindow *pWnd, int nSpeed = CBMP_CURT_SPEED, int nMaskColor = NOT_TRANSPARENT);
-	ErrorCode FadeLines(CBofWindow *pWnd, CBofRect *pDstRect = nullptr, CBofRect *pSrcRect = nullptr, int nSpeed = CBMP_LINE_SPEED, int nMaskColor = NOT_TRANSPARENT);
+	ErrorCode curtain(CBofWindow *pWnd, int nSpeed = CBMP_CURT_SPEED, int nMaskColor = NOT_TRANSPARENT);
+	ErrorCode fadeLines(CBofWindow *pWnd, CBofRect *pDstRect = nullptr, CBofRect *pSrcRect = nullptr, int nSpeed = CBMP_LINE_SPEED, int nMaskColor = NOT_TRANSPARENT);
 
 	/**
 	 * Returns the color at the (x, y) location in this bmp
@@ -385,7 +385,7 @@ public:
 	 * @param y         Y position
 	 * @return          Color Index of specified (x,y) location in m_pBits
 	 */
-	byte ReadPixel(int x, int y);
+	byte readPixel(int x, int y);
 
 	/**
 	 * Assigns the specified color to the (x, y) location
@@ -393,7 +393,7 @@ public:
 	 * @param y         Y position
 	 * @param iColor    Pixel value
 	 */
-	void WritePixel(int x, int y, byte iColor);
+	void writePixel(int x, int y, byte iColor);
 
 	/**
 	 * Writes a circle into this bitmap
@@ -402,7 +402,7 @@ public:
 	 * @param nRadius   Radius of circle
 	 * @param iColor    Pixel value
 	 */
-	void Circle(int x, int y, uint16 nRadius, byte iColor);
+	void circle(int x, int y, uint16 nRadius, byte iColor);
 
 	/**
 	 * Writes a circle into this bitmap
@@ -410,7 +410,7 @@ public:
 	 * @param nRadius   Radius of circle
 	 * @param iColor    Pixel value
 	 */
-	void Circle(CBofPoint *pCenter, uint16 nRadius, byte iColor);
+	void circle(CBofPoint *pCenter, uint16 nRadius, byte iColor);
 
 	/**
 	 * Writes a line into this bitmap
@@ -420,7 +420,7 @@ public:
 	 * @param nDstY     Endpoint 2 y
 	 * @param iColor    Pixel value
 	 */
-	void Line(int nSrcX, int nSrcY, int nDstX, int nDstY, byte iColor);
+	void line(int nSrcX, int nSrcY, int nDstX, int nDstY, byte iColor);
 
 	/**
 	 * Writes a line into this bitmap
@@ -428,7 +428,7 @@ public:
 	 * @param pDest     Endpoint 2
 	 * @param iColor    Pixel value
 	 */
-	void Line(CBofPoint *pSrc, CBofPoint *pDest, byte iColor);
+	void line(CBofPoint *pSrc, CBofPoint *pDest, byte iColor);
 
 	/**
 	 * Writes a filled circle into this bitmap
@@ -437,7 +437,7 @@ public:
 	 * @param nRadius   Radius of circle
 	 * @param iColor    Pixel value
 	 */
-	void FillCircle(int x, int y, uint16 nRadius, byte iColor);
+	void fillCircle(int x, int y, uint16 nRadius, byte iColor);
 
 	/**
 	 * Writes a filled circle into this bitmap
@@ -445,14 +445,14 @@ public:
 	 * @param nRadius   Radius of circle
 	 * @param iColor    Pixel value
 	 */
-	void FillCircle(CBofPoint *pCenter, uint16 nRadius, byte iColor);
+	void fillCircle(CBofPoint *pCenter, uint16 nRadius, byte iColor);
 
 	/**
 	 * Writes a Rectangle into this bitmap
 	 * @param cRect     Pointer to rectangle Coordinates
 	 * @param iColor    Color of rectangle
 	 */
-	void DrawRect(CBofRect *cRect, byte iColor);
+	void drawRect(CBofRect *cRect, byte iColor);
 
 	/**
 	 * Writes a filled in Rectangle to this bitmap
@@ -461,7 +461,7 @@ public:
 	 */
 	void fillRect(CBofRect *cRect, byte iColor);
 
-	void FlipVerticalFast();
+	void flipVerticalFast();
 
 	/**
 	 * Scrolls current bitmap horizontally
@@ -469,11 +469,11 @@ public:
 	 * @param pRect         Section of bitmap to scroll
 	 * @return              Error return code
 	 */
-	ErrorCode ScrollRight(int nPixels, CBofRect *pRect = nullptr);
+	ErrorCode scrollRight(int nPixels, CBofRect *pRect = nullptr);
 
 
-	ErrorCode ScrollLeft(int nPixels, CBofRect *pRect = nullptr) {
-		return (ScrollRight(-nPixels, pRect));
+	ErrorCode scrollLeft(int nPixels, CBofRect *pRect = nullptr) {
+		return scrollRight(-nPixels, pRect);
 	}
 
 	/**
@@ -486,14 +486,14 @@ public:
 
 
 	ErrorCode scrollDown(int nPixels, CBofRect *pRect = nullptr) {
-		return (scrollUp(-nPixels, pRect));
+		return scrollUp(-nPixels, pRect);
 	}
 
-	static void SetUseBackdrop(bool b) {
+	static void setUseBackdrop(bool b) {
 		m_bUseBackdrop = b;
 	}
-	static bool GetUseBackdrop() {
-		return (m_bUseBackdrop);
+	static bool getUseBackdrop() {
+		return m_bUseBackdrop;
 	}
 };
 
@@ -510,7 +510,7 @@ public:
  * @param bSharedPal        Shared palette flag
  * @return                  Pointer to bitmap
  */
-extern CBofBitmap *LoadBitmap(const char *pszFileName, CBofPalette *pPalette = nullptr, bool bSharedPal = false);
+extern CBofBitmap *loadBitmap(const char *pszFileName, CBofPalette *pPalette = nullptr, bool bSharedPal = false);
 
 /**
  * Paints specified bitmap to specified window
@@ -522,7 +522,7 @@ extern CBofBitmap *LoadBitmap(const char *pszFileName, CBofPalette *pPalette = n
  * @param nMaskColor        Optional transparent color
  * @return                  Error return code
  */
-extern ErrorCode PaintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofRect *pDstRect = nullptr,
+extern ErrorCode paintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofRect *pDstRect = nullptr,
                               CBofRect *pSrcRect = nullptr, CBofPalette *pPalette = nullptr, int nMaskColor = NOT_TRANSPARENT);
 
 /**
@@ -535,7 +535,7 @@ extern ErrorCode PaintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofR
  * @param nMaskColor        Optional transparent color
  * @return                  Error return code
  */
-extern ErrorCode PaintBitmap(CBofBitmap *pBmp, const char *pszFileName, CBofRect *pDstRect = nullptr,
+extern ErrorCode paintBitmap(CBofBitmap *pBmp, const char *pszFileName, CBofRect *pDstRect = nullptr,
                               CBofRect *pSrcRect = nullptr, CBofPalette *pPalette = nullptr, int nMaskColor = NOT_TRANSPARENT);
 
 } // namespace Bagel

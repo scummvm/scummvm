@@ -95,11 +95,11 @@ ErrorCode CBagRestoreDialog::attach() {
 	m_nSelectedItem = g_nSelectedSlot;
 
 	// Save off the current game's palette
-	m_pSavePalette = CBofApp::GetApp()->GetPalette();
+	m_pSavePalette = CBofApp::GetApp()->getPalette();
 
 	// Insert ours
-	CBofPalette *pPal = _pBackdrop->GetPalette();
-	CBofApp::GetApp()->SetPalette(pPal);
+	CBofPalette *pPal = _pBackdrop->getPalette();
+	CBofApp::GetApp()->setPalette(pPal);
 
 	// Paint the SaveList Box onto the background
 	if (_pBackdrop != nullptr) {
@@ -118,10 +118,10 @@ ErrorCode CBagRestoreDialog::attach() {
 		if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
 			CBofBitmap *pUp, *pDown, *pFocus, *pDis;
 
-			pUp = LoadBitmap(BuildSysDir(g_stButtons[i].m_pszUp), pPal);
-			pDown = LoadBitmap(BuildSysDir(g_stButtons[i].m_pszDown), pPal);
-			pFocus = LoadBitmap(BuildSysDir(g_stButtons[i].m_pszFocus), pPal);
-			pDis = LoadBitmap(BuildSysDir(g_stButtons[i].m_pszDisabled), pPal);
+			pUp = loadBitmap(BuildSysDir(g_stButtons[i].m_pszUp), pPal);
+			pDown = loadBitmap(BuildSysDir(g_stButtons[i].m_pszDown), pPal);
+			pFocus = loadBitmap(BuildSysDir(g_stButtons[i].m_pszFocus), pPal);
+			pDis = loadBitmap(BuildSysDir(g_stButtons[i].m_pszDisabled), pPal);
 
 			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 
@@ -165,7 +165,7 @@ ErrorCode CBagRestoreDialog::attach() {
 		if (_pBackdrop != nullptr) {
 			CBofPalette *pPal2;
 
-			pPal2 = _pBackdrop->GetPalette();
+			pPal2 = _pBackdrop->getPalette();
 
 			byte iPalIdx = pPal2->GetNearestIndex(RGB(255, 0, 0));
 
@@ -257,7 +257,7 @@ ErrorCode CBagRestoreDialog::Detach() {
 
 	m_nSelectedItem = -1;
 
-	CBofApp::GetApp()->SetPalette(m_pSavePalette);
+	CBofApp::GetApp()->setPalette(m_pSavePalette);
 
 	return _errCode;
 }

@@ -54,7 +54,7 @@ ErrorCode CBagSpriteObject::attach() {
 		Assert(m_xSprite == nullptr);
 
 		if ((m_xSprite = new CBofSprite()) != nullptr) {
-			if (m_xSprite->LoadSprite(GetFileName(), GetCels()) != false && (m_xSprite->width() != 0) && (m_xSprite->height() != 0)) {
+			if (m_xSprite->LoadSprite(getFileName(), GetCels()) != false && (m_xSprite->width() != 0) && (m_xSprite->height() != 0)) {
 				if (IsTransparent()) {
 					int nMaskColor = CBagel::getBagApp()->getChromaColor();
 
@@ -80,7 +80,7 @@ ErrorCode CBagSpriteObject::attach() {
 					pMainWin->SetPreFilterPan(true);
 				}
 			} else {
-				ReportError(ERR_FOPEN, "Could Not Open Sprite: %s", m_xSprite->GetFileName());
+				ReportError(ERR_FOPEN, "Could Not Open Sprite: %s", m_xSprite->getFileName());
 			}
 
 		} else {
@@ -115,7 +115,7 @@ CBofRect CBagSpriteObject::getRect() {
 	CBofPoint p = getPosition();
 	CBofSize s;
 	if (m_xSprite)
-		s = m_xSprite->GetSize();
+		s = m_xSprite->getSize();
 	return CBofRect(p, s);
 }
 
@@ -256,7 +256,7 @@ bool CBagSpriteObject::isInside(const CBofPoint &xPoint) {
 		if (IsTransparent()) {
 			int x = xPoint.x - getRect().left;
 			int y = xPoint.y - getRect().top;
-			int c = m_xSprite->ReadPixel(x, y);
+			int c = m_xSprite->readPixel(x, y);
 			int d = m_xSprite->GetMaskColor();
 			return (c != d);
 		}

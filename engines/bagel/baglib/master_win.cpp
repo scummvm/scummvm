@@ -119,7 +119,7 @@ CBagMasterWin::~CBagMasterWin() {
 
 	CBofApp *pApp;
 	if ((pApp = CBofApp::GetApp()) != nullptr) {
-		pApp->SetPalette(nullptr);
+		pApp->setPalette(nullptr);
 	}
 
 	// Delete any remaining cursors
@@ -167,7 +167,7 @@ ErrorCode CBagMasterWin::ShowSystemDialog(bool bSaveBackground) {
 		CBagOptWindow cOptionDialog;
 
 		// Use specified bitmap as this dialog's image
-		CBofBitmap *pBmp = Bagel::LoadBitmap(m_cSysScreen.GetBuffer());
+		CBofBitmap *pBmp = Bagel::loadBitmap(m_cSysScreen.GetBuffer());
 
 		cOptionDialog.setBackdrop(pBmp);
 
@@ -209,7 +209,7 @@ ErrorCode CBagMasterWin::ShowCreditsDialog(CBofWindow *pWin, bool bSaveBkg) {
 	CBagCreditsDialog cCreditsDialog;
 
 	// Use specified bitmap as this dialog's image
-	CBofBitmap *pBmp = Bagel::LoadBitmap(BuildSysDir("BARAREA.BMP"));
+	CBofBitmap *pBmp = Bagel::loadBitmap(BuildSysDir("BARAREA.BMP"));
 
 	cCreditsDialog.setBackdrop(pBmp);
 
@@ -258,7 +258,7 @@ bool CBagMasterWin::ShowQuitDialog(CBofWindow *pWin, bool bSaveBackground) {
 		}
 
 		// Use specified bitmap as this dialog's image
-		CBofBitmap *pBmp = Bagel::LoadBitmap(m_cSysScreen.GetBuffer());
+		CBofBitmap *pBmp = Bagel::loadBitmap(m_cSysScreen.GetBuffer());
 
 		cQuitDialog.setBackdrop(pBmp);
 
@@ -357,7 +357,7 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 		cRect.right = cRect.left + 520 - 1;
 		cRect.bottom = cRect.top + 240 - 1;
 
-		PaintBitmap(this, sWldFileName.GetBuffer(), &cRect);
+		paintBitmap(this, sWldFileName.GetBuffer(), &cRect);
 	}
 
 	sWldFileName = sWldName;
@@ -372,7 +372,7 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 	// replaced with a new one.
 	CBofApp *pApp = CBofApp::GetApp();
 	if (pApp != nullptr) {
-		pApp->SetPalette(nullptr);
+		pApp->setPalette(nullptr);
 	}
 
 	// Save all used objects (if going to another .WLD file)
@@ -586,7 +586,7 @@ ErrorCode CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 
 	delete m_pVariableList;
 	m_pVariableList = new CBagVarManager();
-	
+
 	if (m_pVariableList != nullptr) {
 
 		MACROREPLACE(sWldFileName);
@@ -1035,7 +1035,7 @@ ErrorCode CBagMasterWin::OnHelp(const CBofString &sHelpFile, bool /*bSaveBkg*/, 
 		sBkg = BuildString("$SBARDIR%sGENERAL%sRULES%sHELPSCRN.BMP", PATH_DELIMETER, PATH_DELIMETER, PATH_DELIMETER);
 		MACROREPLACE(sBkg);
 
-		CBofBitmap *pBmp = Bagel::LoadBitmap(sBkg);
+		CBofBitmap *pBmp = Bagel::loadBitmap(sBkg);
 		cHelp.setBackdrop(pBmp);
 
 		CBofRect cRect = cHelp.getBackdrop()->getRect();
@@ -1311,9 +1311,9 @@ void CBagMasterWin::onUserMessage(uint32 nMessage, uint32 lParam) {
 		// Kill any waiting PDA messages that are queued up...
 		CBagPDA::RemoveFromMovieQueue(nullptr);
 
-		CBofBitmap cBmp(width(), height(), CBagel::GetApp()->GetPalette());
+		CBofBitmap cBmp(width(), height(), CBagel::GetApp()->getPalette());
 		cBmp.fillRect(nullptr, COLOR_BLACK);
-		cBmp.FadeLines(this, 0, 0);
+		cBmp.fadeLines(this, 0, 0);
 
 		char szBuf[MAX_FNAME];
 
@@ -1563,7 +1563,7 @@ bool CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, bool bSaveBkg) {
 			cSaveDialog.SetSaveGameBuffer((byte *)pSaveBuf, sizeof(ST_BAGEL_SAVE));
 
 			// Use specified bitmap as this dialog's image
-			CBofBitmap *pBmp = Bagel::LoadBitmap(m_cSysScreen.GetBuffer());
+			CBofBitmap *pBmp = Bagel::loadBitmap(m_cSysScreen.GetBuffer());
 
 			cSaveDialog.setBackdrop(pBmp);
 
@@ -1732,7 +1732,7 @@ bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 		CBagRestoreDialog cRestoreDialog;
 
 		// Use specified bitmap as this dialog's image
-		CBofBitmap *pBmp = Bagel::LoadBitmap(m_cSysScreen.GetBuffer());
+		CBofBitmap *pBmp = Bagel::loadBitmap(m_cSysScreen.GetBuffer());
 
 		cRestoreDialog.setBackdrop(pBmp);
 
@@ -1989,13 +1989,13 @@ ErrorCode PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString &
 	CBofPalette *pPal = nullptr;
 	CBofApp *pApp = CBofApp::GetApp();
 	if (pApp != nullptr) {
-		pPal = pApp->GetPalette();
+		pPal = pApp->getPalette();
 	}
 
 	if (pPal != nullptr) {
 		cBmp.fillRect(nullptr, pPal->GetNearestIndex(RGB(92, 92, 92)));
 
-		cBmp.DrawRect(&r, pPal->GetNearestIndex(RGB(0, 0, 0)));
+		cBmp.drawRect(&r, pPal->GetNearestIndex(RGB(0, 0, 0)));
 	} else {
 		cBmp.fillRect(nullptr, COLOR_BLACK);
 	}
@@ -2015,13 +2015,13 @@ ErrorCode PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString &
 	r.bottom -= 5;
 
 	for (int i = 1; i <= 3; i++) {
-		cBmp.Line(left + i, bottom - i, right - i, bottom - i, c1);
-		cBmp.Line(right - i, bottom - i, right - i, top + i - 1, c1);
+		cBmp.line(left + i, bottom - i, right - i, bottom - i, c1);
+		cBmp.line(right - i, bottom - i, right - i, top + i - 1, c1);
 	}
 
 	for (int i = 1; i <= 3; i++) {
-		cBmp.Line(left + i, bottom - i, left + i, top + i - 1, c2);
-		cBmp.Line(left + i, top + i - 1, right - i, top + i - 1, c2);
+		cBmp.line(left + i, bottom - i, left + i, top + i - 1, c2);
+		cBmp.line(left + i, top + i - 1, right - i, top + i - 1, c2);
 	}
 
 	PaintText(&cBmp, &r, cString, nSize, nWeight, cColor, nJustify, nFormat, nFont);
@@ -2044,13 +2044,13 @@ ErrorCode PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &
 	CBofPalette *pPal = nullptr;
 	CBofApp *pApp = CBofApp::GetApp();
 	if (pApp != nullptr) {
-		pPal = pApp->GetPalette();
+		pPal = pApp->getPalette();
 	}
 
 	if (pPal != nullptr) {
 		cBmp.fillRect(nullptr, pPal->GetNearestIndex(RGB(92, 92, 92)));
 
-		cBmp.DrawRect(&r, pPal->GetNearestIndex(RGB(0, 0, 0)));
+		cBmp.drawRect(&r, pPal->GetNearestIndex(RGB(0, 0, 0)));
 	} else {
 		cBmp.fillRect(nullptr, COLOR_BLACK);
 	}
@@ -2073,13 +2073,13 @@ ErrorCode PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &
 	r.bottom -= 5;
 
 	for (i = 1; i <= 3; i++) {
-		cBmp.Line(left + i, bottom - i, right - i, bottom - i, c1);
-		cBmp.Line(right - i, bottom - i, right - i, top + i - 1, c1);
+		cBmp.line(left + i, bottom - i, right - i, bottom - i, c1);
+		cBmp.line(right - i, bottom - i, right - i, top + i - 1, c1);
 	}
 
 	for (i = 1; i <= 3; i++) {
-		cBmp.Line(left + i, bottom - i, left + i, top + i - 1, c2);
-		cBmp.Line(left + i, top + i - 1, right - i, top + i - 1, c2);
+		cBmp.line(left + i, bottom - i, left + i, top + i - 1, c2);
+		cBmp.line(left + i, top + i - 1, right - i, top + i - 1, c2);
 	}
 
 	PaintText(&cBmp, &r, cString, nSize, nWeight, cColor, nJustify, nFormat, nFont);

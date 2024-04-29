@@ -299,7 +299,7 @@ ErrorCode CBibbleWindow::attach() {
 
 	// Must have a valid backdrop by now
 	Assert(_pBackdrop != nullptr);
-	CBofPalette *pPal = _pBackdrop->GetPalette();
+	CBofPalette *pPal = _pBackdrop->getPalette();
 
 	// Setup the text fields
 	if ((m_pCreditsText = new CBofText) != nullptr) {
@@ -394,10 +394,10 @@ ErrorCode CBibbleWindow::attach() {
 	for (int i = 0; i < BIBBLE_NUM_BUTTONS; i++) {
 		if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
 
-			CBofBitmap *pUp = LoadBitmap(BuildDir(g_stButtons[i].m_pszUp), pPal);
-			CBofBitmap *pDown = LoadBitmap(BuildDir(g_stButtons[i].m_pszDown), pPal);
-			CBofBitmap *pFocus = LoadBitmap(BuildDir(g_stButtons[i].m_pszFocus), pPal);
-			CBofBitmap *pDis = LoadBitmap(BuildDir(g_stButtons[i].m_pszDisabled), pPal);
+			CBofBitmap *pUp = loadBitmap(BuildDir(g_stButtons[i].m_pszUp), pPal);
+			CBofBitmap *pDown = loadBitmap(BuildDir(g_stButtons[i].m_pszDown), pPal);
+			CBofBitmap *pFocus = loadBitmap(BuildDir(g_stButtons[i].m_pszFocus), pPal);
+			CBofBitmap *pDis = loadBitmap(BuildDir(g_stButtons[i].m_pszDisabled), pPal);
 
 			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 			m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i]._nID);
@@ -688,7 +688,7 @@ void CBibbleWindow::onBofButton(CBofObject *pObject, int nState) {
 			CBofRect cRect(0, 440, 640 - 1, 480 - 1);
 
 			CBofBitmap cBmp(cRect.width(), cRect.height(), (CBofPalette *)nullptr, false);
-			cBmp.CaptureScreen(this, &cRect);
+			cBmp.captureScreen(this, &cRect);
 
 			PaintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
 			WaitForInput();
@@ -1128,7 +1128,7 @@ ErrorCode CBibbleWindow::Highlight(CBetArea *pArea, byte nColor) {
 	Assert(IsValidObject(this));
 	Assert(pArea != nullptr);
 
-	CBofBitmap cBmp(pArea->_cRect.width(), pArea->_cRect.height(), _pBackdrop->GetPalette());
+	CBofBitmap cBmp(pArea->_cRect.width(), pArea->_cRect.height(), _pBackdrop->getPalette());
 
 	Assert(_pBackdrop != nullptr);
 	CBofRect r = cBmp.getRect();
@@ -1137,13 +1137,13 @@ ErrorCode CBibbleWindow::Highlight(CBetArea *pArea, byte nColor) {
 	// Add highlight rectangle
 	CBofRect cRect = cBmp.getRect();
 
-	cBmp.DrawRect(&cRect, nColor);
+	cBmp.drawRect(&cRect, nColor);
 	cRect.left += 1;
 	cRect.right -= 1;
 	cRect.top += 1;
 	cRect.bottom -= 1;
 
-	cBmp.DrawRect(&cRect, nColor);
+	cBmp.drawRect(&cRect, nColor);
 
 	// Add bet amount text
 	char szBuf[20];
@@ -1165,7 +1165,7 @@ ErrorCode CBibbleWindow::UnHighlight(CBetArea *pArea) {
 	Assert(IsValidObject(this));
 	Assert(pArea != nullptr);
 
-	CBofBitmap cBmp(pArea->_cRect.width(), pArea->_cRect.height(), _pBackdrop->GetPalette());
+	CBofBitmap cBmp(pArea->_cRect.width(), pArea->_cRect.height(), _pBackdrop->getPalette());
 
 	Assert(_pBackdrop != nullptr);
 

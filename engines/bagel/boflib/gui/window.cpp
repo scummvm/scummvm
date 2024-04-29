@@ -151,7 +151,7 @@ ErrorCode CBofWindow::create(const char *pszName, int x, int y, int nWidth, int 
 
 	if (!ErrorOccurred()) {
 		CBofPalette *pPalette;
-		if ((pPalette = CBofApp::GetApp()->GetPalette()) != nullptr) {
+		if ((pPalette = CBofApp::GetApp()->getPalette()) != nullptr) {
 			selectPalette(pPalette);
 		}
 
@@ -497,7 +497,7 @@ ErrorCode CBofWindow::setBackdrop(const char *pszFileName, bool bRefresh) {
 	CBofPalette *pPalette;
 
 	// Use Application's palette if none supplied
-	pPalette = CBofApp::GetApp()->GetPalette();
+	pPalette = CBofApp::GetApp()->getPalette();
 
 	if ((pBmp = new CBofBitmap(pszFileName, pPalette)) != nullptr) {
 		return setBackdrop(pBmp, bRefresh);
@@ -758,7 +758,7 @@ void CBofWindow::fillWindow(byte iColor) {
 }
 
 void CBofWindow::fillRect(CBofRect *pRect, byte iColor) {
-	CBofBitmap cBmp(width(), height(), CBofApp::GetApp()->GetPalette());
+	CBofBitmap cBmp(width(), height(), CBofApp::GetApp()->getPalette());
 	cBmp.fillRect(pRect, iColor);
 	cBmp.paint(this, 0, 0);
 }
