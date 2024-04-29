@@ -38,11 +38,11 @@ public:
 
 protected:
 	Graphics::ManagedSurface *m_pSbuf;
-	Video::SmackerDecoder *m_pSmk;
+	Video::SmackerDecoder *_pSmk;
 
-	bool m_bEscCanStop;
-	bool m_bLoop;
-	MVSTATUS m_eMovStatus;
+	bool _bEscCanStop;
+	bool _bLoop;
+	MVSTATUS _eMovStatus;
 
 	CBofBitmap *m_pBmpBuf;
 	CBofBitmap *m_pFilterBmp;
@@ -117,7 +117,7 @@ public:
 	virtual bool stop();
 
 	virtual MVSTATUS status() {
-		return m_eMovStatus;
+		return _eMovStatus;
 	}
 
 	virtual bool seekToStart();
@@ -134,7 +134,7 @@ public:
 		return m_pSbuf;
 	}
 	Video::VideoDecoder *getSmackMovie() {
-		return m_pSmk;
+		return _pSmk;
 	}
 };
 

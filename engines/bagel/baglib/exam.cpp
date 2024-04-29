@@ -40,8 +40,8 @@ bool CBagExam::initExam() {
 
 	markBegEnd();
 	setRotationRects();
-	m_bLoop = true;
-	m_bEscCanStop = true;
+	_bLoop = true;
+	_bEscCanStop = true;
 
 	pause();
 
@@ -79,7 +79,7 @@ bool CBagExam::setRotationRects() {
 }
 
 bool CBagExam::markBegEnd() {
-	_end = m_pSmk->getFrameCount() - 1;
+	_end = _pSmk->getFrameCount() - 1;
 	_start = 0;
 
 	return true;
@@ -87,7 +87,7 @@ bool CBagExam::markBegEnd() {
 
 void  CBagExam::onButtonUp(uint32 /*n flags, unused */, CBofPoint * /* point, unused */) {
 	// Clean up and exit
-	m_bLoop = false;
+	_bLoop = false;
 
 	stop();
 	onMovieDone();
@@ -95,21 +95,21 @@ void  CBagExam::onButtonUp(uint32 /*n flags, unused */, CBofPoint * /* point, un
 
 
 bool CBagExam::rotateLeft() {
-	if (m_eMovStatus != FOREWARD)
+	if (_eMovStatus != FOREWARD)
 		return play();
 
 	return true;
 }
 
 bool CBagExam::rotateRight() {
-	if (m_eMovStatus != REVERSE)
+	if (_eMovStatus != REVERSE)
 		return reverse();
 
 	return true;
 }
 
 bool CBagExam::rotateStop() {
-	if (m_eMovStatus == FOREWARD || m_eMovStatus == REVERSE)
+	if (_eMovStatus == FOREWARD || _eMovStatus == REVERSE)
 		// The movie is currently playing
 		return pause();
 
@@ -128,7 +128,7 @@ void CBagExam::onMouseMove(uint32 /* flags, unused */, CBofPoint *point, void * 
 	} else if (point->x >= _rightRect.left) {
 		// Right rect, play forward
 		rotateRight();
-	} else if (m_eMovStatus == FOREWARD || m_eMovStatus == REVERSE) {
+	} else if (_eMovStatus == FOREWARD || _eMovStatus == REVERSE) {
 		rotateStop();
 	}
 }

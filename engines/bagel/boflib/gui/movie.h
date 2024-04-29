@@ -35,14 +35,14 @@ class CBofMovie : public CBofDialog {
 public:
 	enum MVSTATUS { STOPPED, PAUSED, FOREWARD, REVERSE};
 protected:
-	Graphics::ManagedSurface *m_pSbuf;
-	Video::SmackerDecoder *m_pSmk;
-	bool m_bEscCanStop;
-	bool m_bLoop;
-	bool m_bStretch;
-	bool m_bUseNewPalette;
-	bool m_bBlackOutWindow;
-	MVSTATUS m_eMovStatus;
+	Graphics::ManagedSurface *_pSbuf;
+	Video::SmackerDecoder *_pSmk;
+	bool _bEscCanStop;
+	bool _bLoop;
+	bool _bStretch;
+	bool _bUseNewPalette;
+	bool _bBlackOutWindow;
+	MVSTATUS _eMovStatus;
 	Common::Rect _srcRect, _dstRect;
 
 	virtual ErrorCode  initialize(CBofWindow *pParent);
@@ -81,7 +81,7 @@ public:
 	virtual bool        stop();
 
 	virtual MVSTATUS    status() {
-		return m_eMovStatus;
+		return _eMovStatus;
 	}
 
 	virtual bool        seekToStart();
@@ -93,10 +93,10 @@ public:
 	virtual bool        centerRect();
 
 	Graphics::ManagedSurface *getSmackBuffer()  {
-		return m_pSbuf;
+		return _pSbuf;
 	}
 	Video::SmackerDecoder *getSmackMovie()   {
-		return m_pSmk;
+		return _pSmk;
 	}
 };
 

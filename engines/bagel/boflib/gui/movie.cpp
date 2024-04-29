@@ -29,13 +29,13 @@
 namespace Bagel {
 
 CBofMovie::CBofMovie(CBofWindow *pParent, const char *pszFilename, CBofRect *pBounds, bool bStretch, bool bUseNewPalette, bool bBlackOutWindow) {
-	m_bStretch = bStretch;
+	_bStretch = bStretch;
 
 	// Allow movie to not shift to new palette.
-	m_bUseNewPalette = bUseNewPalette;
+	_bUseNewPalette = bUseNewPalette;
 
 	// Black out first and last frame of flythroughs and examine movies
-	m_bBlackOutWindow = bBlackOutWindow;
+	_bBlackOutWindow = bBlackOutWindow;
 
 	initialize(pParent);
 	open(pszFilename, pBounds);
@@ -47,13 +47,13 @@ CBofMovie::~CBofMovie() {
 
 ErrorCode CBofMovie::initialize(CBofWindow *pParent) {
 	// Movie Stuff
-	m_eMovStatus = STOPPED;
-	m_bEscCanStop = true;
+	_eMovStatus = STOPPED;
+	_bEscCanStop = true;
 
 	// Smacker Stuff
-	m_pSbuf = nullptr;
-	m_pSmk = nullptr;
-	m_bLoop = false;
+	_pSbuf = nullptr;
+	_pSmk = nullptr;
+	_bLoop = false;
 
 	// Call dialog box creates
 	if (create("MovieWin", 0, 0, 1, 1, pParent, 1) == ERR_NONE) {
@@ -91,92 +91,92 @@ bool CBofMovie::open(const char *sFilename, CBofRect *pBounds) {
 bool CBofMovie::openMovie(const char *sFilename) {
 	Assert(sFilename[0] != '\0');
 
-	if (m_pSmk) {
+	if (_pSmk) {
 		closeMovie();
 	}
-	m_pSmk = new Video::SmackerDecoder();
-	m_pSmk->setSoundType(Audio::Mixer::kSFXSoundType);
+	_pSmk = new Video::SmackerDecoder();
+	_pSmk->setSoundType(Audio::Mixer::kSFXSoundType);
 
-	if (!m_pSmk->loadFile(sFilename)) {
+	if (!_pSmk->loadFile(sFilename)) {
 		// Opened failed
 		error("Movie not found=%s", sFilename);
 		return false;
 	}
 
 	// If supposed to stretch into specified window
-	if (m_bStretch) {
-		m_pSbuf = new Graphics::ManagedSurface(Width(), Height(), m_pSmk->getPixelFormat());
+	if (_bStretch) {
+		_pSbuf = new Graphics::ManagedSurface(Width(), Height(), _pSmk->getPixelFormat());
 	} else {
-		m_pSbuf = new Graphics::ManagedSurface(m_pSmk->getWidth(), m_pSmk->getHeight(), m_pSmk->getPixelFormat());
+		_pSbuf = new Graphics::ManagedSurface(_pSmk->getWidth(), _pSmk->getHeight(), _pSmk->getPixelFormat());
 	}
 
-	_srcRect = Common::Rect(m_pSmk->getWidth(), m_pSmk->getHeight());
-	_dstRect = Common::Rect(m_pSbuf->w, m_pSbuf->h);
+	_srcRect = Common::Rect(_pSmk->getWidth(), _pSmk->getHeight());
+	_dstRect = Common::Rect(_pSbuf->w, _pSbuf->h);
 
-	if (!m_bStretch) {
-		_dstRect.moveTo((m_pSbuf->w - m_pSmk->getWidth()) / 2, (m_pSbuf->h - m_pSmk->getHeight()) / 2);
+	if (!_bStretch) {
+		_dstRect.moveTo((_pSbuf->w - _pSmk->getWidth()) / 2, (_pSbuf->h - _pSmk->getHeight()) / 2);
 	}
 
-	CBofRect MovieBounds(0, 0, (uint16)m_pSbuf->w - 1, (uint16)m_pSbuf->h - 1);
+	CBofRect MovieBounds(0, 0, (uint16)_pSbuf->w - 1, (uint16)_pSbuf->h - 1);
 	ReSize(&MovieBounds, true);
 
 	// If we have a window that is going to cause a single frame
 	// palette shift, then black it out here.
-	if (m_bBlackOutWindow) {
+	if (_bBlackOutWindow) {
 		FillWindow(COLOR_BLACK);
 	}
 
 	// Smack the current frame into the buffer
-	const Graphics::Surface *frame = m_pSmk->decodeNextFrame();
+	const Graphics::Surface *frame = _pSmk->decodeNextFrame();
 	if (frame) {
-		m_pSbuf->setPalette(m_pSmk->getPalette(), 0, 256);
-		m_pSbuf->blitFrom(*frame, _srcRect, _dstRect);
+		_pSbuf->setPalette(_pSmk->getPalette(), 0, 256);
+		_pSbuf->blitFrom(*frame, _srcRect, _dstRect);
 	}
 
 	return true;
 }
 
 void  CBofMovie::onKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
-	if (m_bEscCanStop && lKey == BKEY_ESC) {
+	if (_bEscCanStop && lKey == BKEY_ESC) {
 		// Clean up and exit
-		m_bLoop = false;
+		_bLoop = false;
 		stop();
 		onMovieDone();
 	}
 }
 
 void  CBofMovie::onMainLoop() {
-	if (m_pSmk->needsUpdate()) {
-		if (m_eMovStatus != STOPPED) {
+	if (_pSmk->needsUpdate()) {
+		if (_eMovStatus != STOPPED) {
 			// Smack the current frame into the buffer
-			const Graphics::Surface *frame = m_pSmk->decodeNextFrame();
-			if (m_pSmk->hasDirtyPalette()) {
-				m_pSbuf->setPalette(m_pSmk->getPalette(), 0, 256);
+			const Graphics::Surface *frame = _pSmk->decodeNextFrame();
+			if (_pSmk->hasDirtyPalette()) {
+				_pSbuf->setPalette(_pSmk->getPalette(), 0, 256);
 			}
 			if (frame) {
-				m_pSbuf->blitFrom(*frame, _srcRect, _dstRect);
+				_pSbuf->blitFrom(*frame, _srcRect, _dstRect);
 				UpdateWindow();
 			}
 
-			if (m_eMovStatus == FOREWARD) {
-				if (m_pSmk->getCurFrame() == (int)m_pSmk->getFrameCount() - 1) {
-					if (m_bLoop == false) {
+			if (_eMovStatus == FOREWARD) {
+				if (_pSmk->getCurFrame() == (int)_pSmk->getFrameCount() - 1) {
+					if (_bLoop == false) {
 						onMovieDone();
 					} else {
 						seekToStart();
-						m_pSmk->start();
+						_pSmk->start();
 					}
 				}
-			} else if (m_eMovStatus == REVERSE) {
-				if ((m_pSmk->getCurFrame() == 0) || (m_pSmk->getCurFrame() == 1)) {
-					if (m_bLoop == false) {
+			} else if (_eMovStatus == REVERSE) {
+				if ((_pSmk->getCurFrame() == 0) || (_pSmk->getCurFrame() == 1)) {
+					if (_bLoop == false) {
 						onMovieDone();
 					} else {
 						seekToEnd();
-						//m_pSmk->start();
+						//_pSmk->start();
 					}
 				} else {
-					setFrame(m_pSmk->getCurFrame() - 2); // HACK: Reverse playback
+					setFrame(_pSmk->getCurFrame() - 2); // HACK: Reverse playback
 				}
 			}// REVERSE
 		}// !STOPPED
@@ -184,20 +184,20 @@ void  CBofMovie::onMainLoop() {
 }
 
 void  CBofMovie::onPaint(CBofRect *) {
-	if (m_pSbuf) {
-		getSurface()->blitFrom(*m_pSbuf);
+	if (_pSbuf) {
+		getSurface()->blitFrom(*_pSbuf);
 	}
 }
 
 void  CBofMovie::closeMovie() {
-	if (m_pSbuf) {
-		delete m_pSbuf;
-		m_pSbuf = nullptr;
+	if (_pSbuf) {
+		delete _pSbuf;
+		_pSbuf = nullptr;
 	}
 
-	if (m_pSmk) {
-		delete m_pSmk;
-		m_pSmk = nullptr;
+	if (_pSmk) {
+		delete _pSmk;
+		_pSmk = nullptr;
 	}
 }
 
@@ -207,7 +207,7 @@ void  CBofMovie::onClose() {
 }
 
 void CBofMovie::onMovieDone() {
-	if (!m_bLoop) {
+	if (!_bLoop) {
 		if (_bCaptured)
 			ReleaseCapture();
 
@@ -218,8 +218,8 @@ void CBofMovie::onMovieDone() {
 
 bool CBofMovie::play(bool bLoop, bool bEscCanStop) {
 
-	m_bEscCanStop = bEscCanStop;
-	m_bLoop = bLoop;
+	_bEscCanStop = bEscCanStop;
+	_bLoop = bLoop;
 
 	bool bSuccess = play();
 
@@ -237,11 +237,11 @@ bool CBofMovie::play(bool bLoop, bool bEscCanStop) {
 
 
 bool CBofMovie::play() {
-	if (m_pSmk) {
-		m_pSmk->pauseVideo(false);
-		//m_pSmk->setReverse(false); // TODO: Not supported by SMK
-		m_pSmk->start();
-		m_eMovStatus = FOREWARD;
+	if (_pSmk) {
+		_pSmk->pauseVideo(false);
+		//_pSmk->setReverse(false); // TODO: Not supported by SMK
+		_pSmk->start();
+		_eMovStatus = FOREWARD;
 		return true;
 	}
 
@@ -252,8 +252,8 @@ bool CBofMovie::play() {
 bool CBofMovie::reverse(bool bLoop,  bool bEscCanStop) {
 	bool bSuccess = true;
 
-	m_bEscCanStop   = bEscCanStop;
-	m_bLoop = bLoop;
+	_bEscCanStop   = bEscCanStop;
+	_bLoop = bLoop;
 
 	bSuccess = reverse();
 
@@ -267,11 +267,11 @@ bool CBofMovie::reverse(bool bLoop,  bool bEscCanStop) {
 
 bool CBofMovie::reverse() {
 
-	if (m_pSmk) {
-		m_pSmk->pauseVideo(false);
-		//m_pSmk->setReverse(true); // TODO: Not supported by SMK
-		m_pSmk->start();
-		m_eMovStatus = REVERSE;
+	if (_pSmk) {
+		_pSmk->pauseVideo(false);
+		//_pSmk->setReverse(true); // TODO: Not supported by SMK
+		_pSmk->start();
+		_eMovStatus = REVERSE;
 		return true;
 	}
 
@@ -280,9 +280,9 @@ bool CBofMovie::reverse() {
 }
 
 bool CBofMovie::stop() {
-	if (m_pSmk) {
-		m_pSmk->stop();
-		m_eMovStatus = STOPPED;
+	if (_pSmk) {
+		_pSmk->stop();
+		_eMovStatus = STOPPED;
 		return true;
 	}
 
@@ -291,9 +291,9 @@ bool CBofMovie::stop() {
 }
 
 bool CBofMovie::pause() {
-	if (m_pSmk) {
-		m_pSmk->pauseVideo(true);
-		m_eMovStatus = PAUSED;
+	if (_pSmk) {
+		_pSmk->pauseVideo(true);
+		_eMovStatus = PAUSED;
 		return true;
 	}
 
@@ -302,8 +302,8 @@ bool CBofMovie::pause() {
 }
 
 bool CBofMovie::seekToStart() {
-	if (m_pSmk) {
-		m_pSmk->rewind();
+	if (_pSmk) {
+		_pSmk->rewind();
 		return true;
 	}
 
@@ -311,8 +311,8 @@ bool CBofMovie::seekToStart() {
 }
 
 bool CBofMovie::seekToEnd() {
-	if (m_pSmk) {
-		setFrame(m_pSmk->getFrameCount() - 2); // HACK: Reverse rewind
+	if (_pSmk) {
+		setFrame(_pSmk->getFrameCount() - 2); // HACK: Reverse rewind
 		return true;
 	}
 
@@ -320,8 +320,8 @@ bool CBofMovie::seekToEnd() {
 }
 
 uint32 CBofMovie::getFrame() {
-	if (m_pSmk) {
-		return m_pSmk->getCurFrame();
+	if (_pSmk) {
+		return _pSmk->getCurFrame();
 	}
 
 	return (uint32) -1;
@@ -329,9 +329,9 @@ uint32 CBofMovie::getFrame() {
 
 
 bool CBofMovie::setFrame(uint32 dwFrameNum) {
-	if (m_pSmk) {
-		dwFrameNum = CLIP<uint32>(dwFrameNum, 0, m_pSmk->getFrameCount() - 1);
-		m_pSmk->forceSeekToFrame(dwFrameNum);
+	if (_pSmk) {
+		dwFrameNum = CLIP<uint32>(dwFrameNum, 0, _pSmk->getFrameCount() - 1);
+		_pSmk->forceSeekToFrame(dwFrameNum);
 		return true;
 	}
 
@@ -348,8 +348,8 @@ bool CBofMovie::centerRect() {
 	int ClientHeight = rcParentRect.bottom - rcParentRect.top;
 
 	// Get Movies width and height
-	int MovieWidth = m_pSmk->getWidth();
-	int MovieHeight = m_pSmk->getHeight();
+	int MovieWidth = _pSmk->getWidth();
+	int MovieHeight = _pSmk->getHeight();
 
 	RECT rcMovieBounds;
 	rcMovieBounds.left = (ClientWidth - MovieWidth) / 2;
