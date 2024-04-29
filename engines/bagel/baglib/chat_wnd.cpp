@@ -31,7 +31,7 @@ ErrorCode CBagChatWnd::attach() {
 	Assert(IsValidObject(this));
 
 	if (CBagStorageDevWnd::attach() == ERR_NONE) {
-		Show();
+		show();
 		InvalidateRect(nullptr);
 		UpdateWindow();
 	}

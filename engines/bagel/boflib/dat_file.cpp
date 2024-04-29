@@ -102,7 +102,7 @@ ErrorCode CBofDataFile::SetFile(const char *pszFileName, uint32 lFlags, const ch
 
 			// Close data file if we are not keeping it open
 			if (!(m_lFlags & CDF_KEEPOPEN)) {
-				Close();
+				close();
 			}
 		}
 	} else {
@@ -127,7 +127,7 @@ ErrorCode CBofDataFile::ReleaseFile() {
 		WriteHeader();
 	}
 
-	Close();
+	close();
 
 	// Free header buffer
 	if (m_pHeader != nullptr) {
@@ -146,7 +146,7 @@ ErrorCode CBofDataFile::create() {
 	// Only continue if there is no current error
 	if (_errCode == ERR_NONE) {
 		if (_stream != nullptr) {
-			Close();
+			close();
 		}
 
 		// Re-initialize
@@ -205,7 +205,7 @@ ErrorCode CBofDataFile::open() {
 	return _errCode;
 }
 
-ErrorCode CBofDataFile::Close() {
+ErrorCode CBofDataFile::close() {
 	Assert(IsValidObject(this));
 
 	if (_stream != nullptr) {
@@ -213,7 +213,7 @@ ErrorCode CBofDataFile::Close() {
 			WriteHeader();
 		}
 
-		CBofFile::Close();
+		CBofFile::close();
 	}
 
 	return _errCode;

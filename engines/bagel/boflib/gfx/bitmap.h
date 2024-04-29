@@ -221,7 +221,7 @@ public:
 		return (CBofSize(m_nDX, m_nDY));
 	}
 
-	CBofRect GetRect() {
+	CBofRect getRect() {
 		return (CBofRect(0, 0, m_nDX - 1, m_nDY - 1));
 	}
 
@@ -237,7 +237,7 @@ public:
 		return (m_bTopDown);
 	}
 
-	int Width() {
+	int width() {
 		return (m_nDX);
 	}
 

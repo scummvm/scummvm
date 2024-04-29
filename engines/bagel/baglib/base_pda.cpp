@@ -317,7 +317,7 @@ void *SBBasePda::pdaButtonHandler(int refId, void *info) {
 		if (curApp != nullptr) {
 			CBagMasterWin *curWnd = curApp->getMasterWnd();
 			if (curWnd != nullptr) {
-				curWnd->PostUserMessage(WM_SHOWSYSTEMDLG, 0);
+				curWnd->postUserMessage(WM_SHOWSYSTEMDLG, 0);
 			}
 		}
 		break;

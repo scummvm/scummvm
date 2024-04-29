@@ -111,7 +111,7 @@ ErrorCode CBofScrollBar::setText(const char *pszText, int nJustify) {
 
 		if (_pScrollText == nullptr) {
 
-			CBofPoint cPoint = _parent->GetWindowRect().TopLeft();
+			CBofPoint cPoint = _parent->getWindowRect().TopLeft();
 			CBofRect cTempRect = _cWindowRect - cPoint;
 
 			cTempRect -= CPoint(0, 20);
@@ -241,9 +241,9 @@ ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, 
 				cPoint.x = 0;
 				cPoint.y = (_pBackdrop->Height() / 2) - (_pLeftBtnUp->Height() / 2);
 
-				_cLeftBtnRect = _pLeftBtnUp->GetRect() + cPoint;
+				_cLeftBtnRect = _pLeftBtnUp->getRect() + cPoint;
 
-				_nOffset = _pLeftBtnUp->Width();
+				_nOffset = _pLeftBtnUp->width();
 				_nScrollWidth -= _nOffset;
 
 			} else {
@@ -258,11 +258,11 @@ ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, 
 
 		if (pszRightBtnUp != nullptr) {
 			if ((_pRightBtnUp = new CBofBitmap(pszRightBtnUp, pPalette)) != nullptr) {
-				cPoint.x = _pBackdrop->Width() - _pRightBtnUp->Width();
+				cPoint.x = _pBackdrop->width() - _pRightBtnUp->width();
 				cPoint.y = (_pBackdrop->Height() / 2) - (_pRightBtnUp->Height() / 2);
-				_cRightBtnRect = _pLeftBtnUp->GetRect() + cPoint;
+				_cRightBtnRect = _pLeftBtnUp->getRect() + cPoint;
 
-				_nScrollWidth -= _cRightBtnRect.Width();
+				_nScrollWidth -= _cRightBtnRect.width();
 
 			} else {
 				ReportError(ERR_MEMORY, "Could not allocate a new CBofBitmap(%s)", pszRightBtnUp);
@@ -302,7 +302,7 @@ ErrorCode CBofScrollBar::paint(CBofRect *pDirtyRect) {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
-		CBofRect cRect(0, 0, _cRect.Width() - 1, _cRect.Height() - 1);
+		CBofRect cRect(0, 0, _cRect.width() - 1, _cRect.Height() - 1);
 		CBofPoint cPoint(0, 0);
 
 		if (pDirtyRect == nullptr) {
@@ -387,7 +387,7 @@ void CBofScrollBar::onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
 		// Set new thumb position
 		setPos(_nPos - _nLineDelta, true);
 
-	} else if (_pThumb->GetRect().PtInRect(*pPoint)) {
+	} else if (_pThumb->getRect().PtInRect(*pPoint)) {
 		_nScrollState = 5;
 
 	} else if (cLeftPageRect.PtInRect(*pPoint)) {
@@ -417,7 +417,7 @@ void CBofScrollBar::onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
 		_bMouseCaptured = true;
 		SetCapture();
 		if (_nScrollState != 5)
-			SetTimer(BMP_SCROLL_TIMER, _nTimerCount);
+			setTimer(BMP_SCROLL_TIMER, _nTimerCount);
 	}
 
 	CBofWindow::onLButtonDown(nFlags, pPoint);
@@ -442,7 +442,7 @@ void CBofScrollBar::onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 
 	if (_bMouseCaptured) {
-		KillTimer(BMP_SCROLL_TIMER);
+		killTimer(BMP_SCROLL_TIMER);
 		_bMouseCaptured = false;
 		ReleaseCapture();
 
@@ -463,7 +463,7 @@ void CBofScrollBar::onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 
 		case 4:
 			if (_pRightBtnUp != nullptr) {
-				x = _cBkSize.cx - _cRightBtnRect.Width();
+				x = _cBkSize.cx - _cRightBtnRect.width();
 				y = (int)(_cBkSize.cy / 2) - (int)(_cRightBtnRect.Height() / 2);
 				_pRightBtnUp->paint(this, x, y, nullptr, COLOR_WHITE);
 			}

@@ -200,7 +200,7 @@ ErrorCode  SBarSlotWnd::attach() {
 
 				m_pSlotButs[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 				m_pSlotButs[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
-				m_pSlotButs[i]->Show();
+				m_pSlotButs[i]->show();
 			}
 		}
 
@@ -213,7 +213,7 @@ ErrorCode  SBarSlotWnd::attach() {
 		}
 
 		// Hide the GO, LOSE Button until a bet is made
-		m_pSlotButs[GO]->Hide();
+		m_pSlotButs[GO]->hide();
 
 		// Build all our slotbmp
 		for (int i = 0; i < SLOT_NUM; i++) {
@@ -284,7 +284,7 @@ ErrorCode  SBarSlotWnd::attach() {
 			ReportError(ERR_MEMORY);
 		}
 
-		Show();
+		show();
 
 		InvalidateRect(nullptr);
 		UpdateWindow();
@@ -297,13 +297,13 @@ ErrorCode  SBarSlotWnd::attach() {
 		ReportError(ERR_MEMORY);
 	}
 
-	CBofCursor::Show();
+	CBofCursor::show();
 
 	return _errCode;
 }
 
 ErrorCode SBarSlotWnd::detach() {
-	CBofCursor::Hide();
+	CBofCursor::hide();
 
 	// Put any credits left in machine back into you credit chip.
 	if (m_nBet > 0) {
@@ -393,7 +393,7 @@ void SBarSlotWnd::AddBet(int nBetVal) {
 
 			// Check and see if we need to show the GO button
 			if (m_nBet && !(m_pSlotButs[GO]->IsVisible())) {
-				m_pSlotButs[GO]->Show();
+				m_pSlotButs[GO]->show();
 			}
 			m_nPayOff1 = 0;
 			m_bLose = false;
@@ -408,7 +408,7 @@ void SBarSlotWnd::AddBet(int nBetVal) {
 
 		CBofRect cRect(0, 440, 640 - 1, 480 - 1);
 
-		CBofBitmap cBmp(cRect.Width(), cRect.Height(), (CBofPalette *)nullptr, false);
+		CBofBitmap cBmp(cRect.width(), cRect.Height(), (CBofPalette *)nullptr, false);
 		cBmp.CaptureScreen(this, &cRect);
 
 		PaintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
@@ -426,7 +426,7 @@ void SBarSlotWnd::BetAll() {
 
 		// Check and see if we need to show the GO button
 		if (m_nBet && !m_pSlotButs[GO]->IsVisible())
-			m_pSlotButs[GO]->Show();
+			m_pSlotButs[GO]->show();
 
 		UpdateText();
 
@@ -438,7 +438,7 @@ void SBarSlotWnd::BetAll() {
 
 		CBofRect cRect(0, 440, 640 - 1, 480 - 1);
 
-		CBofBitmap cBmp(cRect.Width(), cRect.Height(), (CBofPalette *)nullptr, false);
+		CBofBitmap cBmp(cRect.width(), cRect.Height(), (CBofPalette *)nullptr, false);
 		cBmp.CaptureScreen(this, &cRect);
 
 		PaintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
@@ -452,7 +452,7 @@ void SBarSlotWnd::ClrBet() {
 	m_nCredit += m_nBet;
 	m_nBet = 0;
 
-	m_pSlotButs[GO]->Hide();
+	m_pSlotButs[GO]->hide();
 
 	UpdateText();
 }
@@ -476,7 +476,7 @@ void SBarSlotWnd::Go() {
 	CalcOutcome();
 
 	// Hide the GO button
-	m_pSlotButs[GO]->Hide();
+	m_pSlotButs[GO]->hide();
 
 	if (m_bFixBet)
 		g_bFix = true;
@@ -488,7 +488,7 @@ void SBarSlotWnd::Go() {
 
 	if (m_bFixBet && m_nBet != 0) {
 		Sleep(3000);
-		m_pSlotButs[GO]->Show();
+		m_pSlotButs[GO]->show();
 		m_pSlotButs[GO]->paint();
 	}
 }
@@ -683,7 +683,7 @@ void SBarSlotWnd::SlideSlots() {
 
 		// Slot #1
 		CBofBitmap *pCurBmp = m_cSlots[0].m_pSlotBmp[m_cSlots[0].m_nIdx];
-		CBofRect BmpRect = pCurBmp->GetRect();
+		CBofRect BmpRect = pCurBmp->getRect();
 		CBofRect SrcRect = BmpRect;
 		SrcRect.left = SrcRect.right;
 		CBofRect DestRect = m_cSlots[0].m_cSlotRect;
@@ -697,7 +697,7 @@ void SBarSlotWnd::SlideSlots() {
 			if (SrcRect.left < BmpRect.left)
 				SrcRect.left = BmpRect.left;
 
-			cRect.SetRect(DestRect.left, DestRect.top, DestRect.left + SrcRect.Width() - 1, DestRect.top + SrcRect.Height() - 1);
+			cRect.SetRect(DestRect.left, DestRect.top, DestRect.left + SrcRect.width() - 1, DestRect.top + SrcRect.Height() - 1);
 
 			pCurBmp->PaintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
 		}
@@ -705,7 +705,7 @@ void SBarSlotWnd::SlideSlots() {
 
 		// Slot #2
 		pCurBmp = m_cSlots[1].m_pSlotBmp[m_cSlots[1].m_nIdx];
-		BmpRect = pCurBmp->GetRect();
+		BmpRect = pCurBmp->getRect();
 		SrcRect = BmpRect;
 		SrcRect.top = SrcRect.bottom;
 		DestRect = m_cSlots[1].m_cSlotRect;
@@ -719,7 +719,7 @@ void SBarSlotWnd::SlideSlots() {
 			if (SrcRect.top < BmpRect.top)
 				SrcRect.top = BmpRect.top;
 
-			cRect.SetRect(DestRect.left, DestRect.top, DestRect.left + SrcRect.Width() - 1, DestRect.top + SrcRect.Height() - 1);
+			cRect.SetRect(DestRect.left, DestRect.top, DestRect.left + SrcRect.width() - 1, DestRect.top + SrcRect.Height() - 1);
 			pCurBmp->PaintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
 		}
 
@@ -727,7 +727,7 @@ void SBarSlotWnd::SlideSlots() {
 
 		// Slot #3
 		pCurBmp = m_cSlots[2].m_pSlotBmp[m_cSlots[2].m_nIdx];
-		BmpRect = pCurBmp->GetRect();
+		BmpRect = pCurBmp->getRect();
 		SrcRect = BmpRect;
 		SrcRect.right = SrcRect.left;
 		DestRect = m_cSlots[2].m_cSlotRect;
@@ -741,14 +741,14 @@ void SBarSlotWnd::SlideSlots() {
 			if (SrcRect.right > BmpRect.right)
 				SrcRect.right = BmpRect.right;
 
-			cRect.SetRect(DestRect.right - SrcRect.Width() + 1, DestRect.top, DestRect.right, DestRect.top + SrcRect.Height() - 1);
+			cRect.SetRect(DestRect.right - SrcRect.width() + 1, DestRect.top, DestRect.right, DestRect.top + SrcRect.Height() - 1);
 			pCurBmp->PaintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
 		}
 		m_pSlotSound->play();
 
 		// Slot #4
 		pCurBmp = m_cSlots[3].m_pSlotBmp[m_cSlots[3].m_nIdx];
-		BmpRect = pCurBmp->GetRect();
+		BmpRect = pCurBmp->getRect();
 		SrcRect = BmpRect;
 		SrcRect.bottom = SrcRect.top;
 		DestRect = m_cSlots[3].m_cSlotRect;
@@ -762,7 +762,7 @@ void SBarSlotWnd::SlideSlots() {
 			if (SrcRect.bottom > BmpRect.bottom)
 				SrcRect.bottom = BmpRect.bottom;
 
-			cRect.SetRect(DestRect.left, DestRect.bottom - SrcRect.Height() + 1, DestRect.left + SrcRect.Width() - 1, DestRect.bottom);
+			cRect.SetRect(DestRect.left, DestRect.bottom - SrcRect.Height() + 1, DestRect.left + SrcRect.width() - 1, DestRect.bottom);
 			pCurBmp->PaintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
 		}
 
@@ -803,7 +803,7 @@ void SBarSlotWnd::UpdateText() {
 	} else if (m_nBet && !g_bFix) {
 		// Check and see if we need to show the GO button
 		if (m_pSlotButs[GO] != nullptr) {
-			m_pSlotButs[GO]->Show();
+			m_pSlotButs[GO]->show();
 			m_pSlotButs[GO]->paint();
 		}
 	} else if (m_pOddsText != nullptr) {
@@ -878,7 +878,7 @@ void SBarSlotWnd::OnBofButton(CBofObject *pObject, int nState) {
 		break;
 	case SLOTQUIT:
 		LogInfo("\tClicked Quit");
-		Close();
+		close();
 		break;
 
 	case SLOTHELP: {

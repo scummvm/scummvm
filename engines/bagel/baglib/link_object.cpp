@@ -63,7 +63,7 @@ PARSE_CODES CBagLinkObject::setInfo(bof_ifstream &istr) {
 		case '@': {
 			CBofRect r;
 			istr.Get();
-			GetRectFromStream(istr, r);
+			getRectFromStream(istr, r);
 			SetDstLoc(r.TopLeft());
 			nObjectUpdated = true;
 			break;
@@ -75,7 +75,7 @@ PARSE_CODES CBagLinkObject::setInfo(bof_ifstream &istr) {
 		case '#': {
 			CBofRect r;
 			istr.Get();
-			GetRectFromStream(istr, r);
+			getRectFromStream(istr, r);
 			SetSrcLoc(r.TopLeft());
 			nObjectUpdated = true;
 			break;
@@ -180,7 +180,7 @@ bool CBagLinkObject::runObject() {
 		}
 	}
 
-	CBagMasterWin::SetActiveCursor(6);
+	CBagMasterWin::setActiveCursor(6);
 
 	CBagStorageDevWnd *pSDev1 = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
 

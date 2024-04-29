@@ -416,10 +416,10 @@ bool CBofSprite::UpdateDirtyRect(CBofWindow *pWnd, CBofSprite *pPrimarySprite) {
 	if (pBackdrop != nullptr) {
 
 		CBofRect *pRect = m_cDirtyRect;
-		if (pRect->Width() != 0 && pRect->Height() != 0) {
+		if (pRect->width() != 0 && pRect->Height() != 0) {
 			// Need a work area
 			CBofBitmap *pWork = m_pWorkBmp;
-			int dx = pRect->Width();
+			int dx = pRect->width();
 			int dy = pRect->Height();
 
 			bool bTempWorkArea = false;
@@ -457,7 +457,7 @@ bool CBofSprite::UpdateDirtyRect(CBofWindow *pWnd, CBofSprite *pPrimarySprite) {
 			}
 
 			// Paint final outcome to the screen
-			cSrcRect.SetRect(0, 0, pRect->Width() - 1, pRect->Height() - 1);
+			cSrcRect.SetRect(0, 0, pRect->width() - 1, pRect->Height() - 1);
 			pWork->paint(pWnd, pRect, &cSrcRect);
 
 			pWork->UnLock();
@@ -645,7 +645,7 @@ bool CBofSprite::SpritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint) {
 	// If the sprite's rectangles overlap
 	CBofRect overlapRect;
 	if (overlapRect.IntersectRect(&_cRect, &pSprite->_cRect)) {
-		int32 dx = overlapRect.Width();
+		int32 dx = overlapRect.width();
 		int32 dy = overlapRect.Height();
 
 		int32 x1 = overlapRect.left - _cRect.left + m_cImageRect.left;

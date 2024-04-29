@@ -47,7 +47,7 @@ public:
 	ErrorCode KillWorkBmp();
 
 	CBofRect getRect() {
-		return CBagStorageDev::GetRect();
+		return CBagStorageDev::getRect();
 	}
 	void SetRect(const CBofRect &xRect) {
 		CBagStorageDev::SetRect(xRect);

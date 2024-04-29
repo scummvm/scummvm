@@ -57,7 +57,7 @@ ErrorCode CBagButtonObject::attach() {
 	}
 
 	if (_buttonType == BTN_VLEVER || _buttonType == BTN_HLEVER) {
-		_midPoint.x = getRect().TopLeft().x + (getRect().Width() / 2);
+		_midPoint.x = getRect().TopLeft().x + (getRect().width() / 2);
 		_midPoint.y = getRect().TopLeft().y + (getRect().Height() / 2);
 	}
 
@@ -69,7 +69,7 @@ ErrorCode CBagButtonObject::attach() {
 	// If this is a slider button make sure it is in the correct position
 	if (_buttonType == BTN_SLIDER) {
 		CBofPoint NewPoint = getPosition();
-		int xIncrement = _slideRect.Width() / (_numPos - 1);
+		int xIncrement = _slideRect.width() / (_numPos - 1);
 		NewPoint.x = _slideRect.left + (getState() * xIncrement);
 		setPosition(NewPoint);
 	}
@@ -156,7 +156,7 @@ void CBagButtonObject::onLButtonUp(uint32 flags, CBofPoint *point, void *extraIn
 		mLoc.x = point->x + r.left - pWnd->GetViewPortPos().x;
 		mLoc.y = point->y + r.top - pWnd->GetViewPortPos().y;
 
-		int xIncrement = _slideRect.Width() / (_numPos - 1);
+		int xIncrement = _slideRect.width() / (_numPos - 1);
 
 		int slidePos = _slideRect.left;
 		int i;
@@ -242,7 +242,7 @@ bool CBagButtonObject::onMouseMove(uint32 /*nFlags*/, CBofPoint point, void *ext
 
 			// We need to set the state here as well as LButtonUP
 			// because there is a chance we won't get it
-			int xIncrement = _slideRect.Width() / (_numPos - 1);
+			int xIncrement = _slideRect.width() / (_numPos - 1);
 			int i = (NewPoint.x - _slideRect.left) / xIncrement;
 			setState(i);
 		}
@@ -477,7 +477,7 @@ void CBagButtonObject::setProperty(const CBofString &prop, int val) {
 				if (_buttonType == BTN_SLIDER) {
 					CBofPoint cPos = getPosition();
 
-					cPos.x = _slideRect.left + (val * (_slideRect.Width() / (_numPos - 1)));
+					cPos.x = _slideRect.left + (val * (_slideRect.width() / (_numPos - 1)));
 					setPosition(cPos);
 					SetDirty(true);
 				}

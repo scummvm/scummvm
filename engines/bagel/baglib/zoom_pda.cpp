@@ -215,7 +215,7 @@ ErrorCode SBZoomPda::attach() {
 			showLog();
 		}
 
-		Show();
+		show();
 		InvalidateRect(nullptr);
 		UpdateWindow();
 	}
@@ -250,7 +250,7 @@ void SBZoomPda::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 		SetLActivity(kMouseNONE);
 
 		if (_curDisplay) {
-			CBofRect offset = CBagStorageDev::GetRect();
+			CBofRect offset = CBagStorageDev::getRect();
 			xPoint->x -= offset.TopLeft().x;
 			xPoint->y -= offset.TopLeft().y;
 
@@ -284,10 +284,10 @@ void SBZoomPda::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 
 	// This should be on update cursor virtual func
 	if (GetExitOnEdge() && (pPoint->x < GetExitOnEdge()) && (pPoint->y < 300) && !(GetPrevSDev().IsEmpty())) {
-		CBagMasterWin::SetActiveCursor(10);
+		CBagMasterWin::setActiveCursor(10);
 	} else {
-		CBofRect cRect = GetBackdrop()->GetRect();
-		CBagMasterWin::SetActiveCursor(getProperCursor(*pPoint, cRect));
+		CBofRect cRect = GetBackdrop()->getRect();
+		CBagMasterWin::setActiveCursor(getProperCursor(*pPoint, cRect));
 	}
 }
 

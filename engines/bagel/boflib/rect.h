@@ -44,7 +44,7 @@ public:
 	CBofRect(const CBofPoint &ptTopLeft, const CBofPoint &ptBottomRight);
 
 	// Attributes
-	int Width() const;
+	int width() const;
 	int Height() const;
 	CBofSize Size() const;
 	CBofPoint TopLeft() const;
@@ -140,7 +140,7 @@ inline CBofRect::CBofRect(const CBofPoint &ptTopLeft, const CBofPoint &ptBottomR
 	SetRect(ptTopLeft.x, ptTopLeft.y, ptBottomRight.x, ptBottomRight.y);
 }
 
-inline int CBofRect::Width() const {
+inline int CBofRect::width() const {
 	// Make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -158,7 +158,7 @@ inline CBofSize CBofRect::Size() const {
 	// Make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
-	return CBofSize(Width(), Height());
+	return CBofSize(width(), Height());
 }
 
 inline CBofPoint CBofRect::TopLeft() const {
@@ -193,7 +193,7 @@ inline bool CBofRect::IsRectEmpty() const {
 	// Make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
-	return (Width() <= 0 || Height() <= 0);
+	return (width() <= 0 || Height() <= 0);
 }
 
 inline bool CBofRect::IsRectNull() const {
@@ -319,7 +319,7 @@ inline bool CBofRect::IntersectRect(const CBofRect *pRect1, const CBofRect *pRec
 	right = MIN(pRect1->right, pRect2->right);
 	bottom = MIN(pRect1->bottom, pRect2->bottom);
 
-	return ((Width() > 0) && (Height() > 0));
+	return ((width() > 0) && (Height() > 0));
 }
 
 inline bool CBofRect::IntersectRect(const CBofRect &cRect1, const CBofRect &cRect2) {

@@ -161,14 +161,14 @@ ErrorCode SBarComputer::attach() {
 
 				m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 				m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
-				m_pButtons[i]->Hide();
+				m_pButtons[i]->hide();
 			}
 		}
 
-		Show();
-		m_pButtons[OFFBUT]->Show();
-		m_pButtons[BCHELP]->Show();
-		m_pButtons[BCQUIT]->Show();
+		show();
+		m_pButtons[OFFBUT]->show();
+		m_pButtons[BCHELP]->show();
+		m_pButtons[BCQUIT]->show();
 
 		// Fix drink already selected bug
 		if (m_pDrinkBox != nullptr) {
@@ -306,7 +306,7 @@ ErrorCode SBarComputer::ReadDrnkFile() {
 		delete pCompItem;
 	}
 
-	fpDrinkFile.Close();
+	fpDrinkFile.close();
 	return ERR_NONE;
 }
 
@@ -371,7 +371,7 @@ ErrorCode SBarComputer::ReadIngFile() {
 		delete pCompItem;
 	}
 
-	fpIngFile.Close();
+	fpIngFile.close();
 	return ERR_NONE;
 }
 
@@ -388,7 +388,7 @@ void SBarComputer::CreateTextBox(CBofString &newText) {
 	}
 
 	if (m_pButtons[ONBUT]) {
-		m_pButtons[ONBUT]->Show();
+		m_pButtons[ONBUT]->show();
 		m_pButtons[ONBUT]->InvalidateRect(nullptr);
 	}
 }
@@ -423,7 +423,7 @@ ErrorCode SBarComputer::CreateDrinksListBox() {
 				return error;
 			}
 
-			m_pDrinkBox->Hide();
+			m_pDrinkBox->hide();
 			m_pDrinkBox->setPointSize(12);
 			m_pDrinkBox->setItemHeight(20);
 
@@ -458,7 +458,7 @@ ErrorCode SBarComputer::CreateIngListBox() {
 				return error;
 			}
 
-			m_pIngBox->Hide();
+			m_pIngBox->hide();
 			m_pIngBox->setPointSize(12);
 			m_pIngBox->setItemHeight(20);
 
@@ -487,24 +487,24 @@ void SBarComputer::OnBofListBox(CBofObject * /*pListBox*/, int nItemIndex) {
 		m_nDrinkSelect = nItemIndex;
 
 		// Prevents the white flash when the show window is performed
-		m_pButtons[ORDER]->Select();
-		m_pButtons[LISTD]->Select();
+		m_pButtons[ORDER]->select();
+		m_pButtons[LISTD]->select();
 
-		m_pButtons[ORDER]->Show();
-		m_pButtons[LISTD]->Show();
+		m_pButtons[ORDER]->show();
+		m_pButtons[LISTD]->show();
 
 		m_pDrinkBox->repaintAll();
 
 	} else {
 		m_nIngSelect = nItemIndex;
 		// Prevents the white flash when the show window is performed
-		m_pButtons[LISTI]->Select();
-		m_pButtons[LISTI]->Show();
+		m_pButtons[LISTI]->select();
+		m_pButtons[LISTI]->show();
 
 		m_pIngBox->repaintAll();
 	}
 
-	ValidateAnscestors(nullptr);
+	validateAnscestors(nullptr);
 	if (m_eMode == DRINKMODE) {
 		m_pButtons[LISTD]->InvalidateRect(nullptr);
 	} else {
@@ -518,8 +518,8 @@ void SBarComputer::OnBofListBox(CBofObject * /*pListBox*/, int nItemIndex) {
 }
 
 void SBarComputer::SetOn() {
-	m_pButtons[OFFBUT]->Hide();
-	m_pButtons[ONBUT]->Show();
+	m_pButtons[OFFBUT]->hide();
+	m_pButtons[ONBUT]->show();
 
 	// Play switching-on sound
 	BofPlaySound(BuildBarcDir(ONAUDIO), SOUND_MIX);
@@ -542,22 +542,22 @@ void SBarComputer::SetOff() {
 
 		m_nDrinkSelect = -1;
 
-		m_pDrinkBox->Hide();
-		m_pIngBox->Hide();
+		m_pDrinkBox->hide();
+		m_pIngBox->hide();
 
 		DeleteTextBox();
 
 		m_eMode = OFFMODE;
 
-		m_pButtons[ONBUT]->Hide();
-		m_pButtons[OFFBUT]->Show();
+		m_pButtons[ONBUT]->hide();
+		m_pButtons[OFFBUT]->show();
 
 		BofPlaySound(BuildBarcDir(ONAUDIO), SOUND_MIX);
 
 		for (int i = 1; i < NUM_COMPBUTT; i++) {
 			// Hide all the buttons but HELP and QUIT
 			if ((i != BCHELP) && (i != BCQUIT)) {
-				m_pButtons[i]->Hide();
+				m_pButtons[i]->hide();
 			}
 		}
 	}
@@ -572,32 +572,32 @@ void SBarComputer::SetDrink() {
 		DeleteTextBox();
 
 		// Prevents the white flash when the show window is performed
-		m_pButtons[INGRED]->Select();
+		m_pButtons[INGRED]->select();
 
-		m_pButtons[DRINKS]->Hide();
-		m_pButtons[INGRED]->Show();
+		m_pButtons[DRINKS]->hide();
+		m_pButtons[INGRED]->show();
 
 		//m_nIngSelect = -1;
-		m_pButtons[LISTI]->Hide();
+		m_pButtons[LISTI]->hide();
 
 		// Prevents the white flash when the show window is performed
-		m_pButtons[PGUP]->Select();
-		m_pButtons[PGDOWN]->Select();
+		m_pButtons[PGUP]->select();
+		m_pButtons[PGDOWN]->select();
 
-		m_pButtons[PGUP]->Show();
-		m_pButtons[PGDOWN]->Show();
-		m_pButtons[BCBACK]->Hide();
+		m_pButtons[PGUP]->show();
+		m_pButtons[PGDOWN]->show();
+		m_pButtons[BCBACK]->hide();
 
 		if (m_nDrinkSelect != -1) {
 			// Prevents the white flash when the show window is performed
-			m_pButtons[LISTD]->Select();
-			m_pButtons[LISTD]->Show();
+			m_pButtons[LISTD]->select();
+			m_pButtons[LISTD]->show();
 		}
 
-		m_pIngBox->Hide();
+		m_pIngBox->hide();
 
-		m_pDrinkBox->Select();
-		m_pDrinkBox->Show();
+		m_pDrinkBox->select();
+		m_pDrinkBox->show();
 
 		EraseBackdrop();
 
@@ -610,31 +610,31 @@ void SBarComputer::SetIng() {
 		DeleteTextBox();
 
 		// Prevents the white flash when the show window is performed
-		m_pButtons[DRINKS]->Select();
+		m_pButtons[DRINKS]->select();
 
 		// Set up buttons
-		m_pButtons[INGRED]->Hide();
-		m_pButtons[DRINKS]->Show();
+		m_pButtons[INGRED]->hide();
+		m_pButtons[DRINKS]->show();
 
 		// Hide list drink ingredient button
-		m_pButtons[LISTD]->Hide();
+		m_pButtons[LISTD]->hide();
 
 		// Prevents the white flash when the show window is performed
-		m_pButtons[PGUP]->Select();
-		m_pButtons[PGDOWN]->Select();
+		m_pButtons[PGUP]->select();
+		m_pButtons[PGDOWN]->select();
 
-		m_pButtons[PGUP]->Show();
-		m_pButtons[PGDOWN]->Show();
-		m_pButtons[BCBACK]->Hide();
+		m_pButtons[PGUP]->show();
+		m_pButtons[PGDOWN]->show();
+		m_pButtons[BCBACK]->hide();
 
 		if (m_nIngSelect != -1) {
-			m_pButtons[LISTI]->Select();
-			m_pButtons[LISTI]->Show();
+			m_pButtons[LISTI]->select();
+			m_pButtons[LISTI]->show();
 		}
 
-		m_pDrinkBox->Hide();
-		m_pIngBox->Select();
-		m_pIngBox->Show();
+		m_pDrinkBox->hide();
+		m_pIngBox->select();
+		m_pIngBox->show();
 
 		EraseBackdrop();
 
@@ -647,8 +647,8 @@ void SBarComputer::SetIng() {
 
 void SBarComputer::SetList() {
 	if (m_eMode != LISTMODE) {
-		m_pDrinkBox->Hide();
-		m_pIngBox->Hide();
+		m_pDrinkBox->hide();
+		m_pIngBox->hide();
 
 		SBarCompItem CompItem;
 		if (m_eMode == DRINKMODE) {
@@ -663,8 +663,8 @@ void SBarComputer::SetList() {
 
 		CBofString cText(CompItem.m_pList);
 
-		m_pDrinkBox->Hide();
-		m_pIngBox->Hide();
+		m_pDrinkBox->hide();
+		m_pIngBox->hide();
 
 		CreateTextBox(cText);
 
@@ -672,16 +672,16 @@ void SBarComputer::SetList() {
 		m_ePrevMode = m_eMode;
 
 		// Prevents the white flash when the show window is performed
-		m_pButtons[BCBACK]->Select();
+		m_pButtons[BCBACK]->select();
 		// Set up buttons
-		m_pButtons[PGDOWN]->Hide();
-		m_pButtons[BCBACK]->Show();
+		m_pButtons[PGDOWN]->hide();
+		m_pButtons[BCBACK]->show();
 
-		m_pButtons[LISTD]->Hide();
-		m_pButtons[LISTI]->Hide();
+		m_pButtons[LISTD]->hide();
+		m_pButtons[LISTI]->hide();
 
-		m_pButtons[PGUP]->Hide();
-		m_pButtons[PGDOWN]->Hide();
+		m_pButtons[PGUP]->hide();
+		m_pButtons[PGDOWN]->hide();
 
 		m_pTBox->setPageLength(10);
 
@@ -696,7 +696,7 @@ void SBarComputer::Back() {
 	else
 		SetIng();
 
-	m_pButtons[BCBACK]->Hide();
+	m_pButtons[BCBACK]->hide();
 }
 
 void SBarComputer::Order() {
@@ -831,7 +831,7 @@ void SBarComputer::OnBofButton(CBofObject *pObject, int nState) {
 		break;
 	case BCQUIT:
 		LogInfo("\tClicked Quit");
-		Close();
+		close();
 		break;
 
 	case BCHELP: {

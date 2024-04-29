@@ -69,7 +69,7 @@ CMainWindow::~CMainWindow() {
 	}
 
 	// Delete the filter bitmaps.
-	DestroyFilters();
+	destroyFilters();
 
 	if (--m_nInstances) {
 		m_pPDABmp = nullptr;
@@ -161,7 +161,7 @@ ErrorCode CMainWindow::attach() {
 				if (m_pWieldBmp->getRect().IsRectEmpty()) {
 					CBofRect r(0, 380, 0 + 100 - 1, 380 + 100 - 1);
 					m_pWieldBmp->SetRect(r);
-					r = GetClientRect();
+					r = getClientRect();
 				}
 
 				InsertFGObjects(m_pWieldBmp);
@@ -185,7 +185,7 @@ ErrorCode CMainWindow::attach() {
 				CBofRect r(0, 0, 300, 200);
 				m_pPDABmp->SetAssociateWnd(this);
 				m_pPDABmp->SetRect(r);
-				r = GetClientRect();
+				r = getClientRect();
 				if (!m_pPDABmp->isAttached())
 					m_pPDABmp->attach();
 
@@ -193,10 +193,10 @@ ErrorCode CMainWindow::attach() {
 				CBagVar *pVar = VARMNGR->GetVariable("PDAINCREMENT");
 				if (pVar) {
 					g_nPDAIncrement = pVar->GetNumValue();
-					m_pPDABmp->setPosInWindow(r.Width(), r.Height(), g_nPDAIncrement);
+					m_pPDABmp->setPosInWindow(r.width(), r.Height(), g_nPDAIncrement);
 				} else {
 					g_nPDAIncrement = PDA_INCREMENT;
-					m_pPDABmp->setPosInWindow(r.Width(), r.Height(), g_nPDAIncrement);
+					m_pPDABmp->setPosInWindow(r.width(), r.Height(), g_nPDAIncrement);
 				}
 				InsertFGObjects(m_pPDABmp);
 				DeactivatePDA();
@@ -227,17 +227,17 @@ ErrorCode CMainWindow::attach() {
 				if (!m_pEvtSDev->isAttached())
 					m_pEvtSDev->attach();
 
-				SetTimer(EVAL_EXPR, 1000);
+				setTimer(EVAL_EXPR, 1000);
 				g_bPauseTimer = false;
 
 			} else {
-				KillTimer(EVAL_EXPR);
+				killTimer(EVAL_EXPR);
 
 				// We already allocated one
 				// we just need to re-associate the parent
 				// window and reset the timer
 				m_pEvtSDev->SetAssociateWnd(this);
-				SetTimer(EVAL_EXPR, 1000);
+				setTimer(EVAL_EXPR, 1000);
 
 				g_bPauseTimer = false;
 			}
@@ -255,7 +255,7 @@ ErrorCode CMainWindow::attach() {
 		}
 	}
 
-	OnSize(0, tmpRect.Width() - 1, tmpRect.Height() - 1);
+	OnSize(0, tmpRect.width() - 1, tmpRect.Height() - 1);
 
 	// Set the first paint to true so the objects
 	// won't run until the window is ready
@@ -264,7 +264,7 @@ ErrorCode CMainWindow::attach() {
 	AttachActiveObjects();
 	CBofSound::AudioTask();
 
-	Show();
+	show();
 
 	OnRender(_pBackdrop, nullptr);
 
@@ -301,7 +301,7 @@ ErrorCode CMainWindow::detach() {
 
 	UnSetSlidebitmap();
 
-	Destroy();
+	destroy();
 
 	// When we move from room to room, we should delete
 	// all our foreground objects (remove from memory).
@@ -331,7 +331,7 @@ ErrorCode CMainWindow::OnCursorUpdate(int nCurrObj) {
 void CMainWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 	// Terminate app on ALT_Q
 	if ((lKey == BKEY_ALT_q) || (lKey == BKEY_ALT_F4)) {
-		Close();
+		close();
 		g_engine->quitGame();
 	}
 
@@ -361,7 +361,7 @@ void CMainWindow::CorrectZzazzlePoint(CBofPoint *p) {
 	if (!GetMovementRect().PtInRect(*p))
 		return;
 
-	int dx = m_xFilterRect->Width();
+	int dx = m_xFilterRect->width();
 	int dy = m_xFilterRect->Height();
 	int x = m_xFilterRect->left;
 	int y = m_xFilterRect->top;

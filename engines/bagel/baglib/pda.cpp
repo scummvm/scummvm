@@ -128,9 +128,9 @@ ErrorCode CBagPDA::attach() {
 	getPdaState();
 
 	// Calculate the position for the pda
-	CBofRect bmpRect = getBitmap()->GetRect();
+	CBofRect bmpRect = getBitmap()->getRect();
 	CBofWindow *pGameWin = CBagel::getBagApp()->getMasterWnd()->GetCurrentGameWindow();
-	CBofRect GameRect = pGameWin->GetRect();
+	CBofRect GameRect = pGameWin->getRect();
 
 	// When the pda is active it should sit flush with the bottom of the screen
 	m_nActiveHeight = GameRect.Height() - bmpRect.Height();
@@ -202,18 +202,18 @@ void CBagPDA::setPosInWindow(int cx, int cy, int nDist) {
 	if (!pBmp)
 		return;
 
-	CBofRect bmpRect = pBmp->GetRect();
+	CBofRect bmpRect = pBmp->getRect();
 
 	_moveDist = nDist;
 	CBofPoint pt;
-	pt.x = (cx - bmpRect.Width()) / 2;
+	pt.x = (cx - bmpRect.width()) / 2;
 
 	if (_activated)
 		pt.y = cy - bmpRect.Height();
 	else
 		pt.y = cy - bmpRect.Height() + _moveDist * _numMoves;
 
-	SetRect(CBofRect(pt.x, pt.y, pt.x + pBmp->Width() - 1, pt.y + pBmp->Height() - 1));
+	SetRect(CBofRect(pt.x, pt.y, pt.x + pBmp->width() - 1, pt.y + pBmp->Height() - 1));
 }
 
 bool CBagPDA::hideCurDisplay() {
@@ -478,8 +478,8 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 				pPda->DeactivateLocalObject(pZoomRegular);
 				g_allowAttachActiveObjectsFl = true;
 
-				pZoomFlash->SetActive(true);
-				pZoomRegular->SetActive(false);
+				pZoomFlash->setActive(true);
+				pZoomRegular->setActive(false);
 
 				pZoomFlash->SetAnimated(true);
 				pZoomFlash->SetAlwaysUpdate(true);
@@ -493,8 +493,8 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 			pPda->ActivateLocalObject(pZoomRegular);
 			g_allowAttachActiveObjectsFl = true;
 
-			pZoomFlash->SetActive(false);
-			pZoomRegular->SetActive(true);
+			pZoomFlash->setActive(false);
+			pZoomRegular->setActive(true);
 
 			pZoomFlash->SetAnimated(false);
 			pZoomFlash->SetAlwaysUpdate(false);

@@ -252,10 +252,10 @@ PARSE_CODES CBagObject::setInfo(bof_ifstream &istr) {
 			rc = UPDATED_OBJECT;
 			CBofRect r;
 			istr.putback(ch);
-			GetRectFromStream(istr, r);
+			getRectFromStream(istr, r);
 			setPosition(r.TopLeft());
-			if (r.Width() && r.Height())
-				setSize(CSize(r.Width(), r.Height()));
+			if (r.width() && r.Height())
+				setSize(CSize(r.width(), r.Height()));
 			break;
 		}
 		//
@@ -290,7 +290,7 @@ PARSE_CODES CBagObject::setInfo(bof_ifstream &istr) {
 			} else if (!s.Find("HIGHLIGHT")) {
 				SetHighlight(b);
 			} else if (!s.Find("ACTIVE")) {
-				SetActive(b);
+				setActive(b);
 			} else if (!s.Find("TRANSPARENT")) {
 				SetTransparent(b);
 			} else if (!s.Find("HIDE_ON_CLICK")) {

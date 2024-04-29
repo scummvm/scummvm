@@ -59,7 +59,7 @@ protected:
 	virtual void OnBofListBox(CBofObject *pObject, int nItemIndex) override;
 	virtual void onKeyHit(uint32 lKey, uint32 lRepCount) override;
 
-	void SaveAndClose();
+	void saveAndClose();
 
 	CBofBmpButton *m_pButtons[NUM_BUTTONS];
 	CBofScrollBar *m_pScrollBar;

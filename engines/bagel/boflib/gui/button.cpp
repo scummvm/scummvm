@@ -88,7 +88,7 @@ ErrorCode CBofButton::paint(CBofRect *) {
 
 		pPalette = CBofApp::GetApp()->GetPalette();
 
-		nWidth = _cRect.Width();
+		nWidth = _cRect.width();
 		nHeight = _cRect.Height();
 
 		// Create our off-screen buffer
@@ -279,7 +279,7 @@ ErrorCode CBofRadioButton::paint(CBofRect *) {
 
 		CBofPalette *pPalette = CBofApp::GetApp()->GetPalette();
 
-		int nWidth = _cRect.Width();
+		int nWidth = _cRect.width();
 		int nHeight = _cRect.Height();
 
 		// Create a temporary off-screen buffer
@@ -377,7 +377,7 @@ ErrorCode CBofCheckButton::paint(CBofRect *) {
 
 		CBofPalette *pPalette = CBofApp::GetApp()->GetPalette();
 
-		int nWidth = _cRect.Width();
+		int nWidth = _cRect.width();
 		int nHeight = _cRect.Height();
 
 		// Create a temporary off-screen buffer
@@ -491,7 +491,7 @@ ErrorCode CBofBmpButton::paint(CBofRect *) {
 	if (IsVisible() && (_parent != nullptr) && _parent->IsVisible()) {
 		CBofPalette *pPalette = _pButtonUp->GetPalette();
 
-		int nWidth = _cRect.Width();
+		int nWidth = _cRect.width();
 		int nHeight = _cRect.Height();
 
 		// Do all painting off-screen

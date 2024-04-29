@@ -76,7 +76,7 @@ ErrorCode CBagStorageDevBmp::SetWorkBmp() {
 
 	CBofBitmap *pBmp = getBackground();
 	if (pBmp != nullptr) {
-		m_pWorkBmp = new CBofBitmap(pBmp->Width(), pBmp->Height(), pBmp->GetPalette());
+		m_pWorkBmp = new CBofBitmap(pBmp->width(), pBmp->Height(), pBmp->GetPalette());
 		pBmp->paint(m_pWorkBmp);
 	}
 
@@ -108,7 +108,7 @@ CBofPoint CBagStorageDevBmp::GetScaledPt(CBofPoint xPoint) {
 	SDevDstRect = getRect();                // Get the destination (screen) rect
 	SDevSrcRect = CBagBmpObject::getRect(); // Get the source (origin) rect
 
-	pt.x = m_cSrcRect.Width() * xPoint.x / rDestRect.Width();
+	pt.x = m_cSrcRect.width() * xPoint.x / rDestRect.width();
 	pt.y = m_cSrcRect.Height() * xPoint.y / rDestRect.Height();
 
 	pt.x += m_cSrcRect.left;
@@ -150,7 +150,7 @@ ErrorCode CBagStorageDevBmp::update(CBofBitmap *pBmp, CBofPoint /*xPoint*/, CBof
 			GetWorkBmp()->paint(pSrcBmp);
 
 			// Paint all the objects to the background
-			CBofRect r = pSrcBmp->GetRect();
+			CBofRect r = pSrcBmp->getRect();
 			PaintStorageDevice(nullptr, pSrcBmp, &r);
 
 			// Paint child storage devices

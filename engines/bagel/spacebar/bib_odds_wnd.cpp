@@ -87,7 +87,7 @@ void SBarBibOddsWnd::onKeyHit(uint32 lKey, uint32 lRepCount) {
 				AttachActiveObjects();
 				break;
 			case BKEY_5:
-				Close();
+				close();
 				break;
 			default:
 				break;
@@ -128,7 +128,7 @@ ErrorCode SBarBibOddsWnd::attach() {
 
 	// Don't call CBagChatWnd::attach() - We are overriding it's behavior
 	if (CBagStorageDevWnd::attach() == ERR_NONE) {
-		Show();
+		show();
 		InvalidateRect(nullptr);
 		UpdateWindow();
 	}

@@ -193,7 +193,7 @@ void CBagOptWindow::onPaint(CBofRect *pRect) {
 
 	PaintBackdrop(pRect);
 
-	ValidateAnscestors();
+	validateAnscestors();
 }
 
 ErrorCode CBagOptWindow::attach() {
@@ -245,7 +245,7 @@ ErrorCode CBagOptWindow::attach() {
 			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 
 			m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
-			m_pButtons[i]->Show();
+			m_pButtons[i]->show();
 		} else {
 			ReportError(ERR_MEMORY);
 			break;
@@ -274,7 +274,7 @@ ErrorCode CBagOptWindow::attach() {
 
 		m_pMidiVolumeScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
 		m_pMidiVolumeScroll->setScrollRange(VOLUME_MIN, VOLUME_MAX, true);
-		m_pMidiVolumeScroll->Show();
+		m_pMidiVolumeScroll->show();
 
 	} else {
 		ReportError(ERR_MEMORY, "Could not allocate the Midi Volume Scroll Bar");
@@ -287,7 +287,7 @@ ErrorCode CBagOptWindow::attach() {
 
 		m_pWaveVolumeScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
 		m_pWaveVolumeScroll->setScrollRange(VOLUME_MIN, VOLUME_MAX, true);
-		m_pWaveVolumeScroll->Show();
+		m_pWaveVolumeScroll->show();
 
 	} else {
 		ReportError(ERR_MEMORY, "Could not allocate the Wave Volume Scroll Bar");
@@ -300,7 +300,7 @@ ErrorCode CBagOptWindow::attach() {
 
 		m_pCorrectionScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
 		m_pCorrectionScroll->setScrollRange(0, 6, true);
-		m_pCorrectionScroll->Show();
+		m_pCorrectionScroll->show();
 
 	} else {
 		ReportError(ERR_MEMORY, "Could not allocate the Pan Correction Scroll Bar");
@@ -313,7 +313,7 @@ ErrorCode CBagOptWindow::attach() {
 
 		m_pPanSpeedScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
 		m_pPanSpeedScroll->setScrollRange(0, 5, true);
-		m_pPanSpeedScroll->Show();
+		m_pPanSpeedScroll->show();
 
 	} else {
 		ReportError(ERR_MEMORY, "Could not allocate the Pan Speed Scroll Bar");
@@ -323,14 +323,14 @@ ErrorCode CBagOptWindow::attach() {
 	if ((m_pFlythroughs = new CBofCheckButton()) != nullptr) {
 		m_pFlythroughs->loadColorScheme(&m_cColorScheme);
 		_errCode = m_pFlythroughs->create("", &cRect, this, FLYTHROUGHS_ID);
-		m_pFlythroughs->Show();
+		m_pFlythroughs->show();
 	}
 
 	cRect.SetRect(PANIMATIONS_LEFT, PANIMATIONS_TOP, PANIMATIONS_LEFT + CHECKBOX_WIDTH, PANIMATIONS_TOP + CHECKBOX_HEIGHT);
 	if ((m_pPanimations = new CBofCheckButton()) != nullptr) {
 		m_pPanimations->loadColorScheme(&m_cColorScheme);
 		_errCode = m_pPanimations->create("", &cRect, this, PAN_CHECK_ID);
-		m_pPanimations->Show();
+		m_pPanimations->show();
 	}
 
 	LoadIniSettings();
@@ -423,7 +423,7 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 			break;
 
 		case OKAY_ID:
-			Close();
+			close();
 			break;
 
 		case DEFAULTS_ID:
@@ -437,7 +437,7 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 				if ((pWin != nullptr) &&  pWin->ShowQuitDialog(this)) {
 					_nReturnValue = 0;
 					killBackground();
-					Close();
+					close();
 					g_engine->quitGame();
 				}
 			}
@@ -466,7 +466,7 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 					m_pSavePalette = nullptr;
 
 					killBackground();
-					Close();
+					close();
 				}
 			}
 			break;
@@ -481,7 +481,7 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 					m_pSavePalette = nullptr;
 
 					killBackground();
-					Close();
+					close();
 				}
 			}
 			break;
@@ -562,7 +562,7 @@ void CBagOptWindow::SaveOutNewSettings() {
 
 				CBagPanWindow::SetRealCorrection(n);
 				if (pPan->GetSlideBitmap() != nullptr) {
-					pPan->GetSlideBitmap()->SetCorrWidth(n);
+					pPan->GetSlideBitmap()->setCorrWidth(n);
 				}
 			}
 		}
@@ -672,7 +672,7 @@ void CBagOptWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 				m_pSavePalette = nullptr;
 
 				killBackground();
-				Close();
+				close();
 			}
 		}
 		break;
@@ -687,7 +687,7 @@ void CBagOptWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 				m_pSavePalette = nullptr;
 
 				killBackground();
-				Close();
+				close();
 			}
 		}
 		break;
@@ -701,7 +701,7 @@ void CBagOptWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 			if ((pWin != nullptr) && pWin->ShowQuitDialog(this)) {
 				_nReturnValue = 0;
 				killBackground();
-				Close();
+				close();
 			}
 		}
 
@@ -710,7 +710,7 @@ void CBagOptWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 
 	// Close
 	case BKEY_ESC:
-		Close();
+		close();
 		break;
 
 	default:

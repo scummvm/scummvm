@@ -102,7 +102,7 @@ bool CBagSoundObject::runObject() {
 			// If waiting until this sound finishes
 			if (m_bWait) {
 				// Show busy cursor
-				CBagMasterWin::SetActiveCursor(6);
+				CBagMasterWin::setActiveCursor(6);
 
 				EventLoop limiter(EventLoop::FORCE_REPAINT);
 				while (m_pSound->IsPlaying()) {
@@ -359,7 +359,7 @@ void CBagSoundObject::SetPlaying(bool bVal) {
 				// If we are supposed to wait until this audio finishes
 				if (m_bWait) {
 					// Show busy cursor
-					CBagMasterWin::SetActiveCursor(6);
+					CBagMasterWin::setActiveCursor(6);
 
 					EventLoop limiter(EventLoop::FORCE_REPAINT);
 					while (m_pSound->IsPlaying()) {

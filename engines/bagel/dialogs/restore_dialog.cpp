@@ -126,7 +126,7 @@ ErrorCode CBagRestoreDialog::attach() {
 			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 
 			m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
-			m_pButtons[i]->Show();
+			m_pButtons[i]->show();
 		} else {
 			ReportError(ERR_MEMORY);
 			break;
@@ -191,7 +191,7 @@ ErrorCode CBagRestoreDialog::attach() {
 			m_pListBox->setSelectedItem(m_nSelectedItem, false);
 		}
 
-		m_pListBox->Show();
+		m_pListBox->show();
 		m_pListBox->UpdateWindow();
 
 	} else {
@@ -275,10 +275,10 @@ void CBagRestoreDialog::onPaint(CBofRect *pRect) {
 		m_pText->display(this);
 	}
 
-	ValidateAnscestors();
+	validateAnscestors();
 }
 
-ErrorCode CBagRestoreDialog::RestoreAndClose() {
+ErrorCode CBagRestoreDialog::RestoreAndclose() {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
@@ -293,7 +293,7 @@ ErrorCode CBagRestoreDialog::RestoreAndClose() {
 			// If we are restoring a game, then we don't need to repaint
 			// the background, because the screen is changing to a restored state.
 			killBackground();
-			Close();
+			close();
 
 			// Restore
 			if (g_engine->loadGameState(m_nSelectedItem + 1).getCode() == Common::kNoError) {
@@ -336,13 +336,13 @@ void CBagRestoreDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 	// Save into current slot, and exit
 	case BKEY_ENTER:
 		if (m_nSelectedItem != -1)
-			RestoreAndClose();
+			RestoreAndclose();
 		break;
 
 
 	// Cancel without saving
 	case BKEY_ESC:
-		Close();
+		close();
 		break;
 
 	default:
@@ -364,12 +364,12 @@ void CBagRestoreDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 
 	// Do actual save
 	case RESTORE_BTN:
-		RestoreAndClose();
+		RestoreAndclose();
 		break;
 
 	// Cancel without saving
 	case CANCEL_BTN:
-		Close();
+		close();
 		break;
 
 	case LINEUP_BTN:
@@ -429,7 +429,7 @@ void CBagRestoreDialog::OnBofListBox(CBofObject *pObject, int nItemIndex) {
 
 		// If user double-clicked on this entry, then just restore it now
 		if (pListBox->getState() == LISTBOX_USENOW) {
-			RestoreAndClose();
+			RestoreAndclose();
 		}
 
 	} else if ((m_pButtons[0] != nullptr) && (m_pButtons[0]->getState() != BUTTON_DISABLED)) {

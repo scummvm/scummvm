@@ -83,7 +83,7 @@ bool CBagFMovie::open(const char *sFilename, CBofRect *pBounds) {
 	if (openMovie(sFilename)) {
 		// We were given specific rect for movie
 		if (pBounds)
-			ReSize(pBounds, true);
+			reSize(pBounds, true);
 		else
 			// Center the movie to the parent window
 			centerRect();
@@ -130,7 +130,7 @@ bool CBagFMovie::openMovie(const char *sFilename) {
 
 		m_nReversed = !(m_pBmpBuf->IsTopDown());
 		m_pBufferStart = (char *)m_pBmpBuf->GetPixelAddress(0, m_nReversed * (m_pBmpBuf->Height() - 1));
-		m_nBufferLength = ABS(m_pBmpBuf->Height() * m_pBmpBuf->Width());
+		m_nBufferLength = ABS(m_pBmpBuf->Height() * m_pBmpBuf->width());
 
 		const Graphics::Surface *frame = _pSmk->decodeNextFrame();
 		m_pSmackerPal->SetData(_pSmk->getPalette());
@@ -140,8 +140,8 @@ bool CBagFMovie::openMovie(const char *sFilename) {
 	}
 	bool bRepaint = true;
 
-	m_xBounds = CBofRect(0, 0, (uint16)m_pBmpBuf->Width() - 1, (uint16)m_pBmpBuf->Height() - 1);
-	ReSize(&m_xBounds, bRepaint);
+	m_xBounds = CBofRect(0, 0, (uint16)m_pBmpBuf->width() - 1, (uint16)m_pBmpBuf->Height() - 1);
+	reSize(&m_xBounds, bRepaint);
 
 	CBagMasterWin *pWnd = CBagel::getBagApp()->getMasterWnd();
 	if (pWnd != nullptr) {
@@ -267,7 +267,7 @@ void CBagFMovie::onMovieDone() {
 		if (_bCaptured)
 			ReleaseCapture();
 
-		GetParent()->enable();
+		getParent()->enable();
 		_bEndDialog = true;
 	}
 }
@@ -279,8 +279,8 @@ bool CBagFMovie::play(bool bLoop, bool bEscCanStop) {
 
 	bool bSuccess = play();
 
-	GetParent()->disable();
-	GetParent()->FlushAllMessages();
+	getParent()->disable();
+	getParent()->FlushAllMessages();
 
 	CursorMan.showMouse(false);
 
@@ -310,8 +310,8 @@ bool CBagFMovie::reverse(bool bLoop, bool bEscCanStop) {
 
 	bool bSuccess = reverse();
 
-	GetParent()->disable();
-	GetParent()->FlushAllMessages();
+	getParent()->disable();
+	getParent()->FlushAllMessages();
 	doModal();
 
 	return bSuccess;
@@ -390,7 +390,7 @@ bool CBagFMovie::setFrame(uint32 dwFrameNum) {
 }
 
 bool CBagFMovie::centerRect() {
-	CBofRect cBofRect = GetParent()->GetClientRect();
+	CBofRect cBofRect = getParent()->getClientRect();
 	RECT rcParentRect = cBofRect.GetWinRect();
 	int ClientWidth = rcParentRect.right - rcParentRect.left;
 	int ClientHeight = rcParentRect.bottom - rcParentRect.top;
@@ -407,7 +407,7 @@ bool CBagFMovie::centerRect() {
 
 	// Reposition the playback window
 	cBofRect = rcMovieBounds;
-	ReSize(&cBofRect, true);
+	reSize(&cBofRect, true);
 
 	return true;
 }

@@ -56,7 +56,7 @@ ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CB
 
 	CBofRect r;
 	if (!rect) {
-		r = wnd->GetWindowRect();
+		r = wnd->getWindowRect();
 		r.OffsetRect(-r.left, -r.top);
 		r.bottom = r.top + MENU_DFLT_HEIGHT;
 	} else {
@@ -88,7 +88,7 @@ ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CB
 
 			bitmap->FillRect(nullptr, pal->GetNearestIndex(RGB(92, 92, 92)));
 
-			CBofRect bmpRect(bitmap->GetRect());
+			CBofRect bmpRect(bitmap->getRect());
 			bitmap->DrawRect(&bmpRect, pal->GetNearestIndex(RGB(0, 0, 0)));
 			bitmap->FillRect(rect, pal->GetNearestIndex(RGB(255, 255, 255)));
 
@@ -98,10 +98,10 @@ ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CB
 	}
 
 	Assert(bitmap != nullptr);
-	CBofRect bmpRect(bitmap->GetRect());
+	CBofRect bmpRect(bitmap->getRect());
 	CBofString className = "CDevDlg";
 	CBagStorageDevDlg::create(className, &bmpRect, wnd, 0);
-	Center();
+	center();
 	SetBackdrop(bitmap);
 
 	return _errCode;

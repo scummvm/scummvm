@@ -98,14 +98,14 @@ CBofRect CBagPanWindow::UnSetSlidebitmap() {
 CBofPalette *CBagPanWindow::SetSlidebitmap(const CBofString &xSlideBmp, const CBofRect &xSlideRect) {
 	if (!xSlideBmp.IsEmpty()) {
 		CBofRect viewRect = UnSetSlidebitmap();
-		CBofRect cRect = GetWindowRect();
+		CBofRect cRect = getWindowRect();
 
-		if ((cRect.Width() <= 0) || (cRect.Width() > DEF_WIDTH))
+		if ((cRect.width() <= 0) || (cRect.width() > DEF_WIDTH))
 			cRect.SetRect(cRect.left, cRect.top, cRect.left + DEF_WIDTH, cRect.bottom);
 
-		cRect.bottom = cRect.top + 3 * cRect.Width() / 4 - 1;
+		cRect.bottom = cRect.top + 3 * cRect.width() / 4 - 1;
 
-		if ((xSlideRect.Width() <= 0) || (xSlideRect.Width() > DEF_WIDTH))
+		if ((xSlideRect.width() <= 0) || (xSlideRect.width() > DEF_WIDTH))
 			viewRect.SetRect(xSlideRect.left, xSlideRect.top, xSlideRect.left + DEF_WIDTH, DEF_HEIGHT);
 		else
 			viewRect = xSlideRect;
@@ -127,19 +127,19 @@ CBofPalette *CBagPanWindow::SetSlidebitmap(const CBofString &xSlideBmp, const CB
 
 			CBofSprite::OpenLibrary(m_pPalette);
 
-			m_pSlideBitmap->SetCorrWidth(m_nCorrection);
+			m_pSlideBitmap->setCorrWidth(m_nCorrection);
 
 			CBofBitmap *pBackDropBitmap = new CBofBitmap(DEF_WIDTH + 1, DEF_HEIGHT + 1, m_pPalette);
-			if (!pBackDropBitmap || pBackDropBitmap->Height() <= 0 || pBackDropBitmap->Width() <= 0) {
+			if (!pBackDropBitmap || pBackDropBitmap->Height() <= 0 || pBackDropBitmap->width() <= 0) {
 				ReportError(ERR_FOPEN, "Error opening bitmap");
 			}
 			m_pVeiwPortBitmap = new CBofBitmap(DEF_WIDTH + 1, m_pSlideBitmap->Height() + 1, m_pPalette);
-			if (!m_pVeiwPortBitmap || !m_pVeiwPortBitmap->Height() || !m_pVeiwPortBitmap->Width()) {
+			if (!m_pVeiwPortBitmap || !m_pVeiwPortBitmap->Height() || !m_pVeiwPortBitmap->width()) {
 				ReportError(ERR_FOPEN);
 			}
 			SetBackdrop(pBackDropBitmap);
 
-			Move(cRect.left, cRect.top);
+			move(cRect.left, cRect.top);
 
 		}
 	}
@@ -167,7 +167,7 @@ CBagPanWindow::~CBagPanWindow() {
 void CBagPanWindow::onClose() {
 	CBagStorageDevWnd::onClose();
 
-	DestroyWindow();				// Destruct the main window
+	destroyWindow();				// Destruct the main window
 }
 
 ErrorCode CBagPanWindow::RunModal(CBagObject *pObj) {
@@ -194,7 +194,7 @@ ErrorCode CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		m_pSlideBitmap->UpdateView();
 
 		CBofRect dstRect(CBofPoint(0, 0), m_pSlideBitmap->GetViewSize());
-		CBofRect clientArea = GetClientRect();
+		CBofRect clientArea = getClientRect();
 
 		if (m_pSlideBitmap->IsPan()) {
 
@@ -238,7 +238,7 @@ ErrorCode CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 		} else {
 			// Close-Ups
-			m_pSlideBitmap->SetCorrWidth(0, false);
+			m_pSlideBitmap->setCorrWidth(0, false);
 
 			// If we've been given the go ahead to call prefilter, then
 			// do so but don't do it again unless asked.
@@ -271,7 +271,7 @@ ErrorCode CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 			// the background bitmap
 			PaintObjects(m_pFGObjectList, pBmp, clientArea, nullptr);
 
-			m_pSlideBitmap->SetCorrWidth(m_nCorrection, false);
+			m_pSlideBitmap->setCorrWidth(m_nCorrection, false);
 		}
 	}
 
@@ -286,7 +286,7 @@ ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 
 	int nCount = list->GetCount();
 	if (nCount != 0) {
-		int nW = m_pSlideBitmap->Width();
+		int nW = m_pSlideBitmap->width();
 		CBofPoint xCursorLocation = DevPtToViewPort(*m_xCursorLocation);
 		int nMouseOverObj = -1;
 
@@ -325,7 +325,7 @@ ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 							} else if (pObj->isAttached() &&                       // don't care if it's not running...
 								        (pCharObj->isStationary() == false) &&
 								        (pCharObj->getNumberOfLoops() != 0) &&     // Plays multiple or infinite (fly == -1)
-								        ((pObj->getRect().Width() != 480) &&
+								        ((pObj->getRect().width() != 480) &&
 								         (pObj->getRect().Height() != 360))) {
 
 								// Redraw everything inside of the closeup... but not the PDA...
@@ -419,10 +419,10 @@ ErrorCode CBagPanWindow::OnCursorUpdate(int nCurrObj) {
 	CBagObject *pObj;
 
 	if ((nCurrObj >= 0) && ((pObj = GetObjectByPos(nCurrObj)) != nullptr)) {
-		CBagMasterWin::SetActiveCursor(pObj->GetOverCursor());
+		CBagMasterWin::setActiveCursor(pObj->GetOverCursor());
 
 	} else if (CBagWield::GetWieldCursor() >= 0) {
-		CBagMasterWin::SetActiveCursor(CBagWield::GetWieldCursor());
+		CBagMasterWin::setActiveCursor(CBagWield::GetWieldCursor());
 	}
 
 	return _errCode;
@@ -438,7 +438,7 @@ void CBagPanWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 				m_nCorrection = 64;
 			}
 			m_nCorrection >>= 1;
-			m_pSlideBitmap->SetCorrWidth(m_nCorrection);
+			m_pSlideBitmap->setCorrWidth(m_nCorrection);
 			CBagMasterWin::SetCorrection(m_nCorrection);
 			break;
 
@@ -449,7 +449,7 @@ void CBagPanWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 			} else if ((m_nCorrection <<= 1) > 32) {
 				m_nCorrection = 0;
 			}
-			m_pSlideBitmap->SetCorrWidth(m_nCorrection);
+			m_pSlideBitmap->setCorrWidth(m_nCorrection);
 			CBagMasterWin::SetCorrection(m_nCorrection);
 			break;
 
@@ -491,22 +491,22 @@ void CBagPanWindow::onMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 			if (m_cRightRect.PtInRect(xPoint)) {
 				m_pSlideBitmap->SetRotateRate(CBofPoint(((xPoint.x - m_xMovementRect.right) * (m_nPanSpeed + 1)) / 2, 0));
 				m_pSlideBitmap->SetDirection(CBagPanBitmap::kDirLEFT);
-				CBagMasterWin::SetActiveCursor(BOFRTCURSOR);
+				CBagMasterWin::setActiveCursor(BOFRTCURSOR);
 
 			} else if (m_cLeftRect.PtInRect(xPoint)) {
 				m_pSlideBitmap->SetRotateRate(CBofPoint(((m_xMovementRect.left - xPoint.x) * (m_nPanSpeed + 1)) / 2, 0));
 				m_pSlideBitmap->SetDirection(CBagPanBitmap::kDirRIGHT);
-				CBagMasterWin::SetActiveCursor(BOFLTCURSOR);
+				CBagMasterWin::setActiveCursor(BOFLTCURSOR);
 
 			} else if (m_cBottomRect.PtInRect(xPoint)) {
 				m_pSlideBitmap->SetRotateRate(CBofPoint(0, (xPoint.y - m_xMovementRect.bottom)));
 				m_pSlideBitmap->SetDirection(CBagPanBitmap::kDirUP);
-				CBagMasterWin::SetActiveCursor(BOFDNCURSOR);
+				CBagMasterWin::setActiveCursor(BOFDNCURSOR);
 
 			} else if (m_cTopRect.PtInRect(xPoint)) {
 				m_pSlideBitmap->SetRotateRate(CBofPoint(0, (m_xMovementRect.top - xPoint.y)));
 				m_pSlideBitmap->SetDirection(CBagPanBitmap::kDirDOWN);
-				CBagMasterWin::SetActiveCursor(BOFUPCURSOR);
+				CBagMasterWin::setActiveCursor(BOFUPCURSOR);
 
 			} else {
 				m_pSlideBitmap->SetDirection(CBagPanBitmap::kDirNONE);
@@ -555,7 +555,7 @@ void CBagPanWindow::onMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 				}
 			}
 
-			CBagMasterWin::SetActiveCursor(nCursorID);
+			CBagMasterWin::setActiveCursor(nCursorID);
 		}
 	}
 
@@ -671,10 +671,10 @@ void CBagPanWindow::OnSize(uint32 nType, int cx, int cy) {
 	CBofSize  vs = CBofSize(cx, cy);
 
 	// Check if the current view is greater than the max view
-	if (vs.cx > xMaxPanBmpRect.Width())
-		vs.cx = xMaxPanBmpRect.Width();
+	if (vs.cx > xMaxPanBmpRect.width())
+		vs.cx = xMaxPanBmpRect.width();
 
-	if (GetSlideBitmap()->Width() > 480)
+	if (GetSlideBitmap()->width() > 480)
 		vs.cy = 3 * vs.cx / 4;
 
 	if (vs.cy > xMaxPanBmpRect.Height())
@@ -710,8 +710,8 @@ void CBagPanWindow::OnWindowPosChanging(WindowPos *lpwndpos) {
 
 	xSlideBmpRect.SetRect(0, 0, DEF_WIDTH, DEF_HEIGHT);
 
-	if (lpwndpos->cx > xSlideBmpRect.Width())
-		lpwndpos->cx = xSlideBmpRect.Width();
+	if (lpwndpos->cx > xSlideBmpRect.width())
+		lpwndpos->cx = xSlideBmpRect.width();
 	if (lpwndpos->cy > xSlideBmpRect.Height() + MENUNBORDER)
 		lpwndpos->cy = xSlideBmpRect.Height() + MENUNBORDER;
 }
@@ -814,8 +814,8 @@ const CBofPoint CBagPanWindow::DevPtToViewPort(const CBofPoint &xPoint) {
 	p.y = xPoint.y + r.top - m_xVeiwPortPos.y;
 
 	if (m_pSlideBitmap->IsPan()) {
-		if (p.x >= m_pSlideBitmap->Width())
-			p.x -= m_pSlideBitmap->Width();
+		if (p.x >= m_pSlideBitmap->width())
+			p.x -= m_pSlideBitmap->width();
 
 		// If this view is being painted with a correction, we need
 		// to correct the point to the warped view space.
@@ -833,7 +833,7 @@ const CBofPoint CBagPanWindow::ViewPortToDevPt(const CBofPoint &xPoint) {
 	CBofPoint p(xPoint.x - r.left, xPoint.y - r.top);
 
 	if (p.x < 0)
-		p.x += m_pSlideBitmap->Width();
+		p.x += m_pSlideBitmap->width();
 
 	return p;
 }

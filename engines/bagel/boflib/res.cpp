@@ -66,7 +66,7 @@ ErrorCode CBofStringTable::Load(const char *pszFileName) {
 	}
 
 	// Don't need this file open anymore
-	Close();
+	close();
 
 	return _errCode;
 }

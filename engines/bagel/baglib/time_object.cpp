@@ -47,11 +47,11 @@ ErrorCode CBagTimeObject::attach() {
 	CBofPoint p = CBagObject::getPosition();
 
 	if ((m_xDig1 = new CBofSprite()) != nullptr) {
-		if (m_xDig1->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xDig1->Width() != 0) && (m_xDig1->Height() != 0)) {
+		if (m_xDig1->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xDig1->width() != 0) && (m_xDig1->Height() != 0)) {
 			m_xDig1->SetAnimated(false);
 			m_xDig1->setPosition(p.x, p.y);
 
-			p.Offset(m_xDig1->Width(), 0);
+			p.Offset(m_xDig1->width(), 0);
 
 		} else {
 			ReportError(ERR_FOPEN, "Could Not Open Dig1 Sprite: %s", m_xDig1->GetFileName());
@@ -62,13 +62,13 @@ ErrorCode CBagTimeObject::attach() {
 	}
 	if ((m_xDig2 = new CBofSprite()) != nullptr) {
 
-		if (m_xDig2->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xDig2->Width() != 0) && (m_xDig2->Height() != 0)) {
+		if (m_xDig2->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xDig2->width() != 0) && (m_xDig2->Height() != 0)) {
 
 			m_xDig2->SetAnimated(false);
 
 			m_xDig2->setPosition(p.x, p.y);
 
-			p.Offset(m_xDig2->Width(), 0);
+			p.Offset(m_xDig2->width(), 0);
 
 		} else {
 			ReportError(ERR_FOPEN, "Could Not Open Dig2 Sprite: %s", m_xDig2->GetFileName());
@@ -79,14 +79,14 @@ ErrorCode CBagTimeObject::attach() {
 	}
 	if ((m_xColon = new CBofSprite()) != nullptr) {
 
-		if (m_xColon->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xColon->Width() != 0) && (m_xColon->Height() != 0)) {
+		if (m_xColon->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xColon->width() != 0) && (m_xColon->Height() != 0)) {
 
 			m_xColon->SetAnimated(false);
 			// The time sprite should start with 0 and go to 9 followed by the :
 			m_xColon->SetCel(m_nCels - 1);
 			m_xColon->setPosition(p.x, p.y);
 
-			p.Offset(m_xColon->Width(), 0);
+			p.Offset(m_xColon->width(), 0);
 		} else {
 			ReportError(ERR_FOPEN, "Could Not Open Colon Sprite: %s", m_xColon->GetFileName());
 		}
@@ -96,13 +96,13 @@ ErrorCode CBagTimeObject::attach() {
 	}
 	if ((m_xDig3 = new CBofSprite()) != nullptr) {
 
-		if (m_xDig3->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xDig3->Width() != 0) && (m_xDig3->Height() != 0)) {
+		if (m_xDig3->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xDig3->width() != 0) && (m_xDig3->Height() != 0)) {
 
 			m_xDig3->SetAnimated(false);
 
 			m_xDig3->setPosition(p.x, p.y);
 
-			p.Offset(m_xDig3->Width(), 0);
+			p.Offset(m_xDig3->width(), 0);
 		} else {
 			ReportError(ERR_FOPEN, "Could Not Open Dig3 Sprite: %s", m_xDig3->GetFileName());
 		}
@@ -112,13 +112,13 @@ ErrorCode CBagTimeObject::attach() {
 	}
 	if ((m_xDig4 = new CBofSprite()) != nullptr) {
 
-		if (m_xDig4->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xDig4->Width() != 0) && (m_xDig4->Height() != 0)) {
+		if (m_xDig4->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xDig4->width() != 0) && (m_xDig4->Height() != 0)) {
 
 			m_xDig4->SetAnimated(false);
 
 			m_xDig4->setPosition(p.x, p.y);
 
-			p.Offset(m_xDig4->Width(), 0);
+			p.Offset(m_xDig4->width(), 0);
 		} else {
 			ReportError(ERR_FOPEN, "Could Not Open Dig4 Sprite: %s", m_xDig4->GetFileName());
 		}
@@ -273,25 +273,25 @@ ErrorCode CBagTimeObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pS
 			sDigString[0] = sTimeString[0];
 			m_xDig1->SetCel(atoi(sDigString));
 			m_xDig1->PaintSprite(pBmp, pt.x, pt.y);
-			pt.Offset(m_xDig1->Width(), 0);
+			pt.Offset(m_xDig1->width(), 0);
 		}
 		// Digit 2
 		if (m_xDig2) {
 			sDigString[0] = sTimeString[1];
 			m_xDig2->SetCel(atoi(sDigString));
 			m_xDig2->PaintSprite(pBmp, pt.x, pt.y);
-			pt.Offset(m_xDig2->Width(), 0);
+			pt.Offset(m_xDig2->width(), 0);
 		}
 		if (m_xColon) {
 			m_xColon->PaintSprite(pBmp, pt.x, pt.y);
-			pt.Offset(m_xColon->Width(), 0);
+			pt.Offset(m_xColon->width(), 0);
 		}
 		// Digit 3
 		if (m_xDig3) {
 			sDigString[0] = sTimeString[2];
 			m_xDig3->SetCel(atoi(sDigString));
 			m_xDig3->PaintSprite(pBmp, pt.x, pt.y);
-			pt.Offset(m_xDig3->Width(), 0);
+			pt.Offset(m_xDig3->width(), 0);
 		}
 		// Digit 4
 		if (m_xDig4) {
@@ -324,25 +324,25 @@ ErrorCode CBagTimeObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, int
 			sDigString[0] = sTimeString[0];
 			m_xDig1->SetCel(atoi(sDigString));
 			m_xDig1->PaintSprite(pWnd, pt.x, pt.y);
-			pt.Offset(m_xDig1->Width(), 0);
+			pt.Offset(m_xDig1->width(), 0);
 		}
 		// Digit 2
 		if (m_xDig2) {
 			sDigString[0] = sTimeString[1];
 			m_xDig2->SetCel(atoi(sDigString));
 			m_xDig2->PaintSprite(pWnd, pt.x, pt.y);
-			pt.Offset(m_xDig2->Width(), 0);
+			pt.Offset(m_xDig2->width(), 0);
 		}
 		if (m_xColon) {
 			m_xColon->PaintSprite(pWnd, pt.x, pt.y);
-			pt.Offset(m_xColon->Width(), 0);
+			pt.Offset(m_xColon->width(), 0);
 		}
 		// Digit 3
 		if (m_xDig3) {
 			sDigString[0] = sTimeString[2];
 			m_xDig3->SetCel(atoi(sDigString));
 			m_xDig3->PaintSprite(pWnd, pt.x, pt.y);
-			pt.Offset(m_xDig3->Width(), 0);
+			pt.Offset(m_xDig3->width(), 0);
 		}
 		// Digit 4
 		if (m_xDig4) {

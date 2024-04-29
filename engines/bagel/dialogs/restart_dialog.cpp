@@ -97,7 +97,7 @@ void CBagRestartDialog::onInitDialog() {
 			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 
 			m_pButtons[i]->create(g_stRestartButtons[i].m_pszName, g_stRestartButtons[i].m_nLeft, g_stRestartButtons[i].m_nTop, g_stRestartButtons[i].m_nWidth, g_stRestartButtons[i].m_nHeight, this, g_stRestartButtons[i].m_nID);
-			m_pButtons[i]->Show();
+			m_pButtons[i]->show();
 		} else {
 			ReportError(ERR_MEMORY);
 			break;
@@ -137,7 +137,7 @@ void CBagRestartDialog::onPaint(CBofRect *pRect) {
 
 	PaintBackdrop(pRect);
 
-	ValidateAnscestors();
+	validateAnscestors();
 }
 
 
@@ -164,11 +164,11 @@ void CBagRestartDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 				cRect.right = cRect.left + 180 - 1;
 				cRect.bottom = cRect.top + 50 - 1;
 
-				CBofCursor::Hide();
+				CBofCursor::hide();
 				PaintBitmap(this, cStr, &cRect);
 
 				pWin->NewGame();
-				CBofCursor::Show();
+				CBofCursor::show();
 
 				killBackground();
 
@@ -181,7 +181,7 @@ void CBagRestartDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 
 	// Cancel
 	case BKEY_ESC:
-		Close();
+		close();
 		break;
 
 	default:
@@ -203,7 +203,7 @@ void CBagRestartDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 
 	// Cancel
 	case CANCEL_BTN: {
-		Close();
+		close();
 		break;
 	}
 
@@ -225,11 +225,11 @@ void CBagRestartDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 				cRect.right = cRect.left + 180 - 1;
 				cRect.bottom = cRect.top + 50 - 1;
 
-				CBofCursor::Hide();
+				CBofCursor::hide();
 				PaintBitmap(this, cStr, &cRect);
 
 				pWin->NewGame();
-				CBofCursor::Show();
+				CBofCursor::show();
 
 				killBackground();
 

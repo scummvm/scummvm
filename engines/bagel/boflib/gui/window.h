@@ -56,13 +56,13 @@ private:
 	 * Handles translating from a ScummVM event structure to
 	 * a code used by the game engine
 	 */
-	uint32 TranslateKey(const Common::Event &event) const;
+	uint32 translateKey(const Common::Event &event) const;
 
 protected:
 	/**
 	 * Checks window timers for expiry
 	 */
-	void CheckTimers();
+	void checkTimers();
 
 public:
 	/**
@@ -116,27 +116,27 @@ public:
 	/**
 	 * Destroys the Window attached to this CBofWindow (if any)
 	 */
-	virtual void Destroy();
-	virtual void DestroyWindow() {
-		Destroy();
+	virtual void destroy();
+	virtual void destroyWindow() {
+		destroy();
 	}
 
 	/**
 	 * Shows current window (if hidden)
 	 */
-	void Show();
+	void show();
 
-	void Select();
+	void select();
 
 	/**
 	 * Hides current window (if shown)
 	 */
-	void Hide();
+	void hide();
 
 	/**
 	 * Centers current window in parent window or in screen
 	 */
-	void Center();
+	void center();
 
 	/**
 	 * Moves current window to specified location in parent
@@ -144,16 +144,16 @@ public:
 	 * @param y         New upper left corner Y position
 	 * @param bRepaint  true if should update the window
 	 */
-	void Move(const int x, const int y, bool bRepaint = false);
+	void move(const int x, const int y, bool bRepaint = false);
 
 	/**
 	 * Resizes current window to specified area
 	 * @param pRect     New area for window
 	 * @parambRepaint   Optional repaint after resize
 	 */
-	void ReSize(CBofRect *pRect, bool bRepaint = false);
+	void reSize(CBofRect *pRect, bool bRepaint = false);
 
-	void Close() {
+	void close() {
 		onClose();
 	}
 
@@ -163,12 +163,12 @@ public:
 	 * @param lParam1       User info
 	 * @param lParam2       More user info
 	 */
-	void PostMessage(uint32 nMessage, uint32 lParam1, uint32 lParam2);
+	void postMessage(uint32 nMessage, uint32 lParam1, uint32 lParam2);
 
 	/**
 	 * Posts a user defined message
 	 */
-	void PostUserMessage(uint32 nMessage, uint32 lExtraInfo);
+	void postUserMessage(uint32 nMessage, uint32 lExtraInfo);
 
 	/**
 	 * Sets a timer which calls specified callback (or onTimer)
@@ -176,70 +176,70 @@ public:
 	 * @param nInterval     Number of milliseconds till event
 	 * @param pCallBack     Function to call when time is up
 	 */
-	void SetTimer(uint32 nID, uint32 nInterval, BofCallback pCallBack = nullptr);
+	void setTimer(uint32 nID, uint32 nInterval, BofCallback pCallBack = nullptr);
 
 	/**
 	 * Stops specified timer
 	 * @param nTimerID       ID of timer to stop
 	 */
-	void KillTimer(uint32 nTimerID);
+	void killTimer(uint32 nTimerID);
 
 	/**
 	 * Stops all timers associated with current window
 	 */
-	void KillMyTimers();
+	void killMyTimers();
 
 	/**
 	 * Determines if specified window is a child to current window
 	 * @param pWin      Window to check
 	 * @return          true if pWnd is a child of current window, false if not
 	 */
-	bool IsChildOf(CBofWindow *pWin);
+	bool isChildOf(CBofWindow *pWin);
 
 	/**
 	 * Determines if specified window is a parent to current window
 	 * @param pWin      Window to check
 	 * @return          true if pWnd is a parent of current window, false if not
 	 */
-	bool IsParentOf(CBofWindow *pWin);
+	bool isParentOf(CBofWindow *pWin);
 
 	/**
 	 * Returns the parent window element, if any
 	*/
-	CBofWindow *GetParent() const {
+	CBofWindow *getParent() const {
 		return _parent;
 	}
-	CBofWindow *GetAnscestor();
+	CBofWindow *getAnscestor();
 
 	/**
 	 * Causes all parent windows to have valid paint regions
 	 * @param pRect         Area to validate
 	 */
-	void ValidateAnscestors(CBofRect *pRect = nullptr);
+	void validateAnscestors(CBofRect *pRect = nullptr);
 
-	static CBofWindow *GetActiveWindow() {
+	static CBofWindow *getActiveWindow() {
 		return m_pActiveWindow;
 	}
 
-	void SetActive() {
+	void setActive() {
 		m_pActiveWindow = this;
 	}
 
-	static CBofWindow *GetWindowList() {
+	static CBofWindow *getWindowList() {
 		return m_pWindowList;
 	}
 
-	CBofRect GetWindowRect() const {
+	CBofRect getWindowRect() const {
 		return _cWindowRect;
 	}
-	CBofRect GetClientRect();
+	CBofRect getClientRect();
 
-	CBofRect GetRect() const {
+	CBofRect getRect() const {
 		return _cRect;
 	}
 
-	int Width() const {
-		return _cRect.Width();
+	int width() const {
+		return _cRect.width();
 	}
 	int Height() const {
 		return _cRect.Height();

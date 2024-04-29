@@ -47,7 +47,7 @@ CBofFile::CBofFile(const char *pszFileName, uint32 lFlags) {
 CBofFile::~CBofFile() {
 	Assert(IsValidObject(this));
 
-	Close();
+	close();
 }
 
 ErrorCode CBofFile::create(const char *pszFileName, uint32 lFlags) {
@@ -134,7 +134,7 @@ ErrorCode CBofFile::open(const char *pszFileName, uint32 lFlags) {
 	return _errCode;
 }
 
-void CBofFile::Close() {
+void CBofFile::close() {
 	Assert(IsValidObject(this));
 
 	if (_stream != nullptr) {

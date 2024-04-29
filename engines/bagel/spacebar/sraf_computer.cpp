@@ -932,7 +932,7 @@ ErrorCode SrafComputer::attach() {
 				m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 				m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
 				if (i != QUIT_BUTTON)
-					m_pButtons[i]->Hide();
+					m_pButtons[i]->hide();
 			}
 		}
 
@@ -952,7 +952,7 @@ ErrorCode SrafComputer::attach() {
 
 		SetOn();
 
-		Show();
+		show();
 		UpdateWindow();
 
 		// Finally, use our regular system cursor, not the custom ones
@@ -1140,9 +1140,9 @@ void SrafComputer::SetOff() {
 	if (m_eMode != SCOFF) {
 		m_eMode = SCOFF;
 
-		m_pButtons[QUIT_BUTTON]->Hide();
-		m_pButtons[OFF_BUTTON]->Hide();
-		m_pButtons[ON_BUTTON]->Show();
+		m_pButtons[QUIT_BUTTON]->hide();
+		m_pButtons[OFF_BUTTON]->hide();
+		m_pButtons[ON_BUTTON]->show();
 
 		SetFocus();
 	}
@@ -1153,7 +1153,7 @@ void SrafComputer::SetOff() {
 }
 
 void SrafComputer::SetQuit() {
-	Close();
+	close();
 }
 
 ErrorCode SrafComputer::CreateListBox() {
@@ -1423,11 +1423,11 @@ void SrafComputer::ActivateDealSummary() {
 	m_pLBox->addToTail(sStr, false);
 
 	// Show list box
-	m_pLBox->Show();
+	m_pLBox->show();
 
-	m_pButtons[RETURN_TO_MAIN_BUTTON]->Show();
-	m_pButtons[SUBMIT_BUTTON]->Show();
-	m_pButtons[QUIT_BUTTON]->Hide();
+	m_pButtons[RETURN_TO_MAIN_BUTTON]->show();
+	m_pButtons[SUBMIT_BUTTON]->show();
+	m_pButtons[QUIT_BUTTON]->hide();
 }
 
 void SrafComputer::ActivateBuyerBids() {
@@ -1480,11 +1480,11 @@ void SrafComputer::ActivateBuyerBids() {
 	m_pLBox->addToTail(sStr, false);
 
 	// Show the list box
-	m_pLBox->Show();
+	m_pLBox->show();
 
-	m_pButtons[RETURN_TO_MAIN_BUTTON]->Show();
-	m_pButtons[DISPLAY_KEY_BUTTON]->Show();
-	m_pButtons[QUIT_BUTTON]->Hide();
+	m_pButtons[RETURN_TO_MAIN_BUTTON]->show();
+	m_pButtons[DISPLAY_KEY_BUTTON]->show();
+	m_pButtons[QUIT_BUTTON]->hide();
 }
 
 CBofString &SrafComputer::BuildBidString(int index) {
@@ -1525,7 +1525,7 @@ void SrafComputer::HideAllButtons() {
 
 	for (int i = 0; i < NUM_SRAFCOMPBUTT; i++) {
 		if (m_pButtons[i] != nullptr) {
-			m_pButtons[i]->Hide();
+			m_pButtons[i]->hide();
 		}
 	}
 }
@@ -1568,10 +1568,10 @@ void SrafComputer::ActivateSellerBios() {
 	}
 
 	// Show list box
-	m_pLBox->Show();
+	m_pLBox->show();
 
-	m_pButtons[RETURN_TO_MAIN_BUTTON]->Show();
-	m_pButtons[QUIT_BUTTON]->Hide();
+	m_pButtons[RETURN_TO_MAIN_BUTTON]->show();
+	m_pButtons[QUIT_BUTTON]->hide();
 }
 
 
@@ -1613,10 +1613,10 @@ void SrafComputer::ActivateOtherBios() {
 	}
 
 	// Show list box
-	m_pLBox->Show();
+	m_pLBox->show();
 
-	m_pButtons[RETURN_TO_MAIN_BUTTON]->Show();
-	m_pButtons[QUIT_BUTTON]->Hide();
+	m_pButtons[RETURN_TO_MAIN_BUTTON]->show();
+	m_pButtons[QUIT_BUTTON]->hide();
 }
 
 void SrafComputer::ActivateStaffBios() {
@@ -1657,10 +1657,10 @@ void SrafComputer::ActivateStaffBios() {
 	}
 
 	// Show list box
-	m_pLBox->Show();
+	m_pLBox->show();
 
-	m_pButtons[RETURN_TO_MAIN_BUTTON]->Show();
-	m_pButtons[QUIT_BUTTON]->Hide();
+	m_pButtons[RETURN_TO_MAIN_BUTTON]->show();
+	m_pButtons[QUIT_BUTTON]->hide();
 }
 
 void SrafComputer::ActivateDispatchTeam() {
@@ -1686,15 +1686,15 @@ void SrafComputer::ActivateDispatchTeam() {
 	RecalcDispatchList(gDispatchCurState);
 
 	// Show the list box
-	m_pLBox->Show();
+	m_pLBox->show();
 
-	m_pButtons[RETURN_TO_MAIN_BUTTON]->Show();
-	m_pButtons[DISPATCH_TEAM_BUTTON]->Show();
+	m_pButtons[RETURN_TO_MAIN_BUTTON]->show();
+	m_pButtons[DISPATCH_TEAM_BUTTON]->show();
 
 	m_pButtons[RETURN_TO_MAIN_BUTTON]->paint();
 	m_pButtons[DISPATCH_TEAM_BUTTON]->paint();
 
-	m_pButtons[QUIT_BUTTON]->Hide();
+	m_pButtons[QUIT_BUTTON]->hide();
 }
 
 
@@ -1927,10 +1927,10 @@ void SrafComputer::ActivateCurrentEMail() {
 	}
 
 	// Show the list box
-	m_pLBox->Show();
+	m_pLBox->show();
 
-	m_pButtons[RETURN_TO_MAIN_BUTTON]->Show();
-	m_pButtons[QUIT_BUTTON]->Hide();
+	m_pButtons[RETURN_TO_MAIN_BUTTON]->show();
+	m_pButtons[QUIT_BUTTON]->hide();
 }
 
 
@@ -1983,16 +1983,16 @@ void SrafComputer::ActivateAudioSettings() {
 	}
 
 	// Show the list box
-	m_pLBox->Show();
+	m_pLBox->show();
 
-	m_pButtons[RETURN_TO_MAIN_BUTTON]->Show();
+	m_pButtons[RETURN_TO_MAIN_BUTTON]->show();
 
 	// Only show the no music button if music is playing.
 	bool bAnythingPlaying = CBofSound::MidiSoundPlaying();
 	if (bAnythingPlaying) {
-		m_pButtons[NO_MUSIC_BUTTON]->Show();
+		m_pButtons[NO_MUSIC_BUTTON]->show();
 	}
-	m_pButtons[QUIT_BUTTON]->Hide();
+	m_pButtons[QUIT_BUTTON]->hide();
 }
 
 
@@ -2043,10 +2043,10 @@ void SrafComputer::ActivateRoboButler() {
 	}
 
 	// Show the list box
-	m_pLBox->Show();
+	m_pLBox->show();
 
-	m_pButtons[RETURN_TO_MAIN_BUTTON]->Show();
-	m_pButtons[QUIT_BUTTON]->Hide();
+	m_pButtons[RETURN_TO_MAIN_BUTTON]->show();
+	m_pButtons[QUIT_BUTTON]->hide();
 
 	DoShowChowButtons();
 	UpdateWindow();
@@ -2072,15 +2072,15 @@ void SrafComputer::DoShowChowButtons() {
 	}
 
 	if (bAllowBeverage) {
-		m_pButtons[ORDER_BEVERAGE_BUTTON]->Show();
+		m_pButtons[ORDER_BEVERAGE_BUTTON]->show();
 	} else {
-		m_pButtons[ORDER_BEVERAGE_BUTTON]->Hide();
+		m_pButtons[ORDER_BEVERAGE_BUTTON]->hide();
 	}
 
 	if (bAllowSnack) {
-		m_pButtons[ORDER_SNACK_BUTTON]->Show();
+		m_pButtons[ORDER_SNACK_BUTTON]->show();
 	} else {
-		m_pButtons[ORDER_SNACK_BUTTON]->Hide();
+		m_pButtons[ORDER_SNACK_BUTTON]->hide();
 	}
 }
 
@@ -2349,10 +2349,10 @@ void SrafComputer::ActivateCheckTeams() {
 	m_pLBox->addToTail(sStr, false);
 
 	// show the list box
-	m_pLBox->Show();
+	m_pLBox->show();
 
-	m_pButtons[RETURN_TO_MAIN_BUTTON]->Show();
-	m_pButtons[QUIT_BUTTON]->Hide();
+	m_pButtons[RETURN_TO_MAIN_BUTTON]->show();
+	m_pButtons[QUIT_BUTTON]->hide();
 }
 
 
@@ -2419,11 +2419,11 @@ void SrafComputer::ActivateCodeWords() {
 	m_pLBox->addToTail(sStr, false);
 
 	// Show list box
-	m_pLBox->Show();
+	m_pLBox->show();
 
 	// Use the done button instead of return to main.
-	m_pButtons[DONE_BUTTON]->Show();
-	m_pButtons[QUIT_BUTTON]->Hide();
+	m_pButtons[DONE_BUTTON]->show();
+	m_pButtons[QUIT_BUTTON]->hide();
 
 	UpdateWindow();
 }
@@ -2765,7 +2765,7 @@ void SrafComputer::OnListDispatchTeam() {
 	                          gCompDisplay.Height());
 	CBofRect    cTeamMembersRect((kTeamMemberColumn - kStandardIndentation) * kBuyerBidsPointWidth,
 	                             0,
-	                             gCompDisplay.Width(),
+	                             gCompDisplay.width(),
 	                             gCompDisplay.Height());
 	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
@@ -2966,7 +2966,7 @@ void SrafComputer::OnListDispatchTeam() {
 		if (bDeleteAll) {
 			m_pLBox->deleteAll();
 			RecalcDispatchList(nRecalcVal);
-			m_pLBox->Show();
+			m_pLBox->show();
 		}
 	}
 
@@ -3053,9 +3053,9 @@ void SrafComputer::OnListAudioSettings() {
 	// If state changes, then change the button also
 	bool bAnythingPlaying = CBofSound::MidiSoundPlaying();
 	if (bAnythingPlaying) {
-		m_pButtons[NO_MUSIC_BUTTON]->Show();
+		m_pButtons[NO_MUSIC_BUTTON]->show();
 	} else {
-		m_pButtons[NO_MUSIC_BUTTON]->Hide();
+		m_pButtons[NO_MUSIC_BUTTON]->hide();
 	}
 }
 
@@ -3655,9 +3655,9 @@ void SrafComputer::DeactivateMainScreen() {
 
 	//  Hide the on/off button
 	if (m_eMode == SCON) {
-		m_pButtons[ON_BUTTON]->Hide();
+		m_pButtons[ON_BUTTON]->hide();
 	} else {
-		m_pButtons[OFF_BUTTON]->Hide();
+		m_pButtons[OFF_BUTTON]->hide();
 	}
 }
 
@@ -3674,14 +3674,14 @@ void SrafComputer::ActivateMainScreen() {
 
 	// Hide the return to main if it's been created
 
-	Show();
+	show();
 
 	if (GetBackdrop()) {
 		PaintBackdrop();
 	}
 
 	HideAllButtons();
-	m_pButtons[QUIT_BUTTON]->Show();
+	m_pButtons[QUIT_BUTTON]->show();
 
 	// Initialize point size and item height
 	m_nListPointSize = kOtherPointSize;
@@ -3725,7 +3725,7 @@ void SrafComputer::ActivateMainScreen() {
 	DisplayTurnCount(nLineNo - 1);
 
 	// Show list box
-	m_pLBox->Show();
+	m_pLBox->show();
 
 	UpdateWindow();
 }
@@ -3800,14 +3800,14 @@ void SrafComputer::OnButtonDealSummary(CBofButton *pButton, int nState) {
 
 	switch (pButton->GetControlID()) {
 	case RETURN_TO_MAIN_BUTTON:
-		m_pButtons[SUBMIT_BUTTON]->Hide();
+		m_pButtons[SUBMIT_BUTTON]->hide();
 		ActivateMainScreen();
 		break;
 
 	case SUBMIT_BUTTON:
 		if (OnButtonSubmitOffer()) {
-			m_pButtons[SUBMIT_BUTTON]->Hide();
-			m_pButtons[RETURN_TO_MAIN_BUTTON]->Hide();
+			m_pButtons[SUBMIT_BUTTON]->hide();
+			m_pButtons[RETURN_TO_MAIN_BUTTON]->hide();
 			ActivateCodeWords();
 		}
 		break;
@@ -4136,7 +4136,7 @@ void SrafComputer::NotifyBoss(CBofString &sSoundFile, int nStafferID) {         
 
 	// Allow for no staffer screen
 	if (nStafferID != -1) {
-		pSaveBackground = new CBofBitmap(gTextWindow.Width(), gTextWindow.Height(), (CBofPalette *)nullptr, false);
+		pSaveBackground = new CBofBitmap(gTextWindow.width(), gTextWindow.Height(), (CBofPalette *)nullptr, false);
 		Assert(pSaveBackground != nullptr);
 
 		if (pSaveBackground == nullptr) {
@@ -4170,9 +4170,9 @@ void SrafComputer::NotifyBoss(CBofString &sSoundFile, int nStafferID) {         
 
 	if (sSoundFile.Find(".WAV") != -1 ||
 	        sSoundFile.Find(".wav") != -1) {
-		CBofCursor::Hide();
+		CBofCursor::hide();
 		BofPlaySound(sSoundFile.GetBuffer(), SOUND_WAVE);
-		CBofCursor::Show();
+		CBofCursor::show();
 	} else if (sSoundFile.Find(".TXT") || sSoundFile.Find(".txt")) {
 		// Make sure the file is there, read it in to our own buffer.
 		CBofFile fTxtFile(sSoundFile, CBF_BINARY | CBF_READONLY);
@@ -4186,7 +4186,7 @@ void SrafComputer::NotifyBoss(CBofString &sSoundFile, int nStafferID) {         
 			// Put it up on the screen
 			DisplayMessage(pszBuf);
 			BofFree(pszBuf);
-			fTxtFile.Close();
+			fTxtFile.close();
 		} else {
 			ReportError(ERR_MEMORY, "Could not read %s into memory", sSoundFile.GetBuffer());
 		}
@@ -4258,7 +4258,7 @@ void SrafComputer::OnButtonAudioSettings(CBofButton *pButton, int nState) {
 		break;
 	case NO_MUSIC_BUTTON:
 		CBofSound::StopSounds();
-		m_pButtons[NO_MUSIC_BUTTON]->Hide();
+		m_pButtons[NO_MUSIC_BUTTON]->hide();
 		ActivateMainScreen();
 		break;
 	default:
@@ -4369,7 +4369,7 @@ void SrafComputer::OnButtonFinished(bool bVictorious) {
 		}
 	}
 
-	Close();
+	close();
 }
 
 // Display's a message at the bottom of the screen.
@@ -4567,7 +4567,7 @@ SrafTextScreen::SrafTextScreen(const CBofString &str, bool isText) :
 	}
 
 	// save the currently active window
-	m_pSaveActiveWin = GetActiveWindow();
+	m_pSaveActiveWin = getActiveWindow();
 }
 
 int SrafTextScreen::CreateTextScreen(CBofWindow *pParent) {
@@ -4623,14 +4623,14 @@ int SrafTextScreen::CreateTextScreen(CBofWindow *pParent) {
 }
 
 void SrafTextScreen::DisplayTextScreen() {
-	Show();
+	show();
 
 	if (GetBackdrop())
 		PaintBackdrop();
 
 	SetFocus();
 
-	m_pOKButton->Show();
+	m_pOKButton->show();
 
 	m_pTextBox->display();
 }
@@ -4666,7 +4666,7 @@ void SrafTextScreen::onClose() {
 void SrafTextScreen::onPaint(CBofRect * /*pRect*/) {
 	DisplayTextScreen();
 
-	ValidateAnscestors();
+	validateAnscestors();
 }
 
 void SrafTextScreen::OnBofButton(CBofObject *pObject, int nState) {
@@ -4676,7 +4676,7 @@ void SrafTextScreen::OnBofButton(CBofObject *pObject, int nState) {
 	CBofButton *pButton = (CBofButton *)pObject;
 
 	if (nState == BUTTON_CLICKED && pButton->GetControlID() == DONE_BUTTON) {
-		Close();
+		close();
 		SrafComputer::SetMainScreen();
 	}
 }

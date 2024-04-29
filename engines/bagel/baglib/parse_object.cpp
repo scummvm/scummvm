@@ -80,7 +80,7 @@ int CBagParseObject::GetStringFromStream(bof_ifstream &istr, CBofString &sStr, c
 	return GetStringFromStream(istr, sStr, CBofString(cEndChar), bPutBack);
 }
 
-int CBagParseObject::GetRectFromStream(bof_ifstream &istr, CBofRect &rect) {
+int CBagParseObject::getRectFromStream(bof_ifstream &istr, CBofRect &rect) {
 	char szLocalStr[256];
 	szLocalStr[0] = 0;
 	CBofString str(szLocalStr, 256);
@@ -148,7 +148,7 @@ int CBagParseObject::GetVectorFromStream(bof_ifstream &istr, CBagVector &vector)
 	if (ch == '~') {
 		ch = (char)istr.Get();
 		CBofRect r;
-		GetRectFromStream(istr, r);
+		getRectFromStream(istr, r);
 		vector.nSprStartIndex = r.left;
 		vector.nSprEndIndex = r.top;
 	}

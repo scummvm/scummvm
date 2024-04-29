@@ -207,7 +207,7 @@ public:
 	bool IsActive() {
 		return IsProperty(ACTIVE);
 	}
-	void SetActive(bool b = true) {
+	void setActive(bool b = true) {
 		SetProperty(ACTIVE, b);
 	}
 	// Is the object has a trasparent bkground

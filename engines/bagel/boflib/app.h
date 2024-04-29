@@ -103,7 +103,7 @@ public:
 		return m_pPalette;
 	}
 
-	int ScreenWidth() const {
+	int screenWidth() const {
 		return m_nScreenDX;
 	}
 	int ScreenHeight() const {

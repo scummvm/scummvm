@@ -77,7 +77,7 @@ bool CBofMovie::open(const char *sFilename, CBofRect *pBounds) {
 	if (openMovie(sFilename)) {
 		// We were given specific rect for movie
 		if (pBounds)
-			ReSize(pBounds, true);
+			reSize(pBounds, true);
 		else
 			// Center the movie to the parent window
 			centerRect();
@@ -105,7 +105,7 @@ bool CBofMovie::openMovie(const char *sFilename) {
 
 	// If supposed to stretch into specified window
 	if (_bStretch) {
-		_pSbuf = new Graphics::ManagedSurface(Width(), Height(), _pSmk->getPixelFormat());
+		_pSbuf = new Graphics::ManagedSurface(width(), Height(), _pSmk->getPixelFormat());
 	} else {
 		_pSbuf = new Graphics::ManagedSurface(_pSmk->getWidth(), _pSmk->getHeight(), _pSmk->getPixelFormat());
 	}
@@ -118,7 +118,7 @@ bool CBofMovie::openMovie(const char *sFilename) {
 	}
 
 	CBofRect MovieBounds(0, 0, (uint16)_pSbuf->w - 1, (uint16)_pSbuf->h - 1);
-	ReSize(&MovieBounds, true);
+	reSize(&MovieBounds, true);
 
 	// If we have a window that is going to cause a single frame
 	// palette shift, then black it out here.
@@ -211,7 +211,7 @@ void CBofMovie::onMovieDone() {
 		if (_bCaptured)
 			ReleaseCapture();
 
-		GetParent()->enable();
+		getParent()->enable();
 		_bEndDialog = true;
 	}
 }
@@ -223,8 +223,8 @@ bool CBofMovie::play(bool bLoop, bool bEscCanStop) {
 
 	bool bSuccess = play();
 
-	GetParent()->disable();
-	GetParent()->FlushAllMessages();
+	getParent()->disable();
+	getParent()->FlushAllMessages();
 
 	CursorMan.showMouse(false);
 
@@ -257,8 +257,8 @@ bool CBofMovie::reverse(bool bLoop,  bool bEscCanStop) {
 
 	bSuccess = reverse();
 
-	GetParent()->disable();
-	GetParent()->FlushAllMessages();
+	getParent()->disable();
+	getParent()->FlushAllMessages();
 	doModal();
 
 	return bSuccess;
@@ -342,7 +342,7 @@ void CBofMovie::onReSize(CBofSize *pSize) {
 }
 
 bool CBofMovie::centerRect() {
-	CBofRect cBofRect = GetParent()->GetClientRect();
+	CBofRect cBofRect = getParent()->getClientRect();
 	RECT rcParentRect = cBofRect.GetWinRect();
 	int ClientWidth = rcParentRect.right - rcParentRect.left;
 	int ClientHeight = rcParentRect.bottom - rcParentRect.top;
@@ -359,7 +359,7 @@ bool CBofMovie::centerRect() {
 
 	// Reposition the playback window
 	cBofRect = rcMovieBounds;
-	ReSize(&cBofRect, true);
+	reSize(&cBofRect, true);
 
 	return true;
 }

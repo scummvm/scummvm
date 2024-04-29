@@ -143,7 +143,7 @@ ErrorCode CBagel::initialize() {
 	LogInfo("Initializing BAGEL");
 
 	// Turn off System cursor
-	CBofCursor::Hide();
+	CBofCursor::hide();
 
 	// Initialize local game paths
 	initLocalFilePaths();
@@ -281,11 +281,11 @@ void CBagel::showNextCDDialog(CBofWindow *parentWin, int diskId) {
 
 	cNextCDDialog.SetBackdrop(pBmp);
 
-	CBofRect cRect = cNextCDDialog.GetBackdrop()->GetRect();
+	CBofRect cRect = cNextCDDialog.GetBackdrop()->getRect();
 
 	// Create the dialog box
-	cNextCDDialog.create("NextCD", cRect.left, cRect.top, cRect.Width(), cRect.Height(), parentWin);
-	cNextCDDialog.Center();
+	cNextCDDialog.create("NextCD", cRect.left, cRect.top, cRect.width(), cRect.Height(), parentWin);
+	cNextCDDialog.center();
 
 	cNextCDDialog.doModal();
 }

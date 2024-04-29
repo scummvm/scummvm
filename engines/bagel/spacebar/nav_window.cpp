@@ -282,16 +282,16 @@ ErrorCode CNavWindow::attach() {
 
 			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 			m_pButtons[i]->create(g_NavButtons[i].m_pszName, g_NavButtons[i].m_nLeft, g_NavButtons[i].m_nTop, g_NavButtons[i].m_nWidth, g_NavButtons[i].m_nHeight, this, g_NavButtons[i].m_nID);
-			m_pButtons[i]->Show();
+			m_pButtons[i]->show();
 		} else {
 			ReportError(ERR_MEMORY);
 			break;
 		}
 	}
 
-	Show();
+	show();
 	UpdateWindow();
-	SetTimer(777, 200, nullptr);
+	setTimer(777, 200, nullptr);
 
 	BofPlaySound(MakeDir(WELCOME_SND), SOUND_WAVE);
 	CSound::WaitWaveSounds();
@@ -557,7 +557,7 @@ void CNavWindow::onPaint(CBofRect *pRect) {
 		}
 	}
 
-	SetTimer(777, 200, nullptr);
+	setTimer(777, 200, nullptr);
 
 	// Separated repainting of text
 	RefreshData();
@@ -686,13 +686,13 @@ void CNavWindow::OnBofButton(CBofObject *pObject, int nState) {
 	case QUIT: {
 		LogInfo("\tClicked Quit");
 		VARMNGR->GetVariable("NPLAYEDNAV")->SetBoolValue(true);
-		Close();
+		close();
 		break;
 	}
 	case HELP: {
 		LogInfo("\tClicked Help");
 
-		KillTimer(777);
+		killTimer(777);
 		CBagel *pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
 			CBagMasterWin *pWin = pApp->getMasterWnd();
@@ -846,7 +846,7 @@ void CNavWindow::onKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 
 	if (lKey == BKEY_ALT_q || lKey == BKEY_ALT_F4) {
 		VARMNGR->GetVariable("NPLAYEDNAV")->SetBoolValue(true);
-		Close();
+		close();
 	}
 }
 
@@ -1376,7 +1376,7 @@ void CNavWindow::CalcFuel(double hf) {
 	if (m_cargo == 0) {
 		m_pCurLoc->EraseSprite(this);
 		RefreshData();
-		KillTimer(777);
+		killTimer(777);
 		m_pCurLoc->SetCel(0);
 		m_pCurLoc->PaintSprite(this, m_pCurPos->left, m_pCurPos->top);
 
@@ -1388,7 +1388,7 @@ void CNavWindow::CalcFuel(double hf) {
 		if (m_level == 3) {
 			VARMNGR->GetVariable("NPASSEDTEST")->SetBoolValue(true);
 			VARMNGR->GetVariable("NPLAYEDNAV")->SetBoolValue(true);
-			Close();
+			close();
 		}
 
 		if (m_level == 2) {
@@ -1455,8 +1455,8 @@ void CNavWindow::CalcFuel(double hf) {
 
 	if (m_fuel <= 0) {
 		VARMNGR->GetVariable("NPLAYEDNAV")->SetBoolValue(true);
-		KillTimer(777);
-		Close();
+		killTimer(777);
+		close();
 	}
 
 	m_pCurLoc->EraseSprite(this);

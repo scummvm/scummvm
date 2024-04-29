@@ -116,7 +116,7 @@ public:
 		return m_cSize;
 	}
 
-	CBofRect GetRect() const {
+	CBofRect getRect() const {
 		return _cRect;
 	}
 
@@ -124,8 +124,8 @@ public:
 		return _cRect.Height();
 	}
 
-	int Width() const {
-		return _cRect.Width();
+	int width() const {
+		return _cRect.width();
 	}
 
 	void SetMaskColor(int nColor) {

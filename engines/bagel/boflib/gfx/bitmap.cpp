@@ -226,7 +226,7 @@ ErrorCode CBofBitmap::paint(CBofWindow *pWnd, int x, int y, CBofRect *pSrcRect, 
 	CBofRect cRect(x, y, x + m_nDX - 1, y + m_nDY - 1);
 
 	if (pSrcRect != nullptr) {
-		cRect.SetRect(x, y, x + pSrcRect->Width() - 1, y + pSrcRect->Height() - 1);
+		cRect.SetRect(x, y, x + pSrcRect->width() - 1, y + pSrcRect->Height() - 1);
 	}
 
 	return paint(pWnd, &cRect, pSrcRect, nMaskColor);
@@ -241,12 +241,12 @@ ErrorCode CBofBitmap::paint(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect *pSrc
 
 	if (_errCode == ERR_NONE) {
 		if (pDstRect != nullptr) {
-			Assert((pDstRect->Width() > 0) && (pDstRect->Height() > 0));
+			Assert((pDstRect->width() > 0) && (pDstRect->Height() > 0));
 			cDestRect = *pDstRect;
 		}
 
 		if (pSrcRect != nullptr) {
-			Assert((pSrcRect->Width() > 0) && (pSrcRect->Height() > 0));
+			Assert((pSrcRect->width() > 0) && (pSrcRect->Height() > 0));
 			cSourceRect = *pSrcRect;
 		}
 
@@ -279,23 +279,23 @@ ErrorCode CBofBitmap::PaintMaskBackdrop(CBofWindow *pWnd, CBofRect *pDstRect, CB
 	if (_errCode == ERR_NONE) {
 
 		if (pDstRect != nullptr) {
-			Assert((pDstRect->Width() > 0) && (pDstRect->Height() > 0));
+			Assert((pDstRect->width() > 0) && (pDstRect->Height() > 0));
 			cDestRect = *pDstRect;
 		}
 
 		if (pSrcRect != nullptr) {
-			Assert((pSrcRect->Width() > 0) && (pSrcRect->Height() > 0));
+			Assert((pSrcRect->width() > 0) && (pSrcRect->Height() > 0));
 
 			cSourceRect = *pSrcRect;
 		}
 
-		CBofBitmap cTempBitmap(cSourceRect.Width(), cSourceRect.Height(), m_pPalette);
+		CBofBitmap cTempBitmap(cSourceRect.width(), cSourceRect.Height(), m_pPalette);
 		CBofBitmap *pBackdrop;
 
 		// Use the backdrop to get the background instead of trying to
 		// capture the screen
 		if ((pBackdrop = pWnd->GetBackdrop()) != nullptr) {
-			CBofRect cTempRect = cTempBitmap.GetRect();
+			CBofRect cTempRect = cTempBitmap.getRect();
 			pBackdrop->paint(&cTempBitmap, &cTempRect, &cDestRect);
 		}
 
@@ -315,7 +315,7 @@ ErrorCode CBofBitmap::paint(CBofBitmap *pBmp, int x, int y, CBofRect *pSrcRect, 
 	CBofRect cRect(x, y, x + m_nDX - 1, y + m_nDY - 1);
 
 	if (pSrcRect != nullptr) {
-		cRect.SetRect(x, y, x + pSrcRect->Width() - 1, y + pSrcRect->Height() - 1);
+		cRect.SetRect(x, y, x + pSrcRect->width() - 1, y + pSrcRect->Height() - 1);
 	}
 
 	return paint(pBmp, &cRect, pSrcRect, nMaskColor);
@@ -330,17 +330,17 @@ ErrorCode CBofBitmap::paint(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSrc
 
 	if (!ErrorOccurred() && !pBmp->ErrorOccurred()) {
 		if (pDstRect != nullptr) {
-			Assert((pDstRect->Width() > 0) && (pDstRect->Height() > 0));
+			Assert((pDstRect->width() > 0) && (pDstRect->Height() > 0));
 			cDestRect = *pDstRect;
 		}
 
 		if (pSrcRect != nullptr) {
-			Assert((pSrcRect->Width() > 0) && (pSrcRect->Height() > 0));
+			Assert((pSrcRect->width() > 0) && (pSrcRect->Height() > 0));
 			cSourceRect = *pSrcRect;
 		}
 
 		// If painting entirely outside destination bitmap, then no need to paint.
-		CBofRect cRect = pBmp->GetRect();
+		CBofRect cRect = pBmp->getRect();
 		if (cClipRect.IntersectRect(&cRect, &cDestRect) == 0) {
 			return _errCode;
 		}
@@ -353,7 +353,7 @@ ErrorCode CBofBitmap::paint(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSrc
 		cDestRect = cClipRect;
 
 		// If painting from entirely outside this bitmap, then don't paint at all.
-		cRect = GetRect();
+		cRect = getRect();
 		if (cClipRect.IntersectRect(&cRect, &cSourceRect) == 0) {
 			return _errCode;
 		}
@@ -668,7 +668,7 @@ byte *CBofBitmap::GetPixelAddress(int x, int y) {
 	Assert(IsLocked());
 
 	// The pixel in question must be in the bitmap area
-	Assert(GetRect().PtInRect(CBofPoint(x, y)));
+	Assert(getRect().PtInRect(CBofPoint(x, y)));
 
 	return (byte *)_bitmap.getBasePtr(x, y);
 }
@@ -789,8 +789,8 @@ void CBofBitmap::Line(int nSrcX, int nSrcY, int nDstX, int nDstY, byte iColor) {
 	Assert(IsValidObject(this));
 
 	// The source and destination points must be in the bitmap area
-	Assert(GetRect().PtInRect(CBofPoint(nSrcX, nSrcY)));
-	Assert(GetRect().PtInRect(CBofPoint(nDstX, nDstY)));
+	Assert(getRect().PtInRect(CBofPoint(nSrcX, nSrcY)));
+	Assert(getRect().PtInRect(CBofPoint(nDstX, nDstY)));
 
 	if (_errCode == ERR_NONE) {
 		// Horizontal lines are a special case that can be done optimally
@@ -852,7 +852,7 @@ CBofBitmap *CBofBitmap::ExtractBitmap(CBofRect *pRect) {
 				pPalette = pPalette->CopyPalette();
 			}
 
-			if ((pNewBmp = new CBofBitmap(pRect->Width(), pRect->Height(), pPalette, m_bOwnPalette)) != nullptr) {
+			if ((pNewBmp = new CBofBitmap(pRect->width(), pRect->Height(), pPalette, m_bOwnPalette)) != nullptr) {
 				paint(pNewBmp, 0, 0, pRect);
 			} else {
 				LogFatal("Unable to allocate a new CBofBitmap");
@@ -927,7 +927,7 @@ ErrorCode CBofBitmap::scrollUp(int nPixels, CBofRect *pRect) {
 
 		int32 x = pRect->left;
 		int32 y = pRect->top;
-		int32 dx = pRect->Width();
+		int32 dx = pRect->width();
 		int32 dy = pRect->Height();
 
 		// Height must be valid or we're hosed
@@ -1102,7 +1102,7 @@ ErrorCode CBofBitmap::Curtain(CBofWindow *pWnd, int nSpeed, int nMaskColor) {
 	if (_errCode == ERR_NONE) {
 		CBofRect cRect;
 
-		int nWidth = pWnd->Width();
+		int nWidth = pWnd->width();
 		int nHeight = pWnd->Height();
 
 		for (int i = 0; i < nHeight; i += nSpeed) {
@@ -1127,22 +1127,22 @@ ErrorCode CBofBitmap::FadeLines(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect *
 		// Entire window?
 		//
 		if (pDstRect == nullptr) {
-			cWindowRect = pWnd->GetRect();
+			cWindowRect = pWnd->getRect();
 			pDstRect = &cWindowRect;
 		}
 		if (pSrcRect == nullptr) {
-			cBmpRect = GetRect();
+			cBmpRect = getRect();
 			pSrcRect = &cBmpRect;
 		}
 
 		int x1 = pDstRect->left;
 		int y1 = pDstRect->top;
-		int nWidth1 = pDstRect->Width();
+		int nWidth1 = pDstRect->width();
 		int nHeight1 = pDstRect->Height();
 
 		int x2 = pSrcRect->left;
 		int y2 = pSrcRect->top;
-		int nWidth2 = pSrcRect->Width();
+		int nWidth2 = pSrcRect->width();
 
 		for (int j = 0; j < 4; j++) {
 			for (int i = 0; i < nHeight1 ; i += 4) {
@@ -1199,7 +1199,7 @@ ErrorCode PaintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofRect *pD
 	CBofBitmap *pBmp = new CBofBitmap(pszFileName, pPalette);
 
 	if (pBmp != nullptr) {
-		CBofRect cRect = pBmp->GetRect();
+		CBofRect cRect = pBmp->getRect();
 
 		if (pSrcRect == nullptr)
 			pSrcRect = &cRect;
@@ -1227,7 +1227,7 @@ ErrorCode PaintBitmap(CBofBitmap *pBitmap, const char *pszFileName, CBofRect *pD
 	CBofBitmap *pBmp = new CBofBitmap(pszFileName, pPalette);
 	if (pBmp != nullptr) {
 
-		CBofRect cRect = pBmp->GetRect();
+		CBofRect cRect = pBmp->getRect();
 
 		if (pSrcRect == nullptr)
 			pSrcRect = &cRect;

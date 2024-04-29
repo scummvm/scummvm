@@ -39,7 +39,7 @@ CBagVar::CBagVar() {
 	SetGlobal(false);
 	SetConstant(false);
 	SetReference(false);
-	SetTimer(false);
+	setTimer(false);
 	SetString();
 	SetRandom(false);
 	VARMNGR->RegisterVariable(this);
@@ -48,7 +48,7 @@ CBagVar::CBagVar() {
 CBagVar::CBagVar(const CBofString &sName, const CBofString &sValue, bool bAddToList) {
 	SetConstant(false);
 	SetReference(false);
-	SetTimer(false);
+	setTimer(false);
 	SetString();
 	SetName(sName);
 
@@ -167,7 +167,7 @@ PARSE_CODES CBagVar::setInfo(bof_ifstream &istr) {
 			istr.EatWhite();
 			GetAlphaNumFromStream(istr, sStr);
 			if (!sStr.Find("TIMER")) {
-				SetTimer();
+				setTimer();
 				VARMNGR->UpdateRegistration();
 			} else if (!sStr.Find("RANDOM")) {
 				SetRandom(true);
