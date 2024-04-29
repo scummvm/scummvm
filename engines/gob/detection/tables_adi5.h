@@ -44,7 +44,7 @@
 		ADGF_UNSUPPORTED,
 		GUIO0()
 	},
-	kFeatures640x480, // Adi 5 actually uses 800x600 resolution (kFeatures800x600) would be required, this change will be applied when the Game is supported.
+	kFeatures800x600,
 	0,0,0
 },
 
@@ -59,7 +59,7 @@
 		ADGF_UNSUPPORTED,
 		GUIO0()
 	},
-	kFeatures640x480, // Adi 5 actually uses 800x600 resolution (kFeatures800x600) would be required, this change will be applied when the Game is supported.
+	kFeatures800x600,
 	0,0,0
 },
 
@@ -76,7 +76,7 @@
 		ADGF_UNSUPPORTED,
 		GUIO0()
 	},
-	kFeatures640x480, // Adi 5 actually uses 800x600 resolution (kFeatures800x600) would be required, this change will be applied when the Game is supported.
+	kFeatures800x600,
 	0,0,0
 },
 
@@ -91,7 +91,7 @@
 		ADGF_UNSUPPORTED,
 		GUIO0()
 	},
-	kFeatures640x480, // Adi 5 actually uses 800x600 resolution (kFeatures800x600) would be required, this change will be applied when the Game is supported.
+	kFeatures800x600,
 	0,0,0
 },
 {
@@ -105,7 +105,7 @@
 		ADGF_UNSUPPORTED | ADGF_DEMO,
 		GUIO0()
 	},
-	kFeatures640x480, // Adi 5 actually uses 800x600 resolution (kFeatures800x600) would be required, this change will be applied when the Game is supported.
+	kFeatures800x600,
 	0,0,0
 },
 
