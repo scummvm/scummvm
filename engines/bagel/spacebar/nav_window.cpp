@@ -1397,7 +1397,7 @@ void CNavWindow::CalcFuel(double hf) {
 			MACROREPLACE(sNebDir);
 			Assert(m_pBackdrop != nullptr);
 			bmptwo = new CBofBitmap(sNebDir.GetBuffer(), m_pPal);
-			SetBackground(bmptwo);
+			setBackground(bmptwo);
 			m_cargo = 125 + 10 + 17 + 8 + 99 + 24;
 			m_ship = 65;
 			m_fuel = 45;
@@ -1415,7 +1415,7 @@ void CNavWindow::CalcFuel(double hf) {
 			MACROREPLACE(sNebDir);
 			Assert(m_pBackdrop != nullptr);
 			bmptwo = new CBofBitmap(sNebDir.GetBuffer(), m_pPal);
-			SetBackground(bmptwo);
+			setBackground(bmptwo);
 			m_cargo = 100 + 75 + 28 + 45 + 14;
 			m_ship = 99;
 			m_fuel = 36;
@@ -1433,7 +1433,7 @@ void CNavWindow::CalcFuel(double hf) {
 			MACROREPLACE(sNebDir);
 			Assert(m_pBackdrop != nullptr);
 			bmptwo = new CBofBitmap(sNebDir.GetBuffer(), m_pPal);
-			SetBackground(bmptwo);
+			setBackground(bmptwo);
 			m_cargo = 54 + 119 + 20 + 127;
 			m_ship = 120;
 			m_fuel = 75;

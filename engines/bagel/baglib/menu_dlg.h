@@ -40,11 +40,11 @@ public:
 	CBagMenu();
 	static void initialize();
 
-	ErrorCode SetBackground(CBofBitmap * /*pBmp*/) {
+	ErrorCode setBackground(CBofBitmap * /*pBmp*/) {
 		Assert(false);
 		return ERR_NONE;
 	}
-	CBofBitmap *GetBackground() {
+	CBofBitmap *getBackground() {
 		Assert(false);
 		return nullptr;
 	}

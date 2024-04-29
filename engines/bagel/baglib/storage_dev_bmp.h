@@ -71,8 +71,8 @@ public:
 	 */
 	CBofPoint GetScaledPt(CBofPoint xPoint);
 
-	ErrorCode SetBackground(CBofBitmap *pBmp);
-	CBofBitmap *GetBackground() {
+	ErrorCode setBackground(CBofBitmap *pBmp);
+	CBofBitmap *getBackground() {
 		return getBitmap();
 	}
 
