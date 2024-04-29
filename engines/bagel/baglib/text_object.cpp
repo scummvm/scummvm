@@ -439,9 +439,9 @@ void CBagTextObject::SetColor(int nColor) {
 
 void CBagTextObject::setProperty(const CBofString &sProp, int nVal) {
 	if (!sProp.Find("SIZE"))
-		SetPointSize(nVal);
+		setPointSize(nVal);
 	else if (!sProp.Find("FONT"))
-		SetFont(MapFont(nVal));
+		setFont(MapFont(nVal));
 	else if (!sProp.Find("COLOR"))
 		SetColor(nVal);
 	else
@@ -450,9 +450,9 @@ void CBagTextObject::setProperty(const CBofString &sProp, int nVal) {
 
 int CBagTextObject::getProperty(const CBofString &sProp) {
 	if (!sProp.Find("SIZE"))
-		return GetPointSize();
+		return getPointSize();
 	if (!sProp.Find("FONT"))
-		return GetFont();
+		return getFont();
 	if (!sProp.Find("COLOR"))
 		return GetColor();
 
@@ -572,7 +572,7 @@ void CBagTextObject::RecalcTextRect(bool bTextFromFile) {
 		tmpRect.right = (ViewRect.right == 640 ? PAN_AREA_WIDTH : ViewRect.right) - 5;
 	}
 
-	CBofRect textRect = CalculateTextRect(tmpRect, m_psText, m_nPointSize, GetFont());
+	CBofRect textRect = CalculateTextRect(tmpRect, m_psText, m_nPointSize, getFont());
 	CBofSize stTextSize(textRect.right, textRect.bottom);
 
 	if (bTextFromFile) {

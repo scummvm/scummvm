@@ -482,11 +482,11 @@ public:
 	 * @param pRect         Section of bitmap to scroll
 	 * @return              Error return code
 	 */
-	ErrorCode ScrollUp(int nPixels, CBofRect *pRect = nullptr);
+	ErrorCode scrollUp(int nPixels, CBofRect *pRect = nullptr);
 
 
-	ErrorCode ScrollDown(int nPixels, CBofRect *pRect = nullptr) {
-		return (ScrollUp(-nPixels, pRect));
+	ErrorCode scrollDown(int nPixels, CBofRect *pRect = nullptr) {
+		return (scrollUp(-nPixels, pRect));
 	}
 
 	static void SetUseBackdrop(bool b) {

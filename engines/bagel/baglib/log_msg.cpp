@@ -244,7 +244,7 @@ CBagObject *CBagLog::OnNewUserObject(const CBofString &initStr) {
 	if (initStr == "MSG") {
 		LogObj = (CBagTextObject *)new CBagLogMsg(cSDevRect.Width());
 		LogObj->SetInitInfo(initStr);
-		LogObj->SetPointSize(nPntSize);
+		LogObj->setPointSize(nPntSize);
 		LogObj->SetColor(7);
 		LogObj->SetFloating();
 	} else if (initStr == "SUS") {
@@ -256,7 +256,7 @@ CBagObject *CBagLog::OnNewUserObject(const CBofString &initStr) {
 		if (nPntSize == FONT_18POINT) {
 			nPntSize -= 2;
 		}
-		LogObj->SetPointSize(nPntSize);
+		LogObj->setPointSize(nPntSize);
 		LogObj->SetColor(7);
 		LogObj->SetFloating();
 	} else if (initStr == "CLU") {
@@ -264,7 +264,7 @@ CBagObject *CBagLog::OnNewUserObject(const CBofString &initStr) {
 	} else if (initStr == "RES") {
 		LogObj = (CBagTextObject *)new CBagLogResidue(cSDevRect.Width());
 		LogObj->SetInitInfo(initStr);
-		LogObj->SetPointSize(nPntSize);
+		LogObj->setPointSize(nPntSize);
 		LogObj->SetColor(7);
 		LogObj->SetFloating();
 	}
@@ -296,7 +296,7 @@ ErrorCode CBagLog::ActivateLocalObject(CBagObject *bagObj) {
 
 		if (bagObj->IsMsgWaiting() ||
 		        (bagObj->GetType() == USEROBJ && (bagObj->GetInitInfo() != nullptr) && (*bagObj->GetInitInfo() == "MSG"))) {
-			m_pQueued_Msgs->AddToTail(bagObj);
+			m_pQueued_Msgs->addToTail(bagObj);
 
 			// Since zoomed pda doesn't  have a message light, only set this thing
 			// as waiting if we are in the  regular PDA, otherwise, we get superfluous
@@ -551,7 +551,7 @@ ErrorCode CBagLogMsg::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect, i
 	int nHr = nMsgTime / 100;
 	int nMn = nMsgTime - (nHr * 100);
 
-	SetFont(FONT_MONO);
+	setFont(FONT_MONO);
 	setText(BuildString("%-30s%02d:%02d", m_sMsgSendee.GetBuffer(), nHr, nMn));
 
 	return CBagTextObject::update(bmp, pt, srcRect, maskColor);
@@ -761,7 +761,7 @@ ErrorCode CBagLogSuspect::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRec
 	else
 		sSusRP = "N";
 
-	SetFont(FONT_MONO);
+	setFont(FONT_MONO);
 
 	setText(BuildString(" %-5.5s %-17.17s %-12.12s %-20.20s %-4.4s %-4.4s",
 	                    sSusChecked.GetBuffer(),
@@ -777,7 +777,7 @@ ErrorCode CBagLogSuspect::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRec
 // Energy detector objects, this should be pretty straightforward.
 
 CBagEnergyDetectorObject::CBagEnergyDetectorObject() {
-	SetFont(FONT_MONO);				// Correct for spacing
+	setFont(FONT_MONO);				// Correct for spacing
 	SetColor(7);					// Make it white
 	SetFloating();					// Is definitely floating
 	SetHighlight();					// Is highlight
@@ -871,7 +871,7 @@ PARSE_CODES CBagEnergyDetectorObject::setInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				int n;
 				GetIntFromStream(istr, n);
-				SetPointSize(n);
+				setPointSize(n);
 				nObjectUpdated = true;
 			} else {
 				PutbackStringOnStream(istr, sStr2);
@@ -971,9 +971,9 @@ CBagLogClue::CBagLogClue(const CBofString &sInit, int nSdevWidth, int nPointSize
 	m_pStringVar3 = nullptr;
 	m_pStringVar4 = nullptr;
 
-	SetFont(FONT_MONO);
+	setFont(FONT_MONO);
 	SetInitInfo(sInit);
-	SetPointSize(nPointSize);
+	setPointSize(nPointSize);
 	SetColor(7);
 	SetFloating();
 }

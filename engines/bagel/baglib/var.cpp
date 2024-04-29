@@ -224,7 +224,7 @@ static int HASHVAR(const char *p, int l) {
 	return h;
 }
 ErrorCode CBagVarManager::RegisterVariable(CBagVar *pVar) {
-	m_xVarList.AddToTail(pVar);
+	m_xVarList.addToTail(pVar);
 
 	return ERR_NONE;
 }
@@ -247,7 +247,7 @@ ErrorCode CBagVarManager::UpdateRegistration() {
 			if (m_xVarList[i]->IsTimer()) {
 				CBagVar *pVar = m_xVarList[i];
 				m_xVarList.Remove(i);
-				m_xVarList.AddToHead(pVar);
+				m_xVarList.addToHead(pVar);
 			}
 		}
 	}
@@ -372,7 +372,7 @@ void CBagVar::SetName(const CBofString &s) {
 			CBofString varStr(szLocalBuff, 256);
 			varStr = m_sVarName;
 			int nHashVal = HASHVAR(szLocalBuff, varStr.GetLength());
-			VARMNGR->m_xVarHashList[nHashVal].AddToTail(this);
+			VARMNGR->m_xVarHashList[nHashVal].addToTail(this);
 		}
 	}
 }

@@ -912,7 +912,7 @@ ErrorCode CBofBitmap::ScrollRight(int nPixels, CBofRect * /*pRect*/) {
 	return _errCode;
 }
 
-ErrorCode CBofBitmap::ScrollUp(int nPixels, CBofRect *pRect) {
+ErrorCode CBofBitmap::scrollUp(int nPixels, CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	if (_errCode == ERR_NONE) {
@@ -1020,7 +1020,7 @@ ErrorCode CBofBitmap::ScrollUp(int nPixels, CBofRect *pRect) {
 				BofFree(pRowBuf);
 
 			} else {
-				ReportError(ERR_MEMORY, "Error: ScrollUp - Could not allocate %ld bytes for row", dx);
+				ReportError(ERR_MEMORY, "Error: scrollUp - Could not allocate %ld bytes for row", dx);
 			}
 		}
 		UnLock();

@@ -81,7 +81,7 @@ ErrorCode CBofOptions::Load() {
 			COption *pNewOption = new COption(szBuf);
 			if (pNewOption != nullptr) {
 				if (m_pOptionList != nullptr) {
-					m_pOptionList->AddToTail(pNewOption);
+					m_pOptionList->addToTail(pNewOption);
 				} else {
 					m_pOptionList = pNewOption;
 				}
@@ -169,7 +169,7 @@ ErrorCode CBofOptions::WriteSetting(const char *pszSection, const char *pszVar, 
 			pSection = new COption(szSectionBuf);
 			if (pSection != nullptr) {
 				if (m_pOptionList != nullptr) {
-					m_pOptionList->AddToTail(pSection);
+					m_pOptionList->addToTail(pSection);
 				} else {
 					m_pOptionList = pSection;
 				}

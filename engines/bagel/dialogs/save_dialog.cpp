@@ -165,15 +165,15 @@ ErrorCode CBagSaveDialog::attach() {
 
 		m_pListBox->create("SaveGameList", &cRect, this);
 
-		m_pListBox->SetPointSize(LIST_FONT_SIZE);
-		m_pListBox->SetItemHeight(LIST_TEXT_DY);
+		m_pListBox->setPointSize(LIST_FONT_SIZE);
+		m_pListBox->setItemHeight(LIST_TEXT_DY);
 
 		// Set a color for selection highlighting
 		if (m_pBackdrop != nullptr) {
 			CBofPalette *pPal2 = m_pBackdrop->GetPalette();
 			byte iPalIdx = pPal2->GetNearestIndex(RGB(255, 0, 0));
 
-			m_pListBox->SetHighlightColor(pPal2->GetColor(iPalIdx));
+			m_pListBox->setHighlightColor(pPal2->GetColor(iPalIdx));
 		}
 
 		// Fill the list box with save game entries
@@ -194,7 +194,7 @@ ErrorCode CBagSaveDialog::attach() {
 				}
 			}
 
-			m_pListBox->AddToTail(title, false);
+			m_pListBox->addToTail(title, false);
 		}
 
 		m_pListBox->Show();
@@ -210,11 +210,11 @@ ErrorCode CBagSaveDialog::attach() {
 		}
 
 		if (m_pListBox != nullptr) {
-			m_pListBox->SetSelectedItem(m_nSelectedItem, false);
+			m_pListBox->setSelectedItem(m_nSelectedItem, false);
 
 			if (m_nSelectedItem >= 9) {
 
-				m_pListBox->ScrollTo(m_nSelectedItem - 8);
+				m_pListBox->scrollTo(m_nSelectedItem - 8);
 			}
 		}
 	} else if (m_pButtons[0] != nullptr) {
@@ -268,7 +268,7 @@ void CBagSaveDialog::onPaint(CBofRect *pRect) {
 	PaintBackdrop(pRect);
 
 	if (m_pListBox != nullptr) {
-		m_pListBox->RepaintAll();
+		m_pListBox->repaintAll();
 	}
 
 	ValidateAnscestors();
@@ -301,25 +301,25 @@ void CBagSaveDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 	switch (lKey) {
 	case BKEY_UP:
 		if (m_pListBox != nullptr) {
-			m_pListBox->LineUp();
+			m_pListBox->lineUp();
 		}
 		break;
 
 	case BKEY_DOWN:
 		if (m_pListBox != nullptr) {
-			m_pListBox->LineDown();
+			m_pListBox->lineDown();
 		}
 		break;
 
 	case BKEY_PAGEUP:
 		if (m_pListBox != nullptr) {
-			m_pListBox->PageUp();
+			m_pListBox->pageUp();
 		}
 		break;
 
 	case BKEY_PAGEDOWN:
 		if (m_pListBox != nullptr) {
-			m_pListBox->PageDown();
+			m_pListBox->pageDown();
 		}
 		break;
 
@@ -365,25 +365,25 @@ void CBagSaveDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 
 	case LINEUP_BTN:
 		if (m_pListBox != nullptr) {
-			m_pListBox->LineUp();
+			m_pListBox->lineUp();
 		}
 		break;
 
 	case LINEDN_BTN:
 		if (m_pListBox != nullptr) {
-			m_pListBox->LineDown();
+			m_pListBox->lineDown();
 		}
 		break;
 
 	case PAGEUP_BTN:
 		if (m_pListBox != nullptr) {
-			m_pListBox->PageUp();
+			m_pListBox->pageUp();
 		}
 		break;
 
 	case PAGEDN_BTN:
 		if (m_pListBox != nullptr) {
-			m_pListBox->PageDown();
+			m_pListBox->pageDown();
 		}
 		break;
 
@@ -403,7 +403,7 @@ void CBagSaveDialog::OnBofListBox(CBofObject * /*pObject*/, int nItemIndex) {
 	// There is only one list box on this dialog
 	if (m_pListBox != nullptr) {
 		// Force item to be highlighted
-		m_pListBox->RepaintAll();
+		m_pListBox->repaintAll();
 
 		// Show selected item in the Edit control
 		if (m_pEditText != nullptr) {

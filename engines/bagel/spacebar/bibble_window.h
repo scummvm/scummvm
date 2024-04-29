@@ -97,7 +97,7 @@ protected:
 
 	virtual void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual void OnLButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
+	virtual void onLButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
 	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
 
 	virtual void onPaint(CBofRect *pRect);

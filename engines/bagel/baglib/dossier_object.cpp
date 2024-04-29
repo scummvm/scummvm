@@ -78,7 +78,7 @@ PARSE_CODES CBagDossierObject::setInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				int size;
 				GetIntFromStream(istr, size);
-				SetPointSize((byte)size);
+				setPointSize((byte)size);
 				objectUpdatedFl = true;
 			} else if (!sStr.Find("SUSPECTVAR")) {
 				istr.EatWhite();
@@ -115,7 +115,7 @@ PARSE_CODES CBagDossierObject::setInfo(bof_ifstream &istr) {
 				int fontId;
 				GetIntFromStream(istr, fontId);
 				fontId = MapFont(fontId);
-				SetFont(fontId);
+				setFont(fontId);
 				objectUpdatedFl = true;
 			} else {
 				PutbackStringOnStream(istr, sStr);

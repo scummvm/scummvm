@@ -125,8 +125,8 @@ public:
 	 */
 	void Order();
 
-	void PageUp();
-	void PageDown();
+	void pageUp();
+	void pageDown();
 	void Back();
 
 	void onMainLoop();

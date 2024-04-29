@@ -151,7 +151,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 						menuLoc.x += objSize.Width();
 					}
 
-					xObjList.AddToTail(pObj);
+					xObjList.addToTail(pObj);
 
 					nMenuCount++;
 				} else {
@@ -268,7 +268,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 					bNoMenu = true;
 				}
 
-				xObjList.AddToTail(pObj);
+				xObjList.addToTail(pObj);
 				nNumItems++;
 
 				nMenuCount++;

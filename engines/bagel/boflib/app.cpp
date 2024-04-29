@@ -224,7 +224,7 @@ void CBofApp::SetPalette(CBofPalette *pPalette) {
 }
 
 void CBofApp::AddCursor(CBofCursor &cCursor) {
-	m_cCursorList.AddToTail(cCursor);
+	m_cCursorList.addToTail(cCursor);
 }
 
 void CBofApp::DelCursor(int nIndex) {

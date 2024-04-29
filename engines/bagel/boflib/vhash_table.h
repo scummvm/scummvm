@@ -95,7 +95,7 @@ void CBofVHashTable<T, S>::insert(const T &val) {
 
 	CBofList<T *> *pHashBucket = &m_xHashTable[nHashBucketIndex];
 	Assert(pHashBucket != nullptr);
-	pHashBucket->AddToTail(pNode);
+	pHashBucket->addToTail(pNode);
 }
 
 // CBofVHashTable<T, S>contains - predicate to test whether a value is stored in the hash table.

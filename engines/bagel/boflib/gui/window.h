@@ -425,7 +425,7 @@ protected:
 	virtual void onMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual void OnLButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
+	virtual void onLButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
 
 	virtual void OnRButtonDown(uint32 nFlags, CBofPoint *pPoint);
 	virtual void OnRButtonUp(uint32 nFlags, CBofPoint *pPoint);

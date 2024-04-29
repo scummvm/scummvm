@@ -747,7 +747,7 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 				pSDev->SetFadeId((uint16)nFadeId);
 			}
 
-			m_pGameSDevList->AddToTail(pSDev);
+			m_pGameSDevList->addToTail(pSDev);
 			break;
 		}
 

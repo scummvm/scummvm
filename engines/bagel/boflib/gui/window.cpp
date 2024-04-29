@@ -329,7 +329,7 @@ void CBofWindow::SetTimer(uint32 nID, uint32 nInterval, BofCallback pCallBack) {
 
 		// Add this timer to the list of current timers
 		if (m_pTimerList != nullptr) {
-			m_pTimerList->AddToHead(pPacket);
+			m_pTimerList->addToHead(pPacket);
 		}
 
 		m_pTimerList = pPacket;
@@ -549,7 +549,7 @@ void CBofWindow::onMouseMove(uint32, CBofPoint *, void *) {}
 
 void CBofWindow::onLButtonDown(uint32, CBofPoint *, void *) {}
 void CBofWindow::onLButtonUp(uint32, CBofPoint *, void *) {}
-void CBofWindow::OnLButtonDblClk(uint32, CBofPoint *) {}
+void CBofWindow::onLButtonDblClk(uint32, CBofPoint *) {}
 
 void CBofWindow::OnRButtonDown(uint32, CBofPoint *) {}
 void CBofWindow::OnRButtonUp(uint32, CBofPoint *) {}
@@ -651,7 +651,7 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 	case Common::EVENT_LBUTTONDOWN:
 		if ((currTime - _lastLButtonTime) <= DOUBLE_CLICK_TIME) {
 			_lastLButtonTime = 0;
-			OnLButtonDblClk(1, &mousePos);
+			onLButtonDblClk(1, &mousePos);
 		} else {
 			onLButtonDown(1, &mousePos);
 			_lastLButtonTime = currTime;

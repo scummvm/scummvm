@@ -55,7 +55,7 @@ struct Vector {
 
 struct WindowPos {
 	void *hwnd = nullptr;
-	void *hwndInsertAfter = nullptr;
+	void *hwndinsertAfter = nullptr;
 	int x = 0;
 	int y = 0;
 	int cx = 0;

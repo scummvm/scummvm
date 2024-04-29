@@ -347,7 +347,7 @@ ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 
 				if (pUpdateArea) {
 					xIntrRect.OffsetRect(pt);
-					pUpdateArea->AddToTail(xIntrRect);
+					pUpdateArea->addToTail(xIntrRect);
 				}
 
 				if (pObj->getRect().PtInRect(xCursorLocation)) {
@@ -374,7 +374,7 @@ ErrorCode CBagPanWindow::InsertFGObjects(CBagObject *pBmp) {
 	// Can't use a nullptr pointer
 	Assert(pBmp != nullptr);
 
-	m_pFGObjectList->AddToTail(pBmp);
+	m_pFGObjectList->addToTail(pBmp);
 
 	return _errCode;
 }
@@ -589,7 +589,7 @@ void CBagPanWindow::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 	if (nMA && pActObj && pActObj->IsMovable()) {
 		m_bDraggingObject = true;
 		m_bDraggingStart = pActObj->GetPosition();
-		m_pFGObjectList->AddToTail(pActObj);
+		m_pFGObjectList->addToTail(pActObj);
 	}
 }
 

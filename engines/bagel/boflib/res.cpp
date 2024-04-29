@@ -120,7 +120,7 @@ ErrorCode CBofStringTable::BuildTable() {
 			if (m_pStringTable == nullptr) {
 				m_pStringTable = pString;
 			} else {
-				m_pStringTable->AddToTail(pString);
+				m_pStringTable->addToTail(pString);
 			}
 		} else {
 			ReportError(ERR_MEMORY, "Unable to allocate a CResString");

@@ -77,7 +77,7 @@ void CQueue::AddItem(void *pObject) {
 
 	if ((pNewItem = new CLList(pObject)) != nullptr) {
 		if (m_pQueueList != nullptr) {
-			m_pQueueList->AddToTail(pNewItem);
+			m_pQueueList->addToTail(pNewItem);
 		} else {
 			m_pQueueList = pNewItem;
 		}

@@ -45,17 +45,17 @@ public:
 
 	void setTextAttribs(const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, const int nFont = FONT_DEFAULT);
 
-	void SetPointSize(const int nSize) {
+	void setPointSize(const int nSize) {
 		m_nPointSize = nSize;
 	}
-	int GetPointSize() {
+	int getPointSize() {
 		return (m_nPointSize);
 	}
 
-	void SetWeight(const int nWeight) {
+	void setWeight(const int nWeight) {
 		m_nWeight = nWeight;
 	}
-	int GetWeight() {
+	int getWeight() {
 		return (m_nWeight);
 	}
 
@@ -73,33 +73,33 @@ public:
 		return (m_cTextColor);
 	}
 
-	void SetFont(int nFont) {
+	void setFont(int nFont) {
 		m_nTextFont = nFont;
 	}
-	int GetFont() {
+	int getFont() {
 		return m_nTextFont;
 	}
 
-	ErrorCode LineUp() {
-		return (ScrollUp(1));
+	ErrorCode lineUp() {
+		return (scrollUp(1));
 	}
-	ErrorCode LineDown() {
-		return (ScrollDown(1));
-	}
-
-	ErrorCode PageUp() {
-		return (ScrollUp(m_nPageSize));
-	}
-	ErrorCode PageDown() {
-		return (ScrollDown(m_nPageSize));
+	ErrorCode lineDown() {
+		return (scrollDown(1));
 	}
 
-	ErrorCode ScrollUp(const int nLines);
-	ErrorCode ScrollDown(const int nLines) {
-		return (ScrollUp(-nLines));
+	ErrorCode pageUp() {
+		return (scrollUp(m_nPageSize));
+	}
+	ErrorCode pageDown() {
+		return (scrollDown(m_nPageSize));
 	}
 
-	ErrorCode ScrollTo(const int nLine);
+	ErrorCode scrollUp(const int nLines);
+	ErrorCode scrollDown(const int nLines) {
+		return (scrollUp(-nLines));
+	}
+
+	ErrorCode scrollTo(const int nLine);
 
 	ErrorCode Display();
 	ErrorCode Erase();
@@ -110,7 +110,7 @@ public:
 		return (m_nCurrentLine);
 	}
 	ErrorCode SetCurrLine(const int nLine) {
-		return (ScrollTo(nLine));
+		return (scrollTo(nLine));
 	}
 
 protected:

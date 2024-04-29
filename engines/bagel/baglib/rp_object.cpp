@@ -402,7 +402,7 @@ ErrorCode CBagRPObject::attach() {
 
 	Assert(m_pRPList != nullptr);
 
-	m_pRPList->AddToTail(this);
+	m_pRPList->addToTail(this);
 
 	ErrorCode ec = CBagObject::attach();
 
@@ -493,7 +493,7 @@ void CBagRPObject::SetTouchedDos(CBofString &s, CBagExpression *x) {
 	pDosObj->m_sDossier = s;
 	pDosObj->m_xDosExp = x;
 
-	m_pTouchedList->AddToTail(pDosObj);
+	m_pTouchedList->addToTail(pDosObj);
 }
 
 // Store a dossier name and associated expression for an untouched object
@@ -512,7 +512,7 @@ void CBagRPObject::SetUntouchedDos(CBofString &s, CBagExpression *x) {
 	pDosObj->m_sDossier = s;
 	pDosObj->m_xDosExp = x;
 
-	m_pUntouchedList->AddToTail(pDosObj);
+	m_pUntouchedList->addToTail(pDosObj);
 }
 
 // This static is the tough guy that is in charge of checking the rp queue for

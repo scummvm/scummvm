@@ -68,7 +68,7 @@ public:
 	 *                  tail of one list to the head of another
 	 * @param pNewList  New list to link to head of current list
 	 */
-	void AddToHead(CLList *);
+	void addToHead(CLList *);
 
 	/**
 	 * Links specified node to tail of current list
@@ -76,7 +76,7 @@ public:
 	 *                  head of one list to the tail of another
 	 * @param pNewList  Pointer to new list
 	 */
-	void AddToTail(CLList *);
+	void addToTail(CLList *);
 
 	/**
 	 * Moves this item to the head of the linked list

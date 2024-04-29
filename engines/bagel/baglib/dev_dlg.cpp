@@ -198,7 +198,7 @@ void CDevDlg::setText(CBofString &text, CBofRect *textRect) {
 		_titleText->SetupText(textRect, JUSTIFY_CENTER, FORMAT_DEFAULT);
 		_titleText->SetColor(RGB(255, 255, 255));
 		_titleText->SetSize(FONT_14POINT);
-		_titleText->SetWeight(TEXT_BOLD);
+		_titleText->setWeight(TEXT_BOLD);
 		_titleText->setText(text);
 	}
 }

@@ -196,7 +196,7 @@ ErrorCode CBagStorageDev::AddObject(CBagObject *pObj, int /*nPos*/) {
 	// can't use a null pointer
 	Assert(pObj != nullptr);
 
-	m_pObjectList->AddToTail(pObj);
+	m_pObjectList->addToTail(pObj);
 
 	return errCode;
 }
@@ -713,7 +713,7 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 			if (bElseExprList.GetHead())
 				bPrevNeg = bElseExprList.GetHead()->GetNodeItem();
 
-			bElseExprList.AddToHead((bool) false);
+			bElseExprList.addToHead((bool) false);
 
 			// Added a bPrevNeg to keep track of nested else-if's
 			CBagExpression *pExp = new CBagExpression(pActiveExpr, bPrevNeg);
@@ -723,14 +723,14 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 			if (!m_pExpressionList)
 				m_pExpressionList = new CBofList<CBagExpression * >;
 			Assert(m_pExpressionList != nullptr);
-			m_pExpressionList->AddToTail(pExp);
+			m_pExpressionList->addToTail(pExp);
 			pActiveExpr = pExp;
 		} else if (!sWorkStr.Find("ELSE")) {
 			if (bElseExprList.IsEmpty()) {
 				ParseAlertBox(fpInput, "Error: ELSE without IF", __FILE__, __LINE__);
 			} else {
 				bElseExprList.RemoveHead();
-				bElseExprList.AddToHead((bool) true);
+				bElseExprList.addToHead((bool) true);
 			}
 		} else if (!sWorkStr.Find("BMP")) {
 			GetStringFromStream(fpInput, sWorkStr, "=", true);
@@ -1820,7 +1820,7 @@ CBagStorageDevManager::~CBagStorageDevManager() {
 ErrorCode CBagStorageDevManager::RegisterStorageDev(CBagStorageDev *pSDev) {
 	Assert(IsValidObject(this));
 
-	m_xStorageDeviceList.AddToTail(pSDev);
+	m_xStorageDeviceList.addToTail(pSDev);
 
 	return ERR_NONE;
 }

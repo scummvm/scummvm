@@ -158,8 +158,8 @@ ErrorCode CBagRestoreDialog::attach() {
 	if ((m_pListBox = new CBofListBox()) != nullptr) {
 		m_pListBox->create("SaveGameList", &cRect, this);
 
-		m_pListBox->SetPointSize(LIST_FONT_SIZE);
-		m_pListBox->SetItemHeight(LIST_TEXT_DY);
+		m_pListBox->setPointSize(LIST_FONT_SIZE);
+		m_pListBox->setItemHeight(LIST_TEXT_DY);
 
 		// Set a color for selection highlighting
 		if (m_pBackdrop != nullptr) {
@@ -169,7 +169,7 @@ ErrorCode CBagRestoreDialog::attach() {
 
 			byte iPalIdx = pPal2->GetNearestIndex(RGB(255, 0, 0));
 
-			m_pListBox->SetHighlightColor(pPal2->GetColor(iPalIdx));
+			m_pListBox->setHighlightColor(pPal2->GetColor(iPalIdx));
 		}
 
 		// Fill the list box with save game entries
@@ -183,12 +183,12 @@ ErrorCode CBagRestoreDialog::attach() {
 				}
 			}
 
-			m_pListBox->AddToTail(desc.c_str(), false);
+			m_pListBox->addToTail(desc.c_str(), false);
 		}
 
 		// Must be a valid item by now
 		if (m_nSelectedItem != -1) {
-			m_pListBox->SetSelectedItem(m_nSelectedItem, false);
+			m_pListBox->setSelectedItem(m_nSelectedItem, false);
 		}
 
 		m_pListBox->Show();
@@ -206,7 +206,7 @@ ErrorCode CBagRestoreDialog::attach() {
 			cRect.SetRect(170, 405, 470, 435);
 			m_pText->SetupText(&cRect, JUSTIFY_LEFT, FORMAT_CENTER_LEFT);
 			m_pText->SetSize(16);
-			m_pText->SetWeight(TEXT_BOLD);
+			m_pText->setWeight(TEXT_BOLD);
 
 			// Set initial selected item
 			if (m_pListBox != nullptr && m_nSelectedItem != -1) {
@@ -268,7 +268,7 @@ void CBagRestoreDialog::onPaint(CBofRect *pRect) {
 	PaintBackdrop(pRect);
 
 	if (m_pListBox != nullptr) {
-		m_pListBox->RepaintAll();
+		m_pListBox->repaintAll();
 	}
 
 	if (m_pText != nullptr) {
@@ -311,25 +311,25 @@ void CBagRestoreDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 	switch (lKey) {
 	case BKEY_UP:
 		if (m_pListBox != nullptr) {
-			m_pListBox->LineUp();
+			m_pListBox->lineUp();
 		}
 		break;
 
 	case BKEY_DOWN:
 		if (m_pListBox != nullptr) {
-			m_pListBox->LineDown();
+			m_pListBox->lineDown();
 		}
 		break;
 
 	case BKEY_PAGEUP:
 		if (m_pListBox != nullptr) {
-			m_pListBox->PageUp();
+			m_pListBox->pageUp();
 		}
 		break;
 
 	case BKEY_PAGEDOWN:
 		if (m_pListBox != nullptr) {
-			m_pListBox->PageDown();
+			m_pListBox->pageDown();
 		}
 		break;
 
@@ -374,25 +374,25 @@ void CBagRestoreDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 
 	case LINEUP_BTN:
 		if (m_pListBox != nullptr) {
-			m_pListBox->LineUp();
+			m_pListBox->lineUp();
 		}
 		break;
 
 	case LINEDN_BTN:
 		if (m_pListBox != nullptr) {
-			m_pListBox->LineDown();
+			m_pListBox->lineDown();
 		}
 		break;
 
 	case PAGEUP_BTN:
 		if (m_pListBox != nullptr) {
-			m_pListBox->PageUp();
+			m_pListBox->pageUp();
 		}
 		break;
 
 	case PAGEDN_BTN:
 		if (m_pListBox != nullptr) {
-			m_pListBox->PageDown();
+			m_pListBox->pageDown();
 		}
 		break;
 
@@ -411,7 +411,7 @@ void CBagRestoreDialog::OnBofListBox(CBofObject *pObject, int nItemIndex) {
 	// There is only one list box on this dialog
 	if (m_pListBox != nullptr) {
 		// Force item to be highlighted
-		m_pListBox->RepaintAll();
+		m_pListBox->repaintAll();
 
 		// Show selected item in the Edit control
 		if (m_pText != nullptr) {

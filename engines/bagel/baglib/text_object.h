@@ -68,10 +68,10 @@ public:
 		m_nDY = (int16)xSize.cy;
 	}
 
-	int GetPointSize() const {
+	int getPointSize() const {
 		return m_nPointSize;
 	}
-	void SetPointSize(int xSize) {
+	void setPointSize(int xSize) {
 		Assert(xSize >= 0 && xSize <= 255);
 		m_nPointSize = (byte)xSize;
 	}
@@ -81,10 +81,10 @@ public:
 	void SetColor(int nColor);
 
 	// Font support for text objects
-	int GetFont() const {
+	int getFont() const {
 		return m_nTextFont;
 	}
-	void SetFont(int nFont) {
+	void setFont(int nFont) {
 		m_nTextFont = nFont;
 	}
 

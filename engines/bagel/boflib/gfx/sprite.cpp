@@ -110,11 +110,11 @@ void CBofSprite::LinkSprite() {
 		if (m_pSpriteChain != nullptr) {
 			switch (m_nZOrder) {
 			case SPRITE_TOPMOST:
-				m_pSpriteChain->AddToTail(this);
+				m_pSpriteChain->addToTail(this);
 				break;
 
 			case SPRITE_HINDMOST:
-				m_pSpriteChain->AddToHead(this);
+				m_pSpriteChain->addToHead(this);
 				m_pSpriteChain = this;
 				break;
 

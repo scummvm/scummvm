@@ -595,7 +595,7 @@ PARSE_CODES CBagExpression::setInfo(bof_ifstream &istr) {
 					pVar->SetConstant();
 				}
 			}
-			m_cVarList.AddToTail(pVar);
+			m_cVarList.addToTail(pVar);
 
 			istr.EatWhite();
 			ch = istr.peek();
@@ -607,7 +607,7 @@ PARSE_CODES CBagExpression::setInfo(bof_ifstream &istr) {
 					errStr = "Bad operator:";
 					break;
 				}
-				m_cOperList.AddToTail(xOper);
+				m_cOperList.addToTail(xOper);
 
 				istr.EatWhite();
 				GetAlphaNumFromStream(istr, sStr);
@@ -624,7 +624,7 @@ PARSE_CODES CBagExpression::setInfo(bof_ifstream &istr) {
 						pVar->SetConstant();
 					}
 				}
-				m_cVarList.AddToTail(pVar);
+				m_cVarList.addToTail(pVar);
 
 				istr.EatWhite();
 				ch = istr.peek();
