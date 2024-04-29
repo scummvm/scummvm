@@ -191,7 +191,7 @@ PARSE_CODES CBagDossierObject::setInfo(bof_ifstream &istr) {
 				int nColor;
 				istr.EatWhite();
 				GetIntFromStream(istr, nColor);
-				SetColor(nColor);
+				setColor(nColor);
 				objectUpdatedFl = true;
 			} else {
 				PutbackStringOnStream(istr, sStr);

@@ -139,7 +139,7 @@ ErrorCode CBofButton::paint(CBofRect *) {
 		if (_nState == BUTTON_DISABLED)
 			cTextColor = _cTextDisabledColor;
 
-		cText.Display(&cBmp, _szTitle, BUTTON_TEXT_SIZE, TEXT_NORMAL, cTextColor);
+		cText.display(&cBmp, _szTitle, BUTTON_TEXT_SIZE, TEXT_NORMAL, cTextColor);
 
 		if (_nState == BUTTON_FOCUS) {
 			cBmp.DrawRect(&cTempRect, pPalette->GetNearestIndex(_cOutlineColor));
@@ -323,7 +323,7 @@ ErrorCode CBofRadioButton::paint(CBofRect *) {
 		// Show text disabled if button is disabled
 
 		// Print text into button
-		cText.Display(&cBmp, _szTitle, RADIO_BOX_TEXT_SIZE, TEXT_NORMAL, cTextColor);
+		cText.display(&cBmp, _szTitle, RADIO_BOX_TEXT_SIZE, TEXT_NORMAL, cTextColor);
 
 		// If button has focus, then put a box around the text
 		if (_nState == BUTTON_FOCUS) {
@@ -414,7 +414,7 @@ ErrorCode CBofCheckButton::paint(CBofRect *) {
 
 		// Print text into button
 		//
-		cText.Display(&cBmp, _szTitle, CHECK_BOX_TEXT_SIZE, TEXT_NORMAL, cTextColor);
+		cText.display(&cBmp, _szTitle, CHECK_BOX_TEXT_SIZE, TEXT_NORMAL, cTextColor);
 
 		// If button has focus, then put a box around the text
 		if (_nState == BUTTON_FOCUS) {

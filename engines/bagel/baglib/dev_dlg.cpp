@@ -187,7 +187,7 @@ void CDevDlg::paintText() {
 	char achTemp[ACH_GUESS_MAX_CHARS];
 	snprintf(achTemp, ACH_GUESS_MAX_CHARS, "%s", _achGuess);
 
-	_guessText->Display(GetBackdrop(), achTemp, 16, TEXT_MEDIUM);
+	_guessText->display(GetBackdrop(), achTemp, 16, TEXT_MEDIUM);
 }
 
 void CDevDlg::setText(CBofString &text, CBofRect *textRect) {
@@ -196,7 +196,7 @@ void CDevDlg::setText(CBofString &text, CBofRect *textRect) {
 	_titleText = new CBofText;
 	if (_titleText != nullptr) {
 		_titleText->SetupText(textRect, JUSTIFY_CENTER, FORMAT_DEFAULT);
-		_titleText->SetColor(RGB(255, 255, 255));
+		_titleText->setColor(RGB(255, 255, 255));
 		_titleText->SetSize(FONT_14POINT);
 		_titleText->setWeight(TEXT_BOLD);
 		_titleText->setText(text);
@@ -210,7 +210,7 @@ ErrorCode CDevDlg::onRender(CBofBitmap *bmp, CBofRect *rect) {
 	ErrorCode errCode = CBagStorageDevDlg::onRender(bmp, rect);
 
 	if (_titleText != nullptr) {
-		_titleText->Display(GetBackdrop());
+		_titleText->display(GetBackdrop());
 	}
 
 	return errCode;

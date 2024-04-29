@@ -306,7 +306,7 @@ ErrorCode CBibbleWindow::attach() {
 		CBofRect cRect(CREDITS_AREA_X1, CREDITS_AREA_Y1, CREDITS_AREA_X2, CREDITS_AREA_Y2);
 
 		m_pCreditsText->SetupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
-		m_pCreditsText->SetColor(RGB(255, 255, 255));
+		m_pCreditsText->setColor(RGB(255, 255, 255));
 
 		m_pCreditsText->SetSize(MapWindowsPointSize(20));
 		m_pCreditsText->setWeight(TEXT_BOLD);
@@ -576,7 +576,7 @@ void CBibbleWindow::onPaint(CBofRect *pRect) {
 
 		// Update # of credits display
 		if (m_pCreditsText != nullptr) {
-			m_pCreditsText->Display(this);
+			m_pCreditsText->display(this);
 		}
 	}
 }
@@ -588,7 +588,7 @@ void CBibbleWindow::OnBofButton(CBofObject *pObject, int nState) {
 
 	if (nState != BUTTON_CLICKED)
 		return;
-	
+
 	CBofButton *pButton = (CBofButton *)pObject;
 
 	int nBet = 0;
@@ -713,7 +713,7 @@ ErrorCode CBibbleWindow::DisplayCredits() {
 
 		Common::sprintf_s(szBuf, "%d", m_nNumCredits);
 		m_pCreditsText->setText(szBuf);
-		m_pCreditsText->Display(this);
+		m_pCreditsText->display(this);
 	}
 
 	return _errCode;

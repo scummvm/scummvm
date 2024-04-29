@@ -370,7 +370,7 @@ PARSE_CODES CBagTextObject::setInfo(bof_ifstream &istr) {
 				int nColor;
 				istr.EatWhite();
 				GetIntFromStream(istr, nColor);
-				SetColor(nColor);
+				setColor(nColor);
 				nObjectUpdated = true;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -403,7 +403,7 @@ PARSE_CODES CBagTextObject::setInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-void CBagTextObject::SetColor(int nColor) {
+void CBagTextObject::setColor(int nColor) {
 	switch (nColor) {
 	case 0:
 		m_nFGColor = RGB(0, 0, 0);
@@ -443,7 +443,7 @@ void CBagTextObject::setProperty(const CBofString &sProp, int nVal) {
 	else if (!sProp.Find("FONT"))
 		setFont(MapFont(nVal));
 	else if (!sProp.Find("COLOR"))
-		SetColor(nVal);
+		setColor(nVal);
 	else
 		CBagObject::setProperty(sProp, nVal);
 }
@@ -454,7 +454,7 @@ int CBagTextObject::getProperty(const CBofString &sProp) {
 	if (!sProp.Find("FONT"))
 		return getFont();
 	if (!sProp.Find("COLOR"))
-		return GetColor();
+		return getColor();
 
 	return CBagObject::getProperty(sProp);
 }

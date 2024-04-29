@@ -169,7 +169,7 @@ ErrorCode CBagRestoreDialog::attach() {
 
 			byte iPalIdx = pPal2->GetNearestIndex(RGB(255, 0, 0));
 
-			m_pListBox->setHighlightColor(pPal2->GetColor(iPalIdx));
+			m_pListBox->setHighlightColor(pPal2->getColor(iPalIdx));
 		}
 
 		// Fill the list box with save game entries
@@ -272,7 +272,7 @@ void CBagRestoreDialog::onPaint(CBofRect *pRect) {
 	}
 
 	if (m_pText != nullptr) {
-		m_pText->Display(this);
+		m_pText->display(this);
 	}
 
 	ValidateAnscestors();
@@ -416,7 +416,7 @@ void CBagRestoreDialog::OnBofListBox(CBofObject *pObject, int nItemIndex) {
 		// Show selected item in the Edit control
 		if (m_pText != nullptr) {
 			m_pText->setText(m_pListBox->getText(nItemIndex));
-			m_pText->Display(this);
+			m_pText->display(this);
 		}
 
 		m_nSelectedItem = nItemIndex;

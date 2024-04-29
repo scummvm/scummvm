@@ -245,7 +245,7 @@ CBagObject *CBagLog::OnNewUserObject(const CBofString &initStr) {
 		LogObj = (CBagTextObject *)new CBagLogMsg(cSDevRect.Width());
 		LogObj->SetInitInfo(initStr);
 		LogObj->setPointSize(nPntSize);
-		LogObj->SetColor(7);
+		LogObj->setColor(7);
 		LogObj->SetFloating();
 	} else if (initStr == "SUS") {
 		LogObj = (CBagTextObject *)new CBagLogSuspect(cSDevRect.Width());
@@ -257,7 +257,7 @@ CBagObject *CBagLog::OnNewUserObject(const CBofString &initStr) {
 			nPntSize -= 2;
 		}
 		LogObj->setPointSize(nPntSize);
-		LogObj->SetColor(7);
+		LogObj->setColor(7);
 		LogObj->SetFloating();
 	} else if (initStr == "CLU") {
 		LogObj = (CBagTextObject *)new CBagLogClue(initStr, cSDevRect.Width(), nPntSize);
@@ -265,7 +265,7 @@ CBagObject *CBagLog::OnNewUserObject(const CBofString &initStr) {
 		LogObj = (CBagTextObject *)new CBagLogResidue(cSDevRect.Width());
 		LogObj->SetInitInfo(initStr);
 		LogObj->setPointSize(nPntSize);
-		LogObj->SetColor(7);
+		LogObj->setColor(7);
 		LogObj->SetFloating();
 	}
 
@@ -778,7 +778,7 @@ ErrorCode CBagLogSuspect::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRec
 
 CBagEnergyDetectorObject::CBagEnergyDetectorObject() {
 	setFont(FONT_MONO);				// Correct for spacing
-	SetColor(7);					// Make it white
+	setColor(7);					// Make it white
 	SetFloating();					// Is definitely floating
 	SetHighlight();					// Is highlight
 	SetTitle();						// As title
@@ -974,7 +974,7 @@ CBagLogClue::CBagLogClue(const CBofString &sInit, int nSdevWidth, int nPointSize
 	setFont(FONT_MONO);
 	SetInitInfo(sInit);
 	setPointSize(nPointSize);
-	SetColor(7);
+	setColor(7);
 	SetFloating();
 }
 

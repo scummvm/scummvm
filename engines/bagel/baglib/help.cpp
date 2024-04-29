@@ -147,7 +147,7 @@ ErrorCode CBagHelp::attach() {
 
 		cRect.SetRect(120, 100, 550, 348);
 		if ((m_pTextBox = new CBofTextBox(this, &cRect, pszBuf)) != nullptr) {
-			m_pTextBox->SetPageLength(18);
+			m_pTextBox->setPageLength(18);
 
 		} else {
 			ReportError(ERR_MEMORY, "Unable to allocate a CBofTextBox");
@@ -208,7 +208,7 @@ void CBagHelp::onPaint(CBofRect *pRect) {
 	PaintBackdrop(pRect);
 
 	if (m_pTextBox != nullptr) {
-		m_pTextBox->Display();
+		m_pTextBox->display();
 	}
 
 	ValidateAnscestors();

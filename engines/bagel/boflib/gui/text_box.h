@@ -39,9 +39,9 @@ public:
 	virtual ~CBofTextBox();
 
 	void setText(const CBofString &cText);
-	ErrorCode SetBox(const CBofRect *pRect);
-	void SetDisplay(CBofWindow *pWindow);
-	void SetDisplay(CBofBitmap *pBitmap);
+	ErrorCode setBox(const CBofRect *pRect);
+	void setDisplay(CBofWindow *pWindow);
+	void setDisplay(CBofBitmap *pBitmap);
 
 	void setTextAttribs(const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, const int nFont = FONT_DEFAULT);
 
@@ -49,28 +49,28 @@ public:
 		m_nPointSize = nSize;
 	}
 	int getPointSize() {
-		return (m_nPointSize);
+		return m_nPointSize;
 	}
 
 	void setWeight(const int nWeight) {
 		m_nWeight = nWeight;
 	}
 	int getWeight() {
-		return (m_nWeight);
+		return m_nWeight;
 	}
 
-	void SetPageLength(const int nSize) {
+	void setPageLength(const int nSize) {
 		m_nPageSize = nSize;
 	}
-	int GetPageLength() {
-		return (m_nPageSize);
+	int getPageLength() {
+		return m_nPageSize;
 	}
 
-	void SetColor(const RGBCOLOR cColor) {
+	void setColor(const RGBCOLOR cColor) {
 		m_cTextColor = cColor;
 	}
-	RGBCOLOR GetColor() {
-		return (m_cTextColor);
+	RGBCOLOR getColor() {
+		return m_cTextColor;
 	}
 
 	void setFont(int nFont) {
@@ -81,40 +81,40 @@ public:
 	}
 
 	ErrorCode lineUp() {
-		return (scrollUp(1));
+		return scrollUp(1);
 	}
 	ErrorCode lineDown() {
-		return (scrollDown(1));
+		return scrollDown(1);
 	}
 
 	ErrorCode pageUp() {
-		return (scrollUp(m_nPageSize));
+		return scrollUp(m_nPageSize);
 	}
 	ErrorCode pageDown() {
-		return (scrollDown(m_nPageSize));
+		return scrollDown(m_nPageSize);
 	}
 
 	ErrorCode scrollUp(const int nLines);
 	ErrorCode scrollDown(const int nLines) {
-		return (scrollUp(-nLines));
+		return scrollUp(-nLines);
 	}
 
 	ErrorCode scrollTo(const int nLine);
 
-	ErrorCode Display();
-	ErrorCode Erase();
+	ErrorCode display();
+	ErrorCode erase();
 
-	void FlushBackground();
+	void flushBackground();
 
-	int GetCurrLine() {
-		return (m_nCurrentLine);
+	int getCurrLine() {
+		return m_nCurrentLine;
 	}
-	ErrorCode SetCurrLine(const int nLine) {
-		return (scrollTo(nLine));
+	ErrorCode setCurrLine(const int nLine) {
+		return scrollTo(nLine);
 	}
 
 protected:
-	int GetIndex(const int nLines);
+	int getIndex(const int nLines);
 
 	// Data
 	CBofString m_cBuffer;

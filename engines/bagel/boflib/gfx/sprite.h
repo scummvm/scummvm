@@ -69,7 +69,7 @@ public:
 	bool PaintCel(CBofBitmap *pBmp, int nCelId, const int x, const int y);
 
 	void Batchpaint(const int, const int y);
-	void BatchErase();
+	void batchErase();
 
 	bool SetupCels(const int nCels);
 	void SetCel(const int nCelID);

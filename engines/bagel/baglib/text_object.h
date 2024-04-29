@@ -75,10 +75,10 @@ public:
 		Assert(xSize >= 0 && xSize <= 255);
 		m_nPointSize = (byte)xSize;
 	}
-	int GetColor() const {
+	int getColor() const {
 		return 0;
 	}
-	void SetColor(int nColor);
+	void setColor(int nColor);
 
 	// Font support for text objects
 	int getFont() const {
