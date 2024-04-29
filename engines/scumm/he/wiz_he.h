@@ -268,6 +268,10 @@ struct WizSimpleBitmap {
 	WizRawPixel *bufferPtr;
 	int32 bitmapWidth;
 	int32 bitmapHeight;
+
+	WizSimpleBitmap() {
+
+	}
 };
 
 struct WizMultiTypeBitmap {

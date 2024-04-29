@@ -1671,21 +1671,6 @@ void Sprite::buildActiveSpriteList() {
 	}
 }
 
-WizSimpleBitmap *Sprite::getSimpleBitmapForSprite(const SpriteInfo *spritePtr) {
-	WizSimpleBitmap simpleBitmap;
-	int image = spritePtr->image;
-	int group = spritePtr->group;
-	int groupImage = _groupTable[group].image;
-
-	if (image != 0 && group != 0 && groupImage != 0) {
-		if (_vm->_wiz->dwSetSimpleBitmapStructFromImage(groupImage, 0, &simpleBitmap)) {
-			return &simpleBitmap;
-		}
-	}
-
-	return nullptr;
-}
-
 void Sprite::renderSprites(bool negativeOrPositiveRender) {
 	int image, group, shadow, state, angle;
 	int sourceImage, scale, destImageNumber;
@@ -1952,9 +1937,17 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 			}
 
 			WizSimpleBitmap *bitmapPtr = nullptr;
+			WizSimpleBitmap simpleBitmap;
 
 			if (_vm->_game.heversion >= 95) {
-				bitmapPtr = getSimpleBitmapForSprite(spritePtr[i]);
+				// This was originally an inlined function, getSimpleBitmapForSprite().
+				// I got fed up with the fact it returned the address of a local WizSimpleBitmap variable,
+				// and it was used here and only here, so I decided to get rid of it and just unroll it...
+				if (spritePtr[i]->image != 0 && spritePtr[i]->group != 0 && _groupTable[group].image != 0) {
+					if (_vm->_wiz->dwSetSimpleBitmapStructFromImage(_groupTable[group].image, 0, &simpleBitmap)) {
+						bitmapPtr = &simpleBitmap;
+					}
+				}
 			}
 
 			if (simpleDraw) {

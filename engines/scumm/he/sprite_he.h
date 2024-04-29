@@ -237,7 +237,6 @@ public:
 	bool doesRectIntersectUpdateAreas(const Common::Rect *rectPtr);
 	void checkForForcedRedraws(bool checkOnlyPositivePriority);
 	void buildActiveSpriteList();
-	WizSimpleBitmap *getSimpleBitmapForSprite(const SpriteInfo *spritePtr);
 	void renderSprites(bool negativeOrPositiveRender);
 	void runSpriteEngines();
 
