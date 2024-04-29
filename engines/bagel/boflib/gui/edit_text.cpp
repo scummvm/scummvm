@@ -106,7 +106,7 @@ void CBofEditText::onPaint(CBofRect *pRect) {
 	if (!_text.IsEmpty()) {
 		CBofString tmp = _text + "|";
 
-		PaintText(this, &_cRect, tmp.GetBuffer(),
+		paintText(this, &_cRect, tmp.GetBuffer(),
 			12, 0, CTEXT_COLOR,
 			JUSTIFY_LEFT,
 			FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE);
@@ -125,7 +125,7 @@ void CBofEditText::onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
 void CBofEditText::onKeyHit(uint32 lKey, uint32 lRepCount) {
 	if (lKey >= 32 && lKey <= 127) {
 		CBofString tmp = _text + lKey;
-		CBofRect rect = CalculateTextRect(this, &tmp, 12, 0);
+		CBofRect rect = calculateTextRect(this, &tmp, 12, 0);
 
 		if ((_cRect.width() - rect.width()) > 10) {
 			setText(tmp);

@@ -65,7 +65,7 @@ ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CB
 
 	_guessText = new CBofText();
 	if (_guessText != nullptr) {
-		_guessText->SetupText(rect, JUSTIFY_LEFT);
+		_guessText->setupText(rect, JUSTIFY_LEFT);
 	}
 
 	_guessCount = 0;
@@ -195,7 +195,7 @@ void CDevDlg::setText(CBofString &text, CBofRect *textRect) {
 
 	_titleText = new CBofText;
 	if (_titleText != nullptr) {
-		_titleText->SetupText(textRect, JUSTIFY_CENTER, FORMAT_DEFAULT);
+		_titleText->setupText(textRect, JUSTIFY_CENTER, FORMAT_DEFAULT);
 		_titleText->setColor(RGB(255, 255, 255));
 		_titleText->SetSize(FONT_14POINT);
 		_titleText->setWeight(TEXT_BOLD);

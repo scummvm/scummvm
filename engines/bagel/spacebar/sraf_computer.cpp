@@ -1517,7 +1517,7 @@ void SrafComputer::ActivateDealBackground() {
 	m_eCurScreen = SCBACKGROUNDDATA;
 
 	sStr = BuildSrafDir("SRAFDEAL.TXT");
-	DisplayTextScreen(sStr);
+	displayTextScreen(sStr);
 }
 
 void SrafComputer::HideAllButtons() {
@@ -2682,10 +2682,10 @@ void SrafComputer::OnListBuyerBids() {
 	// Calculate the text width based on the attributes of the text
 	// rather than guessing to where they are.
 	sStr = " ACCEPT ";
-	CBofRect        cAcceptBidRect = CalculateTextRect(this, &sStr, kBuyerBidsPointSize, FONT_MONO);
+	CBofRect        cAcceptBidRect = calculateTextRect(this, &sStr, kBuyerBidsPointSize, FONT_MONO);
 
 	AlignAtColumn(sStr, "", kFirstMineralColumn + NUM_MINERALS * kMineralColWidth);
-	CBofRect cDummyRect = CalculateTextRect(this, &sStr, kBuyerBidsPointSize, FONT_MONO);
+	CBofRect cDummyRect = calculateTextRect(this, &sStr, kBuyerBidsPointSize, FONT_MONO);
 
 	CBofPoint cStartPoint(cDummyRect.right, 0);
 	cAcceptBidRect.OffsetRect(cStartPoint);
@@ -2715,7 +2715,7 @@ void SrafComputer::OnListBuyerBids() {
 
 		if (index >= 0 && index < NUM_BUYERS) {
 			sStr2 = BuildSrafDir(g_stBuyerBids[index].m_pszBuyerBio);
-			DisplayTextScreen(sStr2);
+			displayTextScreen(sStr2);
 		}
 	}
 }
@@ -2730,7 +2730,7 @@ void SrafComputer::OnListSellerBios() {
 
 	if (m_nSelection >= 2) {
 		sStr = BuildSrafDir(g_stSellerNames[m_nSelection - 2].m_pszSellerBio);
-		DisplayTextScreen(sStr);
+		displayTextScreen(sStr);
 	}
 }
 
@@ -2741,7 +2741,7 @@ void SrafComputer::OnListOtherBios() {
 
 	if (m_nSelection >= 2) {
 		sStr = BuildSrafDir(g_stOtherPartys[m_nSelection - 2].m_pszOtherPartyBio);
-		DisplayTextScreen(sStr);
+		displayTextScreen(sStr);
 	}
 }
 
@@ -2753,7 +2753,7 @@ void SrafComputer::OnListStaffBios() {
 
 	if (m_nSelection >= 2) {
 		sStr = BuildSrafDir(g_staffers[m_nSelection - 2].m_pszStafferBio);
-		DisplayTextScreen(sStr);
+		displayTextScreen(sStr);
 	}
 }
 
@@ -2827,7 +2827,7 @@ void SrafComputer::OnListDispatchTeam() {
 
 				if (cMeetBio.PtInRect(cPoint)) {        // if so, bring up biography.
 					sStr = BuildSrafDir(g_stOtherPartys[nElementIndex].m_pszOtherPartyBio);
-					DisplayTextScreen(sStr);
+					displayTextScreen(sStr);
 				} else if (cMeetMember.PtInRect(cPoint)) {         // if so, put a checkmark in that column.
 					// Uncheck any member we already have checked, this is a singular operation
 					if ((nMeetMember = GetMeetMember(nListToCheck)) != -1) {
@@ -2876,7 +2876,7 @@ void SrafComputer::OnListDispatchTeam() {
 
 				if (cMeetBio.PtInRect(cPoint)) {        // If so, bring up biography.
 					sStr = BuildSrafDir(g_stSellerNames[nElementIndex].m_pszSellerBio);
-					DisplayTextScreen(sStr);
+					displayTextScreen(sStr);
 				} else if (cMeetMember.PtInRect(cPoint)) {
 					// If so, put a checkmark in that column.
 
@@ -2927,7 +2927,7 @@ void SrafComputer::OnListDispatchTeam() {
 				if (cMeetBio.PtInRect(cPoint)) {
 					// if so, bring up biography.
 					sStr = BuildSrafDir(g_stBuyerBids[nElementIndex].m_pszBuyerBio);
-					DisplayTextScreen(sStr);
+					displayTextScreen(sStr);
 				} else if (cMeetMember.PtInRect(cPoint)) {
 					// if so, put a checkmark in that column.
 					// Uncheck any member we already have checked, this is a singular operation
@@ -2988,7 +2988,7 @@ void SrafComputer::OnListDispatchTeam() {
 			//  If in the staff names column, then show the biography
 			if (cStaffNames.PtInRect(cPoint)) {
 				sStr = BuildSrafDir(g_staffers[nElementIndex].m_pszStafferBio);
-				DisplayTextScreen(sStr);
+				displayTextScreen(sStr);
 			} else {
 				// if in the "include on team" column, then handle appropriately
 				if (cStaffInclude.PtInRect(cPoint)) {
@@ -3021,7 +3021,7 @@ void SrafComputer::OnListCurrentEMail() {
 
 	if (m_nSelection >= 2) {
 		sStr = BuildSrafDir(g_stEmailMessages[m_nSelection - 2].m_pszMessageFile);
-		DisplayTextScreen(sStr);
+		displayTextScreen(sStr);
 	}
 }
 
@@ -3071,7 +3071,7 @@ void SrafComputer::OnListRoboButler() {
 	CBofString  sStr(szLocalBuff, 256);
 
 	sStr = BuildSrafDir(g_stOfferings[nSelection].m_pszFile);
-	DisplayTextScreen(sStr);
+	displayTextScreen(sStr);
 }
 
 // Here are the constants that define how strong a team must be in order
@@ -3582,7 +3582,7 @@ void SrafComputer::OnListCodeWords() {
 	// Calculate the text width based on the attributes of the text
 	// rather than guessing to where they are.
 	AlignAtColumn(sStr, "", kGroup1Col2);
-	CBofRect        cCol1Rect = CalculateTextRect(this, &sStr, kOtherPointSize, FONT_MONO);
+	CBofRect        cCol1Rect = calculateTextRect(this, &sStr, kOtherPointSize, FONT_MONO);
 	CBofRect        cCol2Rect = cCol1Rect;
 	CBofPoint       cStartPoint(cCol1Rect.right, 0);
 
@@ -3591,7 +3591,7 @@ void SrafComputer::OnListCodeWords() {
 	// Second bunch of code words start at column 45, create a dummy string and then
 	// start offsetting from there.
 	AlignAtColumn(sStr, "", kGroup2Col1);
-	CBofRect        cDummyRect = CalculateTextRect(this, &sStr, kOtherPointSize, FONT_MONO);
+	CBofRect        cDummyRect = calculateTextRect(this, &sStr, kOtherPointSize, FONT_MONO);
 	cStartPoint.x = cDummyRect.right;
 
 	CBofRect        cCol3Rect = cCol1Rect;
@@ -3752,7 +3752,7 @@ void SrafComputer::AlignAtColumn(CBofString &sStr, const char *szRightText, int 
 	}
 }
 
-void SrafComputer::DisplayTextScreen(CBofString &sStr) {
+void SrafComputer::displayTextScreen(CBofString &sStr) {
 	// Use a global to determine if we can give meeting reports or not.
 	gTextScreenFrontmost = true;
 
@@ -4029,7 +4029,7 @@ void SrafComputer::OnButtonBuyerBids(CBofButton *pButton, int nState) {
 		CBofString sStr(szLocalBuff, 256);
 
 		sStr = BuildSrafDir("KEYINFO.TXT");
-		DisplayTextScreen(sStr);
+		displayTextScreen(sStr);
 		break;
 	}
 
@@ -4622,7 +4622,7 @@ int SrafTextScreen::CreateTextScreen(CBofWindow *pParent) {
 	return ERR_NONE;
 }
 
-void SrafTextScreen::DisplayTextScreen() {
+void SrafTextScreen::displayTextScreen() {
 	show();
 
 	if (getBackdrop())
@@ -4664,7 +4664,7 @@ void SrafTextScreen::onClose() {
 }
 
 void SrafTextScreen::onPaint(CBofRect * /*pRect*/) {
-	DisplayTextScreen();
+	displayTextScreen();
 
 	validateAnscestors();
 }

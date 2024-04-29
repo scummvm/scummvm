@@ -204,7 +204,7 @@ ErrorCode CBagRestoreDialog::attach() {
 
 		if ((m_pText = new CBofText) != nullptr) {
 			cRect.SetRect(170, 405, 470, 435);
-			m_pText->SetupText(&cRect, JUSTIFY_LEFT, FORMAT_CENTER_LEFT);
+			m_pText->setupText(&cRect, JUSTIFY_LEFT, FORMAT_CENTER_LEFT);
 			m_pText->SetSize(16);
 			m_pText->setWeight(TEXT_BOLD);
 

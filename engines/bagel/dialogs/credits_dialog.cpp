@@ -346,7 +346,7 @@ ErrorCode CBagCreditsDialog::PaintLine(int nLine, char *pszText) {
 	m_pCreditsBmp->fillRect(&cRect, MY_MASK_COLOR);
 
 	if (*pszText != '\0') {
-		PaintShadowedText(m_pCreditsBmp, &cRect, pszText, g_cScreen[m_iScreen].m_nPointSize, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_CENTER);
+		paintShadowedText(m_pCreditsBmp, &cRect, pszText, g_cScreen[m_iScreen].m_nPointSize, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_CENTER);
 	}
 
 	return _errCode;

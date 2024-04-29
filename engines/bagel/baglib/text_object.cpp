@@ -120,7 +120,7 @@ ErrorCode CBagTextObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 				r.left += 1;
 			}
 
-			errCode = PaintText(pBmp, &r, getText(), MapWindowsPointSize(nPointSize), TEXT_NORMAL, m_nFGColor, JUSTIFY_WRAP, nFormat, m_nTextFont);
+			errCode = paintText(pBmp, &r, getText(), MapWindowsPointSize(nPointSize), TEXT_NORMAL, m_nFGColor, JUSTIFY_WRAP, nFormat, m_nTextFont);
 
 			// This object does not need to be updated now...
 			SetDirty(false);
@@ -567,12 +567,12 @@ void CBagTextObject::RecalcTextRect(bool bTextFromFile) {
 	// height of the text string).
 	CBofRect tmpRect = ViewRect;
 	if (!m_bTitle) {
-		// Exactly match the width used in DisplayTextEx
+		// Exactly match the width used in displayTextEx
 		tmpRect.left += 5;
 		tmpRect.right = (ViewRect.right == 640 ? PAN_AREA_WIDTH : ViewRect.right) - 5;
 	}
 
-	CBofRect textRect = CalculateTextRect(tmpRect, m_psText, m_nPointSize, getFont());
+	CBofRect textRect = calculateTextRect(tmpRect, m_psText, m_nPointSize, getFont());
 	CBofSize stTextSize(textRect.right, textRect.bottom);
 
 	if (bTextFromFile) {

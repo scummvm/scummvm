@@ -405,7 +405,7 @@ ErrorCode CBofListBox::repaintAll() {
 					// If this item is currently selected and we have a high color
 					if ((i + _n1stVisible == _nSelectedItem) && (_cHighColor != _cTextColor)) {
 						// display text highlighted
-						PaintText(_pWork,
+						paintText(_pWork,
 						          &cRect,
 						          *(_cTextItems.GetNodeItem(i + _n1stVisible)._pTextStr),
 						          _nTextSize,
@@ -422,7 +422,7 @@ ErrorCode CBofListBox::repaintAll() {
 							rgbTextColor = _cTextItems.GetNodeItem(i + _n1stVisible)._nTextLineColor;
 						}
 
-						PaintText(_pWork,
+						paintText(_pWork,
 						          &cRect,
 						          *(_cTextItems.GetNodeItem(i + _n1stVisible)._pTextStr),
 						          _nTextSize,
@@ -480,7 +480,7 @@ ErrorCode CBofListBox::repaintItem(int nIndex) {
 			// If this item is currently selected and we have a high color
 			if ((nIndex == _nSelectedItem) && (_cHighColor != _cTextColor)) {
 				// Display text highlighted
-				PaintText(_pWork,
+				paintText(_pWork,
 				          &cRect,
 				          *(_cTextItems.GetNodeItem(nIndex)._pTextStr),
 				          _nTextSize,
@@ -497,7 +497,7 @@ ErrorCode CBofListBox::repaintItem(int nIndex) {
 				if (_cTextItems.GetNodeItem(i + _n1stVisible)._nTextLineColor != COLOR_USE_DEFAULT) {
 					rgbTextColor = _cTextItems.GetNodeItem(i + _n1stVisible)._nTextLineColor;
 				}
-				PaintText(_pWork,
+				paintText(_pWork,
 				          &cRect,
 				          *(_cTextItems.GetNodeItem(nIndex)._pTextStr),
 				          _nTextSize,

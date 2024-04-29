@@ -134,41 +134,41 @@ public:
 	 * @param pRect			Rectangular area encompassed by the text object
 	 * @param nJustify		Alignment of text in the rectangle
 	 */
-	ErrorCode SetupText(const CBofRect *pRect, int nJustify = JUSTIFY_CENTER, uint32 nFormatFlags = FORMAT_DEFAULT);
-	ErrorCode SetupTextOpt(const CBofRect *pRect, int nJustify = JUSTIFY_CENTER, uint32 nFormatFlags = FORMAT_DEFAULT);
+	ErrorCode setupText(const CBofRect *pRect, int nJustify = JUSTIFY_CENTER, uint32 nFormatFlags = FORMAT_DEFAULT);
+	ErrorCode setupTextOpt(const CBofRect *pRect, int nJustify = JUSTIFY_CENTER, uint32 nFormatFlags = FORMAT_DEFAULT);
 
 	void setText(const CBofString &cString) {
-		m_cCurString = cString;
+		_cCurString = cString;
 	}
 	void setColor(const RGBCOLOR cColor) {
-		m_cTextColor = cColor;
+		_cTextColor = cColor;
 	}
 	void SetSize(const int nSize) {
-		m_nCurSize = nSize;
+		_nCurSize = nSize;
 	}
 	void setWeight(const int nWeight) {
-		m_nCurWeight = nWeight;
+		_nCurWeight = nWeight;
 	}
 
-	void SetShadowColor(const RGBCOLOR cColor) {
-		m_cShadowColor = cColor;
+	void setShadowColor(const RGBCOLOR cColor) {
+		_cShadowColor = cColor;
 	}
-	void SetShadowSize(int nDX, int nDY) {
-		m_nShadow_DX = nDX;
-		m_nShadow_DY = nDY;
+	void setShadowSize(int nDX, int nDY) {
+		_nShadow_DX = nDX;
+		_nShadow_DY = nDY;
 	}
 
 	CBofString getText() const {
-		return m_cCurString;
+		return _cCurString;
 	}
 	RGBCOLOR getColor() const {
-		return m_cTextColor;
+		return _cTextColor;
 	}
 	int getSize() const {
-		return m_nCurSize;
+		return _nCurSize;
 	}
 	int getWeight() const {
-		return m_nCurWeight;
+		return _nCurWeight;
 	}
 
 	/**
@@ -231,7 +231,7 @@ public:
 	 * @param cShadow		Color that the text's shadow will be
 	 * @return				Error return Code
 	 */
-	ErrorCode DisplayShadowed(CBofWindow *pWnd, const char *pszText, int nSize,
+	ErrorCode displayShadowed(CBofWindow *pWnd, const char *pszText, int nSize,
 		int nWeight, RGBCOLOR cColor, RGBCOLOR cShadow = CTEXT_SHADOW_COLOR,
 		int nDX = CTEXT_SHADOW_DX, int nDY = CTEXT_SHADOW_DY, int n = FONT_DEFAULT);
 
@@ -245,10 +245,10 @@ public:
 	 * @param cShadow		Color that the text's shadow will be
 	 * @return				Error return Code
 	 */
-	ErrorCode DisplayShadowed(CBofBitmap *, const char *, const int, const int, const RGBCOLOR cColor, const RGBCOLOR cShadow = CTEXT_SHADOW_COLOR, const int nDX = CTEXT_SHADOW_DX, const int nDY = CTEXT_SHADOW_DY, int n = FONT_DEFAULT);
+	ErrorCode displayShadowed(CBofBitmap *, const char *, const int, const int, const RGBCOLOR cColor, const RGBCOLOR cShadow = CTEXT_SHADOW_COLOR, const int nDX = CTEXT_SHADOW_DX, const int nDY = CTEXT_SHADOW_DY, int n = FONT_DEFAULT);
 
 	void flushBackground()       {
-		m_bSaved = false;
+		_bSaved = false;
 	}
 
 	static ErrorCode initialize();
@@ -264,7 +264,7 @@ public:
 	 * @param bShadowed		Whether the text is shadowed
 	 * @return				Error return Code
 	 */
-	ErrorCode DisplayTextEx(CBofBitmap *pBmp, const char *pszText, CBofRect *pRect, const int nSize, const int nWeight, const bool bShadowed, int nFont = FONT_DEFAULT);
+	ErrorCode displayTextEx(CBofBitmap *pBmp, const char *pszText, CBofRect *pRect, const int nSize, const int nWeight, const bool bShadowed, int nFont = FONT_DEFAULT);
 
 	static Graphics::Font *getFont(int nFont, int nSize, int nWeight);
 
@@ -272,7 +272,7 @@ private:
 	/**
 	 * Initializes key fields to zero or nullptr states.
 	 */
-	void InitializeFields();
+	void initializeFields();
 
 	/**
 	 * Displays specified text onto specified bitmap
@@ -284,31 +284,31 @@ private:
 	 * @param bShadowed		Whether the text is shadowed
 	 * @return				Error return Code
 	 */
-	ErrorCode DisplayText(CBofWindow *pWnd, const char *pszText, CBofRect *pRect, const int nSize, const int nWeight, const bool bShadowed, int nFont = FONT_DEFAULT);
-	ErrorCode DisplayText(CBofBitmap *pBmp, const char *pszText, CBofRect *pRect, const int nSize, const int nWeight, const bool bShadowed, int nFont = FONT_DEFAULT);
+	ErrorCode displayText(CBofWindow *pWnd, const char *pszText, CBofRect *pRect, const int nSize, const int nWeight, const bool bShadowed, int nFont = FONT_DEFAULT);
+	ErrorCode displayText(CBofBitmap *pBmp, const char *pszText, CBofRect *pRect, const int nSize, const int nWeight, const bool bShadowed, int nFont = FONT_DEFAULT);
 
 	void displayLine(Graphics::Font *font, Graphics::ManagedSurface &surface, const Common::String &line,
 		int left, int top, int width, int color, Graphics::TextAlign align);
 
 protected:
-	CBofString  m_cCurString;       // text to be displayed
+	CBofString  _cCurString;       // text to be displayed
 	CBofRect    _cRect;            // bounding rectangle of text area
-	CBofPoint   m_cPosition;        // upper left corner of text displayed
-	CBofSize    m_cSize;            // dx/dy size of the text bitmap
-	RGBCOLOR    m_cTextColor;       // color to use for the text itself
-	RGBCOLOR    m_cShadowColor;     // color to use for the text's shadow
-	CBofBitmap *m_pBackground;      // bitmap for the text's background
-	CBofBitmap *m_pWork;            // bitmap for the work area
+	CBofPoint   _cPosition;        // upper left corner of text displayed
+	CBofSize    _cSize;            // dx/dy size of the text bitmap
+	RGBCOLOR    _cTextColor;       // color to use for the text itself
+	RGBCOLOR    _cShadowColor;     // color to use for the text's shadow
+	CBofBitmap *_pBackground;      // bitmap for the text's background
+	CBofBitmap *_pWork;            // bitmap for the work area
 
-	int         m_nCurSize;         // point size of current text
-	int         m_nCurWeight;       // style of current text
+	int         _nCurSize;         // point size of current text
+	int         _nCurWeight;       // style of current text
 
-	int         m_nJustify;         // positioning within the rectangle
-	int         m_nShadow_DX;       // horizontal offset for shadow
-	int         m_nShadow_DY;       // vertical offset for shadow
-	uint32        m_nFormatFlags;     // multi line formatting flags
-	bool        m_bMultiLine;       // mutli vs single line formatting
-	bool        m_bSaved;
+	int         _nJustify;         // positioning within the rectangle
+	int         _nShadow_DX;       // horizontal offset for shadow
+	int         _nShadow_DY;       // vertical offset for shadow
+	uint32        _nFormatFlags;     // multi line formatting flags
+	bool        _bMultiLine;       // mutli vs single line formatting
+	bool        _bSaved;
 
 	static Graphics::Font *_defaultFonts[NUM_POINT_SIZES];
 	static Graphics::Font *_fixedFonts[NUM_POINT_SIZES];
@@ -321,18 +321,18 @@ protected:
 
 // Global text functions
 //
-ErrorCode PaintText(CBofWindow *pWnd, CBofRect *pRect, const char *, const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, int nJustify = JUSTIFY_CENTER, uint32 nFormat = FORMAT_DEFAULT, int nFont = FONT_DEFAULT);
-ErrorCode PaintText(CBofBitmap *pBmp, CBofRect *pRect, const char *, const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, int nJustify = JUSTIFY_CENTER, uint32 nFormat = FORMAT_DEFAULT, int nFont = FONT_DEFAULT);
+ErrorCode paintText(CBofWindow *pWnd, CBofRect *pRect, const char *, const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, int nJustify = JUSTIFY_CENTER, uint32 nFormat = FORMAT_DEFAULT, int nFont = FONT_DEFAULT);
+ErrorCode paintText(CBofBitmap *pBmp, CBofRect *pRect, const char *, const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, int nJustify = JUSTIFY_CENTER, uint32 nFormat = FORMAT_DEFAULT, int nFont = FONT_DEFAULT);
 
-ErrorCode PaintShadowedText(CBofWindow *, CBofRect *pRect, const char *, const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, int nJustify = JUSTIFY_CENTER, uint32 n = FORMAT_DEFAULT, int nFont = FONT_DEFAULT);
-ErrorCode PaintShadowedText(CBofBitmap *, CBofRect *pRect, const char *, const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, int nJustify = JUSTIFY_CENTER, uint32 n = FORMAT_DEFAULT, int nFont = FONT_DEFAULT);
+ErrorCode paintShadowedText(CBofWindow *, CBofRect *pRect, const char *, const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, int nJustify = JUSTIFY_CENTER, uint32 n = FORMAT_DEFAULT, int nFont = FONT_DEFAULT);
+ErrorCode paintShadowedText(CBofBitmap *, CBofRect *pRect, const char *, const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, int nJustify = JUSTIFY_CENTER, uint32 n = FORMAT_DEFAULT, int nFont = FONT_DEFAULT);
 
 /**
  * Utility routine that will calculate the rectangle that a text string
  * will fit in, given point size and font.
  */
-CBofRect CalculateTextRect(CBofWindow *pWnd, const CBofString *pStr, int nSize, int nFont);
-CBofRect CalculateTextRect(CBofRect rect, const CBofString *pStr, int nSize, int nFont);
+CBofRect calculateTextRect(CBofWindow *pWnd, const CBofString *pStr, int nSize, int nFont);
+CBofRect calculateTextRect(CBofRect rect, const CBofString *pStr, int nSize, int nFont);
 
 } // namespace Bagel
 
