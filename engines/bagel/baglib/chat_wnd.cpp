@@ -36,7 +36,7 @@ ErrorCode CBagChatWnd::attach() {
 		UpdateWindow();
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 void CBagChatWnd::onTimer(uint32 /*nTimerId*/) {

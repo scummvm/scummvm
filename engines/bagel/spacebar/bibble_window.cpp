@@ -197,7 +197,7 @@ static bool g_bBibbleHack = false;
 
 
 CBetArea::CBetArea(const CBetAreaDef &def) :
-	m_cRect(def.left, def.top, def.right, def.bottom), m_bWon(false),
+	_cRect(def.left, def.top, def.right, def.bottom), m_bWon(false),
 	m_nBet(def.m_nBet), m_nPayOff1(def.m_nPayOff1), m_nPayOff2(def.m_nPayOff2),
 	m_cAudioFile(def.m_cAudioFile), m_cPayFile(def.m_cPayFile) {
 }
@@ -424,7 +424,7 @@ ErrorCode CBibbleWindow::attach() {
 
 	CBagCursor::showSystemCursor();
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -517,7 +517,7 @@ ErrorCode CBibbleWindow::detach() {
 	// Playing BibbleBonk has made 1 turn go by.
 	VARMNGR->IncrementTimers();
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -561,7 +561,7 @@ void CBibbleWindow::onPaint(CBofRect *pRect) {
 			// Add bet amount text
 			char szBuf[20];
 			Common::sprintf_s(szBuf, "%d", g_engine->g_cBetAreas[i].m_nBet);
-			cRect = g_engine->g_cBetAreas[i].m_cRect;
+			cRect = g_engine->g_cBetAreas[i]._cRect;
 			cRect.top += cRect.Height() / 2;
 
 			PaintText(pBmp, &cRect, szBuf, 16, TEXT_NORMAL, CTEXT_COLOR, JUSTIFY_RIGHT, FORMAT_BOT_RIGHT);
@@ -716,7 +716,7 @@ ErrorCode CBibbleWindow::DisplayCredits() {
 		m_pCreditsText->Display(this);
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -816,7 +816,7 @@ ErrorCode CBibbleWindow::PlayGame() {
 
 	LogInfo(BuildString("\tDone BibbleBonk.  Credits: %d", m_nNumCredits));
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBibbleWindow::BonkBibble(int nBibbleID, int nShouts) {
@@ -871,7 +871,7 @@ ErrorCode CBibbleWindow::BonkBibble(int nBibbleID, int nShouts) {
 
 	pBibble->SetAnimated(false);
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -1060,7 +1060,7 @@ void CBibbleWindow::OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 		CBetArea *pArea = &g_engine->g_cBetAreas[i];
 
 		// If this is the area the user selected
-		if (pArea->m_cRect.PtInRect(*pPoint)) {
+		if (pArea->_cRect.PtInRect(*pPoint)) {
 			CBetArea *pPrevArea = m_pSelected;
 
 			// Keep track of selected area
@@ -1102,7 +1102,7 @@ void CBibbleWindow::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) 
 
 		// If this is the area the user selected
 		//
-		if (pArea->m_cRect.PtInRect(*pPoint)) {
+		if (pArea->_cRect.PtInRect(*pPoint)) {
 			CBetArea *pPrevArea = m_pSelected;
 
 			// Keep track of selected area
@@ -1128,11 +1128,11 @@ ErrorCode CBibbleWindow::Highlight(CBetArea *pArea, byte nColor) {
 	Assert(IsValidObject(this));
 	Assert(pArea != nullptr);
 
-	CBofBitmap cBmp(pArea->m_cRect.Width(), pArea->m_cRect.Height(), m_pBackdrop->GetPalette());
+	CBofBitmap cBmp(pArea->_cRect.Width(), pArea->_cRect.Height(), m_pBackdrop->GetPalette());
 
 	Assert(m_pBackdrop != nullptr);
 	CBofRect r = cBmp.GetRect();
-	m_pBackdrop->paint(&cBmp, &r, &pArea->m_cRect);
+	m_pBackdrop->paint(&cBmp, &r, &pArea->_cRect);
 
 	// Add highlight rectangle
 	CBofRect cRect = cBmp.GetRect();
@@ -1155,9 +1155,9 @@ ErrorCode CBibbleWindow::Highlight(CBetArea *pArea, byte nColor) {
 	PaintText(&cBmp, &cRect, szBuf, 16, TEXT_NORMAL, CTEXT_COLOR, JUSTIFY_RIGHT, FORMAT_BOT_RIGHT);
 
 	// Paint result to screen
-	cBmp.paint(this, &pArea->m_cRect);
+	cBmp.paint(this, &pArea->_cRect);
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -1165,13 +1165,13 @@ ErrorCode CBibbleWindow::UnHighlight(CBetArea *pArea) {
 	Assert(IsValidObject(this));
 	Assert(pArea != nullptr);
 
-	CBofBitmap cBmp(pArea->m_cRect.Width(), pArea->m_cRect.Height(), m_pBackdrop->GetPalette());
+	CBofBitmap cBmp(pArea->_cRect.Width(), pArea->_cRect.Height(), m_pBackdrop->GetPalette());
 
 	Assert(m_pBackdrop != nullptr);
 
 	// Copy bet area
 	CBofRect r = cBmp.GetRect();
-	m_pBackdrop->paint(&cBmp, &r, &pArea->m_cRect);
+	m_pBackdrop->paint(&cBmp, &r, &pArea->_cRect);
 
 	// Add bet amount text
 	char szBuf[20];
@@ -1183,9 +1183,9 @@ ErrorCode CBibbleWindow::UnHighlight(CBetArea *pArea) {
 	PaintText(&cBmp, &cRect, szBuf, 16, TEXT_NORMAL, CTEXT_COLOR, JUSTIFY_RIGHT, FORMAT_BOT_RIGHT);
 
 	// Paint to screen
-	cBmp.paint(this, &pArea->m_cRect);
+	cBmp.paint(this, &pArea->_cRect);
 
-	return m_errCode;
+	return _errCode;
 }
 
 void CBibbleWindow::onKeyHit(uint32 lKey, uint32 /*lRepCount*/) {

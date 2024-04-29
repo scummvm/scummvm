@@ -72,9 +72,9 @@ CBofSprite::CBofSprite() {
 	m_pImage = nullptr;                                 // No initial bitmap image for the sprite
 
 	m_cSize = CBofSize(0, 0);                           // There is no size to the sprite image
-	m_cRect.SetRectEmpty();                             // Rectangular bounds not yet defined
+	_cRect.SetRectEmpty();                             // Rectangular bounds not yet defined
 
-	m_cImageRect = m_cRect;                             // Image rectangle starts same as display bounds
+	m_cImageRect = _cRect;                             // Image rectangle starts same as display bounds
 	m_cPosition = CBofPoint(0, 0);                      // Default position to upper left corner of display
 	m_bPositioned = false;                              // Not yet positioned
 	m_bDuplicated = false;                              // Not sharing resources with other sprites
@@ -218,7 +218,7 @@ bool CBofSprite::DuplicateSprite(CBofSprite *pSprite) {
 	if (pSprite != nullptr) {
 		pSprite->m_pImage = m_pImage;
 
-		pSprite->m_cRect = m_cRect;
+		pSprite->_cRect = _cRect;
 		pSprite->m_cImageRect = m_cImageRect;
 		pSprite->m_cSize = m_cSize;
 		pSprite->m_cPosition = m_cPosition;
@@ -267,7 +267,7 @@ bool CBofSprite::LoadSprite(CBofBitmap *pBitmap, int nCels) {
 
 	m_cSize = pBitmap->GetSize();
 
-	m_cRect.SetRect(0, 0, m_cSize.cx - 1, m_cSize.cy - 1);
+	_cRect.SetRect(0, 0, m_cSize.cx - 1, m_cSize.cy - 1);
 	m_cImageRect.SetRect(0, 0, m_cSize.cx - 1, m_cSize.cy - 1);
 	m_nCelCount = 1;
 	m_nCelID = m_nCelCount - 1;
@@ -293,8 +293,8 @@ bool CBofSprite::SetupCels(const int nCels) {
 	m_cSize.cx /= nCels;                                        // Calculate width of a cel
 
 	if (m_cSize.cx * nCels == nStripWidth) {                    // Verify we have an even multiple
-		m_cRect.right = m_cRect.left + m_cSize.cx;              // Reset sprite rectangular bounds
-		m_cRect.bottom = m_cRect.top + m_cSize.cy;              // ... based on cel dimensions
+		_cRect.right = _cRect.left + m_cSize.cx;              // Reset sprite rectangular bounds
+		_cRect.bottom = _cRect.top + m_cSize.cy;              // ... based on cel dimensions
 		m_cImageRect.SetRect(0, 0, m_cSize.cx - 1, m_cSize.cy - 1); // Set bounds for first cel in strip
 		return true;
 	}
@@ -390,7 +390,7 @@ void CBofSprite::Batchpaint(const int x, const int y) {
 	// If the sprite is already on screen, then we must also add it's old
 	// current location to the dirty rect list so that it is erase properly
 	if (m_bPositioned)  {
-		AddToDirtyRect(&m_cRect);
+		AddToDirtyRect(&_cRect);
 	}
 
 	// Now establish the sprite's new position
@@ -443,11 +443,11 @@ bool CBofSprite::UpdateDirtyRect(CBofWindow *pWnd, CBofSprite *pPrimarySprite) {
 			// Run thru the sprite list
 			while (pSprite != nullptr) {
 				// and paint each partial sprite overlap to the work area
-				if (pSprite->m_bPositioned && cRect.IntersectRect(&pSprite->m_cRect, pRect)) {
+				if (pSprite->m_bPositioned && cRect.IntersectRect(&pSprite->_cRect, pRect)) {
 					if (pPrimarySprite != pSprite)
 						m_pTouchedSprite = pSprite;
 
-					cSrcRect = cRect - pSprite->m_cRect.TopLeft();
+					cSrcRect = cRect - pSprite->_cRect.TopLeft();
 					cSrcRect += pSprite->m_cImageRect.TopLeft();
 					cRect -= pRect->TopLeft();
 
@@ -492,12 +492,12 @@ bool CBofSprite::UpdateDirtyRect(CBofBitmap *pBmp, CBofSprite *pPrimarySprite) {
 	// Run thru the sprite list
 	while (pSprite != nullptr) {
 		// and paint each partial sprite overlap to the work area
-		if (pSprite->m_bPositioned && cRect.IntersectRect(&pSprite->m_cRect, pRect)) {
+		if (pSprite->m_bPositioned && cRect.IntersectRect(&pSprite->_cRect, pRect)) {
 
 			if (pPrimarySprite != pSprite)
 				m_pTouchedSprite = pSprite;
 
-			CBofRect cSrcRect = cRect - pSprite->m_cRect.TopLeft();
+			CBofRect cSrcRect = cRect - pSprite->_cRect.TopLeft();
 			cSrcRect += pSprite->m_cImageRect.TopLeft();
 
 			pSprite->m_pImage->paint(pBmp, &cRect, &cSrcRect, pSprite->m_nMaskColor);
@@ -560,7 +560,7 @@ void CBofSprite::BatchErase() {
 	if (m_bPositioned) {
 		m_bPositioned = false;
 
-		AddToDirtyRect(&m_cRect);
+		AddToDirtyRect(&_cRect);
 	}
 }
 
@@ -576,7 +576,7 @@ bool CBofSprite::TestInterception(CBofSprite *pTestSprite, CBofPoint *pPoint) {
 
 			CBofRect overlapRect; // Area of overlap between rectangles
 			// Use simple rectangle screening first
-			if (overlapRect.IntersectRect(&m_cRect, &pTestSprite->m_cRect)) {
+			if (overlapRect.IntersectRect(&_cRect, &pTestSprite->_cRect)) {
 				// ... and if that succeeds, see if we
 				// ... have image masks that overlap
 				if ((m_nMaskColor == NOT_TRANSPARENT) || (pTestSprite->m_nMaskColor == NOT_TRANSPARENT) || SpritesOverlap(pTestSprite, pPoint)) {
@@ -605,7 +605,7 @@ CBofSprite *CBofSprite::Interception(CBofRect *pNewRect, CBofSprite *pTestSprite
 			CBofRect overlapRect; // Area of overlap between rectangles
 			// Sprites touch if their rectangles intersect.
 			// does our sprite overlap another?
-			if (overlapRect.IntersectRect(pNewRect, &pSprite->m_cRect))
+			if (overlapRect.IntersectRect(pNewRect, &pSprite->_cRect))
 				// ... if so return a pointer to it
 				return pSprite;
 		}
@@ -644,15 +644,15 @@ bool CBofSprite::SpritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint) {
 
 	// If the sprite's rectangles overlap
 	CBofRect overlapRect;
-	if (overlapRect.IntersectRect(&m_cRect, &pSprite->m_cRect)) {
+	if (overlapRect.IntersectRect(&_cRect, &pSprite->_cRect)) {
 		int32 dx = overlapRect.Width();
 		int32 dy = overlapRect.Height();
 
-		int32 x1 = overlapRect.left - m_cRect.left + m_cImageRect.left;
-		int32 y1 = overlapRect.top - m_cRect.top + m_cImageRect.top;
+		int32 x1 = overlapRect.left - _cRect.left + m_cImageRect.left;
+		int32 y1 = overlapRect.top - _cRect.top + m_cImageRect.top;
 
-		int32 x2 = overlapRect.left - pSprite->m_cRect.left + pSprite->m_cImageRect.left;
-		int32 y2 = overlapRect.top - pSprite->m_cRect.top + pSprite->m_cImageRect.top;
+		int32 x2 = overlapRect.left - pSprite->_cRect.left + pSprite->m_cImageRect.left;
+		int32 y2 = overlapRect.top - pSprite->_cRect.top + pSprite->m_cImageRect.top;
 
 		int32 dx1 = m_pImage->WidthBytes();
 		int32 dx2 = pSprite->m_pImage->WidthBytes();
@@ -716,7 +716,7 @@ void CBofSprite::SetPosition(int x, int y) {
 	m_bPositioned = true;
 	m_cPosition.x = x;
 	m_cPosition.y = y;
-	m_cRect.SetRect(m_cPosition.x, m_cPosition.y, m_cPosition.x + m_cSize.cx - 1, m_cPosition.y + m_cSize.cy - 1);
+	_cRect.SetRect(m_cPosition.x, m_cPosition.y, m_cPosition.x + m_cSize.cx - 1, m_cPosition.y + m_cSize.cy - 1);
 }
 
 

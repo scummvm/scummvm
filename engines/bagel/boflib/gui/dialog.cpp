@@ -87,7 +87,7 @@ ErrorCode CBofDialog::create(const char *pszName, int x, int y, int nWidth, int 
 	m_nID = nControlID;
 
 	// Remember the name of this window
-	strncpy(m_szTitle, pszName, MAX_TITLE);
+	strncpy(_szTitle, pszName, MAX_TITLE);
 
 	// Calculate effective bounds
 	Common::Rect stRect(x, y, x + nWidth, y + nHeight);
@@ -95,11 +95,11 @@ ErrorCode CBofDialog::create(const char *pszName, int x, int y, int nWidth, int 
 		stRect.translate(pParent->GetWindowRect().left,
 						 pParent->GetWindowRect().top);
 
-	m_cRect = stRect;
+	_cRect = stRect;
 	delete _surface;
 	_surface = new Graphics::ManagedSurface(*g_engine->_screen, stRect);
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -178,7 +178,7 @@ ErrorCode CBofDialog::paint(CBofRect *pRect) {
 		PaintBackdrop(pRect, COLOR_WHITE);
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -187,10 +187,10 @@ ErrorCode CBofDialog::paintBackground() {
 
 	// Paint back the background
 	if (_pDlgBackground != nullptr) {
-		m_errCode = _pDlgBackground->paint(this, 0, 0);
+		_errCode = _pDlgBackground->paint(this, 0, 0);
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -205,7 +205,7 @@ ErrorCode CBofDialog::saveBackground() {
 		// Save a copy of the background
 		_pDlgBackground = new CBofBitmap(Width(), Height(), pPalette);
 		if (_pDlgBackground != nullptr) {
-			_pDlgBackground->CaptureScreen(this, &m_cRect);
+			_pDlgBackground->CaptureScreen(this, &_cRect);
 			_pDlgBackground->SetReadOnly(true);
 
 		} else {
@@ -215,7 +215,7 @@ ErrorCode CBofDialog::saveBackground() {
 
 	_bFirstTime = false;
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -223,7 +223,7 @@ ErrorCode CBofDialog::killBackground() {
 	delete _pDlgBackground;
 	_pDlgBackground = nullptr;
 
-	return m_errCode;
+	return _errCode;
 }
 
 

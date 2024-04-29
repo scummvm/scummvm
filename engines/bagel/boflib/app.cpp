@@ -108,12 +108,12 @@ ErrorCode CBofApp::PreInit() {
 		}
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 
 ErrorCode CBofApp::initialize() {
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -178,17 +178,17 @@ ErrorCode CBofApp::runApp() {
 		limiter.startFrame();
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 
 ErrorCode CBofApp::shutdown() {
-	return m_errCode;
+	return _errCode;
 }
 
 
 ErrorCode CBofApp::PreShutDown() {
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBofApp::PostShutDown() {
@@ -205,7 +205,7 @@ ErrorCode CBofApp::PostShutDown() {
 		m_pDefPalette = nullptr;
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 void CBofApp::SetPalette(CBofPalette *pPalette) {

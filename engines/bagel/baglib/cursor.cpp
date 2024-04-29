@@ -116,7 +116,7 @@ ErrorCode CBagCursor::load(CBofBitmap *bmp) {
 
 	_bitmap = bmp;
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBagCursor::load(const char *fileName, CBofPalette *pal) {
@@ -127,7 +127,7 @@ ErrorCode CBagCursor::load(const char *fileName, CBofPalette *pal) {
 
 	_bitmap = LoadBitmap(fileName, pal, _sharedPalFl);
 
-	return m_errCode;
+	return _errCode;
 }
 
 void CBagCursor::unLoad() {

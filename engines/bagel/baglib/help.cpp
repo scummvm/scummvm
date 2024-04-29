@@ -161,7 +161,7 @@ ErrorCode CBagHelp::attach() {
 
 	CBagCursor::showSystemCursor();
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -189,7 +189,7 @@ ErrorCode CBagHelp::Detach() {
 
 	CBofApp::GetApp()->SetPalette(m_pSavePalette);
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBagHelp::SetHelpFile(const char *pszTextFile) {
@@ -198,7 +198,7 @@ ErrorCode CBagHelp::SetHelpFile(const char *pszTextFile) {
 
 	m_cTextFile = pszTextFile;
 
-	return m_errCode;
+	return _errCode;
 }
 
 

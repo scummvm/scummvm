@@ -121,12 +121,12 @@ CBagOptWindow::CBagOptWindow() {
 	m_cSystemData.m_nMusicVolume = VOLUME_DEFAULT;
 	m_cSystemData.m_nSoundVolume = VOLUME_DEFAULT;
 
-	m_cColorScheme.m_cFace = RGB(123, 156, 206);
-	m_cColorScheme.m_cHighlight = RGB(255, 255, 255);
-	m_cColorScheme.m_cShadow = RGB(255, 255, 255);
-	m_cColorScheme.m_cText = RGB(0, 0, 0);
-	m_cColorScheme.m_cTextDisabled = RGB(255, 255, 255);
-	m_cColorScheme.m_cOutline = RGB(123, 156, 206);
+	m_cColorScheme._cFace = RGB(123, 156, 206);
+	m_cColorScheme._cHighlight = RGB(255, 255, 255);
+	m_cColorScheme._cShadow = RGB(255, 255, 255);
+	m_cColorScheme._cText = RGB(0, 0, 0);
+	m_cColorScheme._cTextDisabled = RGB(255, 255, 255);
+	m_cColorScheme._cOutline = RGB(123, 156, 206);
 
 	// Don't need to save the background behind this dialog
 	_lFlags &= ~BOFDLG_SAVEBACKGND;
@@ -184,7 +184,7 @@ ErrorCode CBagOptWindow::Detach() {
 
 	CBofApp::GetApp()->SetPalette(m_pSavePalette);
 
-	return m_errCode;
+	return _errCode;
 }
 
 void CBagOptWindow::onPaint(CBofRect *pRect) {
@@ -322,14 +322,14 @@ ErrorCode CBagOptWindow::attach() {
 	cRect.SetRect(FLYTHROUGHS_LEFT, FLYTHROUGHS_TOP, FLYTHROUGHS_LEFT + CHECKBOX_WIDTH, FLYTHROUGHS_TOP + CHECKBOX_HEIGHT);
 	if ((m_pFlythroughs = new CBofCheckButton()) != nullptr) {
 		m_pFlythroughs->loadColorScheme(&m_cColorScheme);
-		m_errCode = m_pFlythroughs->create("", &cRect, this, FLYTHROUGHS_ID);
+		_errCode = m_pFlythroughs->create("", &cRect, this, FLYTHROUGHS_ID);
 		m_pFlythroughs->Show();
 	}
 
 	cRect.SetRect(PANIMATIONS_LEFT, PANIMATIONS_TOP, PANIMATIONS_LEFT + CHECKBOX_WIDTH, PANIMATIONS_TOP + CHECKBOX_HEIGHT);
 	if ((m_pPanimations = new CBofCheckButton()) != nullptr) {
 		m_pPanimations->loadColorScheme(&m_cColorScheme);
-		m_errCode = m_pPanimations->create("", &cRect, this, PAN_CHECK_ID);
+		_errCode = m_pPanimations->create("", &cRect, this, PAN_CHECK_ID);
 		m_pPanimations->Show();
 	}
 
@@ -339,7 +339,7 @@ ErrorCode CBagOptWindow::attach() {
 
 	CBagCursor::showSystemCursor();
 
-	return m_errCode;
+	return _errCode;
 }
 
 void CBagOptWindow::PutDialogData() {

@@ -223,7 +223,7 @@ ErrorCode CBagSaveDialog::attach() {
 
 	CBagCursor::showSystemCursor();
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBagSaveDialog::Detach() {
@@ -259,7 +259,7 @@ ErrorCode CBagSaveDialog::Detach() {
 	// Restore the saved palette
 	CBofApp::GetApp()->SetPalette(m_pSavePalette);
 
-	return m_errCode;
+	return _errCode;
 }
 
 void CBagSaveDialog::onPaint(CBofRect *pRect) {

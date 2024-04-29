@@ -235,14 +235,14 @@ public:
 	CBofRect GetClientRect();
 
 	CBofRect GetRect() const {
-		return m_cRect;
+		return _cRect;
 	}
 
 	int Width() const {
-		return m_cRect.Width();
+		return _cRect.Width();
 	}
 	int Height() const {
-		return m_cRect.Height();
+		return _cRect.Height();
 	}
 
 	void ScreenToClient(CBofPoint *pPoint);
@@ -441,16 +441,16 @@ protected:
 	virtual void OnDeActivate();
 
 	// Window Data
-	char m_szTitle[MAX_TITLE] = { 0 };	// Title of window
+	char _szTitle[MAX_TITLE] = { 0 };	// Title of window
 	CBofRect m_cWindowRect;				// Screen based area of this window
-	CBofRect m_cRect;					// Window-based area of this window
+	CBofRect _cRect;					// Window-based area of this window
 	CBofBitmap *m_pBackdrop = nullptr;  // Backdrop bitmap
 	uint32 m_nID = 0;						// ID of this window
 
 	RGBCOLOR m_cBkColor = RGB(255, 255, 255);
 	RGBCOLOR m_cFgColor = RGB(0, 0, 0);
 
-	bool m_bCaptured = false;
+	bool _bCaptured = false;
 	Graphics::ManagedSurface *_surface = nullptr;
 
 	static CBofWindow *m_pWindowList;

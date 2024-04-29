@@ -62,7 +62,7 @@ public:
 	CBetArea(const CBetAreaDef &def);
 
 	// Data members
-	CBofRect m_cRect;
+	CBofRect _cRect;
 	int m_nBet = 0;
 	int m_nPayOff1 = 0;
 	int m_nPayOff2 = 0;

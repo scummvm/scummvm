@@ -596,7 +596,7 @@ ErrorCode CBagMenuDlg::create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRec
 		SetBackdrop(pBmp);
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 

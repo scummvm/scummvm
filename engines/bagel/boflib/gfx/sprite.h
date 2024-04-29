@@ -117,15 +117,15 @@ public:
 	}
 
 	CBofRect GetRect() const {
-		return m_cRect;
+		return _cRect;
 	}
 
 	int Height() const {
-		return m_cRect.Height();
+		return _cRect.Height();
 	}
 
 	int Width() const {
-		return m_cRect.Width();
+		return _cRect.Width();
 	}
 
 	void SetMaskColor(int nColor) {
@@ -209,7 +209,7 @@ public:
 protected:
 	CBofPoint m_cPosition; // Upper left corner of sprite on display
 	CBofSize m_cSize;      // dx/dy size of the sprite bitmap
-	CBofRect m_cRect;      // Bounding rectangle on display
+	CBofRect _cRect;      // Bounding rectangle on display
 	CBofRect m_cImageRect; // Bounding rectangle within image bitmap
 
 	int m_nMaskColor; // Transparent color index for this sprite

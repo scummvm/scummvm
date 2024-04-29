@@ -62,7 +62,7 @@ protected:
 	static ErrorCode m_errGlobal;
 	static int m_nErrorCount;
 
-	ErrorCode m_errCode;
+	ErrorCode _errCode;
 
 protected:
 	virtual void bofMessageBox(const Common::String &content, const Common::String &title) {}
@@ -73,7 +73,7 @@ public:
 
 	/**
 	 * Logs specified error to log file.
-	 * @remarks     Sets m_errCode to specified error condition, and logs the
+	 * @remarks     Sets _errCode to specified error condition, and logs the
 	 *                   error.
 	 * @param errCode       Error to report
 	 * @param format        printf style format string
@@ -81,13 +81,13 @@ public:
 	void ReportError(ErrorCode errCode, const char *format = nullptr, ...);
 
 	bool ErrorOccurred() {
-		return m_errCode != ERR_NONE;
+		return _errCode != ERR_NONE;
 	}
 	ErrorCode GetErrorCode() {
-		return m_errCode;
+		return _errCode;
 	}
 	void ClearError() {
-		m_errCode = ERR_NONE;
+		_errCode = ERR_NONE;
 	}
 
 	static void initialize();

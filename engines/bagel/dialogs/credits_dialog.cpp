@@ -179,7 +179,7 @@ ErrorCode CBagCreditsDialog::LoadNextTextFile() {
 		}
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 int CBagCreditsDialog::LinesPerPage() {
@@ -306,7 +306,7 @@ ErrorCode CBagCreditsDialog::DisplayCredits() {
 		NextScreen();
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBagCreditsDialog::NextScreen() {
@@ -330,7 +330,7 @@ ErrorCode CBagCreditsDialog::NextScreen() {
 		Close();
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBagCreditsDialog::PaintLine(int nLine, char *pszText) {
@@ -349,7 +349,7 @@ ErrorCode CBagCreditsDialog::PaintLine(int nLine, char *pszText) {
 		PaintShadowedText(m_pCreditsBmp, &cRect, pszText, g_cScreen[m_iScreen].m_nPointSize, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_CENTER);
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 void CBagCreditsDialog::NextLine() {

@@ -142,7 +142,7 @@ ErrorCode SBarVidWnd::attach() {
 		}
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -166,7 +166,7 @@ ErrorCode SBarVidWnd::detach() {
 
 	CMainWindow::detach();
 
-	return m_errCode;
+	return _errCode;
 }
 
 
@@ -287,7 +287,7 @@ ErrorCode SBarVidWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		PaintText(pBmp, &cRect, szBuf, 14, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_DEFAULT, FONT_MONO);
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 CBagObject *SBarVidWnd::OnNewButtonObject(const CBofString &) {

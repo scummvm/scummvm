@@ -104,7 +104,7 @@ ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CB
 	Center();
 	SetBackdrop(bitmap);
 
-	return m_errCode;
+	return _errCode;
 }
 
 void CDevDlg::onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {

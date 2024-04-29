@@ -71,7 +71,7 @@ bool CBofMovie::Open(const char *sFilename, CBofRect *pBounds) {
 	}
 
 	if (pBounds != nullptr) {
-		m_cRect = *pBounds;
+		_cRect = *pBounds;
 	}
 
 	if (OpenMovie(sFilename)) {
@@ -208,7 +208,7 @@ void  CBofMovie::onClose() {
 
 void CBofMovie::OnMovieDone() {
 	if (!m_bLoop) {
-		if (m_bCaptured)
+		if (_bCaptured)
 			ReleaseCapture();
 
 		GetParent()->enable();

@@ -292,7 +292,7 @@ private:
 
 protected:
 	CBofString  m_cCurString;       // text to be displayed
-	CBofRect    m_cRect;            // bounding rectangle of text area
+	CBofRect    _cRect;            // bounding rectangle of text area
 	CBofPoint   m_cPosition;        // upper left corner of text displayed
 	CBofSize    m_cSize;            // dx/dy size of the text bitmap
 	RGBCOLOR    m_cTextColor;       // color to use for the text itself

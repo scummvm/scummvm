@@ -67,7 +67,7 @@ ErrorCode CBagWield::attach() {
 		}
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBagWield::detach() {
@@ -153,7 +153,7 @@ ErrorCode CBagWield::DeactivateLocalObject(CBagObject *pObj) {
 		SetCurrObj(nullptr);
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 

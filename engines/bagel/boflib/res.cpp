@@ -68,7 +68,7 @@ ErrorCode CBofStringTable::Load(const char *pszFileName) {
 	// Don't need this file open anymore
 	Close();
 
-	return m_errCode;
+	return _errCode;
 }
 
 void CBofStringTable::Release() {
@@ -139,7 +139,7 @@ ErrorCode CBofStringTable::BuildTable() {
 		}
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 const char *CBofStringTable::GetString(int nId) {

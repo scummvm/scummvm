@@ -566,7 +566,7 @@ ErrorCode CBagPDA::attachActiveObjects() {
 		bAlready = false;
 	}
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode CBagPDA::detachActiveObjects() {

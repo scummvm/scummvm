@@ -299,7 +299,7 @@ ErrorCode  SBarSlotWnd::attach() {
 
 	CBofCursor::Show();
 
-	return m_errCode;
+	return _errCode;
 }
 
 ErrorCode SBarSlotWnd::detach() {
@@ -381,7 +381,7 @@ ErrorCode SBarSlotWnd::detach() {
 	// One turn has gone by
 	VARMNGR->IncrementTimers();
 
-	return m_errCode;
+	return _errCode;
 }
 
 void SBarSlotWnd::AddBet(int nBetVal) {
