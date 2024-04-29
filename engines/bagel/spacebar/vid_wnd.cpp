@@ -284,7 +284,7 @@ ErrorCode SBarVidWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 		Common::sprintf_s(szBuf, "%02d:%02d:%02d", nHr, nMn, nSc);
 
-		PaintText(pBmp, &cRect, szBuf, 14, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_DEFAULT, FONT_MONO);
+		paintText(pBmp, &cRect, szBuf, 14, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_DEFAULT, FONT_MONO);
 	}
 
 	return _errCode;

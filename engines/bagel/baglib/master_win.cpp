@@ -2024,7 +2024,7 @@ ErrorCode PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString &
 		cBmp.line(left + i, top + i - 1, right - i, top + i - 1, c2);
 	}
 
-	PaintText(&cBmp, &r, cString, nSize, nWeight, cColor, nJustify, nFormat, nFont);
+	paintText(&cBmp, &r, cString, nSize, nWeight, cColor, nJustify, nFormat, nFont);
 
 	cBmp.paint(pBmp, pRect);
 
@@ -2082,7 +2082,7 @@ ErrorCode PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &
 		cBmp.line(left + i, top + i - 1, right - i, top + i - 1, c2);
 	}
 
-	PaintText(&cBmp, &r, cString, nSize, nWeight, cColor, nJustify, nFormat, nFont);
+	paintText(&cBmp, &r, cString, nSize, nWeight, cColor, nJustify, nFormat, nFont);
 
 	cBmp.paint(pWin, pRect);
 

@@ -238,7 +238,7 @@ ErrorCode  SBarSlotWnd::attach() {
 		m_pCredText = new CBofText;
 		if (m_pCredText != nullptr) {
 			CBofRect cRect(CreditRect.left, CreditRect.top, CreditRect.right, CreditRect.bottom);
-			m_pCredText->SetupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
+			m_pCredText->setupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
 			m_pCredText->setColor(RGB(255, 255, 255));
 
 			m_pCredText->SetSize(20);
@@ -256,7 +256,7 @@ ErrorCode  SBarSlotWnd::attach() {
 		m_pBetText = new CBofText;
 		if (m_pBetText != nullptr) {
 			CBofRect cRect(BetRect.left, BetRect.top, BetRect.right, BetRect.bottom);
-			m_pBetText->SetupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
+			m_pBetText->setupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
 			m_pBetText->setColor(RGB(255, 255, 255));
 
 			m_pBetText->SetSize(20);
@@ -274,7 +274,7 @@ ErrorCode  SBarSlotWnd::attach() {
 		m_pOddsText = new CBofText;
 		if (m_pOddsText != nullptr) {
 			CBofRect cRect(OddRect.left, OddRect.top, OddRect.right, OddRect.bottom);
-			m_pOddsText->SetupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
+			m_pOddsText->setupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
 			m_pOddsText->setColor(RGB(255, 255, 255));
 
 			m_pOddsText->SetSize(32);

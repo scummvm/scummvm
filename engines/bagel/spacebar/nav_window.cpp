@@ -579,18 +579,18 @@ void CNavWindow::RefreshData() {
 	pBmp->paint(&cBmp, 0, 0, &cRect);
 
 	cRect.SetRect(0, 10, 199, 25);
-	PaintText(&cBmp, &cRect, BuildString("Current Port of call:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, BuildString("Current Port of call:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.left += 10;       // Indent this section
 	cRect.top += 15;
 	cRect.bottom += 15;
-	PaintText(&cBmp, &cRect, BuildString("%s", m_pPortName->GetBuffer()), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, BuildString("%s", m_pPortName->GetBuffer()), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.left -= 10;       // Un-indent
 
 	// Leave blank space before next section
 	cRect.top += 30;
 	cRect.bottom += 30;
 
-	PaintText(&cBmp, &cRect, BuildString("Current Manifest:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, BuildString("Current Manifest:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 
 	cRect.left += 10;       // Indent this section
 	char szBuf[100];
@@ -603,11 +603,11 @@ void CNavWindow::RefreshData() {
 				Common::sprintf_s(szBuf, "%3d tons of %s", m_pLevel[i].cargo.Weight, m_pLevel[i].cargo.m_pszCargo/*, m_pLevel[i].Name*/);
 			else
 				Common::sprintf_s(szBuf, "%3d ton of %s", m_pLevel[i].cargo.Weight, m_pLevel[i].cargo.m_pszCargo/*, m_pLevel[i].Name*/);
-			PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+			paintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 			cRect.top += 15;
 			cRect.bottom += 15;
 			Common::sprintf_s(szBuf, "    for %s", m_pLevel[i].Name);
-			PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+			paintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 		};
 		i++;
 	};
@@ -617,21 +617,21 @@ void CNavWindow::RefreshData() {
 	cRect.top += 30;
 	cRect.bottom += 30;
 
-	PaintText(&cBmp, &cRect, BuildString("Current Fuel:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, BuildString("Current Fuel:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.left += 10;       // Indent this section
 	cRect.top += 15;
 	cRect.bottom += 15;
 	if (m_fuel != 1)
-		PaintText(&cBmp, &cRect, BuildString("%3d tons", m_fuel), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+		paintText(&cBmp, &cRect, BuildString("%3d tons", m_fuel), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	else
-		PaintText(&cBmp, &cRect, BuildString("%3d ton", m_fuel), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+		paintText(&cBmp, &cRect, BuildString("%3d ton", m_fuel), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.left -= 10;       // Un-indent
 
 	// Leave blank space before next section
 	cRect.top += 30;
 	cRect.bottom += 30;
 
-	PaintText(&cBmp, &cRect, BuildString("Current Tonnage:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, BuildString("Current Tonnage:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.top += 15;
 	cRect.bottom += 15;
 
@@ -640,36 +640,36 @@ void CNavWindow::RefreshData() {
 		Common::sprintf_s(szBuf, "%3d tons Cargo", m_cargo);
 	else
 		Common::sprintf_s(szBuf, "%3d ton Cargo", m_cargo);
-	PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.top += 15;
 	cRect.bottom += 15;
 	if (m_ship != 1)
 		Common::sprintf_s(szBuf, "%3d tons Ship", m_ship);
 	else
 		Common::sprintf_s(szBuf, "%3d ton Ship", m_ship);
-	PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.top += 15;
 	cRect.bottom += 15;
 	if (m_fuel != 1)
 		Common::sprintf_s(szBuf, "%3d tons Fuel", m_fuel);
 	else
 		Common::sprintf_s(szBuf, "%3d ton Fuel", m_fuel);
-	PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.top += 15;
 	cRect.bottom += 15;
 	Common::sprintf_s(szBuf, "%3d tons TOTAL", m_ship + m_fuel + m_cargo);
-	PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.left -= 10;       // Un-indent
 
 	cRect.top += 30;
 	cRect.bottom += 30;
 	Common::sprintf_s(szBuf, "Simulation Level:");
-	PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.left += 10;       // Indent
 	cRect.top += 15;
 	cRect.bottom += 15;
 	Common::sprintf_s(szBuf, "%s", g_LevelTitle[m_level]);
-	PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.left -= 10;       // Un-indent
 	cBmp.paint(this, 443, 0);
 }

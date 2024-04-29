@@ -110,7 +110,7 @@ public:
 	SrafTextScreen(const CBofString &str, bool isText = false);
 	virtual ~SrafTextScreen();
 	int CreateTextScreen(CBofWindow *pParent = nullptr);
-	void DisplayTextScreen();
+	void displayTextScreen();
 
 	void onBofButton(CBofObject *, int) override;
 	void onClose() override;
@@ -222,7 +222,7 @@ public:
 	void OnButtonCodeWords(CBofButton *pButton, int nState);
 
 	// biography support routines
-	void DisplayTextScreen(CBofString &);
+	void displayTextScreen(CBofString &);
 
 	void RecalcSellerSummaryList();
 	void RecalcBuyerSummaryList();

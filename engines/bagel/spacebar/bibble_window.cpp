@@ -305,7 +305,7 @@ ErrorCode CBibbleWindow::attach() {
 	if ((m_pCreditsText = new CBofText) != nullptr) {
 		CBofRect cRect(CREDITS_AREA_X1, CREDITS_AREA_Y1, CREDITS_AREA_X2, CREDITS_AREA_Y2);
 
-		m_pCreditsText->SetupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
+		m_pCreditsText->setupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
 		m_pCreditsText->setColor(RGB(255, 255, 255));
 
 		m_pCreditsText->SetSize(MapWindowsPointSize(20));
@@ -564,7 +564,7 @@ void CBibbleWindow::onPaint(CBofRect *pRect) {
 			cRect = g_engine->g_cBetAreas[i]._cRect;
 			cRect.top += cRect.height() / 2;
 
-			PaintText(pBmp, &cRect, szBuf, 16, TEXT_NORMAL, CTEXT_COLOR, JUSTIFY_RIGHT, FORMAT_BOT_RIGHT);
+			paintText(pBmp, &cRect, szBuf, 16, TEXT_NORMAL, CTEXT_COLOR, JUSTIFY_RIGHT, FORMAT_BOT_RIGHT);
 		}
 
 		// Now update the screen
@@ -1152,7 +1152,7 @@ ErrorCode CBibbleWindow::Highlight(CBetArea *pArea, byte nColor) {
 	cRect = cBmp.getRect();
 	cRect.top += cRect.height() / 2;
 
-	PaintText(&cBmp, &cRect, szBuf, 16, TEXT_NORMAL, CTEXT_COLOR, JUSTIFY_RIGHT, FORMAT_BOT_RIGHT);
+	paintText(&cBmp, &cRect, szBuf, 16, TEXT_NORMAL, CTEXT_COLOR, JUSTIFY_RIGHT, FORMAT_BOT_RIGHT);
 
 	// Paint result to screen
 	cBmp.paint(this, &pArea->_cRect);
@@ -1180,7 +1180,7 @@ ErrorCode CBibbleWindow::UnHighlight(CBetArea *pArea) {
 	CBofRect cRect = cBmp.getRect();
 	cRect.top += cRect.height() / 2;
 
-	PaintText(&cBmp, &cRect, szBuf, 16, TEXT_NORMAL, CTEXT_COLOR, JUSTIFY_RIGHT, FORMAT_BOT_RIGHT);
+	paintText(&cBmp, &cRect, szBuf, 16, TEXT_NORMAL, CTEXT_COLOR, JUSTIFY_RIGHT, FORMAT_BOT_RIGHT);
 
 	// Paint to screen
 	cBmp.paint(this, &pArea->_cRect);
