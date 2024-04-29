@@ -930,7 +930,7 @@ ErrorCode SrafComputer::attach() {
 				CBofBitmap *pDis = LoadBitmap(BuildSrafDir(g_stButtons[i].m_pszDisabled), pPal);
 
 				m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
-				m_pButtons[i]->Create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
+				m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
 				if (i != QUIT_BUTTON)
 					m_pButtons[i]->Hide();
 			}
@@ -1164,7 +1164,7 @@ ErrorCode SrafComputer::CreateListBox() {
 		m_pLBox = new CBofListBox;
 		if (m_pLBox != nullptr) {
 
-			error = m_pLBox->Create("ListBox", &gCompDisplay, this);
+			error = m_pLBox->create("ListBox", &gCompDisplay, this);
 			if (error != ERR_NONE) {
 				return error;
 			}
@@ -3763,7 +3763,7 @@ void SrafComputer::DisplayTextScreen(CBofString &sStr) {
 
 	m_pTextOnlyScreen->CreateTextScreen(this);
 
-	m_pTextOnlyScreen->DoModal();
+	m_pTextOnlyScreen->doModal();
 	delete m_pTextOnlyScreen;
 	m_pTextOnlyScreen = nullptr;
 
@@ -4383,7 +4383,7 @@ void SrafComputer::DisplayMessage(const char *szMsg) {
 	if (m_pTextOnlyScreen != nullptr) {
 		m_pTextOnlyScreen->CreateTextScreen(this);
 
-		m_pTextOnlyScreen->DoModal();
+		m_pTextOnlyScreen->doModal();
 		delete m_pTextOnlyScreen;
 		m_pTextOnlyScreen = nullptr;
 
@@ -4577,7 +4577,7 @@ int SrafTextScreen::CreateTextScreen(CBofWindow *pParent) {
 	CBofString  sStr(szLocalBuff, 256);
 
 	// Create our parent window
-	Create("Sraffin Text", &gTextWindow, pParent, 0);
+	create("Sraffin Text", &gTextWindow, pParent, 0);
 
 	// Needs the computer bitmap for a backdrop
 	SetBackdrop(SrafComputer::GetComputerBackdrop(), false);
@@ -4596,7 +4596,7 @@ int SrafTextScreen::CreateTextScreen(CBofWindow *pParent) {
 
 		m_pOKButton->LoadBitmaps(pUp, pDown, pFocus, pDis);
 
-		m_pOKButton->Create(g_stButtons[DONE_BUTTON].m_pszName,
+		m_pOKButton->create(g_stButtons[DONE_BUTTON].m_pszName,
 		                    g_stButtons[DONE_BUTTON].m_nLeft,
 		                    g_stButtons[DONE_BUTTON].m_nTop,
 		                    g_stButtons[DONE_BUTTON].m_nWidth,

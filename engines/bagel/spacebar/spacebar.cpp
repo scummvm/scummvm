@@ -125,7 +125,7 @@ ErrorCode SpaceBarEngine::initialize() {
 				CBofWindow *pLastWin = g_hackWindow;
 				g_hackWindow = &cDlg;
 
-				int nRetVal = cDlg.DoModal();
+				int nRetVal = cDlg.doModal();
 
 				g_hackWindow = pLastWin;
 

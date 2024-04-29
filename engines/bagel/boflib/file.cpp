@@ -50,7 +50,7 @@ CBofFile::~CBofFile() {
 	Close();
 }
 
-ErrorCode CBofFile::Create(const char *pszFileName, uint32 lFlags) {
+ErrorCode CBofFile::create(const char *pszFileName, uint32 lFlags) {
 	Assert(IsValidObject(this));
 	Assert(pszFileName != nullptr);
 	Assert(strlen(pszFileName) < MAX_DIRPATH);
@@ -103,7 +103,7 @@ ErrorCode CBofFile::Open(const char *pszFileName, uint32 lFlags) {
 
 	if ((lFlags & CBF_CREATE) && ((lFlags & CBF_SAVEFILE) ||
 			!Common::File::exists(pszFileName))) {
-		Create(pszFileName, lFlags);
+		create(pszFileName, lFlags);
 
 	} else {
 		// Remember this files' name

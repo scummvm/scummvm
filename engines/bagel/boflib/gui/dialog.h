@@ -84,7 +84,7 @@ public:
 	 * @param nControlID	Control Id
 	 * @return				Error return code
 	 */
-	ErrorCode Create(const char *pszName, int x = 0, int y = 0, int nWidth = USE_DEFAULT, int nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
+	ErrorCode create(const char *pszName, int x = 0, int y = 0, int nWidth = USE_DEFAULT, int nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
 	/**
 	 * Creates the dialog
@@ -94,38 +94,38 @@ public:
 	 * @param nControlID	Control Id
 	 * @return				Error return code
 	 */
-	ErrorCode Create(const char *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
+	ErrorCode create(const char *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
 	/**
 	 * Set the dialog flags
 	 */
-	void SetFlags(uint32 lFlags) {
+	void setFlags(uint32 lFlags) {
 		_lFlags = lFlags;
 	}
 
 	/**
 	 * Return the dialog's flags
 	 */
-	uint32 GetFlags() const {
+	uint32 getFlags() const {
 		return _lFlags;
 	}
 
 	/**
 	 * Show the dialog as a modal
 	 */
-	int DoModal();
+	int doModal();
 
 	/**
 	 * End the dialog modal display
 	 */
-	void EndModal() {
+	void endModal() {
 		_bEndDialog = true;
 	}
 
 	/**
 	 * Set the dialog's return value
 	 */
-	void SetReturnValue(int nValue) {
+	void setReturnValue(int nValue) {
 		_nReturnValue = nValue;
 	}
 
@@ -133,7 +133,7 @@ public:
 	 * Get the dialog's return value
 	 * @return
 	 */
-	int GetReturnValue() const {
+	int getReturnValue() const {
 		return _nReturnValue;
 	}
 };

@@ -46,7 +46,7 @@ bool CBagExam::initExam() {
 	Pause();
 
 	CBofCursor::Show();
-	DoModal();
+	doModal();
 	CBofCursor::Hide();
 
 	return true;

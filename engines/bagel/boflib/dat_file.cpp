@@ -138,7 +138,7 @@ ErrorCode CBofDataFile::ReleaseFile() {
 	return m_errCode;
 }
 
-ErrorCode CBofDataFile::Create() {
+ErrorCode CBofDataFile::create() {
 	Assert(IsValidObject(this));
 
 	HEAD_INFO stHeaderInfo;
@@ -163,7 +163,7 @@ ErrorCode CBofDataFile::Create() {
 		stHeaderInfo.m_lAddress = HEAD_INFO::size();
 
 		// Create the file
-		if (CBofFile::Create(m_szFileName, m_lFlags) == ERR_NONE) {
+		if (CBofFile::create(m_szFileName, m_lFlags) == ERR_NONE) {
 			// Write empty header info
 			if (Write(stHeaderInfo) == ERR_NONE) {
 
@@ -190,9 +190,9 @@ ErrorCode CBofDataFile::Open() {
 			if (!(m_lFlags & CDF_READONLY)) {
 				if (m_lFlags & CDF_SAVEFILE) {
 					if (m_lFlags & CDF_CREATE)
-						Create();
+						create();
 				} else if (!FileExists(m_szFileName))
-					Create();
+					create();
 			}
 
 			if (_stream == nullptr) {

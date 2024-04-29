@@ -98,10 +98,10 @@ public:
 		return &m_szFileName[0];
 	}
 
-	void SetFlags(uint16 wFlags) {
+	void setFlags(uint16 wFlags) {
 		m_wFlags = wFlags;
 	}
-	uint16 GetFlags() {
+	uint16 getFlags() {
 		return m_wFlags;
 	}
 

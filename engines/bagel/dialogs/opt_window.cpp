@@ -244,7 +244,7 @@ ErrorCode CBagOptWindow::attach() {
 
 			m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
 
-			m_pButtons[i]->Create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
+			m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
 			m_pButtons[i]->Show();
 		} else {
 			ReportError(ERR_MEMORY);
@@ -270,7 +270,7 @@ ErrorCode CBagOptWindow::attach() {
 	CBofRect cRect;
 	cRect.SetRect(73, 48, 73 + 120 - 1, 48 + 20 - 1);
 	if ((m_pMidiVolumeScroll = new CBofScrollBar) != nullptr) {
-		m_pMidiVolumeScroll->Create("", &cRect, this, MIDI_VOL_ID);
+		m_pMidiVolumeScroll->create("", &cRect, this, MIDI_VOL_ID);
 
 		m_pMidiVolumeScroll->LoadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
 		m_pMidiVolumeScroll->SetScrollRange(VOLUME_MIN, VOLUME_MAX, true);
@@ -283,7 +283,7 @@ ErrorCode CBagOptWindow::attach() {
 	// Digital Audio volume control
 	cRect.SetRect(73, 98, 73 + 120 - 1, 98 + 20 - 1);
 	if ((m_pWaveVolumeScroll = new CBofScrollBar) != nullptr) {
-		m_pWaveVolumeScroll->Create("", &cRect, this, WAVE_VOL_ID);
+		m_pWaveVolumeScroll->create("", &cRect, this, WAVE_VOL_ID);
 
 		m_pWaveVolumeScroll->LoadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
 		m_pWaveVolumeScroll->SetScrollRange(VOLUME_MIN, VOLUME_MAX, true);
@@ -296,7 +296,7 @@ ErrorCode CBagOptWindow::attach() {
 	// Pan Correction control
 	cRect.SetRect(73, 268, 73 + 120 - 1, 268 + 20 - 1);
 	if ((m_pCorrectionScroll = new CBofScrollBar) != nullptr) {
-		m_pCorrectionScroll->Create("", &cRect, this, CORRECTION_ID);
+		m_pCorrectionScroll->create("", &cRect, this, CORRECTION_ID);
 
 		m_pCorrectionScroll->LoadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
 		m_pCorrectionScroll->SetScrollRange(0, 6, true);
@@ -309,7 +309,7 @@ ErrorCode CBagOptWindow::attach() {
 	// Pan Speed control
 	cRect.SetRect(73, 318, 73 + 120 - 1, 318 + 20 - 1);
 	if ((m_pPanSpeedScroll = new CBofScrollBar) != nullptr) {
-		m_pPanSpeedScroll->Create("", &cRect, this, PANSPEED_ID);
+		m_pPanSpeedScroll->create("", &cRect, this, PANSPEED_ID);
 
 		m_pPanSpeedScroll->LoadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
 		m_pPanSpeedScroll->SetScrollRange(0, 5, true);
@@ -322,14 +322,14 @@ ErrorCode CBagOptWindow::attach() {
 	cRect.SetRect(FLYTHROUGHS_LEFT, FLYTHROUGHS_TOP, FLYTHROUGHS_LEFT + CHECKBOX_WIDTH, FLYTHROUGHS_TOP + CHECKBOX_HEIGHT);
 	if ((m_pFlythroughs = new CBofCheckButton()) != nullptr) {
 		m_pFlythroughs->LoadColorScheme(&m_cColorScheme);
-		m_errCode = m_pFlythroughs->Create("", &cRect, this, FLYTHROUGHS_ID);
+		m_errCode = m_pFlythroughs->create("", &cRect, this, FLYTHROUGHS_ID);
 		m_pFlythroughs->Show();
 	}
 
 	cRect.SetRect(PANIMATIONS_LEFT, PANIMATIONS_TOP, PANIMATIONS_LEFT + CHECKBOX_WIDTH, PANIMATIONS_TOP + CHECKBOX_HEIGHT);
 	if ((m_pPanimations = new CBofCheckButton()) != nullptr) {
 		m_pPanimations->LoadColorScheme(&m_cColorScheme);
-		m_errCode = m_pPanimations->Create("", &cRect, this, PAN_CHECK_ID);
+		m_errCode = m_pPanimations->create("", &cRect, this, PAN_CHECK_ID);
 		m_pPanimations->Show();
 	}
 

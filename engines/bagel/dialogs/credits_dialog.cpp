@@ -89,7 +89,7 @@ void CBagCreditsDialog::onInitDialog() {
 
 	CBofDialog::onInitDialog();
 
-	SetReturnValue(-1);
+	setReturnValue(-1);
 
 	CBofPalette *pPal;
 

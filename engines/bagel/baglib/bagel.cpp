@@ -284,10 +284,10 @@ void CBagel::showNextCDDialog(CBofWindow *parentWin, int diskId) {
 	CBofRect cRect = cNextCDDialog.GetBackdrop()->GetRect();
 
 	// Create the dialog box
-	cNextCDDialog.Create("NextCD", cRect.left, cRect.top, cRect.Width(), cRect.Height(), parentWin);
+	cNextCDDialog.create("NextCD", cRect.left, cRect.top, cRect.Width(), cRect.Height(), parentWin);
 	cNextCDDialog.Center();
 
-	cNextCDDialog.DoModal();
+	cNextCDDialog.doModal();
 }
 
 } // namespace Bagel

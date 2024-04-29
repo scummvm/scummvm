@@ -30,11 +30,11 @@ namespace Bagel {
 CBofEditText::CBofEditText(const char *pszName, int x, int y, int nWidth,
 		int nHeight, CBofWindow *pParent)
 		: CBofWindow(pszName, x, y, nWidth, nHeight, pParent) {
-	Create(pszName, x, y, nWidth, nHeight, pParent);
+	create(pszName, x, y, nWidth, nHeight, pParent);
 }
 
 
-ErrorCode CBofEditText::Create(const char *pszName, CBofRect *pRect,
+ErrorCode CBofEditText::create(const char *pszName, CBofRect *pRect,
 		CBofWindow *pParent, uint32 nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
@@ -54,11 +54,11 @@ ErrorCode CBofEditText::Create(const char *pszName, CBofRect *pRect,
 		nHeight = pRect->Height();
 	}
 
-	return Create(pszName, x, y, nWidth, nHeight, pParent, nControlID);
+	return create(pszName, x, y, nWidth, nHeight, pParent, nControlID);
 }
 
 
-ErrorCode CBofEditText::Create(const char *pszName, int x, int y,
+ErrorCode CBofEditText::create(const char *pszName, int x, int y,
 		int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);

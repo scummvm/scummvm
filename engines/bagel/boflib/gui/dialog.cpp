@@ -64,7 +64,7 @@ CBofDialog::CBofDialog(const char *pszFileName, CBofWindow *pParent, const uint3
 	CBofRect cRect = m_pBackdrop->GetRect();
 
 	// Create the dialog box
-	Create("DialogBox", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pParent, nID);
+	create("DialogBox", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pParent, nID);
 }
 
 CBofDialog::~CBofDialog() {
@@ -75,7 +75,7 @@ CBofDialog::~CBofDialog() {
 }
 
 
-ErrorCode CBofDialog::Create(const char *pszName, int x, int y, int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {
+ErrorCode CBofDialog::create(const char *pszName, int x, int y, int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
 
@@ -103,7 +103,7 @@ ErrorCode CBofDialog::Create(const char *pszName, int x, int y, int nWidth, int 
 }
 
 
-ErrorCode CBofDialog::Create(const char *pszName, CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
+ErrorCode CBofDialog::create(const char *pszName, CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
 
@@ -125,7 +125,7 @@ ErrorCode CBofDialog::Create(const char *pszName, CBofRect *pRect, CBofWindow *p
 		nHeight = pRect->Height();
 	}
 
-	return Create(pszName, x, y, nWidth, nHeight, pParent, nControlID);
+	return create(pszName, x, y, nWidth, nHeight, pParent, nControlID);
 }
 
 
@@ -241,7 +241,7 @@ void CBofDialog::onPaint(CBofRect *pRect) {
 }
 
 
-int CBofDialog::DoModal() {
+int CBofDialog::doModal() {
 	Assert(IsValidObject(this));
 
 	// The dialog box must have been successfully created first

@@ -281,7 +281,7 @@ ErrorCode CNavWindow::attach() {
 			CBofBitmap *pDis = LoadBitmap(MakeDir(g_NavButtons[i].m_pszDisabled), m_pPal);
 
 			m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
-			m_pButtons[i]->Create(g_NavButtons[i].m_pszName, g_NavButtons[i].m_nLeft, g_NavButtons[i].m_nTop, g_NavButtons[i].m_nWidth, g_NavButtons[i].m_nHeight, this, g_NavButtons[i].m_nID);
+			m_pButtons[i]->create(g_NavButtons[i].m_pszName, g_NavButtons[i].m_nLeft, g_NavButtons[i].m_nTop, g_NavButtons[i].m_nWidth, g_NavButtons[i].m_nHeight, this, g_NavButtons[i].m_nID);
 			m_pButtons[i]->Show();
 		} else {
 			ReportError(ERR_MEMORY);

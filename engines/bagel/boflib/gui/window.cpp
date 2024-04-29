@@ -56,7 +56,7 @@ CBofWindow::CBofWindow(const char *pszName, int x, int y, int nWidth, int nHeigh
 		m_pWindowList->Insert(this);
 	}
 
-	Create(pszName, x, y, nWidth, nHeight, pParent);
+	create(pszName, x, y, nWidth, nHeight, pParent);
 }
 
 CBofWindow::~CBofWindow() {
@@ -123,7 +123,7 @@ void CBofWindow::ValidateAnscestors(CBofRect *pRect) {
 	}
 }
 
-ErrorCode CBofWindow::Create(const char *pszName, int x, int y, int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {
+ErrorCode CBofWindow::create(const char *pszName, int x, int y, int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
 	Assert(pParent != this);
@@ -182,7 +182,7 @@ void CBofWindow::setParent(CBofWindow *parent) {
 }
 
 
-ErrorCode CBofWindow::Create(const char *pszName, const CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
+ErrorCode CBofWindow::create(const char *pszName, const CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
 
@@ -198,7 +198,7 @@ ErrorCode CBofWindow::Create(const char *pszName, const CBofRect *pRect, CBofWin
 		nHeight = pRect->Height();
 	}
 
-	return Create(pszName, x, y, nWidth, nHeight, pParent, nControlID);
+	return create(pszName, x, y, nWidth, nHeight, pParent, nControlID);
 }
 
 void CBofWindow::ReleaseCapture() {

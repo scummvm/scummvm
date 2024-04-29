@@ -41,7 +41,7 @@ void CBagNextCDDialog::onInitDialog() {
 
 	CBofDialog::onInitDialog();
 
-	SetReturnValue(-1);
+	setReturnValue(-1);
 
 	CBofPalette *pPal;
 
@@ -60,7 +60,7 @@ void CBagNextCDDialog::onInitDialog() {
 
 		m_pButton->LoadBitmaps(pUp, pDown, pFocus, pDis);
 
-		m_pButton->Create("NextCD", 77, 127, 60, 30, this, OK_BTN);
+		m_pButton->create("NextCD", 77, 127, 60, 30, this, OK_BTN);
 		m_pButton->Show();
 
 	} else {

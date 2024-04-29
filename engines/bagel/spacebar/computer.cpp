@@ -160,7 +160,7 @@ ErrorCode SBarComputer::attach() {
 				CBofBitmap *pDis = LoadBitmap(BuildBarcDir(g_stButtons[i].m_pszDisabled), pPal);
 
 				m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
-				m_pButtons[i]->Create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
+				m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
 				m_pButtons[i]->Hide();
 			}
 		}
@@ -418,7 +418,7 @@ ErrorCode SBarComputer::CreateDrinksListBox() {
 
 		m_pDrinkBox = new CBofListBox();	
 		if (m_pDrinkBox != nullptr) {
-			error = m_pDrinkBox->Create("ListBox", &_compDisplay, this);
+			error = m_pDrinkBox->create("ListBox", &_compDisplay, this);
 			if (error != ERR_NONE) {
 				return error;
 			}
@@ -453,7 +453,7 @@ ErrorCode SBarComputer::CreateIngListBox() {
 		// We need to create one
 		m_pIngBox = new CBofListBox();
 		if (m_pIngBox != nullptr) {
-			error = m_pIngBox->Create("ListBox", &_compDisplay, this);
+			error = m_pIngBox->create("ListBox", &_compDisplay, this);
 			if (error != ERR_NONE) {
 				return error;
 			}

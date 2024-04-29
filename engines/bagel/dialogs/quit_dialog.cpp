@@ -61,7 +61,7 @@ void CBagQuitDialog::onInitDialog() {
 	Assert(IsValidObject(this));
 
 	CBofDialog::onInitDialog();
-	SetReturnValue(-1);
+	setReturnValue(-1);
 
 	Assert(m_pBackdrop != nullptr);
 	CBofPalette *pPal = m_pBackdrop->GetPalette();
@@ -85,7 +85,7 @@ void CBagQuitDialog::onInitDialog() {
 
 			m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
 
-			m_pButtons[i]->Create(g_stQuitButtons[i].m_pszName, g_stQuitButtons[i].m_nLeft, g_stQuitButtons[i].m_nTop, g_stQuitButtons[i].m_nWidth, g_stQuitButtons[i].m_nHeight, this, g_stQuitButtons[i].m_nID);
+			m_pButtons[i]->create(g_stQuitButtons[i].m_pszName, g_stQuitButtons[i].m_nLeft, g_stQuitButtons[i].m_nTop, g_stQuitButtons[i].m_nWidth, g_stQuitButtons[i].m_nHeight, this, g_stQuitButtons[i].m_nID);
 			m_pButtons[i]->Show();
 		} else {
 			ReportError(ERR_MEMORY);
@@ -133,7 +133,7 @@ void CBagQuitDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 	if (lKey == BKEY_ESC) {
 		// Cancel
 		//
-		SetReturnValue(CANCEL_BTN);
+		setReturnValue(CANCEL_BTN);
 		Close();
 	} else 
 		CBofDialog::onKeyHit(lKey, nRepCount);
@@ -165,7 +165,7 @@ void CBagQuitDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 		}
 
 		if (bQuit) {
-			SetReturnValue(nId);
+			setReturnValue(nId);
 			Close();
 		}
 	}

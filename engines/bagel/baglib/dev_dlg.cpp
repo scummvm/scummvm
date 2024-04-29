@@ -100,7 +100,7 @@ ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CB
 	Assert(bitmap != nullptr);
 	CBofRect bmpRect(bitmap->GetRect());
 	CBofString className = "CDevDlg";
-	CBagStorageDevDlg::Create(className, &bmpRect, wnd, 0);
+	CBagStorageDevDlg::create(className, &bmpRect, wnd, 0);
 	Center();
 	SetBackdrop(bitmap);
 

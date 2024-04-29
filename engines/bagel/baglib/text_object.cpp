@@ -486,7 +486,7 @@ bool CBagTextObject::runObject() {
 				cBmp.FillRect(nullptr, pPal->GetNearestIndex(RGB(92, 92, 92)));
 
 				CBagMenuDlg cDlg;
-				cDlg.Create(pParent, pPal, &cRect);
+				cDlg.create(pParent, pPal, &cRect);
 	
 				update(cDlg.GetBackdrop(), cPoint, &cRect);
 
@@ -514,7 +514,7 @@ bool CBagTextObject::runObject() {
 					cDlg.Move(x, y, true);
 				}
 				g_bPauseTimer = true;
-				cDlg.DoModal();
+				cDlg.doModal();
 				g_bPauseTimer = false;
 			}
 		}

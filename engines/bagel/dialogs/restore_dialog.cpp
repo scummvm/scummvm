@@ -125,7 +125,7 @@ ErrorCode CBagRestoreDialog::attach() {
 
 			m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
 
-			m_pButtons[i]->Create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
+			m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
 			m_pButtons[i]->Show();
 		} else {
 			ReportError(ERR_MEMORY);
@@ -156,7 +156,7 @@ ErrorCode CBagRestoreDialog::attach() {
 	// Create a list box for the user to choose the slot to save into
 	CBofRect cRect(LIST_X, LIST_Y, LIST_X + LIST_DX - 1, LIST_Y + LIST_DY - 1);
 	if ((m_pListBox = new CBofListBox()) != nullptr) {
-		m_pListBox->Create("SaveGameList", &cRect, this);
+		m_pListBox->create("SaveGameList", &cRect, this);
 
 		m_pListBox->SetPointSize(LIST_FONT_SIZE);
 		m_pListBox->SetItemHeight(LIST_TEXT_DY);

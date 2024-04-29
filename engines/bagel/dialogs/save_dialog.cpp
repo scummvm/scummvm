@@ -130,7 +130,7 @@ ErrorCode CBagSaveDialog::attach() {
 
 			m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
 
-			m_pButtons[i]->Create(g_stButtons[i]._name, g_stButtons[i]._left, g_stButtons[i]._top, g_stButtons[i]._width, g_stButtons[i]._height, this, g_stButtons[i]._id);
+			m_pButtons[i]->create(g_stButtons[i]._name, g_stButtons[i]._left, g_stButtons[i]._top, g_stButtons[i]._width, g_stButtons[i]._height, this, g_stButtons[i]._id);
 			m_pButtons[i]->Show();
 		} else {
 			ReportError(ERR_MEMORY);
@@ -163,7 +163,7 @@ ErrorCode CBagSaveDialog::attach() {
 	if ((m_pListBox = new CBofListBox()) != nullptr) {
 		CBofRect cRect(LIST_X, LIST_Y, LIST_X + LIST_DX - 1, LIST_Y + LIST_DY - 1);
 
-		m_pListBox->Create("SaveGameList", &cRect, this);
+		m_pListBox->create("SaveGameList", &cRect, this);
 
 		m_pListBox->SetPointSize(LIST_FONT_SIZE);
 		m_pListBox->SetItemHeight(LIST_TEXT_DY);
@@ -290,7 +290,7 @@ void CBagSaveDialog::SaveAndClose() {
 			m_pEditText->GetText().GetBuffer());
 
 		Close();
-		SetReturnValue(SAVE_BTN);
+		setReturnValue(SAVE_BTN);
 	}
 }
 
@@ -330,7 +330,7 @@ void CBagSaveDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 
 	// Cancel without saving
 	case BKEY_ESC:
-		SetReturnValue(CANCEL_BTN);
+		setReturnValue(CANCEL_BTN);
 		Close();
 		break;
 
@@ -353,13 +353,13 @@ void CBagSaveDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 	switch (pButton->GetControlID()) {
 	// Do actual save
 	case SAVE_BTN:
-		SetReturnValue(SAVE_BTN);
+		setReturnValue(SAVE_BTN);
 		SaveAndClose();
 		break;
 
 	// Cancel without saving
 	case CANCEL_BTN:
-		SetReturnValue(CANCEL_BTN);
+		setReturnValue(CANCEL_BTN);
 		Close();
 		break;
 

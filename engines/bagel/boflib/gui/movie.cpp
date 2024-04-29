@@ -56,7 +56,7 @@ ErrorCode CBofMovie::initialize(CBofWindow *pParent) {
 	m_bLoop = false;
 
 	// Call dialog box creates
-	if (Create("MovieWin", 0, 0, 1, 1, pParent, 1) == ERR_NONE) {
+	if (create("MovieWin", 0, 0, 1, 1, pParent, 1) == ERR_NONE) {
 		SetCapture();
 	}
 
@@ -228,7 +228,7 @@ bool CBofMovie::Play(bool bLoop, bool bEscCanStop) {
 
 	CursorMan.showMouse(false);
 
-	DoModal();
+	doModal();
 
 	CursorMan.showMouse(true);
 
@@ -259,7 +259,7 @@ bool CBofMovie::Reverse(bool bLoop,  bool bEscCanStop) {
 
 	GetParent()->Disable();
 	GetParent()->FlushAllMessages();
-	DoModal();
+	doModal();
 
 	return bSuccess;
 
