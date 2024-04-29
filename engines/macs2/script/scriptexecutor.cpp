@@ -1216,7 +1216,8 @@ void Script::ScriptExecutor::ExecuteScript() {
 			c->StartLerpTo(Common::Point(x, y), 2 * 1000);
 		} else if (opcode1 == 0x11) {
 			// Wait for last movement to be finished
-			// Trigger a walk to action
+			// Note that there can be several in a row, and they will apply to the character in question
+			// TODO: To check how this functionality is really done
 			// TODO: Compare function for what exactly it does
 			// TODO: Check what the first value does
 			uint32 objectID = Func9F4D_32() - 0x400;
@@ -1224,7 +1225,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Need to be able to address the character objects by ID, now relying
 			// on the fact that they were added in a specific order
 			Character *c = currentView->GetCharacterByIndex(objectID);
-			c->ExecuteScriptOnFinishLerp = true;
+			c->RegisterWaitForMovementFinishedEvent();
 			requestCallback = false;
 			return;
 		}
@@ -1362,6 +1363,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x2A) {
 			// TODO: Not sure what this is about, current hypothesis is that this is loading object
 			// data for an object not yet added to the scene
+			// But it is called several times, for example for the gangster 406 in the scene 6 start
 			uint32 objectID = Func9F4D_32() - 0x400;
 			Func9F4D_32();
 			Func9F4D_32();
