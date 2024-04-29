@@ -73,7 +73,7 @@ void *BofMemAlloc(uint32 lSize, const char *pszFile, int nLine, bool bClear) {
 		}
 		// Otherwise, we need to free up some memory by flushing old
 		// objects from the Cache.
-		CCache::Optimize(lSize + 2 * sizeof(uint16) + sizeof(uint32));
+		CCache::optimize(lSize + 2 * sizeof(uint16) + sizeof(uint32));
 	}
 
 	if (pNewBlock == nullptr) {

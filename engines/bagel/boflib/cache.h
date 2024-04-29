@@ -30,19 +30,19 @@ namespace Bagel {
 
 class CCache : private CLList {
 private:
-	virtual bool Alloc() = 0;       // These pure-virtuals MUST be defined
-	virtual void Free() = 0;        // in the derived class.
+	virtual bool alloc() = 0;       // These pure-virtuals MUST be defined
+	virtual void free() = 0;        // in the derived class.
 
-	static CCache *m_pCacheList;    // Linked cache list
-	static uint32 m_lOldest;        // Current oldest object in cache
-	static uint32 m_lYoungest;      // Current youngest object in cache
-	static uint16 m_nEntries;       // Number of CCache Objects
+	static CCache *_pCacheList;    // Linked cache list
+	static uint32 _lOldest;        // Current oldest object in cache
+	static uint32 _lYoungest;      // Current youngest object in cache
+	static uint16 _nEntries;       // Number of CCache Objects
 
-	uint32 m_lAge;      // Age of this object
-	int m_nLockCount;   // # of locks held on this object
-	bool m_bCached;     // true if object is in the cache
+	uint32 _lAge;      // Age of this object
+	int _nLockCount;   // # of locks held on this object
+	bool _bCached;     // true if object is in the cache
 
-	bool m_bValid;      // true if this object is valid
+	bool _bValid;      // true if this object is valid
 
 public:
 	/**
@@ -58,22 +58,22 @@ public:
 	/**
 	 * Loads current object into cache
 	 */
-	void Load();
+	void load();
 
 	/**
 	 * Releases current object from cache
 	 */
-	bool Release();
+	bool release();
 
-	void Lock() {
-		m_nLockCount++;
-		Load();
+	void lock() {
+		_nLockCount++;
+		load();
 	}
-	void UnLock() {
-		m_nLockCount--;
+	void unlock() {
+		_nLockCount--;
 	}
-	bool IsLocked() {
-		return (m_nLockCount > 0);
+	bool isLocked() {
+		return (_nLockCount > 0);
 	}
 
 	/**
@@ -84,7 +84,7 @@ public:
 	/**
 	 * Releases all objects from cache
 	 */
-	static bool Flush();
+	static bool flush();
 
 	/**
 	 * Releases older objects from cache if need memory
@@ -93,7 +93,7 @@ public:
 	 * @return      true if there were any objects to release from the cache.
 	 *              false if there were no objects released.
 	 */
-	static bool Optimize(uint32 lRequestedFreeSpace);
+	static bool optimize(uint32 lRequestedFreeSpace);
 };
 
 } // namespace Bagel

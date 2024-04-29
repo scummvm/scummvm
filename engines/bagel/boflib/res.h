@@ -57,7 +57,7 @@ protected:
 	/**
 	 * De-allocates the current Resource String Table
 	 */
-	void Release();
+	void release();
 
 	/**
 	 * Allocates the current Resource String Table

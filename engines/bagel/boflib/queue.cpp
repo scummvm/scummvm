@@ -144,7 +144,7 @@ void *CQueue::GetQItem() {
 	return pItem;
 }
 
-void CQueue::Flush() {
+void CQueue::flush() {
 	Assert(IsValidObject(this));
 
 	while (RemoveItem() != nullptr) {

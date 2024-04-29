@@ -36,14 +36,14 @@ CBofStringTable::CBofStringTable(const char *pszFileName) : CBofFile(nullptr) {
 CBofStringTable::~CBofStringTable() {
 	Assert(IsValidObject(this));
 
-	Release();
+	release();
 }
 
 ErrorCode CBofStringTable::Load(const char *pszFileName) {
 	Assert(IsValidObject(this));
 
 	// Deallocate any previous data
-	Release();
+	release();
 
 	// Open this string file
 	open(pszFileName);
@@ -71,7 +71,7 @@ ErrorCode CBofStringTable::Load(const char *pszFileName) {
 	return _errCode;
 }
 
-void CBofStringTable::Release() {
+void CBofStringTable::release() {
 	Assert(IsValidObject(this));
 
 	KillTable();

@@ -88,7 +88,7 @@ public:
 	/**
 	 * Removes all items from the queue
 	 */
-	void Flush();
+	void flush();
 };
 
 } // namespace Bagel

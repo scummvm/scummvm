@@ -54,7 +54,7 @@ CBagel::~CBagel() {
 	Assert(IsValidObject(this));
 
 	// Release options file
-	Release();
+	release();
 
 	// Empty the file cache.
 	if (_cacheFileList) {
