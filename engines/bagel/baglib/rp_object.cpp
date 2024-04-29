@@ -576,7 +576,7 @@ int CBagRPObject::RunRPQueue() {
 				case RP_READ_DOSSIER: {
 					CBagDossierObject *pDObj = m_pActivateThisGuy->GetActiveDossier();
 					if (pDObj) {
-						pDObj->showDosText();
+						pDObj->showDossierText();
 						// Special case, make sure the trail back to the rp obj is clearly marked
 						pDObj->setResiduePrintedObject(m_pActivateThisGuy);
 					}
@@ -838,7 +838,7 @@ bool CBagRPObject::ActivateRPObject() {
 
 		// By default, include the dossier in the list
 		if (pDosObj->m_bDisplayDossier) {
-			pDosObj->m_pDossier->activateDosObject(pLogWld);
+			pDosObj->m_pDossier->activateDossierObject(pLogWld);
 		}
 
 		// Give it a back pointer so that it can find the parent res print object
@@ -884,7 +884,7 @@ void CBagRPObject::DeactivateRPObject() {
 
 	for (int i = 0; i < nCount; i++) {
 		pDosLObj = m_pTouchedList->GetNodeItem(i);
-		pDosLObj->m_pDossier->deactivateDosObject(pLogWld);
+		pDosLObj->m_pDossier->deactivateDossierObject(pLogWld);
 	}
 
 	if (m_pTouchedList != m_pUntouchedList) {
@@ -892,7 +892,7 @@ void CBagRPObject::DeactivateRPObject() {
 
 		for (int i = 0; i < nCount; i++) {
 			pDosLObj = m_pUntouchedList->GetNodeItem(i);
-			pDosLObj->m_pDossier->deactivateDosObject(pLogWld);
+			pDosLObj->m_pDossier->deactivateDossierObject(pLogWld);
 		}
 	}
 
