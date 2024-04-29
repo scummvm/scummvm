@@ -312,7 +312,7 @@ ErrorCode CBagVarManager::IncrementTimers() {
 
 	// Separate turn world out of event world and only execute when we
 	// increment the timers.
-	CBagEventSDev::SetEvalTurnEvents(true);
+	CBagEventSDev::setEvalTurnEvents(true);
 
 	return ERR_NONE;
 }

@@ -255,7 +255,7 @@ bool SBBasePda::hideMap() {
 
 bool SBBasePda::showLog() {
 	if (CBagStorageDevWnd::m_pEvtSDev != nullptr) {
-		CBagStorageDevWnd::m_pEvtSDev->EvaluateExpressions();
+		CBagStorageDevWnd::m_pEvtSDev->evaluateExpressions();
 	}
 
 	synchronizePdaState();
@@ -561,7 +561,7 @@ CBofRect SBBasePda::getViewRect() {
 
 ErrorCode SBBasePda::attachActiveObjects() {
 	if (CBagStorageDevWnd::m_pEvtSDev != nullptr) {
-		CBagStorageDevWnd::m_pEvtSDev->EvaluateExpressions();
+		CBagStorageDevWnd::m_pEvtSDev->evaluateExpressions();
 	}
 
 	if (_mooWnd)

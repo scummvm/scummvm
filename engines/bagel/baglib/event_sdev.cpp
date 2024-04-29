@@ -25,7 +25,7 @@
 
 namespace Bagel {
 
-bool CBagEventSDev::m_bEvalTurnEvents;
+bool CBagEventSDev::_evalTurnEventsFl;
 
 ErrorCode CBagEventSDev::attach() {
 	ErrorCode errCode = CBagStorageDev::attach();
@@ -41,7 +41,7 @@ ErrorCode CBagEventSDev::attach() {
 
 }
 
-ErrorCode CBagEventSDev::EvaluateExpressions() {
+ErrorCode CBagEventSDev::evaluateExpressions() {
 	ErrorCode errCode = ERR_NONE;
 	CBofPoint nArrangePos(5, 5);
 
@@ -80,7 +80,7 @@ ErrorCode CBagEventSDev::EvaluateExpressions() {
 	return errCode;
 }
 
-ErrorCode CBagTurnEventSDev::EvaluateExpressions() {
+ErrorCode CBagTurnEventSDev::evaluateExpressions() {
 	ErrorCode      errCode = ERR_NONE;
 	CBofPoint       nArrangePos(5, 5);
 

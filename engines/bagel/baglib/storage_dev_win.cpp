@@ -276,12 +276,12 @@ ErrorCode CBagStorageDev::DeactivateLocalObject(const CBofString &sName) {
 CBofPoint CBagStorageDev::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 	CBofPoint NextPos = nPos;
 
-	if (GetBackground() != nullptr) {
+	if (getBackground() != nullptr) {
 
 		int nPageNum = 0;
 
-		int     nBackWidth = GetBackground()->Width();
-		int     nBackHeight = GetBackground()->Height();
+		int     nBackWidth = getBackground()->Width();
+		int     nBackHeight = getBackground()->Height();
 		int     nObjWidth = pObj->getRect().Width();
 		int     nObjHeight = pObj->getRect().Height();
 
@@ -974,7 +974,7 @@ ErrorCode CBagStorageDev::attach() {
 		CBofBitmap *pBmp = new CBofBitmap(m_sBackgroundName);
 
 		if ((pBmp != nullptr) && !pBmp->ErrorOccurred()) {
-			SetBackground(pBmp);
+			setBackground(pBmp);
 			errCode = AttachActiveObjects();
 		} else {
 			errCode = ERR_FOPEN;
@@ -988,7 +988,7 @@ ErrorCode CBagStorageDev::attach() {
 ErrorCode CBagStorageDev::detach() {
 	// Must force people to not use a bad App's palette
 	CBofApp::GetApp()->SetPalette(nullptr);
-	SetBackground(nullptr);
+	setBackground(nullptr);
 
 	// Notify the main window that we need to redraw the background filter.
 	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev());
@@ -1187,7 +1187,7 @@ ErrorCode CBagStorageDevWnd::attach() {
 			ReportError(ERR_FOPEN, "BarComputer Background Opened Failed");
 		} else {
 
-			SetBackground(pBmp);
+			setBackground(pBmp);
 
 			// Set the bagel crap
 			CBofPalette *pPalette = pBmp->GetPalette();
@@ -1252,17 +1252,17 @@ void CBagStorageDevWnd::onTimer(uint32 nEventID) {
 			// Evaluate the event storage device IF MOVIE NOT PLAYING
 			if ((CBofApp::GetApp()->GetMainWindow())->IsEnabled() && nEventID == EVAL_EXPR) {
 				if (m_pEvtSDev != nullptr) {
-					m_pEvtSDev->EvaluateExpressions();
+					m_pEvtSDev->evaluateExpressions();
 
 					// If our turncount was updated, then execute the event world
 					// for the turncount dependent storage device.
-					if (CBagEventSDev::GetEvalTurnEvents() == true) {
-						CBagEventSDev::SetEvalTurnEvents(false);
+					if (CBagEventSDev::getEvalTurnEvents() == true) {
+						CBagEventSDev::setEvalTurnEvents(false);
 						CBagTurnEventSDev *pSDev = (CBagTurnEventSDev *) SDEVMNGR->GetStorageDevice("TURN_WLD");
 						if (pSDev != nullptr) {
 							// If unable to execute event world, try again next time through.
-							if (pSDev->EvaluateExpressions() == ERR_UNKNOWN) {
-								CBagEventSDev::SetEvalTurnEvents(true);
+							if (pSDev->evaluateExpressions() == ERR_UNKNOWN) {
+								CBagEventSDev::setEvalTurnEvents(true);
 							}
 						}
 					}
@@ -1281,7 +1281,7 @@ ErrorCode CBagStorageDevWnd::detach() {
 
 	CBofApp::GetApp()->SetPalette(nullptr);
 
-	SetBackground(nullptr);
+	setBackground(nullptr);
 	CBofSprite::CloseLibrary();
 	CBagStorageDev::detach();
 
@@ -1299,7 +1299,7 @@ ErrorCode CBagStorageDevWnd::Close() {
 }
 
 
-ErrorCode CBagStorageDevWnd::SetBackground(CBofBitmap *pBmp) {
+ErrorCode CBagStorageDevWnd::setBackground(CBofBitmap *pBmp) {
 	if (pBmp) {
 		SetBackdrop(pBmp);
 		SetWorkBmp();
@@ -1315,7 +1315,7 @@ ErrorCode CBagStorageDevWnd::SetWorkBmp() {
 	// Delete any previous work area
 	KillWorkBmp();
 
-	CBofBitmap *pBmp = GetBackground();
+	CBofBitmap *pBmp = getBackground();
 	if (pBmp != nullptr) {
 		m_pWorkBmp = new CBofBitmap(pBmp->Width(), pBmp->Height(), pBmp->GetPalette());
 		pBmp->Paint(m_pWorkBmp);
@@ -1581,7 +1581,7 @@ ErrorCode CBagStorageDevDlg::attach() {
 	CBofString s(szLocalBuff, 256);
 	s = GetName();
 
-	CBofBitmap *pBmp = GetBackground();
+	CBofBitmap *pBmp = getBackground();
 	CBofRect r;
 	if (pBmp)
 		r = pBmp->GetRect();

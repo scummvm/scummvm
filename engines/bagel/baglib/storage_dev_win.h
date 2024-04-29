@@ -301,8 +301,8 @@ public:
 
 	virtual PARSE_CODES setInfo(bof_ifstream &fpInput); // This function call the pure virt set background
 
-	virtual ErrorCode SetBackground(CBofBitmap *pBmp) = 0; // This could be eliminated but is kept in to insure good class usage
-	virtual CBofBitmap *GetBackground() = 0;                // Think about it, you can figure this out
+	virtual ErrorCode setBackground(CBofBitmap *pBmp) = 0; // This could be eliminated but is kept in to insure good class usage
+	virtual CBofBitmap *getBackground() = 0;                // Think about it, you can figure this out
 	const CBofString &GetBackgroundName() {
 		return m_sBackgroundName;
 	}
@@ -456,8 +456,8 @@ public:
 		return GetWindowRect();
 	}
 
-	virtual ErrorCode SetBackground(CBofBitmap *pBmp);
-	virtual CBofBitmap *GetBackground() {
+	virtual ErrorCode setBackground(CBofBitmap *pBmp);
+	virtual CBofBitmap *getBackground() {
 		return GetBackdrop();
 	}
 	virtual CBofBitmap *GetWorkBmp() {
@@ -512,14 +512,14 @@ public:
 		return GetWindowRect();
 	}
 
-	virtual ErrorCode SetBackground(CBofBitmap *pBmp) {
+	virtual ErrorCode setBackground(CBofBitmap *pBmp) {
 		if (pBmp)
 			return SetBackdrop(pBmp);
 		else
 			KillBackdrop();
 		return ERR_NONE;
 	}
-	virtual CBofBitmap *GetBackground() {
+	virtual CBofBitmap *getBackground() {
 		return GetBackdrop();
 	}
 

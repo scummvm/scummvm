@@ -53,7 +53,7 @@ ErrorCode CBagStorageDevBmp::detach() {
 	return CBagStorageDev::detach();
 }
 
-ErrorCode CBagStorageDevBmp::SetBackground(CBofBitmap *pBmp) {
+ErrorCode CBagStorageDevBmp::setBackground(CBofBitmap *pBmp) {
 	if (pBmp != nullptr) {
 		setBitmap(pBmp);
 		SetWorkBmp();
@@ -74,7 +74,7 @@ ErrorCode CBagStorageDevBmp::SetWorkBmp() {
 	// Delete any previous work area
 	KillWorkBmp();
 
-	CBofBitmap *pBmp = GetBackground();
+	CBofBitmap *pBmp = getBackground();
 	if (pBmp != nullptr) {
 		m_pWorkBmp = new CBofBitmap(pBmp->Width(), pBmp->Height(), pBmp->GetPalette());
 		pBmp->Paint(m_pWorkBmp);

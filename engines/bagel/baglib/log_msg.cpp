@@ -59,7 +59,7 @@ CBofPoint CBagLog::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 	// will get called on a storage device that is not the current one,
 	// so we will not require a backdrop.
 
-	if (GetBackground() != nullptr) {
+	if (getBackground() != nullptr) {
 		CBofString sDevName = GetName();
 		int nBorderSize = 0;
 
@@ -79,7 +79,7 @@ CBofPoint CBagLog::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 
 		// The log window has instructional text at the top and bottom, so
 		// create a floater rect to stay in the middle area
-		CBofRect xFloatRect = GetBackground()->GetRect();
+		CBofRect xFloatRect = getBackground()->GetRect();
 		xFloatRect.top += nBorderSize;
 		xFloatRect.bottom -= (nBorderSize / 2);
 
@@ -101,7 +101,7 @@ CBofPoint CBagLog::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 			pObj->SetPosition(xPagePos);
 		} else {
 			// Set the position to be off the sdev, so it won't show
-			pObj->SetPosition(CBofPoint(NextPos.x, GetBackground()->Height() + 1));
+			pObj->SetPosition(CBofPoint(NextPos.x, getBackground()->Height() + 1));
 		}
 
 		// Calculate the position for the next floater

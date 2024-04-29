@@ -29,25 +29,27 @@ namespace Bagel {
 
 class CBagEventSDev : public CBagStorageDev {
 private:
-	static bool m_bEvalTurnEvents;
+	static bool _evalTurnEventsFl;
 
 public:
 	CBagEventSDev() : CBagStorageDev() {}
 	virtual ~CBagEventSDev() {}
+
 	static void initialize() {
-		m_bEvalTurnEvents = false;
+		_evalTurnEventsFl = false;
 	}
 
 	/**
 	 * Called to overload new set backgrounds.  Calls the set backdrop pure
 	 * virtual function by default.
 	 */
-	virtual ErrorCode attach();
+	ErrorCode attach() override;
 
-	virtual ErrorCode SetBackground(CBofBitmap * /*pBmp*/) {
+	ErrorCode setBackground(CBofBitmap * /* bmp, unused */) override {
 		return ERR_NONE;
 	}
-	virtual CBofBitmap *GetBackground() {
+
+	CBofBitmap *getBackground() override {
 		return nullptr;
 	}
 
@@ -55,14 +57,14 @@ public:
 	 * Evaluate only the expression object of this storage device
 	 * @return  Returns and error code if there is an invalid object in the list
 	 */
-	virtual ErrorCode EvaluateExpressions();
+	virtual ErrorCode evaluateExpressions();
 
 	// Gives timer code a method to launch tim
-	static void SetEvalTurnEvents(bool b = true) {
-		m_bEvalTurnEvents = b;
+	static void setEvalTurnEvents(bool b = true) {
+		_evalTurnEventsFl = b;
 	}
-	static bool GetEvalTurnEvents() {
-		return m_bEvalTurnEvents;
+	static bool getEvalTurnEvents() {
+		return _evalTurnEventsFl;
 	}
 };
 
@@ -71,14 +73,15 @@ public:
 	CBagTurnEventSDev() : CBagStorageDev() {}
 	virtual ~CBagTurnEventSDev() {}
 
-	virtual ErrorCode SetBackground(CBofBitmap * /*pBmp*/) {
+	ErrorCode setBackground(CBofBitmap * /* bmp, unused */) override {
 		return ERR_NONE;
 	}
-	virtual CBofBitmap *GetBackground() {
+
+	CBofBitmap *getBackground() override {
 		return nullptr;
 	}
 
-	virtual ErrorCode EvaluateExpressions();
+	virtual ErrorCode evaluateExpressions();
 };
 
 } // namespace Bagel
