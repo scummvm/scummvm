@@ -58,10 +58,10 @@ public:
 	int GetNumItems() {
 		return (m_nNumItems);
 	}
-	CBofString GetText(int nIndex);
-	void SetText(int nIndex, const CBofString &cStr);
+	CBofString getText(int nIndex);
+	void setText(int nIndex, const CBofString &cStr);
 
-	void SetTextLineColor(int nIndex, RGBCOLOR rgbColor);
+	void setTextLineColor(int nIndex, RGBCOLOR rgbColor);
 
 	ErrorCode LineUp() {
 		return (ScrollUp(1));
@@ -95,10 +95,10 @@ public:
 		return (m_cHighColor);
 	}
 
-	void SetTextColor(RGBCOLOR cColor) {
+	void setTextColor(RGBCOLOR cColor) {
 		m_cTextColor = cColor;
 	}
-	RGBCOLOR GetTextColor() {
+	RGBCOLOR getTextColor() {
 		return (m_cTextColor);
 	}
 

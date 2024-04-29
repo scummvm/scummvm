@@ -552,7 +552,7 @@ ErrorCode CBagLogMsg::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect, i
 	int nMn = nMsgTime - (nHr * 100);
 
 	SetFont(FONT_MONO);
-	SetText(BuildString("%-30s%02d:%02d", m_sMsgSendee.GetBuffer(), nHr, nMn));
+	setText(BuildString("%-30s%02d:%02d", m_sMsgSendee.GetBuffer(), nHr, nMn));
 
 	return CBagTextObject::update(bmp, pt, srcRect, maskColor);
 }
@@ -763,7 +763,7 @@ ErrorCode CBagLogSuspect::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRec
 
 	SetFont(FONT_MONO);
 
-	SetText(BuildString(" %-5.5s %-17.17s %-12.12s %-20.20s %-4.4s %-4.4s",
+	setText(BuildString(" %-5.5s %-17.17s %-12.12s %-20.20s %-4.4s %-4.4s",
 	                    sSusChecked.GetBuffer(),
 	                    m_sSusName.GetBuffer(),
 	                    m_sSusSpecies.GetBuffer(),
@@ -954,7 +954,7 @@ ErrorCode CBagEnergyDetectorObject::attach() {
 
 	SetPSText(&cStr);
 
-	SetText(BuildString("%02d:%02d %6.6s %s  %-35.35s", nHr, nMn, zStr.GetBuffer(), "zhaps", causeStr.GetBuffer()));
+	setText(BuildString("%02d:%02d %6.6s %s  %-35.35s", nHr, nMn, zStr.GetBuffer(), "zhaps", causeStr.GetBuffer()));
 	RecalcTextRect(false);
 
 	return CBagObject::attach();

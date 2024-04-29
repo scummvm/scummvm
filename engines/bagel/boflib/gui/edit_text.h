@@ -45,11 +45,11 @@ public:
 	ErrorCode create(const char *pszName, int x = 0, int y = 0, int nWidth = USE_DEFAULT, int nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 	ErrorCode create(const char *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
-	CBofString GetText() const {
+	CBofString getText() const {
 		return _text;
 	}
 
-	void SetText(const char *pszString);
+	void setText(const char *pszString);
 
 	void onPaint(CBofRect *pRect) override;
 };

@@ -38,12 +38,12 @@ public:
 	CBofTextBox(CBofBitmap *pBitmap, const CBofRect *pRect, const CBofString &cText);
 	virtual ~CBofTextBox();
 
-	void SetText(const CBofString &cText);
+	void setText(const CBofString &cText);
 	ErrorCode SetBox(const CBofRect *pRect);
 	void SetDisplay(CBofWindow *pWindow);
 	void SetDisplay(CBofBitmap *pBitmap);
 
-	void SetTextAttribs(const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, const int nFont = FONT_DEFAULT);
+	void setTextAttribs(const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, const int nFont = FONT_DEFAULT);
 
 	void SetPointSize(const int nSize) {
 		m_nPointSize = nSize;

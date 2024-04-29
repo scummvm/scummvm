@@ -210,10 +210,10 @@ ErrorCode CBagRestoreDialog::attach() {
 
 			// Set initial selected item
 			if (m_pListBox != nullptr && m_nSelectedItem != -1) {
-				m_pText->SetText(m_pListBox->GetText(m_nSelectedItem));
+				m_pText->setText(m_pListBox->getText(m_nSelectedItem));
 
 			} else {
-				m_pText->SetText("");
+				m_pText->setText("");
 			}
 
 		} else {
@@ -415,7 +415,7 @@ void CBagRestoreDialog::OnBofListBox(CBofObject *pObject, int nItemIndex) {
 
 		// Show selected item in the Edit control
 		if (m_pText != nullptr) {
-			m_pText->SetText(m_pListBox->GetText(nItemIndex));
+			m_pText->setText(m_pListBox->getText(nItemIndex));
 			m_pText->Display(this);
 		}
 

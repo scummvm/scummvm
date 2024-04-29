@@ -61,7 +61,7 @@ CBofTextBox::CBofTextBox(CBofWindow *pWindow, const CBofRect *pRect, const CBofS
 	m_nCurrentIndex = 0;
 	m_nNumLines = 0;
 
-	SetText(cText);
+	setText(cText);
 	SetBox(pRect);
 	SetDisplay(pWindow);
 }
@@ -83,7 +83,7 @@ CBofTextBox::CBofTextBox(CBofBitmap *pBitmap, const CBofRect *pRect, const CBofS
 	m_nCurrentIndex = 0;
 	m_nNumLines = 0;
 
-	SetText(cText);
+	setText(cText);
 	SetBox(pRect);
 	SetDisplay(pBitmap);
 }
@@ -140,7 +140,7 @@ void CBofTextBox::SetDisplay(CBofBitmap *pBitmap) {
 }
 
 
-void CBofTextBox::SetTextAttribs(const int nSize, const int nWeight, const RGBCOLOR cColor, const int nFont) {
+void CBofTextBox::setTextAttribs(const int nSize, const int nWeight, const RGBCOLOR cColor, const int nFont) {
 	Assert(IsValidObject(this));
 
 	m_nPointSize = nSize;
@@ -150,7 +150,7 @@ void CBofTextBox::SetTextAttribs(const int nSize, const int nWeight, const RGBCO
 }
 
 
-void CBofTextBox::SetText(const CBofString &cString) {
+void CBofTextBox::setText(const CBofString &cString) {
 	m_cBuffer = cString;
 	Assert(m_cBuffer.GetLength() != 0);
 

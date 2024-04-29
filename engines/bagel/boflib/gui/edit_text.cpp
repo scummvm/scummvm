@@ -84,7 +84,7 @@ ErrorCode CBofEditText::create(const char *pszName, int x, int y,
 	return _errCode;
 }
 
-void CBofEditText::SetText(const char *pszString) {
+void CBofEditText::setText(const char *pszString) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 	Assert(pszString != nullptr);
@@ -128,7 +128,7 @@ void CBofEditText::onKeyHit(uint32 lKey, uint32 lRepCount) {
 		CBofRect rect = CalculateTextRect(this, &tmp, 12, 0);
 
 		if ((_cRect.Width() - rect.Width()) > 10) {
-			SetText(tmp);
+			setText(tmp);
 		}
 	
 	} else if (lKey == BKEY_BACK && !_text.IsEmpty()) {

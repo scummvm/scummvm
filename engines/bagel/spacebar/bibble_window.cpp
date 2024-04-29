@@ -310,7 +310,7 @@ ErrorCode CBibbleWindow::attach() {
 
 		m_pCreditsText->SetSize(MapWindowsPointSize(20));
 		m_pCreditsText->SetWeight(TEXT_BOLD);
-		m_pCreditsText->SetText(BuildString("%d", m_nNumCredits));
+		m_pCreditsText->setText(BuildString("%d", m_nNumCredits));
 	} else {
 		ReportError(ERR_MEMORY);
 	}
@@ -712,7 +712,7 @@ ErrorCode CBibbleWindow::DisplayCredits() {
 		char szBuf[20];
 
 		Common::sprintf_s(szBuf, "%d", m_nNumCredits);
-		m_pCreditsText->SetText(szBuf);
+		m_pCreditsText->setText(szBuf);
 		m_pCreditsText->Display(this);
 	}
 

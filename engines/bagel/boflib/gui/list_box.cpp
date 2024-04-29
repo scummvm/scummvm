@@ -536,12 +536,12 @@ void CBofListBox::SetSelectedItem(int nItem, bool bRepaint) {
 }
 
 
-CBofString CBofListBox::GetText(int nIndex) {
+CBofString CBofListBox::getText(int nIndex) {
 	return *(m_cTextItems.GetNodeItem(nIndex).m_pTextStr);
 }
 
 
-void CBofListBox::SetText(int nIndex, const CBofString &cStr) {
+void CBofListBox::setText(int nIndex, const CBofString &cStr) {
 
 	ListBoxItem lbi = m_cTextItems.GetNodeItem(nIndex);
 	*lbi.m_pTextStr = cStr;
@@ -550,7 +550,7 @@ void CBofListBox::SetText(int nIndex, const CBofString &cStr) {
 }
 
 
-void CBofListBox::SetTextLineColor(int nIndex, RGBCOLOR rgbColor) {
+void CBofListBox::setTextLineColor(int nIndex, RGBCOLOR rgbColor) {
 
 	ListBoxItem lbi = m_cTextItems.GetNodeItem(nIndex);
 	lbi.m_nTextLineColor = rgbColor;

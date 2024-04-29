@@ -101,7 +101,7 @@ void CBofScrollBar::onPaint(CBofRect *pDirtyRect) {
 }
 
 
-ErrorCode CBofScrollBar::SetText(const char *pszText, int nJustify) {
+ErrorCode CBofScrollBar::setText(const char *pszText, int nJustify) {
 	Assert(IsValidObject(this));
 
 	m_szScrollText[0] = '\0';

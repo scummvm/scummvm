@@ -76,7 +76,7 @@ ErrorCode CBagTextObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 	// assume no error
 	 ErrorCode errCode = ERR_NONE;
 
-	if ((pBmp != nullptr) && isAttached() && !(GetText().IsEmpty())) {
+	if ((pBmp != nullptr) && isAttached() && !(getText().IsEmpty())) {
 
 		if (pBmp->GetRect().PtInRect(pt)) {
 
@@ -120,7 +120,7 @@ ErrorCode CBagTextObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 				r.left += 1;
 			}
 
-			errCode = PaintText(pBmp, &r, GetText(), MapWindowsPointSize(nPointSize), TEXT_NORMAL, m_nFGColor, JUSTIFY_WRAP, nFormat, m_nTextFont);
+			errCode = PaintText(pBmp, &r, getText(), MapWindowsPointSize(nPointSize), TEXT_NORMAL, m_nFGColor, JUSTIFY_WRAP, nFormat, m_nTextFont);
 
 			// This object does not need to be updated now...
 			SetDirty(false);
@@ -224,14 +224,14 @@ ErrorCode CBagTextObject::detach() {
 	return CBagObject::detach();
 }
 
-const CBofString &CBagTextObject::GetText() {
+const CBofString &CBagTextObject::getText() {
 	if (m_psText)
 		return *m_psText;
 
 	return GetFileName();
 }
 
-void CBagTextObject::SetText(const CBofString &s) {
+void CBagTextObject::setText(const CBofString &s) {
 	if (m_psText) {
 		*m_psText = s;
 	} else {
