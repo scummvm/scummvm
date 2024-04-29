@@ -140,7 +140,7 @@ public:
 	void setText(const CBofString &cString) {
 		m_cCurString = cString;
 	}
-	void SetColor(const RGBCOLOR cColor) {
+	void setColor(const RGBCOLOR cColor) {
 		m_cTextColor = cColor;
 	}
 	void SetSize(const int nSize) {
@@ -161,7 +161,7 @@ public:
 	CBofString getText() const {
 		return m_cCurString;
 	}
-	RGBCOLOR GetColor() const {
+	RGBCOLOR getColor() const {
 		return m_cTextColor;
 	}
 	int GetSize() const {
@@ -176,28 +176,28 @@ public:
 	 * @param pWnd		Window to erase text from
 	 * @return			Error return Code
 	 */
-	ErrorCode Erase(CBofWindow *pWnd);
+	ErrorCode erase(CBofWindow *pWnd);
 
 	/**
 	 * Restores the background behind current text offscreen
 	 * @param pBmp		Offscreen bitmap to erase text from
 	 * @return			Error return Code
 	 */
-	ErrorCode Erase(CBofBitmap *pBmp);
+	ErrorCode erase(CBofBitmap *pBmp);
 
 	/**
 	 * Re-displays current text, formatted with current attribs
 	 * @param pWnd		Window to paint into
 	 * @return			Error return Code
 	 */
-	ErrorCode Display(CBofWindow *pWnd);
+	ErrorCode display(CBofWindow *pWnd);
 
 	/**
 	 * Re-displays current text, formatted with current attribs
 	 * @param pBmp		Bitmap to paint into
 	 * @return			Error return Code
 	 */
-	ErrorCode Display(CBofBitmap *pBmp);
+	ErrorCode display(CBofBitmap *pBmp);
 
 	/**
 	 * Display a text string, formatted in the current text area
@@ -208,7 +208,7 @@ public:
 	 * @param cColor		Color that the text will be
 	 * @return				Error return Code
 	 */
-	ErrorCode Display(CBofWindow *pWnd, const char *pszText, const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, int nFont = FONT_DEFAULT);
+	ErrorCode display(CBofWindow *pWnd, const char *pszText, const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, int nFont = FONT_DEFAULT);
 
 	/**
 	 * Display a text string, formatted in the current text area
@@ -219,7 +219,7 @@ public:
 	 * @param cColor		Color that the text will be
 	 * @return				Error return Code
 	 */
-	ErrorCode Display(CBofBitmap *pBmp, const char *pszText, const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, int nFont = FONT_DEFAULT);
+	ErrorCode display(CBofBitmap *pBmp, const char *pszText, const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, int nFont = FONT_DEFAULT);
 
 	/**
 	 * Display a shadowed text string into the current text area
@@ -247,7 +247,7 @@ public:
 	 */
 	ErrorCode DisplayShadowed(CBofBitmap *, const char *, const int, const int, const RGBCOLOR cColor, const RGBCOLOR cShadow = CTEXT_SHADOW_COLOR, const int nDX = CTEXT_SHADOW_DX, const int nDY = CTEXT_SHADOW_DY, int n = FONT_DEFAULT);
 
-	void FlushBackground()       {
+	void flushBackground()       {
 		m_bSaved = false;
 	}
 

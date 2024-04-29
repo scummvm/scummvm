@@ -4611,8 +4611,8 @@ int SrafTextScreen::CreateTextScreen(CBofWindow *pParent) {
 	cRect.SetRect(gCompDisplay.left, gCompDisplay.top, gCompDisplay.right, gCompDisplay.bottom);
 
 	if ((m_pTextBox = new CBofTextBox(this, &cRect, _text)) != nullptr) {
-		m_pTextBox->SetPageLength(24);
-		m_pTextBox->SetColor(RGB(255, 255, 255));
+		m_pTextBox->setPageLength(24);
+		m_pTextBox->setColor(RGB(255, 255, 255));
 		m_pTextBox->setFont(FONT_MONO);
 		m_pTextBox->setPointSize(FONT_14POINT);
 	} else {
@@ -4632,7 +4632,7 @@ void SrafTextScreen::DisplayTextScreen() {
 
 	m_pOKButton->Show();
 
-	m_pTextBox->Display();
+	m_pTextBox->display();
 }
 
 SrafTextScreen::~SrafTextScreen() {

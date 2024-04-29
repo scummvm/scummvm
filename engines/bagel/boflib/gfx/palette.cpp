@@ -119,7 +119,7 @@ byte CBofPalette::GetNearestIndex(RGBCOLOR stRGB) {
 	return lookup.findBestColor(GetRed(stRGB), GetGreen(stRGB), GetBlue(stRGB));
 }
 
-RGBCOLOR CBofPalette::GetColor(byte nIndex) {
+RGBCOLOR CBofPalette::getColor(byte nIndex) {
 	const byte *rgb = &_palette._data[nIndex * 3];
 
 	RGBCOLOR cColor = RGB(rgb[0], rgb[1], rgb[2]);

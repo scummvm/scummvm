@@ -107,7 +107,7 @@ public:
 
 	byte GetNearestIndex(RGBCOLOR cColor);
 
-	RGBCOLOR GetColor(byte nIndex);
+	RGBCOLOR getColor(byte nIndex);
 
 	/**
 	 * Assigns specified palette to this CBofPalette

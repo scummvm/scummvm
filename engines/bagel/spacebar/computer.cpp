@@ -121,7 +121,7 @@ void  SBarComputer::onPaint(CBofRect *pRect) {
 	}
 
 	if (m_pTBox != nullptr)
-		m_pTBox->Display();
+		m_pTBox->display();
 
 	// Paint the backdrop
 	if (GetBackdrop())
@@ -382,8 +382,8 @@ void SBarComputer::CreateTextBox(CBofString &newText) {
 		m_pTBox->setTextAttribs(12, TEXT_NORMAL, RGB(0, 0, 0));
 	} else {
 		EraseBackdrop();
-		m_pTBox->Erase();
-		m_pTBox->FlushBackground();
+		m_pTBox->erase();
+		m_pTBox->flushBackground();
 		m_pTBox->setText(newText);
 	}
 
@@ -416,7 +416,7 @@ ErrorCode SBarComputer::CreateDrinksListBox() {
 
 	if (m_pDrinkBox == nullptr) { // We need to create one
 
-		m_pDrinkBox = new CBofListBox();	
+		m_pDrinkBox = new CBofListBox();
 		if (m_pDrinkBox != nullptr) {
 			error = m_pDrinkBox->create("ListBox", &_compDisplay, this);
 			if (error != ERR_NONE) {
@@ -430,7 +430,7 @@ ErrorCode SBarComputer::CreateDrinksListBox() {
 			CBofPalette *pPal = _pBackdrop->GetPalette();
 			byte PalIdx = pPal->GetNearestIndex(RGB(255, 0, 0));
 
-			m_pDrinkBox->setHighlightColor(pPal->GetColor(PalIdx));
+			m_pDrinkBox->setHighlightColor(pPal->getColor(PalIdx));
 
 			// Populate listbox
 			int numItems = m_pDrinkList->GetCount();
@@ -465,7 +465,7 @@ ErrorCode SBarComputer::CreateIngListBox() {
 			CBofPalette *pPal = _pBackdrop->GetPalette();
 			byte PalIdx = pPal->GetNearestIndex(RGB(255, 0, 0));
 
-			m_pIngBox->setHighlightColor(pPal->GetColor(PalIdx));
+			m_pIngBox->setHighlightColor(pPal->getColor(PalIdx));
 
 
 			// Populate listbox
@@ -535,7 +535,7 @@ void SBarComputer::SetOff() {
 		if (m_pDrinkBox != nullptr) {
 			m_pDrinkBox->setSelectedItem(-1, false);
 		}
-		
+
 		if (m_pIngBox != nullptr) {
 			m_pIngBox->setSelectedItem(-1, false);
 		}
@@ -683,7 +683,7 @@ void SBarComputer::SetList() {
 		m_pButtons[PGUP]->Hide();
 		m_pButtons[PGDOWN]->Hide();
 
-		m_pTBox->SetPageLength(10);
+		m_pTBox->setPageLength(10);
 
 		m_eMode = LISTMODE;
 		UpdateWindow();
@@ -755,7 +755,7 @@ void SBarComputer::Order() {
 						pVar->SetValue(nCredits - 1);
 						pVar2->SetValue(1);
 					}
-					
+
 					if (bRefuse) {
 						PaintBeveledText(this, &_compTextWindow, szRefuse, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
 						WaitForInput();

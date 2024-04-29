@@ -549,14 +549,14 @@ bool CBofSprite::EraseSprite(CBofWindow *pWnd) {
 	Assert(IsValidObject(this));
 	Assert(pWnd != nullptr);
 
-	BatchErase();
+	batchErase();
 	UpdateDirtyRect(pWnd);
 
 	return !ErrorOccurred();
 }
 
 
-void CBofSprite::BatchErase() {
+void CBofSprite::batchErase() {
 	if (m_bPositioned) {
 		m_bPositioned = false;
 

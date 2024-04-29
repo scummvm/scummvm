@@ -173,7 +173,7 @@ ErrorCode CBagSaveDialog::attach() {
 			CBofPalette *pPal2 = _pBackdrop->GetPalette();
 			byte iPalIdx = pPal2->GetNearestIndex(RGB(255, 0, 0));
 
-			m_pListBox->setHighlightColor(pPal2->GetColor(iPalIdx));
+			m_pListBox->setHighlightColor(pPal2->getColor(iPalIdx));
 		}
 
 		// Fill the list box with save game entries
