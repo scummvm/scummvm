@@ -35,12 +35,12 @@ namespace Bagel {
 
 #define TEST_DEBUG 0
 
-bool CBofBitmap::m_bUseBackdrop = false;
+bool CBofBitmap::_bUseBackdrop = false;
 
 extern bool g_bRealizePalette;
 
 CBofBitmap::CBofBitmap() {
-	m_szFileName[0] = '\0';
+	_szFileName[0] = '\0';
 }
 
 CBofBitmap::CBofBitmap(int dx, int dy, CBofPalette *pPalette, bool bOwnPalette, byte *pPrivateBuff) {
@@ -55,64 +55,64 @@ CBofBitmap::CBofBitmap(int dx, int dy, CBofPalette *pPalette, bool bOwnPalette, 
 
 	// Inits
 	//
-	m_nDX = dx;
-	m_nDY = dy;
-	m_nScanDX = ((dx + 3) & ~3);
-	m_bTopDown = true;
-	m_bOwnPalette = bOwnPalette;
-	m_bReadOnly = false;
-	m_szFileName[0] = '\0';
-	m_pPalette = nullptr;
-	m_bInitialized = true;
+	_nDX = dx;
+	_nDY = dy;
+	_nScanDX = ((dx + 3) & ~3);
+	_bTopDown = true;
+	_bOwnPalette = bOwnPalette;
+	_bReadOnly = false;
+	_szFileName[0] = '\0';
+	_pPalette = nullptr;
+	_bInitialized = true;
 
 	// Allow privatization of the bitmap (used only on mac from displaytextex).;
-	m_bPrivateBmp = (pPrivateBuff != nullptr);
-	if (m_bPrivateBmp == true) {
-		m_pBits = pPrivateBuff;
+	_bPrivateBmp = (pPrivateBuff != nullptr);
+	if (_bPrivateBmp == true) {
+		_pBits = pPrivateBuff;
 
 		_bitmap.w = dx;
 		_bitmap.h = dy;
-		_bitmap.pitch = m_nScanDX;
+		_bitmap.pitch = _nScanDX;
 		_bitmap.format = Graphics::PixelFormat::createFormatCLUT8();
 		_bitmap.setPixels(pPrivateBuff);
 
 	} else {
-		m_pBits = nullptr;
+		_pBits = nullptr;
 	}
 
 	// Fill the info structure
-	m_cBitmapInfo.m_cInfoHeader.biSize = sizeof(BOFBITMAPINFOHEADER);
-	m_cBitmapInfo.m_cInfoHeader.biWidth = dx;
-	m_cBitmapInfo.m_cInfoHeader.biHeight = dy;
-	m_cBitmapInfo.m_cInfoHeader.biPlanes = 1;
-	m_cBitmapInfo.m_cInfoHeader.biBitCount = 8;
-	m_cBitmapInfo.m_cInfoHeader.biCompression = 0;
-	m_cBitmapInfo.m_cInfoHeader.biSizeImage = 0;
-	m_cBitmapInfo.m_cInfoHeader.biXPelsPerMeter = 0;
-	m_cBitmapInfo.m_cInfoHeader.biYPelsPerMeter = 0;
-	m_cBitmapInfo.m_cInfoHeader.biClrUsed = 0;
-	m_cBitmapInfo.m_cInfoHeader.biClrImportant = 0;
+	_cBitmapInfo.cInfoHeader.biSize = sizeof(BOFBITMAPINFOHEADER);
+	_cBitmapInfo.cInfoHeader.biWidth = dx;
+	_cBitmapInfo.cInfoHeader.biHeight = dy;
+	_cBitmapInfo.cInfoHeader.biPlanes = 1;
+	_cBitmapInfo.cInfoHeader.biBitCount = 8;
+	_cBitmapInfo.cInfoHeader.biCompression = 0;
+	_cBitmapInfo.cInfoHeader.biSizeImage = 0;
+	_cBitmapInfo.cInfoHeader.biXPelsPerMeter = 0;
+	_cBitmapInfo.cInfoHeader.biYPelsPerMeter = 0;
+	_cBitmapInfo.cInfoHeader.biClrUsed = 0;
+	_cBitmapInfo.cInfoHeader.biClrImportant = 0;
 
-	m_pPalette = pPalette;
+	_pPalette = pPalette;
 	load();
 }
 
 CBofBitmap::CBofBitmap(const char *pszFileName, CBofPalette *pPalette, bool bOwnPalette) {
 	Assert(pszFileName != nullptr);
-	m_bOwnPalette = bOwnPalette;
-	m_szFileName[0] = '\0';
-	m_bInitialized = true;
+	_bOwnPalette = bOwnPalette;
+	_szFileName[0] = '\0';
+	_bInitialized = true;
 
 	if (pPalette == nullptr) {
 		if ((pPalette = new CBofPalette(pszFileName)) != nullptr) {
-			m_bOwnPalette = true;
+			_bOwnPalette = true;
 		}
 	}
 
 	// Init the info needed to load a bitmap from disk
-	m_pPalette = pPalette;
+	_pPalette = pPalette;
 
-	if (FileGetFullPath(m_szFileName, pszFileName) != nullptr) {
+	if (FileGetFullPath(_szFileName, pszFileName) != nullptr) {
 		// Load this bitmap into the cache
 		load();
 	} else {
@@ -125,13 +125,13 @@ CBofBitmap::~CBofBitmap() {
 
 	release();
 
-	if (m_bOwnPalette && (m_pPalette != nullptr)) {
-		delete m_pPalette;
-		m_bOwnPalette = false;
+	if (_bOwnPalette && (_pPalette != nullptr)) {
+		delete _pPalette;
+		_bOwnPalette = false;
 	}
 
-	m_pPalette = nullptr;
-	m_bInitialized = false;
+	_pPalette = nullptr;
+	_bInitialized = false;
 }
 
 
@@ -141,22 +141,22 @@ ErrorCode CBofBitmap::buildBitmap(CBofPalette *pPalette) {
 
 	if (_errCode == ERR_NONE) {
 
-		_bitmap.create(m_nDX, m_nDY, Graphics::PixelFormat::createFormatCLUT8());
-		m_pBits = (byte *)_bitmap.getBasePtr(0, 0);
-		m_nScanDX = _bitmap.pitch;
+		_bitmap.create(_nDX, _nDY, Graphics::PixelFormat::createFormatCLUT8());
+		_pBits = (byte *)_bitmap.getBasePtr(0, 0);
+		_nScanDX = _bitmap.pitch;
 
 		// Set this bitmap's palette
-		setPalette(pPalette, m_bOwnPalette);
+		setPalette(pPalette, _bOwnPalette);
 	}
 
 	return _errCode;
 }
 
 bool CBofBitmap::alloc() {
-	if (m_szFileName[0] != '\0') {
-		loadBitmap(m_szFileName, m_pPalette);
+	if (_szFileName[0] != '\0') {
+		loadBitmap(_szFileName, _pPalette);
 	} else {
-		buildBitmap(m_pPalette);
+		buildBitmap(_pPalette);
 	}
 
 	return !ErrorOccurred();
@@ -189,7 +189,7 @@ ErrorCode CBofBitmap::loadBitmap(const char *pszFileName, CBofPalette *pPalette)
 			Assert(strlen(pszFileName) < MAX_FNAME);
 
 			// Keep track of this filename
-			Common::strcpy_s(m_szFileName, pszFileName);
+			Common::strcpy_s(_szFileName, pszFileName);
 
 			// Decode the bitmap
 			Image::BitmapDecoder decoder;
@@ -203,10 +203,10 @@ ErrorCode CBofBitmap::loadBitmap(const char *pszFileName, CBofPalette *pPalette)
 			// Load the bitmap palette
 			_bitmap.setPalette(decoder.getPalette(), 0, PALETTE_COUNT);
 
-			m_nDX = _bitmap.w;
-			m_nDY = _bitmap.h;
-			m_nScanDX = _bitmap.pitch;
-			m_pBits = (byte*)_bitmap.getBasePtr(0, 0);
+			_nDX = _bitmap.w;
+			_nDY = _bitmap.h;
+			_nScanDX = _bitmap.pitch;
+			_pBits = (byte*)_bitmap.getBasePtr(0, 0);
 
 			// Close bitmap file
 			delete pFile;
@@ -223,7 +223,7 @@ ErrorCode CBofBitmap::paint(CBofWindow *pWnd, int x, int y, CBofRect *pSrcRect, 
 	Assert(IsValidObject(this));
 	Assert(pWnd != nullptr);
 
-	CBofRect cRect(x, y, x + m_nDX - 1, y + m_nDY - 1);
+	CBofRect cRect(x, y, x + _nDX - 1, y + _nDY - 1);
 
 	if (pSrcRect != nullptr) {
 		cRect.SetRect(x, y, x + pSrcRect->width() - 1, y + pSrcRect->height() - 1);
@@ -237,7 +237,7 @@ ErrorCode CBofBitmap::paint(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect *pSrc
 	Assert(pWnd != nullptr);
 
 	Graphics::ManagedSurface *dstSurf = pWnd->getSurface();
-	CBofRect cDestRect(0, 0, m_nDX - 1, m_nDY - 1), cSourceRect(0, 0, m_nDX - 1, m_nDY - 1);
+	CBofRect cDestRect(0, 0, _nDX - 1, _nDY - 1), cSourceRect(0, 0, _nDX - 1, _nDY - 1);
 
 	if (_errCode == ERR_NONE) {
 		if (pDstRect != nullptr) {
@@ -252,7 +252,7 @@ ErrorCode CBofBitmap::paint(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect *pSrc
 
 		if (_bitmap.format.bytesPerPixel == 1) {
 			// Bitmap is paletted, so ensure it's palette is updated
-			const HPALETTE &pal = m_pPalette->getPalette();
+			const HPALETTE &pal = _pPalette->getPalette();
 			_bitmap.setPalette(pal._data, 0, pal._numColors);
 		}
 
@@ -274,7 +274,7 @@ ErrorCode CBofBitmap::paintMaskBackdrop(CBofWindow *pWnd, CBofRect *pDstRect, CB
 	// This function requires the use of a backdrop
 	Assert(pWnd->getBackdrop() != nullptr);
 
-	CBofRect cDestRect(0, 0, m_nDX - 1, m_nDY - 1), cSourceRect(0, 0, m_nDX - 1, m_nDY - 1);
+	CBofRect cDestRect(0, 0, _nDX - 1, _nDY - 1), cSourceRect(0, 0, _nDX - 1, _nDY - 1);
 
 	if (_errCode == ERR_NONE) {
 
@@ -289,7 +289,7 @@ ErrorCode CBofBitmap::paintMaskBackdrop(CBofWindow *pWnd, CBofRect *pDstRect, CB
 			cSourceRect = *pSrcRect;
 		}
 
-		CBofBitmap cTempBitmap(cSourceRect.width(), cSourceRect.height(), m_pPalette);
+		CBofBitmap cTempBitmap(cSourceRect.width(), cSourceRect.height(), _pPalette);
 		CBofBitmap *pBackdrop;
 
 		// Use the backdrop to get the background instead of trying to
@@ -312,7 +312,7 @@ ErrorCode CBofBitmap::paint(CBofBitmap *pBmp, int x, int y, CBofRect *pSrcRect, 
 	Assert(IsValidObject(this));
 	Assert(pBmp != nullptr);
 
-	CBofRect cRect(x, y, x + m_nDX - 1, y + m_nDY - 1);
+	CBofRect cRect(x, y, x + _nDX - 1, y + _nDY - 1);
 
 	if (pSrcRect != nullptr) {
 		cRect.SetRect(x, y, x + pSrcRect->width() - 1, y + pSrcRect->height() - 1);
@@ -325,7 +325,7 @@ ErrorCode CBofBitmap::paint(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSrc
 	Assert(IsValidObject(this));
 	Assert(pBmp != nullptr);
 
-	CBofRect cDestRect(0, 0, m_nDX - 1, m_nDY - 1), cSourceRect(0, 0, m_nDX - 1, m_nDY - 1);
+	CBofRect cDestRect(0, 0, _nDX - 1, _nDY - 1), cSourceRect(0, 0, _nDX - 1, _nDY - 1);
 	CBofRect cClipRect;
 
 	if (!ErrorOccurred() && !pBmp->ErrorOccurred()) {
@@ -396,7 +396,7 @@ ErrorCode CBofBitmap::paint1To1(CBofBitmap *pBmp) {
 		pBmp->lock();
 
 		// Direct 1 to 1 copy
-		BofMemCopy(pBmp->m_pBits, m_pBits, m_nScanDX * m_nDY);
+		BofMemCopy(pBmp->_pBits, _pBits, _nScanDX * _nDY);
 
 		pBmp->unlock();
 		unlock();
@@ -416,14 +416,14 @@ ErrorCode CBofBitmap::paintStretch4(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRe
 	Assert(pBmp->isLocked());
 
 	if (_errCode == ERR_NONE) {
-		int dy1 = m_nDY;
-		int dx1 = m_nScanDX;
+		int dy1 = _nDY;
+		int dx1 = _nScanDX;
 
-		int dy2 = pBmp->m_nDY;
-		int dx2 = pBmp->m_nScanDX;
+		int dy2 = pBmp->_nDY;
+		int dx2 = pBmp->_nScanDX;
 
-		byte *pDestBits = pBmp->m_pBits;
-		byte *pSrcBits = m_pBits;
+		byte *pDestBits = pBmp->_pBits;
+		byte *pSrcBits = _pBits;
 
 		int32 dy = pSrcRect->height();
 
@@ -435,14 +435,14 @@ ErrorCode CBofBitmap::paintStretch4(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRe
 		int32 x2 = pDstRect->left;
 		int32 y2 = pDstRect->top;
 
-		if (m_bTopDown) {
+		if (_bTopDown) {
 			pSrcBits += y1 * dx1 + x1;
 		} else {
 			pSrcBits += (dy1 - y1 - 1) * dx1 + x1;
 			dx1 = -dx1;
 		}
 
-		if (pBmp->m_bTopDown) {
+		if (pBmp->_bTopDown) {
 			pDestBits += y2 * dx2 + x2;
 		} else {
 			pDestBits += (dy2 - y2 - 1) * dx2 + x2;
@@ -535,14 +535,14 @@ ErrorCode CBofBitmap::paintStretchOpt(CBofBitmap *pBmp, CBofRect *pDstRect, CBof
 	Assert(pBmp->isLocked());
 
 	if (_errCode == ERR_NONE) {
-		int dy1 = m_nDY;
-		int dx1 = m_nScanDX;
+		int dy1 = _nDY;
+		int dx1 = _nScanDX;
 
-		int dy2 = pBmp->m_nDY;
-		int dx2 = pBmp->m_nScanDX;
+		int dy2 = pBmp->_nDY;
+		int dx2 = pBmp->_nScanDX;
 
-		byte *pDestBits = pBmp->m_pBits;
-		byte *pSrcBits = m_pBits;
+		byte *pDestBits = pBmp->_pBits;
+		byte *pSrcBits = _pBits;
 
 		int32 dy = pSrcRect->height();
 
@@ -554,14 +554,14 @@ ErrorCode CBofBitmap::paintStretchOpt(CBofBitmap *pBmp, CBofRect *pDstRect, CBof
 		int32 x2 = pDstRect->left;
 		int32 y2 = pDstRect->top;
 
-		if (m_bTopDown) {
+		if (_bTopDown) {
 			pSrcBits += y1 * dx1 + x1;
 		} else {
 			pSrcBits += (dy1 - y1 - 1) * dx1 + x1;
 			dx1 = -dx1;
 		}
 
-		if (pBmp->m_bTopDown) {
+		if (pBmp->_bTopDown) {
 			pDestBits += y2 * dx2 + x2;
 		} else {
 			pDestBits += (dy2 - y2 - 1) * dx2 + x2;
@@ -613,8 +613,8 @@ ErrorCode CBofBitmap::captureScreen(CBofWindow *pWnd, CBofRect *pSrcRect, CBofRe
 	Assert(pWnd != nullptr);
 	Assert(pSrcRect != nullptr);
 
-	CBofRect cDestRect(0, 0, m_nDX - 1, m_nDY - 1);
-	CBofRect cSrcRect(0, 0, m_nDX - 1, m_nDY - 1);
+	CBofRect cDestRect(0, 0, _nDX - 1, _nDY - 1);
+	CBofRect cSrcRect(0, 0, _nDX - 1, _nDY - 1);
 
 	if (_errCode == ERR_NONE) {
 		if (pDstRect != nullptr) {
@@ -625,10 +625,10 @@ ErrorCode CBofBitmap::captureScreen(CBofWindow *pWnd, CBofRect *pSrcRect, CBofRe
 		CBofBitmap *pBackdrop = pWnd->getBackdrop();
 
 		// If we're capturing the screen, we have to convert the format first.
-		if (!m_bUseBackdrop || pBackdrop == nullptr) {
+		if (!_bUseBackdrop || pBackdrop == nullptr) {
 			Graphics::Surface tmp;
 			tmp.copyFrom(*pWnd->getSurface());
-			_bitmap.blitFrom(tmp.convertTo(_bitmap.format, nullptr, 0, m_pPalette->GetData(), PALETTE_COUNT),
+			_bitmap.blitFrom(tmp.convertTo(_bitmap.format, nullptr, 0, _pPalette->GetData(), PALETTE_COUNT),
 				cSrcRect,
 				cDestRect);
 			tmp.free();
@@ -649,14 +649,14 @@ void CBofBitmap::setPalette(CBofPalette *pBofPalette, bool bOwnPalette) {
 
 	if (_errCode == ERR_NONE) {
 		if (pBofPalette != nullptr) {
-			if (m_bOwnPalette && (m_pPalette != nullptr) && (m_pPalette != pBofPalette)) {
-				delete m_pPalette;
+			if (_bOwnPalette && (_pPalette != nullptr) && (_pPalette != pBofPalette)) {
+				delete _pPalette;
 			}
 
-			m_bOwnPalette = bOwnPalette;
-			m_pPalette = pBofPalette;
+			_bOwnPalette = bOwnPalette;
+			_pPalette = pBofPalette;
 
-			_bitmap.setPalette(m_pPalette->GetData(), 0, PALETTE_COUNT);
+			_bitmap.setPalette(_pPalette->GetData(), 0, PALETTE_COUNT);
 		}
 	}
 }
@@ -847,11 +847,11 @@ CBofBitmap *CBofBitmap::extractBitmap(CBofRect *pRect) {
 	if (_errCode == ERR_NONE) {
 		CBofPalette *pPalette = getPalette();
 		if (pPalette != nullptr) {
-			if (m_bOwnPalette) {
+			if (_bOwnPalette) {
 				pPalette = pPalette->CopyPalette();
 			}
 
-			if ((pNewBmp = new CBofBitmap(pRect->width(), pRect->height(), pPalette, m_bOwnPalette)) != nullptr) {
+			if ((pNewBmp = new CBofBitmap(pRect->width(), pRect->height(), pPalette, _bOwnPalette)) != nullptr) {
 				paint(pNewBmp, 0, 0, pRect);
 			} else {
 				LogFatal("Unable to allocate a new CBofBitmap");
@@ -870,34 +870,34 @@ ErrorCode CBofBitmap::scrollRight(int nPixels, CBofRect * /*pRect*/) {
 
 	if (_errCode == ERR_NONE) {
 		if (nPixels != 0) {
-			Assert(m_pBits != nullptr);
+			Assert(_pBits != nullptr);
 			byte *pTemp = (byte *)BofAlloc(abs(nPixels));
 
 			if (pTemp != nullptr) {
-				int nBytes = m_nDX - nPixels;
+				int nBytes = _nDX - nPixels;
 				if (nPixels < 0) {
-					nBytes = m_nDX + nPixels;
+					nBytes = _nDX + nPixels;
 				}
 
-				byte *p = m_pBits;
+				byte *p = _pBits;
 
 				lock();
 
 				if (nPixels > 0) {
-					for (int i = 0; i < m_nDY; i++) {
+					for (int i = 0; i < _nDY; i++) {
 						BofMemCopy(pTemp, p + nBytes, nPixels);
 						BofMemMove(p + nPixels, p, nBytes);
 						BofMemCopy(p, pTemp, nPixels);
-						p += m_nScanDX;
+						p += _nScanDX;
 					}
 				} else {
 					nPixels = -nPixels;
 
-					for (int i = 0; i < m_nDY; i++) {
+					for (int i = 0; i < _nDY; i++) {
 						BofMemCopy(pTemp, p, nPixels);
 						BofMemMove(p, p + nPixels, nBytes);
 						BofMemCopy(p + nBytes, pTemp, nPixels);
-						p += m_nScanDX;
+						p += _nScanDX;
 					}
 				}
 
@@ -917,7 +917,7 @@ ErrorCode CBofBitmap::scrollUp(int nPixels, CBofRect *pRect) {
 	if (_errCode == ERR_NONE) {
 		lock();
 
-		CBofRect cRect(0, 0, m_nDX  - 1, m_nDY  - 1);
+		CBofRect cRect(0, 0, _nDX  - 1, _nDY  - 1);
 
 		// Flip entire bitmap ?
 		if (pRect == nullptr) {
@@ -959,13 +959,13 @@ ErrorCode CBofBitmap::scrollUp(int nPixels, CBofRect *pRect) {
 			if (pRowBuf != nullptr) {
 
 				byte *pEnd;
-				byte *pStart = pEnd = m_pBits;
+				byte *pStart = pEnd = _pBits;
 
-				int32 dx1 = m_nScanDX;
-				int32 dy1 = m_nDY;
+				int32 dx1 = _nScanDX;
+				int32 dy1 = _nDY;
 
 				// Is bitmap top-down or bottom up?
-				if (m_bTopDown) {
+				if (_bTopDown) {
 					pStart += y * dx1 + x;
 					pEnd += (y + dy - 1) * dx1 + x;
 				} else {
@@ -992,7 +992,7 @@ ErrorCode CBofBitmap::scrollUp(int nPixels, CBofRect *pRect) {
 					pLastRow = pCurRow;
 
 					pCurRow += lJump;
-					if (pCurRow < pEnd && !m_bTopDown) {
+					if (pCurRow < pEnd && !_bTopDown) {
 						pCurRow = pStart - (pEnd - pCurRow) - dx1;
 
 						if (pCurRow == p1stRow) {
@@ -1048,8 +1048,8 @@ ErrorCode CBofBitmap::fadeIn(CBofWindow *pWnd, int xStart, int yStart, int nMask
 		CBofRect cSrcRect, cDstRect;
 		uint32 mask = (BIT16 | BIT15 | BIT2 | BIT0);
 
-		uint32 width = m_nDX / nBlockSize;
-		uint32 height = m_nDY;
+		uint32 width = _nDX / nBlockSize;
+		uint32 height = _nDY;
 
 		uint32 maxvalue = height / nBlockSize * width;
 		uint32 seed = SEQ - 1;
@@ -1163,8 +1163,8 @@ const char *CBofBitmap::getFileName() {
 	Assert(IsValidObject(this));
 
 	const char *p = nullptr;
-	if (m_szFileName[0] != '\0')
-		p = (const char *)&m_szFileName[0];
+	if (_szFileName[0] != '\0')
+		p = (const char *)&_szFileName[0];
 
 	return p;
 }
@@ -1246,18 +1246,18 @@ ErrorCode paintBitmap(CBofBitmap *pBitmap, const char *pszFileName, CBofRect *pD
 }
 
 void CBofBitmap::flipVerticalFast() {
-	m_bTopDown = !m_bTopDown;
-	m_cBitmapInfo.m_cInfoHeader.biHeight = -m_cBitmapInfo.m_cInfoHeader.biHeight;
+	_bTopDown = !_bTopDown;
+	_cBitmapInfo.cInfoHeader.biHeight = -_cBitmapInfo.cInfoHeader.biHeight;
 }
 
 Graphics::ManagedSurface CBofBitmap::getSurface() {
 	Graphics::ManagedSurface s;
-	s.w = m_nDX;
-	s.h = m_nDY;
-	s.pitch = m_nScanDX;
+	s.w = _nDX;
+	s.h = _nDY;
+	s.pitch = _nScanDX;
 	s.format = Graphics::PixelFormat::createFormatCLUT8();
-	s.setPalette(m_pPalette->GetData(), 0, PALETTE_COUNT);
-	s.setPixels(m_pBits);
+	s.setPalette(_pPalette->GetData(), 0, PALETTE_COUNT);
+	s.setPixels(_pBits);
 
 	return s;
 }

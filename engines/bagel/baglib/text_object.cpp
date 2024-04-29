@@ -38,7 +38,7 @@ extern bool g_bPauseTimer;
 CBagTextObject::CBagTextObject() : CBagObject() {
 	m_xObjType = TEXTOBJ;
 	m_nDX = 80;
-	m_nDY = 20;
+	_nDY = 20;
 	m_psText = nullptr;
 	SetOverCursor(1); // Switch to cursor 1, 4 doesn't exist.
 
