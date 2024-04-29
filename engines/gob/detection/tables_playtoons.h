@@ -447,6 +447,20 @@
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
+{
+	{ // Supplied by laenion in Bugreport #13457
+		"playtnck3",
+		"",
+		AD_ENTRY2s("playtoon.stk",	"9ca3a2c19a3261cf9fa0f40eebc9d3ad", 65879662,
+				   "dan.itk",		"e8566d7efb8601a323adc918948d03fe", 3325952),
+		DE_DEU,
+		kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
+	},
+	kFeatures640x480,
+	"intro2.stk", 0, 0
+},
 
 // -- Bambou le sauveur de la jungle --
 
