@@ -49,7 +49,7 @@ public:
 	void Start()                    {
 		m_bActive = true;
 	}
-	void Stop()                     {
+	void stop()                     {
 		m_bActive = false;
 	}
 

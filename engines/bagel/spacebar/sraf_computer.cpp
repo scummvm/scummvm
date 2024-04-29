@@ -3047,7 +3047,7 @@ void SrafComputer::OnListAudioSettings() {
 
 	// Now start playing...
 	if (g_stAudioSetting[nTrackSelection]->m_pMidiTrack != nullptr) {
-		g_stAudioSetting[nTrackSelection]->m_pMidiTrack->Play();
+		g_stAudioSetting[nTrackSelection]->m_pMidiTrack->play();
 	}
 
 	// If state changes, then change the button also
@@ -4499,7 +4499,7 @@ void SrafComputer::IncrementTurnCount() {
 
 		// Now start playing...
 		if (g_stAudioSetting[nTrackSelection]->m_pMidiTrack != nullptr) {
-			g_stAudioSetting[nTrackSelection]->m_pMidiTrack->Play();
+			g_stAudioSetting[nTrackSelection]->m_pMidiTrack->play();
 		}
 		m_nRandomTime += kRandomPlayTime;
 	}

@@ -368,7 +368,7 @@ bool CBagCommandObject::runObject() {
 
 				// Play the movie only if it exists
 				if (FileExists(smkName.GetBuffer())) {
-					BofPlayMovie(mainWin, smkName.GetBuffer());
+					bofPlayMovie(mainWin, smkName.GetBuffer());
 					bmp.paint(mainWin, 0, 0);
 				}
 			}

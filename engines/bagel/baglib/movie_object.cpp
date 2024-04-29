@@ -157,7 +157,7 @@ bool CBagMovieObject::runObject() {
 			// If we have an asnych movie to play, make sure it is a good
 			// time to play it, if not, then queue it up so it can play at a much better time.
 			if (m_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
-				if (AsynchPDAMovieCanPlay() == false) {
+				if (asynchPDAMovieCanPlay() == false) {
 					pPDA->AddToMovieQueue(this);
 					return rc;
 				}
@@ -267,7 +267,7 @@ bool CBagMovieObject::runObject() {
 						pMovie->Show();
 						CBofApp::GetApp()->GetMainWindow()->FlushAllMessages();
 						pWnd->FlushAllMessages();
-						pMovie->Play(false);
+						pMovie->play(false);
 						delete pMovie;
 						rc = true;
 					} else {
@@ -330,7 +330,7 @@ bool CBagMovieObject::runObject() {
 							pMovie->Show();
 							CBofApp::GetApp()->GetMainWindow()->FlushAllMessages();
 							pWnd->FlushAllMessages();
-							pMovie->Play(false);
+							pMovie->play(false);
 							delete pMovie;
 							rc = true;
 						} else {
@@ -367,7 +367,7 @@ bool CBagMovieObject::runObject() {
 		} else if (nMovFileType == MOVFILETYPE::SOUND) {
 			CBofSound *pSound = new CBofSound(CBofApp::GetApp()->GetMainWindow(), sFileName, SOUND_WAVE);
 			if (pSound) {
-				pSound->Play();
+				pSound->play();
 				delete pSound;
 				rc = true;
 			} else {
@@ -526,7 +526,7 @@ PARSE_CODES CBagMovieObject::setInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-bool CBagMovieObject::AsynchPDAMovieCanPlay() {
+bool CBagMovieObject::asynchPDAMovieCanPlay() {
 	// Don't play movie if we're zoomed or if we're in a CIC
 	// or a sound is playing or another movie is playing...
 	bool bCanPlay = true;

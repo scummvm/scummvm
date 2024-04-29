@@ -38,11 +38,11 @@ CBofMovie::CBofMovie(CBofWindow *pParent, const char *pszFilename, CBofRect *pBo
 	m_bBlackOutWindow = bBlackOutWindow;
 
 	initialize(pParent);
-	Open(pszFilename, pBounds);
+	open(pszFilename, pBounds);
 }
 
 CBofMovie::~CBofMovie() {
-	CloseMovie();
+	closeMovie();
 }
 
 ErrorCode CBofMovie::initialize(CBofWindow *pParent) {
@@ -64,7 +64,7 @@ ErrorCode CBofMovie::initialize(CBofWindow *pParent) {
 
 }
 
-bool CBofMovie::Open(const char *sFilename, CBofRect *pBounds) {
+bool CBofMovie::open(const char *sFilename, CBofRect *pBounds) {
 	if (sFilename == nullptr) {
 		Assert(sFilename);
 		return false;
@@ -74,13 +74,13 @@ bool CBofMovie::Open(const char *sFilename, CBofRect *pBounds) {
 		_cRect = *pBounds;
 	}
 
-	if (OpenMovie(sFilename)) {
+	if (openMovie(sFilename)) {
 		// We were given specific rect for movie
 		if (pBounds)
 			ReSize(pBounds, true);
 		else
 			// Center the movie to the parent window
-			CenterRect();
+			centerRect();
 
 		return true;
 	}
@@ -88,11 +88,11 @@ bool CBofMovie::Open(const char *sFilename, CBofRect *pBounds) {
 	return false;
 }
 
-bool CBofMovie::OpenMovie(const char *sFilename) {
+bool CBofMovie::openMovie(const char *sFilename) {
 	Assert(sFilename[0] != '\0');
 
 	if (m_pSmk) {
-		CloseMovie();
+		closeMovie();
 	}
 	m_pSmk = new Video::SmackerDecoder();
 	m_pSmk->setSoundType(Audio::Mixer::kSFXSoundType);
@@ -140,8 +140,8 @@ void  CBofMovie::onKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	if (m_bEscCanStop && lKey == BKEY_ESC) {
 		// Clean up and exit
 		m_bLoop = false;
-		Stop();
-		OnMovieDone();
+		stop();
+		onMovieDone();
 	}
 }
 
@@ -161,22 +161,22 @@ void  CBofMovie::onMainLoop() {
 			if (m_eMovStatus == FOREWARD) {
 				if (m_pSmk->getCurFrame() == (int)m_pSmk->getFrameCount() - 1) {
 					if (m_bLoop == false) {
-						OnMovieDone();
+						onMovieDone();
 					} else {
-						SeekToStart();
+						seekToStart();
 						m_pSmk->start();
 					}
 				}
 			} else if (m_eMovStatus == REVERSE) {
 				if ((m_pSmk->getCurFrame() == 0) || (m_pSmk->getCurFrame() == 1)) {
 					if (m_bLoop == false) {
-						OnMovieDone();
+						onMovieDone();
 					} else {
-						SeekToEnd();
+						seekToEnd();
 						//m_pSmk->start();
 					}
 				} else {
-					SetFrame(m_pSmk->getCurFrame() - 2); // HACK: Reverse playback
+					setFrame(m_pSmk->getCurFrame() - 2); // HACK: Reverse playback
 				}
 			}// REVERSE
 		}// !STOPPED
@@ -189,7 +189,7 @@ void  CBofMovie::onPaint(CBofRect *) {
 	}
 }
 
-void  CBofMovie::CloseMovie() {
+void  CBofMovie::closeMovie() {
 	if (m_pSbuf) {
 		delete m_pSbuf;
 		m_pSbuf = nullptr;
@@ -202,11 +202,11 @@ void  CBofMovie::CloseMovie() {
 }
 
 void  CBofMovie::onClose() {
-	CloseMovie();
+	closeMovie();
 	CBofDialog::onClose();
 }
 
-void CBofMovie::OnMovieDone() {
+void CBofMovie::onMovieDone() {
 	if (!m_bLoop) {
 		if (_bCaptured)
 			ReleaseCapture();
@@ -216,12 +216,12 @@ void CBofMovie::OnMovieDone() {
 	}
 }
 
-bool CBofMovie::Play(bool bLoop, bool bEscCanStop) {
+bool CBofMovie::play(bool bLoop, bool bEscCanStop) {
 
 	m_bEscCanStop = bEscCanStop;
 	m_bLoop = bLoop;
 
-	bool bSuccess = Play();
+	bool bSuccess = play();
 
 	GetParent()->disable();
 	GetParent()->FlushAllMessages();
@@ -236,7 +236,7 @@ bool CBofMovie::Play(bool bLoop, bool bEscCanStop) {
 }
 
 
-bool CBofMovie::Play() {
+bool CBofMovie::play() {
 	if (m_pSmk) {
 		m_pSmk->pauseVideo(false);
 		//m_pSmk->setReverse(false); // TODO: Not supported by SMK
@@ -249,13 +249,13 @@ bool CBofMovie::Play() {
 
 }
 
-bool CBofMovie::Reverse(bool bLoop,  bool bEscCanStop) {
+bool CBofMovie::reverse(bool bLoop,  bool bEscCanStop) {
 	bool bSuccess = true;
 
 	m_bEscCanStop   = bEscCanStop;
 	m_bLoop = bLoop;
 
-	bSuccess = Reverse();
+	bSuccess = reverse();
 
 	GetParent()->disable();
 	GetParent()->FlushAllMessages();
@@ -265,7 +265,7 @@ bool CBofMovie::Reverse(bool bLoop,  bool bEscCanStop) {
 
 }
 
-bool CBofMovie::Reverse() {
+bool CBofMovie::reverse() {
 
 	if (m_pSmk) {
 		m_pSmk->pauseVideo(false);
@@ -279,7 +279,7 @@ bool CBofMovie::Reverse() {
 
 }
 
-bool CBofMovie::Stop() {
+bool CBofMovie::stop() {
 	if (m_pSmk) {
 		m_pSmk->stop();
 		m_eMovStatus = STOPPED;
@@ -290,7 +290,7 @@ bool CBofMovie::Stop() {
 
 }
 
-bool CBofMovie::Pause() {
+bool CBofMovie::pause() {
 	if (m_pSmk) {
 		m_pSmk->pauseVideo(true);
 		m_eMovStatus = PAUSED;
@@ -301,7 +301,7 @@ bool CBofMovie::Pause() {
 
 }
 
-bool CBofMovie::SeekToStart() {
+bool CBofMovie::seekToStart() {
 	if (m_pSmk) {
 		m_pSmk->rewind();
 		return true;
@@ -310,16 +310,16 @@ bool CBofMovie::SeekToStart() {
 	return false;
 }
 
-bool CBofMovie::SeekToEnd() {
+bool CBofMovie::seekToEnd() {
 	if (m_pSmk) {
-		SetFrame(m_pSmk->getFrameCount() - 2); // HACK: Reverse rewind
+		setFrame(m_pSmk->getFrameCount() - 2); // HACK: Reverse rewind
 		return true;
 	}
 
 	return false;
 }
 
-uint32 CBofMovie::GetFrame() {
+uint32 CBofMovie::getFrame() {
 	if (m_pSmk) {
 		return m_pSmk->getCurFrame();
 	}
@@ -328,7 +328,7 @@ uint32 CBofMovie::GetFrame() {
 }
 
 
-bool CBofMovie::SetFrame(uint32 dwFrameNum) {
+bool CBofMovie::setFrame(uint32 dwFrameNum) {
 	if (m_pSmk) {
 		dwFrameNum = CLIP<uint32>(dwFrameNum, 0, m_pSmk->getFrameCount() - 1);
 		m_pSmk->forceSeekToFrame(dwFrameNum);
@@ -341,7 +341,7 @@ bool CBofMovie::SetFrame(uint32 dwFrameNum) {
 void CBofMovie::onReSize(CBofSize *pSize) {
 }
 
-bool CBofMovie::CenterRect() {
+bool CBofMovie::centerRect() {
 	CBofRect cBofRect = GetParent()->GetClientRect();
 	RECT rcParentRect = cBofRect.GetWinRect();
 	int ClientWidth = rcParentRect.right - rcParentRect.left;
@@ -368,13 +368,13 @@ void CBofMovie::onButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/) {
 }
 
 
-ErrorCode BofPlayMovie(CBofWindow *pParent, const char *pszMovieFile, CBofRect *pRect) {
+ErrorCode bofPlayMovie(CBofWindow *pParent, const char *pszMovieFile, CBofRect *pRect) {
 	Assert(pParent != nullptr);
 	Assert(pszMovieFile != nullptr);
 
 	CBofMovie cMovie(pParent, pszMovieFile, pRect);
 	if (!cMovie.ErrorOccurred()) {
-		cMovie.Play(false, true);
+		cMovie.play(false, true);
 	}
 
 	return cMovie.GetErrorCode();

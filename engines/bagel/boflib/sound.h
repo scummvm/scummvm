@@ -82,10 +82,10 @@ public:
 	static void GetDrivePath(char *pszDrivePath);
 
 	bool MidiLoopPlaySegment(uint32 LoopBegin, uint32 LoopEnd = 0L, uint32 FirstPassBegin = 0L, uint32 TimeFmt = FMT_MILLISEC);
-	bool Play(uint32 StartOfPlay = 0L, uint32 TimeFmtFlag = FMT_MILLISEC);
-	bool Pause();
+	bool play(uint32 StartOfPlay = 0L, uint32 TimeFmtFlag = FMT_MILLISEC);
+	bool pause();
 	bool Resume();
-	void Stop();
+	void stop();
 
 	CBofSound *GetNext() {
 		return (CBofSound *)m_pNext;

@@ -145,7 +145,7 @@ public:
 	 * Opens an existing data-file, or creates a new one.
 	 * @return          Error return code
 	 */
-	ErrorCode Open();
+	ErrorCode open();
 
 	/**
 	 * Closes current data-file, if it's not already closed

@@ -124,7 +124,7 @@ CBagStorageDev::CBagStorageDev() {
 
 	m_pBitmapFilter = nullptr;
 
-	SetCloseOnOpen(false);
+	setCloseOnOpen(false);
 	SetExitOnEdge(0);
 	SetFilterId(0);
 	SetFadeId(0);
@@ -578,7 +578,7 @@ ErrorCode CBagStorageDev::LoadFile(const CBofString &sWldName) {
 		bof_ifstream fpInput(pBuf, nLength);
 
 		CBofFile cFile;
-		cFile.Open(sWldFileName);
+		cFile.open(sWldFileName);
 		cFile.Read(pBuf, nLength);
 		cFile.Close();
 
@@ -1148,7 +1148,7 @@ void CBagStorageDev::MakeListDirty(CBofList<CBagObject *> *pList) {
 
 CBagStorageDevWnd::CBagStorageDevWnd() : CBofWindow() {
 	SetOnUpdate(true);
-	SetCloseOnOpen(false);
+	setCloseOnOpen(false);
 	m_pWorkBmp = nullptr;
 
 	// Set a default help file for when there is not one specified
@@ -1445,7 +1445,7 @@ ErrorCode CBagStorageDevWnd::LoadFile(const CBofString &sFile) {
 		bof_ifstream fpInput(pBuf, nLength);
 
 		CBofFile cFile;
-		cFile.Open(sWldFile);
+		cFile.open(sWldFile);
 		cFile.Read(pBuf, nLength);
 		cFile.Close();
 
@@ -1721,7 +1721,7 @@ ErrorCode CBagStorageDevDlg::LoadFile(const CBofString &sFile) {
 		bof_ifstream fpInput(pBuf, nLength);
 
 		CBofFile cFile;
-		cFile.Open(sWldFile);
+		cFile.open(sWldFile);
 		cFile.Read(pBuf, nLength);
 		cFile.Close();
 

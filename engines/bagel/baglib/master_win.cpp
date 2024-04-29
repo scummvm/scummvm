@@ -453,7 +453,7 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 			bof_ifstream fpInput(pBuf, nLength);
 
 			CBofFile cFile;
-			cFile.Open(sWldFileName);
+			cFile.open(sWldFileName);
 			cFile.Read(pBuf, nLength);
 			cFile.Close();
 
@@ -516,7 +516,7 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 	} else {
 		ReportError(ERR_FFIND, "Could not find World Script: %s", sWldFileName.GetBuffer());
 	}
-	LogInfo(BuildString("Time to Load %s, %ld ms", sWldFileName.GetBuffer(), TimerStop()));
+	LogInfo(BuildString("Time to Load %s, %ld ms", sWldFileName.GetBuffer(), timerStop()));
 
 	return _errCode;
 }
@@ -600,7 +600,7 @@ ErrorCode CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 				bof_ifstream fpInput(pBuf, nLength);
 
 				CBofFile cFile;
-				cFile.Open(sWldFileName);
+				cFile.open(sWldFileName);
 				cFile.Read(pBuf, nLength);
 				cFile.Close();
 
@@ -1087,7 +1087,7 @@ void CBagMasterWin::onKeyHit(uint32 lKey, uint32 lRepCount) {
 
 			// Play the tick-tock sound
 			if (m_pWaitSound != nullptr) {
-				m_pWaitSound->Play();
+				m_pWaitSound->play();
 			}
 
 			VARMNGR->IncrementTimers();

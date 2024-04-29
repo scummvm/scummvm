@@ -43,7 +43,7 @@ bool CBagExam::initExam() {
 	m_bLoop = true;
 	m_bEscCanStop = true;
 
-	Pause();
+	pause();
 
 	CBofCursor::Show();
 	doModal();
@@ -89,21 +89,21 @@ void  CBagExam::onButtonUp(uint32 /*n flags, unused */, CBofPoint * /* point, un
 	// Clean up and exit
 	m_bLoop = false;
 
-	Stop();
-	OnMovieDone();
+	stop();
+	onMovieDone();
 }
 
 
 bool CBagExam::rotateLeft() {
 	if (m_eMovStatus != FOREWARD)
-		return Play();
+		return play();
 
 	return true;
 }
 
 bool CBagExam::rotateRight() {
 	if (m_eMovStatus != REVERSE)
-		return Reverse();
+		return reverse();
 
 	return true;
 }
@@ -111,7 +111,7 @@ bool CBagExam::rotateRight() {
 bool CBagExam::rotateStop() {
 	if (m_eMovStatus == FOREWARD || m_eMovStatus == REVERSE)
 		// The movie is currently playing
-		return Pause();
+		return pause();
 
 	return true;
 

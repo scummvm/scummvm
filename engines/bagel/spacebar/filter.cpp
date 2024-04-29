@@ -802,7 +802,7 @@ static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			pBmp->UnLock();
 
 			// Let's hear the thunder!
-			pThunder->Play();
+			pThunder->play();
 
 			// Set the time that the next bolt of lightning will occur.
 			// If only nature were so precise...

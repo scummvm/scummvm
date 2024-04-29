@@ -40,7 +40,7 @@ CBofFile::CBofFile(const char *pszFileName, uint32 lFlags) {
 
 	// Open now?
 	if (pszFileName != nullptr) {
-		Open(pszFileName, lFlags);
+		open(pszFileName, lFlags);
 	}
 }
 
@@ -80,7 +80,7 @@ ErrorCode CBofFile::create(const char *pszFileName, uint32 lFlags) {
 	return _errCode;
 }
 
-ErrorCode CBofFile::Open(const char *pszFileName, uint32 lFlags) {
+ErrorCode CBofFile::open(const char *pszFileName, uint32 lFlags) {
 	Assert(IsValidObject(this));
 	Assert(pszFileName != nullptr);
 	Assert(strlen(pszFileName) < MAX_DIRPATH);
@@ -248,7 +248,7 @@ uint32 CBofFile::GetPosition() {
 	error("GetPosition on closed file");
 }
 
-ErrorCode CBofFile::SeekToEnd() {
+ErrorCode CBofFile::seekToEnd() {
 	Assert(IsValidObject(this));
 
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_stream);

@@ -380,7 +380,7 @@ PARSE_CODES CBagButtonObject::setInfo(bof_ifstream &istr) {
 				// The framerate is expressed in frames/second, so do some division
 				// here to store the number of milliseconds.
 
-				SetFrameRate(1000 / nFrameRate);
+				setFrameRate(1000 / nFrameRate);
 
 				nObjectUpdated = true;
 			} else {

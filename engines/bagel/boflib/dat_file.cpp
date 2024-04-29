@@ -95,7 +95,7 @@ ErrorCode CBofDataFile::SetFile(const char *pszFileName, uint32 lFlags, const ch
 	m_lFlags = lFlags;
 
 	if (FileGetFullPath(m_szFileName, pszFileName) != nullptr) {
-		if (Open() == ERR_NONE) {
+		if (open() == ERR_NONE) {
 
 			// Read header block
 			ReadHeader();
@@ -181,7 +181,7 @@ ErrorCode CBofDataFile::create() {
 	return _errCode;
 }
 
-ErrorCode CBofDataFile::Open() {
+ErrorCode CBofDataFile::open() {
 	Assert(IsValidObject(this));
 
 	// Only continue if there is no current error
@@ -197,7 +197,7 @@ ErrorCode CBofDataFile::Open() {
 
 			if (_stream == nullptr) {
 				// Open data file
-				CBofFile::Open(m_szFileName, m_lFlags);
+				CBofFile::open(m_szFileName, m_lFlags);
 			}
 		}
 	}
@@ -225,7 +225,7 @@ ErrorCode CBofDataFile::ReadHeader() {
 	// Only continue if there is no current error
 	if (_errCode == ERR_NONE) {
 		if (_stream == nullptr) {
-			Open();
+			open();
 		}
 
 		if (!ErrorOccurred()) {
@@ -304,7 +304,7 @@ ErrorCode CBofDataFile::WriteHeader() {
 	if (_errCode == ERR_NONE) {
 		// Open the data file if it's not already open
 		if (_stream == nullptr) {
-			Open();
+			open();
 		}
 
 		if (_errCode == ERR_NONE) {
@@ -369,7 +369,7 @@ ErrorCode CBofDataFile::ReadRecord(int32 lRecNum, void *pBuf) {
 
 		// Open the data file if it's not already open
 		if (_stream == nullptr) {
-			Open();
+			open();
 		}
 
 		if (_errCode == ERR_NONE) {
@@ -420,7 +420,7 @@ ErrorCode CBofDataFile::ReadFromFile(int32 lRecNum, void *pBuf, int32 lBytes) {
 
 		// Open the data file if it's not already open
 		if (_stream == nullptr) {
-			Open();
+			open();
 		}
 
 		if (_errCode == ERR_NONE) {
@@ -477,7 +477,7 @@ ErrorCode CBofDataFile::WriteRecord(int32 lRecNum, void *pBuf, int32 lSize, bool
 		m_bHeaderDirty = true;
 
 		if (_stream == nullptr) {
-			Open();
+			open();
 		}
 
 		// This record starts at the end of the last record
@@ -657,7 +657,7 @@ ErrorCode CBofDataFile::AddRecord(void *pBuf, int32 lLength, bool bUpdateHeader,
 
 		if (lLength > 0) {
 			if (_stream == nullptr) {
-				Open();
+				open();
 			}
 
 			if (_errCode == ERR_NONE) {
@@ -725,7 +725,7 @@ ErrorCode CBofDataFile::DeleteRecord(int32 lRecNum, bool bUpdateHeader) {
 
 		// Open the data file if it's not already
 		if (_stream == nullptr) {
-			Open();
+			open();
 		}
 
 		if (_errCode == ERR_NONE) {

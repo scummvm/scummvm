@@ -410,7 +410,7 @@ ErrorCode CBibbleWindow::attach() {
 	}
 
 	if ((m_pBkgSnd = new CBofSound(this, BuildDir(CASINO_AUDIO), SOUND_MIX, 99999)) != nullptr) {
-		m_pBkgSnd->Play();
+		m_pBkgSnd->play();
 	} else {
 		ReportError(ERR_MEMORY);
 	}
@@ -451,7 +451,7 @@ ErrorCode CBibbleWindow::detach() {
 	}
 
 	if (m_pBkgSnd->IsPlaying()) {
-		m_pBkgSnd->Stop();
+		m_pBkgSnd->stop();
 	}
 	if (m_pBkgSnd != nullptr) {
 		delete m_pBkgSnd;
@@ -858,7 +858,7 @@ ErrorCode CBibbleWindow::BonkBibble(int nBibbleID, int nShouts) {
 
 				if (i == START_YELL) {
 					// Start shouting
-					m_pShouts[nShouts - 1]->Play();
+					m_pShouts[nShouts - 1]->play();
 				}
 
 				Sleep(SPEED_DELAY2);

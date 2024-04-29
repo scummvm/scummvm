@@ -81,10 +81,10 @@ public:
 	void setProperty(const CBofString &sProp, int nVal);
 	int getProperty(const CBofString &sProp);
 
-	int GetFrameRate() {
+	int getFrameRate() {
 		return m_nMaxFrameRate;
 	}
-	void SetFrameRate(int nFR) {
+	void setFrameRate(int nFR) {
 		m_nMaxFrameRate = nFR;
 	}
 
