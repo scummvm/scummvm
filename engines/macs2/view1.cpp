@@ -598,7 +598,7 @@ Macs2::AnimFrame *Character::GetCurrentPortrait() {
 	AnimFrame *result = new AnimFrame();
 	Common::MemoryReadStream stream(this->GameObject->Blobs[17].data(), this->GameObject->Blobs[17].size());
 	// TODO: Need to check how the offset really is calculated by the game code, this will not hold
-	if (GameObject->Index == 2) {
+	if (GameObject->Index == 2 || GameObject->Index == 6) {
 		stream.seek(35, SEEK_SET);
 	} else {
 		stream.seek(36, SEEK_SET);
@@ -617,15 +617,31 @@ void Character::StartLerpTo(const Common::Point &target, uint32 duration) {
 	IsLerping = true;
 }
 
+void Character::RegisterWaitForMovementFinishedEvent() {
+
+	// For now, we are treating this one as a flag to send an event
+	// even if we are not lerping, so that we have a delay between action 0x11
+	// and the new execution
+	ExecuteScriptOnFinishLerp = true;
+	
+}
+
 void Character::Update() {
 	if (!IsLerping) {
+		// We might have gotten the 0x11 command after we stopped moving
+		// TODO: Check if the code handles this similarly
+		// TODO: Consider which run function to use
+		if (ExecuteScriptOnFinishLerp) {
+			ExecuteScriptOnFinishLerp = false;
+			g_engine->RunScriptExecutor();
+		}
 		return;
 	}
 	uint32 endTime = StartTime + Duration;
 	bool isDone = endTime < g_events->currentMillis;
+	
 	if (isDone) {
 		IsLerping = false;
-
 		// Check if we need to execute the script
 		// TODO: Consider which run function to use
 		if (ExecuteScriptOnFinishLerp) {
