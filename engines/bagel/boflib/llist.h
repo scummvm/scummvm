@@ -31,7 +31,7 @@ namespace Bagel {
 class CLList {
 protected:
 	CLList *m_pPrev; // Pointer to next link in chain
-	CLList *m_pNext; // Pointer to previous link in chain
+	CLList *_pNext; // Pointer to previous link in chain
 	void *m_pData;   // Pointer to owning CData
 
 public:
@@ -113,7 +113,7 @@ public:
 		return m_pPrev;
 	}
 	CLList *GetNext() const {
-		return m_pNext;
+		return _pNext;
 	}
 
 	void *getData() const {

@@ -38,10 +38,10 @@ protected:
 
 public:
 	CBofListNode() {
-		m_pNext = m_pPrev = nullptr;
+		_pNext = m_pPrev = nullptr;
 	}
 	CBofListNode(T cItem) {
-		m_pNext = m_pPrev = nullptr;
+		_pNext = m_pPrev = nullptr;
 		m_cItem = cItem;
 	}
 
@@ -52,7 +52,7 @@ public:
 		m_cItem = cItem;
 	}
 
-	CBofListNode *m_pNext; // Next node in list
+	CBofListNode *_pNext; // Next node in list
 	CBofListNode *m_pPrev; // Previous node in list
 };
 
@@ -106,7 +106,7 @@ private:
 
 			while (pNode != nullptr) {
 				*(m_pItemList + i++) = pNode;
-				pNode = pNode->m_pNext;
+				pNode = pNode->_pNext;
 			}
 		}
 	}
@@ -151,7 +151,7 @@ private:
 
 		while (pNode != nullptr) {
 			pLast = pNode;
-			pNode = pLast->m_pNext;
+			pNode = pLast->_pNext;
 		}
 
 		return pLast;
@@ -198,7 +198,7 @@ public:
 		CBofListNode<T> *pNode = m_pHead;
 		while (pNode != nullptr) {
 			nCount++;
-			pNode = pNode->m_pNext;
+			pNode = pNode->_pNext;
 		}
 
 		// There should be no discrepancy
@@ -256,7 +256,7 @@ public:
 			while (pNode != nullptr) {
 				if (nNodeIndex-- == 0)
 					break;
-				pNode = pNode->m_pNext;
+				pNode = pNode->_pNext;
 			}
 
 		} else {
@@ -292,10 +292,10 @@ public:
 			CBofListNode<T> *pNewNode = NewNode(cNewItem);
 
 			pNewNode->m_pPrev = pNode->m_pPrev;
-			pNewNode->m_pNext = pNode;
+			pNewNode->_pNext = pNode;
 
 			if (pNode->m_pPrev != nullptr)
-				pNode->m_pPrev->m_pNext = pNewNode;
+				pNode->m_pPrev->_pNext = pNewNode;
 
 			pNode->m_pPrev = pNewNode;
 		}
@@ -332,12 +332,12 @@ public:
 
 			CBofListNode<T> *pNewNode = NewNode(cNewItem);
 			pNewNode->m_pPrev = pNode;
-			pNewNode->m_pNext = pNode->m_pNext;
+			pNewNode->_pNext = pNode->_pNext;
 
-			if (pNode->m_pNext != nullptr)
-				pNode->m_pNext->m_pPrev = pNewNode;
+			if (pNode->_pNext != nullptr)
+				pNode->_pNext->m_pPrev = pNewNode;
 
-			pNode->m_pNext = pNewNode;
+			pNode->_pNext = pNewNode;
 		}
 
 		// one more item in list
@@ -367,16 +367,16 @@ public:
 			retVal = pNode->GetNodeItem();
 
 			if (m_pHead == pNode)
-				m_pHead = m_pHead->m_pNext;
+				m_pHead = m_pHead->_pNext;
 
 			if (m_pTail == pNode)
 				m_pTail = m_pTail->m_pPrev;
 
 			if (pNode->m_pPrev != nullptr)
-				pNode->m_pPrev->m_pNext = pNode->m_pNext;
+				pNode->m_pPrev->_pNext = pNode->_pNext;
 
-			if (pNode->m_pNext != nullptr)
-				pNode->m_pNext->m_pPrev = pNode->m_pPrev;
+			if (pNode->_pNext != nullptr)
+				pNode->_pNext->m_pPrev = pNode->m_pPrev;
 
 			delete pNode;
 
@@ -433,7 +433,7 @@ public:
 	inline void addToHead(CBofListNode<T> *pNewNode) {
 		assert(pNewNode != nullptr);
 
-		pNewNode->m_pNext = m_pHead;
+		pNewNode->_pNext = m_pHead;
 		pNewNode->m_pPrev = nullptr;
 		if (m_pHead != nullptr)
 			m_pHead->m_pPrev = pNewNode;
@@ -465,9 +465,9 @@ public:
 		assert(pNewNode != nullptr);
 
 		pNewNode->m_pPrev = m_pTail;
-		pNewNode->m_pNext = nullptr;
+		pNewNode->_pNext = nullptr;
 		if (m_pTail != nullptr)
-			m_pTail->m_pNext = pNewNode;
+			m_pTail->_pNext = pNewNode;
 		m_pTail = pNewNode;
 
 		if (m_pHead == nullptr)

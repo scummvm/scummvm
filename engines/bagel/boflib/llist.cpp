@@ -26,13 +26,13 @@ namespace Bagel {
 
 CLList::CLList() {
 	m_pPrev = nullptr;
-	m_pNext = nullptr;
+	_pNext = nullptr;
 	m_pData = nullptr;
 }
 
 CLList::CLList(void *pObj) {
 	m_pPrev = nullptr;
-	m_pNext = nullptr;
+	_pNext = nullptr;
 	m_pData = pObj;
 }
 
@@ -46,7 +46,7 @@ void CLList::addToHead(CLList *pNewList) {
 
 	CLList *pListHead = GetHead();
 
-	pNewList->m_pNext = pListHead;
+	pNewList->_pNext = pListHead;
 	pNewList->m_pPrev = nullptr;
 
 	pListHead->m_pPrev = pNewList;
@@ -59,9 +59,9 @@ void CLList::addToTail(CLList *pNewList) {
 	CLList *pListTail = GetTail();
 
 	pNewList->m_pPrev = pListTail;
-	pNewList->m_pNext = nullptr;
+	pNewList->_pNext = nullptr;
 
-	pListTail->m_pNext = pNewList;
+	pListTail->_pNext = pNewList;
 }
 
 void CLList::Insert(CLList *pList) {
@@ -69,22 +69,22 @@ void CLList::Insert(CLList *pList) {
 	assert(pList != nullptr);
 
 	pList->m_pPrev = this;
-	pList->m_pNext = m_pNext;
+	pList->_pNext = _pNext;
 
-	if (m_pNext != nullptr)
-		m_pNext->m_pPrev = pList;
+	if (_pNext != nullptr)
+		_pNext->m_pPrev = pList;
 
-	m_pNext = pList;
+	_pNext = pList;
 }
 
 void CLList::Delete() {
 	if (m_pPrev != nullptr)
-		m_pPrev->m_pNext = m_pNext;
+		m_pPrev->_pNext = _pNext;
 
-	if (m_pNext != nullptr)
-		m_pNext->m_pPrev = m_pPrev;
+	if (_pNext != nullptr)
+		_pNext->m_pPrev = m_pPrev;
 
-	m_pPrev = m_pNext = nullptr;
+	m_pPrev = _pNext = nullptr;
 }
 
 void CLList::MoveToHead() {
@@ -121,7 +121,7 @@ void CLList::MoveLeft() {
 }
 
 void CLList::MoveRight() {
-	CLList *pNext = m_pNext;
+	CLList *pNext = _pNext;
 
 	if (pNext != nullptr) {
 
@@ -138,7 +138,7 @@ void CLList::FlushList() {
 	assert(pList != nullptr);
 
 	while (pList != nullptr) {
-		CLList *pTmpList = pList->m_pNext;
+		CLList *pTmpList = pList->_pNext;
 
 		// Don't delete myself
 		if (pList != this)
@@ -158,8 +158,8 @@ CLList *CLList::GetHead() {
 
 CLList *CLList::GetTail() {
 	CLList *pList = this;
-	while (pList->m_pNext != nullptr)
-		pList = pList->m_pNext;
+	while (pList->_pNext != nullptr)
+		pList = pList->_pNext;
 
 	return pList;
 }
