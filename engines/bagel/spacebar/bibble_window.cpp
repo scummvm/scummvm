@@ -535,7 +535,7 @@ void CBibbleWindow::onPaint(CBofRect *pRect) {
 	// Render offscreen
 	if (m_pBackdrop != nullptr && (pBmp = GetWorkBmp()) != nullptr) {
 
-		m_pBackdrop->Paint(pBmp, pRect, pRect);
+		m_pBackdrop->paint(pBmp, pRect, pRect);
 
 		// Paint the bibbles - just sitting there
 		for (int i = 0; i < BIBBLE_NUM_BIBBLES; i++) {
@@ -568,7 +568,7 @@ void CBibbleWindow::onPaint(CBofRect *pRect) {
 		}
 
 		// Now update the screen
-		pBmp->Paint(this, pRect, pRect);
+		pBmp->paint(this, pRect, pRect);
 
 		if (m_pSelected != nullptr) {
 			Highlight(m_pSelected, HIGHLIGHT_COLOR);
@@ -693,7 +693,7 @@ void CBibbleWindow::OnBofButton(CBofObject *pObject, int nState) {
 			PaintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
 			WaitForInput();
 
-			cBmp.Paint(this, &cRect);
+			cBmp.paint(this, &cRect);
 		}
 
 		DisplayCredits();
@@ -1132,7 +1132,7 @@ ErrorCode CBibbleWindow::Highlight(CBetArea *pArea, byte nColor) {
 
 	Assert(m_pBackdrop != nullptr);
 	CBofRect r = cBmp.GetRect();
-	m_pBackdrop->Paint(&cBmp, &r, &pArea->m_cRect);
+	m_pBackdrop->paint(&cBmp, &r, &pArea->m_cRect);
 
 	// Add highlight rectangle
 	CBofRect cRect = cBmp.GetRect();
@@ -1155,7 +1155,7 @@ ErrorCode CBibbleWindow::Highlight(CBetArea *pArea, byte nColor) {
 	PaintText(&cBmp, &cRect, szBuf, 16, TEXT_NORMAL, CTEXT_COLOR, JUSTIFY_RIGHT, FORMAT_BOT_RIGHT);
 
 	// Paint result to screen
-	cBmp.Paint(this, &pArea->m_cRect);
+	cBmp.paint(this, &pArea->m_cRect);
 
 	return m_errCode;
 }
@@ -1171,7 +1171,7 @@ ErrorCode CBibbleWindow::UnHighlight(CBetArea *pArea) {
 
 	// Copy bet area
 	CBofRect r = cBmp.GetRect();
-	m_pBackdrop->Paint(&cBmp, &r, &pArea->m_cRect);
+	m_pBackdrop->paint(&cBmp, &r, &pArea->m_cRect);
 
 	// Add bet amount text
 	char szBuf[20];
@@ -1183,7 +1183,7 @@ ErrorCode CBibbleWindow::UnHighlight(CBetArea *pArea) {
 	PaintText(&cBmp, &cRect, szBuf, 16, TEXT_NORMAL, CTEXT_COLOR, JUSTIFY_RIGHT, FORMAT_BOT_RIGHT);
 
 	// Paint to screen
-	cBmp.Paint(this, &pArea->m_cRect);
+	cBmp.paint(this, &pArea->m_cRect);
 
 	return m_errCode;
 }

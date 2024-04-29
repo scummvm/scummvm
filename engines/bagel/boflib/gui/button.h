@@ -58,7 +58,7 @@ public:
 
 	void LoadColorScheme(ST_COLORSCHEME *pColorScheme);
 
-	virtual ErrorCode Paint(CBofRect *pRect = nullptr);
+	virtual ErrorCode paint(CBofRect *pRect = nullptr);
 
 	virtual void Enable() override;
 	virtual void Disable() override;
@@ -85,7 +85,7 @@ protected:
 
 class CBofRadioButton : public CBofButton {
 public:
-	virtual ErrorCode Paint(CBofRect *pRect = nullptr);
+	virtual ErrorCode paint(CBofRect *pRect = nullptr);
 
 protected:
 	virtual void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
@@ -99,7 +99,7 @@ public:
 		return (m_nState == BUTTON_CHECKED);
 	}
 
-	virtual ErrorCode Paint(CBofRect *pRect = nullptr);
+	virtual ErrorCode paint(CBofRect *pRect = nullptr);
 
 protected:
 	virtual void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
@@ -118,7 +118,7 @@ public:
 	ErrorCode LoadBitmaps(CBofBitmap *pUp, CBofBitmap *pDown, CBofBitmap *pFocus, CBofBitmap *pDisabled, int nMaskColor = NOT_TRANSPARENT);
 	ErrorCode LoadBitmaps(CBofPalette *pPalette, const char *pszUp, const char *pszDown = nullptr, const char *pszFocus = nullptr, const char *pszDisabled = nullptr, int nMaskColor = NOT_TRANSPARENT);
 
-	ErrorCode Paint(CBofRect *pRect = nullptr);
+	ErrorCode paint(CBofRect *pRect = nullptr);
 
 	ErrorCode SetState(int nNewState, bool bRepaintNow = true);
 	int GetState() {

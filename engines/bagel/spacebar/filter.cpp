@@ -304,7 +304,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	if (g_pHudOn->GetNumValue() == 1) {
 		if (g_pDGrafiti->GetNumValue()) {
 			CBofRect SrcRect(pGrafittiBmp->GetRect());
-			pGrafittiBmp->Paint(pBmp, g_engine->viewRect.left, g_engine->viewRect.top, &SrcRect, 1);
+			pGrafittiBmp->paint(pBmp, g_engine->viewRect.left, g_engine->viewRect.top, &SrcRect, 1);
 		}
 
 		CBofRect rect(g_engine->viewRect.left, g_engine->viewRect.top, g_engine->viewRect.right, g_engine->viewRect.top + 20);
@@ -347,7 +347,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		rect.right = g_engine->viewRect.right;
 		rect.top = g_engine->viewRect.bottom - 20;
 		rect.bottom = g_engine->viewRect.bottom;
-		pTipBmp->Paint(pBmp, &rect, &srcTipRect, 0);
+		pTipBmp->paint(pBmp, &rect, &srcTipRect, 0);
 
 		// moved up here to use chipID later on bar
 		int chipID = g_pDChipID->GetNumValue();
@@ -557,7 +557,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				int tdef = g_engine->viewRect.Height() - 300;
 				CBofRect tmprct(0, 0, VILDROIDCHIPTEXTWIDTH, 300);                 // (tdef/2)
 
-				pChipBmp->Paint(pBmp, ((rdef / 2) + g_engine->viewRect.left), (tdef + g_engine->viewRect.top), &tmprct, 0);
+				pChipBmp->paint(pBmp, ((rdef / 2) + g_engine->viewRect.left), (tdef + g_engine->viewRect.top), &tmprct, 0);
 			}
 
 			if (waitCount == 0)
@@ -608,7 +608,7 @@ static bool TriFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 	if (VARMNGR->GetVariable("GLASSESON")->GetNumValue()) {
 		CBofRect SrcRect(pTriBmp->GetRect());
-		pTriBmp->Paint(pBmp, g_engine->viewRect.left, g_engine->viewRect.top, &SrcRect, 1);
+		pTriBmp->paint(pBmp, g_engine->viewRect.left, g_engine->viewRect.top, &SrcRect, 1);
 	}
 	return true;
 }
@@ -647,7 +647,7 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			if (pMiniBitmap != nullptr) {
 				CBofRect dstRect(g_engine->viewRect);
 				CBofRect srcRect = pMiniBitmap->GetRect();
-				pBmp->Paint(pMiniBitmap, &srcRect, &dstRect);
+				pBmp->paint(pMiniBitmap, &srcRect, &dstRect);
 
 				CBofRect &filterRect = CMainWindow::GetFilterRect();
 				filterRect.SetRect(g_engine->viewRect.left, g_engine->viewRect.top, g_engine->viewRect.left + dx, g_engine->viewRect.top + dy);
@@ -663,7 +663,7 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 						x = g_engine->viewRect.left + (dx >> 1);
 					}
 					for (; j < 3; ++j) {
-						pMiniBitmap->Paint(pBmp, x, y);
+						pMiniBitmap->paint(pBmp, x, y);
 						x += dx;
 					}
 					y += dy;
@@ -704,7 +704,7 @@ static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		CBofRect tempRect = pTempBitmap->GetRect();
 		CBofRect srcRect(g_engine->viewRect);
 		CBofRect dstRect = tempRect;
-		pBmp->Paint(pTempBitmap, &dstRect, &srcRect);   // Copy the Screen's Bmp into Temp
+		pBmp->paint(pTempBitmap, &dstRect, &srcRect);   // Copy the Screen's Bmp into Temp
 		int nShiftAmount = 0;
 		
 		// Step through strips of bmp
@@ -712,11 +712,11 @@ static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			srcRect.SetRect(0, y, tempRect.right - nShiftAmount, y + 4); // Get everything over one
 			dstRect.SetRect(g_engine->viewRect.left + nShiftAmount, g_engine->viewRect.top + y,
 			                g_engine->viewRect.right, (g_engine->viewRect.top + y) + 4);
-			pTempBitmap->Paint(pBmp, &dstRect, &srcRect);
+			pTempBitmap->paint(pBmp, &dstRect, &srcRect);
 			srcRect.SetRect(tempRect.right - nShiftAmount, y, tempRect.right, y + 4);
 			dstRect.SetRect(g_engine->viewRect.left, g_engine->viewRect.top + y,
 			                g_engine->viewRect.left + nShiftAmount, (g_engine->viewRect.top + y) + 4);
-			pTempBitmap->Paint(pBmp, &dstRect, &srcRect);
+			pTempBitmap->paint(pBmp, &dstRect, &srcRect);
 			// I'm sure there's some nerdy math formula that does
 			//...this all pretty-like -- will fix it if it comes to me
 			// Change the amount of shift depending on the row we're in

@@ -219,7 +219,7 @@ ErrorCode CBofBitmap::LoadBitmap(const char *pszFileName, CBofPalette *pPalette)
 	return m_errCode;
 }
 
-ErrorCode CBofBitmap::Paint(CBofWindow *pWnd, int x, int y, CBofRect *pSrcRect, int nMaskColor) {
+ErrorCode CBofBitmap::paint(CBofWindow *pWnd, int x, int y, CBofRect *pSrcRect, int nMaskColor) {
 	Assert(IsValidObject(this));
 	Assert(pWnd != nullptr);
 
@@ -229,10 +229,10 @@ ErrorCode CBofBitmap::Paint(CBofWindow *pWnd, int x, int y, CBofRect *pSrcRect, 
 		cRect.SetRect(x, y, x + pSrcRect->Width() - 1, y + pSrcRect->Height() - 1);
 	}
 
-	return Paint(pWnd, &cRect, pSrcRect, nMaskColor);
+	return paint(pWnd, &cRect, pSrcRect, nMaskColor);
 }
 
-ErrorCode CBofBitmap::Paint(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect *pSrcRect, int nMaskColor) {
+ErrorCode CBofBitmap::paint(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect *pSrcRect, int nMaskColor) {
 	Assert(IsValidObject(this));
 	Assert(pWnd != nullptr);
 
@@ -296,11 +296,11 @@ ErrorCode CBofBitmap::PaintMaskBackdrop(CBofWindow *pWnd, CBofRect *pDstRect, CB
 		// capture the screen
 		if ((pBackdrop = pWnd->GetBackdrop()) != nullptr) {
 			CBofRect cTempRect = cTempBitmap.GetRect();
-			pBackdrop->Paint(&cTempBitmap, &cTempRect, &cDestRect);
+			pBackdrop->paint(&cTempBitmap, &cTempRect, &cDestRect);
 		}
 
-		Paint(&cTempBitmap, 0, 0, &cSourceRect, nMaskColor);
-		cTempBitmap.Paint(pWnd, &cDestRect);
+		paint(&cTempBitmap, 0, 0, &cSourceRect, nMaskColor);
+		cTempBitmap.paint(pWnd, &cDestRect);
 
 		UnLock();
 	}
@@ -308,7 +308,7 @@ ErrorCode CBofBitmap::PaintMaskBackdrop(CBofWindow *pWnd, CBofRect *pDstRect, CB
 	return m_errCode;
 }
 
-ErrorCode CBofBitmap::Paint(CBofBitmap *pBmp, int x, int y, CBofRect *pSrcRect, int nMaskColor) {
+ErrorCode CBofBitmap::paint(CBofBitmap *pBmp, int x, int y, CBofRect *pSrcRect, int nMaskColor) {
 	Assert(IsValidObject(this));
 	Assert(pBmp != nullptr);
 
@@ -318,10 +318,10 @@ ErrorCode CBofBitmap::Paint(CBofBitmap *pBmp, int x, int y, CBofRect *pSrcRect, 
 		cRect.SetRect(x, y, x + pSrcRect->Width() - 1, y + pSrcRect->Height() - 1);
 	}
 
-	return Paint(pBmp, &cRect, pSrcRect, nMaskColor);
+	return paint(pBmp, &cRect, pSrcRect, nMaskColor);
 }
 
-ErrorCode CBofBitmap::Paint(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSrcRect, int nMaskColor) {
+ErrorCode CBofBitmap::paint(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSrcRect, int nMaskColor) {
 	Assert(IsValidObject(this));
 	Assert(pBmp != nullptr);
 
@@ -636,7 +636,7 @@ ErrorCode CBofBitmap::CaptureScreen(CBofWindow *pWnd, CBofRect *pSrcRect, CBofRe
 		} else {
 			// Optimization to use the window's backdrop bitmap instead of doing
 			// an actual screen capture.
-			pBackdrop->Paint(this, &cDestRect, &cSrcRect);
+			pBackdrop->paint(this, &cDestRect, &cSrcRect);
 		}
 	}
 
@@ -853,7 +853,7 @@ CBofBitmap *CBofBitmap::ExtractBitmap(CBofRect *pRect) {
 			}
 
 			if ((pNewBmp = new CBofBitmap(pRect->Width(), pRect->Height(), pPalette, m_bOwnPalette)) != nullptr) {
-				Paint(pNewBmp, 0, 0, pRect);
+				paint(pNewBmp, 0, 0, pRect);
 			} else {
 				LogFatal("Unable to allocate a new CBofBitmap");
 			}
@@ -1085,11 +1085,11 @@ ErrorCode CBofBitmap::FadeIn(CBofWindow *pWnd, int xStart, int yStart, int nMask
 			x += xStart;
 			y += yStart;
 			cDstRect.SetRect((int)x, (int)y, (int)x + nBlockSize - 1, (int)y + nBlockSize - 1);
-			Paint(pWnd, &cDstRect, &cSrcRect, nMaskColor);
+			paint(pWnd, &cDstRect, &cSrcRect, nMaskColor);
 		}
 
 		cSrcRect.SetRect(0, 0, nBlockSize - 1, nBlockSize - 1);
-		Paint(pWnd, &cSrcRect, &cSrcRect, nMaskColor);
+		paint(pWnd, &cSrcRect, &cSrcRect, nMaskColor);
 	}
 
 	return m_errCode;
@@ -1107,7 +1107,7 @@ ErrorCode CBofBitmap::Curtain(CBofWindow *pWnd, int nSpeed, int nMaskColor) {
 
 		for (int i = 0; i < nHeight; i += nSpeed) {
 			cRect.SetRect(0, i, nWidth - 1, i + nSpeed - 1);
-			Paint(pWnd, &cRect, &cRect, nMaskColor);
+			paint(pWnd, &cRect, &cRect, nMaskColor);
 			Sleep(1);
 		}
 	}
@@ -1149,7 +1149,7 @@ ErrorCode CBofBitmap::FadeLines(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect *
 
 				cDstRect.SetRect(x1, y1 + i + j, x1 + nWidth1 - 1, y1 + i + j);
 				cSrcRect.SetRect(x2, y2 + i + j, x2 + nWidth2 - 1, y2 + i + j);
-				Paint(pWnd, &cDstRect, &cSrcRect, nMaskColor);
+				paint(pWnd, &cDstRect, &cSrcRect, nMaskColor);
 
 				if (i % nSpeed == 0)
 					Sleep(1);
@@ -1207,7 +1207,7 @@ ErrorCode PaintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofRect *pD
 		if (pDstRect == nullptr)
 			pDstRect = &cRect;
 
-		errCode = pBmp->Paint(pWindow, pDstRect, pSrcRect, nMaskColor);
+		errCode = pBmp->paint(pWindow, pDstRect, pSrcRect, nMaskColor);
 
 		delete pBmp;
 
@@ -1235,7 +1235,7 @@ ErrorCode PaintBitmap(CBofBitmap *pBitmap, const char *pszFileName, CBofRect *pD
 		if (pDstRect == nullptr)
 			pDstRect = &cRect;
 
-		errCode = pBmp->Paint(pBitmap, pDstRect, pSrcRect, nMaskColor);
+		errCode = pBmp->paint(pBitmap, pDstRect, pSrcRect, nMaskColor);
 
 		delete pBmp;
 

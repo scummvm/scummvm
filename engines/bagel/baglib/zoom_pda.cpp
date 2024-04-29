@@ -67,7 +67,7 @@ ErrorCode SBZoomPda::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 			}
 
 			if (GetWorkBmp() != nullptr) {
-				GetWorkBmp()->Paint(pBmp, pRect, pRect);
+				GetWorkBmp()->paint(pBmp, pRect, pRect);
 			}
 
 			bUpdate = true;

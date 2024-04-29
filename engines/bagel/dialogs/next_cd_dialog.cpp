@@ -93,7 +93,7 @@ void CBagNextCDDialog::onPaint(CBofRect *pRect) {
 
 	// Paint the dialog
 	if (m_pBackdrop != nullptr) {
-		m_pBackdrop->Paint(this, pRect, pRect, 1);
+		m_pBackdrop->paint(this, pRect, pRect, 1);
 	}
 
 	_bHavePainted = true;

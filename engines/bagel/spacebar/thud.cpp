@@ -145,7 +145,7 @@ ErrorCode SBarThud::DeactivateLocalObject(CBagObject *pObj) {
 	}
 
 	if (m_xYouBmp && getBackground())
-		m_xYouBmp->Paint(getBackground(), 0, 0);
+		m_xYouBmp->paint(getBackground(), 0, 0);
 
 	CBagMenu::SetUniversalObjectList(nullptr);
 	return CBagStorageDev::DeactivateLocalObject(pObj);

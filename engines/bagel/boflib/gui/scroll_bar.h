@@ -103,7 +103,7 @@ public:
 	ErrorCode SetText(const char *pszText, int nFlags = JUSTIFY_CENTER);
 
 	void SetRepeatTimer(uint32 nMilliSeconds);
-	ErrorCode Paint(CBofRect *pRect = nullptr);
+	ErrorCode paint(CBofRect *pRect = nullptr);
 
 protected:
 	int PointToPos(CBofPoint *pPoint);

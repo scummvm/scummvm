@@ -139,7 +139,7 @@ void SBarSlotWnd::onPaint(CBofRect *pRect) {
 			Assert(GetWorkBmp() != nullptr);
 
 			// Erase everything from the background
-			GetWorkBmp()->Paint(pBackBmp, pRect, pRect);
+			GetWorkBmp()->paint(pBackBmp, pRect, pRect);
 
 			// Paint all the objects to the background
 			PaintStorageDevice(nullptr, pBackBmp, pRect);
@@ -149,12 +149,12 @@ void SBarSlotWnd::onPaint(CBofRect *pRect) {
 		for (int i = 0; i < SLOT_NUM; i++) {
 
 			if (m_cSlots[i].m_pSlotBmp[m_cSlots[i].m_nIdx] != nullptr) {
-				m_cSlots[i].m_pSlotBmp[m_cSlots[i].m_nIdx]->Paint(pBackBmp, &m_cSlots[i].m_cSlotRect, nullptr, CBagel::getBagApp()->getChromaColor());
+				m_cSlots[i].m_pSlotBmp[m_cSlots[i].m_nIdx]->paint(pBackBmp, &m_cSlots[i].m_cSlotRect, nullptr, CBagel::getBagApp()->getChromaColor());
 			}
 		}
 
 		if (m_bFixBet && m_bFixBmp != nullptr) {
-			m_bFixBmp->Paint(pBackBmp, FixRect.left, FixRect.top);
+			m_bFixBmp->paint(pBackBmp, FixRect.left, FixRect.top);
 		}
 
 		// Paint the backdrop
@@ -414,7 +414,7 @@ void SBarSlotWnd::AddBet(int nBetVal) {
 		PaintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
 		WaitForInput();
 
-		cBmp.Paint(this, &cRect);
+		cBmp.paint(this, &cRect);
 	}
 }
 
@@ -444,7 +444,7 @@ void SBarSlotWnd::BetAll() {
 		PaintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
 		WaitForInput();
 
-		cBmp.Paint(this, &cRect);
+		cBmp.paint(this, &cRect);
 	}
 }
 
@@ -489,7 +489,7 @@ void SBarSlotWnd::Go() {
 	if (m_bFixBet && m_nBet != 0) {
 		Sleep(3000);
 		m_pSlotButs[GO]->Show();
-		m_pSlotButs[GO]->Paint();
+		m_pSlotButs[GO]->paint();
 	}
 }
 
@@ -561,7 +561,7 @@ void SBarSlotWnd::CalcOutcome() {
 		m_bLose = false;
 
 	} else {
-		m_pLoseBmp->Paint(this, 401, 125);
+		m_pLoseBmp->paint(this, 401, 125);
 		m_bLose = true;
 		m_pOddsText->SetText("");
 	}
@@ -678,7 +678,7 @@ void SBarSlotWnd::SlideSlots() {
 		// Erase Previous game
 		CBofRect cRect(219, 12, 626, 276);
 		if (m_pBackdrop != nullptr) {
-			m_pBackdrop->Paint(this, &cRect, &cRect);
+			m_pBackdrop->paint(this, &cRect, &cRect);
 		}
 
 		// Slot #1
@@ -793,7 +793,7 @@ void SBarSlotWnd::UpdateText() {
 	if (m_bLose) {
 
 		if (m_pLoseBmp != nullptr) {
-			m_pLoseBmp->Paint(this, 401, 125);
+			m_pLoseBmp->paint(this, 401, 125);
 		}
 
 		if (m_pOddsText != nullptr) {
@@ -804,7 +804,7 @@ void SBarSlotWnd::UpdateText() {
 		// Check and see if we need to show the GO button
 		if (m_pSlotButs[GO] != nullptr) {
 			m_pSlotButs[GO]->Show();
-			m_pSlotButs[GO]->Paint();
+			m_pSlotButs[GO]->paint();
 		}
 	} else if (m_pOddsText != nullptr) {
 		m_pOddsText->Display(this);

@@ -134,7 +134,7 @@ ErrorCode CBagCreditsDialog::LoadNextTextFile() {
 
 		if ((m_pSaveBmp = new CBofBitmap(m_pCreditsBmp->Width(), m_pCreditsBmp->Height(), m_pBackdrop->GetPalette())) != nullptr) {
 			CBofRect tmpRect = m_pSaveBmp->GetRect();
-			m_pBackdrop->Paint(m_pSaveBmp, &tmpRect, &cRect);
+			m_pBackdrop->paint(m_pSaveBmp, &tmpRect, &cRect);
 
 		} else {
 			ReportError(ERR_MEMORY);
@@ -268,13 +268,13 @@ ErrorCode CBagCreditsDialog::DisplayCredits() {
 			Assert(m_pBackdrop != nullptr);
 			Assert(m_pSaveBmp != nullptr);
 
-			m_pSaveBmp->Paint(m_pBackdrop, g_cScreen[m_iScreen].m_nLeft, g_cScreen[m_iScreen].m_nTop);
+			m_pSaveBmp->paint(m_pBackdrop, g_cScreen[m_iScreen].m_nLeft, g_cScreen[m_iScreen].m_nTop);
 			CBofRect cRect;
 			cRect.SetRect(0, 0, m_pCreditsBmp->Width() - 1, m_pCreditsBmp->Height() - 1 - (LINE_HEIGHT + 2));
-			m_pCreditsBmp->Paint(m_pBackdrop, g_cScreen[m_iScreen].m_nLeft, g_cScreen[m_iScreen].m_nTop, &cRect, MY_MASK_COLOR);
+			m_pCreditsBmp->paint(m_pBackdrop, g_cScreen[m_iScreen].m_nLeft, g_cScreen[m_iScreen].m_nTop, &cRect, MY_MASK_COLOR);
 
 			if (g_b1) {
-				m_pBackdrop->Paint(this, 0, 0);
+				m_pBackdrop->paint(this, 0, 0);
 				g_b1 = false;
 
 			} else {
@@ -282,7 +282,7 @@ ErrorCode CBagCreditsDialog::DisplayCredits() {
 				cRect.top = g_cScreen[m_iScreen].m_nTop;
 				cRect.right = cRect.left + m_pCreditsBmp->Width() - 1;
 				cRect.bottom = cRect.top + m_pCreditsBmp->Height() - 1 - (LINE_HEIGHT + 2);
-				m_pBackdrop->Paint(this, &cRect, &cRect);
+				m_pBackdrop->paint(this, &cRect, &cRect);
 			}
 
 

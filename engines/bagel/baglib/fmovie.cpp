@@ -89,7 +89,7 @@ bool CBagFMovie::Open(const char *sFilename, CBofRect *pBounds) {
 			CenterRect();
 
 		// Paint the image to the screen.
-		m_pFilterBmp->Paint(this, 0, 0);
+		m_pFilterBmp->paint(this, 0, 0);
 
 		return true;
 	}
@@ -150,7 +150,7 @@ bool CBagFMovie::OpenMovie(const char *sFilename) {
 			if (pSDevWnd->IsFiltered()) {
 				uint16 nFilterId = pSDevWnd->GetFilterId();
 				FilterFunction pFilterFunction = pSDevWnd->GetFilter();
-				m_pBmpBuf->Paint(m_pFilterBmp);
+				m_pBmpBuf->paint(m_pFilterBmp);
 				(*pFilterFunction)(nFilterId, m_pFilterBmp, &m_xBounds);
 			}
 		}
@@ -195,7 +195,7 @@ void CBagFMovie::onMainLoop() {
 			}
 
 			// Paint the buffer to the screen.
-			m_pFilterBmp->Paint(this, 0, 0);
+			m_pFilterBmp->paint(this, 0, 0);
 
 			if (m_eMovStatus == FOREWARD) {
 				if (m_pSmk->getCurFrame() == (int)m_pSmk->getFrameCount() - 1) {

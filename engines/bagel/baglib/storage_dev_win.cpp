@@ -1318,7 +1318,7 @@ ErrorCode CBagStorageDevWnd::SetWorkBmp() {
 	CBofBitmap *pBmp = getBackground();
 	if (pBmp != nullptr) {
 		m_pWorkBmp = new CBofBitmap(pBmp->Width(), pBmp->Height(), pBmp->GetPalette());
-		pBmp->Paint(m_pWorkBmp);
+		pBmp->paint(m_pWorkBmp);
 	}
 
 	return m_errCode;
@@ -1355,7 +1355,7 @@ ErrorCode CBagStorageDevWnd::PaintScreen(CBofRect *pRect) {
 		OnRender(m_pBackdrop, pRect);
 
 		if (g_allowPaintFl) {
-			m_pBackdrop->Paint(this, pRect, pRect);
+			m_pBackdrop->paint(this, pRect, pRect);
 		}
 	}
 
@@ -1377,7 +1377,7 @@ ErrorCode CBagStorageDevWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		SetPreFilterPan(false);
 
 		if (m_pWorkBmp != nullptr) {
-			m_pWorkBmp->Paint(pBmp, pRect, pRect);
+			m_pWorkBmp->paint(pBmp, pRect, pRect);
 		}
 	}
 
@@ -1407,7 +1407,7 @@ ErrorCode CBagStorageDevWnd::RunModal(CBagObject *pObj) {
 				SetPreFilterPan(true);
 				OnRender(pBmp, nullptr);
 				if (g_allowPaintFl) {
-					pBmp->Paint(this, 0, 0);
+					pBmp->paint(this, 0, 0);
 				}
 
 				if (eventLoop.frame())
@@ -1669,7 +1669,7 @@ ErrorCode CBagStorageDevDlg::PaintScreen(CBofRect *pRect) {
 				if (pWin->PreFilterPan()) {
 					CBofBitmap *pWorkBmp = pWin->GetWorkBmp();
 					if (pWorkBmp != nullptr) {
-						pWorkBmp->Paint(pBmp, pRect, pRect);
+						pWorkBmp->paint(pBmp, pRect, pRect);
 					}
 
 					pWin->OnRender(pBmp, pRect);
@@ -1677,10 +1677,10 @@ ErrorCode CBagStorageDevDlg::PaintScreen(CBofRect *pRect) {
 
 				onRender(m_pBackdrop, pRect);
 				CBofRect wrect(GetWindowRect());
-				m_pBackdrop->Paint(pBmp, &wrect, nullptr);
+				m_pBackdrop->paint(pBmp, &wrect, nullptr);
 
 				if (g_allowPaintFl) {
-					pBmp->Paint(pWin, pRect, pRect);
+					pBmp->paint(pWin, pRect, pRect);
 				}
 			}
 		}

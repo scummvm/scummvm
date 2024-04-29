@@ -80,7 +80,7 @@ void CBagRestartDialog::onInitDialog() {
 	if (m_pBackdrop != nullptr) {
 		pPal = m_pBackdrop->GetPalette();
 		CBofBitmap cBmp(BuildSysDir("RESTDBOX.BMP"), pPal);
-		cBmp.Paint(m_pBackdrop, 181, 182);
+		cBmp.paint(m_pBackdrop, 181, 182);
 	}
 
 	// Build all our buttons

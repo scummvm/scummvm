@@ -178,7 +178,7 @@ void CBagPanBitmap::GenerateCosineTable() {
 	}
 }
 
-ErrorCode CBagPanBitmap::Paint(CBofWindow * /*pWnd*/, const CBofPoint /*xDstOffset*/) {
+ErrorCode CBagPanBitmap::paint(CBofWindow * /*pWnd*/, const CBofPoint /*xDstOffset*/) {
 	return m_errCode;
 }
 
@@ -239,7 +239,7 @@ ErrorCode CBagPanBitmap::PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, 
 			                   nRight + i,
 			                   nTop + (int)(*pSrcHeight * srcBottom));
 
-			pSrcBmp->Paint(pBmp, &WndDstRect, &PanSrcRect);
+			pSrcBmp->paint(pBmp, &WndDstRect, &PanSrcRect);
 
 			WndDstRect.left = WndDstRect.right + 1;
 			WndDstRect.right = WndDstRect.right + nWidth;
@@ -306,7 +306,7 @@ ErrorCode CBagPanBitmap::PaintUncorrected(CBofBitmap *pBmp, CBofRect &dstRect) {
 	}
 	m_xCurrView = dstRect;
 
-	Paint(pBmp);
+	paint(pBmp);
 	m_xCurrView = tmpRect;
 
 	m_nCorrWidth = tmp;
@@ -314,7 +314,7 @@ ErrorCode CBagPanBitmap::PaintUncorrected(CBofBitmap *pBmp, CBofRect &dstRect) {
 	return m_errCode;
 }
 
-ErrorCode CBagPanBitmap::Paint(CBofBitmap *pBmp, const CBofPoint xDstOffset) {
+ErrorCode CBagPanBitmap::paint(CBofBitmap *pBmp, const CBofPoint xDstOffset) {
 	CBofRect dstRect;
 	CBofRect srcRect = m_xCurrView;
 	int nW = Width();
@@ -337,14 +337,14 @@ ErrorCode CBagPanBitmap::Paint(CBofBitmap *pBmp, const CBofPoint xDstOffset) {
 		dstRect.right = xDstOffset.x + viewWidth - 1;
 		dstRect.left = dstRect.right - nOffset;
 
-		CBofBitmap::Paint(pBmp, &dstRect, &srcRect2);
+		CBofBitmap::paint(pBmp, &dstRect, &srcRect2);
 
 		srcRect.right = nW - 1;
 		dstRect.right = dstRect.left;
 		dstRect.left = xDstOffset.x;
 	}
 
-	CBofBitmap::Paint(pBmp, &dstRect, &srcRect);
+	CBofBitmap::paint(pBmp, &dstRect, &srcRect);
 
 	return m_errCode;
 }

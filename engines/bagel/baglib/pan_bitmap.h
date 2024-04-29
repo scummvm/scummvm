@@ -72,8 +72,8 @@ public:
 		return m_bPanorama;
 	}
 
-	ErrorCode Paint(CBofBitmap *pBmp, const CBofPoint xDstOffset = CBofPoint(0, 0));
-	ErrorCode Paint(CBofWindow *pWnd, const CBofPoint xDstOffset = CBofPoint(0, 0));
+	ErrorCode paint(CBofBitmap *pBmp, const CBofPoint xDstOffset = CBofPoint(0, 0));
+	ErrorCode paint(CBofWindow *pWnd, const CBofPoint xDstOffset = CBofPoint(0, 0));
 	ErrorCode PaintUncorrected(CBofBitmap *pBmp, CBofRect &dstRect);
 	ErrorCode PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, const CBofRect &srcRect, const int offset = 0, CBofBitmap *pSrcBmp = nullptr, const CBofRect &preSrcRect = CBofRect());
 	ErrorCode PaintWarped4(CBofBitmap *pBmp, const CBofRect &dstRect, const CBofRect &srcRect, const int offset = 0, CBofBitmap *pSrcBmp = nullptr, const CBofRect &preSrcRect = CBofRect());

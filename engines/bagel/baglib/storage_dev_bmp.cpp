@@ -77,7 +77,7 @@ ErrorCode CBagStorageDevBmp::SetWorkBmp() {
 	CBofBitmap *pBmp = getBackground();
 	if (pBmp != nullptr) {
 		m_pWorkBmp = new CBofBitmap(pBmp->Width(), pBmp->Height(), pBmp->GetPalette());
-		pBmp->Paint(m_pWorkBmp);
+		pBmp->paint(m_pWorkBmp);
 	}
 
 	return m_errCode;
@@ -147,7 +147,7 @@ ErrorCode CBagStorageDevBmp::update(CBofBitmap *pBmp, CBofPoint /*xPoint*/, CBof
 		if ((pSrcBmp = getBitmap()) != nullptr) {
 			Assert(GetWorkBmp() != nullptr);
 			// Erase everything from the background
-			GetWorkBmp()->Paint(pSrcBmp);
+			GetWorkBmp()->paint(pSrcBmp);
 
 			// Paint all the objects to the background
 			CBofRect r = pSrcBmp->GetRect();
@@ -158,9 +158,9 @@ ErrorCode CBagStorageDevBmp::update(CBofBitmap *pBmp, CBofPoint /*xPoint*/, CBof
 
 			// Paint to screen
 			if (m_bTrans)
-				pSrcBmp->Paint(pBmp, GetPosition().x, GetPosition().y, nullptr, m_nMaskColor);
+				pSrcBmp->paint(pBmp, GetPosition().x, GetPosition().y, nullptr, m_nMaskColor);
 			else
-				pSrcBmp->Paint(pBmp, GetPosition().x, GetPosition().y, nullptr, -1);
+				pSrcBmp->paint(pBmp, GetPosition().x, GetPosition().y, nullptr, -1);
 		}
 	}
 

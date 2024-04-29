@@ -344,7 +344,7 @@ ErrorCode CBofListBox::SaveBackground() {
 		if ((_parent != nullptr) && (_parent->GetBackdrop() != nullptr)) {
 			CBofRect cRect = m_pBackdrop->GetRect();
 
-			_parent->GetBackdrop()->Paint(m_pBackdrop, &cRect, &m_cWindowRect);
+			_parent->GetBackdrop()->paint(m_pBackdrop, &cRect, &m_cWindowRect);
 
 		} else {
 			m_pBackdrop->CaptureScreen(this, &m_cRect);
@@ -395,7 +395,7 @@ ErrorCode CBofListBox::RepaintAll() {
 			// prepare the background
 			//
 			Assert(m_pBackdrop != nullptr);
-			m_pBackdrop->Paint(m_pWork);
+			m_pBackdrop->paint(m_pWork);
 
 			for (int i = 0; i < m_nPageSize; i++) {
 				CBofRect cRect;
@@ -439,7 +439,7 @@ ErrorCode CBofListBox::RepaintAll() {
 			}
 
 			// Show final image on screen
-			m_pWork->Paint(this);
+			m_pWork->paint(this);
 
 			m_pWork->UnLock();
 		}
@@ -475,7 +475,7 @@ ErrorCode CBofListBox::RepaintItem(int nIndex) {
 
 			// Prepare the background
 			Assert(m_pBackdrop != nullptr);
-			m_pBackdrop->Paint(m_pWork, &cRect, &cRect);
+			m_pBackdrop->paint(m_pWork, &cRect, &cRect);
 
 			// If this item is currently selected and we have a high color
 			if ((nIndex == m_nSelectedItem) && (m_cHighColor != m_cTextColor)) {
@@ -511,7 +511,7 @@ ErrorCode CBofListBox::RepaintItem(int nIndex) {
 			m_pWork->Line(&bl, &br, (byte)nIndexedColor);
 
 			// Show final image on screen
-			m_pWork->Paint(this, &cRect, &cRect);
+			m_pWork->paint(this, &cRect, &cRect);
 
 			m_pWork->UnLock();
 		}

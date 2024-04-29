@@ -287,7 +287,7 @@ ErrorCode CMainWindow::attach() {
 		}
 	}
 
-	m_pBackdrop->Paint(this, 0, 0);
+	m_pBackdrop->paint(this, 0, 0);
 
 	return m_errCode;
 }
