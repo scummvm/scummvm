@@ -1158,7 +1158,7 @@ byte AkosRenderer::hePaintCel(int actor, int drawToBack, int celX, int celY, int
 							  const WizRawPixel *conversionTable, int32 specialRenderFlags) {
 
 	int plotX, plotY;
-	bool xFlipFlag, yFlipFlag;
+	bool xFlipFlag;
 	Common::Rect destRect;
 	Common::Rect sourceRect;
 	Common::Rect clipRect;
@@ -1168,10 +1168,9 @@ byte AkosRenderer::hePaintCel(int actor, int drawToBack, int celX, int celY, int
 	Actor *a = _vm->derefActor(actor, "hePaintCel");
 
 	if (allowFlip) {
-		yFlipFlag = false;
 		xFlipFlag = _mirror;
 	} else {
-		xFlipFlag = yFlipFlag = false;
+		xFlipFlag = false;
 	}
 
 	// Find cel's "plot" position with flipping etc...
@@ -1229,12 +1228,7 @@ byte AkosRenderer::hePaintCel(int actor, int drawToBack, int celX, int celY, int
 
 		//SetActorUpdateArea(actor, destRect.x1, destRect.y1, destRect.x2, destRect.y2);
 
-		// Get final plot point and flip source coords if necessary.
-		if (yFlipFlag) {
-			wiz->swapRectY(&sourceRect);
-			sourceRect.top = (celHeight - 1) - sourceRect.top;
-			sourceRect.bottom = (celHeight - 1) - sourceRect.bottom;
-		}
+		// Get final plot point and flip source coords if necessary...
 		if (xFlipFlag) {
 			wiz->swapRectX(&sourceRect);
 			sourceRect.left = (celWidth - 1) - sourceRect.left;
