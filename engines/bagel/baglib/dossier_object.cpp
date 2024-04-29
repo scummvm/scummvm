@@ -267,7 +267,7 @@ ErrorCode CBagDossierObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *src
 
 CBofRect CBagDossierObject::getRect() {
 	CBofRect rect;
-	CBofPoint pos = GetPosition();
+	CBofPoint pos = getPosition();
 
 	if (_showIndexFl) {
 		rect = _indexRect;

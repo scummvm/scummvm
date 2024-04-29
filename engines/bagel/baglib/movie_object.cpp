@@ -247,7 +247,7 @@ bool CBagMovieObject::runObject() {
 
 				// Use the position scripted for the movie if it exists
 				// The bottom, right is unimportant because movie won't resize anyway
-				CBofPoint p = CBagObject::GetPosition();
+				CBofPoint p = CBagObject::getPosition();
 
 				if (p.x != -1 && p.y != -1)
 					r.OffsetRect(p);

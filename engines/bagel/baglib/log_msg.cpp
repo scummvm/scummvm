@@ -98,10 +98,10 @@ CBofPoint CBagLog::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 			xPagePos.y = xPagePos.y - ((nPageNum - 1) * xFloatRect.Height());
 			// Add in the border
 			xPagePos.y += nBorderSize;
-			pObj->SetPosition(xPagePos);
+			pObj->setPosition(xPagePos);
 		} else {
 			// Set the position to be off the sdev, so it won't show
-			pObj->SetPosition(CBofPoint(NextPos.x, getBackground()->Height() + 1));
+			pObj->setPosition(CBofPoint(NextPos.x, getBackground()->Height() + 1));
 		}
 
 		// Calculate the position for the next floater

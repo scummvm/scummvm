@@ -64,12 +64,12 @@ ErrorCode CBagSpriteObject::attach() {
 				// Set animated of the sprite to be the same as it's parent
 				m_xSprite->SetAnimated(IsAnimated());
 
-				CBofPoint p = CBagObject::GetPosition();
+				CBofPoint p = CBagObject::getPosition();
 
 				if (p.x == -1 && p.y == -1) // Fixed to allow for [0,0] positioning
 					SetFloating();
 				else
-					m_xSprite->SetPosition(p.x, p.y);
+					m_xSprite->setPosition(p.x, p.y);
 
 				setProperty("CURR_CEL", getState());
 
@@ -105,14 +105,14 @@ void CBagSpriteObject::SetCels(int nCels) {
 		m_xSprite->SetupCels(nCels);
 }
 
-void CBagSpriteObject::SetPosition(const CBofPoint &pos) {
-	CBagObject::SetPosition(pos);
+void CBagSpriteObject::setPosition(const CBofPoint &pos) {
+	CBagObject::setPosition(pos);
 	if (m_xSprite)
-		m_xSprite->SetPosition(pos.x, pos.y);
+		m_xSprite->setPosition(pos.x, pos.y);
 }
 
 CBofRect CBagSpriteObject::getRect() {
-	CBofPoint p = GetPosition();
+	CBofPoint p = getPosition();
 	CBofSize s;
 	if (m_xSprite)
 		s = m_xSprite->GetSize();

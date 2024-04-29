@@ -51,7 +51,7 @@ ErrorCode CBagBmpObject::detach() {
 }
 
 CBofRect CBagBmpObject::getRect() {
-	CBofPoint curPos = GetPosition();
+	CBofPoint curPos = getPosition();
 	CBofSize size;
 	if (_bmp)
 		size = _bmp->GetSize();

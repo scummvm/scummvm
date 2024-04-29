@@ -203,7 +203,7 @@ bool CBagCommandObject::runObject() {
 				CBagStorageDev *currSDev = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
 				if ((currSDev != nullptr) && (currSDev->GetDeviceType() == SDEV_GAMEWIN)) {
 					CBagPanWindow *currWin = (CBagPanWindow *)currSDev;
-					currWin->RotateTo(GetPosition());
+					currWin->RotateTo(getPosition());
 				}
 			}
 
@@ -212,11 +212,11 @@ bool CBagCommandObject::runObject() {
 			CBagStorageDev *currSDev = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
 			if ((currSDev != nullptr) && (currSDev->GetDeviceType() == SDEV_GAMEWIN)) {
 				CBagPanWindow *currWin = (CBagPanWindow *)currSDev;
-				currWin->RotateTo(GetPosition());
+				currWin->RotateTo(getPosition());
 			}
 
 		} else if (GetFileName() == "SETQVOL") {
-			CBofSound::SetQVol(GetPosition().x, GetPosition().y);
+			CBofSound::SetQVol(getPosition().x, getPosition().y);
 
 		} else if (GetFileName() == "TURN") {
 
@@ -309,8 +309,8 @@ bool CBagCommandObject::runObject() {
 				CBagPanWindow *currWin= (CBagPanWindow *)currSDev;
 
 				if (currWin->GetSlideBitmap() != nullptr) {
-					int x = GetPosition().x;
-					int y = GetPosition().y;
+					int x = getPosition().x;
+					int y = getPosition().y;
 
 					CBofRect cRect;
 					cRect.SetRect(x, y, x + 480 - 1, y + 360 - 1);

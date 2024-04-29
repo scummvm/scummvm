@@ -158,9 +158,9 @@ ErrorCode CBagStorageDevBmp::update(CBofBitmap *pBmp, CBofPoint /*xPoint*/, CBof
 
 			// Paint to screen
 			if (m_bTrans)
-				pSrcBmp->paint(pBmp, GetPosition().x, GetPosition().y, nullptr, m_nMaskColor);
+				pSrcBmp->paint(pBmp, getPosition().x, getPosition().y, nullptr, m_nMaskColor);
 			else
-				pSrcBmp->paint(pBmp, GetPosition().x, GetPosition().y, nullptr, -1);
+				pSrcBmp->paint(pBmp, getPosition().x, getPosition().y, nullptr, -1);
 		}
 	}
 

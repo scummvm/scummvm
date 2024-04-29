@@ -109,7 +109,7 @@ ErrorCode SBarVidWnd::attach() {
 		m_pMovie = new CBagCharacterObject;
 		if (m_pMovie != nullptr) {
 			m_pMovie->SetFileName(BuildVidDir("BRNL.SMK"));
-			m_pMovie->SetPosition(CBofPoint(209, 10));
+			m_pMovie->setPosition(CBofPoint(209, 10));
 			m_pMovie->attach();
 
 		} else {
@@ -272,7 +272,7 @@ ErrorCode SBarVidWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		int nFrame = getFrame(m_fTimer, nDisc);
 
 		m_pMovie->setCurrentFrame(nFrame);
-		m_pMovie->update(pBmp, m_pMovie->GetPosition());
+		m_pMovie->update(pBmp, m_pMovie->getPosition());
 
 		//
 		// Display current time for that image

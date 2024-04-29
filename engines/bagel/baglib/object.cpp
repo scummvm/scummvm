@@ -253,7 +253,7 @@ PARSE_CODES CBagObject::setInfo(bof_ifstream &istr) {
 			CBofRect r;
 			istr.putback(ch);
 			GetRectFromStream(istr, r);
-			SetPosition(r.TopLeft());
+			setPosition(r.TopLeft());
 			if (r.Width() && r.Height())
 				setSize(CSize(r.Width(), r.Height()));
 			break;

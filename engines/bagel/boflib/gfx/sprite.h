@@ -106,9 +106,9 @@ public:
 
 	bool TestInterception(CBofSprite *pSprite, CBofPoint *pPoint = nullptr);
 
-	void SetPosition(int x, int y);
+	void setPosition(int x, int y);
 
-	CBofPoint GetPosition() const {
+	CBofPoint getPosition() const {
 		return m_cPosition;
 	}
 

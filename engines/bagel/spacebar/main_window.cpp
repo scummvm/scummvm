@@ -193,10 +193,10 @@ ErrorCode CMainWindow::attach() {
 				CBagVar *pVar = VARMNGR->GetVariable("PDAINCREMENT");
 				if (pVar) {
 					g_nPDAIncrement = pVar->GetNumValue();
-					m_pPDABmp->SetPosInWindow(r.Width(), r.Height(), g_nPDAIncrement);
+					m_pPDABmp->setPosInWindow(r.Width(), r.Height(), g_nPDAIncrement);
 				} else {
 					g_nPDAIncrement = PDA_INCREMENT;
-					m_pPDABmp->SetPosInWindow(r.Width(), r.Height(), g_nPDAIncrement);
+					m_pPDABmp->setPosInWindow(r.Width(), r.Height(), g_nPDAIncrement);
 				}
 				InsertFGObjects(m_pPDABmp);
 				DeactivatePDA();
@@ -314,9 +314,9 @@ ErrorCode CMainWindow::detach() {
 void CMainWindow::OnSize(uint32 nType, int cx, int cy) {
 	if (m_pPDABmp) {
 		if (GetStretchToScreen()) {
-			m_pPDABmp->SetPosInWindow(500, 370, g_nPDAIncrement);
+			m_pPDABmp->setPosInWindow(500, 370, g_nPDAIncrement);
 		} else
-			m_pPDABmp->SetPosInWindow(cx, cy, g_nPDAIncrement);
+			m_pPDABmp->setPosInWindow(cx, cy, g_nPDAIncrement);
 	}
 
 	CBagPanWindow::OnSize(nType, cx, cy);

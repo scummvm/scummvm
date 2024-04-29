@@ -217,7 +217,7 @@ bool CBagCharacterObject::refreshCurrentFrame() {
 }
 
 CBofRect CBagCharacterObject::getRect() {
-	CBofPoint pos = GetPosition();
+	CBofPoint pos = getPosition();
 	CBofSize size;
 
 	if (_bmpBuf)
@@ -250,7 +250,7 @@ void CBagCharacterObject::updatePosition() {
 			// A valid number was read
 			if ((xPos > -1) && (yPos > -1)) {
 				CBofPoint newPos(xPos, yPos);
-				SetPosition(newPos);
+				setPosition(newPos);
 			}
 		}
 	}
@@ -345,7 +345,7 @@ bool CBagCharacterObject::runObject() {
 
 ErrorCode CBagCharacterObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect * /*srcRect, unused*/, int /*maskColor, unused*/) {
 	// Get the original position for character
-	CBofPoint originalPos = GetPosition();
+	CBofPoint originalPos = getPosition();
 
 	bool doAdvanceFl = doAdvance();
 
@@ -357,7 +357,7 @@ ErrorCode CBagCharacterObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect * 
 
 	if (_bmpBuf) {
 		// Get the new position for the character
-		CBofPoint newPos = GetPosition();
+		CBofPoint newPos = getPosition();
 		// Get access to the current sDev
 
 		// Paint in the new pos

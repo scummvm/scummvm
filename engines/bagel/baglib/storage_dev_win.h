@@ -199,10 +199,10 @@ public:
 	void SetRect(const CBofRect &xRect) {
 		m_cDestRect = xRect;
 	}
-	CBofPoint GetPosition() {
+	CBofPoint getPosition() {
 		return m_cDestRect.TopLeft();
 	}
-	void SetPosition(const CBofPoint &pos);
+	void setPosition(const CBofPoint &pos);
 
 	virtual ErrorCode AddObject(CBagObject *pObj, int nPos = 0); // Add a new object
 	virtual ErrorCode ActivateLocalObject(CBagObject *pObj);
