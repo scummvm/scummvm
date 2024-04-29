@@ -100,7 +100,7 @@ public:
 	void GetScrollRange(int &nMin, int &nMax);
 	void SetScrollRange(int nMin, int nMax, bool bRepaint = true);
 
-	ErrorCode SetText(const char *pszText, int nFlags = JUSTIFY_CENTER);
+	ErrorCode setText(const char *pszText, int nFlags = JUSTIFY_CENTER);
 
 	void SetRepeatTimer(uint32 nMilliSeconds);
 	ErrorCode paint(CBofRect *pRect = nullptr);

@@ -142,7 +142,7 @@ ErrorCode CBagSaveDialog::attach() {
 	Assert(m_pEditText == nullptr);
 
 	if ((m_pEditText = new CBofEditText("", EDIT_X, EDIT_Y, EDIT_DX, EDIT_DY, this)) != nullptr) {
-		m_pEditText->SetText("");
+		m_pEditText->setText("");
 		m_pEditText->Show();
 	}
 
@@ -188,7 +188,7 @@ ErrorCode CBagSaveDialog::attach() {
 
 					if (m_nSelectedItem == -1) {
 						m_nSelectedItem = i;
-						m_pEditText->SetText(desc.c_str());
+						m_pEditText->setText(desc.c_str());
 					}
 					break;
 				}
@@ -287,7 +287,7 @@ void CBagSaveDialog::SaveAndClose() {
 
 		// Save the game
 		g_engine->saveGameState(m_nSelectedItem + 1,
-			m_pEditText->GetText().GetBuffer());
+			m_pEditText->getText().GetBuffer());
 
 		Close();
 		setReturnValue(SAVE_BTN);
@@ -408,7 +408,7 @@ void CBagSaveDialog::OnBofListBox(CBofObject * /*pObject*/, int nItemIndex) {
 		// Show selected item in the Edit control
 		if (m_pEditText != nullptr) {
 			m_pEditText->SetFocus();
-			m_pEditText->SetText(m_pListBox->GetText(nItemIndex));
+			m_pEditText->setText(m_pListBox->getText(nItemIndex));
 		}
 
 		m_nSelectedItem = nItemIndex;

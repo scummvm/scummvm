@@ -243,7 +243,7 @@ ErrorCode  SBarSlotWnd::attach() {
 
 			m_pCredText->SetSize(20);
 			m_pCredText->SetWeight(TEXT_BOLD);
-			m_pCredText->SetText(BuildString("%d", m_nCredit));
+			m_pCredText->setText(BuildString("%d", m_nCredit));
 		} else {
 			ReportError(ERR_MEMORY);
 		}
@@ -261,7 +261,7 @@ ErrorCode  SBarSlotWnd::attach() {
 
 			m_pBetText->SetSize(20);
 			m_pBetText->SetWeight(TEXT_BOLD);
-			m_pBetText->SetText(BuildString("%d", m_nBet));
+			m_pBetText->setText(BuildString("%d", m_nBet));
 		} else {
 			ReportError(ERR_MEMORY);
 		}
@@ -279,7 +279,7 @@ ErrorCode  SBarSlotWnd::attach() {
 
 			m_pOddsText->SetSize(32);
 			m_pOddsText->SetWeight(TEXT_BOLD);
-			m_pOddsText->SetText("");
+			m_pOddsText->setText("");
 		} else {
 			ReportError(ERR_MEMORY);
 		}
@@ -397,7 +397,7 @@ void SBarSlotWnd::AddBet(int nBetVal) {
 			}
 			m_nPayOff1 = 0;
 			m_bLose = false;
-			m_pOddsText->SetText("");
+			m_pOddsText->setText("");
 
 			UpdateText();
 		}
@@ -563,7 +563,7 @@ void SBarSlotWnd::CalcOutcome() {
 	} else {
 		m_pLoseBmp->paint(this, 401, 125);
 		m_bLose = true;
-		m_pOddsText->SetText("");
+		m_pOddsText->setText("");
 	}
 
 	// Put up better luck next time if bet not fixed, clear bet
@@ -776,17 +776,17 @@ void SBarSlotWnd::UpdateText() {
 		return;
 
 	if (m_nPayOff1 > 0 && m_pOddsText != nullptr) {
-		m_pOddsText->SetText(BuildString("%d:%d", m_nPayOff1, m_nPayOff2));
+		m_pOddsText->setText(BuildString("%d:%d", m_nPayOff1, m_nPayOff2));
 	}
 
 	if (m_pCredText != nullptr) {
-		m_pCredText->SetText(BuildString("%d", m_nCredit));
+		m_pCredText->setText(BuildString("%d", m_nCredit));
 		m_pCredText->Display(this);
 	}
 
 	// Update bet
 	if (m_pBetText != nullptr) {
-		m_pBetText->SetText(BuildString("%d", m_nBet));
+		m_pBetText->setText(BuildString("%d", m_nBet));
 		m_pBetText->Display(this);
 	}
 
@@ -797,7 +797,7 @@ void SBarSlotWnd::UpdateText() {
 		}
 
 		if (m_pOddsText != nullptr) {
-			m_pOddsText->SetText("");
+			m_pOddsText->setText("");
 		}
 
 	} else if (m_nBet && !g_bFix) {

@@ -137,7 +137,7 @@ public:
 	ErrorCode SetupText(const CBofRect *pRect, int nJustify = JUSTIFY_CENTER, uint32 nFormatFlags = FORMAT_DEFAULT);
 	ErrorCode SetupTextOpt(const CBofRect *pRect, int nJustify = JUSTIFY_CENTER, uint32 nFormatFlags = FORMAT_DEFAULT);
 
-	void SetText(const CBofString &cString) {
+	void setText(const CBofString &cString) {
 		m_cCurString = cString;
 	}
 	void SetColor(const RGBCOLOR cColor) {
@@ -158,7 +158,7 @@ public:
 		m_nShadow_DY = nDY;
 	}
 
-	CBofString GetText() const {
+	CBofString getText() const {
 		return m_cCurString;
 	}
 	RGBCOLOR GetColor() const {

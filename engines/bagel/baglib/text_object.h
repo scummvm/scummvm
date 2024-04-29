@@ -105,8 +105,8 @@ public:
 	}
 	void SetPSText(CBofString *p);
 
-	const CBofString &GetText();
-	void SetText(const CBofString &s);
+	const CBofString &getText();
+	void setText(const CBofString &s);
 
 	/**
 	 * Calculate the required bounds to display text

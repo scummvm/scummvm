@@ -379,12 +379,12 @@ void SBarComputer::CreateTextBox(CBofString &newText) {
 	if (m_pTBox == nullptr) {
 		m_pTBox = new CBofTextBox(GetBackdrop(), &_compDisplay, newText);
 		Assert(m_pTBox != nullptr);
-		m_pTBox->SetTextAttribs(12, TEXT_NORMAL, RGB(0, 0, 0));
+		m_pTBox->setTextAttribs(12, TEXT_NORMAL, RGB(0, 0, 0));
 	} else {
 		EraseBackdrop();
 		m_pTBox->Erase();
 		m_pTBox->FlushBackground();
-		m_pTBox->SetText(newText);
+		m_pTBox->setText(newText);
 	}
 
 	if (m_pButtons[ONBUT]) {

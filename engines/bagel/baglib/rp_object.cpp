@@ -1407,14 +1407,14 @@ void CBagRPObject::ShowRPReview() {
 					// If the time on this object has not yet been set, then force it to
 					// be re-read into memory and append the current time to it.
 					if (pRPObj->m_bRPTimeSet == false) {
-						CBofString s = pRPObj->m_pObjectName->GetText();
+						CBofString s = pRPObj->m_pObjectName->getText();
 
 						int nHr = pRPObj->m_nRPTime / 100;
 						int nMn = pRPObj->m_nRPTime - (nHr * 100);
 
 						s += BuildString("%02d:%02d", nHr, nMn);
 
-						pRPObj->m_pObjectName->SetText(s);
+						pRPObj->m_pObjectName->setText(s);
 						pRPObj->m_bRPTimeSet = true;
 						pRPObj->SaveRPVars();
 					}

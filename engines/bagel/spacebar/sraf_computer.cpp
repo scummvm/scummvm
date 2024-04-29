@@ -1176,7 +1176,7 @@ ErrorCode SrafComputer::CreateListBox() {
 
 	m_pLBox->SetPointSize(m_nListPointSize);
 	m_pLBox->SetItemHeight(m_nListItemHeight);
-	m_pLBox->SetTextColor(m_cTextColor);
+	m_pLBox->setTextColor(m_cTextColor);
 	m_pLBox->SetHighlightColor(m_cTextHiliteColor);
 	m_pLBox->SetFont(FONT_MONO);
 	m_pLBox->SetFocus();
@@ -1466,7 +1466,7 @@ void SrafComputer::ActivateBuyerBids() {
 		sStr = BuildBidString(i);
 		m_pLBox->AddToTail(sStr, false);
 		if (g_stBuyerBids[i].m_bAccept) {
-			m_pLBox->SetTextLineColor(i + 1, m_cTextLineColor);
+			m_pLBox->setTextLineColor(i + 1, m_cTextLineColor);
 		}
 	}
 
@@ -2700,11 +2700,11 @@ void SrafComputer::OnListBuyerBids() {
 
 		// Redraw with the new one checked/unchecked
 		CBofString cStr = BuildBidString(index);
-		m_pLBox->SetText(m_nSelection, cStr);
+		m_pLBox->setText(m_nSelection, cStr);
 		if (g_stBuyerBids[index].m_bAccept) {
-			m_pLBox->SetTextLineColor(m_nSelection, m_cTextLineColor);
+			m_pLBox->setTextLineColor(m_nSelection, m_cTextLineColor);
 		} else {
-			m_pLBox->SetTextLineColor(m_nSelection, (RGBCOLOR) - 1); // Restore default
+			m_pLBox->setTextLineColor(m_nSelection, (RGBCOLOR) - 1); // Restore default
 		}
 
 		m_pLBox->RepaintItem(m_nSelection);
@@ -2949,17 +2949,17 @@ void SrafComputer::OnListDispatchTeam() {
 		// If we have to uncheck a column, do that here.
 		if (nMeetMember != -1) {
 			int nThisItemAt = GetAdjustedIndex(nListToCheck, nMeetMember, false) + 3 + nPreceedingHeaders;
-			sStr = m_pLBox->GetText(nThisItemAt);
+			sStr = m_pLBox->getText(nThisItemAt);
 			sStr.ReplaceCharAt(kStandardIndentation + 1, ' ');
-			m_pLBox->SetText(nThisItemAt, sStr);
+			m_pLBox->setText(nThisItemAt, sStr);
 			m_pLBox->RepaintItem(nThisItemAt);
 		}
 
 		// If we have a new column to check, do that here.
 		if (bInMeetMemberColumn) {
-			sStr = m_pLBox->GetText(m_nSelection);
+			sStr = m_pLBox->getText(m_nSelection);
 			sStr.ReplaceCharAt(kStandardIndentation + 1, kCheckmark);       // ??? works fine on mac, not sure what check mark is for pc
-			m_pLBox->SetText(m_nSelection, sStr);
+			m_pLBox->setText(m_nSelection, sStr);
 			m_pLBox->RepaintItem(m_nSelection);
 		}
 
@@ -3002,9 +3002,9 @@ void SrafComputer::OnListDispatchTeam() {
 						// Negate
 						g_staffers[nElementIndex].m_bOnCurrentTeam = !g_staffers[nElementIndex].m_bOnCurrentTeam;
 
-						sStr = m_pLBox->GetText(m_nSelection);
+						sStr = m_pLBox->getText(m_nSelection);
 						sStr.ReplaceCharAt(kTeamIncludeColumn, cNewChar);
-						m_pLBox->SetText(m_nSelection, sStr);
+						m_pLBox->setText(m_nSelection, sStr);
 						m_pLBox->RepaintItem(m_nSelection);
 					}
 				}
@@ -3645,7 +3645,7 @@ void SrafComputer::OnListCodeWords() {
 		}
 
 		sStr += ")";
-		m_pLBox->SetText(nLastLine, sStr);
+		m_pLBox->setText(nLastLine, sStr);
 		m_pLBox->RepaintItem(nLastLine);
 	}
 }
@@ -4521,11 +4521,11 @@ void SrafComputer::DisplayTurnCount(int nLineNo) {
 
 	// Get whatever is on that line...
 	if (m_pLBox) {
-		CBofString cStr = m_pLBox->GetText(nLineNo);
+		CBofString cStr = m_pLBox->getText(nLineNo);
 
 		// reset the value on that line.
 		if (cStr.GetLength() != 0) {
-			m_pLBox->SetText(nLineNo, sStr);
+			m_pLBox->setText(nLineNo, sStr);
 		}
 	}
 
