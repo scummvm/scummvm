@@ -138,7 +138,7 @@ ErrorCode CBofWindow::create(const char *pszName, int x, int y, int nWidth, int 
 	strncpy(_szTitle, pszName, MAX_TITLE);
 
 	// Retain screen coordinates for this window
-	m_cWindowRect.SetRect(x, y, x + nWidth - 1, y + nHeight - 1);
+	_cWindowRect.SetRect(x, y, x + nWidth - 1, y + nHeight - 1);
 
 	// Calculate effective bounds
 	Common::Rect stRect(x, y, x + nWidth, y + nHeight);
@@ -156,7 +156,7 @@ ErrorCode CBofWindow::create(const char *pszName, int x, int y, int nWidth, int 
 		}
 
 		// Retain local coordinates (based on own window)
-		_cRect.SetRect(0, 0, m_cWindowRect.Width() - 1, m_cWindowRect.Height() - 1);
+		_cRect.SetRect(0, 0, _cWindowRect.Width() - 1, _cWindowRect.Height() - 1);
 	}
 
 	return _errCode;
@@ -254,11 +254,11 @@ void CBofWindow::Move(const int x, const int y, bool bRepaint) {
 	Assert(IsCreated());
 
 	// We now have a new position (in screen coordinates)
-	m_cWindowRect.SetRect(x, y, x + _cRect.Width() - 1, y + _cRect.Height() - 1);
+	_cWindowRect.SetRect(x, y, x + _cRect.Width() - 1, y + _cRect.Height() - 1);
 
 	// Recreate the surface at the new screen position
 	delete _surface;
-	_surface = new Graphics::ManagedSurface(*g_engine->_screen, m_cWindowRect);
+	_surface = new Graphics::ManagedSurface(*g_engine->_screen, _cWindowRect);
 }
 
 void CBofWindow::ReSize(CBofRect *pRect, bool bRepaint) {
@@ -267,12 +267,12 @@ void CBofWindow::ReSize(CBofRect *pRect, bool bRepaint) {
 	Assert(pRect != nullptr);
 
 	// We now have a new position (in screen coordinates)
-	m_cWindowRect = *pRect;
-	_cRect.SetRect(0, 0, m_cWindowRect.Width() - 1, m_cWindowRect.Height() - 1);
+	_cWindowRect = *pRect;
+	_cRect.SetRect(0, 0, _cWindowRect.Width() - 1, _cWindowRect.Height() - 1);
 
 	// Recreate the surface at the new screen position
 	delete _surface;
-	_surface = new Graphics::ManagedSurface(*g_engine->_screen, m_cWindowRect);
+	_surface = new Graphics::ManagedSurface(*g_engine->_screen, _cWindowRect);
 }
 
 void CBofWindow::Select() {
@@ -480,10 +480,10 @@ ErrorCode CBofWindow::SetBackdrop(CBofBitmap *pNewBitmap, bool bRefresh) {
 	KillBackdrop();
 
 	// We take ownership of this bitmap!
-	m_pBackdrop = pNewBitmap;
+	_pBackdrop = pNewBitmap;
 
 	if (bRefresh) {
-		m_pBackdrop->paint(this, 0, 0);
+		_pBackdrop->paint(this, 0, 0);
 	}
 
 	return _errCode;
@@ -512,21 +512,21 @@ ErrorCode CBofWindow::SetBackdrop(const char *pszFileName, bool bRefresh) {
 void CBofWindow::KillBackdrop() {
 	Assert(IsValidObject(this));
 
-	if (m_pBackdrop != nullptr) {
-		delete m_pBackdrop;
-		m_pBackdrop = nullptr;
+	if (_pBackdrop != nullptr) {
+		delete _pBackdrop;
+		_pBackdrop = nullptr;
 	}
 }
 
 ErrorCode CBofWindow::PaintBackdrop(CBofRect *pRect, int nTransparentColor) {
 	Assert(IsValidObject(this));
 
-	if (m_pBackdrop != nullptr) {
+	if (_pBackdrop != nullptr) {
 		if (pRect == nullptr) {
-			_errCode = m_pBackdrop->paint(this, &_cRect, nullptr, nTransparentColor);
+			_errCode = _pBackdrop->paint(this, &_cRect, nullptr, nTransparentColor);
 
 		} else {
-			_errCode = m_pBackdrop->paint(this, pRect, pRect, nTransparentColor);
+			_errCode = _pBackdrop->paint(this, pRect, pRect, nTransparentColor);
 		}
 	}
 
@@ -612,11 +612,11 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 		// Window is disabled or hidden
 		return;
 
-	CPoint mousePos(event.mouse.x - m_cWindowRect.left,
-		event.mouse.y - m_cWindowRect.top);
+	CPoint mousePos(event.mouse.x - _cWindowRect.left,
+		event.mouse.y - _cWindowRect.top);
 	for (auto parent = _parent; parent; parent = parent->_parent) {
-		mousePos.x -= parent->m_cWindowRect.left;
-		mousePos.y -= parent->m_cWindowRect.top;
+		mousePos.x -= parent->_cWindowRect.left;
+		mousePos.y -= parent->_cWindowRect.top;
 	}
 
 	switch (event.type) {

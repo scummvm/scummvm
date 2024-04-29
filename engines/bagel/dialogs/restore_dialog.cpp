@@ -98,17 +98,17 @@ ErrorCode CBagRestoreDialog::attach() {
 	m_pSavePalette = CBofApp::GetApp()->GetPalette();
 
 	// Insert ours
-	CBofPalette *pPal = m_pBackdrop->GetPalette();
+	CBofPalette *pPal = _pBackdrop->GetPalette();
 	CBofApp::GetApp()->SetPalette(pPal);
 
 	// Paint the SaveList Box onto the background
-	if (m_pBackdrop != nullptr) {
+	if (_pBackdrop != nullptr) {
 		CBofBitmap cBmp(BuildSysDir("SAVELIST.BMP"), pPal);
-		cBmp.paint(m_pBackdrop, 153, 50);
+		cBmp.paint(_pBackdrop, 153, 50);
 	}
-	if (m_pBackdrop != nullptr) {
+	if (_pBackdrop != nullptr) {
 		CBofBitmap cBmp(BuildSysDir("TYPESAVE.BMP"), pPal);
-		cBmp.paint(m_pBackdrop, 152, 400);
+		cBmp.paint(_pBackdrop, 152, 400);
 	}
 
 	// Build all our buttons
@@ -162,10 +162,10 @@ ErrorCode CBagRestoreDialog::attach() {
 		m_pListBox->setItemHeight(LIST_TEXT_DY);
 
 		// Set a color for selection highlighting
-		if (m_pBackdrop != nullptr) {
+		if (_pBackdrop != nullptr) {
 			CBofPalette *pPal2;
 
-			pPal2 = m_pBackdrop->GetPalette();
+			pPal2 = _pBackdrop->GetPalette();
 
 			byte iPalIdx = pPal2->GetNearestIndex(RGB(255, 0, 0));
 

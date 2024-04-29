@@ -147,8 +147,8 @@ ErrorCode SBarComputer::attach() {
 		CreateIngListBox();
 
 		// Must have a valid backdrop by now
-		Assert(m_pBackdrop != nullptr);
-		CBofPalette *pPal = m_pBackdrop->GetPalette();
+		Assert(_pBackdrop != nullptr);
+		CBofPalette *pPal = _pBackdrop->GetPalette();
 
 		// Build all our buttons
 		for (int i = 0; i < NUM_COMPBUTT; i++) {
@@ -427,7 +427,7 @@ ErrorCode SBarComputer::CreateDrinksListBox() {
 			m_pDrinkBox->setPointSize(12);
 			m_pDrinkBox->setItemHeight(20);
 
-			CBofPalette *pPal = m_pBackdrop->GetPalette();
+			CBofPalette *pPal = _pBackdrop->GetPalette();
 			byte PalIdx = pPal->GetNearestIndex(RGB(255, 0, 0));
 
 			m_pDrinkBox->setHighlightColor(pPal->GetColor(PalIdx));
@@ -462,7 +462,7 @@ ErrorCode SBarComputer::CreateIngListBox() {
 			m_pIngBox->setPointSize(12);
 			m_pIngBox->setItemHeight(20);
 
-			CBofPalette *pPal = m_pBackdrop->GetPalette();
+			CBofPalette *pPal = _pBackdrop->GetPalette();
 			byte PalIdx = pPal->GetNearestIndex(RGB(255, 0, 0));
 
 			m_pIngBox->setHighlightColor(pPal->GetColor(PalIdx));

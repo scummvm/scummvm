@@ -45,8 +45,8 @@ void CBagNextCDDialog::onInitDialog() {
 
 	CBofPalette *pPal;
 
-	Assert(m_pBackdrop != nullptr);
-	pPal = m_pBackdrop->GetPalette();
+	Assert(_pBackdrop != nullptr);
+	pPal = _pBackdrop->GetPalette();
 	SelectPalette(pPal);
 
 	// Build all our buttons
@@ -92,8 +92,8 @@ void CBagNextCDDialog::onPaint(CBofRect *pRect) {
 	_bFirstTime = false;
 
 	// Paint the dialog
-	if (m_pBackdrop != nullptr) {
-		m_pBackdrop->paint(this, pRect, pRect, 1);
+	if (_pBackdrop != nullptr) {
+		_pBackdrop->paint(this, pRect, pRect, 1);
 	}
 
 	_bHavePainted = true;

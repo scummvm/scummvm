@@ -230,7 +230,7 @@ public:
 	}
 
 	CBofRect GetWindowRect() const {
-		return m_cWindowRect;
+		return _cWindowRect;
 	}
 	CBofRect GetClientRect();
 
@@ -271,15 +271,15 @@ public:
 	ErrorCode SetBackdrop(const char *pszBmpFile, bool bRefresh = false);
 
 	void ClearBackdrop() {
-		m_pBackdrop = nullptr;
+		_pBackdrop = nullptr;
 	}
 
 	CBofBitmap *GetBackdrop() {
-		return m_pBackdrop;
+		return _pBackdrop;
 	}
 
 	bool HasBackdrop() {
-		return m_pBackdrop != nullptr;
+		return _pBackdrop != nullptr;
 	}
 
 	/**
@@ -442,9 +442,9 @@ protected:
 
 	// Window Data
 	char _szTitle[MAX_TITLE] = { 0 };	// Title of window
-	CBofRect m_cWindowRect;				// Screen based area of this window
+	CBofRect _cWindowRect;				// Screen based area of this window
 	CBofRect _cRect;					// Window-based area of this window
-	CBofBitmap *m_pBackdrop = nullptr;  // Backdrop bitmap
+	CBofBitmap *_pBackdrop = nullptr;  // Backdrop bitmap
 	uint32 m_nID = 0;						// ID of this window
 
 	RGBCOLOR m_cBkColor = RGB(255, 255, 255);

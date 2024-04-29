@@ -266,28 +266,28 @@ ErrorCode CMainWindow::attach() {
 
 	Show();
 
-	OnRender(m_pBackdrop, nullptr);
+	OnRender(_pBackdrop, nullptr);
 
 	// Perform fade
-	if ((m_pBackdrop != nullptr) && GetFadeId()) {
+	if ((_pBackdrop != nullptr) && GetFadeId()) {
 		int nFade = GetFadeId() & 0x0F;
 
 		switch (nFade) {
 		case 1:
-			m_pBackdrop->FadeIn(this);
+			_pBackdrop->FadeIn(this);
 			break;
 
 		case 2:
-			m_pBackdrop->Curtain(this);
+			_pBackdrop->Curtain(this);
 			break;
 
 		case 3:
-			m_pBackdrop->FadeLines(this);
+			_pBackdrop->FadeLines(this);
 			break;
 		}
 	}
 
-	m_pBackdrop->paint(this, 0, 0);
+	_pBackdrop->paint(this, 0, 0);
 
 	return _errCode;
 }

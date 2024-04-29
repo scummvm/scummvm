@@ -298,8 +298,8 @@ ErrorCode CBibbleWindow::attach() {
 	}
 
 	// Must have a valid backdrop by now
-	Assert(m_pBackdrop != nullptr);
-	CBofPalette *pPal = m_pBackdrop->GetPalette();
+	Assert(_pBackdrop != nullptr);
+	CBofPalette *pPal = _pBackdrop->GetPalette();
 
 	// Setup the text fields
 	if ((m_pCreditsText = new CBofText) != nullptr) {
@@ -533,9 +533,9 @@ void CBibbleWindow::onPaint(CBofRect *pRect) {
 	CBofBitmap *pBmp;
 
 	// Render offscreen
-	if (m_pBackdrop != nullptr && (pBmp = GetWorkBmp()) != nullptr) {
+	if (_pBackdrop != nullptr && (pBmp = GetWorkBmp()) != nullptr) {
 
-		m_pBackdrop->paint(pBmp, pRect, pRect);
+		_pBackdrop->paint(pBmp, pRect, pRect);
 
 		// Paint the bibbles - just sitting there
 		for (int i = 0; i < BIBBLE_NUM_BIBBLES; i++) {
@@ -1128,11 +1128,11 @@ ErrorCode CBibbleWindow::Highlight(CBetArea *pArea, byte nColor) {
 	Assert(IsValidObject(this));
 	Assert(pArea != nullptr);
 
-	CBofBitmap cBmp(pArea->_cRect.Width(), pArea->_cRect.Height(), m_pBackdrop->GetPalette());
+	CBofBitmap cBmp(pArea->_cRect.Width(), pArea->_cRect.Height(), _pBackdrop->GetPalette());
 
-	Assert(m_pBackdrop != nullptr);
+	Assert(_pBackdrop != nullptr);
 	CBofRect r = cBmp.GetRect();
-	m_pBackdrop->paint(&cBmp, &r, &pArea->_cRect);
+	_pBackdrop->paint(&cBmp, &r, &pArea->_cRect);
 
 	// Add highlight rectangle
 	CBofRect cRect = cBmp.GetRect();
@@ -1165,13 +1165,13 @@ ErrorCode CBibbleWindow::UnHighlight(CBetArea *pArea) {
 	Assert(IsValidObject(this));
 	Assert(pArea != nullptr);
 
-	CBofBitmap cBmp(pArea->_cRect.Width(), pArea->_cRect.Height(), m_pBackdrop->GetPalette());
+	CBofBitmap cBmp(pArea->_cRect.Width(), pArea->_cRect.Height(), _pBackdrop->GetPalette());
 
-	Assert(m_pBackdrop != nullptr);
+	Assert(_pBackdrop != nullptr);
 
 	// Copy bet area
 	CBofRect r = cBmp.GetRect();
-	m_pBackdrop->paint(&cBmp, &r, &pArea->_cRect);
+	_pBackdrop->paint(&cBmp, &r, &pArea->_cRect);
 
 	// Add bet amount text
 	char szBuf[20];

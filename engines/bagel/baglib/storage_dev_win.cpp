@@ -1351,11 +1351,11 @@ void CBagStorageDevWnd::onMainLoop() {
 ErrorCode CBagStorageDevWnd::PaintScreen(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
-	if (m_pBackdrop != nullptr) {
-		OnRender(m_pBackdrop, pRect);
+	if (_pBackdrop != nullptr) {
+		OnRender(_pBackdrop, pRect);
 
 		if (g_allowPaintFl) {
-			m_pBackdrop->paint(this, pRect, pRect);
+			_pBackdrop->paint(this, pRect, pRect);
 		}
 	}
 
@@ -1658,7 +1658,7 @@ void CBagStorageDevDlg::onPaint(CBofRect *) {
 ErrorCode CBagStorageDevDlg::PaintScreen(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
-	if (m_pBackdrop != nullptr) {
+	if (_pBackdrop != nullptr) {
 		CBagStorageDevWnd *pWin = g_pLastWindow;
 
 		if (pWin != nullptr) {
@@ -1675,9 +1675,9 @@ ErrorCode CBagStorageDevDlg::PaintScreen(CBofRect *pRect) {
 					pWin->OnRender(pBmp, pRect);
 				}
 
-				onRender(m_pBackdrop, pRect);
+				onRender(_pBackdrop, pRect);
 				CBofRect wrect(GetWindowRect());
-				m_pBackdrop->paint(pBmp, &wrect, nullptr);
+				_pBackdrop->paint(pBmp, &wrect, nullptr);
 
 				if (g_allowPaintFl) {
 					pBmp->paint(pWin, pRect, pRect);

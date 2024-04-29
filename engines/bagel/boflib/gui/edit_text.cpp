@@ -71,7 +71,7 @@ ErrorCode CBofEditText::create(const char *pszName, int x, int y,
 	Common::strcpy_s(_szTitle, pszName);
 
 	// Retain screen coordinates for this window
-	m_cWindowRect.SetRect(x, y, x + nWidth - 1, y + nHeight - 1);
+	_cWindowRect.SetRect(x, y, x + nWidth - 1, y + nHeight - 1);
 
 	CBofPalette *pPalette = CBofApp::GetApp()->GetPalette();
 	if (pPalette != nullptr) {
@@ -79,7 +79,7 @@ ErrorCode CBofEditText::create(const char *pszName, int x, int y,
 	}
 
 	// Retain local coordinates (based on own window)
-	_cRect.SetRect(0, 0, m_cWindowRect.Width() - 1, m_cWindowRect.Height() - 1);
+	_cRect.SetRect(0, 0, _cWindowRect.Width() - 1, _cWindowRect.Height() - 1);
 
 	return _errCode;
 }

@@ -33,16 +33,16 @@ namespace Bagel {
 
 
 CBofListBox::CBofListBox() {
-	m_cTextColor = CTEXT_COLOR;
-	m_cHighColor = CTEXT_COLOR;
-	m_nTextSize = 10;
-	m_nTextWeight = TEXT_NORMAL;
-	m_nNumItems = 0;
-	m_n1stVisible = 0;
-	m_nPageSize = 0;
-	m_pWork = nullptr;
-	m_nItemHeight = TEXT_ITEM_HEIGHT;
-	m_nState = LISTBOX_NORMAL;
+	_cTextColor = CTEXT_COLOR;
+	_cHighColor = CTEXT_COLOR;
+	_nTextSize = 10;
+	_nTextWeight = TEXT_NORMAL;
+	_nNumItems = 0;
+	_n1stVisible = 0;
+	_nPageSize = 0;
+	_pWork = nullptr;
+	_nItemHeight = TEXT_ITEM_HEIGHT;
+	_nState = LISTBOX_NORMAL;
 
 	// Initialized the selected item
 	clearSelection();
@@ -51,29 +51,29 @@ CBofListBox::CBofListBox() {
 
 CBofListBox::~CBofListBox() {
 	// Kill the temporary work area
-	if (m_pWork != nullptr) {
-		delete m_pWork;
-		m_pWork  = nullptr;
+	if (_pWork != nullptr) {
+		delete _pWork;
+		_pWork  = nullptr;
 	}
 
 	deleteAll(false);
 }
 
 void CBofListBox::clearSelection() {
-	m_nSelectedItem = -1;
+	_nSelectedItem = -1;
 }
 
 void CBofListBox::insertBefore(int nIndex, const CBofString &cString, bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	ListBoxItem lbi;
-	lbi.m_pTextStr          = new CBofString(cString);
-	lbi.m_nTextLineColor    = COLOR_USE_DEFAULT;
+	lbi._pTextStr          = new CBofString(cString);
+	lbi._nTextLineColor    = COLOR_USE_DEFAULT;
 
-	m_cTextItems.insertBefore(nIndex, lbi);
+	_cTextItems.insertBefore(nIndex, lbi);
 
 	// One more item
-	m_nNumItems++;
+	_nNumItems++;
 
 	clearSelection();
 
@@ -87,13 +87,13 @@ void CBofListBox::insertAfter(int nIndex, const CBofString &cString, bool bRepai
 	Assert(IsValidObject(this));
 
 	ListBoxItem lbi;
-	lbi.m_pTextStr          = new CBofString(cString);
-	lbi.m_nTextLineColor    = COLOR_USE_DEFAULT;
+	lbi._pTextStr          = new CBofString(cString);
+	lbi._nTextLineColor    = COLOR_USE_DEFAULT;
 
-	m_cTextItems.insertAfter(nIndex, lbi);
+	_cTextItems.insertAfter(nIndex, lbi);
 
 	// One more item
-	m_nNumItems++;
+	_nNumItems++;
 
 	if (bRepaint && IsCreated() && IsVisible()) {
 		repaintAll();
@@ -105,13 +105,13 @@ void CBofListBox::addToHead(const CBofString &cString, bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	ListBoxItem lbi;
-	lbi.m_pTextStr          = new CBofString(cString);
-	lbi.m_nTextLineColor    = COLOR_USE_DEFAULT;
+	lbi._pTextStr          = new CBofString(cString);
+	lbi._nTextLineColor    = COLOR_USE_DEFAULT;
 
-	m_cTextItems.addToHead(lbi);
+	_cTextItems.addToHead(lbi);
 
 	// One more item
-	m_nNumItems++;
+	_nNumItems++;
 
 	clearSelection();
 
@@ -125,13 +125,13 @@ void CBofListBox::addToTail(const CBofString &cString, bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	ListBoxItem lbi;
-	lbi.m_pTextStr          = new CBofString(cString);
-	lbi.m_nTextLineColor    = COLOR_USE_DEFAULT;
+	lbi._pTextStr          = new CBofString(cString);
+	lbi._nTextLineColor    = COLOR_USE_DEFAULT;
 
-	m_cTextItems.addToTail(lbi);
+	_cTextItems.addToTail(lbi);
 
 	// One more item
-	m_nNumItems++;
+	_nNumItems++;
 
 	clearSelection();
 
@@ -143,17 +143,17 @@ void CBofListBox::addToTail(const CBofString &cString, bool bRepaint) {
 
 ErrorCode CBofListBox::delItem(int nIndex, bool bRepaint) {
 	Assert(IsValidObject(this));
-	Assert(nIndex >= 0 && nIndex < m_nNumItems);
+	Assert(nIndex >= 0 && nIndex < _nNumItems);
 
-	m_cTextItems.Remove(nIndex);
+	_cTextItems.Remove(nIndex);
 
 	// One less item
-	m_nNumItems--;
+	_nNumItems--;
 
-	if (m_n1stVisible >= m_nNumItems) {
-		m_n1stVisible = m_nNumItems - 1;
-		if (m_n1stVisible < 0)
-			m_n1stVisible = 0;
+	if (_n1stVisible >= _nNumItems) {
+		_n1stVisible = _nNumItems - 1;
+		if (_n1stVisible < 0)
+			_n1stVisible = 0;
 	}
 
 	clearSelection();
@@ -170,16 +170,16 @@ ErrorCode CBofListBox::deleteAll(bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	// Switch item to be pointer to cbofstring instead of the item itself
-	int nCount = m_cTextItems.GetCount();
+	int nCount = _cTextItems.GetCount();
 
 	for (int i = 0; i < nCount; i++) {
-		ListBoxItem lbi = m_cTextItems.GetNodeItem(i);
-		delete lbi.m_pTextStr;
+		ListBoxItem lbi = _cTextItems.GetNodeItem(i);
+		delete lbi._pTextStr;
 	}
 
-	m_cTextItems.RemoveAll();
-	m_nNumItems = 0;
-	m_n1stVisible = 0;
+	_cTextItems.RemoveAll();
+	_nNumItems = 0;
+	_n1stVisible = 0;
 
 	clearSelection();
 
@@ -195,11 +195,11 @@ void CBofListBox::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
-	int nIndex = (pPoint->y / m_nItemHeight) + m_n1stVisible;
-	if (nIndex < m_nNumItems) {
+	int nIndex = (pPoint->y / _nItemHeight) + _n1stVisible;
+	if (nIndex < _nNumItems) {
 
-		m_nSelectedItem = nIndex; // Set the selected item
-		m_nState = LISTBOX_SELECT;
+		_nSelectedItem = nIndex; // Set the selected item
+		_nState = LISTBOX_SELECT;
 
 		if (_parent != nullptr) {
 			_parent->SetPrevMouseDown(*pPoint);
@@ -213,11 +213,11 @@ void CBofListBox::onLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
-	int nIndex = (pPoint->y / m_nItemHeight) + m_n1stVisible;
+	int nIndex = (pPoint->y / _nItemHeight) + _n1stVisible;
 
-	if (nIndex < m_nNumItems) {
-		m_nSelectedItem = nIndex; // Set the selected item
-		m_nState = LISTBOX_USENOW;
+	if (nIndex < _nNumItems) {
+		_nSelectedItem = nIndex; // Set the selected item
+		_nState = LISTBOX_USENOW;
 
 		if (_parent != nullptr) {
 			_parent->SetPrevMouseDown(*pPoint);
@@ -238,7 +238,7 @@ void CBofListBox::onKeyHit(uint32 lKey, uint32 lRepCount) {
 		break;
 
 	case BKEY_END:
-		scrollTo(m_nNumItems);
+		scrollTo(_nNumItems);
 		break;
 
 	case BKEY_UP:
@@ -272,20 +272,20 @@ ErrorCode CBofListBox::scrollUp(const int nLines) {
 	Assert(IsValidObject(this));
 
 	// If all the items fit on a single page, make this operation a no-op.
-	if (m_nNumItems <= m_nPageSize) {
-		return scrollTo(m_n1stVisible);
+	if (_nNumItems <= _nPageSize) {
+		return scrollTo(_n1stVisible);
 	}
 
-	int nNewLine = m_n1stVisible - nLines;
+	int nNewLine = _n1stVisible - nLines;
 
 	if (nNewLine < 0) {
 		nNewLine = 0;
 
-	} else if (nNewLine > (m_nNumItems - m_nPageSize)) {
+	} else if (nNewLine > (_nNumItems - _nPageSize)) {
 		// If the line requested to be the top of the page
-		// would cause fewer than m_nPageSize lines to be displayed,
+		// would cause fewer than _nPageSize lines to be displayed,
 		// snap nNewLine to be equal to the top of the last full page.
-		nNewLine = (m_nNumItems - m_nPageSize);
+		nNewLine = (_nNumItems - _nPageSize);
 	}
 
 	return scrollTo(nNewLine);
@@ -293,15 +293,15 @@ ErrorCode CBofListBox::scrollUp(const int nLines) {
 
 ErrorCode CBofListBox::scrollTo(const int nLine) {
 	Assert(IsValidObject(this));
-	Assert(nLine >= 0 && nLine <= m_nNumItems);
+	Assert(nLine >= 0 && nLine <= _nNumItems);
 
 	// Only update the screen if the list actually moved
-	if (m_n1stVisible != nLine) {
-		m_n1stVisible = nLine;
+	if (_n1stVisible != nLine) {
+		_n1stVisible = nLine;
 
-		if (nLine >= m_nNumItems) {
-			Assert(m_nNumItems > 0);
-			m_n1stVisible--;
+		if (nLine >= _nNumItems) {
+			Assert(_nNumItems > 0);
+			_n1stVisible--;
 		}
 
 		// Show the text box
@@ -315,9 +315,9 @@ ErrorCode CBofListBox::scrollTo(const int nLine) {
 void CBofListBox::onPaint(CBofRect * /*pRect*/) {
 	Assert(IsValidObject(this));
 
-	m_nPageSize = Height() / m_nItemHeight;
+	_nPageSize = Height() / _nItemHeight;
 
-	if (m_pBackdrop == nullptr) {
+	if (_pBackdrop == nullptr) {
 		saveBackground();
 	}
 
@@ -328,9 +328,9 @@ void CBofListBox::onPaint(CBofRect * /*pRect*/) {
 void CBofListBox::killBackground() {
 	Assert(IsValidObject(this));
 
-	if (m_pBackdrop != nullptr) {
-		delete m_pBackdrop;
-		m_pBackdrop = nullptr;
+	if (_pBackdrop != nullptr) {
+		delete _pBackdrop;
+		_pBackdrop = nullptr;
 	}
 }
 
@@ -340,14 +340,14 @@ ErrorCode CBofListBox::saveBackground() {
 
 	killBackground();
 
-	if ((m_pBackdrop = new CBofBitmap(Width(), Height(), CBofApp::GetApp()->GetPalette())) != nullptr) {
+	if ((_pBackdrop = new CBofBitmap(Width(), Height(), CBofApp::GetApp()->GetPalette())) != nullptr) {
 		if ((_parent != nullptr) && (_parent->GetBackdrop() != nullptr)) {
-			CBofRect cRect = m_pBackdrop->GetRect();
+			CBofRect cRect = _pBackdrop->GetRect();
 
-			_parent->GetBackdrop()->paint(m_pBackdrop, &cRect, &m_cWindowRect);
+			_parent->GetBackdrop()->paint(_pBackdrop, &cRect, &_cWindowRect);
 
 		} else {
-			m_pBackdrop->CaptureScreen(this, &_cRect);
+			_pBackdrop->CaptureScreen(this, &_cRect);
 		}
 
 	} else {
@@ -360,14 +360,14 @@ ErrorCode CBofListBox::saveBackground() {
 ErrorCode CBofListBox::createWorkArea() {
 	Assert(IsValidObject(this));
 
-	if (m_pBackdrop == nullptr) {
+	if (_pBackdrop == nullptr) {
 		saveBackground();
 	}
 
-	if (m_pWork == nullptr) {
-		Assert(m_pBackdrop != nullptr);
+	if (_pWork == nullptr) {
+		Assert(_pBackdrop != nullptr);
 
-		if ((m_pWork = new CBofBitmap(Width(), Height(), m_pBackdrop->GetPalette())) == nullptr) {
+		if ((_pWork = new CBofBitmap(Width(), Height(), _pBackdrop->GetPalette())) == nullptr) {
 			ReportError(ERR_MEMORY, "Unable to allocate a %d x %d CBofBitmap", Width(), Height());
 		}
 	}
@@ -383,50 +383,50 @@ ErrorCode CBofListBox::repaintAll() {
 		Assert(IsCreated());
 
 		int nCurFont = getFont();
-		setFont(m_nTextFont);
+		setFont(_nTextFont);
 
 		createWorkArea();
 
-		if (m_pWork != nullptr) {
-			m_pWork->Lock();
+		if (_pWork != nullptr) {
+			_pWork->Lock();
 
-			int nIndexedColor = m_pWork->GetPalette()->GetNearestIndex(m_cTextColor);
+			int nIndexedColor = _pWork->GetPalette()->GetNearestIndex(_cTextColor);
 
 			// prepare the background
 			//
-			Assert(m_pBackdrop != nullptr);
-			m_pBackdrop->paint(m_pWork);
+			Assert(_pBackdrop != nullptr);
+			_pBackdrop->paint(_pWork);
 
-			for (int i = 0; i < m_nPageSize; i++) {
+			for (int i = 0; i < _nPageSize; i++) {
 				CBofRect cRect;
-				cRect.SetRect(0, i * m_nItemHeight, Width() - 1, (i + 1) * m_nItemHeight - 1);
+				cRect.SetRect(0, i * _nItemHeight, Width() - 1, (i + 1) * _nItemHeight - 1);
 
-				if (i + m_n1stVisible < m_nNumItems) {
+				if (i + _n1stVisible < _nNumItems) {
 					// If this item is currently selected and we have a high color
-					if ((i + m_n1stVisible == m_nSelectedItem) && (m_cHighColor != m_cTextColor)) {
+					if ((i + _n1stVisible == _nSelectedItem) && (_cHighColor != _cTextColor)) {
 						// display text highlighted
-						PaintText(m_pWork,
+						PaintText(_pWork,
 						          &cRect,
-						          *(m_cTextItems.GetNodeItem(i + m_n1stVisible).m_pTextStr),
-						          m_nTextSize,
-						          m_nTextWeight,
-						          m_cHighColor,
+						          *(_cTextItems.GetNodeItem(i + _n1stVisible)._pTextStr),
+						          _nTextSize,
+						          _nTextWeight,
+						          _cHighColor,
 						          JUSTIFY_LEFT,
 						          FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
 						          getFont());
 					} else {
 						// Display text
 						// Allow list items of different colors.
-						RGBCOLOR rgbTextColor = m_cTextColor;
-						if (m_cTextItems.GetNodeItem(i + m_n1stVisible).m_nTextLineColor != COLOR_USE_DEFAULT) {
-							rgbTextColor = m_cTextItems.GetNodeItem(i + m_n1stVisible).m_nTextLineColor;
+						RGBCOLOR rgbTextColor = _cTextColor;
+						if (_cTextItems.GetNodeItem(i + _n1stVisible)._nTextLineColor != COLOR_USE_DEFAULT) {
+							rgbTextColor = _cTextItems.GetNodeItem(i + _n1stVisible)._nTextLineColor;
 						}
 
-						PaintText(m_pWork,
+						PaintText(_pWork,
 						          &cRect,
-						          *(m_cTextItems.GetNodeItem(i + m_n1stVisible).m_pTextStr),
-						          m_nTextSize,
-						          m_nTextWeight,
+						          *(_cTextItems.GetNodeItem(i + _n1stVisible)._pTextStr),
+						          _nTextSize,
+						          _nTextWeight,
 						          rgbTextColor,
 						          JUSTIFY_LEFT,
 						          FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
@@ -434,14 +434,14 @@ ErrorCode CBofListBox::repaintAll() {
 					}
 
 					CBofPoint bl(cRect.BottomLeft()), br(cRect.BottomRight());
-					m_pWork->Line(&bl, &br, (byte)nIndexedColor);
+					_pWork->Line(&bl, &br, (byte)nIndexedColor);
 				}
 			}
 
 			// Show final image on screen
-			m_pWork->paint(this);
+			_pWork->paint(this);
 
-			m_pWork->UnLock();
+			_pWork->UnLock();
 		}
 
 		// Reset the font
@@ -456,36 +456,36 @@ ErrorCode CBofListBox::repaintItem(int nIndex) {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
-		Assert(nIndex >= 0 && nIndex < m_nNumItems);
+		Assert(nIndex >= 0 && nIndex < _nNumItems);
 		int nCurFont = getFont();
-		setFont(m_nTextFont);           // Set the proper font
+		setFont(_nTextFont);           // Set the proper font
 
 		// If this item is visible, then repaint it.
-		if (nIndex >= m_n1stVisible && nIndex <= m_n1stVisible + m_nPageSize) {
-			int i = nIndex - m_n1stVisible;
+		if (nIndex >= _n1stVisible && nIndex <= _n1stVisible + _nPageSize) {
+			int i = nIndex - _n1stVisible;
 
 			createWorkArea();
-			int nIndexedColor = m_pWork->GetPalette()->GetNearestIndex(m_cTextColor);
+			int nIndexedColor = _pWork->GetPalette()->GetNearestIndex(_cTextColor);
 
-			m_pWork->Lock();
+			_pWork->Lock();
 
 			// Calculate area for this text item
 			CBofRect cRect;
-			cRect.SetRect(0, i * m_nItemHeight, Width() - 1, (i + 1) * m_nItemHeight - 1);
+			cRect.SetRect(0, i * _nItemHeight, Width() - 1, (i + 1) * _nItemHeight - 1);
 
 			// Prepare the background
-			Assert(m_pBackdrop != nullptr);
-			m_pBackdrop->paint(m_pWork, &cRect, &cRect);
+			Assert(_pBackdrop != nullptr);
+			_pBackdrop->paint(_pWork, &cRect, &cRect);
 
 			// If this item is currently selected and we have a high color
-			if ((nIndex == m_nSelectedItem) && (m_cHighColor != m_cTextColor)) {
+			if ((nIndex == _nSelectedItem) && (_cHighColor != _cTextColor)) {
 				// Display text highlighted
-				PaintText(m_pWork,
+				PaintText(_pWork,
 				          &cRect,
-				          *(m_cTextItems.GetNodeItem(nIndex).m_pTextStr),
-				          m_nTextSize,
-				          m_nTextWeight,
-				          m_cHighColor,
+				          *(_cTextItems.GetNodeItem(nIndex)._pTextStr),
+				          _nTextSize,
+				          _nTextWeight,
+				          _cHighColor,
 				          JUSTIFY_LEFT,
 				          FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
 				          getFont());
@@ -493,27 +493,27 @@ ErrorCode CBofListBox::repaintItem(int nIndex) {
 			} else {
 				// Display text
 				// Allow list items of different colors.
-				RGBCOLOR rgbTextColor = m_cTextColor;
-				if (m_cTextItems.GetNodeItem(i + m_n1stVisible).m_nTextLineColor != COLOR_USE_DEFAULT) {
-					rgbTextColor = m_cTextItems.GetNodeItem(i + m_n1stVisible).m_nTextLineColor;
+				RGBCOLOR rgbTextColor = _cTextColor;
+				if (_cTextItems.GetNodeItem(i + _n1stVisible)._nTextLineColor != COLOR_USE_DEFAULT) {
+					rgbTextColor = _cTextItems.GetNodeItem(i + _n1stVisible)._nTextLineColor;
 				}
-				PaintText(m_pWork,
+				PaintText(_pWork,
 				          &cRect,
-				          *(m_cTextItems.GetNodeItem(nIndex).m_pTextStr),
-				          m_nTextSize,
-				          m_nTextWeight,
+				          *(_cTextItems.GetNodeItem(nIndex)._pTextStr),
+				          _nTextSize,
+				          _nTextWeight,
 				          rgbTextColor,
 				          JUSTIFY_LEFT,
 				          FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
 				          getFont());
 			}
 			CBofPoint bl(cRect.BottomLeft()), br(cRect.BottomRight());
-			m_pWork->Line(&bl, &br, (byte)nIndexedColor);
+			_pWork->Line(&bl, &br, (byte)nIndexedColor);
 
 			// Show final image on screen
-			m_pWork->paint(this, &cRect, &cRect);
+			_pWork->paint(this, &cRect, &cRect);
 
-			m_pWork->UnLock();
+			_pWork->UnLock();
 		}
 
 		// Reset the font
@@ -528,7 +528,7 @@ void CBofListBox::setSelectedItem(int nItem, bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	// Set highlighted item
-	m_nSelectedItem = nItem;
+	_nSelectedItem = nItem;
 
 	if (bRepaint) {
 		repaintAll();
@@ -537,25 +537,25 @@ void CBofListBox::setSelectedItem(int nItem, bool bRepaint) {
 
 
 CBofString CBofListBox::getText(int nIndex) {
-	return *(m_cTextItems.GetNodeItem(nIndex).m_pTextStr);
+	return *(_cTextItems.GetNodeItem(nIndex)._pTextStr);
 }
 
 
 void CBofListBox::setText(int nIndex, const CBofString &cStr) {
 
-	ListBoxItem lbi = m_cTextItems.GetNodeItem(nIndex);
-	*lbi.m_pTextStr = cStr;
+	ListBoxItem lbi = _cTextItems.GetNodeItem(nIndex);
+	*lbi._pTextStr = cStr;
 
-	m_cTextItems.SetNodeItem(nIndex, lbi);
+	_cTextItems.SetNodeItem(nIndex, lbi);
 }
 
 
 void CBofListBox::setTextLineColor(int nIndex, RGBCOLOR rgbColor) {
 
-	ListBoxItem lbi = m_cTextItems.GetNodeItem(nIndex);
-	lbi.m_nTextLineColor = rgbColor;
+	ListBoxItem lbi = _cTextItems.GetNodeItem(nIndex);
+	lbi._nTextLineColor = rgbColor;
 
-	m_cTextItems.SetNodeItem(nIndex, lbi);
+	_cTextItems.SetNodeItem(nIndex, lbi);
 }
 
 } // namespace Bagel

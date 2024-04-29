@@ -112,7 +112,7 @@ ErrorCode CBofScrollBar::setText(const char *pszText, int nJustify) {
 		if (m_pScrollText == nullptr) {
 
 			CBofPoint cPoint = _parent->GetWindowRect().TopLeft();
-			CBofRect cTempRect = m_cWindowRect - cPoint;
+			CBofRect cTempRect = _cWindowRect - cPoint;
 
 			cTempRect -= CPoint(0, 20);
 			cTempRect.right += 20;
@@ -220,7 +220,7 @@ ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, 
 
 		CBofPalette *pPalette = CBofApp::GetApp()->GetPalette();
 
-		m_cBkSize = m_pBackdrop->GetSize();
+		m_cBkSize = _pBackdrop->GetSize();
 		m_nScrollWidth = m_cBkSize.cx;
 
 		if ((m_pThumb = new CBofSprite) != nullptr) {
@@ -239,7 +239,7 @@ ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, 
 		if (pszLeftBtnUp != nullptr) {
 			if ((m_pLeftBtnUp = new CBofBitmap(pszLeftBtnUp, pPalette)) != nullptr) {
 				cPoint.x = 0;
-				cPoint.y = (m_pBackdrop->Height() / 2) - (m_pLeftBtnUp->Height() / 2);
+				cPoint.y = (_pBackdrop->Height() / 2) - (m_pLeftBtnUp->Height() / 2);
 
 				m_cLeftBtnRect = m_pLeftBtnUp->GetRect() + cPoint;
 
@@ -258,8 +258,8 @@ ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, 
 
 		if (pszRightBtnUp != nullptr) {
 			if ((m_pRightBtnUp = new CBofBitmap(pszRightBtnUp, pPalette)) != nullptr) {
-				cPoint.x = m_pBackdrop->Width() - m_pRightBtnUp->Width();
-				cPoint.y = (m_pBackdrop->Height() / 2) - (m_pRightBtnUp->Height() / 2);
+				cPoint.x = _pBackdrop->Width() - m_pRightBtnUp->Width();
+				cPoint.y = (_pBackdrop->Height() / 2) - (m_pRightBtnUp->Height() / 2);
 				m_cRightBtnRect = m_pLeftBtnUp->GetRect() + cPoint;
 
 				m_nScrollWidth -= m_cRightBtnRect.Width();
@@ -316,11 +316,11 @@ ErrorCode CBofScrollBar::paint(CBofRect *pDirtyRect) {
 		// invalidated.  Right now it just repaints the entire scroll bar each time.
 		//
 
-		if ((m_pBackdrop != nullptr) && (m_pThumb != nullptr)) {
+		if ((_pBackdrop != nullptr) && (m_pThumb != nullptr)) {
 			// Do all painting offscreen
 			CBofBitmap *pBmp = new CBofBitmap(m_cBkSize.cx, m_cBkSize.cy, pPalette);
 			if (pBmp != nullptr) {
-				m_pBackdrop->paint(pBmp, 0, 0, nullptr, COLOR_WHITE);
+				_pBackdrop->paint(pBmp, 0, 0, nullptr, COLOR_WHITE);
 
 				if ((m_nScrollState == 1) && (m_pLeftBtnDn != nullptr)) {
 					cPoint = m_cLeftBtnRect.TopLeft();

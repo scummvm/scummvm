@@ -35,8 +35,8 @@ namespace Bagel {
 
 class ListBoxItem {
 public:
-	CBofString *m_pTextStr;
-	RGBCOLOR m_nTextLineColor;
+	CBofString *_pTextStr;
+	RGBCOLOR _nTextLineColor;
 };
 
 class CBofListBox : public CBofWindow {
@@ -56,7 +56,7 @@ public:
 	ErrorCode deleteAll(bool bRepaint = true);
 
 	int getNumItems() {
-		return m_nNumItems;
+		return _nNumItems;
 	}
 	CBofString getText(int nIndex);
 	void setText(int nIndex, const CBofString &cStr);
@@ -71,10 +71,10 @@ public:
 	}
 
 	ErrorCode pageUp() {
-		return scrollUp(m_nPageSize);
+		return scrollUp(_nPageSize);
 	}
 	ErrorCode pageDown() {
-		return scrollDown(m_nPageSize);
+		return scrollDown(_nPageSize);
 	}
 
 	ErrorCode scrollUp(const int nLines);
@@ -89,49 +89,49 @@ public:
 	void killBackground();
 
 	void setHighlightColor(RGBCOLOR cHighColor) {
-		m_cHighColor = cHighColor;
+		_cHighColor = cHighColor;
 	}
 	RGBCOLOR getHighlightColor() {
-		return m_cHighColor;
+		return _cHighColor;
 	}
 
 	void setTextColor(RGBCOLOR cColor) {
-		m_cTextColor = cColor;
+		_cTextColor = cColor;
 	}
 	RGBCOLOR getTextColor() {
-		return m_cTextColor;
+		return _cTextColor;
 	}
 
 	void setPointSize(int nSize) {
-		m_nTextSize = nSize;
+		_nTextSize = nSize;
 	}
 	int getPointSize() {
-		return m_nTextSize;
+		return _nTextSize;
 	}
 
 	void setWeight(int nWeight) {
-		m_nTextWeight = nWeight;
+		_nTextWeight = nWeight;
 	}
 	int getWeight() {
-		return m_nTextWeight;
+		return _nTextWeight;
 	}
 
 	void setItemHeight(int nHeight) {
-		m_nItemHeight = nHeight;
+		_nItemHeight = nHeight;
 	}
 	int getItemHeight() {
-		return m_nItemHeight;
+		return _nItemHeight;
 	}
 
 	void setFont(int nFont) {
-		m_nTextFont = nFont;
+		_nTextFont = nFont;
 	}
 	int getFont() {
-		return m_nTextFont;
+		return _nTextFont;
 	}
 
 	int getState() {
-		return m_nState;
+		return _nState;
 	}
 
 	virtual ErrorCode repaintItem(int nIndex);
@@ -148,21 +148,21 @@ protected:
 	 */
 	virtual void clearSelection();
 
-	CBofList<ListBoxItem> m_cTextItems;
-	CBofBitmap *m_pWork;
-	int m_nNumItems;
-	int m_n1stVisible;
+	CBofList<ListBoxItem> _cTextItems;
+	CBofBitmap *_pWork;
+	int _nNumItems;
+	int _n1stVisible;
 
-	int m_nPageSize;
+	int _nPageSize;
 
-	int m_nTextSize;
-	int m_nTextWeight;
-	RGBCOLOR m_cTextColor;
-	RGBCOLOR m_cHighColor;
-	int m_nSelectedItem;
-	int m_nItemHeight;
-	int m_nTextFont;
-	int m_nState;
+	int _nTextSize;
+	int _nTextWeight;
+	RGBCOLOR _cTextColor;
+	RGBCOLOR _cHighColor;
+	int _nSelectedItem;
+	int _nItemHeight;
+	int _nTextFont;
+	int _nState;
 };
 
 } // namespace Bagel
