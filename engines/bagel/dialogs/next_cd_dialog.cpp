@@ -36,10 +36,10 @@ CBagNextCDDialog::CBagNextCDDialog() {
 	_lFlags = 0;
 }
 
-void CBagNextCDDialog::OnInitDialog() {
+void CBagNextCDDialog::onInitDialog() {
 	Assert(IsValidObject(this));
 
-	CBofDialog::OnInitDialog();
+	CBofDialog::onInitDialog();
 
 	SetReturnValue(-1);
 
@@ -85,7 +85,7 @@ void CBagNextCDDialog::onClose() {
 	CBofDialog::onClose();
 }
 
-void CBagNextCDDialog::OnPaint(CBofRect *pRect) {
+void CBagNextCDDialog::onPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 

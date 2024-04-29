@@ -128,7 +128,7 @@ SBarSlotWnd::SBarSlotWnd() : CBagStorageDevWnd() {
 }
 
 
-void SBarSlotWnd::OnPaint(CBofRect *pRect) {
+void SBarSlotWnd::onPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
@@ -165,7 +165,7 @@ void SBarSlotWnd::OnPaint(CBofRect *pRect) {
 	}
 }
 
-void SBarSlotWnd::OnMainLoop() {
+void SBarSlotWnd::onMainLoop() {
 	// Do nothing
 }
 
@@ -814,7 +814,7 @@ void SBarSlotWnd::UpdateText() {
 void SBarSlotWnd::onTimer(uint32 /*nTimerId*/) {
 }
 
-void SBarSlotWnd::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
+void SBarSlotWnd::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	if (FixRect.PtInRect(*pPoint)) {
 		FixBet();
 		InvalidateRect(&FixRect);

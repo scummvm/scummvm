@@ -56,10 +56,10 @@ CBagStartDialog::CBagStartDialog(const char *pszFileName, CBofWindow *pWin)
 	Common::fill(_buttons, _buttons + NUM_START_BTNS, (CBofBmpButton *)nullptr);
 }
 
-void CBagStartDialog::OnInitDialog() {
+void CBagStartDialog::onInitDialog() {
 	Assert(IsValidObject(this));
 
-	CBofDialog::OnInitDialog();
+	CBofDialog::onInitDialog();
 	SetReturnValue(-1);
 
 	// Halt all audio when user dies (and at start of game).
@@ -115,13 +115,13 @@ void CBagStartDialog::onClose() {
 		}
 	}
 
-	KillBackground();
+	killBackground();
 
 	CBofDialog::onClose();
 }
 
 
-void CBagStartDialog::OnPaint(CBofRect *pRect) {
+void CBagStartDialog::onPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	PaintBackdrop(pRect);

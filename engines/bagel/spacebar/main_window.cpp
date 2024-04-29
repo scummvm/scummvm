@@ -420,13 +420,13 @@ void CMainWindow::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 }
 
 
-void CMainWindow::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
+void CMainWindow::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 	if (GetFilterId() & 0x08) {
 		if (m_bZzazzlVision)                // If zzazzl paint is toggled on
 			CorrectZzazzlePoint(xPoint);
 	}
 
-	CBagPanWindow::OnLButtonDown(nFlags, xPoint);
+	CBagPanWindow::onLButtonDown(nFlags, xPoint);
 }
 
 void CMainWindow::onClose() {

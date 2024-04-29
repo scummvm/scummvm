@@ -81,13 +81,13 @@ CBagCreditsDialog::CBagCreditsDialog() {
 	m_bDisplay = false;
 }
 
-void CBagCreditsDialog::OnInitDialog() {
+void CBagCreditsDialog::onInitDialog() {
 	Assert(IsValidObject(this));
 
 	// Hide cursor for credit screens
 	CursorMan.showMouse(false);
 
-	CBofDialog::OnInitDialog();
+	CBofDialog::onInitDialog();
 
 	SetReturnValue(-1);
 
@@ -222,7 +222,7 @@ void CBagCreditsDialog::onClose() {
 	CursorMan.showMouse(true);
 }
 
-void CBagCreditsDialog::OnPaint(CBofRect *pRect) {
+void CBagCreditsDialog::onPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	PaintBackdrop(pRect);
@@ -230,7 +230,7 @@ void CBagCreditsDialog::OnPaint(CBofRect *pRect) {
 	ValidateAnscestors();
 }
 
-void CBagCreditsDialog::OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
+void CBagCreditsDialog::onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
 	Assert(IsValidObject(this));
 
 	NextScreen();
@@ -242,7 +242,7 @@ void CBagCreditsDialog::onKeyHit(uint32 /*lKey*/, uint32 /*nRepCount*/) {
 	NextScreen();
 }
 
-void CBagCreditsDialog::OnMainLoop() {
+void CBagCreditsDialog::onMainLoop() {
 	Assert(IsValidObject(this));
 
 	// If it's OK to show the credits

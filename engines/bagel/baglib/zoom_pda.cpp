@@ -291,7 +291,7 @@ void SBZoomPda::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 	}
 }
 
-void SBZoomPda::OnMainLoop() {
+void SBZoomPda::onMainLoop() {
 	uint32 nCurTime = GetTimer();
 
 	// Force an update every 1/4 second
@@ -303,7 +303,7 @@ void SBZoomPda::OnMainLoop() {
 		}
 	}
 
-	CBagStorageDevWnd::OnMainLoop();
+	CBagStorageDevWnd::onMainLoop();
 }
 
 ErrorCode SBZoomPda::attachActiveObjects() {

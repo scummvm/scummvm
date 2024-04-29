@@ -160,7 +160,7 @@ ErrorCode CBofApp::runApp() {
 						return ERR_NONE;
 
 					if (pWindow->IsCreated()) {
-						pWindow->OnMainLoop();
+						pWindow->onMainLoop();
 					}
 
 					pWindow = (CBofWindow *)pWindow->GetNext();

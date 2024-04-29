@@ -537,12 +537,12 @@ ErrorCode CNavWindow::detach() {
 }
 
 
-void CNavWindow::OnMainLoop() {
+void CNavWindow::onMainLoop() {
 	// Do nothing
 }
 
 
-void CNavWindow::OnPaint(CBofRect *pRect) {
+void CNavWindow::onPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 
@@ -711,7 +711,7 @@ void CNavWindow::OnBofButton(CBofObject *pObject, int nState) {
 }
 
 
-void CNavWindow::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
+void CNavWindow::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 

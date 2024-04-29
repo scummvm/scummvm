@@ -262,7 +262,7 @@ ErrorCode CBagSaveDialog::Detach() {
 	return m_errCode;
 }
 
-void CBagSaveDialog::OnPaint(CBofRect *pRect) {
+void CBagSaveDialog::onPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	PaintBackdrop(pRect);
@@ -419,10 +419,10 @@ void CBagSaveDialog::OnBofListBox(CBofObject * /*pObject*/, int nItemIndex) {
 	}
 }
 
-void CBagSaveDialog::OnInitDialog() {
+void CBagSaveDialog::onInitDialog() {
 	Assert(IsValidObject(this));
 
-	CBofDialog::OnInitDialog();
+	CBofDialog::onInitDialog();
 	attach();
 }
 

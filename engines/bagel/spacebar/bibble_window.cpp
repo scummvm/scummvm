@@ -521,12 +521,12 @@ ErrorCode CBibbleWindow::detach() {
 }
 
 
-void CBibbleWindow::OnMainLoop() {
+void CBibbleWindow::onMainLoop() {
 	// Do nothing
 }
 
 
-void CBibbleWindow::OnPaint(CBofRect *pRect) {
+void CBibbleWindow::onPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 
@@ -1093,7 +1093,7 @@ void CBibbleWindow::onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void 
 }
 
 
-void CBibbleWindow::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
+void CBibbleWindow::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 

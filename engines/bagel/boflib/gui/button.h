@@ -69,8 +69,8 @@ public:
 	}
 
 protected:
-	void OnPaint(CBofRect *pRect) override;
-	void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
+	void onPaint(CBofRect *pRect) override;
+	void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
 	void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
 
 	RGBCOLOR m_cFaceColor;
@@ -88,7 +88,7 @@ public:
 	virtual ErrorCode Paint(CBofRect *pRect = nullptr);
 
 protected:
-	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 };
 
@@ -102,7 +102,7 @@ public:
 	virtual ErrorCode Paint(CBofRect *pRect = nullptr);
 
 protected:
-	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 };
 
@@ -130,8 +130,8 @@ public:
 	}
 
 protected:
-	virtual void OnPaint(CBofRect *pRect);
-	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void onPaint(CBofRect *pRect);
+	virtual void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 
 	CBofBitmap *m_pButtonUp;

@@ -57,10 +57,10 @@ CBagQuitDialog::CBagQuitDialog() {
 }
 
 
-void CBagQuitDialog::OnInitDialog() {
+void CBagQuitDialog::onInitDialog() {
 	Assert(IsValidObject(this));
 
-	CBofDialog::OnInitDialog();
+	CBofDialog::onInitDialog();
 	SetReturnValue(-1);
 
 	Assert(m_pBackdrop != nullptr);
@@ -112,13 +112,13 @@ void CBagQuitDialog::onClose() {
 	}
 
 	if (_nReturnValue == QUIT_BTN || _nReturnValue == SAVE_BTN)
-		KillBackground();
+		killBackground();
 
 	CBofDialog::onClose();
 }
 
 
-void CBagQuitDialog::OnPaint(CBofRect *pRect) {
+void CBagQuitDialog::onPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	PaintBackdrop(pRect);

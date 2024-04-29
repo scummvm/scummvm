@@ -36,12 +36,12 @@ public:
 
 	virtual ErrorCode attach();
 	virtual ErrorCode Detach();
-	virtual void OnInitDialog();
+	virtual void onInitDialog();
 
 	ErrorCode SetHelpFile(const char *pszTextFile);
 
 protected:
-	virtual void OnPaint(CBofRect *pRect);
+	virtual void onPaint(CBofRect *pRect);
 	virtual void OnBofButton(CBofObject *pObject, int nState);
 	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
 

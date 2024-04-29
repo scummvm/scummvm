@@ -191,7 +191,7 @@ ErrorCode CBofListBox::DeleteAll(bool bRepaint) {
 }
 
 
-void CBofListBox::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
+void CBofListBox::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
@@ -312,7 +312,7 @@ ErrorCode CBofListBox::ScrollTo(const int nLine) {
 }
 
 
-void CBofListBox::OnPaint(CBofRect * /*pRect*/) {
+void CBofListBox::onPaint(CBofRect * /*pRect*/) {
 	Assert(IsValidObject(this));
 
 	m_nPageSize = Height() / m_nItemHeight;
@@ -325,7 +325,7 @@ void CBofListBox::OnPaint(CBofRect * /*pRect*/) {
 }
 
 
-void CBofListBox::KillBackground() {
+void CBofListBox::killBackground() {
 	Assert(IsValidObject(this));
 
 	if (m_pBackdrop != nullptr) {
@@ -338,7 +338,7 @@ void CBofListBox::KillBackground() {
 ErrorCode CBofListBox::SaveBackground() {
 	Assert(IsValidObject(this));
 
-	KillBackground();
+	killBackground();
 
 	if ((m_pBackdrop = new CBofBitmap(Width(), Height(), CBofApp::GetApp()->GetPalette())) != nullptr) {
 		if ((_parent != nullptr) && (_parent->GetBackdrop() != nullptr)) {

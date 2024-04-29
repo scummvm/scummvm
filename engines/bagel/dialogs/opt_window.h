@@ -78,8 +78,8 @@ public:
 	void UpdateOptions();
 
 protected:
-	virtual void OnPaint(CBofRect *pRect);
-	virtual void OnInitDialog();
+	virtual void onPaint(CBofRect *pRect);
+	virtual void onInitDialog();
 
 	virtual void OnBofScrollBar(CBofObject *pObject, int nPos);
 	virtual void OnBofButton(CBofObject *pObject, int nState);

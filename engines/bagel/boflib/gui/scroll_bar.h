@@ -108,8 +108,8 @@ public:
 protected:
 	int PointToPos(CBofPoint *pPoint);
 
-	virtual void OnPaint(CBofRect *pDirtyRect);
-	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void onPaint(CBofRect *pDirtyRect);
+	virtual void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void onMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void onTimer(uint32);

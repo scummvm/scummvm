@@ -440,7 +440,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 				// Need to re-save the background because there is a bug with moving
 				// the dialog box.
-				dlg.SaveBackground();
+				dlg.saveBackground();
 
 				// Set this caption to automatically go away after specified delay
 				if (m_nDelay > 0) {
@@ -451,7 +451,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 				// Need to re-save the background because there is a bug with moving
 				// the dialog box.
-				dlg.SaveBackground();
+				dlg.saveBackground();
 			}
 
 			CBagPanWindow::FlushInputEvents();
@@ -669,10 +669,10 @@ void CBagMenuDlg::onTimer(uint32 nID) {
 	}
 }
 
-void CBagMenuDlg::OnPaint(CBofRect *pRect) {
+void CBagMenuDlg::onPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
-	CBagStorageDevDlg::OnPaint(pRect);
+	CBagStorageDevDlg::onPaint(pRect);
 
 	// Don't allow user input until this menu is visible
 	CBagPanWindow::FlushInputEvents();

@@ -165,7 +165,7 @@ ErrorCode CBofWindow::Create(const char *pszName, int x, int y, int nWidth, int 
 void CBofWindow::UpdateWindow() {
 	if (_visible) {
 		if (IsVisible())
-			OnPaint(&m_cRect);
+			onPaint(&m_cRect);
 
 		for (uint i = 0; i < _children.size(); ++i)
 			_children[i]->UpdateWindow();
@@ -547,7 +547,7 @@ Graphics::ManagedSurface *CBofWindow::getSurface() {
 //
 void CBofWindow::onMouseMove(uint32, CBofPoint *, void *) {}
 
-void CBofWindow::OnLButtonDown(uint32, CBofPoint *, void *) {}
+void CBofWindow::onLButtonDown(uint32, CBofPoint *, void *) {}
 void CBofWindow::onLButtonUp(uint32, CBofPoint *, void *) {}
 void CBofWindow::OnLButtonDblClk(uint32, CBofPoint *) {}
 
@@ -558,7 +558,7 @@ void CBofWindow::OnRButtonDblClk(uint32, CBofPoint *) {}
 void CBofWindow::onKeyHit(uint32, uint32) {}
 
 void CBofWindow::onReSize(CBofSize *) {}
-void CBofWindow::OnPaint(CBofRect *) {}
+void CBofWindow::onPaint(CBofRect *) {}
 void CBofWindow::onTimer(uint32) {}
 
 void CBofWindow::onClose() {}
@@ -567,7 +567,7 @@ void CBofWindow::OnBofButton(CBofObject *, int) {}
 void CBofWindow::OnBofScrollBar(CBofObject *, int) {}
 void CBofWindow::OnBofListBox(CBofObject *, int) {}
 void CBofWindow::OnUserMessage(uint32, uint32) {}
-void CBofWindow::OnMainLoop() {}
+void CBofWindow::onMainLoop() {}
 
 void CBofWindow::OnSoundNotify(CBofObject *, uint32) {}
 void CBofWindow::OnMovieNotify(uint32, uint32) {}
@@ -653,7 +653,7 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 			_lastLButtonTime = 0;
 			OnLButtonDblClk(1, &mousePos);
 		} else {
-			OnLButtonDown(1, &mousePos);
+			onLButtonDown(1, &mousePos);
 			_lastLButtonTime = currTime;
 		}
 		break;

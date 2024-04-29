@@ -51,7 +51,7 @@ private:
 	SaveStateList _savesList;
 
 protected:
-	void OnPaint(CBofRect *pRect) override;
+	void onPaint(CBofRect *pRect) override;
 	void OnBofButton(CBofObject *pObject, int nState) override;
 	void OnBofListBox(CBofObject *pObject, int nItemIndex) override;
 
@@ -77,7 +77,7 @@ public:
 		return m_bRestored;
 	}
 
-	void OnInitDialog() override;
+	void onInitDialog() override;
 };
 
 } // namespace Bagel

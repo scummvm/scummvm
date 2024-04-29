@@ -97,7 +97,7 @@ SBarComputer::SBarComputer() : CBagStorageDevWnd(),
 SBarComputer::~SBarComputer() {
 }
 
-void SBarComputer::OnMainLoop() {
+void SBarComputer::onMainLoop() {
 	if (m_bFirstPaint) {
 		m_bFirstPaint = false;
 		AttachActiveObjects();
@@ -110,7 +110,7 @@ void SBarComputer::EraseBackdrop() {
 	UpdateWindow();
 }
 
-void  SBarComputer::OnPaint(CBofRect *pRect) {
+void  SBarComputer::onPaint(CBofRect *pRect) {
 	if (GetBackdrop()) {
 		Assert(GetWorkBmp() != nullptr);
 
