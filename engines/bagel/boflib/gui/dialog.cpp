@@ -163,7 +163,7 @@ void CBofDialog::onClose() {
 }
 
 
-ErrorCode CBofDialog::Paint(CBofRect *pRect) {
+ErrorCode CBofDialog::paint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 
@@ -187,7 +187,7 @@ ErrorCode CBofDialog::paintBackground() {
 
 	// Paint back the background
 	if (_pDlgBackground != nullptr) {
-		m_errCode = _pDlgBackground->Paint(this, 0, 0);
+		m_errCode = _pDlgBackground->paint(this, 0, 0);
 	}
 
 	return m_errCode;
@@ -235,7 +235,7 @@ void CBofDialog::onPaint(CBofRect *pRect) {
 		saveBackground();
 	}
 
-	Paint(pRect);
+	paint(pRect);
 
 	_bHavePainted = true;
 }

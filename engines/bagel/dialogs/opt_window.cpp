@@ -207,27 +207,27 @@ ErrorCode CBagOptWindow::attach() {
 	// Paint stuff
 	if (m_pBackdrop != nullptr) {
 		CBofBitmap cBmp(BuildSysDir("MUSICVOL.BMP"), pPal);
-		cBmp.Paint(m_pBackdrop, 30, 30);
+		cBmp.paint(m_pBackdrop, 30, 30);
 	}
 	if (m_pBackdrop != nullptr) {
 		CBofBitmap cBmp(BuildSysDir("AUDIOVOL.BMP"), pPal);
-		cBmp.Paint(m_pBackdrop, 30, 80);
+		cBmp.paint(m_pBackdrop, 30, 80);
 	}
 	if (m_pBackdrop != nullptr) {
 		CBofBitmap cBmp(BuildSysDir("FLYTHRUS.BMP"), pPal);
-		cBmp.Paint(m_pBackdrop, 30, 140);
+		cBmp.paint(m_pBackdrop, 30, 140);
 	}
 	if (m_pBackdrop != nullptr) {
 		CBofBitmap cBmp(BuildSysDir("PANIMATS.BMP"), pPal);
-		cBmp.Paint(m_pBackdrop, 30, 190);
+		cBmp.paint(m_pBackdrop, 30, 190);
 	}
 	if (m_pBackdrop != nullptr) {
 		CBofBitmap cBmp(BuildSysDir("CORRECTN.BMP"), pPal);
-		cBmp.Paint(m_pBackdrop, 30, 250);
+		cBmp.paint(m_pBackdrop, 30, 250);
 	}
 	if (m_pBackdrop != nullptr) {
 		CBofBitmap cBmp(BuildSysDir("PANSPEED.BMP"), pPal);
-		cBmp.Paint(m_pBackdrop, 30, 300);
+		cBmp.paint(m_pBackdrop, 30, 300);
 	}
 
 	// Build all our buttons

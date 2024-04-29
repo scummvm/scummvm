@@ -165,7 +165,7 @@ ErrorCode CBagWield::update(CBofBitmap *pBmp, CBofPoint /*cPoint*/, CBofRect * /
 
 		CBofBitmap *pYouIcon = getBackground();
 		if (pYouIcon != nullptr) {
-			pYouIcon->Paint(pBmp, GetPosition().x, GetPosition().y, nullptr, DEFAULT_CHROMA_COLOR);
+			pYouIcon->paint(pBmp, GetPosition().x, GetPosition().y, nullptr, DEFAULT_CHROMA_COLOR);
 			SetDirty(false);
 		}
 	}

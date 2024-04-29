@@ -70,7 +70,7 @@ void CBagQuitDialog::onInitDialog() {
 	// Paint the SaveList Box onto the background
 	if (m_pBackdrop != nullptr) {
 		CBofBitmap cBmp(BuildSysDir("QUITDBOX.BMP"), pPal);
-		cBmp.Paint(m_pBackdrop, 205, 150);
+		cBmp.paint(m_pBackdrop, 205, 150);
 	}
 
 	// Build all our buttons

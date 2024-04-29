@@ -75,7 +75,7 @@ CBofButton::~CBofButton() {
 }
 
 
-ErrorCode CBofButton::Paint(CBofRect *) {
+ErrorCode CBofButton::paint(CBofRect *) {
 	Assert(IsValidObject(this));
 
 	// Only continue if this button is visible
@@ -146,7 +146,7 @@ ErrorCode CBofButton::Paint(CBofRect *) {
 		}
 
 		// Now we can update the window
-		cBmp.Paint(this, 0, 0);
+		cBmp.paint(this, 0, 0);
 	}
 
 	return m_errCode;
@@ -197,7 +197,7 @@ ErrorCode CBofButton::SetState(int nNewState, bool bRepaintNow) {
 
 	// Update the window if forced to or if button state has changed
 	if (bRepaintNow || (nOldState != nNewState)) {
-		Paint();
+		paint();
 	}
 
 	// I must have a valid parent
@@ -217,7 +217,7 @@ void CBofButton::onPaint(CBofRect *pRect) {
 
 	Assert(pRect != nullptr);
 
-	Paint(pRect);
+	paint(pRect);
 }
 
 
@@ -271,7 +271,7 @@ void CBofRadioButton::onLButtonUp(uint32, CBofPoint *pPoint, void *) {
 }
 
 
-ErrorCode CBofRadioButton::Paint(CBofRect *) {
+ErrorCode CBofRadioButton::paint(CBofRect *) {
 	Assert(IsValidObject(this));
 
 	// Only continue if this button is visible
@@ -331,7 +331,7 @@ ErrorCode CBofRadioButton::Paint(CBofRect *) {
 		}
 
 		// Now we can update the window
-		cBmp.Paint(this, 0, 0);
+		cBmp.paint(this, 0, 0);
 	}
 
 	return m_errCode;
@@ -369,7 +369,7 @@ void CBofCheckButton::onLButtonUp(uint32, CBofPoint *pPoint, void *) {
 }
 
 
-ErrorCode CBofCheckButton::Paint(CBofRect *) {
+ErrorCode CBofCheckButton::paint(CBofRect *) {
 	Assert(IsValidObject(this));
 
 	// Only continue if this button is visible
@@ -422,7 +422,7 @@ ErrorCode CBofCheckButton::Paint(CBofRect *) {
 		}
 
 		// Now we can update the window
-		cBmp.Paint(this, 0, 0);
+		cBmp.paint(this, 0, 0);
 	}
 
 	return m_errCode;
@@ -478,7 +478,7 @@ CBofBmpButton::~CBofBmpButton() {
 }
 
 
-ErrorCode CBofBmpButton::Paint(CBofRect *) {
+ErrorCode CBofBmpButton::paint(CBofRect *) {
 	Assert(IsValidObject(this));
 
 	// LoadBitmaps must be called before the button can be painted
@@ -505,7 +505,7 @@ ErrorCode CBofBmpButton::Paint(CBofRect *) {
 			}
 
 		} else {
-			m_pBackground->Paint(&cOffScreen, 0, 0);
+			m_pBackground->paint(&cOffScreen, 0, 0);
 		}
 
 		// Assume UP state
@@ -523,10 +523,10 @@ ErrorCode CBofBmpButton::Paint(CBofRect *) {
 		}
 
 		// Paint button offscreen
-		pBitmap->Paint(&cOffScreen, 0, 0, nullptr, m_nMaskColor);
+		pBitmap->paint(&cOffScreen, 0, 0, nullptr, m_nMaskColor);
 
 		// Now we can update the window
-		cOffScreen.Paint(this, 0, 0);
+		cOffScreen.paint(this, 0, 0);
 	}
 
 	return m_errCode;
@@ -593,7 +593,7 @@ ErrorCode CBofBmpButton::SetState(int nNewState, bool bRepaintNow) {
 
 	// Update the window if forced to or if button state has changed
 	if (bRepaintNow || (nOldState != nNewState)) {
-		Paint();
+		paint();
 	}
 
 	// I MUST have a valid parent
@@ -613,7 +613,7 @@ void CBofBmpButton::onPaint(CBofRect *pRect) {
 
 	Assert(pRect != nullptr);
 
-	Paint(pRect);
+	paint(pRect);
 }
 
 

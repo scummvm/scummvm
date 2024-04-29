@@ -550,10 +550,10 @@ void CNavWindow::onPaint(CBofRect *pRect) {
 	if (m_pBackdrop != nullptr) {
 		CBofBitmap *pBmp = GetWorkBmp();
 		if (pBmp != nullptr) {
-			m_pBackdrop->Paint(pBmp, pRect, pRect);
+			m_pBackdrop->paint(pBmp, pRect, pRect);
 
 			// Now update the screen
-			pBmp->Paint(this, pRect, pRect);
+			pBmp->paint(this, pRect, pRect);
 		}
 	}
 
@@ -576,7 +576,7 @@ void CNavWindow::RefreshData() {
 
 	CBofRect cRect(440, 0, 639, 439);
 	CBofBitmap cBmp(200, 440, m_pPal);
-	pBmp->Paint(&cBmp, 0, 0, &cRect);
+	pBmp->paint(&cBmp, 0, 0, &cRect);
 
 	cRect.SetRect(0, 10, 199, 25);
 	PaintText(&cBmp, &cRect, BuildString("Current Port of call:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
@@ -671,7 +671,7 @@ void CNavWindow::RefreshData() {
 	Common::sprintf_s(szBuf, "%s", g_LevelTitle[m_level]);
 	PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.left -= 10;       // Un-indent
-	cBmp.Paint(this, 443, 0);
+	cBmp.paint(this, 443, 0);
 }
 
 void CNavWindow::OnBofButton(CBofObject *pObject, int nState) {

@@ -115,7 +115,7 @@ void  SBarComputer::onPaint(CBofRect *pRect) {
 		Assert(GetWorkBmp() != nullptr);
 
 		// Erase everything from the background
-		GetWorkBmp()->Paint(GetBackdrop(), pRect, pRect);
+		GetWorkBmp()->paint(GetBackdrop(), pRect, pRect);
 		// Paint all the objects to the background
 		PaintStorageDevice(nullptr, GetBackdrop(), pRect);
 	}
@@ -721,7 +721,7 @@ void SBarComputer::Order() {
 
 				WaitForInput();
 
-				saveBackground.Paint(this, &_compTextWindow);
+				saveBackground.paint(this, &_compTextWindow);
 
 			} else {
 				CBagStorageDev *pSoldierSDev = nullptr;
@@ -760,7 +760,7 @@ void SBarComputer::Order() {
 						PaintBeveledText(this, &_compTextWindow, szRefuse, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
 						WaitForInput();
 
-						saveBackgroundTwo.Paint(this, &_compTextWindow);
+						saveBackgroundTwo.paint(this, &_compTextWindow);
 					}
 				}
 

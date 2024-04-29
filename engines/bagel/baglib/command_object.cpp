@@ -360,7 +360,7 @@ bool CBagCommandObject::runObject() {
 				CBofBitmap bmp(640, 480, CBofApp::GetApp()->GetPalette());
 				bmp.FillRect(nullptr, COLOR_BLACK);
 
-				bmp.Paint(mainWin, 0, 0);
+				bmp.paint(mainWin, 0, 0);
 				g_allowPaintFl = false;
 
 				CBofString smkName("$SBARDIR\\BAR\\EVGAMWIN.SMK");
@@ -369,7 +369,7 @@ bool CBagCommandObject::runObject() {
 				// Play the movie only if it exists
 				if (FileExists(smkName.GetBuffer())) {
 					BofPlayMovie(mainWin, smkName.GetBuffer());
-					bmp.Paint(mainWin, 0, 0);
+					bmp.paint(mainWin, 0, 0);
 				}
 			}
 

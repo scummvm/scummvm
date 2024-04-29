@@ -875,7 +875,7 @@ void SrafComputer::onPaint(CBofRect *pRect) {
 		Assert(GetWorkBmp() != nullptr);
 
 		// erase everything from the background
-		GetWorkBmp()->Paint(GetBackdrop(), pRect, pRect);
+		GetWorkBmp()->paint(GetBackdrop(), pRect, pRect);
 
 		// paint all the objects to the background
 		PaintStorageDevice(nullptr, GetBackdrop(), pRect);
@@ -887,9 +887,9 @@ void SrafComputer::onPaint(CBofRect *pRect) {
 	}
 
 	if (m_eMode == SCOFF) {
-		m_pButtons[ON_BUTTON]->Paint(nullptr);
+		m_pButtons[ON_BUTTON]->paint(nullptr);
 	} else {
-		m_pButtons[OFF_BUTTON]->Paint(nullptr);
+		m_pButtons[OFF_BUTTON]->paint(nullptr);
 	}
 }
 
@@ -1691,8 +1691,8 @@ void SrafComputer::ActivateDispatchTeam() {
 	m_pButtons[RETURN_TO_MAIN_BUTTON]->Show();
 	m_pButtons[DISPATCH_TEAM_BUTTON]->Show();
 
-	m_pButtons[RETURN_TO_MAIN_BUTTON]->Paint();
-	m_pButtons[DISPATCH_TEAM_BUTTON]->Paint();
+	m_pButtons[RETURN_TO_MAIN_BUTTON]->paint();
+	m_pButtons[DISPATCH_TEAM_BUTTON]->paint();
 
 	m_pButtons[QUIT_BUTTON]->Hide();
 }
@@ -4161,7 +4161,7 @@ void SrafComputer::NotifyBoss(CBofString &sSoundFile, int nStafferID) {         
 
 		// Guaranteed to have it now.  Paste it to the screen.
 
-		m_pStafferBmp[nStafferID]->Paint(this, &gStafferDisplay);
+		m_pStafferBmp[nStafferID]->paint(this, &gStafferDisplay);
 
 	}
 
@@ -4194,7 +4194,7 @@ void SrafComputer::NotifyBoss(CBofString &sSoundFile, int nStafferID) {         
 
 	// allow for no staffer screen
 	if (nStafferID != -1) {
-		pSaveBackground->Paint(this, &gTextWindow);
+		pSaveBackground->paint(this, &gTextWindow);
 
 		delete pSaveBackground;
 	}

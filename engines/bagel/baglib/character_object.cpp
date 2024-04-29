@@ -361,7 +361,7 @@ ErrorCode CBagCharacterObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect * 
 		// Get access to the current sDev
 
 		// Paint in the new pos
-		return _bmpBuf->Paint(bmp, (pt.x + (newPos.x - originalPos.x)), (pt.y + (newPos.y - originalPos.y)), nullptr, _charTransColor);
+		return _bmpBuf->paint(bmp, (pt.x + (newPos.x - originalPos.x)), (pt.y + (newPos.y - originalPos.y)), nullptr, _charTransColor);
 	}
 
 	return ERR_NONE;

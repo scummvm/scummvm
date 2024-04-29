@@ -48,7 +48,7 @@ protected:
 	bool _bHavePainted = false;
 
 protected:
-	virtual ErrorCode Paint(CBofRect *pRect);
+	virtual ErrorCode paint(CBofRect *pRect);
 	virtual ErrorCode paintBackground();
 	virtual ErrorCode saveBackground();
 	virtual ErrorCode killBackground();

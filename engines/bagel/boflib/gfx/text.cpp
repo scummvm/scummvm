@@ -167,7 +167,7 @@ ErrorCode CBofText::Erase(CBofWindow *pWnd) {
 
 	if (m_pBackground != nullptr && m_bSaved) {
 		// Simply splat the background art back where it came from
-		m_errCode = m_pBackground->Paint(pWnd, &m_cRect);
+		m_errCode = m_pBackground->paint(pWnd, &m_cRect);
 	}
 
 	return m_errCode;
@@ -179,7 +179,7 @@ ErrorCode CBofText::Erase(CBofBitmap *pBmp) {
 
 	if (m_pBackground != nullptr && m_bSaved) {
 		// Simply splat the background art back where it came from
-		m_errCode = m_pBackground->Paint(pBmp, &m_cRect);
+		m_errCode = m_pBackground->paint(pBmp, &m_cRect);
 	}
 
 	return m_errCode;
@@ -261,11 +261,11 @@ ErrorCode CBofText::DisplayText(CBofWindow *pWnd, const char *pszText, CBofRect 
 		m_bSaved = true;
 	}
 
-	m_pBackground->Paint(m_pWork, 0, 0);
+	m_pBackground->paint(m_pWork, 0, 0);
 
 	DisplayTextEx(m_pWork, pszText, &cRect, nSize, nWeight, bShadowed, nFont);
 
-	m_pWork->Paint(pWnd, pRect);
+	m_pWork->paint(pWnd, pRect);
 
 	return m_errCode;
 }
@@ -284,15 +284,15 @@ ErrorCode CBofText::DisplayText(CBofBitmap *pBmp, const char *pszText, CBofRect 
 
 	if (!m_bSaved) {
 		CBofRect r = m_pBackground->GetRect();
-		pBmp->Paint(m_pBackground, &r, pRect);
+		pBmp->paint(m_pBackground, &r, pRect);
 		m_bSaved = true;
 	}
 
-	m_pBackground->Paint(m_pWork, 0, 0);
+	m_pBackground->paint(m_pWork, 0, 0);
 
 	DisplayTextEx(m_pWork, pszText, &cRect, nSize, nWeight, bShadowed, nFont);
 
-	m_pWork->Paint(pBmp, pRect);
+	m_pWork->paint(pBmp, pRect);
 
 	return m_errCode;
 }

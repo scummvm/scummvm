@@ -107,7 +107,7 @@ ErrorCode SpaceBarEngine::initialize() {
 
 			// Paint the screen black
 			if (pBmp != nullptr)
-				pBmp->Paint(_masterWin, 0, 0);
+				pBmp->paint(_masterWin, 0, 0);
 
 			_useOriginalSaveLoad = ConfMan.getBool("original_menus");
 
@@ -138,14 +138,14 @@ ErrorCode SpaceBarEngine::initialize() {
 
 					// Hide that dialog
 					if (pBmp != nullptr) {
-						pBmp->Paint(_masterWin, 0, 0);
+						pBmp->paint(_masterWin, 0, 0);
 					}
 					break;
 
 				case QUIT_BTN:
 					// Hide that dialog
 					if (pBmp != nullptr) {
-						pBmp->Paint(_masterWin, 0, 0);
+						pBmp->paint(_masterWin, 0, 0);
 					}
 					_masterWin->Close();
 					_masterWin = nullptr;
@@ -166,7 +166,7 @@ ErrorCode SpaceBarEngine::initialize() {
 					if (FileExists(cString.GetBuffer())) {
 						BofPlayMovie(_masterWin, cString.GetBuffer());
 						if (pBmp != nullptr) {
-							pBmp->Paint(_masterWin, 0, 0);
+							pBmp->paint(_masterWin, 0, 0);
 						}
 					}
 					if (shouldQuit())
@@ -177,7 +177,7 @@ ErrorCode SpaceBarEngine::initialize() {
 					if (FileExists(cString.GetBuffer())) {
 						BofPlayMovie(_masterWin, cString.GetBuffer());
 						if (pBmp != nullptr) {
-							pBmp->Paint(_masterWin, 0, 0);
+							pBmp->paint(_masterWin, 0, 0);
 						}
 					}
 					if (shouldQuit())
@@ -190,7 +190,7 @@ ErrorCode SpaceBarEngine::initialize() {
 					if (FileExists(cString.GetBuffer())) {
 						BofPlayMovie(_masterWin, cString.GetBuffer());
 						if (pBmp != nullptr) {
-							pBmp->Paint(_masterWin, 0, 0);
+							pBmp->paint(_masterWin, 0, 0);
 						}
 					}
 				}

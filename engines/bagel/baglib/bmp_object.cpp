@@ -82,7 +82,7 @@ ErrorCode CBagBmpObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect
 				srcRect->bottom -= offset + 1;
 			}
 		}
-		if (_bmp->Paint(bmp, pt.x, pt.y, srcRect, maskColor))
+		if (_bmp->paint(bmp, pt.x, pt.y, srcRect, maskColor))
 			return ERR_UNKNOWN;
 	}
 

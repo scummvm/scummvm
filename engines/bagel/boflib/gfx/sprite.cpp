@@ -340,7 +340,7 @@ bool CBofSprite::PaintSprite(CBofWindow *pWnd, const int x, const int y) {
 	// The window MUST have a backdrop
 	Assert(pWnd->GetBackdrop() != nullptr);
 
-	BatchPaint(x, y);
+	Batchpaint(x, y);
 
 	UpdateDirtyRect(pWnd, this);
 
@@ -354,7 +354,7 @@ bool CBofSprite::PaintSprite(CBofBitmap *pBmp, const int x, const int y) {
 	// Can't paint to a non-existent window
 	Assert(pBmp != nullptr);
 
-	BatchPaint(x, y);
+	Batchpaint(x, y);
 	UpdateDirtyRect(pBmp, this);
 
 	return !ErrorOccurred();
@@ -373,7 +373,7 @@ bool CBofSprite::PaintCel(CBofBitmap *pBmp, int nCelId, const int x, const int y
 }
 
 
-void CBofSprite::BatchPaint(const int x, const int y) {
+void CBofSprite::Batchpaint(const int x, const int y) {
 	Assert(IsValidObject(this));
 
 	CBofRect cDstRect;
@@ -431,7 +431,7 @@ bool CBofSprite::UpdateDirtyRect(CBofWindow *pWnd, CBofSprite *pPrimarySprite) {
 			pWork->Lock();
 
 			// Paint the background into the work area
-			pBackdrop->Paint(pWork, 0, 0, pRect);
+			pBackdrop->paint(pWork, 0, 0, pRect);
 
 			// Only need to search the sprite list if current sprite is linked
 			CBofSprite *pSprite = pPrimarySprite;
@@ -451,14 +451,14 @@ bool CBofSprite::UpdateDirtyRect(CBofWindow *pWnd, CBofSprite *pPrimarySprite) {
 					cSrcRect += pSprite->m_cImageRect.TopLeft();
 					cRect -= pRect->TopLeft();
 
-					pSprite->m_pImage->Paint(pWork, &cRect, &cSrcRect, pSprite->m_nMaskColor);
+					pSprite->m_pImage->paint(pWork, &cRect, &cSrcRect, pSprite->m_nMaskColor);
 				}
 				pSprite = (CBofSprite *)pSprite->m_pNext;
 			}
 
 			// Paint final outcome to the screen
 			cSrcRect.SetRect(0, 0, pRect->Width() - 1, pRect->Height() - 1);
-			pWork->Paint(pWnd, pRect, &cSrcRect);
+			pWork->paint(pWnd, pRect, &cSrcRect);
 
 			pWork->UnLock();
 
@@ -500,7 +500,7 @@ bool CBofSprite::UpdateDirtyRect(CBofBitmap *pBmp, CBofSprite *pPrimarySprite) {
 			CBofRect cSrcRect = cRect - pSprite->m_cRect.TopLeft();
 			cSrcRect += pSprite->m_cImageRect.TopLeft();
 
-			pSprite->m_pImage->Paint(pBmp, &cRect, &cSrcRect, pSprite->m_nMaskColor);
+			pSprite->m_pImage->paint(pBmp, &cRect, &cSrcRect, pSprite->m_nMaskColor);
 		}
 		pSprite = (CBofSprite *)pSprite->m_pNext;
 	}
@@ -738,7 +738,7 @@ bool CBofSprite::CropImage(CBofWindow *pWnd, CBofRect *pRect, bool bUpdateNow) {
 		if (bUpdateNow) {
 			CBofBitmap *pBackdrop = pWnd->GetBackdrop();
 			if (pBackdrop != nullptr) {
-				pBackdrop->Paint(pWnd, &cDestRect, &myRect);
+				pBackdrop->paint(pWnd, &cDestRect, &myRect);
 			}
 		}
 	}

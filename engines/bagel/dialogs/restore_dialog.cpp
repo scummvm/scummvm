@@ -104,11 +104,11 @@ ErrorCode CBagRestoreDialog::attach() {
 	// Paint the SaveList Box onto the background
 	if (m_pBackdrop != nullptr) {
 		CBofBitmap cBmp(BuildSysDir("SAVELIST.BMP"), pPal);
-		cBmp.Paint(m_pBackdrop, 153, 50);
+		cBmp.paint(m_pBackdrop, 153, 50);
 	}
 	if (m_pBackdrop != nullptr) {
 		CBofBitmap cBmp(BuildSysDir("TYPESAVE.BMP"), pPal);
-		cBmp.Paint(m_pBackdrop, 152, 400);
+		cBmp.paint(m_pBackdrop, 152, 400);
 	}
 
 	// Build all our buttons

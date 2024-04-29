@@ -220,7 +220,7 @@ ErrorCode CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 			// No correction ?
 			if (m_nCorrection == 0) {
-				m_pVeiwPortBitmap->Paint(pBmp, &dstRect, &srcRect);
+				m_pVeiwPortBitmap->paint(pBmp, &dstRect, &srcRect);
 
 			} else {
 				// Warp the backdrop to itself
@@ -250,7 +250,7 @@ ErrorCode CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 				// it in subsequent calls, then we will trash our PDA in this closeup,
 				// and that will be a bad thing.
 				dstRect.OffsetRect(m_xVeiwPortPos);
-				((CBofBitmap *)m_pSlideBitmap)->Paint(pBmp, m_xVeiwPortPos.x, m_xVeiwPortPos.y);
+				((CBofBitmap *)m_pSlideBitmap)->paint(pBmp, m_xVeiwPortPos.x, m_xVeiwPortPos.y);
 			}
 
 			clientArea.OffsetRect(-m_xVeiwPortPos.x, -m_xVeiwPortPos.y);

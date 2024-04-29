@@ -273,7 +273,7 @@ public:
 	 * @param nMaskColor    Transparency color
 	 * @return              error return code
 	 */
-	ErrorCode Paint(CBofWindow *pWnd, int x, int y, CBofRect *pSrcRect = nullptr, int nMaskColor = NOT_TRANSPARENT);
+	ErrorCode paint(CBofWindow *pWnd, int x, int y, CBofRect *pSrcRect = nullptr, int nMaskColor = NOT_TRANSPARENT);
 
 	/**
 	 * Paints some or all of the bitmap directly to the screen
@@ -283,7 +283,7 @@ public:
 	 * @param nMaskColor    transparency color
 	 * @return              Error return code
 	 */
-	ErrorCode Paint(CBofWindow *pWnd, CBofRect *pDstRect = nullptr, CBofRect *pSrcRect = nullptr, int nMaskColor = NOT_TRANSPARENT);
+	ErrorCode paint(CBofWindow *pWnd, CBofRect *pDstRect = nullptr, CBofRect *pSrcRect = nullptr, int nMaskColor = NOT_TRANSPARENT);
 
 	/**
 	 * Paints some or all of the bitmap directly to the screen
@@ -304,7 +304,7 @@ public:
 	 * @param nMaskColor    Transparency color
 	 * @return              Error return code
 	 */
-	ErrorCode Paint(CBofBitmap *pBmp, int x, int y, CBofRect *pSrcRect = nullptr, int nMaskColor = NOT_TRANSPARENT);
+	ErrorCode paint(CBofBitmap *pBmp, int x, int y, CBofRect *pSrcRect = nullptr, int nMaskColor = NOT_TRANSPARENT);
 
 	/**
 	 * Paints some or all of the bitmap directly to the screen
@@ -314,7 +314,7 @@ public:
 	 * @param nMaskColor    Transparency color
 	 * @return              Error return code.
 	 */
-	ErrorCode Paint(CBofBitmap *pBmp, CBofRect *pDstRect = nullptr, CBofRect *pSrcRect = nullptr, int nMaskColor = NOT_TRANSPARENT);
+	ErrorCode paint(CBofBitmap *pBmp, CBofRect *pDstRect = nullptr, CBofRect *pSrcRect = nullptr, int nMaskColor = NOT_TRANSPARENT);
 
 	//
 	// Special Paint routines Optimized for specific tasks

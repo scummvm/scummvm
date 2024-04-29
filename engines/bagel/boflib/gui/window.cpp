@@ -483,7 +483,7 @@ ErrorCode CBofWindow::SetBackdrop(CBofBitmap *pNewBitmap, bool bRefresh) {
 	m_pBackdrop = pNewBitmap;
 
 	if (bRefresh) {
-		m_pBackdrop->Paint(this, 0, 0);
+		m_pBackdrop->paint(this, 0, 0);
 	}
 
 	return m_errCode;
@@ -523,10 +523,10 @@ ErrorCode CBofWindow::PaintBackdrop(CBofRect *pRect, int nTransparentColor) {
 
 	if (m_pBackdrop != nullptr) {
 		if (pRect == nullptr) {
-			m_errCode = m_pBackdrop->Paint(this, &m_cRect, nullptr, nTransparentColor);
+			m_errCode = m_pBackdrop->paint(this, &m_cRect, nullptr, nTransparentColor);
 
 		} else {
-			m_errCode = m_pBackdrop->Paint(this, pRect, pRect, nTransparentColor);
+			m_errCode = m_pBackdrop->paint(this, pRect, pRect, nTransparentColor);
 		}
 	}
 
@@ -760,7 +760,7 @@ void CBofWindow::FillWindow(byte iColor) {
 void CBofWindow::FillRect(CBofRect *pRect, byte iColor) {
 	CBofBitmap cBmp(Width(), Height(), CBofApp::GetApp()->GetPalette());
 	cBmp.FillRect(pRect, iColor);
-	cBmp.Paint(this, 0, 0);
+	cBmp.paint(this, 0, 0);
 }
 
 } // namespace Bagel

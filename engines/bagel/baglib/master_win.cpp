@@ -1334,7 +1334,7 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 		g_hackWindow = pLastWin;
 
 		// Hide that dialog
-		cBmp.Paint(this, 0, 0);
+		cBmp.paint(this, 0, 0);
 
 		switch (nRetVal) {
 
@@ -2026,7 +2026,7 @@ ErrorCode PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString &
 
 	PaintText(&cBmp, &r, cString, nSize, nWeight, cColor, nJustify, nFormat, nFont);
 
-	cBmp.Paint(pBmp, pRect);
+	cBmp.paint(pBmp, pRect);
 
 	return errCode;
 }
@@ -2084,7 +2084,7 @@ ErrorCode PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &
 
 	PaintText(&cBmp, &r, cString, nSize, nWeight, cColor, nJustify, nFormat, nFont);
 
-	cBmp.Paint(pWin, pRect);
+	cBmp.paint(pWin, pRect);
 
 	return errCode;
 }

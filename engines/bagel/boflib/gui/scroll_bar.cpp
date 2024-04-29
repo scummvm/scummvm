@@ -97,7 +97,7 @@ CBofScrollBar::~CBofScrollBar() {
 void CBofScrollBar::onPaint(CBofRect *pDirtyRect) {
 	Assert(IsValidObject(this));
 
-	Paint(pDirtyRect);
+	paint(pDirtyRect);
 }
 
 
@@ -159,7 +159,7 @@ ErrorCode CBofScrollBar::SetPos(const int nPos, bool bRepaint, bool isInitial) {
 	// If forced to repaint
 	if (bRepaint) {
 
-		Paint();
+		paint();
 
 	} else if (m_nPos != nOriginalPos) {
 		// Otherwise, only paint the thumb if it's position changed
@@ -197,7 +197,7 @@ void CBofScrollBar::SetScrollRange(int nMin, int nMax, bool bRepaint) {
 
 	// Should we repaint the scroll bar now?
 	if (bRepaint) {
-		Paint(nullptr);
+		paint(nullptr);
 	}
 }
 
@@ -298,7 +298,7 @@ ErrorCode CBofScrollBar::LoadBitmaps(const char *pszBack, const char *pszThumb, 
 }
 
 
-ErrorCode CBofScrollBar::Paint(CBofRect *pDirtyRect) {
+ErrorCode CBofScrollBar::paint(CBofRect *pDirtyRect) {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
@@ -320,24 +320,24 @@ ErrorCode CBofScrollBar::Paint(CBofRect *pDirtyRect) {
 			// Do all painting offscreen
 			CBofBitmap *pBmp = new CBofBitmap(m_cBkSize.cx, m_cBkSize.cy, pPalette);
 			if (pBmp != nullptr) {
-				m_pBackdrop->Paint(pBmp, 0, 0, nullptr, COLOR_WHITE);
+				m_pBackdrop->paint(pBmp, 0, 0, nullptr, COLOR_WHITE);
 
 				if ((m_nScrollState == 1) && (m_pLeftBtnDn != nullptr)) {
 					cPoint = m_cLeftBtnRect.TopLeft();
-					m_pLeftBtnDn->Paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
+					m_pLeftBtnDn->paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
 
 				} else if (m_pLeftBtnUp != nullptr) {
 					cPoint = m_cLeftBtnRect.TopLeft();
-					m_pLeftBtnUp->Paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
+					m_pLeftBtnUp->paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
 				}
 
 				if ((m_nScrollState == 4) && (m_pRightBtnDn != nullptr)) {
 					cPoint = m_cRightBtnRect.TopLeft();
-					m_pRightBtnDn->Paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
+					m_pRightBtnDn->paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
 
 				} else if (m_pRightBtnUp != nullptr) {
 					cPoint = m_cRightBtnRect.TopLeft();
-					m_pRightBtnUp->Paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
+					m_pRightBtnUp->paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
 				}
 
 				m_cThumbPos.x = (int)(((int32)(m_nScrollWidth - m_cThumbSize.cx) * m_nPos) / (m_nRange - 1)) + m_nOffset;
@@ -351,7 +351,7 @@ ErrorCode CBofScrollBar::Paint(CBofRect *pDirtyRect) {
 				m_pThumb->PaintSprite(pBmp, m_cThumbPos);
 
 				// now we can paint the offscreen buffer to the screen
-				pBmp->Paint(this, 0, 0);
+				pBmp->paint(this, 0, 0);
 
 				delete pBmp;
 			} else {
@@ -457,7 +457,7 @@ void CBofScrollBar::onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 			if (m_pLeftBtnUp != nullptr) {
 				x = 0;
 				y = (int)(m_cBkSize.cy / 2) - (int)(m_cLeftBtnRect.Height() / 2);
-				m_pLeftBtnUp->Paint(this, x, y, nullptr, COLOR_WHITE);
+				m_pLeftBtnUp->paint(this, x, y, nullptr, COLOR_WHITE);
 			}
 			break;
 
@@ -465,7 +465,7 @@ void CBofScrollBar::onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 			if (m_pRightBtnUp != nullptr) {
 				x = m_cBkSize.cx - m_cRightBtnRect.Width();
 				y = (int)(m_cBkSize.cy / 2) - (int)(m_cRightBtnRect.Height() / 2);
-				m_pRightBtnUp->Paint(this, x, y, nullptr, COLOR_WHITE);
+				m_pRightBtnUp->paint(this, x, y, nullptr, COLOR_WHITE);
 			}
 			break;
 

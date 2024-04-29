@@ -68,7 +68,7 @@ public:
 	bool PaintCel(CBofWindow *pWnd, int nCelId, const int x, const int y);
 	bool PaintCel(CBofBitmap *pBmp, int nCelId, const int x, const int y);
 
-	void BatchPaint(const int, const int y);
+	void Batchpaint(const int, const int y);
 	void BatchErase();
 
 	bool SetupCels(const int nCels);
