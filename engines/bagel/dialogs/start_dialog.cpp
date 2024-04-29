@@ -69,7 +69,7 @@ void CBagStartDialog::onInitDialog() {
 	_savePalette = CBofApp::GetApp()->GetPalette();
 
 	// Insert ours
-	CBofPalette *pPal = m_pBackdrop->GetPalette();
+	CBofPalette *pPal = _pBackdrop->GetPalette();
 	CBofApp::GetApp()->SetPalette(pPal);
 
 	// Build all our buttons

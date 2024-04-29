@@ -96,8 +96,8 @@ void CBagCreditsDialog::onInitDialog() {
 	// Start at 1st credit screen
 	m_iScreen = 0;
 
-	Assert(m_pBackdrop != nullptr);
-	pPal = m_pBackdrop->GetPalette();
+	Assert(_pBackdrop != nullptr);
+	pPal = _pBackdrop->GetPalette();
 	SelectPalette(pPal);
 	g_b1 = true;
 
@@ -124,7 +124,7 @@ ErrorCode CBagCreditsDialog::LoadNextTextFile() {
 	}
 
 	// Create a new work area
-	if ((m_pCreditsBmp = new CBofBitmap(cRect.Width(), cRect.Height() + LINE_HEIGHT + 2, m_pBackdrop->GetPalette())) != nullptr) {
+	if ((m_pCreditsBmp = new CBofBitmap(cRect.Width(), cRect.Height() + LINE_HEIGHT + 2, _pBackdrop->GetPalette())) != nullptr) {
 		m_pCreditsBmp->FillRect(nullptr, MY_MASK_COLOR);
 
 		// Kill any previous work area
@@ -132,9 +132,9 @@ ErrorCode CBagCreditsDialog::LoadNextTextFile() {
 			delete m_pSaveBmp;
 		}
 
-		if ((m_pSaveBmp = new CBofBitmap(m_pCreditsBmp->Width(), m_pCreditsBmp->Height(), m_pBackdrop->GetPalette())) != nullptr) {
+		if ((m_pSaveBmp = new CBofBitmap(m_pCreditsBmp->Width(), m_pCreditsBmp->Height(), _pBackdrop->GetPalette())) != nullptr) {
 			CBofRect tmpRect = m_pSaveBmp->GetRect();
-			m_pBackdrop->paint(m_pSaveBmp, &tmpRect, &cRect);
+			_pBackdrop->paint(m_pSaveBmp, &tmpRect, &cRect);
 
 		} else {
 			ReportError(ERR_MEMORY);
@@ -265,16 +265,16 @@ ErrorCode CBagCreditsDialog::DisplayCredits() {
 		Assert(m_pCreditsBmp != nullptr);
 
 		if (m_pCreditsBmp != nullptr) {
-			Assert(m_pBackdrop != nullptr);
+			Assert(_pBackdrop != nullptr);
 			Assert(m_pSaveBmp != nullptr);
 
-			m_pSaveBmp->paint(m_pBackdrop, g_cScreen[m_iScreen].m_nLeft, g_cScreen[m_iScreen].m_nTop);
+			m_pSaveBmp->paint(_pBackdrop, g_cScreen[m_iScreen].m_nLeft, g_cScreen[m_iScreen].m_nTop);
 			CBofRect cRect;
 			cRect.SetRect(0, 0, m_pCreditsBmp->Width() - 1, m_pCreditsBmp->Height() - 1 - (LINE_HEIGHT + 2));
-			m_pCreditsBmp->paint(m_pBackdrop, g_cScreen[m_iScreen].m_nLeft, g_cScreen[m_iScreen].m_nTop, &cRect, MY_MASK_COLOR);
+			m_pCreditsBmp->paint(_pBackdrop, g_cScreen[m_iScreen].m_nLeft, g_cScreen[m_iScreen].m_nTop, &cRect, MY_MASK_COLOR);
 
 			if (g_b1) {
-				m_pBackdrop->paint(this, 0, 0);
+				_pBackdrop->paint(this, 0, 0);
 				g_b1 = false;
 
 			} else {
@@ -282,7 +282,7 @@ ErrorCode CBagCreditsDialog::DisplayCredits() {
 				cRect.top = g_cScreen[m_iScreen].m_nTop;
 				cRect.right = cRect.left + m_pCreditsBmp->Width() - 1;
 				cRect.bottom = cRect.top + m_pCreditsBmp->Height() - 1 - (LINE_HEIGHT + 2);
-				m_pBackdrop->paint(this, &cRect, &cRect);
+				_pBackdrop->paint(this, &cRect, &cRect);
 			}
 
 

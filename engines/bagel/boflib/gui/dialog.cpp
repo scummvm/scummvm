@@ -60,8 +60,8 @@ CBofDialog::CBofDialog(const char *pszFileName, CBofWindow *pParent, const uint3
 		SetBackdrop(pBmp);
 	}
 
-	Assert(m_pBackdrop != nullptr);
-	CBofRect cRect = m_pBackdrop->GetRect();
+	Assert(_pBackdrop != nullptr);
+	CBofRect cRect = _pBackdrop->GetRect();
 
 	// Create the dialog box
 	create("DialogBox", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pParent, nID);
@@ -113,8 +113,8 @@ ErrorCode CBofDialog::create(const char *pszName, CBofRect *pRect, CBofWindow *p
 	int nWidth = USE_DEFAULT;
 	int nHeight = USE_DEFAULT;
 
-	if ((pRect == nullptr) && (m_pBackdrop != nullptr)) {
-		cRect = m_pBackdrop->GetRect();
+	if ((pRect == nullptr) && (_pBackdrop != nullptr)) {
+		cRect = _pBackdrop->GetRect();
 		pRect = &cRect;
 	}
 

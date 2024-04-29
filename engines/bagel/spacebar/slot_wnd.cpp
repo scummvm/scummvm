@@ -183,8 +183,8 @@ ErrorCode  SBarSlotWnd::attach() {
 
 	if (CBagStorageDevWnd::attach() == ERR_NONE) {
 		// Must have a valid backdrop by now
-		Assert(m_pBackdrop != nullptr);
-		CBofPalette *pPal = m_pBackdrop->GetPalette();
+		Assert(_pBackdrop != nullptr);
+		CBofPalette *pPal = _pBackdrop->GetPalette();
 
 		m_bFixBmp = new CBofBitmap(BuildSlotDir(FIXBMP));
 
@@ -677,8 +677,8 @@ void SBarSlotWnd::SlideSlots() {
 
 		// Erase Previous game
 		CBofRect cRect(219, 12, 626, 276);
-		if (m_pBackdrop != nullptr) {
-			m_pBackdrop->paint(this, &cRect, &cRect);
+		if (_pBackdrop != nullptr) {
+			_pBackdrop->paint(this, &cRect, &cRect);
 		}
 
 		// Slot #1

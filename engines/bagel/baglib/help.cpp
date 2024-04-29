@@ -83,7 +83,7 @@ ErrorCode CBagHelp::attach() {
 	m_pSavePalette = CBofApp::GetApp()->GetPalette();
 
 	// Insert ours
-	pPal = m_pBackdrop->GetPalette();
+	pPal = _pBackdrop->GetPalette();
 	CBofApp::GetApp()->SetPalette(pPal);
 
 	if ((m_pOKButton = new CBofBmpButton) != nullptr) {

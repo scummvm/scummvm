@@ -255,7 +255,7 @@ ErrorCode CNavWindow::attach() {
 	m_pCurPos = new CBofRect(*m_pYzore);
 
 	m_pOldPal = CBofApp::GetApp()->GetPalette();
-	m_pPal = m_pBackdrop->GetPalette()->CopyPalette();
+	m_pPal = _pBackdrop->GetPalette()->CopyPalette();
 	CBofApp::GetApp()->SetPalette(m_pPal);
 	m_pCurLoc = new CBofSprite;
 	if (m_pCurLoc != nullptr) {
@@ -547,10 +547,10 @@ void CNavWindow::onPaint(CBofRect *pRect) {
 	Assert(pRect != nullptr);
 
 	// Render offscreen
-	if (m_pBackdrop != nullptr) {
+	if (_pBackdrop != nullptr) {
 		CBofBitmap *pBmp = GetWorkBmp();
 		if (pBmp != nullptr) {
-			m_pBackdrop->paint(pBmp, pRect, pRect);
+			_pBackdrop->paint(pBmp, pRect, pRect);
 
 			// Now update the screen
 			pBmp->paint(this, pRect, pRect);
@@ -566,7 +566,7 @@ void CNavWindow::onPaint(CBofRect *pRect) {
 void CNavWindow::RefreshData() {
 	Assert(IsValidObject(this));
 
-	if (m_pBackdrop == nullptr)
+	if (_pBackdrop == nullptr)
 		return;
 
 	// Render offscreen
@@ -1380,9 +1380,9 @@ void CNavWindow::CalcFuel(double hf) {
 		m_pCurLoc->SetCel(0);
 		m_pCurLoc->PaintSprite(this, m_pCurPos->left, m_pCurPos->top);
 
-		// WORKAROUND: m_pBackdrop shares it's palette with m_pCurLoc,
+		// WORKAROUND: _pBackdrop shares it's palette with m_pCurLoc,
 		// so as the backdrop is changed, don't free the palette
-		m_pBackdrop->SetIsOwnPalette(false);
+		_pBackdrop->SetIsOwnPalette(false);
 		bool isDone = (m_level == 3);
 
 		if (m_level == 3) {
@@ -1395,7 +1395,7 @@ void CNavWindow::CalcFuel(double hf) {
 			pause();
 			CBofString sNebDir(NEBSIM4BMP);
 			MACROREPLACE(sNebDir);
-			Assert(m_pBackdrop != nullptr);
+			Assert(_pBackdrop != nullptr);
 			bmptwo = new CBofBitmap(sNebDir.GetBuffer(), m_pPal);
 			setBackground(bmptwo);
 			m_cargo = 125 + 10 + 17 + 8 + 99 + 24;
@@ -1413,7 +1413,7 @@ void CNavWindow::CalcFuel(double hf) {
 			pause();
 			CBofString sNebDir(NEBSIM3BMP);
 			MACROREPLACE(sNebDir);
-			Assert(m_pBackdrop != nullptr);
+			Assert(_pBackdrop != nullptr);
 			bmptwo = new CBofBitmap(sNebDir.GetBuffer(), m_pPal);
 			setBackground(bmptwo);
 			m_cargo = 100 + 75 + 28 + 45 + 14;
@@ -1431,7 +1431,7 @@ void CNavWindow::CalcFuel(double hf) {
 			pause();
 			CBofString sNebDir(NEBSIM2BMP);
 			MACROREPLACE(sNebDir);
-			Assert(m_pBackdrop != nullptr);
+			Assert(_pBackdrop != nullptr);
 			bmptwo = new CBofBitmap(sNebDir.GetBuffer(), m_pPal);
 			setBackground(bmptwo);
 			m_cargo = 54 + 119 + 20 + 127;
@@ -1450,7 +1450,7 @@ void CNavWindow::CalcFuel(double hf) {
 			UpdateWindow();
 
 		// WORKAROUND: Restore owns palette flag back again
-		m_pBackdrop->SetIsOwnPalette(true);
+		_pBackdrop->SetIsOwnPalette(true);
 	}
 
 	if (m_fuel <= 0) {

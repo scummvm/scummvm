@@ -917,8 +917,8 @@ ErrorCode SrafComputer::attach() {
 		}
 
 		// Must have a valid backdrop by now
-		Assert(m_pBackdrop != nullptr);
-		CBofPalette *pPal = m_pBackdrop->GetPalette();
+		Assert(_pBackdrop != nullptr);
+		CBofPalette *pPal = _pBackdrop->GetPalette();
 
 		for (int i = 0; i < NUM_SRAFCOMPBUTT; i++) {
 			m_pButtons[i] = new CBofBmpButton;
@@ -4582,8 +4582,8 @@ int SrafTextScreen::CreateTextScreen(CBofWindow *pParent) {
 	// Needs the computer bitmap for a backdrop
 	SetBackdrop(SrafComputer::GetComputerBackdrop(), false);
 
-	Assert(m_pBackdrop != nullptr);
-	CBofPalette *pPal = m_pBackdrop->GetPalette();
+	Assert(_pBackdrop != nullptr);
+	CBofPalette *pPal = _pBackdrop->GetPalette();
 	// Create our OK button
 
 	m_pOKButton = new CBofBmpButton;

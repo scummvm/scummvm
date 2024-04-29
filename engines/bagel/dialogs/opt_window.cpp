@@ -201,33 +201,33 @@ ErrorCode CBagOptWindow::attach() {
 	m_pSavePalette = CBofApp::GetApp()->GetPalette();
 
 	// Insert ours
-	CBofPalette *pPal = m_pBackdrop->GetPalette();
+	CBofPalette *pPal = _pBackdrop->GetPalette();
 	CBofApp::GetApp()->SetPalette(pPal);
 
 	// Paint stuff
-	if (m_pBackdrop != nullptr) {
+	if (_pBackdrop != nullptr) {
 		CBofBitmap cBmp(BuildSysDir("MUSICVOL.BMP"), pPal);
-		cBmp.paint(m_pBackdrop, 30, 30);
+		cBmp.paint(_pBackdrop, 30, 30);
 	}
-	if (m_pBackdrop != nullptr) {
+	if (_pBackdrop != nullptr) {
 		CBofBitmap cBmp(BuildSysDir("AUDIOVOL.BMP"), pPal);
-		cBmp.paint(m_pBackdrop, 30, 80);
+		cBmp.paint(_pBackdrop, 30, 80);
 	}
-	if (m_pBackdrop != nullptr) {
+	if (_pBackdrop != nullptr) {
 		CBofBitmap cBmp(BuildSysDir("FLYTHRUS.BMP"), pPal);
-		cBmp.paint(m_pBackdrop, 30, 140);
+		cBmp.paint(_pBackdrop, 30, 140);
 	}
-	if (m_pBackdrop != nullptr) {
+	if (_pBackdrop != nullptr) {
 		CBofBitmap cBmp(BuildSysDir("PANIMATS.BMP"), pPal);
-		cBmp.paint(m_pBackdrop, 30, 190);
+		cBmp.paint(_pBackdrop, 30, 190);
 	}
-	if (m_pBackdrop != nullptr) {
+	if (_pBackdrop != nullptr) {
 		CBofBitmap cBmp(BuildSysDir("CORRECTN.BMP"), pPal);
-		cBmp.paint(m_pBackdrop, 30, 250);
+		cBmp.paint(_pBackdrop, 30, 250);
 	}
-	if (m_pBackdrop != nullptr) {
+	if (_pBackdrop != nullptr) {
 		CBofBitmap cBmp(BuildSysDir("PANSPEED.BMP"), pPal);
-		cBmp.paint(m_pBackdrop, 30, 300);
+		cBmp.paint(_pBackdrop, 30, 300);
 	}
 
 	// Build all our buttons
