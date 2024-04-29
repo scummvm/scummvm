@@ -70,8 +70,8 @@ class CBofPalette : public CBofError, public CBofObject {
 protected:
 	HPALETTE _palette;
 
-	static CBofPalette *m_pSharedPalette;
-	static char m_szSharedPalFile[MAX_FNAME];
+	static CBofPalette *_pSharedPalette;
+	static char _szSharedPalFile[MAX_FNAME];
 
 	/**
 	 * Deletes internal palette info
@@ -101,11 +101,11 @@ public:
 	 * @param nFlags        Flags for animation, etc...
 	 * @return              Error return Code
 	 */
-	ErrorCode LoadPalette(const char *pszFileName, uint16 nFlags = PAL_DEFAULT);
+	ErrorCode loadPalette(const char *pszFileName, uint16 nFlags = PAL_DEFAULT);
 
-	ErrorCode CreateDefault(uint16 nFlags = PAL_DEFAULT);
+	ErrorCode createDefault(uint16 nFlags = PAL_DEFAULT);
 
-	byte GetNearestIndex(RGBCOLOR cColor);
+	byte getNearestIndex(RGBCOLOR cColor);
 
 	RGBCOLOR getColor(byte nIndex);
 
@@ -119,11 +119,11 @@ public:
 		return _palette;
 	}
 
-	const byte *GetData() const {
+	const byte *getData() const {
 		return _palette._data;
 	}
 
-	void SetData(const byte* colors) {
+	void setData(const byte* colors) {
 		memcpy(_palette._data, colors, PALETTE_SIZE);
 	}
 
@@ -132,7 +132,7 @@ public:
 	/**
 	 * Create a new palette based on current palette
 	 */
-	CBofPalette *CopyPalette();
+	CBofPalette *copyPalette();
 
 	/**
 	 * initialize static class fields
@@ -143,13 +143,13 @@ public:
 	 * Called only in response to "SHAREDPAL=filename" in a script file
 	 * @param pszFileName       Palette filename
 	 */
-	static ErrorCode SetSharedPalette(const char *pszFileName);
+	static ErrorCode setSharedPalette(const char *pszFileName);
 
 	/**
 	 * Returns the current shared palette
 	 * @return      Pointer to shared palette
 	 */
-	static CBofPalette *GetSharedPalette();
+	static CBofPalette *getSharedPalette();
 };
 
 } // namespace Bagel

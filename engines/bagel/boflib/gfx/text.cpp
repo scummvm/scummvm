@@ -387,12 +387,12 @@ ErrorCode CBofText::DisplayTextEx(CBofBitmap *pBmp, const char *pszText, CBofRec
 		const Common::U32String &line = lines[i];
 
 		if (bShadowed) {
-			color = CBofApp::GetApp()->getPalette()->GetNearestIndex(m_cShadowColor);
+			color = CBofApp::GetApp()->getPalette()->getNearestIndex(m_cShadowColor);
 			displayLine(font, surface, line, shadowRect.left, shadowRect.top,
 				shadowRect.width(), color, align);
 		}
 
-		color = CBofApp::GetApp()->getPalette()->GetNearestIndex(m_cTextColor);
+		color = CBofApp::GetApp()->getPalette()->getNearestIndex(m_cTextColor);
 		displayLine(font, surface, line, newRect.left, newRect.top,
 			newRect.width(), color, align);
 

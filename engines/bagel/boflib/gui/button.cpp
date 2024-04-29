@@ -94,15 +94,15 @@ ErrorCode CBofButton::paint(CBofRect *) {
 		// Create our off-screen buffer
 		CBofBitmap cBmp(nWidth, nHeight, pPalette);
 
-		cBmp.fillRect(&_cRect, pPalette->GetNearestIndex(_cFaceColor));
+		cBmp.fillRect(&_cRect, pPalette->getNearestIndex(_cFaceColor));
 
 		left = _cRect.left;
 		right = _cRect.right;
 		top = _cRect.top;
 		bottom = _cRect.bottom;
 
-		iShadow = pPalette->GetNearestIndex(_cShadowColor);
-		iHighlight = pPalette->GetNearestIndex(_cHighlightColor);
+		iShadow = pPalette->getNearestIndex(_cShadowColor);
+		iHighlight = pPalette->getNearestIndex(_cHighlightColor);
 
 		if (_nState == BUTTON_DOWN) {
 			iTemp = iShadow;
@@ -123,7 +123,7 @@ ErrorCode CBofButton::paint(CBofRect *) {
 			cBmp.line(left + i, top + i - 1, right - i, top + i - 1, c2);
 		}
 
-		cBmp.drawRect(&_cRect, pPalette->GetNearestIndex(_cOutlineColor));
+		cBmp.drawRect(&_cRect, pPalette->getNearestIndex(_cOutlineColor));
 
 		// Create a temporary text object
 		CBofRect cTempRect(3, 3, _cRect.right - 3, _cRect.bottom - 3);
@@ -142,7 +142,7 @@ ErrorCode CBofButton::paint(CBofRect *) {
 		cText.display(&cBmp, _szTitle, BUTTON_TEXT_SIZE, TEXT_NORMAL, cTextColor);
 
 		if (_nState == BUTTON_FOCUS) {
-			cBmp.drawRect(&cTempRect, pPalette->GetNearestIndex(_cOutlineColor));
+			cBmp.drawRect(&cTempRect, pPalette->getNearestIndex(_cOutlineColor));
 		}
 
 		// Now we can update the window
@@ -286,14 +286,14 @@ ErrorCode CBofRadioButton::paint(CBofRect *) {
 		CBofBitmap cBmp(nWidth, nHeight, pPalette);
 
 		// Fill in the background color
-		cBmp.fillRect(&_cRect, pPalette->GetNearestIndex(_cFaceColor));
+		cBmp.fillRect(&_cRect, pPalette->getNearestIndex(_cFaceColor));
 
 		RGBCOLOR cTextColor = _cTextColor;
 		if (_nState == BUTTON_DISABLED)
 			cTextColor = _cTextDisabledColor;
 
-		byte iShadow = pPalette->GetNearestIndex(cTextColor);
-		byte iHighlight = pPalette->GetNearestIndex(cTextColor);
+		byte iShadow = pPalette->getNearestIndex(cTextColor);
+		byte iHighlight = pPalette->getNearestIndex(cTextColor);
 
 		// Paint the radio button circle
 		int nRadius = 7;
@@ -318,7 +318,7 @@ ErrorCode CBofRadioButton::paint(CBofRect *) {
 		CBofText cText(&cTempRect, JUSTIFY_LEFT);
 
 		// Put a box around the whole button
-		cBmp.drawRect(&_cRect, pPalette->GetNearestIndex(_cOutlineColor));
+		cBmp.drawRect(&_cRect, pPalette->getNearestIndex(_cOutlineColor));
 
 		// Show text disabled if button is disabled
 
@@ -327,7 +327,7 @@ ErrorCode CBofRadioButton::paint(CBofRect *) {
 
 		// If button has focus, then put a box around the text
 		if (_nState == BUTTON_FOCUS) {
-			cBmp.drawRect(&cTempRect, pPalette->GetNearestIndex(_cOutlineColor));
+			cBmp.drawRect(&cTempRect, pPalette->getNearestIndex(_cOutlineColor));
 		}
 
 		// Now we can update the window
@@ -384,14 +384,14 @@ ErrorCode CBofCheckButton::paint(CBofRect *) {
 		CBofBitmap cBmp(nWidth, nHeight, pPalette);
 
 		// Fill in the background color
-		cBmp.fillRect(&_cRect, pPalette->GetNearestIndex(_cFaceColor));
+		cBmp.fillRect(&_cRect, pPalette->getNearestIndex(_cFaceColor));
 
 		// Show text disabled if button is disabled
 		RGBCOLOR cTextColor = _cTextColor;
 		if (_nState == BUTTON_DISABLED)
 			cTextColor = _cTextDisabledColor;
 
-		byte iShadow = pPalette->GetNearestIndex(cTextColor);
+		byte iShadow = pPalette->getNearestIndex(cTextColor);
 
 		// Draw the check box (centered vertically)
 		int y = ((nHeight - CHECK_BOX_SIZE) / 2);
@@ -410,7 +410,7 @@ ErrorCode CBofCheckButton::paint(CBofRect *) {
 		CBofText cText(&cTempRect, JUSTIFY_LEFT);
 
 		// Put a box around the whole button
-		cBmp.drawRect(&_cRect, pPalette->GetNearestIndex(_cOutlineColor));
+		cBmp.drawRect(&_cRect, pPalette->getNearestIndex(_cOutlineColor));
 
 		// Print text into button
 		//
@@ -418,7 +418,7 @@ ErrorCode CBofCheckButton::paint(CBofRect *) {
 
 		// If button has focus, then put a box around the text
 		if (_nState == BUTTON_FOCUS) {
-			cBmp.drawRect(&cTempRect, pPalette->GetNearestIndex(_cOutlineColor));
+			cBmp.drawRect(&cTempRect, pPalette->getNearestIndex(_cOutlineColor));
 		}
 
 		// Now we can update the window

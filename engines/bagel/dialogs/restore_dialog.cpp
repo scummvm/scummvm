@@ -167,7 +167,7 @@ ErrorCode CBagRestoreDialog::attach() {
 
 			pPal2 = _pBackdrop->getPalette();
 
-			byte iPalIdx = pPal2->GetNearestIndex(RGB(255, 0, 0));
+			byte iPalIdx = pPal2->getNearestIndex(RGB(255, 0, 0));
 
 			m_pListBox->setHighlightColor(pPal2->getColor(iPalIdx));
 		}

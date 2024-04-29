@@ -423,7 +423,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			MACROREPLACE(cString);
 			CBofPalette      xPal;
 
-			xPal.LoadPalette(cString);
+			xPal.loadPalette(cString);
 			dlg.create(pParent, &xPal, &tmpRect);
 
 			if (bCaption) {
@@ -591,8 +591,8 @@ ErrorCode CBagMenuDlg::create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRec
 	if (pBmp != nullptr) {
 		r.OffsetRect(-r.left, -r.top);
 		Assert(pPal != nullptr);
-		pBmp->fillRect(&r, pPal->GetNearestIndex(RGB(82, 82, 82)) /*RGB(0,0,0)*/);
-		pBmp->drawRect(&r, pPal->GetNearestIndex(RGB(0, 0, 0)) /*RGB(0,0,0)*/);
+		pBmp->fillRect(&r, pPal->getNearestIndex(RGB(82, 82, 82)) /*RGB(0,0,0)*/);
+		pBmp->drawRect(&r, pPal->getNearestIndex(RGB(0, 0, 0)) /*RGB(0,0,0)*/);
 		setBackdrop(pBmp);
 	}
 

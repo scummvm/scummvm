@@ -126,14 +126,14 @@ bool CBagFMovie::openMovie(const char *sFilename) {
 
 	if (m_pBmpBuf) {
 		m_pBmpBuf->lock();
-		m_pBmpBuf->fillRect(nullptr, m_pSmackerPal->GetNearestIndex(RGB(255, 255, 255)));
+		m_pBmpBuf->fillRect(nullptr, m_pSmackerPal->getNearestIndex(RGB(255, 255, 255)));
 
 		m_nReversed = !(m_pBmpBuf->isTopDown());
 		m_pBufferStart = (char *)m_pBmpBuf->getPixelAddress(0, m_nReversed * (m_pBmpBuf->height() - 1));
 		m_nBufferLength = ABS(m_pBmpBuf->height() * m_pBmpBuf->width());
 
 		const Graphics::Surface *frame = _pSmk->decodeNextFrame();
-		m_pSmackerPal->SetData(_pSmk->getPalette());
+		m_pSmackerPal->setData(_pSmk->getPalette());
 		if (frame) {
 			m_pBmpBuf->getSurface().blitFrom(*frame);
 		}
@@ -175,7 +175,7 @@ void CBagFMovie::onMainLoop() {
 			// Smack the current frame into the buffer
 			const Graphics::Surface *frame = _pSmk->decodeNextFrame();
 			if (_pSmk->hasDirtyPalette()) {
-				m_pSmackerPal->SetData(_pSmk->getPalette());
+				m_pSmackerPal->setData(_pSmk->getPalette());
 			}
 			if (frame) {
 				m_pBmpBuf->getSurface().blitFrom(*frame);

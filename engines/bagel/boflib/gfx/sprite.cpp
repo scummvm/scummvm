@@ -52,7 +52,7 @@ void CBofSprite::OpenLibrary(CBofPalette *pPal) {
 
 	ClearDirtyRect();
 
-	SetSharedPalette(pPal);
+	setSharedPalette(pPal);
 
 	// Set up a default work area
 	SetupWorkArea(200, 200);
@@ -758,7 +758,7 @@ void CBofSprite::ClearImage() {
 }
 
 
-void CBofSprite::SetSharedPalette(CBofPalette *pPal) {
+void CBofSprite::setSharedPalette(CBofPalette *pPal) {
 	Assert(pPal != nullptr);
 
 	m_pSharedPalette = pPal;

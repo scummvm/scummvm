@@ -483,7 +483,7 @@ bool CBagTextObject::runObject() {
 				CBofPalette *pPal = pApp->getPalette();
 				CBofBitmap cBmp(cRect.width(), cRect.height(), pPal);
 
-				cBmp.fillRect(nullptr, pPal->GetNearestIndex(RGB(92, 92, 92)));
+				cBmp.fillRect(nullptr, pPal->getNearestIndex(RGB(92, 92, 92)));
 
 				CBagMenuDlg cDlg;
 				cDlg.create(pParent, pPal, &cRect);
