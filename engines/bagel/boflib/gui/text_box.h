@@ -46,38 +46,38 @@ public:
 	void setTextAttribs(const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, const int nFont = FONT_DEFAULT);
 
 	void setPointSize(const int nSize) {
-		m_nPointSize = nSize;
+		_nPointSize = nSize;
 	}
 	int getPointSize() {
-		return m_nPointSize;
+		return _nPointSize;
 	}
 
 	void setWeight(const int nWeight) {
-		m_nWeight = nWeight;
+		_nWeight = nWeight;
 	}
 	int getWeight() {
-		return m_nWeight;
+		return _nWeight;
 	}
 
 	void setPageLength(const int nSize) {
-		m_nPageSize = nSize;
+		_nPageSize = nSize;
 	}
 	int getPageLength() {
-		return m_nPageSize;
+		return _nPageSize;
 	}
 
 	void setColor(const RGBCOLOR cColor) {
-		m_cTextColor = cColor;
+		_cTextColor = cColor;
 	}
 	RGBCOLOR getColor() {
-		return m_cTextColor;
+		return _cTextColor;
 	}
 
 	void setFont(int nFont) {
-		m_nTextFont = nFont;
+		_nTextFont = nFont;
 	}
 	int getFont() {
-		return m_nTextFont;
+		return _nTextFont;
 	}
 
 	ErrorCode lineUp() {
@@ -88,10 +88,10 @@ public:
 	}
 
 	ErrorCode pageUp() {
-		return scrollUp(m_nPageSize);
+		return scrollUp(_nPageSize);
 	}
 	ErrorCode pageDown() {
-		return scrollDown(m_nPageSize);
+		return scrollDown(_nPageSize);
 	}
 
 	ErrorCode scrollUp(const int nLines);
@@ -107,7 +107,7 @@ public:
 	void flushBackground();
 
 	int getCurrLine() {
-		return m_nCurrentLine;
+		return _nCurrentLine;
 	}
 	ErrorCode setCurrLine(const int nLine) {
 		return scrollTo(nLine);
@@ -117,20 +117,20 @@ protected:
 	int getIndex(const int nLines);
 
 	// Data
-	CBofString m_cBuffer;
-	CBofText *m_pTextField;
-	CBofWindow *m_pDestWindow;
-	CBofBitmap *m_pDestBitmap;
+	CBofString _cBuffer;
+	CBofText *_pTextField;
+	CBofWindow *_pDestWindow;
+	CBofBitmap *_pDestBitmap;
 
-	int m_nCurrentLine;
-	int m_nCurrentIndex;
-	int m_nNumLines;
-	int m_nPageSize;
+	int _nCurrentLine;
+	int _nCurrentIndex;
+	int _nNumLines;
+	int _nPageSize;
 
-	RGBCOLOR m_cTextColor;
-	int m_nPointSize;
-	int m_nWeight;
-	int m_nTextFont;
+	RGBCOLOR _cTextColor;
+	int _nPointSize;
+	int _nWeight;
+	int _nTextFont;
 };
 
 } // namespace Bagel
