@@ -445,8 +445,15 @@ void LB::b_power(int nargs) {
 }
 
 void LB::b_random(int nargs) {
-	Datum max = g_lingo->pop();
-	Datum res((int)(g_director->_rnd.getRandom(max.asInt()) + 1));
+	int max = g_lingo->pop().asInt();
+	Datum res;
+	// Output in D4/D5 seems to be bounded from 1-65535, regardless of input.
+	if (max <= 0) {
+		res = g_director->_rnd.getRandom(65535) + 1;
+	} else {
+		max = MIN(max, 65535);
+		res = g_director->_rnd.getRandom(max) + 1;
+	}
 	g_lingo->push(res);
 }
 
