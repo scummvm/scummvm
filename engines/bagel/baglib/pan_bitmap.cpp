@@ -68,7 +68,7 @@ CBagPanBitmap::CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, con
 		m_bActiveScrolling = false; // The scrolling is not active
 		m_xDirection = kDirNONE;        // Direction is not moving
 
-		pPalette = GetPalette();
+		pPalette = getPalette();
 
 		if (xViewSize.IsRectEmpty())
 			m_xCurrView = xMaxViewSize;
@@ -118,7 +118,7 @@ CBagPanBitmap::CBagPanBitmap(int dx, int dy, CBofPalette *pPalette, const CBofRe
 		m_bActiveScrolling = false;		// The scrolling is not active
 		m_xDirection = kDirNONE;		// Direction is not moving
 
-		pPalette = GetPalette();
+		pPalette = getPalette();
 
 		if (xViewSize.IsRectEmpty())
 			m_xCurrView = xMaxViewSize;
@@ -256,7 +256,7 @@ ErrorCode CBagPanBitmap::PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, 
 			                   nRight + i,
 			                   STRIP_POINTS[tableSlot][stripNumber].bottom);
 
-			pSrcBmp->PaintStretch4(pBmp, &WndDstRect, &PanSrcRect);
+			pSrcBmp->paintStretch4(pBmp, &WndDstRect, &PanSrcRect);
 
 			WndDstRect.left = WndDstRect.right + 1;
 			WndDstRect.right = WndDstRect.right + nWidth;
@@ -269,7 +269,7 @@ ErrorCode CBagPanBitmap::PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, 
 			                   nRight + i,
 			                   nTop + (int)(*pSrcHeight * srcBottom));
 
-			pSrcBmp->PaintStretchOpt(pBmp, &WndDstRect, &PanSrcRect, nWidth);
+			pSrcBmp->paintStretchOpt(pBmp, &WndDstRect, &PanSrcRect, nWidth);
 
 			WndDstRect.left = WndDstRect.right + 1;
 			WndDstRect.right = WndDstRect.right + nWidth;

@@ -75,7 +75,7 @@ void CBagPDA::AddToMovieQueue(CBagMovieObject *pMObj) {
 	int nCount = m_pMovieList->GetCount();
 	for (int i = 0; i < nCount; i++) {
 		CBagMovieObject *p = m_pMovieList->GetNodeItem(i);
-		if (p->GetFileName().Find(pMObj->GetFileName()) == 0) {
+		if (p->getFileName().Find(pMObj->getFileName()) == 0) {
 			return;
 		}
 	}
@@ -333,7 +333,7 @@ bool CBagPDA::isInside(const CBofPoint &xPoint) {
 		if (pSrcBmp) {
 			int x = xPoint.x - getRect().left;
 			int y = xPoint.y - getRect().top;
-			int c = pSrcBmp->ReadPixel(x, y);
+			int c = pSrcBmp->readPixel(x, y);
 			return (c != m_nMaskColor);
 		}
 

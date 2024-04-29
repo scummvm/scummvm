@@ -113,9 +113,9 @@ public:
 	 * Assigns specified palette to this CBofPalette
 	 * @param hPalette      Handle to windows palette
 	 */
-	void SetPalette(const HPALETTE &hPalette);
+	void setPalette(const HPALETTE &hPalette);
 
-	const HPALETTE &GetPalette() const {
+	const HPALETTE &getPalette() const {
 		return _palette;
 	}
 

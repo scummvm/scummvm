@@ -51,7 +51,7 @@ public:
 
 	CBofRect getRect();
 
-	CBofSize GetSize() const {
+	CBofSize getSize() const {
 		return m_xSize;
 	}
 	CBofPoint GetDstLoc() const {

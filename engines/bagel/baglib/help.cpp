@@ -80,19 +80,19 @@ ErrorCode CBagHelp::attach() {
 	CBofPalette *pPal;
 
 	// Save off the current game's palette
-	m_pSavePalette = CBofApp::GetApp()->GetPalette();
+	m_pSavePalette = CBofApp::GetApp()->getPalette();
 
 	// Insert ours
-	pPal = _pBackdrop->GetPalette();
-	CBofApp::GetApp()->SetPalette(pPal);
+	pPal = _pBackdrop->getPalette();
+	CBofApp::GetApp()->setPalette(pPal);
 
 	if ((m_pOKButton = new CBofBmpButton) != nullptr) {
 		CBofBitmap *pUp, *pDown, *pFocus, *pDis;
 
-		pUp = LoadBitmap(BuildHelpDir(HELP_OK_UP), pPal);
-		pDown = LoadBitmap(BuildHelpDir(HELP_OK_DOWN), pPal);
-		pFocus = LoadBitmap(BuildHelpDir(HELP_OK_FOCUS), pPal);
-		pDis = LoadBitmap(BuildHelpDir(HELP_OK_DISABLED), pPal);
+		pUp = loadBitmap(BuildHelpDir(HELP_OK_UP), pPal);
+		pDown = loadBitmap(BuildHelpDir(HELP_OK_DOWN), pPal);
+		pFocus = loadBitmap(BuildHelpDir(HELP_OK_FOCUS), pPal);
+		pDis = loadBitmap(BuildHelpDir(HELP_OK_DISABLED), pPal);
 
 		m_pOKButton->loadBitmaps(pUp, pDown, pFocus, pDis);
 
@@ -106,10 +106,10 @@ ErrorCode CBagHelp::attach() {
 
 		CBofBitmap *pUp, *pDown, *pFocus, *pDis;
 
-		pUp = LoadBitmap(BuildHelpDir(HELP_PU_UP), pPal);
-		pDown = LoadBitmap(BuildHelpDir(HELP_PU_DOWN), pPal);
-		pFocus = LoadBitmap(BuildHelpDir(HELP_PU_FOCUS), pPal);
-		pDis = LoadBitmap(BuildHelpDir(HELP_PU_DISABLED), pPal);
+		pUp = loadBitmap(BuildHelpDir(HELP_PU_UP), pPal);
+		pDown = loadBitmap(BuildHelpDir(HELP_PU_DOWN), pPal);
+		pFocus = loadBitmap(BuildHelpDir(HELP_PU_FOCUS), pPal);
+		pDis = loadBitmap(BuildHelpDir(HELP_PU_DISABLED), pPal);
 
 		m_pPageUp->loadBitmaps(pUp, pDown, pFocus, pDis);
 
@@ -123,10 +123,10 @@ ErrorCode CBagHelp::attach() {
 
 		CBofBitmap *pUp, *pDown, *pFocus, *pDis;
 
-		pUp = LoadBitmap(BuildHelpDir(HELP_PD_UP), pPal);
-		pDown = LoadBitmap(BuildHelpDir(HELP_PD_DOWN), pPal);
-		pFocus = LoadBitmap(BuildHelpDir(HELP_PD_FOCUS), pPal);
-		pDis = LoadBitmap(BuildHelpDir(HELP_PD_DISABLED), pPal);
+		pUp = loadBitmap(BuildHelpDir(HELP_PD_UP), pPal);
+		pDown = loadBitmap(BuildHelpDir(HELP_PD_DOWN), pPal);
+		pFocus = loadBitmap(BuildHelpDir(HELP_PD_FOCUS), pPal);
+		pDis = loadBitmap(BuildHelpDir(HELP_PD_DISABLED), pPal);
 
 		m_pPageDown->loadBitmaps(pUp, pDown, pFocus, pDis);
 
@@ -187,7 +187,7 @@ ErrorCode CBagHelp::Detach() {
 		m_pOKButton = nullptr;
 	}
 
-	CBofApp::GetApp()->SetPalette(m_pSavePalette);
+	CBofApp::GetApp()->setPalette(m_pSavePalette);
 
 	return _errCode;
 }

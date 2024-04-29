@@ -72,7 +72,7 @@ bool CBagCommandObject::runObject() {
 			dstSDev = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev()->GetPrevSDev();
 		}
 
-		if (GetFileName() == "REMOVE") {
+		if (getFileName() == "REMOVE") {
 			static bool removeFl = false;
 			if (!removeFl) {
 				removeFl = true;
@@ -83,40 +83,40 @@ bool CBagCommandObject::runObject() {
 				removeFl = false;
 			}
 
-		} else if (GetFileName() == "INSERT2") {
+		} else if (getFileName() == "INSERT2") {
 			if (!_objName.IsEmpty() && !dstSDev.IsEmpty()) {
 				g_allowAttachActiveObjectsFl = false;
 				SDEVMNGR->AddObject(dstSDev, _objName);
 				g_allowAttachActiveObjectsFl = true;
 			}
 
-		} else if (GetFileName() == "INSERT") {
+		} else if (getFileName() == "INSERT") {
 			if (!_objName.IsEmpty() && !dstSDev.IsEmpty()) {
 				SDEVMNGR->AddObject(dstSDev, _objName);
 			}
 
-		} else if (GetFileName() == "TRANSFER") {
+		} else if (getFileName() == "TRANSFER") {
 
 			if (!_objName.IsEmpty() && !srcSDev.IsEmpty() && !dstSDev.IsEmpty()) {
 				SDEVMNGR->MoveObject(dstSDev, srcSDev, _objName);
 			}
 
-		} else if (GetFileName().Find("FLUSHQUEUE") == 0) {
+		} else if (getFileName().Find("FLUSHQUEUE") == 0) {
 			char buffer[20];
 			int slot;
 
 			slot = 0;
-			Common::strcpy_s(buffer, GetFileName());
+			Common::strcpy_s(buffer, getFileName());
 			if (strlen(buffer) == 11) {
 				slot = buffer[10] - 48;
 			}
 			Assert(slot >= 0 && slot < 8);
 
-		} else if (GetFileName() == "CLOSE") {
+		} else if (getFileName() == "CLOSE") {
 			CBagStorageDevWnd *currentSDev = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
 			currentSDev->close();
 
-		} else if (GetFileName() == "UPDATE") {
+		} else if (getFileName() == "UPDATE") {
 			static bool updateFl = false;
 
 			if (!updateFl) {
@@ -128,7 +128,7 @@ bool CBagCommandObject::runObject() {
 				updateFl = false;
 			}
 
-		} else if (GetFileName() == "EVENTLOOP") {
+		} else if (getFileName() == "EVENTLOOP") {
 			static bool eventLoopFl = false;
 
 			// prevent recursion
@@ -146,10 +146,10 @@ bool CBagCommandObject::runObject() {
 				eventLoopFl = false;
 			}
 
-		} else if (GetFileName() == "STOPPAINT") {
+		} else if (getFileName() == "STOPPAINT") {
 			g_allowPaintFl = false;
 
-		} else if (GetFileName() == "REMOVEWIELD") {
+		} else if (getFileName() == "REMOVEWIELD") {
 			// Remove currently wielded object from the game
 			if (CBagPanWindow::m_pWieldBmp != nullptr) {
 				CBagObject *currObj = CBagPanWindow::m_pWieldBmp->GetCurrObj();
@@ -158,7 +158,7 @@ bool CBagCommandObject::runObject() {
 				}
 			}
 
-		} else if (GetFileName() == "PAINT") {
+		} else if (getFileName() == "PAINT") {
 			// Get a pointer to the current game window
 			CBagStorageDevWnd *gameWin = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
 
@@ -166,10 +166,10 @@ bool CBagCommandObject::runObject() {
 				gameWin->PaintScreen(nullptr);
 			}
 
-		} else if (GetFileName() == "STOPWAVE") {
+		} else if (getFileName() == "STOPWAVE") {
 			CBofSound::StopWaveSounds();
 
-		} else if (GetFileName() == "STASHWIELD") {
+		} else if (getFileName() == "STASHWIELD") {
 			// Stash the currently wielded item
 			if (CBagPanWindow::m_pWieldBmp != nullptr) {
 				CBagObject *currObj = CBagPanWindow::m_pWieldBmp->GetCurrObj();
@@ -179,14 +179,14 @@ bool CBagCommandObject::runObject() {
 				}
 			}
 
-		} else if (GetFileName() == "DEATH") {
+		} else if (getFileName() == "DEATH") {
 			CBagel::getBagApp()->getMasterWnd()->postUserMessage(WM_DIE, 0);
 			g_allowPaintFl = false;
 
-		} else if (GetFileName() == "GOPAINT") {
+		} else if (getFileName() == "GOPAINT") {
 			g_allowPaintFl = true;
 
-		} else if (GetFileName() == "DEACTIVATEPDA") {
+		} else if (getFileName() == "DEACTIVATEPDA") {
 
 			// Get a pointer to the current game window
 			CBagStorageDevWnd *gameWin = (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev());
@@ -197,7 +197,7 @@ bool CBagCommandObject::runObject() {
 				((CBagPanWindow *)gameWin)->WaitForPDA();
 			}
 
-		} else if (GetFileName() == "ROTATETOFLY") {
+		} else if (getFileName() == "ROTATETOFLY") {
 			if (CBagMasterWin::GetFlyThru()) {
 				CBagMasterWin::setActiveCursor(6);
 				CBagStorageDev *currSDev = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
@@ -207,7 +207,7 @@ bool CBagCommandObject::runObject() {
 				}
 			}
 
-		} else if (GetFileName() == "ROTATETO") {
+		} else if (getFileName() == "ROTATETO") {
 			CBagMasterWin::setActiveCursor(6);
 			CBagStorageDev *currSDev = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
 			if ((currSDev != nullptr) && (currSDev->GetDeviceType() == SDEV_GAMEWIN)) {
@@ -215,95 +215,95 @@ bool CBagCommandObject::runObject() {
 				currWin->RotateTo(getPosition());
 			}
 
-		} else if (GetFileName() == "SETQVOL") {
+		} else if (getFileName() == "SETQVOL") {
 			CBofSound::SetQVol(getPosition().x, getPosition().y);
 
-		} else if (GetFileName() == "TURN") {
+		} else if (getFileName() == "TURN") {
 
 			// Cause 1 turn to go by
 			VARMNGR->IncrementTimers();
 
-		} else if (GetFileName() == "RP_UPDATE_QUEUE") {
+		} else if (getFileName() == "RP_UPDATE_QUEUE") {
 			// Execute any waiting residue printing results.
 			CBagRPObject::UpdateRPQueue();
 
-		} else if (GetFileName() == "RP_RUN_QUEUE") {
+		} else if (getFileName() == "RP_RUN_QUEUE") {
 			// Execute any waiting residue printing results.
 			CBagRPObject::RunRPQueue();
 
-		} else if (GetFileName() == "RP_DEACTIVATE_RESULTS") {
+		} else if (getFileName() == "RP_DEACTIVATE_RESULTS") {
 			// Execute any waiting residue printing results.
 			CBagRPObject::DeactivateRPQueue();
 
-		} else if (GetFileName() == "RP_DEACTIVATE_REVIEW") {
+		} else if (getFileName() == "RP_DEACTIVATE_REVIEW") {
 			// Execute any waiting residue printing results.
 			CBagRPObject::DeactivateRPReview();
 
-		} else if (GetFileName() == "RP_DEACTIVATE_DOSSIER") {
+		} else if (getFileName() == "RP_DEACTIVATE_DOSSIER") {
 			// Execute any waiting residue printing results.
 			CBagDossierObject::deactivateCurDossier();
 
-		} else if (GetFileName() == "RP_ACTIVATE_REVIEW") {
+		} else if (getFileName() == "RP_ACTIVATE_REVIEW") {
 			// Execute any waiting residue printing results.
 			CBagRPObject::ActivateRPReview();
 
-		} else if (GetFileName() == "SAVESTACK") {
+		} else if (getFileName() == "SAVESTACK") {
 			CBagMasterWin *pWin = CBagel::getBagApp()->getMasterWnd();
 
 			if (pWin != nullptr) {
 				pWin->SaveSDevStack();
 			}
 
-		} else if (GetFileName() == "DEATH2") {
+		} else if (getFileName() == "DEATH2") {
 			CBagel::getBagApp()->getMasterWnd()->postUserMessage(WM_DIE, 2);
 			g_allowPaintFl = false;
 
-		} else if (GetFileName() == "ENTRYTHUD") { // Thud
+		} else if (getFileName() == "ENTRYTHUD") { // Thud
 			CBofRect tmpRect(60, 50, 137, 70);
 			CBofString bmpName("$SBARDIR\\GENERAL\\POPUP\\THUDPOP.BMP");
 			MACROREPLACE(bmpName);
 			CDevDlg dlg;
-			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
+			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->getPalette(), &tmpRect);
 			dlg.doModal();
 			dlg.destroy();
 
-		} else if (GetFileName() == "ENTRYFLEE") { // Fleebix
+		} else if (getFileName() == "ENTRYFLEE") { // Fleebix
 			CBofRect tmpRect(35, 48, 114, 69);
 			CBofString bmpName("$SBARDIR\\GENERAL\\POPUP\\FLEEDAT.BMP");
 			MACROREPLACE(bmpName);
 			CDevDlg dlg;
-			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
+			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->getPalette(), &tmpRect);
 			dlg.doModal();
 			dlg.destroy();
 
-		} else if (GetFileName() == "ENTRYCLICK") { // Click's locker combo
+		} else if (getFileName() == "ENTRYCLICK") { // Click's locker combo
 			CBofRect tmpRect(60, 49, 138, 68);
 			CBofString bmpName("$SBARDIR\\GENERAL\\POPUP\\CLICKPOP.BMP");
 			MACROREPLACE(bmpName);
 			CDevDlg dlg;
-			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
+			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->getPalette(), &tmpRect);
 			dlg.doModal();
 			dlg.destroy();
 
-		} else if (GetFileName() == "ENTRYFRUIT") { // MegaWave the fruit
+		} else if (getFileName() == "ENTRYFRUIT") { // MegaWave the fruit
 			CBofRect tmpRect(35, 49, 114, 68);
 			CBofString bmpName("$SBARDIR\\GENERAL\\POPUP\\CLICKDAT.BMP");
 			MACROREPLACE(bmpName);
 			CDevDlg dlg;
-			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
+			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->getPalette(), &tmpRect);
 			dlg.doModal();
 			dlg.destroy();
 
-		} else if (GetFileName() == "D7CODE1DLG") { // Deven-7 code word
+		} else if (getFileName() == "D7CODE1DLG") { // Deven-7 code word
 			CBofRect tmpRect(10, 48, 189, 69);
 			CBofString bmpName("$SBARDIR\\GENERAL\\POPUP\\DEVENPOP.BMP");
 			MACROREPLACE(bmpName);
 			CDevDlg dlg;
-			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect, true);
+			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->getPalette(), &tmpRect, true);
 			dlg.doModal();
 			dlg.destroy();
 
-		} else if (GetFileName() == "SNAPTO") {
+		} else if (getFileName() == "SNAPTO") {
 			CBagStorageDev *currSDev = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
 			if ((currSDev != nullptr) && (currSDev->GetDeviceType() == SDEV_GAMEWIN)) {
 				CBagPanWindow *currWin= (CBagPanWindow *)currSDev;
@@ -318,22 +318,22 @@ bool CBagCommandObject::runObject() {
 				}
 			}
 
-		} else if (GetFileName() == "RESUMESOUND") {
+		} else if (getFileName() == "RESUMESOUND") {
 			CBofSound::ResumeSounds();
 
-		} else if (GetFileName() == "PAUSESOUND") {
+		} else if (getFileName() == "PAUSESOUND") {
 			CBofSound::PauseSounds();
 
-		} else if (GetFileName() == "STOPMIDI") {
+		} else if (getFileName() == "STOPMIDI") {
 			CBofSound::StopMidiSounds();
 
-		} else if (GetFileName() == "WAITWAVE") {
+		} else if (getFileName() == "WAITWAVE") {
 			CBofSound::WaitWaveSounds();
 
-		} else if (GetFileName() == "WAITMIDI") {
+		} else if (getFileName() == "WAITMIDI") {
 			CBofSound::WaitMidiSounds();
 
-		} else if (GetFileName() == "ACTIVATEPDA") {
+		} else if (getFileName() == "ACTIVATEPDA") {
 			// Get a pointer to the current game window
 			CBagStorageDevWnd *mainWin = (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev());
 			// Pull up the PDA (if it exists)
@@ -343,21 +343,21 @@ bool CBagCommandObject::runObject() {
 				((CBagPanWindow *)mainWin)->WaitForPDA();
 			}
 
-		} else if (GetFileName() == "SHOWPDALOG") {
+		} else if (getFileName() == "SHOWPDALOG") {
 			// Get a pointer to the current game window
 			CBagPDA *pda = (CBagPDA *)SDEVMNGR->GetStorageDevice("BPDA_WLD");
 			if (pda) {
 				pda->showLog();
 			}
 
-		} else if (GetFileName() == "OBJLIST") {
+		} else if (getFileName() == "OBJLIST") {
 			g_restoreObjectListFl = false;
 
-		} else if (GetFileName() == "WIN") {
+		} else if (getFileName() == "WIN") {
 			CBagMasterWin *mainWin = CBagel::getBagApp()->getMasterWnd();
 
 			if (mainWin != nullptr) {
-				CBofBitmap bmp(640, 480, CBofApp::GetApp()->GetPalette());
+				CBofBitmap bmp(640, 480, CBofApp::GetApp()->getPalette());
 				bmp.fillRect(nullptr, COLOR_BLACK);
 
 				bmp.paint(mainWin, 0, 0);
@@ -380,13 +380,13 @@ bool CBagCommandObject::runObject() {
 			CBagel::getBagApp()->getMasterWnd()->close();
 			g_engine->quitGame();
 
-		} else if (GetFileName() == "BREAK") {
+		} else if (getFileName() == "BREAK") {
 			// As far as I'm aware, this can't actually happen in the game,
 			// but what the heck, ScummVM has a console, let's hook it up
 			g_engine->getDebugger()->attach();
 
 		} else {
-			ReportError(ERR_UNKNOWN, "Invalid RUN COMMAND = %s", (const char *)GetFileName());
+			ReportError(ERR_UNKNOWN, "Invalid RUN COMMAND = %s", (const char *)getFileName());
 		}
 
 		rc = CBagObject::runObject();

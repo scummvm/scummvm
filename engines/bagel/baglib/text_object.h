@@ -60,7 +60,7 @@ public:
 
 	CBofRect getRect();
 
-	CBofSize GetSize() const {
+	CBofSize getSize() const {
 		return CBofSize(m_nDX, m_nDY);
 	}
 	void setSize(const CBofSize &xSize) {

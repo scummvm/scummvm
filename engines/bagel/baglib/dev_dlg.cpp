@@ -89,7 +89,7 @@ ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CB
 			bitmap->fillRect(nullptr, pal->GetNearestIndex(RGB(92, 92, 92)));
 
 			CBofRect bmpRect(bitmap->getRect());
-			bitmap->DrawRect(&bmpRect, pal->GetNearestIndex(RGB(0, 0, 0)));
+			bitmap->drawRect(&bmpRect, pal->GetNearestIndex(RGB(0, 0, 0)));
 			bitmap->fillRect(rect, pal->GetNearestIndex(RGB(255, 255, 255)));
 
 		} else {

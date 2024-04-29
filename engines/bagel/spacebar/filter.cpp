@@ -120,7 +120,7 @@ void VilInitFilters(CBofBitmap *pBmp) {
 		nfile.Read(buff, nfile.GetLength());
 		StrReplaceChar(buff, '\n', ' ');
 		StrReplaceChar(buff, '\r', ' ');
-		pTipBmp = new CBofBitmap((nfile.GetLength() + 1) * 7, 20, pBmp->GetPalette());
+		pTipBmp = new CBofBitmap((nfile.GetLength() + 1) * 7, 20, pBmp->getPalette());
 
 		CBofRect rct(0, 0, (nfile.GetLength() + 1) * 7, 20);
 		PaintText(pTipBmp, &rct, buff, VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(107, 0, 255), JUSTIFY_LEFT, FORMAT_DEFAULT);
@@ -133,7 +133,7 @@ void VilInitFilters(CBofBitmap *pBmp) {
 		CBofString cBString(szBString, 256);
 		cBString = VILDROIDGRAFITTI;
 		MACROREPLACE(cBString);
-		pGrafittiBmp = new CBofBitmap(cBString, pBmp->GetPalette());
+		pGrafittiBmp = new CBofBitmap(cBString, pBmp->getPalette());
 
 		// No initialization of the pChipBmp is done here - it's
 		// done on the fly inside VildroidFilter.
@@ -152,7 +152,7 @@ void TriInitFilters(CBofBitmap *pBmp) {
 	CBofString cTriStr(szTriStr, 256);
 	cTriStr = TRIFILTERBMP;
 	MACROREPLACE(cTriStr);
-	pTriBmp = new CBofBitmap(cTriStr, pBmp->GetPalette());
+	pTriBmp = new CBofBitmap(cTriStr, pBmp->getPalette());
 	triinitDone = true;
 }
 
@@ -342,7 +342,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		srcTipRect.top = 0;
 		srcTipRect.bottom = 20;
 
-		pTipBmp->ScrollLeft(VILDROIDTIPSCROLLSPEED, nullptr);
+		pTipBmp->scrollLeft(VILDROIDTIPSCROLLSPEED, nullptr);
 		rect.left = g_engine->viewRect.left;
 		rect.right = g_engine->viewRect.right;
 		rect.top = g_engine->viewRect.bottom - 20;
@@ -369,7 +369,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				CBofFile nfile(cString, CBF_READONLY);
 				buff = new char[nfile.GetLength() + 1];
 				memset(buff, 0, nfile.GetLength() + 1);
-				pChipBmp = new CBofBitmap(VILDROIDCHIPTEXTWIDTH, 300, pBmp->GetPalette());
+				pChipBmp = new CBofBitmap(VILDROIDCHIPTEXTWIDTH, 300, pBmp->getPalette());
 				nfile.Read(buff, nfile.GetLength());
 				CBofRect txtRect(0, 0, VILDROIDCHIPTEXTWIDTH, 18);
 				uint32 test = 0;
@@ -412,7 +412,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				CBofFile nfile(cString, CBF_READONLY);
 				buff = new char[nfile.GetLength() + 1];
 				memset(buff, 0, nfile.GetLength() + 1);
-				pChipBmp = new CBofBitmap(VILDROIDCHIPTEXTWIDTH, 300, pBmp->GetPalette());
+				pChipBmp = new CBofBitmap(VILDROIDCHIPTEXTWIDTH, 300, pBmp->getPalette());
 				nfile.Read(buff, nfile.GetLength());
 				CBofRect txtRect(0, 0, VILDROIDCHIPTEXTWIDTH, 18);
 				uint32 test = 0;
@@ -640,7 +640,7 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			CMainWindow::SetZzazzlVision(true);             // zzazzl paint is on in the script
 			int dx = g_engine->viewRect.width() / 3;  // + 1;
 			int dy = g_engine->viewRect.height() / 3; // + 1;
-			CBofPalette *pPal = pBmp->GetPalette();
+			CBofPalette *pPal = pBmp->getPalette();
 
 			CBofBitmap *pMiniBitmap = new CBofBitmap(dx, dy, pPal);
 
@@ -699,7 +699,7 @@ static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 	if (VARMNGR->GetVariable(hStr)->GetNumValue() > 0) {
 		bHallucinating = true;
-		CBofPalette *pPal = pBmp->GetPalette();
+		CBofPalette *pPal = pBmp->getPalette();
 		CBofBitmap *pTempBitmap = new CBofBitmap(g_engine->viewRect.width(), g_engine->viewRect.height(), pPal);
 		CBofRect tempRect = pTempBitmap->getRect();
 		CBofRect srcRect(g_engine->viewRect);
@@ -787,7 +787,7 @@ static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			pBmp->lock();
 
 			for (int i = 0; i < nHeight; i++) {
-				byte *pPixel = pBmp->GetPixelAddress(g_engine->viewRect.left, g_engine->viewRect.top + i);
+				byte *pPixel = pBmp->getPixelAddress(g_engine->viewRect.left, g_engine->viewRect.top + i);
 
 				// Fix this such that it uses predefined constants, makes for much
 				// better lightning on the mac.

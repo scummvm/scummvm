@@ -28,7 +28,7 @@ namespace Bagel {
 
 bool CBagExam::initExam() {
 	CBofRect paintRect(155, 55, 155 + 330 - 1, 55 + 250 - 1);
-	PaintBitmap(CBagel::getBagApp()->getMasterWnd()->GetCurrentGameWindow(), BuildSysDir("SSBORDER.BMP"), &paintRect);
+	paintBitmap(CBagel::getBagApp()->getMasterWnd()->GetCurrentGameWindow(), BuildSysDir("SSBORDER.BMP"), &paintRect);
 
 	Common::Event e;
 	while (g_system->getEventManager()->pollEvent(e)) {

@@ -263,9 +263,9 @@ bool CBofSprite::LoadSprite(CBofBitmap *pBitmap, int nCels) {
 
 	m_pImage = pBitmap;		// Save pointer to bitmap
 
-	pBitmap->SetReadOnly(m_bReadOnly);
+	pBitmap->setReadOnly(m_bReadOnly);
 
-	m_cSize = pBitmap->GetSize();
+	m_cSize = pBitmap->getSize();
 
 	_cRect.SetRect(0, 0, m_cSize.cx - 1, m_cSize.cy - 1);
 	m_cImageRect.SetRect(0, 0, m_cSize.cx - 1, m_cSize.cy - 1);
@@ -654,8 +654,8 @@ bool CBofSprite::SpritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint) {
 		int32 x2 = overlapRect.left - pSprite->_cRect.left + pSprite->m_cImageRect.left;
 		int32 y2 = overlapRect.top - pSprite->_cRect.top + pSprite->m_cImageRect.top;
 
-		int32 dx1 = m_pImage->WidthBytes();
-		int32 dx2 = pSprite->m_pImage->WidthBytes();
+		int32 dx1 = m_pImage->widthBytes();
+		int32 dx2 = pSprite->m_pImage->widthBytes();
 
 		byte m1 = (byte)m_nMaskColor;
 		byte m2 = (byte)pSprite->m_nMaskColor;
@@ -664,14 +664,14 @@ bool CBofSprite::SpritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint) {
 		m_pImage->lock();
 		pSprite->m_pImage->lock();
 
-		byte *pDib1 = (byte *)m_pImage->GetPixelAddress((int)x1, (int)y1);
-		byte *pDib2 = (byte *)pSprite->m_pImage->GetPixelAddress((int)x2, (int)y2);
+		byte *pDib1 = (byte *)m_pImage->getPixelAddress((int)x1, (int)y1);
+		byte *pDib2 = (byte *)pSprite->m_pImage->getPixelAddress((int)x2, (int)y2);
 
-		if (!m_pImage->IsTopDown()) {
+		if (!m_pImage->isTopDown()) {
 			dx1 = -dx1;
 		}
 
-		if (!pSprite->m_pImage->IsTopDown()) {
+		if (!pSprite->m_pImage->isTopDown()) {
 			dx2 = -dx2;
 		}
 

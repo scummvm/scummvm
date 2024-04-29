@@ -104,7 +104,7 @@ ErrorCode CBofApp::PreInit() {
 		m_pDefPalette = new CBofPalette();
 		if (m_pDefPalette != nullptr) {
 			m_pDefPalette->CreateDefault();
-			SetPalette(m_pDefPalette);
+			setPalette(m_pDefPalette);
 		}
 	}
 
@@ -208,12 +208,12 @@ ErrorCode CBofApp::PostShutDown() {
 	return _errCode;
 }
 
-void CBofApp::SetPalette(CBofPalette *pPalette) {
+void CBofApp::setPalette(CBofPalette *pPalette) {
 	m_pPalette = pPalette;
 
 	if (pPalette != nullptr) {
 		if (g_system->getScreenFormat().bytesPerPixel == 1) {
-			const HPALETTE &pal = pPalette->GetPalette();
+			const HPALETTE &pal = pPalette->getPalette();
 			g_system->getPaletteManager()->setPalette(pal._data, 0, pal._numColors);
 		}
 

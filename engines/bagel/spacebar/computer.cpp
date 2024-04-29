@@ -148,16 +148,16 @@ ErrorCode SBarComputer::attach() {
 
 		// Must have a valid backdrop by now
 		Assert(_pBackdrop != nullptr);
-		CBofPalette *pPal = _pBackdrop->GetPalette();
+		CBofPalette *pPal = _pBackdrop->getPalette();
 
 		// Build all our buttons
 		for (int i = 0; i < NUM_COMPBUTT; i++) {
 			if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
 
-				CBofBitmap *pUp = LoadBitmap(BuildBarcDir(g_stButtons[i].m_pszUp), pPal);
-				CBofBitmap *pDown = LoadBitmap(BuildBarcDir(g_stButtons[i].m_pszDown), pPal);
-				CBofBitmap *pFocus = LoadBitmap(BuildBarcDir(g_stButtons[i].m_pszFocus), pPal);
-				CBofBitmap *pDis = LoadBitmap(BuildBarcDir(g_stButtons[i].m_pszDisabled), pPal);
+				CBofBitmap *pUp = loadBitmap(BuildBarcDir(g_stButtons[i].m_pszUp), pPal);
+				CBofBitmap *pDown = loadBitmap(BuildBarcDir(g_stButtons[i].m_pszDown), pPal);
+				CBofBitmap *pFocus = loadBitmap(BuildBarcDir(g_stButtons[i].m_pszFocus), pPal);
+				CBofBitmap *pDis = loadBitmap(BuildBarcDir(g_stButtons[i].m_pszDisabled), pPal);
 
 				m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 				m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i]._nID);
@@ -427,7 +427,7 @@ ErrorCode SBarComputer::CreateDrinksListBox() {
 			m_pDrinkBox->setPointSize(12);
 			m_pDrinkBox->setItemHeight(20);
 
-			CBofPalette *pPal = _pBackdrop->GetPalette();
+			CBofPalette *pPal = _pBackdrop->getPalette();
 			byte PalIdx = pPal->GetNearestIndex(RGB(255, 0, 0));
 
 			m_pDrinkBox->setHighlightColor(pPal->getColor(PalIdx));
@@ -462,7 +462,7 @@ ErrorCode SBarComputer::CreateIngListBox() {
 			m_pIngBox->setPointSize(12);
 			m_pIngBox->setItemHeight(20);
 
-			CBofPalette *pPal = _pBackdrop->GetPalette();
+			CBofPalette *pPal = _pBackdrop->getPalette();
 			byte PalIdx = pPal->GetNearestIndex(RGB(255, 0, 0));
 
 			m_pIngBox->setHighlightColor(pPal->getColor(PalIdx));
@@ -716,7 +716,7 @@ void SBarComputer::Order() {
 			// If the player is out of nuggets, then put up a text message.
 			if (nCredits < 1) {
 				CBofBitmap saveBackground(640, 480, (CBofPalette *)nullptr, false);
-				saveBackground.CaptureScreen(this, &_compTextWindow);
+				saveBackground.captureScreen(this, &_compTextWindow);
 				PaintBeveledText(this, &_compTextWindow, szBroke, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
 
 				WaitForInput();
@@ -728,7 +728,7 @@ void SBarComputer::Order() {
 				pSoldierSDev = SDEVMNGR->GetStorageDevice("SOLDIER_WLD");
 
 				CBofBitmap saveBackgroundTwo(640, 480, (CBofPalette *)nullptr, false);
-				saveBackgroundTwo.CaptureScreen(this, &_compTextWindow);
+				saveBackgroundTwo.captureScreen(this, &_compTextWindow);
 
 				// Don't allow him to order if he has other drinks in the Soldier CIC or stash
 				if (pSoldierSDev) {

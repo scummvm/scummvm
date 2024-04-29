@@ -48,18 +48,18 @@ bool CBagExpressionObject::runObject() {
 		m_xExpression->Evaluate(false, xVar);
 
 		if (!IsConditional()) {
-			if (GetFileName().IsEmpty())
+			if (getFileName().IsEmpty())
 				return false;
 
-			int nIndex = GetFileName().Find("~~");
+			int nIndex = getFileName().Find("~~");
 			if (nIndex > 0) { // This is a reference
-				CBofString sObject = GetFileName().Left(nIndex);
-				CBofString sProperty = GetFileName().Mid(nIndex + 2);
+				CBofString sObject = getFileName().Left(nIndex);
+				CBofString sProperty = getFileName().Mid(nIndex + 2);
 
 				SDEVMNGR->SetObjectValue(sObject, sProperty, xVar.GetNumValue());
 
 			} else {
-				CBagVar *pVar = VARMNGR->GetVariable(GetFileName());
+				CBagVar *pVar = VARMNGR->GetVariable(getFileName());
 				if (pVar)
 					pVar->SetValue(xVar.GetValue());
 			}

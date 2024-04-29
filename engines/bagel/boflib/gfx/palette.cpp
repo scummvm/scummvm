@@ -62,15 +62,15 @@ CBofPalette::~CBofPalette() {
 	// If we trash the games palette, then reset it back to nullptr.
 	CBofApp *pApp;
 	if ((pApp = CBofApp::GetApp()) != nullptr) {
-		if (this == pApp->GetPalette()) {
-			pApp->SetPalette(nullptr);
+		if (this == pApp->getPalette()) {
+			pApp->setPalette(nullptr);
 		}
 	}
 
 	ReleasePalette();
 }
 
-void CBofPalette::SetPalette(const HPALETTE &hPalette) {
+void CBofPalette::setPalette(const HPALETTE &hPalette) {
 	Assert(IsValidObject(this));
 
 	ReleasePalette();

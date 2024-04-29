@@ -112,7 +112,7 @@ public:
 		return m_cPosition;
 	}
 
-	CBofSize GetSize() const {
+	CBofSize getSize() const {
 		return m_cSize;
 	}
 
@@ -136,8 +136,8 @@ public:
 		return m_nMaskColor;
 	}
 
-	byte ReadPixel(int x, int y) const {
-		return m_pImage->ReadPixel(x, y);
+	byte readPixel(int x, int y) const {
+		return m_pImage->readPixel(x, y);
 	}
 
 	void SetZOrder(int nValue);
@@ -159,8 +159,8 @@ public:
 	void LinkSprite();
 	void UnlinkSprite();
 
-	const char *GetFileName() const {
-		return m_pImage->GetFileName();
+	const char *getFileName() const {
+		return m_pImage->getFileName();
 	}
 
 	static void OpenLibrary(CBofPalette *pPal);

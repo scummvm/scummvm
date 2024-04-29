@@ -125,7 +125,7 @@ ErrorCode CBagCursor::load(const char *fileName, CBofPalette *pal) {
 
 	unLoad();
 
-	_bitmap = LoadBitmap(fileName, pal, _sharedPalFl);
+	_bitmap = loadBitmap(fileName, pal, _sharedPalFl);
 
 	return _errCode;
 }
@@ -139,7 +139,7 @@ void CBagCursor::unLoad() {
 
 void CBagCursor::setCurrent() {
 	_currentCursor = this;
-	CursorMan.replaceCursorPalette(_bitmap->GetPalette()->GetData(), 0, PALETTE_COUNT);
+	CursorMan.replaceCursorPalette(_bitmap->getPalette()->GetData(), 0, PALETTE_COUNT);
 	CursorMan.replaceCursor(_bitmap->getSurface(), _x, _y, 1);
 }
 

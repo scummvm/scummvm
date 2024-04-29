@@ -97,9 +97,9 @@ public:
 		return m_pWindow;
 	}
 
-	void SetPalette(CBofPalette *pPalette);
+	void setPalette(CBofPalette *pPalette);
 
-	CBofPalette *GetPalette() const {
+	CBofPalette *getPalette() const {
 		return m_pPalette;
 	}
 

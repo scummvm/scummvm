@@ -46,17 +46,17 @@ void CBagNextCDDialog::onInitDialog() {
 	CBofPalette *pPal;
 
 	Assert(_pBackdrop != nullptr);
-	pPal = _pBackdrop->GetPalette();
+	pPal = _pBackdrop->getPalette();
 	selectPalette(pPal);
 
 	// Build all our buttons
 	if ((m_pButton = new CBofBmpButton) != nullptr) {
 		CBofBitmap *pUp, *pDown, *pFocus, *pDis;
 
-		pUp = LoadBitmap(BuildSysDir("CDOKUP.BMP"), pPal);
-		pDown = LoadBitmap(BuildSysDir("CDOKDN.BMP"), pPal);
-		pFocus = LoadBitmap(BuildSysDir("CDOKUP.BMP"), pPal);
-		pDis = LoadBitmap(BuildSysDir("CDOKUP.BMP"), pPal);
+		pUp = loadBitmap(BuildSysDir("CDOKUP.BMP"), pPal);
+		pDown = loadBitmap(BuildSysDir("CDOKDN.BMP"), pPal);
+		pFocus = loadBitmap(BuildSysDir("CDOKUP.BMP"), pPal);
+		pDis = loadBitmap(BuildSysDir("CDOKUP.BMP"), pPal);
 
 		m_pButton->loadBitmaps(pUp, pDown, pFocus, pDis);
 

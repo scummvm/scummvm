@@ -128,8 +128,8 @@ bool CBagFMovie::openMovie(const char *sFilename) {
 		m_pBmpBuf->lock();
 		m_pBmpBuf->fillRect(nullptr, m_pSmackerPal->GetNearestIndex(RGB(255, 255, 255)));
 
-		m_nReversed = !(m_pBmpBuf->IsTopDown());
-		m_pBufferStart = (char *)m_pBmpBuf->GetPixelAddress(0, m_nReversed * (m_pBmpBuf->height() - 1));
+		m_nReversed = !(m_pBmpBuf->isTopDown());
+		m_pBufferStart = (char *)m_pBmpBuf->getPixelAddress(0, m_nReversed * (m_pBmpBuf->height() - 1));
 		m_nBufferLength = ABS(m_pBmpBuf->height() * m_pBmpBuf->width());
 
 		const Graphics::Surface *frame = _pSmk->decodeNextFrame();
@@ -181,7 +181,7 @@ void CBagFMovie::onMainLoop() {
 				m_pBmpBuf->getSurface().blitFrom(*frame);
 			}
 
-			m_pBmpBuf->Paint1To1(m_pFilterBmp);
+			m_pBmpBuf->paint1To1(m_pFilterBmp);
 
 			// Filter the bitmap.
 			CBagMasterWin *pWnd = CBagel::getBagApp()->getMasterWnd();

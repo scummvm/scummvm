@@ -76,7 +76,7 @@ ErrorCode CBagStorageDevBmp::SetWorkBmp() {
 
 	CBofBitmap *pBmp = getBackground();
 	if (pBmp != nullptr) {
-		m_pWorkBmp = new CBofBitmap(pBmp->width(), pBmp->height(), pBmp->GetPalette());
+		m_pWorkBmp = new CBofBitmap(pBmp->width(), pBmp->height(), pBmp->getPalette());
 		pBmp->paint(m_pWorkBmp);
 	}
 

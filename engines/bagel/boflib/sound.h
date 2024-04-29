@@ -94,7 +94,7 @@ public:
 		return (CBofSound *)m_pPrev;
 	}
 
-	char *GetFileName() {
+	char *getFileName() {
 		return &m_szFileName[0];
 	}
 

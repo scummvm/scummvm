@@ -198,8 +198,8 @@ public:
 		m_pSlideBitmap->SetFOV(fov);
 	}
 
-	CBofPalette *GetPalette() {
-		return m_pSlideBitmap->GetPalette();
+	CBofPalette *getPalette() {
+		return m_pSlideBitmap->getPalette();
 	}
 
 	uint32 Benchmark();

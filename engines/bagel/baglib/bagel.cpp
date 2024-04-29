@@ -262,15 +262,15 @@ void CBagel::showNextCDDialog(CBofWindow *parentWin, int diskId) {
 	switch (diskId) {
 
 	case 1:
-		pBmp = Bagel::LoadBitmap(BuildSysDir("DISK1.BMP"), pPal);
+		pBmp = Bagel::loadBitmap(BuildSysDir("DISK1.BMP"), pPal);
 		break;
 
 	case 2:
-		pBmp = Bagel::LoadBitmap(BuildSysDir("DISK2.BMP"), pPal);
+		pBmp = Bagel::loadBitmap(BuildSysDir("DISK2.BMP"), pPal);
 		break;
 
 	case 3:
-		pBmp = Bagel::LoadBitmap(BuildSysDir("DISK3.BMP"), pPal);
+		pBmp = Bagel::loadBitmap(BuildSysDir("DISK3.BMP"), pPal);
 		break;
 
 	// Shouldn't ever get here

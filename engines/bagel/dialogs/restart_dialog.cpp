@@ -70,15 +70,15 @@ void CBagRestartDialog::onInitDialog() {
 	Assert(_pBackdrop != nullptr);
 
 	// Save off the current game's palette
-	m_pSavePalette = CBofApp::GetApp()->GetPalette();
+	m_pSavePalette = CBofApp::GetApp()->getPalette();
 
 	// Insert ours
-	CBofPalette *pPal = _pBackdrop->GetPalette();
-	CBofApp::GetApp()->SetPalette(pPal);
+	CBofPalette *pPal = _pBackdrop->getPalette();
+	CBofApp::GetApp()->setPalette(pPal);
 
 	// Paint the SaveList Box onto the background
 	if (_pBackdrop != nullptr) {
-		pPal = _pBackdrop->GetPalette();
+		pPal = _pBackdrop->getPalette();
 		CBofBitmap cBmp(BuildSysDir("RESTDBOX.BMP"), pPal);
 		cBmp.paint(_pBackdrop, 181, 182);
 	}
@@ -89,10 +89,10 @@ void CBagRestartDialog::onInitDialog() {
 
 		if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
 
-			CBofBitmap *pUp = LoadBitmap(BuildSysDir(g_stRestartButtons[i].m_pszUp), pPal);
-			CBofBitmap *pDown = LoadBitmap(BuildSysDir(g_stRestartButtons[i].m_pszDown), pPal);
-			CBofBitmap *pFocus = LoadBitmap(BuildSysDir(g_stRestartButtons[i].m_pszFocus), pPal);
-			CBofBitmap *pDis = LoadBitmap(BuildSysDir(g_stRestartButtons[i].m_pszDisabled), pPal);
+			CBofBitmap *pUp = loadBitmap(BuildSysDir(g_stRestartButtons[i].m_pszUp), pPal);
+			CBofBitmap *pDown = loadBitmap(BuildSysDir(g_stRestartButtons[i].m_pszDown), pPal);
+			CBofBitmap *pFocus = loadBitmap(BuildSysDir(g_stRestartButtons[i].m_pszFocus), pPal);
+			CBofBitmap *pDis = loadBitmap(BuildSysDir(g_stRestartButtons[i].m_pszDisabled), pPal);
 
 			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 
@@ -125,9 +125,9 @@ void CBagRestartDialog::onClose() {
 	CBofDialog::onClose();
 
 	if (_nReturnValue != RESTART_BTN) {
-		CBofApp::GetApp()->SetPalette(m_pSavePalette);
+		CBofApp::GetApp()->setPalette(m_pSavePalette);
 	} else {
-		CBofApp::GetApp()->SetPalette(nullptr);
+		CBofApp::GetApp()->setPalette(nullptr);
 	}
 }
 
@@ -165,7 +165,7 @@ void CBagRestartDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 				cRect.bottom = cRect.top + 50 - 1;
 
 				CBofCursor::hide();
-				PaintBitmap(this, cStr, &cRect);
+				paintBitmap(this, cStr, &cRect);
 
 				pWin->NewGame();
 				CBofCursor::show();
@@ -226,7 +226,7 @@ void CBagRestartDialog::onBofButton(CBofObject *pObject, int nFlags) {
 				cRect.bottom = cRect.top + 50 - 1;
 
 				CBofCursor::hide();
-				PaintBitmap(this, cStr, &cRect);
+				paintBitmap(this, cStr, &cRect);
 
 				pWin->NewGame();
 				CBofCursor::show();
