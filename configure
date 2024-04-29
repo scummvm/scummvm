@@ -6794,6 +6794,7 @@ if test "$_imgui" != no ; then
 				;;
 		esac
 	else
+		_imgui=no
 		echo "no (requires OpenGL)"
 	fi
 else
