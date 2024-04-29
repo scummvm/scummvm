@@ -176,7 +176,7 @@ bool CBagMovieObject::runObject() {
 				CBofRect r(160, 60, 480, 300);
 
 				// Offset the rect for the movies to compensate for all screen sizes
-				r.OffsetRect(((CBofWindow *)pMainWin)->GetWindowRect().TopLeft());
+				r.OffsetRect(((CBofWindow *)pMainWin)->getWindowRect().TopLeft());
 
 				// If we have a movie playing in the zoom pda, then black out
 				// the background.  Examine movies will always play with a black background
@@ -194,7 +194,7 @@ bool CBagMovieObject::runObject() {
 					}
 
 					CBofWindow *wnd = CBagel::getBagApp()->getMasterWnd();
-					pMovie->Show();
+					pMovie->show();
 					CBofApp::GetApp()->GetMainWindow()->FlushAllMessages();
 					wnd->FlushAllMessages();
 					pMovie->initExam();
@@ -211,7 +211,7 @@ bool CBagMovieObject::runObject() {
 				CBofRect r(80, 10, 80 + 480 - 1, 10 + 360 - 1);
 
 				// Offset the rect for the movies to compensate for all screen sizes
-				r.OffsetRect(((CBofWindow *)pMainWin)->GetWindowRect().TopLeft());
+				r.OffsetRect(((CBofWindow *)pMainWin)->getWindowRect().TopLeft());
 
 				if (m_xDisplayType == DISP_TYPE::PDAMSG || m_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
 					// Pull up the PDA (if it exists)
@@ -264,7 +264,7 @@ bool CBagMovieObject::runObject() {
 					CBagFMovie *pMovie = new CBagFMovie(CBofApp::GetApp()->GetMainWindow(), sFileName, &r);
 
 					if (pMovie != nullptr && pMovie->ErrorOccurred() == false) {
-						pMovie->Show();
+						pMovie->show();
 						CBofApp::GetApp()->GetMainWindow()->FlushAllMessages();
 						pWnd->FlushAllMessages();
 						pMovie->play(false);
@@ -308,7 +308,7 @@ bool CBagMovieObject::runObject() {
 							pNewWin = new CBofWindow();
 							if (pNewWin) {
 								pNewWin->create("BLACK", 0, 0, 640, 480, CBofApp::GetApp()->GetMainWindow(), 0);
-								pNewWin->Show();
+								pNewWin->show();
 								pNewWin->FillWindow(COLOR_BLACK);
 							}
 						}
@@ -327,7 +327,7 @@ bool CBagMovieObject::runObject() {
 						if (pMovie && pMovie->ErrorOccurred() == false) {
 							// Stop any asnych movies already playing
 							pPDA->stopMovie(true);
-							pMovie->Show();
+							pMovie->show();
 							CBofApp::GetApp()->GetMainWindow()->FlushAllMessages();
 							pWnd->FlushAllMessages();
 							pMovie->play(false);

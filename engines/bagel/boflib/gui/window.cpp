@@ -65,7 +65,7 @@ CBofWindow::~CBofWindow() {
 	delete _surface;
 	_surface = nullptr;
 
-	KillMyTimers();
+	killMyTimers();
 
 	// Remove it from any parent
 	if (_parent != nullptr)
@@ -78,7 +78,7 @@ CBofWindow::~CBofWindow() {
 
 	KillBackdrop();
 
-	Destroy();
+	destroy();
 }
 
 ErrorCode CBofWindow::initialize() {
@@ -97,7 +97,7 @@ Common::Point CBofWindow::getMousePos() {
 	return Common::Point(_mouseX, _mouseY);
 }
 
-void CBofWindow::Destroy() {
+void CBofWindow::destroy() {
 	ReleaseCapture();
 
 	if (_surface != nullptr) {
@@ -110,7 +110,7 @@ void CBofWindow::Destroy() {
 	setParent(nullptr);
 }
 
-void CBofWindow::ValidateAnscestors(CBofRect *pRect) {
+void CBofWindow::validateAnscestors(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	CBofWindow *pParent;
@@ -119,7 +119,7 @@ void CBofWindow::ValidateAnscestors(CBofRect *pRect) {
 	pParent = _parent;
 	while (pParent != nullptr) {
 		pParent->ValidateRect(pRect);
-		pParent = pParent->GetParent();
+		pParent = pParent->getParent();
 	}
 }
 
@@ -143,8 +143,8 @@ ErrorCode CBofWindow::create(const char *pszName, int x, int y, int nWidth, int 
 	// Calculate effective bounds
 	Common::Rect stRect(x, y, x + nWidth, y + nHeight);
 	if (pParent != nullptr)
-		stRect.translate(pParent->GetWindowRect().left,
-			pParent->GetWindowRect().top);
+		stRect.translate(pParent->getWindowRect().left,
+			pParent->getWindowRect().top);
 
 	delete _surface;
 	_surface = new Graphics::ManagedSurface(*g_engine->_screen, stRect);
@@ -156,7 +156,7 @@ ErrorCode CBofWindow::create(const char *pszName, int x, int y, int nWidth, int 
 		}
 
 		// Retain local coordinates (based on own window)
-		_cRect.SetRect(0, 0, _cWindowRect.Width() - 1, _cWindowRect.Height() - 1);
+		_cRect.SetRect(0, 0, _cWindowRect.width() - 1, _cWindowRect.Height() - 1);
 	}
 
 	return _errCode;
@@ -194,7 +194,7 @@ ErrorCode CBofWindow::create(const char *pszName, const CBofRect *pRect, CBofWin
 	if (pRect != nullptr) {
 		x = pRect->left;
 		y = pRect->top;
-		nWidth = pRect->Width();
+		nWidth = pRect->width();
 		nHeight = pRect->Height();
 	}
 
@@ -228,7 +228,7 @@ bool CBofWindow::HasFocus() const {
 	return CBofApp::GetApp()->getFocusControl() == this;
 }
 
-void CBofWindow::Center() {
+void CBofWindow::center() {
 	Assert(IsValidObject(this));
 
 	CBofWindow *pParent;
@@ -237,49 +237,49 @@ void CBofWindow::Center() {
 	if ((pParent = _parent) != nullptr) {
 		CBofRect cWindowRect;
 
-		cWindowRect = pParent->GetWindowRect();
-		x = cWindowRect.left + (pParent->Width() - Width()) / 2;
+		cWindowRect = pParent->getWindowRect();
+		x = cWindowRect.left + (pParent->width() - width()) / 2;
 		y = cWindowRect.top + (pParent->Height() - Height()) / 2;
 
 	} else {
-		x = (CBofApp::GetApp()->ScreenWidth() - Width()) / 2;
+		x = (CBofApp::GetApp()->screenWidth() - width()) / 2;
 		y = (CBofApp::GetApp()->ScreenHeight() - Height()) / 2;
 	}
 
-	Move(x, y);
+	move(x, y);
 }
 
-void CBofWindow::Move(const int x, const int y, bool bRepaint) {
+void CBofWindow::move(const int x, const int y, bool bRepaint) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 
 	// We now have a new position (in screen coordinates)
-	_cWindowRect.SetRect(x, y, x + _cRect.Width() - 1, y + _cRect.Height() - 1);
+	_cWindowRect.SetRect(x, y, x + _cRect.width() - 1, y + _cRect.Height() - 1);
 
 	// Recreate the surface at the new screen position
 	delete _surface;
 	_surface = new Graphics::ManagedSurface(*g_engine->_screen, _cWindowRect);
 }
 
-void CBofWindow::ReSize(CBofRect *pRect, bool bRepaint) {
+void CBofWindow::reSize(CBofRect *pRect, bool bRepaint) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 	Assert(pRect != nullptr);
 
 	// We now have a new position (in screen coordinates)
 	_cWindowRect = *pRect;
-	_cRect.SetRect(0, 0, _cWindowRect.Width() - 1, _cWindowRect.Height() - 1);
+	_cRect.SetRect(0, 0, _cWindowRect.width() - 1, _cWindowRect.Height() - 1);
 
 	// Recreate the surface at the new screen position
 	delete _surface;
 	_surface = new Graphics::ManagedSurface(*g_engine->_screen, _cWindowRect);
 }
 
-void CBofWindow::Select() {
+void CBofWindow::select() {
 	// No implementation in ScummVM
 }
 
-void CBofWindow::Show() {
+void CBofWindow::show() {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
@@ -292,7 +292,7 @@ void CBofWindow::Show() {
 	}
 }
 
-void CBofWindow::Hide() {
+void CBofWindow::hide() {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
@@ -302,12 +302,12 @@ void CBofWindow::Hide() {
 	}
 }
 
-void CBofWindow::PostMessage(uint32 nMessage, uint32 lParam1, uint32 lParam2) {
+void CBofWindow::postMessage(uint32 nMessage, uint32 lParam1, uint32 lParam2) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 }
 
-void CBofWindow::SetTimer(uint32 nID, uint32 nInterval, BofCallback pCallBack) {
+void CBofWindow::setTimer(uint32 nID, uint32 nInterval, BofCallback pCallBack) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 
@@ -339,7 +339,7 @@ void CBofWindow::SetTimer(uint32 nID, uint32 nInterval, BofCallback pCallBack) {
 	_timers.push_back(WindowTimer(nInterval, nID, pCallBack));
 }
 
-void CBofWindow::KillTimer(uint32 nID) {
+void CBofWindow::killTimer(uint32 nID) {
 	Assert(IsValidObject(this));
 
 	// Remove the timer from the window timer list
@@ -367,7 +367,7 @@ void CBofWindow::KillTimer(uint32 nID) {
 	}
 }
 
-void CBofWindow::KillMyTimers() {
+void CBofWindow::killMyTimers() {
 	Assert(IsValidObject(this));
 
 	CBofTimerPacket *pTimer, *pNextTimer;
@@ -377,18 +377,18 @@ void CBofWindow::KillMyTimers() {
 		pNextTimer = (CBofTimerPacket *)pTimer->GetNext();
 
 		if (pTimer->m_pOwnerWindow == this) {
-			KillTimer(pTimer->m_nID);
+			killTimer(pTimer->m_nID);
 		}
 
 		pTimer = pNextTimer;
 	}
 }
 
-void CBofWindow::CheckTimers() {
+void CBofWindow::checkTimers() {
 	uint32 currTime;
 
 	for (uint i = 0; i < _children.size(); ++i)
-		_children[i]->CheckTimers();
+		_children[i]->checkTimers();
 
 	for (bool timersChanged = true; timersChanged;) {
 		timersChanged = false;
@@ -426,14 +426,14 @@ void CBofWindow::ClientToScreen(CBofPoint *pPoint) {
 	// Not needed in ScummVM
 }
 
-CBofRect CBofWindow::GetClientRect() {
+CBofRect CBofWindow::getClientRect() {
 	Assert(IsValidObject(this));
 
-	CBofRect cRect(0, 0, _cRect.Width() - 1, _cRect.Height() - 1);
+	CBofRect cRect(0, 0, _cRect.width() - 1, _cRect.Height() - 1);
 	return cRect;
 }
 
-void CBofWindow::PostUserMessage(uint32 lMessage, uint32 lExtraInfo) {
+void CBofWindow::postUserMessage(uint32 lMessage, uint32 lExtraInfo) {
 	Common::Event e;
 	e.type = (Common::EventType)EVENT_USER;
 	e.mouse.x = lMessage;
@@ -442,7 +442,7 @@ void CBofWindow::PostUserMessage(uint32 lMessage, uint32 lExtraInfo) {
 	g_system->getEventManager()->pushEvent(e);
 }
 
-CBofWindow *CBofWindow::GetAnscestor() {
+CBofWindow *CBofWindow::getAnscestor() {
 	Assert(IsValidObject(this));
 
 	CBofWindow *pCurWnd, *pLastWnd;
@@ -585,7 +585,7 @@ void CBofWindow::handleEvents() {
 	CBofWindow *focus = CBofApp::GetApp()->getFocusControl();
 
 	// Check for expired timers before handling events
-	CheckTimers();
+	checkTimers();
 
 	while (g_system->getEventManager()->pollEvent(e)) {
 		if (capture)
@@ -629,7 +629,7 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 		for (uint i = 0; i < _children.size(); ++i) {
 			auto &child = *_children[i];
 			if (child.IsVisible() && child.isEnabled() &&
-					child.GetWindowRect().PtInRect(mousePos)) {
+					child.getWindowRect().PtInRect(mousePos)) {
 				child.handleEvent(event);
 				return;
 			}
@@ -679,7 +679,7 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 	case Common::EVENT_KEYDOWN:
 		uint32 lNewKey;
 
-		if ((lNewKey = TranslateKey(event)) != BKEY_UNKNOWN) {
+		if ((lNewKey = translateKey(event)) != BKEY_UNKNOWN) {
 			onKeyHit(lNewKey, event.kbdRepeat ? 1 : 0);
 		}
 		break;
@@ -705,7 +705,7 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 }
 
 
-uint32 CBofWindow::TranslateKey(const Common::Event &event) const {
+uint32 CBofWindow::translateKey(const Common::Event &event) const {
 	uint32 nCode = BKEY_UNKNOWN;
 
 	switch (event.kbd.keycode) {
@@ -758,7 +758,7 @@ void CBofWindow::FillWindow(byte iColor) {
 }
 
 void CBofWindow::FillRect(CBofRect *pRect, byte iColor) {
-	CBofBitmap cBmp(Width(), Height(), CBofApp::GetApp()->GetPalette());
+	CBofBitmap cBmp(width(), Height(), CBofApp::GetApp()->GetPalette());
 	cBmp.FillRect(pRect, iColor);
 	cBmp.paint(this, 0, 0);
 }

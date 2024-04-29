@@ -51,7 +51,7 @@ ErrorCode SBarThud::attach() {
 	// save a copy of the you icon
 	m_xYouBmp = new CBofBitmap(GetBackgroundName());
 
-	if ((m_xYouBmp == nullptr) || (m_xYouBmp->Height() <= 0) || (m_xYouBmp->Width() <= 0)) {
+	if ((m_xYouBmp == nullptr) || (m_xYouBmp->Height() <= 0) || (m_xYouBmp->width() <= 0)) {
 		BofMessageBox("You icon in Thud: Background Opened Failed", __FILE__);
 		return ERR_FOPEN;
 	}

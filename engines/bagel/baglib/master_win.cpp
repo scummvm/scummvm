@@ -83,7 +83,7 @@ CBagMasterWin::CBagMasterWin() {
 
 	CBofApp *pApp = CBofApp::GetApp();
 	if (pApp != nullptr) {
-		cRect.SetRect(0, 0, pApp->ScreenWidth() - 1, pApp->ScreenHeight() - 1);
+		cRect.SetRect(0, 0, pApp->screenWidth() - 1, pApp->ScreenHeight() - 1);
 		pAppName = pApp->GetAppName();
 	}
 
@@ -171,14 +171,14 @@ ErrorCode CBagMasterWin::ShowSystemDialog(bool bSaveBackground) {
 
 		cOptionDialog.SetBackdrop(pBmp);
 
-		CBofRect cRect = cOptionDialog.GetBackdrop()->GetRect();
+		CBofRect cRect = cOptionDialog.GetBackdrop()->getRect();
 
 		if (!bSaveBackground) {
 			cOptionDialog.setFlags(cOptionDialog.getFlags() & ~BOFDLG_SAVEBACKGND);
 		}
 
 		// Create the dialog box
-		cOptionDialog.create("System Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), this);
+		cOptionDialog.create("System Dialog", cRect.left, cRect.top, cRect.width(), cRect.Height(), this);
 
 		CBofWindow *pLastWin = g_hackWindow;
 		g_hackWindow = &cOptionDialog;
@@ -194,7 +194,7 @@ ErrorCode CBagMasterWin::ShowSystemDialog(bool bSaveBackground) {
 
 		// User chose to Quit
 		if (nReturnValue == 0) {
-			Close();
+			close();
 		}
 	}
 
@@ -213,7 +213,7 @@ ErrorCode CBagMasterWin::ShowCreditsDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 	cCreditsDialog.SetBackdrop(pBmp);
 
-	CBofRect cRect = cCreditsDialog.GetBackdrop()->GetRect();
+	CBofRect cRect = cCreditsDialog.GetBackdrop()->getRect();
 
 	// Don't allow save of background?
 	if (!bSaveBkg) {
@@ -228,7 +228,7 @@ ErrorCode CBagMasterWin::ShowCreditsDialog(CBofWindow *pWin, bool bSaveBkg) {
 	}
 
 	// Create the dialog box
-	cCreditsDialog.create("Save Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pWin);
+	cCreditsDialog.create("Save Dialog", cRect.left, cRect.top, cRect.width(), cRect.Height(), pWin);
 
 	bool bSaveTimer = g_bPauseTimer;
 	g_bPauseTimer = true;
@@ -262,14 +262,14 @@ bool CBagMasterWin::ShowQuitDialog(CBofWindow *pWin, bool bSaveBackground) {
 
 		cQuitDialog.SetBackdrop(pBmp);
 
-		CBofRect cRect = cQuitDialog.GetBackdrop()->GetRect();
+		CBofRect cRect = cQuitDialog.GetBackdrop()->getRect();
 
 		if (!bSaveBackground) {
 			cQuitDialog.setFlags(cQuitDialog.getFlags() & ~BOFDLG_SAVEBACKGND);
 		}
 
 		// Create the dialog box
-		cQuitDialog.create("Quit Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pWin);
+		cQuitDialog.create("Quit Dialog", cRect.left, cRect.top, cRect.width(), cRect.Height(), pWin);
 
 		bool bSaveTimer = g_bPauseTimer;
 		g_bPauseTimer = true;
@@ -455,7 +455,7 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 			CBofFile cFile;
 			cFile.open(sWldFileName);
 			cFile.Read(pBuf, nLength);
-			cFile.Close();
+			cFile.close();
 
 			CBagMasterWin::LoadFileFromStream(fpInput, sStartWldName);
 
@@ -467,7 +467,7 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 		if (pBagApp != nullptr) {
 			_errCode = pBagApp->verifyCDInDrive(m_nDiskID, m_cCDChangeAudio.GetBuffer());
 			if (_errCode != ERR_NONE || g_engine->shouldQuit()) {
-				Close();
+				close();
 				return _errCode;
 			}
 		}
@@ -480,7 +480,7 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 			}
 		}
 
-		SetActiveCursor(0);
+		setActiveCursor(0);
 		CBagWield::SetWieldCursor(-1);
 
 		if (g_restoreObjectListFl) {
@@ -602,7 +602,7 @@ ErrorCode CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 				CBofFile cFile;
 				cFile.open(sWldFileName);
 				cFile.Read(pBuf, nLength);
-				cFile.Close();
+				cFile.close();
 
 				while (!fpInput.eof()) {
 					fpInput.EatWhite();
@@ -707,7 +707,7 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 					GetAlphaNumFromStream(fpInput, typestr);
 				} else if (!sWorkStr.Find("RECT")) {
 					fpInput.EatWhite();
-					GetRectFromStream(fpInput, rRect);
+					getRectFromStream(fpInput, rRect);
 				} else if (!sWorkStr.Find("FILTER")) {
 					fpInput.EatWhite();
 					GetIntFromStream(fpInput, nFilter);
@@ -732,7 +732,7 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 			// as the ID specified for this .WLD script file.
 			pSDev->SetDiskID(m_nDiskID);
 
-			if (rRect.Width() && rRect.Height())
+			if (rRect.width() && rRect.Height())
 				pSDev->SetRect(rRect);
 
 			pSDev->LoadFileFromStream(fpInput, namestr, false);
@@ -983,7 +983,7 @@ ErrorCode CBagMasterWin::SetStorageDev(const CBofString &sWldName, bool bEntry) 
 
 		strncpy(g_szString[g_nString], sWldName, 511);
 
-		PostUserMessage(WM_ENTERNEWWLD, (uint32)g_nString);
+		postUserMessage(WM_ENTERNEWWLD, (uint32)g_nString);
 
 		if (++g_nString >= NUM_MSG_STRINGS) {
 			g_nString = 0;
@@ -1001,7 +1001,7 @@ ErrorCode CBagMasterWin::SetStorageDev(const CBofString &sWldName, bool bEntry) 
 		Assert(sWldName.GetLength() < 512);
 		Common::strcpy_s(g_szString[g_nString], sWldName);
 
-		PostUserMessage(WM_EXITCLOSEUPWINDOW, (uint32)g_nString);
+		postUserMessage(WM_EXITCLOSEUPWINDOW, (uint32)g_nString);
 
 		if (++g_nString >= NUM_MSG_STRINGS) {
 			g_nString = 0;
@@ -1038,13 +1038,13 @@ ErrorCode CBagMasterWin::OnHelp(const CBofString &sHelpFile, bool /*bSaveBkg*/, 
 		CBofBitmap *pBmp = Bagel::LoadBitmap(sBkg);
 		cHelp.SetBackdrop(pBmp);
 
-		CBofRect cRect = cHelp.GetBackdrop()->GetRect();
+		CBofRect cRect = cHelp.GetBackdrop()->getRect();
 
 		if (pParent == nullptr)
 			pParent = this;
 
 		// create the dialog box
-		cHelp.create("HelpDialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pParent);
+		cHelp.create("HelpDialog", cRect.left, cRect.top, cRect.width(), cRect.Height(), pParent);
 
 		cHelp.SetHelpFile(sFile.GetBuffer());
 		cHelp.doModal();
@@ -1104,7 +1104,7 @@ void CBagMasterWin::onKeyHit(uint32 lKey, uint32 lRepCount) {
 	case BKEY_ALT_q:
 	case BKEY_ALT_F4:
 		if (g_engine->isDemo() || ShowQuitDialog(this, false)) {
-			Close();
+			close();
 			g_engine->quitGame();
 		}
 		break;
@@ -1311,7 +1311,7 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 		// Kill any waiting PDA messages that are queued up...
 		CBagPDA::RemoveFromMovieQueue(nullptr);
 
-		CBofBitmap cBmp(Width(), Height(), CBagel::GetApp()->GetPalette());
+		CBofBitmap cBmp(width(), Height(), CBagel::GetApp()->GetPalette());
 		cBmp.FillRect(nullptr, COLOR_BLACK);
 		cBmp.FadeLines(this, 0, 0);
 
@@ -1346,7 +1346,7 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 			break;
 
 		case QUIT_BTN:
-			Close();
+			close();
 			g_engine->quitGame();
 			break;
 		}
@@ -1423,7 +1423,7 @@ ErrorCode CBagMasterWin::Run() {
 	return _errCode;
 }
 
-void CBagMasterWin::SetActiveCursor(int iCursor) {
+void CBagMasterWin::setActiveCursor(int iCursor) {
 	Assert(iCursor >= 0 && iCursor < MAX_CURSORS);
 
 	if (m_cCursorList[iCursor] != nullptr) {
@@ -1567,7 +1567,7 @@ bool CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 			cSaveDialog.SetBackdrop(pBmp);
 
-			CBofRect cRect = cSaveDialog.GetBackdrop()->GetRect();
+			CBofRect cRect = cSaveDialog.GetBackdrop()->getRect();
 
 			// Don't allow save of background
 			if (!bSaveBkg) {
@@ -1576,7 +1576,7 @@ bool CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, bool bSaveBkg) {
 			}
 
 			// Create the dialog box
-			cSaveDialog.create("Save Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pWin);
+			cSaveDialog.create("Save Dialog", cRect.left, cRect.top, cRect.width(), cRect.Height(), pWin);
 
 			bool bSaveTimer = g_bPauseTimer;
 			g_bPauseTimer = true;
@@ -1736,7 +1736,7 @@ bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 		cRestoreDialog.SetBackdrop(pBmp);
 
-		CBofRect cRect = cRestoreDialog.GetBackdrop()->GetRect();
+		CBofRect cRect = cRestoreDialog.GetBackdrop()->getRect();
 
 		// Don't allow save of background
 		if (!bSaveBkg) {
@@ -1747,7 +1747,7 @@ bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 		}
 
 		// Create the dialog box
-		cRestoreDialog.create("Restore Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pWin);
+		cRestoreDialog.create("Restore Dialog", cRect.left, cRect.top, cRect.width(), cRect.Height(), pWin);
 
 		CBofWindow *pLastWin = g_hackWindow;
 		g_hackWindow = &cRestoreDialog;
@@ -1760,7 +1760,7 @@ bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 		cRestoreDialog.Detach();
 
 		bRestored = (!cRestoreDialog.ErrorOccurred() && cRestoreDialog.Restored());
-		cRestoreDialog.Destroy();
+		cRestoreDialog.destroy();
 
 		g_hackWindow = pLastWin;
 
@@ -1979,12 +1979,12 @@ ErrorCode PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString &
 	Assert(pBmp != nullptr);
 	Assert(pRect != nullptr);
 
-	CBofBitmap cBmp(pRect->Width(), pRect->Height(), nullptr, false);
+	CBofBitmap cBmp(pRect->width(), pRect->Height(), nullptr, false);
 
 	// Assume no error
 	ErrorCode errCode = ERR_NONE;
 
-	CBofRect r = cBmp.GetRect();
+	CBofRect r = cBmp.getRect();
 
 	CBofPalette *pPal = nullptr;
 	CBofApp *pApp = CBofApp::GetApp();
@@ -2035,12 +2035,12 @@ ErrorCode PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &
 	Assert(pWin != nullptr);
 	Assert(pRect != nullptr);
 
-	CBofBitmap cBmp(pRect->Width(), pRect->Height(), nullptr, false);
+	CBofBitmap cBmp(pRect->width(), pRect->Height(), nullptr, false);
 
 	// Assume no error
 	ErrorCode errCode = ERR_NONE;
 
-	CBofRect r = cBmp.GetRect();
+	CBofRect r = cBmp.getRect();
 	CBofPalette *pPal = nullptr;
 	CBofApp *pApp = CBofApp::GetApp();
 	if (pApp != nullptr) {
@@ -2098,7 +2098,7 @@ ErrorCode WaitForInput() {
 	return ERR_NONE;
 }
 
-void CBagMasterWin::Close() {
+void CBagMasterWin::close() {
 	Assert(IsValidObject(this));
 
 	g_allowPaintFl = false;

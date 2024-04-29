@@ -116,7 +116,7 @@ ErrorCode CBofText::SetupText(const CBofRect *pRect, int nJustify, uint32 nForma
 
 	// Setup the fields for location and size of the text area
 	_cRect = *pRect;
-	m_cSize.cx = _cRect.Width();
+	m_cSize.cx = _cRect.width();
 	m_cSize.cy = _cRect.Height();
 
 	if (m_pWork != nullptr) {
@@ -155,7 +155,7 @@ ErrorCode CBofText::SetupTextOpt(const CBofRect *pRect, int nJustify, uint32 nFo
 
 	// Setup the fields for location and size of the text area
 	_cRect = *pRect;
-	m_cSize.cx = _cRect.Width();
+	m_cSize.cx = _cRect.width();
 	m_cSize.cy = _cRect.Height();
 
 	return _errCode;
@@ -249,7 +249,7 @@ ErrorCode CBofText::DisplayText(CBofWindow *pWnd, const char *pszText, CBofRect 
 	Assert(pszText != nullptr);
 	Assert(pRect != nullptr);
 
-	CBofRect cRect(0, 0, pRect->Width() - 1, pRect->Height() - 1);
+	CBofRect cRect(0, 0, pRect->width() - 1, pRect->Height() - 1);
 
 	Assert(m_pBackground != nullptr);
 	Assert(m_pWork != nullptr);
@@ -276,14 +276,14 @@ ErrorCode CBofText::DisplayText(CBofBitmap *pBmp, const char *pszText, CBofRect 
 	Assert(pszText != nullptr);
 	Assert(pRect != nullptr);
 
-	CBofRect cRect(0, 0, pRect->Width() - 1, pRect->Height() - 1);
+	CBofRect cRect(0, 0, pRect->width() - 1, pRect->Height() - 1);
 
 	Assert(m_pWork != nullptr);
 
 	Assert(m_pBackground != nullptr);
 
 	if (!m_bSaved) {
-		CBofRect r = m_pBackground->GetRect();
+		CBofRect r = m_pBackground->getRect();
 		pBmp->paint(m_pBackground, &r, pRect);
 		m_bSaved = true;
 	}
@@ -336,7 +336,7 @@ ErrorCode CBofText::DisplayTextEx(CBofBitmap *pBmp, const char *pszText, CBofRec
 
 	// Split lines
 	Common::U32StringArray lines;
-	font->wordWrapText(Common::U32String(pszText, Common::kWindows1252), pRect->Width(), lines);
+	font->wordWrapText(Common::U32String(pszText, Common::kWindows1252), pRect->width(), lines);
 
 	// Iterate the lines to get the maximum width
 	int maxWidth = 0;
@@ -482,7 +482,7 @@ ErrorCode PaintShadowedText(CBofBitmap *pBmp, CBofRect *pRect, const char *pszSt
 }
 
 CBofRect CalculateTextRect(CBofWindow *pWnd, const CBofString *pStr, int nSize, int nFont) {
-	return CalculateTextRect(pWnd->GetRect(), pStr, nSize, nFont);
+	return CalculateTextRect(pWnd->getRect(), pStr, nSize, nFont);
 }
 
 CBofRect CalculateTextRect(CBofRect rect, const CBofString *pStr, int nSize, int nFont) {
@@ -491,7 +491,7 @@ CBofRect CalculateTextRect(CBofRect rect, const CBofString *pStr, int nSize, int
 
 	// Wrap the text as necessary
 	Common::U32StringArray lines;
-	font->wordWrapText(Common::U32String(pStr->GetBuffer(), Common::kWindows1252), rect.Width(), lines);
+	font->wordWrapText(Common::U32String(pStr->GetBuffer(), Common::kWindows1252), rect.width(), lines);
 
 	// Iterate the lines to get the maximum width
 	int maxWidth = 0;

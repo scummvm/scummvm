@@ -124,7 +124,7 @@ void VilInitFilters(CBofBitmap *pBmp) {
 
 		CBofRect rct(0, 0, (nfile.GetLength() + 1) * 7, 20);
 		PaintText(pTipBmp, &rct, buff, VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(107, 0, 255), JUSTIFY_LEFT, FORMAT_DEFAULT);
-		nfile.Close();
+		nfile.close();
 		delete buff;
 
 		// Graffiti bitmap.
@@ -167,7 +167,7 @@ void LightningInitFilters() {
 	}
 }
 
-void DestroyFilters() {
+void destroyFilters() {
 	if (pTipBmp) {
 		delete pTipBmp;
 		pTipBmp = nullptr;
@@ -298,12 +298,12 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		// rectangle.
 
 		// Now intersect that rectangle with the bitmap's rectangle.
-		g_engine->viewRect.IntersectRect(pBmp->GetRect(), g_engine->viewPortRect);
+		g_engine->viewRect.IntersectRect(pBmp->getRect(), g_engine->viewPortRect);
 	}
 
 	if (g_pHudOn->GetNumValue() == 1) {
 		if (g_pDGrafiti->GetNumValue()) {
-			CBofRect SrcRect(pGrafittiBmp->GetRect());
+			CBofRect SrcRect(pGrafittiBmp->getRect());
 			pGrafittiBmp->paint(pBmp, g_engine->viewRect.left, g_engine->viewRect.top, &SrcRect, 1);
 		}
 
@@ -395,7 +395,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 						txtRect.bottom += 18;
 					}
 				}
-				nfile.Close();
+				nfile.close();
 				CMainWindow::chipdisp = true;
 				delete buff;
 				break;
@@ -438,7 +438,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 						txtRect.bottom += 18;
 					}
 				}
-				nfile.Close();
+				nfile.close();
 				CMainWindow::chipdisp = true;
 				delete buff;
 				break;
@@ -553,7 +553,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		} else {
 			// Chip is Green or Blue (ID 1 or 2)
 			if (pChipBmp != nullptr) {
-				int rdef = g_engine->viewRect.Width() - VILDROIDCHIPTEXTWIDTH;
+				int rdef = g_engine->viewRect.width() - VILDROIDCHIPTEXTWIDTH;
 				int tdef = g_engine->viewRect.Height() - 300;
 				CBofRect tmprct(0, 0, VILDROIDCHIPTEXTWIDTH, 300);                 // (tdef/2)
 
@@ -603,11 +603,11 @@ static bool TriFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		// rectangle.
 
 		// Now intersect that rectangle with the bitmap's rectangle.
-		g_engine->viewRect.IntersectRect(pBmp->GetRect(), g_engine->viewPortRect);
+		g_engine->viewRect.IntersectRect(pBmp->getRect(), g_engine->viewPortRect);
 	}
 
 	if (VARMNGR->GetVariable("GLASSESON")->GetNumValue()) {
-		CBofRect SrcRect(pTriBmp->GetRect());
+		CBofRect SrcRect(pTriBmp->getRect());
 		pTriBmp->paint(pBmp, g_engine->viewRect.left, g_engine->viewRect.top, &SrcRect, 1);
 	}
 	return true;
@@ -628,7 +628,7 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		// rectangle.
 
 		// Now intersect that rectangle with the bitmap's rectangle.
-		g_engine->viewRect.IntersectRect(pBmp->GetRect(), g_engine->viewPortRect);
+		g_engine->viewRect.IntersectRect(pBmp->getRect(), g_engine->viewPortRect);
 	}
 
 	zStr = "ZZAZZLVISION";
@@ -638,7 +638,7 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		bZzazzlVision = true;
 		if (pVar->GetNumValue() > 0) {
 			CMainWindow::SetZzazzlVision(true);             // zzazzl paint is on in the script
-			int dx = g_engine->viewRect.Width() / 3;  // + 1;
+			int dx = g_engine->viewRect.width() / 3;  // + 1;
 			int dy = g_engine->viewRect.Height() / 3; // + 1;
 			CBofPalette *pPal = pBmp->GetPalette();
 
@@ -646,7 +646,7 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 			if (pMiniBitmap != nullptr) {
 				CBofRect dstRect(g_engine->viewRect);
-				CBofRect srcRect = pMiniBitmap->GetRect();
+				CBofRect srcRect = pMiniBitmap->getRect();
 				pBmp->paint(pMiniBitmap, &srcRect, &dstRect);
 
 				CBofRect &filterRect = CMainWindow::GetFilterRect();
@@ -692,7 +692,7 @@ static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		// rectangle.
 
 		// Now intersect that rectangle with the bitmap's rectangle.
-		g_engine->viewRect.IntersectRect(pBmp->GetRect(), g_engine->viewPortRect);
+		g_engine->viewRect.IntersectRect(pBmp->getRect(), g_engine->viewPortRect);
 	}
 
 	hStr = "HALLUCINATE";
@@ -700,8 +700,8 @@ static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	if (VARMNGR->GetVariable(hStr)->GetNumValue() > 0) {
 		bHallucinating = true;
 		CBofPalette *pPal = pBmp->GetPalette();
-		CBofBitmap *pTempBitmap = new CBofBitmap(g_engine->viewRect.Width(), g_engine->viewRect.Height(), pPal);
-		CBofRect tempRect = pTempBitmap->GetRect();
+		CBofBitmap *pTempBitmap = new CBofBitmap(g_engine->viewRect.width(), g_engine->viewRect.Height(), pPal);
+		CBofRect tempRect = pTempBitmap->getRect();
 		CBofRect srcRect(g_engine->viewRect);
 		CBofRect dstRect = tempRect;
 		pBmp->paint(pTempBitmap, &dstRect, &srcRect);   // Copy the Screen's Bmp into Temp
@@ -774,13 +774,13 @@ static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				// rectangle.
 
 				// Now intersect that rectangle with the bitmap's rectangle.
-				g_engine->viewRect.IntersectRect(pBmp->GetRect(), g_engine->viewPortRect);
+				g_engine->viewRect.IntersectRect(pBmp->getRect(), g_engine->viewPortRect);
 			}
 
 			// To give the illusion of a lightning bolt strike,
 			// we'll spin through the bitmap and coerce pixels which are black
 			// to be white and pixels which are not black be black.
-			int nWidth = g_engine->viewRect.Width();
+			int nWidth = g_engine->viewRect.width();
 			int nHeight = g_engine->viewRect.Height();
 
 			// Need to lock down this bitmap to make sure we can get it's bits

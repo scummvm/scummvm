@@ -124,7 +124,7 @@ ErrorCode CBagCreditsDialog::LoadNextTextFile() {
 	}
 
 	// Create a new work area
-	if ((m_pCreditsBmp = new CBofBitmap(cRect.Width(), cRect.Height() + LINE_HEIGHT + 2, _pBackdrop->GetPalette())) != nullptr) {
+	if ((m_pCreditsBmp = new CBofBitmap(cRect.width(), cRect.Height() + LINE_HEIGHT + 2, _pBackdrop->GetPalette())) != nullptr) {
 		m_pCreditsBmp->FillRect(nullptr, MY_MASK_COLOR);
 
 		// Kill any previous work area
@@ -132,8 +132,8 @@ ErrorCode CBagCreditsDialog::LoadNextTextFile() {
 			delete m_pSaveBmp;
 		}
 
-		if ((m_pSaveBmp = new CBofBitmap(m_pCreditsBmp->Width(), m_pCreditsBmp->Height(), _pBackdrop->GetPalette())) != nullptr) {
-			CBofRect tmpRect = m_pSaveBmp->GetRect();
+		if ((m_pSaveBmp = new CBofBitmap(m_pCreditsBmp->width(), m_pCreditsBmp->Height(), _pBackdrop->GetPalette())) != nullptr) {
+			CBofRect tmpRect = m_pSaveBmp->getRect();
 			_pBackdrop->paint(m_pSaveBmp, &tmpRect, &cRect);
 
 		} else {
@@ -227,7 +227,7 @@ void CBagCreditsDialog::onPaint(CBofRect *pRect) {
 
 	PaintBackdrop(pRect);
 
-	ValidateAnscestors();
+	validateAnscestors();
 }
 
 void CBagCreditsDialog::onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
@@ -270,7 +270,7 @@ ErrorCode CBagCreditsDialog::DisplayCredits() {
 
 			m_pSaveBmp->paint(_pBackdrop, g_cScreen[m_iScreen].m_nLeft, g_cScreen[m_iScreen].m_nTop);
 			CBofRect cRect;
-			cRect.SetRect(0, 0, m_pCreditsBmp->Width() - 1, m_pCreditsBmp->Height() - 1 - (LINE_HEIGHT + 2));
+			cRect.SetRect(0, 0, m_pCreditsBmp->width() - 1, m_pCreditsBmp->Height() - 1 - (LINE_HEIGHT + 2));
 			m_pCreditsBmp->paint(_pBackdrop, g_cScreen[m_iScreen].m_nLeft, g_cScreen[m_iScreen].m_nTop, &cRect, MY_MASK_COLOR);
 
 			if (g_b1) {
@@ -280,7 +280,7 @@ ErrorCode CBagCreditsDialog::DisplayCredits() {
 			} else {
 				cRect.left = g_cScreen[m_iScreen].m_nLeft;
 				cRect.top = g_cScreen[m_iScreen].m_nTop;
-				cRect.right = cRect.left + m_pCreditsBmp->Width() - 1;
+				cRect.right = cRect.left + m_pCreditsBmp->width() - 1;
 				cRect.bottom = cRect.top + m_pCreditsBmp->Height() - 1 - (LINE_HEIGHT + 2);
 				_pBackdrop->paint(this, &cRect, &cRect);
 			}
@@ -289,7 +289,7 @@ ErrorCode CBagCreditsDialog::DisplayCredits() {
 			// Strip off top layer so it won't wrap around
 			int i;
 			for (i = 0; i < PIX_SCROLL_DY; i++) {
-				m_pCreditsBmp->Line(0, i, m_pCreditsBmp->Width() - 1, i, MY_MASK_COLOR);
+				m_pCreditsBmp->Line(0, i, m_pCreditsBmp->width() - 1, i, MY_MASK_COLOR);
 			}
 
 			// Scroll text up 1 pixel
@@ -327,7 +327,7 @@ ErrorCode CBagCreditsDialog::NextScreen() {
 	} else {
 		// Since there are no more screens to show, then we are outta here
 		m_bDisplay = false;
-		Close();
+		close();
 	}
 
 	return _errCode;
@@ -341,7 +341,7 @@ ErrorCode CBagCreditsDialog::PaintLine(int nLine, char *pszText) {
 
 	CBofRect cRect;
 
-	cRect.SetRect(0, nLine * LINE_HEIGHT, m_pCreditsBmp->Width() - 1, (nLine + 1) * LINE_HEIGHT - 1);
+	cRect.SetRect(0, nLine * LINE_HEIGHT, m_pCreditsBmp->width() - 1, (nLine + 1) * LINE_HEIGHT - 1);
 
 	m_pCreditsBmp->FillRect(&cRect, MY_MASK_COLOR);
 

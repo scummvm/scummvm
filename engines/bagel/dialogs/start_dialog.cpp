@@ -84,7 +84,7 @@ void CBagStartDialog::onInitDialog() {
 
 			_buttons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 			_buttons[i]->create(g_stStartButtons[i].m_pszName, g_stStartButtons[i].m_nLeft, g_stStartButtons[i].m_nTop, g_stStartButtons[i].m_nWidth, g_stStartButtons[i].m_nHeight, this, g_stStartButtons[i].m_nID);
-			_buttons[i]->Show();
+			_buttons[i]->show();
 
 		} else {
 			ReportError(ERR_MEMORY);
@@ -126,7 +126,7 @@ void CBagStartDialog::onPaint(CBofRect *pRect) {
 
 	PaintBackdrop(pRect);
 
-	ValidateAnscestors();
+	validateAnscestors();
 }
 
 
@@ -136,7 +136,7 @@ void CBagStartDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 	switch (lKey) {
 	case BKEY_ESC:
 		setReturnValue(QUIT_BTN);
-		Close();
+		close();
 		break;
 
 	default:
@@ -162,12 +162,12 @@ void CBagStartDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 			CBagMasterWin *pWin = pApp->getMasterWnd();
 
 			if ((pWin != nullptr) && pWin->ShowRestoreDialog(this)) {
-				Close();
+				close();
 			}
 		}
 	} else {
 		setReturnValue(nId);
-		Close();
+		close();
 	}
 }
 

@@ -78,7 +78,7 @@ ErrorCode CBagTextObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 
 	if ((pBmp != nullptr) && isAttached() && !(getText().IsEmpty())) {
 
-		if (pBmp->GetRect().PtInRect(pt)) {
+		if (pBmp->getRect().PtInRect(pt)) {
 
 			CBofRect r(pt, pSrcRect->Size());
 
@@ -92,7 +92,7 @@ ErrorCode CBagTextObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 				byte c1 = 3;
 				byte c2 = 9;
 
-				cBevel.IntersectRect(pBmp->GetRect(), r);
+				cBevel.IntersectRect(pBmp->getRect(), r);
 
 				int left = cBevel.left;
 				int top = cBevel.top;
@@ -152,7 +152,7 @@ ErrorCode CBagTextObject::attach() {
 				if (pTextBuff != nullptr) {
 					// Read the text file into buffers
 					fpTextFile.Read(pTextBuff, nFileLen);
-					fpTextFile.Close();
+					fpTextFile.close();
 
 					*m_psText += pTextBuff;
 
@@ -481,13 +481,13 @@ bool CBagTextObject::runObject() {
 				CBofPoint cPoint(0, 0);
 
 				CBofPalette *pPal = pApp->GetPalette();
-				CBofBitmap cBmp(cRect.Width(), cRect.Height(), pPal);
+				CBofBitmap cBmp(cRect.width(), cRect.Height(), pPal);
 
 				cBmp.FillRect(nullptr, pPal->GetNearestIndex(RGB(92, 92, 92)));
 
 				CBagMenuDlg cDlg;
 				cDlg.create(pParent, pPal, &cRect);
-	
+
 				update(cDlg.GetBackdrop(), cPoint, &cRect);
 
 				CBagPDA *pPDA = nullptr;
@@ -503,15 +503,15 @@ bool CBagTextObject::runObject() {
 				if (pPDAZ && pPDAZ->getZoomed() == true) {
 					CBofRect zRect = pPDAZ->getViewRect();
 					Assert(zRect.Height() > 0 && zRect.Height() < 480);
-					Assert(zRect.Width() > 0 && zRect.Width() < 640);
-					cDlg.Move(80, zRect.bottom - cRect.Height(), true); // xxx
+					Assert(zRect.width() > 0 && zRect.width() < 640);
+					cDlg.move(80, zRect.bottom - cRect.Height(), true); // xxx
 				} else if ((pPDA != nullptr) && (pPDA->isActivated() || pPDA->isActivating())) {
-					cDlg.Move(80, 10, true);
+					cDlg.move(80, 10, true);
 
 				} else {
 					int x = 80;
 					int y = 360 + 10 - cRect.Height();
-					cDlg.Move(x, y, true);
+					cDlg.move(x, y, true);
 				}
 				g_bPauseTimer = true;
 				cDlg.doModal();
@@ -555,7 +555,7 @@ void CBagTextObject::RecalcTextRect(bool bTextFromFile) {
 		if (pPanWin->GetDeviceType() == SDEV_GAMEWIN) {
 			ViewRect = pPanWin->GetViewPort();
 		} else {
-			ViewRect = pPanWin->GetClientRect();
+			ViewRect = pPanWin->getClientRect();
 		}
 	}
 
@@ -590,7 +590,7 @@ void CBagTextObject::RecalcTextRect(bool bTextFromFile) {
 	}
 
 	if (bTextFromFile) {
-		cDisplaySize.cx = ViewRect.Width();
+		cDisplaySize.cx = ViewRect.width();
 		cDisplaySize.cy = cSize.cy;
 
 		// If for some reason (CIC, CHAT) we got too large

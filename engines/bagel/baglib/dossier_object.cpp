@@ -146,7 +146,7 @@ PARSE_CODES CBagDossierObject::setInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				if ((char)istr.peek() == '[') {
 					CBofRect r;
-					GetRectFromStream(istr, r);
+					getRectFromStream(istr, r);
 					_indexRect = r;
 				}
 			} else {
@@ -233,7 +233,7 @@ ErrorCode CBagDossierObject::attach() {
 	}
 
 	SetVisible(false); // Don't display until needed.
-	SetActive(false);  // Not active until we need it.
+	setActive(false);  // Not active until we need it.
 	return ec;
 }
 
@@ -303,7 +303,7 @@ void CBagDossierObject::activateDossierObject(CBagLog *logWld) {
 	}
 
 	SetVisible(); // can see this thing now...
-	SetActive();  // make sure it counts for something
+	setActive();  // make sure it counts for something
 
 	// Starting state will ALWAYS be index first
 	_dossierSetFl = false;
@@ -318,7 +318,7 @@ void CBagDossierObject::deactivateDossierObject(CBagLog *logWld) {
 	}
 
 	SetVisible(false); // Cover it up
-	SetActive(false);  // Make sure it counts for something
+	setActive(false);  // Make sure it counts for something
 	SetLocal(false);   // Not local anymore
 }
 
@@ -386,7 +386,7 @@ void CBagDossierObject::showDossierText() {
 	// Let the residue printing object know which one we're displaying.
 
 	CBagRPObject *pRPObj = (CBagRPObject *)_residuePrintedObject;
-	pRPObj->SetActiveDossier(this);
+	pRPObj->setActiveDossier(this);
 }
 
 } // namespace Bagel

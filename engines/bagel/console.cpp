@@ -122,7 +122,7 @@ bool Console::cmdSave(int argc, const char **argv) {
 	CBagSaveGameFile saves(true);
 	saves.WriteSavedGame();
 
-	saves.Close();
+	saves.close();
 
 	debugPrintf("Created new spacebar.sav in saves folder.\n");
 	return true;

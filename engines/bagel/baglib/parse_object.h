@@ -120,7 +120,7 @@ public:
 	int GetAlphaNumFromStream(bof_ifstream &istr, CBofString &sStr);
 	int GetOperStrFromStream(bof_ifstream &istr, CBofString &sStr);
 	int GetIntFromStream(bof_ifstream &istr, int &nNum);
-	int GetRectFromStream(bof_ifstream &istr, CBofRect &rect);
+	int getRectFromStream(bof_ifstream &istr, CBofRect &rect);
 	int GetVectorFromStream(bof_ifstream &istr, CBagVector &vector);
 	int GetKeywordFromStream(bof_ifstream &istr, KEYWORDS &keyword);
 	int PutbackStringOnStream(bof_ifstream &istr, const CBofString &sStr);

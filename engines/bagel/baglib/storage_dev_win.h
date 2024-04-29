@@ -193,7 +193,7 @@ public:
 	bool Contains(CBagObject *pObj, bool bActive = true);
 
 	// virtual CBofRect GetLocation()                       { return CBofRect(); }
-	CBofRect GetRect() {
+	CBofRect getRect() {
 		return m_cDestRect;
 	}
 	void SetRect(const CBofRect &xRect) {
@@ -310,7 +310,7 @@ public:
 	virtual ErrorCode attach(); // This function attaches the background and necessary bitmaps
 	virtual ErrorCode detach(); // This function attaches the background and necessary bitmaps
 
-	virtual ErrorCode Close();
+	virtual ErrorCode close();
 
 	virtual ErrorCode LoadObjects();
 	virtual ErrorCode ReleaseObjects();
@@ -431,7 +431,7 @@ public:
 	virtual ErrorCode attach(); // This function attaches the background and necessary bitmaps
 	virtual ErrorCode detach(); // This function attaches the background and necessary bitmaps
 
-	virtual ErrorCode Close();
+	virtual ErrorCode close();
 	virtual ErrorCode RunModal(CBagObject *pObj);
 	virtual void onTimer(uint32 nTimerId);
 
@@ -453,7 +453,7 @@ public:
 	ErrorCode PaintWithCursor(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
 
 	virtual CBofRect GetLocation() {
-		return GetWindowRect();
+		return getWindowRect();
 	}
 
 	virtual ErrorCode setBackground(CBofBitmap *pBmp);
@@ -509,7 +509,7 @@ public:
 	}
 
 	virtual CBofRect GetLocation() {
-		return GetWindowRect();
+		return getWindowRect();
 	}
 
 	virtual ErrorCode setBackground(CBofBitmap *pBmp) {
@@ -530,7 +530,7 @@ public:
 
 	virtual ErrorCode attach(); // This function attaches the background and necessary bitmaps
 
-	virtual ErrorCode Close();
+	virtual ErrorCode close();
 
 	virtual const CBofString &GetHelpFilename() {
 		return m_sHelpFileName;

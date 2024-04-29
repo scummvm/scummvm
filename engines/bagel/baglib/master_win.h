@@ -91,13 +91,13 @@ public:
 	virtual ~CBagMasterWin();
 	virtual ErrorCode Run();
 
-	void Close();
+	void close();
 
 	CBofString &GetWldScript() {
 		return m_cWldScript;
 	}
 
-	static void SetActiveCursor(int iCursor);
+	static void setActiveCursor(int iCursor);
 	static int GetActiveCursor() {
 		return m_nCurCursor;
 	}

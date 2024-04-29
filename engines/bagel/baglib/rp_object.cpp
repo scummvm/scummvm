@@ -804,7 +804,7 @@ bool CBagRPObject::ActivateRPObject() {
 
 	// Make sure this guy is active and ready to get drawn.
 	SetVisible(); // show this guy
-	SetActive();  // accept mouse downs
+	setActive();  // accept mouse downs
 
 	CBagLog *pLogWld;
 	if (Zoomed()) {
@@ -901,7 +901,7 @@ void CBagRPObject::DeactivateRPObject() {
 
 	if (m_pDescObj) {
 		m_pDescObj->SetVisible(false);  // Hide this guy
-		m_pDescObj->SetActive(false);   // Don't take mousedowns
+		m_pDescObj->setActive(false);   // Don't take mousedowns
 		m_pDescObj->SetFloating(false); // Don't calculate floating rects
 	}
 	SetVisible(false); // Hide this guy
@@ -958,7 +958,7 @@ void CBagRPObject::DeactivateRPReview() {
 		if (pRPObj->m_pObjectName) {
 			pRPObj->m_pObjectName->SetFloating(false);
 			pRPObj->m_pObjectName->SetVisible(false);
-			pRPObj->m_pObjectName->SetActive(false);
+			pRPObj->m_pObjectName->setActive(false);
 		}
 	}
 }
@@ -1366,7 +1366,7 @@ void CBagRPObject::HideRPReview() {
 		if (pRPObj->m_pObjectName) {
 			pRPObj->m_pObjectName->SetVisible(false);  // hide this guy
 			pRPObj->m_pObjectName->SetFloating(false); // don't arrange floating pages
-			pRPObj->m_pObjectName->SetActive(false);   // don't accept mouse downs
+			pRPObj->m_pObjectName->setActive(false);   // don't accept mouse downs
 		}
 	}
 }
@@ -1402,7 +1402,7 @@ void CBagRPObject::ShowRPReview() {
 					}
 					pRPObj->m_pObjectName->SetVisible();
 					pRPObj->m_pObjectName->SetFloating();
-					pRPObj->m_pObjectName->SetActive();
+					pRPObj->m_pObjectName->setActive();
 
 					// If the time on this object has not yet been set, then force it to
 					// be re-read into memory and append the current time to it.
@@ -1554,7 +1554,7 @@ bool CBagRPObject::initialize() {
 		m_pObjectName->SetRPObject(this);
 
 		m_pObjectName->SetVisible(false);
-		m_pObjectName->SetActive(false);
+		m_pObjectName->setActive(false);
 		m_pObjectName->SetFloating(false);
 	}
 
@@ -1623,7 +1623,7 @@ CBagDossierObject *CBagRPObject::GetActiveDossier() {
 }
 
 // Used to set the currently active dossier when one is displayed to the user.
-void CBagRPObject::SetActiveDossier(CBagDossierObject *pDosObj) {
+void CBagRPObject::setActiveDossier(CBagDossierObject *pDosObj) {
 	CBofList<DossierObj *> *pDosList = (m_bTouched ? m_pTouchedList : m_pUntouchedList);
 	DossierObj *p = nullptr;
 

@@ -151,7 +151,7 @@ public:
 	 * Closes current data-file, if it's not already closed
 	 * @return          Error return code
 	 */
-	ErrorCode Close();
+	ErrorCode close();
 
 	/**
 	 * Destroys current data-file, if any, and starts a new empty one

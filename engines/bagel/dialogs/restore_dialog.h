@@ -36,7 +36,7 @@ namespace Bagel {
 
 class CBagRestoreDialog : public CBofDialog {
 private:
-	ErrorCode RestoreAndClose();
+	ErrorCode RestoreAndclose();
 
 	CBofBmpButton *m_pButtons[NUM_RESTORE_BTNS];
 	CBofScrollBar *m_pScrollBar = nullptr;

@@ -29,14 +29,14 @@ const CBofRect CBagPanBitmap::GetMaxView(CBofSize s) {
 	CBofRect r;
 
 	if (m_bPanorama) {
-		int h = 3 * (int)((double)Width() / (MAXDIVVIEW * 4));
+		int h = 3 * (int)((double)width() / (MAXDIVVIEW * 4));
 		if (h > Height())
 			h = Height();
 
-		r.SetRect(0, 0, (int)(Width() / MAXDIVVIEW - 2), h - 1);
+		r.SetRect(0, 0, (int)(width() / MAXDIVVIEW - 2), h - 1);
 
 	} else {
-		r.SetRect(0, 0, Width() - 1, Height() - 1);
+		r.SetRect(0, 0, width() - 1, Height() - 1);
 	}
 
 	if (s.cx > 0 && r.right > s.cx) {
@@ -53,7 +53,7 @@ const CBofRect CBagPanBitmap::GetMaxView(CBofSize s) {
 
 CBagPanBitmap::CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, const CBofRect &xViewSize) :
 		CBofBitmap(pszFileName, pPalette, true) {
-	int nW = Width();
+	int nW = width();
 	int nH = Height();
 
 	if (nW && nH) {
@@ -75,11 +75,11 @@ CBagPanBitmap::CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, con
 		else
 			m_xCurrView = xViewSize;
 
-		if (m_xCurrView.Width() > xMaxViewSize.Width()) {
-			m_xCurrView.SetRect(0, m_xCurrView.top, xMaxViewSize.Width() - 1, m_xCurrView.bottom);
+		if (m_xCurrView.width() > xMaxViewSize.width()) {
+			m_xCurrView.SetRect(0, m_xCurrView.top, xMaxViewSize.width() - 1, m_xCurrView.bottom);
 		}
 
-		m_xRotateRate.x = (nW - m_xCurrView.Width()) / 64 + 1;
+		m_xRotateRate.x = (nW - m_xCurrView.width()) / 64 + 1;
 		m_xRotateRate.y = (nH - m_xCurrView.Height()) / 64 + 1;
 
 		NormalizeViewSize();
@@ -90,9 +90,9 @@ CBagPanBitmap::CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, con
 		// this causes the cosine table to be allocated incorrectly in
 		// GenerateCosineTable.  Move the initialization before SetFOV.
 		if (m_bPanorama)
-			SetCorrWidth(4);
+			setCorrWidth(4);
 		else
-			SetCorrWidth(0);
+			setCorrWidth(0);
 
 		m_bIsValid = true;
 
@@ -103,7 +103,7 @@ CBagPanBitmap::CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, con
 
 CBagPanBitmap::CBagPanBitmap(int dx, int dy, CBofPalette *pPalette, const CBofRect &xViewSize) :
 		CBofBitmap(dx, dy, pPalette) {
-	int nW = Width();
+	int nW = width();
 	int nH = Height();
 
 	if (nW && nH) {
@@ -125,11 +125,11 @@ CBagPanBitmap::CBagPanBitmap(int dx, int dy, CBofPalette *pPalette, const CBofRe
 		else
 			m_xCurrView = xViewSize;
 
-		if (m_xCurrView.Width() > xMaxViewSize.Width()) {
-			m_xCurrView.SetRect(0, m_xCurrView.top, xMaxViewSize.Width() - 1, m_xCurrView.bottom);
+		if (m_xCurrView.width() > xMaxViewSize.width()) {
+			m_xCurrView.SetRect(0, m_xCurrView.top, xMaxViewSize.width() - 1, m_xCurrView.bottom);
 		}
 
-		m_xRotateRate.x = (nW - m_xCurrView.Width()) / 64 + 1;
+		m_xRotateRate.x = (nW - m_xCurrView.width()) / 64 + 1;
 		m_xRotateRate.y = (nH - m_xCurrView.Height()) / 64 + 1;
 
 		NormalizeViewSize();
@@ -137,9 +137,9 @@ CBagPanBitmap::CBagPanBitmap(int dx, int dy, CBofPalette *pPalette, const CBofRe
 		SetFOV(DEFFOV); // If FOV is set to 0 then unity FOV is assumed (faster redraws)
 
 		if (m_bPanorama)
-			SetCorrWidth(4);
+			setCorrWidth(4);
 		else
-			SetCorrWidth(0);
+			setCorrWidth(0);
 
 		m_bIsValid = true;
 
@@ -161,7 +161,7 @@ CBagPanBitmap::~CBagPanBitmap() {
 void CBagPanBitmap::GenerateCosineTable() {
 	int nWidth = 1 << m_nCorrWidth;
 	int offset = nWidth >> 1; // This is not really needed just more correction to move angle to center
-	int viewWidth = m_xCurrView.Width();
+	int viewWidth = m_xCurrView.width();
 
 	m_nNumDegrees = (viewWidth >> m_nCorrWidth) + 1;
 
@@ -192,9 +192,9 @@ CBofRect CBagPanBitmap::GetWarpSrcRect() {
 }
 
 CBofPoint CBagPanBitmap::WarpedPoint(CBofPoint &xPoint) {
-	CBofRect r = GetRect();
+	CBofRect r = getRect();
 	int nH2 = Height() >> 1;
-	int nW = Width();
+	int nW = width();
 	int nWidth = 1 << m_nCorrWidth; // It may no longer be necessary to store corr width as a shift arg
 	int nCenter = r.top + nH2;
 
@@ -203,7 +203,7 @@ CBofPoint CBagPanBitmap::WarpedPoint(CBofPoint &xPoint) {
 		nOffset += nW;
 	nOffset /= nWidth;
 
-	if ((nOffset < 0) || ((xPoint.x - m_xCurrView.left) > m_xCurrView.Width()) || (nOffset >= m_nNumDegrees))
+	if ((nOffset < 0) || ((xPoint.x - m_xCurrView.left) > m_xCurrView.width()) || (nOffset >= m_nNumDegrees))
 		return CBofPoint(0, 0);
 
 	CBofFixed srcHeight = m_pCosineTable[nOffset];
@@ -231,7 +231,7 @@ ErrorCode CBagPanBitmap::PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, 
 	int nIncrement = 1;
 
 	if (nWidth < 4) {
-		for (int i = 0; i < dstRect.Width(); i += nWidth) {
+		for (int i = 0; i < dstRect.width(); i += nWidth) {
 			// Set the source
 			//
 			PanSrcRect.SetRect(srcRect.left + i,
@@ -249,7 +249,7 @@ ErrorCode CBagPanBitmap::PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, 
 		int tableSlot = srcRect.top + preSrcRect.top;
 		int stripNumber = 0;
 
-		for (int i = 0; i < dstRect.Width(); i += nWidth, stripNumber++) {
+		for (int i = 0; i < dstRect.width(); i += nWidth, stripNumber++) {
 			// Set the source
 			PanSrcRect.SetRect(srcRect.left + i,
 			                   STRIP_POINTS[tableSlot][stripNumber].top,
@@ -262,7 +262,7 @@ ErrorCode CBagPanBitmap::PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, 
 			WndDstRect.right = WndDstRect.right + nWidth;
 		}
 	} else { // nWidth > 4
-		for (int i = 0; i < dstRect.Width(); i += nWidth) {
+		for (int i = 0; i < dstRect.width(); i += nWidth) {
 			// Set the source
 			PanSrcRect.SetRect(srcRect.left + i,
 			                   nTop + (int)(*pSrcHeight * srcTop),
@@ -317,8 +317,8 @@ ErrorCode CBagPanBitmap::PaintUncorrected(CBofBitmap *pBmp, CBofRect &dstRect) {
 ErrorCode CBagPanBitmap::paint(CBofBitmap *pBmp, const CBofPoint xDstOffset) {
 	CBofRect dstRect;
 	CBofRect srcRect = m_xCurrView;
-	int nW = Width();
-	int viewWidth = m_xCurrView.Width();
+	int nW = width();
+	int viewWidth = m_xCurrView.width();
 	srcRect.right = m_xCurrView.left + viewWidth - 1;
 	int nOffset = srcRect.right - nW;
 
@@ -367,7 +367,7 @@ CBagPanBitmap::Direction CBagPanBitmap::UpdateView() {
 	return kDirNONE;
 }
 
-void CBagPanBitmap::SetCorrWidth(int nWidth, bool bUpdate) {
+void CBagPanBitmap::setCorrWidth(int nWidth, bool bUpdate) {
 	int i = 0;
 
 	while (nWidth >>= 1)
@@ -410,12 +410,12 @@ void CBagPanBitmap::RotateDown(int nYRotRate) {
 }
 
 void CBagPanBitmap::NormalizeViewSize() {
-	int nW = Width();
+	int nW = width();
 	int nH = Height();
 
 	if (m_bPanorama) {
 		// The CurrView can not be more than 0.25Width x Height of the Bitmap
-		if ((m_xCurrView.Width() >= nW / MAXDIVVIEW) || (m_xCurrView.Width() <= 0))
+		if ((m_xCurrView.width() >= nW / MAXDIVVIEW) || (m_xCurrView.width() <= 0))
 			m_xCurrView.right = (long)(m_xCurrView.left + nW / MAXDIVVIEW - 1);
 		if ((m_xCurrView.Height() >= nH) || (m_xCurrView.Height() <= 0))
 			m_xCurrView.bottom = m_xCurrView.top + nH - 1;

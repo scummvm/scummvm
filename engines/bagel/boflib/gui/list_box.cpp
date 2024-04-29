@@ -259,7 +259,7 @@ void CBofListBox::onKeyHit(uint32 lKey, uint32 lRepCount) {
 
 	default:
 		// Call the previous windows onkeyhit
-		CBofWindow *pParent = GetParent();
+		CBofWindow *pParent = getParent();
 		if (pParent && pParent != this) {
 			pParent->onKeyHit(lKey, lRepCount);
 		}
@@ -340,9 +340,9 @@ ErrorCode CBofListBox::saveBackground() {
 
 	killBackground();
 
-	if ((_pBackdrop = new CBofBitmap(Width(), Height(), CBofApp::GetApp()->GetPalette())) != nullptr) {
+	if ((_pBackdrop = new CBofBitmap(width(), Height(), CBofApp::GetApp()->GetPalette())) != nullptr) {
 		if ((_parent != nullptr) && (_parent->GetBackdrop() != nullptr)) {
-			CBofRect cRect = _pBackdrop->GetRect();
+			CBofRect cRect = _pBackdrop->getRect();
 
 			_parent->GetBackdrop()->paint(_pBackdrop, &cRect, &_cWindowRect);
 
@@ -351,7 +351,7 @@ ErrorCode CBofListBox::saveBackground() {
 		}
 
 	} else {
-		ReportError(ERR_MEMORY, "Unable to allocate a %d x %d CBofBitmap", Width(), Height());
+		ReportError(ERR_MEMORY, "Unable to allocate a %d x %d CBofBitmap", width(), Height());
 	}
 
 	return _errCode;
@@ -367,8 +367,8 @@ ErrorCode CBofListBox::createWorkArea() {
 	if (_pWork == nullptr) {
 		Assert(_pBackdrop != nullptr);
 
-		if ((_pWork = new CBofBitmap(Width(), Height(), _pBackdrop->GetPalette())) == nullptr) {
-			ReportError(ERR_MEMORY, "Unable to allocate a %d x %d CBofBitmap", Width(), Height());
+		if ((_pWork = new CBofBitmap(width(), Height(), _pBackdrop->GetPalette())) == nullptr) {
+			ReportError(ERR_MEMORY, "Unable to allocate a %d x %d CBofBitmap", width(), Height());
 		}
 	}
 
@@ -399,7 +399,7 @@ ErrorCode CBofListBox::repaintAll() {
 
 			for (int i = 0; i < _nPageSize; i++) {
 				CBofRect cRect;
-				cRect.SetRect(0, i * _nItemHeight, Width() - 1, (i + 1) * _nItemHeight - 1);
+				cRect.SetRect(0, i * _nItemHeight, width() - 1, (i + 1) * _nItemHeight - 1);
 
 				if (i + _n1stVisible < _nNumItems) {
 					// If this item is currently selected and we have a high color
@@ -471,7 +471,7 @@ ErrorCode CBofListBox::repaintItem(int nIndex) {
 
 			// Calculate area for this text item
 			CBofRect cRect;
-			cRect.SetRect(0, i * _nItemHeight, Width() - 1, (i + 1) * _nItemHeight - 1);
+			cRect.SetRect(0, i * _nItemHeight, width() - 1, (i + 1) * _nItemHeight - 1);
 
 			// Prepare the background
 			Assert(_pBackdrop != nullptr);

@@ -35,8 +35,8 @@ bool CBagExam::initExam() {
 		// Flush events, though not sure why we need it
 	}
 
-	GetParent()->disable();
-	GetParent()->FlushAllMessages();
+	getParent()->disable();
+	getParent()->FlushAllMessages();
 
 	markBegEnd();
 	setRotationRects();
@@ -45,9 +45,9 @@ bool CBagExam::initExam() {
 
 	pause();
 
-	CBofCursor::Show();
+	CBofCursor::show();
 	doModal();
-	CBofCursor::Hide();
+	CBofCursor::hide();
 
 	return true;
 }
@@ -61,7 +61,7 @@ void CBagExam::onReSize(CBofSize *size) {
 
 bool CBagExam::setRotationRects() {
 	// Get the  windows rect
-	CBofRect clientRect = GetClientRect();
+	CBofRect clientRect = getClientRect();
 
 	// Left quarter of the video window
 	_leftRect.left = clientRect.left;

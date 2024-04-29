@@ -61,7 +61,7 @@ void CBagNextCDDialog::onInitDialog() {
 		m_pButton->loadBitmaps(pUp, pDown, pFocus, pDis);
 
 		m_pButton->create("NextCD", 77, 127, 60, 30, this, OK_BTN);
-		m_pButton->Show();
+		m_pButton->show();
 
 	} else {
 		ReportError(ERR_MEMORY);
@@ -98,7 +98,7 @@ void CBagNextCDDialog::onPaint(CBofRect *pRect) {
 
 	_bHavePainted = true;
 
-	ValidateAnscestors();
+	validateAnscestors();
 }
 
 void CBagNextCDDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
@@ -108,7 +108,7 @@ void CBagNextCDDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 	// Cancel
 	case BKEY_ENTER:
 	case BKEY_ESC:
-		Close();
+		close();
 		break;
 
 	default:
@@ -121,7 +121,7 @@ void CBagNextCDDialog::OnBofButton(CBofObject * /*pObject*/, int nFlags) {
 	Assert(IsValidObject(this));
 
 	if (nFlags == BUTTON_CLICKED) {
-		Close();
+		close();
 	}
 }
 

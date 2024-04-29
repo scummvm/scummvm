@@ -131,7 +131,7 @@ ErrorCode CBagSaveDialog::attach() {
 			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 
 			m_pButtons[i]->create(g_stButtons[i]._name, g_stButtons[i]._left, g_stButtons[i]._top, g_stButtons[i]._width, g_stButtons[i]._height, this, g_stButtons[i]._id);
-			m_pButtons[i]->Show();
+			m_pButtons[i]->show();
 		} else {
 			ReportError(ERR_MEMORY);
 			break;
@@ -143,7 +143,7 @@ ErrorCode CBagSaveDialog::attach() {
 
 	if ((m_pEditText = new CBofEditText("", EDIT_X, EDIT_Y, EDIT_DX, EDIT_DY, this)) != nullptr) {
 		m_pEditText->setText("");
-		m_pEditText->Show();
+		m_pEditText->show();
 	}
 
 	// Get a list of saves, and filter out the autosave entry if present
@@ -197,7 +197,7 @@ ErrorCode CBagSaveDialog::attach() {
 			m_pListBox->addToTail(title, false);
 		}
 
-		m_pListBox->Show();
+		m_pListBox->show();
 		m_pListBox->UpdateWindow();
 
 	} else {
@@ -271,10 +271,10 @@ void CBagSaveDialog::onPaint(CBofRect *pRect) {
 		m_pListBox->repaintAll();
 	}
 
-	ValidateAnscestors();
+	validateAnscestors();
 }
 
-void CBagSaveDialog::SaveAndClose() {
+void CBagSaveDialog::saveAndClose() {
 	Assert(IsValidObject(this));
 
 	// We should not be able to access the save button if we
@@ -289,7 +289,7 @@ void CBagSaveDialog::SaveAndClose() {
 		g_engine->saveGameState(m_nSelectedItem + 1,
 			m_pEditText->getText().GetBuffer());
 
-		Close();
+		close();
 		setReturnValue(SAVE_BTN);
 	}
 }
@@ -325,13 +325,13 @@ void CBagSaveDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 
 	// Save into current slot, and exit
 	case BKEY_ENTER:
-		SaveAndClose();
+		saveAndClose();
 		break;
 
 	// Cancel without saving
 	case BKEY_ESC:
 		setReturnValue(CANCEL_BTN);
-		Close();
+		close();
 		break;
 
 	default:
@@ -354,13 +354,13 @@ void CBagSaveDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 	// Do actual save
 	case SAVE_BTN:
 		setReturnValue(SAVE_BTN);
-		SaveAndClose();
+		saveAndClose();
 		break;
 
 	// Cancel without saving
 	case CANCEL_BTN:
 		setReturnValue(CANCEL_BTN);
-		Close();
+		close();
 		break;
 
 	case LINEUP_BTN:

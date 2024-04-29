@@ -154,7 +154,7 @@ ErrorCode CBofApp::runApp() {
 		} else {
 			for (int i = 0; i < nCount; i++) {
 				// Give each window it's own main loop (sort-of)
-				CBofWindow *pWindow = CBofWindow::GetWindowList();
+				CBofWindow *pWindow = CBofWindow::getWindowList();
 				while (pWindow != nullptr) {
 					if (shouldQuit())
 						return ERR_NONE;

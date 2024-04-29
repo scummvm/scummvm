@@ -79,7 +79,7 @@ CBofPoint CBagLog::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 
 		// The log window has instructional text at the top and bottom, so
 		// create a floater rect to stay in the middle area
-		CBofRect xFloatRect = getBackground()->GetRect();
+		CBofRect xFloatRect = getBackground()->getRect();
 		xFloatRect.top += nBorderSize;
 		xFloatRect.bottom -= (nBorderSize / 2);
 
@@ -106,10 +106,10 @@ CBofPoint CBagLog::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 
 		// Calculate the position for the next floater
 		// This will get sent back to the calling func
-		NextPos.x += pObj->getRect().Width();
+		NextPos.x += pObj->getRect().width();
 
 		// Check to see if the whole object can fit in width, if it can't wrap
-		if (NextPos.x > (xFloatRect.Width() - pObj->getRect().Width())) {
+		if (NextPos.x > (xFloatRect.width() - pObj->getRect().width())) {
 			NextPos.x = 0;
 			NextPos.y += pObj->getRect().Height();
 		}
@@ -145,39 +145,39 @@ void CBagLog::ArrangePages() {
 
 	if (nCurPage > nFirstPage && nCurPage < nLastPage) {
 		if (pUpObj->isAttached() == false) {
-			pUpObj->SetActive();
+			pUpObj->setActive();
 			pUpObj->attach();
 		}
 		if (pDownObj->isAttached() == false) {
-			pDownObj->SetActive();
+			pDownObj->setActive();
 			pDownObj->attach();
 		}
 	} else if (nCurPage == nFirstPage && nCurPage == nLastPage) {
 		if (pUpObj->isAttached()) {
-			pUpObj->SetActive(false);
+			pUpObj->setActive(false);
 			pUpObj->detach();
 		}
 		if (pDownObj->isAttached()) {
-			pDownObj->SetActive(false);
+			pDownObj->setActive(false);
 			pDownObj->detach();
 		}
 	} else if (nCurPage <= nFirstPage) {
 		if (pUpObj->isAttached()) {
-			pUpObj->SetActive(false);
+			pUpObj->setActive(false);
 			pUpObj->detach();
 		}
 		if (pDownObj->isAttached() == false) {
-			pDownObj->SetActive();
+			pDownObj->setActive();
 			pDownObj->attach();
 		}
 	} else if (nCurPage >= nLastPage) {
 		if (pUpObj->isAttached() == false) {
-			pUpObj->SetActive();
+			pUpObj->setActive();
 			pUpObj->attach();
 		}
 
 		if (pDownObj->isAttached()) {
-			pDownObj->SetActive(false);
+			pDownObj->setActive(false);
 			pDownObj->detach();
 		}
 	}
@@ -242,13 +242,13 @@ CBagObject *CBagLog::OnNewUserObject(const CBofString &initStr) {
 		nPntSize = FONT_18POINT;
 
 	if (initStr == "MSG") {
-		LogObj = (CBagTextObject *)new CBagLogMsg(cSDevRect.Width());
+		LogObj = (CBagTextObject *)new CBagLogMsg(cSDevRect.width());
 		LogObj->SetInitInfo(initStr);
 		LogObj->setPointSize(nPntSize);
 		LogObj->setColor(7);
 		LogObj->SetFloating();
 	} else if (initStr == "SUS") {
-		LogObj = (CBagTextObject *)new CBagLogSuspect(cSDevRect.Width());
+		LogObj = (CBagTextObject *)new CBagLogSuspect(cSDevRect.width());
 		LogObj->SetInitInfo(initStr);
 
 		// Reduce point size on zoompda suspect list, make it
@@ -260,9 +260,9 @@ CBagObject *CBagLog::OnNewUserObject(const CBofString &initStr) {
 		LogObj->setColor(7);
 		LogObj->SetFloating();
 	} else if (initStr == "CLU") {
-		LogObj = (CBagTextObject *)new CBagLogClue(initStr, cSDevRect.Width(), nPntSize);
+		LogObj = (CBagTextObject *)new CBagLogClue(initStr, cSDevRect.width(), nPntSize);
 	} else if (initStr == "RES") {
-		LogObj = (CBagTextObject *)new CBagLogResidue(cSDevRect.Width());
+		LogObj = (CBagTextObject *)new CBagLogResidue(cSDevRect.width());
 		LogObj->SetInitInfo(initStr);
 		LogObj->setPointSize(nPntSize);
 		LogObj->setColor(7);
@@ -316,7 +316,7 @@ ErrorCode CBagLog::ActivateLocalObject(CBagObject *bagObj) {
 
 				if (pMsgLight) {
 					if (!pMsgLight->isAttached()) {
-						pMsgLight->SetActive();
+						pMsgLight->setActive();
 						pMsgLight->attach();
 					}
 

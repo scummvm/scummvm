@@ -186,10 +186,10 @@ public:
 	}
 
 	int GetCorrection() {
-		return m_pSlideBitmap->GetCorrWidth();
+		return m_pSlideBitmap->getCorrWidth();
 	}
 	void SetCorrection(int nCorr) {
-		m_pSlideBitmap->SetCorrWidth(nCorr);
+		m_pSlideBitmap->setCorrWidth(nCorr);
 	}
 	double GetFOV() {
 		return m_pSlideBitmap->GetFOV();

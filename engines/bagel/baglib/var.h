@@ -98,7 +98,7 @@ public:
 	void SetReference(bool bVal = true) {
 		m_bReference = bVal;
 	}
-	void SetTimer(bool bVal = true) {
+	void setTimer(bool bVal = true) {
 		m_bTimer = bVal;
 	}
 	void SetRandom(bool bVal = true) {

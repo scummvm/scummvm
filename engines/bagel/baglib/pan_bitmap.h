@@ -117,15 +117,15 @@ public:
 	void SetFOV(double degrees, bool bUpdate = true) {
 		m_xFOVAngle = degrees / 114.5916558176;
 		if (bUpdate) {
-			// m_xCurrView.SetRect(0, m_xCurrView.top, Width()*degrees/360, m_xCurrView.bottom);
+			// m_xCurrView.SetRect(0, m_xCurrView.top, width()*degrees/360, m_xCurrView.bottom);
 			GenerateCosineTable();
 		}
 	}
-	int GetCorrWidth() {
+	int getCorrWidth() {
 		return m_nCorrWidth;
 	}
 
-	void SetCorrWidth(int nWidth, bool bUpdate = true);
+	void setCorrWidth(int nWidth, bool bUpdate = true);
 
 	void SetViewSize(const CBofSize &xViewSize, bool bUpdate = true) {
 		m_xCurrView.right = m_xCurrView.left + xViewSize.cx;
@@ -137,13 +137,13 @@ public:
 		}
 	}
 	CBofSize SetUnityViewSize() {
-		int w = (int)(Width() * m_xFOVAngle / 3.14159);
+		int w = (int)(width() * m_xFOVAngle / 3.14159);
 		m_xCurrView.SetRect(0, m_xCurrView.top, w, m_xCurrView.bottom);
 		GenerateCosineTable();
 		return GetViewSize();
 	}
 	double SetUnityFOV() {
-		SetFOV(360.0 * m_xCurrView.Width() / Width(), false); // If FOV is set to 0 then unity FOV is assumed (faster redraws)
+		SetFOV(360.0 * m_xCurrView.width() / width(), false); // If FOV is set to 0 then unity FOV is assumed (faster redraws)
 		GenerateCosineTable();
 		return GetFOV();
 	}

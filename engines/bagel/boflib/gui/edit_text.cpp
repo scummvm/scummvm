@@ -50,7 +50,7 @@ ErrorCode CBofEditText::create(const char *pszName, CBofRect *pRect,
 	if (pRect != nullptr) {
 		x = pRect->left;
 		y = pRect->top;
-		nWidth = pRect->Width();
+		nWidth = pRect->width();
 		nHeight = pRect->Height();
 	}
 
@@ -79,7 +79,7 @@ ErrorCode CBofEditText::create(const char *pszName, int x, int y,
 	}
 
 	// Retain local coordinates (based on own window)
-	_cRect.SetRect(0, 0, _cWindowRect.Width() - 1, _cWindowRect.Height() - 1);
+	_cRect.SetRect(0, 0, _cWindowRect.width() - 1, _cWindowRect.Height() - 1);
 
 	return _errCode;
 }
@@ -127,7 +127,7 @@ void CBofEditText::onKeyHit(uint32 lKey, uint32 lRepCount) {
 		CBofString tmp = _text + lKey;
 		CBofRect rect = CalculateTextRect(this, &tmp, 12, 0);
 
-		if ((_cRect.Width() - rect.Width()) > 10) {
+		if ((_cRect.width() - rect.width()) > 10) {
 			setText(tmp);
 		}
 	

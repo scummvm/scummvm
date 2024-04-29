@@ -61,10 +61,10 @@ CBofDialog::CBofDialog(const char *pszFileName, CBofWindow *pParent, const uint3
 	}
 
 	Assert(_pBackdrop != nullptr);
-	CBofRect cRect = _pBackdrop->GetRect();
+	CBofRect cRect = _pBackdrop->getRect();
 
 	// Create the dialog box
-	create("DialogBox", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pParent, nID);
+	create("DialogBox", cRect.left, cRect.top, cRect.width(), cRect.Height(), pParent, nID);
 }
 
 CBofDialog::~CBofDialog() {
@@ -92,8 +92,8 @@ ErrorCode CBofDialog::create(const char *pszName, int x, int y, int nWidth, int 
 	// Calculate effective bounds
 	Common::Rect stRect(x, y, x + nWidth, y + nHeight);
 	if (pParent != nullptr)
-		stRect.translate(pParent->GetWindowRect().left,
-						 pParent->GetWindowRect().top);
+		stRect.translate(pParent->getWindowRect().left,
+						 pParent->getWindowRect().top);
 
 	_cRect = stRect;
 	delete _surface;
@@ -114,14 +114,14 @@ ErrorCode CBofDialog::create(const char *pszName, CBofRect *pRect, CBofWindow *p
 	int nHeight = USE_DEFAULT;
 
 	if ((pRect == nullptr) && (_pBackdrop != nullptr)) {
-		cRect = _pBackdrop->GetRect();
+		cRect = _pBackdrop->getRect();
 		pRect = &cRect;
 	}
 
 	if (pRect != nullptr) {
 		x = pRect->left;
 		y = pRect->top;
-		nWidth = pRect->Width();
+		nWidth = pRect->width();
 		nHeight = pRect->Height();
 	}
 
@@ -203,13 +203,13 @@ ErrorCode CBofDialog::saveBackground() {
 		// Remove any previous background
 		delete _pDlgBackground;
 		// Save a copy of the background
-		_pDlgBackground = new CBofBitmap(Width(), Height(), pPalette);
+		_pDlgBackground = new CBofBitmap(width(), Height(), pPalette);
 		if (_pDlgBackground != nullptr) {
 			_pDlgBackground->CaptureScreen(this, &_cRect);
 			_pDlgBackground->SetReadOnly(true);
 
 		} else {
-			ReportError(ERR_MEMORY, "Unable to allocate a new CBofBitmap(%d x %d)", Width(), Height());
+			ReportError(ERR_MEMORY, "Unable to allocate a new CBofBitmap(%d x %d)", width(), Height());
 		}
 	}
 
@@ -247,12 +247,12 @@ int CBofDialog::doModal() {
 	// The dialog box must have been successfully created first
 	Assert(IsCreated());
 
-	CBofWindow *pLastActive = GetActiveWindow();
-	SetActive();
+	CBofWindow *pLastActive = getActiveWindow();
+	setActive();
 	onInitDialog();
 
 	// Display the window
-	Show();
+	show();
 
 	UpdateWindow();
 
@@ -279,7 +279,7 @@ int CBofDialog::doModal() {
 	}
 
 	if (pLastActive != nullptr) {
-		pLastActive->SetActive();
+		pLastActive->setActive();
 	} else {
 		m_pActiveWindow = nullptr;
 	}

@@ -40,7 +40,7 @@ typedef bool(*FilterFxn)(const uint16, CBofBitmap *, CBofRect *);
 void VilInitFilters(CBofBitmap *pBmp);
 void TriInitFilters(CBofBitmap *pBmp);
 void LightningInitFilters();
-void DestroyFilters();
+void destroyFilters();
 
 bool DoFilters(const uint16 nFilterId, CBofBitmap *pBmp, CBofRect *viewRect);
 

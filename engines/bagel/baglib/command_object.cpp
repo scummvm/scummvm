@@ -114,7 +114,7 @@ bool CBagCommandObject::runObject() {
 
 		} else if (GetFileName() == "CLOSE") {
 			CBagStorageDevWnd *currentSDev = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
-			currentSDev->Close();
+			currentSDev->close();
 
 		} else if (GetFileName() == "UPDATE") {
 			static bool updateFl = false;
@@ -180,7 +180,7 @@ bool CBagCommandObject::runObject() {
 			}
 
 		} else if (GetFileName() == "DEATH") {
-			CBagel::getBagApp()->getMasterWnd()->PostUserMessage(WM_DIE, 0);
+			CBagel::getBagApp()->getMasterWnd()->postUserMessage(WM_DIE, 0);
 			g_allowPaintFl = false;
 
 		} else if (GetFileName() == "GOPAINT") {
@@ -199,7 +199,7 @@ bool CBagCommandObject::runObject() {
 
 		} else if (GetFileName() == "ROTATETOFLY") {
 			if (CBagMasterWin::GetFlyThru()) {
-				CBagMasterWin::SetActiveCursor(6);
+				CBagMasterWin::setActiveCursor(6);
 				CBagStorageDev *currSDev = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
 				if ((currSDev != nullptr) && (currSDev->GetDeviceType() == SDEV_GAMEWIN)) {
 					CBagPanWindow *currWin = (CBagPanWindow *)currSDev;
@@ -208,7 +208,7 @@ bool CBagCommandObject::runObject() {
 			}
 
 		} else if (GetFileName() == "ROTATETO") {
-			CBagMasterWin::SetActiveCursor(6);
+			CBagMasterWin::setActiveCursor(6);
 			CBagStorageDev *currSDev = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
 			if ((currSDev != nullptr) && (currSDev->GetDeviceType() == SDEV_GAMEWIN)) {
 				CBagPanWindow *currWin = (CBagPanWindow *)currSDev;
@@ -255,7 +255,7 @@ bool CBagCommandObject::runObject() {
 			}
 
 		} else if (GetFileName() == "DEATH2") {
-			CBagel::getBagApp()->getMasterWnd()->PostUserMessage(WM_DIE, 2);
+			CBagel::getBagApp()->getMasterWnd()->postUserMessage(WM_DIE, 2);
 			g_allowPaintFl = false;
 
 		} else if (GetFileName() == "ENTRYTHUD") { // Thud
@@ -265,7 +265,7 @@ bool CBagCommandObject::runObject() {
 			CDevDlg dlg;
 			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
 			dlg.doModal();
-			dlg.Destroy();
+			dlg.destroy();
 
 		} else if (GetFileName() == "ENTRYFLEE") { // Fleebix
 			CBofRect tmpRect(35, 48, 114, 69);
@@ -274,7 +274,7 @@ bool CBagCommandObject::runObject() {
 			CDevDlg dlg;
 			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
 			dlg.doModal();
-			dlg.Destroy();
+			dlg.destroy();
 
 		} else if (GetFileName() == "ENTRYCLICK") { // Click's locker combo
 			CBofRect tmpRect(60, 49, 138, 68);
@@ -283,7 +283,7 @@ bool CBagCommandObject::runObject() {
 			CDevDlg dlg;
 			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
 			dlg.doModal();
-			dlg.Destroy();
+			dlg.destroy();
 
 		} else if (GetFileName() == "ENTRYFRUIT") { // MegaWave the fruit
 			CBofRect tmpRect(35, 49, 114, 68);
@@ -292,7 +292,7 @@ bool CBagCommandObject::runObject() {
 			CDevDlg dlg;
 			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
 			dlg.doModal();
-			dlg.Destroy();
+			dlg.destroy();
 
 		} else if (GetFileName() == "D7CODE1DLG") { // Deven-7 code word
 			CBofRect tmpRect(10, 48, 189, 69);
@@ -301,7 +301,7 @@ bool CBagCommandObject::runObject() {
 			CDevDlg dlg;
 			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect, true);
 			dlg.doModal();
-			dlg.Destroy();
+			dlg.destroy();
 
 		} else if (GetFileName() == "SNAPTO") {
 			CBagStorageDev *currSDev = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
@@ -377,7 +377,7 @@ bool CBagCommandObject::runObject() {
 			mainWin->ShowCreditsDialog(mainWin);
 
 			// Exit the game
-			CBagel::getBagApp()->getMasterWnd()->Close();
+			CBagel::getBagApp()->getMasterWnd()->close();
 			g_engine->quitGame();
 
 		} else if (GetFileName() == "BREAK") {

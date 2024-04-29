@@ -480,12 +480,12 @@ PARSE_CODES CBagCharacterObject::setInfo(bof_ifstream &istr) {
 				CBofRect r;
 				istr.EatWhite();
 
-				GetRectFromStream(istr, r);
+				getRectFromStream(istr, r);
 
 				_startFrame = r.left;
 				_endFrame = r.top;
 
-				if (r.Width() && r.Height()) {
+				if (r.width() && r.Height()) {
 					// error of some type
 				}
 

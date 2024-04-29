@@ -86,7 +86,7 @@ void CBagQuitDialog::onInitDialog() {
 			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 
 			m_pButtons[i]->create(g_stQuitButtons[i].m_pszName, g_stQuitButtons[i].m_nLeft, g_stQuitButtons[i].m_nTop, g_stQuitButtons[i].m_nWidth, g_stQuitButtons[i].m_nHeight, this, g_stQuitButtons[i].m_nID);
-			m_pButtons[i]->Show();
+			m_pButtons[i]->show();
 		} else {
 			ReportError(ERR_MEMORY);
 			break;
@@ -123,7 +123,7 @@ void CBagQuitDialog::onPaint(CBofRect *pRect) {
 
 	PaintBackdrop(pRect);
 
-	ValidateAnscestors();
+	validateAnscestors();
 }
 
 
@@ -134,7 +134,7 @@ void CBagQuitDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 		// Cancel
 		//
 		setReturnValue(CANCEL_BTN);
-		Close();
+		close();
 	} else 
 		CBofDialog::onKeyHit(lKey, nRepCount);
 }
@@ -166,7 +166,7 @@ void CBagQuitDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 
 		if (bQuit) {
 			setReturnValue(nId);
-			Close();
+			close();
 		}
 	}
 }

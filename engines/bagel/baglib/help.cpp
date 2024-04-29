@@ -97,7 +97,7 @@ ErrorCode CBagHelp::attach() {
 		m_pOKButton->loadBitmaps(pUp, pDown, pFocus, pDis);
 
 		m_pOKButton->create("OK", HELP_OK_X, HELP_OK_Y, HELP_OK_CX, HELP_OK_CY, this, HELP_OK_ID);
-		m_pOKButton->Show();
+		m_pOKButton->show();
 	} else {
 		ReportError(ERR_MEMORY);
 	}
@@ -114,7 +114,7 @@ ErrorCode CBagHelp::attach() {
 		m_pPageUp->loadBitmaps(pUp, pDown, pFocus, pDis);
 
 		m_pPageUp->create("PageUp", HELP_PU_X, HELP_PU_Y, HELP_PU_CX, HELP_PU_CY, this, HELP_PU_ID);
-		m_pPageUp->Show();
+		m_pPageUp->show();
 	} else {
 		ReportError(ERR_MEMORY);
 	}
@@ -131,7 +131,7 @@ ErrorCode CBagHelp::attach() {
 		m_pPageDown->loadBitmaps(pUp, pDown, pFocus, pDis);
 
 		m_pPageDown->create("PageDown", HELP_PD_X, HELP_PD_Y, HELP_PD_CX, HELP_PD_CY, this, HELP_PD_ID);
-		m_pPageDown->Show();
+		m_pPageDown->show();
 	} else {
 		ReportError(ERR_MEMORY);
 	}
@@ -211,7 +211,7 @@ void CBagHelp::onPaint(CBofRect *pRect) {
 		m_pTextBox->display();
 	}
 
-	ValidateAnscestors();
+	validateAnscestors();
 }
 
 
@@ -245,7 +245,7 @@ void CBagHelp::onKeyHit(uint32 lKey, uint32 nRepCount) {
 
 	case BKEY_ESC:
 	case BKEY_ENTER:
-		Close();
+		close();
 
 	default:
 		CBofDialog::onKeyHit(lKey, nRepCount);
@@ -265,7 +265,7 @@ void CBagHelp::OnBofButton(CBofObject *pObject, int nFlags) {
 
 	switch (pButton->GetControlID()) {
 	case HELP_OK_ID:
-		Close();
+		close();
 		break;
 
 	case HELP_PU_ID:

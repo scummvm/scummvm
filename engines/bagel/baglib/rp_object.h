@@ -132,7 +132,7 @@ public:
 	bool initialize();
 
 	CBagDossierObject *GetActiveDossier();
-	void SetActiveDossier(CBagDossierObject *);
+	void setActiveDossier(CBagDossierObject *);
 
 	static bool AddToMsgQueue(CBagRPObject *);
 

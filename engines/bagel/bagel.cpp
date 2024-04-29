@@ -122,7 +122,7 @@ bool BagelEngine::isDemo() const {
 }
 
 bool BagelEngine::canSaveLoadFromWindow() const {
-	CBofWindow *win = CBofWindow::GetActiveWindow();
+	CBofWindow *win = CBofWindow::getActiveWindow();
 
 	// Don't allow saves when capture/focus is active
 	if (CBofApp::GetApp()->getCaptureControl() != nullptr ||

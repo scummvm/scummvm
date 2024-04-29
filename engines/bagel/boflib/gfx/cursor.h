@@ -39,8 +39,8 @@ public:
 
 	ErrorCode Set();
 
-	static void Show();
-	static void Hide();
+	static void show();
+	static void hide();
 };
 
 } // namespace Bagel

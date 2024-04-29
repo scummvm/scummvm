@@ -136,7 +136,7 @@ public:
 	/**
 	 * Close a currently open file
 	 */
-	void Close();
+	void close();
 
 	/**
 	 * Read from a currently open file

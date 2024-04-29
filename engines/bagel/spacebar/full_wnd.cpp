@@ -49,7 +49,7 @@ ErrorCode SBarFullWnd::attach() {
 			g_bWaitOK = false;
 		}
 
-		Show();
+		show();
 		InvalidateRect(nullptr);
 		UpdateWindow();
 	}
