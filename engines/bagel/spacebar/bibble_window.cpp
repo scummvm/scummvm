@@ -327,11 +327,11 @@ ErrorCode CBibbleWindow::attach() {
 
 	// Pre-load the ball
 	if ((m_pBall = new CBofSprite) != nullptr) {
-		m_pBall->LoadSprite(BuildDir(BALL_BMP), BALL_CELS);
-		m_pBall->SetMaskColor(MASK_COLOR);
-		m_pBall->SetZOrder(SPRITE_HINDMOST);
-		m_pBall->SetAnimated(true);
-		m_pBall->LinkSprite();
+		m_pBall->loadSprite(BuildDir(BALL_BMP), BALL_CELS);
+		m_pBall->setMaskColor(MASK_COLOR);
+		m_pBall->setZOrder(SPRITE_HINDMOST);
+		m_pBall->setAnimated(true);
+		m_pBall->linkSprite();
 
 	} else {
 		ReportError(ERR_MEMORY);
@@ -339,10 +339,10 @@ ErrorCode CBibbleWindow::attach() {
 
 	// Pre-load the bibbles
 	if ((m_pMasterBibble = new CBofSprite) != nullptr) {
-		m_pMasterBibble->LoadSprite(BuildDir(BIBBLE_BMP), BIBBLE_CELS);
-		m_pMasterBibble->SetMaskColor(MASK_COLOR);
-		m_pMasterBibble->SetZOrder(SPRITE_TOPMOST);
-		m_pMasterBibble->SetAnimated(false);
+		m_pMasterBibble->loadSprite(BuildDir(BIBBLE_BMP), BIBBLE_CELS);
+		m_pMasterBibble->setMaskColor(MASK_COLOR);
+		m_pMasterBibble->setZOrder(SPRITE_TOPMOST);
+		m_pMasterBibble->setAnimated(false);
 
 	} else {
 		ReportError(ERR_MEMORY);
@@ -350,9 +350,9 @@ ErrorCode CBibbleWindow::attach() {
 
 	// Dup the bibbles
 	for (int i = 0; i < BIBBLE_NUM_BIBBLES; i++) {
-		if ((m_pBibble[i] = m_pMasterBibble->DuplicateSprite()) != nullptr) {
+		if ((m_pBibble[i] = m_pMasterBibble->duplicateSprite()) != nullptr) {
 			m_pBibble[i]->setPosition(nBibbleXPos[i], nBibbleYPos[i]);
-			m_pBibble[i]->LinkSprite();
+			m_pBibble[i]->linkSprite();
 
 		} else {
 			ReportError(ERR_MEMORY);
@@ -361,29 +361,29 @@ ErrorCode CBibbleWindow::attach() {
 
 	// Load the arch bitmaps that the ball needs to go behind
 	if ((m_pArch1 = new CBofSprite) != nullptr) {
-		m_pArch1->LoadSprite(BuildDir(ARCH1_BMP));
-		m_pArch1->SetMaskColor(MASK_COLOR);
-		m_pArch1->SetZOrder(SPRITE_MIDDLE);
-		m_pArch1->LinkSprite();
+		m_pArch1->loadSprite(BuildDir(ARCH1_BMP));
+		m_pArch1->setMaskColor(MASK_COLOR);
+		m_pArch1->setZOrder(SPRITE_MIDDLE);
+		m_pArch1->linkSprite();
 	} else {
 		ReportError(ERR_MEMORY);
 	}
 
 	if ((m_pArch2 = new CBofSprite) != nullptr) {
-		m_pArch2->LoadSprite(BuildDir(ARCH2_BMP));
-		m_pArch2->SetMaskColor(MASK_COLOR);
-		m_pArch2->SetZOrder(SPRITE_MIDDLE);
-		m_pArch2->LinkSprite();
+		m_pArch2->loadSprite(BuildDir(ARCH2_BMP));
+		m_pArch2->setMaskColor(MASK_COLOR);
+		m_pArch2->setZOrder(SPRITE_MIDDLE);
+		m_pArch2->linkSprite();
 
 	} else {
 		ReportError(ERR_MEMORY);
 	}
 
 	if ((m_pArch3 = new CBofSprite) != nullptr) {
-		m_pArch3->LoadSprite(BuildDir(ARCH3_BMP));
-		m_pArch3->SetMaskColor(MASK_COLOR);
-		m_pArch3->SetZOrder(SPRITE_MIDDLE);
-		m_pArch3->LinkSprite();
+		m_pArch3->loadSprite(BuildDir(ARCH3_BMP));
+		m_pArch3->setMaskColor(MASK_COLOR);
+		m_pArch3->setZOrder(SPRITE_MIDDLE);
+		m_pArch3->linkSprite();
 
 	} else {
 		ReportError(ERR_MEMORY);
@@ -506,7 +506,7 @@ ErrorCode CBibbleWindow::detach() {
 	}
 
 	// Close sprite lib
-	CBofSprite::CloseLibrary();
+	CBofSprite::closeLibrary();
 
 	killBackdrop();
 
@@ -540,18 +540,18 @@ void CBibbleWindow::onPaint(CBofRect *pRect) {
 		// Paint the bibbles - just sitting there
 		for (int i = 0; i < BIBBLE_NUM_BIBBLES; i++) {
 			if (m_pBibble[i] != nullptr) {
-				m_pBibble[i]->PaintSprite(pBmp, m_pBibble[i]->getPosition());
+				m_pBibble[i]->paintSprite(pBmp, m_pBibble[i]->getPosition());
 			}
 		}
 
 		if (m_pArch1 != nullptr) {
-			m_pArch1->PaintSprite(pBmp, 238, 107);
+			m_pArch1->paintSprite(pBmp, 238, 107);
 		}
 		if (m_pArch2 != nullptr) {
-			m_pArch2->PaintSprite(pBmp, 336, 145);
+			m_pArch2->paintSprite(pBmp, 336, 145);
 		}
 		if (m_pArch3 != nullptr) {
-			m_pArch3->PaintSprite(pBmp, 435, 178);
+			m_pArch3->paintSprite(pBmp, 435, 178);
 		}
 
 		CBofRect cRect;
@@ -843,18 +843,18 @@ ErrorCode CBibbleWindow::BonkBibble(int nBibbleID, int nShouts) {
 
 	// Get a local bibble
 	CBofSprite *pBibble = m_pBibble[nBibbleID - 1];
-	pBibble->SetAnimated(true);
+	pBibble->setAnimated(true);
 
 	for (;;) {
 		cBallPosition.x += BALL_SPEED;
-		m_pBall->PaintSprite(this, cBallPosition);
+		m_pBall->paintSprite(this, cBallPosition);
 
-		if (m_pBall->TestInterception(pBibble)) {
+		if (m_pBall->testInterception(pBibble)) {
 
-			m_pBall->EraseSprite(this);
+			m_pBall->eraseSprite(this);
 
-			for (int i = 0; i < pBibble->GetCelCount(); i++) {
-				pBibble->PaintSprite(this, pBibble->getPosition());
+			for (int i = 0; i < pBibble->getCelCount(); i++) {
+				pBibble->paintSprite(this, pBibble->getPosition());
 
 				if (i == START_YELL) {
 					// Start shouting
@@ -869,7 +869,7 @@ ErrorCode CBibbleWindow::BonkBibble(int nBibbleID, int nShouts) {
 		Sleep(SPEED_DELAY);
 	}
 
-	pBibble->SetAnimated(false);
+	pBibble->setAnimated(false);
 
 	return _errCode;
 }

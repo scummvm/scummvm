@@ -1192,7 +1192,7 @@ ErrorCode CBagStorageDevWnd::attach() {
 			// Set the bagel crap
 			CBofPalette *pPalette = pBmp->getPalette();
 			CBofApp::GetApp()->setPalette(pPalette);
-			CBofSprite::OpenLibrary(pPalette);
+			CBofSprite::openLibrary(pPalette);
 
 			CBofRect r = pBmp->getRect();
 
@@ -1282,7 +1282,7 @@ ErrorCode CBagStorageDevWnd::detach() {
 	CBofApp::GetApp()->setPalette(nullptr);
 
 	setBackground(nullptr);
-	CBofSprite::CloseLibrary();
+	CBofSprite::closeLibrary();
 	CBagStorageDev::detach();
 
 	killTimer(EVAL_EXPR);

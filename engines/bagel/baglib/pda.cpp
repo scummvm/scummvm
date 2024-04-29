@@ -481,7 +481,7 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 				pZoomFlash->setActive(true);
 				pZoomRegular->setActive(false);
 
-				pZoomFlash->SetAnimated(true);
+				pZoomFlash->setAnimated(true);
 				pZoomFlash->SetAlwaysUpdate(true);
 
 				m_bFlashing = true;
@@ -496,7 +496,7 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 			pZoomFlash->setActive(false);
 			pZoomRegular->setActive(true);
 
-			pZoomFlash->SetAnimated(false);
+			pZoomFlash->setAnimated(false);
 			pZoomFlash->SetAlwaysUpdate(false);
 
 			m_bFlashing = false;

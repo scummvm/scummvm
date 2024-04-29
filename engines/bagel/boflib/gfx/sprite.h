@@ -49,62 +49,62 @@ public:
 	//////////////////////////////////////////
 
 	// Implementation
-	CBofSprite *DuplicateSprite();
-	bool DuplicateSprite(CBofSprite *pSprite);
+	CBofSprite *duplicateSprite();
+	bool duplicateSprite(CBofSprite *pSprite);
 
-	bool LoadSprite(const char *pszPathName, int nCels = 1);
-	bool LoadSprite(CBofBitmap *pBitmap, int nCels = 1);
+	bool loadSprite(const char *pszPathName, int nCels = 1);
+	bool loadSprite(CBofBitmap *pBitmap, int nCels = 1);
 
-	bool PaintSprite(CBofBitmap *pBmp, const int x, const int y);
-	bool PaintSprite(CBofBitmap *pBmp, CBofPoint point) {
-		return PaintSprite(pBmp, point.x, point.y);
+	bool paintSprite(CBofBitmap *pBmp, const int x, const int y);
+	bool paintSprite(CBofBitmap *pBmp, CBofPoint point) {
+		return paintSprite(pBmp, point.x, point.y);
 	}
 
-	bool PaintSprite(CBofWindow *pWnd, const int x, const int y);
-	bool PaintSprite(CBofWindow *pWnd, CBofPoint point) {
-		return PaintSprite(pWnd, point.x, point.y);
+	bool paintSprite(CBofWindow *pWnd, const int x, const int y);
+	bool paintSprite(CBofWindow *pWnd, CBofPoint point) {
+		return paintSprite(pWnd, point.x, point.y);
 	}
 
-	bool PaintCel(CBofWindow *pWnd, int nCelId, const int x, const int y);
-	bool PaintCel(CBofBitmap *pBmp, int nCelId, const int x, const int y);
+	bool paintCel(CBofWindow *pWnd, int nCelId, const int x, const int y);
+	bool paintCel(CBofBitmap *pBmp, int nCelId, const int x, const int y);
 
-	void Batchpaint(const int, const int y);
+	void batchPaint(const int, const int y);
 	void batchErase();
 
-	bool SetupCels(const int nCels);
-	void SetCel(const int nCelID);
+	bool setupCels(const int nCels);
+	void setCel(const int nCelID);
 
-	void NextCel();
-	void PrevCel();
+	void nextCel();
+	void prevCel();
 
-	bool CropImage(CBofWindow *pWnd, CBofRect *pRect, bool bUpdateNow = true);
+	bool cropImage(CBofWindow *pWnd, CBofRect *pRect, bool bUpdateNow = true);
 
-	bool RefreshSprite(CBofBitmap *pBmp) {
-		return PaintSprite(pBmp, m_cPosition.x, m_cPosition.y);
+	bool refreshSprite(CBofBitmap *pBmp) {
+		return paintSprite(pBmp, m_cPosition.x, m_cPosition.y);
 	}
 
-	bool RefreshSprite(CBofWindow *pWnd) {
-		return PaintSprite(pWnd, m_cPosition.x, m_cPosition.y);
+	bool refreshSprite(CBofWindow *pWnd) {
+		return paintSprite(pWnd, m_cPosition.x, m_cPosition.y);
 	}
 
-	bool EraseSprite(CBofWindow *pWnd);
+	bool eraseSprite(CBofWindow *pWnd);
 
-	// Notice how there is no EraseSprite for a CBofBitmap - that's because
+	// Notice how there is no eraseSprite for a CBofBitmap - that's because
 	// sprites no longer retain their background, so there would be no way
-	// to restore the background, and that's all EraseSprite does.
+	// to restore the background, and that's all eraseSprite does.
 
-	CBofSprite *Interception(CBofRect *newRect, CBofSprite *pSprite);
-	CBofSprite *Interception(CBofSprite *pTestSprite);
+	CBofSprite *interception(CBofRect *newRect, CBofSprite *pSprite);
+	CBofSprite *interception(CBofSprite *pTestSprite);
 
-	CBofSprite *Interception() {
-		return Interception(m_pSpriteChain);
+	CBofSprite *interception() {
+		return interception(m_pSpriteChain);
 	}
 
-	CBofSprite *Interception(CBofRect *newRect) {
-		return Interception(newRect, m_pSpriteChain);
+	CBofSprite *interception(CBofRect *newRect) {
+		return interception(newRect, m_pSpriteChain);
 	}
 
-	bool TestInterception(CBofSprite *pSprite, CBofPoint *pPoint = nullptr);
+	bool testInterception(CBofSprite *pSprite, CBofPoint *pPoint = nullptr);
 
 	void setPosition(int x, int y);
 
@@ -128,11 +128,11 @@ public:
 		return _cRect.width();
 	}
 
-	void SetMaskColor(int nColor) {
+	void setMaskColor(int nColor) {
 		m_nMaskColor = nColor;
 	}
 
-	int GetMaskColor() const {
+	int getMaskColor() const {
 		return m_nMaskColor;
 	}
 
@@ -140,68 +140,68 @@ public:
 		return m_pImage->readPixel(x, y);
 	}
 
-	void SetZOrder(int nValue);
+	void setZOrder(int nValue);
 
-	int GetCelCount() const {
+	int getCelCount() const {
 		return m_nCelCount;
 	}
-	int GetCelIndex() const {
+	int getCelIndex() const {
 		return m_nCelID;
 	}
 
-	void SetAnimated(bool bAnimated) {
+	void setAnimated(bool bAnimated) {
 		m_bAnimated = bAnimated;
 	}
-	bool GetAnimated() const {
+	bool getAnimated() const {
 		return m_bAnimated;
 	}
 
-	void LinkSprite();
-	void UnlinkSprite();
+	void linkSprite();
+	void unlinkSprite();
 
 	const char *getFileName() const {
 		return m_pImage->getFileName();
 	}
 
-	static void OpenLibrary(CBofPalette *pPal);
-	static void CloseLibrary();
+	static void openLibrary(CBofPalette *pPal);
+	static void closeLibrary();
 
 	static void setSharedPalette(CBofPalette *pPalette);
 
-	static CBofSprite *GetSpriteChain() {
+	static CBofSprite *getSpriteChain() {
 		return m_pSpriteChain;
 	}
 
-	static bool UpdateDirtyRect(CBofWindow *pWnd, CBofSprite *pSprite = nullptr);
-	static bool UpdateDirtyRect(CBofBitmap *pBmp, CBofSprite *pSprite = nullptr);
-	static void AddToDirtyRect(CBofRect *pRect);
-	static void ClearDirtyRect() {
+	static bool updateDirtyRect(CBofWindow *pWnd, CBofSprite *pSprite = nullptr);
+	static bool updateDirtyRect(CBofBitmap *pBmp, CBofSprite *pSprite = nullptr);
+	static void addToDirtyRect(CBofRect *pRect);
+	static void clearDirtyRect() {
 		m_cDirtyRect->SetRectEmpty();
 	}
 
-	static CBofRect *GetDirtyRect() {
+	static CBofRect *getDirtyRect() {
 		return m_cDirtyRect;
 	}
 
-	static void FlushSpriteChain();
+	static void flushSpriteChain();
 
-	static bool SetupWorkArea(int dx, int dy);
-	static void TearDownWorkArea();
+	static bool setupWorkArea(int dx, int dy);
+	static void tearDownWorkArea();
 
 	// Add a method for allowing callers of this object to block
 	// next cell advancement
 
-	void SetBlockAdvance(bool b = true) {
+	void setBlockAdvance(bool b = true) {
 		m_bBlockAdvance = b;
 	}
-	bool GetBlockAdvance() const {
+	bool getBlockAdvance() const {
 		return m_bBlockAdvance;
 	}
 
 private:
-	void ClearImage();
+	void clearImage();
 
-	bool SpritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint = nullptr);
+	bool spritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint = nullptr);
 	bool m_bBlockAdvance; // Allow block next cell.
 public:
 	CBofBitmap *m_pImage; // Bitmap for the sprite

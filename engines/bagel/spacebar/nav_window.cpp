@@ -259,11 +259,11 @@ ErrorCode CNavWindow::attach() {
 	CBofApp::GetApp()->setPalette(m_pPal);
 	m_pCurLoc = new CBofSprite;
 	if (m_pCurLoc != nullptr) {
-		m_pCurLoc->LoadSprite(MakeDir(CUR_LOC), 2);
-		m_pCurLoc->SetMaskColor(MASK_COLOR);
-		m_pCurLoc->SetZOrder(SPRITE_TOPMOST);
-		m_pCurLoc->SetAnimated(true);
-		m_pCurLoc->LinkSprite();
+		m_pCurLoc->loadSprite(MakeDir(CUR_LOC), 2);
+		m_pCurLoc->setMaskColor(MASK_COLOR);
+		m_pCurLoc->setZOrder(SPRITE_TOPMOST);
+		m_pCurLoc->setAnimated(true);
+		m_pCurLoc->linkSprite();
 		m_pCurLoc->setPosition(m_pCurPos->left, m_pCurPos->top);
 
 	} else {
@@ -527,7 +527,7 @@ ErrorCode CNavWindow::detach() {
 	}
 
 	// Close sprite lib
-	CBofSprite::CloseLibrary();
+	CBofSprite::closeLibrary();
 
 	killBackdrop();
 
@@ -852,7 +852,7 @@ void CNavWindow::onKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 
 void CNavWindow::onTimer(uint32 tId) {
 	if (tId == 777) {
-		m_pCurLoc->PaintSprite(this, m_pCurPos->left, m_pCurPos->top);
+		m_pCurLoc->paintSprite(this, m_pCurPos->left, m_pCurPos->top);
 	}
 }
 
@@ -1374,11 +1374,11 @@ void CNavWindow::CalcFuel(double hf) {
 	m_fuel -= (int)((m_ship + m_fuel + m_cargo) * hf * .01);
 
 	if (m_cargo == 0) {
-		m_pCurLoc->EraseSprite(this);
+		m_pCurLoc->eraseSprite(this);
 		RefreshData();
 		killTimer(777);
-		m_pCurLoc->SetCel(0);
-		m_pCurLoc->PaintSprite(this, m_pCurPos->left, m_pCurPos->top);
+		m_pCurLoc->setCel(0);
+		m_pCurLoc->paintSprite(this, m_pCurPos->left, m_pCurPos->top);
 
 		// WORKAROUND: _pBackdrop shares it's palette with m_pCurLoc,
 		// so as the backdrop is changed, don't free the palette
@@ -1459,9 +1459,9 @@ void CNavWindow::CalcFuel(double hf) {
 		close();
 	}
 
-	m_pCurLoc->EraseSprite(this);
+	m_pCurLoc->eraseSprite(this);
 	RefreshData();
-	m_pCurLoc->PaintSprite(this, m_pCurPos->left, m_pCurPos->top);
+	m_pCurLoc->paintSprite(this, m_pCurPos->left, m_pCurPos->top);
 }
 
 void CNavWindow::OnWeed() {

@@ -35,7 +35,7 @@ CBagSpriteObject::CBagSpriteObject() : CBagObject() {
 	// Transparent by default
 	SetTransparent();
 	SetOverCursor(1);
-	SetAnimated();
+	setAnimated();
 	SetTimeless(true);
 
 	// implement sprite framerates
@@ -54,15 +54,15 @@ ErrorCode CBagSpriteObject::attach() {
 		Assert(m_xSprite == nullptr);
 
 		if ((m_xSprite = new CBofSprite()) != nullptr) {
-			if (m_xSprite->LoadSprite(getFileName(), GetCels()) != false && (m_xSprite->width() != 0) && (m_xSprite->height() != 0)) {
+			if (m_xSprite->loadSprite(getFileName(), GetCels()) != false && (m_xSprite->width() != 0) && (m_xSprite->height() != 0)) {
 				if (IsTransparent()) {
 					int nMaskColor = CBagel::getBagApp()->getChromaColor();
 
-					m_xSprite->SetMaskColor(nMaskColor);
+					m_xSprite->setMaskColor(nMaskColor);
 				}
 
 				// Set animated of the sprite to be the same as it's parent
-				m_xSprite->SetAnimated(IsAnimated());
+				m_xSprite->setAnimated(IsAnimated());
 
 				CBofPoint p = CBagObject::getPosition();
 
@@ -99,10 +99,10 @@ ErrorCode CBagSpriteObject::detach() {
 	return CBagObject::detach();
 }
 
-void CBagSpriteObject::SetCels(int nCels) {
+void CBagSpriteObject::setCels(int nCels) {
 	m_nCels = nCels;
 	if (m_xSprite)
-		m_xSprite->SetupCels(nCels);
+		m_xSprite->setupCels(nCels);
 }
 
 void CBagSpriteObject::setPosition(const CBofPoint &pos) {
@@ -137,7 +137,7 @@ PARSE_CODES CBagSpriteObject::setInfo(bof_ifstream &istr) {
 			int cels;
 			istr.Get();
 			GetIntFromStream(istr, cels);
-			SetCels(cels);
+			setCels(cels);
 			nObjectUpdated = true;
 		}
 		break;
@@ -157,7 +157,7 @@ PARSE_CODES CBagSpriteObject::setInfo(bof_ifstream &istr) {
 
 			if (!sStr.Find("NOANIM")) {
 				istr.EatWhite();
-				SetAnimated(false);
+				setAnimated(false);
 				nObjectUpdated = true;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -220,14 +220,14 @@ ErrorCode CBagSpriteObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*
 		if (nFrameInterval != 0) {
 			uint32 nCurTime = GetTimer();
 			if (nCurTime > m_nLastUpdate + nFrameInterval) {
-				m_xSprite->SetBlockAdvance(false);
+				m_xSprite->setBlockAdvance(false);
 				m_nLastUpdate = nCurTime;
 			} else {
-				m_xSprite->SetBlockAdvance(true);
+				m_xSprite->setBlockAdvance(true);
 			}
 		}
 
-		b = m_xSprite->PaintSprite(pBmp, pt.x, pt.y);
+		b = m_xSprite->paintSprite(pBmp, pt.x, pt.y);
 
 		// Don't have to redraw this item...
 		// SetDirty (false);
@@ -240,7 +240,7 @@ ErrorCode CBagSpriteObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*
 
 ErrorCode CBagSpriteObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, int) {
 	if (m_xSprite) {
-		bool b = m_xSprite->PaintSprite(pWnd, pt.x, pt.y);
+		bool b = m_xSprite->paintSprite(pWnd, pt.x, pt.y);
 
 		// don't have to redraw this item...
 		// SetDirty (false);
@@ -257,7 +257,7 @@ bool CBagSpriteObject::isInside(const CBofPoint &xPoint) {
 			int x = xPoint.x - getRect().left;
 			int y = xPoint.y - getRect().top;
 			int c = m_xSprite->readPixel(x, y);
-			int d = m_xSprite->GetMaskColor();
+			int d = m_xSprite->getMaskColor();
 			return (c != d);
 		}
 
@@ -270,11 +270,11 @@ void CBagSpriteObject::setProperty(const CBofString &sProp, int nVal) {
 	if (!sProp.Find("STATE")) {
 		setState(nVal);
 		if (m_xSprite)
-			m_xSprite->SetCel(nVal);
+			m_xSprite->setCel(nVal);
 	} else if (!sProp.Find("CURR_CEL")) {
 		setState(nVal);
 		if (m_xSprite)
-			m_xSprite->SetCel(nVal);
+			m_xSprite->setCel(nVal);
 	} else
 		CBagObject::setProperty(sProp, nVal);
 }
@@ -282,7 +282,7 @@ void CBagSpriteObject::setProperty(const CBofString &sProp, int nVal) {
 int CBagSpriteObject::getProperty(const CBofString &sProp) {
 	if (!sProp.Find("CURR_CEL")) {
 		if (m_xSprite) {
-			return m_xSprite->GetCelIndex();
+			return m_xSprite->getCelIndex();
 		}
 		return 0;
 	}
@@ -290,10 +290,10 @@ int CBagSpriteObject::getProperty(const CBofString &sProp) {
 	return CBagObject::getProperty(sProp);
 }
 
-void CBagSpriteObject::SetAnimated(bool b) {
+void CBagSpriteObject::setAnimated(bool b) {
 	m_bAnimated = b;
 	if (m_xSprite)
-		m_xSprite->SetAnimated(b);
+		m_xSprite->setAnimated(b);
 }
 
 } // namespace Bagel

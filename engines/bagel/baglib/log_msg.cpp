@@ -323,7 +323,7 @@ ErrorCode CBagLog::ActivateLocalObject(CBagObject *bagObj) {
 					// Make sure this guy always gets updated regardless of its
 					// dirty bit.
 					pMsgLight->SetAlwaysUpdate(true);
-					pMsgLight->SetAnimated(true);
+					pMsgLight->setAnimated(true);
 				}
 			}
 		} else {
@@ -400,9 +400,9 @@ ErrorCode CBagLog::PlayMsgQue() {
 
 				if (pMsgLight) {
 					if (nCount) {
-						pMsgLight->SetAnimated(true);
+						pMsgLight->setAnimated(true);
 					} else {
-						pMsgLight->SetAnimated(false);
+						pMsgLight->setAnimated(false);
 					}
 				}
 			}

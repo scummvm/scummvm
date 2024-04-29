@@ -164,8 +164,8 @@ ErrorCode CBofScrollBar::setPos(const int nPos, bool bRepaint, bool isInitial) {
 	} else if (_nPos != nOriginalPos) {
 		// Otherwise, only paint the thumb if it's position changed
 		if (_pThumb != nullptr) {
-			if (_pThumb->PaintSprite(this, _cThumbPos) == false) {
-				ReportError(ERR_UNKNOWN, "_pThumb->PaintSprite() failed");
+			if (_pThumb->paintSprite(this, _cThumbPos) == false) {
+				ReportError(ERR_UNKNOWN, "_pThumb->paintSprite() failed");
 			}
 		}
 	}
@@ -210,7 +210,7 @@ ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, 
 		_cRightBtnRect.SetRect(0, 0, 0, 0);
 
 		if (_pThumb != nullptr) {
-			_pThumb->EraseSprite(this);
+			_pThumb->eraseSprite(this);
 			delete _pThumb;
 			_pThumb = nullptr;
 		}
@@ -224,8 +224,8 @@ ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, 
 		_nScrollWidth = _cBkSize.cx;
 
 		if ((_pThumb = new CBofSprite) != nullptr) {
-			if (_pThumb->LoadSprite(pszThumb) != false) {
-				_pThumb->SetMaskColor(COLOR_WHITE);
+			if (_pThumb->loadSprite(pszThumb) != false) {
+				_pThumb->setMaskColor(COLOR_WHITE);
 				_cThumbSize = _pThumb->getSize();
 			}
 		}
@@ -348,7 +348,7 @@ ErrorCode CBofScrollBar::paint(CBofRect *pDirtyRect) {
 				if (_cThumbPos.x > (_nScrollWidth - _cThumbSize.cx + _nOffset))
 					_cThumbPos.x = _nScrollWidth - _cThumbSize.cx + _nOffset;
 
-				_pThumb->PaintSprite(pBmp, _cThumbPos);
+				_pThumb->paintSprite(pBmp, _cThumbPos);
 
 				// now we can paint the offscreen buffer to the screen
 				pBmp->paint(this, 0, 0);
