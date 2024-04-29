@@ -390,18 +390,18 @@ public:
 		return _surface != nullptr;
 	}
 
-	virtual void Enable() {
+	virtual void enable() {
 		_enabled = true;
 		UpdateWindow();
 	}
-	virtual void Disable() {
+	virtual void disable() {
 		_enabled = false;
 		UpdateWindow();
 	}
 	bool IsVisible() const {
 		return _visible;
 	}
-	bool IsEnabled() const {
+	bool isEnabled() const {
 		return _enabled;
 	}
 

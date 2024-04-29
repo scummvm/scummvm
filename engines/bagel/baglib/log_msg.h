@@ -75,19 +75,19 @@ public:
 	}
 
 	void SetMsgTime(int &nVal) {
-		int nState = GetState();
-		SetState((nState & mMsgPlayedMask) | (nVal & mMsgTimeMask));
+		int nState = getState();
+		setState((nState & mMsgPlayedMask) | (nVal & mMsgTimeMask));
 	}
 	int GetMsgTime() {
-		return GetState() & mMsgTimeMask;
+		return getState() & mMsgTimeMask;
 	}
 
 	void SetMsgPlayed(bool bPlayed) {
-		int nState = GetState();
-		SetState((nState & mMsgTimeMask) | (bPlayed == true ? mMsgPlayedMask : 0));
+		int nState = getState();
+		setState((nState & mMsgTimeMask) | (bPlayed == true ? mMsgPlayedMask : 0));
 	}
 	bool GetMsgPlayed() {
-		return (GetState() & mMsgPlayedMask) != 0;
+		return (getState() & mMsgPlayedMask) != 0;
 	}
 };
 
@@ -127,24 +127,24 @@ public:
 	}
 
 	void SetSusVP(bool bVal) {
-		bVal == false ? SetState(GetState() & ~mSusVoicePrinted) : SetState(GetState() | mSusVoicePrinted);
+		bVal == false ? setState(getState() & ~mSusVoicePrinted) : setState(getState() | mSusVoicePrinted);
 	}
 	bool GetSusVP() {
-		return (GetState() & mSusVoicePrinted) != 0;
+		return (getState() & mSusVoicePrinted) != 0;
 	}
 
 	void SetSusRP(bool bVal) {
-		bVal == false ? SetState(GetState() & ~mSusResiduePrinted) : SetState(GetState() | mSusResiduePrinted);
+		bVal == false ? setState(getState() & ~mSusResiduePrinted) : setState(getState() | mSusResiduePrinted);
 	}
 	bool GetSusRP() {
-		return (GetState() & mSusResiduePrinted) != 0;
+		return (getState() & mSusResiduePrinted) != 0;
 	}
 
 	void SetSusChecked(bool bVal) {
-		bVal == false ? SetState(GetState() & ~mSusChecked) : SetState(GetState() | mSusChecked);
+		bVal == false ? setState(getState() & ~mSusChecked) : setState(getState() | mSusChecked);
 	}
 	bool GetSusChecked() {
-		return (GetState() & mSusChecked) != 0;
+		return (getState() & mSusChecked) != 0;
 	}
 };
 
@@ -215,10 +215,10 @@ public:
 	ErrorCode attach();
 
 	void SetMsgTime(int &nVal) {
-		SetState(nVal);
+		setState(nVal);
 	}
 	int GetMsgTime() {
-		return GetState();
+		return getState();
 	}
 
 protected:

@@ -131,7 +131,7 @@ ErrorCode CBagCharacterObject::attach() {
 
 	if (_saveState) {
 		// Get the current state for this object
-		int nState = GetState();
+		int nState = getState();
 
 		// If the state is not the default(0) then move to the correct frame
 		if (nState != 0)
@@ -159,7 +159,7 @@ ErrorCode CBagCharacterObject::detach() {
 		// Save off the state/frame information as we detach
 		// so that we can recreate the scene when we attach again
 		if (_smacker != nullptr) {
-			SetState(_smacker->getCurFrame());
+			setState(_smacker->getCurFrame());
 		}
 	} else {
 		// Decrement current loop from happening again

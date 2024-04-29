@@ -49,7 +49,7 @@ public:
 	// Implementation
 	//
 
-	ErrorCode LoadBitmaps(const char *pszBack, const char *pszThumb, const char *pszLeftUp = nullptr, const char *pszRightUp = nullptr, const char *pszLeftDown = nullptr, const char *pszRightDown = nullptr);
+	ErrorCode loadBitmaps(const char *pszBack, const char *pszThumb, const char *pszLeftUp = nullptr, const char *pszRightUp = nullptr, const char *pszLeftDown = nullptr, const char *pszRightDown = nullptr);
 
 	ErrorCode SetPos(const int nPos, bool bRepaint = true, bool isInitial = false);
 	int GetPos() {

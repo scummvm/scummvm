@@ -94,7 +94,7 @@ ErrorCode CBagHelp::attach() {
 		pFocus = LoadBitmap(BuildHelpDir(HELP_OK_FOCUS), pPal);
 		pDis = LoadBitmap(BuildHelpDir(HELP_OK_DISABLED), pPal);
 
-		m_pOKButton->LoadBitmaps(pUp, pDown, pFocus, pDis);
+		m_pOKButton->loadBitmaps(pUp, pDown, pFocus, pDis);
 
 		m_pOKButton->create("OK", HELP_OK_X, HELP_OK_Y, HELP_OK_CX, HELP_OK_CY, this, HELP_OK_ID);
 		m_pOKButton->Show();
@@ -111,7 +111,7 @@ ErrorCode CBagHelp::attach() {
 		pFocus = LoadBitmap(BuildHelpDir(HELP_PU_FOCUS), pPal);
 		pDis = LoadBitmap(BuildHelpDir(HELP_PU_DISABLED), pPal);
 
-		m_pPageUp->LoadBitmaps(pUp, pDown, pFocus, pDis);
+		m_pPageUp->loadBitmaps(pUp, pDown, pFocus, pDis);
 
 		m_pPageUp->create("PageUp", HELP_PU_X, HELP_PU_Y, HELP_PU_CX, HELP_PU_CY, this, HELP_PU_ID);
 		m_pPageUp->Show();
@@ -128,7 +128,7 @@ ErrorCode CBagHelp::attach() {
 		pFocus = LoadBitmap(BuildHelpDir(HELP_PD_FOCUS), pPal);
 		pDis = LoadBitmap(BuildHelpDir(HELP_PD_DISABLED), pPal);
 
-		m_pPageDown->LoadBitmaps(pUp, pDown, pFocus, pDis);
+		m_pPageDown->loadBitmaps(pUp, pDown, pFocus, pDis);
 
 		m_pPageDown->create("PageDown", HELP_PD_X, HELP_PD_Y, HELP_PD_CX, HELP_PD_CY, this, HELP_PD_ID);
 		m_pPageDown->Show();

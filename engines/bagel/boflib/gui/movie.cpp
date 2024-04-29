@@ -211,7 +211,7 @@ void CBofMovie::OnMovieDone() {
 		if (m_bCaptured)
 			ReleaseCapture();
 
-		GetParent()->Enable();
+		GetParent()->enable();
 		_bEndDialog = true;
 	}
 }
@@ -223,7 +223,7 @@ bool CBofMovie::Play(bool bLoop, bool bEscCanStop) {
 
 	bool bSuccess = Play();
 
-	GetParent()->Disable();
+	GetParent()->disable();
 	GetParent()->FlushAllMessages();
 
 	CursorMan.showMouse(false);
@@ -257,7 +257,7 @@ bool CBofMovie::Reverse(bool bLoop,  bool bEscCanStop) {
 
 	bSuccess = Reverse();
 
-	GetParent()->Disable();
+	GetParent()->disable();
 	GetParent()->FlushAllMessages();
 	doModal();
 

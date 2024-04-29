@@ -82,7 +82,7 @@ void CBagStartDialog::onInitDialog() {
 			CBofBitmap *pFocus = LoadBitmap(BuildSysDir(g_stStartButtons[i].m_pszFocus), pPal);
 			CBofBitmap *pDis = LoadBitmap(BuildSysDir(g_stStartButtons[i].m_pszDisabled), pPal);
 
-			_buttons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
+			_buttons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 			_buttons[i]->create(g_stStartButtons[i].m_pszName, g_stStartButtons[i].m_nLeft, g_stStartButtons[i].m_nTop, g_stStartButtons[i].m_nWidth, g_stStartButtons[i].m_nHeight, this, g_stStartButtons[i].m_nID);
 			_buttons[i]->Show();
 
@@ -95,7 +95,7 @@ void CBagStartDialog::onInitDialog() {
 	// Disable the restore button if there are no saved games
 	CBagel *pApp = CBagel::getBagApp();
 	if ((pApp != nullptr) && !g_engine->savesExist())
-		_buttons[0]->SetState(BUTTON_DISABLED);
+		_buttons[0]->setState(BUTTON_DISABLED);
 
 	// Show System cursor
 	CBagCursor::showSystemCursor();

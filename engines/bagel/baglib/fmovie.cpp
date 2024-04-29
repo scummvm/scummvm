@@ -267,7 +267,7 @@ void CBagFMovie::OnMovieDone() {
 		if (m_bCaptured)
 			ReleaseCapture();
 
-		GetParent()->Enable();
+		GetParent()->enable();
 		_bEndDialog = true;
 	}
 }
@@ -279,7 +279,7 @@ bool CBagFMovie::Play(bool bLoop, bool bEscCanStop) {
 
 	bool bSuccess = Play();
 
-	GetParent()->Disable();
+	GetParent()->disable();
 	GetParent()->FlushAllMessages();
 
 	CursorMan.showMouse(false);
@@ -310,7 +310,7 @@ bool CBagFMovie::Reverse(bool bLoop, bool bEscCanStop) {
 
 	bool bSuccess = Reverse();
 
-	GetParent()->Disable();
+	GetParent()->disable();
 	GetParent()->FlushAllMessages();
 	doModal();
 

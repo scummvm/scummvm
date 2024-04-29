@@ -83,7 +83,7 @@ void CBagQuitDialog::onInitDialog() {
 			CBofBitmap *pFocus = LoadBitmap(BuildSysDir(g_stQuitButtons[i].m_pszFocus), pPal);
 			CBofBitmap *pDis = LoadBitmap(BuildSysDir(g_stQuitButtons[i].m_pszDisabled), pPal);
 
-			m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
+			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 
 			m_pButtons[i]->create(g_stQuitButtons[i].m_pszName, g_stQuitButtons[i].m_nLeft, g_stQuitButtons[i].m_nTop, g_stQuitButtons[i].m_nWidth, g_stQuitButtons[i].m_nHeight, this, g_stQuitButtons[i].m_nID);
 			m_pButtons[i]->Show();

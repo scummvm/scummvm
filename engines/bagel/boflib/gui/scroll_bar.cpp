@@ -202,7 +202,7 @@ void CBofScrollBar::SetScrollRange(int nMin, int nMax, bool bRepaint) {
 }
 
 
-ErrorCode CBofScrollBar::LoadBitmaps(const char *pszBack, const char *pszThumb, const char *pszLeftBtnUp, const char *pszRightBtnUp, const char *pszLeftBtnDn, const char *pszRightBtnDn) {
+ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, const char *pszLeftBtnUp, const char *pszRightBtnUp, const char *pszLeftBtnDn, const char *pszRightBtnDn) {
 	Assert(IsValidObject(this));
 
 	if ((pszBack != nullptr) && (pszThumb != nullptr)) {

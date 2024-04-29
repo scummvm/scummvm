@@ -123,7 +123,7 @@ ErrorCode CBagRestoreDialog::attach() {
 			pFocus = LoadBitmap(BuildSysDir(g_stButtons[i].m_pszFocus), pPal);
 			pDis = LoadBitmap(BuildSysDir(g_stButtons[i].m_pszDisabled), pPal);
 
-			m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
+			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 
 			m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
 			m_pButtons[i]->Show();
@@ -134,7 +134,7 @@ ErrorCode CBagRestoreDialog::attach() {
 	}
 
 	if (m_nSelectedItem == -1) {
-		m_pButtons[0]->SetState(BUTTON_DISABLED);
+		m_pButtons[0]->setState(BUTTON_DISABLED);
 	}
 
 	// Get a list of saves, and filter out the autosave entry if present
@@ -423,17 +423,17 @@ void CBagRestoreDialog::OnBofListBox(CBofObject *pObject, int nItemIndex) {
 	}
 
 	if (m_nSelectedItem != -1) {
-		if ((m_pButtons[0] != nullptr) && (m_pButtons[0]->GetState() == BUTTON_DISABLED)) {
-			m_pButtons[0]->SetState(BUTTON_UP, true);
+		if ((m_pButtons[0] != nullptr) && (m_pButtons[0]->getState() == BUTTON_DISABLED)) {
+			m_pButtons[0]->setState(BUTTON_UP, true);
 		}
 
 		// If user double-clicked on this entry, then just restore it now
-		if (pListBox->GetState() == LISTBOX_USENOW) {
+		if (pListBox->getState() == LISTBOX_USENOW) {
 			RestoreAndClose();
 		}
 
-	} else if ((m_pButtons[0] != nullptr) && (m_pButtons[0]->GetState() != BUTTON_DISABLED)) {
-		m_pButtons[0]->SetState(BUTTON_DISABLED, true);
+	} else if ((m_pButtons[0] != nullptr) && (m_pButtons[0]->getState() != BUTTON_DISABLED)) {
+		m_pButtons[0]->setState(BUTTON_DISABLED, true);
 	}
 }
 

@@ -31,7 +31,7 @@ CBagButtonObject::CBagButtonObject() {
 	_buttonType = BTN_PUSH;
 
 	// Set to first cel
-	CBagObject::SetState(0);
+	CBagObject::setState(0);
 
 	_active = false;
 	_activeDown = false;
@@ -70,7 +70,7 @@ ErrorCode CBagButtonObject::attach() {
 	if (_buttonType == BTN_SLIDER) {
 		CBofPoint NewPoint = GetPosition();
 		int xIncrement = _slideRect.Width() / (_numPos - 1);
-		NewPoint.x = _slideRect.left + (GetState() * xIncrement);
+		NewPoint.x = _slideRect.left + (getState() * xIncrement);
 		SetPosition(NewPoint);
 	}
 
@@ -98,7 +98,7 @@ bool CBagButtonObject::runObject() {
 		}
 
 		// Set to first cel
-		SetState(0);
+		setState(0);
 	}
 
 	runCallBack();
@@ -118,7 +118,7 @@ void CBagButtonObject::onLButtonDown(uint32 /*nFlags*/, CBofPoint *point, void *
 		}
 
 		// Set to clicked down
-		SetState(1);
+		setState(1);
 
 	} else if (_buttonType == BTN_HLEVER || _buttonType == BTN_VLEVER) {
 		if (!_activeDown && !_activeUp) {
@@ -184,7 +184,7 @@ void CBagButtonObject::onLButtonUp(uint32 flags, CBofPoint *point, void *extraIn
 			i = _numPos - 1;
 		}
 
-		SetState(i);
+		setState(i);
 		_dragging = false;
 
 	} else if (_buttonType == BTN_CHECKBOX) {
@@ -200,9 +200,9 @@ void CBagButtonObject::onLButtonUp(uint32 flags, CBofPoint *point, void *extraIn
 			}
 
 			if (_activeDown)
-				SetState(1);
+				setState(1);
 			else
-				SetState(0);
+				setState(0);
 		}
 	}
 
@@ -244,7 +244,7 @@ bool CBagButtonObject::onMouseMove(uint32 /*nFlags*/, CBofPoint point, void *ext
 			// because there is a chance we won't get it
 			int xIncrement = _slideRect.Width() / (_numPos - 1);
 			int i = (NewPoint.x - _slideRect.left) / xIncrement;
-			SetState(i);
+			setState(i);
 		}
 	}
 
@@ -259,7 +259,7 @@ bool CBagButtonObject::onMouseMove(uint32 /*nFlags*/, CBofPoint point, void *ext
 			SetVisible(false);
 		}
 
-		SetState(0); // Set to first cel
+		setState(0); // Set to first cel
 	}
 
 	return true;
@@ -323,7 +323,7 @@ ErrorCode CBagButtonObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcR
 				_activeUp = false;
 			}
 
-			SetState(GetSprite()->GetCelIndex());
+			setState(GetSprite()->GetCelIndex());
 		}
 	}
 
@@ -470,9 +470,9 @@ void CBagButtonObject::setProperty(const CBofString &prop, int val) {
 				}
 
 				if (val == 0)
-					SetState(0);
+					setState(0);
 				else
-					SetState(1);
+					setState(1);
 			} else {
 				if (_buttonType == BTN_SLIDER) {
 					CBofPoint cPos = GetPosition();
@@ -481,12 +481,12 @@ void CBagButtonObject::setProperty(const CBofString &prop, int val) {
 					SetPosition(cPos);
 					SetDirty(true);
 				}
-				SetState(val);
+				setState(val);
 				GetSprite()->SetCel(val);
 			}
 		}
 	} else if (!prop.Find("CURR_CEL")) {
-		SetState(val);
+		setState(val);
 		if (GetSprite())
 			GetSprite()->SetCel(val);
 	} else

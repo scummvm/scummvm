@@ -35,7 +35,7 @@ bool CBagExam::initExam() {
 		// Flush events, though not sure why we need it
 	}
 
-	GetParent()->Disable();
+	GetParent()->disable();
 	GetParent()->FlushAllMessages();
 
 	markBegEnd();

@@ -242,7 +242,7 @@ ErrorCode CBagOptWindow::attach() {
 			pFocus = LoadBitmap(BuildSysDir(g_stButtons[i].m_pszFocus), pPal);
 			pDis = LoadBitmap(BuildSysDir(g_stButtons[i].m_pszDisabled), pPal);
 
-			m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
+			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 
 			m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
 			m_pButtons[i]->Show();
@@ -272,7 +272,7 @@ ErrorCode CBagOptWindow::attach() {
 	if ((m_pMidiVolumeScroll = new CBofScrollBar) != nullptr) {
 		m_pMidiVolumeScroll->create("", &cRect, this, MIDI_VOL_ID);
 
-		m_pMidiVolumeScroll->LoadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
+		m_pMidiVolumeScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
 		m_pMidiVolumeScroll->SetScrollRange(VOLUME_MIN, VOLUME_MAX, true);
 		m_pMidiVolumeScroll->Show();
 
@@ -285,7 +285,7 @@ ErrorCode CBagOptWindow::attach() {
 	if ((m_pWaveVolumeScroll = new CBofScrollBar) != nullptr) {
 		m_pWaveVolumeScroll->create("", &cRect, this, WAVE_VOL_ID);
 
-		m_pWaveVolumeScroll->LoadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
+		m_pWaveVolumeScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
 		m_pWaveVolumeScroll->SetScrollRange(VOLUME_MIN, VOLUME_MAX, true);
 		m_pWaveVolumeScroll->Show();
 
@@ -298,7 +298,7 @@ ErrorCode CBagOptWindow::attach() {
 	if ((m_pCorrectionScroll = new CBofScrollBar) != nullptr) {
 		m_pCorrectionScroll->create("", &cRect, this, CORRECTION_ID);
 
-		m_pCorrectionScroll->LoadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
+		m_pCorrectionScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
 		m_pCorrectionScroll->SetScrollRange(0, 6, true);
 		m_pCorrectionScroll->Show();
 
@@ -311,7 +311,7 @@ ErrorCode CBagOptWindow::attach() {
 	if ((m_pPanSpeedScroll = new CBofScrollBar) != nullptr) {
 		m_pPanSpeedScroll->create("", &cRect, this, PANSPEED_ID);
 
-		m_pPanSpeedScroll->LoadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
+		m_pPanSpeedScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
 		m_pPanSpeedScroll->SetScrollRange(0, 5, true);
 		m_pPanSpeedScroll->Show();
 
@@ -321,14 +321,14 @@ ErrorCode CBagOptWindow::attach() {
 
 	cRect.SetRect(FLYTHROUGHS_LEFT, FLYTHROUGHS_TOP, FLYTHROUGHS_LEFT + CHECKBOX_WIDTH, FLYTHROUGHS_TOP + CHECKBOX_HEIGHT);
 	if ((m_pFlythroughs = new CBofCheckButton()) != nullptr) {
-		m_pFlythroughs->LoadColorScheme(&m_cColorScheme);
+		m_pFlythroughs->loadColorScheme(&m_cColorScheme);
 		m_errCode = m_pFlythroughs->create("", &cRect, this, FLYTHROUGHS_ID);
 		m_pFlythroughs->Show();
 	}
 
 	cRect.SetRect(PANIMATIONS_LEFT, PANIMATIONS_TOP, PANIMATIONS_LEFT + CHECKBOX_WIDTH, PANIMATIONS_TOP + CHECKBOX_HEIGHT);
 	if ((m_pPanimations = new CBofCheckButton()) != nullptr) {
-		m_pPanimations->LoadColorScheme(&m_cColorScheme);
+		m_pPanimations->loadColorScheme(&m_cColorScheme);
 		m_errCode = m_pPanimations->create("", &cRect, this, PAN_CHECK_ID);
 		m_pPanimations->Show();
 	}
@@ -498,12 +498,12 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 
 		switch (pButton->GetControlID()) {
 		case FLYTHROUGHS_ID:
-			m_cSystemData.m_bFlythroughs = (pButton->GetState() == BUTTON_CHECKED);
+			m_cSystemData.m_bFlythroughs = (pButton->getState() == BUTTON_CHECKED);
 			m_bDirty = true;
 			break;
 
 		case PAN_CHECK_ID:
-			m_cSystemData.m_bPanimations = (pButton->GetState() == BUTTON_CHECKED);
+			m_cSystemData.m_bPanimations = (pButton->getState() == BUTTON_CHECKED);
 			m_bDirty = true;
 			break;
 
