@@ -279,12 +279,12 @@ void CBagel::showNextCDDialog(CBofWindow *parentWin, int diskId) {
 		break;
 	}
 
-	cNextCDDialog.SetBackdrop(pBmp);
+	cNextCDDialog.setBackdrop(pBmp);
 
-	CBofRect cRect = cNextCDDialog.GetBackdrop()->getRect();
+	CBofRect cRect = cNextCDDialog.getBackdrop()->getRect();
 
 	// Create the dialog box
-	cNextCDDialog.create("NextCD", cRect.left, cRect.top, cRect.width(), cRect.Height(), parentWin);
+	cNextCDDialog.create("NextCD", cRect.left, cRect.top, cRect.width(), cRect.height(), parentWin);
 	cNextCDDialog.center();
 
 	cNextCDDialog.doModal();

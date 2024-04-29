@@ -172,7 +172,7 @@ void CBagStorageDev::setPosition(const CBofPoint &pos) {
 
 	m_cDestRect.SetRect(pos.x, pos.y,
 	                    pos.x + OrigRect.width() - 1,
-	                    pos.y + OrigRect.Height() - 1);
+	                    pos.y + OrigRect.height() - 1);
 }
 
 
@@ -281,14 +281,14 @@ CBofPoint CBagStorageDev::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 		int nPageNum = 0;
 
 		int     nBackWidth = getBackground()->width();
-		int     nBackHeight = getBackground()->Height();
+		int     nBackHeight = getBackground()->height();
 		int     nObjWidth = pObj->getRect().width();
-		int     nObjHeight = pObj->getRect().Height();
+		int     nObjHeight = pObj->getRect().height();
 
 		// Check to see if the whole object can fit in, if it can't wrap
 		if (NextPos.x > (nBackWidth - nObjWidth)) {
 			NextPos.x = 0;
-			NextPos.y += pObj->getRect().Height();
+			NextPos.y += pObj->getRect().height();
 		}
 		pObj->setPosition(NextPos);
 
@@ -424,7 +424,7 @@ ErrorCode CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *
 	if (nCount) {
 		CBofWindow *pWnd1 = CBagel::getBagApp()->getMasterWnd();
 		if (pWnd1)
-			pWnd1->ScreenToClient(&*m_xCursorLocation);
+			pWnd1->screenToClient(&*m_xCursorLocation);
 
 		for (int i = 0; i < nCount; ++i) {
 			CBagObject *pObj = GetObjectByPos(i);
@@ -433,7 +433,7 @@ ErrorCode CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *
 				CBofPoint pt = xBmpRect.TopLeft();
 				xBmpRect.OffsetRect(-pt.x, -pt.y);
 
-				if (pObj->IsVisible()) {
+				if (pObj->isVisible()) {
 					if (pBmp) {
 						// Only update dirty objects...
 						if (pObj->IsDirty() || pObj->IsAlwaysUpdate()) {
@@ -1109,7 +1109,7 @@ ErrorCode CBagStorageDev::PreFilter(CBofBitmap *pBmp, CBofRect *pRect, CBofList<
 			fillRect = &viewPortRect;
 		}
 
-		pBmp->FillRect(fillRect, RGB(0, 0, 0));
+		pBmp->fillRect(fillRect, RGB(0, 0, 0));
 	}
 
 	// Let pda know that we've been prefiltered
@@ -1183,7 +1183,7 @@ ErrorCode CBagStorageDevWnd::attach() {
 
 		CBofBitmap *pBmp  = new CBofBitmap(GetBackgroundName());
 
-		if ((pBmp == nullptr) || (pBmp->Height() <= 0) || (pBmp->width() <= 0)) {
+		if ((pBmp == nullptr) || (pBmp->height() <= 0) || (pBmp->width() <= 0)) {
 			ReportError(ERR_FOPEN, "BarComputer Background Opened Failed");
 		} else {
 
@@ -1196,7 +1196,7 @@ ErrorCode CBagStorageDevWnd::attach() {
 
 			CBofRect r = pBmp->getRect();
 
-			if (r.width() && r.Height()) {
+			if (r.width() && r.height()) {
 				create(s.GetBuffer(), &r, CBagel::getBagApp()->getMasterWnd());
 
 			} else {
@@ -1301,10 +1301,10 @@ ErrorCode CBagStorageDevWnd::close() {
 
 ErrorCode CBagStorageDevWnd::setBackground(CBofBitmap *pBmp) {
 	if (pBmp) {
-		SetBackdrop(pBmp);
+		setBackdrop(pBmp);
 		SetWorkBmp();
 	} else {
-		KillBackdrop();
+		killBackdrop();
 		KillWorkBmp();
 	}
 	return _errCode;
@@ -1317,7 +1317,7 @@ ErrorCode CBagStorageDevWnd::SetWorkBmp() {
 
 	CBofBitmap *pBmp = getBackground();
 	if (pBmp != nullptr) {
-		m_pWorkBmp = new CBofBitmap(pBmp->width(), pBmp->Height(), pBmp->GetPalette());
+		m_pWorkBmp = new CBofBitmap(pBmp->width(), pBmp->height(), pBmp->GetPalette());
 		pBmp->paint(m_pWorkBmp);
 	}
 
@@ -1399,7 +1399,7 @@ ErrorCode CBagStorageDevWnd::RunModal(CBagObject *pObj) {
 	if (pObj->IsModal() && pObj->IsActive()) {
 
 		EventLoop eventLoop;
-		CBofBitmap *pBmp = GetBackdrop();
+		CBofBitmap *pBmp = getBackdrop();
 
 		if (pBmp != nullptr) {
 			while (!g_engine->shouldQuit() && !pObj->isModalDone()) {
@@ -1451,10 +1451,10 @@ ErrorCode CBagStorageDevWnd::LoadFile(const CBofString &sFile) {
 
 		CBagStorageDev::LoadFileFromStream(fpInput, sWldFile);
 
-		// If the window.IsCreated()
+		// If the window.isCreated()
 		//
-		if (IsCreated())
-			InvalidateRect(nullptr);
+		if (isCreated())
+			invalidateRect(nullptr);
 
 		BofFree(pBuf);
 
@@ -1586,7 +1586,7 @@ ErrorCode CBagStorageDevDlg::attach() {
 	if (pBmp)
 		r = pBmp->getRect();
 
-	if (r.width() && r.Height()) {
+	if (r.width() && r.height()) {
 		create(s.GetBuffer(), &r, CBagel::getBagApp()->getMasterWnd());
 
 	} else {
@@ -1604,7 +1604,7 @@ ErrorCode CBagStorageDevDlg::attach() {
 
 
 ErrorCode CBagStorageDevDlg::close() {
-	ReleaseCapture();
+	releaseCapture();
 
 	CBofDialog::close();
 
@@ -1662,7 +1662,7 @@ ErrorCode CBagStorageDevDlg::PaintScreen(CBofRect *pRect) {
 		CBagStorageDevWnd *pWin = g_pLastWindow;
 
 		if (pWin != nullptr) {
-			CBofBitmap *pBmp = pWin->GetBackdrop();
+			CBofBitmap *pBmp = pWin->getBackdrop();
 
 			if (pBmp != nullptr) {
 				// Don't redraw the background window unless we have to.
@@ -1729,8 +1729,8 @@ ErrorCode CBagStorageDevDlg::LoadFile(const CBofString &sFile) {
 
 		BofFree(pBuf);
 
-		if (IsCreated())
-			InvalidateRect(nullptr);
+		if (isCreated())
+			invalidateRect(nullptr);
 	}
 
 	// Add everything to the window
@@ -1739,13 +1739,13 @@ ErrorCode CBagStorageDevDlg::LoadFile(const CBofString &sFile) {
 
 ErrorCode CBagStorageDevDlg::create(const char *pszName, int x, int y, int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {
 	ErrorCode rc = CBofDialog::create(pszName, x, y, nWidth, nHeight, pParent, nControlID);
-	SetCapture();
+	setCapture();
 	return rc;
 }
 
 ErrorCode CBagStorageDevDlg::create(const char *pszName, CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
 	ErrorCode rc = CBofDialog::create(pszName, pRect, pParent, nControlID);
-	SetCapture();
+	setCapture();
 	return rc;
 }
 

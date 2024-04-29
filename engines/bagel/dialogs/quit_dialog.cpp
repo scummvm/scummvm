@@ -39,7 +39,7 @@ struct ST_BUTTONS {
 	int m_nTop;
 	int m_nWidth;
 	int m_nHeight;
-	int m_nID;
+	int _nID;
 };
 
 static const ST_BUTTONS g_stQuitButtons[NUM_QUIT_BUTTONS] = {
@@ -65,7 +65,7 @@ void CBagQuitDialog::onInitDialog() {
 
 	Assert(_pBackdrop != nullptr);
 	CBofPalette *pPal = _pBackdrop->GetPalette();
-	SelectPalette(pPal);
+	selectPalette(pPal);
 
 	// Paint the SaveList Box onto the background
 	if (_pBackdrop != nullptr) {
@@ -85,7 +85,7 @@ void CBagQuitDialog::onInitDialog() {
 
 			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 
-			m_pButtons[i]->create(g_stQuitButtons[i].m_pszName, g_stQuitButtons[i].m_nLeft, g_stQuitButtons[i].m_nTop, g_stQuitButtons[i].m_nWidth, g_stQuitButtons[i].m_nHeight, this, g_stQuitButtons[i].m_nID);
+			m_pButtons[i]->create(g_stQuitButtons[i].m_pszName, g_stQuitButtons[i].m_nLeft, g_stQuitButtons[i].m_nTop, g_stQuitButtons[i].m_nWidth, g_stQuitButtons[i].m_nHeight, this, g_stQuitButtons[i]._nID);
 			m_pButtons[i]->show();
 		} else {
 			ReportError(ERR_MEMORY);
@@ -121,7 +121,7 @@ void CBagQuitDialog::onClose() {
 void CBagQuitDialog::onPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
-	PaintBackdrop(pRect);
+	paintBackdrop(pRect);
 
 	validateAnscestors();
 }
@@ -140,7 +140,7 @@ void CBagQuitDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 }
 
 
-void CBagQuitDialog::OnBofButton(CBofObject *pObject, int nFlags) {
+void CBagQuitDialog::onBofButton(CBofObject *pObject, int nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -150,7 +150,7 @@ void CBagQuitDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 	CBofBmpButton *pButton = (CBofBmpButton *)pObject;
 
 	if (pButton != nullptr) {
-		int nId = pButton->GetControlID();
+		int nId = pButton->getControlID();
 
 		bool bQuit = true;
 		if (nId == SAVE_BTN) {

@@ -85,7 +85,7 @@ ErrorCode CBagCharacterObject::attach() {
 	_bmpBuf = new CBofBitmap(_smacker->getWidth(), _smacker->getHeight(), smackPal);
 
 	if ((smackPal != nullptr) && (_bmpBuf != nullptr)) {
-		_bmpBuf->FillRect(nullptr, smackPal->GetNearestIndex(RGB(255, 255, 255)));
+		_bmpBuf->fillRect(nullptr, smackPal->GetNearestIndex(RGB(255, 255, 255)));
 	}
 
 	// Create the text filename
@@ -485,7 +485,7 @@ PARSE_CODES CBagCharacterObject::setInfo(bof_ifstream &istr) {
 				_startFrame = r.left;
 				_endFrame = r.top;
 
-				if (r.width() && r.Height()) {
+				if (r.width() && r.height()) {
 					// error of some type
 				}
 

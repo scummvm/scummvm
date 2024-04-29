@@ -40,7 +40,7 @@ public:
 protected:
 	virtual void onPaint(CBofRect *pRect);
 	virtual void onClose();
-	virtual void OnBofButton(CBofObject *pObject, int nState);
+	virtual void onBofButton(CBofObject *pObject, int nState);
 
 	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
 

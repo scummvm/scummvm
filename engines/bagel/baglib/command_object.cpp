@@ -358,7 +358,7 @@ bool CBagCommandObject::runObject() {
 
 			if (mainWin != nullptr) {
 				CBofBitmap bmp(640, 480, CBofApp::GetApp()->GetPalette());
-				bmp.FillRect(nullptr, COLOR_BLACK);
+				bmp.fillRect(nullptr, COLOR_BLACK);
 
 				bmp.paint(mainWin, 0, 0);
 				g_allowPaintFl = false;

@@ -50,7 +50,7 @@ struct ST_BUTTONS {
 	int m_nTop;
 	int m_nWidth;
 	int m_nHeight;
-	int m_nID;
+	int _nID;
 };
 
 static const ST_BUTTONS g_stButtons[NUM_COMPBUTT] = {
@@ -105,27 +105,27 @@ void SBarComputer::onMainLoop() {
 }
 
 void SBarComputer::EraseBackdrop() {
-	InvalidateRect(&_compDisplay);
+	invalidateRect(&_compDisplay);
 
-	UpdateWindow();
+	updateWindow();
 }
 
 void  SBarComputer::onPaint(CBofRect *pRect) {
-	if (GetBackdrop()) {
+	if (getBackdrop()) {
 		Assert(GetWorkBmp() != nullptr);
 
 		// Erase everything from the background
-		GetWorkBmp()->paint(GetBackdrop(), pRect, pRect);
+		GetWorkBmp()->paint(getBackdrop(), pRect, pRect);
 		// Paint all the objects to the background
-		PaintStorageDevice(nullptr, GetBackdrop(), pRect);
+		PaintStorageDevice(nullptr, getBackdrop(), pRect);
 	}
 
 	if (m_pTBox != nullptr)
 		m_pTBox->display();
 
 	// Paint the backdrop
-	if (GetBackdrop())
-		PaintBackdrop();
+	if (getBackdrop())
+		paintBackdrop();
 }
 
 ErrorCode SBarComputer::attach() {
@@ -160,7 +160,7 @@ ErrorCode SBarComputer::attach() {
 				CBofBitmap *pDis = LoadBitmap(BuildBarcDir(g_stButtons[i].m_pszDisabled), pPal);
 
 				m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
-				m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
+				m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i]._nID);
 				m_pButtons[i]->hide();
 			}
 		}
@@ -178,7 +178,7 @@ ErrorCode SBarComputer::attach() {
 			m_pIngBox->setSelectedItem(-1, false);
 		}
 
-		UpdateWindow();
+		updateWindow();
 	}
 
 	CBagCursor::showSystemCursor();
@@ -377,7 +377,7 @@ ErrorCode SBarComputer::ReadIngFile() {
 
 void SBarComputer::CreateTextBox(CBofString &newText) {
 	if (m_pTBox == nullptr) {
-		m_pTBox = new CBofTextBox(GetBackdrop(), &_compDisplay, newText);
+		m_pTBox = new CBofTextBox(getBackdrop(), &_compDisplay, newText);
 		Assert(m_pTBox != nullptr);
 		m_pTBox->setTextAttribs(12, TEXT_NORMAL, RGB(0, 0, 0));
 	} else {
@@ -389,7 +389,7 @@ void SBarComputer::CreateTextBox(CBofString &newText) {
 
 	if (m_pButtons[ONBUT]) {
 		m_pButtons[ONBUT]->show();
-		m_pButtons[ONBUT]->InvalidateRect(nullptr);
+		m_pButtons[ONBUT]->invalidateRect(nullptr);
 	}
 }
 
@@ -482,7 +482,7 @@ ErrorCode SBarComputer::CreateIngListBox() {
 	return error;
 }
 
-void SBarComputer::OnBofListBox(CBofObject * /*pListBox*/, int nItemIndex) {
+void SBarComputer::onBofListBox(CBofObject * /*pListBox*/, int nItemIndex) {
 	if (m_eMode == DRINKMODE) {
 		m_nDrinkSelect = nItemIndex;
 
@@ -506,15 +506,15 @@ void SBarComputer::OnBofListBox(CBofObject * /*pListBox*/, int nItemIndex) {
 
 	validateAnscestors(nullptr);
 	if (m_eMode == DRINKMODE) {
-		m_pButtons[LISTD]->InvalidateRect(nullptr);
+		m_pButtons[LISTD]->invalidateRect(nullptr);
 	} else {
-		m_pButtons[LISTI]->InvalidateRect(nullptr);
+		m_pButtons[LISTI]->invalidateRect(nullptr);
 	}
-	m_pButtons[ORDER]->InvalidateRect(nullptr);
-	m_pButtons[PGUP]->InvalidateRect(nullptr);
-	m_pButtons[PGDOWN]->InvalidateRect(nullptr);
+	m_pButtons[ORDER]->invalidateRect(nullptr);
+	m_pButtons[PGUP]->invalidateRect(nullptr);
+	m_pButtons[PGDOWN]->invalidateRect(nullptr);
 
-	UpdateWindow();
+	updateWindow();
 }
 
 void SBarComputer::SetOn() {
@@ -525,7 +525,7 @@ void SBarComputer::SetOn() {
 	BofPlaySound(BuildBarcDir(ONAUDIO), SOUND_MIX);
 
 	SetDrink();
-	UpdateWindow();
+	updateWindow();
 }
 
 void SBarComputer::SetOff() {
@@ -562,8 +562,8 @@ void SBarComputer::SetOff() {
 		}
 	}
 
-	InvalidateRect(&_compDisplay);
-	UpdateWindow();
+	invalidateRect(&_compDisplay);
+	updateWindow();
 
 }
 
@@ -641,7 +641,7 @@ void SBarComputer::SetIng() {
 		m_eMode = INGMODE;
 	}
 
-	UpdateWindow();
+	updateWindow();
 }
 
 
@@ -686,7 +686,7 @@ void SBarComputer::SetList() {
 		m_pTBox->setPageLength(10);
 
 		m_eMode = LISTMODE;
-		UpdateWindow();
+		updateWindow();
 	}
 }
 
@@ -789,7 +789,7 @@ void SBarComputer::pageDown() {
 	}
 }
 
-void SBarComputer::OnBofButton(CBofObject *pObject, int nState) {
+void SBarComputer::onBofButton(CBofObject *pObject, int nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -798,7 +798,7 @@ void SBarComputer::OnBofButton(CBofObject *pObject, int nState) {
 
 	CBofButton *pButton = (CBofButton *)pObject;
 
-	switch (pButton->GetControlID()) {
+	switch (pButton->getControlID()) {
 	case OFFBUT:
 		SetOn();
 		break;
@@ -849,7 +849,7 @@ void SBarComputer::OnBofButton(CBofObject *pObject, int nState) {
 		break;
 
 	default:
-		LogWarning(BuildString("Clicked Unknown Button with ID %d", pButton->GetControlID()));
+		LogWarning(BuildString("Clicked Unknown Button with ID %d", pButton->getControlID()));
 		break;
 	}
 }

@@ -57,7 +57,7 @@ ErrorCode CBofMovie::initialize(CBofWindow *pParent) {
 
 	// Call dialog box creates
 	if (create("MovieWin", 0, 0, 1, 1, pParent, 1) == ERR_NONE) {
-		SetCapture();
+		setCapture();
 	}
 
 	return ERR_NONE;
@@ -105,7 +105,7 @@ bool CBofMovie::openMovie(const char *sFilename) {
 
 	// If supposed to stretch into specified window
 	if (_bStretch) {
-		_pSbuf = new Graphics::ManagedSurface(width(), Height(), _pSmk->getPixelFormat());
+		_pSbuf = new Graphics::ManagedSurface(width(), height(), _pSmk->getPixelFormat());
 	} else {
 		_pSbuf = new Graphics::ManagedSurface(_pSmk->getWidth(), _pSmk->getHeight(), _pSmk->getPixelFormat());
 	}
@@ -123,7 +123,7 @@ bool CBofMovie::openMovie(const char *sFilename) {
 	// If we have a window that is going to cause a single frame
 	// palette shift, then black it out here.
 	if (_bBlackOutWindow) {
-		FillWindow(COLOR_BLACK);
+		fillWindow(COLOR_BLACK);
 	}
 
 	// Smack the current frame into the buffer
@@ -155,7 +155,7 @@ void  CBofMovie::onMainLoop() {
 			}
 			if (frame) {
 				_pSbuf->blitFrom(*frame, _srcRect, _dstRect);
-				UpdateWindow();
+				updateWindow();
 			}
 
 			if (_eMovStatus == FOREWARD) {
@@ -209,7 +209,7 @@ void  CBofMovie::onClose() {
 void CBofMovie::onMovieDone() {
 	if (!_bLoop) {
 		if (_bCaptured)
-			ReleaseCapture();
+			releaseCapture();
 
 		getParent()->enable();
 		_bEndDialog = true;
@@ -224,7 +224,7 @@ bool CBofMovie::play(bool bLoop, bool bEscCanStop) {
 	bool bSuccess = play();
 
 	getParent()->disable();
-	getParent()->FlushAllMessages();
+	getParent()->flushAllMessages();
 
 	CursorMan.showMouse(false);
 
@@ -258,7 +258,7 @@ bool CBofMovie::reverse(bool bLoop,  bool bEscCanStop) {
 	bSuccess = reverse();
 
 	getParent()->disable();
-	getParent()->FlushAllMessages();
+	getParent()->flushAllMessages();
 	doModal();
 
 	return bSuccess;

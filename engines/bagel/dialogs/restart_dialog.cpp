@@ -41,7 +41,7 @@ struct ST_BUTTONS {
 	int m_nTop;
 	int m_nWidth;
 	int m_nHeight;
-	int m_nID;
+	int _nID;
 };
 
 static const ST_BUTTONS g_stRestartButtons[NUM_RESTART_BTNS] = {
@@ -96,7 +96,7 @@ void CBagRestartDialog::onInitDialog() {
 
 			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 
-			m_pButtons[i]->create(g_stRestartButtons[i].m_pszName, g_stRestartButtons[i].m_nLeft, g_stRestartButtons[i].m_nTop, g_stRestartButtons[i].m_nWidth, g_stRestartButtons[i].m_nHeight, this, g_stRestartButtons[i].m_nID);
+			m_pButtons[i]->create(g_stRestartButtons[i].m_pszName, g_stRestartButtons[i].m_nLeft, g_stRestartButtons[i].m_nTop, g_stRestartButtons[i].m_nWidth, g_stRestartButtons[i].m_nHeight, this, g_stRestartButtons[i]._nID);
 			m_pButtons[i]->show();
 		} else {
 			ReportError(ERR_MEMORY);
@@ -135,7 +135,7 @@ void CBagRestartDialog::onClose() {
 void CBagRestartDialog::onPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
-	PaintBackdrop(pRect);
+	paintBackdrop(pRect);
 
 	validateAnscestors();
 }
@@ -190,7 +190,7 @@ void CBagRestartDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 	}
 }
 
-void CBagRestartDialog::OnBofButton(CBofObject *pObject, int nFlags) {
+void CBagRestartDialog::onBofButton(CBofObject *pObject, int nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -199,7 +199,7 @@ void CBagRestartDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 
 	CBofBmpButton *pButton = (CBofBmpButton *)pObject;
 
-	switch (pButton->GetControlID()) {
+	switch (pButton->getControlID()) {
 
 	// Cancel
 	case CANCEL_BTN: {
@@ -241,7 +241,7 @@ void CBagRestartDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 	}
 
 	default:
-		LogWarning(BuildString("Restart/Restore: Unknown button: %d", pButton->GetControlID()));
+		LogWarning(BuildString("Restart/Restore: Unknown button: %d", pButton->getControlID()));
 		break;
 	}
 }

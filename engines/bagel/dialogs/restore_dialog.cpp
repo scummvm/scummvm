@@ -62,7 +62,7 @@ struct ST_BUTTONS {
 	int m_nTop;
 	int m_nWidth;
 	int m_nHeight;
-	int m_nID;
+	int _nID;
 };
 
 static const ST_BUTTONS g_stButtons[NUM_RESTORE_BTNS] = {
@@ -125,7 +125,7 @@ ErrorCode CBagRestoreDialog::attach() {
 
 			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 
-			m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
+			m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i]._nID);
 			m_pButtons[i]->show();
 		} else {
 			ReportError(ERR_MEMORY);
@@ -192,7 +192,7 @@ ErrorCode CBagRestoreDialog::attach() {
 		}
 
 		m_pListBox->show();
-		m_pListBox->UpdateWindow();
+		m_pListBox->updateWindow();
 
 	} else {
 		ReportError(ERR_MEMORY);
@@ -265,7 +265,7 @@ ErrorCode CBagRestoreDialog::Detach() {
 void CBagRestoreDialog::onPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
-	PaintBackdrop(pRect);
+	paintBackdrop(pRect);
 
 	if (m_pListBox != nullptr) {
 		m_pListBox->repaintAll();
@@ -351,7 +351,7 @@ void CBagRestoreDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 	}
 }
 
-void CBagRestoreDialog::OnBofButton(CBofObject *pObject, int nFlags) {
+void CBagRestoreDialog::onBofButton(CBofObject *pObject, int nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -360,7 +360,7 @@ void CBagRestoreDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 
 	CBofBmpButton *pButton = (CBofBmpButton *)pObject;
 
-	switch (pButton->GetControlID()) {
+	switch (pButton->getControlID()) {
 
 	// Do actual save
 	case RESTORE_BTN:
@@ -397,12 +397,12 @@ void CBagRestoreDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 		break;
 
 	default:
-		LogWarning(BuildString("Save/Restore: Unknown button: %d", pButton->GetControlID()));
+		LogWarning(BuildString("Save/Restore: Unknown button: %d", pButton->getControlID()));
 		break;
 	}
 }
 
-void CBagRestoreDialog::OnBofListBox(CBofObject *pObject, int nItemIndex) {
+void CBagRestoreDialog::onBofListBox(CBofObject *pObject, int nItemIndex) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 

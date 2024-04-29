@@ -216,8 +216,8 @@ ErrorCode SBZoomPda::attach() {
 		}
 
 		show();
-		InvalidateRect(nullptr);
-		UpdateWindow();
+		invalidateRect(nullptr);
+		updateWindow();
 	}
 
 	// Keep track of updates...
@@ -270,9 +270,9 @@ void SBZoomPda::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	}
 
 	// This thing could get trashed by the underlying code...
-	if (IsCreated()) {
-		InvalidateRect(nullptr);
-		UpdateWindow();
+	if (isCreated()) {
+		invalidateRect(nullptr);
+		updateWindow();
 	}
 }
 
@@ -286,7 +286,7 @@ void SBZoomPda::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 	if (GetExitOnEdge() && (pPoint->x < GetExitOnEdge()) && (pPoint->y < 300) && !(GetPrevSDev().IsEmpty())) {
 		CBagMasterWin::setActiveCursor(10);
 	} else {
-		CBofRect cRect = GetBackdrop()->getRect();
+		CBofRect cRect = getBackdrop()->getRect();
 		CBagMasterWin::setActiveCursor(getProperCursor(*pPoint, cRect));
 	}
 }

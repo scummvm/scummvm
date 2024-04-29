@@ -205,7 +205,7 @@ ErrorCode CBagHelp::SetHelpFile(const char *pszTextFile) {
 void CBagHelp::onPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
-	PaintBackdrop(pRect);
+	paintBackdrop(pRect);
 
 	if (m_pTextBox != nullptr) {
 		m_pTextBox->display();
@@ -254,7 +254,7 @@ void CBagHelp::onKeyHit(uint32 lKey, uint32 nRepCount) {
 }
 
 
-void CBagHelp::OnBofButton(CBofObject *pObject, int nFlags) {
+void CBagHelp::onBofButton(CBofObject *pObject, int nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -263,7 +263,7 @@ void CBagHelp::OnBofButton(CBofObject *pObject, int nFlags) {
 
 	CBofBmpButton *pButton = (CBofBmpButton *)pObject;
 
-	switch (pButton->GetControlID()) {
+	switch (pButton->getControlID()) {
 	case HELP_OK_ID:
 		close();
 		break;

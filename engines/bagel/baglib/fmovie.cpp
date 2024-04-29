@@ -63,7 +63,7 @@ ErrorCode CBagFMovie::initialize(CBofWindow *pParent) {
 
 	// Call dialog box creates
 	if (create("MovieWin", 0, 0, 1, 1, pParent, 1) == ERR_NONE) {
-		SetCapture();
+		setCapture();
 	}
 
 	return ERR_NONE;
@@ -122,15 +122,15 @@ bool CBagFMovie::openMovie(const char *sFilename) {
 	m_pFilterBmp = new CBofBitmap(_pSmk->getWidth(), _pSmk->getHeight(), m_pSmackerPal, false);
 	m_pFilterBmp->Lock();
 
-	SelectPalette(m_pSmackerPal);
+	selectPalette(m_pSmackerPal);
 
 	if (m_pBmpBuf) {
 		m_pBmpBuf->Lock();
-		m_pBmpBuf->FillRect(nullptr, m_pSmackerPal->GetNearestIndex(RGB(255, 255, 255)));
+		m_pBmpBuf->fillRect(nullptr, m_pSmackerPal->GetNearestIndex(RGB(255, 255, 255)));
 
 		m_nReversed = !(m_pBmpBuf->IsTopDown());
-		m_pBufferStart = (char *)m_pBmpBuf->GetPixelAddress(0, m_nReversed * (m_pBmpBuf->Height() - 1));
-		m_nBufferLength = ABS(m_pBmpBuf->Height() * m_pBmpBuf->width());
+		m_pBufferStart = (char *)m_pBmpBuf->GetPixelAddress(0, m_nReversed * (m_pBmpBuf->height() - 1));
+		m_nBufferLength = ABS(m_pBmpBuf->height() * m_pBmpBuf->width());
 
 		const Graphics::Surface *frame = _pSmk->decodeNextFrame();
 		m_pSmackerPal->SetData(_pSmk->getPalette());
@@ -140,7 +140,7 @@ bool CBagFMovie::openMovie(const char *sFilename) {
 	}
 	bool bRepaint = true;
 
-	m_xBounds = CBofRect(0, 0, (uint16)m_pBmpBuf->width() - 1, (uint16)m_pBmpBuf->Height() - 1);
+	m_xBounds = CBofRect(0, 0, (uint16)m_pBmpBuf->width() - 1, (uint16)m_pBmpBuf->height() - 1);
 	reSize(&m_xBounds, bRepaint);
 
 	CBagMasterWin *pWnd = CBagel::getBagApp()->getMasterWnd();
@@ -265,7 +265,7 @@ void CBagFMovie::onClose() {
 void CBagFMovie::onMovieDone() {
 	if (!_bLoop) {
 		if (_bCaptured)
-			ReleaseCapture();
+			releaseCapture();
 
 		getParent()->enable();
 		_bEndDialog = true;
@@ -280,7 +280,7 @@ bool CBagFMovie::play(bool bLoop, bool bEscCanStop) {
 	bool bSuccess = play();
 
 	getParent()->disable();
-	getParent()->FlushAllMessages();
+	getParent()->flushAllMessages();
 
 	CursorMan.showMouse(false);
 
@@ -311,7 +311,7 @@ bool CBagFMovie::reverse(bool bLoop, bool bEscCanStop) {
 	bool bSuccess = reverse();
 
 	getParent()->disable();
-	getParent()->FlushAllMessages();
+	getParent()->flushAllMessages();
 	doModal();
 
 	return bSuccess;

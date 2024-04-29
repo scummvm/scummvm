@@ -77,7 +77,7 @@ void CBofListBox::insertBefore(int nIndex, const CBofString &cString, bool bRepa
 
 	clearSelection();
 
-	if (bRepaint && IsCreated() && IsVisible()) {
+	if (bRepaint && isCreated() && isVisible()) {
 		repaintAll();
 	}
 }
@@ -95,7 +95,7 @@ void CBofListBox::insertAfter(int nIndex, const CBofString &cString, bool bRepai
 	// One more item
 	_nNumItems++;
 
-	if (bRepaint && IsCreated() && IsVisible()) {
+	if (bRepaint && isCreated() && isVisible()) {
 		repaintAll();
 	}
 }
@@ -115,7 +115,7 @@ void CBofListBox::addToHead(const CBofString &cString, bool bRepaint) {
 
 	clearSelection();
 
-	if (bRepaint && IsCreated() && IsVisible()) {
+	if (bRepaint && isCreated() && isVisible()) {
 		repaintAll();
 	}
 }
@@ -135,7 +135,7 @@ void CBofListBox::addToTail(const CBofString &cString, bool bRepaint) {
 
 	clearSelection();
 
-	if (bRepaint && IsCreated() && IsVisible()) {
+	if (bRepaint && isCreated() && isVisible()) {
 		repaintAll();
 	}
 }
@@ -159,7 +159,7 @@ ErrorCode CBofListBox::delItem(int nIndex, bool bRepaint) {
 	clearSelection();
 
 
-	if (bRepaint && IsCreated() && IsVisible()) {
+	if (bRepaint && isCreated() && isVisible()) {
 		repaintAll();
 	}
 
@@ -183,7 +183,7 @@ ErrorCode CBofListBox::deleteAll(bool bRepaint) {
 
 	clearSelection();
 
-	if (bRepaint && IsCreated() && IsVisible()) {
+	if (bRepaint && isCreated() && isVisible()) {
 		repaintAll();
 	}
 
@@ -202,8 +202,8 @@ void CBofListBox::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 		_nState = LISTBOX_SELECT;
 
 		if (_parent != nullptr) {
-			_parent->SetPrevMouseDown(*pPoint);
-			_parent->OnBofListBox(this, nIndex);
+			_parent->setPrevMouseDown(*pPoint);
+			_parent->onBofListBox(this, nIndex);
 		}
 	}
 }
@@ -220,12 +220,12 @@ void CBofListBox::onLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 		_nState = LISTBOX_USENOW;
 
 		if (_parent != nullptr) {
-			_parent->SetPrevMouseDown(*pPoint);
-			_parent->OnBofListBox(this, nIndex);
+			_parent->setPrevMouseDown(*pPoint);
+			_parent->onBofListBox(this, nIndex);
 		}
 	}
 
-	SetFocus();
+	setFocus();
 }
 
 
@@ -315,7 +315,7 @@ ErrorCode CBofListBox::scrollTo(const int nLine) {
 void CBofListBox::onPaint(CBofRect * /*pRect*/) {
 	Assert(IsValidObject(this));
 
-	_nPageSize = Height() / _nItemHeight;
+	_nPageSize = height() / _nItemHeight;
 
 	if (_pBackdrop == nullptr) {
 		saveBackground();
@@ -340,18 +340,18 @@ ErrorCode CBofListBox::saveBackground() {
 
 	killBackground();
 
-	if ((_pBackdrop = new CBofBitmap(width(), Height(), CBofApp::GetApp()->GetPalette())) != nullptr) {
-		if ((_parent != nullptr) && (_parent->GetBackdrop() != nullptr)) {
+	if ((_pBackdrop = new CBofBitmap(width(), height(), CBofApp::GetApp()->GetPalette())) != nullptr) {
+		if ((_parent != nullptr) && (_parent->getBackdrop() != nullptr)) {
 			CBofRect cRect = _pBackdrop->getRect();
 
-			_parent->GetBackdrop()->paint(_pBackdrop, &cRect, &_cWindowRect);
+			_parent->getBackdrop()->paint(_pBackdrop, &cRect, &_cWindowRect);
 
 		} else {
 			_pBackdrop->CaptureScreen(this, &_cRect);
 		}
 
 	} else {
-		ReportError(ERR_MEMORY, "Unable to allocate a %d x %d CBofBitmap", width(), Height());
+		ReportError(ERR_MEMORY, "Unable to allocate a %d x %d CBofBitmap", width(), height());
 	}
 
 	return _errCode;
@@ -367,8 +367,8 @@ ErrorCode CBofListBox::createWorkArea() {
 	if (_pWork == nullptr) {
 		Assert(_pBackdrop != nullptr);
 
-		if ((_pWork = new CBofBitmap(width(), Height(), _pBackdrop->GetPalette())) == nullptr) {
-			ReportError(ERR_MEMORY, "Unable to allocate a %d x %d CBofBitmap", width(), Height());
+		if ((_pWork = new CBofBitmap(width(), height(), _pBackdrop->GetPalette())) == nullptr) {
+			ReportError(ERR_MEMORY, "Unable to allocate a %d x %d CBofBitmap", width(), height());
 		}
 	}
 
@@ -380,7 +380,7 @@ ErrorCode CBofListBox::repaintAll() {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
-		Assert(IsCreated());
+		Assert(isCreated());
 
 		int nCurFont = getFont();
 		setFont(_nTextFont);

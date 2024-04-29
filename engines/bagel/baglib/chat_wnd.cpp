@@ -32,8 +32,8 @@ ErrorCode CBagChatWnd::attach() {
 
 	if (CBagStorageDevWnd::attach() == ERR_NONE) {
 		show();
-		InvalidateRect(nullptr);
-		UpdateWindow();
+		invalidateRect(nullptr);
+		updateWindow();
 	}
 
 	return _errCode;

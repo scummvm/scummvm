@@ -82,7 +82,7 @@ public:
 	virtual ErrorCode attach();
 	virtual ErrorCode detach();
 
-	virtual void OnBofButton(CBofObject *pButton, int nState);
+	virtual void onBofButton(CBofObject *pButton, int nState);
 	virtual void onClose();
 
 protected:

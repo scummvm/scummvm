@@ -51,7 +51,7 @@ ErrorCode CBofEditText::create(const char *pszName, CBofRect *pRect,
 		x = pRect->left;
 		y = pRect->top;
 		nWidth = pRect->width();
-		nHeight = pRect->Height();
+		nHeight = pRect->height();
 	}
 
 	return create(pszName, x, y, nWidth, nHeight, pParent, nControlID);
@@ -65,7 +65,7 @@ ErrorCode CBofEditText::create(const char *pszName, int x, int y,
 
 	// Remember who our parent is
 	_parent = pParent;
-	m_nID = nControlID;
+	_nID = nControlID;
 
 	// Remember the name of this window
 	Common::strcpy_s(_szTitle, pszName);
@@ -75,23 +75,23 @@ ErrorCode CBofEditText::create(const char *pszName, int x, int y,
 
 	CBofPalette *pPalette = CBofApp::GetApp()->GetPalette();
 	if (pPalette != nullptr) {
-		SelectPalette(pPalette);
+		selectPalette(pPalette);
 	}
 
 	// Retain local coordinates (based on own window)
-	_cRect.SetRect(0, 0, _cWindowRect.width() - 1, _cWindowRect.Height() - 1);
+	_cRect.SetRect(0, 0, _cWindowRect.width() - 1, _cWindowRect.height() - 1);
 
 	return _errCode;
 }
 
 void CBofEditText::setText(const char *pszString) {
 	Assert(IsValidObject(this));
-	Assert(IsCreated());
+	Assert(isCreated());
 	Assert(pszString != nullptr);
 
 	_text = pszString;
 
-	UpdateWindow();
+	updateWindow();
 }
 
 
@@ -99,8 +99,8 @@ void CBofEditText::onPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 
-	if (HasFocus())
-		FillRect(nullptr, 255);
+	if (hasFocus())
+		fillRect(nullptr, 255);
 
 	// Draw the text, if any
 	if (!_text.IsEmpty()) {
@@ -116,10 +116,10 @@ void CBofEditText::onPaint(CBofRect *pRect) {
 
 void CBofEditText::onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
 	// First click focuses text input
-	SetFocus();
+	setFocus();
 	_cursorPos = _text.GetBufferSize();
 
-	UpdateWindow();
+	updateWindow();
 }
 
 void CBofEditText::onKeyHit(uint32 lKey, uint32 lRepCount) {
@@ -133,7 +133,7 @@ void CBofEditText::onKeyHit(uint32 lKey, uint32 lRepCount) {
 	
 	} else if (lKey == BKEY_BACK && !_text.IsEmpty()) {
 		_text.DeleteLastChar();
-		UpdateWindow();
+		updateWindow();
 	}
 }
 

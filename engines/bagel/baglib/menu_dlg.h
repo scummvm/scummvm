@@ -91,7 +91,7 @@ public:
 	virtual void onMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 
-	virtual void OnDeActivate();
+	virtual void onDeActivate();
 
 	virtual void onTimer(uint32 nID);
 	virtual void onPaint(CBofRect *pRect);

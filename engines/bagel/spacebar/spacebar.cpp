@@ -95,15 +95,15 @@ ErrorCode SpaceBarEngine::initialize() {
 			// Init sound system
 			InitializeSoundSystem(1, 22050, 8);
 
-			pBmp = new CBofBitmap(_masterWin->width(), _masterWin->Height(), m_pPalette);
+			pBmp = new CBofBitmap(_masterWin->width(), _masterWin->height(), m_pPalette);
 			if (pBmp != nullptr) {
-				pBmp->FillRect(nullptr, COLOR_BLACK);
+				pBmp->fillRect(nullptr, COLOR_BLACK);
 			} else {
 				ReportError(ERR_MEMORY, "Unable to allocate a CBofBitmap");
 			}
 
 			_masterWin->show();
-			_masterWin->ValidateRect(nullptr);
+			_masterWin->validateRect(nullptr);
 
 			// Paint the screen black
 			if (pBmp != nullptr)

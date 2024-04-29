@@ -38,7 +38,7 @@ WindowTimer::WindowTimer(uint32 interval, uint32 id, BofCallback callback) :
 
 CBofTimer::CBofTimer() {
 	m_lLastTime = 0;
-	m_nID = 0;
+	_nID = 0;
 	m_nInterval = 0;
 	m_pCallBack = nullptr;
 	m_lUserInfo = 0;
@@ -59,7 +59,7 @@ CBofTimer::CBofTimer() {
 
 CBofTimer::CBofTimer(uint32 nID, uint32 nInterval, void *lUserInfo, BofCallback pCallBack) {
 	m_lLastTime = 0;
-	m_nID = nID;
+	_nID = nID;
 	m_nInterval = nInterval;
 	m_pCallBack = pCallBack;
 	m_lUserInfo = lUserInfo;
@@ -105,7 +105,7 @@ void CBofTimer::HandleTimers() {
 
 				if (pTimer->m_pCallBack != nullptr) {
 					// Execute call back
-					(*pTimer->m_pCallBack)(pTimer->m_nID, pTimer->m_lUserInfo);
+					(*pTimer->m_pCallBack)(pTimer->_nID, pTimer->m_lUserInfo);
 
 					// If callback modifies the timer list, then we must start over
 					if (m_bModified) {
@@ -115,7 +115,7 @@ void CBofTimer::HandleTimers() {
 
 				} else {
 					// Otherwise, something is wrong
-					LogWarning(BuildString("Timer without a callback: %d", pTimer->m_nID));
+					LogWarning(BuildString("Timer without a callback: %d", pTimer->_nID));
 				}
 			}
 		}

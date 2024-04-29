@@ -159,7 +159,7 @@ ErrorCode CBofApp::runApp() {
 					if (shouldQuit())
 						return ERR_NONE;
 
-					if (pWindow->IsCreated()) {
+					if (pWindow->isCreated()) {
 						pWindow->onMainLoop();
 					}
 

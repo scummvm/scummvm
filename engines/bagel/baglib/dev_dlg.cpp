@@ -86,11 +86,11 @@ ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CB
 		if (bitmap != nullptr) {
 			Assert(pal != nullptr);
 
-			bitmap->FillRect(nullptr, pal->GetNearestIndex(RGB(92, 92, 92)));
+			bitmap->fillRect(nullptr, pal->GetNearestIndex(RGB(92, 92, 92)));
 
 			CBofRect bmpRect(bitmap->getRect());
 			bitmap->DrawRect(&bmpRect, pal->GetNearestIndex(RGB(0, 0, 0)));
-			bitmap->FillRect(rect, pal->GetNearestIndex(RGB(255, 255, 255)));
+			bitmap->fillRect(rect, pal->GetNearestIndex(RGB(255, 255, 255)));
 
 		} else {
 			ReportError(ERR_MEMORY);
@@ -102,7 +102,7 @@ ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CB
 	CBofString className = "CDevDlg";
 	CBagStorageDevDlg::create(className, &bmpRect, wnd, 0);
 	center();
-	SetBackdrop(bitmap);
+	setBackdrop(bitmap);
 
 	return _errCode;
 }
@@ -187,7 +187,7 @@ void CDevDlg::paintText() {
 	char achTemp[ACH_GUESS_MAX_CHARS];
 	snprintf(achTemp, ACH_GUESS_MAX_CHARS, "%s", _achGuess);
 
-	_guessText->display(GetBackdrop(), achTemp, 16, TEXT_MEDIUM);
+	_guessText->display(getBackdrop(), achTemp, 16, TEXT_MEDIUM);
 }
 
 void CDevDlg::setText(CBofString &text, CBofRect *textRect) {
@@ -210,7 +210,7 @@ ErrorCode CDevDlg::onRender(CBofBitmap *bmp, CBofRect *rect) {
 	ErrorCode errCode = CBagStorageDevDlg::onRender(bmp, rect);
 
 	if (_titleText != nullptr) {
-		_titleText->display(GetBackdrop());
+		_titleText->display(getBackdrop());
 	}
 
 	return errCode;

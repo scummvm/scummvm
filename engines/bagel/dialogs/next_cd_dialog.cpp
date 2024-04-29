@@ -47,7 +47,7 @@ void CBagNextCDDialog::onInitDialog() {
 
 	Assert(_pBackdrop != nullptr);
 	pPal = _pBackdrop->GetPalette();
-	SelectPalette(pPal);
+	selectPalette(pPal);
 
 	// Build all our buttons
 	if ((m_pButton = new CBofBmpButton) != nullptr) {
@@ -117,7 +117,7 @@ void CBagNextCDDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 	}
 }
 
-void CBagNextCDDialog::OnBofButton(CBofObject * /*pObject*/, int nFlags) {
+void CBagNextCDDialog::onBofButton(CBofObject * /*pObject*/, int nFlags) {
 	Assert(IsValidObject(this));
 
 	if (nFlags == BUTTON_CLICKED) {

@@ -50,8 +50,8 @@ ErrorCode SBarFullWnd::attach() {
 		}
 
 		show();
-		InvalidateRect(nullptr);
-		UpdateWindow();
+		invalidateRect(nullptr);
+		updateWindow();
 	}
 
 	return _errCode;

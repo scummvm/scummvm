@@ -554,7 +554,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			// Chip is Green or Blue (ID 1 or 2)
 			if (pChipBmp != nullptr) {
 				int rdef = g_engine->viewRect.width() - VILDROIDCHIPTEXTWIDTH;
-				int tdef = g_engine->viewRect.Height() - 300;
+				int tdef = g_engine->viewRect.height() - 300;
 				CBofRect tmprct(0, 0, VILDROIDCHIPTEXTWIDTH, 300);                 // (tdef/2)
 
 				pChipBmp->paint(pBmp, ((rdef / 2) + g_engine->viewRect.left), (tdef + g_engine->viewRect.top), &tmprct, 0);
@@ -639,7 +639,7 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		if (pVar->GetNumValue() > 0) {
 			CMainWindow::SetZzazzlVision(true);             // zzazzl paint is on in the script
 			int dx = g_engine->viewRect.width() / 3;  // + 1;
-			int dy = g_engine->viewRect.Height() / 3; // + 1;
+			int dy = g_engine->viewRect.height() / 3; // + 1;
 			CBofPalette *pPal = pBmp->GetPalette();
 
 			CBofBitmap *pMiniBitmap = new CBofBitmap(dx, dy, pPal);
@@ -700,7 +700,7 @@ static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	if (VARMNGR->GetVariable(hStr)->GetNumValue() > 0) {
 		bHallucinating = true;
 		CBofPalette *pPal = pBmp->GetPalette();
-		CBofBitmap *pTempBitmap = new CBofBitmap(g_engine->viewRect.width(), g_engine->viewRect.Height(), pPal);
+		CBofBitmap *pTempBitmap = new CBofBitmap(g_engine->viewRect.width(), g_engine->viewRect.height(), pPal);
 		CBofRect tempRect = pTempBitmap->getRect();
 		CBofRect srcRect(g_engine->viewRect);
 		CBofRect dstRect = tempRect;
@@ -781,7 +781,7 @@ static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			// we'll spin through the bitmap and coerce pixels which are black
 			// to be white and pixels which are not black be black.
 			int nWidth = g_engine->viewRect.width();
-			int nHeight = g_engine->viewRect.Height();
+			int nHeight = g_engine->viewRect.height();
 
 			// Need to lock down this bitmap to make sure we can get it's bits
 			pBmp->Lock();

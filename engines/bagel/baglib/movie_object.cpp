@@ -195,8 +195,8 @@ bool CBagMovieObject::runObject() {
 
 					CBofWindow *wnd = CBagel::getBagApp()->getMasterWnd();
 					pMovie->show();
-					CBofApp::GetApp()->GetMainWindow()->FlushAllMessages();
-					wnd->FlushAllMessages();
+					CBofApp::GetApp()->GetMainWindow()->flushAllMessages();
+					wnd->flushAllMessages();
 					pMovie->initExam();
 					delete pMovie;
 					rc = true;
@@ -257,7 +257,7 @@ bool CBagMovieObject::runObject() {
 						pNewWin = new CBofWindow();
 						if (pNewWin) {
 							pNewWin->create("BLACK", 0, 0, 640, 480, CBofApp::GetApp()->GetMainWindow(), 0);
-							pNewWin->FillWindow(COLOR_BLACK);
+							pNewWin->fillWindow(COLOR_BLACK);
 						}
 					}
 
@@ -265,8 +265,8 @@ bool CBagMovieObject::runObject() {
 
 					if (pMovie != nullptr && pMovie->ErrorOccurred() == false) {
 						pMovie->show();
-						CBofApp::GetApp()->GetMainWindow()->FlushAllMessages();
-						pWnd->FlushAllMessages();
+						CBofApp::GetApp()->GetMainWindow()->flushAllMessages();
+						pWnd->flushAllMessages();
 						pMovie->play(false);
 						delete pMovie;
 						rc = true;
@@ -309,7 +309,7 @@ bool CBagMovieObject::runObject() {
 							if (pNewWin) {
 								pNewWin->create("BLACK", 0, 0, 640, 480, CBofApp::GetApp()->GetMainWindow(), 0);
 								pNewWin->show();
-								pNewWin->FillWindow(COLOR_BLACK);
+								pNewWin->fillWindow(COLOR_BLACK);
 							}
 						}
 
@@ -328,8 +328,8 @@ bool CBagMovieObject::runObject() {
 							// Stop any asnych movies already playing
 							pPDA->stopMovie(true);
 							pMovie->show();
-							CBofApp::GetApp()->GetMainWindow()->FlushAllMessages();
-							pWnd->FlushAllMessages();
+							CBofApp::GetApp()->GetMainWindow()->flushAllMessages();
+							pWnd->flushAllMessages();
 							pMovie->play(false);
 							delete pMovie;
 							rc = true;

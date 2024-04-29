@@ -198,7 +198,7 @@ ErrorCode CBagSaveDialog::attach() {
 		}
 
 		m_pListBox->show();
-		m_pListBox->UpdateWindow();
+		m_pListBox->updateWindow();
 
 	} else {
 		ReportError(ERR_MEMORY);
@@ -206,7 +206,7 @@ ErrorCode CBagSaveDialog::attach() {
 
 	if (m_nSelectedItem != -1) {
 		if (m_pEditText != nullptr) {
-			m_pEditText->SetFocus();
+			m_pEditText->setFocus();
 		}
 
 		if (m_pListBox != nullptr) {
@@ -265,7 +265,7 @@ ErrorCode CBagSaveDialog::Detach() {
 void CBagSaveDialog::onPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
-	PaintBackdrop(pRect);
+	paintBackdrop(pRect);
 
 	if (m_pListBox != nullptr) {
 		m_pListBox->repaintAll();
@@ -341,7 +341,7 @@ void CBagSaveDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 }
 
 
-void CBagSaveDialog::OnBofButton(CBofObject *pObject, int nFlags) {
+void CBagSaveDialog::onBofButton(CBofObject *pObject, int nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -350,7 +350,7 @@ void CBagSaveDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 	
 	CBofBmpButton *pButton = (CBofBmpButton *)pObject;
 
-	switch (pButton->GetControlID()) {
+	switch (pButton->getControlID()) {
 	// Do actual save
 	case SAVE_BTN:
 		setReturnValue(SAVE_BTN);
@@ -388,17 +388,17 @@ void CBagSaveDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 		break;
 
 	default:
-		LogWarning(BuildString("Save/Restore: Unknown button: %d", pButton->GetControlID()));
+		LogWarning(BuildString("Save/Restore: Unknown button: %d", pButton->getControlID()));
 		break;
 	}
 }
 
 
-void CBagSaveDialog::OnBofListBox(CBofObject * /*pObject*/, int nItemIndex) {
+void CBagSaveDialog::onBofListBox(CBofObject * /*pObject*/, int nItemIndex) {
 	Assert(IsValidObject(this));
 
 	// Reset the focus away from the text field if set
-	ReleaseFocus();
+	releaseFocus();
 
 	// There is only one list box on this dialog
 	if (m_pListBox != nullptr) {
@@ -407,7 +407,7 @@ void CBagSaveDialog::OnBofListBox(CBofObject * /*pObject*/, int nItemIndex) {
 
 		// Show selected item in the Edit control
 		if (m_pEditText != nullptr) {
-			m_pEditText->SetFocus();
+			m_pEditText->setFocus();
 			m_pEditText->setText(m_pListBox->getText(nItemIndex));
 		}
 

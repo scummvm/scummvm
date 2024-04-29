@@ -477,18 +477,18 @@ bool CBagTextObject::runObject() {
 			if (pWin != nullptr) {
 				CBagStorageDevWnd *pParent = pWin->GetCurrentStorageDev();
 
-				CBofRect cRect(80, 10, 80 + 480 /*- 1 */, 10 + getRect().Height() - 1 + 5);
+				CBofRect cRect(80, 10, 80 + 480 /*- 1 */, 10 + getRect().height() - 1 + 5);
 				CBofPoint cPoint(0, 0);
 
 				CBofPalette *pPal = pApp->GetPalette();
-				CBofBitmap cBmp(cRect.width(), cRect.Height(), pPal);
+				CBofBitmap cBmp(cRect.width(), cRect.height(), pPal);
 
-				cBmp.FillRect(nullptr, pPal->GetNearestIndex(RGB(92, 92, 92)));
+				cBmp.fillRect(nullptr, pPal->GetNearestIndex(RGB(92, 92, 92)));
 
 				CBagMenuDlg cDlg;
 				cDlg.create(pParent, pPal, &cRect);
 
-				update(cDlg.GetBackdrop(), cPoint, &cRect);
+				update(cDlg.getBackdrop(), cPoint, &cRect);
 
 				CBagPDA *pPDA = nullptr;
 				sStr = "BPDA_WLD";
@@ -502,15 +502,15 @@ bool CBagTextObject::runObject() {
 
 				if (pPDAZ && pPDAZ->getZoomed() == true) {
 					CBofRect zRect = pPDAZ->getViewRect();
-					Assert(zRect.Height() > 0 && zRect.Height() < 480);
+					Assert(zRect.height() > 0 && zRect.height() < 480);
 					Assert(zRect.width() > 0 && zRect.width() < 640);
-					cDlg.move(80, zRect.bottom - cRect.Height(), true); // xxx
+					cDlg.move(80, zRect.bottom - cRect.height(), true); // xxx
 				} else if ((pPDA != nullptr) && (pPDA->isActivated() || pPDA->isActivating())) {
 					cDlg.move(80, 10, true);
 
 				} else {
 					int x = 80;
-					int y = 360 + 10 - cRect.Height();
+					int y = 360 + 10 - cRect.height();
 					cDlg.move(x, y, true);
 				}
 				g_bPauseTimer = true;

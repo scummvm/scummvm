@@ -42,7 +42,7 @@ public:
 
 protected:
 	virtual void onPaint(CBofRect *pRect);
-	virtual void OnBofButton(CBofObject *pObject, int nState);
+	virtual void onBofButton(CBofObject *pObject, int nState);
 	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
 
 	CBofString m_cTextFile;

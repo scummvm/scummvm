@@ -84,7 +84,7 @@ CBofPoint CBagLog::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 		xFloatRect.bottom -= (nBorderSize / 2);
 
 		// calculate what page the whole object belongs on
-		int nPageNum = ((NextPos.y + pObj->getRect().Height()) / xFloatRect.Height());
+		int nPageNum = ((NextPos.y + pObj->getRect().height()) / xFloatRect.height());
 		// page numbering is 1-N
 		nPageNum++;
 		SetNumFloatPages(nPageNum);
@@ -95,13 +95,13 @@ CBofPoint CBagLog::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 		if (nPageNum == nTotalPages) {
 			CBofPoint xPagePos = NextPos;
 			// Bring the current page into view
-			xPagePos.y = xPagePos.y - ((nPageNum - 1) * xFloatRect.Height());
+			xPagePos.y = xPagePos.y - ((nPageNum - 1) * xFloatRect.height());
 			// Add in the border
 			xPagePos.y += nBorderSize;
 			pObj->setPosition(xPagePos);
 		} else {
 			// Set the position to be off the sdev, so it won't show
-			pObj->setPosition(CBofPoint(NextPos.x, getBackground()->Height() + 1));
+			pObj->setPosition(CBofPoint(NextPos.x, getBackground()->height() + 1));
 		}
 
 		// Calculate the position for the next floater
@@ -111,7 +111,7 @@ CBofPoint CBagLog::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 		// Check to see if the whole object can fit in width, if it can't wrap
 		if (NextPos.x > (xFloatRect.width() - pObj->getRect().width())) {
 			NextPos.x = 0;
-			NextPos.y += pObj->getRect().Height();
+			NextPos.y += pObj->getRect().height();
 		}
 	}
 

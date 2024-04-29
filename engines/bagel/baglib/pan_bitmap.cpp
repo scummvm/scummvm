@@ -30,13 +30,13 @@ const CBofRect CBagPanBitmap::GetMaxView(CBofSize s) {
 
 	if (m_bPanorama) {
 		int h = 3 * (int)((double)width() / (MAXDIVVIEW * 4));
-		if (h > Height())
-			h = Height();
+		if (h > height())
+			h = height();
 
 		r.SetRect(0, 0, (int)(width() / MAXDIVVIEW - 2), h - 1);
 
 	} else {
-		r.SetRect(0, 0, width() - 1, Height() - 1);
+		r.SetRect(0, 0, width() - 1, height() - 1);
 	}
 
 	if (s.cx > 0 && r.right > s.cx) {
@@ -54,7 +54,7 @@ const CBofRect CBagPanBitmap::GetMaxView(CBofSize s) {
 CBagPanBitmap::CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, const CBofRect &xViewSize) :
 		CBofBitmap(pszFileName, pPalette, true) {
 	int nW = width();
-	int nH = Height();
+	int nH = height();
 
 	if (nW && nH) {
 		CBofRect xMaxViewSize(0, 0, nW - 1, nH - 1);
@@ -80,7 +80,7 @@ CBagPanBitmap::CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, con
 		}
 
 		m_xRotateRate.x = (nW - m_xCurrView.width()) / 64 + 1;
-		m_xRotateRate.y = (nH - m_xCurrView.Height()) / 64 + 1;
+		m_xRotateRate.y = (nH - m_xCurrView.height()) / 64 + 1;
 
 		NormalizeViewSize();
 
@@ -104,7 +104,7 @@ CBagPanBitmap::CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, con
 CBagPanBitmap::CBagPanBitmap(int dx, int dy, CBofPalette *pPalette, const CBofRect &xViewSize) :
 		CBofBitmap(dx, dy, pPalette) {
 	int nW = width();
-	int nH = Height();
+	int nH = height();
 
 	if (nW && nH) {
 		CBofRect xMaxViewSize(0, 0, nW - 1, nH - 1);
@@ -130,7 +130,7 @@ CBagPanBitmap::CBagPanBitmap(int dx, int dy, CBofPalette *pPalette, const CBofRe
 		}
 
 		m_xRotateRate.x = (nW - m_xCurrView.width()) / 64 + 1;
-		m_xRotateRate.y = (nH - m_xCurrView.Height()) / 64 + 1;
+		m_xRotateRate.y = (nH - m_xCurrView.height()) / 64 + 1;
 
 		NormalizeViewSize();
 
@@ -183,7 +183,7 @@ ErrorCode CBagPanBitmap::paint(CBofWindow * /*pWnd*/, const CBofPoint /*xDstOffs
 }
 
 CBofRect CBagPanBitmap::GetWarpSrcRect() {
-	int nH2 = Height() >> 1;
+	int nH2 = height() >> 1;
 
 	return CBofRect(m_xCurrView.left,
 	                nH2 + (int)(*m_pCosineTable * CBofFixed(m_xCurrView.top - nH2)),
@@ -193,7 +193,7 @@ CBofRect CBagPanBitmap::GetWarpSrcRect() {
 
 CBofPoint CBagPanBitmap::WarpedPoint(CBofPoint &xPoint) {
 	CBofRect r = getRect();
-	int nH2 = Height() >> 1;
+	int nH2 = height() >> 1;
 	int nW = width();
 	int nWidth = 1 << m_nCorrWidth; // It may no longer be necessary to store corr width as a shift arg
 	int nCenter = r.top + nH2;
@@ -288,7 +288,7 @@ ErrorCode CBagPanBitmap::PaintUncorrected(CBofBitmap *pBmp, CBofRect &dstRect) {
 	m_nCorrWidth = 0;
 
 	CBofFixed fONE(1);
-	CBofFixed fH2(Height() / 2);
+	CBofFixed fH2(height() / 2);
 	CBofFixed fCos(m_pCosineTable[0]);
 	int nOffset = (int)((fONE - fCos) * fH2);
 
@@ -298,11 +298,11 @@ ErrorCode CBagPanBitmap::PaintUncorrected(CBofBitmap *pBmp, CBofRect &dstRect) {
 	dstRect.bottom += nOffset;
 
 	if (dstRect.top < 0) {
-		dstRect.bottom = dstRect.Height() - 1;
+		dstRect.bottom = dstRect.height() - 1;
 		dstRect.top = 0;
 	}
-	if (dstRect.Height() >= pBmp->Height()) {
-		dstRect.bottom = dstRect.top + pBmp->Height() - 2;
+	if (dstRect.height() >= pBmp->height()) {
+		dstRect.bottom = dstRect.top + pBmp->height() - 2;
 	}
 	m_xCurrView = dstRect;
 
@@ -323,7 +323,7 @@ ErrorCode CBagPanBitmap::paint(CBofBitmap *pBmp, const CBofPoint xDstOffset) {
 	int nOffset = srcRect.right - nW;
 
 	dstRect.top = xDstOffset.y;
-	dstRect.bottom = dstRect.top + srcRect.Height() - 1;
+	dstRect.bottom = dstRect.top + srcRect.height() - 1;
 
 	// If the right side of the view is the beginning of the panorama
 	// paint the un-wrapped side (right) first.
@@ -411,13 +411,13 @@ void CBagPanBitmap::RotateDown(int nYRotRate) {
 
 void CBagPanBitmap::NormalizeViewSize() {
 	int nW = width();
-	int nH = Height();
+	int nH = height();
 
 	if (m_bPanorama) {
 		// The CurrView can not be more than 0.25Width x Height of the Bitmap
 		if ((m_xCurrView.width() >= nW / MAXDIVVIEW) || (m_xCurrView.width() <= 0))
 			m_xCurrView.right = (long)(m_xCurrView.left + nW / MAXDIVVIEW - 1);
-		if ((m_xCurrView.Height() >= nH) || (m_xCurrView.Height() <= 0))
+		if ((m_xCurrView.height() >= nH) || (m_xCurrView.height() <= 0))
 			m_xCurrView.bottom = m_xCurrView.top + nH - 1;
 
 		// The Base coords of CurrView must exist within the rectangle

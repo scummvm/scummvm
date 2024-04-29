@@ -81,7 +81,7 @@ struct ST_BUTTONS {
 	int m_nTop;
 	int m_nWidth;
 	int m_nHeight;
-	int m_nID;
+	int _nID;
 };
 
 static const ST_BUTTONS g_stButtons[NUM_SYS_BUTTONS] = {
@@ -191,7 +191,7 @@ void CBagOptWindow::onPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 
-	PaintBackdrop(pRect);
+	paintBackdrop(pRect);
 
 	validateAnscestors();
 }
@@ -244,7 +244,7 @@ ErrorCode CBagOptWindow::attach() {
 
 			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 
-			m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
+			m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i]._nID);
 			m_pButtons[i]->show();
 		} else {
 			ReportError(ERR_MEMORY);
@@ -392,7 +392,7 @@ void CBagOptWindow::GetDialogData() {
 	}
 }
 
-void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
+void CBagOptWindow::onBofButton(CBofObject *pObject, int nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -401,7 +401,7 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 
 		CBagMasterWin *pWin;
 		CBagel *pApp;
-		switch (pButton->GetControlID()) {
+		switch (pButton->getControlID()) {
 		case HELP_ID:
 			pApp = CBagel::getBagApp();
 			if (pApp != nullptr) {
@@ -496,7 +496,7 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 	} else {
 		CBofButton *pButton = (CBofButton *)pObject;
 
-		switch (pButton->GetControlID()) {
+		switch (pButton->getControlID()) {
 		case FLYTHROUGHS_ID:
 			m_cSystemData.m_bFlythroughs = (pButton->getState() == BUTTON_CHECKED);
 			m_bDirty = true;
@@ -513,7 +513,7 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 	}
 }
 
-void CBagOptWindow::OnBofScrollBar(CBofObject *pObj, int nPos) {
+void CBagOptWindow::onBofScrollBar(CBofObject *pObj, int nPos) {
 	Assert(IsValidObject(this));
 
 	CBofScrollBar *pScroll = (CBofScrollBar *)pObj;
