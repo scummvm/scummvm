@@ -42,76 +42,63 @@ ErrorCode CBagEventSDev::attach() {
 }
 
 ErrorCode CBagEventSDev::evaluateExpressions() {
-	ErrorCode errCode = ERR_NONE;
-	CBofPoint nArrangePos(5, 5);
-
-	// If a zelda movie is playing, don't execute the event world
-	if (CBagPDA::IsMoviePlaying()) {
+	// If a Zelda movie is playing, don't execute the event world
+	if (CBagPDA::IsMoviePlaying())
 		return ERR_NONE;
-	}
 
-	int nCount;
-	if ((nCount = GetObjectCount()) != 0) {
-		for (int i = 0; i < nCount; ++i) {
+	ErrorCode errCode = ERR_NONE;
+	int count = GetObjectCount();
+	for (int i = 0; i < count; ++i) {
 
-			CBagObject *pObj;
-			if ((pObj = GetObjectByPos(i)) != nullptr) {
-				// Find the local Expression objects
-				// This code says... only evaluate if we're in an if statement, this must be wrong.
-				if (pObj->GetExpression() == nullptr || pObj->GetExpression()->Evaluate(pObj->IsNegative())) {
-					if (!pObj->isAttached()) {
-						pObj->SetActive();
-						pObj->attach();
-					}
-					if (pObj->IsImmediateRun())
-						pObj->runObject();
-
-				} else if (pObj->isAttached()) {
-					if (pObj->GetType() != SOUNDOBJ || !((CBagSoundObject *)pObj)->IsPlaying()) {
-						pObj->SetActive(false);
-						pObj->detach();
-					}
+		CBagObject *posObj = GetObjectByPos(i);
+		if (posObj != nullptr) {
+			// Find the local Expression objects
+			// This code says... only evaluate if we're in an if statement, this must be wrong.
+			if (posObj->GetExpression() == nullptr || posObj->GetExpression()->Evaluate(posObj->IsNegative())) {
+				if (!posObj->isAttached()) {
+					posObj->SetActive();
+					posObj->attach();
 				}
-			} else
-				errCode = ERR_FFIND;
-		}
+				if (posObj->IsImmediateRun())
+					posObj->runObject();
+
+			} else if (posObj->isAttached() && (posObj->GetType() != SOUNDOBJ || !((CBagSoundObject *)posObj)->IsPlaying())) {
+				posObj->SetActive(false);
+				posObj->detach();
+			}
+		} else
+			errCode = ERR_FFIND;
 	}
 
 	return errCode;
 }
 
 ErrorCode CBagTurnEventSDev::evaluateExpressions() {
-	ErrorCode      errCode = ERR_NONE;
-	CBofPoint       nArrangePos(5, 5);
-
 	// If a zelda movie is playing, don't execute the turncount world
 	if (CBagPDA::IsMoviePlaying()) {
 		return ERR_UNKNOWN;
 	}
 
-	int nCount;
-	if ((nCount = GetObjectCount()) != 0) {
-		for (int i = 0; i < nCount; ++i) {
-			CBagObject *pObj;
-			if ((pObj = GetObjectByPos(i)) != nullptr) {
-				// Find the local Expression objects
-				// This code says... only evaluate if we're in an if statement, this must be wrong.
-				if (pObj->GetExpression() == nullptr || pObj->GetExpression()->Evaluate(pObj->IsNegative())) {
-					if (!pObj->isAttached()) {
-						pObj->SetActive();
-						pObj->attach();
-					}
-					if (pObj->IsImmediateRun())
-						pObj->runObject();
-				} else if (pObj->isAttached()) {
-					if (pObj->GetType() != SOUNDOBJ || !((CBagSoundObject *)pObj)->IsPlaying()) {
-						pObj->SetActive(false);
-						pObj->detach();
-					}
+	ErrorCode errCode = ERR_NONE;
+	int count = GetObjectCount();
+	for (int i = 0; i < count; ++i) {
+		CBagObject *posObj = GetObjectByPos(i);
+		if (posObj != nullptr) {
+			// Find the local Expression objects
+			// This code says... only evaluate if we're in an if statement, this must be wrong.
+			if (posObj->GetExpression() == nullptr || posObj->GetExpression()->Evaluate(posObj->IsNegative())) {
+				if (!posObj->isAttached()) {
+					posObj->SetActive();
+					posObj->attach();
 				}
-			} else
-				errCode = ERR_FFIND;
-		}
+				if (posObj->IsImmediateRun())
+					posObj->runObject();
+			} else if (posObj->isAttached() && (posObj->GetType() != SOUNDOBJ || !((CBagSoundObject *)posObj)->IsPlaying())) {
+				posObj->SetActive(false);
+				posObj->detach();
+			}
+		} else
+			errCode = ERR_FFIND;
 	}
 
 	return errCode;
