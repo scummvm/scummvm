@@ -1672,14 +1672,14 @@ void Sprite::buildActiveSpriteList() {
 }
 
 WizSimpleBitmap *Sprite::getSimpleBitmapForSprite(const SpriteInfo *spritePtr) {
-	WizSimpleBitmap *simpleBitmap = nullptr;
+	WizSimpleBitmap simpleBitmap;
 	int image = spritePtr->image;
 	int group = spritePtr->group;
 	int groupImage = _groupTable[group].image;
 
 	if (image != 0 && group != 0 && groupImage != 0) {
-		if (_vm->_wiz->dwSetSimpleBitmapStructFromImage(groupImage, 0, simpleBitmap)) {
-			return simpleBitmap;
+		if (_vm->_wiz->dwSetSimpleBitmapStructFromImage(groupImage, 0, &simpleBitmap)) {
+			return &simpleBitmap;
 		}
 	}
 
