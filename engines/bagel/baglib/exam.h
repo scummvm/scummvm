@@ -29,66 +29,64 @@ namespace Bagel {
 
 class CBagExam : public CBofMovie {
 protected:
-	CBofRect m_LeftRect;
-	CBofRect m_RightRect;
-	uint32 m_dwStart;
-	uint32 m_dwEnd;
+	CBofRect _leftRect;
+	CBofRect _rightRect;
+	uint32 _start;
+	uint32 _end;
 
 public:
 	CBagExam(CBofWindow *pParent = nullptr) : CBofMovie(pParent),
-		m_LeftRect(0, 0, 0, 0), m_RightRect(0, 0, 0, 0), m_dwStart(0), m_dwEnd(0) {}
+		_leftRect(0, 0, 0, 0), _rightRect(0, 0, 0, 0), _start(0), _end(0) {}
 	CBagExam(CBofWindow *pParent, const char *sFilename) : CBofMovie(pParent, sFilename),
-		m_LeftRect(0, 0, 0, 0), m_RightRect(0, 0, 0, 0), m_dwStart(0), m_dwEnd(0) {}
-	CBagExam(CBofWindow *pParent, const char *sFilename, CBofRect *pBounds,
-	         bool bStretch = false, bool bUseNewPal = true, bool bBlackOutWindow = false) :
-		CBofMovie(pParent, sFilename, pBounds, bStretch, bUseNewPal, bBlackOutWindow),
-		m_LeftRect(0, 0, 0, 0), m_RightRect(0, 0, 0, 0),                                                                                                                                        m_dwStart(0), m_dwEnd(0) {}
+		_leftRect(0, 0, 0, 0), _rightRect(0, 0, 0, 0), _start(0), _end(0) {}
+	CBagExam(CBofWindow *pParent, const char *sFilename, CBofRect *pBounds) : CBofMovie(pParent, sFilename, pBounds),
+			_leftRect(0, 0, 0, 0), _rightRect(0, 0, 0, 0), _start(0), _end(0) {}
 	~CBagExam() {}
 
 	/**
-	 * Initailize exam object after opened and ready to play
+	 * Initialize exam object after opened and ready to play
 	 * @return      Success/failure
 	 */
-	virtual bool Exam();
+	virtual bool initExam();
 
 	/**
 	 * Called when the mouse is moved over window, check if the
 	 * cursor is in one of the rectangle and rotate object accordingly
 	 */
-	virtual void onMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	void onMouseMove(uint32 /* flags */ , CBofPoint *point, void * /* extraInfo */ = nullptr) override;
 
 	/**
 	 * Resize the examination window
 	 */
-	virtual void OnReSize(CBofSize *pSize);
-	virtual void OnButtonUp(uint32 nFlags, CBofPoint *pPoint);
+	void onReSize(CBofSize *size) override;
+	void onButtonUp(uint32 /* flags */, CBofPoint * /* point */) override;
 
 	/**
 	 * Set the rectangles that determine "hot" mouse locations
 	 * @return      Success/failure
 	 */
-	bool SetRotationRects();
+	bool setRotationRects();
 
 	/**
 	 * Store off the start and end frames of the movies
 	 * @return      Success/failure
 	 */
-	bool MarkBegEnd();
+	bool markBegEnd();
 
 	/**
 	 * Rotate the object to the right (play movie)
 	 */
-	bool RotateRight();
+	bool rotateRight();
 
 	/**
 	 * Rotate the object to the left (reverse movie)
 	 */
-	bool RotateLeft();
+	bool rotateLeft();
 
 	/**
 	 * Stop the rotation of the object (stop movie)
 	 */
-	bool RotateStop();
+	bool rotateStop();
 };
 
 } // namespace Bagel

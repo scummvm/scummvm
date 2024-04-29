@@ -431,7 +431,7 @@ protected:
 	virtual void OnRButtonUp(uint32 nFlags, CBofPoint *pPoint);
 	virtual void OnRButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
 
-	virtual void OnReSize(CBofSize *pSize);
+	virtual void onReSize(CBofSize *pSize);
 	virtual void OnPaint(CBofRect *pRect);
 	virtual void onClose();
 

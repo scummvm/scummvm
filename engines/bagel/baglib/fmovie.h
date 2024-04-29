@@ -71,7 +71,7 @@ protected:
 	 */
 	virtual void CloseMovie();
 
-	virtual void OnReSize(CBofSize *pSize);
+	virtual void onReSize(CBofSize *pSize) {};
 
 	virtual bool Play();
 	virtual bool Reverse();

@@ -50,18 +50,18 @@ protected:
 	virtual bool    OpenMovie(const char *sFilename);
 	virtual void    CloseMovie();
 
-	virtual void    OnReSize(CBofSize *pSize);
+	virtual void    onReSize(CBofSize *pSize);
 
 	virtual bool    Play();
 	virtual bool    Reverse();
 
 	virtual void    onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) {
-		OnButtonUp(nFlags, pPoint);
+		onButtonUp(nFlags, pPoint);
 	}
 	virtual void    OnRButtonUp(uint32 nFlags, CBofPoint *pPoint) {
-		OnButtonUp(nFlags, pPoint);
+		onButtonUp(nFlags, pPoint);
 	}
-	virtual void    OnButtonUp(uint32 nFlags, CBofPoint *pPoint);
+	virtual void    onButtonUp(uint32 nFlags, CBofPoint *pPoint);
 	virtual void    OnPaint(CBofRect *pRect);
 	virtual void    OnMovieDone();
 	virtual void    onClose();
