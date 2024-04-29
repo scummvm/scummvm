@@ -62,10 +62,10 @@ CBagRestartDialog::CBagRestartDialog(const char *pszFileName, CBofWindow *pWin)
 }
 
 
-void CBagRestartDialog::OnInitDialog() {
+void CBagRestartDialog::onInitDialog() {
 	Assert(IsValidObject(this));
 
-	CBofDialog::OnInitDialog();
+	CBofDialog::onInitDialog();
 
 	Assert(m_pBackdrop != nullptr);
 
@@ -132,7 +132,7 @@ void CBagRestartDialog::onClose() {
 }
 
 
-void CBagRestartDialog::OnPaint(CBofRect *pRect) {
+void CBagRestartDialog::onPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	PaintBackdrop(pRect);
@@ -170,7 +170,7 @@ void CBagRestartDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 				pWin->NewGame();
 				CBofCursor::Show();
 
-				KillBackground();
+				killBackground();
 
 				_nReturnValue = RESTART_BTN;
 				onClose();
@@ -231,7 +231,7 @@ void CBagRestartDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 				pWin->NewGame();
 				CBofCursor::Show();
 
-				KillBackground();
+				killBackground();
 
 				_nReturnValue = RESTART_BTN;
 				onClose();

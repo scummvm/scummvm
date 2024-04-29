@@ -145,7 +145,7 @@ void  CBofMovie::onKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	}
 }
 
-void  CBofMovie::OnMainLoop() {
+void  CBofMovie::onMainLoop() {
 	if (m_pSmk->needsUpdate()) {
 		if (m_eMovStatus != STOPPED) {
 			// Smack the current frame into the buffer
@@ -183,7 +183,7 @@ void  CBofMovie::OnMainLoop() {
 	}// !SMACKWAIT
 }
 
-void  CBofMovie::OnPaint(CBofRect *) {
+void  CBofMovie::onPaint(CBofRect *) {
 	if (m_pSbuf) {
 		getSurface()->blitFrom(*m_pSbuf);
 	}

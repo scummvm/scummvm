@@ -569,7 +569,7 @@ void CBagPanWindow::onMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 	*m_xCursorLocation = xPoint;
 }
 
-void CBagPanWindow::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
+void CBagPanWindow::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 	int nCount = m_pFGObjectList->GetCount();
 	if (nCount != 0) {
 		for (int i = 0; i < nCount; ++i) {
@@ -581,7 +581,7 @@ void CBagPanWindow::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 			}
 		}
 	}
-	CBagStorageDevWnd::OnLButtonDown(nFlags, xPoint);
+	CBagStorageDevWnd::onLButtonDown(nFlags, xPoint);
 
 	MOUSE_ACTIVITY  nMA = GetLActivity();
 	CBagObject *pActObj = GetLActiveObject();

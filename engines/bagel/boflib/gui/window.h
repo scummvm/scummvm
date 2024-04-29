@@ -369,7 +369,7 @@ public:
 	virtual void OnBofButton(CBofObject *pButton, int nExtraInfo);
 	virtual void OnBofScrollBar(CBofObject *pButton, int nNewPos);
 	virtual void OnBofListBox(CBofObject *pListBox, int nItemIndex);
-	virtual void OnMainLoop();
+	virtual void onMainLoop();
 
 	virtual void OnSoundNotify(CBofObject *pObject, uint32 lParam2);
 	virtual void OnMovieNotify(uint32 lParam1, uint32 lParam2);
@@ -423,7 +423,7 @@ protected:
 	Array<CBofWindow *> _children;	// Child element pointers
 
 	virtual void onMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void OnLButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
 
@@ -432,7 +432,7 @@ protected:
 	virtual void OnRButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
 
 	virtual void onReSize(CBofSize *pSize);
-	virtual void OnPaint(CBofRect *pRect);
+	virtual void onPaint(CBofRect *pRect);
 	virtual void onClose();
 
 	virtual void OnUserMessage(uint32 nMessage, uint32 lParam);

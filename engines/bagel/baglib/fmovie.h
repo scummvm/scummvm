@@ -80,10 +80,10 @@ protected:
 		OnButtonUp(nFlags, pPoint);
 	}
 	virtual void OnButtonUp(uint32 nFlags, CBofPoint *pPoint);
-	virtual void OnPaint(CBofRect *pRect);
+	virtual void onPaint(CBofRect *pRect);
 	virtual void OnMovieDone();
 	virtual void onClose();
-	virtual void OnMainLoop();
+	virtual void onMainLoop();
 
 	/**
 	 * Catch the ESC key when hit

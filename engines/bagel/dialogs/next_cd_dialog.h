@@ -35,10 +35,10 @@ class CBagQuitDialog : public CBofDialog {
 public:
 	CBagQuitDialog();
 
-	virtual void OnInitDialog();
+	virtual void onInitDialog();
 
 protected:
-	virtual void OnPaint(CBofRect *pRect);
+	virtual void onPaint(CBofRect *pRect);
 	virtual void onClose();
 	virtual void OnBofButton(CBofObject *pObject, int nState);
 
@@ -53,10 +53,10 @@ class CBagNextCDDialog : public CBofDialog {
 public:
 	CBagNextCDDialog();
 
-	virtual void OnInitDialog();
+	virtual void onInitDialog();
 
 protected:
-	virtual void OnPaint(CBofRect *pRect);
+	virtual void onPaint(CBofRect *pRect);
 	virtual void onClose();
 	virtual void OnBofButton(CBofObject *pObject, int nState);
 
@@ -70,16 +70,16 @@ class CBagCreditsDialog : public CBofDialog {
 public:
 	CBagCreditsDialog();
 
-	virtual void OnInitDialog();
+	virtual void onInitDialog();
 
 protected:
-	virtual void OnPaint(CBofRect *pRect);
+	virtual void onPaint(CBofRect *pRect);
 	virtual void onClose();
 
 	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
-	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 
-	virtual void OnMainLoop();
+	virtual void onMainLoop();
 
 	ErrorCode NextScreen();
 	ErrorCode DisplayCredits();

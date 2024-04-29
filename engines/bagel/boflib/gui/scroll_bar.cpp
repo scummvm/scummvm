@@ -94,7 +94,7 @@ CBofScrollBar::~CBofScrollBar() {
 }
 
 
-void CBofScrollBar::OnPaint(CBofRect *pDirtyRect) {
+void CBofScrollBar::onPaint(CBofRect *pDirtyRect) {
 	Assert(IsValidObject(this));
 
 	Paint(pDirtyRect);
@@ -368,7 +368,7 @@ ErrorCode CBofScrollBar::Paint(CBofRect *pDirtyRect) {
 }
 
 
-void CBofScrollBar::OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
+void CBofScrollBar::onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 
 	CBofRect cLeftPageRect, cRightPageRect;
@@ -420,7 +420,7 @@ void CBofScrollBar::OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
 			SetTimer(BMP_SCROLL_TIMER, m_nTimerCount);
 	}
 
-	CBofWindow::OnLButtonDown(nFlags, pPoint);
+	CBofWindow::onLButtonDown(nFlags, pPoint);
 }
 
 

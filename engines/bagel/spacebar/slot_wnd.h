@@ -103,7 +103,7 @@ public:
 	SBarSlotWnd();
 
 	virtual void        OnBofButton(CBofObject *pButton, int nState);
-	virtual void        OnMainLoop();
+	virtual void        onMainLoop();
 
 	virtual ErrorCode  attach();	// This function attachs the background and nessasary bitmaps
 	virtual ErrorCode  detach();	// This function detachs the background and nessasary bitmaps
@@ -125,9 +125,9 @@ public:
 
 	void                SlideSlots();
 
-	void                OnPaint(CBofRect *pRect);
+	void                onPaint(CBofRect *pRect);
 	void                onTimer(uint32 nTimerId);
-	void                OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	void                onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	void                onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {
 	}
 };

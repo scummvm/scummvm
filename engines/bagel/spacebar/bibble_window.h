@@ -95,13 +95,13 @@ protected:
 	ErrorCode Highlight(CBetArea *pArea, byte nColor);
 	ErrorCode UnHighlight(CBetArea *pArea);
 
-	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void OnLButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
 	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
 
-	virtual void OnPaint(CBofRect *pRect);
-	virtual void OnMainLoop();
+	virtual void onPaint(CBofRect *pRect);
+	virtual void onMainLoop();
 	virtual void onTimer(uint32 /*nTimerID*/) {
 		// Do nothing
 	}

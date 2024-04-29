@@ -168,7 +168,7 @@ void CBagFMovie::onKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	}
 }
 
-void CBagFMovie::OnMainLoop() {
+void CBagFMovie::onMainLoop() {
 	if (m_pSmk->needsUpdate()) {
 		// Not needed for filtered movies
 		if (m_eMovStatus != STOPPED) {
@@ -220,7 +220,7 @@ void CBagFMovie::OnMainLoop() {
 	} // !SMACKWAIT
 }
 
-void CBagFMovie::OnPaint(CBofRect *) {
+void CBagFMovie::onPaint(CBofRect *) {
 }
 
 void CBagFMovie::CloseMovie() {

@@ -51,10 +51,10 @@ public:
 		m_nBufSize = nLength;
 	}
 
-	void OnInitDialog() override;
+	void onInitDialog() override;
 
 protected:
-	virtual void OnPaint(CBofRect *pRect) override;
+	virtual void onPaint(CBofRect *pRect) override;
 	virtual void OnBofButton(CBofObject *pObject, int nState) override;
 	virtual void OnBofListBox(CBofObject *pObject, int nItemIndex) override;
 	virtual void onKeyHit(uint32 lKey, uint32 lRepCount) override;

@@ -35,10 +35,10 @@ class CBagRestartDialog : public CBofDialog {
 public:
 	CBagRestartDialog(const char *pszFileName, CBofWindow *pWin);
 
-	virtual void OnInitDialog();
+	virtual void onInitDialog();
 
 protected:
-	virtual void OnPaint(CBofRect *pRect);
+	virtual void onPaint(CBofRect *pRect);
 	virtual void onClose();
 	virtual void OnBofButton(CBofObject *pObject, int nState);
 

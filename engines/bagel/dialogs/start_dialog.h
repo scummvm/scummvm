@@ -39,7 +39,7 @@ private:
 	CBofPalette *_savePalette = nullptr;
 
 protected:
-	void OnPaint(CBofRect *pRect) override;
+	void onPaint(CBofRect *pRect) override;
 	void onClose() override;
 	void OnBofButton(CBofObject *pObject, int nState) override;
 
@@ -48,7 +48,7 @@ protected:
 public:
 	CBagStartDialog(const char *pszFileName, CBofWindow *pWin);
 
-	void OnInitDialog() override;
+	void onInitDialog() override;
 };
 
 } // namespace Bagel

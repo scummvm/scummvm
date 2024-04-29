@@ -62,10 +62,10 @@ protected:
 		onButtonUp(nFlags, pPoint);
 	}
 	virtual void    onButtonUp(uint32 nFlags, CBofPoint *pPoint);
-	virtual void    OnPaint(CBofRect *pRect);
+	virtual void    onPaint(CBofRect *pRect);
 	virtual void    OnMovieDone();
 	virtual void    onClose();
-	virtual void    OnMainLoop();
+	virtual void    onMainLoop();
 	virtual void    onKeyHit(uint32 lKey, uint32 lRepCount);
 
 public:

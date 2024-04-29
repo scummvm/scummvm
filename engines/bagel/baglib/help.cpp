@@ -202,7 +202,7 @@ ErrorCode CBagHelp::SetHelpFile(const char *pszTextFile) {
 }
 
 
-void CBagHelp::OnPaint(CBofRect *pRect) {
+void CBagHelp::onPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	PaintBackdrop(pRect);
@@ -290,10 +290,10 @@ const char *BuildHelpDir(const char *pszFile) {
 	return formPath(RULES_DIR, pszFile);
 }
 
-void CBagHelp::OnInitDialog() {
+void CBagHelp::onInitDialog() {
 	Assert(IsValidObject(this));
 
-	CBofDialog::OnInitDialog();
+	CBofDialog::onInitDialog();
 
 	attach();
 }

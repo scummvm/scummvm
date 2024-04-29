@@ -187,7 +187,7 @@ ErrorCode CBagOptWindow::Detach() {
 	return m_errCode;
 }
 
-void CBagOptWindow::OnPaint(CBofRect *pRect) {
+void CBagOptWindow::onPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 
@@ -436,7 +436,7 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 				pWin = pApp->getMasterWnd();
 				if ((pWin != nullptr) &&  pWin->ShowQuitDialog(this)) {
 					_nReturnValue = 0;
-					KillBackground();
+					killBackground();
 					Close();
 					g_engine->quitGame();
 				}
@@ -465,7 +465,7 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 					// Can't restore a deleted palette
 					m_pSavePalette = nullptr;
 
-					KillBackground();
+					killBackground();
 					Close();
 				}
 			}
@@ -480,7 +480,7 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 					// Can't restore a deleted palette
 					m_pSavePalette = nullptr;
 
-					KillBackground();
+					killBackground();
 					Close();
 				}
 			}
@@ -622,10 +622,10 @@ void CBagOptWindow::ReturnToDefaults() {
 	m_bDirty = true;
 }
 
-void CBagOptWindow::OnInitDialog() {
+void CBagOptWindow::onInitDialog() {
 	Assert(IsValidObject(this));
 
-	CBofDialog::OnInitDialog();
+	CBofDialog::onInitDialog();
 
 	attach();
 }
@@ -671,7 +671,7 @@ void CBagOptWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 				// Can't restore a deleted palette
 				m_pSavePalette = nullptr;
 
-				KillBackground();
+				killBackground();
 				Close();
 			}
 		}
@@ -686,7 +686,7 @@ void CBagOptWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 				// Can't restore a deleted palette
 				m_pSavePalette = nullptr;
 
-				KillBackground();
+				killBackground();
 				Close();
 			}
 		}
@@ -700,7 +700,7 @@ void CBagOptWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 			pWin = pApp->getMasterWnd();
 			if ((pWin != nullptr) && pWin->ShowQuitDialog(this)) {
 				_nReturnValue = 0;
-				KillBackground();
+				killBackground();
 				Close();
 			}
 		}

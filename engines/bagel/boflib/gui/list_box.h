@@ -86,7 +86,7 @@ public:
 
 	ErrorCode CreateWorkArea();
 	ErrorCode SaveBackground();
-	void KillBackground();
+	void killBackground();
 
 	void SetHighlightColor(RGBCOLOR cHighColor) {
 		m_cHighColor = cHighColor;
@@ -138,10 +138,10 @@ public:
 	virtual ErrorCode RepaintAll();
 
 protected:
-	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void OnLButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
 	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
-	virtual void OnPaint(CBofRect *pRect);
+	virtual void onPaint(CBofRect *pRect);
 
 	/**
 	 * Clears the currently selected item

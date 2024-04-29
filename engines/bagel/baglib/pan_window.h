@@ -209,7 +209,7 @@ public:
 
 	void onClose();
 	void onMouseMove(uint32 nFlags, CBofPoint *p, void * = nullptr);
-	void OnLButtonDown(uint32 nFlags, CBofPoint *point, void * = nullptr);
+	void onLButtonDown(uint32 nFlags, CBofPoint *point, void * = nullptr);
 	void onLButtonUp(uint32 nFlags, CBofPoint *point, void * = nullptr);
 	void onKeyHit(uint32 lKey, uint32 lRepCount);
 	void OnSize(uint32 nType, int cx, int cy);

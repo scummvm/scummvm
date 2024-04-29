@@ -129,15 +129,15 @@ public:
 	void PageDown();
 	void Back();
 
-	void OnMainLoop();
+	void onMainLoop();
 
 	virtual void onTimer(uint32 /*nTimerID*/) {
 	}
 
-	void OnPaint(CBofRect *pRect);
+	void onPaint(CBofRect *pRect);
 	void EraseBackdrop();
 
-	void OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {}
+	void onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {}
 	void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {}
 
 	void onMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);

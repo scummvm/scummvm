@@ -94,7 +94,7 @@ public:
 	virtual void OnDeActivate();
 
 	virtual void onTimer(uint32 nID);
-	virtual void OnPaint(CBofRect *pRect);
+	virtual void onPaint(CBofRect *pRect);
 };
 
 extern bool g_bPauseTimer;

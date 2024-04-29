@@ -49,13 +49,13 @@ protected:
 
 protected:
 	virtual ErrorCode Paint(CBofRect *pRect);
-	virtual ErrorCode PaintBackground();
-	virtual ErrorCode SaveBackground();
-	virtual ErrorCode KillBackground();
+	virtual ErrorCode paintBackground();
+	virtual ErrorCode saveBackground();
+	virtual ErrorCode killBackground();
 
-	virtual void OnPaint(CBofRect *pRect);
+	virtual void onPaint(CBofRect *pRect);
 	virtual void onClose();
-	virtual void OnInitDialog();
+	virtual void onInitDialog();
 
 public:
 	/**
@@ -131,7 +131,7 @@ public:
 
 	/**
 	 * Get the dialog's return value
-	 * @return 
+	 * @return
 	 */
 	int GetReturnValue() const {
 		return _nReturnValue;

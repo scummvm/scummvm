@@ -34,7 +34,7 @@ private:
 	size_t _cursorPos = 0;
 
 protected:
-	void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
+	void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
 	void onKeyHit(uint32 lKey, uint32 lRepCount) override;
 
 public:
@@ -51,7 +51,7 @@ public:
 
 	void SetText(const char *pszString);
 
-	void OnPaint(CBofRect *pRect) override;
+	void onPaint(CBofRect *pRect) override;
 };
 
 } // namespace Bagel

@@ -95,7 +95,7 @@ void CBofEditText::SetText(const char *pszString) {
 }
 
 
-void CBofEditText::OnPaint(CBofRect *pRect) {
+void CBofEditText::onPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 
@@ -114,7 +114,7 @@ void CBofEditText::OnPaint(CBofRect *pRect) {
 
 }
 
-void CBofEditText::OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
+void CBofEditText::onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
 	// First click focuses text input
 	SetFocus();
 	_cursorPos = _text.GetBufferSize();

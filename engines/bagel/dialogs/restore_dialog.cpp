@@ -262,7 +262,7 @@ ErrorCode CBagRestoreDialog::Detach() {
 	return m_errCode;
 }
 
-void CBagRestoreDialog::OnPaint(CBofRect *pRect) {
+void CBagRestoreDialog::onPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	PaintBackdrop(pRect);
@@ -292,7 +292,7 @@ ErrorCode CBagRestoreDialog::RestoreAndClose() {
 
 			// If we are restoring a game, then we don't need to repaint
 			// the background, because the screen is changing to a restored state.
-			KillBackground();
+			killBackground();
 			Close();
 
 			// Restore
@@ -437,10 +437,10 @@ void CBagRestoreDialog::OnBofListBox(CBofObject *pObject, int nItemIndex) {
 	}
 }
 
-void CBagRestoreDialog::OnInitDialog() {
+void CBagRestoreDialog::onInitDialog() {
 	Assert(IsValidObject(this));
 
-	CBofDialog::OnInitDialog();
+	CBofDialog::onInitDialog();
 
 	attach();
 }

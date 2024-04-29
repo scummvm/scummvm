@@ -114,7 +114,7 @@ public:
 
 	void OnBofButton(CBofObject *, int) override;
 	void onClose() override;
-	void OnPaint(CBofRect * pRect) override;
+	void onPaint(CBofRect * pRect) override;
 };
 
 // Number of constants...
@@ -146,10 +146,10 @@ public:
 	virtual void onKeyHit(uint32 lKey, uint32 nRepCount);
 	virtual ErrorCode attach();
 	virtual ErrorCode detach();
-	void OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
+	void onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
 	void onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
-	void OnMainLoop();
-	void OnPaint(CBofRect *pRect);
+	void onMainLoop();
+	void onPaint(CBofRect *pRect);
 	void OnBofButton(CBofObject *, int);
 	void OnBofListBox(CBofObject *pListBox, int nItemIndex);
 	void SetOn();

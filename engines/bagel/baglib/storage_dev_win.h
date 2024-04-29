@@ -330,7 +330,7 @@ public:
 
 	virtual void onMouseMove(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	virtual ErrorCode OnMouseOver(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
-	virtual void OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
+	virtual void onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	virtual void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 
 	virtual ErrorCode OnCursorUpdate(int /*nCurrObj*/) {
@@ -474,11 +474,11 @@ public:
 	}
 
 	virtual ErrorCode OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
-	virtual void OnPaint(CBofRect *);
-	virtual void OnMainLoop();
+	virtual void onPaint(CBofRect *);
+	virtual void onMainLoop();
 	void onClose();
 	void onMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
-	void OnLButtonDown(uint32 nFlags, CBofPoint *point, void * = nullptr);
+	void onLButtonDown(uint32 nFlags, CBofPoint *point, void * = nullptr);
 	void onLButtonUp(uint32 nFlags, CBofPoint *point, void * = nullptr);
 
 	void onKeyHit(uint32 lKey, uint32 nRepCount);
@@ -539,13 +539,13 @@ public:
 		m_sHelpFileName = s;
 	}
 
-	virtual void OnMainLoop();
+	virtual void onMainLoop();
 	virtual ErrorCode onRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
 
-	virtual void OnPaint(CBofRect *);
+	virtual void onPaint(CBofRect *);
 	virtual void onClose();
 	void onMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
-	void OnLButtonDown(uint32 nFlags, CBofPoint *point, void * = nullptr);
+	void onLButtonDown(uint32 nFlags, CBofPoint *point, void * = nullptr);
 	void onLButtonUp(uint32 nFlags, CBofPoint *point, void * = nullptr);
 };
 

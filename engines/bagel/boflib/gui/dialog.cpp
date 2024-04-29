@@ -147,7 +147,7 @@ void CBofDialog::onClose() {
 
 	// If we saved the background, then paint it
 	if (_lFlags & BOFDLG_SAVEBACKGND) {
-		PaintBackground();
+		paintBackground();
 
 	} else if (_parent != nullptr) {
 		// Need to validate the portion of the parent window that we obscured
@@ -169,7 +169,7 @@ ErrorCode CBofDialog::Paint(CBofRect *pRect) {
 
 	// Repaint the background behind the dialog
 	if (!_bFirstTime) {
-		PaintBackground();
+		paintBackground();
 	}
 	_bFirstTime = false;
 
@@ -182,7 +182,7 @@ ErrorCode CBofDialog::Paint(CBofRect *pRect) {
 }
 
 
-ErrorCode CBofDialog::PaintBackground() {
+ErrorCode CBofDialog::paintBackground() {
 	Assert(IsValidObject(this));
 
 	// Paint back the background
@@ -194,7 +194,7 @@ ErrorCode CBofDialog::PaintBackground() {
 }
 
 
-ErrorCode CBofDialog::SaveBackground() {
+ErrorCode CBofDialog::saveBackground() {
 	Assert(IsValidObject(this));
 
 	if (_lFlags & BOFDLG_SAVEBACKGND) {
@@ -219,7 +219,7 @@ ErrorCode CBofDialog::SaveBackground() {
 }
 
 
-ErrorCode CBofDialog::KillBackground() {
+ErrorCode CBofDialog::killBackground() {
 	delete _pDlgBackground;
 	_pDlgBackground = nullptr;
 
@@ -227,12 +227,12 @@ ErrorCode CBofDialog::KillBackground() {
 }
 
 
-void CBofDialog::OnPaint(CBofRect *pRect) {
+void CBofDialog::onPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 
 	if (_bFirstTime) {
-		SaveBackground();
+		saveBackground();
 	}
 
 	Paint(pRect);
@@ -249,7 +249,7 @@ int CBofDialog::DoModal() {
 
 	CBofWindow *pLastActive = GetActiveWindow();
 	SetActive();
-	OnInitDialog();
+	onInitDialog();
 
 	// Display the window
 	Show();
@@ -268,7 +268,7 @@ int CBofDialog::DoModal() {
 		CBofTimer::HandleTimers();
 
 		if (IsCreated()) {
-			OnMainLoop();
+			onMainLoop();
 		}
 
 		handleEvents();
@@ -291,6 +291,6 @@ int CBofDialog::DoModal() {
 // Virtual functions that the user can override if they want to
 ///////////////////////////////////////////////////////////////////
 
-void CBofDialog::OnInitDialog() {}
+void CBofDialog::onInitDialog() {}
 
 } // namespace Bagel

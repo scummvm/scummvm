@@ -481,7 +481,7 @@ ErrorCode CBagStorageDev::OnMouseOver(uint32 /*nFlags*/, CBofPoint * /*xPoint*/,
 }
 
 
-void CBagStorageDev::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *vpInfo) {
+void CBagStorageDev::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *vpInfo) {
 	if (CBagPDA::IsMoviePlaying() && CBagMasterWin::GetActiveCursor() == 6) {
 		return;
 	}
@@ -1334,13 +1334,13 @@ ErrorCode CBagStorageDevWnd::KillWorkBmp() {
 	return m_errCode;
 }
 
-void CBagStorageDevWnd::OnPaint(CBofRect *) {
+void CBagStorageDevWnd::onPaint(CBofRect *) {
 	Assert(IsValidObject(this));
 
 	PaintScreen();
 }
 
-void CBagStorageDevWnd::OnMainLoop() {
+void CBagStorageDevWnd::onMainLoop() {
 	Assert(IsValidObject(this));
 
 	PaintScreen();
@@ -1526,15 +1526,15 @@ void CBagStorageDevWnd::onMouseMove(uint32 n, CBofPoint *pPoint, void *) {
 	}
 }
 
-void CBagStorageDevWnd::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
+void CBagStorageDevWnd::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 	// If asynch movie playing in PDA don't react to mouse down (8033)
 	//  if it's not a wait cursor, then allow the user to access that hotspot.
 	if (CBagPDA::IsMoviePlaying() && CBagMasterWin::GetActiveCursor() == 6) {
 		return;
 	}
 
-	CBagStorageDev::OnLButtonDown(nFlags, xPoint, GetAssociateWnd());
-	CBofWindow::OnLButtonDown(nFlags, xPoint);
+	CBagStorageDev::onLButtonDown(nFlags, xPoint, GetAssociateWnd());
+	CBofWindow::onLButtonDown(nFlags, xPoint);
 }
 
 void CBagStorageDevWnd::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
@@ -1627,7 +1627,7 @@ ErrorCode CBagStorageDevDlg::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 }
 
 
-void CBagStorageDevDlg::OnMainLoop() {
+void CBagStorageDevDlg::onMainLoop() {
 	Assert(IsValidObject(this));
 
 	// The background of a storage device might be in motion, i.e. it
@@ -1644,7 +1644,7 @@ void CBagStorageDevDlg::OnMainLoop() {
 }
 
 
-void CBagStorageDevDlg::OnPaint(CBofRect *) {
+void CBagStorageDevDlg::onPaint(CBofRect *) {
 	Assert(IsValidObject(this));
 
 	PaintScreen();
@@ -1791,9 +1791,9 @@ void CBagStorageDevDlg::onMouseMove(uint32 n, CBofPoint *xPoint, void *) {
 	CBagStorageDev::onMouseMove(n, xPoint, GetAssociateWnd());
 }
 
-void CBagStorageDevDlg::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
-	CBagStorageDev::OnLButtonDown(nFlags, xPoint, GetAssociateWnd());
-	CBofDialog::OnLButtonDown(nFlags, xPoint);
+void CBagStorageDevDlg::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
+	CBagStorageDev::onLButtonDown(nFlags, xPoint, GetAssociateWnd());
+	CBofDialog::onLButtonDown(nFlags, xPoint);
 }
 
 void CBagStorageDevDlg::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {

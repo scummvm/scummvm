@@ -118,7 +118,7 @@ CBofPoint CBagStorageDevBmp::GetScaledPt(CBofPoint xPoint) {
 }
 
 void CBagStorageDevBmp::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *info) {
-	CBagStorageDev::OnLButtonDown(nFlags, xPoint, info);
+	CBagStorageDev::onLButtonDown(nFlags, xPoint, info);
 }
 
 void CBagStorageDevBmp::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {

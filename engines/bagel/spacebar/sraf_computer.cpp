@@ -863,14 +863,14 @@ SrafComputer::~SrafComputer() {
 	m_pHead = nullptr;
 }
 
-void SrafComputer::OnMainLoop() {
+void SrafComputer::onMainLoop() {
 	if (m_bFirstPaint) {
 		m_bFirstPaint = false;
 		AttachActiveObjects();
 	}
 }
 
-void SrafComputer::OnPaint(CBofRect *pRect) {
+void SrafComputer::onPaint(CBofRect *pRect) {
 	if (GetBackdrop()) {
 		Assert(GetWorkBmp() != nullptr);
 
@@ -1048,7 +1048,7 @@ ErrorCode SrafComputer::detach() {
 void SrafComputer::onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void *) {
 }
 
-void SrafComputer::OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void *) {
+void SrafComputer::onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void *) {
 }
 
 void SrafComputer::onKeyHit(uint32 lKey, uint32 nRepCount) {
@@ -4663,7 +4663,7 @@ void SrafTextScreen::onClose() {
 	ClearBackdrop();
 }
 
-void SrafTextScreen::OnPaint(CBofRect * /*pRect*/) {
+void SrafTextScreen::onPaint(CBofRect * /*pRect*/) {
 	DisplayTextScreen();
 
 	ValidateAnscestors();
