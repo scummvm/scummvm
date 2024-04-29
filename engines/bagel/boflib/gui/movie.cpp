@@ -338,7 +338,7 @@ bool CBofMovie::SetFrame(uint32 dwFrameNum) {
 	return false;
 }
 
-void CBofMovie::OnReSize(CBofSize *pSize) {
+void CBofMovie::onReSize(CBofSize *pSize) {
 }
 
 bool CBofMovie::CenterRect() {
@@ -364,7 +364,7 @@ bool CBofMovie::CenterRect() {
 	return true;
 }
 
-void CBofMovie::OnButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/) {
+void CBofMovie::onButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/) {
 }
 
 

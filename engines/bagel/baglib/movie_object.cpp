@@ -56,7 +56,7 @@ CBagMovieObject::CBagMovieObject() {
 }
 
 CBagMovieObject::~CBagMovieObject() {
-	detach();
+	CBagObject::detach();
 
 	// Could still by lying around in the pda movie queue,
 	// Make sure it has been removed.
@@ -197,7 +197,7 @@ bool CBagMovieObject::runObject() {
 					pMovie->Show();
 					CBofApp::GetApp()->GetMainWindow()->FlushAllMessages();
 					wnd->FlushAllMessages();
-					pMovie->Exam();
+					pMovie->initExam();
 					delete pMovie;
 					rc = true;
 

@@ -26,9 +26,9 @@
 
 namespace Bagel {
 
-bool CBagExam::Exam() {
-	CBofRect r(155, 55, 155 + 330 - 1, 55 + 250 - 1);
-	PaintBitmap(CBagel::getBagApp()->getMasterWnd()->GetCurrentGameWindow(), BuildSysDir("SSBORDER.BMP"), &r);
+bool CBagExam::initExam() {
+	CBofRect paintRect(155, 55, 155 + 330 - 1, 55 + 250 - 1);
+	PaintBitmap(CBagel::getBagApp()->getMasterWnd()->GetCurrentGameWindow(), BuildSysDir("SSBORDER.BMP"), &paintRect);
 
 	Common::Event e;
 	while (g_system->getEventManager()->pollEvent(e)) {
@@ -38,8 +38,8 @@ bool CBagExam::Exam() {
 	GetParent()->Disable();
 	GetParent()->FlushAllMessages();
 
-	MarkBegEnd();
-	SetRotationRects();
+	markBegEnd();
+	setRotationRects();
 	m_bLoop = true;
 	m_bEscCanStop = true;
 
@@ -52,39 +52,40 @@ bool CBagExam::Exam() {
 	return true;
 }
 
-void CBagExam::OnReSize(CBofSize *pSize) {
+void CBagExam::onReSize(CBofSize *size) {
 
-	CBofMovie::OnReSize(pSize);
-	SetRotationRects();
+	CBofMovie::onReSize(size);
+	setRotationRects();
 
 }
 
-bool CBagExam::SetRotationRects() {
-	CBofRect rcClient = GetClientRect();    // Get the  windows rect
+bool CBagExam::setRotationRects() {
+	// Get the  windows rect
+	CBofRect clientRect = GetClientRect();
 
 	// Left quarter of the video window
-	m_LeftRect.left = rcClient.left;
-	m_LeftRect.top = rcClient.top;
-	m_LeftRect.right = rcClient.left + ((rcClient.right - rcClient.left) / 4);
-	m_LeftRect.bottom = rcClient.bottom;
+	_leftRect.left = clientRect.left;
+	_leftRect.top = clientRect.top;
+	_leftRect.right = clientRect.left + ((clientRect.right - clientRect.left) / 4);
+	_leftRect.bottom = clientRect.bottom;
 
 	// Right quarter of the video window
-	m_RightRect.left = rcClient.right - ((rcClient.bottom - rcClient.left) / 4);
-	m_RightRect.top = rcClient.top;
-	m_RightRect.right = rcClient.right;
-	m_RightRect.bottom = rcClient.bottom;
+	_rightRect.left = clientRect.right - ((clientRect.bottom - clientRect.left) / 4);
+	_rightRect.top = clientRect.top;
+	_rightRect.right = clientRect.right;
+	_rightRect.bottom = clientRect.bottom;
 
 	return true;
 }
 
-bool CBagExam::MarkBegEnd() {
-	m_dwEnd = m_pSmk->getFrameCount() - 1;
-	m_dwStart = 0;
+bool CBagExam::markBegEnd() {
+	_end = m_pSmk->getFrameCount() - 1;
+	_start = 0;
 
 	return true;
 }
 
-void  CBagExam::OnButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/) {
+void  CBagExam::onButtonUp(uint32 /*n flags, unused */, CBofPoint * /* point, unused */) {
 	// Clean up and exit
 	m_bLoop = false;
 
@@ -93,42 +94,42 @@ void  CBagExam::OnButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/) {
 }
 
 
-bool CBagExam::RotateLeft() {
+bool CBagExam::rotateLeft() {
 	if (m_eMovStatus != FOREWARD)
 		return Play();
-	else
-		return true;
+
+	return true;
 }
 
-bool CBagExam::RotateRight() {
+bool CBagExam::rotateRight() {
 	if (m_eMovStatus != REVERSE)
 		return Reverse();
-	else
-		return true;
+
+	return true;
 }
 
-bool CBagExam::RotateStop() {
+bool CBagExam::rotateStop() {
 	if (m_eMovStatus == FOREWARD || m_eMovStatus == REVERSE)
 		// The movie is currently playing
 		return Pause();
-	else
-		return true;
+
+	return true;
 
 }
 
-void CBagExam::onMouseMove(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
+void CBagExam::onMouseMove(uint32 /* flags, unused */, CBofPoint *point, void * /* extraInfo, unused */) {
 	Assert(IsValidObject(this));
-	Assert(pPoint != nullptr);
+	Assert(point != nullptr);
 
 	// No more cursor in Examine movies
-	if (pPoint->x <= m_LeftRect.right) {
+	if (point->x <= _leftRect.right) {
 		// Left rect, play reverse
-		RotateLeft();
-	} else if (pPoint->x >= m_RightRect.left) {
+		rotateLeft();
+	} else if (point->x >= _rightRect.left) {
 		// Right rect, play forward
-		RotateRight();
+		rotateRight();
 	} else if (m_eMovStatus == FOREWARD || m_eMovStatus == REVERSE) {
-		RotateStop();
+		rotateStop();
 	}
 }
 

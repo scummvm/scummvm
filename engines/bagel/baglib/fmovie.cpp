@@ -389,9 +389,6 @@ bool CBagFMovie::SetFrame(uint32 dwFrameNum) {
 	return false;
 }
 
-void CBagFMovie::OnReSize(CBofSize *) {
-}
-
 bool CBagFMovie::CenterRect() {
 	CBofRect cBofRect = GetParent()->GetClientRect();
 	RECT rcParentRect = cBofRect.GetWinRect();

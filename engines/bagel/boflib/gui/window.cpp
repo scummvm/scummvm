@@ -557,7 +557,7 @@ void CBofWindow::OnRButtonDblClk(uint32, CBofPoint *) {}
 
 void CBofWindow::onKeyHit(uint32, uint32) {}
 
-void CBofWindow::OnReSize(CBofSize *) {}
+void CBofWindow::onReSize(CBofSize *) {}
 void CBofWindow::OnPaint(CBofRect *) {}
 void CBofWindow::onTimer(uint32) {}
 
