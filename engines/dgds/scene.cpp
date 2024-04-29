@@ -1012,8 +1012,11 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 	if (area->_num == 0) {
 		// dropped on the inventory button
 		if (dragItem) {
+			debug("Item %d dropped on inventory.", dragItem->_num);
 			dragItem->_inSceneNum = 2;
+			engine->setMouseCursor(0);
 		} else {
+			debug("Mouseup on inventory.");
 			static_cast<DgdsEngine *>(g_engine)->getInventory()->open();
 		}
 	} else {
