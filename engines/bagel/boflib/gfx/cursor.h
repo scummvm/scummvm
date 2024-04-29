@@ -34,10 +34,10 @@ public:
 	~CBofCursor();
 	static void initialize();
 
-	ErrorCode Load();
-	ErrorCode UnLoad();
+	ErrorCode load();
+	ErrorCode unLoad();
 
-	ErrorCode Set();
+	ErrorCode set();
 
 	static void show();
 	static void hide();
