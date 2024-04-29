@@ -568,7 +568,7 @@ CBagLogSuspect::CBagLogSuspect(int sdevWidth) : CBagTextObject() {
 	m_bTitle = true;
 
 	// Need to save state info, set all to false.
-	SetState(0);
+	setState(0);
 }
 
 PARSE_CODES CBagLogSuspect::setInfo(bof_ifstream &istr) {

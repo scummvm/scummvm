@@ -139,10 +139,10 @@ void CBofDialog::onClose() {
 
 	if (_parent != nullptr) {
 		CBofWindow *pParent = _parent;
-		pParent->Enable();
+		pParent->enable();
 
 		// The parent window MUST now be enabled
-		Assert(pParent->IsEnabled());
+		Assert(pParent->isEnabled());
 	}
 
 	// If we saved the background, then paint it

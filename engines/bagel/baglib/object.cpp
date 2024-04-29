@@ -122,7 +122,7 @@ ErrorCode CBagObject::update(CBofBitmap * /*pBmp*/, CPoint /*pt*/, CRect * /*pSr
 
 int CBagObject::getProperty(const CBofString &sProp) {
 	if (!sProp.Find("STATE"))
-		return GetState();
+		return getState();
 
 	if (!sProp.Find("MODAL"))
 		return IsModal();
@@ -132,7 +132,7 @@ int CBagObject::getProperty(const CBofString &sProp) {
 
 void CBagObject::setProperty(const CBofString &sProp, int nVal) {
 	if (!sProp.Find("STATE"))
-		SetState(nVal);
+		setState(nVal);
 	else if (!sProp.Find("TIMELESS")) {
 		if (nVal)
 			SetTimeless();
@@ -232,7 +232,7 @@ PARSE_CODES CBagObject::setInfo(bof_ifstream &istr) {
 			rc = UPDATED_OBJECT;
 			int nState;
 			GetIntFromStream(istr, nState);
-			SetState(nState);
+			setState(nState);
 			break;
 		}
 		//

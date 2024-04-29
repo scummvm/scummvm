@@ -58,7 +58,7 @@ void CBagNextCDDialog::onInitDialog() {
 		pFocus = LoadBitmap(BuildSysDir("CDOKUP.BMP"), pPal);
 		pDis = LoadBitmap(BuildSysDir("CDOKUP.BMP"), pPal);
 
-		m_pButton->LoadBitmaps(pUp, pDown, pFocus, pDis);
+		m_pButton->loadBitmaps(pUp, pDown, pFocus, pDis);
 
 		m_pButton->create("NextCD", 77, 127, 60, 30, this, OK_BTN);
 		m_pButton->Show();

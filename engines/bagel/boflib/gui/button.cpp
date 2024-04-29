@@ -56,7 +56,7 @@ CBofButton::CBofButton() {
 	m_nState = BUTTON_UP;
 
 	// Load a default color scheme until another is loaded
-	LoadColorScheme(&g_stDefaultColors);
+	loadColorScheme(&g_stDefaultColors);
 }
 
 
@@ -66,7 +66,7 @@ CBofButton::CBofButton(ST_COLORSCHEME *pColorScheme) {
 	// Inits
 	m_nState = BUTTON_UP;
 
-	LoadColorScheme(pColorScheme);
+	loadColorScheme(pColorScheme);
 }
 
 
@@ -153,7 +153,7 @@ ErrorCode CBofButton::paint(CBofRect *) {
 }
 
 
-void CBofButton::LoadColorScheme(ST_COLORSCHEME *pColorScheme) {
+void CBofButton::loadColorScheme(ST_COLORSCHEME *pColorScheme) {
 	Assert(IsValidObject(this));
 
 	Assert(pColorScheme != nullptr);
@@ -168,25 +168,25 @@ void CBofButton::LoadColorScheme(ST_COLORSCHEME *pColorScheme) {
 }
 
 
-void CBofButton::Enable() {
+void CBofButton::enable() {
 	Assert(IsValidObject(this));
 
-	CBofWindow::Enable();
+	CBofWindow::enable();
 
-	SetState(BUTTON_UP);
+	setState(BUTTON_UP);
 }
 
 
-void CBofButton::Disable() {
+void CBofButton::disable() {
 	Assert(IsValidObject(this));
 
-	SetState(BUTTON_DISABLED);
+	setState(BUTTON_DISABLED);
 
-	CBofWindow::Disable();
+	CBofWindow::disable();
 }
 
 
-ErrorCode CBofButton::SetState(int nNewState, bool bRepaintNow) {
+ErrorCode CBofButton::setState(int nNewState, bool bRepaintNow) {
 	Assert(IsValidObject(this));
 	Assert(nNewState >= BUTTON_UP && nNewState <= BUTTON_DISABLED);
 
@@ -229,7 +229,7 @@ void CBofButton::onLButtonDown(uint32, CBofPoint *pPoint, void *) {
 
 		SetCapture();
 
-		SetState(BUTTON_DOWN, true);
+		setState(BUTTON_DOWN, true);
 	}
 }
 
@@ -241,7 +241,7 @@ void CBofButton::onLButtonUp(uint32, CBofPoint *pPoint, void *) {
 	if (m_bCaptured) {
 		ReleaseCapture();
 
-		SetState(BUTTON_UP, true);
+		setState(BUTTON_UP, true);
 
 		if (m_cRect.PtInRect(*pPoint) && (_parent != nullptr)) {
 			_parent->OnBofButton(this, BUTTON_CLICKED);
@@ -260,7 +260,7 @@ void CBofRadioButton::onLButtonDown(uint32, CBofPoint *pPoint, void *) {
 
 	if ((m_nState != BUTTON_DISABLED) && (m_nState == BUTTON_UP)) {
 
-		SetState(BUTTON_DOWN, true);
+		setState(BUTTON_DOWN, true);
 	}
 }
 
@@ -351,11 +351,11 @@ void CBofCheckButton::onLButtonDown(uint32, CBofPoint *pPoint, void *) {
 
 		if (m_nState == BUTTON_UP) {
 
-			SetState(BUTTON_DOWN, true);
+			setState(BUTTON_DOWN, true);
 
 		} else if (m_nState == BUTTON_DOWN) {
 
-			SetState(BUTTON_UP, true);
+			setState(BUTTON_UP, true);
 		}
 	}
 }
@@ -432,7 +432,7 @@ ErrorCode CBofCheckButton::paint(CBofRect *) {
 ErrorCode CBofCheckButton::SetCheck(bool bChecked) {
 	Assert(IsValidObject(this));
 
-	SetState(bChecked ? BUTTON_CHECKED : BUTTON_UNCHECKED, false);
+	setState(bChecked ? BUTTON_CHECKED : BUTTON_UNCHECKED, false);
 
 	return m_errCode;
 }
@@ -481,7 +481,7 @@ CBofBmpButton::~CBofBmpButton() {
 ErrorCode CBofBmpButton::paint(CBofRect *) {
 	Assert(IsValidObject(this));
 
-	// LoadBitmaps must be called before the button can be painted
+	// loadBitmaps must be called before the button can be painted
 	Assert(m_pButtonUp != nullptr);
 	Assert(m_pButtonDown != nullptr);
 	Assert(m_pButtonFocus != nullptr);
@@ -533,7 +533,7 @@ ErrorCode CBofBmpButton::paint(CBofRect *) {
 }
 
 
-ErrorCode CBofBmpButton::LoadBitmaps(CBofBitmap *pUp, CBofBitmap *pDown, CBofBitmap *pFocus, CBofBitmap *pDisabled, int nMaskColor) {
+ErrorCode CBofBmpButton::loadBitmaps(CBofBitmap *pUp, CBofBitmap *pDown, CBofBitmap *pFocus, CBofBitmap *pDisabled, int nMaskColor) {
 	Assert(IsValidObject(this));
 
 	Assert(pUp != nullptr);
@@ -552,7 +552,7 @@ ErrorCode CBofBmpButton::LoadBitmaps(CBofBitmap *pUp, CBofBitmap *pDown, CBofBit
 }
 
 
-ErrorCode CBofBmpButton::LoadBitmaps(CBofPalette *pPalette, const char *pszUp, const char *pszDown, const char *pszFocus, const char *pszDisabled, int nMaskColor) {
+ErrorCode CBofBmpButton::loadBitmaps(CBofPalette *pPalette, const char *pszUp, const char *pszDown, const char *pszFocus, const char *pszDisabled, int nMaskColor) {
 	Assert(IsValidObject(this));
 
 	Assert(pPalette != nullptr);
@@ -582,7 +582,7 @@ ErrorCode CBofBmpButton::LoadBitmaps(CBofPalette *pPalette, const char *pszUp, c
 }
 
 
-ErrorCode CBofBmpButton::SetState(int nNewState, bool bRepaintNow) {
+ErrorCode CBofBmpButton::setState(int nNewState, bool bRepaintNow) {
 	Assert(IsValidObject(this));
 	Assert(nNewState >= BUTTON_UP && nNewState <= BUTTON_DISABLED);
 
@@ -624,7 +624,7 @@ void CBofBmpButton::onLButtonDown(uint32, CBofPoint *pPoint, void *) {
 	if (!m_bCaptured && m_nState != BUTTON_DISABLED) {
 		SetCapture();
 
-		SetState(BUTTON_DOWN, true);
+		setState(BUTTON_DOWN, true);
 	}
 }
 
@@ -636,7 +636,7 @@ void CBofBmpButton::onLButtonUp(uint32, CBofPoint *pPoint, void *) {
 	if (m_bCaptured) {
 		ReleaseCapture();
 
-		SetState(BUTTON_UP, true);
+		setState(BUTTON_UP, true);
 
 		if (m_cRect.PtInRect(*pPoint) && (_parent != nullptr)) {
 			_parent->OnBofButton(this, BUTTON_CLICKED);

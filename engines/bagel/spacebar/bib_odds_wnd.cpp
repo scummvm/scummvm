@@ -49,7 +49,7 @@ ErrorCode SBarBibOddsWnd::detach() {
 		CBagObject *pObj = GetObject(500 + i);
 
 		if (pObj != nullptr) {
-			int nPayIdx = pObj->GetState();
+			int nPayIdx = pObj->getState();
 			g_engine->g_cBetAreas[i].m_nPayOff1 = PAY_OFFS[nPayIdx].m_nPay1;
 			g_engine->g_cBetAreas[i].m_nPayOff2 = PAY_OFFS[nPayIdx].m_nPay2;
 		}

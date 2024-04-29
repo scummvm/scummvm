@@ -628,7 +628,7 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 		// Check if the mouse is within the area of a child control
 		for (uint i = 0; i < _children.size(); ++i) {
 			auto &child = *_children[i];
-			if (child.IsVisible() && child.IsEnabled() &&
+			if (child.IsVisible() && child.isEnabled() &&
 					child.GetWindowRect().PtInRect(mousePos)) {
 				child.handleEvent(event);
 				return;

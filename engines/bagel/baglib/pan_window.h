@@ -124,8 +124,8 @@ public:
 		return m_nPanSpeed;
 	}
 
-	virtual void Enable();
-	virtual void Disable();
+	virtual void enable();
+	virtual void disable();
 
 	ErrorCode PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CRect &viewOffsetRect,
 	                        CBofList<CRect> * = nullptr, bool tempVar = true);

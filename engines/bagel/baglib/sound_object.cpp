@@ -43,7 +43,7 @@ CBagSoundObject::CBagSoundObject() {
 	m_wFlags = SOUND_MIX; //(SOUND_WAVE | SOUND_ASYNCH);
 
 	m_nVol = VOLUME_INDEX_DEFAULT;
-	SetState(0);
+	setState(0);
 	m_bWait = false;
 
 	m_nLoops = 1;
@@ -70,7 +70,7 @@ ErrorCode CBagSoundObject::NewSound(CBofWindow *pWin) {
 
 	if ((m_pSound = new CBofSound(pWin, GetFileName(), m_wFlags, m_nLoops)) != nullptr) {
 		m_pSound->SetVolume(m_nVol);
-		m_pSound->SetQSlot(GetState());
+		m_pSound->SetQSlot(getState());
 
 	} else {
 		errCode = ERR_MEMORY;
@@ -96,7 +96,7 @@ bool CBagSoundObject::runObject() {
 
 		if (m_pSound && m_pMidiSound != m_pSound) {
 
-			m_pSound->SetQSlot(GetState());
+			m_pSound->SetQSlot(getState());
 			m_pSound->Play();
 
 			// If waiting until this sound finishes
@@ -353,7 +353,7 @@ void CBagSoundObject::SetPlaying(bool bVal) {
 
 			if (m_pSound && m_pMidiSound != m_pSound) {
 
-				m_pSound->SetQSlot(GetState());
+				m_pSound->SetQSlot(getState());
 				m_pSound->Play();
 
 				// If we are supposed to wait until this audio finishes

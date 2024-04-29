@@ -130,7 +130,7 @@ public:
 		return (m_nTextFont);
 	}
 
-	int GetState() {
+	int getState() {
 		return (m_nState);
 	}
 

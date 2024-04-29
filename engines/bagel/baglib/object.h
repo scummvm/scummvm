@@ -335,7 +335,7 @@ public:
 	virtual int GetOverCursor() {
 		return m_nOverCursor;
 	}
-	virtual int GetState() {
+	virtual int getState() {
 		return m_nState;
 	}
 	virtual CBofRect getRect() {
@@ -363,7 +363,7 @@ public:
 	virtual void SetOverCursor(int curs) {
 		m_nOverCursor = (byte)curs;
 	}
-	virtual void SetState(int state) {
+	virtual void setState(int state) {
 		Assert(ABS(state) < 0x8000);
 		m_nState = (int16)state;
 	}

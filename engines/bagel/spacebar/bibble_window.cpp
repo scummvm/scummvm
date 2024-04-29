@@ -289,7 +289,7 @@ ErrorCode CBibbleWindow::attach() {
 				CBagObject *pObj = pSDev->GetObject(500 + i);
 				if (pObj != nullptr) {
 
-					int nPayOff = pObj->GetState();
+					int nPayOff = pObj->getState();
 					g_engine->g_cBetAreas[i].m_nPayOff1 = PAY_OFFS[nPayOff].m_nPay1;
 					g_engine->g_cBetAreas[i].m_nPayOff2 = PAY_OFFS[nPayOff].m_nPay2;
 				}
@@ -399,7 +399,7 @@ ErrorCode CBibbleWindow::attach() {
 			CBofBitmap *pFocus = LoadBitmap(BuildDir(g_stButtons[i].m_pszFocus), pPal);
 			CBofBitmap *pDis = LoadBitmap(BuildDir(g_stButtons[i].m_pszDisabled), pPal);
 
-			m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
+			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 			m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
 			m_pButtons[i]->Show();
 

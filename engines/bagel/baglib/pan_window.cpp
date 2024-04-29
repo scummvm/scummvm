@@ -405,11 +405,11 @@ void CBagPanWindow::DeActivateView() {
 	}
 }
 
-void CBagPanWindow::Enable() {
+void CBagPanWindow::enable() {
 	ActivateView();
 }
 
-void CBagPanWindow::Disable() {
+void CBagPanWindow::disable() {
 	FlushAllMessages();
 	DeActivateView();
 }

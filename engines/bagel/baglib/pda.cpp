@@ -468,7 +468,7 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 	}
 
 	// Only change the flashing state if we're not in a button down situation
-	if (pZoomFlash && pZoomRegular && pZoomRegular->GetState() != 1) {
+	if (pZoomFlash && pZoomRegular && pZoomRegular->getState() != 1) {
 		if (bButtonDown == false && _pdaMode == INVMODE && (_pdaPos == PDAUP) && _invWnd && _invWnd->GetNumFloatPages() > 1) {
 			// Make the zoom button blink, to indicate more icons
 			if (m_bFlashing == false) {

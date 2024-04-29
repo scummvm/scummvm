@@ -1250,7 +1250,7 @@ void CBagStorageDevWnd::onTimer(uint32 nEventID) {
 		if (!bAlready) {
 			bAlready = true;
 			// Evaluate the event storage device IF MOVIE NOT PLAYING
-			if ((CBofApp::GetApp()->GetMainWindow())->IsEnabled() && nEventID == EVAL_EXPR) {
+			if ((CBofApp::GetApp()->GetMainWindow())->isEnabled() && nEventID == EVAL_EXPR) {
 				if (m_pEvtSDev != nullptr) {
 					m_pEvtSDev->evaluateExpressions();
 
@@ -2009,7 +2009,7 @@ void CBagStorageDevManager::SaveObjList(ST_OBJ *pObjList, int nNumEntries) {
 
 					// Save if this guy is waiting to play
 					(pObjList + k)->m_nFlags = (uint16)(pObj->IsMsgWaiting() ? mIsMsgWaiting : 0);
-					(pObjList + k)->m_lState = pObj->GetState();
+					(pObjList + k)->m_lState = pObj->getState();
 					(pObjList + k)->m_lProperties = pObj->GetProperties();
 					(pObjList + k)->m_lType = pObj->GetType();
 					(pObjList + k)->m_bUsed = 1;
@@ -2041,7 +2041,7 @@ void CBagStorageDevManager::RestoreObjList(ST_OBJ *pObjList, int nNumEntries) {
 				CBagObject *pObj = pSDev->GetObject((pObjList + i)->m_szName);
 				if (pObj != nullptr) {
 					pObj->SetProperties((pObjList + i)->m_lProperties);
-					pObj->SetState((pObjList + i)->m_lState);
+					pObj->setState((pObjList + i)->m_lState);
 					pObj->SetType((BAG_OBJECT_TYPE)(pObjList + i)->m_lType);
 
 					pObj->SetMsgWaiting(((pObjList + i)->m_nFlags & mIsMsgWaiting) == mIsMsgWaiting);

@@ -71,7 +71,7 @@ ErrorCode CBagSpriteObject::attach() {
 				else
 					m_xSprite->SetPosition(p.x, p.y);
 
-				setProperty("CURR_CEL", GetState());
+				setProperty("CURR_CEL", getState());
 
 				// This might add something to the PDA, make sure it gets redrawn.
 				CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev());
@@ -268,11 +268,11 @@ bool CBagSpriteObject::isInside(const CBofPoint &xPoint) {
 
 void CBagSpriteObject::setProperty(const CBofString &sProp, int nVal) {
 	if (!sProp.Find("STATE")) {
-		SetState(nVal);
+		setState(nVal);
 		if (m_xSprite)
 			m_xSprite->SetCel(nVal);
 	} else if (!sProp.Find("CURR_CEL")) {
-		SetState(nVal);
+		setState(nVal);
 		if (m_xSprite)
 			m_xSprite->SetCel(nVal);
 	} else

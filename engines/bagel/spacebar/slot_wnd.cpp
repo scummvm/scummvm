@@ -198,7 +198,7 @@ ErrorCode  SBarSlotWnd::attach() {
 				CBofBitmap *pFocus = LoadBitmap(BuildSlotDir(g_stButtons[i].m_pszFocus), pPal);
 				CBofBitmap *pDis = LoadBitmap(BuildSlotDir(g_stButtons[i].m_pszDisabled), pPal);
 
-				m_pSlotButs[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
+				m_pSlotButs[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 				m_pSlotButs[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
 				m_pSlotButs[i]->Show();
 			}

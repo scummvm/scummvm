@@ -128,7 +128,7 @@ ErrorCode CBagSaveDialog::attach() {
 			pFocus = LoadBitmap(BuildSysDir(g_stButtons[i]._focus), pPal);
 			pDis = LoadBitmap(BuildSysDir(g_stButtons[i]._disabled), pPal);
 
-			m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
+			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 
 			m_pButtons[i]->create(g_stButtons[i]._name, g_stButtons[i]._left, g_stButtons[i]._top, g_stButtons[i]._width, g_stButtons[i]._height, this, g_stButtons[i]._id);
 			m_pButtons[i]->Show();
@@ -218,7 +218,7 @@ ErrorCode CBagSaveDialog::attach() {
 			}
 		}
 	} else if (m_pButtons[0] != nullptr) {
-		m_pButtons[0]->SetState(BUTTON_DISABLED);
+		m_pButtons[0]->setState(BUTTON_DISABLED);
 	}
 
 	CBagCursor::showSystemCursor();
@@ -414,8 +414,8 @@ void CBagSaveDialog::OnBofListBox(CBofObject * /*pObject*/, int nItemIndex) {
 		m_nSelectedItem = nItemIndex;
 	}
 
-	if ((m_nSelectedItem != -1) && (m_pButtons[0] != nullptr) && (m_pButtons[0]->GetState() == BUTTON_DISABLED)) {
-		m_pButtons[0]->SetState(BUTTON_UP, true);
+	if ((m_nSelectedItem != -1) && (m_pButtons[0] != nullptr) && (m_pButtons[0]->getState() == BUTTON_DISABLED)) {
+		m_pButtons[0]->setState(BUTTON_UP, true);
 	}
 }
 

@@ -56,15 +56,15 @@ public:
 	CBofButton(ST_COLORSCHEME *pColorScheme);
 	virtual ~CBofButton();
 
-	void LoadColorScheme(ST_COLORSCHEME *pColorScheme);
+	void loadColorScheme(ST_COLORSCHEME *pColorScheme);
 
 	virtual ErrorCode paint(CBofRect *pRect = nullptr);
 
-	virtual void Enable() override;
-	virtual void Disable() override;
+	virtual void enable() override;
+	virtual void disable() override;
 
-	ErrorCode SetState(int nNewState, bool bRepaintNow = true);
-	int GetState() {
+	ErrorCode setState(int nNewState, bool bRepaintNow = true);
+	int getState() {
 		return (m_nState);
 	}
 
@@ -115,17 +115,17 @@ public:
 
 	// NOTE: CBofBmpButton takes control of these bitmaps, so there's
 	// no need for the callers to free them afterwards
-	ErrorCode LoadBitmaps(CBofBitmap *pUp, CBofBitmap *pDown, CBofBitmap *pFocus, CBofBitmap *pDisabled, int nMaskColor = NOT_TRANSPARENT);
-	ErrorCode LoadBitmaps(CBofPalette *pPalette, const char *pszUp, const char *pszDown = nullptr, const char *pszFocus = nullptr, const char *pszDisabled = nullptr, int nMaskColor = NOT_TRANSPARENT);
+	ErrorCode loadBitmaps(CBofBitmap *pUp, CBofBitmap *pDown, CBofBitmap *pFocus, CBofBitmap *pDisabled, int nMaskColor = NOT_TRANSPARENT);
+	ErrorCode loadBitmaps(CBofPalette *pPalette, const char *pszUp, const char *pszDown = nullptr, const char *pszFocus = nullptr, const char *pszDisabled = nullptr, int nMaskColor = NOT_TRANSPARENT);
 
 	ErrorCode paint(CBofRect *pRect = nullptr);
 
-	ErrorCode SetState(int nNewState, bool bRepaintNow = true);
-	int GetState() {
+	ErrorCode setState(int nNewState, bool bRepaintNow = true);
+	int getState() {
 		return (m_nState);
 	}
 
-	CBofBitmap *GetButtonBmp() {
+	CBofBitmap *getButtonBmp() {
 		return m_pButtonUp;
 	}
 
