@@ -85,9 +85,9 @@ struct bofBITMAPFILEHEADER {
 typedef bofBITMAPFILEHEADER BOFBITMAPFILEHEADER;
 
 struct bofBITMAP_EX {
-	BOFBITMAPFILEHEADER m_cFileHeader;
-	BOFBITMAPINFOHEADER m_cInfoHeader;
-	BOFRGBQUAD m_cRgbValues[256];
+	BOFBITMAPFILEHEADER cFileHeader;
+	BOFBITMAPINFOHEADER cInfoHeader;
+	BOFRGBQUAD cRgbValues[256];
 } PACKED_STRUCT;
 typedef bofBITMAP_EX BITMAP_EX;
 
@@ -109,28 +109,28 @@ protected:
 	//
 	// data members
 	//
-	static bool m_bUseBackdrop;
+	static bool _bUseBackdrop;
 
-	char m_szFileName[MAX_FNAME];
+	char _szFileName[MAX_FNAME];
 
-	BITMAP_EX m_cBitmapInfo;
+	BITMAP_EX _cBitmapInfo;
 
 	Graphics::ManagedSurface _bitmap;
 
-	byte *m_pBits = nullptr;
+	byte *_pBits = nullptr;
 
-	CBofPalette *m_pPalette = nullptr;
+	CBofPalette *_pPalette = nullptr;
 
-	int m_nScanDX = 0;
-	int m_nDX = 0;
-	int m_nDY = 0;
-	bool m_bTopDown = false;
+	int _nScanDX = 0;
+	int _nDX = 0;
+	int _nDY = 0;
+	bool _bTopDown = false;
 
-	bool m_bOwnPalette = false;
-	bool m_bReadOnly = false;
-	bool m_bInitialized = false;
+	bool _bOwnPalette = false;
+	bool _bReadOnly = false;
+	bool _bInitialized = false;
 
-	bool m_bPrivateBmp = false;
+	bool _bPrivateBmp = false;
 
 public:
 	/**
@@ -191,15 +191,15 @@ public:
 	void setPalette(CBofPalette *pPalette, bool bOwnPalette = false);
 
 	CBofPalette *getPalette() {
-		return m_pPalette;
+		return _pPalette;
 	}
 
 	bool isOwnPalette() {
-		return m_bOwnPalette;
+		return _bOwnPalette;
 	}
 
 	void setIsOwnPalette(bool own) {
-		m_bOwnPalette = own;
+		_bOwnPalette = own;
 	}
 
 	//
@@ -208,8 +208,8 @@ public:
 
 	/**
 	 * Returns the bit address of the (x, y) location in this bmp
-	 * @param x     Column in m_pBits
-	 * @param y     Row in m_pBits
+	 * @param x     Column in _pBits
+	 * @param y     Row in _pBits
 	 * @return      Address of (x,y) in bitmap surface
 	 */
 	byte *getPixelAddress(int x, int y);
@@ -218,35 +218,35 @@ public:
 	}
 
 	CBofSize getSize() {
-		return CBofSize(m_nDX, m_nDY);
+		return CBofSize(_nDX, _nDY);
 	}
 
 	CBofRect getRect() {
-		return CBofRect(0, 0, m_nDX - 1, m_nDY - 1);
+		return CBofRect(0, 0, _nDX - 1, _nDY - 1);
 	}
 
 	void setReadOnly(bool bReadOnly) {
-		m_bReadOnly = bReadOnly;
+		_bReadOnly = bReadOnly;
 	}
 
 	bool getReadOnly() {
-		return m_bReadOnly;
+		return _bReadOnly;
 	}
 
 	bool isTopDown() {
-		return m_bTopDown;
+		return _bTopDown;
 	}
 
 	int width() {
-		return m_nDX;
+		return _nDX;
 	}
 
 	int widthBytes() {
-		return m_nScanDX;
+		return _nScanDX;
 	}
 
 	int height() {
-		return m_nDY;
+		return _nDY;
 	}
 
 	operator Graphics::ManagedSurface &() {
@@ -383,7 +383,7 @@ public:
 	 * Returns the color at the (x, y) location in this bmp
 	 * @param x         X position
 	 * @param y         Y position
-	 * @return          Color Index of specified (x,y) location in m_pBits
+	 * @return          Color Index of specified (x,y) location in _pBits
 	 */
 	byte readPixel(int x, int y);
 
@@ -490,10 +490,10 @@ public:
 	}
 
 	static void setUseBackdrop(bool b) {
-		m_bUseBackdrop = b;
+		_bUseBackdrop = b;
 	}
 	static bool getUseBackdrop() {
-		return m_bUseBackdrop;
+		return _bUseBackdrop;
 	}
 };
 

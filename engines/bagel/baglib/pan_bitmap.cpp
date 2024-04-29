@@ -212,7 +212,7 @@ CBofPoint CBagPanBitmap::WarpedPoint(CBofPoint &xPoint) {
 }
 
 ErrorCode CBagPanBitmap::PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, const CBofRect &srcRect, const int offset, CBofBitmap *pSrcBmp, const CBofRect &preSrcRect) {
-	int nH2 = m_nDY >> 1;
+	int nH2 = _nDY >> 1;
 	int nWidth = 1 << m_nCorrWidth; // It may no longer be necessary to store corr width as a shift arg
 	CBofFixed *pSrcHeight = &m_pCosineTable[offset >> m_nCorrWidth];
 	CBofFixed srcTop = preSrcRect.top + srcRect.top - nH2;

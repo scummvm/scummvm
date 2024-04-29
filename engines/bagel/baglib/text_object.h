@@ -41,7 +41,7 @@ private:
 	RGBCOLOR m_nFGColor;
 
 	int16 m_nDX;
-	int16 m_nDY;
+	int16 _nDY;
 
 	byte m_nPointSize;
 	int m_nTextFont;
@@ -61,11 +61,11 @@ public:
 	CBofRect getRect();
 
 	CBofSize getSize() const {
-		return CBofSize(m_nDX, m_nDY);
+		return CBofSize(m_nDX, _nDY);
 	}
 	void setSize(const CBofSize &xSize) {
 		m_nDX = (int16)xSize.cx;
-		m_nDY = (int16)xSize.cy;
+		_nDY = (int16)xSize.cy;
 	}
 
 	int getPointSize() const {
