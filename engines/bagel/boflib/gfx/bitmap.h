@@ -99,12 +99,12 @@ protected:
 	 * Does the actual allocation for this bitmap
 	 * @return  true is this bitmap was successfully loaded into the cache
 	 */
-	virtual bool Alloc();
+	virtual bool alloc();
 
 	/**
 	 * Frees the data used by this bitmap (removes from cache)
 	 */
-	virtual void Free();
+	virtual void free();
 
 	//
 	// data members

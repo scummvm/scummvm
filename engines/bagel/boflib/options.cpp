@@ -43,7 +43,7 @@ CBofOptions::CBofOptions(const char *pszOptionFile) {
 CBofOptions::~CBofOptions() {
 	Assert(IsValidObject(this));
 
-	Release();
+	release();
 
 	m_szFileName[0] = '\0';
 }
@@ -55,7 +55,7 @@ ErrorCode CBofOptions::LoadOptionFile(const char *pszOptionFile) {
 	Assert(*pszOptionFile != '\0');
 	Assert(strlen(pszOptionFile) < MAX_FNAME);
 
-	Release();
+	release();
 
 	Common::strcpy_s(m_szFileName, pszOptionFile);
 
@@ -69,7 +69,7 @@ ErrorCode CBofOptions::Load() {
 	ErrorCode errCode = ERR_NONE;
 
 	// Free any previous option info
-	Release();
+	release();
 
 	Common::File f;
 	if (Common::File::exists(m_szFileName) && f.open(m_szFileName)) {
@@ -106,7 +106,7 @@ ErrorCode CBofOptions::Load() {
 	return errCode;
 }
 
-void CBofOptions::Release() {
+void CBofOptions::release() {
 	Assert(IsValidObject(this));
 
 	Commit();

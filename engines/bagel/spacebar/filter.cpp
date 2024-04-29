@@ -784,7 +784,7 @@ static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			int nHeight = g_engine->viewRect.height();
 
 			// Need to lock down this bitmap to make sure we can get it's bits
-			pBmp->Lock();
+			pBmp->lock();
 
 			for (int i = 0; i < nHeight; i++) {
 				byte *pPixel = pBmp->GetPixelAddress(g_engine->viewRect.left, g_engine->viewRect.top + i);
@@ -799,7 +799,7 @@ static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			}
 
 			// Don't need a lock on it anymore
-			pBmp->UnLock();
+			pBmp->unlock();
 
 			// Let's hear the thunder!
 			pThunder->play();

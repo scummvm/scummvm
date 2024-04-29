@@ -388,7 +388,7 @@ ErrorCode CBofListBox::repaintAll() {
 		createWorkArea();
 
 		if (_pWork != nullptr) {
-			_pWork->Lock();
+			_pWork->lock();
 
 			int nIndexedColor = _pWork->GetPalette()->GetNearestIndex(_cTextColor);
 
@@ -441,7 +441,7 @@ ErrorCode CBofListBox::repaintAll() {
 			// Show final image on screen
 			_pWork->paint(this);
 
-			_pWork->UnLock();
+			_pWork->unlock();
 		}
 
 		// Reset the font
@@ -467,7 +467,7 @@ ErrorCode CBofListBox::repaintItem(int nIndex) {
 			createWorkArea();
 			int nIndexedColor = _pWork->GetPalette()->GetNearestIndex(_cTextColor);
 
-			_pWork->Lock();
+			_pWork->lock();
 
 			// Calculate area for this text item
 			CBofRect cRect;
@@ -513,7 +513,7 @@ ErrorCode CBofListBox::repaintItem(int nIndex) {
 			// Show final image on screen
 			_pWork->paint(this, &cRect, &cRect);
 
-			_pWork->UnLock();
+			_pWork->unlock();
 		}
 
 		// Reset the font

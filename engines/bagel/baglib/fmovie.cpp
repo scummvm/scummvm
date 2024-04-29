@@ -120,12 +120,12 @@ bool CBagFMovie::openMovie(const char *sFilename) {
 	m_pBmpBuf = new CBofBitmap(_pSmk->getWidth(), _pSmk->getHeight(), m_pSmackerPal, false);
 
 	m_pFilterBmp = new CBofBitmap(_pSmk->getWidth(), _pSmk->getHeight(), m_pSmackerPal, false);
-	m_pFilterBmp->Lock();
+	m_pFilterBmp->lock();
 
 	selectPalette(m_pSmackerPal);
 
 	if (m_pBmpBuf) {
-		m_pBmpBuf->Lock();
+		m_pBmpBuf->lock();
 		m_pBmpBuf->fillRect(nullptr, m_pSmackerPal->GetNearestIndex(RGB(255, 255, 255)));
 
 		m_nReversed = !(m_pBmpBuf->IsTopDown());
@@ -235,13 +235,13 @@ void CBagFMovie::closeMovie() {
 	}
 
 	if (m_pFilterBmp != nullptr) {
-		m_pFilterBmp->UnLock();
+		m_pFilterBmp->unlock();
 		delete m_pFilterBmp;
 		m_pFilterBmp = nullptr;
 	}
 
 	if (m_pBmpBuf != nullptr) {
-		m_pBmpBuf->UnLock();
+		m_pBmpBuf->unlock();
 		delete m_pBmpBuf;
 		m_pBmpBuf = nullptr;
 	}

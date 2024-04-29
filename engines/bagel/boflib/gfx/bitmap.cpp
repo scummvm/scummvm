@@ -94,7 +94,7 @@ CBofBitmap::CBofBitmap(int dx, int dy, CBofPalette *pPalette, bool bOwnPalette, 
 	m_cBitmapInfo.m_cInfoHeader.biClrImportant = 0;
 
 	m_pPalette = pPalette;
-	Load();
+	load();
 }
 
 CBofBitmap::CBofBitmap(const char *pszFileName, CBofPalette *pPalette, bool bOwnPalette) {
@@ -114,7 +114,7 @@ CBofBitmap::CBofBitmap(const char *pszFileName, CBofPalette *pPalette, bool bOwn
 
 	if (FileGetFullPath(m_szFileName, pszFileName) != nullptr) {
 		// Load this bitmap into the cache
-		Load();
+		load();
 	} else {
 		ReportError(ERR_FFIND, "Could not build full path to %s", pszFileName);
 	}
@@ -123,7 +123,7 @@ CBofBitmap::CBofBitmap(const char *pszFileName, CBofPalette *pPalette, bool bOwn
 CBofBitmap::~CBofBitmap() {
 	Assert(IsValidObject(this));
 
-	Release();
+	release();
 
 	if (m_bOwnPalette && (m_pPalette != nullptr)) {
 		delete m_pPalette;
@@ -152,7 +152,7 @@ ErrorCode CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 	return _errCode;
 }
 
-bool CBofBitmap::Alloc() {
+bool CBofBitmap::alloc() {
 	if (m_szFileName[0] != '\0') {
 		LoadBitmap(m_szFileName, m_pPalette);
 	} else {
@@ -162,7 +162,7 @@ bool CBofBitmap::Alloc() {
 	return !ErrorOccurred();
 }
 
-void CBofBitmap::Free() {
+void CBofBitmap::free() {
 	ReleaseBitmap();
 }
 
@@ -302,7 +302,7 @@ ErrorCode CBofBitmap::PaintMaskBackdrop(CBofWindow *pWnd, CBofRect *pDstRect, CB
 		paint(&cTempBitmap, 0, 0, &cSourceRect, nMaskColor);
 		cTempBitmap.paint(pWnd, &cDestRect);
 
-		UnLock();
+		unlock();
 	}
 
 	return _errCode;
@@ -366,8 +366,8 @@ ErrorCode CBofBitmap::paint(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSrc
 		cSourceRect = cClipRect;
 
 		// Lock these bitmaps down so we can start painting
-		Lock();
-		pBmp->Lock();
+		lock();
+		pBmp->lock();
 
 		// Do the actual painting.
 		// Since we are copying from bitmap to bitmap, using the
@@ -379,8 +379,8 @@ ErrorCode CBofBitmap::paint(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSrc
 		}
 
 		// Don't need a lock on these guys anymore
-		pBmp->UnLock();
-		UnLock();
+		pBmp->unlock();
+		unlock();
 	}
 
 	return _errCode;
@@ -392,14 +392,14 @@ ErrorCode CBofBitmap::Paint1To1(CBofBitmap *pBmp) {
 
 	if (!ErrorOccurred() && !pBmp->ErrorOccurred()) {
 
-		Lock();
-		pBmp->Lock();
+		lock();
+		pBmp->lock();
 
 		// Direct 1 to 1 copy
 		BofMemCopy(pBmp->m_pBits, m_pBits, m_nScanDX * m_nDY);
 
-		pBmp->UnLock();
-		UnLock();
+		pBmp->unlock();
+		unlock();
 	}
 
 	return _errCode;
@@ -412,8 +412,8 @@ ErrorCode CBofBitmap::PaintStretch4(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRe
 	Assert(pSrcRect != nullptr);
 
 	// These bitmaps MUST be locked down before hand
-	Assert(IsLocked());
-	Assert(pBmp->IsLocked());
+	Assert(isLocked());
+	Assert(pBmp->isLocked());
 
 	if (_errCode == ERR_NONE) {
 		int dy1 = m_nDY;
@@ -531,8 +531,8 @@ ErrorCode CBofBitmap::PaintStretchOpt(CBofBitmap *pBmp, CBofRect *pDstRect, CBof
 	Assert(pSrcRect != nullptr);
 
 	// These bitmaps MUST be locked down before hand
-	Assert(IsLocked());
-	Assert(pBmp->IsLocked());
+	Assert(isLocked());
+	Assert(pBmp->isLocked());
 
 	if (_errCode == ERR_NONE) {
 		int dy1 = m_nDY;
@@ -665,7 +665,7 @@ byte *CBofBitmap::GetPixelAddress(int x, int y) {
 	Assert(IsValidObject(this));
 
 	// You can not call this function unless you manually lock this bitmap
-	Assert(IsLocked());
+	Assert(isLocked());
 
 	// The pixel in question must be in the bitmap area
 	Assert(getRect().PtInRect(CBofPoint(x, y)));
@@ -676,9 +676,9 @@ byte *CBofBitmap::GetPixelAddress(int x, int y) {
 byte CBofBitmap::ReadPixel(int x, int y) {
 	Assert(IsValidObject(this));
 
-	Lock();
+	lock();
 	byte chPixel = *GetPixelAddress(x, y);
-	UnLock();
+	unlock();
 
 	return chPixel;
 }
@@ -686,10 +686,10 @@ byte CBofBitmap::ReadPixel(int x, int y) {
 void CBofBitmap::WritePixel(int x, int y, byte iColor) {
 	Assert(IsValidObject(this));
 
-	Lock();
+	lock();
 	byte *pPixel = GetPixelAddress(x, y);
 	*pPixel = iColor;
-	UnLock();
+	unlock();
 }
 
 void CBofBitmap::Circle(int xCenter, int yCenter, uint16 nRadius, byte iColor) {
@@ -795,9 +795,9 @@ void CBofBitmap::Line(int nSrcX, int nSrcY, int nDstX, int nDstY, byte iColor) {
 	if (_errCode == ERR_NONE) {
 		// Horizontal lines are a special case that can be done optimally
 		if (nSrcY == nDstY) {
-			Lock();
+			lock();
 			BofMemSet(GetPixelAddress(MIN(nSrcX, nDstX), nSrcY), iColor, ABS(nDstX - nSrcX));
-			UnLock();
+			unlock();
 
 		} else {
 			// Otherwise use standard Bresenham Line algorithm
@@ -882,7 +882,7 @@ ErrorCode CBofBitmap::ScrollRight(int nPixels, CBofRect * /*pRect*/) {
 
 				byte *p = m_pBits;
 
-				Lock();
+				lock();
 
 				if (nPixels > 0) {
 					for (int i = 0; i < m_nDY; i++) {
@@ -902,7 +902,7 @@ ErrorCode CBofBitmap::ScrollRight(int nPixels, CBofRect * /*pRect*/) {
 					}
 				}
 
-				UnLock();
+				unlock();
 
 				BofFree(pTemp);
 			}
@@ -916,7 +916,7 @@ ErrorCode CBofBitmap::scrollUp(int nPixels, CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	if (_errCode == ERR_NONE) {
-		Lock();
+		lock();
 
 		CBofRect cRect(0, 0, m_nDX  - 1, m_nDY  - 1);
 
@@ -1023,7 +1023,7 @@ ErrorCode CBofBitmap::scrollUp(int nPixels, CBofRect *pRect) {
 				ReportError(ERR_MEMORY, "Error: scrollUp - Could not allocate %ld bytes for row", dx);
 			}
 		}
-		UnLock();
+		unlock();
 	}
 
 	return _errCode;

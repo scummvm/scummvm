@@ -428,7 +428,7 @@ bool CBofSprite::UpdateDirtyRect(CBofWindow *pWnd, CBofSprite *pPrimarySprite) {
 				bTempWorkArea = true;
 				pWork = new CBofBitmap(dx, dy, m_pSharedPalette);
 			}
-			pWork->Lock();
+			pWork->lock();
 
 			// Paint the background into the work area
 			pBackdrop->paint(pWork, 0, 0, pRect);
@@ -460,7 +460,7 @@ bool CBofSprite::UpdateDirtyRect(CBofWindow *pWnd, CBofSprite *pPrimarySprite) {
 			cSrcRect.SetRect(0, 0, pRect->width() - 1, pRect->height() - 1);
 			pWork->paint(pWnd, pRect, &cSrcRect);
 
-			pWork->UnLock();
+			pWork->unlock();
 
 			if (bTempWorkArea) {
 				delete pWork;
@@ -661,8 +661,8 @@ bool CBofSprite::SpritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint) {
 		byte m2 = (byte)pSprite->m_nMaskColor;
 
 		// Lock down these bitmaps
-		m_pImage->Lock();
-		pSprite->m_pImage->Lock();
+		m_pImage->lock();
+		pSprite->m_pImage->lock();
 
 		byte *pDib1 = (byte *)m_pImage->GetPixelAddress((int)x1, (int)y1);
 		byte *pDib2 = (byte *)pSprite->m_pImage->GetPixelAddress((int)x2, (int)y2);
@@ -701,8 +701,8 @@ bool CBofSprite::SpritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint) {
 
 endroutine:
 	// Don't need access to these bitmaps any more
-	pSprite->m_pImage->UnLock();
-	m_pImage->UnLock();
+	pSprite->m_pImage->unlock();
+	m_pImage->unlock();
 
 	return bHit;
 }

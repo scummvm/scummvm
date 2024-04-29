@@ -950,7 +950,7 @@ ErrorCode CBofSound::FlushQueue(int nSlot) {
 	ErrorCode errCode = ERR_NONE;
 
 	// Remove all queued sounds
-	m_cQueue[nSlot]->Flush();
+	m_cQueue[nSlot]->flush();
 
 	// Including any that are currently playing
 	CBofSound *pSound = m_pSoundChain;

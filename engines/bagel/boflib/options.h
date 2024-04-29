@@ -166,7 +166,7 @@ public:
 	/**
 	 * Updates and Releases current option list
 	 */
-	void Release();
+	void release();
 };
 
 } // namespace Bagel

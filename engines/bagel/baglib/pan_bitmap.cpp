@@ -225,8 +225,8 @@ ErrorCode CBagPanBitmap::PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, 
 	CBofRect PanSrcRect;
 	CBofRect WndDstRect(dstRect.left + 0, dstRect.top, (dstRect.left + 0 + nWidth) - 1, dstRect.bottom);
 
-	pBmp->Lock();
-	pSrcBmp->Lock();
+	pBmp->lock();
+	pSrcBmp->lock();
 
 	int nIncrement = 1;
 
@@ -277,8 +277,8 @@ ErrorCode CBagPanBitmap::PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, 
 		}
 	}
 
-	pSrcBmp->UnLock();
-	pBmp->UnLock();
+	pSrcBmp->unlock();
+	pBmp->unlock();
 
 	return _errCode;
 }
