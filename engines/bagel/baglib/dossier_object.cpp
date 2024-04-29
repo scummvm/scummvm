@@ -244,11 +244,6 @@ ErrorCode CBagDossierObject::detach() {
 	return ec;
 }
 
-CBofPoint CBagDossierObject::arrangeFloater(CBofPoint pos, CBagObject * /*pObj*/) {
-	CBofPoint nextPos = pos;
-	return nextPos;
-}
-
 // Called to splash one of these guys to the screen
 ErrorCode CBagDossierObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect, int n) {
 	if (_showIndexFl) {
@@ -292,11 +287,11 @@ void CBagDossierObject::onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, v
 		return;
 	}
 
-	showDosText();
+	showDossierText();
 }
 
 // utility routine for activating dossier objects
-void CBagDossierObject::activateDosObject(CBagLog *logWld) {
+void CBagDossierObject::activateDossierObject(CBagLog *logWld) {
 	if (logWld) {
 		logWld->ActivateLocalObject(this);
 	}
@@ -315,7 +310,7 @@ void CBagDossierObject::activateDosObject(CBagLog *logWld) {
 	_showIndexFl = true;
 }
 
-void CBagDossierObject::deactivateDosObject(CBagLog *logWld) {
+void CBagDossierObject::deactivateDossierObject(CBagLog *logWld) {
 	if (CBagRPObject::GetLogState() == RP_READ_DOSSIER) {
 		SetFloating(false); // This is not floating
 	} else {
@@ -342,7 +337,7 @@ void CBagDossierObject::deactivateCurDossier() {
 				logWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGWLD);
 			}
 		}
-		_curDossier->deactivateDosObject(logWld);
+		_curDossier->deactivateDossierObject(logWld);
 
 		// When we hit the update code, we're gonna need to reevaluate this
 		// guys current view status.
@@ -355,7 +350,7 @@ void CBagDossierObject::deactivateCurDossier() {
 	}
 }
 
-void CBagDossierObject::showDosText() {
+void CBagDossierObject::showDossierText() {
 	// Make sure our script knows where we're going with this.
 	CBagRPObject::SetLogState(RP_READ_DOSSIER);
 
@@ -378,7 +373,7 @@ void CBagDossierObject::showDosText() {
 	}
 
 	// Now reactivate this object.
-	activateDosObject(logWld);
+	activateDossierObject(logWld);
 
 	// Mark this one as our current dossier
 	_curDossier = this;

@@ -60,13 +60,6 @@ public:
 
 	void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr) override; // run menu if available
 
-	/**
-	 * Arrange the float rects for the script rpo objects
-	 */
-	CBofPoint arrangeFloater(CBofPoint pos, CBagObject *pObj);
-	CBofString &getDossierLine() {
-		return _indexLine;
-	}
 	CBofRect getRect() override;
 
 	void setNotActive(bool b) {
@@ -76,18 +69,15 @@ public:
 		return _notActiveFl;
 	}
 
-	void activateDosObject(CBagLog *logWld);
-	void deactivateDosObject(CBagLog *logWld);
+	void activateDossierObject(CBagLog *logWld);
+	void deactivateDossierObject(CBagLog *logWld);
 
 	void setResiduePrintedObject(CBagObject *p) {
 		_residuePrintedObject = p;
 	};
-	CBagObject *getResiduePrintedObject() const {
-		return _residuePrintedObject;
-	};
 
 	static void deactivateCurDossier();
-	void showDosText();
+	void showDossierText();
 
 	static void initialize();
 	static CBagDossierObject *_curDossier;
