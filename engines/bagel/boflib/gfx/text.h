@@ -146,7 +146,7 @@ public:
 	void SetSize(const int nSize) {
 		m_nCurSize = nSize;
 	}
-	void SetWeight(const int nWeight) {
+	void setWeight(const int nWeight) {
 		m_nCurWeight = nWeight;
 	}
 
@@ -167,7 +167,7 @@ public:
 	int GetSize() const {
 		return m_nCurSize;
 	}
-	int GetWeight() const {
+	int getWeight() const {
 		return m_nCurWeight;
 	}
 

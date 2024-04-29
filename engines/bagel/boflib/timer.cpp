@@ -49,7 +49,7 @@ CBofTimer::CBofTimer() {
 		m_pTimerList = this;
 
 	} else {
-		m_pTimerList->AddToTail(this);
+		m_pTimerList->addToTail(this);
 	}
 
 	// Creating a new timer object modifies the timer list
@@ -70,7 +70,7 @@ CBofTimer::CBofTimer(uint32 nID, uint32 nInterval, void *lUserInfo, BofCallback 
 		m_pTimerList = this;
 
 	} else {
-		m_pTimerList->AddToTail(this);
+		m_pTimerList->addToTail(this);
 	}
 
 	// Creating a new timer object modifies the timer list

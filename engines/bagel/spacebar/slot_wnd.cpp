@@ -242,7 +242,7 @@ ErrorCode  SBarSlotWnd::attach() {
 			m_pCredText->SetColor(RGB(255, 255, 255));
 
 			m_pCredText->SetSize(20);
-			m_pCredText->SetWeight(TEXT_BOLD);
+			m_pCredText->setWeight(TEXT_BOLD);
 			m_pCredText->setText(BuildString("%d", m_nCredit));
 		} else {
 			ReportError(ERR_MEMORY);
@@ -260,7 +260,7 @@ ErrorCode  SBarSlotWnd::attach() {
 			m_pBetText->SetColor(RGB(255, 255, 255));
 
 			m_pBetText->SetSize(20);
-			m_pBetText->SetWeight(TEXT_BOLD);
+			m_pBetText->setWeight(TEXT_BOLD);
 			m_pBetText->setText(BuildString("%d", m_nBet));
 		} else {
 			ReportError(ERR_MEMORY);
@@ -278,7 +278,7 @@ ErrorCode  SBarSlotWnd::attach() {
 			m_pOddsText->SetColor(RGB(255, 255, 255));
 
 			m_pOddsText->SetSize(32);
-			m_pOddsText->SetWeight(TEXT_BOLD);
+			m_pOddsText->setWeight(TEXT_BOLD);
 			m_pOddsText->setText("");
 		} else {
 			ReportError(ERR_MEMORY);

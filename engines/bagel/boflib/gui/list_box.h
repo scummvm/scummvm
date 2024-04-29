@@ -44,109 +44,109 @@ public:
 	CBofListBox();
 	~CBofListBox();
 
-	void SetSelectedItem(int nItem, bool bRepaint = true);
+	void setSelectedItem(int nItem, bool bRepaint = true);
 
-	void InsertBefore(int nIndex, const CBofString &cString, bool bRepaint = true);
-	void InsertAfter(int nIndex, const CBofString &cString, bool bRepaint = true);
+	void insertBefore(int nIndex, const CBofString &cString, bool bRepaint = true);
+	void insertAfter(int nIndex, const CBofString &cString, bool bRepaint = true);
 
-	void AddToHead(const CBofString &cString, bool bRepaint = true);
-	void AddToTail(const CBofString &cString, bool bRepaint = true);
+	void addToHead(const CBofString &cString, bool bRepaint = true);
+	void addToTail(const CBofString &cString, bool bRepaint = true);
 
-	ErrorCode DelItem(int nIndex, bool bRepaint = true);
-	ErrorCode DeleteAll(bool bRepaint = true);
+	ErrorCode delItem(int nIndex, bool bRepaint = true);
+	ErrorCode deleteAll(bool bRepaint = true);
 
-	int GetNumItems() {
-		return (m_nNumItems);
+	int getNumItems() {
+		return m_nNumItems;
 	}
 	CBofString getText(int nIndex);
 	void setText(int nIndex, const CBofString &cStr);
 
 	void setTextLineColor(int nIndex, RGBCOLOR rgbColor);
 
-	ErrorCode LineUp() {
-		return (ScrollUp(1));
+	ErrorCode lineUp() {
+		return scrollUp(1);
 	}
-	ErrorCode LineDown() {
-		return (ScrollDown(1));
-	}
-
-	ErrorCode PageUp() {
-		return (ScrollUp(m_nPageSize));
-	}
-	ErrorCode PageDown() {
-		return (ScrollDown(m_nPageSize));
+	ErrorCode lineDown() {
+		return scrollDown(1);
 	}
 
-	ErrorCode ScrollUp(const int nLines);
-	ErrorCode ScrollDown(const int nLines) {
-		return (ScrollUp(-nLines));
+	ErrorCode pageUp() {
+		return scrollUp(m_nPageSize);
+	}
+	ErrorCode pageDown() {
+		return scrollDown(m_nPageSize);
 	}
 
-	ErrorCode ScrollTo(const int nLine);
+	ErrorCode scrollUp(const int nLines);
+	ErrorCode scrollDown(const int nLines) {
+		return scrollUp(-nLines);
+	}
 
-	ErrorCode CreateWorkArea();
-	ErrorCode SaveBackground();
+	ErrorCode scrollTo(const int nLine);
+
+	ErrorCode createWorkArea();
+	ErrorCode saveBackground();
 	void killBackground();
 
-	void SetHighlightColor(RGBCOLOR cHighColor) {
+	void setHighlightColor(RGBCOLOR cHighColor) {
 		m_cHighColor = cHighColor;
 	}
-	RGBCOLOR GetHighlightColor() {
-		return (m_cHighColor);
+	RGBCOLOR getHighlightColor() {
+		return m_cHighColor;
 	}
 
 	void setTextColor(RGBCOLOR cColor) {
 		m_cTextColor = cColor;
 	}
 	RGBCOLOR getTextColor() {
-		return (m_cTextColor);
+		return m_cTextColor;
 	}
 
-	void SetPointSize(int nSize) {
+	void setPointSize(int nSize) {
 		m_nTextSize = nSize;
 	}
-	int GetPointSize() {
-		return (m_nTextSize);
+	int getPointSize() {
+		return m_nTextSize;
 	}
 
-	void SetWeight(int nWeight) {
+	void setWeight(int nWeight) {
 		m_nTextWeight = nWeight;
 	}
-	int GetWeight() {
-		return (m_nTextWeight);
+	int getWeight() {
+		return m_nTextWeight;
 	}
 
-	void SetItemHeight(int nHeight) {
+	void setItemHeight(int nHeight) {
 		m_nItemHeight = nHeight;
 	}
-	int GetItemHeight() {
-		return (m_nItemHeight);
+	int getItemHeight() {
+		return m_nItemHeight;
 	}
 
-	void SetFont(int nFont) {
+	void setFont(int nFont) {
 		m_nTextFont = nFont;
 	}
-	int GetFont() {
-		return (m_nTextFont);
+	int getFont() {
+		return m_nTextFont;
 	}
 
 	int getState() {
-		return (m_nState);
+		return m_nState;
 	}
 
-	virtual ErrorCode RepaintItem(int nIndex);
-	virtual ErrorCode RepaintAll();
+	virtual ErrorCode repaintItem(int nIndex);
+	virtual ErrorCode repaintAll();
 
 protected:
 	virtual void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual void OnLButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
+	virtual void onLButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
 	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
 	virtual void onPaint(CBofRect *pRect);
 
 	/**
 	 * Clears the currently selected item
 	 */
-	virtual void ClearSelection();
+	virtual void clearSelection();
 
 	CBofList<ListBoxItem> m_cTextItems;
 	CBofBitmap *m_pWork;

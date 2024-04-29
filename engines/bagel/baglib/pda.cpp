@@ -80,7 +80,7 @@ void CBagPDA::AddToMovieQueue(CBagMovieObject *pMObj) {
 		}
 	}
 
-	m_pMovieList->AddToTail(pMObj);
+	m_pMovieList->addToTail(pMObj);
 }
 
 CBagPDA::~CBagPDA() {

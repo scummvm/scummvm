@@ -309,7 +309,7 @@ ErrorCode CBibbleWindow::attach() {
 		m_pCreditsText->SetColor(RGB(255, 255, 255));
 
 		m_pCreditsText->SetSize(MapWindowsPointSize(20));
-		m_pCreditsText->SetWeight(TEXT_BOLD);
+		m_pCreditsText->setWeight(TEXT_BOLD);
 		m_pCreditsText->setText(BuildString("%d", m_nNumCredits));
 	} else {
 		ReportError(ERR_MEMORY);
@@ -1050,7 +1050,7 @@ void CBibbleWindow::CalcOutcome() {
 	LogInfo(BuildString("\tNumber of '4' Babbles: %d", m_nNumShout4));
 }
 
-void CBibbleWindow::OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
+void CBibbleWindow::onLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 

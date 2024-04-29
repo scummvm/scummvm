@@ -293,7 +293,7 @@ ErrorCode CBagCreditsDialog::DisplayCredits() {
 			}
 
 			// Scroll text up 1 pixel
-			m_pCreditsBmp->ScrollUp(PIX_SCROLL_DY);
+			m_pCreditsBmp->scrollUp(PIX_SCROLL_DY);
 
 			m_nNumPixels += PIX_SCROLL_DY;
 			if ((m_nNumPixels % LINE_HEIGHT) == 0) {

@@ -45,7 +45,7 @@ CBofListBox::CBofListBox() {
 	m_nState = LISTBOX_NORMAL;
 
 	// Initialized the selected item
-	ClearSelection();
+	clearSelection();
 }
 
 
@@ -56,92 +56,92 @@ CBofListBox::~CBofListBox() {
 		m_pWork  = nullptr;
 	}
 
-	DeleteAll(false);
+	deleteAll(false);
 }
 
-void CBofListBox::ClearSelection() {
+void CBofListBox::clearSelection() {
 	m_nSelectedItem = -1;
 }
 
-void CBofListBox::InsertBefore(int nIndex, const CBofString &cString, bool bRepaint) {
+void CBofListBox::insertBefore(int nIndex, const CBofString &cString, bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	ListBoxItem lbi;
 	lbi.m_pTextStr          = new CBofString(cString);
 	lbi.m_nTextLineColor    = COLOR_USE_DEFAULT;
 
-	m_cTextItems.InsertBefore(nIndex, lbi);
+	m_cTextItems.insertBefore(nIndex, lbi);
 
 	// One more item
 	m_nNumItems++;
 
-	ClearSelection();
+	clearSelection();
 
 	if (bRepaint && IsCreated() && IsVisible()) {
-		RepaintAll();
+		repaintAll();
 	}
 }
 
 
-void CBofListBox::InsertAfter(int nIndex, const CBofString &cString, bool bRepaint) {
+void CBofListBox::insertAfter(int nIndex, const CBofString &cString, bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	ListBoxItem lbi;
 	lbi.m_pTextStr          = new CBofString(cString);
 	lbi.m_nTextLineColor    = COLOR_USE_DEFAULT;
 
-	m_cTextItems.InsertAfter(nIndex, lbi);
+	m_cTextItems.insertAfter(nIndex, lbi);
 
 	// One more item
 	m_nNumItems++;
 
 	if (bRepaint && IsCreated() && IsVisible()) {
-		RepaintAll();
+		repaintAll();
 	}
 }
 
 
-void CBofListBox::AddToHead(const CBofString &cString, bool bRepaint) {
+void CBofListBox::addToHead(const CBofString &cString, bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	ListBoxItem lbi;
 	lbi.m_pTextStr          = new CBofString(cString);
 	lbi.m_nTextLineColor    = COLOR_USE_DEFAULT;
 
-	m_cTextItems.AddToHead(lbi);
+	m_cTextItems.addToHead(lbi);
 
 	// One more item
 	m_nNumItems++;
 
-	ClearSelection();
+	clearSelection();
 
 	if (bRepaint && IsCreated() && IsVisible()) {
-		RepaintAll();
+		repaintAll();
 	}
 }
 
 
-void CBofListBox::AddToTail(const CBofString &cString, bool bRepaint) {
+void CBofListBox::addToTail(const CBofString &cString, bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	ListBoxItem lbi;
 	lbi.m_pTextStr          = new CBofString(cString);
 	lbi.m_nTextLineColor    = COLOR_USE_DEFAULT;
 
-	m_cTextItems.AddToTail(lbi);
+	m_cTextItems.addToTail(lbi);
 
 	// One more item
 	m_nNumItems++;
 
-	ClearSelection();
+	clearSelection();
 
 	if (bRepaint && IsCreated() && IsVisible()) {
-		RepaintAll();
+		repaintAll();
 	}
 }
 
 
-ErrorCode CBofListBox::DelItem(int nIndex, bool bRepaint) {
+ErrorCode CBofListBox::delItem(int nIndex, bool bRepaint) {
 	Assert(IsValidObject(this));
 	Assert(nIndex >= 0 && nIndex < m_nNumItems);
 
@@ -156,17 +156,17 @@ ErrorCode CBofListBox::DelItem(int nIndex, bool bRepaint) {
 			m_n1stVisible = 0;
 	}
 
-	ClearSelection();
+	clearSelection();
 
 
 	if (bRepaint && IsCreated() && IsVisible()) {
-		RepaintAll();
+		repaintAll();
 	}
 
 	return _errCode;
 }
 
-ErrorCode CBofListBox::DeleteAll(bool bRepaint) {
+ErrorCode CBofListBox::deleteAll(bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	// Switch item to be pointer to cbofstring instead of the item itself
@@ -181,10 +181,10 @@ ErrorCode CBofListBox::DeleteAll(bool bRepaint) {
 	m_nNumItems = 0;
 	m_n1stVisible = 0;
 
-	ClearSelection();
+	clearSelection();
 
 	if (bRepaint && IsCreated() && IsVisible()) {
-		RepaintAll();
+		repaintAll();
 	}
 
 	return _errCode;
@@ -209,7 +209,7 @@ void CBofListBox::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 }
 
 
-void CBofListBox::OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
+void CBofListBox::onLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
@@ -234,27 +234,27 @@ void CBofListBox::onKeyHit(uint32 lKey, uint32 lRepCount) {
 
 	switch (lKey) {
 	case BKEY_HOME:
-		ScrollTo(0);
+		scrollTo(0);
 		break;
 
 	case BKEY_END:
-		ScrollTo(m_nNumItems);
+		scrollTo(m_nNumItems);
 		break;
 
 	case BKEY_UP:
-		LineUp();
+		lineUp();
 		break;
 
 	case BKEY_DOWN:
-		LineDown();
+		lineDown();
 		break;
 
 	case BKEY_PAGEUP:
-		PageUp();
+		pageUp();
 		break;
 
 	case BKEY_PAGEDOWN:
-		PageDown();
+		pageDown();
 		break;
 
 	default:
@@ -268,12 +268,12 @@ void CBofListBox::onKeyHit(uint32 lKey, uint32 lRepCount) {
 }
 
 
-ErrorCode CBofListBox::ScrollUp(const int nLines) {
+ErrorCode CBofListBox::scrollUp(const int nLines) {
 	Assert(IsValidObject(this));
 
 	// If all the items fit on a single page, make this operation a no-op.
 	if (m_nNumItems <= m_nPageSize) {
-		return ScrollTo(m_n1stVisible);
+		return scrollTo(m_n1stVisible);
 	}
 
 	int nNewLine = m_n1stVisible - nLines;
@@ -288,10 +288,10 @@ ErrorCode CBofListBox::ScrollUp(const int nLines) {
 		nNewLine = (m_nNumItems - m_nPageSize);
 	}
 
-	return ScrollTo(nNewLine);
+	return scrollTo(nNewLine);
 }
 
-ErrorCode CBofListBox::ScrollTo(const int nLine) {
+ErrorCode CBofListBox::scrollTo(const int nLine) {
 	Assert(IsValidObject(this));
 	Assert(nLine >= 0 && nLine <= m_nNumItems);
 
@@ -305,7 +305,7 @@ ErrorCode CBofListBox::ScrollTo(const int nLine) {
 		}
 
 		// Show the text box
-		RepaintAll();
+		repaintAll();
 	}
 
 	return _errCode;
@@ -318,10 +318,10 @@ void CBofListBox::onPaint(CBofRect * /*pRect*/) {
 	m_nPageSize = Height() / m_nItemHeight;
 
 	if (m_pBackdrop == nullptr) {
-		SaveBackground();
+		saveBackground();
 	}
 
-	RepaintAll();
+	repaintAll();
 }
 
 
@@ -335,7 +335,7 @@ void CBofListBox::killBackground() {
 }
 
 
-ErrorCode CBofListBox::SaveBackground() {
+ErrorCode CBofListBox::saveBackground() {
 	Assert(IsValidObject(this));
 
 	killBackground();
@@ -357,11 +357,11 @@ ErrorCode CBofListBox::SaveBackground() {
 	return _errCode;
 }
 
-ErrorCode CBofListBox::CreateWorkArea() {
+ErrorCode CBofListBox::createWorkArea() {
 	Assert(IsValidObject(this));
 
 	if (m_pBackdrop == nullptr) {
-		SaveBackground();
+		saveBackground();
 	}
 
 	if (m_pWork == nullptr) {
@@ -376,16 +376,16 @@ ErrorCode CBofListBox::CreateWorkArea() {
 }
 
 
-ErrorCode CBofListBox::RepaintAll() {
+ErrorCode CBofListBox::repaintAll() {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
 		Assert(IsCreated());
 
-		int nCurFont = GetFont();
-		SetFont(m_nTextFont);
+		int nCurFont = getFont();
+		setFont(m_nTextFont);
 
-		CreateWorkArea();
+		createWorkArea();
 
 		if (m_pWork != nullptr) {
 			m_pWork->Lock();
@@ -413,7 +413,7 @@ ErrorCode CBofListBox::RepaintAll() {
 						          m_cHighColor,
 						          JUSTIFY_LEFT,
 						          FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
-						          GetFont());
+						          getFont());
 					} else {
 						// Display text
 						// Allow list items of different colors.
@@ -430,7 +430,7 @@ ErrorCode CBofListBox::RepaintAll() {
 						          rgbTextColor,
 						          JUSTIFY_LEFT,
 						          FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
-						          GetFont());
+						          getFont());
 					}
 
 					CBofPoint bl(cRect.BottomLeft()), br(cRect.BottomRight());
@@ -445,26 +445,26 @@ ErrorCode CBofListBox::RepaintAll() {
 		}
 
 		// Reset the font
-		SetFont(nCurFont);
+		setFont(nCurFont);
 	}
 
 	return _errCode;
 }
 
 
-ErrorCode CBofListBox::RepaintItem(int nIndex) {
+ErrorCode CBofListBox::repaintItem(int nIndex) {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
 		Assert(nIndex >= 0 && nIndex < m_nNumItems);
-		int nCurFont = GetFont();
-		SetFont(m_nTextFont);           // Set the proper font
+		int nCurFont = getFont();
+		setFont(m_nTextFont);           // Set the proper font
 
 		// If this item is visible, then repaint it.
 		if (nIndex >= m_n1stVisible && nIndex <= m_n1stVisible + m_nPageSize) {
 			int i = nIndex - m_n1stVisible;
 
-			CreateWorkArea();
+			createWorkArea();
 			int nIndexedColor = m_pWork->GetPalette()->GetNearestIndex(m_cTextColor);
 
 			m_pWork->Lock();
@@ -488,7 +488,7 @@ ErrorCode CBofListBox::RepaintItem(int nIndex) {
 				          m_cHighColor,
 				          JUSTIFY_LEFT,
 				          FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
-				          GetFont());
+				          getFont());
 
 			} else {
 				// Display text
@@ -505,7 +505,7 @@ ErrorCode CBofListBox::RepaintItem(int nIndex) {
 				          rgbTextColor,
 				          JUSTIFY_LEFT,
 				          FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
-				          GetFont());
+				          getFont());
 			}
 			CBofPoint bl(cRect.BottomLeft()), br(cRect.BottomRight());
 			m_pWork->Line(&bl, &br, (byte)nIndexedColor);
@@ -517,21 +517,21 @@ ErrorCode CBofListBox::RepaintItem(int nIndex) {
 		}
 
 		// Reset the font
-		SetFont(nCurFont);
+		setFont(nCurFont);
 	}
 
 	return _errCode;
 }
 
 
-void CBofListBox::SetSelectedItem(int nItem, bool bRepaint) {
+void CBofListBox::setSelectedItem(int nItem, bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	// Set highlighted item
 	m_nSelectedItem = nItem;
 
 	if (bRepaint) {
-		RepaintAll();
+		repaintAll();
 	}
 }
 

@@ -188,10 +188,10 @@ int CBofTextBox::GetIndex(const int nLine) {
 }
 
 
-ErrorCode CBofTextBox::ScrollUp(const int nLines) {
+ErrorCode CBofTextBox::scrollUp(const int nLines) {
 	// Make scroll a no-op if all the lines in the box appear on one screen.
 	if (m_nNumLines <= m_nPageSize) {
-		return ScrollTo(m_nCurrentLine);
+		return scrollTo(m_nCurrentLine);
 	}
 
 	int nNewLine = m_nCurrentLine - nLines;
@@ -205,11 +205,11 @@ ErrorCode CBofTextBox::ScrollUp(const int nLines) {
 		//
 		nNewLine = (m_nNumLines - m_nPageSize);
 	}
-	return ScrollTo(nNewLine);
+	return scrollTo(nNewLine);
 }
 
 
-ErrorCode CBofTextBox::ScrollTo(const int nLine) {
+ErrorCode CBofTextBox::scrollTo(const int nLine) {
 	Assert(IsValidObject(this));
 	Assert(nLine >= 0 && nLine <= m_nNumLines);
 

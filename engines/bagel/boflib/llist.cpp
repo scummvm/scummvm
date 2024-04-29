@@ -40,7 +40,7 @@ CLList::~CLList() {
 	this->Delete();
 }
 
-void CLList::AddToHead(CLList *pNewList) {
+void CLList::addToHead(CLList *pNewList) {
 	// Can't insert a nullptr record into the list
 	assert(pNewList != nullptr);
 
@@ -52,7 +52,7 @@ void CLList::AddToHead(CLList *pNewList) {
 	pListHead->m_pPrev = pNewList;
 }
 
-void CLList::AddToTail(CLList *pNewList) {
+void CLList::addToTail(CLList *pNewList) {
 	// Can't insert a nullptr record into the list
 	assert(pNewList != nullptr);
 
@@ -93,7 +93,7 @@ void CLList::MoveToHead() {
 
 	if (this != pHead) {
 		Delete();
-		pHead->AddToHead(this);
+		pHead->addToHead(this);
 	}
 }
 
@@ -103,7 +103,7 @@ void CLList::MoveToTail() {
 
 	if (this != pTail) {
 		Delete();
-		pTail->AddToTail(this);
+		pTail->addToTail(this);
 	}
 }
 

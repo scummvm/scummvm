@@ -271,9 +271,9 @@ public:
 	 * @param nNodeIndex    Index of node to insert before
 	 * @param cNewItem      Data to store at new node
 	 */
-	void InsertBefore(int nNodeIndex, T cNewItem) {
+	void insertBefore(int nNodeIndex, T cNewItem) {
 		assert(!IsEmpty());
-		InsertBefore(GetNode(nNodeIndex), cNewItem);
+		insertBefore(GetNode(nNodeIndex), cNewItem);
 	}
 
 	/**
@@ -281,12 +281,12 @@ public:
 	 * @param pNode         Node to insert before
 	 * @param cNewItem      Data to store at new node
 	 */
-	void InsertBefore(CBofListNode<T> *pNode, T cNewItem) {
+	void insertBefore(CBofListNode<T> *pNode, T cNewItem) {
 		assert(pNode != nullptr);
 		assert(!IsEmpty());
 
 		if (pNode == m_pHead) {
-			AddToHead(cNewItem);
+			addToHead(cNewItem);
 		} else {
 
 			CBofListNode<T> *pNewNode = NewNode(cNewItem);
@@ -312,9 +312,9 @@ public:
 	 * @param nNodeIndex        Index of node to insert after
 	 * @param cNewItem          Data to store at new node
 	 */
-	void InsertAfter(int nNodeIndex, T cNewItem) {
+	void insertAfter(int nNodeIndex, T cNewItem) {
 		assert(!IsEmpty());
-		InsertAfter(GetNode(nNodeIndex), cNewItem);
+		insertAfter(GetNode(nNodeIndex), cNewItem);
 	}
 
 	/**
@@ -322,12 +322,12 @@ public:
 	 * @param pNode             Node to insert after
 	 * @param cNewItem          Data to store at new node
 	 */
-	void InsertAfter(CBofListNode<T> *pNode, T cNewItem) {
+	void insertAfter(CBofListNode<T> *pNode, T cNewItem) {
 		assert(pNode != nullptr);
 		assert(!IsEmpty());
 
 		if (pNode == m_pTail) {
-			AddToTail(cNewItem);
+			addToTail(cNewItem);
 		} else {
 
 			CBofListNode<T> *pNewNode = NewNode(cNewItem);
@@ -430,7 +430,7 @@ public:
 	 * Adds specified node as the new head of this list
 	 * @param pNode     Pointer to node to add to the list
 	 */
-	inline void AddToHead(CBofListNode<T> *pNewNode) {
+	inline void addToHead(CBofListNode<T> *pNewNode) {
 		assert(pNewNode != nullptr);
 
 		pNewNode->m_pNext = m_pHead;
@@ -453,15 +453,15 @@ public:
 	 * Adds specified item as the new head of this list
 	 * @param cItem     Item to add to the list
 	 */
-	inline void AddToHead(T cItem) {
-		AddToHead(NewNode(cItem));
+	inline void addToHead(T cItem) {
+		addToHead(NewNode(cItem));
 	}
 
 	/**
 	 * Adds specified node as the new tail of this list
 	 * @param pNode     Pointer to node to add to the list
 	 */
-	void AddToTail(CBofListNode<T> *pNewNode) {
+	void addToTail(CBofListNode<T> *pNewNode) {
 		assert(pNewNode != nullptr);
 
 		pNewNode->m_pPrev = m_pTail;
@@ -483,8 +483,8 @@ public:
 	 * Adds specified item as the new tail of this list
 	 * @param cItem     Item to add to the list
 	 */
-	void AddToTail(T cItem) {
-		AddToTail(NewNode(cItem));
+	void addToTail(T cItem) {
+		addToTail(NewNode(cItem));
 	}
 
 	CBofListNode<T> *GetHead() const {

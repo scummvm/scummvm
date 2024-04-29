@@ -564,7 +564,7 @@ void SrafComputer::RecalcSellerSummaryList() {
 		sellerItem.m_nSellerOffer = g_stSellerNames[i].m_nAmount;
 		sellerItem.m_pSellerName = g_stSellerNames[i].m_pszName;
 
-		m_pSellerSummaryList->AddToTail(sellerItem);
+		m_pSellerSummaryList->addToTail(sellerItem);
 		i++;
 	}
 }
@@ -596,7 +596,7 @@ void SrafComputer::RecalcBuyerSummaryList() {
 			pBuyerItem->m_nBuyerOffer = g_stBuyerBids[i].m_nBidSum;
 			pBuyerItem->m_pBuyerName = g_stBuyerBids[i].m_pszName;
 
-			m_pBuyerSummaryList->AddToTail(*pBuyerItem);
+			m_pBuyerSummaryList->addToTail(*pBuyerItem);
 			delete pBuyerItem;
 		}
 
@@ -766,7 +766,7 @@ bool SrafComputer::VerifyDispatchTeam() {
 		// Team gender is based on sex of captain.
 		pTeamItem->m_nFlags |= GetTeamGender(pTeamItem->m_nFlags);
 
-		m_pTeamList->AddToTail(*pTeamItem);
+		m_pTeamList->addToTail(*pTeamItem);
 
 		// Finally, since we have a valid team, set those team members who are attending to
 		// be unavailable for any other staff meetings, also reset them to false for
@@ -1174,11 +1174,11 @@ ErrorCode SrafComputer::CreateListBox() {
 	if (m_pLBox == nullptr)
 		return ERR_MEMORY;
 
-	m_pLBox->SetPointSize(m_nListPointSize);
-	m_pLBox->SetItemHeight(m_nListItemHeight);
+	m_pLBox->setPointSize(m_nListPointSize);
+	m_pLBox->setItemHeight(m_nListItemHeight);
 	m_pLBox->setTextColor(m_cTextColor);
-	m_pLBox->SetHighlightColor(m_cTextHiliteColor);
-	m_pLBox->SetFont(FONT_MONO);
+	m_pLBox->setHighlightColor(m_cTextHiliteColor);
+	m_pLBox->setFont(FONT_MONO);
 	m_pLBox->SetFocus();
 
 	return error;
@@ -1187,7 +1187,7 @@ ErrorCode SrafComputer::CreateListBox() {
 
 void SrafComputer::DeleteListBox() {
 	if (m_pLBox) {
-		m_pLBox->DeleteAll();	// Clears all in the text box
+		m_pLBox->deleteAll();	// Clears all in the text box
 	}
 }
 
@@ -1200,7 +1200,7 @@ void SrafComputer::FillMain() {
 
 		pCompItem->m_pItem = g_stMainItems[i];
 
-		m_pMainList->AddToTail(*pCompItem);
+		m_pMainList->addToTail(*pCompItem);
 		delete pCompItem;
 
 		i++;
@@ -1307,15 +1307,15 @@ void SrafComputer::ActivateDealSummary() {
 	//  Populate first line of list with header
 
 	sStr = "DEAL SUMMARY: Armpit III";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	// Align text with others in column
 	sStr = "COSTS";
 	AlignAtColumn(sStr, "CURRENT TERMS", kRightColumnAlign);
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	// Populate the listbox with the sellers
 	int numItems = m_pSellerSummaryList->GetCount();
@@ -1338,7 +1338,7 @@ void SrafComputer::ActivateDealSummary() {
 		}
 
 		AlignAtColumn(sStr, szRightCol, kRightColumnAlign);
-		m_pLBox->AddToTail(sStr, false);
+		m_pLBox->addToTail(sStr, false);
 	}
 
 	for (int i = 0; i < NUM_OTHER_PARTYS; i++) {
@@ -1356,7 +1356,7 @@ void SrafComputer::ActivateDealSummary() {
 			}
 
 			AlignAtColumn(sStr, szRightCol, kRightColumnAlign);
-			m_pLBox->AddToTail(sStr, false);
+			m_pLBox->addToTail(sStr, false);
 			break;
 		case SWONZA5:
 		default:
@@ -1373,15 +1373,15 @@ void SrafComputer::ActivateDealSummary() {
 	}
 
 	AlignAtColumn(sStr, szRightCol, kRightColumnAlign);
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = "BUYERS";
 	AlignAtColumn(sStr, "CURRENT OFFER", kRightColumnAlign);
 
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	// Populate the listbox with the buyers
 	numItems = m_pBuyerSummaryList->GetCount();
@@ -1397,7 +1397,7 @@ void SrafComputer::ActivateDealSummary() {
 			Common::sprintf_s(szRightCol, "%2dgZ", buyerItem.m_nBuyerOffer);
 			totalAsking += buyerItem.m_nBuyerOffer;
 			AlignAtColumn(sStr, szRightCol, kRightColumnAlign);
-			m_pLBox->AddToTail(sStr, false);
+			m_pLBox->addToTail(sStr, false);
 		}
 	}
 
@@ -1411,7 +1411,7 @@ void SrafComputer::ActivateDealSummary() {
 		Common::sprintf_s(szRightCol, "%2dgZ", g_stOtherPartys[SWONZA5].m_nPaymentAmount);
 
 		AlignAtColumn(sStr, szRightCol, kRightColumnAlign);
-		m_pLBox->AddToTail(sStr, false);
+		m_pLBox->addToTail(sStr, false);
 	}
 
 	// Update the asking with the bribes
@@ -1420,7 +1420,7 @@ void SrafComputer::ActivateDealSummary() {
 	Common::sprintf_s(szRightCol, "%2dgZ", totalAsking);
 	AlignAtColumn(sStr, szRightCol, kRightColumnAlign);
 
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	// Show list box
 	m_pLBox->Show();
@@ -1459,25 +1459,25 @@ void SrafComputer::ActivateBuyerBids() {
 
 	// Put up the column header
 	sStr = kBuyerBidsHeaderStr;
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	// Walk through the grid and build individual strings and add to the list.
 	for (int i = 0; i < NUM_BUYERS; i++) {
 		sStr = BuildBidString(i);
-		m_pLBox->AddToTail(sStr, false);
+		m_pLBox->addToTail(sStr, false);
 		if (g_stBuyerBids[i].m_bAccept) {
 			m_pLBox->setTextLineColor(i + 1, m_cTextLineColor);
 		}
 	}
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = kBuyerBidsMessage1;
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = kBuyerBidsMessage2;
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	// Show the list box
 	m_pLBox->Show();
@@ -1556,15 +1556,15 @@ void SrafComputer::ActivateSellerBios() {
 
 	// Populate first line of list with header
 	sStr = "SELLER BIOGRAPHIES";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	// Populate the listbox with the staff names
 	for (int i = 0; i < NUM_SELLERS; i++) {
 		sStr = g_stSellerNames[i].m_pszName;
-		m_pLBox->AddToTail(sStr, false);
+		m_pLBox->addToTail(sStr, false);
 	}
 
 	// Show list box
@@ -1601,15 +1601,15 @@ void SrafComputer::ActivateOtherBios() {
 
 	// Populate first line of list with header
 	sStr = "OTHER BIOGRAPHIES";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	// Populate the listbox with the other names
 	for (int i = 0; i < NUM_OTHER_PARTYS; i++) {
 		sStr = g_stOtherPartys[i].m_pszName;
-		m_pLBox->AddToTail(sStr, false);
+		m_pLBox->addToTail(sStr, false);
 	}
 
 	// Show list box
@@ -1645,15 +1645,15 @@ void SrafComputer::ActivateStaffBios() {
 
 	// Populate first line of list with header
 	sStr = "STAFF BIOGRAPHIES";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	// Populate the listbox with the staff names
 	for (int i = 0; i < NUM_STAFFERS; i++) {
 		sStr = g_staffers[i].m_pszStafferName;
-		m_pLBox->AddToTail(sStr, false);
+		m_pLBox->addToTail(sStr, false);
 	}
 
 	// Show list box
@@ -1707,15 +1707,15 @@ void SrafComputer::RecalcDispatchList(int mExpansionFlag) {
 	int nListEntries = 0;
 	const char *pMeetWith[3] = { "A Seller", "A Buyer", "Other Interested Party" };
 	int nMeetWithEntries = 3;
-	bool bAddToTail = true;
+	bool baddToTail = true;
 	int nSkipped = 0;
 
 	// Put up the column header and a blank line
 	sStr = kDispatchHeaderStr;
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	// Keep track of the currently expanded state
 	gDispatchCurState = mExpansionFlag;
@@ -1768,7 +1768,7 @@ void SrafComputer::RecalcDispatchList(int mExpansionFlag) {
 							sStr.ReplaceCharAt(kStandardIndentation + 1, kCheckmark);
 						}
 					} else {
-						bAddToTail = false;
+						baddToTail = false;
 					}
 				}
 			}
@@ -1798,7 +1798,7 @@ void SrafComputer::RecalcDispatchList(int mExpansionFlag) {
 						}
 					}
 				} else {
-					bAddToTail = false;
+					baddToTail = false;
 				}
 			}
 			break;
@@ -1820,7 +1820,7 @@ void SrafComputer::RecalcDispatchList(int mExpansionFlag) {
 							sStr.ReplaceCharAt(kStandardIndentation + 1, kCheckmark);
 						}
 					} else {
-						bAddToTail = false;
+						baddToTail = false;
 					}
 				}
 			}
@@ -1828,7 +1828,7 @@ void SrafComputer::RecalcDispatchList(int mExpansionFlag) {
 		}
 
 		// Add the right hand column
-		if (bAddToTail == true) {
+		if (baddToTail == true) {
 			if ((i - nSkipped) < NUM_STAFFERS) {
 				Common::strcpy_s(szRightCol, g_staffers[i - nSkipped].m_pszStafferName);
 				AlignAtColumn(sStr, szRightCol, kTeamMemberColumn);
@@ -1840,12 +1840,12 @@ void SrafComputer::RecalcDispatchList(int mExpansionFlag) {
 
 				AlignAtColumn(sStr, szRightCol, kTeamIncludeColumn - 1);
 			}
-			m_pLBox->AddToTail(sStr, false);
+			m_pLBox->addToTail(sStr, false);
 		} else {
 			nSkipped++;
 		}
 
-		bAddToTail = true;
+		baddToTail = true;
 
 		// Find out if we're done
 		i++;
@@ -1856,22 +1856,22 @@ void SrafComputer::RecalcDispatchList(int mExpansionFlag) {
 
 	// Include our footer in this list
 	sStr = "";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = kDispatchFooterStr1;
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = kDispatchFooterStr2;
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = kDispatchFooterStr3;
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = kDispatchFooterStr4;
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = kDispatchFooterStr5;
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 }
 
 
@@ -1908,10 +1908,10 @@ void SrafComputer::ActivateCurrentEMail() {
 
 	// Put up the column header and a blank line
 	sStr = kEmailHeaderStr;
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	// Walk through the grid and build individual strings and add to the list.
 	for (int i = 0; i < NUM_MAIL_MESSAGES; i++) {
@@ -1923,7 +1923,7 @@ void SrafComputer::ActivateCurrentEMail() {
 		Common::strcpy_s(szRightCol, g_stEmailMessages[i].m_pszMessageTo);
 		AlignAtColumn(sStr, szRightCol, kMessageToColumn);
 
-		m_pLBox->AddToTail(sStr, false);
+		m_pLBox->addToTail(sStr, false);
 	}
 
 	// Show the list box
@@ -1963,10 +1963,10 @@ void SrafComputer::ActivateAudioSettings() {
 
 	// Put up the column header and a blank line
 	sStr = kAudioHeaderStr;
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	// Walk through the titles and build the list
 	char szRightCol[256];
@@ -1979,7 +1979,7 @@ void SrafComputer::ActivateAudioSettings() {
 		Common::strcpy_s(szRightCol, g_stAudioSetting[i]->m_pszPlanet);
 		AlignAtColumn(sStr, szRightCol, kAudioPlanetCol);
 
-		m_pLBox->AddToTail(sStr, false);
+		m_pLBox->addToTail(sStr, false);
 	}
 
 	// Show the list box
@@ -2027,10 +2027,10 @@ void SrafComputer::ActivateRoboButler() {
 
 	// Put up the column header and a blank line
 	sStr = kRobobutlerHeaderStr;
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	// Walk through the titles and build the list
 	for (int i = 0; i < NUM_OFFERINGS; i++) {
@@ -2039,7 +2039,7 @@ void SrafComputer::ActivateRoboButler() {
 		Common::strcpy_s(szRightCol, g_stOfferings[i].m_pszOffering);
 		AlignAtColumn(sStr, szRightCol, kRobobutlerCol);
 
-		m_pLBox->AddToTail(sStr, false);
+		m_pLBox->addToTail(sStr, false);
 	}
 
 	// Show the list box
@@ -2119,13 +2119,13 @@ void SrafComputer::ActivateCheckTeams() {
 
 	// Put up the column header and a blank line
 	sStr = kCheckTeamHeaderStr1;
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = kCheckTeamHeaderStr2;
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	int numItems = (m_pTeamList == nullptr ? 0 : m_pTeamList->GetCount());
 
@@ -2225,30 +2225,30 @@ void SrafComputer::ActivateCheckTeams() {
 		nNumAttendees = 0;
 
 		AlignAtColumn(sStr, szAttendeesBuff, kCheckTeamStaffCol);
-		m_pLBox->AddToTail(sStr, false);
+		m_pLBox->addToTail(sStr, false);
 	}
 
 	// Decrease point size if we got too much for one screen
 	if (nMaxNumAttendees > 4) {
 		m_nListPointSize = kOtherPointSize;
 		m_nListItemHeight = kLineItemHeight;
-		m_pLBox->SetPointSize(m_nListPointSize);
-		m_pLBox->SetItemHeight(m_nListItemHeight);
+		m_pLBox->setPointSize(m_nListPointSize);
+		m_pLBox->setItemHeight(m_nListItemHeight);
 	}
 
 	// Display the current time...
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	// Add a dummy line so we can overwrite it with the current turncount.
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
-	int nLineNo = m_pLBox->GetNumItems();
+	int nLineNo = m_pLBox->getNumItems();
 	DisplayTurnCount(nLineNo - 1);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 #define kCheckSuccessfulNegotiations "SUCCESSFUL NEGOTIATIONS: "
 #define kCheckUnsuccessfulNegotiations "UNSUCCESSFUL NEGOTIATIONS: "
@@ -2327,26 +2327,26 @@ void SrafComputer::ActivateCheckTeams() {
 
 	// Display all this info we just calculated...
 	sStr = kCheckSuccessfulNegotiations;
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
-	m_pLBox->AddToTail(sGoodMeetings, false);
+	m_pLBox->addToTail(sGoodMeetings, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = kCheckUnsuccessfulNegotiations;
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
-	m_pLBox->AddToTail(sBadMeetings, false);
+	m_pLBox->addToTail(sBadMeetings, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = kCheckDispatchTeamFooter1;
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = kCheckDispatchTeamFooter2;
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	// show the list box
 	m_pLBox->Show();
@@ -2383,16 +2383,16 @@ void SrafComputer::ActivateCodeWords() {
 
 	// Populate first line of list with header
 	sStr = kCodeWordsHeader1;
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = kCodeWordsHeader2;
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = kCodeWordsHeader3;
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	// Populate the listbox with the staff names
 	for (int i = 0; i < NUM_CODE_WORDS; i++) {
@@ -2407,16 +2407,16 @@ void SrafComputer::ActivateCodeWords() {
 		Common::strcpy_s(szRightCol, g_stCodeWords[i].m_pszCodeWord4);
 		AlignAtColumn(sStr, szRightCol, kGroup2Col2);
 
-		m_pLBox->AddToTail(sStr, false);
+		m_pLBox->addToTail(sStr, false);
 	}
 
 	// Blank line and add to end
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = "CODE WORD PAIR: (,)";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	// Show list box
 	m_pLBox->Show();
@@ -2707,7 +2707,7 @@ void SrafComputer::OnListBuyerBids() {
 			m_pLBox->setTextLineColor(m_nSelection, (RGBCOLOR) - 1); // Restore default
 		}
 
-		m_pLBox->RepaintItem(m_nSelection);
+		m_pLBox->repaintItem(m_nSelection);
 
 	} else {
 		szLocalBuff[0] = '\0';
@@ -2952,7 +2952,7 @@ void SrafComputer::OnListDispatchTeam() {
 			sStr = m_pLBox->getText(nThisItemAt);
 			sStr.ReplaceCharAt(kStandardIndentation + 1, ' ');
 			m_pLBox->setText(nThisItemAt, sStr);
-			m_pLBox->RepaintItem(nThisItemAt);
+			m_pLBox->repaintItem(nThisItemAt);
 		}
 
 		// If we have a new column to check, do that here.
@@ -2960,11 +2960,11 @@ void SrafComputer::OnListDispatchTeam() {
 			sStr = m_pLBox->getText(m_nSelection);
 			sStr.ReplaceCharAt(kStandardIndentation + 1, kCheckmark);       // ??? works fine on mac, not sure what check mark is for pc
 			m_pLBox->setText(m_nSelection, sStr);
-			m_pLBox->RepaintItem(m_nSelection);
+			m_pLBox->repaintItem(m_nSelection);
 		}
 
 		if (bDeleteAll) {
-			m_pLBox->DeleteAll();
+			m_pLBox->deleteAll();
 			RecalcDispatchList(nRecalcVal);
 			m_pLBox->Show();
 		}
@@ -3005,7 +3005,7 @@ void SrafComputer::OnListDispatchTeam() {
 						sStr = m_pLBox->getText(m_nSelection);
 						sStr.ReplaceCharAt(kTeamIncludeColumn, cNewChar);
 						m_pLBox->setText(m_nSelection, sStr);
-						m_pLBox->RepaintItem(m_nSelection);
+						m_pLBox->repaintItem(m_nSelection);
 					}
 				}
 			}
@@ -3646,7 +3646,7 @@ void SrafComputer::OnListCodeWords() {
 
 		sStr += ")";
 		m_pLBox->setText(nLastLine, sStr);
-		m_pLBox->RepaintItem(nLastLine);
+		m_pLBox->repaintItem(nLastLine);
 	}
 }
 
@@ -3695,33 +3695,33 @@ void SrafComputer::ActivateMainScreen() {
 	// Populate listbox
 	for (int i = 0; i < numItems; i++) {
 		SrafCompItem compItem = m_pMainList->GetNodeItem(i);
-		m_pLBox->AddToTail(CBofString(compItem.m_pItem), false);
+		m_pLBox->addToTail(CBofString(compItem.m_pItem), false);
 	}
 
 	// Add instructions to the bottom of the list...
 	sStr = "";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = kActivateFooterStr1;
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = kActivateFooterStr2;
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	sStr = kActivateFooterStr3;
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	// Display the current time...
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
 	// Add a dummy line so we can overwrite it with the
 	// current turncount.
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, false);
+	m_pLBox->addToTail(sStr, false);
 
-	int nLineNo = m_pLBox->GetNumItems();
+	int nLineNo = m_pLBox->getNumItems();
 	DisplayTurnCount(nLineNo - 1);
 
 	// Show list box
@@ -3778,7 +3778,7 @@ void SrafComputer::DisplayTextScreen(CBofString &sStr) {
 void SrafComputer::OnButtonMainScreen(CBofButton *pButton, int nState) {
 	if (nState != BUTTON_CLICKED)
 		return;
-	
+
 	switch (pButton->GetControlID()) {
 	case ON_BUTTON:
 		SetOn();
@@ -4269,7 +4269,7 @@ void SrafComputer::OnButtonAudioSettings(CBofButton *pButton, int nState) {
 void SrafComputer::OnButtonRoboButler(CBofButton *pButton, int nState) {
 	if (nState != BUTTON_CLICKED)
 		return;
-	
+
 	switch (pButton->GetControlID()) {
 	case RETURN_TO_MAIN_BUTTON:
 		ActivateMainScreen();
@@ -4613,8 +4613,8 @@ int SrafTextScreen::CreateTextScreen(CBofWindow *pParent) {
 	if ((m_pTextBox = new CBofTextBox(this, &cRect, _text)) != nullptr) {
 		m_pTextBox->SetPageLength(24);
 		m_pTextBox->SetColor(RGB(255, 255, 255));
-		m_pTextBox->SetFont(FONT_MONO);
-		m_pTextBox->SetPointSize(FONT_14POINT);
+		m_pTextBox->setFont(FONT_MONO);
+		m_pTextBox->setPointSize(FONT_14POINT);
 	} else {
 		ReportError(ERR_MEMORY, "Unable to allocate a CBofTextBox");
 	}
@@ -4925,7 +4925,7 @@ void SrafComputer::RestoreSraffanVars() {
 		}
 
 		if (teamListItem.m_nFlags != 0) {
-			m_pTeamList->AddToTail(teamListItem);
+			m_pTeamList->addToTail(teamListItem);
 		}
 	}
 

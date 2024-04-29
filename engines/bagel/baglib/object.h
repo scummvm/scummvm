@@ -396,7 +396,7 @@ public:
 
 	virtual void onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr) {}
 	virtual void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr); //{ } run menu if available
-	// virtual bool        OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr);    //{ return false; }
+	// virtual bool        onLButtonDblClk(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr);    //{ return false; }
 	virtual bool onMouseMove(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr); //{ return false; }
 	virtual bool OnMouseOver(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr) {
 		return false;

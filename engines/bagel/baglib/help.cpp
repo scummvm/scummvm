@@ -221,25 +221,25 @@ void CBagHelp::onKeyHit(uint32 lKey, uint32 nRepCount) {
 	switch (lKey) {
 	case BKEY_UP:
 		if (m_pTextBox != nullptr) {
-			m_pTextBox->LineUp();
+			m_pTextBox->lineUp();
 		}
 		break;
 
 	case BKEY_DOWN:
 		if (m_pTextBox != nullptr) {
-			m_pTextBox->LineDown();
+			m_pTextBox->lineDown();
 		}
 		break;
 
 	case BKEY_PAGEUP:
 		if (m_pTextBox != nullptr) {
-			m_pTextBox->PageUp();
+			m_pTextBox->pageUp();
 		}
 		break;
 
 	case BKEY_PAGEDOWN:
 		if (m_pTextBox != nullptr) {
-			m_pTextBox->PageDown();
+			m_pTextBox->pageDown();
 		}
 		break;
 
@@ -270,13 +270,13 @@ void CBagHelp::OnBofButton(CBofObject *pObject, int nFlags) {
 
 	case HELP_PU_ID:
 		if (m_pTextBox != nullptr) {
-			m_pTextBox->PageUp();
+			m_pTextBox->pageUp();
 		}
 		break;
 
 	case HELP_PD_ID:
 		if (m_pTextBox != nullptr) {
-			m_pTextBox->PageDown();
+			m_pTextBox->pageDown();
 		}
 		break;
 

@@ -172,10 +172,10 @@ ErrorCode SBarComputer::attach() {
 
 		// Fix drink already selected bug
 		if (m_pDrinkBox != nullptr) {
-			m_pDrinkBox->SetSelectedItem(-1, false);
+			m_pDrinkBox->setSelectedItem(-1, false);
 		}
 		if (m_pIngBox != nullptr) {
-			m_pIngBox->SetSelectedItem(-1, false);
+			m_pIngBox->setSelectedItem(-1, false);
 		}
 
 		UpdateWindow();
@@ -302,7 +302,7 @@ ErrorCode SBarComputer::ReadDrnkFile() {
 
 		pPosInBuff++;   // Increment past it
 
-		m_pDrinkList->AddToTail(*pCompItem);
+		m_pDrinkList->addToTail(*pCompItem);
 		delete pCompItem;
 	}
 
@@ -367,7 +367,7 @@ ErrorCode SBarComputer::ReadIngFile() {
 
 		pPosInBuff++;   // Increment past it
 
-		m_pIngList->AddToTail(*pCompItem);
+		m_pIngList->addToTail(*pCompItem);
 		delete pCompItem;
 	}
 
@@ -424,19 +424,19 @@ ErrorCode SBarComputer::CreateDrinksListBox() {
 			}
 
 			m_pDrinkBox->Hide();
-			m_pDrinkBox->SetPointSize(12);
-			m_pDrinkBox->SetItemHeight(20);
+			m_pDrinkBox->setPointSize(12);
+			m_pDrinkBox->setItemHeight(20);
 
 			CBofPalette *pPal = m_pBackdrop->GetPalette();
 			byte PalIdx = pPal->GetNearestIndex(RGB(255, 0, 0));
 
-			m_pDrinkBox->SetHighlightColor(pPal->GetColor(PalIdx));
+			m_pDrinkBox->setHighlightColor(pPal->GetColor(PalIdx));
 
 			// Populate listbox
 			int numItems = m_pDrinkList->GetCount();
 			for (int i = 0; i < numItems; ++i) {
 				SBarCompItem CompItem = m_pDrinkList->GetNodeItem(i);
-				m_pDrinkBox->AddToTail(CBofString(CompItem.m_pItem), false);
+				m_pDrinkBox->addToTail(CBofString(CompItem.m_pItem), false);
 			}
 		} else {
 			return ERR_MEMORY;
@@ -459,20 +459,20 @@ ErrorCode SBarComputer::CreateIngListBox() {
 			}
 
 			m_pIngBox->Hide();
-			m_pIngBox->SetPointSize(12);
-			m_pIngBox->SetItemHeight(20);
+			m_pIngBox->setPointSize(12);
+			m_pIngBox->setItemHeight(20);
 
 			CBofPalette *pPal = m_pBackdrop->GetPalette();
 			byte PalIdx = pPal->GetNearestIndex(RGB(255, 0, 0));
 
-			m_pIngBox->SetHighlightColor(pPal->GetColor(PalIdx));
+			m_pIngBox->setHighlightColor(pPal->GetColor(PalIdx));
 
 
 			// Populate listbox
 			int numItems = m_pIngList->GetCount();
 			for (int i = 0; i < numItems; ++i) {
 				SBarCompItem CompItem = m_pIngList->GetNodeItem(i);
-				m_pIngBox->AddToTail(CBofString(CompItem.m_pItem), false);
+				m_pIngBox->addToTail(CBofString(CompItem.m_pItem), false);
 			}
 
 		} else
@@ -493,7 +493,7 @@ void SBarComputer::OnBofListBox(CBofObject * /*pListBox*/, int nItemIndex) {
 		m_pButtons[ORDER]->Show();
 		m_pButtons[LISTD]->Show();
 
-		m_pDrinkBox->RepaintAll();
+		m_pDrinkBox->repaintAll();
 
 	} else {
 		m_nIngSelect = nItemIndex;
@@ -501,7 +501,7 @@ void SBarComputer::OnBofListBox(CBofObject * /*pListBox*/, int nItemIndex) {
 		m_pButtons[LISTI]->Select();
 		m_pButtons[LISTI]->Show();
 
-		m_pIngBox->RepaintAll();
+		m_pIngBox->repaintAll();
 	}
 
 	ValidateAnscestors(nullptr);
@@ -533,11 +533,11 @@ void SBarComputer::SetOff() {
 
 		// Fix drink already selected bug
 		if (m_pDrinkBox != nullptr) {
-			m_pDrinkBox->SetSelectedItem(-1, false);
+			m_pDrinkBox->setSelectedItem(-1, false);
 		}
 		
 		if (m_pIngBox != nullptr) {
-			m_pIngBox->SetSelectedItem(-1, false);
+			m_pIngBox->setSelectedItem(-1, false);
 		}
 
 		m_nDrinkSelect = -1;
@@ -769,23 +769,23 @@ void SBarComputer::Order() {
 	}
 }
 
-void SBarComputer::PageUp() {
+void SBarComputer::pageUp() {
 	if (m_eMode == DRINKMODE) {
 		if (m_pDrinkBox) {
-			m_pDrinkBox->PageUp();
+			m_pDrinkBox->pageUp();
 		}
 	} else if (m_pIngBox) {
-		m_pIngBox->PageUp();
+		m_pIngBox->pageUp();
 	}
 }
 
-void SBarComputer::PageDown() {
+void SBarComputer::pageDown() {
 	if (m_eMode == DRINKMODE) {
 		if (m_pDrinkBox) {
-			m_pDrinkBox->PageDown();
+			m_pDrinkBox->pageDown();
 		}
 	} else if (m_pIngBox) {
-		m_pIngBox->PageDown();
+		m_pIngBox->pageDown();
 	}
 }
 
@@ -821,10 +821,10 @@ void SBarComputer::OnBofButton(CBofObject *pObject, int nState) {
 		Order();
 		break;
 	case PGUP:
-		PageUp();
+		pageUp();
 		break;
 	case PGDOWN:
-		PageDown();
+		pageDown();
 		break;
 	case BCBACK:
 		Back();
@@ -861,40 +861,40 @@ void SBarComputer::onKeyHit(uint32 lKey, uint32 nRepCount) {
 	case BKEY_UP:
 		if (m_eMode == DRINKMODE) {
 			if (m_pDrinkBox) {
-				m_pDrinkBox->LineUp();
+				m_pDrinkBox->lineUp();
 			}
 		} else if (m_pIngBox) {
-			m_pIngBox->LineUp();
+			m_pIngBox->lineUp();
 		}
 		break;
 
 	case BKEY_DOWN:
 		if (m_eMode == DRINKMODE) {
 			if (m_pDrinkBox) {
-				m_pDrinkBox->LineDown();
+				m_pDrinkBox->lineDown();
 			}
 		} else if (m_pIngBox) {
-			m_pIngBox->LineDown();
+			m_pIngBox->lineDown();
 		}
 		break;
 
 	case BKEY_PAGEUP:
 		if (m_eMode == DRINKMODE) {
 			if (m_pDrinkBox) {
-				m_pDrinkBox->PageUp();
+				m_pDrinkBox->pageUp();
 			}
 		} else if (m_pIngBox) {
-			m_pIngBox->PageUp();
+			m_pIngBox->pageUp();
 		}
 		break;
 
 	case BKEY_PAGEDOWN:
 		if (m_eMode == DRINKMODE) {
 			if (m_pDrinkBox) {
-				m_pDrinkBox->PageDown();
+				m_pDrinkBox->pageDown();
 			}
 		} else if (m_pIngBox) {
-			m_pIngBox->PageDown();
+			m_pIngBox->pageDown();
 		}
 		break;
 
