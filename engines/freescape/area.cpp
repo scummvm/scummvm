@@ -368,7 +368,7 @@ void Area::removeObject(int16 id) {
 }
 
 void Area::addObjectFromArea(int16 id, Area *global) {
-	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
+	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure in area %d", id, _areaID);
 	Object *obj = global->objectWithID(id);
 	if (!obj) {
 		assert(global->entranceWithID(id));
@@ -387,6 +387,26 @@ void Area::addObjectFromArea(int16 id, Area *global) {
 		}
 	}
 }
+
+void Area::addGroupFromArea(int16 id, Area *global) {
+	debugC(1, kFreescapeDebugParser, "Adding group %d to room structure in area %d", id, _areaID);
+	Object *obj = global->objectWithID(id);
+	assert(obj);
+	assert(obj->getType() == ObjectType::kGroupType);
+
+	addObjectFromArea(id, global);
+	//Group *group = (Group *)objectWithID(id);
+	for (auto &it : ((Group *)obj)->_objectIds) {
+		if (it == 0 || it == 0xffff)
+			break;
+		if (!global->objectWithID(it))
+			continue;
+
+		addObjectFromArea(it, global);
+		//group->linkObject(objectWithID(it));
+	}
+}
+
 
 void Area::addFloor() {
 	int id = 0;

@@ -63,7 +63,7 @@ public:
 	bool isDrawable() override { return true; }
 	void draw(Renderer *gfx) override;
 	void scale(int scale_) override { _scale = scale_; };
-	Object *duplicate() override { error("cannot duplicate Group"); };
+	Object *duplicate() override;
 };
 
 } // End of namespace Freescape

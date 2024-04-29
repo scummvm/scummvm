@@ -55,6 +55,15 @@ Group::~Group() {
 		delete _operations[i];
 }
 
+Object *Group::duplicate() {
+	return new Group(
+		_objectID,
+		_flags,
+		_objectIds,
+		_operations
+		);
+}
+
 void Group::linkObject(Object *obj) {
 	int objectIndex = -1;
 	for (int i = 0; i < int(_objectIds.size()) ; i++) {
