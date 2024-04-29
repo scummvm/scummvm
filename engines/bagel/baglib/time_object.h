@@ -69,7 +69,7 @@ public:
 		return m_nCels;
 	}
 
-	void SetCels(int nCels);
+	void setCels(int nCels);
 	virtual void setPosition(const CBofPoint &pos);
 
 	/**

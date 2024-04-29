@@ -87,7 +87,7 @@ CBofRect CBagPanWindow::UnSetSlidebitmap() {
 		m_pVeiwPortBitmap = nullptr;
 	}
 
-	CBofSprite::CloseLibrary();
+	CBofSprite::closeLibrary();
 
 	// There is no palette right now
 	CBofApp::GetApp()->setPalette(nullptr);
@@ -125,7 +125,7 @@ CBofPalette *CBagPanWindow::SetSlidebitmap(const CBofString &xSlideBmp, const CB
 			CBofApp::GetApp()->GetMainWindow()->selectPalette(m_pPalette);
 			selectPalette(m_pPalette);
 
-			CBofSprite::OpenLibrary(m_pPalette);
+			CBofSprite::openLibrary(m_pPalette);
 
 			m_pSlideBitmap->setCorrWidth(m_nCorrection);
 
@@ -159,7 +159,7 @@ CBagPanWindow::~CBagPanWindow() {
 		m_pVeiwPortBitmap = nullptr;
 	}
 
-	CBofSprite::CloseLibrary();		// Free the off screen bitmap
+	CBofSprite::closeLibrary();		// Free the off screen bitmap
 
 	delete m_pFGObjectList;
 }
