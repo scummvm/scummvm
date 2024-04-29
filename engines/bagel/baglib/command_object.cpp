@@ -264,7 +264,7 @@ bool CBagCommandObject::runObject() {
 			MACROREPLACE(bmpName);
 			CDevDlg dlg;
 			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
-			dlg.DoModal();
+			dlg.doModal();
 			dlg.Destroy();
 
 		} else if (GetFileName() == "ENTRYFLEE") { // Fleebix
@@ -273,7 +273,7 @@ bool CBagCommandObject::runObject() {
 			MACROREPLACE(bmpName);
 			CDevDlg dlg;
 			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
-			dlg.DoModal();
+			dlg.doModal();
 			dlg.Destroy();
 
 		} else if (GetFileName() == "ENTRYCLICK") { // Click's locker combo
@@ -282,7 +282,7 @@ bool CBagCommandObject::runObject() {
 			MACROREPLACE(bmpName);
 			CDevDlg dlg;
 			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
-			dlg.DoModal();
+			dlg.doModal();
 			dlg.Destroy();
 
 		} else if (GetFileName() == "ENTRYFRUIT") { // MegaWave the fruit
@@ -291,7 +291,7 @@ bool CBagCommandObject::runObject() {
 			MACROREPLACE(bmpName);
 			CDevDlg dlg;
 			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect);
-			dlg.DoModal();
+			dlg.doModal();
 			dlg.Destroy();
 
 		} else if (GetFileName() == "D7CODE1DLG") { // Deven-7 code word
@@ -300,7 +300,7 @@ bool CBagCommandObject::runObject() {
 			MACROREPLACE(bmpName);
 			CDevDlg dlg;
 			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect, true);
-			dlg.DoModal();
+			dlg.doModal();
 			dlg.Destroy();
 
 		} else if (GetFileName() == "SNAPTO") {

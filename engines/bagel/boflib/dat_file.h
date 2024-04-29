@@ -157,7 +157,7 @@ public:
 	 * Destroys current data-file, if any, and starts a new empty one
 	 * @return          Error return code
 	 */
-	ErrorCode Create();
+	ErrorCode create();
 
 	/**
 	 * Reads specified record from data-file.

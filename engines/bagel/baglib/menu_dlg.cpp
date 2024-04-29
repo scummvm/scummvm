@@ -424,7 +424,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			CBofPalette      xPal;
 
 			xPal.LoadPalette(cString);
-			dlg.Create(pParent, &xPal, &tmpRect);
+			dlg.create(pParent, &xPal, &tmpRect);
 
 			if (bCaption) {
 				// We need to move this back to the correct position
@@ -457,7 +457,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			CBagPanWindow::FlushInputEvents();
 
 			g_bPauseTimer = true;
-			dlg.DoModal();
+			dlg.doModal();
 			g_bPauseTimer = false;
 
 			pObj = dlg.m_pSelectedObject;
@@ -570,7 +570,7 @@ CBagMenuDlg::~CBagMenuDlg() {
 	Assert(IsValidObject(this));
 }
 
-ErrorCode CBagMenuDlg::Create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRect *pRect, uint32 /*nStyle*/) {
+ErrorCode CBagMenuDlg::create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRect *pRect, uint32 /*nStyle*/) {
 	CBofRect r;
 
 	m_bMultipleDialogs = false;
@@ -585,7 +585,7 @@ ErrorCode CBagMenuDlg::Create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRec
 		r = *pRect;
 	}
 
-	CBagStorageDevDlg::Create("Menu", &r, pWnd, 0);
+	CBagStorageDevDlg::create("Menu", &r, pWnd, 0);
 
 	CBofBitmap *pBmp = new CBofBitmap(r.Width(), r.Height(), pPal);
 	if (pBmp != nullptr) {

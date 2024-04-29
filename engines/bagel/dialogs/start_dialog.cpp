@@ -60,7 +60,7 @@ void CBagStartDialog::onInitDialog() {
 	Assert(IsValidObject(this));
 
 	CBofDialog::onInitDialog();
-	SetReturnValue(-1);
+	setReturnValue(-1);
 
 	// Halt all audio when user dies (and at start of game).
 	CBofSound::StopSounds();
@@ -83,7 +83,7 @@ void CBagStartDialog::onInitDialog() {
 			CBofBitmap *pDis = LoadBitmap(BuildSysDir(g_stStartButtons[i].m_pszDisabled), pPal);
 
 			_buttons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
-			_buttons[i]->Create(g_stStartButtons[i].m_pszName, g_stStartButtons[i].m_nLeft, g_stStartButtons[i].m_nTop, g_stStartButtons[i].m_nWidth, g_stStartButtons[i].m_nHeight, this, g_stStartButtons[i].m_nID);
+			_buttons[i]->create(g_stStartButtons[i].m_pszName, g_stStartButtons[i].m_nLeft, g_stStartButtons[i].m_nTop, g_stStartButtons[i].m_nWidth, g_stStartButtons[i].m_nHeight, this, g_stStartButtons[i].m_nID);
 			_buttons[i]->Show();
 
 		} else {
@@ -135,7 +135,7 @@ void CBagStartDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 
 	switch (lKey) {
 	case BKEY_ESC:
-		SetReturnValue(QUIT_BTN);
+		setReturnValue(QUIT_BTN);
 		Close();
 		break;
 
@@ -166,7 +166,7 @@ void CBagStartDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 			}
 		}
 	} else {
-		SetReturnValue(nId);
+		setReturnValue(nId);
 		Close();
 	}
 }

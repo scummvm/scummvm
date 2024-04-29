@@ -131,7 +131,7 @@ public:
 	 * @param pszFileName       Filename
 	 * @param lFlags            Access flags
 	 */
-	ErrorCode Create(const char *pszFileName, uint32 lFlags = CBF_DEFAULT | CBF_CREATE);
+	ErrorCode create(const char *pszFileName, uint32 lFlags = CBF_DEFAULT | CBF_CREATE);
 
 	/**
 	 * Close a currently open file

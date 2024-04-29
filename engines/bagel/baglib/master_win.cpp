@@ -96,7 +96,7 @@ CBagMasterWin::CBagMasterWin() {
 	m_pVariableList = nullptr;
 	m_nDiskID = 1;
 
-	Create(pAppName, &cRect);
+	create(pAppName, &cRect);
 
 	// Assume default system screen
 	m_cSysScreen = "$SBARDIR\\GENERAL\\SYSTEM\\GAMBHALL.BMP";
@@ -174,17 +174,17 @@ ErrorCode CBagMasterWin::ShowSystemDialog(bool bSaveBackground) {
 		CBofRect cRect = cOptionDialog.GetBackdrop()->GetRect();
 
 		if (!bSaveBackground) {
-			cOptionDialog.SetFlags(cOptionDialog.GetFlags() & ~BOFDLG_SAVEBACKGND);
+			cOptionDialog.setFlags(cOptionDialog.getFlags() & ~BOFDLG_SAVEBACKGND);
 		}
 
 		// Create the dialog box
-		cOptionDialog.Create("System Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), this);
+		cOptionDialog.create("System Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), this);
 
 		CBofWindow *pLastWin = g_hackWindow;
 		g_hackWindow = &cOptionDialog;
 
 		g_bPauseTimer = true;
-		int nReturnValue = cOptionDialog.DoModal();
+		int nReturnValue = cOptionDialog.doModal();
 		g_bPauseTimer = false;
 		cOptionDialog.Detach();
 
@@ -217,9 +217,9 @@ ErrorCode CBagMasterWin::ShowCreditsDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 	// Don't allow save of background?
 	if (!bSaveBkg) {
-		int lFlags = cCreditsDialog.GetFlags();
+		int lFlags = cCreditsDialog.getFlags();
 
-		cCreditsDialog.SetFlags(lFlags & ~BOFDLG_SAVEBACKGND);
+		cCreditsDialog.setFlags(lFlags & ~BOFDLG_SAVEBACKGND);
 	}
 
 	// Use CBagMasterWin if no parent specified
@@ -228,11 +228,11 @@ ErrorCode CBagMasterWin::ShowCreditsDialog(CBofWindow *pWin, bool bSaveBkg) {
 	}
 
 	// Create the dialog box
-	cCreditsDialog.Create("Save Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pWin);
+	cCreditsDialog.create("Save Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pWin);
 
 	bool bSaveTimer = g_bPauseTimer;
 	g_bPauseTimer = true;
-	cCreditsDialog.DoModal();
+	cCreditsDialog.doModal();
 	g_bPauseTimer = bSaveTimer;
 
 	LogInfo("Exiting Credits Screen");
@@ -265,15 +265,15 @@ bool CBagMasterWin::ShowQuitDialog(CBofWindow *pWin, bool bSaveBackground) {
 		CBofRect cRect = cQuitDialog.GetBackdrop()->GetRect();
 
 		if (!bSaveBackground) {
-			cQuitDialog.SetFlags(cQuitDialog.GetFlags() & ~BOFDLG_SAVEBACKGND);
+			cQuitDialog.setFlags(cQuitDialog.getFlags() & ~BOFDLG_SAVEBACKGND);
 		}
 
 		// Create the dialog box
-		cQuitDialog.Create("Quit Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pWin);
+		cQuitDialog.create("Quit Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pWin);
 
 		bool bSaveTimer = g_bPauseTimer;
 		g_bPauseTimer = true;
-		int nReturnValue = cQuitDialog.DoModal();
+		int nReturnValue = cQuitDialog.doModal();
 		g_bPauseTimer = bSaveTimer;
 
 		switch (nReturnValue) {
@@ -1044,10 +1044,10 @@ ErrorCode CBagMasterWin::OnHelp(const CBofString &sHelpFile, bool /*bSaveBkg*/, 
 			pParent = this;
 
 		// create the dialog box
-		cHelp.Create("HelpDialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pParent);
+		cHelp.create("HelpDialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pParent);
 
 		cHelp.SetHelpFile(sFile.GetBuffer());
-		cHelp.DoModal();
+		cHelp.doModal();
 		cHelp.Detach();
 	}
 
@@ -1271,13 +1271,13 @@ bool CBagMasterWin::ShowRestartDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 		// Don't allow save of background
 		if (!bSaveBkg) {
-			int lFlags = cDlg.GetFlags();
-			cDlg.SetFlags(lFlags & ~BOFDLG_SAVEBACKGND);
+			int lFlags = cDlg.getFlags();
+			cDlg.setFlags(lFlags & ~BOFDLG_SAVEBACKGND);
 		}
 
 		bool bSaveTimer = g_bPauseTimer;
 		g_bPauseTimer = true;
-		int nReturn = cDlg.DoModal();
+		int nReturn = cDlg.doModal();
 		g_bPauseTimer = bSaveTimer;
 
 		g_hackWindow = pLastWin;
@@ -1328,7 +1328,7 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 		g_hackWindow = &cDlg;
 
 		g_bAllowRestore = true;
-		int nRetVal = cDlg.DoModal();
+		int nRetVal = cDlg.doModal();
 		g_bAllowRestore = false;
 
 		g_hackWindow = pLastWin;
@@ -1571,16 +1571,16 @@ bool CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 			// Don't allow save of background
 			if (!bSaveBkg) {
-				int lFlags = cSaveDialog.GetFlags();
-				cSaveDialog.SetFlags(lFlags & ~BOFDLG_SAVEBACKGND);
+				int lFlags = cSaveDialog.getFlags();
+				cSaveDialog.setFlags(lFlags & ~BOFDLG_SAVEBACKGND);
 			}
 
 			// Create the dialog box
-			cSaveDialog.Create("Save Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pWin);
+			cSaveDialog.create("Save Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pWin);
 
 			bool bSaveTimer = g_bPauseTimer;
 			g_bPauseTimer = true;
-			int nId = cSaveDialog.DoModal();
+			int nId = cSaveDialog.doModal();
 			g_bPauseTimer = bSaveTimer;
 
 			bSaved = (nId == SAVE_BTN);
@@ -1741,20 +1741,20 @@ bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 		// Don't allow save of background
 		if (!bSaveBkg) {
 			int lFlags;
-			lFlags = cRestoreDialog.GetFlags();
+			lFlags = cRestoreDialog.getFlags();
 
-			cRestoreDialog.SetFlags(lFlags & ~BOFDLG_SAVEBACKGND);
+			cRestoreDialog.setFlags(lFlags & ~BOFDLG_SAVEBACKGND);
 		}
 
 		// Create the dialog box
-		cRestoreDialog.Create("Restore Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pWin);
+		cRestoreDialog.create("Restore Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pWin);
 
 		CBofWindow *pLastWin = g_hackWindow;
 		g_hackWindow = &cRestoreDialog;
 
 		bool bSaveTimer = g_bPauseTimer;
 		g_bPauseTimer = true;
-		cRestoreDialog.DoModal();
+		cRestoreDialog.doModal();
 		g_bPauseTimer = bSaveTimer;
 
 		cRestoreDialog.Detach();

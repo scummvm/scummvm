@@ -256,7 +256,7 @@ bool CBagMovieObject::runObject() {
 					if (bZoomed) {
 						pNewWin = new CBofWindow();
 						if (pNewWin) {
-							pNewWin->Create("BLACK", 0, 0, 640, 480, CBofApp::GetApp()->GetMainWindow(), 0);
+							pNewWin->create("BLACK", 0, 0, 640, 480, CBofApp::GetApp()->GetMainWindow(), 0);
 							pNewWin->FillWindow(COLOR_BLACK);
 						}
 					}
@@ -307,7 +307,7 @@ bool CBagMovieObject::runObject() {
 						if (bZoomed && m_xDisplayType != DISP_TYPE::ASYNCH_PDAMSG && m_xDisplayType != DISP_TYPE::PDAMSG) {
 							pNewWin = new CBofWindow();
 							if (pNewWin) {
-								pNewWin->Create("BLACK", 0, 0, 640, 480, CBofApp::GetApp()->GetMainWindow(), 0);
+								pNewWin->create("BLACK", 0, 0, 640, 480, CBofApp::GetApp()->GetMainWindow(), 0);
 								pNewWin->Show();
 								pNewWin->FillWindow(COLOR_BLACK);
 							}

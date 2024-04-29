@@ -71,7 +71,7 @@ CBagHelp::CBagHelp() {
 	m_pPageUp = nullptr;
 	m_pPageDown = nullptr;
 	m_pSavePalette = nullptr;
-	SetFlags(0);
+	setFlags(0);
 }
 
 ErrorCode CBagHelp::attach() {
@@ -96,7 +96,7 @@ ErrorCode CBagHelp::attach() {
 
 		m_pOKButton->LoadBitmaps(pUp, pDown, pFocus, pDis);
 
-		m_pOKButton->Create("OK", HELP_OK_X, HELP_OK_Y, HELP_OK_CX, HELP_OK_CY, this, HELP_OK_ID);
+		m_pOKButton->create("OK", HELP_OK_X, HELP_OK_Y, HELP_OK_CX, HELP_OK_CY, this, HELP_OK_ID);
 		m_pOKButton->Show();
 	} else {
 		ReportError(ERR_MEMORY);
@@ -113,7 +113,7 @@ ErrorCode CBagHelp::attach() {
 
 		m_pPageUp->LoadBitmaps(pUp, pDown, pFocus, pDis);
 
-		m_pPageUp->Create("PageUp", HELP_PU_X, HELP_PU_Y, HELP_PU_CX, HELP_PU_CY, this, HELP_PU_ID);
+		m_pPageUp->create("PageUp", HELP_PU_X, HELP_PU_Y, HELP_PU_CX, HELP_PU_CY, this, HELP_PU_ID);
 		m_pPageUp->Show();
 	} else {
 		ReportError(ERR_MEMORY);
@@ -130,7 +130,7 @@ ErrorCode CBagHelp::attach() {
 
 		m_pPageDown->LoadBitmaps(pUp, pDown, pFocus, pDis);
 
-		m_pPageDown->Create("PageDown", HELP_PD_X, HELP_PD_Y, HELP_PD_CX, HELP_PD_CY, this, HELP_PD_ID);
+		m_pPageDown->create("PageDown", HELP_PD_X, HELP_PD_Y, HELP_PD_CX, HELP_PD_CY, this, HELP_PD_ID);
 		m_pPageDown->Show();
 	} else {
 		ReportError(ERR_MEMORY);

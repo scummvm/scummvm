@@ -1197,10 +1197,10 @@ ErrorCode CBagStorageDevWnd::attach() {
 			CBofRect r = pBmp->GetRect();
 
 			if (r.Width() && r.Height()) {
-				Create(s.GetBuffer(), &r, CBagel::getBagApp()->getMasterWnd());
+				create(s.GetBuffer(), &r, CBagel::getBagApp()->getMasterWnd());
 
 			} else {
-				Create(s.GetBuffer(), nullptr, CBagel::getBagApp()->getMasterWnd());
+				create(s.GetBuffer(), nullptr, CBagel::getBagApp()->getMasterWnd());
 			}
 
 			Show();
@@ -1587,15 +1587,15 @@ ErrorCode CBagStorageDevDlg::attach() {
 		r = pBmp->GetRect();
 
 	if (r.Width() && r.Height()) {
-		Create(s.GetBuffer(), &r, CBagel::getBagApp()->getMasterWnd());
+		create(s.GetBuffer(), &r, CBagel::getBagApp()->getMasterWnd());
 
 	} else {
-		Create(s.GetBuffer(), nullptr, CBagel::getBagApp()->getMasterWnd());
+		create(s.GetBuffer(), nullptr, CBagel::getBagApp()->getMasterWnd());
 	}
 
 	SetPreFilterPan(true);
 
-	CBofDialog::DoModal();
+	CBofDialog::doModal();
 
 	Destroy();
 
@@ -1737,14 +1737,14 @@ ErrorCode CBagStorageDevDlg::LoadFile(const CBofString &sFile) {
 	return m_errCode;
 }
 
-ErrorCode CBagStorageDevDlg::Create(const char *pszName, int x, int y, int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {
-	ErrorCode rc = CBofDialog::Create(pszName, x, y, nWidth, nHeight, pParent, nControlID);
+ErrorCode CBagStorageDevDlg::create(const char *pszName, int x, int y, int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {
+	ErrorCode rc = CBofDialog::create(pszName, x, y, nWidth, nHeight, pParent, nControlID);
 	SetCapture();
 	return rc;
 }
 
-ErrorCode CBagStorageDevDlg::Create(const char *pszName, CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
-	ErrorCode rc = CBofDialog::Create(pszName, pRect, pParent, nControlID);
+ErrorCode CBagStorageDevDlg::create(const char *pszName, CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
+	ErrorCode rc = CBofDialog::create(pszName, pRect, pParent, nControlID);
 	SetCapture();
 	return rc;
 }
