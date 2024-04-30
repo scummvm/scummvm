@@ -173,13 +173,13 @@ void  CBofMovie::onMainLoop() {
 						onMovieDone();
 					} else {
 						seekToEnd();
-						//_pSmk->start();
+						//_smk->start();
 					}
 				} else {
 					setFrame(_pSmk->getCurFrame() - 2); // HACK: Reverse playback
 				}
-			}// REVERSE
-		}// !STOPPED
+			}// MOVIE_REVERSE
+		}// !MOVIE_STOPPED
 	}// !SMACKWAIT
 }
 
@@ -239,7 +239,7 @@ bool CBofMovie::play(bool bLoop, bool bEscCanStop) {
 bool CBofMovie::play() {
 	if (_pSmk) {
 		_pSmk->pauseVideo(false);
-		//_pSmk->setReverse(false); // TODO: Not supported by SMK
+		//_smk->setReverse(false); // TODO: Not supported by SMK
 		_pSmk->start();
 		_eMovStatus = FOREWARD;
 		return true;
@@ -269,7 +269,7 @@ bool CBofMovie::reverse() {
 
 	if (_pSmk) {
 		_pSmk->pauseVideo(false);
-		//_pSmk->setReverse(true); // TODO: Not supported by SMK
+		//_smk->setReverse(true); // TODO: Not supported by SMK
 		_pSmk->start();
 		_eMovStatus = REVERSE;
 		return true;
