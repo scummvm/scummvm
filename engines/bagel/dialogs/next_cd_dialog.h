@@ -46,7 +46,7 @@ protected:
 
 	// Data
 	//
-	CBofBmpButton *m_pButtons[NUM_QUIT_BUTTONS];
+	CBofBmpButton *_pButtons[NUM_QUIT_BUTTONS];
 };
 
 class CBagNextCDDialog : public CBofDialog {
@@ -63,7 +63,7 @@ protected:
 	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
 
 	// Data
-	CBofBmpButton *m_pButton;
+	CBofBmpButton *_pButton;
 };
 
 class CBagCreditsDialog : public CBofDialog {
@@ -88,18 +88,18 @@ protected:
 	void nextLine();
 	ErrorCode paintLine(int nLine, char *pszText);
 
-	CBofBitmap *m_pCreditsBmp;
-	CBofBitmap *m_pSaveBmp;
+	CBofBitmap *_pCreditsBmp;
+	CBofBitmap *_pSaveBmp;
 
-	char *m_pszNextLine;
-	char *m_pszEnd;
-	char *m_pszText;
+	char *_pszNextLine;
+	char *_pszEnd;
+	char *_pszText;
 
-	int m_nLines;
-	int m_nNumPixels;
-	int m_iScreen;
+	int _nLines;
+	int _nNumPixels;
+	int _iScreen;
 
-	bool m_bDisplay;
+	bool _bDisplay;
 };
 
 } // namespace Bagel
