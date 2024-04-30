@@ -45,7 +45,7 @@ CBagExpressionObject::~CBagExpressionObject() {
 bool CBagExpressionObject::runObject() {
 	if (m_xExpression != nullptr) {
 		CBagVar xVar;
-		m_xExpression->Evaluate(false, xVar);
+		m_xExpression->evaluate(false, xVar);
 
 		if (!IsConditional()) {
 			if (getFileName().IsEmpty())

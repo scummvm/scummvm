@@ -224,7 +224,7 @@ ErrorCode CBagStorageDev::ActivateLocalObject(CBagObject  *pObj) {
 
 	if (pObj != nullptr) {
 		pObj->SetLocal();
-		if (!pObj->IsActive() && (!pObj->GetExpression() || pObj->GetExpression()->Evaluate(pObj->IsNegative()))) {
+		if (!pObj->IsActive() && (!pObj->GetExpression() || pObj->GetExpression()->evaluate(pObj->IsNegative()))) {
 			pObj->setActive();
 			pObj->attach();
 
@@ -324,7 +324,7 @@ ErrorCode CBagStorageDev::AttachActiveObjects() {
 
 			CBagObject *pObj = GetObjectByPos(i);
 			if (pObj != nullptr) {
-				if (pObj->IsLocal() && (!pObj->GetExpression() || pObj->GetExpression()->Evaluate(pObj->IsNegative()))) {
+				if (pObj->IsLocal() && (!pObj->GetExpression() || pObj->GetExpression()->evaluate(pObj->IsNegative()))) {
 					if (!pObj->isAttached()) {
 						pObj->setActive();
 						pObj->attach();
@@ -701,7 +701,7 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 				bElseExprList.RemoveHead();
 			}
 			if (pActiveExpr) {
-				pActiveExpr = pActiveExpr->GetPrevExpression();
+				pActiveExpr = pActiveExpr->getPrevExpression();
 			} else {
 				CBofString str2("Unexpected ENDIF:");
 				str2 += sWldName;
@@ -796,7 +796,7 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 
 			if (!bElseExprList.IsEmpty() && bElseExprList[0]) {
 				pObj->SetNegative();
-			} else if (pActiveExpr && pActiveExpr->IsNegative()) {
+			} else if (pActiveExpr && pActiveExpr->isNegative()) {
 				// If there is an active expression that is negative
 				// i.e if NOT( blah blah blah)
 				pObj->SetNegative();
@@ -805,7 +805,7 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 			// Determine if the object is an active object in this world
 			if (!bHoldActivation) {
 				pObj->SetLocal();
-				if (!pActiveExpr || pActiveExpr->Evaluate(pObj->IsNegative())) {
+				if (!pActiveExpr || pActiveExpr->evaluate(pObj->IsNegative())) {
 					pObj->setActive();
 				}
 			}

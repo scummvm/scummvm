@@ -1005,7 +1005,7 @@ void CBagRPObject::EvaluateDossiers() {
 		// By default, include the dossier in the list
 		pDosLObj->m_bDisplayDossier = true;
 		if (pDosLObj->m_xDosExp != nullptr) {
-			pDosLObj->m_bDisplayDossier = pDosLObj->m_xDosExp->EvalLeftToRight(false);
+			pDosLObj->m_bDisplayDossier = pDosLObj->m_xDosExp->evalLeftToRight(false);
 		}
 
 		// If we are displaying this dossier and the suspect var is

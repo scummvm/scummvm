@@ -63,67 +63,67 @@ private:
 	bool _prevNegativeFl; // True if the operation should return Negative results
 	bool _negativeFl;     // True if the operation should return Negative results
 
-	bool Evaluate(CBagVar *xLHOper, CBagVar *xRHOper, OPERATION xOper, CBagVar &xResult);
+	bool evaluate(CBagVar *leftHandOper, CBagVar *rightHandOper, OPERATION oper, CBagVar &result);
 
 public:
-	static CBagVar *m_xTempVar; // Used as a default param
+	static CBagVar *_tempVar; // Used as a default param
 	static void initialize();
 	static void shutdown();
 
-	CBagExpression(CBagExpression *pPrevExpr = nullptr, bool bPrevNeg = false);
+	CBagExpression(CBagExpression *prevExpr = nullptr, bool prevNegFl = false);
 	virtual ~CBagExpression();
 
-	bool Evaluate(bool bNeg = false, CBagVar &xResult = *m_xTempVar);
+	bool evaluate(bool negFl = false, CBagVar &result = *_tempVar);
 
 	/**
 	 * Same as evaluate above except it evaluates left to right and preserves
 	 * the value of the previous evaluation in the loop.  Provides partial
 	 * evaluation hierarchy support.
 	 */
-	bool EvalLeftToRight(bool bNeg = false, CBagVar &xResult = *m_xTempVar);
+	bool evalLeftToRight(bool negFl = false, CBagVar &result = *_tempVar);
 
-	bool NegEvaluate(CBagVar &xResult = *m_xTempVar);
+	bool negEvaluate(CBagVar &result = *_tempVar);
 
-	void SetNegative(bool b = true) {
+	void setNegative(bool b = true) {
 		_negativeFl = b;
 	}
-	bool IsNegative() {
+	bool isNegative() const {
 		return _negativeFl;
 	}
 
-	CBagVar *GetVariable(int nPos);
-	OPERATION GetOperation(int nPos);
+	CBagVar *getVariable(int itemPos);
+	OPERATION getOperation(int itemPos);
 
-	PARSE_CODES setInfo(bof_ifstream &istr);
-	ErrorCode GetOperatorFromStream(bof_ifstream &istr, OPERATION &xOper);
+	PARSE_CODES setInfo(bof_ifstream &istr) override;
+	ErrorCode getOperatorFromStream(bof_ifstream &istr, OPERATION &oper);
 
-	CBagExpression *GetPrevExpression() {
+	CBagExpression *getPrevExpression() const {
 		return _prevExpression;
 	}
-	void SetPrevExpression(CBagExpression *pExpr) {
-		_prevExpression = pExpr;
+	void setPrevExpression(CBagExpression *expr) {
+		_prevExpression = expr;
 	}
 
-	virtual bool OnAssign(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper);
-	virtual bool OnEqual(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper);
-	virtual bool OnNotEqual(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper);
-	virtual bool OnLessThan(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper);
-	virtual bool OnGreaterThan(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper);
-	virtual bool OnLessThanEqual(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper);
-	virtual bool OnGreaterThanEqual(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper);
-	virtual bool OnPlusAssign(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper);
-	virtual bool OnMinusAssign(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper);
-	virtual bool OnContains(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper);
-	virtual bool OnHas(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper);
-	virtual bool OnCurrSDev(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper);
-	virtual bool OnPlus(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper);
-	virtual bool OnMinus(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper);
-	virtual bool OnMultiply(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper);
-	virtual bool OnDivide(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper);
-	virtual bool OnMod(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper);
-	virtual bool OnAnd(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper);
-	virtual bool OnOr(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper);
-	virtual bool OnStatus(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper);
+	virtual bool onAssign(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper);
+	virtual bool onEqual(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper);
+	virtual bool onNotEqual(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper);
+	virtual bool onLessThan(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper);
+	virtual bool onGreaterThan(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper);
+	virtual bool onLessThanEqual(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper);
+	virtual bool onGreaterThanEqual(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper);
+	virtual bool onPlusAssign(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper);
+	virtual bool onMinusAssign(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper);
+	virtual bool onContains(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper);
+	virtual bool onHas(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper);
+	virtual bool onCurrSDev(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper);
+	virtual bool onPlus(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper);
+	virtual bool onMinus(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper);
+	virtual bool onMultiply(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper);
+	virtual bool onDivide(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper);
+	virtual bool onMod(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper);
+	virtual bool onAnd(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper);
+	virtual bool onOr(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper);
+	virtual bool onStatus(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper);
 };
 
 } // namespace Bagel

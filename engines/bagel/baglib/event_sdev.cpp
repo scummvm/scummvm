@@ -54,7 +54,7 @@ ErrorCode CBagEventSDev::evaluateExpressions() {
 		if (posObj != nullptr) {
 			// Find the local Expression objects
 			// This code says... only evaluate if we're in an if statement, this must be wrong.
-			if (posObj->GetExpression() == nullptr || posObj->GetExpression()->Evaluate(posObj->IsNegative())) {
+			if (posObj->GetExpression() == nullptr || posObj->GetExpression()->evaluate(posObj->IsNegative())) {
 				if (!posObj->isAttached()) {
 					posObj->setActive();
 					posObj->attach();
@@ -86,7 +86,7 @@ ErrorCode CBagTurnEventSDev::evaluateExpressions() {
 		if (posObj != nullptr) {
 			// Find the local Expression objects
 			// This code says... only evaluate if we're in an if statement, this must be wrong.
-			if (posObj->GetExpression() == nullptr || posObj->GetExpression()->Evaluate(posObj->IsNegative())) {
+			if (posObj->GetExpression() == nullptr || posObj->GetExpression()->evaluate(posObj->IsNegative())) {
 				if (!posObj->isAttached()) {
 					posObj->setActive();
 					posObj->attach();
