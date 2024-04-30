@@ -70,6 +70,18 @@ static void showVars() {
 	ImGui::End();
 }
 
+static ImVec4 convertColor(uint32 color) {
+	if (g_director->_colorDepth == 1) {
+		float r = g_director->getPalette()[color * 3 + 0] * 1.0 / 255.0;
+		float g = g_director->getPalette()[color * 3 + 1] * 1.0 / 255.0;
+		float b = g_director->getPalette()[color * 3 + 2] * 1.0 / 255.0;
+
+		return ImVec4(r, g, b, 1.0);
+	}
+
+	return ImGui::ColorConvertU32ToFloat4(color);
+}
+
 static void showChannels() {
 	if (!_state->_showChannels)
 		return;
@@ -152,8 +164,10 @@ static void showChannels() {
 					ImGui::Text("%d (%s)", sprite._spriteType, spriteType2str(sprite._spriteType));
 					ImGui::TableNextColumn();
 					ImGui::Text("%d", sprite._foreColor);
+					ImGui::ColorButton("foreColor", convertColor(sprite._foreColor));
 					ImGui::TableNextColumn();
 					ImGui::Text("%d", sprite._backColor);
+					ImGui::ColorButton("foreColor", convertColor(sprite._backColor));
 					ImGui::TableNextColumn();
 					ImGui::Text("%s", sprite._scriptId.asString().c_str());
 					ImGui::TableNextColumn();
@@ -169,9 +183,15 @@ static void showChannels() {
 					ImGui::TableNextColumn();
 					ImGui::Checkbox("", &sprite._moveable);
 					ImGui::TableNextColumn();
-					ImGui::Text("%f", channel._movieRate);
+					if (channel._movieRate)
+						ImGui::Text("%f", channel._movieRate);
+					else
+						ImGui::Text("0");
 					ImGui::TableNextColumn();
-					ImGui::Text("%d (%f)", channel._movieTime, (float)(channel._movieTime/60.0f));
+					if (channel._movieRate)
+						ImGui::Text("%d (%f)", channel._movieTime, (float)(channel._movieTime/60.0f));
+					else
+						ImGui::Text("0");
 				} else {
 					ImGui::Text("000");
 				}
