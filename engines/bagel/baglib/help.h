@@ -36,22 +36,22 @@ public:
 
 	virtual ErrorCode attach();
 	virtual ErrorCode detach();
-	virtual void onInitDialog();
+	void onInitDialog() override;
 
-	ErrorCode SetHelpFile(const char *pszTextFile);
+	ErrorCode SetHelpFile(const char *textFile);
 
 protected:
-	virtual void onPaint(CBofRect *pRect);
-	virtual void onBofButton(CBofObject *pObject, int nState);
-	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
+	void onPaint(CBofRect *rect) override;
+	void onBofButton(CBofObject *object, int state) override;
+	void onKeyHit(uint32 keyCode, uint32 repCount) override;
 
-	CBofString m_cTextFile;
+	CBofString _textFile;
 
-	CBofTextBox *m_pTextBox;
-	CBofBmpButton *m_pOKButton;
-	CBofBmpButton *m_pPageUp;
-	CBofBmpButton *m_pPageDown;
-	CBofPalette *m_pSavePalette;
+	CBofTextBox *_textBox;
+	CBofBmpButton *_okButton;
+	CBofBmpButton *_pageUp;
+	CBofBmpButton *_pageDown;
+	CBofPalette *_savePalette;
 };
 
 } // namespace Bagel

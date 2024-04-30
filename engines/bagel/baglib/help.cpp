@@ -41,122 +41,119 @@ namespace Bagel {
 #define HELP_OK_DISABLED   "DONE4.BMP"
 #define HELP_OK_ID 1
 
-#define HELP_PU_X  81
-#define HELP_PU_Y  377
-#define HELP_PU_CX 125
-#define HELP_PU_CY 30
-#define HELP_PU_UP         "PAGEUP1.BMP"
-#define HELP_PU_DOWN       "PAGEUP2.BMP"
-#define HELP_PU_FOCUS      "PAGEUP3.BMP"
-#define HELP_PU_DISABLED   "PAGEUP4.BMP"
-#define HELP_PU_ID 2
+#define HELP_PAGE_UP_X  81
+#define HELP_PAGE_UP_Y  377
+#define HELP_PAGE_UP_CX 125
+#define HELP_PAGE_UP_CY 30
+#define HELP_PAGE_UP_UP         "PAGEUP1.BMP"
+#define HELP_PAGE_UP_DOWN       "PAGEUP2.BMP"
+#define HELP_PAGE_UP_FOCUS      "PAGEUP3.BMP"
+#define HELP_PAGE_UP_DISABLED   "PAGEUP4.BMP"
+#define HELP_PAGE_UP_ID 2
 
-#define HELP_PD_X  435
-#define HELP_PD_Y  377
-#define HELP_PD_CX 125
-#define HELP_PD_CY 30
-#define HELP_PD_UP         "PAGEDN1.BMP"
-#define HELP_PD_DOWN       "PAGEDN2.BMP"
-#define HELP_PD_FOCUS      "PAGEDN3.BMP"
-#define HELP_PD_DISABLED   "PAGEDN4.BMP"
-#define HELP_PD_ID 3
+#define HELP_PAGE_DOWN_X  435
+#define HELP_PAGE_DOWN_Y  377
+#define HELP_PAGE_DOWN_CX 125
+#define HELP_PAGE_DOWN_CY 30
+#define HELP_PAGE_DOWN_UP         "PAGEDN1.BMP"
+#define HELP_PAGE_DOWN_DOWN       "PAGEDN2.BMP"
+#define HELP_PAGE_DOWN_FOCUS      "PAGEDN3.BMP"
+#define HELP_PAGE_DOWN_DISABLED   "PAGEDN4.BMP"
+#define HELP_PAGE_DOWN_ID 3
 
 // Local functions
-const char *BuildHelpDir(const char *pszFile);
+const char *buildHelpDir(const char *fileName);
 
 
 CBagHelp::CBagHelp() {
-	m_pTextBox = nullptr;
-	m_pOKButton = nullptr;
-	m_pPageUp = nullptr;
-	m_pPageDown = nullptr;
-	m_pSavePalette = nullptr;
+	_textBox = nullptr;
+	_okButton = nullptr;
+	_pageUp = nullptr;
+	_pageDown = nullptr;
+	_savePalette = nullptr;
 	setFlags(0);
 }
 
 ErrorCode CBagHelp::attach() {
 	Assert(IsValidObject(this));
 
-	CBofPalette *pPal;
-
 	// Save off the current game's palette
-	m_pSavePalette = CBofApp::GetApp()->getPalette();
+	_savePalette = CBofApp::GetApp()->getPalette();
 
 	// Insert ours
-	pPal = _pBackdrop->getPalette();
-	CBofApp::GetApp()->setPalette(pPal);
+	CBofPalette *backPal = _pBackdrop->getPalette();
+	CBofApp::GetApp()->setPalette(backPal);
 
-	if ((m_pOKButton = new CBofBmpButton) != nullptr) {
-		CBofBitmap *pUp, *pDown, *pFocus, *pDis;
+	_okButton = new CBofBmpButton;
+	if (_okButton != nullptr) {
 
-		pUp = loadBitmap(BuildHelpDir(HELP_OK_UP), pPal);
-		pDown = loadBitmap(BuildHelpDir(HELP_OK_DOWN), pPal);
-		pFocus = loadBitmap(BuildHelpDir(HELP_OK_FOCUS), pPal);
-		pDis = loadBitmap(BuildHelpDir(HELP_OK_DISABLED), pPal);
+		CBofBitmap *upBmp = loadBitmap(buildHelpDir(HELP_OK_UP), backPal);
+		CBofBitmap *downBmp = loadBitmap(buildHelpDir(HELP_OK_DOWN), backPal);
+		CBofBitmap *focusBmp = loadBitmap(buildHelpDir(HELP_OK_FOCUS), backPal);
+		CBofBitmap *disableBmp = loadBitmap(buildHelpDir(HELP_OK_DISABLED), backPal);
 
-		m_pOKButton->loadBitmaps(pUp, pDown, pFocus, pDis);
+		_okButton->loadBitmaps(upBmp, downBmp, focusBmp, disableBmp);
 
-		m_pOKButton->create("OK", HELP_OK_X, HELP_OK_Y, HELP_OK_CX, HELP_OK_CY, this, HELP_OK_ID);
-		m_pOKButton->show();
+		_okButton->create("OK", HELP_OK_X, HELP_OK_Y, HELP_OK_CX, HELP_OK_CY, this, HELP_OK_ID);
+		_okButton->show();
 	} else {
 		ReportError(ERR_MEMORY);
 	}
 
-	if ((m_pPageUp = new CBofBmpButton) != nullptr) {
+	_pageUp = new CBofBmpButton;
+	if (_pageUp != nullptr) {
 
-		CBofBitmap *pUp, *pDown, *pFocus, *pDis;
+		CBofBitmap *upBmp = loadBitmap(buildHelpDir(HELP_PAGE_UP_UP), backPal);
+		CBofBitmap *downBmp = loadBitmap(buildHelpDir(HELP_PAGE_UP_DOWN), backPal);
+		CBofBitmap *focusBmp = loadBitmap(buildHelpDir(HELP_PAGE_UP_FOCUS), backPal);
+		CBofBitmap *disableBmp = loadBitmap(buildHelpDir(HELP_PAGE_UP_DISABLED), backPal);
 
-		pUp = loadBitmap(BuildHelpDir(HELP_PU_UP), pPal);
-		pDown = loadBitmap(BuildHelpDir(HELP_PU_DOWN), pPal);
-		pFocus = loadBitmap(BuildHelpDir(HELP_PU_FOCUS), pPal);
-		pDis = loadBitmap(BuildHelpDir(HELP_PU_DISABLED), pPal);
+		_pageUp->loadBitmaps(upBmp, downBmp, focusBmp, disableBmp);
 
-		m_pPageUp->loadBitmaps(pUp, pDown, pFocus, pDis);
-
-		m_pPageUp->create("PageUp", HELP_PU_X, HELP_PU_Y, HELP_PU_CX, HELP_PU_CY, this, HELP_PU_ID);
-		m_pPageUp->show();
+		_pageUp->create("PageUp", HELP_PAGE_UP_X, HELP_PAGE_UP_Y, HELP_PAGE_UP_CX, HELP_PAGE_UP_CY, this, HELP_PAGE_UP_ID);
+		_pageUp->show();
 	} else {
 		ReportError(ERR_MEMORY);
 	}
 
-	if ((m_pPageDown = new CBofBmpButton) != nullptr) {
+	_pageDown = new CBofBmpButton;
+	if (_pageDown != nullptr) {
 
-		CBofBitmap *pUp, *pDown, *pFocus, *pDis;
+		CBofBitmap *upBmp = loadBitmap(buildHelpDir(HELP_PAGE_DOWN_UP), backPal);
+		CBofBitmap *downBmp = loadBitmap(buildHelpDir(HELP_PAGE_DOWN_DOWN), backPal);
+		CBofBitmap *focusBmp = loadBitmap(buildHelpDir(HELP_PAGE_DOWN_FOCUS), backPal);
+		CBofBitmap *disableBmp = loadBitmap(buildHelpDir(HELP_PAGE_DOWN_DISABLED), backPal);
 
-		pUp = loadBitmap(BuildHelpDir(HELP_PD_UP), pPal);
-		pDown = loadBitmap(BuildHelpDir(HELP_PD_DOWN), pPal);
-		pFocus = loadBitmap(BuildHelpDir(HELP_PD_FOCUS), pPal);
-		pDis = loadBitmap(BuildHelpDir(HELP_PD_DISABLED), pPal);
+		_pageDown->loadBitmaps(upBmp, downBmp, focusBmp, disableBmp);
 
-		m_pPageDown->loadBitmaps(pUp, pDown, pFocus, pDis);
-
-		m_pPageDown->create("PageDown", HELP_PD_X, HELP_PD_Y, HELP_PD_CX, HELP_PD_CY, this, HELP_PD_ID);
-		m_pPageDown->show();
+		_pageDown->create("PageDown", HELP_PAGE_DOWN_X, HELP_PAGE_DOWN_Y, HELP_PAGE_DOWN_CX, HELP_PAGE_DOWN_CY, this, HELP_PAGE_DOWN_ID);
+		_pageDown->show();
 	} else {
 		ReportError(ERR_MEMORY);
 	}
 
-	CBofFile cFile(m_cTextFile, CBF_BINARY | CBF_READONLY);
-	CBofRect cRect;
-	char *pszBuf;
-	uint32 lSize;
+	CBofFile file(_textFile, CBF_BINARY | CBF_READONLY);
 
-	lSize = cFile.GetLength();
-	if ((pszBuf = (char *)BofCAlloc(lSize + 1, 1)) != nullptr) {
-		cFile.Read(pszBuf, lSize);
+	uint32 size = file.GetLength();
+	char *buffer = (char *)BofCAlloc(size + 1, 1);
+	if (buffer != nullptr) {
+		file.Read(buffer, size);
 
+		CBofRect cRect;
 		cRect.SetRect(120, 100, 550, 348);
-		if ((m_pTextBox = new CBofTextBox(this, &cRect, pszBuf)) != nullptr) {
-			m_pTextBox->setPageLength(18);
+
+		_textBox = new CBofTextBox(this, &cRect, buffer);
+		if (_textBox != nullptr) {
+			_textBox->setPageLength(18);
 
 		} else {
 			ReportError(ERR_MEMORY, "Unable to allocate a CBofTextBox");
 		}
 
-		BofFree(pszBuf);
+		BofFree(buffer);
 
 	} else {
-		ReportError(ERR_MEMORY, "Unable to allocate %d bytes to read %s.", lSize, m_cTextFile.GetBuffer());
+		ReportError(ERR_MEMORY, "Unable to allocate %d bytes to read %s.", size, _textFile.GetBuffer());
 	}
 
 	CBagCursor::showSystemCursor();
@@ -170,76 +167,71 @@ ErrorCode CBagHelp::detach() {
 
 	CBagCursor::hideSystemCursor();
 
-	if (m_pTextBox != nullptr) {
-		delete m_pTextBox;
-		m_pTextBox = nullptr;
-	}
-	if (m_pPageDown != nullptr) {
-		delete m_pPageDown;
-		m_pPageDown = nullptr;
-	}
-	if (m_pPageUp != nullptr) {
-		delete m_pPageUp;
-		m_pPageUp = nullptr;
-	}
-	if (m_pOKButton != nullptr) {
-		delete m_pOKButton;
-		m_pOKButton = nullptr;
-	}
+	delete _textBox;
+	_textBox = nullptr;
 
-	CBofApp::GetApp()->setPalette(m_pSavePalette);
+	delete _pageDown;
+	_pageDown = nullptr;
+
+	delete _pageUp;
+	_pageUp = nullptr;
+
+	delete _okButton;
+	_okButton = nullptr;
+
+	CBofApp::GetApp()->setPalette(_savePalette);
 
 	return _errCode;
 }
 
-ErrorCode CBagHelp::SetHelpFile(const char *pszTextFile) {
+ErrorCode CBagHelp::SetHelpFile(const char *textFile) {
 	Assert(IsValidObject(this));
-	Assert(pszTextFile != nullptr);
+	Assert(textFile != nullptr);
 
-	m_cTextFile = pszTextFile;
+	_textFile = textFile;
 
 	return _errCode;
 }
 
 
-void CBagHelp::onPaint(CBofRect *pRect) {
+void CBagHelp::onPaint(CBofRect *rect) {
 	Assert(IsValidObject(this));
 
-	paintBackdrop(pRect);
+	paintBackdrop(rect);
 
-	if (m_pTextBox != nullptr) {
-		m_pTextBox->display();
+	if (_textBox != nullptr) {
+		_textBox->display();
 	}
 
 	validateAnscestors();
 }
 
 
-void CBagHelp::onKeyHit(uint32 lKey, uint32 nRepCount) {
+void CBagHelp::onKeyHit(uint32 keyCode, uint32 repCount) {
 	Assert(IsValidObject(this));
 
-	switch (lKey) {
+	switch (keyCode) {
 	case BKEY_UP:
-		if (m_pTextBox != nullptr) {
-			m_pTextBox->lineUp();
+		if (_textBox != nullptr) {
+			_textBox->lineUp();
 		}
 		break;
 
 	case BKEY_DOWN:
-		if (m_pTextBox != nullptr) {
-			m_pTextBox->lineDown();
+		if (_textBox != nullptr) {
+			_textBox->lineDown();
 		}
 		break;
 
 	case BKEY_PAGEUP:
-		if (m_pTextBox != nullptr) {
-			m_pTextBox->pageUp();
+		if (_textBox != nullptr) {
+			_textBox->pageUp();
 		}
 		break;
 
 	case BKEY_PAGEDOWN:
-		if (m_pTextBox != nullptr) {
-			m_pTextBox->pageDown();
+		if (_textBox != nullptr) {
+			_textBox->pageDown();
 		}
 		break;
 
@@ -248,35 +240,35 @@ void CBagHelp::onKeyHit(uint32 lKey, uint32 nRepCount) {
 		close();
 
 	default:
-		CBofDialog::onKeyHit(lKey, nRepCount);
+		CBofDialog::onKeyHit(keyCode, repCount);
 		break;
 	}
 }
 
 
-void CBagHelp::onBofButton(CBofObject *pObject, int nFlags) {
+void CBagHelp::onBofButton(CBofObject *object, int flags) {
 	Assert(IsValidObject(this));
-	Assert(pObject != nullptr);
+	Assert(object != nullptr);
 
-	if (nFlags != BUTTON_CLICKED)
+	if (flags != BUTTON_CLICKED)
 		return;
 
-	CBofBmpButton *pButton = (CBofBmpButton *)pObject;
+	CBofBmpButton *pButton = (CBofBmpButton *)object;
 
 	switch (pButton->getControlID()) {
 	case HELP_OK_ID:
 		close();
 		break;
 
-	case HELP_PU_ID:
-		if (m_pTextBox != nullptr) {
-			m_pTextBox->pageUp();
+	case HELP_PAGE_UP_ID:
+		if (_textBox != nullptr) {
+			_textBox->pageUp();
 		}
 		break;
 
-	case HELP_PD_ID:
-		if (m_pTextBox != nullptr) {
-			m_pTextBox->pageDown();
+	case HELP_PAGE_DOWN_ID:
+		if (_textBox != nullptr) {
+			_textBox->pageDown();
 		}
 		break;
 
@@ -286,8 +278,8 @@ void CBagHelp::onBofButton(CBofObject *pObject, int nFlags) {
 	}
 }
 
-const char *BuildHelpDir(const char *pszFile) {
-	return formPath(RULES_DIR, pszFile);
+const char *buildHelpDir(const char *fileName) {
+	return formPath(RULES_DIR, fileName);
 }
 
 void CBagHelp::onInitDialog() {
