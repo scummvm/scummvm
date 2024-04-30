@@ -28,243 +28,244 @@
 
 namespace Bagel {
 
-CBagVar *CBagExpression::m_xTempVar;	// Used as a default param
+CBagVar *CBagExpression::_tempVar;	// Used as a default param
 
 void CBagExpression::initialize() {
-	m_xTempVar = new CBagVar("CBagExpr::TempVar", "", false);            // used as a default param
+	// used as a default param
+	_tempVar = new CBagVar("CBagExpr::TempVar", "", false);
 }
 
 void CBagExpression::shutdown() {
-	delete m_xTempVar;
+	delete _tempVar;
 }
 
-CBagExpression::CBagExpression(CBagExpression *pPrevExpr, bool bPrevNeg) {
+CBagExpression::CBagExpression(CBagExpression *prevExpr, bool prevNegFl) {
 	_negativeFl = false;
-	_prevExpression = pPrevExpr;
-
-	_prevNegativeFl = bPrevNeg;
+	_prevExpression = prevExpr;
+	_prevNegativeFl = prevNegFl;
 }
 
 CBagExpression::~CBagExpression() {
 }
 
-bool CBagExpression::Evaluate(CBagVar *xLHOper, CBagVar *xRHOper, OPERATION xOper, CBagVar &xResult) {
-	bool bRClocal = false;
+bool CBagExpression::evaluate(CBagVar *leftHandOper, CBagVar *rightHandOper, OPERATION oper, CBagVar &result) {
+	bool retVal = false;
 
 	// If the variable is named "RANDOM", generate a random number for its value
-	if (xLHOper->GetName() == "RANDOM")
-		xLHOper->SetValue(g_engine->getRandomNumber());
-	if (xRHOper->GetName() == "RANDOM")
-		xRHOper->SetValue(g_engine->getRandomNumber());
+	if (leftHandOper->GetName() == "RANDOM")
+		leftHandOper->SetValue(g_engine->getRandomNumber());
+	if (rightHandOper->GetName() == "RANDOM")
+		rightHandOper->SetValue(g_engine->getRandomNumber());
 
-	switch (xOper) {
+	switch (oper) {
 	case OP_NONE:
 		break;
 
 	case OP_ASSIGN:
-		bRClocal = OnAssign(xLHOper, xRHOper, xResult);
+		retVal = onAssign(leftHandOper, rightHandOper, result);
 		break;
 
 	case OP_EQUAL:
-		bRClocal = OnEqual(xLHOper, xRHOper, xResult);
+		retVal = onEqual(leftHandOper, rightHandOper, result);
 		break;
 
 	case OP_NOT_EQUAL:
-		bRClocal = OnNotEqual(xLHOper, xRHOper, xResult);
+		retVal = onNotEqual(leftHandOper, rightHandOper, result);
 		break;
 
 	case OP_LESS_THAN:
-		bRClocal = OnLessThan(xLHOper, xRHOper, xResult);
+		retVal = onLessThan(leftHandOper, rightHandOper, result);
 		break;
 
 	case OP_LESS_THAN_EQUAL:
-		bRClocal = OnLessThanEqual(xLHOper, xRHOper, xResult);
+		retVal = onLessThanEqual(leftHandOper, rightHandOper, result);
 		break;
 
 	case OP_GREATER_THAN:
-		bRClocal = OnGreaterThan(xLHOper, xRHOper, xResult);
+		retVal = onGreaterThan(leftHandOper, rightHandOper, result);
 		break;
 
 	case OP_GREATER_THAN_EQUAL:
-		bRClocal = OnGreaterThanEqual(xLHOper, xRHOper, xResult);
+		retVal = onGreaterThanEqual(leftHandOper, rightHandOper, result);
 		break;
 
 	case OP_PLUS_ASSIGN:
-		bRClocal = OnPlusAssign(xLHOper, xRHOper, xResult);
+		retVal = onPlusAssign(leftHandOper, rightHandOper, result);
 		break;
 
 	case OP_MINUS_ASSIGN:
-		bRClocal = OnMinusAssign(xLHOper, xRHOper, xResult);
+		retVal = onMinusAssign(leftHandOper, rightHandOper, result);
 		break;
 
 	case OP_PLUS:
-		bRClocal = OnPlus(xLHOper, xRHOper, xResult);
+		retVal = onPlus(leftHandOper, rightHandOper, result);
 		break;
 
 	case OP_MINUS:
-		bRClocal = OnMinus(xLHOper, xRHOper, xResult);
+		retVal = onMinus(leftHandOper, rightHandOper, result);
 		break;
 
 	case OP_MULTIPLY:
-		bRClocal = OnMultiply(xLHOper, xRHOper, xResult);
+		retVal = onMultiply(leftHandOper, rightHandOper, result);
 		break;
 
 	case OP_DIVIDE:
-		bRClocal = OnDivide(xLHOper, xRHOper, xResult);
+		retVal = onDivide(leftHandOper, rightHandOper, result);
 		break;
 
 	case OP_MOD:
-		bRClocal = OnMod(xLHOper, xRHOper, xResult);
+		retVal = onMod(leftHandOper, rightHandOper, result);
 		break;
 
 	case OP_CONTAINS:
-		bRClocal = OnContains(xLHOper, xRHOper, xResult);
+		retVal = onContains(leftHandOper, rightHandOper, result);
 		break;
 
 	case OP_HAS:
-		bRClocal = OnHas(xLHOper, xRHOper, xResult);
+		retVal = onHas(leftHandOper, rightHandOper, result);
 		break;
 
 	case OP_STATUS:
-		bRClocal = OnStatus(xLHOper, xRHOper, xResult);
+		retVal = onStatus(leftHandOper, rightHandOper, result);
 		break;
 
 	default:
 		break;
 	}
 
-	return bRClocal;
+	return retVal;
 }
 
 
-CBagVar *CBagExpression::GetVariable(int nPos) {
-	CBagVar *pVar = _varList.GetNodeItem(nPos);
+CBagVar *CBagExpression::getVariable(int itemPos) {
+	CBagVar *curVar = _varList.GetNodeItem(itemPos);
 
 	// If the variable is a reference (OBJ.PROPERTY)
-	if (pVar->IsReference()) {
-		char *p, szFront[256];
-		Common::strcpy_s(szFront, pVar->GetName());
+	if (curVar->IsReference()) {
+		char frontStr[256];
+		Common::strcpy_s(frontStr, curVar->GetName());
 
-		if ((p = strstr(szFront, "~~")) != nullptr) {
-			char szBack[256];
-			Common::strcpy_s(szBack, p + 2);
+		char *p = strstr(frontStr, "~~");
+		if (p != nullptr) {
+			char backStr[256];
+			Common::strcpy_s(backStr, p + 2);
 			*p = '\0';
 
-			CBofString sObject(szFront, 256);
-			CBofString sProperty(szBack, 256);
+			CBofString stringObject(frontStr, 256);
+			CBofString stringProperty(backStr, 256);
 
-			int nVal = SDEVMNGR->GetObjectValue(sObject, sProperty);
-			pVar->SetValue(nVal);
+			int newVal = SDEVMNGR->GetObjectValue(stringObject, stringProperty);
+			curVar->SetValue(newVal);
 		}
 	}
 
-	return pVar;
+	return curVar;
 }
 
 
-CBagExpression::OPERATION CBagExpression::GetOperation(int nPos) {
+CBagExpression::OPERATION CBagExpression::getOperation(int itemPos) {
 	Assert(false);
-	return _operList.GetNodeItem(nPos);
+	return _operList.GetNodeItem(itemPos);
 }
 
 
-bool CBagExpression::Evaluate(bool bNeg, CBagVar &xResult) {
-	bool bRClocal = false;
+bool CBagExpression::evaluate(bool negFl, CBagVar &result) {
+	bool retVal = false;
 
 	// There must be an expression for every variable after the first
 	Assert(_varList.GetCount() - 1 == _operList.GetCount());
 
-	int nVCount = 0;
+	int count = 0;
 
-	CBagVar *xLHOper = GetVariable(nVCount++);
-	xResult = *xLHOper;
+	CBagVar *leftHandOper = getVariable(count++);
+	result = *leftHandOper;
 
-	bool bRCparent = true;
+	bool parentCheckFl = true;
 	if (_prevExpression) {
-		bRCparent = _prevExpression->Evaluate(_prevNegativeFl, xResult);
+		parentCheckFl = _prevExpression->evaluate(_prevNegativeFl, result);
 	}
 
-	if (bRCparent) {
-		bool bVal = false;
-		int nECount = 0;
+	if (parentCheckFl) {
+		bool subValFl;
+		int nodeCount = 0;
 
-		while (nVCount < _varList.GetCount()) {
-			CBagVar *xRHOper = GetVariable(nVCount++);
-			OPERATION xOper = _operList.GetNodeItem(nECount++);
-			CBagVar *xRHOper2;
+		while (count < _varList.GetCount()) {
+			CBagVar *rightHandOper = getVariable(count++);
+			OPERATION oper = _operList.GetNodeItem(nodeCount++);
+			CBagVar *rightHandOper2;
 
-			switch (xOper) {
+			switch (oper) {
 			case OP_AND:
-				xRHOper2 = GetVariable(nVCount++);
-				xOper = _operList.GetNodeItem(nECount++);
-				bVal = Evaluate(xRHOper, xRHOper2, xOper, xResult);
+				rightHandOper2 = getVariable(count++);
+				oper = _operList.GetNodeItem(nodeCount++);
+				subValFl = evaluate(rightHandOper, rightHandOper2, oper, result);
 
-				bRClocal &= bVal;
+				retVal &= subValFl;
 				break;
 
 			case OP_OR:
-				xRHOper2 = GetVariable(nVCount++);
-				xOper = _operList.GetNodeItem(nECount++);
-				bVal = Evaluate(xRHOper, xRHOper2, xOper, xResult);
+				rightHandOper2 = getVariable(count++);
+				oper = _operList.GetNodeItem(nodeCount++);
+				subValFl = evaluate(rightHandOper, rightHandOper2, oper, result);
 
-				bRClocal |= bVal;
+				retVal |= subValFl;
 				break;
 
 			default:
-				bRClocal = Evaluate(xLHOper, xRHOper, xOper, xResult);
+				retVal = evaluate(leftHandOper, rightHandOper, oper, result);
 				break;
 			}
 		}
 
-		if (bNeg)
+		if (negFl)
 			// Evaluate before and with parent
-			bRClocal = !bRClocal;
+			retVal = !retVal;
 
-		bRClocal &= bRCparent;
+		retVal &= parentCheckFl;
 	}
 
-	return bRClocal;
+	return retVal;
 }
 
-bool CBagExpression::EvalLeftToRight(bool bNeg, CBagVar &xResult) {
-	bool bRClocal = false;
-	CBagVar stLHOper;
-	OPERATION xOper = OP_NONE;
+bool CBagExpression::evalLeftToRight(bool negFl, CBagVar &result) {
+	bool retVal = false;
+	OPERATION oper = OP_NONE;
 
 	// There must be an expression for every variable after the first
 	Assert(_varList.GetCount() - 1 == _operList.GetCount());
 
-	int nVCount = 0;
+	int varCount = 0;
 
-	CBagVar *xLHOper = GetVariable(nVCount++);
-	xResult = *xLHOper;
+	CBagVar *leftHandOper = getVariable(varCount++);
+	result = *leftHandOper;
 
-	bool bRCparent = true;
+	bool parentCheckFl = true;
 	if (_prevExpression) {
-		bRCparent = _prevExpression->Evaluate(_prevNegativeFl, xResult);
+		parentCheckFl = _prevExpression->evaluate(_prevNegativeFl, result);
 	}
 
-	if (bRCparent) {
+	if (parentCheckFl) {
 		bool bFirstTime = true;
-		int nECount = 0;
-		while (nVCount < _varList.GetCount()) {
-			CBagVar *xRHOper = GetVariable(nVCount++);
-			OPERATION xPrevOper = xOper;      // save previous operator
-			xOper = _operList.GetNodeItem(nECount++);
+		int nodeCount = 0;
+		while (varCount < _varList.GetCount()) {
+			CBagVar compLeftHandOper;
+			CBagVar *rightHandOper = getVariable(varCount++);
+			OPERATION prevOper = oper;      // save previous operator
+			oper = _operList.GetNodeItem(nodeCount++);
 
 			if (bFirstTime) {
-				stLHOper = *xLHOper;
+				compLeftHandOper = *leftHandOper;
 				bFirstTime = false;
 			} else {
 				// Based on what we have for a previous operator, either use
 				// the left hand expression or the result of the previous expression.
-				switch (xPrevOper) {
+				switch (prevOper) {
 				case OP_MINUS:
 				case OP_MULTIPLY:
 				case OP_DIVIDE:
 				case OP_MOD:
 				case OP_PLUS:
-					stLHOper = xResult;
+					compLeftHandOper = result;
 					break;
 				case OP_NONE:
 				case OP_ASSIGN:
@@ -280,300 +281,297 @@ bool CBagExpression::EvalLeftToRight(bool bNeg, CBagVar &xResult) {
 				case OP_HAS:
 				case OP_STATUS:
 				default:
-					stLHOper = *xLHOper;
+					compLeftHandOper = *leftHandOper;
 					break;
 				}
 			}
 
-			bool bVal;
-			CBagVar *xRHOper2;
-			switch (xOper) {
+			bool boolVal;
+			CBagVar *rightHandOper2;
+			switch (oper) {
 
 			case OP_AND:
-				xRHOper2 = GetVariable(nVCount++);
-				xOper = _operList.GetNodeItem(nECount++);
-				bVal = Evaluate(xRHOper, xRHOper2, xOper, xResult);
+				rightHandOper2 = getVariable(varCount++);
+				oper = _operList.GetNodeItem(nodeCount++);
+				boolVal = evaluate(rightHandOper, rightHandOper2, oper, result);
 
-				bRClocal &= bVal;
+				retVal &= boolVal;
 				break;
 
 			case OP_OR:
-				xRHOper2 = GetVariable(nVCount++);
-				xOper = _operList.GetNodeItem(nECount++);
-				bVal = Evaluate(xRHOper, xRHOper2, xOper, xResult);
+				rightHandOper2 = getVariable(varCount++);
+				oper = _operList.GetNodeItem(nodeCount++);
+				boolVal = evaluate(rightHandOper, rightHandOper2, oper, result);
 
 				// or this don't not it!!!
-				bRClocal |= bVal;
+				retVal |= boolVal;
 				break;
 
 			default:
-				bRClocal = Evaluate(&stLHOper, xRHOper, xOper, xResult);
+				retVal = evaluate(&compLeftHandOper, rightHandOper, oper, result);
 				break;
 			}
 		}
 
-		if (bNeg)
+		if (negFl)
 			// Evaluate before and with parent
-			bRClocal = !bRClocal;
+			retVal = !retVal;
 
-		bRClocal &= bRCparent;
+		retVal &= parentCheckFl;
 	}
 
-	return bRClocal;
+	return retVal;
 }
 
 
-bool CBagExpression::NegEvaluate(CBagVar &xResult) {
-	return Evaluate(false, xResult);
+bool CBagExpression::negEvaluate(CBagVar &result) {
+	return evaluate(false, result);
 }
 
 
-bool CBagExpression::OnAssign(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResultOper*/) {
-	//int nIndex;
-	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
+bool CBagExpression::onAssign(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar & /* resultOper, unused*/) {
+	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
-	char szBuf[256];
-	Common::strcpy_s(szBuf, xRHOper->GetValue());
-	Assert(strlen(szBuf) < 256);
-	CBofString sBuf(szBuf, 256);
+	char buffer[256];
+	Common::strcpy_s(buffer, rightHandOper->GetValue());
+	Assert(strlen(buffer) < 256);
+	CBofString newLeftHandValue(buffer, 256);
 
-	xLHOper->SetValue(sBuf);
+	leftHandOper->SetValue(newLeftHandValue);
 
 	return true;
 }
 
 
-bool CBagExpression::OnEqual(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
-	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
+bool CBagExpression::onEqual(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
+	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
-	bool bVal = xLHOper->GetValue() == xRHOper->GetValue();
-	xResultOper.SetBoolValue(bVal);
+	bool retVal = leftHandOper->GetValue() == rightHandOper->GetValue();
+	resultOper.SetBoolValue(retVal);
 
-	return bVal;
+	return retVal;
 }
 
 
-bool CBagExpression::OnNotEqual(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
-	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
-	bool bVal = xLHOper->GetValue() != xRHOper->GetValue();
-	xResultOper.SetBoolValue(bVal);
+bool CBagExpression::onNotEqual(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
+	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
+	bool retVal = leftHandOper->GetValue() != rightHandOper->GetValue();
+	resultOper.SetBoolValue(retVal);
 
-	return bVal;
+	return retVal;
 }
 
 
-bool CBagExpression::OnLessThan(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
-	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
-	bool bVal = xLHOper->GetNumValue() < xRHOper->GetNumValue();
-	xResultOper.SetBoolValue(bVal);
-	return bVal;
+bool CBagExpression::onLessThan(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
+	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
+	bool retVal = leftHandOper->GetNumValue() < rightHandOper->GetNumValue();
+	resultOper.SetBoolValue(retVal);
+	return retVal;
 }
 
 
-bool CBagExpression::OnGreaterThan(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
-	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
-	bool bVal = xLHOper->GetNumValue() > xRHOper->GetNumValue();
-	xResultOper.SetBoolValue(bVal);
-	return bVal;
+bool CBagExpression::onGreaterThan(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
+	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
+	bool retVal = leftHandOper->GetNumValue() > rightHandOper->GetNumValue();
+	resultOper.SetBoolValue(retVal);
+	return retVal;
 }
 
 
-bool CBagExpression::OnLessThanEqual(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
-	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
-	bool bVal = xLHOper->GetNumValue() <= xRHOper->GetNumValue();
-	xResultOper.SetBoolValue(bVal);
-	return bVal;
+bool CBagExpression::onLessThanEqual(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
+	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
+	bool retVal = leftHandOper->GetNumValue() <= rightHandOper->GetNumValue();
+	resultOper.SetBoolValue(retVal);
+	return retVal;
 }
 
 
-bool CBagExpression::OnGreaterThanEqual(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
-	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
+bool CBagExpression::onGreaterThanEqual(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
+	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
-	bool bVal = xLHOper->GetNumValue() >= xRHOper->GetNumValue();
-	xResultOper.SetBoolValue(bVal);
-	return bVal;
+	bool retVal = leftHandOper->GetNumValue() >= rightHandOper->GetNumValue();
+	resultOper.SetBoolValue(retVal);
+	return retVal;
 }
 
 
-bool CBagExpression::OnPlusAssign(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
-	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
+bool CBagExpression::onPlusAssign(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
+	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
-	if (xLHOper->IsNumeric() && xRHOper->IsNumeric()) {
-		int nLHO = xLHOper->GetNumValue();
-		int nRHO = xRHOper->GetNumValue();
-		xLHOper->SetValue(nLHO + nRHO);
-		xResultOper.SetValue(xLHOper->GetNumValue());
-	}
-
-	return true;
-}
-
-
-bool CBagExpression::OnMinusAssign(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
-	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
-
-	if (xLHOper->IsNumeric() && xRHOper->IsNumeric()) {
-		int nLHO = xLHOper->GetNumValue();
-		int nRHO = xRHOper->GetNumValue();
-		xLHOper->SetValue(nLHO - nRHO);
-		xResultOper.SetValue(xLHOper->GetNumValue());
+	if (leftHandOper->IsNumeric() && rightHandOper->IsNumeric()) {
+		int leftHandNum = leftHandOper->GetNumValue();
+		int rightHandNum = rightHandOper->GetNumValue();
+		leftHandOper->SetValue(leftHandNum + rightHandNum);
+		resultOper.SetValue(leftHandOper->GetNumValue());
 	}
 
 	return true;
 }
 
 
-bool CBagExpression::OnContains(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResultOper*/) {
-	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
+bool CBagExpression::onMinusAssign(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
+	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
-	CBagStorageDev *pSDev;
-	if ((pSDev = SDEVMNGR->GetStorageDevice(xLHOper->GetValue())) == nullptr)
+	if (leftHandOper->IsNumeric() && rightHandOper->IsNumeric()) {
+		int leftHandNum = leftHandOper->GetNumValue();
+		int rightHandNum = rightHandOper->GetNumValue();
+		leftHandOper->SetValue(leftHandNum - rightHandNum);
+		resultOper.SetValue(leftHandOper->GetNumValue());
+	}
+
+	return true;
+}
+
+
+bool CBagExpression::onContains(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar & /* resultOper, unused */) {
+	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
+
+	CBagStorageDev *sDev = SDEVMNGR->GetStorageDevice(leftHandOper->GetValue());
+	if (sDev == nullptr)
 		return false;
 
-	CBagObject *pObj;
-	if ((pObj = pSDev->GetObject(xRHOper->GetValue())) == nullptr)
-		return false;
-
-	if (pObj->IsActive())
+	CBagObject *curObj = sDev->GetObject(rightHandOper->GetValue());
+	if ((curObj != nullptr) && curObj->IsActive())
 		return true;
 
 	return false;
 }
 
-bool CBagExpression::OnHas(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResultOper*/) {
-	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
+bool CBagExpression::onHas(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar & /* resultOper, unused */) {
+	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
-	CBagStorageDev *pSDev = SDEVMNGR->GetStorageDevice(xLHOper->GetValue());
-	if (pSDev == nullptr)
+	CBagStorageDev *sDev = SDEVMNGR->GetStorageDevice(leftHandOper->GetValue());
+	if (sDev == nullptr)
 		return false;
 
-	CBagObject *pObj = pSDev->GetObjectByType(xRHOper->GetValue(), true);
-	if (pObj == nullptr)
+	CBagObject *curObj = sDev->GetObjectByType(rightHandOper->GetValue(), true);
+	if (curObj == nullptr)
 		return false;
 
 	return true;
 }
 
-bool CBagExpression::OnStatus(CBagVar *pLHOper, CBagVar * /*pRHOper*/, CBagVar & /*xResultOper*/) {
+bool CBagExpression::onStatus(CBagVar *pLHOper, CBagVar * /* rightHandOper, unused */, CBagVar & /* resultOper, unused */) {
 	Assert(pLHOper != nullptr);
 
-	CBagStorageDev *pSDev = SDEVMNGR->GetStorageDeviceContaining(pLHOper->GetValue());
-	if (pSDev == nullptr)
+	CBagStorageDev *sDev = SDEVMNGR->GetStorageDeviceContaining(pLHOper->GetValue());
+	if (sDev == nullptr)
 		return false;
 
-	CBagObject *pObj = pSDev->GetObject(pLHOper->GetValue());
-	if (pObj == nullptr)
+	CBagObject *curObj = sDev->GetObject(pLHOper->GetValue());
+	if (curObj == nullptr)
 		return false;
 
 	return false;
 
 }
-bool CBagExpression::OnCurrSDev(CBagVar * /*xLHOper*/, CBagVar * /*xRHOper*/, CBagVar & /*xResultOper*/) {
+bool CBagExpression::onCurrSDev(CBagVar * /* leftHandOper, unused*/, CBagVar * /* rightHandOper, unused */, CBagVar & /* resultOper, unused */) {
 	return true;
 }
 
 
-bool CBagExpression::OnPlus(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
-	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
+bool CBagExpression::onPlus(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
+	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
-	if (xLHOper->IsNumeric() && xRHOper->IsNumeric()) {
-		int nLHO = xLHOper->GetNumValue();
-		int nRHO = xRHOper->GetNumValue();
-		xResultOper.SetValue(nLHO + nRHO);
+	if (leftHandOper->IsNumeric() && rightHandOper->IsNumeric()) {
+		int leftHandNum = leftHandOper->GetNumValue();
+		int rightHandNum = rightHandOper->GetNumValue();
+		resultOper.SetValue(leftHandNum + rightHandNum);
 	}
 
 	return true;
 }
 
 
-bool CBagExpression::OnMinus(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
-	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
+bool CBagExpression::onMinus(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
+	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
-	if (xLHOper->IsNumeric() && xRHOper->IsNumeric()) {
-		int nLHO = xLHOper->GetNumValue();
-		int nRHO = xRHOper->GetNumValue();
-		xResultOper.SetValue(nLHO - nRHO);
+	if (leftHandOper->IsNumeric() && rightHandOper->IsNumeric()) {
+		int leftHandNum = leftHandOper->GetNumValue();
+		int rightHandNum = rightHandOper->GetNumValue();
+		resultOper.SetValue(leftHandNum - rightHandNum);
 	}
 
 	return true;
 }
 
 
-bool CBagExpression::OnMultiply(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
-	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
+bool CBagExpression::onMultiply(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
+	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
-	if (xLHOper->IsNumeric() && xRHOper->IsNumeric()) {
-		int nLHO = xLHOper->GetNumValue();
-		int nRHO = xRHOper->GetNumValue();
+	if (leftHandOper->IsNumeric() && rightHandOper->IsNumeric()) {
+		int leftHandNum = leftHandOper->GetNumValue();
+		int rightHandNum = rightHandOper->GetNumValue();
 
-		xResultOper.SetValue(nLHO * nRHO);
+		resultOper.SetValue(leftHandNum * rightHandNum);
 	}
 
 	return true;
 }
 
 
-bool CBagExpression::OnDivide(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
-	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
+bool CBagExpression::onDivide(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
+	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
-	if (xLHOper->IsNumeric() && xRHOper->IsNumeric()) {
-		int nLHO = xLHOper->GetNumValue();
-		int nRHO = xRHOper->GetNumValue();
+	if (leftHandOper->IsNumeric() && rightHandOper->IsNumeric()) {
+		int leftHandNum = leftHandOper->GetNumValue();
+		int rightHandNum = rightHandOper->GetNumValue();
 
 		// Divide by Zero error?
-		Assert(nRHO != 0);
+		Assert(rightHandNum != 0);
 
-		xResultOper.SetValue(nLHO / nRHO);
+		resultOper.SetValue(leftHandNum / rightHandNum);
 	}
 
 	return true;
 }
 
 
-bool CBagExpression::OnMod(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
-	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
+bool CBagExpression::onMod(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
+	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
-	if (xLHOper->IsNumeric() && xRHOper->IsNumeric()) {
-		int nLHO = xLHOper->GetNumValue();
-		int nRHO = xRHOper->GetNumValue();
+	if (leftHandOper->IsNumeric() && rightHandOper->IsNumeric()) {
+		int leftHandNum = leftHandOper->GetNumValue();
+		int rightHandNum = rightHandOper->GetNumValue();
 
 		// Divide by Zero error?
-		Assert(nRHO != 0);
+		Assert(rightHandNum != 0);
 
-		xResultOper.SetValue(nLHO % nRHO);
+		resultOper.SetValue(leftHandNum % rightHandNum);
 	}
 
 	return true;
 }
 
 
-bool CBagExpression::OnAnd(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResultOper*/) {
-	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
+bool CBagExpression::onAnd(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar & /* resultOper, unused */) {
+	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
-	return (!xLHOper->GetValue().Find("true") && !xRHOper->GetValue().Find("true"));
+	return (!leftHandOper->GetValue().Find("true") && !rightHandOper->GetValue().Find("true"));
 }
 
 
-bool CBagExpression::OnOr(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResultOper*/) {
-	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
+bool CBagExpression::onOr(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar & /* resultOper, unused */) {
+	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
-	return (!xLHOper->GetValue().Find("true") || !xRHOper->GetValue().Find("true"));
+	return (!leftHandOper->GetValue().Find("true") || !rightHandOper->GetValue().Find("true"));
 }
 
 
 PARSE_CODES CBagExpression::setInfo(bof_ifstream &istr) {
-	char szBuf[256];
-	szBuf[0] = 0;
-	CBofString sStr(szBuf, 256);
+	char buffer[256];
+	buffer[0] = 0;
+	CBofString tmpStr(buffer, 256);
 
-	char szErrStr[256];
-	Common::strcpy_s(szErrStr, "Error in expression ");
-	CBofString errStr(szErrStr, 256);
+	char errBuffer[256];
+	Common::strcpy_s(errBuffer, "Error in expression ");
+	// CHECKME: Should we put this string in a debugC at the end of the function? (Currently unused)
+	CBofString errStr(errBuffer, 256);
 
 	PARSE_CODES rc = PARSING_DONE;
-	bool bDone = false;
+	bool doneFl = false;
 
-	while (!bDone && rc == PARSING_DONE) {
+	while (!doneFl && rc == PARSING_DONE) {
 		istr.EatWhite();
 		int ch = istr.peek();
 		switch (ch) {
@@ -581,50 +579,54 @@ PARSE_CODES CBagExpression::setInfo(bof_ifstream &istr) {
 			istr.Get();
 			istr.EatWhite();
 
-			GetAlphaNumFromStream(istr, sStr);
-			CBagVar *pVar = VARMNGR->GetVariable(sStr);
-			if (!pVar) {                             // This must be a reference, make a new variable
-				if (sStr.Find("~~") > 0) {
-					pVar = new CBagVar;
-					pVar->SetName(sStr);
-					pVar->SetReference();
-				} else {                             // This is an error condition, constants can only be rhopers
-					pVar = new CBagVar;
-					pVar->SetName(sStr);
-					pVar->SetValue(sStr);
-					pVar->SetConstant();
+			GetAlphaNumFromStream(istr, tmpStr);
+			CBagVar *curVar = VARMNGR->GetVariable(tmpStr);
+			if (!curVar) {
+				// This must be a reference, make a new variable
+				if (tmpStr.Find("~~") > 0) {
+					curVar = new CBagVar;
+					curVar->SetName(tmpStr);
+					curVar->SetReference();
+				} else {
+					// This is an error condition, constants can only be rhopers
+					curVar = new CBagVar;
+					curVar->SetName(tmpStr);
+					curVar->SetValue(tmpStr);
+					curVar->SetConstant();
 				}
 			}
-			_varList.addToTail(pVar);
+			_varList.addToTail(curVar);
 
 			istr.EatWhite();
 			ch = istr.peek();
 			while ((ch != ')') && rc == PARSING_DONE) {
-				OPERATION xOper;
-				GetOperatorFromStream(istr, xOper);
-				if (xOper == OP_NONE) {
+				OPERATION curOper;
+				getOperatorFromStream(istr, curOper);
+				if (curOper == OP_NONE) {
 					rc = UNKNOWN_TOKEN;
 					errStr = "Bad operator:";
 					break;
 				}
-				_operList.addToTail(xOper);
+				_operList.addToTail(curOper);
 
 				istr.EatWhite();
-				GetAlphaNumFromStream(istr, sStr);
-				pVar = VARMNGR->GetVariable(sStr);
-				if (!pVar) {
-					if (sStr.Find("~~") > 0) {          // This must be a reference, make a new variable
-						pVar = new CBagVar;
-						pVar->SetName(sStr);
-						pVar->SetReference();
-					} else {                            // This must be a constant, make a new variable
-						pVar = new CBagVar;
-						pVar->SetName(sStr);
-						pVar->SetValue(sStr);
-						pVar->SetConstant();
+				GetAlphaNumFromStream(istr, tmpStr);
+				curVar = VARMNGR->GetVariable(tmpStr);
+				if (!curVar) {
+					if (tmpStr.Find("~~") > 0) {
+						// This must be a reference, make a new variable
+						curVar = new CBagVar;
+						curVar->SetName(tmpStr);
+						curVar->SetReference();
+					} else {
+						// This must be a constant, make a new variable
+						curVar = new CBagVar;
+						curVar->SetName(tmpStr);
+						curVar->SetValue(tmpStr);
+						curVar->SetConstant();
 					}
 				}
-				_varList.addToTail(pVar);
+				_varList.addToTail(curVar);
 
 				istr.EatWhite();
 				ch = istr.peek();
@@ -632,14 +634,14 @@ PARSE_CODES CBagExpression::setInfo(bof_ifstream &istr) {
 
 			if (ch == ')') {
 				istr.Get();
-				bDone = true;
+				doneFl = true;
 			}
 			break;
 		}
 
 		case 'N':
-			GetAlphaNumFromStream(istr, sStr);
-			if (!sStr.Find("NOT")) {
+			GetAlphaNumFromStream(istr, tmpStr);
+			if (!tmpStr.Find("NOT")) {
 				_negativeFl = !_negativeFl;
 				istr.EatWhite();
 				break;
@@ -660,85 +662,85 @@ PARSE_CODES CBagExpression::setInfo(bof_ifstream &istr) {
 }
 
 
-ErrorCode CBagExpression::GetOperatorFromStream(bof_ifstream &istr, OPERATION &xOper) {
+ErrorCode CBagExpression::getOperatorFromStream(bof_ifstream &istr, OPERATION &oper) {
 	ErrorCode rc = ERR_NONE;
 
-	char szLocalBuff[256];
-	szLocalBuff[0] = 0;
+	char localBuff[256];
+	localBuff[0] = 0;
 
-	CBofString sStr(szLocalBuff, 256);
+	CBofString localStr(localBuff, 256);
 
-	xOper = OP_NONE;
+	oper = OP_NONE;
 
 	istr.EatWhite();
-	GetOperStrFromStream(istr, sStr);
+	GetOperStrFromStream(istr, localStr);
 
-	if (sStr.IsEmpty()) {
-		GetAlphaNumFromStream(istr, sStr);
+	if (localStr.IsEmpty()) {
+		GetAlphaNumFromStream(istr, localStr);
 		istr.EatWhite();
 	}
 
-	if (!sStr.Find("-=")) {
-		xOper = OP_MINUS_ASSIGN;
+	if (!localStr.Find("-=")) {
+		oper = OP_MINUS_ASSIGN;
 
-	} else if (!sStr.Find("+=")) {
-		xOper = OP_PLUS_ASSIGN;
+	} else if (!localStr.Find("+=")) {
+		oper = OP_PLUS_ASSIGN;
 
-	} else if (!sStr.Find(">=")) {
-		xOper = OP_GREATER_THAN_EQUAL;
+	} else if (!localStr.Find(">=")) {
+		oper = OP_GREATER_THAN_EQUAL;
 
-	} else if (!sStr.Find("<=")) {
-		xOper = OP_LESS_THAN_EQUAL;
+	} else if (!localStr.Find("<=")) {
+		oper = OP_LESS_THAN_EQUAL;
 
-	} else if (!sStr.Find("!=")) {
-		xOper = OP_NOT_EQUAL;
+	} else if (!localStr.Find("!=")) {
+		oper = OP_NOT_EQUAL;
 
-	} else if (!sStr.Find("==")) {
-		xOper = OP_EQUAL;
+	} else if (!localStr.Find("==")) {
+		oper = OP_EQUAL;
 
-	} else if (!sStr.Find(">")) {
-		xOper = OP_GREATER_THAN;
+	} else if (!localStr.Find(">")) {
+		oper = OP_GREATER_THAN;
 
-	} else if (!sStr.Find("<")) {
-		xOper = OP_LESS_THAN;
+	} else if (!localStr.Find("<")) {
+		oper = OP_LESS_THAN;
 
-	} else if (!sStr.Find("=")) {
-		xOper = OP_ASSIGN;
+	} else if (!localStr.Find("=")) {
+		oper = OP_ASSIGN;
 
-	} else if (!sStr.Find("+")) {
-		xOper = OP_PLUS;
+	} else if (!localStr.Find("+")) {
+		oper = OP_PLUS;
 
-	} else if (!sStr.Find("-")) {
-		xOper = OP_MINUS;
+	} else if (!localStr.Find("-")) {
+		oper = OP_MINUS;
 
-	} else if (!sStr.Find("*")) {
-		xOper = OP_MULTIPLY;
+	} else if (!localStr.Find("*")) {
+		oper = OP_MULTIPLY;
 
-	} else if (!sStr.Find("/")) {
-		xOper = OP_DIVIDE;
+	} else if (!localStr.Find("/")) {
+		oper = OP_DIVIDE;
 
-	} else if (!sStr.Find("%")) {
-		xOper = OP_MOD;
+	} else if (!localStr.Find("%")) {
+		oper = OP_MOD;
 
-	} else if (!sStr.Find("CONTAINS")) {
-		// Sdev contains object
-		xOper = OP_CONTAINS;
+	} else if (!localStr.Find("CONTAINS")) {
+		// SDev contains object
+		oper = OP_CONTAINS;
 
-	} else if (!sStr.Find("HAS")) {
-		// Sdev has type of object
-		xOper = OP_HAS;
+	} else if (!localStr.Find("HAS")) {
+		// SDev has type of object
+		oper = OP_HAS;
 
-	} else if (!sStr.Find("OR")) {
-		xOper = OP_OR;
+	} else if (!localStr.Find("OR")) {
+		oper = OP_OR;
 
-	} else if (!sStr.Find("STATUS")) {
-		xOper = OP_STATUS;
+	} else if (!localStr.Find("STATUS")) {
+		oper = OP_STATUS;
 
-	} else if (!sStr.Find("AND")) {
-		xOper = OP_AND;
+	} else if (!localStr.Find("AND")) {
+		oper = OP_AND;
 	}
 
-	if (xOper == OP_NONE)
+	if (oper == OP_NONE)
 		rc = ERR_UNKNOWN;
 
 	return rc;

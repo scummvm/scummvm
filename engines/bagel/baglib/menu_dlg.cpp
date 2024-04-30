@@ -121,7 +121,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 			pObj = m_pUniversalObjectList->GetNodeItem(i);
 
-			if (pObj->IsLocal() && (!pObj->GetExpression() || pObj->GetExpression()->Evaluate(pObj->IsNegative()))) {
+			if (pObj->IsLocal() && (!pObj->GetExpression() || pObj->GetExpression()->evaluate(pObj->IsNegative()))) {
 				// Only attach if not attached
 				if (pObj->isAttached() == false) {
 					pObj->attach();
@@ -181,7 +181,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 		pObj = GetObjectList()->GetNodeItem(i);
 
-		if (pObj->IsLocal() && (!pObj->GetExpression() || pObj->GetExpression()->Evaluate(pObj->IsNegative()))) {
+		if (pObj->IsLocal() && (!pObj->GetExpression() || pObj->GetExpression()->evaluate(pObj->IsNegative()))) {
 			// Only attach if not attached
 			if (pObj->isAttached() == false) {
 				pObj->attach();
