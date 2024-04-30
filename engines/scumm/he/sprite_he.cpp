@@ -1435,7 +1435,7 @@ void Sprite::eraseSprites() {
 
 	eraseRect.left = 1234;
 	eraseRect.top = 1234;
-	eraseRect.left = -1234;
+	eraseRect.right = -1234;
 	eraseRect.bottom = -1234;
 
 	spritePtr = _activeSprites;

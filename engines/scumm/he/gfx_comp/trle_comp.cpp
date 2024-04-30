@@ -2512,10 +2512,10 @@ int Wiz::trleRLECompression(byte *pdest, const WizRawPixel *psource, int rowsize
 	_trlePutSize = 0;
 
 	if (_uses16BitColor) {
-		_trleBuf[0] = lastc = c = (*source16++);
+		lastc = c = (*source16++);
 		_trleBuf[0] = (byte)c;
 	} else {
-		_trleBuf[0] = lastc = c = (*source8++);
+		lastc = c = (*source8++);
 		_trleBuf[0] = (byte)c;
 	}
 

@@ -1665,7 +1665,7 @@ void ScummEngine_v90he::o90_getOverlap() {
 		_sprite->getSpriteLogicalRect(firstList[0], &firstRect);
 		_sprite->getSpriteLogicalRect(lastList[0], &lastRect);
 
-		if (!_wiz->isRectValid(firstRect) || !_wiz->isRectValid(firstRect)) {
+		if (!_wiz->isRectValid(firstRect)) {
 			push(0);
 			break;
 		}
@@ -1684,7 +1684,7 @@ void ScummEngine_v90he::o90_getOverlap() {
 		_sprite->getSpriteDrawRect(firstList[0], &firstRect);
 		_sprite->getSpriteDrawRect(lastList[0], &lastRect);
 
-		if (!_wiz->isRectValid(firstRect) || !_wiz->isRectValid(firstRect)) {
+		if (!_wiz->isRectValid(firstRect)) {
 			push(0);
 			break;
 		}
@@ -1707,7 +1707,7 @@ void ScummEngine_v90he::o90_getOverlap() {
 		lastRect.right = lastList[2];
 		lastRect.bottom = lastList[3];
 
-		if (!_wiz->isRectValid(firstRect) || _wiz->isRectValid(firstRect)) {
+		if (!_wiz->isRectValid(firstRect)) {
 			push(0);
 			break;
 		}
@@ -1727,7 +1727,7 @@ void ScummEngine_v90he::o90_getOverlap() {
 		lastRect.right = lastList[2];
 		lastRect.bottom = lastList[3];
 
-		if (!_wiz->isRectValid(firstRect) || !_wiz->isRectValid(firstRect)) {
+		if (!_wiz->isRectValid(firstRect)) {
 			push(0);
 			break;
 		}

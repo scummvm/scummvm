@@ -132,7 +132,7 @@ static bool getMoonbaseWizSizeAndType(ScummEngine_v71he *vm, WizImage *wizPtr, i
 
 	if (!workPtr) {
 		sizeX    = 0;
-		sizeX    = 0;
+		sizeY    = 0;
 		compType = 0;
 
 		return false;
