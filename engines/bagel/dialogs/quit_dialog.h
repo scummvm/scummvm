@@ -45,7 +45,7 @@ protected:
 	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
 
 	// Data
-	CBofBmpButton *m_pButtons[NUM_QUIT_BUTTONS];
+	CBofBmpButton *_pButtons[NUM_QUIT_BUTTONS];
 };
 
 } // namespace Bagel

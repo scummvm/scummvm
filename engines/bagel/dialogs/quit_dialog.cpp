@@ -30,15 +30,15 @@
 namespace Bagel {
 
 struct ST_BUTTONS {
-	const char *m_pszName;
-	const char *m_pszUp;
-	const char *m_pszDown;
-	const char *m_pszFocus;
-	const char *m_pszDisabled;
-	int m_nLeft;
-	int m_nTop;
-	int m_nWidth;
-	int m_nHeight;
+	const char *_pszName;
+	const char *_pszUp;
+	const char *_pszDown;
+	const char *_pszFocus;
+	const char *_pszDisabled;
+	int _nLeft;
+	int _nTop;
+	int _nWidth;
+	int _nHeight;
 	int _nID;
 };
 
@@ -52,7 +52,7 @@ CBagQuitDialog::CBagQuitDialog() {
 	// Inits
 	_nReturnValue = -1;
 	for (int i = 0; i < NUM_QUIT_BUTTONS; i++) {
-		m_pButtons[i] = nullptr;
+		_pButtons[i] = nullptr;
 	}
 }
 
@@ -75,18 +75,18 @@ void CBagQuitDialog::onInitDialog() {
 
 	// Build all our buttons
 	for (int i = 0; i < NUM_QUIT_BUTTONS; i++) {
-		Assert(m_pButtons[i] == nullptr);
+		Assert(_pButtons[i] == nullptr);
 
-		if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
-			CBofBitmap *pUp = loadBitmap(buildSysDir(g_stQuitButtons[i].m_pszUp), pPal);
-			CBofBitmap *pDown = loadBitmap(buildSysDir(g_stQuitButtons[i].m_pszDown), pPal);
-			CBofBitmap *pFocus = loadBitmap(buildSysDir(g_stQuitButtons[i].m_pszFocus), pPal);
-			CBofBitmap *pDis = loadBitmap(buildSysDir(g_stQuitButtons[i].m_pszDisabled), pPal);
+		if ((_pButtons[i] = new CBofBmpButton) != nullptr) {
+			CBofBitmap *pUp = loadBitmap(buildSysDir(g_stQuitButtons[i]._pszUp), pPal);
+			CBofBitmap *pDown = loadBitmap(buildSysDir(g_stQuitButtons[i]._pszDown), pPal);
+			CBofBitmap *pFocus = loadBitmap(buildSysDir(g_stQuitButtons[i]._pszFocus), pPal);
+			CBofBitmap *pDis = loadBitmap(buildSysDir(g_stQuitButtons[i]._pszDisabled), pPal);
 
-			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
+			_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 
-			m_pButtons[i]->create(g_stQuitButtons[i].m_pszName, g_stQuitButtons[i].m_nLeft, g_stQuitButtons[i].m_nTop, g_stQuitButtons[i].m_nWidth, g_stQuitButtons[i].m_nHeight, this, g_stQuitButtons[i]._nID);
-			m_pButtons[i]->show();
+			_pButtons[i]->create(g_stQuitButtons[i]._pszName, g_stQuitButtons[i]._nLeft, g_stQuitButtons[i]._nTop, g_stQuitButtons[i]._nWidth, g_stQuitButtons[i]._nHeight, this, g_stQuitButtons[i]._nID);
+			_pButtons[i]->show();
 		} else {
 			ReportError(ERR_MEMORY);
 			break;
@@ -105,9 +105,9 @@ void CBagQuitDialog::onClose() {
 
 	// Destroy all buttons
 	for (int i = 0; i < NUM_QUIT_BUTTONS; i++) {
-		if (m_pButtons[i] != nullptr) {
-			delete m_pButtons[i];
-			m_pButtons[i] = nullptr;
+		if (_pButtons[i] != nullptr) {
+			delete _pButtons[i];
+			_pButtons[i] = nullptr;
 		}
 	}
 
@@ -135,7 +135,7 @@ void CBagQuitDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 		//
 		setReturnValue(CANCEL_BTN);
 		close();
-	} else 
+	} else
 		CBofDialog::onKeyHit(lKey, nRepCount);
 }
 
