@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-04-28 19:48+0000\n"
-"PO-Revision-Date: 2024-04-22 23:42+0000\n"
+"PO-Revision-Date: 2024-04-30 18:40+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -10904,10 +10904,8 @@ msgid "Ransome *unbeeped* (DLC)"
 msgstr "Ransome *unbeeped* (DLC)"
 
 #: engines/twp/metaengine.cpp:151
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select highlighted verb"
-msgstr "Valitse sävytin"
+msgstr "Valitse korostettu verbi"
 
 #: engines/twp/metaengine.cpp:157
 msgid "Select Actor 1"
