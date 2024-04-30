@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_RESTART_DIALOG_H
-#define BAGEL_BAGLIB_RESTART_DIALOG_H
+#ifndef BAGEL_DIALOGS_RESTART_DIALOG_H
+#define BAGEL_DIALOGS_RESTART_DIALOG_H
 
 #include "bagel/boflib/gui/button.h"
 #include "bagel/boflib/gui/text_box.h"

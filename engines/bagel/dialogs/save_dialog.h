@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_SAVE_DIALOG_H
-#define BAGEL_BAGLIB_SAVE_DIALOG_H
+#ifndef BAGEL_DIALOGS_SAVE_DIALOG_H
+#define BAGEL_DIALOGS_SAVE_DIALOG_H
 
 #include "bagel/baglib/save_game_file.h"
 #include "bagel/boflib/gui/dialog.h"
@@ -42,13 +42,13 @@ public:
 	virtual ErrorCode detach();
 
 	byte *getSaveGameBuffer(int &nLength) {
-		nLength = m_nBufSize;
-		return m_pSaveBuf;
+		nLength = _nBufSize;
+		return _pSaveBuf;
 	}
 
 	void setSaveGameBuffer(byte *pBuf, int nLength) {
-		m_pSaveBuf = pBuf;
-		m_nBufSize = nLength;
+		_pSaveBuf = pBuf;
+		_nBufSize = nLength;
 	}
 
 	void onInitDialog() override;
@@ -61,15 +61,15 @@ protected:
 
 	void saveAndClose();
 
-	CBofBmpButton *m_pButtons[NUM_BUTTONS];
-	CBofScrollBar *m_pScrollBar;
+	CBofBmpButton *_pButtons[NUM_BUTTONS];
+	CBofScrollBar *_pScrollBar;
 
-	CBofEditText *m_pEditText;
-	CBofListBox *m_pListBox;
-	int m_nSelectedItem;
-	byte *m_pSaveBuf;
-	int m_nBufSize;
-	CBofPalette *m_pSavePalette;
+	CBofEditText *_pEditText;
+	CBofListBox *_pListBox;
+	int _nSelectedItem;
+	byte *_pSaveBuf;
+	int _nBufSize;
+	CBofPalette *_pSavePalette;
 	SaveStateList _savesList;
 };
 

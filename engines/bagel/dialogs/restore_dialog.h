@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_RESTORE_DIALOG_H
-#define BAGEL_BAGLIB_RESTORE_DIALOG_H
+#ifndef BAGEL_DIALOGS_RESTORE_DIALOG_H
+#define BAGEL_DIALOGS_RESTORE_DIALOG_H
 
 #include "bagel/boflib/gui/list_box.h"
 #include "bagel/boflib/gui/scroll_bar.h"
