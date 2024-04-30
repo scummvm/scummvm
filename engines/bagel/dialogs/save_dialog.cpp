@@ -30,7 +30,7 @@ namespace Bagel {
 
 #define USE_CBAGDIALOG 0
 
-const char *BuildSysDir(const char *pszFile);
+const char *buildSysDir(const char *pszFile);
 
 #define DIALOG_WIDTH    640
 #define DIALOG_HEIGHT   480
@@ -108,11 +108,11 @@ ErrorCode CBagSaveDialog::attach() {
 
 	// Paint the SaveList Box onto the background
 	if (_pBackdrop != nullptr) {
-		CBofBitmap cBmp(BuildSysDir("SAVELIST.BMP"), pPal);
+		CBofBitmap cBmp(buildSysDir("SAVELIST.BMP"), pPal);
 		cBmp.paint(_pBackdrop, 153, 50);
 	}
 	if (_pBackdrop != nullptr) {
-		CBofBitmap cBmp(BuildSysDir("TYPESAVE.BMP"), pPal);
+		CBofBitmap cBmp(buildSysDir("TYPESAVE.BMP"), pPal);
 		cBmp.paint(_pBackdrop, 152, 400);
 	}
 
@@ -123,10 +123,10 @@ ErrorCode CBagSaveDialog::attach() {
 		if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
 			CBofBitmap *pUp, *pDown, *pFocus, *pDis;
 
-			pUp = loadBitmap(BuildSysDir(g_stButtons[i]._up), pPal);
-			pDown = loadBitmap(BuildSysDir(g_stButtons[i]._down), pPal);
-			pFocus = loadBitmap(BuildSysDir(g_stButtons[i]._focus), pPal);
-			pDis = loadBitmap(BuildSysDir(g_stButtons[i]._disabled), pPal);
+			pUp = loadBitmap(buildSysDir(g_stButtons[i]._up), pPal);
+			pDown = loadBitmap(buildSysDir(g_stButtons[i]._down), pPal);
+			pFocus = loadBitmap(buildSysDir(g_stButtons[i]._focus), pPal);
+			pDis = loadBitmap(buildSysDir(g_stButtons[i]._disabled), pPal);
 
 			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 
@@ -226,7 +226,7 @@ ErrorCode CBagSaveDialog::attach() {
 	return _errCode;
 }
 
-ErrorCode CBagSaveDialog::Detach() {
+ErrorCode CBagSaveDialog::detach() {
 	Assert(IsValidObject(this));
 
 	CBagCursor::hideSystemCursor();

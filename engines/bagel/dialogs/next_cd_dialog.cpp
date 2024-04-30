@@ -53,10 +53,10 @@ void CBagNextCDDialog::onInitDialog() {
 	if ((_pButton = new CBofBmpButton) != nullptr) {
 		CBofBitmap *pUp, *pDown, *pFocus, *pDis;
 
-		pUp = loadBitmap(BuildSysDir("CDOKUP.BMP"), pPal);
-		pDown = loadBitmap(BuildSysDir("CDOKDN.BMP"), pPal);
-		pFocus = loadBitmap(BuildSysDir("CDOKUP.BMP"), pPal);
-		pDis = loadBitmap(BuildSysDir("CDOKUP.BMP"), pPal);
+		pUp = loadBitmap(buildSysDir("CDOKUP.BMP"), pPal);
+		pDown = loadBitmap(buildSysDir("CDOKDN.BMP"), pPal);
+		pFocus = loadBitmap(buildSysDir("CDOKUP.BMP"), pPal);
+		pDis = loadBitmap(buildSysDir("CDOKUP.BMP"), pPal);
 
 		_pButton->loadBitmaps(pUp, pDown, pFocus, pDis);
 

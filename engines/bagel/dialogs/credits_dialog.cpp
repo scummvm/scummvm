@@ -109,7 +109,7 @@ ErrorCode CBagCreditsDialog::loadNextTextFile() {
 	Assert(IsValidObject(this));
 
 	// Our credits text must exist
-	Assert(FileExists(BuildSysDir(g_cScreen[_iScreen]._pszTextFile)));
+	Assert(FileExists(buildSysDir(g_cScreen[_iScreen]._pszTextFile)));
 
 	CBofRect cRect;
 	cRect.left = g_cScreen[_iScreen]._nLeft;
@@ -147,7 +147,7 @@ ErrorCode CBagCreditsDialog::loadNextTextFile() {
 		_pszText = nullptr;
 	}
 
-	CBofFile cFile(BuildSysDir(g_cScreen[_iScreen]._pszTextFile), CBF_BINARY | CBF_READONLY);
+	CBofFile cFile(buildSysDir(g_cScreen[_iScreen]._pszTextFile), CBF_BINARY | CBF_READONLY);
 
 	if (!cFile.ErrorOccurred()) {
 		uint32 lSize;
@@ -316,7 +316,7 @@ ErrorCode CBagCreditsDialog::nextScreen() {
 		CBofBitmap *pBmp;
 
 		// Load next screen (flushes previous backdrop)
-		if ((pBmp = Bagel::loadBitmap(BuildSysDir(g_cScreen[_iScreen]._pszBackground))) != nullptr) {
+		if ((pBmp = Bagel::loadBitmap(buildSysDir(g_cScreen[_iScreen]._pszBackground))) != nullptr) {
 			setBackdrop(pBmp);
 			g_b1 = true;
 		}

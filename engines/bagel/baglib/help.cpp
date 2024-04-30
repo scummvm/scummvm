@@ -165,7 +165,7 @@ ErrorCode CBagHelp::attach() {
 }
 
 
-ErrorCode CBagHelp::Detach() {
+ErrorCode CBagHelp::detach() {
 	Assert(IsValidObject(this));
 
 	CBagCursor::hideSystemCursor();

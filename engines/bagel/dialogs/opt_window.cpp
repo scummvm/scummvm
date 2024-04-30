@@ -72,15 +72,15 @@ namespace Bagel {
 #define WAVE_VOL_ID    13
 
 struct ST_BUTTONS {
-	const char *m_pszName;
-	const char *m_pszUp;
-	const char *m_pszDown;
-	const char *m_pszFocus;
-	const char *m_pszDisabled;
-	int m_nLeft;
-	int m_nTop;
-	int m_nWidth;
-	int m_nHeight;
+	const char *_pszName;
+	const char *_pszUp;
+	const char *_pszDown;
+	const char *_pszFocus;
+	const char *_pszDisabled;
+	int _nLeft;
+	int _nTop;
+	int _nWidth;
+	int _nHeight;
 	int _nID;
 };
 
@@ -98,14 +98,14 @@ static const ST_BUTTONS g_stButtons[NUM_SYS_BUTTONS] = {
 
 CBagOptWindow::CBagOptWindow() {
 	// Inits
-	m_pFlythroughs = nullptr;
-	m_pPanimations = nullptr;
+	_pFlythroughs = nullptr;
+	_pPanimations = nullptr;
 
-	m_pMidiVolumeScroll = nullptr;
-	m_pWaveVolumeScroll = nullptr;
-	m_pCorrectionScroll = nullptr;
-	m_pPanSpeedScroll = nullptr;
-	m_bDirty = false;
+	_pMidiVolumeScroll = nullptr;
+	_pWaveVolumeScroll = nullptr;
+	_pCorrectionScroll = nullptr;
+	_pPanSpeedScroll = nullptr;
+	_bDirty = false;
 
 	// CBofDialog Inits
 	_pDlgBackground = nullptr;
@@ -114,75 +114,75 @@ CBagOptWindow::CBagOptWindow() {
 	_lFlags = BOFDLG_DEFAULT;
 	_bEndDialog = false;
 
-	m_cSystemData.m_bPanimations = true;
-	m_cSystemData.m_bFlythroughs = true;
-	m_cSystemData.m_nCorrection = 4;
-	m_cSystemData.m_nPanSpeed = 1;
-	m_cSystemData.m_nMusicVolume = VOLUME_DEFAULT;
-	m_cSystemData.m_nSoundVolume = VOLUME_DEFAULT;
+	_cSystemData._bPanimations = true;
+	_cSystemData._bFlythroughs = true;
+	_cSystemData._nCorrection = 4;
+	_cSystemData._nPanSpeed = 1;
+	_cSystemData._nMusicVolume = VOLUME_DEFAULT;
+	_cSystemData._nSoundVolume = VOLUME_DEFAULT;
 
-	m_cColorScheme._cFace = RGB(123, 156, 206);
-	m_cColorScheme._cHighlight = RGB(255, 255, 255);
-	m_cColorScheme._cShadow = RGB(255, 255, 255);
-	m_cColorScheme._cText = RGB(0, 0, 0);
-	m_cColorScheme._cTextDisabled = RGB(255, 255, 255);
-	m_cColorScheme._cOutline = RGB(123, 156, 206);
+	_cColorScheme._cFace = RGB(123, 156, 206);
+	_cColorScheme._cHighlight = RGB(255, 255, 255);
+	_cColorScheme._cShadow = RGB(255, 255, 255);
+	_cColorScheme._cText = RGB(0, 0, 0);
+	_cColorScheme._cTextDisabled = RGB(255, 255, 255);
+	_cColorScheme._cOutline = RGB(123, 156, 206);
 
 	// Don't need to save the background behind this dialog
 	_lFlags &= ~BOFDLG_SAVEBACKGND;
 	_nReturnValue = -1;
 
 	for (int i = 0; i < NUM_SYS_BUTTONS; i++) {
-		m_pButtons[i] = nullptr;
+		_pButtons[i] = nullptr;
 	}
 }
 
-ErrorCode CBagOptWindow::Detach() {
+ErrorCode CBagOptWindow::detach() {
 	Assert(IsValidObject(this));
 
 	CBagCursor::hideSystemCursor();
 
 	// Save any changes that the user made
-	SaveOutNewSettings();
+	saveOutNewSettings();
 
 	// Destroy all buttons
 	for (int i = 0; i < NUM_SYS_BUTTONS; i++) {
-		if (m_pButtons[i] != nullptr) {
-			delete m_pButtons[i];
-			m_pButtons[i] = nullptr;
+		if (_pButtons[i] != nullptr) {
+			delete _pButtons[i];
+			_pButtons[i] = nullptr;
 		}
 	}
 
-	if (m_pFlythroughs != nullptr) {
-		delete m_pFlythroughs;
-		m_pFlythroughs = nullptr;
+	if (_pFlythroughs != nullptr) {
+		delete _pFlythroughs;
+		_pFlythroughs = nullptr;
 	}
-	if (m_pPanimations != nullptr) {
-		delete m_pPanimations;
-		m_pPanimations = nullptr;
-	}
-
-	if (m_pMidiVolumeScroll != nullptr) {
-		delete m_pMidiVolumeScroll;
-		m_pMidiVolumeScroll = nullptr;
+	if (_pPanimations != nullptr) {
+		delete _pPanimations;
+		_pPanimations = nullptr;
 	}
 
-	if (m_pWaveVolumeScroll != nullptr) {
-		delete m_pWaveVolumeScroll;
-		m_pWaveVolumeScroll = nullptr;
+	if (_pMidiVolumeScroll != nullptr) {
+		delete _pMidiVolumeScroll;
+		_pMidiVolumeScroll = nullptr;
 	}
 
-	if (m_pCorrectionScroll != nullptr) {
-		delete m_pCorrectionScroll;
-		m_pCorrectionScroll = nullptr;
+	if (_pWaveVolumeScroll != nullptr) {
+		delete _pWaveVolumeScroll;
+		_pWaveVolumeScroll = nullptr;
 	}
 
-	if (m_pPanSpeedScroll != nullptr) {
-		delete m_pPanSpeedScroll;
-		m_pPanSpeedScroll = nullptr;
+	if (_pCorrectionScroll != nullptr) {
+		delete _pCorrectionScroll;
+		_pCorrectionScroll = nullptr;
 	}
 
-	CBofApp::GetApp()->setPalette(m_pSavePalette);
+	if (_pPanSpeedScroll != nullptr) {
+		delete _pPanSpeedScroll;
+		_pPanSpeedScroll = nullptr;
+	}
+
+	CBofApp::GetApp()->setPalette(_pSavePalette);
 
 	return _errCode;
 }
@@ -198,7 +198,7 @@ void CBagOptWindow::onPaint(CBofRect *pRect) {
 
 ErrorCode CBagOptWindow::attach() {
 	// Save off the current game's palette
-	m_pSavePalette = CBofApp::GetApp()->getPalette();
+	_pSavePalette = CBofApp::GetApp()->getPalette();
 
 	// Insert ours
 	CBofPalette *pPal = _pBackdrop->getPalette();
@@ -206,46 +206,46 @@ ErrorCode CBagOptWindow::attach() {
 
 	// Paint stuff
 	if (_pBackdrop != nullptr) {
-		CBofBitmap cBmp(BuildSysDir("MUSICVOL.BMP"), pPal);
+		CBofBitmap cBmp(buildSysDir("MUSICVOL.BMP"), pPal);
 		cBmp.paint(_pBackdrop, 30, 30);
 	}
 	if (_pBackdrop != nullptr) {
-		CBofBitmap cBmp(BuildSysDir("AUDIOVOL.BMP"), pPal);
+		CBofBitmap cBmp(buildSysDir("AUDIOVOL.BMP"), pPal);
 		cBmp.paint(_pBackdrop, 30, 80);
 	}
 	if (_pBackdrop != nullptr) {
-		CBofBitmap cBmp(BuildSysDir("FLYTHRUS.BMP"), pPal);
+		CBofBitmap cBmp(buildSysDir("FLYTHRUS.BMP"), pPal);
 		cBmp.paint(_pBackdrop, 30, 140);
 	}
 	if (_pBackdrop != nullptr) {
-		CBofBitmap cBmp(BuildSysDir("PANIMATS.BMP"), pPal);
+		CBofBitmap cBmp(buildSysDir("PANIMATS.BMP"), pPal);
 		cBmp.paint(_pBackdrop, 30, 190);
 	}
 	if (_pBackdrop != nullptr) {
-		CBofBitmap cBmp(BuildSysDir("CORRECTN.BMP"), pPal);
+		CBofBitmap cBmp(buildSysDir("CORRECTN.BMP"), pPal);
 		cBmp.paint(_pBackdrop, 30, 250);
 	}
 	if (_pBackdrop != nullptr) {
-		CBofBitmap cBmp(BuildSysDir("PANSPEED.BMP"), pPal);
+		CBofBitmap cBmp(buildSysDir("PANSPEED.BMP"), pPal);
 		cBmp.paint(_pBackdrop, 30, 300);
 	}
 
 	// Build all our buttons
 	for (int i = 0; i < NUM_SYS_BUTTONS; i++) {
-		Assert(m_pButtons[i] == nullptr);
+		Assert(_pButtons[i] == nullptr);
 
-		if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
+		if ((_pButtons[i] = new CBofBmpButton) != nullptr) {
 			CBofBitmap *pUp, *pDown, *pFocus, *pDis;
 
-			pUp = loadBitmap(BuildSysDir(g_stButtons[i].m_pszUp), pPal);
-			pDown = loadBitmap(BuildSysDir(g_stButtons[i].m_pszDown), pPal);
-			pFocus = loadBitmap(BuildSysDir(g_stButtons[i].m_pszFocus), pPal);
-			pDis = loadBitmap(BuildSysDir(g_stButtons[i].m_pszDisabled), pPal);
+			pUp = loadBitmap(buildSysDir(g_stButtons[i]._pszUp), pPal);
+			pDown = loadBitmap(buildSysDir(g_stButtons[i]._pszDown), pPal);
+			pFocus = loadBitmap(buildSysDir(g_stButtons[i]._pszFocus), pPal);
+			pDis = loadBitmap(buildSysDir(g_stButtons[i]._pszDisabled), pPal);
 
-			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
+			_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 
-			m_pButtons[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i]._nID);
-			m_pButtons[i]->show();
+			_pButtons[i]->create(g_stButtons[i]._pszName, g_stButtons[i]._nLeft, g_stButtons[i]._nTop, g_stButtons[i]._nWidth, g_stButtons[i]._nHeight, this, g_stButtons[i]._nID);
+			_pButtons[i]->show();
 		} else {
 			ReportError(ERR_MEMORY);
 			break;
@@ -259,22 +259,22 @@ ErrorCode CBagOptWindow::attach() {
 	char szBuf5[MAX_DIRPATH];
 	char szBuf6[MAX_DIRPATH];
 
-	Common::strcpy_s(szBuf1, BuildSysDir(BROWN_SCROLL_BKGD));
-	Common::strcpy_s(szBuf2, BuildSysDir(BROWN_SCROLL_THMB));
-	Common::strcpy_s(szBuf3, BuildSysDir(BROWN_SCROLL_LFUP));
-	Common::strcpy_s(szBuf4, BuildSysDir(BROWN_SCROLL_RTUP));
-	Common::strcpy_s(szBuf5, BuildSysDir(BROWN_SCROLL_LFDN));
-	Common::strcpy_s(szBuf6, BuildSysDir(BROWN_SCROLL_RTDN));
+	Common::strcpy_s(szBuf1, buildSysDir(BROWN_SCROLL_BKGD));
+	Common::strcpy_s(szBuf2, buildSysDir(BROWN_SCROLL_THMB));
+	Common::strcpy_s(szBuf3, buildSysDir(BROWN_SCROLL_LFUP));
+	Common::strcpy_s(szBuf4, buildSysDir(BROWN_SCROLL_RTUP));
+	Common::strcpy_s(szBuf5, buildSysDir(BROWN_SCROLL_LFDN));
+	Common::strcpy_s(szBuf6, buildSysDir(BROWN_SCROLL_RTDN));
 
 	// Midi volume control
 	CBofRect cRect;
 	cRect.SetRect(73, 48, 73 + 120 - 1, 48 + 20 - 1);
-	if ((m_pMidiVolumeScroll = new CBofScrollBar) != nullptr) {
-		m_pMidiVolumeScroll->create("", &cRect, this, MIDI_VOL_ID);
+	if ((_pMidiVolumeScroll = new CBofScrollBar) != nullptr) {
+		_pMidiVolumeScroll->create("", &cRect, this, MIDI_VOL_ID);
 
-		m_pMidiVolumeScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
-		m_pMidiVolumeScroll->setScrollRange(VOLUME_MIN, VOLUME_MAX, true);
-		m_pMidiVolumeScroll->show();
+		_pMidiVolumeScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
+		_pMidiVolumeScroll->setScrollRange(VOLUME_MIN, VOLUME_MAX, true);
+		_pMidiVolumeScroll->show();
 
 	} else {
 		ReportError(ERR_MEMORY, "Could not allocate the Midi Volume Scroll Bar");
@@ -282,12 +282,12 @@ ErrorCode CBagOptWindow::attach() {
 
 	// Digital Audio volume control
 	cRect.SetRect(73, 98, 73 + 120 - 1, 98 + 20 - 1);
-	if ((m_pWaveVolumeScroll = new CBofScrollBar) != nullptr) {
-		m_pWaveVolumeScroll->create("", &cRect, this, WAVE_VOL_ID);
+	if ((_pWaveVolumeScroll = new CBofScrollBar) != nullptr) {
+		_pWaveVolumeScroll->create("", &cRect, this, WAVE_VOL_ID);
 
-		m_pWaveVolumeScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
-		m_pWaveVolumeScroll->setScrollRange(VOLUME_MIN, VOLUME_MAX, true);
-		m_pWaveVolumeScroll->show();
+		_pWaveVolumeScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
+		_pWaveVolumeScroll->setScrollRange(VOLUME_MIN, VOLUME_MAX, true);
+		_pWaveVolumeScroll->show();
 
 	} else {
 		ReportError(ERR_MEMORY, "Could not allocate the Wave Volume Scroll Bar");
@@ -295,12 +295,12 @@ ErrorCode CBagOptWindow::attach() {
 
 	// Pan Correction control
 	cRect.SetRect(73, 268, 73 + 120 - 1, 268 + 20 - 1);
-	if ((m_pCorrectionScroll = new CBofScrollBar) != nullptr) {
-		m_pCorrectionScroll->create("", &cRect, this, CORRECTION_ID);
+	if ((_pCorrectionScroll = new CBofScrollBar) != nullptr) {
+		_pCorrectionScroll->create("", &cRect, this, CORRECTION_ID);
 
-		m_pCorrectionScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
-		m_pCorrectionScroll->setScrollRange(0, 6, true);
-		m_pCorrectionScroll->show();
+		_pCorrectionScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
+		_pCorrectionScroll->setScrollRange(0, 6, true);
+		_pCorrectionScroll->show();
 
 	} else {
 		ReportError(ERR_MEMORY, "Could not allocate the Pan Correction Scroll Bar");
@@ -308,87 +308,87 @@ ErrorCode CBagOptWindow::attach() {
 
 	// Pan Speed control
 	cRect.SetRect(73, 318, 73 + 120 - 1, 318 + 20 - 1);
-	if ((m_pPanSpeedScroll = new CBofScrollBar) != nullptr) {
-		m_pPanSpeedScroll->create("", &cRect, this, PANSPEED_ID);
+	if ((_pPanSpeedScroll = new CBofScrollBar) != nullptr) {
+		_pPanSpeedScroll->create("", &cRect, this, PANSPEED_ID);
 
-		m_pPanSpeedScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
-		m_pPanSpeedScroll->setScrollRange(0, 5, true);
-		m_pPanSpeedScroll->show();
+		_pPanSpeedScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
+		_pPanSpeedScroll->setScrollRange(0, 5, true);
+		_pPanSpeedScroll->show();
 
 	} else {
 		ReportError(ERR_MEMORY, "Could not allocate the Pan Speed Scroll Bar");
 	}
 
 	cRect.SetRect(FLYTHROUGHS_LEFT, FLYTHROUGHS_TOP, FLYTHROUGHS_LEFT + CHECKBOX_WIDTH, FLYTHROUGHS_TOP + CHECKBOX_HEIGHT);
-	if ((m_pFlythroughs = new CBofCheckButton()) != nullptr) {
-		m_pFlythroughs->loadColorScheme(&m_cColorScheme);
-		_errCode = m_pFlythroughs->create("", &cRect, this, FLYTHROUGHS_ID);
-		m_pFlythroughs->show();
+	if ((_pFlythroughs = new CBofCheckButton()) != nullptr) {
+		_pFlythroughs->loadColorScheme(&_cColorScheme);
+		_errCode = _pFlythroughs->create("", &cRect, this, FLYTHROUGHS_ID);
+		_pFlythroughs->show();
 	}
 
 	cRect.SetRect(PANIMATIONS_LEFT, PANIMATIONS_TOP, PANIMATIONS_LEFT + CHECKBOX_WIDTH, PANIMATIONS_TOP + CHECKBOX_HEIGHT);
-	if ((m_pPanimations = new CBofCheckButton()) != nullptr) {
-		m_pPanimations->loadColorScheme(&m_cColorScheme);
-		_errCode = m_pPanimations->create("", &cRect, this, PAN_CHECK_ID);
-		m_pPanimations->show();
+	if ((_pPanimations = new CBofCheckButton()) != nullptr) {
+		_pPanimations->loadColorScheme(&_cColorScheme);
+		_errCode = _pPanimations->create("", &cRect, this, PAN_CHECK_ID);
+		_pPanimations->show();
 	}
 
-	LoadIniSettings();
+	loadIniSettings();
 
-	PutDialogData();
+	putDialogData();
 
 	CBagCursor::showSystemCursor();
 
 	return _errCode;
 }
 
-void CBagOptWindow::PutDialogData() {
+void CBagOptWindow::putDialogData() {
 	Assert(IsValidObject(this));
 
-	if (m_pMidiVolumeScroll != nullptr)
-		m_pMidiVolumeScroll->setPos(m_cSystemData.m_nMusicVolume, true, true);
+	if (_pMidiVolumeScroll != nullptr)
+		_pMidiVolumeScroll->setPos(_cSystemData._nMusicVolume, true, true);
 
-	if (m_pWaveVolumeScroll != nullptr)
-		m_pWaveVolumeScroll->setPos(m_cSystemData.m_nSoundVolume, true, true);
+	if (_pWaveVolumeScroll != nullptr)
+		_pWaveVolumeScroll->setPos(_cSystemData._nSoundVolume, true, true);
 
-	if (m_pCorrectionScroll != nullptr)
-		m_pCorrectionScroll->setPos(m_cSystemData.m_nCorrection, true, true);
+	if (_pCorrectionScroll != nullptr)
+		_pCorrectionScroll->setPos(_cSystemData._nCorrection, true, true);
 
-	if (m_pPanSpeedScroll != nullptr)
-		m_pPanSpeedScroll->setPos(m_cSystemData.m_nPanSpeed, true, true);
+	if (_pPanSpeedScroll != nullptr)
+		_pPanSpeedScroll->setPos(_cSystemData._nPanSpeed, true, true);
 
-	if (m_pFlythroughs != nullptr)
-		m_pFlythroughs->SetCheck(m_cSystemData.m_bFlythroughs);
+	if (_pFlythroughs != nullptr)
+		_pFlythroughs->SetCheck(_cSystemData._bFlythroughs);
 
-	if (m_pPanimations != nullptr)
-		m_pPanimations->SetCheck(m_cSystemData.m_bPanimations);
+	if (_pPanimations != nullptr)
+		_pPanimations->SetCheck(_cSystemData._bPanimations);
 }
 
-void CBagOptWindow::GetDialogData() {
+void CBagOptWindow::getDialogData() {
 	Assert(IsValidObject(this));
 
-	if (m_pMidiVolumeScroll != nullptr) {
-		m_cSystemData.m_nMusicVolume = m_pMidiVolumeScroll->getPos();
+	if (_pMidiVolumeScroll != nullptr) {
+		_cSystemData._nMusicVolume = _pMidiVolumeScroll->getPos();
 	}
 
-	if (m_pWaveVolumeScroll != nullptr) {
-		m_cSystemData.m_nSoundVolume = m_pWaveVolumeScroll->getPos();
+	if (_pWaveVolumeScroll != nullptr) {
+		_cSystemData._nSoundVolume = _pWaveVolumeScroll->getPos();
 	}
 
-	if (m_pCorrectionScroll != nullptr) {
-		m_cSystemData.m_nCorrection = m_pCorrectionScroll->getPos();
+	if (_pCorrectionScroll != nullptr) {
+		_cSystemData._nCorrection = _pCorrectionScroll->getPos();
 	}
 
-	if (m_pPanSpeedScroll != nullptr) {
-		m_cSystemData.m_nPanSpeed = m_pPanSpeedScroll->getPos();
+	if (_pPanSpeedScroll != nullptr) {
+		_cSystemData._nPanSpeed = _pPanSpeedScroll->getPos();
 	}
 
-	if (m_pPanimations != nullptr) {
-		m_cSystemData.m_bPanimations = m_pPanimations->GetCheck();
+	if (_pPanimations != nullptr) {
+		_cSystemData._bPanimations = _pPanimations->GetCheck();
 	}
 
-	if (m_pFlythroughs != nullptr) {
-		m_cSystemData.m_bFlythroughs = m_pFlythroughs->GetCheck();
+	if (_pFlythroughs != nullptr) {
+		_cSystemData._bFlythroughs = _pFlythroughs->GetCheck();
 	}
 }
 
@@ -427,7 +427,7 @@ void CBagOptWindow::onBofButton(CBofObject *pObject, int nState) {
 			break;
 
 		case DEFAULTS_ID:
-			ReturnToDefaults();
+			returnToDefaults();
 			break;
 
 		case QUIT_ID: {
@@ -463,7 +463,7 @@ void CBagOptWindow::onBofButton(CBofObject *pObject, int nState) {
 				pWin = pApp->getMasterWnd();
 				if ((pWin != nullptr) && pWin->ShowRestoreDialog(this)) {
 					// Can't restore a deleted palette
-					m_pSavePalette = nullptr;
+					_pSavePalette = nullptr;
 
 					killBackground();
 					close();
@@ -478,7 +478,7 @@ void CBagOptWindow::onBofButton(CBofObject *pObject, int nState) {
 				pWin = pApp->getMasterWnd();
 				if ((pWin != nullptr) && pWin->ShowRestartDialog(this)) {
 					// Can't restore a deleted palette
-					m_pSavePalette = nullptr;
+					_pSavePalette = nullptr;
 
 					killBackground();
 					close();
@@ -498,13 +498,13 @@ void CBagOptWindow::onBofButton(CBofObject *pObject, int nState) {
 
 		switch (pButton->getControlID()) {
 		case FLYTHROUGHS_ID:
-			m_cSystemData.m_bFlythroughs = (pButton->getState() == BUTTON_CHECKED);
-			m_bDirty = true;
+			_cSystemData._bFlythroughs = (pButton->getState() == BUTTON_CHECKED);
+			_bDirty = true;
 			break;
 
 		case PAN_CHECK_ID:
-			m_cSystemData.m_bPanimations = (pButton->getState() == BUTTON_CHECKED);
-			m_bDirty = true;
+			_cSystemData._bPanimations = (pButton->getState() == BUTTON_CHECKED);
+			_bDirty = true;
 			break;
 
 		default:
@@ -518,35 +518,35 @@ void CBagOptWindow::onBofScrollBar(CBofObject *pObj, int nPos) {
 
 	CBofScrollBar *pScroll = (CBofScrollBar *)pObj;
 
-	if (pScroll == m_pMidiVolumeScroll) {
-		m_cSystemData.m_nMusicVolume = nPos;
-		CBofSound::SetVolume(m_cSystemData.m_nMusicVolume, m_cSystemData.m_nSoundVolume);
+	if (pScroll == _pMidiVolumeScroll) {
+		_cSystemData._nMusicVolume = nPos;
+		CBofSound::SetVolume(_cSystemData._nMusicVolume, _cSystemData._nSoundVolume);
 
-	} else if (pScroll == m_pWaveVolumeScroll) {
-		m_cSystemData.m_nSoundVolume = nPos;
-		CBofSound::SetVolume(m_cSystemData.m_nMusicVolume, m_cSystemData.m_nSoundVolume);
+	} else if (pScroll == _pWaveVolumeScroll) {
+		_cSystemData._nSoundVolume = nPos;
+		CBofSound::SetVolume(_cSystemData._nMusicVolume, _cSystemData._nSoundVolume);
 
-	} else if (pScroll == m_pCorrectionScroll) {
-		m_cSystemData.m_nCorrection = nPos;
+	} else if (pScroll == _pCorrectionScroll) {
+		_cSystemData._nCorrection = nPos;
 
-	} else if (pScroll == m_pPanSpeedScroll) {
-		m_cSystemData.m_nPanSpeed = nPos;
+	} else if (pScroll == _pPanSpeedScroll) {
+		_cSystemData._nPanSpeed = nPos;
 	}
 }
 
-void CBagOptWindow::SaveOutNewSettings() {
+void CBagOptWindow::saveOutNewSettings() {
 	Assert(IsValidObject(this));
 
 	CBagel *pApp = CBagel::getBagApp();
 
 	// Write out current system settings
-	ConfMan.setBool("Panimations", m_cSystemData.m_bPanimations);
-	ConfMan.setBool("FlyThroughs", m_cSystemData.m_bFlythroughs);
+	ConfMan.setBool("Panimations", _cSystemData._bPanimations);
+	ConfMan.setBool("FlyThroughs", _cSystemData._bFlythroughs);
 
-	ConfMan.setInt("Correction", 6 - m_cSystemData.m_nCorrection);
-	ConfMan.setInt("PanSpeed", m_cSystemData.m_nPanSpeed);
-	ConfMan.setInt("music_volume", VOLUME_SVM(m_cSystemData.m_nMusicVolume));
-	ConfMan.setInt("sfx_volume", VOLUME_SVM(m_cSystemData.m_nSoundVolume));
+	ConfMan.setInt("Correction", 6 - _cSystemData._nCorrection);
+	ConfMan.setInt("PanSpeed", _cSystemData._nPanSpeed);
+	ConfMan.setInt("music_volume", VOLUME_SVM(_cSystemData._nMusicVolume));
+	ConfMan.setInt("sfx_volume", VOLUME_SVM(_cSystemData._nSoundVolume));
 	ConfMan.flushToDisk();
 
 	if (pApp) {
@@ -568,13 +568,13 @@ void CBagOptWindow::SaveOutNewSettings() {
 		}
 	}
 
-	CBofSound::SetVolume(m_cSystemData.m_nMusicVolume, m_cSystemData.m_nSoundVolume);
-	CBagPanWindow::SetPanSpeed(m_cSystemData.m_nPanSpeed);
+	CBofSound::SetVolume(_cSystemData._nMusicVolume, _cSystemData._nSoundVolume);
+	CBagPanWindow::SetPanSpeed(_cSystemData._nPanSpeed);
 
-	m_bDirty = false;
+	_bDirty = false;
 }
 
-void CBagOptWindow::LoadIniSettings() {
+void CBagOptWindow::loadIniSettings() {
 	Assert(IsValidObject(this));
 	int nTemp;
 
@@ -584,42 +584,42 @@ void CBagOptWindow::LoadIniSettings() {
 	ConfMan.registerDefault("PanSpeed", 1);
 
 	// Read in current system settings
-	m_cSystemData.m_bPanimations = ConfMan.getBool("Panimations");
-	m_cSystemData.m_bFlythroughs = ConfMan.getBool("FlyThroughs");
+	_cSystemData._bPanimations = ConfMan.getBool("Panimations");
+	_cSystemData._bFlythroughs = ConfMan.getBool("FlyThroughs");
 
 	nTemp = ConfMan.getInt("Correction");
 	if (nTemp < 0 || nTemp > 6)
 		nTemp = 2;
-	m_cSystemData.m_nCorrection = 6 - nTemp;
+	_cSystemData._nCorrection = 6 - nTemp;
 
 	// Pan speed
 	nTemp = ConfMan.getInt("PanSpeed");
 	if (nTemp < 0 || nTemp > 5)
 		nTemp = 1;
-	m_cSystemData.m_nPanSpeed = nTemp;
+	_cSystemData._nPanSpeed = nTemp;
 
 	// Midi Volume
 	int musVolume = ConfMan.getBool("music_mute") ? 0 : CLIP(ConfMan.getInt("music_volume"), 0, 255);
-	m_cSystemData.m_nMusicVolume = SVM_VOLUME(musVolume);
+	_cSystemData._nMusicVolume = SVM_VOLUME(musVolume);
 
 	// Digital Audio Volume
 	int sfxVolume = ConfMan.getBool("sfx_mute") ? 0 : CLIP(ConfMan.getInt("sfx_volume"), 0, 255);
-	m_cSystemData.m_nSoundVolume = SVM_VOLUME(sfxVolume);
+	_cSystemData._nSoundVolume = SVM_VOLUME(sfxVolume);
 }
 
-void CBagOptWindow::ReturnToDefaults() {
+void CBagOptWindow::returnToDefaults() {
 	Assert(IsValidObject(this));
 
-	m_cSystemData.m_bPanimations = true;
-	m_cSystemData.m_bFlythroughs = true;
-	m_cSystemData.m_nCorrection = 4;
-	m_cSystemData.m_nPanSpeed = 1;
-	m_cSystemData.m_nMusicVolume = VOLUME_DEFAULT;
-	m_cSystemData.m_nSoundVolume = VOLUME_DEFAULT;
+	_cSystemData._bPanimations = true;
+	_cSystemData._bFlythroughs = true;
+	_cSystemData._nCorrection = 4;
+	_cSystemData._nPanSpeed = 1;
+	_cSystemData._nMusicVolume = VOLUME_DEFAULT;
+	_cSystemData._nSoundVolume = VOLUME_DEFAULT;
 
-	PutDialogData();
+	putDialogData();
 
-	m_bDirty = true;
+	_bDirty = true;
 }
 
 void CBagOptWindow::onInitDialog() {
@@ -669,7 +669,7 @@ void CBagOptWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 			pWin = pApp->getMasterWnd();
 			if ((pWin != nullptr) && pWin->ShowRestoreDialog(this)) {
 				// Can't restore a deleted palette
-				m_pSavePalette = nullptr;
+				_pSavePalette = nullptr;
 
 				killBackground();
 				close();
@@ -684,7 +684,7 @@ void CBagOptWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 			pWin = pApp->getMasterWnd();
 			if ((pWin != nullptr) && pWin->ShowRestartDialog(this)) {
 				// Can't restore a deleted palette
-				m_pSavePalette = nullptr;
+				_pSavePalette = nullptr;
 
 				killBackground();
 				close();
@@ -719,7 +719,7 @@ void CBagOptWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 	}
 }
 
-const char *BuildSysDir(const char *pszFile) {
+const char *buildSysDir(const char *pszFile) {
 	Assert(pszFile != nullptr);
 	static char szBuf[MAX_DIRPATH];
 

@@ -103,11 +103,11 @@ ErrorCode CBagRestoreDialog::attach() {
 
 	// Paint the SaveList Box onto the background
 	if (_pBackdrop != nullptr) {
-		CBofBitmap cBmp(BuildSysDir("SAVELIST.BMP"), pPal);
+		CBofBitmap cBmp(buildSysDir("SAVELIST.BMP"), pPal);
 		cBmp.paint(_pBackdrop, 153, 50);
 	}
 	if (_pBackdrop != nullptr) {
-		CBofBitmap cBmp(BuildSysDir("TYPESAVE.BMP"), pPal);
+		CBofBitmap cBmp(buildSysDir("TYPESAVE.BMP"), pPal);
 		cBmp.paint(_pBackdrop, 152, 400);
 	}
 
@@ -118,10 +118,10 @@ ErrorCode CBagRestoreDialog::attach() {
 		if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
 			CBofBitmap *pUp, *pDown, *pFocus, *pDis;
 
-			pUp = loadBitmap(BuildSysDir(g_stButtons[i].m_pszUp), pPal);
-			pDown = loadBitmap(BuildSysDir(g_stButtons[i].m_pszDown), pPal);
-			pFocus = loadBitmap(BuildSysDir(g_stButtons[i].m_pszFocus), pPal);
-			pDis = loadBitmap(BuildSysDir(g_stButtons[i].m_pszDisabled), pPal);
+			pUp = loadBitmap(buildSysDir(g_stButtons[i].m_pszUp), pPal);
+			pDown = loadBitmap(buildSysDir(g_stButtons[i].m_pszDown), pPal);
+			pFocus = loadBitmap(buildSysDir(g_stButtons[i].m_pszFocus), pPal);
+			pDis = loadBitmap(buildSysDir(g_stButtons[i].m_pszDisabled), pPal);
 
 			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 
@@ -226,7 +226,7 @@ ErrorCode CBagRestoreDialog::attach() {
 	return _errCode;
 }
 
-ErrorCode CBagRestoreDialog::Detach() {
+ErrorCode CBagRestoreDialog::detach() {
 	Assert(IsValidObject(this));
 
 	CBagCursor::hideSystemCursor();

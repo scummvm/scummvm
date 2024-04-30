@@ -186,7 +186,7 @@ ErrorCode CBagMasterWin::ShowSystemDialog(bool bSaveBackground) {
 		g_bPauseTimer = true;
 		int nReturnValue = cOptionDialog.doModal();
 		g_bPauseTimer = false;
-		cOptionDialog.Detach();
+		cOptionDialog.detach();
 
 		g_hackWindow = pLastWin;
 
@@ -209,7 +209,7 @@ ErrorCode CBagMasterWin::ShowCreditsDialog(CBofWindow *pWin, bool bSaveBkg) {
 	CBagCreditsDialog cCreditsDialog;
 
 	// Use specified bitmap as this dialog's image
-	CBofBitmap *pBmp = Bagel::loadBitmap(BuildSysDir("BARAREA.BMP"));
+	CBofBitmap *pBmp = Bagel::loadBitmap(buildSysDir("BARAREA.BMP"));
 
 	cCreditsDialog.setBackdrop(pBmp);
 
@@ -1048,7 +1048,7 @@ ErrorCode CBagMasterWin::OnHelp(const CBofString &sHelpFile, bool /*bSaveBkg*/, 
 
 		cHelp.SetHelpFile(sFile.GetBuffer());
 		cHelp.doModal();
-		cHelp.Detach();
+		cHelp.detach();
 	}
 
 	return _errCode;
@@ -1317,9 +1317,9 @@ void CBagMasterWin::onUserMessage(uint32 nMessage, uint32 lParam) {
 
 		char szBuf[MAX_FNAME];
 
-		Common::strcpy_s(szBuf, BuildSysDir("DIED2.BMP"));
+		Common::strcpy_s(szBuf, buildSysDir("DIED2.BMP"));
 		if (lParam == 2) {
-			Common::strcpy_s(szBuf, BuildSysDir("START.BMP"));
+			Common::strcpy_s(szBuf, buildSysDir("START.BMP"));
 		}
 
 		CBagStartDialog cDlg(szBuf, this);
@@ -1585,7 +1585,7 @@ bool CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 			bSaved = (nId == SAVE_BTN);
 
-			cSaveDialog.Detach();
+			cSaveDialog.detach();
 
 			BofFree(pSaveBuf);
 		} else {
@@ -1757,7 +1757,7 @@ bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 		cRestoreDialog.doModal();
 		g_bPauseTimer = bSaveTimer;
 
-		cRestoreDialog.Detach();
+		cRestoreDialog.detach();
 
 		bRestored = (!cRestoreDialog.ErrorOccurred() && cRestoreDialog.Restored());
 		cRestoreDialog.destroy();
