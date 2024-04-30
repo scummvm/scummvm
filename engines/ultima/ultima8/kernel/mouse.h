@@ -118,6 +118,9 @@ private:
 	ObjId _dragging_objId;
 	uint16 _draggingItem_startGump;
 	uint16 _draggingItem_lastGump;
+
+	int _walkThreshold;
+	int _runThreshold;
 private:
 	void startDragging(int mx, int my);
 	void moveDragging(int mx, int my);
