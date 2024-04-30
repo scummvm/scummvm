@@ -696,7 +696,7 @@ void CBibbleWindow::onBofButton(CBofObject *pObject, int nState) {
 			cBmp.paint(this, &cRect);
 		}
 
-		DisplayCredits();
+		displayCredits();
 	}
 }
 
@@ -704,7 +704,7 @@ void CBibbleWindow::onClose() {
 	g_engine->quitGame();
 }
 
-ErrorCode CBibbleWindow::DisplayCredits() {
+ErrorCode CBibbleWindow::displayCredits() {
 	Assert(IsValidObject(this));
 
 	// Display new number of credits
@@ -791,7 +791,7 @@ ErrorCode CBibbleWindow::PlayGame() {
 				m_nNumCredits += nPayoff;
 
 				// Display new number of credits
-				DisplayCredits();
+				displayCredits();
 
 				LogInfo(BuildString("\tWinner on square %d.  Pays %d credits", i, nPayoff));
 			}
@@ -1081,7 +1081,7 @@ void CBibbleWindow::onLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 			// Highlight the area selected
 			Highlight(m_pSelected, HIGHLIGHT_COLOR);
 
-			DisplayCredits();
+			displayCredits();
 			break;
 		}
 	}
