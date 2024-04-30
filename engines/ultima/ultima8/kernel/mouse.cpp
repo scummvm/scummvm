@@ -29,6 +29,7 @@
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/actors/avatar_mover_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
@@ -147,8 +148,17 @@ bool Mouse::isMouseDownEvent(MouseButton button) const {
 }
 
 int Mouse::getMouseLength(int mx, int my) const {
+	Ultima8Engine *engine = Ultima8Engine::get_instance();
+	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
+	if (proc) {
+		if (proc->hasMovementFlags(AvatarMoverProcess::MOVE_STEP))
+			return 0;
+		if (proc->hasMovementFlags(AvatarMoverProcess::MOVE_RUN))
+			return 2;
+	}
+
 	Rect dims;
-	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
+	RenderSurface *screen = engine->getRenderScreen();
 	screen->GetSurfaceDims(dims);
 
 	// Reference point is the center of the screen

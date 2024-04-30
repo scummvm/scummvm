@@ -230,7 +230,7 @@ void U8AvatarMoverProcess::handleCombatMode() {
 			nextanim = Animation::advance;
 		}
 
-		if (mouselength == 2) {
+		if (mouselength == 2 || hasMovementFlags(MOVE_RUN)) {
 			// Take a step before running
 			nextanim = Animation::walk;
 			avatar->setActorFlag(Actor::ACT_COMBATRUN);
@@ -508,9 +508,9 @@ void U8AvatarMoverProcess::handleNormalMode() {
 		if (checkTurn(mousedir, false))
 			return;
 
-		Animation::Sequence nextanim = Animation::jumpUp;
-		if (mouselength > 0) {
-			nextanim = Animation::jump;
+		Animation::Sequence nextanim = Animation::jump;
+		if (mouselength == 0 || hasMovementFlags(MOVE_STEP)) {
+			nextanim = Animation::jumpUp;
 		}
 
 		// check if there's something we can climb up onto here
@@ -539,11 +539,11 @@ void U8AvatarMoverProcess::handleNormalMode() {
 	}
 
 	if (hasMovementFlags(MOVE_MOUSE_DIRECTION)) {
-		Animation::Sequence nextanim = Animation::step;
+		Animation::Sequence nextanim = Animation::walk;
 
-		if (mouselength == 1) {
-			nextanim = Animation::walk;
-		} else if (mouselength == 2) {
+		if (mouselength == 0 || hasMovementFlags(MOVE_STEP)) {
+			nextanim = Animation::step;
+		} else if (mouselength == 2 || hasMovementFlags(MOVE_RUN)) {
 			if (lastanim == Animation::run
 			        || lastanim == Animation::runningJump
 			        || lastanim == Animation::walk)
