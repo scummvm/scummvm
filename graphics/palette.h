@@ -62,6 +62,7 @@ public:
 
 	~Palette();
 
+	Palette &operator=(const Palette &rhs);
 	bool operator==(const Palette &rhs) const { return equals(rhs); }
 	bool operator!=(const Palette &rhs) const { return !equals(rhs); }
 

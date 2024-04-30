@@ -47,6 +47,19 @@ Palette::~Palette() {
 	delete[] _data;
 }
 
+Palette &Palette::operator=(const Palette &rhs) {
+	delete[] _data;
+	_data = nullptr;
+	_size = rhs._size;
+
+	if (_size > 0) {
+		_data = new byte[_size * 3]();
+		memcpy(_data, rhs._data, _size * 3);
+	}
+
+	return *this;
+}
+
 bool Palette::equals(const Palette &p) const {
 	return p._size == _size && !memcmp(_data, p._data, p._size * 3);
 }
