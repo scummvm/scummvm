@@ -30,15 +30,15 @@
 namespace Bagel {
 
 struct ST_BUTTONS {
-	const char *m_pszName;
-	const char *m_pszUp;
-	const char *m_pszDown;
-	const char *m_pszFocus;
-	const char *m_pszDisabled;
-	int m_nLeft;
-	int m_nTop;
-	int m_nWidth;
-	int m_nHeight;
+	const char *_pszName;
+	const char *_pszUp;
+	const char *_pszDown;
+	const char *_pszFocus;
+	const char *_pszDisabled;
+	int _nLeft;
+	int _nTop;
+	int _nWidth;
+	int _nHeight;
 	int _nID;
 };
 
@@ -77,13 +77,13 @@ void CBagStartDialog::onInitDialog() {
 		Assert(_buttons[i] == nullptr);
 
 		if ((_buttons[i] = new CBofBmpButton) != nullptr) {
-			CBofBitmap *pUp = loadBitmap(buildSysDir(g_stStartButtons[i].m_pszUp), pPal);
-			CBofBitmap *pDown = loadBitmap(buildSysDir(g_stStartButtons[i].m_pszDown), pPal);
-			CBofBitmap *pFocus = loadBitmap(buildSysDir(g_stStartButtons[i].m_pszFocus), pPal);
-			CBofBitmap *pDis = loadBitmap(buildSysDir(g_stStartButtons[i].m_pszDisabled), pPal);
+			CBofBitmap *pUp = loadBitmap(buildSysDir(g_stStartButtons[i]._pszUp), pPal);
+			CBofBitmap *pDown = loadBitmap(buildSysDir(g_stStartButtons[i]._pszDown), pPal);
+			CBofBitmap *pFocus = loadBitmap(buildSysDir(g_stStartButtons[i]._pszFocus), pPal);
+			CBofBitmap *pDis = loadBitmap(buildSysDir(g_stStartButtons[i]._pszDisabled), pPal);
 
 			_buttons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
-			_buttons[i]->create(g_stStartButtons[i].m_pszName, g_stStartButtons[i].m_nLeft, g_stStartButtons[i].m_nTop, g_stStartButtons[i].m_nWidth, g_stStartButtons[i].m_nHeight, this, g_stStartButtons[i]._nID);
+			_buttons[i]->create(g_stStartButtons[i]._pszName, g_stStartButtons[i]._nLeft, g_stStartButtons[i]._nTop, g_stStartButtons[i]._nWidth, g_stStartButtons[i]._nHeight, this, g_stStartButtons[i]._nID);
 			_buttons[i]->show();
 
 		} else {
