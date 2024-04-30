@@ -120,7 +120,7 @@ ErrorCode SpaceBarEngine::initialize() {
 			} else if (savesExist()) {
 				bRestart = false;
 
-				CBagStartDialog cDlg(BuildSysDir("START.BMP"), _masterWin);
+				CBagStartDialog cDlg(buildSysDir("START.BMP"), _masterWin);
 
 				CBofWindow *pLastWin = g_hackWindow;
 				g_hackWindow = &cDlg;

@@ -35,7 +35,7 @@ public:
 	CBagHelp();
 
 	virtual ErrorCode attach();
-	virtual ErrorCode Detach();
+	virtual ErrorCode detach();
 	virtual void onInitDialog();
 
 	ErrorCode SetHelpFile(const char *pszTextFile);

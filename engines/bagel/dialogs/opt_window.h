@@ -32,13 +32,13 @@
 namespace Bagel {
 
 struct SYSTEM_DATA {
-	int m_nMusicVolume;
-	int m_nSoundVolume;
+	int _nMusicVolume;
+	int _nSoundVolume;
 
-	bool m_bFlythroughs;
-	bool m_bPanimations;
-	int m_nCorrection;
-	int m_nPanSpeed;
+	bool _bFlythroughs;
+	bool _bPanimations;
+	int _nCorrection;
+	int _nPanSpeed;
 } ;
 
 #define NUM_SYS_BUTTONS 8
@@ -48,34 +48,32 @@ public:
 	CBagOptWindow();
 
 	virtual ErrorCode attach();
-	virtual ErrorCode Detach();
+	virtual ErrorCode detach();
 
 	/**
 	 * Get the system settings from CBofApp.
 	 */
-	void LoadIniSettings();
+	void loadIniSettings();
 
 	/**
 	 * Save Out New Settings to the ini file of the App.
 	 */
-	void SaveOutNewSettings();
+	void saveOutNewSettings();
 
 	/**
 	 * Change Settings to the defaults
 	 */
-	void ReturnToDefaults();
+	void returnToDefaults();
 
 	/**
 	 * Changes the states of buttons & controls to reflect the current variable values.
 	 */
-	void PutDialogData();
+	void putDialogData();
 
 	/**
 	 * Changes the current variable values to reflect the states of buttons & controls.
 	 */
-	void GetDialogData();
-
-	void UpdateOptions();
+	void getDialogData();
 
 protected:
 	virtual void onPaint(CBofRect *pRect);
@@ -87,23 +85,23 @@ protected:
 
 	// Data members
 	//
-	CBofBmpButton *m_pButtons[NUM_SYS_BUTTONS];
-	SYSTEM_DATA m_cSystemData;
-	ST_COLORSCHEME m_cColorScheme;
+	CBofBmpButton *_pButtons[NUM_SYS_BUTTONS];
+	SYSTEM_DATA _cSystemData;
+	ST_COLORSCHEME _cColorScheme;
 
-	CBofCheckButton *m_pFlythroughs;
-	CBofCheckButton *m_pPanimations;
+	CBofCheckButton *_pFlythroughs;
+	CBofCheckButton *_pPanimations;
 
-	CBofScrollBar *m_pMidiVolumeScroll;
-	CBofScrollBar *m_pWaveVolumeScroll;
-	CBofScrollBar *m_pCorrectionScroll;
-	CBofScrollBar *m_pPanSpeedScroll;
-	CBofPalette *m_pSavePalette;
+	CBofScrollBar *_pMidiVolumeScroll;
+	CBofScrollBar *_pWaveVolumeScroll;
+	CBofScrollBar *_pCorrectionScroll;
+	CBofScrollBar *_pPanSpeedScroll;
+	CBofPalette *_pSavePalette;
 
-	bool m_bDirty;
+	bool _bDirty;
 };
 
-const char *BuildSysDir(const char *pszFile);
+const char *buildSysDir(const char *pszFile);
 
 } // namespace Bagel
 

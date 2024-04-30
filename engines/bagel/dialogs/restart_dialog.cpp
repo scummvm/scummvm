@@ -79,7 +79,7 @@ void CBagRestartDialog::onInitDialog() {
 	// Paint the SaveList Box onto the background
 	if (_pBackdrop != nullptr) {
 		pPal = _pBackdrop->getPalette();
-		CBofBitmap cBmp(BuildSysDir("RESTDBOX.BMP"), pPal);
+		CBofBitmap cBmp(buildSysDir("RESTDBOX.BMP"), pPal);
 		cBmp.paint(_pBackdrop, 181, 182);
 	}
 
@@ -89,10 +89,10 @@ void CBagRestartDialog::onInitDialog() {
 
 		if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
 
-			CBofBitmap *pUp = loadBitmap(BuildSysDir(g_stRestartButtons[i].m_pszUp), pPal);
-			CBofBitmap *pDown = loadBitmap(BuildSysDir(g_stRestartButtons[i].m_pszDown), pPal);
-			CBofBitmap *pFocus = loadBitmap(BuildSysDir(g_stRestartButtons[i].m_pszFocus), pPal);
-			CBofBitmap *pDis = loadBitmap(BuildSysDir(g_stRestartButtons[i].m_pszDisabled), pPal);
+			CBofBitmap *pUp = loadBitmap(buildSysDir(g_stRestartButtons[i].m_pszUp), pPal);
+			CBofBitmap *pDown = loadBitmap(buildSysDir(g_stRestartButtons[i].m_pszDown), pPal);
+			CBofBitmap *pFocus = loadBitmap(buildSysDir(g_stRestartButtons[i].m_pszFocus), pPal);
+			CBofBitmap *pDis = loadBitmap(buildSysDir(g_stRestartButtons[i].m_pszDisabled), pPal);
 
 			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 
