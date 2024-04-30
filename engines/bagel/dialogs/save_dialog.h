@@ -41,12 +41,12 @@ public:
 	virtual ErrorCode attach();
 	virtual ErrorCode detach();
 
-	byte *GetSaveGameBuffer(int &nLength) {
+	byte *getSaveGameBuffer(int &nLength) {
 		nLength = m_nBufSize;
 		return m_pSaveBuf;
 	}
 
-	void SetSaveGameBuffer(byte *pBuf, int nLength) {
+	void setSaveGameBuffer(byte *pBuf, int nLength) {
 		m_pSaveBuf = pBuf;
 		m_nBufSize = nLength;
 	}

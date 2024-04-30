@@ -38,16 +38,16 @@ class CBagRestoreDialog : public CBofDialog {
 private:
 	ErrorCode RestoreAndclose();
 
-	CBofBmpButton *m_pButtons[NUM_RESTORE_BTNS];
-	CBofScrollBar *m_pScrollBar = nullptr;
+	CBofBmpButton *_pButtons[NUM_RESTORE_BTNS];
+	CBofScrollBar *_pScrollBar = nullptr;
 
-	CBofText *m_pText = nullptr;
-	CBofListBox *m_pListBox = nullptr;
-	int m_nSelectedItem = -1;
-	ST_BAGEL_SAVE *m_pSaveBuf = nullptr;
-	int m_nBufSize = 0;
-	bool m_bRestored = false;
-	CBofPalette *m_pSavePalette = nullptr;
+	CBofText *_pText = nullptr;
+	CBofListBox *_pListBox = nullptr;
+	int _nSelectedItem = -1;
+	ST_BAGEL_SAVE *_pSaveBuf = nullptr;
+	int _nBufSize = 0;
+	bool _bRestored = false;
+	CBofPalette *_pSavePalette = nullptr;
 	SaveStateList _savesList;
 
 protected:
@@ -63,18 +63,18 @@ public:
 	virtual ErrorCode attach();
 	virtual ErrorCode detach();
 
-	ST_BAGEL_SAVE *GetSaveGameBuffer(int &nLength) {
-		nLength = m_nBufSize;
-		return m_pSaveBuf;
+	ST_BAGEL_SAVE *getSaveGameBuffer(int &nLength) {
+		nLength = _nBufSize;
+		return _pSaveBuf;
 	}
 
-	void SetSaveGameBuffer(ST_BAGEL_SAVE *pBuf, int nLength) {
-		m_pSaveBuf = pBuf;
-		m_nBufSize = nLength;
+	void setSaveGameBuffer(ST_BAGEL_SAVE *pBuf, int nLength) {
+		_pSaveBuf = pBuf;
+		_nBufSize = nLength;
 	}
 
-	bool Restored() {
-		return m_bRestored;
+	bool restored() {
+		return _bRestored;
 	}
 
 	void onInitDialog() override;
