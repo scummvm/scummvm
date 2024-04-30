@@ -81,12 +81,12 @@ protected:
 
 	virtual void onMainLoop();
 
-	ErrorCode NextScreen();
-	ErrorCode DisplayCredits();
-	ErrorCode LoadNextTextFile();
-	int LinesPerPage();
-	void NextLine();
-	ErrorCode PaintLine(int nLine, char *pszText);
+	ErrorCode nextScreen();
+	ErrorCode displayCredits();
+	ErrorCode loadNextTextFile();
+	int linesPerPage();
+	void nextLine();
+	ErrorCode paintLine(int nLine, char *pszText);
 
 	CBofBitmap *m_pCreditsBmp;
 	CBofBitmap *m_pSaveBmp;

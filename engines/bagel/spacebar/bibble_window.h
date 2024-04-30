@@ -90,7 +90,7 @@ protected:
 	ErrorCode BonkBibble(int nBibble, int nShout);
 
 	void CalcOutcome();
-	ErrorCode DisplayCredits();
+	ErrorCode displayCredits();
 
 	ErrorCode Highlight(CBetArea *pArea, byte nColor);
 	ErrorCode UnHighlight(CBetArea *pArea);

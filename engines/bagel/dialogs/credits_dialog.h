@@ -43,25 +43,25 @@ protected:
 
 	virtual void onMainLoop();
 
-	ErrorCode NextScreen();
-	ErrorCode DisplayCredits();
-	ErrorCode LoadNextTextFile();
-	int LinesPerPage();
-	void NextLine();
-	ErrorCode PaintLine(int nLine, char *pszText);
+	ErrorCode nextScreen();
+	ErrorCode displayCredits();
+	ErrorCode loadNextTextFile();
+	int linesPerPage();
+	void nextLine();
+	ErrorCode paintLine(int nLine, char *pszText);
 
-	CBofBitmap *m_pCreditsBmp;
-	CBofBitmap *m_pSaveBmp;
+	CBofBitmap *_pCreditsBmp;
+	CBofBitmap *_pSaveBmp;
 
-	char *m_pszNextLine;
-	char *m_pszEnd;
-	char *m_pszText;
+	char *_pszNextLine;
+	char *_pszEnd;
+	char *_pszText;
 
-	int m_nLines;
-	int m_nNumPixels;
-	int m_iScreen;
+	int _nLines;
+	int _nNumPixels;
+	int _iScreen;
 
-	bool m_bDisplay;
+	bool _bDisplay;
 };
 
 } // namespace Bagel
