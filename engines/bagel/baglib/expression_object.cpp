@@ -28,24 +28,24 @@ namespace Bagel {
 
 CBagExpressionObject::CBagExpressionObject() : CBagObject() {
 	m_xObjType = EXPRESSOBJ;
-	expression = nullptr;
+	_expression = nullptr;
 	setConditional(false);
 	SetVisible(false);
 	SetTimeless(true);
 }
 
 CBagExpressionObject::~CBagExpressionObject() {
-	if (expression != nullptr) {
-		delete expression;
-		expression = nullptr;
+	if (_expression != nullptr) {
+		delete _expression;
+		_expression = nullptr;
 	}
 	CBagObject::detach();
 }
 
 bool CBagExpressionObject::runObject() {
-	if (expression != nullptr) {
+	if (_expression != nullptr) {
 		CBagVar localVar;
-		expression->evaluate(false, localVar);
+		_expression->evaluate(false, localVar);
 
 		if (!isConditional()) {
 			if (getFileName().IsEmpty())
@@ -80,9 +80,9 @@ PARSE_CODES CBagExpressionObject::setInfo(bof_ifstream &istr) {
 		//  AS  - n number of slides in sprite
 		//
 		case '(': {
-			expression = new CBagExpression();
-			if (expression) {
-				expression->setInfo(istr);
+			_expression = new CBagExpression();
+			if (_expression) {
+				_expression->setInfo(istr);
 				objectUpdatedFl = true;
 			} else {
 				// there was an error
