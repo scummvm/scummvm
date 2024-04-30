@@ -58,8 +58,8 @@ Mouse::Mouse() : _lastMouseFrame(-1), _flashingCursorTime(0), _mouseOverGump(0),
 	// space to make the large cursor without having to hit the edge.
 
 	// Walk & run threshold range of 0-255
-	ConfMan.registerDefault("walk_threshold", 24);
-	ConfMan.registerDefault("run_threshold", 80);
+	ConfMan.registerDefault("walk_threshold", 50);
+	ConfMan.registerDefault("run_threshold", 160);
 
 	_walkThreshold = CLIP<int>(ConfMan.getInt("walk_threshold"), 0, 255);
 	_runThreshold = CLIP<int>(ConfMan.getInt("run_threshold"), 0, 255);
@@ -164,16 +164,16 @@ int Mouse::getMouseLength(int mx, int my) const {
 	// Reference point is the center of the screen
 	int dx = abs(mx - dims.width() / 2);
 	int dy = abs((dims.height() / 2) - my);
-	int xmed = dims.width() * _runThreshold / 255;
-	int ymed = dims.height() * _runThreshold / 255;
+	int xmed = dims.width() / 2 * _runThreshold / 255;
+	int ymed = dims.height() / 2 * _runThreshold / 255;
 
 	if (dx > xmed || dy > ymed)
 		return 2;
 
 	// For short cursor, reference point is near the avatar's feet
 	dy = abs((dims.height() / 2 + 14) - my); //! constant
-	int xshort = dims.width() * _walkThreshold / 255;
-	int yshort = dims.height() * _walkThreshold / 255;
+	int xshort = dims.width() / 2 * _walkThreshold / 255;
+	int yshort = dims.height() / 2 * _walkThreshold / 255;
 
 	if (dx > xshort || dy > yshort)
 		return 1;
