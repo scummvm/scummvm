@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	fonts/ttf.o \
 	fonts/winfont.o \
 	framelimiter.o \
+	image-archive.o \
 	korfont.o \
 	larryScale.o \
 	maccursor.o \

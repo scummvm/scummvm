@@ -23,6 +23,7 @@
 #define GRAPHICS_MACGUI_MACTEXTCANVAS_H
 
 #include "graphics/macgui/macwindowmanager.h"
+#include "graphics/image-archive.h"
 
 namespace Graphics {
 
@@ -122,6 +123,7 @@ public:
 	bool _macFontMode = true;
 	MacText *_macText;
 	MacFontRun _defaultFormatting;
+	ImageArchive _imageArchive;
 
 public:
 	~MacTextCanvas();

@@ -650,13 +650,11 @@ void MacTextCanvas::render(int from, int to, int shadow) {
 
 	for (int i = myFrom; i != myTo; i += delta) {
 		if (!_text[i].picfname.empty()) {
-			const Surface *image = _macText->getImageSurface(_text[i].picfname);
-
-			int xOffset = (_text[i].width - _text[i].charwidth) / 2;
-			Common::Rect bbox(xOffset, _text[i].y, xOffset + _text[i].charwidth, _text[i].y + _text[i].height);
+			const Surface *image = _imageArchive.getImageSurface(_text[i].picfname, _text[i].charwidth, _text[i].height);
 
 			if (image) {
-				surface->blitFrom(image, Common::Rect(0, 0, image->w, image->h), bbox);
+				int xOffset = (_text[i].width - _text[i].charwidth) / 2;
+				surface->blitFrom(image, Common::Point(xOffset, _text[i].y));
 
 				D(9, "MacTextCanvas::render: Image %d x %d bbox: %d, %d, %d, %d", image->w, image->h, bbox.left, bbox.top,
 						bbox.right, bbox.bottom);
@@ -859,7 +857,7 @@ int MacTextCanvas::getLineWidth(int lineNum, bool enforce, int col) {
 		return line->width;
 
 	if (!line->picfname.empty()) {
-		const Surface *image = _macText->getImageSurface(line->picfname);
+		const Surface *image = _imageArchive.getImageSurface(line->picfname);
 
 		if (image) {
 			line->width = _maxWidth;
