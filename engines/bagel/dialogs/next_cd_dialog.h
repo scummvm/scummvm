@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_DIALOGS_H
-#define BAGEL_BAGLIB_DIALOGS_H
+#ifndef BAGEL_DIALOGS_NEXT_CD_DIALOG_H
+#define BAGEL_DIALOGS_NEXT_CD_DIALOG_H
 
 #include "bagel/boflib/gui/dialog.h"
 #include "bagel/boflib/gui/button.h"

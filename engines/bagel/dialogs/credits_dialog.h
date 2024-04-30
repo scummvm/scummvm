@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_CREDITS_DIALOG_H
-#define BAGEL_BAGLIB_CREDITS_DIALOG_H
+#ifndef BAGEL_DIALOGS_CREDITS_DIALOG_H
+#define BAGEL_DIALOGS_CREDITS_DIALOG_H
 
 #include "bagel/boflib/gui/dialog.h"
 #include "bagel/boflib/gfx/text.h"

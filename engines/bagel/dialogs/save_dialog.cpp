@@ -83,16 +83,16 @@ CBagSaveDialog::CBagSaveDialog() {
 	LogInfo("Constructing CBagSaveDialog");
 	g_nSelectedSlot = -1;
 
-	m_pListBox = nullptr;
-	m_pEditText = nullptr;
-	m_pScrollBar = nullptr;
-	m_nSelectedItem = -1;
-	m_pSaveBuf = nullptr;
-	m_nBufSize = 0;
-	m_pSavePalette = nullptr;
+	_pListBox = nullptr;
+	_pEditText = nullptr;
+	_pScrollBar = nullptr;
+	_nSelectedItem = -1;
+	_pSaveBuf = nullptr;
+	_nBufSize = 0;
+	_pSavePalette = nullptr;
 
 	for (int i = 0; i < NUM_BUTTONS; i++) {
-		m_pButtons[i] = nullptr;
+		_pButtons[i] = nullptr;
 	}
 }
 
@@ -100,7 +100,7 @@ ErrorCode CBagSaveDialog::attach() {
 	Assert(IsValidObject(this));
 
 	// Save off the current game's palette
-	m_pSavePalette = CBofApp::GetApp()->getPalette();
+	_pSavePalette = CBofApp::GetApp()->getPalette();
 
 	// Insert ours
 	CBofPalette *pPal = _pBackdrop->getPalette();
@@ -118,9 +118,9 @@ ErrorCode CBagSaveDialog::attach() {
 
 	// Build all our buttons
 	for (int i = 0; i < NUM_BUTTONS; i++) {
-		Assert(m_pButtons[i] == nullptr);
+		Assert(_pButtons[i] == nullptr);
 
-		if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
+		if ((_pButtons[i] = new CBofBmpButton) != nullptr) {
 			CBofBitmap *pUp, *pDown, *pFocus, *pDis;
 
 			pUp = loadBitmap(buildSysDir(g_stButtons[i]._up), pPal);
@@ -128,10 +128,10 @@ ErrorCode CBagSaveDialog::attach() {
 			pFocus = loadBitmap(buildSysDir(g_stButtons[i]._focus), pPal);
 			pDis = loadBitmap(buildSysDir(g_stButtons[i]._disabled), pPal);
 
-			m_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
+			_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 
-			m_pButtons[i]->create(g_stButtons[i]._name, g_stButtons[i]._left, g_stButtons[i]._top, g_stButtons[i]._width, g_stButtons[i]._height, this, g_stButtons[i]._id);
-			m_pButtons[i]->show();
+			_pButtons[i]->create(g_stButtons[i]._name, g_stButtons[i]._left, g_stButtons[i]._top, g_stButtons[i]._width, g_stButtons[i]._height, this, g_stButtons[i]._id);
+			_pButtons[i]->show();
 		} else {
 			ReportError(ERR_MEMORY);
 			break;
@@ -139,11 +139,11 @@ ErrorCode CBagSaveDialog::attach() {
 	}
 
 	// The edit text control must not be currently allocated
-	Assert(m_pEditText == nullptr);
+	Assert(_pEditText == nullptr);
 
-	if ((m_pEditText = new CBofEditText("", EDIT_X, EDIT_Y, EDIT_DX, EDIT_DY, this)) != nullptr) {
-		m_pEditText->setText("");
-		m_pEditText->show();
+	if ((_pEditText = new CBofEditText("", EDIT_X, EDIT_Y, EDIT_DX, EDIT_DY, this)) != nullptr) {
+		_pEditText->setText("");
+		_pEditText->show();
 	}
 
 	// Get a list of saves, and filter out the autosave entry if present
@@ -157,23 +157,23 @@ ErrorCode CBagSaveDialog::attach() {
 	}
 
 	// The list box must not be currently allocated
-	Assert(m_pListBox == nullptr);
+	Assert(_pListBox == nullptr);
 
 	// Create a list box for the user to choose the slot to save into
-	if ((m_pListBox = new CBofListBox()) != nullptr) {
+	if ((_pListBox = new CBofListBox()) != nullptr) {
 		CBofRect cRect(LIST_X, LIST_Y, LIST_X + LIST_DX - 1, LIST_Y + LIST_DY - 1);
 
-		m_pListBox->create("SaveGameList", &cRect, this);
+		_pListBox->create("SaveGameList", &cRect, this);
 
-		m_pListBox->setPointSize(LIST_FONT_SIZE);
-		m_pListBox->setItemHeight(LIST_TEXT_DY);
+		_pListBox->setPointSize(LIST_FONT_SIZE);
+		_pListBox->setItemHeight(LIST_TEXT_DY);
 
 		// Set a color for selection highlighting
 		if (_pBackdrop != nullptr) {
 			CBofPalette *pPal2 = _pBackdrop->getPalette();
 			byte iPalIdx = pPal2->getNearestIndex(RGB(255, 0, 0));
 
-			m_pListBox->setHighlightColor(pPal2->getColor(iPalIdx));
+			_pListBox->setHighlightColor(pPal2->getColor(iPalIdx));
 		}
 
 		// Fill the list box with save game entries
@@ -186,39 +186,39 @@ ErrorCode CBagSaveDialog::attach() {
 					Common::String desc = entry.getDescription();
 					Common::strcpy_s(title, desc.c_str());
 
-					if (m_nSelectedItem == -1) {
-						m_nSelectedItem = i;
-						m_pEditText->setText(desc.c_str());
+					if (_nSelectedItem == -1) {
+						_nSelectedItem = i;
+						_pEditText->setText(desc.c_str());
 					}
 					break;
 				}
 			}
 
-			m_pListBox->addToTail(title, false);
+			_pListBox->addToTail(title, false);
 		}
 
-		m_pListBox->show();
-		m_pListBox->updateWindow();
+		_pListBox->show();
+		_pListBox->updateWindow();
 
 	} else {
 		ReportError(ERR_MEMORY);
 	}
 
-	if (m_nSelectedItem != -1) {
-		if (m_pEditText != nullptr) {
-			m_pEditText->setFocus();
+	if (_nSelectedItem != -1) {
+		if (_pEditText != nullptr) {
+			_pEditText->setFocus();
 		}
 
-		if (m_pListBox != nullptr) {
-			m_pListBox->setSelectedItem(m_nSelectedItem, false);
+		if (_pListBox != nullptr) {
+			_pListBox->setSelectedItem(_nSelectedItem, false);
 
-			if (m_nSelectedItem >= 9) {
+			if (_nSelectedItem >= 9) {
 
-				m_pListBox->scrollTo(m_nSelectedItem - 8);
+				_pListBox->scrollTo(_nSelectedItem - 8);
 			}
 		}
-	} else if (m_pButtons[0] != nullptr) {
-		m_pButtons[0]->setState(BUTTON_DISABLED);
+	} else if (_pButtons[0] != nullptr) {
+		_pButtons[0]->setState(BUTTON_DISABLED);
 	}
 
 	CBagCursor::showSystemCursor();
@@ -231,33 +231,33 @@ ErrorCode CBagSaveDialog::detach() {
 
 	CBagCursor::hideSystemCursor();
 
-	if (m_pScrollBar != nullptr) {
-		delete m_pScrollBar;
-		m_pScrollBar = nullptr;
+	if (_pScrollBar != nullptr) {
+		delete _pScrollBar;
+		_pScrollBar = nullptr;
 	}
 
-	if (m_pEditText != nullptr) {
-		delete m_pEditText;
-		m_pEditText = nullptr;
+	if (_pEditText != nullptr) {
+		delete _pEditText;
+		_pEditText = nullptr;
 	}
 
-	if (m_pListBox != nullptr) {
-		delete m_pListBox;
-		m_pListBox = nullptr;
+	if (_pListBox != nullptr) {
+		delete _pListBox;
+		_pListBox = nullptr;
 	}
 
 	// Destroy all buttons
 	for (int i = 0; i < NUM_BUTTONS; i++) {
-		if (m_pButtons[i] != nullptr) {
-			delete m_pButtons[i];
-			m_pButtons[i] = nullptr;
+		if (_pButtons[i] != nullptr) {
+			delete _pButtons[i];
+			_pButtons[i] = nullptr;
 		}
 	}
 
-	m_nSelectedItem = -1;
+	_nSelectedItem = -1;
 
 	// Restore the saved palette
-	CBofApp::GetApp()->setPalette(m_pSavePalette);
+	CBofApp::GetApp()->setPalette(_pSavePalette);
 
 	return _errCode;
 }
@@ -267,8 +267,8 @@ void CBagSaveDialog::onPaint(CBofRect *pRect) {
 
 	paintBackdrop(pRect);
 
-	if (m_pListBox != nullptr) {
-		m_pListBox->repaintAll();
+	if (_pListBox != nullptr) {
+		_pListBox->repaintAll();
 	}
 
 	validateAnscestors();
@@ -279,15 +279,15 @@ void CBagSaveDialog::saveAndClose() {
 
 	// We should not be able to access the save button if we
 	// have not yet chosen a slot to save into.
-	Assert(m_nSelectedItem != -1);
-	if (m_nSelectedItem != -1) {
-		LogInfo(BuildString("Saving into slot #%d", m_nSelectedItem));
+	Assert(_nSelectedItem != -1);
+	if (_nSelectedItem != -1) {
+		LogInfo(BuildString("Saving into slot #%d", _nSelectedItem));
 
-		g_nSelectedSlot = m_nSelectedItem;
+		g_nSelectedSlot = _nSelectedItem;
 
 		// Save the game
-		g_engine->saveGameState(m_nSelectedItem + 1,
-			m_pEditText->getText().GetBuffer());
+		g_engine->saveGameState(_nSelectedItem + 1,
+			_pEditText->getText().GetBuffer());
 
 		close();
 		setReturnValue(SAVE_BTN);
@@ -300,26 +300,26 @@ void CBagSaveDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 
 	switch (lKey) {
 	case BKEY_UP:
-		if (m_pListBox != nullptr) {
-			m_pListBox->lineUp();
+		if (_pListBox != nullptr) {
+			_pListBox->lineUp();
 		}
 		break;
 
 	case BKEY_DOWN:
-		if (m_pListBox != nullptr) {
-			m_pListBox->lineDown();
+		if (_pListBox != nullptr) {
+			_pListBox->lineDown();
 		}
 		break;
 
 	case BKEY_PAGEUP:
-		if (m_pListBox != nullptr) {
-			m_pListBox->pageUp();
+		if (_pListBox != nullptr) {
+			_pListBox->pageUp();
 		}
 		break;
 
 	case BKEY_PAGEDOWN:
-		if (m_pListBox != nullptr) {
-			m_pListBox->pageDown();
+		if (_pListBox != nullptr) {
+			_pListBox->pageDown();
 		}
 		break;
 
@@ -347,7 +347,7 @@ void CBagSaveDialog::onBofButton(CBofObject *pObject, int nFlags) {
 
 	if (nFlags != BUTTON_CLICKED)
 		return;
-	
+
 	CBofBmpButton *pButton = (CBofBmpButton *)pObject;
 
 	switch (pButton->getControlID()) {
@@ -364,26 +364,26 @@ void CBagSaveDialog::onBofButton(CBofObject *pObject, int nFlags) {
 		break;
 
 	case LINEUP_BTN:
-		if (m_pListBox != nullptr) {
-			m_pListBox->lineUp();
+		if (_pListBox != nullptr) {
+			_pListBox->lineUp();
 		}
 		break;
 
 	case LINEDN_BTN:
-		if (m_pListBox != nullptr) {
-			m_pListBox->lineDown();
+		if (_pListBox != nullptr) {
+			_pListBox->lineDown();
 		}
 		break;
 
 	case PAGEUP_BTN:
-		if (m_pListBox != nullptr) {
-			m_pListBox->pageUp();
+		if (_pListBox != nullptr) {
+			_pListBox->pageUp();
 		}
 		break;
 
 	case PAGEDN_BTN:
-		if (m_pListBox != nullptr) {
-			m_pListBox->pageDown();
+		if (_pListBox != nullptr) {
+			_pListBox->pageDown();
 		}
 		break;
 
@@ -401,21 +401,21 @@ void CBagSaveDialog::onBofListBox(CBofObject * /*pObject*/, int nItemIndex) {
 	releaseFocus();
 
 	// There is only one list box on this dialog
-	if (m_pListBox != nullptr) {
+	if (_pListBox != nullptr) {
 		// Force item to be highlighted
-		m_pListBox->repaintAll();
+		_pListBox->repaintAll();
 
 		// Show selected item in the Edit control
-		if (m_pEditText != nullptr) {
-			m_pEditText->setFocus();
-			m_pEditText->setText(m_pListBox->getText(nItemIndex));
+		if (_pEditText != nullptr) {
+			_pEditText->setFocus();
+			_pEditText->setText(_pListBox->getText(nItemIndex));
 		}
 
-		m_nSelectedItem = nItemIndex;
+		_nSelectedItem = nItemIndex;
 	}
 
-	if ((m_nSelectedItem != -1) && (m_pButtons[0] != nullptr) && (m_pButtons[0]->getState() == BUTTON_DISABLED)) {
-		m_pButtons[0]->setState(BUTTON_UP, true);
+	if ((_nSelectedItem != -1) && (_pButtons[0] != nullptr) && (_pButtons[0]->getState() == BUTTON_DISABLED)) {
+		_pButtons[0]->setState(BUTTON_UP, true);
 	}
 }
 
