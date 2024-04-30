@@ -1560,7 +1560,7 @@ bool CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, bool bSaveBkg) {
 		if (pSaveBuf != nullptr) {
 			CBagSaveDialog cSaveDialog;
 			FillSaveBuffer(pSaveBuf);
-			cSaveDialog.SetSaveGameBuffer((byte *)pSaveBuf, sizeof(ST_BAGEL_SAVE));
+			cSaveDialog.setSaveGameBuffer((byte *)pSaveBuf, sizeof(ST_BAGEL_SAVE));
 
 			// Use specified bitmap as this dialog's image
 			CBofBitmap *pBmp = Bagel::loadBitmap(m_cSysScreen.GetBuffer());
@@ -1759,7 +1759,7 @@ bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 		cRestoreDialog.detach();
 
-		bRestored = (!cRestoreDialog.ErrorOccurred() && cRestoreDialog.Restored());
+		bRestored = (!cRestoreDialog.ErrorOccurred() && cRestoreDialog.restored());
 		cRestoreDialog.destroy();
 
 		g_hackWindow = pLastWin;
