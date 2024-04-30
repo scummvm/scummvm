@@ -32,7 +32,7 @@ namespace Bagel {
 CBagNextCDDialog::CBagNextCDDialog() {
 	// Inits
 	_nReturnValue = -1;
-	m_pButton = nullptr;
+	_pButton = nullptr;
 	_lFlags = 0;
 }
 
@@ -50,7 +50,7 @@ void CBagNextCDDialog::onInitDialog() {
 	selectPalette(pPal);
 
 	// Build all our buttons
-	if ((m_pButton = new CBofBmpButton) != nullptr) {
+	if ((_pButton = new CBofBmpButton) != nullptr) {
 		CBofBitmap *pUp, *pDown, *pFocus, *pDis;
 
 		pUp = loadBitmap(BuildSysDir("CDOKUP.BMP"), pPal);
@@ -58,10 +58,10 @@ void CBagNextCDDialog::onInitDialog() {
 		pFocus = loadBitmap(BuildSysDir("CDOKUP.BMP"), pPal);
 		pDis = loadBitmap(BuildSysDir("CDOKUP.BMP"), pPal);
 
-		m_pButton->loadBitmaps(pUp, pDown, pFocus, pDis);
+		_pButton->loadBitmaps(pUp, pDown, pFocus, pDis);
 
-		m_pButton->create("NextCD", 77, 127, 60, 30, this, OK_BTN);
-		m_pButton->show();
+		_pButton->create("NextCD", 77, 127, 60, 30, this, OK_BTN);
+		_pButton->show();
 
 	} else {
 		ReportError(ERR_MEMORY);
@@ -77,9 +77,9 @@ void CBagNextCDDialog::onClose() {
 	CBagCursor::hideSystemCursor();
 
 	// Destroy my buttons
-	if (m_pButton != nullptr) {
-		delete m_pButton;
-		m_pButton = nullptr;
+	if (_pButton != nullptr) {
+		delete _pButton;
+		_pButton = nullptr;
 	}
 
 	CBofDialog::onClose();
