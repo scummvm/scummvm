@@ -28,40 +28,41 @@ namespace Bagel {
 
 CBagExpressionObject::CBagExpressionObject() : CBagObject() {
 	m_xObjType = EXPRESSOBJ;
-	m_xExpression = nullptr;
-	SetConditional(false);
+	expression = nullptr;
+	setConditional(false);
 	SetVisible(false);
 	SetTimeless(true);
 }
 
 CBagExpressionObject::~CBagExpressionObject() {
-	if (m_xExpression != nullptr) {
-		delete m_xExpression;
-		m_xExpression = nullptr;
+	if (expression != nullptr) {
+		delete expression;
+		expression = nullptr;
 	}
-	detach();
+	CBagObject::detach();
 }
 
 bool CBagExpressionObject::runObject() {
-	if (m_xExpression != nullptr) {
-		CBagVar xVar;
-		m_xExpression->evaluate(false, xVar);
+	if (expression != nullptr) {
+		CBagVar localVar;
+		expression->evaluate(false, localVar);
 
-		if (!IsConditional()) {
+		if (!isConditional()) {
 			if (getFileName().IsEmpty())
 				return false;
 
 			int nIndex = getFileName().Find("~~");
-			if (nIndex > 0) { // This is a reference
-				CBofString sObject = getFileName().Left(nIndex);
-				CBofString sProperty = getFileName().Mid(nIndex + 2);
+			if (nIndex > 0) {
+				// This is a reference
+				CBofString objectStr = getFileName().Left(nIndex);
+				CBofString propertyStr = getFileName().Mid(nIndex + 2);
 
-				SDEVMNGR->SetObjectValue(sObject, sProperty, xVar.GetNumValue());
+				SDEVMNGR->SetObjectValue(objectStr, propertyStr, localVar.GetNumValue());
 
 			} else {
 				CBagVar *pVar = VARMNGR->GetVariable(getFileName());
 				if (pVar)
-					pVar->SetValue(xVar.GetValue());
+					pVar->SetValue(localVar.GetValue());
 			}
 		}
 	}
@@ -70,7 +71,7 @@ bool CBagExpressionObject::runObject() {
 }
 
 PARSE_CODES CBagExpressionObject::setInfo(bof_ifstream &istr) {
-	bool nObjectUpdated = false;
+	bool objectUpdatedFl = false;
 
 	while (!istr.eof()) {
 		char ch = (char)istr.peek();
@@ -79,10 +80,10 @@ PARSE_CODES CBagExpressionObject::setInfo(bof_ifstream &istr) {
 		//  AS  - n number of slides in sprite
 		//
 		case '(': {
-			m_xExpression = new CBagExpression();
-			if (m_xExpression) {
-				m_xExpression->setInfo(istr);
-				nObjectUpdated = true;
+			expression = new CBagExpression();
+			if (expression) {
+				expression->setInfo(istr);
+				objectUpdatedFl = true;
 			} else {
 				// there was an error
 			}
@@ -97,9 +98,9 @@ PARSE_CODES CBagExpressionObject::setInfo(bof_ifstream &istr) {
 			}
 
 			if (rc == UPDATED_OBJECT) {
-				nObjectUpdated = true;
+				objectUpdatedFl = true;
 			} else { // rc==UNKNOWN_TOKEN
-				if (nObjectUpdated)
+				if (objectUpdatedFl)
 					return UPDATED_OBJECT;
 
 				return UNKNOWN_TOKEN;

@@ -33,21 +33,21 @@ namespace Bagel {
  */
 class CBagExpressionObject : public CBagObject {
 private:
-	CBagExpression *m_xExpression;
-	byte m_bConditional;
+	CBagExpression *expression;
+	bool conditionalFl;
 
 public:
 	CBagExpressionObject();
 	virtual ~CBagExpressionObject();
 
-	virtual bool runObject();
-	virtual PARSE_CODES setInfo(bof_ifstream &istr);
+	bool runObject() override;
+	PARSE_CODES setInfo(bof_ifstream &istr) override;
 
-	bool IsConditional() const {
-		return m_bConditional;
+	bool isConditional() const {
+		return conditionalFl;
 	}
-	void SetConditional(bool b = true) {
-		m_bConditional = (byte)b;
+	void setConditional(bool b = true) {
+		conditionalFl = b;
 	}
 };
 
