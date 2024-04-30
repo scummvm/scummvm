@@ -58,6 +58,37 @@ scummvmAssert("a" <= "Bubba")
 scummvmAssert("z" > "Z")
 scummvmAssert("abba" > "Abba")
 
+-- Array comparison with coercion
+scummvmAssert([] = [])
+scummvmAssert(not([] <> []))
+scummvmAssert([1, 2] = [1, 2])
+scummvmAssert(not([1, 2] <> [1, 2]))
+scummvmAssert([1, 2] = [1, "2"])
+scummvmAssert(not([1, 2] <> [1, "2"]))
+scummvmAssert([1, 2, 3] = [1, "2", 3.0])
+scummvmAssert(not([1, 2, 3] <> [1, "2", 3.0]))
+
+-- D4 has a quirk where only the left side list elements are checked
+set the scummvmVersion to 400
+scummvmAssert([] = [1, "2", 4])
+scummvmAssert(not([] <> [1, "2", 4]))
+scummvmAssert([1, 2] = [1, "2", 4])
+scummvmAssert(not([1, 2] <> [1, "2", 4]))
+scummvmAssert([1, 2, 3] <> [1, "2", 4])
+scummvmAssert(not([1, 2, 3] = [1, "2", 4]))
+scummvmAssert([1, 2, 3] <> [1, "2"])
+scummvmAssert(not([1, 2, 3] = [1, "2"]))
+
+set the scummvmVersion to 500
+scummvmAssert([] <> [1, "2", 4])
+scummvmAssert(not([] = [1, "2", 4]))
+scummvmAssert([1, 2] <> [1, "2", 4])
+scummvmAssert(not([1, 2] = [1, "2", 4]))
+scummvmAssert([1, 2, 3] <> [1, "2", 4])
+scummvmAssert(not([1, 2, 3] = [1, "2", 4]))
+scummvmAssert([1, 2, 3] <> [1, "2"])
+scummvmAssert(not([1, 2, 3] = [1, "2"]))
+
 -- Void comparison
 set v1 = value("!")
 set v2 = value("!")

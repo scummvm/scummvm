@@ -1307,13 +1307,23 @@ Datum LC::compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2, 
 }
 
 Datum LC::eqData(Datum d1, Datum d2) {
-	// Lingo doesn't bother checking list equality if the left is longer
-	if (d1.isArray() && d2.isArray() &&
+	if ((d1.isArray() && d2.isArray()) || (d1.type == PARRAY && d2.type == PARRAY)) {
+		// D4 has a bug, and only checks the elements on the left array.
+		// Therefore if the left array is bigger, don't bother checking.
+		// LC::compareArrays will trim the inputs to the shortest length.
+		// (Mac 4.0.4 is fixed, Win 4.0.4 is not)
+		bool hasArrayBug = (g_director->getVersion() < 500 && g_director->getPlatform() == Common::kPlatformWindows) ||
+			(g_director->getVersion() < 404 && g_director->getPlatform() == Common::kPlatformMacintosh);
+		if (hasArrayBug &&
 			d1.u.farr->arr.size() > d2.u.farr->arr.size()) {
-		return Datum(0);
+			return Datum(0);
+		} else if (!hasArrayBug && d1.u.farr->arr.size() != d2.u.farr->arr.size()) {
+			// D5 and up is fixed; only check arrays if the sizes are the same.
+			return Datum(0);
+		}
 	}
 	if (d1.type == PARRAY && d2.type == PARRAY &&
-			d1.u.parr->arr.size() > d2.u.parr->arr.size()) {
+			d1.u.parr->arr.size() != d2.u.parr->arr.size()) {
 		return Datum(0);
 	}
 	if (d1.isArray() || d2.isArray() ||
@@ -1332,13 +1342,8 @@ void LC::c_eq() {
 }
 
 Datum LC::neqData(Datum d1, Datum d2) {
-	if (d1.isArray() || d2.isArray() ||
-			d1.type == PARRAY || d2.type == PARRAY) {
-		return LC::compareArrays(LC::neqData, d1, d2, false, true);
-	}
-	Datum check;
-	check = !d1.equalTo(d2, true);
-	return check;
+	// invert the output of eqData
+	return LC::eqData(d1, d2).asInt() ? 0 : 1;
 }
 
 void LC::c_neq() {
