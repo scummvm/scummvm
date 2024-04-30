@@ -33,8 +33,8 @@ namespace Bagel {
  */
 class CBagExpressionObject : public CBagObject {
 private:
-	CBagExpression *expression;
-	bool conditionalFl;
+	CBagExpression *_expression;
+	bool _conditionalFl;
 
 public:
 	CBagExpressionObject();
@@ -44,10 +44,10 @@ public:
 	PARSE_CODES setInfo(bof_ifstream &istr) override;
 
 	bool isConditional() const {
-		return conditionalFl;
+		return _conditionalFl;
 	}
 	void setConditional(bool b = true) {
-		conditionalFl = b;
+		_conditionalFl = b;
 	}
 };
 
