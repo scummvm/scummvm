@@ -31,35 +31,34 @@
 namespace Bagel {
 
 
-CBagFMovie::CBagFMovie(CBofWindow *pParent, const char *sFilename, CBofRect *pBounds, bool bUseNewPalette, bool bBlackOutWindow) {
+CBagFMovie::CBagFMovie(CBofWindow *parent, const char *filename, CBofRect *bounds, bool useNewPalette, bool blackOutWindow) {
 	// Allow movie to not shift to new palette.
-	m_bUseNewPalette = bUseNewPalette;
+	_useNewPaletteFl = useNewPalette;
 
 	// Black out first and last frame of flythroughs and examine movies
-	m_bBlackOutWindow = bBlackOutWindow;
+	_blackOutWindowFl = blackOutWindow;
 
-	initialize(pParent);
-	open(sFilename, pBounds);
+	CBagFMovie::initialize(parent);
+	CBagFMovie::open(filename, bounds);
 }
 
 CBagFMovie::~CBagFMovie() {
-	closeMovie();
+	CBagFMovie::closeMovie();
 }
 
 ErrorCode CBagFMovie::initialize(CBofWindow *pParent) {
 	// Movie Stuff
-	_eMovStatus = STOPPED;
-	_bEscCanStop = true;
-	m_pSmackerPal = nullptr;
-	m_pBmpBuf = nullptr;
-	m_pFilterBmp = nullptr;
-	m_pBufferStart = nullptr;
-	m_nBufferLength = 0;
+	_movieStatus = MOVIE_STOPPED;
+	_escCanStopFl = true;
+	_smackerPal = nullptr;
+	_bmpBuf = nullptr;
+	_filterBmp = nullptr;
+	_bufferStart = nullptr;
+	_bufferLength = 0;
 
 	// Smacker Stuff
-	m_pSbuf = nullptr;
-	_pSmk = nullptr;
-	_bLoop = false;
+	_smk = nullptr;
+	_loopFl = false;
 
 	// Call dialog box creates
 	if (create("MovieWin", 0, 0, 1, 1, pParent, 1) == ERR_NONE) {
@@ -69,27 +68,27 @@ ErrorCode CBagFMovie::initialize(CBofWindow *pParent) {
 	return ERR_NONE;
 }
 
-bool CBagFMovie::open(const char *sFilename, CBofRect *pBounds) {
+bool CBagFMovie::open(const char *filename, CBofRect *bounds) {
 	// No filename, so put up an open file box
-	if (sFilename == nullptr) {
-		Assert(sFilename);
+	if (filename == nullptr) {
+		Assert(filename);
 		return false;
 	}
 
-	if (pBounds != nullptr) {
-		_cRect = *pBounds;
+	if (bounds != nullptr) {
+		_cRect = *bounds;
 	}
 
-	if (openMovie(sFilename)) {
+	if (openMovie(filename)) {
 		// We were given specific rect for movie
-		if (pBounds)
-			reSize(pBounds, true);
+		if (bounds)
+			reSize(bounds, true);
 		else
 			// Center the movie to the parent window
 			centerRect();
 
 		// Paint the image to the screen.
-		m_pFilterBmp->paint(this, 0, 0);
+		_filterBmp->paint(this, 0, 0);
 
 		return true;
 	}
@@ -100,159 +99,146 @@ bool CBagFMovie::open(const char *sFilename, CBofRect *pBounds) {
 bool CBagFMovie::openMovie(const char *sFilename) {
 	Assert(sFilename[0] != '\0');
 
-	if (_pSmk) {
+	if (_smk) {
 		closeMovie();
 	}
-	_pSmk = new Video::SmackerDecoder();
-	_pSmk->setSoundType(Audio::Mixer::kSFXSoundType);
+	_smk = new Video::SmackerDecoder();
+	_smk->setSoundType(Audio::Mixer::kSFXSoundType);
 
 	// Opened failed ?
-	if (!_pSmk->loadFile(sFilename)) {
+	if (!_smk->loadFile(sFilename)) {
 		error("Movie not found=%s", sFilename);
 		return false;
 	}
 
 
 	// Allocate the bitmaps.
-	HPALETTE hPalette;
-	m_pSmackerPal = new CBofPalette(hPalette);
+	HPALETTE pal;
+	_smackerPal = new CBofPalette(pal);
 
-	m_pBmpBuf = new CBofBitmap(_pSmk->getWidth(), _pSmk->getHeight(), m_pSmackerPal, false);
+	_bmpBuf = new CBofBitmap(_smk->getWidth(), _smk->getHeight(), _smackerPal, false);
 
-	m_pFilterBmp = new CBofBitmap(_pSmk->getWidth(), _pSmk->getHeight(), m_pSmackerPal, false);
-	m_pFilterBmp->lock();
+	_filterBmp = new CBofBitmap(_smk->getWidth(), _smk->getHeight(), _smackerPal, false);
+	_filterBmp->lock();
 
-	selectPalette(m_pSmackerPal);
+	selectPalette(_smackerPal);
 
-	if (m_pBmpBuf) {
-		m_pBmpBuf->lock();
-		m_pBmpBuf->fillRect(nullptr, m_pSmackerPal->getNearestIndex(RGB(255, 255, 255)));
+	if (_bmpBuf) {
+		_bmpBuf->lock();
+		_bmpBuf->fillRect(nullptr, _smackerPal->getNearestIndex(RGB(255, 255, 255)));
 
-		m_nReversed = !(m_pBmpBuf->isTopDown());
-		m_pBufferStart = (char *)m_pBmpBuf->getPixelAddress(0, m_nReversed * (m_pBmpBuf->height() - 1));
-		m_nBufferLength = ABS(m_pBmpBuf->height() * m_pBmpBuf->width());
+		_reversedFl = !(_bmpBuf->isTopDown());
+		_bufferStart = (char *)_bmpBuf->getPixelAddress(0, _reversedFl * (_bmpBuf->height() - 1));
+		_bufferLength = ABS(_bmpBuf->height() * _bmpBuf->width());
 
-		const Graphics::Surface *frame = _pSmk->decodeNextFrame();
-		m_pSmackerPal->setData(_pSmk->getPalette());
+		const Graphics::Surface *frame = _smk->decodeNextFrame();
+		_smackerPal->setData(_smk->getPalette());
 		if (frame) {
-			m_pBmpBuf->getSurface().blitFrom(*frame);
+			_bmpBuf->getSurface().blitFrom(*frame);
 		}
 	}
-	bool bRepaint = true;
+	bool repaintFl = true;
 
-	m_xBounds = CBofRect(0, 0, (uint16)m_pBmpBuf->width() - 1, (uint16)m_pBmpBuf->height() - 1);
-	reSize(&m_xBounds, bRepaint);
+	_bounds = CBofRect(0, 0, (uint16)_bmpBuf->width() - 1, (uint16)_bmpBuf->height() - 1);
+	reSize(&_bounds, repaintFl);
 
-	CBagMasterWin *pWnd = CBagel::getBagApp()->getMasterWnd();
-	if (pWnd != nullptr) {
-		CBagStorageDevWnd *pSDevWnd = pWnd->GetCurrentStorageDev();
-		if (pSDevWnd != nullptr) {
-			if (pSDevWnd->IsFiltered()) {
-				uint16 nFilterId = pSDevWnd->GetFilterId();
-				FilterFunction pFilterFunction = pSDevWnd->GetFilter();
-				m_pBmpBuf->paint(m_pFilterBmp);
-				(*pFilterFunction)(nFilterId, m_pFilterBmp, &m_xBounds);
-			}
+	CBagMasterWin *curWin = CBagel::getBagApp()->getMasterWnd();
+	if (curWin != nullptr) {
+		CBagStorageDevWnd *curSDev = curWin->GetCurrentStorageDev();
+		if ((curSDev != nullptr) && curSDev->IsFiltered()) {
+			uint16 filterId = curSDev->GetFilterId();
+			FilterFunction filterFunction = curSDev->GetFilter();
+			_bmpBuf->paint(_filterBmp);
+			(*filterFunction)(filterId, _filterBmp, &_bounds);
 		}
 	}
 
 	return true;
 }
 
-void CBagFMovie::onKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
-	if (_bEscCanStop && lKey == BKEY_ESC) {
+void CBagFMovie::onKeyHit(uint32 keyCode, uint32 /* repCount */) {
+	if (_escCanStopFl && keyCode == BKEY_ESC) {
 		// Clean up and exit
-		_bLoop = false;
+		_loopFl = false;
 		stop();
 		onMovieDone();
 	}
 }
 
 void CBagFMovie::onMainLoop() {
-	if (_pSmk->needsUpdate()) {
-		// Not needed for filtered movies
-		if (_eMovStatus != STOPPED) {
-			// Smack the current frame into the buffer
-			const Graphics::Surface *frame = _pSmk->decodeNextFrame();
-			if (_pSmk->hasDirtyPalette()) {
-				m_pSmackerPal->setData(_pSmk->getPalette());
-			}
-			if (frame) {
-				m_pBmpBuf->getSurface().blitFrom(*frame);
-			}
+	if (!_smk->needsUpdate() || (_movieStatus == MOVIE_STOPPED))
+		return;
 
-			m_pBmpBuf->paint1To1(m_pFilterBmp);
+	
+	// Smack the current frame into the buffer
+	const Graphics::Surface *frame = _smk->decodeNextFrame();
+	if (_smk->hasDirtyPalette()) {
+		_smackerPal->setData(_smk->getPalette());
+	}
+	if (frame) {
+		_bmpBuf->getSurface().blitFrom(*frame);
+	}
 
-			// Filter the bitmap.
-			CBagMasterWin *pWnd = CBagel::getBagApp()->getMasterWnd();
-			if (pWnd != nullptr) {
-				CBagStorageDevWnd *pSDevWnd = pWnd->GetCurrentStorageDev();
-				if ((pSDevWnd != nullptr) && pSDevWnd->IsFiltered()) {
-					uint16 nFilterId = pSDevWnd->GetFilterId();
-					FilterFunction pFilterFunction = pSDevWnd->GetFilter();
-					(*pFilterFunction)(nFilterId, m_pFilterBmp, &m_xBounds);
-				}
-			}
+	_bmpBuf->paint1To1(_filterBmp);
 
-			// Paint the buffer to the screen.
-			m_pFilterBmp->paint(this, 0, 0);
+	// Filter the bitmap.
+	CBagMasterWin *curWin = CBagel::getBagApp()->getMasterWnd();
+	if (curWin != nullptr) {
+		CBagStorageDevWnd *curSDev = curWin->GetCurrentStorageDev();
+		if ((curSDev != nullptr) && curSDev->IsFiltered()) {
+			uint16 filterId = curSDev->GetFilterId();
+			FilterFunction filterFunction = curSDev->GetFilter();
+			(*filterFunction)(filterId, _filterBmp, &_bounds);
+		}
+	}
 
-			if (_eMovStatus == FOREWARD) {
-				if (_pSmk->getCurFrame() == (int)_pSmk->getFrameCount() - 1) {
-					if (_bLoop == false) {
-						onMovieDone();
-					} else {
-						seekToStart();
-						_pSmk->start();
-					}
-				}
-			} else if ((_eMovStatus == REVERSE) && ((_pSmk->getCurFrame() == 0) || (_pSmk->getCurFrame() == 1))) {
-				if (_bLoop == false) {
-					onMovieDone();
-				} else {
-					seekToEnd();
-				}
+	// Paint the buffer to the screen.
+	_filterBmp->paint(this, 0, 0);
+
+	if (_movieStatus == MOVIE_FOREWARD) {
+		if (_smk->getCurFrame() == (int)_smk->getFrameCount() - 1) {
+			if (_loopFl == false) {
+				onMovieDone();
 			} else {
-				setFrame(_pSmk->getCurFrame() - 2); // HACK: Reverse playback
+				seekToStart();
+				_smk->start();
 			}
-
-		}// !STOPPED
-	} // !SMACKWAIT
+		}
+	} else if ((_movieStatus == MOVIE_REVERSE) && ((_smk->getCurFrame() == 0) || (_smk->getCurFrame() == 1))) {
+		if (_loopFl == false) {
+			onMovieDone();
+		} else {
+			seekToEnd();
+		}
+	} else {
+		setFrame(_smk->getCurFrame() - 2); // HACK: Reverse playback
+	}
 }
 
 void CBagFMovie::onPaint(CBofRect *) {
 }
 
 void CBagFMovie::closeMovie() {
-	if (m_pSbuf != nullptr) {
-		delete m_pSbuf;
-		m_pSbuf = nullptr;
+	delete _smk;
+	_smk = nullptr;
+
+	if (_filterBmp != nullptr) {
+		_filterBmp->unlock();
+		delete _filterBmp;
+		_filterBmp = nullptr;
 	}
 
-	if (_pSmk != nullptr) {
-		delete _pSmk;
-		_pSmk = nullptr;
+	if (_bmpBuf != nullptr) {
+		_bmpBuf->unlock();
+		delete _bmpBuf;
+		_bmpBuf = nullptr;
 	}
 
-	if (m_pFilterBmp != nullptr) {
-		m_pFilterBmp->unlock();
-		delete m_pFilterBmp;
-		m_pFilterBmp = nullptr;
-	}
+	delete _smackerPal;
+	_smackerPal = nullptr;
 
-	if (m_pBmpBuf != nullptr) {
-		m_pBmpBuf->unlock();
-		delete m_pBmpBuf;
-		m_pBmpBuf = nullptr;
-	}
-
-	if (m_pSmackerPal != nullptr) {
-		delete m_pSmackerPal;
-		m_pSmackerPal = nullptr;
-	}
-
-	m_pBufferStart = nullptr;
-	m_nBufferLength = 0;
+	_bufferStart = nullptr;
+	_bufferLength = 0;
 }
 
 
@@ -263,7 +249,7 @@ void CBagFMovie::onClose() {
 
 
 void CBagFMovie::onMovieDone() {
-	if (!_bLoop) {
+	if (!_loopFl) {
 		if (_bCaptured)
 			releaseCapture();
 
@@ -273,11 +259,11 @@ void CBagFMovie::onMovieDone() {
 }
 
 
-bool CBagFMovie::play(bool bLoop, bool bEscCanStop) {
-	_bEscCanStop = bEscCanStop;
-	_bLoop = bLoop;
+bool CBagFMovie::play(bool loop, bool escCanStop) {
+	_escCanStopFl = escCanStop;
+	_loopFl = loop;
 
-	bool bSuccess = play();
+	bool retVal = play();
 
 	getParent()->disable();
 	getParent()->flushAllMessages();
@@ -288,41 +274,41 @@ bool CBagFMovie::play(bool bLoop, bool bEscCanStop) {
 
 	CursorMan.showMouse(true);
 
-	return bSuccess;
+	return retVal;
 }
 
 
 bool CBagFMovie::play() {
-	if (_pSmk) {
-		_pSmk->pauseVideo(false);
-		// _pSmk->setReverse(false); // TODO: Not supported by SMK
-		_pSmk->start();
-		_eMovStatus = FOREWARD;
+	if (_smk) {
+		_smk->pauseVideo(false);
+		// _smk->setReverse(false); // TODO: Not supported by SMK
+		_smk->start();
+		_movieStatus = MOVIE_FOREWARD;
 		return true;
 	}
 
 	return false;
 }
 
-bool CBagFMovie::reverse(bool bLoop, bool bEscCanStop) {
-	_bEscCanStop = bEscCanStop;
-	_bLoop = bLoop;
+bool CBagFMovie::reverse(bool loop, bool escCanStop) {
+	_escCanStopFl = escCanStop;
+	_loopFl = loop;
 
-	bool bSuccess = reverse();
+	bool retVal = reverse();
 
 	getParent()->disable();
 	getParent()->flushAllMessages();
 	doModal();
 
-	return bSuccess;
+	return retVal;
 }
 
 bool CBagFMovie::reverse() {
-	if (_pSmk) {
-		_pSmk->pauseVideo(false);
-		// _pSmk->setReverse(true); // TODO: Not supported by SMK
-		_pSmk->start();
-		_eMovStatus = REVERSE;
+	if (_smk) {
+		_smk->pauseVideo(false);
+		// _smk->setReverse(true); // TODO: Not supported by SMK
+		_smk->start();
+		_movieStatus = MOVIE_REVERSE;
 		return true;
 	}
 
@@ -331,9 +317,9 @@ bool CBagFMovie::reverse() {
 }
 
 bool CBagFMovie::stop() {
-	if (_pSmk) {
-		_pSmk->stop();
-		_eMovStatus = STOPPED;
+	if (_smk) {
+		_smk->stop();
+		_movieStatus = MOVIE_STOPPED;
 		return true;
 	}
 	return false;
@@ -341,9 +327,9 @@ bool CBagFMovie::stop() {
 }
 
 bool CBagFMovie::pause() {
-	if (_pSmk) {
-		_pSmk->pauseVideo(true);
-		_eMovStatus = PAUSED;
+	if (_smk) {
+		_smk->pauseVideo(true);
+		_movieStatus = MOVIE_PAUSED;
 		return true;
 	}
 
@@ -352,8 +338,8 @@ bool CBagFMovie::pause() {
 }
 
 bool CBagFMovie::seekToStart() {
-	if (_pSmk) {
-		_pSmk->rewind();
+	if (_smk) {
+		_smk->rewind();
 		return true;
 	}
 
@@ -362,8 +348,8 @@ bool CBagFMovie::seekToStart() {
 }
 
 bool CBagFMovie::seekToEnd() {
-	if (_pSmk) {
-		setFrame(_pSmk->getFrameCount() - 2); // HACK: Reverse rewind
+	if (_smk) {
+		setFrame(_smk->getFrameCount() - 2); // HACK: Reverse rewind
 		return true;
 	}
 
@@ -372,17 +358,17 @@ bool CBagFMovie::seekToEnd() {
 }
 
 uint32 CBagFMovie::getFrame() {
-	if (_pSmk) {
-		return _pSmk->getCurFrame();
+	if (_smk) {
+		return _smk->getCurFrame();
 	}
 
 	return (uint32) -1;
 }
 
-bool CBagFMovie::setFrame(uint32 dwFrameNum) {
-	if (_pSmk) {
-		dwFrameNum = CLIP<uint32>(dwFrameNum, 0, _pSmk->getFrameCount() - 1);
-		_pSmk->forceSeekToFrame(dwFrameNum);
+bool CBagFMovie::setFrame(uint32 frameNum) {
+	if (_smk) {
+		frameNum = CLIP<uint32>(frameNum, 0, _smk->getFrameCount() - 1);
+		_smk->forceSeekToFrame(frameNum);
 		return true;
 	}
 
@@ -390,29 +376,26 @@ bool CBagFMovie::setFrame(uint32 dwFrameNum) {
 }
 
 bool CBagFMovie::centerRect() {
-	CBofRect cBofRect = getParent()->getClientRect();
-	RECT rcParentRect = cBofRect.GetWinRect();
-	int ClientWidth = rcParentRect.right - rcParentRect.left;
-	int ClientHeight = rcParentRect.bottom - rcParentRect.top;
+	CBofRect clientRect = getParent()->getClientRect();
+	RECT parentRect = clientRect.GetWinRect();
+	int clientWidth = parentRect.right - parentRect.left;
+	int clientHeight = parentRect.bottom - parentRect.top;
 
 	// Get Movies width and height
-	int MovieWidth = _pSmk->getWidth();
-	int MovieHeight = _pSmk->getHeight();
+	int movieWidth = _smk->getWidth();
+	int movieHeight = _smk->getHeight();
 
-	RECT rcMovieBounds;
-	rcMovieBounds.left = (ClientWidth - MovieWidth) / 2;
-	rcMovieBounds.top = (ClientHeight - MovieHeight) / 2;
-	rcMovieBounds.right = rcMovieBounds.left + MovieWidth;
-	rcMovieBounds.bottom = rcMovieBounds.top + MovieHeight;
+	RECT movieBounds;
+	movieBounds.left = (clientWidth - movieWidth) / 2;
+	movieBounds.top = (clientHeight - movieHeight) / 2;
+	movieBounds.right = movieBounds.left + movieWidth;
+	movieBounds.bottom = movieBounds.top + movieHeight;
 
 	// Reposition the playback window
-	cBofRect = rcMovieBounds;
-	reSize(&cBofRect, true);
+	clientRect = movieBounds;
+	reSize(&clientRect, true);
 
 	return true;
-}
-
-void CBagFMovie::OnButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/) {
 }
 
 } // namespace Bagel

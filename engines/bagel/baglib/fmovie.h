@@ -23,7 +23,6 @@
 #ifndef BAGEL_BAGLIB_FMOVIE_H
 #define BAGEL_BAGLIB_FMOVIE_H
 
-#include "graphics/managed_surface.h"
 #include "video/smk_decoder.h"
 #include "bagel/boflib/gui/dialog.h"
 #include "bagel/boflib/rect.h"
@@ -34,25 +33,24 @@ namespace Bagel {
 
 class CBagFMovie : public CBofDialog {
 public:
-	enum MVSTATUS { STOPPED, PAUSED, FOREWARD, REVERSE };
+	enum MVSTATUS { MOVIE_STOPPED, MOVIE_PAUSED, MOVIE_FOREWARD, MOVIE_REVERSE };
 
 protected:
-	Graphics::ManagedSurface *m_pSbuf;
-	Video::SmackerDecoder *_pSmk;
+	Video::SmackerDecoder *_smk;
 
-	bool _bEscCanStop;
-	bool _bLoop;
-	MVSTATUS _eMovStatus;
+	bool _escCanStopFl;
+	bool _loopFl;
+	MVSTATUS _movieStatus;
 
-	CBofBitmap *m_pBmpBuf;
-	CBofBitmap *m_pFilterBmp;
-	CBofPalette *m_pSmackerPal;
-	char *m_pBufferStart;
-	int m_nBufferLength;
-	uint32 m_nReversed;
-	CBofRect m_xBounds;
-	bool m_bUseNewPalette;
-	bool m_bBlackOutWindow;
+	CBofBitmap *_bmpBuf;
+	CBofBitmap *_filterBmp;
+	CBofPalette *_smackerPal;
+	char *_bufferStart;
+	int _bufferLength;
+	uint32 _reversedFl;
+	CBofRect _bounds;
+	bool _useNewPaletteFl;
+	bool _blackOutWindowFl;
 
 	/**
 	 * Open the movie file, center it in parent, rewind it, and realize it's
@@ -71,34 +69,36 @@ protected:
 	 */
 	virtual void closeMovie();
 
-	virtual void onReSize(CBofSize *pSize) {};
+	void onReSize(CBofSize *pSize) override {};
 
 	virtual bool play();
 	virtual bool reverse();
 
-	virtual void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) {
-		OnButtonUp(nFlags, pPoint);
+	void onLButtonUp(uint32 flags, CBofPoint *point, void * = nullptr) override {
+		onButtonUp(flags, point);
 	}
-	virtual void OnButtonUp(uint32 nFlags, CBofPoint *pPoint);
-	virtual void onPaint(CBofRect *pRect);
+	virtual void onButtonUp(uint32 flags, CBofPoint *point) {};
+	void onPaint(CBofRect *pRect) override;
 	virtual void onMovieDone();
-	virtual void onClose();
-	virtual void onMainLoop();
+	void onClose() override;
+	void onMainLoop() override;
 
 	/**
 	 * Catch the ESC key when hit
 	 */
-	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
+	void onKeyHit(uint32 keyCode, uint32 repCount) override;
 
 public:
 	/**
 	 * Initializes Movie Object and opens movie file @ Rect
-	 * @param pParent       A pointer to the parent window
-	 * @param sFilename     String containing filename of movie to be opened
-	 * @param pBounds       Location for video object relative to parent
+	 * @param parent       A pointer to the parent window
+	 * @param filename     String containing filename of movie to be opened
+	 * @param bounds       Location for video object relative to parent
+	 * @param useNewPalette
+	 * @param blackOutWindow
 	 */
-	CBagFMovie(CBofWindow *pParent = nullptr, const char *sFilename = nullptr,
-	           CBofRect *pBounds = nullptr, bool bUseNewPalette = true, bool bBlackOutWindow = false);
+	CBagFMovie(CBofWindow *parent = nullptr, const char *filename = nullptr,
+	           CBofRect *bounds = nullptr, bool useNewPalette = true, bool blackOutWindow = false);
 
 	/**
 	 * Destructor
@@ -106,36 +106,27 @@ public:
 	~CBagFMovie();
 
 	/**
-	 * Open the movie file, place it @ pBounds, rewind it, and realize it's
+	 * Open the movie file, place it @ bounds, rewind it, and realize it's
 	 * palette in the background.
 	 */
-	virtual bool open(const char *sFilename = nullptr, CBofRect *pBounds = nullptr);
+	virtual bool open(const char *filename = nullptr, CBofRect *bounds = nullptr);
 
-	virtual bool play(bool bLoop, bool bEscCanStop = true);
-	virtual bool reverse(bool bLoop, bool bEscCanStop = true);
+	virtual bool play(bool loop, bool escCanStop = true);
+	virtual bool reverse(bool loop, bool escCanStop = true);
 	virtual bool pause();
 	virtual bool stop();
 
 	virtual MVSTATUS status() {
-		return _eMovStatus;
+		return _movieStatus;
 	}
 
 	virtual bool seekToStart();
 	virtual bool seekToEnd();
 
 	virtual uint32 getFrame();
-	virtual bool setFrame(uint32 dwFrameNum);
+	virtual bool setFrame(uint32 frameNum);
 
 	virtual bool centerRect();
-
-	// Need to access members from outside of class for
-	// performance optimization.
-	Graphics::ManagedSurface *getSmackBuffer() {
-		return m_pSbuf;
-	}
-	Video::VideoDecoder *getSmackMovie() {
-		return _pSmk;
-	}
 };
 
 } // namespace Bagel
