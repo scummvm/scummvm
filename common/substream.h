@@ -89,30 +89,6 @@ public:
 };
 
 /**
- * This is a SeekableSubReadStream subclass which adds non-endian
- * read methods whose endianness is set on the stream creation.
- *
- * Manipulating the parent stream directly /will/ mess up a substream.
- * @see SubReadStream
- */
-class SeekableSubReadStreamEndian :  virtual public SeekableSubReadStream, virtual public SeekableReadStreamEndian {
-public:
-	WARN_DEPRECATED("Use SeekableReadStreamEndianWrapper with SeekableSubReadStream instead")
-	SeekableSubReadStreamEndian(SeekableReadStream *parentStream, uint32 begin, uint32 end, bool bigEndian, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO)
-		: SeekableSubReadStream(parentStream, begin, end, disposeParentStream),
-		  SeekableReadStreamEndian(bigEndian),
-		  ReadStreamEndian(bigEndian) {
-	}
-
-	int64 pos() const override { return SeekableSubReadStream::pos(); }
-	int64 size() const override { return SeekableSubReadStream::size(); }
-
-	bool seek(int64 offset, int whence = SEEK_SET) override { return SeekableSubReadStream::seek(offset, whence); }
-	void hexdump(int len, int bytesPerLine = 16, int startOffset = 0) { SeekableSubReadStream::hexdump(len, bytesPerLine, startOffset); }
-	bool skip(uint32 offset) override { return SeekableSubReadStream::seek(offset, SEEK_CUR); }
-};
-
-/**
  * A seekable substream that removes the exclusivity demand required by the
  * normal SeekableSubReadStream, at the cost of seek()ing the parent stream
  * before each read().
