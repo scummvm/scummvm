@@ -780,7 +780,7 @@ CBagEnergyDetectorObject::CBagEnergyDetectorObject() {
 	setFont(FONT_MONO);				// Correct for spacing
 	setColor(7);					// Make it white
 	SetFloating();					// Is definitely floating
-	SetHighlight();					// Is highlight
+	setHighlight();					// Is highlight
 	SetTitle();						// As title
 	m_bTextInitialized = false;     // Not initialized yet
 }

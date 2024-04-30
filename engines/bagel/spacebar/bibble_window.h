@@ -40,8 +40,8 @@ namespace SpaceBar {
 #define BIBBLE_NUM_BET_AREAS 24
 
 struct ST_PAYOFFS {
-	int m_nPay1;
-	int m_nPay2;
+	int _nPay1;
+	int _nPay2;
 };
 
 struct CBetAreaDef {
@@ -49,11 +49,11 @@ struct CBetAreaDef {
 	int top;
 	int right;
 	int bottom;
-	int m_nBet;
-	int m_nPayOff1;
-	int m_nPayOff2;
-	const char *m_cAudioFile;
-	const char *m_cPayFile;
+	int _nBet;
+	int _nPayOff1;
+	int _nPayOff2;
+	const char *_cAudioFile;
+	const char *_cPayFile;
 };
 
 class CBetArea : public CBofObject {
@@ -63,12 +63,12 @@ public:
 
 	// Data members
 	CBofRect _cRect;
-	int m_nBet = 0;
-	int m_nPayOff1 = 0;
-	int m_nPayOff2 = 0;
-	bool m_bWon = false;
-	CBofString m_cAudioFile;
-	CBofString m_cPayFile;
+	int _nBet = 0;
+	int _nPayOff1 = 0;
+	int _nPayOff2 = 0;
+	bool _bWon = false;
+	CBofString _cAudioFile;
+	CBofString _cPayFile;
 };
 
 extern CBetAreaDef BET_AREAS[BIBBLE_NUM_BET_AREAS];
@@ -86,14 +86,14 @@ public:
 	virtual void onClose();
 
 protected:
-	ErrorCode PlayGame();
-	ErrorCode BonkBibble(int nBibble, int nShout);
+	ErrorCode playGame();
+	ErrorCode bonkBibble(int nBibble, int nShout);
 
-	void CalcOutcome();
+	void calcOutcome();
 	ErrorCode displayCredits();
 
-	ErrorCode Highlight(CBetArea *pArea, byte nColor);
-	ErrorCode UnHighlight(CBetArea *pArea);
+	ErrorCode highlight(CBetArea *pArea, byte nColor);
+	ErrorCode unHighlight(CBetArea *pArea);
 
 	virtual void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
@@ -107,35 +107,35 @@ protected:
 	}
 
 	// Data
-	CBofSound *m_pBkgSnd;
-	CBofBmpButton *m_pButtons[BIBBLE_NUM_BUTTONS];
-	CBofText *m_pCreditsText;
-	CBofSprite *m_pMasterBibble;
-	CBofSprite *m_pBibble[BIBBLE_NUM_BIBBLES];
-	CBofSprite *m_pBall;
-	CBofSprite *m_pArch1;
-	CBofSprite *m_pArch2;
-	CBofSprite *m_pArch3;
-	CBofSound *m_pShouts[BIBBLE_NUM_SHOUTS];
-	uint32 m_nNumCredits;
+	CBofSound *_pBkgSnd;
+	CBofBmpButton *_pButtons[BIBBLE_NUM_BUTTONS];
+	CBofText *_pCreditsText;
+	CBofSprite *_pMasterBibble;
+	CBofSprite *_pBibble[BIBBLE_NUM_BIBBLES];
+	CBofSprite *_pBall;
+	CBofSprite *_pArch1;
+	CBofSprite *_pArch2;
+	CBofSprite *_pArch3;
+	CBofSound *_pShouts[BIBBLE_NUM_SHOUTS];
+	uint32 _nNumCredits;
 
-	int m_nBall1;           // Which Bibble hit by ball 1
-	int m_nBall2;           // Which Bibble hit by ball 2
-	int m_nBall3;           // Which Bibble hit by ball 3
+	int _nBall1;           // Which Bibble hit by ball 1
+	int _nBall2;           // Which Bibble hit by ball 2
+	int _nBall3;           // Which Bibble hit by ball 3
 
-	int m_nBall1Said;
-	int m_nBall2Said;
-	int m_nBall3Said;
+	int _nBall1Said;
+	int _nBall2Said;
+	int _nBall3Said;
 
-	int m_nNumShout1;
-	int m_nNumShout2;
-	int m_nNumShout3;
-	int m_nNumShout4;
+	int _nNumShout1;
+	int _nNumShout2;
+	int _nNumShout3;
+	int _nNumShout4;
 
-	int m_nNumTopBonks;
-	int m_nNumMidBonks;
-	int m_nNumBotBonks;
-	CBetArea *m_pSelected;
+	int _nNumTopBonks;
+	int _nNumMidBonks;
+	int _nNumBotBonks;
+	CBetArea *_pSelected;
 };
 
 } // namespace SpaceBar

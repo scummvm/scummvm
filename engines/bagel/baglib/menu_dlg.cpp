@@ -143,7 +143,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 						menuSize.cy = (objSize.height() + menuLoc.y);
 
 					pObj->setPosition(menuLoc);
-					pObj->SetHighlight(false);
+					pObj->setHighlight(false);
 
 					if (!nMenuCount && (pObj->GetType() == TEXTOBJ)) {
 						menuLoc.y += objSize.height();
@@ -235,7 +235,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 					if (menuSize.cy < (objSize.height() + menuLoc.y))
 						menuSize.cy = (objSize.height() + menuLoc.y);
 					pObj->setPosition(menuLoc);
-					pObj->SetHighlight(false);
+					pObj->setHighlight(false);
 
 					menuLoc.x = (1 + nBaseMenuLocX);
 					menuLoc.y += (objSize.height() + 1);
@@ -256,7 +256,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 						menuSize.cy = (objSize.height() + menuLoc.y);
 
 					pObj->setPosition(menuLoc);
-					pObj->SetHighlight(false);
+					pObj->setHighlight(false);
 
 					if ((nObjectPal < 0) && ((pObj->GetType() == BMPOBJ) || (pObj->GetType() == SPRITEOBJ)))
 						nObjectPal = i;
@@ -638,9 +638,9 @@ void CBagMenuDlg::onMouseMove(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 		if (pObj != GetLActiveObject()) {
 			if (pObj->getCallBack() || pObj->GetMenuPtr()) {
 
-				pObj->SetHighlight();
+				pObj->setHighlight();
 				if (GetLActiveObject())
-					GetLActiveObject()->SetHighlight(false);
+					GetLActiveObject()->setHighlight(false);
 				SetLActiveObject(pObj);
 			}
 		}

@@ -82,7 +82,7 @@ CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &typestr) {
 	} else if (!typestr.Find("FULLSCREEN2")) {
 		pSDev = new SBarFullWnd();
 		pSDev->SetCloseup(true);
-		((SBarFullWnd *)pSDev)->m_bAllowEventWorld = false;
+		((SBarFullWnd *)pSDev)->_bAllowEventWorld = false;
 
 	} else if (!typestr.Find("FULLSCREEN")) {
 		pSDev = new SBarFullWnd();
@@ -209,7 +209,7 @@ void CSBarMasterWin::OnNewFilter(CBagStorageDev *pSDev, const CBofString &typest
 	int filterId = pSDev->GetFilterId();
 
 	if (filterId != 0) {
-		filterFunction = &DoFilters;
+		filterFunction = &doFilters;
 	}
 
 	if (!typestr.Find("PDA")) {
@@ -248,7 +248,7 @@ void CSBarMasterWin::OnNewFilter(CBagStorageDev *pSDev, const int nType) {
 	int filterId = pSDev->GetFilterId();
 
 	if (filterId != 0) {
-		filterFunction = &DoFilters;
+		filterFunction = &doFilters;
 	}
 
 	switch (nType) {

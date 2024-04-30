@@ -62,7 +62,7 @@ ErrorCode SBZoomPda::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 			// Paint our storage device the first time through and the next time
 			// through, this takes care of multiple text drawing problems (trust me!).
-			if (m_bFirstPaint == false) {
+			if (_bFirstPaint == false) {
 				SetPreFilterPan(false);
 			}
 

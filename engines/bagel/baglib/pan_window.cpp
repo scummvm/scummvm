@@ -35,13 +35,13 @@ namespace Bagel {
 CBagPDA *CBagPanWindow::m_pPDABmp;      // Pointer to the PDA object
 int CBagPanWindow::m_nCorrection;
 int CBagPanWindow::m_nPanSpeed;
-CBagWield *CBagPanWindow::m_pWieldBmp;  // Pointer to the WEILD object
+CBagWield *CBagPanWindow::_pWieldBmp;  // Pointer to the WEILD object
 
 void CBagPanWindow::initialize() {
 	m_pPDABmp = nullptr;
 	m_nCorrection = 4;
 	m_nPanSpeed = 1;
-	m_pWieldBmp = nullptr;
+	_pWieldBmp = nullptr;
 }
 
 CBagPanWindow::CBagPanWindow() : CBagStorageDevWnd() {

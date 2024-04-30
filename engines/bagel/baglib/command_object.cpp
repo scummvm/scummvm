@@ -151,10 +151,10 @@ bool CBagCommandObject::runObject() {
 
 		} else if (getFileName() == "REMOVEWIELD") {
 			// Remove currently wielded object from the game
-			if (CBagPanWindow::m_pWieldBmp != nullptr) {
-				CBagObject *currObj = CBagPanWindow::m_pWieldBmp->GetCurrObj();
+			if (CBagPanWindow::_pWieldBmp != nullptr) {
+				CBagObject *currObj = CBagPanWindow::_pWieldBmp->GetCurrObj();
 				if (currObj != nullptr) {
-					SDEVMNGR->RemoveObject(CBagPanWindow::m_pWieldBmp->GetName(), currObj->GetRefName());
+					SDEVMNGR->RemoveObject(CBagPanWindow::_pWieldBmp->GetName(), currObj->GetRefName());
 				}
 			}
 
@@ -171,11 +171,11 @@ bool CBagCommandObject::runObject() {
 
 		} else if (getFileName() == "STASHWIELD") {
 			// Stash the currently wielded item
-			if (CBagPanWindow::m_pWieldBmp != nullptr) {
-				CBagObject *currObj = CBagPanWindow::m_pWieldBmp->GetCurrObj();
+			if (CBagPanWindow::_pWieldBmp != nullptr) {
+				CBagObject *currObj = CBagPanWindow::_pWieldBmp->GetCurrObj();
 				if (currObj != nullptr) {
-					SDEVMNGR->MoveObject("INV_WLD", CBagPanWindow::m_pWieldBmp->GetName(), currObj->GetRefName());
-					CBagPanWindow::m_pWieldBmp->SetCurrObj(nullptr);
+					SDEVMNGR->MoveObject("INV_WLD", CBagPanWindow::_pWieldBmp->GetName(), currObj->GetRefName());
+					CBagPanWindow::_pWieldBmp->SetCurrObj(nullptr);
 				}
 			}
 

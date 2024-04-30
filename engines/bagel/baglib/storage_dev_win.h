@@ -117,7 +117,7 @@ protected:
 	bool m_bCloseup : 1;       // true if is a closeup (includes CIC, or CHAT)
 	bool m_bCIC : 1;           // true if is a CIC
 	bool m_bCustom : 1;        // true if is a hand coded closeup
-	bool m_bFirstPaint : 1;    // run object stuff
+	bool _bFirstPaint : 1;    // run object stuff
 
 	static bool m_bPanPreFiltered;  // Let pda know if screens been prefiltered
 	static bool m_bDirtyAllObjects; // Dirty all objects in prefilter?
@@ -435,7 +435,7 @@ public:
 	virtual ErrorCode RunModal(CBagObject *pObj);
 	virtual void onTimer(uint32 nTimerId);
 
-	void SetOnUpdate(bool bVal = true) {
+	void setOnUpdate(bool bVal = true) {
 		m_bOnUpdate = bVal;
 	}
 	bool GetOnUpdate() {

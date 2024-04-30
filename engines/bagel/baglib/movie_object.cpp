@@ -49,7 +49,7 @@ CBagMovieObject::CBagMovieObject() {
 	SetIncrement();
 
 	// Allow movie to play on a black background (default, nada).
-	SetOnBlack(false);
+	setOnBlack(false);
 
 	// Default is no associated sound.
 	SetAssociatedSound(nullptr);

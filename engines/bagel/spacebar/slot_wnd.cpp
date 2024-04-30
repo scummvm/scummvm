@@ -112,8 +112,8 @@ SBarSlotWnd::SBarSlotWnd() : CBagStorageDevWnd() {
 	m_pOddsText = nullptr;
 	m_bAutoDecrement = false;
 
-	m_nPayOff1 = 0;
-	m_nPayOff2 = 0;
+	_nPayOff1 = 0;
+	_nPayOff2 = 0;
 
 	m_bFixBmp = nullptr;
 	m_pWinSound = nullptr;
@@ -395,7 +395,7 @@ void SBarSlotWnd::AddBet(int nBetVal) {
 			if (m_nBet && !(m_pSlotButs[GO]->isVisible())) {
 				m_pSlotButs[GO]->show();
 			}
-			m_nPayOff1 = 0;
+			_nPayOff1 = 0;
 			m_bLose = false;
 			m_pOddsText->setText("");
 
@@ -473,7 +473,7 @@ void SBarSlotWnd::Go() {
 
 	SlideSlots();
 
-	CalcOutcome();
+	calcOutcome();
 
 	// Hide the GO button
 	m_pSlotButs[GO]->hide();
@@ -493,7 +493,7 @@ void SBarSlotWnd::Go() {
 	}
 }
 
-void SBarSlotWnd::CalcOutcome() {
+void SBarSlotWnd::calcOutcome() {
 	int nMatch = 0;
 	int nMatchVal = 0;
 	int nGeo = 0;
@@ -501,8 +501,8 @@ void SBarSlotWnd::CalcOutcome() {
 	int nLuck = 0;
 
 	// Clear out Payoffs
-	m_nPayOff1 = 0;
-	m_nPayOff2 = 0;
+	_nPayOff1 = 0;
+	_nPayOff2 = 0;
 
 	// Get number of matching slots
 	for (int i = 0; i < SLOT_NUM; i++) {
@@ -535,19 +535,19 @@ void SBarSlotWnd::CalcOutcome() {
 		}
 
 		if (nGeo == 3) {
-			m_nPayOff1 = 1;
-			m_nPayOff2 = 1;
+			_nPayOff1 = 1;
+			_nPayOff2 = 1;
 		} else if (nCelest == 3) {
-			m_nPayOff1 = 3;
-			m_nPayOff2 = 2;
+			_nPayOff1 = 3;
+			_nPayOff2 = 2;
 		} else if (nLuck == 3) {
-			m_nPayOff1 = 2;
-			m_nPayOff2 = 1;
+			_nPayOff1 = 2;
+			_nPayOff2 = 1;
 		}
 	}
 
 	// Do we have a winner ?
-	if (m_nPayOff1 > 0) {
+	if (_nPayOff1 > 0) {
 		// Play winning audio
 		m_pWinSound = new CBofSound(this, BuildSlotDir(WINAUDIO), SOUND_MIX, 1);
 		if (m_pWinSound != nullptr) {
@@ -557,7 +557,7 @@ void SBarSlotWnd::CalcOutcome() {
 		}
 
 		// Calc new credit
-		m_nCredit += (m_nBet * m_nPayOff1) / m_nPayOff2;
+		m_nCredit += (m_nBet * _nPayOff1) / _nPayOff2;
 		m_bLose = false;
 
 	} else {
@@ -664,8 +664,8 @@ void SBarSlotWnd::PairPays(int nSlotIdx) {
 }
 
 void SBarSlotWnd::SetPayOff(int nPay1, int nPay2) {
-	m_nPayOff1 = nPay1;
-	m_nPayOff2 = nPay2;
+	_nPayOff1 = nPay1;
+	_nPayOff2 = nPay2;
 }
 
 void SBarSlotWnd::SlideSlots() {
@@ -775,8 +775,8 @@ void SBarSlotWnd::UpdateText() {
 	if (ErrorOccurred())
 		return;
 
-	if (m_nPayOff1 > 0 && m_pOddsText != nullptr) {
-		m_pOddsText->setText(BuildString("%d:%d", m_nPayOff1, m_nPayOff2));
+	if (_nPayOff1 > 0 && m_pOddsText != nullptr) {
+		m_pOddsText->setText(BuildString("%d:%d", _nPayOff1, _nPayOff2));
 	}
 
 	if (m_pCredText != nullptr) {

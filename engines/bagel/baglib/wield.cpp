@@ -171,8 +171,8 @@ ErrorCode CBagWield::update(CBofBitmap *pBmp, CBofPoint /*cPoint*/, CBofRect * /
 	}
 
 	// Set the firstpaint flag and attach objects to allow for immediate run objects to run
-	if (m_bFirstPaint) {
-		m_bFirstPaint = false;
+	if (_bFirstPaint) {
+		_bFirstPaint = false;
 		AttachActiveObjects();
 	}
 

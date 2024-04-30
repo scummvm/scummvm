@@ -79,7 +79,7 @@ private:
 	// double                m_fyAspectRation;          // Maintain the current aspect ratio
 
 public:
-	static CBagWield *m_pWieldBmp; // Pointer to the WEILD object
+	static CBagWield *_pWieldBmp; // Pointer to the WEILD object
 
 	CBagPanWindow();
 	virtual ~CBagPanWindow();

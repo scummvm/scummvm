@@ -27,25 +27,25 @@
 namespace Bagel {
 namespace SpaceBar {
 
-CBagObject *SBarFullWnd::m_pWieldedObject = nullptr;
+CBagObject *SBarFullWnd::_pWieldedObject = nullptr;
 
 SBarFullWnd::SBarFullWnd() {
-	m_bAllowEventWorld = true;
+	_bAllowEventWorld = true;
 }
 
 ErrorCode SBarFullWnd::attach() {
 	Assert(IsValidObject(this));
 
 	// If we have something wielded, put it on hold for now.
-	if (CBagPanWindow::m_pWieldBmp != nullptr) {
-		m_pWieldedObject = CBagPanWindow::m_pWieldBmp->GetCurrObj();
-		if (m_pWieldedObject != nullptr) {
-			SDEVMNGR->RemoveObject(CBagPanWindow::m_pWieldBmp->GetName(), m_pWieldedObject->GetRefName());
+	if (CBagPanWindow::_pWieldBmp != nullptr) {
+		_pWieldedObject = CBagPanWindow::_pWieldBmp->GetCurrObj();
+		if (_pWieldedObject != nullptr) {
+			SDEVMNGR->RemoveObject(CBagPanWindow::_pWieldBmp->GetName(), _pWieldedObject->GetRefName());
 		}
 	}
 
 	if (CBagStorageDevWnd::attach() == ERR_NONE) {
-		if (!m_bAllowEventWorld) {
+		if (!_bAllowEventWorld) {
 			g_bWaitOK = false;
 		}
 
@@ -60,9 +60,9 @@ ErrorCode SBarFullWnd::attach() {
 ErrorCode SBarFullWnd::detach() {
 	CBagStorageDevWnd::detach();
 
-	if (m_pWieldedObject) {
-		SDEVMNGR->AddObject(CBagPanWindow::m_pWieldBmp->GetName(), m_pWieldedObject->GetRefName());
-		m_pWieldedObject = nullptr;
+	if (_pWieldedObject) {
+		SDEVMNGR->AddObject(CBagPanWindow::_pWieldBmp->GetName(), _pWieldedObject->GetRefName());
+		_pWieldedObject = nullptr;
 	}
 
 	return ERR_NONE;
@@ -72,7 +72,7 @@ void SBarFullWnd::onTimer(uint32 nTimerId) {
 	Assert(IsValidObject(this));
 
 	// If allowing EVENT_WLD to execute
-	if (m_bAllowEventWorld) {
+	if (_bAllowEventWorld) {
 		CBagStorageDevWnd::onTimer(nTimerId);
 
 	} else {

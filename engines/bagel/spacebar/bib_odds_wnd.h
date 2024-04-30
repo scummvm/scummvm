@@ -42,7 +42,7 @@ public:
 	void onKeyHit(uint32 lKey, uint32 lRepCount);
 
 	static void initialize();
-	static CBagObject *m_pWieldedObject;
+	static CBagObject *_wieldedObject;
 };
 
 } // namespace SpaceBar

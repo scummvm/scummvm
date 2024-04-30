@@ -288,7 +288,7 @@ PARSE_CODES CBagObject::setInfo(bof_ifstream &istr) {
 			} else if (!s.Find("STRETCHABLE")) {
 				SetStretchable(b);
 			} else if (!s.Find("HIGHLIGHT")) {
-				SetHighlight(b);
+				setHighlight(b);
 			} else if (!s.Find("ACTIVE")) {
 				setActive(b);
 			} else if (!s.Find("TRANSPARENT")) {

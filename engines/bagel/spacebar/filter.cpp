@@ -107,7 +107,7 @@ static uint32 waitCount;
 
 // Filter initialization code.
 //
-void VilInitFilters(CBofBitmap *pBmp) {
+void vilInitFilters(CBofBitmap *pBmp) {
 	if (!initDone) {
 		char szCString[256];
 		CBofString cString(szCString, 256);
@@ -146,7 +146,7 @@ void VilInitFilters(CBofBitmap *pBmp) {
 	}
 }
 
-void TriInitFilters(CBofBitmap *pBmp) {
+void triInitFilters(CBofBitmap *pBmp) {
 	// Trisecks sunglasses bitmap.
 	char szTriStr[256];
 	CBofString cTriStr(szTriStr, 256);
@@ -156,7 +156,7 @@ void TriInitFilters(CBofBitmap *pBmp) {
 	triinitDone = true;
 }
 
-void LightningInitFilters() {
+void lightningInitFilters() {
 	if (!lightninginitDone) {
 		char szThunderFileName[256];
 		CBofString cThunderFileName(szThunderFileName, 256);
@@ -203,7 +203,7 @@ void destroyFilters() {
 	lightninginitDone = false;
 }
 
-bool DoFilters(const uint16 nFilterId, CBofBitmap *pBmp, CBofRect *pRect) {
+bool doFilters(const uint16 nFilterId, CBofBitmap *pBmp, CBofRect *pRect) {
 	bool bReturnValue = false;
 
 	if ((nFilterId & kTriFilter) != 0) {
@@ -279,7 +279,7 @@ static void GetVilVars() {
 // Vildroid filter.
 static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	if (!initDone) {
-		VilInitFilters(pBmp);
+		vilInitFilters(pBmp);
 	}
 
 	// If get vars for 1st time
@@ -590,7 +590,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 // Trisecks filter
 static bool TriFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	if (!triinitDone) {
-		TriInitFilters(pBmp);
+		triInitFilters(pBmp);
 	}
 
 	if (pRect != nullptr) {
@@ -706,7 +706,7 @@ static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		CBofRect dstRect = tempRect;
 		pBmp->paint(pTempBitmap, &dstRect, &srcRect);   // Copy the Screen's Bmp into Temp
 		int nShiftAmount = 0;
-		
+
 		// Step through strips of bmp
 		for (int y = tempRect.top; y < tempRect.bottom; y += 4) {
 			srcRect.SetRect(0, y, tempRect.right - nShiftAmount, y + 4); // Get everything over one
@@ -758,7 +758,7 @@ static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 	if (nLightningDelay > 0) {
 		if (!lightninginitDone) {
-			LightningInitFilters();
+			lightningInitFilters();
 		}
 
 		// Check to see if it's time to "flash" a bolt of lightning.
