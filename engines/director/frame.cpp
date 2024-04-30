@@ -267,12 +267,10 @@ void Frame::readSpriteD2(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 
 	uint16 fieldPosition = offset - spriteStart;
 
-	if (debugChannelSet(8, kDebugLoading)) {
-		debugC(8, kDebugLoading, "Frame::readSpriteD2(): channel %d, 16 bytes", spritePosition);
-		stream.hexdump(kSprChannelSizeD2);
-	}
-
 	debugC(3, kDebugLoading, "Frame::readSpriteD2(): sprite: %d offset: %d size: %d, field: %d", spritePosition, offset, size, fieldPosition);
+	if (debugChannelSet(8, kDebugLoading)) {
+		stream.hexdump(size);
+	}
 
 	Sprite &sprite = *_sprites[spritePosition + 1];
 
@@ -577,12 +575,10 @@ void Frame::readSpriteD4(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 
 	uint16 fieldPosition = offset - spriteStart;
 
-	if (debugChannelSet(8, kDebugLoading)) {
-		debugC(8, kDebugLoading, "Frame::readSpriteD4(): channel %d, 20 bytes", spritePosition);
-		stream.hexdump(kSprChannelSizeD4);
-	}
-
 	debugC(3, kDebugLoading, "Frame::readSpriteD4(): sprite: %d offset: %d size: %d, field: %d", spritePosition, offset, size, fieldPosition);
+	if (debugChannelSet(8, kDebugLoading)) {
+		stream.hexdump(size);
+	}
 
 	Sprite &sprite = *_sprites[spritePosition + 1];
 
@@ -881,12 +877,10 @@ void Frame::readSpriteD5(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 
 	uint16 fieldPosition = offset - spriteStart;
 
-	if (debugChannelSet(8, kDebugLoading)) {
-		debugC(8, kDebugLoading, "Frame::readSpriteD5(): channel %d, 20 bytes", spritePosition);
-		stream.hexdump(kSprChannelSizeD4);
-	}
-
 	debugC(3, kDebugLoading, "Frame::readSpriteD5(): sprite: %d offset: %d size: %d, field: %d", spritePosition, offset, size, fieldPosition);
+	if (debugChannelSet(8, kDebugLoading)) {
+		stream.hexdump(size);
+	}
 
 	Sprite &sprite = *_sprites[spritePosition + 1];
 
@@ -1081,12 +1075,10 @@ void Frame::readSpriteD6(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 
 	uint16 fieldPosition = offset - spriteStart;
 
-	if (debugChannelSet(8, kDebugLoading)) {
-		debugC(8, kDebugLoading, "Frame::readSpriteD6(): channel %d, 20 bytes", spritePosition);
-		stream.hexdump(kSprChannelSizeD6);
-	}
-
 	debugC(3, kDebugLoading, "Frame::readSpriteD6(): sprite: %d offset: %d size: %d, field: %d", spritePosition, offset, size, fieldPosition);
+	if (debugChannelSet(8, kDebugLoading)) {
+		stream.hexdump(size);
+	}
 
 	Sprite &sprite = *_sprites[spritePosition + 1];
 
