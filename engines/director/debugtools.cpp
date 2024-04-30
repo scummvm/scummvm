@@ -71,7 +71,7 @@ static void showVars() {
 }
 
 static ImVec4 convertColor(uint32 color) {
-	if (g_director->_colorDepth == 1) {
+	if (g_director->_colorDepth <= 8) {
 		float r = g_director->getPalette()[color * 3 + 0] * 1.0 / 255.0;
 		float g = g_director->getPalette()[color * 3 + 1] * 1.0 / 255.0;
 		float b = g_director->getPalette()[color * 3 + 2] * 1.0 / 255.0;
@@ -111,27 +111,28 @@ static void showChannels() {
 		ImGui::Text("LSCR:   actionId: %d", frame._mainChannels.actionId.member);
 
 		if (ImGui::BeginTable("Channels", 21, ImGuiTableFlags_Borders)) {
-			ImGui::TableSetupColumn("CH", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_AngledHeader);
-			ImGui::TableSetupColumn("castId", ImGuiTableColumnFlags_AngledHeader);
-			ImGui::TableSetupColumn("vis", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_AngledHeader);
-			ImGui::TableSetupColumn("inkData", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_AngledHeader);
-			ImGui::TableSetupColumn("ink", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_AngledHeader);
-			ImGui::TableSetupColumn("trails", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_AngledHeader);
-			ImGui::TableSetupColumn("stretch", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_AngledHeader);
-			ImGui::TableSetupColumn("line", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_AngledHeader);
-			ImGui::TableSetupColumn("dims", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_AngledHeader);
-			ImGui::TableSetupColumn("type", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_AngledHeader);
-			ImGui::TableSetupColumn("fg", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_AngledHeader);
-			ImGui::TableSetupColumn("bg", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_AngledHeader);
-			ImGui::TableSetupColumn("script", ImGuiTableColumnFlags_AngledHeader);
-			ImGui::TableSetupColumn("colorcode", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_AngledHeader);
-			ImGui::TableSetupColumn("blendAmount", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_AngledHeader);
-			ImGui::TableSetupColumn("unk3", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_AngledHeader);
-			ImGui::TableSetupColumn("constraint", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_AngledHeader);
-			ImGui::TableSetupColumn("puppet", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_AngledHeader);
-			ImGui::TableSetupColumn("moveable", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_AngledHeader);
-			ImGui::TableSetupColumn("movieRate", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_AngledHeader);
-			ImGui::TableSetupColumn("movieTime", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_AngledHeader);
+			ImGuiTableFlags flags = ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_AngledHeader;
+			ImGui::TableSetupColumn("CH", flags);
+			ImGui::TableSetupColumn("castId", flags);
+			ImGui::TableSetupColumn("vis", flags);
+			ImGui::TableSetupColumn("inkData", flags);
+			ImGui::TableSetupColumn("ink", flags);
+			ImGui::TableSetupColumn("trails", flags);
+			ImGui::TableSetupColumn("stretch", flags);
+			ImGui::TableSetupColumn("line", flags);
+			ImGui::TableSetupColumn("dims", flags);
+			ImGui::TableSetupColumn("type", flags);
+			ImGui::TableSetupColumn("fg", flags);
+			ImGui::TableSetupColumn("bg", flags);
+			ImGui::TableSetupColumn("script", flags);
+			ImGui::TableSetupColumn("colorcode", flags);
+			ImGui::TableSetupColumn("blendAmount", flags);
+			ImGui::TableSetupColumn("unk3", flags);
+			ImGui::TableSetupColumn("constraint", flags);
+			ImGui::TableSetupColumn("puppet", flags);
+			ImGui::TableSetupColumn("moveable", flags);
+			ImGui::TableSetupColumn("movieRate", flags);
+			ImGui::TableSetupColumn("movieTime", flags);
 
 			ImGui::TableAngledHeadersRow();
 			for (int i = 0; i < frame._numChannels; i++) {
@@ -163,13 +164,14 @@ static void showChannels() {
 					ImGui::TableNextColumn();
 					ImGui::Text("%d (%s)", sprite._spriteType, spriteType2str(sprite._spriteType));
 					ImGui::TableNextColumn();
-					ImGui::Text("%d", sprite._foreColor);
+					ImGui::Text("%3d", sprite._foreColor); ImGui::SameLine();
 					ImGui::ColorButton("foreColor", convertColor(sprite._foreColor));
 					ImGui::TableNextColumn();
-					ImGui::Text("%d", sprite._backColor);
-					ImGui::ColorButton("foreColor", convertColor(sprite._backColor));
+					ImGui::Text("%3d", sprite._backColor); ImGui::SameLine();
+					ImGui::ColorButton("backColor", convertColor(sprite._backColor));
 					ImGui::TableNextColumn();
-					ImGui::Text("%s", sprite._scriptId.asString().c_str());
+					if (sprite._scriptId.member)
+						ImGui::Text("%s", sprite._scriptId.asString().c_str());
 					ImGui::TableNextColumn();
 					ImGui::Text("0x%x", sprite._colorcode);
 					ImGui::TableNextColumn();
