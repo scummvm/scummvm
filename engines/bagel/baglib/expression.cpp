@@ -39,10 +39,10 @@ void CBagExpression::shutdown() {
 }
 
 CBagExpression::CBagExpression(CBagExpression *pPrevExpr, bool bPrevNeg) {
-	m_bNegative = false;
-	m_xPrevExpression = pPrevExpr;
+	_negativeFl = false;
+	_prevExpression = pPrevExpr;
 
-	m_bPrevNegative = (byte)bPrevNeg;
+	_prevNegativeFl = bPrevNeg;
 }
 
 CBagExpression::~CBagExpression() {
@@ -58,74 +58,74 @@ bool CBagExpression::Evaluate(CBagVar *xLHOper, CBagVar *xRHOper, OPERATION xOpe
 		xRHOper->SetValue(g_engine->getRandomNumber());
 
 	switch (xOper) {
-	case NONE:
+	case OP_NONE:
 		break;
 
-	case ASSIGN:
+	case OP_ASSIGN:
 		bRClocal = OnAssign(xLHOper, xRHOper, xResult);
 		break;
 
-	case EQUAL:
+	case OP_EQUAL:
 		bRClocal = OnEqual(xLHOper, xRHOper, xResult);
 		break;
 
-	case NOTEQUAL:
+	case OP_NOT_EQUAL:
 		bRClocal = OnNotEqual(xLHOper, xRHOper, xResult);
 		break;
 
-	case LESSTHAN:
+	case OP_LESS_THAN:
 		bRClocal = OnLessThan(xLHOper, xRHOper, xResult);
 		break;
 
-	case LESSTHANEQUAL:
+	case OP_LESS_THAN_EQUAL:
 		bRClocal = OnLessThanEqual(xLHOper, xRHOper, xResult);
 		break;
 
-	case GREATERTHAN:
+	case OP_GREATER_THAN:
 		bRClocal = OnGreaterThan(xLHOper, xRHOper, xResult);
 		break;
 
-	case GREATERTHANEQUAL:
+	case OP_GREATER_THAN_EQUAL:
 		bRClocal = OnGreaterThanEqual(xLHOper, xRHOper, xResult);
 		break;
 
-	case PLUSASSIGN:
+	case OP_PLUS_ASSIGN:
 		bRClocal = OnPlusAssign(xLHOper, xRHOper, xResult);
 		break;
 
-	case MINUSASSIGN:
+	case OP_MINUS_ASSIGN:
 		bRClocal = OnMinusAssign(xLHOper, xRHOper, xResult);
 		break;
 
-	case PLUS:
+	case OP_PLUS:
 		bRClocal = OnPlus(xLHOper, xRHOper, xResult);
 		break;
 
-	case MINUS:
+	case OP_MINUS:
 		bRClocal = OnMinus(xLHOper, xRHOper, xResult);
 		break;
 
-	case MULTIPLY:
+	case OP_MULTIPLY:
 		bRClocal = OnMultiply(xLHOper, xRHOper, xResult);
 		break;
 
-	case DIVIDE:
+	case OP_DIVIDE:
 		bRClocal = OnDivide(xLHOper, xRHOper, xResult);
 		break;
 
-	case MOD:
+	case OP_MOD:
 		bRClocal = OnMod(xLHOper, xRHOper, xResult);
 		break;
 
-	case CONTAINS:
+	case OP_CONTAINS:
 		bRClocal = OnContains(xLHOper, xRHOper, xResult);
 		break;
 
-	case HAS:
+	case OP_HAS:
 		bRClocal = OnHas(xLHOper, xRHOper, xResult);
 		break;
 
-	case STATUS:
+	case OP_STATUS:
 		bRClocal = OnStatus(xLHOper, xRHOper, xResult);
 		break;
 
@@ -138,7 +138,7 @@ bool CBagExpression::Evaluate(CBagVar *xLHOper, CBagVar *xRHOper, OPERATION xOpe
 
 
 CBagVar *CBagExpression::GetVariable(int nPos) {
-	CBagVar *pVar = m_cVarList.GetNodeItem(nPos);
+	CBagVar *pVar = _varList.GetNodeItem(nPos);
 
 	// If the variable is a reference (OBJ.PROPERTY)
 	if (pVar->IsReference()) {
@@ -164,7 +164,7 @@ CBagVar *CBagExpression::GetVariable(int nPos) {
 
 CBagExpression::OPERATION CBagExpression::GetOperation(int nPos) {
 	Assert(false);
-	return m_cOperList.GetNodeItem(nPos);
+	return _operList.GetNodeItem(nPos);
 }
 
 
@@ -172,7 +172,7 @@ bool CBagExpression::Evaluate(bool bNeg, CBagVar &xResult) {
 	bool bRClocal = false;
 
 	// There must be an expression for every variable after the first
-	Assert(m_cVarList.GetCount() - 1 == m_cOperList.GetCount());
+	Assert(_varList.GetCount() - 1 == _operList.GetCount());
 
 	int nVCount = 0;
 
@@ -180,31 +180,31 @@ bool CBagExpression::Evaluate(bool bNeg, CBagVar &xResult) {
 	xResult = *xLHOper;
 
 	bool bRCparent = true;
-	if (m_xPrevExpression) {
-		bRCparent = m_xPrevExpression->Evaluate(m_bPrevNegative, xResult);
+	if (_prevExpression) {
+		bRCparent = _prevExpression->Evaluate(_prevNegativeFl, xResult);
 	}
 
 	if (bRCparent) {
 		bool bVal = false;
 		int nECount = 0;
 
-		while (nVCount < m_cVarList.GetCount()) {
+		while (nVCount < _varList.GetCount()) {
 			CBagVar *xRHOper = GetVariable(nVCount++);
-			OPERATION xOper = m_cOperList.GetNodeItem(nECount++);
+			OPERATION xOper = _operList.GetNodeItem(nECount++);
 			CBagVar *xRHOper2;
 
 			switch (xOper) {
-			case AND:
+			case OP_AND:
 				xRHOper2 = GetVariable(nVCount++);
-				xOper = m_cOperList.GetNodeItem(nECount++);
+				xOper = _operList.GetNodeItem(nECount++);
 				bVal = Evaluate(xRHOper, xRHOper2, xOper, xResult);
 
 				bRClocal &= bVal;
 				break;
 
-			case OR:
+			case OP_OR:
 				xRHOper2 = GetVariable(nVCount++);
-				xOper = m_cOperList.GetNodeItem(nECount++);
+				xOper = _operList.GetNodeItem(nECount++);
 				bVal = Evaluate(xRHOper, xRHOper2, xOper, xResult);
 
 				bRClocal |= bVal;
@@ -229,10 +229,10 @@ bool CBagExpression::Evaluate(bool bNeg, CBagVar &xResult) {
 bool CBagExpression::EvalLeftToRight(bool bNeg, CBagVar &xResult) {
 	bool bRClocal = false;
 	CBagVar stLHOper;
-	OPERATION xOper = NONE;
+	OPERATION xOper = OP_NONE;
 
 	// There must be an expression for every variable after the first
-	Assert(m_cVarList.GetCount() - 1 == m_cOperList.GetCount());
+	Assert(_varList.GetCount() - 1 == _operList.GetCount());
 
 	int nVCount = 0;
 
@@ -240,17 +240,17 @@ bool CBagExpression::EvalLeftToRight(bool bNeg, CBagVar &xResult) {
 	xResult = *xLHOper;
 
 	bool bRCparent = true;
-	if (m_xPrevExpression) {
-		bRCparent = m_xPrevExpression->Evaluate(m_bPrevNegative, xResult);
+	if (_prevExpression) {
+		bRCparent = _prevExpression->Evaluate(_prevNegativeFl, xResult);
 	}
 
 	if (bRCparent) {
 		bool bFirstTime = true;
 		int nECount = 0;
-		while (nVCount < m_cVarList.GetCount()) {
+		while (nVCount < _varList.GetCount()) {
 			CBagVar *xRHOper = GetVariable(nVCount++);
 			OPERATION xPrevOper = xOper;      // save previous operator
-			xOper = m_cOperList.GetNodeItem(nECount++);
+			xOper = _operList.GetNodeItem(nECount++);
 
 			if (bFirstTime) {
 				stLHOper = *xLHOper;
@@ -259,26 +259,26 @@ bool CBagExpression::EvalLeftToRight(bool bNeg, CBagVar &xResult) {
 				// Based on what we have for a previous operator, either use
 				// the left hand expression or the result of the previous expression.
 				switch (xPrevOper) {
-				case MINUS:
-				case MULTIPLY:
-				case DIVIDE:
-				case MOD:
-				case PLUS:
+				case OP_MINUS:
+				case OP_MULTIPLY:
+				case OP_DIVIDE:
+				case OP_MOD:
+				case OP_PLUS:
 					stLHOper = xResult;
 					break;
-				case NONE:
-				case ASSIGN:
-				case EQUAL:
-				case NOTEQUAL:
-				case LESSTHAN:
-				case LESSTHANEQUAL:
-				case GREATERTHAN:
-				case GREATERTHANEQUAL:
-				case PLUSASSIGN:
-				case MINUSASSIGN:
-				case CONTAINS:
-				case HAS:
-				case STATUS:
+				case OP_NONE:
+				case OP_ASSIGN:
+				case OP_EQUAL:
+				case OP_NOT_EQUAL:
+				case OP_LESS_THAN:
+				case OP_LESS_THAN_EQUAL:
+				case OP_GREATER_THAN:
+				case OP_GREATER_THAN_EQUAL:
+				case OP_PLUS_ASSIGN:
+				case OP_MINUS_ASSIGN:
+				case OP_CONTAINS:
+				case OP_HAS:
+				case OP_STATUS:
 				default:
 					stLHOper = *xLHOper;
 					break;
@@ -289,17 +289,17 @@ bool CBagExpression::EvalLeftToRight(bool bNeg, CBagVar &xResult) {
 			CBagVar *xRHOper2;
 			switch (xOper) {
 
-			case AND:
+			case OP_AND:
 				xRHOper2 = GetVariable(nVCount++);
-				xOper = m_cOperList.GetNodeItem(nECount++);
+				xOper = _operList.GetNodeItem(nECount++);
 				bVal = Evaluate(xRHOper, xRHOper2, xOper, xResult);
 
 				bRClocal &= bVal;
 				break;
 
-			case OR:
+			case OP_OR:
 				xRHOper2 = GetVariable(nVCount++);
-				xOper = m_cOperList.GetNodeItem(nECount++);
+				xOper = _operList.GetNodeItem(nECount++);
 				bVal = Evaluate(xRHOper, xRHOper2, xOper, xResult);
 
 				// or this don't not it!!!
@@ -595,19 +595,19 @@ PARSE_CODES CBagExpression::setInfo(bof_ifstream &istr) {
 					pVar->SetConstant();
 				}
 			}
-			m_cVarList.addToTail(pVar);
+			_varList.addToTail(pVar);
 
 			istr.EatWhite();
 			ch = istr.peek();
 			while ((ch != ')') && rc == PARSING_DONE) {
 				OPERATION xOper;
 				GetOperatorFromStream(istr, xOper);
-				if (xOper == NONE) {
+				if (xOper == OP_NONE) {
 					rc = UNKNOWN_TOKEN;
 					errStr = "Bad operator:";
 					break;
 				}
-				m_cOperList.addToTail(xOper);
+				_operList.addToTail(xOper);
 
 				istr.EatWhite();
 				GetAlphaNumFromStream(istr, sStr);
@@ -624,7 +624,7 @@ PARSE_CODES CBagExpression::setInfo(bof_ifstream &istr) {
 						pVar->SetConstant();
 					}
 				}
-				m_cVarList.addToTail(pVar);
+				_varList.addToTail(pVar);
 
 				istr.EatWhite();
 				ch = istr.peek();
@@ -640,7 +640,7 @@ PARSE_CODES CBagExpression::setInfo(bof_ifstream &istr) {
 		case 'N':
 			GetAlphaNumFromStream(istr, sStr);
 			if (!sStr.Find("NOT")) {
-				m_bNegative = (byte)!m_bNegative;
+				_negativeFl = !_negativeFl;
 				istr.EatWhite();
 				break;
 			}
@@ -668,7 +668,7 @@ ErrorCode CBagExpression::GetOperatorFromStream(bof_ifstream &istr, OPERATION &x
 
 	CBofString sStr(szLocalBuff, 256);
 
-	xOper = NONE;
+	xOper = OP_NONE;
 
 	istr.EatWhite();
 	GetOperStrFromStream(istr, sStr);
@@ -679,66 +679,66 @@ ErrorCode CBagExpression::GetOperatorFromStream(bof_ifstream &istr, OPERATION &x
 	}
 
 	if (!sStr.Find("-=")) {
-		xOper = MINUSASSIGN;
+		xOper = OP_MINUS_ASSIGN;
 
 	} else if (!sStr.Find("+=")) {
-		xOper = PLUSASSIGN;
+		xOper = OP_PLUS_ASSIGN;
 
 	} else if (!sStr.Find(">=")) {
-		xOper = GREATERTHANEQUAL;
+		xOper = OP_GREATER_THAN_EQUAL;
 
 	} else if (!sStr.Find("<=")) {
-		xOper = LESSTHANEQUAL;
+		xOper = OP_LESS_THAN_EQUAL;
 
 	} else if (!sStr.Find("!=")) {
-		xOper = NOTEQUAL;
+		xOper = OP_NOT_EQUAL;
 
 	} else if (!sStr.Find("==")) {
-		xOper = EQUAL;
+		xOper = OP_EQUAL;
 
 	} else if (!sStr.Find(">")) {
-		xOper = GREATERTHAN;
+		xOper = OP_GREATER_THAN;
 
 	} else if (!sStr.Find("<")) {
-		xOper = LESSTHAN;
+		xOper = OP_LESS_THAN;
 
 	} else if (!sStr.Find("=")) {
-		xOper = ASSIGN;
+		xOper = OP_ASSIGN;
 
 	} else if (!sStr.Find("+")) {
-		xOper = PLUS;
+		xOper = OP_PLUS;
 
 	} else if (!sStr.Find("-")) {
-		xOper = MINUS;
+		xOper = OP_MINUS;
 
 	} else if (!sStr.Find("*")) {
-		xOper = MULTIPLY;
+		xOper = OP_MULTIPLY;
 
 	} else if (!sStr.Find("/")) {
-		xOper = DIVIDE;
+		xOper = OP_DIVIDE;
 
 	} else if (!sStr.Find("%")) {
-		xOper = MOD;
+		xOper = OP_MOD;
 
 	} else if (!sStr.Find("CONTAINS")) {
 		// Sdev contains object
-		xOper = CONTAINS;
+		xOper = OP_CONTAINS;
 
 	} else if (!sStr.Find("HAS")) {
 		// Sdev has type of object
-		xOper = HAS;
+		xOper = OP_HAS;
 
 	} else if (!sStr.Find("OR")) {
-		xOper = OR;
+		xOper = OP_OR;
 
 	} else if (!sStr.Find("STATUS")) {
-		xOper = STATUS;
+		xOper = OP_STATUS;
 
 	} else if (!sStr.Find("AND")) {
-		xOper = AND;
+		xOper = OP_AND;
 	}
 
-	if (xOper == NONE)
+	if (xOper == OP_NONE)
 		rc = ERR_UNKNOWN;
 
 	return rc;

@@ -32,36 +32,36 @@ namespace Bagel {
 class CBagExpression : public CBagParseObject, public CBofObject {
 public:
 	enum OPERATION {
-		NONE,
-		ASSIGN,
-		EQUAL,
-		NOTEQUAL,
-		LESSTHAN,
-		LESSTHANEQUAL,
-		GREATERTHAN,
-		GREATERTHANEQUAL,
-		PLUSASSIGN,
-		MINUSASSIGN,
-		CONTAINS,
-		HAS,
-		CURRSDEV,
-		PLUS,
-		MINUS,
-		MULTIPLY,
-		DIVIDE,
-		AND,
-		OR,
-		MOD,
-		STATUS
+		OP_NONE,
+		OP_ASSIGN,
+		OP_EQUAL,
+		OP_NOT_EQUAL,
+		OP_LESS_THAN,
+		OP_LESS_THAN_EQUAL,
+		OP_GREATER_THAN,
+		OP_GREATER_THAN_EQUAL,
+		OP_PLUS_ASSIGN,
+		OP_MINUS_ASSIGN,
+		OP_CONTAINS,
+		OP_HAS,
+		OP_CURR_SDEV,
+		OP_PLUS,
+		OP_MINUS,
+		OP_MULTIPLY,
+		OP_DIVIDE,
+		OP_AND,
+		OP_OR,
+		OP_MOD,
+		OP_STATUS
 	};
 
 private:
-	CBofList<CBagVar *> m_cVarList;    // Right hand operator
-	CBofList<OPERATION> m_cOperList;   // Operation to be preformed
-	CBagExpression *m_xPrevExpression; // Not null when when this is an enclosed expression
+	CBofList<CBagVar *> _varList;    // Right hand operator
+	CBofList<OPERATION> _operList;   // Operation to be preformed
+	CBagExpression *_prevExpression; // Not null when when this is an enclosed expression
 
-	byte m_bPrevNegative; // True if the operation should return Negative results
-	byte m_bNegative;     // True if the operation should return Negative results
+	bool _prevNegativeFl; // True if the operation should return Negative results
+	bool _negativeFl;     // True if the operation should return Negative results
 
 	bool Evaluate(CBagVar *xLHOper, CBagVar *xRHOper, OPERATION xOper, CBagVar &xResult);
 
@@ -85,10 +85,10 @@ public:
 	bool NegEvaluate(CBagVar &xResult = *m_xTempVar);
 
 	void SetNegative(bool b = true) {
-		m_bNegative = (byte)b;
+		_negativeFl = b;
 	}
 	bool IsNegative() {
-		return m_bNegative;
+		return _negativeFl;
 	}
 
 	CBagVar *GetVariable(int nPos);
@@ -98,10 +98,10 @@ public:
 	ErrorCode GetOperatorFromStream(bof_ifstream &istr, OPERATION &xOper);
 
 	CBagExpression *GetPrevExpression() {
-		return m_xPrevExpression;
+		return _prevExpression;
 	}
 	void SetPrevExpression(CBagExpression *pExpr) {
-		m_xPrevExpression = pExpr;
+		_prevExpression = pExpr;
 	}
 
 	virtual bool OnAssign(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper);
