@@ -40,9 +40,9 @@ public:
 
 	void onMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
 
-	bool m_bAllowEventWorld;
+	bool _bAllowEventWorld;
 
-	static CBagObject *m_pWieldedObject;
+	static CBagObject *_pWieldedObject;
 };
 
 } // namespace SpaceBar

@@ -972,7 +972,7 @@ ErrorCode CBagMasterWin::SetStorageDev(const CBofString &sWldName, bool bEntry) 
 
 	sExt = sWldName.Right(4);
 	if (m_pGameWindow)
-		m_pGameWindow->SetOnUpdate(false);
+		m_pGameWindow->setOnUpdate(false);
 
 	if (!sExt.Find(".wld") || !sExt.Find(".WLD") || (sWldName.Find(".WLD~~") > 0) || (sWldName.Find(".wld~~") > 0)) {
 
@@ -1416,7 +1416,7 @@ void CBagMasterWin::onUserMessage(uint32 nMessage, uint32 lParam) {
 	}
 
 	if (m_pGameWindow)
-		m_pGameWindow->SetOnUpdate(true);
+		m_pGameWindow->setOnUpdate(true);
 }
 
 ErrorCode CBagMasterWin::Run() {

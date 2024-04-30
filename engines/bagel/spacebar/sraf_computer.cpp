@@ -864,8 +864,8 @@ SrafComputer::~SrafComputer() {
 }
 
 void SrafComputer::onMainLoop() {
-	if (m_bFirstPaint) {
-		m_bFirstPaint = false;
+	if (_bFirstPaint) {
+		_bFirstPaint = false;
 		AttachActiveObjects();
 	}
 }
@@ -950,7 +950,7 @@ ErrorCode SrafComputer::attach() {
 		Assert(m_pszGroup1Word != nullptr);
 		Assert(m_pszGroup2Word != nullptr);
 
-		SetOn();
+		setOn();
 
 		show();
 		updateWindow();
@@ -1054,7 +1054,7 @@ void SrafComputer::onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void
 void SrafComputer::onKeyHit(uint32 lKey, uint32 nRepCount) {
 	switch (lKey) {
 	case BKEY_BACK:                 // Temporary, go back to main screen.
-		DeleteListBox();
+		deleteListBox();
 		m_eCurScreen = SCMAIN;
 		break;
 
@@ -1130,13 +1130,13 @@ void SrafComputer::onBofButton(CBofObject *pObject, int nState) {
 }
 
 
-void SrafComputer::SetOn() {
+void SrafComputer::setOn() {
 	m_eMode = SCON;
 
 	ActivateMainScreen();
 }
 
-void SrafComputer::SetOff() {
+void SrafComputer::setOff() {
 	if (m_eMode != SCOFF) {
 		m_eMode = SCOFF;
 
@@ -1147,7 +1147,7 @@ void SrafComputer::SetOff() {
 		setFocus();
 	}
 
-	DeleteListBox();
+	deleteListBox();
 	invalidateRect(&gCompDisplay);
 	updateWindow();
 }
@@ -1185,7 +1185,7 @@ ErrorCode SrafComputer::CreateListBox() {
 }
 
 
-void SrafComputer::DeleteListBox() {
+void SrafComputer::deleteListBox() {
 	if (m_pLBox) {
 		m_pLBox->deleteAll();	// Clears all in the text box
 	}
@@ -3651,7 +3651,7 @@ void SrafComputer::OnListCodeWords() {
 }
 
 void SrafComputer::DeactivateMainScreen() {
-	DeleteListBox();
+	deleteListBox();
 
 	//  Hide the on/off button
 	if (m_eMode == SCON) {
@@ -3670,7 +3670,7 @@ void SrafComputer::ActivateMainScreen() {
 	m_eCurScreen = SCMAIN;
 
 	// Delete the list box
-	DeleteListBox();
+	deleteListBox();
 
 	// Hide the return to main if it's been created
 
@@ -3781,10 +3781,10 @@ void SrafComputer::OnButtonMainScreen(CBofButton *pButton, int nState) {
 
 	switch (pButton->getControlID()) {
 	case ON_BUTTON:
-		SetOn();
+		setOn();
 		break;
 	case OFF_BUTTON:
-		SetOff();
+		setOff();
 		break;
 	case QUIT_BUTTON:
 		SetQuit();

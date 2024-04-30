@@ -116,7 +116,7 @@ CBagStorageDev::CBagStorageDev() {
 	m_bCIC = false;
 
 	// run object stuff
-	m_bFirstPaint = true;
+	_bFirstPaint = true;
 
 	m_nFloatPages = 0;
 
@@ -333,7 +333,7 @@ ErrorCode CBagStorageDev::AttachActiveObjects() {
 					// If we have already painted the storage device once
 					if (pObj->IsImmediateRun()) {
 
-						if (m_bFirstPaint == false) {
+						if (_bFirstPaint == false) {
 
 							pObj->runObject();
 
@@ -540,8 +540,8 @@ void CBagStorageDev::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 		if (pApp != nullptr) {
 			CBagPanWindow *pWin = (CBagPanWindow *)pApp->getMasterWnd();
 			if (pWin != nullptr) {
-				if (pWin->m_pWieldBmp != nullptr) {
-					pObj = pWin->m_pWieldBmp->GetCurrObj();
+				if (pWin->_pWieldBmp != nullptr) {
+					pObj = pWin->_pWieldBmp->GetCurrObj();
 					if ((pObj != nullptr) && pObj->IsActive()) {
 						pObj->onLButtonUp(nFlags, xPoint, vpInfo);
 						SetLActiveObject(pObj);
@@ -968,7 +968,7 @@ ErrorCode CBagStorageDev::attach() {
 	// Assume no error
 	ErrorCode errCode = ERR_NONE;
 
-	m_bFirstPaint = true;
+	_bFirstPaint = true;
 
 	if (!m_sBackgroundName.IsEmpty()) {
 		CBofBitmap *pBmp = new CBofBitmap(m_sBackgroundName);
@@ -1147,7 +1147,7 @@ void CBagStorageDev::MakeListDirty(CBofList<CBagObject *> *pList) {
 *****************************************************************************/
 
 CBagStorageDevWnd::CBagStorageDevWnd() : CBofWindow() {
-	SetOnUpdate(true);
+	setOnUpdate(true);
 	setCloseOnOpen(false);
 	m_pWorkBmp = nullptr;
 
@@ -1359,8 +1359,8 @@ ErrorCode CBagStorageDevWnd::PaintScreen(CBofRect *pRect) {
 		}
 	}
 
-	if (m_bFirstPaint) {
-		m_bFirstPaint = false;
+	if (_bFirstPaint) {
+		_bFirstPaint = false;
 		AttachActiveObjects();
 	}
 
@@ -1688,8 +1688,8 @@ ErrorCode CBagStorageDevDlg::PaintScreen(CBofRect *pRect) {
 
 	// Set the firstpaint flag and attach objects
 	// to allow for immediate run objects to run
-	if (m_bFirstPaint) {
-		m_bFirstPaint = false;
+	if (_bFirstPaint) {
+		_bFirstPaint = false;
 		AttachActiveObjects();
 	}
 

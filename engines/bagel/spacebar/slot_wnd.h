@@ -84,8 +84,8 @@ protected:
 	CBofBmpButton *m_pSlotButs[NUM_SLOTBUTT];
 	int             m_nBet;
 	int             m_nCredit;
-	int             m_nPayOff1;
-	int             m_nPayOff2;
+	int             _nPayOff1;
+	int             _nPayOff2;
 	CBofText *m_pCredText;
 	CBofText *m_pBetText;
 	CBofText *m_pOddsText;
@@ -115,7 +115,7 @@ public:
 	void                Go();
 
 	void                UpdateText();
-	void                CalcOutcome();
+	void                calcOutcome();
 
 	void                QuadPays(int nSlotIdx);
 	void                TripPays(int nSlotIdx);

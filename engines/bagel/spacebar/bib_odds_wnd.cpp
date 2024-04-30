@@ -30,10 +30,10 @@
 namespace Bagel {
 namespace SpaceBar {
 
-CBagObject *SBarBibOddsWnd::m_pWieldedObject;
+CBagObject *SBarBibOddsWnd::_wieldedObject;
 
 void SBarBibOddsWnd::initialize() {
-	m_pWieldedObject = nullptr;
+	_wieldedObject = nullptr;
 }
 
 SBarBibOddsWnd::SBarBibOddsWnd() : CBagChatWnd() {
@@ -50,14 +50,14 @@ ErrorCode SBarBibOddsWnd::detach() {
 
 		if (pObj != nullptr) {
 			int nPayIdx = pObj->getState();
-			g_engine->g_cBetAreas[i].m_nPayOff1 = PAY_OFFS[nPayIdx].m_nPay1;
-			g_engine->g_cBetAreas[i].m_nPayOff2 = PAY_OFFS[nPayIdx].m_nPay2;
+			g_engine->g_cBetAreas[i]._nPayOff1 = PAY_OFFS[nPayIdx]._nPay1;
+			g_engine->g_cBetAreas[i]._nPayOff2 = PAY_OFFS[nPayIdx]._nPay2;
 		}
 	}
 
-	if (m_pWieldedObject) {
-		SDEVMNGR->AddObject(CBagPanWindow::m_pWieldBmp->GetName(), m_pWieldedObject->GetRefName());
-		m_pWieldedObject = nullptr;
+	if (_wieldedObject) {
+		SDEVMNGR->AddObject(CBagPanWindow::_pWieldBmp->GetName(), _wieldedObject->GetRefName());
+		_wieldedObject = nullptr;
 	}
 
 	return CBagChatWnd::detach();
@@ -120,9 +120,9 @@ ErrorCode SBarBibOddsWnd::attach() {
 	Assert(IsValidObject(this));
 
 	// If we have something wielded, put it on hold for now.
-	if (CBagPanWindow::m_pWieldBmp != nullptr) {
-		if ((m_pWieldedObject = CBagPanWindow::m_pWieldBmp->GetCurrObj()) != nullptr) {
-			SDEVMNGR->RemoveObject(CBagPanWindow::m_pWieldBmp->GetName(), m_pWieldedObject->GetRefName());
+	if (CBagPanWindow::_pWieldBmp != nullptr) {
+		if ((_wieldedObject = CBagPanWindow::_pWieldBmp->GetCurrObj()) != nullptr) {
+			SDEVMNGR->RemoveObject(CBagPanWindow::_pWieldBmp->GetName(), _wieldedObject->GetRefName());
 		}
 	}
 

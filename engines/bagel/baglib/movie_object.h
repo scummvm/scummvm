@@ -79,7 +79,7 @@ public:
 	void SetIncrement(bool b = true) {
 		m_bIncrement = b;
 	}
-	void SetOnBlack(bool b = true) {
+	void setOnBlack(bool b = true) {
 		m_bOnBlack = b;
 	}
 

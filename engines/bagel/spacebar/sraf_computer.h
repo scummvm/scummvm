@@ -152,13 +152,13 @@ public:
 	void onPaint(CBofRect *pRect);
 	void onBofButton(CBofObject *, int);
 	void onBofListBox(CBofObject *pListBox, int nItemIndex);
-	void SetOn();
-	void SetOff();
+	void setOn();
+	void setOff();
 	void SetQuit();
 	void AlignAtColumn(CBofString &sStr, const char *szRightText, int nAlignAt);
 	CBofString &BuildBidString(int index);
 
-	void DeleteListBox();
+	void deleteListBox();
 
 	ErrorCode CreateListBox();
 

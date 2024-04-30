@@ -73,7 +73,7 @@ CMainWindow::~CMainWindow() {
 
 	if (--m_nInstances) {
 		m_pPDABmp = nullptr;
-		m_pWieldBmp = nullptr;
+		_pWieldBmp = nullptr;
 		m_pThudBmp = nullptr;
 	}
 }
@@ -150,22 +150,22 @@ ErrorCode CMainWindow::attach() {
 			InsertFGObjects(m_pThudBmp);
 		}
 
-		if (!m_pWieldBmp) {
+		if (!_pWieldBmp) {
 			pSDev = SDEVMNGR->GetStorageDevice(WIELDWLD);
 			if (pSDev != nullptr) {
-				m_pWieldBmp = (CBagWield *)pSDev;
-				m_pWieldBmp->SetAssociateWnd(this);
-				if (!m_pWieldBmp->isAttached())
-					m_pWieldBmp->attach();
+				_pWieldBmp = (CBagWield *)pSDev;
+				_pWieldBmp->SetAssociateWnd(this);
+				if (!_pWieldBmp->isAttached())
+					_pWieldBmp->attach();
 
-				if (m_pWieldBmp->getRect().IsRectEmpty()) {
+				if (_pWieldBmp->getRect().IsRectEmpty()) {
 					CBofRect r(0, 380, 0 + 100 - 1, 380 + 100 - 1);
-					m_pWieldBmp->SetRect(r);
+					_pWieldBmp->SetRect(r);
 					r = getClientRect();
 				}
 
-				InsertFGObjects(m_pWieldBmp);
-				m_pWieldBmp->SetVisible(true);
+				InsertFGObjects(_pWieldBmp);
+				_pWieldBmp->SetVisible(true);
 
 			} else {
 				ReportError(ERR_UNKNOWN, "No Wield found");
@@ -173,8 +173,8 @@ ErrorCode CMainWindow::attach() {
 		}
 
 		if ((CBagObject *)nullptr == GetFGObjects(CBofString(WIELDWLD))) {
-			m_pWieldBmp->SetAssociateWnd(this);
-			InsertFGObjects(m_pWieldBmp);
+			_pWieldBmp->SetAssociateWnd(this);
+			InsertFGObjects(_pWieldBmp);
 		}
 
 		// Create the PDA for the game
@@ -249,8 +249,8 @@ ErrorCode CMainWindow::attach() {
 		// Only do it if we're coming from somewhere other than the zoom
 		if (bForegroundObj == true) {
 			if ((CBagObject *)nullptr == GetFGObjects(CBofString(WIELDWLD))) {
-				m_pWieldBmp->SetAssociateWnd(this);
-				InsertFGObjects(m_pWieldBmp);
+				_pWieldBmp->SetAssociateWnd(this);
+				InsertFGObjects(_pWieldBmp);
 			}
 		}
 	}
@@ -259,7 +259,7 @@ ErrorCode CMainWindow::attach() {
 
 	// Set the first paint to true so the objects
 	// won't run until the window is ready
-	m_bFirstPaint = true;
+	_bFirstPaint = true;
 
 	AttachActiveObjects();
 	CBofSound::AudioTask();

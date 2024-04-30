@@ -54,9 +54,9 @@ enum COMPMODE {
 
 class SBarCompItem {
 public:
-	char *m_pItem;
-	char *m_pList;
-	char *m_pDrink;
+	char *_pItem;
+	char *_pList;
+	char *_pDrink;
 };
 
 class SBarComputer : public CBagStorageDevWnd {
@@ -65,18 +65,18 @@ private:
 	CBofRect _compTextWindow;
 
 protected:
-	CBofListBox *m_pDrinkBox;   // Used for list of Drinks
-	CBofListBox *m_pIngBox;     // Used for list of Ingredients
-	CBofTextBox *m_pTBox;       // Used to display the list
-	char *m_pDrinkBuff;
-	char *m_pIngBuff;
-	CBofList<SBarCompItem> *m_pDrinkList;
-	CBofList<SBarCompItem> *m_pIngList;
-	int m_nDrinkSelect;
-	int m_nIngSelect;
-	CBofBmpButton *m_pButtons[NUM_COMPBUTT];
-	COMPMODE m_eMode;
-	COMPMODE m_ePrevMode;
+	CBofListBox *_pDrinkBox;   // Used for list of Drinks
+	CBofListBox *_pIngBox;     // Used for list of Ingredients
+	CBofTextBox *_pTBox;       // Used to display the list
+	char *_pDrinkBuff;
+	char *_pIngBuff;
+	CBofList<SBarCompItem> *_pDrinkList;
+	CBofList<SBarCompItem> *_pIngList;
+	int _nDrinkSelect;
+	int _nIngSelect;
+	CBofBmpButton *_pButtons[NUM_COMPBUTT];
+	COMPMODE _eMode;
+	COMPMODE _ePrevMode;
 
 public:
 	SBarComputer();
@@ -97,37 +97,37 @@ public:
 	 */
 	virtual ErrorCode detach();
 
-	ErrorCode CreateDrinksListBox();
-	ErrorCode CreateIngListBox();
+	ErrorCode createDrinksListBox();
+	ErrorCode createIngListBox();
 
-	void CreateTextBox(CBofString &newText);
-	void DeleteTextBox();
-	void DeleteListBox();
+	void createTextBox(CBofString &newText);
+	void deleteTextBox();
+	void deleteListBox();
 
-	void SetOn();
-	void SetOff();
-	void SetDrink();
-	void SetIng();
-	void SetList();
-
-	/**
-	 * Read in the ingredient file
-	 */
-	ErrorCode ReadDrnkFile();
+	void setOn();
+	void setOff();
+	void setDrink();
+	void setIng();
+	void setList();
 
 	/**
 	 * Read in the ingredient file
 	 */
-	ErrorCode ReadIngFile();
+	ErrorCode readDrnkFile();
+
+	/**
+	 * Read in the ingredient file
+	 */
+	ErrorCode readIngFile();
 
 	/**
 	 * Order Button
 	 */
-	void Order();
+	void order();
 
 	void pageUp();
 	void pageDown();
-	void Back();
+	void back();
 
 	void onMainLoop();
 
@@ -135,7 +135,7 @@ public:
 	}
 
 	void onPaint(CBofRect *pRect);
-	void EraseBackdrop();
+	void eraseBackdrop();
 
 	void onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {}
 	void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {}

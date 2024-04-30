@@ -197,10 +197,10 @@ public:
 		SetProperty(VISIBLE, b);
 	}
 	// Sould object be hightlighed when the mouse is over
-	bool IsHighlight() {
+	bool isHighlight() {
 		return IsProperty(HIGHLIGHT);
 	}
-	void SetHighlight(bool b = true) {
+	void setHighlight(bool b = true) {
 		SetProperty(HIGHLIGHT, b);
 	}
 	// Is the object active in this world
