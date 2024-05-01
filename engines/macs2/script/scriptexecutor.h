@@ -71,6 +71,10 @@ class Macs2Engine;
 			
 			void Func9F4D(uint16 &out1, uint16 &out2);
 
+			// Function to be used if we only want to have the script be advanced
+			// due to a skipped implementation
+			void Func9F4D_Placeholder();
+
 			// Combines both 16 bit values into a 32 bit value
 			uint32 Func9F4D_32();
 
