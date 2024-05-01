@@ -619,6 +619,9 @@ static void game_loop_update_animated_buttons() {
 static void update_objects_scale() {
 	for (uint32_t objid = 0; objid < _G(croom)->numobj; ++objid) {
 		RoomObject &obj = _G(objs)[objid];
+		if (obj.on == 0)
+			continue; // not enabled
+
 		int zoom_level = 100;
 		// calculate the zoom level
 		if ((obj.flags & OBJF_USEROOMSCALING) == 0) {
@@ -651,6 +654,9 @@ static void update_objects_scale() {
 	for (uint32_t charid = 0; charid < _GP(game).numcharacters; ++charid) {
 		// Test for valid view and loop
 		CharacterInfo &chin = _GP(game).chars[charid];
+		if (chin.on == 0 || chin.room != _G(displayed_room))
+			continue; // not enabled, or in a different room
+
 		CharacterExtras &chex = _GP(charextra)[charid];
 		if (chin.view < 0) {
 			quitprintf("!The character '%s' was turned on in the current room (room %d) but has not been assigned a view number.",
@@ -1201,12 +1207,16 @@ void RunGameUntilAborted() {
 	}
 }
 
-void update_cursor_and_dependent() {
+void UpdateCursorAndDrawables() {
 	const int mwasatx = _G(mousex), mwasaty = _G(mousey);
 	ags_domouse();
 	update_cursor_over_gui();
 	update_cursor_over_location(mwasatx, mwasaty);
 	update_cursor_view();
+	// TODO: following does not have to be called every frame while in a
+	// fully blocking state (like Display() func), refactor to only call it
+	// once the blocking state begins.
+	update_objects_scale();
 }
 
 void update_polled_stuff() {

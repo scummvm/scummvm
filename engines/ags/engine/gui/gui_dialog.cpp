@@ -81,7 +81,7 @@ void clear_gui_screen() {
 
 void refresh_gui_screen() {
 	_G(gfxDriver)->UpdateDDBFromBitmap(_G(dialogDDB), _G(windowBuffer), false);
-	update_cursor_and_dependent();
+	UpdateCursorAndDrawables();
 	render_graphics(_G(dialogDDB), _G(windowPosX), _G(windowPosY));
 }
 
