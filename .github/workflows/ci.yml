@@ -99,13 +99,14 @@ jobs:
           path: ${{ env.VCPKG_INSTALLED_DIR }}\\${{ matrix.triplet }}\\bin\\*.pdb
   xcode:
     name: Xcode
-    runs-on: macos-latest
+    # macos-14 is arm64. macosx build currently fails on macos-14.
+    runs-on: macos-13
     strategy:
       fail-fast: false
       matrix:
         include:
           - platform: macosx
-            buildFlags: -scheme ScummVM-macOS
+            buildFlags: -scheme ScummVM-macOS -destination 'platform=macOS,arch=x86_64'
             configFlags: --disable-nasm --enable-faad --enable-gif --enable-mikmod --enable-mpeg2 --enable-vpx
             brewPackages: a52dec faad2 flac fluid-synth freetype fribidi giflib jpeg mad libmikmod libmpeg2 libogg libpng libvorbis libvpx sdl2 sdl2_net theora
           - platform: ios7
