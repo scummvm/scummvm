@@ -1706,7 +1706,7 @@ Frame *Score::getFrameData(int frameNum){
 void Score::setSpriteCasts() {
 	// Update sprite cache of cast pointers/info
 	for (uint16 j = 0; j < _currentFrame->_sprites.size(); j++) {
-		_currentFrame->_sprites[j]->setCast(_currentFrame->_sprites[j]->_castId);
+		_currentFrame->_sprites[j]->setCast(_currentFrame->_sprites[j]->_castId, !_currentFrame->_sprites[j]->_stretch);
 
 		debugC(8, kDebugLoading, "Score::setSpriteCasts(): Frame: 0 Channel: %d castId: %s type: %d (%s)",
 			 j, _currentFrame->_sprites[j]->_castId.asString().c_str(), _currentFrame->_sprites[j]->_spriteType,
