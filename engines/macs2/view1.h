@@ -30,6 +30,18 @@ namespace Macs2 {
 
 	class GameObject;
 
+	class Button {
+
+		public: 
+		Common::Point Position;
+		Common::Point Size;
+		Common::String Caption;
+
+		bool IsPointInside(const Common::Point &p) const;
+
+		void Render(Graphics::ManagedSurface &s);
+	};
+
 	class Character {
 private:
 
@@ -62,6 +74,10 @@ private:
 class View1 : public UIElement {
 private:
 
+	// TODO: Find a better place for those
+	Common::Array<GameObject *> inventoryItems;
+
+	AnimFrame *GetInventoryIcon(GameObject *gameObject);
 	
 	byte _pal[256 * 3] = { 0 };
 	int _offset = 0;
