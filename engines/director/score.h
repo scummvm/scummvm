@@ -90,7 +90,7 @@ public:
 	void stopPlay();
 	void setDelay(uint32 ticks);
 
-	void setCurrentFrame(uint16 frameId) { _nextFrame = frameId; }
+	void setCurrentFrame(uint16 frameId);
 	uint16 getCurrentFrameNum() { return _curFrameNumber; }
 	int getNextFrame() { return _nextFrame; }
 	uint16 getFramesNum() { return _numFrames; }

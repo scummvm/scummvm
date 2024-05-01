@@ -85,7 +85,7 @@ Score::Score(Movie *movie) {
 	_numChannelsDisplayed = 0;
 	_skipTransition = false;
 
-	_curFrameNumber = 0;
+	_curFrameNumber = 1;
 	_framesStream = nullptr;
 	_currentFrame = nullptr;
 }
@@ -271,7 +271,6 @@ int Score::getPreviousLabelNumber(int referenceFrame) {
 }
 
 void Score::startPlay() {
-	_curFrameNumber = 1;
 	_playState = kPlayStarted;
 	_nextFrameTime = 0;
 	_nextFrameDelay = 0;
@@ -282,6 +281,9 @@ void Score::startPlay() {
 
 		return;
 	}
+
+	// load first frame (either 1 or _nextFrame)
+	updateCurrentFrame();
 
 	// All frames in the same movie have the same number of channels
 	if (_playState != kPlayStopped)
@@ -336,6 +338,10 @@ void Score::setDelay(uint32 ticks) {
 		_nextFrameDelay = g_system->getMillis() + (ticks * 1000 / 60);
 		debugC(5, kDebugLoading, "Score::setDelay(): delaying %d ticks, next frame time at %d", ticks, _nextFrameDelay);
 	}
+}
+
+void Score::setCurrentFrame(uint16 frameId) {
+	_nextFrame = frameId;
 }
 
 bool Score::isWaitingForNextFrame() {
