@@ -100,6 +100,12 @@ const char *Object_GetTextProperty(ScriptObject *objj, const char *property);
 bool    Object_SetProperty(ScriptObject *objj, const char *property, int value);
 bool    Object_SetTextProperty(ScriptObject *objj, const char *property, const char *value);
 
+// Deduces room object's scale, accounting for both manual scaling and the room region effects;
+// calculates resulting sprite size.
+void    update_object_scale(int objid);
+// Deduces arbitrary object's scale, accounting for both manual scaling and the room region effects
+void    update_object_scale(int &res_zoom, int &res_width, int &res_height,
+						    int objx, int objy, int sprnum, int own_zoom, bool use_region_scaling);
 void    move_object(int objj, int tox, int toy, int spee, int ignwal);
 void    get_object_blocking_rect(int objid, int *x1, int *y1, int *width, int *y2);
 int     isposinbox(int mmx, int mmy, int lf, int tp, int rt, int bt);
