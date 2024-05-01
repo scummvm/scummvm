@@ -93,7 +93,7 @@ ErrorCode CMainWindow::attach() {
 
 	g_allowPaintFl = true;
 
-	CBagStorageDev *pSDev = SDEVMNGR->GetStorageDevice(GetPrevSDev());
+	CBagStorageDev *pSDev = SDEV_MANAGER->GetStorageDevice(GetPrevSDev());
 	if (pSDev && pSDev->GetDeviceType() == SDEV_ZOOMPDA) {
 		bForegroundObj = false;
 	}
@@ -133,7 +133,7 @@ ErrorCode CMainWindow::attach() {
 
 	if (m_nGameMode == VRPLAYMODE && bForegroundObj == true) {
 		if (!m_pThudBmp) {
-			pSDev = SDEVMNGR->GetStorageDevice(THUDWLD);
+			pSDev = SDEV_MANAGER->GetStorageDevice(THUDWLD);
 			if (pSDev != nullptr) {
 				m_pThudBmp = (SBarThud *)pSDev;
 				m_pThudBmp->SetAssociateWnd(this);
@@ -151,7 +151,7 @@ ErrorCode CMainWindow::attach() {
 		}
 
 		if (!_pWieldBmp) {
-			pSDev = SDEVMNGR->GetStorageDevice(WIELDWLD);
+			pSDev = SDEV_MANAGER->GetStorageDevice(WIELDWLD);
 			if (pSDev != nullptr) {
 				_pWieldBmp = (CBagWield *)pSDev;
 				_pWieldBmp->SetAssociateWnd(this);
@@ -179,7 +179,7 @@ ErrorCode CMainWindow::attach() {
 
 		// Create the PDA for the game
 		if (!m_pPDABmp) {
-			pSDev = SDEVMNGR->GetStorageDevice(PDAWLD);
+			pSDev = SDEV_MANAGER->GetStorageDevice(PDAWLD);
 			if (pSDev != nullptr) {
 				m_pPDABmp = (CBagPDA *)pSDev;
 				CBofRect r(0, 0, 300, 200);
@@ -190,7 +190,7 @@ ErrorCode CMainWindow::attach() {
 					m_pPDABmp->attach();
 
 				// Allow the script to specify the increment height.
-				CBagVar *pVar = VARMNGR->GetVariable("PDAINCREMENT");
+				CBagVar *pVar = VAR_MANAGER->GetVariable("PDAINCREMENT");
 				if (pVar) {
 					g_nPDAIncrement = pVar->GetNumValue();
 					m_pPDABmp->setPosInWindow(r.width(), r.height(), g_nPDAIncrement);
@@ -218,7 +218,7 @@ ErrorCode CMainWindow::attach() {
 		m_pPDABmp->attachActiveObjects();
 
 		// If this world file contains an evt_wld
-		pSDev = SDEVMNGR->GetStorageDevice("EVT_WLD");
+		pSDev = SDEV_MANAGER->GetStorageDevice("EVT_WLD");
 		if (pSDev != nullptr) {
 			// Have we allocated one yet ?
 			if (m_pEvtSDev == nullptr) {
@@ -338,7 +338,7 @@ void CMainWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 	if (lKey == BKEY_SCRL_LOCK) {               // Get a scroll lock hit
 		if (GetFilterId() == 0x08) {            // If we're in zzazzl filter
 			m_bZzazzlVision = !m_bZzazzlVision; // toggle the paint zzazzl flag
-			CBagVar *pVar = VARMNGR->GetVariable("ZZAZZLVISION");
+			CBagVar *pVar = VAR_MANAGER->GetVariable("ZZAZZLVISION");
 
 			if (pVar != nullptr) {
 				pVar->SetValue(m_bZzazzlVision ? 1 : 0);
@@ -353,7 +353,7 @@ void CMainWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 
 void CMainWindow::CorrectZzazzlePoint(CBofPoint *p) {
 	// Don't correct this boy if he's inside the PDA.
-	CBagPDA *pPDA = (CBagPDA *)SDEVMNGR->GetStorageDevice("BPDA_WLD");
+	CBagPDA *pPDA = (CBagPDA *)SDEV_MANAGER->GetStorageDevice("BPDA_WLD");
 	if (pPDA && pPDA->isInside(*p)) {
 		return;
 	}

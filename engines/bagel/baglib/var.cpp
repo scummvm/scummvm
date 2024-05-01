@@ -42,7 +42,7 @@ CBagVar::CBagVar() {
 	setTimer(false);
 	SetString();
 	SetRandom(false);
-	VARMNGR->RegisterVariable(this);
+	VAR_MANAGER->RegisterVariable(this);
 }
 
 CBagVar::CBagVar(const CBofString &sName, const CBofString &sValue, bool bAddToList) {
@@ -57,14 +57,14 @@ CBagVar::CBagVar(const CBofString &sName, const CBofString &sValue, bool bAddToL
 	SetGlobal(false);
 
 	if (bAddToList)
-		VARMNGR->RegisterVariable(this);
+		VAR_MANAGER->RegisterVariable(this);
 }
 
 CBagVar::~CBagVar() {
 	if (CBagel::getBagApp() &&
 		CBagel::getBagApp()->getMasterWnd() &&
-		CBagel::getBagApp()->getMasterWnd()->GetVariableManager())
-		VARMNGR->UnRegisterVariable(this);
+		CBagel::getBagApp()->getMasterWnd()->getVariableManager())
+		VAR_MANAGER->UnRegisterVariable(this);
 }
 
 void CBagVar::SetValue(const CBofString &s) {
@@ -85,7 +85,7 @@ const CBofString &CBagVar::GetValue() {
 	// asked him about betting, it hangs him. Work around this by force setting
 	// betting to have been discussed
 	if (m_sVarName == "BETWITHDEVEN") {
-		if (VARMNGR->GetVariable("DEVENCODE1")->GetValue() != "NOTSETYET")
+		if (VAR_MANAGER->GetVariable("DEVENCODE1")->GetValue() != "NOTSETYET")
 			// Finished flashback, so ensure betting flag is set
 			m_sVarValue = "1";
 	}
@@ -93,16 +93,16 @@ const CBofString &CBagVar::GetValue() {
 	// Check if these items should be replaced by the current sdev
 	if (!m_sVarName.IsEmpty() && !m_sVarName.Find(CURRSDEV_TOKEN)) {
 		CBofString CurrSDev;
-		if (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev()) {
-			m_sVarValue = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev()->GetName();
+		if (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()) {
+			m_sVarValue = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->GetName();
 		}
 	} else {
 
 		// Check if these items should be replaced by the previous sdev
 		if (!m_sVarName.IsEmpty() && !m_sVarName.Find(PREVSDEV_TOKEN)) {
 			CBofString CurrSDev;
-			if (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev()) {
-				m_sVarValue = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev()->GetPrevSDev();
+			if (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()) {
+				m_sVarValue = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->GetPrevSDev();
 			}
 		}
 	}
@@ -168,13 +168,13 @@ PARSE_CODES CBagVar::setInfo(CBagIfstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 			if (!sStr.Find("TIMER")) {
 				setTimer();
-				VARMNGR->UpdateRegistration();
+				VAR_MANAGER->UpdateRegistration();
 			} else if (!sStr.Find("RANDOM")) {
 				SetRandom(true);
-				VARMNGR->UpdateRegistration();
+				VAR_MANAGER->UpdateRegistration();
 			} else if (!sStr.Find("GLOBAL")) {
 				SetGlobal(true);
-				VARMNGR->UpdateRegistration();
+				VAR_MANAGER->UpdateRegistration();
 			} else {
 				PutbackStringOnStream(istr, sStr);
 				PutbackStringOnStream(istr, "AS ");
@@ -367,12 +367,12 @@ void CBagVar::SetName(const CBofString &s) {
 	if (pApp) {
 		CBagMasterWin *pMainWin = pApp->getMasterWnd();
 
-		if (!s.IsEmpty() && pMainWin && pMainWin->GetVariableManager()) {
+		if (!s.IsEmpty() && pMainWin && pMainWin->getVariableManager()) {
 			char szLocalBuff[256];
 			CBofString varStr(szLocalBuff, 256);
 			varStr = m_sVarName;
 			int nHashVal = HASHVAR(szLocalBuff, varStr.GetLength());
-			VARMNGR->m_xVarHashList[nHashVal].addToTail(this);
+			VAR_MANAGER->m_xVarHashList[nHashVal].addToTail(this);
 		}
 	}
 }

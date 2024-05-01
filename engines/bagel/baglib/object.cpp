@@ -157,7 +157,7 @@ bool CBagObject::runObject() {
 	if (IsTimeless())
 		return true;
 
-	VARMNGR->IncrementTimers();
+	VAR_MANAGER->IncrementTimers();
 
 	return true;
 }
@@ -193,14 +193,14 @@ PARSE_CODES CBagObject::setInfo(CBagIfstream &istr) {
 					// Try to cut down the number of Storage Devices by
 					// removing these unused ones from the list.
 					//
-					SDEVMNGR->UnRegisterStorageDev(m_pMenu);
+					SDEV_MANAGER->UnRegisterStorageDev(m_pMenu);
 				}
 			}
 
 			istr.putBack();
 
 			char szBuff[256];
-			Common::sprintf_s(szBuff, "Menu:%d", CBagMasterWin::m_lMenuCount++);
+			Common::sprintf_s(szBuff, "Menu:%d", CBagMasterWin::_menuCount++);
 			CBofString s(szBuff, 256);
 
 			m_pMenu->LoadFileFromStream(istr, s, false);

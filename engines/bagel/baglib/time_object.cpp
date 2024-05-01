@@ -260,7 +260,7 @@ ErrorCode CBagTimeObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pS
 	CBofString sTimeString(szLocalBuff, 256);
 	ErrorCode rc = ERR_NONE;
 
-	CBagVar *xVar = VARMNGR->GetVariable(m_sVariable);
+	CBagVar *xVar = VAR_MANAGER->GetVariable(m_sVariable);
 
 	// If everything looks good
 	if (isAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
@@ -311,7 +311,7 @@ ErrorCode CBagTimeObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, int
 
 	ErrorCode rc = ERR_NONE;
 
-	CBagVar *xVar = VARMNGR->GetVariable(m_sVariable);
+	CBagVar *xVar = VAR_MANAGER->GetVariable(m_sVariable);
 
 	// If everything looks good
 	if (isAttached() && xVar && !(xVar->GetValue().IsEmpty())) {

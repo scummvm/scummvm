@@ -157,7 +157,7 @@ ErrorCode CBagTextObject::attach() {
 					*m_psText += pTextBuff;
 
 					if (m_psInitInfo != nullptr) {
-						CBagVar *pVar = VARMNGR->GetVariable(*m_psInitInfo);
+						CBagVar *pVar = VAR_MANAGER->GetVariable(*m_psInitInfo);
 
 						if (pVar != nullptr) {
 							m_bReAttach = true;
@@ -475,7 +475,7 @@ bool CBagTextObject::runObject() {
 		if (pApp != nullptr) {
 			CBagMasterWin *pWin = pApp->getMasterWnd();
 			if (pWin != nullptr) {
-				CBagStorageDevWnd *pParent = pWin->GetCurrentStorageDev();
+				CBagStorageDevWnd *pParent = pWin->getCurrentStorageDev();
 
 				CBofRect cRect(80, 10, 80 + 480 /*- 1 */, 10 + getRect().height() - 1 + 5);
 				CBofPoint cPoint(0, 0);
@@ -492,13 +492,13 @@ bool CBagTextObject::runObject() {
 
 				CBagPDA *pPDA = nullptr;
 				sStr = "BPDA_WLD";
-				pPDA = (CBagPDA *)SDEVMNGR->GetStorageDevice(sStr);
+				pPDA = (CBagPDA *)SDEV_MANAGER->GetStorageDevice(sStr);
 
 				// If we're in the zoom pda then put this box at the
 				// bottom of the zoom rect.
 				SBZoomPda *pPDAZ = nullptr;
 				sStr = "BPDAZ_WLD";
-				pPDAZ = (SBZoomPda *)SDEVMNGR->GetStorageDevice(sStr);
+				pPDAZ = (SBZoomPda *)SDEV_MANAGER->GetStorageDevice(sStr);
 
 				if (pPDAZ && pPDAZ->getZoomed() == true) {
 					CBofRect zRect = pPDAZ->getViewRect();
@@ -550,7 +550,7 @@ void CBagTextObject::RecalcTextRect(bool bTextFromFile) {
 	Assert(m_psText != nullptr);
 
 	// The window where the object are displayed
-	CBagPanWindow *pPanWin = (CBagPanWindow *)(CBagel::getBagApp()->getMasterWnd()->GetCurrentGameWindow());
+	CBagPanWindow *pPanWin = (CBagPanWindow *)(CBagel::getBagApp()->getMasterWnd()->getCurrentGameWindow());
 	if (bTextFromFile) {
 		if (pPanWin->GetDeviceType() == SDEV_GAMEWIN) {
 			ViewRect = pPanWin->GetViewPort();

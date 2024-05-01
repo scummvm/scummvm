@@ -154,7 +154,7 @@ CBagVar *CBagExpression::getVariable(int itemPos) {
 			CBofString stringObject(frontStr, 256);
 			CBofString stringProperty(backStr, 256);
 
-			int newVal = SDEVMNGR->GetObjectValue(stringObject, stringProperty);
+			int newVal = SDEV_MANAGER->GetObjectValue(stringObject, stringProperty);
 			curVar->SetValue(newVal);
 		}
 	}
@@ -426,7 +426,7 @@ bool CBagExpression::onMinusAssign(CBagVar *leftHandOper, CBagVar *rightHandOper
 bool CBagExpression::onContains(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar & /* resultOper, unused */) {
 	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
-	CBagStorageDev *sDev = SDEVMNGR->GetStorageDevice(leftHandOper->GetValue());
+	CBagStorageDev *sDev = SDEV_MANAGER->GetStorageDevice(leftHandOper->GetValue());
 	if (sDev == nullptr)
 		return false;
 
@@ -440,7 +440,7 @@ bool CBagExpression::onContains(CBagVar *leftHandOper, CBagVar *rightHandOper, C
 bool CBagExpression::onHas(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar & /* resultOper, unused */) {
 	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
-	CBagStorageDev *sDev = SDEVMNGR->GetStorageDevice(leftHandOper->GetValue());
+	CBagStorageDev *sDev = SDEV_MANAGER->GetStorageDevice(leftHandOper->GetValue());
 	if (sDev == nullptr)
 		return false;
 
@@ -454,7 +454,7 @@ bool CBagExpression::onHas(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVa
 bool CBagExpression::onStatus(CBagVar *pLHOper, CBagVar * /* rightHandOper, unused */, CBagVar & /* resultOper, unused */) {
 	Assert(pLHOper != nullptr);
 
-	CBagStorageDev *sDev = SDEVMNGR->GetStorageDeviceContaining(pLHOper->GetValue());
+	CBagStorageDev *sDev = SDEV_MANAGER->GetStorageDeviceContaining(pLHOper->GetValue());
 	if (sDev == nullptr)
 		return false;
 
@@ -580,7 +580,7 @@ PARSE_CODES CBagExpression::setInfo(CBagIfstream &istr) {
 			istr.eatWhite();
 
 			GetAlphaNumFromStream(istr, tmpStr);
-			CBagVar *curVar = VARMNGR->GetVariable(tmpStr);
+			CBagVar *curVar = VAR_MANAGER->GetVariable(tmpStr);
 			if (!curVar) {
 				// This must be a reference, make a new variable
 				if (tmpStr.Find("~~") > 0) {
@@ -611,7 +611,7 @@ PARSE_CODES CBagExpression::setInfo(CBagIfstream &istr) {
 
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, tmpStr);
-				curVar = VARMNGR->GetVariable(tmpStr);
+				curVar = VAR_MANAGER->GetVariable(tmpStr);
 				if (!curVar) {
 					if (tmpStr.Find("~~") > 0) {
 						// This must be a reference, make a new variable

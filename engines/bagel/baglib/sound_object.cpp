@@ -92,7 +92,7 @@ ErrorCode CBagSoundObject::detach() {
 }
 
 bool CBagSoundObject::runObject() {
-	if (((m_wFlags & SOUND_MIDI) && CBagMasterWin::GetMidi()) || (((m_wFlags & SOUND_WAVE) || (m_wFlags & SOUND_MIX)) && CBagMasterWin::GetDigitalAudio())) {
+	if (((m_wFlags & SOUND_MIDI) && CBagMasterWin::getMidi()) || (((m_wFlags & SOUND_WAVE) || (m_wFlags & SOUND_MIX)) && CBagMasterWin::getDigitalAudio())) {
 
 		if (m_pSound && m_pMidiSound != m_pSound) {
 
@@ -347,7 +347,7 @@ bool CBagSoundObject::IsQueued() {
 }
 
 void CBagSoundObject::SetPlaying(bool bVal) {
-	if (((m_wFlags & SOUND_MIDI) && CBagMasterWin::GetMidi()) || (((m_wFlags & SOUND_WAVE) || (m_wFlags & SOUND_MIX)) && CBagMasterWin::GetDigitalAudio())) {
+	if (((m_wFlags & SOUND_MIDI) && CBagMasterWin::getMidi()) || (((m_wFlags & SOUND_WAVE) || (m_wFlags & SOUND_MIX)) && CBagMasterWin::getDigitalAudio())) {
 
 		if (bVal) {
 

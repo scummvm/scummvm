@@ -50,8 +50,8 @@ CBagPanWindow::CBagPanWindow() : CBagStorageDevWnd() {
 	m_xVeiwPortPos = CBofPoint(0, 20);
 	m_xMovementRect.SetRectEmpty();
 
-	m_nCorrection = CBagMasterWin::GetCorrection();
-	m_nPanSpeed = CBagMasterWin::GetPanSpeed();
+	m_nCorrection = CBagMasterWin::getCorrection();
+	m_nPanSpeed = CBagMasterWin::getPanSpeed();
 	m_pSlideBitmap = nullptr;
 	m_pPalette = nullptr;
 	m_bPaintToBackdrop = true;
@@ -439,7 +439,7 @@ void CBagPanWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 			}
 			m_nCorrection >>= 1;
 			m_pSlideBitmap->setCorrWidth(m_nCorrection);
-			CBagMasterWin::SetCorrection(m_nCorrection);
+			CBagMasterWin::setCorrection(m_nCorrection);
 			break;
 
 		case BKEY_PLUS:
@@ -450,7 +450,7 @@ void CBagPanWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 				m_nCorrection = 0;
 			}
 			m_pSlideBitmap->setCorrWidth(m_nCorrection);
-			CBagMasterWin::SetCorrection(m_nCorrection);
+			CBagMasterWin::setCorrection(m_nCorrection);
 			break;
 
 		case BKEY_LEFT:
@@ -540,7 +540,7 @@ void CBagPanWindow::onMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 
 			// the logz case is handled by onmousemove in zoompda
 			if (pOverObj->GetRefName().Find("BPDA_WLD") != -1) {
-				CBagPDA *pPda = (CBagPDA *)SDEVMNGR->GetStorageDevice(pOverObj->GetRefName());
+				CBagPDA *pPda = (CBagPDA *)SDEV_MANAGER->GetStorageDevice(pOverObj->GetRefName());
 				if (pPda != nullptr) {
 					CBofRect cRect = pOverObj->getRect();
 					nCursorID = pPda->getProperCursor(xPoint, cRect);

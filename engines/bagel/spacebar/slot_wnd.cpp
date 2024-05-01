@@ -226,7 +226,7 @@ ErrorCode  SBarSlotWnd::attach() {
 		// Read in their total nuggets from game
 		CBagVar *pVar = nullptr;
 
-		pVar = VARMNGR->GetVariable("NUGGETS");
+		pVar = VAR_MANAGER->GetVariable("NUGGETS");
 
 		if (pVar)
 			m_nCredit = pVar->GetNumValue();
@@ -311,7 +311,7 @@ ErrorCode SBarSlotWnd::detach() {
 	}
 
 	// Write out new value of nuggets
-	CBagVar *pVar = VARMNGR->GetVariable("NUGGETS");
+	CBagVar *pVar = VAR_MANAGER->GetVariable("NUGGETS");
 	if (pVar)
 		pVar->SetValue(m_nCredit);
 
@@ -379,7 +379,7 @@ ErrorCode SBarSlotWnd::detach() {
 	CBagStorageDevWnd::detach();
 
 	// One turn has gone by
-	VARMNGR->IncrementTimers();
+	VAR_MANAGER->IncrementTimers();
 
 	return _errCode;
 }
@@ -411,8 +411,8 @@ void SBarSlotWnd::AddBet(int nBetVal) {
 		CBofBitmap cBmp(cRect.width(), cRect.height(), (CBofPalette *)nullptr, false);
 		cBmp.captureScreen(this, &cRect);
 
-		PaintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
-		WaitForInput();
+		paintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
+		waitForInput();
 
 		cBmp.paint(this, &cRect);
 	}
@@ -441,8 +441,8 @@ void SBarSlotWnd::BetAll() {
 		CBofBitmap cBmp(cRect.width(), cRect.height(), (CBofPalette *)nullptr, false);
 		cBmp.captureScreen(this, &cRect);
 
-		PaintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
-		WaitForInput();
+		paintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
+		waitForInput();
 
 		cBmp.paint(this, &cRect);
 	}
@@ -889,7 +889,7 @@ void SBarSlotWnd::onBofButton(CBofObject *pObject, int nState) {
 			CBagMasterWin *pWin = pApp->getMasterWnd();
 			if (pWin != nullptr) {
 				m_bPaused = true;
-				pWin->OnHelp(BuildSlotDir("SLOT.TXT"));
+				pWin->onHelp(BuildSlotDir("SLOT.TXT"));
 				m_bPaused = false;
 			}
 		}

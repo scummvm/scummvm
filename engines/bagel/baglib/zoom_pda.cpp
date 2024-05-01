@@ -142,7 +142,7 @@ ErrorCode SBZoomPda::attach() {
 	if (rc == ERR_NONE) {
 		CBagStorageDev *pSDev;
 		if (!_mooWnd) {
-			pSDev = SDEVMNGR->GetStorageDevice(ZOOMMOOWLD);
+			pSDev = SDEV_MANAGER->GetStorageDevice(ZOOMMOOWLD);
 
 			if (pSDev != nullptr) {
 				_mooWnd = (CBagStorageDevBmp *)pSDev;
@@ -157,7 +157,7 @@ ErrorCode SBZoomPda::attach() {
 		}
 
 		if (!_invWnd) {
-			pSDev = SDEVMNGR->GetStorageDevice(ZOOMINVWLD);
+			pSDev = SDEV_MANAGER->GetStorageDevice(ZOOMINVWLD);
 			if (pSDev != nullptr) {
 				_invWnd = (CBagStorageDevBmp *)pSDev;
 				_invWnd->SetAssociateWnd(GetAssociateWnd());
@@ -175,7 +175,7 @@ ErrorCode SBZoomPda::attach() {
 		}
 
 		if (!_mapWnd) {
-			pSDev = SDEVMNGR->GetStorageDevice(ZOOMMAPWLD);
+			pSDev = SDEV_MANAGER->GetStorageDevice(ZOOMMAPWLD);
 			if (pSDev != nullptr) {
 				_mapWnd = (CBagStorageDevBmp *)pSDev;
 				_mapWnd->SetAssociateWnd(GetAssociateWnd());
@@ -193,7 +193,7 @@ ErrorCode SBZoomPda::attach() {
 		}
 
 		if (!_logWnd) {
-			pSDev = SDEVMNGR->GetStorageDevice(ZOOMLOGWLD);
+			pSDev = SDEV_MANAGER->GetStorageDevice(ZOOMLOGWLD);
 			if (pSDev != nullptr) {
 				_logWnd = (CBagStorageDevBmp *)pSDev;
 				_logWnd->SetAssociateWnd(GetAssociateWnd());

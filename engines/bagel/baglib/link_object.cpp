@@ -173,7 +173,7 @@ bool CBagLinkObject::runObject() {
 	if (getFileName().Find("$LASTWORLD") != -1) {
 		curStr = getFileName();
 
-		CBagVar *var = VARMNGR->GetVariable("$LASTWORLD");
+		CBagVar *var = VAR_MANAGER->GetVariable("$LASTWORLD");
 		if (var != nullptr) {
 			curStr.ReplaceStr("$LASTWORLD", var->GetValue());
 		}
@@ -181,23 +181,23 @@ bool CBagLinkObject::runObject() {
 
 	CBagMasterWin::setActiveCursor(6);
 
-	CBagStorageDevWnd *curSDev = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
+	CBagStorageDevWnd *curSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev();
 
 	// Set the link position for the storage device we are about to jump to
-	CBagStorageDev *destWin = SDEVMNGR->GetStorageDevice(curStr);
+	CBagStorageDev *destWin = SDEV_MANAGER->GetStorageDevice(curStr);
 	if (destWin) {
 		destWin->SetLoadFilePos(getDestLoc());
 	}
 
 	CBagMasterWin *pMasterWin = CBagel::getBagApp()->getMasterWnd();
 	if (pMasterWin) {
-		pMasterWin->SetCurrfadeIn(_fade);
-		pMasterWin->SetStorageDev(curStr);
+		pMasterWin->setCurrfadeIn(_fade);
+		pMasterWin->setStorageDev(curStr);
 	}
 
-	CBagStorageDevWnd *otherSDev = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
+	CBagStorageDevWnd *otherSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev();
 	if (!curSDev->IsCloseup() && !otherSDev->IsCloseup()) {
-		VARMNGR->IncrementTimers();
+		VAR_MANAGER->IncrementTimers();
 	}
 
 	return CBagObject::runObject();

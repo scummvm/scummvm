@@ -57,10 +57,10 @@ bool CBagExpressionObject::runObject() {
 				CBofString objectStr = getFileName().Left(nIndex);
 				CBofString propertyStr = getFileName().Mid(nIndex + 2);
 
-				SDEVMNGR->SetObjectValue(objectStr, propertyStr, localVar.GetNumValue());
+				SDEV_MANAGER->SetObjectValue(objectStr, propertyStr, localVar.GetNumValue());
 
 			} else {
-				CBagVar *pVar = VARMNGR->GetVariable(getFileName());
+				CBagVar *pVar = VAR_MANAGER->GetVariable(getFileName());
 				if (pVar)
 					pVar->SetValue(localVar.GetValue());
 			}

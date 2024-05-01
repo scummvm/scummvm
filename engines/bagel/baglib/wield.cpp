@@ -105,7 +105,7 @@ ErrorCode CBagWield::activateLocalObject(CBagObject *pObj) {
 
 			if (pPrevObj != nullptr) {
 				// Move current object to stash
-				SDEVMNGR->MoveObject("INV_WLD", GetName(), pPrevObj->GetRefName());
+				SDEV_MANAGER->MoveObject("INV_WLD", GetName(), pPrevObj->GetRefName());
 
 			} else {
 				ReportError(ERR_UNKNOWN, "Wielded Object has been lost");

@@ -46,7 +46,7 @@ bool Console::cmdVar(int argc, const char **argv) {
 		return true;
 	}
 
-	CBagVar *var = VARMNGR->GetVariable(argv[1]);
+	CBagVar *var = VAR_MANAGER->GetVariable(argv[1]);
 	assert(var);
 
 	if (argc == 2) {
@@ -60,8 +60,8 @@ bool Console::cmdVar(int argc, const char **argv) {
 }
 
 bool Console::cmdVars(int argc, const char **argv) {
-	for (int i = 0; i < VARMNGR->GetNumVars(); i++) {
-		CBagVar *pVar = VARMNGR->GetVariable(i);
+	for (int i = 0; i < VAR_MANAGER->GetNumVars(); i++) {
+		CBagVar *pVar = VAR_MANAGER->GetVariable(i);
 		if (pVar != nullptr) {
 			debugPrintf("VAR[%d]: %s = %s\n", i, (const char *)pVar->GetName(),
 				(const char *)pVar->GetValue());
@@ -72,8 +72,8 @@ bool Console::cmdVars(int argc, const char **argv) {
 }
 
 bool Console::cmdFleebix(int argc, const char **argv) {
-	CBofString inner = VARMNGR->GetVariable("NDJAM_INNERDIAL_DISPLAY")->GetValue();
-	CBofString outer = VARMNGR->GetVariable("NDJAM_OUTERDIAL_DISPLAY")->GetValue();
+	CBofString inner = VAR_MANAGER->GetVariable("NDJAM_INNERDIAL_DISPLAY")->GetValue();
+	CBofString outer = VAR_MANAGER->GetVariable("NDJAM_OUTERDIAL_DISPLAY")->GetValue();
 
 	debugPrintf("Frequency is %s.%s\n", inner.GetBuffer(), outer.GetBuffer());
 	return true;

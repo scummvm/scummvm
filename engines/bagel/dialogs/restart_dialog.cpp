@@ -167,7 +167,7 @@ void CBagRestartDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 				CBofCursor::hide();
 				paintBitmap(this, cStr, &cRect);
 
-				pWin->NewGame();
+				pWin->newGame();
 				CBofCursor::show();
 
 				killBackground();
@@ -228,7 +228,7 @@ void CBagRestartDialog::onBofButton(CBofObject *pObject, int nFlags) {
 				CBofCursor::hide();
 				paintBitmap(this, cStr, &cRect);
 
-				pWin->NewGame();
+				pWin->newGame();
 				CBofCursor::show();
 
 				killBackground();

@@ -159,7 +159,7 @@ void CBagQuitDialog::onBofButton(CBofObject *pObject, int nFlags) {
 				CBagMasterWin *pWin = pApp->getMasterWnd();
 				if (pWin != nullptr) {
 
-					bQuit = pWin->ShowSaveDialog(this, false);
+					bQuit = pWin->showSaveDialog(this, false);
 				}
 			}
 		}

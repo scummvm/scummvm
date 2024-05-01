@@ -39,10 +39,10 @@ bool CBagInv::_firstStashFl;
 
 ErrorCode CBagInv::activateLocalObject(const CBofString &objectName) {
 
-	CBagStorageDev *pdaSDev = SDEVMNGR->GetStorageDevice("BPDA_WLD");
+	CBagStorageDev *pdaSDev = SDEV_MANAGER->GetStorageDevice("BPDA_WLD");
 
 	// Don't do any wand animation if we are zoomed.
-	SBZoomPda *zoomPda = (SBZoomPda *)SDEVMNGR->GetStorageDevice("BPDAZ_WLD");
+	SBZoomPda *zoomPda = (SBZoomPda *)SDEV_MANAGER->GetStorageDevice("BPDAZ_WLD");
 	Assert(zoomPda != nullptr);
 	bool zoomedFl = (zoomPda ? zoomPda->getZoomed() : false);
 
@@ -64,9 +64,9 @@ ErrorCode CBagInv::activateLocalObject(const CBofString &objectName) {
 
 	if (zoomedFl == false) {
 		// Check to see if we are in the bar
-		CBagVar *var = VARMNGR->GetVariable("INBAR");
+		CBagVar *var = VAR_MANAGER->GetVariable("INBAR");
 		if (var != nullptr) {
-			var = VARMNGR->GetVariable("FIRST_STASH");
+			var = VAR_MANAGER->GetVariable("FIRST_STASH");
 
 			// If this is our first stash, play the smacker associated with it.
 			if ((var != nullptr) && (var->GetNumValue() == 0)) {
@@ -93,10 +93,10 @@ ErrorCode CBagInv::activateLocalObject(const CBofString &objectName) {
  * The wand on the PDA should animate
  */
 ErrorCode CBagInv::deactivateLocalObject(const CBofString &objectName) {
-	CBagStorageDev *pdaSDev = SDEVMNGR->GetStorageDevice("BPDA_WLD");
+	CBagStorageDev *pdaSDev = SDEV_MANAGER->GetStorageDevice("BPDA_WLD");
 
 	// Don't do any wand animation if we are zoomed.
-	SBZoomPda *zoomPDA = (SBZoomPda *)SDEVMNGR->GetStorageDevice("BPDAZ_WLD");
+	SBZoomPda *zoomPDA = (SBZoomPda *)SDEV_MANAGER->GetStorageDevice("BPDAZ_WLD");
 	Assert(zoomPDA != nullptr);
 	bool zoomedFl = (zoomPDA ? zoomPDA->getZoomed() : false);
 

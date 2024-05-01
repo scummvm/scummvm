@@ -129,7 +129,7 @@ ErrorCode CBagPDA::attach() {
 
 	// Calculate the position for the pda
 	CBofRect bmpRect = getBitmap()->getRect();
-	CBofWindow *pGameWin = CBagel::getBagApp()->getMasterWnd()->GetCurrentGameWindow();
+	CBofWindow *pGameWin = CBagel::getBagApp()->getMasterWnd()->getCurrentGameWindow();
 	CBofRect GameRect = pGameWin->getRect();
 
 	// When the pda is active it should sit flush with the bottom of the screen
@@ -139,7 +139,7 @@ ErrorCode CBagPDA::attach() {
 
 	// Should be allowed to not find one.
 	if (!_mooWnd) {
-		if ((pSDev = SDEVMNGR->GetStorageDevice(MOOWLD)) != nullptr) {
+		if ((pSDev = SDEV_MANAGER->GetStorageDevice(MOOWLD)) != nullptr) {
 			_mooWnd = (CBagStorageDevBmp *)pSDev;
 			_mooWnd->SetAssociateWnd(GetAssociateWnd());
 			_mooWnd->SetTransparent(false);
@@ -149,7 +149,7 @@ ErrorCode CBagPDA::attach() {
 	}
 
 	if (!_invWnd) {
-		if ((pSDev = SDEVMNGR->GetStorageDevice(INVWLD)) != nullptr) {
+		if ((pSDev = SDEV_MANAGER->GetStorageDevice(INVWLD)) != nullptr) {
 			_invWnd = (CBagStorageDevBmp *)pSDev;
 			_invWnd->SetAssociateWnd(GetAssociateWnd());
 
@@ -163,7 +163,7 @@ ErrorCode CBagPDA::attach() {
 	}
 
 	if (!_mapWnd) {
-		if ((pSDev = SDEVMNGR->GetStorageDevice(MAPWLD)) != nullptr) {
+		if ((pSDev = SDEV_MANAGER->GetStorageDevice(MAPWLD)) != nullptr) {
 			_mapWnd = (CBagStorageDevBmp *)pSDev;
 			_mapWnd->SetAssociateWnd(GetAssociateWnd());
 
@@ -176,7 +176,7 @@ ErrorCode CBagPDA::attach() {
 		}
 	}
 	if (!_logWnd) {
-		if ((pSDev = SDEVMNGR->GetStorageDevice(LOGWLD)) != nullptr) {
+		if ((pSDev = SDEV_MANAGER->GetStorageDevice(LOGWLD)) != nullptr) {
 			_logWnd = (CBagStorageDevBmp *)pSDev;
 			_logWnd->SetAssociateWnd(GetAssociateWnd());
 
@@ -313,7 +313,7 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 		bool bWandAnimating = CBagCharacterObject::pdaWandAnimating();
 
 		if (isActivating() || bWandAnimating || bMoviePlaying) {
-			CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev());
+			CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev());
 			((CBagPanWindow *)pMainWin)->SetPreFilterPan(true);
 		} else if (!isActivated() && (SBBasePda::_pdaMode != MAPMODE)) {
 			// If it is not activated, then don't bother redrawing it or the objects
@@ -343,7 +343,7 @@ bool CBagPDA::isInside(const CBofPoint &xPoint) {
 }
 
 void CBagPDA::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
-	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev());
+	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev());
 
 	if (!isActivated() && _pdaMode != INVMODE) {          // if the PDA is not active, activate it
 		if (isInside(*xPoint)) {
@@ -460,7 +460,7 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 	CBofString sDevice(szLocalBuff, 256);
 	sDevice = "BPDA_WLD";
 
-	CBagStorageDev *pPda = SDEVMNGR->GetStorageDevice(sDevice);
+	CBagStorageDev *pPda = SDEV_MANAGER->GetStorageDevice(sDevice);
 	if (pPda) {
 		sDevice = PDA_ZOOMFLASH;
 		pZoomFlash = (CBagButtonObject *)pPda->GetObject(sDevice);
