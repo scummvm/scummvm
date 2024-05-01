@@ -453,7 +453,7 @@ void Channel::setClean(Sprite *nextSprite, bool partial) {
 	// if cast are modified, then we need to replace it
 	// if cast size are changed, and we may need to replace it, because we may having the scaled bitmap castmember
 	// other situation, e.g. position changing, we will let channel to handle it. So we don't have to replace widget
-	bool dimsChanged = !isStretched() && !hasTextCastMember(_sprite) && (_sprite->_width != nextSprite->_width || _sprite->_height != nextSprite->_height);
+	bool dimsChanged = !hasTextCastMember(_sprite) && (_sprite->_width != nextSprite->_width || _sprite->_height != nextSprite->_height);
 
 	// if spriteType is changing, then we may need to re-create the widget since spriteType will guide when we creating widget
 	bool spriteTypeChanged = _sprite->_spriteType != nextSprite->_spriteType;

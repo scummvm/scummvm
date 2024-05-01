@@ -419,7 +419,7 @@ bool Sprite::checkSpriteType() {
 	return true;
 }
 
-void Sprite::setCast(CastMemberID memberID) {
+void Sprite::setCast(CastMemberID memberID, bool replaceDims) {
 	/**
 	 * There are two things we need to take into account here:
 	 *   1. The cast member's type
@@ -455,19 +455,21 @@ void Sprite::setCast(CastMemberID memberID) {
 			}
 		}
 
-		Common::Rect dims = _cast->getInitialRect();
-		switch (_cast->_type) {
-		case kCastBitmap:
-			_width = dims.width();
-			_height = dims.height();
-			break;
-		case kCastShape:
-		case kCastText: 	// fall-through
-			break;
-		default:
-			_width = dims.width();
-			_height = dims.height();
-			break;
+		if (replaceDims) {
+			Common::Rect dims = _cast->getInitialRect();
+			switch (_cast->_type) {
+			case kCastBitmap:
+				_width = dims.width();
+				_height = dims.height();
+				break;
+			case kCastShape:
+			case kCastText: 	// fall-through
+				break;
+			default:
+				_width = dims.width();
+				_height = dims.height();
+				break;
+			}
 		}
 
 	} else {
