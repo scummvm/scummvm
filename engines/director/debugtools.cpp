@@ -19,6 +19,7 @@
  *
  */
 
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include "backends/imgui/imgui.h"
 
 #include "director/director.h"
@@ -93,8 +94,11 @@ static void showChannels() {
 	if (!_state->_showChannels)
 		return;
 
-	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(240, 240), ImGuiCond_FirstUseEver);
+	ImVec2 pos(40, 40);
+	ImGui::SetNextWindowPos(pos, ImGuiCond_FirstUseEver);
+
+	ImVec2 windowSize = ImGui::GetMainViewport()->Size - pos - pos;
+	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Channels", &_state->_showChannels)) {
 		Score *score = g_director->getCurrentMovie()->getScore();
@@ -233,15 +237,10 @@ static bool showScript(CastMemberID &id) {
 			for (auto &handler : ctx->_functionHandlers)
 				ImGui::Text("%s\n", lingo->formatFunctionBody(handler._value).c_str());
 		} else if (cast->_lingoArchive->factoryContexts.contains(id.member)) {
-			ImGui::Text("[Factory]");
-#if 0
 			for (auto &it : *cast->_lingoArchive->factoryContexts.getVal(id.member)) {
-				Common::String prefix = Common::String::format("%s:", it._key.c_str());
-				Common::String handler = funcName.substr(prefix.size());
-				if (it._value->_functionHandlers.contains(handler))
-					ImGui::Text("%s\n", lingo->formatFunctionBody(it._value->_functionHandlers[handler]).c_str());
+				for (auto &handler : it._value->_functionHandlers)
+					ImGui::Text("%s\n", lingo->formatFunctionBody(handler._value).c_str());
 			}
-#endif
 		} else {
 			ImGui::Text("[Nothing]");
 		}
