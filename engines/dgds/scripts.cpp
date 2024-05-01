@@ -88,7 +88,15 @@ static const char *ttmOpName(uint16 op) {
 	case 0x4200: return "STORE AREA";
 	case 0x4210: return "SAVE GETPUT REGION";
 	case 0xa000: return "DRAW PIXEL";
+	case 0xa010: return "SAVE REGION 10?????";
+	case 0xa020: return "SAVE REGION 20?????";
+	case 0xa030: return "SAVE REGION 30?????";
+	case 0xa040: return "SAVE REGION 40?????";
 	case 0xa050: return "SAVE REGION";
+	case 0xa060: return "SAVE REGION FLIPPED??";
+	case 0xa070: return "SAVE REGION 70?????";
+	case 0xa080: return "SAVE REGION 80?????";
+	case 0xa090: return "SAVE REGION 90?????";
 	case 0xa0a0: return "DRAW LINE";
 	case 0xa100: return "DRAW FILLED RECT";
 	case 0xa110: return "DRAW EMPTY RECT";
@@ -124,23 +132,21 @@ static const char *ttmOpName(uint16 op) {
 }
 
 void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval) {
-	Common::Rect bmpArea(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-
 	switch (op) {
 	case 0x0000: // FINISH:	void
 		break;
 	case 0x0020: // SAVE (free?) BACKGROUND
 		if (seq._executed) // this is a one-shot op
 			break;
-		_vm->getBottomBuffer().copyFrom(_vm->getTopBuffer());
+		_vm->getBackgroundBuffer().copyFrom(_vm->getForegroundBuffer());
 		break;
 	case 0x0070: // FREE PALETTE
 		if (seq._executed) // this is a one-shot op
 			break;
 		error("TODO: Implement me: free palette (current pal)");
 		break;
-	case 0x0080: // FREE SHAPE // DRAW BACKGROUND??
-		_vm->getTopBuffer().copyFrom(_vm->getBottomBuffer());
+	case 0x0080: // FREE SHAPE
+		env._scriptShapes[seq._currentBmpId].reset();
 		break;
 	case 0x0090: // FREE FONT
 		if (seq._executed) // this is a one-shot op
@@ -149,6 +155,12 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		break;
 	case 0x00B0:
 		// Does nothing?
+		break;
+	case 0x00C0: // (one-shot) FREE GETPUT (free getput item pointed to by _currentGetPutId)
+		if (seq._executed) // this is a one-shot op
+			break;
+		env._getPutSurfaces[seq._currentGetPutId].reset();
+		env._getPutAreas[seq._currentGetPutId] = Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 		break;
 	case 0x0110: // PURGE void
 		_vm->adsInterpreter()->setHitTTMOp0110();
@@ -243,15 +255,16 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 				g_system->delayMillis(5);
 			}
 		}
-		_vm->getBottomBuffer().fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		_vm->getBackgroundBuffer().fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		break;
 	case 0x4120: { // FADE IN:	colorno,ncolors,targetcol,speed:byte
 		if (seq._executed) // this is a one-shot op.
 			break;
 		// blt first to make the initial fade-in work
-		_vm->_resData.blitFrom(_vm->getBottomBuffer());
-		_vm->_resData.transBlitFrom(_vm->getTopBuffer());
-		g_system->copyRectToScreen(_vm->_resData.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		_vm->_compositionBuffer.blitFrom(_vm->getBackgroundBuffer());
+		_vm->_compositionBuffer.transBlitFrom(_vm->getStoredAreaBuffer());
+		_vm->_compositionBuffer.transBlitFrom(_vm->getForegroundBuffer());
+		g_system->copyRectToScreen(_vm->_compositionBuffer.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 		if (ivals[3] == 0) {
 			_vm->getGamePals()->setPalette();
@@ -265,13 +278,11 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		}
 		break;
 	}
-	case 0x4200: { // STORE AREA: x,y,w,h:int [0..n]		; it makes this area of bmpData persist in the next frames.
+	case 0x4200: { // STORE AREA: x,y,w,h:int [0..n]  ; makes this area of foreground persist in the next frames.
 		if (seq._executed) // this is a one-shot op
 			break;
-		const Common::Rect destRect(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
-		_vm->_resData.blitFrom(_vm->getBottomBuffer());
-		_vm->_resData.transBlitFrom(_vm->getTopBuffer());
-		_vm->getBottomBuffer().copyRectToSurface(_vm->_resData, destRect.left, destRect.top, destRect);
+		const Common::Rect rect(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
+		_vm->getStoredAreaBuffer().transBlitFrom(_vm->getForegroundBuffer(), rect, rect);
 		break;
 	}
 	case 0x4210: { // SAVE GETPUT REGION (getput area) x,y,w,h:int
@@ -281,41 +292,51 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 			env._getPutAreas.resize(seq._currentGetPutId + 1);
 			env._getPutSurfaces.resize(seq._currentGetPutId + 1);
 		}
-		Common::Rect rect = Common::Rect(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
+		const Common::Rect rect(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
 		env._getPutAreas[seq._currentGetPutId] = rect;
-		// TODO: Check which buffer this should get things from .. composed buffer?
-		_vm->_resData.blitFrom(_vm->getBottomBuffer());
-		_vm->_resData.transBlitFrom(_vm->getTopBuffer());
-		Graphics::ManagedSurface *surf = new Graphics::ManagedSurface(rect.width(), rect.height(), _vm->_resData.format);
-		surf->blitFrom(_vm->_resData, rect, Common::Rect(0, 0, rect.width(), rect.height()));
+
+		// Getput reads an area from the front buffer.
+		Graphics::ManagedSurface *surf = new Graphics::ManagedSurface(rect.width(), rect.height(), _vm->getForegroundBuffer().format);
+		surf->blitFrom(_vm->getForegroundBuffer(), rect, Common::Point(0, 0));
 		env._getPutSurfaces[seq._currentGetPutId].reset(surf);
 		break;
 	}
 	case 0xa000: // DRAW PIXEL x,y:int
-		_vm->getTopBuffer().setPixel(ivals[0], ivals[1], seq._drawColFG);
+		_vm->getForegroundBuffer().setPixel(ivals[0], ivals[1], seq._drawColFG);
 		break;
-	case 0xa050: // SAVE REGION    i,j,k,l:int	[i<k,j<l] (not in DRAGON)
+	case 0xa050: {// SAVE REGION    x,y,w,h:int	(not used in DRAGON?)
 		// it works like a bitblit, but it doesn't write if there's something already at the destination?
-		// TODO: In dragon this seems to be a whole set of operations - 0xa0n4.
-		// Maybe there are up to 9 regions available?
-		_vm->_resData.blitFrom(_vm->getBottomBuffer());
-		_vm->_resData.transBlitFrom(_vm->getTopBuffer());
-		_vm->getTopBuffer().copyFrom(_vm->_resData);
+		// TODO: This is part of a whole set of operations - 0xa0n4.
+		// They do various flips etc.
+		warning("TODO: Fix implementation of SAVE REGION (0xa050)");
+		const Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
+		_vm->_compositionBuffer.blitFrom(_vm->getBackgroundBuffer());
+		_vm->_compositionBuffer.transBlitFrom(_vm->getStoredAreaBuffer());
+		_vm->_compositionBuffer.transBlitFrom(_vm->getForegroundBuffer());
+		_vm->getForegroundBuffer().blitFrom(_vm->_compositionBuffer, r, r);
 		break;
+	}
+	case 0xa060: { // RESTORE REGION
+		const Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
+		_vm->getStoredAreaBuffer().fillRect(r, 0);
+		break;
+	}
 	case 0xa0a0: // DRAW LINE  x1,y1,x2,y2:int
-		_vm->getTopBuffer().drawLine(ivals[0], ivals[1], ivals[2], ivals[3], seq._drawColFG);
+		_vm->getForegroundBuffer().drawLine(ivals[0], ivals[1], ivals[2], ivals[3], seq._drawColFG);
 		break;
-	case 0xa100: // DRAW FILLED RECT x,y,w,h:int	[0..320,0..200]
-		bmpArea = Common::Rect(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
-		_vm->getTopBuffer().fillRect(bmpArea, seq._drawColFG);
+	case 0xa100: { // DRAW FILLED RECT x,y,w,h:int	[0..320,0..200]
+		const Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
+		_vm->getForegroundBuffer().fillRect(r, seq._drawColFG);
 		break;
-	case 0xa110: // DRAW EMPTY RECT  x1,y1,x2,y2:int
-		bmpArea = Common::Rect(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
-		_vm->getTopBuffer().drawLine(bmpArea.left, bmpArea.top, bmpArea.right, bmpArea.top, seq._drawColFG);
-		_vm->getTopBuffer().drawLine(bmpArea.left, bmpArea.bottom, bmpArea.right, bmpArea.bottom, seq._drawColFG);
-		_vm->getTopBuffer().drawLine(bmpArea.left, bmpArea.top, bmpArea.left, bmpArea.bottom, seq._drawColFG);
-		_vm->getTopBuffer().drawLine(bmpArea.right, bmpArea.top, bmpArea.right, bmpArea.bottom, seq._drawColFG);
+	}
+	case 0xa110: { // DRAW EMPTY RECT  x1,y1,x2,y2:int
+		const Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
+		_vm->getForegroundBuffer().drawLine(r.left, r.top, r.right, r.top, seq._drawColFG);
+		_vm->getForegroundBuffer().drawLine(r.left, r.bottom, r.right, r.bottom, seq._drawColFG);
+		_vm->getForegroundBuffer().drawLine(r.left, r.top, r.left, r.bottom, seq._drawColFG);
+		_vm->getForegroundBuffer().drawLine(r.right, r.top, r.right, r.bottom, seq._drawColFG);
 		break;
+	}
 	case 0xa200: // 0xa2n0 DRAW STRING n: x,y,w,h:int - draw the nth string from the string table
 	case 0xa210:
 	case 0xa220:
@@ -332,7 +353,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		// TODO: Probably not this font?
 		const Font *font = mgr->getFont(FontManager::kDefaultFont);
 		// Note: ignore the y-height argument (ivals[3]) for now.
-		font->drawString(&(_vm->getTopBuffer()), str, ivals[0], ivals[1], ivals[2], seq._drawColFG);
+		font->drawString(&(_vm->getForegroundBuffer()), str, ivals[0], ivals[1], ivals[2], seq._drawColFG);
 		break;
 	}
 	case 0xa510:
@@ -361,7 +382,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		// DRAW BMP: x,y:int [-n,+n] (RISE)
 		Common::SharedPtr<Image> img = env._scriptShapes[seq._currentBmpId];
 		if (img)
-			img->drawBitmap(frameno, ivals[0], ivals[1], seq._drawWin, _vm->getTopBuffer(), op == 0xa520);
+			img->drawBitmap(frameno, ivals[0], ivals[1], seq._drawWin, _vm->getForegroundBuffer(), op == 0xa520);
 		else
 			warning("Trying to draw image %d in env %d which is not loaded", seq._currentBmpId, env._enviro);
 		break;
@@ -375,15 +396,16 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 			break;
 		}
 		const Common::Rect &r = env._getPutAreas[i];
-		_vm->getTopBuffer().copyRectToSurface(*(env._getPutSurfaces[i]->surfacePtr()),
-						r.left, r.top, Common::Rect(0, 0, r.width(), r.height()));
+		_vm->getForegroundBuffer().transBlitFrom(*(env._getPutSurfaces[i].get()),
+						Common::Point(r.left, r.top));
 		break;
 	}
 	case 0xf010: { // LOAD SCR:	filename:str
 		if (seq._executed) // this is a one-shot op
 			break;
 		Image tmp = Image(_vm->getResourceManager(), _vm->getDecompressor());
-		tmp.drawScreen(sval, _vm->getBottomBuffer());
+		tmp.drawScreen(sval, _vm->getBackgroundBuffer());
+		_vm->getStoredAreaBuffer().fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		break;
 	}
 	case 0xf020: // LOAD BMP:	filename:str
@@ -437,12 +459,18 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 
 	// Unimplemented / unknown
 	case 0x0010: // (one-shot) ??
-	case 0x00C0: // (one-shot) FREE GETPUT (free getput item pointed to by _currentGetPutId)
 	case 0x0230: // (one-shot) reset current music? (0 args) - found in HoC intro.  Sets params about current music.
 	case 0x0400: // (one-shot) set palette??
 	case 0x1040: // Sets some global? i:int
 	case 0x10B0: // null op?
 	case 0x2010: // SET FRAME?? x,y
+	case 0xa010: // SAVE REGION ????
+	case 0xa020: // SAVE REGION ????
+	case 0xa030: // SAVE REGION ????
+	case 0xa040: // SAVE REGION ????
+	case 0xa070: // SAVE REGION ????
+	case 0xa080: // SAVE REGION ????
+	case 0xa090: // SAVE REGION ????
 	case 0xa300: // DRAW some string? x,y,?,?:int
 	case 0xa400: // DRAW FILLED CIRCLE
 	case 0xa420: // DRAW EMPTY CIRCLE
@@ -516,12 +544,22 @@ bool TTMInterpreter::run(TTMEnviro &env, struct TTMSeq &seq) {
 	return true;
 }
 
-int32 TTMInterpreter::findGOTOTarget(TTMEnviro &env, TTMSeq &seq, int16 frame) {
+int32 TTMInterpreter::findGOTOTarget(TTMEnviro &env, TTMSeq &seq, int16 targetFrame) {
+	int64 startpos = env.scr->pos();
+	int32 retval = -1;
 	for (int32 i = 0; i < (int)env._frameOffsets.size(); i++) {
-		if (env._frameOffsets[i] == frame)
-			return i;
+		env.scr->seek(env._frameOffsets[i]);
+		uint16 op = env.scr->readUint16LE();
+		if (op == 0x1101 || op == 0x1111) {
+			uint16 frameno = env.scr->readUint16LE();
+			if (frameno == targetFrame) {
+				retval = i;
+				break;
+			}
+		}
 	}
-	return -1;
+	env.scr->seek(startpos);
+	return retval;
 }
 
 void TTMInterpreter::findAndAddSequences(TTMEnviro &env, Common::Array<TTMSeq> &seqArray) {

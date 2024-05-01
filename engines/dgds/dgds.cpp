@@ -72,7 +72,7 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_soundPlayer(nullptr), _decompressor(nullptr), _scene(nullptr),
 	_gdsScene(nullptr), _resource(nullptr), _gamePals(nullptr), _gameGlobals(nullptr),
 	_detailLevel(kDgdsDetailHigh), _textSpeed(1), _justChangedScene1(false), _justChangedScene2(false),
-	_random("dgds"), _currentCursor(-1), _topBufferUsed(false) {
+	_random("dgds"), _currentCursor(-1) {
 	syncSoundSettings();
 
 	_platform = gameDesc->platform;
@@ -106,9 +106,10 @@ DgdsEngine::~DgdsEngine() {
 	_icons.reset();
 	_corners.reset();
 
-	_resData.free();
-	_topBuffer.free();
-	_bottomBuffer.free();
+	_compositionBuffer.free();
+	_foregroundBuffer.free();
+	_storedAreaBuffer.free();
+	_backgroundBuffer.free();
 }
 
 
@@ -134,7 +135,7 @@ bool DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
 		warning("Tried to change from scene %d to itself, doing nothing.", sceneNum);
 		return false;
 	}
-	
+
 	if (sceneNum != 2 && _scene->getNum() != 2 && _inventory->isOpen()) {
 		_inventory->close();
 	}
@@ -190,11 +191,21 @@ void DgdsEngine::setMouseCursor(uint num) {
 	if (num >= cursors.size())
 		error("Not enough cursor info, need %d have %d", num, cursors.size());
 
-	int hotx = cursors[num]._hotX;
-	int hoty = cursors[num]._hotY;
+	uint16 hotX = cursors[num]._hotX;
+	uint16 hotY = cursors[num]._hotY;
 
-	CursorMan.popAllCursors();
-	CursorMan.pushCursor(*(_icons->getSurface(num)->surfacePtr()), hotx, hoty, 0, 0);
+	/*
+	// Adjust mouse location so hot pixel is in the same place as before?
+	uint16 lastHotX = _currentCursor >= 0 ? cursors[_currentCursor]._hotX : 0;
+	uint16 lastHotY = _currentCursor >= 0 ? cursors[_currentCursor]._hotY : 0;
+
+	int16 newMouseX = _lastMouse.x - lastHotX + hotX;
+	int16 newMouseY = _lastMouse.y - lastHotY + hotY;
+
+	g_system->warpMouse(newMouseX, newMouseY);
+	*/
+
+	CursorMan.replaceCursor(*(_icons->getSurface(num)->surfacePtr()), hotX, hotY, 0, 0);
 	CursorMan.showMouse(true);
 
 	_currentCursor = num;
@@ -212,15 +223,11 @@ void DgdsEngine::checkDrawInventoryButton() {
 	int x = SCREEN_WIDTH - _icons->width(2) - 5;
 	int y = SCREEN_HEIGHT - _icons->height(2) - 5;
 	static const Common::Rect drawWin(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-	_icons->drawBitmap(2, x, y, drawWin, _resData);
+	_icons->drawBitmap(2, x, y, drawWin, _compositionBuffer);
 }
 
-Graphics::ManagedSurface &DgdsEngine::getTopBuffer() {
-	if (_topBufferUsed) {
-		_topBuffer.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
-		_topBufferUsed = false;
-	}
-	return _topBuffer;
+Graphics::ManagedSurface &DgdsEngine::getForegroundBuffer() {
+	return _foregroundBuffer;
 }
 
 Common::Error DgdsEngine::run() {
@@ -240,9 +247,10 @@ Common::Error DgdsEngine::run() {
 
 	setDebugger(_console);
 
-	_bottomBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
-	_topBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
-	_resData.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
+	_backgroundBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
+	_storedAreaBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
+	_foregroundBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
+	_compositionBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 
 	g_system->fillScreen(0);
 
@@ -371,7 +379,7 @@ Common::Error DgdsEngine::run() {
 			_gdsScene->runPreTickOps();
 			_scene->runPreTickOps();
 
-			_scene->drawActiveDialogBgs(&_resData);
+			_scene->drawActiveDialogBgs(&_compositionBuffer);
 
 			if (moveToNext && _inventory->isOpen()) {
 				_inventory->close();
@@ -427,6 +435,16 @@ Common::Error DgdsEngine::run() {
 			_scene->runPostTickOps();
 			_scene->checkTriggers();
 
+			// Now we start to assemble the rendered scene.
+			_compositionBuffer.blitFrom(_backgroundBuffer);
+			_compositionBuffer.transBlitFrom(_storedAreaBuffer);
+
+			if (_inventory->isOpen()) {
+				int invCount = _gdsScene->countItemsInScene2();
+				_inventory->draw(_compositionBuffer, invCount);
+			}
+
+			_compositionBuffer.transBlitFrom(_foregroundBuffer);
 			/* For debugging, dump the frame contents..
 			{
 				Common::DumpFile outf;
@@ -446,28 +464,18 @@ Common::Error DgdsEngine::run() {
 				outf.open(Common::Path(Common::String::format("/tmp/%07d-res.png", now)));
 				::Image::writePNG(outf, *_resData.surfacePtr(), palbuf);
 				outf.close();
-			}
-			*/
+			}*/
 
-			// Now we start to assemble the rendered scene.
-			_resData.blitFrom(_bottomBuffer);
-
-			if (_inventory->isOpen()) {
-				int invCount = _gdsScene->countItemsInScene2();
-				_inventory->draw(_resData, invCount);
-			}
-
-			_resData.transBlitFrom(_topBuffer);
-			_topBufferUsed = true;
+			_foregroundBuffer.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 
 			if (!_inventory->isOpen()) {
-				_gdsScene->drawItems(_resData);
+				_gdsScene->drawItems(_compositionBuffer);
 				checkDrawInventoryButton();
 			}
-			_clock.draw(_resData);
+			_clock.draw(_compositionBuffer);
 			bool haveActiveDialog = _scene->checkDialogActive();
 
-			_scene->drawAndUpdateDialogs(&_resData);
+			_scene->drawAndUpdateDialogs(&_compositionBuffer);
 
 			bool gameRunning = (!haveActiveDialog && _gameGlobals->getGlobal(0x57) /* TODO: && _dragItem == nullptr*/);
 			_clock.update(gameRunning);
@@ -477,7 +485,7 @@ Common::Error DgdsEngine::run() {
 				return Common::kNoError;
 		}
 
-		g_system->copyRectToScreen(_resData.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		g_system->copyRectToScreen(_compositionBuffer.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 

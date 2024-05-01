@@ -72,7 +72,7 @@ class DgdsEngine : public Engine {
 public:
 	Common::Platform _platform;
 	Sound *_soundPlayer;
-	Graphics::ManagedSurface _resData;
+	Graphics::ManagedSurface _compositionBuffer;
 
 private:
 	Console *_console;
@@ -81,9 +81,9 @@ private:
 	Decompressor *_decompressor;
 
 	DgdsGameId _gameId;
-	Graphics::ManagedSurface _bottomBuffer;
-	Graphics::ManagedSurface _topBuffer;
-	bool _topBufferUsed;
+	Graphics::ManagedSurface _backgroundBuffer;
+	Graphics::ManagedSurface _storedAreaBuffer;
+	Graphics::ManagedSurface _foregroundBuffer;
 	SDSScene *_scene;
 	GDSScene *_gdsScene;
 	Menu *_menu;
@@ -118,9 +118,10 @@ public:
 
 	DgdsGameId getGameId() { return _gameId; }
 
-	Graphics::ManagedSurface &getTopBuffer();
-	const Graphics::ManagedSurface &getTopBuffer() const { return _topBuffer; }
-	Graphics::ManagedSurface &getBottomBuffer() { return _bottomBuffer; }
+	Graphics::ManagedSurface &getForegroundBuffer();
+	const Graphics::ManagedSurface &getForegroundBuffer() const { return _foregroundBuffer; }
+	Graphics::ManagedSurface &getBackgroundBuffer() { return _backgroundBuffer; }
+	Graphics::ManagedSurface &getStoredAreaBuffer() { return _storedAreaBuffer; }
 	Common::SeekableReadStream *getResource(const Common::String &name, bool ignorePatches);
 	ResourceManager *getResourceManager() { return _resource; }
 	Decompressor *getDecompressor() { return _decompressor; }
