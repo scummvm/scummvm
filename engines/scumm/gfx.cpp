@@ -4309,7 +4309,7 @@ void ScummEngine::transitionEffect(int a) {
 	if (_game.version >= 3 || _game.platform == Common::kPlatformNES) {
 		numOfIterations = transitionEffects[a].numOfIterations;
 	} else {
-		numOfIterations = (a == 0 || a == 4) ? ceil((height / 8.0) / 2) : height / 8;
+		numOfIterations = (a == 0 || a == 4) ? ceil((double)height / 16.0) : height / 8;
 	}
 
 	for (i = 0; i < 16; i++) {
