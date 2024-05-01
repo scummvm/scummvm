@@ -197,7 +197,7 @@ PARSE_CODES CBagObject::setInfo(CBagIfstream &istr) {
 				}
 			}
 
-			istr.putBack(ch);
+			istr.putBack();
 
 			char szBuff[256];
 			Common::sprintf_s(szBuff, "Menu:%d", CBagMasterWin::m_lMenuCount++);
@@ -251,7 +251,7 @@ PARSE_CODES CBagObject::setInfo(CBagIfstream &istr) {
 		case '[': {
 			rc = UPDATED_OBJECT;
 			CBofRect r;
-			istr.putBack(ch);
+			istr.putBack();
 			getRectFromStream(istr, r);
 			setPosition(r.TopLeft());
 			if (r.width() && r.height())
@@ -263,7 +263,7 @@ PARSE_CODES CBagObject::setInfo(CBagIfstream &istr) {
 		//
 		case 'I': {
 			if (istr.peek() != 'S') {
-				istr.putBack(ch);
+				istr.putBack();
 				return rc;
 				break;
 			}
@@ -332,7 +332,7 @@ PARSE_CODES CBagObject::setInfo(CBagIfstream &istr) {
 		//  no match return from function
 		//
 		default:
-			istr.putBack(ch);
+			istr.putBack();
 			return rc;
 		}
 	}

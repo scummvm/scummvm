@@ -609,7 +609,7 @@ ErrorCode CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 
 					KEYWORDS keyword;
 
-					if (fpInput.eatWhite() == -1) {
+					if (!fpInput.eatWhite()) {
 						break;
 					}
 
@@ -673,7 +673,7 @@ ErrorCode CBagMasterWin::LoadFileFromStream(CBagIfstream &fpInput, const CBofStr
 
 		KEYWORDS keyword;
 
-		if (fpInput.eatWhite() == -1) {
+		if (!fpInput.eatWhite()) {
 			break;
 		}
 

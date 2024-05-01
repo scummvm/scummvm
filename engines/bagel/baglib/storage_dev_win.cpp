@@ -616,7 +616,7 @@ ErrorCode CBagStorageDev::LoadFileFromStream(CBagIfstream &fpInput, const CBofSt
 		s += sWldName;
 		BofMessageBox(s.GetBuffer(), "Warning");
 
-		fpInput.putBack((char)ch);
+		fpInput.putBack();
 	}
 
 	fpInput.eatWhite();

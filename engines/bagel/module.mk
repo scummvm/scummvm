@@ -22,6 +22,7 @@ MODULE_OBJS = \
 	baglib/expression_object.o \
 	baglib/fmovie.o \
 	baglib/help.o \
+	baglib/ifstream.o \
 	baglib/inv.o \
 	baglib/link_object.o \
 	baglib/log_msg.o \
