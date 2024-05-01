@@ -21,24 +21,37 @@
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "backends/imgui/imgui.h"
+#include "graphics/surface.h"
+#include "graphics/opengl/shader.h"
+#include "image/png.h"
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
-#include "director/debugtools.h"
 #include "director/cast.h"
+#include "director/castmember/bitmap.h"
+#include "director/castmember/castmember.h"
+#include "director/castmember/script.h"
 #include "director/channel.h"
+#include "director/debugtools.h"
 #include "director/frame.h"
 #include "director/movie.h"
+#include "director/picture.h"
 #include "director/score.h"
 #include "director/sprite.h"
+#include "director/types.h"
 
 namespace Director {
 
 typedef struct ImGuiState {
+	struct {
+		Common::HashMap<Graphics::Surface *, ImTextureID> _textures;
+		bool _listView = true;
+	} _cast;
 	bool _showCallStack = false;
 	bool _showVars = false;
 	bool _showChannels = false;
+	bool _showCast = true;
 	Common::List<CastMemberID> _scripts;
 } ImGuiState;
 
@@ -55,6 +68,198 @@ static void showCallStack() {
 		ImGui::Text("%s", lingo->formatCallStack(lingo->_state->pc).c_str());
 	}
 	ImGui::End();
+}
+
+static GLuint loadTextureFromSurface(Graphics::Surface *surface, const byte *palette, int palCount) {
+
+	// Create a OpenGL texture identifier
+	GLuint image_texture;
+	glGenTextures(1, &image_texture);
+	glBindTexture(GL_TEXTURE_2D, image_texture);
+
+	// Setup filtering parameters for display
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // This is required on WebGL for non power-of-two textures
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Same
+
+	// Upload pixels into texture
+	Graphics::Surface *s = surface->convertTo(Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0), palette, palCount);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, s->format.bytesPerPixel);
+
+	GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, s->w, s->h, 0, GL_RGB, GL_UNSIGNED_BYTE, s->getPixels()));
+	s->free();
+	delete s;
+	return image_texture;
+}
+
+static const char *toString(ScriptType scriptType) {
+	static const char *scriptTypes[] = {
+		"Score",
+		"Cast",
+		"Movie",
+		"Event",
+		"Test",
+		"Parent",
+	};
+	if (scriptType < 0 || scriptType > kMaxScriptType)
+		return "???";
+	return scriptTypes[(int)scriptType];
+}
+
+static const char *toString(CastType castType) {
+	static const char *castTypes[] = {
+		"Empty",
+		"Bitmap",
+		"FilmLoop",
+		"Text",
+		"Palette",
+		"Picture",
+		"Sound",
+		"Button",
+		"Shape",
+		"Movie",
+		"DigitalVideo",
+		"Script",
+		"RTE",
+		"???",
+		"Transition"};
+	if (castType < 0 || castType > kCastTransition)
+		return "???";
+	return castTypes[(int)castType];
+}
+
+static ImTextureID getImageID(CastMember *castMember) {
+	if (castMember->_type != CastType::kCastBitmap)
+		return nullptr;
+
+	BitmapCastMember *bmpMember = (BitmapCastMember *)castMember;
+	Common::Rect bbox(bmpMember->getBbox());
+	Graphics::Surface *bmp = bmpMember->getMatte(bbox);
+	if (!bmp)
+		return nullptr;
+
+	if (_state->_cast._textures.contains(bmp))
+		return _state->_cast._textures[bmp];
+
+	Picture *pic = bmpMember->_picture;
+	if (!pic)
+		return nullptr;
+
+	ImTextureID textureID = (ImTextureID)(intptr_t)loadTextureFromSurface(&pic->_surface, pic->_palette, pic->_paletteColors);
+	_state->_cast._textures[bmp] = textureID;
+	return textureID;
+}
+
+static void showCast() {
+	if (!_state->_showCast)
+		return;
+
+	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(520, 240), ImGuiCond_FirstUseEver);
+
+	if (ImGui::Begin("Cast", &_state->_showCast)) {
+		Movie *movie = g_director->getCurrentMovie();
+		ImGui::BeginDisabled(_state->_cast._listView);
+		if (ImGui::Button("List")) {
+			_state->_cast._listView = true;
+		}
+		ImGui::EndDisabled();
+		ImGui::SameLine();
+		ImGui::BeginDisabled(!_state->_cast._listView);
+		if (ImGui::Button("Grid")) {
+			_state->_cast._listView = false;
+		}
+		ImGui::EndDisabled();
+		if (_state->_cast._listView) {
+			if (ImGui::BeginTable("Resources", 5, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg)) {
+				ImGui::TableSetupColumn("Name", 0, 120.f);
+				ImGui::TableSetupColumn("#", 0, 20.f);
+				ImGui::TableSetupColumn("Script", 0, 80.f);
+				ImGui::TableSetupColumn("Type", 0, 80.f);
+				ImGui::TableSetupColumn("Preview", 0, 128.f);
+				ImGui::TableHeadersRow();
+
+				for (auto it : *movie->getCasts()) {
+					Cast *cast = it._value;
+					if (!cast->_loadedCast)
+						continue;
+
+					for (auto castMember : *cast->_loadedCast) {
+						CastMemberInfo *castMemberInfo = cast->getCastMemberInfo(castMember._key);
+						if (!castMember._value->isLoaded())
+							continue;
+						ImGui::TableNextRow();
+						ImGui::TableNextColumn();
+						ImGui::Text("%s", castMemberInfo ? castMemberInfo->name.c_str() : "");
+
+						ImGui::TableNextColumn();
+						ImGui::Text("%d", castMember._key);
+
+						ImGui::TableNextColumn();
+						if (castMember._value->_type == CastType::kCastLingoScript) {
+							ScriptCastMember *scriptMember = (ScriptCastMember *)castMember._value;
+							ImGui::Text("%s", toString(scriptMember->_scriptType));
+						}
+						ImGui::TableNextColumn();
+						ImGui::Text("%s", toString(castMember._value->_type));
+
+						ImGui::TableNextColumn();
+						ImTextureID imgID = getImageID(castMember._value);
+						if (imgID) {
+							ImGui::Image(imgID, ImVec2(64, 64));
+						}
+					}
+				}
+
+				ImGui::EndTable();
+			}
+		} else {
+			float contentWidth = ImGui::GetContentRegionAvail().x;
+			float contentHeight = ImGui::GetContentRegionAvail().y;
+
+			ImGui::BeginChild("##ContentRegion", {contentWidth, contentHeight}, true);
+			int columns = contentWidth / 142;
+			columns = columns < 1 ? 1 : columns;
+
+			ImGui::Columns(columns, nullptr, false);
+			for (auto it : *movie->getCasts()) {
+				Cast *cast = it._value;
+				if (!cast->_loadedCast)
+					continue;
+
+				for (auto castMember : *cast->_loadedCast) {
+					CastMemberInfo *castMemberInfo = cast->getCastMemberInfo(castMember._key);
+					if (!castMember._value->isLoaded())
+						continue;
+
+					ImGui::BeginGroup();
+					ImTextureID imgID = getImageID(castMember._value);
+					if (imgID) {
+						ImGui::Image(imgID, ImVec2(128, 128), ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImVec4(1, 1, 1, 1));
+					} else {
+						ImGui::Image(0, ImVec2(128, 128), ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImVec4(1, 1, 1, 1));
+					}
+					Common::String name(castMemberInfo ? castMemberInfo->name : "");
+					if(name.empty()) {
+						name = Common::String::format("%d", castMember._key);
+					}
+
+					Common::String text(name);
+					float textWidth = ImGui::CalcTextSize(text.c_str()).x;
+					if(textWidth > 128.f) textWidth = 128.f;
+
+					float x = ImGui::GetCursorPosX();
+					ImGui::SetCursorPosX(x + (128 - textWidth) * 0.5f);
+					ImGui::Text("%s", text.c_str());
+					ImGui::EndGroup();
+					ImGui::NextColumn();
+				}
+			}
+			ImGui::EndChild();
+		}
+		ImGui::End();
+	}
 }
 
 static void showVars() {
@@ -286,6 +491,7 @@ void onImGuiRender() {
 			ImGui::MenuItem("CallStack", NULL, &_state->_showCallStack);
 			ImGui::MenuItem("Vars", NULL, &_state->_showVars);
 			ImGui::MenuItem("Channels", NULL, &_state->_showChannels);
+			ImGui::MenuItem("Cast", NULL, &_state->_showCast);
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
@@ -295,6 +501,7 @@ void onImGuiRender() {
 	showCallStack();
 	showChannels();
 	showScripts();
+	showCast();
 }
 
 void onImGuiCleanup() {
