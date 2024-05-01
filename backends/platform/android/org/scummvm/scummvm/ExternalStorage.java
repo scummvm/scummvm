@@ -481,8 +481,8 @@ public class ExternalStorage {
 		map.add(DATA_DIRECTORY_INT);
 		map.add(ctx.getFilesDir().getPath());
 
-		map.add(DATA_DIRECTORY_EXT);
 		if (ctx.getExternalFilesDir(null) != null) {
+			map.add(DATA_DIRECTORY_EXT);
 			map.add(ctx.getExternalFilesDir(null).getPath());
 		}
 
