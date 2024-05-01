@@ -62,8 +62,8 @@ public:
 	virtual ErrorCode ActivateLocalObject(CBagObject *pObj);
 	virtual ErrorCode DeactivateLocalObject(CBagObject *pObj);
 
-	virtual ErrorCode  ActivateLocalObject(const CBofString &sName);
-	virtual ErrorCode  DeactivateLocalObject(const CBofString &sName);
+	virtual ErrorCode  activateLocalObject(const CBofString &sName);
+	virtual ErrorCode  deactivateLocalObject(const CBofString &sName);
 };
 
 } // namespace SpaceBar

@@ -82,11 +82,11 @@ bool CBagWield::OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
 		return false;
 
 	// Find the storage device
-	if (CBagStorageDev::ActivateLocalObject(sObjName) != ERR_NONE)
+	if (CBagStorageDev::activateLocalObject(sObjName) != ERR_NONE)
 		return false;
 
-	if (pSDev->DeactivateLocalObject(sObjName) != ERR_NONE) {
-		CBagStorageDev::DeactivateLocalObject(sObjName);
+	if (pSDev->deactivateLocalObject(sObjName) != ERR_NONE) {
+		CBagStorageDev::deactivateLocalObject(sObjName);
 		return false;
 	}
 

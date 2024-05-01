@@ -206,12 +206,12 @@ public:
 
 	virtual ErrorCode AddObject(CBagObject *pObj, int nPos = 0); // Add a new object
 	virtual ErrorCode ActivateLocalObject(CBagObject *pObj);
-	virtual ErrorCode ActivateLocalObject(const CBofString &sName);
+	virtual ErrorCode activateLocalObject(const CBofString &sName);
 	virtual ErrorCode AttachActiveObjects();
 
 	virtual ErrorCode RemoveObject(CBagObject *pObj);
 	virtual ErrorCode DeactivateLocalObject(CBagObject *pObj);
-	virtual ErrorCode DeactivateLocalObject(const CBofString &sName);
+	virtual ErrorCode deactivateLocalObject(const CBofString &sName);
 	virtual ErrorCode DetachActiveObjects();
 
 	virtual void SetHelpFilename(const CBofString &) {}

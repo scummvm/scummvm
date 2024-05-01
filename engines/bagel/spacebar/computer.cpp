@@ -750,7 +750,7 @@ void SBarComputer::order() {
 					else if (nHaveDrink > 0)
 						bRefuse = true;
 					else {
-						pSoldierSDev->ActivateLocalObject(CompItem._pDrink);
+						pSoldierSDev->activateLocalObject(CompItem._pDrink);
 						BofPlaySound(BuildBarcDir(ORDERAUDIO), SOUND_MIX);
 						pVar->SetValue(nCredits - 1);
 						pVar2->SetValue(1);

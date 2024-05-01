@@ -241,7 +241,7 @@ ErrorCode CBagStorageDev::ActivateLocalObject(CBagObject  *pObj) {
 }
 
 
-ErrorCode CBagStorageDev::ActivateLocalObject(const CBofString &sName) {
+ErrorCode CBagStorageDev::activateLocalObject(const CBofString &sName) {
 	// can't use a empty string
 	Assert(!sName.IsEmpty());
 
@@ -265,7 +265,7 @@ ErrorCode CBagStorageDev::DeactivateLocalObject(CBagObject *pObj) {
 }
 
 
-ErrorCode CBagStorageDev::DeactivateLocalObject(const CBofString &sName) {
+ErrorCode CBagStorageDev::deactivateLocalObject(const CBofString &sName) {
 	// Can't use a empty string
 	Assert(!sName.IsEmpty());
 
@@ -1901,10 +1901,10 @@ bool CBagStorageDevManager::MoveObject(const CBofString &sDstName, const CBofStr
 		return false;
 
 	// Find the storage device
-	if (pDstSDev->ActivateLocalObject(sObjName) != ERR_NONE)
+	if (pDstSDev->activateLocalObject(sObjName) != ERR_NONE)
 		return false;
-	if (pSrcSDev->DeactivateLocalObject(sObjName) != ERR_NONE) {
-		pDstSDev->DeactivateLocalObject(sObjName);
+	if (pSrcSDev->deactivateLocalObject(sObjName) != ERR_NONE) {
+		pDstSDev->deactivateLocalObject(sObjName);
 		return false;
 	}
 
@@ -1921,7 +1921,7 @@ bool CBagStorageDevManager::AddObject(const CBofString &sDstName, const CBofStri
 		return false;
 
 	// Find the storage device
-	if (pDstSDev->ActivateLocalObject(sObjName) != ERR_NONE)
+	if (pDstSDev->activateLocalObject(sObjName) != ERR_NONE)
 		return false;
 
 	return true;
@@ -1938,7 +1938,7 @@ bool CBagStorageDevManager::RemoveObject(const CBofString &sSrcName, const CBofS
 		return false;
 
 	// Find the storage device
-	if (pSrcSDev->DeactivateLocalObject(sObjName) != ERR_NONE)
+	if (pSrcSDev->deactivateLocalObject(sObjName) != ERR_NONE)
 		return false;
 
 	return true;
