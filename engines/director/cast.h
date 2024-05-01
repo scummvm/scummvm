@@ -110,6 +110,7 @@ public:
 	CastMember *getCastMemberByScriptId(int scriptId);
 	CastMemberInfo *getCastMemberInfo(int castId);
 	const Stxt *getStxt(int castId);
+	Common::String getLinkedPath(int castId);
 	Common::String getVideoPath(int castId);
 	Common::SeekableReadStreamEndian *getResource(uint32 tag, uint16 id);
 	void rebuildCastNameCache();
