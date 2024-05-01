@@ -35,46 +35,46 @@ public:
 	enum LINK_TYPE { LINK = 0, CLOSEUP = 1 };
 
 private:
-	CBofSize m_xSize;
-	int m_nOutline;
-	CBofPoint m_xDestLocation;
-	CBofPoint m_xSrcLocation;
-	LINK_TYPE m_xLinkType;
-	int m_nFade;
+	CBofSize _size;
+	int _outline;
+	CBofPoint _destLocation;
+	CBofPoint _srcLocation;
+	LINK_TYPE _linkType;
+	int _fade;
 
 public:
 	CBagLinkObject();
 	virtual ~CBagLinkObject();
 
-	// Return true if the Object had members that are properly initialized/de-initialized
-	PARSE_CODES setInfo(CBagIfstream &istr);
+	// Return UPDATED_OBJECT if the Object had members that are properly initialized/de-initialized
+	PARSE_CODES setInfo(CBagIfstream &istr) override;
 
-	CBofRect getRect();
+	bool runObject() override;
+
+	CBofRect getRect() override;
 
 	CBofSize getSize() const {
-		return m_xSize;
+		return _size;
 	}
-	CBofPoint GetDstLoc() const {
-		return m_xDestLocation;
+	CBofPoint getDestLoc() const {
+		return _destLocation;
 	}
-	CBofPoint GetSrcLoc() const {
-		return m_xSrcLocation;
-	}
-
-	void setSize(const CBofSize &xSize) {
-		m_xSize = xSize;
-	}
-	void SetDstLoc(CBofPoint xLoc) {
-		m_xDestLocation = xLoc;
-	}
-	void SetSrcLoc(CBofPoint xLoc) {
-		m_xSrcLocation = xLoc;
-	}
-	void SetOutline(int nColor) {
-		m_nOutline = nColor;
+	CBofPoint getSrcLoc() const {
+		return _srcLocation;
 	}
 
-	virtual bool runObject();
+	void setSize(const CBofSize &size) override {
+		_size = size;
+	}
+	void setDstLoc(CBofPoint loc) {
+		_destLocation = loc;
+	}
+	void setSrcLoc(CBofPoint loc) {
+		_srcLocation = loc;
+	}
+	void setOutline(int color) {
+		_outline = color;
+	}
 };
 
 } // namespace Bagel

@@ -81,11 +81,11 @@ ErrorCode CBagButtonObject::detach() {
 	return CBagSpriteObject::detach();
 }
 
-extern bool g_bNoMenu;
+extern bool g_noMenuFl;
 
 bool CBagButtonObject::runObject() {
 	// Reset wield
-	g_bNoMenu = false;
+	g_noMenuFl = false;
 
 	if (_buttonType == BTN_PUSH) {
 

@@ -25,7 +25,7 @@
 
 namespace Bagel {
 
-extern bool g_bNoMenu;
+extern bool g_noMenuFl;
 
 CBofString GetStringTypeOfObject(BAG_OBJECT_TYPE n) {
 	switch (n) {
@@ -352,7 +352,7 @@ void CBagObject::onLButtonUp(uint32 nFlags, CBofPoint * /*xPoint*/, void *) {
 		GetMenuPtr()->TrackPopupMenu(nFlags, pt.x, pt.y, pWnd, nullptr, &r);
 
 	} else {
-		g_bNoMenu = true;
+		g_noMenuFl = true;
 	}
 
 	runObject();
