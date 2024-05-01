@@ -53,6 +53,7 @@ typedef struct ImGuiState {
 	bool _showChannels = false;
 	bool _showCast = false;
 	Common::List<CastMemberID> _scripts;
+	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _breakpoints;
 } ImGuiState;
 
 ImGuiState *_state = nullptr;
@@ -429,23 +430,55 @@ static void renderScript(Symbol &sym) {
 		return;
 
 	Director::Lingo *lingo = g_director->getLingo();
+	Common::String handlerName;
 
-	if (sym.ctx && sym.ctx->_id) {
-		ImGui::Text("%d:", sym.ctx->_id);
-		ImGui::SameLine();
-	}
-	ImGui::Text("%s", lingo->formatFunctionName(sym).c_str());
+	if (sym.ctx && sym.ctx->_id)
+		handlerName = Common::String::format("%d:", sym.ctx->_id);
+
+	handlerName += lingo->formatFunctionName(sym);
+
+	ImGui::Text("%s", handlerName.c_str());
 
 	ImDrawList *dl = ImGui::GetWindowDrawList();
 
-	//ImVec4 bp_color_disabled(0.9f, 0.08f, 0.0f, 0.0f);
-	//ImVec4 bp_color_enabled(0.9f, 0.08f, 0.0f, 1.0f);
-	ImVec4 bp_color_hover(0.42f, 0.17f, 0.13f, 1.0f);
-	ImVec2 mid(0, ImGui::GetFontSize() * 0.5f);
+	ImU32 bp_color_disabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 0.0f));
+	ImU32 bp_color_enabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 1.0f));
+	ImU32 bp_color_hover = ImGui::GetColorU32(ImVec4(0.42f, 0.17f, 0.13f, 1.0f));
+	ImU32 line_color = ImGui::GetColorU32(ImVec4(0.44f, 0.44f, 0.44f, 1.0f));
+	ImU32 color;
 
 	uint pc = 0;
 	while (pc < sym.u.defn->size()) {
-		dl->AddCircleFilled(mid, ImGui::GetFontSize() * 0.5f, ImGui::GetColorU32(bp_color_hover));
+		ImVec2 pos = ImGui::GetCursorScreenPos();
+		const ImVec2 mid(pos.x + 7, pos.y + 7);
+		Common::String bpName = Common::String::format("%s-%d", handlerName.c_str(), pc);
+
+		color = bp_color_disabled;
+
+		if (_state->_breakpoints.contains(bpName))
+			color = bp_color_enabled;
+
+		ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
+		if (ImGui::IsItemClicked(0)) {
+			if (color == bp_color_enabled) {
+				_state->_breakpoints.erase(bpName);
+				color = bp_color_disabled;
+			} else {
+				_state->_breakpoints[bpName] = true;
+				color = bp_color_enabled;
+			}
+		}
+
+		if (color == bp_color_disabled && ImGui::IsItemHovered()) {
+			color = bp_color_hover;
+		}
+
+		dl->AddCircleFilled(mid, 4.0f, color);
+		dl->AddLine(ImVec2(pos.x + 16.0f, pos.y), ImVec2(pos.x + 16.0f, pos.y + 17), line_color);
+
+		ImGui::SetItemTooltip("Click to add a breakpoint");
+
+		ImGui::SameLine();
 		ImGui::Text("[%5d] ", pc);
 		ImGui::SameLine();
 		ImGui::Text("%s", lingo->decodeInstruction(sym.u.defn, pc, &pc).c_str());
