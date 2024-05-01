@@ -60,7 +60,7 @@ CBofRect CBagVariableObject::getRect() {
 //
 //   Takes in info and then removes the relative information and returns the info
 //   without the relevant info.
-PARSE_CODES CBagVariableObject::setInfo(bof_ifstream &istr) {
+PARSE_CODES CBagVariableObject::setInfo(CBagIfstream &istr) {
 	int nChanged;
 	bool nObjectUpdated = false;
 	char ch;
@@ -68,7 +68,7 @@ PARSE_CODES CBagVariableObject::setInfo(bof_ifstream &istr) {
 	while (!istr.eof()) {
 		nChanged = 0;
 
-		istr.EatWhite();
+		istr.eatWhite();
 
 		switch (ch = (char)istr.peek()) {
 		//
@@ -82,7 +82,7 @@ PARSE_CODES CBagVariableObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("SIZE")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				GetIntFromStream(istr, m_nPointSize);
 				nObjectUpdated = true;
 				nChanged++;
@@ -106,7 +106,7 @@ PARSE_CODES CBagVariableObject::setInfo(bof_ifstream &istr) {
 
 			if (!sStr.Find("COLOR")) {
 				int nColor;
-				istr.EatWhite();
+				istr.eatWhite();
 				GetIntFromStream(istr, nColor);
 				switch (nColor) {
 				case 0:	m_nFGColor = RGB(0, 0, 0); break;							// black

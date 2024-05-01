@@ -59,7 +59,7 @@ public:
 		return m_pSndObj;
 	}
 
-	PARSE_CODES setInfo(bof_ifstream &istr);
+	PARSE_CODES setInfo(CBagIfstream &istr);
 
 	virtual bool runObject();
 

@@ -435,7 +435,7 @@ void CBagLogMsg::setSize(const CBofSize &size) {
 	CBagTextObject::setSize(CBofSize(m_nSdevWidth, size.cy));
 }
 
-PARSE_CODES CBagLogMsg::setInfo(bof_ifstream &istr) {
+PARSE_CODES CBagLogMsg::setInfo(CBagIfstream &istr) {
 	bool nObjectUpdated = false;
 	char szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
@@ -444,7 +444,7 @@ PARSE_CODES CBagLogMsg::setInfo(bof_ifstream &istr) {
 	CBofString s(szLocalBuff2, 256);
 
 	while (!istr.eof()) {
-		istr.EatWhite();
+		istr.eatWhite();
 		
 		char ch = (char)istr.peek();
 		switch (ch) {
@@ -455,7 +455,7 @@ PARSE_CODES CBagLogMsg::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("SENDEE")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				GetAlphaNumFromStream(istr, s);
 
 				// Replace any underscores with spaces
@@ -477,7 +477,7 @@ PARSE_CODES CBagLogMsg::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("TIME")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				char cNext = (char)istr.peek();
 				int     nMsgTime = 0;
 				if (Common::isDigit(cNext)) {
@@ -571,7 +571,7 @@ CBagLogSuspect::CBagLogSuspect(int sdevWidth) : CBagTextObject() {
 	setState(0);
 }
 
-PARSE_CODES CBagLogSuspect::setInfo(bof_ifstream &istr) {
+PARSE_CODES CBagLogSuspect::setInfo(CBagIfstream &istr) {
 	bool nObjectUpdated = false;
 	char szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
@@ -580,7 +580,7 @@ PARSE_CODES CBagLogSuspect::setInfo(bof_ifstream &istr) {
 	CBofString s(szLocalBuff2, 256);
 
 	while (!istr.eof()) {
-		istr.EatWhite();
+		istr.eatWhite();
 
 		char ch = (char)istr.peek();
 		switch (ch) {
@@ -591,7 +591,7 @@ PARSE_CODES CBagLogSuspect::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("NAME")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				GetAlphaNumFromStream(istr, s);
 
 				// Replace any underscores with spaces
@@ -609,7 +609,7 @@ PARSE_CODES CBagLogSuspect::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("SPECIES")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				GetAlphaNumFromStream(istr, s);
 
 				// Replace any underscores with spaces
@@ -628,7 +628,7 @@ PARSE_CODES CBagLogSuspect::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("ROOM")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				GetAlphaNumFromStream(istr, s);
 
 				// Replace any underscores with spaces
@@ -788,7 +788,7 @@ CBagEnergyDetectorObject::CBagEnergyDetectorObject() {
 CBagEnergyDetectorObject::~CBagEnergyDetectorObject() {
 }
 
-PARSE_CODES CBagEnergyDetectorObject::setInfo(bof_ifstream &istr) {
+PARSE_CODES CBagEnergyDetectorObject::setInfo(CBagIfstream &istr) {
 	bool nObjectUpdated = false;
 	char szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
@@ -797,7 +797,7 @@ PARSE_CODES CBagEnergyDetectorObject::setInfo(bof_ifstream &istr) {
 	CBofString s(szLocalBuff2, 256);
 
 	while (!istr.eof()) {
-		istr.EatWhite();
+		istr.eatWhite();
 		
 		char ch = (char)istr.peek();
 		switch (ch) {
@@ -808,7 +808,7 @@ PARSE_CODES CBagEnergyDetectorObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("ZHAPS")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				GetAlphaNumFromStream(istr, s);
 
 				m_sZhapsStr = s;
@@ -827,7 +827,7 @@ PARSE_CODES CBagEnergyDetectorObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("CAUSE")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				GetAlphaNumFromStream(istr, s);
 
 				m_sCauseStr = s;
@@ -846,7 +846,7 @@ PARSE_CODES CBagEnergyDetectorObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("TIME")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				(void)istr.peek();
 
 				GetAlphaNumFromStream(istr, m_sEnergyTimeStr);
@@ -868,7 +868,7 @@ PARSE_CODES CBagEnergyDetectorObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr2);
 
 			if (!sStr2.Find("SIZE")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				int n;
 				GetIntFromStream(istr, n);
 				setPointSize(n);
@@ -1007,14 +1007,14 @@ ErrorCode CBagLogClue::attach() {
 	return ec;
 }
 
-PARSE_CODES CBagLogClue::setInfo(bof_ifstream &istr) {
+PARSE_CODES CBagLogClue::setInfo(CBagIfstream &istr) {
 	bool nObjectUpdated = false;
 
 	char szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
 
 	while (!istr.eof()) {
-		istr.EatWhite();
+		istr.eatWhite();
 		char ch = (char)istr.peek();
 		switch (ch) {
 		//
@@ -1025,7 +1025,7 @@ PARSE_CODES CBagLogClue::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("STRINGVAR")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 				CBagVar *pVar = VARMNGR->GetVariable(sStr);
 				// The variable must have been found, if it wasn't, then

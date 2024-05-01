@@ -575,7 +575,7 @@ ErrorCode CBagStorageDev::LoadFile(const CBofString &sWldName) {
 	int nLength = FileLength(sWldFileName);
 	char *pBuf = (char *)BofAlloc(nLength);
 	if (pBuf != nullptr) {
-		bof_ifstream fpInput(pBuf, nLength);
+		CBagIfstream fpInput(pBuf, nLength);
 
 		CBofFile cFile;
 		cFile.open(sWldFileName);
@@ -592,7 +592,7 @@ ErrorCode CBagStorageDev::LoadFile(const CBofString &sWldName) {
 }
 
 
-ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach) {
+ErrorCode CBagStorageDev::LoadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName, bool bAttach) {
 	char                szWorkStr[256];
 	char                szStr[256];
 	szWorkStr[0] = 0;
@@ -606,8 +606,8 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 
 	SetName(sWldName);
 
-	fpInput.EatWhite();
-	int ch = fpInput.Get();
+	fpInput.eatWhite();
+	int ch = fpInput.getCh();
 	if (ch != SDEV_START_DELIM) {
 		char szWarningMsg[256];
 		CBofString s(szWarningMsg, 256);
@@ -616,10 +616,10 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 		s += sWldName;
 		BofMessageBox(s.GetBuffer(), "Warning");
 
-		fpInput.putback((char)ch);
+		fpInput.putBack((char)ch);
 	}
 
-	fpInput.EatWhite();
+	fpInput.eatWhite();
 
 	while (/*fpInput &&*/ !fpInput.eof() && !(fpInput.peek() == SDEV_END_DELIM)) {
 		bool bOperSet           = false;    // Set if an operator was found
@@ -649,7 +649,7 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 			bOperSet        = true;
 		}
 
-		fpInput.EatWhite();
+		fpInput.eatWhite();
 
 		if (bOperSet) {
 			// If we are not doing the default RUN get next argument
@@ -660,7 +660,7 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 			ParseAlertBox(fpInput, "Error in line:", __FILE__, __LINE__);
 		}
 
-		fpInput.EatWhite();
+		fpInput.eatWhite();
 
 		CBagObject *pObj = nullptr;
 
@@ -671,27 +671,27 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 			}
 
 		} else if (!sWorkStr.Find("DISKID")) {
-			fpInput.EatWhite();
-			ch = (char)fpInput.Get();
+			fpInput.eatWhite();
+			ch = (char)fpInput.getCh();
 			if (ch == '=') {
 				GetAlphaNumFromStream(fpInput, str);
-				fpInput.EatWhite();
+				fpInput.eatWhite();
 				m_nDiskID = (uint16)atoi(str);
 				if (fpInput.peek() == ';') {
-					fpInput.Get();
+					fpInput.getCh();
 				}
 			}
 		} else if (!sWorkStr.Find("HELP")) {
-			fpInput.EatWhite();
-			ch = (char)fpInput.Get();
+			fpInput.eatWhite();
+			ch = (char)fpInput.getCh();
 			if (ch == '=') {
 				GetAlphaNumFromStream(fpInput, str);
-				fpInput.EatWhite();
+				fpInput.eatWhite();
 
 				SetHelpFilename(str);
 
 				if (fpInput.peek() == ';') {
-					fpInput.Get();
+					fpInput.getCh();
 				}
 			}
 		} else if (!sWorkStr.Find("ENDIF")) {
@@ -786,7 +786,7 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 			pObj = OnNewExpressionObject(sWorkStr);
 		} else if (!sWorkStr.Find("REM") || !sWorkStr.Find("//")) {
 			char s[256];
-			fpInput.Get(s, 256);
+			fpInput.getCh(s, 256);
 		} else {
 			pObj = OnNewUserObject(sWorkStr);
 		}
@@ -819,14 +819,14 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 			AddObject(pObj);
 		}
 
-		fpInput.EatWhite();
+		fpInput.eatWhite();
 
 	}  // While not eof
 
 	if (fpInput.peek() == SDEV_END_DELIM)
-		fpInput.Get();
+		fpInput.getCh();
 
-	fpInput.EatWhite();
+	fpInput.eatWhite();
 
 	if (pActiveExpr) {
 		CBofString str2("Mismatch in IF/ENDIF:");
@@ -939,24 +939,24 @@ void CBagStorageDev::HandleError(ErrorCode errCode) {
 }
 
 
-PARSE_CODES CBagStorageDev::setInfo(bof_ifstream &fpInput) {
+PARSE_CODES CBagStorageDev::setInfo(CBagIfstream &fpInput) {
 	char szStr[256];
 	szStr[0] = 0;
 	CBofString str(szStr, 256);
 
-	fpInput.EatWhite();
+	fpInput.eatWhite();
 
-	char ch = (char)fpInput.Get();
+	char ch = (char)fpInput.getCh();
 	if (ch == '=') {
 		GetAlphaNumFromStream(fpInput, str);
-		fpInput.EatWhite();
+		fpInput.eatWhite();
 
 		MACROREPLACE(str);
 
 		m_sBackgroundName = str;
 
 		if (fpInput.peek() == ';') {
-			fpInput.Get();
+			fpInput.getCh();
 		}
 	}
 
@@ -1442,7 +1442,7 @@ ErrorCode CBagStorageDevWnd::LoadFile(const CBofString &sFile) {
 	int nLength = FileLength(sWldFile);
 	char *pBuf = (char *)BofAlloc(nLength);
 	if (pBuf != nullptr) {
-		bof_ifstream fpInput(pBuf, nLength);
+		CBagIfstream fpInput(pBuf, nLength);
 
 		CBofFile cFile;
 		cFile.open(sWldFile);
@@ -1718,7 +1718,7 @@ ErrorCode CBagStorageDevDlg::LoadFile(const CBofString &sFile) {
 	int nLength = FileLength(sWldFile);
 	char *pBuf = (char *)BofAlloc(nLength);
 	if (pBuf != nullptr) {
-		bof_ifstream fpInput(pBuf, nLength);
+		CBagIfstream fpInput(pBuf, nLength);
 
 		CBofFile cFile;
 		cFile.open(sWldFile);

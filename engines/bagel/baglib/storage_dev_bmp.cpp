@@ -92,7 +92,7 @@ ErrorCode CBagStorageDevBmp::KillWorkBmp() {
 	return _errCode;
 }
 
-ErrorCode CBagStorageDevBmp::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach) {
+ErrorCode CBagStorageDevBmp::LoadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName, bool bAttach) {
 	SetFileName(sWldName);
 	SetRefName(sWldName);
 

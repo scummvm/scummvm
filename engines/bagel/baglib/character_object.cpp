@@ -367,7 +367,7 @@ ErrorCode CBagCharacterObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect * 
 	return ERR_NONE;
 }
 
-PARSE_CODES CBagCharacterObject::setInfo(bof_ifstream &istr) {
+PARSE_CODES CBagCharacterObject::setInfo(CBagIfstream &istr) {
 	bool objectUpdatedFl = false;
 
 	while (!istr.eof()) {
@@ -382,7 +382,7 @@ PARSE_CODES CBagCharacterObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, str);
 
 			if (!str.Find("KEEPSTATE")) {
-				istr.EatWhite();
+				istr.eatWhite();
 
 				_saveState = true;
 
@@ -402,7 +402,7 @@ PARSE_CODES CBagCharacterObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, str);
 
 			if (!str.Find("LOOP")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				GetIntFromStream(istr, _numOfLoops);
 				objectUpdatedFl = true;
 			} else {
@@ -420,7 +420,7 @@ PARSE_CODES CBagCharacterObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, str);
 
 			if (!str.Find("SPEED")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				GetIntFromStream(istr, _playbackSpeed);
 				objectUpdatedFl = true;
 			} else {
@@ -438,7 +438,7 @@ PARSE_CODES CBagCharacterObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, str);
 
 			if (!str.Find("EXITATEND")) {
-				istr.EatWhite();
+				istr.eatWhite();
 
 				_exitAtEnd = true;
 				objectUpdatedFl = true;
@@ -456,7 +456,7 @@ PARSE_CODES CBagCharacterObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, str);
 
 			if (!str.Find("PANIM")) {
-				istr.EatWhite();
+				istr.eatWhite();
 
 				_pAnim = true;
 				objectUpdatedFl = true;
@@ -478,7 +478,7 @@ PARSE_CODES CBagCharacterObject::setInfo(bof_ifstream &istr) {
 
 			if (!str.Find("FRAME")) {
 				CBofRect r;
-				istr.EatWhite();
+				istr.eatWhite();
 
 				getRectFromStream(istr, r);
 

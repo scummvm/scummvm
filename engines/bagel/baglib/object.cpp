@@ -162,12 +162,12 @@ bool CBagObject::runObject() {
 	return true;
 }
 
-PARSE_CODES CBagObject::setInfo(bof_ifstream &istr) {
+PARSE_CODES CBagObject::setInfo(CBagIfstream &istr) {
 	PARSE_CODES rc = UNKNOWN_TOKEN;
 
 	while (!istr.eof()) {
-		istr.EatWhite();
-		char ch = (char)istr.Get();
+		istr.eatWhite();
+		char ch = (char)istr.getCh();
 		switch (ch) {
 		//
 		//  =filename.ext
@@ -197,7 +197,7 @@ PARSE_CODES CBagObject::setInfo(bof_ifstream &istr) {
 				}
 			}
 
-			istr.putback(ch);
+			istr.putBack(ch);
 
 			char szBuff[256];
 			Common::sprintf_s(szBuff, "Menu:%d", CBagMasterWin::m_lMenuCount++);
@@ -251,7 +251,7 @@ PARSE_CODES CBagObject::setInfo(bof_ifstream &istr) {
 		case '[': {
 			rc = UPDATED_OBJECT;
 			CBofRect r;
-			istr.putback(ch);
+			istr.putBack(ch);
 			getRectFromStream(istr, r);
 			setPosition(r.TopLeft());
 			if (r.width() && r.height())
@@ -263,7 +263,7 @@ PARSE_CODES CBagObject::setInfo(bof_ifstream &istr) {
 		//
 		case 'I': {
 			if (istr.peek() != 'S') {
-				istr.putback(ch);
+				istr.putBack(ch);
 				return rc;
 				break;
 			}
@@ -271,12 +271,12 @@ PARSE_CODES CBagObject::setInfo(bof_ifstream &istr) {
 			szLocalBuff[0] = 0;
 			CBofString s(szLocalBuff, 256);
 			bool b = true;
-			istr.Get();
-			istr.EatWhite();
+			istr.getCh();
+			istr.eatWhite();
 			GetAlphaNumFromStream(istr, s);
 			if (!s.Find("NOT")) {
 				GetAlphaNumFromStream(istr, s);
-				istr.EatWhite();
+				istr.eatWhite();
 				b = false;
 			}
 			if (!s.Find("MOVABLE")) {
@@ -332,7 +332,7 @@ PARSE_CODES CBagObject::setInfo(bof_ifstream &istr) {
 		//  no match return from function
 		//
 		default:
-			istr.putback(ch);
+			istr.putBack(ch);
 			return rc;
 		}
 	}

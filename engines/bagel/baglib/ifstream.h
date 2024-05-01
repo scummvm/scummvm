@@ -31,103 +31,103 @@
 
 namespace Bagel {
 
-class bof_ifstream : public CBofObject {
+class CBagIfstream : public CBofObject {
 private:
-	int m_nLineNumber;
-	CBofString m_sLineString;
+	int _lineNumber;
+	CBofString _lineString;
 
-	char *m_pszBuf;
-	char *m_pszCurr;
-	char *m_pszEOF;
-	int m_nLength;
+	char *_buffer;
+	char *_curr;
+	char *_eof;
+	int _length;
 
 public:
-	bof_ifstream(char *pBuf, int nLength) {
-		m_pszCurr = m_pszBuf = pBuf;
-		m_pszEOF = pBuf + nLength;
-		m_nLength = nLength;
+	CBagIfstream(char *buffer, int length) {
+		_curr = _buffer = buffer;
+		_eof = buffer + length;
+		_length = length;
 
-		m_nLineNumber = 1;
-		m_sLineString = "";
+		_lineNumber = 1;
+		_lineString = "";
 	}
 
-	int Get() {
+	int getCh() {
 		int ch = get();
 		return ch;
 	}
 
-	int getline(char *pszBuf, int nLength) {
-		return get(pszBuf, nLength, '\n');
+	int getLine(char *buffer, int length) {
+		return get(buffer, length, '\n');
 	}
 
-	int putback(char /*ch*/) {
-		if (m_pszCurr > m_pszBuf)
-			m_pszCurr--;
+	int putBack(char /*ch*/) {
+		if (_curr > _buffer)
+			_curr--;
 
 		return 0;
 	}
 
-	int eof() {
-		if (m_pszCurr == m_pszEOF) {
-			return -1;
+	bool eof() const {
+		if (_curr == _eof) {
+			return true;
 
 		}
 
-		return 0;
+		return false;
 	}
 
 	int get() {
-		if (m_pszCurr != m_pszEOF)
-			return *m_pszCurr++;
+		if (_curr != _eof)
+			return *_curr++;
 
 		return -1;
 	}
 
-	int get(char *pszBuf, int nCount, char chDelim = '\n') {
+	int get(char *buffer, int count, char delimiter = '\n') {
 		if (!eof()) {
-			nCount = MIN<int>(nCount, m_pszEOF - m_pszCurr);
+			count = MIN<int>(count, _eof - _curr);
 
-			char *p = (char *)memchr(m_pszCurr, chDelim, nCount);
+			char *p = (char *)memchr(_curr, delimiter, count);
 			if (p != nullptr) {
-				nCount = MIN<int>(nCount, p - m_pszCurr /* + 1*/);
+				count = MIN<int>(count, p - _curr /* + 1*/);
 			}
-			memcpy(pszBuf, m_pszCurr, nCount);
-			m_pszCurr += nCount;
-			Assert(m_pszCurr <= m_pszEOF);
+			memcpy(buffer, _curr, count);
+			_curr += count;
+			Assert(_curr <= _eof);
 
-			return m_pszCurr == m_pszEOF ? -1 : 0;
+			return _curr == _eof ? -1 : 0;
 		} 
 
 		return -1;
 	}
 
 	int peek() {
-		if (m_pszCurr != m_pszEOF)
-			return *m_pszCurr;
+		if (_curr != _eof)
+			return *_curr;
 
 		return -1;
 	}
 
-	int Get(char *pch, int nCount, char delim = '\n') {
-		get(pch, nCount, delim);
+	int getCh(char *ch, int count, char delimiter = '\n') {
+		get(ch, count, delimiter);
 
-		if (delim == '\n') {
-			m_nLineNumber++;
-			m_sLineString = "";
+		if (delimiter == '\n') {
+			_lineNumber++;
+			_lineString = "";
 		}
 
 		return 0;
 	}
 
-	int EatWhite() {
+	int eatWhite() {
 		int ch = peek();
 		while ((ch == ' ') || (ch == '\t') || (ch == '\r') || (ch == '\n')) {
 
 			if (ch == '\n') {
-				m_nLineNumber++;
-				m_sLineString = "";
+				_lineNumber++;
+				_lineString = "";
 			}
-			Get();
+			getCh();
 			ch = peek();
 		}
 		if (ch == -1)
@@ -136,14 +136,14 @@ public:
 		return 0;
 	}
 
-	int GetLineNumber() const {
-		return m_nLineNumber;
+	int getLineNumber() const {
+		return _lineNumber;
 	}
 	int getSize() const {
-		return m_nLength;
+		return _length;
 	}
-	const CBofString &GetLineString() {
-		return m_sLineString;
+	const CBofString &getLineString() {
+		return _lineString;
 	}
 };
 

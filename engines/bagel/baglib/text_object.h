@@ -118,7 +118,7 @@ public:
 	ErrorCode attach();
 	ErrorCode detach();
 
-	PARSE_CODES setInfo(bof_ifstream &istr);
+	PARSE_CODES setInfo(CBagIfstream &istr);
 
 	void setProperty(const CBofString &sProp, int nVal);
 	int getProperty(const CBofString &sProp);

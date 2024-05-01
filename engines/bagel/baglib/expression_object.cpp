@@ -70,7 +70,7 @@ bool CBagExpressionObject::runObject() {
 	return CBagObject::runObject();
 }
 
-PARSE_CODES CBagExpressionObject::setInfo(bof_ifstream &istr) {
+PARSE_CODES CBagExpressionObject::setInfo(CBagIfstream &istr) {
 	bool objectUpdatedFl = false;
 
 	while (!istr.eof()) {

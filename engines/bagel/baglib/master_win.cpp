@@ -450,7 +450,7 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 		int nLength = FileLength(sWldFileName);
 		char *pBuf = (char *)BofAlloc(nLength);
 		if (pBuf != nullptr) {
-			bof_ifstream fpInput(pBuf, nLength);
+			CBagIfstream fpInput(pBuf, nLength);
 
 			CBofFile cFile;
 			cFile.open(sWldFileName);
@@ -597,7 +597,7 @@ ErrorCode CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 			int nLength = FileLength(sWldFileName);
 			char *pBuf = (char *)BofAlloc(nLength);
 			if (pBuf != nullptr) {
-				bof_ifstream fpInput(pBuf, nLength);
+				CBagIfstream fpInput(pBuf, nLength);
 
 				CBofFile cFile;
 				cFile.open(sWldFileName);
@@ -605,11 +605,11 @@ ErrorCode CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 				cFile.close();
 
 				while (!fpInput.eof()) {
-					fpInput.EatWhite();
+					fpInput.eatWhite();
 
 					KEYWORDS keyword;
 
-					if (fpInput.EatWhite() == -1) {
+					if (fpInput.eatWhite() == -1) {
 						break;
 					}
 
@@ -619,7 +619,7 @@ ErrorCode CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 
 					case VARIABLE: {
 						CBagVar *pVar = new CBagVar;
-						fpInput.EatWhite();
+						fpInput.eatWhite();
 						pVar->setInfo(fpInput);
 						pVar->SetGlobal();
 						break;
@@ -627,7 +627,7 @@ ErrorCode CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 
 					case REMARK: {
 						char s[256];
-						fpInput.Get(s, 255);
+						fpInput.getCh(s, 255);
 						break;
 					}
 
@@ -653,7 +653,7 @@ ErrorCode CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 	return _errCode;
 }
 
-ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName) {
+ErrorCode CBagMasterWin::LoadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName) {
 	char szLocalStr[256];
 	szLocalStr[0] = 0;
 	CBofRect rRect;
@@ -665,7 +665,7 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 	m_sStartWld = sWldName;
 
 	while (!fpInput.eof()) {
-		fpInput.EatWhite();
+		fpInput.eatWhite();
 		CBagStorageDev *pSDev = nullptr;
 		int nFilter = 0;
 		rRect.right = rRect.left - 1;
@@ -673,7 +673,7 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 
 		KEYWORDS keyword;
 
-		if (fpInput.EatWhite() == -1) {
+		if (fpInput.eatWhite() == -1) {
 			break;
 		}
 
@@ -692,27 +692,27 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 			CBofString namestr(szNameBuff, 256);
 			CBofString typestr(szTypeBuff, 256);
 
-			fpInput.EatWhite();
+			fpInput.eatWhite();
 			GetAlphaNumFromStream(fpInput, namestr);
 
-			fpInput.EatWhite();
+			fpInput.eatWhite();
 
 			int nFadeId = 0;
 
 			while (fpInput.peek() != '{') {
 				GetAlphaNumFromStream(fpInput, sWorkStr);
-				fpInput.EatWhite();
+				fpInput.eatWhite();
 				if (!sWorkStr.Find("AS")) {
-					fpInput.EatWhite();
+					fpInput.eatWhite();
 					GetAlphaNumFromStream(fpInput, typestr);
 				} else if (!sWorkStr.Find("RECT")) {
-					fpInput.EatWhite();
+					fpInput.eatWhite();
 					getRectFromStream(fpInput, rRect);
 				} else if (!sWorkStr.Find("FILTER")) {
-					fpInput.EatWhite();
+					fpInput.eatWhite();
 					GetIntFromStream(fpInput, nFilter);
 				} else if (!sWorkStr.Find("FADE")) { // Note that this should usually be set in the link
-					fpInput.EatWhite();
+					fpInput.eatWhite();
 					GetIntFromStream(fpInput, nFadeId);
 				} else {
 					// There is an error here
@@ -720,7 +720,7 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 					return ERR_UNKNOWN;
 				}
 
-				fpInput.EatWhite();
+				fpInput.eatWhite();
 			}
 			pSDev = OnNewStorageDev(typestr);
 			if (!pSDev) {
@@ -757,10 +757,10 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 
 			CBofString sStr(str, 256);
 
-			fpInput.EatWhite();
+			fpInput.eatWhite();
 			if (fpInput.peek() == '=') {
-				fpInput.Get();
-				fpInput.EatWhite();
+				fpInput.getCh();
+				fpInput.eatWhite();
 				GetAlphaNumFromStream(fpInput, sStr);
 
 				// Only use the start wld if not specified elsewhere
@@ -779,19 +779,19 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 			CBofString sStr(str, 256);
 			int nId;
 
-			fpInput.EatWhite();
+			fpInput.eatWhite();
 			GetIntFromStream(fpInput, nId);
-			fpInput.EatWhite();
+			fpInput.eatWhite();
 			if (fpInput.peek() == '=') {
 				int x, y;
-				fpInput.Get();
-				fpInput.EatWhite();
+				fpInput.getCh();
+				fpInput.eatWhite();
 
 				GetIntFromStream(fpInput, x);
-				fpInput.EatWhite();
+				fpInput.eatWhite();
 
 				GetIntFromStream(fpInput, y);
-				fpInput.EatWhite();
+				fpInput.eatWhite();
 
 				GetAlphaNumFromStream(fpInput, sStr);
 				MACROREPLACE(sStr);
@@ -800,13 +800,13 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 				// the USESHAREDPAL token after the full cursor specification
 				bool bUseShared = false;
 
-				fpInput.EatWhite();
+				fpInput.eatWhite();
 				if (fpInput.peek() == '=') {
 					char szSharedPalToken[256];
 					CBofString tStr(szSharedPalToken, 256);
 
-					fpInput.Get();
-					fpInput.EatWhite();
+					fpInput.getCh();
+					fpInput.eatWhite();
 
 					// Check for shared pal token, if there, then create our cursor
 					// with the shared palette bit set
@@ -846,10 +846,10 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 			char szPDAState[256];
 			szPDAState[0] = '\0';
 			CBofString sStr(szPDAState, 256);
-			fpInput.EatWhite();
+			fpInput.eatWhite();
 			if (fpInput.peek() == '=') {
-				fpInput.Get();
-				fpInput.EatWhite();
+				fpInput.getCh();
+				fpInput.eatWhite();
 
 				GetAlphaNumFromStream(fpInput, sStr);
 
@@ -870,10 +870,10 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 			char szBmpFileName[256];
 			szBmpFileName[0] = '\0';
 			CBofString sStr(szBmpFileName, 256);
-			fpInput.EatWhite();
+			fpInput.eatWhite();
 			if (fpInput.peek() == '=') {
-				fpInput.Get();
-				fpInput.EatWhite();
+				fpInput.getCh();
+				fpInput.eatWhite();
 
 				GetAlphaNumFromStream(fpInput, sStr);
 				MACROREPLACE(sStr);
@@ -888,10 +888,10 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 
 		case SYSSCREEN: {
 
-			fpInput.EatWhite();
+			fpInput.eatWhite();
 			if (fpInput.peek() == '=') {
-				fpInput.Get();
-				fpInput.EatWhite();
+				fpInput.getCh();
+				fpInput.eatWhite();
 
 				GetAlphaNumFromStream(fpInput, m_cSysScreen);
 				MACROREPLACE(m_cSysScreen);
@@ -907,10 +907,10 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 			szDiskID[0] = '\0';
 			CBofString sStr(szDiskID, 256);
 
-			fpInput.EatWhite();
+			fpInput.eatWhite();
 			if (fpInput.peek() == '=') {
-				fpInput.Get();
-				fpInput.EatWhite();
+				fpInput.getCh();
+				fpInput.eatWhite();
 
 				GetAlphaNumFromStream(fpInput, m_cCDChangeAudio);
 				MACROREPLACE(m_cCDChangeAudio);
@@ -921,10 +921,10 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 		}
 
 		case DISKID: {
-			fpInput.EatWhite();
+			fpInput.eatWhite();
 			if (fpInput.peek() == '=') {
-				fpInput.Get();
-				fpInput.EatWhite();
+				fpInput.getCh();
+				fpInput.eatWhite();
 				int n;
 
 				GetIntFromStream(fpInput, n);
@@ -940,14 +940,14 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 		case VARIABLE: {
 			CBagVar *xVar = new CBagVar;
 			// LogInfo("New global variable");
-			fpInput.EatWhite();
+			fpInput.eatWhite();
 			xVar->setInfo(fpInput);
 			break;
 		}
 
 		case REMARK: {
 			char s[255];
-			fpInput.Get(s, 255);
+			fpInput.getCh(s, 255);
 			break;
 		}
 
