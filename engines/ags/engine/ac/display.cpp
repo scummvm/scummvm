@@ -306,7 +306,7 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 			sys_evt_process_pending();
 
 			update_audio_system_on_game_loop();
-			update_cursor_and_dependent();
+			UpdateCursorAndDrawables();
 			render_graphics();
 			eAGSMouseButton mbut;
 			int mwheelz;
