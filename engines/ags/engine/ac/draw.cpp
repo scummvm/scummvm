@@ -1170,15 +1170,17 @@ static bool scale_and_flip_sprite(int useindx, int sppic, int newwidth, int newh
 // require altering the raw bitmap itself.
 // Except if alwaysUseSoftware is set, in which case even HW renderers
 // construct the image in software mode as well.
-bool construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysUseSoftware) {
+bool construct_object_gfx(int objid, int *drawnWidth, int *drawnHeight, bool alwaysUseSoftware) {
 	bool hardwareAccelerated = !alwaysUseSoftware && _G(gfxDriver)->HasAcceleratedTransform();
 
-	if (_GP(spriteset)[_G(objs)[aa].num] == nullptr)
-		quitprintf("There was an error drawing object %d. Its current sprite, %d, is invalid.", aa, _G(objs)[aa].num);
+	/*const*/ RoomObject &obj = _G(objs)[objid];
 
-	int coldept = _GP(spriteset)[_G(objs)[aa].num]->GetColorDepth();
-	const int src_sprwidth = _GP(game).SpriteInfos[_G(objs)[aa].num].Width;
-	const int src_sprheight = _GP(game).SpriteInfos[_G(objs)[aa].num].Height;
+	if (_GP(spriteset)[obj.num] == nullptr)
+		quitprintf("There was an error drawing object %d. Its current sprite, %d, is invalid.", objid, obj.num);
+
+	int coldept = _GP(spriteset)[obj.num]->GetColorDepth();
+	const int src_sprwidth = _GP(game).SpriteInfos[obj.num].Width;
+	const int src_sprheight = _GP(game).SpriteInfos[obj.num].Height;
 	int sprwidth = src_sprwidth;
 	int sprheight = src_sprheight;
 
@@ -1187,22 +1189,22 @@ bool construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool always
 	int zoom_level = 100;
 
 	// calculate the zoom level
-	if ((_G(objs)[aa].flags & OBJF_USEROOMSCALING) == 0) {
-		zoom_level = _G(objs)[aa].zoom;
+	if ((obj.flags & OBJF_USEROOMSCALING) == 0) {
+		zoom_level = obj.zoom;
 	} else {
-		int onarea = get_walkable_area_at_location(_G(objs)[aa].x, _G(objs)[aa].y);
+		int onarea = get_walkable_area_at_location(obj.x, obj.y);
 
 		if ((onarea <= 0) && (_GP(thisroom).WalkAreas[0].ScalingFar == 0)) {
 			// just off the edge of an area -- use the scaling we had
 			// while on the area
-			zoom_level = _G(objs)[aa].zoom;
+			zoom_level = obj.zoom;
 		} else
-			zoom_level = get_area_scaling(onarea, _G(objs)[aa].x, _G(objs)[aa].y);
+			zoom_level = get_area_scaling(onarea, obj.x, obj.y);
 	}
 
 	if (zoom_level != 100)
-		scale_sprite_size(_G(objs)[aa].num, zoom_level, &sprwidth, &sprheight);
-	_G(objs)[aa].zoom = zoom_level;
+		scale_sprite_size(obj.num, zoom_level, &sprwidth, &sprheight);
+	obj.zoom = zoom_level;
 
 	// save width/height into parameters if requested
 	if (drawnWidth)
@@ -1210,93 +1212,96 @@ bool construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool always
 	if (drawnHeight)
 		*drawnHeight = sprheight;
 
-	_G(objs)[aa].last_width = sprwidth;
-	_G(objs)[aa].last_height = sprheight;
+	obj.last_width = sprwidth;
+	obj.last_height = sprheight;
 
 	tint_red = tint_green = tint_blue = tint_level = tint_light = light_level = 0;
 
-	if (_G(objs)[aa].flags & OBJF_HASTINT) {
+	if (obj.flags & OBJF_HASTINT) {
 		// object specific tint, use it
-		tint_red = _G(objs)[aa].tint_r;
-		tint_green = _G(objs)[aa].tint_g;
-		tint_blue = _G(objs)[aa].tint_b;
-		tint_level = _G(objs)[aa].tint_level;
-		tint_light = _G(objs)[aa].tint_light;
+		tint_red = obj.tint_r;
+		tint_green = obj.tint_g;
+		tint_blue = obj.tint_b;
+		tint_level = obj.tint_level;
+		tint_light = obj.tint_light;
 		light_level = 0;
-	} else if (_G(objs)[aa].flags & OBJF_HASLIGHT) {
-		light_level = _G(objs)[aa].tint_light;
+	} else if (obj.flags & OBJF_HASLIGHT) {
+		light_level = obj.tint_light;
 	} else {
 		// get the ambient or region tint
 		int ignoreRegionTints = 1;
-		if (_G(objs)[aa].flags & OBJF_USEREGIONTINTS)
+		if (obj.flags & OBJF_USEREGIONTINTS)
 			ignoreRegionTints = 0;
 
-		get_local_tint(_G(objs)[aa].x, _G(objs)[aa].y, ignoreRegionTints,
+		get_local_tint(obj.x, obj.y, ignoreRegionTints,
 		               &tint_level, &tint_red, &tint_green, &tint_blue,
 		               &tint_light, &light_level);
 	}
 
 	// check whether the image should be flipped
 	bool isMirrored = false;
-	if ((_G(objs)[aa].view != (uint16_t)-1) &&
-		(_GP(views)[_G(objs)[aa].view].loops[_G(objs)[aa].loop].frames[_G(objs)[aa].frame].pic == _G(objs)[aa].num) &&
-		((_GP(views)[_G(objs)[aa].view].loops[_G(objs)[aa].loop].frames[_G(objs)[aa].frame].flags & VFLG_FLIPSPRITE) != 0)) {
+	if ((obj.view != (uint16_t)-1) &&
+		(_GP(views)[obj.view].loops[obj.loop].frames[obj.frame].pic == obj.num) &&
+		((_GP(views)[obj.view].loops[obj.loop].frames[obj.frame].flags & VFLG_FLIPSPRITE) != 0)) {
 		isMirrored = true;
 	}
 
-	const int useindx = aa; // actsps array index
+	const int useindx = objid; // actsps array index
 	auto &actsp = _GP(actsps)[useindx];
-	actsp.SpriteID = _G(objs)[aa].num; // for texture sharing
+	actsp.SpriteID = obj.num; // for texture sharing
+
 	// NOTE: we need cached bitmap if:
 	// * it's a software renderer, otherwise
 	// * the walk-behind method is DrawOverCharSprite
 	if ((hardwareAccelerated) && (_G(walkBehindMethod) != DrawOverCharSprite)) {
 		// HW acceleration
-		bool is_texture_intact = _G(objcache)[aa].sppic != _G(objs)[aa].num;
-		_G(objcache)[aa].sppic = _G(objs)[aa].num;
-		_G(objcache)[aa].tintamnt = tint_level;
-		_G(objcache)[aa].tintr = tint_red;
-		_G(objcache)[aa].tintg = tint_green;
-		_G(objcache)[aa].tintb = tint_blue;
-		_G(objcache)[aa].tintlight = tint_light;
-		_G(objcache)[aa].lightlev = light_level;
-		_G(objcache)[aa].zoom = zoom_level;
-		_G(objcache)[aa].mirrored = isMirrored;
+		ObjectCache &objsav = _G(objcache)[objid];
+		bool is_texture_intact = objsav.sppic == obj.num;
+		objsav.sppic = obj.num;
+		objsav.tintamnt = tint_level;
+		objsav.tintr = tint_red;
+		objsav.tintg = tint_green;
+		objsav.tintb = tint_blue;
+		objsav.tintlight = tint_light;
+		objsav.lightlev = light_level;
+		objsav.zoom = zoom_level;
+		objsav.mirrored = isMirrored;
 		return is_texture_intact;
 	}
 
 	//
 	// Software mode below
 	//
+	ObjectCache &objsav = _G(objcache)[objid];
 	if ((!hardwareAccelerated) && (_G(gfxDriver)->HasAcceleratedTransform())) {
 		// They want to draw it in software mode with the D3D driver, so force a redraw
-		_G(objcache)[aa].sppic = -389538;
+		objsav.sppic = -389538;
 	}
 
 	// If we have the image cached, use it
-	if ((_G(objcache)[aa].image != nullptr) &&
-	        (_G(objcache)[aa].sppic == _G(objs)[aa].num) &&
-			(_G(objcache)[aa].tintamnt == tint_level) &&
-			(_G(objcache)[aa].tintlight == tint_light) &&
-			(_G(objcache)[aa].tintr == tint_red) &&
-			(_G(objcache)[aa].tintg == tint_green) &&
-			(_G(objcache)[aa].tintb == tint_blue) &&
-			(_G(objcache)[aa].lightlev == light_level) &&
-			(_G(objcache)[aa].zoom == zoom_level) &&
-			(_G(objcache)[aa].mirrored == isMirrored)) {
+	if ((objsav.image != nullptr) &&
+	        (objsav.sppic == obj.num) &&
+			(objsav.tintamnt == tint_level) &&
+			(objsav.tintlight == tint_light) &&
+			(objsav.tintr == tint_red) &&
+			(objsav.tintg == tint_green) &&
+			(objsav.tintb == tint_blue) &&
+			(objsav.lightlev == light_level) &&
+			(objsav.zoom == zoom_level) &&
+			(objsav.mirrored == isMirrored)) {
 		// the image is the same, we can use it cached!
 		if ((_G(walkBehindMethod) != DrawOverCharSprite) &&
 			(actsp.Bmp != nullptr))
 			return true;
 		// Check if the X & Y co-ords are the same, too -- if so, there
 		// is scope for further optimisations
-		if ((_G(objcache)[aa].x == _G(objs)[aa].x) &&
-				(_G(objcache)[aa].y == _G(objs)[aa].y) &&
+		if ((objsav.x == obj.x) &&
+				(objsav.y == obj.y) &&
 				(actsp.Bmp != nullptr) &&
 				(_G(walk_behind_baselines_changed) == 0))
 			return true;
 		recycle_bitmap(actsp.Bmp, coldept, sprwidth, sprheight);
-		actsp.Bmp->Blit(_G(objcache)[aa].image.get(), 0, 0, 0, 0, _G(objcache)[aa].image->GetWidth(), _G(objcache)[aa].image->GetHeight());
+		actsp.Bmp->Blit(objsav.image.get(), 0, 0, 0, 0, objsav.image->GetWidth(), objsav.image->GetHeight());
 		return false; // image was modified
 	}
 
@@ -1305,7 +1310,7 @@ bool construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool always
 	bool actspsUsed = false;
 	if (!hardwareAccelerated) {
 		// draw the base sprite, scaled and flipped as appropriate
-		actspsUsed = scale_and_flip_sprite(useindx, _G(objs)[aa].num, sprwidth, sprheight, isMirrored);
+		actspsUsed = scale_and_flip_sprite(useindx, obj.num, sprwidth, sprheight, isMirrored);
 	}
 	if (!actspsUsed) {
 		recycle_bitmap(actsp.Bmp, coldept, src_sprwidth, src_sprheight);
@@ -1314,7 +1319,7 @@ bool construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool always
 	// direct read from source bitmap, where possible
 	Bitmap *comeFrom = nullptr;
 	if (!actspsUsed)
-		comeFrom = _GP(spriteset)[_G(objs)[aa].num];
+		comeFrom = _GP(spriteset)[obj.num];
 
 	// apply tints or lightenings where appropriate, else just copy
 	// the source bitmap
@@ -1323,22 +1328,22 @@ bool construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool always
 			tint_green, tint_blue, tint_light, coldept,
 			comeFrom);
 	} else if (!actspsUsed) {
-		actsp.Bmp->Blit(_GP(spriteset)[_G(objs)[aa].num], 0, 0);
+		actsp.Bmp->Blit(_GP(spriteset)[obj.num], 0, 0);
 	}
 
 	// Re-use the bitmap if it's the same size
-	recycle_bitmap(_G(objcache)[aa].image, coldept, sprwidth, sprheight);
+	recycle_bitmap(objsav.image, coldept, sprwidth, sprheight);
 	// Create the cached image and store it
-	_G(objcache)[aa].image->Blit(actsp.Bmp.get(), 0, 0);
-	_G(objcache)[aa].sppic = _G(objs)[aa].num;
-	_G(objcache)[aa].tintamnt = tint_level;
-	_G(objcache)[aa].tintr = tint_red;
-	_G(objcache)[aa].tintg = tint_green;
-	_G(objcache)[aa].tintb = tint_blue;
-	_G(objcache)[aa].tintlight = tint_light;
-	_G(objcache)[aa].lightlev = light_level;
-	_G(objcache)[aa].zoom = zoom_level;
-	_G(objcache)[aa].mirrored = isMirrored;
+	objsav.image->Blit(actsp.Bmp.get(), 0, 0);
+	objsav.sppic = obj.num;
+	objsav.tintamnt = tint_level;
+	objsav.tintr = tint_red;
+	objsav.tintg = tint_green;
+	objsav.tintb = tint_blue;
+	objsav.tintlight = tint_light;
+	objsav.lightlev = light_level;
+	objsav.zoom = zoom_level;
+	objsav.mirrored = isMirrored;
 	return false; // image was modified
 }
 
@@ -1347,27 +1352,29 @@ bool construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool always
 void prepare_objects_for_drawing() {
 	_G(our_eip) = 32;
 
-	for (uint32_t aa = 0; aa < _G(croom)->numobj; aa++) {
-		if (_G(objs)[aa].on != 1) continue;
+	for (uint32_t objid = 0; objid < _G(croom)->numobj; ++objid) {
+		const RoomObject &obj = _G(objs)[objid];
+		if (obj.on != 1) continue;
 		// offscreen, don't draw
-		if ((_G(objs)[aa].x >= _GP(thisroom).Width) || (_G(objs)[aa].y < 1))
+		if ((obj.x >= _GP(thisroom).Width) || (obj.y < 1))
 			continue;
 
 		int tehHeight;
-		bool actspsIntact = construct_object_gfx(aa, nullptr, &tehHeight, false);
+		bool actspsIntact = construct_object_gfx(objid, nullptr, &tehHeight, false);
 
-		const int useindx = aa; // actsps array index
+		const int useindx = objid; // actsps array index
 		auto &actsp = _GP(actsps)[useindx];
 
 		// update the cache for next time
-		_G(objcache)[aa].x = _G(objs)[aa].x;
-		_G(objcache)[aa].y = _G(objs)[aa].y;
-		int atxp = data_to_game_coord(_G(objs)[aa].x);
-		int atyp = data_to_game_coord(_G(objs)[aa].y) - tehHeight;
+		ObjectCache &objsav = _G(objcache)[objid];
+		objsav.x = obj.x;
+		objsav.y = obj.y;
+		int atxp = data_to_game_coord(obj.x);
+		int atyp = data_to_game_coord(obj.y) - tehHeight;
 
-		int usebasel = _G(objs)[aa].get_baseline();
+		int usebasel = obj.get_baseline();
 
-		if (_G(objs)[aa].flags & OBJF_NOWALKBEHINDS) {
+		if (obj.flags & OBJF_NOWALKBEHINDS) {
 			// ignore walk-behinds, do nothing
 			if (_G(walkBehindMethod) == DrawAsSeparateSprite) {
 				usebasel += _GP(thisroom).Height;
@@ -1377,28 +1384,28 @@ void prepare_objects_for_drawing() {
 		}
 
 		if ((!actspsIntact) || (actsp.Ddb == nullptr)) {
-			sync_object_texture(actsp, (_GP(game).SpriteInfos[_G(objs)[aa].num].Flags & SPF_ALPHACHANNEL) != 0);
+			sync_object_texture(actsp, (_GP(game).SpriteInfos[obj.num].Flags & SPF_ALPHACHANNEL) != 0);
 		}
 
 		if (_G(gfxDriver)->HasAcceleratedTransform()) {
-			actsp.Ddb->SetFlippedLeftRight(_G(objcache)[aa].mirrored);
-			actsp.Ddb->SetStretch(_G(objs)[aa].last_width, _G(objs)[aa].last_height);
-			actsp.Ddb->SetTint(_G(objcache)[aa].tintr, _G(objcache)[aa].tintg, _G(objcache)[aa].tintb, (_G(objcache)[aa].tintamnt * 256) / 100);
+			actsp.Ddb->SetFlippedLeftRight(objsav.mirrored);
+			actsp.Ddb->SetStretch(obj.last_width, obj.last_height);
+			actsp.Ddb->SetTint(objsav.tintr, objsav.tintg, objsav.tintb, (objsav.tintamnt * 256) / 100);
 
-			if (_G(objcache)[aa].tintamnt > 0) {
-				if (_G(objcache)[aa].tintlight == 0)  // luminance of 0 -- pass 1 to enable
+			if (objsav.tintamnt > 0) {
+				if (objsav.tintlight == 0)  // luminance of 0 -- pass 1 to enable
 					actsp.Ddb->SetLightLevel(1);
-				else if (_G(objcache)[aa].tintlight < 250)
-					actsp.Ddb->SetLightLevel(_G(objcache)[aa].tintlight);
+				else if (objsav.tintlight < 250)
+					actsp.Ddb->SetLightLevel(objsav.tintlight);
 				else
 					actsp.Ddb->SetLightLevel(0);
-			} else if (_G(objcache)[aa].lightlev != 0)
-				actsp.Ddb->SetLightLevel((_G(objcache)[aa].lightlev * 25) / 10 + 256);
+			} else if (objsav.lightlev != 0)
+				actsp.Ddb->SetLightLevel((objsav.lightlev * 25) / 10 + 256);
 			else
 				actsp.Ddb->SetLightLevel(0);
 		}
 
-		actsp.Ddb->SetAlpha(GfxDef::LegacyTrans255ToAlpha255(_G(objs)[aa].transparent));
+		actsp.Ddb->SetAlpha(GfxDef::LegacyTrans255ToAlpha255(obj.transparent));
 		add_to_sprite_list(actsp.Ddb, atxp, atyp, usebasel, false);
 	}
 }
@@ -1464,12 +1471,16 @@ void prepare_characters_for_drawing() {
 	_G(our_eip) = 33;
 
 	// draw characters
-	for (int aa = 0; aa < _GP(game).numcharacters; aa++) {
-		if (_GP(game).chars[aa].on == 0) continue;
-		if (_GP(game).chars[aa].room != _G(displayed_room)) continue;
-		_G(eip_guinum) = aa;
+	for (int charid = 0; charid < _GP(game).numcharacters; ++charid) {
+		/*const*/ CharacterInfo *chin = &_GP(game).chars[charid];
+		if (chin->on == 0)
+			continue;
+		if (chin->room != _G(displayed_room))
+			continue;
+		_G(eip_guinum) = charid;
 
-		CharacterInfo *chin = &_GP(game).chars[aa];
+		/*const*/ CharacterExtras &chex = _GP(charextra)[charid];
+
 		_G(our_eip) = 330;
 		// Test for valid view and loop
 		if (chin->view < 0) {
@@ -1491,34 +1502,34 @@ void prepare_characters_for_drawing() {
 			sppic = 0;  // in case it's screwed up somehow
 		_G(our_eip) = 331;
 		// sort out the stretching if required
-		onarea = get_walkable_area_at_character(aa);
+		onarea = get_walkable_area_at_character(charid);
 		_G(our_eip) = 332;
 
 		// calculates the zoom level
 		if (chin->flags & CHF_MANUALSCALING)  // character ignores scaling
-			zoom_level = _GP(charextra)[aa].zoom;
+			zoom_level = chex.zoom;
 		else if ((onarea <= 0) && (_GP(thisroom).WalkAreas[0].ScalingFar == 0)) {
-			zoom_level = _GP(charextra)[aa].zoom;
+			zoom_level = chex.zoom;
 			// NOTE: room objects don't have this fix
 			if (zoom_level == 0)
 				zoom_level = 100;
 		} else
 			zoom_level = get_area_scaling(onarea, chin->x, chin->y);
 
-		_GP(charextra)[aa].zoom = zoom_level;
+		chex.zoom = zoom_level;
 
 		tint_red = tint_green = tint_blue = tint_amount = tint_light = light_level = 0;
 
 		if (chin->flags & CHF_HASTINT) {
 			// object specific tint, use it
-			tint_red = _GP(charextra)[aa].tint_r;
-			tint_green = _GP(charextra)[aa].tint_g;
-			tint_blue = _GP(charextra)[aa].tint_b;
-			tint_amount = _GP(charextra)[aa].tint_level;
-			tint_light = _GP(charextra)[aa].tint_light;
+			tint_red = chex.tint_r;
+			tint_green = chex.tint_g;
+			tint_blue = chex.tint_b;
+			tint_amount = chex.tint_level;
+			tint_light = chex.tint_light;
 			light_level = 0;
 		} else if (chin->flags & CHF_HASLIGHT) {
-			light_level = _GP(charextra)[aa].tint_light;
+			light_level = chex.tint_light;
 		} else {
 			get_local_tint(chin->x, chin->y, chin->flags & CHF_NOLIGHTING,
 			               &tint_amount, &tint_red, &tint_green, &tint_blue,
@@ -1541,33 +1552,34 @@ void prepare_characters_for_drawing() {
 
 		_G(our_eip) = 3331;
 
-		const int useindx = aa + ACTSP_OBJSOFF; // actsps array index
+		const int useindx = charid + ACTSP_OBJSOFF; // actsps array index
 		auto &actsp = _GP(actsps)[useindx];
 		actsp.SpriteID = sppic; // for texture sharing
 
+		ObjectCache &chsav = _GP(charcache)[charid];
 		// if the character was the same sprite and scaling last time,
 		// just use the cached image
-		if ((_GP(charcache)[aa].in_use) &&
-			(_GP(charcache)[aa].sppic == specialpic) &&
-			(_GP(charcache)[aa].zoom == zoom_level) &&
-			(_GP(charcache)[aa].tintr == tint_red) &&
-			(_GP(charcache)[aa].tintg == tint_green) &&
-			(_GP(charcache)[aa].tintb == tint_blue) &&
-			(_GP(charcache)[aa].tintamnt == tint_amount) &&
-			(_GP(charcache)[aa].tintlight == tint_light) &&
-			(_GP(charcache)[aa].lightlev == light_level)) {
+		if ((chsav.in_use) &&
+			(chsav.sppic == specialpic) &&
+			(chsav.zoom == zoom_level) &&
+			(chsav.tintr == tint_red) &&
+			(chsav.tintg == tint_green) &&
+			(chsav.tintb == tint_blue) &&
+			(chsav.tintamnt == tint_amount) &&
+			(chsav.tintlight == tint_light) &&
+			(chsav.lightlev == light_level)) {
 			if (_G(walkBehindMethod) == DrawOverCharSprite) {
-				recycle_bitmap(actsp.Bmp, _GP(charcache)[aa].image->GetColorDepth(), _GP(charcache)[aa].image->GetWidth(), _GP(charcache)[aa].image->GetHeight());
-				actsp.Bmp->Blit(_GP(charcache)[aa].image.get(), 0, 0);
+				recycle_bitmap(actsp.Bmp, chsav.image->GetColorDepth(), chsav.image->GetWidth(), chsav.image->GetHeight());
+				actsp.Bmp->Blit(chsav.image.get(), 0, 0);
 			} else {
 				usingCachedImage = true;
 			}
-		} else if ((_GP(charcache)[aa].in_use) &&
-			(_GP(charcache)[aa].sppic == specialpic) &&
+		} else if ((chsav.in_use) &&
+			(chsav.sppic == specialpic) &&
 			(_G(gfxDriver)->HasAcceleratedTransform())) {
 			usingCachedImage = true;
-		} else if (_GP(charcache)[aa].in_use) {
-			_GP(charcache)[aa].in_use = false;
+		} else if (chsav.in_use) {
+			chsav.in_use = false;
 		}
 
 		_G(our_eip) = 3332;
@@ -1579,13 +1591,13 @@ void prepare_characters_for_drawing() {
 			// it needs to be stretched, so calculate the new dimensions
 
 			scale_sprite_size(sppic, zoom_level, &newwidth, &newheight);
-			_GP(charextra)[aa].width = newwidth;
-			_GP(charextra)[aa].height = newheight;
+			chex.width = newwidth;
+			chex.height = newheight;
 		} else {
 			// draw at original size, so just use the sprite width and height
-			// TODO: store width and height always, that's much simpler to use for reference!
-			_GP(charextra)[aa].width = 0;
-			_GP(charextra)[aa].height = 0;
+			// TODO: store width and height always, that's much simplier to use for reference!
+			chex.width = 0;
+			chex.height = 0;
 			newwidth = src_sprwidth;
 			newheight = src_sprheight;
 		}
@@ -1598,20 +1610,20 @@ void prepare_characters_for_drawing() {
 		                 // adjust the Y positioning for the character's Z co-ord
 		                 - data_to_game_coord(chin->z);
 
-		_GP(charcache)[aa].zoom = zoom_level;
-		_GP(charcache)[aa].sppic = specialpic;
-		_GP(charcache)[aa].tintr = tint_red;
-		_GP(charcache)[aa].tintg = tint_green;
-		_GP(charcache)[aa].tintb = tint_blue;
-		_GP(charcache)[aa].tintamnt = tint_amount;
-		_GP(charcache)[aa].tintlight = tint_light;
-		_GP(charcache)[aa].lightlev = light_level;
+		chsav.zoom = zoom_level;
+		chsav.sppic = specialpic;
+		chsav.tintr = tint_red;
+		chsav.tintg = tint_green;
+		chsav.tintb = tint_blue;
+		chsav.tintamnt = tint_amount;
+		chsav.tintlight = tint_light;
+		chsav.lightlev = light_level;
 
 		// If cache needs to be re-drawn
 		// NOTE: we need cached bitmap if:
 		// * it's a software renderer, otherwise
 		// * the walk-behind method is DrawOverCharSprite
-		if (((!_G(gfxDriver)->HasAcceleratedTransform()) || (_G(walkBehindMethod) == DrawOverCharSprite)) && !_GP(charcache)[aa].in_use) {
+		if (((!_G(gfxDriver)->HasAcceleratedTransform()) || (_G(walkBehindMethod) == DrawOverCharSprite)) && !chsav.in_use) {
 			// create the base sprite in _GP(actsps)[useindx], which will
 			// be scaled and/or flipped, as appropriate
 			bool actspsUsed = false;
@@ -1642,9 +1654,9 @@ void prepare_characters_for_drawing() {
 			}
 
 			// update the character cache with the new image
-			_GP(charcache)[aa].in_use = true;
-			recycle_bitmap(_GP(charcache)[aa].image, coldept, actsp.Bmp->GetWidth(), actsp.Bmp->GetHeight());
-			_GP(charcache)[aa].image->Blit(actsp.Bmp.get(), 0, 0);
+			chsav.in_use = true;
+			recycle_bitmap(chsav.image, coldept, actsp.Bmp->GetWidth(), actsp.Bmp->GetHeight());
+			chsav.image->Blit(actsp.Bmp.get(), 0, 0);
 
 		} // end if !cache.in_use
 
