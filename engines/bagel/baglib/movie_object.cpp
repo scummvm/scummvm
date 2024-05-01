@@ -392,13 +392,13 @@ bool CBagMovieObject::runObject() {
 	return rc;
 }
 
-PARSE_CODES CBagMovieObject::setInfo(bof_ifstream &istr) {
+PARSE_CODES CBagMovieObject::setInfo(CBagIfstream &istr) {
 	bool nObjectUpdated = false;
 	char szLocalStr[256];
 	CBofString sStr(szLocalStr, 256);
 
 	while (!istr.eof()) {
-		istr.EatWhite(); // Eat any white space between script elements
+		istr.eatWhite(); // Eat any white space between script elements
 
 		char ch = (char)istr.peek();
 		switch (ch) {
@@ -409,7 +409,7 @@ PARSE_CODES CBagMovieObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("AS")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 				if (!sStr.Find("EXAMINE")) {
 					m_xDisplayType = DISP_TYPE::EXAMINE;

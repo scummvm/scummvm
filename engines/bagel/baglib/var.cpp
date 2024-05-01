@@ -144,18 +144,18 @@ void CBagVar::Increment() {
 		SetValue(GetNumValue() + 1);
 }
 
-PARSE_CODES CBagVar::setInfo(bof_ifstream &istr) {
+PARSE_CODES CBagVar::setInfo(CBagIfstream &istr) {
 	Assert(IsValidObject(this));
 
 	char szLocalStr[256];
 	szLocalStr[0] = 0;
 	CBofString sStr(szLocalStr, 256);
-	istr.EatWhite();
+	istr.eatWhite();
 
 	GetAlphaNumFromStream(istr, sStr);
 	SetName(sStr);
 
-	istr.EatWhite();
+	istr.eatWhite();
 
 	if (istr.peek() == 'A') {
 		char sz2LocalStr[256];
@@ -164,7 +164,7 @@ PARSE_CODES CBagVar::setInfo(bof_ifstream &istr) {
 		GetAlphaNumFromStream(istr, sStr);
 
 		if (!sStr.Find("AS")) {
-			istr.EatWhite();
+			istr.eatWhite();
 			GetAlphaNumFromStream(istr, sStr);
 			if (!sStr.Find("TIMER")) {
 				setTimer();
@@ -184,16 +184,16 @@ PARSE_CODES CBagVar::setInfo(bof_ifstream &istr) {
 		}
 	}
 
-	istr.EatWhite();
+	istr.eatWhite();
 
 	if (istr.peek() == '=') {
-		istr.Get();
-		istr.EatWhite();
+		istr.getCh();
+		istr.eatWhite();
 		GetAlphaNumFromStream(istr, sStr);
 		SetValue(sStr);
 	}
 
-	istr.EatWhite();
+	istr.eatWhite();
 
 	return PARSING_DONE;
 }

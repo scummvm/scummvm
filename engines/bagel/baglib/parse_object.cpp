@@ -34,13 +34,13 @@ CBagParseObject::CBagParseObject() {
 	m_bAttached = false;
 }
 
-int CBagParseObject::GetIntFromStream(bof_ifstream &istr, int &nNum) {
+int CBagParseObject::GetIntFromStream(CBagIfstream &istr, int &nNum) {
 	char ch = 0;
 	char szLocalStr[256];
 	int i = 0;
 
 	while (Common::isDigit(ch = (char)istr.peek())) {
-		ch = (char)istr.Get();
+		ch = (char)istr.getCh();
 		szLocalStr[i++] = ch;
 		Assert(i < 256);
 	}
@@ -51,7 +51,7 @@ int CBagParseObject::GetIntFromStream(bof_ifstream &istr, int &nNum) {
 	return ch;
 }
 
-int CBagParseObject::GetStringFromStream(bof_ifstream &istr, CBofString &sStr, const CBofString &sEndChars, bool bPutBack) {
+int CBagParseObject::GetStringFromStream(CBagIfstream &istr, CBofString &sStr, const CBofString &sEndChars, bool bPutBack) {
 	bool bDone = false;
 	char ch = 0;
 
@@ -61,7 +61,7 @@ int CBagParseObject::GetStringFromStream(bof_ifstream &istr, CBofString &sStr, c
 		if (istr.eof())
 			bDone = true;
 		else
-			ch = (char)istr.Get();
+			ch = (char)istr.getCh();
 		for (int i = 0; !bDone && i < sEndChars.GetLength(); ++i) {
 			if (sEndChars[i] == ch)
 				bDone = true;
@@ -71,22 +71,22 @@ int CBagParseObject::GetStringFromStream(bof_ifstream &istr, CBofString &sStr, c
 	} while (!bDone);
 
 	if (bPutBack)
-		istr.putback(ch);
+		istr.putBack(ch);
 
 	return ch;
 }
 
-int CBagParseObject::GetStringFromStream(bof_ifstream &istr, CBofString &sStr, const char cEndChar, bool bPutBack) {
+int CBagParseObject::GetStringFromStream(CBagIfstream &istr, CBofString &sStr, const char cEndChar, bool bPutBack) {
 	return GetStringFromStream(istr, sStr, CBofString(cEndChar), bPutBack);
 }
 
-int CBagParseObject::getRectFromStream(bof_ifstream &istr, CBofRect &rect) {
+int CBagParseObject::getRectFromStream(CBagIfstream &istr, CBofRect &rect) {
 	char szLocalStr[256];
 	szLocalStr[0] = 0;
 	CBofString str(szLocalStr, 256);
 
 	// The first char must be a [
-	char ch = (char)istr.Get();
+	char ch = (char)istr.getCh();
 	if (ch != '[')
 		return -1;
 
@@ -99,7 +99,7 @@ int CBagParseObject::getRectFromStream(bof_ifstream &istr, CBofRect &rect) {
 	rect.top = atoi(str);
 
 	// If ',' then get the size coords
-	ch = (char)istr.Get();
+	ch = (char)istr.getCh();
 	if (ch == ',') {
 		// Get the right-coord (optional)
 		GetStringFromStream(istr, str, ",");
@@ -116,13 +116,13 @@ int CBagParseObject::getRectFromStream(bof_ifstream &istr, CBofRect &rect) {
 	return 0;
 }
 
-int CBagParseObject::GetVectorFromStream(bof_ifstream &istr, CBagVector &vector) {
+int CBagParseObject::GetVectorFromStream(CBagIfstream &istr, CBagVector &vector) {
 	char szLocalStr[256];
 	szLocalStr[0] = 0;
 	CBofString str(szLocalStr, 256);
 
 	// The first char must be a (
-	char ch = (char)istr.Get();
+	char ch = (char)istr.getCh();
 	if (ch != '(')
 		return -1;
 
@@ -138,7 +138,7 @@ int CBagParseObject::GetVectorFromStream(bof_ifstream &istr, CBagVector &vector)
 	vector.nMoveRate = 1;
 	ch = (char)istr.peek();
 	if (ch == ',') {
-		ch = (char)istr.Get();
+		ch = (char)istr.getCh();
 		GetStringFromStream(istr, str, "):@", true);
 		vector.nMoveRate = atoi(str);
 	}
@@ -146,7 +146,7 @@ int CBagParseObject::GetVectorFromStream(bof_ifstream &istr, CBagVector &vector)
 	// Start-Stop index
 	ch = (char)istr.peek();
 	if (ch == '~') {
-		ch = (char)istr.Get();
+		ch = (char)istr.getCh();
 		CBofRect r;
 		getRectFromStream(istr, r);
 		vector.nSprStartIndex = r.left;
@@ -156,7 +156,7 @@ int CBagParseObject::GetVectorFromStream(bof_ifstream &istr, CBagVector &vector)
 	// Start-Stop index
 	ch = (char)istr.peek();
 	if (ch == '@') {
-		ch = (char)istr.Get();
+		ch = (char)istr.getCh();
 		GetStringFromStream(istr, str, ")");
 		vector.nChangeRate = atoi(str);
 	}
@@ -164,63 +164,58 @@ int CBagParseObject::GetVectorFromStream(bof_ifstream &istr, CBagVector &vector)
 	return 0;
 }
 
-int CBagParseObject::GetAlphaNumFromStream(bof_ifstream &istr, CBofString &sStr) {
+int CBagParseObject::GetAlphaNumFromStream(CBagIfstream &istr, CBofString &sStr) {
 	bool bDone = false;
 	char ch = 0;
 
 	sStr = "";
 
-	istr.EatWhite();
+	istr.eatWhite();
 
 	do {
 		if (istr.eof())
 			bDone = true;
 		else
-			ch = (char)istr.Get();
+			ch = (char)istr.getCh();
 
-		// if ((lastch == '/') && (ch == '/')) { // put comment back
-		//  istr.putback(lastch);
-		//  bDone = true;
-		// } else
 		if (Common::isAlnum(ch) || ch == '_' || ch == '-' || ch == '\\' || ch == '/' || ch == '.' || ch == ':' || ch == '$' || ch == 39 || ch == '~') {
 			sStr += ch;
 		} else {
 			bDone = true;
 		}
 
-		// lastch = ch;
 	} while (!bDone);
 
-	istr.putback(ch);
+	istr.putBack(ch);
 
 	return ch;
 }
 
-int CBagParseObject::GetOperStrFromStream(bof_ifstream &istr, CBofString &sStr) {
+int CBagParseObject::GetOperStrFromStream(CBagIfstream &istr, CBofString &sStr) {
 	bool bDone = false;
 	char ch = 0;
 
 	sStr = "";
 
-	istr.EatWhite();
+	istr.eatWhite();
 
 	do {
 		if (istr.eof())
 			bDone = true;
 		else
-			ch = (char)istr.Get();
+			ch = (char)istr.getCh();
 		if (Common::isPunct(ch))
 			sStr += ch;
 		else
 			bDone = true;
 	} while (!bDone);
 
-	istr.putback(ch);
+	istr.putBack(ch);
 
 	return ch;
 }
 
-int CBagParseObject::GetKeywordFromStream(bof_ifstream &istr, CBagParseObject::KEYWORDS &keyword) {
+int CBagParseObject::GetKeywordFromStream(CBagIfstream &istr, CBagParseObject::KEYWORDS &keyword) {
 	keyword = CBagParseObject::UNKNOWN;
 	char szLocalStr[256];
 	szLocalStr[0] = 0;
@@ -266,34 +261,34 @@ int CBagParseObject::GetKeywordFromStream(bof_ifstream &istr, CBagParseObject::K
 	return rc;
 }
 
-int CBagParseObject::PutbackStringOnStream(bof_ifstream &istr, const CBofString &sStr) {
+int CBagParseObject::PutbackStringOnStream(CBagIfstream &istr, const CBofString &sStr) {
 	int nLen = sStr.GetLength();
 
 	while (nLen > 0) {
 		--nLen;
-		istr.putback(sStr[nLen]);
+		istr.putBack(sStr[nLen]);
 	}
 
 	return 0;
 }
 
-int CBagParseObject::ParseAlertBox(bof_ifstream &istr, const char *sTitle, const char *sFile, int nLine) {
+int CBagParseObject::ParseAlertBox(CBagIfstream &istr, const char *sTitle, const char *sFile, int nLine) {
 	char str[256];
 
 	CBofString s = sFile;
 
-	Common::String tmp = Common::String::format("(%d)@%d", nLine, istr.GetLineNumber());
+	Common::String tmp = Common::String::format("(%d)@%d", nLine, istr.getLineNumber());
 
 	s += tmp.c_str();
 
 	s += ":";
-	s += istr.GetLineString();
+	s += istr.getLineString();
 
-	istr.getline(str, 255);
+	istr.getLine(str, 255);
 	s += str;
-	istr.getline(str, 255);
+	istr.getLine(str, 255);
 	s += str;
-	istr.getline(str, 255);
+	istr.getLine(str, 255);
 	s += str;
 
 	BofMessageBox(s, sTitle);

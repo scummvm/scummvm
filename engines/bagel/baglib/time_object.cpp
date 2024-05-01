@@ -187,11 +187,11 @@ CBofRect CBagTimeObject::getRect() {
 	return CBofRect(p, s);
 }
 
-PARSE_CODES CBagTimeObject::setInfo(bof_ifstream &istr) {
+PARSE_CODES CBagTimeObject::setInfo(CBagIfstream &istr) {
 	bool nObjectUpdated = false;
 
 	while (!istr.eof()) {
-		istr.EatWhite();
+		istr.eatWhite();
 
 		char ch = (char)istr.peek();
 		switch (ch) {
@@ -200,7 +200,7 @@ PARSE_CODES CBagTimeObject::setInfo(bof_ifstream &istr) {
 		//
 		case '+': {
 			int cels;
-			istr.Get();
+			istr.getCh();
 			GetIntFromStream(istr, cels);
 			setCels(cels);
 			nObjectUpdated = true;
@@ -215,7 +215,7 @@ PARSE_CODES CBagTimeObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("VALUE")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				char szLocalBuff1[256];
 				szLocalBuff[0] = '\0';
 				CBofString s(szLocalBuff1, 256);

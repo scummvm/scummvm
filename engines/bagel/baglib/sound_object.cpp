@@ -147,11 +147,11 @@ bool CBagSoundObject::runObject() {
 	return CBagObject::runObject();
 }
 
-PARSE_CODES CBagSoundObject::setInfo(bof_ifstream &istr) {
+PARSE_CODES CBagSoundObject::setInfo(CBagIfstream &istr) {
 	bool nObjectUpdated = false;
 
 	while (!istr.eof()) {
-		istr.EatWhite(); // Eat any white space between script elements
+		istr.eatWhite(); // Eat any white space between script elements
 		char ch = (char)istr.peek();
 		switch (ch) {
 
@@ -165,7 +165,7 @@ PARSE_CODES CBagSoundObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("VOLUME")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				int n;
 				GetIntFromStream(istr, n);
 				SetVolume(n);
@@ -187,7 +187,7 @@ PARSE_CODES CBagSoundObject::setInfo(bof_ifstream &istr) {
 
 			if (!sStr.Find("AS")) {
 
-				istr.EatWhite();
+				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 
 				if (!sStr.Find("WAVE")) {
@@ -253,7 +253,7 @@ PARSE_CODES CBagSoundObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("LOOP")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				GetIntFromStream(istr, m_nLoops);
 				nObjectUpdated = true;
 			} else {

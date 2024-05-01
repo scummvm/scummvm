@@ -53,13 +53,13 @@ CBagDossierObject::CBagDossierObject() {
 CBagDossierObject::~CBagDossierObject() {
 }
 
-PARSE_CODES CBagDossierObject::setInfo(bof_ifstream &istr) {
+PARSE_CODES CBagDossierObject::setInfo(CBagIfstream &istr) {
 	bool objectUpdatedFl = false;
 	char localBuffer[256];
 	CBofString sStr(localBuffer, 256);
 
 	while (!istr.eof()) {
-		istr.EatWhite();
+		istr.eatWhite();
 		char ch = (char)istr.peek();
 		switch (ch) {
 
@@ -75,13 +75,13 @@ PARSE_CODES CBagDossierObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("SIZE")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				int size;
 				GetIntFromStream(istr, size);
 				setPointSize((byte)size);
 				objectUpdatedFl = true;
 			} else if (!sStr.Find("SUSPECTVAR")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 				m_sSuspectVar = sStr;
 				objectUpdatedFl = true;
@@ -111,7 +111,7 @@ PARSE_CODES CBagDossierObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("FONT")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				int fontId;
 				GetIntFromStream(istr, fontId);
 				fontId = MapFont(fontId);
@@ -130,7 +130,7 @@ PARSE_CODES CBagDossierObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("INDEX")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 
 				// replace underlines with spaces.
@@ -143,7 +143,7 @@ PARSE_CODES CBagDossierObject::setInfo(bof_ifstream &istr) {
 				// If the next character is a '[' then we got another rect coming
 				// along.  This rect is for the index string.
 
-				istr.EatWhite();
+				istr.eatWhite();
 				if ((char)istr.peek() == '[') {
 					CBofRect r;
 					getRectFromStream(istr, r);
@@ -160,7 +160,7 @@ PARSE_CODES CBagDossierObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("AS")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 				if (!sStr.Find("CAPTION")) {
 					m_bCaption = true;
@@ -189,7 +189,7 @@ PARSE_CODES CBagDossierObject::setInfo(bof_ifstream &istr) {
 
 			if (!sStr.Find("COLOR")) {
 				int nColor;
-				istr.EatWhite();
+				istr.eatWhite();
 				GetIntFromStream(istr, nColor);
 				setColor(nColor);
 				objectUpdatedFl = true;

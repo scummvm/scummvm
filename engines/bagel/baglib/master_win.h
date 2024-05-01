@@ -145,7 +145,7 @@ public:
 	ErrorCode LoadFile(const CBofString &sWldName, const CBofString &sStartWldName, bool bRestart = false, bool bSetStart = true);
 
 	ErrorCode SaveFile(const CBofString &sWldName);
-	ErrorCode LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName);
+	ErrorCode LoadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName);
 	ErrorCode LoadGlobalVars(const CBofString &sWldName);
 
 	ErrorCode SetCurrfadeIn(int nFade) {

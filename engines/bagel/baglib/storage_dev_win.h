@@ -299,7 +299,7 @@ public:
 		return m_pAssociateWnd;
 	}
 
-	virtual PARSE_CODES setInfo(bof_ifstream &fpInput); // This function call the pure virt set background
+	virtual PARSE_CODES setInfo(CBagIfstream &fpInput); // This function call the pure virt set background
 
 	virtual ErrorCode setBackground(CBofBitmap *pBmp) = 0; // This could be eliminated but is kept in to insure good class usage
 	virtual CBofBitmap *getBackground() = 0;                // Think about it, you can figure this out
@@ -326,7 +326,7 @@ public:
 
 	// virtual ErrorCode   SaveFile(ostream& fpOutput);
 	virtual ErrorCode LoadFile(const CBofString &sFile);
-	virtual ErrorCode LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach = true);
+	virtual ErrorCode LoadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName, bool bAttach = true);
 
 	virtual void onMouseMove(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	virtual ErrorCode OnMouseOver(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);

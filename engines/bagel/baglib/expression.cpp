@@ -558,7 +558,7 @@ bool CBagExpression::onOr(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar
 }
 
 
-PARSE_CODES CBagExpression::setInfo(bof_ifstream &istr) {
+PARSE_CODES CBagExpression::setInfo(CBagIfstream &istr) {
 	char buffer[256];
 	buffer[0] = 0;
 	CBofString tmpStr(buffer, 256);
@@ -572,12 +572,12 @@ PARSE_CODES CBagExpression::setInfo(bof_ifstream &istr) {
 	bool doneFl = false;
 
 	while (!doneFl && rc == PARSING_DONE) {
-		istr.EatWhite();
+		istr.eatWhite();
 		int ch = istr.peek();
 		switch (ch) {
 		case '(': {
-			istr.Get();
-			istr.EatWhite();
+			istr.getCh();
+			istr.eatWhite();
 
 			GetAlphaNumFromStream(istr, tmpStr);
 			CBagVar *curVar = VARMNGR->GetVariable(tmpStr);
@@ -597,7 +597,7 @@ PARSE_CODES CBagExpression::setInfo(bof_ifstream &istr) {
 			}
 			_varList.addToTail(curVar);
 
-			istr.EatWhite();
+			istr.eatWhite();
 			ch = istr.peek();
 			while ((ch != ')') && rc == PARSING_DONE) {
 				OPERATION curOper;
@@ -609,7 +609,7 @@ PARSE_CODES CBagExpression::setInfo(bof_ifstream &istr) {
 				}
 				_operList.addToTail(curOper);
 
-				istr.EatWhite();
+				istr.eatWhite();
 				GetAlphaNumFromStream(istr, tmpStr);
 				curVar = VARMNGR->GetVariable(tmpStr);
 				if (!curVar) {
@@ -628,12 +628,12 @@ PARSE_CODES CBagExpression::setInfo(bof_ifstream &istr) {
 				}
 				_varList.addToTail(curVar);
 
-				istr.EatWhite();
+				istr.eatWhite();
 				ch = istr.peek();
 			} // while parsing inner circle
 
 			if (ch == ')') {
-				istr.Get();
+				istr.getCh();
 				doneFl = true;
 			}
 			break;
@@ -643,7 +643,7 @@ PARSE_CODES CBagExpression::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, tmpStr);
 			if (!tmpStr.Find("NOT")) {
 				_negativeFl = !_negativeFl;
-				istr.EatWhite();
+				istr.eatWhite();
 				break;
 			}
 		default:
@@ -656,13 +656,13 @@ PARSE_CODES CBagExpression::setInfo(bof_ifstream &istr) {
 		ParseAlertBox(istr, "Error in expression:", __FILE__, __LINE__);
 	}
 
-	istr.EatWhite();
+	istr.eatWhite();
 
 	return rc;
 }
 
 
-ErrorCode CBagExpression::getOperatorFromStream(bof_ifstream &istr, OPERATION &oper) {
+ErrorCode CBagExpression::getOperatorFromStream(CBagIfstream &istr, OPERATION &oper) {
 	ErrorCode rc = ERR_NONE;
 
 	char localBuff[256];
@@ -672,12 +672,12 @@ ErrorCode CBagExpression::getOperatorFromStream(bof_ifstream &istr, OPERATION &o
 
 	oper = OP_NONE;
 
-	istr.EatWhite();
+	istr.eatWhite();
 	GetOperStrFromStream(istr, localStr);
 
 	if (localStr.IsEmpty()) {
 		GetAlphaNumFromStream(istr, localStr);
-		istr.EatWhite();
+		istr.eatWhite();
 	}
 
 	if (!localStr.Find("-=")) {

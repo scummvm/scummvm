@@ -172,13 +172,13 @@ CBagRPObject::~CBagRPObject() {
 	m_pCurBarPage = nullptr;
 }
 
-PARSE_CODES CBagRPObject::setInfo(bof_ifstream &istr) {
+PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 	bool nObjectUpdated = false;
 	char szLocalStr[256];
 	CBofString sStr(szLocalStr, 256);
 
 	while (!istr.eof()) {
-		istr.EatWhite();
+		istr.eatWhite();
 
 		char ch = (char)istr.peek();
 		switch (ch) {
@@ -195,7 +195,7 @@ PARSE_CODES CBagRPObject::setInfo(bof_ifstream &istr) {
 				GetAlphaNumFromStream(istr, sStr);
 
 				nObjectUpdated = true;
-				istr.EatWhite();
+				istr.eatWhite();
 
 				// Get the variable name from the definition line, then find it
 				// in the global list.
@@ -219,7 +219,7 @@ PARSE_CODES CBagRPObject::setInfo(bof_ifstream &istr) {
 
 					// If the next non-whitespace char is a paren, then we're going
 					// to have an expression.
-					istr.EatWhite();
+					istr.eatWhite();
 					if ((char)istr.peek() == '(') {
 						px = new CBagExpression();
 						if (px) {
@@ -235,8 +235,8 @@ PARSE_CODES CBagRPObject::setInfo(bof_ifstream &istr) {
 					}
 
 					if ((char)istr.peek() == ',') {
-						istr.Get();
-						istr.EatWhite();
+						istr.getCh();
+						istr.eatWhite();
 						bContinue = true;
 					}
 				} while (bContinue);
@@ -251,12 +251,12 @@ PARSE_CODES CBagRPObject::setInfo(bof_ifstream &istr) {
 		// is more on the next line.
 		case '+': {
 			// Skip over this character
-			istr.Get();
-			istr.EatWhite();
+			istr.getCh();
+			istr.eatWhite();
 
 			// Now keep going until we get our next alpha num.
 			while (!Common::isAlnum((char)istr.peek())) {
-				istr.Get();
+				istr.getCh();
 			}
 		}
 		break;
@@ -266,7 +266,7 @@ PARSE_CODES CBagRPObject::setInfo(bof_ifstream &istr) {
 			if (!sStr.Find("NAME")) {
 				nObjectUpdated = true;
 
-				istr.EatWhite();
+				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 
 				m_sObjectName = sStr;
@@ -283,7 +283,7 @@ PARSE_CODES CBagRPObject::setInfo(bof_ifstream &istr) {
 
 			if (!sStr.Find("SAVE")) {
 				nObjectUpdated = true;
-				istr.EatWhite();
+				istr.eatWhite();
 
 				// Get the variable name from the definition line, then find it
 				// in the global list.
@@ -351,7 +351,7 @@ PARSE_CODES CBagRPObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 			if (!sStr.Find("VAR")) {
 				nObjectUpdated = true;
-				istr.EatWhite();
+				istr.eatWhite();
 
 				// Get the variable name from the definition line, then find it
 				// in the global list.

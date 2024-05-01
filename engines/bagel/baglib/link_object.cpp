@@ -48,7 +48,7 @@ CBofRect CBagLinkObject::getRect() {
 	return r;
 }
 
-PARSE_CODES CBagLinkObject::setInfo(bof_ifstream &istr) {
+PARSE_CODES CBagLinkObject::setInfo(CBagIfstream &istr) {
 	bool nObjectUpdated = false;
 
 	PARSE_CODES cCode = PARSING_DONE;
@@ -62,7 +62,7 @@ PARSE_CODES CBagLinkObject::setInfo(bof_ifstream &istr) {
 		//
 		case '@': {
 			CBofRect r;
-			istr.Get();
+			istr.getCh();
 			getRectFromStream(istr, r);
 			SetDstLoc(r.TopLeft());
 			nObjectUpdated = true;
@@ -74,7 +74,7 @@ PARSE_CODES CBagLinkObject::setInfo(bof_ifstream &istr) {
 		//
 		case '#': {
 			CBofRect r;
-			istr.Get();
+			istr.getCh();
 			getRectFromStream(istr, r);
 			SetSrcLoc(r.TopLeft());
 			nObjectUpdated = true;
@@ -91,7 +91,7 @@ PARSE_CODES CBagLinkObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("AS")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 				if (!sStr.Find("CLOSEUP")) {
 					m_xLinkType = CLOSEUP;
@@ -120,7 +120,7 @@ PARSE_CODES CBagLinkObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("FADE")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				GetIntFromStream(istr, m_nFade);
 				nObjectUpdated = true;
 			} else {

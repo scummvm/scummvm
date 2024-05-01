@@ -60,7 +60,7 @@ public:
 	 * Takes in info and then removes the relative information and returns the info
 	 * without the relevant info.
 	 */
-	PARSE_CODES setInfo(bof_ifstream &istr);
+	PARSE_CODES setInfo(CBagIfstream &istr);
 
 	void setSize(const CBofSize &size);
 
@@ -111,7 +111,7 @@ public:
 
 	void setSize(const CBofSize &size);
 
-	PARSE_CODES setInfo(bof_ifstream &istr);
+	PARSE_CODES setInfo(CBagIfstream &istr);
 
 	void setProperty(const CBofString &prop, int val);
 	int getProperty(const CBofString &prop);
@@ -208,7 +208,7 @@ public:
 	virtual ~CBagEnergyDetectorObject();
 
 	// Need private setinfo so we can parse energy detector fields
-	PARSE_CODES setInfo(bof_ifstream &istr);
+	PARSE_CODES setInfo(CBagIfstream &istr);
 
 	ErrorCode update(CBofBitmap *, CBofPoint, CBofRect *, int);
 
@@ -245,7 +245,7 @@ public:
 
 	ErrorCode attach();
 
-	PARSE_CODES setInfo(bof_ifstream &istr);
+	PARSE_CODES setInfo(CBagIfstream &istr);
 
 	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 };

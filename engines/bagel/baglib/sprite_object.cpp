@@ -122,11 +122,11 @@ CBofRect CBagSpriteObject::getRect() {
 //
 //   Takes in info and then removes the relative information and returns the info
 //   without the relevant info.
-PARSE_CODES CBagSpriteObject::setInfo(bof_ifstream &istr) {
+PARSE_CODES CBagSpriteObject::setInfo(CBagIfstream &istr) {
 	bool nObjectUpdated = false;
 
 	while (!istr.eof()) {
-		istr.EatWhite(); // not sure why this WAS NOT here.
+		istr.eatWhite(); // not sure why this WAS NOT here.
 
 		char ch = (char)istr.peek();
 		switch (ch) {
@@ -135,7 +135,7 @@ PARSE_CODES CBagSpriteObject::setInfo(bof_ifstream &istr) {
 		//
 		case '+': {
 			int cels;
-			istr.Get();
+			istr.getCh();
 			GetIntFromStream(istr, cels);
 			setCels(cels);
 			nObjectUpdated = true;
@@ -143,7 +143,7 @@ PARSE_CODES CBagSpriteObject::setInfo(bof_ifstream &istr) {
 		break;
 		case '#': {
 			int curs;
-			istr.Get();
+			istr.getCh();
 			GetIntFromStream(istr, curs);
 			SetWieldCursor(curs);
 			nObjectUpdated = true;
@@ -156,7 +156,7 @@ PARSE_CODES CBagSpriteObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("NOANIM")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				setAnimated(false);
 				nObjectUpdated = true;
 			} else {
@@ -174,7 +174,7 @@ PARSE_CODES CBagSpriteObject::setInfo(bof_ifstream &istr) {
 
 			if (!sStr.Find("FRAMERATE")) {
 				int nFrameRate;
-				istr.EatWhite();
+				istr.eatWhite();
 				GetIntFromStream(istr, nFrameRate);
 
 				// The framerate is expressed in frames/second, so do some division

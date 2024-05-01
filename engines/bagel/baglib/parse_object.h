@@ -91,7 +91,7 @@ public:
 		return m_bAttached;
 	}
 
-	virtual PARSE_CODES setInfo(bof_ifstream &) {
+	virtual PARSE_CODES setInfo(CBagIfstream &) {
 		return PARSING_DONE;
 	}
 
@@ -115,17 +115,17 @@ public:
 		return m_bBinaryData;
 	}
 
-	int GetStringFromStream(bof_ifstream &istr, CBofString &sStr, const char cEndChar, bool bPutBack = false);
-	int GetStringFromStream(bof_ifstream &istr, CBofString &sStr, const CBofString &sEndChars, bool bPutBack = false);
-	int GetAlphaNumFromStream(bof_ifstream &istr, CBofString &sStr);
-	int GetOperStrFromStream(bof_ifstream &istr, CBofString &sStr);
-	int GetIntFromStream(bof_ifstream &istr, int &nNum);
-	int getRectFromStream(bof_ifstream &istr, CBofRect &rect);
-	int GetVectorFromStream(bof_ifstream &istr, CBagVector &vector);
-	int GetKeywordFromStream(bof_ifstream &istr, KEYWORDS &keyword);
-	int PutbackStringOnStream(bof_ifstream &istr, const CBofString &sStr);
+	int GetStringFromStream(CBagIfstream &istr, CBofString &sStr, const char cEndChar, bool bPutBack = false);
+	int GetStringFromStream(CBagIfstream &istr, CBofString &sStr, const CBofString &sEndChars, bool bPutBack = false);
+	int GetAlphaNumFromStream(CBagIfstream &istr, CBofString &sStr);
+	int GetOperStrFromStream(CBagIfstream &istr, CBofString &sStr);
+	int GetIntFromStream(CBagIfstream &istr, int &nNum);
+	int getRectFromStream(CBagIfstream &istr, CBofRect &rect);
+	int GetVectorFromStream(CBagIfstream &istr, CBagVector &vector);
+	int GetKeywordFromStream(CBagIfstream &istr, KEYWORDS &keyword);
+	int PutbackStringOnStream(CBagIfstream &istr, const CBofString &sStr);
 
-	int ParseAlertBox(bof_ifstream &istr, const char *sTitle, const char *sFile, int nLine);
+	int ParseAlertBox(CBagIfstream &istr, const char *sTitle, const char *sFile, int nLine);
 
 	virtual void *GetDataStart() {
 		return &m_bAttached;

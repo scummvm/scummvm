@@ -343,7 +343,7 @@ void CBagButtonObject::setSize(const CBofSize &size) {
 	CBagSpriteObject::setSize(size);
 }
 
-PARSE_CODES CBagButtonObject::setInfo(bof_ifstream &istr) {
+PARSE_CODES CBagButtonObject::setInfo(CBagIfstream &istr) {
 	bool nObjectUpdated = false;
 
 	while (!istr.eof()) {
@@ -354,7 +354,7 @@ PARSE_CODES CBagButtonObject::setInfo(bof_ifstream &istr) {
 		//
 		case '+': {
 			int cels;
-			istr.Get();
+			istr.getCh();
 			GetIntFromStream(istr, cels);
 
 			if (_buttonType == BTN_SLIDER)
@@ -374,7 +374,7 @@ PARSE_CODES CBagButtonObject::setInfo(bof_ifstream &istr) {
 
 			if (!sStr.Find("FRAMERATE")) {
 				int nFrameRate;
-				istr.EatWhite();
+				istr.eatWhite();
 				GetIntFromStream(istr, nFrameRate);
 
 				// The framerate is expressed in frames/second, so do some division
@@ -399,7 +399,7 @@ PARSE_CODES CBagButtonObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("AS")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 				if (!sStr.Find("PUSH")) {
 					_buttonType = BTN_PUSH;

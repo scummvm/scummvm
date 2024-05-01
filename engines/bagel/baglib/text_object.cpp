@@ -244,11 +244,11 @@ void CBagTextObject::setText(const CBofString &s) {
 //   Takes in info and then removes the relative information and returns the info
 //   without the relevant info.
 //
-PARSE_CODES CBagTextObject::setInfo(bof_ifstream &istr) {
+PARSE_CODES CBagTextObject::setInfo(CBagIfstream &istr) {
 	bool nObjectUpdated = false;
 
 	while (!istr.eof()) {
-		istr.EatWhite();
+		istr.eatWhite();
 
 		char ch = (char)istr.peek();
 		switch (ch) {
@@ -267,7 +267,7 @@ PARSE_CODES CBagTextObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("VAR")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 				SetInitInfo(sStr);
 				nObjectUpdated = true;
@@ -288,7 +288,7 @@ PARSE_CODES CBagTextObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("SIZE")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				int n;
 				GetIntFromStream(istr, n);
 				m_nPointSize = (byte)n;
@@ -316,7 +316,7 @@ PARSE_CODES CBagTextObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("FONT")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				int n;
 				GetIntFromStream(istr, n);
 				m_nTextFont = MapFont(n);
@@ -336,7 +336,7 @@ PARSE_CODES CBagTextObject::setInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("AS")) {
-				istr.EatWhite();
+				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 				if (!sStr.Find("CAPTION")) {
 					m_bCaption = true;
@@ -368,7 +368,7 @@ PARSE_CODES CBagTextObject::setInfo(bof_ifstream &istr) {
 
 			if (!sStr.Find("COLOR")) {
 				int nColor;
-				istr.EatWhite();
+				istr.eatWhite();
 				GetIntFromStream(istr, nColor);
 				setColor(nColor);
 				nObjectUpdated = true;
