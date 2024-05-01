@@ -171,6 +171,8 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 		_video->setDitheringPalette(palette);
 	}
 
+	_duration = getMovieTotalTime();
+
 	return result;
 }
 
@@ -225,8 +227,6 @@ void DigitalVideoCastMember::startVideo() {
 
 	if (_channel && _channel->_stopTime == 0)
 		_channel->_stopTime = getMovieTotalTime();
-
-	_duration = getMovieTotalTime();
 }
 
 void DigitalVideoCastMember::stopVideo() {
@@ -311,7 +311,6 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 uint DigitalVideoCastMember::getDuration() {
 	if (!_video || !_video->isVideoLoaded()) {
 		loadVideoFromCast();
-		_duration = getMovieTotalTime();
 	}
 	return _duration;
 }
