@@ -71,7 +71,7 @@ int CBagParseObject::GetStringFromStream(CBagIfstream &istr, CBofString &sStr, c
 	} while (!bDone);
 
 	if (bPutBack)
-		istr.putBack(ch);
+		istr.putBack();
 
 	return ch;
 }
@@ -186,7 +186,7 @@ int CBagParseObject::GetAlphaNumFromStream(CBagIfstream &istr, CBofString &sStr)
 
 	} while (!bDone);
 
-	istr.putBack(ch);
+	istr.putBack();
 
 	return ch;
 }
@@ -210,7 +210,7 @@ int CBagParseObject::GetOperStrFromStream(CBagIfstream &istr, CBofString &sStr) 
 			bDone = true;
 	} while (!bDone);
 
-	istr.putBack(ch);
+	istr.putBack();
 
 	return ch;
 }
@@ -266,7 +266,7 @@ int CBagParseObject::PutbackStringOnStream(CBagIfstream &istr, const CBofString 
 
 	while (nLen > 0) {
 		--nLen;
-		istr.putBack(sStr[nLen]);
+		istr.putBack();
 	}
 
 	return 0;
