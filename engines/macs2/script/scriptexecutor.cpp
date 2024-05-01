@@ -712,10 +712,6 @@ l0037_A2CF:
 		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
-		else {
-		// TODO: Handle others
-		ScriptUnimplementedOpcode(value);
-	}
 /*
 l0037_A2DC:
 	cmp	ax,30h
@@ -764,6 +760,20 @@ l0037_A324:
 	mov	[bp-4h],ax
 	mov	[bp-2h],ax
 
+*/
+	else if (value == 0x31) {
+		// TODO: We need the values of two globals here, for now returning fixed 0
+		out1 = 0;
+		out2 = 0;
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		return;
+	} else {
+		// TODO: Handle others
+		ScriptUnimplementedOpcode(value);
+	}
+
+/*
+
 l0037_A32C:
 	;; Central end of the function
 	;; For the case of mode 14h with a hotspot, we return AX = content of [1024h] and DX = 0
@@ -775,6 +785,10 @@ l0037_A32C:
 
 	debug("- 9F4D results: %.4x %.4x", out1, out2);
 	// debug("-- Leaving 94FD");
+}
+
+void ScriptExecutor::Func9F4D_Placeholder() {
+	Func9F4D_32();
 }
 
 uint32 ScriptExecutor::Func9F4D_32() {
@@ -1200,6 +1214,9 @@ void Script::ScriptExecutor::ExecuteScript() {
 			Func9F4D(throwaway1, throwaway2);
 			// TODO: This one might also do a skip
 			continue;
+		} else if (opcode1 == 0x07) {
+			// TODO: Need to figure out what exactly this does
+			// It has no specific case handling code in the original
 		}
 		else if (opcode1 == 0x10) {
 			// Trigger a walk to action
@@ -1287,7 +1304,8 @@ void Script::ScriptExecutor::ExecuteScript() {
 			uint16 duration = Func9F4D_16();
 			requestCallback = false;
 			// TODO: Need to figure out the units/duration of the timer
-			StartTimer(duration * 1000);
+			constexpr uint32 durationMultiplier = 5;
+			StartTimer(duration * durationMultiplier);
 			break;
 		}
 		else if (opcode1 == 0x12) {
@@ -1320,6 +1338,13 @@ void Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x1d) {
 			// Working assumption is that this has something to do with guarding against executing
 			// object scripts, it only changes the value of global [102Ah]
+			continue;
+		} else if (opcode1 == 0x1e) {
+			// This is playing an animation
+			// TODO: Skipped for now until the animation system is more in the focus
+			Func9F4D_32();
+			Func9F4D_32();
+			Func9F4D_32();
 			continue;
 		}
 		else if (opcode1 == 0x22) {
@@ -1384,6 +1409,23 @@ void Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x40) {
 			// TODO: Called function has some outputs to DMA functions - could be something very
 			// specific related to memory management
+		} else if (opcode1 == 0x43) {
+			// TODO: Not yet identified opcode
+			Func9F4D_Placeholder();
+			ReadByte();
+		} else if (opcode1 == 0x44) {
+			// TODO: Not yet identified opcode
+			Func9F4D_Placeholder();
+			Func9F4D_Placeholder();
+			Func9F4D_Placeholder();
+		} else if (opcode1 == 0x45) {
+			// TODO: Not yet identified opcode
+			Func9F4D_Placeholder();
+			Func9F4D_Placeholder();
+			Func9F4D_Placeholder();
+		} else if (opcode1 == 0x46) {
+			// TODO: Not yet identified opcode
+			Func9F4D_Placeholder();
 		}
 		else {
 			ScriptUnimplementedOpcode(opcode1)

@@ -50,6 +50,18 @@ View1::View1() : UIElement("View1") {
 		// TODO: Need to consider the DRY principle for the properties
 		protagonist->Position = protagonist->GameObject->Position;
 		characters.push_back(protagonist);
+
+		inventoryItems.push_back(GameObjects::instance().Objects[0x8 - 1]);
+	}
+
+	AnimFrame *View1::GetInventoryIcon(GameObject *gameObject) {
+		AnimFrame *result = new AnimFrame();
+		Common::MemoryReadStream stream(gameObject->Blobs[5-1].data(), gameObject->Blobs[5-1].size());
+		// TODO: Need to check how the offset really is calculated by the game code, this will not hold
+		stream.seek(23, SEEK_SET);
+		result->ReadFromStream(&stream);
+		return result;
+		// TODO: Think about proper memory management
 	}
 
 	void View1::drawDarkRectangle(uint16 x, uint16 y, uint16 width, uint16 height)
@@ -481,6 +493,11 @@ bool View1::tick() {
 
 void View1::drawInventory(Graphics::ManagedSurface &s) {
 	drawDarkRectangle(0x36, 0x2c, 0x10A - 0x36, 0x82 - 0x2c);
+	for (GameObject *currentItem : inventoryItems) {
+		AnimFrame *icon = GetInventoryIcon(currentItem);
+		DrawSprite(0x36, 0x2c, icon->Width, icon->Height, icon->Data, s);
+
+	}
 }
 
 void View1::DrawSprite(int16 x, int16 y, uint16 width, uint16 height, byte* data, Graphics::ManagedSurface& s)
@@ -566,6 +583,7 @@ void View1::DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, 
 void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 	int i = -1;
 	for (auto current : characters) {
+		int index = current->GameObject->Index;
 		AnimFrame* frame = current->GetCurrentAnimationFrame();
 		
 		
@@ -585,10 +603,19 @@ void View1::ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 }
 
 Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
+	int blobIndex = 0x2;
+	int offset = 0x1C;
+
+	// TODO: Need to figure out the access pattern more systematically
+	if (GameObject->Index == 0x8) {
+		blobIndex = 4;
+		offset = 23;
+	}
+
 	AnimFrame* result = new AnimFrame();
-	Common::MemoryReadStream stream(this->GameObject->Blobs[0x2].data(), this->GameObject->Blobs[0x2].size());
+	Common::MemoryReadStream stream(this->GameObject->Blobs[blobIndex].data(), this->GameObject->Blobs[blobIndex].size());
 	// TODO: Need to check how the offset really is calculated by the game code
-	stream.seek(0x1C, SEEK_SET);
+	stream.seek(offset, SEEK_SET);
 	result->ReadFromStream(&stream);
 	return result;
 	// TODO: Think about proper memory management
@@ -653,6 +680,13 @@ void Character::Update() {
 
 	float progress = (float) (g_events->currentMillis - StartTime) / (float) Duration;
 	Position = StartPosition + (EndPosition - StartPosition) * progress;
+}
+
+bool Button::IsPointInside(const Common::Point &p) const {
+	return false;
+}
+
+void Button::Render(Graphics::ManagedSurface &s) {
 }
 
 } // namespace Macs2
