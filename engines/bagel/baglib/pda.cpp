@@ -441,7 +441,7 @@ bool  CBagPDA::PaintFGObjects(CBofBitmap *pBmp) {
 	return true;
 }
 
-CBagObject *CBagPDA::OnNewUserObject(const CBofString &sInit) {
+CBagObject *CBagPDA::onNewUserObject(const CBofString &sInit) {
 	CBagTimeObject *pTimeObj;
 
 	pTimeObj = nullptr;
@@ -474,7 +474,7 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 			if (m_bFlashing == false) {
 				// Don't allow attachActiveObjects() to be called in here
 				g_allowAttachActiveObjectsFl = false;
-				pPda->ActivateLocalObject(pZoomFlash);
+				pPda->activateLocalObject(pZoomFlash);
 				pPda->DeactivateLocalObject(pZoomRegular);
 				g_allowAttachActiveObjectsFl = true;
 
@@ -490,7 +490,7 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 			// Don't allow attachActiveObjects() to be called in here
 			g_allowAttachActiveObjectsFl = false;
 			pPda->DeactivateLocalObject(pZoomFlash);
-			pPda->ActivateLocalObject(pZoomRegular);
+			pPda->activateLocalObject(pZoomRegular);
 			g_allowAttachActiveObjectsFl = true;
 
 			pZoomFlash->setActive(false);

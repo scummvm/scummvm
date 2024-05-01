@@ -109,7 +109,7 @@ public:
 
 	bool isInside(const CBofPoint &xPoint) override;
 
-	CBagObject *OnNewUserObject(const CBofString &sInit) override;
+	CBagObject *onNewUserObject(const CBofString &sInit) override;
 
 	/**
 	 * Allow the movie code to queue up asynch pda messages

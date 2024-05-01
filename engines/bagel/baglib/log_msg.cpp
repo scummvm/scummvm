@@ -31,334 +31,325 @@
 
 namespace Bagel {
 
-CBagLog *CBagLog::m_bLastFloatPage;
+CBagLog *CBagLog::_lastFloatPage;
 
-#define LOGBORDER (42)
-#define LOGZBORDER (84)
+#define LOG_BORDER (42)
+#define LOG_Z_BORDER (84)
 
-#define OVERRIDESMK             "$SBARDIR\\BAR\\LOG\\OVERRIDE.SMK"
-#define OVERRIDEMOVIE           "OVERRIDE_MOVIE"
+#define OVERRIDE_SMK             "$SBARDIR\\BAR\\LOG\\OVERRIDE.SMK"
+#define OVERRIDE_MOVIE           "OVERRIDE_MOVIE"
 
 CBagLog::CBagLog() : CBagStorageDevBmp() {
-	m_pQueued_Msgs = new CBofList<CBagObject *>;
-	SetCurFltPage(1);
+	_queuedMsgList = new CBofList<CBagObject *>;
+	setCurFltPage(1);
 }
 
 CBagLog::~CBagLog() {
-	if (m_pQueued_Msgs != nullptr) {
-		ReleaseMsg();       // Delete all master sprite objects
-		delete m_pQueued_Msgs;
-		m_pQueued_Msgs = nullptr;
+	if (_queuedMsgList != nullptr) {
+		releaseMsg();       // Delete all master sprite objects
+		delete _queuedMsgList;
+		_queuedMsgList = nullptr;
 	}
 }
 
-CBofPoint CBagLog::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
-	CBofPoint   NextPos = nPos;
+CBofPoint CBagLog::arrangeFloater(CBofPoint pos, CBagObject *bagObj) {
+	CBofPoint   nextPos = pos;
 
 	// Things are so convoluted now, it is entirely  possible that this method
 	// will get called on a storage device that is not the current one,
 	// so we will not require a backdrop.
 
 	if (getBackground() != nullptr) {
-		CBofString sDevName = GetName();
-		int nBorderSize = 0;
+		CBofString sdevName = GetName();
+		int borderSize = 0;
 
 		// Get this from script, allows individual log states to set border.
-		CBagVar *pVar = VARMNGR->GetVariable("LOGBORDER");
-		if (pVar != nullptr) {
-			nBorderSize = pVar->GetNumValue();
+		CBagVar *curVar = VARMNGR->GetVariable("LOGBORDER");
+		if (curVar != nullptr) {
+			borderSize = curVar->GetNumValue();
 		}
 
-		if (nBorderSize == 0) {
-			if (sDevName == "LOG_WLD") {
-				nBorderSize = LOGBORDER;
-			} else if (sDevName == "LOGZ_WLD") {
-				nBorderSize = LOGZBORDER;
+		if (borderSize == 0) {
+			if (sdevName == "LOG_WLD") {
+				borderSize = LOG_BORDER;
+			} else if (sdevName == "LOGZ_WLD") {
+				borderSize = LOG_Z_BORDER;
 			}
 		}
 
 		// The log window has instructional text at the top and bottom, so
 		// create a floater rect to stay in the middle area
-		CBofRect xFloatRect = getBackground()->getRect();
-		xFloatRect.top += nBorderSize;
-		xFloatRect.bottom -= (nBorderSize / 2);
+		CBofRect floatRect = getBackground()->getRect();
+		floatRect.top += borderSize;
+		floatRect.bottom -= (borderSize / 2);
 
 		// calculate what page the whole object belongs on
-		int nPageNum = ((NextPos.y + pObj->getRect().height()) / xFloatRect.height());
+		int pageNum = ((nextPos.y + bagObj->getRect().height()) / floatRect.height());
 		// page numbering is 1-N
-		nPageNum++;
-		SetNumFloatPages(nPageNum);
+		pageNum++;
+		SetNumFloatPages(pageNum);
 
-		int nTotalPages = GetCurFltPage();
+		int totalPages = getCurFltPage();
 		// Now position this object int the sdev
 		// if it fell on this page, show it
-		if (nPageNum == nTotalPages) {
-			CBofPoint xPagePos = NextPos;
+		if (pageNum == totalPages) {
+			CBofPoint pagePos = nextPos;
 			// Bring the current page into view
-			xPagePos.y = xPagePos.y - ((nPageNum - 1) * xFloatRect.height());
+			pagePos.y = pagePos.y - ((pageNum - 1) * floatRect.height());
 			// Add in the border
-			xPagePos.y += nBorderSize;
-			pObj->setPosition(xPagePos);
+			pagePos.y += borderSize;
+			bagObj->setPosition(pagePos);
 		} else {
 			// Set the position to be off the sdev, so it won't show
-			pObj->setPosition(CBofPoint(NextPos.x, getBackground()->height() + 1));
+			bagObj->setPosition(CBofPoint(nextPos.x, getBackground()->height() + 1));
 		}
 
 		// Calculate the position for the next floater
 		// This will get sent back to the calling func
-		NextPos.x += pObj->getRect().width();
+		nextPos.x += bagObj->getRect().width();
 
 		// Check to see if the whole object can fit in width, if it can't wrap
-		if (NextPos.x > (xFloatRect.width() - pObj->getRect().width())) {
-			NextPos.x = 0;
-			NextPos.y += pObj->getRect().height();
+		if (nextPos.x > (floatRect.width() - bagObj->getRect().width())) {
+			nextPos.x = 0;
+			nextPos.y += bagObj->getRect().height();
 		}
 	}
 
-	m_bLastFloatPage = this;
-	return NextPos;
+	_lastFloatPage = this;
+	return nextPos;
 }
 
-void CBagLog::ArrangePages() {
+void CBagLog::arrangePages() {
 	// Don't bother if we don't have a floater worth arranging...
-	if (m_bLastFloatPage == nullptr) {
+	if (_lastFloatPage == nullptr) {
 		return;
 	}
 
-	CBagObject *pUpObj = nullptr;
-	CBagObject *pDownObj = nullptr;
-
-	CBagLog *pLastFloat = m_bLastFloatPage;
+	CBagLog *lastFloat = _lastFloatPage;
 
 	// Get the up button and the down button...
-	pUpObj = pLastFloat->GetObject("LOGPAGUP");
-	pDownObj = pLastFloat->GetObject("LOGPAGDOWN");
+	CBagObject *upObj = lastFloat->GetObject("LOGPAGUP");
+	CBagObject *downObj = lastFloat->GetObject("LOGPAGDOWN");
 
-	if (pUpObj == nullptr || pDownObj == nullptr) {
+	if (upObj == nullptr || downObj == nullptr) {
 		return;
 	}
 
 	// Get current page number and last page number
-	int nLastPage = pLastFloat->GetNumFloatPages();
-	int nCurPage = pLastFloat->GetCurFltPage();
-	int nFirstPage = 1;
+	int lastPage = lastFloat->GetNumFloatPages();
+	int curPage = lastFloat->getCurFltPage();
+	int firstPage = 1;
 
-	if (nCurPage > nFirstPage && nCurPage < nLastPage) {
-		if (pUpObj->isAttached() == false) {
-			pUpObj->setActive();
-			pUpObj->attach();
+	if (curPage > firstPage && curPage < lastPage) {
+		if (upObj->isAttached() == false) {
+			upObj->setActive();
+			upObj->attach();
 		}
-		if (pDownObj->isAttached() == false) {
-			pDownObj->setActive();
-			pDownObj->attach();
+		if (downObj->isAttached() == false) {
+			downObj->setActive();
+			downObj->attach();
 		}
-	} else if (nCurPage == nFirstPage && nCurPage == nLastPage) {
-		if (pUpObj->isAttached()) {
-			pUpObj->setActive(false);
-			pUpObj->detach();
+	} else if (curPage == firstPage && curPage == lastPage) {
+		if (upObj->isAttached()) {
+			upObj->setActive(false);
+			upObj->detach();
 		}
-		if (pDownObj->isAttached()) {
-			pDownObj->setActive(false);
-			pDownObj->detach();
+		if (downObj->isAttached()) {
+			downObj->setActive(false);
+			downObj->detach();
 		}
-	} else if (nCurPage <= nFirstPage) {
-		if (pUpObj->isAttached()) {
-			pUpObj->setActive(false);
-			pUpObj->detach();
+	} else if (curPage <= firstPage) {
+		if (upObj->isAttached()) {
+			upObj->setActive(false);
+			upObj->detach();
 		}
-		if (pDownObj->isAttached() == false) {
-			pDownObj->setActive();
-			pDownObj->attach();
+		if (downObj->isAttached() == false) {
+			downObj->setActive();
+			downObj->attach();
 		}
-	} else if (nCurPage >= nLastPage) {
-		if (pUpObj->isAttached() == false) {
-			pUpObj->setActive();
-			pUpObj->attach();
+	} else if (curPage >= lastPage) {
+		if (upObj->isAttached() == false) {
+			upObj->setActive();
+			upObj->attach();
 		}
 
-		if (pDownObj->isAttached()) {
-			pDownObj->setActive(false);
-			pDownObj->detach();
+		if (downObj->isAttached()) {
+			downObj->setActive(false);
+			downObj->detach();
 		}
 	}
 
 	// Reinitialize
-	m_bLastFloatPage = nullptr;
+	_lastFloatPage = nullptr;
 }
 
-int CBagLog::GetCurFltPage() {
+int CBagLog::getCurFltPage() {
 	int nCurFltPage = 0;
 
 	// Read in their total nuggets from game
-	CBagVar *pVar = VARMNGR->GetVariable("CUR_BAR_LOG_PAGE");
+	CBagVar *curVar = VARMNGR->GetVariable("CUR_BAR_LOG_PAGE");
 
-	if (pVar) {
-		nCurFltPage = pVar->GetNumValue();
+	if (curVar) {
+		nCurFltPage = curVar->GetNumValue();
 	}
 
 	return nCurFltPage;
 }
 
-void CBagLog::SetCurFltPage(int fltPage) {
+void CBagLog::setCurFltPage(int fltPage) {
 	// Read in their total nuggets from game
-	CBagVar *pVar = VARMNGR->GetVariable("CUR_BAR_LOG_PAGE");
+	CBagVar *curVar = VARMNGR->GetVariable("CUR_BAR_LOG_PAGE");
 
-	if (pVar)
-		pVar->SetValue(fltPage);
+	if (curVar)
+		curVar->SetValue(fltPage);
 }
 
-ErrorCode CBagLog::ReleaseMsg() {
+ErrorCode CBagLog::releaseMsg() {
 	ErrorCode errCode = ERR_NONE;
-	int nCount = m_pQueued_Msgs->GetCount();
+	int count = _queuedMsgList->GetCount();
 
-	if (nCount) {
-		for (int i = 0; i < nCount; ++i) {
-			CBagObject *pObj = m_pQueued_Msgs->RemoveHead();
+	for (int i = 0; i < count; ++i) {
+		CBagObject *curObj = _queuedMsgList->RemoveHead();
 
-			// This is waiting to be played, mark it in memory as such, the fixes
-			// get uglier and uglier... since zoomed pda doesn't have a message light,
-			// only set this thing as waiting if we are in the regular PDA,
-			// otherwise, we get superfluous blinking of the PDA light.
-			CBofString  sDevName = GetName();
-			if (sDevName == "LOG_WLD") {
-				pObj->SetMsgWaiting(true);
-			}
+		// This is waiting to be played, mark it in memory as such, the fixes
+		// get uglier and uglier... since zoomed pda doesn't have a message light,
+		// only set this thing as waiting if we are in the regular PDA,
+		// otherwise, we get superfluous blinking of the PDA light.
+		CBofString  devName = GetName();
+		if (devName == "LOG_WLD") {
+			curObj->SetMsgWaiting(true);
 		}
 	}
 
-	m_pQueued_Msgs->RemoveAll();
+	_queuedMsgList->RemoveAll();
 	return errCode;
 }
 
-CBagObject *CBagLog::OnNewUserObject(const CBofString &initStr) {
-	CBagTextObject *LogObj = nullptr;
-	CBofRect cSDevRect = getRect();
-	CBofString  sDevName = GetName();
-	int     nPntSize = 10;
+CBagObject *CBagLog::onNewUserObject(const CBofString &initStr) {
+	CBagTextObject *retLogObj = nullptr;
+	CBofRect sdevRect = getRect();
+	CBofString  sdevName = GetName();
+	int     pointSize = 10;
 
-	if (sDevName == "LOG_WLD")
-		nPntSize = FONT_8POINT;
-	else if (sDevName == "LOGZ_WLD")
-		nPntSize = FONT_18POINT;
+	if (sdevName == "LOG_WLD")
+		pointSize = FONT_8POINT;
+	else if (sdevName == "LOGZ_WLD")
+		pointSize = FONT_18POINT;
 
 	if (initStr == "MSG") {
-		LogObj = (CBagTextObject *)new CBagLogMsg(cSDevRect.width());
-		LogObj->SetInitInfo(initStr);
-		LogObj->setPointSize(nPntSize);
-		LogObj->setColor(7);
-		LogObj->SetFloating();
+		retLogObj = (CBagTextObject *)new CBagLogMsg(sdevRect.width());
+		retLogObj->SetInitInfo(initStr);
+		retLogObj->setPointSize(pointSize);
+		retLogObj->setColor(7);
+		retLogObj->SetFloating();
 	} else if (initStr == "SUS") {
-		LogObj = (CBagTextObject *)new CBagLogSuspect(cSDevRect.width());
-		LogObj->SetInitInfo(initStr);
+		retLogObj = (CBagTextObject *)new CBagLogSuspect(sdevRect.width());
+		retLogObj->SetInitInfo(initStr);
 
 		// Reduce point size on zoompda suspect list, make it
 		// all fit in the zoompda window.
-		if (nPntSize == FONT_18POINT) {
-			nPntSize -= 2;
+		if (pointSize == FONT_18POINT) {
+			pointSize -= 2;
 		}
-		LogObj->setPointSize(nPntSize);
-		LogObj->setColor(7);
-		LogObj->SetFloating();
+		retLogObj->setPointSize(pointSize);
+		retLogObj->setColor(7);
+		retLogObj->SetFloating();
 	} else if (initStr == "CLU") {
-		LogObj = (CBagTextObject *)new CBagLogClue(initStr, cSDevRect.width(), nPntSize);
+		retLogObj = (CBagTextObject *)new CBagLogClue(initStr, sdevRect.width(), pointSize);
 	} else if (initStr == "RES") {
-		LogObj = (CBagTextObject *)new CBagLogResidue(cSDevRect.width());
-		LogObj->SetInitInfo(initStr);
-		LogObj->setPointSize(nPntSize);
-		LogObj->setColor(7);
-		LogObj->SetFloating();
+		retLogObj = (CBagTextObject *)new CBagLogResidue(sdevRect.width());
+		retLogObj->SetInitInfo(initStr);
+		retLogObj->setPointSize(pointSize);
+		retLogObj->setColor(7);
+		retLogObj->SetFloating();
 	}
 
-	return LogObj;
+	return retLogObj;
 }
 
-bool CBagLog::RemoveFromMsgQueue(CBagObject *deletedObj) {
-	bool bRemoved = false;
-	int nCount = m_pQueued_Msgs->GetCount();
+bool CBagLog::removeFromMsgQueue(CBagObject *deletedObj) {
+	bool removedFl = false;
+	int count = _queuedMsgList->GetCount();
 
-	for (int i = 0; i < nCount; i++) {
-		CBagObject *pObj = m_pQueued_Msgs->GetNodeItem(i);
+	for (int i = 0; i < count; i++) {
+		CBagObject *curObj = _queuedMsgList->GetNodeItem(i);
 
-		if (pObj == deletedObj) {
-			m_pQueued_Msgs->Remove(i);
-			bRemoved = true;
+		if (curObj == deletedObj) {
+			_queuedMsgList->Remove(i);
+			removedFl = true;
 			break;
 		}
 	}
 
-	return bRemoved;
+	return removedFl;
 }
 
-ErrorCode CBagLog::ActivateLocalObject(CBagObject *bagObj) {
+ErrorCode CBagLog::activateLocalObject(CBagObject *bagObj) {
 	ErrorCode errCode = ERR_NONE;
 
-	if (bagObj != nullptr) {
+	if (bagObj == nullptr)
+		return errCode;
 
-		if (bagObj->IsMsgWaiting() ||
-		        (bagObj->GetType() == USEROBJ && (bagObj->GetInitInfo() != nullptr) && (*bagObj->GetInitInfo() == "MSG"))) {
-			m_pQueued_Msgs->addToTail(bagObj);
+	if (bagObj->IsMsgWaiting() ||
+	        (bagObj->GetType() == USEROBJ && (bagObj->GetInitInfo() != nullptr) && (*bagObj->GetInitInfo() == "MSG"))) {
+		_queuedMsgList->addToTail(bagObj);
 
-			// Since zoomed pda doesn't  have a message light, only set this thing
-			// as waiting if we are in the  regular PDA, otherwise, we get superfluous
-			// blinking of the PDA light.
-			CBofString  sDevName = GetName();
-			if (sDevName == "LOG_WLD") {
-				bagObj->SetMsgWaiting(true);
-			}
-
-			CBagButtonObject *pMsgLight = nullptr;
-			CBagStorageDev *pPda = nullptr;
-
-			pPda = SDEVMNGR->GetStorageDevice("BPDA_WLD");
-
-			if (pPda) {
-				pMsgLight = (CBagButtonObject *)pPda->GetObject("MSGLIGHT");
-
-				if (pMsgLight) {
-					if (!pMsgLight->isAttached()) {
-						pMsgLight->setActive();
-						pMsgLight->attach();
-					}
-
-					// Make sure this guy always gets updated regardless of its
-					// dirty bit.
-					pMsgLight->SetAlwaysUpdate(true);
-					pMsgLight->setAnimated(true);
-				}
-			}
-		} else {
-			errCode = CBagStorageDev::ActivateLocalObject(bagObj);
+		// Since zoomed pda doesn't  have a message light, only set this thing
+		// as waiting if we are in the  regular PDA, otherwise, we get superfluous
+		// blinking of the PDA light.
+		CBofString  sdevName = GetName();
+		if (sdevName == "LOG_WLD") {
+			bagObj->SetMsgWaiting(true);
 		}
+
+		CBagStorageDev *pda = SDEVMNGR->GetStorageDevice("BPDA_WLD");
+
+		if (pda) {
+			CBagButtonObject *msgLight = (CBagButtonObject *)pda->GetObject("MSGLIGHT");
+
+			if (msgLight) {
+				if (!msgLight->isAttached()) {
+					msgLight->setActive();
+					msgLight->attach();
+				}
+
+				// Make sure this guy always gets updated regardless of its
+				// dirty bit.
+				msgLight->SetAlwaysUpdate(true);
+				msgLight->setAnimated(true);
+			}
+		}
+	} else {
+		errCode = CBagStorageDev::activateLocalObject(bagObj);
 	}
 
 	return errCode;
 }
 
-ErrorCode CBagLog::PlayMsgQue() {
+ErrorCode CBagLog::playMsgQueue() {
 	ErrorCode errCode = ERR_NONE;
-	int nCount = m_pQueued_Msgs->GetCount();
+	int count = _queuedMsgList->GetCount();
 
 	// Walk through the message queue and play all the messages
 	// Only play one message per click on the pda message light.
-	if (nCount) {
+	if (count) {
 
-		CBagStorageDev *pPda = nullptr;
-		pPda = SDEVMNGR->GetStorageDevice("BPDA_WLD");
+		CBagStorageDev *bpda = SDEVMNGR->GetStorageDevice("BPDA_WLD");
 
 		// If we're in a closeup, then don't play the message!
-		CBagStorageDev *pSDev = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
-		bool bPlayMsg = true;
+		CBagStorageDev *sdev = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
+		bool playMsgFl = true;
 
-		if ((pSDev != nullptr) && pSDev->IsCIC()) {
-			bPlayMsg = false;
+		if ((sdev != nullptr) && sdev->IsCIC()) {
+			playMsgFl = false;
 
-			char szLocalBuff[256];
-			CBofString mStr(szLocalBuff, 256);
+			char localBuffer[256];
+			CBofString smkName(localBuffer, 256);
 
-			mStr = OVERRIDESMK;
-			MACROREPLACE(mStr);
+			smkName = OVERRIDE_SMK;
+			MACROREPLACE(smkName);
 
-			CBagMovieObject *pMovie = (CBagMovieObject *)GetObject(OVERRIDEMOVIE);
+			CBagMovieObject *pMovie = (CBagMovieObject *)GetObject(OVERRIDE_MOVIE);
 			if (pMovie) {
 				if (pMovie->isAttached() == false) {
 					pMovie->attach();
@@ -370,36 +361,36 @@ ErrorCode CBagLog::PlayMsgQue() {
 
 		// If we're playing a valid message (not the override message) then make sure
 		// we remove it from the queue.
-		if (bPlayMsg) {
-			CBagObject *pObj = m_pQueued_Msgs->RemoveHead();
+		if (playMsgFl) {
+			CBagObject *curObj = _queuedMsgList->RemoveHead();
 
-			if (pObj) {
+			if (curObj) {
 				CRect  r = getRect();
 
-				errCode = CBagStorageDev::ActivateLocalObject(pObj);
-				CBagMenu *pObjMenu = pObj->GetMenuPtr();
-				if (pObjMenu)
-					pObjMenu->TrackPopupMenu(0, 0, 0, CBofApp::GetApp()->GetMainWindow(), nullptr, &r);
-				pObj->runObject();
-				pObj->SetMsgWaiting(false);
+				errCode = CBagStorageDev::activateLocalObject(curObj);
+				CBagMenu *objMenu = curObj->GetMenuPtr();
+				if (objMenu)
+					objMenu->TrackPopupMenu(0, 0, 0, CBofApp::GetApp()->GetMainWindow(), nullptr, &r);
+				curObj->runObject();
+				curObj->SetMsgWaiting(false);
 
 				// Mark this guy as played...
-				((CBagLogMsg *)pObj)->SetMsgPlayed(true);
+				((CBagLogMsg *)curObj)->setMsgPlayed(true);
 			}
 
 			// Although this might seem like a superfluous thing to do, but wait!
-			// it is not!  the runobject call above can cause the number of objects in the
+			// it is not!  the runObject call above can cause the number of objects in the
 			// message queue to be decremented.
-			nCount = m_pQueued_Msgs->GetCount();
+			count = _queuedMsgList->GetCount();
 
 			// Don't stop message light from blinking unless we're down to zero
 			// messages in the queue.
 
-			if (pPda) {
-				CBagButtonObject *pMsgLight = (CBagButtonObject *)pPda->GetObject("MSGLIGHT");
+			if (bpda) {
+				CBagButtonObject *pMsgLight = (CBagButtonObject *)bpda->GetObject("MSGLIGHT");
 
 				if (pMsgLight) {
-					if (nCount) {
+					if (count) {
 						pMsgLight->setAnimated(true);
 					} else {
 						pMsgLight->setAnimated(false);
@@ -414,34 +405,34 @@ ErrorCode CBagLog::PlayMsgQue() {
 
 CBagLogResidue::CBagLogResidue(int sdevWidth) : CBagTextObject() {
 	m_xObjType = USEROBJ;
-	m_nSdevWidth = sdevWidth;
+	_sdevWidth = sdevWidth;
 	m_bTitle = true;
 }
 
 void CBagLogResidue::setSize(const CBofSize &size) {
-	CBagTextObject::setSize(CBofSize(m_nSdevWidth, size.cy));
+	CBagTextObject::setSize(CBofSize(_sdevWidth, size.cy));
 }
 
 CBagLogMsg::CBagLogMsg(int sdevWidth) : CBagTextObject() {
 	m_xObjType = USEROBJ;
-	m_nSdevWidth = sdevWidth;
+	_sdevWidth = sdevWidth;
 	m_bTitle = true;
 
 	// Start all messages off as not played
-	SetMsgPlayed(false);
+	setMsgPlayed(false);
 }
 
 void CBagLogMsg::setSize(const CBofSize &size) {
-	CBagTextObject::setSize(CBofSize(m_nSdevWidth, size.cy));
+	CBagTextObject::setSize(CBofSize(_sdevWidth, size.cy));
 }
 
 PARSE_CODES CBagLogMsg::setInfo(CBagIfstream &istr) {
 	bool nObjectUpdated = false;
-	char szLocalBuff[256];
-	CBofString sStr(szLocalBuff, 256);
+	char localBuffer[256];
+	CBofString string1(localBuffer, 256);
 
-	char szLocalBuff2[256];
-	CBofString s(szLocalBuff2, 256);
+	char localBuffer2[256];
+	CBofString string2(localBuffer2, 256);
 
 	while (!istr.eof()) {
 		istr.eatWhite();
@@ -452,20 +443,20 @@ PARSE_CODES CBagLogMsg::setInfo(CBagIfstream &istr) {
 		//  SENDEE FRANK - Sets the sendee name of the message to FRANK
 		//
 		case 'S': {
-			GetAlphaNumFromStream(istr, sStr);
+			GetAlphaNumFromStream(istr, string1);
 
-			if (!sStr.Find("SENDEE")) {
+			if (!string1.Find("SENDEE")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, s);
+				GetAlphaNumFromStream(istr, string2);
 
 				// Replace any underscores with spaces
-				s.ReplaceChar('_', ' ');
+				string2.ReplaceChar('_', ' ');
 
-				SetMsgSendee(s);
+				setMsgSendee(string2);
 
 				nObjectUpdated = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				PutbackStringOnStream(istr, string1);
 			}
 			break;
 		}
@@ -474,22 +465,22 @@ PARSE_CODES CBagLogMsg::setInfo(CBagIfstream &istr) {
 		//   TIME x- Sets the time of the message to xx:xx
 		//
 		case 'T': {
-			GetAlphaNumFromStream(istr, sStr);
+			GetAlphaNumFromStream(istr, string1);
 
-			if (!sStr.Find("TIME")) {
+			if (!string1.Find("TIME")) {
 				istr.eatWhite();
-				char cNext = (char)istr.peek();
-				int     nMsgTime = 0;
-				if (Common::isDigit(cNext)) {
-					GetIntFromStream(istr, nMsgTime);
+				char nextCh = (char)istr.peek();
+				int msgTime = 0;
+				if (Common::isDigit(nextCh)) {
+					GetIntFromStream(istr, msgTime);
 				} else {
-					GetAlphaNumFromStream(istr, m_sMsgTimeStr);
+					GetAlphaNumFromStream(istr, _msgTimeStr);
 				}
 
-				SetMsgTime(nMsgTime);
+				setMsgTime(msgTime);
 				nObjectUpdated = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				PutbackStringOnStream(istr, string1);
 			}
 			break;
 		}
@@ -518,9 +509,9 @@ PARSE_CODES CBagLogMsg::setInfo(CBagIfstream &istr) {
 
 void CBagLogMsg::setProperty(const CBofString &prop, int val) {
 	if (!prop.Find("TIME")) {
-		SetMsgTime(val);
+		setMsgTime(val);
 	} else if (!prop.Find("PLAYED")) {
-		SetMsgPlayed(val);
+		setMsgPlayed(val);
 	}
 
 	CBagObject::setProperty(prop, val);
@@ -528,12 +519,12 @@ void CBagLogMsg::setProperty(const CBofString &prop, int val) {
 
 int CBagLogMsg::getProperty(const CBofString &prop) {
 	if (!prop.Find("TIME"))
-		return GetMsgTime();
+		return getMsgTime();
 
 	// Played requires a 1 or a 0 (don't use true or false).
 	if (!prop.Find("PLAYED")) {
-		bool bPlayed = GetMsgPlayed();
-		return (bPlayed ? 1 : 0);
+		bool playedFl = getMsgPlayed();
+		return (playedFl ? 1 : 0);
 	}
 
 	return CBagObject::getProperty(prop);
@@ -541,18 +532,18 @@ int CBagLogMsg::getProperty(const CBofString &prop) {
 
 ErrorCode CBagLogMsg::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect, int maskColor) {
 	// We could use a variable here, translate it's value if that's the case.
-	if (GetMsgTime() == 0) {
-		CBagVar *pVar = VARMNGR->GetVariable(m_sMsgTimeStr);
+	if (getMsgTime() == 0) {
+		CBagVar *pVar = VARMNGR->GetVariable(_msgTimeStr);
 		int nMsgTime = pVar->GetNumValue();
-		SetMsgTime(nMsgTime);
+		setMsgTime(nMsgTime);
 	}
 
-	int nMsgTime = GetMsgTime();
-	int nHr = nMsgTime / 100;
-	int nMn = nMsgTime - (nHr * 100);
+	int msgTime = getMsgTime();
+	int hour = msgTime / 100;
+	int minutes = msgTime - (hour * 100);
 
 	setFont(FONT_MONO);
-	setText(BuildString("%-30s%02d:%02d", m_sMsgSendee.GetBuffer(), nHr, nMn));
+	setText(BuildString("%-30s%02d:%02d", _msgSendee.GetBuffer(), hour, minutes));
 
 	return CBagTextObject::update(bmp, pt, srcRect, maskColor);
 }
@@ -568,16 +559,16 @@ CBagLogSuspect::CBagLogSuspect(int sdevWidth) : CBagTextObject() {
 	m_bTitle = true;
 
 	// Need to save state info, set all to false.
-	setState(0);
+	CBagObject::setState(0);
 }
 
 PARSE_CODES CBagLogSuspect::setInfo(CBagIfstream &istr) {
-	bool nObjectUpdated = false;
-	char szLocalBuff[256];
-	CBofString sStr(szLocalBuff, 256);
+	bool objectUpdatedFl = false;
+	char localBuffer[256];
+	CBofString string1(localBuffer, 256);
 
-	char szLocalBuff2[256];
-	CBofString s(szLocalBuff2, 256);
+	char localBuffer2[256];
+	CBofString string2(localBuffer2, 256);
 
 	while (!istr.eof()) {
 		istr.eatWhite();
@@ -588,56 +579,56 @@ PARSE_CODES CBagLogSuspect::setInfo(CBagIfstream &istr) {
 		//  NAME FRANK - Sets the sendee name of the message to FRANK
 		//
 		case 'N': {
-			GetAlphaNumFromStream(istr, sStr);
+			GetAlphaNumFromStream(istr, string1);
 
-			if (!sStr.Find("NAME")) {
+			if (!string1.Find("NAME")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, s);
+				GetAlphaNumFromStream(istr, string2);
 
 				// Replace any underscores with spaces
-				s.ReplaceChar('_', ' ');
-				SetSusName(s);
+				string2.ReplaceChar('_', ' ');
+				setSusName(string2);
 
-				nObjectUpdated = true;
+				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				PutbackStringOnStream(istr, string1);
 			}
 			break;
 		}
 
 		case 'S': {
-			GetAlphaNumFromStream(istr, sStr);
+			GetAlphaNumFromStream(istr, string1);
 
-			if (!sStr.Find("SPECIES")) {
+			if (!string1.Find("SPECIES")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, s);
+				GetAlphaNumFromStream(istr, string2);
 
 				// Replace any underscores with spaces
-				s.ReplaceChar('_', ' ');
+				string2.ReplaceChar('_', ' ');
 
-				SetSusSpecies(s);
+				setSusSpecies(string2);
 
-				nObjectUpdated = true;
+				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				PutbackStringOnStream(istr, string1);
 			}
 			break;
 		}
 
 		case 'R': {
-			GetAlphaNumFromStream(istr, sStr);
+			GetAlphaNumFromStream(istr, string1);
 
-			if (!sStr.Find("ROOM")) {
+			if (!string1.Find("ROOM")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, s);
+				GetAlphaNumFromStream(istr, string2);
 
 				// Replace any underscores with spaces
-				s.ReplaceChar('_', ' ');
-				SetSusRoom(s);
+				string2.ReplaceChar('_', ' ');
+				setSusRoom(string2);
 
-				nObjectUpdated = true;
+				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				PutbackStringOnStream(istr, string1);
 			}
 			break;
 		}
@@ -649,9 +640,9 @@ PARSE_CODES CBagLogSuspect::setInfo(CBagIfstream &istr) {
 			}
 
 			if (rc == UPDATED_OBJECT) {
-				nObjectUpdated = true;
+				objectUpdatedFl = true;
 			} else { // rc==UNKNOWN_TOKEN
-				if (nObjectUpdated)
+				if (objectUpdatedFl)
 					return UPDATED_OBJECT;
 
 				return UNKNOWN_TOKEN;
@@ -667,48 +658,48 @@ void CBagLogSuspect::setProperty(const CBofString &prop, int val) {
 	if (!prop.Find("ROOM")) {
 		switch (val) {
 		case 1:  // BAP
-			SetSusRoom("Entry Vestibule");
+			setSusRoom("Entry Vestibule");
 			break;
 		case 2:  // BBP
-			SetSusRoom("Howdy Saloon");
+			setSusRoom("Howdy Saloon");
 			break;
 		case 4:  // BDP
-			SetSusRoom("Bar Area");
+			setSusRoom("Bar Area");
 			break;
 		case 5:  // BEP
-			SetSusRoom("Dance Floor");
+			setSusRoom("Dance Floor");
 			break;
 		case 6:  // BFP
-			SetSusRoom("Dining Area");
+			setSusRoom("Dining Area");
 			break;
 		case 7:  // BGP
-			SetSusRoom("Gambling Hall");
+			setSusRoom("Gambling Hall");
 			break;
 		case 10: // BJP
-			SetSusRoom("Kitchen");
+			setSusRoom("Kitchen");
 			break;
 		case 23:  // BWP
-			SetSusRoom("Outside Howdy Saloon");
+			setSusRoom("Outside Howdy Saloon");
 			break;
 		default:
 			break;
 		}
 	} else {
 		// Hack alert!  If our value is 2, then this means toggle the boolean!!!
-		int bVal = false;
+		int hackVal = false;
 		if (val == 1)
-			bVal = true;
+			hackVal = true;
 		if (val == 0)
-			bVal = false;
+			hackVal = false;
 		if (val == 2)
-			bVal = 2;
+			hackVal = 2;
 
 		if (!prop.Find("CHECKED"))
-			SetSusChecked(bVal == 2 ? !GetSusChecked() : bVal);
+			setSusChecked(hackVal == 2 ? !getSusChecked() : hackVal);
 		else if (!prop.Find("VP"))
-			SetSusVP(bVal == 2 ? !GetSusVP() : bVal);
+			setSusVoicePrinted(hackVal == 2 ? !getSusVoicePrinted() : hackVal);
 		else if (!prop.Find("RP"))
-			SetSusRP(bVal == 2 ? !GetSusRP() : bVal);
+			setSusResiduePrinted(hackVal == 2 ? !getSusResiduePrinted() : hackVal);
 		else
 			CBagObject::setProperty(prop, val);
 	}
@@ -717,13 +708,13 @@ void CBagLogSuspect::setProperty(const CBofString &prop, int val) {
 
 int CBagLogSuspect::getProperty(const CBofString &prop) {
 	if (!prop.Find("CHECKED"))
-		return GetSusChecked();
+		return getSusChecked();
 
 	if (!prop.Find("VP"))
-		return GetSusVP();
+		return getSusVoicePrinted();
 
 	if (!prop.Find("RP"))
-		return GetSusRP();
+		return getSusResiduePrinted();
 
 	return CBagObject::getProperty(prop);
 }
@@ -736,40 +727,40 @@ void CBagLogSuspect::setSize(const CBofSize &size) {
 
 
 ErrorCode CBagLogSuspect::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect, int maskColor) {
-	char szSusChecked[256];
-	CBofString sSusChecked(szSusChecked, 256);
+	char susCheckedFl[256];
+	CBofString susCheckedString(susCheckedFl, 256);
 
 	// Remove all the references to the jamming and voice printer state
-	char szSusVP[256];
-	char szSusRP[256];
+	char voiceBuffer[256];
+	char residueBuffer[256];
 
-	CBofString sSusVP(szSusVP, 256);
-	CBofString sSusRP(szSusRP, 256);
+	CBofString voicePrintString(voiceBuffer, 256);
+	CBofString residuePrintString(residueBuffer, 256);
 
-	if (GetSusChecked())
-		sSusChecked = "Y";
+	if (getSusChecked())
+		susCheckedString = "Y";
 	else
-		sSusChecked = "N";
+		susCheckedString = "N";
 
-	if (GetSusVP())
-		sSusVP = "OK";
+	if (getSusVoicePrinted())
+		voicePrintString = "OK";
 	else
-		sSusVP = "?";
+		voicePrintString = "?";
 
-	if (GetSusRP())
-		sSusRP = "Y";
+	if (getSusResiduePrinted())
+		residuePrintString = "Y";
 	else
-		sSusRP = "N";
+		residuePrintString = "N";
 
 	setFont(FONT_MONO);
 
 	setText(BuildString(" %-5.5s %-17.17s %-12.12s %-20.20s %-4.4s %-4.4s",
-	                    sSusChecked.GetBuffer(),
-	                    m_sSusName.GetBuffer(),
-	                    m_sSusSpecies.GetBuffer(),
-	                    m_sSusRoom.GetBuffer(),
-	                    sSusVP.GetBuffer(),
-	                    sSusRP.GetBuffer()));
+	                    susCheckedString.GetBuffer(),
+	                    _susName.GetBuffer(),
+	                    _susSpecies.GetBuffer(),
+	                    _susRoom.GetBuffer(),
+	                    voicePrintString.GetBuffer(),
+	                    residuePrintString.GetBuffer()));
 
 	return CBagTextObject::update(bmp, pt, srcRect, maskColor);
 }
@@ -782,19 +773,19 @@ CBagEnergyDetectorObject::CBagEnergyDetectorObject() {
 	SetFloating();					// Is definitely floating
 	setHighlight();					// Is highlight
 	SetTitle();						// As title
-	m_bTextInitialized = false;     // Not initialized yet
+	_textInitializedFl = false;     // Not initialized yet
 }
 
 CBagEnergyDetectorObject::~CBagEnergyDetectorObject() {
 }
 
 PARSE_CODES CBagEnergyDetectorObject::setInfo(CBagIfstream &istr) {
-	bool nObjectUpdated = false;
-	char szLocalBuff[256];
-	CBofString sStr(szLocalBuff, 256);
+	bool objectUpdatedFl = false;
+	char localBuffer[256];
+	CBofString string1(localBuffer, 256);
 
-	char szLocalBuff2[256];
-	CBofString s(szLocalBuff2, 256);
+	char localBuffer2[256];
+	CBofString string2(localBuffer2, 256);
 
 	while (!istr.eof()) {
 		istr.eatWhite();
@@ -805,17 +796,17 @@ PARSE_CODES CBagEnergyDetectorObject::setInfo(CBagIfstream &istr) {
 		//  ZHAPS - NUMBER OF ZHAPS (ENERGY UNITS)
 		//
 		case 'Z': {
-			GetAlphaNumFromStream(istr, sStr);
+			GetAlphaNumFromStream(istr, string1);
 
-			if (!sStr.Find("ZHAPS")) {
+			if (!string1.Find("ZHAPS")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, s);
+				GetAlphaNumFromStream(istr, string2);
 
-				m_sZhapsStr = s;
+				_zhapsStr = string2;
 
-				nObjectUpdated = true;
+				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				PutbackStringOnStream(istr, string1);
 			}
 			break;
 		}
@@ -824,17 +815,17 @@ PARSE_CODES CBagEnergyDetectorObject::setInfo(CBagIfstream &istr) {
 		//  CAUSE - REASON FOR ENERGY BURST
 		//
 		case 'C': {
-			GetAlphaNumFromStream(istr, sStr);
+			GetAlphaNumFromStream(istr, string1);
 
-			if (!sStr.Find("CAUSE")) {
+			if (!string1.Find("CAUSE")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, s);
+				GetAlphaNumFromStream(istr, string2);
 
-				m_sCauseStr = s;
+				_causeStr = string2;
 
-				nObjectUpdated = true;
+				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				PutbackStringOnStream(istr, string1);
 			}
 			break;
 		}
@@ -843,16 +834,16 @@ PARSE_CODES CBagEnergyDetectorObject::setInfo(CBagIfstream &istr) {
 		//   TIME x- Sets the time of the message to xx:xx
 		//
 		case 'T': {
-			GetAlphaNumFromStream(istr, sStr);
+			GetAlphaNumFromStream(istr, string1);
 
-			if (!sStr.Find("TIME")) {
+			if (!string1.Find("TIME")) {
 				istr.eatWhite();
 				(void)istr.peek();
 
-				GetAlphaNumFromStream(istr, m_sEnergyTimeStr);
-				nObjectUpdated = true;
+				GetAlphaNumFromStream(istr, _energyTimeStr);
+				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				PutbackStringOnStream(istr, string1);
 			}
 			break;
 		}
@@ -861,20 +852,20 @@ PARSE_CODES CBagEnergyDetectorObject::setInfo(CBagIfstream &istr) {
 		//  SIZE n - n point size of the txt
 		//
 		case 'S': {
-			char szLocalStr[256];
-			szLocalStr[0] = 0;
-			CBofString sStr2(szLocalStr, 256);
+			char localBuffer3[256];
+			localBuffer3[0] = 0;
+			CBofString string3(localBuffer3, 256);
 
-			GetAlphaNumFromStream(istr, sStr2);
+			GetAlphaNumFromStream(istr, string3);
 
-			if (!sStr2.Find("SIZE")) {
+			if (!string3.Find("SIZE")) {
 				istr.eatWhite();
 				int n;
 				GetIntFromStream(istr, n);
 				setPointSize(n);
-				nObjectUpdated = true;
+				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, sStr2);
+				PutbackStringOnStream(istr, string3);
 			}
 			break;
 		}
@@ -886,9 +877,9 @@ PARSE_CODES CBagEnergyDetectorObject::setInfo(CBagIfstream &istr) {
 			}
 
 			if (rc == UPDATED_OBJECT) {
-				nObjectUpdated = true;
+				objectUpdatedFl = true;
 			} else { // rc==UNKNOWN_TOKEN
-				if (nObjectUpdated)
+				if (objectUpdatedFl)
 					return UPDATED_OBJECT;
 
 				return UNKNOWN_TOKEN;
@@ -901,79 +892,78 @@ PARSE_CODES CBagEnergyDetectorObject::setInfo(CBagIfstream &istr) {
 	return PARSING_DONE;
 }
 
-ErrorCode CBagEnergyDetectorObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
+ErrorCode CBagEnergyDetectorObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect, int maskColor) {
 	// Don't draw until we're attached
 	if (isAttached() == false) {
 		return ERR_NONE;
 	}
 
-	return CBagTextObject::update(pBmp, pt, pSrcRect, nMaskColor);
+	return CBagTextObject::update(bmp, pt, srcRect, maskColor);
 }
 
 ErrorCode CBagEnergyDetectorObject::attach() {
 	Assert(IsValidObject(this));
 
 	int nMsgTime;
-	char szLocalBuff[256];
-	CBofString causeStr(szLocalBuff, 256);
+	char localBuffer[256];
+	CBofString causeString(localBuffer, 256);
 
-	char szZhapsBuff[256];
-	CBofString zStr(szZhapsBuff, 256);
+	char zhapsBuffer[256];
+	CBofString zhapsString(zhapsBuffer, 256);
 
 	// We could use a variable here, translate it's value if that's the case.
-	CBagVar *pVar = VARMNGR->GetVariable(m_sEnergyTimeStr);
-	if (pVar) {
-		nMsgTime = pVar->GetNumValue();
+	CBagVar *curVar = VARMNGR->GetVariable(_energyTimeStr);
+	if (curVar) {
+		nMsgTime = curVar->GetNumValue();
 	} else {
-		nMsgTime = atoi(m_sEnergyTimeStr.GetBuffer());
+		nMsgTime = atoi(_energyTimeStr.GetBuffer());
 	}
 
-	int nHr = nMsgTime / 100;
-	int nMn = nMsgTime - (nHr * 100);
+	int hour = nMsgTime / 100;
+	int minute = nMsgTime - (hour * 100);
 
 	// Get the number of zhaps.
-	pVar = VARMNGR->GetVariable(m_sZhapsStr);
-	if (pVar) {
-		zStr = pVar->GetValue();
+	curVar = VARMNGR->GetVariable(_zhapsStr);
+	if (curVar) {
+		zhapsString = curVar->GetValue();
 	} else {
-		zStr = m_sZhapsStr;
+		zhapsString = _zhapsStr;
 	}
 
 	// Get the cause
-	pVar = VARMNGR->GetVariable(m_sCauseStr);
-	if (pVar) {
-		causeStr = pVar->GetValue();
+	curVar = VARMNGR->GetVariable(_causeStr);
+	if (curVar) {
+		causeString = curVar->GetValue();
 	} else {
-		causeStr = m_sCauseStr;
+		causeString = _causeStr;
 	}
 
 	// Replace any underscores with spaces
-	causeStr.ReplaceChar('_', ' ');
+	causeString.ReplaceChar('_', ' ');
 
 	CBofString cStr;
-
 	SetPSText(&cStr);
 
-	setText(BuildString("%02d:%02d %6.6s %s  %-35.35s", nHr, nMn, zStr.GetBuffer(), "zhaps", causeStr.GetBuffer()));
+	setText(BuildString("%02d:%02d %6.6s %s  %-35.35s", hour, minute, zhapsString.GetBuffer(), "zhaps", causeString.GetBuffer()));
 	RecalcTextRect(false);
 
 	return CBagObject::attach();
 }
 
-CBagLogClue::CBagLogClue(const CBofString &sInit, int nSdevWidth, int nPointSize) : CBagTextObject() {
+CBagLogClue::CBagLogClue(const CBofString &initStr, int sdevWidth, int pointSize) : CBagTextObject() {
 	m_xObjType = USEROBJ;
-	m_nSdevWidth = nSdevWidth;
+	_sdevWidth = sdevWidth;
 
 	m_bTitle = true;
 
-	m_pStringVar1 = nullptr;
-	m_pStringVar2 = nullptr;
-	m_pStringVar3 = nullptr;
-	m_pStringVar4 = nullptr;
+	_stringVar1 = nullptr;
+	_stringVar2 = nullptr;
+	_stringVar3 = nullptr;
+	_stringVar4 = nullptr;
 
 	setFont(FONT_MONO);
-	SetInitInfo(sInit);
-	setPointSize(nPointSize);
+	SetInitInfo(initStr);
+	setPointSize(pointSize);
 	setColor(7);
 	SetFloating();
 }
@@ -996,10 +986,10 @@ ErrorCode CBagLogClue::attach() {
 
 	// Format the text appropriately.
 	Common::sprintf_s(szClueStr, cFormat.GetBuffer(),
-	                  (m_pStringVar1 ? (const char *)m_pStringVar1->GetValue() : (const char *)""),
-	                  (m_pStringVar2 ? (const char *)m_pStringVar2->GetValue() : (const char *)""),
-	                  (m_pStringVar3 ? (const char *)m_pStringVar3->GetValue() : (const char *)""),
-	                  (m_pStringVar4 ? (const char *)m_pStringVar4->GetValue() : (const char *)""));
+	                  (_stringVar1 ? (const char *)_stringVar1->GetValue() : (const char *)""),
+	                  (_stringVar2 ? (const char *)_stringVar2->GetValue() : (const char *)""),
+	                  (_stringVar3 ? (const char *)_stringVar3->GetValue() : (const char *)""),
+	                  (_stringVar4 ? (const char *)_stringVar4->GetValue() : (const char *)""));
 
 	CBofString cStr(szClueStr);
 	SetPSText(&cStr);
@@ -1035,14 +1025,14 @@ PARSE_CODES CBagLogClue::setInfo(CBagIfstream &istr) {
 					return UNKNOWN_TOKEN;
 				}
 
-				if (m_pStringVar1 == nullptr) {
-					m_pStringVar1 = pVar;
-				} else if (m_pStringVar2 == nullptr) {
-					m_pStringVar2 = pVar;
-				} else if (m_pStringVar3 == nullptr) {
-					m_pStringVar3 = pVar;
-				} else if (m_pStringVar4 == nullptr) {
-					m_pStringVar4 = pVar;
+				if (_stringVar1 == nullptr) {
+					_stringVar1 = pVar;
+				} else if (_stringVar2 == nullptr) {
+					_stringVar2 = pVar;
+				} else if (_stringVar3 == nullptr) {
+					_stringVar3 = pVar;
+				} else if (_stringVar4 == nullptr) {
+					_stringVar4 = pVar;
 				} else {
 					return UNKNOWN_TOKEN;
 				}
@@ -1075,8 +1065,8 @@ PARSE_CODES CBagLogClue::setInfo(CBagIfstream &istr) {
 	return PARSING_DONE;
 }
 
-ErrorCode CBagLogClue::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
-	return CBagTextObject::update(pBmp, pt, pSrcRect, nMaskColor);
+ErrorCode CBagLogClue::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *srcRect, int maskColor) {
+	return CBagTextObject::update(pBmp, pt, srcRect, maskColor);
 }
 
 } // namespace Bagel

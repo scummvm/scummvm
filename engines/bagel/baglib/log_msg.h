@@ -30,64 +30,65 @@ namespace Bagel {
 
 class CBagLogResidue : public CBagTextObject {
 protected:
-	int m_nSdevWidth;
+	int _sdevWidth;
 
 public:
 	CBagLogResidue(int sdevWidth);
 	virtual ~CBagLogResidue() {}
 
-	void setSize(const CBofSize &size);
+	void setSize(const CBofSize &size) override;
 
-	ErrorCode update(CBofBitmap *bmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
+	ErrorCode update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect = nullptr, int maskColor = -1) override;
 };
 
-#define mMsgTimeMask 0x3FFF
-#define mMsgPlayedMask 0x4000
+#define MSG_TIME_MASK 0x3FFF
+#define MSG_PLAYED_MASK 0x4000
 
 class CBagLogMsg : public CBagTextObject {
 protected:
-	CBofString m_sMsgSendee;
-	CBofString m_sMsgTimeStr;
-	int m_nSdevWidth;
+	CBofString _msgSendee;
+	CBofString _msgTimeStr;
+	int _sdevWidth;
 
 public:
 	CBagLogMsg(int sdevWidth);
 	virtual ~CBagLogMsg() {}
 
-	ErrorCode update(CBofBitmap *bmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
+	ErrorCode update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect = nullptr, int maskColor = -1) override;
 
 	/**
 	 * Takes in info and then removes the relative information and returns the info
 	 * without the relevant info.
 	 */
-	PARSE_CODES setInfo(CBagIfstream &istr);
+	PARSE_CODES setInfo(CBagIfstream &istr) override;
 
-	void setSize(const CBofSize &size);
+	void setSize(const CBofSize &size) override;
 
-	void setProperty(const CBofString &prop, int val);
-	int getProperty(const CBofString &prop);
+	void setProperty(const CBofString &prop, int val) override;
+	int getProperty(const CBofString &prop) override;
 
-	void SetMsgSendee(const CBofString &sProp) {
-		m_sMsgSendee = sProp;
+	void setMsgSendee(const CBofString &sendee) {
+		_msgSendee = sendee;
 	}
-	CBofString GetMsgSendee() {
-		return m_sMsgSendee;
-	}
-
-	void SetMsgTime(int &nVal) {
-		int nState = getState();
-		setState((nState & mMsgPlayedMask) | (nVal & mMsgTimeMask));
-	}
-	int GetMsgTime() {
-		return getState() & mMsgTimeMask;
+	CBofString getMsgSendee() const {
+		return _msgSendee;
 	}
 
-	void SetMsgPlayed(bool bPlayed) {
-		int nState = getState();
-		setState((nState & mMsgTimeMask) | (bPlayed == true ? mMsgPlayedMask : 0));
+	void setMsgTime(int &msgTime) {
+		int state = getState();
+		setState((state & MSG_PLAYED_MASK) | (msgTime & MSG_TIME_MASK));
 	}
-	bool GetMsgPlayed() {
-		return (getState() & mMsgPlayedMask) != 0;
+
+	int getMsgTime() {
+		return getState() & MSG_TIME_MASK;
+	}
+
+	void setMsgPlayed(bool playedFl) {
+		int state = getState();
+		setState((state & MSG_TIME_MASK) | (playedFl == true ? MSG_PLAYED_MASK : 0));
+	}
+	bool getMsgPlayed() {
+		return (getState() & MSG_PLAYED_MASK) != 0;
 	}
 };
 
@@ -99,51 +100,51 @@ class CBagLogSuspect : public CBagTextObject {
 protected:
 	int m_nSdevWidth;
 
-	CBofString m_sSusName;
-	CBofString m_sSusSpecies;
-	CBofString m_sSusRoom;
+	CBofString _susName;
+	CBofString _susSpecies;
+	CBofString _susRoom;
 
 public:
 	CBagLogSuspect(int sdevWidth);
 	virtual ~CBagLogSuspect() {}
 
-	ErrorCode update(CBofBitmap *bmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
+	ErrorCode update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect = nullptr, int maskColor = -1) override;
 
-	void setSize(const CBofSize &size);
+	void setSize(const CBofSize &size) override;
 
-	PARSE_CODES setInfo(CBagIfstream &istr);
+	PARSE_CODES setInfo(CBagIfstream &istr) override;
 
-	void setProperty(const CBofString &prop, int val);
-	int getProperty(const CBofString &prop);
+	void setProperty(const CBofString &prop, int val) override;
+	int getProperty(const CBofString &prop) override;
 
-	void SetSusName(const CBofString &sProp) {
-		m_sSusName = sProp;
+	void setSusName(const CBofString &susName) {
+		_susName = susName;
 	}
-	void SetSusSpecies(const CBofString &sProp) {
-		m_sSusSpecies = sProp;
+	void setSusSpecies(const CBofString &susSpecies) {
+		_susSpecies = susSpecies;
 	}
-	void SetSusRoom(const CBofString &sProp) {
-		m_sSusRoom = sProp;
+	void setSusRoom(const CBofString &susRoom) {
+		_susRoom = susRoom;
 	}
 
-	void SetSusVP(bool bVal) {
+	void setSusVoicePrinted(bool bVal) {
 		bVal == false ? setState(getState() & ~mSusVoicePrinted) : setState(getState() | mSusVoicePrinted);
 	}
-	bool GetSusVP() {
+	bool getSusVoicePrinted() {
 		return (getState() & mSusVoicePrinted) != 0;
 	}
 
-	void SetSusRP(bool bVal) {
+	void setSusResiduePrinted(bool bVal) {
 		bVal == false ? setState(getState() & ~mSusResiduePrinted) : setState(getState() | mSusResiduePrinted);
 	}
-	bool GetSusRP() {
+	bool getSusResiduePrinted() {
 		return (getState() & mSusResiduePrinted) != 0;
 	}
 
-	void SetSusChecked(bool bVal) {
+	void setSusChecked(bool bVal) {
 		bVal == false ? setState(getState() & ~mSusChecked) : setState(getState() | mSusChecked);
 	}
-	bool GetSusChecked() {
+	bool getSusChecked() {
 		return (getState() & mSusChecked) != 0;
 	}
 };
@@ -151,18 +152,18 @@ public:
 class CBagLog : public CBagStorageDevBmp {
 protected:
 	// Queued messages waited to be played and inserted into SDEV
-	CBofList<CBagObject *> *m_pQueued_Msgs;
+	CBofList<CBagObject *> *_queuedMsgList;
 
-	static CBagLog *m_bLastFloatPage;
+	static CBagLog *_lastFloatPage;
 
 public:
 	CBagLog();
 	virtual ~CBagLog();
 	static void initialize() {
-		m_bLastFloatPage = nullptr;
+		_lastFloatPage = nullptr;
 	}
 
-	virtual CBagObject *OnNewUserObject(const CBofString &initStr);
+	CBagObject *onNewUserObject(const CBofString &initStr) override;
 
 	/**
 	 * This is different for the log sdev Object are just queued for insertion
@@ -170,19 +171,19 @@ public:
 	 * to the sdev when the message light is clicked
 	 * @return      Error result code
 	 */
-	virtual ErrorCode ActivateLocalObject(CBagObject *bagObj);
+	ErrorCode activateLocalObject(CBagObject *bagObj) override;
 
 	/**
 	 * Releases and deletes all the objects in the list
 	 */
-	ErrorCode ReleaseMsg();
+	ErrorCode releaseMsg();
 
-	ErrorCode PlayMsgQue();
+	ErrorCode playMsgQueue();
 
 	/**
 	 * Remove a (duplicate) message from the message queue
 	 */
-	bool RemoveFromMsgQueue(CBagObject *pObj);
+	bool removeFromMsgQueue(CBagObject *bagObj);
 
 	/**
 	 * This function arranges the objects that are considered floating
@@ -191,14 +192,14 @@ public:
 	 * @return Returns the next available location in the sdev,
 	 * at this level the objects will go out of range of the sdev.
 	 */
-	CBofPoint ArrangeFloater(CBofPoint nPos, CBagObject *pObj);
+	CBofPoint arrangeFloater(CBofPoint pos, CBagObject *bagObj) override;
 
-	int GetCurFltPage();
-	void SetCurFltPage(int fltPage);
+	int getCurFltPage();
+	void setCurFltPage(int fltPage);
 
-	static void ArrangePages();
-	static void InitArrangePages() {
-		m_bLastFloatPage = nullptr;
+	static void arrangePages();
+	static void initArrangePages() {
+		_lastFloatPage = nullptr;
 	}
 };
 
@@ -208,46 +209,45 @@ public:
 	virtual ~CBagEnergyDetectorObject();
 
 	// Need private setinfo so we can parse energy detector fields
-	PARSE_CODES setInfo(CBagIfstream &istr);
+	PARSE_CODES setInfo(CBagIfstream &istr) override;
 
-	ErrorCode update(CBofBitmap *, CBofPoint, CBofRect *, int);
+	ErrorCode update(CBofBitmap *, CBofPoint, CBofRect *, int) override;
 
-	ErrorCode attach();
+	ErrorCode attach() override;
 
-	void SetMsgTime(int &nVal) {
+	void setMsgTime(int &nVal) {
 		setState(nVal);
 	}
-	int GetMsgTime() {
+	int getMsgTime() {
 		return getState();
 	}
 
-protected:
 private:
-	CBofString m_sEnergyTimeStr;
-	CBofString m_sZhapsStr;
-	CBofString m_sCauseStr;
+	CBofString _energyTimeStr;
+	CBofString _zhapsStr;
+	CBofString _causeStr;
 
-	bool m_bTextInitialized;
+	bool _textInitializedFl;
 };
 
 // Special object, clue object.
 class CBagLogClue : public CBagTextObject {
 private:
-	CBagVar *m_pStringVar1;
-	CBagVar *m_pStringVar2;
-	CBagVar *m_pStringVar3;
-	CBagVar *m_pStringVar4;
-	int m_nSdevWidth;
+	CBagVar *_stringVar1;
+	CBagVar *_stringVar2;
+	CBagVar *_stringVar3;
+	CBagVar *_stringVar4;
+	int _sdevWidth;
 
 public:
-	CBagLogClue(const CBofString &sInit, int nSdevWidth, int nPointSize);
+	CBagLogClue(const CBofString &initStr, int sdevWidth, int pointSize);
 	virtual ~CBagLogClue() {}
 
-	ErrorCode attach();
+	ErrorCode attach() override;
 
-	PARSE_CODES setInfo(CBagIfstream &istr);
+	PARSE_CODES setInfo(CBagIfstream &istr) override;
 
-	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
+	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *srcRect = nullptr, int maskColor = -1) override;
 };
 
 } // namespace Bagel

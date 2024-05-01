@@ -293,7 +293,7 @@ void CBagDossierObject::onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, v
 // utility routine for activating dossier objects
 void CBagDossierObject::activateDossierObject(CBagLog *logWld) {
 	if (logWld) {
-		logWld->ActivateLocalObject(this);
+		logWld->activateLocalObject(this);
 	}
 
 	if (CBagRPObject::GetLogState() == RP_READ_DOSSIER) {
