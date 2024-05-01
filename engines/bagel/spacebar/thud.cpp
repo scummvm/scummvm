@@ -95,10 +95,10 @@ bool SBarThud::OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
 		return false;
 
 	// Find the storage device
-	if (ActivateLocalObject(sObjName) != ERR_NONE)
+	if (activateLocalObject(sObjName) != ERR_NONE)
 		return false;
-	if (pSDev->DeactivateLocalObject(sObjName) != ERR_NONE) {
-		DeactivateLocalObject(sObjName);
+	if (pSDev->deactivateLocalObject(sObjName) != ERR_NONE) {
+		deactivateLocalObject(sObjName);
 		return false;
 	}
 
@@ -151,12 +151,12 @@ ErrorCode SBarThud::DeactivateLocalObject(CBagObject *pObj) {
 	return CBagStorageDev::DeactivateLocalObject(pObj);
 }
 
-ErrorCode SBarThud::ActivateLocalObject(const CBofString &sName) {
-	return CBagStorageDev::ActivateLocalObject(sName);
+ErrorCode SBarThud::activateLocalObject(const CBofString &sName) {
+	return CBagStorageDev::activateLocalObject(sName);
 }
 
-ErrorCode SBarThud::DeactivateLocalObject(const CBofString &sName) {
-	return CBagStorageDev::DeactivateLocalObject(sName);
+ErrorCode SBarThud::deactivateLocalObject(const CBofString &sName) {
+	return CBagStorageDev::deactivateLocalObject(sName);
 }
 
 } // namespace SpaceBar

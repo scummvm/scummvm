@@ -28,57 +28,49 @@
 
 namespace Bagel {
 
-#define FIRSSTASHMOV        "FIRST_STASH_MOVIE"
+#define FIRS_STASH_MOV        "FIRST_STASH_MOVIE"
 
-bool CBagInv::m_bFirstStash;
+bool CBagInv::_firstStashFl;
 
 //
-//	ActivateLocalObject
 //	This is called when a object is inserted into the inventory
 //  The wand on the PDA should animate
 //
 
-ErrorCode CBagInv::ActivateLocalObject(const CBofString &sName) {
-	CBagCharacterObject *pWand = nullptr;
-	CBagStorageDev *pPda = nullptr;
-	CBagPDA *pPDAReally = nullptr;
-	SBZoomPda *pZPDA = nullptr;
-	bool bZoomed = false;
+ErrorCode CBagInv::activateLocalObject(const CBofString &objectName) {
 
-	pPda = SDEVMNGR->GetStorageDevice("BPDA_WLD");
+	CBagStorageDev *pdaSDev = SDEVMNGR->GetStorageDevice("BPDA_WLD");
 
 	// Don't do any wand animation if we are zoomed.
-	pZPDA = (SBZoomPda *)SDEVMNGR->GetStorageDevice("BPDAZ_WLD");
-	Assert(pZPDA != nullptr);
-	bZoomed = (pZPDA ? pZPDA->getZoomed() : false);
+	SBZoomPda *zoomPda = (SBZoomPda *)SDEVMNGR->GetStorageDevice("BPDAZ_WLD");
+	Assert(zoomPda != nullptr);
+	bool zoomedFl = (zoomPda ? zoomPda->getZoomed() : false);
 
-	if (pPda && bZoomed == false) {
-		pWand = (CBagCharacterObject *)pPda->GetObject("WANDANIM");
-		pPDAReally = (CBagPDA *)pPda;
+	if (pdaSDev && zoomedFl == false) {
+		CBagCharacterObject *wand = (CBagCharacterObject *)pdaSDev->GetObject("WANDANIM");
+		CBagPDA *pda = (CBagPDA *)pdaSDev;
 
-		if (pWand) {
-			pWand->setPlaybackSpeed(1);
-			pWand->setNumOfLoops(1);
+		if (wand) {
+			wand->setPlaybackSpeed(1);
+			wand->setNumOfLoops(1);
 
 			// Let our character anim know that this is our PDA Wand,
 			// it will need to let the pda update code know that
 			// it needs to get redrawn.
-			CBagCharacterObject::setPdaWand(pWand);
-			pPDAReally->SetDirty(true);
+			CBagCharacterObject::setPdaWand(wand);
+			pda->SetDirty(true);
 		}
 	}
 
-	if (bZoomed == false) {
-		CBagVar *pVar;
-
+	if (zoomedFl == false) {
 		// Check to see if we are in the bar
-		pVar = VARMNGR->GetVariable("INBAR");
-		if (pVar != nullptr) {
-			pVar = VARMNGR->GetVariable("FIRST_STASH");
+		CBagVar *var = VARMNGR->GetVariable("INBAR");
+		if (var != nullptr) {
+			var = VARMNGR->GetVariable("FIRST_STASH");
 
-			// If this is our first stash, play the smacker associated  with it.
-			if ((pVar != nullptr) && (pVar->GetNumValue() == 0)) {
-				CBagMovieObject *pMovie = (CBagMovieObject *)GetObject(FIRSSTASHMOV);
+			// If this is our first stash, play the smacker associated with it.
+			if ((var != nullptr) && (var->GetNumValue() == 0)) {
+				CBagMovieObject *pMovie = (CBagMovieObject *)GetObject(FIRS_STASH_MOV);
 				if (pMovie) {
 					if (pMovie->isAttached() == false) {
 						pMovie->attach();
@@ -88,39 +80,38 @@ ErrorCode CBagInv::ActivateLocalObject(const CBofString &sName) {
 					pMovie->runObject();
 				}
 
-				pVar->SetValue(1);
+				var->SetValue(1);
 			}
 		}
 	}
 
-	return CBagStorageDevBmp::ActivateLocalObject(sName);
+	return CBagStorageDevBmp::activateLocalObject(objectName);
 }
 
-ErrorCode CBagInv::DeactivateLocalObject(const CBofString &sName) {
-	CBagCharacterObject *pWand = nullptr;
-	CBagStorageDev *pPda = nullptr;
-	SBZoomPda *pZPDA = nullptr;
-	bool bZoomed = false;
-
-	pPda = SDEVMNGR->GetStorageDevice("BPDA_WLD");
+/**
+ * This is called when a object is removed from the inventory
+ * The wand on the PDA should animate
+ */
+ErrorCode CBagInv::deactivateLocalObject(const CBofString &objectName) {
+	CBagStorageDev *pdaSDev = SDEVMNGR->GetStorageDevice("BPDA_WLD");
 
 	// Don't do any wand animation if we are zoomed.
-	pZPDA = (SBZoomPda *)SDEVMNGR->GetStorageDevice("BPDAZ_WLD");
-	Assert(pZPDA != nullptr);
-	bZoomed = (pZPDA ? pZPDA->getZoomed() : false);
+	SBZoomPda *zoomPDA = (SBZoomPda *)SDEVMNGR->GetStorageDevice("BPDAZ_WLD");
+	Assert(zoomPDA != nullptr);
+	bool zoomedFl = (zoomPDA ? zoomPDA->getZoomed() : false);
 
-	if (pPda && bZoomed == false) {
-		pWand = (CBagCharacterObject *)pPda->GetObject("WANDANIM");
-		if (pWand) {
-			pWand->setPlaybackSpeed(-1);
-			pWand->setNumOfLoops(1);
+	if (pdaSDev && zoomedFl == false) {
+		CBagCharacterObject *wand = (CBagCharacterObject *)pdaSDev->GetObject("WANDANIM");
+		if (wand) {
+			wand->setPlaybackSpeed(-1);
+			wand->setNumOfLoops(1);
 
 			// Let it know our ending frame is 0, not 1.
-			pWand->setEndFrame(0);
+			wand->setEndFrame(0);
 		}
 	}
 
-	return CBagStorageDevBmp::DeactivateLocalObject(sName);;
+	return CBagStorageDevBmp::deactivateLocalObject(objectName);;
 }
 
 } // namespace Bagel

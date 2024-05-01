@@ -29,22 +29,17 @@ namespace Bagel {
 
 class CBagInv : public CBagStorageDevBmp {
 protected:
-	static bool m_bFirstStash;
+	static bool _firstStashFl;
 
 public:
 	CBagInv() : CBagStorageDevBmp() {}
 	virtual ~CBagInv() {}
 	static void initialize() {
-		m_bFirstStash = true;
+		_firstStashFl = true;
 	}
 
-	ErrorCode ActivateLocalObject(const CBofString &sName);
-
-	/**
-	 * This is called when a object is removed from the inventory
-	 * The wand on the PDA should animate
-	 */
-	ErrorCode DeactivateLocalObject(const CBofString &sName);
+	ErrorCode activateLocalObject(const CBofString &objectName) override;
+	ErrorCode deactivateLocalObject(const CBofString &objectName) override;
 };
 
 } // namespace Bagel

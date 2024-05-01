@@ -576,9 +576,9 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				CBagStorageDev *pWieldSDev = nullptr;
 				pWieldSDev = SDEVMNGR->GetStorageDevice("BWIELD_WLD");
 				if (chipID == 1)
-					pWieldSDev->ActivateLocalObject("GREENCHIP");
+					pWieldSDev->activateLocalObject("GREENCHIP");
 				else
-					pWieldSDev->ActivateLocalObject("BLUECHIP");
+					pWieldSDev->activateLocalObject("BLUECHIP");
 			}
 		}
 	}
