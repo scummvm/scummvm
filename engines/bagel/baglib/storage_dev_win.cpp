@@ -500,7 +500,7 @@ void CBagStorageDev::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *vpInf
 	SetLActiveObject(pObj);
 }
 
-bool g_bNoMenu = false;
+bool g_noMenuFl = false;
 
 
 void CBagStorageDev::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo) {
@@ -521,12 +521,12 @@ void CBagStorageDev::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 	if (pObj != nullptr) {
 		bUseWield = false;
 
-		g_bNoMenu = false;
+		g_noMenuFl = false;
 		if (pObj->IsActive()) {
 			pObj->onLButtonUp(nFlags, xPoint, vpInfo);
 
-			if (g_bNoMenu) {
-				g_bNoMenu = false;
+			if (g_noMenuFl) {
+				g_noMenuFl = false;
 				bUseWield = true;
 			}
 			SetLActiveObject(pObj);

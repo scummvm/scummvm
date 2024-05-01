@@ -25,20 +25,20 @@
 
 namespace Bagel {
 
-extern bool g_bNoMenu;
+extern bool g_noMenuFl;
 
 CBagLinkObject::CBagLinkObject() {
 	m_xObjType = LINKOBJ;
-	m_xLinkType = LINK;
-	m_xDestLocation = CBofPoint(0, 0);
-	m_xSrcLocation = CBofPoint(-1, -1);
-	m_nFade = 0;
+	_linkType = LINK;
+	_destLocation = CBofPoint(0, 0);
+	_srcLocation = CBofPoint(-1, -1);
+	_fade = 0;
 	SetVisible(false);
-	SetOverCursor(5);
+	CBagObject::SetOverCursor(5);
 }
 
 CBagLinkObject::~CBagLinkObject() {
-	detach();
+	CBagObject::detach();
 }
 
 CBofRect CBagLinkObject::getRect() {
@@ -49,12 +49,12 @@ CBofRect CBagLinkObject::getRect() {
 }
 
 PARSE_CODES CBagLinkObject::setInfo(CBagIfstream &istr) {
-	bool nObjectUpdated = false;
+	bool objectUpdatedFl = false;
 
-	PARSE_CODES cCode = PARSING_DONE;
-	bool bDone = false;
+	PARSE_CODES parsingCode = PARSING_DONE;
+	bool doneFl = false;
 
-	while (!bDone && !istr.eof()) {
+	while (!doneFl && !istr.eof()) {
 		char ch = (char)istr.peek();
 		switch (ch) {
 		//
@@ -64,8 +64,8 @@ PARSE_CODES CBagLinkObject::setInfo(CBagIfstream &istr) {
 			CBofRect r;
 			istr.getCh();
 			getRectFromStream(istr, r);
-			SetDstLoc(r.TopLeft());
-			nObjectUpdated = true;
+			setDstLoc(r.TopLeft());
+			objectUpdatedFl = true;
 			break;
 		}
 
@@ -76,8 +76,8 @@ PARSE_CODES CBagLinkObject::setInfo(CBagIfstream &istr) {
 			CBofRect r;
 			istr.getCh();
 			getRectFromStream(istr, r);
-			SetSrcLoc(r.TopLeft());
-			nObjectUpdated = true;
+			setSrcLoc(r.TopLeft());
+			objectUpdatedFl = true;
 			break;
 		}
 
@@ -85,27 +85,27 @@ PARSE_CODES CBagLinkObject::setInfo(CBagIfstream &istr) {
 		//  AS [LINK|CLOSEUP]  - how to run the link
 		//
 		case 'A': {
-			char szLocalStr[256];
-			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256);
-			GetAlphaNumFromStream(istr, sStr);
+			char localBuffer[256];
+			localBuffer[0] = 0;
+			CBofString curString(localBuffer, 256);
+			GetAlphaNumFromStream(istr, curString);
 
-			if (!sStr.Find("AS")) {
+			if (!curString.Find("AS")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, sStr);
-				if (!sStr.Find("CLOSEUP")) {
-					m_xLinkType = CLOSEUP;
+				GetAlphaNumFromStream(istr, curString);
+				if (!curString.Find("CLOSEUP")) {
+					_linkType = CLOSEUP;
 					SetOverCursor(2);
-					nObjectUpdated = true;
-				} else if (!sStr.Find("LINK")) {
-					m_xLinkType = LINK;
-					nObjectUpdated = true;
+					objectUpdatedFl = true;
+				} else if (!curString.Find("LINK")) {
+					_linkType = LINK;
+					objectUpdatedFl = true;
 				} else {
-					PutbackStringOnStream(istr, sStr);
+					PutbackStringOnStream(istr, curString);
 					PutbackStringOnStream(istr, "AS ");
 				}
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				PutbackStringOnStream(istr, curString);
 			}
 			break;
 		}
@@ -114,90 +114,89 @@ PARSE_CODES CBagLinkObject::setInfo(CBagIfstream &istr) {
 		//  FADE n
 		//
 		case 'F': {
-			char szLocalStr[256];
-			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256);
-			GetAlphaNumFromStream(istr, sStr);
+			char localBuffer[256];
+			localBuffer[0] = 0;
+			CBofString curString(localBuffer, 256);
+			GetAlphaNumFromStream(istr, curString);
 
-			if (!sStr.Find("FADE")) {
+			if (!curString.Find("FADE")) {
 				istr.eatWhite();
-				GetIntFromStream(istr, m_nFade);
-				nObjectUpdated = true;
+				GetIntFromStream(istr, _fade);
+				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				PutbackStringOnStream(istr, curString);
 			}
 			break;
 		}
 
 		//
-		//  No match return from funtion
+		//  No match return from function
 		//
 		default: {
 			PARSE_CODES rc = CBagObject::setInfo(istr);
 
 			if (rc == PARSING_DONE) {
-				cCode = PARSING_DONE;
-				bDone = true;
+				parsingCode = PARSING_DONE;
+				doneFl = true;
 
 			} else if (rc == UPDATED_OBJECT) {
-				nObjectUpdated = true;
+				objectUpdatedFl = true;
 
 			} else { // rc==UNKNOWN_TOKEN
-				if (nObjectUpdated)
-					cCode = UPDATED_OBJECT;
+				if (objectUpdatedFl)
+					parsingCode = UPDATED_OBJECT;
 				else
-					cCode = UNKNOWN_TOKEN;
+					parsingCode = UNKNOWN_TOKEN;
 
-				bDone = true;
+				doneFl = true;
 			}
 			break;
 		}
 		}
 	}
 
-	return cCode;
+	return parsingCode;
 }
 
 
 bool CBagLinkObject::runObject() {
 	// Reset Wield
-	g_bNoMenu = false;
+	g_noMenuFl = false;
 
-	char szBuf[256];
-	szBuf[0] = '\0';
-	CBofString cStr(szBuf, 256);
-
-	cStr = getFileName();
+	char buffer[256];
+	buffer[0] = '\0';
+	CBofString curStr(buffer, 256);
+	curStr = getFileName();
 
 	// If this is a special link (using the last known sdev stack),
 	// then find it's value, and use that instead.
 	if (getFileName().Find("$LASTWORLD") != -1) {
-		cStr = getFileName();
+		curStr = getFileName();
 
-		CBagVar *pVar = VARMNGR->GetVariable("$LASTWORLD");
-		if (pVar != nullptr) {
-			cStr.ReplaceStr("$LASTWORLD", pVar->GetValue());
+		CBagVar *var = VARMNGR->GetVariable("$LASTWORLD");
+		if (var != nullptr) {
+			curStr.ReplaceStr("$LASTWORLD", var->GetValue());
 		}
 	}
 
 	CBagMasterWin::setActiveCursor(6);
 
-	CBagStorageDevWnd *pSDev1 = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
+	CBagStorageDevWnd *curSDev = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
 
 	// Set the link position for the storage device we are about to jump to
-	CBagStorageDev *pDestWin;
-	if ((pDestWin = SDEVMNGR->GetStorageDevice(cStr)) != nullptr) {
-		pDestWin->SetLoadFilePos(GetDstLoc());
+	CBagStorageDev *destWin = SDEVMNGR->GetStorageDevice(curStr);
+	if (destWin) {
+		destWin->SetLoadFilePos(getDestLoc());
 	}
 
 	CBagMasterWin *pMasterWin = CBagel::getBagApp()->getMasterWnd();
 	if (pMasterWin) {
-		pMasterWin->SetCurrfadeIn(m_nFade);
-		pMasterWin->SetStorageDev(cStr);
+		pMasterWin->SetCurrfadeIn(_fade);
+		pMasterWin->SetStorageDev(curStr);
 	}
 
-	CBagStorageDevWnd *pSDev2 = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
-	if (!pSDev1->IsCloseup() && !pSDev2->IsCloseup()) {
+	CBagStorageDevWnd *otherSDev = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
+	if (!curSDev->IsCloseup() && !otherSDev->IsCloseup()) {
 		VARMNGR->IncrementTimers();
 	}
 
