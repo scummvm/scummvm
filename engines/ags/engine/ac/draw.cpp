@@ -1156,10 +1156,10 @@ static Bitmap *transform_sprite(Bitmap *src, bool src_has_alpha, std::unique_ptr
 // Returns 1 if something was drawn to actsps; returns 0 if no
 // scaling or stretching was required, in which case nothing was done.
 // Used for software render mode only.
-static bool scale_and_flip_sprite(int useindx, int sppic, int newwidth, int newheight, bool hmirror) {
+static bool scale_and_flip_sprite(int useindx, int sppic, int width, int height, bool hmirror) {
 	Bitmap *src = _GP(spriteset)[sppic];
 	Bitmap *result = transform_sprite(src, (_GP(game).SpriteInfos[sppic].Flags & SPF_ALPHACHANNEL) != 0,
-		_GP(actsps)[useindx].Bmp, Size(newwidth, newheight), hmirror ? kFlip_Horizontal : kFlip_None);
+		_GP(actsps)[useindx].Bmp, Size(width, height), hmirror ? kFlip_Horizontal : kFlip_None);
 	return result != src;
 }
 
@@ -1439,65 +1439,25 @@ void tint_image(Bitmap *ds, Bitmap *srcimg, int red, int grn, int blu, int light
 
 
 void prepare_characters_for_drawing() {
-	int zoom_level, newwidth, newheight, onarea, sppic;
-	int light_level, coldept;
-	int tint_red, tint_green, tint_blue, tint_amount, tint_light = 255;
-
 	_G(our_eip) = 33;
 
 	// draw characters
-	for (int charid = 0; charid < _GP(game).numcharacters; ++charid) {
-		/*const*/ CharacterInfo *chin = &_GP(game).chars[charid];
-		if (chin->on == 0)
+	for (uint32_t charid = 0; charid < _GP(game).numcharacters; ++charid) {
+		const CharacterInfo &chin = _GP(game).chars[charid];
+		if (chin.on == 0)
 			continue;
-		if (chin->room != _G(displayed_room))
+		if (chin.room != _G(displayed_room))
 			continue;
 		_G(eip_guinum) = charid;
 
-		/*const*/ CharacterExtras &chex = _GP(charextra)[charid];
+		const CharacterExtras &chex = _GP(charextra)[charid];
 
 		_G(our_eip) = 330;
 
-		// FIXME ----- move to update
-		// Test for valid view and loop
-		if (chin->view < 0) {
-			quitprintf("!The character '%s' was turned on in the current room (room %d) but has not been assigned a view number.",
-			           chin->name, _G(displayed_room));
-		}
-		if (chin->loop >= _GP(views)[chin->view].numLoops) {
-			quitprintf("!The character '%s' could not be displayed because there was no loop %d of view %d.",
-					   chin->name, chin->loop, chin->view + 1);
-			continue;  // FIXME: upstream does not break here
-		}
-		// If frame is too high -- fallback to the frame 0;
-		// there's always at least 1 dummy frame at index 0
-		if (chin->frame >= _GP(views)[chin->view].loops[chin->loop].numFrames)
-			chin->frame = 0;
+		int tint_red = 0, tint_green = 0, tint_blue = 0, tint_amount = 0;
+		int tint_light = 0, light_level = 0;
 
-		sppic = _GP(views)[chin->view].loops[chin->loop].frames[chin->frame].pic;
-		if (sppic < 0)
-			sppic = 0;  // in case it's screwed up somehow
-		_G(our_eip) = 331;
-		// sort out the stretching if required
-		onarea = get_walkable_area_at_character(charid);
-		_G(our_eip) = 332;
-
-		// calculates the zoom level
-		if (chin->flags & CHF_MANUALSCALING)  // character ignores scaling
-			zoom_level = chex.zoom;
-		else if ((onarea <= 0) && (_GP(thisroom).WalkAreas[0].ScalingFar == 0)) {
-			zoom_level = chex.zoom;
-			// NOTE: room objects don't have this fix
-			if (zoom_level == 0)
-				zoom_level = 100;
-		} else
-			zoom_level = get_area_scaling(onarea, chin->x, chin->y);
-
-		chex.zoom = zoom_level;
-
-		tint_red = tint_green = tint_blue = tint_amount = tint_light = light_level = 0;
-
-		if (chin->flags & CHF_HASTINT) {
+		if (chin.flags & CHF_HASTINT) {
 			// object specific tint, use it
 			tint_red = chex.tint_r;
 			tint_green = chex.tint_g;
@@ -1505,24 +1465,25 @@ void prepare_characters_for_drawing() {
 			tint_amount = chex.tint_level;
 			tint_light = chex.tint_light;
 			light_level = 0;
-		} else if (chin->flags & CHF_HASLIGHT) {
+		} else if (chin.flags & CHF_HASLIGHT) {
 			light_level = chex.tint_light;
 		} else {
-			get_local_tint(chin->x, chin->y, chin->flags & CHF_NOLIGHTING,
+			get_local_tint(chin.x, chin.y, chin.flags & CHF_NOLIGHTING,
 			               &tint_amount, &tint_red, &tint_green, &tint_blue,
 			               &tint_light, &light_level);
 		}
 
 		_G(our_eip) = 3330;
+		const int sppic = _GP(views)[chin.view].loops[chin.loop].frames[chin.frame].pic;
 		bool isMirrored = false;
 		int specialpic = sppic;
 		bool usingCachedImage = false;
 
-		coldept = _GP(spriteset)[sppic]->GetColorDepth();
+		const int coldept = _GP(spriteset)[sppic]->GetColorDepth();
 
 		// adjust the sppic if mirrored, so it doesn't accidentally
 		// cache the mirrored frame as the real one
-		if (_GP(views)[chin->view].loops[chin->loop].frames[chin->frame].flags & VFLG_FLIPSPRITE) {
+		if (_GP(views)[chin.view].loops[chin.loop].frames[chin.frame].flags & VFLG_FLIPSPRITE) {
 			isMirrored = true;
 			specialpic = -sppic;
 		}
@@ -1538,7 +1499,7 @@ void prepare_characters_for_drawing() {
 		// just use the cached image
 		if ((chsav.in_use) &&
 			(chsav.sppic == specialpic) &&
-			(chsav.zoom == zoom_level) &&
+			(chsav.zoom == chex.zoom) &&
 			(chsav.tintr == tint_red) &&
 			(chsav.tintg == tint_green) &&
 			(chsav.tintb == tint_blue) &&
@@ -1559,39 +1520,7 @@ void prepare_characters_for_drawing() {
 			chsav.in_use = false;
 		}
 
-		_G(our_eip) = 3332;
-
-		// FIXME ----- move to update
-		const int src_sprwidth = _GP(game).SpriteInfos[sppic].Width;
-		const int src_sprheight = _GP(game).SpriteInfos[sppic].Height;
-
-		if (zoom_level != 100) {
-			// it needs to be stretched, so calculate the new dimensions
-
-			scale_sprite_size(sppic, zoom_level, &newwidth, &newheight);
-			chex.width = newwidth;
-			chex.height = newheight;
-		} else {
-			// draw at original size, so just use the sprite width and height
-			// TODO: store width and height always, that's much simplier to use for reference!
-			chex.width = 0;
-			chex.height = 0;
-			newwidth = src_sprwidth;
-			newheight = src_sprheight;
-		}
-		// FIXME ----- move to update
-
-		_G(our_eip) = 3336;
-
-		// FIXME ----- move to update
-		// Calculate the X & Y co-ordinates of where the sprite will be
-		const int atxp = (data_to_game_coord(chin->x)) - newwidth / 2;
-		const int atyp = (data_to_game_coord(chin->y) - newheight)
-		                 // adjust the Y positioning for the character's Z co-ord
-		                 - data_to_game_coord(chin->z);
-		// FIXME ----- move to update
-
-		chsav.zoom = zoom_level;
+		chsav.zoom = chex.zoom;
 		chsav.sppic = specialpic;
 		chsav.tintr = tint_red;
 		chsav.tintg = tint_green;
@@ -1609,11 +1538,11 @@ void prepare_characters_for_drawing() {
 			// be scaled and/or flipped, as appropriate
 			bool actspsUsed = false;
 			if (!_G(gfxDriver)->HasAcceleratedTransform()) {
-				actspsUsed = scale_and_flip_sprite(useindx, sppic, newwidth, newheight, isMirrored);
+				actspsUsed = scale_and_flip_sprite(useindx, sppic, chex.width, chex.height, isMirrored);
 			}
 			if (!actspsUsed) {
 				// ensure actsps exists // CHECKME: why do we need this in hardware accel mode too?
-				recycle_bitmap(actsp.Bmp, coldept, src_sprwidth, src_sprheight);
+				recycle_bitmap(actsp.Bmp, coldept, _GP(game).SpriteInfos[sppic].Width, _GP(game).SpriteInfos[sppic].Height);
 			}
 
 			_G(our_eip) = 335;
@@ -1641,14 +1570,14 @@ void prepare_characters_for_drawing() {
 
 		} // end if !cache.in_use
 
-		int usebasel = chin->get_baseline();
+		int usebasel = chin.get_baseline();
 
 		_G(our_eip) = 336;
 
-		const int bgX = atxp + chin->pic_xoffs;
-		const int bgY = atyp + chin->pic_yoffs;
+		const int bgX = chin.actx + chin.pic_xoffs;
+		const int bgY = chin.acty + chin.pic_yoffs;
 
-		if (chin->flags & CHF_NOWALKBEHINDS) {
+		if (chin.flags & CHF_NOWALKBEHINDS) {
 			// ignore walk-behinds, do nothing
 			if (_G(walkBehindMethod) == DrawAsSeparateSprite) {
 				usebasel += _GP(thisroom).Height;
@@ -1662,7 +1591,7 @@ void prepare_characters_for_drawing() {
 		}
 
 		if (_G(gfxDriver)->HasAcceleratedTransform()) {
-			actsp.Ddb->SetStretch(newwidth, newheight);
+			actsp.Ddb->SetStretch(chex.width, chex.height);
 			actsp.Ddb->SetFlippedLeftRight(isMirrored);
 			actsp.Ddb->SetTint(tint_red, tint_green, tint_blue, (tint_amount * 256) / 100);
 
@@ -1682,12 +1611,7 @@ void prepare_characters_for_drawing() {
 
 		_G(our_eip) = 337;
 
-		// FIXME ----- move to update
-		chin->actx = atxp;
-		chin->acty = atyp;
-		// FIXME ----- move to update
-
-		actsp.Ddb->SetAlpha(GfxDef::LegacyTrans255ToAlpha255(chin->transparency));
+		actsp.Ddb->SetAlpha(GfxDef::LegacyTrans255ToAlpha255(chin.transparency));
 		add_to_sprite_list(actsp.Ddb, bgX, bgY, usebasel, false);
 	}
 }
