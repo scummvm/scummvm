@@ -269,7 +269,7 @@ struct WizSimpleBitmap {
 	int32 bitmapWidth;
 	int32 bitmapHeight;
 
-	WizSimpleBitmap() {
+	WizSimpleBitmap() : bufferPtr(nullptr), bitmapWidth(0), bitmapHeight(0) {
 
 	}
 };
@@ -373,7 +373,7 @@ struct WarpWizOneSpanTable {
 	int spanCount;
 };
 
-enum WizRenderingFlags {
+enum WizRenderingFlags : uint {
 	// Standard rendering flags
 	kWRFUsePalette = 0x00000001,
 	kWRFRemap      = 0x00000002,
