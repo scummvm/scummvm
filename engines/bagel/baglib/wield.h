@@ -63,7 +63,7 @@ public:
 	virtual ErrorCode attach();
 	virtual ErrorCode detach();
 
-	virtual ErrorCode ActivateLocalObject(CBagObject *pObj);
+	virtual ErrorCode activateLocalObject(CBagObject *pObj);
 	virtual ErrorCode DeactivateLocalObject(CBagObject *pObj);
 };
 

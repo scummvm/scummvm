@@ -708,7 +708,7 @@ bool CBagRPObject::AddToMsgQueue(CBagRPObject *pRPObj) {
 
 	if (pLogWld) {
 		pRPObj->SetMsgWaiting(true); // mark this guy as waiting
-		pLogWld->ActivateLocalObject(pRPObj);
+		pLogWld->activateLocalObject(pRPObj);
 
 		pRPObj->SetVisible(true);     // make sure it gets updated.
 		pRPObj->m_bRPRead = false;    // hasn't been read yet
@@ -1023,7 +1023,7 @@ void CBagRPObject::EvaluateDossiers() {
 				CBagLogSuspect *pSusObj = (CBagLogSuspect *)pLogZWld->GetObject(pDosLObj->m_pDossier->m_sSuspectVar);
 
 				if (pSusObj != nullptr) {
-					pSusObj->SetSusRP(true);
+					pSusObj->setSusResiduePrinted(true);
 				}
 			}
 		}
@@ -1159,7 +1159,7 @@ void CBagRPObject::SetLogPages(int nPages) {
 		// Let the float code know how many pages we have.
 		pLogWld->SetNumFloatPages(nPages);
 		if (nPages == 1) {
-			pLogWld->SetCurFltPage(1);
+			pLogWld->setCurFltPage(1);
 		}
 	}
 }
@@ -1398,7 +1398,7 @@ void CBagRPObject::ShowRPReview() {
 
 					bool bIsAttached = pRPObj->m_pObjectName->isAttached();
 					if (bIsAttached == false) {
-						pLogWld->ActivateLocalObject(pRPObj->m_pObjectName);
+						pLogWld->activateLocalObject(pRPObj->m_pObjectName);
 					}
 					pRPObj->m_pObjectName->SetVisible();
 					pRPObj->m_pObjectName->SetFloating();
@@ -1450,7 +1450,7 @@ void CBagRPObject::RemoveAllFromMsgQueue(CBagRPObject *pCurRPObj) {
 		CBagRPObject *pRPObj = m_pRPList->GetNodeItem(i);
 
 		if (pRPObj->m_bRPReported && pRPObj->m_bRPRead == false && pRPObj != pCurRPObj) {
-			pLogWld->RemoveFromMsgQueue(pRPObj);
+			pLogWld->removeFromMsgQueue(pRPObj);
 
 			pRPObj->m_bRPRead = true;
 			pRPObj->m_bMoviePlayed = true; // Don't want this guys movie again

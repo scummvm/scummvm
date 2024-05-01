@@ -219,7 +219,7 @@ ErrorCode CBagStorageDev::RemoveObject(CBagObject *pRObj) {
 }
 
 
-ErrorCode CBagStorageDev::ActivateLocalObject(CBagObject  *pObj) {
+ErrorCode CBagStorageDev::activateLocalObject(CBagObject  *pObj) {
 	ErrorCode errCode = ERR_NONE;
 
 	if (pObj != nullptr) {
@@ -245,7 +245,7 @@ ErrorCode CBagStorageDev::activateLocalObject(const CBofString &sName) {
 	// can't use a empty string
 	Assert(!sName.IsEmpty());
 
-	return ActivateLocalObject(GetObject(sName));
+	return activateLocalObject(GetObject(sName));
 }
 
 ErrorCode CBagStorageDev::DeactivateLocalObject(CBagObject *pObj) {
@@ -273,7 +273,7 @@ ErrorCode CBagStorageDev::deactivateLocalObject(const CBofString &sName) {
 }
 
 
-CBofPoint CBagStorageDev::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
+CBofPoint CBagStorageDev::arrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 	CBofPoint NextPos = nPos;
 
 	if (getBackground() != nullptr) {
@@ -312,7 +312,7 @@ ErrorCode CBagStorageDev::AttachActiveObjects() {
 	ErrorCode errCode = ERR_NONE;
 	CBofPoint nArrangePos(0, 0);	// Removed 5,5 padding
 
-	CBagLog::InitArrangePages();
+	CBagLog::initArrangePages();
 
 	int nCount = GetObjectCount();
 	if (nCount != 0) {
@@ -345,7 +345,7 @@ ErrorCode CBagStorageDev::AttachActiveObjects() {
 					if (pObj->IsModal())
 						SetContainsModal(true);
 					if (pObj->IsFloating()) {
-						nArrangePos = ArrangeFloater(nArrangePos, pObj);
+						nArrangePos = arrangeFloater(nArrangePos, pObj);
 					}
 				} else if (pObj->isAttached()) {
 
@@ -359,7 +359,7 @@ ErrorCode CBagStorageDev::AttachActiveObjects() {
 		}
 	}
 
-	CBagLog::ArrangePages();
+	CBagLog::arrangePages();
 
 	return errCode;
 }
@@ -789,7 +789,7 @@ ErrorCode CBagStorageDev::LoadFileFromStream(CBagIfstream &fpInput, const CBofSt
 			char s[256];
 			fpInput.getCh(s, 256);
 		} else {
-			pObj = OnNewUserObject(sWorkStr);
+			pObj = onNewUserObject(sWorkStr);
 		}
 
 		if (pObj != nullptr) {
@@ -1078,7 +1078,7 @@ CBagObject *CBagStorageDev::OnNewVariableObject(const CBofString &) {
 }
 
 
-CBagObject *CBagStorageDev::OnNewUserObject(const CBofString &str) {
+CBagObject *CBagStorageDev::onNewUserObject(const CBofString &str) {
 	char szLocalBuff[256];
 	CBofString s(szLocalBuff, 256);
 

@@ -120,7 +120,7 @@ ErrorCode SBarThud::LoadFileFromStream(CBagIfstream &fpInput, const CBofString &
 //
 
 
-ErrorCode SBarThud::ActivateLocalObject(CBagObject *pObj) {
+ErrorCode SBarThud::activateLocalObject(CBagObject *pObj) {
 	if (pObj == nullptr)
 		return ERR_UNKNOWN;
 
@@ -128,7 +128,7 @@ ErrorCode SBarThud::ActivateLocalObject(CBagObject *pObj) {
 	if (m_nObjects)
 		return ERR_UNKNOWN;
 
-	return CBagStorageDev::ActivateLocalObject(pObj);
+	return CBagStorageDev::activateLocalObject(pObj);
 }
 
 ErrorCode SBarThud::DeactivateLocalObject(CBagObject *pObj) {

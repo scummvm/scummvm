@@ -2119,7 +2119,7 @@ void CBagMasterWin::RestoreActiveMessages(CBagStorageDevManager *pSDevManager) {
 				for (int j = 0; j < m; j++) {
 					CBagObject *pObj = pSDev->GetObjectByPos(j);
 					if (pObj != nullptr && pObj->IsMsgWaiting()) {
-						pSDev->ActivateLocalObject(pObj);
+						pSDev->activateLocalObject(pObj);
 					}
 				}
 			}

@@ -620,10 +620,8 @@ void CBagTextObject::RecalcTextRect(bool bTextFromFile) {
 void CBagTextObject::SetPSText(CBofString *p) {
 	Assert(IsValidObject(this));
 
-	if (m_psText != nullptr) {
-		delete m_psText;
-		m_psText = nullptr;
-	}
+	delete m_psText;
+	m_psText = nullptr;
 
 	if (p != nullptr) {
 		m_psText = new CBofString(*p);

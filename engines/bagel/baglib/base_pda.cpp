@@ -288,7 +288,7 @@ bool SBBasePda::showLog() {
 bool SBBasePda::msgLight() {
 	// If we have a map window
 	if (_logWnd) {
-		((CBagLog *)_logWnd)->PlayMsgQue();
+		((CBagLog *)_logWnd)->playMsgQueue();
 	}
 
 	return true;

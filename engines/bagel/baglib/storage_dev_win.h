@@ -205,7 +205,7 @@ public:
 	void setPosition(const CBofPoint &pos);
 
 	virtual ErrorCode AddObject(CBagObject *pObj, int nPos = 0); // Add a new object
-	virtual ErrorCode ActivateLocalObject(CBagObject *pObj);
+	virtual ErrorCode activateLocalObject(CBagObject *pObj);
 	virtual ErrorCode activateLocalObject(const CBofString &sName);
 	virtual ErrorCode AttachActiveObjects();
 
@@ -351,11 +351,11 @@ public:
 	virtual CBagObject *OnNewAreaObject(const CBofString &sInit);
 	virtual CBagObject *OnNewExpressionObject(const CBofString &sInit);
 	virtual CBagObject *OnNewVariableObject(const CBofString &sInit);
-	virtual CBagObject *OnNewUserObject(const CBofString &sInit);
+	virtual CBagObject *onNewUserObject(const CBofString &sInit);
 	virtual CBagObject *OnNewThingObject(const CBofString &sInit);
 
 	// Call to arrange floating object, override to customize layout
-	virtual CBofPoint ArrangeFloater(CBofPoint nPos, CBagObject *pObj);
+	virtual CBofPoint arrangeFloater(CBofPoint nPos, CBagObject *pObj);
 
 	// Set and Get the number of pages required to display all floating objects
 	int GetNumFloatPages() {

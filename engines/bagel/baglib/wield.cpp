@@ -59,7 +59,7 @@ ErrorCode CBagWield::attach() {
 		if (pObj->IsActive() && (pObj->GetType() == BOFSPRITEOBJ || pObj->GetType() == BOFBMPOBJ)) {
 			if (nObjects == 0) {
 				nObjects++;
-				ActivateLocalObject(pObj);
+				activateLocalObject(pObj);
 
 			} else {
 				pObj->detach();
@@ -93,7 +93,7 @@ bool CBagWield::OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
 	return true;
 }
 
-ErrorCode CBagWield::ActivateLocalObject(CBagObject *pObj) {
+ErrorCode CBagWield::activateLocalObject(CBagObject *pObj) {
 	ErrorCode errCode = ERR_UNKNOWN;
 
 	if (pObj != nullptr) {
@@ -134,7 +134,7 @@ ErrorCode CBagWield::ActivateLocalObject(CBagObject *pObj) {
 		pObj->setPosition(cPos);
 		pObj->SetFloating(false);
 
-		errCode = CBagStorageDev::ActivateLocalObject(pObj);
+		errCode = CBagStorageDev::activateLocalObject(pObj);
 	}
 
 	return errCode;
