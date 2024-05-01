@@ -554,12 +554,11 @@ void BitmapCastMember::load() {
 			}
 		}
 
-		CastMemberInfo *ci = _cast->getCastMemberInfo(_castId);
+		Common::String imageFilename = _cast->getLinkedPath(_castId);
 
 		if ((pic == nullptr || pic->size() == 0)
-				&& ci && !ci->fileName.empty()) {
+				&& !imageFilename.empty()) {
 			// image file is linked, load from the filesystem
-			Common::String imageFilename = ci->directory + g_director->_dirSeparator + ci->fileName;
 			Common::Path location = findPath(imageFilename);
 			Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(location);
 			if (file) {

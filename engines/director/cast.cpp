@@ -726,6 +726,18 @@ void Cast::loadCast() {
 	}
 }
 
+Common::String Cast::getLinkedPath(int castId) {
+	if (!_castsInfo.contains(castId))
+		return Common::String();
+	Common::String filename = _castsInfo[castId]->fileName;
+	if (filename.empty())
+		return Common::String();
+	Common::String directory = _castsInfo[castId]->directory;
+	if (directory.lastChar() != g_director->_dirSeparator)
+		directory += g_director->_dirSeparator;
+	return directory + filename;
+}
+
 Common::String Cast::getVideoPath(int castId) {
 	Common::String res;
 	CastMember *cast = _loadedCast->getVal(castId);
@@ -760,12 +772,7 @@ Common::String Cast::getVideoPath(int castId) {
 
 	if (videoData == nullptr || videoData->size() == 0) {
 		// video file is linked, load from the filesystem
-
-		Common::String filename = _castsInfo[castId]->fileName;
-		Common::String directory = _castsInfo[castId]->directory;
-		if (directory.lastChar() != g_director->_dirSeparator)
-			directory += g_director->_dirSeparator;
-		res = directory + filename;
+		res = getLinkedPath(castId);
 	} else {
 		Video::QuickTimeDecoder qt;
 		qt.loadStream(videoData);
