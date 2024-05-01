@@ -279,9 +279,9 @@ void AnimateObject4(int obn, int loopn, int spdd, int rept) {
 
 void MergeObject(int obn) {
 	if (!is_valid_object(obn)) quit("!MergeObject: invalid object specified");
-	int theHeight;
 
-	construct_object_gfx(obn, nullptr, &theHeight, true);
+	// FIXME: call update object scale
+	construct_object_gfx(obn, true);
 	Bitmap *actsp = get_cached_object_image(obn);
 
 	PBitmap bg_frame = _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic;
@@ -289,7 +289,7 @@ void MergeObject(int obn) {
 		quit("!MergeObject: unable to merge object due to color depth differences");
 
 	int xpos = data_to_game_coord(_G(objs)[obn].x);
-	int ypos = (data_to_game_coord(_G(objs)[obn].y) - theHeight);
+	int ypos = (data_to_game_coord(_G(objs)[obn].y) - _G(objs)[obn].last_height);
 
 	draw_sprite_support_alpha(bg_frame.get(), false, xpos, ypos, actsp, (_GP(game).SpriteInfos[_G(objs)[obn].num].Flags & SPF_ALPHACHANNEL) != 0);
 	invalidate_screen();
