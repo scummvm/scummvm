@@ -367,6 +367,9 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_game.platform == Common::kPlatformFMTowns) {
+		ConfMan.registerDefault("force_fmtowns_hires_mode", false);
+		if (ConfMan.hasKey("force_fmtowns_hires_mode"))
+			_forceFMTownsHiResMode = ConfMan.getBool("force_fmtowns_hires_mode");
 		ConfMan.registerDefault("smooth_scroll", true);
 		if (ConfMan.hasKey("smooth_scroll"))
 			_enableSmoothScrolling = ConfMan.getBool("smooth_scroll");
@@ -1149,6 +1152,11 @@ Common::Error ScummEngine::init() {
 	// Load it earlier so _useCJKMode variable could be set
 	loadCJKFont();
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	if (_game.platform == Common::kPlatformFMTowns && _forceFMTownsHiResMode)
+		_textSurfaceMultiplier = 2;
+#endif
+
 	Common::Path macResourceFile;
 
 	if (_game.platform == Common::kPlatformMacintosh) {
@@ -1256,14 +1264,9 @@ Common::Error ScummEngine::init() {
 	} else if (_renderMode == Common::kRenderCGA_BW || (_renderMode == Common::kRenderEGA && _supportsEGADithering)) {
 		initGraphics(_screenWidth * 2, _screenHeight * 2);
 	} else {
-		int screenWidth = _screenWidth;
-		int screenHeight = _screenHeight;
-		if (_useCJKMode || _macScreen) {
-			// CJK FT and DIG use usual NUT fonts, not FM-TOWNS ROM, so
-			// there is no text surface for them. This takes that into account
-			screenWidth *= _textSurfaceMultiplier;
-			screenHeight *= _textSurfaceMultiplier;
-		}
+		int screenWidth = _screenWidth * _textSurfaceMultiplier;
+		int screenHeight = _screenHeight * _textSurfaceMultiplier;
+
 		if (_game.features & GF_16BIT_COLOR
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 			|| _game.platform == Common::kPlatformFMTowns

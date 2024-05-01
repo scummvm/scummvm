@@ -656,6 +656,14 @@ static const ExtraGuiOption fmtownsTrimTo200 = {
 	0
 };
 
+static const ExtraGuiOption fmtownsForceHiResMode = {
+	_s("Run in original 640 x 480 resolution"),
+	_s("This allows more accurate pause/restart banners, but might impact performance or shader/scaler usage."),
+	"force_fmtowns_hires_mode",
+	false,
+	0,
+	0};
+
 static const ExtraGuiOption macV3LowQualityMusic = {
 	_s("Play simplified music"),
 	_s("This music was intended for low-end Macs, and uses only one channel."),
@@ -769,6 +777,10 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 			options.push_back(semiSmoothScrolling);
 		if (guiOptions.contains(GUIO_TRIM_FMTOWNS_TO_200_PIXELS))
 			options.push_back(fmtownsTrimTo200);
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		if (platform == Common::kPlatformFMTowns && Common::parseLanguage(language) != Common::JA_JPN)
+			options.push_back(fmtownsForceHiResMode);
+#endif
 	}
 
 	// The Steam Mac versions of Loom and Indy 3 are more akin to the VGA

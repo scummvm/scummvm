@@ -1893,6 +1893,7 @@ protected:
 	int _refreshArrayPos = 0;
 	bool _refreshNeedCatchUp = false;
 	bool _enableSmoothScrolling = false;
+	bool _forceFMTownsHiResMode = false;
 	uint32 _scrollTimer = 0;
 	uint32 _scrollDestOffset = 0;
 	uint16 _scrollFeedStrips[3];

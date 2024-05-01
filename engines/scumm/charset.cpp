@@ -1485,7 +1485,7 @@ void CharsetRendererTownsV3::drawBits1(Graphics::Surface &dest, int x, int y, co
 		return;
 	}
 #endif
-	bool scale2x = ((&dest == &_vm->_textSurface) && (_vm->_textSurfaceMultiplier == 2) && !(_sjisCurChar >= 256 && _vm->_useCJKMode));
+	bool scale2x = (_vm->_textSurfaceMultiplier == 2 && !(_sjisCurChar >= 256 && _vm->_useCJKMode) && (&dest == &_vm->_textSurface || &dest == &_vm->_virtscr[kBannerVirtScreen]));
 #endif
 
 	byte bits = 0;
