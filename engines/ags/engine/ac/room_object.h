@@ -80,9 +80,9 @@ struct RoomObject {
 
 	RoomObject();
 
-	int get_width();
-	int get_height();
-	int get_baseline();
+	int get_width() const;
+	int get_height() const;
+	int get_baseline() const;
 
 	inline bool has_explicit_light() const {
 		return (flags & OBJF_HASLIGHT) != 0;

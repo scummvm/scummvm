@@ -43,20 +43,23 @@ using namespace AGS::Shared;
 
 #define Random __Rand
 
-int CharacterInfo::get_effective_y() {
+int CharacterInfo::get_effective_y() const {
 	return y - z;
 }
-int CharacterInfo::get_baseline() {
+
+int CharacterInfo::get_baseline() const {
 	if (baseline < 1)
 		return y;
 	return baseline;
 }
-int CharacterInfo::get_blocking_top() {
+
+int CharacterInfo::get_blocking_top() const {
 	if (blocking_height > 0)
 		return y - blocking_height / 2;
 	return y - 2;
 }
-int CharacterInfo::get_blocking_bottom() {
+
+int CharacterInfo::get_blocking_bottom() const {
 	// the blocking_bottom should be 1 less than the top + height
 	// since the code does <= checks on it rather than < checks
 	if (blocking_height > 0)
