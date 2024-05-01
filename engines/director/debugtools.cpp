@@ -51,7 +51,7 @@ typedef struct ImGuiState {
 	bool _showCallStack = false;
 	bool _showVars = false;
 	bool _showChannels = false;
-	bool _showCast = true;
+	bool _showCast = false;
 	Common::List<CastMemberID> _scripts;
 } ImGuiState;
 
@@ -241,13 +241,13 @@ static void showCast() {
 						ImGui::Image(0, ImVec2(128, 128), ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImVec4(1, 1, 1, 1));
 					}
 					Common::String name(castMemberInfo ? castMemberInfo->name : "");
-					if(name.empty()) {
+					if (name.empty()) {
 						name = Common::String::format("%d", castMember._key);
 					}
 
 					Common::String text(name);
 					float textWidth = ImGui::CalcTextSize(text.c_str()).x;
-					if(textWidth > 128.f) textWidth = 128.f;
+					if (textWidth > 128.f) textWidth = 128.f;
 
 					float x = ImGui::GetCursorPosX();
 					ImGui::SetCursorPosX(x + (128 - textWidth) * 0.5f);
@@ -424,6 +424,34 @@ static void showChannels() {
 	ImGui::End();
 }
 
+static void renderScript(Symbol &sym) {
+	if (sym.type != HANDLER)
+		return;
+
+	Director::Lingo *lingo = g_director->getLingo();
+
+	if (sym.ctx && sym.ctx->_id) {
+		ImGui::Text("%d:", sym.ctx->_id);
+		ImGui::SameLine();
+	}
+	ImGui::Text("%s", lingo->formatFunctionName(sym).c_str());
+
+	ImDrawList *dl = ImGui::GetWindowDrawList();
+
+	//ImVec4 bp_color_disabled(0.9f, 0.08f, 0.0f, 0.0f);
+	//ImVec4 bp_color_enabled(0.9f, 0.08f, 0.0f, 1.0f);
+	ImVec4 bp_color_hover(0.42f, 0.17f, 0.13f, 1.0f);
+	ImVec2 mid(0, ImGui::GetFontSize() * 0.5f);
+
+	uint pc = 0;
+	while (pc < sym.u.defn->size()) {
+		dl->AddCircleFilled(mid, ImGui::GetFontSize() * 0.5f, ImGui::GetColorU32(bp_color_hover));
+		ImGui::Text("[%5d] ", pc);
+		ImGui::SameLine();
+		ImGui::Text("%s", lingo->decodeInstruction(sym.u.defn, pc, &pc).c_str());
+	}
+}
+
 static bool showScript(CastMemberID &id) {
 	Common::String wName("Script ");
 	wName += id.asString();
@@ -434,17 +462,16 @@ static bool showScript(CastMemberID &id) {
 	bool closed = true;
 
 	if (ImGui::Begin(wName.c_str(), &closed)) {
-		Director::Lingo *lingo = g_director->getLingo();
 		Cast *cast = g_director->getCurrentMovie()->getCasts()->getVal(id.castLib);
 		ScriptContext *ctx = g_director->getCurrentMovie()->getScriptContext(kScoreScript, id);
 
 		if (ctx) {
 			for (auto &handler : ctx->_functionHandlers)
-				ImGui::Text("%s\n", lingo->formatFunctionBody(handler._value).c_str());
+				renderScript(handler._value);
 		} else if (cast->_lingoArchive->factoryContexts.contains(id.member)) {
 			for (auto &it : *cast->_lingoArchive->factoryContexts.getVal(id.member)) {
 				for (auto &handler : it._value->_functionHandlers)
-					ImGui::Text("%s\n", lingo->formatFunctionBody(handler._value).c_str());
+					renderScript(handler._value);
 			}
 		} else {
 			ImGui::Text("[Nothing]");
