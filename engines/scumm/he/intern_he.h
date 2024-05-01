@@ -268,6 +268,7 @@ class Moonbase;
 class ScummEngine_v71he : public ScummEngine_v70he {
 	friend class Wiz;
 	friend class Moonbase;
+	friend class Gdi;
 
 protected:
 	enum SubOpType {

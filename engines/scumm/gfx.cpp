@@ -2597,9 +2597,10 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 	}
 	case BMCOMP_SOLID_COLOR_FILL:
 	{
-		WizRawPixel color = ((ScummEngine_v71he *)_vm)->_wiz->convert8BppToRawPixel(*bmapPtr, (WizRawPixel *)_vm->getHEPaletteSlot(1));
+		ScummEngine_v71he *tmpVm = ((ScummEngine_v71he *)_vm);
+		WizRawPixel color = tmpVm->_wiz->convert8BppToRawPixel(*bmapPtr, (WizRawPixel *)_vm->getHEPaletteSlot(1));
 
-		if (_vm->_game.heversion > 99 && _vm->VAR_COLOR_BLACK != 0xFF && _vm->VAR(_vm->VAR_COLOR_BLACK) == color)
+		if ((_vm->_game.heversion < 100) || (tmpVm->VAR_WIZ_TRANSPARENT_COLOR != 0xFF && _vm->VAR(tmpVm->VAR_WIZ_TRANSPARENT_COLOR) == *bmapPtr))
 			break;
 
 		WizSimpleBitmap dstBitmap;
