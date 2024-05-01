@@ -565,7 +565,7 @@ Graphics::Surface *Surface::convertTo(const PixelFormat &dstFormat, const byte *
 		assert(srcPalette);
 		uint32 map[256];
 
-		convertPaletteToMap(map, srcPalette, 256, dstFormat);
+		convertPaletteToMap(map, srcPalette, srcPaletteCount, dstFormat);
 		crossBlitMap(dst, src, surface->pitch, pitch, w, h, dstFormat.bytesPerPixel, map);
 	} else {
 		// Converting from high color to high color
