@@ -23,6 +23,7 @@
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-object.h"
 #include "director/debugtools.h"
 #include "director/cast.h"
 #include "director/channel.h"
@@ -34,9 +35,10 @@
 namespace Director {
 
 typedef struct ImGuiState {
-	bool _showCallStack;
-	bool _showVars;
-	bool _showChannels;
+	bool _showCallStack = false;
+	bool _showVars = false;
+	bool _showChannels = false;
+	Common::List<CastMemberID> _scripts;
 } ImGuiState;
 
 ImGuiState *_state = nullptr;
@@ -80,6 +82,11 @@ static ImVec4 convertColor(uint32 color) {
 	}
 
 	return ImGui::ColorConvertU32ToFloat4(color);
+}
+
+static void addScriptToDisplay(CastMemberID &id) {
+	_state->_scripts.remove(id);
+	_state->_scripts.push_back(id);
 }
 
 static void showChannels() {
@@ -170,8 +177,12 @@ static void showChannels() {
 					ImGui::Text("%3d", sprite._backColor); ImGui::SameLine();
 					ImGui::ColorButton("backColor", convertColor(sprite._backColor));
 					ImGui::TableNextColumn();
-					if (sprite._scriptId.member)
-						ImGui::Text("%s", sprite._scriptId.asString().c_str());
+					if (sprite._scriptId.member) {
+						ImGui::TextColored(ImVec4(0.5f, 0.5f, 1.0f, 1.0f), "%s", sprite._scriptId.asString().c_str());
+
+						if (ImGui::IsItemClicked(0))
+							addScriptToDisplay(sprite._scriptId);
+					}
 					ImGui::TableNextColumn();
 					ImGui::Text("0x%x", sprite._colorcode);
 					ImGui::TableNextColumn();
@@ -204,9 +215,60 @@ static void showChannels() {
 	ImGui::End();
 }
 
+static bool showScript(CastMemberID &id) {
+	Common::String wName("Script ");
+	wName += id.asString();
+
+	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(240, 240), ImGuiCond_FirstUseEver);
+
+	bool closed = true;
+
+	if (ImGui::Begin(wName.c_str(), &closed)) {
+		Director::Lingo *lingo = g_director->getLingo();
+		Cast *cast = g_director->getCurrentMovie()->getCasts()->getVal(id.castLib);
+		ScriptContext *ctx = g_director->getCurrentMovie()->getScriptContext(kScoreScript, id);
+
+		if (ctx) {
+			for (auto &handler : ctx->_functionHandlers)
+				ImGui::Text("%s\n", lingo->formatFunctionBody(handler._value).c_str());
+		} else if (cast->_lingoArchive->factoryContexts.contains(id.member)) {
+			ImGui::Text("[Factory]");
+#if 0
+			for (auto &it : *cast->_lingoArchive->factoryContexts.getVal(id.member)) {
+				Common::String prefix = Common::String::format("%s:", it._key.c_str());
+				Common::String handler = funcName.substr(prefix.size());
+				if (it._value->_functionHandlers.contains(handler))
+					ImGui::Text("%s\n", lingo->formatFunctionBody(it._value->_functionHandlers[handler]).c_str());
+			}
+#endif
+		} else {
+			ImGui::Text("[Nothing]");
+		}
+
+		ImGui::End();
+	}
+
+	if (!closed)
+		return false;
+
+	return true;
+}
+
+static void showScripts() {
+	if (_state->_scripts.empty())
+		return;
+
+	for (Common::List<CastMemberID>::iterator scr = _state->_scripts.begin(); scr != _state->_scripts.end(); ) {
+		if (!showScript(*scr))
+			scr = _state->_scripts.erase(scr);
+		else
+			scr++;
+	}
+}
+
 void onImGuiInit() {
 	_state = new ImGuiState();
-	memset(_state, 0, sizeof(ImGuiState));
 }
 
 void onImGuiRender() {
@@ -233,6 +295,7 @@ void onImGuiRender() {
 	showVars();
 	showCallStack();
 	showChannels();
+	showScripts();
 }
 
 void onImGuiCleanup() {
