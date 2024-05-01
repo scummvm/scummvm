@@ -500,6 +500,7 @@ void CBagStorageDev::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *vpInf
 	SetLActiveObject(pObj);
 }
 
+// TODO: This is a global, move it to the main class
 bool g_noMenuFl = false;
 
 
