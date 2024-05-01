@@ -709,6 +709,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "barnrunner5p3", "Barn Runner 5: The Forever Friday (Part 3)" },
 	{ "barnrunner5p5", "Barn Runner 5: The Forever Friday (Part 5)" },
 	{ "barnrunnerbake1", "Barn Runner Bake Sale 1: The Rich Dame Who Cut The Cheese" },
+	{ "barnrunnerfashion", "Barn Runner: Fashionably Late" },
 	{ "barnrunnerhall1", "Barn Runner Halloween 1: Fully Automatic Mojo" },
 	{ "barnrunnervalentine1", "Barn Runner Valentine 1: Pucker Factor" },
 	{ "barnrunnervn1", "Barn Runner Visual Novel 1: The Mayor's New Dress" },
@@ -985,6 +986,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "comedyquest", "Comedy Quest" },
 	{ "cometcollision", "Comet Collision" },
 	{ "comiclassic", "The Curse of Monkey Island: Classic Edition" },
+	{ "comicsquest", "Comics Quest" },
 	{ "commandoadv", "Commando: The Adventure Game" },
 	{ "comradecitizenpart1", "Comrade Citizen - Part I" },
 	{ "concurrence", "Concurrence" },
@@ -1192,6 +1194,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "dreadmacfarlanev2ep8", "Dread Mac Farlane V2 (Remake) - Episode 8" },
 	{ "dreadmacfarlanev2ep9", "Dread Mac Farlane V2 (Remake) - Episode 9" },
 	{ "dreadmacfarlanev2ep10", "Dread Mac Farlane V2 (Remake) - Episode 10" },
+	{ "dreadmacfarlanev2ep11", "Dread Mac Farlane V2 (Remake) - Episode 11" },
 	{ "dreamagine", "Dreamagine" },
 	{ "dreamcatadv", "Dreamcat Adventure: Beyond Dream and Time" },  // Jenseits von Traum und Zeit
 	{ "dreamdiary", "Dream Diary Quest" },
@@ -1639,6 +1642,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "infinitybit", "Infinity Bit" },
 	{ "inlimbo", "In Limbo" },
 	{ "innersanctum", "Inner Sanctum" },
+	{ "inourmidst", "In Our Midst" },
 	{ "insanebert", "Insane Bert" },
 	{ "insidemonkeyisland", "Inside Monkey Island" },
 	{ "insidemonkeyislandch2", "Inside Monkey Island: 2nd chapter" },
@@ -2750,6 +2754,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "scalestraining", "Scales Training Game" },
 	{ "scarecrowquest", "Scarecrow and his quest for a brain" },
 	{ "scaredstiff", "Scared Stiff" },
+	{ "scarehouse", "Scare House" },
 	{ "scarymaze", "Scary Maze Halloween 2016" },
 	{ "scenario5b", "Scenario 5B" },
 	{ "schnelltrial", "The Trial of the Schnellersparrow" },
@@ -2807,6 +2812,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "sheetart", "Sheet: The art of Art" },
 	{ "shemwood", "Shemwood Plains" },
 	{ "sherlock", "Sherlock - The Dark Arts" },
+	{ "sherwood", "Sherwood" },
 	{ "shifter", "Shifter" },
 	{ "shifters", "Shifters" },
 	{ "shiftersboxoutsidein", "Shifter's Box - Outside In" },
@@ -2980,6 +2986,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "steamsquares", "Steamsquares" },
 	{ "steamtrek", "Steam Trek: Clueless around Risa" },
 	{ "stediddyip1employment", "Stediddy in IP1 - Employment" },
+	{ "steeplejack", "Steeplejack" },
 	{ "stephenkingcars", "Stephen King DodgeEmCars" },
 	{ "stevequest", "Steve Quest" },
 	{ "stickamhour1", "Stickam Hour Game - Downfallen Superhero" },
@@ -3556,6 +3563,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "flowproblem", "Flow Problem" },
 	{ "gloriouswolfcomicsep1", "Glorious Wolf - Interactive Musical Comics Ep. 1" },
 	{ "gloriouswolfcomicsep2", "Glorious Wolf - Interactive Musical Comics Ep. 2" },
+	{ "jaro", "Jaro" },
 	{ "lonelyspaces", "Lonely Spaces" },
 	{ "metrocityresistance", "METRO CITY: Resistance" },
 	{ "paintedhills", "Painted Hills" },
@@ -4039,6 +4047,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY("breakfastrequiem", "Breakfast Requiem.ags", "9a3d632075dd0f50b28d3a4e0321999a", 21634549),
 	UNSUPPORTED_GAME_ENTRY("brianeggswoods", "Brian Eggs Woods.ags", "8b23975e2fdf0a5f1124230ca3219016", 11428377),
 	UNSUPPORTED_GAME_ENTRY("flowproblem", "Flow Problem.ags", "4e82d48102ea7ca1d72d675db69ddec3", 177517),  // v1.01
+	UNSUPPORTED_GAME_ENTRY("jaro", "Jaro.ags", "73ea767bec41a9e0bb7dc16ce74b35e4", 20333293),  // Polish
 	UNSUPPORTED_GAME_ENTRY("lonelyspaces", "LonelySpaces.ags", "0639cde13b999293a1b90d99e17ca49e", 17823673),  // v1
 	UNSUPPORTED_DEMO_ENTRY("metrocityresistance", "METRO CITY Resistance.ags", "f10254c9af0948cc26bef04ec0d6eb74", 1455799507),
 	UNSUPPORTED_GAME_ENTRY("strangerutopia", "StrangerInUtopia.exe", "5c3a31d27beb519dfe291ea27ead1371", 61286148), // Win
@@ -4332,6 +4341,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DETECTION_ENTRY_GUIO("dreamswitchhouse", "Dreams in the Witch House.exe", "160d78e898924f5cb1347b13746cc935", 484844189, Common::EN_ANY, "GOG.com", GUIO2(GUIO_NOLANG, GAMEOPTION_NO_SAVELOAD), nullptr, ADGF_NO_FLAGS),  // v1.07
 	DETECTION_ENTRY_GUIO("dreamswitchhouse", "Dreams in the Witch House.exe", "160d78e898924f5cb1347b13746cc935", 484795038, Common::EN_ANY, "Steam", GUIO2(GUIO_NOLANG, GAMEOPTION_NO_SAVELOAD), nullptr, ADGF_NO_FLAGS),  // v1.05
 	DETECTION_ENTRY_GUIO("dreamswitchhouse", "Dreams in the Witch House.exe", "160d78e898924f5cb1347b13746cc935", 484843981, Common::EN_ANY, "Steam", GUIO2(GUIO_NOLANG, GAMEOPTION_NO_SAVELOAD), nullptr, ADGF_NO_FLAGS),  // v1.07
+	DETECTION_ENTRY_GUIO("dreamswitchhouse", "Dreams in the Witch House.exe", "160d78e898924f5cb1347b13746cc935", 489032242, Common::UNK_LANG, "Steam", GUIO2(GUIO_NOLANG, GAMEOPTION_NO_SAVELOAD), nullptr, ADGF_NO_FLAGS),  // v1.08 beta
 	DETECTION_ENTRY_GUIO("dustbowl", "dustbowl.exe", "aa349d52fd620cf9642935cd5bdec5d8", 63365026, Common::EN_ANY, "Steam", GUIO2(GUIO_NOLANG, GAMEOPTION_NO_SAVELOAD), nullptr, ADGF_NO_FLAGS),
 	GAME_ENTRY_EN("dustbowl", "dustbowl.exe", "aa349d52fd620cf9642935cd5bdec5d8", 82185295),
 	DETECTION_ENTRY_GUIO("excavationhb", "TEOHB.exe", "f176b46bc89e227f745dae9878171676", 566323169, Common::EN_ANY, "Steam", GUIO3(GUIO_NOLANG, GUIO_NOLAUNCHLOAD, GAMEOPTION_NO_AUTOSAVE), AGSSPRITEFONT_CLIFFTOP, ADGF_NO_FLAGS), // Win
@@ -5673,6 +5683,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("barnrunner5p3", "Barn Runner 5-3.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 236159803),  // v1.2
 	GAME_ENTRY_EN("barnrunner5p5", "Barn Runner 5-5.exe", "beb4cc3da02c78321e80af92b834938c", 293046932),
 	GAME_ENTRY_EN("barnrunnerbake1", "BR Bake Sale 1.exe", "18b284c22010850f79bc5c20054a70c4", 29716432),
+	GAME_ENTRY_EN("barnrunnerfashion", "MAGS 04-24.exe", "615e806856b7730afadf1fea9a756b70", 18323428),
 	GAME_ENTRY_EN("barnrunnerhall1", "BR Halloween 1.exe", "18b284c22010850f79bc5c20054a70c4", 52243988),
 	GAME_ENTRY_EN("barnrunnerhall1", "BR Halloween 1.exe", "18b284c22010850f79bc5c20054a70c4", 52252562),  //v1.3
 	GAME_ENTRY_EN("barnrunnervalentine1", "BR Valentine 1.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 101774857),
@@ -6015,6 +6026,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("comedyquest", "Comedy Quest.exe", "7a0123d8f6575e9954a18125456515f4", 22381783),
 	GAME_ENTRY_EN_PLATFORM("cometcollision", "CometCollision.exe", "7c6e063343fc2ec2bfffc93a1bbd6cfe", 6027272, "MAGS"),
 	GAME_ENTRY_EN("cometcollision", "CometCollision.exe", "5b916edf70413f20906ceb9c05ac65b9", 6035658),  // v2-v3
+	GAME_ENTRY_LANG("comicsquest", "Comics Quest.exe", "93ff64eb8c917a738ca7d3da67ff7509", 6577187, Common::CS_CZE),
 	GAME_ENTRY_EN("commandoadv", "commando.exe", "0736c98683a5ee6179edd886ca674909", 6225721),
 	GAME_ENTRY_EN("comradecitizenpart1", "citizen.exe", "06a03fe35791b0578068ab1873455463", 2174301),
 	GAME_ENTRY_EN("concurrence", "Concurrence.exe", "27343924ddad3be0b97bdcaa71858b1b", 57168217),  //v1.1
@@ -6270,6 +6282,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("dreadmacfarlanev2ep8", "Dread Mac Farlane - episode 8.ags", "953493139f332e2be0a336246eb98167", 129754180),  // Eng-Fra
 	GAME_ENTRY("dreadmacfarlanev2ep9", "Dread Mac Farlane - episode 9.ags", "99263303dbb8f86440814eeba82506b8", 188806094),  // Eng-Fra
 	GAME_ENTRY("dreadmacfarlanev2ep10", "Dread Mac Farlane - episode 10.ags", "de0b2e49d690c18e30602c2619c7e104", 223828573),  // Eng-Fra
+	GAME_ENTRY("dreadmacfarlanev2ep11", "Dread Mac Farlane - episode 11.ags", "045342ca09babf5dd12c24e8cb5821f5", 359125814),  // Eng-Fra
 	GAME_ENTRY_EN("dreamychristmas", "Your dreamy Christmas.exe", "a4e6ec808b347f4456eae7c808e90727", 84727913),  // Windows
 	GAME_ENTRY_EN("dreamychristmas", "Your dreamy Christmas.ags", "f61d34a8a5c9501962c7161fe127aba2", 81696341),  // Linux
 	GAME_ENTRY_EN("dreamagine", "Game.exe", "256752c9a97b4780fc5e6f3239c8cdf1", 11122818),
@@ -6811,6 +6824,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("infinitybit", "InfinityBit.exe", "27343924ddad3be0b97bdcaa71858b1b", 48338191),
 	GAME_ENTRY_EN("inlimbo", "inLIMBO.exe", "0710e2ec71042617f565c01824f0cf3c", 1883031),
 	GAME_ENTRY_EN("innersanctum", "Inner Sanctum.exe", "36f44e064eab15e502caeb60fd09f52d", 88875883),
+	GAME_ENTRY_EN("inourmidst", "In Our Midst.exe", "37a9920da93e4599c9deb4ccd10121c0", 14729571),
 	GAME_ENTRY_EN("insanebert", "Insane Bert.exe", "18b284c22010850f79bc5c20054a70c4", 1675739),
 	GAME_ENTRY("insidemonkeyisland", "MIIM.exe", "06a03fe35791b0578068ab1873455463", 5186306),  // En-It
 	GAME_ENTRY_LANG("insidemonkeyisland", "MIIM.exe", "06a03fe35791b0578068ab1873455463", 5148690, Common::IT_ITA),
@@ -8129,6 +8143,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("scalestraining", "Scalestraining.ags", "81d110ed81cfc34e1e249ea0df2d4fdd", 3264621),
 	GAME_ENTRY_EN("scarecrowquest", "Scarecrow and his quest for a brain.exe", "099a8b752cba39bb76552e94197edbf4", 109875238),
 	GAME_ENTRY_EN("scaredstiff", "Scared Stiff.exe", "18b284c22010850f79bc5c20054a70c4", 57878023),
+	GAME_ENTRY_EN("scarehouse", "Scare House.exe", "7ddb9e776648faed5a51170d087074e9", 31133714),
 	GAME_ENTRY_EN("scarymaze", "Scary Maze.exe", "01823d511cc00f4de6fd920eb543c6e7", 5380554),
 	GAME_ENTRY("scenario5b", "scenario.exe", "707c317aa3cf27d21107ae3a52296baa", 4151144),  // Eng-Ita
 	GAME_ENTRY_EN("schnelltrial", "TSS2.exe", "18456f28d9bf843b087e80072c85beca", 11217104),
@@ -8198,6 +8213,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("sheepquest", "SheepQuest.exe", "c62e6e17113f278357859e2b9d5e4dbf", 16505844),  // Eng-Deu
 	GAME_ENTRY_EN("sheetart", "Sheet.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 7431391),
 	GAME_ENTRY("sherlock", "Sherlock.exe", "615e73fc1874e92d60a1996c2330ea36", 19108029),  // En-Fr
+	GAME_ENTRY_EN("sherwood", "Sherwood.ags", "1f20e6ed6713a8ca9a2f07077719163f", 2728754),
 	GAME_ENTRY_EN("shifter", "Shifter.exe", "615e73fc1874e92d60a1996c2330ea36", 35991817),
 	GAME_ENTRY_EN("shifters", "Shifters.exe", "0241777c2537fc5d077c05cde10bfa9f", 9888383),
 	GAME_ENTRY_EN("shiftersboxoutsidein", "Box.exe", "fc17e9b3ab53f6b4841e2a4af5c782ff", 24471804),
@@ -8411,6 +8427,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("steamsquares", "Steamsquares.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 1993722),
 	GAME_ENTRY_EN("steamtrek", "steamtrek.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 14807756),
 	GAME_ENTRY_EN("stediddyip1employment", "stediddy1.exe", "5872fea5a958bc74c2d9ca7b2d196c42", 27136166),
+	GAME_ENTRY_EN("steeplejack", "steeplejack.ags", "3025c45908736d5849ecd4d696211d30", 6114285),
 	GAME_ENTRY_EN_PLATFORM("stephenkingcars", "Stephen King.exe", "82da2565c456dcfb265ded6fe3189c0b", 39260572, "Alpha"),
 	GAME_ENTRY_EN("stevequest", "SteveQuest.exe", "615e73fc1874e92d60a1996c2330ea36", 4552527),  // Windows
 	GAME_ENTRY_EN("stevequest", "ac2game.dat", "615e73fc1874e92d60a1996c2330ea36", 4552527),  // Linux
