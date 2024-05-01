@@ -74,7 +74,7 @@ ErrorCode CBagSpriteObject::attach() {
 				setProperty("CURR_CEL", getState());
 
 				// This might add something to the PDA, make sure it gets redrawn.
-				CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev());
+				CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev());
 
 				if (pMainWin != nullptr) {
 					pMainWin->SetPreFilterPan(true);

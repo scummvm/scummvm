@@ -35,27 +35,27 @@
 
 namespace Bagel {
 
-#define SDEVMNGR CBagel::getBagApp()->getMasterWnd()->GetStorageDevManager()
-#define VARMNGR CBagel::getBagApp()->getMasterWnd()->GetVariableManager()
+#define SDEV_MANAGER CBagel::getBagApp()->getMasterWnd()->getStorageDevManager()
+#define VAR_MANAGER CBagel::getBagApp()->getMasterWnd()->getVariableManager()
 
 class CBagStorageDevManager;
 class CBagStorageDevWnd;
 class CBagStorageDev;
 
 enum SpaceBarEventType {
-	WM_ENTERPANWINDOW     = 1001,
-	WM_ENTERCLOSEUPWINDOW = 1002,
-	WM_EXITCLOSEUPWINDOW  = 1003,
-	WM_ENTERNEWWLD        = 1004,
+	WM_ENTER_PAN_WINDOW     = 1001,
+	WM_ENTER_CLOSE_UP_WINDOW = 1002,
+	WM_EXIT_CLOSE_UP_WINDOW  = 1003,
+	WM_ENTER_NEW_WLD        = 1004,
 	WM_DIE                = 1005,
-	WM_SHOWSYSTEMDLG      = 1006
+	WM_SHOW_SYSTEM_DLG      = 1006
 };
 
 #define MAX_CURSORS 60
 
 // Some utility routines
-void SetCICStatus(CBagStorageDev *pSDev);
-bool GetCICStatus();
+void setCICStatus(CBagStorageDev *sdev);
+bool getCICStatus();
 
 /**
  * This is the main window that is never destroyed throughout the game.
@@ -65,27 +65,27 @@ bool GetCICStatus();
  */
 class CBagMasterWin : public CBofWindow, public CBagParseObject {
 protected:
-	static bool m_bObjSave;
-	static ST_OBJ *m_pObjList;
-	static CBagCursor *m_cCursorList[MAX_CURSORS];
+	static bool _objSaveFl;
+	static ST_OBJ *_objList;
+	static CBagCursor *_cursorList[MAX_CURSORS];
 
-	CBagStorageDevWnd *m_pGameWindow;
+	CBagStorageDevWnd *_gameWindow;
 
-	CBofString m_cWldScript;
-	CBofString m_sStartWld;
-	CBofString m_cCDChangeAudio;
-	CBofString m_cSysScreen;
+	CBofString _wldScript;
+	CBofString _startWld;
+	CBofString _cdChangeAudio;
+	CBofString _sysScreen;
 
-	uint16 m_nDiskID;
-	int m_nFadeIn;
-	CBofList<CBagStorageDev *> *m_pGameSDevList;
-	CBagStorageDevManager *m_pStorageDeviceList;
-	CBagVarManager *m_pVariableList; // List of variables used throughout wld
-	CBofSound *m_pWaitSound;
-	static int m_nCurCursor;
+	uint16 _diskId;
+	int _fadeIn;
+	CBofList<CBagStorageDev *> *_gameSDevList;
+	CBagStorageDevManager *_storageDeviceList;
+	CBagVarManager *_variableList; // List of variables used throughout wld
+	CBofSound *_waitSound;
+	static int _curCursor;
 
 public:
-	static int m_lMenuCount;
+	static int _menuCount;
 
 	CBagMasterWin();
 	virtual ~CBagMasterWin();
@@ -93,127 +93,127 @@ public:
 
 	void close();
 
-	CBofString &GetWldScript() {
-		return m_cWldScript;
+	CBofString &getWldScript() {
+		return _wldScript;
 	}
 
-	static void setActiveCursor(int iCursor);
-	static int GetActiveCursor() {
-		return m_nCurCursor;
+	static void setActiveCursor(int cursorId);
+	static int getActiveCursor() {
+		return _curCursor;
 	}
 
 	// User options
-	static bool GetFlyThru();
+	static bool getFlyThru();
 
-	static bool GetPanimations();
-	static void SetPanimations(bool bPanims);
+	static bool getPanimations();
+	static void setPanimations(bool panimsFl);
 
-	static int GetCorrection();
-	static void SetCorrection(int nCorrection);
+	static int getCorrection();
+	static void setCorrection(int correction);
 
-	static int GetPanSpeed();
-	static void SetPanSpeed(int nSpeed);
+	static int getPanSpeed();
+	static void setPanSpeed(int speed);
 
-	static int GetMidiVolume();
-	static void SetMidiVolume(int nVol);
+	static int getMidiVolume();
+	static void setMidiVolume(int vol);
 
-	static int GetWaveVolume();
-	static void SetWaveVolume(int nVol);
+	static int getWaveVolume();
+	static void setWaveVolume(int vol);
 
-	static bool GetMidi() {
-		return GetMidiVolume() != 0;
+	static bool getMidi() {
+		return getMidiVolume() != 0;
 	}
-	static bool GetDigitalAudio() {
-		return GetWaveVolume() != 0;
+	static bool getDigitalAudio() {
+		return getWaveVolume() != 0;
 	}
 
-	static void MuteToggle();
-	static void ForcePaintScreen();
+	static void muteToggle();
+	static void forcePaintScreen();
 
-	virtual ErrorCode ShowSystemDialog(bool bSave = true);
-	bool ShowRestartDialog(CBofWindow *pWin = nullptr, bool bSave = true);
-	bool ShowSaveDialog(CBofWindow *pWin, bool bSave = true);
-	bool ShowRestoreDialog(CBofWindow *pWin, bool bSave = true);
-	bool ShowQuitDialog(CBofWindow *pWin, bool bSave = true);
-	ErrorCode ShowCreditsDialog(CBofWindow *pWin, bool bSave = true);
+	virtual ErrorCode showSystemDialog(bool saveFl = true);
+	bool showRestartDialog(CBofWindow *win = nullptr, bool saveFl = true);
+	bool showSaveDialog(CBofWindow *win, bool saveFl = true);
+	bool showRestoreDialog(CBofWindow *win, bool saveFl = true);
+	bool showQuitDialog(CBofWindow *win, bool saveFl = true);
+	ErrorCode showCreditsDialog(CBofWindow *win, bool saveFl = true);
 
-	void FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf);
-	void DoRestore(ST_BAGEL_SAVE *pSaveBuf);
+	void fillSaveBuffer(ST_BAGEL_SAVE *saveBuf);
+	void doRestore(ST_BAGEL_SAVE *saveBuf);
 
-	ErrorCode NewGame();
+	ErrorCode newGame();
 
-	ErrorCode LoadFile(const CBofString &sWldName, const CBofString &sStartWldName, bool bRestart = false, bool bSetStart = true);
+	ErrorCode loadFile(const CBofString &wldName, const CBofString &startWldName, bool restartFl = false, bool setStartFl = true);
 
-	ErrorCode SaveFile(const CBofString &sWldName);
-	ErrorCode LoadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName);
-	ErrorCode LoadGlobalVars(const CBofString &sWldName);
+	ErrorCode saveFile(const CBofString &wldName);
+	ErrorCode loadFileFromStream(CBagIfstream &input, const CBofString &wldName);
+	ErrorCode loadGlobalVars(const CBofString &wldName);
 
-	ErrorCode SetCurrfadeIn(int nFade) {
-		m_nFadeIn = nFade;
+	ErrorCode setCurrfadeIn(int fade) {
+		_fadeIn = fade;
 		return ERR_NONE;
 	}
-	ErrorCode SetStorageDev(const CBofString &sWldName, bool bEntry = true);
-	ErrorCode GotoNewWindow(const CBofString *pStr);
+	ErrorCode setStorageDev(const CBofString &wldName, bool entry = true);
+	ErrorCode gotoNewWindow(const CBofString *str);
 
-	uint16 GetDiskID() {
-		return m_nDiskID;
+	uint16 getDiskID() {
+		return _diskId;
 	}
-	void SetDiskID(uint16 did) {
-		m_nDiskID = did;
-	}
-
-	CBofWindow *GetCurrentGameWindow() {
-		return (CBofWindow *)m_pGameWindow;
-	}
-	CBagStorageDevWnd *GetCurrentStorageDev() {
-		return m_pGameWindow;
-	}
-	CBagStorageDevManager *GetStorageDevManager() {
-		return m_pStorageDeviceList;
-	}
-	CBagVarManager *GetVariableManager() {
-		return m_pVariableList;
+	void setDiskID(uint16 id) {
+		_diskId = id;
 	}
 
-	virtual CBagStorageDev *OnNewStorageDev(const CBofString &typestr) = 0;
-	virtual CBagStorageDev *OnNewStorageDev(int nType) = 0;
+	CBofWindow *getCurrentGameWindow() {
+		return (CBofWindow *)_gameWindow;
+	}
+	CBagStorageDevWnd *getCurrentStorageDev() {
+		return _gameWindow;
+	}
+	CBagStorageDevManager *getStorageDevManager() {
+		return _storageDeviceList;
+	}
+	CBagVarManager *getVariableManager() {
+		return _variableList;
+	}
 
-	virtual void OnNewFilter(CBagStorageDev *, const CBofString &typestr) = 0;
-	virtual void OnNewFilter(CBagStorageDev *pSDev, const int nType) = 0;
+	virtual CBagStorageDev *onNewStorageDev(const CBofString &typestr) = 0;
+	virtual CBagStorageDev *onNewStorageDev(int type) = 0;
 
-	virtual ErrorCode OnHelp(const CBofString &sHelpFile, bool bSaveBkg = true, CBofWindow *pParent = nullptr);
+	virtual void onNewFilter(CBagStorageDev *, const CBofString &typeStr) = 0;
+	virtual void onNewFilter(CBagStorageDev *sdev, const int type) = 0;
 
-	void onUserMessage(uint32 nMessage, uint32 lParam) override;
+	virtual ErrorCode onHelp(const CBofString &helpFile, bool saveBkgFl = true, CBofWindow *parent = nullptr);
 
-	void onKeyHit(uint32 lKey, uint32 lRepCount) override;
+	void onUserMessage(uint32 message, uint32 param) override;
+
+	void onKeyHit(uint32 keyCode, uint32 repCount) override;
 	void onClose() override;
 
-	ST_OBJ *GetObjList() {
-		return m_pObjList;
+	ST_OBJ *getObjList() {
+		return _objList;
 	}
-	void SetSaveObjs(bool bSave) {
-		m_bObjSave = bSave;
+	void setSaveObjs(bool saveFl) {
+		_objSaveFl = saveFl;
 	}
-	bool IsObjSave() {
-		return m_bObjSave;
+	bool isObjSave() {
+		return _objSaveFl;
 	}
 
-	void SaveSDevStack();
+	void saveSDevStack();
 
-	virtual void *GetDataStart() override {
-		return &m_pGameWindow;
+	void *getDataStart() override {
+		return &_gameWindow;
 	}
-	virtual void *GetDataEnd() override {
-		return &m_pVariableList + sizeof(CBagVarManager *);
+
+	void *getDataEnd() override {
+		return &_variableList + sizeof(CBagVarManager *);
 	}
 
 	// Since we do this from load file and do restore, centralize it in one location.
-	void RestoreActiveMessages(CBagStorageDevManager *pSDevManager);
+	void restoreActiveMessages(CBagStorageDevManager *sdevManager);
 };
 
-ErrorCode PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString &cStr, const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, int nJustify = JUSTIFY_CENTER, uint32 nFormat = FORMAT_DEFAULT, int nFont = FONT_DEFAULT);
-ErrorCode PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &cStr, const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, int nJustify = JUSTIFY_CENTER, uint32 nFormat = FORMAT_DEFAULT, int nFont = FONT_DEFAULT);
-ErrorCode WaitForInput();
+ErrorCode paintBeveledText(CBofWindow *win, CBofRect *rect, const CBofString &string, const int size, const int weight, const RGBCOLOR color = CTEXT_COLOR, int justify = JUSTIFY_CENTER, uint32 format = FORMAT_DEFAULT, int font = FONT_DEFAULT);
+ErrorCode waitForInput();
 
 extern bool g_bWaitOK;
 

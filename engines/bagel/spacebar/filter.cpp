@@ -236,43 +236,43 @@ static void GetVilVars() {
 
 	// check if HUD is on
 	cStr = "HUDON";
-	g_pHudOn = VARMNGR->GetVariable(cStr);
+	g_pHudOn = VAR_MANAGER->GetVariable(cStr);
 
 	cStr = "DGRAFITTI";
-	g_pDGrafiti = VARMNGR->GetVariable(cStr);
+	g_pDGrafiti = VAR_MANAGER->GetVariable(cStr);
 
 	cStr = "DRADIO";
-	g_pDRadio = VARMNGR->GetVariable(cStr);
+	g_pDRadio = VAR_MANAGER->GetVariable(cStr);
 
 	cStr = "PRECIPITATION";
-	g_pPrecip = VARMNGR->GetVariable(cStr);
+	g_pPrecip = VAR_MANAGER->GetVariable(cStr);
 
 	cStr = "PRECDECIMAL";
-	g_pPrecDecimal = VARMNGR->GetVariable(cStr);
+	g_pPrecDecimal = VAR_MANAGER->GetVariable(cStr);
 
 	cStr = "DUST";
-	g_pDust = VARMNGR->GetVariable(cStr);
+	g_pDust = VAR_MANAGER->GetVariable(cStr);
 
 	cStr = "DUSTDECIMAL";
-	g_pDustDecimal = VARMNGR->GetVariable(cStr);
+	g_pDustDecimal = VAR_MANAGER->GetVariable(cStr);
 
 	cStr = "DVOICEID";
-	g_pDVoiceID = VARMNGR->GetVariable(cStr);
+	g_pDVoiceID = VAR_MANAGER->GetVariable(cStr);
 
 	cStr = "DCHIPID";
-	g_pDChipID = VARMNGR->GetVariable(cStr);
+	g_pDChipID = VAR_MANAGER->GetVariable(cStr);
 
 	cStr = "TDIG1";
-	g_pTDig1 = VARMNGR->GetVariable(cStr);
+	g_pTDig1 = VAR_MANAGER->GetVariable(cStr);
 
 	cStr = "TDIG2";
-	g_pTDig2 = VARMNGR->GetVariable(cStr);
+	g_pTDig2 = VAR_MANAGER->GetVariable(cStr);
 
 	cStr = "TDIG3";
-	g_pTDig3 = VARMNGR->GetVariable(cStr);
+	g_pTDig3 = VAR_MANAGER->GetVariable(cStr);
 
 	cStr = "TDIG4";
-	g_pTDig4 = VARMNGR->GetVariable(cStr);
+	g_pTDig4 = VAR_MANAGER->GetVariable(cStr);
 }
 
 
@@ -574,7 +574,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				MACROREPLACE(cString);
 				BofPlaySound(cString, SOUND_WAVE | SOUND_MIX);
 				CBagStorageDev *pWieldSDev = nullptr;
-				pWieldSDev = SDEVMNGR->GetStorageDevice("BWIELD_WLD");
+				pWieldSDev = SDEV_MANAGER->GetStorageDevice("BWIELD_WLD");
 				if (chipID == 1)
 					pWieldSDev->activateLocalObject("GREENCHIP");
 				else
@@ -606,7 +606,7 @@ static bool TriFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		g_engine->viewRect.IntersectRect(pBmp->getRect(), g_engine->viewPortRect);
 	}
 
-	if (VARMNGR->GetVariable("GLASSESON")->GetNumValue()) {
+	if (VAR_MANAGER->GetVariable("GLASSESON")->GetNumValue()) {
 		CBofRect SrcRect(pTriBmp->getRect());
 		pTriBmp->paint(pBmp, g_engine->viewRect.left, g_engine->viewRect.top, &SrcRect, 1);
 	}
@@ -632,7 +632,7 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	}
 
 	zStr = "ZZAZZLVISION";
-	CBagVar *pVar = VARMNGR->GetVariable(zStr);
+	CBagVar *pVar = VAR_MANAGER->GetVariable(zStr);
 	if (pVar != nullptr) {
 
 		bZzazzlVision = true;
@@ -697,7 +697,7 @@ static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 	hStr = "HALLUCINATE";
 
-	if (VARMNGR->GetVariable(hStr)->GetNumValue() > 0) {
+	if (VAR_MANAGER->GetVariable(hStr)->GetNumValue() > 0) {
 		bHallucinating = true;
 		CBofPalette *pPal = pBmp->getPalette();
 		CBofBitmap *pTempBitmap = new CBofBitmap(g_engine->viewRect.width(), g_engine->viewRect.height(), pPal);
@@ -749,7 +749,7 @@ static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	char szVBuf[256];
 	CBofString vStr(szVBuf, 256);
 	vStr = "LIGHTNINGDELAY";
-	CBagVar *pVar = VARMNGR->GetVariable(vStr);
+	CBagVar *pVar = VAR_MANAGER->GetVariable(vStr);
 	int nLightningDelay = 0;
 
 	if (pVar != nullptr) {

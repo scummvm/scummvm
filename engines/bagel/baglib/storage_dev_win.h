@@ -324,7 +324,6 @@ public:
 		return xPoint;
 	}
 
-	// virtual ErrorCode   SaveFile(ostream& fpOutput);
 	virtual ErrorCode LoadFile(const CBofString &sFile);
 	virtual ErrorCode LoadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName, bool bAttach = true);
 

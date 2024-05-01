@@ -161,7 +161,7 @@ void CBagStartDialog::onBofButton(CBofObject *pObject, int nFlags) {
 		if (pApp != nullptr) {
 			CBagMasterWin *pWin = pApp->getMasterWnd();
 
-			if ((pWin != nullptr) && pWin->ShowRestoreDialog(this)) {
+			if ((pWin != nullptr) && pWin->showRestoreDialog(this)) {
 				close();
 			}
 		}

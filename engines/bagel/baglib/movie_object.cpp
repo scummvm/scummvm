@@ -74,14 +74,14 @@ CBagMovieObject::~CBagMovieObject() {
 bool CBagMovieObject::runObject() {
 	CBagPDA *pPDA = nullptr;
 	CBofWindow *pNewWin = nullptr;
-	SBZoomPda *pPDAz = (SBZoomPda *)SDEVMNGR->GetStorageDevice("BPDAZ_WLD");
+	SBZoomPda *pPDAz = (SBZoomPda *)SDEV_MANAGER->GetStorageDevice("BPDAZ_WLD");
 	bool bZoomed = (pPDAz == nullptr ? false : pPDAz->getZoomed());
 
 	// Get a pointer to the current game window
-	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev());
+	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev());
 
 	bool rc = true;
-	if (!m_bFlyThru || CBagMasterWin::GetFlyThru()) {
+	if (!m_bFlyThru || CBagMasterWin::getFlyThru()) {
 		rc = false;
 
 		CBofString sFileName = getFileName();
@@ -146,11 +146,11 @@ bool CBagMovieObject::runObject() {
 
 			bool isFiltered = false;
 			CBagMasterWin *pWnd = CBagel::getBagApp()->getMasterWnd();
-			CBagStorageDevWnd *pSDevWnd = (pWnd ? pWnd->GetCurrentStorageDev() : nullptr);
+			CBagStorageDevWnd *pSDevWnd = (pWnd ? pWnd->getCurrentStorageDev() : nullptr);
 
 			// Get the pda here, we need it so much anyway.
 			if (pPDA == nullptr) {
-				pPDA = (CBagPDA *)SDEVMNGR->GetStorageDevice("BPDA_WLD");
+				pPDA = (CBagPDA *)SDEV_MANAGER->GetStorageDevice("BPDA_WLD");
 			}
 			Assert(pPDA != nullptr);
 
@@ -181,7 +181,7 @@ bool CBagMovieObject::runObject() {
 				// If we have a movie playing in the zoom pda, then black out
 				// the background.  Examine movies will always play with a black background
 				// on the mac (prevents a palette shift).
-				CBagExam *pMovie = new CBagExam(CBagel::getBagApp()->getMasterWnd()->GetCurrentGameWindow(), sFileName, &r);
+				CBagExam *pMovie = new CBagExam(CBagel::getBagApp()->getMasterWnd()->getCurrentGameWindow(), sFileName, &r);
 
 				if (pMovie) {
 					// If there is an associated sound file, then start it up here.
@@ -220,7 +220,7 @@ bool CBagMovieObject::runObject() {
 						// Increment timer one, pda message counts as one turn
 						// Allow scripter to override timer increment
 						if (IsIncrement()) {
-							VARMNGR->IncrementTimers();
+							VAR_MANAGER->IncrementTimers();
 						}
 					}
 
@@ -540,12 +540,12 @@ bool CBagMovieObject::asynchPDAMovieCanPlay() {
 	CBofString sStr(szLocalBuff, 256);
 
 	sStr = "BPDAZ_WLD";
-	SBZoomPda *pPDAz = (SBZoomPda *)SDEVMNGR->GetStorageDevice(sStr);
+	SBZoomPda *pPDAz = (SBZoomPda *)SDEV_MANAGER->GetStorageDevice(sStr);
 
 	sStr = "BPDA_WLD";
-	CBagPDA *pPDA = (CBagPDA *)SDEVMNGR->GetStorageDevice(sStr);
+	CBagPDA *pPDA = (CBagPDA *)SDEV_MANAGER->GetStorageDevice(sStr);
 
-	CBagPanWindow *pMainWin = (CBagPanWindow *)(CBagel::getBagApp()->getMasterWnd()->GetCurrentGameWindow());
+	CBagPanWindow *pMainWin = (CBagPanWindow *)(CBagel::getBagApp()->getMasterWnd()->getCurrentGameWindow());
 
 	// Queue this message if any one of a variety of things is happening.
 	Assert(pPDA != nullptr);

@@ -127,10 +127,10 @@ public:
 
 	int ParseAlertBox(CBagIfstream &istr, const char *sTitle, const char *sFile, int nLine);
 
-	virtual void *GetDataStart() {
+	virtual void *getDataStart() {
 		return &m_bAttached;
 	}
-	virtual void *GetDataEnd() {
+	virtual void *getDataEnd() {
 		return &m_bAttached + sizeof(bool);
 	}
 };

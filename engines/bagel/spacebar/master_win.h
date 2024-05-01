@@ -36,13 +36,13 @@ namespace SpaceBar {
  */
 class CSBarMasterWin : public CBagMasterWin {
 public:
-	virtual CBagStorageDev *OnNewStorageDev(const CBofString &typestr);
-	virtual CBagStorageDev *OnNewStorageDev(int nType);
+	virtual CBagStorageDev *onNewStorageDev(const CBofString &typestr);
+	virtual CBagStorageDev *onNewStorageDev(int nType);
 
 	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
 
-	void OnNewFilter(CBagStorageDev *pSDev, const CBofString &typestr);
-	void OnNewFilter(CBagStorageDev *pSDev, const int nType);
+	void onNewFilter(CBagStorageDev *pSDev, const CBofString &typestr);
+	void onNewFilter(CBagStorageDev *pSDev, const int nType);
 };
 
 } // namespace SpaceBar

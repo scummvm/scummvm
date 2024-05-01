@@ -406,8 +406,8 @@ void CBagOptWindow::onBofButton(CBofObject *pObject, int nState) {
 			pApp = CBagel::getBagApp();
 			if (pApp != nullptr) {
 				pWin = pApp->getMasterWnd();
-				if ((pWin != nullptr) && pWin->GetCurrentGameWindow() != nullptr) {
-					pWin->OnHelp(((CBagStorageDevWnd *)pWin->GetCurrentGameWindow())->GetHelpFilename(), false, this);
+				if ((pWin != nullptr) && pWin->getCurrentGameWindow() != nullptr) {
+					pWin->onHelp(((CBagStorageDevWnd *)pWin->getCurrentGameWindow())->GetHelpFilename(), false, this);
 				}
 			}
 			break;
@@ -417,7 +417,7 @@ void CBagOptWindow::onBofButton(CBofObject *pObject, int nState) {
 			if (pApp != nullptr) {
 				pWin = pApp->getMasterWnd();
 				if (pWin != nullptr) {
-					pWin->ShowCreditsDialog(this);
+					pWin->showCreditsDialog(this);
 				}
 			}
 			break;
@@ -434,7 +434,7 @@ void CBagOptWindow::onBofButton(CBofObject *pObject, int nState) {
 			pApp = CBagel::getBagApp();
 			if (pApp != nullptr) {
 				pWin = pApp->getMasterWnd();
-				if ((pWin != nullptr) &&  pWin->ShowQuitDialog(this)) {
+				if ((pWin != nullptr) &&  pWin->showQuitDialog(this)) {
 					_nReturnValue = 0;
 					killBackground();
 					close();
@@ -450,7 +450,7 @@ void CBagOptWindow::onBofButton(CBofObject *pObject, int nState) {
 			if (pApp != nullptr) {
 				pWin = pApp->getMasterWnd();
 				if (pWin != nullptr) {
-					pWin->ShowSaveDialog(this);
+					pWin->showSaveDialog(this);
 				}
 			}
 
@@ -461,7 +461,7 @@ void CBagOptWindow::onBofButton(CBofObject *pObject, int nState) {
 			pApp = CBagel::getBagApp();
 			if (pApp != nullptr) {
 				pWin = pApp->getMasterWnd();
-				if ((pWin != nullptr) && pWin->ShowRestoreDialog(this)) {
+				if ((pWin != nullptr) && pWin->showRestoreDialog(this)) {
 					// Can't restore a deleted palette
 					_pSavePalette = nullptr;
 
@@ -476,7 +476,7 @@ void CBagOptWindow::onBofButton(CBofObject *pObject, int nState) {
 			pApp = CBagel::getBagApp();
 			if (pApp != nullptr) {
 				pWin = pApp->getMasterWnd();
-				if ((pWin != nullptr) && pWin->ShowRestartDialog(this)) {
+				if ((pWin != nullptr) && pWin->showRestartDialog(this)) {
 					// Can't restore a deleted palette
 					_pSavePalette = nullptr;
 
@@ -555,8 +555,8 @@ void CBagOptWindow::saveOutNewSettings() {
 		// Set current Pan correction
 		if (pWin != nullptr) {
 
-			int n = pWin->GetCorrection();
-			CBagStorageDevWnd *pSDev = pWin->GetCurrentStorageDev();
+			int n = pWin->getCorrection();
+			CBagStorageDevWnd *pSDev = pWin->getCurrentStorageDev();
 			if ((pSDev != nullptr) && pSDev->GetDeviceType() == SDEV_GAMEWIN) {
 				CBagPanWindow *pPan = (CBagPanWindow *)pSDev;
 
@@ -642,8 +642,8 @@ void CBagOptWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 		pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
 			pWin = pApp->getMasterWnd();
-			if ((pWin != nullptr) && (pWin->GetCurrentGameWindow() != nullptr)) {
-				pWin->OnHelp(((CBagStorageDevWnd *)pWin->GetCurrentGameWindow())->GetHelpFilename(), false, this);
+			if ((pWin != nullptr) && (pWin->getCurrentGameWindow() != nullptr)) {
+				pWin->onHelp(((CBagStorageDevWnd *)pWin->getCurrentGameWindow())->GetHelpFilename(), false, this);
 			}
 		}
 		break;
@@ -656,7 +656,7 @@ void CBagOptWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 		if (pApp != nullptr) {
 			pWin = pApp->getMasterWnd();
 			if (pWin != nullptr) {
-				pWin->ShowSaveDialog(this);
+				pWin->showSaveDialog(this);
 			}
 		}
 		break;
@@ -667,7 +667,7 @@ void CBagOptWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 		pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
 			pWin = pApp->getMasterWnd();
-			if ((pWin != nullptr) && pWin->ShowRestoreDialog(this)) {
+			if ((pWin != nullptr) && pWin->showRestoreDialog(this)) {
 				// Can't restore a deleted palette
 				_pSavePalette = nullptr;
 
@@ -682,7 +682,7 @@ void CBagOptWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 		pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
 			pWin = pApp->getMasterWnd();
-			if ((pWin != nullptr) && pWin->ShowRestartDialog(this)) {
+			if ((pWin != nullptr) && pWin->showRestartDialog(this)) {
 				// Can't restore a deleted palette
 				_pSavePalette = nullptr;
 
@@ -698,7 +698,7 @@ void CBagOptWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 		pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
 			pWin = pApp->getMasterWnd();
-			if ((pWin != nullptr) && pWin->ShowQuitDialog(this)) {
+			if ((pWin != nullptr) && pWin->showQuitDialog(this)) {
 				_nReturnValue = 0;
 				killBackground();
 				close();

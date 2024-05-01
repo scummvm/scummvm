@@ -272,7 +272,7 @@ bool CBagCharacterObject::doAdvance() {
 	// If we got a background bitmap
 	if (_bmpBuf != nullptr) {
 		// If This Panimation is modal, or Panimations are ON, then get next frame.
-		if (IsModal() || !_pAnim || CBagMasterWin::GetPanimations()) {
+		if (IsModal() || !_pAnim || CBagMasterWin::getPanimations()) {
 			if (_smacker->needsUpdate()) {
 				doAdvanceFl = true;
 
@@ -545,7 +545,7 @@ void CBagCharacterObject::setNumOfLoops(int n) {
 
 	// If this character is modal run until done looping
 	if (IsModal() && isAttached()) {
-		CBagStorageDevWnd *win = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
+		CBagStorageDevWnd *win = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev();
 
 		if (win != nullptr) {
 			win->RunModal(this);
@@ -648,7 +648,7 @@ void CBagCharacterObject::setPdaWand(CBagCharacterObject *pdaWand) {
 
 bool CBagCharacterObject::pdaWandAnimating() {
 	if (_pdaWand == nullptr || !_pdaWand->isAttached()) {
-		CBagStorageDev *pda = SDEVMNGR->GetStorageDevice("BPDA_WLD");
+		CBagStorageDev *pda = SDEV_MANAGER->GetStorageDevice("BPDA_WLD");
 		if (pda != nullptr) {
 			CBagCharacterObject *wand = (CBagCharacterObject *)pda->GetObject("WANDANIM");
 			if (wand != nullptr) {

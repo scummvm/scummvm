@@ -317,7 +317,7 @@ void *SBBasePda::pdaButtonHandler(int refId, void *info) {
 		if (curApp != nullptr) {
 			CBagMasterWin *curWnd = curApp->getMasterWnd();
 			if (curWnd != nullptr) {
-				curWnd->postUserMessage(WM_SHOWSYSTEMDLG, 0);
+				curWnd->postUserMessage(WM_SHOW_SYSTEM_DLG, 0);
 			}
 		}
 		break;
@@ -374,7 +374,7 @@ void SBBasePda::setPdaState() {
 	const char *pdaMode;
 	const char *pdaPos;
 
-	CBagVar *curVar = VARMNGR->GetVariable("INBAR");
+	CBagVar *curVar = VAR_MANAGER->GetVariable("INBAR");
 
 	if (curVar != nullptr) {
 		// Defined as global
@@ -386,7 +386,7 @@ void SBBasePda::setPdaState() {
 	}
 
 	// Save the pda state and position
-	curVar = VARMNGR->GetVariable(pdaMode);
+	curVar = VAR_MANAGER->GetVariable(pdaMode);
 	if (curVar != nullptr) {
 		switch (_pdaMode) {
 		case NOMODE:
@@ -407,7 +407,7 @@ void SBBasePda::setPdaState() {
 		}
 	}
 
-	curVar = VARMNGR->GetVariable(pdaPos);
+	curVar = VAR_MANAGER->GetVariable(pdaPos);
 	if (curVar != nullptr) {
 		switch (_pdaPos) {
 		case PDAUP:
@@ -428,7 +428,7 @@ void SBBasePda::getPdaState() {
 	const char *pdaMode;
 	const char *pdaPos;
 
-	CBagVar *curVar = VARMNGR->GetVariable("INBAR");
+	CBagVar *curVar = VAR_MANAGER->GetVariable("INBAR");
 
 	if (curVar != nullptr) {
 		// Defined as global
@@ -439,7 +439,7 @@ void SBBasePda::getPdaState() {
 		pdaPos = "PDAPOSITION";
 	}
 
-	curVar = VARMNGR->GetVariable(pdaMode);
+	curVar = VAR_MANAGER->GetVariable(pdaMode);
 	if (curVar) {
 		pdaState = curVar->GetValue();
 		// Now set the internal PDA state based on this info.
@@ -458,7 +458,7 @@ void SBBasePda::getPdaState() {
 	}
 
 	// Get the PDA up/down position
-	curVar = VARMNGR->GetVariable(pdaPos);
+	curVar = VAR_MANAGER->GetVariable(pdaPos);
 	if (curVar) {
 		pdaState = curVar->GetValue();
 		if (pdaState.Find("UP") != -1) {

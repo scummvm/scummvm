@@ -229,7 +229,7 @@ ErrorCode SBarComputer::detach() {
 	CBagStorageDevWnd::detach();
 
 	// Going into mr drinkmaster makes 1 turn go by
-	VARMNGR->IncrementTimers();
+	VAR_MANAGER->IncrementTimers();
 
 	LogInfo("Detached SBarComputer");
 
@@ -706,8 +706,8 @@ void SBarComputer::order() {
 
 		// Deduct 1 Nugget from the player
 		// Read in their total nuggets from game
-		CBagVar *pVar = VARMNGR->GetVariable("NUGGETS");
-		CBagVar *pVar2 = VARMNGR->GetVariable("HAVEDRINK");
+		CBagVar *pVar = VAR_MANAGER->GetVariable("NUGGETS");
+		CBagVar *pVar2 = VAR_MANAGER->GetVariable("HAVEDRINK");
 
 		if (pVar) {
 			int nCredits = pVar->GetNumValue();
@@ -717,15 +717,15 @@ void SBarComputer::order() {
 			if (nCredits < 1) {
 				CBofBitmap saveBackground(640, 480, (CBofPalette *)nullptr, false);
 				saveBackground.captureScreen(this, &_compTextWindow);
-				PaintBeveledText(this, &_compTextWindow, szBroke, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
+				paintBeveledText(this, &_compTextWindow, szBroke, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
 
-				WaitForInput();
+				waitForInput();
 
 				saveBackground.paint(this, &_compTextWindow);
 
 			} else {
 				CBagStorageDev *pSoldierSDev = nullptr;
-				pSoldierSDev = SDEVMNGR->GetStorageDevice("SOLDIER_WLD");
+				pSoldierSDev = SDEV_MANAGER->GetStorageDevice("SOLDIER_WLD");
 
 				CBofBitmap saveBackgroundTwo(640, 480, (CBofPalette *)nullptr, false);
 				saveBackgroundTwo.captureScreen(this, &_compTextWindow);
@@ -757,8 +757,8 @@ void SBarComputer::order() {
 					}
 
 					if (bRefuse) {
-						PaintBeveledText(this, &_compTextWindow, szRefuse, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
-						WaitForInput();
+						paintBeveledText(this, &_compTextWindow, szRefuse, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
+						waitForInput();
 
 						saveBackgroundTwo.paint(this, &_compTextWindow);
 					}
@@ -842,7 +842,7 @@ void SBarComputer::onBofButton(CBofObject *pObject, int nState) {
 		if (pApp != nullptr) {
 			CBagMasterWin *pWin = pApp->getMasterWnd();
 			if (pWin != nullptr) {
-				pWin->OnHelp(BuildBarcDir("BARCOMP.TXT"));
+				pWin->onHelp(BuildBarcDir("BARCOMP.TXT"));
 			}
 		}
 		}

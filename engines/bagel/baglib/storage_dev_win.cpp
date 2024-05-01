@@ -138,7 +138,7 @@ CBagStorageDev::CBagStorageDev() {
 	// Not sure what the hell is going on here...
 	SetLActivity(kMouseNONE);
 
-	SDEVMNGR->RegisterStorageDev(this);
+	SDEV_MANAGER->RegisterStorageDev(this);
 }
 
 CBagStorageDev::~CBagStorageDev() {
@@ -159,7 +159,7 @@ CBagStorageDev::~CBagStorageDev() {
 		}
 	}  // If the lists belong to this storage device
 
-	SDEVMNGR->UnRegisterStorageDev(this);
+	SDEV_MANAGER->UnRegisterStorageDev(this);
 
 	if (CBagStorageDevWnd::m_pEvtSDev == this) {
 		CBagStorageDevWnd::m_pEvtSDev = nullptr;
@@ -482,7 +482,7 @@ ErrorCode CBagStorageDev::OnMouseOver(uint32 /*nFlags*/, CBofPoint * /*xPoint*/,
 
 
 void CBagStorageDev::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *vpInfo) {
-	if (CBagPDA::IsMoviePlaying() && CBagMasterWin::GetActiveCursor() == 6) {
+	if (CBagPDA::IsMoviePlaying() && CBagMasterWin::getActiveCursor() == 6) {
 		return;
 	}
 
@@ -508,11 +508,11 @@ void CBagStorageDev::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 	char szLocalBuff[256];
 	CBofString sCurrSDev(szLocalBuff, 256);
 
-	if (CBagPDA::IsMoviePlaying() && CBagMasterWin::GetActiveCursor() == 6) {
+	if (CBagPDA::IsMoviePlaying() && CBagMasterWin::getActiveCursor() == 6) {
 		return;
 	}
 
-	sCurrSDev = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev()->GetName();
+	sCurrSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->GetName();
 
 	*m_xCursorLocation = *xPoint;
 	CBofPoint xCursorLocation = DevPtToViewPort(*xPoint);
@@ -555,7 +555,7 @@ void CBagStorageDev::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 
 	SetLActivity(kMouseNONE);
 
-	if (g_bAAOk && (sCurrSDev == (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev()->GetName()))) {
+	if (g_bAAOk && (sCurrSDev == (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->GetName()))) {
 		AttachActiveObjects();
 	}
 
@@ -992,7 +992,7 @@ ErrorCode CBagStorageDev::detach() {
 	setBackground(nullptr);
 
 	// Notify the main window that we need to redraw the background filter.
-	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev());
+	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev());
 	if (pMainWin != nullptr) {
 		((CBagPanWindow *)pMainWin)->SetPreFilterPan(true);
 	}
@@ -1216,7 +1216,7 @@ ErrorCode CBagStorageDevWnd::attach() {
 	SetPreFilterPan(true);
 	g_pLastWindow = this;
 
-	CBagStorageDev *pSDev = SDEVMNGR->GetStorageDevice("EVT_WLD");
+	CBagStorageDev *pSDev = SDEV_MANAGER->GetStorageDevice("EVT_WLD");
 
 	if (pSDev != nullptr) {
 		// Have we allocated one yet ?
@@ -1259,7 +1259,7 @@ void CBagStorageDevWnd::onTimer(uint32 nEventID) {
 					// for the turncount dependent storage device.
 					if (CBagEventSDev::getEvalTurnEvents() == true) {
 						CBagEventSDev::setEvalTurnEvents(false);
-						CBagTurnEventSDev *pSDev = (CBagTurnEventSDev *) SDEVMNGR->GetStorageDevice("TURN_WLD");
+						CBagTurnEventSDev *pSDev = (CBagTurnEventSDev *) SDEV_MANAGER->GetStorageDevice("TURN_WLD");
 						if (pSDev != nullptr) {
 							// If unable to execute event world, try again next time through.
 							if (pSDev->evaluateExpressions() == ERR_UNKNOWN) {
@@ -1294,7 +1294,7 @@ ErrorCode CBagStorageDevWnd::detach() {
 }
 
 ErrorCode CBagStorageDevWnd::close() {
-	CBagel::getBagApp()->getMasterWnd()->SetStorageDev(GetPrevSDev(), false);
+	CBagel::getBagApp()->getMasterWnd()->setStorageDev(GetPrevSDev(), false);
 
 	return _errCode;
 }
@@ -1530,7 +1530,7 @@ void CBagStorageDevWnd::onMouseMove(uint32 n, CBofPoint *pPoint, void *) {
 void CBagStorageDevWnd::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 	// If asynch movie playing in PDA don't react to mouse down (8033)
 	//  if it's not a wait cursor, then allow the user to access that hotspot.
-	if (CBagPDA::IsMoviePlaying() && CBagMasterWin::GetActiveCursor() == 6) {
+	if (CBagPDA::IsMoviePlaying() && CBagMasterWin::getActiveCursor() == 6) {
 		return;
 	}
 
@@ -1541,7 +1541,7 @@ void CBagStorageDevWnd::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) 
 void CBagStorageDevWnd::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	// If asynch movie playing in PDA don't react to mouse down (8033)
 	// if it's not a wait cursor, then allow the user to access that hotspot.
-	if (CBagPDA::IsMoviePlaying() && CBagMasterWin::GetActiveCursor() == 6) {
+	if (CBagPDA::IsMoviePlaying() && CBagMasterWin::getActiveCursor() == 6) {
 		return;
 	}
 
@@ -1891,13 +1891,13 @@ CBagStorageDev *CBagStorageDevManager::GetStorageDevice(const CBofString &sName)
 bool CBagStorageDevManager::MoveObject(const CBofString &sDstName, const CBofString &sSrcName, const CBofString &sObjName) {
 	Assert(IsValidObject(this));
 
-	CBagStorageDev *pDstSDev = SDEVMNGR->GetStorageDevice(sDstName);
+	CBagStorageDev *pDstSDev = SDEV_MANAGER->GetStorageDevice(sDstName);
 
 	// Find the storage device
 	if (pDstSDev == nullptr)
 		return false;
 
-	CBagStorageDev *pSrcSDev = SDEVMNGR->GetStorageDevice(sSrcName);
+	CBagStorageDev *pSrcSDev = SDEV_MANAGER->GetStorageDevice(sSrcName);
 	if (pSrcSDev == nullptr)
 		return false;
 
@@ -1915,7 +1915,7 @@ bool CBagStorageDevManager::MoveObject(const CBofString &sDstName, const CBofStr
 bool CBagStorageDevManager::AddObject(const CBofString &sDstName, const CBofString &sObjName) {
 	Assert(IsValidObject(this));
 
-	CBagStorageDev *pDstSDev = SDEVMNGR->GetStorageDevice(sDstName);
+	CBagStorageDev *pDstSDev = SDEV_MANAGER->GetStorageDevice(sDstName);
 
 	// Find the storage device
 	if (pDstSDev == nullptr)
@@ -1932,7 +1932,7 @@ bool CBagStorageDevManager::AddObject(const CBofString &sDstName, const CBofStri
 bool CBagStorageDevManager::RemoveObject(const CBofString &sSrcName, const CBofString &sObjName) {
 	Assert(IsValidObject(this));
 
-	CBagStorageDev *pSrcSDev = SDEVMNGR->GetStorageDevice(sSrcName);
+	CBagStorageDev *pSrcSDev = SDEV_MANAGER->GetStorageDevice(sSrcName);
 
 	// Find the storage device
 	if (pSrcSDev == nullptr)
@@ -2064,7 +2064,7 @@ bool CBagStorageDev::IsCIC() {
 
 	sStr = "BPDAZ_WLD";
 	if (m_sName == sStr) {
-		return GetCICStatus();
+		return getCICStatus();
 	}
 
 	return false;

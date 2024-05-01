@@ -40,7 +40,7 @@ ErrorCode SBarFullWnd::attach() {
 	if (CBagPanWindow::_pWieldBmp != nullptr) {
 		_pWieldedObject = CBagPanWindow::_pWieldBmp->GetCurrObj();
 		if (_pWieldedObject != nullptr) {
-			SDEVMNGR->RemoveObject(CBagPanWindow::_pWieldBmp->GetName(), _pWieldedObject->GetRefName());
+			SDEV_MANAGER->RemoveObject(CBagPanWindow::_pWieldBmp->GetName(), _pWieldedObject->GetRefName());
 		}
 	}
 
@@ -61,7 +61,7 @@ ErrorCode SBarFullWnd::detach() {
 	CBagStorageDevWnd::detach();
 
 	if (_pWieldedObject) {
-		SDEVMNGR->AddObject(CBagPanWindow::_pWieldBmp->GetName(), _pWieldedObject->GetRefName());
+		SDEV_MANAGER->AddObject(CBagPanWindow::_pWieldBmp->GetName(), _pWieldedObject->GetRefName());
 		_pWieldedObject = nullptr;
 	}
 

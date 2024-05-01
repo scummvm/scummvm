@@ -56,7 +56,7 @@ ErrorCode SBarBibOddsWnd::detach() {
 	}
 
 	if (_wieldedObject) {
-		SDEVMNGR->AddObject(CBagPanWindow::_pWieldBmp->GetName(), _wieldedObject->GetRefName());
+		SDEV_MANAGER->AddObject(CBagPanWindow::_pWieldBmp->GetName(), _wieldedObject->GetRefName());
 		_wieldedObject = nullptr;
 	}
 
@@ -64,7 +64,7 @@ ErrorCode SBarBibOddsWnd::detach() {
 }
 
 void SBarBibOddsWnd::onKeyHit(uint32 lKey, uint32 lRepCount) {
-	CBagVar *pVar = VARMNGR->GetVariable("TORSOSTATE");
+	CBagVar *pVar = VAR_MANAGER->GetVariable("TORSOSTATE");
 
 	if (pVar != nullptr) {
 		CBofString StateStr = pVar->GetValue();
@@ -122,7 +122,7 @@ ErrorCode SBarBibOddsWnd::attach() {
 	// If we have something wielded, put it on hold for now.
 	if (CBagPanWindow::_pWieldBmp != nullptr) {
 		if ((_wieldedObject = CBagPanWindow::_pWieldBmp->GetCurrObj()) != nullptr) {
-			SDEVMNGR->RemoveObject(CBagPanWindow::_pWieldBmp->GetName(), _wieldedObject->GetRefName());
+			SDEV_MANAGER->RemoveObject(CBagPanWindow::_pWieldBmp->GetName(), _wieldedObject->GetRefName());
 		}
 	}
 

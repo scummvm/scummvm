@@ -64,7 +64,7 @@ CBofPoint CBagLog::arrangeFloater(CBofPoint pos, CBagObject *bagObj) {
 		int borderSize = 0;
 
 		// Get this from script, allows individual log states to set border.
-		CBagVar *curVar = VARMNGR->GetVariable("LOGBORDER");
+		CBagVar *curVar = VAR_MANAGER->GetVariable("LOGBORDER");
 		if (curVar != nullptr) {
 			borderSize = curVar->GetNumValue();
 		}
@@ -187,7 +187,7 @@ int CBagLog::getCurFltPage() {
 	int nCurFltPage = 0;
 
 	// Read in their total nuggets from game
-	CBagVar *curVar = VARMNGR->GetVariable("CUR_BAR_LOG_PAGE");
+	CBagVar *curVar = VAR_MANAGER->GetVariable("CUR_BAR_LOG_PAGE");
 
 	if (curVar) {
 		nCurFltPage = curVar->GetNumValue();
@@ -198,7 +198,7 @@ int CBagLog::getCurFltPage() {
 
 void CBagLog::setCurFltPage(int fltPage) {
 	// Read in their total nuggets from game
-	CBagVar *curVar = VARMNGR->GetVariable("CUR_BAR_LOG_PAGE");
+	CBagVar *curVar = VAR_MANAGER->GetVariable("CUR_BAR_LOG_PAGE");
 
 	if (curVar)
 		curVar->SetValue(fltPage);
@@ -302,7 +302,7 @@ ErrorCode CBagLog::activateLocalObject(CBagObject *bagObj) {
 			bagObj->SetMsgWaiting(true);
 		}
 
-		CBagStorageDev *pda = SDEVMNGR->GetStorageDevice("BPDA_WLD");
+		CBagStorageDev *pda = SDEV_MANAGER->GetStorageDevice("BPDA_WLD");
 
 		if (pda) {
 			CBagButtonObject *msgLight = (CBagButtonObject *)pda->GetObject("MSGLIGHT");
@@ -334,10 +334,10 @@ ErrorCode CBagLog::playMsgQueue() {
 	// Only play one message per click on the pda message light.
 	if (count) {
 
-		CBagStorageDev *bpda = SDEVMNGR->GetStorageDevice("BPDA_WLD");
+		CBagStorageDev *bpda = SDEV_MANAGER->GetStorageDevice("BPDA_WLD");
 
 		// If we're in a closeup, then don't play the message!
-		CBagStorageDev *sdev = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
+		CBagStorageDev *sdev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev();
 		bool playMsgFl = true;
 
 		if ((sdev != nullptr) && sdev->IsCIC()) {
@@ -533,7 +533,7 @@ int CBagLogMsg::getProperty(const CBofString &prop) {
 ErrorCode CBagLogMsg::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect, int maskColor) {
 	// We could use a variable here, translate it's value if that's the case.
 	if (getMsgTime() == 0) {
-		CBagVar *pVar = VARMNGR->GetVariable(_msgTimeStr);
+		CBagVar *pVar = VAR_MANAGER->GetVariable(_msgTimeStr);
 		int nMsgTime = pVar->GetNumValue();
 		setMsgTime(nMsgTime);
 	}
@@ -912,7 +912,7 @@ ErrorCode CBagEnergyDetectorObject::attach() {
 	CBofString zhapsString(zhapsBuffer, 256);
 
 	// We could use a variable here, translate it's value if that's the case.
-	CBagVar *curVar = VARMNGR->GetVariable(_energyTimeStr);
+	CBagVar *curVar = VAR_MANAGER->GetVariable(_energyTimeStr);
 	if (curVar) {
 		nMsgTime = curVar->GetNumValue();
 	} else {
@@ -923,7 +923,7 @@ ErrorCode CBagEnergyDetectorObject::attach() {
 	int minute = nMsgTime - (hour * 100);
 
 	// Get the number of zhaps.
-	curVar = VARMNGR->GetVariable(_zhapsStr);
+	curVar = VAR_MANAGER->GetVariable(_zhapsStr);
 	if (curVar) {
 		zhapsString = curVar->GetValue();
 	} else {
@@ -931,7 +931,7 @@ ErrorCode CBagEnergyDetectorObject::attach() {
 	}
 
 	// Get the cause
-	curVar = VARMNGR->GetVariable(_causeStr);
+	curVar = VAR_MANAGER->GetVariable(_causeStr);
 	if (curVar) {
 		causeString = curVar->GetValue();
 	} else {
@@ -1017,7 +1017,7 @@ PARSE_CODES CBagLogClue::setInfo(CBagIfstream &istr) {
 			if (!sStr.Find("STRINGVAR")) {
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
-				CBagVar *pVar = VARMNGR->GetVariable(sStr);
+				CBagVar *pVar = VAR_MANAGER->GetVariable(sStr);
 				// The variable must have been found, if it wasn't, then
 				// complain violently.
 

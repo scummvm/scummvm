@@ -152,7 +152,7 @@ bool BagelEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 }
 
 Common::Error BagelEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
-	_masterWin->FillSaveBuffer(&_saveData);
+	_masterWin->fillSaveBuffer(&_saveData);
 
 	return Engine::saveGameState(slot, desc, isAutosave);
 }
@@ -167,7 +167,7 @@ Common::Error BagelEngine::loadGameState(int slot) {
 	Common::Error result = Engine::loadGameState(slot);
 
 	if (result.getCode() == Common::kNoError) {
-		_masterWin->DoRestore(&_saveData);
+		_masterWin->doRestore(&_saveData);
 	}
 
 	return result;

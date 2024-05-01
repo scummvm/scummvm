@@ -153,7 +153,7 @@ ErrorCode CBagSaveGameFile::WriteSavedGame() {
 
 	// Populate the save data
 	ST_BAGEL_SAVE saveData;
-	g_engine->_masterWin->FillSaveBuffer(&saveData);
+	g_engine->_masterWin->fillSaveBuffer(&saveData);
 
 	Common::String str = "./" + Common::String(saveData.m_szScript);
 	str.replace('/', '\\');
@@ -211,7 +211,7 @@ ErrorCode CBagSaveGameFile::ReadSavedGame(int32 slotNum) {
 			Common::strcpy_s(saveData.m_szScript, path + 2);
 
 			// Restore the game
-			g_engine->_masterWin->DoRestore(&saveData);
+			g_engine->_masterWin->doRestore(&saveData);
 		}
 	} else {
 		_errCode = ERR_FREAD;

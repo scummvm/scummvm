@@ -208,7 +208,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 					// If we're zoomed, then do things differently
 					CBagTextObject *pTXObj = (CBagTextObject *)pObj;
 					if (pTXObj->IsCaption()) {
-						SBZoomPda *pZPDA = (SBZoomPda *)SDEVMNGR->GetStorageDevice("BPDAZ_WLD");
+						SBZoomPda *pZPDA = (SBZoomPda *)SDEV_MANAGER->GetStorageDevice("BPDAZ_WLD");
 						if (pZPDA && pZPDA->getZoomed()) {
 							bZoomed = true;
 
@@ -399,7 +399,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 			// If we were requested to put a dialog over the PDA, then shift it upward
 			// a bit... unless of course the mousedown occurred in the PDA itself.
-			CBagPDA *pPDA = (CBagPDA *)SDEVMNGR->GetStorageDevice("BPDA_WLD");
+			CBagPDA *pPDA = (CBagPDA *)SDEV_MANAGER->GetStorageDevice("BPDA_WLD");
 
 			if (pPDA != nullptr && (pPDA->isActivated() && bZoomed == false)) {
 				if (!pPDA->isInside(cMouseDown)) {
@@ -469,19 +469,19 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 			// If our current storage device is "AS CUSTOM" then don't allow
 			// the timer to get incremented.
-			CBagStorageDev *pCurSDEV = CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev();
+			CBagStorageDev *pCurSDEV = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev();
 			if (pObj != nullptr) {
 				pObj->runCallBack();
 
 				// Selecting this menu item causes a turn to go by
 				if (nNumCalls == 1 && pCurSDEV->IsCustom() == false) {
-					VARMNGR->IncrementTimers();
+					VAR_MANAGER->IncrementTimers();
 				}
 			} else if (bCaption && (nNumCalls == 2)) {
 				// Selecting this menu item causes a turn to go by
 				dlg.m_pSelectedObject = nullptr;
 				if (pCurSDEV->IsCustom() == false) {
-					VARMNGR->IncrementTimers();
+					VAR_MANAGER->IncrementTimers();
 				}
 			}
 		}
@@ -563,7 +563,7 @@ bool CBagMenu::RemoveUniversalObjectList() {
 CBagMenuDlg::CBagMenuDlg() {
 	// Remove this SDEV from the storage device list so that it is not deleted
 	// when we switch .WLD files, and there may still be a Dialog open.
-	SDEVMNGR->UnRegisterStorageDev(this);
+	SDEV_MANAGER->UnRegisterStorageDev(this);
 }
 
 CBagMenuDlg::~CBagMenuDlg() {

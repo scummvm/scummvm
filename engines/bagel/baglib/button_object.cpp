@@ -138,7 +138,7 @@ void CBagButtonObject::onLButtonDown(uint32 /*nFlags*/, CBofPoint *point, void *
 }
 
 void CBagButtonObject::onLButtonUp(uint32 flags, CBofPoint *point, void *extraInfo) {
-	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev());
+	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev());
 
 	if (pMainWin != nullptr) {
 		pMainWin->SetPreFilterPan(true);
@@ -212,7 +212,7 @@ void CBagButtonObject::onLButtonUp(uint32 flags, CBofPoint *point, void *extraIn
 }
 
 bool CBagButtonObject::onMouseMove(uint32 /*nFlags*/, CBofPoint point, void *extraInfo) {
-	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->GetCurrentStorageDev());
+	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev());
 
 	if (_buttonType == BTN_SLIDER && _dragging) {
 		if (!_slideRect.IsRectEmpty()) {

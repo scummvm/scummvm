@@ -267,13 +267,13 @@ ErrorCode CBibbleWindow::attach() {
 
 	CBagVar *pVar;
 
-	if ((pVar = VARMNGR->GetVariable("NUGGETS")) != nullptr) {
+	if ((pVar = VAR_MANAGER->GetVariable("NUGGETS")) != nullptr) {
 		_nNumCredits = pVar->GetNumValue();
 	}
 	LogInfo(BuildString("\tCredits: %d", _nNumCredits));
 
 	g_bBibbleHack = false;
-	if ((pVar = VARMNGR->GetVariable("BIBBLEHACK")) != nullptr) {
+	if ((pVar = VAR_MANAGER->GetVariable("BIBBLEHACK")) != nullptr) {
 		if (pVar->GetNumValue() != 0) {
 			g_bBibbleHack = true;
 		}
@@ -281,7 +281,7 @@ ErrorCode CBibbleWindow::attach() {
 
 	// If player has modified the payoffs, then load new payoffs from Bar script
 	if (g_bBibbleHack) {
-		CBagStorageDev *pSDev = SDEVMNGR->GetStorageDevice("BGNM_WLD");
+		CBagStorageDev *pSDev = SDEV_MANAGER->GetStorageDevice("BGNM_WLD");
 
 		if (pSDev != nullptr) {
 			for (int i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
@@ -446,7 +446,7 @@ ErrorCode CBibbleWindow::detach() {
 
 	// Write out new value of nuggets
 	CBagVar *pVar;
-	if ((pVar = VARMNGR->GetVariable("NUGGETS")) != nullptr) {
+	if ((pVar = VAR_MANAGER->GetVariable("NUGGETS")) != nullptr) {
 		pVar->SetValue(_nNumCredits);
 	}
 
@@ -515,7 +515,7 @@ ErrorCode CBibbleWindow::detach() {
 	CBagStorageDevWnd::detach();
 
 	// Playing BibbleBonk has made 1 turn go by.
-	VARMNGR->IncrementTimers();
+	VAR_MANAGER->IncrementTimers();
 
 	return _errCode;
 }
@@ -658,7 +658,7 @@ void CBibbleWindow::onBofButton(CBofObject *pObject, int nState) {
 		if (pApp != nullptr) {
 			CBagMasterWin *pWin = pApp->getMasterWnd();
 			if (pWin != nullptr) {
-				pWin->OnHelp(BuildDir("BIBBLE.TXT"));
+				pWin->onHelp(BuildDir("BIBBLE.TXT"));
 			}
 		}
 		break;
@@ -690,8 +690,8 @@ void CBibbleWindow::onBofButton(CBofObject *pObject, int nState) {
 			CBofBitmap cBmp(cRect.width(), cRect.height(), (CBofPalette *)nullptr, false);
 			cBmp.captureScreen(this, &cRect);
 
-			PaintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
-			WaitForInput();
+			paintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
+			waitForInput();
 
 			cBmp.paint(this, &cRect);
 		}

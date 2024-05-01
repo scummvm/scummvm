@@ -199,7 +199,7 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 
 				// Get the variable name from the definition line, then find it
 				// in the global list.
-				m_pTouchedVar = VARMNGR->GetVariable(sStr);
+				m_pTouchedVar = VAR_MANAGER->GetVariable(sStr);
 
 				break;
 			}
@@ -288,7 +288,7 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 				// Get the variable name from the definition line, then find it
 				// in the global list.
 				GetAlphaNumFromStream(istr, sStr);
-				m_pSaveVar = VARMNGR->GetVariable(sStr);
+				m_pSaveVar = VAR_MANAGER->GetVariable(sStr);
 
 				// the variable must have been found, if it wasn't, then
 				// complain violently.
@@ -356,7 +356,7 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 				// Get the variable name from the definition line, then find it
 				// in the global list.
 				GetAlphaNumFromStream(istr, sStr);
-				m_pVarObj = VARMNGR->GetVariable(sStr);
+				m_pVarObj = VAR_MANAGER->GetVariable(sStr);
 
 				// the variable must have been found, if it wasn't, then
 				// complain violently.
@@ -604,7 +604,7 @@ int CBagRPObject::RunRPQueue() {
 
 		// Get the turncount variable.
 		if (m_pTurncount == nullptr) {
-			m_pTurncount = VARMNGR->GetVariable("TURNCOUNT");
+			m_pTurncount = VAR_MANAGER->GetVariable("TURNCOUNT");
 		}
 		//
 		Assert(m_pTurncount != nullptr);
@@ -704,7 +704,7 @@ bool CBagRPObject::AddToMsgQueue(CBagRPObject *pRPObj) {
 		return false;
 	}
 
-	CBagLog *pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGWLD);
+	CBagLog *pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
 
 	if (pLogWld) {
 		pRPObj->SetMsgWaiting(true); // mark this guy as waiting
@@ -808,9 +808,9 @@ bool CBagRPObject::ActivateRPObject() {
 
 	CBagLog *pLogWld;
 	if (Zoomed()) {
-		pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGZWLD);
+		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZWLD);
 	} else {
-		pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGWLD);
+		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
 	}
 
 	if (pLogWld == nullptr) {
@@ -868,9 +868,9 @@ void CBagRPObject::DeactivateRPObject() {
 
 	// Get the appropriate storage device
 	if (Zoomed()) {
-		pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGZWLD);
+		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZWLD);
 	} else {
-		pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGWLD);
+		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
 	}
 
 	// Can't bloody well do much without our storage device
@@ -930,9 +930,9 @@ void CBagRPObject::DeactivateRPReview() {
 
 	// Get the appropriate storage device
 	if (Zoomed()) {
-		pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGZWLD);
+		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZWLD);
 	} else {
-		pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGWLD);
+		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
 	}
 
 	// can't bloody well get anywhere without this info.
@@ -1016,7 +1016,7 @@ void CBagRPObject::EvaluateDossiers() {
 		        pDosLObj->m_pDossier->m_sSuspectVar.IsEmpty() == false) {
 
 			if (pLogZWld == nullptr) {
-				pLogZWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGZWLD);
+				pLogZWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZWLD);
 			}
 
 			if (pLogZWld != nullptr) {
@@ -1038,11 +1038,11 @@ void CBagRPObject::SetLogState(RPSTATES eLogMode) {
 	// Also, so we know where to return to, make sure we set the previous log
 	// state to whatever LOG_STATE is right now.
 	if (m_pLogStateVar == nullptr) {
-		m_pLogStateVar = VARMNGR->GetVariable("LOG_STATE");
+		m_pLogStateVar = VAR_MANAGER->GetVariable("LOG_STATE");
 	}
 
 	if (m_pPrevLogStateVar == nullptr) {
-		m_pPrevLogStateVar = VARMNGR->GetVariable("PREV_LOG_STATE");
+		m_pPrevLogStateVar = VAR_MANAGER->GetVariable("PREV_LOG_STATE");
 	}
 
 	Assert(m_pLogStateVar != nullptr && m_pPrevLogStateVar != nullptr);
@@ -1084,11 +1084,11 @@ void CBagRPObject::SetLogState(RPSTATES eLogMode) {
 
 		if (bSavePage || bRestorePage) {
 			if (m_pPrevBarPage == nullptr) {
-				m_pPrevBarPage = VARMNGR->GetVariable("PREV_BAR_LOG_PAGE");
+				m_pPrevBarPage = VAR_MANAGER->GetVariable("PREV_BAR_LOG_PAGE");
 			}
 
 			if (m_pCurBarPage == nullptr) {
-				m_pCurBarPage = VARMNGR->GetVariable("CUR_BAR_LOG_PAGE");
+				m_pCurBarPage = VAR_MANAGER->GetVariable("CUR_BAR_LOG_PAGE");
 			}
 
 			if (m_pPrevBarPage && m_pCurBarPage) {
@@ -1109,7 +1109,7 @@ void CBagRPObject::SetLogState(RPSTATES eLogMode) {
 // Return the current log state
 RPSTATES CBagRPObject::GetLogState() {
 	if (m_pLogStateVar == nullptr) {
-		m_pLogStateVar = VARMNGR->GetVariable("LOG_STATE");
+		m_pLogStateVar = VAR_MANAGER->GetVariable("LOG_STATE");
 	}
 
 	m_eRPMode = RP_NOMODE;
@@ -1137,7 +1137,7 @@ RPSTATES CBagRPObject::GetLogState() {
 // Set the current number of pages in both script and code.
 void CBagRPObject::SetLogPages(int nPages) {
 	if (m_pBarLogPages == nullptr) {
-		m_pBarLogPages = VARMNGR->GetVariable("CODE_TOTAL_LOG_PAGES");
+		m_pBarLogPages = VAR_MANAGER->GetVariable("CODE_TOTAL_LOG_PAGES");
 	}
 
 	Assert(m_pBarLogPages != nullptr);
@@ -1149,9 +1149,9 @@ void CBagRPObject::SetLogPages(int nPages) {
 	// Let the float code know how many pages we have.
 	CBagLog *pLogWld;
 	if (Zoomed()) {
-		pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGZWLD);
+		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZWLD);
 	} else {
-		pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGWLD);
+		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
 	}
 
 	Assert(pLogWld != nullptr);
@@ -1341,9 +1341,9 @@ void CBagRPObject::HideRPReview() {
 	CBagLog *pLogWld;
 
 	if (Zoomed()) {
-		pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGZWLD);
+		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZWLD);
 	} else {
-		pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGWLD);
+		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
 	}
 
 	pRPObj = m_pRPList->GetNodeItem(0);
@@ -1375,9 +1375,9 @@ void CBagRPObject::ShowRPReview() {
 	CBagLog *pLogWld;
 
 	if (Zoomed()) {
-		pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGZWLD);
+		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZWLD);
 	} else {
-		pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGWLD);
+		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
 	}
 
 	// Count items in this queue.
@@ -1442,7 +1442,7 @@ int CBagRPObject::RPResultsWaiting() {
 // Remove all residue print results from the message queue
 void CBagRPObject::RemoveAllFromMsgQueue(CBagRPObject *pCurRPObj) {
 	// we really only care about the log world, not the logz.
-	CBagLog *pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGWLD);
+	CBagLog *pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
 	Assert(pLogWld != nullptr);
 	int nCount = m_pRPList->GetCount();
 
@@ -1462,12 +1462,12 @@ void CBagRPObject::RemoveAllFromMsgQueue(CBagRPObject *pCurRPObj) {
 //  We're going to need to switch the PDA to log mode.
 void CBagRPObject::ShowPDALog() {
 	if (Zoomed()) {
-		SBZoomPda *pZoomPDA = (SBZoomPda *)SDEVMNGR->GetStorageDevice(PDAZWLD);
+		SBZoomPda *pZoomPDA = (SBZoomPda *)SDEV_MANAGER->GetStorageDevice(PDAZWLD);
 		if (pZoomPDA) {
 			pZoomPDA->showLog();
 		}
 	} else {
-		CBagPDA *pPDA = (CBagPDA *)SDEVMNGR->GetStorageDevice(PDAWLD);
+		CBagPDA *pPDA = (CBagPDA *)SDEV_MANAGER->GetStorageDevice(PDAWLD);
 		if (pPDA) {
 			pPDA->showLog();
 		}
@@ -1475,7 +1475,7 @@ void CBagRPObject::ShowPDALog() {
 }
 
 bool CBagRPObject::Zoomed() {
-	SBZoomPda *pPDA = (SBZoomPda *)SDEVMNGR->GetStorageDevice(PDAZWLD);
+	SBZoomPda *pPDA = (SBZoomPda *)SDEV_MANAGER->GetStorageDevice(PDAZWLD);
 	if (pPDA == nullptr) {
 		return false;
 	}
@@ -1490,9 +1490,9 @@ bool CBagRPObject::initialize() {
 	DossierObj *pDosObj;
 
 	if (Zoomed()) {
-		pSDev = SDEVMNGR->GetStorageDevice(LOGZWLD);
+		pSDev = SDEV_MANAGER->GetStorageDevice(LOGZWLD);
 	} else {
-		pSDev = SDEVMNGR->GetStorageDevice(LOGWLD);
+		pSDev = SDEV_MANAGER->GetStorageDevice(LOGWLD);
 	}
 	Assert(pSDev != nullptr);
 
@@ -1565,12 +1565,12 @@ bool CBagRPObject::initialize() {
 // the zoom pda are propagated down to the regular PDA.
 void CBagRPObject::SynchronizeRPObjects(bool bLogFrontmost) {
 	// only synchronize in the bar
-	CBagVar *pVar = VARMNGR->GetVariable("INBAR");
+	CBagVar *pVar = VAR_MANAGER->GetVariable("INBAR");
 	if (pVar == nullptr) {
 		return;
 	}
 
-	CBagLog *pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGWLD);
+	CBagLog *pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
 	if (pLogWld == nullptr) {
 		return;
 	}

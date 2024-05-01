@@ -116,7 +116,7 @@ void CDevDlg::onMouseMove(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
 void CDevDlg::onClose() {
 	Assert(IsValidObject(this));
 
-	CBagVar *varDialogReturn = VARMNGR->GetVariable("DIALOGRETURN");
+	CBagVar *varDialogReturn = VAR_MANAGER->GetVariable("DIALOGRETURN");
 	if (varDialogReturn != nullptr) {
 		// If we need to parse the input for 2 words (Deven-7 Code words)
 		if (_useExtraFl) {
@@ -127,7 +127,7 @@ void CDevDlg::onClose() {
 				p++;
 
 				// Set variable 2 (DIALOGRETURN2)
-				CBagVar *varDialogReturn2 = VARMNGR->GetVariable("DIALOGRETURN2");
+				CBagVar *varDialogReturn2 = VAR_MANAGER->GetVariable("DIALOGRETURN2");
 				if (varDialogReturn2 != nullptr) {
 					varDialogReturn2->SetValue(p);
 				}

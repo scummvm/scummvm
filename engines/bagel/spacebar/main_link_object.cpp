@@ -37,12 +37,12 @@ void CMainLinkObject::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) 
 	CMainWindow *pWnd = (CMainWindow *)info;
 
 	if (pWnd && pWnd->GameMode() == CMainWindow::VRPLAYMODE) {
-		if (CBagMasterWin::GetFlyThru()) {
+		if (CBagMasterWin::getFlyThru()) {
 			pWnd->RotateTo(getSrcLoc(), 12);
 		}
 
 		// Set the link position for the storage device we are about to jump to
-		CBagStorageDev *pDestWin = SDEVMNGR->GetStorageDevice(getFileName());
+		CBagStorageDev *pDestWin = SDEV_MANAGER->GetStorageDevice(getFileName());
 		if (pDestWin != nullptr) {
 			pDestWin->SetLoadFilePos(getDestLoc());
 		}

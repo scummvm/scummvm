@@ -198,7 +198,7 @@ ErrorCode SpaceBarEngine::initialize() {
 					goto exit;
 
 				// Start a new game (In entry vestibule)
-				_masterWin->NewGame();
+				_masterWin->newGame();
 			}
 
 		} else {

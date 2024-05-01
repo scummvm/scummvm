@@ -38,7 +38,7 @@ CBagVariableObject::~CBagVariableObject() {
 }
 
 ErrorCode CBagVariableObject::attach() {
-	CBagVar *xVar = VARMNGR->GetVariable(getFileName());
+	CBagVar *xVar = VAR_MANAGER->GetVariable(getFileName());
 
 	if (xVar && !GetRefName().IsEmpty())
 		xVar->SetValue(GetRefName());
@@ -152,7 +152,7 @@ PARSE_CODES CBagVariableObject::setInfo(CBagIfstream &istr) {
 
 ErrorCode CBagVariableObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int) {
 	ErrorCode rc = ERR_NONE;
-	CBagVar *xVar = VARMNGR->GetVariable(getFileName());
+	CBagVar *xVar = VAR_MANAGER->GetVariable(getFileName());
 
 	if (isAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
 		// FIXME: Offset for the last accessed time and # times counter in
@@ -178,7 +178,7 @@ ErrorCode CBagVariableObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *p
 
 ErrorCode CBagVariableObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int) {
 	ErrorCode rc = ERR_NONE;
-	CBagVar *xVar = VARMNGR->GetVariable(getFileName());
+	CBagVar *xVar = VAR_MANAGER->GetVariable(getFileName());
 
 	if (isAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
 		CBofRect r(pt, pSrcRect->Size());

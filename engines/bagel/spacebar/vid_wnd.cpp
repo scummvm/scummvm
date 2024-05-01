@@ -86,11 +86,11 @@ ErrorCode SBarVidWnd::attach() {
 	Assert(IsValidObject(this));
 
 	if (CMainWindow::attach() == ERR_NONE) {
-		m_pDiscVar = VARMNGR->GetVariable("CUR_VDISC");
-		m_pTimerVar = VARMNGR->GetVariable("CUR_VTIME");
+		m_pDiscVar = VAR_MANAGER->GetVariable("CUR_VDISC");
+		m_pTimerVar = VAR_MANAGER->GetVariable("CUR_VTIME");
 
 		// What time does the murder occur?
-		CBagVar *pVar = VARMNGR->GetVariable("VDISC_EVTIME");
+		CBagVar *pVar = VAR_MANAGER->GetVariable("VDISC_EVTIME");
 		if (pVar != nullptr) {
 			m_nStartTime = pVar->GetNumValue();
 			m_nStartTime -= 180;
@@ -118,7 +118,7 @@ ErrorCode SBarVidWnd::attach() {
 
 		m_fTimerDiff = 0;
 
-		m_pPlayingVar = VARMNGR->GetVariable("VDISC_PLAYING");
+		m_pPlayingVar = VAR_MANAGER->GetVariable("VDISC_PLAYING");
 		if (m_pPlayingVar != nullptr) {
 			int nMode = m_pPlayingVar->GetNumValue();
 
@@ -155,7 +155,7 @@ ErrorCode SBarVidWnd::detach() {
 		m_pMovie = nullptr;
 	}
 
-	CBagVar *pTimerVar = VARMNGR->GetVariable("CUR_VTIME");
+	CBagVar *pTimerVar = VAR_MANAGER->GetVariable("CUR_VTIME");
 	if (pTimerVar != nullptr) {
 		pTimerVar->SetValue((int)m_fTimer);
 	}
@@ -181,7 +181,7 @@ void SBarVidWnd::SetPlayMode(int nMode) {
 	// reflect that in the script.
 	if (nMode != 0 && m_pDiscVar != nullptr) {
 		if (m_pDiscVar->GetNumValue() == 2) {
-			CBagVar *pVar = VARMNGR->GetVariable("VIDDISC_SEEN");
+			CBagVar *pVar = VAR_MANAGER->GetVariable("VIDDISC_SEEN");
 			if (pVar != nullptr) {
 				pVar->SetValue(1);
 			}

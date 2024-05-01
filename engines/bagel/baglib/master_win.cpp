@@ -66,11 +66,11 @@ static char g_szString[NUM_MSG_STRINGS][512];
 
 // static initializations
 
-bool CBagMasterWin::m_bObjSave = false;
-ST_OBJ *CBagMasterWin::m_pObjList = nullptr;
-CBagCursor *CBagMasterWin::m_cCursorList[MAX_CURSORS];
-int CBagMasterWin::m_lMenuCount = 0;
-int CBagMasterWin::m_nCurCursor = 0;
+bool CBagMasterWin::_objSaveFl = false;
+ST_OBJ *CBagMasterWin::_objList = nullptr;
+CBagCursor *CBagMasterWin::_cursorList[MAX_CURSORS];
+int CBagMasterWin::_menuCount = 0;
+int CBagMasterWin::_curCursor = 0;
 
 //
 //
@@ -88,33 +88,33 @@ CBagMasterWin::CBagMasterWin() {
 	}
 
 	cRect.SetRect(0, 0, 640 - 1, 480 - 1);
-	m_nFadeIn = 0;
-	m_pGameWindow = nullptr;
+	_fadeIn = 0;
+	_gameWindow = nullptr;
 
-	m_pStorageDeviceList = nullptr;
-	m_pGameSDevList = nullptr;
-	m_pVariableList = nullptr;
-	m_nDiskID = 1;
+	_storageDeviceList = nullptr;
+	_gameSDevList = nullptr;
+	_variableList = nullptr;
+	_diskId = 1;
 
 	create(pAppName, &cRect);
 
 	// Assume default system screen
-	m_cSysScreen = "$SBARDIR\\GENERAL\\SYSTEM\\GAMBHALL.BMP";
-	MACROREPLACE(m_cSysScreen);
+	_sysScreen = "$SBARDIR\\GENERAL\\SYSTEM\\GAMBHALL.BMP";
+	MACROREPLACE(_sysScreen);
 
 	// Load wait sound for when user hits the spacebar
 	CBofString cString("$SBARDIR\\GENERAL\\WAIT.WAV");
 	MACROREPLACE(cString);
 
-	m_pWaitSound = new CBofSound(this, cString, SOUND_MIX);
+	_waitSound = new CBofSound(this, cString, SOUND_MIX);
 }
 
 CBagMasterWin::~CBagMasterWin() {
 	Assert(IsValidObject(this));
 
-	if (m_pWaitSound != nullptr) {
-		delete m_pWaitSound;
-		m_pWaitSound = nullptr;
+	if (_waitSound != nullptr) {
+		delete _waitSound;
+		_waitSound = nullptr;
 	}
 
 	CBofApp *pApp;
@@ -124,42 +124,42 @@ CBagMasterWin::~CBagMasterWin() {
 
 	// Delete any remaining cursors
 	for (int i = 0; i < MAX_CURSORS; i++) {
-		if (m_cCursorList[i] != nullptr) {
-			delete m_cCursorList[i];
-			m_cCursorList[i] = nullptr;
+		if (_cursorList[i] != nullptr) {
+			delete _cursorList[i];
+			_cursorList[i] = nullptr;
 		}
 	}
 
-	if (m_pGameWindow != nullptr) {
-		delete m_pGameWindow;
-		m_pGameWindow = nullptr;
+	if (_gameWindow != nullptr) {
+		delete _gameWindow;
+		_gameWindow = nullptr;
 	}
-	if (m_pStorageDeviceList != nullptr) {
-		delete m_pStorageDeviceList;
-		m_pStorageDeviceList = nullptr;
+	if (_storageDeviceList != nullptr) {
+		delete _storageDeviceList;
+		_storageDeviceList = nullptr;
 	}
-	if (m_pVariableList != nullptr) {
-		delete m_pVariableList;
-		m_pVariableList = nullptr;
+	if (_variableList != nullptr) {
+		delete _variableList;
+		_variableList = nullptr;
 	}
-	if (m_pGameSDevList != nullptr) {
-		delete m_pGameSDevList;
-		m_pGameSDevList = nullptr;
+	if (_gameSDevList != nullptr) {
+		delete _gameSDevList;
+		_gameSDevList = nullptr;
 	}
 
 	// We can get rid of this buffer since the game is shutting down
-	if (m_pObjList != nullptr) {
-		BofFree(m_pObjList);
-		m_pObjList = nullptr;
+	if (_objList != nullptr) {
+		BofFree(_objList);
+		_objList = nullptr;
 	}
 }
 
-ErrorCode CBagMasterWin::ShowSystemDialog(bool bSaveBackground) {
+ErrorCode CBagMasterWin::showSystemDialog(bool bSaveBackground) {
 	Assert(IsValidObject(this));
 	if (g_engine->isDemo())
 		return ERR_NONE;
 
-	CBagStorageDevWnd *pSdev = GetCurrentStorageDev();
+	CBagStorageDevWnd *pSdev = getCurrentStorageDev();
 
 	if ((pSdev == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
 		LogInfo("Showing System Screen");
@@ -167,7 +167,7 @@ ErrorCode CBagMasterWin::ShowSystemDialog(bool bSaveBackground) {
 		CBagOptWindow cOptionDialog;
 
 		// Use specified bitmap as this dialog's image
-		CBofBitmap *pBmp = Bagel::loadBitmap(m_cSysScreen.GetBuffer());
+		CBofBitmap *pBmp = Bagel::loadBitmap(_sysScreen.GetBuffer());
 
 		cOptionDialog.setBackdrop(pBmp);
 
@@ -201,7 +201,7 @@ ErrorCode CBagMasterWin::ShowSystemDialog(bool bSaveBackground) {
 	return _errCode;
 }
 
-ErrorCode CBagMasterWin::ShowCreditsDialog(CBofWindow *pWin, bool bSaveBkg) {
+ErrorCode CBagMasterWin::showCreditsDialog(CBofWindow *win, bool bSaveBkg) {
 	Assert(IsValidObject(this));
 
 	LogInfo("Showing Credits Screen");
@@ -223,12 +223,12 @@ ErrorCode CBagMasterWin::ShowCreditsDialog(CBofWindow *pWin, bool bSaveBkg) {
 	}
 
 	// Use CBagMasterWin if no parent specified
-	if (pWin == nullptr) {
-		pWin = this;
+	if (win == nullptr) {
+		win = this;
 	}
 
 	// Create the dialog box
-	cCreditsDialog.create("Save Dialog", cRect.left, cRect.top, cRect.width(), cRect.height(), pWin);
+	cCreditsDialog.create("Save Dialog", cRect.left, cRect.top, cRect.width(), cRect.height(), win);
 
 	bool bSaveTimer = g_bPauseTimer;
 	g_bPauseTimer = true;
@@ -240,10 +240,10 @@ ErrorCode CBagMasterWin::ShowCreditsDialog(CBofWindow *pWin, bool bSaveBkg) {
 	return _errCode;
 }
 
-bool CBagMasterWin::ShowQuitDialog(CBofWindow *pWin, bool bSaveBackground) {
+bool CBagMasterWin::showQuitDialog(CBofWindow *win, bool bSaveBackground) {
 	Assert(IsValidObject(this));
 
-	CBagStorageDevWnd *pSdev = GetCurrentStorageDev();
+	CBagStorageDevWnd *pSdev = getCurrentStorageDev();
 	bool bQuit = false;
 
 	if ((pSdev == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
@@ -253,12 +253,12 @@ bool CBagMasterWin::ShowQuitDialog(CBofWindow *pWin, bool bSaveBackground) {
 
 		CBofSound::PauseSounds();
 
-		if (pWin == nullptr) {
-			pWin = this;
+		if (win == nullptr) {
+			win = this;
 		}
 
 		// Use specified bitmap as this dialog's image
-		CBofBitmap *pBmp = Bagel::loadBitmap(m_cSysScreen.GetBuffer());
+		CBofBitmap *pBmp = Bagel::loadBitmap(_sysScreen.GetBuffer());
 
 		cQuitDialog.setBackdrop(pBmp);
 
@@ -269,7 +269,7 @@ bool CBagMasterWin::ShowQuitDialog(CBofWindow *pWin, bool bSaveBackground) {
 		}
 
 		// Create the dialog box
-		cQuitDialog.create("Quit Dialog", cRect.left, cRect.top, cRect.width(), cRect.height(), pWin);
+		cQuitDialog.create("Quit Dialog", cRect.left, cRect.top, cRect.width(), cRect.height(), win);
 
 		bool bSaveTimer = g_bPauseTimer;
 		g_bPauseTimer = true;
@@ -301,7 +301,7 @@ bool CBagMasterWin::ShowQuitDialog(CBofWindow *pWin, bool bSaveBackground) {
 	return bQuit;
 }
 
-ErrorCode CBagMasterWin::NewGame() {
+ErrorCode CBagMasterWin::newGame() {
 	Assert(IsValidObject(this));
 
 	char sWorkStr[256];
@@ -315,7 +315,7 @@ ErrorCode CBagMasterWin::NewGame() {
 	CBagPanWindow::FlushInputEvents();
 
 	// Inits for a New Game
-	m_bObjSave = false;
+	_objSaveFl = false;
 
 	CBagel *pApp = CBagel::getBagApp();
 	// Find the starting .WLD file name
@@ -326,13 +326,13 @@ ErrorCode CBagMasterWin::NewGame() {
 		MACROREPLACE(cInitWld);
 	}
 
-	LoadGlobalVars(GLOBALWORLD);
-	LoadFile(cInitWld, "", true);
+	loadGlobalVars(GLOBALWORLD);
+	loadFile(cInitWld, "", true);
 
 	return _errCode;
 }
 
-ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &sStartWldName, bool bRestart, bool bSetStart) {
+ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &startWldName, bool restartFl, bool setStartFl) {
 	char szLocalBuff[256];
 
 	szLocalBuff[0] = '\0';
@@ -360,13 +360,13 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 		paintBitmap(this, sWldFileName.GetBuffer(), &cRect);
 	}
 
-	sWldFileName = sWldName;
+	sWldFileName = wldName;
 
 	// Reset unique ID for menus
-	m_lMenuCount = 0;
+	_menuCount = 0;
 
 	// Keep track of what script we are in
-	m_cWldScript = sWldName;
+	_wldScript = wldName;
 
 	// This palette will be deleted so don't let anyone use it, until it is
 	// replaced with a new one.
@@ -377,68 +377,68 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 
 	// Save all used objects (if going to another .WLD file)
 	bool bRestore = false;
-	if ((m_pStorageDeviceList != nullptr) && !bRestart) {
+	if ((_storageDeviceList != nullptr) && !restartFl) {
 
-		if (!m_bObjSave) {
+		if (!_objSaveFl) {
 
-			m_bObjSave = true;
+			_objSaveFl = true;
 
 			// Only allocate the object list when we really need it...
-			if (m_pObjList == nullptr) {
-				m_pObjList = (ST_OBJ *)BofAlloc(MAX_OBJS * sizeof(ST_OBJ));
-				if (m_pObjList != nullptr) {
+			if (_objList == nullptr) {
+				_objList = (ST_OBJ *)BofAlloc(MAX_OBJS * sizeof(ST_OBJ));
+				if (_objList != nullptr) {
 					// Init to zero (we might not use all slots)
-					BofMemSet(m_pObjList, 0, MAX_OBJS * sizeof(ST_OBJ));
+					BofMemSet(_objList, 0, MAX_OBJS * sizeof(ST_OBJ));
 
 				} else {
 					ReportError(ERR_MEMORY, "Could not allocate Object list");
 				}
 			}
 
-			m_pStorageDeviceList->SaveObjList(m_pObjList, MAX_OBJS); // xxx
+			_storageDeviceList->SaveObjList(_objList, MAX_OBJS); // xxx
 
 			// Save our SDEV location, so we can restore it from Kerpupu
-			SaveSDevStack();
+			saveSDevStack();
 
 		} else {
 			bRestore = true;
 		}
 	}
 
-	if (m_pVariableList != nullptr) {
-		m_pVariableList->ReleaseVariables(false);
+	if (_variableList != nullptr) {
+		_variableList->ReleaseVariables(false);
 	}
 
-	if (m_pGameSDevList != nullptr) {
-		delete m_pGameSDevList;
-		m_pGameSDevList = nullptr;
+	if (_gameSDevList != nullptr) {
+		delete _gameSDevList;
+		_gameSDevList = nullptr;
 	}
 
-	if (m_pGameWindow != nullptr) {
-		delete m_pGameWindow;
-		m_pGameWindow = nullptr;
+	if (_gameWindow != nullptr) {
+		delete _gameWindow;
+		_gameWindow = nullptr;
 	}
 
-	if (m_pStorageDeviceList != nullptr) {
-		delete m_pStorageDeviceList;
-		m_pStorageDeviceList = nullptr;
+	if (_storageDeviceList != nullptr) {
+		delete _storageDeviceList;
+		_storageDeviceList = nullptr;
 	}
 
 	// Unload all current cursors
 	for (int i = 0; i < MAX_CURSORS; i++) {
-		if (m_cCursorList[i] != nullptr) {
-			delete m_cCursorList[i];
-			m_cCursorList[i] = nullptr;
+		if (_cursorList[i] != nullptr) {
+			delete _cursorList[i];
+			_cursorList[i] = nullptr;
 		}
 	}
 
 	CBagMenu::SetUniversalObjectList(nullptr);
 
-	m_pStorageDeviceList = new CBagStorageDevManager();
-	if (!m_pVariableList) {
-		m_pVariableList = new CBagVarManager();
+	_storageDeviceList = new CBagStorageDevManager();
+	if (!_variableList) {
+		_variableList = new CBagVarManager();
 	}
-	m_pGameSDevList = new CBofList<CBagStorageDev *>;
+	_gameSDevList = new CBofList<CBagStorageDev *>;
 
 	MACROREPLACE(sWldFileName);
 
@@ -457,7 +457,7 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 			cFile.Read(pBuf, nLength);
 			cFile.close();
 
-			CBagMasterWin::LoadFileFromStream(fpInput, sStartWldName);
+			CBagMasterWin::loadFileFromStream(fpInput, startWldName);
 
 			BofFree(pBuf);
 		}
@@ -465,7 +465,7 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 		// Possibly need to switch CDs
 		CBagel *pBagApp = CBagel::getBagApp();
 		if (pBagApp != nullptr) {
-			_errCode = pBagApp->verifyCDInDrive(m_nDiskID, m_cCDChangeAudio.GetBuffer());
+			_errCode = pBagApp->verifyCDInDrive(_diskId, _cdChangeAudio.GetBuffer());
 			if (_errCode != ERR_NONE || g_engine->shouldQuit()) {
 				close();
 				return _errCode;
@@ -475,8 +475,8 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 		// Now that we know we are on the correct CD, we can load the cursors
 		// Only load the cursors that are not wield cursors
 		for (int i = 0; i < MAX_CURSORS; i++) {
-			if (m_cCursorList[i] != nullptr) {
-				m_cCursorList[i]->load();
+			if (_cursorList[i] != nullptr) {
+				_cursorList[i]->load();
 			}
 		}
 
@@ -485,33 +485,33 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 
 		if (g_restoreObjectListFl) {
 
-			if (bRestore && m_bObjSave) {
-				Assert(m_pStorageDeviceList != nullptr);
-				if (m_pStorageDeviceList != nullptr) {
+			if (bRestore && _objSaveFl) {
+				Assert(_storageDeviceList != nullptr);
+				if (_storageDeviceList != nullptr) {
 					// Use a preallocated buffer, trash it when we're done.
-					Assert(m_pObjList != nullptr);
-					m_pStorageDeviceList->RestoreObjList(m_pObjList, MAX_OBJS);
+					Assert(_objList != nullptr);
+					_storageDeviceList->RestoreObjList(_objList, MAX_OBJS);
 
 					// All done with this list, can trash it now
-					BofFree(m_pObjList);
-					m_pObjList = nullptr;
+					BofFree(_objList);
+					_objList = nullptr;
 				}
-				m_bObjSave = false;
+				_objSaveFl = false;
 			}
 		}
 		g_restoreObjectListFl = true;
 
 		// If a start wld is passed in then use it
-		if (!sStartWldName.IsEmpty()) {
-			m_sStartWld = sStartWldName;
+		if (!startWldName.IsEmpty()) {
+			_startWld = startWldName;
 		}
-		if (bSetStart) {
-			if (!m_sStartWld.IsEmpty()) {
-				SetStorageDev(m_sStartWld);
+		if (setStartFl) {
+			if (!_startWld.IsEmpty()) {
+				setStorageDev(_startWld);
 			}
 		}
 
-		RestoreActiveMessages(m_pStorageDeviceList);
+		restoreActiveMessages(_storageDeviceList);
 
 	} else {
 		ReportError(ERR_FFIND, "Could not find World Script: %s", sWldFileName.GetBuffer());
@@ -521,7 +521,7 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 	return _errCode;
 }
 
-void CBagMasterWin::SaveSDevStack() {
+void CBagMasterWin::saveSDevStack() {
 	Assert(IsValidObject(this));
 
 	// Save our SDEV location, so we can restore it from Kerpupu
@@ -530,7 +530,7 @@ void CBagMasterWin::SaveSDevStack() {
 
 	memset(&szLocStack[0][0], 0, sizeof(char) * MAX_CLOSEUP_DEPTH * MAX_VAR_VALUE);
 	szTempBuf[0] = '\0';
-	CBagStorageDevWnd *pSDevWin = GetCurrentStorageDev();
+	CBagStorageDevWnd *pSDevWin = getCurrentStorageDev();
 	if (pSDevWin != nullptr) {
 		int i = 0;
 
@@ -542,7 +542,7 @@ void CBagMasterWin::SaveSDevStack() {
 		}
 
 		while ((i < MAX_CLOSEUP_DEPTH) && !cStr.IsEmpty()) {
-			pSDevWin = (CBagStorageDevWnd *)m_pStorageDeviceList->GetStorageDevice(cStr);
+			pSDevWin = (CBagStorageDevWnd *)_storageDeviceList->GetStorageDevice(cStr);
 			if (pSDevWin != nullptr) {
 
 				Common::strcpy_s(szLocStack[i], cStr.GetBuffer());
@@ -568,7 +568,7 @@ void CBagMasterWin::SaveSDevStack() {
 		Assert(strlen(szTempBuf) < MAX_VAR_VALUE);
 
 		// Store our current sdev location stack in a global variable.
-		CBagVar *pVar = VARMNGR->GetVariable("$LASTWORLD");
+		CBagVar *pVar = VAR_MANAGER->GetVariable("$LASTWORLD");
 		if (pVar != nullptr) {
 			cStr = szTempBuf;
 			pVar->SetValue(cStr);
@@ -576,18 +576,18 @@ void CBagMasterWin::SaveSDevStack() {
 	}
 }
 
-ErrorCode CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
+ErrorCode CBagMasterWin::loadGlobalVars(const CBofString &wldName) {
 	Assert(IsValidObject(this));
 
 	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sWldFileName(szLocalBuff, 256);
-	sWldFileName = sWldName;
+	sWldFileName = wldName;
 
-	delete m_pVariableList;
-	m_pVariableList = new CBagVarManager();
+	delete _variableList;
+	_variableList = new CBagVarManager();
 
-	if (m_pVariableList != nullptr) {
+	if (_variableList != nullptr) {
 
 		MACROREPLACE(sWldFileName);
 
@@ -653,7 +653,7 @@ ErrorCode CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 	return _errCode;
 }
 
-ErrorCode CBagMasterWin::LoadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName) {
+ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofString &wldName) {
 	char szLocalStr[256];
 	szLocalStr[0] = 0;
 	CBofRect rRect;
@@ -662,10 +662,10 @@ ErrorCode CBagMasterWin::LoadFileFromStream(CBagIfstream &fpInput, const CBofStr
 	memset(szLocalStr, 0, 256);
 	CBofString sWorkStr(szLocalStr, 256);
 
-	m_sStartWld = sWldName;
+	_startWld = wldName;
 
-	while (!fpInput.eof()) {
-		fpInput.eatWhite();
+	while (!input.eof()) {
+		input.eatWhite();
 		CBagStorageDev *pSDev = nullptr;
 		int nFilter = 0;
 		rRect.right = rRect.left - 1;
@@ -673,11 +673,11 @@ ErrorCode CBagMasterWin::LoadFileFromStream(CBagIfstream &fpInput, const CBofStr
 
 		KEYWORDS keyword;
 
-		if (!fpInput.eatWhite()) {
+		if (!input.eatWhite()) {
 			break;
 		}
 
-		GetKeywordFromStream(fpInput, keyword);
+		GetKeywordFromStream(input, keyword);
 
 		switch (keyword) {
 
@@ -692,37 +692,37 @@ ErrorCode CBagMasterWin::LoadFileFromStream(CBagIfstream &fpInput, const CBofStr
 			CBofString namestr(szNameBuff, 256);
 			CBofString typestr(szTypeBuff, 256);
 
-			fpInput.eatWhite();
-			GetAlphaNumFromStream(fpInput, namestr);
+			input.eatWhite();
+			GetAlphaNumFromStream(input, namestr);
 
-			fpInput.eatWhite();
+			input.eatWhite();
 
 			int nFadeId = 0;
 
-			while (fpInput.peek() != '{') {
-				GetAlphaNumFromStream(fpInput, sWorkStr);
-				fpInput.eatWhite();
+			while (input.peek() != '{') {
+				GetAlphaNumFromStream(input, sWorkStr);
+				input.eatWhite();
 				if (!sWorkStr.Find("AS")) {
-					fpInput.eatWhite();
-					GetAlphaNumFromStream(fpInput, typestr);
+					input.eatWhite();
+					GetAlphaNumFromStream(input, typestr);
 				} else if (!sWorkStr.Find("RECT")) {
-					fpInput.eatWhite();
-					getRectFromStream(fpInput, rRect);
+					input.eatWhite();
+					getRectFromStream(input, rRect);
 				} else if (!sWorkStr.Find("FILTER")) {
-					fpInput.eatWhite();
-					GetIntFromStream(fpInput, nFilter);
+					input.eatWhite();
+					GetIntFromStream(input, nFilter);
 				} else if (!sWorkStr.Find("FADE")) { // Note that this should usually be set in the link
-					fpInput.eatWhite();
-					GetIntFromStream(fpInput, nFadeId);
+					input.eatWhite();
+					GetIntFromStream(input, nFadeId);
 				} else {
 					// There is an error here
 					LogError(BuildString("FAILED on argument of storage device %s : %s", namestr.GetBuffer(), typestr.GetBuffer()));
 					return ERR_UNKNOWN;
 				}
 
-				fpInput.eatWhite();
+				input.eatWhite();
 			}
-			pSDev = OnNewStorageDev(typestr);
+			pSDev = onNewStorageDev(typestr);
 			if (!pSDev) {
 				LogError(BuildString("FAILED on open of storage device %s : %s", namestr.GetBuffer(), typestr.GetBuffer()));
 				return ERR_UNKNOWN;
@@ -730,24 +730,24 @@ ErrorCode CBagMasterWin::LoadFileFromStream(CBagIfstream &fpInput, const CBofStr
 
 			// Default DISK ID for this storage device is the same
 			// as the ID specified for this .WLD script file.
-			pSDev->SetDiskID(m_nDiskID);
+			pSDev->SetDiskID(_diskId);
 
 			if (rRect.width() && rRect.height())
 				pSDev->SetRect(rRect);
 
-			pSDev->LoadFileFromStream(fpInput, namestr, false);
+			pSDev->LoadFileFromStream(input, namestr, false);
 			if (nFilter) {
 				pSDev->SetFilterId((uint16)nFilter);
 
 				// Set the filter on the window.
-				OnNewFilter(pSDev, typestr);
+				onNewFilter(pSDev, typestr);
 			}
 
 			if (nFadeId != 0) {
 				pSDev->SetFadeId((uint16)nFadeId);
 			}
 
-			m_pGameSDevList->addToTail(pSDev);
+			_gameSDevList->addToTail(pSDev);
 			break;
 		}
 
@@ -757,15 +757,15 @@ ErrorCode CBagMasterWin::LoadFileFromStream(CBagIfstream &fpInput, const CBofStr
 
 			CBofString sStr(str, 256);
 
-			fpInput.eatWhite();
-			if (fpInput.peek() == '=') {
-				fpInput.getCh();
-				fpInput.eatWhite();
-				GetAlphaNumFromStream(fpInput, sStr);
+			input.eatWhite();
+			if (input.peek() == '=') {
+				input.getCh();
+				input.eatWhite();
+				GetAlphaNumFromStream(input, sStr);
 
 				// Only use the start wld if not specified elsewhere
-				m_sStartWld = sStr;
-				LogInfo(BuildString("START_WLD set to %s", m_sStartWld.GetBuffer()));
+				_startWld = sStr;
+				LogInfo(BuildString("START_WLD set to %s", _startWld.GetBuffer()));
 			}
 			break;
 		}
@@ -779,38 +779,38 @@ ErrorCode CBagMasterWin::LoadFileFromStream(CBagIfstream &fpInput, const CBofStr
 			CBofString sStr(str, 256);
 			int nId;
 
-			fpInput.eatWhite();
-			GetIntFromStream(fpInput, nId);
-			fpInput.eatWhite();
-			if (fpInput.peek() == '=') {
+			input.eatWhite();
+			GetIntFromStream(input, nId);
+			input.eatWhite();
+			if (input.peek() == '=') {
 				int x, y;
-				fpInput.getCh();
-				fpInput.eatWhite();
+				input.getCh();
+				input.eatWhite();
 
-				GetIntFromStream(fpInput, x);
-				fpInput.eatWhite();
+				GetIntFromStream(input, x);
+				input.eatWhite();
 
-				GetIntFromStream(fpInput, y);
-				fpInput.eatWhite();
+				GetIntFromStream(input, y);
+				input.eatWhite();
 
-				GetAlphaNumFromStream(fpInput, sStr);
+				GetAlphaNumFromStream(input, sStr);
 				MACROREPLACE(sStr);
 
 				// Specify if we have a shared palette or not, look for
 				// the USESHAREDPAL token after the full cursor specification
 				bool bUseShared = false;
 
-				fpInput.eatWhite();
-				if (fpInput.peek() == '=') {
+				input.eatWhite();
+				if (input.peek() == '=') {
 					char szSharedPalToken[256];
 					CBofString tStr(szSharedPalToken, 256);
 
-					fpInput.getCh();
-					fpInput.eatWhite();
+					input.getCh();
+					input.eatWhite();
 
 					// Check for shared pal token, if there, then create our cursor
 					// with the shared palette bit set
-					GetAlphaNumFromStream(fpInput, tStr);
+					GetAlphaNumFromStream(input, tStr);
 					if (tStr.Find("USESHAREDPAL") != -1) {
 						bUseShared = true;
 					}
@@ -823,10 +823,10 @@ ErrorCode CBagMasterWin::LoadFileFromStream(CBagIfstream &fpInput, const CBofStr
 					Assert(nId >= 0 && nId < MAX_CURSORS);
 
 					// Delete any previous cursor
-					if (m_cCursorList[nId] != nullptr) {
-						delete m_cCursorList[nId];
+					if (_cursorList[nId] != nullptr) {
+						delete _cursorList[nId];
 					}
-					m_cCursorList[nId] = pCursor;
+					_cursorList[nId] = pCursor;
 
 					// Set the wielded cursor status (needed for
 					// a load time optimization)
@@ -846,12 +846,12 @@ ErrorCode CBagMasterWin::LoadFileFromStream(CBagIfstream &fpInput, const CBofStr
 			char szPDAState[256];
 			szPDAState[0] = '\0';
 			CBofString sStr(szPDAState, 256);
-			fpInput.eatWhite();
-			if (fpInput.peek() == '=') {
-				fpInput.getCh();
-				fpInput.eatWhite();
+			input.eatWhite();
+			if (input.peek() == '=') {
+				input.getCh();
+				input.eatWhite();
 
-				GetAlphaNumFromStream(fpInput, sStr);
+				GetAlphaNumFromStream(input, sStr);
 
 				if (sStr.Find("MAP") != -1) {
 					SBBasePda::setPdaMode(MAPMODE);
@@ -870,12 +870,12 @@ ErrorCode CBagMasterWin::LoadFileFromStream(CBagIfstream &fpInput, const CBofStr
 			char szBmpFileName[256];
 			szBmpFileName[0] = '\0';
 			CBofString sStr(szBmpFileName, 256);
-			fpInput.eatWhite();
-			if (fpInput.peek() == '=') {
-				fpInput.getCh();
-				fpInput.eatWhite();
+			input.eatWhite();
+			if (input.peek() == '=') {
+				input.getCh();
+				input.eatWhite();
 
-				GetAlphaNumFromStream(fpInput, sStr);
+				GetAlphaNumFromStream(input, sStr);
 				MACROREPLACE(sStr);
 
 				// Read the palette in and keep it hanging around for later use
@@ -888,15 +888,15 @@ ErrorCode CBagMasterWin::LoadFileFromStream(CBagIfstream &fpInput, const CBofStr
 
 		case SYSSCREEN: {
 
-			fpInput.eatWhite();
-			if (fpInput.peek() == '=') {
-				fpInput.getCh();
-				fpInput.eatWhite();
+			input.eatWhite();
+			if (input.peek() == '=') {
+				input.getCh();
+				input.eatWhite();
 
-				GetAlphaNumFromStream(fpInput, m_cSysScreen);
-				MACROREPLACE(m_cSysScreen);
+				GetAlphaNumFromStream(input, _sysScreen);
+				MACROREPLACE(_sysScreen);
 
-				LogInfo(BuildString("SYSSCREEN = %s", m_cSysScreen.GetBuffer()));
+				LogInfo(BuildString("SYSSCREEN = %s", _sysScreen.GetBuffer()));
 			}
 			break;
 		}
@@ -907,30 +907,30 @@ ErrorCode CBagMasterWin::LoadFileFromStream(CBagIfstream &fpInput, const CBofStr
 			szDiskID[0] = '\0';
 			CBofString sStr(szDiskID, 256);
 
-			fpInput.eatWhite();
-			if (fpInput.peek() == '=') {
-				fpInput.getCh();
-				fpInput.eatWhite();
+			input.eatWhite();
+			if (input.peek() == '=') {
+				input.getCh();
+				input.eatWhite();
 
-				GetAlphaNumFromStream(fpInput, m_cCDChangeAudio);
-				MACROREPLACE(m_cCDChangeAudio);
+				GetAlphaNumFromStream(input, _cdChangeAudio);
+				MACROREPLACE(_cdChangeAudio);
 
-				LogInfo(BuildString("DISKAUDIO = %s", m_cCDChangeAudio.GetBuffer()));
+				LogInfo(BuildString("DISKAUDIO = %s", _cdChangeAudio.GetBuffer()));
 			}
 			break;
 		}
 
 		case DISKID: {
-			fpInput.eatWhite();
-			if (fpInput.peek() == '=') {
-				fpInput.getCh();
-				fpInput.eatWhite();
+			input.eatWhite();
+			if (input.peek() == '=') {
+				input.getCh();
+				input.eatWhite();
 				int n;
 
-				GetIntFromStream(fpInput, n);
-				m_nDiskID = (uint16)n;
+				GetIntFromStream(input, n);
+				_diskId = (uint16)n;
 
-				LogInfo(BuildString("DISKID = %d", m_nDiskID));
+				LogInfo(BuildString("DISKID = %d", _diskId));
 
 			} else {
 			}
@@ -940,19 +940,19 @@ ErrorCode CBagMasterWin::LoadFileFromStream(CBagIfstream &fpInput, const CBofStr
 		case VARIABLE: {
 			CBagVar *xVar = new CBagVar;
 			// LogInfo("New global variable");
-			fpInput.eatWhite();
-			xVar->setInfo(fpInput);
+			input.eatWhite();
+			xVar->setInfo(input);
 			break;
 		}
 
 		case REMARK: {
 			char s[255];
-			fpInput.getCh(s, 255);
+			input.getCh(s, 255);
 			break;
 		}
 
 		default: {
-			ParseAlertBox(fpInput, "Syntax Error:", __FILE__, __LINE__);
+			ParseAlertBox(input, "Syntax Error:", __FILE__, __LINE__);
 			break;
 		}
 		}
@@ -963,45 +963,45 @@ ErrorCode CBagMasterWin::LoadFileFromStream(CBagIfstream &fpInput, const CBofStr
 	return _errCode;
 }
 
-ErrorCode CBagMasterWin::SetStorageDev(const CBofString &sWldName, bool bEntry) {
-	Assert(CBofObject::IsValidObject(&sWldName));
+ErrorCode CBagMasterWin::setStorageDev(const CBofString &wldName, bool entry) {
+	Assert(CBofObject::IsValidObject(&wldName));
 
 	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sExt(szLocalBuff, 256);
 
-	sExt = sWldName.Right(4);
-	if (m_pGameWindow)
-		m_pGameWindow->setOnUpdate(false);
+	sExt = wldName.Right(4);
+	if (_gameWindow)
+		_gameWindow->setOnUpdate(false);
 
-	if (!sExt.Find(".wld") || !sExt.Find(".WLD") || (sWldName.Find(".WLD~~") > 0) || (sWldName.Find(".wld~~") > 0)) {
+	if (!sExt.Find(".wld") || !sExt.Find(".WLD") || (wldName.Find(".WLD~~") > 0) || (wldName.Find(".wld~~") > 0)) {
 
 		// This is to stop it from going out of scope before
 		// the message is received.
 		Assert(g_nString >= 0 && g_nString < NUM_MSG_STRINGS);
-		Assert(sWldName.GetLength() < 512);
+		Assert(wldName.GetLength() < 512);
 
-		strncpy(g_szString[g_nString], sWldName, 511);
+		strncpy(g_szString[g_nString], wldName, 511);
 
-		postUserMessage(WM_ENTERNEWWLD, (uint32)g_nString);
+		postUserMessage(WM_ENTER_NEW_WLD, (uint32)g_nString);
 
 		if (++g_nString >= NUM_MSG_STRINGS) {
 			g_nString = 0;
 		}
 
-	} else if (bEntry) {
+	} else if (entry) {
 
-		GotoNewWindow(&sWldName);
+		gotoNewWindow(&wldName);
 
 	} else {
 
 		// This is to stop the string from going out of scope before
 		// the message is received.
 		Assert(g_nString >= 0 && g_nString < NUM_MSG_STRINGS);
-		Assert(sWldName.GetLength() < 512);
-		Common::strcpy_s(g_szString[g_nString], sWldName);
+		Assert(wldName.GetLength() < 512);
+		Common::strcpy_s(g_szString[g_nString], wldName);
 
-		postUserMessage(WM_EXITCLOSEUPWINDOW, (uint32)g_nString);
+		postUserMessage(WM_EXIT_CLOSE_UP_WINDOW, (uint32)g_nString);
 
 		if (++g_nString >= NUM_MSG_STRINGS) {
 			g_nString = 0;
@@ -1011,20 +1011,20 @@ ErrorCode CBagMasterWin::SetStorageDev(const CBofString &sWldName, bool bEntry) 
 	return ERR_NONE;
 }
 
-ErrorCode CBagMasterWin::OnHelp(const CBofString &sHelpFile, bool /*bSaveBkg*/, CBofWindow *pParent) {
+ErrorCode CBagMasterWin::onHelp(const CBofString &helpFile, bool /*bSaveBkg*/, CBofWindow *parent) {
 	Assert(IsValidObject(this));
 
 	if (g_engine->isDemo())
 		return ERR_NONE;
 
-	if (!sHelpFile.IsEmpty()) {
+	if (!helpFile.IsEmpty()) {
 		CBagHelp cHelp;
 
 		char szLocalBuff[256];
 		szLocalBuff[0] = '\0';
 		CBofString sFile(szLocalBuff, 256);
 
-		sFile = sHelpFile;
+		sFile = helpFile;
 		MACROREPLACE(sFile);
 
 		// use specified bitmap as this dialog's image
@@ -1040,11 +1040,11 @@ ErrorCode CBagMasterWin::OnHelp(const CBofString &sHelpFile, bool /*bSaveBkg*/, 
 
 		CBofRect cRect = cHelp.getBackdrop()->getRect();
 
-		if (pParent == nullptr)
-			pParent = this;
+		if (parent == nullptr)
+			parent = this;
 
 		// create the dialog box
-		cHelp.create("HelpDialog", cRect.left, cRect.top, cRect.width(), cRect.height(), pParent);
+		cHelp.create("HelpDialog", cRect.left, cRect.top, cRect.width(), cRect.height(), parent);
 
 		cHelp.SetHelpFile(sFile.GetBuffer());
 		cHelp.doModal();
@@ -1056,28 +1056,28 @@ ErrorCode CBagMasterWin::OnHelp(const CBofString &sHelpFile, bool /*bSaveBkg*/, 
 
 bool g_bWaitOK = false;
 
-void CBagMasterWin::onKeyHit(uint32 lKey, uint32 lRepCount) {
+void CBagMasterWin::onKeyHit(uint32 keyCode, uint32 repCount) {
 	Assert(IsValidObject(this));
 
 	int nVol;
 
-	switch (lKey) {
+	switch (keyCode) {
 	// Dynamic Midi Volume increase
 	case BKEY_ALT_UP:
-		nVol = GetMidiVolume();
+		nVol = getMidiVolume();
 		if (nVol < 12) {
 			nVol++;
-			SetMidiVolume(nVol);
+			setMidiVolume(nVol);
 		}
 
 		break;
 
 	// Dynamic Midi Volume decrease
 	case BKEY_ALT_DOWN:
-		nVol = GetMidiVolume();
+		nVol = getMidiVolume();
 		if (nVol > 0) {
 			nVol--;
-			SetMidiVolume(nVol);
+			setMidiVolume(nVol);
 		}
 		break;
 
@@ -1086,24 +1086,24 @@ void CBagMasterWin::onKeyHit(uint32 lKey, uint32 lRepCount) {
 			g_bWaitOK = false;
 
 			// Play the tick-tock sound
-			if (m_pWaitSound != nullptr) {
-				m_pWaitSound->play();
+			if (_waitSound != nullptr) {
+				_waitSound->play();
 			}
 
-			VARMNGR->IncrementTimers();
+			VAR_MANAGER->IncrementTimers();
 
 			// Prefilter this guy, could cause something to change in the
 			// pan or the PDA or a closeup.
-			m_pGameWindow->SetPreFilterPan(true);
+			_gameWindow->SetPreFilterPan(true);
 
-			m_pGameWindow->AttachActiveObjects();
+			_gameWindow->AttachActiveObjects();
 		}
 		break;
 
 	// Quit
 	case BKEY_ALT_q:
 	case BKEY_ALT_F4:
-		if (g_engine->isDemo() || ShowQuitDialog(this, false)) {
+		if (g_engine->isDemo() || showQuitDialog(this, false)) {
 			close();
 			g_engine->quitGame();
 		}
@@ -1111,61 +1111,61 @@ void CBagMasterWin::onKeyHit(uint32 lKey, uint32 lRepCount) {
 
 	//  Help
 	case BKEY_F1:
-		if (m_pGameWindow != nullptr) {
-			OnHelp(m_pGameWindow->GetHelpFilename(), false);
+		if (_gameWindow != nullptr) {
+			onHelp(_gameWindow->GetHelpFilename(), false);
 		}
 		break;
 
 	// Save a Game
 	case BKEY_ALT_s:
 	case BKEY_SAVE:
-		ShowSaveDialog(this, false);
+		showSaveDialog(this, false);
 		break;
 
 	// Restore Game
 	case BKEY_RESTORE:
-		ShowRestoreDialog(this, false);
+		showRestoreDialog(this, false);
 		break;
 
 	// System options dialog
 	case BKEY_ALT_o:
 	case BKEY_F4:
-		ShowSystemDialog(false);
+		showSystemDialog(false);
 		break;
 
 	// Toggle sound On/Off
 	case BKEY_ALT_m:
-		MuteToggle();
+		muteToggle();
 		break;
 
 	// Restart the game
 	case BKEY_F12:
-		ShowRestartDialog(this, false);
+		showRestartDialog(this, false);
 		break;
 
 	// Default action
 	default:
-		if (m_pGameWindow)
-			m_pGameWindow->onKeyHit(lKey, lRepCount);
+		if (_gameWindow)
+			_gameWindow->onKeyHit(keyCode, repCount);
 		break;
 	}
 
-	CBofWindow::onKeyHit(lKey, lRepCount);
+	CBofWindow::onKeyHit(keyCode, repCount);
 }
 
 void CBagMasterWin::onClose() {
 	Assert(IsValidObject(this));
 
-	if (m_pGameWindow)
-		m_pGameWindow->onClose();
+	if (_gameWindow)
+		_gameWindow->onClose();
 
 	g_engine->quitGame();
 }
 
-ErrorCode CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
+ErrorCode CBagMasterWin::gotoNewWindow(const CBofString *str) {
 	Assert(IsValidObject(this));
-	Assert(pStr != nullptr);
-	Assert(CBofObject::IsValidObject(pStr));
+	Assert(str != nullptr);
+	Assert(CBofObject::IsValidObject(str));
 
 	CBagStorageDev *pSDev;
 
@@ -1181,8 +1181,8 @@ ErrorCode CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 	CBofString sPrevSDevStr(szPrevSDevStr, 256);
 	CBofString sCurrSDevStr(szCurSDevStr, 256);
 
-	int n = pStr->Find("~~");
-	sWorkStr = *pStr;
+	int n = str->Find("~~");
+	sWorkStr = *str;
 	bool bPrev = false;
 
 	while (n > 0) {
@@ -1191,14 +1191,14 @@ ErrorCode CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 		n = sWorkStr.Find("~~");
 		if (n > 0) {
 			sCurrSDevStr = sWorkStr.Left(n);
-			pSDev = m_pStorageDeviceList->GetStorageDevice(sCurrSDevStr);
+			pSDev = _storageDeviceList->GetStorageDevice(sCurrSDevStr);
 			if (pSDev != nullptr) {
 				pSDev->SetPrevSDev(sPrevSDevStr);
 				bPrev = true;
 			}
 		} else {
 			sCurrSDevStr = sWorkStr;
-			pSDev = m_pStorageDeviceList->GetStorageDevice(sCurrSDevStr);
+			pSDev = _storageDeviceList->GetStorageDevice(sCurrSDevStr);
 			if (pSDev != nullptr) {
 				pSDev->SetPrevSDev(sPrevSDevStr);
 				bPrev = true;
@@ -1206,20 +1206,20 @@ ErrorCode CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 		}
 	}
 
-	pSDev = m_pStorageDeviceList->GetStorageDevice(sWorkStr);
+	pSDev = _storageDeviceList->GetStorageDevice(sWorkStr);
 	if (pSDev != nullptr) {
 
 		LogInfo(BuildString("Switching to SDEV: %s", sWorkStr.GetBuffer()));
 
-		if (m_pGameWindow) {
-			m_pGameWindow->detach();
+		if (_gameWindow) {
+			_gameWindow->detach();
 
 			//  If the new storage device is equal to the last windows previous
 			//  lets not go in a circle
 			//  If the current game window did not have a previous win
-			if ((m_pGameWindow->GetPrevSDev().IsEmpty()) || (m_pGameWindow->GetPrevSDev() != pSDev->GetName())) {
+			if ((_gameWindow->GetPrevSDev().IsEmpty()) || (_gameWindow->GetPrevSDev() != pSDev->GetName())) {
 				if (!bPrev) {
-					pSDev->SetPrevSDev(m_pGameWindow->GetName());
+					pSDev->SetPrevSDev(_gameWindow->GetName());
 				}
 			}
 		}
@@ -1229,13 +1229,13 @@ ErrorCode CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 			pSDev->SetPrevSDev("");
 		}
 
-		m_pGameWindow = (CBagStorageDevWnd *)pSDev;
-		SetCICStatus(pSDev);
+		_gameWindow = (CBagStorageDevWnd *)pSDev;
+		setCICStatus(pSDev);
 
 		int nFadeId = pSDev->GetFadeId();
 
-		if (m_nFadeIn != 0)
-			pSDev->SetFadeId((uint16)m_nFadeIn);
+		if (_fadeIn != 0)
+			pSDev->SetFadeId((uint16)_fadeIn);
 
 		// Reset paints
 		g_allowPaintFl = true;
@@ -1243,28 +1243,28 @@ ErrorCode CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 		pSDev->attach();
 
 		pSDev->SetFadeId((uint16)nFadeId);
-		m_nFadeIn = 0;
+		_fadeIn = 0;
 	}
 
 	return _errCode;
 }
 
-bool CBagMasterWin::ShowRestartDialog(CBofWindow *pWin, bool bSaveBkg) {
+bool CBagMasterWin::showRestartDialog(CBofWindow *win, bool bSaveBkg) {
 	Assert(IsValidObject(this));
 
 	if (g_engine->isDemo())
 		return false;
 
-	CBagStorageDevWnd *pSdev = GetCurrentStorageDev();
+	CBagStorageDevWnd *pSdev = getCurrentStorageDev();
 	if ((pSdev == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
 
 		LogInfo("Showing Restart Screen");
 
-		if (pWin == nullptr) {
-			pWin = this;
+		if (win == nullptr) {
+			win = this;
 		}
 
-		CBagRestartDialog cDlg(m_cSysScreen.GetBuffer(), pWin);
+		CBagRestartDialog cDlg(_sysScreen.GetBuffer(), win);
 
 		CBofWindow *pLastWin = g_hackWindow;
 		g_hackWindow = &cDlg;
@@ -1290,12 +1290,12 @@ bool CBagMasterWin::ShowRestartDialog(CBofWindow *pWin, bool bSaveBkg) {
 	return false;
 }
 
-void CBagMasterWin::onUserMessage(uint32 nMessage, uint32 lParam) {
+void CBagMasterWin::onUserMessage(uint32 message, uint32 param) {
 	Assert(IsValidObject(this));
 
-	switch (nMessage) {
-	case WM_SHOWSYSTEMDLG:
-		ShowSystemDialog();
+	switch (message) {
+	case WM_SHOW_SYSTEM_DLG:
+		showSystemDialog();
 		break;
 
 	// Ask user if they want to restart or restore a game
@@ -1318,7 +1318,7 @@ void CBagMasterWin::onUserMessage(uint32 nMessage, uint32 lParam) {
 		char szBuf[MAX_FNAME];
 
 		Common::strcpy_s(szBuf, buildSysDir("DIED2.BMP"));
-		if (lParam == 2) {
+		if (param == 2) {
 			Common::strcpy_s(szBuf, buildSysDir("START.BMP"));
 		}
 
@@ -1342,7 +1342,7 @@ void CBagMasterWin::onUserMessage(uint32 nMessage, uint32 lParam) {
 			break;
 
 		case RESTART_BTN:
-			NewGame();
+			newGame();
 			break;
 
 		case QUIT_BTN:
@@ -1354,15 +1354,14 @@ void CBagMasterWin::onUserMessage(uint32 nMessage, uint32 lParam) {
 		return;
 	}
 
-	case WM_ENTERNEWWLD: {
+	case WM_ENTER_NEW_WLD: {
 		char szLocalBuff[256];
 		szLocalBuff[0] = '\0';
 		CBofString sWldScript(szLocalBuff, 256);
 
 		// User info is an index into an array of temporary string buffers
-		//Assert(lParam >= 0);
-		Assert(lParam < NUM_MSG_STRINGS);
-		sWldScript = g_szString[(int)lParam];
+		Assert(param < NUM_MSG_STRINGS);
+		sWldScript = g_szString[(int)param];
 
 		char szStartWld[256];
 		szStartWld[0] = '\0';
@@ -1373,38 +1372,37 @@ void CBagMasterWin::onUserMessage(uint32 nMessage, uint32 lParam) {
 			sStartWld = sWldScript.Mid(n + 2);
 			sWldScript = sWldScript.Left(n);
 		}
-		LoadFile(sWldScript, sStartWld);
+		loadFile(sWldScript, sStartWld);
 		break;
 	}
 
-	case WM_ENTERPANWINDOW:
-	case WM_ENTERCLOSEUPWINDOW:
+	case WM_ENTER_PAN_WINDOW:
+	case WM_ENTER_CLOSE_UP_WINDOW:
 		// Should never be called
 		Assert(false);
 		break;
 
-	case WM_EXITCLOSEUPWINDOW: {
+	case WM_EXIT_CLOSE_UP_WINDOW: {
 		CBofString cStr;
 
 		// User info is an index into an array of tempory string buffers
-		//Assert(lParam >= 0);
-		Assert(lParam < NUM_MSG_STRINGS);
-		cStr = g_szString[(int)lParam];
+		Assert(param < NUM_MSG_STRINGS);
+		cStr = g_szString[(int)param];
 
-		CBagStorageDev *pSDev = m_pStorageDeviceList->GetStorageDevice(cStr);
+		CBagStorageDev *pSDev = _storageDeviceList->GetStorageDevice(cStr);
 
 		if (pSDev) {
-			if (m_pGameWindow) {
-				m_pGameWindow->detach();
+			if (_gameWindow) {
+				_gameWindow->detach();
 			}
 
 			pSDev->attach();
 			pSDev->SetPreFilterPan(true);
 
-			m_pGameWindow = (CBagStorageDevWnd *)pSDev;
+			_gameWindow = (CBagStorageDevWnd *)pSDev;
 
 			// Reset the CIC var
-			SetCICStatus(pSDev);
+			setCICStatus(pSDev);
 		} else {
 			// Report error
 		}
@@ -1415,40 +1413,40 @@ void CBagMasterWin::onUserMessage(uint32 nMessage, uint32 lParam) {
 		break;
 	}
 
-	if (m_pGameWindow)
-		m_pGameWindow->setOnUpdate(true);
+	if (_gameWindow)
+		_gameWindow->setOnUpdate(true);
 }
 
 ErrorCode CBagMasterWin::Run() {
 	return _errCode;
 }
 
-void CBagMasterWin::setActiveCursor(int iCursor) {
-	Assert(iCursor >= 0 && iCursor < MAX_CURSORS);
+void CBagMasterWin::setActiveCursor(int cursorId) {
+	Assert(cursorId >= 0 && cursorId < MAX_CURSORS);
 
-	if (m_cCursorList[iCursor] != nullptr) {
-		m_cCursorList[iCursor]->setCurrent();
-		m_nCurCursor = iCursor;
+	if (_cursorList[cursorId] != nullptr) {
+		_cursorList[cursorId]->setCurrent();
+		_curCursor = cursorId;
 	}
 }
 
-void CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
+void CBagMasterWin::fillSaveBuffer(ST_BAGEL_SAVE *saveBuf) {
 	Assert(IsValidObject(this));
-	Assert(pSaveBuf != nullptr);
+	Assert(saveBuf != nullptr);
 
 	//
 	// Fill the save game buffer with all the info we need to restore this game
 	//
 
 	// 1st, wipe it
-	BofMemSet(pSaveBuf, 0, sizeof(ST_BAGEL_SAVE));
+	BofMemSet(saveBuf, 0, sizeof(ST_BAGEL_SAVE));
 
 	CBagel *pApp = CBagel::getBagApp();
 	if (pApp != nullptr) {
 		CBagMasterWin *pWin = pApp->getMasterWnd();
 		if (pWin != nullptr) {
 			// Save Global variables
-			CBagVarManager *pVarManager = GetVariableManager();
+			CBagVarManager *pVarManager = getVariableManager();
 			if (pVarManager != nullptr) {
 
 				// Walk variable list and save each global variable
@@ -1464,23 +1462,23 @@ void CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 
 						if (!pVar->GetName().IsEmpty()) {
 							Assert(strlen(pVar->GetName()) < MAX_VAR_NAME);
-							Common::strcpy_s(pSaveBuf->m_stVarList[j].m_szName, pVar->GetName());
+							Common::strcpy_s(saveBuf->m_stVarList[j].m_szName, pVar->GetName());
 						}
 
 						if (!pVar->GetValue().IsEmpty()) {
 							Assert(strlen(pVar->GetValue()) < MAX_VAR_VALUE);
-							Common::strcpy_s(pSaveBuf->m_stVarList[j].m_szValue, pVar->GetValue());
+							Common::strcpy_s(saveBuf->m_stVarList[j].m_szValue, pVar->GetValue());
 						}
 
-						pSaveBuf->m_stVarList[j].m_nType = (uint16)pVar->GetType();
-						pSaveBuf->m_stVarList[j].m_bGlobal = (byte)pVar->IsGlobal();
-						pSaveBuf->m_stVarList[j].m_bConstant = (byte)pVar->IsConstant();
-						pSaveBuf->m_stVarList[j].m_bReference = (byte)pVar->IsReference();
-						pSaveBuf->m_stVarList[j].m_bTimer = (byte)pVar->IsTimer();
-						pSaveBuf->m_stVarList[j].m_bRandom = (byte)pVar->IsRandom();
-						pSaveBuf->m_stVarList[j].m_bNumeric = (byte)pVar->IsNumeric();
-						pSaveBuf->m_stVarList[j].m_bAttached = (byte)pVar->isAttached();
-						pSaveBuf->m_stVarList[j].m_bUsed = 1;
+						saveBuf->m_stVarList[j].m_nType = (uint16)pVar->GetType();
+						saveBuf->m_stVarList[j].m_bGlobal = (byte)pVar->IsGlobal();
+						saveBuf->m_stVarList[j].m_bConstant = (byte)pVar->IsConstant();
+						saveBuf->m_stVarList[j].m_bReference = (byte)pVar->IsReference();
+						saveBuf->m_stVarList[j].m_bTimer = (byte)pVar->IsTimer();
+						saveBuf->m_stVarList[j].m_bRandom = (byte)pVar->IsRandom();
+						saveBuf->m_stVarList[j].m_bNumeric = (byte)pVar->IsNumeric();
+						saveBuf->m_stVarList[j].m_bAttached = (byte)pVar->isAttached();
+						saveBuf->m_stVarList[j].m_bUsed = 1;
 						j++;
 
 						// Can't exceed MAX_VARS
@@ -1491,34 +1489,34 @@ void CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 			}
 
 			// Remember current script file
-			strncpy(pSaveBuf->m_szScript, GetWldScript().GetBuffer(), MAX_FNAME - 1);
+			strncpy(saveBuf->m_szScript, getWldScript().GetBuffer(), MAX_FNAME - 1);
 
-			CBagStorageDevWnd *pSDevWin = GetCurrentStorageDev();
+			CBagStorageDevWnd *pSDevWin = getCurrentStorageDev();
 			if (pSDevWin != nullptr) {
 				char szLocalStr[256];
 				szLocalStr[0] = 0;
 				CBofString cStr(szLocalStr, 256);
 
-				pSaveBuf->m_nLocType = pSDevWin->GetDeviceType();
+				saveBuf->m_nLocType = pSDevWin->GetDeviceType();
 
 				// Remember the pan's position
-				if (pSaveBuf->m_nLocType == SDEV_GAMEWIN) {
+				if (saveBuf->m_nLocType == SDEV_GAMEWIN) {
 					CBagPanWindow *pPanWin = (CBagPanWindow *)pSDevWin;
 					CBofRect cPos = pPanWin->GetViewPort();
 
-					pSaveBuf->m_nLocX = (uint16)cPos.left;
-					pSaveBuf->m_nLocY = (uint16)cPos.top;
+					saveBuf->m_nLocX = (uint16)cPos.left;
+					saveBuf->m_nLocY = (uint16)cPos.top;
 				}
 
-				CBagStorageDevManager *pManager = GetStorageDevManager();
+				CBagStorageDevManager *pManager = getStorageDevManager();
 				if (pManager != nullptr) {
-					pManager->SaveObjList(&pSaveBuf->m_stObjList[0], MAX_OBJS);
-					if (IsObjSave()) {
+					pManager->SaveObjList(&saveBuf->m_stObjList[0], MAX_OBJS);
+					if (isObjSave()) {
 
-						Assert(m_pObjList != nullptr);
+						Assert(_objList != nullptr);
 
-						BofMemCopy(&pSaveBuf->m_stObjListEx[0], m_pObjList, sizeof(ST_OBJ) * MAX_OBJS);
-						pSaveBuf->m_bUseEx = 1;
+						BofMemCopy(&saveBuf->m_stObjListEx[0], _objList, sizeof(ST_OBJ) * MAX_OBJS);
+						saveBuf->m_bUseEx = 1;
 					}
 
 					// Save current storage device location (stack)
@@ -1526,7 +1524,7 @@ void CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 					cStr = pSDevWin->GetName();
 					while ((i < MAX_CLOSEUP_DEPTH) && !cStr.IsEmpty()) {
 						pSDevWin = (CBagStorageDevWnd *)pManager->GetStorageDevice(cStr);
-						Common::strcpy_s(pSaveBuf->m_szLocStack[i], cStr.GetBuffer());
+						Common::strcpy_s(saveBuf->m_szLocStack[i], cStr.GetBuffer());
 						i++;
 						cStr.Free();
 						if (pSDevWin != nullptr) {
@@ -1539,7 +1537,7 @@ void CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 	}
 }
 
-bool CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, bool bSaveBkg) {
+bool CBagMasterWin::showSaveDialog(CBofWindow *win, bool bSaveBkg) {
 	Assert(IsValidObject(this));
 
 	if (g_engine->isDemo())
@@ -1550,7 +1548,7 @@ bool CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, bool bSaveBkg) {
 	}
 
 	bool bSaved = false;
-	CBagStorageDevWnd *pSdev = GetCurrentStorageDev();
+	CBagStorageDevWnd *pSdev = getCurrentStorageDev();
 	if ((pSdev == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
 
 		LogInfo("Showing Save Screen");
@@ -1559,11 +1557,11 @@ bool CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 		if (pSaveBuf != nullptr) {
 			CBagSaveDialog cSaveDialog;
-			FillSaveBuffer(pSaveBuf);
+			fillSaveBuffer(pSaveBuf);
 			cSaveDialog.setSaveGameBuffer((byte *)pSaveBuf, sizeof(ST_BAGEL_SAVE));
 
 			// Use specified bitmap as this dialog's image
-			CBofBitmap *pBmp = Bagel::loadBitmap(m_cSysScreen.GetBuffer());
+			CBofBitmap *pBmp = Bagel::loadBitmap(_sysScreen.GetBuffer());
 
 			cSaveDialog.setBackdrop(pBmp);
 
@@ -1576,7 +1574,7 @@ bool CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, bool bSaveBkg) {
 			}
 
 			// Create the dialog box
-			cSaveDialog.create("Save Dialog", cRect.left, cRect.top, cRect.width(), cRect.height(), pWin);
+			cSaveDialog.create("Save Dialog", cRect.left, cRect.top, cRect.width(), cRect.height(), win);
 
 			bool bSaveTimer = g_bPauseTimer;
 			g_bPauseTimer = true;
@@ -1600,15 +1598,15 @@ bool CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, bool bSaveBkg) {
 	return bSaved;
 }
 
-void CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
+void CBagMasterWin::doRestore(ST_BAGEL_SAVE *saveBuf) {
 	Assert(IsValidObject(this));
-	Assert(pSaveBuf != nullptr);
+	Assert(saveBuf != nullptr);
 
 	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString cScript(szLocalBuff, 256);
 
-	cScript = pSaveBuf->m_szScript;
+	cScript = saveBuf->m_szScript;
 
 	char szBuf[60], szCloseup[256];
 	char szLocalStr[256];
@@ -1619,8 +1617,8 @@ void CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 	// Rebuild the stack of locations (Could be 3 closups deep)
 	szCloseup[0] = '\0';
 	for (i = MAX_CLOSEUP_DEPTH - 1; i >= 0; i--) {
-		if (pSaveBuf->m_szLocStack[i][0] != '\0') {
-			Common::sprintf_s(szBuf, "%s~~", pSaveBuf->m_szLocStack[i]);
+		if (saveBuf->m_szLocStack[i][0] != '\0') {
+			Common::sprintf_s(szBuf, "%s~~", saveBuf->m_szLocStack[i]);
 			Common::strcat_s(szCloseup, szBuf);
 		}
 	}
@@ -1631,87 +1629,87 @@ void CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 	}
 
 	// Designate closeups
-	if (pSaveBuf->m_nLocType == SDEV_CLOSEP) {
+	if (saveBuf->m_nLocType == SDEV_CLOSEP) {
 		Common::strcat_s(szCloseup, " AS CLOSEUP");
 	}
 
 	cStr = szCloseup;
 
 	// Don't allow a local restore
-	SetSaveObjs(false);
+	setSaveObjs(false);
 
 	// Make sure that all global variables are loaded and available
-	LoadGlobalVars(GLOBALWORLD);
+	loadGlobalVars(GLOBALWORLD);
 
 	// Tell BAGEL to start over with this script
-	LoadFile(cScript, cStr, false, false);
+	loadFile(cScript, cStr, false, false);
 
 	if (!ErrorOccurred()) {
 
 		// Restore all variables
 		//
-		CBagVarManager *pVarManager = GetVariableManager();
+		CBagVarManager *pVarManager = getVariableManager();
 		if (pVarManager != nullptr) {
 
 			// Reset the Global Vars with these new settings
 			for (i = 0; i < MAX_VARS; i++) {
 				// If this entry is actually used to store Var info
-				if (pSaveBuf->m_stVarList[i].m_bUsed) {
+				if (saveBuf->m_stVarList[i].m_bUsed) {
 					// Find the Global Var (already in memory)
-					CBagVar *pVar = pVarManager->GetVariable(pSaveBuf->m_stVarList[i].m_szName);
+					CBagVar *pVar = pVarManager->GetVariable(saveBuf->m_stVarList[i].m_szName);
 					if (pVar != nullptr) {
-						pVar->SetValue(pSaveBuf->m_stVarList[i].m_szValue);
+						pVar->SetValue(saveBuf->m_stVarList[i].m_szValue);
 
 					} else {
-						LogError(BuildString("Global Variable NOT found: %s", pSaveBuf->m_stVarList[i].m_szName));
+						LogError(BuildString("Global Variable NOT found: %s", saveBuf->m_stVarList[i].m_szName));
 					}
 				}
 			}
 		}
 
-		CBagStorageDevManager *pSDevManager = GetStorageDevManager();
+		CBagStorageDevManager *pSDevManager = getStorageDevManager();
 
 		if (pSDevManager != nullptr) {
 			// Restore any extra obj list info (for .WLD swapping)
-			if (m_pObjList == nullptr) {
-				m_pObjList = (ST_OBJ *)BofAlloc(MAX_OBJS * sizeof(ST_OBJ));
-				if (m_pObjList != nullptr) {
+			if (_objList == nullptr) {
+				_objList = (ST_OBJ *)BofAlloc(MAX_OBJS * sizeof(ST_OBJ));
+				if (_objList != nullptr) {
 					// Init to nullptr (might not use all slots)
-					BofMemSet(m_pObjList, 0, MAX_OBJS * sizeof(ST_OBJ));
+					BofMemSet(_objList, 0, MAX_OBJS * sizeof(ST_OBJ));
 
 				} else {
 					ReportError(ERR_MEMORY);
 				}
 			}
 
-			BofMemCopy(GetObjList(), &pSaveBuf->m_stObjListEx[0], sizeof(ST_OBJ) * MAX_OBJS);
+			BofMemCopy(getObjList(), &saveBuf->m_stObjListEx[0], sizeof(ST_OBJ) * MAX_OBJS);
 
-			if (pSaveBuf->m_bUseEx) {
-				SetSaveObjs(true);
+			if (saveBuf->m_bUseEx) {
+				setSaveObjs(true);
 			} else {
-				SetSaveObjs(false);
+				setSaveObjs(false);
 			}
 
-			pSDevManager->RestoreObjList(&pSaveBuf->m_stObjList[0], MAX_OBJS);
+			pSDevManager->RestoreObjList(&saveBuf->m_stObjList[0], MAX_OBJS);
 		}
 
 		// If it's a Panorama, the set it's View position.
-		if (pSaveBuf->m_nLocType == SDEV_GAMEWIN) {
-			g_engine->g_cInitLoc.x = pSaveBuf->m_nLocX;
-			g_engine->g_cInitLoc.y = pSaveBuf->m_nLocY;
+		if (saveBuf->m_nLocType == SDEV_GAMEWIN) {
+			g_engine->g_cInitLoc.x = saveBuf->m_nLocX;
+			g_engine->g_cInitLoc.y = saveBuf->m_nLocY;
 			g_engine->g_bUseInitLoc = true;
 		}
 
 		// Now set the start storage device and let the game start
-		if (!m_sStartWld.IsEmpty()) {
-			SetStorageDev(m_sStartWld);
+		if (!_startWld.IsEmpty()) {
+			setStorageDev(_startWld);
 		}
 
-		RestoreActiveMessages(pSDevManager);
+		restoreActiveMessages(pSDevManager);
 	}
 }
 
-bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
+bool CBagMasterWin::showRestoreDialog(CBofWindow *win, bool bSaveBkg) {
 	Assert(IsValidObject(this));
 	if (g_engine->isDemo())
 		return false;
@@ -1723,7 +1721,7 @@ bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 	bool bRestored = false;
 	CBagStorageDevWnd *pSdev;
 
-	if (g_bAllowRestore || ((pSdev = GetCurrentStorageDev()) == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
+	if (g_bAllowRestore || ((pSdev = getCurrentStorageDev()) == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
 
 		LogInfo("Showing Restore Screen");
 
@@ -1732,7 +1730,7 @@ bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 		CBagRestoreDialog cRestoreDialog;
 
 		// Use specified bitmap as this dialog's image
-		CBofBitmap *pBmp = Bagel::loadBitmap(m_cSysScreen.GetBuffer());
+		CBofBitmap *pBmp = Bagel::loadBitmap(_sysScreen.GetBuffer());
 
 		cRestoreDialog.setBackdrop(pBmp);
 
@@ -1747,7 +1745,7 @@ bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 		}
 
 		// Create the dialog box
-		cRestoreDialog.create("Restore Dialog", cRect.left, cRect.top, cRect.width(), cRect.height(), pWin);
+		cRestoreDialog.create("Restore Dialog", cRect.left, cRect.top, cRect.width(), cRect.height(), win);
 
 		CBofWindow *pLastWin = g_hackWindow;
 		g_hackWindow = &cRestoreDialog;
@@ -1775,7 +1773,7 @@ bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 // User options
 #define DEFAULT_CORRECTION 2
 
-bool CBagMasterWin::GetFlyThru() {
+bool CBagMasterWin::getFlyThru() {
 	bool bFlyThrusOn = true;
 	CBagel *pApp = CBagel::getBagApp();
 	if (pApp != nullptr) {
@@ -1785,7 +1783,7 @@ bool CBagMasterWin::GetFlyThru() {
 	return bFlyThrusOn;
 }
 
-int CBagMasterWin::GetMidiVolume() {
+int CBagMasterWin::getMidiVolume() {
 	int nMidiVol = VOLUME_INDEX_DEFAULT;
 	CBagel *pApp = CBagel::getBagApp();
 	if (pApp != nullptr) {
@@ -1798,19 +1796,19 @@ int CBagMasterWin::GetMidiVolume() {
 	return nMidiVol;
 }
 
-void CBagMasterWin::SetMidiVolume(int nVol) {
-	Assert(nVol >= VOLUME_INDEX_MIN && nVol <= VOLUME_INDEX_MAX);
+void CBagMasterWin::setMidiVolume(int vol) {
+	Assert(vol >= VOLUME_INDEX_MIN && vol <= VOLUME_INDEX_MAX);
 	CBagel *pApp = CBagel::getBagApp();
 
 	if (pApp != nullptr) {
-		pApp->setOption(USER_OPTIONS, "MidiVolume", nVol);
+		pApp->setOption(USER_OPTIONS, "MidiVolume", vol);
 	}
 
 	// We will let the sound subsystem do our volume control...
-	CBofSound::SetVolume(nVol, GetWaveVolume());
+	CBofSound::SetVolume(vol, getWaveVolume());
 }
 
-int CBagMasterWin::GetWaveVolume() {
+int CBagMasterWin::getWaveVolume() {
 	int nWaveVol = VOLUME_INDEX_DEFAULT;
 	CBagel *pApp = CBagel::getBagApp();
 	if (pApp != nullptr) {
@@ -1824,19 +1822,19 @@ int CBagMasterWin::GetWaveVolume() {
 	return nWaveVol;
 }
 
-void CBagMasterWin::SetWaveVolume(int nVol) {
-	Assert(nVol >= VOLUME_INDEX_MIN && nVol <= VOLUME_INDEX_MAX);
+void CBagMasterWin::setWaveVolume(int vol) {
+	Assert(vol >= VOLUME_INDEX_MIN && vol <= VOLUME_INDEX_MAX);
 	CBagel *pApp = CBagel::getBagApp();
 
 	if (pApp != nullptr) {
-		pApp->setOption(USER_OPTIONS, WAVE_VOLUME, nVol);
+		pApp->setOption(USER_OPTIONS, WAVE_VOLUME, vol);
 	}
 
 	// We will let the sound subsystem do our volume control...
-	CBofSound::SetVolume(GetMidiVolume(), nVol);
+	CBofSound::SetVolume(getMidiVolume(), vol);
 }
 
-int CBagMasterWin::GetCorrection() {
+int CBagMasterWin::getCorrection() {
 	int nCorrection = DEFAULT_CORRECTION;
 	CBagel *pApp = CBagel::getBagApp();
 	if (pApp != nullptr) {
@@ -1856,12 +1854,12 @@ int CBagMasterWin::GetCorrection() {
 	return nCorrection;
 }
 
-void CBagMasterWin::SetCorrection(int nCorrection) {
-	Assert(nCorrection >= 0 && nCorrection <= 32);
+void CBagMasterWin::setCorrection(int correction) {
+	Assert(correction >= 0 && correction <= 32);
 
 	int nActualCorr = 2;
 
-	switch (nCorrection) {
+	switch (correction) {
 	case 0:
 		nActualCorr = 6;
 		break;
@@ -1897,7 +1895,7 @@ void CBagMasterWin::SetCorrection(int nCorrection) {
 	}
 }
 
-int CBagMasterWin::GetPanSpeed() {
+int CBagMasterWin::getPanSpeed() {
 	int n = 1;
 	CBagel *pApp = CBagel::getBagApp();
 	if (pApp != nullptr) {
@@ -1911,16 +1909,16 @@ int CBagMasterWin::GetPanSpeed() {
 	return n;
 }
 
-void CBagMasterWin::SetPanSpeed(int nSpeed) {
-	Assert(nSpeed >= 0 && nSpeed <= 5);
+void CBagMasterWin::setPanSpeed(int speed) {
+	Assert(speed >= 0 && speed <= 5);
 	CBagel *pApp = CBagel::getBagApp();
 
 	if (pApp != nullptr) {
-		pApp->setOption(USER_OPTIONS, "PanSpeed", nSpeed);
+		pApp->setOption(USER_OPTIONS, "PanSpeed", speed);
 	}
 }
 
-bool CBagMasterWin::GetPanimations() {
+bool CBagMasterWin::getPanimations() {
 	bool bPanims = 0;
 	CBagel *pApp = CBagel::getBagApp();
 	if (pApp != nullptr) {
@@ -1930,44 +1928,44 @@ bool CBagMasterWin::GetPanimations() {
 	return bPanims;
 }
 
-void CBagMasterWin::SetPanimations(bool bPanims) {
+void CBagMasterWin::setPanimations(bool panimsFl) {
 	CBagel *pApp = CBagel::getBagApp();
 
 	if (pApp != nullptr) {
-		pApp->setOption(USER_OPTIONS, "Panimations", bPanims);
+		pApp->setOption(USER_OPTIONS, "Panimations", panimsFl);
 	}
 }
 
-void CBagMasterWin::MuteToggle() {
+void CBagMasterWin::muteToggle() {
 	static int nMidiVol = VOLUME_INDEX_MIN;
 	static int nWaveVol = VOLUME_INDEX_MIN;
 	static bool bMute = false;
 
 	if (bMute) {
 		// Restore settings
-		SetMidiVolume(nMidiVol);
-		SetWaveVolume(nWaveVol);
+		setMidiVolume(nMidiVol);
+		setWaveVolume(nWaveVol);
 
 	} else {
 		// Save current settings
-		nMidiVol = GetMidiVolume();
-		nWaveVol = GetWaveVolume();
+		nMidiVol = getMidiVolume();
+		nWaveVol = getWaveVolume();
 
 		// Mute
-		SetMidiVolume(VOLUME_INDEX_MIN);
-		SetWaveVolume(VOLUME_INDEX_MIN);
+		setMidiVolume(VOLUME_INDEX_MIN);
+		setWaveVolume(VOLUME_INDEX_MIN);
 	}
 
 	// Toggle mute-ness
 	bMute = !bMute;
 }
 
-void CBagMasterWin::ForcePaintScreen() {
+void CBagMasterWin::forcePaintScreen() {
 	CBagel *pApp = CBagel::getBagApp();
 	if (pApp != nullptr) {
 		CBagMasterWin *pWin = pApp->getMasterWnd();
 		if (pWin != nullptr) {
-			CBagStorageDevWnd *pSDev = pWin->GetCurrentStorageDev();
+			CBagStorageDevWnd *pSDev = pWin->getCurrentStorageDev();
 			if (pSDev != nullptr) {
 				pSDev->PaintScreen(nullptr);
 			}
@@ -1975,67 +1973,11 @@ void CBagMasterWin::ForcePaintScreen() {
 	}
 }
 
-ErrorCode PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString &cString, const int nSize, const int nWeight, const RGBCOLOR cColor, int nJustify, uint32 nFormat, int nFont) {
-	Assert(pBmp != nullptr);
-	Assert(pRect != nullptr);
+ErrorCode paintBeveledText(CBofWindow *win, CBofRect *rect, const CBofString &cString, const int size, const int weight, const RGBCOLOR color, int justify, uint32 format, int font) {
+	Assert(win != nullptr);
+	Assert(rect != nullptr);
 
-	CBofBitmap cBmp(pRect->width(), pRect->height(), nullptr, false);
-
-	// Assume no error
-	ErrorCode errCode = ERR_NONE;
-
-	CBofRect r = cBmp.getRect();
-
-	CBofPalette *pPal = nullptr;
-	CBofApp *pApp = CBofApp::GetApp();
-	if (pApp != nullptr) {
-		pPal = pApp->getPalette();
-	}
-
-	if (pPal != nullptr) {
-		cBmp.fillRect(nullptr, pPal->getNearestIndex(RGB(92, 92, 92)));
-
-		cBmp.drawRect(&r, pPal->getNearestIndex(RGB(0, 0, 0)));
-	} else {
-		cBmp.fillRect(nullptr, COLOR_BLACK);
-	}
-
-	byte c1 = 3;
-	byte c2 = 9;
-	CBofRect cBevel = r;
-
-	int left = cBevel.left;
-	int top = cBevel.top;
-	int right = cBevel.right;
-	int bottom = cBevel.bottom;
-
-	r.left += 6;
-	r.top += 3;
-	r.right -= 5;
-	r.bottom -= 5;
-
-	for (int i = 1; i <= 3; i++) {
-		cBmp.line(left + i, bottom - i, right - i, bottom - i, c1);
-		cBmp.line(right - i, bottom - i, right - i, top + i - 1, c1);
-	}
-
-	for (int i = 1; i <= 3; i++) {
-		cBmp.line(left + i, bottom - i, left + i, top + i - 1, c2);
-		cBmp.line(left + i, top + i - 1, right - i, top + i - 1, c2);
-	}
-
-	paintText(&cBmp, &r, cString, nSize, nWeight, cColor, nJustify, nFormat, nFont);
-
-	cBmp.paint(pBmp, pRect);
-
-	return errCode;
-}
-
-ErrorCode PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &cString, const int nSize, const int nWeight, const RGBCOLOR cColor, int nJustify, uint32 nFormat, int nFont) {
-	Assert(pWin != nullptr);
-	Assert(pRect != nullptr);
-
-	CBofBitmap cBmp(pRect->width(), pRect->height(), nullptr, false);
+	CBofBitmap cBmp(rect->width(), rect->height(), nullptr, false);
 
 	// Assume no error
 	ErrorCode errCode = ERR_NONE;
@@ -2082,14 +2024,14 @@ ErrorCode PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &
 		cBmp.line(left + i, top + i - 1, right - i, top + i - 1, c2);
 	}
 
-	paintText(&cBmp, &r, cString, nSize, nWeight, cColor, nJustify, nFormat, nFont);
+	paintText(&cBmp, &r, cString, size, weight, color, justify, format, font);
 
-	cBmp.paint(pWin, pRect);
+	cBmp.paint(win, rect);
 
 	return errCode;
 }
 
-ErrorCode WaitForInput() {
+ErrorCode waitForInput() {
 	EventLoop eventLoop;
 
 	while (!g_engine->shouldQuit() && !eventLoop.frame()) {
@@ -2104,15 +2046,15 @@ void CBagMasterWin::close() {
 	g_allowPaintFl = false;
 }
 
-void CBagMasterWin::RestoreActiveMessages(CBagStorageDevManager *pSDevManager) {
-	Assert(pSDevManager != nullptr);
+void CBagMasterWin::restoreActiveMessages(CBagStorageDevManager *sdevManager) {
+	Assert(sdevManager != nullptr);
 
-	if (pSDevManager != nullptr) {
+	if (sdevManager != nullptr) {
 		// Make sure the Message Log light will flash if user has
 		// waiting messages.
-		int n = pSDevManager->GetNumStorageDevices();
+		int n = sdevManager->GetNumStorageDevices();
 		for (int i = 0; i < n; i++) {
-			CBagStorageDev *pSDev = pSDevManager->GetStorageDevice(i);
+			CBagStorageDev *pSDev = sdevManager->GetStorageDevice(i);
 			if (pSDev != nullptr) {
 
 				int m = pSDev->GetObjectCount();
@@ -2129,29 +2071,29 @@ void CBagMasterWin::RestoreActiveMessages(CBagStorageDevManager *pSDevManager) {
 
 // Set the CIC var to either true or false so that our scripting
 // code can tell whether or not to play certain movies (primarily flashbacks).
-void SetCICStatus(CBagStorageDev *pSDev) {
+void setCICStatus(CBagStorageDev *sdev) {
 	char szLocalBuff[256];
 	CBofString sWorkStr(szLocalBuff, 256);
 
 	// If the new game window is a CIC, then set the global var indicating
 	// that this is the case.  Don't reset when we're zooming the PDA.
-	if (pSDev && pSDev->GetName() != "BPDAZ_WLD") {
+	if (sdev && sdev->GetName() != "BPDAZ_WLD") {
 		sWorkStr = "IN_CIC";
-		CBagVar *pCICVar = VARMNGR->GetVariable(sWorkStr);
+		CBagVar *pCICVar = VAR_MANAGER->GetVariable(sWorkStr);
 		if (pCICVar) {
-			sWorkStr = pSDev->IsCIC() ? "TRUE" : "FALSE";
+			sWorkStr = sdev->IsCIC() ? "TRUE" : "FALSE";
 			pCICVar->SetValue(sWorkStr);
 		}
 	}
 }
 
-bool GetCICStatus() {
+bool getCICStatus() {
 	char szLocalBuff[256];
 	CBofString sWorkStr(szLocalBuff, 256);
 	bool bRetVal = false;
 
 	sWorkStr = "IN_CIC";
-	CBagVar *pCICVar = VARMNGR->GetVariable(sWorkStr);
+	CBagVar *pCICVar = VAR_MANAGER->GetVariable(sWorkStr);
 	if (pCICVar) {
 		bRetVal = (pCICVar->GetValue() == "TRUE");
 	}
