@@ -280,7 +280,7 @@ void AnimateObject4(int obn, int loopn, int spdd, int rept) {
 void MergeObject(int obn) {
 	if (!is_valid_object(obn)) quit("!MergeObject: invalid object specified");
 
-	// FIXME: call update object scale
+	update_object_scale(obn); // make sure sprite transform is up to date
 	construct_object_gfx(obn, true);
 	Bitmap *actsp = get_cached_object_image(obn);
 

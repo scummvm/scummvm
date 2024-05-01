@@ -212,6 +212,9 @@ void CheckViewFrameForCharacter(CharacterInfo *chi);
 int  GetCharacterFrameVolume(CharacterInfo *chi);
 Shared::Bitmap *GetCharacterImage(int charid, int *isFlipped);
 CharacterInfo *GetCharacterAtScreen(int xx, int yy);
+// Deduces room object's scale, accounting for both manual scaling and the room region effects;
+// calculates resulting sprite size.
+void update_character_scale(int charid);
 CharacterInfo *GetCharacterAtRoom(int x, int y);
 // Get character ID at the given room coordinates
 int is_pos_on_character(int xx, int yy);
