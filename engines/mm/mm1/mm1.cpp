@@ -62,16 +62,16 @@ Common::Error MM1Engine::run() {
 	// Initialize graphics mode
 	initGraphics(320, 200);
 
-	// Setup mixer
-	_sound = new Sound(_mixer);
-	syncSoundSettings();
-
 	if (isEnhanced()) {
 		if (!setupEnhanced())
 			return Common::kNoError;
 	} else {
 		setupNormal();
 	}
+
+	// Setup mixer
+	_sound = new Sound(_mixer);
+	syncSoundSettings();
 
 	// Setup console
 	setDebugger(new Console());

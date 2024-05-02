@@ -50,8 +50,9 @@ _musicVolume(0), _sfxVolume(0) {
 		break;
 	}
 
-	// force load effects early so custom instruments for mt32 are loaded before sound is played.
-	loadEffectsData();
+	if (g_engine->getGameID() != GType_MightAndMagic1)
+		// Force load effects early so custom instruments for mt32 are loaded before sound is played.
+		loadEffectsData();
 
 	assert(_SoundDriver);
 
