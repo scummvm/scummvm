@@ -320,7 +320,12 @@ void GridItemTray::handleMouseDown(int x, int y, int button, int clickCount) {
 	if ((x < 0 || x > _w) || (y > _h || y < -(_grid->_gridItemHeight))) {
 		// Close on clicking outside
 		close();
-	} else if (y < 0 && clickCount >= 2) {
+	}
+}
+
+void GridItemTray::handleMouseUp(int x, int y, int button, int clickCount) {
+	Dialog::handleMouseUp(x, y, button, clickCount);
+	if (y < 0 && clickCount >= 2) {
 		// Run on double clicking thumbnail
 		close();
 		sendCommand(kItemDoubleClickedCmd, _entryID);
