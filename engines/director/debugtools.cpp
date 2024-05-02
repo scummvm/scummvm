@@ -70,8 +70,9 @@ static void showControlPanel() {
 	if (!_state->_showControlPanel)
 		return;
 
-	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(140, 120), ImGuiCond_FirstUseEver);
+	ImVec2 vp(ImGui::GetMainViewport()->Size);
+	ImGui::SetNextWindowPos(ImVec2(vp.x - 220.0f, 20.0f), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(200, 55), ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Control Panel", &_state->_showControlPanel)) {
 		ImDrawList *dl = ImGui::GetWindowDrawList();
@@ -135,6 +136,14 @@ static void showControlPanel() {
 		dl->AddTriangleFilled(ImVec2(p.x, p.y), ImVec2(p.x, p.y + 16), ImVec2(p.x + 14, p.y + 8), color);
 		ImGui::SetItemTooltip("Play");
 		ImGui::SameLine();
+
+		char buf[5];
+
+		snprintf(buf, 5, "%d", g_director->getCurrentMovie()->getScore()->getCurrentFrameNum());
+
+		ImGui::SetNextItemWidth(30);
+		ImGui::InputText("##frame", buf, 5, ImGuiInputTextFlags_CharsDecimal);
+		ImGui::SetItemTooltip("Frame");
 	}
 	ImGui::End();
 }
