@@ -55,6 +55,7 @@ typedef struct ImGuiState {
 		bool _listView = true;
 		int _thumbnailSize = 64;
 	} _cast;
+	bool _showControlPanel = true;
 	bool _showCallStack = false;
 	bool _showVars = false;
 	bool _showChannels = false;
@@ -64,6 +65,71 @@ typedef struct ImGuiState {
 } ImGuiState;
 
 ImGuiState *_state = nullptr;
+
+static void showControlPanel() {
+	if (!_state->_showControlPanel)
+		return;
+
+	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(140, 120), ImGuiCond_FirstUseEver);
+
+	if (ImGui::Begin("Control Panel", &_state->_showControlPanel)) {
+		ImDrawList *dl = ImGui::GetWindowDrawList();
+
+		ImU32 color = ImGui::GetColorU32(ImVec4(0.8f, 0.8f, 0.8f, 1.0f));
+		ImVec2 p = ImGui::GetCursorScreenPos();
+		ImVec2 mid(p.x + 7, p.y + 7);
+
+		ImGui::InvisibleButton("Rewind", ImVec2(16, ImGui::GetFontSize()));
+		if (ImGui::IsItemClicked(0)) {
+		}
+
+		dl->AddTriangleFilled(ImVec2(p.x, p.y + 7), ImVec2(p.x + 4, p.y + 3), ImVec2(p.x + 4, p.y + 11), color);
+		dl->AddTriangleFilled(ImVec2(p.x + 4, p.y + 7), ImVec2(p.x + 8, p.y + 3), ImVec2(p.x + 8, p.y + 11), color);
+		ImGui::SetItemTooltip("Rewind");
+		ImGui::SameLine();
+
+		p = ImGui::GetCursorScreenPos();
+		mid = ImVec2(p.x + 7, p.y + 7);
+		ImGui::InvisibleButton("Step Back", ImVec2(16, ImGui::GetFontSize()));
+		if (ImGui::IsItemClicked(0)) {
+		}
+		dl->AddTriangleFilled(ImVec2(p.x, p.y + 7), ImVec2(p.x + 5, p.y + 3), ImVec2(p.x + 5, p.y + 11), color);
+		dl->AddRectFilled(ImVec2(p.x + 6, p.y + 3), ImVec2(p.x + 9, p.y + 11), color);
+		ImGui::SetItemTooltip("Step Back");
+		ImGui::SameLine();
+
+		p = ImGui::GetCursorScreenPos();
+		mid = ImVec2(p.x + 7, p.y + 7);
+		ImGui::InvisibleButton("Stop", ImVec2(16, ImGui::GetFontSize()));
+		if (ImGui::IsItemClicked(0)) {
+		}
+		dl->AddRectFilled(ImVec2(p.x, p.y + 3), ImVec2(p.x + 8, p.y + 11), color);
+		ImGui::SetItemTooltip("Stop");
+		ImGui::SameLine();
+
+		p = ImGui::GetCursorScreenPos();
+		mid = ImVec2(p.x + 7, p.y + 7);
+		ImGui::InvisibleButton("Step", ImVec2(16, ImGui::GetFontSize()));
+		if (ImGui::IsItemClicked(0)) {
+		}
+		dl->AddRectFilled(ImVec2(p.x, p.y + 3), ImVec2(p.x + 3, p.y + 11), color);
+		dl->AddTriangleFilled(ImVec2(p.x + 4, p.y + 4), ImVec2(p.x + 4, p.y + 10), ImVec2(p.x + 8, p.y + 7), color);
+		ImGui::SetItemTooltip("Step");
+		ImGui::SameLine();
+
+		p = ImGui::GetCursorScreenPos();
+		mid = ImVec2(p.x + 7, p.y + 7);
+		ImGui::InvisibleButton("Play", ImVec2(16, ImGui::GetFontSize()));
+		if (ImGui::IsItemClicked(0)) {
+			warning("Play");
+		}
+		dl->AddTriangleFilled(ImVec2(p.x, p.y + 3), ImVec2(p.x, p.y + 11), ImVec2(p.x + 7, p.y + 7), color);
+		ImGui::SetItemTooltip("Play");
+		ImGui::SameLine();
+	}
+	ImGui::End();
+}
 
 static void showCallStack() {
 	if (!_state->_showCallStack)
@@ -588,6 +654,7 @@ void onImGuiRender() {
 
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("View")) {
+			ImGui::MenuItem("Control Panel", NULL, &_state->_showControlPanel);
 			ImGui::MenuItem("CallStack", NULL, &_state->_showCallStack);
 			ImGui::MenuItem("Vars", NULL, &_state->_showVars);
 			ImGui::MenuItem("Channels", NULL, &_state->_showChannels);
@@ -597,6 +664,7 @@ void onImGuiRender() {
 		ImGui::EndMainMenuBar();
 	}
 
+	showControlPanel();
 	showVars();
 	showCallStack();
 	showChannels();
