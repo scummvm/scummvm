@@ -29,6 +29,7 @@
 #include "common/platform.h"
 #include "graphics/managed_surface.h"
 #include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 #include "dgds/dgds.h"
 #include "dgds/font.h"

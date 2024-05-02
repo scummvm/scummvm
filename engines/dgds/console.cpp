@@ -24,6 +24,7 @@
 #include "common/system.h"
 
 #include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "image/png.h"
 
