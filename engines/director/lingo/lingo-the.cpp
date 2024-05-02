@@ -1963,6 +1963,18 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 		g_debugger->propReadHook(propName);
 		return;
 	}
+	if (obj.type == POINT) {
+		if (propName.equalsIgnoreCase("locH")) {
+			d = obj.u.farr->arr[0];
+		} else if (propName.equalsIgnoreCase("locV")) {
+			d = obj.u.farr->arr[1];
+		} else {
+			g_lingo->lingoError("Lingo::getObjectProp: Point <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
+		}
+		g_lingo->push(d);
+		g_debugger->propReadHook(propName);
+		return;
+	}
 	if (obj.type == RECT) {
 		if (propName.equalsIgnoreCase("left")) {
 			d = obj.u.farr->arr[0];
