@@ -83,6 +83,7 @@ public:
 	bool stopSegment();
 	void updateScreenBlocking();
 	void updateScreen();
+	int getTicks();
 };
 
 namespace MMovieXObj {

@@ -165,18 +165,21 @@ void MMovieXObject::updateScreenBlocking() {
 		bool keepPlaying = true;
 		if (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
-				case Common::EVENT_QUIT:
-					g_director->processEventQUIT();
-					// fallthrough
-				case Common::EVENT_KEYDOWN:
-				case Common::EVENT_RBUTTONDOWN:
-				case Common::EVENT_LBUTTONDOWN:
-					if (_abortOnClick)
-						keepPlaying = false;
-					break;
-				default:
-					break;
+			case Common::EVENT_QUIT:
+				g_director->processEventQUIT();
+				// fallthrough
+			case Common::EVENT_KEYDOWN:
+			case Common::EVENT_RBUTTONDOWN:
+			case Common::EVENT_LBUTTONDOWN:
+				if (_abortOnClick)
+					keepPlaying = false;
+				break;
+			default:
+				break;
 			}
+			// pass event through to window manager.
+			// this is required so that e.g. the stillDown is kept up to date
+			g_director->_wm->processEvent(event);
 		}
 		if (!keepPlaying)
 			break;
@@ -192,7 +195,7 @@ void MMovieXObject::updateScreen() {
 			if (movie._video && movie._video->isPlaying() && movie._video->needsUpdate()) {
 				const Graphics::Surface *frame = movie._video->decodeNextFrame();
 				if (frame) {
-					debugC(5, kDebugXObj, "MMovieXObject: rendering movie %s (%d), time %d", movie._path.toString().c_str(), _currentMovieIndex, movie._video->getTime());
+					debugC(8, kDebugXObj, "MMovieXObject: rendering movie %s (%d), time %d", movie._path.toString().c_str(), _currentMovieIndex, movie._video->getTime());
 					Graphics::Surface *temp1 = frame->scale(_bounds.width(), _bounds.height(), false);
 					Graphics::Surface *temp2 = temp1->convertTo(g_director->_pixelformat, movie._video->getPalette());
 					g_system->copyRectToScreen(temp2->getPixels(), temp2->pitch, _bounds.left, _bounds.top, _bounds.width(), _bounds.height());
@@ -202,7 +205,7 @@ void MMovieXObject::updateScreen() {
 			}
 			// do a time check
 			uint32 endTime = Audio::Timestamp(0, seg._length + seg._start, movie._video->getTimeScale()).msecs();
-			debugC(5, kDebugXObj, "MMovieXObject::updateScreen(): time: %d, endTime: %d", movie._video->getTime(), endTime);
+			debugC(8, kDebugXObj, "MMovieXObject::updateScreen(): time: %d, endTime: %d", movie._video->getTime(), endTime);
 			if (movie._video->getTime() >= endTime) {
 				if (_looping) {
 					debugC(5, kDebugXObj, "MMovieXObject::updateScreen(): rewinding loop on %s (%d), time %d", movie._path.toString().c_str(), _currentMovieIndex, movie._video->getTime());
@@ -216,6 +219,16 @@ void MMovieXObject::updateScreen() {
 	}
 	g_system->updateScreen();
 	g_director->delayMillis(10);
+}
+
+int MMovieXObject::getTicks() {
+	if (_currentMovieIndex) {
+		MMovieFile &movie = _movies.getVal(_currentMovieIndex);
+		if (movie._video) {
+			return movie._video->getTime() * 60 / 1000;
+		}
+	}
+	return -1;
 }
 
 void MMovieXObj::open(ObjectType type, const Common::Path &path) {
@@ -277,10 +290,10 @@ void MMovieXObj::m_openMMovie(int nargs) {
 		movie._video = nullptr;
 	}
 	uint32 offsetCount = offsetsFile.readUint32BE();
-	offsetsFile.skip(0x3c);
+	offsetsFile.skip(0x3c); // rest of header should be blank
 	debugC(5, kDebugXObj, "MMovieXObj:m_openMMovie(): opening movie %s (index %d)", path.toString().c_str(), me->_lastIndex);
 	for (uint32 i = 0; i < offsetCount; i++) {
-		Common::String name = offsetsFile.readString(0x20, 0x10);
+		Common::String name = offsetsFile.readString(' ', 0x10);
 		uint32 start = offsetsFile.readUint32BE();
 		uint32 length = offsetsFile.readUint32BE();
 		debugC(5, kDebugXObj, "MMovieXObj:m_openMMovie(): adding segment %s (index %d): start %d (%dms) length %d (%dms)", name.c_str(), movie.segments.size(), start, Audio::Timestamp(0, start, movie._video->getTimeScale()).msecs(), length, Audio::Timestamp(0, length, movie._video->getTimeScale()).msecs());
@@ -351,7 +364,9 @@ void MMovieXObj::m_playSegment(int nargs) {
 				g_lingo->push(MMovieError::MMOVIE_INDEX_OUT_OF_RANGE);
 				return;
 			}
-			g_lingo->push(0);
+			int result = me->getTicks();
+			debugC(5, kDebugXObj, "MMovieXObj::m_playSegment: ticks: %d", result);
+			g_lingo->push(result);
 			return;
 		}
 	}
@@ -384,7 +399,9 @@ void MMovieXObj::m_playSegLoop(int nargs) {
 		if (it._value.segLookup.contains(segmentName)) {
 			int segIndex = it._value.segLookup.getVal(segmentName);
 			me->playSegment(it._key, segIndex, true, restore, shiftAbort, abortOnClick, purge, async);
-			g_lingo->push(0);
+			int result = me->getTicks();
+			debugC(5, kDebugXObj, "MMovieXObj::m_playSegLoop: ticks: %d", result);
+			g_lingo->push(result);
 			return;
 		}
 	}
@@ -393,13 +410,14 @@ void MMovieXObj::m_playSegLoop(int nargs) {
 }
 
 void MMovieXObj::m_idleSegment(int nargs) {
-	debugC(5, kDebugXObj, "MMovieXObj::m_idleSegment()");
 	if (nargs != 0) {
 		g_lingo->dropStack(nargs);
 	}
 	MMovieXObject *me = static_cast<MMovieXObject *>(g_lingo->_state->me.u.obj);
 	me->updateScreen();
-	g_lingo->push(0);
+	int result = me->getTicks();
+	debugC(5, kDebugXObj, "MMovieXObj::m_idleSegment(): ticks: %d", result);
+	g_lingo->push(result);
 }
 
 void MMovieXObj::m_stopSegment(int nargs) {
@@ -523,7 +541,7 @@ void MMovieXObj::m_readFile(int nargs) {
 		warning("MMovieXObj::m_readFile(): expecting 2 argument");
 	}
 	Common::SaveFileManager *saves = g_system->getSavefileManager();
-	bool scramble = (bool)g_lingo->pop().asInt();
+	bool scramble = g_lingo->pop().asInt() != 0;
 	Common::String origPath = g_lingo->pop().asString();
 	Common::String path = origPath;
 
@@ -536,6 +554,7 @@ void MMovieXObj::m_readFile(int nargs) {
 		if (browser.runModal() <= 0) {
 			debugC(5, kDebugXObj, "MMovieXObj::m_readFile(): read cancelled by modal");
 			g_lingo->push(result);
+			return;
 		}
 		path = browser.getResult();
 
@@ -583,7 +602,7 @@ void MMovieXObj::m_writeFile(int nargs) {
 		warning("MMovieXObj::m_writeFile(): expecting 3 arguments");
 	}
 	Common::SaveFileManager *saves = g_system->getSavefileManager();
-	bool scramble = (bool)g_lingo->pop().asInt();
+	bool scramble = g_lingo->pop().asInt() != 0;
 	Common::String data = g_lingo->pop().asString();
 	Common::String origPath = g_lingo->pop().asString();
 	Common::String path = origPath;
@@ -597,6 +616,7 @@ void MMovieXObj::m_writeFile(int nargs) {
 		if (browser.runModal() <= 0) {
 			debugC(5, kDebugXObj, "MMovieXObj::m_writeFile(): write cancelled by modal");
 			g_lingo->push(result);
+			return;
 		}
 		path = browser.getResult();
 
