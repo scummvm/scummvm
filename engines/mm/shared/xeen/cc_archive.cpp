@@ -29,10 +29,10 @@ namespace Shared {
 namespace Xeen {
 
 uint16 BaseCCArchive::convertNameToId(const Common::Path &resourceName) {
-	if (resourceName.empty())
+	Common::String name = resourceName.baseName();
+	if (resourceName.empty() || name.hasSuffix("."))
 		return 0xffff;
 
-	Common::String name = resourceName.baseName();
 	name.toUppercase();
 
 	// Check if a resource number is being directly specified
