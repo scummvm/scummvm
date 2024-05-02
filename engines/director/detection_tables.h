@@ -5245,8 +5245,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("photos4us", "Demo", "Photos4us", "2c27791a84756be6201d281bad54f7bb", 351560, 404),
 
 	// From Star Trek: Borg (Disc 2)
-	MACGAME1("picarddossier", "", "Picard Dossier", "e1dc28c1dd8409c2d2e0d5d269df5ffc", 519813, 400),
-	WINGAME1t("picarddossier", "", "OMNIBORG.EXE", "59dbe112ee3a8d2a5c9cdf5f528dcfbd", 811363, 404),
+	MACGAME1("picarddossier", "", "Picard Dossier", "r:e1dc28c1dd8409c2d2e0d5d269df5ffc", 519813, 404),
+	WINGAME1("picarddossier", "", "OMNIBORG.EXE",	"t:59dbe112ee3a8d2a5c9cdf5f528dcfbd", 811363, 404),
 
 	WINGAME1("picklesbook", "", "PICKLE.EXE", "fb00695cb48e574f4acd75587b280756", 805141, 404),
 
@@ -6734,6 +6734,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("perfectblue", "", "PERFECTB.EXE", "2535f11350bc1f2b7ca2dcc6c0cdddfd", 1420772, Common::JA_JPN, 501),
 
 	WINGAME1_l("pettson1", "", "PETT32.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1430755, Common::SE_SWE, 501),
+
+	// From Japanese Star Trek: Borg DVD (2000)
+	WINGAME1_l("picarddossier", "DVD", "OMNIBORG.EXE",	"t:312801acbcbedcb6825414dad03538e8", 1501528, Common::JA_JPN, 501),
 
 	WINDEMO1("picasso", "Demo", "PICASS32.EXE", "3460ad87d2ba57104e2810a77b53c220", 1413437, 500),
 
