@@ -43,10 +43,17 @@
 
 namespace Director {
 
+typedef struct ImGuiImage {
+	ImTextureID id;
+	int16 width;
+	int16 height;
+} ImGuiImage;
+
 typedef struct ImGuiState {
 	struct {
-		Common::HashMap<Graphics::Surface *, ImTextureID> _textures;
+		Common::HashMap<Graphics::Surface *, ImGuiImage> _textures;
 		bool _listView = true;
+		int _thumbnailSize = 64;
 	} _cast;
 	bool _showCallStack = false;
 	bool _showVars = false;
@@ -130,26 +137,52 @@ static const char *toString(CastType castType) {
 	return castTypes[(int)castType];
 }
 
-static ImTextureID getImageID(CastMember *castMember) {
+static ImGuiImage getImageID(CastMember *castMember) {
 	if (castMember->_type != CastType::kCastBitmap)
-		return nullptr;
+		return {};
 
 	BitmapCastMember *bmpMember = (BitmapCastMember *)castMember;
 	Common::Rect bbox(bmpMember->getBbox());
 	Graphics::Surface *bmp = bmpMember->getMatte(bbox);
 	if (!bmp)
-		return nullptr;
+		return {};
 
 	if (_state->_cast._textures.contains(bmp))
 		return _state->_cast._textures[bmp];
 
 	Picture *pic = bmpMember->_picture;
 	if (!pic)
-		return nullptr;
+		return {};
 
 	ImTextureID textureID = (ImTextureID)(intptr_t)loadTextureFromSurface(&pic->_surface, pic->_palette, pic->_paletteColors);
-	_state->_cast._textures[bmp] = textureID;
-	return textureID;
+	_state->_cast._textures[bmp] = {textureID, pic->_surface.w, pic->_surface.h};
+	return _state->_cast._textures[bmp];
+}
+
+static void setToolTipImage(const ImGuiImage &image, const char *name) {
+	if (ImGui::IsItemHovered() && ImGui::BeginTooltip()) {
+		ImGui::Text("%s", name);
+		ImGui::Image(image.id, ImVec2(image.width, image.height), ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImVec4(1, 1, 1, 1));
+		ImGui::EndTooltip();
+	}
+}
+
+static void showImage(const ImGuiImage &image, const char *name, float thumbnailSize) {
+	ImVec2 size;
+	if (image.width > image.height) {
+		size = {thumbnailSize - 2, (thumbnailSize - 2) * image.height / image.width};
+	} else {
+		size = {(thumbnailSize - 2) * image.width / image.height, thumbnailSize - 2};
+	}
+	ImGui::BeginGroup();
+	ImVec2 screenPos = ImGui::GetCursorScreenPos();
+	ImGui::GetWindowDrawList()->AddRect(screenPos, screenPos + ImVec2(thumbnailSize, thumbnailSize), 0xFFFFFFFF);
+	ImVec2 pos = ImGui::GetCursorPos();
+	ImVec2 imgPos = pos + ImVec2(1 + (thumbnailSize - 2 - size.x) * 0.5f, 1 + (thumbnailSize - 2 - size.y) * 0.5f);
+	ImGui::SetCursorPos(imgPos);
+	ImGui::Image(image.id, size);
+	ImGui::EndGroup();
+	setToolTipImage(image, name);
 }
 
 static void showCast() {
@@ -161,24 +194,18 @@ static void showCast() {
 
 	if (ImGui::Begin("Cast", &_state->_showCast)) {
 		Movie *movie = g_director->getCurrentMovie();
-		ImGui::BeginDisabled(_state->_cast._listView);
-		if (ImGui::Button("List")) {
-			_state->_cast._listView = true;
+		if (ImGui::Button(_state->_cast._listView ? "Grid" : "List")) {
+			_state->_cast._listView = !_state->_cast._listView;
 		}
-		ImGui::EndDisabled();
-		ImGui::SameLine();
-		ImGui::BeginDisabled(!_state->_cast._listView);
-		if (ImGui::Button("Grid")) {
-			_state->_cast._listView = false;
-		}
-		ImGui::EndDisabled();
+		ImGui::Separator();
+
 		if (_state->_cast._listView) {
 			if (ImGui::BeginTable("Resources", 5, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg)) {
 				ImGui::TableSetupColumn("Name", 0, 120.f);
 				ImGui::TableSetupColumn("#", 0, 20.f);
 				ImGui::TableSetupColumn("Script", 0, 80.f);
 				ImGui::TableSetupColumn("Type", 0, 80.f);
-				ImGui::TableSetupColumn("Preview", 0, 128.f);
+				ImGui::TableSetupColumn("Preview", 0, 32.f);
 				ImGui::TableHeadersRow();
 
 				for (auto it : *movie->getCasts()) {
@@ -192,6 +219,7 @@ static void showCast() {
 							continue;
 						ImGui::TableNextRow();
 						ImGui::TableNextColumn();
+						const char *name = castMemberInfo ? castMemberInfo->name.c_str() : "";
 						ImGui::Text("%s", castMemberInfo ? castMemberInfo->name.c_str() : "");
 
 						ImGui::TableNextColumn();
@@ -206,9 +234,9 @@ static void showCast() {
 						ImGui::Text("%s", toString(castMember._value->_type));
 
 						ImGui::TableNextColumn();
-						ImTextureID imgID = getImageID(castMember._value);
-						if (imgID) {
-							ImGui::Image(imgID, ImVec2(64, 64));
+						ImGuiImage imgID = getImageID(castMember._value);
+						if (imgID.id) {
+							showImage(imgID, name, 32.f);
 						}
 					}
 				}
@@ -216,13 +244,12 @@ static void showCast() {
 				ImGui::EndTable();
 			}
 		} else {
-			float contentWidth = ImGui::GetContentRegionAvail().x;
-			float contentHeight = ImGui::GetContentRegionAvail().y;
+			ImGui::SliderInt("Thumbnail Size", &_state->_cast._thumbnailSize, 32, 256);
+			const float thumbnailSize = (float)_state->_cast._thumbnailSize;
 
-			ImGui::BeginChild("##ContentRegion", {contentWidth, contentHeight}, true);
-			int columns = contentWidth / 142;
+			const float contentWidth = ImGui::GetContentRegionAvail().x;
+			int columns = contentWidth / (thumbnailSize + 8.f);
 			columns = columns < 1 ? 1 : columns;
-
 			ImGui::Columns(columns, nullptr, false);
 			for (auto it : *movie->getCasts()) {
 				Cast *cast = it._value;
@@ -235,29 +262,42 @@ static void showCast() {
 						continue;
 
 					ImGui::BeginGroup();
-					ImTextureID imgID = getImageID(castMember._value);
-					if (imgID) {
-						ImGui::Image(imgID, ImVec2(128, 128), ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImVec4(1, 1, 1, 1));
-					} else {
-						ImGui::Image(0, ImVec2(128, 128), ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImVec4(1, 1, 1, 1));
-					}
 					Common::String name(castMemberInfo ? castMemberInfo->name : "");
 					if (name.empty()) {
 						name = Common::String::format("%d", castMember._key);
 					}
 
-					Common::String text(name);
-					float textWidth = ImGui::CalcTextSize(text.c_str()).x;
-					if (textWidth > 128.f) textWidth = 128.f;
+					const ImVec2 textSize = ImGui::CalcTextSize(name.c_str());
+					float textWidth = textSize.x;
+					float textHeight = textSize.y;
+					if (textWidth > thumbnailSize) {
+						textWidth = thumbnailSize;
+						textHeight *= (textSize.x / textWidth);
+						if (textHeight > thumbnailSize) {
+							textHeight = thumbnailSize;
+						}
+					}
 
-					float x = ImGui::GetCursorPosX();
-					ImGui::SetCursorPosX(x + (128 - textWidth) * 0.5f);
-					ImGui::Text("%s", text.c_str());
+					ImGuiImage imgID = getImageID(castMember._value);
+					if (imgID.id) {
+						showImage(imgID, name.c_str(), thumbnailSize);
+					} else {
+						ImGui::PushID(castMember._key);
+						ImGui::InvisibleButton("##canvas", ImVec2(thumbnailSize, thumbnailSize));
+						ImGui::PopID();
+						const ImVec2 p0 = ImGui::GetItemRectMin();
+						const ImVec2 p1 = ImGui::GetItemRectMax();
+						ImGui::PushClipRect(p0, p1, true);
+						ImDrawList *draw_list = ImGui::GetWindowDrawList();
+						draw_list->AddRect(p0, p1, IM_COL32_WHITE);
+						const ImVec2 pos = p0 + ImVec2((thumbnailSize - textWidth) * 0.5f, (thumbnailSize - textHeight) * 0.5f);
+						draw_list->AddText(nullptr, 0.f, pos, IM_COL32_WHITE, name.c_str(), 0, thumbnailSize);
+						ImGui::PopClipRect();
+					}
 					ImGui::EndGroup();
 					ImGui::NextColumn();
 				}
 			}
-			ImGui::EndChild();
 		}
 		ImGui::End();
 	}
