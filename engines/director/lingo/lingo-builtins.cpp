@@ -524,7 +524,7 @@ void LB::b_charToNum(int nargs) {
 
 void LB::b_length(int nargs) {
 	Datum d = g_lingo->pop();
-	if (d.type == INT || d.type == FLOAT) {
+	if (d.type == INT || d.type == FLOAT || d.type == VOID) {
 		g_lingo->push(0);
 		return;
 	}
