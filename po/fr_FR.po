@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-05-01 14:07+0000\n"
-"PO-Revision-Date: 2024-04-28 13:42+0000\n"
+"PO-Revision-Date: 2024-05-02 20:42+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -10246,13 +10246,15 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:660
 msgid "Run in original 640 x 480 resolution"
-msgstr ""
+msgstr "Exécuter en résolution 640 x 480 d'origine"
 
 #: engines/scumm/metaengine.cpp:661
 msgid ""
 "This allows more accurate pause/restart banners, but might impact "
 "performance or shader/scaler usage."
 msgstr ""
+"Les bannières de pause/redémarrage sont ainsi plus précises, mais cela peut "
+"impacter les performances ou l'utilisation des shaders/scaleurs."
 
 #: engines/scumm/metaengine.cpp:668
 msgid "Play simplified music"
