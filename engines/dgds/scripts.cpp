@@ -100,6 +100,16 @@ static const char *ttmOpName(uint16 op) {
 	case 0xa0a0: return "DRAW LINE";
 	case 0xa100: return "DRAW FILLED RECT";
 	case 0xa110: return "DRAW EMPTY RECT";
+	case 0xa200: return "DRAW STRING 0";
+	case 0xa210: return "DRAW STRING 1";
+	case 0xa220: return "DRAW STRING 2";
+	case 0xa230: return "DRAW STRING 3";
+	case 0xa240: return "DRAW STRING 4";
+	case 0xa250: return "DRAW STRING 5";
+	case 0xa260: return "DRAW STRING 6";
+	case 0xa270: return "DRAW STRING 7";
+	case 0xa280: return "DRAW STRING 8";
+	case 0xa290: return "DRAW STRING 9";
 	case 0xa500: return "DRAW BMP";
 	case 0xa520: return "DRAW SPRITE FLIP";
 	case 0xa530: return "DRAW BMP4";
@@ -109,6 +119,16 @@ static const char *ttmOpName(uint16 op) {
 	case 0xf040: return "LOAD FONT";
 	case 0xf050: return "LOAD PAL";
 	case 0xf060: return "LOAD SONG";
+	case 0xf100: return "SET STRING 0";
+	case 0xf110: return "SET STRING 1";
+	case 0xf120: return "SET STRING 2";
+	case 0xf130: return "SET STRING 3";
+	case 0xf140: return "SET STRING 4";
+	case 0xf150: return "SET STRING 5";
+	case 0xf160: return "SET STRING 6";
+	case 0xf170: return "SET STRING 7";
+	case 0xf180: return "SET STRING 8";
+	case 0xf190: return "SET STRING 9";
 	case 0x0220: return "STOP CURRENT MUSIC";
 
 	case 0x00C0: return "FREE BACKGROUND";
@@ -282,7 +302,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		if (seq._executed) // this is a one-shot op
 			break;
 		const Common::Rect rect(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
-		_vm->getStoredAreaBuffer().transBlitFrom(_vm->getForegroundBuffer(), rect, rect);
+		_vm->getStoredAreaBuffer().blitFrom(_vm->getForegroundBuffer(), rect, rect);
 		break;
 	}
 	case 0x4210: { // SAVE GETPUT REGION (getput area) x,y,w,h:int
@@ -756,7 +776,7 @@ void ADSInterpreter::findUsedSequencesForSegment(int segno) {
 							opcode, (int)_adsData->scr->pos(), envno, seqno);
 				} else {
 					bool already_added = false;
-					for (TTMSeq *s : _adsData->_usedSeqs[segno]) {
+					for (const TTMSeq *s : _adsData->_usedSeqs[segno]) {
 						if (s == seq) {
 							already_added = true;
 							break;
