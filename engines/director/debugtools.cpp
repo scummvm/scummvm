@@ -77,54 +77,62 @@ static void showControlPanel() {
 		ImDrawList *dl = ImGui::GetWindowDrawList();
 
 		ImU32 color = ImGui::GetColorU32(ImVec4(0.8f, 0.8f, 0.8f, 1.0f));
+		ImU32 bgcolor = ImGui::GetColorU32(ImVec4(0.2f, 0.2f, 1.0f, 1.0f));
 		ImVec2 p = ImGui::GetCursorScreenPos();
-		ImVec2 mid(p.x + 7, p.y + 7);
+		ImVec2 buttonSize(20, 14);
+		float bgX1 = -4.0f, bgX2 = 21.0f;
 
-		ImGui::InvisibleButton("Rewind", ImVec2(16, ImGui::GetFontSize()));
+		ImGui::InvisibleButton("Rewind", buttonSize);
 		if (ImGui::IsItemClicked(0)) {
 		}
+		if (ImGui::IsItemHovered())
+			dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
 
-		dl->AddTriangleFilled(ImVec2(p.x, p.y + 7), ImVec2(p.x + 4, p.y + 3), ImVec2(p.x + 4, p.y + 11), color);
-		dl->AddTriangleFilled(ImVec2(p.x + 4, p.y + 7), ImVec2(p.x + 8, p.y + 3), ImVec2(p.x + 8, p.y + 11), color);
+		dl->AddTriangleFilled(ImVec2(p.x, p.y + 8), ImVec2(p.x + 8, p.y), ImVec2(p.x + 8, p.y + 16), color);
+		dl->AddTriangleFilled(ImVec2(p.x + 8, p.y + 8), ImVec2(p.x + 16, p.y), ImVec2(p.x + 16, p.y + 16), color);
 		ImGui::SetItemTooltip("Rewind");
 		ImGui::SameLine();
 
 		p = ImGui::GetCursorScreenPos();
-		mid = ImVec2(p.x + 7, p.y + 7);
-		ImGui::InvisibleButton("Step Back", ImVec2(16, ImGui::GetFontSize()));
+		ImGui::InvisibleButton("Step Back", ImVec2(18, 16));
 		if (ImGui::IsItemClicked(0)) {
 		}
-		dl->AddTriangleFilled(ImVec2(p.x, p.y + 7), ImVec2(p.x + 5, p.y + 3), ImVec2(p.x + 5, p.y + 11), color);
-		dl->AddRectFilled(ImVec2(p.x + 6, p.y + 3), ImVec2(p.x + 9, p.y + 11), color);
+		if (ImGui::IsItemHovered())
+			dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
+		dl->AddTriangleFilled(ImVec2(p.x, p.y + 8), ImVec2(p.x + 9, p.y), ImVec2(p.x + 9, p.y + 16), color);
+		dl->AddRectFilled(ImVec2(p.x + 11, p.y), ImVec2(p.x + 17, p.y + 16), color);
 		ImGui::SetItemTooltip("Step Back");
 		ImGui::SameLine();
 
 		p = ImGui::GetCursorScreenPos();
-		mid = ImVec2(p.x + 7, p.y + 7);
-		ImGui::InvisibleButton("Stop", ImVec2(16, ImGui::GetFontSize()));
+		ImGui::InvisibleButton("Stop", buttonSize);
 		if (ImGui::IsItemClicked(0)) {
 		}
-		dl->AddRectFilled(ImVec2(p.x, p.y + 3), ImVec2(p.x + 8, p.y + 11), color);
+		if (ImGui::IsItemHovered())
+			dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
+		dl->AddRectFilled(ImVec2(p.x, p.y), ImVec2(p.x + 16, p.y + 16), color);
 		ImGui::SetItemTooltip("Stop");
 		ImGui::SameLine();
 
 		p = ImGui::GetCursorScreenPos();
-		mid = ImVec2(p.x + 7, p.y + 7);
-		ImGui::InvisibleButton("Step", ImVec2(16, ImGui::GetFontSize()));
+		ImGui::InvisibleButton("Step", buttonSize);
 		if (ImGui::IsItemClicked(0)) {
 		}
-		dl->AddRectFilled(ImVec2(p.x, p.y + 3), ImVec2(p.x + 3, p.y + 11), color);
-		dl->AddTriangleFilled(ImVec2(p.x + 4, p.y + 4), ImVec2(p.x + 4, p.y + 10), ImVec2(p.x + 8, p.y + 7), color);
+		if (ImGui::IsItemHovered())
+			dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
+		dl->AddRectFilled(ImVec2(p.x, p.y), ImVec2(p.x + 6, p.y + 16), color);
+		dl->AddTriangleFilled(ImVec2(p.x + 8, p.y + 2), ImVec2(p.x + 8, p.y + 14), ImVec2(p.x + 16, p.y + 8), color);
 		ImGui::SetItemTooltip("Step");
 		ImGui::SameLine();
 
 		p = ImGui::GetCursorScreenPos();
-		mid = ImVec2(p.x + 7, p.y + 7);
-		ImGui::InvisibleButton("Play", ImVec2(16, ImGui::GetFontSize()));
+		ImGui::InvisibleButton("Play", buttonSize);
 		if (ImGui::IsItemClicked(0)) {
 			warning("Play");
 		}
-		dl->AddTriangleFilled(ImVec2(p.x, p.y + 3), ImVec2(p.x, p.y + 11), ImVec2(p.x + 7, p.y + 7), color);
+		if (ImGui::IsItemHovered())
+			dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
+		dl->AddTriangleFilled(ImVec2(p.x, p.y), ImVec2(p.x, p.y + 16), ImVec2(p.x + 14, p.y + 8), color);
 		ImGui::SetItemTooltip("Play");
 		ImGui::SameLine();
 	}
