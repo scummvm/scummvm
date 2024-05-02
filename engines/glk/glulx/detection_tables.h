@@ -1011,6 +1011,10 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "tgp_treffen",         "Treffen am Nebelgrat" },                                                  //    1st Place
 	{ "tgp_dersigkeitenlad", "Der Süßigkeitenladen" },                                                  //    4th Place
 
+	// IF Grand Prix 2024 (German)
+	{ "tgp_staub",			"Staub" },
+	{ "tgp_zuschauer",		"Die Zuschauer" },
+
 	// Italian games
 	{ "angolo",             "Dietro l'Angolo" },
 	{ "ayon_glulx",         "Nel Mondo di Ayon" },
@@ -2581,6 +2585,11 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	// Textfire Grand Prix 2014 (German)
 	DT_ENTRYL1("tgp_treffen", Common::DE_DEU, "140331", "e395219a697b34fbbcb90ed03bf35a5b", 1727130),
 	DT_ENTRYL1("tgp_dersigkeitenlad", Common::DE_DEU, "140401", "3dd57df785437293386076a062a7a415", 1619138),
+
+	// IF Grand Prix 2024 (German)
+	DT_ENTRYL1("tgp_staub", Common::DE_DEU, "240329", "e2bfc2c311f85396fd76af2a10613fd1", 1506992),
+	DT_ENTRYL1("tgp_staub", Common::DE_DEU, "240415", "d0ca22538b7e06b7d100fdab0693124f", 1551536),
+	DT_ENTRYL1("tgp_zuschauer", Common::DE_DEU, "240401", "f16bf2cf4ae27bf035cd221c0b3ec3fc", 1851170),
 
 	// Italian games
 	DT_ENTRYL1("angolo", Common::IT_ITA, "170801", "6f4fa5eaf56f5d7855b5caf30ff85be7", 628512),
