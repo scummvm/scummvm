@@ -690,9 +690,11 @@ void TextDisplayer_rpg::textPageBreak() {
 		_screen->set16bitShadingLevel(4);
 		_vm->gui_drawBox(x, y, w, _vm->guiSettings()->buttons.height, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
 		_screen->set16bitShadingLevel(0);
+#if defined(ENABLE_EOB)
 		if (_vm->guiSettings()->buttons.labelShadow && _vm->game() != GI_LOL)
 			((Screen_EoB*)screen())->printShadedText(_pageBreakString.c_str(), x + (w >> 1) - (_vm->screen()->getTextWidth(_pageBreakString.c_str()) >> 1), y + _vm->guiSettings()->buttons.txtOffsY, _vm->_dialogueButtonLabelColor1, 0, _vm->guiSettings()->colors.guiColorBlack);
 		else
+#endif
 			_screen->printText(_pageBreakString.c_str(), x + (w >> 1) - (_vm->screen()->getTextWidth(_pageBreakString.c_str()) >> 1), y + _vm->guiSettings()->buttons.txtOffsY, _vm->_dialogueButtonLabelColor1, 0);
 	}
 
