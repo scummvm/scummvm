@@ -184,8 +184,8 @@ void CDevDlg::onKeyHit(uint32 keyCode, uint32 repCount) {
 void CDevDlg::paintText() {
 	Assert(IsValidObject(this));
 
-	char achTemp[ACH_GUESS_MAX_CHARS];
-	snprintf(achTemp, ACH_GUESS_MAX_CHARS, "%s", _achGuess);
+	char achTemp[ACH_GUESS_MAX_CHARS+1];
+	snprintf(achTemp, ACH_GUESS_MAX_CHARS+1, "%s", _achGuess);
 
 	_guessText->display(getBackdrop(), achTemp, 16, TEXT_MEDIUM);
 }

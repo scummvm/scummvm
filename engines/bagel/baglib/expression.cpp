@@ -646,6 +646,8 @@ PARSE_CODES CBagExpression::setInfo(CBagIfstream &istr) {
 				istr.eatWhite();
 				break;
 			}
+			// FIXME: Is this intentional?
+			// fallthrough
 		default:
 			rc = UNKNOWN_TOKEN;
 			break;
