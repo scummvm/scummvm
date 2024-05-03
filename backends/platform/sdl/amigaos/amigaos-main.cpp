@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Set a stack cookie to avoid crashes from a too low stack.
-	static const char *stack_cookie __attribute__((used)) = "$STACK: 2048000";
+	static const char *stack_cookie __attribute__((used)) = "$STACK: 4096000";
 
 	// Create our OSystem instance.
 	g_system = new OSystem_AmigaOS();
