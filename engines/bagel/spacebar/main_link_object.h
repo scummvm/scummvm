@@ -30,8 +30,8 @@ namespace SpaceBar {
 
 class CMainLinkObject : public CBagLinkObject {
 public:
-	bool m_bClickedOn;
-	bool m_bClickedResize;
+	bool _bClickedOn;
+	bool _bClickedResize;
 
 	CMainLinkObject();
 

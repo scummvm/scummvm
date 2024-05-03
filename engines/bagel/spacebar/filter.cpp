@@ -637,7 +637,7 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 		bZzazzlVision = true;
 		if (pVar->GetNumValue() > 0) {
-			CMainWindow::SetZzazzlVision(true);             // zzazzl paint is on in the script
+			CMainWindow::setZzazzlVision(true);             // zzazzl paint is on in the script
 			int dx = g_engine->viewRect.width() / 3;  // + 1;
 			int dy = g_engine->viewRect.height() / 3; // + 1;
 			CBofPalette *pPal = pBmp->getPalette();
@@ -649,7 +649,7 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				CBofRect srcRect = pMiniBitmap->getRect();
 				pBmp->paint(pMiniBitmap, &srcRect, &dstRect);
 
-				CBofRect &filterRect = CMainWindow::GetFilterRect();
+				CBofRect &filterRect = CMainWindow::getFilterRect();
 				filterRect.SetRect(g_engine->viewRect.left, g_engine->viewRect.top, g_engine->viewRect.left + dx, g_engine->viewRect.top + dy);
 
 				int j, x;

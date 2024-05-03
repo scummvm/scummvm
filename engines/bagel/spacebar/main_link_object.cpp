@@ -28,15 +28,15 @@ namespace SpaceBar {
 
 CMainLinkObject::CMainLinkObject()
 	: CBagLinkObject() {
-	m_bClickedOn = false;
-	m_bClickedResize = false;
+	_bClickedOn = false;
+	_bClickedResize = false;
 }
 
 
 void CMainLinkObject::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 	CMainWindow *pWnd = (CMainWindow *)info;
 
-	if (pWnd && pWnd->GameMode() == CMainWindow::VRPLAYMODE) {
+	if (pWnd && pWnd->gameMode() == CMainWindow::VRPLAYMODE) {
 		if (CBagMasterWin::getFlyThru()) {
 			pWnd->RotateTo(getSrcLoc(), 12);
 		}
@@ -44,7 +44,7 @@ void CMainLinkObject::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) 
 		// Set the link position for the storage device we are about to jump to
 		CBagStorageDev *pDestWin = SDEV_MANAGER->GetStorageDevice(getFileName());
 		if (pDestWin != nullptr) {
-			pDestWin->SetLoadFilePos(getDestLoc());
+			pDestWin->setLoadFilePos(getDestLoc());
 		}
 
 		CBagLinkObject::onLButtonUp(nFlags, xPoint);

@@ -212,12 +212,12 @@ public:
 	void onLButtonDown(uint32 nFlags, CBofPoint *point, void * = nullptr);
 	void onLButtonUp(uint32 nFlags, CBofPoint *point, void * = nullptr);
 	void onKeyHit(uint32 lKey, uint32 lRepCount);
-	void OnSize(uint32 nType, int cx, int cy);
+	void onSize(uint32 nType, int cx, int cy);
 	void OnWindowPosChanging(WindowPos *lpwndpos);
 
-	ErrorCode OnCursorUpdate(int nCurrObj);
+	ErrorCode onCursorUpdate(int nCurrObj);
 
-	static CBagPDA *m_pPDABmp; // Pointer to the PDA object
+	static CBagPDA *_pPDABmp; // Pointer to the PDA object
 
 	/**
 	 * Deactivate the PDA by calling the PDA->deactivate() directly.
@@ -233,9 +233,9 @@ public:
 
 	void WaitForPDA() {
 		// Make sure we have a non-null pda
-		while (m_pPDABmp && m_pPDABmp->isActivating()) {
+		while (_pPDABmp && _pPDABmp->isActivating()) {
 			SetPreFilterPan(true);
-			m_pPDABmp->SetDirty(true);
+			_pPDABmp->SetDirty(true);
 			PaintScreen();
 		}
 	}

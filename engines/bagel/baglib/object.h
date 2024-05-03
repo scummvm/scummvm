@@ -346,7 +346,7 @@ public:
 	getFileName() {
 		return m_sFileName;
 	}
-	CBagMenu *GetMenuPtr() {
+	CBagMenu *getMenuPtr() {
 		return m_pMenu;
 	}
 	virtual const CBofString &GetRefName();

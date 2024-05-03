@@ -32,13 +32,13 @@
 
 namespace Bagel {
 
-CBagPDA *CBagPanWindow::m_pPDABmp;      // Pointer to the PDA object
+CBagPDA *CBagPanWindow::_pPDABmp;      // Pointer to the PDA object
 int CBagPanWindow::m_nCorrection;
 int CBagPanWindow::m_nPanSpeed;
 CBagWield *CBagPanWindow::_pWieldBmp;  // Pointer to the WEILD object
 
 void CBagPanWindow::initialize() {
-	m_pPDABmp = nullptr;
+	_pPDABmp = nullptr;
 	m_nCorrection = 4;
 	m_nPanSpeed = 1;
 	_pWieldBmp = nullptr;
@@ -414,7 +414,7 @@ void CBagPanWindow::disable() {
 	DeActivateView();
 }
 
-ErrorCode CBagPanWindow::OnCursorUpdate(int nCurrObj) {
+ErrorCode CBagPanWindow::onCursorUpdate(int nCurrObj) {
 	Assert(IsValidObject(this));
 	CBagObject *pObj;
 
@@ -648,7 +648,7 @@ void CBagPanWindow::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	}
 }
 
-void CBagPanWindow::OnSize(uint32 nType, int cx, int cy) {
+void CBagPanWindow::onSize(uint32 nType, int cx, int cy) {
 	// nRange defines the distance (in pixels) from a viewport edge
 	// (toward the center of the viewport) that the viewport boundary
 	// rectangles begin.  The boundary rectangles surround the edges
@@ -786,9 +786,9 @@ uint32 CBagPanWindow::Benchmark() {
 
 bool CBagPanWindow::DeactivatePDA() {
 	// If we have a PDA and the pda is active
-	if (m_pPDABmp && m_pPDABmp->isActivated()) {
+	if (_pPDABmp && _pPDABmp->isActivated()) {
 		// deactivate it
-		m_pPDABmp->deactivate();
+		_pPDABmp->deactivate();
 
 		return true;        // PDA successfully deactivated
 	}
@@ -797,8 +797,8 @@ bool CBagPanWindow::DeactivatePDA() {
 
 bool CBagPanWindow::ActivatePDA() {
 	// If we have a BMP and the pda is not active
-	if (m_pPDABmp&& (!m_pPDABmp->isActivated() || m_pPDABmp->isActivating())) {
-		m_pPDABmp->activate();  // activate it
+	if (_pPDABmp&& (!_pPDABmp->isActivated() || _pPDABmp->isActivating())) {
+		_pPDABmp->activate();  // activate it
 
 		return true;            // PDA successfully activated
 	}
@@ -841,8 +841,8 @@ const CBofPoint CBagPanWindow::ViewPortToDevPt(const CBofPoint &xPoint) {
 ErrorCode CBagPanWindow::AttachActiveObjects() {
 	CBagStorageDev::AttachActiveObjects();
 
-	if (m_pPDABmp != nullptr) {
-		m_pPDABmp->attachActiveObjects();
+	if (_pPDABmp != nullptr) {
+		_pPDABmp->attachActiveObjects();
 	}
 
 	return _errCode;

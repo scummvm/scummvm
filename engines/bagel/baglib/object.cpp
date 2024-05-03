@@ -341,7 +341,7 @@ PARSE_CODES CBagObject::setInfo(CBagIfstream &istr) {
 }
 
 void CBagObject::onLButtonUp(uint32 nFlags, CBofPoint * /*xPoint*/, void *) {
-	if (GetMenuPtr()) {
+	if (getMenuPtr()) {
 
 		CBofPoint pt = GetMousePos();
 		CBofWindow *pWnd = CBofApp::GetApp()->GetMainWindow();
@@ -349,7 +349,7 @@ void CBagObject::onLButtonUp(uint32 nFlags, CBofPoint * /*xPoint*/, void *) {
 
 		// Just send the mouse pos
 		CRect r = getRect();
-		GetMenuPtr()->TrackPopupMenu(nFlags, pt.x, pt.y, pWnd, nullptr, &r);
+		getMenuPtr()->TrackPopupMenu(nFlags, pt.x, pt.y, pWnd, nullptr, &r);
 
 	} else {
 		g_noMenuFl = true;

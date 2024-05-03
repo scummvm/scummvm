@@ -146,7 +146,7 @@ public:
 		return m_nDiskID;
 	}
 
-	virtual ErrorCode SetLoadFilePos(const CBofPoint) {
+	virtual ErrorCode setLoadFilePos(const CBofPoint) {
 		return ERR_NONE;
 	}
 
@@ -332,13 +332,13 @@ public:
 	virtual void onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	virtual void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 
-	virtual ErrorCode OnCursorUpdate(int /*nCurrObj*/) {
+	virtual ErrorCode onCursorUpdate(int /*nCurrObj*/) {
 		return ERR_NONE;
 	}
 	virtual CBagObject *OnNewSpriteObject(const CBofString &sInit);
 	virtual CBagObject *OnNewBitmapObject(const CBofString &sInit);
 	virtual CBagObject *OnNewTextObject(const CBofString &sInit);
-	virtual CBagObject *OnNewLinkObject(const CBofString &sInit);
+	virtual CBagObject *onNewLinkObject(const CBofString &sInit);
 	virtual CBagObject *OnNewRPObject(const CBofString &sInit);
 	virtual CBagObject *OnNewEDObject(const CBofString &sInit);
 	virtual CBagObject *OnNewDosObject(const CBofString &sInit);
@@ -419,12 +419,12 @@ private:
 	CBofString m_sHelpFileName; // Name of the help file for this device
 
 public:
-	static CBagEventSDev *m_pEvtSDev; // Pointer to the Event Storage Device
+	static CBagEventSDev *_pEvtSDev; // Pointer to the Event Storage Device
 
 	CBagStorageDevWnd();
 	virtual ~CBagStorageDevWnd();
 	static void initialize() {
-		m_pEvtSDev = nullptr;
+		_pEvtSDev = nullptr;
 	}
 
 	virtual ErrorCode attach(); // This function attaches the background and necessary bitmaps

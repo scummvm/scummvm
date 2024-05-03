@@ -432,7 +432,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 				// If the PDA is currently active, then we have to put the caption elsewhere,
 				// or deactivate the PDA (if PDA zoomed, just place at bottom.
-				if (CBagPanWindow::m_pPDABmp != nullptr && CBagPanWindow::m_pPDABmp->isActivated() && bZoomed == false) {
+				if (CBagPanWindow::_pPDABmp != nullptr && CBagPanWindow::_pPDABmp->isActivated() && bZoomed == false) {
 					dlg.move(wndRect.left, wndRect.top, true);
 				} else {
 					dlg.move(tmpRect.left, tmpRect.top, true);
@@ -636,7 +636,7 @@ void CBagMenuDlg::onMouseMove(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 		CBagMasterWin::setActiveCursor(pObj->GetOverCursor());
 
 		if (pObj != GetLActiveObject()) {
-			if (pObj->getCallBack() || pObj->GetMenuPtr()) {
+			if (pObj->getCallBack() || pObj->getMenuPtr()) {
 
 				pObj->setHighlight();
 				if (GetLActiveObject())
