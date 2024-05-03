@@ -61,6 +61,18 @@ static int suggestx;
 static int suggesty;
 static int line_failed = 0;
 
+// Configuration for the pathfinder
+struct PathfinderConfig {
+	const int MaxGranularity = 3;
+
+	// Short sweep is performed in certain radius around requested destination,
+	// when searching for a nearest walkable area in the vicinity
+	const int ShortSweepRadius = 50;
+	int ShortSweepGranularity = 3; // variable, depending on loaded game version
+	// Full sweep is performed over a whole walkable area
+	const int FullSweepGranularity = 5;
+};
+
 void init_pathfinder() {
 	pathbackx = (int *)malloc(sizeof(int) * MAXPATHBACK);
 	pathbacky = (int *)malloc(sizeof(int) * MAXPATHBACK);
@@ -138,9 +150,8 @@ int find_nearest_walkable_area(Bitmap *tempw, int fromX, int fromY, int toX, int
 	return 0;
 }
 
-#define MAX_GRANULARITY 3
 static int walk_area_granularity[MAX_WALK_AREAS + 1];
-static int is_route_possible(int fromx, int fromy, int tox, int toy, Bitmap *wss) {
+static int is_route_possible(int fromx, int fromy, int tox, int toy, Bitmap *wss, const PathfinderConfig &pfc) {
 	_G(wallscreen) = wss;
 	suggestx = -1;
 
@@ -203,41 +214,37 @@ static int is_route_possible(int fromx, int fromy, int tox, int toy, Bitmap *wss
 	// find the average "width" of a path in this walkable area
 	for (dd = 1; dd <= MAX_WALK_AREAS; dd++) {
 		if (walk_area_times[dd] == 0) {
-			walk_area_granularity[dd] = MAX_GRANULARITY;
+			walk_area_granularity[dd] = pfc.MaxGranularity;
 			continue;
 		}
 
 		walk_area_granularity[dd] /= walk_area_times[dd];
 		if (walk_area_granularity[dd] <= 4)
 			walk_area_granularity[dd] = 2;
-		// NB: Since MAX_GRANULARITY is 3, the following code is redundant causing compiler warnings
+		// NB: Since pfc.MaxGranularity is 3, the following code is redundant causing compiler warnings
 #if 0
 		else if (walk_area_granularity[dd] <= 15)
 			walk_area_granularity[dd] = 3;
 #endif
 		else
-			walk_area_granularity[dd] = MAX_GRANULARITY;
+			walk_area_granularity[dd] = pfc.MaxGranularity;
 
 #ifdef DEBUG_PATHFINDER
 		AGS::Shared::Debug::Printf("area %d: Gran %d", dd, walk_area_granularity[dd]);
 #endif
 	}
-	walk_area_granularity[0] = MAX_GRANULARITY;
+	walk_area_granularity[0] = pfc.MaxGranularity;
 
 	tempw->FloodFill(fromx, fromy, 232);
 	if (tempw->GetPixel(tox, toy) != 232) {
 		// Destination pixel is not walkable
-		// Try the 100x100 square around the target first at 3-pixel granularity
-		int tryFirstX = tox - 50, tryToX = tox + 50;
-		int tryFirstY = toy - 50, tryToY = toy + 50;
+		// Try the N x N square around the target first at 3-pixel granularity
+		int tryFirstX = tox - pfc.ShortSweepRadius, tryToX = tox + pfc.ShortSweepRadius;
+		int tryFirstY = toy - pfc.ShortSweepRadius, tryToY = toy + pfc.ShortSweepRadius;
 
-		// This is a fix for the Treppenbug in old (pre-3.0) Maniac Mansion Mania games.
-		// Using a higher granularity the find_nearest_walkable_area sets a wrong coordinate that prevents
-		// the staircase in Bernard's home from working.
-		int sweep_granularity = _G(loaded_game_file_version) > kGameVersion_272 ? 3 : 1;
-		if (!find_nearest_walkable_area(tempw, tryFirstX, tryFirstY, tryToX, tryToY, tox, toy, sweep_granularity)) {
+		if (!find_nearest_walkable_area(tempw, tryFirstX, tryFirstY, tryToX, tryToY, tox, toy, pfc.ShortSweepGranularity)) {
 			// Nothing found, sweep the whole room at 5 pixel granularity
-			find_nearest_walkable_area(tempw, 0, 0, tempw->GetWidth(), tempw->GetHeight(), tox, toy, 5);
+			find_nearest_walkable_area(tempw, 0, 0, tempw->GetWidth(), tempw->GetHeight(), tox, toy, pfc.FullSweepGranularity);
 		}
 
 		delete tempw;
@@ -401,7 +408,7 @@ static void round_down_coords(int &tmpx, int &tmpy) {
 	}
 }
 
-static int find_route_dijkstra(int fromx, int fromy, int destx, int desty) {
+static int find_route_dijkstra(int fromx, int fromy, int destx, int desty, const PathfinderConfig &pfc) {
 	int i, j;
 
 	assert(_G(wallscreen) != nullptr);
@@ -437,10 +444,10 @@ static int find_route_dijkstra(int fromx, int fromy, int destx, int desty) {
 
 	int granularity = 3, newx = -1, newy, foundAnswer = -1, numreplace;
 	int changeiter, numfound, adjcount;
-	int destxlow = destx - MAX_GRANULARITY;
-	int destylow = desty - MAX_GRANULARITY;
-	int destxhi = destxlow + MAX_GRANULARITY * 2;
-	int destyhi = destylow + MAX_GRANULARITY * 2;
+	int destxlow = destx - pfc.MaxGranularity;
+	int destylow = desty - pfc.MaxGranularity;
+	int destxhi = destxlow + pfc.MaxGranularity * 2;
+	int destyhi = destylow + pfc.MaxGranularity * 2;
 	int modifier = 0;
 	int totalfound = 0;
 	int DIRECTION_BONUS = 0;
@@ -507,10 +514,10 @@ static int find_route_dijkstra(int fromx, int fromy, int destx, int desty) {
 
 			// edges of screen pose a problem, so if current and dest are within
 			// certain distance of the edge, say we've got it
-			if ((newx >= _G(wallscreen)->GetWidth() - MAX_GRANULARITY) && (destx >= _G(wallscreen)->GetWidth() - MAX_GRANULARITY))
+			if ((newx >= _G(wallscreen)->GetWidth() - pfc.MaxGranularity) && (destx >= _G(wallscreen)->GetWidth() - pfc.MaxGranularity))
 				newx = destx;
 
-			if ((newy >= _G(wallscreen)->GetHeight() - MAX_GRANULARITY) && (desty >= _G(wallscreen)->GetHeight() - MAX_GRANULARITY))
+			if ((newy >= _G(wallscreen)->GetHeight() - pfc.MaxGranularity) && (desty >= _G(wallscreen)->GetHeight() - pfc.MaxGranularity))
 				newy = desty;
 
 			// Found the desination, abort loop
@@ -582,7 +589,7 @@ static int find_route_dijkstra(int fromx, int fromy, int destx, int desty) {
 	return 1;
 }
 
-static int __find_route(int srcx, int srcy, short *tox, short *toy, int noredx) {
+static int __find_route(int srcx, int srcy, short *tox, short *toy, int noredx, const PathfinderConfig &pfc) {
 	assert(_G(wallscreen) != nullptr);
 	assert(beenhere != nullptr);
 	assert(tox != nullptr);
@@ -602,7 +609,7 @@ findroutebk:
 			return 1;
 		}
 
-		if ((waspossible = is_route_possible(srcx, srcy, tox[0], toy[0], _G(wallscreen))) == 0) {
+		if ((waspossible = is_route_possible(srcx, srcy, tox[0], toy[0], _G(wallscreen), pfc)) == 0) {
 			if (suggestx >= 0) {
 				tox[0] = suggestx;
 				toy[0] = suggesty;
@@ -618,7 +625,7 @@ findroutebk:
 	}
 
 	// Try the new pathfinding algorithm
-	if (find_route_dijkstra(srcx, srcy, tox[0], toy[0])) {
+	if (find_route_dijkstra(srcx, srcy, tox[0], toy[0], pfc)) {
 		return 1;
 	}
 
@@ -729,6 +736,11 @@ int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int
 	assert(pathbackx != nullptr);
 	assert(pathbacky != nullptr);
 
+	// Setup pathfinder configuration, depending on the loaded game version;
+	// sweep granularity has changed between 3.0.0 and 3.0.1; see issue #663
+	PathfinderConfig pfc;
+	pfc.ShortSweepGranularity = (_G(loaded_game_file_version) > kGameVersion_300) ? 3 : 1;
+
 #ifdef DEBUG_PATHFINDER
 	// __wnormscreen();
 #endif
@@ -761,9 +773,9 @@ int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int
 		for (aaa = 1; aaa < _G(wallscreen)->GetHeight(); aaa++)
 			beenhere[aaa] = beenhere[0] + aaa * (_G(wallscreen)->GetWidth());
 
-		if (__find_route(srcx, srcy, &xx, &yy, nocross) == 0) {
+		if (__find_route(srcx, srcy, &xx, &yy, nocross, pfc) == 0) {
 			leftorright = 1;
-			if (__find_route(srcx, srcy, &xx, &yy, nocross) == 0)
+			if (__find_route(srcx, srcy, &xx, &yy, nocross, pfc) == 0)
 				pathbackstage = -1;
 		}
 		free(beenhere[0]);
