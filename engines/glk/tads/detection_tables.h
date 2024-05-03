@@ -41,7 +41,6 @@ const PlainGameDescriptor TADS2_GAME_LIST[] = {
 	{ "campingtrip",        "The Camping Trip" },
 	{ "castleofdoom",       "Castle of Doom" },
 	{ "dampcamp",           "The Damp Camp" },
-	{ "deadmantads",        "Dead Man" },
 	{ "deanna",             "Deanna" },
 	{ "deepspace",          "Deep Space" },
 	{ "depravitybites",     "Depravity Bites" },
@@ -61,33 +60,32 @@ const PlainGameDescriptor TADS2_GAME_LIST[] = {
 	{ "galacticpeace",      "Galactic Peace" },
 	{ "gc",                 "GC: A Thrashing Parity Bit of the Mind" },
 	{ "gift2",              "Gifts of Phallius 2: The Key to Eternity" },
-	{ "gift3",              "Gifts of Phallus 3: The Valkin War" },
+	{ "gift3",              "Gifts of Phallius 3: The Valkin War" },
 	{ "gna",                "Generic New York Apartment Building" },
 	{ "goldenfleece",       "The Golden Fleece" },
 	{ "goldenskull",        "The Golden Skull" },
 	{ "helpfulman",         "The Adventures of Helpfulman" },
 	{ "heroinc1",           "Hero, Inc Part One: Calling All Heroes" },
-	{ "hitads",             "Ideal New England Prep School" },
 	{ "holygrail",          "The Holy Grail" },
+	{ "idealneps",          "Ideal New England Prep School" },
 	{ "indarkness",         "In Darkness" },
 	{ "inheritance",        "Inheritance" },
 	{ "insanitycubed",      "Insanity Cubed" },
 	{ "islandinfinity",     "The Island of Infinity" },
 	{ "islecult",           "Isle Cult" },
 	{ "journeyking",        "The Journey of the King" },
-	{ "katanatads",         "Katana" },
+	{ "katana",             "Katana" },
 	{ "kitchenencounters",  "Kitchen Encounters" },
-	{ "legendladymagaidh",  "The Legend of Lady Magaidh" },
 	{ "letheflowphoenix",   "Lethe Flow Phoenix: A Flight of Fantasy" },
 	{ "lost_jh",            "Lost (by Jeffrey Hersh)" },
-	{ "meanstreetstads",    "Mean Streets" },
+	{ "meanstreets",        "Mean Streets" },
 	{ "meine",              "Meine Dalix" },
 	{ "modernism",          "Modernism" },
 	{ "moist",              "Moist" },
 	{ "mrsk",               "Magic Realms: The Sword of Kasza" },
 	{ "murmellius2",        "Murmellius 2" },
 	{ "museumoftads",       "Museum of TADS" },
-	{ "mythtads",           "Myth" },
+	{ "myth_bv",            "Myth (by Barry Volain)" },
 	{ "nbdemo",             "The Singular, and Historically Inaccurate, Misadventures of Nobeard" },
 	{ "ninjaburger",        "Ninja Burger" },
 	{ "onefootdown",        "One Foot Down" },
@@ -100,7 +98,7 @@ const PlainGameDescriptor TADS2_GAME_LIST[] = {
 	{ "ptbad4",             "PTBAD4: How the Record Got its Groove Back" },
 	{ "ptbad5",             "PTBAD5: Jesus Attack of Jesus Christ" },
 	{ "reeferisland",       "Reefer Island" },
-	{ "saveprincetontads",  "Save Princeton" },
+	{ "saveprince_tads",    "Save Princeton" },
 	{ "scavnightsedge",     "Scavenger: Night's Edge" },
 	{ "sd2",                "School Dreams 2: Forfeit Fantasy" },
 	{ "sd3",                "School Dreams 3: School Dreams Forever" },
@@ -122,7 +120,7 @@ const PlainGameDescriptor TADS2_GAME_LIST[] = {
 	{ "themansion",         "The Mansion or The Tale of the Adventurous Thief" },
 	{ "themission",         "The Mission" },
 	{ "theoracle",          "The Oracle" },
-	{ "threedoors",         "Three Doors" },
+	{ "threedoors_pb",      "Three Doors (by Peter Berman)" },
 	{ "tide",               "The Ebb and Flow of the Tide" },
 	{ "tnc",                "Tomorrow Never Comes" },
 	{ "tortoise",           "The Lesson of the Tortoise" },
@@ -137,7 +135,7 @@ const PlainGameDescriptor TADS2_GAME_LIST[] = {
 	{ "xarbo",              "Escape from the Arboretum" },
 	{ "yourchoice",         "Your Choice" },
 
-	// Adventions games
+	// Adventions games (TADS2)
 	{ "ccr",                "Colossal Cave Revisited" },
 	{ "legendlives",        "The Legend Lives!" },
 	{ "rylvania",           "The Horror of Rylvania" },
@@ -578,12 +576,14 @@ const PlainGameDescriptor TADS3_GAME_LIST[] = {
 	{ "cookoff",            "Cook Off" },
 	{ "darkangel",          "Dark Angel" },
 	{ "dearbrian",          "Dear Brian" },
+	{ "devildetails",       "The Devil in the Details" },
 	{ "diabolical",         "Diabolical" },
 	{ "entrancingsin",      "Entrancing Sin" },
 	{ "experiment",         "Experiment" },
 	{ "golden-banana",      "The Quest of the Golden Banana" },
 	{ "homeopen",           "Home Open" },
 	{ "korenvliet",         "Korenvliet" },
+	{ "iamprey",            "I Am Prey" },
 	{ "liasad",             "Love Is as Powerful as Death, Jealousy Is as Cruel as the Grave" },
 	{ "littlestgriffin",    "The Littlest Griffin" },
 	{ "lowell",             "Escape from Lowell Prison" },
@@ -597,7 +597,6 @@ const PlainGameDescriptor TADS3_GAME_LIST[] = {
 	{ "pastpresent",        "Past Present" },
 	{ "pekostory",          "Peko's Story" },
 	{ "ratincontrol",       "Rat In Control" },
-	{ "reconcilingmother",  "Reconciling Mother" },
 	{ "recluse",            "Recluse" },
 	{ "revenge",            "The Fiendish Revenge of Baron von Glockenspiel" },
 	{ "ribosoperation",     "Dr Who and the Ribos Operation" },
@@ -777,23 +776,25 @@ const PlainGameDescriptor TADS3_GAME_LIST[] = {
 	// XYZZY Awards 2011 (TADS3)
 	{ "xyz_indigo",         "Indigo" },
 
-	// Czech games
+	// Czech games (TADS3)
 	{ "exoter",             "Exoter" },
 
-	// German games
+	// German games (TADS3)
 	{ "pionierin",          "Die Pionierin und die Tragödie des telematischen Typewriters" },
 
-	// Italian games
+	// Italian games (TADS3)
 	{ "remerook",           "La missione di Kyle Remerook" },
 
-	// Spanish games
+	// Spanish games (TADS3)
+	{ "memorias_tads",      "Memorias de reXXe" },
 	{ "verla",              "No Quiero Verla" },
 
 	{ nullptr, nullptr }
 };
 
 const GlkDetectionEntry TADS_GAMES[] = {
-	// TADS 2 - English
+	// ------------------------------------------------- TADS2 Section ------------------------------------------------
+	// English games (TADS2)
 	DT_ENTRY0("2044", "ec9e00db314709ba9616ec1a7f9dd5ea", 48263),
 	DT_ENTRY0("3", "db9086179d99638372803e5500c3154a", 107073),
 	DT_ENTRY0("academy", "b9674d0cb50c45ab5631bea1dcdc7999", 336970),
@@ -807,7 +808,6 @@ const GlkDetectionEntry TADS_GAMES[] = {
 	DT_ENTRY0("castleofdoom", "5a09aa5ebb8a62f94d9f33e081ef0ef4", 51848),
 	DT_ENTRY0("dampcamp", "17d330ba999713b65ebafb1527bbc84b", 87845),
 	DT_ENTRY0("deanna", "34570038fd9661c0c5235e52517644d5", 236165),
-	DT_ENTRY0("deathscavenger", "6dd1c61b75a016085b7f2b985d37eec3", 362826),
 	DT_ENTRY0("deepspace", "636e58c425e066335c6f92e7bfb0d5f7", 203942),
 	DT_ENTRY0("depravitybites", "b918fef79d70a12b048d413689d03495", 170029),
 	DT_ENTRY0("diemasse", "f1c42af81468d8d69f2726e3b56e8449", 211069),
@@ -839,31 +839,30 @@ const GlkDetectionEntry TADS_GAMES[] = {
 	DT_ENTRY0("helpfulman", "2b73d801672bb49ba75e2eac680ee469", 351592),
 	DT_ENTRY1("helpfulman", "Bundled", "2b73d801672bb49ba75e2eac680ee469", 979505),
 	DT_ENTRY0("heroinc1", "1d80dd1ffda1270926deb7a1745f9ccf", 148427),
-	DT_ENTRY0("hitads", "516f3cece115c56ae70bc7c34fb17112", 546856),
 	DT_ENTRY0("holygrail", "a837f2c5a2ba17361c52f4e567211d7a", 216242),
+	DT_ENTRY0("idealneps", "516f3cece115c56ae70bc7c34fb17112", 546856),
 	DT_ENTRY0("indarkness", "365696166db6e16bc4dfaec94ab73534", 489743),
 	DT_ENTRY0("inheritance", "18e17f76b038b95e1ad99d47a1c5ef55", 106396),
 	DT_ENTRY0("insanitycubed", "5ed65e5000a2c394eec872ab71ed2ae7", 117209),
 	DT_ENTRY0("islandinfinity", "c60957d69aaf2b2438fa6ab9185217e5", 248815),
 	DT_ENTRY0("islecult", "c49319d7a1c1ea485d2cab86b077c647", 411081),
 	DT_ENTRY0("journeyking", "f68126f75c8134d26ea348b560f7cae2", 310554),
-	DT_ENTRY0("katanatads", "bcf79886ddd9869f1e8a19b5cf186075", 828033),
+	DT_ENTRY0("katana", "bcf79886ddd9869f1e8a19b5cf186075", 828033),
 	DT_ENTRY0("kitchenencounters", "a73484097e4e24c2226a8361a2dc0009", 70272),
 	DT_ENTRY0("letheflowphoenix", "e3760cc303082aaa06b54e0b4a6358e8", 272075),
 	DT_ENTRY1("letheflowphoenix", "No I/O", "a5e60a545bcad6bbb4ebaf532ae7e745", 272140),
 	DT_ENTRY0("lost_jh", "a30d7caa49f58ed305fc669b4c5b9ecf", 297358),
-	DT_ENTRY0("meanstreetstads", "79a6207bbb92faac485e4c4677fa3ab3", 127027),
+	DT_ENTRY0("meanstreets", "79a6207bbb92faac485e4c4677fa3ab3", 127027),
 	DT_ENTRY0("meine", "bf118303cd6c599f281070f9177bf15f", 229180),
 	DT_ENTRY0("modernism", "1a80f4b557d6c7dc94a906baab57edee", 46549),
 	DT_ENTRY0("moist", "2cb2b56e00df7148b7c40c4753c801d5", 373100),
 	DT_ENTRY0("mrsk", "c21cedc30ce3d6eadefc2f75f5b1a168", 224542),
 	DT_ENTRY0("murmellius2", "97df7e025e1a9f1ba1523664ad4ead9c", 105661),
 	DT_ENTRY0("museumoftads", "829d1af57ff47169ad4d7e6551a22721", 253171),
-	DT_ENTRY0("mythtads", "63b1eee145cd8983cb645328c9e78cdf", 161000),
+	DT_ENTRY0("myth_bv", "63b1eee145cd8983cb645328c9e78cdf", 161000),
 	DT_ENTRY1("nbdemo", "Demo", "eac25992e40de6aee5e36bc3195f21a9", 112331),
 	DT_ENTRY0("ninjaburger", "f4edb87ecf3e0e28ff0442a8b03e1dbb", 94376),
 	DT_ENTRY0("onefootdown", "f8e9be6afe3eb6b5296ebd098f638421", 210220),
-	DT_ENTRY0("onegotaway", "df697076c90cb474a6ef5cf6fe15b06d", 108570),
 	DT_ENTRY0("pasttense", "8422454168ee6bc2d45385ce629c5c22", 195897),
 	DT_ENTRY0("pcu", "4e82b5774dab9948a0331a80075ed7c8", 183145),
 	DT_ENTRY0("perditionsflame", "4b2307fb8ff4095de94c9dcc0b68504e", 334065),
@@ -873,7 +872,7 @@ const GlkDetectionEntry TADS_GAMES[] = {
 	DT_ENTRY0("ptbad4", "81bccf14bd80c405bed38b8935b212dd", 58290),
 	DT_ENTRY0("ptbad5", "57e824ca2b61bcb7ad89d6410a66ec77", 59858),
 	DT_ENTRY0("reeferisland", "e1c33e8e06fd335870c1cecec782e02b", 364587),
-	DT_ENTRY0("saveprincetontads", "2159c4ff547d493f90c0bec0dfa1dcf6", 273825),
+	DT_ENTRY0("saveprince_tads", "2159c4ff547d493f90c0bec0dfa1dcf6", 273825),
 	DT_ENTRY0("scavnightsedge", "17b62ca221ad5f046285594a57d6c0c0", 473137),
 	DT_ENTRY0("sd2", "eca426e7170cdf3e706b8d310b51ee34", 935510),
 	DT_ENTRY0("sd3", "4040e1febed0be63e42d9a35bacaef2b", 53083589),
@@ -892,18 +891,16 @@ const GlkDetectionEntry TADS_GAMES[] = {
 	DT_ENTRY0("textmetroid", "4399099ee07f186ec05972cfdd7b10ea", 56436),
 	DT_ENTRY0("theapprentice", "dca00dd78cbf7ca1df6916547672f098", 178406),
 	DT_ENTRY0("thegate", "e88364be7f027da095eaab6a5150575a", 68294),
-	DT_ENTRY1("thehouset2", "TADS2", "9b45d0ac097e99f6d47a105e52edda16", 83981),
+	DT_ENTRY1("thehouset2", "gam", "9b45d0ac097e99f6d47a105e52edda16", 83981),
 	DT_ENTRY0("themansion", "e47b961ffc30828f15551ac738192362", 95515),
 	DT_ENTRY0("themission", "6614dea95ebb3b54e2ee0d3c66a819da", 254145),
 	DT_ENTRY0("theoracle", "4565348d87a51856558000a018812e25", 172090),
-	DT_ENTRY0("threedoors", "54455dd8df6ca20a9c85452d734ad044", 399804),
+	DT_ENTRY0("threedoors_pb", "24e02d46cd9e647593a2fed4802c5ea3", 66946),
 	DT_ENTRY0("tide", "ae0026feaf23a2d9987e77901f107622", 89757),
 	DT_ENTRY0("tnc", "fe79042b10d727c04cd23fb54f185e0a", 898785),
 	DT_ENTRY1("tnc", "Bundled", "fe79042b10d727c04cd23fb54f185e0a", 1034403),
-	DT_ENTRY0("toonesia", "54f9a3efea8faf6acf99629fdf787ad2", 126627),
 	DT_ENTRY0("tortoise", "a6a2d324fabf5594c5950c17c52c7d44", 91936),
 	DT_ENTRY0("tylerscube", "9be988b677ed05ff12ccc66ab3eda535", 39002),
-	DT_ENTRY0("undertow", "1a178cde22a95108f5f176c58afa07df", 159487),
 	DT_ENTRY0("unease", "7c1709cb482498e00b9e70da7a33e605", 412858),
 	DT_ENTRY0("urbancleanup", "b632f5f31e70ebfaf2ad2bd09fda47b0", 149135),
 	DT_ENTRY0("uux", "20b3b72ec1143f8ddb91e19dd209e9a0", 885548),
@@ -913,21 +910,21 @@ const GlkDetectionEntry TADS_GAMES[] = {
 	DT_ENTRY0("wormhole", "3e15f6f2c84eb3a0837f433aa8d0d8a1", 173579),
 	DT_ENTRY0("xarbo", "24c991db36a721192b5f974f55de1719", 285594),
 	DT_ENTRY0("yourchoice", "72f5727f770c6d355b6e5de32f05109e", 83855),
-	DT_ENTRY0("zebulon", "6be895d5655514b5a5b5c97b9b245120", 147473),
 
-	// TADS 2 - Adventions games
+	// Adventions games (TADS2)
 	DT_ENTRY0("ccr", "2da7dba524075aed0167ae02e6484a32", 291305),
 	DT_ENTRY1("ccr", "r1", "3b500c9e8f09dc4283f33f17cf408961", 165236),
 	DT_ENTRY1("ccr", "r2", "c044ace00b0604169457efa3b616b2b1", 165225),
 	DT_ENTRY1("legendlives", "r1", "03a651ef3d904dbef6a80cd2c041423c", 622989),
 	DT_ENTRY1("legendlives", "r2", "33d0c4bb222c0267eef1f750526bc57f", 623095),
-	DT_ENTRY0("rylvania", "98027d23f0da0e38c02f1326a2357713", 302903),
-	DT_ENTRY1("u0", "Demo", "d9615e08336cc0d50984cdc0879f2006", 500949),
-	DT_ENTRY1("u0", "Demo/r1", "41e935188b8a15bd61baaab1650bb015", 119999),
-	DT_ENTRY1("u0", "Demo/r2", "737ec18187c67b3512beb5a5bc98d433", 119989),
-	DT_ENTRY0("uhalf", "80c18f27f656d7e83d1f3f8075115720", 242269),
-	DT_ENTRY1("uhalf", "r1", "3c2b1ad95dcb1ac885ef80dc6dca4e8e", 143654),
-	DT_ENTRY1("uhalf", "r2", "b86c1887bf5f2fe91c1be49612626f02", 143644),
+	DT_ENTRY1("rylvania", "93???\?/1.0/Demo", "46e36010c320a503e4ca741bc2dbe840", 135174),
+	DT_ENTRY1("rylvania", "96???\?/2.5g", "98027d23f0da0e38c02f1326a2357713", 302903),
+	DT_ENTRY1("u0", "93???\?/1.0/Demo/v1", "41e935188b8a15bd61baaab1650bb015", 119999),
+	DT_ENTRY1("u0", "93???\?/1.0/Demo/v2", "737ec18187c67b3512beb5a5bc98d433", 119989),
+	DT_ENTRY1("u0", "96???\?/1.0g/Demo", "d9615e08336cc0d50984cdc0879f2006", 500949),
+	DT_ENTRY1("uhalf", "93???\?/1.0/v1", "3c2b1ad95dcb1ac885ef80dc6dca4e8e", 143654),
+	DT_ENTRY1("uhalf", "93???\?/1.0/v2", "b86c1887bf5f2fe91c1be49612626f02", 143644),
+	DT_ENTRY1("uhalf", "96???\?/1.0g", "80c18f27f656d7e83d1f3f8075115720", 242269),
 	DT_ENTRY0("uu1", "705b91f9e54c591e361d6c2e15bff8ef", 367506),
 	DT_ENTRY1("uu1", "v3.01/r1", "2b760b87ce3a268dfb7dbbf8029d7494", 235198),
 	DT_ENTRY1("uu1", "v3.01/r2", "8f408d7a02ff94aab97f7b7c7746f920", 235188),
@@ -1401,10 +1398,11 @@ const GlkDetectionEntry TADS_GAMES[] = {
 	DT_ENTRY0("xyz_bbn", "d59d036f1806b5110b8ce69dcb9a2867", 2156274),
 	DT_ENTRY0("xyz_findingmartin", "1c92590cd85cb707e4e2763a825515de", 1547636),
 
-	// TADS 2 - Russian
+	// Russian games (TADS2)
 	DT_ENTRYL0("ditchday", Common::RU_RUS, "30743db95826c38a4e683f44dc5fe2d2", 206234),
 
-	// TADS 3 - English
+	// ------------------------------------------------- TADS3 Section ------------------------------------------------
+	// English games (TADS3)
 	DT_ENTRY0("atopoesis", "e43854fcaa551d587bac020ffd141aa1", 448325),
 	DT_ENTRY0("blendings", "0eed7f70dcd7e7e4e532ec82972f9a9a", 469831),
 	DT_ENTRY0("catchthatcat", "2fe0399552c16b0fb5c7912565bfdd7f", 528804),
@@ -1413,7 +1411,7 @@ const GlkDetectionEntry TADS_GAMES[] = {
 	DT_ENTRY0("comp02tr", "23327e39fa44259fcabcb99917302c22", 960653),
 	DT_ENTRY0("cookoff", "581d1996db3a442064dae237e2e962f7", 1147531),
 	DT_ENTRY0("darkangel", "04f418d9e6ad8fb5a8d8291e11a788e6", 2873281),
-	DT_ENTRY1("darkangel", "WebUI", "f7b2b242d4029623171f35214ef213c8", 2873281),
+	DT_ENTRY1("darkangel", "160824/WebUI", "f7b2b242d4029623171f35214ef213c8", 2873281),
 	DT_ENTRY0("dearbrian", "8488c4f5c18a76ab65dd9e8eb72393ac", 999423),
 	DT_ENTRY0("devildetails", "0cca588557a79231daa78ef948f62397", 2892947),
 	DT_ENTRY0("diabolical", "161bc401e1d61ea7f3e14bddebd1f35a", 1614329),
@@ -1422,6 +1420,7 @@ const GlkDetectionEntry TADS_GAMES[] = {
 	DT_ENTRY0("golden-banana", "c5df512d642503556cd9c0d487a3c95f", 726650),
 	DT_ENTRY0("homeopen", "ae46177333238267362f9465f65fac80", 1869401),
 	DT_ENTRY1("homeopen", "WebUI", "7db13d7785329886ad5f24533115a749", 2303325),
+	DT_ENTRY0("iamprey", "06133295cd3c5fc339f2004b1114ae9d", 6583055),
 	DT_ENTRY1("korenvliet", "1.0", "9c91716c269e268938c5051dbfc07f33", 1311919),
 	DT_ENTRY1("korenvliet", "1.2", "4ab26eb23354a000f66b77bcbb820be4", 719957),
 	DT_ENTRY0("liasad", "af7bedb1529d5de959426eb1dc1a65d2", 606851),
@@ -1654,27 +1653,26 @@ const GlkDetectionEntry TADS_GAMES[] = {
 	// XYZZY Awards 2011 (TADS3)
 	DT_ENTRY0("xyz_indigo", "ca322b887ba56ef503b96ee462a2df30", 535570),
 
-	// TADS 3 - Czech
+	// Czech games (TADS3)
 	DT_ENTRYL0("exoter", Common::CS_CZE, "02b93382a19cd69f3cb67a12073f4795", 1487144),
 	DT_ENTRYL1("exoter", Common::CS_CZE, "WebUI", "865db2452b38f96035841f04e314c2c6", 1489600),
 	DT_ENTRYL1("exoter", Common::CS_CZE, "WebUI/r1", "956f93c8c8b5270d75501039ef825429", 1074752),
 
-	// TADS 3 - German
+	// German games (TADS3)
 	DT_ENTRYL1("pionierin", Common::DE_DEU, "WebUI", "9f899c9826204184c09f7088acfa8cce", 1293016),
 	DT_ENTRYL0("pionierin", Common::DE_DEU, "11b10b38003dda7e7c0c43bac3ce67d0", 928810),
 	DT_ENTRYL0("spiegel", Common::DE_DEU, "75c48fd809da11db3a4b2d250c8b01e1", 816048),
 
-	// TADS 3 - Italian
+	// Italian games (TADS3)
 	DT_ENTRYL0("remerook", Common::IT_ITA, "218f1ad01f58f93a610ba91f626b5fb5", 1166951),
 
-	// TADS 3 - Spanish
+	// Spanish games (TADS3)
 	DT_ENTRYL0("memorias_tads", Common::ES_ESP, "8b62037af64b77d08caf43794a0ccdd6", 616193),
 	DT_ENTRYL1("verla", Common::ES_ESP, "0.02", "751eaee6249e4acec9b7ace03bb80fb4", 1118875),
 	DT_ENTRYL1("verla", Common::ES_ESP, "1.1", "f901ee66728d813c76ce5ad95aa7199d", 8411036),
 	DT_ENTRYL1("verla", Common::ES_ESP, "WebUI/v1", "a5fdc0388600bcfa2b424a0edd62844e", 1545007),
 	DT_ENTRYL1("verla", Common::ES_ESP, "WebUI/v2", "beb148c15ff993f4714d8e908efc3ea1", 1695763),
 	DT_ENTRYL1("verla", Common::ES_ESP, "WebUI/v3", "1ed6250a40e8e16d6e14976fb74bb5bd", 2616415),
-
 
 	DT_END_MARKER
 };
