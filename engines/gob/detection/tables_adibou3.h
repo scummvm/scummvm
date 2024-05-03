@@ -167,4 +167,21 @@
 	0,0,0
 },
 
+// -- Dutch: Adiboo 3 --
+
+{
+	{
+
+		"adibou3",
+		_s("Missing game code"), // Adiboo 3 3.00 (Published by Transposia) (Engine: DEV7 version 1.2.0.0)
+		AD_ENTRY1s("b3_common.stk", "2650174b2b45ae776ebccc02073fea1f", 523647),
+		NL_NLD,
+		kPlatformWindows,
+		ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	0,0,0
+},
+
 #endif // GOB_DETECTION_TABLES_ADIBOU3_H
