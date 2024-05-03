@@ -293,6 +293,9 @@ void Score::startPlay() {
 }
 
 void Score::step() {
+	if (_playState == kPlayPaused)
+		return;
+
 	if (_playState == kPlayStopped)
 		return;
 

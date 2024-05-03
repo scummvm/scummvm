@@ -554,6 +554,8 @@ bool Window::step() {
 			debugC(5, kDebugEvents, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 			_currentMovie->getScore()->step();
 			return true;
+		case kPlayPaused:
+			return true;
 		default:
 			return false;
 		}

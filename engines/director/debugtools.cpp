@@ -75,71 +75,102 @@ static void showControlPanel() {
 	ImGui::SetNextWindowSize(ImVec2(200, 55), ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Control Panel", &_state->_showControlPanel)) {
+		Score *score = g_director->getCurrentMovie()->getScore();
 		ImDrawList *dl = ImGui::GetWindowDrawList();
 
 		ImU32 color = ImGui::GetColorU32(ImVec4(0.8f, 0.8f, 0.8f, 1.0f));
+		ImU32 active_color = ImGui::GetColorU32(ImVec4(1.0f, 1.0f, 0.4f, 1.0f));
 		ImU32 bgcolor = ImGui::GetColorU32(ImVec4(0.2f, 0.2f, 1.0f, 1.0f));
 		ImVec2 p = ImGui::GetCursorScreenPos();
 		ImVec2 buttonSize(20, 14);
 		float bgX1 = -4.0f, bgX2 = 21.0f;
 
-		ImGui::InvisibleButton("Rewind", buttonSize);
-		if (ImGui::IsItemClicked(0)) {
-		}
-		if (ImGui::IsItemHovered())
-			dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
+		{ // Rewind
+			ImGui::InvisibleButton("Rewind", buttonSize);
 
-		dl->AddTriangleFilled(ImVec2(p.x, p.y + 8), ImVec2(p.x + 8, p.y), ImVec2(p.x + 8, p.y + 16), color);
-		dl->AddTriangleFilled(ImVec2(p.x + 8, p.y + 8), ImVec2(p.x + 16, p.y), ImVec2(p.x + 16, p.y + 16), color);
-		ImGui::SetItemTooltip("Rewind");
-		ImGui::SameLine();
+			if (ImGui::IsItemClicked(0)) {
+			}
 
-		p = ImGui::GetCursorScreenPos();
-		ImGui::InvisibleButton("Step Back", ImVec2(18, 16));
-		if (ImGui::IsItemClicked(0)) {
-		}
-		if (ImGui::IsItemHovered())
-			dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
-		dl->AddTriangleFilled(ImVec2(p.x, p.y + 8), ImVec2(p.x + 9, p.y), ImVec2(p.x + 9, p.y + 16), color);
-		dl->AddRectFilled(ImVec2(p.x + 11, p.y), ImVec2(p.x + 17, p.y + 16), color);
-		ImGui::SetItemTooltip("Step Back");
-		ImGui::SameLine();
+			if (ImGui::IsItemHovered())
+				dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
 
-		p = ImGui::GetCursorScreenPos();
-		ImGui::InvisibleButton("Stop", buttonSize);
-		if (ImGui::IsItemClicked(0)) {
-		}
-		if (ImGui::IsItemHovered())
-			dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
-		dl->AddRectFilled(ImVec2(p.x, p.y), ImVec2(p.x + 16, p.y + 16), color);
-		ImGui::SetItemTooltip("Stop");
-		ImGui::SameLine();
+			dl->AddTriangleFilled(ImVec2(p.x, p.y + 8), ImVec2(p.x + 8, p.y), ImVec2(p.x + 8, p.y + 16), color);
+			dl->AddTriangleFilled(ImVec2(p.x + 8, p.y + 8), ImVec2(p.x + 16, p.y), ImVec2(p.x + 16, p.y + 16), color);
 
-		p = ImGui::GetCursorScreenPos();
-		ImGui::InvisibleButton("Step", buttonSize);
-		if (ImGui::IsItemClicked(0)) {
+			ImGui::SetItemTooltip("Rewind");
+			ImGui::SameLine();
 		}
-		if (ImGui::IsItemHovered())
-			dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
-		dl->AddRectFilled(ImVec2(p.x, p.y), ImVec2(p.x + 6, p.y + 16), color);
-		dl->AddTriangleFilled(ImVec2(p.x + 8, p.y + 2), ImVec2(p.x + 8, p.y + 14), ImVec2(p.x + 16, p.y + 8), color);
-		ImGui::SetItemTooltip("Step");
-		ImGui::SameLine();
 
-		p = ImGui::GetCursorScreenPos();
-		ImGui::InvisibleButton("Play", buttonSize);
-		if (ImGui::IsItemClicked(0)) {
-			warning("Play");
+		{ // Step Back
+			p = ImGui::GetCursorScreenPos();
+			ImGui::InvisibleButton("Step Back", ImVec2(18, 16));
+
+			if (ImGui::IsItemClicked(0)) {
+			}
+
+			if (ImGui::IsItemHovered())
+				dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
+
+			dl->AddTriangleFilled(ImVec2(p.x, p.y + 8), ImVec2(p.x + 9, p.y), ImVec2(p.x + 9, p.y + 16), color);
+			dl->AddRectFilled(ImVec2(p.x + 11, p.y), ImVec2(p.x + 17, p.y + 16), color);
+
+			ImGui::SetItemTooltip("Step Back");
+			ImGui::SameLine();
 		}
-		if (ImGui::IsItemHovered())
-			dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
-		dl->AddTriangleFilled(ImVec2(p.x, p.y), ImVec2(p.x, p.y + 16), ImVec2(p.x + 14, p.y + 8), color);
-		ImGui::SetItemTooltip("Play");
-		ImGui::SameLine();
+
+		{ // Stop
+			p = ImGui::GetCursorScreenPos();
+			ImGui::InvisibleButton("Stop", buttonSize);
+
+			if (ImGui::IsItemClicked(0))
+				score->_playState = kPlayPaused;
+
+			if (ImGui::IsItemHovered())
+				dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
+
+			ImU32 stopColor = (score->_playState == kPlayPaused) ? active_color : color;
+			dl->AddRectFilled(ImVec2(p.x, p.y), ImVec2(p.x + 16, p.y + 16), stopColor);
+
+			ImGui::SetItemTooltip("Stop");
+			ImGui::SameLine();
+		}
+
+		{ // Step
+			p = ImGui::GetCursorScreenPos();
+			ImGui::InvisibleButton("Step", buttonSize);
+
+			if (ImGui::IsItemClicked(0)) {
+			}
+
+			if (ImGui::IsItemHovered())
+				dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
+
+			dl->AddRectFilled(ImVec2(p.x, p.y), ImVec2(p.x + 6, p.y + 16), color);
+			dl->AddTriangleFilled(ImVec2(p.x + 8, p.y + 2), ImVec2(p.x + 8, p.y + 14), ImVec2(p.x + 16, p.y + 8), color);
+
+			ImGui::SetItemTooltip("Step");
+			ImGui::SameLine();
+		}
+
+		{ // Play
+			p = ImGui::GetCursorScreenPos();
+			ImGui::InvisibleButton("Play", buttonSize);
+
+			if (ImGui::IsItemClicked(0))
+				score->_playState = kPlayStarted;
+
+			if (ImGui::IsItemHovered())
+				dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
+
+			dl->AddTriangleFilled(ImVec2(p.x, p.y), ImVec2(p.x, p.y + 16), ImVec2(p.x + 14, p.y + 8), color);
+
+			ImGui::SetItemTooltip("Play");
+			ImGui::SameLine();
+		}
 
 		char buf[5];
 
-		snprintf(buf, 5, "%d", g_director->getCurrentMovie()->getScore()->getCurrentFrameNum());
+		snprintf(buf, 5, "%d", score->getCurrentFrameNum());
 
 		ImGui::SetNextItemWidth(30);
 		ImGui::InputText("##frame", buf, 5, ImGuiInputTextFlags_CharsDecimal);
