@@ -148,6 +148,14 @@ enum CursorMaskValue {
 	kCursorMaskPaletteXorColorXnor = 3,
 };
 
+#if defined(USE_IMGUI)
+typedef struct ImGuiCallbacks {
+	void (*init)() = nullptr;
+	void (*render)() = nullptr;
+	void (*cleanup)() = nullptr;
+} ImGuiCallbacks;
+#endif
+
 /**
  * Interface for ScummVM backends.
  *
@@ -915,7 +923,7 @@ public:
 	 *
 	 * @param render The function pointer called while rendering on screen
 	 */
-	virtual void setImGuiRenderCallback(void(*render)()) { }
+	virtual void setImGuiRenderCallback(ImGuiCallbacks callbacks) { }
 #endif
 
 	/**

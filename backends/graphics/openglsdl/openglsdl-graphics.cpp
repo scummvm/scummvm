@@ -306,7 +306,7 @@ void OpenGLSdlGraphicsManager::updateScreen() {
 	}
 
 #if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
-	if (_imGuiRender) {
+	if (_callbacks.render) {
 		_forceRedraw = true;
 	}
 #endif
@@ -465,12 +465,12 @@ void OpenGLSdlGraphicsManager::refreshScreen() {
 #endif
 
 #if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
-	if (_imGuiRender) {
+	if (_callbacks.render) {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplSDL2_NewFrame(_window->getSDLWindow());
 
 		ImGui::NewFrame();
-		_imGuiRender();
+		_callbacks.render();
 		ImGui::Render();
 
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -556,6 +556,9 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		notifyContextDestroy();
 
 #ifdef USE_IMGUI
+		if (_callbacks.cleanup) {
+			_callbacks.cleanup();
+		}
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplSDL2_Shutdown();
 		ImGui::DestroyContext();
@@ -618,6 +621,9 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	ImGui::StyleColorsDark();
 	ImGuiIO &io = ImGui::GetIO();
 	io.IniFilename = nullptr;
+	if (_callbacks.init) {
+		_callbacks.init();
+	}
 #endif
 
 	if (SDL_GL_SetSwapInterval(_vsync ? 1 : 0)) {
