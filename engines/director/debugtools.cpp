@@ -21,6 +21,8 @@
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "backends/imgui/imgui.h"
+#include "backends/imgui/imgui_fonts.h"
+#include "common/config-manager.h"
 #include "graphics/surface.h"
 #include "graphics/opengl/shader.h"
 #include "image/png.h"
@@ -229,6 +231,28 @@ static const char *toString(ScriptType scriptType) {
 	return scriptTypes[(int)scriptType];
 }
 
+static const char *toIcon(CastType castType) {
+	static const char *castTypes[] = {
+		"",       // Empty
+		"\ue075", // Bitmap
+		"\ue062", // FilmLoop
+		"\ue0e1", // Text
+		"\ue055", // Palette
+		"\ue075", // Picture
+		"\ue0f1", // Sound
+		"\ue0cb", // Button
+		"\ue058", // Shape
+		"\ue0ee", // Movie
+		"\ue062", // DigitalVideo
+		"\ue0bc", // Script
+		"",       // RTE
+		"",       // ???
+		""};      // Transition"
+	if (castType < 0 || castType > kCastTransition)
+		return "";
+	return castTypes[(int)castType];
+}
+
 static const char *toString(CastType castType) {
 	static const char *castTypes[] = {
 		"Empty",
@@ -308,11 +332,17 @@ static void showCast() {
 
 	if (ImGui::Begin("Cast", &_state->_showCast)) {
 		Movie *movie = g_director->getCurrentMovie();
-		if (ImGui::Button(_state->_cast._listView ? "Grid" : "List")) {
-			_state->_cast._listView = !_state->_cast._listView;
+		ImGui::BeginDisabled(_state->_cast._listView);
+		if (ImGui::Button("\ue07e")) {
+			_state->_cast._listView = true;
 		}
-		ImGui::Separator();
-
+		ImGui::EndDisabled();
+		ImGui::SameLine();
+		ImGui::BeginDisabled(!_state->_cast._listView);
+		if (ImGui::Button("\ue06e")) {
+			_state->_cast._listView = false;
+		}
+		ImGui::EndDisabled();
 		if (_state->_cast._listView) {
 			if (ImGui::BeginTable("Resources", 5, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg)) {
 				ImGui::TableSetupColumn("Name", 0, 120.f);
@@ -334,7 +364,7 @@ static void showCast() {
 						ImGui::TableNextRow();
 						ImGui::TableNextColumn();
 						const char *name = castMemberInfo ? castMemberInfo->name.c_str() : "";
-						ImGui::Text("%s", castMemberInfo ? castMemberInfo->name.c_str() : "");
+						ImGui::Text("%s %s", toIcon(castMember._value->_type), name);
 
 						ImGui::TableNextColumn();
 						ImGui::Text("%d", castMember._key);
@@ -686,6 +716,19 @@ static void showScripts() {
 }
 
 void onImGuiInit() {
+	ImGuiIO &io = ImGui::GetIO();
+	io.Fonts->AddFontDefault();
+
+	ImFontConfig icons_config;
+	icons_config.MergeMode = true;
+	icons_config.PixelSnapH = false;
+	icons_config.OversampleH = 3;
+	icons_config.OversampleV = 3;
+	icons_config.GlyphOffset = {0, 3};
+
+	static const ImWchar icons_ranges[] = {0xE000, 0xF8FF, 0};
+	ImGui::addTTFFontFromArchive("OpenFontIcons.ttf", 13.f, &icons_config, icons_ranges);
+
 	_state = new ImGuiState();
 }
 
@@ -698,7 +741,8 @@ void onImGuiRender() {
 	if (!_state)
 		return;
 
-	ImGui::GetIO().ConfigFlags &= ~(ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse);
+	ImGuiIO &io = ImGui::GetIO();
+	io.ConfigFlags &= ~(ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse);
 
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("View")) {
