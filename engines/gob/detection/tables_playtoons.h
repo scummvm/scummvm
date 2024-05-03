@@ -40,7 +40,7 @@
 		AD_ENTRY2s("playtoon.stk",	"8c98e9a11be9bb203a55e8c6e68e519b", 25574338,
 				   "archi.stk",		"8d44b2a0d4e3139471213f9f0ed21e81", 5524674),
 		FR_FRA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -54,7 +54,7 @@
 		AD_ENTRY2s("playtoon.stk",	"55f0293202963854192e39474e214f5f", 30448474,
 				   "archi.stk",		"8d44b2a0d4e3139471213f9f0ed21e81", 5524674),
 		FR_FRA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -68,7 +68,7 @@
 		AD_ENTRY2s("playtoon.stk",	"c5ca2a288cdaefca9556cd9ae4b579cf", 25158926,
 				   "archi.stk",		"8d44b2a0d4e3139471213f9f0ed21e81", 5524674),
 		DE_DEU,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -82,7 +82,7 @@
 		AD_ENTRY2s("playtoon.stk",	"9e513e993a5b0e2496add3f50c08764b", 30448506,
 				   "archi.stk",		"00d8274519dfcf8a0d8ae3099daea0f8", 5532135),
 		EN_ANY,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -104,7 +104,7 @@
 			{0, 0, 0, 0}
 		},
 		EN_ANY,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -118,7 +118,7 @@
 		AD_ENTRY2s("e.scn",			"8a0db733c3f77be86e74e8242e5caa61", 124,
 				   "demarchg.vmd",	"d14a95da7d8792faf5503f649ffcbc12", 5619415),
 		EN_ANY,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -136,7 +136,7 @@
                     "demoita.vmd", "b4c0622d14c8749965cd0f5dfca4cf4b", 1183566,
                     "wooddem3.vmd", "a1700596172c2d4e264760030c3a3d47", 8994250),
 		IT_ITA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -153,7 +153,7 @@
                     "demo5.vmd", "2abb7b6a26406c984f389f0b24b5e28e", 13290970,
                     "wooddem3.vmd", "a1700596172c2d4e264760030c3a3d47", 8994250),
 		ES_ESP,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -170,7 +170,7 @@
 		AD_ENTRY2s("playtoon.stk",	"4772c96be88a57f0561519e4a1526c62", 24406262,
 				   "spirou.stk",	"5d9c7644d0c47840169b4d016765cc1a", 9816201),
 		EN_ANY,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -184,7 +184,7 @@
 		AD_ENTRY2s("playtoon.stk",	"55a85036dd93cce93532d8f743d90074", 17467154,
 				   "spirou.stk",	"e3e1b6148dd72fafc3637f1a8e5764f5", 9812043),
 		FR_FRA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -198,7 +198,7 @@
 		AD_ENTRY2s("playtoon.stk",	"8c98e9a11be9bb203a55e8c6e68e519b", 25574338,
 				   "spirou.stk",	"91080dc148de1bbd6a97321c1a1facf3", 9817086),
 		FR_FRA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -212,7 +212,7 @@
 		AD_ENTRY2s("playtoon.stk",	"c5ca2a288cdaefca9556cd9ae4b579cf", 25158926,
 				   "spirou.stk",	"91080dc148de1bbd6a97321c1a1facf3", 9817086),
 		DE_DEU,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -226,7 +226,7 @@
 		AD_ENTRY2s("playtoon.stk",	"2572685400852d12759a2fbf09ec88eb", 9698780,
 				  "spirou.stk",		"d3cfeff920b6343a2ece55088f530dba", 7076608),
 		IT_ITA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -240,7 +240,7 @@
 		AD_ENTRY2s("playtoon.stk",	"9e513e993a5b0e2496add3f50c08764b", 30448506,
 				   "spirou.stk",	"993737f112ca6a9b33c814273280d832", 9825760),
 		EN_ANY,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -257,7 +257,7 @@
 		AD_ENTRY2s("playtoon.stk",	"8c98e9a11be9bb203a55e8c6e68e519b", 25574338,
 				   "chato.stk",		"4fa4ed96a427c344e9f916f9f236598d", 6033793),
 		FR_FRA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -271,7 +271,7 @@
 		AD_ENTRY2s("playtoon.stk",	"9e513e993a5b0e2496add3f50c08764b", 30448506,
 				   "chato.stk",		"8fc8d0da5b3e758908d1d7298d497d0b", 6041026),
 		EN_ANY,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -285,7 +285,7 @@
 		AD_ENTRY2s("playtoon.stk",	"55f0293202963854192e39474e214f5f", 30448474,
 				   "chato.stk",		"4fa4ed96a427c344e9f916f9f236598d", 6033793),
 		FR_FRA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -299,7 +299,7 @@
 		AD_ENTRY2s("playtoon.stk",	"c5ca2a288cdaefca9556cd9ae4b579cf", 25158926,
 				   "chato.stk", 	"3c6cb3ac8a5a7cf681a19971a92a748d", 6033791),
 		DE_DEU,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -313,7 +313,7 @@
 		AD_ENTRY2s("playtoon.stk",	"4772c96be88a57f0561519e4a1526c62", 24406262,
 				   "chato.stk",		"bdef407387112bfcee90e664865ac3af", 6033867),
 		EN_ANY,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -330,7 +330,7 @@
 		AD_ENTRY2s("playtoon.stk",	"b7f5afa2dc1b0f75970b7c07d175db1b", 24340406,
 				   "manda.stk",		"92529e0b927191d9898a34c2892e9a3a", 6485072),
 		FR_FRA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -344,7 +344,7 @@
 		AD_ENTRY2s("playtoon.stk",	"f853153e9be33b9e0ec6970d05642e51", 30448480,
 				   "manda.stk",		"fb65d32f43ade3ff573a8534d5a1a91e", 6492732),
 		DE_DEU,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -358,7 +358,7 @@
 		AD_ENTRY2s("playtoon.stk",	"9e513e993a5b0e2496add3f50c08764b", 30448506,
 				   "manda.stk",		"69a79c9f61b2618e482726f2ff68078d", 6499208),
 		EN_ANY,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -375,7 +375,7 @@
 		AD_ENTRY2s("playtoon.stk",	"55f0293202963854192e39474e214f5f", 30448474,
 				   "wakan.stk",		"f493bf82851bc5ba74d57de6b7e88df8", 5520153),
 		FR_FRA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -389,7 +389,7 @@
 		AD_ENTRY2s("playtoon.stk",	"9e513e993a5b0e2496add3f50c08764b", 30448506,
 				   "wakan.stk",		"5518139580becd8c49bbfbdd4f49187a", 5523417),
 		DE_DEU,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -406,7 +406,7 @@
 		AD_ENTRY2s("playtoon.stk",	"5f9aae29265f1f105ad8ec195dff81de", 68382024,
 				   "dan.itk",		"906d67b3e438d5e95ec7ea9e781a94f3", 3000320),
 		FR_FRA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -423,7 +423,7 @@
 		AD_ENTRY2s("playtoon.stk",	"5f9aae29265f1f105ad8ec195dff81de", 68382024,
 				   "dan.itk",		"74eeb075bd2cb47b243349730264af01", 3213312),
 		FR_FRA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -440,7 +440,7 @@
 		AD_ENTRY2s("playtoon.stk",	"5f9aae29265f1f105ad8ec195dff81de", 68382024,
 				   "dan.itk",		"9a8f62809eca5a52f429b5b6a8e70f8f", 2861056),
 		FR_FRA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -454,7 +454,7 @@
 		AD_ENTRY2s("playtoon.stk",	"9ca3a2c19a3261cf9fa0f40eebc9d3ad", 65879662,
 				   "dan.itk",		"e8566d7efb8601a323adc918948d03fe", 3325952),
 		DE_DEU,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -471,7 +471,7 @@
 		AD_ENTRY2s("intro.stk",		"2f8db6963ff8d72a8331627ebda918f4", 3613238,
 				   "bambou.itk",	"0875914d31126d0749313428f10c7768", 114440192),
 		FR_FRA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
