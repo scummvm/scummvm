@@ -570,112 +570,212 @@ const PlainGameDescriptor TADS3_GAME_LIST[] = {
 	{ "tads3",              "TADS 3 Game" },
 
 	// English games
-	{ "allhope",            "All Hope Abandon" },
-	{ "aprilparis",         "April in Paris" },
 	{ "atopoesis",          "Atopoesis" },
-	{ "battle",             "The Battle of Walcot Keep" },
 	{ "blendings",          "Blendings" },
-	{ "blightedisle",       "Blighted Isle" },
-	{ "brokenman",          "A Broken Man" },
-	{ "camelgirl",          "The Epic Origins of CamelGirl!" },
-	{ "captivity",          "Captivity" },
 	{ "catchthatcat",       "Catch That Cat" },
-	{ "closedcircles",      "Closed Circles" },
 	{ "combatdemo",         "TADS 3 Combat Demos" },
 	{ "comp02tr",           "Comp02ter Game" },
-	{ "contentment",        "Koustrea's Contentment" },
 	{ "cookoff",            "Cook Off" },
 	{ "darkangel",          "Dark Angel" },
-	{ "deadlikeants",       "Dead Like Ants" },
-	{ "deadmansparty",      "Dead Mans Party" },
 	{ "dearbrian",          "Dear Brian" },
-	{ "deathscavenger",     "Death's Scavenger Hunt" },
-	{ "deezlebub",          "Deezlebub" },
-	{ "deprivation",        "Deprivation" },
-	{ "devildetails",       "The Devil in the Details" },
 	{ "diabolical",         "Diabolical" },
-	{ "dining",             "Dining With the Alien" },
-	{ "edgeofchaos",        "Jay Schilling's Edge of Chaos" },
-	{ "elysiumenigma",      "The Elysium Enigma" },
-	{ "emma2",              "Emma II" },
 	{ "entrancingsin",      "Entrancing Sin" },
-	{ "ericgift",           "Eric's Gift" },
-	{ "evilbrain5",         "Evil Brain Five: Dead on the Set" },
 	{ "experiment",         "Experiment" },
-	{ "fakenews",           "Fake News" },
-	{ "folkarstation",      "Folkar Station" },
-	{ "feathergrange",      "The Feather Grange Job" },
-	{ "fishbot",            "Fish-Bot!" },
-	{ "foreveralways",      "Elizabeth Hawk's Forever Always" },
-	{ "germania",           "Germania" },
-	{ "ghostwithin",        "Ghosts Within" },
 	{ "golden-banana",      "The Quest of the Golden Banana" },
-	{ "gunmute",            "Gun Mute" },
 	{ "homeopen",           "Home Open" },
-	{ "imustplay",          "I Must Play" },
-	{ "indigo",             "Indigo" },
-	{ "it",                 "It" },
 	{ "korenvliet",         "Korenvliet" },
 	{ "liasad",             "Love Is as Powerful as Death, Jealousy Is as Cruel as the Grave" },
 	{ "littlestgriffin",    "The Littlest Griffin" },
-	{ "lookaroundcorner",   "Look Around the Corner" },
 	{ "lowell",             "Escape from Lowell Prison" },
 	{ "lydiasheart",        "Lydia's Heart" },
 	{ "macrocosm",          "Macrocosm" },
-	{ "magic",              "Magic" },
 	{ "marthasbigdate",     "Martha's Big Date" },
 	{ "mazes",              "Nothing But Mazes" },
-	{ "midsummer",          "The Midsummer Banquet" },
-	{ "miranda",            "Oh Miranda!" },
-	{ "mixtape",            "Mix Tape" },
-	{ "mrspepper",          "Mrs. Pepper's Nasty Secret" },
-	{ "multiverserogue",    "Rogue of the Multiverse" },
 	{ "mylastrodeo",        "My Last Rodeo" },
 	{ "natdewey",           "Nat Dewey" },
 	{ "officeharassment",   "Office Harassment" },
-	{ "parrots",            "Max Blaster and Doris de Lightning" },
 	{ "pastpresent",        "Past Present" },
 	{ "pekostory",          "Peko's Story" },
-	{ "promdress",          "The Only Possible Prom Dress" },
-	{ "rainbow",            "Painting the Rainbow" },
 	{ "ratincontrol",       "Rat In Control" },
 	{ "reconcilingmother",  "Reconciling Mother" },
 	{ "recluse",            "Recluse" },
-	{ "returntoditchday",   "Return to Ditch Day" },
 	{ "revenge",            "The Fiendish Revenge of Baron von Glockenspiel" },
 	{ "ribosoperation",     "Dr Who and the Ribos Operation" },
 	{ "saturnschild",       "Saturn's Child" },
 	{ "sawesome",           "Hide and Seek - Cindy's Something Awesome Project" },
 	{ "schattenweg",        "Schattenweg" },
-	{ "shadowsmirror",      "Shadows on the Mirror" },
 	{ "snowswinter",        "The First Snows of Winter" },
 	{ "sod",                "SpeedIF of Destiny or Nothing, Punk" },
 	{ "spaceshooter",       "Space Shooter: A TADS 3 abuse" },
 	{ "spiegel",            "Durch den Spiegel" },
-	{ "squarecircle",       "Square Circle" },
-	{ "stomach",            "Light of My Stomach" },
 	{ "stormshelter",       "Shelter from the Storm" },
-	{ "thehouset3",         "The House" },
-	{ "theisland",          "The Island" },
 	{ "thereveal",          "The Reveal" },
 	{ "threedaysofnight",   "Three Days of Night" },
-	{ "sleepingprincess",   "The Sleeping Princess" },
-	{ "tin",                "Tin" },
-	{ "tocatchfragonfly",   "To Catch a Dragonfly" },
 	{ "trenchline",         "Trench Line" },
 	{ "undertaleepilogue",  "Undertale: Epilogue" },
 	{ "venice",             "A Lady in Waiting" },
 	{ "vividity",           "Vividity" },
 	{ "wardz",              "Ward Z" },
-	{ "walkersilhouette",   "Walker and Silhouette" },
-	{ "whitebull",          "The White Bull" },
 	{ "wilderness",         "In the Wilderness" },
 	{ "wolfenschtein",      "Wolfenschtein" },
 	{ "writingonthewall",   "The Writing on the Wall" },
 	{ "wutheringheights",   "Wuthering Heights" },
-	{ "xthunt",             "Xen: The Hunt" },
 	{ "yetanotherexp",      "Yet Another Experiment" },
 	{ "youmatched",         "It's a Match!" },
+
+	// IFComp 2002 (TADS3)
+	{ "if02_ericgift",      "Eric's Gift" },                                                            //   34th Place
+
+	// IFComp 2003 (TADS3)
+	{ "if03_shadowsmirror", "Shadows on the Mirror" },                                                  //    6th Place
+
+	// IFComp 2004 (TADS3)
+	{ "if04_squarecircle",  "Square Circle" },                                                          //    5th Place
+	{ "if04_imustplay",     "I Must Play" },                                                            //   14th Place
+
+	// IFComp 2005 (TADS3)
+	{ "if05_mixtape",       "Mix Tape" },                                                               //   18th Place
+
+	// IFComp 2006 (TADS3)
+	{ "if06_elysiumenigma", "The Elysium Enigma" },                                                     //    3rd Place
+	{ "if06_xthunt",        "Xen: The Hunt" },                                                          //   17th Place
+	{ "if06_brokenman",     "A Broken Man" },                                                           //   26th Place
+
+	// IFComp 2007 (TADS3)
+	{ "if07_reconcilmoth",  "Reconciling Mother" },                                                     //   13th Place
+
+	// IFComp 2008 (TADS3)
+	{ "if08_aprilparis",    "April in Paris" },                                                         //    8th Place
+	{ "if08_magic",         "Magic" },                                                                  //   14th Place
+
+	// IFComp 2010 (TADS3)
+	{ "if10_multiversrgue", "Rogue of the Multiverse" },                                                //    2nd Place
+
+	// IFComp 2011 (TADS3)
+	{ "if11_it",            "It" },                                                                     //   16th Place
+
+	// IFComp 2012 (TADS3)
+	{ "if12_theisland",     "The Island" },                                                             //   25th Place
+
+	// IFComp 2015 (TADS3)
+	{ "if15_contentment",   "Koustrea's Contentment" },                                                 //   15th Place
+
+	// IFComp 2016 (TADS3)
+	{ "if16_hillridge",     "Hill Ridge Lost & Found" },                                                //    9th Place
+
+	// IFComp 2017 (TADS3)
+	{ "if17_fakenews",      "Fake News" },                                                              //   31th Place
+
+	// IFComp 2020 (TADS3)
+	{ "if20_captivity",     "Captivity" },                                                              //   16th Place
+	{ "if20_edgeofchaos",   "Jay Schilling's Edge of Chaos" },                                          //   25th Place
+	{ "if20_deezlebub",     "Deezlebub" },                                                              //   53th Place
+
+	// IFComp 2021 (TADS3)
+	{ "if21_ghostwithin",   "Ghosts Within" },                                                          //   28th Place
+
+	// IFComp 2022 (TADS3)
+	{ "if22_cain",          "According to Cain" },                                                      //    6th Place
+	{ "if22_promdress",     "The Only Possible Prom Dress" },                                           //   28th Place
+
+	// IF Art Show 2004 (TADS3)
+	{ "ifas_battle",        "The Battle of Walcot Keep" },
+
+	// Cover Stories Game-Jam (TADS3)
+	{ "cs_feathergrange",   "The Feather Grange Job" },
+
+	// IFBeginnersComp 2008 (TADS3)
+	{ "ifb_germania",       "Germania" },
+	{ "ifb_mrspepper",      "Mrs. Pepper's Nasty Secret" },
+	{ "ifb_sleepprincess",  "The Sleeping Princess" },
+
+	// IntroComp 2005 (TADS3)
+	{ "ic05_negotis",       "Negotis: Book I" },
+
+	// IntroComp 2007 (TADS3)
+	{ "ic07_folkarstation", "Folkar Station" },
+	{ "ic07_tin",           "Tin" },
+
+	// IntroComp 2010 (TADS3)
+	{ "ic10_closedcircles", "Closed Circles" },
+
+	// IntroComp 2014 (TADS3)
+	{ "ic14_devildetails",  "The Devil in the Details" },
+
+	// IntroComp 2015 (TADS3)
+	{ "ic15_deprivation",   "Deprivation" },
+
+	// Shufflecomp Competition 2014 (TADS3)
+	{ "sh14_deadmansparty", "Dead Mans Party" },
+	{ "sh14_lookacorner",   "Look Around the Corner" },
+
+	// SpeedIF 20 Competition (TADS3)
+	{ "sif_greatzimbawe",   "Great Zimbawe" },
+	{ "sif_miranda",        "Oh Miranda!" },
+
+	// SpeedIF 5th Anniversary Competition (TADS3)
+	{ "sif_evilbrain5",     "Evil Brain Five: Dead on the Set" },
+
+	// SpeedIF Crinkle Cut Competition (TADS3)
+	{ "sif_dining",         "Dining With the Alien" },
+
+	// SpeedIF of Destiny Competition (TADS3)
+	{ "sif_rainbow",        "Painting the Rainbow" },
+
+	// SpeedIF Jacket Competition (TADS3)
+	{ "sif_midsummer",      "The Midsummer Banquet" },
+
+	// SpeedIF Jacket 4 Competition (TADS3)
+	{ "sif_stomach",        "Light of My Stomach" },
+
+	// SpeedIF Late! Competition (TADS3)
+	{ "sif_fishbot",        "Fish-Bot!" },
+
+	// SpeedIF Let's Make a Nightmare Competition (TADS3)
+	{ "sif_threedoors_sl",  "Three Doors (by Soren Lovborg)" },
+
+	// SpeedIF Thanksgiving Competition (TADS3)
+	{ "sif_catchfragonfly", "To Catch a Dragonfly" },
+
+	// SpeedIF U Competition (TADS3)
+	{ "sif_deathscavenger", "Death's Scavenger Hunt" },
+
+	// SpeedIF Ultimate not Numbered New Year's Competition  (TADS3)
+	{ "sif_emma2",          "Emma II" },
+
+	// Spring Thing 2003 (TADS3)
+	{ "stc03_parrots",      "Max Blaster and Doris de Lightning" },
+
+	// Spring Thing 2007 (TADS3)
+	{ "stc07_camelgirl",    "The Epic Origins of CamelGirl!" },
+
+	// Spring Thing 2012 (TADS3)
+	{ "stc12_whitebull",    "The White Bull" },
+
+	// Spring Thing 2018 (TADS3)
+	{ "stc18_thehouset3",   "The House" },
+
+	// XYZZY Awards 2002 (TADS3)
+	{ "xyz_foreveralways",  "Elizabeth Hawk's Forever Always" },
+
+	// XYZZY Awards 2004 (TADS3)
+	{ "xyz_returnditchday", "Return to Ditch Day" },
+
+	// XYZZY Awards 2005 (TADS3)
+	{ "xyz_allhope",        "All Hope Abandon" },
+
+	// XYZZY Awards 2007 (TADS3)
+	{ "xyz_blightedisle",   "Blighted Isle" },
+
+	// XYZZY Awards 2008 (TADS3)
+	{ "xyz_gunmute",        "Gun Mute" },
+
+	// XYZZY Awards 2009 (TADS3)
+	{ "xyz_deadlikeants",   "Dead Like Ants" },
+	{ "xyz_walkersilho",    "Walker and Silhouette" },
+
+	// XYZZY Awards 2011 (TADS3)
+	{ "xyz_indigo",         "Indigo" },
 
 	// Czech games
 	{ "exoter",             "Exoter" },
@@ -1306,39 +1406,19 @@ const GlkDetectionEntry TADS_GAMES[] = {
 
 	// TADS 3 - English
 	DT_ENTRY0("atopoesis", "e43854fcaa551d587bac020ffd141aa1", 448325),
-	DT_ENTRY0("battle", "e8d7dd64768efb9da7d9d365ca8d45e3", 943915),
 	DT_ENTRY0("blendings", "0eed7f70dcd7e7e4e532ec82972f9a9a", 469831),
-	DT_ENTRY0("blightedisle", "a400f71d73c0efdf301635e73ff00c79", 3326591),
-	DT_ENTRY1("blightedisle", "WebUI", "4ee80cdf2e39f41e721440db7ddbc05e", 3999970),
-	DT_ENTRY0("camelgirl", "24908c4fb1cc2faee2042348d6a0afc5", 1018598),
 	DT_ENTRY0("catchthatcat", "2fe0399552c16b0fb5c7912565bfdd7f", 528804),
-	DT_ENTRY0("closedcircles", "3f5d083a5407c7e4f105856ea799ce9d", 612103),
 	DT_ENTRY0("combatdemo", "23a59262f9d8534562379b123e1272b7", 515392),
 	DT_ENTRY1("combatdemo", "Bundled", "23a59262f9d8534562379b123e1272b7", 620151),
 	DT_ENTRY0("comp02tr", "23327e39fa44259fcabcb99917302c22", 960653),
 	DT_ENTRY0("cookoff", "581d1996db3a442064dae237e2e962f7", 1147531),
 	DT_ENTRY0("darkangel", "04f418d9e6ad8fb5a8d8291e11a788e6", 2873281),
 	DT_ENTRY1("darkangel", "WebUI", "f7b2b242d4029623171f35214ef213c8", 2873281),
-	DT_ENTRY0("deadmansparty", "bc78f6e390df143a13aeabcdb9de1fed", 1638558),
-	DT_ENTRY1("deadmansparty", "WebUI", "831ba48e61a40e442a7459aa798da3ea", 2056080),
 	DT_ENTRY0("dearbrian", "8488c4f5c18a76ab65dd9e8eb72393ac", 999423),
-	DT_ENTRY0("deprivation", "4daf3729590d29dd918dae0a4ec5b107", 1640675),
 	DT_ENTRY0("devildetails", "0cca588557a79231daa78ef948f62397", 2892947),
 	DT_ENTRY0("diabolical", "161bc401e1d61ea7f3e14bddebd1f35a", 1614329),
-	DT_ENTRY0("dining", "b34d05d2243399343ce5366317627ff8", 421666),
-	DT_ENTRY0("edgeofchaos", "6e20b8013ff2e8cc1a9e1b0ce570adbb", 11780522),
-	DT_ENTRY0("elysiumenigma", "f98f0e4de8c7cf5d6f471b56c6a96d81", 2095654),
-	DT_ENTRY1("elysiumenigma", "WebUI", "7ca73a03b433b28a831808066a843d79", 2149533),
-	DT_ENTRY0("emma2", "e3cb9450cbd09487447f9e1b4feff9dd", 699363),
 	DT_ENTRY0("entrancingsin", "df6ccd84bf305f35231b090217a6285e", 1173354),
-	DT_ENTRY0("evilbrain5", "c40acfa1f3b79988957c7908459fbf1b", 398901),
 	DT_ENTRY0("experiment", "c0fd329d7a33e1cc48e2261169804a90", 685564),
-	DT_ENTRY0("feathergrange", "ce30f438545469a078cc28e4676079fc", 684191),
-	DT_ENTRY0("fishbot", "e868effa94933f71b50b9e018d950940", 363180),
-	DT_ENTRY0("folkarstation", "07abdfc44d4e0e60c4b986957c028ce3", 505463),
-	DT_ENTRY0("foreveralways", "1e901bfebf416a910ba55e301101034c", 656194),
-	DT_ENTRY0("germania", "1ad65401989aaeaae1a8bfa5b340d0b8", 555992),
-	DT_ENTRY0("ghostwithin", "e589ef28d2276d82339fef3bff2945e0", 1745032),
 	DT_ENTRY0("golden-banana", "c5df512d642503556cd9c0d487a3c95f", 726650),
 	DT_ENTRY0("homeopen", "ae46177333238267362f9465f65fac80", 1869401),
 	DT_ENTRY1("homeopen", "WebUI", "7db13d7785329886ad5f24533115a749", 2303325),
@@ -1346,9 +1426,6 @@ const GlkDetectionEntry TADS_GAMES[] = {
 	DT_ENTRY1("korenvliet", "1.2", "4ab26eb23354a000f66b77bcbb820be4", 719957),
 	DT_ENTRY0("liasad", "af7bedb1529d5de959426eb1dc1a65d2", 606851),
 	DT_ENTRY1("littlestgriffin", "Web", "4491867db64e3bb6272d50efbae2c0f4", 1100275),
-	DT_ENTRY0("lookaroundcorner", "c9ac24c941c39ef57b23a55ed36f844d", 664271),
-	DT_ENTRY1("lookaroundcorner", "Competition Release", "7827b2f97dc429aebb570ce1b3d8eecd", 663334),
-	DT_ENTRY1("lookaroundcorner", "WebUI", "5e7d1e0c7f93662fb455972797795f15", 1079205),
 	DT_ENTRY0("lowell", "43cc0c4f12348cf5be2a5585e4ac2adb", 490426),
 	DT_ENTRY0("lydiasheart", "aa92fa47c4e04e90d358e9cfd50de671", 2620069),
 	DT_ENTRY0("macrocosm", "44492ef14565d51cbfe8ae6ddf07af1f", 30678531),
@@ -1356,20 +1433,12 @@ const GlkDetectionEntry TADS_GAMES[] = {
 	DT_ENTRY1("mazes", "v2.00","c77ea32fc4867f8ff79626e6498cdcc6", 8475954),
 	DT_ENTRY1("mazes", "v2.01", "664f1f83281d4093f9a48c98248a9af5", 8481749),
 	DT_ENTRY1("mazes", "Competition Release", "2fccc4148714aeca2ee640fcd3916cd6", 8481841),
-	DT_ENTRY0("midsummer", "954f2608b04e5148df55f2f11b1af261", 290120),
-	DT_ENTRY0("miranda", "6aee961565c541725c536319a7a4da4a", 378691),
-	DT_ENTRY0("mrspepper", "d9b3c2f7b954fb066561febf195b27d4", 1118901),
-	DT_ENTRY1("mrspepper", "WebUI", "9bcfcdc5a37e9c5beb9b961a98929b67", 1721042),
-	DT_ENTRY1("mrspepper", "Competition Release", "fd96b4428eb75f7feb7c0719ac318b0d", 1118827),
-	DT_ENTRY0("multiverserogue", "551b85aaba2d958f2bfd1080c7787844", 811469),
 	DT_ENTRY0("mylastrodeo", "82f4a03bfdd5b8da41c6e3dbba0d9666", 1614970),
 	DT_ENTRY1("mylastrodeo", "WebUI", "d7f480254686e114037de11f9c82782b", 2042237),
 	DT_ENTRY0("natdewey", "a768d1669eb7b3f80e52ba544d5ca2a7", 2145219),
 	DT_ENTRY0("officeharassment", "e3b365c7c6840b05c2b0ef8981603574", 1209725),
-	DT_ENTRY0("parrots", "b68b8dbc1ebcbb49322f8ea792182324", 1532127),
 	DT_ENTRY0("pastpresent", "c2a72f503aaaca57ad3dabe7d76be0db", 1988734),
 	DT_ENTRY0("pekostory", "0d703060d485aa4aeefe0d267a819ab3", 1100463),
-	DT_ENTRY0("rainbow", "7e1316a28660cb9853322d2e18267afb", 514600),
 	DT_ENTRY0("ratincontrol", "607502409e7143cb20896d09201744ac", 401192),
 	DT_ENTRY0("recluse", "c41b5ab77e458f38c487dc1a1e0778f2", 1073030),
 	DT_ENTRY0("revenge", "74203a6ae5510ac19ae2d8798847a534", 641270),
@@ -1382,23 +1451,13 @@ const GlkDetectionEntry TADS_GAMES[] = {
 	DT_ENTRY0("snowswinter", "fee15dca3dc311d80973c31a8e8114e8", 824711),
 	DT_ENTRY0("sod", "f97cff3a3db44cc2a7d7f06027076eac", 376613),
 	DT_ENTRY0("spaceshooter", "cb7275fb06421696153aef808bc28d53", 79989),
-	DT_ENTRY1("squarecircle", "r1", "3813eb298213bdc00b7d02cd30f0e198", 991978),
-	DT_ENTRY1("squarecircle", "r2", "935775a75e141df9a6f9d94b41ae71ee", 1024972),
-	DT_ENTRY1("squarecircle", "WebUI", "fb2eeb70d3b751bec1a0aa728e60f290", 1654749),
-	DT_ENTRY0("stomach", "9c07b078efbe21612fade9b851c3838e", 523172),
 	DT_ENTRY1("stormshelter", "r1", "72d6180f16066cdb20725176d03d7ded", 1702075),
 	DT_ENTRY1("stormshelter", "r2", "c44fb06b549a3e7e3caf2778b37fdd78", 1708137),
 	DT_ENTRY1("stormshelter", "WebUI", "db84c1f25835763494fc8124fcade37f", 2293053),
-	DT_ENTRY1("thehouset3", "TADS3", "8b92f7f00ef0ca5713f7ffffa13b8a01", 1688640),
 	DT_ENTRY0("thereveal", "ff5485af8cbc5c0b4211bf87db23ceeb", 1590214),
 	DT_ENTRY1("thereveal", "WebUI", "d4f196d2e6bd3dd49f70e52bb504e793", 2018665),
-	DT_ENTRY0("sleepingprincess", "63255d1bde649f907725a6c328047809", 736075),
-	DT_ENTRY1("sleepingprincess", "Competition Release", "8dfc3e925caa99891cb1fef4b1157baa", 709058),
-	DT_ENTRY1("sleepingprincess", "WebUI", "711cf6098b0670821af907dc94793e90", 1337974),
 	DT_ENTRY0("threedaysofnight", "8271c716c6c11b4aec8b0b95aacb276d", 1711576),
 	DT_ENTRY1("threedaysofnight", "WebUI", "1de414e58b667eab103361dbcd95353a", 2139562),
-	DT_ENTRY0("tin", "0756b7837f706a29cc24871ebbe72d55", 547524),
-	DT_ENTRY0("tocatchfragonfly", "c15712045323480c273b13e313c58ce8", 540029),
 	DT_ENTRY0("trenchline", "88358f4007fff93a6420b5f73a331766", 813623),
 	DT_ENTRY0("undertaleepilogue", "e76c15c3446865916bb1647ed4f83b3e", 1189729),
 	DT_ENTRY0("venice", "2db783be567e7761b4501ec12bc2eb35", 880111),
@@ -1406,7 +1465,6 @@ const GlkDetectionEntry TADS_GAMES[] = {
 	DT_ENTRY0("vividity", "7da90c0a140c73249b83b5c3e459ca83", 692049),
 	DT_ENTRY1("vividity", "WebUI", "f535eb35d8f4776b2262dd8aca3281b3", 1106715),
 	DT_ENTRY0("wardz", "f17c720b4a80693534fea474a54f15b4", 1170346),
-	DT_ENTRY0("whitebull", "dc01235c8fa2ca07920171e124447967", 14511731),
 	DT_ENTRY0("wilderness", "5ea2cc9ab1193d416c907b9c1f0934e3", 663353),
 	DT_ENTRY1("wilderness", "WebUI", "b2a76f20abf3f255dfe23d53cbaedcf0", 1089562),
 	DT_ENTRY1("wolfenschtein", "WebUI", "31ccf0d040271950ddf3ca91f8ff22e2", 1200645),
@@ -1415,6 +1473,186 @@ const GlkDetectionEntry TADS_GAMES[] = {
 	DT_ENTRY0("yetanotherexp", "9978b9e1ed9e0aae9f33e815cf775734", 685671),
 	DT_ENTRY0("youmatched", "63007bd45363f5ddbcc2e4fe4a1a52de", 1621574),
 	DT_ENTRY1("youmatched", "WebUI", "055efcc37f945071ea2486a207703951", 2050047),
+
+	// IFComp 2002 (TADS3)
+	DT_ENTRY0("if02_ericgift", "94b65257f63b3395eabceac6dcdc4484", 403829),
+
+	// IFComp 2003 (TADS3)
+	DT_ENTRY0("if03_shadowsmirror", "8934fe2f3fdfbf20da8eb5a668f62d98", 665576),
+
+	// IFComp 2004 (TADS3)
+	DT_ENTRY1("if04_squarecircle", "Competition Release", "3813eb298213bdc00b7d02cd30f0e198", 991978),
+	DT_ENTRY0("if04_squarecircle", "935775a75e141df9a6f9d94b41ae71ee", 1024972),
+	DT_ENTRY1("if04_squarecircle", "WebUI", "fb2eeb70d3b751bec1a0aa728e60f290", 1654749),
+	DT_ENTRY0("if04_imustplay", "070a5888a00ba13d433884964f6aedd5", 651023),
+
+	// IFComp 2005 (TADS3)
+	DT_ENTRY0("if05_mixtape", "d684a75f38a1b42ee90d181444b8c8bc", 893688),
+
+	// IFComp 2006 (TADS3)
+	DT_ENTRY1("if06_elysiumenigma", "Competition Release", "cd0a03ce5c3efb3268bc5f0863c853f9", 1543240),
+	DT_ENTRY0("if06_elysiumenigma", "f98f0e4de8c7cf5d6f471b56c6a96d81", 2095654),
+	DT_ENTRY1("if06_elysiumenigma", "WebUI", "7ca73a03b433b28a831808066a843d79", 2149533),
+	DT_ENTRY0("if06_xthunt", "b9bcae307b3586e60c18685084a003c9", 851365),
+	DT_ENTRY0("if06_brokenman", "4aab871cb1cdfd1ee3638c493a6ced98", 573441),
+
+	// IFComp 2007 (TADS3)
+	DT_ENTRY0("if07_reconcilmoth", "5a37b230d073cb10fe79a87c42c72e67", 811696),
+
+	// IFComp 2008 (TADS3)
+	DT_ENTRY0("if08_aprilparis", "003d517e0112ba1184d5f66e66552d33", 763952),
+	DT_ENTRY0("if08_magic", "2147b68f33c11b83ac7dee9fb6c5fa83", 661392),
+
+	// IFComp 2010 (TADS3)
+	DT_ENTRY1("if10_multiversrgue", "Competition Release", "d30dfee5c7a2f9c4b444e1810b01c128", 809848),
+	DT_ENTRY0("if10_multiversrgue", "551b85aaba2d958f2bfd1080c7787844", 811469),
+
+	// IFComp 2011 (TADS3)
+	DT_ENTRY1("if11_it", "11???\?/1.0", "aae7a1a7eb812ef216406875df1035bc", 1161138),
+	DT_ENTRY1("if11_it", "11???\?/2.2", "bd6e1a94089538b9b1aa58616cfbba45", 2439207),
+	DT_ENTRY1("if11_it", "WebUI", "e69e00d227df2ea9179bb3bc20d779c9", 1589779),
+
+	// IFComp 2012 (TADS3)
+	DT_ENTRY0("if12_theisland", "db1223c6d7ca43dcb6e0cc7f77f8f72b", 713956),
+
+	// IFComp 2015 (TADS3)
+	DT_ENTRY1("if15_contentment", "15???\?/1.03", "02a2f64a45501e5419ced0d733fb6397", 997294),
+	DT_ENTRY1("if15_contentment", "15???\?/1.05", "3ffc224bf30d8cd0f9c876ca83b703fe", 1000411),
+
+	// IFComp 2016 (TADS3)
+	DT_ENTRY1("if16_hillridge", "16???\?/1.09", "29f0ab8b35c149ee7c011f956b427630", 855220),
+
+	// IFComp 2017 (TADS3)
+	DT_ENTRY1("if17_fakenews", "170928/1.0", "df5c476ee2c06ab586b691f5d91761bd", 1891393),
+	DT_ENTRY1("if17_fakenews", "170928/1.0/WebUI", "436a715d168d84e2bb0a911e10a7124a", 2389400),
+	DT_ENTRY1("if17_fakenews", "200425/1.1", "1bed7ef5033b4a6168cac39ee4f3733e", 1892928),
+
+	// IFComp 2020 (TADS3)
+	DT_ENTRY0("if20_captivity", "aeeb0bcd430448867d45a4e6bea96c23", 1908803),
+	DT_ENTRY1("if20_edgeofchaos", "Competition Release", "1e0b04d1cf78192aa173d7647fa73d16", 7979255),
+	DT_ENTRY0("if20_edgeofchaos", "6e20b8013ff2e8cc1a9e1b0ce570adbb", 11780522),
+	DT_ENTRY0("if20_deezlebub", "57d532aa89fc21abaa52745689326a5f", 1142633),
+
+	// IFComp 2021 (TADS3)
+	DT_ENTRY1("if21_ghostwithin", "Competition Release", "25faca7427be437e0d00b7f1656ff30e", 2001751),
+	DT_ENTRY0("if21_ghostwithin", "e589ef28d2276d82339fef3bff2945e0", 1745032),
+
+	// IFComp 2022 (TADS3)
+	DT_ENTRY0("if22_cain", "794e2840955272c4c6847fa1d3869efb", 16243566),
+	DT_ENTRY0("if22_promdress", "b345c70532a3f73dc4ef2abe82e82ca7", 3732288),
+
+	// IF Art Show 2004 (TADS3)
+	DT_ENTRY0("ifas_battle", "e8d7dd64768efb9da7d9d365ca8d45e3", 943915),
+
+	// Cover Stories Game-Jam (TADS3)
+	DT_ENTRY0("cs_feathergrange", "ce30f438545469a078cc28e4676079fc", 684191),
+
+	// IFBeginnersComp 2008 (TADS3)
+	DT_ENTRY0("ifb_germania", "1ad65401989aaeaae1a8bfa5b340d0b8", 555992),
+	DT_ENTRY0("ifb_mrspepper", "d9b3c2f7b954fb066561febf195b27d4", 1118901),
+	DT_ENTRY1("ifb_mrspepper", "WebUI", "9bcfcdc5a37e9c5beb9b961a98929b67", 1721042),
+	DT_ENTRY1("ifb_mrspepper", "Competition Release", "fd96b4428eb75f7feb7c0719ac318b0d", 1118827),
+	DT_ENTRY0("ifb_sleepprincess", "63255d1bde649f907725a6c328047809", 736075),
+	DT_ENTRY1("ifb_sleepprincess", "Competition Release", "8dfc3e925caa99891cb1fef4b1157baa", 709058),
+	DT_ENTRY1("ifb_sleepprincess", "WebUI", "711cf6098b0670821af907dc94793e90", 1337974),
+
+	// IntroComp 2005 (TADS3)
+	DT_ENTRY0("ic05_negotis", "9598735eaaa54fceeef68c9f3a5d8750", 723973),
+
+	// IntroComp 2007 (TADS3)
+	DT_ENTRY0("ic07_folkarstation", "07abdfc44d4e0e60c4b986957c028ce3", 505463),
+	DT_ENTRY0("ic07_tin", "0756b7837f706a29cc24871ebbe72d55", 547524),
+
+	// IntroComp 2010 (TADS3)
+	DT_ENTRY0("ic10_closedcircles", "3f5d083a5407c7e4f105856ea799ce9d", 612103),
+
+	// IntroComp 2014 (TADS3)
+	DT_ENTRY1("ic14_devildetails", "140720", "9cd086d4a3e284e368b9aa6228086bb7", 2203123),
+
+	// IntroComp 2015 (TADS3)
+	DT_ENTRY1("ic15_deprivation", "15???\?/0.2", "4daf3729590d29dd918dae0a4ec5b107", 1640675),
+
+	// Shufflecomp Competition 2014 (TADS3)
+	DT_ENTRY1("sh14_deadmansparty", "14???\?/v1", "bc78f6e390df143a13aeabcdb9de1fed", 1638558),
+	DT_ENTRY1("sh14_deadmansparty", "14???\?/v2", "eb52018f79eba192b7448c16d45f7226", 1630209),
+	DT_ENTRY1("sh14_deadmansparty", "WebUI", "831ba48e61a40e442a7459aa798da3ea", 2056080),
+	DT_ENTRY0("sh14_lookacorner", "c9ac24c941c39ef57b23a55ed36f844d", 664271),
+	DT_ENTRY1("sh14_lookacorner", "Competition Release", "7827b2f97dc429aebb570ce1b3d8eecd", 663334),
+	DT_ENTRY1("sh14_lookacorner", "WebUI", "5e7d1e0c7f93662fb455972797795f15", 1079205),
+
+	// SpeedIF 20 Competition (TADS3)
+	DT_ENTRY0("sif_greatzimbawe", "bbdcf7afdeb77cd14a72eba4c1615f75", 570209),
+	DT_ENTRY0("sif_miranda", "6aee961565c541725c536319a7a4da4a", 378691),
+
+	// SpeedIF 5th Anniversary Competition (TADS3)
+	DT_ENTRY0("sif_evilbrain5", "c40acfa1f3b79988957c7908459fbf1b", 398901),
+
+	// SpeedIF Crinkle Cut Competition (TADS3)
+	DT_ENTRY0("sif_dining", "b34d05d2243399343ce5366317627ff8", 421666),
+
+	// SpeedIF of Destiny Competition (TADS3)
+	DT_ENTRY0("sif_rainbow", "7e1316a28660cb9853322d2e18267afb", 514600),
+
+	// SpeedIF Jacket Competition (TADS3)
+	DT_ENTRY0("sif_midsummer", "954f2608b04e5148df55f2f11b1af261", 290120),
+
+	// SpeedIF Jacket 4 Competition (TADS3)
+	DT_ENTRY0("sif_stomach", "9c07b078efbe21612fade9b851c3838e", 523172),
+
+	// SpeedIF Late! Competition (TADS3)
+	DT_ENTRY0("sif_fishbot", "e868effa94933f71b50b9e018d950940", 363180),
+
+	// SpeedIF Let's Make a Nightmare Competition (TADS3)
+	DT_ENTRY0("sif_threedoors_sl", "54455dd8df6ca20a9c85452d734ad044", 399804),
+
+	// SpeedIF Thanksgiving Competition (TADS3)
+	DT_ENTRY0("sif_catchfragonfly", "c15712045323480c273b13e313c58ce8", 540029),
+
+	// SpeedIF U Competition (TADS3)
+	DT_ENTRY0("sif_deathscavenger", "6dd1c61b75a016085b7f2b985d37eec3", 362826),
+
+	// SpeedIF Ultimate not Numbered New Year's Competition  (TADS3)
+	DT_ENTRY0("sif_emma2", "e3cb9450cbd09487447f9e1b4feff9dd", 699363),
+
+	// Spring Thing 2003 (TADS3)
+	DT_ENTRY0("stc03_parrots", "b68b8dbc1ebcbb49322f8ea792182324", 1532127),
+	DT_ENTRY1("stc03_parrots", "Bundled", "b68b8dbc1ebcbb49322f8ea792182324", 2058062),
+
+	// Spring Thing 2007 (TADS3)
+	DT_ENTRY0("stc07_camelgirl", "24908c4fb1cc2faee2042348d6a0afc5", 1018598),
+
+	// Spring Thing 2012 (TADS3)
+	DT_ENTRY0("stc12_whitebull", "dc01235c8fa2ca07920171e124447967", 14511731),
+
+	// Spring Thing 2018 (TADS3)
+	DT_ENTRY1("stc18_thehouset3", "t3", "8b92f7f00ef0ca5713f7ffffa13b8a01", 1688640),
+
+	// XYZZY Awards 2002 (TADS3)
+	DT_ENTRY1("xyz_foreveralways", "Competition Release", "c4c7de117843a9756ad06e9e9aa23ff1", 347383),
+	DT_ENTRY0("xyz_foreveralways", "1e901bfebf416a910ba55e301101034c", 656194),
+
+	// XYZZY Awards 2004 (TADS3)
+	DT_ENTRY0("xyz_returnditchday", "47577d2001035ac30332bdb5ad9bcf3c", 2141661),
+	DT_ENTRY1("xyz_returnditchday", "WebUI", "7de1082c5c7e37435880576c1cc26d96", 2565423),
+
+	// XYZZY Awards 2005 (TADS3)
+	DT_ENTRY0("xyz_allhope", "1e842218ad6eeacb2d284ad34adbeaaa", 1816249),
+	DT_ENTRY1("xyz_allhope", "WebUI", "c65cff5c63cfecad3d8c922f0086816f", 2434146),
+
+	// XYZZY Awards 2007 (TADS3)
+	DT_ENTRY1("xyz_blightedisle", "Competition Release", "8e2ef477586d441e3a356da8dad594a3", 3331088),
+	DT_ENTRY0("xyz_blightedisle", "a400f71d73c0efdf301635e73ff00c79", 3326591),
+	DT_ENTRY1("xyz_blightedisle", "WebUI", "4ee80cdf2e39f41e721440db7ddbc05e", 3999970),
+
+	// XYZZY Awards 2008 (TADS3)
+	DT_ENTRY0("xyz_gunmute", "bf196b6b53fca37c8fec25d27bdb4f23", 713636),
+
+	// XYZZY Awards 2009 (TADS3)
+	DT_ENTRY0("xyz_deadlikeants", "58dd749b5416d1341fa007a527be7ce5", 682402),
+	DT_ENTRY0("xyz_walkersilho", "05bd96f0782fefa3d09d0adad67249c9", 687377),
+
+	// XYZZY Awards 2011 (TADS3)
+	DT_ENTRY0("xyz_indigo", "ca322b887ba56ef503b96ee462a2df30", 535570),
 
 	// TADS 3 - Czech
 	DT_ENTRYL0("exoter", Common::CS_CZE, "02b93382a19cd69f3cb67a12073f4795", 1487144),
@@ -1430,99 +1668,12 @@ const GlkDetectionEntry TADS_GAMES[] = {
 	DT_ENTRYL0("remerook", Common::IT_ITA, "218f1ad01f58f93a610ba91f626b5fb5", 1166951),
 
 	// TADS 3 - Spanish
-	DT_ENTRYL1("verla", Common::ES_ESP, "r1", "751eaee6249e4acec9b7ace03bb80fb4", 1118875),
-	DT_ENTRYL1("verla", Common::ES_ESP, "r2", "f901ee66728d813c76ce5ad95aa7199d", 8411036),
-	DT_ENTRYL1("verla", Common::ES_ESP, "WebUI", "1ed6250a40e8e16d6e14976fb74bb5bd", 2616415),
-
-	// TADS 3 - 8th Annual Interactive Fiction Competition (2002)
-	DT_ENTRY0("ericgift", "94b65257f63b3395eabceac6dcdc4484", 403829),
-
-	// TADS 3 - 9th Annual Interactive Fiction Competition (2003)
-	DT_ENTRY0("shadowsmirror", "8934fe2f3fdfbf20da8eb5a668f62d98", 665576),
-
-	// TADS 3 - 10th Annual Interactive Fiction Competition (2004)
-	DT_ENTRY0("imustplay", "070a5888a00ba13d433884964f6aedd5", 651023),
-	DT_ENTRY1("squarecircle", "Competition Release", "6aee961565c541725c536319a7a4da4a", 378691),
-
-	// TADS 3 - 11th Annual Interactive Fiction Competition (2005)
-	DT_ENTRY0("mixtape", "d684a75f38a1b42ee90d181444b8c8bc", 893688),
-
-	// TADS 3 - 12th Annual Interactive Fiction Competition (2006)
-	DT_ENTRY0("brokenman", "4aab871cb1cdfd1ee3638c493a6ced98", 573441),
-	DT_ENTRY1("elysiumenigma", "Competition Release", "cd0a03ce5c3efb3268bc5f0863c853f9", 1543240),
-	DT_ENTRY0("xthunt", "b9bcae307b3586e60c18685084a003c9", 851365),
-
-	// TADS 3 - 13th Annual Interactive Fiction Competition (2007)
-	DT_ENTRY0("reconcilingmother", "5a37b230d073cb10fe79a87c42c72e67", 811696),
-
-	// TADS 3 - 14th Annual Interactive Fiction Competition (2008)
-	DT_ENTRY0("aprilparis", "003d517e0112ba1184d5f66e66552d33", 763952),
-	DT_ENTRY0("magic", "2147b68f33c11b83ac7dee9fb6c5fa83", 661392),
-
-	// TADS 3 - 16th Annual Interactive Fiction Competition (2010)
-	DT_ENTRY1("multiverserogue", "Competition Release", "d30dfee5c7a2f9c4b444e1810b01c128", 809848),
-
-	// TADS 3 - 17th Annual Interactive Fiction Competition (2011)
-	DT_ENTRY0("it", "aae7a1a7eb812ef216406875df1035bc", 1161138),
-	DT_ENTRY1("it", "WebUI", "e69e00d227df2ea9179bb3bc20d779c9", 1589779),
-
-	// TADS 3 - 18th Annual Interactive Fiction Competition (2012)
-	DT_ENTRY0("theisland", "db1223c6d7ca43dcb6e0cc7f77f8f72b", 713956),
-
-	// TADS 3 - 21st Annual Interactive Fiction Competition (2015)
-	DT_ENTRY0("contentment", "3ffc224bf30d8cd0f9c876ca83b703fe", 1000411),
-
-	// TADS 3 - 23rd Annual Interactive Fiction Competition (2017)
-	DT_ENTRY0("fakenews", "1bed7ef5033b4a6168cac39ee4f3733e", 1892928),
-	DT_ENTRY1("fakenews", "WebUI", "436a715d168d84e2bb0a911e10a7124a", 2389400),
-
-	// TADS 3 - 26th Annual Interactive Fiction Competition (2020)
-	DT_ENTRY0("captivity", "aeeb0bcd430448867d45a4e6bea96c23", 1908803),
-	DT_ENTRY0("deezlebub", "57d532aa89fc21abaa52745689326a5f", 1142633),
-	DT_ENTRY1("edgeofchaos", "Competition Release", "1e0b04d1cf78192aa173d7647fa73d16", 7979255),
-
-	// TADS 3 - 27th Annual Interactive Fiction Competition (2021)
-	DT_ENTRY1("ghostwithin", "Competition Release", "25faca7427be437e0d00b7f1656ff30e", 2001751),
-
-	// TADS 3 - 28th Annual Interactive Fiction Competition (2022)
-	DT_ENTRY0("promdress", "b345c70532a3f73dc4ef2abe82e82ca7", 3732288),
-
-	// TADS 3 - 2002 XYZZY Awards
-	DT_ENTRY1("foreveralways", "Competition Release", "c4c7de117843a9756ad06e9e9aa23ff1", 347383),
-
-	// TADS 3 - 2003 XYZZY Awards
-	DT_ENTRY0("parrots", "b68b8dbc1ebcbb49322f8ea792182324", 1532127),
-	DT_ENTRY0("shadowsmirror", "8934fe2f3fdfbf20da8eb5a668f62d98", 665576),
-
-	// TADS 3 - 2004 XYZZY Awards
-	DT_ENTRY0("returntoditchday", "47577d2001035ac30332bdb5ad9bcf3c", 2141661),
-	DT_ENTRY1("returntoditchday", "WebUI", "7de1082c5c7e37435880576c1cc26d96", 2565423),
-	DT_ENTRY1("squarecircle", "Competition Release", "6aee961565c541725c536319a7a4da4a", 378691),
-
-	// TADS 3 - 2005 XYZZY Awards
-	DT_ENTRY0("allhope", "1e842218ad6eeacb2d284ad34adbeaaa", 1816249),
-	DT_ENTRY1("allhope", "WebUI", "c65cff5c63cfecad3d8c922f0086816f", 2434146),
-	DT_ENTRY0("mixtape", "d684a75f38a1b42ee90d181444b8c8bc", 893688),
-
-	// TADS 3 - 2006 XYZZY Awards
-	DT_ENTRY1("elysiumenigma", "Competition Release", "cd0a03ce5c3efb3268bc5f0863c853f9", 1543240),
-
-	// TADS 3 - 2007 XYZZY Awards
-	DT_ENTRY1("blightedisle", "Competition Release", "8e2ef477586d441e3a356da8dad594a3", 3331088),
-
-	// TADS 3 - 2008 XYZZY Awards
-	DT_ENTRY0("aprilparis", "003d517e0112ba1184d5f66e66552d33", 763952),
-	DT_ENTRY0("gunmute", "bf196b6b53fca37c8fec25d27bdb4f23", 713636),
-
-	// TADS 3 - 2009 XYZZY Awards
-	DT_ENTRY0("deadlikeants", "58dd749b5416d1341fa007a527be7ce5", 682402),
-	DT_ENTRY0("walkersilhouette", "05bd96f0782fefa3d09d0adad67249c9", 687377),
-
-	// TADS 3 - 2010 XYZZY Awards
-	DT_ENTRY1("multiverserogue", "Competition Release", "d30dfee5c7a2f9c4b444e1810b01c128", 809848),
-
-	// TADS 3 - 2011 XYZZY Awards
-	DT_ENTRY0("indigo", "ca322b887ba56ef503b96ee462a2df30", 535570),
+	DT_ENTRYL0("memorias_tads", Common::ES_ESP, "8b62037af64b77d08caf43794a0ccdd6", 616193),
+	DT_ENTRYL1("verla", Common::ES_ESP, "0.02", "751eaee6249e4acec9b7ace03bb80fb4", 1118875),
+	DT_ENTRYL1("verla", Common::ES_ESP, "1.1", "f901ee66728d813c76ce5ad95aa7199d", 8411036),
+	DT_ENTRYL1("verla", Common::ES_ESP, "WebUI/v1", "a5fdc0388600bcfa2b424a0edd62844e", 1545007),
+	DT_ENTRYL1("verla", Common::ES_ESP, "WebUI/v2", "beb148c15ff993f4714d8e908efc3ea1", 1695763),
+	DT_ENTRYL1("verla", Common::ES_ESP, "WebUI/v3", "1ed6250a40e8e16d6e14976fb74bb5bd", 2616415),
 
 
 	DT_END_MARKER
