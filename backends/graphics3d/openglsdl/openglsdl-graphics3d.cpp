@@ -566,6 +566,10 @@ bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint ga
 					ImGui::StyleColorsDark();
 					ImGuiIO &io = ImGui::GetIO();
 					io.IniFilename = nullptr;
+					if (_callbacks.init) {
+						_imguiInitCalled = true;
+						_callbacks.init();
+					}
 #endif
 				}
 			}
@@ -677,12 +681,19 @@ void OpenGLSdlGraphics3dManager::updateScreen() {
 #endif
 
 #if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
-	if (_imGuiRender) {
+	if (_callbacks.render) {
+		if (!_imguiRenderCalled && _callbacks.init) {
+			_imguiRenderCalled = true;
+			if (!_imguiInitCalled) {
+				_imguiInitCalled = true;
+				_callbacks.init();
+			}
+		}
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplSDL2_NewFrame(_window->getSDLWindow());
 
 		ImGui::NewFrame();
-		_imGuiRender();
+		_callbacks.render();
 		ImGui::Render();
 
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -821,6 +832,9 @@ void OpenGLSdlGraphics3dManager::showSystemMouseCursor(bool visible) {
 void OpenGLSdlGraphics3dManager::deinitializeRenderer() {
 #ifdef USE_IMGUI
 	if (_glContext) {
+		if (_callbacks.cleanup) {
+			_callbacks.cleanup();
+		}
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplSDL2_Shutdown();
 		ImGui::DestroyContext();

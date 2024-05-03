@@ -208,10 +208,10 @@ private:
 
 #if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
 public:
-	void setImGuiRenderCallback(void(*render)()) override { _imGuiRender = render; }
+	void setImGuiRenderCallback(ImGuiCallbacks callbacks) override { _callbacks = callbacks; }
 
 protected:
-	void(*_imGuiRender)() = nullptr;
+	ImGuiCallbacks _callbacks;
 #endif
 
 };

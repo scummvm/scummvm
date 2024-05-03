@@ -74,8 +74,8 @@ int ModularGraphicsBackend::getGraphicsMode() const {
 }
 
 #if defined(USE_IMGUI)
-void ModularGraphicsBackend::setImGuiRenderCallback(void(*render)()) {
-	_graphicsManager->setImGuiRenderCallback(render);
+void ModularGraphicsBackend::setImGuiRenderCallback(ImGuiCallbacks callbacks) {
+	_graphicsManager->setImGuiRenderCallback(callbacks);
 }
 #endif
 
