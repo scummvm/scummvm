@@ -492,8 +492,9 @@ ifdef USE_IMGUI
 MODULE_OBJS += \
 	imgui/imgui.o \
 	imgui/imgui_draw.o \
-	imgui/imgui_widgets.o \
-	imgui/imgui_tables.o
+	imgui/imgui_fonts.o \
+	imgui/imgui_tables.o \
+	imgui/imgui_widgets.o
 endif
 
 ifdef USE_SDL2
