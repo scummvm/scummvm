@@ -3327,6 +3327,7 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 				nRequiredStrength = SINJIN11_REQUIRED_TEAM_STRENGTH;
 				nTalkedUpAmount1 = kSinjinTalkedUpAmount;
 				nMineralID1 = kSinjinMineralID;
+				// fallthrough
 
 			case GUNG14:
 				// This guy can be talked up by a good negotiating team to (8gZ)
@@ -3335,6 +3336,7 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 					nTalkedUpAmount1 = kGungTalkedUpAmount;
 					nMineralID1 = kGungMineralID;
 				}
+				// fallthrough
 
 			case GILD13:
 				// Gild can be talked up on zinc from 6 to 11 and on
@@ -3346,6 +3348,8 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 					nTalkedUpAmount2 = kGildTalkedUpAmount2;
 					nMineralID2 = kGildMineralID2;
 				}
+				// fallthrough
+
 			case DORK44: {
 				// Negotiating team must be at least half female.
 				if (teamListItem.m_nMeetWithID == DORK44) {

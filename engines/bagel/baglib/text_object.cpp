@@ -324,7 +324,9 @@ PARSE_CODES CBagTextObject::setInfo(CBagIfstream &istr) {
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
+			// FIXME: Missing break?
 		}
+		// fallthrough
 
 		//
 		//  AS [CAPTION]  - how to run the link

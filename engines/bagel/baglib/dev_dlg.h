@@ -33,7 +33,7 @@ namespace Bagel {
 class CDevDlg : public CBagStorageDevDlg {
 private:
 	// for text entry:
-	char _achGuess[ACH_GUESS_MAX_CHARS + 2];
+	char _achGuess[ACH_GUESS_MAX_CHARS];
 	CBofText *_guessText;
 	int _guessCount;
 	int _buttonX;

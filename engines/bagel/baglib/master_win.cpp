@@ -772,6 +772,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 
 		case WIELDCURSOR:
 			bIsWieldCursor = true;
+			// fallthrough
 		case CURSOR: {
 			char str[256];
 			str[0] = 0;
