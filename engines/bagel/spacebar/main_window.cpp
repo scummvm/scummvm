@@ -34,47 +34,47 @@ namespace SpaceBar {
 #define WIELDWLD        "BWIELD_WLD"
 #define THUDWLD         "THUD_WLD"
 
-SBarThud *CMainWindow::m_pThudBmp = nullptr;    // Pointer to the WEILD object
-int CMainWindow::m_nInstances = 0;      // Number of space bar windows
-bool CMainWindow::m_bZzazzlVision = false;
-CBofRect *CMainWindow::m_xFilterRect;
+SBarThud *CMainWindow::_pThudBmp = nullptr;    // Pointer to the WEILD object
+int CMainWindow::_nInstances = 0;      // Number of space bar windows
+bool CMainWindow::_bZzazzlVision = false;
+CBofRect *CMainWindow::_xFilterRect;
 bool CMainWindow::chipdisp;
 int CMainWindow::pause;
 
 static int g_nPDAIncrement = 13;
 
 void CMainWindow::initialize() {
-	m_xFilterRect = new CBofRect();
+	_xFilterRect = new CBofRect();
 }
 
 void CMainWindow::shutdown() {
-	delete m_xFilterRect;
+	delete _xFilterRect;
 }
 
 CMainWindow::CMainWindow() {
-	m_cLastLoc.x = 1195;
-	m_cLastLoc.y = 105;
+	_cLastLoc.x = 1195;
+	_cLastLoc.y = 105;
 
-	m_pMenu = nullptr;
-	m_pGamePalette = nullptr;
+	_pMenu = nullptr;
+	_pGamePalette = nullptr;
 
-	m_nInstances++;
+	_nInstances++;
 
-	m_nGameMode = VRPLAYMODE;
+	_nGameMode = VRPLAYMODE;
 }
 
 CMainWindow::~CMainWindow() {
-	if (m_pMenu != nullptr) {
-		m_pMenu = nullptr;
+	if (_pMenu != nullptr) {
+		_pMenu = nullptr;
 	}
 
 	// Delete the filter bitmaps.
 	destroyFilters();
 
-	if (--m_nInstances) {
-		m_pPDABmp = nullptr;
+	if (--_nInstances) {
+		_pPDABmp = nullptr;
 		_pWieldBmp = nullptr;
-		m_pThudBmp = nullptr;
+		_pThudBmp = nullptr;
 	}
 }
 
@@ -111,7 +111,7 @@ ErrorCode CMainWindow::attach() {
 
 	// Assume we will use the view we had last time.
 	CBofRect rView;
-	rView.SetRect(m_cLastLoc.x, m_cLastLoc.y, m_cLastLoc.x - 1, m_cLastLoc.y - 1);
+	rView.SetRect(_cLastLoc.x, _cLastLoc.y, _cLastLoc.x - 1, _cLastLoc.y - 1);
 	if (g_engine->g_bUseInitLoc) {
 		rView.SetRect(g_engine->g_cInitLoc.x, g_engine->g_cInitLoc.y,
 			g_engine->g_cInitLoc.x - 1, g_engine->g_cInitLoc.y - 1);
@@ -121,7 +121,7 @@ ErrorCode CMainWindow::attach() {
 	CBofSound::AudioTask();
 
 	CBofPalette *bofpal = SetSlidebitmap(GetBackgroundName(), rView);
-	SetPalPtr(bofpal);
+	setPalPtr(bofpal);
 
 	CBagel::getBagApp()->getMasterWnd()->selectPalette(bofpal);
 	CBofApp::GetApp()->setPalette(bofpal);
@@ -131,23 +131,23 @@ ErrorCode CMainWindow::attach() {
 
 	g_pLastWindow = this;
 
-	if (m_nGameMode == VRPLAYMODE && bForegroundObj == true) {
-		if (!m_pThudBmp) {
+	if (_nGameMode == VRPLAYMODE && bForegroundObj == true) {
+		if (!_pThudBmp) {
 			pSDev = SDEV_MANAGER->GetStorageDevice(THUDWLD);
 			if (pSDev != nullptr) {
-				m_pThudBmp = (SBarThud *)pSDev;
-				m_pThudBmp->SetAssociateWnd(this);
-				if (!m_pThudBmp->isAttached())
-					m_pThudBmp->attach();
-				InsertFGObjects(m_pThudBmp);
-				m_pThudBmp->SetVisible(true);
+				_pThudBmp = (SBarThud *)pSDev;
+				_pThudBmp->SetAssociateWnd(this);
+				if (!_pThudBmp->isAttached())
+					_pThudBmp->attach();
+				InsertFGObjects(_pThudBmp);
+				_pThudBmp->SetVisible(true);
 			}
 		}
 
-		if (m_pThudBmp && (CBagObject *)nullptr == GetFGObjects(CBofString(THUDWLD))) {
+		if (_pThudBmp && (CBagObject *)nullptr == GetFGObjects(CBofString(THUDWLD))) {
 			CBofRect r(1, tmpRect.height() - 101, 101, tmpRect.height() - 1);
-			m_pThudBmp->SetAssociateWnd(this);
-			InsertFGObjects(m_pThudBmp);
+			_pThudBmp->SetAssociateWnd(this);
+			InsertFGObjects(_pThudBmp);
 		}
 
 		if (!_pWieldBmp) {
@@ -178,29 +178,29 @@ ErrorCode CMainWindow::attach() {
 		}
 
 		// Create the PDA for the game
-		if (!m_pPDABmp) {
+		if (!_pPDABmp) {
 			pSDev = SDEV_MANAGER->GetStorageDevice(PDAWLD);
 			if (pSDev != nullptr) {
-				m_pPDABmp = (CBagPDA *)pSDev;
+				_pPDABmp = (CBagPDA *)pSDev;
 				CBofRect r(0, 0, 300, 200);
-				m_pPDABmp->SetAssociateWnd(this);
-				m_pPDABmp->SetRect(r);
+				_pPDABmp->SetAssociateWnd(this);
+				_pPDABmp->SetRect(r);
 				r = getClientRect();
-				if (!m_pPDABmp->isAttached())
-					m_pPDABmp->attach();
+				if (!_pPDABmp->isAttached())
+					_pPDABmp->attach();
 
 				// Allow the script to specify the increment height.
 				CBagVar *pVar = VAR_MANAGER->GetVariable("PDAINCREMENT");
 				if (pVar) {
 					g_nPDAIncrement = pVar->GetNumValue();
-					m_pPDABmp->setPosInWindow(r.width(), r.height(), g_nPDAIncrement);
+					_pPDABmp->setPosInWindow(r.width(), r.height(), g_nPDAIncrement);
 				} else {
 					g_nPDAIncrement = PDA_INCREMENT;
-					m_pPDABmp->setPosInWindow(r.width(), r.height(), g_nPDAIncrement);
+					_pPDABmp->setPosInWindow(r.width(), r.height(), g_nPDAIncrement);
 				}
-				InsertFGObjects(m_pPDABmp);
+				InsertFGObjects(_pPDABmp);
 				DeactivatePDA();
-				m_pPDABmp->SetVisible(true);
+				_pPDABmp->SetVisible(true);
 
 			} else {
 				ReportError(ERR_UNKNOWN, "No PDA found");
@@ -209,23 +209,23 @@ ErrorCode CMainWindow::attach() {
 
 		if ((CBagObject *)nullptr == GetFGObjects(CBofString(PDAWLD))) {
 			CBofRect r(0, 0, 300, 200);
-			m_pPDABmp->SetAssociateWnd(this);
+			_pPDABmp->SetAssociateWnd(this);
 
 			// To fix pda not updating problem
-			InsertFGObjects(m_pPDABmp);
+			InsertFGObjects(_pPDABmp);
 		}
 
-		m_pPDABmp->attachActiveObjects();
+		_pPDABmp->attachActiveObjects();
 
 		// If this world file contains an evt_wld
 		pSDev = SDEV_MANAGER->GetStorageDevice("EVT_WLD");
 		if (pSDev != nullptr) {
 			// Have we allocated one yet ?
-			if (m_pEvtSDev == nullptr) {
-				m_pEvtSDev = (CBagEventSDev *)pSDev;
-				m_pEvtSDev->SetAssociateWnd(this);
-				if (!m_pEvtSDev->isAttached())
-					m_pEvtSDev->attach();
+			if (_pEvtSDev == nullptr) {
+				_pEvtSDev = (CBagEventSDev *)pSDev;
+				_pEvtSDev->SetAssociateWnd(this);
+				if (!_pEvtSDev->isAttached())
+					_pEvtSDev->attach();
 
 				setTimer(EVAL_EXPR, 1000);
 				g_bPauseTimer = false;
@@ -236,7 +236,7 @@ ErrorCode CMainWindow::attach() {
 				// We already allocated one
 				// we just need to re-associate the parent
 				// window and reset the timer
-				m_pEvtSDev->SetAssociateWnd(this);
+				_pEvtSDev->SetAssociateWnd(this);
 				setTimer(EVAL_EXPR, 1000);
 
 				g_bPauseTimer = false;
@@ -255,7 +255,7 @@ ErrorCode CMainWindow::attach() {
 		}
 	}
 
-	OnSize(0, tmpRect.width() - 1, tmpRect.height() - 1);
+	onSize(0, tmpRect.width() - 1, tmpRect.height() - 1);
 
 	// Set the first paint to true so the objects
 	// won't run until the window is ready
@@ -295,7 +295,7 @@ ErrorCode CMainWindow::attach() {
 
 ErrorCode CMainWindow::detach() {
 	// If this was a closeup then save the leaving position
-	m_cLastLoc = GetViewPort().TopLeft();
+	_cLastLoc = GetViewPort().TopLeft();
 
 	CBagPanWindow::detach();
 
@@ -311,20 +311,20 @@ ErrorCode CMainWindow::detach() {
 }
 
 
-void CMainWindow::OnSize(uint32 nType, int cx, int cy) {
-	if (m_pPDABmp) {
+void CMainWindow::onSize(uint32 nType, int cx, int cy) {
+	if (_pPDABmp) {
 		if (GetStretchToScreen()) {
-			m_pPDABmp->setPosInWindow(500, 370, g_nPDAIncrement);
+			_pPDABmp->setPosInWindow(500, 370, g_nPDAIncrement);
 		} else
-			m_pPDABmp->setPosInWindow(cx, cy, g_nPDAIncrement);
+			_pPDABmp->setPosInWindow(cx, cy, g_nPDAIncrement);
 	}
 
-	CBagPanWindow::OnSize(nType, cx, cy);
+	CBagPanWindow::onSize(nType, cx, cy);
 }
 
 
-ErrorCode CMainWindow::OnCursorUpdate(int nCurrObj) {
-	return CBagPanWindow::OnCursorUpdate(nCurrObj);
+ErrorCode CMainWindow::onCursorUpdate(int nCurrObj) {
+	return CBagPanWindow::onCursorUpdate(nCurrObj);
 }
 
 
@@ -337,11 +337,11 @@ void CMainWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 
 	if (lKey == BKEY_SCRL_LOCK) {               // Get a scroll lock hit
 		if (GetFilterId() == 0x08) {            // If we're in zzazzl filter
-			m_bZzazzlVision = !m_bZzazzlVision; // toggle the paint zzazzl flag
+			_bZzazzlVision = !_bZzazzlVision; // toggle the paint zzazzl flag
 			CBagVar *pVar = VAR_MANAGER->GetVariable("ZZAZZLVISION");
 
 			if (pVar != nullptr) {
-				pVar->SetValue(m_bZzazzlVision ? 1 : 0);
+				pVar->SetValue(_bZzazzlVision ? 1 : 0);
 			}
 		}
 	} else {
@@ -351,7 +351,7 @@ void CMainWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 }
 
 
-void CMainWindow::CorrectZzazzlePoint(CBofPoint *p) {
+void CMainWindow::correctZzazzlePoint(CBofPoint *p) {
 	// Don't correct this boy if he's inside the PDA.
 	CBagPDA *pPDA = (CBagPDA *)SDEV_MANAGER->GetStorageDevice("BPDA_WLD");
 	if (pPDA && pPDA->isInside(*p)) {
@@ -361,10 +361,10 @@ void CMainWindow::CorrectZzazzlePoint(CBofPoint *p) {
 	if (!GetMovementRect().PtInRect(*p))
 		return;
 
-	int dx = m_xFilterRect->width();
-	int dy = m_xFilterRect->height();
-	int x = m_xFilterRect->left;
-	int y = m_xFilterRect->top;
+	int dx = _xFilterRect->width();
+	int dy = _xFilterRect->height();
+	int x = _xFilterRect->left;
+	int y = _xFilterRect->top;
 	CBofRect r(x + dx, y + dy, x + dx + dx, y + dy + dy);
 
 	// Attempt to make all squares active in zzazzlvision
@@ -372,18 +372,18 @@ void CMainWindow::CorrectZzazzlePoint(CBofPoint *p) {
 	for (int i = 0; i < 3; ++i) {
 		if (i == 1) {
 			// Center row
-			x = m_xFilterRect->left;
+			x = _xFilterRect->left;
 			j = 0;
 		} else {
 			// Only two squares in top & bottom rows, start 1/2 a square to the left
-			x = m_xFilterRect->left + (dx >> 1);
+			x = _xFilterRect->left + (dx >> 1);
 			j = 1;
 		}
 		for (; j < 3; ++j) {
 			r.SetRect(x, y, x + dx, y + dy);
 			if (r.PtInRect(*p)) {
-				p->x = m_xFilterRect->left + (p->x - r.left) * 3;
-				p->y = m_xFilterRect->top + (p->y - r.top) * 3;
+				p->x = _xFilterRect->left + (p->x - r.left) * 3;
+				p->y = _xFilterRect->top + (p->y - r.top) * 3;
 				return;
 			}
 			x += dx;
@@ -397,12 +397,12 @@ void CMainWindow::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
-	if (m_cLastPos != *pPoint) {
-		m_cLastPos = *pPoint;
+	if (_cLastPos != *pPoint) {
+		_cLastPos = *pPoint;
 
 		if (GetFilterId() & 0x08) {
-			if (m_bZzazzlVision)                // If zzazzl paint is toggled on
-				CorrectZzazzlePoint(pPoint);
+			if (_bZzazzlVision)                // If zzazzl paint is toggled on
+				correctZzazzlePoint(pPoint);
 		}
 
 		CBagPanWindow::onMouseMove(nFlags, pPoint);
@@ -412,8 +412,8 @@ void CMainWindow::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 
 void CMainWindow::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	if (GetFilterId() & 0x08) {
-		if (m_bZzazzlVision)                // If zzazzl paint is toggled on
-			CorrectZzazzlePoint(xPoint);
+		if (_bZzazzlVision)                // If zzazzl paint is toggled on
+			correctZzazzlePoint(xPoint);
 	}
 
 	CBagPanWindow::onLButtonUp(nFlags, xPoint);
@@ -422,8 +422,8 @@ void CMainWindow::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 
 void CMainWindow::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 	if (GetFilterId() & 0x08) {
-		if (m_bZzazzlVision)                // If zzazzl paint is toggled on
-			CorrectZzazzlePoint(xPoint);
+		if (_bZzazzlVision)                // If zzazzl paint is toggled on
+			correctZzazzlePoint(xPoint);
 	}
 
 	CBagPanWindow::onLButtonDown(nFlags, xPoint);
@@ -434,14 +434,14 @@ void CMainWindow::onClose() {
 }
 
 
-CBagObject *CMainWindow::OnNewLinkObject(const CBofString &) {
+CBagObject *CMainWindow::onNewLinkObject(const CBofString &) {
 	return new CMainLinkObject();
 }
 
 
-ErrorCode CMainWindow::SetLoadFilePos(const CBofPoint dstLoc) {
+ErrorCode CMainWindow::setLoadFilePos(const CBofPoint dstLoc) {
 	if (dstLoc.x != 0 || dstLoc.y != 0) {
-		m_cLastLoc = dstLoc;
+		_cLastLoc = dstLoc;
 	}
 
 	return _errCode;
@@ -449,8 +449,8 @@ ErrorCode CMainWindow::SetLoadFilePos(const CBofPoint dstLoc) {
 
 
 // Set the ZzazzlVision variable.
-void CMainWindow::SetZzazzlVision(bool newValue) {
-	m_bZzazzlVision = newValue;
+void CMainWindow::setZzazzlVision(bool newValue) {
+	_bZzazzlVision = newValue;
 }
 
 } // namespace SpaceBar

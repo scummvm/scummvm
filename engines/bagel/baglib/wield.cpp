@@ -116,8 +116,8 @@ ErrorCode CBagWield::activateLocalObject(CBagObject *pObj) {
 		}
 
 		// Add to wield
-		if (pObj->GetMenuPtr() != nullptr) {
-			CBagMenu::SetUniversalObjectList(pObj->GetMenuPtr()->GetObjectList());
+		if (pObj->getMenuPtr() != nullptr) {
+			CBagMenu::SetUniversalObjectList(pObj->getMenuPtr()->GetObjectList());
 		}
 
 		if (pObj->GetType() == SPRITEOBJ) {

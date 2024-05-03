@@ -62,7 +62,7 @@ extern bool g_bPauseTimer;
 extern bool g_bWaitOK;
 
 // Statics
-CBagEventSDev *CBagStorageDevWnd::m_pEvtSDev = nullptr;    // Pointer to the EventSDev
+CBagEventSDev *CBagStorageDevWnd::_pEvtSDev = nullptr;    // Pointer to the EventSDev
 CBofPoint *CBagStorageDev::m_xCursorLocation;
 CBofRect *CBagStorageDev::gRepaintRect;
 bool CBagStorageDev::m_bHidePDA = false;
@@ -161,8 +161,8 @@ CBagStorageDev::~CBagStorageDev() {
 
 	SDEV_MANAGER->UnRegisterStorageDev(this);
 
-	if (CBagStorageDevWnd::m_pEvtSDev == this) {
-		CBagStorageDevWnd::m_pEvtSDev = nullptr;
+	if (CBagStorageDevWnd::_pEvtSDev == this) {
+		CBagStorageDevWnd::_pEvtSDev = nullptr;
 	}
 }
 
@@ -741,7 +741,7 @@ ErrorCode CBagStorageDev::LoadFileFromStream(CBagIfstream &fpInput, const CBofSt
 			pObj = OnNewSpriteObject(sWorkStr);
 		} else if (!sWorkStr.Find("LNK")) {
 			GetStringFromStream(fpInput, sWorkStr, "=", true);
-			pObj = OnNewLinkObject(sWorkStr);
+			pObj = onNewLinkObject(sWorkStr);
 
 		} else if (!sWorkStr.Find("RPO")) {
 			// Allow residue printing objects
@@ -1016,7 +1016,7 @@ CBagObject *CBagStorageDev::OnNewBitmapObject(const CBofString &) {
 }
 
 
-CBagObject *CBagStorageDev::OnNewLinkObject(const CBofString &) {
+CBagObject *CBagStorageDev::onNewLinkObject(const CBofString &) {
 	return new CBagLinkObject();
 }
 
@@ -1220,11 +1220,11 @@ ErrorCode CBagStorageDevWnd::attach() {
 
 	if (pSDev != nullptr) {
 		// Have we allocated one yet ?
-		if (m_pEvtSDev == nullptr) {
-			m_pEvtSDev = (CBagEventSDev *)pSDev;
-			m_pEvtSDev->SetAssociateWnd(this);
-			if (!m_pEvtSDev->isAttached())
-				m_pEvtSDev->attach();
+		if (_pEvtSDev == nullptr) {
+			_pEvtSDev = (CBagEventSDev *)pSDev;
+			_pEvtSDev->SetAssociateWnd(this);
+			if (!_pEvtSDev->isAttached())
+				_pEvtSDev->attach();
 
 			setTimer(EVAL_EXPR, 1000);
 			g_bPauseTimer = false;
@@ -1232,7 +1232,7 @@ ErrorCode CBagStorageDevWnd::attach() {
 		} else {
 			// We already allocated one
 			// We just need to re-associate the parent window and reset the timer
-			m_pEvtSDev->SetAssociateWnd(this);
+			_pEvtSDev->SetAssociateWnd(this);
 
 			setTimer(EVAL_EXPR, 1000);
 			g_bPauseTimer = false;
@@ -1252,8 +1252,8 @@ void CBagStorageDevWnd::onTimer(uint32 nEventID) {
 			bAlready = true;
 			// Evaluate the event storage device IF MOVIE NOT PLAYING
 			if ((CBofApp::GetApp()->GetMainWindow())->isEnabled() && nEventID == EVAL_EXPR) {
-				if (m_pEvtSDev != nullptr) {
-					m_pEvtSDev->evaluateExpressions();
+				if (_pEvtSDev != nullptr) {
+					_pEvtSDev->evaluateExpressions();
 
 					// If our turncount was updated, then execute the event world
 					// for the turncount dependent storage device.

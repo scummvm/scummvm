@@ -49,22 +49,22 @@ namespace SpaceBar {
 //
 class CMainWindow : public CBagPanWindow {
 public:
-	static SBarThud *m_pThudBmp;	// Pointer to the THUD object
+	static SBarThud *_pThudBmp;	// Pointer to the THUD object
 
 private:
-	static int m_nInstances;		// Number of space bar windows
-	static bool m_bZzazzlVision;	// If Zzazzl vision is on/off
+	static int _nInstances;		// Number of space bar windows
+	static bool _bZzazzlVision;	// If Zzazzl vision is on/off
 
-	CBagMenu *m_pMenu;
-	CBofPalette *m_pGamePalette;
-	static CBofRect *m_xFilterRect;
-	CBofPoint m_cLastPos;
-	CBofPoint m_cLastLoc;
+	CBagMenu *_pMenu;
+	CBofPalette *_pGamePalette;
+	static CBofRect *_xFilterRect;
+	CBofPoint _cLastPos;
+	CBofPoint _cLastLoc;
 
 public:
-	enum GAMEMODE {
+	enum GameMode {
 		VRPLAYMODE, VRBUILDMODE, VRPANMODE
-	} m_nGameMode;
+	} _nGameMode;
 
 	static bool chipdisp;
 	static int pause;
@@ -77,42 +77,42 @@ public:
 
 	ErrorCode attach();
 	ErrorCode detach();
-	static void SetZzazzlVision(bool newValue);
-	static CBofRect &GetFilterRect() {
-		return *m_xFilterRect;
+	static void setZzazzlVision(bool newValue);
+	static CBofRect &getFilterRect() {
+		return *_xFilterRect;
 	}
-	static CBofRect &SetFilterRect(CBofRect &newValue) {
-		*m_xFilterRect = newValue;
-		return *m_xFilterRect;
-	}
-
-	CBagMenu *GetMenuPtr() {
-		return m_pMenu;
-	}
-	CBofPalette *GetPalPtr() {
-		return m_pGamePalette;
-	}
-	void SetPalPtr(CBofPalette *pal) {
-		m_pGamePalette = pal;
+	static CBofRect &setFilterRect(CBofRect &newValue) {
+		*_xFilterRect = newValue;
+		return *_xFilterRect;
 	}
 
-	GAMEMODE GameMode() {
-		return m_nGameMode;
+	CBagMenu *getMenuPtr() {
+		return _pMenu;
 	}
-	void SetMode(GAMEMODE mode) {
-		m_nGameMode = mode;
+	CBofPalette *getPalPtr() {
+		return _pGamePalette;
+	}
+	void setPalPtr(CBofPalette *pal) {
+		_pGamePalette = pal;
 	}
 
-	ErrorCode SetLoadFilePos(const CBofPoint dstLoc);
+	GameMode gameMode() {
+		return _nGameMode;
+	}
+	void setMode(GameMode mode) {
+		_nGameMode = mode;
+	}
 
-	CBagObject *OnNewLinkObject(const CBofString &sInit);
+	ErrorCode setLoadFilePos(const CBofPoint dstLoc);
 
-	void CorrectZzazzlePoint(CBofPoint *p);
+	CBagObject *onNewLinkObject(const CBofString &sInit);
 
-	ErrorCode OnCursorUpdate(int nCurrObj);
+	void correctZzazzlePoint(CBofPoint *p);
+
+	ErrorCode onCursorUpdate(int nCurrObj);
 
 	void onClose();
-	void OnSize(uint32 nType, int cx, int cy);
+	void onSize(uint32 nType, int cx, int cy);
 	void onKeyHit(uint32 lKey, uint32 lRepCount);
 	void onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
 	void onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
