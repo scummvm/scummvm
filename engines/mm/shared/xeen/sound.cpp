@@ -27,6 +27,9 @@
 #include "mm/shared/xeen/sound_driver_mt32.h"
 #include "mm/xeen/xeen.h"
 #include "mm/mm.h"
+#ifdef ENABLE_MM1
+#include "mm/mm1/mm1.h"
+#endif
 
 namespace MM {
 namespace Shared {
@@ -50,7 +53,11 @@ _musicVolume(0), _sfxVolume(0) {
 		break;
 	}
 
-	if (g_engine->getGameID() != GType_MightAndMagic1)
+	if (g_engine->getGameID() != GType_MightAndMagic1
+#ifdef ENABLE_MM1
+		|| static_cast<MM::MM1::MM1Engine *>(g_engine)->isEnhanced()
+#endif
+		)
 		// Force load effects early so custom instruments for mt32 are loaded before sound is played.
 		loadEffectsData();
 
