@@ -41,10 +41,10 @@ public:
 		m_nWieldCursor = -1;
 	}
 
-	CBagObject *GetCurrObj() const {
+	CBagObject *getCurrObj() const {
 		return m_pCurrObj;
 	}
-	CBagObject *SetCurrObj(CBagObject *pObj) {
+	CBagObject *setCurrObj(CBagObject *pObj) {
 		return m_pCurrObj = pObj;
 	}
 
@@ -57,14 +57,14 @@ public:
 
 	virtual ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);
 
-	virtual ErrorCode LoadFile(const CBofString &sFile);
-	virtual bool OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev);
+	virtual ErrorCode loadFile(const CBofString &sFile);
+	virtual bool onObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev);
 
 	virtual ErrorCode attach();
 	virtual ErrorCode detach();
 
 	virtual ErrorCode activateLocalObject(CBagObject *pObj);
-	virtual ErrorCode DeactivateLocalObject(CBagObject *pObj);
+	virtual ErrorCode deactivateLocalObject(CBagObject *pObj);
 };
 
 } // namespace Bagel

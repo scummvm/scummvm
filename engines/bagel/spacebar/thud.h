@@ -31,36 +31,36 @@ namespace SpaceBar {
 class SBarThud : public CBagStorageDevBmp {
 private:
 	CBagObject *pCurrObj;
-	int m_nObjects;         // The number of currently active objects
-	CBofBitmap *m_xYouBmp;
-	static int  m_nThudCursor;
+	int _nObjects;         // The number of currently active objects
+	CBofBitmap *_xYouBmp;
+	static int  _nThudCursor;
 public:
 	SBarThud(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect());
 	virtual ~SBarThud();
 
-	CBagObject *GetCurrObj() {
+	CBagObject *getCurrObj() {
 		return pCurrObj;
 	}
-	CBagObject *SetCurrObj(CBagObject *pObj) {
+	CBagObject *setCurrObj(CBagObject *pObj) {
 		return pCurrObj = pObj;
 	}
 
-	static int      GetThudCursor() {
-		return m_nThudCursor;
+	static int      getThudCursor() {
+		return _nThudCursor;
 	}
-	static void     SetThudCursor(int n) {
-		m_nThudCursor = n;
+	static void     setThudCursor(int n) {
+		_nThudCursor = n;
 	}
 
-	virtual ErrorCode LoadFile(const CBofString &sFile);
-	virtual ErrorCode LoadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName, bool bAttach);
-	virtual bool       OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev);
+	virtual ErrorCode loadFile(const CBofString &sFile);
+	virtual ErrorCode loadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName, bool bAttach);
+	virtual bool       onObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev);
 
 	virtual ErrorCode  attach();
 	virtual ErrorCode  detach();
 
 	virtual ErrorCode activateLocalObject(CBagObject *pObj);
-	virtual ErrorCode DeactivateLocalObject(CBagObject *pObj);
+	virtual ErrorCode deactivateLocalObject(CBagObject *pObj);
 
 	virtual ErrorCode  activateLocalObject(const CBofString &sName);
 	virtual ErrorCode  deactivateLocalObject(const CBofString &sName);

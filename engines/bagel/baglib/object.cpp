@@ -203,7 +203,7 @@ PARSE_CODES CBagObject::setInfo(CBagIfstream &istr) {
 			Common::sprintf_s(szBuff, "Menu:%d", CBagMasterWin::_menuCount++);
 			CBofString s(szBuff, 256);
 
-			m_pMenu->LoadFileFromStream(istr, s, false);
+			m_pMenu->loadFileFromStream(istr, s, false);
 		}
 		break;
 		//

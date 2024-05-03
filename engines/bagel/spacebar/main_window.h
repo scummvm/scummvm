@@ -103,7 +103,7 @@ public:
 		_nGameMode = mode;
 	}
 
-	ErrorCode setLoadFilePos(const CBofPoint dstLoc);
+	ErrorCode setloadFilePos(const CBofPoint dstLoc);
 
 	CBagObject *onNewLinkObject(const CBofString &sInit);
 

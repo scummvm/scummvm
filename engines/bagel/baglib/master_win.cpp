@@ -735,7 +735,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 			if (rRect.width() && rRect.height())
 				pSDev->SetRect(rRect);
 
-			pSDev->LoadFileFromStream(input, namestr, false);
+			pSDev->loadFileFromStream(input, namestr, false);
 			if (nFilter) {
 				pSDev->SetFilterId((uint16)nFilter);
 

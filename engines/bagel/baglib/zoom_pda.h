@@ -42,19 +42,19 @@ public:
 	virtual ErrorCode attach();
 	virtual ErrorCode detach();
 
-	virtual ErrorCode LoadFile(const CBofString &sFile);
+	virtual ErrorCode loadFile(const CBofString &sFile);
 	virtual void onMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
 
 	/**
 	 * Called to overload specific types of sprite objects
 	 * @retrn       Pointer to the new object
 	 */
-	CBagObject *OnNewButtonObject(const CBofString &sInit);
+	CBagObject *onNewButtonObject(const CBofString &sInit);
 
 	virtual void onMainLoop();
 
 	void onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
-	virtual ErrorCode OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
+	virtual ErrorCode onRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
 
 	virtual ErrorCode attachActiveObjects();
 	virtual ErrorCode detachActiveObjects();

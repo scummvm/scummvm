@@ -47,34 +47,34 @@ public:
 
 class SBarVidWnd : public CMainWindow {
 protected:
-	CBagCharacterObject *m_pMovie;
+	CBagCharacterObject *_pMovie;
 
-	CBagVar *m_pTimerVar;
-	CBagVar *m_pPlayingVar;
-	CBagVar *m_pDiscVar;
+	CBagVar *_pTimerVar;
+	CBagVar *_pPlayingVar;
+	CBagVar *_pDiscVar;
 
-	double   m_fTimerDiff;
-	double   m_fTimer;
-	int      m_nStartTime;
+	double   _fTimerDiff;
+	double   _fTimer;
+	int      _nStartTime;
 
 public:
 	SBarVidWnd();
 	~SBarVidWnd();
 
-	void                SetPlayMode(int nMode);
-	void                SetInc(double fDiff) {
-		m_fTimerDiff = fDiff;
+	void setPlayMode(int nMode);
+	void setInc(double fDiff) {
+		_fTimerDiff = fDiff;
 	}
 
-	bool                HasDisc();
-	int                 getFrame(double fTime, int nUseDisc);
+	bool hasDisc();
+	int getFrame(double fTime, int nUseDisc);
 
 	virtual ErrorCode  attach();
 	virtual ErrorCode  detach();
 
-	ErrorCode          OnRender(CBofBitmap *pBmp, CBofRect *pRect);
+	ErrorCode onRender(CBofBitmap *pBmp, CBofRect *pRect);
 
-	CBagObject *OnNewButtonObject(const CBofString &sInit);
+	CBagObject *onNewButtonObject(const CBofString &sInit);
 };
 
 } // namespace SpaceBar
