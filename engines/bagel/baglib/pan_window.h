@@ -87,7 +87,7 @@ public:
 
 	virtual ErrorCode AttachActiveObjects();
 
-	virtual ErrorCode OnRender(CBofBitmap *pBmp, CRect *pRect = nullptr);
+	virtual ErrorCode onRender(CBofBitmap *pBmp, CRect *pRect = nullptr);
 
 	/**
 	 * The modal object is painted to the screen until it is done with

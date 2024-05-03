@@ -31,7 +31,7 @@ int CBagWield::m_nWieldCursor = -1;
 
 CBagWield::CBagWield(CBofWindow *pParent, const CBofRect &xRect) :
 	CBagStorageDevBmp(pParent, xRect) {
-	m_xSDevType = SDEV_WIELD;
+	_xSDevType = SDEV_WIELD;
 	m_nObjects = 0;         // This should be changed on the attach
 	m_pCurrObj = nullptr;
 }
@@ -40,8 +40,8 @@ CBagWield::CBagWield(CBofWindow *pParent, const CBofRect &xRect) :
 CBagWield::~CBagWield() {
 }
 
-ErrorCode CBagWield::LoadFile(const CBofString &sFile) {
-	ErrorCode error = CBagStorageDev::LoadFile(sFile);
+ErrorCode CBagWield::loadFile(const CBofString &sFile) {
+	ErrorCode error = CBagStorageDev::loadFile(sFile);
 
 	return error;
 }
@@ -75,7 +75,7 @@ ErrorCode CBagWield::detach() {
 	return CBagBmpObject::detach();
 }
 
-bool CBagWield::OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
+bool CBagWield::onObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
 	CBofString sObjName = pObj->GetRefName();
 
 	if (sObjName.IsEmpty())
@@ -101,7 +101,7 @@ ErrorCode CBagWield::activateLocalObject(CBagObject *pObj) {
 		// the user is currently holding into their stash (Inventory), and then
 		// put the new object that they are trying to pick up into their wield.
 		if (m_nObjects == 1) {
-			CBagObject *pPrevObj = GetCurrObj();
+			CBagObject *pPrevObj = getCurrObj();
 
 			if (pPrevObj != nullptr) {
 				// Move current object to stash
@@ -121,7 +121,7 @@ ErrorCode CBagWield::activateLocalObject(CBagObject *pObj) {
 		}
 
 		if (pObj->GetType() == SPRITEOBJ) {
-			SetCurrObj(pObj);
+			setCurrObj(pObj);
 			m_nObjects++;
 			CBagSpriteObject *pSpObj = (CBagSpriteObject *)pObj;
 			SetWieldCursor(pSpObj->GetWieldCursor());
@@ -140,7 +140,7 @@ ErrorCode CBagWield::activateLocalObject(CBagObject *pObj) {
 	return errCode;
 }
 
-ErrorCode CBagWield::DeactivateLocalObject(CBagObject *pObj) {
+ErrorCode CBagWield::deactivateLocalObject(CBagObject *pObj) {
 	if (m_nObjects == 1) {
 
 		if (pObj->GetType() == SPRITEOBJ) {
@@ -149,8 +149,8 @@ ErrorCode CBagWield::DeactivateLocalObject(CBagObject *pObj) {
 		}
 
 		CBagMenu::SetUniversalObjectList(nullptr);
-		CBagStorageDev::DeactivateLocalObject(pObj);
-		SetCurrObj(nullptr);
+		CBagStorageDev::deactivateLocalObject(pObj);
+		setCurrObj(nullptr);
 	}
 
 	return _errCode;

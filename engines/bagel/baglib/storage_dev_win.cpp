@@ -120,7 +120,7 @@ CBagStorageDev::CBagStorageDev() {
 
 	m_nFloatPages = 0;
 
-	m_xSDevType = SDEV_UNDEF;
+	_xSDevType = SDEV_UNDEF;
 
 	m_pBitmapFilter = nullptr;
 
@@ -248,7 +248,7 @@ ErrorCode CBagStorageDev::activateLocalObject(const CBofString &sName) {
 	return activateLocalObject(GetObject(sName));
 }
 
-ErrorCode CBagStorageDev::DeactivateLocalObject(CBagObject *pObj) {
+ErrorCode CBagStorageDev::deactivateLocalObject(CBagObject *pObj) {
 	ErrorCode  errCode = ERR_NONE;
 
 	if (pObj != nullptr) {
@@ -269,7 +269,7 @@ ErrorCode CBagStorageDev::deactivateLocalObject(const CBofString &sName) {
 	// Can't use a empty string
 	Assert(!sName.IsEmpty());
 
-	return DeactivateLocalObject(GetObject(sName));
+	return deactivateLocalObject(GetObject(sName));
 }
 
 
@@ -542,7 +542,7 @@ void CBagStorageDev::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 			CBagPanWindow *pWin = (CBagPanWindow *)pApp->getMasterWnd();
 			if (pWin != nullptr) {
 				if (pWin->_pWieldBmp != nullptr) {
-					pObj = pWin->_pWieldBmp->GetCurrObj();
+					pObj = pWin->_pWieldBmp->getCurrObj();
 					if ((pObj != nullptr) && pObj->IsActive()) {
 						pObj->onLButtonUp(nFlags, xPoint, vpInfo);
 						SetLActiveObject(pObj);
@@ -563,7 +563,7 @@ void CBagStorageDev::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 }
 
 
-ErrorCode CBagStorageDev::LoadFile(const CBofString &sWldName) {
+ErrorCode CBagStorageDev::loadFile(const CBofString &sWldName) {
 	char szLocalBuff[256];
 	CBofString sWldFileName(szLocalBuff, 256);
 
@@ -583,7 +583,7 @@ ErrorCode CBagStorageDev::LoadFile(const CBofString &sWldName) {
 		cFile.Read(pBuf, nLength);
 		cFile.close();
 
-		CBagStorageDev::LoadFileFromStream(fpInput, sWldFileName);
+		CBagStorageDev::loadFileFromStream(fpInput, sWldFileName);
 
 		BofFree(pBuf);
 	}
@@ -593,7 +593,7 @@ ErrorCode CBagStorageDev::LoadFile(const CBofString &sWldName) {
 }
 
 
-ErrorCode CBagStorageDev::LoadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName, bool bAttach) {
+ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName, bool bAttach) {
 	char                szWorkStr[256];
 	char                szStr[256];
 	szWorkStr[0] = 0;
@@ -760,7 +760,7 @@ ErrorCode CBagStorageDev::LoadFileFromStream(CBagIfstream &fpInput, const CBofSt
 			pObj = OnNewSoundObject(sWorkStr);
 		} else if (!sWorkStr.Find("BUT")) {
 			GetStringFromStream(fpInput, sWorkStr, "=", true);
-			pObj = OnNewButtonObject(sWorkStr);
+			pObj = onNewButtonObject(sWorkStr);
 		} else if (!sWorkStr.Find("CHR")) {
 			GetStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewCharacterObject(sWorkStr);
@@ -1041,7 +1041,7 @@ CBagObject *CBagStorageDev::OnNewSoundObject(const CBofString &) {
 }
 
 
-CBagObject *CBagStorageDev::OnNewButtonObject(const CBofString &) {
+CBagObject *CBagStorageDev::onNewButtonObject(const CBofString &) {
 	return new CBagButtonObject();
 }
 
@@ -1156,7 +1156,7 @@ CBagStorageDevWnd::CBagStorageDevWnd() : CBofWindow() {
 	m_sHelpFileName = "$SBARDIR\\GENERAL\\RULES\\DEFAULT.TXT";
 	MACROREPLACE(m_sHelpFileName);
 
-	m_xSDevType = SDEV_WND;
+	_xSDevType = SDEV_WND;
 }
 
 
@@ -1353,7 +1353,7 @@ ErrorCode CBagStorageDevWnd::PaintScreen(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	if (_pBackdrop != nullptr) {
-		OnRender(_pBackdrop, pRect);
+		onRender(_pBackdrop, pRect);
 
 		if (g_allowPaintFl) {
 			_pBackdrop->paint(this, pRect, pRect);
@@ -1369,7 +1369,7 @@ ErrorCode CBagStorageDevWnd::PaintScreen(CBofRect *pRect) {
 }
 
 
-ErrorCode CBagStorageDevWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
+ErrorCode CBagStorageDevWnd::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pBmp != nullptr);
 
@@ -1406,7 +1406,7 @@ ErrorCode CBagStorageDevWnd::RunModal(CBagObject *pObj) {
 			while (!g_engine->shouldQuit() && !pObj->isModalDone()) {
 				// Make sure we redraw each and every frame!
 				SetPreFilterPan(true);
-				OnRender(pBmp, nullptr);
+				onRender(pBmp, nullptr);
 				if (g_allowPaintFl) {
 					pBmp->paint(this, 0, 0);
 				}
@@ -1426,7 +1426,7 @@ ErrorCode CBagStorageDevWnd::PaintObjects(CBofList<CBagObject *> * /*list*/, CBo
 	return _errCode;
 }
 
-ErrorCode CBagStorageDevWnd::LoadFile(const CBofString &sFile) {
+ErrorCode CBagStorageDevWnd::loadFile(const CBofString &sFile) {
 	char        szWldFile[256];
 	szWldFile[0] = 0;
 	CBofString sWldFile(szWldFile, 256);        // performance improvement
@@ -1450,7 +1450,7 @@ ErrorCode CBagStorageDevWnd::LoadFile(const CBofString &sFile) {
 		cFile.Read(pBuf, nLength);
 		cFile.close();
 
-		CBagStorageDev::LoadFileFromStream(fpInput, sWldFile);
+		CBagStorageDev::loadFileFromStream(fpInput, sWldFile);
 
 		// If the window.isCreated()
 		//
@@ -1564,7 +1564,7 @@ void CBagStorageDevWnd::onKeyHit(uint32 lKey, uint32 nRepCount) {
 
 
 CBagStorageDevDlg::CBagStorageDevDlg() : CBofDialog() {
-	m_xSDevType = SDEV_DLG;
+	_xSDevType = SDEV_DLG;
 
 	// Set a default help file for when there is not one specified
 	//
@@ -1673,7 +1673,7 @@ ErrorCode CBagStorageDevDlg::PaintScreen(CBofRect *pRect) {
 						pWorkBmp->paint(pBmp, pRect, pRect);
 					}
 
-					pWin->OnRender(pBmp, pRect);
+					pWin->onRender(pBmp, pRect);
 				}
 
 				onRender(_pBackdrop, pRect);
@@ -1703,7 +1703,7 @@ ErrorCode CBagStorageDevDlg::PaintObjects(CBofList<CBagObject *> * /*list*/, CBo
 }
 
 
-ErrorCode CBagStorageDevDlg::LoadFile(const CBofString &sFile) {
+ErrorCode CBagStorageDevDlg::loadFile(const CBofString &sFile) {
 	char        szWldFile[256];
 	szWldFile[0] = 0;
 	CBofString sWldFile(szWldFile, 256);
@@ -1726,7 +1726,7 @@ ErrorCode CBagStorageDevDlg::LoadFile(const CBofString &sFile) {
 		cFile.Read(pBuf, nLength);
 		cFile.close();
 
-		CBagStorageDev::LoadFileFromStream(fpInput, sWldFile);
+		CBagStorageDev::loadFileFromStream(fpInput, sWldFile);
 
 		BofFree(pBuf);
 

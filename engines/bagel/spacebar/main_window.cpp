@@ -266,7 +266,7 @@ ErrorCode CMainWindow::attach() {
 
 	show();
 
-	OnRender(_pBackdrop, nullptr);
+	onRender(_pBackdrop, nullptr);
 
 	// Perform fade
 	if ((_pBackdrop != nullptr) && GetFadeId()) {
@@ -439,7 +439,7 @@ CBagObject *CMainWindow::onNewLinkObject(const CBofString &) {
 }
 
 
-ErrorCode CMainWindow::setLoadFilePos(const CBofPoint dstLoc) {
+ErrorCode CMainWindow::setloadFilePos(const CBofPoint dstLoc) {
 	if (dstLoc.x != 0 || dstLoc.y != 0) {
 		_cLastLoc = dstLoc;
 	}

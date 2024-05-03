@@ -80,14 +80,14 @@ public:
 	 */
 	virtual bool PaintFGObjects(CBofBitmap *pBmp) override;
 
-	virtual ErrorCode LoadFile(const CBofString &sFile) override;
+	virtual ErrorCode loadFile(const CBofString &sFile) override;
 
 	/**
 	 * Called to overload specific types of sprite objects
 	 * @param sInit     Init
 	 * @return          Pointer to the new object
 	 */
-	CBagObject *OnNewButtonObject(const CBofString &sInit) override;
+	CBagObject *onNewButtonObject(const CBofString &sInit) override;
 
 	/**
 	 * Called on the mouse left button down

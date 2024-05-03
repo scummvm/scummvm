@@ -76,7 +76,7 @@ public:
 	void SetPlayImmediate() {
 		m_nAsynchFlags |= ASYNCH_PLAYIMMEDIATE;
 	}
-	void SetIncrement(bool b = true) {
+	void setIncrement(bool b = true) {
 		m_bIncrement = b;
 	}
 	void setOnBlack(bool b = true) {

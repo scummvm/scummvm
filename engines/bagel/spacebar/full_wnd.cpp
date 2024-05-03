@@ -38,7 +38,7 @@ ErrorCode SBarFullWnd::attach() {
 
 	// If we have something wielded, put it on hold for now.
 	if (CBagPanWindow::_pWieldBmp != nullptr) {
-		_pWieldedObject = CBagPanWindow::_pWieldBmp->GetCurrObj();
+		_pWieldedObject = CBagPanWindow::_pWieldBmp->getCurrObj();
 		if (_pWieldedObject != nullptr) {
 			SDEV_MANAGER->RemoveObject(CBagPanWindow::_pWieldBmp->GetName(), _pWieldedObject->GetRefName());
 		}

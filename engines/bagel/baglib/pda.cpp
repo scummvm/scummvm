@@ -48,7 +48,7 @@ void CBagPDA::initialize() {
 CBagPDA::CBagPDA(CBofWindow *pParent, const CBofRect &xRect, bool bActivated)
 	: CBagStorageDevBmp(pParent, xRect),
 	  SBBasePda(pParent, xRect, bActivated) {
-	m_xSDevType = SDEV_PDA;
+	_xSDevType = SDEV_PDA;
 
 	m_nActiveHeight = 0;
 	m_nDeactiveHeight = 0;
@@ -93,12 +93,12 @@ CBagPDA::~CBagPDA() {
 	}
 }
 
-ErrorCode CBagPDA::LoadFile(const CBofString &sFile) {
+ErrorCode CBagPDA::loadFile(const CBofString &sFile) {
 	Assert(IsValidObject(this));
 
 	ErrorCode error;
 
-	error = CBagStorageDev::LoadFile(sFile);
+	error = CBagStorageDev::loadFile(sFile);
 	if (_mooWnd) {
 		RemoveObject(_mooWnd);
 	}
@@ -417,7 +417,7 @@ void CBagPDA::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *info) {
 	CBagStorageDevBmp::onLButtonDown(nFlags, xPoint, info);
 }
 
-CBagObject *CBagPDA::OnNewButtonObject(const CBofString &) {
+CBagObject *CBagPDA::onNewButtonObject(const CBofString &) {
 	CBagButtonObject *PdaButtObj;
 
 	PdaButtObj = new CBagButtonObject();
@@ -475,7 +475,7 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 				// Don't allow attachActiveObjects() to be called in here
 				g_allowAttachActiveObjectsFl = false;
 				pPda->activateLocalObject(pZoomFlash);
-				pPda->DeactivateLocalObject(pZoomRegular);
+				pPda->deactivateLocalObject(pZoomRegular);
 				g_allowAttachActiveObjectsFl = true;
 
 				pZoomFlash->setActive(true);
@@ -489,7 +489,7 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 		} else if (m_bFlashing) {
 			// Don't allow attachActiveObjects() to be called in here
 			g_allowAttachActiveObjectsFl = false;
-			pPda->DeactivateLocalObject(pZoomFlash);
+			pPda->deactivateLocalObject(pZoomFlash);
 			pPda->activateLocalObject(pZoomRegular);
 			g_allowAttachActiveObjectsFl = true;
 

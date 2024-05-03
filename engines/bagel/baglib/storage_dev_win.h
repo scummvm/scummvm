@@ -104,7 +104,7 @@ private:
 	uint16 m_nDiskID;
 
 protected:
-	uint16 m_xSDevType;                 // Type of storage device
+	uint16 _xSDevType;                 // Type of storage device
 	static CBofPoint *m_xCursorLocation; // Current cursor location in bmp.
 	static CBofRect *gRepaintRect;
 	static bool m_bHandledUpEvent;      // Hack to stop
@@ -146,7 +146,7 @@ public:
 		return m_nDiskID;
 	}
 
-	virtual ErrorCode setLoadFilePos(const CBofPoint) {
+	virtual ErrorCode setloadFilePos(const CBofPoint) {
 		return ERR_NONE;
 	}
 
@@ -172,7 +172,7 @@ public:
 	}
 
 	int GetDeviceType() {
-		return m_xSDevType;
+		return _xSDevType;
 	}
 
 	int GetObjectCount();
@@ -210,7 +210,7 @@ public:
 	virtual ErrorCode AttachActiveObjects();
 
 	virtual ErrorCode RemoveObject(CBagObject *pObj);
-	virtual ErrorCode DeactivateLocalObject(CBagObject *pObj);
+	virtual ErrorCode deactivateLocalObject(CBagObject *pObj);
 	virtual ErrorCode deactivateLocalObject(const CBofString &sName);
 	virtual ErrorCode DetachActiveObjects();
 
@@ -324,8 +324,8 @@ public:
 		return xPoint;
 	}
 
-	virtual ErrorCode LoadFile(const CBofString &sFile);
-	virtual ErrorCode LoadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName, bool bAttach = true);
+	virtual ErrorCode loadFile(const CBofString &sFile);
+	virtual ErrorCode loadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName, bool bAttach = true);
 
 	virtual void onMouseMove(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	virtual ErrorCode OnMouseOver(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
@@ -343,7 +343,7 @@ public:
 	virtual CBagObject *OnNewEDObject(const CBofString &sInit);
 	virtual CBagObject *OnNewDosObject(const CBofString &sInit);
 	virtual CBagObject *OnNewSoundObject(const CBofString &sInit);
-	virtual CBagObject *OnNewButtonObject(const CBofString &sInit);
+	virtual CBagObject *onNewButtonObject(const CBofString &sInit);
 	virtual CBagObject *OnNewCharacterObject(const CBofString &sInit);
 	virtual CBagObject *OnNewMovieObject(const CBofString &);
 	virtual CBagObject *OnNewCommandObject(const CBofString &sInit);
@@ -463,7 +463,7 @@ public:
 		return m_pWorkBmp;
 	}
 
-	virtual ErrorCode LoadFile(const CBofString &sWldFile);
+	virtual ErrorCode loadFile(const CBofString &sWldFile);
 
 	virtual const CBofString &GetHelpFilename() {
 		return m_sHelpFileName;
@@ -472,7 +472,7 @@ public:
 		m_sHelpFileName = s;
 	}
 
-	virtual ErrorCode OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
+	virtual ErrorCode onRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
 	virtual void onPaint(CBofRect *);
 	virtual void onMainLoop();
 	void onClose();
@@ -522,7 +522,7 @@ public:
 		return getBackdrop();
 	}
 
-	virtual ErrorCode LoadFile(const CBofString &sWldFile);
+	virtual ErrorCode loadFile(const CBofString &sWldFile);
 
 	ErrorCode create(const char *pszName, int x = 0, int y = 0, int nWidth = USE_DEFAULT, int nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 	ErrorCode create(const char *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);

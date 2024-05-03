@@ -27,20 +27,20 @@
 namespace Bagel {
 namespace SpaceBar {
 
-int SBarThud::m_nThudCursor = -1;
+int SBarThud::_nThudCursor = -1;
 
 SBarThud::SBarThud(CBofWindow *pParent, const CBofRect &xRect) :
 	CBagStorageDevBmp(pParent, xRect) {
-	m_xSDevType = SDEV_WIELD;
-	m_xYouBmp = nullptr;
-	m_nObjects = 0;         // This should be changed on the attach
+	_xSDevType = SDEV_WIELD;
+	_xYouBmp = nullptr;
+	_nObjects = 0;         // This should be changed on the attach
 }
 
 SBarThud::~SBarThud() {
 }
 
-ErrorCode SBarThud::LoadFile(const CBofString &sFile) {
-	ErrorCode error = CBagStorageDev::LoadFile(sFile);
+ErrorCode SBarThud::loadFile(const CBofString &sFile) {
+	ErrorCode error = CBagStorageDev::loadFile(sFile);
 	return error;
 }
 
@@ -49,9 +49,9 @@ ErrorCode SBarThud::attach() {
 	ErrorCode rc = CBagStorageDevBmp::attach();
 
 	// save a copy of the you icon
-	m_xYouBmp = new CBofBitmap(GetBackgroundName());
+	_xYouBmp = new CBofBitmap(GetBackgroundName());
 
-	if ((m_xYouBmp == nullptr) || (m_xYouBmp->height() <= 0) || (m_xYouBmp->width() <= 0)) {
+	if ((_xYouBmp == nullptr) || (_xYouBmp->height() <= 0) || (_xYouBmp->width() <= 0)) {
 		BofMessageBox("You icon in Thud: Background Opened Failed", __FILE__);
 		return ERR_FOPEN;
 	}
@@ -72,15 +72,15 @@ ErrorCode SBarThud::attach() {
 	}
 
 	// The weild has been loaded with too many active objects
-	m_nObjects = nActiveObj;
+	_nObjects = nActiveObj;
 
 	return rc;
 }
 
 ErrorCode SBarThud::detach() {
-	if (m_xYouBmp) {
-		delete m_xYouBmp;
-		m_xYouBmp = nullptr;
+	if (_xYouBmp) {
+		delete _xYouBmp;
+		_xYouBmp = nullptr;
 	}
 
 	// Write one function in sdevbmp
@@ -89,7 +89,7 @@ ErrorCode SBarThud::detach() {
 }
 
 
-bool SBarThud::OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
+bool SBarThud::onObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
 	CBofString sObjName = pObj->GetRefName();
 	if (sObjName.IsEmpty())
 		return false;
@@ -107,8 +107,8 @@ bool SBarThud::OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
 
 
 
-ErrorCode SBarThud::LoadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName, bool bAttach) {
-	return CBagStorageDevBmp::LoadFileFromStream(fpInput, sWldName, bAttach);
+ErrorCode SBarThud::loadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName, bool bAttach) {
+	return CBagStorageDevBmp::loadFileFromStream(fpInput, sWldName, bAttach);
 }
 
 
@@ -125,30 +125,30 @@ ErrorCode SBarThud::activateLocalObject(CBagObject *pObj) {
 		return ERR_UNKNOWN;
 
 	// Thud can only activate one object at a time
-	if (m_nObjects)
+	if (_nObjects)
 		return ERR_UNKNOWN;
 
 	return CBagStorageDev::activateLocalObject(pObj);
 }
 
-ErrorCode SBarThud::DeactivateLocalObject(CBagObject *pObj) {
-	if (m_nObjects != 1)
+ErrorCode SBarThud::deactivateLocalObject(CBagObject *pObj) {
+	if (_nObjects != 1)
 		return ERR_NONE;
 
 	if (pObj->GetType() == SPRITEOBJ) {
-		SetThudCursor(-1);
+		setThudCursor(-1);
 
 	}
 
 	if (pObj->GetType() == BOFSPRITEOBJ || pObj->GetType() == SPRITEOBJ) {
-		m_nObjects--;
+		_nObjects--;
 	}
 
-	if (m_xYouBmp && getBackground())
-		m_xYouBmp->paint(getBackground(), 0, 0);
+	if (_xYouBmp && getBackground())
+		_xYouBmp->paint(getBackground(), 0, 0);
 
 	CBagMenu::SetUniversalObjectList(nullptr);
-	return CBagStorageDev::DeactivateLocalObject(pObj);
+	return CBagStorageDev::deactivateLocalObject(pObj);
 }
 
 ErrorCode SBarThud::activateLocalObject(const CBofString &sName) {

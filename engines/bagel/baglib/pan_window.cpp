@@ -64,7 +64,7 @@ CBagPanWindow::CBagPanWindow() : CBagStorageDevWnd() {
 	m_pFGObjectList = new CBofList<CBagObject *>();
 
 	// Declare this to be type game win, because it has a pda
-	m_xSDevType = SDEV_GAMEWIN;
+	_xSDevType = SDEV_GAMEWIN;
 
 	// Make sure the prefilter gets called.
 	SetPreFilterPan(true);
@@ -186,7 +186,7 @@ ErrorCode CBagPanWindow::RunModal(CBagObject *pObj) {
 	return _errCode;
 }
 
-ErrorCode CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
+ErrorCode CBagPanWindow::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pBmp != nullptr);
 
@@ -619,7 +619,7 @@ void CBagPanWindow::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 					CBagObject *pObj = m_pFGObjectList->GetNodeItem(i);
 					CBofRect xBmpRect = pObj->getRect();
 					if (xBmpRect.PtInRect(*xPoint)) {
-						pObj->OnObjInteraction(pActObj, this);
+						pObj->onObjInteraction(pActObj, this);
 					}
 				}
 			}

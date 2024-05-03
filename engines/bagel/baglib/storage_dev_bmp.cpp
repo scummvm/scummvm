@@ -28,7 +28,7 @@ CBagStorageDevBmp::CBagStorageDevBmp(CBofWindow *pParent, const CBofRect &xRect,
 	: CBagBmpObject() {
 	m_cSrcRect.SetRect(0, 0, 0, 0);
 	m_bTrans = bTrans;
-	m_xSDevType = SDEV_BMP;
+	_xSDevType = SDEV_BMP;
 	SetRect(xRect);
 	m_pWorkBmp = nullptr;
 
@@ -92,11 +92,11 @@ ErrorCode CBagStorageDevBmp::KillWorkBmp() {
 	return _errCode;
 }
 
-ErrorCode CBagStorageDevBmp::LoadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName, bool bAttach) {
+ErrorCode CBagStorageDevBmp::loadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName, bool bAttach) {
 	SetFileName(sWldName);
 	SetRefName(sWldName);
 
-	return CBagStorageDev::LoadFileFromStream(fpInput, sWldName, bAttach);
+	return CBagStorageDev::loadFileFromStream(fpInput, sWldName, bAttach);
 }
 
 CBofPoint CBagStorageDevBmp::GetScaledPt(CBofPoint xPoint) {

@@ -44,10 +44,10 @@ void SBZoomPda::initialize() {
 SBZoomPda::SBZoomPda(CBofWindow *pParent, const CBofRect &xRect, bool bActivated)
 	: CBagStorageDevWnd(),
 	  SBBasePda(pParent, xRect, bActivated) {
-	m_xSDevType = SDEV_ZOOMPDA;
+	_xSDevType = SDEV_ZOOMPDA;
 }
 
-ErrorCode SBZoomPda::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
+ErrorCode SBZoomPda::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pBmp != nullptr);
 
@@ -86,8 +86,8 @@ ErrorCode SBZoomPda::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	return _errCode;
 }
 
-ErrorCode SBZoomPda::LoadFile(const CBofString &sFile) {
-	ErrorCode error = CBagStorageDev::LoadFile(sFile);
+ErrorCode SBZoomPda::loadFile(const CBofString &sFile) {
+	ErrorCode error = CBagStorageDev::loadFile(sFile);
 	RemoveObject(_mooWnd);
 	RemoveObject(_invWnd);
 	RemoveObject(_mapWnd);
@@ -226,7 +226,7 @@ ErrorCode SBZoomPda::attach() {
 	return rc;
 }
 
-CBagObject *SBZoomPda::OnNewButtonObject(const CBofString &) {
+CBagObject *SBZoomPda::onNewButtonObject(const CBofString &) {
 	CBagButtonObject *PdaButtObj = new CBagButtonObject();
 	PdaButtObj->setCallBack(pdaButtonHandler, (SBBasePda *)this);
 

@@ -390,7 +390,7 @@ public:
 
 	virtual ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
 
-	virtual bool OnObjInteraction(CBagObject * /*pObj*/, CBagStorageDev * /*pSDev*/) {
+	virtual bool onObjInteraction(CBagObject * /*pObj*/, CBagStorageDev * /*pSDev*/) {
 		return false;
 	}
 

@@ -46,7 +46,7 @@ CBagMovieObject::CBagMovieObject() {
 	m_nAsynchFlags = 0;
 
 	// Allow user to force movie not to increment (default = increment = true)
-	SetIncrement();
+	setIncrement();
 
 	// Allow movie to play on a black background (default, nada).
 	setOnBlack(false);
@@ -446,7 +446,7 @@ PARSE_CODES CBagMovieObject::setInfo(CBagIfstream &istr) {
 				nObjectUpdated = true;
 			} else if (!sStr.Find("DONTINCREMENT")) {
 				// Don't increment the timer when playing this movie					
-				SetIncrement(false);
+				setIncrement(false);
 				nObjectUpdated = true;
 			} else {
 				PutbackStringOnStream(istr, sStr);
