@@ -195,8 +195,9 @@ static void check_mouse_controls() {
 	if ((_G(wasbutdown) > kMouseNone) && (ags_misbuttondown(_G(wasbutdown)))) {
 		gui_on_mouse_hold(_G(wasongui), _G(wasbutdown));
 	} else if ((_G(wasbutdown) > kMouseNone) && (!ags_misbuttondown(_G(wasbutdown)))) {
-		gui_on_mouse_up(_G(wasongui), _G(wasbutdown));
-		_G(wasbutdown) = kMouseNone;
+		eAGSMouseButton mouse_btn_up = _G(wasbutdown);
+		_G(wasbutdown) = kMouseNone; // reset before event, avoid recursive call of "mouse up"
+		gui_on_mouse_up(_G(wasongui), mouse_btn_up);
 	}
 
 	eAGSMouseButton mbut;
