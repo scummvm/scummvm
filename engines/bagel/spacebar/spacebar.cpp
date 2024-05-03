@@ -95,7 +95,7 @@ ErrorCode SpaceBarEngine::initialize() {
 			// Init sound system
 			InitializeSoundSystem(1, 22050, 8);
 
-			pBmp = new CBofBitmap(_masterWin->width(), _masterWin->height(), m_pPalette);
+			pBmp = new CBofBitmap(_masterWin->width(), _masterWin->height(), _pPalette);
 			if (pBmp != nullptr) {
 				pBmp->fillRect(nullptr, COLOR_BLACK);
 			} else {

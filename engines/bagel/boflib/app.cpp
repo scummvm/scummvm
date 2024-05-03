@@ -56,7 +56,7 @@ CBofApp::~CBofApp() {
 
 	m_szAppName[0] = '\0';
 	m_pMainWnd = nullptr;
-	m_pPalette = nullptr;
+	_pPalette = nullptr;
 	m_pBofApp = nullptr;
 }
 
@@ -100,7 +100,7 @@ void CBofApp::ShutDownCode() {
 
 
 ErrorCode CBofApp::PreInit() {
-	if ((m_pPalette == nullptr) && (m_pDefPalette == nullptr)) {
+	if ((_pPalette == nullptr) && (m_pDefPalette == nullptr)) {
 		m_pDefPalette = new CBofPalette();
 		if (m_pDefPalette != nullptr) {
 			m_pDefPalette->createDefault();
@@ -198,7 +198,7 @@ ErrorCode CBofApp::PostShutDown() {
 	}
 
 	// No more palettes
-	m_pPalette = nullptr;
+	_pPalette = nullptr;
 
 	if (m_pDefPalette != nullptr) {
 		delete m_pDefPalette;
@@ -209,7 +209,7 @@ ErrorCode CBofApp::PostShutDown() {
 }
 
 void CBofApp::setPalette(CBofPalette *pPalette) {
-	m_pPalette = pPalette;
+	_pPalette = pPalette;
 
 	if (pPalette != nullptr) {
 		if (g_system->getScreenFormat().bytesPerPixel == 1) {
@@ -219,7 +219,7 @@ void CBofApp::setPalette(CBofPalette *pPalette) {
 
 	} else {
 		// Use default palette
-		m_pPalette = m_pDefPalette;
+		_pPalette = m_pDefPalette;
 	}
 }
 

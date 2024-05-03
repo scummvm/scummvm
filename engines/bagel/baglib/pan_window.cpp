@@ -53,7 +53,7 @@ CBagPanWindow::CBagPanWindow() : CBagStorageDevWnd() {
 	m_nCorrection = CBagMasterWin::getCorrection();
 	m_nPanSpeed = CBagMasterWin::getPanSpeed();
 	m_pSlideBitmap = nullptr;
-	m_pPalette = nullptr;
+	_pPalette = nullptr;
 	m_bPaintToBackdrop = true;
 	m_bStretchToScreen = false;
 	m_bDraggingObject = false;
@@ -115,25 +115,25 @@ CBofPalette *CBagPanWindow::SetSlidebitmap(const CBofString &xSlideBmp, const CB
 
 		// Make sure the file was found
 		if (m_pSlideBitmap == nullptr || !m_pSlideBitmap->IsValid()) {
-			m_pPalette = nullptr;
+			_pPalette = nullptr;
 			ReportError(ERR_FOPEN);
 		} else {
 			// Set the bagel crap
-			m_pPalette = m_pSlideBitmap->getPalette();
-			CBofApp::GetApp()->setPalette(m_pPalette);
-			CBagel::getBagApp()->getMasterWnd()->selectPalette(m_pPalette);
-			CBofApp::GetApp()->GetMainWindow()->selectPalette(m_pPalette);
-			selectPalette(m_pPalette);
+			_pPalette = m_pSlideBitmap->getPalette();
+			CBofApp::GetApp()->setPalette(_pPalette);
+			CBagel::getBagApp()->getMasterWnd()->selectPalette(_pPalette);
+			CBofApp::GetApp()->GetMainWindow()->selectPalette(_pPalette);
+			selectPalette(_pPalette);
 
-			CBofSprite::openLibrary(m_pPalette);
+			CBofSprite::openLibrary(_pPalette);
 
 			m_pSlideBitmap->setCorrWidth(m_nCorrection);
 
-			CBofBitmap *pBackDropBitmap = new CBofBitmap(DEF_WIDTH + 1, DEF_HEIGHT + 1, m_pPalette);
+			CBofBitmap *pBackDropBitmap = new CBofBitmap(DEF_WIDTH + 1, DEF_HEIGHT + 1, _pPalette);
 			if (!pBackDropBitmap || pBackDropBitmap->height() <= 0 || pBackDropBitmap->width() <= 0) {
 				ReportError(ERR_FOPEN, "Error opening bitmap");
 			}
-			m_pVeiwPortBitmap = new CBofBitmap(DEF_WIDTH + 1, m_pSlideBitmap->height() + 1, m_pPalette);
+			m_pVeiwPortBitmap = new CBofBitmap(DEF_WIDTH + 1, m_pSlideBitmap->height() + 1, _pPalette);
 			if (!m_pVeiwPortBitmap || !m_pVeiwPortBitmap->height() || !m_pVeiwPortBitmap->width()) {
 				ReportError(ERR_FOPEN);
 			}
@@ -144,7 +144,7 @@ CBofPalette *CBagPanWindow::SetSlidebitmap(const CBofString &xSlideBmp, const CB
 		}
 	}
 
-	return m_pPalette;
+	return _pPalette;
 }
 
 CBagPanWindow::~CBagPanWindow() {

@@ -38,15 +38,15 @@ namespace SpaceBar {
 #define SLOTAUDIO       "BGNSLOT.WAV"
 
 struct ST_BUTTONS {
-	const char *m_pszName;
-	const char *m_pszUp;
-	const char *m_pszDown;
-	const char *m_pszFocus;
-	const char *m_pszDisabled;
-	int m_nLeft;
-	int m_nTop;
-	int m_nWidth;
-	int m_nHeight;
+	const char *_pszName;
+	const char *_pszUp;
+	const char *_pszDown;
+	const char *_pszFocus;
+	const char *_pszDisabled;
+	int _nLeft;
+	int _nTop;
+	int _nWidth;
+	int _nHeight;
 	int _nID;
 };
 
@@ -71,7 +71,7 @@ static ST_BUTTONS g_stButtons[NUM_SLOTBUTT] = {
 };
 
 struct ST_SLOTBMPS {
-	const char *m_pszName[SLOT_BMP_NUM];
+	const char *_pszName[SLOT_BMP_NUM];
 };
 
 static ST_SLOTBMPS g_stSlotBmps[SLOT_NUM] = {
@@ -88,37 +88,37 @@ static bool g_bFix = false;
 
 SBarSlotWnd::SBarSlotWnd() : CBagStorageDevWnd() {
 	for (int i = 0; i < NUM_SLOTBUTT; i++) {
-		m_pSlotButs[i] = nullptr;
+		_pSlotButs[i] = nullptr;
 	}
 
 	// Init all our slotbmp
 	for (int i = 0; i < SLOT_NUM; i++) {
-		m_cSlots[i].m_nIdx = g_engine->getRandomNumber() % SLOT_BMP_NUM;
+		_cSlots[i]._nIdx = g_engine->getRandomNumber() % SLOT_BMP_NUM;
 		for (int j = 0; j < SLOT_BMP_NUM; j++) {
-			m_cSlots[i].m_pSlotBmp[j] = nullptr;
+			_cSlots[i]._pSlotBmp[j] = nullptr;
 		}
 	}
 
-	m_cSlots[0].m_cSlotRect = Slot0Rect;
-	m_cSlots[1].m_cSlotRect = Slot1Rect;
-	m_cSlots[2].m_cSlotRect = Slot2Rect;
-	m_cSlots[3].m_cSlotRect = Slot3Rect;
+	_cSlots[0]._cSlotRect = Slot0Rect;
+	_cSlots[1]._cSlotRect = Slot1Rect;
+	_cSlots[2]._cSlotRect = Slot2Rect;
+	_cSlots[3]._cSlotRect = Slot3Rect;
 
-	m_bFixBet = false;
-	m_nBet = 0;
-	m_nCredit = 0;
-	m_pCredText = nullptr;
-	m_pBetText = nullptr;
-	m_pOddsText = nullptr;
-	m_bAutoDecrement = false;
+	_bFixBet = false;
+	_nBet = 0;
+	_nCredit = 0;
+	_pCredText = nullptr;
+	_pBetText = nullptr;
+	_pOddsText = nullptr;
+	_bAutoDecrement = false;
 
 	_nPayOff1 = 0;
 	_nPayOff2 = 0;
 
-	m_bFixBmp = nullptr;
-	m_pWinSound = nullptr;
-	m_pSlotSound = nullptr;
-	m_pLoseBmp = nullptr;
+	_bFixBmp = nullptr;
+	_pWinSound = nullptr;
+	_pSlotSound = nullptr;
+	_pLoseBmp = nullptr;
 
 	SetHelpFilename(BuildSlotDir("SLOT.TXT"));
 
@@ -148,20 +148,20 @@ void SBarSlotWnd::onPaint(CBofRect *pRect) {
 		// Paint all our slotbmp
 		for (int i = 0; i < SLOT_NUM; i++) {
 
-			if (m_cSlots[i].m_pSlotBmp[m_cSlots[i].m_nIdx] != nullptr) {
-				m_cSlots[i].m_pSlotBmp[m_cSlots[i].m_nIdx]->paint(pBackBmp, &m_cSlots[i].m_cSlotRect, nullptr, CBagel::getBagApp()->getChromaColor());
+			if (_cSlots[i]._pSlotBmp[_cSlots[i]._nIdx] != nullptr) {
+				_cSlots[i]._pSlotBmp[_cSlots[i]._nIdx]->paint(pBackBmp, &_cSlots[i]._cSlotRect, nullptr, CBagel::getBagApp()->getChromaColor());
 			}
 		}
 
-		if (m_bFixBet && m_bFixBmp != nullptr) {
-			m_bFixBmp->paint(pBackBmp, FixRect.left, FixRect.top);
+		if (_bFixBet && _bFixBmp != nullptr) {
+			_bFixBmp->paint(pBackBmp, FixRect.left, FixRect.top);
 		}
 
 		// Paint the backdrop
 		if (getBackdrop())
 			paintBackdrop();
 
-		UpdateText();
+		updateText();
 	}
 }
 
@@ -170,11 +170,11 @@ void SBarSlotWnd::onMainLoop() {
 }
 
 ErrorCode  SBarSlotWnd::attach() {
-	m_bPaused = false;
-	m_bLose = false;
-	m_bFixBet = false;
+	_bPaused = false;
+	_bLose = false;
+	_bFixBet = false;
 
-	if ((m_pSlotSound = new CBofSound(this, BuildSlotDir(SLOTAUDIO), SOUND_MIX, 1)) != nullptr) {
+	if ((_pSlotSound = new CBofSound(this, BuildSlotDir(SLOTAUDIO), SOUND_MIX, 1)) != nullptr) {
 
 	} else {
 		ReportError(ERR_MEMORY, "Could not allocate a CBofSound");
@@ -186,26 +186,26 @@ ErrorCode  SBarSlotWnd::attach() {
 		Assert(_pBackdrop != nullptr);
 		CBofPalette *pPal = _pBackdrop->getPalette();
 
-		m_bFixBmp = new CBofBitmap(BuildSlotDir(FIXBMP));
+		_bFixBmp = new CBofBitmap(BuildSlotDir(FIXBMP));
 
 		// Build all our buttons
 		for (int i = 0; i < NUM_SLOTBUTT; i++) {
 
-			m_pSlotButs[i] = new CBofBmpButton;
-			if (m_pSlotButs[i] != nullptr) {
-				CBofBitmap *pUp = loadBitmap(BuildSlotDir(g_stButtons[i].m_pszUp), pPal);
-				CBofBitmap *pDown = loadBitmap(BuildSlotDir(g_stButtons[i].m_pszDown), pPal);
-				CBofBitmap *pFocus = loadBitmap(BuildSlotDir(g_stButtons[i].m_pszFocus), pPal);
-				CBofBitmap *pDis = loadBitmap(BuildSlotDir(g_stButtons[i].m_pszDisabled), pPal);
+			_pSlotButs[i] = new CBofBmpButton;
+			if (_pSlotButs[i] != nullptr) {
+				CBofBitmap *pUp = loadBitmap(BuildSlotDir(g_stButtons[i]._pszUp), pPal);
+				CBofBitmap *pDown = loadBitmap(BuildSlotDir(g_stButtons[i]._pszDown), pPal);
+				CBofBitmap *pFocus = loadBitmap(BuildSlotDir(g_stButtons[i]._pszFocus), pPal);
+				CBofBitmap *pDis = loadBitmap(BuildSlotDir(g_stButtons[i]._pszDisabled), pPal);
 
-				m_pSlotButs[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
-				m_pSlotButs[i]->create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i]._nID);
-				m_pSlotButs[i]->show();
+				_pSlotButs[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
+				_pSlotButs[i]->create(g_stButtons[i]._pszName, g_stButtons[i]._nLeft, g_stButtons[i]._nTop, g_stButtons[i]._nWidth, g_stButtons[i]._nHeight, this, g_stButtons[i]._nID);
+				_pSlotButs[i]->show();
 			}
 		}
 
-		if (m_pLoseBmp == nullptr) {
-			if ((m_pLoseBmp = new CBofBitmap(BuildSlotDir("BGNV.BMP"), pPal)) != nullptr) {
+		if (_pLoseBmp == nullptr) {
+			if ((_pLoseBmp = new CBofBitmap(BuildSlotDir("BGNV.BMP"), pPal)) != nullptr) {
 
 			} else {
 				ReportError(ERR_MEMORY);
@@ -213,13 +213,13 @@ ErrorCode  SBarSlotWnd::attach() {
 		}
 
 		// Hide the GO, LOSE Button until a bet is made
-		m_pSlotButs[GO]->hide();
+		_pSlotButs[GO]->hide();
 
 		// Build all our slotbmp
 		for (int i = 0; i < SLOT_NUM; i++) {
-			m_cSlots[i].m_nIdx = g_engine->getRandomNumber() % SLOT_BMP_NUM;
+			_cSlots[i]._nIdx = g_engine->getRandomNumber() % SLOT_BMP_NUM;
 			for (int j = 0; j < SLOT_BMP_NUM; j++) {
-				m_cSlots[i].m_pSlotBmp[j] = new CBofBitmap(BuildSlotDir(g_stSlotBmps[i].m_pszName[j]), pPal);
+				_cSlots[i]._pSlotBmp[j] = new CBofBitmap(BuildSlotDir(g_stSlotBmps[i]._pszName[j]), pPal);
 			}
 		}
 
@@ -229,21 +229,21 @@ ErrorCode  SBarSlotWnd::attach() {
 		pVar = VAR_MANAGER->GetVariable("NUGGETS");
 
 		if (pVar)
-			m_nCredit = pVar->GetNumValue();
+			_nCredit = pVar->GetNumValue();
 
 		// Initialize their bet
-		m_nBet = 0;
+		_nBet = 0;
 
 		// Setup the Credit text fields
-		m_pCredText = new CBofText;
-		if (m_pCredText != nullptr) {
+		_pCredText = new CBofText;
+		if (_pCredText != nullptr) {
 			CBofRect cRect(CreditRect.left, CreditRect.top, CreditRect.right, CreditRect.bottom);
-			m_pCredText->setupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
-			m_pCredText->setColor(RGB(255, 255, 255));
+			_pCredText->setupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
+			_pCredText->setColor(RGB(255, 255, 255));
 
-			m_pCredText->SetSize(20);
-			m_pCredText->setWeight(TEXT_BOLD);
-			m_pCredText->setText(BuildString("%d", m_nCredit));
+			_pCredText->SetSize(20);
+			_pCredText->setWeight(TEXT_BOLD);
+			_pCredText->setText(BuildString("%d", _nCredit));
 		} else {
 			ReportError(ERR_MEMORY);
 		}
@@ -251,17 +251,17 @@ ErrorCode  SBarSlotWnd::attach() {
 		// Setup the Bet text fields
 		//
 		// Make sure that we don't already have one
-		Assert(m_pBetText == nullptr);
+		Assert(_pBetText == nullptr);
 
-		m_pBetText = new CBofText;
-		if (m_pBetText != nullptr) {
+		_pBetText = new CBofText;
+		if (_pBetText != nullptr) {
 			CBofRect cRect(BetRect.left, BetRect.top, BetRect.right, BetRect.bottom);
-			m_pBetText->setupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
-			m_pBetText->setColor(RGB(255, 255, 255));
+			_pBetText->setupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
+			_pBetText->setColor(RGB(255, 255, 255));
 
-			m_pBetText->SetSize(20);
-			m_pBetText->setWeight(TEXT_BOLD);
-			m_pBetText->setText(BuildString("%d", m_nBet));
+			_pBetText->SetSize(20);
+			_pBetText->setWeight(TEXT_BOLD);
+			_pBetText->setText(BuildString("%d", _nBet));
 		} else {
 			ReportError(ERR_MEMORY);
 		}
@@ -269,17 +269,17 @@ ErrorCode  SBarSlotWnd::attach() {
 		// Setup the Odds text fields
 		//
 		// Make sure that we don't already have one
-		Assert(m_pOddsText == nullptr);
+		Assert(_pOddsText == nullptr);
 
-		m_pOddsText = new CBofText;
-		if (m_pOddsText != nullptr) {
+		_pOddsText = new CBofText;
+		if (_pOddsText != nullptr) {
 			CBofRect cRect(OddRect.left, OddRect.top, OddRect.right, OddRect.bottom);
-			m_pOddsText->setupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
-			m_pOddsText->setColor(RGB(255, 255, 255));
+			_pOddsText->setupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
+			_pOddsText->setColor(RGB(255, 255, 255));
 
-			m_pOddsText->SetSize(32);
-			m_pOddsText->setWeight(TEXT_BOLD);
-			m_pOddsText->setText("");
+			_pOddsText->SetSize(32);
+			_pOddsText->setWeight(TEXT_BOLD);
+			_pOddsText->setText("");
 		} else {
 			ReportError(ERR_MEMORY);
 		}
@@ -290,9 +290,9 @@ ErrorCode  SBarSlotWnd::attach() {
 		updateWindow();
 	}
 
-	m_pBkgSnd = new CBofSound(this, BuildSlotDir(CASINO_AUDIO), SOUND_MIX, 99999);
-	if (m_pBkgSnd != nullptr) {
-		m_pBkgSnd->play();
+	_pBkgSnd = new CBofSound(this, BuildSlotDir(CASINO_AUDIO), SOUND_MIX, 99999);
+	if (_pBkgSnd != nullptr) {
+		_pBkgSnd->play();
 	} else {
 		ReportError(ERR_MEMORY);
 	}
@@ -306,74 +306,74 @@ ErrorCode SBarSlotWnd::detach() {
 	CBofCursor::hide();
 
 	// Put any credits left in machine back into you credit chip.
-	if (m_nBet > 0) {
-		m_nCredit += m_nBet;
+	if (_nBet > 0) {
+		_nCredit += _nBet;
 	}
 
 	// Write out new value of nuggets
 	CBagVar *pVar = VAR_MANAGER->GetVariable("NUGGETS");
 	if (pVar)
-		pVar->SetValue(m_nCredit);
+		pVar->SetValue(_nCredit);
 
-	if (m_pBkgSnd->IsPlaying()) {
-		m_pBkgSnd->stop();
+	if (_pBkgSnd->IsPlaying()) {
+		_pBkgSnd->stop();
 	}
-	if (m_pBkgSnd != nullptr) {
-		delete m_pBkgSnd;
-		m_pBkgSnd = nullptr;
+	if (_pBkgSnd != nullptr) {
+		delete _pBkgSnd;
+		_pBkgSnd = nullptr;
 	}
 
-	if (m_pLoseBmp != nullptr) {
-		delete m_pLoseBmp;
-		m_pLoseBmp = nullptr;
+	if (_pLoseBmp != nullptr) {
+		delete _pLoseBmp;
+		_pLoseBmp = nullptr;
 	}
 
 	// Destroy all buttons
 	for (int i = 0; i < NUM_SLOTBUTT; i++) {
-		if (m_pSlotButs[i] != nullptr) {
-			delete m_pSlotButs[i];
-			m_pSlotButs[i] = nullptr;
+		if (_pSlotButs[i] != nullptr) {
+			delete _pSlotButs[i];
+			_pSlotButs[i] = nullptr;
 		}
 	}
 
 	// Destroy all our slotbmp
 	for (int i = 0; i < SLOT_NUM; i++) {
-		m_cSlots[i].m_nIdx = 0;
+		_cSlots[i]._nIdx = 0;
 
 		for (int j = 0; j < SLOT_BMP_NUM; j++) {
-			if (m_cSlots[i].m_pSlotBmp[j]) {
-				delete m_cSlots[i].m_pSlotBmp[j];
-				m_cSlots[i].m_pSlotBmp[j] = nullptr;
+			if (_cSlots[i]._pSlotBmp[j]) {
+				delete _cSlots[i]._pSlotBmp[j];
+				_cSlots[i]._pSlotBmp[j] = nullptr;
 			}
 		}
 	}
 
-	if (m_pCredText != nullptr) {
-		delete m_pCredText;
-		m_pCredText = nullptr;
+	if (_pCredText != nullptr) {
+		delete _pCredText;
+		_pCredText = nullptr;
 	}
-	if (m_pBetText != nullptr) {
-		delete m_pBetText;
-		m_pBetText = nullptr;
-	}
-
-	if (m_bFixBmp != nullptr) {
-		delete m_bFixBmp;
-		m_bFixBmp = nullptr;
+	if (_pBetText != nullptr) {
+		delete _pBetText;
+		_pBetText = nullptr;
 	}
 
-	if (m_pWinSound != nullptr) {
-		delete m_pWinSound;
-		m_pWinSound = nullptr;
+	if (_bFixBmp != nullptr) {
+		delete _bFixBmp;
+		_bFixBmp = nullptr;
 	}
 
-	if (m_pSlotSound != nullptr) {
-		delete m_pSlotSound;
-		m_pSlotSound = nullptr;
+	if (_pWinSound != nullptr) {
+		delete _pWinSound;
+		_pWinSound = nullptr;
 	}
-	if (m_pOddsText != nullptr) {
-		delete m_pOddsText;
-		m_pOddsText = nullptr;
+
+	if (_pSlotSound != nullptr) {
+		delete _pSlotSound;
+		_pSlotSound = nullptr;
+	}
+	if (_pOddsText != nullptr) {
+		delete _pOddsText;
+		_pOddsText = nullptr;
 	}
 
 	CBagStorageDevWnd::detach();
@@ -384,22 +384,22 @@ ErrorCode SBarSlotWnd::detach() {
 	return _errCode;
 }
 
-void SBarSlotWnd::AddBet(int nBetVal) {
-	if (m_nCredit < MAX_CREDITS) {
-		if (nBetVal <= m_nCredit) {
+void SBarSlotWnd::addBet(int nBetVal) {
+	if (_nCredit < MAX_CREDITS) {
+		if (nBetVal <= _nCredit) {
 
-			m_nBet += nBetVal;
-			m_nCredit -= nBetVal;
+			_nBet += nBetVal;
+			_nCredit -= nBetVal;
 
 			// Check and see if we need to show the GO button
-			if (m_nBet && !(m_pSlotButs[GO]->isVisible())) {
-				m_pSlotButs[GO]->show();
+			if (_nBet && !(_pSlotButs[GO]->isVisible())) {
+				_pSlotButs[GO]->show();
 			}
 			_nPayOff1 = 0;
-			m_bLose = false;
-			m_pOddsText->setText("");
+			_bLose = false;
+			_pOddsText->setText("");
 
-			UpdateText();
+			updateText();
 		}
 	} else {
 		char szBuf[256];
@@ -418,17 +418,17 @@ void SBarSlotWnd::AddBet(int nBetVal) {
 	}
 }
 
-void SBarSlotWnd::BetAll() {
-	if (m_nCredit < MAX_CREDITS) {
+void SBarSlotWnd::betAll() {
+	if (_nCredit < MAX_CREDITS) {
 
-		m_nBet += m_nCredit;
-		m_nCredit = 0;
+		_nBet += _nCredit;
+		_nCredit = 0;
 
 		// Check and see if we need to show the GO button
-		if (m_nBet && !m_pSlotButs[GO]->isVisible())
-			m_pSlotButs[GO]->show();
+		if (_nBet && !_pSlotButs[GO]->isVisible())
+			_pSlotButs[GO]->show();
 
-		UpdateText();
+		updateText();
 
 	} else {
 
@@ -448,48 +448,48 @@ void SBarSlotWnd::BetAll() {
 	}
 }
 
-void SBarSlotWnd::ClrBet() {
-	m_nCredit += m_nBet;
-	m_nBet = 0;
+void SBarSlotWnd::clrBet() {
+	_nCredit += _nBet;
+	_nBet = 0;
 
-	m_pSlotButs[GO]->hide();
+	_pSlotButs[GO]->hide();
 
-	UpdateText();
+	updateText();
 }
 
-void SBarSlotWnd::FixBet() {
-	m_bFixBet = !m_bFixBet;
+void SBarSlotWnd::fixBet() {
+	_bFixBet = !_bFixBet;
 
-	if (!m_bFixBet) {
-		m_bAutoDecrement = false;
+	if (!_bFixBet) {
+		_bAutoDecrement = false;
 	}
 }
 
-void SBarSlotWnd::Go() {
+void SBarSlotWnd::go() {
 	for (int i = 0; i < SLOT_NUM; i++) {
-		m_cSlots[i].m_nIdx = g_engine->getRandomNumber() % SLOT_BMP_NUM;
-		invalidateRect(&(m_cSlots[i].m_cSlotRect));
+		_cSlots[i]._nIdx = g_engine->getRandomNumber() % SLOT_BMP_NUM;
+		invalidateRect(&(_cSlots[i]._cSlotRect));
 	}
 
-	SlideSlots();
+	slideSlots();
 
 	calcOutcome();
 
 	// Hide the GO button
-	m_pSlotButs[GO]->hide();
+	_pSlotButs[GO]->hide();
 
-	if (m_bFixBet)
+	if (_bFixBet)
 		g_bFix = true;
 
-	UpdateText();
+	updateText();
 
 	updateWindow();
 	g_bFix = false;
 
-	if (m_bFixBet && m_nBet != 0) {
+	if (_bFixBet && _nBet != 0) {
 		Sleep(3000);
-		m_pSlotButs[GO]->show();
-		m_pSlotButs[GO]->paint();
+		_pSlotButs[GO]->show();
+		_pSlotButs[GO]->paint();
 	}
 }
 
@@ -507,30 +507,30 @@ void SBarSlotWnd::calcOutcome() {
 	// Get number of matching slots
 	for (int i = 0; i < SLOT_NUM; i++) {
 		for (int j = i + 1; j < SLOT_NUM; j++) {
-			if (m_cSlots[i].m_nIdx == m_cSlots[j].m_nIdx) {
+			if (_cSlots[i]._nIdx == _cSlots[j]._nIdx) {
 				nMatch++;
-				nMatchVal = m_cSlots[i].m_nIdx;
+				nMatchVal = _cSlots[i]._nIdx;
 			}
 		}
 	}
 
 	// See if we are already a winner
 	if (nMatch > 3)             // Quad
-		QuadPays(nMatchVal);
+		quadPays(nMatchVal);
 	else if (nMatch == 3)       // Trio
-		TripPays(nMatchVal);
+		tripPays(nMatchVal);
 	else if (nMatch == 2)       // Two Pair
-		SetPayOff(5, 2);
+		setPayOff(5, 2);
 	else if (nMatch == 1)       // Pair
-		PairPays(nMatchVal);
+		pairPays(nMatchVal);
 	else {
 		// Check for special trio
 		for (int i = 0; i < SLOT_NUM; i++) {
-			if (m_cSlots[i].m_nIdx < 3) // Geometric Trio
+			if (_cSlots[i]._nIdx < 3) // Geometric Trio
 				nGeo++;
-			if (m_cSlots[i].m_nIdx >= 3 && m_cSlots[i].m_nIdx < 6) // Celestial Trio
+			if (_cSlots[i]._nIdx >= 3 && _cSlots[i]._nIdx < 6) // Celestial Trio
 				nCelest++;
-			if (m_cSlots[i].m_nIdx >= 6) // Lucky Trio
+			if (_cSlots[i]._nIdx >= 6) // Lucky Trio
 				nLuck++;
 		}
 
@@ -549,126 +549,126 @@ void SBarSlotWnd::calcOutcome() {
 	// Do we have a winner ?
 	if (_nPayOff1 > 0) {
 		// Play winning audio
-		m_pWinSound = new CBofSound(this, BuildSlotDir(WINAUDIO), SOUND_MIX, 1);
-		if (m_pWinSound != nullptr) {
-			m_pWinSound->play();
+		_pWinSound = new CBofSound(this, BuildSlotDir(WINAUDIO), SOUND_MIX, 1);
+		if (_pWinSound != nullptr) {
+			_pWinSound->play();
 		} else {
 			ReportError(ERR_MEMORY);
 		}
 
 		// Calc new credit
-		m_nCredit += (m_nBet * _nPayOff1) / _nPayOff2;
-		m_bLose = false;
+		_nCredit += (_nBet * _nPayOff1) / _nPayOff2;
+		_bLose = false;
 
 	} else {
-		m_pLoseBmp->paint(this, 401, 125);
-		m_bLose = true;
-		m_pOddsText->setText("");
+		_pLoseBmp->paint(this, 401, 125);
+		_bLose = true;
+		_pOddsText->setText("");
 	}
 
 	// Put up better luck next time if bet not fixed, clear bet
-	if (m_bFixBet == false) {
-		m_nBet = 0;
+	if (_bFixBet == false) {
+		_nBet = 0;
 
 	} else {
-		m_bAutoDecrement = true;
+		_bAutoDecrement = true;
 
 		// If the player has fixed the bet,now is the time to decrement
-		if (m_nCredit >= m_nBet) {
-			m_nCredit -= m_nBet;
+		if (_nCredit >= _nBet) {
+			_nCredit -= _nBet;
 		} else {
-			m_nBet = m_nCredit;
-			m_nCredit = 0;
+			_nBet = _nCredit;
+			_nCredit = 0;
 		}
 	}
 }
 
-void SBarSlotWnd::QuadPays(int nSlotIdx) {
+void SBarSlotWnd::quadPays(int nSlotIdx) {
 	switch (nSlotIdx) {
 	case 0: // triangle
-		SetPayOff(25, 1);
+		setPayOff(25, 1);
 		break;
 	case 1: // square
-		SetPayOff(50, 1);
+		setPayOff(50, 1);
 		break;
 	case 2: // circle
-		SetPayOff(75, 1);
+		setPayOff(75, 1);
 		break;
 	case 3: // sun
-		SetPayOff(100, 1);
+		setPayOff(100, 1);
 		break;
 	case 4: // star
-		SetPayOff(150, 1);
+		setPayOff(150, 1);
 		break;
 	case 5: // moon
-		SetPayOff(200, 1);
+		setPayOff(200, 1);
 		break;
 	case 6: // eye
-		SetPayOff(300, 1);
+		setPayOff(300, 1);
 		break;
 	case 7: // atom
-		SetPayOff(400, 1);
+		setPayOff(400, 1);
 		break;
 	case 8: // shoe
-		SetPayOff(500, 1);
+		setPayOff(500, 1);
 		break;
 	}
 }
 
-void SBarSlotWnd::TripPays(int nSlotIdx) {
+void SBarSlotWnd::tripPays(int nSlotIdx) {
 	switch (nSlotIdx) {
 	case 0: // triangle
 	case 1: // square
 	case 2: // circle
-		SetPayOff(3, 1);
+		setPayOff(3, 1);
 		break;
 	case 3: // sun
 	case 4: // star
 	case 5: // moon
-		SetPayOff(4, 1);
+		setPayOff(4, 1);
 		break;
 	case 6: // eye
-		SetPayOff(5, 1);
+		setPayOff(5, 1);
 		break;
 	case 7: // atom
-		SetPayOff(7, 1);
+		setPayOff(7, 1);
 		break;
 	case 8: // shoe
-		SetPayOff(10, 1);
+		setPayOff(10, 1);
 		break;
 	}
 }
 
-void SBarSlotWnd::PairPays(int nSlotIdx) {
+void SBarSlotWnd::pairPays(int nSlotIdx) {
 	switch (nSlotIdx) {
 	case 0: // triangle
 	case 1: // square
 	case 2: // circle
-		SetPayOff(1, 4);
+		setPayOff(1, 4);
 		break;
 	case 3: // sun
 	case 4: // star
 	case 5: // moon
-		SetPayOff(1, 3);
+		setPayOff(1, 3);
 		break;
 	case 6: // eye
-		SetPayOff(1, 2);
+		setPayOff(1, 2);
 		break;
 	case 7: // atom
-		SetPayOff(1, 1);
+		setPayOff(1, 1);
 		break;
 	case 8: // shoe
-		SetPayOff(3, 2);
+		setPayOff(3, 2);
 		break;
 	}
 }
 
-void SBarSlotWnd::SetPayOff(int nPay1, int nPay2) {
+void SBarSlotWnd::setPayOff(int nPay1, int nPay2) {
 	_nPayOff1 = nPay1;
 	_nPayOff2 = nPay2;
 }
 
-void SBarSlotWnd::SlideSlots() {
+void SBarSlotWnd::slideSlots() {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
@@ -682,11 +682,11 @@ void SBarSlotWnd::SlideSlots() {
 		}
 
 		// Slot #1
-		CBofBitmap *pCurBmp = m_cSlots[0].m_pSlotBmp[m_cSlots[0].m_nIdx];
+		CBofBitmap *pCurBmp = _cSlots[0]._pSlotBmp[_cSlots[0]._nIdx];
 		CBofRect BmpRect = pCurBmp->getRect();
 		CBofRect SrcRect = BmpRect;
 		SrcRect.left = SrcRect.right;
-		CBofRect DestRect = m_cSlots[0].m_cSlotRect;
+		CBofRect DestRect = _cSlots[0]._cSlotRect;
 
 		for (int i = 1; SrcRect.left > BmpRect.left; i++) {
 			Sleep(30);
@@ -701,14 +701,14 @@ void SBarSlotWnd::SlideSlots() {
 
 			pCurBmp->paintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
 		}
-		m_pSlotSound->play();
+		_pSlotSound->play();
 
 		// Slot #2
-		pCurBmp = m_cSlots[1].m_pSlotBmp[m_cSlots[1].m_nIdx];
+		pCurBmp = _cSlots[1]._pSlotBmp[_cSlots[1]._nIdx];
 		BmpRect = pCurBmp->getRect();
 		SrcRect = BmpRect;
 		SrcRect.top = SrcRect.bottom;
-		DestRect = m_cSlots[1].m_cSlotRect;
+		DestRect = _cSlots[1]._cSlotRect;
 
 		for (int i = 1; SrcRect.top > BmpRect.top; i++) {
 			Sleep(30);
@@ -723,14 +723,14 @@ void SBarSlotWnd::SlideSlots() {
 			pCurBmp->paintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
 		}
 
-		m_pSlotSound->play();
+		_pSlotSound->play();
 
 		// Slot #3
-		pCurBmp = m_cSlots[2].m_pSlotBmp[m_cSlots[2].m_nIdx];
+		pCurBmp = _cSlots[2]._pSlotBmp[_cSlots[2]._nIdx];
 		BmpRect = pCurBmp->getRect();
 		SrcRect = BmpRect;
 		SrcRect.right = SrcRect.left;
-		DestRect = m_cSlots[2].m_cSlotRect;
+		DestRect = _cSlots[2]._cSlotRect;
 
 		for (int i = 1; SrcRect.right < BmpRect.right; i++) {
 			Sleep(30);
@@ -744,14 +744,14 @@ void SBarSlotWnd::SlideSlots() {
 			cRect.SetRect(DestRect.right - SrcRect.width() + 1, DestRect.top, DestRect.right, DestRect.top + SrcRect.height() - 1);
 			pCurBmp->paintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
 		}
-		m_pSlotSound->play();
+		_pSlotSound->play();
 
 		// Slot #4
-		pCurBmp = m_cSlots[3].m_pSlotBmp[m_cSlots[3].m_nIdx];
+		pCurBmp = _cSlots[3]._pSlotBmp[_cSlots[3]._nIdx];
 		BmpRect = pCurBmp->getRect();
 		SrcRect = BmpRect;
 		SrcRect.bottom = SrcRect.top;
-		DestRect = m_cSlots[3].m_cSlotRect;
+		DestRect = _cSlots[3]._cSlotRect;
 
 		for (int i = 1; SrcRect.bottom < BmpRect.bottom; i++) {
 			Sleep(30);
@@ -766,48 +766,48 @@ void SBarSlotWnd::SlideSlots() {
 			pCurBmp->paintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
 		}
 
-		m_pSlotSound->play();
+		_pSlotSound->play();
 	}
 }
 
-void SBarSlotWnd::UpdateText() {
+void SBarSlotWnd::updateText() {
 	Assert(IsValidObject(this));
 	if (ErrorOccurred())
 		return;
 
-	if (_nPayOff1 > 0 && m_pOddsText != nullptr) {
-		m_pOddsText->setText(BuildString("%d:%d", _nPayOff1, _nPayOff2));
+	if (_nPayOff1 > 0 && _pOddsText != nullptr) {
+		_pOddsText->setText(BuildString("%d:%d", _nPayOff1, _nPayOff2));
 	}
 
-	if (m_pCredText != nullptr) {
-		m_pCredText->setText(BuildString("%d", m_nCredit));
-		m_pCredText->display(this);
+	if (_pCredText != nullptr) {
+		_pCredText->setText(BuildString("%d", _nCredit));
+		_pCredText->display(this);
 	}
 
 	// Update bet
-	if (m_pBetText != nullptr) {
-		m_pBetText->setText(BuildString("%d", m_nBet));
-		m_pBetText->display(this);
+	if (_pBetText != nullptr) {
+		_pBetText->setText(BuildString("%d", _nBet));
+		_pBetText->display(this);
 	}
 
-	if (m_bLose) {
+	if (_bLose) {
 
-		if (m_pLoseBmp != nullptr) {
-			m_pLoseBmp->paint(this, 401, 125);
+		if (_pLoseBmp != nullptr) {
+			_pLoseBmp->paint(this, 401, 125);
 		}
 
-		if (m_pOddsText != nullptr) {
-			m_pOddsText->setText("");
+		if (_pOddsText != nullptr) {
+			_pOddsText->setText("");
 		}
 
-	} else if (m_nBet && !g_bFix) {
+	} else if (_nBet && !g_bFix) {
 		// Check and see if we need to show the GO button
-		if (m_pSlotButs[GO] != nullptr) {
-			m_pSlotButs[GO]->show();
-			m_pSlotButs[GO]->paint();
+		if (_pSlotButs[GO] != nullptr) {
+			_pSlotButs[GO]->show();
+			_pSlotButs[GO]->paint();
 		}
-	} else if (m_pOddsText != nullptr) {
-		m_pOddsText->display(this);
+	} else if (_pOddsText != nullptr) {
+		_pOddsText->display(this);
 	}
 }
 
@@ -816,7 +816,7 @@ void SBarSlotWnd::onTimer(uint32 /*nTimerId*/) {
 
 void SBarSlotWnd::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	if (FixRect.PtInRect(*pPoint)) {
-		FixBet();
+		fixBet();
 		invalidateRect(&FixRect);
 	}
 }
@@ -832,49 +832,49 @@ void SBarSlotWnd::onBofButton(CBofObject *pObject, int nState) {
 
 	switch (pButton->getControlID()) {
 	case ONE:
-		AddBet(1);
+		addBet(1);
 		break;
 	case FOUR:
-		AddBet(4);
+		addBet(4);
 		break;
 	case SEVEN:
-		AddBet(7);
+		addBet(7);
 		break;
 	case TEN:
-		AddBet(10);
+		addBet(10);
 		break;
 	case FORTY:
-		AddBet(40);
+		addBet(40);
 		break;
 	case SEVENTY:
-		AddBet(70);
+		addBet(70);
 		break;
 	case OHNDRD:
-		AddBet(100);
+		addBet(100);
 		break;
 	case RHNDRD:
-		AddBet(400);
+		addBet(400);
 		break;
 	case SHNDRD:
-		AddBet(700);
+		addBet(700);
 		break;
 	case OTHSND:
-		AddBet(1000);
+		addBet(1000);
 		break;
 	case RTHSND:
-		AddBet(4000);
+		addBet(4000);
 		break;
 	case STHSND:
-		AddBet(7000);
+		addBet(7000);
 		break;
 	case CLRBET:
-		ClrBet();
+		clrBet();
 		break;
 	case BETALL:
-		BetAll();
+		betAll();
 		break;
 	case GO:
-		Go();
+		go();
 		break;
 	case SLOTQUIT:
 		LogInfo("\tClicked Quit");
@@ -888,9 +888,9 @@ void SBarSlotWnd::onBofButton(CBofObject *pObject, int nState) {
 		if (pApp != nullptr) {
 			CBagMasterWin *pWin = pApp->getMasterWnd();
 			if (pWin != nullptr) {
-				m_bPaused = true;
+				_bPaused = true;
 				pWin->onHelp(BuildSlotDir("SLOT.TXT"));
-				m_bPaused = false;
+				_bPaused = false;
 			}
 		}
 		}

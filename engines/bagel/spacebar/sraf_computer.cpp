@@ -1156,7 +1156,7 @@ void SrafComputer::SetQuit() {
 	close();
 }
 
-ErrorCode SrafComputer::CreateListBox() {
+ErrorCode SrafComputer::createListBox() {
 	ErrorCode error = ERR_NONE;
 
 	if (m_pLBox == nullptr) {
@@ -1301,7 +1301,7 @@ void SrafComputer::ActivateDealSummary() {
 
 	// load up the main list now with our deal summary data.
 
-	ErrorCode error = CreateListBox();
+	ErrorCode error = createListBox();
 	Assert(error == ERR_NONE);
 
 	//  Populate first line of list with header
@@ -1314,7 +1314,7 @@ void SrafComputer::ActivateDealSummary() {
 
 	// Align text with others in column
 	sStr = "COSTS";
-	AlignAtColumn(sStr, "CURRENT TERMS", kRightColumnAlign);
+	alignAtColumn(sStr, "CURRENT TERMS", kRightColumnAlign);
 	m_pLBox->addToTail(sStr, false);
 
 	// Populate the listbox with the sellers
@@ -1337,7 +1337,7 @@ void SrafComputer::ActivateDealSummary() {
 			totalAsking += sellerItem.m_nSellerOffer;
 		}
 
-		AlignAtColumn(sStr, szRightCol, kRightColumnAlign);
+		alignAtColumn(sStr, szRightCol, kRightColumnAlign);
 		m_pLBox->addToTail(sStr, false);
 	}
 
@@ -1355,7 +1355,7 @@ void SrafComputer::ActivateDealSummary() {
 				Common::sprintf_s(szRightCol, "%2dgZ", -g_stOtherPartys[i].m_nPaymentAmount);
 			}
 
-			AlignAtColumn(sStr, szRightCol, kRightColumnAlign);
+			alignAtColumn(sStr, szRightCol, kRightColumnAlign);
 			m_pLBox->addToTail(sStr, false);
 			break;
 		case SWONZA5:
@@ -1372,14 +1372,14 @@ void SrafComputer::ActivateDealSummary() {
 		Common::strcpy_s(szRightCol, kUnknownTermStr);
 	}
 
-	AlignAtColumn(sStr, szRightCol, kRightColumnAlign);
+	alignAtColumn(sStr, szRightCol, kRightColumnAlign);
 	m_pLBox->addToTail(sStr, false);
 
 	sStr = " ";
 	m_pLBox->addToTail(sStr, false);
 
 	sStr = "BUYERS";
-	AlignAtColumn(sStr, "CURRENT OFFER", kRightColumnAlign);
+	alignAtColumn(sStr, "CURRENT OFFER", kRightColumnAlign);
 
 	m_pLBox->addToTail(sStr, false);
 
@@ -1396,7 +1396,7 @@ void SrafComputer::ActivateDealSummary() {
 		if (buyerItem.m_nBuyerOffer != 0) {
 			Common::sprintf_s(szRightCol, "%2dgZ", buyerItem.m_nBuyerOffer);
 			totalAsking += buyerItem.m_nBuyerOffer;
-			AlignAtColumn(sStr, szRightCol, kRightColumnAlign);
+			alignAtColumn(sStr, szRightCol, kRightColumnAlign);
 			m_pLBox->addToTail(sStr, false);
 		}
 	}
@@ -1410,7 +1410,7 @@ void SrafComputer::ActivateDealSummary() {
 		totalAsking += g_stOtherPartys[SWONZA5].m_nPaymentAmount;
 		Common::sprintf_s(szRightCol, "%2dgZ", g_stOtherPartys[SWONZA5].m_nPaymentAmount);
 
-		AlignAtColumn(sStr, szRightCol, kRightColumnAlign);
+		alignAtColumn(sStr, szRightCol, kRightColumnAlign);
 		m_pLBox->addToTail(sStr, false);
 	}
 
@@ -1418,7 +1418,7 @@ void SrafComputer::ActivateDealSummary() {
 	sStr = "TOTAL OFFER PRICE  ";
 
 	Common::sprintf_s(szRightCol, "%2dgZ", totalAsking);
-	AlignAtColumn(sStr, szRightCol, kRightColumnAlign);
+	alignAtColumn(sStr, szRightCol, kRightColumnAlign);
 
 	m_pLBox->addToTail(sStr, false);
 
@@ -1449,7 +1449,7 @@ void SrafComputer::ActivateBuyerBids() {
 	DeactivateMainScreen();
 
 	// Load up the main list now with our bid data.
-	error = CreateListBox();
+	error = createListBox();
 	Assert(error == ERR_NONE);
 
 	// Make sure we start with the correct computer background
@@ -1463,7 +1463,7 @@ void SrafComputer::ActivateBuyerBids() {
 
 	// Walk through the grid and build individual strings and add to the list.
 	for (int i = 0; i < NUM_BUYERS; i++) {
-		sStr = BuildBidString(i);
+		sStr = buildBidString(i);
 		m_pLBox->addToTail(sStr, false);
 		if (g_stBuyerBids[i].m_bAccept) {
 			m_pLBox->setTextLineColor(i + 1, m_cTextLineColor);
@@ -1487,7 +1487,7 @@ void SrafComputer::ActivateBuyerBids() {
 	m_pButtons[QUIT_BUTTON]->hide();
 }
 
-CBofString &SrafComputer::BuildBidString(int index) {
+CBofString &SrafComputer::buildBidString(int index) {
 	char szRightCol[256];
 	gBidStr = g_stBuyerBids[index].m_pszName;
 
@@ -1499,12 +1499,12 @@ CBofString &SrafComputer::BuildBidString(int index) {
 			Common::sprintf_s(szRightCol, "%2d", g_stBuyerBids[index].m_nMineralVal[j]);
 		}
 
-		AlignAtColumn(gBidStr, szRightCol, kFirstMineralColumn + j * kMineralColWidth);
+		alignAtColumn(gBidStr, szRightCol, kFirstMineralColumn + j * kMineralColWidth);
 	}
 
 	Common::strcpy_s(szRightCol, (g_stBuyerBids[index].m_bAccept ? "[*]" : "[ ]"));
 
-	AlignAtColumn(gBidStr, szRightCol, kFirstMineralColumn + NUM_MINERALS * kMineralColWidth + 2);
+	alignAtColumn(gBidStr, szRightCol, kFirstMineralColumn + NUM_MINERALS * kMineralColWidth + 2);
 
 	return gBidStr;
 }
@@ -1551,7 +1551,7 @@ void SrafComputer::ActivateSellerBios() {
 	}
 
 	// Load up the main list now with our deal summary data.
-	ErrorCode error = CreateListBox();
+	ErrorCode error = createListBox();
 	Assert(error == ERR_NONE);
 
 	// Populate first line of list with header
@@ -1596,7 +1596,7 @@ void SrafComputer::ActivateOtherBios() {
 	}
 
 	// Load up the main list now with our deal summary data.
-	ErrorCode error = CreateListBox();
+	ErrorCode error = createListBox();
 	Assert(error == ERR_NONE);
 
 	// Populate first line of list with header
@@ -1640,7 +1640,7 @@ void SrafComputer::ActivateStaffBios() {
 	}
 
 	// Load up the main list now with our deal summary data.
-	ErrorCode error = CreateListBox();
+	ErrorCode error = createListBox();
 	Assert(error == ERR_NONE);
 
 	// Populate first line of list with header
@@ -1675,7 +1675,7 @@ void SrafComputer::ActivateDispatchTeam() {
 	DeactivateMainScreen();
 
 	// Load up the main list now with our bid data.
-	ErrorCode error = CreateListBox();
+	ErrorCode error = createListBox();
 	Assert(error == ERR_NONE);
 
 	// Make sure we start with the correct computer background
@@ -1831,14 +1831,14 @@ void SrafComputer::RecalcDispatchList(int mExpansionFlag) {
 		if (baddToTail == true) {
 			if ((i - nSkipped) < NUM_STAFFERS) {
 				Common::strcpy_s(szRightCol, g_staffers[i - nSkipped].m_pszStafferName);
-				AlignAtColumn(sStr, szRightCol, kTeamMemberColumn);
+				alignAtColumn(sStr, szRightCol, kTeamMemberColumn);
 
 				Common::strcpy_s(szRightCol, (g_staffers[i - nSkipped].m_bAvailable ? "YES" : "NO "));
-				AlignAtColumn(sStr, szRightCol, kTeamAvailableColumn);
+				alignAtColumn(sStr, szRightCol, kTeamAvailableColumn);
 
 				Common::strcpy_s(szRightCol, (g_staffers[i - nSkipped].m_bOnCurrentTeam ? "[*]" : "[ ]"));
 
-				AlignAtColumn(sStr, szRightCol, kTeamIncludeColumn - 1);
+				alignAtColumn(sStr, szRightCol, kTeamIncludeColumn - 1);
 			}
 			m_pLBox->addToTail(sStr, false);
 		} else {
@@ -1898,7 +1898,7 @@ void SrafComputer::ActivateCurrentEMail() {
 
 	// load up the main list now with our bid data.
 
-	error = CreateListBox();
+	error = createListBox();
 	Assert(error == ERR_NONE);
 
 	// Make sure we start with the correct computer background
@@ -1918,10 +1918,10 @@ void SrafComputer::ActivateCurrentEMail() {
 		sStr = g_stEmailMessages[i].m_pszMessageSubj;
 
 		Common::strcpy_s(szRightCol, g_stEmailMessages[i].m_pszMessageFrom);
-		AlignAtColumn(sStr, szRightCol, kMessageFromColumn);
+		alignAtColumn(sStr, szRightCol, kMessageFromColumn);
 
 		Common::strcpy_s(szRightCol, g_stEmailMessages[i].m_pszMessageTo);
-		AlignAtColumn(sStr, szRightCol, kMessageToColumn);
+		alignAtColumn(sStr, szRightCol, kMessageToColumn);
 
 		m_pLBox->addToTail(sStr, false);
 	}
@@ -1953,7 +1953,7 @@ void SrafComputer::ActivateAudioSettings() {
 	DeactivateMainScreen();
 
 	// Load up the main list now with our bid data.
-	error = CreateListBox();
+	error = createListBox();
 	Assert(error == ERR_NONE);
 
 	// Make sure we start with the correct computer background
@@ -1974,10 +1974,10 @@ void SrafComputer::ActivateAudioSettings() {
 		sStr = g_stAudioSetting[i]->m_pszTitle;
 
 		Common::strcpy_s(szRightCol, g_stAudioSetting[i]->m_pszAuthor);
-		AlignAtColumn(sStr, szRightCol, kAudioAuthorCol);
+		alignAtColumn(sStr, szRightCol, kAudioAuthorCol);
 
 		Common::strcpy_s(szRightCol, g_stAudioSetting[i]->m_pszPlanet);
-		AlignAtColumn(sStr, szRightCol, kAudioPlanetCol);
+		alignAtColumn(sStr, szRightCol, kAudioPlanetCol);
 
 		m_pLBox->addToTail(sStr, false);
 	}
@@ -2017,7 +2017,7 @@ void SrafComputer::ActivateRoboButler() {
 	DeactivateMainScreen();
 
 	// Load up the main list now with our bid data.
-	ErrorCode error = CreateListBox();
+	ErrorCode error = createListBox();
 	Assert(error == ERR_NONE);
 
 	// Make sure we start with the correct computer background
@@ -2037,7 +2037,7 @@ void SrafComputer::ActivateRoboButler() {
 		sStr = g_stOfferings[i].m_pszType;
 
 		Common::strcpy_s(szRightCol, g_stOfferings[i].m_pszOffering);
-		AlignAtColumn(sStr, szRightCol, kRobobutlerCol);
+		alignAtColumn(sStr, szRightCol, kRobobutlerCol);
 
 		m_pLBox->addToTail(sStr, false);
 	}
@@ -2109,7 +2109,7 @@ void SrafComputer::ActivateCheckTeams() {
 	DeactivateMainScreen();
 
 	// Load up the main list now with our bid data.
-	ErrorCode error = CreateListBox();
+	ErrorCode error = createListBox();
 	Assert(error == ERR_NONE);
 
 	// Make sure we start with the correct computer background
@@ -2151,7 +2151,7 @@ void SrafComputer::ActivateCheckTeams() {
 		                  "%02d:%02d",
 		                  teamListItem.m_nDispatchTime / 100,
 		                  teamListItem.m_nDispatchTime % 100);
-		AlignAtColumn(sStr, szRightCol, kCheckTeamTimeCol);
+		alignAtColumn(sStr, szRightCol, kCheckTeamTimeCol);
 
 		// Now build the list of attendees.
 		bool bFirstAttendee = true;
@@ -2224,7 +2224,7 @@ void SrafComputer::ActivateCheckTeams() {
 		}
 		nNumAttendees = 0;
 
-		AlignAtColumn(sStr, szAttendeesBuff, kCheckTeamStaffCol);
+		alignAtColumn(sStr, szAttendeesBuff, kCheckTeamStaffCol);
 		m_pLBox->addToTail(sStr, false);
 	}
 
@@ -2378,7 +2378,7 @@ void SrafComputer::ActivateCodeWords() {
 	}
 
 	// Load up the main list now with our deal summary data.
-	ErrorCode error = CreateListBox();
+	ErrorCode error = createListBox();
 	Assert(error == ERR_NONE);
 
 	// Populate first line of list with header
@@ -2399,13 +2399,13 @@ void SrafComputer::ActivateCodeWords() {
 		sStr = g_stCodeWords[i].m_pszCodeWord1;
 
 		Common::strcpy_s(szRightCol, g_stCodeWords[i].m_pszCodeWord2);
-		AlignAtColumn(sStr, szRightCol, kGroup1Col2);
+		alignAtColumn(sStr, szRightCol, kGroup1Col2);
 
 		Common::strcpy_s(szRightCol, g_stCodeWords[i].m_pszCodeWord3);
-		AlignAtColumn(sStr, szRightCol, kGroup2Col1);
+		alignAtColumn(sStr, szRightCol, kGroup2Col1);
 
 		Common::strcpy_s(szRightCol, g_stCodeWords[i].m_pszCodeWord4);
-		AlignAtColumn(sStr, szRightCol, kGroup2Col2);
+		alignAtColumn(sStr, szRightCol, kGroup2Col2);
 
 		m_pLBox->addToTail(sStr, false);
 	}
@@ -2684,7 +2684,7 @@ void SrafComputer::OnListBuyerBids() {
 	sStr = " ACCEPT ";
 	CBofRect        cAcceptBidRect = calculateTextRect(this, &sStr, kBuyerBidsPointSize, FONT_MONO);
 
-	AlignAtColumn(sStr, "", kFirstMineralColumn + NUM_MINERALS * kMineralColWidth);
+	alignAtColumn(sStr, "", kFirstMineralColumn + NUM_MINERALS * kMineralColWidth);
 	CBofRect cDummyRect = calculateTextRect(this, &sStr, kBuyerBidsPointSize, FONT_MONO);
 
 	CBofPoint cStartPoint(cDummyRect.right, 0);
@@ -2699,7 +2699,7 @@ void SrafComputer::OnListBuyerBids() {
 		g_stBuyerBids[index].m_bAccept = !g_stBuyerBids[index].m_bAccept;
 
 		// Redraw with the new one checked/unchecked
-		CBofString cStr = BuildBidString(index);
+		CBofString cStr = buildBidString(index);
 		m_pLBox->setText(m_nSelection, cStr);
 		if (g_stBuyerBids[index].m_bAccept) {
 			m_pLBox->setTextLineColor(m_nSelection, m_cTextLineColor);
@@ -3585,7 +3585,7 @@ void SrafComputer::OnListCodeWords() {
 	CBofString sStr;
 	// Calculate the text width based on the attributes of the text
 	// rather than guessing to where they are.
-	AlignAtColumn(sStr, "", kGroup1Col2);
+	alignAtColumn(sStr, "", kGroup1Col2);
 	CBofRect        cCol1Rect = calculateTextRect(this, &sStr, kOtherPointSize, FONT_MONO);
 	CBofRect        cCol2Rect = cCol1Rect;
 	CBofPoint       cStartPoint(cCol1Rect.right, 0);
@@ -3594,7 +3594,7 @@ void SrafComputer::OnListCodeWords() {
 
 	// Second bunch of code words start at column 45, create a dummy string and then
 	// start offsetting from there.
-	AlignAtColumn(sStr, "", kGroup2Col1);
+	alignAtColumn(sStr, "", kGroup2Col1);
 	CBofRect        cDummyRect = calculateTextRect(this, &sStr, kOtherPointSize, FONT_MONO);
 	cStartPoint.x = cDummyRect.right;
 
@@ -3691,7 +3691,7 @@ void SrafComputer::ActivateMainScreen() {
 	m_nListPointSize = kOtherPointSize;
 	m_nListItemHeight = kLineItemHeight;
 
-	ErrorCode error = CreateListBox();
+	ErrorCode error = createListBox();
 	Assert(error == ERR_NONE);
 
 	int numItems = m_pMainList->GetCount();
@@ -3735,7 +3735,7 @@ void SrafComputer::ActivateMainScreen() {
 }
 
 
-void SrafComputer::AlignAtColumn(CBofString &sStr, const char *szRightText, int nAlignAt) {
+void SrafComputer::alignAtColumn(CBofString &sStr, const char *szRightText, int nAlignAt) {
 	int nAppendLen = strlen(szRightText);
 
 	while (sStr.GetLength() < nAlignAt) {
@@ -3765,7 +3765,7 @@ void SrafComputer::displayTextScreen(CBofString &sStr) {
 	if (m_pTextOnlyScreen == nullptr)
 		return;
 
-	m_pTextOnlyScreen->CreateTextScreen(this);
+	m_pTextOnlyScreen->createTextScreen(this);
 
 	m_pTextOnlyScreen->doModal();
 	delete m_pTextOnlyScreen;
@@ -4385,7 +4385,7 @@ void SrafComputer::DisplayMessage(const char *szMsg) {
 	m_pTextOnlyScreen = new SrafTextScreen(szMsg, true);
 
 	if (m_pTextOnlyScreen != nullptr) {
-		m_pTextOnlyScreen->CreateTextScreen(this);
+		m_pTextOnlyScreen->createTextScreen(this);
 
 		m_pTextOnlyScreen->doModal();
 		delete m_pTextOnlyScreen;
@@ -4574,7 +4574,7 @@ SrafTextScreen::SrafTextScreen(const CBofString &str, bool isText) :
 	m_pSaveActiveWin = getActiveWindow();
 }
 
-int SrafTextScreen::CreateTextScreen(CBofWindow *pParent) {
+int SrafTextScreen::createTextScreen(CBofWindow *pParent) {
 	CBofRect cRect;
 	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
