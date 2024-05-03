@@ -11,6 +11,8 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
   - Fixed GLSL version parsing on some OpenGL ES2 platforms.
   - Added optional dependency for libopenmpt for sound.
+  - The "Aspect ratio correction" option within the Global Options section
+    is now active by default.
 
  AGS:
   - Syncronized with upstream AGS 3.6.0.58
