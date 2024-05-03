@@ -34,9 +34,9 @@ namespace Bagel {
 namespace SpaceBar {
 
 struct NCARGO {
-	const char *m_pszCargo;
+	const char *_pszCargo;
 	int Weight;
-	bool m_bUsed;
+	bool _bUsed;
 };
 
 struct NPLANET {
@@ -60,7 +60,7 @@ public:
 
 protected:
 	void pause();
-	void CalcFuel(double hf);
+	void calcFuel(double hf);
 
 	void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
 	void onKeyHit(uint32 lKey, uint32 lRepCount) override;
@@ -69,97 +69,97 @@ protected:
 	void onMainLoop() override;
 
 	// Split up the onmousedown method
-	void RefreshData();     // Added func to just paint text
+	void refreshData();     // Added func to just paint text
 
-	void OnPinna();
-	void OnHpoctyl();
-	void OnArmpit();
-	void OnYzore();
-	void OnBulbus();
-	void OnDingle();
-	void OnKarkas();
-	void OnFruufnia();
-	void OnWilbur();
-	void OnMcKelvey();
-	void OnMedge();
-	void OnWall();
-	void OnWoo();
-	void OnRoman();
-	void OnWeed();
-	void OnBok();
-	void OnPizer();
-	void OnBackwater();
-	void OnUranus();
-	void OnToejam();
-	void OnHellhole();
-	void OnPustule();
-	void OnSwamprock();
-	void OnSlug();
-	void OnMaggotsnest();
-	void OnPeggleboz();
-	void OnArcheroids();
-	void OnPackRat();
-	void OnBeacon();
-	void OnMankala();
-	void OnLife();
-	void OnFuge();
-	void OnGarfunkel();
-	void OnBattlefish();
-	void OnNoVacancy();
+	void onPinna();
+	void onHpoctyl();
+	void onArmpit();
+	void onYzore();
+	void onBulbus();
+	void onDingle();
+	void onKarkas();
+	void onFruufnia();
+	void onWilbur();
+	void onMcKelvey();
+	void onMedge();
+	void onWall();
+	void onWoo();
+	void onRoman();
+	void onWeed();
+	void onBok();
+	void onPizer();
+	void onBackwater();
+	void onUranus();
+	void onToejam();
+	void onHellhole();
+	void onPustule();
+	void onSwamprock();
+	void onSlug();
+	void onMaggotsnest();
+	void onPeggleboz();
+	void onArcheroids();
+	void onPackRat();
+	void onBeacon();
+	void onMankala();
+	void onLife();
+	void onFuge();
+	void onGarfunkel();
+	void onBattlefish();
+	void onNoVacancy();
 
 	// Data
 	//
-	int m_level;
-	int m_fuel;
-	int m_cargo;
-	int m_ship;
-	CBofRect *m_pPinna;
-	CBofRect *m_pHpoctyl;
-	CBofRect *m_pArmpit;
-	CBofRect *m_pYzore;
-	CBofRect *m_pBulbus;
-	CBofRect *m_pDingle;
-	CBofRect *m_pKarkas;
-	CBofRect *m_pFruufnia;
-	CBofBmpButton *m_pButtons[2];
-	CBofPalette *m_pPal;
-	CBofPalette *m_pOldPal;
-	CBofSprite *m_pMap;
-	CBofSprite *m_pCurLoc;
-	CBofBitmap *m_pNewMap;
+	int _level;
+	int _fuel;
+	int _cargo;
+	int _ship;
+	CBofRect *_pPinna;
+	CBofRect *_pHpoctyl;
+	CBofRect *_pArmpit;
+	CBofRect *_pYzore;
+	CBofRect *_pBulbus;
+	CBofRect *_pDingle;
+	CBofRect *_pKarkas;
+	CBofRect *_pFruufnia;
+	CBofBmpButton *_pButtons[2];
+	CBofPalette *_pPal;
+	CBofPalette *_pOldPal;
+	CBofSprite *_pMap;
+	CBofSprite *_pCurLoc;
+	CBofBitmap *_pNewMap;
 	CBofBitmap *bmptwo;
-	CBofRect *m_pCurPos;
-	CBofString *m_pPortName;
-	CBofRect *m_pWilbur;
-	CBofRect *m_pMcKelvey;
-	CBofRect *m_pMedge;
-	CBofRect *m_pWall;
-	CBofRect *m_pWoo;
-	CBofRect *m_pRoman;
-	CBofRect *m_pWeed;
-	CBofRect *m_pBok;
-	CBofRect *m_pPizer;
-	CBofRect *m_pBackwater;
-	CBofRect *m_pUranus;
-	CBofRect *m_pToejam;
-	CBofRect *m_pHellhole;
-	CBofRect *m_pPustule;
-	CBofRect *m_pSwamprock;
-	CBofRect *m_pSlug;
-	CBofRect *m_pMaggotsnest;
-	CBofRect *m_pPeggleboz;
-	CBofRect *m_pArcheroids;
-	CBofRect *m_pPackRat;
-	CBofRect *m_pBeacon;
-	CBofRect *m_pMankala;
-	CBofRect *m_pLife;
-	CBofRect *m_pFuge;
-	CBofRect *m_pGarfunkel;
-	CBofRect *m_pBattlefish;
-	CBofRect *m_pNoVacancy;
+	CBofRect *_pCurPos;
+	CBofString *_pPortName;
+	CBofRect *_pWilbur;
+	CBofRect *_pMcKelvey;
+	CBofRect *_pMedge;
+	CBofRect *_pWall;
+	CBofRect *_pWoo;
+	CBofRect *_pRoman;
+	CBofRect *_pWeed;
+	CBofRect *_pBok;
+	CBofRect *_pPizer;
+	CBofRect *_pBackwater;
+	CBofRect *_pUranus;
+	CBofRect *_pToejam;
+	CBofRect *_pHellhole;
+	CBofRect *_pPustule;
+	CBofRect *_pSwamprock;
+	CBofRect *_pSlug;
+	CBofRect *_pMaggotsnest;
+	CBofRect *_pPeggleboz;
+	CBofRect *_pArcheroids;
+	CBofRect *_pPackRat;
+	CBofRect *_pBeacon;
+	CBofRect *_pMankala;
+	CBofRect *_pLife;
+	CBofRect *_pFuge;
+	CBofRect *_pGarfunkel;
+	CBofRect *_pBattlefish;
+	CBofRect *_pNoVacancy;
 
-	NPLANET *m_pLevel;
-	bool m_bNavAttached;
+	NPLANET *_pLevel;
+	bool _bNavAttached;
 };
 
 } // namespace SpaceBar

@@ -62,9 +62,9 @@ namespace SpaceBar {
 
 class SBarSlot {
 public:
-	int m_nIdx;
-	CBofRect    m_cSlotRect;
-	CBofBitmap *m_pSlotBmp[SLOT_BMP_NUM];
+	int _nIdx;
+	CBofRect    _cSlotRect;
+	CBofBitmap *_pSlotBmp[SLOT_BMP_NUM];
 };
 
 class SBarSlotWnd : public CBagStorageDevWnd {
@@ -80,56 +80,56 @@ private:
 	CBofRect FixRect = CBofRect(150, 306, 150 + 109 - 1, 306 + 64 - 1);
 
 protected:
-	SBarSlot        m_cSlots[SLOT_NUM];
-	CBofBmpButton *m_pSlotButs[NUM_SLOTBUTT];
-	int             m_nBet;
-	int             m_nCredit;
-	int             _nPayOff1;
-	int             _nPayOff2;
-	CBofText *m_pCredText;
-	CBofText *m_pBetText;
-	CBofText *m_pOddsText;
-	bool            m_bFixBet;
-	bool            m_bAutoDecrement;
-	CBofBitmap *m_bFixBmp;
-	CBofBitmap *m_pLoseBmp;
-	CBofSound *m_pBkgSnd;			// Casino background sounds
-	CBofSound *m_pSlotSound;
-	CBofSound *m_pWinSound;			// Allow all ambient noise to continue playing
-	bool            m_bPaused;
-	bool            m_bLose;
+	SBarSlot _cSlots[SLOT_NUM];
+	CBofBmpButton *_pSlotButs[NUM_SLOTBUTT];
+	int _nBet;
+	int _nCredit;
+	int _nPayOff1;
+	int _nPayOff2;
+	CBofText *_pCredText;
+	CBofText *_pBetText;
+	CBofText *_pOddsText;
+	bool _bFixBet;
+	bool _bAutoDecrement;
+	CBofBitmap *_bFixBmp;
+	CBofBitmap *_pLoseBmp;
+	CBofSound *_pBkgSnd;			// Casino background sounds
+	CBofSound *_pSlotSound;
+	CBofSound *_pWinSound;			// Allow all ambient noise to continue playing
+	bool _bPaused;
+	bool _bLose;
 
 public:
 	SBarSlotWnd();
 
-	virtual void        onBofButton(CBofObject *pButton, int nState);
-	virtual void        onMainLoop();
+	virtual void onBofButton(CBofObject *pButton, int nState);
+	virtual void onMainLoop();
 
-	virtual ErrorCode  attach();	// This function attachs the background and nessasary bitmaps
-	virtual ErrorCode  detach();	// This function detachs the background and nessasary bitmaps
+	virtual ErrorCode attach();	// This function attachs the background and nessasary bitmaps
+	virtual ErrorCode detach();	// This function detachs the background and nessasary bitmaps
 
-	void                AddBet(int nBetVal);
-	void                BetAll();
-	void                ClrBet();
-	void                FixBet();
-	void                Go();
+	void addBet(int nBetVal);
+	void betAll();
+	void clrBet();
+	void fixBet();
+	void go();
 
-	void                UpdateText();
-	void                calcOutcome();
+	void updateText();
+	void calcOutcome();
 
-	void                QuadPays(int nSlotIdx);
-	void                TripPays(int nSlotIdx);
-	void                PairPays(int nSlotIdx);
+	void quadPays(int nSlotIdx);
+	void tripPays(int nSlotIdx);
+	void pairPays(int nSlotIdx);
 
-	void                SetPayOff(int nPay1, int nPay2);
+	void setPayOff(int nPay1, int nPay2);
 
-	void                SlideSlots();
+	void slideSlots();
 
-	void                onPaint(CBofRect *pRect);
-	void                onTimer(uint32 nTimerId);
-	void                onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	void                onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {
-	}
+	void onPaint(CBofRect *pRect);
+	void onTimer(uint32 nTimerId);
+	void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) { }
+
 };
 
 } // namespace SpaceBar

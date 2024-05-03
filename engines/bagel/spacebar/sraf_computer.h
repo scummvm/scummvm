@@ -109,7 +109,7 @@ private:
 public:
 	SrafTextScreen(const CBofString &str, bool isText = false);
 	virtual ~SrafTextScreen();
-	int CreateTextScreen(CBofWindow *pParent = nullptr);
+	int createTextScreen(CBofWindow *pParent = nullptr);
 	void displayTextScreen();
 
 	void onBofButton(CBofObject *, int) override;
@@ -155,12 +155,12 @@ public:
 	void setOn();
 	void setOff();
 	void SetQuit();
-	void AlignAtColumn(CBofString &sStr, const char *szRightText, int nAlignAt);
-	CBofString &BuildBidString(int index);
+	void alignAtColumn(CBofString &sStr, const char *szRightText, int nAlignAt);
+	CBofString &buildBidString(int index);
 
 	void deleteListBox();
 
-	ErrorCode CreateListBox();
+	ErrorCode createListBox();
 
 	void FillMain();
 

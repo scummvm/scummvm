@@ -64,7 +64,7 @@ private:
 
 	CBagPanBitmap *m_pSlideBitmap; // Contains the full bitmap of the world
 	CBofBitmap *m_pVeiwPortBitmap; // Contains the current viewport bitmap
-	CBofPalette *m_pPalette;
+	CBofPalette *_pPalette;
 
 	CBofPoint m_bDraggingStart; // Starting location of the dragged object
 	bool m_bDraggingObject;     // Whether or not the first FG object is being dragged

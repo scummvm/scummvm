@@ -52,7 +52,7 @@ protected:
 	CBofCursor m_cDefaultCursor;
 
 	CBofWindow *m_pMainWnd = nullptr;
-	CBofPalette *m_pPalette = nullptr;
+	CBofPalette *_pPalette = nullptr;
 	CBofPalette *m_pDefPalette = nullptr;
 	int m_nScreenDX = 0;
 	int m_nScreenDY = 0;
@@ -100,7 +100,7 @@ public:
 	void setPalette(CBofPalette *pPalette);
 
 	CBofPalette *getPalette() const {
-		return m_pPalette;
+		return _pPalette;
 	}
 
 	int screenWidth() const {
