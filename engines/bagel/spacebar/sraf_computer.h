@@ -35,7 +35,7 @@ namespace SpaceBar {
 
 class SrafCompItem {
 public:
-	const char *m_pItem;
+	const char *_pItem;
 };
 
 enum SELLERS {
@@ -44,9 +44,9 @@ enum SELLERS {
 
 class DealSummarySellerItem {
 public:
-	SELLERS m_eSellerID;
-	int m_nSellerOffer;
-	const char *m_pSellerName;
+	SELLERS _eSellerID;
+	int _nSellerOffer;
+	const char *_pSellerName;
 };
 
 enum BUYERS {
@@ -63,9 +63,9 @@ enum STAFFERS {
 
 class DealSummaryBuyerItem {
 public:
-	BUYERS m_eBuyerID;
-	int m_nBuyerOffer;
-	const char *m_pBuyerName;
+	BUYERS _eBuyerID;
+	int _nBuyerOffer;
+	const char *_pBuyerName;
 };
 
 #define mOtherParty     0x0001
@@ -86,19 +86,19 @@ public:
 
 class DispatchedTeamItem {
 public:
-	int m_nFlags = 0;
-	int m_nMeetWithID = 0;
-	int m_nDispatchTime = 0;
-	int m_nTeamCaptain = 0;
-	int m_nMeetingTime = 0;
+	int _nFlags = 0;
+	int _nMeetWithID = 0;
+	int _nDispatchTime = 0;
+	int _nTeamCaptain = 0;
+	int _nMeetingTime = 0;
 };
 
 class SrafTextScreen : public CBofDialog {
 private:
-	static CBofWindow *m_pSaveActiveWin;
+	static CBofWindow *_pSaveActiveWin;
 
-	CBofTextBox *m_pTextBox = nullptr;          // Bof text box for all kinds of cool info
-	CBofBmpButton *m_pOKButton = nullptr;
+	CBofTextBox *_pTextBox = nullptr;          // Bof text box for all kinds of cool info
+	CBofBmpButton *_pOKButton = nullptr;
 	CBofString _text;
 
 	CBofRect gCompDisplay;
@@ -154,7 +154,7 @@ public:
 	void onBofListBox(CBofObject *pListBox, int nItemIndex);
 	void setOn();
 	void setOff();
-	void SetQuit();
+	void setQuit();
 	void alignAtColumn(CBofString &sStr, const char *szRightText, int nAlignAt);
 	CBofString &buildBidString(int index);
 
@@ -162,172 +162,172 @@ public:
 
 	ErrorCode createListBox();
 
-	void FillMain();
+	void fillMain();
 
-	void HideAllButtons();
+	void hideAllButtons();
 
-	void ActivateDealSummary();
-	void ActivateBuyerBids();
-	void ActivateDealBackground();
-	void ActivateSellerBios();
-	void ActivateOtherBios();
-	void ActivateStaffBios();
-	void ActivateDispatchTeam();
-	void ActivateCurrentEMail();
-	void ActivateAudioSettings();
-	void ActivateRoboButler();
-	void ActivateCheckTeams();
-	void ActivateCodeWords();
+	void activateDealSummary();
+	void activateBuyerBids();
+	void activateDealBackground();
+	void activateSellerBios();
+	void activateOtherBios();
+	void activateStaffBios();
+	void activateDispatchTeam();
+	void activateCurrentEMail();
+	void activateAudioSettings();
+	void activateRoboButler();
+	void activateCheckTeams();
+	void activateCodeWords();
 
-	void DeactivateMainScreen();
-	void ActivateMainScreen();
+	void deactivateMainScreen();
+	void activateMainScreen();
 
-	void InitDealSummary();
-	void InitBuyerBids();
-	void InitDealBackground();
-	void InitSellerBios();
-	void InitOtherBios();
-	void InitStaffBios();
-	void InitDispatchTeam();
-	void InitCurrentEMail();
-	void InitAudioSettings();
-	void InitRoboButler();
+	void initDealSummary();
+	void initBuyerBids();
+	void initDealBackground();
+	void initSellerBios();
+	void initOtherBios();
+	void initStaffBios();
+	void initDispatchTeam();
+	void initCurrentEMail();
+	void initAudioSettings();
+	void initRoboButler();
 
-	void OnListMainScreen();
-	void OnListDealSummary();
-	void OnListBuyerBids();
-	void OnListDealBackground();
-	void OnListSellerBios();
-	void OnListOtherBios();
-	void OnListStaffBios();
-	void OnListDispatchTeam();
-	void OnListCurrentEMail();
-	void OnListAudioSettings();
-	void OnListRoboButler();
-	void OnListCheckTeams();
-	void OnListCodeWords();
+	void onListMainScreen();
+	void onListDealSummary();
+	void onListBuyerBids();
+	void onListDealBackground();
+	void onListSellerBios();
+	void onListOtherBios();
+	void onListStaffBios();
+	void onListDispatchTeam();
+	void onListCurrentEMail();
+	void onListAudioSettings();
+	void onListRoboButler();
+	void onListCheckTeams();
+	void onListCodeWords();
 
-	void OnButtonMainScreen(CBofButton *pButton, int nState);
-	void OnButtonDealSummary(CBofButton *pButton, int nState);
-	void OnButtonBuyerBids(CBofButton *pButton, int nState);
-	void OnButtonDealBackground(CBofButton *pButton, int nState);
-	void OnButtonSellerBios(CBofButton *pButton, int nState);
-	void OnButtonOtherBios(CBofButton *pButton, int nState);
-	void OnButtonStaffBios(CBofButton *pButton, int nState);
-	void OnButtonDispatchTeam(CBofButton *pButton, int nState);
-	void OnButtonCurrentEMail(CBofButton *pButton, int nState);
-	void OnButtonAudioSettings(CBofButton *pButton, int nState);
-	void OnButtonRoboButler(CBofButton *pButton, int nState);
-	void OnButtonCheckTeams(CBofButton *pButton, int nState);
-	void OnButtonCodeWords(CBofButton *pButton, int nState);
+	void onButtonMainScreen(CBofButton *pButton, int nState);
+	void onButtonDealSummary(CBofButton *pButton, int nState);
+	void onButtonBuyerBids(CBofButton *pButton, int nState);
+	void onButtonDealBackground(CBofButton *pButton, int nState);
+	void onButtonSellerBios(CBofButton *pButton, int nState);
+	void onButtonOtherBios(CBofButton *pButton, int nState);
+	void onButtonStaffBios(CBofButton *pButton, int nState);
+	void onButtonDispatchTeam(CBofButton *pButton, int nState);
+	void onButtonCurrentEMail(CBofButton *pButton, int nState);
+	void onButtonAudioSettings(CBofButton *pButton, int nState);
+	void onButtonRoboButler(CBofButton *pButton, int nState);
+	void onButtonCheckTeams(CBofButton *pButton, int nState);
+	void onButtonCodeWords(CBofButton *pButton, int nState);
 
 	// biography support routines
 	void displayTextScreen(CBofString &);
 
-	void RecalcSellerSummaryList();
-	void RecalcBuyerSummaryList();
-	void RecalcDispatchList(int);
+	void recalcSellerSummaryList();
+	void recalcBuyerSummaryList();
+	void recalcDispatchList(int);
 
-	bool OnButtonSubmitOffer();
+	bool onButtonSubmitOffer();
 
 	//  support routines to return info about a list
-	int GetMeetMember(int);
+	int getMeetMember(int);
 
 	/**
 	 * Search the specified list and return the index of a true member, if there
 	 * is one, return the element in the list that has "meet with" set to true.
 	 */
-	int GetAdjustedIndex(int, int, bool);
+	int getAdjustedIndex(int, int, bool);
 
 	// Dispatch support routines
-	bool VerifyDispatchTeam();
-	void NotifyBoss(CBofString &, int);
-	int CalculateMeetingTime(int nFlags);
-	bool ReportMeetingStatus(int);
+	bool verifyDispatchTeam();
+	void notifyBoss(CBofString &, int);
+	int calculateMeetingTime(int nFlags);
+	bool reportMeetingStatus(int);
 
 	/**
 	 * Search the specified list and return the index of a true member, if there
 	 * is one, return the element in the list that has "meet with" set to true.
 	 */
-	void SetMeetingResult(int, int, bool);
+	void setMeetingResult(int, int, bool);
 
-	int GetTeamCaptain(int nFlags);
-	int GetTeamGender(int nFlags);
+	int getTeamCaptain(int nFlags);
+	int getTeamGender(int nFlags);
 
 	// Robobutler service methods
 
-	void DoOrderBeverage();
-	void DoOrderSnack();
-	void DoShowChowButtons();
+	void doOrderBeverage();
+	void doOrderSnack();
+	void doShowChowButtons();
 
 	// To activate the main screen from outside the sraffan computer
 
-	static void SetMainScreen();
-	static CBofBitmap *GetComputerBackdrop();
+	static void setMainScreen();
+	static CBofBitmap *getComputerBackdrop();
 
 	// User interaction
 
-	void DisplayMessage(const char *szMsg);
+	void displayMessage(const char *szMsg);
 
 	// Finally, all done!
-	void IncrementTurnCount();
+	void incrementTurnCount();
 
 
 	/**
 	 * This dynamically updates the turncount on the screen,
 	 * must know which line to update though.
 	 */
-	void DisplayTurnCount(int);
-	void OnButtonFinished(bool);
+	void displayTurnCount(int);
+	void onButtonFinished(bool);
 
 	// Save/Restore
 
-	void SaveSraffanVars();
-	void RestoreSraffanVars();
+	void saveSraffanVars();
+	void restoreSraffanVars();
 
 protected:
 	enum SRAFCOMPMODE {
 		SCON, SCOFF, SCDONE
-	} m_eMode;
+	} _eMode;
 	enum SRAFCURSCREEN {
 		SCMAIN, SCDEAL, SCBIDS, SCBACKGROUNDDATA,
 		SCSELLER_BIOS, SCOTHER_BIOS, SCSTAFF_BIOS,
 		SCDISPATCH, SCEMAIL, SCAUDIO, SCORDER,
 		SCCHECK_TEAMS, SCCODE_WORDS
-	} m_eCurScreen;
-	CBofBmpButton *m_pButtons[NUM_SRAFCOMPBUTT];
-	RGBCOLOR m_cTextColor;
-	RGBCOLOR m_cTextHiliteColor;
-	RGBCOLOR m_cTextLineColor;
+	} _eCurScreen;
+	CBofBmpButton *_pButtons[NUM_SRAFCOMPBUTT];
+	RGBCOLOR _cTextColor;
+	RGBCOLOR _cTextHiliteColor;
+	RGBCOLOR _cTextLineColor;
 
-	CBofListBox *m_pLBox;               // Main screen list
-	CBofList<SrafCompItem> *m_pMainList;
-	CBofList<DealSummarySellerItem> *m_pSellerSummaryList;
-	CBofList<DealSummaryBuyerItem> *m_pBuyerSummaryList;
-	CBofList<DispatchedTeamItem> *m_pTeamList;
+	CBofListBox *_pLBox;               // Main screen list
+	CBofList<SrafCompItem> *_pMainList;
+	CBofList<DealSummarySellerItem> *_pSellerSummaryList;
+	CBofList<DealSummaryBuyerItem> *_pBuyerSummaryList;
+	CBofList<DispatchedTeamItem> *_pTeamList;
 
-	CBofBitmap *m_pStafferBmp[NUM_STAFFERS + 1];    //  (one extra staffer, durteen)
+	CBofBitmap *_pStafferBmp[NUM_STAFFERS + 1];    //  (one extra staffer, durteen)
 
-	int m_nSelection;
-	int m_nListPointSize;
-	int m_nListItemHeight;
-	SrafTextScreen *m_pTextOnlyScreen;
+	int _nSelection;
+	int _nListPointSize;
+	int _nListItemHeight;
+	SrafTextScreen *_pTextOnlyScreen;
 
 	// Code words
 
-	CBofString *m_pszGroup1Word;
-	CBofString *m_pszGroup2Word;
-	bool m_bSrafAttached;
+	CBofString *_pszGroup1Word;
+	CBofString *_pszGroup2Word;
+	bool _bSrafAttached;
 
-	static bool m_bSwonzaEnlightened;
-	static int m_nStartingTime;
+	static bool _bSwonzaEnlightened;
+	static int _nStartingTime;
 
-	static SrafComputer *m_pHead;               // Unique pointer to head of list
+	static SrafComputer *_pHead;               // Unique pointer to head of list
 
-	static bool m_bRandomAudio;
-	static int m_nRandomTime;
+	static bool _bRandomAudio;
+	static int _nRandomTime;
 
-	static bool m_bFailureNotified;
+	static bool _bFailureNotified;
 
 private:
 	CBofRect gCompDisplay;
