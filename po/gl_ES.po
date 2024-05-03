@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-05-03 18:04+0000\n"
+"POT-Creation-Date: 2024-05-03 22:09+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -5964,14 +5964,18 @@ msgstr ""
 #: engines/gob/detection/tables_adi5.h:40
 #: engines/gob/detection/tables_adi5.h:55
 #: engines/gob/detection/tables_adi5.h:72
-#: engines/gob/detection/tables_adi5.h:86
+#: engines/gob/detection/tables_adi5.h:87
+#: engines/gob/detection/tables_adi5.h:101
 #: engines/gob/detection/tables_adibou3.h:39
 #: engines/gob/detection/tables_adibou3.h:53
-#: engines/gob/detection/tables_adibou3.h:70
-#: engines/gob/detection/tables_adibou3.h:85
-#: engines/gob/detection/tables_adibou3.h:100
-#: engines/gob/detection/tables_adibou3.h:115
-#: engines/gob/detection/tables_adibou3.h:132
+#: engines/gob/detection/tables_adibou3.h:67
+#: engines/gob/detection/tables_adibou3.h:84
+#: engines/gob/detection/tables_adibou3.h:99
+#: engines/gob/detection/tables_adibou3.h:114
+#: engines/gob/detection/tables_adibou3.h:128
+#: engines/gob/detection/tables_adibou3.h:142
+#: engines/gob/detection/tables_adibou3.h:159
+#: engines/gob/detection/tables_adibou3.h:176
 #: engines/gob/detection/tables_adiboupresente.h:39
 #: engines/gob/detection/tables_adiboupresente.h:55
 #: engines/gob/detection/tables_adiboupresente.h:71
