@@ -290,8 +290,11 @@ Common::Error DirectorEngine::run() {
 	}
 
 #ifdef USE_IMGUI
-	onImGuiInit();
-	_system->setImGuiRenderCallback(onImGuiRender);
+	ImGuiCallbacks callbacks;
+	callbacks.init = onImGuiInit;
+	callbacks.render = onImGuiRender;
+	callbacks.cleanup = onImGuiCleanup;
+	_system->setImGuiCallbacks(callbacks);
 #endif
 
 	bool loop = true;
@@ -319,11 +322,6 @@ Common::Error DirectorEngine::run() {
 		draw();
 		g_director->delayMillis(10);
 	}
-
-#ifdef USE_IMGUI
-	_system->setImGuiRenderCallback(nullptr);
-	onImGuiCleanup();
-#endif
 
 	return Common::kNoError;
 }

@@ -917,13 +917,13 @@ public:
 
 #if defined(USE_IMGUI)
 	/**
-	 * Set the address for ImGui rendering callback
+	 * Set the init/render/cleanup callbacks for ImGui.
 	 *
-	 * This is only supported on select backends desktop oriented
+	 * This is only supported on select backends desktop oriented.
 	 *
-	 * @param render The function pointer called while rendering on screen
+	 * @param callbacks Structure containing init/render/cleanup callbacks called on screen initialization, rendering and when deinitialized.
 	 */
-	virtual void setImGuiRenderCallback(ImGuiCallbacks callbacks) { }
+	virtual void setImGuiCallbacks(const ImGuiCallbacks &callbacks) {}
 #endif
 
 	/**

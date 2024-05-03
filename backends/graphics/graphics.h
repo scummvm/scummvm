@@ -49,7 +49,7 @@ public:
 	virtual bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags) { return (mode == 0); }
 	virtual int getGraphicsMode() const { return 0; }
 #if defined(USE_IMGUI)
-	virtual void setImGuiRenderCallback(ImGuiCallbacks callbacks) { }
+	virtual void setImGuiCallbacks(const ImGuiCallbacks &callbacks) { }
 #endif
 	virtual bool setShader(const Common::Path &fileName) { return false; }
 	virtual const OSystem::GraphicsMode *getSupportedStretchModes() const {

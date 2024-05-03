@@ -873,8 +873,11 @@ Common::Error TwpEngine::run() {
 	updateSettingVars();
 
 #ifdef USE_IMGUI
-	onImGuiInit();
-	_system->setImGuiRenderCallback(onImGuiRender);
+	ImGuiCallbacks callbacks;
+	callbacks.init = onImGuiInit;
+	callbacks.render = onImGuiRender;
+	callbacks.cleanup = onImGuiCleanup;
+	_system->setImGuiCallbacks(callbacks);
 #endif
 
 	// Simple event handling loop
@@ -1100,11 +1103,6 @@ Common::Error TwpEngine::run() {
 			_system->delayMillis(10 - delta);
 		}
 	}
-
-#ifdef USE_IMGUI
-	_system->setImGuiRenderCallback(nullptr);
-	onImGuiCleanup();
-#endif
 
 	return Common::kNoError;
 }
