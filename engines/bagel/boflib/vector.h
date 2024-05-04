@@ -56,33 +56,33 @@ public:
 	 * @param vector        Second vector
 	 * @return              Dot-product
 	 */
-	double DotProduct(const Vector &vector);
+	double dotProduct(const Vector &vector);
 
 	/**
 	 * Rotates this vector the specified number of degrees
 	 * @param fAngle        Rotation angle
 	 */
-	void Rotate(double fAngle);
+	void rotate(double fAngle);
 
 	/**
 	 * Gets the angle between this vector and specified vector
 	 * @param vector    Second vector
 	 * @return          Angle
 	 */
-	double AngleBetween(const Vector &vector);
+	double angleBetween(const Vector &vector);
 
 	/**
 	 * Calculates the positive or negative angle between 2 vectors
 	 * @param vector        Second vector
 	 * @return              Angle
 	 */
-	double RealAngle(const Vector &vector);
+	double realAngle(const Vector &vector);
 
 	/**
 	 * Gets the length of this vector
 	 * @return      Vector length
 	 */
-	double Length();
+	double length();
 
 	// Generic operations
 	CVector operator+(Vector);

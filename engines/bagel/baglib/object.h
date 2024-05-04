@@ -204,7 +204,7 @@ public:
 		SetProperty(HIGHLIGHT, b);
 	}
 	// Is the object active in this world
-	bool IsActive() {
+	bool isActive() {
 		return IsProperty(ACTIVE);
 	}
 	void setActive(bool b = true) {

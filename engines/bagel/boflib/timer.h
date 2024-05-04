@@ -34,8 +34,7 @@ struct WindowTimer {
 	uint32 _id = 0;
 	BofCallback _callback = nullptr;
 
-	WindowTimer() {
-	}
+	WindowTimer() { }
 	WindowTimer(uint32 interval, uint32 id, BofCallback callback);
 };
 
@@ -46,46 +45,46 @@ public:
 	CBofTimer(uint32 nID, uint32 nInterval, void *lUserInfo, BofCallback pCallBack);
 	~CBofTimer();
 
-	void Start()                    {
-		m_bActive = true;
+	void start()                    {
+		_bActive = true;
 	}
 	void stop()                     {
-		m_bActive = false;
+		_bActive = false;
 	}
 
-	bool IsActive()                 {
-		return (m_bActive);
+	bool isActive()                 {
+		return _bActive;
 	}
 
-	void SetID(uint32 nID)                {
+	void setID(uint32 nID)                {
 		_nID = nID;
 	}
-	uint32 GetID()                    {
-		return (_nID);
+	uint32 getID()                    {
+		return _nID;
 	}
 
-	void SetInterval(uint32 nInterval)    {
-		m_nInterval = nInterval;
+	void setInterval(uint32 nInterval)    {
+		_nInterval = nInterval;
 	}
-	uint32 GetInterval()              {
-		return (m_nInterval);
-	}
-
-	void SetUserInfo(void *lUserInfo)   {
-		m_lUserInfo = lUserInfo;
-	}
-	void *GetUserInfo()             {
-		return (m_lUserInfo);
+	uint32 getInterval()              {
+		return _nInterval;
 	}
 
-	void SetCallBack(BofCallback pCallBack) {
-		m_pCallBack = pCallBack;
+	void setUserInfo(void *lUserInfo)   {
+		_lUserInfo = lUserInfo;
 	}
-	BofCallback GetCallBack()       {
-		return (m_pCallBack);
+	void *getUserInfo()             {
+		return _lUserInfo;
 	}
 
-	static void HandleTimers();
+	void setCallBack(BofCallback pCallBack) {
+		_pCallBack = pCallBack;
+	}
+	BofCallback getCallBack()       {
+		return _pCallBack;
+	}
+
+	static void handleTimers();
 
 	//
 	// members
@@ -93,17 +92,17 @@ public:
 
 protected:
 
-	static CBofTimer *m_pTimerList;
-	static bool m_bModified;
+	static CBofTimer *_pTimerList;
+	static bool _bModified;
 
 public:
 
-	uint32       m_lLastTime;
+	uint32       _lLastTime;
 	uint32        _nID;
-	uint32        m_nInterval;
-	BofCallback m_pCallBack;
-	void       *m_lUserInfo;
-	bool        m_bActive;
+	uint32        _nInterval;
+	BofCallback _pCallBack;
+	void       *_lUserInfo;
+	bool        _bActive;
 };
 
 } // namespace Bagel

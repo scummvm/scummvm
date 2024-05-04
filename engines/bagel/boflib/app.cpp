@@ -144,7 +144,7 @@ ErrorCode CBofApp::runApp() {
 
 		// Handle sounds and timers
 		CBofSound::audioTask();
-		CBofTimer::HandleTimers();
+		CBofTimer::handleTimers();
 
 		if (nCount < 0)  {
 			nCount++;

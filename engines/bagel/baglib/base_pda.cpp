@@ -517,7 +517,7 @@ int SBBasePda::getProperCursor(const CBofPoint &pos, CBofRect &pdaRect) {
 					int count = objList->getCount();
 					for (int i = 0; i < count; ++i) {
 						CBagObject *curObj = objList->getNodeItem(i);
-						if (curObj->IsActive()) {
+						if (curObj->isActive()) {
 							// localize icon rectangle
 							CBofRect iconRect = curObj->getRect() + pdaViewRect.topLeft();
 							if (iconRect.ptInRect(pos)) {

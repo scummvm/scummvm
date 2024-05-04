@@ -181,7 +181,7 @@ bool CBagStorageDev::Contains(CBagObject *pObj, bool bActive) {
 	if (nCount != 0) {
 		for (int i = 0; i < nCount; ++i) {
 			if (pObj == GetObjectByPos(i)) {
-				if (bActive && (pObj->IsActive()))
+				if (bActive && (pObj->isActive()))
 					return true;
 			}
 		}
@@ -224,7 +224,7 @@ ErrorCode CBagStorageDev::activateLocalObject(CBagObject  *pObj) {
 
 	if (pObj != nullptr) {
 		pObj->SetLocal();
-		if (!pObj->IsActive() && (!pObj->GetExpression() || pObj->GetExpression()->evaluate(pObj->IsNegative()))) {
+		if (!pObj->isActive() && (!pObj->GetExpression() || pObj->GetExpression()->evaluate(pObj->IsNegative()))) {
 			pObj->setActive();
 			pObj->attach();
 
@@ -253,7 +253,7 @@ ErrorCode CBagStorageDev::deactivateLocalObject(CBagObject *pObj) {
 
 	if (pObj != nullptr) {
 		pObj->SetLocal(false);
-		if (pObj->IsActive()) {
+		if (pObj->isActive()) {
 			pObj->setActive(false);
 			pObj->detach();
 		}
@@ -492,7 +492,7 @@ void CBagStorageDev::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *vpInf
 	SetLActivity(kMouseNONE);
 
 	CBagObject *pObj = GetObject(xCursorLocation, true);
-	if ((pObj != nullptr) && (pObj->IsActive())) {
+	if ((pObj != nullptr) && (pObj->isActive())) {
 		pObj->onLButtonDown(nFlags, xPoint, vpInfo);
 		SetLActivity(kMouseDRAGGING);
 	}
@@ -523,7 +523,7 @@ void CBagStorageDev::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 		bUseWield = false;
 
 		g_noMenuFl = false;
-		if (pObj->IsActive()) {
+		if (pObj->isActive()) {
 			pObj->onLButtonUp(nFlags, xPoint, vpInfo);
 
 			if (g_noMenuFl) {
@@ -543,7 +543,7 @@ void CBagStorageDev::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 			if (pWin != nullptr) {
 				if (pWin->_pWieldBmp != nullptr) {
 					pObj = pWin->_pWieldBmp->getCurrObj();
-					if ((pObj != nullptr) && pObj->IsActive()) {
+					if ((pObj != nullptr) && pObj->isActive()) {
 						pObj->onLButtonUp(nFlags, xPoint, vpInfo);
 						SetLActiveObject(pObj);
 						m_bHandledUpEvent = true;
@@ -871,7 +871,7 @@ CBagObject *CBagStorageDev::GetObject(int nRefId, bool bActiveOnly) {
 	for (int i = 0; i < nListLen; ++i) {
 		CBagObject *pObj = GetObjectByPos(i);
 
-		if ((pObj->GetRefId() == nRefId) && (!bActiveOnly || (pObj->IsActive() && pObj->isAttached())))
+		if ((pObj->GetRefId() == nRefId) && (!bActiveOnly || (pObj->isActive() && pObj->isAttached())))
 			return pObj;
 	}
 
@@ -894,7 +894,7 @@ CBagObject *CBagStorageDev::GetObject(const CBofString &sName, bool bActiveOnly)
 
 		pNode = pNode->_pNext;
 	}
-	if (bActiveOnly && (pObjFound != nullptr) && !pObjFound->IsActive())
+	if (bActiveOnly && (pObjFound != nullptr) && !pObjFound->isActive())
 		pObjFound = nullptr;
 
 	return pObjFound;
@@ -910,7 +910,7 @@ CBagObject *CBagStorageDev::GetObjectByType(const CBofString &sType, bool bActiv
 		CBagObject *pObj = GetObjectByPos(i);
 
 		if (bActiveOnly) {
-			if (pObj->IsActive() && !getStringTypeOfObject(pObj->GetType()).find(sType))
+			if (pObj->isActive() && !getStringTypeOfObject(pObj->GetType()).find(sType))
 				return pObj;
 		} else if (!getStringTypeOfObject(pObj->GetType()).find(sType))
 			return pObj;
@@ -928,7 +928,7 @@ CBagObject *CBagStorageDev::GetObject(const CBofPoint &xPoint, bool bActiveOnly)
 		for (int i = nCount - 1; i >= 0; --i) {
 			CBagObject *pObj = GetObjectByPos(i);
 
-			if (pObj->isInside(xPoint) && (!bActiveOnly || (pObj->IsActive() && pObj->isAttached())))
+			if (pObj->isInside(xPoint) && (!bActiveOnly || (pObj->isActive() && pObj->isAttached())))
 				return pObj;
 		}
 	}
@@ -1397,7 +1397,7 @@ ErrorCode CBagStorageDevWnd::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 ErrorCode CBagStorageDevWnd::RunModal(CBagObject *pObj) {
 	assert(pObj != nullptr);
 
-	if (pObj->IsModal() && pObj->IsActive()) {
+	if (pObj->IsModal() && pObj->isActive()) {
 
 		EventLoop eventLoop;
 		CBofBitmap *pBmp = getBackdrop();

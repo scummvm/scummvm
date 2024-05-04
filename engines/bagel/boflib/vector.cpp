@@ -43,14 +43,14 @@ CVector::CVector(double xx, double yy, double zz) {
 	z = zz;
 }
 
-double CVector::Length() {
+double CVector::length() {
 	// Make sure this object is not used after it is destructed
 	assert(isValidObject(this));
 
 	return sqrt(x * x + y * y);
 }
 
-double CVector::AngleBetween(const Vector &vector) {
+double CVector::angleBetween(const Vector &vector) {
 	// Make sure this object is not used after it is destructed
 	assert(isValidObject(this));
 
@@ -58,7 +58,7 @@ double CVector::AngleBetween(const Vector &vector) {
 
 	// Get the angle by getting the arc-cosine of the cosine of the
 	// angle between the 2 vectors.
-	double fCos = this->DotProduct(vTmp) / (this->Length() * vTmp.Length());
+	double fCos = this->dotProduct(vTmp) / (this->length() * vTmp.length());
 
 	if (fCos > 1.0) {
 		fCos = 1.0;
@@ -70,14 +70,14 @@ double CVector::AngleBetween(const Vector &vector) {
 	return angle;
 }
 
-double CVector::DotProduct(const Vector &vector) {
+double CVector::dotProduct(const Vector &vector) {
 	// Make sure this object is not used after it is destructed
 	assert(isValidObject(this));
 
 	return (this->x * vector.x) + (this->y * vector.y);
 }
 
-void CVector::Rotate(double angle) {
+void CVector::rotate(double angle) {
 	// Make sure this object is not used after it is destructed
 	assert(isValidObject(this));
 
@@ -92,18 +92,18 @@ void CVector::Rotate(double angle) {
 	this->y = yy;
 }
 
-double CVector::RealAngle(const Vector &vector) {
+double CVector::realAngle(const Vector &vector) {
 	// Make sure this object is not used after it is destructed
 	assert(isValidObject(this));
 
 	CVector vTmp = *this;
-	double angle = vTmp.AngleBetween(vector);
+	double angle = vTmp.angleBetween(vector);
 
 	if (angle != (double)0.0) {
-		vTmp.Rotate(angle);
+		vTmp.rotate(angle);
 
 		// Determine if the angle is greater then 180 degrees
-		if (((int)(vTmp.AngleBetween(vector) * 1000) == 0)) {
+		if (((int)(vTmp.angleBetween(vector) * 1000) == 0)) {
 			angle = 2 * PI - angle;
 		}
 	}
