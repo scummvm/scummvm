@@ -26,6 +26,7 @@
  *
  *************************************/
 
+#include "common/events.h"
 #include "director/director.h"
 #include "director/archive.h"
 #include "director/lingo/lingo.h"
@@ -47,10 +48,26 @@ const char *UnitTestXObj::fileNames[] = {
 	"UnitTest",
 	0
 };
+/*
+-- ScummVM UnitTest XObject.
+UnitTest
+I      mNew                     --Creates a new instance of the XObject
+X      mDispose                 --Disposes of XObject instance
+I      mIsRealDirector          --Returns 1 for real Director, 0 for ScummVM
+IS     mScreenshot, path        --Copy contents of stage window to file
+III    mMoveMouse, x, y         --Move the mouse pointer to window position (x, y)
+I      mLeftMouseDown           --Press the LMB
+I      mLeftMouseUp             --Release the LMB
+ */
 
 static MethodProto xlibMethods[] = {
-	{ "new",				UnitTestXObj::m_new,				 0, 0,	400 },	// D4
-	{ "screenshot",			UnitTestXObj::m_screenshot,			 1, 1,  400 },	// D4
+	{ "new",				UnitTestXObj::m_new,				0, 0,	400 },	// D4
+	{ "dispose",			UnitTestXObj::m_dispose,			0, 0,	400 },	// D4
+	{ "isRealDirector",		UnitTestXObj::m_isRealDirector,		0, 0,	400 },	// D4
+	{ "screenshot",			UnitTestXObj::m_screenshot,			1, 1,	400 },	// D4
+	{ "moveMouse",			UnitTestXObj::m_moveMouse,			2, 2,	400 },	// D4
+	{ "leftMouseDown",		UnitTestXObj::m_leftMouseDown,		0, 0,	400 },	// D4
+	{ "leftMouseUp",		UnitTestXObj::m_leftMouseUp,		0, 0,	400 },	// D4
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
@@ -75,6 +92,13 @@ UnitTestXObject::UnitTestXObject(ObjectType ObjectType) :Object<UnitTestXObject>
 
 void UnitTestXObj::m_new(int nargs) {
 	g_lingo->push(g_lingo->_state->me);
+}
+
+void UnitTestXObj::m_dispose(int nargs) {
+}
+
+void UnitTestXObj::m_isRealDirector(int nargs) {
+	g_lingo->push(0);
 }
 
 void UnitTestXObj::m_screenshot(int nargs) {
@@ -135,6 +159,54 @@ void UnitTestXObj::m_screenshot(int nargs) {
 	}
 	stream->finalize();
 	delete stream;
+}
+
+void UnitTestXObj::m_moveMouse(int nargs) {
+	if (nargs != 2) {
+		warning("UnitTestXObj::m_moveMouse: expected 2 arguments");
+		g_lingo->dropStack(nargs);
+		g_lingo->push(0);
+		return;
+	}
+	UnitTestXObject *me = static_cast<UnitTestXObject *>(g_lingo->_state->me.u.obj);
+	int16 y = (int16)g_lingo->pop().asInt();
+	int16 x = (int16)g_lingo->pop().asInt();
+	Common::Event ev;
+	ev.type = Common::EVENT_MOUSEMOVE;
+	ev.mouse = Common::Point(x, y);
+	me->_mousePos = ev.mouse;
+	g_director->getCurrentMovie()->processEvent(ev);
+	g_lingo->push(0);
+}
+
+void UnitTestXObj::m_leftMouseDown(int nargs) {
+	if (nargs != 0) {
+		warning("UnitTestXObj::m_leftMouseDown: expected 0 arguments");
+		g_lingo->dropStack(nargs);
+		g_lingo->push(0);
+		return;
+	}
+	UnitTestXObject *me = static_cast<UnitTestXObject *>(g_lingo->_state->me.u.obj);
+	Common::Event ev;
+	ev.type = Common::EVENT_LBUTTONDOWN;
+	ev.mouse = me->_mousePos;
+	g_director->getCurrentMovie()->processEvent(ev);
+	g_lingo->push(0);
+}
+
+void UnitTestXObj::m_leftMouseUp(int nargs) {
+	if (nargs != 0) {
+		warning("UnitTestXObj::m_leftMouseDown: expected 0 arguments");
+		g_lingo->dropStack(nargs);
+		g_lingo->push(0);
+		return;
+	}
+	UnitTestXObject *me = static_cast<UnitTestXObject *>(g_lingo->_state->me.u.obj);
+	Common::Event ev;
+	ev.type = Common::EVENT_LBUTTONUP;
+	ev.mouse = me->_mousePos;
+	g_director->getCurrentMovie()->processEvent(ev);
+	g_lingo->push(0);
 }
 
 } // End of namespace Director
