@@ -162,16 +162,16 @@ PARSE_CODES CBagSoundObject::setInfo(CBagIfstream &istr) {
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("VOLUME")) {
 				istr.eatWhite();
 				int n;
-				GetIntFromStream(istr, n);
+				getIntFromStream(istr, n);
 				setVolume(n);
 				nObjectUpdated = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 			break;
 		}
@@ -183,12 +183,12 @@ PARSE_CODES CBagSoundObject::setInfo(CBagIfstream &istr) {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256); // performance improvement
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("AS")) {
 
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, sStr);
+				getAlphaNumFromStream(istr, sStr);
 
 				if (!sStr.find("WAVE")) {
 					// m_xSndType  = WAVE;
@@ -234,12 +234,12 @@ PARSE_CODES CBagSoundObject::setInfo(CBagIfstream &istr) {
 					nObjectUpdated = true;
 
 				} else {
-					PutbackStringOnStream(istr, sStr);
-					PutbackStringOnStream(istr, "AS ");
+					putbackStringOnStream(istr, sStr);
+					putbackStringOnStream(istr, "AS ");
 				}
 
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 		}
 		break;
@@ -250,14 +250,14 @@ PARSE_CODES CBagSoundObject::setInfo(CBagIfstream &istr) {
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256); // performance improvement
 
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("LOOP")) {
 				istr.eatWhite();
-				GetIntFromStream(istr, m_nLoops);
+				getIntFromStream(istr, m_nLoops);
 				nObjectUpdated = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 		}
 		break;
@@ -268,13 +268,13 @@ PARSE_CODES CBagSoundObject::setInfo(CBagIfstream &istr) {
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256); // performance improvement
 
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("SOUNDOVEROK")) {
 				SetSoundOver();
 				nObjectUpdated = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 		}
 		break;

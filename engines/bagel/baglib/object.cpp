@@ -177,7 +177,7 @@ PARSE_CODES CBagObject::setInfo(CBagIfstream &istr) {
 			char szLocalBuff[256];
 			szLocalBuff[0] = 0;
 			CBofString s(szLocalBuff, 256);
-			GetAlphaNumFromStream(istr, s);
+			getAlphaNumFromStream(istr, s);
 			MACROREPLACE(s);
 			setFileName(s);
 			break;
@@ -214,13 +214,13 @@ PARSE_CODES CBagObject::setInfo(CBagIfstream &istr) {
 			char c = (char)istr.peek();
 			if (Common::isDigit(c)) {
 				int nId;
-				GetIntFromStream(istr, nId);
+				getIntFromStream(istr, nId);
 				setRefId(nId);
 			} else {
 				char szLocalBuff[256];
 				szLocalBuff[0] = 0;
 				CBofString s(szLocalBuff, 256);
-				GetAlphaNumFromStream(istr, s);
+				getAlphaNumFromStream(istr, s);
 				setRefName(s);
 			}
 			break;
@@ -231,7 +231,7 @@ PARSE_CODES CBagObject::setInfo(CBagIfstream &istr) {
 		case '*': {
 			rc = UPDATED_OBJECT;
 			int nState;
-			GetIntFromStream(istr, nState);
+			getIntFromStream(istr, nState);
 			setState(nState);
 			break;
 		}
@@ -241,7 +241,7 @@ PARSE_CODES CBagObject::setInfo(CBagIfstream &istr) {
 		case '%': {
 			rc = UPDATED_OBJECT;
 			int nCursor;
-			GetIntFromStream(istr, nCursor);
+			getIntFromStream(istr, nCursor);
 			setOverCursor(nCursor);
 			break;
 		}
@@ -273,9 +273,9 @@ PARSE_CODES CBagObject::setInfo(CBagIfstream &istr) {
 			bool b = true;
 			istr.getCh();
 			istr.eatWhite();
-			GetAlphaNumFromStream(istr, s);
+			getAlphaNumFromStream(istr, s);
 			if (!s.find("NOT")) {
-				GetAlphaNumFromStream(istr, s);
+				getAlphaNumFromStream(istr, s);
 				istr.eatWhite();
 				b = false;
 			}
@@ -311,10 +311,10 @@ PARSE_CODES CBagObject::setInfo(CBagIfstream &istr) {
 			} else if (!s.find("FOREGROUND")) {
 				setForeGround(b);
 			} else {
-				PutbackStringOnStream(istr, s);
+				putbackStringOnStream(istr, s);
 				if (!b)
-					PutbackStringOnStream(istr, " NOT ");
-				PutbackStringOnStream(istr, "IS ");
+					putbackStringOnStream(istr, " NOT ");
+				putbackStringOnStream(istr, "IS ");
 				return rc;
 				break;
 			}

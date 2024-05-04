@@ -579,7 +579,7 @@ PARSE_CODES CBagExpression::setInfo(CBagIfstream &istr) {
 			istr.getCh();
 			istr.eatWhite();
 
-			GetAlphaNumFromStream(istr, tmpStr);
+			getAlphaNumFromStream(istr, tmpStr);
 			CBagVar *curVar = VAR_MANAGER->GetVariable(tmpStr);
 			if (!curVar) {
 				// This must be a reference, make a new variable
@@ -610,7 +610,7 @@ PARSE_CODES CBagExpression::setInfo(CBagIfstream &istr) {
 				_operList.addToTail(curOper);
 
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, tmpStr);
+				getAlphaNumFromStream(istr, tmpStr);
 				curVar = VAR_MANAGER->GetVariable(tmpStr);
 				if (!curVar) {
 					if (tmpStr.find("~~") > 0) {
@@ -640,7 +640,7 @@ PARSE_CODES CBagExpression::setInfo(CBagIfstream &istr) {
 		}
 
 		case 'N':
-			GetAlphaNumFromStream(istr, tmpStr);
+			getAlphaNumFromStream(istr, tmpStr);
 			if (!tmpStr.find("NOT")) {
 				_negativeFl = !_negativeFl;
 				istr.eatWhite();
@@ -655,7 +655,7 @@ PARSE_CODES CBagExpression::setInfo(CBagIfstream &istr) {
 	}
 
 	if (rc != PARSING_DONE) {
-		ParseAlertBox(istr, "Error in expression:", __FILE__, __LINE__);
+		parseAlertBox(istr, "Error in expression:", __FILE__, __LINE__);
 	}
 
 	istr.eatWhite();
@@ -675,10 +675,10 @@ ErrorCode CBagExpression::getOperatorFromStream(CBagIfstream &istr, OPERATION &o
 	oper = OP_NONE;
 
 	istr.eatWhite();
-	GetOperStrFromStream(istr, localStr);
+	getOperStrFromStream(istr, localStr);
 
 	if (localStr.isEmpty()) {
-		GetAlphaNumFromStream(istr, localStr);
+		getAlphaNumFromStream(istr, localStr);
 		istr.eatWhite();
 	}
 

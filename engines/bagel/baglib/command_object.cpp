@@ -412,14 +412,14 @@ PARSE_CODES CBagCommandObject::setInfo(CBagIfstream &istr) {
 			char localBuffer[256];
 			localBuffer[0] = 0;
 			CBofString curStr(localBuffer, 256);
-			GetAlphaNumFromStream(istr, curStr);
+			getAlphaNumFromStream(istr, curStr);
 
 			if (!curStr.find("OBJECT")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, _objName);
+				getAlphaNumFromStream(istr, _objName);
 				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, curStr);
+				putbackStringOnStream(istr, curStr);
 			}
 			break;
 		}
@@ -430,14 +430,14 @@ PARSE_CODES CBagCommandObject::setInfo(CBagIfstream &istr) {
 			char localBuffer[256];
 			localBuffer[0] = 0;
 			CBofString curStr(localBuffer, 256);
-			GetAlphaNumFromStream(istr, curStr);
+			getAlphaNumFromStream(istr, curStr);
 
 			if (!curStr.find("FROM")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, _srcSDev);
+				getAlphaNumFromStream(istr, _srcSDev);
 				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, curStr);
+				putbackStringOnStream(istr, curStr);
 			}
 			break;
 		}
@@ -448,14 +448,14 @@ PARSE_CODES CBagCommandObject::setInfo(CBagIfstream &istr) {
 			char localBuffer[256];
 			localBuffer[0] = 0;
 			CBofString curStr(localBuffer, 256);
-			GetAlphaNumFromStream(istr, curStr);
+			getAlphaNumFromStream(istr, curStr);
 
 			if (!curStr.find("TO")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, _destSDev);
+				getAlphaNumFromStream(istr, _destSDev);
 				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, curStr);
+				putbackStringOnStream(istr, curStr);
 			}
 			break;
 		}

@@ -88,11 +88,11 @@ PARSE_CODES CBagLinkObject::setInfo(CBagIfstream &istr) {
 			char localBuffer[256];
 			localBuffer[0] = 0;
 			CBofString curString(localBuffer, 256);
-			GetAlphaNumFromStream(istr, curString);
+			getAlphaNumFromStream(istr, curString);
 
 			if (!curString.find("AS")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, curString);
+				getAlphaNumFromStream(istr, curString);
 				if (!curString.find("CLOSEUP")) {
 					_linkType = CLOSEUP;
 					setOverCursor(2);
@@ -101,11 +101,11 @@ PARSE_CODES CBagLinkObject::setInfo(CBagIfstream &istr) {
 					_linkType = LINK;
 					objectUpdatedFl = true;
 				} else {
-					PutbackStringOnStream(istr, curString);
-					PutbackStringOnStream(istr, "AS ");
+					putbackStringOnStream(istr, curString);
+					putbackStringOnStream(istr, "AS ");
 				}
 			} else {
-				PutbackStringOnStream(istr, curString);
+				putbackStringOnStream(istr, curString);
 			}
 			break;
 		}
@@ -117,14 +117,14 @@ PARSE_CODES CBagLinkObject::setInfo(CBagIfstream &istr) {
 			char localBuffer[256];
 			localBuffer[0] = 0;
 			CBofString curString(localBuffer, 256);
-			GetAlphaNumFromStream(istr, curString);
+			getAlphaNumFromStream(istr, curString);
 
 			if (!curString.find("FADE")) {
 				istr.eatWhite();
-				GetIntFromStream(istr, _fade);
+				getIntFromStream(istr, _fade);
 				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, curString);
+				putbackStringOnStream(istr, curString);
 			}
 			break;
 		}

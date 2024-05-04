@@ -72,21 +72,21 @@ PARSE_CODES CBagDossierObject::setInfo(CBagIfstream &istr) {
 		// yields positive results on a character then set the rp field of the
 		// associated suspect object to true.
 		case 'S':
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("SIZE")) {
 				istr.eatWhite();
 				int size;
-				GetIntFromStream(istr, size);
+				getIntFromStream(istr, size);
 				setPointSize((byte)size);
 				objectUpdatedFl = true;
 			} else if (!sStr.find("SUSPECTVAR")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, sStr);
+				getAlphaNumFromStream(istr, sStr);
 				m_sSuspectVar = sStr;
 				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 			break;
 
@@ -94,13 +94,13 @@ PARSE_CODES CBagDossierObject::setInfo(CBagIfstream &istr) {
 		//  NOTACTIVE KEYWORD MEANS DON'T DO ANYTHING ON MOUSE DOWN!!!
 		//
 		case 'N':
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("NOTACTIVE")) {
 				setNotActive(true);
 				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 			break;
 
@@ -108,17 +108,17 @@ PARSE_CODES CBagDossierObject::setInfo(CBagIfstream &istr) {
 		//  FONT MONO or DEFAULT
 		//
 		case 'F':
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("FONT")) {
 				istr.eatWhite();
 				int fontId;
-				GetIntFromStream(istr, fontId);
+				getIntFromStream(istr, fontId);
 				fontId = MapFont(fontId);
 				setFont(fontId);
 				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 			break;
 
@@ -127,11 +127,11 @@ PARSE_CODES CBagDossierObject::setInfo(CBagIfstream &istr) {
 		//  log entry.
 		//
 		case 'I':
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("INDEX")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, sStr);
+				getAlphaNumFromStream(istr, sStr);
 
 				// replace underlines with spaces.
 
@@ -150,18 +150,18 @@ PARSE_CODES CBagDossierObject::setInfo(CBagIfstream &istr) {
 					_indexRect = r;
 				}
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 			break;
 
 		//
 		//  AS [CAPTION]  - how to run the link
 		case 'A':
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("AS")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, sStr);
+				getAlphaNumFromStream(istr, sStr);
 				if (!sStr.find("CAPTION")) {
 					_bCaption = true;
 					objectUpdatedFl = true;
@@ -171,11 +171,11 @@ PARSE_CODES CBagDossierObject::setInfo(CBagIfstream &istr) {
 					objectUpdatedFl = true;
 
 				} else {
-					PutbackStringOnStream(istr, sStr);
-					PutbackStringOnStream(istr, "AS ");
+					putbackStringOnStream(istr, sStr);
+					putbackStringOnStream(istr, "AS ");
 				}
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 			break;
 
@@ -185,16 +185,16 @@ PARSE_CODES CBagDossierObject::setInfo(CBagIfstream &istr) {
 #define CTEXT_YELLOW RGB(255, 255, 0)
 #define CTEXT_WHITE RGB(255, 255, 255)
 		case 'C':
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("COLOR")) {
 				int nColor;
 				istr.eatWhite();
-				GetIntFromStream(istr, nColor);
+				getIntFromStream(istr, nColor);
 				setColor(nColor);
 				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 			break;
 		//

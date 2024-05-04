@@ -152,7 +152,7 @@ PARSE_CODES CBagVar::setInfo(CBagIfstream &istr) {
 	CBofString sStr(szLocalStr, 256);
 	istr.eatWhite();
 
-	GetAlphaNumFromStream(istr, sStr);
+	getAlphaNumFromStream(istr, sStr);
 	SetName(sStr);
 
 	istr.eatWhite();
@@ -161,11 +161,11 @@ PARSE_CODES CBagVar::setInfo(CBagIfstream &istr) {
 		char sz2LocalStr[256];
 		sz2LocalStr[0] = 0;
 		sStr = CBofString(sz2LocalStr, 256);
-		GetAlphaNumFromStream(istr, sStr);
+		getAlphaNumFromStream(istr, sStr);
 
 		if (!sStr.find("AS")) {
 			istr.eatWhite();
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 			if (!sStr.find("TIMER")) {
 				setTimer();
 				VAR_MANAGER->UpdateRegistration();
@@ -176,11 +176,11 @@ PARSE_CODES CBagVar::setInfo(CBagIfstream &istr) {
 				SetGlobal(true);
 				VAR_MANAGER->UpdateRegistration();
 			} else {
-				PutbackStringOnStream(istr, sStr);
-				PutbackStringOnStream(istr, "AS ");
+				putbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, "AS ");
 			}
 		} else {
-			PutbackStringOnStream(istr, sStr);
+			putbackStringOnStream(istr, sStr);
 		}
 	}
 
@@ -189,7 +189,7 @@ PARSE_CODES CBagVar::setInfo(CBagIfstream &istr) {
 	if (istr.peek() == '=') {
 		istr.getCh();
 		istr.eatWhite();
-		GetAlphaNumFromStream(istr, sStr);
+		getAlphaNumFromStream(istr, sStr);
 		SetValue(sStr);
 	}
 

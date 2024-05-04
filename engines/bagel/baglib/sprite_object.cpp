@@ -136,7 +136,7 @@ PARSE_CODES CBagSpriteObject::setInfo(CBagIfstream &istr) {
 		case '+': {
 			int cels;
 			istr.getCh();
-			GetIntFromStream(istr, cels);
+			getIntFromStream(istr, cels);
 			setCels(cels);
 			nObjectUpdated = true;
 		}
@@ -144,7 +144,7 @@ PARSE_CODES CBagSpriteObject::setInfo(CBagIfstream &istr) {
 		case '#': {
 			int curs;
 			istr.getCh();
-			GetIntFromStream(istr, curs);
+			getIntFromStream(istr, curs);
 			SetWieldCursor(curs);
 			nObjectUpdated = true;
 		}
@@ -153,14 +153,14 @@ PARSE_CODES CBagSpriteObject::setInfo(CBagIfstream &istr) {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256); // performance improvement
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("NOANIM")) {
 				istr.eatWhite();
 				setAnimated(false);
 				nObjectUpdated = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 		}
 		break;
@@ -170,12 +170,12 @@ PARSE_CODES CBagSpriteObject::setInfo(CBagIfstream &istr) {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("FRAMERATE")) {
 				int nFrameRate;
 				istr.eatWhite();
-				GetIntFromStream(istr, nFrameRate);
+				getIntFromStream(istr, nFrameRate);
 
 				// The framerate is expressed in frames/second, so do some division
 				// here to store the number of milliseconds.
@@ -183,7 +183,7 @@ PARSE_CODES CBagSpriteObject::setInfo(CBagIfstream &istr) {
 
 				nObjectUpdated = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 		}
 		break;

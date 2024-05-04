@@ -591,7 +591,7 @@ ErrorCode CBagMasterWin::loadGlobalVars(const CBofString &wldName) {
 						break;
 					}
 
-					GetKeywordFromStream(fpInput, keyword);
+					getKeywordFromStream(fpInput, keyword);
 
 					switch (keyword) {
 
@@ -617,7 +617,7 @@ ErrorCode CBagMasterWin::loadGlobalVars(const CBofString &wldName) {
 					case SHAREDPAL:
 					case PDASTATE:
 					default: {
-						ParseAlertBox(fpInput, "Syntax Error:  Unexpected Type in Global Var Wld:", __FILE__, __LINE__);
+						parseAlertBox(fpInput, "Syntax Error:  Unexpected Type in Global Var Wld:", __FILE__, __LINE__);
 						break;
 					}
 					}
@@ -654,7 +654,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 			break;
 		}
 
-		GetKeywordFromStream(input, keyword);
+		getKeywordFromStream(input, keyword);
 
 		switch (keyword) {
 
@@ -670,27 +670,27 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 			CBofString typeStr(typeBuff, 256);
 
 			input.eatWhite();
-			GetAlphaNumFromStream(input, nameStr);
+			getAlphaNumFromStream(input, nameStr);
 
 			input.eatWhite();
 
 			int fadeId = 0;
 
 			while (input.peek() != '{') {
-				GetAlphaNumFromStream(input, workStr);
+				getAlphaNumFromStream(input, workStr);
 				input.eatWhite();
 				if (!workStr.find("AS")) {
 					input.eatWhite();
-					GetAlphaNumFromStream(input, typeStr);
+					getAlphaNumFromStream(input, typeStr);
 				} else if (!workStr.find("RECT")) {
 					input.eatWhite();
 					getRectFromStream(input, curRect);
 				} else if (!workStr.find("FILTER")) {
 					input.eatWhite();
-					GetIntFromStream(input, filter);
+					getIntFromStream(input, filter);
 				} else if (!workStr.find("FADE")) { // Note that this should usually be set in the link
 					input.eatWhite();
-					GetIntFromStream(input, fadeId);
+					getIntFromStream(input, fadeId);
 				} else {
 					// There is an error here
 					logError(buildString("FAILED on argument of storage device %s : %s", nameStr.getBuffer(), typeStr.getBuffer()));
@@ -738,7 +738,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 			if (input.peek() == '=') {
 				input.getCh();
 				input.eatWhite();
-				GetAlphaNumFromStream(input, str);
+				getAlphaNumFromStream(input, str);
 
 				// Only use the start wld if not specified elsewhere
 				_startWld = str;
@@ -758,20 +758,20 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 			int id;
 
 			input.eatWhite();
-			GetIntFromStream(input, id);
+			getIntFromStream(input, id);
 			input.eatWhite();
 			if (input.peek() == '=') {
 				int x, y;
 				input.getCh();
 				input.eatWhite();
 
-				GetIntFromStream(input, x);
+				getIntFromStream(input, x);
 				input.eatWhite();
 
-				GetIntFromStream(input, y);
+				getIntFromStream(input, y);
 				input.eatWhite();
 
-				GetAlphaNumFromStream(input, str);
+				getAlphaNumFromStream(input, str);
 				MACROREPLACE(str);
 
 				// Specify if we have a shared palette or not, look for
@@ -788,7 +788,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 
 					// Check for shared pal token, if there, then create our cursor
 					// with the shared palette bit set
-					GetAlphaNumFromStream(input, sharedPalToken);
+					getAlphaNumFromStream(input, sharedPalToken);
 					if (sharedPalToken.find("USESHAREDPAL") != -1) {
 						bUseShared = true;
 					}
@@ -827,7 +827,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				input.getCh();
 				input.eatWhite();
 
-				GetAlphaNumFromStream(input, pdaState);
+				getAlphaNumFromStream(input, pdaState);
 
 				if (pdaState.find("MAP") != -1) {
 					SBBasePda::setPdaMode(MAPMODE);
@@ -851,7 +851,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				input.getCh();
 				input.eatWhite();
 
-				GetAlphaNumFromStream(input, bmpFileName);
+				getAlphaNumFromStream(input, bmpFileName);
 				MACROREPLACE(bmpFileName);
 
 				// Read the palette in and keep it hanging around for later use
@@ -869,7 +869,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				input.getCh();
 				input.eatWhite();
 
-				GetAlphaNumFromStream(input, _sysScreen);
+				getAlphaNumFromStream(input, _sysScreen);
 				MACROREPLACE(_sysScreen);
 
 				logInfo(buildString("SYSSCREEN = %s", _sysScreen.getBuffer()));
@@ -888,7 +888,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				input.getCh();
 				input.eatWhite();
 
-				GetAlphaNumFromStream(input, _cdChangeAudio);
+				getAlphaNumFromStream(input, _cdChangeAudio);
 				MACROREPLACE(_cdChangeAudio);
 
 				logInfo(buildString("DISKAUDIO = %s", _cdChangeAudio.getBuffer()));
@@ -903,7 +903,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				input.eatWhite();
 				int n;
 
-				GetIntFromStream(input, n);
+				getIntFromStream(input, n);
 				_diskId = (uint16)n;
 
 				logInfo(buildString("DISKID = %d", _diskId));
@@ -928,7 +928,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 		}
 
 		default: {
-			ParseAlertBox(input, "Syntax Error:", __FILE__, __LINE__);
+			parseAlertBox(input, "Syntax Error:", __FILE__, __LINE__);
 			break;
 		}
 		}
