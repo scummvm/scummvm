@@ -1988,7 +1988,7 @@ void SrafComputer::activateAudioSettings() {
 	_pButtons[RETURN_TO_MAIN_BUTTON]->show();
 
 	// Only show the no music button if music is playing.
-	bool bAnythingPlaying = CBofSound::MidiSoundPlaying();
+	bool bAnythingPlaying = CBofSound::midiSoundPlaying();
 	if (bAnythingPlaying) {
 		_pButtons[NO_MUSIC_BUTTON]->show();
 	}
@@ -3051,7 +3051,7 @@ void SrafComputer::onListAudioSettings() {
 	}
 
 	// If state changes, then change the button also
-	bool bAnythingPlaying = CBofSound::MidiSoundPlaying();
+	bool bAnythingPlaying = CBofSound::midiSoundPlaying();
 	if (bAnythingPlaying) {
 		_pButtons[NO_MUSIC_BUTTON]->show();
 	} else {
@@ -4261,7 +4261,7 @@ void SrafComputer::onButtonAudioSettings(CBofButton *pButton, int nState) {
 		activateMainScreen();
 		break;
 	case NO_MUSIC_BUTTON:
-		CBofSound::StopSounds();
+		CBofSound::stopSounds();
 		_pButtons[NO_MUSIC_BUTTON]->hide();
 		activateMainScreen();
 		break;

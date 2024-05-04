@@ -264,7 +264,7 @@ int CBofDialog::doModal() {
 	Graphics::FrameLimiter limiter(g_system, 60);
 
 	while (!_bEndDialog && !g_engine->shouldQuit() && (CBofError::getErrorCount() < MAX_ERRORS)) {
-		CBofSound::AudioTask();
+		CBofSound::audioTask();
 		CBofTimer::HandleTimers();
 
 		if (isCreated()) {

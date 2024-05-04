@@ -78,7 +78,7 @@ CCache::~CCache() {
 
 	// Remove this object from the linked list
 	if (this == _pCacheList) {
-		_pCacheList = (CCache *)this->GetNext();
+		_pCacheList = (CCache *)this->getNext();
 	}
 
 	this->Delete();
@@ -97,7 +97,7 @@ bool CCache::flush() {
 		if (pCache->release())
 			bReleased = true;
 
-		pCache = (CCache *)(pCache->GetNext());
+		pCache = (CCache *)(pCache->getNext());
 	}
 
 	return bReleased;
@@ -124,7 +124,7 @@ bool CCache::optimize(uint32 lRequestedFreeSpace) {
 			}
 
 			// Next object in list
-			pCache = (CCache *)pCache->GetNext();
+			pCache = (CCache *)pCache->getNext();
 		}
 
 		// If there are no objects loaded then we really might be out of memory

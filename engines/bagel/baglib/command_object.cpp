@@ -65,11 +65,11 @@ bool CBagCommandObject::runObject() {
 
 		// Check if these items should be replaced by the previous sdev
 		if (!srcSDev.isEmpty() && !srcSDev.Find(PREVSDEV_TOKEN)) {
-			srcSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->GetPrevSDev();
+			srcSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->getPrevSDev();
 		}
 
 		if (!dstSDev.isEmpty() && !dstSDev.Find(PREVSDEV_TOKEN)) {
-			dstSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->GetPrevSDev();
+			dstSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->getPrevSDev();
 		}
 
 		if (getFileName() == "REMOVE") {
@@ -167,7 +167,7 @@ bool CBagCommandObject::runObject() {
 			}
 
 		} else if (getFileName() == "STOPWAVE") {
-			CBofSound::StopWaveSounds();
+			CBofSound::stopWaveSounds();
 
 		} else if (getFileName() == "STASHWIELD") {
 			// Stash the currently wielded item
@@ -216,7 +216,7 @@ bool CBagCommandObject::runObject() {
 			}
 
 		} else if (getFileName() == "SETQVOL") {
-			CBofSound::SetQVol(getPosition().x, getPosition().y);
+			CBofSound::setQVol(getPosition().x, getPosition().y);
 
 		} else if (getFileName() == "TURN") {
 
@@ -319,19 +319,19 @@ bool CBagCommandObject::runObject() {
 			}
 
 		} else if (getFileName() == "RESUMESOUND") {
-			CBofSound::ResumeSounds();
+			CBofSound::resumeSounds();
 
 		} else if (getFileName() == "PAUSESOUND") {
-			CBofSound::PauseSounds();
+			CBofSound::pauseSounds();
 
 		} else if (getFileName() == "STOPMIDI") {
-			CBofSound::StopMidiSounds();
+			CBofSound::stopMidiSounds();
 
 		} else if (getFileName() == "WAITWAVE") {
-			CBofSound::WaitWaveSounds();
+			CBofSound::waitWaveSounds();
 
 		} else if (getFileName() == "WAITMIDI") {
-			CBofSound::WaitMidiSounds();
+			CBofSound::waitMidiSounds();
 
 		} else if (getFileName() == "ACTIVATEPDA") {
 			// Get a pointer to the current game window

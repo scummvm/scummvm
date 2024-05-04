@@ -63,7 +63,7 @@ void CBagStartDialog::onInitDialog() {
 	setReturnValue(-1);
 
 	// Halt all audio when user dies (and at start of game).
-	CBofSound::StopSounds();
+	CBofSound::stopSounds();
 
 	// Save off the current game's palette
 	_savePalette = CBofApp::getApp()->getPalette();

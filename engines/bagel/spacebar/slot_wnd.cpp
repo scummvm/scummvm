@@ -315,7 +315,7 @@ ErrorCode SBarSlotWnd::detach() {
 	if (pVar)
 		pVar->SetValue(_nCredit);
 
-	if (_pBkgSnd->IsPlaying()) {
+	if (_pBkgSnd->isPlaying()) {
 		_pBkgSnd->stop();
 	}
 	if (_pBkgSnd != nullptr) {

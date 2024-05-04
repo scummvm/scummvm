@@ -97,8 +97,8 @@ public:
 
 	virtual bool runObject();
 
-	void SetVolume(int nVol);
-	int GetVolume();
+	void setVolume(int nVol);
+	int getVolume();
 
 	void SetNumOfLoops(int n);
 
@@ -112,8 +112,8 @@ public:
 	PARSE_CODES setInfo(CBagIfstream &istr);
 
 	//  Added properties to sound object
-	bool IsPlaying();
-	bool IsQueued();
+	bool isPlaying();
+	bool isQueued();
 
 	void SetPlaying(bool bVal = true);
 };

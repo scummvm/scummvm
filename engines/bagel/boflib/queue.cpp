@@ -44,7 +44,7 @@ CQueue::CQueue(CQueue *pQueue) {
 	pList = pQueue->_pQueueList;
 	while (pList != nullptr) {
 		addItem(pList->getData());
-		pList = pList->GetNext();
+		pList = pList->getNext();
 	}
 }
 
@@ -54,7 +54,7 @@ CQueue::CQueue(const CQueue &cQueue) {
 	pList = cQueue._pQueueList;
 	while (pList != nullptr) {
 		addItem(pList->getData());
-		pList = pList->GetNext();
+		pList = pList->getNext();
 	}
 }
 
@@ -100,7 +100,7 @@ void *CQueue::removeItem() {
 
 		pObject = pList->getData();
 
-		_pQueueList = pList->GetNext();
+		_pQueueList = pList->getNext();
 		delete pList;
 	}
 
@@ -116,12 +116,12 @@ void CQueue::deleteItem(void *pItem) {
 
 	pList = _pQueueList;
 	while (pList != nullptr) {
-		pNext = pList->GetNext();
+		pNext = pList->getNext();
 
 		if (pItem == pList->getData()) {
 			// If this is the 1st item in the Queue, then move head
 			if (pList == _pQueueList)
-				_pQueueList = _pQueueList->GetNext();
+				_pQueueList = _pQueueList->getNext();
 
 			delete pList;
 			break;

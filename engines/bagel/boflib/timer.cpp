@@ -82,7 +82,7 @@ CBofTimer::~CBofTimer() {
 	assert(isValidObject(this));
 
 	if (m_pTimerList == this) {
-		m_pTimerList = (CBofTimer *)m_pTimerList->GetNext();
+		m_pTimerList = (CBofTimer *)m_pTimerList->getNext();
 	}
 
 	// Removing a timer object modifies the timer list
@@ -120,7 +120,7 @@ void CBofTimer::HandleTimers() {
 			}
 		}
 
-		pTimer = (CBofTimer *)pTimer->GetNext();
+		pTimer = (CBofTimer *)pTimer->getNext();
 	}
 }
 

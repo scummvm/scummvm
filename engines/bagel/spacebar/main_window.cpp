@@ -93,7 +93,7 @@ ErrorCode CMainWindow::attach() {
 
 	g_allowPaintFl = true;
 
-	CBagStorageDev *pSDev = SDEV_MANAGER->GetStorageDevice(GetPrevSDev());
+	CBagStorageDev *pSDev = SDEV_MANAGER->GetStorageDevice(getPrevSDev());
 	if (pSDev && pSDev->GetDeviceType() == SDEV_ZOOMPDA) {
 		bForegroundObj = false;
 	}
@@ -118,7 +118,7 @@ ErrorCode CMainWindow::attach() {
 		g_engine->g_bUseInitLoc = false;
 	}
 
-	CBofSound::AudioTask();
+	CBofSound::audioTask();
 
 	CBofPalette *bofpal = SetSlidebitmap(GetBackgroundName(), rView);
 	setPalPtr(bofpal);
@@ -127,7 +127,7 @@ ErrorCode CMainWindow::attach() {
 	CBofApp::getApp()->setPalette(bofpal);
 
 	ActivateView();
-	CBofSound::AudioTask();
+	CBofSound::audioTask();
 
 	g_pLastWindow = this;
 
@@ -262,7 +262,7 @@ ErrorCode CMainWindow::attach() {
 	_bFirstPaint = true;
 
 	AttachActiveObjects();
-	CBofSound::AudioTask();
+	CBofSound::audioTask();
 
 	show();
 

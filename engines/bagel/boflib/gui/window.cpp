@@ -73,7 +73,7 @@ CBofWindow::~CBofWindow() {
 
 	// Remove this window from the list
 	if (_pWindowList == this) {
-		_pWindowList = (CBofWindow *)GetNext();
+		_pWindowList = (CBofWindow *)getNext();
 	}
 
 	killBackdrop();
@@ -318,7 +318,7 @@ void CBofWindow::setTimer(uint32 nID, uint32 nInterval, BofCallback pCallBack) {
 		if (pPacket->_nID == nID)
 			return;
 
-		pPacket = (CBofTimerPacket *)pPacket->GetNext();
+		pPacket = (CBofTimerPacket *)pPacket->getNext();
 	}
 
 	if ((pPacket = new CBofTimerPacket) != nullptr) {
@@ -356,14 +356,14 @@ void CBofWindow::killTimer(uint32 nID) {
 	while (pPacket != nullptr) {
 		if (pPacket->_nID == nID) {
 			if (pPacket == _pTimerList) {
-				_pTimerList = (CBofTimerPacket *)_pTimerList->GetNext();
+				_pTimerList = (CBofTimerPacket *)_pTimerList->getNext();
 			}
 
 			delete pPacket;
 			break;
 		}
 
-		pPacket = (CBofTimerPacket *)pPacket->GetNext();
+		pPacket = (CBofTimerPacket *)pPacket->getNext();
 	}
 }
 
@@ -374,7 +374,7 @@ void CBofWindow::killMyTimers() {
 
 	pTimer = _pTimerList;
 	while (pTimer != nullptr) {
-		pNextTimer = (CBofTimerPacket *)pTimer->GetNext();
+		pNextTimer = (CBofTimerPacket *)pTimer->getNext();
 
 		if (pTimer->_pOwnerWindow == this) {
 			killTimer(pTimer->_nID);

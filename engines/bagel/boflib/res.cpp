@@ -87,7 +87,7 @@ void CBofStringTable::killTable() {
 
 	CResString *pString = _pStringTable;
 	while (pString != nullptr) {
-		CResString *pNextString = (CResString *)pString->GetNext();
+		CResString *pNextString = (CResString *)pString->getNext();
 		delete pString;
 
 		pString = pNextString;
@@ -154,7 +154,7 @@ const char *CBofStringTable::getString(int nId) {
 			break;
 		}
 
-		pCurString = (CResString *)pCurString->GetNext();
+		pCurString = (CResString *)pCurString->getNext();
 	}
 
 	if (pCurString == nullptr) {

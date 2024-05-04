@@ -251,7 +251,7 @@ bool CBagMasterWin::showQuitDialog(CBofWindow *win, bool bSaveBackground) {
 
 		CBagQuitDialog cQuitDialog;
 
-		CBofSound::PauseSounds();
+		CBofSound::pauseSounds();
 
 		if (win == nullptr) {
 			win = this;
@@ -292,7 +292,7 @@ bool CBagMasterWin::showQuitDialog(CBofWindow *win, bool bSaveBackground) {
 		}
 
 		if (!bQuit) {
-			CBofSound::ResumeSounds();
+			CBofSound::resumeSounds();
 		}
 
 		logInfo("Exiting Quit Screen");
@@ -346,7 +346,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 	g_engine->g_bGetVilVars = true;
 
 	// Reset the Queued sound slot volumes back to default
-	CBofSound::ResetQVolumes();
+	CBofSound::resetQVolumes();
 
 	if (!bPainted) {
 		bPainted = true;
@@ -537,7 +537,7 @@ void CBagMasterWin::saveSDevStack() {
 		CBofString cStr = pSDevWin->GetName();
 		if (!cStr.isEmpty()) {
 			Common::strcpy_s(szLocStack[i], cStr.GetBuffer());
-			cStr = pSDevWin->GetPrevSDev();
+			cStr = pSDevWin->getPrevSDev();
 			i++;
 		}
 
@@ -548,7 +548,7 @@ void CBagMasterWin::saveSDevStack() {
 				Common::strcpy_s(szLocStack[i], cStr.GetBuffer());
 
 				i++;
-				cStr = pSDevWin->GetPrevSDev();
+				cStr = pSDevWin->getPrevSDev();
 			} else {
 				break;
 			}
@@ -1218,7 +1218,7 @@ ErrorCode CBagMasterWin::gotoNewWindow(const CBofString *str) {
 			//  If the new storage device is equal to the last windows previous
 			//  lets not go in a circle
 			//  If the current game window did not have a previous win
-			if ((_gameWindow->GetPrevSDev().isEmpty()) || (_gameWindow->GetPrevSDev() != pSDev->GetName())) {
+			if ((_gameWindow->getPrevSDev().isEmpty()) || (_gameWindow->getPrevSDev() != pSDev->GetName())) {
 				if (!bPrev) {
 					pSDev->SetPrevSDev(_gameWindow->GetName());
 				}
@@ -1226,7 +1226,7 @@ ErrorCode CBagMasterWin::gotoNewWindow(const CBofString *str) {
 		}
 
 		// Don't allow recursion
-		if (!pSDev->GetPrevSDev().isEmpty() && pSDev->GetPrevSDev().CompareNoCase(pSDev->GetName()) == 0) {
+		if (!pSDev->getPrevSDev().isEmpty() && pSDev->getPrevSDev().CompareNoCase(pSDev->GetName()) == 0) {
 			pSDev->SetPrevSDev("");
 		}
 
@@ -1307,7 +1307,7 @@ void CBagMasterWin::onUserMessage(uint32 message, uint32 param) {
 		// with audio only (i.e. no smacker),  but that can be fixed in
 		// script.
 		//
-		CBofSound::StopSounds();
+		CBofSound::stopSounds();
 
 		// Kill any waiting PDA messages that are queued up...
 		CBagPDA::removeFromMovieQueue(nullptr);
@@ -1529,7 +1529,7 @@ void CBagMasterWin::fillSaveBuffer(ST_BAGEL_SAVE *saveBuf) {
 						i++;
 						cStr.Free();
 						if (pSDevWin != nullptr) {
-							cStr = pSDevWin->GetPrevSDev();
+							cStr = pSDevWin->getPrevSDev();
 						}
 					}
 				}
@@ -1553,7 +1553,7 @@ bool CBagMasterWin::showSaveDialog(CBofWindow *win, bool bSaveBkg) {
 	if ((pSdev == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
 
 		logInfo("Showing Save Screen");
-		CBofSound::PauseSounds();
+		CBofSound::pauseSounds();
 		ST_BAGEL_SAVE *pSaveBuf = (ST_BAGEL_SAVE *)bofAlloc(sizeof(ST_BAGEL_SAVE));
 
 		if (pSaveBuf != nullptr) {
@@ -1591,7 +1591,7 @@ bool CBagMasterWin::showSaveDialog(CBofWindow *win, bool bSaveBkg) {
 			reportError(ERR_MEMORY, "Unable to allocate the Save Game Buffer");
 		}
 
-		CBofSound::ResumeSounds();
+		CBofSound::resumeSounds();
 
 		logInfo("Exiting Save Screen");
 	}
@@ -1726,7 +1726,7 @@ bool CBagMasterWin::showRestoreDialog(CBofWindow *win, bool bSaveBkg) {
 
 		logInfo("Showing Restore Screen");
 
-		CBofSound::PauseSounds();
+		CBofSound::pauseSounds();
 
 		CBagRestoreDialog cRestoreDialog;
 
@@ -1763,7 +1763,7 @@ bool CBagMasterWin::showRestoreDialog(CBofWindow *win, bool bSaveBkg) {
 
 		g_hackWindow = pLastWin;
 
-		CBofSound::ResumeSounds();
+		CBofSound::resumeSounds();
 
 		logInfo("Exiting Restore Screen");
 	}
@@ -1806,7 +1806,7 @@ void CBagMasterWin::setMidiVolume(int vol) {
 	}
 
 	// We will let the sound subsystem do our volume control...
-	CBofSound::SetVolume(vol, getWaveVolume());
+	CBofSound::setVolume(vol, getWaveVolume());
 }
 
 int CBagMasterWin::getWaveVolume() {
@@ -1832,7 +1832,7 @@ void CBagMasterWin::setWaveVolume(int vol) {
 	}
 
 	// We will let the sound subsystem do our volume control...
-	CBofSound::SetVolume(getMidiVolume(), vol);
+	CBofSound::setVolume(getMidiVolume(), vol);
 }
 
 int CBagMasterWin::getCorrection() {

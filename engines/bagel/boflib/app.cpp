@@ -143,7 +143,7 @@ ErrorCode CBofApp::runApp() {
 		}
 
 		// Handle sounds and timers
-		CBofSound::AudioTask();
+		CBofSound::audioTask();
 		CBofTimer::HandleTimers();
 
 		if (nCount < 0)  {
@@ -163,7 +163,7 @@ ErrorCode CBofApp::runApp() {
 						pWindow->onMainLoop();
 					}
 
-					pWindow = (CBofWindow *)pWindow->GetNext();
+					pWindow = (CBofWindow *)pWindow->getNext();
 				}
 			}
 
