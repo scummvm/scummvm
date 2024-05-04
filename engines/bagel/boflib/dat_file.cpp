@@ -267,28 +267,28 @@ ErrorCode CBofDataFile::readHeader() {
 								uint32 lCrc = calculateCRC(&_pHeader->_lOffset, 4 * _lNumRecs);
 
 								if (lCrc != stHeaderInfo._lFootCrc) {
-									LogError(BuildString("Error: '%s' has invalid footer", _szFileName));
+									logError(buildString("Error: '%s' has invalid footer", _szFileName));
 									_errCode = ERR_CRC;
 								}
 
 							} else {
-								LogError(BuildString("Error: Could not read footer in file '%s'", _szFileName));
+								logError(buildString("Error: Could not read footer in file '%s'", _szFileName));
 								_errCode = ERR_FREAD;
 							}
 
 						} else {
-							LogError(BuildString("Error: Could not allocate footer for file '%s'", _szFileName));
+							logError(buildString("Error: Could not allocate footer for file '%s'", _szFileName));
 							_errCode = ERR_MEMORY;
 						}
 					}
 
 				} else {
-					LogError(BuildString("Error: '%s' has invalid header", _szFileName));
+					logError(buildString("Error: '%s' has invalid header", _szFileName));
 					_errCode = ERR_FTYPE;
 				}
 
 			} else {
-				LogError(BuildString("Error: Could not read header in file '%s'", _szFileName));
+				logError(buildString("Error: Could not read header in file '%s'", _szFileName));
 				_errCode = ERR_FREAD;
 			}
 		}
@@ -336,12 +336,12 @@ ErrorCode CBofDataFile::writeHeader() {
 					_bHeaderDirty = false;
 
 				} else {
-					LogError(BuildString("Error writing footer to file '%s'", _szFileName));
+					logError(buildString("Error writing footer to file '%s'", _szFileName));
 					_errCode = ERR_FWRITE;
 				}
 
 			} else {
-				LogError(BuildString("Error writing header to file '%s'", _szFileName));
+				logError(buildString("Error writing header to file '%s'", _szFileName));
 				_errCode = ERR_FWRITE;
 			}
 		}
@@ -391,7 +391,7 @@ ErrorCode CBofDataFile::readRecord(int32 lRecNum, void *pBuf) {
 				}
 
 			} else {
-				LogError(BuildString("Error reading record %ld in file '%s'", lRecNum, _szFileName));
+				logError(buildString("Error reading record %ld in file '%s'", lRecNum, _szFileName));
 				_errCode = ERR_FREAD;
 			}
 		}
@@ -437,7 +437,7 @@ ErrorCode CBofDataFile::readFromFile(int32 lRecNum, void *pBuf, int32 lBytes) {
 				// Don't bother with a CRC as this chunk of input won't generate a proper
 				// CRC anyway.
 			} else {
-				LogError(BuildString("Error reading record %ld in file '%s'", lRecNum, _szFileName));
+				logError(buildString("Error reading record %ld in file '%s'", lRecNum, _szFileName));
 				_errCode = ERR_FREAD;
 			}
 		}

@@ -129,7 +129,7 @@ void  SBarComputer::onPaint(CBofRect *pRect) {
 }
 
 ErrorCode SBarComputer::attach() {
-	LogInfo("Attaching SBarComputer...");
+	logInfo("Attaching SBarComputer...");
 
 	ErrorCode rc = CBagStorageDevWnd::attach();
 	if (rc == ERR_NONE) {
@@ -231,7 +231,7 @@ ErrorCode SBarComputer::detach() {
 	// Going into mr drinkmaster makes 1 turn go by
 	VAR_MANAGER->IncrementTimers();
 
-	LogInfo("Detached SBarComputer");
+	logInfo("Detached SBarComputer");
 
 	return ERR_NONE;
 }
@@ -433,9 +433,9 @@ ErrorCode SBarComputer::createDrinksListBox() {
 			_pDrinkBox->setHighlightColor(pPal->getColor(PalIdx));
 
 			// Populate listbox
-			int numItems = _pDrinkList->GetCount();
+			int numItems = _pDrinkList->getCount();
 			for (int i = 0; i < numItems; ++i) {
-				SBarCompItem CompItem = _pDrinkList->GetNodeItem(i);
+				SBarCompItem CompItem = _pDrinkList->getNodeItem(i);
 				_pDrinkBox->addToTail(CBofString(CompItem._pItem), false);
 			}
 		} else {
@@ -469,9 +469,9 @@ ErrorCode SBarComputer::createIngListBox() {
 
 
 			// Populate listbox
-			int numItems = _pIngList->GetCount();
+			int numItems = _pIngList->getCount();
 			for (int i = 0; i < numItems; ++i) {
-				SBarCompItem CompItem = _pIngList->GetNodeItem(i);
+				SBarCompItem CompItem = _pIngList->getNodeItem(i);
 				_pIngBox->addToTail(CBofString(CompItem._pItem), false);
 			}
 
@@ -653,12 +653,12 @@ void SBarComputer::setList() {
 		SBarCompItem CompItem;
 		if (_eMode == DRINKMODE) {
 			Assert(_nDrinkSelect != -1);
-			CompItem = _pDrinkList->GetNodeItem(_nDrinkSelect);
+			CompItem = _pDrinkList->getNodeItem(_nDrinkSelect);
 
 		} else {
 
 			Assert(_nIngSelect != -1);
-			CompItem = _pIngList->GetNodeItem(_nIngSelect);
+			CompItem = _pIngList->getNodeItem(_nIngSelect);
 		}
 
 		CBofString cText(CompItem._pList);
@@ -702,7 +702,7 @@ void SBarComputer::back() {
 void SBarComputer::order() {
 	if (_nDrinkSelect != -1) {
 		// Get the associated drink name
-		SBarCompItem CompItem = _pDrinkList->GetNodeItem(_nDrinkSelect);
+		SBarCompItem CompItem = _pDrinkList->getNodeItem(_nDrinkSelect);
 
 		// Deduct 1 Nugget from the player
 		// Read in their total nuggets from game
@@ -830,12 +830,12 @@ void SBarComputer::onBofButton(CBofObject *pObject, int nState) {
 		back();
 		break;
 	case BCQUIT:
-		LogInfo("\tClicked Quit");
+		logInfo("\tClicked Quit");
 		close();
 		break;
 
 	case BCHELP: {
-		LogInfo("\tClicked Help");
+		logInfo("\tClicked Help");
 
 		CBagel *pApp = CBagel::getBagApp();
 
@@ -849,7 +849,7 @@ void SBarComputer::onBofButton(CBofObject *pObject, int nState) {
 		break;
 
 	default:
-		LogWarning(BuildString("Clicked Unknown Button with ID %d", pButton->getControlID()));
+		logWarning(buildString("Clicked Unknown Button with ID %d", pButton->getControlID()));
 		break;
 	}
 }

@@ -34,27 +34,27 @@ static const char *const g_pszLogTypes[4] = {
 	""
 };
 
-void LogInfo(const char *msg) {
+void logInfo(const char *msg) {
 	if (gDebugLevel > 0)
 		debug("%s", msg);
 }
 
-void LogWarning(const char *msg) {
+void logWarning(const char *msg) {
 	if (gDebugLevel > 0)
 		debug("%s%s", g_pszLogTypes[2], msg);
 }
 
-void LogError(const char *msg) {
+void logError(const char *msg) {
 	if (gDebugLevel > 0)
 		debug("%s%s", g_pszLogTypes[1], msg);
 }
 
-void LogFatal(const char *msg) {
+void logFatal(const char *msg) {
 	if (gDebugLevel > 0)
 		debug("%s%s", g_pszLogTypes[0], msg);
 }
 
-const char *BuildString(const char *pszFormat, ...) {
+const char *buildString(const char *pszFormat, ...) {
 	static char szBuf[256];
 	va_list argptr;
 

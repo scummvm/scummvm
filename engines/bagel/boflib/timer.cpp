@@ -115,7 +115,7 @@ void CBofTimer::HandleTimers() {
 
 				} else {
 					// Otherwise, something is wrong
-					LogWarning(BuildString("Timer without a callback: %d", pTimer->_nID));
+					logWarning(buildString("Timer without a callback: %d", pTimer->_nID));
 				}
 			}
 		}

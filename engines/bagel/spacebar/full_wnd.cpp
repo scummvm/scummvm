@@ -40,7 +40,7 @@ ErrorCode SBarFullWnd::attach() {
 	if (CBagPanWindow::_pWieldBmp != nullptr) {
 		_pWieldedObject = CBagPanWindow::_pWieldBmp->getCurrObj();
 		if (_pWieldedObject != nullptr) {
-			SDEV_MANAGER->RemoveObject(CBagPanWindow::_pWieldBmp->GetName(), _pWieldedObject->GetRefName());
+			SDEV_MANAGER->removeObject(CBagPanWindow::_pWieldBmp->GetName(), _pWieldedObject->GetRefName());
 		}
 	}
 

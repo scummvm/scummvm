@@ -58,14 +58,14 @@ private:
 	// Boolean which affords a light-weight test of whether the hash
 	// table is empty.
 	//
-	bool m_bIsEmpty;
+	bool m_bisEmpty;
 };
 
 // CBofVHashTable::CBofVHashTable - class constructor.
 //
 template<class T, int S>
 CBofVHashTable<T, S>::CBofVHashTable(unsigned(*hashFun)(const T &)) : m_nHashTableSize(S),
-	m_pHashFunction(hashFun), m_bIsEmpty(true) {
+	m_pHashFunction(hashFun), m_bisEmpty(true) {
 }
 
 // CBofVHashTable::~CBofVHashTable - class destructor.
@@ -73,12 +73,12 @@ template<class T, int S>
 CBofVHashTable<T, S>::~CBofVHashTable() {
 	for (int x = 0; x < m_nHashTableSize; x++) {
 		CBofList<T *> *pHashBucket = &m_xHashTable[x];
-		int nListEntries = pHashBucket->GetActualCount();
+		int nListEntries = pHashBucket->getActualCount();
 
 		for (int i = 0; i < nListEntries; i++) {
-			T *pListItem = pHashBucket->GetNodeItem(i);
+			T *pListItem = pHashBucket->getNodeItem(i);
 			delete pListItem;
-			pHashBucket->SetNodeItem(i, (T *)nullptr);
+			pHashBucket->setNodeItem(i, (T *)nullptr);
 		}
 	}
 }
@@ -108,9 +108,9 @@ bool CBofVHashTable<T, S>::contains(const T &val) {
 	CBofVHashTable<T, S> *const fakeThis = (CBofVHashTable<T, S> *const)this;
 	CBofList<T *> *pHashBucket = &(fakeThis->m_xHashTable[nHashBucketIndex]);
 	Assert(pHashBucket != nullptr);
-	int nItemsInBucket = pHashBucket->GetCount();
+	int nItemsInBucket = pHashBucket->getCount();
 	for (int i = 0; i < nItemsInBucket; i++) {
-		T *TableEntry = pHashBucket->GetNodeItem(i);
+		T *TableEntry = pHashBucket->getNodeItem(i);
 		if (TableEntry->CompareNoCase((const char *)val) == 0) {
 			returnValue = true;
 			break;

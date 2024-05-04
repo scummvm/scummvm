@@ -30,9 +30,9 @@ namespace Bagel {
  */
 class CLList {
 protected:
-	CLList *m_pPrev; // Pointer to next link in chain
+	CLList *_pPrev; // Pointer to next link in chain
 	CLList *_pNext; // Pointer to previous link in chain
-	void *m_pData;   // Pointer to owning CData
+	void *_pData;   // Pointer to owning CData
 
 public:
 	/**
@@ -102,25 +102,25 @@ public:
 	 * Returns head of current list
 	 * @return      Pointer to head of list
 	*/
-	CLList *GetHead();
+	CLList *getHead();
 
 	/**
 	 * Returns tail of current list
 	 * @return      Pointer to tail of list
 	*/
-	CLList *GetTail();
+	CLList *getTail();
 	CLList *GetPrev() const {
-		return m_pPrev;
+		return _pPrev;
 	}
 	CLList *GetNext() const {
 		return _pNext;
 	}
 
 	void *getData() const {
-		return m_pData;
+		return _pData;
 	}
 	void PutData(void *pObj) {
-		m_pData = pObj;
+		_pData = pObj;
 	}
 
 	/**

@@ -29,12 +29,12 @@ namespace Bagel {
  * Builds a string like sprintf()
  * @return      Pointer to new (temporary) buffer.
  */
-const char *BuildString(const char *pszFormat, ...);
+const char *buildString(const char *pszFormat, ...);
 
-extern void LogInfo(const char *msg);
-extern void LogWarning(const char *msg);
-extern void LogError(const char *msg);
-extern void LogFatal(const char *msg);
+extern void logInfo(const char *msg);
+extern void logWarning(const char *msg);
+extern void logError(const char *msg);
+extern void logFatal(const char *msg);
 
 } // namespace Bagel
 

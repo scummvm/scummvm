@@ -138,7 +138,7 @@ bool CBagExpression::evaluate(CBagVar *leftHandOper, CBagVar *rightHandOper, OPE
 
 
 CBagVar *CBagExpression::getVariable(int itemPos) {
-	CBagVar *curVar = _varList.GetNodeItem(itemPos);
+	CBagVar *curVar = _varList.getNodeItem(itemPos);
 
 	// If the variable is a reference (OBJ.PROPERTY)
 	if (curVar->IsReference()) {
@@ -165,7 +165,7 @@ CBagVar *CBagExpression::getVariable(int itemPos) {
 
 CBagExpression::OPERATION CBagExpression::getOperation(int itemPos) {
 	Assert(false);
-	return _operList.GetNodeItem(itemPos);
+	return _operList.getNodeItem(itemPos);
 }
 
 
@@ -173,7 +173,7 @@ bool CBagExpression::evaluate(bool negFl, CBagVar &result) {
 	bool retVal = false;
 
 	// There must be an expression for every variable after the first
-	Assert(_varList.GetCount() - 1 == _operList.GetCount());
+	Assert(_varList.getCount() - 1 == _operList.getCount());
 
 	int count = 0;
 
@@ -189,15 +189,15 @@ bool CBagExpression::evaluate(bool negFl, CBagVar &result) {
 		bool subValFl;
 		int nodeCount = 0;
 
-		while (count < _varList.GetCount()) {
+		while (count < _varList.getCount()) {
 			CBagVar *rightHandOper = getVariable(count++);
-			OPERATION oper = _operList.GetNodeItem(nodeCount++);
+			OPERATION oper = _operList.getNodeItem(nodeCount++);
 			CBagVar *rightHandOper2;
 
 			switch (oper) {
 			case OP_AND:
 				rightHandOper2 = getVariable(count++);
-				oper = _operList.GetNodeItem(nodeCount++);
+				oper = _operList.getNodeItem(nodeCount++);
 				subValFl = evaluate(rightHandOper, rightHandOper2, oper, result);
 
 				retVal &= subValFl;
@@ -205,7 +205,7 @@ bool CBagExpression::evaluate(bool negFl, CBagVar &result) {
 
 			case OP_OR:
 				rightHandOper2 = getVariable(count++);
-				oper = _operList.GetNodeItem(nodeCount++);
+				oper = _operList.getNodeItem(nodeCount++);
 				subValFl = evaluate(rightHandOper, rightHandOper2, oper, result);
 
 				retVal |= subValFl;
@@ -232,7 +232,7 @@ bool CBagExpression::evalLeftToRight(bool negFl, CBagVar &result) {
 	OPERATION oper = OP_NONE;
 
 	// There must be an expression for every variable after the first
-	Assert(_varList.GetCount() - 1 == _operList.GetCount());
+	Assert(_varList.getCount() - 1 == _operList.getCount());
 
 	int varCount = 0;
 
@@ -247,11 +247,11 @@ bool CBagExpression::evalLeftToRight(bool negFl, CBagVar &result) {
 	if (parentCheckFl) {
 		bool bFirstTime = true;
 		int nodeCount = 0;
-		while (varCount < _varList.GetCount()) {
+		while (varCount < _varList.getCount()) {
 			CBagVar compLeftHandOper;
 			CBagVar *rightHandOper = getVariable(varCount++);
 			OPERATION prevOper = oper;      // save previous operator
-			oper = _operList.GetNodeItem(nodeCount++);
+			oper = _operList.getNodeItem(nodeCount++);
 
 			if (bFirstTime) {
 				compLeftHandOper = *leftHandOper;
@@ -292,7 +292,7 @@ bool CBagExpression::evalLeftToRight(bool negFl, CBagVar &result) {
 
 			case OP_AND:
 				rightHandOper2 = getVariable(varCount++);
-				oper = _operList.GetNodeItem(nodeCount++);
+				oper = _operList.getNodeItem(nodeCount++);
 				boolVal = evaluate(rightHandOper, rightHandOper2, oper, result);
 
 				retVal &= boolVal;
@@ -300,7 +300,7 @@ bool CBagExpression::evalLeftToRight(bool negFl, CBagVar &result) {
 
 			case OP_OR:
 				rightHandOper2 = getVariable(varCount++);
-				oper = _operList.GetNodeItem(nodeCount++);
+				oper = _operList.getNodeItem(nodeCount++);
 				boolVal = evaluate(rightHandOper, rightHandOper2, oper, result);
 
 				// or this don't not it!!!
@@ -677,7 +677,7 @@ ErrorCode CBagExpression::getOperatorFromStream(CBagIfstream &istr, OPERATION &o
 	istr.eatWhite();
 	GetOperStrFromStream(istr, localStr);
 
-	if (localStr.IsEmpty()) {
+	if (localStr.isEmpty()) {
 		GetAlphaNumFromStream(istr, localStr);
 		istr.eatWhite();
 	}

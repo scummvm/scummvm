@@ -48,7 +48,7 @@ bool CBagExpressionObject::runObject() {
 		_expression->evaluate(false, localVar);
 
 		if (!isConditional()) {
-			if (getFileName().IsEmpty())
+			if (getFileName().isEmpty())
 				return false;
 
 			int nIndex = getFileName().Find("~~");

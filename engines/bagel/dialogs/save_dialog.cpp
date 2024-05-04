@@ -80,7 +80,7 @@ static const ST_BUTTONS g_stButtons[NUM_BUTTONS] = {
 int g_nSelectedSlot;
 
 CBagSaveDialog::CBagSaveDialog() {
-	LogInfo("Constructing CBagSaveDialog");
+	logInfo("Constructing CBagSaveDialog");
 	g_nSelectedSlot = -1;
 
 	_pListBox = nullptr;
@@ -281,7 +281,7 @@ void CBagSaveDialog::saveAndClose() {
 	// have not yet chosen a slot to save into.
 	Assert(_nSelectedItem != -1);
 	if (_nSelectedItem != -1) {
-		LogInfo(BuildString("Saving into slot #%d", _nSelectedItem));
+		logInfo(buildString("Saving into slot #%d", _nSelectedItem));
 
 		g_nSelectedSlot = _nSelectedItem;
 
@@ -388,7 +388,7 @@ void CBagSaveDialog::onBofButton(CBofObject *pObject, int nFlags) {
 		break;
 
 	default:
-		LogWarning(BuildString("Save/Restore: Unknown button: %d", pButton->getControlID()));
+		logWarning(buildString("Save/Restore: Unknown button: %d", pButton->getControlID()));
 		break;
 	}
 }

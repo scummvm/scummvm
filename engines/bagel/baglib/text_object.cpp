@@ -76,7 +76,7 @@ ErrorCode CBagTextObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 	// assume no error
 	 ErrorCode errCode = ERR_NONE;
 
-	if ((pBmp != nullptr) && isAttached() && !(getText().IsEmpty())) {
+	if ((pBmp != nullptr) && isAttached() && !(getText().isEmpty())) {
 
 		if (pBmp->getRect().PtInRect(pt)) {
 

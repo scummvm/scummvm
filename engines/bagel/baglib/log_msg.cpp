@@ -206,10 +206,10 @@ void CBagLog::setCurFltPage(int fltPage) {
 
 ErrorCode CBagLog::releaseMsg() {
 	ErrorCode errCode = ERR_NONE;
-	int count = _queuedMsgList->GetCount();
+	int count = _queuedMsgList->getCount();
 
 	for (int i = 0; i < count; ++i) {
-		CBagObject *curObj = _queuedMsgList->RemoveHead();
+		CBagObject *curObj = _queuedMsgList->removeHead();
 
 		// This is waiting to be played, mark it in memory as such, the fixes
 		// get uglier and uglier... since zoomed pda doesn't have a message light,
@@ -221,7 +221,7 @@ ErrorCode CBagLog::releaseMsg() {
 		}
 	}
 
-	_queuedMsgList->RemoveAll();
+	_queuedMsgList->removeAll();
 	return errCode;
 }
 
@@ -269,13 +269,13 @@ CBagObject *CBagLog::onNewUserObject(const CBofString &initStr) {
 
 bool CBagLog::removeFromMsgQueue(CBagObject *deletedObj) {
 	bool removedFl = false;
-	int count = _queuedMsgList->GetCount();
+	int count = _queuedMsgList->getCount();
 
 	for (int i = 0; i < count; i++) {
-		CBagObject *curObj = _queuedMsgList->GetNodeItem(i);
+		CBagObject *curObj = _queuedMsgList->getNodeItem(i);
 
 		if (curObj == deletedObj) {
-			_queuedMsgList->Remove(i);
+			_queuedMsgList->remove(i);
 			removedFl = true;
 			break;
 		}
@@ -328,7 +328,7 @@ ErrorCode CBagLog::activateLocalObject(CBagObject *bagObj) {
 
 ErrorCode CBagLog::playMsgQueue() {
 	ErrorCode errCode = ERR_NONE;
-	int count = _queuedMsgList->GetCount();
+	int count = _queuedMsgList->getCount();
 
 	// Walk through the message queue and play all the messages
 	// Only play one message per click on the pda message light.
@@ -362,7 +362,7 @@ ErrorCode CBagLog::playMsgQueue() {
 		// If we're playing a valid message (not the override message) then make sure
 		// we remove it from the queue.
 		if (playMsgFl) {
-			CBagObject *curObj = _queuedMsgList->RemoveHead();
+			CBagObject *curObj = _queuedMsgList->removeHead();
 
 			if (curObj) {
 				CRect  r = getRect();
@@ -381,7 +381,7 @@ ErrorCode CBagLog::playMsgQueue() {
 			// Although this might seem like a superfluous thing to do, but wait!
 			// it is not!  the runObject call above can cause the number of objects in the
 			// message queue to be decremented.
-			count = _queuedMsgList->GetCount();
+			count = _queuedMsgList->getCount();
 
 			// Don't stop message light from blinking unless we're down to zero
 			// messages in the queue.
@@ -543,7 +543,7 @@ ErrorCode CBagLogMsg::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect, i
 	int minutes = msgTime - (hour * 100);
 
 	setFont(FONT_MONO);
-	setText(BuildString("%-30s%02d:%02d", _msgSendee.GetBuffer(), hour, minutes));
+	setText(buildString("%-30s%02d:%02d", _msgSendee.GetBuffer(), hour, minutes));
 
 	return CBagTextObject::update(bmp, pt, srcRect, maskColor);
 }
@@ -754,7 +754,7 @@ ErrorCode CBagLogSuspect::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRec
 
 	setFont(FONT_MONO);
 
-	setText(BuildString(" %-5.5s %-17.17s %-12.12s %-20.20s %-4.4s %-4.4s",
+	setText(buildString(" %-5.5s %-17.17s %-12.12s %-20.20s %-4.4s %-4.4s",
 	                    susCheckedString.GetBuffer(),
 	                    _susName.GetBuffer(),
 	                    _susSpecies.GetBuffer(),
@@ -944,7 +944,7 @@ ErrorCode CBagEnergyDetectorObject::attach() {
 	CBofString cStr;
 	SetPSText(&cStr);
 
-	setText(BuildString("%02d:%02d %6.6s %s  %-35.35s", hour, minute, zhapsString.GetBuffer(), "zhaps", causeString.GetBuffer()));
+	setText(buildString("%02d:%02d %6.6s %s  %-35.35s", hour, minute, zhapsString.GetBuffer(), "zhaps", causeString.GetBuffer()));
 	RecalcTextRect(false);
 
 	return CBagObject::attach();

@@ -488,7 +488,7 @@ void CBagOptWindow::onBofButton(CBofObject *pObject, int nState) {
 		}
 
 		default:
-			LogWarning("Unknown button pressed");
+			logWarning("Unknown button pressed");
 			break;
 
 		}

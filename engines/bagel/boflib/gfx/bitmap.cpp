@@ -854,11 +854,11 @@ CBofBitmap *CBofBitmap::extractBitmap(CBofRect *pRect) {
 			if ((pNewBmp = new CBofBitmap(pRect->width(), pRect->height(), pPalette, _bOwnPalette)) != nullptr) {
 				paint(pNewBmp, 0, 0, pRect);
 			} else {
-				LogFatal("Unable to allocate a new CBofBitmap");
+				logFatal("Unable to allocate a new CBofBitmap");
 			}
 
 		} else {
-			LogFatal("This bitmap does not have a valid palette");
+			logFatal("This bitmap does not have a valid palette");
 		}
 	}
 

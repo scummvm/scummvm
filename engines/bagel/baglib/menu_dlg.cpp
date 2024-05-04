@@ -113,13 +113,13 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 	CBofWindow *pParent = pWnd;
 	int nNumWieldChoices = 0;
 
-	if ((GetObjectList()->GetCount() == 1) && (GetObjectList()->GetTail()->GetNodeItem()->GetType() == TEXTOBJ) && (((CBagTextObject *)GetObjectList()->GetTail()->GetNodeItem())->IsCaption())) {
+	if ((GetObjectList()->getCount() == 1) && (GetObjectList()->getTail()->getNodeItem()->GetType() == TEXTOBJ) && (((CBagTextObject *)GetObjectList()->getTail()->getNodeItem())->IsCaption())) {
 		nBaseMenuLocX = 0;
 
 	} else if (nNumCalls == 1 && m_pUniversalObjectList && m_pUniversalObjectList != GetObjectList()) {
-		for (int i = 0; i < m_pUniversalObjectList->GetCount(); ++i) {
+		for (int i = 0; i < m_pUniversalObjectList->getCount(); ++i) {
 
-			pObj = m_pUniversalObjectList->GetNodeItem(i);
+			pObj = m_pUniversalObjectList->getNodeItem(i);
 
 			if (pObj->IsLocal() && (!pObj->GetExpression() || pObj->GetExpression()->evaluate(pObj->IsNegative()))) {
 				// Only attach if not attached
@@ -168,7 +168,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 		// Start non-wield menu on next row
 		menuLoc.y += objSize.height();
 
-		nNumWieldChoices = xObjList.GetCount();
+		nNumWieldChoices = xObjList.getCount();
 
 		if (nNumWieldChoices != 0) {
 			cWieldMenuSize = menuSize;
@@ -177,9 +177,9 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 	bool bNoMenu = false;
 
-	for (int i = 0; i < GetObjectList()->GetCount(); ++i) {
+	for (int i = 0; i < GetObjectList()->getCount(); ++i) {
 
-		pObj = GetObjectList()->GetNodeItem(i);
+		pObj = GetObjectList()->getNodeItem(i);
 
 		if (pObj->IsLocal() && (!pObj->GetExpression() || pObj->GetExpression()->evaluate(pObj->IsNegative()))) {
 			// Only attach if not attached
@@ -302,9 +302,9 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 		bool bMoved = false;
 		bool bCaption = false;
 		int nNumChars = 0;
-		if ((nNumItems == 1) && (xObjList.GetTail()->GetNodeItem()->GetType() == TEXTOBJ) && (((CBagTextObject *)xObjList.GetTail()->GetNodeItem())->IsCaption())) {
+		if ((nNumItems == 1) && (xObjList.getTail()->getNodeItem()->GetType() == TEXTOBJ) && (((CBagTextObject *)xObjList.getTail()->getNodeItem())->IsCaption())) {
 			while (nNumWieldChoices-- != 0) {
-				pObj = xObjList.RemoveHead();
+				pObj = xObjList.removeHead();
 				pObj->detach();
 			}
 
@@ -321,19 +321,19 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			tmpRect.top = tmpRect.bottom - menuSize.cy;
 			bCaption = true;
 
-			nNumChars = ((CBagTextObject *)xObjList.GetHead()->GetNodeItem())->getText().getLength();
+			nNumChars = ((CBagTextObject *)xObjList.getHead()->getNodeItem())->getText().getLength();
 
 			// Bring caption back 3 pixels
 			CBofPoint cPoint;
-			cPoint = xObjList.GetHead()->GetNodeItem()->getPosition();
+			cPoint = xObjList.getHead()->getNodeItem()->getPosition();
 			cPoint.x = 1;
 
-			xObjList.GetHead()->GetNodeItem()->setPosition(cPoint);
+			xObjList.getHead()->getNodeItem()->setPosition(cPoint);
 
 		} else {
 			if (bTextOnly) {
 				while (nNumWieldChoices-- != 0) {
-					pObj = xObjList.RemoveHead();
+					pObj = xObjList.removeHead();
 					pObj->detach();
 				}
 
@@ -367,12 +367,12 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 		}
 
 		bReturn = false;
-		if (xObjList.GetCount() && !bNoMenu) {
+		if (xObjList.getCount() && !bNoMenu) {
 			bReturn = true;
 
 			dlg.SetObjectList(&xObjList);
 
-			for (int i = 0; i < xObjList.GetCount(); i++) {
+			for (int i = 0; i < xObjList.getCount(); i++) {
 				pObj = xObjList[i];
 
 				if (pObj->GetType() == TEXTOBJ) {
@@ -538,7 +538,7 @@ bool CBagMenu::UnCheck(int /*nRefId*/) {
 
 bool CBagMenu::SetUniversalObjectList(CBofList<CBagObject *> *pObjList) {
 	if (m_pUniversalObjectList != nullptr) {
-		RemoveUniversalObjectList();
+		removeUniversalObjectList();
 	}
 
 	m_pUniversalObjectList = pObjList;
@@ -546,7 +546,7 @@ bool CBagMenu::SetUniversalObjectList(CBofList<CBagObject *> *pObjList) {
 	return true;
 }
 
-bool CBagMenu::RemoveUniversalObjectList() {
+bool CBagMenu::removeUniversalObjectList() {
 	if (m_pUniversalObjectList == nullptr) {
 		return true;
 	}
@@ -664,7 +664,7 @@ void CBagMenuDlg::onTimer(uint32 nID) {
 		break;
 
 	default:
-		LogWarning("Invalid Timer ID");
+		logWarning("Invalid Timer ID");
 		break;
 	}
 }

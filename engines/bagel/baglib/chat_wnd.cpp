@@ -56,9 +56,9 @@ void CBagChatWnd::onMouseMove(uint32 flags, CBofPoint *pos, void *) {
 	// Run thru background object list and find if the cursor is over an object
 	if ((bagObjectList = GetObjectList()) != nullptr) {
 		// Go thru list backwards to find the 1st top-most object
-		CBofListNode<CBagObject *> *currNode = bagObjectList->GetTail();
+		CBofListNode<CBagObject *> *currNode = bagObjectList->getTail();
 		while (currNode != nullptr) {
-			CBagObject *currNodeItem = currNode->GetNodeItem();
+			CBagObject *currNodeItem = currNode->getNodeItem();
 
 			if (currNodeItem->GetType() == TEXTOBJ) {
 				((CBagTextObject *)currNodeItem)->setColor(4);
@@ -69,7 +69,7 @@ void CBagChatWnd::onMouseMove(uint32 flags, CBofPoint *pos, void *) {
 				}
 			}
 
-			currNode = currNode->m_pPrev;
+			currNode = currNode->_pPrev;
 		}
 	}
 }

@@ -61,7 +61,7 @@ CBagMovieObject::~CBagMovieObject() {
 	// Could still by lying around in the pda movie queue,
 	// Make sure it has been removed.
 	if (m_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
-		CBagPDA::RemoveFromMovieQueue(this);
+		CBagPDA::removeFromMovieQueue(this);
 	}
 
 	// If there's a sound with this guy, then trash it here.
@@ -88,7 +88,7 @@ bool CBagMovieObject::runObject() {
 		int nExt = sFileName.getLength() - 4; // ".EXT"
 
 		if (nExt <= 0) {
-			LogError("Movie does not have a file name or proper extension.  Please write better scripts.");
+			logError("Movie does not have a file name or proper extension.  Please write better scripts.");
 			return rc;
 		}
 
@@ -136,7 +136,7 @@ bool CBagMovieObject::runObject() {
 			// We should never get here
 			case MOVFILETYPE::NONE:
 			default:
-				LogError(BuildString("Movie does not have a correct file name: %s.", sFileName.GetBuffer()));
+				logError(buildString("Movie does not have a correct file name: %s.", sFileName.GetBuffer()));
 				return rc;
 			}
 		}
@@ -271,7 +271,7 @@ bool CBagMovieObject::runObject() {
 						delete pMovie;
 						rc = true;
 					} else {
-						LogError(BuildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.GetBuffer()));
+						logError(buildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.GetBuffer()));
 					}
 
 					if (pNewWin) {
@@ -299,7 +299,7 @@ bool CBagMovieObject::runObject() {
 								pPDA->setMovie(sFileName); // Set the movie to play
 							}
 						} else {
-							LogError(BuildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.GetBuffer()));
+							logError(buildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.GetBuffer()));
 						}
 					} else {
 						CBofMovie *pMovie;
@@ -334,7 +334,7 @@ bool CBagMovieObject::runObject() {
 							delete pMovie;
 							rc = true;
 						} else {
-							LogError(BuildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.GetBuffer()));
+							logError(buildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.GetBuffer()));
 						}
 
 						// If we put a black window up, then
@@ -371,7 +371,7 @@ bool CBagMovieObject::runObject() {
 				delete pSound;
 				rc = true;
 			} else {
-				LogError(BuildString("Movie SOUND file could not be read: %s.  Where? Not in Kansas ...", sFileName.GetBuffer()));
+				logError(buildString("Movie SOUND file could not be read: %s.  Where? Not in Kansas ...", sFileName.GetBuffer()));
 			}
 		} else if (nMovFileType == MOVFILETYPE::TEXT) {
 			Common::File f;
@@ -382,7 +382,7 @@ bool CBagMovieObject::runObject() {
 				f.close();
 				rc = true;
 			} else {
-				LogError(BuildString("Movie TEXT file could not be read: %s.  Why? because we like you ...", sFileName.GetBuffer()));
+				logError(buildString("Movie TEXT file could not be read: %s.  Why? because we like you ...", sFileName.GetBuffer()));
 			}
 		}
 

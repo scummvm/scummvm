@@ -25,15 +25,15 @@
 namespace Bagel {
 
 CLList::CLList() {
-	m_pPrev = nullptr;
+	_pPrev = nullptr;
 	_pNext = nullptr;
-	m_pData = nullptr;
+	_pData = nullptr;
 }
 
 CLList::CLList(void *pObj) {
-	m_pPrev = nullptr;
+	_pPrev = nullptr;
 	_pNext = nullptr;
-	m_pData = pObj;
+	_pData = pObj;
 }
 
 CLList::~CLList() {
@@ -44,21 +44,21 @@ void CLList::addToHead(CLList *pNewList) {
 	// Can't insert a nullptr record into the list
 	assert(pNewList != nullptr);
 
-	CLList *pListHead = GetHead();
+	CLList *pListHead = getHead();
 
 	pNewList->_pNext = pListHead;
-	pNewList->m_pPrev = nullptr;
+	pNewList->_pPrev = nullptr;
 
-	pListHead->m_pPrev = pNewList;
+	pListHead->_pPrev = pNewList;
 }
 
 void CLList::addToTail(CLList *pNewList) {
 	// Can't insert a nullptr record into the list
 	assert(pNewList != nullptr);
 
-	CLList *pListTail = GetTail();
+	CLList *pListTail = getTail();
 
-	pNewList->m_pPrev = pListTail;
+	pNewList->_pPrev = pListTail;
 	pNewList->_pNext = nullptr;
 
 	pListTail->_pNext = pNewList;
@@ -68,27 +68,27 @@ void CLList::Insert(CLList *pList) {
 	// Can't insert a nullptr record into the list
 	assert(pList != nullptr);
 
-	pList->m_pPrev = this;
+	pList->_pPrev = this;
 	pList->_pNext = _pNext;
 
 	if (_pNext != nullptr)
-		_pNext->m_pPrev = pList;
+		_pNext->_pPrev = pList;
 
 	_pNext = pList;
 }
 
 void CLList::Delete() {
-	if (m_pPrev != nullptr)
-		m_pPrev->_pNext = _pNext;
+	if (_pPrev != nullptr)
+		_pPrev->_pNext = _pNext;
 
 	if (_pNext != nullptr)
-		_pNext->m_pPrev = m_pPrev;
+		_pNext->_pPrev = _pPrev;
 
-	m_pPrev = _pNext = nullptr;
+	_pPrev = _pNext = nullptr;
 }
 
 void CLList::MoveToHead() {
-	CLList *pHead = GetHead();
+	CLList *pHead = getHead();
 	assert(pHead != nullptr);
 
 	if (this != pHead) {
@@ -98,7 +98,7 @@ void CLList::MoveToHead() {
 }
 
 void CLList::MoveToTail() {
-	CLList *pTail = GetTail();
+	CLList *pTail = getTail();
 	assert(pTail != nullptr);
 
 	if (this != pTail) {
@@ -108,9 +108,9 @@ void CLList::MoveToTail() {
 }
 
 void CLList::MoveLeft() {
-	if (m_pPrev != nullptr) {
+	if (_pPrev != nullptr) {
 
-		CLList *pPrev = m_pPrev->GetPrev();
+		CLList *pPrev = _pPrev->GetPrev();
 		if (pPrev != nullptr) {
 			Delete();
 			pPrev->Insert(this);
@@ -132,7 +132,7 @@ void CLList::MoveRight() {
 
 void CLList::FlushList() {
 
-	CLList *pList = GetHead();
+	CLList *pList = getHead();
 
 	// Something is wrong if the head is invalid
 	assert(pList != nullptr);
@@ -148,15 +148,15 @@ void CLList::FlushList() {
 	}
 }
 
-CLList *CLList::GetHead() {
+CLList *CLList::getHead() {
 	CLList *pList = this;
-	while (pList->m_pPrev != nullptr)
-		pList = pList->m_pPrev;
+	while (pList->_pPrev != nullptr)
+		pList = pList->_pPrev;
 
 	return pList;
 }
 
-CLList *CLList::GetTail() {
+CLList *CLList::getTail() {
 	CLList *pList = this;
 	while (pList->_pNext != nullptr)
 		pList = pList->_pNext;

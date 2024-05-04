@@ -121,7 +121,7 @@ public:
 	 * Just remove this message from the queue, remember that we
 	 * don't own this object, so just remove it, don't delete it!!!!
 	 */
-	static void RemoveFromMovieQueue(CBagMovieObject *);
+	static void removeFromMovieQueue(CBagMovieObject *);
 
 	/**
 	 * Return true if a movie is waiting to play.

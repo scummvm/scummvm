@@ -34,78 +34,78 @@ namespace Bagel {
 template<class T>
 class CBofListNode {
 protected:
-	T m_cItem;              // Data contained at this node
+	T _cItem;              // Data contained at this node
 
 public:
 	CBofListNode() {
-		_pNext = m_pPrev = nullptr;
+		_pNext = _pPrev = nullptr;
 	}
 	CBofListNode(T cItem) {
-		_pNext = m_pPrev = nullptr;
-		m_cItem = cItem;
+		_pNext = _pPrev = nullptr;
+		_cItem = cItem;
 	}
 
-	T GetNodeItem() {
-		return m_cItem;
+	T getNodeItem() {
+		return _cItem;
 	}
-	void SetNodeItem(T cItem) {
-		m_cItem = cItem;
+	void setNodeItem(T cItem) {
+		_cItem = cItem;
 	}
 
 	CBofListNode *_pNext; // Next node in list
-	CBofListNode *m_pPrev; // Previous node in list
+	CBofListNode *_pPrev; // Previous node in list
 };
 
 template<class T>
 class CBofList {
 private:
-	void NewItemList() {
-		if (m_pItemList != nullptr) {
-			BofFree(m_pItemList);
-			m_pItemList = nullptr;
+	void newItemList() {
+		if (_pItemList != nullptr) {
+			BofFree(_pItemList);
+			_pItemList = nullptr;
 		}
 
-		if (m_nNumItems != 0) {
-			m_pItemList = (void **)BofAlloc(m_nNumItems * sizeof(void *));
-		}
-	}
-
-	void KillItemList() {
-		if (m_pItemList != nullptr) {
-			BofFree(m_pItemList);
-			m_pItemList = nullptr;
+		if (_nNumItems != 0) {
+			_pItemList = (void **)BofAlloc(_nNumItems * sizeof(void *));
 		}
 	}
 
-	void RecalcItemList() {
+	void killItemList() {
+		if (_pItemList != nullptr) {
+			BofFree(_pItemList);
+			_pItemList = nullptr;
+		}
+	}
+
+	void recalcItemList() {
 		CBofListNode<T> *pNode;
 		int i;
 
 		// We only want to recalc if we're about to overflow what we have
-		if (m_nNumItems >= m_nItemsAllocated) {
-			if (m_pItemList != nullptr) {
-				BofFree(m_pItemList);
-				m_pItemList = nullptr;
+		if (_nNumItems >= _nItemsAllocated) {
+			if (_pItemList != nullptr) {
+				BofFree(_pItemList);
+				_pItemList = nullptr;
 			}
 
-			if (m_nNumItems != 0) {
-				assert(m_nItemsAllocated < 0x8000);
-				m_nItemsAllocated *= 2;
-				if (m_nItemsAllocated == 0)
-					m_nItemsAllocated = MIN_NODES;
+			if (_nNumItems != 0) {
+				assert(_nItemsAllocated < 0x8000);
+				_nItemsAllocated *= 2;
+				if (_nItemsAllocated == 0)
+					_nItemsAllocated = MIN_NODES;
 
-				m_pItemList = (void **)BofAlloc(m_nItemsAllocated * sizeof(void *));
+				_pItemList = (void **)BofAlloc(_nItemsAllocated * sizeof(void *));
 			}
 		}
 
-		if (m_nNumItems != 0) {
-			assert(m_pItemList != nullptr);
+		if (_nNumItems != 0) {
+			assert(_pItemList != nullptr);
 
 			i = 0;
-			pNode = m_pHead;
+			pNode = _pHead;
 
 			while (pNode != nullptr) {
-				*(m_pItemList + i++) = pNode;
+				*(_pItemList + i++) = pNode;
 				pNode = pNode->_pNext;
 			}
 		}
@@ -116,24 +116,24 @@ private:
 	 * @param cItem     Data to store in new node
 	 * @returns         Pointer to new node
 	 */
-	CBofListNode<T> *NewNode(T cItem) {
+	CBofListNode<T> *newNode(T cItem) {
 		CBofListNode<T> *pNewNode = new CBofListNode<T>(cItem);
 		return pNewNode;
 	}
 
 	/**
 	 * Calculates the actual head of this linked list
-	 * @remarks     This function is used for debugging to verify that m_pHead
+	 * @remarks     This function is used for debugging to verify that _pHead
 	 *              is still pointing to the 1st node in the list.
 	 * @returns     Pointer to head of list
 	 */
-	CBofListNode<T> *GetActualHead() {
+	CBofListNode<T> *getActualHead() {
 		CBofListNode<T> *pNode;
-		CBofListNode<T> *pLast = pNode = m_pHead;
+		CBofListNode<T> *pLast = pNode = _pHead;
 
 		while (pNode != nullptr) {
 			pLast = pNode;
-			pNode = pNode->m_pPrev;
+			pNode = pNode->_pPrev;
 		}
 
 		return pLast;
@@ -141,13 +141,13 @@ private:
 
 	/**
 	 * Calculates the actual tail of this linked list
-	 * @remarks     This function is used for debugging to verify that m_pTail
+	 * @remarks     This function is used for debugging to verify that _pTail
 	 *              is still pointing to the last node in the list.
 	 * @returns     Pointer to tail of list
 	 */
-	CBofListNode<T> *GetActualTail() {
+	CBofListNode<T> *getActualTail() {
 		CBofListNode<T> *pNode;
-		CBofListNode<T> *pLast = pNode = m_pTail;
+		CBofListNode<T> *pLast = pNode = _pTail;
 
 		while (pNode != nullptr) {
 			pLast = pNode;
@@ -158,61 +158,61 @@ private:
 	}
 
 protected:
-	uint32 m_nNumItems;
-	uint32 m_nItemsAllocated;
-	CBofListNode<T> *m_pHead;       // pointer to head of list
-	CBofListNode<T> *m_pTail;       // pointer to tail of list
+	uint32 _nNumItems;
+	uint32 _nItemsAllocated;
+	CBofListNode<T> *_pHead;       // pointer to head of list
+	CBofListNode<T> *_pTail;       // pointer to tail of list
 
-	void **m_pItemList;         // pointer to secondary node list
+	void **_pItemList;         // pointer to secondary node list
 
 public:
 	/*
 	 * Constructor
 	 */
 	CBofList() {
-		m_nNumItems = 0;
-		m_nItemsAllocated = 0;
-		m_pHead = m_pTail = nullptr;
-		m_pItemList = nullptr;
+		_nNumItems = 0;
+		_nItemsAllocated = 0;
+		_pHead = _pTail = nullptr;
+		_pItemList = nullptr;
 	}
 
 	/**
 	 * Destructor
 	 */
 	virtual ~CBofList() {
-		RemoveAll();
-		KillItemList();
-		assert(m_nNumItems == 0);
+		removeAll();
+		killItemList();
+		assert(_nNumItems == 0);
 	}
 
-	int GetCount() const {
-		return m_nNumItems;
+	int getCount() const {
+		return _nNumItems;
 	}
 
 	/**
 	 * Retrieves the number of items in this list
 	 * @returns     Returns the number of linked items in this linked list.
 	 */
-	int GetActualCount() const {
+	int getActualCount() const {
 		uint32 nCount = 0;
-		CBofListNode<T> *pNode = m_pHead;
+		CBofListNode<T> *pNode = _pHead;
 		while (pNode != nullptr) {
 			nCount++;
 			pNode = pNode->_pNext;
 		}
 
 		// There should be no discrepancy
-		assert(m_nNumItems == nCount);
+		assert(_nNumItems == nCount);
 
-		return m_nNumItems;
+		return _nNumItems;
 	}
 
 	/**
 	 * Returns true if the list is empty
 	 * @return
 	*/
-	bool IsEmpty() const {
-		return m_pHead == nullptr;
+	bool isEmpty() const {
+		return _pHead == nullptr;
 	}
 
 	/**
@@ -220,24 +220,24 @@ public:
 	 * @returns     Returns the item located at the node with given index.
 	 * @param nNodeIndex        Index of node to retrieve
 	 */
-	inline T GetNodeItem(int nNodeIndex) {
-		CBofListNode<T> *pNode = GetNode(nNodeIndex);
+	inline T getNodeItem(int nNodeIndex) {
+		CBofListNode<T> *pNode = getNode(nNodeIndex);
 
 		assert(pNode != nullptr);
 
-		return pNode->GetNodeItem();
+		return pNode->getNodeItem();
 	}
 
-	void SetNodeItem(int nNodeIndex, T tNewItem) {
-		CBofListNode<T> *pNode = GetNode(nNodeIndex);
+	void setNodeItem(int nNodeIndex, T tNewItem) {
+		CBofListNode<T> *pNode = getNode(nNodeIndex);
 
 		assert(pNode != nullptr);
 
-		pNode->SetNodeItem(tNewItem);
+		pNode->setNodeItem(tNewItem);
 	}
 
 	T operator[](int nIndex) {
-		return GetNodeItem(nIndex);
+		return getNodeItem(nIndex);
 	}
 
 	/**
@@ -245,14 +245,14 @@ public:
 	 * @returns     Returns the node located at the given index.
 	 * @param nIndex        Index of node to retrieve
 	 */
-	CBofListNode<T> *GetNode(int nNodeIndex) {
-		assert(nNodeIndex >= 0 && nNodeIndex < GetCount());
+	CBofListNode<T> *getNode(int nNodeIndex) {
+		assert(nNodeIndex >= 0 && nNodeIndex < getCount());
 
 		CBofListNode<T> *pNode;
 
-		if (m_pItemList == nullptr) {
+		if (_pItemList == nullptr) {
 
-			pNode = m_pHead;
+			pNode = _pHead;
 			while (pNode != nullptr) {
 				if (nNodeIndex-- == 0)
 					break;
@@ -260,7 +260,7 @@ public:
 			}
 
 		} else {
-			pNode = (CBofListNode<T> *)(*(m_pItemList + nNodeIndex));
+			pNode = (CBofListNode<T> *)(*(_pItemList + nNodeIndex));
 		}
 
 		return pNode;
@@ -272,8 +272,8 @@ public:
 	 * @param cNewItem      Data to store at new node
 	 */
 	void insertBefore(int nNodeIndex, T cNewItem) {
-		assert(!IsEmpty());
-		insertBefore(GetNode(nNodeIndex), cNewItem);
+		assert(!isEmpty());
+		insertBefore(getNode(nNodeIndex), cNewItem);
 	}
 
 	/**
@@ -283,28 +283,28 @@ public:
 	 */
 	void insertBefore(CBofListNode<T> *pNode, T cNewItem) {
 		assert(pNode != nullptr);
-		assert(!IsEmpty());
+		assert(!isEmpty());
 
-		if (pNode == m_pHead) {
+		if (pNode == _pHead) {
 			addToHead(cNewItem);
 		} else {
 
-			CBofListNode<T> *pNewNode = NewNode(cNewItem);
+			CBofListNode<T> *pNewNode = newNode(cNewItem);
 
-			pNewNode->m_pPrev = pNode->m_pPrev;
+			pNewNode->_pPrev = pNode->_pPrev;
 			pNewNode->_pNext = pNode;
 
-			if (pNode->m_pPrev != nullptr)
-				pNode->m_pPrev->_pNext = pNewNode;
+			if (pNode->_pPrev != nullptr)
+				pNode->_pPrev->_pNext = pNewNode;
 
-			pNode->m_pPrev = pNewNode;
+			pNode->_pPrev = pNewNode;
 		}
 
 		// one more item in list
-		assert(m_nNumItems != 0xFFFF);
-		m_nNumItems++;
+		assert(_nNumItems != 0xFFFF);
+		_nNumItems++;
 
-		RecalcItemList();
+		recalcItemList();
 	}
 
 	/**
@@ -313,8 +313,8 @@ public:
 	 * @param cNewItem          Data to store at new node
 	 */
 	void insertAfter(int nNodeIndex, T cNewItem) {
-		assert(!IsEmpty());
-		insertAfter(GetNode(nNodeIndex), cNewItem);
+		assert(!isEmpty());
+		insertAfter(getNode(nNodeIndex), cNewItem);
 	}
 
 	/**
@@ -324,27 +324,27 @@ public:
 	 */
 	void insertAfter(CBofListNode<T> *pNode, T cNewItem) {
 		assert(pNode != nullptr);
-		assert(!IsEmpty());
+		assert(!isEmpty());
 
-		if (pNode == m_pTail) {
+		if (pNode == _pTail) {
 			addToTail(cNewItem);
 		} else {
 
-			CBofListNode<T> *pNewNode = NewNode(cNewItem);
-			pNewNode->m_pPrev = pNode;
+			CBofListNode<T> *pNewNode = newNode(cNewItem);
+			pNewNode->_pPrev = pNode;
 			pNewNode->_pNext = pNode->_pNext;
 
 			if (pNode->_pNext != nullptr)
-				pNode->_pNext->m_pPrev = pNewNode;
+				pNode->_pNext->_pPrev = pNewNode;
 
 			pNode->_pNext = pNewNode;
 		}
 
 		// one more item in list
-		assert(m_nNumItems != 0xFFFF);
-		m_nNumItems++;
+		assert(_nNumItems != 0xFFFF);
+		_nNumItems++;
 
-		RecalcItemList();
+		recalcItemList();
 	}
 
 	/**
@@ -352,35 +352,35 @@ public:
 	 * @param pNode             Node to remove
 	 * @returns                 Item stored at specified location
 	 */
-	T Remove(CBofListNode<T> *pNode) {
+	T remove(CBofListNode<T> *pNode) {
 		assert(pNode != nullptr);
 
 		T retVal;
 
 		// One less item in list
-		m_nNumItems--;
+		_nNumItems--;
 
-		//assert(m_nNumItems >= 0);
+		//assert(_nNumItems >= 0);
 
 		if (pNode != nullptr) {
 
-			retVal = pNode->GetNodeItem();
+			retVal = pNode->getNodeItem();
 
-			if (m_pHead == pNode)
-				m_pHead = m_pHead->_pNext;
+			if (_pHead == pNode)
+				_pHead = _pHead->_pNext;
 
-			if (m_pTail == pNode)
-				m_pTail = m_pTail->m_pPrev;
+			if (_pTail == pNode)
+				_pTail = _pTail->_pPrev;
 
-			if (pNode->m_pPrev != nullptr)
-				pNode->m_pPrev->_pNext = pNode->_pNext;
+			if (pNode->_pPrev != nullptr)
+				pNode->_pPrev->_pNext = pNode->_pNext;
 
 			if (pNode->_pNext != nullptr)
-				pNode->_pNext->m_pPrev = pNode->m_pPrev;
+				pNode->_pNext->_pPrev = pNode->_pPrev;
 
 			delete pNode;
 
-			RecalcItemList();
+			recalcItemList();
 			return retVal;
 		} else {
 			return T();
@@ -392,38 +392,38 @@ public:
 	 * @param nNodeIndex        Index of node to remove
 	 * @returns                 Item stored at specified location
 	 */
-	T Remove(int nNodeIndex) {
-		return Remove(GetNode(nNodeIndex));
+	T remove(int nNodeIndex) {
+		return remove(getNode(nNodeIndex));
 	}
 
 	/**
 	 * Removes all nodes from this list
 	 * @remarks     Deletes all memory used by the nodes in this list
 	 */
-	void RemoveAll() {
-		int i = GetCount();
+	void removeAll() {
+		int i = getCount();
 
 		while (i-- != 0)
-			Remove(0);
+			remove(0);
 	}
 
 	/**
 	 * Removes specfied node (by index) from the list
 	 * @returns     Item stored at specified location
 	 */
-	inline T RemoveHead() {
-		assert(m_pHead != nullptr);
+	inline T removeHead() {
+		assert(_pHead != nullptr);
 
-		return Remove(m_pHead);
+		return remove(_pHead);
 	}
 
 	/**
 	 * Removes specfied node (by index) from the list
 	 * @returns     Item stored at specified location
 	 */
-	inline T RemoveTail() {
-		assert(m_pTail != nullptr);
-		return Remove(m_pTail);
+	inline T removeTail() {
+		assert(_pTail != nullptr);
+		return remove(_pTail);
 	}
 
 	/**
@@ -433,20 +433,20 @@ public:
 	inline void addToHead(CBofListNode<T> *pNewNode) {
 		assert(pNewNode != nullptr);
 
-		pNewNode->_pNext = m_pHead;
-		pNewNode->m_pPrev = nullptr;
-		if (m_pHead != nullptr)
-			m_pHead->m_pPrev = pNewNode;
-		m_pHead = pNewNode;
+		pNewNode->_pNext = _pHead;
+		pNewNode->_pPrev = nullptr;
+		if (_pHead != nullptr)
+			_pHead->_pPrev = pNewNode;
+		_pHead = pNewNode;
 
-		if (m_pTail == nullptr)
-			m_pTail = m_pHead;
+		if (_pTail == nullptr)
+			_pTail = _pHead;
 
 		// one less item in list
-		assert(m_nNumItems != 0xFFFF);
-		m_nNumItems++;
+		assert(_nNumItems != 0xFFFF);
+		_nNumItems++;
 
-		RecalcItemList();
+		recalcItemList();
 	}
 
 	/**
@@ -454,7 +454,7 @@ public:
 	 * @param cItem     Item to add to the list
 	 */
 	inline void addToHead(T cItem) {
-		addToHead(NewNode(cItem));
+		addToHead(newNode(cItem));
 	}
 
 	/**
@@ -464,19 +464,19 @@ public:
 	void addToTail(CBofListNode<T> *pNewNode) {
 		assert(pNewNode != nullptr);
 
-		pNewNode->m_pPrev = m_pTail;
+		pNewNode->_pPrev = _pTail;
 		pNewNode->_pNext = nullptr;
-		if (m_pTail != nullptr)
-			m_pTail->_pNext = pNewNode;
-		m_pTail = pNewNode;
+		if (_pTail != nullptr)
+			_pTail->_pNext = pNewNode;
+		_pTail = pNewNode;
 
-		if (m_pHead == nullptr)
-			m_pHead = m_pTail;
+		if (_pHead == nullptr)
+			_pHead = _pTail;
 
 		// One more item in list
-		assert(m_nNumItems != 0xFFFF);
-		m_nNumItems++;
-		RecalcItemList();
+		assert(_nNumItems != 0xFFFF);
+		_nNumItems++;
+		recalcItemList();
 	}
 
 	/**
@@ -484,14 +484,14 @@ public:
 	 * @param cItem     Item to add to the list
 	 */
 	void addToTail(T cItem) {
-		addToTail(NewNode(cItem));
+		addToTail(newNode(cItem));
 	}
 
-	CBofListNode<T> *GetHead() const {
-		return m_pHead;
+	CBofListNode<T> *getHead() const {
+		return _pHead;
 	}
-	CBofListNode<T> *GetTail() const {
-		return m_pTail;
+	CBofListNode<T> *getTail() const {
+		return _pTail;
 	}
 };
 

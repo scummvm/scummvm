@@ -65,7 +65,7 @@ CQueue::~CQueue() {
 	while (RemoveItem() != nullptr) {
 	}
 
-	// Remove() must set m_pQueueList to nullptr when it removes the last item
+	// remove() must set m_pQueueList to nullptr when it removes the last item
 	Assert(m_pQueueList == nullptr);
 }
 
@@ -82,7 +82,7 @@ void CQueue::AddItem(void *pObject) {
 			m_pQueueList = pNewItem;
 		}
 
-		Assert(pNewItem->GetHead() == m_pQueueList);
+		Assert(pNewItem->getHead() == m_pQueueList);
 	}
 }
 

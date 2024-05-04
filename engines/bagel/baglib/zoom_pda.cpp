@@ -88,10 +88,10 @@ ErrorCode SBZoomPda::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 ErrorCode SBZoomPda::loadFile(const CBofString &sFile) {
 	ErrorCode error = CBagStorageDev::loadFile(sFile);
-	RemoveObject(_mooWnd);
-	RemoveObject(_invWnd);
-	RemoveObject(_mapWnd);
-	RemoveObject(_logWnd);
+	removeObject(_mooWnd);
+	removeObject(_invWnd);
+	removeObject(_mapWnd);
+	removeObject(_logWnd);
 
 	return error;
 }
@@ -283,7 +283,7 @@ void SBZoomPda::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 
 
 	// This should be on update cursor virtual func
-	if (GetExitOnEdge() && (pPoint->x < GetExitOnEdge()) && (pPoint->y < 300) && !(GetPrevSDev().IsEmpty())) {
+	if (GetExitOnEdge() && (pPoint->x < GetExitOnEdge()) && (pPoint->y < 300) && !(GetPrevSDev().isEmpty())) {
 		CBagMasterWin::setActiveCursor(10);
 	} else {
 		CBofRect cRect = getBackdrop()->getRect();

@@ -127,7 +127,7 @@ public:
 		return _cCursorList[nIndex];
 	}
 	int getNumberOfCursors() const {
-		return _cCursorList.GetCount();
+		return _cCursorList.getCount();
 	}
 
 	void setCaptureControl(CBofWindow *ctl) {
