@@ -113,7 +113,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 	CBofWindow *pParent = pWnd;
 	int nNumWieldChoices = 0;
 
-	if ((GetObjectList()->getCount() == 1) && (GetObjectList()->getTail()->getNodeItem()->GetType() == TEXTOBJ) && (((CBagTextObject *)GetObjectList()->getTail()->getNodeItem())->IsCaption())) {
+	if ((GetObjectList()->getCount() == 1) && (GetObjectList()->getTail()->getNodeItem()->GetType() == TEXTOBJ) && (((CBagTextObject *)GetObjectList()->getTail()->getNodeItem())->isCaption())) {
 		nBaseMenuLocX = 0;
 
 	} else if (nNumCalls == 1 && m_pUniversalObjectList && m_pUniversalObjectList != GetObjectList()) {
@@ -130,7 +130,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 					// since we are gonna trash is with our own values soon.
 
 				} else if (pObj->GetType() == TEXTOBJ) {
-					((CBagTextObject *)pObj)->RecalcTextRect(((CBagTextObject *)pObj)->IsCaption());
+					((CBagTextObject *)pObj)->recalcTextRect(((CBagTextObject *)pObj)->isCaption());
 				}
 
 				if (!pObj->IsImmediateRun()) {
@@ -190,7 +190,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 				// since we are gonna trash is with our own values soon.
 
 			} else if (pObj->GetType() == TEXTOBJ) {
-				((CBagTextObject *)pObj)->RecalcTextRect(((CBagTextObject *)pObj)->IsCaption());
+				((CBagTextObject *)pObj)->recalcTextRect(((CBagTextObject *)pObj)->isCaption());
 			}
 
 			if (!pObj->IsImmediateRun()) {
@@ -207,7 +207,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 					// If we're zoomed, then do things differently
 					CBagTextObject *pTXObj = (CBagTextObject *)pObj;
-					if (pTXObj->IsCaption()) {
+					if (pTXObj->isCaption()) {
 						SBZoomPda *pZPDA = (SBZoomPda *)SDEV_MANAGER->GetStorageDevice("BPDAZ_WLD");
 						if (pZPDA && pZPDA->getZoomed()) {
 							bZoomed = true;
@@ -302,7 +302,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 		bool bMoved = false;
 		bool bCaption = false;
 		int nNumChars = 0;
-		if ((nNumItems == 1) && (xObjList.getTail()->getNodeItem()->GetType() == TEXTOBJ) && (((CBagTextObject *)xObjList.getTail()->getNodeItem())->IsCaption())) {
+		if ((nNumItems == 1) && (xObjList.getTail()->getNodeItem()->GetType() == TEXTOBJ) && (((CBagTextObject *)xObjList.getTail()->getNodeItem())->isCaption())) {
 			while (nNumWieldChoices-- != 0) {
 				pObj = xObjList.removeHead();
 				pObj->detach();

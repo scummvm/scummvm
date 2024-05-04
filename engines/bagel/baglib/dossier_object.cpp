@@ -32,7 +32,7 @@ void CBagDossierObject::initialize() {
 }
 
 CBagDossierObject::CBagDossierObject() {
-	m_xObjType = DOSSIEROBJ;
+	_xObjType = DOSSIEROBJ;
 
 	_dossierSetFl = false;
 	_indexRect.setRect(0, 0, 0, 0);
@@ -163,11 +163,11 @@ PARSE_CODES CBagDossierObject::setInfo(CBagIfstream &istr) {
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 				if (!sStr.find("CAPTION")) {
-					m_bCaption = true;
+					_bCaption = true;
 					objectUpdatedFl = true;
 
 				} else if (!sStr.find("TITLE")) {
-					m_bTitle = true;
+					_bTitle = true;
 					objectUpdatedFl = true;
 
 				} else {
@@ -249,13 +249,13 @@ ErrorCode CBagDossierObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *src
 	if (_showIndexFl) {
 		if (_dossierSetFl == false) {
 			// Set the text to be the index line.
-			SetPSText(&_indexLine);
+			setPSText(&_indexLine);
 			_dossierSetFl = true;
 		}
 	} else if (_dossierSetFl == false) {
 		// Set the text to be nullptr, this forces the bagtx code to
 		// paint the text file.
-		SetPSText(nullptr);
+		setPSText(nullptr);
 
 		CBagTextObject::attach();
 

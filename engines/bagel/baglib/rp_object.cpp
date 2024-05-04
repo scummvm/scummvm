@@ -69,7 +69,7 @@ CBagRPObject *CBagRPObject::m_pActivateThisGuy = nullptr;
 //  printing.
 //
 CBagRPObject::CBagRPObject() {
-	m_xObjType = RESPRNTOBJ;
+	_xObjType = RESPRNTOBJ;
 
 	// Dossier list
 	m_pTouchedList = nullptr;
@@ -1551,7 +1551,7 @@ bool CBagRPObject::initialize() {
 	if (m_pObjectName) {
 		// Give the dossier a back pointer so that it can respond to
 		// mouse down events
-		m_pObjectName->SetRPObject(this);
+		m_pObjectName->setRPObject(this);
 
 		m_pObjectName->SetVisible(false);
 		m_pObjectName->setActive(false);

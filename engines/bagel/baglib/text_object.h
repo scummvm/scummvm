@@ -36,23 +36,23 @@ int MapFont(int nFont);
  */
 class CBagTextObject : public CBagObject {
 private:
-	CBofString *m_psInitInfo; // Aux info
+	CBofString *_psInitInfo; // Aux info
 
-	RGBCOLOR m_nFGColor;
+	RGBCOLOR _nFGColor;
 
-	int16 m_nDX;
+	int16 _nDX;
 	int16 _nDY;
 
-	byte m_nPointSize;
-	int m_nTextFont;
+	byte _nPointSize;
+	int _nTextFont;
 
-	CBagObject *m_pRPObject;
+	CBagObject *_pRPObject;
 
 protected:
-	bool m_bCaption : 1;
-	bool m_bTitle : 1;
-	bool m_bReAttach : 1;
-	CBofString *m_psText;
+	bool _bCaption : 1;
+	bool _bTitle : 1;
+	bool _bReAttach : 1;
+	CBofString *_psText;
 
 public:
 	CBagTextObject();
@@ -61,19 +61,19 @@ public:
 	CBofRect getRect();
 
 	CBofSize getSize() const {
-		return CBofSize(m_nDX, _nDY);
+		return CBofSize(_nDX, _nDY);
 	}
 	void setSize(const CBofSize &xSize) {
-		m_nDX = (int16)xSize.cx;
+		_nDX = (int16)xSize.cx;
 		_nDY = (int16)xSize.cy;
 	}
 
 	int getPointSize() const {
-		return m_nPointSize;
+		return _nPointSize;
 	}
 	void setPointSize(int xSize) {
 		assert(xSize >= 0 && xSize <= 255);
-		m_nPointSize = (byte)xSize;
+		_nPointSize = (byte)xSize;
 	}
 	int getColor() const {
 		return 0;
@@ -82,28 +82,28 @@ public:
 
 	// Font support for text objects
 	int getFont() const {
-		return m_nTextFont;
+		return _nTextFont;
 	}
 	void setFont(int nFont) {
-		m_nTextFont = nFont;
+		_nTextFont = nFont;
 	}
 
 	virtual bool runObject();
 
-	const CBofString *GetInitInfo() const {
-		return m_psInitInfo;
+	const CBofString *getInitInfo() const {
+		return _psInitInfo;
 	}
-	void SetInitInfo(const CBofString &info) {
-		if (m_psInitInfo)
-			delete m_psInitInfo;
-		m_psInitInfo = new CBofString();
-		*m_psInitInfo = info;
+	void setInitInfo(const CBofString &info) {
+		if (_psInitInfo)
+			delete _psInitInfo;
+		_psInitInfo = new CBofString();
+		*_psInitInfo = info;
 	}
 
-	CBofString *GetPSText() const {
-		return m_psText;
+	CBofString *getPSText() const {
+		return _psText;
 	}
-	void SetPSText(CBofString *p);
+	void setPSText(CBofString *p);
 
 	const CBofString &getText();
 	void setText(const CBofString &s);
@@ -111,7 +111,7 @@ public:
 	/**
 	 * Calculate the required bounds to display text
 	 */
-	void RecalcTextRect(bool bTextFromFile);
+	void recalcTextRect(bool bTextFromFile);
 
 	virtual ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 
@@ -123,25 +123,25 @@ public:
 	void setProperty(const CBofString &sProp, int nVal);
 	int getProperty(const CBofString &sProp);
 
-	bool IsCaption() const {
-		return m_bCaption;
+	bool isCaption() const {
+		return _bCaption;
 	}
 
-	void SetTitle(bool b = true) {
-		m_bTitle = b;
+	void setTitle(bool b = true) {
+		_bTitle = b;
 	}
-	bool IsTitle() const {
-		return m_bTitle;
+	bool isTitle() const {
+		return _bTitle;
 	}
 
 	// Wxtra stuff to handle mouse downs on floaters in the log pda/residue printing code.
 	virtual void onLButtonUp(uint32, CBofPoint *, void * = nullptr);
 
-	void SetRPObject(CBagObject *prp) {
-		m_pRPObject = prp;
+	void setRPObject(CBagObject *prp) {
+		_pRPObject = prp;
 	}
-	CBagObject *GetRPObject() const {
-		return m_pRPObject;
+	CBagObject *getRPObject() const {
+		return _pRPObject;
 	}
 };
 

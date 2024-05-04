@@ -39,7 +39,7 @@ void CBagCharacterObject::initialize() {
 }
 
 CBagCharacterObject::CBagCharacterObject() : CBagObject() {
-	m_xObjType = CHAROBJ;
+	_xObjType = CHAROBJ;
 	_bmpBuf = nullptr;
 	_binBuf = nullptr;
 	_charTransColor = -1;

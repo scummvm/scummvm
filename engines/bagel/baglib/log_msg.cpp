@@ -238,13 +238,13 @@ CBagObject *CBagLog::onNewUserObject(const CBofString &initStr) {
 
 	if (initStr == "MSG") {
 		retLogObj = (CBagTextObject *)new CBagLogMsg(sdevRect.width());
-		retLogObj->SetInitInfo(initStr);
+		retLogObj->setInitInfo(initStr);
 		retLogObj->setPointSize(pointSize);
 		retLogObj->setColor(7);
 		retLogObj->SetFloating();
 	} else if (initStr == "SUS") {
 		retLogObj = (CBagTextObject *)new CBagLogSuspect(sdevRect.width());
-		retLogObj->SetInitInfo(initStr);
+		retLogObj->setInitInfo(initStr);
 
 		// Reduce point size on zoompda suspect list, make it
 		// all fit in the zoompda window.
@@ -258,7 +258,7 @@ CBagObject *CBagLog::onNewUserObject(const CBofString &initStr) {
 		retLogObj = (CBagTextObject *)new CBagLogClue(initStr, sdevRect.width(), pointSize);
 	} else if (initStr == "RES") {
 		retLogObj = (CBagTextObject *)new CBagLogResidue(sdevRect.width());
-		retLogObj->SetInitInfo(initStr);
+		retLogObj->setInitInfo(initStr);
 		retLogObj->setPointSize(pointSize);
 		retLogObj->setColor(7);
 		retLogObj->SetFloating();
@@ -291,7 +291,7 @@ ErrorCode CBagLog::activateLocalObject(CBagObject *bagObj) {
 		return errCode;
 
 	if (bagObj->IsMsgWaiting() ||
-	        (bagObj->GetType() == USEROBJ && (bagObj->GetInitInfo() != nullptr) && (*bagObj->GetInitInfo() == "MSG"))) {
+	        (bagObj->GetType() == USEROBJ && (bagObj->getInitInfo() != nullptr) && (*bagObj->getInitInfo() == "MSG"))) {
 		_queuedMsgList->addToTail(bagObj);
 
 		// Since zoomed pda doesn't  have a message light, only set this thing
@@ -404,9 +404,9 @@ ErrorCode CBagLog::playMsgQueue() {
 }
 
 CBagLogResidue::CBagLogResidue(int sdevWidth) : CBagTextObject() {
-	m_xObjType = USEROBJ;
+	_xObjType = USEROBJ;
 	_sdevWidth = sdevWidth;
-	m_bTitle = true;
+	_bTitle = true;
 }
 
 void CBagLogResidue::setSize(const CBofSize &size) {
@@ -414,9 +414,9 @@ void CBagLogResidue::setSize(const CBofSize &size) {
 }
 
 CBagLogMsg::CBagLogMsg(int sdevWidth) : CBagTextObject() {
-	m_xObjType = USEROBJ;
+	_xObjType = USEROBJ;
 	_sdevWidth = sdevWidth;
-	m_bTitle = true;
+	_bTitle = true;
 
 	// Start all messages off as not played
 	setMsgPlayed(false);
@@ -553,10 +553,10 @@ ErrorCode CBagLogResidue::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRec
 }
 
 CBagLogSuspect::CBagLogSuspect(int sdevWidth) : CBagTextObject() {
-	m_xObjType = USEROBJ;
+	_xObjType = USEROBJ;
 	m_nSdevWidth = sdevWidth;
 
-	m_bTitle = true;
+	_bTitle = true;
 
 	// Need to save state info, set all to false.
 	CBagObject::setState(0);
@@ -772,7 +772,7 @@ CBagEnergyDetectorObject::CBagEnergyDetectorObject() {
 	setColor(7);					// Make it white
 	SetFloating();					// Is definitely floating
 	setHighlight();					// Is highlight
-	SetTitle();						// As title
+	setTitle();						// As title
 	_textInitializedFl = false;     // Not initialized yet
 }
 
@@ -942,19 +942,19 @@ ErrorCode CBagEnergyDetectorObject::attach() {
 	causeString.replaceChar('_', ' ');
 
 	CBofString cStr;
-	SetPSText(&cStr);
+	setPSText(&cStr);
 
 	setText(buildString("%02d:%02d %6.6s %s  %-35.35s", hour, minute, zhapsString.getBuffer(), "zhaps", causeString.getBuffer()));
-	RecalcTextRect(false);
+	recalcTextRect(false);
 
 	return CBagObject::attach();
 }
 
 CBagLogClue::CBagLogClue(const CBofString &initStr, int sdevWidth, int pointSize) : CBagTextObject() {
-	m_xObjType = USEROBJ;
+	_xObjType = USEROBJ;
 	_sdevWidth = sdevWidth;
 
-	m_bTitle = true;
+	_bTitle = true;
 
 	_stringVar1 = nullptr;
 	_stringVar2 = nullptr;
@@ -962,7 +962,7 @@ CBagLogClue::CBagLogClue(const CBofString &initStr, int sdevWidth, int pointSize
 	_stringVar4 = nullptr;
 
 	setFont(FONT_MONO);
-	SetInitInfo(initStr);
+	setInitInfo(initStr);
 	setPointSize(pointSize);
 	setColor(7);
 	SetFloating();
@@ -992,7 +992,7 @@ ErrorCode CBagLogClue::attach() {
 	                  (_stringVar4 ? (const char *)_stringVar4->GetValue() : (const char *)""));
 
 	CBofString cStr(szClueStr);
-	SetPSText(&cStr);
+	setPSText(&cStr);
 
 	return ec;
 }

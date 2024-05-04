@@ -36,7 +36,7 @@ void CBagSoundObject::initialize() {
 }
 
 CBagSoundObject::CBagSoundObject() {
-	m_xObjType = SOUNDOBJ;
+	_xObjType = SOUNDOBJ;
 	m_pSound = nullptr;
 
 	// Assume MIX if not specified

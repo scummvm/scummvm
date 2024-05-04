@@ -38,7 +38,7 @@ extern bool g_restoreObjectListFl;
 extern bool g_allowAttachActiveObjectsFl;
 
 CBagCommandObject::CBagCommandObject() {
-	m_xObjType = COMMANDOBJ;
+	_xObjType = COMMANDOBJ;
 	SetVisible(false);
 	SetTimeless(true);
 }

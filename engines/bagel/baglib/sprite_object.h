@@ -63,7 +63,7 @@ public:
 		return m_xSprite;
 	}
 	CBofRect getRect();
-	int GetCels() {
+	int getCels() {
 		return m_nCels;
 	}
 
