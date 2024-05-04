@@ -64,7 +64,6 @@
 
 // FIXME: HACK for error()
 Engine *g_engine = 0;
-bool Engine::_quitRequested;
 
 // Output formatter for debug() and error() which invokes
 // the errorString method of the active engine, if any.
@@ -154,7 +153,6 @@ Engine::Engine(OSystem *syst)
 		_lastAutosaveTime(_system->getMillis()) {
 
 	g_engine = this;
-	_quitRequested = false;
 	Common::setErrorOutputFormatter(defaultOutputFormatter);
 	Common::setErrorHandler(defaultErrorHandler);
 
@@ -985,13 +983,11 @@ void Engine::quitGame() {
 
 	event.type = Common::EVENT_QUIT;
 	g_system->getEventManager()->pushEvent(event);
-	_quitRequested = true;
 }
 
 bool Engine::shouldQuit() {
 	Common::EventManager *eventMan = g_system->getEventManager();
-	return eventMan->shouldQuit() || eventMan->shouldReturnToLauncher()
-		|| _quitRequested;
+	return (eventMan->shouldQuit() || eventMan->shouldReturnToLauncher());
 }
 
 GUI::Debugger *Engine::getOrCreateDebugger() {
