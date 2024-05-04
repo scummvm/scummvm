@@ -242,7 +242,7 @@ void SBZoomPda::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 
 	CBagObject *pObj = GetObject(xCursorLocation, true);
 	if (pObj != nullptr) {
-		if (pObj->IsActive()) {
+		if (pObj->isActive()) {
 			pObj->onLButtonUp(nFlags, xPoint);
 			SetLActiveObject(pObj);
 		}

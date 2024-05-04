@@ -59,7 +59,7 @@ ErrorCode SBarThud::attach() {
 	// Take care of objects being held
 	for (int i = 0; i < GetObjectCount(); ++i) {
 		CBagObject *pObj = GetObjectByPos(i);
-		if (pObj->IsActive() && (pObj->GetType() == BOFSPRITEOBJ || pObj->GetType() == BOFBMPOBJ))
+		if (pObj->isActive() && (pObj->GetType() == BOFSPRITEOBJ || pObj->GetType() == BOFBMPOBJ))
 			nActiveObj++;
 
 		// Detach all activated objects after the first

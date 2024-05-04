@@ -46,33 +46,33 @@ private:
 	CBofVHashTable();
 
 	// Member which holds the hash table itself.
-	CBofList<T *> m_xHashTable[S];
+	CBofList<T *> _xHashTable[S];
 
 	// Member which holds a pointer to the table's hashing
 	// function.
-	unsigned(*m_pHashFunction)(const T &);
+	unsigned(*_pHashFunction)(const T &);
 
 	// Member which holds the count of buckets in the hash table.
-	int m_nHashTableSize;
+	int _nHashTableSize;
 
 	// Boolean which affords a light-weight test of whether the hash
 	// table is empty.
 	//
-	bool m_bisEmpty;
+	bool _bisEmpty;
 };
 
 // CBofVHashTable::CBofVHashTable - class constructor.
 //
 template<class T, int S>
-CBofVHashTable<T, S>::CBofVHashTable(unsigned(*hashFun)(const T &)) : m_nHashTableSize(S),
-	m_pHashFunction(hashFun), m_bisEmpty(true) {
+CBofVHashTable<T, S>::CBofVHashTable(unsigned(*hashFun)(const T &)) : _nHashTableSize(S),
+	_pHashFunction(hashFun), _bisEmpty(true) {
 }
 
 // CBofVHashTable::~CBofVHashTable - class destructor.
 template<class T, int S>
 CBofVHashTable<T, S>::~CBofVHashTable() {
-	for (int x = 0; x < m_nHashTableSize; x++) {
-		CBofList<T *> *pHashBucket = &m_xHashTable[x];
+	for (int x = 0; x < _nHashTableSize; x++) {
+		CBofList<T *> *pHashBucket = &_xHashTable[x];
 		int nListEntries = pHashBucket->getActualCount();
 
 		for (int i = 0; i < nListEntries; i++) {
@@ -90,10 +90,10 @@ void CBofVHashTable<T, S>::insert(const T &val) {
 	CBofListNode<T *> *pNode = new CBofListNode<T *>(pNodeValue);
 	assert(pNode != nullptr);
 
-	int nHashBucketIndex = ((*m_pHashFunction)(val)) % m_nHashTableSize;
-	assert(nHashBucketIndex < m_nHashTableSize);
+	int nHashBucketIndex = ((*_pHashFunction)(val)) % _nHashTableSize;
+	assert(nHashBucketIndex < _nHashTableSize);
 
-	CBofList<T *> *pHashBucket = &m_xHashTable[nHashBucketIndex];
+	CBofList<T *> *pHashBucket = &_xHashTable[nHashBucketIndex];
 	assert(pHashBucket != nullptr);
 	pHashBucket->addToTail(pNode);
 }
@@ -102,11 +102,11 @@ void CBofVHashTable<T, S>::insert(const T &val) {
 template<class T, int S>
 bool CBofVHashTable<T, S>::contains(const T &val) {
 	bool returnValue = false;
-	int nHashBucketIndex = ((*m_pHashFunction)(val)) % m_nHashTableSize;
-	assert(nHashBucketIndex < m_nHashTableSize);
+	int nHashBucketIndex = ((*_pHashFunction)(val)) % _nHashTableSize;
+	assert(nHashBucketIndex < _nHashTableSize);
 
 	CBofVHashTable<T, S> *const fakeThis = (CBofVHashTable<T, S> *const)this;
-	CBofList<T *> *pHashBucket = &(fakeThis->m_xHashTable[nHashBucketIndex]);
+	CBofList<T *> *pHashBucket = &(fakeThis->_xHashTable[nHashBucketIndex]);
 	assert(pHashBucket != nullptr);
 	int nItemsInBucket = pHashBucket->getCount();
 	for (int i = 0; i < nItemsInBucket; i++) {

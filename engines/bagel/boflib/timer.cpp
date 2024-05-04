@@ -27,8 +27,8 @@
 
 namespace Bagel {
 
-bool CBofTimer::m_bModified = false;
-CBofTimer *CBofTimer::m_pTimerList = nullptr;
+bool CBofTimer::_bModified = false;
+CBofTimer *CBofTimer::_pTimerList = nullptr;
 
 WindowTimer::WindowTimer(uint32 interval, uint32 id, BofCallback callback) :
 		_interval(interval), _id(id), _callback(callback) {
@@ -37,79 +37,79 @@ WindowTimer::WindowTimer(uint32 interval, uint32 id, BofCallback callback) :
 
 
 CBofTimer::CBofTimer() {
-	m_lLastTime = 0;
+	_lLastTime = 0;
 	_nID = 0;
-	m_nInterval = 0;
-	m_pCallBack = nullptr;
-	m_lUserInfo = 0;
-	m_bActive = false;
+	_nInterval = 0;
+	_pCallBack = nullptr;
+	_lUserInfo = 0;
+	_bActive = false;
 
 	// Another item for the list
-	if (m_pTimerList == nullptr) {
-		m_pTimerList = this;
+	if (_pTimerList == nullptr) {
+		_pTimerList = this;
 
 	} else {
-		m_pTimerList->addToTail(this);
+		_pTimerList->addToTail(this);
 	}
 
 	// Creating a new timer object modifies the timer list
-	m_bModified = true;
+	_bModified = true;
 }
 
 
 CBofTimer::CBofTimer(uint32 nID, uint32 nInterval, void *lUserInfo, BofCallback pCallBack) {
-	m_lLastTime = 0;
+	_lLastTime = 0;
 	_nID = nID;
-	m_nInterval = nInterval;
-	m_pCallBack = pCallBack;
-	m_lUserInfo = lUserInfo;
-	m_bActive = false;
+	_nInterval = nInterval;
+	_pCallBack = pCallBack;
+	_lUserInfo = lUserInfo;
+	_bActive = false;
 
 	// Another item for the list
-	if (m_pTimerList == nullptr) {
-		m_pTimerList = this;
+	if (_pTimerList == nullptr) {
+		_pTimerList = this;
 
 	} else {
-		m_pTimerList->addToTail(this);
+		_pTimerList->addToTail(this);
 	}
 
 	// Creating a new timer object modifies the timer list
-	m_bModified = true;
+	_bModified = true;
 }
 
 
 CBofTimer::~CBofTimer() {
 	assert(isValidObject(this));
 
-	if (m_pTimerList == this) {
-		m_pTimerList = (CBofTimer *)m_pTimerList->getNext();
+	if (_pTimerList == this) {
+		_pTimerList = (CBofTimer *)_pTimerList->getNext();
 	}
 
 	// Removing a timer object modifies the timer list
-	m_bModified = true;
+	_bModified = true;
 }
 
 
-void CBofTimer::HandleTimers() {
+void CBofTimer::handleTimers() {
 	CBofTimer *pTimer;
 	uint32 lCurrentTime;
 
-	pTimer = m_pTimerList;
+	pTimer = _pTimerList;
 	while (pTimer != nullptr) {
-		if (pTimer->IsActive()) {
+		if (pTimer->isActive()) {
 			lCurrentTime = g_system->getMillis();
 
-			if ((uint32)(lCurrentTime - pTimer->m_lLastTime) >= pTimer->m_nInterval) {
+			if ((uint32)(lCurrentTime - pTimer->_lLastTime) >= pTimer->_nInterval) {
 				// Remember for next time
-				pTimer->m_lLastTime = lCurrentTime;
+				pTimer->_lLastTime = lCurrentTime;
 
-				if (pTimer->m_pCallBack != nullptr) {
+				if (pTimer->_pCallBack != nullptr) {
 					// Execute call back
-					(*pTimer->m_pCallBack)(pTimer->_nID, pTimer->m_lUserInfo);
+					(*pTimer->_pCallBack)(pTimer->_nID, pTimer->_lUserInfo);
 
 					// If callback modifies the timer list, then we must start over
-					if (m_bModified) {
-						pTimer = m_pTimerList;
+					if (_bModified) {
+						pTimer = _pTimerList;
 						continue;
 					}
 

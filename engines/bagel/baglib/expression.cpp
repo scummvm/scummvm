@@ -431,7 +431,7 @@ bool CBagExpression::onContains(CBagVar *leftHandOper, CBagVar *rightHandOper, C
 		return false;
 
 	CBagObject *curObj = sDev->GetObject(rightHandOper->GetValue());
-	if ((curObj != nullptr) && curObj->IsActive())
+	if ((curObj != nullptr) && curObj->isActive())
 		return true;
 
 	return false;

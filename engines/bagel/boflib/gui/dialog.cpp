@@ -265,7 +265,7 @@ int CBofDialog::doModal() {
 
 	while (!_bEndDialog && !g_engine->shouldQuit() && (CBofError::getErrorCount() < MAX_ERRORS)) {
 		CBofSound::audioTask();
-		CBofTimer::HandleTimers();
+		CBofTimer::handleTimers();
 
 		if (isCreated()) {
 			onMainLoop();
