@@ -77,7 +77,7 @@ Item::Item()
 	  _flags(0), _quality(0), _npcNum(0), _mapNum(0),
 	  _extendedFlags(0), _parent(0),
 	  _cachedShape(nullptr), _cachedShapeInfo(nullptr),
-	  _gump(0), _gravityPid(0), _lastSetup(0),
+	  _gump(0), _bark(0), _gravityPid(0), _lastSetup(0),
 	  _ix(0), _iy(0), _iz(0), _damagePoints(1) {
 }
 
@@ -1942,9 +1942,9 @@ void Item::leaveFastArea() {
 		callUsecodeEvent_leaveFastArea();
 
 	// If we have a gump open, close it (unless we're in a container)
-	if (!_parent && (_flags & FLG_GUMP_OPEN)) {
-		Gump *g = Ultima8Engine::get_instance()->getGump(_gump);
-		if (g) g->Close();
+	if (!_parent) {
+		closeGump();
+		closeBark();
 	}
 
 	// Unset the flag
@@ -2025,6 +2025,42 @@ void Item::closeGump() {
 void Item::clearGump() {
 	_gump = 0;
 	_flags &= ~FLG_GUMP_OPEN;
+}
+
+ProcId Item::bark(const Std::string &msg, ObjId id) {
+	closeBark();
+
+	uint32 shapenum = getShape();
+	if (id == 666)
+		shapenum = 666; // Hack for guardian barks
+
+	Gump *gump = new BarkGump(getObjId(), msg, shapenum);
+	_bark = gump->getObjId();
+
+	// Adds talk animations when bark is active.
+	// FIXME: This also affects bark after look unlike original game
+	if (getObjId() < 256) { // CONSTANT!
+		GumpNotifyProcess *notifyproc;
+		notifyproc = new ActorBarkNotifyProcess(getObjId());
+		Kernel::get_instance()->addProcess(notifyproc);
+		gump->SetNotifyProcess(notifyproc);
+	}
+
+	gump->InitGump(0);
+
+	return gump->GetNotifyProcess()->getPid();
+}
+
+void Item::closeBark() {
+	Gump *gump = Ultima8Engine::get_instance()->getGump(_bark);
+	if (gump)
+		gump->Close();
+
+	clearBark();
+}
+
+void Item::clearBark() {
+	_bark = 0;
 }
 
 int32 Item::ascend(int delta) {
@@ -2613,6 +2649,9 @@ void Item::saveData(Common::WriteStream *ws) {
 	}
 	if ((_flags & FLG_ETHEREAL) && (_flags & (FLG_CONTAINED | FLG_EQUIPPED)))
 		ws->writeUint16LE(_parent);
+
+	// TODO: Consider saving this
+	// ws->writeUint16LE(_bark);
 }
 
 bool Item::loadData(Common::ReadStream *rs, uint32 version) {
@@ -2640,6 +2679,8 @@ bool Item::loadData(Common::ReadStream *rs, uint32 version) {
 		_parent = rs->readUint16LE();
 	else
 		_parent = 0;
+
+	_bark = 0;
 
 	//!! hackish...
 	if (_extendedFlags & EXT_INCURMAP) {
@@ -3033,21 +3074,7 @@ uint32 Item::I_bark(const uint8 *args, unsigned int /*argsize*/) {
 		return 0;
 	}
 
-	uint32 shapenum = item->getShape();
-	if (id_item == 666)
-		shapenum = 666; // Hack for guardian barks
-	Gump *gump = new BarkGump(item->getObjId(), str, shapenum);
-
-	if (item->getObjId() < 256) { // CONSTANT!
-		GumpNotifyProcess *notifyproc;
-		notifyproc = new ActorBarkNotifyProcess(item->getObjId());
-		Kernel::get_instance()->addProcess(notifyproc);
-		gump->SetNotifyProcess(notifyproc);
-	}
-
-	gump->InitGump(0);
-
-	return gump->GetNotifyProcess()->getPid();
+	return item->bark(str, id_item);
 }
 
 uint32 Item::I_look(const uint8 *args, unsigned int /*argsize*/) {
@@ -3129,6 +3156,10 @@ uint32 Item::I_ask(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_LIST(answers);
 
 	if (!answers) return 0;
+
+	Actor *actor = getMainActor();
+	if (actor)
+		actor->closeBark();
 
 	// Use AskGump
 	Gump *_gump = new AskGump(1, answers);
