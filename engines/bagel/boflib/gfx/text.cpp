@@ -129,7 +129,7 @@ ErrorCode CBofText::setupText(const CBofRect *pRect, int nJustify, uint32 nForma
 	}
 
 	CBofPalette *pPalette;
-	pPalette = CBofApp::GetApp()->getPalette();
+	pPalette = CBofApp::getApp()->getPalette();
 
 	// Create a bitmap to serve as our work area as we output text
 	if ((_pWork = new CBofBitmap(_cSize.cx, _cSize.cy, pPalette)) != nullptr) {
@@ -387,12 +387,12 @@ ErrorCode CBofText::displayTextEx(CBofBitmap *pBmp, const char *pszText, CBofRec
 		const Common::U32String &line = lines[i];
 
 		if (bShadowed) {
-			color = CBofApp::GetApp()->getPalette()->getNearestIndex(_cShadowColor);
+			color = CBofApp::getApp()->getPalette()->getNearestIndex(_cShadowColor);
 			displayLine(font, surface, line, shadowRect.left, shadowRect.top,
 				shadowRect.width(), color, align);
 		}
 
-		color = CBofApp::GetApp()->getPalette()->getNearestIndex(_cTextColor);
+		color = CBofApp::getApp()->getPalette()->getNearestIndex(_cTextColor);
 		displayLine(font, surface, line, newRect.left, newRect.top,
 			newRect.width(), color, align);
 

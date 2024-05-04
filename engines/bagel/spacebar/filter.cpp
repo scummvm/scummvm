@@ -162,7 +162,7 @@ void lightningInitFilters() {
 		CBofString cThunderFileName(szThunderFileName, 256);
 		cThunderFileName = THUNDERSOUND;
 		MACROREPLACE(cThunderFileName);
-		pThunder = new CBofSound(CBofApp::GetApp()->GetMainWindow(), szThunderFileName, SOUND_MIX);
+		pThunder = new CBofSound(CBofApp::getApp()->getMainWindow(), szThunderFileName, SOUND_MIX);
 		lightninginitDone = true;
 	}
 }

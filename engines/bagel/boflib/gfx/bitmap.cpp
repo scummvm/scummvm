@@ -50,7 +50,7 @@ CBofBitmap::CBofBitmap(int dx, int dy, CBofPalette *pPalette, bool bOwnPalette, 
 	//
 	if (pPalette == nullptr) {
 		bOwnPalette = false;
-		pPalette = CBofApp::GetApp()->getPalette();
+		pPalette = CBofApp::getApp()->getPalette();
 	}
 
 	// Inits

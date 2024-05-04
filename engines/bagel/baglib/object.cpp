@@ -343,8 +343,8 @@ PARSE_CODES CBagObject::setInfo(CBagIfstream &istr) {
 void CBagObject::onLButtonUp(uint32 nFlags, CBofPoint * /*xPoint*/, void *) {
 	if (getMenuPtr()) {
 
-		CBofPoint pt = GetMousePos();
-		CBofWindow *pWnd = CBofApp::GetApp()->GetMainWindow();
+		CBofPoint pt = getMousePos();
+		CBofWindow *pWnd = CBofApp::getApp()->getMainWindow();
 		pWnd->screenToClient(&pt);
 
 		// Just send the mouse pos

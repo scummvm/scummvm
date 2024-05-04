@@ -65,7 +65,7 @@ ErrorCode CBagCharacterObject::attach() {
 	char localBuff[256];
 	localBuff[0] = '\0';
 	CBofString filename(localBuff, 256);
-	CBofPalette *smackPal = CBofApp::GetApp()->getPalette();
+	CBofPalette *smackPal = CBofApp::getApp()->getPalette();
 
 	filename = getFileName();
 

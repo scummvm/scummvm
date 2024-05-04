@@ -38,7 +38,7 @@ namespace Bagel {
 
 class CBofApp : public CBofError {
 private:
-	CBofWindow *m_pWindow = nullptr;
+	CBofWindow *_pWindow = nullptr;
 	CBofWindow *_captureControl = nullptr;
 	CBofWindow *_focusControl = nullptr;
 	Video::VideoDecoder *_consoleVideo = nullptr;
@@ -47,20 +47,20 @@ protected:
 	void StartupCode();
 	void ShutDownCode();
 
-	char m_szAppName[MAX_APP_NAME] = { 0 };
-	CBofList<CBofCursor> m_cCursorList;
-	CBofCursor m_cDefaultCursor;
+	char _szAppName[MAX_APP_NAME] = { 0 };
+	CBofList<CBofCursor> _cCursorList;
+	CBofCursor _cDefaultCursor;
 
-	CBofWindow *m_pMainWnd = nullptr;
+	CBofWindow *_pMainWnd = nullptr;
 	CBofPalette *_pPalette = nullptr;
-	CBofPalette *m_pDefPalette = nullptr;
-	int m_nScreenDX = 0;
-	int m_nScreenDY = 0;
-	int m_nColorDepth = 0;
+	CBofPalette *_pDefPalette = nullptr;
+	int _nScreenDX = 0;
+	int _nScreenDY = 0;
+	int _nColorDepth = 0;
 
-	int m_nIterations = DEFAULT_MAINLOOPS;
+	int _nIterations = DEFAULT_MAINLOOPS;
 
-	static CBofApp *m_pBofApp;
+	static CBofApp *_pBofApp;
 
 	virtual bool shouldQuit() const = 0;
 
@@ -69,32 +69,32 @@ public:
 	CBofApp(const char *pszAppName);
 	virtual ~CBofApp();
 
-	ErrorCode PreInit();
-	ErrorCode PreShutDown();
-	ErrorCode PostShutDown();
+	ErrorCode preInit();
+	ErrorCode preShutDown();
+	ErrorCode postShutDown();
 
 	// These functions can be overridden by the child class
 	virtual ErrorCode initialize();
 	virtual ErrorCode runApp();
 	virtual ErrorCode shutdown();
 
-	void SetAppName(const char *pszNewAppName) {
-		Common::strcpy_s(m_szAppName, pszNewAppName);
+	void setAppName(const char *pszNewAppName) {
+		Common::strcpy_s(_szAppName, pszNewAppName);
 	}
 
-	const char *GetAppName() const {
-		return (const char *)m_szAppName;
+	const char *getAppName() const {
+		return (const char *)_szAppName;
 	}
 
-	void SetMainWindow(CBofWindow *pWnd) {
-		m_pMainWnd = pWnd;
+	void setMainWindow(CBofWindow *pWnd) {
+		_pMainWnd = pWnd;
 	}
-	CBofWindow *GetMainWindow() const {
-		return m_pMainWnd;
+	CBofWindow *getMainWindow() const {
+		return _pMainWnd;
 	}
 
-	CBofWindow *GetActualWindow() const {
-		return m_pWindow;
+	CBofWindow *getActualWindow() const {
+		return _pWindow;
 	}
 
 	void setPalette(CBofPalette *pPalette);
@@ -104,30 +104,30 @@ public:
 	}
 
 	int screenWidth() const {
-		return m_nScreenDX;
+		return _nScreenDX;
 	}
 	int screenHeight() const {
-		return m_nScreenDY;
+		return _nScreenDY;
 	}
-	int ScreenDepth() const {
-		return m_nColorDepth;
-	}
-
-	CBofCursor GetDefaultCursor() const {
-		return m_cDefaultCursor;
-	}
-	void SetDefaultCursor(CBofCursor &cCursor) {
-		m_cDefaultCursor = cCursor;
+	int screenDepth() const {
+		return _nColorDepth;
 	}
 
-	void AddCursor(CBofCursor &cCursor);
-	void DelCursor(int nIndex);
-
-	CBofCursor GetCursor(int nIndex) {
-		return m_cCursorList[nIndex];
+	CBofCursor getDefaultCursor() const {
+		return _cDefaultCursor;
 	}
-	int GetNumberOfCursors() const {
-		return m_cCursorList.GetCount();
+	void setDefaultCursor(CBofCursor &cCursor) {
+		_cDefaultCursor = cCursor;
+	}
+
+	void addCursor(CBofCursor &cCursor);
+	void delCursor(int nIndex);
+
+	CBofCursor getCursor(int nIndex) {
+		return _cCursorList[nIndex];
+	}
+	int getNumberOfCursors() const {
+		return _cCursorList.GetCount();
 	}
 
 	void setCaptureControl(CBofWindow *ctl) {
@@ -144,22 +144,20 @@ public:
 	}
 	bool consolePlayVideo(const Common::Path &path);
 
-	static uint32 GetMachineSpeed() {
+	static uint32 getMachineSpeed() {
 		return kReallyFastPPC;
 	}
 
-	static CBofApp *GetApp() {
-		return m_pBofApp;
+	static CBofApp *getApp() {
+		return _pBofApp;
 	}
 };
 
 // Global routines
 //
-void BofMessageBox(const char *pszTitle, const char *pszMessage);
+void bofMessageBox(const char *pszTitle, const char *pszMessage);
 
-#define Quit() g_engine->quitGame()
-
-CBofPoint GetMousePos();
+CBofPoint getMousePos();
 
 } // namespace Bagel
 

@@ -196,7 +196,7 @@ void CSBarMasterWin::onKeyHit(uint32 lKey, uint32 lRepCount) {
 	Assert(IsValidObject(this));
 
 	if (lKey == BKEY_ALT_v) {
-		BofMessageBox(GetBuildVersion(), "Version");
+		bofMessageBox(GetBuildVersion(), "Version");
 	} else {
 		CBagMasterWin::onKeyHit(lKey, lRepCount);
 	}

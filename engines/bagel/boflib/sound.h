@@ -213,7 +213,7 @@ private:
 	static bool m_bMidiAvailable;           // Whether midi sound is available
 	static bool m_bWaveVolume;              // Whether wave volume can be set
 	static bool m_bMidiVolume;              // Whether midi volume can be set
-	static CBofWindow *m_pMainWnd;          // Window for message processing
+	static CBofWindow *_pMainWnd;          // Window for message processing
 	static bool m_bInit;
 
 	static int m_nSlotVol[NUM_QUEUES];

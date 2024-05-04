@@ -152,15 +152,15 @@ public:
 	ErrorCode getOption(const char *section, const char *option, bool *boolValue, int defaultValue);
 
 	void setAppName(const char *newAppName) {
-		Common::strcpy_s(m_szAppName, newAppName);
+		Common::strcpy_s(_szAppName, newAppName);
 	}
 
 	CBagMasterWin *getMasterWnd() {
-		return (CBagMasterWin *)m_pMainWnd;
+		return (CBagMasterWin *)_pMainWnd;
 	}
 
 	static CBagel *getBagApp() {
-		return (CBagel *)m_pBofApp;
+		return (CBagel *)_pBofApp;
 	}
 
 	int getChromaColor() {

@@ -132,7 +132,7 @@ bool Console::cmdVideo(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("video <path>\n");
 		return true;
-	} else if (!CBofApp::GetApp()->consolePlayVideo(argv[1])) {
+	} else if (!CBofApp::getApp()->consolePlayVideo(argv[1])) {
 		debugPrintf("Could not locate video.\n");
 		return true;
 	} else {

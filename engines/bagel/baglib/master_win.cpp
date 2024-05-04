@@ -81,10 +81,10 @@ CBagMasterWin::CBagMasterWin() {
 
 	const char *pAppName = "BAGEL Application";
 
-	CBofApp *pApp = CBofApp::GetApp();
+	CBofApp *pApp = CBofApp::getApp();
 	if (pApp != nullptr) {
 		cRect.SetRect(0, 0, pApp->screenWidth() - 1, pApp->screenHeight() - 1);
-		pAppName = pApp->GetAppName();
+		pAppName = pApp->getAppName();
 	}
 
 	cRect.SetRect(0, 0, 640 - 1, 480 - 1);
@@ -118,7 +118,7 @@ CBagMasterWin::~CBagMasterWin() {
 	}
 
 	CBofApp *pApp;
-	if ((pApp = CBofApp::GetApp()) != nullptr) {
+	if ((pApp = CBofApp::getApp()) != nullptr) {
 		pApp->setPalette(nullptr);
 	}
 
@@ -370,7 +370,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 
 	// This palette will be deleted so don't let anyone use it, until it is
 	// replaced with a new one.
-	CBofApp *pApp = CBofApp::GetApp();
+	CBofApp *pApp = CBofApp::getApp();
 	if (pApp != nullptr) {
 		pApp->setPalette(nullptr);
 	}
@@ -1312,7 +1312,7 @@ void CBagMasterWin::onUserMessage(uint32 message, uint32 param) {
 		// Kill any waiting PDA messages that are queued up...
 		CBagPDA::RemoveFromMovieQueue(nullptr);
 
-		CBofBitmap cBmp(width(), height(), CBagel::GetApp()->getPalette());
+		CBofBitmap cBmp(width(), height(), CBagel::getApp()->getPalette());
 		cBmp.fillRect(nullptr, COLOR_BLACK);
 		cBmp.fadeLines(this, 0, 0);
 
@@ -1985,7 +1985,7 @@ ErrorCode paintBeveledText(CBofWindow *win, CBofRect *rect, const CBofString &cS
 
 	CBofRect r = cBmp.getRect();
 	CBofPalette *pPal = nullptr;
-	CBofApp *pApp = CBofApp::GetApp();
+	CBofApp *pApp = CBofApp::getApp();
 	if (pApp != nullptr) {
 		pPal = pApp->getPalette();
 	}

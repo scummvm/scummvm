@@ -48,7 +48,7 @@ bool    CBofSound::m_bSoundAvailable = false;    // Whether wave sound is availa
 bool    CBofSound::m_bMidiAvailable = false;     // Whether midi sound is available
 bool    CBofSound::m_bWaveVolume = false;        // Whether wave volume can be set
 bool    CBofSound::m_bMidiVolume = false;        // Whether midi volume can be set
-CBofWindow   *CBofSound::m_pMainWnd = nullptr;   // Window for message processing
+CBofWindow   *CBofSound::_pMainWnd = nullptr;   // Window for message processing
 
 bool    CBofSound::m_bInit = false;
 
@@ -65,11 +65,11 @@ CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, c
 	// Initialize data fields
 	//
 
-	m_pWnd = m_pMainWnd;
+	m_pWnd = _pMainWnd;
 	if (pWnd != nullptr) {
 		m_pWnd = pWnd;
-		if (m_pMainWnd == nullptr)
-			m_pMainWnd = pWnd;
+		if (_pMainWnd == nullptr)
+			_pMainWnd = pWnd;
 	}
 
 	m_wLoops = (uint16)nLoops;
@@ -248,7 +248,7 @@ bool CBofSound::play(uint32 dwBeginHere, uint32 TimeFormatFlag) {
 
 	if (_errCode == ERR_NONE) {
 		// We must be attached to a valid window
-		Assert((m_pWnd != nullptr) || (m_pMainWnd != nullptr));
+		Assert((m_pWnd != nullptr) || (_pMainWnd != nullptr));
 
 		// If already playing, then stop and start again
 		if (Playing()) {
@@ -677,7 +677,7 @@ bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot) {
 			return false;
 		}
 
-		CBofWindow *pWnd = CBofApp::GetApp()->GetMainWindow();
+		CBofWindow *pWnd = CBofApp::getApp()->getMainWindow();
 
 		// Take care of any last minute cleanup before we start this new sound
 		CBofSound::AudioTask();
@@ -718,7 +718,7 @@ bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot, bool bW
 			return false;
 		}
 
-		CBofWindow *pWnd = CBofApp::GetApp()->GetMainWindow();
+		CBofWindow *pWnd = CBofApp::getApp()->getMainWindow();
 
 		// Take care of any last minute cleanup before we start this new sound
 		CBofSound::AudioTask();

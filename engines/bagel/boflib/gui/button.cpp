@@ -86,7 +86,7 @@ ErrorCode CBofButton::paint(CBofRect *) {
 		int nWidth, nHeight;
 		int i, left, right, top, bottom;
 
-		pPalette = CBofApp::GetApp()->getPalette();
+		pPalette = CBofApp::getApp()->getPalette();
 
 		nWidth = _cRect.width();
 		nHeight = _cRect.height();
@@ -277,7 +277,7 @@ ErrorCode CBofRadioButton::paint(CBofRect *) {
 	// Only continue if this button is visible
 	if (isVisible() && (_parent != nullptr) && _parent->isVisible()) {
 
-		CBofPalette *pPalette = CBofApp::GetApp()->getPalette();
+		CBofPalette *pPalette = CBofApp::getApp()->getPalette();
 
 		int nWidth = _cRect.width();
 		int nHeight = _cRect.height();
@@ -375,7 +375,7 @@ ErrorCode CBofCheckButton::paint(CBofRect *) {
 	// Only continue if this button is visible
 	if (isVisible() && (_parent != nullptr) && _parent->isVisible()) {
 
-		CBofPalette *pPalette = CBofApp::GetApp()->getPalette();
+		CBofPalette *pPalette = CBofApp::getApp()->getPalette();
 
 		int nWidth = _cRect.width();
 		int nHeight = _cRect.height();

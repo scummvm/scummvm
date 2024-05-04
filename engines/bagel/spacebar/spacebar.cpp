@@ -90,7 +90,7 @@ ErrorCode SpaceBarEngine::initialize() {
 
 		if ((_masterWin = new CSBarMasterWin()) != nullptr) {
 			// This is the primary game window
-			SetMainWindow(_masterWin);
+			setMainWindow(_masterWin);
 
 			// Init sound system
 			InitializeSoundSystem(1, 22050, 8);
@@ -184,7 +184,7 @@ ErrorCode SpaceBarEngine::initialize() {
 						goto exit;
 
 					// Use hi-res movie if user has a fast machine
-					cString = (GetMachineSpeed() < 100) ? LOGOSMK3EX : LOGOSMK3;
+					cString = (getMachineSpeed() < 100) ? LOGOSMK3EX : LOGOSMK3;
 					MACROREPLACE(cString);
 
 					if (FileExists(cString.GetBuffer())) {
@@ -249,7 +249,7 @@ Common::Error SpaceBarEngine::run() {
 	setDebugger(new Console());
 
 	// Initialize
-	PreInit();
+	preInit();
 	initialize();
 
 	// Run the app
@@ -257,9 +257,9 @@ Common::Error SpaceBarEngine::run() {
 		runApp();
 
 	// shutdown
-	PreShutDown();
+	preShutDown();
 	shutdown();
-	PostShutDown();
+	postShutDown();
 
 	return Common::kNoError;
 }

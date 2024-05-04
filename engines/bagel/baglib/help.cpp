@@ -78,11 +78,11 @@ ErrorCode CBagHelp::attach() {
 	Assert(IsValidObject(this));
 
 	// Save off the current game's palette
-	_savePalette = CBofApp::GetApp()->getPalette();
+	_savePalette = CBofApp::getApp()->getPalette();
 
 	// Insert ours
 	CBofPalette *backPal = _pBackdrop->getPalette();
-	CBofApp::GetApp()->setPalette(backPal);
+	CBofApp::getApp()->setPalette(backPal);
 
 	_okButton = new CBofBmpButton;
 	if (_okButton != nullptr) {
@@ -179,7 +179,7 @@ ErrorCode CBagHelp::detach() {
 	delete _okButton;
 	_okButton = nullptr;
 
-	CBofApp::GetApp()->setPalette(_savePalette);
+	CBofApp::getApp()->setPalette(_savePalette);
 
 	return _errCode;
 }

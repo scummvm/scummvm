@@ -151,7 +151,7 @@ ErrorCode CBofWindow::create(const char *pszName, int x, int y, int nWidth, int 
 
 	if (!ErrorOccurred()) {
 		CBofPalette *pPalette;
-		if ((pPalette = CBofApp::GetApp()->getPalette()) != nullptr) {
+		if ((pPalette = CBofApp::getApp()->getPalette()) != nullptr) {
 			selectPalette(pPalette);
 		}
 
@@ -204,28 +204,28 @@ ErrorCode CBofWindow::create(const char *pszName, const CBofRect *pRect, CBofWin
 void CBofWindow::releaseCapture() {
 	_bCaptured = false;
 	if (hasCapture())
-		CBofApp::GetApp()->setCaptureControl(nullptr);
+		CBofApp::getApp()->setCaptureControl(nullptr);
 }
 
 void CBofWindow::setCapture() {
 	_bCaptured = true;
-	CBofApp::GetApp()->setCaptureControl(this);
+	CBofApp::getApp()->setCaptureControl(this);
 }
 
 bool CBofWindow::hasCapture() const {
-	return CBofApp::GetApp()->getCaptureControl() == this;
+	return CBofApp::getApp()->getCaptureControl() == this;
 }
 
 void CBofWindow::releaseFocus() {
-	CBofApp::GetApp()->setFocusControl(nullptr);
+	CBofApp::getApp()->setFocusControl(nullptr);
 }
 
 void CBofWindow::setFocus() {
-	CBofApp::GetApp()->setFocusControl(this);
+	CBofApp::getApp()->setFocusControl(this);
 }
 
 bool CBofWindow::hasFocus() const {
-	return CBofApp::GetApp()->getFocusControl() == this;
+	return CBofApp::getApp()->getFocusControl() == this;
 }
 
 void CBofWindow::center() {
@@ -242,8 +242,8 @@ void CBofWindow::center() {
 		y = cWindowRect.top + (pParent->height() - height()) / 2;
 
 	} else {
-		x = (CBofApp::GetApp()->screenWidth() - width()) / 2;
-		y = (CBofApp::GetApp()->screenHeight() - height()) / 2;
+		x = (CBofApp::getApp()->screenWidth() - width()) / 2;
+		y = (CBofApp::getApp()->screenHeight() - height()) / 2;
 	}
 
 	move(x, y);
@@ -497,7 +497,7 @@ ErrorCode CBofWindow::setBackdrop(const char *pszFileName, bool bRefresh) {
 	CBofPalette *pPalette;
 
 	// Use Application's palette if none supplied
-	pPalette = CBofApp::GetApp()->getPalette();
+	pPalette = CBofApp::getApp()->getPalette();
 
 	if ((pBmp = new CBofBitmap(pszFileName, pPalette)) != nullptr) {
 		return setBackdrop(pBmp, bRefresh);
@@ -581,8 +581,8 @@ void CBofWindow::onMCINotify(uint32 wParam, uint32 lParam) {
 
 void CBofWindow::handleEvents() {
 	Common::Event e;
-	CBofWindow *capture = CBofApp::GetApp()->getCaptureControl();
-	CBofWindow *focus = CBofApp::GetApp()->getFocusControl();
+	CBofWindow *capture = CBofApp::getApp()->getCaptureControl();
+	CBofWindow *focus = CBofApp::getApp()->getFocusControl();
 
 	// Check for expired timers before handling events
 	checkTimers();
@@ -758,7 +758,7 @@ void CBofWindow::fillWindow(byte iColor) {
 }
 
 void CBofWindow::fillRect(CBofRect *pRect, byte iColor) {
-	CBofBitmap cBmp(width(), height(), CBofApp::GetApp()->getPalette());
+	CBofBitmap cBmp(width(), height(), CBofApp::getApp()->getPalette());
 	cBmp.fillRect(pRect, iColor);
 	cBmp.paint(this, 0, 0);
 }
