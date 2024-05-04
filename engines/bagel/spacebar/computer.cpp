@@ -100,7 +100,7 @@ SBarComputer::~SBarComputer() {
 void SBarComputer::onMainLoop() {
 	if (_bFirstPaint) {
 		_bFirstPaint = false;
-		AttachActiveObjects();
+		attachActiveObjects();
 	}
 }
 

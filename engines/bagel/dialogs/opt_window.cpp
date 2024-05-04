@@ -560,16 +560,16 @@ void CBagOptWindow::saveOutNewSettings() {
 			if ((pSDev != nullptr) && pSDev->GetDeviceType() == SDEV_GAMEWIN) {
 				CBagPanWindow *pPan = (CBagPanWindow *)pSDev;
 
-				CBagPanWindow::SetRealCorrection(n);
-				if (pPan->GetSlideBitmap() != nullptr) {
-					pPan->GetSlideBitmap()->setCorrWidth(n);
+				CBagPanWindow::setRealCorrection(n);
+				if (pPan->getSlideBitmap() != nullptr) {
+					pPan->getSlideBitmap()->setCorrWidth(n);
 				}
 			}
 		}
 	}
 
 	CBofSound::setVolume(_cSystemData._nMusicVolume, _cSystemData._nSoundVolume);
-	CBagPanWindow::SetPanSpeed(_cSystemData._nPanSpeed);
+	CBagPanWindow::setPanSpeed(_cSystemData._nPanSpeed);
 
 	_bDirty = false;
 }

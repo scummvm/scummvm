@@ -35,7 +35,7 @@
 namespace Bagel {
 
 extern bool g_restoreObjectListFl;
-extern bool g_allowAttachActiveObjectsFl;
+extern bool g_allowattachActiveObjectsFl;
 
 CBagCommandObject::CBagCommandObject() {
 	_xObjType = COMMANDOBJ;
@@ -85,9 +85,9 @@ bool CBagCommandObject::runObject() {
 
 		} else if (getFileName() == "INSERT2") {
 			if (!_objName.isEmpty() && !dstSDev.isEmpty()) {
-				g_allowAttachActiveObjectsFl = false;
+				g_allowattachActiveObjectsFl = false;
 				SDEV_MANAGER->AddObject(dstSDev, _objName);
-				g_allowAttachActiveObjectsFl = true;
+				g_allowattachActiveObjectsFl = true;
 			}
 
 		} else if (getFileName() == "INSERT") {
@@ -123,7 +123,7 @@ bool CBagCommandObject::runObject() {
 				updateFl = true;
 
 				CBagStorageDevWnd *currentSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev();
-				currentSDev->AttachActiveObjects();
+				currentSDev->attachActiveObjects();
 
 				updateFl = false;
 			}
@@ -193,8 +193,8 @@ bool CBagCommandObject::runObject() {
 
 			// Pull down the PDA (if it exists)
 			if (gameWin->GetDeviceType() == SDEV_GAMEWIN) {
-				((CBagPanWindow *)gameWin)->DeactivatePDA();
-				((CBagPanWindow *)gameWin)->WaitForPDA();
+				((CBagPanWindow *)gameWin)->deactivatePDA();
+				((CBagPanWindow *)gameWin)->waitForPDA();
 			}
 
 		} else if (getFileName() == "ROTATETOFLY") {
@@ -203,7 +203,7 @@ bool CBagCommandObject::runObject() {
 				CBagStorageDev *currSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev();
 				if ((currSDev != nullptr) && (currSDev->GetDeviceType() == SDEV_GAMEWIN)) {
 					CBagPanWindow *currWin = (CBagPanWindow *)currSDev;
-					currWin->RotateTo(getPosition());
+					currWin->rotateTo(getPosition());
 				}
 			}
 
@@ -212,7 +212,7 @@ bool CBagCommandObject::runObject() {
 			CBagStorageDev *currSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev();
 			if ((currSDev != nullptr) && (currSDev->GetDeviceType() == SDEV_GAMEWIN)) {
 				CBagPanWindow *currWin = (CBagPanWindow *)currSDev;
-				currWin->RotateTo(getPosition());
+				currWin->rotateTo(getPosition());
 			}
 
 		} else if (getFileName() == "SETQVOL") {
@@ -308,13 +308,13 @@ bool CBagCommandObject::runObject() {
 			if ((currSDev != nullptr) && (currSDev->GetDeviceType() == SDEV_GAMEWIN)) {
 				CBagPanWindow *currWin= (CBagPanWindow *)currSDev;
 
-				if (currWin->GetSlideBitmap() != nullptr) {
+				if (currWin->getSlideBitmap() != nullptr) {
 					int x = getPosition().x;
 					int y = getPosition().y;
 
 					CBofRect cRect;
 					cRect.setRect(x, y, x + 480 - 1, y + 360 - 1);
-					currWin->GetSlideBitmap()->SetCurrView(cRect);
+					currWin->getSlideBitmap()->setCurrView(cRect);
 				}
 			}
 
@@ -339,8 +339,8 @@ bool CBagCommandObject::runObject() {
 			// Pull up the PDA (if it exists)
 			//
 			if (mainWin->GetDeviceType() == SDEV_GAMEWIN) {
-				((CBagPanWindow *)mainWin)->ActivatePDA();
-				((CBagPanWindow *)mainWin)->WaitForPDA();
+				((CBagPanWindow *)mainWin)->activatePDA();
+				((CBagPanWindow *)mainWin)->waitForPDA();
 			}
 
 		} else if (getFileName() == "SHOWPDALOG") {

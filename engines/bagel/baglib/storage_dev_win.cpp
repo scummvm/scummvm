@@ -56,14 +56,14 @@ namespace Bagel {
 // Globals (hacks)
 bool g_allowPaintFl = true;
 bool g_bAAOk = true;            // Prevent attachActiveObjects() after a RUN LNK
-bool g_allowAttachActiveObjectsFl = true;        // Prevent attachActiveObjects() after a RUN LNK
+bool g_allowattachActiveObjectsFl = true;        // Prevent attachActiveObjects() after a RUN LNK
 CBagStorageDevWnd *g_pLastWindow = nullptr;
 extern bool g_pauseTimerFl;
 extern bool g_waitOKFl;
 
 // Statics
 CBagEventSDev *CBagStorageDevWnd::_pEvtSDev = nullptr;    // Pointer to the EventSDev
-CBofPoint *CBagStorageDev::m_xCursorLocation;
+CBofPoint *CBagStorageDev::_xCursorLocation;
 CBofRect *CBagStorageDev::gRepaintRect;
 bool CBagStorageDev::m_bHidePDA = false;
 bool CBagStorageDev::m_bHandledUpEvent = false;
@@ -83,10 +83,10 @@ static int gLastBackgroundUpdate = 0;
 void CBagStorageDev::initialize() {
 	g_allowPaintFl = true;
 	g_bAAOk = true;
-	g_allowAttachActiveObjectsFl = true;
+	g_allowattachActiveObjectsFl = true;
 	g_pLastWindow = nullptr;
 
-	m_xCursorLocation = new CBofPoint();
+	_xCursorLocation = new CBofPoint();
 	gRepaintRect = new CBofRect();
 	m_bHidePDA = false;
 	m_bHandledUpEvent = false;
@@ -99,7 +99,7 @@ void CBagStorageDev::initialize() {
 }
 
 void CBagStorageDev::shutdown() {
-	delete m_xCursorLocation;
+	delete _xCursorLocation;
 	delete gRepaintRect;
 }
 
@@ -122,7 +122,7 @@ CBagStorageDev::CBagStorageDev() {
 
 	_xSDevType = SDEV_UNDEF;
 
-	m_pBitmapFilter = nullptr;
+	_pBitmapFilter = nullptr;
 
 	setCloseOnOpen(false);
 	SetExitOnEdge(0);
@@ -229,8 +229,8 @@ ErrorCode CBagStorageDev::activateLocalObject(CBagObject  *pObj) {
 			pObj->attach();
 
 			// Preform an update and arrange objects in the storage device
-			if (g_allowAttachActiveObjectsFl) {
-				AttachActiveObjects();
+			if (g_allowattachActiveObjectsFl) {
+				attachActiveObjects();
 			}
 		}
 	} else  {
@@ -308,7 +308,7 @@ CBofPoint CBagStorageDev::arrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 }
 
 
-ErrorCode CBagStorageDev::AttachActiveObjects() {
+ErrorCode CBagStorageDev::attachActiveObjects() {
 	ErrorCode errCode = ERR_NONE;
 	CBofPoint nArrangePos(0, 0);	// Removed 5,5 padding
 
@@ -424,7 +424,7 @@ ErrorCode CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *
 	if (nCount) {
 		CBofWindow *pWnd1 = CBagel::getBagApp()->getMasterWnd();
 		if (pWnd1)
-			pWnd1->screenToClient(&*m_xCursorLocation);
+			pWnd1->screenToClient(&*_xCursorLocation);
 
 		for (int i = 0; i < nCount; ++i) {
 			CBagObject *pObj = GetObjectByPos(i);
@@ -443,8 +443,8 @@ ErrorCode CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *
 				}
 
 				// if it is visible update it
-				if (pObj->getRect().ptInRect(*m_xCursorLocation)) {
-					pObj->onMouseOver(0, *m_xCursorLocation, this);
+				if (pObj->getRect().ptInRect(*_xCursorLocation)) {
+					pObj->onMouseOver(0, *_xCursorLocation, this);
 					bMouseOverObj = true;
 				}  // if on screen
 			}  // If the object is attached
@@ -468,7 +468,7 @@ ErrorCode CBagStorageDev::NoObjectsUnderMouse() {
 }
 
 void CBagStorageDev::onMouseMove(uint32 nFlags, CBofPoint *xPoint, void *vpInfo) {
-	*m_xCursorLocation = *xPoint;
+	*_xCursorLocation = *xPoint;
 
 	if (GetLActiveObject() && GetLActivity()) {
 		GetLActiveObject()->onMouseMove(nFlags, *xPoint, vpInfo);
@@ -486,8 +486,8 @@ void CBagStorageDev::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *vpInf
 		return;
 	}
 
-	*m_xCursorLocation = *xPoint;
-	CBofPoint xCursorLocation = DevPtToViewPort(*xPoint);
+	*_xCursorLocation = *xPoint;
+	CBofPoint xCursorLocation = devPtToViewPort(*xPoint);
 
 	SetLActivity(kMouseNONE);
 
@@ -514,8 +514,8 @@ void CBagStorageDev::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 
 	sCurrSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->GetName();
 
-	*m_xCursorLocation = *xPoint;
-	CBofPoint xCursorLocation = DevPtToViewPort(*xPoint);
+	*_xCursorLocation = *xPoint;
+	CBofPoint xCursorLocation = devPtToViewPort(*xPoint);
 
 	bool bUseWield = true;
 	CBagObject *pObj = GetObject(xCursorLocation, true);
@@ -556,7 +556,7 @@ void CBagStorageDev::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 	SetLActivity(kMouseNONE);
 
 	if (g_bAAOk && (sCurrSDev == (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->GetName()))) {
-		AttachActiveObjects();
+		attachActiveObjects();
 	}
 
 	g_bAAOk = true;
@@ -838,7 +838,7 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 	}
 
 	if (bAttach)
-		return AttachActiveObjects();
+		return attachActiveObjects();
 
 	// Add everything to the window
 	return ERR_NONE;
@@ -976,7 +976,7 @@ ErrorCode CBagStorageDev::attach() {
 
 		if ((pBmp != nullptr) && !pBmp->errorOccurred()) {
 			setBackground(pBmp);
-			errCode = AttachActiveObjects();
+			errCode = attachActiveObjects();
 		} else {
 			errCode = ERR_FOPEN;
 		}
@@ -1090,11 +1090,11 @@ CBagObject *CBagStorageDev::onNewUserObject(const CBofString &str) {
 }
 
 void CBagStorageDev::OnSetFilter(bool (*filterFunction)(const uint16 nFilterid, CBofBitmap *, CBofRect *)) {
-	m_pBitmapFilter = filterFunction;
+	_pBitmapFilter = filterFunction;
 }
 
 FilterFunction CBagStorageDev::GetFilter() {
-	return m_pBitmapFilter;
+	return _pBitmapFilter;
 }
 
 
@@ -1206,7 +1206,7 @@ ErrorCode CBagStorageDevWnd::attach() {
 
 			show();
 
-			AttachActiveObjects();
+			attachActiveObjects();
 		}
 
 	} else {
@@ -1362,7 +1362,7 @@ ErrorCode CBagStorageDevWnd::PaintScreen(CBofRect *pRect) {
 
 	if (_bFirstPaint) {
 		_bFirstPaint = false;
-		AttachActiveObjects();
+		attachActiveObjects();
 	}
 
 	return _errCode;
@@ -1387,14 +1387,14 @@ ErrorCode CBagStorageDevWnd::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 	if (IsFiltered()) {
 		uint16 nFilterId = GetFilterId();
-		(*m_pBitmapFilter)(nFilterId, pBmp, pRect);
+		(*_pBitmapFilter)(nFilterId, pBmp, pRect);
 	}
 
 	return _errCode;
 }
 
 
-ErrorCode CBagStorageDevWnd::RunModal(CBagObject *pObj) {
+ErrorCode CBagStorageDevWnd::runModal(CBagObject *pObj) {
 	assert(pObj != nullptr);
 
 	if (pObj->isModal() && pObj->isActive()) {
@@ -1422,7 +1422,7 @@ ErrorCode CBagStorageDevWnd::RunModal(CBagObject *pObj) {
 
 
 
-ErrorCode CBagStorageDevWnd::PaintObjects(CBofList<CBagObject *> * /*list*/, CBofBitmap * /*pBmp*/, CBofRect & /*viewRect*/, CBofList<CBofRect> * /*pUpdateArea*/, bool /*tempVar*/) {
+ErrorCode CBagStorageDevWnd::paintObjects(CBofList<CBagObject *> * /*list*/, CBofBitmap * /*pBmp*/, CBofRect & /*viewRect*/, CBofList<CBofRect> * /*pUpdateArea*/, bool /*tempVar*/) {
 	return _errCode;
 }
 
@@ -1503,7 +1503,7 @@ void CBagStorageDevWnd::onMouseMove(uint32 n, CBofPoint *pPoint, void *) {
 		// Run thru background object list and find if the cursor is over an object
 		CBofList<CBagObject *> *pList = GetObjectList();
 		if (pList != nullptr) {
-			CBofPoint cCursorLocation = DevPtToViewPort(*m_xCursorLocation);
+			CBofPoint cCursorLocation = devPtToViewPort(*_xCursorLocation);
 
 			// Go thru list backwards to find the 1st top-most object
 			CBofListNode<CBagObject *> *pNode = pList->getTail();
@@ -1621,7 +1621,7 @@ ErrorCode CBagStorageDevDlg::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 	if (IsFiltered()) {
 		uint16 nFilterId = GetFilterId();
-		(*m_pBitmapFilter)(nFilterId, pBmp, pRect);
+		(*_pBitmapFilter)(nFilterId, pBmp, pRect);
 	}
 
 	return _errCode;
@@ -1652,7 +1652,7 @@ void CBagStorageDevDlg::onPaint(CBofRect *) {
 
 	validateAnscestors();
 
-	CBagPanWindow::FlushInputEvents();
+	CBagPanWindow::flushInputEvents();
 }
 
 
@@ -1691,14 +1691,14 @@ ErrorCode CBagStorageDevDlg::PaintScreen(CBofRect *pRect) {
 	// to allow for immediate run objects to run
 	if (_bFirstPaint) {
 		_bFirstPaint = false;
-		AttachActiveObjects();
+		attachActiveObjects();
 	}
 
 	return _errCode;
 }
 
 
-ErrorCode CBagStorageDevDlg::PaintObjects(CBofList<CBagObject *> * /*list*/, CBofBitmap * /*pBmp*/, CBofRect & /*viewRect*/, CBofList<CBofRect> * /*pUpdateArea*/, bool /*tempVar*/) {
+ErrorCode CBagStorageDevDlg::paintObjects(CBofList<CBagObject *> * /*list*/, CBofBitmap * /*pBmp*/, CBofRect & /*viewRect*/, CBofList<CBofRect> * /*pUpdateArea*/, bool /*tempVar*/) {
 	return _errCode;
 }
 

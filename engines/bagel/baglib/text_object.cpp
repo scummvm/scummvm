@@ -555,7 +555,7 @@ void CBagTextObject::recalcTextRect(bool bTextFromFile) {
 	CBagPanWindow *pPanWin = (CBagPanWindow *)(CBagel::getBagApp()->getMasterWnd()->getCurrentGameWindow());
 	if (bTextFromFile) {
 		if (pPanWin->GetDeviceType() == SDEV_GAMEWIN) {
-			ViewRect = pPanWin->GetViewPort();
+			ViewRect = pPanWin->getViewPort();
 		} else {
 			ViewRect = pPanWin->getClientRect();
 		}

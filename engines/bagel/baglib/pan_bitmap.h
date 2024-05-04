@@ -43,16 +43,16 @@ public:
 	};
 
 private:
-	CBofRect m_xCurrView;      // Viewport Window size (0->Width-1,0->Heigth-1,1->Width+Width/4,1->Heigth)
-	double m_xFOVAngle;        // Feild of view in radians
-	CBofPoint m_xRotateRate;   // Rate of rotation on increment left, right ...
-	bool m_bActiveScrolling;   // True when there should be screen updates
-	bool m_bPanorama;          // True when the bitmap is a 360 panorama
-	Direction m_xDirection;    // Set direction for next update
-	int m_nCorrWidth;          // Size of each correction band
-	CBofFixed *m_pCosineTable; // Lookup table for cosine values
-	int m_nNumDegrees;         // Number of lookups in the cosine table
-	bool m_bIsValid;           // Is the bmp a valid object
+	CBofRect _xCurrView;      // Viewport Window size (0->Width-1,0->Heigth-1,1->Width+Width/4,1->Heigth)
+	double _xFOVAngle;        // Feild of view in radians
+	CBofPoint _xRotateRate;   // Rate of rotation on increment left, right ...
+	bool _bActiveScrolling;   // True when there should be screen updates
+	bool _bPanorama;          // True when the bitmap is a 360 panorama
+	Direction _xDirection;    // Set direction for next update
+	int _nCorrWidth;          // Size of each correction band
+	CBofFixed *_pCosineTable; // Lookup table for cosine values
+	int _nNumDegrees;         // Number of lookups in the cosine table
+	bool _bIsValid;           // Is the bmp a valid object
 	static int AdjustConvexUp(CBofRect &, const CBofRect &, const int);
 	static int AdjustConvexDown(CBofRect &, const CBofRect &, const int);
 	static int AdjustPlanar(CBofRect &, const CBofRect &, const int);
@@ -65,100 +65,100 @@ public:
 	CBagPanBitmap(int dx, int dy, CBofPalette *pPalette, const CBofRect &xViewSize = CBofRect());
 	virtual ~CBagPanBitmap();
 
-	bool IsValid() {
-		return m_bIsValid;
+	bool isValid() {
+		return _bIsValid;
 	}
-	bool IsPan() {
-		return m_bPanorama;
+	bool isPan() {
+		return _bPanorama;
 	}
 
 	ErrorCode paint(CBofBitmap *pBmp, const CBofPoint xDstOffset = CBofPoint(0, 0));
 	ErrorCode paint(CBofWindow *pWnd, const CBofPoint xDstOffset = CBofPoint(0, 0));
-	ErrorCode PaintUncorrected(CBofBitmap *pBmp, CBofRect &dstRect);
-	ErrorCode PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, const CBofRect &srcRect, const int offset = 0, CBofBitmap *pSrcBmp = nullptr, const CBofRect &preSrcRect = CBofRect());
-	ErrorCode PaintWarped4(CBofBitmap *pBmp, const CBofRect &dstRect, const CBofRect &srcRect, const int offset = 0, CBofBitmap *pSrcBmp = nullptr, const CBofRect &preSrcRect = CBofRect());
+	ErrorCode paintUncorrected(CBofBitmap *pBmp, CBofRect &dstRect);
+	ErrorCode paintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, const CBofRect &srcRect, const int offset = 0, CBofBitmap *pSrcBmp = nullptr, const CBofRect &preSrcRect = CBofRect());
+	ErrorCode paintWarped4(CBofBitmap *pBmp, const CBofRect &dstRect, const CBofRect &srcRect, const int offset = 0, CBofBitmap *pSrcBmp = nullptr, const CBofRect &preSrcRect = CBofRect());
 
-	CBofRect GetWarpSrcRect();
-	CBofPoint WarpedPoint(CBofPoint &xPoint);
+	CBofRect getWarpSrcRect();
+	CBofPoint warpedPoint(CBofPoint &xPoint);
 
-	double GetFOV() {
-		return m_xFOVAngle;
+	double getFOV() {
+		return _xFOVAngle;
 	}
-	const CBofSize GetViewSize() {
-		return CBofPoint(m_xCurrView.size());
+	const CBofSize getViewSize() {
+		return CBofPoint(_xCurrView.size());
 	}
-	const CBofRect GetCurrView() {
-		return m_xCurrView;
-	}
-
-	const CBofRect GetMaxView(CBofSize s = CBofSize(640, 480));
-	const CBofPoint GetRotateRate() {
-		return m_xRotateRate;
-	}
-	Direction GetDirection() {
-		return m_xDirection;
+	const CBofRect getCurrView() {
+		return _xCurrView;
 	}
 
-	void SetRotateRate(const CBofPoint &xRotRate) {
-		m_xRotateRate = xRotRate;
+	const CBofRect getMaxView(CBofSize s = CBofSize(640, 480));
+	const CBofPoint getRotateRate() {
+		return _xRotateRate;
 	}
-	void SetDirection(const Direction xDirection) {
-		m_xDirection = xDirection;
+	Direction getDirection() {
+		return _xDirection;
 	}
-	void SetCurrView(const CBofRect &xCurrView) {
-		m_xCurrView = xCurrView;
+
+	void setRotateRate(const CBofPoint &xRotRate) {
+		_xRotateRate = xRotRate;
+	}
+	void setDirection(const Direction xDirection) {
+		_xDirection = xDirection;
+	}
+	void setCurrView(const CBofRect &xCurrView) {
+		_xCurrView = xCurrView;
 		NormalizeViewSize();
 	}
-	void OffsetCurrView(const CBofPoint &xOffset) {
-		CBofRect xCurrView = m_xCurrView;
+	void offsetCurrView(const CBofPoint &xOffset) {
+		CBofRect xCurrView = _xCurrView;
 		xCurrView.offsetRect(xOffset);
-		SetCurrView(xCurrView);
+		setCurrView(xCurrView);
 	}
-	void SetFOV(double degrees, bool bUpdate = true) {
-		m_xFOVAngle = degrees / 114.5916558176;
+	void setFOV(double degrees, bool bUpdate = true) {
+		_xFOVAngle = degrees / 114.5916558176;
 		if (bUpdate) {
-			// m_xCurrView.setRect(0, m_xCurrView.top, width()*degrees/360, m_xCurrView.bottom);
+			// _xCurrView.setRect(0, _xCurrView.top, width()*degrees/360, _xCurrView.bottom);
 			GenerateCosineTable();
 		}
 	}
 	int getCorrWidth() {
-		return m_nCorrWidth;
+		return _nCorrWidth;
 	}
 
 	void setCorrWidth(int nWidth, bool bUpdate = true);
 
-	void SetViewSize(const CBofSize &xViewSize, bool bUpdate = true) {
-		m_xCurrView.right = m_xCurrView.left + xViewSize.cx;
-		m_xCurrView.bottom = m_xCurrView.top + xViewSize.cy;
+	void setViewSize(const CBofSize &xViewSize, bool bUpdate = true) {
+		_xCurrView.right = _xCurrView.left + xViewSize.cx;
+		_xCurrView.bottom = _xCurrView.top + xViewSize.cy;
 		NormalizeViewSize();
 
 		if (bUpdate) {
 			GenerateCosineTable();
 		}
 	}
-	CBofSize SetUnityViewSize() {
-		int w = (int)(width() * m_xFOVAngle / 3.14159);
-		m_xCurrView.setRect(0, m_xCurrView.top, w, m_xCurrView.bottom);
+	CBofSize setUnityViewSize() {
+		int w = (int)(width() * _xFOVAngle / 3.14159);
+		_xCurrView.setRect(0, _xCurrView.top, w, _xCurrView.bottom);
 		GenerateCosineTable();
-		return GetViewSize();
+		return getViewSize();
 	}
-	double SetUnityFOV() {
-		SetFOV(360.0 * m_xCurrView.width() / width(), false); // If FOV is set to 0 then unity FOV is assumed (faster redraws)
+	double setUnityFOV() {
+		setFOV(360.0 * _xCurrView.width() / width(), false); // If FOV is set to 0 then unity FOV is assumed (faster redraws)
 		GenerateCosineTable();
-		return GetFOV();
+		return getFOV();
 	}
-	void RotateRight(int nXRotRate = 0);
-	void RotateLeft(int nXRotRate = 0);
-	void RotateUp(int nYRotRate = 0);
-	void RotateDown(int nYRotRate = 0);
+	void rotateRight(int nXRotRate = 0);
+	void rotateLeft(int nXRotRate = 0);
+	void rotateUp(int nYRotRate = 0);
+	void rotateDown(int nYRotRate = 0);
 
-	Direction UpdateView();
+	Direction updateView();
 
-	void ActivateScrolling(bool val = true) {
-		m_bActiveScrolling = val;
+	void activateScrolling(bool val = true) {
+		_bActiveScrolling = val;
 	}
-	void DeActivateScrolling() {
-		ActivateScrolling(false);
+	void deActivateScrolling() {
+		activateScrolling(false);
 	}
 };
 

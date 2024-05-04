@@ -395,7 +395,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 				}
 			}
 
-			CBagPanWindow::FlushInputEvents();
+			CBagPanWindow::flushInputEvents();
 
 			// If we were requested to put a dialog over the PDA, then shift it upward
 			// a bit... unless of course the mousedown occurred in the PDA itself.
@@ -454,7 +454,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 				dlg.saveBackground();
 			}
 
-			CBagPanWindow::FlushInputEvents();
+			CBagPanWindow::flushInputEvents();
 
 			g_pauseTimerFl = true;
 			dlg.doModal();
@@ -616,7 +616,7 @@ void CBagMenuDlg::onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 			}
 
 		} else {
-			CBofPoint pt = DevPtToViewPort(*pPoint);
+			CBofPoint pt = devPtToViewPort(*pPoint);
 			_pSelectedObject = GetObject(pt);
 			if (_pSelectedObject != nullptr) {
 				_pSelectedObject->onLButtonUp(nFlags, pPoint);
@@ -675,7 +675,7 @@ void CBagMenuDlg::onPaint(CBofRect *pRect) {
 	CBagStorageDevDlg::onPaint(pRect);
 
 	// Don't allow user input until this menu is visible
-	CBagPanWindow::FlushInputEvents();
+	CBagPanWindow::flushInputEvents();
 }
 
 void CBagMenuDlg::onDeActivate() {
