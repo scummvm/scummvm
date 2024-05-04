@@ -191,7 +191,7 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 		case 'U':
 		case 'T': {
 			GetAlphaNumFromStream(istr, sStr);
-			if (sStr.Find("TOUCHEDVAR") == 0) {
+			if (sStr.find("TOUCHEDVAR") == 0) {
 				GetAlphaNumFromStream(istr, sStr);
 
 				nObjectUpdated = true;
@@ -206,7 +206,7 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 
 			bool bTouched = (ch == 'T');
 
-			if ((bTouched && !sStr.Find("TOUCHED")) || (bTouched == false && !sStr.Find("UNTOUCHED"))) {
+			if ((bTouched && !sStr.find("TOUCHED")) || (bTouched == false && !sStr.find("UNTOUCHED"))) {
 
 				nObjectUpdated = true;
 
@@ -263,7 +263,7 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 
 		case 'N': {
 			GetAlphaNumFromStream(istr, sStr);
-			if (!sStr.Find("NAME")) {
+			if (!sStr.find("NAME")) {
 				nObjectUpdated = true;
 
 				istr.eatWhite();
@@ -281,7 +281,7 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 		case 'S': {
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("SAVE")) {
+			if (!sStr.find("SAVE")) {
 				nObjectUpdated = true;
 				istr.eatWhite();
 
@@ -294,13 +294,13 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 				// complain violently.
 				if (m_pSaveVar == nullptr) {
 					reportError(ERR_UNKNOWN, "Invalid Residue Print SAVE Variable=%s",
-					            sStr.GetBuffer());
+					            sStr.getBuffer());
 					return UNKNOWN_TOKEN;
 				}
 				break;
 			}
 
-			if (!sStr.Find("SAME")) {
+			if (!sStr.find("SAME")) {
 				nObjectUpdated = true;
 
 				m_pUntouchedList = m_pTouchedList;
@@ -315,7 +315,7 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 		//
 		case 'M': {
 			GetAlphaNumFromStream(istr, sStr);
-			if (!sStr.Find("MOVIE")) {
+			if (!sStr.find("MOVIE")) {
 				nObjectUpdated = true;
 
 				GetAlphaNumFromStream(istr, sStr);
@@ -332,7 +332,7 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 		//
 		case 'D': {
 			GetAlphaNumFromStream(istr, sStr);
-			if (!sStr.Find("DESC")) {
+			if (!sStr.find("DESC")) {
 				nObjectUpdated = true;
 
 				m_pDescObj = new CBagTextObject();
@@ -349,7 +349,7 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 		// residue printing of that object has occurred.
 		case 'V': {
 			GetAlphaNumFromStream(istr, sStr);
-			if (!sStr.Find("VAR")) {
+			if (!sStr.find("VAR")) {
 				nObjectUpdated = true;
 				istr.eatWhite();
 
@@ -362,7 +362,7 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 				// complain violently.
 				if (m_pVarObj == nullptr) {
 					reportError(ERR_UNKNOWN, "Invalid Residue Print Variable=%s",
-					            sStr.GetBuffer());
+					            sStr.getBuffer());
 					return UNKNOWN_TOKEN;
 				}
 			} else {
@@ -652,7 +652,7 @@ int CBagRPObject::UpdateRPQueue() {
 
 			// If it's value is NOT 3000, then store its value in the associative
 			// rp object.
-			if (cStr.Find("3000") == -1) {
+			if (cStr.find("3000") == -1) {
 				int nTimecount = atoi(szLocalBuff);
 				pRPObj->m_nRPTime = nTimecount;
 				pRPObj->m_bRPReported = false;

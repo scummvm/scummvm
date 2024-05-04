@@ -50,7 +50,7 @@ bool Console::cmdVar(int argc, const char **argv) {
 	assert(var);
 
 	if (argc == 2) {
-		debugPrintf("Current value = %s\n", var->GetValue().GetBuffer());
+		debugPrintf("Current value = %s\n", var->GetValue().getBuffer());
 	} else {
 		var->SetValue(argv[2]);
 		debugPrintf("Variable set\n");
@@ -75,7 +75,7 @@ bool Console::cmdFleebix(int argc, const char **argv) {
 	CBofString inner = VAR_MANAGER->GetVariable("NDJAM_INNERDIAL_DISPLAY")->GetValue();
 	CBofString outer = VAR_MANAGER->GetVariable("NDJAM_OUTERDIAL_DISPLAY")->GetValue();
 
-	debugPrintf("Frequency is %s.%s\n", inner.GetBuffer(), outer.GetBuffer());
+	debugPrintf("Frequency is %s.%s\n", inner.getBuffer(), outer.getBuffer());
 	return true;
 }
 

@@ -163,9 +163,9 @@ ErrorCode CBagCreditsDialog::loadNextTextFile() {
 			_nNumPixels = 0;
 
 			// Determine the number of lines of text in credits
-			_nLines = StrCharCount(_pszText, '\n');
-			StrReplaceChar(_pszText, '\r', ' ');
-			StrReplaceChar(_pszText, '\n', '\0');
+			_nLines = strCharCount(_pszText, '\n');
+			strreplaceChar(_pszText, '\r', ' ');
+			strreplaceChar(_pszText, '\n', '\0');
 
 			paintLine(linesPerPage() - 1, _pszNextLine);
 			nextLine();

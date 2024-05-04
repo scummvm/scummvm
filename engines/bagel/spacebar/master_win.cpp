@@ -53,95 +53,95 @@ CBagStorageDev *CSBarMasterWin::onNewStorageDev(const CBofString &typestr) {
 
 	CBagStorageDev *pSDev;
 
-	if (!typestr.Find("PDA")) {
+	if (!typestr.find("PDA")) {
 		pSDev = new CBagPDA();
 
-	} else if (!typestr.Find("WIELD")) {
+	} else if (!typestr.find("WIELD")) {
 		pSDev = new CBagWield();
 
-	} else if (!typestr.Find("BMP")) {
+	} else if (!typestr.find("BMP")) {
 		pSDev = new CBagStorageDevBmp();
 
-	} else if (!typestr.Find("DLG")) {
+	} else if (!typestr.find("DLG")) {
 		pSDev = new CBagStorageDevDlg();
 
-	} else if (!typestr.Find("BARCOMP")) {
+	} else if (!typestr.find("BARCOMP")) {
 		pSDev = new SBarComputer();
 		pSDev->SetCustom(true);
 
-	} else if (!typestr.Find("SRACOMP")) {
+	} else if (!typestr.find("SRACOMP")) {
 		pSDev = new SrafComputer();
 		pSDev->SetExitOnEdge(10);
 
-	} else if (!typestr.Find("VIDEQUIP")) {
+	} else if (!typestr.find("VIDEQUIP")) {
 		pSDev = new SBarVidWnd();
 		pSDev->SetCloseup(true);
 		pSDev->SetExitOnEdge(80);
 		pSDev->SetCustom(true);
 
-	} else if (!typestr.Find("FULLSCREEN2")) {
+	} else if (!typestr.find("FULLSCREEN2")) {
 		pSDev = new SBarFullWnd();
 		pSDev->SetCloseup(true);
 		((SBarFullWnd *)pSDev)->_bAllowEventWorld = false;
 
-	} else if (!typestr.Find("FULLSCREEN")) {
+	} else if (!typestr.find("FULLSCREEN")) {
 		pSDev = new SBarFullWnd();
 		pSDev->SetCloseup(true);
 
-	} else if (!typestr.Find("SBARSLOT")) {
+	} else if (!typestr.find("SBARSLOT")) {
 		pSDev = new SBarSlotWnd();
 		pSDev->SetCustom(true);
 
-	} else if (!typestr.Find("BIBODDS")) {
+	} else if (!typestr.find("BIBODDS")) {
 		pSDev = new SBarBibOddsWnd();
 		pSDev->SetCloseup(true);
 		// pSDev->SetExitOnEdge(10);
 		pSDev->SetCustom(true);
 
-	} else if (!typestr.Find("INVWLD")) {
+	} else if (!typestr.find("INVWLD")) {
 		pSDev = new CBagInv();
 
-	} else if (!typestr.Find("MOOWLD")) {
+	} else if (!typestr.find("MOOWLD")) {
 		pSDev = new CBagMoo();
 
-	} else if (!typestr.Find("ZOOMPDA")) {
+	} else if (!typestr.find("ZOOMPDA")) {
 		pSDev = new SBZoomPda();
 		pSDev->SetCloseup(true);
 
-	} else if (!typestr.Find("PLAYBIBBLE")) {
+	} else if (!typestr.find("PLAYBIBBLE")) {
 		pSDev = new CBibbleWindow();
 		pSDev->SetCustom(true);
 
-	} else if (!typestr.Find("PLAYNAV")) {
+	} else if (!typestr.find("PLAYNAV")) {
 		pSDev = new CNavWindow();
 
 		// delineate cic's
-	} else if (!typestr.Find("CIC")) {
+	} else if (!typestr.find("CIC")) {
 		if ((pSDev = new GAMEWINDOW()) != nullptr) {
 			pSDev->SetCloseup(true);
 			pSDev->SetCIC(true);
 			pSDev->SetExitOnEdge(80);
 		}
 
-	} else if (!typestr.Find("CLOSEUP")) {
+	} else if (!typestr.find("CLOSEUP")) {
 		if ((pSDev = new GAMEWINDOW()) != nullptr) {
 			pSDev->SetCloseup(true);
 			pSDev->SetExitOnEdge(80);
 		}
 
-	} else if (!typestr.Find("CHAT")) {
+	} else if (!typestr.find("CHAT")) {
 		if ((pSDev = new CBagChatWnd()) != nullptr) {
 			pSDev->SetCloseup(true);
 			//          pSDev->SetExitOnEdge(80);
 		}
 
-	} else if (!typestr.Find("EVENT")) {        // EVT STUFF
+	} else if (!typestr.find("EVENT")) {        // EVT STUFF
 		pSDev = new CBagEventSDev();
 
-	} else if (!typestr.Find("TURNEVENT")) {    // turn based storage device
+	} else if (!typestr.find("TURNEVENT")) {    // turn based storage device
 		pSDev = new CBagTurnEventSDev();
 
-	} else if (!typestr.Find("LOG")) {          // PDA LOG STUFF
+	} else if (!typestr.find("LOG")) {          // PDA LOG STUFF
 		pSDev = new CBagLog();
 
 	} else {
@@ -212,29 +212,29 @@ void CSBarMasterWin::onNewFilter(CBagStorageDev *pSDev, const CBofString &typest
 		filterFunction = &doFilters;
 	}
 
-	if (!typestr.Find("PDA")) {
-	} else if (!typestr.Find("WIELD")) {
-	} else if (!typestr.Find("BMP")) {
-	} else if (!typestr.Find("DLG")) {
+	if (!typestr.find("PDA")) {
+	} else if (!typestr.find("WIELD")) {
+	} else if (!typestr.find("BMP")) {
+	} else if (!typestr.find("DLG")) {
 		pSDev->OnSetFilter(filterFunction);
-	} else if (!typestr.Find("BARCOMP")) {
-	} else if (!typestr.Find("SRACOMP")) {
-	} else if (!typestr.Find("VIDEQUIP")) {
-	} else if (!typestr.Find("FULLSCREEN")) {
-	} else if (!typestr.Find("SBARSLOT")) {
-	} else if (!typestr.Find("BIBODDS")) {
-	} else if (!typestr.Find("INVWLD")) {
-	} else if (!typestr.Find("MOOWLD")) {
-	} else if (!typestr.Find("ZOOMPDA")) {
-	} else if (!typestr.Find("PLAYBIBBLE")) {
-	} else if (!typestr.Find("PLAYNAV")) {
-	} else if (!typestr.Find("CLOSEUP")) {
+	} else if (!typestr.find("BARCOMP")) {
+	} else if (!typestr.find("SRACOMP")) {
+	} else if (!typestr.find("VIDEQUIP")) {
+	} else if (!typestr.find("FULLSCREEN")) {
+	} else if (!typestr.find("SBARSLOT")) {
+	} else if (!typestr.find("BIBODDS")) {
+	} else if (!typestr.find("INVWLD")) {
+	} else if (!typestr.find("MOOWLD")) {
+	} else if (!typestr.find("ZOOMPDA")) {
+	} else if (!typestr.find("PLAYBIBBLE")) {
+	} else if (!typestr.find("PLAYNAV")) {
+	} else if (!typestr.find("CLOSEUP")) {
 		pSDev->OnSetFilter(filterFunction);
-	} else if (!typestr.Find("CHAT")) {
+	} else if (!typestr.find("CHAT")) {
 		pSDev->OnSetFilter(filterFunction);
-	} else if (!typestr.Find("EVENT")) {
-	} else if (!typestr.Find("TURNEVENT")) {
-	} else if (!typestr.Find("LOG")) {
+	} else if (!typestr.find("EVENT")) {
+	} else if (!typestr.find("TURNEVENT")) {
+	} else if (!typestr.find("LOG")) {
 	} else {
 		// The game window
 		pSDev->OnSetFilter(filterFunction);

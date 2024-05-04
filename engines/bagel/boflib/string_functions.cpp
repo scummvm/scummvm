@@ -26,7 +26,7 @@
 
 namespace Bagel {
 
-int StrCharCount(const char *str, char c) {
+int strCharCount(const char *str, char c) {
 	assert(str != nullptr);
 
 	int n = 0;
@@ -38,7 +38,7 @@ int StrCharCount(const char *str, char c) {
 	return n;
 }
 
-char *StrReplaceChar(char *str, char cOld, char cNew) {
+char *strreplaceChar(char *str, char cOld, char cNew) {
 	char *p = str;
 
 	// Can't access a nullptr pointer
@@ -57,7 +57,7 @@ char *StrReplaceChar(char *str, char cOld, char cNew) {
 	return str;
 }
 
-char *StrReplaceStr(char *pszBuf, const char *pszTok, const char *pszNewTok) {
+char *strreplaceStr(char *pszBuf, const char *pszTok, const char *pszNewTok) {
 	// Can't access nullptr pointers
 	assert(pszBuf != nullptr);
 	assert(pszTok != nullptr);
@@ -83,7 +83,7 @@ char *StrReplaceStr(char *pszBuf, const char *pszTok, const char *pszNewTok) {
 	return pszBuf;
 }
 
-void MemReplaceChar(byte *pBuf, byte chOld, byte chNew, int32 lSize) {
+void memreplaceChar(byte *pBuf, byte chOld, byte chNew, int32 lSize) {
 	assert(pBuf != nullptr);
 	assert(chOld != chNew);
 

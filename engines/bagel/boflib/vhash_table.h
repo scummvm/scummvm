@@ -111,7 +111,7 @@ bool CBofVHashTable<T, S>::contains(const T &val) {
 	int nItemsInBucket = pHashBucket->getCount();
 	for (int i = 0; i < nItemsInBucket; i++) {
 		T *TableEntry = pHashBucket->getNodeItem(i);
-		if (TableEntry->CompareNoCase((const char *)val) == 0) {
+		if (TableEntry->compareNoCase((const char *)val) == 0) {
 			returnValue = true;
 			break;
 		}

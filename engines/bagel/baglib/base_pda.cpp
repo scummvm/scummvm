@@ -444,13 +444,13 @@ void SBBasePda::getPdaState() {
 		pdaState = curVar->GetValue();
 		// Now set the internal PDA state based on this info.
 		// If we saved during a movie, then restore to map mode.
-		if (pdaState.Find("MAP") != -1 || pdaState.Find("MOO") != -1) {
+		if (pdaState.find("MAP") != -1 || pdaState.find("MOO") != -1) {
 			_pdaMode = MAPMODE;
-		} else if (pdaState.Find("INV") != -1) {
+		} else if (pdaState.find("INV") != -1) {
 			_pdaMode = INVMODE;
-		} else if (pdaState.Find("LOG") != -1) {
+		} else if (pdaState.find("LOG") != -1) {
 			_pdaMode = LOGMODE;
-		} else if (pdaState.Find("MOO") != -1) {
+		} else if (pdaState.find("MOO") != -1) {
 			_pdaMode = MOOMODE;
 		} else {
 			_pdaMode = NOMODE;
@@ -461,7 +461,7 @@ void SBBasePda::getPdaState() {
 	curVar = VAR_MANAGER->GetVariable(pdaPos);
 	if (curVar) {
 		pdaState = curVar->GetValue();
-		if (pdaState.Find("UP") != -1) {
+		if (pdaState.find("UP") != -1) {
 			_pdaPos = PDAUP;
 		} else {
 			_pdaPos = PDADOWN;

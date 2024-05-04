@@ -31,9 +31,9 @@ namespace Bagel {
 // The buffer size and string len members are shorts, and use the high byte
 // of the buffer size to tell us if it is stack memory being used.
 #define mUseStackMem 0x8000
-#define NORMALIZEBUFFERSIZE() (m_nBufferSize & ~mUseStackMem)
-#define SETBUFFERSIZE(size, usestackmem) (m_nBufferSize = (uint16)(size + (usestackmem ? mUseStackMem : 0)))
-#define USESSTACKMEM() (m_nBufferSize & mUseStackMem)
+#define NORMALIZEBUFFERSIZE() (_nBufferSize & ~mUseStackMem)
+#define SETBUFFERSIZE(size, usestackmem) (_nBufferSize = (uint16)(size + (usestackmem ? mUseStackMem : 0)))
+#define USESSTACKMEM() (_nBufferSize & mUseStackMem)
 
 class CBofString : public CBofObject {
 public:
@@ -82,44 +82,44 @@ public:
 
 	// Attributes & Operations
 
-	int GetBufferSize() const {
+	int getBufferSize() const {
 		return NORMALIZEBUFFERSIZE();
 	}
 	int getLength() const {
-		return m_nLength;
+		return _nLength;
 	}
 	bool isEmpty() const {
-		return m_nLength == 0;
+		return _nLength == 0;
 	}
 
 	/**
 	 * De-Allocates internal buffer for current CBofString
 	 */
-	void Free();
+	void free();
 
-	void GrowTo(int nNewSize); // Resize the buffer
+	void growTo(int nNewSize); // Resize the buffer
 
-	char GetAt(int nIndex);      // 0 based
-	char operator[](int nIndex); // same as GetAt
-	void SetAt(int nIndex, char ch);
+	char getAt(int nIndex);      // 0 based
+	char operator[](int nIndex); // same as getAt
+	void setAt(int nIndex, char ch);
 
 	operator const char *() const {
-		return (const char *)m_pszData;
+		return (const char *)_pszData;
 	}
-	const char *GetBuffer() const {
-		return m_pszData;
+	const char *getBuffer() const {
+		return _pszData;
 	}
 
 	// Hashing support.
 	//
-	int Hash() const;
+	int hash() const;
 
 	// Overloaded assignment
 	/**
 	 * Copies specified string into current CBofString
 	 * @param pszSourceBuf    Buffer to copy
 	 */
-	void Copy(const char *pszSourceBuf);
+	void copy(const char *pszSourceBuf);
 
 	const CBofString &operator=(const CBofString &cStringSrc);
 	const CBofString &operator=(char ch);
@@ -137,53 +137,53 @@ public:
 	friend CBofString operator+(const char *lpsz, const CBofString &string);
 
 	// String comparison
-	int Compare(const char *lpsz) const;       // straight character
-	int CompareNoCase(const char *lpsz) const; // ignore case
-	int Collate(const char *lpsz) const;       // NLS aware
+	int compare(const char *lpsz) const;       // straight character
+	int compareNoCase(const char *lpsz) const; // ignore case
+	int collate(const char *lpsz) const;       // NLS aware
 
 	// Simple sub-string extraction
 	//
-	CBofString Mid(int nFirst, int nCount) const;
-	CBofString Mid(int nFirst) const;
-	CBofString Left(int nCount) const;
-	CBofString Right(int nCount) const;
+	CBofString mid(int nFirst, int nCount) const;
+	CBofString mid(int nFirst) const;
+	CBofString left(int nCount) const;
+	CBofString right(int nCount) const;
 
-	void Mid(int nFirst, int nCount, CBofString *) const;
-	void Mid(int nFirst, CBofString *) const;
-	void Left(int nCount, CBofString *) const;
-	void Right(int nCount, CBofString *) const;
+	void mid(int nFirst, int nCount, CBofString *) const;
+	void mid(int nFirst, CBofString *) const;
+	void left(int nCount, CBofString *) const;
+	void right(int nCount, CBofString *) const;
 
-	void DeleteLastChar();
+	void deleteLastChar();
 
-	CBofString SpanIncluding(const char *lpszCharSet) const;
-	CBofString SpanExcluding(const char *lpszCharSet) const;
+	CBofString spanIncluding(const char *lpszCharSet) const;
+	CBofString spanExcluding(const char *lpszCharSet) const;
 
 	// Upper/lower/reverse conversion
-	void MakeUpper();
-	void MakeLower();
+	void makeUpper();
+	void makeLower();
 
 	// Searching (return starting index, or -1 if not found)
 	// look for a single character match
-	int Find(char ch) const; // like "C" strchr
-	int ReverseFind(char ch) const;
-	int FindOneOf(const char *lpszCharSet) const;
+	int find(char ch) const; // like "C" strchr
+	int reverseFind(char ch) const;
+	int findOneOf(const char *lpszCharSet) const;
 
 	// Look for a specific sub-string
-	int Find(const char *lpszSub) const; // like "C" strstr
-	int FindNumOccurrences(const char *pszSub);
+	int find(const char *lpszSub) const; // like "C" strstr
+	int findNumOccurrences(const char *pszSub);
 
 	// Search and replace routines
-	void ReplaceCharAt(int, char);
-	void ReplaceChar(char chOld, char chNew);
-	void ReplaceStr(const char *pszOld, const char *pszNew);
+	void replaceCharAt(int, char);
+	void replaceChar(char chOld, char chNew);
+	void replaceStr(const char *pszOld, const char *pszNew);
 
 	// Simple formatting
-	void Format(const char *lpszFormat, ...);
+	void format(const char *lpszFormat, ...);
 
 	// Access to string implementation buffer as "C" character array
-	char *GetBuffer();
-	void ReleaseBuffer(int nNewLength = 0);
-	void FreeExtra();
+	char *getBuffer();
+	void releaseBuffer(int nNewLength = 0);
+	void freeExtra();
 
 protected:
 	// implementation helpers
@@ -191,104 +191,104 @@ protected:
 	/**
 	 * initialize current CBofString members
 	 */
-	void Init();
+	void init();
 
 	/**
 	 * Allocates specified string into specified destination
 	 */
-	void AllocCopy(CBofString &dest, int nCopyLen, int nCopyIndex, int nExtraLen) const;
+	void allocCopy(CBofString &dest, int nCopyLen, int nCopyIndex, int nExtraLen) const;
 
 	/**
 	 * Allocates internal buffer for current CBofString
 	 * @param nLen      Initial buffer size
 	 */
-	void AllocBuffer(int nLen);
+	void allocBuffer(int nLen);
 
-	void ConcatCopy(int nSrc1Len, const char *lpszSrc1Data, int nSrc2Len, const char *lpszSrc2Data, int nAllocLen = 0);
-	void ConcatInPlace(int nSrcLen, const char *lpszSrcData);
-	static void SafeDelete(char *lpsz);
-	static int SafeStrlen(const char *lpsz);
+	void concatCopy(int nSrc1Len, const char *lpszSrc1Data, int nSrc2Len, const char *lpszSrc2Data, int nAllocLen = 0);
+	void concatInPlace(int nSrcLen, const char *lpszSrcData);
+	static void safeDelete(char *lpsz);
+	static int safeStrlen(const char *lpsz);
 
 	// Lengths/sizes in characters
 	//  (note: an extra character is always allocated)
 	//
-	char *m_pszData;      // actual string (zero terminated)
-	uint16 m_nLength;     // does not include terminating 0
-	uint16 m_nBufferSize; // does not include terminating 0
+	char *_pszData;      // actual string (zero terminated)
+	uint16 _nLength;     // does not include terminating 0
+	uint16 _nBufferSize; // does not include terminating 0
 };
 
 // Inline Comparison operators
 //
 inline bool operator==(const CBofString &s1, const CBofString &s2) {
-	return s1.Compare(s2) == 0;
+	return s1.compare(s2) == 0;
 }
 
 inline bool operator==(const CBofString &s1, const char *s2) {
-	return s1.Compare(s2) == 0;
+	return s1.compare(s2) == 0;
 }
 
 inline bool operator==(const char *s1, const CBofString &s2) {
-	return s2.Compare(s1) == 0;
+	return s2.compare(s1) == 0;
 }
 
 inline bool operator!=(const CBofString &s1, const CBofString &s2) {
-	return s1.Compare(s2) != 0;
+	return s1.compare(s2) != 0;
 }
 
 inline bool operator!=(const CBofString &s1, const char *s2) {
-	return s1.Compare(s2) != 0;
+	return s1.compare(s2) != 0;
 }
 
 inline bool operator!=(const char *s1, const CBofString &s2) {
-	return s2.Compare(s1) != 0;
+	return s2.compare(s1) != 0;
 }
 
 inline bool operator<(const CBofString &s1, const CBofString &s2) {
-	return s1.Compare(s2) < 0;
+	return s1.compare(s2) < 0;
 }
 
 inline bool operator<(const CBofString &s1, const char *s2) {
-	return s1.Compare(s2) < 0;
+	return s1.compare(s2) < 0;
 }
 
 inline bool operator<(const char *s1, const CBofString &s2) {
-	return s2.Compare(s1) > 0;
+	return s2.compare(s1) > 0;
 }
 
 inline bool operator>(const CBofString &s1, const CBofString &s2) {
-	return s1.Compare(s2) > 0;
+	return s1.compare(s2) > 0;
 }
 
 inline bool operator>(const CBofString &s1, const char *s2) {
-	return s1.Compare(s2) > 0;
+	return s1.compare(s2) > 0;
 }
 
 inline bool operator>(const char *s1, const CBofString &s2) {
-	return s2.Compare(s1) < 0;
+	return s2.compare(s1) < 0;
 }
 
 inline bool operator<=(const CBofString &s1, const CBofString &s2) {
-	return s1.Compare(s2) <= 0;
+	return s1.compare(s2) <= 0;
 }
 
 inline bool operator<=(const CBofString &s1, const char *s2) {
-	return s1.Compare(s2) <= 0;
+	return s1.compare(s2) <= 0;
 }
 
 inline bool operator<=(const char *s1, const CBofString &s2) {
-	return s2.Compare(s1) >= 0;
+	return s2.compare(s1) >= 0;
 }
 
 inline bool operator>=(const CBofString &s1, const CBofString &s2) {
-	return s1.Compare(s2) >= 0;
+	return s1.compare(s2) >= 0;
 }
 
 inline bool operator>=(const CBofString &s1, const char *s2) {
-	return s1.Compare(s2) >= 0;
+	return s1.compare(s2) >= 0;
 }
 
 inline bool operator>=(const char *s1, const CBofString &s2) {
-	return s2.Compare(s1) <= 0;
+	return s2.compare(s1) <= 0;
 }
 
 } // namespace Bagel

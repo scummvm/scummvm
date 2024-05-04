@@ -223,38 +223,38 @@ int CBagParseObject::GetKeywordFromStream(CBagIfstream &istr, CBagParseObject::K
 
 	int rc = GetAlphaNumFromStream(istr, sStr);
 
-	if (!sStr.Find("SDEV")) {
+	if (!sStr.find("SDEV")) {
 		keyword = CBagParseObject::STORAGEDEV;
 
-	} else if (!sStr.Find("START_WLD")) {
+	} else if (!sStr.find("START_WLD")) {
 		keyword = CBagParseObject::START_WLD;
 
-	} else if (!sStr.Find("VAR")) {
+	} else if (!sStr.find("VAR")) {
 		keyword = CBagParseObject::VARIABLE;
 
-	} else if (!sStr.Find("DISKAUDIO")) {
+	} else if (!sStr.find("DISKAUDIO")) {
 		// Specify the audio that get's played when user is asked to insert another CD.
 		keyword = CBagParseObject::DISKAUDIO;
 
-	} else if (!sStr.Find("SYSSCREEN")) {
+	} else if (!sStr.find("SYSSCREEN")) {
 		keyword = CBagParseObject::SYSSCREEN;
 
-	} else if (!sStr.Find("DISKID")) {
+	} else if (!sStr.find("DISKID")) {
 		keyword = CBagParseObject::DISKID;
 
-	} else if (!sStr.Find("SHAREDPAL")) {
+	} else if (!sStr.find("SHAREDPAL")) {
 		keyword = CBagParseObject::SHAREDPAL; // Allow shared palette at front of script
 
-	} else if (!sStr.Find("PDASTATE")) {
+	} else if (!sStr.find("PDASTATE")) {
 		keyword = CBagParseObject::PDASTATE; // allow shared palette at front of script
 
-	} else if (!sStr.Find("CURSOR")) {
+	} else if (!sStr.find("CURSOR")) {
 		keyword = CBagParseObject::CURSOR;
 
-	} else if (!sStr.Find("WIELDCURSOR")) {
+	} else if (!sStr.find("WIELDCURSOR")) {
 		keyword = CBagParseObject::WIELDCURSOR;
 
-	} else if (!sStr.Find("REM") || !sStr.Find("//")) {
+	} else if (!sStr.find("REM") || !sStr.find("//")) {
 		keyword = CBagParseObject::REMARK;
 	}
 

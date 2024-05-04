@@ -105,8 +105,8 @@ ErrorCode CBofStringTable::buildTable() {
 	assert(_pStringTable == nullptr);
 	assert(_pBuf != nullptr);
 
-	MemReplaceChar(_pBuf, '\r', '\0', _lBufSize);
-	MemReplaceChar(_pBuf, '\n', '\0', _lBufSize);
+	memreplaceChar(_pBuf, '\r', '\0', _lBufSize);
+	memreplaceChar(_pBuf, '\n', '\0', _lBufSize);
 	const byte *pBuf = _pBuf;
 
 	while (pBuf < _pBuf + _lBufSize) {

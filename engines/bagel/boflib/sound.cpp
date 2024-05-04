@@ -110,7 +110,7 @@ CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, c
 
 		char szTempPath[MAX_DIRPATH];
 		snprintf(szTempPath, MAX_DIRPATH, "%s%s", _szDrivePath, pszPathName);
-		StrReplaceStr(szTempPath, "\\\\", "\\");
+		strreplaceStr(szTempPath, "\\\\", "\\");
 
 		// Continue as long as this file exists
 		if (fileExists(szTempPath)) {
@@ -125,7 +125,7 @@ CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, c
 		} else {
 			// Try both MIDI formats
 			if (_wFlags & SOUND_MIDI) {
-				StrReplaceStr(szTempPath, ".MID", ".MOV");
+				strreplaceStr(szTempPath, ".MID", ".MOV");
 				if (fileExists(szTempPath)) {
 					fileGetFullPath(_szFileName, szTempPath);
 					_chType = SOUND_TYPE_QT;

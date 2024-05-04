@@ -35,7 +35,7 @@ namespace Bagel {
 
 // Static member variables.
 static unsigned stringHashFunction(const CBofString &s) {
-	return s.Hash();
+	return s.hash();
 }
 CBofVHashTable<CBofString, HASH_TABLE_SIZE> *CBagel::_cacheFileList;
 
@@ -204,10 +204,10 @@ ErrorCode CBagel::verifyCDInDrive(int diskId, const char *waveFile) {
 
 		// If the disk is not in drive, then inform the user
 		int i = 0;
-		while (!shouldQuit() && !fileExists(cString.GetBuffer())) {
+		while (!shouldQuit() && !fileExists(cString.getBuffer())) {
 			// display a dialog box that tells the user to put the CD back into
 			// the drive, or Abort.
-			logInfo(buildString("Unable to find game's DiskID as '%s'", cString.GetBuffer()));
+			logInfo(buildString("Unable to find game's DiskID as '%s'", cString.getBuffer()));
 
 			if (i++ > _numRetries) {
 				reportError(ERR_FFIND, "Could not recover from missing CD");
@@ -240,12 +240,12 @@ ErrorCode CBagel::verifyRequirements() {
 bool MACROREPLACE(CBofString &s) {
 	// Remove any homedir prefix. In ScummVM, all paths are relative
 	// to the game folder automatically
-	char *p = strstr(s.GetBuffer(), HOMEDIR_TOKEN);
+	char *p = strstr(s.getBuffer(), HOMEDIR_TOKEN);
 	if (p != nullptr)
 		s = p + strlen(HOMEDIR_TOKEN) + 1;
 
 	// Replace any backslashes with forward slashes
-	while ((p = strchr(s.GetBuffer(), '\\')) != nullptr)
+	while ((p = strchr(s.getBuffer(), '\\')) != nullptr)
 		*p = '/';
 
 	return true;

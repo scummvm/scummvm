@@ -1765,7 +1765,7 @@ void SrafComputer::recalcDispatchList(int mExpansionFlag) {
 						sStr += "[ ] ";
 						sStr += g_stSellerNames[i - 1]._pszName;
 						if (g_stSellerNames[i - 1]._bMeetWith) {
-							sStr.ReplaceCharAt(kStandardIndentation + 1, kCheckmark);
+							sStr.replaceCharAt(kStandardIndentation + 1, kCheckmark);
 						}
 					} else {
 						baddToTail = false;
@@ -1794,7 +1794,7 @@ void SrafComputer::recalcDispatchList(int mExpansionFlag) {
 						sStr += "[ ] ";
 						sStr += g_stBuyerBids[i - 2]._pszName;
 						if (g_stBuyerBids[i - 2]._bMeetWith) {
-							sStr.ReplaceCharAt(kStandardIndentation + 1, kCheckmark);
+							sStr.replaceCharAt(kStandardIndentation + 1, kCheckmark);
 						}
 					}
 				} else {
@@ -1817,7 +1817,7 @@ void SrafComputer::recalcDispatchList(int mExpansionFlag) {
 						sStr += "[ ] ";
 						sStr += g_stOtherPartys[i - 3]._pszName;
 						if (g_stOtherPartys[i - 3]._bMeetWith) {
-							sStr.ReplaceCharAt(kStandardIndentation + 1, kCheckmark);
+							sStr.replaceCharAt(kStandardIndentation + 1, kCheckmark);
 						}
 					} else {
 						baddToTail = false;
@@ -2950,7 +2950,7 @@ void SrafComputer::onListDispatchTeam() {
 		if (nMeetMember != -1) {
 			int nThisItemAt = getAdjustedIndex(nListToCheck, nMeetMember, false) + 3 + nPreceedingHeaders;
 			sStr = _pLBox->getText(nThisItemAt);
-			sStr.ReplaceCharAt(kStandardIndentation + 1, ' ');
+			sStr.replaceCharAt(kStandardIndentation + 1, ' ');
 			_pLBox->setText(nThisItemAt, sStr);
 			_pLBox->repaintItem(nThisItemAt);
 		}
@@ -2958,7 +2958,7 @@ void SrafComputer::onListDispatchTeam() {
 		// If we have a new column to check, do that here.
 		if (bInMeetMemberColumn) {
 			sStr = _pLBox->getText(_nSelection);
-			sStr.ReplaceCharAt(kStandardIndentation + 1, kCheckmark);       // ??? works fine on mac, not sure what check mark is for pc
+			sStr.replaceCharAt(kStandardIndentation + 1, kCheckmark);       // ??? works fine on mac, not sure what check mark is for pc
 			_pLBox->setText(_nSelection, sStr);
 			_pLBox->repaintItem(_nSelection);
 		}
@@ -3003,7 +3003,7 @@ void SrafComputer::onListDispatchTeam() {
 						g_staffers[nElementIndex]._bOnCurrentTeam = !g_staffers[nElementIndex]._bOnCurrentTeam;
 
 						sStr = _pLBox->getText(_nSelection);
-						sStr.ReplaceCharAt(kTeamIncludeColumn, cNewChar);
+						sStr.replaceCharAt(kTeamIncludeColumn, cNewChar);
 						_pLBox->setText(_nSelection, sStr);
 						_pLBox->repaintItem(_nSelection);
 					}
@@ -4172,12 +4172,12 @@ void SrafComputer::notifyBoss(CBofString &sSoundFile, int nStafferID) {         
 	// Play the voice file... Depends on if we have a voice file or a text file...
 	// the last three will tell us.
 
-	if (sSoundFile.Find(".WAV") != -1 ||
-	        sSoundFile.Find(".wav") != -1) {
+	if (sSoundFile.find(".WAV") != -1 ||
+	        sSoundFile.find(".wav") != -1) {
 		CBofCursor::hide();
-		BofPlaySound(sSoundFile.GetBuffer(), SOUND_WAVE);
+		BofPlaySound(sSoundFile.getBuffer(), SOUND_WAVE);
 		CBofCursor::show();
-	} else if (sSoundFile.Find(".TXT") || sSoundFile.Find(".txt")) {
+	} else if (sSoundFile.find(".TXT") || sSoundFile.find(".txt")) {
 		// Make sure the file is there, read it in to our own buffer.
 		CBofFile fTxtFile(sSoundFile, CBF_BINARY | CBF_READONLY);
 		char *pszBuf;
@@ -4192,7 +4192,7 @@ void SrafComputer::notifyBoss(CBofString &sSoundFile, int nStafferID) {         
 			bofFree(pszBuf);
 			fTxtFile.close();
 		} else {
-			reportError(ERR_MEMORY, "Could not read %s into memory", sSoundFile.GetBuffer());
+			reportError(ERR_MEMORY, "Could not read %s into memory", sSoundFile.getBuffer());
 		}
 	}
 
@@ -4352,12 +4352,12 @@ void SrafComputer::onButtonFinished(bool bVictorious) {
 		assert(pVar != nullptr);
 
 		if (pVar)
-			pVar->SetValue(_pszGroup1Word->GetBuffer());
+			pVar->SetValue(_pszGroup1Word->getBuffer());
 
 		pVar = VAR_MANAGER->GetVariable("DEVENCODE2");
 		assert(pVar != nullptr);
 		if (pVar)
-			pVar->SetValue(_pszGroup2Word->GetBuffer());
+			pVar->SetValue(_pszGroup2Word->getBuffer());
 	}
 
 	// Setting the flashback variable will trigger the

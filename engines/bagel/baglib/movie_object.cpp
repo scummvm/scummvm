@@ -102,20 +102,20 @@ bool CBagMovieObject::runObject() {
 		                   SOUND = 2,
 		                   MOVIE = 3
 		                 } nMovFileType;
-		CBofString sBaseStr = sFileName.Left(nExt);
+		CBofString sBaseStr = sFileName.left(nExt);
 
-		if (sFileName.Find(".smk") > 0 || sFileName.Find(".SMK") > 0) {
+		if (sFileName.find(".smk") > 0 || sFileName.find(".SMK") > 0) {
 			nMovFileType = MOVFILETYPE::MOVIE;
-		} else if (sFileName.Find(SOUNDFILEEXTLOWER) > 0 || sFileName.Find(SOUNDFILEEXTUPPER) > 0) {
+		} else if (sFileName.find(SOUNDFILEEXTLOWER) > 0 || sFileName.find(SOUNDFILEEXTUPPER) > 0) {
 			nMovFileType = MOVFILETYPE::SOUND;
-		} else if (sFileName.Find(".txt") > 0 || sFileName.Find(".TXT") > 0) {
+		} else if (sFileName.find(".txt") > 0 || sFileName.find(".TXT") > 0) {
 			nMovFileType = MOVFILETYPE::TEXT;
 		} else {
 			nMovFileType = MOVFILETYPE::NONE;
 		}
 
 		// Look for .SMK then .WAV, then .TXT
-		while (!fileExists(sFileName.GetBuffer())) {
+		while (!fileExists(sFileName.getBuffer())) {
 			switch (nMovFileType) {
 
 			case MOVFILETYPE::MOVIE:
@@ -129,14 +129,14 @@ bool CBagMovieObject::runObject() {
 				break;
 
 			case MOVFILETYPE::TEXT:
-				bofMessageBox(sFileName.GetBuffer(), "Could not find asset");
+				bofMessageBox(sFileName.getBuffer(), "Could not find asset");
 				nMovFileType = MOVFILETYPE::NONE;
 				break;
 
 			// We should never get here
 			case MOVFILETYPE::NONE:
 			default:
-				logError(buildString("Movie does not have a correct file name: %s.", sFileName.GetBuffer()));
+				logError(buildString("Movie does not have a correct file name: %s.", sFileName.getBuffer()));
 				return rc;
 			}
 		}
@@ -271,7 +271,7 @@ bool CBagMovieObject::runObject() {
 						delete pMovie;
 						rc = true;
 					} else {
-						logError(buildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.GetBuffer()));
+						logError(buildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.getBuffer()));
 					}
 
 					if (pNewWin) {
@@ -299,7 +299,7 @@ bool CBagMovieObject::runObject() {
 								pPDA->setMovie(sFileName); // Set the movie to play
 							}
 						} else {
-							logError(buildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.GetBuffer()));
+							logError(buildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.getBuffer()));
 						}
 					} else {
 						CBofMovie *pMovie;
@@ -334,7 +334,7 @@ bool CBagMovieObject::runObject() {
 							delete pMovie;
 							rc = true;
 						} else {
-							logError(buildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.GetBuffer()));
+							logError(buildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.getBuffer()));
 						}
 
 						// If we put a black window up, then
@@ -371,18 +371,18 @@ bool CBagMovieObject::runObject() {
 				delete pSound;
 				rc = true;
 			} else {
-				logError(buildString("Movie SOUND file could not be read: %s.  Where? Not in Kansas ...", sFileName.GetBuffer()));
+				logError(buildString("Movie SOUND file could not be read: %s.  Where? Not in Kansas ...", sFileName.getBuffer()));
 			}
 		} else if (nMovFileType == MOVFILETYPE::TEXT) {
 			Common::File f;
-			if (f.open(sFileName.GetBuffer())) {
+			if (f.open(sFileName.getBuffer())) {
 				Common::String line = f.readLine();
 
 				bofMessageBox(line.c_str(), "Incoming Message...");
 				f.close();
 				rc = true;
 			} else {
-				logError(buildString("Movie TEXT file could not be read: %s.  Why? because we like you ...", sFileName.GetBuffer()));
+				logError(buildString("Movie TEXT file could not be read: %s.  Why? because we like you ...", sFileName.getBuffer()));
 			}
 		}
 
@@ -408,20 +408,20 @@ PARSE_CODES CBagMovieObject::setInfo(CBagIfstream &istr) {
 		case 'A': {
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("AS")) {
+			if (!sStr.find("AS")) {
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
-				if (!sStr.Find("EXAMINE")) {
+				if (!sStr.find("EXAMINE")) {
 					m_xDisplayType = DISP_TYPE::EXAMINE;
-				} else if (!sStr.Find("MOVIE")) {
+				} else if (!sStr.find("MOVIE")) {
 					m_xDisplayType = DISP_TYPE::MOVIE;
 
-				} else if (!sStr.Find("FLYTHRU")) {
+				} else if (!sStr.find("FLYTHRU")) {
 					m_xDisplayType = DISP_TYPE::MOVIE;
 					m_bFlyThru = true;
-				} else if (!sStr.Find("PDAMSG")) {
+				} else if (!sStr.find("PDAMSG")) {
 					m_xDisplayType = DISP_TYPE::PDAMSG;
-				} else if (!sStr.Find("ASYNCH_PDAMSG")) {
+				} else if (!sStr.find("ASYNCH_PDAMSG")) {
 					m_xDisplayType = DISP_TYPE::ASYNCH_PDAMSG;
 
 					// see if this improves performance any...
@@ -438,14 +438,14 @@ PARSE_CODES CBagMovieObject::setInfo(CBagIfstream &istr) {
 		case 'D': {
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("DONTQUEUE")) {
+			if (!sStr.find("DONTQUEUE")) {
 				SetDontQueue();
 				nObjectUpdated = true;
-			} else if (!sStr.Find("DONTOVERRIDE")) {
+			} else if (!sStr.find("DONTOVERRIDE")) {
 				SetDontOverride();
 				nObjectUpdated = true;
-			} else if (!sStr.Find("DONTINCREMENT")) {
-				// Don't increment the timer when playing this movie					
+			} else if (!sStr.find("DONTINCREMENT")) {
+				// Don't increment the timer when playing this movie
 				setIncrement(false);
 				nObjectUpdated = true;
 			} else {
@@ -459,7 +459,7 @@ PARSE_CODES CBagMovieObject::setInfo(CBagIfstream &istr) {
 		case 'P': {
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("PLAYIMMEDIATE")) {
+			if (!sStr.find("PLAYIMMEDIATE")) {
 				SetPlayImmediate();
 				nObjectUpdated = true;
 			} else {
@@ -475,7 +475,7 @@ PARSE_CODES CBagMovieObject::setInfo(CBagIfstream &istr) {
 		case 'O': {
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("ONBLACK")) {
+			if (!sStr.find("ONBLACK")) {
 				SetPlayImmediate();
 				nObjectUpdated = true;
 			} else {
@@ -488,7 +488,7 @@ PARSE_CODES CBagMovieObject::setInfo(CBagIfstream &istr) {
 		// movies).
 		case 'S': {
 			GetAlphaNumFromStream(istr, sStr);
-			if (!sStr.Find("SND")) {
+			if (!sStr.find("SND")) {
 				nObjectUpdated = true;
 
 				m_pSndObj = new CBagSoundObject();

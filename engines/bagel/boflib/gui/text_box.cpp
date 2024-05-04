@@ -154,12 +154,12 @@ void CBofTextBox::setText(const CBofString &cString) {
 	_cBuffer = cString;
 	assert(_cBuffer.getLength() != 0);
 
-	_cBuffer.ReplaceStr("\r\n", "\n");
-	_cBuffer.ReplaceStr("\r", "\n");
+	_cBuffer.replaceStr("\r\n", "\n");
+	_cBuffer.replaceStr("\r", "\n");
 
 	_nCurrentLine = 0;
 	_nCurrentIndex = 0;
-	_nNumLines = _cBuffer.FindNumOccurrences("\n");
+	_nNumLines = _cBuffer.findNumOccurrences("\n");
 }
 
 int CBofTextBox::getIndex(const int nLine) {
@@ -233,13 +233,13 @@ ErrorCode CBofTextBox::display() {
 
 	// If painting to a window
 	if (_pDestWindow != nullptr) {
-		_pTextField->display(_pDestWindow, _cBuffer.Mid(_nCurrentIndex), _nPointSize, _nWeight, _cTextColor, _nTextFont);
+		_pTextField->display(_pDestWindow, _cBuffer.mid(_nCurrentIndex), _nPointSize, _nWeight, _cTextColor, _nTextFont);
 
 	} else {
 		// Otherwise, must be painting to a bitmap
 		assert(_pDestBitmap != nullptr);
 
-		_pTextField->display(_pDestBitmap, _cBuffer.Mid(_nCurrentIndex), _nPointSize, _nWeight, _cTextColor, _nTextFont);
+		_pTextField->display(_pDestBitmap, _cBuffer.mid(_nCurrentIndex), _nPointSize, _nWeight, _cTextColor, _nTextFont);
 	}
 
 	return _errCode;

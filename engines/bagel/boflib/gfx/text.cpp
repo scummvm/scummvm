@@ -491,7 +491,7 @@ CBofRect calculateTextRect(CBofRect rect, const CBofString *pStr, int nSize, int
 
 	// Wrap the text as necessary
 	Common::U32StringArray lines;
-	font->wordWrapText(Common::U32String(pStr->GetBuffer(), Common::kWindows1252), rect.width(), lines);
+	font->wordWrapText(Common::U32String(pStr->getBuffer(), Common::kWindows1252), rect.width(), lines);
 
 	// Iterate the lines to get the maximum width
 	int maxWidth = 0;

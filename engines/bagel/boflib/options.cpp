@@ -238,7 +238,7 @@ ErrorCode CBofOptions::readSetting(const char *section, const char *option, char
 		Common::strcpy_s(szBuf, pOption->_szBuf);
 
 		// Strip out any comments
-		StrReplaceChar(szBuf, ';', '\0');
+		strreplaceChar(szBuf, ';', '\0');
 
 		// Find 1st equal sign
 		char *p = strchr(szBuf, '=');

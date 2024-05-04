@@ -131,7 +131,7 @@ bool readLine(Common::SeekableReadStream *fp, char *pszBuf) {
 
 	Common::String line = fp->readLine();
 	Common::strcpy_s(pszBuf, MAX_LINE_LEN, line.c_str());
-	StrReplaceChar(pszBuf, '\n', '\0');
+	strreplaceChar(pszBuf, '\n', '\0');
 
 	return true;
 }

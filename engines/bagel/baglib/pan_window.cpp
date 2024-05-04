@@ -384,7 +384,7 @@ CBagObject *CBagPanWindow::GetFGObjects(const CBofString &sObjName) {
 
 	for (int i = 0; i < nListLen; ++i) {
 		CBagObject *pObj = (*m_pFGObjectList)[i];
-		if ((pObj->GetRefName().Find(sObjName)) != -1)
+		if ((pObj->GetRefName().find(sObjName)) != -1)
 			return pObj;
 	}
 
@@ -539,7 +539,7 @@ void CBagPanWindow::onMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 			int nCursorID = -1;
 
 			// the logz case is handled by onmousemove in zoompda
-			if (pOverObj->GetRefName().Find("BPDA_WLD") != -1) {
+			if (pOverObj->GetRefName().find("BPDA_WLD") != -1) {
 				CBagPDA *pPda = (CBagPDA *)SDEV_MANAGER->GetStorageDevice(pOverObj->GetRefName());
 				if (pPda != nullptr) {
 					CBofRect cRect = pOverObj->getRect();
@@ -550,7 +550,7 @@ void CBagPanWindow::onMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 			// Still no luck, if we're wielding, use that cursor.
 			if (nCursorID == -1) {
 				nCursorID = pOverObj->GetOverCursor();
-				if (CBagWield::GetWieldCursor() >= 0 && ((pOverObj->GetRefName().Find("BWIELD_WLD") != -1) || (pOverObj->GetRefName().Find("THUD_WLD") != -1))) {
+				if (CBagWield::GetWieldCursor() >= 0 && ((pOverObj->GetRefName().find("BWIELD_WLD") != -1) || (pOverObj->GetRefName().find("THUD_WLD") != -1))) {
 					nCursorID = CBagWield::GetWieldCursor();
 				}
 			}

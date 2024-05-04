@@ -121,24 +121,24 @@ ErrorCode CBagObject::update(CBofBitmap * /*pBmp*/, CPoint /*pt*/, CRect * /*pSr
 }
 
 int CBagObject::getProperty(const CBofString &sProp) {
-	if (!sProp.Find("STATE"))
+	if (!sProp.find("STATE"))
 		return getState();
 
-	if (!sProp.Find("MODAL"))
+	if (!sProp.find("MODAL"))
 		return IsModal();
 
 	return 0;
 }
 
 void CBagObject::setProperty(const CBofString &sProp, int nVal) {
-	if (!sProp.Find("STATE"))
+	if (!sProp.find("STATE"))
 		setState(nVal);
-	else if (!sProp.Find("TIMELESS")) {
+	else if (!sProp.find("TIMELESS")) {
 		if (nVal)
 			SetTimeless();
 		else
 			SetTimeless(false);
-	} else if (!sProp.Find("MODAL")) {
+	} else if (!sProp.find("MODAL")) {
 		if (nVal)
 			SetModal();
 		else
@@ -274,41 +274,41 @@ PARSE_CODES CBagObject::setInfo(CBagIfstream &istr) {
 			istr.getCh();
 			istr.eatWhite();
 			GetAlphaNumFromStream(istr, s);
-			if (!s.Find("NOT")) {
+			if (!s.find("NOT")) {
 				GetAlphaNumFromStream(istr, s);
 				istr.eatWhite();
 				b = false;
 			}
-			if (!s.Find("MOVABLE")) {
+			if (!s.find("MOVABLE")) {
 				SetMovable(b);
-			} else if (!s.Find("MODAL")) {
+			} else if (!s.find("MODAL")) {
 				SetModal(b);
-			} else if (!s.Find("VISIBLE")) {
+			} else if (!s.find("VISIBLE")) {
 				SetVisible(b);
-			} else if (!s.Find("STRETCHABLE")) {
+			} else if (!s.find("STRETCHABLE")) {
 				SetStretchable(b);
-			} else if (!s.Find("HIGHLIGHT")) {
+			} else if (!s.find("HIGHLIGHT")) {
 				setHighlight(b);
-			} else if (!s.Find("ACTIVE")) {
+			} else if (!s.find("ACTIVE")) {
 				setActive(b);
-			} else if (!s.Find("TRANSPARENT")) {
+			} else if (!s.find("TRANSPARENT")) {
 				SetTransparent(b);
-			} else if (!s.Find("HIDE_ON_CLICK")) {
+			} else if (!s.find("HIDE_ON_CLICK")) {
 				SetHideOnClick(b);
-			} else if (!s.Find("IMMEDIATE_RUN")) {
+			} else if (!s.find("IMMEDIATE_RUN")) {
 				SetImmediateRun(b);
-			} else if (!s.Find("TIMELESS")) {
+			} else if (!s.find("TIMELESS")) {
 				SetTimeless(b);
-			} else if (!s.Find("LOCAL")) {
+			} else if (!s.find("LOCAL")) {
 				SetLocal(b);
-			} else if (!s.Find("CONSTANT_UPDATE")) {
+			} else if (!s.find("CONSTANT_UPDATE")) {
 				SetConstantUpdate(b);
-			} else if (!s.Find("PRELOAD")) {
+			} else if (!s.find("PRELOAD")) {
 				SetPreload(b);
-			} else if (!s.Find("NOMENU")) {
+			} else if (!s.find("NOMENU")) {
 				m_bNoMenu = true;
 
-			} else if (!s.Find("FOREGROUND")) {
+			} else if (!s.find("FOREGROUND")) {
 				SetForeGround(b);
 			} else {
 				PutbackStringOnStream(istr, s);
@@ -381,7 +381,7 @@ void CBagObject::SetRefName(const CBofString &s) {
 	m_psName = nullptr;
 
 	// If it's the same as the filename, then point to the filename
-	if (!m_sFileName.isEmpty() && m_sFileName.Compare(s) == 0) {
+	if (!m_sFileName.isEmpty() && m_sFileName.compare(s) == 0) {
 		m_psName = &m_sFileName;
 	} else if (!s.isEmpty()) {
 		m_psName = new CBofString(s);

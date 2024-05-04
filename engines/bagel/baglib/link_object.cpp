@@ -90,14 +90,14 @@ PARSE_CODES CBagLinkObject::setInfo(CBagIfstream &istr) {
 			CBofString curString(localBuffer, 256);
 			GetAlphaNumFromStream(istr, curString);
 
-			if (!curString.Find("AS")) {
+			if (!curString.find("AS")) {
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, curString);
-				if (!curString.Find("CLOSEUP")) {
+				if (!curString.find("CLOSEUP")) {
 					_linkType = CLOSEUP;
 					SetOverCursor(2);
 					objectUpdatedFl = true;
-				} else if (!curString.Find("LINK")) {
+				} else if (!curString.find("LINK")) {
 					_linkType = LINK;
 					objectUpdatedFl = true;
 				} else {
@@ -119,7 +119,7 @@ PARSE_CODES CBagLinkObject::setInfo(CBagIfstream &istr) {
 			CBofString curString(localBuffer, 256);
 			GetAlphaNumFromStream(istr, curString);
 
-			if (!curString.Find("FADE")) {
+			if (!curString.find("FADE")) {
 				istr.eatWhite();
 				GetIntFromStream(istr, _fade);
 				objectUpdatedFl = true;
@@ -170,12 +170,12 @@ bool CBagLinkObject::runObject() {
 
 	// If this is a special link (using the last known sdev stack),
 	// then find it's value, and use that instead.
-	if (getFileName().Find("$LASTWORLD") != -1) {
+	if (getFileName().find("$LASTWORLD") != -1) {
 		curStr = getFileName();
 
 		CBagVar *var = VAR_MANAGER->GetVariable("$LASTWORLD");
 		if (var != nullptr) {
-			curStr.ReplaceStr("$LASTWORLD", var->GetValue());
+			curStr.replaceStr("$LASTWORLD", var->GetValue());
 		}
 	}
 

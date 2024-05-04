@@ -91,7 +91,7 @@ const CBofString &CBagVar::GetValue() {
 	}
 
 	// Check if these items should be replaced by the current sdev
-	if (!m_sVarName.isEmpty() && !m_sVarName.Find(CURRSDEV_TOKEN)) {
+	if (!m_sVarName.isEmpty() && !m_sVarName.find(CURRSDEV_TOKEN)) {
 		CBofString CurrSDev;
 		if (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()) {
 			m_sVarValue = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->GetName();
@@ -99,7 +99,7 @@ const CBofString &CBagVar::GetValue() {
 	} else {
 
 		// Check if these items should be replaced by the previous sdev
-		if (!m_sVarName.isEmpty() && !m_sVarName.Find(PREVSDEV_TOKEN)) {
+		if (!m_sVarName.isEmpty() && !m_sVarName.find(PREVSDEV_TOKEN)) {
 			CBofString CurrSDev;
 			if (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()) {
 				m_sVarValue = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->getPrevSDev();
@@ -163,16 +163,16 @@ PARSE_CODES CBagVar::setInfo(CBagIfstream &istr) {
 		sStr = CBofString(sz2LocalStr, 256);
 		GetAlphaNumFromStream(istr, sStr);
 
-		if (!sStr.Find("AS")) {
+		if (!sStr.find("AS")) {
 			istr.eatWhite();
 			GetAlphaNumFromStream(istr, sStr);
-			if (!sStr.Find("TIMER")) {
+			if (!sStr.find("TIMER")) {
 				setTimer();
 				VAR_MANAGER->UpdateRegistration();
-			} else if (!sStr.Find("RANDOM")) {
+			} else if (!sStr.find("RANDOM")) {
 				SetRandom(true);
 				VAR_MANAGER->UpdateRegistration();
-			} else if (!sStr.Find("GLOBAL")) {
+			} else if (!sStr.find("GLOBAL")) {
 				SetGlobal(true);
 				VAR_MANAGER->UpdateRegistration();
 			} else {
@@ -301,7 +301,7 @@ ErrorCode CBagVarManager::IncrementTimers() {
 		if (pVar->IsTimer()) {
 
 			// Hack to keep the game time from exceeding 22:50
-			if (pVar->GetName().CompareNoCase("TURNCOUNT") == 0) {
+			if (pVar->GetName().compareNoCase("TURNCOUNT") == 0) {
 				if (pVar->GetNumValue() == 2250) {
 					continue;
 				}
@@ -352,7 +352,7 @@ CBagVar *CBagVarManager::GetVariable(const CBofString &sName) {
 	CBofList<CBagVar *> *pVarList = &m_xVarHashList[nHashVal];
 	for (int i = 0; i < pVarList->getCount(); ++i) {
 		pVar = pVarList->getNodeItem(i);
-		if (pVar != nullptr && (pVar->GetName().getLength() == sName.getLength()) && !pVar->GetName().Find(sName)) {
+		if (pVar != nullptr && (pVar->GetName().getLength() == sName.getLength()) && !pVar->GetName().find(sName)) {
 			return pVar;
 		}
 	}

@@ -167,7 +167,7 @@ ErrorCode CBagMasterWin::showSystemDialog(bool bSaveBackground) {
 		CBagOptWindow cOptionDialog;
 
 		// Use specified bitmap as this dialog's image
-		CBofBitmap *pBmp = Bagel::loadBitmap(_sysScreen.GetBuffer());
+		CBofBitmap *pBmp = Bagel::loadBitmap(_sysScreen.getBuffer());
 
 		cOptionDialog.setBackdrop(pBmp);
 
@@ -258,7 +258,7 @@ bool CBagMasterWin::showQuitDialog(CBofWindow *win, bool bSaveBackground) {
 		}
 
 		// Use specified bitmap as this dialog's image
-		CBofBitmap *pBmp = Bagel::loadBitmap(_sysScreen.GetBuffer());
+		CBofBitmap *pBmp = Bagel::loadBitmap(_sysScreen.getBuffer());
 
 		cQuitDialog.setBackdrop(pBmp);
 
@@ -357,7 +357,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 		cRect.right = cRect.left + 520 - 1;
 		cRect.bottom = cRect.top + 240 - 1;
 
-		paintBitmap(this, sWldFileName.GetBuffer(), &cRect);
+		paintBitmap(this, sWldFileName.getBuffer(), &cRect);
 	}
 
 	sWldFileName = wldName;
@@ -465,7 +465,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 		// Possibly need to switch CDs
 		CBagel *pBagApp = CBagel::getBagApp();
 		if (pBagApp != nullptr) {
-			_errCode = pBagApp->verifyCDInDrive(_diskId, _cdChangeAudio.GetBuffer());
+			_errCode = pBagApp->verifyCDInDrive(_diskId, _cdChangeAudio.getBuffer());
 			if (_errCode != ERR_NONE || g_engine->shouldQuit()) {
 				close();
 				return _errCode;
@@ -514,9 +514,9 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 		restoreActiveMessages(_storageDeviceList);
 
 	} else {
-		reportError(ERR_FFIND, "Could not find World Script: %s", sWldFileName.GetBuffer());
+		reportError(ERR_FFIND, "Could not find World Script: %s", sWldFileName.getBuffer());
 	}
-	logInfo(buildString("Time to Load %s, %ld ms", sWldFileName.GetBuffer(), timerStop()));
+	logInfo(buildString("Time to Load %s, %ld ms", sWldFileName.getBuffer(), timerStop()));
 
 	return _errCode;
 }
@@ -536,7 +536,7 @@ void CBagMasterWin::saveSDevStack() {
 
 		CBofString cStr = pSDevWin->GetName();
 		if (!cStr.isEmpty()) {
-			Common::strcpy_s(szLocStack[i], cStr.GetBuffer());
+			Common::strcpy_s(szLocStack[i], cStr.getBuffer());
 			cStr = pSDevWin->getPrevSDev();
 			i++;
 		}
@@ -545,7 +545,7 @@ void CBagMasterWin::saveSDevStack() {
 			pSDevWin = (CBagStorageDevWnd *)_storageDeviceList->GetStorageDevice(cStr);
 			if (pSDevWin != nullptr) {
 
-				Common::strcpy_s(szLocStack[i], cStr.GetBuffer());
+				Common::strcpy_s(szLocStack[i], cStr.getBuffer());
 
 				i++;
 				cStr = pSDevWin->getPrevSDev();
@@ -702,21 +702,21 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 			while (input.peek() != '{') {
 				GetAlphaNumFromStream(input, sWorkStr);
 				input.eatWhite();
-				if (!sWorkStr.Find("AS")) {
+				if (!sWorkStr.find("AS")) {
 					input.eatWhite();
 					GetAlphaNumFromStream(input, typestr);
-				} else if (!sWorkStr.Find("RECT")) {
+				} else if (!sWorkStr.find("RECT")) {
 					input.eatWhite();
 					getRectFromStream(input, rRect);
-				} else if (!sWorkStr.Find("FILTER")) {
+				} else if (!sWorkStr.find("FILTER")) {
 					input.eatWhite();
 					GetIntFromStream(input, nFilter);
-				} else if (!sWorkStr.Find("FADE")) { // Note that this should usually be set in the link
+				} else if (!sWorkStr.find("FADE")) { // Note that this should usually be set in the link
 					input.eatWhite();
 					GetIntFromStream(input, nFadeId);
 				} else {
 					// There is an error here
-					logError(buildString("FAILED on argument of storage device %s : %s", namestr.GetBuffer(), typestr.GetBuffer()));
+					logError(buildString("FAILED on argument of storage device %s : %s", namestr.getBuffer(), typestr.getBuffer()));
 					return ERR_UNKNOWN;
 				}
 
@@ -724,7 +724,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 			}
 			pSDev = onNewStorageDev(typestr);
 			if (!pSDev) {
-				logError(buildString("FAILED on open of storage device %s : %s", namestr.GetBuffer(), typestr.GetBuffer()));
+				logError(buildString("FAILED on open of storage device %s : %s", namestr.getBuffer(), typestr.getBuffer()));
 				return ERR_UNKNOWN;
 			}
 
@@ -765,7 +765,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 
 				// Only use the start wld if not specified elsewhere
 				_startWld = sStr;
-				logInfo(buildString("START_WLD set to %s", _startWld.GetBuffer()));
+				logInfo(buildString("START_WLD set to %s", _startWld.getBuffer()));
 			}
 			break;
 		}
@@ -812,7 +812,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 					// Check for shared pal token, if there, then create our cursor
 					// with the shared palette bit set
 					GetAlphaNumFromStream(input, tStr);
-					if (tStr.Find("USESHAREDPAL") != -1) {
+					if (tStr.find("USESHAREDPAL") != -1) {
 						bUseShared = true;
 					}
 				}
@@ -854,11 +854,11 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 
 				GetAlphaNumFromStream(input, sStr);
 
-				if (sStr.Find("MAP") != -1) {
+				if (sStr.find("MAP") != -1) {
 					SBBasePda::setPdaMode(MAPMODE);
-				} else if (sStr.Find("INV") != -1) {
+				} else if (sStr.find("INV") != -1) {
 					SBBasePda::setPdaMode(INVMODE);
-				} else if (sStr.Find("LOG") != -1) {
+				} else if (sStr.find("LOG") != -1) {
 					SBBasePda::setPdaMode(LOGMODE);
 				}
 				logInfo(buildString("PDASTATE = %s", szPDAState));
@@ -882,7 +882,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				// Read the palette in and keep it hanging around for later use
 				CBofPalette::setSharedPalette(sStr);
 
-				logInfo(buildString("SHAREDPAL = %s", sStr.GetBuffer()));
+				logInfo(buildString("SHAREDPAL = %s", sStr.getBuffer()));
 			}
 			break;
 		}
@@ -897,7 +897,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				GetAlphaNumFromStream(input, _sysScreen);
 				MACROREPLACE(_sysScreen);
 
-				logInfo(buildString("SYSSCREEN = %s", _sysScreen.GetBuffer()));
+				logInfo(buildString("SYSSCREEN = %s", _sysScreen.getBuffer()));
 			}
 			break;
 		}
@@ -916,7 +916,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				GetAlphaNumFromStream(input, _cdChangeAudio);
 				MACROREPLACE(_cdChangeAudio);
 
-				logInfo(buildString("DISKAUDIO = %s", _cdChangeAudio.GetBuffer()));
+				logInfo(buildString("DISKAUDIO = %s", _cdChangeAudio.getBuffer()));
 			}
 			break;
 		}
@@ -971,11 +971,11 @@ ErrorCode CBagMasterWin::setStorageDev(const CBofString &wldName, bool entry) {
 	szLocalBuff[0] = '\0';
 	CBofString sExt(szLocalBuff, 256);
 
-	sExt = wldName.Right(4);
+	sExt = wldName.right(4);
 	if (_gameWindow)
 		_gameWindow->setOnUpdate(false);
 
-	if (!sExt.Find(".wld") || !sExt.Find(".WLD") || (wldName.Find(".WLD~~") > 0) || (wldName.Find(".wld~~") > 0)) {
+	if (!sExt.find(".wld") || !sExt.find(".WLD") || (wldName.find(".WLD~~") > 0) || (wldName.find(".wld~~") > 0)) {
 
 		// This is to stop it from going out of scope before
 		// the message is received.
@@ -1047,7 +1047,7 @@ ErrorCode CBagMasterWin::onHelp(const CBofString &helpFile, bool /*bSaveBkg*/, C
 		// create the dialog box
 		cHelp.create("HelpDialog", cRect.left, cRect.top, cRect.width(), cRect.height(), parent);
 
-		cHelp.SetHelpFile(sFile.GetBuffer());
+		cHelp.SetHelpFile(sFile.getBuffer());
 		cHelp.doModal();
 		cHelp.detach();
 	}
@@ -1182,16 +1182,16 @@ ErrorCode CBagMasterWin::gotoNewWindow(const CBofString *str) {
 	CBofString sPrevSDevStr(szPrevSDevStr, 256);
 	CBofString sCurrSDevStr(szCurSDevStr, 256);
 
-	int n = str->Find("~~");
+	int n = str->find("~~");
 	sWorkStr = *str;
 	bool bPrev = false;
 
 	while (n > 0) {
-		sPrevSDevStr = sWorkStr.Left(n);
-		sWorkStr = sWorkStr.Mid(n + 2);
-		n = sWorkStr.Find("~~");
+		sPrevSDevStr = sWorkStr.left(n);
+		sWorkStr = sWorkStr.mid(n + 2);
+		n = sWorkStr.find("~~");
 		if (n > 0) {
-			sCurrSDevStr = sWorkStr.Left(n);
+			sCurrSDevStr = sWorkStr.left(n);
 			pSDev = _storageDeviceList->GetStorageDevice(sCurrSDevStr);
 			if (pSDev != nullptr) {
 				pSDev->SetPrevSDev(sPrevSDevStr);
@@ -1210,7 +1210,7 @@ ErrorCode CBagMasterWin::gotoNewWindow(const CBofString *str) {
 	pSDev = _storageDeviceList->GetStorageDevice(sWorkStr);
 	if (pSDev != nullptr) {
 
-		logInfo(buildString("Switching to SDEV: %s", sWorkStr.GetBuffer()));
+		logInfo(buildString("Switching to SDEV: %s", sWorkStr.getBuffer()));
 
 		if (_gameWindow) {
 			_gameWindow->detach();
@@ -1226,7 +1226,7 @@ ErrorCode CBagMasterWin::gotoNewWindow(const CBofString *str) {
 		}
 
 		// Don't allow recursion
-		if (!pSDev->getPrevSDev().isEmpty() && pSDev->getPrevSDev().CompareNoCase(pSDev->GetName()) == 0) {
+		if (!pSDev->getPrevSDev().isEmpty() && pSDev->getPrevSDev().compareNoCase(pSDev->GetName()) == 0) {
 			pSDev->SetPrevSDev("");
 		}
 
@@ -1265,7 +1265,7 @@ bool CBagMasterWin::showRestartDialog(CBofWindow *win, bool bSaveBkg) {
 			win = this;
 		}
 
-		CBagRestartDialog cDlg(_sysScreen.GetBuffer(), win);
+		CBagRestartDialog cDlg(_sysScreen.getBuffer(), win);
 
 		CBofWindow *pLastWin = g_hackWindow;
 		g_hackWindow = &cDlg;
@@ -1368,10 +1368,10 @@ void CBagMasterWin::onUserMessage(uint32 message, uint32 param) {
 		szStartWld[0] = '\0';
 		CBofString sStartWld(szStartWld, 256);
 
-		int n = sWldScript.Find("~~");
+		int n = sWldScript.find("~~");
 		if (n > 0) {
-			sStartWld = sWldScript.Mid(n + 2);
-			sWldScript = sWldScript.Left(n);
+			sStartWld = sWldScript.mid(n + 2);
+			sWldScript = sWldScript.left(n);
 		}
 		loadFile(sWldScript, sStartWld);
 		break;
@@ -1490,7 +1490,7 @@ void CBagMasterWin::fillSaveBuffer(ST_BAGEL_SAVE *saveBuf) {
 			}
 
 			// Remember current script file
-			strncpy(saveBuf->m_szScript, getWldScript().GetBuffer(), MAX_FNAME - 1);
+			strncpy(saveBuf->m_szScript, getWldScript().getBuffer(), MAX_FNAME - 1);
 
 			CBagStorageDevWnd *pSDevWin = getCurrentStorageDev();
 			if (pSDevWin != nullptr) {
@@ -1525,9 +1525,9 @@ void CBagMasterWin::fillSaveBuffer(ST_BAGEL_SAVE *saveBuf) {
 					cStr = pSDevWin->GetName();
 					while ((i < MAX_CLOSEUP_DEPTH) && !cStr.isEmpty()) {
 						pSDevWin = (CBagStorageDevWnd *)pManager->GetStorageDevice(cStr);
-						Common::strcpy_s(saveBuf->m_szLocStack[i], cStr.GetBuffer());
+						Common::strcpy_s(saveBuf->m_szLocStack[i], cStr.getBuffer());
 						i++;
-						cStr.Free();
+						cStr.free();
 						if (pSDevWin != nullptr) {
 							cStr = pSDevWin->getPrevSDev();
 						}
@@ -1562,7 +1562,7 @@ bool CBagMasterWin::showSaveDialog(CBofWindow *win, bool bSaveBkg) {
 			cSaveDialog.setSaveGameBuffer((byte *)pSaveBuf, sizeof(ST_BAGEL_SAVE));
 
 			// Use specified bitmap as this dialog's image
-			CBofBitmap *pBmp = Bagel::loadBitmap(_sysScreen.GetBuffer());
+			CBofBitmap *pBmp = Bagel::loadBitmap(_sysScreen.getBuffer());
 
 			cSaveDialog.setBackdrop(pBmp);
 
@@ -1731,7 +1731,7 @@ bool CBagMasterWin::showRestoreDialog(CBofWindow *win, bool bSaveBkg) {
 		CBagRestoreDialog cRestoreDialog;
 
 		// Use specified bitmap as this dialog's image
-		CBofBitmap *pBmp = Bagel::loadBitmap(_sysScreen.GetBuffer());
+		CBofBitmap *pBmp = Bagel::loadBitmap(_sysScreen.getBuffer());
 
 		cRestoreDialog.setBackdrop(pBmp);
 
