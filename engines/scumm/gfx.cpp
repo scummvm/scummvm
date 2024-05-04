@@ -1314,7 +1314,7 @@ void ScummEngine::clearCharsetMask() {
 
 void ScummEngine::clearTextSurface() {
 	towns_fillTopLayerRect(0, 0, _textSurface.w, _textSurface.h, 0);
-	fill((byte *)_textSurface.getPixels(),  _textSurface.pitch,
+	fill((byte *)_textSurface.getPixels(), _textSurface.pitch,
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		_game.platform == Common::kPlatformFMTowns ? 0 :
 #endif
@@ -1591,7 +1591,8 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 				if (_game.version == 3 && vs->number != kTextVirtScreen) {
 					towns_fillTopLayerRect(x * _textSurfaceMultiplier,
 						(y - _screenTop + vs->topline) * _textSurfaceMultiplier, width * _textSurfaceMultiplier, height * _textSurfaceMultiplier, color);
-					return;
+					// We still need to continue and make the same changes to the textSurface (the original FM-Towns
+					// SCUMM3 interpreters don't have that, everything goes directly onto screen layer 2 there).
 				}
 
 				if (vs->number == kBannerVirtScreen) {
