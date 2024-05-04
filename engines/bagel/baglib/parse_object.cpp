@@ -24,17 +24,17 @@
 
 namespace Bagel {
 
-int CBagParseObject::m_nIndentation;
+int CBagParseObject::_nIndentation;
 
 void CBagParseObject::initialize() {
-	m_nIndentation = 0;
+	_nIndentation = 0;
 }
 
 CBagParseObject::CBagParseObject() {
-	m_bAttached = false;
+	_bAttached = false;
 }
 
-int CBagParseObject::GetIntFromStream(CBagIfstream &istr, int &nNum) {
+int CBagParseObject::getIntFromStream(CBagIfstream &istr, int &nNum) {
 	char ch = 0;
 	char szLocalStr[256];
 	int i = 0;
@@ -116,7 +116,7 @@ int CBagParseObject::getRectFromStream(CBagIfstream &istr, CBofRect &rect) {
 	return 0;
 }
 
-int CBagParseObject::GetVectorFromStream(CBagIfstream &istr, CBagVector &vector) {
+int CBagParseObject::getVectorFromStream(CBagIfstream &istr, CBagVector &vector) {
 	char szLocalStr[256];
 	szLocalStr[0] = 0;
 	CBofString str(szLocalStr, 256);
@@ -164,7 +164,7 @@ int CBagParseObject::GetVectorFromStream(CBagIfstream &istr, CBagVector &vector)
 	return 0;
 }
 
-int CBagParseObject::GetAlphaNumFromStream(CBagIfstream &istr, CBofString &sStr) {
+int CBagParseObject::getAlphaNumFromStream(CBagIfstream &istr, CBofString &sStr) {
 	bool bDone = false;
 	char ch = 0;
 
@@ -191,7 +191,7 @@ int CBagParseObject::GetAlphaNumFromStream(CBagIfstream &istr, CBofString &sStr)
 	return ch;
 }
 
-int CBagParseObject::GetOperStrFromStream(CBagIfstream &istr, CBofString &sStr) {
+int CBagParseObject::getOperStrFromStream(CBagIfstream &istr, CBofString &sStr) {
 	bool bDone = false;
 	char ch = 0;
 
@@ -215,13 +215,13 @@ int CBagParseObject::GetOperStrFromStream(CBagIfstream &istr, CBofString &sStr) 
 	return ch;
 }
 
-int CBagParseObject::GetKeywordFromStream(CBagIfstream &istr, CBagParseObject::KEYWORDS &keyword) {
+int CBagParseObject::getKeywordFromStream(CBagIfstream &istr, CBagParseObject::KEYWORDS &keyword) {
 	keyword = CBagParseObject::UNKNOWN;
 	char szLocalStr[256];
 	szLocalStr[0] = 0;
 	CBofString sStr(szLocalStr, 256);
 
-	int rc = GetAlphaNumFromStream(istr, sStr);
+	int rc = getAlphaNumFromStream(istr, sStr);
 
 	if (!sStr.find("SDEV")) {
 		keyword = CBagParseObject::STORAGEDEV;
@@ -261,7 +261,7 @@ int CBagParseObject::GetKeywordFromStream(CBagIfstream &istr, CBagParseObject::K
 	return rc;
 }
 
-int CBagParseObject::PutbackStringOnStream(CBagIfstream &istr, const CBofString &sStr) {
+int CBagParseObject::putbackStringOnStream(CBagIfstream &istr, const CBofString &sStr) {
 	int nLen = sStr.getLength();
 
 	while (nLen > 0) {
@@ -272,7 +272,7 @@ int CBagParseObject::PutbackStringOnStream(CBagIfstream &istr, const CBofString 
 	return 0;
 }
 
-int CBagParseObject::ParseAlertBox(CBagIfstream &istr, const char *sTitle, const char *sFile, int nLine) {
+int CBagParseObject::parseAlertBox(CBagIfstream &istr, const char *sTitle, const char *sFile, int nLine) {
 	char str[256];
 
 	CBofString s = sFile;

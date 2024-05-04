@@ -355,7 +355,7 @@ PARSE_CODES CBagButtonObject::setInfo(CBagIfstream &istr) {
 		case '+': {
 			int cels;
 			istr.getCh();
-			GetIntFromStream(istr, cels);
+			getIntFromStream(istr, cels);
 
 			if (_buttonType == BTN_SLIDER)
 				_numPos = cels;
@@ -370,12 +370,12 @@ PARSE_CODES CBagButtonObject::setInfo(CBagIfstream &istr) {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("FRAMERATE")) {
 				int nFrameRate;
 				istr.eatWhite();
-				GetIntFromStream(istr, nFrameRate);
+				getIntFromStream(istr, nFrameRate);
 
 				// The framerate is expressed in frames/second, so do some division
 				// here to store the number of milliseconds.
@@ -384,7 +384,7 @@ PARSE_CODES CBagButtonObject::setInfo(CBagIfstream &istr) {
 
 				nObjectUpdated = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 			break;
 		}
@@ -396,11 +396,11 @@ PARSE_CODES CBagButtonObject::setInfo(CBagIfstream &istr) {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("AS")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, sStr);
+				getAlphaNumFromStream(istr, sStr);
 				if (!sStr.find("PUSH")) {
 					_buttonType = BTN_PUSH;
 					nObjectUpdated = true;
@@ -420,11 +420,11 @@ PARSE_CODES CBagButtonObject::setInfo(CBagIfstream &istr) {
 					_buttonType = BTN_SLIDER;
 					nObjectUpdated = true;
 				} else {
-					PutbackStringOnStream(istr, sStr);
-					PutbackStringOnStream(istr, "AS ");
+					putbackStringOnStream(istr, sStr);
+					putbackStringOnStream(istr, "AS ");
 				}
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 			break;
 		}

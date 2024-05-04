@@ -379,7 +379,7 @@ PARSE_CODES CBagCharacterObject::setInfo(CBagIfstream &istr) {
 			localStr[0] = 0;
 			CBofString str(localStr, 256);
 
-			GetAlphaNumFromStream(istr, str);
+			getAlphaNumFromStream(istr, str);
 
 			if (!str.find("KEEPSTATE")) {
 				istr.eatWhite();
@@ -388,7 +388,7 @@ PARSE_CODES CBagCharacterObject::setInfo(CBagIfstream &istr) {
 
 				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, str);
+				putbackStringOnStream(istr, str);
 			}
 			break;
 		}
@@ -399,14 +399,14 @@ PARSE_CODES CBagCharacterObject::setInfo(CBagIfstream &istr) {
 			localStr[0] = 0;
 			CBofString str(localStr, 256);
 
-			GetAlphaNumFromStream(istr, str);
+			getAlphaNumFromStream(istr, str);
 
 			if (!str.find("LOOP")) {
 				istr.eatWhite();
-				GetIntFromStream(istr, _numOfLoops);
+				getIntFromStream(istr, _numOfLoops);
 				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, str);
+				putbackStringOnStream(istr, str);
 			}
 			break;
 		}
@@ -417,14 +417,14 @@ PARSE_CODES CBagCharacterObject::setInfo(CBagIfstream &istr) {
 			localStr[0] = 0;
 			CBofString str(localStr, 256);
 
-			GetAlphaNumFromStream(istr, str);
+			getAlphaNumFromStream(istr, str);
 
 			if (!str.find("SPEED")) {
 				istr.eatWhite();
-				GetIntFromStream(istr, _playbackSpeed);
+				getIntFromStream(istr, _playbackSpeed);
 				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, str);
+				putbackStringOnStream(istr, str);
 			}
 			break;
 		}
@@ -435,7 +435,7 @@ PARSE_CODES CBagCharacterObject::setInfo(CBagIfstream &istr) {
 			localStr[0] = 0;
 			CBofString str(localStr, 256);
 
-			GetAlphaNumFromStream(istr, str);
+			getAlphaNumFromStream(istr, str);
 
 			if (!str.find("EXITATEND")) {
 				istr.eatWhite();
@@ -443,7 +443,7 @@ PARSE_CODES CBagCharacterObject::setInfo(CBagIfstream &istr) {
 				_exitAtEnd = true;
 				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, str);
+				putbackStringOnStream(istr, str);
 			}
 			break;
 		}
@@ -453,7 +453,7 @@ PARSE_CODES CBagCharacterObject::setInfo(CBagIfstream &istr) {
 		case 'P': {
 			CBofString str;
 
-			GetAlphaNumFromStream(istr, str);
+			getAlphaNumFromStream(istr, str);
 
 			if (!str.find("PANIM")) {
 				istr.eatWhite();
@@ -462,7 +462,7 @@ PARSE_CODES CBagCharacterObject::setInfo(CBagIfstream &istr) {
 				objectUpdatedFl = true;
 
 			} else {
-				PutbackStringOnStream(istr, str);
+				putbackStringOnStream(istr, str);
 			}
 
 			break;
@@ -474,7 +474,7 @@ PARSE_CODES CBagCharacterObject::setInfo(CBagIfstream &istr) {
 			localStr[0] = 0;
 			CBofString str(localStr, 256);
 
-			GetAlphaNumFromStream(istr, str);
+			getAlphaNumFromStream(istr, str);
 
 			if (!str.find("FRAME")) {
 				CBofRect r;
@@ -491,7 +491,7 @@ PARSE_CODES CBagCharacterObject::setInfo(CBagIfstream &istr) {
 
 				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, str);
+				putbackStringOnStream(istr, str);
 			}
 			break;
 		}

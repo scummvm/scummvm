@@ -70,9 +70,9 @@ public:
 	};
 
 private:
-	static int m_nIndentation;
-	static bool m_bBinaryData;
-	bool m_bAttached;
+	static int _nIndentation;
+	static bool _bBinaryData;
+	bool _bAttached;
 
 public:
 	CBagParseObject();
@@ -80,58 +80,58 @@ public:
 	static void initialize();
 
 	virtual ErrorCode attach() {
-		m_bAttached = true;
+		_bAttached = true;
 		return ERR_NONE;
 	}
 	virtual ErrorCode detach() {
-		m_bAttached = false;
+		_bAttached = false;
 		return ERR_NONE;
 	}
 	virtual bool isAttached() {
-		return m_bAttached;
+		return _bAttached;
 	}
 
 	virtual PARSE_CODES setInfo(CBagIfstream &) {
 		return PARSING_DONE;
 	}
 
-	int SetIndent(int n) {
-		return m_nIndentation = n;
+	int setIndent(int n) {
+		return _nIndentation = n;
 	}
-	int GetIndent() const {
-		return m_nIndentation;
+	int getIndent() const {
+		return _nIndentation;
 	}
-	int Tab(int n = 2) {
-		return m_nIndentation += n;
+	int tab(int n = 2) {
+		return _nIndentation += n;
 	}
-	int UnTab(int n = 2) {
-		return m_nIndentation -= n;
+	int unTab(int n = 2) {
+		return _nIndentation -= n;
 	}
 
-	int SetBinaryData(bool b = true) const {
-		return m_bBinaryData = b;
+	int setBinaryData(bool b = true) const {
+		return _bBinaryData = b;
 	}
-	int IsBinaryData() {
-		return m_bBinaryData;
+	int isBinaryData() {
+		return _bBinaryData;
 	}
 
 	int getStringFromStream(CBagIfstream &istr, CBofString &sStr, const char cEndChar, bool bPutBack = false);
 	int getStringFromStream(CBagIfstream &istr, CBofString &sStr, const CBofString &sEndChars, bool bPutBack = false);
-	int GetAlphaNumFromStream(CBagIfstream &istr, CBofString &sStr);
-	int GetOperStrFromStream(CBagIfstream &istr, CBofString &sStr);
-	int GetIntFromStream(CBagIfstream &istr, int &nNum);
+	int getAlphaNumFromStream(CBagIfstream &istr, CBofString &sStr);
+	int getOperStrFromStream(CBagIfstream &istr, CBofString &sStr);
+	int getIntFromStream(CBagIfstream &istr, int &nNum);
 	int getRectFromStream(CBagIfstream &istr, CBofRect &rect);
-	int GetVectorFromStream(CBagIfstream &istr, CBagVector &vector);
-	int GetKeywordFromStream(CBagIfstream &istr, KEYWORDS &keyword);
-	int PutbackStringOnStream(CBagIfstream &istr, const CBofString &sStr);
+	int getVectorFromStream(CBagIfstream &istr, CBagVector &vector);
+	int getKeywordFromStream(CBagIfstream &istr, KEYWORDS &keyword);
+	int putbackStringOnStream(CBagIfstream &istr, const CBofString &sStr);
 
-	int ParseAlertBox(CBagIfstream &istr, const char *sTitle, const char *sFile, int nLine);
+	int parseAlertBox(CBagIfstream &istr, const char *sTitle, const char *sFile, int nLine);
 
 	virtual void *getDataStart() {
-		return &m_bAttached;
+		return &_bAttached;
 	}
 	virtual void *getDataEnd() {
-		return &m_bAttached + sizeof(bool);
+		return &_bAttached + sizeof(bool);
 	}
 };
 

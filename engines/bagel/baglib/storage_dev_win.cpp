@@ -628,10 +628,10 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 		bool bRunActivation     = true;     // Set if the object should be run instantly on attach
 
 		// Get Operator SET or HOLD or RUN; on none RUN is default
-		GetAlphaNumFromStream(fpInput, sWorkStr);
+		getAlphaNumFromStream(fpInput, sWorkStr);
 
 		if (sWorkStr.isEmpty()) {
-			ParseAlertBox(fpInput, "Error in line No Operator:", __FILE__, __LINE__);
+			parseAlertBox(fpInput, "Error in line No Operator:", __FILE__, __LINE__);
 
 			bOperSet        = true;
 		}
@@ -654,11 +654,11 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 
 		if (bOperSet) {
 			// If we are not doing the default RUN get next argument
-			GetAlphaNumFromStream(fpInput, sWorkStr);
+			getAlphaNumFromStream(fpInput, sWorkStr);
 		}
 
 		if (sWorkStr.isEmpty()) {
-			ParseAlertBox(fpInput, "Error in line:", __FILE__, __LINE__);
+			parseAlertBox(fpInput, "Error in line:", __FILE__, __LINE__);
 		}
 
 		fpInput.eatWhite();
@@ -675,7 +675,7 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 			fpInput.eatWhite();
 			ch = (char)fpInput.getCh();
 			if (ch == '=') {
-				GetAlphaNumFromStream(fpInput, str);
+				getAlphaNumFromStream(fpInput, str);
 				fpInput.eatWhite();
 				m_nDiskID = (uint16)atoi(str);
 				if (fpInput.peek() == ';') {
@@ -686,7 +686,7 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 			fpInput.eatWhite();
 			ch = (char)fpInput.getCh();
 			if (ch == '=') {
-				GetAlphaNumFromStream(fpInput, str);
+				getAlphaNumFromStream(fpInput, str);
 				fpInput.eatWhite();
 
 				SetHelpFilename(str);
@@ -697,7 +697,7 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 			}
 		} else if (!sWorkStr.find("ENDIF")) {
 			if (bElseExprList.isEmpty()) {
-				ParseAlertBox(fpInput, "Error: ENDIF without IF", __FILE__, __LINE__);
+				parseAlertBox(fpInput, "Error: ENDIF without IF", __FILE__, __LINE__);
 			} else {
 				bElseExprList.removeHead();
 			}
@@ -706,7 +706,7 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 			} else {
 				CBofString str2("Unexpected ENDIF:");
 				str2 += sWldName;
-				ParseAlertBox(fpInput, str2.getBuffer(), __FILE__, __LINE__);
+				parseAlertBox(fpInput, str2.getBuffer(), __FILE__, __LINE__);
 			}
 		} else if (!sWorkStr.find("IF")) {
 			// Added a bPrevNeg to keep track of nested else-if's
@@ -728,7 +728,7 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 			pActiveExpr = pExp;
 		} else if (!sWorkStr.find("ELSE")) {
 			if (bElseExprList.isEmpty()) {
-				ParseAlertBox(fpInput, "Error: ELSE without IF", __FILE__, __LINE__);
+				parseAlertBox(fpInput, "Error: ELSE without IF", __FILE__, __LINE__);
 			} else {
 				bElseExprList.removeHead();
 				bElseExprList.addToHead((bool) true);
@@ -832,7 +832,7 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 	if (pActiveExpr) {
 		CBofString str2("Mismatch in IF/ENDIF:");
 		str2 += sWldName;
-		ParseAlertBox(fpInput, str2.getBuffer(), __FILE__, __LINE__);
+		parseAlertBox(fpInput, str2.getBuffer(), __FILE__, __LINE__);
 
 		return ERR_UNKNOWN;
 	}
@@ -949,7 +949,7 @@ PARSE_CODES CBagStorageDev::setInfo(CBagIfstream &fpInput) {
 
 	char ch = (char)fpInput.getCh();
 	if (ch == '=') {
-		GetAlphaNumFromStream(fpInput, str);
+		getAlphaNumFromStream(fpInput, str);
 		fpInput.eatWhite();
 
 		MACROREPLACE(str);

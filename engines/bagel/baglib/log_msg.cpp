@@ -443,11 +443,11 @@ PARSE_CODES CBagLogMsg::setInfo(CBagIfstream &istr) {
 		//  SENDEE FRANK - Sets the sendee name of the message to FRANK
 		//
 		case 'S': {
-			GetAlphaNumFromStream(istr, string1);
+			getAlphaNumFromStream(istr, string1);
 
 			if (!string1.find("SENDEE")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, string2);
+				getAlphaNumFromStream(istr, string2);
 
 				// Replace any underscores with spaces
 				string2.replaceChar('_', ' ');
@@ -456,7 +456,7 @@ PARSE_CODES CBagLogMsg::setInfo(CBagIfstream &istr) {
 
 				nObjectUpdated = true;
 			} else {
-				PutbackStringOnStream(istr, string1);
+				putbackStringOnStream(istr, string1);
 			}
 			break;
 		}
@@ -465,22 +465,22 @@ PARSE_CODES CBagLogMsg::setInfo(CBagIfstream &istr) {
 		//   TIME x- Sets the time of the message to xx:xx
 		//
 		case 'T': {
-			GetAlphaNumFromStream(istr, string1);
+			getAlphaNumFromStream(istr, string1);
 
 			if (!string1.find("TIME")) {
 				istr.eatWhite();
 				char nextCh = (char)istr.peek();
 				int msgTime = 0;
 				if (Common::isDigit(nextCh)) {
-					GetIntFromStream(istr, msgTime);
+					getIntFromStream(istr, msgTime);
 				} else {
-					GetAlphaNumFromStream(istr, _msgTimeStr);
+					getAlphaNumFromStream(istr, _msgTimeStr);
 				}
 
 				setMsgTime(msgTime);
 				nObjectUpdated = true;
 			} else {
-				PutbackStringOnStream(istr, string1);
+				putbackStringOnStream(istr, string1);
 			}
 			break;
 		}
@@ -579,11 +579,11 @@ PARSE_CODES CBagLogSuspect::setInfo(CBagIfstream &istr) {
 		//  NAME FRANK - Sets the sendee name of the message to FRANK
 		//
 		case 'N': {
-			GetAlphaNumFromStream(istr, string1);
+			getAlphaNumFromStream(istr, string1);
 
 			if (!string1.find("NAME")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, string2);
+				getAlphaNumFromStream(istr, string2);
 
 				// Replace any underscores with spaces
 				string2.replaceChar('_', ' ');
@@ -591,17 +591,17 @@ PARSE_CODES CBagLogSuspect::setInfo(CBagIfstream &istr) {
 
 				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, string1);
+				putbackStringOnStream(istr, string1);
 			}
 			break;
 		}
 
 		case 'S': {
-			GetAlphaNumFromStream(istr, string1);
+			getAlphaNumFromStream(istr, string1);
 
 			if (!string1.find("SPECIES")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, string2);
+				getAlphaNumFromStream(istr, string2);
 
 				// Replace any underscores with spaces
 				string2.replaceChar('_', ' ');
@@ -610,17 +610,17 @@ PARSE_CODES CBagLogSuspect::setInfo(CBagIfstream &istr) {
 
 				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, string1);
+				putbackStringOnStream(istr, string1);
 			}
 			break;
 		}
 
 		case 'R': {
-			GetAlphaNumFromStream(istr, string1);
+			getAlphaNumFromStream(istr, string1);
 
 			if (!string1.find("ROOM")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, string2);
+				getAlphaNumFromStream(istr, string2);
 
 				// Replace any underscores with spaces
 				string2.replaceChar('_', ' ');
@@ -628,7 +628,7 @@ PARSE_CODES CBagLogSuspect::setInfo(CBagIfstream &istr) {
 
 				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, string1);
+				putbackStringOnStream(istr, string1);
 			}
 			break;
 		}
@@ -796,17 +796,17 @@ PARSE_CODES CBagEnergyDetectorObject::setInfo(CBagIfstream &istr) {
 		//  ZHAPS - NUMBER OF ZHAPS (ENERGY UNITS)
 		//
 		case 'Z': {
-			GetAlphaNumFromStream(istr, string1);
+			getAlphaNumFromStream(istr, string1);
 
 			if (!string1.find("ZHAPS")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, string2);
+				getAlphaNumFromStream(istr, string2);
 
 				_zhapsStr = string2;
 
 				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, string1);
+				putbackStringOnStream(istr, string1);
 			}
 			break;
 		}
@@ -815,17 +815,17 @@ PARSE_CODES CBagEnergyDetectorObject::setInfo(CBagIfstream &istr) {
 		//  CAUSE - REASON FOR ENERGY BURST
 		//
 		case 'C': {
-			GetAlphaNumFromStream(istr, string1);
+			getAlphaNumFromStream(istr, string1);
 
 			if (!string1.find("CAUSE")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, string2);
+				getAlphaNumFromStream(istr, string2);
 
 				_causeStr = string2;
 
 				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, string1);
+				putbackStringOnStream(istr, string1);
 			}
 			break;
 		}
@@ -834,16 +834,16 @@ PARSE_CODES CBagEnergyDetectorObject::setInfo(CBagIfstream &istr) {
 		//   TIME x- Sets the time of the message to xx:xx
 		//
 		case 'T': {
-			GetAlphaNumFromStream(istr, string1);
+			getAlphaNumFromStream(istr, string1);
 
 			if (!string1.find("TIME")) {
 				istr.eatWhite();
 				(void)istr.peek();
 
-				GetAlphaNumFromStream(istr, _energyTimeStr);
+				getAlphaNumFromStream(istr, _energyTimeStr);
 				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, string1);
+				putbackStringOnStream(istr, string1);
 			}
 			break;
 		}
@@ -856,16 +856,16 @@ PARSE_CODES CBagEnergyDetectorObject::setInfo(CBagIfstream &istr) {
 			localBuffer3[0] = 0;
 			CBofString string3(localBuffer3, 256);
 
-			GetAlphaNumFromStream(istr, string3);
+			getAlphaNumFromStream(istr, string3);
 
 			if (!string3.find("SIZE")) {
 				istr.eatWhite();
 				int n;
-				GetIntFromStream(istr, n);
+				getIntFromStream(istr, n);
 				setPointSize(n);
 				objectUpdatedFl = true;
 			} else {
-				PutbackStringOnStream(istr, string3);
+				putbackStringOnStream(istr, string3);
 			}
 			break;
 		}
@@ -1012,11 +1012,11 @@ PARSE_CODES CBagLogClue::setInfo(CBagIfstream &istr) {
 		//  is contained in script in a clue statement.
 		//
 		case 'S': {
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("STRINGVAR")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, sStr);
+				getAlphaNumFromStream(istr, sStr);
 				CBagVar *pVar = VAR_MANAGER->GetVariable(sStr);
 				// The variable must have been found, if it wasn't, then
 				// complain violently.
@@ -1037,7 +1037,7 @@ PARSE_CODES CBagLogClue::setInfo(CBagIfstream &istr) {
 					return UNKNOWN_TOKEN;
 				}
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 			break;
 		}

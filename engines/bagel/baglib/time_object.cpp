@@ -201,7 +201,7 @@ PARSE_CODES CBagTimeObject::setInfo(CBagIfstream &istr) {
 		case '+': {
 			int cels;
 			istr.getCh();
-			GetIntFromStream(istr, cels);
+			getIntFromStream(istr, cels);
 			setCels(cels);
 			nObjectUpdated = true;
 			break;
@@ -212,20 +212,20 @@ PARSE_CODES CBagTimeObject::setInfo(CBagIfstream &istr) {
 			szLocalBuff[0] = '\0';
 			CBofString sStr(szLocalBuff, 256);
 
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("VALUE")) {
 				istr.eatWhite();
 				char szLocalBuff1[256];
 				szLocalBuff[0] = '\0';
 				CBofString s(szLocalBuff1, 256);
-				GetAlphaNumFromStream(istr, s);
+				getAlphaNumFromStream(istr, s);
 
 				setVariable(s);
 
 				nObjectUpdated = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 			break;
 		}

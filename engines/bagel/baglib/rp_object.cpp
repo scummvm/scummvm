@@ -190,9 +190,9 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 		//
 		case 'U':
 		case 'T': {
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 			if (sStr.find("TOUCHEDVAR") == 0) {
-				GetAlphaNumFromStream(istr, sStr);
+				getAlphaNumFromStream(istr, sStr);
 
 				nObjectUpdated = true;
 				istr.eatWhite();
@@ -214,7 +214,7 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 				do {
 					CBagExpression *px = nullptr;
 
-					GetAlphaNumFromStream(istr, sStr);
+					getAlphaNumFromStream(istr, sStr);
 					bContinue = false;
 
 					// If the next non-whitespace char is a paren, then we're going
@@ -241,7 +241,7 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 					}
 				} while (bContinue);
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 		}
 		break;
@@ -262,24 +262,24 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 		break;
 
 		case 'N': {
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 			if (!sStr.find("NAME")) {
 				nObjectUpdated = true;
 
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, sStr);
+				getAlphaNumFromStream(istr, sStr);
 
 				m_sObjectName = sStr;
 
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 		}
 		break;
 
 		// Same and Save can be in the stream.
 		case 'S': {
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("SAVE")) {
 				nObjectUpdated = true;
@@ -287,7 +287,7 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 
 				// Get the variable name from the definition line, then find it
 				// in the global list.
-				GetAlphaNumFromStream(istr, sStr);
+				getAlphaNumFromStream(istr, sStr);
 				m_pSaveVar = VAR_MANAGER->GetVariable(sStr);
 
 				// the variable must have been found, if it wasn't, then
@@ -305,7 +305,7 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 
 				m_pUntouchedList = m_pTouchedList;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 		}
 		break;
@@ -314,14 +314,14 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 		// Might have an associated movie
 		//
 		case 'M': {
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 			if (!sStr.find("MOVIE")) {
 				nObjectUpdated = true;
 
-				GetAlphaNumFromStream(istr, sStr);
+				getAlphaNumFromStream(istr, sStr);
 				m_sMovieObj = sStr;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 		}
 		break;
@@ -331,7 +331,7 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 		// that is being residue printed.
 		//
 		case 'D': {
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 			if (!sStr.find("DESC")) {
 				nObjectUpdated = true;
 
@@ -340,7 +340,7 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 					return PARSING_DONE;
 				}
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 		}
 		break;
@@ -348,14 +348,14 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 		// The variable, which is required, will be the var that is set when
 		// residue printing of that object has occurred.
 		case 'V': {
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 			if (!sStr.find("VAR")) {
 				nObjectUpdated = true;
 				istr.eatWhite();
 
 				// Get the variable name from the definition line, then find it
 				// in the global list.
-				GetAlphaNumFromStream(istr, sStr);
+				getAlphaNumFromStream(istr, sStr);
 				m_pVarObj = VAR_MANAGER->GetVariable(sStr);
 
 				// the variable must have been found, if it wasn't, then
@@ -366,7 +366,7 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 					return UNKNOWN_TOKEN;
 				}
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 		}
 		break;

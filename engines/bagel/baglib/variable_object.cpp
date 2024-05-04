@@ -79,15 +79,15 @@ PARSE_CODES CBagVariableObject::setInfo(CBagIfstream &istr) {
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);		// jwl 08.28.96 performance improvement
 
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("SIZE")) {
 				istr.eatWhite();
-				GetIntFromStream(istr, m_nPointSize);
+				getIntFromStream(istr, m_nPointSize);
 				nObjectUpdated = true;
 				nChanged++;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 		}
 		break;
@@ -102,12 +102,12 @@ PARSE_CODES CBagVariableObject::setInfo(CBagIfstream &istr) {
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);		// jwl 08.28.96 performance improvement
 
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("COLOR")) {
 				int nColor;
 				istr.eatWhite();
-				GetIntFromStream(istr, nColor);
+				getIntFromStream(istr, nColor);
 				switch (nColor) {
 				case 0:	m_nFGColor = RGB(0, 0, 0); break;							// black
 				case 1:	m_nFGColor = RGB(255, 0, 0); break;
@@ -123,7 +123,7 @@ PARSE_CODES CBagVariableObject::setInfo(CBagIfstream &istr) {
 				nObjectUpdated = true;
 				nChanged++;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 			break;
 		}

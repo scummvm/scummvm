@@ -264,15 +264,15 @@ PARSE_CODES CBagTextObject::setInfo(CBagIfstream &istr) {
 			// Need to use this field, so no one else can
 			assert(_psInitInfo == nullptr);
 
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("VAR")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, sStr);
+				getAlphaNumFromStream(istr, sStr);
 				setInitInfo(sStr);
 				nObjectUpdated = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 			break;
 		}
@@ -285,12 +285,12 @@ PARSE_CODES CBagTextObject::setInfo(CBagIfstream &istr) {
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("SIZE")) {
 				istr.eatWhite();
 				int n;
-				GetIntFromStream(istr, n);
+				getIntFromStream(istr, n);
 				_nPointSize = (byte)n;
 				nObjectUpdated = true;
 
@@ -300,7 +300,7 @@ PARSE_CODES CBagTextObject::setInfo(CBagIfstream &istr) {
 					_nPointSize = 26;
 
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 			break;
 		}
@@ -313,16 +313,16 @@ PARSE_CODES CBagTextObject::setInfo(CBagIfstream &istr) {
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("FONT")) {
 				istr.eatWhite();
 				int n;
-				GetIntFromStream(istr, n);
+				getIntFromStream(istr, n);
 				_nTextFont = MapFont(n);
 				nObjectUpdated = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 			// FIXME: Missing break?
 		}
@@ -335,11 +335,11 @@ PARSE_CODES CBagTextObject::setInfo(CBagIfstream &istr) {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("AS")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, sStr);
+				getAlphaNumFromStream(istr, sStr);
 				if (!sStr.find("CAPTION")) {
 					_bCaption = true;
 					nObjectUpdated = true;
@@ -349,11 +349,11 @@ PARSE_CODES CBagTextObject::setInfo(CBagIfstream &istr) {
 					nObjectUpdated = true;
 
 				} else {
-					PutbackStringOnStream(istr, sStr);
-					PutbackStringOnStream(istr, "AS ");
+					putbackStringOnStream(istr, sStr);
+					putbackStringOnStream(istr, "AS ");
 				}
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 			break;
 		}
@@ -366,16 +366,16 @@ PARSE_CODES CBagTextObject::setInfo(CBagIfstream &istr) {
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("COLOR")) {
 				int nColor;
 				istr.eatWhite();
-				GetIntFromStream(istr, nColor);
+				getIntFromStream(istr, nColor);
 				setColor(nColor);
 				nObjectUpdated = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 			break;
 		}

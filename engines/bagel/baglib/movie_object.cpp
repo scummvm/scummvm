@@ -406,11 +406,11 @@ PARSE_CODES CBagMovieObject::setInfo(CBagIfstream &istr) {
 		//  AS  - n number of slides in sprite
 		//
 		case 'A': {
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("AS")) {
 				istr.eatWhite();
-				GetAlphaNumFromStream(istr, sStr);
+				getAlphaNumFromStream(istr, sStr);
 				if (!sStr.find("EXAMINE")) {
 					_xDisplayType = DISP_TYPE::EXAMINE;
 				} else if (!sStr.find("MOVIE")) {
@@ -436,7 +436,7 @@ PARSE_CODES CBagMovieObject::setInfo(CBagIfstream &istr) {
 		// Don't queue attribute, when set, the asynch movie either plays
 		// immediately or not at all.
 		case 'D': {
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("DONTQUEUE")) {
 				setDontQueue();
@@ -449,7 +449,7 @@ PARSE_CODES CBagMovieObject::setInfo(CBagIfstream &istr) {
 				setIncrement(false);
 				nObjectUpdated = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 		}
 		break;
@@ -457,13 +457,13 @@ PARSE_CODES CBagMovieObject::setInfo(CBagIfstream &istr) {
 		// Don't queue attribute, when set, the asynch movie either plays
 		// immediately or not at all.
 		case 'P': {
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("PLAYIMMEDIATE")) {
 				setPlayImmediate();
 				nObjectUpdated = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 		}
 		break;
@@ -473,13 +473,13 @@ PARSE_CODES CBagMovieObject::setInfo(CBagIfstream &istr) {
 		// background.  this solves the problem of palette shifts on examine
 		// movies.
 		case 'O': {
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("ONBLACK")) {
 				setPlayImmediate();
 				nObjectUpdated = true;
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 		}
 		break;
@@ -487,7 +487,7 @@ PARSE_CODES CBagMovieObject::setInfo(CBagIfstream &istr) {
 		// Associate a sound file with this movie (primarily for examine
 		// movies).
 		case 'S': {
-			GetAlphaNumFromStream(istr, sStr);
+			getAlphaNumFromStream(istr, sStr);
 			if (!sStr.find("SND")) {
 				nObjectUpdated = true;
 
@@ -496,7 +496,7 @@ PARSE_CODES CBagMovieObject::setInfo(CBagIfstream &istr) {
 					return PARSING_DONE;
 				}
 			} else {
-				PutbackStringOnStream(istr, sStr);
+				putbackStringOnStream(istr, sStr);
 			}
 		}
 		break;
