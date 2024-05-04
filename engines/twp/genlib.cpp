@@ -343,11 +343,28 @@ static SQInteger frameCounter(HSQUIRRELVM v) {
 	return sqpush(v, g_twp->_frameCounter);
 }
 
+static Common::String toPlatform(const Common::String &value) {
+	const char *platformsSrc[] = {"xbox", "switch", "playstation", "playstation2"};
+	const char *platformsDst[] = {"XBOX", "SWITCH", "PS4", "PS4"};
+	for (int i = 0; i < ARRAYSIZE(platformsSrc); i++) {
+		if (value == platformsSrc[i]) {
+			return platformsDst[i];
+		}
+	}
+	return "0";
+}
+
 static SQInteger getUserPref(HSQUIRRELVM v) {
 	Common::String key;
 	if (SQ_FAILED(sqget(v, 2, key))) {
 		return sq_throwerror(v, _SC("failed to get key"));
 	}
+
+	if (key == "platform" && ConfMan.hasKey(key)) {
+		sqpush(v, toPlatform(ConfMan.get(key)));
+		return 1;
+	}
+
 	SQInteger numArgs = sq_gettop(v) - 1;
 	// is there a fault value as argument ?
 	if (numArgs > 1) {

@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "twp/twp.h"
 #include "twp/callback.h"
 #include "twp/dialog.h"
@@ -1055,7 +1057,18 @@ void sqgame_register_constants(HSQUIRRELVM v) {
 	regConst(v, "BUTTON_MOUSE_LEFT", BUTTON_MOUSE_LEFT);
 	regConst(v, "BUTTON_MOUSE_RIGHT", BUTTON_MOUSE_RIGHT);
 	regConst(v, "WAITING_FOR_CHOICE", 2);
-	regConst(v, "PLATFORM", 1); // TODO: choose the right platform
+
+	// convert ScummVM platform to the one expected
+	SQInteger platform = MAC;
+	const char *platformsSrc[] = {"mac", "windows", "linux", "xbox", "ios", "android", "switch"};
+	const SQInteger platformsDst[] = {MAC, WIN, LINUX, XBOX, IOS, ANDROID, SWITCH};
+	Common::String platformName(ConfMan.get("platform"));
+	for (int i = 0; i < ARRAYSIZE(platformsSrc); i++) {
+		if (platformName == platformsSrc[i]) {
+			platform = platformsDst[i];
+		}
+	}
+	regConst(v, "PLATFORM", platform);
 }
 
 } // namespace Twp
