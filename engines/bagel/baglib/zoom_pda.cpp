@@ -283,7 +283,7 @@ void SBZoomPda::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 
 
 	// This should be on update cursor virtual func
-	if (GetExitOnEdge() && (pPoint->x < GetExitOnEdge()) && (pPoint->y < 300) && !(GetPrevSDev().isEmpty())) {
+	if (GetExitOnEdge() && (pPoint->x < GetExitOnEdge()) && (pPoint->y < 300) && !(getPrevSDev().isEmpty())) {
 		CBagMasterWin::setActiveCursor(10);
 	} else {
 		CBofRect cRect = getBackdrop()->getRect();

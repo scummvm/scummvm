@@ -110,7 +110,7 @@ void CLList::MoveToTail() {
 void CLList::MoveLeft() {
 	if (_pPrev != nullptr) {
 
-		CLList *pPrev = _pPrev->GetPrev();
+		CLList *pPrev = _pPrev->getPrev();
 		if (pPrev != nullptr) {
 			Delete();
 			pPrev->Insert(this);

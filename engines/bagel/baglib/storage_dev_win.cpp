@@ -349,7 +349,7 @@ ErrorCode CBagStorageDev::AttachActiveObjects() {
 					}
 				} else if (pObj->isAttached()) {
 
-					if (pObj->GetType() != SOUNDOBJ || !((CBagSoundObject *)pObj)->IsPlaying()) {
+					if (pObj->GetType() != SOUNDOBJ || !((CBagSoundObject *)pObj)->isPlaying()) {
 						pObj->setActive(false);
 						pObj->detach();
 					}
@@ -1294,7 +1294,7 @@ ErrorCode CBagStorageDevWnd::detach() {
 }
 
 ErrorCode CBagStorageDevWnd::close() {
-	CBagel::getBagApp()->getMasterWnd()->setStorageDev(GetPrevSDev(), false);
+	CBagel::getBagApp()->getMasterWnd()->setStorageDev(getPrevSDev(), false);
 
 	return _errCode;
 }
@@ -1489,7 +1489,7 @@ void CBagStorageDevWnd::onMouseMove(uint32 n, CBofPoint *pPoint, void *) {
 		return;
 	}
 
-	if (GetExitOnEdge() && (pPoint->x < GetExitOnEdge()) && (pPoint->y < 360 + 10) && !(GetPrevSDev().isEmpty())) {
+	if (GetExitOnEdge() && (pPoint->x < GetExitOnEdge()) && (pPoint->y < 360 + 10) && !(getPrevSDev().isEmpty())) {
 		CBagMasterWin::setActiveCursor(10);
 
 	} else {
@@ -1548,7 +1548,7 @@ void CBagStorageDevWnd::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	// React to a mouse up, it will probably involve drawing a new window...
 	SetPreFilterPan(true);
 
-	if (GetExitOnEdge() && xPoint->x < GetExitOnEdge() && !(GetPrevSDev().isEmpty())) {
+	if (GetExitOnEdge() && xPoint->x < GetExitOnEdge() && !(getPrevSDev().isEmpty())) {
 		// Set the initial location as the last full panoramas position
 		close();
 

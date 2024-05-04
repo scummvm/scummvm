@@ -113,7 +113,7 @@ void CBofOptions::release() {
 
 	// Release each item in the list
 	while (_pOptionList != nullptr) {
-		COption *pNextItem = (COption *)_pOptionList->GetNext();
+		COption *pNextItem = (COption *)_pOptionList->getNext();
 
 		delete _pOptionList;
 		_pOptionList = pNextItem;
@@ -316,7 +316,7 @@ COption *CBofOptions::findSection(const char *pszSection) {
 			break;
 		}
 
-		pOption = (COption *)pOption->GetNext();
+		pOption = (COption *)pOption->getNext();
 	}
 
 	return pOption;
@@ -336,7 +336,7 @@ COption *CBofOptions::findOption(const char *pszSection, const char *pszVar) {
 	COption *pStart;
 
 	if ((pStart = findSection(pszSection)) != nullptr) {
-		COption *pOption = (COption *)pStart->GetNext();
+		COption *pOption = (COption *)pStart->getNext();
 		while (pOption != nullptr) {
 			if (pOption->_szBuf[0] == '[') {
 				// this option was not found
@@ -349,7 +349,7 @@ COption *CBofOptions::findOption(const char *pszSection, const char *pszVar) {
 				break;
 			}
 
-			pOption = (COption *)pOption->GetNext();
+			pOption = (COption *)pOption->getNext();
 		}
 	}
 

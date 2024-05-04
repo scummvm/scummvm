@@ -69,8 +69,8 @@ ErrorCode CBagSoundObject::NewSound(CBofWindow *pWin) {
 	KillSound();
 
 	if ((m_pSound = new CBofSound(pWin, getFileName(), m_wFlags, m_nLoops)) != nullptr) {
-		m_pSound->SetVolume(m_nVol);
-		m_pSound->SetQSlot(getState());
+		m_pSound->setVolume(m_nVol);
+		m_pSound->setQSlot(getState());
 
 	} else {
 		errCode = ERR_MEMORY;
@@ -96,7 +96,7 @@ bool CBagSoundObject::runObject() {
 
 		if (m_pSound && m_pMidiSound != m_pSound) {
 
-			m_pSound->SetQSlot(getState());
+			m_pSound->setQSlot(getState());
 			m_pSound->play();
 
 			// If waiting until this sound finishes
@@ -105,8 +105,8 @@ bool CBagSoundObject::runObject() {
 				CBagMasterWin::setActiveCursor(6);
 
 				EventLoop limiter(EventLoop::FORCE_REPAINT);
-				while (m_pSound->IsPlaying()) {
-					CBofSound::AudioTask();
+				while (m_pSound->isPlaying()) {
+					CBofSound::audioTask();
 
 					if (limiter.frame()) {
 						m_pSound->stop();
@@ -168,7 +168,7 @@ PARSE_CODES CBagSoundObject::setInfo(CBagIfstream &istr) {
 				istr.eatWhite();
 				int n;
 				GetIntFromStream(istr, n);
-				SetVolume(n);
+				setVolume(n);
 				nObjectUpdated = true;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -293,7 +293,7 @@ PARSE_CODES CBagSoundObject::setInfo(CBagIfstream &istr) {
 			} else { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
-				
+
 				return UNKNOWN_TOKEN;
 			}
 		}
@@ -314,33 +314,33 @@ void CBagSoundObject::SetQueue(bool b) {
 	}
 }
 
-int CBagSoundObject::GetVolume() {
+int CBagSoundObject::getVolume() {
 	return m_nVol;
 }
 
-void CBagSoundObject::SetVolume(int nVol) {
+void CBagSoundObject::setVolume(int nVol) {
 	m_nVol = (byte)nVol;
 	if (isAttached()) {
 
 		if (m_pSound != nullptr) {
-			m_pSound->SetVolume(m_nVol);
+			m_pSound->setVolume(m_nVol);
 		}
 	}
 }
 
-bool CBagSoundObject::IsPlaying() {
+bool CBagSoundObject::isPlaying() {
 	bool bPlaying = false;
 	if (m_pSound != nullptr) {
-		bPlaying = m_pSound->Playing();
+		bPlaying = m_pSound->playing();
 	}
 
 	return bPlaying;
 }
 
-bool CBagSoundObject::IsQueued() {
+bool CBagSoundObject::isQueued() {
 	bool bQueued = false;
 	if (m_pSound != nullptr) {
-		bQueued = m_pSound->IsQueued();
+		bQueued = m_pSound->isQueued();
 	}
 
 	return bQueued;
@@ -353,7 +353,7 @@ void CBagSoundObject::SetPlaying(bool bVal) {
 
 			if (m_pSound && m_pMidiSound != m_pSound) {
 
-				m_pSound->SetQSlot(getState());
+				m_pSound->setQSlot(getState());
 				m_pSound->play();
 
 				// If we are supposed to wait until this audio finishes
@@ -362,8 +362,8 @@ void CBagSoundObject::SetPlaying(bool bVal) {
 					CBagMasterWin::setActiveCursor(6);
 
 					EventLoop limiter(EventLoop::FORCE_REPAINT);
-					while (m_pSound->IsPlaying()) {
-						CBofSound::AudioTask();
+					while (m_pSound->isPlaying()) {
+						CBofSound::audioTask();
 
 						if (limiter.frame()) {
 							m_pSound->stop();
@@ -392,17 +392,17 @@ void CBagSoundObject::SetNumOfLoops(int n) {
 
 int CBagSoundObject::getProperty(const CBofString &sProp) {
 	if (!sProp.Find("VOLUME")) {
-		return GetVolume();
+		return getVolume();
 
 	}
 
 	if (!sProp.Find("QUEUED")) {
-		return IsQueued();
+		return isQueued();
 
 	}
 
 	if (!sProp.Find("PLAYING")) {
-		return IsPlaying();
+		return isPlaying();
 
 	}
 
@@ -415,7 +415,7 @@ int CBagSoundObject::getProperty(const CBofString &sProp) {
 
 void CBagSoundObject::setProperty(const CBofString &sProp, int nVal) {
 	if (!sProp.Find("VOLUME")) {
-		SetVolume(nVal);
+		setVolume(nVal);
 
 	} else if (!sProp.Find("PLAYING")) {
 

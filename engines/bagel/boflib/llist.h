@@ -109,10 +109,10 @@ public:
 	 * @return      Pointer to tail of list
 	*/
 	CLList *getTail();
-	CLList *GetPrev() const {
+	CLList *getPrev() const {
 		return _pPrev;
 	}
-	CLList *GetNext() const {
+	CLList *getNext() const {
 		return _pNext;
 	}
 

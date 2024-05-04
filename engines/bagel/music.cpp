@@ -51,10 +51,10 @@ void MusicPlayer::play(CBofSound *sound) {
 
 	MidiParser *parser = nullptr;
 	bool loaded = false;
-	if (sound->m_chType == SOUND_TYPE_XM) {
+	if (sound->_chType == SOUND_TYPE_XM) {
 		parser = MidiParser::createParser_XMIDI();
-		loaded = parser->loadMusic(sound->m_pFileBuf, sound->m_iFileSize);
-	} else if (sound->m_chType == SOUND_TYPE_QT) {
+		loaded = parser->loadMusic(sound->_pFileBuf, sound->_iFileSize);
+	} else if (sound->_chType == SOUND_TYPE_QT) {
 		parser = MidiParser::createParser_QT();
 		// HACK: loadMusic doesn't work with QT MIDI
 		loaded = ((MidiParser_QT *)parser)->loadFromContainerFile(sound->_szFileName);
@@ -75,7 +75,7 @@ void MusicPlayer::play(CBofSound *sound) {
 		// TODO: Set channel volume
 		syncVolume();
 
-		_isLooping = (sound->m_wLoops == 0);
+		_isLooping = (sound->_wLoops == 0);
 		_isPlaying = true;
 		_sound = sound;
 	} else {

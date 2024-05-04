@@ -237,10 +237,10 @@ public:
 		return m_nFadeId;
 	}
 
-	const CBofString &GetPrevSDev() {
+	const CBofString &getPrevSDev() {
 		return m_sPrevSDev;
 	}
-	const CBofPoint GetPrevLoc() {
+	const CBofPoint getPrevLoc() {
 		return m_xPrevLocation;
 	}
 	void SetPrevSDev(const CBofString &str) {

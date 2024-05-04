@@ -102,7 +102,7 @@ const CBofString &CBagVar::GetValue() {
 		if (!m_sVarName.isEmpty() && !m_sVarName.Find(PREVSDEV_TOKEN)) {
 			CBofString CurrSDev;
 			if (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()) {
-				m_sVarValue = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->GetPrevSDev();
+				m_sVarValue = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->getPrevSDev();
 			}
 		}
 	}

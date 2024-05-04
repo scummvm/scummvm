@@ -77,20 +77,16 @@ public:
 	CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, const int nLoops = 1);
 	virtual ~CBofSound();
 
-	// Implementation
-	static void SetDrivePath(const char *pszDrivePath);
-	static void GetDrivePath(char *pszDrivePath);
-
-	bool MidiLoopPlaySegment(uint32 LoopBegin, uint32 LoopEnd = 0L, uint32 FirstPassBegin = 0L, uint32 TimeFmt = FMT_MILLISEC);
+	bool midiLoopPlaySegment(uint32 LoopBegin, uint32 LoopEnd = 0L, uint32 FirstPassBegin = 0L, uint32 TimeFmt = FMT_MILLISEC);
 	bool play(uint32 StartOfPlay = 0L, uint32 TimeFmtFlag = FMT_MILLISEC);
 	bool pause();
-	bool Resume();
+	bool resume();
 	void stop();
 
-	CBofSound *GetNext() {
+	CBofSound *getNext() {
 		return (CBofSound *)_pNext;
 	}
-	CBofSound *GetPrev() {
+	CBofSound *getPrev() {
 		return (CBofSound *)_pPrev;
 	}
 
@@ -99,125 +95,125 @@ public:
 	}
 
 	void setFlags(uint16 wFlags) {
-		m_wFlags = wFlags;
+		_wFlags = wFlags;
 	}
 	uint16 getFlags() {
-		return m_wFlags;
+		return _wFlags;
 	}
 
-	bool Playing() {
-		return IsPlaying();
+	bool playing() {
+		return isPlaying();
 	}
 
-	bool IsPlaying() {
-		return m_bPlaying;
+	bool isPlaying() {
+		return _bPlaying;
 	}
-	bool IsQueued() {
-		return m_bInQueue;
-	}
-
-	bool Paused() {
-		return m_bPaused;
+	bool isQueued() {
+		return _bInQueue;
 	}
 
-	void SetQSlot(int nSlot) {
-		m_iQSlot = nSlot;
-	}
-	int GetQSlot() {
-		return m_iQSlot;
+	bool paused() {
+		return _bPaused;
 	}
 
-	void SetVolume(int nVol);
-	int GetVolume() {
-		return m_nVol;
+	void setQSlot(int nSlot) {
+		_iQSlot = nSlot;
+	}
+	int getQSlot() {
+		return _iQSlot;
+	}
+
+	void setVolume(int nVol);
+	int getVolume() {
+		return _nVol;
 	}
 
 	static void initialize();
 	static void shutdown();
-	static void SetVolume(int MidiVolume, int WaveVolume);
-	static bool SoundAvailable();
-	static bool MidiAvailable();
-	static bool SoundVolumeAvailable() {
-		return m_bWaveVolume;
+	static void setVolume(int MidiVolume, int WaveVolume);
+	static bool soundAvailable();
+	static bool midiAvailable();
+	static bool soundVolumeAvailable() {
+		return _bWaveVolume;
 	}
-	static bool MidiVolumeAvailable() {
-		return m_bMidiVolume;
-	}
-
-	static bool SoundPlaying() {
-		return (m_nCount > 0) ? true : false;
+	static bool midiVolumeAvailable() {
+		return _bMidiVolume;
 	}
 
-	static bool WaveSoundPlaying();
-	static bool MidiSoundPlaying();
-	static bool SoundsPlayingNotOver();
+	static bool soundPlaying() {
+		return (_nCount > 0) ? true : false;
+	}
 
-	static void SetQVol(int nSlot, int nVol);
+	static bool waveSoundPlaying();
+	static bool midiSoundPlaying();
+	static bool soundsPlayingNotOver();
 
-	ErrorCode PlayWAV();
+	static void setQVol(int nSlot, int nVol);
 
-	static ErrorCode FlushQueue(int nSlot);
+	ErrorCode playWAV();
 
-	static void ResetQVolumes();
+	static ErrorCode flushQueue(int nSlot);
 
-	static bool PauseSounds();
-	static bool ResumeSounds();
-	static void StopSounds();
-	static void StopWaveSounds();
-	static void StopMidiSounds();
-	static void ClearSounds();
-	static void ClearWaveSounds();
-	static void ClearMidiSounds();
-	static void WaitSounds();
-	static void WaitWaveSounds();
-	static void WaitMidiSounds();
-	static bool HandleMessages();
+	static void resetQVolumes();
+
+	static bool pauseSounds();
+	static bool resumeSounds();
+	static void stopSounds();
+	static void stopWaveSounds();
+	static void stopMidiSounds();
+	static void clearSounds();
+	static void clearWaveSounds();
+	static void clearMidiSounds();
+	static void waitSounds();
+	static void waitWaveSounds();
+	static void waitMidiSounds();
+	static bool handleMessages();
 	static bool bofSleep(uint32 dwTime);
-	static void AudioTask();
-	static bool SoundsPlaying();
+	static void audioTask();
+	static bool soundsPlaying();
 
 private:
-	bool LoadSound();
-	bool ReleaseSound();
+	bool loadSound();
+	bool releaseSound();
 
 private:
 	char _szFileName[MAX_FNAME]; // Path spec for sound file
-	int8 m_chType = 0;            // Type of sound commands used
+	int8 _chType = 0;            // Type of sound commands used
 
-	uint16 m_wLoops = 0;     // Number of times to loop the sound (0xFFFF means infinite)
-	uint16 m_wFlags = 0;     // Flags for playing
-	bool m_bPaused = false;  // Whether its paused
-	bool m_bPlaying = false; // Whether its playing
+	uint16 _wLoops = 0;     // Number of times to loop the sound (0xFFFF means infinite)
+	uint16 _wFlags = 0;     // Flags for playing
+	bool _bPaused = false;  // Whether its paused
+	bool _bPlaying = false; // Whether its playing
 
-	bool m_bExtensionsUsed = false;
-	uint32 m_dwPlayStart = 0;
-	uint32 m_dwRePlayStart = 0;
-	uint32 m_dwRePlayEnd = 0;
-	Audio::SoundHandle m_handle;
-	byte *m_pFileBuf = nullptr;
-	uint32 m_iFileSize = 0;
+	bool _bExtensionsUsed = false;
+	uint32 _dwPlayStart = 0;
+	uint32 _dwRePlayStart = 0;
+	uint32 _dwRePlayEnd = 0;
+	Audio::SoundHandle _handle;
+	byte *_pFileBuf = nullptr;
+	uint32 _iFileSize = 0;
 
-	int m_iQSlot = 0;
-	bool m_bInQueue = false;
-	bool m_bStarted = false;
-	int m_nVol = 0;
+	int _iQSlot = 0;
+	bool _bInQueue = false;
+	bool _bStarted = false;
+	int _nVol = 0;
 
-	CBofWindow *m_pWnd = nullptr; // Parent window for messages
+	CBofWindow *_pWnd = nullptr; // Parent window for messages
 
-	static char m_szDrivePath[MAX_DIRPATH]; // Path spec to drive
-	static CBofSound *m_pSoundChain;        // First item in chain or nullptr
-	static int m_nCount;                    // Count of active sounds
-	static int m_nWavCount;                 // Number of wave sound devices
-	static int m_nMidiCount;                // Number of midi sound devices
-	static bool m_bSoundAvailable;          // Whether wave sound is available
-	static bool m_bMidiAvailable;           // Whether midi sound is available
-	static bool m_bWaveVolume;              // Whether wave volume can be set
-	static bool m_bMidiVolume;              // Whether midi volume can be set
+	static char _szDrivePath[MAX_DIRPATH]; // Path spec to drive
+	static CBofSound *_pSoundChain;        // First item in chain or nullptr
+	static int _nCount;                    // Count of active sounds
+	static int _nWavCount;                 // Number of wave sound devices
+	static int _nMidiCount;                // Number of midi sound devices
+	static bool _bsoundAvailable;          // Whether wave sound is available
+	static bool _bmidiAvailable;           // Whether midi sound is available
+	static bool _bWaveVolume;              // Whether wave volume can be set
+	static bool _bMidiVolume;              // Whether midi volume can be set
 	static CBofWindow *_pMainWnd;          // Window for message processing
-	static bool m_bInit;
+	static bool _bInit;
 
-	static int m_nSlotVol[NUM_QUEUES];
-	static CQueue *m_cQueue[NUM_QUEUES];
+	static int _nSlotVol[NUM_QUEUES];
+	static CQueue *_cQueue[NUM_QUEUES];
 };
 
 bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot = 0);

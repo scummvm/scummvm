@@ -520,11 +520,11 @@ void CBagOptWindow::onBofScrollBar(CBofObject *pObj, int nPos) {
 
 	if (pScroll == _pMidiVolumeScroll) {
 		_cSystemData._nMusicVolume = nPos;
-		CBofSound::SetVolume(_cSystemData._nMusicVolume, _cSystemData._nSoundVolume);
+		CBofSound::setVolume(_cSystemData._nMusicVolume, _cSystemData._nSoundVolume);
 
 	} else if (pScroll == _pWaveVolumeScroll) {
 		_cSystemData._nSoundVolume = nPos;
-		CBofSound::SetVolume(_cSystemData._nMusicVolume, _cSystemData._nSoundVolume);
+		CBofSound::setVolume(_cSystemData._nMusicVolume, _cSystemData._nSoundVolume);
 
 	} else if (pScroll == _pCorrectionScroll) {
 		_cSystemData._nCorrection = nPos;
@@ -568,7 +568,7 @@ void CBagOptWindow::saveOutNewSettings() {
 		}
 	}
 
-	CBofSound::SetVolume(_cSystemData._nMusicVolume, _cSystemData._nSoundVolume);
+	CBofSound::setVolume(_cSystemData._nMusicVolume, _cSystemData._nSoundVolume);
 	CBagPanWindow::SetPanSpeed(_cSystemData._nPanSpeed);
 
 	_bDirty = false;

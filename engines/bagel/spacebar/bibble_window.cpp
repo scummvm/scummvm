@@ -450,7 +450,7 @@ ErrorCode CBibbleWindow::detach() {
 		pVar->SetValue(_nNumCredits);
 	}
 
-	if (_pBkgSnd->IsPlaying()) {
+	if (_pBkgSnd->isPlaying()) {
 		_pBkgSnd->stop();
 	}
 	if (_pBkgSnd != nullptr) {
