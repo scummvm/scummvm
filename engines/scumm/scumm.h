@@ -1915,7 +1915,7 @@ protected:
 	void towns_updateGfx() {}
 	void towns_waitForScroll(int waitForDirection, int threshold = 0) {}
 	void towns_fillTopLayerRect(int x1, int y1, int x2, int y2, int col) {}
-	void towns_swapVirtScreenArea(VirtScreen *vs, int x, int y, int w, int h);
+	void towns_swapVirtScreenArea(VirtScreen *vs, int x, int y, int w, int h) {}
 #endif // DISABLE_TOWNS_DUAL_LAYER_MODE
 };
 
