@@ -34,7 +34,7 @@ CBagStorageDevBmp::CBagStorageDevBmp(CBofWindow *pParent, const CBofRect &xRect,
 
 	SetAssociateWnd(pParent);
 
-	SetVisible();       // This object is visible
+	setVisible();       // This object is visible
 }
 
 CBagStorageDevBmp::~CBagStorageDevBmp() {
@@ -94,7 +94,7 @@ ErrorCode CBagStorageDevBmp::KillWorkBmp() {
 
 ErrorCode CBagStorageDevBmp::loadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName, bool bAttach) {
 	setFileName(sWldName);
-	SetRefName(sWldName);
+	setRefName(sWldName);
 
 	return CBagStorageDev::loadFileFromStream(fpInput, sWldName, bAttach);
 }

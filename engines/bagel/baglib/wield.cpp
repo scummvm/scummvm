@@ -56,7 +56,7 @@ ErrorCode CBagWield::attach() {
 	for (int i = 0; i < GetObjectCount(); ++i) {
 		CBagObject *pObj = GetObjectByPos(i);
 
-		if (pObj->isActive() && (pObj->GetType() == BOFSPRITEOBJ || pObj->GetType() == BOFBMPOBJ)) {
+		if (pObj->isActive() && (pObj->getType() == BOFSPRITEOBJ || pObj->getType() == BOFBMPOBJ)) {
 			if (nObjects == 0) {
 				nObjects++;
 				activateLocalObject(pObj);
@@ -76,7 +76,7 @@ ErrorCode CBagWield::detach() {
 }
 
 bool CBagWield::onObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
-	CBofString sObjName = pObj->GetRefName();
+	CBofString sObjName = pObj->getRefName();
 
 	if (sObjName.isEmpty())
 		return false;
@@ -105,7 +105,7 @@ ErrorCode CBagWield::activateLocalObject(CBagObject *pObj) {
 
 			if (pPrevObj != nullptr) {
 				// Move current object to stash
-				SDEV_MANAGER->MoveObject("INV_WLD", GetName(), pPrevObj->GetRefName());
+				SDEV_MANAGER->MoveObject("INV_WLD", GetName(), pPrevObj->getRefName());
 
 			} else {
 				reportError(ERR_UNKNOWN, "Wielded Object has been lost");
@@ -120,7 +120,7 @@ ErrorCode CBagWield::activateLocalObject(CBagObject *pObj) {
 			CBagMenu::setUniversalObjectList(pObj->getMenuPtr()->GetObjectList());
 		}
 
-		if (pObj->GetType() == SPRITEOBJ) {
+		if (pObj->getType() == SPRITEOBJ) {
 			setCurrObj(pObj);
 			m_nObjects++;
 			CBagSpriteObject *pSpObj = (CBagSpriteObject *)pObj;
@@ -132,7 +132,7 @@ ErrorCode CBagWield::activateLocalObject(CBagObject *pObj) {
 		// on the You icon. (It's rectangle will appear empty)
 		CBofPoint cPos(2056, 2056);
 		pObj->setPosition(cPos);
-		pObj->SetFloating(false);
+		pObj->setFloating(false);
 
 		errCode = CBagStorageDev::activateLocalObject(pObj);
 	}
@@ -143,7 +143,7 @@ ErrorCode CBagWield::activateLocalObject(CBagObject *pObj) {
 ErrorCode CBagWield::deactivateLocalObject(CBagObject *pObj) {
 	if (m_nObjects == 1) {
 
-		if (pObj->GetType() == SPRITEOBJ) {
+		if (pObj->getType() == SPRITEOBJ) {
 			SetWieldCursor(-1);
 			m_nObjects--;
 		}
@@ -166,7 +166,7 @@ ErrorCode CBagWield::update(CBofBitmap *pBmp, CBofPoint /*cPoint*/, CBofRect * /
 		CBofBitmap *pYouIcon = getBackground();
 		if (pYouIcon != nullptr) {
 			pYouIcon->paint(pBmp, getPosition().x, getPosition().y, nullptr, DEFAULT_CHROMA_COLOR);
-			SetDirty(false);
+			setDirty(false);
 		}
 	}
 

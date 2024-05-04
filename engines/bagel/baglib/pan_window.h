@@ -235,7 +235,7 @@ public:
 		// Make sure we have a non-null pda
 		while (_pPDABmp && _pPDABmp->isActivating()) {
 			SetPreFilterPan(true);
-			_pPDABmp->SetDirty(true);
+			_pPDABmp->setDirty(true);
 			PaintScreen();
 		}
 	}

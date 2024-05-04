@@ -58,7 +58,7 @@ ErrorCode CBagInv::activateLocalObject(const CBofString &objectName) {
 			// it will need to let the pda update code know that
 			// it needs to get redrawn.
 			CBagCharacterObject::setPdaWand(wand);
-			pda->SetDirty(true);
+			pda->setDirty(true);
 		}
 	}
 
@@ -74,7 +74,7 @@ ErrorCode CBagInv::activateLocalObject(const CBofString &objectName) {
 				if (pMovie) {
 					if (pMovie->isAttached() == false) {
 						pMovie->attach();
-						pMovie->SetVisible();
+						pMovie->setVisible();
 					}
 
 					pMovie->runObject();

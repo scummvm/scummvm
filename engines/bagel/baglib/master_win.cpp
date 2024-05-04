@@ -1445,7 +1445,7 @@ void CBagMasterWin::fillSaveBuffer(ST_BAGEL_SAVE *saveBuf) {
 							Common::strcpy_s(saveBuf->m_stVarList[j].m_szValue, pVar->GetValue());
 						}
 
-						saveBuf->m_stVarList[j].m_nType = (uint16)pVar->GetType();
+						saveBuf->m_stVarList[j].m_nType = (uint16)pVar->getType();
 						saveBuf->m_stVarList[j].m_bGlobal = (byte)pVar->IsGlobal();
 						saveBuf->m_stVarList[j].m_bConstant = (byte)pVar->IsConstant();
 						saveBuf->m_stVarList[j].m_bReference = (byte)pVar->IsReference();
@@ -2035,7 +2035,7 @@ void CBagMasterWin::restoreActiveMessages(CBagStorageDevManager *sdevManager) {
 				int m = pSDev->GetObjectCount();
 				for (int j = 0; j < m; j++) {
 					CBagObject *pObj = pSDev->GetObjectByPos(j);
-					if (pObj != nullptr && pObj->IsMsgWaiting()) {
+					if (pObj != nullptr && pObj->isMsgWaiting()) {
 						pSDev->activateLocalObject(pObj);
 					}
 				}

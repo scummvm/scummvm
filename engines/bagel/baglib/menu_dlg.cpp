@@ -84,7 +84,7 @@ CBagObject *CBagMenu::onNewSpriteObject(const CBofString &) {
 
 	CBofPoint pt(0, _nY);
 	pObj->setPosition(pt);
-	pObj->SetTransparent(false);
+	pObj->setTransparent(false);
 
 	return pObj;
 }
@@ -113,7 +113,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 	CBofWindow *pParent = pWnd;
 	int nNumWieldChoices = 0;
 
-	if ((GetObjectList()->getCount() == 1) && (GetObjectList()->getTail()->getNodeItem()->GetType() == TEXTOBJ) && (((CBagTextObject *)GetObjectList()->getTail()->getNodeItem())->isCaption())) {
+	if ((GetObjectList()->getCount() == 1) && (GetObjectList()->getTail()->getNodeItem()->getType() == TEXTOBJ) && (((CBagTextObject *)GetObjectList()->getTail()->getNodeItem())->isCaption())) {
 		nBaseMenuLocX = 0;
 
 	} else if (nNumCalls == 1 && _pUniversalObjectList && _pUniversalObjectList != GetObjectList()) {
@@ -121,7 +121,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 			pObj = _pUniversalObjectList->getNodeItem(i);
 
-			if (pObj->IsLocal() && (!pObj->GetExpression() || pObj->GetExpression()->evaluate(pObj->IsNegative()))) {
+			if (pObj->isLocal() && (!pObj->getExpression() || pObj->getExpression()->evaluate(pObj->isNegative()))) {
 				// Only attach if not attached
 				if (pObj->isAttached() == false) {
 					pObj->attach();
@@ -129,11 +129,11 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 					// Otherwise, we need to re-calculate the size of the text object,
 					// since we are gonna trash is with our own values soon.
 
-				} else if (pObj->GetType() == TEXTOBJ) {
+				} else if (pObj->getType() == TEXTOBJ) {
 					((CBagTextObject *)pObj)->recalcTextRect(((CBagTextObject *)pObj)->isCaption());
 				}
 
-				if (!pObj->IsImmediateRun()) {
+				if (!pObj->isImmediateRun()) {
 					// Get the next menu items pos
 					objSize = pObj->getRect();
 
@@ -145,7 +145,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 					pObj->setPosition(menuLoc);
 					pObj->setHighlight(false);
 
-					if (!nMenuCount && (pObj->GetType() == TEXTOBJ)) {
+					if (!nMenuCount && (pObj->getType() == TEXTOBJ)) {
 						menuLoc.y += objSize.height();
 					} else {
 						menuLoc.x += objSize.width();
@@ -181,7 +181,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 		pObj = GetObjectList()->getNodeItem(i);
 
-		if (pObj->IsLocal() && (!pObj->GetExpression() || pObj->GetExpression()->evaluate(pObj->IsNegative()))) {
+		if (pObj->isLocal() && (!pObj->getExpression() || pObj->getExpression()->evaluate(pObj->isNegative()))) {
 			// Only attach if not attached
 			if (pObj->isAttached() == false) {
 				pObj->attach();
@@ -189,16 +189,16 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 				// Otherwise, we need to re-calculate the size of the text object,
 				// since we are gonna trash is with our own values soon.
 
-			} else if (pObj->GetType() == TEXTOBJ) {
+			} else if (pObj->getType() == TEXTOBJ) {
 				((CBagTextObject *)pObj)->recalcTextRect(((CBagTextObject *)pObj)->isCaption());
 			}
 
-			if (!pObj->IsImmediateRun()) {
+			if (!pObj->isImmediateRun()) {
 				// Get the next menu items pos
 				objSize = pObj->getRect();
 
 				// If it is a text object increment next position by its height
-				if (pObj->GetType() == TEXTOBJ) {
+				if (pObj->getType() == TEXTOBJ) {
 
 					if (tmpVal)
 						// If we have a value move text to next line
@@ -258,13 +258,13 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 					pObj->setPosition(menuLoc);
 					pObj->setHighlight(false);
 
-					if ((nObjectPal < 0) && ((pObj->GetType() == BMPOBJ) || (pObj->GetType() == SPRITEOBJ)))
+					if ((nObjectPal < 0) && ((pObj->getType() == BMPOBJ) || (pObj->getType() == SPRITEOBJ)))
 						nObjectPal = i;
 					menuLoc.x += objSize.width();
 					tmpVal = objSize.height();//save the obj height for use later if we get a text obj
 				}
 
-				if (pObj->IsNoMenu()) {
+				if (pObj->isNoMenu()) {
 					bNoMenu = true;
 				}
 
@@ -276,7 +276,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			} else {
 				nRunItems++;
 				pObj->runObject();
-				if (pObj->GetType() == LINKOBJ) {
+				if (pObj->getType() == LINKOBJ) {
 					g_bAAOk = false;
 				}
 			}
@@ -302,7 +302,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 		bool bMoved = false;
 		bool bCaption = false;
 		int nNumChars = 0;
-		if ((nNumItems == 1) && (xObjList.getTail()->getNodeItem()->GetType() == TEXTOBJ) && (((CBagTextObject *)xObjList.getTail()->getNodeItem())->isCaption())) {
+		if ((nNumItems == 1) && (xObjList.getTail()->getNodeItem()->getType() == TEXTOBJ) && (((CBagTextObject *)xObjList.getTail()->getNodeItem())->isCaption())) {
 			while (nNumWieldChoices-- != 0) {
 				pObj = xObjList.removeHead();
 				pObj->detach();
@@ -375,7 +375,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			for (int i = 0; i < xObjList.getCount(); i++) {
 				pObj = xObjList[i];
 
-				if (pObj->GetType() == TEXTOBJ) {
+				if (pObj->getType() == TEXTOBJ) {
 					int cx = tmpRect.size().cx - 1;
 					int cy = tmpRect.size().cy - 1;
 					if (!bCaption) {
@@ -633,7 +633,7 @@ void CBagMenuDlg::onMouseMove(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	if (pObj != nullptr) {
 
 		// Switch to that cursor
-		CBagMasterWin::setActiveCursor(pObj->GetOverCursor());
+		CBagMasterWin::setActiveCursor(pObj->getOverCursor());
 
 		if (pObj != GetLActiveObject()) {
 			if (pObj->getCallBack() || pObj->getMenuPtr()) {

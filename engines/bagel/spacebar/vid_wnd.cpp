@@ -305,7 +305,7 @@ const char *BuildVidDir(const char *pszFile) {
 
 
 void SBarVidBut::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *pInfo) {
-	switch (GetRefId()) {
+	switch (getRefId()) {
 
 	case VID_PLAY_BUT: {
 		SBarVidWnd *vidWnd = (SBarVidWnd *)pInfo;

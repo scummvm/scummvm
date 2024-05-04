@@ -147,8 +147,8 @@ ErrorCode SBZoomPda::attach() {
 			if (pSDev != nullptr) {
 				_mooWnd = (CBagStorageDevBmp *)pSDev;
 				_mooWnd->SetAssociateWnd(GetAssociateWnd());
-				_mooWnd->SetTransparent(false);
-				_mooWnd->SetVisible(false);
+				_mooWnd->setTransparent(false);
+				_mooWnd->setVisible(false);
 				rc = _mooWnd->attach();
 			}
 		} else {
@@ -162,8 +162,8 @@ ErrorCode SBZoomPda::attach() {
 				_invWnd = (CBagStorageDevBmp *)pSDev;
 				_invWnd->SetAssociateWnd(GetAssociateWnd());
 
-				_invWnd->SetTransparent(false);
-				_invWnd->SetVisible(false);
+				_invWnd->setTransparent(false);
+				_invWnd->setVisible(false);
 				rc = _invWnd->attach();
 			} else {
 				bofMessageBox("No PDA INVENTORY found", __FILE__);
@@ -180,8 +180,8 @@ ErrorCode SBZoomPda::attach() {
 				_mapWnd = (CBagStorageDevBmp *)pSDev;
 				_mapWnd->SetAssociateWnd(GetAssociateWnd());
 
-				_mapWnd->SetTransparent(false);
-				_mapWnd->SetVisible(false);
+				_mapWnd->setTransparent(false);
+				_mapWnd->setVisible(false);
 				rc = _mapWnd->attach();
 			} else {
 				bofMessageBox("No PDA MAP found", __FILE__);
@@ -198,8 +198,8 @@ ErrorCode SBZoomPda::attach() {
 				_logWnd = (CBagStorageDevBmp *)pSDev;
 				_logWnd->SetAssociateWnd(GetAssociateWnd());
 
-				_logWnd->SetTransparent(false);
-				_logWnd->SetVisible(false);
+				_logWnd->setTransparent(false);
+				_logWnd->setVisible(false);
 				rc = _logWnd->attach();
 			}
 		} else {

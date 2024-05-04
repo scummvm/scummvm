@@ -60,9 +60,9 @@ void CBagChatWnd::onMouseMove(uint32 flags, CBofPoint *pos, void *) {
 		while (currNode != nullptr) {
 			CBagObject *currNodeItem = currNode->getNodeItem();
 
-			if (currNodeItem->GetType() == TEXTOBJ) {
+			if (currNodeItem->getType() == TEXTOBJ) {
 				((CBagTextObject *)currNodeItem)->setColor(4);
-				currNodeItem->SetDirty(true);
+				currNodeItem->setDirty(true);
 
 				if (currNodeItem->isAttached() && currNodeItem->isInside(*pos)) {
 					((CBagTextObject *)currNodeItem)->setColor(8);

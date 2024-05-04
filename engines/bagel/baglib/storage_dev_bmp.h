@@ -62,7 +62,7 @@ public:
 	bool GetTransparent() {
 		return m_bTrans;
 	}
-	void SetTransparent(bool bTrans = true) {
+	void setTransparent(bool bTrans = true) {
 		m_bTrans = bTrans;
 	}
 
