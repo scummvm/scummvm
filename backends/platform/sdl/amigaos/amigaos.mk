@@ -62,9 +62,9 @@ endif
 	# AmigaOS installations, especially vanilla ones, won't have every
 	# mandatory shared library in place, let alone the correct versions.
 	# Extract and install compiled-in shared libraries to their own subdir.
-	$(CP) ${srcdir}/dists/amigaos/Ext_Inst_so.rexx .
-	rx Ext_Inst_so.rexx $(EXECUTABLE) $(AMIGAOSPATH)
-	rm -f Ext_Inst_so.rexx
+	$(CP) ${srcdir}/dists/amigaos/install_deps.rexx .
+	rx install_deps.rexx $(EXECUTABLE) $(AMIGAOSPATH)
+	rm -f install_deps.rexx
 endif
 ifdef DEBUG_BUILD
 	# Preserve all debug information on debug builds
