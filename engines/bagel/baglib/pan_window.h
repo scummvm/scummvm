@@ -154,7 +154,7 @@ public:
 		CRect r;
 		if (m_pSlideBitmap)
 			r = m_pSlideBitmap->GetCurrView();
-		return r.Size();
+		return r.size();
 	}
 	const CRect GetMaxView() {
 		return m_pSlideBitmap->GetMaxView();

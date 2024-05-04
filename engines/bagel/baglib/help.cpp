@@ -140,7 +140,7 @@ ErrorCode CBagHelp::attach() {
 		file.read(buffer, size);
 
 		CBofRect cRect;
-		cRect.SetRect(120, 100, 550, 348);
+		cRect.setRect(120, 100, 550, 348);
 
 		_textBox = new CBofTextBox(this, &cRect, buffer);
 		if (_textBox != nullptr) {

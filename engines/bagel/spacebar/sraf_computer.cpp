@@ -2688,12 +2688,12 @@ void SrafComputer::onListBuyerBids() {
 	CBofRect cDummyRect = calculateTextRect(this, &sStr, kBuyerBidsPointSize, FONT_MONO);
 
 	CBofPoint cStartPoint(cDummyRect.right, 0);
-	cAcceptBidRect.OffsetRect(cStartPoint);
+	cAcceptBidRect.offsetRect(cStartPoint);
 	cAcceptBidRect.bottom = 1000;
 
 	//  Based on the location of the mouse determine if we should check/uncheck
 	//  the "accept bid" field or present a bio on he who was checked.
-	if (cAcceptBidRect.PtInRect(cPoint)) {
+	if (cAcceptBidRect.ptInRect(cPoint)) {
 
 		// Negate the current value
 		g_stBuyerBids[index]._bAccept = !g_stBuyerBids[index]._bAccept;
@@ -2778,7 +2778,7 @@ void SrafComputer::onListDispatchTeam() {
 
 	// Check if we're in the left hand column, if we are, then determine
 	// if we're left of the list or in the list itself.
-	if (cMeetWithRect.PtInRect(cPoint)) {
+	if (cMeetWithRect.ptInRect(cPoint)) {
 		nElementIndex = _nSelection - 3;   // three header lines before data starts
 
 		bool        bDeleteAll = false;
@@ -2825,10 +2825,10 @@ void SrafComputer::onListDispatchTeam() {
 				if (nElementIndex >= NUM_OTHER_PARTYS)
 					break;
 
-				if (cMeetBio.PtInRect(cPoint)) {        // if so, bring up biography.
+				if (cMeetBio.ptInRect(cPoint)) {        // if so, bring up biography.
 					sStr = BuildSrafDir(g_stOtherPartys[nElementIndex]._pszOtherPartyBio);
 					displayTextScreen(sStr);
-				} else if (cMeetMember.PtInRect(cPoint)) {         // if so, put a checkmark in that column.
+				} else if (cMeetMember.ptInRect(cPoint)) {         // if so, put a checkmark in that column.
 					// Uncheck any member we already have checked, this is a singular operation
 					if ((nMeetMember = getMeetMember(nListToCheck)) != -1) {
 						g_stOtherPartys[nMeetMember]._bMeetWith = false;
@@ -2874,10 +2874,10 @@ void SrafComputer::onListDispatchTeam() {
 					break;
 				}
 
-				if (cMeetBio.PtInRect(cPoint)) {        // If so, bring up biography.
+				if (cMeetBio.ptInRect(cPoint)) {        // If so, bring up biography.
 					sStr = BuildSrafDir(g_stSellerNames[nElementIndex]._pszSellerBio);
 					displayTextScreen(sStr);
-				} else if (cMeetMember.PtInRect(cPoint)) {
+				} else if (cMeetMember.ptInRect(cPoint)) {
 					// If so, put a checkmark in that column.
 
 					// Uncheck any member we already have checked, this is a singular operation
@@ -2924,11 +2924,11 @@ void SrafComputer::onListDispatchTeam() {
 
 				// Account for those guys out on meetings that we have not displayed
 
-				if (cMeetBio.PtInRect(cPoint)) {
+				if (cMeetBio.ptInRect(cPoint)) {
 					// if so, bring up biography.
 					sStr = BuildSrafDir(g_stBuyerBids[nElementIndex]._pszBuyerBio);
 					displayTextScreen(sStr);
-				} else if (cMeetMember.PtInRect(cPoint)) {
+				} else if (cMeetMember.ptInRect(cPoint)) {
 					// if so, put a checkmark in that column.
 					// Uncheck any member we already have checked, this is a singular operation
 					if ((nMeetMember = getMeetMember(nListToCheck)) != -1) {
@@ -2973,7 +2973,7 @@ void SrafComputer::onListDispatchTeam() {
 	// Handle if we're in the right hand side of the screen.  We only care about
 	// two columns, the staff member names and the guys check boxes on the right.
 
-	if (cTeamMembersRect.PtInRect(cPoint)) {
+	if (cTeamMembersRect.ptInRect(cPoint)) {
 		nElementIndex = _nSelection - 2; // two header lines before data starts
 		if (nElementIndex >= 0 && nElementIndex < NUM_STAFFERS) {
 			CBofRect cStaffNames(cTeamMembersRect.left + kStandardIndentation * kBuyerBidsPointWidth,
@@ -2986,12 +2986,12 @@ void SrafComputer::onListDispatchTeam() {
 			                          cTeamMembersRect.bottom);
 
 			//  If in the staff names column, then show the biography
-			if (cStaffNames.PtInRect(cPoint)) {
+			if (cStaffNames.ptInRect(cPoint)) {
 				sStr = BuildSrafDir(g_staffers[nElementIndex]._pszStafferBio);
 				displayTextScreen(sStr);
 			} else {
 				// if in the "include on team" column, then handle appropriately
-				if (cStaffInclude.PtInRect(cPoint)) {
+				if (cStaffInclude.ptInRect(cPoint)) {
 					// Make sure that this dude is available
 					if (g_staffers[nElementIndex]._bAvailable) {
 						char cNewChar = ' ';
@@ -3590,7 +3590,7 @@ void SrafComputer::onListCodeWords() {
 	CBofRect        cCol2Rect = cCol1Rect;
 	CBofPoint       cStartPoint(cCol1Rect.right, 0);
 
-	cCol2Rect.OffsetRect(cStartPoint);
+	cCol2Rect.offsetRect(cStartPoint);
 
 	// Second bunch of code words start at column 45, create a dummy string and then
 	// start offsetting from there.
@@ -3599,11 +3599,11 @@ void SrafComputer::onListCodeWords() {
 	cStartPoint.x = cDummyRect.right;
 
 	CBofRect        cCol3Rect = cCol1Rect;
-	cCol3Rect.OffsetRect(cStartPoint);
+	cCol3Rect.offsetRect(cStartPoint);
 
 	CBofRect        cCol4Rect = cCol1Rect;
 	cStartPoint.x = cCol3Rect.right;
-	cCol4Rect.OffsetRect(cStartPoint);
+	cCol4Rect.offsetRect(cStartPoint);
 
 	// Extend each rectangle to the bottom of the screen.
 	cCol1Rect.bottom = cCol2Rect.bottom = cCol3Rect.bottom = cCol4Rect.bottom = 1000;
@@ -3615,16 +3615,16 @@ void SrafComputer::onListCodeWords() {
 	CBofPoint   cPoint = getPrevMouseDown();        // already in local coords
 
 	// Find the rect that it was in.
-	if (cCol1Rect.PtInRect(cPoint)) {
+	if (cCol1Rect.ptInRect(cPoint)) {
 		nWordGroup = 1;
 		pszWord = g_stCodeWords[nCodeWordLine]._pszCodeWord1;
-	} else if (cCol2Rect.PtInRect(cPoint)) {
+	} else if (cCol2Rect.ptInRect(cPoint)) {
 		nWordGroup = 2;
 		pszWord = g_stCodeWords[nCodeWordLine]._pszCodeWord2;
-	} else if (cCol3Rect.PtInRect(cPoint)) {
+	} else if (cCol3Rect.ptInRect(cPoint)) {
 		nWordGroup = 3;
 		pszWord = g_stCodeWords[nCodeWordLine]._pszCodeWord3;
-	} else if (cCol4Rect.PtInRect(cPoint)) {
+	} else if (cCol4Rect.ptInRect(cPoint)) {
 		nWordGroup = 4;
 		pszWord = g_stCodeWords[nCodeWordLine]._pszCodeWord4;
 	}
@@ -4612,7 +4612,7 @@ int SrafTextScreen::createTextScreen(CBofWindow *pParent) {
 	assert(_pOKButton != nullptr);
 
 	//  Create our text box.
-	cRect.SetRect(gCompDisplay.left, gCompDisplay.top, gCompDisplay.right, gCompDisplay.bottom);
+	cRect.setRect(gCompDisplay.left, gCompDisplay.top, gCompDisplay.right, gCompDisplay.bottom);
 
 	if ((_pTextBox = new CBofTextBox(this, &cRect, _text)) != nullptr) {
 		_pTextBox->setPageLength(24);

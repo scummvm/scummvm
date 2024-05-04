@@ -30,7 +30,7 @@ namespace Bagel {
 CBofStringTable::CBofStringTable(const char *pszFileName) : CBofFile(nullptr) {
 	assert(pszFileName != nullptr);
 
-	Load(pszFileName);
+	load(pszFileName);
 }
 
 CBofStringTable::~CBofStringTable() {
@@ -39,7 +39,7 @@ CBofStringTable::~CBofStringTable() {
 	release();
 }
 
-ErrorCode CBofStringTable::Load(const char *pszFileName) {
+ErrorCode CBofStringTable::load(const char *pszFileName) {
 	assert(isValidObject(this));
 
 	// Deallocate any previous data
@@ -48,21 +48,21 @@ ErrorCode CBofStringTable::Load(const char *pszFileName) {
 	// Open this string file
 	open(pszFileName);
 
-	m_lBufSize = getLength();
+	_lBufSize = getLength();
 
-	assert(m_lBufSize > 0);
+	assert(_lBufSize > 0);
 
 	// Allocate a buffer to hold entire file
-	if ((m_pBuf = (byte *)bofAlloc(m_lBufSize + 1)) != nullptr) {
-		bofMemSet(m_pBuf, 0, m_lBufSize + 1);
+	if ((_pBuf = (byte *)bofAlloc(_lBufSize + 1)) != nullptr) {
+		bofMemSet(_pBuf, 0, _lBufSize + 1);
 
 		// Read in entire file
-		read(m_pBuf, m_lBufSize);
+		read(_pBuf, _lBufSize);
 
-		BuildTable();
+		buildTable();
 
 	} else {
-		reportError(ERR_MEMORY, "Unable to allocate %ld bytes for String Table", m_lBufSize);
+		reportError(ERR_MEMORY, "Unable to allocate %ld bytes for String Table", _lBufSize);
 	}
 
 	// Don't need this file open anymore
@@ -74,18 +74,18 @@ ErrorCode CBofStringTable::Load(const char *pszFileName) {
 void CBofStringTable::release() {
 	assert(isValidObject(this));
 
-	KillTable();
+	killTable();
 
-	if (m_pBuf != nullptr) {
-		bofFree(m_pBuf);
-		m_pBuf = nullptr;
+	if (_pBuf != nullptr) {
+		bofFree(_pBuf);
+		_pBuf = nullptr;
 	}
 }
 
-void CBofStringTable::KillTable() {
+void CBofStringTable::killTable() {
 	assert(isValidObject(this));
 
-	CResString *pString = m_pStringTable;
+	CResString *pString = _pStringTable;
 	while (pString != nullptr) {
 		CResString *pNextString = (CResString *)pString->GetNext();
 		delete pString;
@@ -93,23 +93,23 @@ void CBofStringTable::KillTable() {
 		pString = pNextString;
 	}
 
-	m_pStringTable = nullptr;
+	_pStringTable = nullptr;
 }
 
-ErrorCode CBofStringTable::BuildTable() {
+ErrorCode CBofStringTable::buildTable() {
 	assert(isValidObject(this));
 
 	// Deallocate any previous table
-	KillTable();
+	killTable();
 
-	assert(m_pStringTable == nullptr);
-	assert(m_pBuf != nullptr);
+	assert(_pStringTable == nullptr);
+	assert(_pBuf != nullptr);
 
-	MemReplaceChar(m_pBuf, '\r', '\0', m_lBufSize);
-	MemReplaceChar(m_pBuf, '\n', '\0', m_lBufSize);
-	const byte *pBuf = m_pBuf;
+	MemReplaceChar(_pBuf, '\r', '\0', _lBufSize);
+	MemReplaceChar(_pBuf, '\n', '\0', _lBufSize);
+	const byte *pBuf = _pBuf;
 
-	while (pBuf < m_pBuf + m_lBufSize) {
+	while (pBuf < _pBuf + _lBufSize) {
 		int nId = atoi((const char *)pBuf);
 		pBuf = (const byte *)strchr((const char *)pBuf, '=');
 		pBuf++;
@@ -117,10 +117,10 @@ ErrorCode CBofStringTable::BuildTable() {
 		CResString *pString = new CResString(nId, (const char *)pBuf);
 		if (pString != nullptr) {
 			// Add this string to the table
-			if (m_pStringTable == nullptr) {
-				m_pStringTable = pString;
+			if (_pStringTable == nullptr) {
+				_pStringTable = pString;
 			} else {
-				m_pStringTable->addToTail(pString);
+				_pStringTable->addToTail(pString);
 			}
 		} else {
 			reportError(ERR_MEMORY, "Unable to allocate a CResString");
@@ -128,13 +128,13 @@ ErrorCode CBofStringTable::BuildTable() {
 		}
 
 		while (*pBuf++ != '\0') {
-			if (pBuf > m_pBuf + m_lBufSize)
+			if (pBuf > _pBuf + _lBufSize)
 				break;
 		}
 
 		while (*pBuf == '\0') {
 			pBuf++;
-			if (pBuf > m_pBuf + m_lBufSize)
+			if (pBuf > _pBuf + _lBufSize)
 				break;
 		}
 	}
@@ -142,15 +142,15 @@ ErrorCode CBofStringTable::BuildTable() {
 	return _errCode;
 }
 
-const char *CBofStringTable::GetString(int nId) {
+const char *CBofStringTable::getString(int nId) {
 	assert(isValidObject(this));
 
-	CResString *pCurString = m_pStringTable;
+	CResString *pCurString = _pStringTable;
 	const char *pszString = nullptr;
 
 	while (pCurString != nullptr) {
-		if (pCurString->m_nId == nId) {
-			pszString = (const char *)pCurString->m_pszString;
+		if (pCurString->_nId == nId) {
+			pszString = (const char *)pCurString->_pszString;
 			break;
 		}
 

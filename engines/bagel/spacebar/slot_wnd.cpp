@@ -697,7 +697,7 @@ void SBarSlotWnd::slideSlots() {
 			if (SrcRect.left < BmpRect.left)
 				SrcRect.left = BmpRect.left;
 
-			cRect.SetRect(DestRect.left, DestRect.top, DestRect.left + SrcRect.width() - 1, DestRect.top + SrcRect.height() - 1);
+			cRect.setRect(DestRect.left, DestRect.top, DestRect.left + SrcRect.width() - 1, DestRect.top + SrcRect.height() - 1);
 
 			pCurBmp->paintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
 		}
@@ -719,7 +719,7 @@ void SBarSlotWnd::slideSlots() {
 			if (SrcRect.top < BmpRect.top)
 				SrcRect.top = BmpRect.top;
 
-			cRect.SetRect(DestRect.left, DestRect.top, DestRect.left + SrcRect.width() - 1, DestRect.top + SrcRect.height() - 1);
+			cRect.setRect(DestRect.left, DestRect.top, DestRect.left + SrcRect.width() - 1, DestRect.top + SrcRect.height() - 1);
 			pCurBmp->paintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
 		}
 
@@ -741,7 +741,7 @@ void SBarSlotWnd::slideSlots() {
 			if (SrcRect.right > BmpRect.right)
 				SrcRect.right = BmpRect.right;
 
-			cRect.SetRect(DestRect.right - SrcRect.width() + 1, DestRect.top, DestRect.right, DestRect.top + SrcRect.height() - 1);
+			cRect.setRect(DestRect.right - SrcRect.width() + 1, DestRect.top, DestRect.right, DestRect.top + SrcRect.height() - 1);
 			pCurBmp->paintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
 		}
 		_pSlotSound->play();
@@ -762,7 +762,7 @@ void SBarSlotWnd::slideSlots() {
 			if (SrcRect.bottom > BmpRect.bottom)
 				SrcRect.bottom = BmpRect.bottom;
 
-			cRect.SetRect(DestRect.left, DestRect.bottom - SrcRect.height() + 1, DestRect.left + SrcRect.width() - 1, DestRect.bottom);
+			cRect.setRect(DestRect.left, DestRect.bottom - SrcRect.height() + 1, DestRect.left + SrcRect.width() - 1, DestRect.bottom);
 			pCurBmp->paintMaskBackdrop(this, &cRect, &SrcRect, nMaskClr);
 		}
 
@@ -815,7 +815,7 @@ void SBarSlotWnd::onTimer(uint32 /*nTimerId*/) {
 }
 
 void SBarSlotWnd::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
-	if (FixRect.PtInRect(*pPoint)) {
+	if (FixRect.ptInRect(*pPoint)) {
 		fixBet();
 		invalidateRect(&FixRect);
 	}

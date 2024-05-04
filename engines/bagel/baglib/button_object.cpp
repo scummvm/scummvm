@@ -57,8 +57,8 @@ ErrorCode CBagButtonObject::attach() {
 	}
 
 	if (_buttonType == BTN_VLEVER || _buttonType == BTN_HLEVER) {
-		_midPoint.x = getRect().TopLeft().x + (getRect().width() / 2);
-		_midPoint.y = getRect().TopLeft().y + (getRect().height() / 2);
+		_midPoint.x = getRect().topLeft().x + (getRect().width() / 2);
+		_midPoint.y = getRect().topLeft().y + (getRect().height() / 2);
 	}
 
 	if (GetSprite()->getCelCount() == 1 && _buttonType != BTN_SLIDER) {
@@ -215,7 +215,7 @@ bool CBagButtonObject::onMouseMove(uint32 /*nFlags*/, CBofPoint point, void *ext
 	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev());
 
 	if (_buttonType == BTN_SLIDER && _dragging) {
-		if (!_slideRect.IsRectEmpty()) {
+		if (!_slideRect.isRectEmpty()) {
 			if (pMainWin != nullptr) {
 				pMainWin->SetPreFilterPan(true);
 			}
@@ -250,7 +250,7 @@ bool CBagButtonObject::onMouseMove(uint32 /*nFlags*/, CBofPoint point, void *ext
 
 	if (_buttonType == BTN_PUSH) {
 		if (GetSprite() && (GetSprite()->getCelCount() > 1)) {
-			if (!this->getRect().PtInRect(point) &&
+			if (!this->getRect().ptInRect(point) &&
 			        _active && !_activeUp) {
 				_activeUp = true;
 			}

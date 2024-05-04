@@ -252,7 +252,7 @@ ErrorCode CBagSpriteObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, i
 }
 
 bool CBagSpriteObject::isInside(const CBofPoint &xPoint) {
-	if (m_xSprite && getRect().PtInRect(xPoint)) {
+	if (m_xSprite && getRect().ptInRect(xPoint)) {
 		if (IsTransparent()) {
 			int x = xPoint.x - getRect().left;
 			int y = xPoint.y - getRect().top;

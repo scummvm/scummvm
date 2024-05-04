@@ -49,8 +49,8 @@ public:
 	CBofRect getRect() {
 		return CBagStorageDev::getRect();
 	}
-	void SetRect(const CBofRect &xRect) {
-		CBagStorageDev::SetRect(xRect);
+	void setRect(const CBofRect &xRect) {
+		CBagStorageDev::setRect(xRect);
 	}
 	CBofPoint getPosition() {
 		return CBagStorageDev::getPosition();

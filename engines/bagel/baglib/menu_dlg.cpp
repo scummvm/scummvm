@@ -351,10 +351,10 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 			// If the menu would go off the screen, adjust it
 			while (tmpRect.top < wndRect.top) {
-				tmpRect.OffsetRect(0, (wndRect.top - tmpRect.top));
+				tmpRect.offsetRect(0, (wndRect.top - tmpRect.top));
 			}
 			while (tmpRect.bottom > wndRect.bottom) {
-				tmpRect.OffsetRect(0, (wndRect.bottom - tmpRect.bottom));
+				tmpRect.offsetRect(0, (wndRect.bottom - tmpRect.bottom));
 			}
 			while (tmpRect.left < wndRect.left) {
 				tmpRect.right += (wndRect.left - tmpRect.left);
@@ -376,8 +376,8 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 				pObj = xObjList[i];
 
 				if (pObj->GetType() == TEXTOBJ) {
-					int cx = tmpRect.Size().cx - 1;
-					int cy = tmpRect.Size().cy - 1;
+					int cx = tmpRect.size().cx - 1;
+					int cy = tmpRect.size().cy - 1;
 					if (!bCaption) {
 						cy = ((CBagTextObject *)pObj)->getSize().cy + 2;
 					}
@@ -405,11 +405,11 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 				if (!pPDA->isInside(cMouseDown)) {
 					CBofRect cPDARect = pPDA->getRect();
 
-					tmpRect.OffsetRect(0, (tmpRect.bottom > cPDARect.top ? cPDARect.top - tmpRect.bottom : 0));
+					tmpRect.offsetRect(0, (tmpRect.bottom > cPDARect.top ? cPDARect.top - tmpRect.bottom : 0));
 
 					// Make sure we didn't go too far
 					if (tmpRect.top < 0) {
-						tmpRect.OffsetRect(0, -tmpRect.top);
+						tmpRect.offsetRect(0, -tmpRect.top);
 					}
 				}
 			}
@@ -447,7 +447,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 					dlg.setTimer(TIMER_CLOSE_ID, m_nDelay + (80 * nNumChars));
 				}
 			} else {
-				dlg.move(tmpRect.TopLeft().x, tmpRect.TopLeft().y, true);
+				dlg.move(tmpRect.topLeft().x, tmpRect.topLeft().y, true);
 
 				// Need to re-save the background because there is a bug with moving
 				// the dialog box.
@@ -579,7 +579,7 @@ ErrorCode CBagMenuDlg::create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRec
 
 	if (!pRect) {
 		r = pWnd->getWindowRect();
-		r.OffsetRect(-r.left, -r.top);
+		r.offsetRect(-r.left, -r.top);
 		r.bottom = r.top + MENU_DFLT_HEIGHT;
 	} else {
 		r = *pRect;
@@ -589,7 +589,7 @@ ErrorCode CBagMenuDlg::create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRec
 
 	CBofBitmap *pBmp = new CBofBitmap(r.width(), r.height(), pPal);
 	if (pBmp != nullptr) {
-		r.OffsetRect(-r.left, -r.top);
+		r.offsetRect(-r.left, -r.top);
 		assert(pPal != nullptr);
 		pBmp->fillRect(&r, pPal->getNearestIndex(RGB(82, 82, 82)) /*RGB(0,0,0)*/);
 		pBmp->drawRect(&r, pPal->getNearestIndex(RGB(0, 0, 0)) /*RGB(0,0,0)*/);
@@ -609,8 +609,8 @@ void CBagMenuDlg::onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 
 		if (m_bMultipleDialogs) {
 			CBofRect r = getWindowRect();
-			r.OffsetRect(-r.left, -r.top);
-			if (r.PtInRect(*pPoint)) {
+			r.offsetRect(-r.left, -r.top);
+			if (r.ptInRect(*pPoint)) {
 				CBagStorageDevDlg::onLButtonUp(nFlags, pPoint);
 				m_pSelectedObject = GetLActiveObject();
 			}

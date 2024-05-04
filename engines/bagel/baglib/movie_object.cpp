@@ -176,7 +176,7 @@ bool CBagMovieObject::runObject() {
 				CBofRect r(160, 60, 480, 300);
 
 				// Offset the rect for the movies to compensate for all screen sizes
-				r.OffsetRect(((CBofWindow *)pMainWin)->getWindowRect().TopLeft());
+				r.offsetRect(((CBofWindow *)pMainWin)->getWindowRect().topLeft());
 
 				// If we have a movie playing in the zoom pda, then black out
 				// the background.  Examine movies will always play with a black background
@@ -211,7 +211,7 @@ bool CBagMovieObject::runObject() {
 				CBofRect r(80, 10, 80 + 480 - 1, 10 + 360 - 1);
 
 				// Offset the rect for the movies to compensate for all screen sizes
-				r.OffsetRect(((CBofWindow *)pMainWin)->getWindowRect().TopLeft());
+				r.offsetRect(((CBofWindow *)pMainWin)->getWindowRect().topLeft());
 
 				if (m_xDisplayType == DISP_TYPE::PDAMSG || m_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
 					// Pull up the PDA (if it exists)
@@ -250,7 +250,7 @@ bool CBagMovieObject::runObject() {
 				CBofPoint p = CBagObject::getPosition();
 
 				if (p.x != -1 && p.y != -1)
-					r.OffsetRect(p);
+					r.offsetRect(p);
 
 				if (isFiltered) {
 					if (bZoomed) {
@@ -316,7 +316,7 @@ bool CBagMovieObject::runObject() {
 						// If playing a PDA message while the PDA is zoomed
 						if (m_xDisplayType == DISP_TYPE::PDAMSG && bZoomed) {
 							// Then stretch it to fit into the PDA's viewscreen
-							r.SetRect(24, 47, 28 + 600 - 1, 47 + 302 - 1);
+							r.setRect(24, 47, 28 + 600 - 1, 47 + 302 - 1);
 							pMovie = new CBofMovie(CBofApp::getApp()->getMainWindow(), sFileName, &r, true);
 
 						} else {

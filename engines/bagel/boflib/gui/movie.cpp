@@ -343,7 +343,7 @@ void CBofMovie::onReSize(CBofSize *pSize) {
 
 bool CBofMovie::centerRect() {
 	CBofRect cBofRect = getParent()->getClientRect();
-	RECT rcParentRect = cBofRect.GetWinRect();
+	RECT rcParentRect = cBofRect.getWinRect();
 	int ClientWidth = rcParentRect.right - rcParentRect.left;
 	int ClientHeight = rcParentRect.bottom - rcParentRect.top;
 

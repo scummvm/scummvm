@@ -78,9 +78,9 @@ ErrorCode CBagTextObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 
 	if ((pBmp != nullptr) && isAttached() && !(getText().isEmpty())) {
 
-		if (pBmp->getRect().PtInRect(pt)) {
+		if (pBmp->getRect().ptInRect(pt)) {
 
-			CBofRect r(pt, pSrcRect->Size());
+			CBofRect r(pt, pSrcRect->size());
 
 			int nPointSize = m_nPointSize;
 			int nFormat = FORMAT_CENTER_LEFT;
@@ -92,7 +92,7 @@ ErrorCode CBagTextObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 				byte c1 = 3;
 				byte c2 = 9;
 
-				cBevel.IntersectRect(pBmp->getRect(), r);
+				cBevel.intersectRect(pBmp->getRect(), r);
 
 				int left = cBevel.left;
 				int top = cBevel.top;
@@ -561,8 +561,8 @@ void CBagTextObject::RecalcTextRect(bool bTextFromFile) {
 		}
 	}
 
-	if (ViewRect.IsRectEmpty()) {
-		ViewRect.SetRect(80, 10, 480 + 80 - 1, 360 + 10 - 1);
+	if (ViewRect.isRectEmpty()) {
+		ViewRect.setRect(80, 10, 480 + 80 - 1, 360 + 10 - 1);
 	}
 
 	// Get the area spanned by the text (i.e. Get the pixel width and

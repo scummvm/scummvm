@@ -33,10 +33,10 @@ const CBofRect CBagPanBitmap::GetMaxView(CBofSize s) {
 		if (h > height())
 			h = height();
 
-		r.SetRect(0, 0, (int)(width() / MAXDIVVIEW - 2), h - 1);
+		r.setRect(0, 0, (int)(width() / MAXDIVVIEW - 2), h - 1);
 
 	} else {
-		r.SetRect(0, 0, width() - 1, height() - 1);
+		r.setRect(0, 0, width() - 1, height() - 1);
 	}
 
 	if (s.cx > 0 && r.right > s.cx) {
@@ -70,13 +70,13 @@ CBagPanBitmap::CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, con
 
 		pPalette = getPalette();
 
-		if (xViewSize.IsRectEmpty())
+		if (xViewSize.isRectEmpty())
 			m_xCurrView = xMaxViewSize;
 		else
 			m_xCurrView = xViewSize;
 
 		if (m_xCurrView.width() > xMaxViewSize.width()) {
-			m_xCurrView.SetRect(0, m_xCurrView.top, xMaxViewSize.width() - 1, m_xCurrView.bottom);
+			m_xCurrView.setRect(0, m_xCurrView.top, xMaxViewSize.width() - 1, m_xCurrView.bottom);
 		}
 
 		m_xRotateRate.x = (nW - m_xCurrView.width()) / 64 + 1;
@@ -120,13 +120,13 @@ CBagPanBitmap::CBagPanBitmap(int dx, int dy, CBofPalette *pPalette, const CBofRe
 
 		pPalette = getPalette();
 
-		if (xViewSize.IsRectEmpty())
+		if (xViewSize.isRectEmpty())
 			m_xCurrView = xMaxViewSize;
 		else
 			m_xCurrView = xViewSize;
 
 		if (m_xCurrView.width() > xMaxViewSize.width()) {
-			m_xCurrView.SetRect(0, m_xCurrView.top, xMaxViewSize.width() - 1, m_xCurrView.bottom);
+			m_xCurrView.setRect(0, m_xCurrView.top, xMaxViewSize.width() - 1, m_xCurrView.bottom);
 		}
 
 		m_xRotateRate.x = (nW - m_xCurrView.width()) / 64 + 1;
@@ -234,7 +234,7 @@ ErrorCode CBagPanBitmap::PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, 
 		for (int i = 0; i < dstRect.width(); i += nWidth) {
 			// Set the source
 			//
-			PanSrcRect.SetRect(srcRect.left + i,
+			PanSrcRect.setRect(srcRect.left + i,
 			                   nTop + (int)(*pSrcHeight * srcTop),
 			                   nRight + i,
 			                   nTop + (int)(*pSrcHeight * srcBottom));
@@ -251,7 +251,7 @@ ErrorCode CBagPanBitmap::PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, 
 
 		for (int i = 0; i < dstRect.width(); i += nWidth, stripNumber++) {
 			// Set the source
-			PanSrcRect.SetRect(srcRect.left + i,
+			PanSrcRect.setRect(srcRect.left + i,
 			                   STRIP_POINTS[tableSlot][stripNumber].top,
 			                   nRight + i,
 			                   STRIP_POINTS[tableSlot][stripNumber].bottom);
@@ -264,7 +264,7 @@ ErrorCode CBagPanBitmap::PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, 
 	} else { // nWidth > 4
 		for (int i = 0; i < dstRect.width(); i += nWidth) {
 			// Set the source
-			PanSrcRect.SetRect(srcRect.left + i,
+			PanSrcRect.setRect(srcRect.left + i,
 			                   nTop + (int)(*pSrcHeight * srcTop),
 			                   nRight + i,
 			                   nTop + (int)(*pSrcHeight * srcBottom));
@@ -422,22 +422,22 @@ void CBagPanBitmap::NormalizeViewSize() {
 
 		// The Base coords of CurrView must exist within the rectangle
 		while (m_xCurrView.left < 0)
-			m_xCurrView.OffsetRect(nW, 0);
+			m_xCurrView.offsetRect(nW, 0);
 		while (m_xCurrView.left >= nW)
-			m_xCurrView.OffsetRect(-1 * nW, 0);
+			m_xCurrView.offsetRect(-1 * nW, 0);
 	} else { // Not a panorama
 		// The Base coords of CurrView must exist within the rectangle
 		if (m_xCurrView.left < 0)
-			m_xCurrView.OffsetRect(-m_xCurrView.left, 0);
+			m_xCurrView.offsetRect(-m_xCurrView.left, 0);
 		else if (m_xCurrView.right > nW)
-			m_xCurrView.OffsetRect(nW - m_xCurrView.right, 0);
+			m_xCurrView.offsetRect(nW - m_xCurrView.right, 0);
 	}
 
 	// We never have up and down wrap around
 	if (m_xCurrView.top < 0)
-		m_xCurrView.OffsetRect(0, -m_xCurrView.top);
+		m_xCurrView.offsetRect(0, -m_xCurrView.top);
 	if (m_xCurrView.bottom >= nH)
-		m_xCurrView.OffsetRect(0, (nH - m_xCurrView.bottom) - 1);
+		m_xCurrView.offsetRect(0, (nH - m_xCurrView.bottom) - 1);
 }
 
 } // namespace Bagel

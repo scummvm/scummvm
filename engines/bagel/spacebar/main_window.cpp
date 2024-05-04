@@ -111,9 +111,9 @@ ErrorCode CMainWindow::attach() {
 
 	// Assume we will use the view we had last time.
 	CBofRect rView;
-	rView.SetRect(_cLastLoc.x, _cLastLoc.y, _cLastLoc.x - 1, _cLastLoc.y - 1);
+	rView.setRect(_cLastLoc.x, _cLastLoc.y, _cLastLoc.x - 1, _cLastLoc.y - 1);
 	if (g_engine->g_bUseInitLoc) {
-		rView.SetRect(g_engine->g_cInitLoc.x, g_engine->g_cInitLoc.y,
+		rView.setRect(g_engine->g_cInitLoc.x, g_engine->g_cInitLoc.y,
 			g_engine->g_cInitLoc.x - 1, g_engine->g_cInitLoc.y - 1);
 		g_engine->g_bUseInitLoc = false;
 	}
@@ -158,9 +158,9 @@ ErrorCode CMainWindow::attach() {
 				if (!_pWieldBmp->isAttached())
 					_pWieldBmp->attach();
 
-				if (_pWieldBmp->getRect().IsRectEmpty()) {
+				if (_pWieldBmp->getRect().isRectEmpty()) {
 					CBofRect r(0, 380, 0 + 100 - 1, 380 + 100 - 1);
-					_pWieldBmp->SetRect(r);
+					_pWieldBmp->setRect(r);
 					r = getClientRect();
 				}
 
@@ -184,7 +184,7 @@ ErrorCode CMainWindow::attach() {
 				_pPDABmp = (CBagPDA *)pSDev;
 				CBofRect r(0, 0, 300, 200);
 				_pPDABmp->SetAssociateWnd(this);
-				_pPDABmp->SetRect(r);
+				_pPDABmp->setRect(r);
 				r = getClientRect();
 				if (!_pPDABmp->isAttached())
 					_pPDABmp->attach();
@@ -295,7 +295,7 @@ ErrorCode CMainWindow::attach() {
 
 ErrorCode CMainWindow::detach() {
 	// If this was a closeup then save the leaving position
-	_cLastLoc = GetViewPort().TopLeft();
+	_cLastLoc = GetViewPort().topLeft();
 
 	CBagPanWindow::detach();
 
@@ -358,7 +358,7 @@ void CMainWindow::correctZzazzlePoint(CBofPoint *p) {
 		return;
 	}
 
-	if (!GetMovementRect().PtInRect(*p))
+	if (!GetMovementRect().ptInRect(*p))
 		return;
 
 	int dx = _xFilterRect->width();
@@ -380,8 +380,8 @@ void CMainWindow::correctZzazzlePoint(CBofPoint *p) {
 			j = 1;
 		}
 		for (; j < 3; ++j) {
-			r.SetRect(x, y, x + dx, y + dy);
-			if (r.PtInRect(*p)) {
+			r.setRect(x, y, x + dx, y + dy);
+			if (r.ptInRect(*p)) {
 				p->x = _xFilterRect->left + (p->x - r.left) * 3;
 				p->y = _xFilterRect->top + (p->y - r.top) * 3;
 				return;

@@ -377,7 +377,7 @@ bool CBagFMovie::setFrame(uint32 frameNum) {
 
 bool CBagFMovie::centerRect() {
 	CBofRect clientRect = getParent()->getClientRect();
-	RECT parentRect = clientRect.GetWinRect();
+	RECT parentRect = clientRect.getWinRect();
 	int clientWidth = parentRect.right - parentRect.left;
 	int clientHeight = parentRect.bottom - parentRect.top;
 

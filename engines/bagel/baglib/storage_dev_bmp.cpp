@@ -26,10 +26,10 @@ namespace Bagel {
 
 CBagStorageDevBmp::CBagStorageDevBmp(CBofWindow *pParent, const CBofRect &xRect, bool bTrans)
 	: CBagBmpObject() {
-	m_cSrcRect.SetRect(0, 0, 0, 0);
+	m_cSrcRect.setRect(0, 0, 0, 0);
 	m_bTrans = bTrans;
 	_xSDevType = SDEV_BMP;
-	SetRect(xRect);
+	setRect(xRect);
 	m_pWorkBmp = nullptr;
 
 	SetAssociateWnd(pParent);

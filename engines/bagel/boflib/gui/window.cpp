@@ -138,7 +138,7 @@ ErrorCode CBofWindow::create(const char *pszName, int x, int y, int nWidth, int 
 	strncpy(_szTitle, pszName, MAX_TITLE);
 
 	// Retain screen coordinates for this window
-	_cWindowRect.SetRect(x, y, x + nWidth - 1, y + nHeight - 1);
+	_cWindowRect.setRect(x, y, x + nWidth - 1, y + nHeight - 1);
 
 	// Calculate effective bounds
 	Common::Rect stRect(x, y, x + nWidth, y + nHeight);
@@ -156,7 +156,7 @@ ErrorCode CBofWindow::create(const char *pszName, int x, int y, int nWidth, int 
 		}
 
 		// Retain local coordinates (based on own window)
-		_cRect.SetRect(0, 0, _cWindowRect.width() - 1, _cWindowRect.height() - 1);
+		_cRect.setRect(0, 0, _cWindowRect.width() - 1, _cWindowRect.height() - 1);
 	}
 
 	return _errCode;
@@ -254,7 +254,7 @@ void CBofWindow::move(const int x, const int y, bool bRepaint) {
 	assert(isCreated());
 
 	// We now have a new position (in screen coordinates)
-	_cWindowRect.SetRect(x, y, x + _cRect.width() - 1, y + _cRect.height() - 1);
+	_cWindowRect.setRect(x, y, x + _cRect.width() - 1, y + _cRect.height() - 1);
 
 	// Recreate the surface at the new screen position
 	delete _surface;
@@ -268,7 +268,7 @@ void CBofWindow::reSize(CBofRect *pRect, bool bRepaint) {
 
 	// We now have a new position (in screen coordinates)
 	_cWindowRect = *pRect;
-	_cRect.SetRect(0, 0, _cWindowRect.width() - 1, _cWindowRect.height() - 1);
+	_cRect.setRect(0, 0, _cWindowRect.width() - 1, _cWindowRect.height() - 1);
 
 	// Recreate the surface at the new screen position
 	delete _surface;
@@ -629,7 +629,7 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 		for (uint i = 0; i < _children.size(); ++i) {
 			auto &child = *_children[i];
 			if (child.isVisible() && child.isEnabled() &&
-					child.getWindowRect().PtInRect(mousePos)) {
+					child.getWindowRect().ptInRect(mousePos)) {
 				child.handleEvent(event);
 				return;
 			}

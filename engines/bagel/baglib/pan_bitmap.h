@@ -85,7 +85,7 @@ public:
 		return m_xFOVAngle;
 	}
 	const CBofSize GetViewSize() {
-		return CBofPoint(m_xCurrView.Size());
+		return CBofPoint(m_xCurrView.size());
 	}
 	const CBofRect GetCurrView() {
 		return m_xCurrView;
@@ -111,13 +111,13 @@ public:
 	}
 	void OffsetCurrView(const CBofPoint &xOffset) {
 		CBofRect xCurrView = m_xCurrView;
-		xCurrView.OffsetRect(xOffset);
+		xCurrView.offsetRect(xOffset);
 		SetCurrView(xCurrView);
 	}
 	void SetFOV(double degrees, bool bUpdate = true) {
 		m_xFOVAngle = degrees / 114.5916558176;
 		if (bUpdate) {
-			// m_xCurrView.SetRect(0, m_xCurrView.top, width()*degrees/360, m_xCurrView.bottom);
+			// m_xCurrView.setRect(0, m_xCurrView.top, width()*degrees/360, m_xCurrView.bottom);
 			GenerateCosineTable();
 		}
 	}
@@ -138,7 +138,7 @@ public:
 	}
 	CBofSize SetUnityViewSize() {
 		int w = (int)(width() * m_xFOVAngle / 3.14159);
-		m_xCurrView.SetRect(0, m_xCurrView.top, w, m_xCurrView.bottom);
+		m_xCurrView.setRect(0, m_xCurrView.top, w, m_xCurrView.bottom);
 		GenerateCosineTable();
 		return GetViewSize();
 	}

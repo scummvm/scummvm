@@ -170,7 +170,7 @@ CBagStorageDev::~CBagStorageDev() {
 void CBagStorageDev::setPosition(const CBofPoint &pos) {
 	CBofRect OrigRect = getRect();                  // Get the destination (screen) rect
 
-	m_cDestRect.SetRect(pos.x, pos.y,
+	m_cDestRect.setRect(pos.x, pos.y,
 	                    pos.x + OrigRect.width() - 1,
 	                    pos.y + OrigRect.height() - 1);
 }
@@ -430,8 +430,8 @@ ErrorCode CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *
 			CBagObject *pObj = GetObjectByPos(i);
 			if (pObj->isAttached()) {
 				CBofRect xBmpRect = pObj->getRect();
-				CBofPoint pt = xBmpRect.TopLeft();
-				xBmpRect.OffsetRect(-pt.x, -pt.y);
+				CBofPoint pt = xBmpRect.topLeft();
+				xBmpRect.offsetRect(-pt.x, -pt.y);
 
 				if (pObj->isVisible()) {
 					if (pBmp) {
@@ -443,7 +443,7 @@ ErrorCode CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *
 				}
 
 				// if it is visible update it
-				if (pObj->getRect().PtInRect(*m_xCursorLocation)) {
+				if (pObj->getRect().ptInRect(*m_xCursorLocation)) {
 					pObj->OnMouseOver(0, *m_xCursorLocation, this);
 					bMouseOverObj = true;
 				}  // if on screen
@@ -734,56 +734,56 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 				bElseExprList.addToHead((bool) true);
 			}
 		} else if (!sWorkStr.Find("BMP")) {
-			GetStringFromStream(fpInput, sWorkStr, "=", true);
+			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewSpriteObject(sWorkStr);
 		} else if (!sWorkStr.Find("SPR")) {
-			GetStringFromStream(fpInput, sWorkStr, "=", true);
+			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewSpriteObject(sWorkStr);
 		} else if (!sWorkStr.Find("LNK")) {
-			GetStringFromStream(fpInput, sWorkStr, "=", true);
+			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = onNewLinkObject(sWorkStr);
 
 		} else if (!sWorkStr.Find("RPO")) {
 			// Allow residue printing objects
-			GetStringFromStream(fpInput, sWorkStr, "=", true);
+			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewRPObject(sWorkStr);
 
 		} else if (!sWorkStr.Find("EDO")) {
-			GetStringFromStream(fpInput, sWorkStr, "=", true);
+			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewEDObject(sWorkStr);
 
 		} else if (!sWorkStr.Find("DOS")) {
-			GetStringFromStream(fpInput, sWorkStr, "=", true);
+			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewDosObject(sWorkStr);
 		} else if (!sWorkStr.Find("SND")) {
-			GetStringFromStream(fpInput, sWorkStr, "=", true);
+			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewSoundObject(sWorkStr);
 		} else if (!sWorkStr.Find("BUT")) {
-			GetStringFromStream(fpInput, sWorkStr, "=", true);
+			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = onNewButtonObject(sWorkStr);
 		} else if (!sWorkStr.Find("CHR")) {
-			GetStringFromStream(fpInput, sWorkStr, "=", true);
+			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewCharacterObject(sWorkStr);
 		} else if (!sWorkStr.Find("TNG")) {
-			GetStringFromStream(fpInput, sWorkStr, "=", true);
+			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewThingObject(sWorkStr);
 		} else if (!sWorkStr.Find("ARE")) {
-			GetStringFromStream(fpInput, sWorkStr, "=", true);
+			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewAreaObject(sWorkStr);
 		} else if (!sWorkStr.Find("VAR")) {
-			GetStringFromStream(fpInput, sWorkStr, "=", true);
+			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewVariableObject(sWorkStr);
 		} else if (!sWorkStr.Find("TXT")) {
-			GetStringFromStream(fpInput, sWorkStr, "=", true);
+			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewTextObject(sWorkStr);
 		} else if (!sWorkStr.Find("MOVIE")) {
-			GetStringFromStream(fpInput, sWorkStr, "=", true);
+			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewMovieObject(sWorkStr);
 		} else if (!sWorkStr.Find("COMMAND")) {
-			GetStringFromStream(fpInput, sWorkStr, "=", true);
+			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewCommandObject(sWorkStr);
 		} else if (!sWorkStr.Find("EXPR")) {
-			GetStringFromStream(fpInput, sWorkStr, "=", true);
+			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewExpressionObject(sWorkStr);
 		} else if (!sWorkStr.Find("REM") || !sWorkStr.Find("//")) {
 			char s[256];
@@ -910,9 +910,9 @@ CBagObject *CBagStorageDev::GetObjectByType(const CBofString &sType, bool bActiv
 		CBagObject *pObj = GetObjectByPos(i);
 
 		if (bActiveOnly) {
-			if (pObj->IsActive() && !GetStringTypeOfObject(pObj->GetType()).Find(sType))
+			if (pObj->IsActive() && !getStringTypeOfObject(pObj->GetType()).Find(sType))
 				return pObj;
-		} else if (!GetStringTypeOfObject(pObj->GetType()).Find(sType))
+		} else if (!getStringTypeOfObject(pObj->GetType()).Find(sType))
 			return pObj;
 	}
 
@@ -1798,7 +1798,7 @@ void CBagStorageDevDlg::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) 
 }
 
 void CBagStorageDevDlg::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
-	if (CBofDialog::getRect().PtInRect(*xPoint)) {
+	if (CBofDialog::getRect().ptInRect(*xPoint)) {
 		CBagStorageDev::onLButtonUp(nFlags, xPoint, GetAssociateWnd());
 		CBofDialog::onLButtonUp(nFlags, xPoint);
 	} else  {

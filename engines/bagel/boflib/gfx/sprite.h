@@ -176,7 +176,7 @@ public:
 	static bool updateDirtyRect(CBofBitmap *pBmp, CBofSprite *pSprite = nullptr);
 	static void addToDirtyRect(CBofRect *pRect);
 	static void clearDirtyRect() {
-		_cDirtyRect->SetRectEmpty();
+		_cDirtyRect->setRectEmpty();
 	}
 
 	static CBofRect *getDirtyRect() {

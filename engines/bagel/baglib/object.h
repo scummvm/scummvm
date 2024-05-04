@@ -78,7 +78,7 @@ enum BAG_OBJECT_PROPERTIES {
 class CBagMenu;
 class CBagStorageDev;
 
-CBofString GetStringTypeOfObject(BAG_OBJECT_TYPE n);
+CBofString getStringTypeOfObject(BAG_OBJECT_TYPE n);
 
 /**
  * CBofBagObject is an object that can be place within the slide window.
@@ -162,7 +162,7 @@ public:
 
 	// Object can be moved within a sceene
 	virtual bool isInside(const CBofPoint &xPoint) {
-		return getRect().PtInRect(xPoint);
+		return getRect().ptInRect(xPoint);
 	}
 
 	// Object can be moved within a sceene

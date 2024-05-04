@@ -35,10 +35,10 @@ CBagDossierObject::CBagDossierObject() {
 	m_xObjType = DOSSIEROBJ;
 
 	_dossierSetFl = false;
-	_indexRect.SetRect(0, 0, 0, 0);
+	_indexRect.setRect(0, 0, 0, 0);
 
 	// Keep track of the original text rect.
-	_dossierRect.SetRect(0, 0, 0, 0);
+	_dossierRect.setRect(0, 0, 0, 0);
 	_dosRectInitFl = false;
 
 	setNotActive(false);
@@ -271,7 +271,7 @@ CBofRect CBagDossierObject::getRect() {
 
 	if (_showIndexFl) {
 		rect = _indexRect;
-		rect.OffsetRect(pos);
+		rect.offsetRect(pos);
 	} else {
 		rect = _dossierRect;
 	}

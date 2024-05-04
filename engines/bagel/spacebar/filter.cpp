@@ -298,7 +298,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		// rectangle.
 
 		// Now intersect that rectangle with the bitmap's rectangle.
-		g_engine->viewRect.IntersectRect(pBmp->getRect(), g_engine->viewPortRect);
+		g_engine->viewRect.intersectRect(pBmp->getRect(), g_engine->viewPortRect);
 	}
 
 	if (g_pHudOn->GetNumValue() == 1) {
@@ -603,7 +603,7 @@ static bool TriFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		// rectangle.
 
 		// Now intersect that rectangle with the bitmap's rectangle.
-		g_engine->viewRect.IntersectRect(pBmp->getRect(), g_engine->viewPortRect);
+		g_engine->viewRect.intersectRect(pBmp->getRect(), g_engine->viewPortRect);
 	}
 
 	if (VAR_MANAGER->GetVariable("GLASSESON")->GetNumValue()) {
@@ -628,7 +628,7 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		// rectangle.
 
 		// Now intersect that rectangle with the bitmap's rectangle.
-		g_engine->viewRect.IntersectRect(pBmp->getRect(), g_engine->viewPortRect);
+		g_engine->viewRect.intersectRect(pBmp->getRect(), g_engine->viewPortRect);
 	}
 
 	zStr = "ZZAZZLVISION";
@@ -650,7 +650,7 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				pBmp->paint(pMiniBitmap, &srcRect, &dstRect);
 
 				CBofRect &filterRect = CMainWindow::getFilterRect();
-				filterRect.SetRect(g_engine->viewRect.left, g_engine->viewRect.top, g_engine->viewRect.left + dx, g_engine->viewRect.top + dy);
+				filterRect.setRect(g_engine->viewRect.left, g_engine->viewRect.top, g_engine->viewRect.left + dx, g_engine->viewRect.top + dy);
 
 				int j, x;
 				int y = g_engine->viewRect.top;
@@ -692,7 +692,7 @@ static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		// rectangle.
 
 		// Now intersect that rectangle with the bitmap's rectangle.
-		g_engine->viewRect.IntersectRect(pBmp->getRect(), g_engine->viewPortRect);
+		g_engine->viewRect.intersectRect(pBmp->getRect(), g_engine->viewPortRect);
 	}
 
 	hStr = "HALLUCINATE";
@@ -709,12 +709,12 @@ static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 		// Step through strips of bmp
 		for (int y = tempRect.top; y < tempRect.bottom; y += 4) {
-			srcRect.SetRect(0, y, tempRect.right - nShiftAmount, y + 4); // Get everything over one
-			dstRect.SetRect(g_engine->viewRect.left + nShiftAmount, g_engine->viewRect.top + y,
+			srcRect.setRect(0, y, tempRect.right - nShiftAmount, y + 4); // Get everything over one
+			dstRect.setRect(g_engine->viewRect.left + nShiftAmount, g_engine->viewRect.top + y,
 			                g_engine->viewRect.right, (g_engine->viewRect.top + y) + 4);
 			pTempBitmap->paint(pBmp, &dstRect, &srcRect);
-			srcRect.SetRect(tempRect.right - nShiftAmount, y, tempRect.right, y + 4);
-			dstRect.SetRect(g_engine->viewRect.left, g_engine->viewRect.top + y,
+			srcRect.setRect(tempRect.right - nShiftAmount, y, tempRect.right, y + 4);
+			dstRect.setRect(g_engine->viewRect.left, g_engine->viewRect.top + y,
 			                g_engine->viewRect.left + nShiftAmount, (g_engine->viewRect.top + y) + 4);
 			pTempBitmap->paint(pBmp, &dstRect, &srcRect);
 			// I'm sure there's some nerdy math formula that does
@@ -774,7 +774,7 @@ static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				// rectangle.
 
 				// Now intersect that rectangle with the bitmap's rectangle.
-				g_engine->viewRect.IntersectRect(pBmp->getRect(), g_engine->viewPortRect);
+				g_engine->viewRect.intersectRect(pBmp->getRect(), g_engine->viewPortRect);
 			}
 
 			// To give the illusion of a lightning bolt strike,
