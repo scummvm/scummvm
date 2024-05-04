@@ -104,7 +104,7 @@ ErrorCode CBagCharacterObject::attach() {
 		_binBufLen = cInputFile.GetLength();
 
 		if ((_binBuf = (char *)BofAlloc(_binBufLen + 1)) != nullptr) {
-			cInputFile.Read(_binBuf, _binBufLen);
+			cInputFile.read(_binBuf, _binBufLen);
 
 		} else {
 			ReportError(ERR_MEMORY);

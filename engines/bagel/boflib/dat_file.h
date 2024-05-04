@@ -48,20 +48,20 @@ namespace Bagel {
 
 struct HEADER_REC {
 public:
-	int32 m_lOffset;
-	int32 m_lLength;
-	uint32 m_lCrc;
-	uint32 m_lKey;
+	int32 _lOffset;
+	int32 _lLength;
+	uint32 _lCrc;
+	uint32 _lKey;
 
 	void synchronize(Common::Serializer &s);
 	static int size() { return 16; }
 };
 
 struct HEAD_INFO {
-	int32 m_lNumRecs;  // Number of records in this file
-	int32 m_lAddress;  // starting address of footer
-	uint32 m_lFlags;   // contains flags for this file
-	uint32 m_lFootCrc; // CRC of the footer
+	int32 _lNumRecs;  // Number of records in this file
+	int32 _lAddress;  // starting address of footer
+	uint32 _lFlags;   // contains flags for this file
+	uint32 _lFootCrc; // CRC of the footer
 
 	void synchronize(Common::Serializer &s);
 	static int size() { return 16; }
@@ -69,26 +69,26 @@ struct HEAD_INFO {
 
 class CBofDataFile : public CBofFile {
 private:
-	char m_szPassWord[MAX_PW_LEN];
-	int32 m_lHeaderLength = 0;
-	int32 m_lHeaderStart = 0;
-	int32 m_lNumRecs = 0;
-	HEADER_REC *m_pHeader = nullptr;
+	char _szPassWord[MAX_PW_LEN];
+	int32 _lHeaderLength = 0;
+	int32 _lHeaderStart = 0;
+	int32 _lNumRecs = 0;
+	HEADER_REC *_pHeader = nullptr;
 
-	bool m_bHeaderDirty;
+	bool _bHeaderDirty;
 
 protected:
 	/**
 	 * Read the header (actually a footer) from the data-file.
 	 * @return                  Error return code
 	 */
-	ErrorCode ReadHeader();
+	ErrorCode readHeader();
 
 	/**
 	 * Writes the header (actually a footer) to the data-file.
 	 * @return                  Error return code
 	 */
-	ErrorCode WriteHeader();
+	ErrorCode writeHeader();
 
 public:
 	/**
@@ -117,29 +117,29 @@ public:
 	 * @param pPassword         Password for encryption
 	 * @return                  Error return code
 	 */
-	ErrorCode SetFile(const char *pszFileName, uint32 lFlags = CDF_DEFAULT, const char *pPassword = nullptr);
+	ErrorCode setFile(const char *pszFileName, uint32 lFlags = CDF_DEFAULT, const char *pPassword = nullptr);
 
 	/**
 	 * Free memory used by this object
 	 * @return                  Error return code
 	 */
-	ErrorCode ReleaseFile();
+	ErrorCode releaseFile();
 
 	/**
 	 * Retrieves size of specified record.
 	 * @param lRecNum           Index of record to get size of
 	 * @return                  Size of specified record
 	 */
-	int32 GetRecSize(int32 lRecNum);
-	int32 GetNumberOfRecs() const {
-		return m_lNumRecs;
+	int32 getRecSize(int32 lRecNum);
+	int32 getNumberOfRecs() const {
+		return _lNumRecs;
 	}
 
 	/**
 	 * Retrieves size of the largest record.
 	 * @return                  Size of largest record in the data-file
 	 */
-	int32 GetMaxRecSize() const;
+	int32 getMaxRecSize() const;
 
 	/**
 	 * Opens an existing data-file, or creates a new one.
@@ -165,14 +165,14 @@ public:
 	 * @param pBuf      Buffer to store record
 	 * @return          Error return code
 	 */
-	ErrorCode ReadRecord(int32 lRecNum, void *pBuf);
+	ErrorCode readRecord(int32 lRecNum, void *pBuf);
 
 	/**
 	 * Read a set number of bytes from the beginning of a file,
 	 * don't bother with a CRC, but decrypt if necessary.  This is dependent upon
 	 * the decryption being based on a single byte ordering scheme.
 	 */
-	ErrorCode ReadFromFile(int32 lRecNum, void *pBuf, int32 lBytes);
+	ErrorCode readFromFile(int32 lRecNum, void *pBuf, int32 lBytes);
 
 	/**
 	 * Writes specified to data-file.
@@ -182,20 +182,20 @@ public:
 	 * @param bUpdateHeader     true if header is to be committed to disk
 	 * @return                  Error return code
 	 */
-	ErrorCode WriteRecord(int32 lRecNum, void *pBuf, int32 lRecSize = -1, bool bUpdateHeader = false, uint32 lKey = 0xFFFFFFFF);
+	ErrorCode writeRecord(int32 lRecNum, void *pBuf, int32 lRecSize = -1, bool bUpdateHeader = false, uint32 lKey = 0xFFFFFFFF);
 
 	/**
 	 * Verifies specified record in data-file.
 	 * @param lRecNum           Record number to verify
 	 * @return                  Error return code
 	 */
-	ErrorCode VerifyRecord(int32 lRecNum);
+	ErrorCode verifyRecord(int32 lRecNum);
 
 	/**
 	 * Verifies all records in this file
 	 * @return                  Error return code
 	 */
-	ErrorCode VerifyAllRecords();
+	ErrorCode verifyAllRecords();
 
 	/**
 	 * Adds a new record to the data-file.
@@ -205,7 +205,7 @@ public:
 	 * @param key               Key
 	 * @return                  Error return code
 	 */
-	ErrorCode AddRecord(void *pBuf, int32 lRecSize, bool bUpdateHeader = false, uint32 lKey = 0xFFFFFFFF);
+	ErrorCode addRecord(void *pBuf, int32 lRecSize, bool bUpdateHeader = false, uint32 lKey = 0xFFFFFFFF);
 
 	/**
 	 * Deletes specified record from data-file.
@@ -213,22 +213,22 @@ public:
 	 * @param bUpdateHeader     true if header is to be committed to disk
 	 * @return                  Error return code
 	 */
-	ErrorCode DeleteRecord(int32 lRecNum, bool bUpdateHeader = false);
+	ErrorCode deleteRecord(int32 lRecNum, bool bUpdateHeader = false);
 
 	/**
 	 * Finds record by it's key.
 	 * @param lKey              Key to search records with
 	 * @return                  Index of record matching key, or -1
 	 */
-	int32 FindRecord(uint32 lKey);
+	int32 findRecord(uint32 lKey);
 
 	/**
 	 * Sets encryption password
 	 * @param pszPassword       New password
 	 */
-	void SetPassword(const char *pszPassword);
-	const char *GetPassword() const {
-		return m_szPassWord;
+	void setPassword(const char *pszPassword);
+	const char *getPassword() const {
+		return _szPassWord;
 	}
 
 	/**
@@ -237,9 +237,9 @@ public:
 	 * @param lBytes        Number of bytes
 	 * @return              Error code
 	 */
-	ErrorCode Read(void *pDestBuf, int32 lBytes);
-	ErrorCode Read(HEADER_REC &rec);
-	ErrorCode Read(HEAD_INFO &rec);
+	ErrorCode read(void *pDestBuf, int32 lBytes);
+	ErrorCode read(HEADER_REC &rec);
+	ErrorCode read(HEAD_INFO &rec);
 
 	/**
 	 * Write to a currently open file
@@ -247,9 +247,9 @@ public:
 	 * @param lBytes        Number of bytes
 	 * @return              Error code
 	 */
-	ErrorCode Write(const void *pSrcBuf, int32 lBytes);
-	ErrorCode Write(HEADER_REC &rec);
-	ErrorCode Write(HEAD_INFO &rec);
+	ErrorCode write(const void *pSrcBuf, int32 lBytes);
+	ErrorCode write(HEADER_REC &rec);
+	ErrorCode write(HEAD_INFO &rec);
 };
 
 } // namespace Bagel

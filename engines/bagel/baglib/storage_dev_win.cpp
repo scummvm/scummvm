@@ -580,7 +580,7 @@ ErrorCode CBagStorageDev::loadFile(const CBofString &sWldName) {
 
 		CBofFile cFile;
 		cFile.open(sWldFileName);
-		cFile.Read(pBuf, nLength);
+		cFile.read(pBuf, nLength);
 		cFile.close();
 
 		CBagStorageDev::loadFileFromStream(fpInput, sWldFileName);
@@ -1447,7 +1447,7 @@ ErrorCode CBagStorageDevWnd::loadFile(const CBofString &sFile) {
 
 		CBofFile cFile;
 		cFile.open(sWldFile);
-		cFile.Read(pBuf, nLength);
+		cFile.read(pBuf, nLength);
 		cFile.close();
 
 		CBagStorageDev::loadFileFromStream(fpInput, sWldFile);
@@ -1723,7 +1723,7 @@ ErrorCode CBagStorageDevDlg::loadFile(const CBofString &sFile) {
 
 		CBofFile cFile;
 		cFile.open(sWldFile);
-		cFile.Read(pBuf, nLength);
+		cFile.read(pBuf, nLength);
 		cFile.close();
 
 		CBagStorageDev::loadFileFromStream(fpInput, sWldFile);

@@ -74,7 +74,7 @@ ErrorCode CBagMoo::SetPDAMovie(CBofString &s) {
 	Assert(m_pMovie != nullptr);
 
 	if (m_pMovie) {
-		m_pMovie->SetFileName(s);
+		m_pMovie->setFileName(s);
 
 		// Attach this bad baby...
 		ec = m_pMovie->attach();

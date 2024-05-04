@@ -57,9 +57,9 @@ void MusicPlayer::play(CBofSound *sound) {
 	} else if (sound->m_chType == SOUND_TYPE_QT) {
 		parser = MidiParser::createParser_QT();
 		// HACK: loadMusic doesn't work with QT MIDI
-		loaded = ((MidiParser_QT *)parser)->loadFromContainerFile(sound->m_szFileName);
+		loaded = ((MidiParser_QT *)parser)->loadFromContainerFile(sound->_szFileName);
 	} else {
-		warning("Invalid sound %s passed to MusicPlayer", sound->m_szFileName);
+		warning("Invalid sound %s passed to MusicPlayer", sound->_szFileName);
 		return;
 	}
 
@@ -79,7 +79,7 @@ void MusicPlayer::play(CBofSound *sound) {
 		_isPlaying = true;
 		_sound = sound;
 	} else {
-		warning("Failed to play %s", sound->m_szFileName);
+		warning("Failed to play %s", sound->_szFileName);
 		delete parser;
 	}
 }

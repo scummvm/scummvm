@@ -94,7 +94,7 @@ static const uint16 crc32tabHi[256] = {
 	0xb366, 0xc461, 0x5d68, 0x2a6f, 0xb40b, 0xc30c, 0x5a05, 0x2d02
 };
 
-uint32 CalculateCRC(const void *pBuffer, int32 lBufLen, uint32 lCrcValue) {
+uint32 calculateCRC(const void *pBuffer, int32 lBufLen, uint32 lCrcValue) {
 	Assert(pBuffer != nullptr);
 	Assert(lBufLen > 0);
 
@@ -111,7 +111,7 @@ uint32 CalculateCRC(const void *pBuffer, int32 lBufLen, uint32 lCrcValue) {
 	return lCrcValue;
 }
 
-uint32 CalculateCRC(const int32 *pBuffer, int32 lBufLen, uint32 lCrcValue) {
+uint32 calculateCRC(const int32 *pBuffer, int32 lBufLen, uint32 lCrcValue) {
 	Assert(pBuffer != nullptr);
 	Assert(lBufLen > 0);
 

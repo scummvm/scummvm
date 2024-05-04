@@ -96,8 +96,8 @@ bool Console::cmdLoad(int argc, const char **argv) {
 		char nameBuffer[MAX_SAVETITLE];
 		// No slot specified, so just list saves
 		for (int i = 0; i < count; ++i) {
-			if (saves.FindRecord(i) != -1) {
-				saves.ReadTitleOnly(i, nameBuffer);
+			if (saves.findRecord(i) != -1) {
+				saves.readTitleOnly(i, nameBuffer);
 				if (strlen(nameBuffer) > 0)
 					debugPrintf("%2d - %s\n", i, nameBuffer);
 			}
@@ -106,7 +106,7 @@ bool Console::cmdLoad(int argc, const char **argv) {
 		// Read in actual savegame
 		int slotNum = atoi(argv[1]);
 
-		if (saves.ReadSavedGame(slotNum) == ERR_NONE)
+		if (saves.readSavedGame(slotNum) == ERR_NONE)
 			return false;
 
 		debugPrintf("Could not read savegame.\n");

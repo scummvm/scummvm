@@ -454,7 +454,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 
 			CBofFile cFile;
 			cFile.open(sWldFileName);
-			cFile.Read(pBuf, nLength);
+			cFile.read(pBuf, nLength);
 			cFile.close();
 
 			CBagMasterWin::loadFileFromStream(fpInput, startWldName);
@@ -601,7 +601,7 @@ ErrorCode CBagMasterWin::loadGlobalVars(const CBofString &wldName) {
 
 				CBofFile cFile;
 				cFile.open(sWldFileName);
-				cFile.Read(pBuf, nLength);
+				cFile.read(pBuf, nLength);
 				cFile.close();
 
 				while (!fpInput.eof()) {

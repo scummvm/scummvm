@@ -108,7 +108,7 @@ ErrorCode SBarVidWnd::attach() {
 
 		_pMovie = new CBagCharacterObject;
 		if (_pMovie != nullptr) {
-			_pMovie->SetFileName(BuildVidDir("BRNL.SMK"));
+			_pMovie->setFileName(BuildVidDir("BRNL.SMK"));
 			_pMovie->setPosition(CBofPoint(209, 10));
 			_pMovie->attach();
 

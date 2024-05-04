@@ -31,11 +31,11 @@ namespace Bagel {
 #define CHUNK_SIZE 0x00007FFF
 
 CBofFile::CBofFile() {
-	m_szFileName[0] = '\0';
+	_szFileName[0] = '\0';
 }
 
 CBofFile::CBofFile(const char *pszFileName, uint32 lFlags) {
-	m_szFileName[0] = '\0';
+	_szFileName[0] = '\0';
 	Assert(pszFileName != nullptr);
 
 	// Open now?
@@ -59,22 +59,22 @@ ErrorCode CBofFile::create(const char *pszFileName, uint32 lFlags) {
 	// Can't create a read-only file
 	Assert(!(lFlags & CBF_READONLY));
 
-	m_lFlags = lFlags;
+	_lFlags = lFlags;
 
 	// Remember this files name
-	Common::strcpy_s(m_szFileName, pszFileName);
+	Common::strcpy_s(_szFileName, pszFileName);
 
 	// Create the file
 	Common::OutSaveFile *save = g_system->getSavefileManager()->openForSaving(pszFileName, false);
 	if (save != nullptr) {
 		_stream = new SaveReadWriteStream(save);
 
-		if (g_pDebugOptions != nullptr && g_pDebugOptions->m_bShowIO) {
-			LogInfo(BuildString("Creating file '%s'", m_szFileName));
+		if (g_pDebugOptions != nullptr && g_pDebugOptions->_bShowIO) {
+			LogInfo(BuildString("Creating file '%s'", _szFileName));
 		}
 
 	} else {
-		ReportError(ERR_FOPEN, "Unable to create %s", m_szFileName);
+		ReportError(ERR_FOPEN, "Unable to create %s", _szFileName);
 	}
 
 	return _errCode;
@@ -96,7 +96,7 @@ ErrorCode CBofFile::open(const char *pszFileName, uint32 lFlags) {
 	Assert(!((lFlags & CBF_READONLY) && (lFlags & CBF_CREATE)));
 
 	// Keep a copy of these flags
-	m_lFlags = lFlags;
+	_lFlags = lFlags;
 
 	if (_stream)
 		return _errCode;
@@ -107,7 +107,7 @@ ErrorCode CBofFile::open(const char *pszFileName, uint32 lFlags) {
 
 	} else {
 		// Remember this files' name
-		Common::strcpy_s(m_szFileName, pszFileName);
+		Common::strcpy_s(_szFileName, pszFileName);
 
 		if (lFlags & CBF_SAVEFILE) {
 			_stream = g_system->getSavefileManager()->openForLoading(pszFileName);
@@ -121,8 +121,8 @@ ErrorCode CBofFile::open(const char *pszFileName, uint32 lFlags) {
 			if (f->open(pszFileName)) {
 				_stream = f;
 
-				if (g_pDebugOptions != nullptr && g_pDebugOptions->m_bShowIO) {
-					LogInfo(BuildString("Opened file '%s'", m_szFileName));
+				if (g_pDebugOptions != nullptr && g_pDebugOptions->_bShowIO) {
+					LogInfo(BuildString("Opened file '%s'", _szFileName));
 				}
 			} else {
 				delete f;
@@ -138,8 +138,8 @@ void CBofFile::close() {
 	Assert(IsValidObject(this));
 
 	if (_stream != nullptr) {
-		if (g_pDebugOptions != nullptr && g_pDebugOptions->m_bShowIO) {
-			LogInfo(BuildString("Closed file '%s'", m_szFileName));
+		if (g_pDebugOptions != nullptr && g_pDebugOptions->_bShowIO) {
+			LogInfo(BuildString("Closed file '%s'", _szFileName));
 		}
 
 		delete _stream;
@@ -147,7 +147,7 @@ void CBofFile::close() {
 	}
 }
 
-ErrorCode CBofFile::Read(void *pDestBuf, int32 lBytes) {
+ErrorCode CBofFile::read(void *pDestBuf, int32 lBytes) {
 	Assert(IsValidObject(this));
 	Assert(pDestBuf != nullptr);
 	Assert(lBytes >= 0);
@@ -164,28 +164,28 @@ ErrorCode CBofFile::Read(void *pDestBuf, int32 lBytes) {
 				lBytes -= CHUNK_SIZE;
 
 				if ((int)rs->read(pBuf, nLength) != nLength) {
-					ReportError(ERR_FREAD, "Unable to read %d bytes from %s", nLength, m_szFileName);
+					ReportError(ERR_FREAD, "Unable to read %d bytes from %s", nLength, _szFileName);
 				}
 
 				pBuf += nLength;
 			}
 
 		} else {
-			error("Attempt to read from a file that is not open for reading: %s", m_szFileName);
+			error("Attempt to read from a file that is not open for reading: %s", _szFileName);
 		}
 	}
 
 	return _errCode;
 }
 
-ErrorCode CBofFile::Write(const void *pSrcBuf, int32 lBytes) {
+ErrorCode CBofFile::write(const void *pSrcBuf, int32 lBytes) {
 	Assert(IsValidObject(this));
 
 	Common::WriteStream *ws = dynamic_cast<Common::WriteStream *>(_stream);
 
 	if (ws != nullptr) {
 		// As long as this file is not set for readonly, then write the buffer
-		if (!(m_lFlags & CBF_READONLY)) {
+		if (!(_lFlags & CBF_READONLY)) {
 			const byte *pBuf = (const byte *)pSrcBuf;
 
 			while (lBytes > 0) {
@@ -193,7 +193,7 @@ ErrorCode CBofFile::Write(const void *pSrcBuf, int32 lBytes) {
 				lBytes -= CHUNK_SIZE;
 
 				if ((int)ws->write(pBuf, nLength) != nLength) {
-					ReportError(ERR_FWRITE, "Unable to write %d bytes to %s", nLength, m_szFileName);
+					ReportError(ERR_FWRITE, "Unable to write %d bytes to %s", nLength, _szFileName);
 				}
 
 				pBuf += nLength;
@@ -203,7 +203,7 @@ ErrorCode CBofFile::Write(const void *pSrcBuf, int32 lBytes) {
 			Commit();
 
 		} else {
-			LogWarning(BuildString("Attempted to write to the READONLY file '%s'", m_szFileName));
+			LogWarning(BuildString("Attempted to write to the READONLY file '%s'", _szFileName));
 		}
 
 	} else {

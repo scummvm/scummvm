@@ -137,7 +137,7 @@ ErrorCode CBagHelp::attach() {
 	uint32 size = file.GetLength();
 	char *buffer = (char *)BofCAlloc(size + 1, 1);
 	if (buffer != nullptr) {
-		file.Read(buffer, size);
+		file.read(buffer, size);
 
 		CBofRect cRect;
 		cRect.SetRect(120, 100, 550, 348);

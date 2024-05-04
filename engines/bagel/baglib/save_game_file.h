@@ -129,7 +129,7 @@ public:
 	CBagSaveGameFile(bool isSaving);
 
 	int32 GetNumSavedGames() const {
-		return GetNumberOfRecs();
+		return getNumberOfRecs();
 	}
 	int32 GetActualNumSaves();
 	bool AnySavedGames();
@@ -142,14 +142,14 @@ public:
 	/**
 	 * Restore a BAGEL saved game
 	 */
-	ErrorCode ReadSavedGame(int32 slotNum);
+	ErrorCode readSavedGame(int32 slotNum);
 
 	/**
 	 * Reads a BAGEL saved game title
 	 */
-	ErrorCode ReadTitle(int32 lSlot, ST_SAVEDGAME_HEADER *pSavedGame);
+	ErrorCode readTitle(int32 lSlot, ST_SAVEDGAME_HEADER *pSavedGame);
 
-	ErrorCode ReadTitleOnly(int32 lSlot, char *pGameTitle);
+	ErrorCode readTitleOnly(int32 lSlot, char *pGameTitle);
 };
 
 } // namespace Bagel

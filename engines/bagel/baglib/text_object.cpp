@@ -151,7 +151,7 @@ ErrorCode CBagTextObject::attach() {
 				char *pTextBuff = (char *)BofCAlloc(nFileLen + 1, 1);
 				if (pTextBuff != nullptr) {
 					// Read the text file into buffers
-					fpTextFile.Read(pTextBuff, nFileLen);
+					fpTextFile.read(pTextBuff, nFileLen);
 					fpTextFile.close();
 
 					*m_psText += pTextBuff;
@@ -235,7 +235,7 @@ void CBagTextObject::setText(const CBofString &s) {
 	if (m_psText) {
 		*m_psText = s;
 	} else {
-		SetFileName(s);
+		setFileName(s);
 	}
 
 	RecalcTextRect(!getFileName().Right(4).Find(".TXT") || !getFileName().Right(4).Find(".txt"));

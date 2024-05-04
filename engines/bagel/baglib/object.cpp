@@ -179,7 +179,7 @@ PARSE_CODES CBagObject::setInfo(CBagIfstream &istr) {
 			CBofString s(szLocalBuff, 256);
 			GetAlphaNumFromStream(istr, s);
 			MACROREPLACE(s);
-			SetFileName(s);
+			setFileName(s);
 			break;
 		}
 		//
