@@ -57,7 +57,7 @@ ErrorCode CBofStringTable::Load(const char *pszFileName) {
 		BofMemSet(m_pBuf, 0, m_lBufSize + 1);
 
 		// Read in entire file
-		Read(m_pBuf, m_lBufSize);
+		read(m_pBuf, m_lBufSize);
 
 		BuildTable();
 
@@ -158,7 +158,7 @@ const char *CBofStringTable::GetString(int nId) {
 	}
 
 	if (pCurString == nullptr) {
-		LogWarning(BuildString("Resource String %d not found in %s", nId, m_szFileName));
+		LogWarning(BuildString("Resource String %d not found in %s", nId, _szFileName));
 	}
 
 	return pszString;

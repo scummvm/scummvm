@@ -70,10 +70,10 @@ private:
 	 * @param pFile     Pointer to open file for reading
 	 * @param pszBuf    Buffer to fill with text read
 	 */
-	bool ReadLine(Common::SeekableReadStream *pFile, char *pszBuf);
+	bool readLine(Common::SeekableReadStream *pFile, char *pszBuf);
 
 protected:
-	char m_szFileName[MAX_FNAME];
+	char _szFileName[MAX_FNAME];
 	COption *m_pOptionList;
 	bool m_bDirty;
 
@@ -105,7 +105,7 @@ public:
 	ErrorCode LoadOptionFile(const char *pszFile);
 
 	const char *getFileName() const {
-		return ((const char *)m_szFileName);
+		return ((const char *)_szFileName);
 	}
 
 	/**
@@ -135,7 +135,7 @@ public:
 	 * @param nSize             Max length of stringValue buffer
 	 * @return                  Error return code
 	 */
-	ErrorCode ReadSetting(const char *section, const char *option, char *stringValue, const char *defaultValue, uint32 nSize);
+	ErrorCode readSetting(const char *section, const char *option, char *stringValue, const char *defaultValue, uint32 nSize);
 
 	/**
 	 * Reads value for the specified option
@@ -145,7 +145,7 @@ public:
 	 * @param defaultValue          Default value if not exists
 	 * @return                  Error return code
 	 */
-	ErrorCode ReadSetting(const char *section, const char *option, int *nValue, int defaultValue);
+	ErrorCode readSetting(const char *section, const char *option, int *nValue, int defaultValue);
 
 	/**
 	 * Reads value for the specified option
@@ -155,7 +155,7 @@ public:
 	 * @param defaultValue          Default value if not exists
 	 * @return                  Error return code
 	 */
-	ErrorCode ReadSetting(const char *section, const char *option, bool *boolValue, bool defaultValue);
+	ErrorCode readSetting(const char *section, const char *option, bool *boolValue, bool defaultValue);
 
 	/**
 	 * Loads current .INI options file

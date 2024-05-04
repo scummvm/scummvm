@@ -156,7 +156,7 @@ ErrorCode CBagCreditsDialog::loadNextTextFile() {
 		lSize = cFile.GetLength();
 		if ((_pszText = (char *)BofCAlloc(lSize + 1, 1)) != nullptr) {
 
-			cFile.Read(_pszText, lSize);
+			cFile.read(_pszText, lSize);
 
 			_pszNextLine = _pszText;
 			_pszEnd = _pszText + lSize;

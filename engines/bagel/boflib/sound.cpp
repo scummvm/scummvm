@@ -79,7 +79,7 @@ CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, c
 	m_wFlags = wFlags;                  // Flags for playing
 	m_bPaused = false;                  // Not suspended
 	m_bExtensionsUsed = false;          // No extended flags used.
-	m_szFileName[0] = '\0';
+	_szFileName[0] = '\0';
 
 	m_handle = {};
 	m_pFileBuf = nullptr;
@@ -114,7 +114,7 @@ CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, c
 
 		// Continue as long as this file exists
 		if (FileExists(szTempPath)) {
-			FileGetFullPath(m_szFileName, szTempPath);
+			FileGetFullPath(_szFileName, szTempPath);
 
 			if (!(m_wFlags & SOUND_QUEUE)) {
 				if (m_wFlags & SOUND_WAVE || m_wFlags & SOUND_MIX) {
@@ -127,7 +127,7 @@ CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, c
 			if (m_wFlags & SOUND_MIDI) {
 				StrReplaceStr(szTempPath, ".MID", ".MOV");
 				if (FileExists(szTempPath)) {
-					FileGetFullPath(m_szFileName, szTempPath);
+					FileGetFullPath(_szFileName, szTempPath);
 					m_chType = SOUND_TYPE_QT;
 				} else {
 					ReportError(ERR_FFIND, szTempPath);
@@ -746,7 +746,7 @@ bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot, bool bW
 
 bool CBofSound::LoadSound() {
 	Assert(IsValidObject(this));
-	Assert(m_szFileName[0] != '\0');
+	Assert(_szFileName[0] != '\0');
 
 	// Assume failure
 	bool bSuccess = false;
@@ -757,7 +757,7 @@ bool CBofSound::LoadSound() {
 
 		Common::File in;
 
-		if (in.open(m_szFileName)) {
+		if (in.open(_szFileName)) {
 			m_iFileSize = in.size();
 
 			m_pFileBuf = (byte *)malloc(m_iFileSize);

@@ -257,7 +257,7 @@ ErrorCode SBarComputer::readDrnkFile() {
 		return ERR_MEMORY;
 
 	// Read the text file into buffers
-	fpDrinkFile.Read(_pDrinkBuff, fpDrinkFile.GetLength());
+	fpDrinkFile.read(_pDrinkBuff, fpDrinkFile.GetLength());
 
 	// Get pointers indexing into Drink buffers
 	char *pPosInBuff = _pDrinkBuff;
@@ -331,7 +331,7 @@ ErrorCode SBarComputer::readIngFile() {
 		return ERR_MEMORY;
 
 	// Read the text file into buffers
-	fpIngFile.Read(_pIngBuff, fpIngFile.GetLength());
+	fpIngFile.read(_pIngBuff, fpIngFile.GetLength());
 
 	// Get pointers indexing into Ingredient buffers
 	char *pPosInBuff = _pIngBuff;

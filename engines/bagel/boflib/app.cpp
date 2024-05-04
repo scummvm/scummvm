@@ -67,7 +67,7 @@ void CBofApp::StartupCode() {
 	// Open the Boffo debug options file (BOFFO.INI)
 	g_pDebugOptions = new CBofDebugOptions(DEBUG_INI);
 	if (g_pDebugOptions != nullptr) {
-		g_pDebugOptions->ReadSetting("DebugOptions", "MainLoops", &_nIterations, DEFAULT_MAINLOOPS);
+		g_pDebugOptions->readSetting("DebugOptions", "MainLoops", &_nIterations, DEFAULT_MAINLOOPS);
 	}
 
 	//

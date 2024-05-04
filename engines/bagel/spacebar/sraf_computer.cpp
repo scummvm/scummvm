@@ -4185,7 +4185,7 @@ void SrafComputer::notifyBoss(CBofString &sSoundFile, int nStafferID) {         
 
 		if (nLength != 0 && (pszBuf = (char *)BofAlloc(nLength + 1)) != nullptr) {
 			BofMemSet(pszBuf, 0, nLength + 1);
-			fTxtFile.Read(pszBuf, nLength);
+			fTxtFile.read(pszBuf, nLength);
 
 			// Put it up on the screen
 			displayMessage(pszBuf);
@@ -4563,7 +4563,7 @@ SrafTextScreen::SrafTextScreen(const CBofString &str, bool isText) :
 
 		size_t len = file->GetLength();
 		char *tmp = new char[len + 1];
-		file->Read(tmp, len);
+		file->read(tmp, len);
 		tmp[len] = '\0';
 
 		_text = CBofString(tmp);

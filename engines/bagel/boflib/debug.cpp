@@ -39,12 +39,12 @@ CBofDebugOptions::CBofDebugOptions(const char *pszFileName) : CBofOptions(pszFil
 	ConfMan.registerDefault("MessageSpy", false);
 
 
-	ReadSetting("DebugOptions", "AbortsOn", &m_bAbortsOn, ConfMan.getBool("AbortsOn"));
-	ReadSetting("DebugOptions", "MessageBoxOn", &m_bMessageBoxOn, ConfMan.getBool("MessageBoxOn"));
-	ReadSetting("DebugOptions", "RandomOn", &m_bRandomOn, ConfMan.getBool("RandomOn"));
-	ReadSetting("DebugOptions", "DebugLevel", &m_nDebugLevel, ConfMan.getInt("DebugLevel"));
-	ReadSetting("DebugOptions", "ShowIO", &m_bShowIO, ConfMan.getBool("ShowIO"));
-	ReadSetting("DebugOptions", "MessageSpy", &m_bShowMessages, ConfMan.getBool("MessageSpy"));
+	readSetting("DebugOptions", "AbortsOn", &_bAbortsOn, ConfMan.getBool("AbortsOn"));
+	readSetting("DebugOptions", "MessageBoxOn", &_bMessageBoxOn, ConfMan.getBool("MessageBoxOn"));
+	readSetting("DebugOptions", "RandomOn", &_bRandomOn, ConfMan.getBool("RandomOn"));
+	readSetting("DebugOptions", "DebugLevel", &_nDebugLevel, ConfMan.getInt("DebugLevel"));
+	readSetting("DebugOptions", "ShowIO", &_bShowIO, ConfMan.getBool("ShowIO"));
+	readSetting("DebugOptions", "MessageSpy", &_bShowMessages, ConfMan.getBool("MessageSpy"));
 }
 
 void BofAssert(bool bExpression, int nLine, const char *pszSourceFile, const char *pszTimeStamp) {

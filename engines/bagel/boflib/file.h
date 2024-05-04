@@ -97,9 +97,9 @@ public:
 
 class CBofFile : public CBofObject, public CBofError {
 protected:
-	char m_szFileName[MAX_FNAME];
+	char _szFileName[MAX_FNAME];
 	Common::Stream *_stream = nullptr;
-	uint32 m_lFlags = CBF_DEFAULT;
+	uint32 _lFlags = CBF_DEFAULT;
 
 public:
 	/**
@@ -144,7 +144,7 @@ public:
 	 * @param lBytes        Number of bytes
 	 * @return              Error code
 	 */
-	ErrorCode Read(void *pDestBuf, int32 lBytes);
+	ErrorCode read(void *pDestBuf, int32 lBytes);
 
 	/**
 	 * Write to a currently open file
@@ -152,7 +152,7 @@ public:
 	 * @param lBytes        Number of bytes
 	 * @return              Error code
 	 */
-	ErrorCode Write(const void *pSrcBuf, int32 lBytes);
+	ErrorCode write(const void *pSrcBuf, int32 lBytes);
 
 	/**
 	 * Flushes I/O stream

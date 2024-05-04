@@ -34,8 +34,8 @@ namespace Bagel {
  * @param lCrcValue     Previous CRC value (if running CRC)
  * @return              New CRC value
  */
-extern uint32 CalculateCRC(const void *pBuffer, int32 lBufLen, uint32 lCrcValue = 0);
-extern uint32 CalculateCRC(const int32 *pBuffer, int32 lBufLen, uint32 lCrcValue = 0);
+extern uint32 calculateCRC(const void *pBuffer, int32 lBufLen, uint32 lCrcValue = 0);
+extern uint32 calculateCRC(const int32 *pBuffer, int32 lBufLen, uint32 lCrcValue = 0);
 
 } // namespace Bagel
 

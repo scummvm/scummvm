@@ -352,7 +352,7 @@ public:
 	virtual const CBofString &GetRefName();
 	virtual void SetRefName(const CBofString &s);
 
-	virtual void SetFileName(const CBofString &s) {
+	virtual void setFileName(const CBofString &s) {
 		m_sFileName = s;
 	}
 	virtual void setSize(const CBofSize &) {}

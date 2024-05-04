@@ -95,7 +95,7 @@ public:
 	}
 
 	char *getFileName() {
-		return &m_szFileName[0];
+		return &_szFileName[0];
 	}
 
 	void setFlags(uint16 wFlags) {
@@ -181,7 +181,7 @@ private:
 	bool ReleaseSound();
 
 private:
-	char m_szFileName[MAX_FNAME]; // Path spec for sound file
+	char _szFileName[MAX_FNAME]; // Path spec for sound file
 	int8 m_chType = 0;            // Type of sound commands used
 
 	uint16 m_wLoops = 0;     // Number of times to loop the sound (0xFFFF means infinite)

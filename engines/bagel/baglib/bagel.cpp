@@ -97,17 +97,17 @@ ErrorCode CBagel::setOption(const char *section, const char *option, int intValu
 
 ErrorCode CBagel::getOption(const char *section, const char *option, char *stringValue, const char *defaultValue, uint32 size) {
 	Assert(IsValidObject(this));
-	return ReadSetting(section, option, stringValue, defaultValue, size);
+	return readSetting(section, option, stringValue, defaultValue, size);
 }
 
 ErrorCode CBagel::getOption(const char *section, const char *option, int *intValue, int defaultValue) {
 	Assert(IsValidObject(this));
-	return ReadSetting(section, option, intValue, defaultValue);
+	return readSetting(section, option, intValue, defaultValue);
 }
 
 ErrorCode CBagel::getOption(const char *section, const char *option, bool *boolValue, int defaultValue) {
 	Assert(IsValidObject(this));
-	return ReadSetting(section, option, boolValue, defaultValue);
+	return readSetting(section, option, boolValue, defaultValue);
 }
 
 ErrorCode CBagel::initialize() {

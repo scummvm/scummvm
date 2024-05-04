@@ -38,12 +38,12 @@ public:
 	 */
 	CBofDebugOptions(const char *pszFileName);
 
-	int  m_nDebugLevel;
-	bool m_bAbortsOn;
-	bool m_bMessageBoxOn;
-	bool m_bRandomOn;
-	bool m_bShowIO;
-	bool m_bShowMessages;
+	int  _nDebugLevel;
+	bool _bAbortsOn;
+	bool _bMessageBoxOn;
+	bool _bRandomOn;
+	bool _bShowIO;
+	bool _bShowMessages;
 };
 
 extern CBofDebugOptions *g_pDebugOptions;

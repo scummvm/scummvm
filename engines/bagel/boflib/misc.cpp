@@ -125,7 +125,7 @@ void BofMemCopy(void *pDst, const void *pSrc, int32 lLength) {
 	}
 }
 
-bool ReadLine(Common::SeekableReadStream *fp, char *pszBuf) {
+bool readLine(Common::SeekableReadStream *fp, char *pszBuf) {
 	if (fp->eos())
 		return false;
 
