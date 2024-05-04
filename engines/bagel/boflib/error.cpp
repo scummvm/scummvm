@@ -49,8 +49,8 @@ const char *const g_errList[] = {
 
 // Static members
 //
-int CBofError::m_nErrorCount;
-ErrorCode CBofError::m_errGlobal;
+int CBofError::_nErrorCount;
+ErrorCode CBofError::_errGlobal;
 
 
 CBofError::CBofError() {
@@ -58,19 +58,19 @@ CBofError::CBofError() {
 }
 
 void CBofError::initialize() {
-	m_nErrorCount = 0;
-	m_errGlobal = ERR_NONE;
+	_nErrorCount = 0;
+	_errGlobal = ERR_NONE;
 }
 
-void CBofError::ReportError(ErrorCode errCode, const char *format, ...) {
+void CBofError::reportError(ErrorCode errCode, const char *format, ...) {
 	if ((_errCode = errCode) != ERR_NONE) {
 		Common::String buf;
 
 		// Set global last error
-		SetLastError(errCode);
+		setLastError(errCode);
 
 		// One more error
-		m_nErrorCount++;
+		_nErrorCount++;
 
 		// Don't parse the variable input if there isn't any
 		if (format != nullptr) {
@@ -82,7 +82,7 @@ void CBofError::ReportError(ErrorCode errCode, const char *format, ...) {
 		}
 
 		// Tell user about error, unless there were too many errors
-		if (m_nErrorCount < MAX_ERRORS)
+		if (_nErrorCount < MAX_ERRORS)
 			bofMessageBox(buf, g_errList[errCode]);
 
 		auto *console = g_engine->getDebugger();

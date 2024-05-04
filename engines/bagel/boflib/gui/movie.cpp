@@ -373,11 +373,11 @@ ErrorCode bofPlayMovie(CBofWindow *pParent, const char *pszMovieFile, CBofRect *
 	Assert(pszMovieFile != nullptr);
 
 	CBofMovie cMovie(pParent, pszMovieFile, pRect);
-	if (!cMovie.ErrorOccurred()) {
+	if (!cMovie.errorOccurred()) {
 		cMovie.play(false, true);
 	}
 
-	return cMovie.GetErrorCode();
+	return cMovie.getErrorCode();
 }
 
 } // namespace Bagel

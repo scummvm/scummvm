@@ -168,7 +168,7 @@ ErrorCode CMainWindow::attach() {
 				_pWieldBmp->SetVisible(true);
 
 			} else {
-				ReportError(ERR_UNKNOWN, "No Wield found");
+				reportError(ERR_UNKNOWN, "No Wield found");
 			}
 		}
 
@@ -203,7 +203,7 @@ ErrorCode CMainWindow::attach() {
 				_pPDABmp->SetVisible(true);
 
 			} else {
-				ReportError(ERR_UNKNOWN, "No PDA found");
+				reportError(ERR_UNKNOWN, "No PDA found");
 			}
 		}
 

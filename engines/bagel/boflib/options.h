@@ -94,7 +94,7 @@ public:
 	 * Updates current option list file
 	 * @return      Error return code
 	 */
-	ErrorCode Commit();
+	ErrorCode commit();
 
 	/**
 	 * Loads specified .INI options file

@@ -113,8 +113,8 @@ CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, c
 		StrReplaceStr(szTempPath, "\\\\", "\\");
 
 		// Continue as long as this file exists
-		if (FileExists(szTempPath)) {
-			FileGetFullPath(_szFileName, szTempPath);
+		if (fileExists(szTempPath)) {
+			fileGetFullPath(_szFileName, szTempPath);
 
 			if (!(m_wFlags & SOUND_QUEUE)) {
 				if (m_wFlags & SOUND_WAVE || m_wFlags & SOUND_MIX) {
@@ -126,14 +126,14 @@ CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, c
 			// Try both MIDI formats
 			if (m_wFlags & SOUND_MIDI) {
 				StrReplaceStr(szTempPath, ".MID", ".MOV");
-				if (FileExists(szTempPath)) {
-					FileGetFullPath(_szFileName, szTempPath);
+				if (fileExists(szTempPath)) {
+					fileGetFullPath(_szFileName, szTempPath);
 					m_chType = SOUND_TYPE_QT;
 				} else {
-					ReportError(ERR_FFIND, szTempPath);
+					reportError(ERR_FFIND, szTempPath);
 				}
 			} else {
-				ReportError(ERR_FFIND, szTempPath);
+				reportError(ERR_FFIND, szTempPath);
 			}
 		}
 	}
@@ -589,7 +589,7 @@ void CBofSound::WaitWaveSounds() {
 			pSound->stop();
 			pSound->m_bPlaying = false;
 
-			pSound->ReportError(ERR_UNKNOWN, "CBofSound::WaitWaveSounds() timeout!");
+			pSound->reportError(ERR_UNKNOWN, "CBofSound::WaitWaveSounds() timeout!");
 		}
 	}
 }
@@ -633,7 +633,7 @@ void CBofSound::WaitMidiSounds() {
 		if (g_system->getMillis() > dwTickCount) {
 			pSound->stop();
 
-			pSound->ReportError(ERR_UNKNOWN, "CBofSound::WaitMidiSounds() timeout");
+			pSound->reportError(ERR_UNKNOWN, "CBofSound::WaitMidiSounds() timeout");
 			break;
 		}
 	}
@@ -672,7 +672,7 @@ bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot) {
 	if (pszSoundFile != nullptr) {
 		nFlags |= SOUND_AUTODELETE;
 
-		if (!FileExists(pszSoundFile)) {
+		if (!fileExists(pszSoundFile)) {
 			LogError(BuildString("Warning: Sound File '%s' not found", pszSoundFile));
 			return false;
 		}
@@ -713,7 +713,7 @@ bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot, bool bW
 			nFlags |= SOUND_AUTODELETE;
 		}
 
-		if (!FileExists(pszSoundFile)) {
+		if (!fileExists(pszSoundFile)) {
 			LogError(BuildString("Warning: Sound File '%s' not found", pszSoundFile));
 			return false;
 		}
@@ -912,7 +912,7 @@ void CBofSound::AudioTask() {
 ErrorCode CBofSound::PlayWAV() {
 	Assert(IsValidObject(this));
 
-	if (!ErrorOccurred()) {
+	if (!errorOccurred()) {
 		// If it's not yet loaded, then load it now
 		if (m_pFileBuf == nullptr) {
 			LoadSound();
@@ -930,7 +930,7 @@ ErrorCode CBofSound::PlayWAV() {
 			Audio::AudioStream *audio = Audio::makeLoopingAudioStream(Audio::makeWAVStream(stream, DisposeAfterUse::YES), m_wLoops);
 
 			if (audio == nullptr) {
-				ReportError(ERR_UNKNOWN, "Could not allocate audio stream.");
+				reportError(ERR_UNKNOWN, "Could not allocate audio stream.");
 			}
 
 			g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &m_handle, audio, -1, VOLUME_SVM(m_nVol));

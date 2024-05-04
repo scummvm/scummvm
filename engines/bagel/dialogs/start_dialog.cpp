@@ -87,7 +87,7 @@ void CBagStartDialog::onInitDialog() {
 			_buttons[i]->show();
 
 		} else {
-			ReportError(ERR_MEMORY);
+			reportError(ERR_MEMORY);
 			break;
 		}
 	}

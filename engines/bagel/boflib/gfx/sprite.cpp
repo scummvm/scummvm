@@ -344,7 +344,7 @@ bool CBofSprite::paintSprite(CBofWindow *pWnd, const int x, const int y) {
 
 	updateDirtyRect(pWnd, this);
 
-	return !ErrorOccurred();
+	return !errorOccurred();
 }
 
 
@@ -357,7 +357,7 @@ bool CBofSprite::paintSprite(CBofBitmap *pBmp, const int x, const int y) {
 	batchPaint(x, y);
 	updateDirtyRect(pBmp, this);
 
-	return !ErrorOccurred();
+	return !errorOccurred();
 }
 
 
@@ -552,7 +552,7 @@ bool CBofSprite::eraseSprite(CBofWindow *pWnd) {
 	batchErase();
 	updateDirtyRect(pWnd);
 
-	return !ErrorOccurred();
+	return !errorOccurred();
 }
 
 

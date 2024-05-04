@@ -108,7 +108,7 @@ ErrorCode CBagWield::activateLocalObject(CBagObject *pObj) {
 				SDEV_MANAGER->MoveObject("INV_WLD", GetName(), pPrevObj->GetRefName());
 
 			} else {
-				ReportError(ERR_UNKNOWN, "Wielded Object has been lost");
+				reportError(ERR_UNKNOWN, "Wielded Object has been lost");
 			}
 
 			// There are no objects in wield

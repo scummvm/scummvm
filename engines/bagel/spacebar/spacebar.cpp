@@ -85,7 +85,7 @@ ErrorCode SpaceBarEngine::initialize() {
 
 	CBagel::initialize();
 
-	if (!ErrorOccurred()) {
+	if (!errorOccurred()) {
 		bool bShowLogo = true;
 
 		if ((_masterWin = new CSBarMasterWin()) != nullptr) {
@@ -99,7 +99,7 @@ ErrorCode SpaceBarEngine::initialize() {
 			if (pBmp != nullptr) {
 				pBmp->fillRect(nullptr, COLOR_BLACK);
 			} else {
-				ReportError(ERR_MEMORY, "Unable to allocate a CBofBitmap");
+				reportError(ERR_MEMORY, "Unable to allocate a CBofBitmap");
 			}
 
 			_masterWin->show();
@@ -163,7 +163,7 @@ ErrorCode SpaceBarEngine::initialize() {
 					MACROREPLACE(cString);
 
 					// Play the movie only if it exists
-					if (FileExists(cString.GetBuffer())) {
+					if (fileExists(cString.GetBuffer())) {
 						bofPlayMovie(_masterWin, cString.GetBuffer());
 						if (pBmp != nullptr) {
 							pBmp->paint(_masterWin, 0, 0);
@@ -174,7 +174,7 @@ ErrorCode SpaceBarEngine::initialize() {
 
 					cString = LOGOSMK2;
 					MACROREPLACE(cString);
-					if (FileExists(cString.GetBuffer())) {
+					if (fileExists(cString.GetBuffer())) {
 						bofPlayMovie(_masterWin, cString.GetBuffer());
 						if (pBmp != nullptr) {
 							pBmp->paint(_masterWin, 0, 0);
@@ -187,7 +187,7 @@ ErrorCode SpaceBarEngine::initialize() {
 					cString = (getMachineSpeed() < 100) ? LOGOSMK3EX : LOGOSMK3;
 					MACROREPLACE(cString);
 
-					if (FileExists(cString.GetBuffer())) {
+					if (fileExists(cString.GetBuffer())) {
 						bofPlayMovie(_masterWin, cString.GetBuffer());
 						if (pBmp != nullptr) {
 							pBmp->paint(_masterWin, 0, 0);
@@ -202,7 +202,7 @@ ErrorCode SpaceBarEngine::initialize() {
 			}
 
 		} else {
-			ReportError(ERR_MEMORY, "Unable to allocate the main SpaceBar Window");
+			reportError(ERR_MEMORY, "Unable to allocate the main SpaceBar Window");
 		}
 	}
 
@@ -253,7 +253,7 @@ Common::Error SpaceBarEngine::run() {
 	initialize();
 
 	// Run the app
-	if (!ErrorOccurred() && !shouldQuit() && _masterWin)
+	if (!errorOccurred() && !shouldQuit() && _masterWin)
 		runApp();
 
 	// shutdown

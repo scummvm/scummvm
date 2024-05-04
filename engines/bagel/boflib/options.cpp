@@ -109,7 +109,7 @@ ErrorCode CBofOptions::Load() {
 void CBofOptions::release() {
 	Assert(IsValidObject(this));
 
-	Commit();
+	commit();
 
 	// Release each item in the list
 	while (m_pOptionList != nullptr) {
@@ -120,7 +120,7 @@ void CBofOptions::release() {
 	}
 }
 
-ErrorCode CBofOptions::Commit() {
+ErrorCode CBofOptions::commit() {
 	Assert(IsValidObject(this));
 	ErrorCode errCode = ERR_NONE;
 

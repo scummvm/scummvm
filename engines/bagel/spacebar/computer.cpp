@@ -242,8 +242,8 @@ ErrorCode SBarComputer::readDrnkFile() {
 
 	// Open the text files
 	CBofFile fpDrinkFile(DrinkString);
-	if (fpDrinkFile.GetErrorCode() != ERR_NONE)
-		return fpDrinkFile.GetErrorCode();
+	if (fpDrinkFile.getErrorCode() != ERR_NONE)
+		return fpDrinkFile.getErrorCode();
 
 	// Check that buffers are null
 	if (_pDrinkBuff) {
@@ -252,16 +252,16 @@ ErrorCode SBarComputer::readDrnkFile() {
 	}
 
 	// Allocate the buffers
-	_pDrinkBuff = (char *)BofAlloc(fpDrinkFile.GetLength() + 1);
+	_pDrinkBuff = (char *)BofAlloc(fpDrinkFile.getLength() + 1);
 	if (_pDrinkBuff == nullptr)
 		return ERR_MEMORY;
 
 	// Read the text file into buffers
-	fpDrinkFile.read(_pDrinkBuff, fpDrinkFile.GetLength());
+	fpDrinkFile.read(_pDrinkBuff, fpDrinkFile.getLength());
 
 	// Get pointers indexing into Drink buffers
 	char *pPosInBuff = _pDrinkBuff;
-	while (pPosInBuff < _pDrinkBuff + fpDrinkFile.GetLength()) {
+	while (pPosInBuff < _pDrinkBuff + fpDrinkFile.getLength()) {
 		SBarCompItem *pCompItem = new SBarCompItem();
 		if (!pCompItem)
 			error("Couldn't allocate a new SBarCompItem");
@@ -297,7 +297,7 @@ ErrorCode SBarComputer::readDrnkFile() {
 		pPosInBuff++;   // Increment past it
 
 		// Search record delimiter from beginning of next
-		while ((pPosInBuff < _pDrinkBuff + fpDrinkFile.GetLength()) && (*pPosInBuff != '$'))
+		while ((pPosInBuff < _pDrinkBuff + fpDrinkFile.getLength()) && (*pPosInBuff != '$'))
 			pPosInBuff++;
 
 		pPosInBuff++;   // Increment past it
@@ -316,8 +316,8 @@ ErrorCode SBarComputer::readIngFile() {
 
 	// Open the text files
 	CBofFile fpIngFile(IngString);
-	if (fpIngFile.GetErrorCode() != ERR_NONE)
-		return fpIngFile.GetErrorCode();
+	if (fpIngFile.getErrorCode() != ERR_NONE)
+		return fpIngFile.getErrorCode();
 
 	// Check that buffers are null
 	if (_pIngBuff) {
@@ -326,16 +326,16 @@ ErrorCode SBarComputer::readIngFile() {
 	}
 
 	// Allocate the buffers
-	_pIngBuff = (char *)BofAlloc(fpIngFile.GetLength() + 1);
+	_pIngBuff = (char *)BofAlloc(fpIngFile.getLength() + 1);
 	if (_pIngBuff == nullptr)
 		return ERR_MEMORY;
 
 	// Read the text file into buffers
-	fpIngFile.read(_pIngBuff, fpIngFile.GetLength());
+	fpIngFile.read(_pIngBuff, fpIngFile.getLength());
 
 	// Get pointers indexing into Ingredient buffers
 	char *pPosInBuff = _pIngBuff;
-	while (pPosInBuff < _pIngBuff + fpIngFile.GetLength()) {
+	while (pPosInBuff < _pIngBuff + fpIngFile.getLength()) {
 		SBarCompItem *pCompItem = new SBarCompItem();
 		if (!pCompItem)
 			error("Couldn't allocate a new SBarCompItem");
@@ -362,7 +362,7 @@ ErrorCode SBarComputer::readIngFile() {
 		pPosInBuff++;   // Increment past it
 
 		// Search record delimiter from beginning of next
-		while ((pPosInBuff < _pIngBuff + fpIngFile.GetLength()) && (*pPosInBuff != '$'))
+		while ((pPosInBuff < _pIngBuff + fpIngFile.getLength()) && (*pPosInBuff != '$'))
 			pPosInBuff++;
 
 		pPosInBuff++;   // Increment past it

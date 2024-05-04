@@ -145,9 +145,9 @@ ErrorCode CBagTextObject::attach() {
 		if (m_psText != nullptr) {
 			CBofFile fpTextFile(getFileName());
 
-			if (!fpTextFile.ErrorOccurred()) {
+			if (!fpTextFile.errorOccurred()) {
 				// Allocate the buffers
-				uint32 nFileLen = fpTextFile.GetLength();
+				uint32 nFileLen = fpTextFile.getLength();
 				char *pTextBuff = (char *)BofCAlloc(nFileLen + 1, 1);
 				if (pTextBuff != nullptr) {
 					// Read the text file into buffers
@@ -168,11 +168,11 @@ ErrorCode CBagTextObject::attach() {
 					BofFree(pTextBuff); // Changed from delete.
 
 				} else {
-					ReportError(ERR_MEMORY);
+					reportError(ERR_MEMORY);
 				}
 
 			} else {
-				ReportError(ERR_MEMORY);
+				reportError(ERR_MEMORY);
 			}
 		}
 
@@ -198,7 +198,7 @@ ErrorCode CBagTextObject::attach() {
 			RecalcTextRect(false);
 
 		} else {
-			ReportError(ERR_MEMORY);
+			reportError(ERR_MEMORY);
 		}
 	}
 

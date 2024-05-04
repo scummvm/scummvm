@@ -131,7 +131,7 @@ SBarSlotWnd::SBarSlotWnd() : CBagStorageDevWnd() {
 void SBarSlotWnd::onPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
-	if (!ErrorOccurred()) {
+	if (!errorOccurred()) {
 		CBofBitmap *pBackBmp;
 
 		//Paint the storage device
@@ -177,7 +177,7 @@ ErrorCode  SBarSlotWnd::attach() {
 	if ((_pSlotSound = new CBofSound(this, BuildSlotDir(SLOTAUDIO), SOUND_MIX, 1)) != nullptr) {
 
 	} else {
-		ReportError(ERR_MEMORY, "Could not allocate a CBofSound");
+		reportError(ERR_MEMORY, "Could not allocate a CBofSound");
 	}
 
 
@@ -208,7 +208,7 @@ ErrorCode  SBarSlotWnd::attach() {
 			if ((_pLoseBmp = new CBofBitmap(BuildSlotDir("BGNV.BMP"), pPal)) != nullptr) {
 
 			} else {
-				ReportError(ERR_MEMORY);
+				reportError(ERR_MEMORY);
 			}
 		}
 
@@ -245,7 +245,7 @@ ErrorCode  SBarSlotWnd::attach() {
 			_pCredText->setWeight(TEXT_BOLD);
 			_pCredText->setText(BuildString("%d", _nCredit));
 		} else {
-			ReportError(ERR_MEMORY);
+			reportError(ERR_MEMORY);
 		}
 
 		// Setup the Bet text fields
@@ -263,7 +263,7 @@ ErrorCode  SBarSlotWnd::attach() {
 			_pBetText->setWeight(TEXT_BOLD);
 			_pBetText->setText(BuildString("%d", _nBet));
 		} else {
-			ReportError(ERR_MEMORY);
+			reportError(ERR_MEMORY);
 		}
 
 		// Setup the Odds text fields
@@ -281,7 +281,7 @@ ErrorCode  SBarSlotWnd::attach() {
 			_pOddsText->setWeight(TEXT_BOLD);
 			_pOddsText->setText("");
 		} else {
-			ReportError(ERR_MEMORY);
+			reportError(ERR_MEMORY);
 		}
 
 		show();
@@ -294,7 +294,7 @@ ErrorCode  SBarSlotWnd::attach() {
 	if (_pBkgSnd != nullptr) {
 		_pBkgSnd->play();
 	} else {
-		ReportError(ERR_MEMORY);
+		reportError(ERR_MEMORY);
 	}
 
 	CBofCursor::show();
@@ -553,7 +553,7 @@ void SBarSlotWnd::calcOutcome() {
 		if (_pWinSound != nullptr) {
 			_pWinSound->play();
 		} else {
-			ReportError(ERR_MEMORY);
+			reportError(ERR_MEMORY);
 		}
 
 		// Calc new credit
@@ -671,7 +671,7 @@ void SBarSlotWnd::setPayOff(int nPay1, int nPay2) {
 void SBarSlotWnd::slideSlots() {
 	Assert(IsValidObject(this));
 
-	if (!ErrorOccurred()) {
+	if (!errorOccurred()) {
 		int nIncrement = 30;	// Number of pixels to move
 		int nMaskClr = CBagel::getBagApp()->getChromaColor();
 
@@ -772,7 +772,7 @@ void SBarSlotWnd::slideSlots() {
 
 void SBarSlotWnd::updateText() {
 	Assert(IsValidObject(this));
-	if (ErrorOccurred())
+	if (errorOccurred())
 		return;
 
 	if (_nPayOff1 > 0 && _pOddsText != nullptr) {

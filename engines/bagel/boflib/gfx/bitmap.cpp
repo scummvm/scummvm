@@ -112,11 +112,11 @@ CBofBitmap::CBofBitmap(const char *pszFileName, CBofPalette *pPalette, bool bOwn
 	// Init the info needed to load a bitmap from disk
 	_pPalette = pPalette;
 
-	if (FileGetFullPath(_szFileName, pszFileName) != nullptr) {
+	if (fileGetFullPath(_szFileName, pszFileName) != nullptr) {
 		// Load this bitmap into the cache
 		load();
 	} else {
-		ReportError(ERR_FFIND, "Could not build full path to %s", pszFileName);
+		reportError(ERR_FFIND, "Could not build full path to %s", pszFileName);
 	}
 }
 
@@ -159,7 +159,7 @@ bool CBofBitmap::alloc() {
 		buildBitmap(_pPalette);
 	}
 
-	return !ErrorOccurred();
+	return !errorOccurred();
 }
 
 void CBofBitmap::free() {
@@ -212,7 +212,7 @@ ErrorCode CBofBitmap::loadBitmap(const char *pszFileName, CBofPalette *pPalette)
 			delete pFile;
 
 		} else {
-			ReportError(ERR_MEMORY, "Could not allocate a CBofFile for %s", pszFileName);
+			reportError(ERR_MEMORY, "Could not allocate a CBofFile for %s", pszFileName);
 		}
 	}
 
@@ -328,7 +328,7 @@ ErrorCode CBofBitmap::paint(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSrc
 	CBofRect cDestRect(0, 0, _nDX - 1, _nDY - 1), cSourceRect(0, 0, _nDX - 1, _nDY - 1);
 	CBofRect cClipRect;
 
-	if (!ErrorOccurred() && !pBmp->ErrorOccurred()) {
+	if (!errorOccurred() && !pBmp->errorOccurred()) {
 		if (pDstRect != nullptr) {
 			Assert((pDstRect->width() > 0) && (pDstRect->height() > 0));
 			cDestRect = *pDstRect;
@@ -390,7 +390,7 @@ ErrorCode CBofBitmap::paint1To1(CBofBitmap *pBmp) {
 	Assert(IsValidObject(this));
 	Assert(pBmp != nullptr);
 
-	if (!ErrorOccurred() && !pBmp->ErrorOccurred()) {
+	if (!errorOccurred() && !pBmp->errorOccurred()) {
 
 		lock();
 		pBmp->lock();
@@ -1019,7 +1019,7 @@ ErrorCode CBofBitmap::scrollUp(int nPixels, CBofRect *pRect) {
 				BofFree(pRowBuf);
 
 			} else {
-				ReportError(ERR_MEMORY, "Error: scrollUp - Could not allocate %ld bytes for row", dx);
+				reportError(ERR_MEMORY, "Error: scrollUp - Could not allocate %ld bytes for row", dx);
 			}
 		}
 		unlock();

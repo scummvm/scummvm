@@ -157,15 +157,15 @@ public:
 	/**
 	 * Flushes I/O stream
 	 */
-	void Commit();
+	void commit();
 
-	//static void CommitAll() { _flushall(); }
+	//static void commitAll() { _flushall(); }
 
 	/**
 	 * Seek to a specified location in the file
 	 * @return      Error code
 	 */
-	ErrorCode Seek(uint32 lPos) {
+	ErrorCode seek(uint32 lPos) {
 		return (setPosition(lPos));
 	}
 
@@ -173,7 +173,7 @@ public:
 	 * Sets the file pointer to the beginning of the file
 	 * @return      Error code
 	 */
-	ErrorCode SeekToBeginning() {
+	ErrorCode seekToBeginning() {
 		return (setPosition(0));
 	}
 
@@ -197,12 +197,12 @@ public:
 	/**
 	 * Set the length of a file
 	 */
-	ErrorCode SetLength(uint32 lNewLength);
+	ErrorCode setLength(uint32 lNewLength);
 
 	/**
 	 * Get the length of a file
 	 */
-	uint32 GetLength();
+	uint32 getLength();
 
 	operator Common::SeekableReadStream *() const {
 		return dynamic_cast<Common::SeekableReadStream *>(_stream);

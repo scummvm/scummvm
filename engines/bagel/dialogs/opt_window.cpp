@@ -247,7 +247,7 @@ ErrorCode CBagOptWindow::attach() {
 			_pButtons[i]->create(g_stButtons[i]._pszName, g_stButtons[i]._nLeft, g_stButtons[i]._nTop, g_stButtons[i]._nWidth, g_stButtons[i]._nHeight, this, g_stButtons[i]._nID);
 			_pButtons[i]->show();
 		} else {
-			ReportError(ERR_MEMORY);
+			reportError(ERR_MEMORY);
 			break;
 		}
 	}
@@ -277,7 +277,7 @@ ErrorCode CBagOptWindow::attach() {
 		_pMidiVolumeScroll->show();
 
 	} else {
-		ReportError(ERR_MEMORY, "Could not allocate the Midi Volume Scroll Bar");
+		reportError(ERR_MEMORY, "Could not allocate the Midi Volume Scroll Bar");
 	}
 
 	// Digital Audio volume control
@@ -290,7 +290,7 @@ ErrorCode CBagOptWindow::attach() {
 		_pWaveVolumeScroll->show();
 
 	} else {
-		ReportError(ERR_MEMORY, "Could not allocate the Wave Volume Scroll Bar");
+		reportError(ERR_MEMORY, "Could not allocate the Wave Volume Scroll Bar");
 	}
 
 	// Pan Correction control
@@ -303,7 +303,7 @@ ErrorCode CBagOptWindow::attach() {
 		_pCorrectionScroll->show();
 
 	} else {
-		ReportError(ERR_MEMORY, "Could not allocate the Pan Correction Scroll Bar");
+		reportError(ERR_MEMORY, "Could not allocate the Pan Correction Scroll Bar");
 	}
 
 	// Pan Speed control
@@ -316,7 +316,7 @@ ErrorCode CBagOptWindow::attach() {
 		_pPanSpeedScroll->show();
 
 	} else {
-		ReportError(ERR_MEMORY, "Could not allocate the Pan Speed Scroll Bar");
+		reportError(ERR_MEMORY, "Could not allocate the Pan Speed Scroll Bar");
 	}
 
 	cRect.SetRect(FLYTHROUGHS_LEFT, FLYTHROUGHS_TOP, FLYTHROUGHS_LEFT + CHECKBOX_WIDTH, FLYTHROUGHS_TOP + CHECKBOX_HEIGHT);

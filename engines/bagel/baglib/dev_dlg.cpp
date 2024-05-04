@@ -76,7 +76,7 @@ ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CB
 	if (bmp != nullptr) {
 		bitmap = new CBofBitmap(bmp, pal);
 		if (bitmap == nullptr) {
-			ReportError(ERR_MEMORY);
+			reportError(ERR_MEMORY);
 		}
 	}
 
@@ -93,7 +93,7 @@ ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CB
 			bitmap->fillRect(rect, pal->getNearestIndex(RGB(255, 255, 255)));
 
 		} else {
-			ReportError(ERR_MEMORY);
+			reportError(ERR_MEMORY);
 		}
 	}
 

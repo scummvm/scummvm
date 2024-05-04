@@ -94,7 +94,7 @@ ErrorCode CBofDataFile::setFile(const char *pszFileName, uint32 lFlags, const ch
 	// Remember the flags
 	_lFlags = lFlags;
 
-	if (FileGetFullPath(_szFileName, pszFileName) != nullptr) {
+	if (fileGetFullPath(_szFileName, pszFileName) != nullptr) {
 		if (open() == ERR_NONE) {
 
 			// Read header block
@@ -106,7 +106,7 @@ ErrorCode CBofDataFile::setFile(const char *pszFileName, uint32 lFlags, const ch
 			}
 		}
 	} else {
-		ReportError(ERR_FFIND, "Could not build full path to %s", pszFileName);
+		reportError(ERR_FFIND, "Could not build full path to %s", pszFileName);
 	}
 
 	return _errCode;
@@ -171,7 +171,7 @@ ErrorCode CBofDataFile::create() {
 				_errCode = ERR_FWRITE;
 			}
 
-			Seek(0);
+			seek(0);
 
 		} else {
 			_errCode = ERR_FOPEN;
@@ -191,7 +191,7 @@ ErrorCode CBofDataFile::open() {
 				if (_lFlags & CDF_SAVEFILE) {
 					if (_lFlags & CDF_CREATE)
 						create();
-				} else if (!FileExists(_szFileName))
+				} else if (!fileExists(_szFileName))
 					create();
 			}
 
@@ -228,7 +228,7 @@ ErrorCode CBofDataFile::readHeader() {
 			open();
 		}
 
-		if (!ErrorOccurred()) {
+		if (!errorOccurred()) {
 			// Determine number of records in file
 			HEAD_INFO stHeaderInfo;
 			if (read(stHeaderInfo) == ERR_NONE) {
@@ -240,12 +240,12 @@ ErrorCode CBofDataFile::readHeader() {
 
 				Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_stream);
 				assert(rs);
-				int32 lFileLength = rs->size();
+				int32 lfileLength = rs->size();
 
 				// Make sure header contains valid info
 				if ((_lHeaderStart >= HEAD_INFO::size()) &&
-				        (_lHeaderStart <= lFileLength) && (_lHeaderLength >= 0) &&
-				        (_lHeaderLength < lFileLength)) {
+				        (_lHeaderStart <= lfileLength) && (_lHeaderLength >= 0) &&
+				        (_lHeaderLength < lfileLength)) {
 
 					// Force Encrypted, and Compress if existing file has them
 					_lFlags |= stHeaderInfo._lFlags & CDF_ENCRYPT;
@@ -255,7 +255,7 @@ ErrorCode CBofDataFile::readHeader() {
 						// Allocate buffer to hold header
 						if ((_pHeader = new HEADER_REC[(int)_lNumRecs]) != nullptr) {
 							// Seek to start of header
-							Seek(_lHeaderStart);
+							seek(_lHeaderStart);
 
 							// Read header
 							ErrorCode errCode = ERR_NONE;
@@ -319,11 +319,11 @@ ErrorCode CBofDataFile::writeHeader() {
 			stHeaderInfo._lFootCrc = calculateCRC(&_pHeader->_lOffset, 4 * _lNumRecs);
 
 			// Seek to front of file to write header info
-			SeekToBeginning();
+			seekToBeginning();
 
 			if (write(stHeaderInfo) == ERR_NONE) {
 				// Seek to start of where header is to be written
-				Seek(_lHeaderStart);
+				seek(_lHeaderStart);
 
 				// Write header to data file
 				ErrorCode errCode = ERR_NONE;
@@ -374,7 +374,7 @@ ErrorCode CBofDataFile::readRecord(int32 lRecNum, void *pBuf) {
 
 		if (_errCode == ERR_NONE) {
 			// Seek to that point in the file
-			Seek(pRecInfo->_lOffset);
+			seek(pRecInfo->_lOffset);
 
 			// Read in the record
 			if (read(pBuf, pRecInfo->_lLength) == ERR_NONE) {
@@ -425,7 +425,7 @@ ErrorCode CBofDataFile::readFromFile(int32 lRecNum, void *pBuf, int32 lBytes) {
 
 		if (_errCode == ERR_NONE) {
 			// Seek to that point in the file
-			Seek(pRecInfo->_lOffset);
+			seek(pRecInfo->_lOffset);
 
 			// Read in the requested bytes...
 			if (read(pBuf, lBytes) == ERR_NONE) {
@@ -484,7 +484,7 @@ ErrorCode CBofDataFile::writeRecord(int32 lRecNum, void *pBuf, int32 lSize, bool
 		pRecInfo->_lOffset = lPrevOffset + lPrevLength;
 
 		// Seek to where we want to write this record
-		Seek(pRecInfo->_lOffset);
+		seek(pRecInfo->_lOffset);
 
 		// Calculate new hash code based on this records key
 		pRecInfo->_lKey = lKey;
@@ -511,7 +511,7 @@ ErrorCode CBofDataFile::writeRecord(int32 lRecNum, void *pBuf, int32 lSize, bool
 			// Read the rest of the file in chunks (of 200k or less),
 			// and write each chunk back in it's new position.
 			//
-			int32 lBufLength = GetLength() - (pRecInfo->_lOffset + pRecInfo->_lLength);
+			int32 lBufLength = getLength() - (pRecInfo->_lOffset + pRecInfo->_lLength);
 			int32 lChunkSize = MIN(lBufLength, (int32)200000);
 
 			// Allocate a buffer big enough for one chunk
@@ -542,7 +542,7 @@ ErrorCode CBofDataFile::writeRecord(int32 lRecNum, void *pBuf, int32 lSize, bool
 				BofFree(pTmpBuf);
 
 			} else {
-				ReportError(ERR_MEMORY, "Unable to allocate %ld bytes to expand record size in writeRecord()", lBufLength);
+				reportError(ERR_MEMORY, "Unable to allocate %ld bytes to expand record size in writeRecord()", lBufLength);
 			}
 
 			// Tell the rest of the records that they moved
@@ -554,7 +554,7 @@ ErrorCode CBofDataFile::writeRecord(int32 lRecNum, void *pBuf, int32 lSize, bool
 			pRecInfo->_lLength = lSize;
 
 			// Seek to where we want to write this record
-			Seek(pRecInfo->_lOffset);
+			seek(pRecInfo->_lOffset);
 
 			// Write this record
 			write(pBuf, lSize);
@@ -689,7 +689,7 @@ ErrorCode CBofDataFile::addRecord(void *pBuf, int32 lLength, bool bUpdateHeader,
 					writeRecord(lRecNum, pBuf, lLength, bUpdateHeader, lKey);
 
 				} else {
-					ReportError(ERR_MEMORY, "Could not allocate a data file header");
+					reportError(ERR_MEMORY, "Could not allocate a data file header");
 				}
 			}
 		}

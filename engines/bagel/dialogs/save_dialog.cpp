@@ -133,7 +133,7 @@ ErrorCode CBagSaveDialog::attach() {
 			_pButtons[i]->create(g_stButtons[i]._name, g_stButtons[i]._left, g_stButtons[i]._top, g_stButtons[i]._width, g_stButtons[i]._height, this, g_stButtons[i]._id);
 			_pButtons[i]->show();
 		} else {
-			ReportError(ERR_MEMORY);
+			reportError(ERR_MEMORY);
 			break;
 		}
 	}
@@ -201,7 +201,7 @@ ErrorCode CBagSaveDialog::attach() {
 		_pListBox->updateWindow();
 
 	} else {
-		ReportError(ERR_MEMORY);
+		reportError(ERR_MEMORY);
 	}
 
 	if (_nSelectedItem != -1) {

@@ -113,7 +113,7 @@ ErrorCode SBarVidWnd::attach() {
 			_pMovie->attach();
 
 		} else {
-			ReportError(ERR_MEMORY);
+			reportError(ERR_MEMORY);
 		}
 
 		_fTimerDiff = 0;

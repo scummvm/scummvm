@@ -204,13 +204,13 @@ ErrorCode CBagel::verifyCDInDrive(int diskId, const char *waveFile) {
 
 		// If the disk is not in drive, then inform the user
 		int i = 0;
-		while (!shouldQuit() && !FileExists(cString.GetBuffer())) {
+		while (!shouldQuit() && !fileExists(cString.GetBuffer())) {
 			// display a dialog box that tells the user to put the CD back into
 			// the drive, or Abort.
 			LogInfo(BuildString("Unable to find game's DiskID as '%s'", cString.GetBuffer()));
 
 			if (i++ > _numRetries) {
-				ReportError(ERR_FFIND, "Could not recover from missing CD");
+				reportError(ERR_FFIND, "Could not recover from missing CD");
 				break;
 			}
 

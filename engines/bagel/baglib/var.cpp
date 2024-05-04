@@ -276,7 +276,7 @@ ErrorCode CBagVarManager::UnRegisterVariable(CBagVar *pVar) {
 	varStr = pVar->GetName();
 
 	// Hash it
-	int nHashVal = HASHVAR(szLocalBuff, varStr.GetLength());
+	int nHashVal = HASHVAR(szLocalBuff, varStr.getLength());
 	CBofList<CBagVar *> *pVarList = &m_xVarHashList[nHashVal];
 
 	// Search the hash table and remove it when we're done.
@@ -347,12 +347,12 @@ CBagVar *CBagVarManager::GetVariable(const CBofString &sName) {
 	CBofString varStr(szLocalBuff, 256);
 	varStr = sName;
 
-	int nHashVal = HASHVAR(szLocalBuff, varStr.GetLength());
+	int nHashVal = HASHVAR(szLocalBuff, varStr.getLength());
 
 	CBofList<CBagVar *> *pVarList = &m_xVarHashList[nHashVal];
 	for (int i = 0; i < pVarList->GetCount(); ++i) {
 		pVar = pVarList->GetNodeItem(i);
-		if (pVar != nullptr && (pVar->GetName().GetLength() == sName.GetLength()) && !pVar->GetName().Find(sName)) {
+		if (pVar != nullptr && (pVar->GetName().getLength() == sName.getLength()) && !pVar->GetName().Find(sName)) {
 			return pVar;
 		}
 	}
@@ -371,7 +371,7 @@ void CBagVar::SetName(const CBofString &s) {
 			char szLocalBuff[256];
 			CBofString varStr(szLocalBuff, 256);
 			varStr = m_sVarName;
-			int nHashVal = HASHVAR(szLocalBuff, varStr.GetLength());
+			int nHashVal = HASHVAR(szLocalBuff, varStr.getLength());
 			VAR_MANAGER->m_xVarHashList[nHashVal].addToTail(this);
 		}
 	}

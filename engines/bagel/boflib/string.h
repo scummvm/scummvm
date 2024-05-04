@@ -85,7 +85,7 @@ public:
 	int GetBufferSize() const {
 		return NORMALIZEBUFFERSIZE();
 	}
-	int GetLength() const {
+	int getLength() const {
 		return m_nLength;
 	}
 	bool IsEmpty() const {

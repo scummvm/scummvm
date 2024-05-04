@@ -367,7 +367,7 @@ bool CBagCommandObject::runObject() {
 				MACROREPLACE(smkName);
 
 				// Play the movie only if it exists
-				if (FileExists(smkName.GetBuffer())) {
+				if (fileExists(smkName.GetBuffer())) {
 					bofPlayMovie(mainWin, smkName.GetBuffer());
 					bmp.paint(mainWin, 0, 0);
 				}
@@ -386,7 +386,7 @@ bool CBagCommandObject::runObject() {
 			g_engine->getDebugger()->attach();
 
 		} else {
-			ReportError(ERR_UNKNOWN, "Invalid RUN COMMAND = %s", (const char *)getFileName());
+			reportError(ERR_UNKNOWN, "Invalid RUN COMMAND = %s", (const char *)getFileName());
 		}
 
 		rc = CBagObject::runObject();

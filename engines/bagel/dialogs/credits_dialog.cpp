@@ -109,7 +109,7 @@ ErrorCode CBagCreditsDialog::loadNextTextFile() {
 	Assert(IsValidObject(this));
 
 	// Our credits text must exist
-	Assert(FileExists(buildSysDir(g_cScreen[_iScreen]._pszTextFile)));
+	Assert(fileExists(buildSysDir(g_cScreen[_iScreen]._pszTextFile)));
 
 	CBofRect cRect;
 	cRect.left = g_cScreen[_iScreen]._nLeft;
@@ -137,7 +137,7 @@ ErrorCode CBagCreditsDialog::loadNextTextFile() {
 			_pBackdrop->paint(_pSaveBmp, &tmpRect, &cRect);
 
 		} else {
-			ReportError(ERR_MEMORY);
+			reportError(ERR_MEMORY);
 		}
 	}
 
@@ -149,11 +149,11 @@ ErrorCode CBagCreditsDialog::loadNextTextFile() {
 
 	CBofFile cFile(buildSysDir(g_cScreen[_iScreen]._pszTextFile), CBF_BINARY | CBF_READONLY);
 
-	if (!cFile.ErrorOccurred()) {
+	if (!cFile.errorOccurred()) {
 		uint32 lSize;
 
 		// Read in text file
-		lSize = cFile.GetLength();
+		lSize = cFile.getLength();
 		if ((_pszText = (char *)BofCAlloc(lSize + 1, 1)) != nullptr) {
 
 			cFile.read(_pszText, lSize);
@@ -175,7 +175,7 @@ ErrorCode CBagCreditsDialog::loadNextTextFile() {
 			_bDisplay = true;
 
 		} else {
-			ReportError(ERR_MEMORY, "Unable to allocate %d bytes for Credits.", lSize);
+			reportError(ERR_MEMORY, "Unable to allocate %d bytes for Credits.", lSize);
 		}
 	}
 

@@ -97,7 +97,7 @@ ErrorCode CBagHelp::attach() {
 		_okButton->create("OK", HELP_OK_X, HELP_OK_Y, HELP_OK_CX, HELP_OK_CY, this, HELP_OK_ID);
 		_okButton->show();
 	} else {
-		ReportError(ERR_MEMORY);
+		reportError(ERR_MEMORY);
 	}
 
 	_pageUp = new CBofBmpButton;
@@ -113,7 +113,7 @@ ErrorCode CBagHelp::attach() {
 		_pageUp->create("PageUp", HELP_PAGE_UP_X, HELP_PAGE_UP_Y, HELP_PAGE_UP_CX, HELP_PAGE_UP_CY, this, HELP_PAGE_UP_ID);
 		_pageUp->show();
 	} else {
-		ReportError(ERR_MEMORY);
+		reportError(ERR_MEMORY);
 	}
 
 	_pageDown = new CBofBmpButton;
@@ -129,12 +129,12 @@ ErrorCode CBagHelp::attach() {
 		_pageDown->create("PageDown", HELP_PAGE_DOWN_X, HELP_PAGE_DOWN_Y, HELP_PAGE_DOWN_CX, HELP_PAGE_DOWN_CY, this, HELP_PAGE_DOWN_ID);
 		_pageDown->show();
 	} else {
-		ReportError(ERR_MEMORY);
+		reportError(ERR_MEMORY);
 	}
 
 	CBofFile file(_textFile, CBF_BINARY | CBF_READONLY);
 
-	uint32 size = file.GetLength();
+	uint32 size = file.getLength();
 	char *buffer = (char *)BofCAlloc(size + 1, 1);
 	if (buffer != nullptr) {
 		file.read(buffer, size);
@@ -147,13 +147,13 @@ ErrorCode CBagHelp::attach() {
 			_textBox->setPageLength(18);
 
 		} else {
-			ReportError(ERR_MEMORY, "Unable to allocate a CBofTextBox");
+			reportError(ERR_MEMORY, "Unable to allocate a CBofTextBox");
 		}
 
 		BofFree(buffer);
 
 	} else {
-		ReportError(ERR_MEMORY, "Unable to allocate %d bytes to read %s.", size, _textFile.GetBuffer());
+		reportError(ERR_MEMORY, "Unable to allocate %d bytes to read %s.", size, _textFile.GetBuffer());
 	}
 
 	CBagCursor::showSystemCursor();

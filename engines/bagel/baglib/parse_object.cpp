@@ -62,7 +62,7 @@ int CBagParseObject::GetStringFromStream(CBagIfstream &istr, CBofString &sStr, c
 			bDone = true;
 		else
 			ch = (char)istr.getCh();
-		for (int i = 0; !bDone && i < sEndChars.GetLength(); ++i) {
+		for (int i = 0; !bDone && i < sEndChars.getLength(); ++i) {
 			if (sEndChars[i] == ch)
 				bDone = true;
 		}
@@ -262,7 +262,7 @@ int CBagParseObject::GetKeywordFromStream(CBagIfstream &istr, CBagParseObject::K
 }
 
 int CBagParseObject::PutbackStringOnStream(CBagIfstream &istr, const CBofString &sStr) {
-	int nLen = sStr.GetLength();
+	int nLen = sStr.getLength();
 
 	while (nLen > 0) {
 		--nLen;

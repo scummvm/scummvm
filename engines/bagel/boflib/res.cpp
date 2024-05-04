@@ -48,7 +48,7 @@ ErrorCode CBofStringTable::Load(const char *pszFileName) {
 	// Open this string file
 	open(pszFileName);
 
-	m_lBufSize = GetLength();
+	m_lBufSize = getLength();
 
 	Assert(m_lBufSize > 0);
 
@@ -62,7 +62,7 @@ ErrorCode CBofStringTable::Load(const char *pszFileName) {
 		BuildTable();
 
 	} else {
-		ReportError(ERR_MEMORY, "Unable to allocate %ld bytes for String Table", m_lBufSize);
+		reportError(ERR_MEMORY, "Unable to allocate %ld bytes for String Table", m_lBufSize);
 	}
 
 	// Don't need this file open anymore
@@ -123,7 +123,7 @@ ErrorCode CBofStringTable::BuildTable() {
 				m_pStringTable->addToTail(pString);
 			}
 		} else {
-			ReportError(ERR_MEMORY, "Unable to allocate a CResString");
+			reportError(ERR_MEMORY, "Unable to allocate a CResString");
 			break;
 		}
 

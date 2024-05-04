@@ -99,7 +99,7 @@ void CBagRestartDialog::onInitDialog() {
 			_pButtons[i]->create(g_stRestartButtons[i]._pszName, g_stRestartButtons[i]._nLeft, g_stRestartButtons[i]._nTop, g_stRestartButtons[i]._nWidth, g_stRestartButtons[i]._nHeight, this, g_stRestartButtons[i]._nID);
 			_pButtons[i]->show();
 		} else {
-			ReportError(ERR_MEMORY);
+			reportError(ERR_MEMORY);
 			break;
 		}
 	}

@@ -34,16 +34,16 @@ namespace Bagel {
  *
  **/
 // for mac, use this routine to replace the diskid
-extern bool FileExists(const char *pszFileName);
+extern bool fileExists(const char *pszFileName);
 
 /**
  * Gets length of file in bytes (via file name)
  * @param pszFileName       Name of file to get length for
  * @return                  Size of specified file (or -1 if not exist or error)
  */
-extern int32 FileLength(const char *pszFileName);
+extern int32 fileLength(const char *pszFileName);
 
-extern char *FileGetFullPath(char *pszDstBuf, const char *pszSrcBuf);
+extern char *fileGetFullPath(char *pszDstBuf, const char *pszSrcBuf);
 
 
 /**

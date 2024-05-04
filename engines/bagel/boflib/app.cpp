@@ -123,7 +123,7 @@ ErrorCode CBofApp::runApp() {
 	// Acquire and dispatch messages until we need to quit, or too many errors
 
 	Graphics::FrameLimiter limiter(g_system, 60);
-	while (!g_engine->shouldQuit() && CBofError::GetErrorCount() < MAX_ERRORS) {
+	while (!g_engine->shouldQuit() && CBofError::getErrorCount() < MAX_ERRORS) {
 		// Support for playing videos via the console
 		if (_consoleVideo && _consoleVideo->isPlaying()) {
 			if (_consoleVideo->needsUpdate()) {
