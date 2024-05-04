@@ -66,11 +66,11 @@ void CBagStartDialog::onInitDialog() {
 	CBofSound::StopSounds();
 
 	// Save off the current game's palette
-	_savePalette = CBofApp::GetApp()->getPalette();
+	_savePalette = CBofApp::getApp()->getPalette();
 
 	// Insert ours
 	CBofPalette *pPal = _pBackdrop->getPalette();
-	CBofApp::GetApp()->setPalette(pPal);
+	CBofApp::getApp()->setPalette(pPal);
 
 	// Build all our buttons
 	for (int i = 0; i < NUM_START_BTNS; i++) {

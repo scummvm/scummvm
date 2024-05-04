@@ -218,7 +218,7 @@ ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, 
 		killBackdrop();
 		setBackdrop(pszBack);
 
-		CBofPalette *pPalette = CBofApp::GetApp()->getPalette();
+		CBofPalette *pPalette = CBofApp::getApp()->getPalette();
 
 		_cBkSize = _pBackdrop->getSize();
 		_nScrollWidth = _cBkSize.cx;
@@ -309,7 +309,7 @@ ErrorCode CBofScrollBar::paint(CBofRect *pDirtyRect) {
 			pDirtyRect = &cRect;
 		}
 
-		CBofPalette *pPalette = CBofApp::GetApp()->getPalette();
+		CBofPalette *pPalette = CBofApp::getApp()->getPalette();
 
 		//
 		// This function needs to be optimized to paint only the section that is

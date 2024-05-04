@@ -291,7 +291,7 @@ int CBagParseObject::ParseAlertBox(CBagIfstream &istr, const char *sTitle, const
 	istr.getLine(str, 255);
 	s += str;
 
-	BofMessageBox(s, sTitle);
+	bofMessageBox(s, sTitle);
 
 	return 0;
 }

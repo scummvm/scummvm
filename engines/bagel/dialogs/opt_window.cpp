@@ -182,7 +182,7 @@ ErrorCode CBagOptWindow::detach() {
 		_pPanSpeedScroll = nullptr;
 	}
 
-	CBofApp::GetApp()->setPalette(_pSavePalette);
+	CBofApp::getApp()->setPalette(_pSavePalette);
 
 	return _errCode;
 }
@@ -198,11 +198,11 @@ void CBagOptWindow::onPaint(CBofRect *pRect) {
 
 ErrorCode CBagOptWindow::attach() {
 	// Save off the current game's palette
-	_pSavePalette = CBofApp::GetApp()->getPalette();
+	_pSavePalette = CBofApp::getApp()->getPalette();
 
 	// Insert ours
 	CBofPalette *pPal = _pBackdrop->getPalette();
-	CBofApp::GetApp()->setPalette(pPal);
+	CBofApp::getApp()->setPalette(pPal);
 
 	// Paint stuff
 	if (_pBackdrop != nullptr) {

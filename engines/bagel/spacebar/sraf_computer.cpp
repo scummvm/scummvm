@@ -988,8 +988,8 @@ ErrorCode SrafComputer::detach() {
 	}
 
 	// Remove any capture/focus
-	CBofApp::GetApp()->setCaptureControl(nullptr);
-	CBofApp::GetApp()->setFocusControl(nullptr);
+	CBofApp::getApp()->setCaptureControl(nullptr);
+	CBofApp::getApp()->setFocusControl(nullptr);
 
 
 	// save all the external variables
@@ -1060,7 +1060,7 @@ void SrafComputer::onKeyHit(uint32 lKey, uint32 nRepCount) {
 
 	case BKEY_ALT_q:
 		// Don't allow a quit from the sraf computer.
-		//Quit();
+		//quit();
 		break;
 
 	case ' ':

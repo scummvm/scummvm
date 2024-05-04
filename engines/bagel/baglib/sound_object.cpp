@@ -133,7 +133,7 @@ bool CBagSoundObject::runObject() {
 				if (FileExists(sBaseStr) && f.open(sBaseStr.GetBuffer())) {
 					Common::String line = f.readLine();
 
-					BofMessageBox(line.c_str(), "Using .TXT for missing .WAV!");
+					bofMessageBox(line.c_str(), "Using .TXT for missing .WAV!");
 					f.close();
 					return true;
 				} else {

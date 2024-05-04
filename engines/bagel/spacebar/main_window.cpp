@@ -124,7 +124,7 @@ ErrorCode CMainWindow::attach() {
 	setPalPtr(bofpal);
 
 	CBagel::getBagApp()->getMasterWnd()->selectPalette(bofpal);
-	CBofApp::GetApp()->setPalette(bofpal);
+	CBofApp::getApp()->setPalette(bofpal);
 
 	ActivateView();
 	CBofSound::AudioTask();

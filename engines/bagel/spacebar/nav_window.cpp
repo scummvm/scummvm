@@ -254,9 +254,9 @@ ErrorCode CNavWindow::attach() {
 	_pLevel = g_Level;
 	_pCurPos = new CBofRect(*_pYzore);
 
-	_pOldPal = CBofApp::GetApp()->getPalette();
+	_pOldPal = CBofApp::getApp()->getPalette();
 	_pPal = _pBackdrop->getPalette()->copyPalette();
-	CBofApp::GetApp()->setPalette(_pPal);
+	CBofApp::getApp()->setPalette(_pPal);
 	_pCurLoc = new CBofSprite;
 	if (_pCurLoc != nullptr) {
 		_pCurLoc->loadSprite(MakeDir(CUR_LOC), 2);
@@ -321,7 +321,7 @@ ErrorCode CNavWindow::detach() {
 
 	LogInfo("\tCNavWindow::detach()");
 
-	CBofApp::GetApp()->setPalette(_pOldPal);
+	CBofApp::getApp()->setPalette(_pOldPal);
 
 	if (_pPal != nullptr) {
 		delete _pPal;
@@ -876,7 +876,7 @@ void CNavWindow::onPinna() {
 		*_pPortName = "Pinna";
 		calcFuel(1.5);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -933,7 +933,7 @@ void CNavWindow::onHpoctyl() {
 		_pCurPos = new CBofRect(*_pHpoctyl);
 		calcFuel(2.8);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -980,7 +980,7 @@ void CNavWindow::onArmpit() {
 		}
 		calcFuel(2.3);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1009,7 +1009,7 @@ void CNavWindow::onYzore() {
 		*_pPortName = "Yzore";
 		calcFuel(1.2);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1044,7 +1044,7 @@ void CNavWindow::onBulbus() {
 		*_pPortName = "Bulbus";
 		calcFuel(3.7);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1067,7 +1067,7 @@ void CNavWindow::onDingle() {
 		*_pPortName = "Dingle";
 		calcFuel(1.9);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1096,7 +1096,7 @@ void CNavWindow::onKarkas() {
 		*_pPortName = "Karkas";
 		calcFuel(1.7);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1141,7 +1141,7 @@ void CNavWindow::onFruufnia() {
 		}
 		calcFuel(3.7);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1171,7 +1171,7 @@ void CNavWindow::onWilbur() {
 		calcFuel(2.1);
 
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1200,7 +1200,7 @@ void CNavWindow::onMcKelvey() {
 		*_pPortName = "McKelvey";
 		calcFuel(2.7);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1235,7 +1235,7 @@ void CNavWindow::onMedge() {
 		}
 		calcFuel(1.2);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1276,7 +1276,7 @@ void CNavWindow::onWall() {
 		_pCurPos = new CBofRect(*_pWall);
 		calcFuel(1.9);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1305,7 +1305,7 @@ void CNavWindow::onWoo() {
 		*_pPortName = "Woo";
 		calcFuel(1.7);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1350,7 +1350,7 @@ void CNavWindow::onRoman() {
 		}
 		calcFuel(4.6);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1489,7 +1489,7 @@ void CNavWindow::onWeed() {
 		*_pPortName = "Weed";
 		calcFuel(2.2);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1514,7 +1514,7 @@ void CNavWindow::onBok() {
 		}
 		calcFuel(3.9);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1559,7 +1559,7 @@ void CNavWindow::onPizer() {
 		}
 		calcFuel(2.2);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1585,7 +1585,7 @@ void CNavWindow::onBackwater() {
 		}
 		calcFuel(4.5);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1631,7 +1631,7 @@ void CNavWindow::onUranus() {
 		}
 		calcFuel(2.9);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1687,7 +1687,7 @@ void CNavWindow::onToejam() {
 		}
 		calcFuel(1.8);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1723,7 +1723,7 @@ void CNavWindow::onHellhole() {
 		}
 		calcFuel(1.3);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1759,7 +1759,7 @@ void CNavWindow::onPustule() {
 		*_pPortName = "Pustule";
 		calcFuel(2.3);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1790,7 +1790,7 @@ void CNavWindow::onSwamprock() {
 		calcFuel(1.9);
 
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1826,7 +1826,7 @@ void CNavWindow::onSlug() {
 		}
 		calcFuel(1.7);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1857,7 +1857,7 @@ void CNavWindow::onMaggotsnest() {
 		calcFuel(1.7);
 
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1893,7 +1893,7 @@ void CNavWindow::onPeggleboz() {
 		}
 		calcFuel(2.4);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1949,7 +1949,7 @@ void CNavWindow::onArcheroids() {
 		}
 		calcFuel(1.2);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -1985,7 +1985,7 @@ void CNavWindow::onPackRat() {
 		}
 		calcFuel(5.2);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -2051,7 +2051,7 @@ void CNavWindow::onBeacon() {
 		}
 		calcFuel(1.8);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -2087,7 +2087,7 @@ void CNavWindow::onMankala() {
 		*_pPortName = "Mankala";
 		calcFuel(1.7);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -2117,7 +2117,7 @@ void CNavWindow::onLife() {
 		*_pPortName = "Life";
 		calcFuel(1.1);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -2173,7 +2173,7 @@ void CNavWindow::onFuge() {
 		}
 		calcFuel(2.0);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -2197,7 +2197,7 @@ void CNavWindow::onGarfunkel() {
 		*_pPortName = "Garfunkel";
 		calcFuel(1.5);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -2235,7 +2235,7 @@ void CNavWindow::onBattlefish() {
 		}
 		calcFuel(1.1);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 
@@ -2259,7 +2259,7 @@ void CNavWindow::onNoVacancy() {
 		*_pPortName = "No Vacancy";
 		calcFuel(2.4);
 	} else {
-		BofMessageBox("Destination unavailable !!", "Test Warning");
+		bofMessageBox("Destination unavailable !!", "Test Warning");
 	}
 }
 

@@ -73,7 +73,7 @@ ErrorCode CBofEditText::create(const char *pszName, int x, int y,
 	// Retain screen coordinates for this window
 	_cWindowRect.SetRect(x, y, x + nWidth - 1, y + nHeight - 1);
 
-	CBofPalette *pPalette = CBofApp::GetApp()->getPalette();
+	CBofPalette *pPalette = CBofApp::getApp()->getPalette();
 	if (pPalette != nullptr) {
 		selectPalette(pPalette);
 	}

@@ -263,7 +263,7 @@ bool CBagCommandObject::runObject() {
 			CBofString bmpName("$SBARDIR\\GENERAL\\POPUP\\THUDPOP.BMP");
 			MACROREPLACE(bmpName);
 			CDevDlg dlg;
-			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->getPalette(), &tmpRect);
+			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::getApp()->getPalette(), &tmpRect);
 			dlg.doModal();
 			dlg.destroy();
 
@@ -272,7 +272,7 @@ bool CBagCommandObject::runObject() {
 			CBofString bmpName("$SBARDIR\\GENERAL\\POPUP\\FLEEDAT.BMP");
 			MACROREPLACE(bmpName);
 			CDevDlg dlg;
-			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->getPalette(), &tmpRect);
+			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::getApp()->getPalette(), &tmpRect);
 			dlg.doModal();
 			dlg.destroy();
 
@@ -281,7 +281,7 @@ bool CBagCommandObject::runObject() {
 			CBofString bmpName("$SBARDIR\\GENERAL\\POPUP\\CLICKPOP.BMP");
 			MACROREPLACE(bmpName);
 			CDevDlg dlg;
-			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->getPalette(), &tmpRect);
+			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::getApp()->getPalette(), &tmpRect);
 			dlg.doModal();
 			dlg.destroy();
 
@@ -290,7 +290,7 @@ bool CBagCommandObject::runObject() {
 			CBofString bmpName("$SBARDIR\\GENERAL\\POPUP\\CLICKDAT.BMP");
 			MACROREPLACE(bmpName);
 			CDevDlg dlg;
-			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->getPalette(), &tmpRect);
+			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::getApp()->getPalette(), &tmpRect);
 			dlg.doModal();
 			dlg.destroy();
 
@@ -299,7 +299,7 @@ bool CBagCommandObject::runObject() {
 			CBofString bmpName("$SBARDIR\\GENERAL\\POPUP\\DEVENPOP.BMP");
 			MACROREPLACE(bmpName);
 			CDevDlg dlg;
-			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::GetApp()->getPalette(), &tmpRect, true);
+			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::getApp()->getPalette(), &tmpRect, true);
 			dlg.doModal();
 			dlg.destroy();
 
@@ -357,7 +357,7 @@ bool CBagCommandObject::runObject() {
 			CBagMasterWin *mainWin = CBagel::getBagApp()->getMasterWnd();
 
 			if (mainWin != nullptr) {
-				CBofBitmap bmp(640, 480, CBofApp::GetApp()->getPalette());
+				CBofBitmap bmp(640, 480, CBofApp::getApp()->getPalette());
 				bmp.fillRect(nullptr, COLOR_BLACK);
 
 				bmp.paint(mainWin, 0, 0);

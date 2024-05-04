@@ -615,7 +615,7 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 
 		s = "Warning: { expected: at start of storage device: ";
 		s += sWldName;
-		BofMessageBox(s.GetBuffer(), "Warning");
+		bofMessageBox(s.GetBuffer(), "Warning");
 
 		fpInput.putBack();
 	}
@@ -988,7 +988,7 @@ ErrorCode CBagStorageDev::attach() {
 
 ErrorCode CBagStorageDev::detach() {
 	// Must force people to not use a bad App's palette
-	CBofApp::GetApp()->setPalette(nullptr);
+	CBofApp::getApp()->setPalette(nullptr);
 	setBackground(nullptr);
 
 	// Notify the main window that we need to redraw the background filter.
@@ -1084,7 +1084,7 @@ CBagObject *CBagStorageDev::onNewUserObject(const CBofString &str) {
 
 	s = str;
 
-	BofMessageBox(s.GetBuffer(), "Could not find object type");
+	bofMessageBox(s.GetBuffer(), "Could not find object type");
 
 	return nullptr;
 }
@@ -1176,7 +1176,7 @@ ErrorCode CBagStorageDevWnd::attach() {
 	if (!GetBackgroundName().IsEmpty()) {
 		// This should actually be moved to sbarapp, but the load file will then
 		// need to be removed from the constructor.
-		//CBofApp::GetApp()->SetMainWindow(this);
+		//CBofApp::getApp()->setMainWindow(this);
 
 		// Associate this window with callbacks so that any public member function can
 		// be accessed by objects inserted into this class.
@@ -1192,7 +1192,7 @@ ErrorCode CBagStorageDevWnd::attach() {
 
 			// Set the bagel crap
 			CBofPalette *pPalette = pBmp->getPalette();
-			CBofApp::GetApp()->setPalette(pPalette);
+			CBofApp::getApp()->setPalette(pPalette);
 			CBofSprite::openLibrary(pPalette);
 
 			CBofRect r = pBmp->getRect();
@@ -1251,7 +1251,7 @@ void CBagStorageDevWnd::onTimer(uint32 nEventID) {
 		if (!bAlready) {
 			bAlready = true;
 			// Evaluate the event storage device IF MOVIE NOT PLAYING
-			if ((CBofApp::GetApp()->GetMainWindow())->isEnabled() && nEventID == EVAL_EXPR) {
+			if ((CBofApp::getApp()->getMainWindow())->isEnabled() && nEventID == EVAL_EXPR) {
 				if (_pEvtSDev != nullptr) {
 					_pEvtSDev->evaluateExpressions();
 
@@ -1280,7 +1280,7 @@ void CBagStorageDevWnd::onTimer(uint32 nEventID) {
 ErrorCode CBagStorageDevWnd::detach() {
 	DetachActiveObjects();
 
-	CBofApp::GetApp()->setPalette(nullptr);
+	CBofApp::getApp()->setPalette(nullptr);
 
 	setBackground(nullptr);
 	CBofSprite::closeLibrary();
@@ -2020,7 +2020,7 @@ void CBagStorageDevManager::SaveObjList(ST_OBJ *pObjList, int nNumEntries) {
 
 					// This is pretty dangerous, put up an error
 					if (k >= nNumEntries) {
-						BofMessageBox("SaveObjList encountered too many objects", "Internal Error");
+						bofMessageBox("SaveObjList encountered too many objects", "Internal Error");
 						break;
 					}
 				}

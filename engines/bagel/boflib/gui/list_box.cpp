@@ -340,7 +340,7 @@ ErrorCode CBofListBox::saveBackground() {
 
 	killBackground();
 
-	if ((_pBackdrop = new CBofBitmap(width(), height(), CBofApp::GetApp()->getPalette())) != nullptr) {
+	if ((_pBackdrop = new CBofBitmap(width(), height(), CBofApp::getApp()->getPalette())) != nullptr) {
 		if ((_parent != nullptr) && (_parent->getBackdrop() != nullptr)) {
 			CBofRect cRect = _pBackdrop->getRect();
 

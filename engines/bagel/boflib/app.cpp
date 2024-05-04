@@ -39,7 +39,7 @@ namespace Bagel {
 
 #define BOFDISP 0
 
-CBofApp *CBofApp::m_pBofApp;
+CBofApp *CBofApp::_pBofApp;
 
 CBofApp::CBofApp() {
 	StartupCode();
@@ -48,26 +48,26 @@ CBofApp::CBofApp() {
 CBofApp::CBofApp(const char *pszAppName) {
 	StartupCode();
 
-	SetAppName(pszAppName);
+	setAppName(pszAppName);
 }
 
 CBofApp::~CBofApp() {
 	ShutDownCode();
 
-	m_szAppName[0] = '\0';
-	m_pMainWnd = nullptr;
+	_szAppName[0] = '\0';
+	_pMainWnd = nullptr;
 	_pPalette = nullptr;
-	m_pBofApp = nullptr;
+	_pBofApp = nullptr;
 }
 
 
 void CBofApp::StartupCode() {
-	m_pBofApp = this;
+	_pBofApp = this;
 
 	// Open the Boffo debug options file (BOFFO.INI)
 	g_pDebugOptions = new CBofDebugOptions(DEBUG_INI);
 	if (g_pDebugOptions != nullptr) {
-		g_pDebugOptions->ReadSetting("DebugOptions", "MainLoops", &m_nIterations, DEFAULT_MAINLOOPS);
+		g_pDebugOptions->ReadSetting("DebugOptions", "MainLoops", &_nIterations, DEFAULT_MAINLOOPS);
 	}
 
 	//
@@ -99,12 +99,12 @@ void CBofApp::ShutDownCode() {
 }
 
 
-ErrorCode CBofApp::PreInit() {
-	if ((_pPalette == nullptr) && (m_pDefPalette == nullptr)) {
-		m_pDefPalette = new CBofPalette();
-		if (m_pDefPalette != nullptr) {
-			m_pDefPalette->createDefault();
-			setPalette(m_pDefPalette);
+ErrorCode CBofApp::preInit() {
+	if ((_pPalette == nullptr) && (_pDefPalette == nullptr)) {
+		_pDefPalette = new CBofPalette();
+		if (_pDefPalette != nullptr) {
+			_pDefPalette->createDefault();
+			setPalette(_pDefPalette);
 		}
 	}
 
@@ -118,7 +118,7 @@ ErrorCode CBofApp::initialize() {
 
 
 ErrorCode CBofApp::runApp() {
-	int nCount = m_nIterations;
+	int nCount = _nIterations;
 
 	// Acquire and dispatch messages until we need to quit, or too many errors
 
@@ -167,11 +167,11 @@ ErrorCode CBofApp::runApp() {
 				}
 			}
 
-			nCount = m_nIterations;
+			nCount = _nIterations;
 		}
 
 		// Handle events
-		m_pMainWnd->handleEvents();
+		_pMainWnd->handleEvents();
 
 		limiter.delayBeforeSwap();
 		g_engine->_screen->update();
@@ -187,22 +187,22 @@ ErrorCode CBofApp::shutdown() {
 }
 
 
-ErrorCode CBofApp::PreShutDown() {
+ErrorCode CBofApp::preShutDown() {
 	return _errCode;
 }
 
-ErrorCode CBofApp::PostShutDown() {
-	if (m_pWindow != nullptr) {
-		delete m_pWindow;
-		m_pWindow = nullptr;
+ErrorCode CBofApp::postShutDown() {
+	if (_pWindow != nullptr) {
+		delete _pWindow;
+		_pWindow = nullptr;
 	}
 
 	// No more palettes
 	_pPalette = nullptr;
 
-	if (m_pDefPalette != nullptr) {
-		delete m_pDefPalette;
-		m_pDefPalette = nullptr;
+	if (_pDefPalette != nullptr) {
+		delete _pDefPalette;
+		_pDefPalette = nullptr;
 	}
 
 	return _errCode;
@@ -219,16 +219,16 @@ void CBofApp::setPalette(CBofPalette *pPalette) {
 
 	} else {
 		// Use default palette
-		_pPalette = m_pDefPalette;
+		_pPalette = _pDefPalette;
 	}
 }
 
-void CBofApp::AddCursor(CBofCursor &cCursor) {
-	m_cCursorList.addToTail(cCursor);
+void CBofApp::addCursor(CBofCursor &cCursor) {
+	_cCursorList.addToTail(cCursor);
 }
 
-void CBofApp::DelCursor(int nIndex) {
-	m_cCursorList.Remove(nIndex);
+void CBofApp::delCursor(int nIndex) {
+	_cCursorList.Remove(nIndex);
 }
 
 bool CBofApp::consolePlayVideo(const Common::Path &path) {
@@ -251,12 +251,12 @@ bool CBofApp::consolePlayVideo(const Common::Path &path) {
 // Global routines
 ///////////////////////////////////////////////////////////////////////////
 
-CBofPoint GetMousePos() {
+CBofPoint getMousePos() {
 	return CBofWindow::getMousePos();
 }
 
 
-void BofMessageBox(const char *pszTitle, const char *pszMessage) {
+void bofMessageBox(const char *pszTitle, const char *pszMessage) {
 	Common::String msg = Common::String::format("%s - %s", pszTitle, pszMessage);
 	g_engine->errorDialog(msg.c_str());
 }

@@ -133,7 +133,7 @@ void CBofDialog::onClose() {
 	Assert(IsValidObject(this));
 
 	// Release any capture/focus that was active
-	CBofApp *app = CBofApp::GetApp();
+	CBofApp *app = CBofApp::getApp();
 	app->setCaptureControl(nullptr);
 	app->setFocusControl(nullptr);
 
@@ -198,7 +198,7 @@ ErrorCode CBofDialog::saveBackground() {
 	Assert(IsValidObject(this));
 
 	if (_lFlags & BOFDLG_SAVEBACKGND) {
-		CBofPalette *pPalette = CBofApp::GetApp()->getPalette();
+		CBofPalette *pPalette = CBofApp::getApp()->getPalette();
 
 		// Remove any previous background
 		delete _pDlgBackground;

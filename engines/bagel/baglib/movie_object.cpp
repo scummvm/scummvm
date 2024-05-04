@@ -129,7 +129,7 @@ bool CBagMovieObject::runObject() {
 				break;
 
 			case MOVFILETYPE::TEXT:
-				BofMessageBox(sFileName.GetBuffer(), "Could not find asset");
+				bofMessageBox(sFileName.GetBuffer(), "Could not find asset");
 				nMovFileType = MOVFILETYPE::NONE;
 				break;
 
@@ -195,7 +195,7 @@ bool CBagMovieObject::runObject() {
 
 					CBofWindow *wnd = CBagel::getBagApp()->getMasterWnd();
 					pMovie->show();
-					CBofApp::GetApp()->GetMainWindow()->flushAllMessages();
+					CBofApp::getApp()->getMainWindow()->flushAllMessages();
 					wnd->flushAllMessages();
 					pMovie->initExam();
 					delete pMovie;
@@ -256,16 +256,16 @@ bool CBagMovieObject::runObject() {
 					if (bZoomed) {
 						pNewWin = new CBofWindow();
 						if (pNewWin) {
-							pNewWin->create("BLACK", 0, 0, 640, 480, CBofApp::GetApp()->GetMainWindow(), 0);
+							pNewWin->create("BLACK", 0, 0, 640, 480, CBofApp::getApp()->getMainWindow(), 0);
 							pNewWin->fillWindow(COLOR_BLACK);
 						}
 					}
 
-					CBagFMovie *pMovie = new CBagFMovie(CBofApp::GetApp()->GetMainWindow(), sFileName, &r);
+					CBagFMovie *pMovie = new CBagFMovie(CBofApp::getApp()->getMainWindow(), sFileName, &r);
 
 					if (pMovie != nullptr && pMovie->ErrorOccurred() == false) {
 						pMovie->show();
-						CBofApp::GetApp()->GetMainWindow()->flushAllMessages();
+						CBofApp::getApp()->getMainWindow()->flushAllMessages();
 						pWnd->flushAllMessages();
 						pMovie->play(false);
 						delete pMovie;
@@ -307,7 +307,7 @@ bool CBagMovieObject::runObject() {
 						if (bZoomed && m_xDisplayType != DISP_TYPE::ASYNCH_PDAMSG && m_xDisplayType != DISP_TYPE::PDAMSG) {
 							pNewWin = new CBofWindow();
 							if (pNewWin) {
-								pNewWin->create("BLACK", 0, 0, 640, 480, CBofApp::GetApp()->GetMainWindow(), 0);
+								pNewWin->create("BLACK", 0, 0, 640, 480, CBofApp::getApp()->getMainWindow(), 0);
 								pNewWin->show();
 								pNewWin->fillWindow(COLOR_BLACK);
 							}
@@ -317,18 +317,18 @@ bool CBagMovieObject::runObject() {
 						if (m_xDisplayType == DISP_TYPE::PDAMSG && bZoomed) {
 							// Then stretch it to fit into the PDA's viewscreen
 							r.SetRect(24, 47, 28 + 600 - 1, 47 + 302 - 1);
-							pMovie = new CBofMovie(CBofApp::GetApp()->GetMainWindow(), sFileName, &r, true);
+							pMovie = new CBofMovie(CBofApp::getApp()->getMainWindow(), sFileName, &r, true);
 
 						} else {
 							// Otherwise, just play the movie normally
-							pMovie = new CBofMovie(CBofApp::GetApp()->GetMainWindow(), sFileName, &r);
+							pMovie = new CBofMovie(CBofApp::getApp()->getMainWindow(), sFileName, &r);
 						}
 
 						if (pMovie && pMovie->ErrorOccurred() == false) {
 							// Stop any asnych movies already playing
 							pPDA->stopMovie(true);
 							pMovie->show();
-							CBofApp::GetApp()->GetMainWindow()->flushAllMessages();
+							CBofApp::getApp()->getMainWindow()->flushAllMessages();
 							pWnd->flushAllMessages();
 							pMovie->play(false);
 							delete pMovie;
@@ -365,7 +365,7 @@ bool CBagMovieObject::runObject() {
 			}
 
 		} else if (nMovFileType == MOVFILETYPE::SOUND) {
-			CBofSound *pSound = new CBofSound(CBofApp::GetApp()->GetMainWindow(), sFileName, SOUND_WAVE);
+			CBofSound *pSound = new CBofSound(CBofApp::getApp()->getMainWindow(), sFileName, SOUND_WAVE);
 			if (pSound) {
 				pSound->play();
 				delete pSound;
@@ -378,7 +378,7 @@ bool CBagMovieObject::runObject() {
 			if (f.open(sFileName.GetBuffer())) {
 				Common::String line = f.readLine();
 
-				BofMessageBox(line.c_str(), "Incoming Message...");
+				bofMessageBox(line.c_str(), "Incoming Message...");
 				f.close();
 				rc = true;
 			} else {

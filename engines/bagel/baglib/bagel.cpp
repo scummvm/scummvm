@@ -62,8 +62,8 @@ CBagel::~CBagel() {
 		_cacheFileList = nullptr;
 	}
 
-	m_szAppName[0] = '\0';
-	m_pMainWnd = nullptr;
+	_szAppName[0] = '\0';
+	_pMainWnd = nullptr;
 	_gameReg = nullptr;
 }
 
@@ -122,14 +122,14 @@ ErrorCode CBagel::initialize() {
 	Common::U32String errMsg;
 	if (!Common::load_engine_data("bagel.dat", "", 1, 0, errMsg)) {
 		Common::String msg(errMsg);
-		BofMessageBox("Engine Data", msg.c_str());
+		bofMessageBox("Engine Data", msg.c_str());
 		_errCode = ERR_FREAD;
 		return _errCode;
 	}
 
 	Common::File paintTable;
 	if (!paintTable.open("paint_table.txt")) {
-		BofMessageBox("Engine Data", "Invalid Paint Table");
+		bofMessageBox("Engine Data", "Invalid Paint Table");
 		_errCode = ERR_FREAD;
 		return _errCode;
 	}
@@ -159,7 +159,7 @@ ErrorCode CBagel::runApp() {
 	Assert(IsValidObject(this));
 
 	// The main game window must have been created by now
-	Assert(m_pMainWnd != nullptr);
+	Assert(_pMainWnd != nullptr);
 
 	return CBofApp::runApp();
 }
@@ -171,9 +171,9 @@ ErrorCode CBagel::shutdown() {
 
 	// Just in case the child class forgot to delete the main window,
 	// I'll do it.
-	if (m_pMainWnd != nullptr) {
-		delete m_pMainWnd;
-		m_pMainWnd = nullptr;
+	if (_pMainWnd != nullptr) {
+		delete _pMainWnd;
+		_pMainWnd = nullptr;
 	}
 
 	return CBofApp::shutdown();
@@ -220,7 +220,7 @@ ErrorCode CBagel::verifyCDInDrive(int diskId, const char *waveFile) {
 			}
 
 			if (g_hackWindow == nullptr) {
-				showNextCDDialog(m_pMainWnd, diskId);
+				showNextCDDialog(_pMainWnd, diskId);
 			} else {
 				showNextCDDialog(g_hackWindow, diskId);
 			}

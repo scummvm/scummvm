@@ -100,11 +100,11 @@ ErrorCode CBagSaveDialog::attach() {
 	Assert(IsValidObject(this));
 
 	// Save off the current game's palette
-	_pSavePalette = CBofApp::GetApp()->getPalette();
+	_pSavePalette = CBofApp::getApp()->getPalette();
 
 	// Insert ours
 	CBofPalette *pPal = _pBackdrop->getPalette();
-	CBofApp::GetApp()->setPalette(pPal);
+	CBofApp::getApp()->setPalette(pPal);
 
 	// Paint the SaveList Box onto the background
 	if (_pBackdrop != nullptr) {
@@ -257,7 +257,7 @@ ErrorCode CBagSaveDialog::detach() {
 	_nSelectedItem = -1;
 
 	// Restore the saved palette
-	CBofApp::GetApp()->setPalette(_pSavePalette);
+	CBofApp::getApp()->setPalette(_pSavePalette);
 
 	return _errCode;
 }

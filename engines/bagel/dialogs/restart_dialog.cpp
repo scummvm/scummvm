@@ -70,11 +70,11 @@ void CBagRestartDialog::onInitDialog() {
 	Assert(_pBackdrop != nullptr);
 
 	// Save off the current game's palette
-	_pSavePalette = CBofApp::GetApp()->getPalette();
+	_pSavePalette = CBofApp::getApp()->getPalette();
 
 	// Insert ours
 	CBofPalette *pPal = _pBackdrop->getPalette();
-	CBofApp::GetApp()->setPalette(pPal);
+	CBofApp::getApp()->setPalette(pPal);
 
 	// Paint the SaveList Box onto the background
 	if (_pBackdrop != nullptr) {
@@ -125,9 +125,9 @@ void CBagRestartDialog::onClose() {
 	CBofDialog::onClose();
 
 	if (_nReturnValue != RESTART_BTN) {
-		CBofApp::GetApp()->setPalette(_pSavePalette);
+		CBofApp::getApp()->setPalette(_pSavePalette);
 	} else {
-		CBofApp::GetApp()->setPalette(nullptr);
+		CBofApp::getApp()->setPalette(nullptr);
 	}
 }
 

@@ -157,7 +157,7 @@ ErrorCode CBagPDA::attach() {
 			_invWnd->SetVisible(false);
 			rc = _invWnd->attach();
 		} else {
-			BofMessageBox("No PDA INVENTORY found", __FILE__);
+			bofMessageBox("No PDA INVENTORY found", __FILE__);
 			rc = ERR_UNKNOWN;
 		}
 	}
@@ -171,7 +171,7 @@ ErrorCode CBagPDA::attach() {
 			_mapWnd->SetVisible(false);
 			rc = _mapWnd->attach();
 		} else {
-			BofMessageBox("No PDA MAP found", __FILE__);
+			bofMessageBox("No PDA MAP found", __FILE__);
 			rc = ERR_UNKNOWN;
 		}
 	}

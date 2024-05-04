@@ -90,7 +90,7 @@ CBofRect CBagPanWindow::UnSetSlidebitmap() {
 	CBofSprite::closeLibrary();
 
 	// There is no palette right now
-	CBofApp::GetApp()->setPalette(nullptr);
+	CBofApp::getApp()->setPalette(nullptr);
 
 	return viewRect;
 }
@@ -120,9 +120,9 @@ CBofPalette *CBagPanWindow::SetSlidebitmap(const CBofString &xSlideBmp, const CB
 		} else {
 			// Set the bagel crap
 			_pPalette = m_pSlideBitmap->getPalette();
-			CBofApp::GetApp()->setPalette(_pPalette);
+			CBofApp::getApp()->setPalette(_pPalette);
 			CBagel::getBagApp()->getMasterWnd()->selectPalette(_pPalette);
-			CBofApp::GetApp()->GetMainWindow()->selectPalette(_pPalette);
+			CBofApp::getApp()->getMainWindow()->selectPalette(_pPalette);
 			selectPalette(_pPalette);
 
 			CBofSprite::openLibrary(_pPalette);

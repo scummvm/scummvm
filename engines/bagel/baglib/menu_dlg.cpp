@@ -64,7 +64,7 @@ CBagMenu::CBagMenu() {
 
 		m_nDefaultDelay = DELAY_DEFAULT;
 
-		CBagel *pBagel = (CBagel *)CBagel::GetApp();
+		CBagel *pBagel = (CBagel *)CBagel::getApp();
 		if (pBagel != nullptr) {
 			pBagel->getOption("UserOptions", "TextDelay", &m_nDefaultDelay, DELAY_DEFAULT);
 
