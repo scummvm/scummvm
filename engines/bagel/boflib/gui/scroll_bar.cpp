@@ -63,7 +63,7 @@ CBofScrollBar::CBofScrollBar() {
 
 
 CBofScrollBar::~CBofScrollBar() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	_szScrollText[0] = '\0';
 
@@ -95,14 +95,14 @@ CBofScrollBar::~CBofScrollBar() {
 
 
 void CBofScrollBar::onPaint(CBofRect *pDirtyRect) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	paint(pDirtyRect);
 }
 
 
 ErrorCode CBofScrollBar::setText(const char *pszText, int nJustify) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	_szScrollText[0] = '\0';
 
@@ -135,7 +135,7 @@ ErrorCode CBofScrollBar::setText(const char *pszText, int nJustify) {
 
 
 ErrorCode CBofScrollBar::setPos(const int nPos, bool bRepaint, bool isInitial) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Save old position
 	int nOriginalPos = _nPos;
@@ -146,7 +146,7 @@ ErrorCode CBofScrollBar::setPos(const int nPos, bool bRepaint, bool isInitial) {
 	if (nPos > _nMax)
 		_nPos = _nMax;
 
-	Assert(_nRange != 0);
+	assert(_nRange != 0);
 
 	_cThumbPos.x = (int)(((int32)(_nScrollWidth - _cThumbSize.cx) * _nPos) / (_nRange - 1)) + _nOffset;
 	_cThumbPos.y = (int)(_cBkSize.cy / 2) - (int)(_cThumbSize.cy / 2);
@@ -180,7 +180,7 @@ ErrorCode CBofScrollBar::setPos(const int nPos, bool bRepaint, bool isInitial) {
 
 
 void CBofScrollBar::getScrollRange(int &nMin, int &nMax) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	nMin = _nMin;
 	nMax = _nMax;
@@ -188,7 +188,7 @@ void CBofScrollBar::getScrollRange(int &nMin, int &nMax) {
 
 
 void CBofScrollBar::setScrollRange(int nMin, int nMax, bool bRepaint) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	_nMin = nMin;
 	_nMax = nMax;
@@ -203,7 +203,7 @@ void CBofScrollBar::setScrollRange(int nMin, int nMax, bool bRepaint) {
 
 
 ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, const char *pszLeftBtnUp, const char *pszRightBtnUp, const char *pszLeftBtnDn, const char *pszRightBtnDn) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if ((pszBack != nullptr) && (pszThumb != nullptr)) {
 		_cLeftBtnRect.SetRect(0, 0, 0, 0);
@@ -299,7 +299,7 @@ ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, 
 
 
 ErrorCode CBofScrollBar::paint(CBofRect *pDirtyRect) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (!errorOccurred()) {
 		CBofRect cRect(0, 0, _cRect.width() - 1, _cRect.height() - 1);
@@ -369,7 +369,7 @@ ErrorCode CBofScrollBar::paint(CBofRect *pDirtyRect) {
 
 
 void CBofScrollBar::onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBofRect cLeftPageRect, cRightPageRect;
 
@@ -425,8 +425,8 @@ void CBofScrollBar::onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
 
 
 int CBofScrollBar::pointToPos(CBofPoint *pPoint) {
-	Assert(IsValidObject(this));
-	Assert(pPoint != nullptr);
+	assert(isValidObject(this));
+	assert(pPoint != nullptr);
 
 	int nPos = _nPos;
 
@@ -439,7 +439,7 @@ int CBofScrollBar::pointToPos(CBofPoint *pPoint) {
 
 
 void CBofScrollBar::onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (_bMouseCaptured) {
 		killTimer(BMP_SCROLL_TIMER);
@@ -481,7 +481,7 @@ void CBofScrollBar::onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 
 
 void CBofScrollBar::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (_bMouseCaptured) {
 		_cCurPoint = *pPoint;
@@ -496,14 +496,14 @@ void CBofScrollBar::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 
 
 void CBofScrollBar::setRepeatTimer(uint32 nTimerInt) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	_nTimerCount = nTimerInt;
 }
 
 
 void CBofScrollBar::onTimer(uint32 nWhichTimer) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBofRect cLeftPageRect, cRightPageRect;
 

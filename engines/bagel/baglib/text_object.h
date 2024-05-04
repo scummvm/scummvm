@@ -72,7 +72,7 @@ public:
 		return m_nPointSize;
 	}
 	void setPointSize(int xSize) {
-		Assert(xSize >= 0 && xSize <= 255);
+		assert(xSize >= 0 && xSize <= 255);
 		m_nPointSize = (byte)xSize;
 	}
 	int getColor() const {

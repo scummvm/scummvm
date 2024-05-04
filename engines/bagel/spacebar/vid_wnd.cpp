@@ -77,13 +77,13 @@ SBarVidWnd::SBarVidWnd() {
 
 
 SBarVidWnd::~SBarVidWnd() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	detach();
 }
 
 ErrorCode SBarVidWnd::attach() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (CMainWindow::attach() == ERR_NONE) {
 		_pDiscVar = VAR_MANAGER->GetVariable("CUR_VDISC");
@@ -147,7 +147,7 @@ ErrorCode SBarVidWnd::attach() {
 
 
 ErrorCode SBarVidWnd::detach() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (_pMovie != nullptr) {
 		_pMovie->detach();
@@ -171,7 +171,7 @@ ErrorCode SBarVidWnd::detach() {
 
 
 void SBarVidWnd::setPlayMode(int nMode) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (_pPlayingVar != nullptr) {
 		_pPlayingVar->SetValue(nMode);
@@ -191,7 +191,7 @@ void SBarVidWnd::setPlayMode(int nMode) {
 
 
 bool SBarVidWnd::hasDisc() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// If either disk is in the vid player
 	bool bHaveDisc = false;
@@ -227,8 +227,8 @@ int SBarVidWnd::getFrame(double fTime, int nUseDisc) {
 
 
 ErrorCode SBarVidWnd::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
-	Assert(IsValidObject(this));
-	Assert(pBmp != nullptr);
+	assert(isValidObject(this));
+	assert(pBmp != nullptr);
 
 	SetPreFilterPan(true);
 
@@ -238,7 +238,7 @@ ErrorCode SBarVidWnd::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	if (hasDisc() && _pPlayingVar != nullptr && _pPlayingVar->GetNumValue() != 0) {
 		static uint32 nLastTime = 0;
 
-		if (GetTimer() >= nLastTime + 100) {
+		if (getTimer() >= nLastTime + 100) {
 
 			_fTimer += _fTimerDiff;
 
@@ -248,7 +248,7 @@ ErrorCode SBarVidWnd::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 			} else if (_fTimer > _nStartTime + 240) {
 				_fTimer = _nStartTime + 240;
 			}
-			nLastTime = GetTimer();
+			nLastTime = getTimer();
 		}
 
 		// Keep BAGEL up to date with this info
@@ -262,7 +262,7 @@ ErrorCode SBarVidWnd::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		int nDisc = 1;
 		if (_pDiscVar != nullptr) {
 			nDisc = _pDiscVar->GetNumValue();
-			Assert(nDisc != 0);
+			assert(nDisc != 0);
 		}
 
 		//
@@ -291,7 +291,7 @@ ErrorCode SBarVidWnd::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 }
 
 CBagObject *SBarVidWnd::onNewButtonObject(const CBofString &) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	SBarVidBut *pVidButtObj = new SBarVidBut();
 

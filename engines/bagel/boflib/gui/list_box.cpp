@@ -64,7 +64,7 @@ void CBofListBox::clearSelection() {
 }
 
 void CBofListBox::insertBefore(int nIndex, const CBofString &cString, bool bRepaint) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	ListBoxItem lbi;
 	lbi._pTextStr          = new CBofString(cString);
@@ -84,7 +84,7 @@ void CBofListBox::insertBefore(int nIndex, const CBofString &cString, bool bRepa
 
 
 void CBofListBox::insertAfter(int nIndex, const CBofString &cString, bool bRepaint) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	ListBoxItem lbi;
 	lbi._pTextStr          = new CBofString(cString);
@@ -102,7 +102,7 @@ void CBofListBox::insertAfter(int nIndex, const CBofString &cString, bool bRepai
 
 
 void CBofListBox::addToHead(const CBofString &cString, bool bRepaint) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	ListBoxItem lbi;
 	lbi._pTextStr          = new CBofString(cString);
@@ -122,7 +122,7 @@ void CBofListBox::addToHead(const CBofString &cString, bool bRepaint) {
 
 
 void CBofListBox::addToTail(const CBofString &cString, bool bRepaint) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	ListBoxItem lbi;
 	lbi._pTextStr          = new CBofString(cString);
@@ -142,8 +142,8 @@ void CBofListBox::addToTail(const CBofString &cString, bool bRepaint) {
 
 
 ErrorCode CBofListBox::delItem(int nIndex, bool bRepaint) {
-	Assert(IsValidObject(this));
-	Assert(nIndex >= 0 && nIndex < _nNumItems);
+	assert(isValidObject(this));
+	assert(nIndex >= 0 && nIndex < _nNumItems);
 
 	_cTextItems.remove(nIndex);
 
@@ -167,7 +167,7 @@ ErrorCode CBofListBox::delItem(int nIndex, bool bRepaint) {
 }
 
 ErrorCode CBofListBox::deleteAll(bool bRepaint) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Switch item to be pointer to cbofstring instead of the item itself
 	int nCount = _cTextItems.getCount();
@@ -192,8 +192,8 @@ ErrorCode CBofListBox::deleteAll(bool bRepaint) {
 
 
 void CBofListBox::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
-	Assert(IsValidObject(this));
-	Assert(pPoint != nullptr);
+	assert(isValidObject(this));
+	assert(pPoint != nullptr);
 
 	int nIndex = (pPoint->y / _nItemHeight) + _n1stVisible;
 	if (nIndex < _nNumItems) {
@@ -210,8 +210,8 @@ void CBofListBox::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 
 
 void CBofListBox::onLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
-	Assert(IsValidObject(this));
-	Assert(pPoint != nullptr);
+	assert(isValidObject(this));
+	assert(pPoint != nullptr);
 
 	int nIndex = (pPoint->y / _nItemHeight) + _n1stVisible;
 
@@ -230,7 +230,7 @@ void CBofListBox::onLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 
 
 void CBofListBox::onKeyHit(uint32 lKey, uint32 lRepCount) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	switch (lKey) {
 	case BKEY_HOME:
@@ -269,7 +269,7 @@ void CBofListBox::onKeyHit(uint32 lKey, uint32 lRepCount) {
 
 
 ErrorCode CBofListBox::scrollUp(const int nLines) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// If all the items fit on a single page, make this operation a no-op.
 	if (_nNumItems <= _nPageSize) {
@@ -292,15 +292,15 @@ ErrorCode CBofListBox::scrollUp(const int nLines) {
 }
 
 ErrorCode CBofListBox::scrollTo(const int nLine) {
-	Assert(IsValidObject(this));
-	Assert(nLine >= 0 && nLine <= _nNumItems);
+	assert(isValidObject(this));
+	assert(nLine >= 0 && nLine <= _nNumItems);
 
 	// Only update the screen if the list actually moved
 	if (_n1stVisible != nLine) {
 		_n1stVisible = nLine;
 
 		if (nLine >= _nNumItems) {
-			Assert(_nNumItems > 0);
+			assert(_nNumItems > 0);
 			_n1stVisible--;
 		}
 
@@ -313,7 +313,7 @@ ErrorCode CBofListBox::scrollTo(const int nLine) {
 
 
 void CBofListBox::onPaint(CBofRect * /*pRect*/) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	_nPageSize = height() / _nItemHeight;
 
@@ -326,7 +326,7 @@ void CBofListBox::onPaint(CBofRect * /*pRect*/) {
 
 
 void CBofListBox::killBackground() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (_pBackdrop != nullptr) {
 		delete _pBackdrop;
@@ -336,7 +336,7 @@ void CBofListBox::killBackground() {
 
 
 ErrorCode CBofListBox::saveBackground() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	killBackground();
 
@@ -358,14 +358,14 @@ ErrorCode CBofListBox::saveBackground() {
 }
 
 ErrorCode CBofListBox::createWorkArea() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (_pBackdrop == nullptr) {
 		saveBackground();
 	}
 
 	if (_pWork == nullptr) {
-		Assert(_pBackdrop != nullptr);
+		assert(_pBackdrop != nullptr);
 
 		if ((_pWork = new CBofBitmap(width(), height(), _pBackdrop->getPalette())) == nullptr) {
 			reportError(ERR_MEMORY, "Unable to allocate a %d x %d CBofBitmap", width(), height());
@@ -377,10 +377,10 @@ ErrorCode CBofListBox::createWorkArea() {
 
 
 ErrorCode CBofListBox::repaintAll() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (!errorOccurred()) {
-		Assert(isCreated());
+		assert(isCreated());
 
 		int nCurFont = getFont();
 		setFont(_nTextFont);
@@ -394,7 +394,7 @@ ErrorCode CBofListBox::repaintAll() {
 
 			// prepare the background
 			//
-			Assert(_pBackdrop != nullptr);
+			assert(_pBackdrop != nullptr);
 			_pBackdrop->paint(_pWork);
 
 			for (int i = 0; i < _nPageSize; i++) {
@@ -453,10 +453,10 @@ ErrorCode CBofListBox::repaintAll() {
 
 
 ErrorCode CBofListBox::repaintItem(int nIndex) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (!errorOccurred()) {
-		Assert(nIndex >= 0 && nIndex < _nNumItems);
+		assert(nIndex >= 0 && nIndex < _nNumItems);
 		int nCurFont = getFont();
 		setFont(_nTextFont);           // Set the proper font
 
@@ -474,7 +474,7 @@ ErrorCode CBofListBox::repaintItem(int nIndex) {
 			cRect.SetRect(0, i * _nItemHeight, width() - 1, (i + 1) * _nItemHeight - 1);
 
 			// Prepare the background
-			Assert(_pBackdrop != nullptr);
+			assert(_pBackdrop != nullptr);
 			_pBackdrop->paint(_pWork, &cRect, &cRect);
 
 			// If this item is currently selected and we have a high color
@@ -525,7 +525,7 @@ ErrorCode CBofListBox::repaintItem(int nIndex) {
 
 
 void CBofListBox::setSelectedItem(int nItem, bool bRepaint) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Set highlighted item
 	_nSelectedItem = nItem;

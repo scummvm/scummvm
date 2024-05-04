@@ -118,8 +118,8 @@ bool CBagExam::rotateStop() {
 }
 
 void CBagExam::onMouseMove(uint32 /* flags, unused */, CBofPoint *point, void * /* extraInfo, unused */) {
-	Assert(IsValidObject(this));
-	Assert(point != nullptr);
+	assert(isValidObject(this));
+	assert(point != nullptr);
 
 	// No more cursor in Examine movies
 	if (point->x <= _leftRect.right) {

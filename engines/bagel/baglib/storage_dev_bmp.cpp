@@ -145,7 +145,7 @@ ErrorCode CBagStorageDevBmp::update(CBofBitmap *pBmp, CBofPoint /*xPoint*/, CBof
 	if (isVisible() && isAttached()) {
 		// Paint the storage device
 		if ((pSrcBmp = getBitmap()) != nullptr) {
-			Assert(GetWorkBmp() != nullptr);
+			assert(GetWorkBmp() != nullptr);
 			// Erase everything from the background
 			GetWorkBmp()->paint(pSrcBmp);
 

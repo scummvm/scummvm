@@ -47,7 +47,7 @@ CBofPalette::CBofPalette() {
 
 CBofPalette::CBofPalette(const char *pszFileName) {
 	Common::fill(&_palette._data[0], &_palette._data[PALETTE_SIZE], 0);
-	Assert(pszFileName != nullptr);
+	assert(pszFileName != nullptr);
 
 	loadPalette(pszFileName);
 }
@@ -57,7 +57,7 @@ CBofPalette::CBofPalette(const HPALETTE &hPalette) {
 }
 
 CBofPalette::~CBofPalette() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// If we trash the games palette, then reset it back to nullptr.
 	CBofApp *pApp;
@@ -71,17 +71,17 @@ CBofPalette::~CBofPalette() {
 }
 
 void CBofPalette::setPalette(const HPALETTE &hPalette) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	ReleasePalette();
 	_palette = hPalette;
 }
 
 ErrorCode CBofPalette::loadPalette(const char *pszFileName, uint16 nFlags) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Validate input
-	Assert(pszFileName != nullptr);
+	assert(pszFileName != nullptr);
 
 	ReleasePalette();
 
@@ -109,7 +109,7 @@ void CBofPalette::ReleasePalette() {
 }
 
 CBofPalette *CBofPalette::copyPalette() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	return nullptr;
 }
@@ -127,7 +127,7 @@ RGBCOLOR CBofPalette::getColor(byte nIndex) {
 }
 
 ErrorCode CBofPalette::createDefault(uint16 nFlags) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	byte *pal = _palette._data;
 	for (int i = 0; i < 256; ++i, pal += 3)

@@ -181,7 +181,7 @@ CNavWindow::CNavWindow() {
 }
 
 ErrorCode CNavWindow::attach() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	logInfo("\tCNavWindow::attach()");
 	CBagStorageDevWnd::attach();
@@ -305,7 +305,7 @@ ErrorCode CNavWindow::attach() {
 
 
 ErrorCode CNavWindow::detach() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// If attached
 	if (_bNavAttached) {
@@ -543,8 +543,8 @@ void CNavWindow::onMainLoop() {
 
 
 void CNavWindow::onPaint(CBofRect *pRect) {
-	Assert(IsValidObject(this));
-	Assert(pRect != nullptr);
+	assert(isValidObject(this));
+	assert(pRect != nullptr);
 
 	// Render offscreen
 	if (_pBackdrop != nullptr) {
@@ -564,7 +564,7 @@ void CNavWindow::onPaint(CBofRect *pRect) {
 }
 
 void CNavWindow::refreshData() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (_pBackdrop == nullptr)
 		return;
@@ -675,8 +675,8 @@ void CNavWindow::refreshData() {
 }
 
 void CNavWindow::onBofButton(CBofObject *pObject, int nState) {
-	Assert(IsValidObject(this));
-	Assert(pObject != nullptr);
+	assert(isValidObject(this));
+	assert(pObject != nullptr);
 
 	if (nState != BUTTON_CLICKED)
 		return;
@@ -712,8 +712,8 @@ void CNavWindow::onBofButton(CBofObject *pObject, int nState) {
 
 
 void CNavWindow::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
-	Assert(IsValidObject(this));
-	Assert(pPoint != nullptr);
+	assert(isValidObject(this));
+	assert(pPoint != nullptr);
 
 	switch (_level) {
 	case 0: {
@@ -842,7 +842,7 @@ void CNavWindow::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 
 
 void CNavWindow::onKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (lKey == BKEY_ALT_q || lKey == BKEY_ALT_F4) {
 		VAR_MANAGER->GetVariable("NPLAYEDNAV")->SetBoolValue(true);
@@ -1368,7 +1368,7 @@ void CNavWindow::pause() {
 }
 
 void CNavWindow::calcFuel(double hf) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 	CBofRect cRect(0, 0, 439, 439);
 
 	_fuel -= (int)((_ship + _fuel + _cargo) * hf * .01);
@@ -1395,7 +1395,7 @@ void CNavWindow::calcFuel(double hf) {
 			pause();
 			CBofString sNebDir(NEBSIM4BMP);
 			MACROREPLACE(sNebDir);
-			Assert(_pBackdrop != nullptr);
+			assert(_pBackdrop != nullptr);
 			bmptwo = new CBofBitmap(sNebDir.GetBuffer(), _pPal);
 			setBackground(bmptwo);
 			_cargo = 125 + 10 + 17 + 8 + 99 + 24;
@@ -1413,7 +1413,7 @@ void CNavWindow::calcFuel(double hf) {
 			pause();
 			CBofString sNebDir(NEBSIM3BMP);
 			MACROREPLACE(sNebDir);
-			Assert(_pBackdrop != nullptr);
+			assert(_pBackdrop != nullptr);
 			bmptwo = new CBofBitmap(sNebDir.GetBuffer(), _pPal);
 			setBackground(bmptwo);
 			_cargo = 100 + 75 + 28 + 45 + 14;
@@ -1431,7 +1431,7 @@ void CNavWindow::calcFuel(double hf) {
 			pause();
 			CBofString sNebDir(NEBSIM2BMP);
 			MACROREPLACE(sNebDir);
-			Assert(_pBackdrop != nullptr);
+			assert(_pBackdrop != nullptr);
 			bmptwo = new CBofBitmap(sNebDir.GetBuffer(), _pPal);
 			setBackground(bmptwo);
 			_cargo = 54 + 119 + 20 + 127;

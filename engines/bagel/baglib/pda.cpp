@@ -68,7 +68,7 @@ void CBagPDA::AddToMovieQueue(CBagMovieObject *pMObj) {
 		return;
 	}
 
-	Assert(m_pMovieList != nullptr);
+	assert(m_pMovieList != nullptr);
 
 	// Go through the whole movie list, make sure there are no dup's of
 	// this movie.
@@ -84,7 +84,7 @@ void CBagPDA::AddToMovieQueue(CBagMovieObject *pMObj) {
 }
 
 CBagPDA::~CBagPDA() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Does not own list item, so no need to delete individual nodes
 	if (m_pMovieList) {
@@ -94,7 +94,7 @@ CBagPDA::~CBagPDA() {
 }
 
 ErrorCode CBagPDA::loadFile(const CBofString &sFile) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	ErrorCode error;
 

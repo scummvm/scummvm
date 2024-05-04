@@ -58,7 +58,7 @@ const char *buildString(const char *pszFormat, ...) {
 	static char szBuf[256];
 	va_list argptr;
 
-	Assert(pszFormat != nullptr);
+	assert(pszFormat != nullptr);
 
 	if (pszFormat != nullptr) {
 		// Parse the variable argument list

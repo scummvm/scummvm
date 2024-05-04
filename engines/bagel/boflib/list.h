@@ -61,18 +61,18 @@ class CBofList {
 private:
 	void newItemList() {
 		if (_pItemList != nullptr) {
-			BofFree(_pItemList);
+			bofFree(_pItemList);
 			_pItemList = nullptr;
 		}
 
 		if (_nNumItems != 0) {
-			_pItemList = (void **)BofAlloc(_nNumItems * sizeof(void *));
+			_pItemList = (void **)bofAlloc(_nNumItems * sizeof(void *));
 		}
 	}
 
 	void killItemList() {
 		if (_pItemList != nullptr) {
-			BofFree(_pItemList);
+			bofFree(_pItemList);
 			_pItemList = nullptr;
 		}
 	}
@@ -84,7 +84,7 @@ private:
 		// We only want to recalc if we're about to overflow what we have
 		if (_nNumItems >= _nItemsAllocated) {
 			if (_pItemList != nullptr) {
-				BofFree(_pItemList);
+				bofFree(_pItemList);
 				_pItemList = nullptr;
 			}
 
@@ -94,7 +94,7 @@ private:
 				if (_nItemsAllocated == 0)
 					_nItemsAllocated = MIN_NODES;
 
-				_pItemList = (void **)BofAlloc(_nItemsAllocated * sizeof(void *));
+				_pItemList = (void **)bofAlloc(_nItemsAllocated * sizeof(void *));
 			}
 		}
 

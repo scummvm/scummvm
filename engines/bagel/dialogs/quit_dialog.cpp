@@ -58,12 +58,12 @@ CBagQuitDialog::CBagQuitDialog() {
 
 
 void CBagQuitDialog::onInitDialog() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBofDialog::onInitDialog();
 	setReturnValue(-1);
 
-	Assert(_pBackdrop != nullptr);
+	assert(_pBackdrop != nullptr);
 	CBofPalette *pPal = _pBackdrop->getPalette();
 	selectPalette(pPal);
 
@@ -75,7 +75,7 @@ void CBagQuitDialog::onInitDialog() {
 
 	// Build all our buttons
 	for (int i = 0; i < NUM_QUIT_BUTTONS; i++) {
-		Assert(_pButtons[i] == nullptr);
+		assert(_pButtons[i] == nullptr);
 
 		if ((_pButtons[i] = new CBofBmpButton) != nullptr) {
 			CBofBitmap *pUp = loadBitmap(buildSysDir(g_stQuitButtons[i]._pszUp), pPal);
@@ -99,7 +99,7 @@ void CBagQuitDialog::onInitDialog() {
 
 
 void CBagQuitDialog::onClose() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBagCursor::hideSystemCursor();
 
@@ -119,7 +119,7 @@ void CBagQuitDialog::onClose() {
 
 
 void CBagQuitDialog::onPaint(CBofRect *pRect) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	paintBackdrop(pRect);
 
@@ -128,7 +128,7 @@ void CBagQuitDialog::onPaint(CBofRect *pRect) {
 
 
 void CBagQuitDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (lKey == BKEY_ESC) {
 		// Cancel
@@ -141,8 +141,8 @@ void CBagQuitDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 
 
 void CBagQuitDialog::onBofButton(CBofObject *pObject, int nFlags) {
-	Assert(IsValidObject(this));
-	Assert(pObject != nullptr);
+	assert(isValidObject(this));
+	assert(pObject != nullptr);
 
 	if (nFlags != BUTTON_CLICKED)
 		return;

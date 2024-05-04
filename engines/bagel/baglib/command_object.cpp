@@ -110,7 +110,7 @@ bool CBagCommandObject::runObject() {
 			if (strlen(buffer) == 11) {
 				slot = buffer[10] - 48;
 			}
-			Assert(slot >= 0 && slot < 8);
+			assert(slot >= 0 && slot < 8);
 
 		} else if (getFileName() == "CLOSE") {
 			CBagStorageDevWnd *currentSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev();

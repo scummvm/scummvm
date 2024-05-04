@@ -42,8 +42,8 @@ CBofDialog::CBofDialog() {
 
 
 CBofDialog::CBofDialog(const char *pszFileName, CBofWindow *pParent, const uint32 nID, const uint32 lFlags) {
-	Assert(pszFileName != nullptr);
-	Assert(pParent != nullptr);
+	assert(pszFileName != nullptr);
+	assert(pParent != nullptr);
 
 	// Inits
 	_pDlgBackground = nullptr;
@@ -60,7 +60,7 @@ CBofDialog::CBofDialog(const char *pszFileName, CBofWindow *pParent, const uint3
 		setBackdrop(pBmp);
 	}
 
-	Assert(_pBackdrop != nullptr);
+	assert(_pBackdrop != nullptr);
 	CBofRect cRect = _pBackdrop->getRect();
 
 	// Create the dialog box
@@ -68,7 +68,7 @@ CBofDialog::CBofDialog(const char *pszFileName, CBofWindow *pParent, const uint3
 }
 
 CBofDialog::~CBofDialog() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	delete _pDlgBackground;
 	_pDlgBackground = nullptr;
@@ -76,11 +76,11 @@ CBofDialog::~CBofDialog() {
 
 
 ErrorCode CBofDialog::create(const char *pszName, int x, int y, int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {
-	Assert(IsValidObject(this));
-	Assert(pszName != nullptr);
+	assert(isValidObject(this));
+	assert(pszName != nullptr);
 
 	// Dialog boxes must have parent windows
-	Assert(pParent != nullptr);
+	assert(pParent != nullptr);
 
 	// Inits
 	_parent = pParent;
@@ -104,8 +104,8 @@ ErrorCode CBofDialog::create(const char *pszName, int x, int y, int nWidth, int 
 
 
 ErrorCode CBofDialog::create(const char *pszName, CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
-	Assert(IsValidObject(this));
-	Assert(pszName != nullptr);
+	assert(isValidObject(this));
+	assert(pszName != nullptr);
 
 	CBofRect cRect;
 	int x = 0;
@@ -130,7 +130,7 @@ ErrorCode CBofDialog::create(const char *pszName, CBofRect *pRect, CBofWindow *p
 
 
 void CBofDialog::onClose() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Release any capture/focus that was active
 	CBofApp *app = CBofApp::getApp();
@@ -142,7 +142,7 @@ void CBofDialog::onClose() {
 		pParent->enable();
 
 		// The parent window MUST now be enabled
-		Assert(pParent->isEnabled());
+		assert(pParent->isEnabled());
 	}
 
 	// If we saved the background, then paint it
@@ -164,8 +164,8 @@ void CBofDialog::onClose() {
 
 
 ErrorCode CBofDialog::paint(CBofRect *pRect) {
-	Assert(IsValidObject(this));
-	Assert(pRect != nullptr);
+	assert(isValidObject(this));
+	assert(pRect != nullptr);
 
 	// Repaint the background behind the dialog
 	if (!_bFirstTime) {
@@ -183,7 +183,7 @@ ErrorCode CBofDialog::paint(CBofRect *pRect) {
 
 
 ErrorCode CBofDialog::paintBackground() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Paint back the background
 	if (_pDlgBackground != nullptr) {
@@ -195,7 +195,7 @@ ErrorCode CBofDialog::paintBackground() {
 
 
 ErrorCode CBofDialog::saveBackground() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (_lFlags & BOFDLG_SAVEBACKGND) {
 		CBofPalette *pPalette = CBofApp::getApp()->getPalette();
@@ -228,8 +228,8 @@ ErrorCode CBofDialog::killBackground() {
 
 
 void CBofDialog::onPaint(CBofRect *pRect) {
-	Assert(IsValidObject(this));
-	Assert(pRect != nullptr);
+	assert(isValidObject(this));
+	assert(pRect != nullptr);
 
 	if (_bFirstTime) {
 		saveBackground();
@@ -242,10 +242,10 @@ void CBofDialog::onPaint(CBofRect *pRect) {
 
 
 int CBofDialog::doModal() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// The dialog box must have been successfully created first
-	Assert(isCreated());
+	assert(isCreated());
 
 	CBofWindow *pLastActive = getActiveWindow();
 	setActive();

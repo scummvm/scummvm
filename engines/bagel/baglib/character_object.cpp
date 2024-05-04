@@ -93,7 +93,7 @@ ErrorCode CBagCharacterObject::attach() {
 	filename.ReplaceStr(".SMK", ".BIN");
 
 	if (_binBuf != nullptr) {
-		BofFree(_binBuf);
+		bofFree(_binBuf);
 		_binBuf = nullptr;
 	}
 
@@ -103,7 +103,7 @@ ErrorCode CBagCharacterObject::attach() {
 
 		_binBufLen = cInputFile.getLength();
 
-		if ((_binBuf = (char *)BofAlloc(_binBufLen + 1)) != nullptr) {
+		if ((_binBuf = (char *)bofAlloc(_binBufLen + 1)) != nullptr) {
 			cInputFile.read(_binBuf, _binBufLen);
 
 		} else {
@@ -179,7 +179,7 @@ ErrorCode CBagCharacterObject::detach() {
 	}
 
 	if (_binBuf != nullptr) {
-		BofFree(_binBuf);
+		bofFree(_binBuf);
 		_binBuf = nullptr;
 	}
 

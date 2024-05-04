@@ -27,35 +27,35 @@
 
 namespace Bagel {
 
-extern int MapWindowsPointSize(int pointSize);
+extern int mapWindowsPointSize(int pointSize);
 
 /**
  * Starts a Millisecond timer
  */
-extern void TimerStart();
+extern void timerStart();
 
 /**
- * Stops the timer started by TimerStart, returns time elapsed.
- * @return      Number of MilliSeconds elapsed since call to TimerStart
+ * Stops the timer started by timerStart, returns time elapsed.
+ * @return      Number of MilliSeconds elapsed since call to timerStart
  */
 extern uint32 timerStop();
 
 /**
  * Returns the current elapsed time in milliseconds
 */
-extern uint32 GetTimer();
+extern uint32 getTimer();
 
 /**
  * Pauses the computer for specified number of MilliSeconds
  * @param milli     Number of milliseconds
  */
-extern void Sleep(uint32 milli);
+extern void bofSleep(uint32 milli);
 
-extern Fixed FixedDivide(Fixed Dividend, Fixed Divisor);
-extern Fixed FixedMultiply(Fixed Multiplicand, Fixed Multiplier);
+extern Fixed fixedDivide(Fixed Dividend, Fixed Divisor);
+extern Fixed fixedMultiply(Fixed Multiplicand, Fixed Multiplier);
 
-#define IntToFixed(i) (Fixed)(((long)(i)) << 16)
-#define FixedToInt(f) (int)(((long)f) >> 16)
+#define intToFixed(i) (Fixed)(((long)(i)) << 16)
+#define fixedToInt(f) (int)(((long)f) >> 16)
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -72,7 +72,7 @@ extern Fixed FixedMultiply(Fixed Multiplicand, Fixed Multiplier);
  * @param bClear        true if buffer should be cleared
  * @return              Pointer to new buffer
  */
-extern void *BofMemAlloc(uint32 nSize, const char *pFile, int nLine, bool bClear);
+extern void *bofMemAlloc(uint32 nSize, const char *pFile, int nLine, bool bClear);
 
 /**
  * Re-Allocates a memory block to the specified size
@@ -82,7 +82,7 @@ extern void *BofMemAlloc(uint32 nSize, const char *pFile, int nLine, bool bClear
  * @param nLine         Source file line number
  * @return              Pointer to new buffer
  */
-extern void *BofMemReAlloc(void *pOldPtr, uint32 nNewSize, const char *pFile, int nLine);
+extern void *bofMemReAlloc(void *pOldPtr, uint32 nNewSize, const char *pFile, int nLine);
 
 /**
  * Frees specified memory block
@@ -90,18 +90,18 @@ extern void *BofMemReAlloc(void *pOldPtr, uint32 nNewSize, const char *pFile, in
  * @param pFile         Source file name
  * @param nLine         Source file line number
  **/
-extern void BofMemFree(void *pBuf, const char *pszFile, int nLine);
+extern void bofMemFree(void *pBuf, const char *pszFile, int nLine);
 
-#define BofAlloc(n) BofMemAlloc((n), __FILE__, __LINE__, false)
-#define BofCAlloc(n, m) BofMemAlloc((uint32)(n) * (m), __FILE__, __LINE__, true)
-#define BofReAlloc(p, n) BofMemReAlloc((p), (n), __FILE__, __LINE__)
-#define BofFree(p) BofMemFree((p), __FILE__, __LINE__)
+#define bofAlloc(n) bofMemAlloc((n), __FILE__, __LINE__, false)
+#define bofCAlloc(n, m) bofMemAlloc((uint32)(n) * (m), __FILE__, __LINE__, true)
+#define bofReAlloc(p, n) bofMemReAlloc((p), (n), __FILE__, __LINE__)
+#define bofFree(p) bofMemFree((p), __FILE__, __LINE__)
 
-#define BofMemSet memset
-#define BofMemCopy memcpy
-#define BofMemMove memmove
+#define bofMemSet memset
+#define bofMemCopy memcpy
+#define bofMemMove memmove
 
-inline uint32 GetFreePhysMem() {
+inline uint32 getFreePhysMem() {
 	return 999999;
 }
 
@@ -111,15 +111,11 @@ inline uint32 GetFreePhysMem() {
  * @param lSize         Number of bytes in buffer
  * @param pszPassword   Optional password to encrypt with
  */
-void Encrypt(void *, int32, const char *pPassword = nullptr);
-#define Decrypt Encrypt
+void encrypt(void *, int32, const char *pPassword = nullptr);
+#define decrypt encrypt
 
-extern void EncryptPartial(void *, int32, int32, const char *pPassword = nullptr);
-#define DecryptPartial EncryptPartial
-
-#ifndef ABS
-#define ABS(x) ((x) > 0 ? (x) : -(x))
-#endif
+extern void encryptPartial(void *, int32, int32, const char *pPassword = nullptr);
+#define decryptPartial encryptPartial
 
 } // namespace Bagel
 

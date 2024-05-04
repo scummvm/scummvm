@@ -44,7 +44,7 @@ char *fileGetFullPath(char *pszDstBuf, const char *pszSrcBuf) {
 }
 
 const char *formPath(const char *dir, const char *pszFile) {
-	Assert(dir != nullptr && pszFile != nullptr);
+	assert(dir != nullptr && pszFile != nullptr);
 	static char szBuf[MAX_DIRPATH];
 
 	CBofString cStr(dir);

@@ -394,8 +394,8 @@ void CMainWindow::correctZzazzlePoint(CBofPoint *p) {
 
 
 void CMainWindow::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
-	Assert(IsValidObject(this));
-	Assert(pPoint != nullptr);
+	assert(isValidObject(this));
+	assert(pPoint != nullptr);
 
 	if (_cLastPos != *pPoint) {
 		_cLastPos = *pPoint;

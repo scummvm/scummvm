@@ -34,7 +34,7 @@ SBarFullWnd::SBarFullWnd() {
 }
 
 ErrorCode SBarFullWnd::attach() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// If we have something wielded, put it on hold for now.
 	if (CBagPanWindow::_pWieldBmp != nullptr) {
@@ -69,7 +69,7 @@ ErrorCode SBarFullWnd::detach() {
 }
 
 void SBarFullWnd::onTimer(uint32 nTimerId) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// If allowing EVENT_WLD to execute
 	if (_bAllowEventWorld) {

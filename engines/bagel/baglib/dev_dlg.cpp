@@ -46,11 +46,11 @@ CDevDlg::~CDevDlg() {
 }
 
 ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CBofRect *rect, bool useExtraFl) {
-	Assert(IsValidObject(this));
-	Assert(bmp != nullptr);
-	Assert(wnd != nullptr);
-	Assert(pal != nullptr);
-	Assert(rect != nullptr);
+	assert(isValidObject(this));
+	assert(bmp != nullptr);
+	assert(wnd != nullptr);
+	assert(pal != nullptr);
+	assert(rect != nullptr);
 
 	_useExtraFl = useExtraFl;
 
@@ -84,7 +84,7 @@ ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CB
 	if (bitmap == nullptr) {
 		bitmap = new CBofBitmap(200, 100, pal);
 		if (bitmap != nullptr) {
-			Assert(pal != nullptr);
+			assert(pal != nullptr);
 
 			bitmap->fillRect(nullptr, pal->getNearestIndex(RGB(92, 92, 92)));
 
@@ -97,7 +97,7 @@ ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CB
 		}
 	}
 
-	Assert(bitmap != nullptr);
+	assert(bitmap != nullptr);
 	CBofRect bmpRect(bitmap->getRect());
 	CBofString className = "CDevDlg";
 	CBagStorageDevDlg::create(className, &bmpRect, wnd, 0);
@@ -114,7 +114,7 @@ void CDevDlg::onMouseMove(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
 }
 
 void CDevDlg::onClose() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBagVar *varDialogReturn = VAR_MANAGER->GetVariable("DIALOGRETURN");
 	if (varDialogReturn != nullptr) {
@@ -145,7 +145,7 @@ void CDevDlg::onClose() {
 }
 
 void CDevDlg::onKeyHit(uint32 keyCode, uint32 repCount) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (_guessCount < ACH_GUESS_MAX_CHARS) {
 		bool paintGuessFl = false;
@@ -182,7 +182,7 @@ void CDevDlg::onKeyHit(uint32 keyCode, uint32 repCount) {
 }
 
 void CDevDlg::paintText() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	char achTemp[ACH_GUESS_MAX_CHARS+1];
 	snprintf(achTemp, ACH_GUESS_MAX_CHARS+1, "%s", _achGuess);
@@ -191,7 +191,7 @@ void CDevDlg::paintText() {
 }
 
 void CDevDlg::setText(CBofString &text, CBofRect *textRect) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	_titleText = new CBofText;
 	if (_titleText != nullptr) {
@@ -205,7 +205,7 @@ void CDevDlg::setText(CBofString &text, CBofRect *textRect) {
 
 // Override on render to do the painting, but call the default anyway.
 ErrorCode CDevDlg::onRender(CBofBitmap *bmp, CBofRect *rect) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	ErrorCode errCode = CBagStorageDevDlg::onRender(bmp, rect);
 

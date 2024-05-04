@@ -152,7 +152,7 @@ bool CBagMovieObject::runObject() {
 			if (pPDA == nullptr) {
 				pPDA = (CBagPDA *)SDEV_MANAGER->GetStorageDevice("BPDA_WLD");
 			}
-			Assert(pPDA != nullptr);
+			assert(pPDA != nullptr);
 
 			// If we have an asnych movie to play, make sure it is a good
 			// time to play it, if not, then queue it up so it can play at a much better time.
@@ -548,8 +548,8 @@ bool CBagMovieObject::asynchPDAMovieCanPlay() {
 	CBagPanWindow *pMainWin = (CBagPanWindow *)(CBagel::getBagApp()->getMasterWnd()->getCurrentGameWindow());
 
 	// Queue this message if any one of a variety of things is happening.
-	Assert(pPDA != nullptr);
-	Assert(pPDAz != nullptr);
+	assert(pPDA != nullptr);
+	assert(pPDAz != nullptr);
 
 	if (pPDA && pPDAz) {
 		if (pPDAz->getZoomed() ||              // We're zoomed

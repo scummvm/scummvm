@@ -29,21 +29,21 @@ CQueue::CQueue() {
 
 CQueue::CQueue(void *pObject) {
 	// Validate input
-	Assert(pObject != nullptr);
+	assert(pObject != nullptr);
 
 	// Start queue with this object
-	AddItem(pObject);
+	addItem(pObject);
 }
 
 CQueue::CQueue(CQueue *pQueue) {
 	CLList *pList;
 
 	// Validate input queue
-	Assert(pQueue != nullptr);
+	assert(pQueue != nullptr);
 
-	pList = pQueue->m_pQueueList;
+	pList = pQueue->_pQueueList;
 	while (pList != nullptr) {
-		AddItem(pList->getData());
+		addItem(pList->getData());
 		pList = pList->GetNext();
 	}
 }
@@ -51,44 +51,44 @@ CQueue::CQueue(CQueue *pQueue) {
 CQueue::CQueue(const CQueue &cQueue) {
 	CLList *pList;
 
-	pList = cQueue.m_pQueueList;
+	pList = cQueue._pQueueList;
 	while (pList != nullptr) {
-		AddItem(pList->getData());
+		addItem(pList->getData());
 		pList = pList->GetNext();
 	}
 }
 
 CQueue::~CQueue() {
 	// Can't destruct if we don't exist
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
-	while (RemoveItem() != nullptr) {
+	while (removeItem() != nullptr) {
 	}
 
-	// remove() must set m_pQueueList to nullptr when it removes the last item
-	Assert(m_pQueueList == nullptr);
+	// remove() must set _pQueueList to nullptr when it removes the last item
+	assert(_pQueueList == nullptr);
 }
 
-void CQueue::AddItem(void *pObject) {
+void CQueue::addItem(void *pObject) {
 	// Make sure this object exists
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CLList *pNewItem;
 
 	if ((pNewItem = new CLList(pObject)) != nullptr) {
-		if (m_pQueueList != nullptr) {
-			m_pQueueList->addToTail(pNewItem);
+		if (_pQueueList != nullptr) {
+			_pQueueList->addToTail(pNewItem);
 		} else {
-			m_pQueueList = pNewItem;
+			_pQueueList = pNewItem;
 		}
 
-		Assert(pNewItem->getHead() == m_pQueueList);
+		assert(pNewItem->getHead() == _pQueueList);
 	}
 }
 
-void *CQueue::RemoveItem() {
+void *CQueue::removeItem() {
 	// Make sure this object exists
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CLList *pList;
 	void *pObject;
@@ -96,32 +96,32 @@ void *CQueue::RemoveItem() {
 	// Assume empty list
 	pObject = nullptr;
 
-	if ((pList = m_pQueueList) != nullptr) {
+	if ((pList = _pQueueList) != nullptr) {
 
 		pObject = pList->getData();
 
-		m_pQueueList = pList->GetNext();
+		_pQueueList = pList->GetNext();
 		delete pList;
 	}
 
 	return pObject;
 }
 
-void CQueue::DeleteItem(void *pItem) {
+void CQueue::deleteItem(void *pItem) {
 	// Make sure this object exists
-	Assert(IsValidObject(this));
-	Assert(pItem != nullptr);
+	assert(isValidObject(this));
+	assert(pItem != nullptr);
 
 	CLList *pList, *pNext;
 
-	pList = m_pQueueList;
+	pList = _pQueueList;
 	while (pList != nullptr) {
 		pNext = pList->GetNext();
 
 		if (pItem == pList->getData()) {
 			// If this is the 1st item in the Queue, then move head
-			if (pList == m_pQueueList)
-				m_pQueueList = m_pQueueList->GetNext();
+			if (pList == _pQueueList)
+				_pQueueList = _pQueueList->GetNext();
 
 			delete pList;
 			break;
@@ -131,23 +131,23 @@ void CQueue::DeleteItem(void *pItem) {
 	}
 }
 
-void *CQueue::GetQItem() {
-	Assert(IsValidObject(this));
+void *CQueue::getQItem() {
+	assert(isValidObject(this));
 
 	void *pItem;
 
 	pItem = nullptr;
-	if (m_pQueueList != nullptr) {
-		pItem = m_pQueueList->getData();
+	if (_pQueueList != nullptr) {
+		pItem = _pQueueList->getData();
 	}
 
 	return pItem;
 }
 
 void CQueue::flush() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
-	while (RemoveItem() != nullptr) {
+	while (removeItem() != nullptr) {
 	}
 }
 

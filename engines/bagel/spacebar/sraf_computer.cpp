@@ -545,7 +545,7 @@ void SrafComputer::recalcSellerSummaryList() {
 	// initialize the initial state of the seller summary
 	if (_pSellerSummaryList == nullptr) {
 		_pSellerSummaryList = new CBofList<DealSummarySellerItem>;
-		Assert(_pSellerSummaryList != nullptr);
+		assert(_pSellerSummaryList != nullptr);
 	} else {
 		delete _pSellerSummaryList;
 		_pSellerSummaryList = nullptr;
@@ -554,7 +554,7 @@ void SrafComputer::recalcSellerSummaryList() {
 	// Lets verify that its all set before we go to use it
 	if (_pSellerSummaryList == nullptr) {
 		_pSellerSummaryList = new CBofList<DealSummarySellerItem>;
-		Assert(_pSellerSummaryList != nullptr);
+		assert(_pSellerSummaryList != nullptr);
 	}
 
 	int i = 0;
@@ -574,7 +574,7 @@ void SrafComputer::recalcBuyerSummaryList() {
 	// initialize the initial state of the deal summary
 	if (_pBuyerSummaryList == nullptr) {
 		_pBuyerSummaryList = new CBofList<DealSummaryBuyerItem>;
-		Assert(_pBuyerSummaryList != nullptr);
+		assert(_pBuyerSummaryList != nullptr);
 	} else {
 		delete _pBuyerSummaryList;
 		_pBuyerSummaryList = nullptr;
@@ -583,14 +583,14 @@ void SrafComputer::recalcBuyerSummaryList() {
 	// Lets verify that its all set before we go to use it
 	if (_pBuyerSummaryList == nullptr) {
 		_pBuyerSummaryList = new CBofList<DealSummaryBuyerItem>;
-		Assert(_pBuyerSummaryList != nullptr);
+		assert(_pBuyerSummaryList != nullptr);
 	}
 
 	int i = 0;
 	while (i < NUM_BUYERS) {
 		if (g_stBuyerBids[i]._bAccept) {
 			DealSummaryBuyerItem *pBuyerItem = new DealSummaryBuyerItem();
-			Assert(pBuyerItem != nullptr);
+			assert(pBuyerItem != nullptr);
 
 			pBuyerItem->_eBuyerID = g_stBuyerBids[i]._nBuyerID;
 			pBuyerItem->_nBuyerOffer = g_stBuyerBids[i]._nBidSum;
@@ -737,16 +737,16 @@ bool SrafComputer::verifyDispatchTeam() {
 
 		if (_pTeamList == nullptr) {
 			_pTeamList = new CBofList<DispatchedTeamItem>;
-			Assert(_pTeamList != nullptr);
+			assert(_pTeamList != nullptr);
 		}
 
 		pTeamItem = new DispatchedTeamItem();
-		Assert(pTeamItem != nullptr);
+		assert(pTeamItem != nullptr);
 
 		pTeamItem->_nFlags = nTeam | nDispatchFlags;
 		pTeamItem->_nMeetWithID = nMeetingWith;
 		CBagVar *pVar = VAR_MANAGER->GetVariable("SRATURNCOUNT");
-		Assert(pVar != nullptr);
+		assert(pVar != nullptr);
 
 		pTeamItem->_nDispatchTime = pVar->GetNumValue();
 		pTeamItem->_nMeetingTime = calculateMeetingTime(pTeamItem->_nFlags);
@@ -872,7 +872,7 @@ void SrafComputer::onMainLoop() {
 
 void SrafComputer::onPaint(CBofRect *pRect) {
 	if (getBackdrop()) {
-		Assert(GetWorkBmp() != nullptr);
+		assert(GetWorkBmp() != nullptr);
 
 		// erase everything from the background
 		GetWorkBmp()->paint(getBackdrop(), pRect, pRect);
@@ -898,10 +898,10 @@ ErrorCode SrafComputer::attach() {
 
 	if (rc == ERR_NONE) {
 		// Build our main menu list
-		Assert(_pMainList == nullptr);
+		assert(_pMainList == nullptr);
 
 		_pMainList = new CBofList<SrafCompItem>;
-		Assert(_pMainList != nullptr);
+		assert(_pMainList != nullptr);
 		fillMain();
 
 		// If we're on the Mac version, slot in the Chicken Dance song
@@ -912,12 +912,12 @@ ErrorCode SrafComputer::attach() {
 		for (int i = 0; i < (NUM_MUSICAL_SCORES - 1); i++) {
 			if (g_stAudioSetting[i]->_pMidiTrack == nullptr) {
 				g_stAudioSetting[i]->_pMidiTrack = new CBofSound(this, BuildAudioDir(g_stAudioSetting[i]->_pszAudioFile), SOUND_MIDI | SOUND_ASYNCH | SOUND_LOOP, 32000);
-				Assert(g_stAudioSetting[i]->_pMidiTrack != nullptr);
+				assert(g_stAudioSetting[i]->_pMidiTrack != nullptr);
 			}
 		}
 
 		// Must have a valid backdrop by now
-		Assert(_pBackdrop != nullptr);
+		assert(_pBackdrop != nullptr);
 		CBofPalette *pPal = _pBackdrop->getPalette();
 
 		for (int i = 0; i < NUM_SRAFCOMPBUTT; i++) {
@@ -943,12 +943,12 @@ ErrorCode SrafComputer::attach() {
 		// Set the starting time...
 		if (_nStartingTime == 0) {
 			CBagVar *pVar = VAR_MANAGER->GetVariable("SRATURNCOUNT");
-			Assert(pVar != nullptr);
+			assert(pVar != nullptr);
 			_nStartingTime = pVar->GetNumValue();
 		}
 
-		Assert(_pszGroup1Word != nullptr);
-		Assert(_pszGroup2Word != nullptr);
+		assert(_pszGroup1Word != nullptr);
+		assert(_pszGroup2Word != nullptr);
 
 		setOn();
 
@@ -1076,8 +1076,8 @@ void SrafComputer::onKeyHit(uint32 lKey, uint32 nRepCount) {
 
 
 void SrafComputer::onBofButton(CBofObject *pObject, int nState) {
-	Assert(IsValidObject(this));
-	Assert(pObject != nullptr);
+	assert(isValidObject(this));
+	assert(pObject != nullptr);
 
 	// Count a turn if we have been clicked
 	// Mouse downs on button clicks were causing too many weird
@@ -1196,7 +1196,7 @@ void SrafComputer::fillMain() {
 
 	while (i < NUM_MAIN_ITEMS) {
 		SrafCompItem *pCompItem = new SrafCompItem();
-		Assert(pCompItem != nullptr);
+		assert(pCompItem != nullptr);
 
 		pCompItem->_pItem = g_stMainItems[i];
 
@@ -1296,13 +1296,13 @@ void SrafComputer::activateDealSummary() {
 	recalcSellerSummaryList();
 	recalcBuyerSummaryList();
 
-	Assert(_pSellerSummaryList != nullptr);
-	Assert(_pBuyerSummaryList != nullptr);
+	assert(_pSellerSummaryList != nullptr);
+	assert(_pBuyerSummaryList != nullptr);
 
 	// load up the main list now with our deal summary data.
 
 	ErrorCode error = createListBox();
-	Assert(error == ERR_NONE);
+	assert(error == ERR_NONE);
 
 	//  Populate first line of list with header
 
@@ -1450,7 +1450,7 @@ void SrafComputer::activateBuyerBids() {
 
 	// Load up the main list now with our bid data.
 	error = createListBox();
-	Assert(error == ERR_NONE);
+	assert(error == ERR_NONE);
 
 	// Make sure we start with the correct computer background
 	if (getBackdrop()) {
@@ -1521,7 +1521,7 @@ void SrafComputer::activateDealBackground() {
 }
 
 void SrafComputer::hideAllButtons() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	for (int i = 0; i < NUM_SRAFCOMPBUTT; i++) {
 		if (_pButtons[i] != nullptr) {
@@ -1552,7 +1552,7 @@ void SrafComputer::activateSellerBios() {
 
 	// Load up the main list now with our deal summary data.
 	ErrorCode error = createListBox();
-	Assert(error == ERR_NONE);
+	assert(error == ERR_NONE);
 
 	// Populate first line of list with header
 	sStr = "SELLER BIOGRAPHIES";
@@ -1597,7 +1597,7 @@ void SrafComputer::activateOtherBios() {
 
 	// Load up the main list now with our deal summary data.
 	ErrorCode error = createListBox();
-	Assert(error == ERR_NONE);
+	assert(error == ERR_NONE);
 
 	// Populate first line of list with header
 	sStr = "OTHER BIOGRAPHIES";
@@ -1641,7 +1641,7 @@ void SrafComputer::activateStaffBios() {
 
 	// Load up the main list now with our deal summary data.
 	ErrorCode error = createListBox();
-	Assert(error == ERR_NONE);
+	assert(error == ERR_NONE);
 
 	// Populate first line of list with header
 	sStr = "STAFF BIOGRAPHIES";
@@ -1676,7 +1676,7 @@ void SrafComputer::activateDispatchTeam() {
 
 	// Load up the main list now with our bid data.
 	ErrorCode error = createListBox();
-	Assert(error == ERR_NONE);
+	assert(error == ERR_NONE);
 
 	// Make sure we start with the correct computer background
 	if (getBackdrop()) {
@@ -1899,7 +1899,7 @@ void SrafComputer::activateCurrentEMail() {
 	// load up the main list now with our bid data.
 
 	error = createListBox();
-	Assert(error == ERR_NONE);
+	assert(error == ERR_NONE);
 
 	// Make sure we start with the correct computer background
 	if (getBackdrop()) {
@@ -1954,7 +1954,7 @@ void SrafComputer::activateAudioSettings() {
 
 	// Load up the main list now with our bid data.
 	error = createListBox();
-	Assert(error == ERR_NONE);
+	assert(error == ERR_NONE);
 
 	// Make sure we start with the correct computer background
 	if (getBackdrop()) {
@@ -2018,7 +2018,7 @@ void SrafComputer::activateRoboButler() {
 
 	// Load up the main list now with our bid data.
 	ErrorCode error = createListBox();
-	Assert(error == ERR_NONE);
+	assert(error == ERR_NONE);
 
 	// Make sure we start with the correct computer background
 	if (getBackdrop()) {
@@ -2110,7 +2110,7 @@ void SrafComputer::activateCheckTeams() {
 
 	// Load up the main list now with our bid data.
 	ErrorCode error = createListBox();
-	Assert(error == ERR_NONE);
+	assert(error == ERR_NONE);
 
 	// Make sure we start with the correct computer background
 	if (getBackdrop()) {
@@ -2379,7 +2379,7 @@ void SrafComputer::activateCodeWords() {
 
 	// Load up the main list now with our deal summary data.
 	ErrorCode error = createListBox();
-	Assert(error == ERR_NONE);
+	assert(error == ERR_NONE);
 
 	// Populate first line of list with header
 	sStr = kCodeWordsHeader1;
@@ -3135,7 +3135,7 @@ bool SrafComputer::reportMeetingStatus(int nTeamNumber) {
 
 	// Get the current time...
 	CBagVar *pVar = VAR_MANAGER->GetVariable("SRATURNCOUNT");
-	Assert(pVar != nullptr);
+	assert(pVar != nullptr);
 	int nCurTime = pVar->GetNumValue();
 
 	// If less then 5 turns have elapsed, then we're still in the driving stage...
@@ -3313,7 +3313,7 @@ bool SrafComputer::reportMeetingStatus(int nTeamNumber) {
 				break;
 
 			default:
-				Assert(false);
+				assert(false);
 			}
 		}
 
@@ -3475,7 +3475,7 @@ bool SrafComputer::reportMeetingStatus(int nTeamNumber) {
 				}
 				break;
 			default:
-				Assert(false);
+				assert(false);
 			}
 		}
 
@@ -3517,7 +3517,7 @@ bool SrafComputer::reportMeetingStatus(int nTeamNumber) {
 				}
 				break;
 			default:
-				Assert(false);
+				assert(false);
 			}
 		}
 	}
@@ -3692,7 +3692,7 @@ void SrafComputer::activateMainScreen() {
 	_nListItemHeight = kLineItemHeight;
 
 	ErrorCode error = createListBox();
-	Assert(error == ERR_NONE);
+	assert(error == ERR_NONE);
 
 	int numItems = _pMainList->getCount();
 
@@ -4141,7 +4141,7 @@ void SrafComputer::notifyBoss(CBofString &sSoundFile, int nStafferID) {         
 	// Allow for no staffer screen
 	if (nStafferID != -1) {
 		pSaveBackground = new CBofBitmap(gTextWindow.width(), gTextWindow.height(), (CBofPalette *)nullptr, false);
-		Assert(pSaveBackground != nullptr);
+		assert(pSaveBackground != nullptr);
 
 		if (pSaveBackground == nullptr) {
 			return;
@@ -4157,7 +4157,7 @@ void SrafComputer::notifyBoss(CBofString &sSoundFile, int nStafferID) {         
 			sStr = BuildSrafDir(g_staffers[nStafferID]._pszStafferBmp);
 
 			_pStafferBmp[nStafferID] = new CBofBitmap(szLocalBuff);
-			Assert(_pStafferBmp[nStafferID] != nullptr);
+			assert(_pStafferBmp[nStafferID] != nullptr);
 			if (_pStafferBmp[nStafferID] == nullptr) {
 				return;
 			}
@@ -4183,13 +4183,13 @@ void SrafComputer::notifyBoss(CBofString &sSoundFile, int nStafferID) {         
 		char *pszBuf;
 		int nLength = fTxtFile.getLength();
 
-		if (nLength != 0 && (pszBuf = (char *)BofAlloc(nLength + 1)) != nullptr) {
-			BofMemSet(pszBuf, 0, nLength + 1);
+		if (nLength != 0 && (pszBuf = (char *)bofAlloc(nLength + 1)) != nullptr) {
+			bofMemSet(pszBuf, 0, nLength + 1);
 			fTxtFile.read(pszBuf, nLength);
 
 			// Put it up on the screen
 			displayMessage(pszBuf);
-			BofFree(pszBuf);
+			bofFree(pszBuf);
 			fTxtFile.close();
 		} else {
 			reportError(ERR_MEMORY, "Could not read %s into memory", sSoundFile.GetBuffer());
@@ -4349,13 +4349,13 @@ void SrafComputer::onButtonFinished(bool bVictorious) {
 
 		// Pass our codewords back to the bar...
 		pVar = VAR_MANAGER->GetVariable("DEVENCODE1");
-		Assert(pVar != nullptr);
+		assert(pVar != nullptr);
 
 		if (pVar)
 			pVar->SetValue(_pszGroup1Word->GetBuffer());
 
 		pVar = VAR_MANAGER->GetVariable("DEVENCODE2");
-		Assert(pVar != nullptr);
+		assert(pVar != nullptr);
 		if (pVar)
 			pVar->SetValue(_pszGroup2Word->GetBuffer());
 	}
@@ -4363,7 +4363,7 @@ void SrafComputer::onButtonFinished(bool bVictorious) {
 	// Setting the flashback variable will trigger the
 	// event world condition which gets us back to the bar.
 	pVar = VAR_MANAGER->GetVariable("RFLASHBACK");
-	Assert(pVar != nullptr);
+	assert(pVar != nullptr);
 
 	if (pVar) {
 		if (bVictorious == true) {
@@ -4418,7 +4418,7 @@ void SrafComputer::incrementTurnCount() {
 	CBagVar *pVar = VAR_MANAGER->GetVariable("SRATURNCOUNT");
 	int nTurncount = 0;
 
-	Assert(pVar != nullptr);
+	assert(pVar != nullptr);
 
 	// If the puzzle is already solved, then don't increment.
 	if (_eCurScreen == SCCODE_WORDS) {
@@ -4511,7 +4511,7 @@ void SrafComputer::incrementTurnCount() {
 
 void SrafComputer::displayTurnCount(int nLineNo) {
 	CBagVar *pVar = VAR_MANAGER->GetVariable("SRATURNCOUNT");
-	Assert(pVar != nullptr);
+	assert(pVar != nullptr);
 
 	char        szLocalBuff[256];
 	szLocalBuff[0] = '\0';
@@ -4559,7 +4559,7 @@ SrafTextScreen::SrafTextScreen(const CBofString &str, bool isText) :
 
 	} else {
 		CBofFile *file = new CBofFile(str, CBF_BINARY | CBF_READONLY);
-		Assert(file != nullptr);
+		assert(file != nullptr);
 
 		size_t len = file->getLength();
 		char *tmp = new char[len + 1];
@@ -4586,7 +4586,7 @@ int SrafTextScreen::createTextScreen(CBofWindow *pParent) {
 	// Needs the computer bitmap for a backdrop
 	setBackdrop(SrafComputer::getComputerBackdrop(), false);
 
-	Assert(_pBackdrop != nullptr);
+	assert(_pBackdrop != nullptr);
 	CBofPalette *pPal = _pBackdrop->getPalette();
 	// Create our OK button
 
@@ -4609,7 +4609,7 @@ int SrafTextScreen::createTextScreen(CBofWindow *pParent) {
 		                    g_stButtons[DONE_BUTTON]._nID);
 	}
 
-	Assert(_pOKButton != nullptr);
+	assert(_pOKButton != nullptr);
 
 	//  Create our text box.
 	cRect.SetRect(gCompDisplay.left, gCompDisplay.top, gCompDisplay.right, gCompDisplay.bottom);
@@ -4674,8 +4674,8 @@ void SrafTextScreen::onPaint(CBofRect * /*pRect*/) {
 }
 
 void SrafTextScreen::onBofButton(CBofObject *pObject, int nState) {
-	Assert(IsValidObject(this));
-	Assert(pObject != nullptr);
+	assert(isValidObject(this));
+	assert(pObject != nullptr);
 
 	CBofButton *pButton = (CBofButton *)pObject;
 
@@ -4832,7 +4832,7 @@ void SrafComputer::restoreSraffanVars() {
 		}
 	}
 
-	Assert(nIndex < 32);
+	assert(nIndex < 32);
 
 	// Restore other party's info
 	OTHERPARTYS nOtherID = SWONZA5;
@@ -4925,7 +4925,7 @@ void SrafComputer::restoreSraffanVars() {
 		// there.
 		if (_pTeamList == nullptr) {
 			_pTeamList = new CBofList<DispatchedTeamItem>;
-			Assert(_pTeamList != nullptr);
+			assert(_pTeamList != nullptr);
 		}
 
 		if (teamListItem._nFlags != 0) {
@@ -5091,7 +5091,7 @@ void SrafComputer::saveSraffanVars() {
 		}
 	}
 
-	Assert(nIndex < 32);
+	assert(nIndex < 32);
 
 	pVar = VAR_MANAGER->GetVariable("AVAILABLEMASK");
 	if (pVar != nullptr) {

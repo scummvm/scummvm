@@ -90,17 +90,6 @@ struct WindowPos {
 
 #define MAX_DIRPATH 256
 
-/**
- * Displays assertion failure
- * @param bExpression       Expression to evaluate (fail if false)
- * @param nLine             Source code line number of assertion
- * @param pszSourceFile     Source code file of assertion
- * @param pszTimeStamp      Time and date version of source file
- */
-extern void BofAssert(bool bExpression, int nLine, const char *pszSourceFile, const char *pszTimeStamp);
-
-#define Assert(f) assert(f)
-
 } // namespace Bagel
 
 #endif

@@ -42,7 +42,7 @@ int CBagParseObject::GetIntFromStream(CBagIfstream &istr, int &nNum) {
 	while (Common::isDigit(ch = (char)istr.peek())) {
 		ch = (char)istr.getCh();
 		szLocalStr[i++] = ch;
-		Assert(i < 256);
+		assert(i < 256);
 	}
 
 	szLocalStr[i] = 0;

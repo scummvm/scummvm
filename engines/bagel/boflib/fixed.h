@@ -60,11 +60,11 @@ public:
 	}
 
 	CBofFixed operator*(const CBofFixed &Arg) const {
-		return FixedMultiply(m_lVal, Arg.m_lVal);
+		return fixedMultiply(m_lVal, Arg.m_lVal);
 	}
 
 	CBofFixed operator/(const CBofFixed &Arg) const {
-		return FixedDivide(m_lVal, Arg.m_lVal);
+		return fixedDivide(m_lVal, Arg.m_lVal);
 	}
 
 	CBofFixed operator-=(const CBofFixed &Arg) {

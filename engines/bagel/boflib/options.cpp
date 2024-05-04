@@ -32,38 +32,38 @@ namespace Bagel {
 
 CBofOptions::CBofOptions(const char *pszOptionFile) {
 	_szFileName[0] = '\0';
-	m_pOptionList = nullptr;
-	m_bDirty = false;
+	_pOptionList = nullptr;
+	_bDirty = false;
 
 	if (pszOptionFile != nullptr) {
-		LoadOptionFile(pszOptionFile);
+		loadOptionFile(pszOptionFile);
 	}
 }
 
 CBofOptions::~CBofOptions() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	release();
 
 	_szFileName[0] = '\0';
 }
 
-ErrorCode CBofOptions::LoadOptionFile(const char *pszOptionFile) {
-	Assert(IsValidObject(this));
+ErrorCode CBofOptions::loadOptionFile(const char *pszOptionFile) {
+	assert(isValidObject(this));
 
-	Assert(pszOptionFile != nullptr);
-	Assert(*pszOptionFile != '\0');
-	Assert(strlen(pszOptionFile) < MAX_FNAME);
+	assert(pszOptionFile != nullptr);
+	assert(*pszOptionFile != '\0');
+	assert(strlen(pszOptionFile) < MAX_FNAME);
 
 	release();
 
 	Common::strcpy_s(_szFileName, pszOptionFile);
 
-	return Load();
+	return load();
 }
 
-ErrorCode CBofOptions::Load() {
-	Assert(IsValidObject(this));
+ErrorCode CBofOptions::load() {
+	assert(isValidObject(this));
 
 	// Assume no error
 	ErrorCode errCode = ERR_NONE;
@@ -75,15 +75,15 @@ ErrorCode CBofOptions::Load() {
 	if (Common::File::exists(_szFileName) && f.open(_szFileName)) {
 		char szBuf[MAX_OPTION_LEN];
 
-		Assert(m_pOptionList == nullptr);
+		assert(_pOptionList == nullptr);
 
 		while (readLine(&f, szBuf)) {
 			COption *pNewOption = new COption(szBuf);
 			if (pNewOption != nullptr) {
-				if (m_pOptionList != nullptr) {
-					m_pOptionList->addToTail(pNewOption);
+				if (_pOptionList != nullptr) {
+					_pOptionList->addToTail(pNewOption);
 				} else {
-					m_pOptionList = pNewOption;
+					_pOptionList = pNewOption;
 				}
 
 			} else {
@@ -92,9 +92,9 @@ ErrorCode CBofOptions::Load() {
 			}
 		}
 
-		if (m_pOptionList != nullptr) {
-			// m_pOptionList must always be the head of the list!
-			Assert(m_pOptionList == m_pOptionList->getHead());
+		if (_pOptionList != nullptr) {
+			// _pOptionList must always be the head of the list!
+			assert(_pOptionList == _pOptionList->getHead());
 		}
 
 		f.close();
@@ -107,26 +107,26 @@ ErrorCode CBofOptions::Load() {
 }
 
 void CBofOptions::release() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	commit();
 
 	// Release each item in the list
-	while (m_pOptionList != nullptr) {
-		COption *pNextItem = (COption *)m_pOptionList->GetNext();
+	while (_pOptionList != nullptr) {
+		COption *pNextItem = (COption *)_pOptionList->GetNext();
 
-		delete m_pOptionList;
-		m_pOptionList = pNextItem;
+		delete _pOptionList;
+		_pOptionList = pNextItem;
 	}
 }
 
 ErrorCode CBofOptions::commit() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 	ErrorCode errCode = ERR_NONE;
 
-	if ((m_pOptionList != nullptr) && m_bDirty) {
-		// m_pOptionList must always be the head of the list!
-		Assert(m_pOptionList == m_pOptionList->getHead());
+	if ((_pOptionList != nullptr) && _bDirty) {
+		// _pOptionList must always be the head of the list!
+		assert(_pOptionList == _pOptionList->getHead());
 
 		warning("TODO: Look into refactoring options to ConfMan if needed");
 	}
@@ -134,11 +134,11 @@ ErrorCode CBofOptions::commit() {
 	return errCode;
 }
 
-ErrorCode CBofOptions::WriteSetting(const char *pszSection, const char *pszVar, const char *pszNewValue) {
+ErrorCode CBofOptions::writeSetting(const char *pszSection, const char *pszVar, const char *pszNewValue) {
 	// Can't access nullptr pointers
-	Assert(pszSection != nullptr);
-	Assert(pszVar != nullptr);
-	Assert(pszNewValue != nullptr);
+	assert(pszSection != nullptr);
+	assert(pszVar != nullptr);
+	assert(pszNewValue != nullptr);
 
 	char szValueBuf[MAX_OPTION_LEN];
 
@@ -146,21 +146,21 @@ ErrorCode CBofOptions::WriteSetting(const char *pszSection, const char *pszVar, 
 	ErrorCode errCode = ERR_NONE;
 
 	// Indicate that the options file needs to be updated
-	m_bDirty = true;
+	_bDirty = true;
 
 	Common::sprintf_s(szValueBuf, "%s=%s", pszVar, pszNewValue);
 
 	// Find this option based on it's section
-	COption *pOption = FindOption(pszSection, pszVar);
+	COption *pOption = findOption(pszSection, pszVar);
 	if (pOption != nullptr) {
 		// Update option with new value
-		Common::strcpy_s(pOption->m_szBuf, szValueBuf);
+		Common::strcpy_s(pOption->_szBuf, szValueBuf);
 
 	} else {
 		// Did not find option (or possibly also did not find section)
 
 		// If this section is not in the file
-		COption *pSection = FindSection(pszSection);
+		COption *pSection = findSection(pszSection);
 		if (pSection == nullptr) {
 			char szSectionBuf[MAX_OPTION_LEN];
 			// Then create a new section
@@ -168,10 +168,10 @@ ErrorCode CBofOptions::WriteSetting(const char *pszSection, const char *pszVar, 
 
 			pSection = new COption(szSectionBuf);
 			if (pSection != nullptr) {
-				if (m_pOptionList != nullptr) {
-					m_pOptionList->addToTail(pSection);
+				if (_pOptionList != nullptr) {
+					_pOptionList->addToTail(pSection);
 				} else {
-					m_pOptionList = pSection;
+					_pOptionList = pSection;
 				}
 			} else {
 				errCode = ERR_MEMORY;
@@ -181,7 +181,7 @@ ErrorCode CBofOptions::WriteSetting(const char *pszSection, const char *pszVar, 
 		// Add this option to the specified section
 		pOption = new COption(szValueBuf);
 		if (pOption != nullptr) {
-			Assert(pSection != nullptr);
+			assert(pSection != nullptr);
 			pSection->Insert(pOption);
 		} else {
 			errCode = ERR_MEMORY;
@@ -191,10 +191,10 @@ ErrorCode CBofOptions::WriteSetting(const char *pszSection, const char *pszVar, 
 	return errCode;
 }
 
-ErrorCode CBofOptions::WriteSetting(const char *pszSection, const char *pszVar, int nNewValue) {
+ErrorCode CBofOptions::writeSetting(const char *pszSection, const char *pszVar, int nNewValue) {
 	// Can't access nullptr pointers
-	Assert(pszSection != nullptr);
-	Assert(pszVar != nullptr);
+	assert(pszSection != nullptr);
+	assert(pszVar != nullptr);
 
 	char szBuf[20];
 
@@ -202,17 +202,17 @@ ErrorCode CBofOptions::WriteSetting(const char *pszSection, const char *pszVar, 
 	ErrorCode errCode = ERR_NONE;
 
 	Common::sprintf_s(szBuf, "%d", nNewValue);
-	errCode = WriteSetting(pszSection, pszVar, szBuf);
+	errCode = writeSetting(pszSection, pszVar, szBuf);
 
 	return errCode;
 }
 
 ErrorCode CBofOptions::readSetting(const char *section, const char *option, char *stringValue, const char *defaultValue, uint32 maxLen) {
 	// Can't access nullptr pointers
-	Assert(section != nullptr);
-	Assert(option != nullptr);
-	Assert(stringValue != nullptr);
-	Assert(defaultValue != nullptr);
+	assert(section != nullptr);
+	assert(option != nullptr);
+	assert(stringValue != nullptr);
+	assert(defaultValue != nullptr);
 
 	// If ConfMan has a key of a given name, no matter the section,
 	// than it takes precedence over any INI file value
@@ -231,11 +231,11 @@ ErrorCode CBofOptions::readSetting(const char *section, const char *option, char
 	Common::strcpy_s(stringValue, maxLen, defaultValue);
 
 	// Try to find this option
-	COption *pOption = FindOption(section, option);
+	COption *pOption = findOption(section, option);
 	if (pOption != nullptr) {
-		Assert(strlen(pOption->m_szBuf) < MAX_OPTION_LEN);
+		assert(strlen(pOption->_szBuf) < MAX_OPTION_LEN);
 
-		Common::strcpy_s(szBuf, pOption->m_szBuf);
+		Common::strcpy_s(szBuf, pOption->_szBuf);
 
 		// Strip out any comments
 		StrReplaceChar(szBuf, ';', '\0');
@@ -260,9 +260,9 @@ ErrorCode CBofOptions::readSetting(const char *section, const char *option, char
 }
 
 ErrorCode CBofOptions::readSetting(const char *section, const char *option, int *intValue, int defaultValue) {
-	Assert(section != nullptr);
-	Assert(option != nullptr);
-	Assert(intValue != nullptr);
+	assert(section != nullptr);
+	assert(option != nullptr);
+	assert(intValue != nullptr);
 
 	// If ConfMan has a key of a given name, no matter the section,
 	// than it takes precedence over any INI file value
@@ -283,9 +283,9 @@ ErrorCode CBofOptions::readSetting(const char *section, const char *option, int 
 }
 
 ErrorCode CBofOptions::readSetting(const char *section, const char *option, bool *boolValue, bool defaultValue) {
-	Assert(section != nullptr);
-	Assert(option != nullptr);
-	Assert(boolValue != nullptr);
+	assert(section != nullptr);
+	assert(option != nullptr);
+	assert(boolValue != nullptr);
 
 	// If ConfMan has a key of a given name, no matter the section,
 	// than it takes precedence over any INI file value
@@ -300,19 +300,19 @@ ErrorCode CBofOptions::readSetting(const char *section, const char *option, bool
 	return errCode;
 }
 
-COption *CBofOptions::FindSection(const char *pszSection) {
-	Assert(IsValidObject(this));
-	Assert(pszSection != nullptr);
-	Assert(*pszSection != '\0');
+COption *CBofOptions::findSection(const char *pszSection) {
+	assert(isValidObject(this));
+	assert(pszSection != nullptr);
+	assert(*pszSection != '\0');
 
 	char szSectionBuf[MAX_OPTION_LEN];
 
 	Common::sprintf_s(szSectionBuf, "[%s]", pszSection);
 	int nLength = strlen(szSectionBuf);
 
-	COption *pOption = m_pOptionList;
+	COption *pOption = _pOptionList;
 	while (pOption != nullptr) {
-		if (!scumm_strnicmp(pOption->m_szBuf, szSectionBuf, nLength)) {
+		if (!scumm_strnicmp(pOption->_szBuf, szSectionBuf, nLength)) {
 			break;
 		}
 
@@ -322,12 +322,12 @@ COption *CBofOptions::FindSection(const char *pszSection) {
 	return pOption;
 }
 
-COption *CBofOptions::FindOption(const char *pszSection, const char *pszVar) {
-	Assert(IsValidObject(this));
-	Assert(pszSection != nullptr);
-	Assert(pszVar != nullptr);
-	Assert(*pszSection != '\0');
-	Assert(*pszVar != '\0');
+COption *CBofOptions::findOption(const char *pszSection, const char *pszVar) {
+	assert(isValidObject(this));
+	assert(pszSection != nullptr);
+	assert(pszVar != nullptr);
+	assert(*pszSection != '\0');
+	assert(*pszVar != '\0');
 
 	// Assume we won't find the option
 	COption *pFound = nullptr;
@@ -335,16 +335,16 @@ COption *CBofOptions::FindOption(const char *pszSection, const char *pszVar) {
 	int nLength = strlen(pszVar);
 	COption *pStart;
 
-	if ((pStart = FindSection(pszSection)) != nullptr) {
+	if ((pStart = findSection(pszSection)) != nullptr) {
 		COption *pOption = (COption *)pStart->GetNext();
 		while (pOption != nullptr) {
-			if (pOption->m_szBuf[0] == '[') {
+			if (pOption->_szBuf[0] == '[') {
 				// this option was not found
 				pFound = nullptr;
 				break;
 			}
 
-			if (!scumm_strnicmp(pOption->m_szBuf, pszVar, nLength)) {
+			if (!scumm_strnicmp(pOption->_szBuf, pszVar, nLength)) {
 				pFound = pOption;
 				break;
 			}
@@ -357,8 +357,8 @@ COption *CBofOptions::FindOption(const char *pszSection, const char *pszVar) {
 }
 
 bool CBofOptions::readLine(Common::SeekableReadStream *pFile, char *pszBuf) {
-	Assert(pFile != nullptr);
-	Assert(pszBuf != nullptr);
+	assert(pFile != nullptr);
+	assert(pszBuf != nullptr);
 
 	if (pFile->eos())
 		return false;

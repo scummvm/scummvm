@@ -164,7 +164,7 @@ CBagVar *CBagExpression::getVariable(int itemPos) {
 
 
 CBagExpression::OPERATION CBagExpression::getOperation(int itemPos) {
-	Assert(false);
+	assert(false);
 	return _operList.getNodeItem(itemPos);
 }
 
@@ -173,7 +173,7 @@ bool CBagExpression::evaluate(bool negFl, CBagVar &result) {
 	bool retVal = false;
 
 	// There must be an expression for every variable after the first
-	Assert(_varList.getCount() - 1 == _operList.getCount());
+	assert(_varList.getCount() - 1 == _operList.getCount());
 
 	int count = 0;
 
@@ -232,7 +232,7 @@ bool CBagExpression::evalLeftToRight(bool negFl, CBagVar &result) {
 	OPERATION oper = OP_NONE;
 
 	// There must be an expression for every variable after the first
-	Assert(_varList.getCount() - 1 == _operList.getCount());
+	assert(_varList.getCount() - 1 == _operList.getCount());
 
 	int varCount = 0;
 
@@ -330,11 +330,11 @@ bool CBagExpression::negEvaluate(CBagVar &result) {
 
 
 bool CBagExpression::onAssign(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar & /* resultOper, unused*/) {
-	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
+	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
 	char buffer[256];
 	Common::strcpy_s(buffer, rightHandOper->GetValue());
-	Assert(strlen(buffer) < 256);
+	assert(strlen(buffer) < 256);
 	CBofString newLeftHandValue(buffer, 256);
 
 	leftHandOper->SetValue(newLeftHandValue);
@@ -344,7 +344,7 @@ bool CBagExpression::onAssign(CBagVar *leftHandOper, CBagVar *rightHandOper, CBa
 
 
 bool CBagExpression::onEqual(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
-	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
+	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
 	bool retVal = leftHandOper->GetValue() == rightHandOper->GetValue();
 	resultOper.SetBoolValue(retVal);
@@ -354,7 +354,7 @@ bool CBagExpression::onEqual(CBagVar *leftHandOper, CBagVar *rightHandOper, CBag
 
 
 bool CBagExpression::onNotEqual(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
-	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
+	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 	bool retVal = leftHandOper->GetValue() != rightHandOper->GetValue();
 	resultOper.SetBoolValue(retVal);
 
@@ -363,7 +363,7 @@ bool CBagExpression::onNotEqual(CBagVar *leftHandOper, CBagVar *rightHandOper, C
 
 
 bool CBagExpression::onLessThan(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
-	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
+	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 	bool retVal = leftHandOper->GetNumValue() < rightHandOper->GetNumValue();
 	resultOper.SetBoolValue(retVal);
 	return retVal;
@@ -371,7 +371,7 @@ bool CBagExpression::onLessThan(CBagVar *leftHandOper, CBagVar *rightHandOper, C
 
 
 bool CBagExpression::onGreaterThan(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
-	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
+	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 	bool retVal = leftHandOper->GetNumValue() > rightHandOper->GetNumValue();
 	resultOper.SetBoolValue(retVal);
 	return retVal;
@@ -379,7 +379,7 @@ bool CBagExpression::onGreaterThan(CBagVar *leftHandOper, CBagVar *rightHandOper
 
 
 bool CBagExpression::onLessThanEqual(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
-	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
+	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 	bool retVal = leftHandOper->GetNumValue() <= rightHandOper->GetNumValue();
 	resultOper.SetBoolValue(retVal);
 	return retVal;
@@ -387,7 +387,7 @@ bool CBagExpression::onLessThanEqual(CBagVar *leftHandOper, CBagVar *rightHandOp
 
 
 bool CBagExpression::onGreaterThanEqual(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
-	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
+	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
 	bool retVal = leftHandOper->GetNumValue() >= rightHandOper->GetNumValue();
 	resultOper.SetBoolValue(retVal);
@@ -396,7 +396,7 @@ bool CBagExpression::onGreaterThanEqual(CBagVar *leftHandOper, CBagVar *rightHan
 
 
 bool CBagExpression::onPlusAssign(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
-	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
+	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
 	if (leftHandOper->IsNumeric() && rightHandOper->IsNumeric()) {
 		int leftHandNum = leftHandOper->GetNumValue();
@@ -410,7 +410,7 @@ bool CBagExpression::onPlusAssign(CBagVar *leftHandOper, CBagVar *rightHandOper,
 
 
 bool CBagExpression::onMinusAssign(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
-	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
+	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
 	if (leftHandOper->IsNumeric() && rightHandOper->IsNumeric()) {
 		int leftHandNum = leftHandOper->GetNumValue();
@@ -424,7 +424,7 @@ bool CBagExpression::onMinusAssign(CBagVar *leftHandOper, CBagVar *rightHandOper
 
 
 bool CBagExpression::onContains(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar & /* resultOper, unused */) {
-	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
+	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
 	CBagStorageDev *sDev = SDEV_MANAGER->GetStorageDevice(leftHandOper->GetValue());
 	if (sDev == nullptr)
@@ -438,7 +438,7 @@ bool CBagExpression::onContains(CBagVar *leftHandOper, CBagVar *rightHandOper, C
 }
 
 bool CBagExpression::onHas(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar & /* resultOper, unused */) {
-	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
+	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
 	CBagStorageDev *sDev = SDEV_MANAGER->GetStorageDevice(leftHandOper->GetValue());
 	if (sDev == nullptr)
@@ -452,7 +452,7 @@ bool CBagExpression::onHas(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVa
 }
 
 bool CBagExpression::onStatus(CBagVar *pLHOper, CBagVar * /* rightHandOper, unused */, CBagVar & /* resultOper, unused */) {
-	Assert(pLHOper != nullptr);
+	assert(pLHOper != nullptr);
 
 	CBagStorageDev *sDev = SDEV_MANAGER->GetStorageDeviceContaining(pLHOper->GetValue());
 	if (sDev == nullptr)
@@ -471,7 +471,7 @@ bool CBagExpression::onCurrSDev(CBagVar * /* leftHandOper, unused*/, CBagVar * /
 
 
 bool CBagExpression::onPlus(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
-	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
+	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
 	if (leftHandOper->IsNumeric() && rightHandOper->IsNumeric()) {
 		int leftHandNum = leftHandOper->GetNumValue();
@@ -484,7 +484,7 @@ bool CBagExpression::onPlus(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagV
 
 
 bool CBagExpression::onMinus(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
-	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
+	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
 	if (leftHandOper->IsNumeric() && rightHandOper->IsNumeric()) {
 		int leftHandNum = leftHandOper->GetNumValue();
@@ -497,7 +497,7 @@ bool CBagExpression::onMinus(CBagVar *leftHandOper, CBagVar *rightHandOper, CBag
 
 
 bool CBagExpression::onMultiply(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
-	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
+	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
 	if (leftHandOper->IsNumeric() && rightHandOper->IsNumeric()) {
 		int leftHandNum = leftHandOper->GetNumValue();
@@ -511,14 +511,14 @@ bool CBagExpression::onMultiply(CBagVar *leftHandOper, CBagVar *rightHandOper, C
 
 
 bool CBagExpression::onDivide(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
-	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
+	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
 	if (leftHandOper->IsNumeric() && rightHandOper->IsNumeric()) {
 		int leftHandNum = leftHandOper->GetNumValue();
 		int rightHandNum = rightHandOper->GetNumValue();
 
 		// Divide by Zero error?
-		Assert(rightHandNum != 0);
+		assert(rightHandNum != 0);
 
 		resultOper.SetValue(leftHandNum / rightHandNum);
 	}
@@ -528,14 +528,14 @@ bool CBagExpression::onDivide(CBagVar *leftHandOper, CBagVar *rightHandOper, CBa
 
 
 bool CBagExpression::onMod(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
-	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
+	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
 	if (leftHandOper->IsNumeric() && rightHandOper->IsNumeric()) {
 		int leftHandNum = leftHandOper->GetNumValue();
 		int rightHandNum = rightHandOper->GetNumValue();
 
 		// Divide by Zero error?
-		Assert(rightHandNum != 0);
+		assert(rightHandNum != 0);
 
 		resultOper.SetValue(leftHandNum % rightHandNum);
 	}
@@ -545,14 +545,14 @@ bool CBagExpression::onMod(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVa
 
 
 bool CBagExpression::onAnd(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar & /* resultOper, unused */) {
-	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
+	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
 	return (!leftHandOper->GetValue().Find("true") && !rightHandOper->GetValue().Find("true"));
 }
 
 
 bool CBagExpression::onOr(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar & /* resultOper, unused */) {
-	Assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
+	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
 	return (!leftHandOper->GetValue().Find("true") || !rightHandOper->GetValue().Find("true"));
 }

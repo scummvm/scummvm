@@ -46,8 +46,8 @@ CBofTextBox::CBofTextBox() {
 
 
 CBofTextBox::CBofTextBox(CBofWindow *pWindow, const CBofRect *pRect, const CBofString &cText) {
-	Assert(pWindow != nullptr);
-	Assert(pRect != nullptr);
+	assert(pWindow != nullptr);
+	assert(pRect != nullptr);
 
 	// Inits
 	_pDestWindow = nullptr;
@@ -68,8 +68,8 @@ CBofTextBox::CBofTextBox(CBofWindow *pWindow, const CBofRect *pRect, const CBofS
 
 
 CBofTextBox::CBofTextBox(CBofBitmap *pBitmap, const CBofRect *pRect, const CBofString &cText) {
-	Assert(pBitmap != nullptr);
-	Assert(pRect != nullptr);
+	assert(pBitmap != nullptr);
+	assert(pRect != nullptr);
 
 	// Inits
 	_pDestWindow = nullptr;
@@ -90,7 +90,7 @@ CBofTextBox::CBofTextBox(CBofBitmap *pBitmap, const CBofRect *pRect, const CBofS
 
 
 CBofTextBox::~CBofTextBox() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (_pTextField != nullptr) {
 		delete _pTextField;
@@ -102,8 +102,8 @@ CBofTextBox::~CBofTextBox() {
 
 
 ErrorCode CBofTextBox::setBox(const CBofRect *pRect) {
-	Assert(IsValidObject(this));
-	Assert(pRect != nullptr);
+	assert(isValidObject(this));
+	assert(pRect != nullptr);
 
 	// Remove previous text field (if any)
 	if (_pTextField != nullptr) {
@@ -123,8 +123,8 @@ ErrorCode CBofTextBox::setBox(const CBofRect *pRect) {
 
 
 void CBofTextBox::setDisplay(CBofWindow *pWindow) {
-	Assert(IsValidObject(this));
-	Assert(pWindow != nullptr);
+	assert(isValidObject(this));
+	assert(pWindow != nullptr);
 
 	_pDestWindow = pWindow;
 	_pDestBitmap = nullptr;
@@ -132,8 +132,8 @@ void CBofTextBox::setDisplay(CBofWindow *pWindow) {
 
 
 void CBofTextBox::setDisplay(CBofBitmap *pBitmap) {
-	Assert(IsValidObject(this));
-	Assert(pBitmap != nullptr);
+	assert(isValidObject(this));
+	assert(pBitmap != nullptr);
 
 	_pDestBitmap = pBitmap;
 	_pDestWindow = nullptr;
@@ -141,7 +141,7 @@ void CBofTextBox::setDisplay(CBofBitmap *pBitmap) {
 
 
 void CBofTextBox::setTextAttribs(const int nSize, const int nWeight, const RGBCOLOR cColor, const int nFont) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	_nPointSize = nSize;
 	_nWeight = nWeight;
@@ -152,7 +152,7 @@ void CBofTextBox::setTextAttribs(const int nSize, const int nWeight, const RGBCO
 
 void CBofTextBox::setText(const CBofString &cString) {
 	_cBuffer = cString;
-	Assert(_cBuffer.getLength() != 0);
+	assert(_cBuffer.getLength() != 0);
 
 	_cBuffer.ReplaceStr("\r\n", "\n");
 	_cBuffer.ReplaceStr("\r", "\n");
@@ -163,7 +163,7 @@ void CBofTextBox::setText(const CBofString &cString) {
 }
 
 int CBofTextBox::getIndex(const int nLine) {
-	Assert(nLine >= 0 && nLine <= _nNumLines);
+	assert(nLine >= 0 && nLine <= _nNumLines);
 
 	// Find the index into our buffer that represents the top left of the
 	// buffer that is nLine from current the beginning of the buffer.
@@ -174,7 +174,7 @@ int CBofTextBox::getIndex(const int nLine) {
 		pszCur = strstr(pszCur, "\n");
 
 		// Make sure we don't go too far (nLines is invalid)
-		Assert(pszCur != nullptr);
+		assert(pszCur != nullptr);
 
 		pszCur++;
 	}
@@ -210,8 +210,8 @@ ErrorCode CBofTextBox::scrollUp(const int nLines) {
 
 
 ErrorCode CBofTextBox::scrollTo(const int nLine) {
-	Assert(IsValidObject(this));
-	Assert(nLine >= 0 && nLine <= _nNumLines);
+	assert(isValidObject(this));
+	assert(nLine >= 0 && nLine <= _nNumLines);
 
 	_nCurrentIndex = getIndex(nLine);
 	_nCurrentLine = nLine;
@@ -224,12 +224,12 @@ ErrorCode CBofTextBox::scrollTo(const int nLine) {
 
 
 ErrorCode CBofTextBox::display() {
-	Assert(IsValidObject(this));
-	Assert(_nCurrentLine >= 0 && _nCurrentLine <= _nNumLines);
-	Assert(_nCurrentIndex >= 0 && _nCurrentIndex < _cBuffer.getLength());
+	assert(isValidObject(this));
+	assert(_nCurrentLine >= 0 && _nCurrentLine <= _nNumLines);
+	assert(_nCurrentIndex >= 0 && _nCurrentIndex < _cBuffer.getLength());
 
 	// The actual text box must have been created before it can be displayed
-	Assert(_pTextField != nullptr);
+	assert(_pTextField != nullptr);
 
 	// If painting to a window
 	if (_pDestWindow != nullptr) {
@@ -237,7 +237,7 @@ ErrorCode CBofTextBox::display() {
 
 	} else {
 		// Otherwise, must be painting to a bitmap
-		Assert(_pDestBitmap != nullptr);
+		assert(_pDestBitmap != nullptr);
 
 		_pTextField->display(_pDestBitmap, _cBuffer.Mid(_nCurrentIndex), _nPointSize, _nWeight, _cTextColor, _nTextFont);
 	}
@@ -247,16 +247,16 @@ ErrorCode CBofTextBox::display() {
 
 
 ErrorCode CBofTextBox::erase() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// The actual text box must have been created before it can be displayed
-	Assert(_pTextField != nullptr);
+	assert(_pTextField != nullptr);
 
 	if (_pDestWindow != nullptr) {
 		_errCode = _pTextField->erase(_pDestWindow);
 
 	} else {
-		Assert(_pDestBitmap != nullptr);
+		assert(_pDestBitmap != nullptr);
 		_errCode = _pTextField->erase(_pDestBitmap);
 	}
 
@@ -265,7 +265,7 @@ ErrorCode CBofTextBox::erase() {
 
 
 void CBofTextBox::flushBackground() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (_pTextField != nullptr) {
 		_pTextField->flushBackground();

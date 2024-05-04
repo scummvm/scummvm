@@ -149,7 +149,7 @@ CBagPanBitmap::CBagPanBitmap(int dx, int dy, CBofPalette *pPalette, const CBofRe
 }
 
 CBagPanBitmap::~CBagPanBitmap() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (m_pCosineTable) {
 		delete[] m_pCosineTable;

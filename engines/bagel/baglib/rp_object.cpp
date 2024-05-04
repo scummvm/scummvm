@@ -400,7 +400,7 @@ ErrorCode CBagRPObject::attach() {
 		m_pRPList = new CBofList<CBagRPObject *>;
 	}
 
-	Assert(m_pRPList != nullptr);
+	assert(m_pRPList != nullptr);
 
 	m_pRPList->addToTail(this);
 
@@ -483,10 +483,10 @@ void CBagRPObject::SetTouchedDos(CBofString &s, CBagExpression *x) {
 		m_pTouchedList = new CBofList<DossierObj *>;
 	}
 
-	Assert(m_pTouchedList != nullptr);
+	assert(m_pTouchedList != nullptr);
 
 	DossierObj *pDosObj = new DossierObj();
-	Assert(pDosObj != nullptr);
+	assert(pDosObj != nullptr);
 
 	// Just store the name for now, we'll get the pointer to the dossier in
 	// the attach code.
@@ -503,10 +503,10 @@ void CBagRPObject::SetUntouchedDos(CBofString &s, CBagExpression *x) {
 		m_pUntouchedList = new CBofList<DossierObj *>;
 	}
 
-	Assert(m_pUntouchedList != nullptr);
+	assert(m_pUntouchedList != nullptr);
 
 	DossierObj *pDosObj = new DossierObj();
-	Assert(pDosObj != nullptr);
+	assert(pDosObj != nullptr);
 
 	// Store the expression and the dossier string.
 	pDosObj->m_sDossier = s;
@@ -599,7 +599,7 @@ int CBagRPObject::RunRPQueue() {
 
 	// Be semi-efficient about this and only execute every 5 seconds or so.
 
-	int32 nCurTime = GetTimer();
+	int32 nCurTime = getTimer();
 	if (nCurTime > m_nLastRPQCheck + 5000) {
 
 		// Get the turncount variable.
@@ -607,7 +607,7 @@ int CBagRPObject::RunRPQueue() {
 			m_pTurncount = VAR_MANAGER->GetVariable("TURNCOUNT");
 		}
 		//
-		Assert(m_pTurncount != nullptr);
+		assert(m_pTurncount != nullptr);
 
 		// Get the current time
 		int nCurSBTime = m_pTurncount->GetNumValue();
@@ -638,7 +638,7 @@ int CBagRPObject::RunRPQueue() {
 // associated variable, find a non-null one and activate the return time associated
 // with that residue print request.
 int CBagRPObject::UpdateRPQueue() {
-	Assert(m_pRPList != nullptr);
+	assert(m_pRPList != nullptr);
 
 	int nCount = m_pRPList->getCount();
 	char szLocalBuff[256];
@@ -679,7 +679,7 @@ int CBagRPObject::UpdateRPQueue() {
 // has been deactivated and is not displayed to the PDA.  Called from
 // script.
 void CBagRPObject::DeactivateRPQueue() {
-	Assert(m_pRPList != nullptr);
+	assert(m_pRPList != nullptr);
 
 	int nCount = m_pRPList->getCount();
 
@@ -851,7 +851,7 @@ bool CBagRPObject::ActivateRPObject() {
 	ShowPDALog();
 
 	// Attach the description object.
-	Assert(m_pDescObj != nullptr);
+	assert(m_pDescObj != nullptr);
 
 	// This object might not be attached since it is not a local object in the
 	// log storage device
@@ -897,7 +897,7 @@ void CBagRPObject::DeactivateRPObject() {
 	}
 
 	// Attach the description object.
-	Assert(m_pDescObj != nullptr);
+	assert(m_pDescObj != nullptr);
 
 	if (m_pDescObj) {
 		m_pDescObj->SetVisible(false);  // Hide this guy
@@ -936,7 +936,7 @@ void CBagRPObject::DeactivateRPReview() {
 	}
 
 	// can't bloody well get anywhere without this info.
-	Assert(pLogWld != nullptr);
+	assert(pLogWld != nullptr);
 	if (pLogWld == nullptr) {
 		return;
 	}
@@ -994,7 +994,7 @@ void CBagRPObject::EvaluateDossiers() {
 	// right routine used below has been specifically tweaked to handle
 	// left to right evaluation.
 	CBofList<DossierObj *> *pDosList = (m_bTouched ? m_pTouchedList : m_pUntouchedList);
-	Assert(pDosList != nullptr);
+	assert(pDosList != nullptr);
 
 	int nCount = pDosList->getCount();
 	CBagLog *pLogZWld = nullptr;
@@ -1045,7 +1045,7 @@ void CBagRPObject::SetLogState(RPSTATES eLogMode) {
 		_pPrevLogStateVar = VAR_MANAGER->GetVariable("PREV_LOG_STATE");
 	}
 
-	Assert(m_pLogStateVar != nullptr && _pPrevLogStateVar != nullptr);
+	assert(m_pLogStateVar != nullptr && _pPrevLogStateVar != nullptr);
 
 	if (m_pLogStateVar != nullptr && _pPrevLogStateVar != nullptr) {
 		char szLocalBuff[256];
@@ -1114,7 +1114,7 @@ RPSTATES CBagRPObject::GetLogState() {
 
 	m_eRPMode = RP_NOMODE;
 
-	Assert(m_pLogStateVar != nullptr);
+	assert(m_pLogStateVar != nullptr);
 	if (m_pLogStateVar) {
 		char szLocalBuff[256];
 		CBofString cStr(szLocalBuff, 256);
@@ -1140,7 +1140,7 @@ void CBagRPObject::SetLogPages(int nPages) {
 		m_pBarLogPages = VAR_MANAGER->GetVariable("CODE_TOTAL_LOG_PAGES");
 	}
 
-	Assert(m_pBarLogPages != nullptr);
+	assert(m_pBarLogPages != nullptr);
 
 	if (m_pBarLogPages) {
 		m_pBarLogPages->SetValue(nPages);
@@ -1154,7 +1154,7 @@ void CBagRPObject::SetLogPages(int nPages) {
 		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
 	}
 
-	Assert(pLogWld != nullptr);
+	assert(pLogWld != nullptr);
 	if (pLogWld) {
 		// Let the float code know how many pages we have.
 		pLogWld->SetNumFloatPages(nPages);
@@ -1207,7 +1207,7 @@ void CBagRPObject::SaveRPVars() {
 
 	// Now handle touched dossier's
 	int nCount = m_pTouchedList->getCount();
-	Assert(nCount <= 3);
+	assert(nCount <= 3);
 	DossierObj *pDosObj;
 
 	if (m_pTouchedList) {
@@ -1229,7 +1229,7 @@ void CBagRPObject::SaveRPVars() {
 
 	// Now handle untouched dossier's
 	nCount = m_pUntouchedList->getCount();
-	Assert(nCount <= 3);
+	assert(nCount <= 3);
 
 	if (m_pUntouchedList) {
 		for (int i = 0; i < nCount; i++) {
@@ -1293,7 +1293,7 @@ void CBagRPObject::RestoreRPVars() {
 
 	// Now handle touched dossier's
 	int nCount = m_pTouchedList->getCount();
-	Assert(nCount <= 3);
+	assert(nCount <= 3);
 	DossierObj *pDosObj;
 
 	if (m_pTouchedList) {
@@ -1315,7 +1315,7 @@ void CBagRPObject::RestoreRPVars() {
 
 	// Now handle untouched dossier's
 	nCount = m_pUntouchedList->getCount();
-	Assert(nCount <= 3);
+	assert(nCount <= 3);
 
 	if (m_pUntouchedList) {
 		for (int i = 0; i < nCount; i++) {
@@ -1443,7 +1443,7 @@ int CBagRPObject::RPResultsWaiting() {
 void CBagRPObject::removeAllFromMsgQueue(CBagRPObject *pCurRPObj) {
 	// we really only care about the log world, not the logz.
 	CBagLog *pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
-	Assert(pLogWld != nullptr);
+	assert(pLogWld != nullptr);
 	int nCount = m_pRPList->getCount();
 
 	for (int i = 0; i < nCount; i++) {
@@ -1494,7 +1494,7 @@ bool CBagRPObject::initialize() {
 	} else {
 		pSDev = SDEV_MANAGER->GetStorageDevice(LOGWLD);
 	}
-	Assert(pSDev != nullptr);
+	assert(pSDev != nullptr);
 
 	// Scoff the dossier out of the LOG_WLD SDEV.  If it's not there then hurl.
 	bool bDoUntouched = (m_pTouchedList != m_pUntouchedList);

@@ -80,7 +80,7 @@ void SpaceBarEngine::initializePath(const Common::FSNode &gamePath) {
 }
 
 ErrorCode SpaceBarEngine::initialize() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 	CBofBitmap *pBmp = nullptr;
 
 	CBagel::initialize();

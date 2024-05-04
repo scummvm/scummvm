@@ -110,7 +110,7 @@ CBagMasterWin::CBagMasterWin() {
 }
 
 CBagMasterWin::~CBagMasterWin() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (_waitSound != nullptr) {
 		delete _waitSound;
@@ -149,13 +149,13 @@ CBagMasterWin::~CBagMasterWin() {
 
 	// We can get rid of this buffer since the game is shutting down
 	if (_objList != nullptr) {
-		BofFree(_objList);
+		bofFree(_objList);
 		_objList = nullptr;
 	}
 }
 
 ErrorCode CBagMasterWin::showSystemDialog(bool bSaveBackground) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 	if (g_engine->isDemo())
 		return ERR_NONE;
 
@@ -202,7 +202,7 @@ ErrorCode CBagMasterWin::showSystemDialog(bool bSaveBackground) {
 }
 
 ErrorCode CBagMasterWin::showCreditsDialog(CBofWindow *win, bool bSaveBkg) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	logInfo("Showing Credits Screen");
 
@@ -241,7 +241,7 @@ ErrorCode CBagMasterWin::showCreditsDialog(CBofWindow *win, bool bSaveBkg) {
 }
 
 bool CBagMasterWin::showQuitDialog(CBofWindow *win, bool bSaveBackground) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBagStorageDevWnd *pSdev = getCurrentStorageDev();
 	bool bQuit = false;
@@ -302,7 +302,7 @@ bool CBagMasterWin::showQuitDialog(CBofWindow *win, bool bSaveBackground) {
 }
 
 ErrorCode CBagMasterWin::newGame() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	char sWorkStr[256];
 	char szCInit[256];
@@ -385,10 +385,10 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 
 			// Only allocate the object list when we really need it...
 			if (_objList == nullptr) {
-				_objList = (ST_OBJ *)BofAlloc(MAX_OBJS * sizeof(ST_OBJ));
+				_objList = (ST_OBJ *)bofAlloc(MAX_OBJS * sizeof(ST_OBJ));
 				if (_objList != nullptr) {
 					// Init to zero (we might not use all slots)
-					BofMemSet(_objList, 0, MAX_OBJS * sizeof(ST_OBJ));
+					bofMemSet(_objList, 0, MAX_OBJS * sizeof(ST_OBJ));
 
 				} else {
 					reportError(ERR_MEMORY, "Could not allocate Object list");
@@ -442,13 +442,13 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 
 	MACROREPLACE(sWldFileName);
 
-	TimerStart();
+	timerStart();
 
 	if (fileExists(sWldFileName)) {
 		// Force buffer to be big enough so that the entire script
 		// is pre-loaded
 		int nLength = fileLength(sWldFileName);
-		char *pBuf = (char *)BofAlloc(nLength);
+		char *pBuf = (char *)bofAlloc(nLength);
 		if (pBuf != nullptr) {
 			CBagIfstream fpInput(pBuf, nLength);
 
@@ -459,7 +459,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 
 			CBagMasterWin::loadFileFromStream(fpInput, startWldName);
 
-			BofFree(pBuf);
+			bofFree(pBuf);
 		}
 
 		// Possibly need to switch CDs
@@ -486,14 +486,14 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 		if (g_restoreObjectListFl) {
 
 			if (bRestore && _objSaveFl) {
-				Assert(_storageDeviceList != nullptr);
+				assert(_storageDeviceList != nullptr);
 				if (_storageDeviceList != nullptr) {
 					// Use a preallocated buffer, trash it when we're done.
-					Assert(_objList != nullptr);
+					assert(_objList != nullptr);
 					_storageDeviceList->RestoreObjList(_objList, MAX_OBJS);
 
 					// All done with this list, can trash it now
-					BofFree(_objList);
+					bofFree(_objList);
 					_objList = nullptr;
 				}
 				_objSaveFl = false;
@@ -522,7 +522,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 }
 
 void CBagMasterWin::saveSDevStack() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Save our SDEV location, so we can restore it from Kerpupu
 	char szLocStack[MAX_CLOSEUP_DEPTH][MAX_VAR_VALUE];
@@ -565,7 +565,7 @@ void CBagMasterWin::saveSDevStack() {
 		}
 
 		// Variables cannot exceed MAX_VAR_VALUE characters in length (for Save/Restore)
-		Assert(strlen(szTempBuf) < MAX_VAR_VALUE);
+		assert(strlen(szTempBuf) < MAX_VAR_VALUE);
 
 		// Store our current sdev location stack in a global variable.
 		CBagVar *pVar = VAR_MANAGER->GetVariable("$LASTWORLD");
@@ -577,7 +577,7 @@ void CBagMasterWin::saveSDevStack() {
 }
 
 ErrorCode CBagMasterWin::loadGlobalVars(const CBofString &wldName) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
@@ -595,7 +595,7 @@ ErrorCode CBagMasterWin::loadGlobalVars(const CBofString &wldName) {
 			// Force buffer to be big enough so that the entire script
 			// is pre-loaded
 			int nLength = fileLength(sWldFileName);
-			char *pBuf = (char *)BofAlloc(nLength);
+			char *pBuf = (char *)bofAlloc(nLength);
 			if (pBuf != nullptr) {
 				CBagIfstream fpInput(pBuf, nLength);
 
@@ -645,7 +645,7 @@ ErrorCode CBagMasterWin::loadGlobalVars(const CBofString &wldName) {
 					}
 				}
 
-				BofFree(pBuf);
+				bofFree(pBuf);
 			}
 		}
 	}
@@ -821,7 +821,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				if (pCursor != nullptr) {
 					pCursor->setHotspot(x, y);
 
-					Assert(nId >= 0 && nId < MAX_CURSORS);
+					assert(nId >= 0 && nId < MAX_CURSORS);
 
 					// Delete any previous cursor
 					if (_cursorList[nId] != nullptr) {
@@ -965,7 +965,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 }
 
 ErrorCode CBagMasterWin::setStorageDev(const CBofString &wldName, bool entry) {
-	Assert(CBofObject::IsValidObject(&wldName));
+	assert(CBofObject::isValidObject(&wldName));
 
 	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
@@ -979,8 +979,8 @@ ErrorCode CBagMasterWin::setStorageDev(const CBofString &wldName, bool entry) {
 
 		// This is to stop it from going out of scope before
 		// the message is received.
-		Assert(g_nString >= 0 && g_nString < NUM_MSG_STRINGS);
-		Assert(wldName.getLength() < 512);
+		assert(g_nString >= 0 && g_nString < NUM_MSG_STRINGS);
+		assert(wldName.getLength() < 512);
 
 		strncpy(g_szString[g_nString], wldName, 511);
 
@@ -998,8 +998,8 @@ ErrorCode CBagMasterWin::setStorageDev(const CBofString &wldName, bool entry) {
 
 		// This is to stop the string from going out of scope before
 		// the message is received.
-		Assert(g_nString >= 0 && g_nString < NUM_MSG_STRINGS);
-		Assert(wldName.getLength() < 512);
+		assert(g_nString >= 0 && g_nString < NUM_MSG_STRINGS);
+		assert(wldName.getLength() < 512);
 		Common::strcpy_s(g_szString[g_nString], wldName);
 
 		postUserMessage(WM_EXIT_CLOSE_UP_WINDOW, (uint32)g_nString);
@@ -1013,7 +1013,7 @@ ErrorCode CBagMasterWin::setStorageDev(const CBofString &wldName, bool entry) {
 }
 
 ErrorCode CBagMasterWin::onHelp(const CBofString &helpFile, bool /*bSaveBkg*/, CBofWindow *parent) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (g_engine->isDemo())
 		return ERR_NONE;
@@ -1058,7 +1058,7 @@ ErrorCode CBagMasterWin::onHelp(const CBofString &helpFile, bool /*bSaveBkg*/, C
 bool g_bWaitOK = false;
 
 void CBagMasterWin::onKeyHit(uint32 keyCode, uint32 repCount) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	int nVol;
 
@@ -1155,7 +1155,7 @@ void CBagMasterWin::onKeyHit(uint32 keyCode, uint32 repCount) {
 }
 
 void CBagMasterWin::onClose() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (_gameWindow)
 		_gameWindow->onClose();
@@ -1164,9 +1164,9 @@ void CBagMasterWin::onClose() {
 }
 
 ErrorCode CBagMasterWin::gotoNewWindow(const CBofString *str) {
-	Assert(IsValidObject(this));
-	Assert(str != nullptr);
-	Assert(CBofObject::IsValidObject(str));
+	assert(isValidObject(this));
+	assert(str != nullptr);
+	assert(CBofObject::isValidObject(str));
 
 	CBagStorageDev *pSDev;
 
@@ -1251,7 +1251,7 @@ ErrorCode CBagMasterWin::gotoNewWindow(const CBofString *str) {
 }
 
 bool CBagMasterWin::showRestartDialog(CBofWindow *win, bool bSaveBkg) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (g_engine->isDemo())
 		return false;
@@ -1292,7 +1292,7 @@ bool CBagMasterWin::showRestartDialog(CBofWindow *win, bool bSaveBkg) {
 }
 
 void CBagMasterWin::onUserMessage(uint32 message, uint32 param) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	switch (message) {
 	case WM_SHOW_SYSTEM_DLG:
@@ -1361,7 +1361,7 @@ void CBagMasterWin::onUserMessage(uint32 message, uint32 param) {
 		CBofString sWldScript(szLocalBuff, 256);
 
 		// User info is an index into an array of temporary string buffers
-		Assert(param < NUM_MSG_STRINGS);
+		assert(param < NUM_MSG_STRINGS);
 		sWldScript = g_szString[(int)param];
 
 		char szStartWld[256];
@@ -1380,14 +1380,14 @@ void CBagMasterWin::onUserMessage(uint32 message, uint32 param) {
 	case WM_ENTER_PAN_WINDOW:
 	case WM_ENTER_CLOSE_UP_WINDOW:
 		// Should never be called
-		Assert(false);
+		assert(false);
 		break;
 
 	case WM_EXIT_CLOSE_UP_WINDOW: {
 		CBofString cStr;
 
 		// User info is an index into an array of tempory string buffers
-		Assert(param < NUM_MSG_STRINGS);
+		assert(param < NUM_MSG_STRINGS);
 		cStr = g_szString[(int)param];
 
 		CBagStorageDev *pSDev = _storageDeviceList->GetStorageDevice(cStr);
@@ -1423,7 +1423,7 @@ ErrorCode CBagMasterWin::Run() {
 }
 
 void CBagMasterWin::setActiveCursor(int cursorId) {
-	Assert(cursorId >= 0 && cursorId < MAX_CURSORS);
+	assert(cursorId >= 0 && cursorId < MAX_CURSORS);
 
 	if (_cursorList[cursorId] != nullptr) {
 		_cursorList[cursorId]->setCurrent();
@@ -1432,15 +1432,15 @@ void CBagMasterWin::setActiveCursor(int cursorId) {
 }
 
 void CBagMasterWin::fillSaveBuffer(ST_BAGEL_SAVE *saveBuf) {
-	Assert(IsValidObject(this));
-	Assert(saveBuf != nullptr);
+	assert(isValidObject(this));
+	assert(saveBuf != nullptr);
 
 	//
 	// Fill the save game buffer with all the info we need to restore this game
 	//
 
 	// 1st, wipe it
-	BofMemSet(saveBuf, 0, sizeof(ST_BAGEL_SAVE));
+	bofMemSet(saveBuf, 0, sizeof(ST_BAGEL_SAVE));
 
 	CBagel *pApp = CBagel::getBagApp();
 	if (pApp != nullptr) {
@@ -1462,12 +1462,12 @@ void CBagMasterWin::fillSaveBuffer(ST_BAGEL_SAVE *saveBuf) {
 						// If it's a global variable, then we need to store it
 
 						if (!pVar->GetName().isEmpty()) {
-							Assert(strlen(pVar->GetName()) < MAX_VAR_NAME);
+							assert(strlen(pVar->GetName()) < MAX_VAR_NAME);
 							Common::strcpy_s(saveBuf->m_stVarList[j].m_szName, pVar->GetName());
 						}
 
 						if (!pVar->GetValue().isEmpty()) {
-							Assert(strlen(pVar->GetValue()) < MAX_VAR_VALUE);
+							assert(strlen(pVar->GetValue()) < MAX_VAR_VALUE);
 							Common::strcpy_s(saveBuf->m_stVarList[j].m_szValue, pVar->GetValue());
 						}
 
@@ -1483,7 +1483,7 @@ void CBagMasterWin::fillSaveBuffer(ST_BAGEL_SAVE *saveBuf) {
 						j++;
 
 						// Can't exceed MAX_VARS
-						Assert(j < MAX_VARS);
+						assert(j < MAX_VARS);
 						//}
 					}
 				}
@@ -1514,9 +1514,9 @@ void CBagMasterWin::fillSaveBuffer(ST_BAGEL_SAVE *saveBuf) {
 					pManager->SaveObjList(&saveBuf->m_stObjList[0], MAX_OBJS);
 					if (isObjSave()) {
 
-						Assert(_objList != nullptr);
+						assert(_objList != nullptr);
 
-						BofMemCopy(&saveBuf->m_stObjListEx[0], _objList, sizeof(ST_OBJ) * MAX_OBJS);
+						bofMemCopy(&saveBuf->m_stObjListEx[0], _objList, sizeof(ST_OBJ) * MAX_OBJS);
 						saveBuf->m_bUseEx = 1;
 					}
 
@@ -1539,7 +1539,7 @@ void CBagMasterWin::fillSaveBuffer(ST_BAGEL_SAVE *saveBuf) {
 }
 
 bool CBagMasterWin::showSaveDialog(CBofWindow *win, bool bSaveBkg) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (g_engine->isDemo())
 		return false;
@@ -1554,7 +1554,7 @@ bool CBagMasterWin::showSaveDialog(CBofWindow *win, bool bSaveBkg) {
 
 		logInfo("Showing Save Screen");
 		CBofSound::PauseSounds();
-		ST_BAGEL_SAVE *pSaveBuf = (ST_BAGEL_SAVE *)BofAlloc(sizeof(ST_BAGEL_SAVE));
+		ST_BAGEL_SAVE *pSaveBuf = (ST_BAGEL_SAVE *)bofAlloc(sizeof(ST_BAGEL_SAVE));
 
 		if (pSaveBuf != nullptr) {
 			CBagSaveDialog cSaveDialog;
@@ -1586,7 +1586,7 @@ bool CBagMasterWin::showSaveDialog(CBofWindow *win, bool bSaveBkg) {
 
 			cSaveDialog.detach();
 
-			BofFree(pSaveBuf);
+			bofFree(pSaveBuf);
 		} else {
 			reportError(ERR_MEMORY, "Unable to allocate the Save Game Buffer");
 		}
@@ -1600,8 +1600,8 @@ bool CBagMasterWin::showSaveDialog(CBofWindow *win, bool bSaveBkg) {
 }
 
 void CBagMasterWin::doRestore(ST_BAGEL_SAVE *saveBuf) {
-	Assert(IsValidObject(this));
-	Assert(saveBuf != nullptr);
+	assert(isValidObject(this));
+	assert(saveBuf != nullptr);
 
 	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
@@ -1673,17 +1673,17 @@ void CBagMasterWin::doRestore(ST_BAGEL_SAVE *saveBuf) {
 		if (pSDevManager != nullptr) {
 			// Restore any extra obj list info (for .WLD swapping)
 			if (_objList == nullptr) {
-				_objList = (ST_OBJ *)BofAlloc(MAX_OBJS * sizeof(ST_OBJ));
+				_objList = (ST_OBJ *)bofAlloc(MAX_OBJS * sizeof(ST_OBJ));
 				if (_objList != nullptr) {
 					// Init to nullptr (might not use all slots)
-					BofMemSet(_objList, 0, MAX_OBJS * sizeof(ST_OBJ));
+					bofMemSet(_objList, 0, MAX_OBJS * sizeof(ST_OBJ));
 
 				} else {
 					reportError(ERR_MEMORY);
 				}
 			}
 
-			BofMemCopy(getObjList(), &saveBuf->m_stObjListEx[0], sizeof(ST_OBJ) * MAX_OBJS);
+			bofMemCopy(getObjList(), &saveBuf->m_stObjListEx[0], sizeof(ST_OBJ) * MAX_OBJS);
 
 			if (saveBuf->m_bUseEx) {
 				setSaveObjs(true);
@@ -1711,7 +1711,7 @@ void CBagMasterWin::doRestore(ST_BAGEL_SAVE *saveBuf) {
 }
 
 bool CBagMasterWin::showRestoreDialog(CBofWindow *win, bool bSaveBkg) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 	if (g_engine->isDemo())
 		return false;
 
@@ -1798,7 +1798,7 @@ int CBagMasterWin::getMidiVolume() {
 }
 
 void CBagMasterWin::setMidiVolume(int vol) {
-	Assert(vol >= VOLUME_INDEX_MIN && vol <= VOLUME_INDEX_MAX);
+	assert(vol >= VOLUME_INDEX_MIN && vol <= VOLUME_INDEX_MAX);
 	CBagel *pApp = CBagel::getBagApp();
 
 	if (pApp != nullptr) {
@@ -1824,7 +1824,7 @@ int CBagMasterWin::getWaveVolume() {
 }
 
 void CBagMasterWin::setWaveVolume(int vol) {
-	Assert(vol >= VOLUME_INDEX_MIN && vol <= VOLUME_INDEX_MAX);
+	assert(vol >= VOLUME_INDEX_MIN && vol <= VOLUME_INDEX_MAX);
 	CBagel *pApp = CBagel::getBagApp();
 
 	if (pApp != nullptr) {
@@ -1856,7 +1856,7 @@ int CBagMasterWin::getCorrection() {
 }
 
 void CBagMasterWin::setCorrection(int correction) {
-	Assert(correction >= 0 && correction <= 32);
+	assert(correction >= 0 && correction <= 32);
 
 	int nActualCorr = 2;
 
@@ -1911,7 +1911,7 @@ int CBagMasterWin::getPanSpeed() {
 }
 
 void CBagMasterWin::setPanSpeed(int speed) {
-	Assert(speed >= 0 && speed <= 5);
+	assert(speed >= 0 && speed <= 5);
 	CBagel *pApp = CBagel::getBagApp();
 
 	if (pApp != nullptr) {
@@ -1975,8 +1975,8 @@ void CBagMasterWin::forcePaintScreen() {
 }
 
 ErrorCode paintBeveledText(CBofWindow *win, CBofRect *rect, const CBofString &cString, const int size, const int weight, const RGBCOLOR color, int justify, uint32 format, int font) {
-	Assert(win != nullptr);
-	Assert(rect != nullptr);
+	assert(win != nullptr);
+	assert(rect != nullptr);
 
 	CBofBitmap cBmp(rect->width(), rect->height(), nullptr, false);
 
@@ -2042,13 +2042,13 @@ ErrorCode waitForInput() {
 }
 
 void CBagMasterWin::close() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	g_allowPaintFl = false;
 }
 
 void CBagMasterWin::restoreActiveMessages(CBagStorageDevManager *sdevManager) {
-	Assert(sdevManager != nullptr);
+	assert(sdevManager != nullptr);
 
 	if (sdevManager != nullptr) {
 		// Make sure the Message Log light will flash if user has

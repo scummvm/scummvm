@@ -47,28 +47,4 @@ CBofDebugOptions::CBofDebugOptions(const char *pszFileName) : CBofOptions(pszFil
 	readSetting("DebugOptions", "MessageSpy", &_bShowMessages, ConfMan.getBool("MessageSpy"));
 }
 
-void BofAssert(bool bExpression, int nLine, const char *pszSourceFile, const char *pszTimeStamp) {
-	static char szBuf[200];
-	static bool bAlready = false;
-
-	/* Assert fails when expression is false
-	 */
-	if (!bExpression) {
-		if (!bAlready) {
-			bAlready = true;
-
-			/* if this compiler supports the __TIMESTAMP__ macro, then show that also
-			 */
-			Common::sprintf_s(szBuf, "Internal error: File %s at line %d\n", pszSourceFile, nLine);
-			if (pszTimeStamp != nullptr) {
-				Common::sprintf_s(szBuf, "Internal error: File %s at line %d (FileDate: %s)\n", pszSourceFile, nLine, pszTimeStamp);
-			}
-
-			bAlready = false;
-		}
-
-		error("%s", szBuf);
-	}
-}
-
 } // namespace Bagel

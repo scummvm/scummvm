@@ -75,7 +75,7 @@ CBagHelp::CBagHelp() {
 }
 
 ErrorCode CBagHelp::attach() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Save off the current game's palette
 	_savePalette = CBofApp::getApp()->getPalette();
@@ -135,7 +135,7 @@ ErrorCode CBagHelp::attach() {
 	CBofFile file(_textFile, CBF_BINARY | CBF_READONLY);
 
 	uint32 size = file.getLength();
-	char *buffer = (char *)BofCAlloc(size + 1, 1);
+	char *buffer = (char *)bofCAlloc(size + 1, 1);
 	if (buffer != nullptr) {
 		file.read(buffer, size);
 
@@ -150,7 +150,7 @@ ErrorCode CBagHelp::attach() {
 			reportError(ERR_MEMORY, "Unable to allocate a CBofTextBox");
 		}
 
-		BofFree(buffer);
+		bofFree(buffer);
 
 	} else {
 		reportError(ERR_MEMORY, "Unable to allocate %d bytes to read %s.", size, _textFile.GetBuffer());
@@ -163,7 +163,7 @@ ErrorCode CBagHelp::attach() {
 
 
 ErrorCode CBagHelp::detach() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBagCursor::hideSystemCursor();
 
@@ -185,8 +185,8 @@ ErrorCode CBagHelp::detach() {
 }
 
 ErrorCode CBagHelp::SetHelpFile(const char *textFile) {
-	Assert(IsValidObject(this));
-	Assert(textFile != nullptr);
+	assert(isValidObject(this));
+	assert(textFile != nullptr);
 
 	_textFile = textFile;
 
@@ -195,7 +195,7 @@ ErrorCode CBagHelp::SetHelpFile(const char *textFile) {
 
 
 void CBagHelp::onPaint(CBofRect *rect) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	paintBackdrop(rect);
 
@@ -208,7 +208,7 @@ void CBagHelp::onPaint(CBofRect *rect) {
 
 
 void CBagHelp::onKeyHit(uint32 keyCode, uint32 repCount) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	switch (keyCode) {
 	case BKEY_UP:
@@ -249,8 +249,8 @@ void CBagHelp::onKeyHit(uint32 keyCode, uint32 repCount) {
 
 
 void CBagHelp::onBofButton(CBofObject *object, int flags) {
-	Assert(IsValidObject(this));
-	Assert(object != nullptr);
+	assert(isValidObject(this));
+	assert(object != nullptr);
 
 	if (flags != BUTTON_CLICKED)
 		return;
@@ -285,7 +285,7 @@ const char *buildHelpDir(const char *fileName) {
 }
 
 void CBagHelp::onInitDialog() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBofDialog::onInitDialog();
 

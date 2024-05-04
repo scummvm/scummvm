@@ -239,7 +239,7 @@ CBibbleWindow::CBibbleWindow() {
 }
 
 ErrorCode CBibbleWindow::attach() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	const int nBibbleYPos[BIBBLE_NUM_BIBBLES] = {
 		BIBBLE_START_Y1,
@@ -298,7 +298,7 @@ ErrorCode CBibbleWindow::attach() {
 	}
 
 	// Must have a valid backdrop by now
-	Assert(_pBackdrop != nullptr);
+	assert(_pBackdrop != nullptr);
 	CBofPalette *pPal = _pBackdrop->getPalette();
 
 	// Setup the text fields
@@ -308,7 +308,7 @@ ErrorCode CBibbleWindow::attach() {
 		_pCreditsText->setupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
 		_pCreditsText->setColor(RGB(255, 255, 255));
 
-		_pCreditsText->SetSize(MapWindowsPointSize(20));
+		_pCreditsText->SetSize(mapWindowsPointSize(20));
 		_pCreditsText->setWeight(TEXT_BOLD);
 		_pCreditsText->setText(buildString("%d", _nNumCredits));
 	} else {
@@ -429,7 +429,7 @@ ErrorCode CBibbleWindow::attach() {
 
 
 ErrorCode CBibbleWindow::detach() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	logInfo("\tCBibbleWindow::detach()");
 
@@ -438,7 +438,7 @@ ErrorCode CBibbleWindow::detach() {
 	// Remove any unused credits from the table, and put them back into your
 	// Credit Chip
 	for (int i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
-		Assert(g_engine->g_cBetAreas[i]._nBet >= 0);
+		assert(g_engine->g_cBetAreas[i]._nBet >= 0);
 
 		_nNumCredits += g_engine->g_cBetAreas[i]._nBet;
 		g_engine->g_cBetAreas[i]._nBet = 0;
@@ -527,8 +527,8 @@ void CBibbleWindow::onMainLoop() {
 
 
 void CBibbleWindow::onPaint(CBofRect *pRect) {
-	Assert(IsValidObject(this));
-	Assert(pRect != nullptr);
+	assert(isValidObject(this));
+	assert(pRect != nullptr);
 
 	CBofBitmap *pBmp;
 
@@ -583,8 +583,8 @@ void CBibbleWindow::onPaint(CBofRect *pRect) {
 
 
 void CBibbleWindow::onBofButton(CBofObject *pObject, int nState) {
-	Assert(IsValidObject(this));
-	Assert(pObject != nullptr);
+	assert(isValidObject(this));
+	assert(pObject != nullptr);
 
 	if (nState != BUTTON_CLICKED)
 		return;
@@ -705,7 +705,7 @@ void CBibbleWindow::onClose() {
 }
 
 ErrorCode CBibbleWindow::displayCredits() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Display new number of credits
 	if (_pCreditsText != nullptr) {
@@ -803,7 +803,7 @@ ErrorCode CBibbleWindow::playGame() {
 		logInfo("\tLoser");
 	}
 
-	Sleep(2000);
+	bofSleep(2000);
 
 	// Clear all bets (On table)
 	logInfo("\tClearing all Bets");
@@ -820,9 +820,9 @@ ErrorCode CBibbleWindow::playGame() {
 }
 
 ErrorCode CBibbleWindow::bonkBibble(int nBibbleID, int nShouts) {
-	Assert(IsValidObject(this));
-	Assert(nBibbleID >= 1 && nBibbleID <= 3);
-	Assert(nShouts >= 1 && nShouts <= 4);
+	assert(isValidObject(this));
+	assert(nBibbleID >= 1 && nBibbleID <= 3);
+	assert(nShouts >= 1 && nShouts <= 4);
 
 	int nBallStartYPos[] = {
 		BALL_START_Y1,
@@ -861,12 +861,12 @@ ErrorCode CBibbleWindow::bonkBibble(int nBibbleID, int nShouts) {
 					_pShouts[nShouts - 1]->play();
 				}
 
-				Sleep(SPEED_DELAY2);
+				bofSleep(SPEED_DELAY2);
 			}
 			break;
 		}
 
-		Sleep(SPEED_DELAY);
+		bofSleep(SPEED_DELAY);
 	}
 
 	pBibble->setAnimated(false);
@@ -876,7 +876,7 @@ ErrorCode CBibbleWindow::bonkBibble(int nBibbleID, int nShouts) {
 
 
 void CBibbleWindow::calcOutcome() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 	int i;
 
 	const int g_nBibbleTable[] = {
@@ -1051,8 +1051,8 @@ void CBibbleWindow::calcOutcome() {
 }
 
 void CBibbleWindow::onLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
-	Assert(IsValidObject(this));
-	Assert(pPoint != nullptr);
+	assert(isValidObject(this));
+	assert(pPoint != nullptr);
 
 	int nBet = MIN((int)_nNumCredits, 100);
 
@@ -1089,13 +1089,13 @@ void CBibbleWindow::onLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 
 
 void CBibbleWindow::onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 }
 
 
 void CBibbleWindow::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
-	Assert(IsValidObject(this));
-	Assert(pPoint != nullptr);
+	assert(isValidObject(this));
+	assert(pPoint != nullptr);
 
 	for (int i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
 		CBetArea *pArea = &g_engine->g_cBetAreas[i];
@@ -1125,12 +1125,12 @@ void CBibbleWindow::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) 
 
 
 ErrorCode CBibbleWindow::highlight(CBetArea *pArea, byte nColor) {
-	Assert(IsValidObject(this));
-	Assert(pArea != nullptr);
+	assert(isValidObject(this));
+	assert(pArea != nullptr);
 
 	CBofBitmap cBmp(pArea->_cRect.width(), pArea->_cRect.height(), _pBackdrop->getPalette());
 
-	Assert(_pBackdrop != nullptr);
+	assert(_pBackdrop != nullptr);
 	CBofRect r = cBmp.getRect();
 	_pBackdrop->paint(&cBmp, &r, &pArea->_cRect);
 
@@ -1162,12 +1162,12 @@ ErrorCode CBibbleWindow::highlight(CBetArea *pArea, byte nColor) {
 
 
 ErrorCode CBibbleWindow::unHighlight(CBetArea *pArea) {
-	Assert(IsValidObject(this));
-	Assert(pArea != nullptr);
+	assert(isValidObject(this));
+	assert(pArea != nullptr);
 
 	CBofBitmap cBmp(pArea->_cRect.width(), pArea->_cRect.height(), _pBackdrop->getPalette());
 
-	Assert(_pBackdrop != nullptr);
+	assert(_pBackdrop != nullptr);
 
 	// Copy bet area
 	CBofRect r = cBmp.getRect();
@@ -1189,7 +1189,7 @@ ErrorCode CBibbleWindow::unHighlight(CBetArea *pArea) {
 }
 
 void CBibbleWindow::onKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (lKey == BKEY_ESC)
 		close();

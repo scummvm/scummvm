@@ -357,14 +357,14 @@ public:
 	}
 	virtual void setSize(const CBofSize &) {}
 	virtual void SetRefId(int id) {
-		Assert(id >= 0 && id <= 0xFFFF);
+		assert(id >= 0 && id <= 0xFFFF);
 		m_nId = (uint16)id;
 	}
 	virtual void SetOverCursor(int curs) {
 		m_nOverCursor = (byte)curs;
 	}
 	virtual void setState(int state) {
-		Assert(ABS(state) < 0x8000);
+		assert(ABS(state) < 0x8000);
 		m_nState = (int16)state;
 	}
 	virtual void SetMenuPtr(CBagMenu *pm) {
@@ -384,7 +384,7 @@ public:
 	virtual PARSE_CODES setInfo(CBagIfstream &istr);
 
 	virtual int HandleError(int nErrID) {
-		Assert(!nErrID);
+		assert(!nErrID);
 		return nErrID;
 	}
 

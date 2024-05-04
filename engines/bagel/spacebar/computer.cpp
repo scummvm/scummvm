@@ -112,7 +112,7 @@ void SBarComputer::eraseBackdrop() {
 
 void  SBarComputer::onPaint(CBofRect *pRect) {
 	if (getBackdrop()) {
-		Assert(GetWorkBmp() != nullptr);
+		assert(GetWorkBmp() != nullptr);
 
 		// Erase everything from the background
 		GetWorkBmp()->paint(getBackdrop(), pRect, pRect);
@@ -147,7 +147,7 @@ ErrorCode SBarComputer::attach() {
 		createIngListBox();
 
 		// Must have a valid backdrop by now
-		Assert(_pBackdrop != nullptr);
+		assert(_pBackdrop != nullptr);
 		CBofPalette *pPal = _pBackdrop->getPalette();
 
 		// Build all our buttons
@@ -252,7 +252,7 @@ ErrorCode SBarComputer::readDrnkFile() {
 	}
 
 	// Allocate the buffers
-	_pDrinkBuff = (char *)BofAlloc(fpDrinkFile.getLength() + 1);
+	_pDrinkBuff = (char *)bofAlloc(fpDrinkFile.getLength() + 1);
 	if (_pDrinkBuff == nullptr)
 		return ERR_MEMORY;
 
@@ -326,7 +326,7 @@ ErrorCode SBarComputer::readIngFile() {
 	}
 
 	// Allocate the buffers
-	_pIngBuff = (char *)BofAlloc(fpIngFile.getLength() + 1);
+	_pIngBuff = (char *)bofAlloc(fpIngFile.getLength() + 1);
 	if (_pIngBuff == nullptr)
 		return ERR_MEMORY;
 
@@ -378,7 +378,7 @@ ErrorCode SBarComputer::readIngFile() {
 void SBarComputer::createTextBox(CBofString &newText) {
 	if (_pTBox == nullptr) {
 		_pTBox = new CBofTextBox(getBackdrop(), &_compDisplay, newText);
-		Assert(_pTBox != nullptr);
+		assert(_pTBox != nullptr);
 		_pTBox->setTextAttribs(12, TEXT_NORMAL, RGB(0, 0, 0));
 	} else {
 		eraseBackdrop();
@@ -652,12 +652,12 @@ void SBarComputer::setList() {
 
 		SBarCompItem CompItem;
 		if (_eMode == DRINKMODE) {
-			Assert(_nDrinkSelect != -1);
+			assert(_nDrinkSelect != -1);
 			CompItem = _pDrinkList->getNodeItem(_nDrinkSelect);
 
 		} else {
 
-			Assert(_nIngSelect != -1);
+			assert(_nIngSelect != -1);
 			CompItem = _pIngList->getNodeItem(_nIngSelect);
 		}
 
@@ -790,8 +790,8 @@ void SBarComputer::pageDown() {
 }
 
 void SBarComputer::onBofButton(CBofObject *pObject, int nState) {
-	Assert(IsValidObject(this));
-	Assert(pObject != nullptr);
+	assert(isValidObject(this));
+	assert(pObject != nullptr);
 
 	if (nState != BUTTON_CLICKED)
 		return;
@@ -855,7 +855,7 @@ void SBarComputer::onBofButton(CBofObject *pObject, int nState) {
 }
 
 void SBarComputer::onKeyHit(uint32 lKey, uint32 nRepCount) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	switch (lKey) {
 	case BKEY_UP:

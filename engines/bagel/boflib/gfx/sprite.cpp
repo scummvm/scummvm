@@ -48,7 +48,7 @@ void CBofSprite::shutdown() {
 
 void CBofSprite::openLibrary(CBofPalette *pPal) {
 	// Must have a valid palette to do any sprite related stuff
-	Assert(pPal != nullptr);
+	assert(pPal != nullptr);
 
 	clearDirtyRect();
 
@@ -92,7 +92,7 @@ CBofSprite::CBofSprite() {
 
 
 CBofSprite::~CBofSprite() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	unlinkSprite();
 
@@ -101,7 +101,7 @@ CBofSprite::~CBofSprite() {
 
 
 void CBofSprite::linkSprite() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (!_bLinked) {
 		// Set for linked into chain
@@ -135,13 +135,13 @@ void CBofSprite::linkSprite() {
 		}
 
 		// _pSpriteChain must always point to the head of the linked list
-		Assert(_pSpriteChain == (CBofSprite *)_pSpriteChain->getHead());
+		assert(_pSpriteChain == (CBofSprite *)_pSpriteChain->getHead());
 	}
 }
 
 
 void CBofSprite::unlinkSprite() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (_bLinked) {
 		// Set for not linked into chain
@@ -196,7 +196,7 @@ void CBofSprite::tearDownWorkArea() {
 
 
 CBofSprite *CBofSprite::duplicateSprite() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Create an object for the sprite
 	CBofSprite *pSprite = new CBofSprite;
@@ -210,10 +210,10 @@ CBofSprite *CBofSprite::duplicateSprite() {
 
 
 bool CBofSprite::duplicateSprite(CBofSprite *pSprite) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// We require a valid sprite to copy
-	Assert(pSprite != nullptr);
+	assert(pSprite != nullptr);
 
 	if (pSprite != nullptr) {
 		pSprite->_pImage = _pImage;
@@ -238,9 +238,9 @@ bool CBofSprite::duplicateSprite(CBofSprite *pSprite) {
 
 
 bool CBofSprite::loadSprite(const char *pszPathName, int nCels) {
-	Assert(IsValidObject(this));
-	Assert(pszPathName != nullptr);
-	Assert(nCels >= 1);
+	assert(isValidObject(this));
+	assert(pszPathName != nullptr);
+	assert(nCels >= 1);
 
 	// Create an object for the sprite's image
 	CBofBitmap *pBitmap = new CBofBitmap(pszPathName, _pSharedPalette);
@@ -253,11 +253,11 @@ bool CBofSprite::loadSprite(const char *pszPathName, int nCels) {
 
 
 bool CBofSprite::loadSprite(CBofBitmap *pBitmap, int nCels) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Can't load an invalid bitmap
-	Assert(pBitmap != nullptr);
-	Assert(nCels >= 1);
+	assert(pBitmap != nullptr);
+	assert(nCels >= 1);
 
 	clearImage();			// Clear out any/all existing bitmaps, palettes,
 
@@ -284,8 +284,8 @@ bool CBofSprite::loadSprite(CBofBitmap *pBitmap, int nCels) {
 
 
 bool CBofSprite::setupCels(const int nCels) {
-	Assert(IsValidObject(this));
-	Assert(nCels > 0);
+	assert(isValidObject(this));
+	assert(nCels > 0);
 
 	_nCelCount = nCels;                                        // Set cel count
 	_nCelID = _nCelCount - 1;                                 // No current cel
@@ -304,10 +304,10 @@ bool CBofSprite::setupCels(const int nCels) {
 
 
 void CBofSprite::nextCel() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// verify old cel id
-	Assert(_nCelID >= 0 && _nCelID < _nCelCount);
+	assert(_nCelID >= 0 && _nCelID < _nCelCount);
 
 	if (getBlockAdvance() == false) {
 		if (++_nCelID >= _nCelCount)
@@ -319,10 +319,10 @@ void CBofSprite::nextCel() {
 
 
 void CBofSprite::prevCel() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// verify old cel id
-	Assert(_nCelID >= 0 && _nCelID < _nCelCount);
+	assert(_nCelID >= 0 && _nCelID < _nCelCount);
 
 	if (--_nCelID < 0)
 		_nCelID = _nCelCount - 1;
@@ -332,13 +332,13 @@ void CBofSprite::prevCel() {
 
 
 bool CBofSprite::paintSprite(CBofWindow *pWnd, const int x, const int y) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Can't paint to a non-existant window
-	Assert(pWnd != nullptr);
+	assert(pWnd != nullptr);
 
 	// The window MUST have a backdrop
-	Assert(pWnd->getBackdrop() != nullptr);
+	assert(pWnd->getBackdrop() != nullptr);
 
 	batchPaint(x, y);
 
@@ -349,10 +349,10 @@ bool CBofSprite::paintSprite(CBofWindow *pWnd, const int x, const int y) {
 
 
 bool CBofSprite::paintSprite(CBofBitmap *pBmp, const int x, const int y) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Can't paint to a non-existent window
-	Assert(pBmp != nullptr);
+	assert(pBmp != nullptr);
 
 	batchPaint(x, y);
 	updateDirtyRect(pBmp, this);
@@ -374,7 +374,7 @@ bool CBofSprite::paintCel(CBofBitmap *pBmp, int nCelId, const int x, const int y
 
 
 void CBofSprite::batchPaint(const int x, const int y) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBofRect cDstRect;
 
@@ -402,11 +402,11 @@ void CBofSprite::batchPaint(const int x, const int y) {
 }
 
 bool CBofSprite::updateDirtyRect(CBofWindow *pWnd, CBofSprite *pPrimarySprite) {
-	Assert(pWnd != nullptr);
+	assert(pWnd != nullptr);
 
 	// The window MUST have a backdrop associated with it.  If that's not feasible, then
 	// use CSprites instead of CBofSprites
-	Assert(pWnd->getBackdrop() != nullptr);
+	assert(pWnd->getBackdrop() != nullptr);
 
 	//
 	// Repaint the contents of the specified rectangle
@@ -475,7 +475,7 @@ bool CBofSprite::updateDirtyRect(CBofWindow *pWnd, CBofSprite *pPrimarySprite) {
 
 
 bool CBofSprite::updateDirtyRect(CBofBitmap *pBmp, CBofSprite *pPrimarySprite) {
-	Assert(pBmp != nullptr);
+	assert(pBmp != nullptr);
 
 	//
 	// Repaint the contents of the specified rectangle
@@ -512,7 +512,7 @@ bool CBofSprite::updateDirtyRect(CBofBitmap *pBmp, CBofSprite *pPrimarySprite) {
 
 
 void CBofSprite::addToDirtyRect(CBofRect *pRect) {
-	Assert(pRect != nullptr);
+	assert(pRect != nullptr);
 
 	CBofRect cRect;
 
@@ -526,10 +526,10 @@ void CBofSprite::addToDirtyRect(CBofRect *pRect) {
 
 
 void CBofSprite::setCel(const int nCelID) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// All sprites must have at least 1 frame
-	Assert(_nCelCount > 0);
+	assert(_nCelCount > 0);
 
 	if (_nCelID != nCelID) {
 		_nCelID = nCelID % _nCelCount;
@@ -539,15 +539,15 @@ void CBofSprite::setCel(const int nCelID) {
 	}
 
 	// Verify new cel id
-	Assert(_nCelID >= 0 && _nCelID < _nCelCount);
+	assert(_nCelID >= 0 && _nCelID < _nCelCount);
 
 	_cImageRect.left = _nCelID * _cSize.cx;
 	_cImageRect.right = _cImageRect.left + _cSize.cx;
 }
 
 bool CBofSprite::eraseSprite(CBofWindow *pWnd) {
-	Assert(IsValidObject(this));
-	Assert(pWnd != nullptr);
+	assert(isValidObject(this));
+	assert(pWnd != nullptr);
 
 	batchErase();
 	updateDirtyRect(pWnd);
@@ -566,8 +566,8 @@ void CBofSprite::batchErase() {
 
 
 bool CBofSprite::testInterception(CBofSprite *pTestSprite, CBofPoint *pPoint) {
-	Assert(IsValidObject(this));
-	Assert(pTestSprite != nullptr);
+	assert(isValidObject(this));
+	assert(pTestSprite != nullptr);
 
 	// Punt if no interception allowed
 	if (pTestSprite != nullptr) {
@@ -591,8 +591,8 @@ bool CBofSprite::testInterception(CBofSprite *pTestSprite, CBofPoint *pPoint) {
 
 
 CBofSprite *CBofSprite::interception(CBofRect *pNewRect, CBofSprite *pTestSprite) {
-	Assert(IsValidObject(this));
-	Assert(pNewRect != nullptr);
+	assert(isValidObject(this));
+	assert(pNewRect != nullptr);
 
 	// Get first sprite to be tested
 	CBofSprite *pSprite = pTestSprite;
@@ -619,7 +619,7 @@ CBofSprite *CBofSprite::interception(CBofRect *pNewRect, CBofSprite *pTestSprite
 
 
 CBofSprite *CBofSprite::interception(CBofSprite *pTestSprite) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBofSprite *pSprite = pTestSprite;				// Get first sprite to be tested
 
@@ -636,8 +636,8 @@ CBofSprite *CBofSprite::interception(CBofSprite *pTestSprite) {
 
 
 bool CBofSprite::spritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint) {
-	Assert(IsValidObject(this));
-	Assert(pSprite != nullptr);
+	assert(isValidObject(this));
+	assert(pSprite != nullptr);
 
 	// Assume no overlap
 	bool bHit = false;
@@ -709,7 +709,7 @@ endroutine:
 
 
 void CBofSprite::setPosition(int x, int y) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Now have a real location establish the new location of the sprite
 	// and setup the bitmap's bounding rectangle
@@ -721,10 +721,10 @@ void CBofSprite::setPosition(int x, int y) {
 
 
 bool CBofSprite::cropImage(CBofWindow *pWnd, CBofRect *pRect, bool bUpdateNow) {
-	Assert(IsValidObject(this));
-	Assert(pWnd != nullptr);
-	Assert(pRect != nullptr);
-	Assert(_pImage != nullptr);
+	assert(isValidObject(this));
+	assert(pWnd != nullptr);
+	assert(pRect != nullptr);
+	assert(_pImage != nullptr);
 
 	if (_nMaskColor != NOT_TRANSPARENT) {
 
@@ -748,7 +748,7 @@ bool CBofSprite::cropImage(CBofWindow *pWnd, CBofRect *pRect, bool bUpdateNow) {
 
 
 void CBofSprite::clearImage() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (!_bDuplicated && (_pImage != nullptr)) {
 		delete _pImage;
@@ -759,14 +759,14 @@ void CBofSprite::clearImage() {
 
 
 void CBofSprite::setSharedPalette(CBofPalette *pPal) {
-	Assert(pPal != nullptr);
+	assert(pPal != nullptr);
 
 	_pSharedPalette = pPal;
 }
 
 void CBofSprite::setZOrder(int nValue) {
-	Assert(IsValidObject(this));
-	Assert(nValue >= SPRITE_TOPMOST && nValue <= SPRITE_HINDMOST);
+	assert(isValidObject(this));
+	assert(nValue >= SPRITE_TOPMOST && nValue <= SPRITE_HINDMOST);
 
 	_nZOrder = nValue;
 

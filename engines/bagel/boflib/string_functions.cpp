@@ -27,7 +27,7 @@
 namespace Bagel {
 
 int StrCharCount(const char *str, char c) {
-	Assert(str != nullptr);
+	assert(str != nullptr);
 
 	int n = 0;
 	while (*str != '\0') {
@@ -42,10 +42,10 @@ char *StrReplaceChar(char *str, char cOld, char cNew) {
 	char *p = str;
 
 	// Can't access a nullptr pointer
-	Assert(str != nullptr);
+	assert(str != nullptr);
 
 	// If cOld was '\0' then this function would do nothing
-	Assert(cOld != '\0');
+	assert(cOld != '\0');
 
 	while (*p != '\0') {
 		if (*p == cOld) {
@@ -59,12 +59,12 @@ char *StrReplaceChar(char *str, char cOld, char cNew) {
 
 char *StrReplaceStr(char *pszBuf, const char *pszTok, const char *pszNewTok) {
 	// Can't access nullptr pointers
-	Assert(pszBuf != nullptr);
-	Assert(pszTok != nullptr);
-	Assert(pszNewTok != nullptr);
+	assert(pszBuf != nullptr);
+	assert(pszTok != nullptr);
+	assert(pszNewTok != nullptr);
 
 	// Search token, and new token can't be the same
-	Assert(strcmp(pszTok, pszNewTok) != 0);
+	assert(strcmp(pszTok, pszNewTok) != 0);
 
 	int nTok = strlen(pszTok);
 	int nNewTok = strlen(pszNewTok);
@@ -77,15 +77,15 @@ char *StrReplaceStr(char *pszBuf, const char *pszTok, const char *pszNewTok) {
 		if (nDiff != 0) {
 			memmove(pszEndTok - nDiff, pszEndTok, strlen(pszEndTok) + 1);
 		}
-		BofMemCopy(pszSearch, pszNewTok, nNewTok);
+		bofMemCopy(pszSearch, pszNewTok, nNewTok);
 	}
 
 	return pszBuf;
 }
 
 void MemReplaceChar(byte *pBuf, byte chOld, byte chNew, int32 lSize) {
-	Assert(pBuf != nullptr);
-	Assert(chOld != chNew);
+	assert(pBuf != nullptr);
+	assert(chOld != chNew);
 
 	while (lSize-- > 0) {
 

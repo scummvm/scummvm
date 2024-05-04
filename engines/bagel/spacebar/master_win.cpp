@@ -49,7 +49,7 @@ static const char *GetBuildVersion() {
 }
 
 CBagStorageDev *CSBarMasterWin::onNewStorageDev(const CBofString &typestr) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBagStorageDev *pSDev;
 
@@ -153,7 +153,7 @@ CBagStorageDev *CSBarMasterWin::onNewStorageDev(const CBofString &typestr) {
 
 
 CBagStorageDev *CSBarMasterWin::onNewStorageDev(int nType) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBagStorageDev *pSDev = nullptr;
 
@@ -193,7 +193,7 @@ CBagStorageDev *CSBarMasterWin::onNewStorageDev(int nType) {
 
 
 void CSBarMasterWin::onKeyHit(uint32 lKey, uint32 lRepCount) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (lKey == BKEY_ALT_v) {
 		bofMessageBox(GetBuildVersion(), "Version");
@@ -203,7 +203,7 @@ void CSBarMasterWin::onKeyHit(uint32 lKey, uint32 lRepCount) {
 }
 
 void CSBarMasterWin::onNewFilter(CBagStorageDev *pSDev, const CBofString &typestr) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	FilterFxn filterFunction = nullptr;
 	int filterId = pSDev->GetFilterId();
@@ -242,7 +242,7 @@ void CSBarMasterWin::onNewFilter(CBagStorageDev *pSDev, const CBofString &typest
 }
 
 void CSBarMasterWin::onNewFilter(CBagStorageDev *pSDev, const int nType) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	FilterFxn filterFunction = nullptr;
 	int filterId = pSDev->GetFilterId();
