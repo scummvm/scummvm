@@ -245,7 +245,7 @@ void MMovieXObj::close(ObjectType type) {
 }
 
 void MMovieXObj::m_new(int nargs) {
-	g_lingo->printSTUBWithArglist("MMovieXObj::m_new", nargs);
+	g_lingo->printArgs("MMovieXObj::m_new", nargs);
 	g_lingo->dropStack(nargs);
 	g_lingo->push(g_lingo->_state->me);
 }
@@ -254,7 +254,7 @@ XOBJSTUB(MMovieXObj::m_Movie, 0)
 XOBJSTUBNR(MMovieXObj::m_dispose)
 
 void MMovieXObj::m_openMMovie(int nargs) {
-	g_lingo->printSTUBWithArglist("MMovieXObj::m_openMMovie", nargs);
+	g_lingo->printArgs("MMovieXObj::m_openMMovie", nargs);
 	if (nargs != 1) {
 		g_lingo->dropStack(nargs);
 		g_lingo->push(Datum(-1));
@@ -307,7 +307,7 @@ void MMovieXObj::m_openMMovie(int nargs) {
 }
 
 void MMovieXObj::m_closeMMovie(int nargs) {
-	g_lingo->printSTUBWithArglist("MMovieXObj::m_closeMMovie", nargs);
+	g_lingo->printArgs("MMovieXObj::m_closeMMovie", nargs);
 	if (nargs != 1) {
 		g_lingo->dropStack(nargs);
 		g_lingo->push(Datum(MMovieError::MMOVIE_INVALID_MOVIE_INDEX));
@@ -337,7 +337,7 @@ void MMovieXObj::m_closeMMovie(int nargs) {
 }
 
 void MMovieXObj::m_playSegment(int nargs) {
-	g_lingo->printSTUBWithArglist("MMovieXObj::m_playSegment", nargs);
+	g_lingo->printArgs("MMovieXObj::m_playSegment", nargs);
 	if (nargs != 5) {
 		g_lingo->dropStack(nargs);
 		g_lingo->push(Datum(MMovieError::MMOVIE_INVALID_SEGMENT_NAME));
@@ -375,7 +375,7 @@ void MMovieXObj::m_playSegment(int nargs) {
 }
 
 void MMovieXObj::m_playSegLoop(int nargs) {
-	g_lingo->printSTUBWithArglist("MMovieXObj::m_playSegLoop", nargs);
+	g_lingo->printArgs("MMovieXObj::m_playSegLoop", nargs);
 	if (nargs != 5) {
 		g_lingo->dropStack(nargs);
 		g_lingo->push(Datum(MMovieError::MMOVIE_INVALID_SEGMENT_NAME));
@@ -421,7 +421,7 @@ void MMovieXObj::m_idleSegment(int nargs) {
 }
 
 void MMovieXObj::m_stopSegment(int nargs) {
-	g_lingo->printSTUBWithArglist("MMovieXObj::m_stopSegment", nargs);
+	g_lingo->printArgs("MMovieXObj::m_stopSegment", nargs);
 	if (nargs != 0) {
 		g_lingo->dropStack(nargs);
 	}
@@ -431,7 +431,7 @@ void MMovieXObj::m_stopSegment(int nargs) {
 }
 
 void MMovieXObj::m_seekSegment(int nargs) {
-	g_lingo->printSTUBWithArglist("MMovieXObj::m_seekSegment", nargs);
+	g_lingo->printArgs("MMovieXObj::m_seekSegment", nargs);
 	if (nargs != 1) {
 		g_lingo->dropStack(nargs);
 		g_lingo->push(MMovieError::MMOVIE_INVALID_SEGMENT_NAME);
@@ -451,7 +451,7 @@ void MMovieXObj::m_seekSegment(int nargs) {
 XOBJSTUB(MMovieXObj::m_setSegmentTime, 0)
 
 void MMovieXObj::m_setDisplayBounds(int nargs) {
-	g_lingo->printSTUBWithArglist("MMovieXObj::m_setDisplayBounds", nargs);
+	g_lingo->printArgs("MMovieXObj::m_setDisplayBounds", nargs);
 	if (nargs != 4) {
 		warning("MMovieXObj::m_setDisplayBounds: expecting 4 arguments!");
 		g_lingo->dropStack(nargs);
@@ -472,7 +472,7 @@ XOBJSTUB(MMovieXObj::m_getMovieNormalWidth, 0)
 XOBJSTUB(MMovieXObj::m_getMovieNormalHeight, 0)
 
 void MMovieXObj::m_getSegCount(int nargs) {
-	g_lingo->printSTUBWithArglist("MMovieXObj::m_getSegCount", nargs);
+	g_lingo->printArgs("MMovieXObj::m_getSegCount", nargs);
 	if (nargs != 1) {
 		g_lingo->dropStack(nargs);
 		g_lingo->push(MMovieError::MMOVIE_INVALID_MOVIE_INDEX);
@@ -511,7 +511,7 @@ void MMovieXObj::m_getSegName(int nargs) {
 }
 
 void MMovieXObj::m_getMovieRate(int nargs) {
-	g_lingo->printSTUBWithArglist("MMovieXObj::m_getMovieRate", nargs);
+	g_lingo->printArgs("MMovieXObj::m_getMovieRate", nargs);
 	if (nargs != 0) {
 		g_lingo->dropStack(nargs);
 	}
@@ -520,7 +520,7 @@ void MMovieXObj::m_getMovieRate(int nargs) {
 }
 
 void MMovieXObj::m_setMovieRate(int nargs) {
-	g_lingo->printSTUBWithArglist("MMovieXObj::m_setMovieRate", nargs);
+	g_lingo->printArgs("MMovieXObj::m_setMovieRate", nargs);
 	if (nargs != 1) {
 		warning("MMovieXObj::m_setMovieRate: expecting 4 arguments");
 		g_lingo->dropStack(nargs);
@@ -536,7 +536,7 @@ XOBJSTUB(MMovieXObj::m_flushEvents, 0)
 XOBJSTUB(MMovieXObj::m_invalidateRect, 0)
 
 void MMovieXObj::m_readFile(int nargs) {
-	g_lingo->printSTUBWithArglist("MMovieXObj::m_readFile", nargs);
+	g_lingo->printArgs("MMovieXObj::m_readFile", nargs);
 	if (nargs != 2) {
 		warning("MMovieXObj::m_readFile(): expecting 2 argument");
 	}
@@ -597,7 +597,7 @@ void MMovieXObj::m_readFile(int nargs) {
 }
 
 void MMovieXObj::m_writeFile(int nargs) {
-	g_lingo->printSTUBWithArglist("MMovieXObj::m_writeFile", nargs);
+	g_lingo->printArgs("MMovieXObj::m_writeFile", nargs);
 	if (nargs != 3) {
 		warning("MMovieXObj::m_writeFile(): expecting 3 arguments");
 	}
