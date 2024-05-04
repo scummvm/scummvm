@@ -215,7 +215,7 @@ public:
 ErrorCode paintBeveledText(CBofWindow *win, CBofRect *rect, const CBofString &string, const int size, const int weight, const RGBCOLOR color = CTEXT_COLOR, int justify = JUSTIFY_CENTER, uint32 format = FORMAT_DEFAULT, int font = FONT_DEFAULT);
 ErrorCode waitForInput();
 
-extern bool g_bWaitOK;
+extern bool g_waitOKFl;
 
 } // namespace Bagel
 

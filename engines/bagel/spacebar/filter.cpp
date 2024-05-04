@@ -283,9 +283,9 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	}
 
 	// If get vars for 1st time
-	if (g_engine->g_bGetVilVars) {
+	if (g_engine->g_getVilVarsFl) {
 		GetVilVars();
-		g_engine->g_bGetVilVars = false;
+		g_engine->g_getVilVarsFl = false;
 	}
 
 	if (pRect != nullptr) {

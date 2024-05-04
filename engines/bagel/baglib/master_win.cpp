@@ -56,13 +56,13 @@ namespace Bagel {
 // Global vars
 //
 extern CBofWindow *g_hackWindow;
-static bool g_bAllowRestore = false;
+static bool g_allowRestoreFl = false;
 
 bool g_restoreObjectListFl = true;
 
 #define NUM_MSG_STRINGS 3
-static int g_nString = 0;
-static char g_szString[NUM_MSG_STRINGS][512];
+static int g_string = 0;
+static char g_stringArray[NUM_MSG_STRINGS][512];
 
 // static initializations
 
@@ -77,17 +77,17 @@ int CBagMasterWin::_curCursor = 0;
 // CBagMasterWin
 //
 CBagMasterWin::CBagMasterWin() {
-	CBofRect cRect(0, 0, 640 - 1, 480 - 1);
+	CBofRect screenRect(0, 0, 640 - 1, 480 - 1);
 
-	const char *pAppName = "BAGEL Application";
+	const char *appName = "BAGEL Application";
 
-	CBofApp *pApp = CBofApp::getApp();
-	if (pApp != nullptr) {
-		cRect.setRect(0, 0, pApp->screenWidth() - 1, pApp->screenHeight() - 1);
-		pAppName = pApp->getAppName();
+	CBofApp *app = CBofApp::getApp();
+	if (app != nullptr) {
+		screenRect.setRect(0, 0, app->screenWidth() - 1, app->screenHeight() - 1);
+		appName = app->getAppName();
 	}
 
-	cRect.setRect(0, 0, 640 - 1, 480 - 1);
+	screenRect.setRect(0, 0, 640 - 1, 480 - 1);
 	_fadeIn = 0;
 	_gameWindow = nullptr;
 
@@ -96,56 +96,47 @@ CBagMasterWin::CBagMasterWin() {
 	_variableList = nullptr;
 	_diskId = 1;
 
-	create(pAppName, &cRect);
+	create(appName, &screenRect);
 
 	// Assume default system screen
 	_sysScreen = "$SBARDIR\\GENERAL\\SYSTEM\\GAMBHALL.BMP";
 	MACROREPLACE(_sysScreen);
 
 	// Load wait sound for when user hits the spacebar
-	CBofString cString("$SBARDIR\\GENERAL\\WAIT.WAV");
-	MACROREPLACE(cString);
+	CBofString waitName("$SBARDIR\\GENERAL\\WAIT.WAV");
+	MACROREPLACE(waitName);
 
-	_waitSound = new CBofSound(this, cString, SOUND_MIX);
+	_waitSound = new CBofSound(this, waitName, SOUND_MIX);
 }
 
 CBagMasterWin::~CBagMasterWin() {
 	assert(isValidObject(this));
 
-	if (_waitSound != nullptr) {
-		delete _waitSound;
-		_waitSound = nullptr;
-	}
+	delete _waitSound;
+	_waitSound = nullptr;
 
-	CBofApp *pApp;
-	if ((pApp = CBofApp::getApp()) != nullptr) {
-		pApp->setPalette(nullptr);
+	CBofApp *app = CBofApp::getApp();
+	if (app != nullptr) {
+		app->setPalette(nullptr);
 	}
 
 	// Delete any remaining cursors
 	for (int i = 0; i < MAX_CURSORS; i++) {
-		if (_cursorList[i] != nullptr) {
-			delete _cursorList[i];
-			_cursorList[i] = nullptr;
-		}
+		delete _cursorList[i];
+		_cursorList[i] = nullptr;
 	}
 
-	if (_gameWindow != nullptr) {
-		delete _gameWindow;
-		_gameWindow = nullptr;
-	}
-	if (_storageDeviceList != nullptr) {
-		delete _storageDeviceList;
-		_storageDeviceList = nullptr;
-	}
-	if (_variableList != nullptr) {
-		delete _variableList;
-		_variableList = nullptr;
-	}
-	if (_gameSDevList != nullptr) {
-		delete _gameSDevList;
-		_gameSDevList = nullptr;
-	}
+	delete _gameWindow;
+	_gameWindow = nullptr;
+
+	delete _storageDeviceList;
+	_storageDeviceList = nullptr;
+
+	delete _variableList;
+	_variableList = nullptr;
+
+	delete _gameSDevList;
+	_gameSDevList = nullptr;
 
 	// We can get rid of this buffer since the game is shutting down
 	if (_objList != nullptr) {
@@ -159,41 +150,40 @@ ErrorCode CBagMasterWin::showSystemDialog(bool bSaveBackground) {
 	if (g_engine->isDemo())
 		return ERR_NONE;
 
-	CBagStorageDevWnd *pSdev = getCurrentStorageDev();
+	CBagStorageDevWnd *sdev = getCurrentStorageDev();
 
-	if ((pSdev == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
+	if ((sdev == nullptr) || (sdev->GetDeviceType() == SDEV_GAMEWIN) || (sdev->GetDeviceType() == SDEV_ZOOMPDA)) {
 		logInfo("Showing System Screen");
 
-		CBagOptWindow cOptionDialog;
-
 		// Use specified bitmap as this dialog's image
-		CBofBitmap *pBmp = Bagel::loadBitmap(_sysScreen.getBuffer());
+		CBofBitmap *dialogBmp = Bagel::loadBitmap(_sysScreen.getBuffer());
 
-		cOptionDialog.setBackdrop(pBmp);
+		CBagOptWindow optionDialog;
+		optionDialog.setBackdrop(dialogBmp);
 
-		CBofRect cRect = cOptionDialog.getBackdrop()->getRect();
+		CBofRect dialogRect = optionDialog.getBackdrop()->getRect();
 
 		if (!bSaveBackground) {
-			cOptionDialog.setFlags(cOptionDialog.getFlags() & ~BOFDLG_SAVEBACKGND);
+			optionDialog.setFlags(optionDialog.getFlags() & ~BOFDLG_SAVEBACKGND);
 		}
 
 		// Create the dialog box
-		cOptionDialog.create("System Dialog", cRect.left, cRect.top, cRect.width(), cRect.height(), this);
+		optionDialog.create("System Dialog", dialogRect.left, dialogRect.top, dialogRect.width(), dialogRect.height(), this);
 
-		CBofWindow *pLastWin = g_hackWindow;
-		g_hackWindow = &cOptionDialog;
+		CBofWindow *lastWin = g_hackWindow;
+		g_hackWindow = &optionDialog;
 
-		g_bPauseTimer = true;
-		int nReturnValue = cOptionDialog.doModal();
-		g_bPauseTimer = false;
-		cOptionDialog.detach();
+		g_pauseTimerFl = true;
+		int dialogReturnValue = optionDialog.doModal();
+		g_pauseTimerFl = false;
+		optionDialog.detach();
 
-		g_hackWindow = pLastWin;
+		g_hackWindow = lastWin;
 
 		logInfo("Exiting System Screen");
 
 		// User chose to Quit
-		if (nReturnValue == 0) {
+		if (dialogReturnValue == 0) {
 			close();
 		}
 	}
@@ -206,20 +196,19 @@ ErrorCode CBagMasterWin::showCreditsDialog(CBofWindow *win, bool bSaveBkg) {
 
 	logInfo("Showing Credits Screen");
 
-	CBagCreditsDialog cCreditsDialog;
-
 	// Use specified bitmap as this dialog's image
-	CBofBitmap *pBmp = Bagel::loadBitmap(buildSysDir("BARAREA.BMP"));
+	CBofBitmap *barBmp = Bagel::loadBitmap(buildSysDir("BARAREA.BMP"));
 
-	cCreditsDialog.setBackdrop(pBmp);
+	CBagCreditsDialog creditsDialog;
+	creditsDialog.setBackdrop(barBmp);
 
-	CBofRect cRect = cCreditsDialog.getBackdrop()->getRect();
+	CBofRect dialogRect = creditsDialog.getBackdrop()->getRect();
 
 	// Don't allow save of background?
 	if (!bSaveBkg) {
-		int lFlags = cCreditsDialog.getFlags();
+		int flags = creditsDialog.getFlags();
 
-		cCreditsDialog.setFlags(lFlags & ~BOFDLG_SAVEBACKGND);
+		creditsDialog.setFlags(flags & ~BOFDLG_SAVEBACKGND);
 	}
 
 	// Use CBagMasterWin if no parent specified
@@ -228,12 +217,12 @@ ErrorCode CBagMasterWin::showCreditsDialog(CBofWindow *win, bool bSaveBkg) {
 	}
 
 	// Create the dialog box
-	cCreditsDialog.create("Save Dialog", cRect.left, cRect.top, cRect.width(), cRect.height(), win);
+	creditsDialog.create("Save Dialog", dialogRect.left, dialogRect.top, dialogRect.width(), dialogRect.height(), win);
 
-	bool bSaveTimer = g_bPauseTimer;
-	g_bPauseTimer = true;
-	cCreditsDialog.doModal();
-	g_bPauseTimer = bSaveTimer;
+	bool saveTimerFl = g_pauseTimerFl;
+	g_pauseTimerFl = true;
+	creditsDialog.doModal();
+	g_pauseTimerFl = saveTimerFl;
 
 	logInfo("Exiting Credits Screen");
 
@@ -243,13 +232,11 @@ ErrorCode CBagMasterWin::showCreditsDialog(CBofWindow *win, bool bSaveBkg) {
 bool CBagMasterWin::showQuitDialog(CBofWindow *win, bool bSaveBackground) {
 	assert(isValidObject(this));
 
-	CBagStorageDevWnd *pSdev = getCurrentStorageDev();
-	bool bQuit = false;
+	CBagStorageDevWnd *sdev = getCurrentStorageDev();
+	bool quitFl = false;
 
-	if ((pSdev == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
+	if ((sdev == nullptr) || (sdev->GetDeviceType() == SDEV_GAMEWIN) || (sdev->GetDeviceType() == SDEV_ZOOMPDA)) {
 		logInfo("Showing Quit Screen");
-
-		CBagQuitDialog cQuitDialog;
 
 		CBofSound::pauseSounds();
 
@@ -258,109 +245,109 @@ bool CBagMasterWin::showQuitDialog(CBofWindow *win, bool bSaveBackground) {
 		}
 
 		// Use specified bitmap as this dialog's image
-		CBofBitmap *pBmp = Bagel::loadBitmap(_sysScreen.getBuffer());
+		CBofBitmap *dialogBmp = Bagel::loadBitmap(_sysScreen.getBuffer());
 
-		cQuitDialog.setBackdrop(pBmp);
+		CBagQuitDialog quitDialog;
+		quitDialog.setBackdrop(dialogBmp);
 
-		CBofRect cRect = cQuitDialog.getBackdrop()->getRect();
+		CBofRect dialogRect = quitDialog.getBackdrop()->getRect();
 
 		if (!bSaveBackground) {
-			cQuitDialog.setFlags(cQuitDialog.getFlags() & ~BOFDLG_SAVEBACKGND);
+			quitDialog.setFlags(quitDialog.getFlags() & ~BOFDLG_SAVEBACKGND);
 		}
 
 		// Create the dialog box
-		cQuitDialog.create("Quit Dialog", cRect.left, cRect.top, cRect.width(), cRect.height(), win);
+		quitDialog.create("Quit Dialog", dialogRect.left, dialogRect.top, dialogRect.width(), dialogRect.height(), win);
 
-		bool bSaveTimer = g_bPauseTimer;
-		g_bPauseTimer = true;
-		int nReturnValue = cQuitDialog.doModal();
-		g_bPauseTimer = bSaveTimer;
+		bool saveTimerFl = g_pauseTimerFl;
+		g_pauseTimerFl = true;
+		int dialogReturnValue = quitDialog.doModal();
+		g_pauseTimerFl = saveTimerFl;
 
-		switch (nReturnValue) {
+		switch (dialogReturnValue) {
 		case SAVE_BTN:
 			// Quit as as well. Saving already done within dialog itself
-			bQuit = true;
+			quitFl = true;
 			break;
 
 		case QUIT_BTN:
-			bQuit = true;
+			quitFl = true;
 			break;
 
 		case CANCEL_BTN:
-			bQuit = false;
+			quitFl = false;
 			break;
 		}
 
-		if (!bQuit) {
+		if (!quitFl) {
 			CBofSound::resumeSounds();
 		}
 
 		logInfo("Exiting Quit Screen");
 	}
 
-	return bQuit;
+	return quitFl;
 }
 
 ErrorCode CBagMasterWin::newGame() {
 	assert(isValidObject(this));
 
-	char sWorkStr[256];
-	char szCInit[256];
+	char workStr[256];
+	char cInit[256];
 
-	sWorkStr[0] = '\0';
-	szCInit[0] = '\0';
+	workStr[0] = '\0';
+	cInit[0] = '\0';
 
-	CBofString cInitWld(szCInit, 256);
+	CBofString initWld(cInit, 256);
 
 	CBagPanWindow::FlushInputEvents();
 
 	// Inits for a New Game
 	_objSaveFl = false;
 
-	CBagel *pApp = CBagel::getBagApp();
+	CBagel *app = CBagel::getBagApp();
 	// Find the starting .WLD file name
-	if (pApp != nullptr) {
-		pApp->getOption("Startup", "WLDFile", sWorkStr, STARTWORLD, 255);
+	if (app != nullptr) {
+		app->getOption("Startup", "WLDFile", workStr, STARTWORLD, 255);
 
-		cInitWld = sWorkStr;
-		MACROREPLACE(cInitWld);
+		initWld = workStr;
+		MACROREPLACE(initWld);
 	}
 
 	loadGlobalVars(GLOBALWORLD);
-	loadFile(cInitWld, "", true);
+	loadFile(initWld, "", true);
 
 	return _errCode;
 }
 
 ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &startWldName, bool restartFl, bool setStartFl) {
-	char szLocalBuff[256];
+	char localBuffer[256];
+	localBuffer[0] = '\0';
 
-	szLocalBuff[0] = '\0';
+	Common::strcpy_s(localBuffer, "$SBARDIR\\GENERAL\\SYSTEM\\LEGAL.BMP");
+	CBofString wldFileName(localBuffer, 256);
 
-	Common::strcpy_s(szLocalBuff, "$SBARDIR\\GENERAL\\SYSTEM\\LEGAL.BMP");
-	CBofString sWldFileName(szLocalBuff, 256);
-
-	static bool bPainted = false;
+	static bool paintedFl = false;
 
 	// Make sure we get a new set of vildroid filter variables
-	g_engine->g_bGetVilVars = true;
+	g_engine->g_getVilVarsFl = true;
 
 	// Reset the Queued sound slot volumes back to default
 	CBofSound::resetQVolumes();
 
-	if (!bPainted) {
-		bPainted = true;
-		MACROREPLACE(sWldFileName);
+	if (!paintedFl) {
+		paintedFl = true;
+		MACROREPLACE(wldFileName);
 		CBofRect cRect;
 		cRect.left = (640 - 520) / 2;
 		cRect.top = (480 - 240) / 2;
 		cRect.right = cRect.left + 520 - 1;
 		cRect.bottom = cRect.top + 240 - 1;
 
-		paintBitmap(this, sWldFileName.getBuffer(), &cRect);
+		paintBitmap(this, wldFileName.getBuffer(), &cRect);
 	}
 
-	sWldFileName = wldName;
+	wldFileName = wldName;
 
 	// Reset unique ID for menus
 	_menuCount = 0;
@@ -370,13 +357,13 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 
 	// This palette will be deleted so don't let anyone use it, until it is
 	// replaced with a new one.
-	CBofApp *pApp = CBofApp::getApp();
-	if (pApp != nullptr) {
-		pApp->setPalette(nullptr);
+	CBofApp *app = CBofApp::getApp();
+	if (app != nullptr) {
+		app->setPalette(nullptr);
 	}
 
 	// Save all used objects (if going to another .WLD file)
-	bool bRestore = false;
+	bool restoreFl = false;
 	if ((_storageDeviceList != nullptr) && !restartFl) {
 
 		if (!_objSaveFl) {
@@ -401,7 +388,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 			saveSDevStack();
 
 		} else {
-			bRestore = true;
+			restoreFl = true;
 		}
 	}
 
@@ -409,27 +396,19 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 		_variableList->ReleaseVariables(false);
 	}
 
-	if (_gameSDevList != nullptr) {
-		delete _gameSDevList;
-		_gameSDevList = nullptr;
-	}
+	delete _gameSDevList;
+	_gameSDevList = nullptr;
 
-	if (_gameWindow != nullptr) {
-		delete _gameWindow;
-		_gameWindow = nullptr;
-	}
+	delete _gameWindow;
+	_gameWindow = nullptr;
 
-	if (_storageDeviceList != nullptr) {
-		delete _storageDeviceList;
-		_storageDeviceList = nullptr;
-	}
+	delete _storageDeviceList;
+	_storageDeviceList = nullptr;
 
 	// Unload all current cursors
 	for (int i = 0; i < MAX_CURSORS; i++) {
-		if (_cursorList[i] != nullptr) {
-			delete _cursorList[i];
-			_cursorList[i] = nullptr;
-		}
+		delete _cursorList[i];
+		_cursorList[i] = nullptr;
 	}
 
 	CBagMenu::SetUniversalObjectList(nullptr);
@@ -440,32 +419,32 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 	}
 	_gameSDevList = new CBofList<CBagStorageDev *>;
 
-	MACROREPLACE(sWldFileName);
+	MACROREPLACE(wldFileName);
 
 	timerStart();
 
-	if (fileExists(sWldFileName)) {
+	if (fileExists(wldFileName)) {
 		// Force buffer to be big enough so that the entire script
 		// is pre-loaded
-		int nLength = fileLength(sWldFileName);
-		char *pBuf = (char *)bofAlloc(nLength);
-		if (pBuf != nullptr) {
-			CBagIfstream fpInput(pBuf, nLength);
+		int length = fileLength(wldFileName);
+		char *fileBuf = (char *)bofAlloc(length);
+		if (fileBuf != nullptr) {
+			CBagIfstream fpInput(fileBuf, length);
 
-			CBofFile cFile;
-			cFile.open(sWldFileName);
-			cFile.read(pBuf, nLength);
-			cFile.close();
+			CBofFile file;
+			file.open(wldFileName);
+			file.read(fileBuf, length);
+			file.close();
 
-			CBagMasterWin::loadFileFromStream(fpInput, startWldName);
+			loadFileFromStream(fpInput, startWldName);
 
-			bofFree(pBuf);
+			bofFree(fileBuf);
 		}
 
 		// Possibly need to switch CDs
-		CBagel *pBagApp = CBagel::getBagApp();
-		if (pBagApp != nullptr) {
-			_errCode = pBagApp->verifyCDInDrive(_diskId, _cdChangeAudio.getBuffer());
+		CBagel *bagApp = CBagel::getBagApp();
+		if (bagApp != nullptr) {
+			_errCode = bagApp->verifyCDInDrive(_diskId, _cdChangeAudio.getBuffer());
 			if (_errCode != ERR_NONE || g_engine->shouldQuit()) {
 				close();
 				return _errCode;
@@ -485,7 +464,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 
 		if (g_restoreObjectListFl) {
 
-			if (bRestore && _objSaveFl) {
+			if (restoreFl && _objSaveFl) {
 				assert(_storageDeviceList != nullptr);
 				if (_storageDeviceList != nullptr) {
 					// Use a preallocated buffer, trash it when we're done.
@@ -505,18 +484,17 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 		if (!startWldName.isEmpty()) {
 			_startWld = startWldName;
 		}
-		if (setStartFl) {
-			if (!_startWld.isEmpty()) {
-				setStorageDev(_startWld);
-			}
+
+		if (setStartFl && !_startWld.isEmpty()) {
+			setStorageDev(_startWld);
 		}
 
 		restoreActiveMessages(_storageDeviceList);
 
 	} else {
-		reportError(ERR_FFIND, "Could not find World Script: %s", sWldFileName.getBuffer());
+		reportError(ERR_FFIND, "Could not find World Script: %s", wldFileName.getBuffer());
 	}
-	logInfo(buildString("Time to Load %s, %ld ms", sWldFileName.getBuffer(), timerStop()));
+	logInfo(buildString("Time to Load %s, %ld ms", wldFileName.getBuffer(), timerStop()));
 
 	return _errCode;
 }
@@ -525,30 +503,30 @@ void CBagMasterWin::saveSDevStack() {
 	assert(isValidObject(this));
 
 	// Save our SDEV location, so we can restore it from Kerpupu
-	char szLocStack[MAX_CLOSEUP_DEPTH][MAX_VAR_VALUE];
-	char szTempBuf[256];
+	char locStack[MAX_CLOSEUP_DEPTH][MAX_VAR_VALUE];
+	char tempBuf[256];
 
-	memset(&szLocStack[0][0], 0, sizeof(char) * MAX_CLOSEUP_DEPTH * MAX_VAR_VALUE);
-	szTempBuf[0] = '\0';
-	CBagStorageDevWnd *pSDevWin = getCurrentStorageDev();
-	if (pSDevWin != nullptr) {
+	memset(&locStack[0][0], 0, sizeof(char) * MAX_CLOSEUP_DEPTH * MAX_VAR_VALUE);
+	tempBuf[0] = '\0';
+	CBagStorageDevWnd *sdevWin = getCurrentStorageDev();
+	if (sdevWin != nullptr) {
 		int i = 0;
 
-		CBofString cStr = pSDevWin->GetName();
-		if (!cStr.isEmpty()) {
-			Common::strcpy_s(szLocStack[i], cStr.getBuffer());
-			cStr = pSDevWin->getPrevSDev();
+		CBofString curStr = sdevWin->GetName();
+		if (!curStr.isEmpty()) {
+			Common::strcpy_s(locStack[i], curStr.getBuffer());
+			curStr = sdevWin->getPrevSDev();
 			i++;
 		}
 
-		while ((i < MAX_CLOSEUP_DEPTH) && !cStr.isEmpty()) {
-			pSDevWin = (CBagStorageDevWnd *)_storageDeviceList->GetStorageDevice(cStr);
-			if (pSDevWin != nullptr) {
+		while ((i < MAX_CLOSEUP_DEPTH) && !curStr.isEmpty()) {
+			sdevWin = (CBagStorageDevWnd *)_storageDeviceList->GetStorageDevice(curStr);
+			if (sdevWin != nullptr) {
 
-				Common::strcpy_s(szLocStack[i], cStr.getBuffer());
+				Common::strcpy_s(locStack[i], curStr.getBuffer());
 
 				i++;
-				cStr = pSDevWin->getPrevSDev();
+				curStr = sdevWin->getPrevSDev();
 			} else {
 				break;
 			}
@@ -556,22 +534,22 @@ void CBagMasterWin::saveSDevStack() {
 		i--;
 		for (int j = i; j >= 0; j--) {
 
-			if (szLocStack[j][0] != '\0') {
-				Common::strcat_s(szTempBuf, szLocStack[j]);
+			if (locStack[j][0] != '\0') {
+				Common::strcat_s(tempBuf, locStack[j]);
 				if (j != 0) {
-					Common::strcat_s(szTempBuf, "~~");
+					Common::strcat_s(tempBuf, "~~");
 				}
 			}
 		}
 
 		// Variables cannot exceed MAX_VAR_VALUE characters in length (for Save/Restore)
-		assert(strlen(szTempBuf) < MAX_VAR_VALUE);
+		assert(strlen(tempBuf) < MAX_VAR_VALUE);
 
 		// Store our current sdev location stack in a global variable.
-		CBagVar *pVar = VAR_MANAGER->GetVariable("$LASTWORLD");
-		if (pVar != nullptr) {
-			cStr = szTempBuf;
-			pVar->SetValue(cStr);
+		CBagVar *var = VAR_MANAGER->GetVariable("$LASTWORLD");
+		if (var != nullptr) {
+			curStr = tempBuf;
+			var->SetValue(curStr);
 		}
 	}
 }
@@ -579,30 +557,30 @@ void CBagMasterWin::saveSDevStack() {
 ErrorCode CBagMasterWin::loadGlobalVars(const CBofString &wldName) {
 	assert(isValidObject(this));
 
-	char szLocalBuff[256];
-	szLocalBuff[0] = '\0';
-	CBofString sWldFileName(szLocalBuff, 256);
-	sWldFileName = wldName;
+	char localBuff[256];
+	localBuff[0] = '\0';
+	CBofString wldFileName(localBuff, 256);
+	wldFileName = wldName;
 
 	delete _variableList;
 	_variableList = new CBagVarManager();
 
 	if (_variableList != nullptr) {
 
-		MACROREPLACE(sWldFileName);
+		MACROREPLACE(wldFileName);
 
-		if (fileExists(sWldFileName)) {
+		if (fileExists(wldFileName)) {
 			// Force buffer to be big enough so that the entire script
 			// is pre-loaded
-			int nLength = fileLength(sWldFileName);
-			char *pBuf = (char *)bofAlloc(nLength);
-			if (pBuf != nullptr) {
-				CBagIfstream fpInput(pBuf, nLength);
+			int length = fileLength(wldFileName);
+			char *buffer = (char *)bofAlloc(length);
+			if (buffer != nullptr) {
+				CBagIfstream fpInput(buffer, length);
 
-				CBofFile cFile;
-				cFile.open(sWldFileName);
-				cFile.read(pBuf, nLength);
-				cFile.close();
+				CBofFile file;
+				file.open(wldFileName);
+				file.read(buffer, length);
+				file.close();
 
 				while (!fpInput.eof()) {
 					fpInput.eatWhite();
@@ -618,16 +596,16 @@ ErrorCode CBagMasterWin::loadGlobalVars(const CBofString &wldName) {
 					switch (keyword) {
 
 					case VARIABLE: {
-						CBagVar *pVar = new CBagVar;
+						CBagVar *var = new CBagVar;
 						fpInput.eatWhite();
-						pVar->setInfo(fpInput);
-						pVar->SetGlobal();
+						var->setInfo(fpInput);
+						var->SetGlobal();
 						break;
 					}
 
 					case REMARK: {
-						char s[256];
-						fpInput.getCh(s, 255);
+						char dummyStr[256];
+						fpInput.getCh(dummyStr, 255);
 						break;
 					}
 
@@ -645,7 +623,7 @@ ErrorCode CBagMasterWin::loadGlobalVars(const CBofString &wldName) {
 					}
 				}
 
-				bofFree(pBuf);
+				bofFree(buffer);
 			}
 		}
 	}
@@ -654,22 +632,21 @@ ErrorCode CBagMasterWin::loadGlobalVars(const CBofString &wldName) {
 }
 
 ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofString &wldName) {
-	char szLocalStr[256];
-	szLocalStr[0] = 0;
-	CBofRect rRect;
-	bool bIsWieldCursor = false;
+	char localStr[256];
+	localStr[0] = 0;
+	bool isWieldCursorFl = false;
 
-	memset(szLocalStr, 0, 256);
-	CBofString sWorkStr(szLocalStr, 256);
+	memset(localStr, 0, 256);
+	CBofString workStr(localStr, 256);
 
 	_startWld = wldName;
 
 	while (!input.eof()) {
 		input.eatWhite();
-		CBagStorageDev *pSDev = nullptr;
-		int nFilter = 0;
-		rRect.right = rRect.left - 1;
-		rRect.bottom = rRect.top - 1;
+		int filter = 0;
+		CBofRect curRect;
+		curRect.right = curRect.left - 1;
+		curRect.bottom = curRect.top - 1;
 
 		KEYWORDS keyword;
 
@@ -682,106 +659,106 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 		switch (keyword) {
 
 		case STORAGEDEV: {
-			char szNameBuff[256];
-			char szTypeBuff[256];
-			szNameBuff[0] = 0;
-			szTypeBuff[0] = 0;
+			char nameBuff[256];
+			char typeBuff[256];
+			nameBuff[0] = 0;
+			typeBuff[0] = 0;
 
-			memset(szNameBuff, 0, 256);
-			memset(szTypeBuff, 0, 256);
-			CBofString namestr(szNameBuff, 256);
-			CBofString typestr(szTypeBuff, 256);
-
-			input.eatWhite();
-			GetAlphaNumFromStream(input, namestr);
+			memset(nameBuff, 0, 256);
+			memset(typeBuff, 0, 256);
+			CBofString nameStr(nameBuff, 256);
+			CBofString typeStr(typeBuff, 256);
 
 			input.eatWhite();
+			GetAlphaNumFromStream(input, nameStr);
 
-			int nFadeId = 0;
+			input.eatWhite();
+
+			int fadeId = 0;
 
 			while (input.peek() != '{') {
-				GetAlphaNumFromStream(input, sWorkStr);
+				GetAlphaNumFromStream(input, workStr);
 				input.eatWhite();
-				if (!sWorkStr.find("AS")) {
+				if (!workStr.find("AS")) {
 					input.eatWhite();
-					GetAlphaNumFromStream(input, typestr);
-				} else if (!sWorkStr.find("RECT")) {
+					GetAlphaNumFromStream(input, typeStr);
+				} else if (!workStr.find("RECT")) {
 					input.eatWhite();
-					getRectFromStream(input, rRect);
-				} else if (!sWorkStr.find("FILTER")) {
+					getRectFromStream(input, curRect);
+				} else if (!workStr.find("FILTER")) {
 					input.eatWhite();
-					GetIntFromStream(input, nFilter);
-				} else if (!sWorkStr.find("FADE")) { // Note that this should usually be set in the link
+					GetIntFromStream(input, filter);
+				} else if (!workStr.find("FADE")) { // Note that this should usually be set in the link
 					input.eatWhite();
-					GetIntFromStream(input, nFadeId);
+					GetIntFromStream(input, fadeId);
 				} else {
 					// There is an error here
-					logError(buildString("FAILED on argument of storage device %s : %s", namestr.getBuffer(), typestr.getBuffer()));
+					logError(buildString("FAILED on argument of storage device %s : %s", nameStr.getBuffer(), typeStr.getBuffer()));
 					return ERR_UNKNOWN;
 				}
 
 				input.eatWhite();
 			}
-			pSDev = onNewStorageDev(typestr);
-			if (!pSDev) {
-				logError(buildString("FAILED on open of storage device %s : %s", namestr.getBuffer(), typestr.getBuffer()));
+			CBagStorageDev *sdev = onNewStorageDev(typeStr);
+			if (!sdev) {
+				logError(buildString("FAILED on open of storage device %s : %s", nameStr.getBuffer(), typeStr.getBuffer()));
 				return ERR_UNKNOWN;
 			}
 
 			// Default DISK ID for this storage device is the same
 			// as the ID specified for this .WLD script file.
-			pSDev->SetDiskID(_diskId);
+			sdev->SetDiskID(_diskId);
 
-			if (rRect.width() && rRect.height())
-				pSDev->setRect(rRect);
+			if (curRect.width() && curRect.height())
+				sdev->setRect(curRect);
 
-			pSDev->loadFileFromStream(input, namestr, false);
-			if (nFilter) {
-				pSDev->SetFilterId((uint16)nFilter);
+			sdev->loadFileFromStream(input, nameStr, false);
+			if (filter) {
+				sdev->SetFilterId((uint16)filter);
 
 				// Set the filter on the window.
-				onNewFilter(pSDev, typestr);
+				onNewFilter(sdev, typeStr);
 			}
 
-			if (nFadeId != 0) {
-				pSDev->SetFadeId((uint16)nFadeId);
+			if (fadeId != 0) {
+				sdev->SetFadeId((uint16)fadeId);
 			}
 
-			_gameSDevList->addToTail(pSDev);
+			_gameSDevList->addToTail(sdev);
 			break;
 		}
 
 		case START_WLD: {
-			char str[256];
-			str[0] = '\0';
+			char strBuf[256];
+			strBuf[0] = '\0';
 
-			CBofString sStr(str, 256);
+			CBofString str(strBuf, 256);
 
 			input.eatWhite();
 			if (input.peek() == '=') {
 				input.getCh();
 				input.eatWhite();
-				GetAlphaNumFromStream(input, sStr);
+				GetAlphaNumFromStream(input, str);
 
 				// Only use the start wld if not specified elsewhere
-				_startWld = sStr;
+				_startWld = str;
 				logInfo(buildString("START_WLD set to %s", _startWld.getBuffer()));
 			}
 			break;
 		}
 
 		case WIELDCURSOR:
-			bIsWieldCursor = true;
+			isWieldCursorFl = true;
 			// fallthrough
 		case CURSOR: {
-			char str[256];
-			str[0] = 0;
+			char strBuf[256];
+			strBuf[0] = 0;
 
-			CBofString sStr(str, 256);
-			int nId;
+			CBofString str(strBuf, 256);
+			int id;
 
 			input.eatWhite();
-			GetIntFromStream(input, nId);
+			GetIntFromStream(input, id);
 			input.eatWhite();
 			if (input.peek() == '=') {
 				int x, y;
@@ -794,8 +771,8 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				GetIntFromStream(input, y);
 				input.eatWhite();
 
-				GetAlphaNumFromStream(input, sStr);
-				MACROREPLACE(sStr);
+				GetAlphaNumFromStream(input, str);
+				MACROREPLACE(str);
 
 				// Specify if we have a shared palette or not, look for
 				// the USESHAREDPAL token after the full cursor specification
@@ -803,35 +780,33 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 
 				input.eatWhite();
 				if (input.peek() == '=') {
-					char szSharedPalToken[256];
-					CBofString tStr(szSharedPalToken, 256);
+					char sharedPalTokenBuf[256];
+					CBofString sharedPalToken(sharedPalTokenBuf, 256);
 
 					input.getCh();
 					input.eatWhite();
 
 					// Check for shared pal token, if there, then create our cursor
 					// with the shared palette bit set
-					GetAlphaNumFromStream(input, tStr);
-					if (tStr.find("USESHAREDPAL") != -1) {
+					GetAlphaNumFromStream(input, sharedPalToken);
+					if (sharedPalToken.find("USESHAREDPAL") != -1) {
 						bUseShared = true;
 					}
 				}
 
-				CBagCursor *pCursor = new CBagCursor(sStr, bUseShared);
-				if (pCursor != nullptr) {
-					pCursor->setHotspot(x, y);
+				CBagCursor *cursor = new CBagCursor(str, bUseShared);
+				if (cursor != nullptr) {
+					cursor->setHotspot(x, y);
 
-					assert(nId >= 0 && nId < MAX_CURSORS);
+					assert(id >= 0 && id < MAX_CURSORS);
 
 					// Delete any previous cursor
-					if (_cursorList[nId] != nullptr) {
-						delete _cursorList[nId];
-					}
-					_cursorList[nId] = pCursor;
+					delete _cursorList[id];
+					_cursorList[id] = cursor;
 
 					// Set the wielded cursor status (needed for
 					// a load time optimization)
-					pCursor->setWieldCursor(bIsWieldCursor);
+					cursor->setWieldCursor(isWieldCursorFl);
 
 				} else {
 					reportError(ERR_MEMORY, "Could not allocate a CBagCursor");
@@ -844,45 +819,45 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 		}
 
 		case PDASTATE: {
-			char szPDAState[256];
-			szPDAState[0] = '\0';
-			CBofString sStr(szPDAState, 256);
+			char pdaStateBuf[256];
+			pdaStateBuf[0] = '\0';
+			CBofString pdaState(pdaStateBuf, 256);
 			input.eatWhite();
 			if (input.peek() == '=') {
 				input.getCh();
 				input.eatWhite();
 
-				GetAlphaNumFromStream(input, sStr);
+				GetAlphaNumFromStream(input, pdaState);
 
-				if (sStr.find("MAP") != -1) {
+				if (pdaState.find("MAP") != -1) {
 					SBBasePda::setPdaMode(MAPMODE);
-				} else if (sStr.find("INV") != -1) {
+				} else if (pdaState.find("INV") != -1) {
 					SBBasePda::setPdaMode(INVMODE);
-				} else if (sStr.find("LOG") != -1) {
+				} else if (pdaState.find("LOG") != -1) {
 					SBBasePda::setPdaMode(LOGMODE);
 				}
-				logInfo(buildString("PDASTATE = %s", szPDAState));
+				logInfo(buildString("PDASTATE = %s", pdaStateBuf));
 			}
 			break;
 		}
 
 		// Implement shared palettes
 		case SHAREDPAL: {
-			char szBmpFileName[256];
-			szBmpFileName[0] = '\0';
-			CBofString sStr(szBmpFileName, 256);
+			char bmpFileNameBuf[256];
+			bmpFileNameBuf[0] = '\0';
+			CBofString bmpFileName(bmpFileNameBuf, 256);
 			input.eatWhite();
 			if (input.peek() == '=') {
 				input.getCh();
 				input.eatWhite();
 
-				GetAlphaNumFromStream(input, sStr);
-				MACROREPLACE(sStr);
+				GetAlphaNumFromStream(input, bmpFileName);
+				MACROREPLACE(bmpFileName);
 
 				// Read the palette in and keep it hanging around for later use
-				CBofPalette::setSharedPalette(sStr);
+				CBofPalette::setSharedPalette(bmpFileName);
 
-				logInfo(buildString("SHAREDPAL = %s", sStr.getBuffer()));
+				logInfo(buildString("SHAREDPAL = %s", bmpFileName.getBuffer()));
 			}
 			break;
 		}
@@ -904,9 +879,9 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 
 		// What audio file should play for this disk swap
 		case DISKAUDIO: {
-			char szDiskID[256];
-			szDiskID[0] = '\0';
-			CBofString sStr(szDiskID, 256);
+			char diskIdBuf[256];
+			diskIdBuf[0] = '\0';
+			CBofString diskId(diskIdBuf, 256);
 
 			input.eatWhite();
 			if (input.peek() == '=') {
@@ -939,10 +914,10 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 		}
 
 		case VARIABLE: {
-			CBagVar *xVar = new CBagVar;
+			CBagVar *var = new CBagVar;
 			// logInfo("New global variable");
 			input.eatWhite();
-			xVar->setInfo(input);
+			var->setInfo(input);
 			break;
 		}
 
@@ -967,27 +942,27 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 ErrorCode CBagMasterWin::setStorageDev(const CBofString &wldName, bool entry) {
 	assert(CBofObject::isValidObject(&wldName));
 
-	char szLocalBuff[256];
-	szLocalBuff[0] = '\0';
-	CBofString sExt(szLocalBuff, 256);
+	char localBuff[256];
+	localBuff[0] = '\0';
+	CBofString extension(localBuff, 256);
 
-	sExt = wldName.right(4);
+	extension = wldName.right(4);
 	if (_gameWindow)
 		_gameWindow->setOnUpdate(false);
 
-	if (!sExt.find(".wld") || !sExt.find(".WLD") || (wldName.find(".WLD~~") > 0) || (wldName.find(".wld~~") > 0)) {
+	if (!extension.find(".wld") || !extension.find(".WLD") || (wldName.find(".WLD~~") > 0) || (wldName.find(".wld~~") > 0)) {
 
 		// This is to stop it from going out of scope before
 		// the message is received.
-		assert(g_nString >= 0 && g_nString < NUM_MSG_STRINGS);
+		assert(g_string >= 0 && g_string < NUM_MSG_STRINGS);
 		assert(wldName.getLength() < 512);
 
-		strncpy(g_szString[g_nString], wldName, 511);
+		strncpy(g_stringArray[g_string], wldName, 511);
 
-		postUserMessage(WM_ENTER_NEW_WLD, (uint32)g_nString);
+		postUserMessage(WM_ENTER_NEW_WLD, (uint32)g_string);
 
-		if (++g_nString >= NUM_MSG_STRINGS) {
-			g_nString = 0;
+		if (++g_string >= NUM_MSG_STRINGS) {
+			g_string = 0;
 		}
 
 	} else if (entry) {
@@ -998,14 +973,14 @@ ErrorCode CBagMasterWin::setStorageDev(const CBofString &wldName, bool entry) {
 
 		// This is to stop the string from going out of scope before
 		// the message is received.
-		assert(g_nString >= 0 && g_nString < NUM_MSG_STRINGS);
+		assert(g_string >= 0 && g_string < NUM_MSG_STRINGS);
 		assert(wldName.getLength() < 512);
-		Common::strcpy_s(g_szString[g_nString], wldName);
+		Common::strcpy_s(g_stringArray[g_string], wldName);
 
-		postUserMessage(WM_EXIT_CLOSE_UP_WINDOW, (uint32)g_nString);
+		postUserMessage(WM_EXIT_CLOSE_UP_WINDOW, (uint32)g_string);
 
-		if (++g_nString >= NUM_MSG_STRINGS) {
-			g_nString = 0;
+		if (++g_string >= NUM_MSG_STRINGS) {
+			g_string = 0;
 		}
 	}
 
@@ -1019,72 +994,71 @@ ErrorCode CBagMasterWin::onHelp(const CBofString &helpFile, bool /*bSaveBkg*/, C
 		return ERR_NONE;
 
 	if (!helpFile.isEmpty()) {
-		CBagHelp cHelp;
+		char localBuffer[256];
+		localBuffer[0] = '\0';
+		CBofString fileName(localBuffer, 256);
 
-		char szLocalBuff[256];
-		szLocalBuff[0] = '\0';
-		CBofString sFile(szLocalBuff, 256);
-
-		sFile = helpFile;
-		MACROREPLACE(sFile);
+		fileName = helpFile;
+		MACROREPLACE(fileName);
 
 		// use specified bitmap as this dialog's image
-		char szBkg[256];
-		szBkg[0] = '\0';
-		CBofString sBkg(szBkg, 256);
+		char backGroundBuffer[256];
+		backGroundBuffer[0] = '\0';
+		CBofString backGround(backGroundBuffer, 256);
 
-		sBkg = buildString("$SBARDIR%sGENERAL%sRULES%sHELPSCRN.BMP", PATH_DELIMETER, PATH_DELIMETER, PATH_DELIMETER);
-		MACROREPLACE(sBkg);
+		backGround = buildString("$SBARDIR%sGENERAL%sRULES%sHELPSCRN.BMP", PATH_DELIMETER, PATH_DELIMETER, PATH_DELIMETER);
+		MACROREPLACE(backGround);
 
-		CBofBitmap *pBmp = Bagel::loadBitmap(sBkg);
-		cHelp.setBackdrop(pBmp);
+		CBofBitmap *bmp = Bagel::loadBitmap(backGround);
+		CBagHelp help;
+		help.setBackdrop(bmp);
 
-		CBofRect cRect = cHelp.getBackdrop()->getRect();
+		CBofRect backRect = help.getBackdrop()->getRect();
 
 		if (parent == nullptr)
 			parent = this;
 
 		// create the dialog box
-		cHelp.create("HelpDialog", cRect.left, cRect.top, cRect.width(), cRect.height(), parent);
+		help.create("HelpDialog", backRect.left, backRect.top, backRect.width(), backRect.height(), parent);
 
-		cHelp.SetHelpFile(sFile.getBuffer());
-		cHelp.doModal();
-		cHelp.detach();
+		help.SetHelpFile(fileName.getBuffer());
+		help.doModal();
+		help.detach();
 	}
 
 	return _errCode;
 }
 
-bool g_bWaitOK = false;
+bool g_waitOKFl = false;
 
 void CBagMasterWin::onKeyHit(uint32 keyCode, uint32 repCount) {
 	assert(isValidObject(this));
 
-	int nVol;
+	int volume;
 
 	switch (keyCode) {
 	// Dynamic Midi Volume increase
 	case BKEY_ALT_UP:
-		nVol = getMidiVolume();
-		if (nVol < 12) {
-			nVol++;
-			setMidiVolume(nVol);
+		volume = getMidiVolume();
+		if (volume < 12) {
+			volume++;
+			setMidiVolume(volume);
 		}
 
 		break;
 
 	// Dynamic Midi Volume decrease
 	case BKEY_ALT_DOWN:
-		nVol = getMidiVolume();
-		if (nVol > 0) {
-			nVol--;
-			setMidiVolume(nVol);
+		volume = getMidiVolume();
+		if (volume > 0) {
+			volume--;
+			setMidiVolume(volume);
 		}
 		break;
 
 	case BKEY_SPACE:
-		if (g_bWaitOK) {
-			g_bWaitOK = false;
+		if (g_waitOKFl) {
+			g_waitOKFl = false;
 
 			// Play the tick-tock sound
 			if (_waitSound != nullptr) {
@@ -1168,49 +1142,49 @@ ErrorCode CBagMasterWin::gotoNewWindow(const CBofString *str) {
 	assert(str != nullptr);
 	assert(CBofObject::isValidObject(str));
 
-	CBagStorageDev *pSDev;
+	CBagStorageDev *sdev;
 
-	char szWorkStr[256];
-	char szPrevSDevStr[256];
-	char szCurSDevStr[256];
+	char workStringBuffer[256];
+	char sprevSDevBuffer[256];
+	char curSDevBuffer[256];
 
-	szWorkStr[0] = '\0';
-	szPrevSDevStr[0] = '\0';
-	szCurSDevStr[0] = '\0';
+	workStringBuffer[0] = '\0';
+	sprevSDevBuffer[0] = '\0';
+	curSDevBuffer[0] = '\0';
 
-	CBofString sWorkStr(szWorkStr, 256);
-	CBofString sPrevSDevStr(szPrevSDevStr, 256);
-	CBofString sCurrSDevStr(szCurSDevStr, 256);
+	CBofString workString(workStringBuffer, 256);
+	CBofString prevSDevString(sprevSDevBuffer, 256);
+	CBofString currSDevString(curSDevBuffer, 256);
 
 	int n = str->find("~~");
-	sWorkStr = *str;
-	bool bPrev = false;
+	workString = *str;
+	bool prevFl = false;
 
 	while (n > 0) {
-		sPrevSDevStr = sWorkStr.left(n);
-		sWorkStr = sWorkStr.mid(n + 2);
-		n = sWorkStr.find("~~");
+		prevSDevString = workString.left(n);
+		workString = workString.mid(n + 2);
+		n = workString.find("~~");
 		if (n > 0) {
-			sCurrSDevStr = sWorkStr.left(n);
-			pSDev = _storageDeviceList->GetStorageDevice(sCurrSDevStr);
-			if (pSDev != nullptr) {
-				pSDev->SetPrevSDev(sPrevSDevStr);
-				bPrev = true;
+			currSDevString = workString.left(n);
+			sdev = _storageDeviceList->GetStorageDevice(currSDevString);
+			if (sdev != nullptr) {
+				sdev->SetPrevSDev(prevSDevString);
+				prevFl = true;
 			}
 		} else {
-			sCurrSDevStr = sWorkStr;
-			pSDev = _storageDeviceList->GetStorageDevice(sCurrSDevStr);
-			if (pSDev != nullptr) {
-				pSDev->SetPrevSDev(sPrevSDevStr);
-				bPrev = true;
+			currSDevString = workString;
+			sdev = _storageDeviceList->GetStorageDevice(currSDevString);
+			if (sdev != nullptr) {
+				sdev->SetPrevSDev(prevSDevString);
+				prevFl = true;
 			}
 		}
 	}
 
-	pSDev = _storageDeviceList->GetStorageDevice(sWorkStr);
-	if (pSDev != nullptr) {
+	sdev = _storageDeviceList->GetStorageDevice(workString);
+	if (sdev != nullptr) {
 
-		logInfo(buildString("Switching to SDEV: %s", sWorkStr.getBuffer()));
+		logInfo(buildString("Switching to SDEV: %s", workString.getBuffer()));
 
 		if (_gameWindow) {
 			_gameWindow->detach();
@@ -1218,46 +1192,46 @@ ErrorCode CBagMasterWin::gotoNewWindow(const CBofString *str) {
 			//  If the new storage device is equal to the last windows previous
 			//  lets not go in a circle
 			//  If the current game window did not have a previous win
-			if ((_gameWindow->getPrevSDev().isEmpty()) || (_gameWindow->getPrevSDev() != pSDev->GetName())) {
-				if (!bPrev) {
-					pSDev->SetPrevSDev(_gameWindow->GetName());
+			if ((_gameWindow->getPrevSDev().isEmpty()) || (_gameWindow->getPrevSDev() != sdev->GetName())) {
+				if (!prevFl) {
+					sdev->SetPrevSDev(_gameWindow->GetName());
 				}
 			}
 		}
 
 		// Don't allow recursion
-		if (!pSDev->getPrevSDev().isEmpty() && pSDev->getPrevSDev().compareNoCase(pSDev->GetName()) == 0) {
-			pSDev->SetPrevSDev("");
+		if (!sdev->getPrevSDev().isEmpty() && sdev->getPrevSDev().compareNoCase(sdev->GetName()) == 0) {
+			sdev->SetPrevSDev("");
 		}
 
-		_gameWindow = (CBagStorageDevWnd *)pSDev;
-		setCICStatus(pSDev);
+		_gameWindow = (CBagStorageDevWnd *)sdev;
+		setCICStatus(sdev);
 
-		int nFadeId = pSDev->GetFadeId();
+		int fadeId = sdev->GetFadeId();
 
 		if (_fadeIn != 0)
-			pSDev->SetFadeId((uint16)_fadeIn);
+			sdev->SetFadeId((uint16)_fadeIn);
 
 		// Reset paints
 		g_allowPaintFl = true;
 
-		pSDev->attach();
+		sdev->attach();
 
-		pSDev->SetFadeId((uint16)nFadeId);
+		sdev->SetFadeId((uint16)fadeId);
 		_fadeIn = 0;
 	}
 
 	return _errCode;
 }
 
-bool CBagMasterWin::showRestartDialog(CBofWindow *win, bool bSaveBkg) {
+bool CBagMasterWin::showRestartDialog(CBofWindow *win, bool saveBkgFl) {
 	assert(isValidObject(this));
 
 	if (g_engine->isDemo())
 		return false;
 
-	CBagStorageDevWnd *pSdev = getCurrentStorageDev();
-	if ((pSdev == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
+	CBagStorageDevWnd *sdev = getCurrentStorageDev();
+	if ((sdev == nullptr) || (sdev->GetDeviceType() == SDEV_GAMEWIN) || (sdev->GetDeviceType() == SDEV_ZOOMPDA)) {
 
 		logInfo("Showing Restart Screen");
 
@@ -1265,27 +1239,27 @@ bool CBagMasterWin::showRestartDialog(CBofWindow *win, bool bSaveBkg) {
 			win = this;
 		}
 
-		CBagRestartDialog cDlg(_sysScreen.getBuffer(), win);
+		CBagRestartDialog restartDialog(_sysScreen.getBuffer(), win);
 
 		CBofWindow *pLastWin = g_hackWindow;
-		g_hackWindow = &cDlg;
+		g_hackWindow = &restartDialog;
 
 		// Don't allow save of background
-		if (!bSaveBkg) {
-			int lFlags = cDlg.getFlags();
-			cDlg.setFlags(lFlags & ~BOFDLG_SAVEBACKGND);
+		if (!saveBkgFl) {
+			int lFlags = restartDialog.getFlags();
+			restartDialog.setFlags(lFlags & ~BOFDLG_SAVEBACKGND);
 		}
 
-		bool bSaveTimer = g_bPauseTimer;
-		g_bPauseTimer = true;
-		int nReturn = cDlg.doModal();
-		g_bPauseTimer = bSaveTimer;
+		bool saveTimerFl = g_pauseTimerFl;
+		g_pauseTimerFl = true;
+		int dialogReturn = restartDialog.doModal();
+		g_pauseTimerFl = saveTimerFl;
 
 		g_hackWindow = pLastWin;
 
 		logInfo("Exiting Restart Screen");
 
-		return nReturn == RESTART_BTN;
+		return dialogReturn == RESTART_BTN;
 	}
 
 	return false;
@@ -1312,32 +1286,32 @@ void CBagMasterWin::onUserMessage(uint32 message, uint32 param) {
 		// Kill any waiting PDA messages that are queued up...
 		CBagPDA::removeFromMovieQueue(nullptr);
 
-		CBofBitmap cBmp(width(), height(), CBagel::getApp()->getPalette());
-		cBmp.fillRect(nullptr, COLOR_BLACK);
-		cBmp.fadeLines(this, 0, 0);
+		CBofBitmap bmp(width(), height(), CBagel::getApp()->getPalette());
+		bmp.fillRect(nullptr, COLOR_BLACK);
+		bmp.fadeLines(this, 0, 0);
 
-		char szBuf[MAX_FNAME];
+		char buffer[MAX_FNAME];
 
-		Common::strcpy_s(szBuf, buildSysDir("DIED2.BMP"));
+		Common::strcpy_s(buffer, buildSysDir("DIED2.BMP"));
 		if (param == 2) {
-			Common::strcpy_s(szBuf, buildSysDir("START.BMP"));
+			Common::strcpy_s(buffer, buildSysDir("START.BMP"));
 		}
 
-		CBagStartDialog cDlg(szBuf, this);
+		CBagStartDialog dialog(buffer, this);
 
-		CBofWindow *pLastWin = g_hackWindow;
-		g_hackWindow = &cDlg;
+		CBofWindow *lastWin = g_hackWindow;
+		g_hackWindow = &dialog;
 
-		g_bAllowRestore = true;
-		int nRetVal = cDlg.doModal();
-		g_bAllowRestore = false;
+		g_allowRestoreFl = true;
+		int dialogRet = dialog.doModal();
+		g_allowRestoreFl = false;
 
-		g_hackWindow = pLastWin;
+		g_hackWindow = lastWin;
 
 		// Hide that dialog
-		cBmp.paint(this, 0, 0);
+		bmp.paint(this, 0, 0);
 
-		switch (nRetVal) {
+		switch (dialogRet) {
 
 		case RESTORE_BTN:
 			break;
@@ -1356,24 +1330,24 @@ void CBagMasterWin::onUserMessage(uint32 message, uint32 param) {
 	}
 
 	case WM_ENTER_NEW_WLD: {
-		char szLocalBuff[256];
-		szLocalBuff[0] = '\0';
-		CBofString sWldScript(szLocalBuff, 256);
+		char localBuff[256];
+		localBuff[0] = '\0';
+		CBofString wldScript(localBuff, 256);
 
 		// User info is an index into an array of temporary string buffers
 		assert(param < NUM_MSG_STRINGS);
-		sWldScript = g_szString[(int)param];
+		wldScript = g_stringArray[(int)param];
 
-		char szStartWld[256];
-		szStartWld[0] = '\0';
-		CBofString sStartWld(szStartWld, 256);
+		char startWldBuf[256];
+		startWldBuf[0] = '\0';
+		CBofString startWld(startWldBuf, 256);
 
-		int n = sWldScript.find("~~");
+		int n = wldScript.find("~~");
 		if (n > 0) {
-			sStartWld = sWldScript.mid(n + 2);
-			sWldScript = sWldScript.left(n);
+			startWld = wldScript.mid(n + 2);
+			wldScript = wldScript.left(n);
 		}
-		loadFile(sWldScript, sStartWld);
+		loadFile(wldScript, startWld);
 		break;
 	}
 
@@ -1384,26 +1358,26 @@ void CBagMasterWin::onUserMessage(uint32 message, uint32 param) {
 		break;
 
 	case WM_EXIT_CLOSE_UP_WINDOW: {
-		CBofString cStr;
+		CBofString deviceStr;
 
-		// User info is an index into an array of tempory string buffers
+		// User info is an index into an array of temporary string buffers
 		assert(param < NUM_MSG_STRINGS);
-		cStr = g_szString[(int)param];
+		deviceStr = g_stringArray[(int)param];
 
-		CBagStorageDev *pSDev = _storageDeviceList->GetStorageDevice(cStr);
+		CBagStorageDev *sdev = _storageDeviceList->GetStorageDevice(deviceStr);
 
-		if (pSDev) {
+		if (sdev) {
 			if (_gameWindow) {
 				_gameWindow->detach();
 			}
 
-			pSDev->attach();
-			pSDev->SetPreFilterPan(true);
+			sdev->attach();
+			sdev->SetPreFilterPan(true);
 
-			_gameWindow = (CBagStorageDevWnd *)pSDev;
+			_gameWindow = (CBagStorageDevWnd *)sdev;
 
 			// Reset the CIC var
-			setCICStatus(pSDev);
+			setCICStatus(sdev);
 		} else {
 			// Report error
 		}
@@ -1577,10 +1551,10 @@ bool CBagMasterWin::showSaveDialog(CBofWindow *win, bool bSaveBkg) {
 			// Create the dialog box
 			cSaveDialog.create("Save Dialog", cRect.left, cRect.top, cRect.width(), cRect.height(), win);
 
-			bool bSaveTimer = g_bPauseTimer;
-			g_bPauseTimer = true;
+			bool bSaveTimer = g_pauseTimerFl;
+			g_pauseTimerFl = true;
 			int nId = cSaveDialog.doModal();
-			g_bPauseTimer = bSaveTimer;
+			g_pauseTimerFl = bSaveTimer;
 
 			bSaved = (nId == SAVE_BTN);
 
@@ -1722,7 +1696,7 @@ bool CBagMasterWin::showRestoreDialog(CBofWindow *win, bool bSaveBkg) {
 	bool bRestored = false;
 	CBagStorageDevWnd *pSdev;
 
-	if (g_bAllowRestore || ((pSdev = getCurrentStorageDev()) == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
+	if (g_allowRestoreFl || ((pSdev = getCurrentStorageDev()) == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
 
 		logInfo("Showing Restore Screen");
 
@@ -1751,10 +1725,10 @@ bool CBagMasterWin::showRestoreDialog(CBofWindow *win, bool bSaveBkg) {
 		CBofWindow *pLastWin = g_hackWindow;
 		g_hackWindow = &cRestoreDialog;
 
-		bool bSaveTimer = g_bPauseTimer;
-		g_bPauseTimer = true;
+		bool bSaveTimer = g_pauseTimerFl;
+		g_pauseTimerFl = true;
 		cRestoreDialog.doModal();
-		g_bPauseTimer = bSaveTimer;
+		g_pauseTimerFl = bSaveTimer;
 
 		cRestoreDialog.detach();
 

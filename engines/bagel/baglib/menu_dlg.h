@@ -97,7 +97,7 @@ public:
 	virtual void onPaint(CBofRect *pRect);
 };
 
-extern bool g_bPauseTimer;
+extern bool g_pauseTimerFl;
 
 } // namespace Bagel
 

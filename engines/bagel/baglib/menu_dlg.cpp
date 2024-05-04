@@ -39,7 +39,7 @@ CBagObject *CBagMenuDlg::m_pSelectedObject;
 CBofList<CBagObject *> *CBagMenu::m_pUniversalObjectList;   // Objects used in every menu
 int CBagMenu::m_nDefaultDelay;
 
-bool g_bPauseTimer = false;
+bool g_pauseTimerFl = false;
 extern bool g_bAAOk;
 
 #define EXAMINEBMP          "$SBARDIR\\GENERAL\\MENUS\\EXAMINE.BMP"
@@ -456,9 +456,9 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 			CBagPanWindow::FlushInputEvents();
 
-			g_bPauseTimer = true;
+			g_pauseTimerFl = true;
 			dlg.doModal();
-			g_bPauseTimer = false;
+			g_pauseTimerFl = false;
 
 			pObj = dlg.m_pSelectedObject;
 			dlg.destroy();

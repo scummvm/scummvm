@@ -58,8 +58,8 @@ bool g_allowPaintFl = true;
 bool g_bAAOk = true;            // Prevent attachActiveObjects() after a RUN LNK
 bool g_allowAttachActiveObjectsFl = true;        // Prevent attachActiveObjects() after a RUN LNK
 CBagStorageDevWnd *g_pLastWindow = nullptr;
-extern bool g_bPauseTimer;
-extern bool g_bWaitOK;
+extern bool g_pauseTimerFl;
+extern bool g_waitOKFl;
 
 // Statics
 CBagEventSDev *CBagStorageDevWnd::_pEvtSDev = nullptr;    // Pointer to the EventSDev
@@ -1227,7 +1227,7 @@ ErrorCode CBagStorageDevWnd::attach() {
 				_pEvtSDev->attach();
 
 			setTimer(EVAL_EXPR, 1000);
-			g_bPauseTimer = false;
+			g_pauseTimerFl = false;
 
 		} else {
 			// We already allocated one
@@ -1235,7 +1235,7 @@ ErrorCode CBagStorageDevWnd::attach() {
 			_pEvtSDev->SetAssociateWnd(this);
 
 			setTimer(EVAL_EXPR, 1000);
-			g_bPauseTimer = false;
+			g_pauseTimerFl = false;
 		}
 	}
 
@@ -1246,7 +1246,7 @@ void CBagStorageDevWnd::onTimer(uint32 nEventID) {
 	assert(isValidObject(this));
 	static bool bAlready = false;
 
-	if (!g_bPauseTimer) {
+	if (!g_pauseTimerFl) {
 		// Don't allow recursion
 		if (!bAlready) {
 			bAlready = true;
@@ -1269,7 +1269,7 @@ void CBagStorageDevWnd::onTimer(uint32 nEventID) {
 					}
 				}
 
-				g_bWaitOK = true;
+				g_waitOKFl = true;
 			}
 			bAlready = false;
 		}

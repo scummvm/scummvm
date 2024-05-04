@@ -33,7 +33,7 @@ namespace Bagel {
 
 #define CTEXT_WHITE RGB(255, 255, 255)
 
-extern bool g_bPauseTimer;
+extern bool g_pauseTimerFl;
 
 CBagTextObject::CBagTextObject() : CBagObject() {
 	_xObjType = TEXTOBJ;
@@ -515,9 +515,9 @@ bool CBagTextObject::runObject() {
 					int y = 360 + 10 - cRect.height();
 					cDlg.move(x, y, true);
 				}
-				g_bPauseTimer = true;
+				g_pauseTimerFl = true;
 				cDlg.doModal();
-				g_bPauseTimer = false;
+				g_pauseTimerFl = false;
 			}
 		}
 	}
