@@ -117,7 +117,7 @@ ErrorCode CBagWield::activateLocalObject(CBagObject *pObj) {
 
 		// Add to wield
 		if (pObj->getMenuPtr() != nullptr) {
-			CBagMenu::SetUniversalObjectList(pObj->getMenuPtr()->GetObjectList());
+			CBagMenu::setUniversalObjectList(pObj->getMenuPtr()->GetObjectList());
 		}
 
 		if (pObj->GetType() == SPRITEOBJ) {
@@ -148,7 +148,7 @@ ErrorCode CBagWield::deactivateLocalObject(CBagObject *pObj) {
 			m_nObjects--;
 		}
 
-		CBagMenu::SetUniversalObjectList(nullptr);
+		CBagMenu::setUniversalObjectList(nullptr);
 		CBagStorageDev::deactivateLocalObject(pObj);
 		setCurrObj(nullptr);
 	}

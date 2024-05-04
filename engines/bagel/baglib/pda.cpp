@@ -64,7 +64,7 @@ void CBagPDA::AddToMovieQueue(CBagMovieObject *pMObj) {
 	// add it at all.  This is done to insure that insignificant movies
 	// such as "have you noticed your message light has been blinking" do not
 	// get queued (and subsequently play when they are no longer appropriate).
-	if (pMObj->IsDontQueue()) {
+	if (pMObj->isDontQueue()) {
 		return;
 	}
 

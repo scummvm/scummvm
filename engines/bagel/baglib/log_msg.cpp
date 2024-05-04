@@ -370,7 +370,7 @@ ErrorCode CBagLog::playMsgQueue() {
 				errCode = CBagStorageDev::activateLocalObject(curObj);
 				CBagMenu *objMenu = curObj->getMenuPtr();
 				if (objMenu)
-					objMenu->TrackPopupMenu(0, 0, 0, CBofApp::getApp()->getMainWindow(), nullptr, &r);
+					objMenu->trackPopupMenu(0, 0, 0, CBofApp::getApp()->getMainWindow(), nullptr, &r);
 				curObj->runObject();
 				curObj->SetMsgWaiting(false);
 

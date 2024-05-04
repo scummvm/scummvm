@@ -411,7 +411,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 		_cursorList[i] = nullptr;
 	}
 
-	CBagMenu::SetUniversalObjectList(nullptr);
+	CBagMenu::setUniversalObjectList(nullptr);
 
 	_storageDeviceList = new CBagStorageDevManager();
 	if (!_variableList) {
