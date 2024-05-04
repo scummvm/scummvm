@@ -293,7 +293,7 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 				// the variable must have been found, if it wasn't, then
 				// complain violently.
 				if (m_pSaveVar == nullptr) {
-					ReportError(ERR_UNKNOWN, "Invalid Residue Print SAVE Variable=%s",
+					reportError(ERR_UNKNOWN, "Invalid Residue Print SAVE Variable=%s",
 					            sStr.GetBuffer());
 					return UNKNOWN_TOKEN;
 				}
@@ -361,7 +361,7 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 				// the variable must have been found, if it wasn't, then
 				// complain violently.
 				if (m_pVarObj == nullptr) {
-					ReportError(ERR_UNKNOWN, "Invalid Residue Print Variable=%s",
+					reportError(ERR_UNKNOWN, "Invalid Residue Print Variable=%s",
 					            sStr.GetBuffer());
 					return UNKNOWN_TOKEN;
 				}

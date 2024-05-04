@@ -80,11 +80,11 @@ ErrorCode CBagSpriteObject::attach() {
 					pMainWin->SetPreFilterPan(true);
 				}
 			} else {
-				ReportError(ERR_FOPEN, "Could Not Open Sprite: %s", m_xSprite->getFileName());
+				reportError(ERR_FOPEN, "Could Not Open Sprite: %s", m_xSprite->getFileName());
 			}
 
 		} else {
-			ReportError(ERR_MEMORY, "Could not allocate sprite");
+			reportError(ERR_MEMORY, "Could not allocate sprite");
 		}
 	}
 

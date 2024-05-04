@@ -85,7 +85,7 @@ bool CBagMovieObject::runObject() {
 		rc = false;
 
 		CBofString sFileName = getFileName();
-		int nExt = sFileName.GetLength() - 4; // ".EXT"
+		int nExt = sFileName.getLength() - 4; // ".EXT"
 
 		if (nExt <= 0) {
 			LogError("Movie does not have a file name or proper extension.  Please write better scripts.");
@@ -115,7 +115,7 @@ bool CBagMovieObject::runObject() {
 		}
 
 		// Look for .SMK then .WAV, then .TXT
-		while (!FileExists(sFileName.GetBuffer())) {
+		while (!fileExists(sFileName.GetBuffer())) {
 			switch (nMovFileType) {
 
 			case MOVFILETYPE::MOVIE:
@@ -263,7 +263,7 @@ bool CBagMovieObject::runObject() {
 
 					CBagFMovie *pMovie = new CBagFMovie(CBofApp::getApp()->getMainWindow(), sFileName, &r);
 
-					if (pMovie != nullptr && pMovie->ErrorOccurred() == false) {
+					if (pMovie != nullptr && pMovie->errorOccurred() == false) {
 						pMovie->show();
 						CBofApp::getApp()->getMainWindow()->flushAllMessages();
 						pWnd->flushAllMessages();
@@ -324,7 +324,7 @@ bool CBagMovieObject::runObject() {
 							pMovie = new CBofMovie(CBofApp::getApp()->getMainWindow(), sFileName, &r);
 						}
 
-						if (pMovie && pMovie->ErrorOccurred() == false) {
+						if (pMovie && pMovie->errorOccurred() == false) {
 							// Stop any asnych movies already playing
 							pPDA->stopMovie(true);
 							pMovie->show();

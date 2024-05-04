@@ -3738,7 +3738,7 @@ void SrafComputer::activateMainScreen() {
 void SrafComputer::alignAtColumn(CBofString &sStr, const char *szRightText, int nAlignAt) {
 	int nAppendLen = strlen(szRightText);
 
-	while (sStr.GetLength() < nAlignAt) {
+	while (sStr.getLength() < nAlignAt) {
 		sStr += " ";
 	}
 
@@ -4181,7 +4181,7 @@ void SrafComputer::notifyBoss(CBofString &sSoundFile, int nStafferID) {         
 		// Make sure the file is there, read it in to our own buffer.
 		CBofFile fTxtFile(sSoundFile, CBF_BINARY | CBF_READONLY);
 		char *pszBuf;
-		int nLength = fTxtFile.GetLength();
+		int nLength = fTxtFile.getLength();
 
 		if (nLength != 0 && (pszBuf = (char *)BofAlloc(nLength + 1)) != nullptr) {
 			BofMemSet(pszBuf, 0, nLength + 1);
@@ -4192,7 +4192,7 @@ void SrafComputer::notifyBoss(CBofString &sSoundFile, int nStafferID) {         
 			BofFree(pszBuf);
 			fTxtFile.close();
 		} else {
-			ReportError(ERR_MEMORY, "Could not read %s into memory", sSoundFile.GetBuffer());
+			reportError(ERR_MEMORY, "Could not read %s into memory", sSoundFile.GetBuffer());
 		}
 	}
 
@@ -4340,8 +4340,8 @@ void SrafComputer::onButtonFinished(bool bVictorious) {
 
 	// Make sure the user selected two code words.
 	if (bVictorious == true) {
-		if (_pszGroup1Word->GetLength() == 0 ||
-		        _pszGroup2Word->GetLength() == 0) {
+		if (_pszGroup1Word->getLength() == 0 ||
+		        _pszGroup2Word->getLength() == 0) {
 			// Put up an error...
 			displayMessage(kszFinishCodeWords);
 			return;
@@ -4528,7 +4528,7 @@ void SrafComputer::displayTurnCount(int nLineNo) {
 		CBofString cStr = _pLBox->getText(nLineNo);
 
 		// reset the value on that line.
-		if (cStr.GetLength() != 0) {
+		if (cStr.getLength() != 0) {
 			_pLBox->setText(nLineNo, sStr);
 		}
 	}
@@ -4561,7 +4561,7 @@ SrafTextScreen::SrafTextScreen(const CBofString &str, bool isText) :
 		CBofFile *file = new CBofFile(str, CBF_BINARY | CBF_READONLY);
 		Assert(file != nullptr);
 
-		size_t len = file->GetLength();
+		size_t len = file->getLength();
 		char *tmp = new char[len + 1];
 		file->read(tmp, len);
 		tmp[len] = '\0';
@@ -4620,7 +4620,7 @@ int SrafTextScreen::createTextScreen(CBofWindow *pParent) {
 		_pTextBox->setFont(FONT_MONO);
 		_pTextBox->setPointSize(FONT_14POINT);
 	} else {
-		ReportError(ERR_MEMORY, "Unable to allocate a CBofTextBox");
+		reportError(ERR_MEMORY, "Unable to allocate a CBofTextBox");
 	}
 
 	return ERR_NONE;

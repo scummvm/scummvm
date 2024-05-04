@@ -153,7 +153,7 @@ ErrorCode CBofPalette::setSharedPalette(const char *pszFileName) {
 CBofPalette *CBofPalette::getSharedPalette() {
 	// Do we need to load the shared palette?
 	if (_pSharedPalette == nullptr) {
-		if (FileExists(_szSharedPalFile)) {
+		if (fileExists(_szSharedPalFile)) {
 			_pSharedPalette = new CBofPalette(_szSharedPalFile);
 		}
 	}

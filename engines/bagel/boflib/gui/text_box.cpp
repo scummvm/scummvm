@@ -115,7 +115,7 @@ ErrorCode CBofTextBox::setBox(const CBofRect *pRect) {
 	if ((_pTextField = new CBofText(pRect, JUSTIFY_WRAP)) != nullptr) {
 
 	} else {
-		ReportError(ERR_MEMORY, "Could not allocate a CBofText");
+		reportError(ERR_MEMORY, "Could not allocate a CBofText");
 	}
 
 	return _errCode;
@@ -152,7 +152,7 @@ void CBofTextBox::setTextAttribs(const int nSize, const int nWeight, const RGBCO
 
 void CBofTextBox::setText(const CBofString &cString) {
 	_cBuffer = cString;
-	Assert(_cBuffer.GetLength() != 0);
+	Assert(_cBuffer.getLength() != 0);
 
 	_cBuffer.ReplaceStr("\r\n", "\n");
 	_cBuffer.ReplaceStr("\r", "\n");
@@ -226,7 +226,7 @@ ErrorCode CBofTextBox::scrollTo(const int nLine) {
 ErrorCode CBofTextBox::display() {
 	Assert(IsValidObject(this));
 	Assert(_nCurrentLine >= 0 && _nCurrentLine <= _nNumLines);
-	Assert(_nCurrentIndex >= 0 && _nCurrentIndex < _cBuffer.GetLength());
+	Assert(_nCurrentIndex >= 0 && _nCurrentIndex < _cBuffer.getLength());
 
 	// The actual text box must have been created before it can be displayed
 	Assert(_pTextField != nullptr);

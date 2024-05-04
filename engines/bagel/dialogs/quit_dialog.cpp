@@ -88,7 +88,7 @@ void CBagQuitDialog::onInitDialog() {
 			_pButtons[i]->create(g_stQuitButtons[i]._pszName, g_stQuitButtons[i]._nLeft, g_stQuitButtons[i]._nTop, g_stQuitButtons[i]._nWidth, g_stQuitButtons[i]._nHeight, this, g_stQuitButtons[i]._nID);
 			_pButtons[i]->show();
 		} else {
-			ReportError(ERR_MEMORY);
+			reportError(ERR_MEMORY);
 			break;
 		}
 	}

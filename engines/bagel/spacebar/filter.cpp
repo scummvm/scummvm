@@ -115,14 +115,14 @@ void vilInitFilters(CBofBitmap *pBmp) {
 
 		MACROREPLACE(cString);
 		CBofFile nfile(cString, CBF_READONLY);
-		buff = new char[nfile.GetLength() + 1];
-		memset(buff, 0, nfile.GetLength() + 1);
-		nfile.read(buff, nfile.GetLength());
+		buff = new char[nfile.getLength() + 1];
+		memset(buff, 0, nfile.getLength() + 1);
+		nfile.read(buff, nfile.getLength());
 		StrReplaceChar(buff, '\n', ' ');
 		StrReplaceChar(buff, '\r', ' ');
-		pTipBmp = new CBofBitmap((nfile.GetLength() + 1) * 7, 20, pBmp->getPalette());
+		pTipBmp = new CBofBitmap((nfile.getLength() + 1) * 7, 20, pBmp->getPalette());
 
-		CBofRect rct(0, 0, (nfile.GetLength() + 1) * 7, 20);
+		CBofRect rct(0, 0, (nfile.getLength() + 1) * 7, 20);
 		paintText(pTipBmp, &rct, buff, VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(107, 0, 255), JUSTIFY_LEFT, FORMAT_DEFAULT);
 		nfile.close();
 		delete buff;
@@ -367,10 +367,10 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 				MACROREPLACE(cString);
 				CBofFile nfile(cString, CBF_READONLY);
-				buff = new char[nfile.GetLength() + 1];
-				memset(buff, 0, nfile.GetLength() + 1);
+				buff = new char[nfile.getLength() + 1];
+				memset(buff, 0, nfile.getLength() + 1);
 				pChipBmp = new CBofBitmap(VILDROIDCHIPTEXTWIDTH, 300, pBmp->getPalette());
-				nfile.read(buff, nfile.GetLength());
+				nfile.read(buff, nfile.getLength());
 				CBofRect txtRect(0, 0, VILDROIDCHIPTEXTWIDTH, 18);
 				uint32 test = 0;
 				char *pBuff1 = buff;
@@ -381,11 +381,11 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 					while (*pBuff1 != '\n' && *pBuff1 != '\r' && bFinished != true) {
 						test++;
 						pBuff1++;
-						if (test >= nfile.GetLength())
+						if (test >= nfile.getLength())
 							bFinished = true;
 
 					}
-					if (test >= nfile.GetLength())
+					if (test >= nfile.getLength())
 						bFinished = true;
 					else {
 						*pBuff1 = '\0';
@@ -410,10 +410,10 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 				MACROREPLACE(cString);
 				CBofFile nfile(cString, CBF_READONLY);
-				buff = new char[nfile.GetLength() + 1];
-				memset(buff, 0, nfile.GetLength() + 1);
+				buff = new char[nfile.getLength() + 1];
+				memset(buff, 0, nfile.getLength() + 1);
 				pChipBmp = new CBofBitmap(VILDROIDCHIPTEXTWIDTH, 300, pBmp->getPalette());
-				nfile.read(buff, nfile.GetLength());
+				nfile.read(buff, nfile.getLength());
 				CBofRect txtRect(0, 0, VILDROIDCHIPTEXTWIDTH, 18);
 				uint32 test = 0;
 				char *pBuff1 = buff;
@@ -424,11 +424,11 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 					while (*pBuff1 != '\n' && *pBuff1 != '\r' && bFinished != true) {
 						test++;
 						pBuff1++;
-						if (test >= nfile.GetLength())
+						if (test >= nfile.getLength())
 							bFinished = true;
 
 					}
-					if (test >= nfile.GetLength())
+					if (test >= nfile.getLength())
 						bFinished = true;
 					else {
 						*pBuff1 = '\0';

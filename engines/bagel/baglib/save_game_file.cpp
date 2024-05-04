@@ -241,11 +241,11 @@ ErrorCode CBagSaveGameFile::readTitle(int32 lSlot, ST_SAVEDGAME_HEADER *pSavedGa
 			BofFree(pBuf);
 
 		} else {
-			ReportError(ERR_MEMORY, "Could not allocate %ld bytes to read a saved game title", lSize);
+			reportError(ERR_MEMORY, "Could not allocate %ld bytes to read a saved game title", lSize);
 		}
 
 	} else {
-		ReportError(ERR_UNKNOWN, "Unable to find saved game #%ld in %s", lSlot, _szFileName);
+		reportError(ERR_UNKNOWN, "Unable to find saved game #%ld in %s", lSlot, _szFileName);
 	}
 
 	return(_errCode);
@@ -268,7 +268,7 @@ ErrorCode CBagSaveGameFile::readTitleOnly(int32 lSlot, char *pGameTitle) {
 		BofMemCopy(pGameTitle, pBuf, lSize);
 
 	} else {
-		ReportError(ERR_UNKNOWN, "Unable to find saved game #%ld in %s", lSlot, _szFileName);
+		reportError(ERR_UNKNOWN, "Unable to find saved game #%ld in %s", lSlot, _szFileName);
 	}
 
 	return _errCode;

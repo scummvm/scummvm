@@ -29,16 +29,16 @@
 
 namespace Bagel {
 
-bool FileExists(const char *pszFileName) {
+bool fileExists(const char *pszFileName) {
 	return Common::File::exists(pszFileName);
 }
 
-int32 FileLength(const char *pszFileName) {
+int32 fileLength(const char *pszFileName) {
 	Common::File f;
 	return f.open(pszFileName) ? f.size() : -1;
 }
 
-char *FileGetFullPath(char *pszDstBuf, const char *pszSrcBuf) {
+char *fileGetFullPath(char *pszDstBuf, const char *pszSrcBuf) {
 	Common::strcpy_s(pszDstBuf, MAX_DIRPATH, pszSrcBuf);
 	return pszDstBuf;
 }

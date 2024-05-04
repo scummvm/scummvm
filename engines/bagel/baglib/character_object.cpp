@@ -98,16 +98,16 @@ ErrorCode CBagCharacterObject::attach() {
 	}
 
 	// Does file exist
-	if (FileExists(filename.GetBuffer())) {
+	if (fileExists(filename.GetBuffer())) {
 		CBofFile cInputFile(filename.GetBuffer());
 
-		_binBufLen = cInputFile.GetLength();
+		_binBufLen = cInputFile.getLength();
 
 		if ((_binBuf = (char *)BofAlloc(_binBufLen + 1)) != nullptr) {
 			cInputFile.read(_binBuf, _binBufLen);
 
 		} else {
-			ReportError(ERR_MEMORY);
+			reportError(ERR_MEMORY);
 		}
 	}
 

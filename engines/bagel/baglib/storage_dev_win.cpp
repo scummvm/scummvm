@@ -573,7 +573,7 @@ ErrorCode CBagStorageDev::loadFile(const CBofString &sWldName) {
 
 	// Force buffer to be big enough so that the entire script
 	// is pre-loaded
-	int nLength = FileLength(sWldFileName);
+	int nLength = fileLength(sWldFileName);
 	char *pBuf = (char *)BofAlloc(nLength);
 	if (pBuf != nullptr) {
 		CBagIfstream fpInput(pBuf, nLength);
@@ -974,7 +974,7 @@ ErrorCode CBagStorageDev::attach() {
 	if (!m_sBackgroundName.IsEmpty()) {
 		CBofBitmap *pBmp = new CBofBitmap(m_sBackgroundName);
 
-		if ((pBmp != nullptr) && !pBmp->ErrorOccurred()) {
+		if ((pBmp != nullptr) && !pBmp->errorOccurred()) {
 			setBackground(pBmp);
 			errCode = AttachActiveObjects();
 		} else {
@@ -1185,7 +1185,7 @@ ErrorCode CBagStorageDevWnd::attach() {
 		CBofBitmap *pBmp  = new CBofBitmap(GetBackgroundName());
 
 		if ((pBmp == nullptr) || (pBmp->height() <= 0) || (pBmp->width() <= 0)) {
-			ReportError(ERR_FOPEN, "BarComputer Background Opened Failed");
+			reportError(ERR_FOPEN, "BarComputer Background Opened Failed");
 		} else {
 
 			setBackground(pBmp);
@@ -1210,7 +1210,7 @@ ErrorCode CBagStorageDevWnd::attach() {
 		}
 
 	} else {
-		ReportError(ERR_UNKNOWN, "No background for this storage device window");
+		reportError(ERR_UNKNOWN, "No background for this storage device window");
 	}
 
 	SetPreFilterPan(true);
@@ -1440,7 +1440,7 @@ ErrorCode CBagStorageDevWnd::loadFile(const CBofString &sFile) {
 
 	// Force buffer to be big enough so that the entire script
 	// is pre-loaded
-	int nLength = FileLength(sWldFile);
+	int nLength = fileLength(sWldFile);
 	char *pBuf = (char *)BofAlloc(nLength);
 	if (pBuf != nullptr) {
 		CBagIfstream fpInput(pBuf, nLength);
@@ -1460,7 +1460,7 @@ ErrorCode CBagStorageDevWnd::loadFile(const CBofString &sFile) {
 		BofFree(pBuf);
 
 	} else {
-		ReportError(ERR_MEMORY);
+		reportError(ERR_MEMORY);
 	}
 
 	// Add everything to the window
@@ -1716,7 +1716,7 @@ ErrorCode CBagStorageDevDlg::loadFile(const CBofString &sFile) {
 	MACROREPLACE(sWldFile);
 
 	// Force buffer to be big enough so that the entire script is pre-loaded
-	int nLength = FileLength(sWldFile);
+	int nLength = fileLength(sWldFile);
 	char *pBuf = (char *)BofAlloc(nLength);
 	if (pBuf != nullptr) {
 		CBagIfstream fpInput(pBuf, nLength);
@@ -1881,7 +1881,7 @@ CBagStorageDev *CBagStorageDevManager::GetStorageDevice(const CBofString &sName)
 
 	for (int i = 0; i < m_xStorageDeviceList.GetCount(); ++i) {
 		CBagStorageDev *pSDev = m_xStorageDeviceList[i];
-		if (pSDev && (pSDev->GetName().GetLength() == sName.GetLength()) &&
+		if (pSDev && (pSDev->GetName().getLength() == sName.getLength()) &&
 		        !pSDev->GetName().Find(sName))
 			return m_xStorageDeviceList[i];
 	}

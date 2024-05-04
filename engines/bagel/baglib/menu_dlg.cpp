@@ -321,7 +321,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			tmpRect.top = tmpRect.bottom - menuSize.cy;
 			bCaption = true;
 
-			nNumChars = ((CBagTextObject *)xObjList.GetHead()->GetNodeItem())->getText().GetLength();
+			nNumChars = ((CBagTextObject *)xObjList.GetHead()->GetNodeItem())->getText().getLength();
 
 			// Bring caption back 3 pixels
 			CBofPoint cPoint;

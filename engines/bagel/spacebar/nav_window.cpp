@@ -267,7 +267,7 @@ ErrorCode CNavWindow::attach() {
 		_pCurLoc->setPosition(_pCurPos->left, _pCurPos->top);
 
 	} else {
-		ReportError(ERR_MEMORY);
+		reportError(ERR_MEMORY);
 	}
 
 	// Build all our buttons
@@ -284,7 +284,7 @@ ErrorCode CNavWindow::attach() {
 			_pButtons[i]->create(g_NavButtons[i]._pszName, g_NavButtons[i]._nLeft, g_NavButtons[i]._nTop, g_NavButtons[i]._nWidth, g_NavButtons[i]._nHeight, this, g_NavButtons[i]._nID);
 			_pButtons[i]->show();
 		} else {
-			ReportError(ERR_MEMORY);
+			reportError(ERR_MEMORY);
 			break;
 		}
 	}

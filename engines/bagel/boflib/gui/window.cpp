@@ -149,7 +149,7 @@ ErrorCode CBofWindow::create(const char *pszName, int x, int y, int nWidth, int 
 	delete _surface;
 	_surface = new Graphics::ManagedSurface(*g_engine->_screen, stRect);
 
-	if (!ErrorOccurred()) {
+	if (!errorOccurred()) {
 		CBofPalette *pPalette;
 		if ((pPalette = CBofApp::getApp()->getPalette()) != nullptr) {
 			selectPalette(pPalette);
@@ -282,7 +282,7 @@ void CBofWindow::select() {
 void CBofWindow::show() {
 	Assert(IsValidObject(this));
 
-	if (!ErrorOccurred()) {
+	if (!errorOccurred()) {
 		Assert(isCreated());
 
 		if (isCreated()) {
@@ -295,7 +295,7 @@ void CBofWindow::show() {
 void CBofWindow::hide() {
 	Assert(IsValidObject(this));
 
-	if (!ErrorOccurred()) {
+	if (!errorOccurred()) {
 		Assert(isCreated());
 
 		_visible = false;
@@ -503,7 +503,7 @@ ErrorCode CBofWindow::setBackdrop(const char *pszFileName, bool bRefresh) {
 		return setBackdrop(pBmp, bRefresh);
 
 	} else {
-		ReportError(ERR_MEMORY, "Could not allocate a new CBofBitmap");
+		reportError(ERR_MEMORY, "Could not allocate a new CBofBitmap");
 	}
 
 	return _errCode;

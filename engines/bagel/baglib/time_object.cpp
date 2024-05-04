@@ -54,11 +54,11 @@ ErrorCode CBagTimeObject::attach() {
 			p.Offset(m_xDig1->width(), 0);
 
 		} else {
-			ReportError(ERR_FOPEN, "Could Not Open Dig1 Sprite: %s", m_xDig1->getFileName());
+			reportError(ERR_FOPEN, "Could Not Open Dig1 Sprite: %s", m_xDig1->getFileName());
 		}
 
 	} else {
-		ReportError(ERR_MEMORY, "Could not allocate  Dig1 sprite");
+		reportError(ERR_MEMORY, "Could not allocate  Dig1 sprite");
 	}
 	if ((m_xDig2 = new CBofSprite()) != nullptr) {
 
@@ -71,11 +71,11 @@ ErrorCode CBagTimeObject::attach() {
 			p.Offset(m_xDig2->width(), 0);
 
 		} else {
-			ReportError(ERR_FOPEN, "Could Not Open Dig2 Sprite: %s", m_xDig2->getFileName());
+			reportError(ERR_FOPEN, "Could Not Open Dig2 Sprite: %s", m_xDig2->getFileName());
 		}
 
 	} else {
-		ReportError(ERR_MEMORY, "Could not allocate  Dig2 sprite");
+		reportError(ERR_MEMORY, "Could not allocate  Dig2 sprite");
 	}
 	if ((m_xColon = new CBofSprite()) != nullptr) {
 
@@ -88,11 +88,11 @@ ErrorCode CBagTimeObject::attach() {
 
 			p.Offset(m_xColon->width(), 0);
 		} else {
-			ReportError(ERR_FOPEN, "Could Not Open Colon Sprite: %s", m_xColon->getFileName());
+			reportError(ERR_FOPEN, "Could Not Open Colon Sprite: %s", m_xColon->getFileName());
 		}
 
 	} else {
-		ReportError(ERR_MEMORY, "Could not allocate  Colon sprite");
+		reportError(ERR_MEMORY, "Could not allocate  Colon sprite");
 	}
 	if ((m_xDig3 = new CBofSprite()) != nullptr) {
 
@@ -104,11 +104,11 @@ ErrorCode CBagTimeObject::attach() {
 
 			p.Offset(m_xDig3->width(), 0);
 		} else {
-			ReportError(ERR_FOPEN, "Could Not Open Dig3 Sprite: %s", m_xDig3->getFileName());
+			reportError(ERR_FOPEN, "Could Not Open Dig3 Sprite: %s", m_xDig3->getFileName());
 		}
 
 	} else {
-		ReportError(ERR_MEMORY, "Could not allocate  Dig3 sprite");
+		reportError(ERR_MEMORY, "Could not allocate  Dig3 sprite");
 	}
 	if ((m_xDig4 = new CBofSprite()) != nullptr) {
 
@@ -120,11 +120,11 @@ ErrorCode CBagTimeObject::attach() {
 
 			p.Offset(m_xDig4->width(), 0);
 		} else {
-			ReportError(ERR_FOPEN, "Could Not Open Dig4 Sprite: %s", m_xDig4->getFileName());
+			reportError(ERR_FOPEN, "Could Not Open Dig4 Sprite: %s", m_xDig4->getFileName());
 		}
 
 	} else {
-		ReportError(ERR_MEMORY, "Could not allocate  Dig4 sprite");
+		reportError(ERR_MEMORY, "Could not allocate  Dig4 sprite");
 	}
 
 	return CBagObject::attach();

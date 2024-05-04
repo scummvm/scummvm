@@ -312,7 +312,7 @@ ErrorCode CBibbleWindow::attach() {
 		_pCreditsText->setWeight(TEXT_BOLD);
 		_pCreditsText->setText(BuildString("%d", _nNumCredits));
 	} else {
-		ReportError(ERR_MEMORY);
+		reportError(ERR_MEMORY);
 	}
 
 	// Pre-load the "One", "Two", "Three", and "Four" shouts
@@ -320,7 +320,7 @@ ErrorCode CBibbleWindow::attach() {
 		if ((_pShouts[i] = new CBofSound(this, BuildDir(pszShouts[i]), SOUND_MIX)) != nullptr) {
 
 		} else {
-			ReportError(ERR_MEMORY);
+			reportError(ERR_MEMORY);
 			break;
 		}
 	}
@@ -334,7 +334,7 @@ ErrorCode CBibbleWindow::attach() {
 		_pBall->linkSprite();
 
 	} else {
-		ReportError(ERR_MEMORY);
+		reportError(ERR_MEMORY);
 	}
 
 	// Pre-load the bibbles
@@ -345,7 +345,7 @@ ErrorCode CBibbleWindow::attach() {
 		_pMasterBibble->setAnimated(false);
 
 	} else {
-		ReportError(ERR_MEMORY);
+		reportError(ERR_MEMORY);
 	}
 
 	// Dup the bibbles
@@ -355,7 +355,7 @@ ErrorCode CBibbleWindow::attach() {
 			_pBibble[i]->linkSprite();
 
 		} else {
-			ReportError(ERR_MEMORY);
+			reportError(ERR_MEMORY);
 		}
 	}
 
@@ -366,7 +366,7 @@ ErrorCode CBibbleWindow::attach() {
 		_pArch1->setZOrder(SPRITE_MIDDLE);
 		_pArch1->linkSprite();
 	} else {
-		ReportError(ERR_MEMORY);
+		reportError(ERR_MEMORY);
 	}
 
 	if ((_pArch2 = new CBofSprite) != nullptr) {
@@ -376,7 +376,7 @@ ErrorCode CBibbleWindow::attach() {
 		_pArch2->linkSprite();
 
 	} else {
-		ReportError(ERR_MEMORY);
+		reportError(ERR_MEMORY);
 	}
 
 	if ((_pArch3 = new CBofSprite) != nullptr) {
@@ -386,7 +386,7 @@ ErrorCode CBibbleWindow::attach() {
 		_pArch3->linkSprite();
 
 	} else {
-		ReportError(ERR_MEMORY);
+		reportError(ERR_MEMORY);
 	}
 
 
@@ -404,7 +404,7 @@ ErrorCode CBibbleWindow::attach() {
 			_pButtons[i]->show();
 
 		} else {
-			ReportError(ERR_MEMORY);
+			reportError(ERR_MEMORY);
 			break;
 		}
 	}
@@ -412,7 +412,7 @@ ErrorCode CBibbleWindow::attach() {
 	if ((_pBkgSnd = new CBofSound(this, BuildDir(CASINO_AUDIO), SOUND_MIX, 99999)) != nullptr) {
 		_pBkgSnd->play();
 	} else {
-		ReportError(ERR_MEMORY);
+		reportError(ERR_MEMORY);
 	}
 
 	// No bet area currently selected

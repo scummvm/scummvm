@@ -128,7 +128,7 @@ ErrorCode CBagRestoreDialog::attach() {
 			_pButtons[i]->create(g_stButtons[i]._pszName, g_stButtons[i]._nLeft, g_stButtons[i]._nTop, g_stButtons[i]._nWidth, g_stButtons[i]._nHeight, this, g_stButtons[i]._nID);
 			_pButtons[i]->show();
 		} else {
-			ReportError(ERR_MEMORY);
+			reportError(ERR_MEMORY);
 			break;
 		}
 	}
@@ -195,10 +195,10 @@ ErrorCode CBagRestoreDialog::attach() {
 		_pListBox->updateWindow();
 
 	} else {
-		ReportError(ERR_MEMORY);
+		reportError(ERR_MEMORY);
 	}
 
-	if (!ErrorOccurred()) {
+	if (!errorOccurred()) {
 		// There could not already be a text field
 		Assert(_pText == nullptr);
 
@@ -217,7 +217,7 @@ ErrorCode CBagRestoreDialog::attach() {
 			}
 
 		} else {
-			ReportError(ERR_MEMORY, "Could not allocate a CBofText for the Restore Dialog");
+			reportError(ERR_MEMORY, "Could not allocate a CBofText for the Restore Dialog");
 		}
 	}
 
@@ -281,7 +281,7 @@ void CBagRestoreDialog::onPaint(CBofRect *pRect) {
 ErrorCode CBagRestoreDialog::RestoreAndclose() {
 	Assert(IsValidObject(this));
 
-	if (!ErrorOccurred()) {
+	if (!errorOccurred()) {
 		// We should not be able to access the save button if we
 		// have not yet chosen a slot to save into.
 		Assert(_nSelectedItem != -1);

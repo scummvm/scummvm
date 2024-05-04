@@ -120,7 +120,7 @@ bool CBagSoundObject::runObject() {
 		} else { /* if no sound */
 			if (!(m_wFlags & SOUND_MIDI)) {
 
-				int nExt = getFileName().GetLength() - 4; // ".EXT"
+				int nExt = getFileName().getLength() - 4; // ".EXT"
 
 				if (nExt <= 0) {
 					LogError("Sound does not have a file name or proper extension.  Please write better scripts.");
@@ -130,7 +130,7 @@ bool CBagSoundObject::runObject() {
 				CBofString sBaseStr = getFileName().Left(nExt) + ".TXT";
 
 				Common::File f;
-				if (FileExists(sBaseStr) && f.open(sBaseStr.GetBuffer())) {
+				if (fileExists(sBaseStr) && f.open(sBaseStr.GetBuffer())) {
 					Common::String line = f.readLine();
 
 					bofMessageBox(line.c_str(), "Using .TXT for missing .WAV!");

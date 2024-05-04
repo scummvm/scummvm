@@ -391,7 +391,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 					BofMemSet(_objList, 0, MAX_OBJS * sizeof(ST_OBJ));
 
 				} else {
-					ReportError(ERR_MEMORY, "Could not allocate Object list");
+					reportError(ERR_MEMORY, "Could not allocate Object list");
 				}
 			}
 
@@ -444,10 +444,10 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 
 	TimerStart();
 
-	if (FileExists(sWldFileName)) {
+	if (fileExists(sWldFileName)) {
 		// Force buffer to be big enough so that the entire script
 		// is pre-loaded
-		int nLength = FileLength(sWldFileName);
+		int nLength = fileLength(sWldFileName);
 		char *pBuf = (char *)BofAlloc(nLength);
 		if (pBuf != nullptr) {
 			CBagIfstream fpInput(pBuf, nLength);
@@ -514,7 +514,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 		restoreActiveMessages(_storageDeviceList);
 
 	} else {
-		ReportError(ERR_FFIND, "Could not find World Script: %s", sWldFileName.GetBuffer());
+		reportError(ERR_FFIND, "Could not find World Script: %s", sWldFileName.GetBuffer());
 	}
 	LogInfo(BuildString("Time to Load %s, %ld ms", sWldFileName.GetBuffer(), timerStop()));
 
@@ -591,10 +591,10 @@ ErrorCode CBagMasterWin::loadGlobalVars(const CBofString &wldName) {
 
 		MACROREPLACE(sWldFileName);
 
-		if (FileExists(sWldFileName)) {
+		if (fileExists(sWldFileName)) {
 			// Force buffer to be big enough so that the entire script
 			// is pre-loaded
-			int nLength = FileLength(sWldFileName);
+			int nLength = fileLength(sWldFileName);
 			char *pBuf = (char *)BofAlloc(nLength);
 			if (pBuf != nullptr) {
 				CBagIfstream fpInput(pBuf, nLength);
@@ -834,11 +834,11 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 					pCursor->setWieldCursor(bIsWieldCursor);
 
 				} else {
-					ReportError(ERR_MEMORY, "Could not allocate a CBagCursor");
+					reportError(ERR_MEMORY, "Could not allocate a CBagCursor");
 				}
 
 			} else {
-				ReportError(ERR_UNKNOWN, "Bad cursor syntax");
+				reportError(ERR_UNKNOWN, "Bad cursor syntax");
 			}
 			break;
 		}
@@ -980,7 +980,7 @@ ErrorCode CBagMasterWin::setStorageDev(const CBofString &wldName, bool entry) {
 		// This is to stop it from going out of scope before
 		// the message is received.
 		Assert(g_nString >= 0 && g_nString < NUM_MSG_STRINGS);
-		Assert(wldName.GetLength() < 512);
+		Assert(wldName.getLength() < 512);
 
 		strncpy(g_szString[g_nString], wldName, 511);
 
@@ -999,7 +999,7 @@ ErrorCode CBagMasterWin::setStorageDev(const CBofString &wldName, bool entry) {
 		// This is to stop the string from going out of scope before
 		// the message is received.
 		Assert(g_nString >= 0 && g_nString < NUM_MSG_STRINGS);
-		Assert(wldName.GetLength() < 512);
+		Assert(wldName.getLength() < 512);
 		Common::strcpy_s(g_szString[g_nString], wldName);
 
 		postUserMessage(WM_EXIT_CLOSE_UP_WINDOW, (uint32)g_nString);
@@ -1588,7 +1588,7 @@ bool CBagMasterWin::showSaveDialog(CBofWindow *win, bool bSaveBkg) {
 
 			BofFree(pSaveBuf);
 		} else {
-			ReportError(ERR_MEMORY, "Unable to allocate the Save Game Buffer");
+			reportError(ERR_MEMORY, "Unable to allocate the Save Game Buffer");
 		}
 
 		CBofSound::ResumeSounds();
@@ -1645,7 +1645,7 @@ void CBagMasterWin::doRestore(ST_BAGEL_SAVE *saveBuf) {
 	// Tell BAGEL to start over with this script
 	loadFile(cScript, cStr, false, false);
 
-	if (!ErrorOccurred()) {
+	if (!errorOccurred()) {
 
 		// Restore all variables
 		//
@@ -1679,7 +1679,7 @@ void CBagMasterWin::doRestore(ST_BAGEL_SAVE *saveBuf) {
 					BofMemSet(_objList, 0, MAX_OBJS * sizeof(ST_OBJ));
 
 				} else {
-					ReportError(ERR_MEMORY);
+					reportError(ERR_MEMORY);
 				}
 			}
 
@@ -1758,7 +1758,7 @@ bool CBagMasterWin::showRestoreDialog(CBofWindow *win, bool bSaveBkg) {
 
 		cRestoreDialog.detach();
 
-		bRestored = (!cRestoreDialog.ErrorOccurred() && cRestoreDialog.restored());
+		bRestored = (!cRestoreDialog.errorOccurred() && cRestoreDialog.restored());
 		cRestoreDialog.destroy();
 
 		g_hackWindow = pLastWin;

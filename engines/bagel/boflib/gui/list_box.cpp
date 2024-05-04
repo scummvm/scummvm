@@ -351,7 +351,7 @@ ErrorCode CBofListBox::saveBackground() {
 		}
 
 	} else {
-		ReportError(ERR_MEMORY, "Unable to allocate a %d x %d CBofBitmap", width(), height());
+		reportError(ERR_MEMORY, "Unable to allocate a %d x %d CBofBitmap", width(), height());
 	}
 
 	return _errCode;
@@ -368,7 +368,7 @@ ErrorCode CBofListBox::createWorkArea() {
 		Assert(_pBackdrop != nullptr);
 
 		if ((_pWork = new CBofBitmap(width(), height(), _pBackdrop->getPalette())) == nullptr) {
-			ReportError(ERR_MEMORY, "Unable to allocate a %d x %d CBofBitmap", width(), height());
+			reportError(ERR_MEMORY, "Unable to allocate a %d x %d CBofBitmap", width(), height());
 		}
 	}
 
@@ -379,7 +379,7 @@ ErrorCode CBofListBox::createWorkArea() {
 ErrorCode CBofListBox::repaintAll() {
 	Assert(IsValidObject(this));
 
-	if (!ErrorOccurred()) {
+	if (!errorOccurred()) {
 		Assert(isCreated());
 
 		int nCurFont = getFont();
@@ -455,7 +455,7 @@ ErrorCode CBofListBox::repaintAll() {
 ErrorCode CBofListBox::repaintItem(int nIndex) {
 	Assert(IsValidObject(this));
 
-	if (!ErrorOccurred()) {
+	if (!errorOccurred()) {
 		Assert(nIndex >= 0 && nIndex < _nNumItems);
 		int nCurFont = getFont();
 		setFont(_nTextFont);           // Set the proper font

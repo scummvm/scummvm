@@ -64,7 +64,7 @@ void CBagNextCDDialog::onInitDialog() {
 		_pButton->show();
 
 	} else {
-		ReportError(ERR_MEMORY);
+		reportError(ERR_MEMORY);
 	}
 
 	// Show System cursor

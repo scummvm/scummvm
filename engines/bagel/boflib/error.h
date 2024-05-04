@@ -59,8 +59,8 @@ extern const char *const g_errList[];
 
 class CBofError {
 protected:
-	static ErrorCode m_errGlobal;
-	static int m_nErrorCount;
+	static ErrorCode _errGlobal;
+	static int _nErrorCount;
 
 	ErrorCode _errCode;
 
@@ -78,34 +78,34 @@ public:
 	 * @param errCode       Error to report
 	 * @param format        printf style format string
 	 */
-	void ReportError(ErrorCode errCode, const char *format = nullptr, ...);
+	void reportError(ErrorCode errCode, const char *format = nullptr, ...);
 
-	bool ErrorOccurred() {
+	bool errorOccurred() {
 		return _errCode != ERR_NONE;
 	}
-	ErrorCode GetErrorCode() {
+	ErrorCode getErrorCode() {
 		return _errCode;
 	}
-	void ClearError() {
+	void clearError() {
 		_errCode = ERR_NONE;
 	}
 
 	static void initialize();
-	static ErrorCode GetLastError() {
-		return m_errGlobal;
+	static ErrorCode getLastError() {
+		return _errGlobal;
 	}
-	static void SetLastError(ErrorCode errCode) {
-		m_errGlobal = errCode;
+	static void setLastError(ErrorCode errCode) {
+		_errGlobal = errCode;
 	}
 
-	static int GetErrorCount() {
-		return m_nErrorCount;
+	static int getErrorCount() {
+		return _nErrorCount;
 	}
-	static void SetErrorCount(int nCount) {
-		m_nErrorCount = nCount;
+	static void setErrorCount(int nCount) {
+		_nErrorCount = nCount;
 	}
-	static void ClearErrorCount() {
-		SetErrorCount(0);
+	static void clearErrorCount() {
+		setErrorCount(0);
 	}
 
 };

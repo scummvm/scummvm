@@ -501,7 +501,7 @@ ErrorCode CBofBmpButton::paint(CBofRect *) {
 			if ((_pBackground = new CBofBitmap(nWidth, nHeight, pPalette)) != nullptr) {
 
 			} else {
-				ReportError(ERR_MEMORY, "Could not allocate a CBofBitmap(%d x %d)", nWidth, nHeight);
+				reportError(ERR_MEMORY, "Could not allocate a CBofBitmap(%d x %d)", nWidth, nHeight);
 			}
 
 		} else {

@@ -209,7 +209,7 @@ ErrorCode CBofDialog::saveBackground() {
 			_pDlgBackground->setReadOnly(true);
 
 		} else {
-			ReportError(ERR_MEMORY, "Unable to allocate a new CBofBitmap(%d x %d)", width(), height());
+			reportError(ERR_MEMORY, "Unable to allocate a new CBofBitmap(%d x %d)", width(), height());
 		}
 	}
 
@@ -263,7 +263,7 @@ int CBofDialog::doModal() {
 	// or until there are too many errors.
 	Graphics::FrameLimiter limiter(g_system, 60);
 
-	while (!_bEndDialog && !g_engine->shouldQuit() && (CBofError::GetErrorCount() < MAX_ERRORS)) {
+	while (!_bEndDialog && !g_engine->shouldQuit() && (CBofError::getErrorCount() < MAX_ERRORS)) {
 		CBofSound::AudioTask();
 		CBofTimer::HandleTimers();
 

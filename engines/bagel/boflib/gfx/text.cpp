@@ -137,10 +137,10 @@ ErrorCode CBofText::setupText(const CBofRect *pRect, int nJustify, uint32 nForma
 		if ((_pBackground = new CBofBitmap(_cSize.cx, _cSize.cy, pPalette)) != nullptr) {
 
 		} else {
-			ReportError(ERR_MEMORY, "Could not allocate a (%d x %d) CBofBitmap", _cSize.cx, _cSize.cy);
+			reportError(ERR_MEMORY, "Could not allocate a (%d x %d) CBofBitmap", _cSize.cx, _cSize.cy);
 		}
 	} else {
-		ReportError(ERR_MEMORY, "Could not allocate a (%d x %d) CBofBitmap", _cSize.cx, _cSize.cy);
+		reportError(ERR_MEMORY, "Could not allocate a (%d x %d) CBofBitmap", _cSize.cx, _cSize.cy);
 	}
 
 	return _errCode;

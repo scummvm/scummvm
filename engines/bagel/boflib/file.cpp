@@ -74,7 +74,7 @@ ErrorCode CBofFile::create(const char *pszFileName, uint32 lFlags) {
 		}
 
 	} else {
-		ReportError(ERR_FOPEN, "Unable to create %s", _szFileName);
+		reportError(ERR_FOPEN, "Unable to create %s", _szFileName);
 	}
 
 	return _errCode;
@@ -113,7 +113,7 @@ ErrorCode CBofFile::open(const char *pszFileName, uint32 lFlags) {
 			_stream = g_system->getSavefileManager()->openForLoading(pszFileName);
 
 			if (!_stream)
-				ReportError(ERR_FOPEN, "Could not open %s", pszFileName);
+				reportError(ERR_FOPEN, "Could not open %s", pszFileName);
 
 		} else {
 			Common::File *f = new Common::File();
@@ -126,7 +126,7 @@ ErrorCode CBofFile::open(const char *pszFileName, uint32 lFlags) {
 				}
 			} else {
 				delete f;
-				ReportError(ERR_FOPEN, "Could not open %s", pszFileName);
+				reportError(ERR_FOPEN, "Could not open %s", pszFileName);
 			}
 		}
 	}
@@ -155,7 +155,7 @@ ErrorCode CBofFile::read(void *pDestBuf, int32 lBytes) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_stream);
 	assert(rs);
 
-	if (!ErrorOccurred()) {
+	if (!errorOccurred()) {
 		if (rs != nullptr) {
 			byte *pBuf = (byte *)pDestBuf;
 
@@ -164,7 +164,7 @@ ErrorCode CBofFile::read(void *pDestBuf, int32 lBytes) {
 				lBytes -= CHUNK_SIZE;
 
 				if ((int)rs->read(pBuf, nLength) != nLength) {
-					ReportError(ERR_FREAD, "Unable to read %d bytes from %s", nLength, _szFileName);
+					reportError(ERR_FREAD, "Unable to read %d bytes from %s", nLength, _szFileName);
 				}
 
 				pBuf += nLength;
@@ -193,14 +193,14 @@ ErrorCode CBofFile::write(const void *pSrcBuf, int32 lBytes) {
 				lBytes -= CHUNK_SIZE;
 
 				if ((int)ws->write(pBuf, nLength) != nLength) {
-					ReportError(ERR_FWRITE, "Unable to write %d bytes to %s", nLength, _szFileName);
+					reportError(ERR_FWRITE, "Unable to write %d bytes to %s", nLength, _szFileName);
 				}
 
 				pBuf += nLength;
 			}
 
 			// Flush this file's buffer back out right now
-			Commit();
+			commit();
 
 		} else {
 			LogWarning(BuildString("Attempted to write to the READONLY file '%s'", _szFileName));
@@ -224,11 +224,11 @@ ErrorCode CBofFile::setPosition(uint32 lPos) {
 
 	if (rs) {
 		if (!rs->seek(lPos))
-			ReportError(ERR_FSEEK, "Unable to seek to %ld", lPos);
+			reportError(ERR_FSEEK, "Unable to seek to %ld", lPos);
 	}
 	if (ws) {
 		if (!ws->seek(lPos))
-			ReportError(ERR_FSEEK, "Unable to seek to %ld", lPos);
+			reportError(ERR_FSEEK, "Unable to seek to %ld", lPos);
 	}
 
 	return _errCode;
@@ -264,15 +264,15 @@ ErrorCode CBofFile::seekToEnd() {
 	return _errCode;
 }
 
-ErrorCode CBofFile::SetLength(uint32 /*lNewLength*/) {
+ErrorCode CBofFile::setLength(uint32 /*lNewLength*/) {
 	Assert(IsValidObject(this));
 
-	LogWarning("CBofFile::SetLength() is not yet supported");
+	LogWarning("CBofFile::setLength() is not yet supported");
 
 	return _errCode;
 }
 
-uint32 CBofFile::GetLength() {
+uint32 CBofFile::getLength() {
 	Assert(IsValidObject(this));
 
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_stream);
@@ -283,10 +283,10 @@ uint32 CBofFile::GetLength() {
 	if (ws)
 		return ws->size();
 
-	error("GetLength in closed file");
+	error("getLength in closed file");
 }
 
-void CBofFile::Commit() {
+void CBofFile::commit() {
 	Assert(IsValidObject(this));
 
 	Common::SeekableWriteStream *ws = dynamic_cast<Common::SeekableWriteStream *>(_stream);
