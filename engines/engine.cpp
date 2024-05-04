@@ -198,6 +198,10 @@ Engine::Engine(OSystem *syst)
 Engine::~Engine() {
 	_mixer->stopAll();
 
+	// Flush any pending remaining events
+	Common::Event evt;
+	while (g_system->getEventManager()->pollEvent(evt)) {}
+
 	delete _debugger;
 	delete _mainMenuDialog;
 	g_engine = NULL;
