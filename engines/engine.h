@@ -233,13 +233,9 @@ private:
 	 * Optional debugger for the engine.
 	 */
 	GUI::Debugger *_debugger;
-
-	/**
-	 * Flag for whether the quitGame method has been called
-	 */
-	static bool _quitRequested;
-
 public:
+
+
 	/**
 	 * Engine features.
 	 *
