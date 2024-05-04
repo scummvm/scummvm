@@ -29,8 +29,8 @@ CBagVariableObject::CBagVariableObject() : CBagObject() {
 	_xObjType = VAROBJ;
 	m_nPointSize = 16;
 	m_nFGColor = CTEXT_COLOR;
-	SetVisible(true);
-	SetTimeless(true);
+	setVisible(true);
+	setTimeless(true);
 }
 
 CBagVariableObject::~CBagVariableObject() {
@@ -40,8 +40,8 @@ CBagVariableObject::~CBagVariableObject() {
 ErrorCode CBagVariableObject::attach() {
 	CBagVar *xVar = VAR_MANAGER->GetVariable(getFileName());
 
-	if (xVar && !GetRefName().isEmpty())
-		xVar->SetValue(GetRefName());
+	if (xVar && !getRefName().isEmpty())
+		xVar->SetValue(getRefName());
 
 	return CBagObject::attach();
 }
@@ -171,7 +171,7 @@ ErrorCode CBagVariableObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *p
 		rc = paintText(pBmp, &r, xVar->GetValue(), MapFontPointSize(m_nPointSize), TEXT_NORMAL, m_nFGColor);
 
 		// Don't need to redraw!
-		SetDirty(false);
+		setDirty(false);
 	}
 	return rc;
 }
@@ -186,7 +186,7 @@ ErrorCode CBagVariableObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *p
 		rc = paintText(pWnd, &r, xVar->GetValue(), MapFontPointSize(m_nPointSize), TEXT_NORMAL, m_nFGColor);
 
 		// Don't need to redraw!
-		SetDirty(false);
+		setDirty(false);
 	}
 
 	return rc;

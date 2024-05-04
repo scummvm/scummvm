@@ -39,8 +39,8 @@ extern bool g_allowAttachActiveObjectsFl;
 
 CBagCommandObject::CBagCommandObject() {
 	_xObjType = COMMANDOBJ;
-	SetVisible(false);
-	SetTimeless(true);
+	setVisible(false);
+	setTimeless(true);
 }
 
 bool CBagCommandObject::runObject() {
@@ -154,7 +154,7 @@ bool CBagCommandObject::runObject() {
 			if (CBagPanWindow::_pWieldBmp != nullptr) {
 				CBagObject *currObj = CBagPanWindow::_pWieldBmp->getCurrObj();
 				if (currObj != nullptr) {
-					SDEV_MANAGER->removeObject(CBagPanWindow::_pWieldBmp->GetName(), currObj->GetRefName());
+					SDEV_MANAGER->removeObject(CBagPanWindow::_pWieldBmp->GetName(), currObj->getRefName());
 				}
 			}
 
@@ -174,7 +174,7 @@ bool CBagCommandObject::runObject() {
 			if (CBagPanWindow::_pWieldBmp != nullptr) {
 				CBagObject *currObj = CBagPanWindow::_pWieldBmp->getCurrObj();
 				if (currObj != nullptr) {
-					SDEV_MANAGER->MoveObject("INV_WLD", CBagPanWindow::_pWieldBmp->GetName(), currObj->GetRefName());
+					SDEV_MANAGER->MoveObject("INV_WLD", CBagPanWindow::_pWieldBmp->GetName(), currObj->getRefName());
 					CBagPanWindow::_pWieldBmp->setCurrObj(nullptr);
 				}
 			}

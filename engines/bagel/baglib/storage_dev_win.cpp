@@ -133,7 +133,7 @@ CBagStorageDev::CBagStorageDev() {
 	SetCustom(false);
 
 	// Make sure all objects that are prefiltered are dirty
-	SetDirtyAllObjects(true);
+	setDirtyAllObjects(true);
 
 	// Not sure what the hell is going on here...
 	SetLActivity(kMouseNONE);
@@ -223,8 +223,8 @@ ErrorCode CBagStorageDev::activateLocalObject(CBagObject  *pObj) {
 	ErrorCode errCode = ERR_NONE;
 
 	if (pObj != nullptr) {
-		pObj->SetLocal();
-		if (!pObj->isActive() && (!pObj->GetExpression() || pObj->GetExpression()->evaluate(pObj->IsNegative()))) {
+		pObj->setLocal();
+		if (!pObj->isActive() && (!pObj->getExpression() || pObj->getExpression()->evaluate(pObj->isNegative()))) {
 			pObj->setActive();
 			pObj->attach();
 
@@ -252,7 +252,7 @@ ErrorCode CBagStorageDev::deactivateLocalObject(CBagObject *pObj) {
 	ErrorCode  errCode = ERR_NONE;
 
 	if (pObj != nullptr) {
-		pObj->SetLocal(false);
+		pObj->setLocal(false);
 		if (pObj->isActive()) {
 			pObj->setActive(false);
 			pObj->detach();
@@ -324,32 +324,32 @@ ErrorCode CBagStorageDev::AttachActiveObjects() {
 
 			CBagObject *pObj = GetObjectByPos(i);
 			if (pObj != nullptr) {
-				if (pObj->IsLocal() && (!pObj->GetExpression() || pObj->GetExpression()->evaluate(pObj->IsNegative()))) {
+				if (pObj->isLocal() && (!pObj->getExpression() || pObj->getExpression()->evaluate(pObj->isNegative()))) {
 					if (!pObj->isAttached()) {
 						pObj->setActive();
 						pObj->attach();
 					}
 
 					// If we have already painted the storage device once
-					if (pObj->IsImmediateRun()) {
+					if (pObj->isImmediateRun()) {
 
 						if (_bFirstPaint == false) {
 
 							pObj->runObject();
 
-							if (pObj->GetType() == LINKOBJ) {
+							if (pObj->getType() == LINKOBJ) {
 								break;
 							}
 						}
 					}
-					if (pObj->IsModal())
+					if (pObj->isModal())
 						SetContainsModal(true);
-					if (pObj->IsFloating()) {
+					if (pObj->isFloating()) {
 						nArrangePos = arrangeFloater(nArrangePos, pObj);
 					}
 				} else if (pObj->isAttached()) {
 
-					if (pObj->GetType() != SOUNDOBJ || !((CBagSoundObject *)pObj)->isPlaying()) {
+					if (pObj->getType() != SOUNDOBJ || !((CBagSoundObject *)pObj)->isPlaying()) {
 						pObj->setActive(false);
 						pObj->detach();
 					}
@@ -375,7 +375,7 @@ ErrorCode CBagStorageDev::DetachActiveObjects() {
 				if (pObj->isAttached()) {
 					// If this object is not removed from memory, then
 					// make sure it is drawn next time it is activated.
-					pObj->SetDirty(true);
+					pObj->setDirty(true);
 					pObj->detach();
 				}
 			} else
@@ -436,7 +436,7 @@ ErrorCode CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *
 				if (pObj->isVisible()) {
 					if (pBmp) {
 						// Only update dirty objects...
-						if (pObj->IsDirty() || pObj->IsAlwaysUpdate()) {
+						if (pObj->isDirty() || pObj->isAlwaysUpdate()) {
 							pObj->update(pBmp, pt, &xBmpRect);
 						}
 					}
@@ -444,7 +444,7 @@ ErrorCode CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *
 
 				// if it is visible update it
 				if (pObj->getRect().ptInRect(*m_xCursorLocation)) {
-					pObj->OnMouseOver(0, *m_xCursorLocation, this);
+					pObj->onMouseOver(0, *m_xCursorLocation, this);
 					bMouseOverObj = true;
 				}  // if on screen
 			}  // If the object is attached
@@ -476,7 +476,7 @@ void CBagStorageDev::onMouseMove(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 }
 
 
-ErrorCode CBagStorageDev::OnMouseOver(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void *) {
+ErrorCode CBagStorageDev::onMouseOver(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void *) {
 	return ERR_NONE;
 }
 
@@ -796,26 +796,26 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 			assert(CBofObject::isValidObject(pObj));
 
 			if (!bElseExprList.isEmpty() && bElseExprList[0]) {
-				pObj->SetNegative();
+				pObj->setNegative();
 			} else if (pActiveExpr && pActiveExpr->isNegative()) {
 				// If there is an active expression that is negative
 				// i.e if NOT( blah blah blah)
-				pObj->SetNegative();
+				pObj->setNegative();
 			}
 
 			// Determine if the object is an active object in this world
 			if (!bHoldActivation) {
-				pObj->SetLocal();
-				if (!pActiveExpr || pActiveExpr->evaluate(pObj->IsNegative())) {
+				pObj->setLocal();
+				if (!pActiveExpr || pActiveExpr->evaluate(pObj->isNegative())) {
 					pObj->setActive();
 				}
 			}
 			if (bRunActivation) {
-				pObj->SetImmediateRun();
+				pObj->setImmediateRun();
 			}
 
 			pObj->setInfo(fpInput);
-			pObj->SetExpression(pActiveExpr);
+			pObj->setExpression(pActiveExpr);
 
 			AddObject(pObj);
 		}
@@ -871,7 +871,7 @@ CBagObject *CBagStorageDev::GetObject(int nRefId, bool bActiveOnly) {
 	for (int i = 0; i < nListLen; ++i) {
 		CBagObject *pObj = GetObjectByPos(i);
 
-		if ((pObj->GetRefId() == nRefId) && (!bActiveOnly || (pObj->isActive() && pObj->isAttached())))
+		if ((pObj->getRefId() == nRefId) && (!bActiveOnly || (pObj->isActive() && pObj->isAttached())))
 			return pObj;
 	}
 
@@ -887,7 +887,7 @@ CBagObject *CBagStorageDev::GetObject(const CBofString &sName, bool bActiveOnly)
 	while (pNode != nullptr) {
 		CBagObject *pObj = pNode->getNodeItem();
 
-		if (pObj->GetRefName().compare(sName) == 0) {
+		if (pObj->getRefName().compare(sName) == 0) {
 			pObjFound = pObj;
 			break;
 		}
@@ -910,9 +910,9 @@ CBagObject *CBagStorageDev::GetObjectByType(const CBofString &sType, bool bActiv
 		CBagObject *pObj = GetObjectByPos(i);
 
 		if (bActiveOnly) {
-			if (pObj->isActive() && !getStringTypeOfObject(pObj->GetType()).find(sType))
+			if (pObj->isActive() && !getStringTypeOfObject(pObj->getType()).find(sType))
 				return pObj;
-		} else if (!getStringTypeOfObject(pObj->GetType()).find(sType))
+		} else if (!getStringTypeOfObject(pObj->getType()).find(sType))
 			return pObj;
 	}
 
@@ -936,7 +936,7 @@ CBagObject *CBagStorageDev::GetObject(const CBofPoint &xPoint, bool bActiveOnly)
 }
 
 
-void CBagStorageDev::HandleError(ErrorCode errCode) {
+void CBagStorageDev::handleError(ErrorCode errCode) {
 }
 
 
@@ -1120,7 +1120,7 @@ ErrorCode CBagStorageDev::PreFilter(CBofBitmap *pBmp, CBofRect *pRect, CBofList<
 		MakeListDirty(m_pObjectList);
 		MakeListDirty(pList);
 	} else {
-		SetDirtyAllObjects(true);
+		setDirtyAllObjects(true);
 	}
 
 	return ERR_NONE;
@@ -1134,7 +1134,7 @@ void CBagStorageDev::MakeListDirty(CBofList<CBagObject *> *pList) {
 
 			for (int i = 0; i < nCount; ++i) {
 				CBagObject *pObj = pList->getNodeItem(i);
-				pObj->SetDirty(true);
+				pObj->setDirty(true);
 			}
 		}
 	}
@@ -1397,7 +1397,7 @@ ErrorCode CBagStorageDevWnd::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 ErrorCode CBagStorageDevWnd::RunModal(CBagObject *pObj) {
 	assert(pObj != nullptr);
 
-	if (pObj->IsModal() && pObj->isActive()) {
+	if (pObj->isModal() && pObj->isActive()) {
 
 		EventLoop eventLoop;
 		CBofBitmap *pBmp = getBackdrop();
@@ -1514,8 +1514,8 @@ void CBagStorageDevWnd::onMouseMove(uint32 n, CBofPoint *pPoint, void *) {
 				// link to another Pan, or a text menu, or button.
 				//
 				if (pObj->isAttached() && pObj->isInside(cCursorLocation)) {
-					int nCursor = pObj->GetOverCursor();
-					if (!bWield || (nCursor == 2 || nCursor == 5 || nCursor == 55 || pObj->GetType() == TEXTOBJ || pObj->GetType() == BUTTONOBJ)) {
+					int nCursor = pObj->getOverCursor();
+					if (!bWield || (nCursor == 2 || nCursor == 5 || nCursor == 55 || pObj->getType() == TEXTOBJ || pObj->getType() == BUTTONOBJ)) {
 						CBagMasterWin::setActiveCursor(nCursor);
 					}
 					break;
@@ -1766,7 +1766,7 @@ void CBagStorageDevDlg::onClose() {
 		for (int i = 0; i < nCount; ++i) {
 			CBagObject *pObj = GetObjectByPos(i);
 			if (pObj != nullptr) {
-				pObj->SetDirty(true);
+				pObj->setDirty(true);
 			}
 		}
 	}
@@ -1998,9 +1998,9 @@ void CBagStorageDevManager::SaveObjList(ST_OBJ *pObjList, int nNumEntries) {
 			for (int j = 0; j < m; j++) {
 				CBagObject *pObj = pSDev->GetObjectByPos(j);
 
-				if (!pObj->GetRefName().isEmpty()) {
-					assert(strlen(pObj->GetRefName()) < MAX_OBJ_NAME);
-					strncpy((pObjList + k)->m_szName, pObj->GetRefName(), MAX_OBJ_NAME);
+				if (!pObj->getRefName().isEmpty()) {
+					assert(strlen(pObj->getRefName()) < MAX_OBJ_NAME);
+					strncpy((pObjList + k)->m_szName, pObj->getRefName(), MAX_OBJ_NAME);
 
 					// We MUST have put something in here
 					assert((pObjList + k)->m_szName[0] != '\0');
@@ -2009,10 +2009,10 @@ void CBagStorageDevManager::SaveObjList(ST_OBJ *pObjList, int nNumEntries) {
 					strncpy((pObjList + k)->m_szSDev, pSDev->GetName(), MAX_SDEV_NAME);
 
 					// Save if this guy is waiting to play
-					(pObjList + k)->m_nFlags = (uint16)(pObj->IsMsgWaiting() ? mIsMsgWaiting : 0);
+					(pObjList + k)->m_nFlags = (uint16)(pObj->isMsgWaiting() ? mIsMsgWaiting : 0);
 					(pObjList + k)->m_lState = pObj->getState();
-					(pObjList + k)->m_lProperties = pObj->GetProperties();
-					(pObjList + k)->m_lType = pObj->GetType();
+					(pObjList + k)->m_lProperties = pObj->getProperties();
+					(pObjList + k)->m_lType = pObj->getType();
 					(pObjList + k)->m_bUsed = 1;
 
 					k++;
@@ -2041,11 +2041,11 @@ void CBagStorageDevManager::RestoreObjList(ST_OBJ *pObjList, int nNumEntries) {
 			if (pSDev != nullptr) {
 				CBagObject *pObj = pSDev->GetObject((pObjList + i)->m_szName);
 				if (pObj != nullptr) {
-					pObj->SetProperties((pObjList + i)->m_lProperties);
+					pObj->setProperties((pObjList + i)->m_lProperties);
 					pObj->setState((pObjList + i)->m_lState);
-					pObj->SetType((BAG_OBJECT_TYPE)(pObjList + i)->m_lType);
+					pObj->setType((BagObjectType)(pObjList + i)->m_lType);
 
-					pObj->SetMsgWaiting(((pObjList + i)->m_nFlags & mIsMsgWaiting) == mIsMsgWaiting);
+					pObj->setMsgWaiting(((pObjList + i)->m_nFlags & mIsMsgWaiting) == mIsMsgWaiting);
 				}
 			}
 		}

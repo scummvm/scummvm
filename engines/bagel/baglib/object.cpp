@@ -27,7 +27,7 @@ namespace Bagel {
 
 extern bool g_noMenuFl;
 
-CBofString getStringTypeOfObject(BAG_OBJECT_TYPE n) {
+CBofString getStringTypeOfObject(BagObjectType n) {
 	switch (n) {
 	case BASEOBJ:
 		return "UKN";
@@ -64,55 +64,55 @@ CBofString getStringTypeOfObject(BAG_OBJECT_TYPE n) {
 
 CBagObject::CBagObject() {
 	_xObjType = BASEOBJ;
-	m_nX = -1;
-	m_nY = -1;
+	_nX = -1;
+	_nY = -1;
 
 	// All objects now default to timeless
-	m_nProperties = TIMELESS;
+	_nProperties = TIMELESS;
 
-	m_nId = 0;
-	m_nOverCursor = 0;
+	_nId = 0;
+	_nOverCursor = 0;
 
 	// Init state
-	m_nState = 0;
+	_nState = 0;
 
-	m_pMenu = nullptr;
-	m_pEvalExpr = nullptr;
-	m_bInteractive = true;
-	m_bNoMenu = false;
+	_pMenu = nullptr;
+	_pEvalExpr = nullptr;
+	_bInteractive = true;
+	_bNoMenu = false;
 
 	// Allocate this on an as-needed basis...
-	m_psName = nullptr;
+	_psName = nullptr;
 
 	// Object is dirty by default, doesn't break anything else
 	// Some objects such as the pda message light are always updated
-	SetDirty(true);
-	SetAlwaysUpdate(false);
+	setDirty(true);
+	setAlwaysUpdate(false);
 
 	// All messages start as not message waiting.
-	SetMsgWaiting(false);
+	setMsgWaiting(false);
 }
 
 CBagObject::~CBagObject() {
-	if (m_pMenu != nullptr) {
-		delete m_pMenu;
-		m_pMenu = nullptr;
+	if (_pMenu != nullptr) {
+		delete _pMenu;
+		_pMenu = nullptr;
 	}
 
-	if (m_psName && (m_psName != &m_sFileName)) {
-		delete m_psName;
+	if (_psName && (_psName != &_sFileName)) {
+		delete _psName;
 	}
 
-	m_psName = nullptr;
+	_psName = nullptr;
 }
 
 ErrorCode CBagObject::attach() {
-	SetVisible();
+	setVisible();
 	return CBagParseObject::attach();
 }
 
 ErrorCode CBagObject::detach() {
-	SetVisible(false);
+	setVisible(false);
 	return CBagParseObject::detach();
 }
 
@@ -125,7 +125,7 @@ int CBagObject::getProperty(const CBofString &sProp) {
 		return getState();
 
 	if (!sProp.find("MODAL"))
-		return IsModal();
+		return isModal();
 
 	return 0;
 }
@@ -135,26 +135,26 @@ void CBagObject::setProperty(const CBofString &sProp, int nVal) {
 		setState(nVal);
 	else if (!sProp.find("TIMELESS")) {
 		if (nVal)
-			SetTimeless();
+			setTimeless();
 		else
-			SetTimeless(false);
+			setTimeless(false);
 	} else if (!sProp.find("MODAL")) {
 		if (nVal)
-			SetModal();
+			setModal();
 		else
-			SetModal(false);
+			setModal(false);
 	}
 }
 
-void CBagObject::SetProperty(BAG_OBJECT_PROPERTIES xProp, bool bVal) {
+void CBagObject::setProperty(BAG_OBJECT_PROPERTIES xProp, bool bVal) {
 	if (bVal)
-		m_nProperties |= xProp;
+		_nProperties |= xProp;
 	else
-		m_nProperties &= ~xProp;
+		_nProperties &= ~xProp;
 }
 
 bool CBagObject::runObject() {
-	if (IsTimeless())
+	if (isTimeless())
 		return true;
 
 	VAR_MANAGER->IncrementTimers();
@@ -187,13 +187,13 @@ PARSE_CODES CBagObject::setInfo(CBagIfstream &istr) {
 		//
 		case '{': {
 			rc = UPDATED_OBJECT;
-			if (!m_pMenu) {
-				if ((m_pMenu = new CBagMenu) != nullptr) {
+			if (!_pMenu) {
+				if ((_pMenu = new CBagMenu) != nullptr) {
 
 					// Try to cut down the number of Storage Devices by
 					// removing these unused ones from the list.
 					//
-					SDEV_MANAGER->UnRegisterStorageDev(m_pMenu);
+					SDEV_MANAGER->UnRegisterStorageDev(_pMenu);
 				}
 			}
 
@@ -203,7 +203,7 @@ PARSE_CODES CBagObject::setInfo(CBagIfstream &istr) {
 			Common::sprintf_s(szBuff, "Menu:%d", CBagMasterWin::_menuCount++);
 			CBofString s(szBuff, 256);
 
-			m_pMenu->loadFileFromStream(istr, s, false);
+			_pMenu->loadFileFromStream(istr, s, false);
 		}
 		break;
 		//
@@ -215,13 +215,13 @@ PARSE_CODES CBagObject::setInfo(CBagIfstream &istr) {
 			if (Common::isDigit(c)) {
 				int nId;
 				GetIntFromStream(istr, nId);
-				SetRefId(nId);
+				setRefId(nId);
 			} else {
 				char szLocalBuff[256];
 				szLocalBuff[0] = 0;
 				CBofString s(szLocalBuff, 256);
 				GetAlphaNumFromStream(istr, s);
-				SetRefName(s);
+				setRefName(s);
 			}
 			break;
 		}
@@ -242,7 +242,7 @@ PARSE_CODES CBagObject::setInfo(CBagIfstream &istr) {
 			rc = UPDATED_OBJECT;
 			int nCursor;
 			GetIntFromStream(istr, nCursor);
-			SetOverCursor(nCursor);
+			setOverCursor(nCursor);
 			break;
 		}
 		//
@@ -280,36 +280,36 @@ PARSE_CODES CBagObject::setInfo(CBagIfstream &istr) {
 				b = false;
 			}
 			if (!s.find("MOVABLE")) {
-				SetMovable(b);
+				setMovable(b);
 			} else if (!s.find("MODAL")) {
-				SetModal(b);
+				setModal(b);
 			} else if (!s.find("VISIBLE")) {
-				SetVisible(b);
+				setVisible(b);
 			} else if (!s.find("STRETCHABLE")) {
-				SetStretchable(b);
+				setStretchable(b);
 			} else if (!s.find("HIGHLIGHT")) {
 				setHighlight(b);
 			} else if (!s.find("ACTIVE")) {
 				setActive(b);
 			} else if (!s.find("TRANSPARENT")) {
-				SetTransparent(b);
+				setTransparent(b);
 			} else if (!s.find("HIDE_ON_CLICK")) {
-				SetHideOnClick(b);
+				setHideOnClick(b);
 			} else if (!s.find("IMMEDIATE_RUN")) {
-				SetImmediateRun(b);
+				setImmediateRun(b);
 			} else if (!s.find("TIMELESS")) {
-				SetTimeless(b);
+				setTimeless(b);
 			} else if (!s.find("LOCAL")) {
-				SetLocal(b);
+				setLocal(b);
 			} else if (!s.find("CONSTANT_UPDATE")) {
-				SetConstantUpdate(b);
+				setConstantUpdate(b);
 			} else if (!s.find("PRELOAD")) {
-				SetPreload(b);
+				setPreload(b);
 			} else if (!s.find("NOMENU")) {
-				m_bNoMenu = true;
+				_bNoMenu = true;
 
 			} else if (!s.find("FOREGROUND")) {
-				SetForeGround(b);
+				setForeGround(b);
 			} else {
 				PutbackStringOnStream(istr, s);
 				if (!b)
@@ -362,9 +362,9 @@ bool CBagObject::onMouseMove(uint32 /*nFlags*/, CPoint /*xPoint*/, void *) {
 	return false;
 }
 
-const CBofString &CBagObject::GetRefName() {
-	if (m_psName) {
-		return *m_psName;
+const CBofString &CBagObject::getRefName() {
+	if (_psName) {
+		return *_psName;
 	}
 
 	return _emptyString;
@@ -373,18 +373,18 @@ const CBofString &CBagObject::GetRefName() {
 // Since we have an inordinate number of bag objects that replicate the
 // filename as the objects name, if this is the case, then use a pointer
 // to the filename.
-void CBagObject::SetRefName(const CBofString &s) {
+void CBagObject::setRefName(const CBofString &s) {
 	// If we got an old one hanging around then trash it.
-	if (m_psName && m_psName != &m_sFileName) {
-		delete m_psName;
+	if (_psName && _psName != &_sFileName) {
+		delete _psName;
 	}
-	m_psName = nullptr;
+	_psName = nullptr;
 
 	// If it's the same as the filename, then point to the filename
-	if (!m_sFileName.isEmpty() && m_sFileName.compare(s) == 0) {
-		m_psName = &m_sFileName;
+	if (!_sFileName.isEmpty() && _sFileName.compare(s) == 0) {
+		_psName = &_sFileName;
 	} else if (!s.isEmpty()) {
-		m_psName = new CBofString(s);
+		_psName = new CBofString(s);
 	}
 }
 

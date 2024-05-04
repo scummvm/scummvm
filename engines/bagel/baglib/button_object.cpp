@@ -40,9 +40,9 @@ CBagButtonObject::CBagButtonObject() {
 	_numPos = 0;
 	_dragging = false;
 	setCallBack(nullptr, nullptr);
-	SetAlwaysUpdate(true);
+	setAlwaysUpdate(true);
 
-	SetTimeless(true);
+	setTimeless(true);
 }
 
 CBagButtonObject::~CBagButtonObject() {
@@ -63,7 +63,7 @@ ErrorCode CBagButtonObject::attach() {
 
 	if (GetSprite()->getCelCount() == 1 && _buttonType != BTN_SLIDER) {
 		// Only given down state
-		SetVisible(false);
+		setVisible(false);
 	}
 
 	// If this is a slider button make sure it is in the correct position
@@ -94,7 +94,7 @@ bool CBagButtonObject::runObject() {
 		}
 		if (GetSprite() && (GetSprite()->getCelCount() == 1)) {
 			// Only given down state
-			SetVisible(false);
+			setVisible(false);
 		}
 
 		// Set to first cel
@@ -114,7 +114,7 @@ void CBagButtonObject::onLButtonDown(uint32 /*nFlags*/, CBofPoint *point, void *
 		}
 		if (GetSprite() && (GetSprite()->getCelCount() == 1)) {
 			// Only given down state
-			SetVisible();
+			setVisible();
 		}
 
 		// Set to clicked down
@@ -134,7 +134,7 @@ void CBagButtonObject::onLButtonDown(uint32 /*nFlags*/, CBofPoint *point, void *
 		_dragging = true;
 	}
 
-	SetDirty();
+	setDirty();
 }
 
 void CBagButtonObject::onLButtonUp(uint32 flags, CBofPoint *point, void *extraInfo) {
@@ -195,7 +195,7 @@ void CBagButtonObject::onLButtonUp(uint32 flags, CBofPoint *point, void *extraIn
 
 			if (GetSprite() && (GetSprite()->getCelCount() == 1)) {
 				// Only given down state
-				SetVisible(_activeDown);
+				setVisible(_activeDown);
 				_active = false;
 			}
 
@@ -206,7 +206,7 @@ void CBagButtonObject::onLButtonUp(uint32 flags, CBofPoint *point, void *extraIn
 		}
 	}
 
-	SetDirty();
+	setDirty();
 
 	CBagSpriteObject::onLButtonUp(flags, point, extraInfo);
 }
@@ -219,7 +219,7 @@ bool CBagButtonObject::onMouseMove(uint32 /*nFlags*/, CBofPoint point, void *ext
 			if (pMainWin != nullptr) {
 				pMainWin->SetPreFilterPan(true);
 			}
-			SetDirty();
+			setDirty();
 
 			CBofPoint mLoc;
 			CBofPoint NewPoint = getPosition();
@@ -256,7 +256,7 @@ bool CBagButtonObject::onMouseMove(uint32 /*nFlags*/, CBofPoint point, void *ext
 			}
 		}
 		if (GetSprite() && (GetSprite()->getCelCount() == 1)) { // Only given down state
-			SetVisible(false);
+			setVisible(false);
 		}
 
 		setState(0); // Set to first cel
@@ -329,7 +329,7 @@ ErrorCode CBagButtonObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcR
 
 	if (GetSprite() && ((GetSprite()->getCelCount() > 1) || isVisible())) {
 		ErrorCode err = CBagSpriteObject::update(bmp, pt, srcRect, maskColor);
-		SetDirty(bDirty);
+		setDirty(bDirty);
 		return err;
 	}
 
@@ -465,7 +465,7 @@ void CBagButtonObject::setProperty(const CBofString &prop, int val) {
 					_activeDown = true;
 
 				if (GetSprite() && (GetSprite()->getCelCount() == 1)) { // Only given down state
-					SetVisible(_activeDown);
+					setVisible(_activeDown);
 					_active = false;
 				}
 
@@ -479,7 +479,7 @@ void CBagButtonObject::setProperty(const CBofString &prop, int val) {
 
 					cPos.x = _slideRect.left + (val * (_slideRect.width() / (_numPos - 1)));
 					setPosition(cPos);
-					SetDirty(true);
+					setDirty(true);
 				}
 				setState(val);
 				GetSprite()->setCel(val);

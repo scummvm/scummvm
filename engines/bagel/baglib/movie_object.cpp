@@ -38,7 +38,7 @@ namespace Bagel {
 
 CBagMovieObject::CBagMovieObject() {
 	_xObjType = MOVIEOBJ;
-	SetVisible(true);
+	setVisible(true);
 	_xDisplayType = DISP_TYPE::MOVIE;
 	_bFlyThru = false;
 
@@ -425,7 +425,7 @@ PARSE_CODES CBagMovieObject::setInfo(CBagIfstream &istr) {
 					_xDisplayType = DISP_TYPE::ASYNCH_PDAMSG;
 
 					// see if this improves performance any...
-					SetPreload(true);
+					setPreload(true);
 				}
 			}
 

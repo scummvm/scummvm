@@ -44,8 +44,8 @@ CBagCharacterObject::CBagCharacterObject() : CBagObject() {
 	_binBuf = nullptr;
 	_charTransColor = -1;
 	// Default is now the nullptr cursor
-	CBagObject::SetOverCursor(0);
-	SetTimeless(true);
+	CBagObject::setOverCursor(0);
+	setTimeless(true);
 	_startFrame = -1;
 	_endFrame = -1;
 	_playbackSpeed = 1;
@@ -144,7 +144,7 @@ ErrorCode CBagCharacterObject::attach() {
 		_smacker->stop();
 	}
 
-	SetVisible(true);
+	setVisible(true);
 	updatePosition();
 	refreshCurrentFrame();
 
@@ -272,7 +272,7 @@ bool CBagCharacterObject::doAdvance() {
 	// If we got a background bitmap
 	if (_bmpBuf != nullptr) {
 		// If This Panimation is modal, or Panimations are ON, then get next frame.
-		if (IsModal() || !_pAnim || CBagMasterWin::getPanimations()) {
+		if (isModal() || !_pAnim || CBagMasterWin::getPanimations()) {
 			if (_smacker->needsUpdate()) {
 				doAdvanceFl = true;
 
@@ -544,7 +544,7 @@ void CBagCharacterObject::setNumOfLoops(int n) {
 	}
 
 	// If this character is modal run until done looping
-	if (IsModal() && isAttached()) {
+	if (isModal() && isAttached()) {
 		CBagStorageDevWnd *win = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev();
 
 		if (win != nullptr) {

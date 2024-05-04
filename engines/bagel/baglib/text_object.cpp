@@ -40,7 +40,7 @@ CBagTextObject::CBagTextObject() : CBagObject() {
 	_nDX = 80;
 	_nDY = 20;
 	_psText = nullptr;
-	SetOverCursor(1); // Switch to cursor 1, 4 doesn't exist.
+	setOverCursor(1); // Switch to cursor 1, 4 doesn't exist.
 
 	_nPointSize = 16;
 	_nFGColor = CTEXT_COLOR;
@@ -123,7 +123,7 @@ ErrorCode CBagTextObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 			errCode = paintText(pBmp, &r, getText(), mapWindowsPointSize(nPointSize), TEXT_NORMAL, _nFGColor, JUSTIFY_WRAP, nFormat, _nTextFont);
 
 			// This object does not need to be updated now...
-			SetDirty(false);
+			setDirty(false);
 		}
 	}
 
@@ -465,7 +465,7 @@ bool CBagTextObject::runObject() {
 	char szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
 
-	if (_bCaption && IsImmediateRun()) {
+	if (_bCaption && isImmediateRun()) {
 
 		// Re-attach this object to get any change in a variable
 		// (Must be using the VAR token).

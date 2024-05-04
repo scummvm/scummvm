@@ -413,7 +413,7 @@ ErrorCode CBagRPObject::attach() {
 	}
 
 	// Start this object off as invisible (so that we don't receive update events).
-	SetVisible(false);
+	setVisible(false);
 
 	RestoreRPVars();
 
@@ -707,10 +707,10 @@ bool CBagRPObject::AddToMsgQueue(CBagRPObject *pRPObj) {
 	CBagLog *pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
 
 	if (pLogWld) {
-		pRPObj->SetMsgWaiting(true); // mark this guy as waiting
+		pRPObj->setMsgWaiting(true); // mark this guy as waiting
 		pLogWld->activateLocalObject(pRPObj);
 
-		pRPObj->SetVisible(true);     // make sure it gets updated.
+		pRPObj->setVisible(true);     // make sure it gets updated.
 		pRPObj->m_bRPRead = false;    // hasn't been read yet
 		pRPObj->m_bRPReported = true; // been reported though
 		pRPObj->SaveRPVars();         // Update the variable store
@@ -803,7 +803,7 @@ bool CBagRPObject::ActivateRPObject() {
 	SaveRPVars();
 
 	// Make sure this guy is active and ready to get drawn.
-	SetVisible(); // show this guy
+	setVisible(); // show this guy
 	setActive();  // accept mouse downs
 
 	CBagLog *pLogWld;
@@ -858,7 +858,7 @@ bool CBagRPObject::ActivateRPObject() {
 	if (!m_pDescObj->isAttached()) {
 		m_pDescObj->attach();
 	}
-	m_pDescObj->SetVisible(); // Show this guy
+	m_pDescObj->setVisible(); // Show this guy
 
 	return true;
 }
@@ -900,11 +900,11 @@ void CBagRPObject::DeactivateRPObject() {
 	assert(m_pDescObj != nullptr);
 
 	if (m_pDescObj) {
-		m_pDescObj->SetVisible(false);  // Hide this guy
+		m_pDescObj->setVisible(false);  // Hide this guy
 		m_pDescObj->setActive(false);   // Don't take mousedowns
-		m_pDescObj->SetFloating(false); // Don't calculate floating rects
+		m_pDescObj->setFloating(false); // Don't calculate floating rects
 	}
-	SetVisible(false); // Hide this guy
+	setVisible(false); // Hide this guy
 
 	return;
 }
@@ -956,8 +956,8 @@ void CBagRPObject::DeactivateRPReview() {
 
 		// We know this object is attached, but it might not be visible.
 		if (pRPObj->m_pObjectName) {
-			pRPObj->m_pObjectName->SetFloating(false);
-			pRPObj->m_pObjectName->SetVisible(false);
+			pRPObj->m_pObjectName->setFloating(false);
+			pRPObj->m_pObjectName->setVisible(false);
 			pRPObj->m_pObjectName->setActive(false);
 		}
 	}
@@ -1364,8 +1364,8 @@ void CBagRPObject::HideRPReview() {
 
 		// We know this object is attached, but it might not be visible.
 		if (pRPObj->m_pObjectName) {
-			pRPObj->m_pObjectName->SetVisible(false);  // hide this guy
-			pRPObj->m_pObjectName->SetFloating(false); // don't arrange floating pages
+			pRPObj->m_pObjectName->setVisible(false);  // hide this guy
+			pRPObj->m_pObjectName->setFloating(false); // don't arrange floating pages
 			pRPObj->m_pObjectName->setActive(false);   // don't accept mouse downs
 		}
 	}
@@ -1387,7 +1387,7 @@ void CBagRPObject::ShowRPReview() {
 	// then cruise the whole thing.
 	for (int i = 0; i < nCount; i++) {
 		CBagObject *pObj = pLogWld->GetObjectByPos(i);
-		if (pObj && pObj->GetType() == RESPRNTOBJ) {
+		if (pObj && pObj->getType() == RESPRNTOBJ) {
 
 			CBagRPObject *pRPObj = (CBagRPObject *)pObj;
 			// Find out if there are any events worth reporting.
@@ -1400,8 +1400,8 @@ void CBagRPObject::ShowRPReview() {
 					if (bIsAttached == false) {
 						pLogWld->activateLocalObject(pRPObj->m_pObjectName);
 					}
-					pRPObj->m_pObjectName->SetVisible();
-					pRPObj->m_pObjectName->SetFloating();
+					pRPObj->m_pObjectName->setVisible();
+					pRPObj->m_pObjectName->setFloating();
 					pRPObj->m_pObjectName->setActive();
 
 					// If the time on this object has not yet been set, then force it to
@@ -1553,9 +1553,9 @@ bool CBagRPObject::initialize() {
 		// mouse down events
 		m_pObjectName->setRPObject(this);
 
-		m_pObjectName->SetVisible(false);
+		m_pObjectName->setVisible(false);
 		m_pObjectName->setActive(false);
-		m_pObjectName->SetFloating(false);
+		m_pObjectName->setFloating(false);
 	}
 
 	return true;
@@ -1582,7 +1582,7 @@ void CBagRPObject::SynchronizeRPObjects(bool bLogFrontmost) {
 	// then cruise the whole thing.
 	for (int i = 0; i < nCount; i++) {
 		CBagObject *pObj = pLogWld->GetObjectByPos(i);
-		if (pObj->GetType() == RESPRNTOBJ) {
+		if (pObj->getType() == RESPRNTOBJ) {
 			CBagRPObject *pRPObj = (CBagRPObject *)pObj;
 			pRPObj->RestoreRPVars();
 

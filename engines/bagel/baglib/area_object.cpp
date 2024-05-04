@@ -33,8 +33,8 @@ CBofSize CBagAreaObject::getSize() const {
 
 CBagAreaObject::CBagAreaObject() {
 	_xObjType = AREAOBJ;
-	SetVisible(false);
-	SetOverCursor(4);
+	setVisible(false);
+	setOverCursor(4);
 }
 
 CBagAreaObject::~CBagAreaObject() {

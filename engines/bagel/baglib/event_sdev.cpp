@@ -54,15 +54,15 @@ ErrorCode CBagEventSDev::evaluateExpressions() {
 		if (posObj != nullptr) {
 			// Find the local Expression objects
 			// This code says... only evaluate if we're in an if statement, this must be wrong.
-			if (posObj->GetExpression() == nullptr || posObj->GetExpression()->evaluate(posObj->IsNegative())) {
+			if (posObj->getExpression() == nullptr || posObj->getExpression()->evaluate(posObj->isNegative())) {
 				if (!posObj->isAttached()) {
 					posObj->setActive();
 					posObj->attach();
 				}
-				if (posObj->IsImmediateRun())
+				if (posObj->isImmediateRun())
 					posObj->runObject();
 
-			} else if (posObj->isAttached() && (posObj->GetType() != SOUNDOBJ || !((CBagSoundObject *)posObj)->isPlaying())) {
+			} else if (posObj->isAttached() && (posObj->getType() != SOUNDOBJ || !((CBagSoundObject *)posObj)->isPlaying())) {
 				posObj->setActive(false);
 				posObj->detach();
 			}
@@ -86,14 +86,14 @@ ErrorCode CBagTurnEventSDev::evaluateExpressions() {
 		if (posObj != nullptr) {
 			// Find the local Expression objects
 			// This code says... only evaluate if we're in an if statement, this must be wrong.
-			if (posObj->GetExpression() == nullptr || posObj->GetExpression()->evaluate(posObj->IsNegative())) {
+			if (posObj->getExpression() == nullptr || posObj->getExpression()->evaluate(posObj->isNegative())) {
 				if (!posObj->isAttached()) {
 					posObj->setActive();
 					posObj->attach();
 				}
-				if (posObj->IsImmediateRun())
+				if (posObj->isImmediateRun())
 					posObj->runObject();
-			} else if (posObj->isAttached() && (posObj->GetType() != SOUNDOBJ || !((CBagSoundObject *)posObj)->isPlaying())) {
+			} else if (posObj->isAttached() && (posObj->getType() != SOUNDOBJ || !((CBagSoundObject *)posObj)->isPlaying())) {
 				posObj->setActive(false);
 				posObj->detach();
 			}

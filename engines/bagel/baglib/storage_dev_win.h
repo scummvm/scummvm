@@ -288,7 +288,7 @@ public:
 
 	ErrorCode PaintStorageDevice(CBofWindow *pWnd, CBofBitmap *pBmp = nullptr, CBofRect * = nullptr);
 
-	virtual void HandleError(ErrorCode errCode);
+	virtual void handleError(ErrorCode errCode);
 
 	// The associated window describes which window to get screen information from and
 	// where to paint objects and most importantly what info to send to the callbacks
@@ -328,7 +328,7 @@ public:
 	virtual ErrorCode loadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName, bool bAttach = true);
 
 	virtual void onMouseMove(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
-	virtual ErrorCode OnMouseOver(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
+	virtual ErrorCode onMouseOver(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	virtual void onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	virtual void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 
@@ -379,7 +379,7 @@ public:
 	}
 
 	// Provide a method to get at the above vars
-	static void SetDirtyAllObjects(bool b) {
+	static void setDirtyAllObjects(bool b) {
 		m_bDirtyAllObjects = b;
 	}
 	static bool GetDirtyAllObjects() {

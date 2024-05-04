@@ -30,8 +30,8 @@ CBagExpressionObject::CBagExpressionObject() : CBagObject() {
 	_xObjType = EXPRESSOBJ;
 	_expression = nullptr;
 	setConditional(false);
-	SetVisible(false);
-	SetTimeless(true);
+	setVisible(false);
+	setTimeless(true);
 }
 
 CBagExpressionObject::~CBagExpressionObject() {

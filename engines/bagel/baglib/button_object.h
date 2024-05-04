@@ -63,7 +63,7 @@ private:
 	bool _active;
 
 	CBofPoint _midPoint;
-	BAGFUNCPTR _callbackFct;
+	BagFuncPtr _callbackFct;
 	void *_callbackInfo; // Data to be passed to the function
 
 public:
@@ -85,12 +85,12 @@ public:
 	bool runObject() override;
 
 	// Callback function functionality - probably can be phased out
-	void setCallBack(BAGFUNCPTR func, void *funcInfo) {
+	void setCallBack(BagFuncPtr func, void *funcInfo) {
 		_callbackFct = func;
 		_callbackInfo = funcInfo;
 	}
 
-	BAGFUNCPTR getCallBack() override {
+	BagFuncPtr getCallBack() override {
 		return _callbackFct;
 	}
 
@@ -100,7 +100,7 @@ public:
 
 	bool runCallBack() override {
 		if (_callbackFct) {
-			_callbackFct((int)GetRefId(), _callbackInfo);
+			_callbackFct((int)getRefId(), _callbackInfo);
 			return true;
 		}
 

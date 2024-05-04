@@ -217,7 +217,7 @@ ErrorCode CBagLog::releaseMsg() {
 		// otherwise, we get superfluous blinking of the PDA light.
 		CBofString  devName = GetName();
 		if (devName == "LOG_WLD") {
-			curObj->SetMsgWaiting(true);
+			curObj->setMsgWaiting(true);
 		}
 	}
 
@@ -241,7 +241,7 @@ CBagObject *CBagLog::onNewUserObject(const CBofString &initStr) {
 		retLogObj->setInitInfo(initStr);
 		retLogObj->setPointSize(pointSize);
 		retLogObj->setColor(7);
-		retLogObj->SetFloating();
+		retLogObj->setFloating();
 	} else if (initStr == "SUS") {
 		retLogObj = (CBagTextObject *)new CBagLogSuspect(sdevRect.width());
 		retLogObj->setInitInfo(initStr);
@@ -253,7 +253,7 @@ CBagObject *CBagLog::onNewUserObject(const CBofString &initStr) {
 		}
 		retLogObj->setPointSize(pointSize);
 		retLogObj->setColor(7);
-		retLogObj->SetFloating();
+		retLogObj->setFloating();
 	} else if (initStr == "CLU") {
 		retLogObj = (CBagTextObject *)new CBagLogClue(initStr, sdevRect.width(), pointSize);
 	} else if (initStr == "RES") {
@@ -261,7 +261,7 @@ CBagObject *CBagLog::onNewUserObject(const CBofString &initStr) {
 		retLogObj->setInitInfo(initStr);
 		retLogObj->setPointSize(pointSize);
 		retLogObj->setColor(7);
-		retLogObj->SetFloating();
+		retLogObj->setFloating();
 	}
 
 	return retLogObj;
@@ -290,8 +290,8 @@ ErrorCode CBagLog::activateLocalObject(CBagObject *bagObj) {
 	if (bagObj == nullptr)
 		return errCode;
 
-	if (bagObj->IsMsgWaiting() ||
-	        (bagObj->GetType() == USEROBJ && (bagObj->getInitInfo() != nullptr) && (*bagObj->getInitInfo() == "MSG"))) {
+	if (bagObj->isMsgWaiting() ||
+	        (bagObj->getType() == USEROBJ && (bagObj->getInitInfo() != nullptr) && (*bagObj->getInitInfo() == "MSG"))) {
 		_queuedMsgList->addToTail(bagObj);
 
 		// Since zoomed pda doesn't  have a message light, only set this thing
@@ -299,7 +299,7 @@ ErrorCode CBagLog::activateLocalObject(CBagObject *bagObj) {
 		// blinking of the PDA light.
 		CBofString  sdevName = GetName();
 		if (sdevName == "LOG_WLD") {
-			bagObj->SetMsgWaiting(true);
+			bagObj->setMsgWaiting(true);
 		}
 
 		CBagStorageDev *pda = SDEV_MANAGER->GetStorageDevice("BPDA_WLD");
@@ -315,7 +315,7 @@ ErrorCode CBagLog::activateLocalObject(CBagObject *bagObj) {
 
 				// Make sure this guy always gets updated regardless of its
 				// dirty bit.
-				msgLight->SetAlwaysUpdate(true);
+				msgLight->setAlwaysUpdate(true);
 				msgLight->setAnimated(true);
 			}
 		}
@@ -353,7 +353,7 @@ ErrorCode CBagLog::playMsgQueue() {
 			if (pMovie) {
 				if (pMovie->isAttached() == false) {
 					pMovie->attach();
-					pMovie->SetVisible();
+					pMovie->setVisible();
 				}
 				pMovie->runObject();
 			}
@@ -372,7 +372,7 @@ ErrorCode CBagLog::playMsgQueue() {
 				if (objMenu)
 					objMenu->trackPopupMenu(0, 0, 0, CBofApp::getApp()->getMainWindow(), nullptr, &r);
 				curObj->runObject();
-				curObj->SetMsgWaiting(false);
+				curObj->setMsgWaiting(false);
 
 				// Mark this guy as played...
 				((CBagLogMsg *)curObj)->setMsgPlayed(true);
@@ -770,7 +770,7 @@ ErrorCode CBagLogSuspect::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRec
 CBagEnergyDetectorObject::CBagEnergyDetectorObject() {
 	setFont(FONT_MONO);				// Correct for spacing
 	setColor(7);					// Make it white
-	SetFloating();					// Is definitely floating
+	setFloating();					// Is definitely floating
 	setHighlight();					// Is highlight
 	setTitle();						// As title
 	_textInitializedFl = false;     // Not initialized yet
@@ -965,7 +965,7 @@ CBagLogClue::CBagLogClue(const CBofString &initStr, int sdevWidth, int pointSize
 	setInitInfo(initStr);
 	setPointSize(pointSize);
 	setColor(7);
-	SetFloating();
+	setFloating();
 }
 
 ErrorCode CBagLogClue::attach() {

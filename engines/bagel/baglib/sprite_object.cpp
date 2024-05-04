@@ -33,10 +33,10 @@ CBagSpriteObject::CBagSpriteObject() : CBagObject() {
 	m_nWieldCursor = -1;
 
 	// Transparent by default
-	SetTransparent();
-	SetOverCursor(1);
+	setTransparent();
+	setOverCursor(1);
 	setAnimated();
-	SetTimeless(true);
+	setTimeless(true);
 
 	// implement sprite framerates
 	setFrameRate(0);
@@ -55,7 +55,7 @@ ErrorCode CBagSpriteObject::attach() {
 
 		if ((m_xSprite = new CBofSprite()) != nullptr) {
 			if (m_xSprite->loadSprite(getFileName(), getCels()) != false && (m_xSprite->width() != 0) && (m_xSprite->height() != 0)) {
-				if (IsTransparent()) {
+				if (isTransparent()) {
 					int nMaskColor = CBagel::getBagApp()->getChromaColor();
 
 					m_xSprite->setMaskColor(nMaskColor);
@@ -67,7 +67,7 @@ ErrorCode CBagSpriteObject::attach() {
 				CBofPoint p = CBagObject::getPosition();
 
 				if (p.x == -1 && p.y == -1) // Fixed to allow for [0,0] positioning
-					SetFloating();
+					setFloating();
 				else
 					m_xSprite->setPosition(p.x, p.y);
 
@@ -230,7 +230,7 @@ ErrorCode CBagSpriteObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*
 		b = m_xSprite->paintSprite(pBmp, pt.x, pt.y);
 
 		// Don't have to redraw this item...
-		// SetDirty (false);
+		// setDirty (false);
 
 		if (!b)
 			return ERR_UNKNOWN;
@@ -243,7 +243,7 @@ ErrorCode CBagSpriteObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, i
 		bool b = m_xSprite->paintSprite(pWnd, pt.x, pt.y);
 
 		// don't have to redraw this item...
-		// SetDirty (false);
+		// setDirty (false);
 
 		if (!b)
 			return ERR_UNKNOWN;
@@ -253,7 +253,7 @@ ErrorCode CBagSpriteObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, i
 
 bool CBagSpriteObject::isInside(const CBofPoint &xPoint) {
 	if (m_xSprite && getRect().ptInRect(xPoint)) {
-		if (IsTransparent()) {
+		if (isTransparent()) {
 			int x = xPoint.x - getRect().left;
 			int y = xPoint.y - getRect().top;
 			int c = m_xSprite->readPixel(x, y);

@@ -142,8 +142,8 @@ ErrorCode CBagPDA::attach() {
 		if ((pSDev = SDEV_MANAGER->GetStorageDevice(MOOWLD)) != nullptr) {
 			_mooWnd = (CBagStorageDevBmp *)pSDev;
 			_mooWnd->SetAssociateWnd(GetAssociateWnd());
-			_mooWnd->SetTransparent(false);
-			_mooWnd->SetVisible(false);
+			_mooWnd->setTransparent(false);
+			_mooWnd->setVisible(false);
 			rc = _mooWnd->attach();
 		}
 	}
@@ -153,8 +153,8 @@ ErrorCode CBagPDA::attach() {
 			_invWnd = (CBagStorageDevBmp *)pSDev;
 			_invWnd->SetAssociateWnd(GetAssociateWnd());
 
-			_invWnd->SetTransparent(false);
-			_invWnd->SetVisible(false);
+			_invWnd->setTransparent(false);
+			_invWnd->setVisible(false);
 			rc = _invWnd->attach();
 		} else {
 			bofMessageBox("No PDA INVENTORY found", __FILE__);
@@ -167,8 +167,8 @@ ErrorCode CBagPDA::attach() {
 			_mapWnd = (CBagStorageDevBmp *)pSDev;
 			_mapWnd->SetAssociateWnd(GetAssociateWnd());
 
-			_mapWnd->SetTransparent(false);
-			_mapWnd->SetVisible(false);
+			_mapWnd->setTransparent(false);
+			_mapWnd->setVisible(false);
 			rc = _mapWnd->attach();
 		} else {
 			bofMessageBox("No PDA MAP found", __FILE__);
@@ -180,8 +180,8 @@ ErrorCode CBagPDA::attach() {
 			_logWnd = (CBagStorageDevBmp *)pSDev;
 			_logWnd->SetAssociateWnd(GetAssociateWnd());
 
-			_logWnd->SetTransparent(false);
-			_logWnd->SetVisible(false);
+			_logWnd->setTransparent(false);
+			_logWnd->setVisible(false);
 			rc = _logWnd->attach();
 		}
 	}
@@ -318,7 +318,7 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 		} else if (!isActivated() && (SBBasePda::_pdaMode != MAPMODE)) {
 			// If it is not activated, then don't bother redrawing it or the objects
 			// inside of it.
-			SetDirty(false);
+			setDirty(false);
 		}
 	}
 
@@ -351,7 +351,7 @@ void CBagPDA::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 			((CBagPanWindow *)pMainWin)->SetPreFilterPan(true);
 
 			activate();
-			SetDirty(true);
+			setDirty(true);
 			attachActiveObjects();  // Forces PDA to be reevaluated.
 		}
 		return;
@@ -371,7 +371,7 @@ void CBagPDA::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 				((CBagPanWindow *)pMainWin)->SetPreFilterPan(true);
 
 				activate();
-				SetDirty(true);
+				setDirty(true);
 			}
 			return;
 		}
@@ -386,7 +386,7 @@ void CBagPDA::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 			// Go through all the buttons and see if we hit any of them.
 			for (int i = 0; i < nCount; i++) {
 				CBagObject *pObj = pList->getNodeItem(i);
-				if (pObj->GetType() == BUTTONOBJ && pObj->getRect().ptInRect(RealPt)) {
+				if (pObj->getType() == BUTTONOBJ && pObj->getRect().ptInRect(RealPt)) {
 					bButtonHit = true;
 					break;
 				}
@@ -482,7 +482,7 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 				pZoomRegular->setActive(false);
 
 				pZoomFlash->setAnimated(true);
-				pZoomFlash->SetAlwaysUpdate(true);
+				pZoomFlash->setAlwaysUpdate(true);
 
 				m_bFlashing = true;
 			}
@@ -497,7 +497,7 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 			pZoomRegular->setActive(true);
 
 			pZoomFlash->setAnimated(false);
-			pZoomFlash->SetAlwaysUpdate(false);
+			pZoomFlash->setAlwaysUpdate(false);
 
 			m_bFlashing = false;
 		}

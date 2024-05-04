@@ -33,8 +33,8 @@ CBagLinkObject::CBagLinkObject() {
 	_destLocation = CBofPoint(0, 0);
 	_srcLocation = CBofPoint(-1, -1);
 	_fade = 0;
-	SetVisible(false);
-	CBagObject::SetOverCursor(5);
+	setVisible(false);
+	CBagObject::setOverCursor(5);
 }
 
 CBagLinkObject::~CBagLinkObject() {
@@ -95,7 +95,7 @@ PARSE_CODES CBagLinkObject::setInfo(CBagIfstream &istr) {
 				GetAlphaNumFromStream(istr, curString);
 				if (!curString.find("CLOSEUP")) {
 					_linkType = CLOSEUP;
-					SetOverCursor(2);
+					setOverCursor(2);
 					objectUpdatedFl = true;
 				} else if (!curString.find("LINK")) {
 					_linkType = LINK;

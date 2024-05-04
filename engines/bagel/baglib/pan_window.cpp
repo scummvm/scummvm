@@ -295,13 +295,13 @@ ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 			CBofRect xBmpRect = pObj->getRect();
 
 			// If it is a panorama we have to check for exceeded bounds
-			if (!pObj->IsForeGround() && (nW > 1024) && (viewRect.right > nW) && (xBmpRect.left < (nW / 2)))
+			if (!pObj->isForeGround() && (nW > 1024) && (viewRect.right > nW) && (xBmpRect.left < (nW / 2)))
 				xBmpRect.offsetRect(nW, 0);
 
 			CBofRect xIntrRect;
-			if (xIntrRect.intersectRect(&viewRect, &xBmpRect) || pObj->IsForeGround() || pObj->IsModal()) {
+			if (xIntrRect.intersectRect(&viewRect, &xBmpRect) || pObj->isForeGround() || pObj->isModal()) {
 				CBofPoint pt = xBmpRect.topLeft();
-				if (!pObj->IsForeGround()) {
+				if (!pObj->isForeGround()) {
 					pt = xBmpRect.topLeft() - viewRect.topLeft();
 				}
 
@@ -309,8 +309,8 @@ ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 				xIntrRect.offsetRect(-xBmpRect.left, -xBmpRect.top);
 
 				// Only update dirty objects...
-				if (pObj->IsDirty() || pObj->IsAlwaysUpdate()) {
-					if (!(pObj->GetType() == TEXTOBJ && ((CBagTextObject *)pObj)->isCaption() && pObj->IsImmediateRun())) {
+				if (pObj->isDirty() || pObj->isAlwaysUpdate()) {
+					if (!(pObj->getType() == TEXTOBJ && ((CBagTextObject *)pObj)->isCaption() && pObj->isImmediateRun())) {
 						pObj->update(pBmp, pt, &xIntrRect);
 
 						// If we're in a closeup and we have a character animation
@@ -318,7 +318,7 @@ ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 						CBagCharacterObject *pCharObj = (CBagCharacterObject *)pObj;
 
 						// Only in closeups
-						if (!m_pSlideBitmap->IsPan() && pObj->GetType() == CHAROBJ) {
+						if (!m_pSlideBitmap->IsPan() && pObj->getType() == CHAROBJ) {
 							// Handle non-modal movies also...
 							if (pCharObj->getNumberOfLoops() == 1) {
 								SetPreFilterPan(true);
@@ -338,7 +338,7 @@ ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 								SetPreFilterPan(true);
 
 								if (!b) {
-									SetDirtyAllObjects(false);
+									setDirtyAllObjects(false);
 								}
 							}
 						}
@@ -351,7 +351,7 @@ ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 				}
 
 				if (pObj->getRect().ptInRect(xCursorLocation)) {
-					pObj->OnMouseOver(0, xCursorLocation, this);
+					pObj->onMouseOver(0, xCursorLocation, this);
 					nMouseOverObj = i;
 				}
 			}  // if on screen
@@ -384,7 +384,7 @@ CBagObject *CBagPanWindow::GetFGObjects(const CBofString &sObjName) {
 
 	for (int i = 0; i < nListLen; ++i) {
 		CBagObject *pObj = (*m_pFGObjectList)[i];
-		if ((pObj->GetRefName().find(sObjName)) != -1)
+		if ((pObj->getRefName().find(sObjName)) != -1)
 			return pObj;
 	}
 
@@ -419,7 +419,7 @@ ErrorCode CBagPanWindow::onCursorUpdate(int nCurrObj) {
 	CBagObject *pObj;
 
 	if ((nCurrObj >= 0) && ((pObj = GetObjectByPos(nCurrObj)) != nullptr)) {
-		CBagMasterWin::setActiveCursor(pObj->GetOverCursor());
+		CBagMasterWin::setActiveCursor(pObj->getOverCursor());
 
 	} else if (CBagWield::GetWieldCursor() >= 0) {
 		CBagMasterWin::setActiveCursor(CBagWield::GetWieldCursor());
@@ -539,8 +539,8 @@ void CBagPanWindow::onMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 			int nCursorID = -1;
 
 			// the logz case is handled by onmousemove in zoompda
-			if (pOverObj->GetRefName().find("BPDA_WLD") != -1) {
-				CBagPDA *pPda = (CBagPDA *)SDEV_MANAGER->GetStorageDevice(pOverObj->GetRefName());
+			if (pOverObj->getRefName().find("BPDA_WLD") != -1) {
+				CBagPDA *pPda = (CBagPDA *)SDEV_MANAGER->GetStorageDevice(pOverObj->getRefName());
 				if (pPda != nullptr) {
 					CBofRect cRect = pOverObj->getRect();
 					nCursorID = pPda->getProperCursor(xPoint, cRect);
@@ -549,8 +549,8 @@ void CBagPanWindow::onMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 
 			// Still no luck, if we're wielding, use that cursor.
 			if (nCursorID == -1) {
-				nCursorID = pOverObj->GetOverCursor();
-				if (CBagWield::GetWieldCursor() >= 0 && ((pOverObj->GetRefName().find("BWIELD_WLD") != -1) || (pOverObj->GetRefName().find("THUD_WLD") != -1))) {
+				nCursorID = pOverObj->getOverCursor();
+				if (CBagWield::GetWieldCursor() >= 0 && ((pOverObj->getRefName().find("BWIELD_WLD") != -1) || (pOverObj->getRefName().find("THUD_WLD") != -1))) {
 					nCursorID = CBagWield::GetWieldCursor();
 				}
 			}
@@ -586,7 +586,7 @@ void CBagPanWindow::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 	MOUSE_ACTIVITY  nMA = GetLActivity();
 	CBagObject *pActObj = GetLActiveObject();
 
-	if (nMA && pActObj && pActObj->IsMovable()) {
+	if (nMA && pActObj && pActObj->isMovable()) {
 		m_bDraggingObject = true;
 		m_bDraggingStart = pActObj->getPosition();
 		m_pFGObjectList->addToTail(pActObj);
@@ -598,7 +598,7 @@ void CBagPanWindow::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	CBagObject *pActObj = GetLActiveObject();
 
 	if ((pActObj != nullptr) && (nMA == kMouseDRAGGING) &&
-			(pActObj->GetType() == BUTTONOBJ) &&
+			(pActObj->getType() == BUTTONOBJ) &&
 			(((CBagButtonObject *)pActObj)->getButtonType() == CBagButtonObject::BTN_SLIDER)) {
 		pActObj->onLButtonUp(nFlags, xPoint, this);
 

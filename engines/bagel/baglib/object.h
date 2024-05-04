@@ -33,9 +33,9 @@
 namespace Bagel {
 
 class CBagObject;
-typedef void *(*BAGFUNCPTR)(int, void *);
+typedef void *(*BagFuncPtr)(int, void *);
 
-enum BAG_OBJECT_TYPE {
+enum BagObjectType {
 	BASEOBJ = 0x0000,
 	BMPOBJ = BOFBMPOBJ,
 	SPRITEOBJ = BOFSPRITEOBJ,
@@ -78,56 +78,56 @@ enum BAG_OBJECT_PROPERTIES {
 class CBagMenu;
 class CBagStorageDev;
 
-CBofString getStringTypeOfObject(BAG_OBJECT_TYPE n);
+CBofString getStringTypeOfObject(BagObjectType n);
 
 /**
  * CBofBagObject is an object that can be place within the slide window.
  */
 class CBagObject : public CBagParseObject, public CBofObject, public CBofError {
 private:
-	CBofString m_sFileName;         // File name contain object look/feel data
-	CBofString *m_psName = nullptr; // Name of this object, needed by movable objects only, it equals file name unless specified.
-	CBagMenu *m_pMenu = nullptr;    // Menu for the object
-	CBagExpression *m_pEvalExpr = nullptr;  // Pointer to expression to be evaluated by
+	CBofString _sFileName;         // File name contain object look/feel data
+	CBofString *_psName = nullptr; // Name of this object, needed by movable objects only, it equals file name unless specified.
+	CBagMenu *_pMenu = nullptr;    // Menu for the object
+	CBagExpression *_pEvalExpr = nullptr;  // Pointer to expression to be evaluated by
 	CBofString _emptyString;
 
-	int16 m_nState = 0;         // Current state of the object
-	uint16 m_nId = 0;           // Ref Id for an object
+	int16 _nState = 0;         // Current state of the object
+	uint16 _nId = 0;           // Ref Id for an object
 
 protected:
 	uint16 _xObjType = AREAOBJ;
 
 private:
-	uint16 m_nProperties = 0;   // Properties of object
+	uint16 _nProperties = 0;   // Properties of object
 
-	int16 m_nX = 0;             // Replaces m_xPosition
-	int16 m_nY = 0;
+	int16 _nX = 0;             // Replaces _xPosition
+	int16 _nY = 0;
 
-	byte m_nOverCursor = 0;    // Ref Id for the objects over cursor
-	byte m_bDirty : 1;         // Object needs redrawing or not?
-	byte m_bMsgWaiting : 1;    // Event needing to be played?
-	byte m_bAlwaysUpdate : 1;  // For message light
-	byte m_bNoMenu : 1;        // Used by AS NOMENU
+	byte _nOverCursor = 0;    // Ref Id for the objects over cursor
+	byte _bDirty : 1;         // Object needs redrawing or not?
+	byte _bMsgWaiting : 1;    // Event needing to be played?
+	byte _bAlwaysUpdate : 1;  // For message light
+	byte _bNoMenu : 1;        // Used by AS NOMENU
 
 protected:
-	byte m_bInteractive = 0;
+	byte _bInteractive = 0;
 
 	// Object property functionality
-	bool IsProperty(BAG_OBJECT_PROPERTIES xProp) {
-		return m_nProperties & xProp;
+	bool isProperty(BAG_OBJECT_PROPERTIES xProp) {
+		return _nProperties & xProp;
 	}
 
-	void SetProperty(BAG_OBJECT_PROPERTIES xProp, bool bVal);
+	void setProperty(BAG_OBJECT_PROPERTIES xProp, bool bVal);
 
 public:
 	CBagObject();
 	virtual ~CBagObject();
 
-	bool IsInteractive() {
-		return m_bInteractive;
+	bool isInteractive() {
+		return _bInteractive;
 	}
-	void SetInteractive(bool b) {
-		m_bInteractive = (byte)b;
+	void setInteractive(bool b) {
+		_bInteractive = (byte)b;
 	}
 
 	// Callback function functionality - probably can be phased out
@@ -135,28 +135,28 @@ public:
 		return false;
 	}
 
-	virtual BAGFUNCPTR getCallBack() {
+	virtual BagFuncPtr getCallBack() {
 		return nullptr;
 	}
 
 	// Run Object is called when there is no callback and the item was selected
 	virtual bool runObject();
 
-	void SetExpression(CBagExpression *pExpr) {
-		m_pEvalExpr = pExpr;
+	void setExpression(CBagExpression *pExpr) {
+		_pEvalExpr = pExpr;
 	}
-	CBagExpression *GetExpression() const {
-		return m_pEvalExpr;
+	CBagExpression *getExpression() const {
+		return _pEvalExpr;
 	}
 
 	// Return true if the Object had members that are properly initialized/de-initialized
 	virtual ErrorCode attach();
 	virtual ErrorCode detach();
 
-	BAG_OBJECT_TYPE GetType() {
-		return (BAG_OBJECT_TYPE)_xObjType;
+	BagObjectType getType() {
+		return (BagObjectType)_xObjType;
 	}
-	void SetType(BAG_OBJECT_TYPE nType) {
+	void setType(BagObjectType nType) {
 		_xObjType = (uint16)nType;
 	}
 
@@ -166,126 +166,126 @@ public:
 	}
 
 	// Object can be moved within a sceene
-	bool IsMovable() {
-		return IsProperty(MOVABLE);
+	bool isMovable() {
+		return isProperty(MOVABLE);
 	}
-	void SetMovable(bool b = true) {
-		SetProperty(MOVABLE, b);
+	void setMovable(bool b = true) {
+		setProperty(MOVABLE, b);
 	}
 	// Object can be stretched within a sceene
-	bool IsStretchable() {
-		return IsProperty(STRETCH);
+	bool isStretchable() {
+		return isProperty(STRETCH);
 	}
-	void SetStretchable(bool b = true) {
-		SetProperty(STRETCH, b);
+	void setStretchable(bool b = true) {
+		setProperty(STRETCH, b);
 	}
 	// Object has exclusive updates to a sceene
-	bool IsModal() {
-		return IsProperty(MODAL);
+	bool isModal() {
+		return isProperty(MODAL);
 	}
-	void SetModal(bool b = true) {
-		SetProperty(MODAL, b);
+	void setModal(bool b = true) {
+		setProperty(MODAL, b);
 	}
 	virtual bool isModalDone() {
 		return true;
 	}
 	//  Is object visible within sceene
 	bool isVisible() {
-		return IsProperty(VISIBLE);
+		return isProperty(VISIBLE);
 	}
-	void SetVisible(bool b = true) {
-		SetProperty(VISIBLE, b);
+	void setVisible(bool b = true) {
+		setProperty(VISIBLE, b);
 	}
 	// Sould object be hightlighed when the mouse is over
 	bool isHighlight() {
-		return IsProperty(HIGHLIGHT);
+		return isProperty(HIGHLIGHT);
 	}
 	void setHighlight(bool b = true) {
-		SetProperty(HIGHLIGHT, b);
+		setProperty(HIGHLIGHT, b);
 	}
 	// Is the object active in this world
 	bool isActive() {
-		return IsProperty(ACTIVE);
+		return isProperty(ACTIVE);
 	}
 	void setActive(bool b = true) {
-		SetProperty(ACTIVE, b);
+		setProperty(ACTIVE, b);
 	}
 	// Is the object has a trasparent bkground
-	bool IsTransparent() {
-		return IsProperty(TRANSPAR);
+	bool isTransparent() {
+		return isProperty(TRANSPAR);
 	}
-	void SetTransparent(bool b = true) {
-		SetProperty(TRANSPAR, b);
+	void setTransparent(bool b = true) {
+		setProperty(TRANSPAR, b);
 	}
 	// Should the object be hidden when clicked on
-	bool IsHideOnClick() {
-		return IsProperty(HIDEONCLK);
+	bool isHideOnClick() {
+		return isProperty(HIDEONCLK);
 	}
-	void SetHideOnClick(bool b = true) {
-		SetProperty(HIDEONCLK, b);
+	void setHideOnClick(bool b = true) {
+		setProperty(HIDEONCLK, b);
 	}
 	// Should the object run and then be destroyed after the attach
-	bool IsImmediateRun() {
-		return IsProperty(IMRUN);
+	bool isImmediateRun() {
+		return isProperty(IMRUN);
 	}
-	void SetImmediateRun(bool b = true) {
-		SetProperty(IMRUN, b);
+	void setImmediateRun(bool b = true) {
+		setProperty(IMRUN, b);
 	}
 	// Is the object currently local to the object
-	bool IsLocal() {
-		return IsProperty(LOCAL);
+	bool isLocal() {
+		return isProperty(LOCAL);
 	}
-	void SetLocal(bool b = true) {
-		SetProperty(LOCAL, b);
+	void setLocal(bool b = true) {
+		setProperty(LOCAL, b);
 	}
 	// Is the object expression negative
-	bool IsNegative() {
-		return IsProperty(NEGATIVE);
+	bool isNegative() {
+		return isProperty(NEGATIVE);
 	}
-	void SetNegative(bool b = true) {
-		SetProperty(NEGATIVE, b);
+	void setNegative(bool b = true) {
+		setProperty(NEGATIVE, b);
 	}
 	// Should the object be constantly updated, even when not on screen
-	bool IsConstantUpdate() {
-		return IsProperty(CONUPDATE);
+	bool isConstantUpdate() {
+		return isProperty(CONUPDATE);
 	}
-	void SetConstantUpdate(bool b = true) {
-		SetProperty(CONUPDATE, b);
+	void setConstantUpdate(bool b = true) {
+		setProperty(CONUPDATE, b);
 	}
 	// Does this objects action take up time
-	bool IsTimeless() {
-		return IsProperty(TIMELESS);
+	bool isTimeless() {
+		return isProperty(TIMELESS);
 	}
-	void SetTimeless(bool b = true) {
-		SetProperty(TIMELESS, b);
-	}
-	// Does this objects have a set position/or should the sdev provide one when it is attached
-	bool IsFloating() {
-		return IsProperty(FLOATING);
-	}
-	void SetFloating(bool b = true) {
-		SetProperty(FLOATING, b);
+	void setTimeless(bool b = true) {
+		setProperty(TIMELESS, b);
 	}
 	// Does this objects have a set position/or should the sdev provide one when it is attached
-	bool IsPreload() {
-		return IsProperty(PRELOAD);
+	bool isFloating() {
+		return isProperty(FLOATING);
 	}
-	void SetPreload(bool b = true) {
-		SetProperty(PRELOAD, b);
+	void setFloating(bool b = true) {
+		setProperty(FLOATING, b);
 	}
 	// Does this objects have a set position/or should the sdev provide one when it is attached
-	bool IsForeGround() {
-		return IsProperty(FOREGROUND);
+	bool isPreload() {
+		return isProperty(PRELOAD);
 	}
-	void SetForeGround(bool b = true) {
-		SetProperty(FOREGROUND, b);
+	void setPreload(bool b = true) {
+		setProperty(PRELOAD, b);
+	}
+	// Does this objects have a set position/or should the sdev provide one when it is attached
+	bool isForeGround() {
+		return isProperty(FOREGROUND);
+	}
+	void setForeGround(bool b = true) {
+		setProperty(FOREGROUND, b);
 	}
 
-	int GetProperties() {
-		return m_nProperties;
+	int getProperties() {
+		return _nProperties;
 	}
-	void SetProperties(int nProperties) {
-		m_nProperties = (uint16)nProperties;
+	void setProperties(int nProperties) {
+		_nProperties = (uint16)nProperties;
 	}
 
 	// Init variables
@@ -297,82 +297,81 @@ public:
 	virtual int getProperty(const CBofString &sProp);
 	virtual void setProperty(const CBofString &, int nVal);
 
-	bool IsDirty() {
-		return m_bDirty != 0;
+	bool isDirty() {
+		return _bDirty != 0;
 	}
-	void SetDirty(bool b = true) {
-		m_bDirty = (byte)b;
+	void setDirty(bool b = true) {
+		_bDirty = (byte)b;
 	}
 
 	// If this thing is getting purged but is awaiting playback, then mark it as such.
-	bool IsMsgWaiting() {
-		return m_bMsgWaiting != 0;
+	bool isMsgWaiting() {
+		return _bMsgWaiting != 0;
 	}
-	void SetMsgWaiting(bool b = true) {
-		m_bMsgWaiting = (byte)b;
-	}
-
-	bool IsAlwaysUpdate() {
-		return m_bAlwaysUpdate != 0;
-	}
-	void SetAlwaysUpdate(bool b = true) {
-		m_bAlwaysUpdate = (byte)b;
+	void setMsgWaiting(bool b = true) {
+		_bMsgWaiting = (byte)b;
 	}
 
-	bool IsNoMenu() {
-		return m_bNoMenu;
+	bool isAlwaysUpdate() {
+		return _bAlwaysUpdate != 0;
 	}
-	void SetNoMenu(bool b = true) {
-		m_bNoMenu = (byte)b;
+	void setAlwaysUpdate(bool b = true) {
+		_bAlwaysUpdate = (byte)b;
+	}
+
+	bool isNoMenu() {
+		return _bNoMenu;
+	}
+	void setNoMenu(bool b = true) {
+		_bNoMenu = (byte)b;
 	}
 
 	virtual CBofPoint getPosition() {
-		return CBofPoint(m_nX, m_nY);
+		return CBofPoint(_nX, _nY);
 	}
-	virtual int GetRefId() {
-		return m_nId;
+	virtual int getRefId() {
+		return _nId;
 	}
-	virtual int GetOverCursor() {
-		return m_nOverCursor;
+	virtual int getOverCursor() {
+		return _nOverCursor;
 	}
 	virtual int getState() {
-		return m_nState;
+		return _nState;
 	}
 	virtual CBofRect getRect() {
-		return CBofRect(m_nX, m_nY, m_nX - 1, m_nY - 1);
+		return CBofRect(_nX, _nY, _nX - 1, _nY - 1);
 	}
 
-	virtual const CBofString &
-	getFileName() {
-		return m_sFileName;
+	virtual const CBofString &getFileName() {
+		return _sFileName;
 	}
 	CBagMenu *getMenuPtr() {
-		return m_pMenu;
+		return _pMenu;
 	}
-	virtual const CBofString &GetRefName();
-	virtual void SetRefName(const CBofString &s);
+	virtual const CBofString &getRefName();
+	virtual void setRefName(const CBofString &s);
 
 	virtual void setFileName(const CBofString &s) {
-		m_sFileName = s;
+		_sFileName = s;
 	}
 	virtual void setSize(const CBofSize &) {}
-	virtual void SetRefId(int id) {
+	virtual void setRefId(int id) {
 		assert(id >= 0 && id <= 0xFFFF);
-		m_nId = (uint16)id;
+		_nId = (uint16)id;
 	}
-	virtual void SetOverCursor(int curs) {
-		m_nOverCursor = (byte)curs;
+	virtual void setOverCursor(int curs) {
+		_nOverCursor = (byte)curs;
 	}
 	virtual void setState(int state) {
 		assert(ABS(state) < 0x8000);
-		m_nState = (int16)state;
+		_nState = (int16)state;
 	}
-	virtual void SetMenuPtr(CBagMenu *pm) {
-		m_pMenu = pm;
+	virtual void setMenuPtr(CBagMenu *pm) {
+		_pMenu = pm;
 	}
 	virtual void setPosition(const CBofPoint &pos) {
-		m_nX = (int16)pos.x;
-		m_nY = (int16)pos.y;
+		_nX = (int16)pos.x;
+		_nY = (int16)pos.y;
 	}
 
 	/**
@@ -383,7 +382,7 @@ public:
 	 */
 	virtual PARSE_CODES setInfo(CBagIfstream &istr);
 
-	virtual int HandleError(int nErrID) {
+	virtual int handleError(int nErrID) {
 		assert(!nErrID);
 		return nErrID;
 	}
@@ -398,7 +397,7 @@ public:
 	virtual void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr); //{ } run menu if available
 	// virtual bool        onLButtonDblClk(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr);    //{ return false; }
 	virtual bool onMouseMove(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr); //{ return false; }
-	virtual bool OnMouseOver(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr) {
+	virtual bool onMouseOver(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr) {
 		return false;
 	}
 };

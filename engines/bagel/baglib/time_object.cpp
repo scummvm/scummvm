@@ -35,8 +35,8 @@ CBagTimeObject::CBagTimeObject() : CBagObject() {
 	_xDig4 = nullptr;
 	_nCels = 1;
 
-	SetOverCursor(1);
-	SetTimeless(true);
+	setOverCursor(1);
+	setTimeless(true);
 }
 
 CBagTimeObject::~CBagTimeObject() {

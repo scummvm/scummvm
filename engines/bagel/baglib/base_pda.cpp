@@ -72,7 +72,7 @@ bool SBBasePda::hideCurDisplay() {
 
 	if (_curDisplay) {
 		// If we have an inventory window
-		_curDisplay->SetVisible(false);
+		_curDisplay->setVisible(false);
 
 		// Hold this info.
 		_holdDisplay = _curDisplay;
@@ -96,7 +96,7 @@ bool SBBasePda::restoreCurDisplay() {
 		_curDisplay = _holdDisplay;
 		_pdaMode = _holdMode;
 
-		_curDisplay->SetVisible(true);
+		_curDisplay->setVisible(true);
 		setPdaState();
 		return true;
 	}
@@ -109,7 +109,7 @@ bool SBBasePda::hideMovie() {
 
 	if (_mooWnd) {
 		// if we have an inventory window
-		_mooWnd->SetVisible(false);
+		_mooWnd->setVisible(false);
 		_curDisplay = nullptr;
 		_pdaMode = NOMODE;
 		setPdaState();
@@ -130,7 +130,7 @@ bool SBBasePda::showMovie() {
 	if (_mooWnd) {
 		if (_curDisplay) {
 			// Turn off the current display
-			_curDisplay->SetVisible(false);
+			_curDisplay->setVisible(false);
 		}
 
 		// Save the current PDA mode so we can return to it when done.
@@ -138,7 +138,7 @@ bool SBBasePda::showMovie() {
 		((CBagMoo *)_mooWnd)->savePDAPosition(_pdaPos);
 
 		// Turn on the inventory
-		_mooWnd->SetVisible(true);
+		_mooWnd->setVisible(true);
 
 		// Set the current display = Inventory
 		_curDisplay = _mooWnd;
@@ -172,7 +172,7 @@ bool SBBasePda::hideInventory() {
 
 	// if we have an inventory window
 	if (_invWnd) {
-		_invWnd->SetVisible(false);
+		_invWnd->setVisible(false);
 		_curDisplay = nullptr;
 		_pdaMode = NOMODE;
 		setPdaState();
@@ -192,10 +192,10 @@ bool SBBasePda::showInventory() {
 	if (_invWnd) {
 		if (_curDisplay) {
 			// Turn off the current display
-			_curDisplay->SetVisible(false);
+			_curDisplay->setVisible(false);
 		}
 		// Turn on the inventory
-		_invWnd->SetVisible(true);
+		_invWnd->setVisible(true);
 
 		// Set the current display = Inventory
 		_curDisplay = _invWnd;
@@ -217,11 +217,11 @@ bool SBBasePda::showMap() {
 	if (_mapWnd)  {
 		if (_curDisplay) {
 			// Turn off the current display
-			_curDisplay->SetVisible(false);
+			_curDisplay->setVisible(false);
 		}
 
 		// Turn on the map
-		_mapWnd->SetVisible(true);	
+		_mapWnd->setVisible(true);	
 
 		// Set the current display = Map
 		_curDisplay = _mapWnd;
@@ -241,7 +241,7 @@ bool SBBasePda::hideMap() {
 	// if we have a map window
 	if (_mapWnd) {
 		// Turn off the Map
-		_mapWnd->SetVisible(false);
+		_mapWnd->setVisible(false);
 
 		// set the current display to nullptr
 		_curDisplay = nullptr;
@@ -267,11 +267,11 @@ bool SBBasePda::showLog() {
 	if (_logWnd) {
 		if (_curDisplay) {
 			// Turn off the current display
-			_curDisplay->SetVisible(false);
+			_curDisplay->setVisible(false);
 		}
 
 		// Turn on the map
-		_logWnd->SetVisible(true);	
+		_logWnd->setVisible(true);	
 
 		// Set the current display = Map
 		_curDisplay = _logWnd;
@@ -529,7 +529,7 @@ int SBBasePda::getProperCursor(const CBofPoint &pos, CBofRect &pdaRect) {
 
 				if (_pdaMode == LOGMODE) {
 					if (overObj) {
-						return overObj->GetOverCursor();
+						return overObj->getOverCursor();
 					}
 					if (wieldCursor >= 0) {
 						return wieldCursor;
@@ -541,7 +541,7 @@ int SBBasePda::getProperCursor(const CBofPoint &pos, CBofRect &pdaRect) {
 						return wieldCursor;
 					}
 					if (overObj) {
-						return overObj->GetOverCursor();
+						return overObj->getOverCursor();
 					}
 				}
 

@@ -140,7 +140,7 @@ ErrorCode CMainWindow::attach() {
 				if (!_pThudBmp->isAttached())
 					_pThudBmp->attach();
 				InsertFGObjects(_pThudBmp);
-				_pThudBmp->SetVisible(true);
+				_pThudBmp->setVisible(true);
 			}
 		}
 
@@ -165,7 +165,7 @@ ErrorCode CMainWindow::attach() {
 				}
 
 				InsertFGObjects(_pWieldBmp);
-				_pWieldBmp->SetVisible(true);
+				_pWieldBmp->setVisible(true);
 
 			} else {
 				reportError(ERR_UNKNOWN, "No Wield found");
@@ -200,7 +200,7 @@ ErrorCode CMainWindow::attach() {
 				}
 				InsertFGObjects(_pPDABmp);
 				DeactivatePDA();
-				_pPDABmp->SetVisible(true);
+				_pPDABmp->setVisible(true);
 
 			} else {
 				reportError(ERR_UNKNOWN, "No PDA found");

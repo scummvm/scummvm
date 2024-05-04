@@ -232,7 +232,7 @@ ErrorCode CBagDossierObject::attach() {
 		_dosRectInitFl = true;
 	}
 
-	SetVisible(false); // Don't display until needed.
+	setVisible(false); // Don't display until needed.
 	setActive(false);  // Not active until we need it.
 	return ec;
 }
@@ -240,7 +240,7 @@ ErrorCode CBagDossierObject::attach() {
 ErrorCode CBagDossierObject::detach() {
 	ErrorCode ec = CBagTextObject::detach();
 
-	SetVisible(false); // Make this invisible, don't want it redrawn.
+	setVisible(false); // Make this invisible, don't want it redrawn.
 	return ec;
 }
 
@@ -297,12 +297,12 @@ void CBagDossierObject::activateDossierObject(CBagLog *logWld) {
 	}
 
 	if (CBagRPObject::GetLogState() == RP_READ_DOSSIER) {
-		SetFloating(false); // This is not floating
+		setFloating(false); // This is not floating
 	} else {
-		SetFloating(); // This is not floating
+		setFloating(); // This is not floating
 	}
 
-	SetVisible(); // can see this thing now...
+	setVisible(); // can see this thing now...
 	setActive();  // make sure it counts for something
 
 	// Starting state will ALWAYS be index first
@@ -312,14 +312,14 @@ void CBagDossierObject::activateDossierObject(CBagLog *logWld) {
 
 void CBagDossierObject::deactivateDossierObject(CBagLog *logWld) {
 	if (CBagRPObject::GetLogState() == RP_READ_DOSSIER) {
-		SetFloating(false); // This is not floating
+		setFloating(false); // This is not floating
 	} else {
-		SetFloating(); // This is not floating
+		setFloating(); // This is not floating
 	}
 
-	SetVisible(false); // Cover it up
+	setVisible(false); // Cover it up
 	setActive(false);  // Make sure it counts for something
-	SetLocal(false);   // Not local anymore
+	setLocal(false);   // Not local anymore
 }
 
 // Called from script to deactivate a dossier view screen.

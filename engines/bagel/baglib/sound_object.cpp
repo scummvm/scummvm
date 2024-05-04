@@ -48,8 +48,8 @@ CBagSoundObject::CBagSoundObject() {
 
 	m_nLoops = 1;
 
-	SetVisible(false);
-	SetOverCursor(3);
+	setVisible(false);
+	setOverCursor(3);
 }
 
 CBagSoundObject::~CBagSoundObject() {

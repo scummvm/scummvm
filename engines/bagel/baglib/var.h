@@ -80,7 +80,7 @@ public:
 	bool IsRandom() {
 		return m_bRandom;
 	}
-	VARTYPE GetType() {
+	VARTYPE getType() {
 		return m_xVarType;
 	}
 
@@ -113,7 +113,7 @@ public:
 	void SetBoolean() {
 		m_xVarType = boolEAN;
 	}
-	// void SetType(VARTYPE xType)      { m_xVarType  = xType; }
+	// void setType(VARTYPE xType)      { m_xVarType  = xType; }
 
 	void Increment();
 };
