@@ -63,7 +63,7 @@ CBofString getStringTypeOfObject(BAG_OBJECT_TYPE n) {
 }
 
 CBagObject::CBagObject() {
-	m_xObjType = BASEOBJ;
+	_xObjType = BASEOBJ;
 	m_nX = -1;
 	m_nY = -1;
 

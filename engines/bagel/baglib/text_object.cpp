@@ -36,27 +36,27 @@ namespace Bagel {
 extern bool g_bPauseTimer;
 
 CBagTextObject::CBagTextObject() : CBagObject() {
-	m_xObjType = TEXTOBJ;
-	m_nDX = 80;
+	_xObjType = TEXTOBJ;
+	_nDX = 80;
 	_nDY = 20;
-	m_psText = nullptr;
+	_psText = nullptr;
 	SetOverCursor(1); // Switch to cursor 1, 4 doesn't exist.
 
-	m_nPointSize = 16;
-	m_nFGColor = CTEXT_COLOR;
-	m_psInitInfo = nullptr;
-	m_bCaption = false;
-	m_bTitle = false;
-	m_bReAttach = false;
-	m_nTextFont = FONT_DEFAULT;
+	_nPointSize = 16;
+	_nFGColor = CTEXT_COLOR;
+	_psInitInfo = nullptr;
+	_bCaption = false;
+	_bTitle = false;
+	_bReAttach = false;
+	_nTextFont = FONT_DEFAULT;
 
-	SetRPObject(nullptr);
+	setRPObject(nullptr);
 }
 
 CBagTextObject::~CBagTextObject() {
-	if (m_psInitInfo != nullptr) {
-		delete m_psInitInfo;
-		m_psInitInfo = nullptr;
+	if (_psInitInfo != nullptr) {
+		delete _psInitInfo;
+		_psInitInfo = nullptr;
 	}
 	detach();
 }
@@ -82,9 +82,9 @@ ErrorCode CBagTextObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 
 			CBofRect r(pt, pSrcRect->size());
 
-			int nPointSize = m_nPointSize;
+			int nPointSize = _nPointSize;
 			int nFormat = FORMAT_CENTER_LEFT;
-			if (!m_bTitle) {
+			if (!_bTitle) {
 
 				CBofRect cBevel;
 				int i;
@@ -120,7 +120,7 @@ ErrorCode CBagTextObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 				r.left += 1;
 			}
 
-			errCode = paintText(pBmp, &r, getText(), mapWindowsPointSize(nPointSize), TEXT_NORMAL, m_nFGColor, JUSTIFY_WRAP, nFormat, m_nTextFont);
+			errCode = paintText(pBmp, &r, getText(), mapWindowsPointSize(nPointSize), TEXT_NORMAL, _nFGColor, JUSTIFY_WRAP, nFormat, _nTextFont);
 
 			// This object does not need to be updated now...
 			SetDirty(false);
@@ -135,14 +135,14 @@ ErrorCode CBagTextObject::attach() {
 
 	if (!getFileName().right(4).find(".TXT") || !getFileName().right(4).find(".txt")) {
 		// Prevent memory leak
-		if (m_psText != nullptr) {
-			delete m_psText;
-			m_psText = nullptr;
+		if (_psText != nullptr) {
+			delete _psText;
+			_psText = nullptr;
 		}
 
 		// Allocate a new string
-		m_psText = new CBofString;
-		if (m_psText != nullptr) {
+		_psText = new CBofString;
+		if (_psText != nullptr) {
 			CBofFile fpTextFile(getFileName());
 
 			if (!fpTextFile.errorOccurred()) {
@@ -154,14 +154,14 @@ ErrorCode CBagTextObject::attach() {
 					fpTextFile.read(pTextBuff, nFileLen);
 					fpTextFile.close();
 
-					*m_psText += pTextBuff;
+					*_psText += pTextBuff;
 
-					if (m_psInitInfo != nullptr) {
-						CBagVar *pVar = VAR_MANAGER->GetVariable(*m_psInitInfo);
+					if (_psInitInfo != nullptr) {
+						CBagVar *pVar = VAR_MANAGER->GetVariable(*_psInitInfo);
 
 						if (pVar != nullptr) {
-							m_bReAttach = true;
-							m_psText->replaceStr("%s", pVar->GetValue());
+							_bReAttach = true;
+							_psText->replaceStr("%s", pVar->GetValue());
 						}
 					}
 
@@ -176,26 +176,26 @@ ErrorCode CBagTextObject::attach() {
 			}
 		}
 
-		if (IsCaption()) {
-			RecalcTextRect(true);
+		if (isCaption()) {
+			recalcTextRect(true);
 		}
 
 	} else {
 		// The Text is in the Bagel script, rather than a .txt file
 		// Prevent memory leak
-		if (m_psText != nullptr) {
-			delete m_psText;
-			m_psText = nullptr;
+		if (_psText != nullptr) {
+			delete _psText;
+			_psText = nullptr;
 		}
 
 		// Allocate a new string
-		if ((m_psText = new CBofString) != nullptr) {
-			*m_psText = getFileName();
+		if ((_psText = new CBofString) != nullptr) {
+			*_psText = getFileName();
 
 			// Replace any underscores with spaces
-			m_psText->replaceChar('_', ' ');
+			_psText->replaceChar('_', ' ');
 
-			RecalcTextRect(false);
+			recalcTextRect(false);
 
 		} else {
 			reportError(ERR_MEMORY);
@@ -204,7 +204,7 @@ ErrorCode CBagTextObject::attach() {
 
 	// If this guy is linked to a residue printing object, make sure he knows
 	// we've been attached.
-	CBagRPObject *pRPObj = (CBagRPObject *)GetRPObject();
+	CBagRPObject *pRPObj = (CBagRPObject *)getRPObject();
 
 	if (pRPObj != nullptr) {
 		pRPObj->SetTimeSet(false);
@@ -216,29 +216,29 @@ ErrorCode CBagTextObject::attach() {
 ErrorCode CBagTextObject::detach() {
 	assert(isValidObject(this));
 
-	if (m_psText != nullptr) {
-		delete m_psText;
-		m_psText = nullptr;
+	if (_psText != nullptr) {
+		delete _psText;
+		_psText = nullptr;
 	}
 
 	return CBagObject::detach();
 }
 
 const CBofString &CBagTextObject::getText() {
-	if (m_psText)
-		return *m_psText;
+	if (_psText)
+		return *_psText;
 
 	return getFileName();
 }
 
 void CBagTextObject::setText(const CBofString &s) {
-	if (m_psText) {
-		*m_psText = s;
+	if (_psText) {
+		*_psText = s;
 	} else {
 		setFileName(s);
 	}
 
-	RecalcTextRect(!getFileName().right(4).find(".TXT") || !getFileName().right(4).find(".txt"));
+	recalcTextRect(!getFileName().right(4).find(".TXT") || !getFileName().right(4).find(".txt"));
 }
 
 //   Takes in info and then removes the relative information and returns the info
@@ -262,14 +262,14 @@ PARSE_CODES CBagTextObject::setInfo(CBagIfstream &istr) {
 			CBofString sStr(szLocalStr, 256);
 
 			// Need to use this field, so no one else can
-			assert(m_psInitInfo == nullptr);
+			assert(_psInitInfo == nullptr);
 
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("VAR")) {
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
-				SetInitInfo(sStr);
+				setInitInfo(sStr);
 				nObjectUpdated = true;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -291,13 +291,13 @@ PARSE_CODES CBagTextObject::setInfo(CBagIfstream &istr) {
 				istr.eatWhite();
 				int n;
 				GetIntFromStream(istr, n);
-				m_nPointSize = (byte)n;
+				_nPointSize = (byte)n;
 				nObjectUpdated = true;
 
 				// WORKAROUND: Reduce the font size of Cilia's full-screen log
 				// in ScummVM so that it fits on the screen
-				if (m_nPointSize == 28 && istr.getSize() == 359105)
-					m_nPointSize = 26;
+				if (_nPointSize == 28 && istr.getSize() == 359105)
+					_nPointSize = 26;
 
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -319,7 +319,7 @@ PARSE_CODES CBagTextObject::setInfo(CBagIfstream &istr) {
 				istr.eatWhite();
 				int n;
 				GetIntFromStream(istr, n);
-				m_nTextFont = MapFont(n);
+				_nTextFont = MapFont(n);
 				nObjectUpdated = true;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -341,11 +341,11 @@ PARSE_CODES CBagTextObject::setInfo(CBagIfstream &istr) {
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 				if (!sStr.find("CAPTION")) {
-					m_bCaption = true;
+					_bCaption = true;
 					nObjectUpdated = true;
 
 				} else if (!sStr.find("TITLE")) {
-					m_bTitle = true;
+					_bTitle = true;
 					nObjectUpdated = true;
 
 				} else {
@@ -408,31 +408,31 @@ PARSE_CODES CBagTextObject::setInfo(CBagIfstream &istr) {
 void CBagTextObject::setColor(int nColor) {
 	switch (nColor) {
 	case 0:
-		m_nFGColor = RGB(0, 0, 0);
+		_nFGColor = RGB(0, 0, 0);
 		break; // Black
 	case 1:
-		m_nFGColor = RGB(226, 50, 51);
+		_nFGColor = RGB(226, 50, 51);
 		break; // Red
 	case 2:
-		m_nFGColor = RGB(255, 255, 255);
+		_nFGColor = RGB(255, 255, 255);
 		break; // Yellow
 	case 3:
-		m_nFGColor = RGB(255, 255, 255);
+		_nFGColor = RGB(255, 255, 255);
 		break; // Green
 	case 4:
-		m_nFGColor = RGB(255, 255, 255);
+		_nFGColor = RGB(255, 255, 255);
 		break; // Green
 	case 5:
-		m_nFGColor = RGB(0, 0, 255);
+		_nFGColor = RGB(0, 0, 255);
 		break; // Blue
 	case 6:
-		m_nFGColor = RGB(255, 0, 255);
+		_nFGColor = RGB(255, 0, 255);
 		break;
 	case 7:
-		m_nFGColor = CTEXT_WHITE;
+		_nFGColor = CTEXT_WHITE;
 		break; // White
 	case 8:
-		m_nFGColor = RGB(255, 255, 0);
+		_nFGColor = RGB(255, 255, 0);
 		break; // Yellow (chat highlight)
 	default:
 		break;
@@ -465,11 +465,11 @@ bool CBagTextObject::runObject() {
 	char szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
 
-	if (m_bCaption && IsImmediateRun()) {
+	if (_bCaption && IsImmediateRun()) {
 
 		// Re-attach this object to get any change in a variable
 		// (Must be using the VAR token).
-		if (m_bReAttach) {
+		if (_bReAttach) {
 			attach();
 		}
 
@@ -535,7 +535,7 @@ int MapFont(int nFont) {
 void CBagTextObject::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *pv) {
 	// If there's a residue printing object, then hand this guy off to
 	// him, otherwise, call back to Cbagobj.
-	CBagRPObject *pRPObj = (CBagRPObject *)GetRPObject();
+	CBagRPObject *pRPObj = (CBagRPObject *)getRPObject();
 	if (pRPObj) {
 		pRPObj->onLButtonUp(nFlags, xPoint, pv);
 		return;
@@ -544,12 +544,12 @@ void CBagTextObject::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *pv) {
 	CBagObject::onLButtonUp(nFlags, xPoint, pv);
 }
 
-void CBagTextObject::RecalcTextRect(bool bTextFromFile) {
+void CBagTextObject::recalcTextRect(bool bTextFromFile) {
 	CBofRect ViewRect;      // The rect of the area where objects are displayed
 	CBofSize cDisplaySize;  // Size of rect needed to display font
 	CBofSize cSize;         // Size of rect needed to display font
 
-	assert(m_psText != nullptr);
+	assert(_psText != nullptr);
 
 	// The window where the object are displayed
 	CBagPanWindow *pPanWin = (CBagPanWindow *)(CBagel::getBagApp()->getMasterWnd()->getCurrentGameWindow());
@@ -568,13 +568,13 @@ void CBagTextObject::RecalcTextRect(bool bTextFromFile) {
 	// Get the area spanned by the text (i.e. Get the pixel width and
 	// height of the text string).
 	CBofRect tmpRect = ViewRect;
-	if (!m_bTitle) {
+	if (!_bTitle) {
 		// Exactly match the width used in displayTextEx
 		tmpRect.left += 5;
 		tmpRect.right = (ViewRect.right == 640 ? PAN_AREA_WIDTH : ViewRect.right) - 5;
 	}
 
-	CBofRect textRect = calculateTextRect(tmpRect, m_psText, m_nPointSize, getFont());
+	CBofRect textRect = calculateTextRect(tmpRect, _psText, _nPointSize, getFont());
 	CBofSize stTextSize(textRect.right, textRect.bottom);
 
 	if (bTextFromFile) {
@@ -587,7 +587,7 @@ void CBagTextObject::RecalcTextRect(bool bTextFromFile) {
 		cSize.cy = stTextSize.cy;
 	} else {
 		cSize.cx = stTextSize.cx + 9;
-		cSize.cy = stTextSize.cy + (m_bTitle ? 0 : 7);
+		cSize.cy = stTextSize.cy + (_bTitle ? 0 : 7);
 		setSize(cSize);
 	}
 
@@ -619,14 +619,14 @@ void CBagTextObject::RecalcTextRect(bool bTextFromFile) {
 	}
 }
 
-void CBagTextObject::SetPSText(CBofString *p) {
+void CBagTextObject::setPSText(CBofString *p) {
 	assert(isValidObject(this));
 
-	delete m_psText;
-	m_psText = nullptr;
+	delete _psText;
+	_psText = nullptr;
 
 	if (p != nullptr) {
-		m_psText = new CBofString(*p);
+		_psText = new CBofString(*p);
 	}
 }
 

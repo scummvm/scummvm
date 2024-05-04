@@ -27,7 +27,7 @@
 namespace Bagel {
 
 CBagSpriteObject::CBagSpriteObject() : CBagObject() {
-	m_xObjType = SPRITEOBJ;
+	_xObjType = SPRITEOBJ;
 	m_xSprite = nullptr;
 	m_nCels = 1;
 	m_nWieldCursor = -1;
@@ -54,7 +54,7 @@ ErrorCode CBagSpriteObject::attach() {
 		assert(m_xSprite == nullptr);
 
 		if ((m_xSprite = new CBofSprite()) != nullptr) {
-			if (m_xSprite->loadSprite(getFileName(), GetCels()) != false && (m_xSprite->width() != 0) && (m_xSprite->height() != 0)) {
+			if (m_xSprite->loadSprite(getFileName(), getCels()) != false && (m_xSprite->width() != 0) && (m_xSprite->height() != 0)) {
 				if (IsTransparent()) {
 					int nMaskColor = CBagel::getBagApp()->getChromaColor();
 

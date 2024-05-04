@@ -95,7 +95,7 @@ private:
 	uint16 m_nId = 0;           // Ref Id for an object
 
 protected:
-	uint16 m_xObjType = AREAOBJ;
+	uint16 _xObjType = AREAOBJ;
 
 private:
 	uint16 m_nProperties = 0;   // Properties of object
@@ -154,10 +154,10 @@ public:
 	virtual ErrorCode detach();
 
 	BAG_OBJECT_TYPE GetType() {
-		return (BAG_OBJECT_TYPE)m_xObjType;
+		return (BAG_OBJECT_TYPE)_xObjType;
 	}
 	void SetType(BAG_OBJECT_TYPE nType) {
-		m_xObjType = (uint16)nType;
+		_xObjType = (uint16)nType;
 	}
 
 	// Object can be moved within a sceene
@@ -289,10 +289,10 @@ public:
 	}
 
 	// Init variables
-	virtual const CBofString *GetInitInfo() const {
+	virtual const CBofString *getInitInfo() const {
 		return nullptr;
 	}
-	virtual void SetInitInfo(const CBofString &) {}
+	virtual void setInitInfo(const CBofString &) {}
 
 	virtual int getProperty(const CBofString &sProp);
 	virtual void setProperty(const CBofString &, int nVal);

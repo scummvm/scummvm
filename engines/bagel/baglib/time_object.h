@@ -35,15 +35,15 @@ namespace Bagel {
  */
 class CBagTimeObject : public CBagObject {
 private:
-	CBofString m_sVariable;
+	CBofString _sVariable;
 
-	CBofSprite *m_xDig1;  // x-:--
-	CBofSprite *m_xDig2;  // -x:--
-	CBofSprite *m_xColon; // --:--
-	CBofSprite *m_xDig3;  // --:x-
-	CBofSprite *m_xDig4;  // --:-x
+	CBofSprite *_xDig1;  // x-:--
+	CBofSprite *_xDig2;  // -x:--
+	CBofSprite *_xColon; // --:--
+	CBofSprite *_xDig3;  // --:x-
+	CBofSprite *_xDig4;  // --:-x
 
-	int m_nCels;
+	int _nCels;
 
 public:
 	CBagTimeObject();
@@ -55,7 +55,7 @@ public:
 	ErrorCode attach();
 	ErrorCode detach();
 	bool isAttached() {
-		return m_xDig1 != nullptr;
+		return _xDig1 != nullptr;
 	}
 
 	/**
@@ -65,8 +65,8 @@ public:
 	PARSE_CODES setInfo(CBagIfstream &istr);
 
 	CBofRect getRect();
-	int GetCels() {
-		return m_nCels;
+	int getCels() {
+		return _nCels;
 	}
 
 	void setCels(int nCels);
@@ -78,10 +78,10 @@ public:
 	 * the time is padded with 0's if it is greater the 4 we truncate to remaining digits
 	 */
 	virtual ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
-	virtual ErrorCode Update(CBofWindow *pWnd, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
+	virtual ErrorCode update(CBofWindow *pWnd, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 
-	void SetVariable(const CBofString &sProp) {
-		m_sVariable = sProp;
+	void setVariable(const CBofString &sProp) {
+		_sVariable = sProp;
 	}
 };
 

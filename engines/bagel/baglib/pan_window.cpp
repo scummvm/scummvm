@@ -310,7 +310,7 @@ ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 
 				// Only update dirty objects...
 				if (pObj->IsDirty() || pObj->IsAlwaysUpdate()) {
-					if (!(pObj->GetType() == TEXTOBJ && ((CBagTextObject *)pObj)->IsCaption() && pObj->IsImmediateRun())) {
+					if (!(pObj->GetType() == TEXTOBJ && ((CBagTextObject *)pObj)->isCaption() && pObj->IsImmediateRun())) {
 						pObj->update(pBmp, pt, &xIntrRect);
 
 						// If we're in a closeup and we have a character animation

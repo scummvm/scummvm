@@ -28,7 +28,7 @@ namespace Bagel {
 extern bool g_noMenuFl;
 
 CBagLinkObject::CBagLinkObject() {
-	m_xObjType = LINKOBJ;
+	_xObjType = LINKOBJ;
 	_linkType = LINK;
 	_destLocation = CBofPoint(0, 0);
 	_srcLocation = CBofPoint(-1, -1);
