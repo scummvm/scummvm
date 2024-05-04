@@ -127,17 +127,17 @@ bool CBagSoundObject::runObject() {
 					return false;
 				}
 
-				CBofString sBaseStr = getFileName().Left(nExt) + ".TXT";
+				CBofString sBaseStr = getFileName().left(nExt) + ".TXT";
 
 				Common::File f;
-				if (fileExists(sBaseStr) && f.open(sBaseStr.GetBuffer())) {
+				if (fileExists(sBaseStr) && f.open(sBaseStr.getBuffer())) {
 					Common::String line = f.readLine();
 
 					bofMessageBox(line.c_str(), "Using .TXT for missing .WAV!");
 					f.close();
 					return true;
 				} else {
-					logError(buildString("Sound TEXT file could not be read: %s.  Why? because we like you ...", getFileName().GetBuffer()));
+					logError(buildString("Sound TEXT file could not be read: %s.  Why? because we like you ...", getFileName().getBuffer()));
 					return false;
 				}
 			}
@@ -164,7 +164,7 @@ PARSE_CODES CBagSoundObject::setInfo(CBagIfstream &istr) {
 
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("VOLUME")) {
+			if (!sStr.find("VOLUME")) {
 				istr.eatWhite();
 				int n;
 				GetIntFromStream(istr, n);
@@ -185,32 +185,32 @@ PARSE_CODES CBagSoundObject::setInfo(CBagIfstream &istr) {
 			CBofString sStr(szLocalStr, 256); // performance improvement
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("AS")) {
+			if (!sStr.find("AS")) {
 
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 
-				if (!sStr.Find("WAVE")) {
+				if (!sStr.find("WAVE")) {
 					// m_xSndType  = WAVE;
 					SetWave();
 					nObjectUpdated = true;
 
-				} else if (!sStr.Find("MIDI")) {
+				} else if (!sStr.find("MIDI")) {
 					// m_xSndType  = MIDI;
 					SetMidi();
 					nObjectUpdated = true;
 
-				} else if (!sStr.Find("SYNC")) {
+				} else if (!sStr.find("SYNC")) {
 					SetSync();
 					nObjectUpdated = true;
 
-				} else if (!sStr.Find("ASYNC")) {
+				} else if (!sStr.find("ASYNC")) {
 					SetASync();
 					nObjectUpdated = true;
 
 					// Mix and Wait
 					//
-				} else if (!sStr.Find("WAITMIX")) {
+				} else if (!sStr.find("WAITMIX")) {
 
 					SetMix();
 					m_bWait = true;
@@ -218,18 +218,18 @@ PARSE_CODES CBagSoundObject::setInfo(CBagIfstream &istr) {
 
 					// Queue and Wait
 					//
-				} else if (!sStr.Find("WAITQUEUE")) {
+				} else if (!sStr.find("WAITQUEUE")) {
 
 					SetQueue();
 					m_bWait = true;
 					nObjectUpdated = true;
 
-				} else if (!sStr.Find("QUEUE")) {
+				} else if (!sStr.find("QUEUE")) {
 
 					SetQueue();
 					nObjectUpdated = true;
 
-				} else if (!sStr.Find("MIX")) {
+				} else if (!sStr.find("MIX")) {
 					SetMix();
 					nObjectUpdated = true;
 
@@ -252,7 +252,7 @@ PARSE_CODES CBagSoundObject::setInfo(CBagIfstream &istr) {
 
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("LOOP")) {
+			if (!sStr.find("LOOP")) {
 				istr.eatWhite();
 				GetIntFromStream(istr, m_nLoops);
 				nObjectUpdated = true;
@@ -270,7 +270,7 @@ PARSE_CODES CBagSoundObject::setInfo(CBagIfstream &istr) {
 
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("SOUNDOVEROK")) {
+			if (!sStr.find("SOUNDOVEROK")) {
 				SetSoundOver();
 				nObjectUpdated = true;
 			} else {
@@ -391,22 +391,22 @@ void CBagSoundObject::SetNumOfLoops(int n) {
 }
 
 int CBagSoundObject::getProperty(const CBofString &sProp) {
-	if (!sProp.Find("VOLUME")) {
+	if (!sProp.find("VOLUME")) {
 		return getVolume();
 
 	}
 
-	if (!sProp.Find("QUEUED")) {
+	if (!sProp.find("QUEUED")) {
 		return isQueued();
 
 	}
 
-	if (!sProp.Find("PLAYING")) {
+	if (!sProp.find("PLAYING")) {
 		return isPlaying();
 
 	}
 
-	if (!sProp.Find("LOOP")) {
+	if (!sProp.find("LOOP")) {
 		return m_nLoops;
 	}
 
@@ -414,17 +414,17 @@ int CBagSoundObject::getProperty(const CBofString &sProp) {
 }
 
 void CBagSoundObject::setProperty(const CBofString &sProp, int nVal) {
-	if (!sProp.Find("VOLUME")) {
+	if (!sProp.find("VOLUME")) {
 		setVolume(nVal);
 
-	} else if (!sProp.Find("PLAYING")) {
+	} else if (!sProp.find("PLAYING")) {
 
 		if (nVal == 1)
 			SetPlaying();
 		else
 			SetPlaying(false);
 
-	} else if (!sProp.Find("LOOP")) {
+	} else if (!sProp.find("LOOP")) {
 		SetNumOfLoops(nVal);
 	} else {
 		CBagObject::setProperty(sProp, nVal);

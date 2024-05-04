@@ -118,8 +118,8 @@ void vilInitFilters(CBofBitmap *pBmp) {
 		buff = new char[nfile.getLength() + 1];
 		memset(buff, 0, nfile.getLength() + 1);
 		nfile.read(buff, nfile.getLength());
-		StrReplaceChar(buff, '\n', ' ');
-		StrReplaceChar(buff, '\r', ' ');
+		strreplaceChar(buff, '\n', ' ');
+		strreplaceChar(buff, '\r', ' ');
 		pTipBmp = new CBofBitmap((nfile.getLength() + 1) * 7, 20, pBmp->getPalette());
 
 		CBofRect rct(0, 0, (nfile.getLength() + 1) * 7, 20);

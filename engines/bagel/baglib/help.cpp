@@ -153,7 +153,7 @@ ErrorCode CBagHelp::attach() {
 		bofFree(buffer);
 
 	} else {
-		reportError(ERR_MEMORY, "Unable to allocate %d bytes to read %s.", size, _textFile.GetBuffer());
+		reportError(ERR_MEMORY, "Unable to allocate %d bytes to read %s.", size, _textFile.getBuffer());
 	}
 
 	CBagCursor::showSystemCursor();

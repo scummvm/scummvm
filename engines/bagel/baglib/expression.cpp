@@ -547,14 +547,14 @@ bool CBagExpression::onMod(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVa
 bool CBagExpression::onAnd(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar & /* resultOper, unused */) {
 	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
-	return (!leftHandOper->GetValue().Find("true") && !rightHandOper->GetValue().Find("true"));
+	return (!leftHandOper->GetValue().find("true") && !rightHandOper->GetValue().find("true"));
 }
 
 
 bool CBagExpression::onOr(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar & /* resultOper, unused */) {
 	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
-	return (!leftHandOper->GetValue().Find("true") || !rightHandOper->GetValue().Find("true"));
+	return (!leftHandOper->GetValue().find("true") || !rightHandOper->GetValue().find("true"));
 }
 
 
@@ -583,7 +583,7 @@ PARSE_CODES CBagExpression::setInfo(CBagIfstream &istr) {
 			CBagVar *curVar = VAR_MANAGER->GetVariable(tmpStr);
 			if (!curVar) {
 				// This must be a reference, make a new variable
-				if (tmpStr.Find("~~") > 0) {
+				if (tmpStr.find("~~") > 0) {
 					curVar = new CBagVar;
 					curVar->SetName(tmpStr);
 					curVar->SetReference();
@@ -613,7 +613,7 @@ PARSE_CODES CBagExpression::setInfo(CBagIfstream &istr) {
 				GetAlphaNumFromStream(istr, tmpStr);
 				curVar = VAR_MANAGER->GetVariable(tmpStr);
 				if (!curVar) {
-					if (tmpStr.Find("~~") > 0) {
+					if (tmpStr.find("~~") > 0) {
 						// This must be a reference, make a new variable
 						curVar = new CBagVar;
 						curVar->SetName(tmpStr);
@@ -641,7 +641,7 @@ PARSE_CODES CBagExpression::setInfo(CBagIfstream &istr) {
 
 		case 'N':
 			GetAlphaNumFromStream(istr, tmpStr);
-			if (!tmpStr.Find("NOT")) {
+			if (!tmpStr.find("NOT")) {
 				_negativeFl = !_negativeFl;
 				istr.eatWhite();
 				break;
@@ -682,63 +682,63 @@ ErrorCode CBagExpression::getOperatorFromStream(CBagIfstream &istr, OPERATION &o
 		istr.eatWhite();
 	}
 
-	if (!localStr.Find("-=")) {
+	if (!localStr.find("-=")) {
 		oper = OP_MINUS_ASSIGN;
 
-	} else if (!localStr.Find("+=")) {
+	} else if (!localStr.find("+=")) {
 		oper = OP_PLUS_ASSIGN;
 
-	} else if (!localStr.Find(">=")) {
+	} else if (!localStr.find(">=")) {
 		oper = OP_GREATER_THAN_EQUAL;
 
-	} else if (!localStr.Find("<=")) {
+	} else if (!localStr.find("<=")) {
 		oper = OP_LESS_THAN_EQUAL;
 
-	} else if (!localStr.Find("!=")) {
+	} else if (!localStr.find("!=")) {
 		oper = OP_NOT_EQUAL;
 
-	} else if (!localStr.Find("==")) {
+	} else if (!localStr.find("==")) {
 		oper = OP_EQUAL;
 
-	} else if (!localStr.Find(">")) {
+	} else if (!localStr.find(">")) {
 		oper = OP_GREATER_THAN;
 
-	} else if (!localStr.Find("<")) {
+	} else if (!localStr.find("<")) {
 		oper = OP_LESS_THAN;
 
-	} else if (!localStr.Find("=")) {
+	} else if (!localStr.find("=")) {
 		oper = OP_ASSIGN;
 
-	} else if (!localStr.Find("+")) {
+	} else if (!localStr.find("+")) {
 		oper = OP_PLUS;
 
-	} else if (!localStr.Find("-")) {
+	} else if (!localStr.find("-")) {
 		oper = OP_MINUS;
 
-	} else if (!localStr.Find("*")) {
+	} else if (!localStr.find("*")) {
 		oper = OP_MULTIPLY;
 
-	} else if (!localStr.Find("/")) {
+	} else if (!localStr.find("/")) {
 		oper = OP_DIVIDE;
 
-	} else if (!localStr.Find("%")) {
+	} else if (!localStr.find("%")) {
 		oper = OP_MOD;
 
-	} else if (!localStr.Find("CONTAINS")) {
+	} else if (!localStr.find("CONTAINS")) {
 		// SDev contains object
 		oper = OP_CONTAINS;
 
-	} else if (!localStr.Find("HAS")) {
+	} else if (!localStr.find("HAS")) {
 		// SDev has type of object
 		oper = OP_HAS;
 
-	} else if (!localStr.Find("OR")) {
+	} else if (!localStr.find("OR")) {
 		oper = OP_OR;
 
-	} else if (!localStr.Find("STATUS")) {
+	} else if (!localStr.find("STATUS")) {
 		oper = OP_STATUS;
 
-	} else if (!localStr.Find("AND")) {
+	} else if (!localStr.find("AND")) {
 		oper = OP_AND;
 	}
 

@@ -372,7 +372,7 @@ PARSE_CODES CBagButtonObject::setInfo(CBagIfstream &istr) {
 			CBofString sStr(szLocalStr, 256);
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("FRAMERATE")) {
+			if (!sStr.find("FRAMERATE")) {
 				int nFrameRate;
 				istr.eatWhite();
 				GetIntFromStream(istr, nFrameRate);
@@ -398,25 +398,25 @@ PARSE_CODES CBagButtonObject::setInfo(CBagIfstream &istr) {
 			CBofString sStr(szLocalStr, 256);
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("AS")) {
+			if (!sStr.find("AS")) {
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
-				if (!sStr.Find("PUSH")) {
+				if (!sStr.find("PUSH")) {
 					_buttonType = BTN_PUSH;
 					nObjectUpdated = true;
-				} else if (!sStr.Find("CHECKBOX")) {
+				} else if (!sStr.find("CHECKBOX")) {
 					_buttonType = BTN_CHECKBOX;
 					nObjectUpdated = true;
-				} else if (!sStr.Find("HLEVER")) {
+				} else if (!sStr.find("HLEVER")) {
 					_buttonType = BTN_HLEVER;
 					nObjectUpdated = true;
-				} else if (!sStr.Find("VLEVER")) {
+				} else if (!sStr.find("VLEVER")) {
 					_buttonType = BTN_VLEVER;
 					nObjectUpdated = true;
-				} else if (!sStr.Find("DIAL")) {
+				} else if (!sStr.find("DIAL")) {
 					_buttonType = BTN_DIAL;
 					nObjectUpdated = true;
-				} else if (!sStr.Find("SLIDER")) {
+				} else if (!sStr.find("SLIDER")) {
 					_buttonType = BTN_SLIDER;
 					nObjectUpdated = true;
 				} else {
@@ -455,7 +455,7 @@ PARSE_CODES CBagButtonObject::setInfo(CBagIfstream &istr) {
 }
 
 void CBagButtonObject::setProperty(const CBofString &prop, int val) {
-	if (!prop.Find("STATE")) {
+	if (!prop.find("STATE")) {
 		if (GetSprite()) {
 			if (_buttonType == BTN_CHECKBOX) {
 				_active = true;
@@ -485,7 +485,7 @@ void CBagButtonObject::setProperty(const CBofString &prop, int val) {
 				GetSprite()->setCel(val);
 			}
 		}
-	} else if (!prop.Find("CURR_CEL")) {
+	} else if (!prop.find("CURR_CEL")) {
 		setState(val);
 		if (GetSprite())
 			GetSprite()->setCel(val);
@@ -494,7 +494,7 @@ void CBagButtonObject::setProperty(const CBofString &prop, int val) {
 }
 
 int CBagButtonObject::getProperty(const CBofString &prop) {
-	if (!prop.Find("CURR_CEL")) {
+	if (!prop.find("CURR_CEL")) {
 		if (GetSprite()) {
 			return GetSprite()->getCelIndex();
 		}

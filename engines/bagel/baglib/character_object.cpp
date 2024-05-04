@@ -72,8 +72,8 @@ ErrorCode CBagCharacterObject::attach() {
 	// Open the smacker file
 	Video::SmackerDecoder *decoder = new Video::SmackerDecoder();
 	decoder->setSoundType(Audio::Mixer::kSFXSoundType);
-	if (!decoder->loadFile(filename.GetBuffer())) {
-		logError(buildString("CHAR SmackOpen failed: %s ", filename.GetBuffer()));
+	if (!decoder->loadFile(filename.getBuffer())) {
+		logError(buildString("CHAR SmackOpen failed: %s ", filename.getBuffer()));
 		return ERR_FOPEN;
 	}
 
@@ -89,8 +89,8 @@ ErrorCode CBagCharacterObject::attach() {
 	}
 
 	// Create the text filename
-	filename.MakeUpper();
-	filename.ReplaceStr(".SMK", ".BIN");
+	filename.makeUpper();
+	filename.replaceStr(".SMK", ".BIN");
 
 	if (_binBuf != nullptr) {
 		bofFree(_binBuf);
@@ -98,8 +98,8 @@ ErrorCode CBagCharacterObject::attach() {
 	}
 
 	// Does file exist
-	if (fileExists(filename.GetBuffer())) {
-		CBofFile cInputFile(filename.GetBuffer());
+	if (fileExists(filename.getBuffer())) {
+		CBofFile cInputFile(filename.getBuffer());
 
 		_binBufLen = cInputFile.getLength();
 
@@ -381,7 +381,7 @@ PARSE_CODES CBagCharacterObject::setInfo(CBagIfstream &istr) {
 
 			GetAlphaNumFromStream(istr, str);
 
-			if (!str.Find("KEEPSTATE")) {
+			if (!str.find("KEEPSTATE")) {
 				istr.eatWhite();
 
 				_saveState = true;
@@ -401,7 +401,7 @@ PARSE_CODES CBagCharacterObject::setInfo(CBagIfstream &istr) {
 
 			GetAlphaNumFromStream(istr, str);
 
-			if (!str.Find("LOOP")) {
+			if (!str.find("LOOP")) {
 				istr.eatWhite();
 				GetIntFromStream(istr, _numOfLoops);
 				objectUpdatedFl = true;
@@ -419,7 +419,7 @@ PARSE_CODES CBagCharacterObject::setInfo(CBagIfstream &istr) {
 
 			GetAlphaNumFromStream(istr, str);
 
-			if (!str.Find("SPEED")) {
+			if (!str.find("SPEED")) {
 				istr.eatWhite();
 				GetIntFromStream(istr, _playbackSpeed);
 				objectUpdatedFl = true;
@@ -437,7 +437,7 @@ PARSE_CODES CBagCharacterObject::setInfo(CBagIfstream &istr) {
 
 			GetAlphaNumFromStream(istr, str);
 
-			if (!str.Find("EXITATEND")) {
+			if (!str.find("EXITATEND")) {
 				istr.eatWhite();
 
 				_exitAtEnd = true;
@@ -455,7 +455,7 @@ PARSE_CODES CBagCharacterObject::setInfo(CBagIfstream &istr) {
 
 			GetAlphaNumFromStream(istr, str);
 
-			if (!str.Find("PANIM")) {
+			if (!str.find("PANIM")) {
 				istr.eatWhite();
 
 				_pAnim = true;
@@ -476,7 +476,7 @@ PARSE_CODES CBagCharacterObject::setInfo(CBagIfstream &istr) {
 
 			GetAlphaNumFromStream(istr, str);
 
-			if (!str.Find("FRAME")) {
+			if (!str.find("FRAME")) {
 				CBofRect r;
 				istr.eatWhite();
 
@@ -609,34 +609,34 @@ void CBagCharacterObject::setFrame(int n) {
 }
 
 void CBagCharacterObject::setProperty(const CBofString &prop, int val) {
-	if (!prop.Find("LOOP"))
+	if (!prop.find("LOOP"))
 		setNumOfLoops(val);
-	else if (!prop.Find("SPEED"))
+	else if (!prop.find("SPEED"))
 		setPlaybackSpeed(val);
-	else if (!prop.Find("START_FRAME"))
+	else if (!prop.find("START_FRAME"))
 		setStartFrame(val);
-	else if (!prop.Find("END_FRAME"))
+	else if (!prop.find("END_FRAME"))
 		setEndFrame(val);
-	else if (!prop.Find("CURR_FRAME"))    // This one will not work currently
+	else if (!prop.find("CURR_FRAME"))    // This one will not work currently
 		setCurrentFrame(val);
 	else
 		CBagObject::setProperty(prop, val);
 }
 
 int CBagCharacterObject::getProperty(const CBofString &prop) {
-	if (!prop.Find("LOOP"))
+	if (!prop.find("LOOP"))
 		return getNumberOfLoops();
 
-	if (!prop.Find("SPEED"))
+	if (!prop.find("SPEED"))
 		return getPlaybackSpeed();
 
-	if (!prop.Find("START_FRAME"))
+	if (!prop.find("START_FRAME"))
 		return getStartFrame();
 
-	if (!prop.Find("END_FRAME"))
+	if (!prop.find("END_FRAME"))
 		return getEndFrame();
 
-	if (!prop.Find("CURR_FRAME"))    // This one will not work currently
+	if (!prop.find("CURR_FRAME"))    // This one will not work currently
 		return getCurrentFrame();
 
 	return CBagObject::getProperty(prop);

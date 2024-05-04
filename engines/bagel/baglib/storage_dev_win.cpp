@@ -615,7 +615,7 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 
 		s = "Warning: { expected: at start of storage device: ";
 		s += sWldName;
-		bofMessageBox(s.GetBuffer(), "Warning");
+		bofMessageBox(s.getBuffer(), "Warning");
 
 		fpInput.putBack();
 	}
@@ -636,15 +636,15 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 			bOperSet        = true;
 		}
 
-		if (!sWorkStr.Find("SET")) {
+		if (!sWorkStr.find("SET")) {
 			bRunActivation  = false;
 			bHoldActivation = false;
 			bOperSet        = true;
-		} else if (!sWorkStr.Find("HOLD")) {
+		} else if (!sWorkStr.find("HOLD")) {
 			bRunActivation  = true;
 			bHoldActivation = true;
 			bOperSet        = true;
-		} else if (!sWorkStr.Find("RUN")) {
+		} else if (!sWorkStr.find("RUN")) {
 			bRunActivation  = true;
 			bHoldActivation = false;
 			bOperSet        = true;
@@ -665,13 +665,13 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 
 		CBagObject *pObj = nullptr;
 
-		if (!sWorkStr.Find("BKG")) {
+		if (!sWorkStr.find("BKG")) {
 			setInfo(fpInput);
 			if (bAttach && attach()) {
 				assert(false);
 			}
 
-		} else if (!sWorkStr.Find("DISKID")) {
+		} else if (!sWorkStr.find("DISKID")) {
 			fpInput.eatWhite();
 			ch = (char)fpInput.getCh();
 			if (ch == '=') {
@@ -682,7 +682,7 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 					fpInput.getCh();
 				}
 			}
-		} else if (!sWorkStr.Find("HELP")) {
+		} else if (!sWorkStr.find("HELP")) {
 			fpInput.eatWhite();
 			ch = (char)fpInput.getCh();
 			if (ch == '=') {
@@ -695,7 +695,7 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 					fpInput.getCh();
 				}
 			}
-		} else if (!sWorkStr.Find("ENDIF")) {
+		} else if (!sWorkStr.find("ENDIF")) {
 			if (bElseExprList.isEmpty()) {
 				ParseAlertBox(fpInput, "Error: ENDIF without IF", __FILE__, __LINE__);
 			} else {
@@ -706,9 +706,9 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 			} else {
 				CBofString str2("Unexpected ENDIF:");
 				str2 += sWldName;
-				ParseAlertBox(fpInput, str2.GetBuffer(), __FILE__, __LINE__);
+				ParseAlertBox(fpInput, str2.getBuffer(), __FILE__, __LINE__);
 			}
-		} else if (!sWorkStr.Find("IF")) {
+		} else if (!sWorkStr.find("IF")) {
 			// Added a bPrevNeg to keep track of nested else-if's
 			bool bPrevNeg = false;
 			if (bElseExprList.getHead())
@@ -726,66 +726,66 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 			assert(m_pExpressionList != nullptr);
 			m_pExpressionList->addToTail(pExp);
 			pActiveExpr = pExp;
-		} else if (!sWorkStr.Find("ELSE")) {
+		} else if (!sWorkStr.find("ELSE")) {
 			if (bElseExprList.isEmpty()) {
 				ParseAlertBox(fpInput, "Error: ELSE without IF", __FILE__, __LINE__);
 			} else {
 				bElseExprList.removeHead();
 				bElseExprList.addToHead((bool) true);
 			}
-		} else if (!sWorkStr.Find("BMP")) {
+		} else if (!sWorkStr.find("BMP")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewSpriteObject(sWorkStr);
-		} else if (!sWorkStr.Find("SPR")) {
+		} else if (!sWorkStr.find("SPR")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewSpriteObject(sWorkStr);
-		} else if (!sWorkStr.Find("LNK")) {
+		} else if (!sWorkStr.find("LNK")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = onNewLinkObject(sWorkStr);
 
-		} else if (!sWorkStr.Find("RPO")) {
+		} else if (!sWorkStr.find("RPO")) {
 			// Allow residue printing objects
 			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewRPObject(sWorkStr);
 
-		} else if (!sWorkStr.Find("EDO")) {
+		} else if (!sWorkStr.find("EDO")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewEDObject(sWorkStr);
 
-		} else if (!sWorkStr.Find("DOS")) {
+		} else if (!sWorkStr.find("DOS")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewDosObject(sWorkStr);
-		} else if (!sWorkStr.Find("SND")) {
+		} else if (!sWorkStr.find("SND")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewSoundObject(sWorkStr);
-		} else if (!sWorkStr.Find("BUT")) {
+		} else if (!sWorkStr.find("BUT")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = onNewButtonObject(sWorkStr);
-		} else if (!sWorkStr.Find("CHR")) {
+		} else if (!sWorkStr.find("CHR")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewCharacterObject(sWorkStr);
-		} else if (!sWorkStr.Find("TNG")) {
+		} else if (!sWorkStr.find("TNG")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewThingObject(sWorkStr);
-		} else if (!sWorkStr.Find("ARE")) {
+		} else if (!sWorkStr.find("ARE")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewAreaObject(sWorkStr);
-		} else if (!sWorkStr.Find("VAR")) {
+		} else if (!sWorkStr.find("VAR")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewVariableObject(sWorkStr);
-		} else if (!sWorkStr.Find("TXT")) {
+		} else if (!sWorkStr.find("TXT")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewTextObject(sWorkStr);
-		} else if (!sWorkStr.Find("MOVIE")) {
+		} else if (!sWorkStr.find("MOVIE")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewMovieObject(sWorkStr);
-		} else if (!sWorkStr.Find("COMMAND")) {
+		} else if (!sWorkStr.find("COMMAND")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewCommandObject(sWorkStr);
-		} else if (!sWorkStr.Find("EXPR")) {
+		} else if (!sWorkStr.find("EXPR")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewExpressionObject(sWorkStr);
-		} else if (!sWorkStr.Find("REM") || !sWorkStr.Find("//")) {
+		} else if (!sWorkStr.find("REM") || !sWorkStr.find("//")) {
 			char s[256];
 			fpInput.getCh(s, 256);
 		} else {
@@ -832,7 +832,7 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 	if (pActiveExpr) {
 		CBofString str2("Mismatch in IF/ENDIF:");
 		str2 += sWldName;
-		ParseAlertBox(fpInput, str2.GetBuffer(), __FILE__, __LINE__);
+		ParseAlertBox(fpInput, str2.getBuffer(), __FILE__, __LINE__);
 
 		return ERR_UNKNOWN;
 	}
@@ -887,7 +887,7 @@ CBagObject *CBagStorageDev::GetObject(const CBofString &sName, bool bActiveOnly)
 	while (pNode != nullptr) {
 		CBagObject *pObj = pNode->getNodeItem();
 
-		if (pObj->GetRefName().Compare(sName) == 0) {
+		if (pObj->GetRefName().compare(sName) == 0) {
 			pObjFound = pObj;
 			break;
 		}
@@ -910,9 +910,9 @@ CBagObject *CBagStorageDev::GetObjectByType(const CBofString &sType, bool bActiv
 		CBagObject *pObj = GetObjectByPos(i);
 
 		if (bActiveOnly) {
-			if (pObj->IsActive() && !getStringTypeOfObject(pObj->GetType()).Find(sType))
+			if (pObj->IsActive() && !getStringTypeOfObject(pObj->GetType()).find(sType))
 				return pObj;
-		} else if (!getStringTypeOfObject(pObj->GetType()).Find(sType))
+		} else if (!getStringTypeOfObject(pObj->GetType()).find(sType))
 			return pObj;
 	}
 
@@ -1084,7 +1084,7 @@ CBagObject *CBagStorageDev::onNewUserObject(const CBofString &str) {
 
 	s = str;
 
-	bofMessageBox(s.GetBuffer(), "Could not find object type");
+	bofMessageBox(s.getBuffer(), "Could not find object type");
 
 	return nullptr;
 }
@@ -1198,10 +1198,10 @@ ErrorCode CBagStorageDevWnd::attach() {
 			CBofRect r = pBmp->getRect();
 
 			if (r.width() && r.height()) {
-				create(s.GetBuffer(), &r, CBagel::getBagApp()->getMasterWnd());
+				create(s.getBuffer(), &r, CBagel::getBagApp()->getMasterWnd());
 
 			} else {
-				create(s.GetBuffer(), nullptr, CBagel::getBagApp()->getMasterWnd());
+				create(s.getBuffer(), nullptr, CBagel::getBagApp()->getMasterWnd());
 			}
 
 			show();
@@ -1588,10 +1588,10 @@ ErrorCode CBagStorageDevDlg::attach() {
 		r = pBmp->getRect();
 
 	if (r.width() && r.height()) {
-		create(s.GetBuffer(), &r, CBagel::getBagApp()->getMasterWnd());
+		create(s.getBuffer(), &r, CBagel::getBagApp()->getMasterWnd());
 
 	} else {
-		create(s.GetBuffer(), nullptr, CBagel::getBagApp()->getMasterWnd());
+		create(s.getBuffer(), nullptr, CBagel::getBagApp()->getMasterWnd());
 	}
 
 	SetPreFilterPan(true);
@@ -1882,7 +1882,7 @@ CBagStorageDev *CBagStorageDevManager::GetStorageDevice(const CBofString &sName)
 	for (int i = 0; i < m_xStorageDeviceList.getCount(); ++i) {
 		CBagStorageDev *pSDev = m_xStorageDeviceList[i];
 		if (pSDev && (pSDev->GetName().getLength() == sName.getLength()) &&
-		        !pSDev->GetName().Find(sName))
+		        !pSDev->GetName().find(sName))
 			return m_xStorageDeviceList[i];
 	}
 	return nullptr;

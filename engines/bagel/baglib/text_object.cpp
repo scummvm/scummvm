@@ -133,7 +133,7 @@ ErrorCode CBagTextObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 ErrorCode CBagTextObject::attach() {
 	assert(isValidObject(this));
 
-	if (!getFileName().Right(4).Find(".TXT") || !getFileName().Right(4).Find(".txt")) {
+	if (!getFileName().right(4).find(".TXT") || !getFileName().right(4).find(".txt")) {
 		// Prevent memory leak
 		if (m_psText != nullptr) {
 			delete m_psText;
@@ -161,7 +161,7 @@ ErrorCode CBagTextObject::attach() {
 
 						if (pVar != nullptr) {
 							m_bReAttach = true;
-							m_psText->ReplaceStr("%s", pVar->GetValue());
+							m_psText->replaceStr("%s", pVar->GetValue());
 						}
 					}
 
@@ -193,7 +193,7 @@ ErrorCode CBagTextObject::attach() {
 			*m_psText = getFileName();
 
 			// Replace any underscores with spaces
-			m_psText->ReplaceChar('_', ' ');
+			m_psText->replaceChar('_', ' ');
 
 			RecalcTextRect(false);
 
@@ -238,7 +238,7 @@ void CBagTextObject::setText(const CBofString &s) {
 		setFileName(s);
 	}
 
-	RecalcTextRect(!getFileName().Right(4).Find(".TXT") || !getFileName().Right(4).Find(".txt"));
+	RecalcTextRect(!getFileName().right(4).find(".TXT") || !getFileName().right(4).find(".txt"));
 }
 
 //   Takes in info and then removes the relative information and returns the info
@@ -266,7 +266,7 @@ PARSE_CODES CBagTextObject::setInfo(CBagIfstream &istr) {
 
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("VAR")) {
+			if (!sStr.find("VAR")) {
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 				SetInitInfo(sStr);
@@ -287,7 +287,7 @@ PARSE_CODES CBagTextObject::setInfo(CBagIfstream &istr) {
 
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("SIZE")) {
+			if (!sStr.find("SIZE")) {
 				istr.eatWhite();
 				int n;
 				GetIntFromStream(istr, n);
@@ -315,7 +315,7 @@ PARSE_CODES CBagTextObject::setInfo(CBagIfstream &istr) {
 
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("FONT")) {
+			if (!sStr.find("FONT")) {
 				istr.eatWhite();
 				int n;
 				GetIntFromStream(istr, n);
@@ -337,14 +337,14 @@ PARSE_CODES CBagTextObject::setInfo(CBagIfstream &istr) {
 			CBofString sStr(szLocalStr, 256);
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("AS")) {
+			if (!sStr.find("AS")) {
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
-				if (!sStr.Find("CAPTION")) {
+				if (!sStr.find("CAPTION")) {
 					m_bCaption = true;
 					nObjectUpdated = true;
 
-				} else if (!sStr.Find("TITLE")) {
+				} else if (!sStr.find("TITLE")) {
 					m_bTitle = true;
 					nObjectUpdated = true;
 
@@ -368,7 +368,7 @@ PARSE_CODES CBagTextObject::setInfo(CBagIfstream &istr) {
 
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("COLOR")) {
+			if (!sStr.find("COLOR")) {
 				int nColor;
 				istr.eatWhite();
 				GetIntFromStream(istr, nColor);
@@ -440,22 +440,22 @@ void CBagTextObject::setColor(int nColor) {
 }
 
 void CBagTextObject::setProperty(const CBofString &sProp, int nVal) {
-	if (!sProp.Find("SIZE"))
+	if (!sProp.find("SIZE"))
 		setPointSize(nVal);
-	else if (!sProp.Find("FONT"))
+	else if (!sProp.find("FONT"))
 		setFont(MapFont(nVal));
-	else if (!sProp.Find("COLOR"))
+	else if (!sProp.find("COLOR"))
 		setColor(nVal);
 	else
 		CBagObject::setProperty(sProp, nVal);
 }
 
 int CBagTextObject::getProperty(const CBofString &sProp) {
-	if (!sProp.Find("SIZE"))
+	if (!sProp.find("SIZE"))
 		return getPointSize();
-	if (!sProp.Find("FONT"))
+	if (!sProp.find("FONT"))
 		return getFont();
-	if (!sProp.Find("COLOR"))
+	if (!sProp.find("COLOR"))
 		return getColor();
 
 	return CBagObject::getProperty(sProp);

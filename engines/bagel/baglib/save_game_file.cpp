@@ -206,7 +206,7 @@ ErrorCode CBagSaveGameFile::readSavedGame(int32 slotNum) {
 
 			CBofString str(saveData.m_szScript);
 			MACROREPLACE(str);
-			const char *path = str.GetBuffer();
+			const char *path = str.getBuffer();
 			assert(!strncmp(path, "./", 2));
 			Common::strcpy_s(saveData.m_szScript, path + 2);
 

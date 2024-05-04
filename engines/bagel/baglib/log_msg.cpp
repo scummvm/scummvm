@@ -445,12 +445,12 @@ PARSE_CODES CBagLogMsg::setInfo(CBagIfstream &istr) {
 		case 'S': {
 			GetAlphaNumFromStream(istr, string1);
 
-			if (!string1.Find("SENDEE")) {
+			if (!string1.find("SENDEE")) {
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, string2);
 
 				// Replace any underscores with spaces
-				string2.ReplaceChar('_', ' ');
+				string2.replaceChar('_', ' ');
 
 				setMsgSendee(string2);
 
@@ -467,7 +467,7 @@ PARSE_CODES CBagLogMsg::setInfo(CBagIfstream &istr) {
 		case 'T': {
 			GetAlphaNumFromStream(istr, string1);
 
-			if (!string1.Find("TIME")) {
+			if (!string1.find("TIME")) {
 				istr.eatWhite();
 				char nextCh = (char)istr.peek();
 				int msgTime = 0;
@@ -508,9 +508,9 @@ PARSE_CODES CBagLogMsg::setInfo(CBagIfstream &istr) {
 }
 
 void CBagLogMsg::setProperty(const CBofString &prop, int val) {
-	if (!prop.Find("TIME")) {
+	if (!prop.find("TIME")) {
 		setMsgTime(val);
-	} else if (!prop.Find("PLAYED")) {
+	} else if (!prop.find("PLAYED")) {
 		setMsgPlayed(val);
 	}
 
@@ -518,11 +518,11 @@ void CBagLogMsg::setProperty(const CBofString &prop, int val) {
 }
 
 int CBagLogMsg::getProperty(const CBofString &prop) {
-	if (!prop.Find("TIME"))
+	if (!prop.find("TIME"))
 		return getMsgTime();
 
 	// Played requires a 1 or a 0 (don't use true or false).
-	if (!prop.Find("PLAYED")) {
+	if (!prop.find("PLAYED")) {
 		bool playedFl = getMsgPlayed();
 		return (playedFl ? 1 : 0);
 	}
@@ -543,7 +543,7 @@ ErrorCode CBagLogMsg::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect, i
 	int minutes = msgTime - (hour * 100);
 
 	setFont(FONT_MONO);
-	setText(buildString("%-30s%02d:%02d", _msgSendee.GetBuffer(), hour, minutes));
+	setText(buildString("%-30s%02d:%02d", _msgSendee.getBuffer(), hour, minutes));
 
 	return CBagTextObject::update(bmp, pt, srcRect, maskColor);
 }
@@ -581,12 +581,12 @@ PARSE_CODES CBagLogSuspect::setInfo(CBagIfstream &istr) {
 		case 'N': {
 			GetAlphaNumFromStream(istr, string1);
 
-			if (!string1.Find("NAME")) {
+			if (!string1.find("NAME")) {
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, string2);
 
 				// Replace any underscores with spaces
-				string2.ReplaceChar('_', ' ');
+				string2.replaceChar('_', ' ');
 				setSusName(string2);
 
 				objectUpdatedFl = true;
@@ -599,12 +599,12 @@ PARSE_CODES CBagLogSuspect::setInfo(CBagIfstream &istr) {
 		case 'S': {
 			GetAlphaNumFromStream(istr, string1);
 
-			if (!string1.Find("SPECIES")) {
+			if (!string1.find("SPECIES")) {
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, string2);
 
 				// Replace any underscores with spaces
-				string2.ReplaceChar('_', ' ');
+				string2.replaceChar('_', ' ');
 
 				setSusSpecies(string2);
 
@@ -618,12 +618,12 @@ PARSE_CODES CBagLogSuspect::setInfo(CBagIfstream &istr) {
 		case 'R': {
 			GetAlphaNumFromStream(istr, string1);
 
-			if (!string1.Find("ROOM")) {
+			if (!string1.find("ROOM")) {
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, string2);
 
 				// Replace any underscores with spaces
-				string2.ReplaceChar('_', ' ');
+				string2.replaceChar('_', ' ');
 				setSusRoom(string2);
 
 				objectUpdatedFl = true;
@@ -655,7 +655,7 @@ PARSE_CODES CBagLogSuspect::setInfo(CBagIfstream &istr) {
 	return PARSING_DONE;
 }
 void CBagLogSuspect::setProperty(const CBofString &prop, int val) {
-	if (!prop.Find("ROOM")) {
+	if (!prop.find("ROOM")) {
 		switch (val) {
 		case 1:  // BAP
 			setSusRoom("Entry Vestibule");
@@ -694,11 +694,11 @@ void CBagLogSuspect::setProperty(const CBofString &prop, int val) {
 		if (val == 2)
 			hackVal = 2;
 
-		if (!prop.Find("CHECKED"))
+		if (!prop.find("CHECKED"))
 			setSusChecked(hackVal == 2 ? !getSusChecked() : hackVal);
-		else if (!prop.Find("VP"))
+		else if (!prop.find("VP"))
 			setSusVoicePrinted(hackVal == 2 ? !getSusVoicePrinted() : hackVal);
-		else if (!prop.Find("RP"))
+		else if (!prop.find("RP"))
 			setSusResiduePrinted(hackVal == 2 ? !getSusResiduePrinted() : hackVal);
 		else
 			CBagObject::setProperty(prop, val);
@@ -707,13 +707,13 @@ void CBagLogSuspect::setProperty(const CBofString &prop, int val) {
 
 
 int CBagLogSuspect::getProperty(const CBofString &prop) {
-	if (!prop.Find("CHECKED"))
+	if (!prop.find("CHECKED"))
 		return getSusChecked();
 
-	if (!prop.Find("VP"))
+	if (!prop.find("VP"))
 		return getSusVoicePrinted();
 
-	if (!prop.Find("RP"))
+	if (!prop.find("RP"))
 		return getSusResiduePrinted();
 
 	return CBagObject::getProperty(prop);
@@ -755,12 +755,12 @@ ErrorCode CBagLogSuspect::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRec
 	setFont(FONT_MONO);
 
 	setText(buildString(" %-5.5s %-17.17s %-12.12s %-20.20s %-4.4s %-4.4s",
-	                    susCheckedString.GetBuffer(),
-	                    _susName.GetBuffer(),
-	                    _susSpecies.GetBuffer(),
-	                    _susRoom.GetBuffer(),
-	                    voicePrintString.GetBuffer(),
-	                    residuePrintString.GetBuffer()));
+	                    susCheckedString.getBuffer(),
+	                    _susName.getBuffer(),
+	                    _susSpecies.getBuffer(),
+	                    _susRoom.getBuffer(),
+	                    voicePrintString.getBuffer(),
+	                    residuePrintString.getBuffer()));
 
 	return CBagTextObject::update(bmp, pt, srcRect, maskColor);
 }
@@ -798,7 +798,7 @@ PARSE_CODES CBagEnergyDetectorObject::setInfo(CBagIfstream &istr) {
 		case 'Z': {
 			GetAlphaNumFromStream(istr, string1);
 
-			if (!string1.Find("ZHAPS")) {
+			if (!string1.find("ZHAPS")) {
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, string2);
 
@@ -817,7 +817,7 @@ PARSE_CODES CBagEnergyDetectorObject::setInfo(CBagIfstream &istr) {
 		case 'C': {
 			GetAlphaNumFromStream(istr, string1);
 
-			if (!string1.Find("CAUSE")) {
+			if (!string1.find("CAUSE")) {
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, string2);
 
@@ -836,7 +836,7 @@ PARSE_CODES CBagEnergyDetectorObject::setInfo(CBagIfstream &istr) {
 		case 'T': {
 			GetAlphaNumFromStream(istr, string1);
 
-			if (!string1.Find("TIME")) {
+			if (!string1.find("TIME")) {
 				istr.eatWhite();
 				(void)istr.peek();
 
@@ -858,7 +858,7 @@ PARSE_CODES CBagEnergyDetectorObject::setInfo(CBagIfstream &istr) {
 
 			GetAlphaNumFromStream(istr, string3);
 
-			if (!string3.Find("SIZE")) {
+			if (!string3.find("SIZE")) {
 				istr.eatWhite();
 				int n;
 				GetIntFromStream(istr, n);
@@ -916,7 +916,7 @@ ErrorCode CBagEnergyDetectorObject::attach() {
 	if (curVar) {
 		nMsgTime = curVar->GetNumValue();
 	} else {
-		nMsgTime = atoi(_energyTimeStr.GetBuffer());
+		nMsgTime = atoi(_energyTimeStr.getBuffer());
 	}
 
 	int hour = nMsgTime / 100;
@@ -939,12 +939,12 @@ ErrorCode CBagEnergyDetectorObject::attach() {
 	}
 
 	// Replace any underscores with spaces
-	causeString.ReplaceChar('_', ' ');
+	causeString.replaceChar('_', ' ');
 
 	CBofString cStr;
 	SetPSText(&cStr);
 
-	setText(buildString("%02d:%02d %6.6s %s  %-35.35s", hour, minute, zhapsString.GetBuffer(), "zhaps", causeString.GetBuffer()));
+	setText(buildString("%02d:%02d %6.6s %s  %-35.35s", hour, minute, zhapsString.getBuffer(), "zhaps", causeString.getBuffer()));
 	RecalcTextRect(false);
 
 	return CBagObject::attach();
@@ -981,11 +981,11 @@ ErrorCode CBagLogClue::attach() {
 	cFormat = getFileName();
 
 	// Replace '$' with '%' (% is an illegal character embedded in a clue string).
-	cFormat.ReplaceChar('_', ' ');
-	cFormat.ReplaceChar('$', '%');
+	cFormat.replaceChar('_', ' ');
+	cFormat.replaceChar('$', '%');
 
 	// Format the text appropriately.
-	Common::sprintf_s(szClueStr, cFormat.GetBuffer(),
+	Common::sprintf_s(szClueStr, cFormat.getBuffer(),
 	                  (_stringVar1 ? (const char *)_stringVar1->GetValue() : (const char *)""),
 	                  (_stringVar2 ? (const char *)_stringVar2->GetValue() : (const char *)""),
 	                  (_stringVar3 ? (const char *)_stringVar3->GetValue() : (const char *)""),
@@ -1014,7 +1014,7 @@ PARSE_CODES CBagLogClue::setInfo(CBagIfstream &istr) {
 		case 'S': {
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("STRINGVAR")) {
+			if (!sStr.find("STRINGVAR")) {
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 				CBagVar *pVar = VAR_MANAGER->GetVariable(sStr);

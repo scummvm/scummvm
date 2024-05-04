@@ -155,7 +155,7 @@ PARSE_CODES CBagSpriteObject::setInfo(CBagIfstream &istr) {
 			CBofString sStr(szLocalStr, 256); // performance improvement
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("NOANIM")) {
+			if (!sStr.find("NOANIM")) {
 				istr.eatWhite();
 				setAnimated(false);
 				nObjectUpdated = true;
@@ -172,7 +172,7 @@ PARSE_CODES CBagSpriteObject::setInfo(CBagIfstream &istr) {
 			CBofString sStr(szLocalStr, 256);
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("FRAMERATE")) {
+			if (!sStr.find("FRAMERATE")) {
 				int nFrameRate;
 				istr.eatWhite();
 				GetIntFromStream(istr, nFrameRate);
@@ -267,11 +267,11 @@ bool CBagSpriteObject::isInside(const CBofPoint &xPoint) {
 }
 
 void CBagSpriteObject::setProperty(const CBofString &sProp, int nVal) {
-	if (!sProp.Find("STATE")) {
+	if (!sProp.find("STATE")) {
 		setState(nVal);
 		if (m_xSprite)
 			m_xSprite->setCel(nVal);
-	} else if (!sProp.Find("CURR_CEL")) {
+	} else if (!sProp.find("CURR_CEL")) {
 		setState(nVal);
 		if (m_xSprite)
 			m_xSprite->setCel(nVal);
@@ -280,7 +280,7 @@ void CBagSpriteObject::setProperty(const CBofString &sProp, int nVal) {
 }
 
 int CBagSpriteObject::getProperty(const CBofString &sProp) {
-	if (!sProp.Find("CURR_CEL")) {
+	if (!sProp.find("CURR_CEL")) {
 		if (m_xSprite) {
 			return m_xSprite->getCelIndex();
 		}

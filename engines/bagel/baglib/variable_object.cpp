@@ -81,7 +81,7 @@ PARSE_CODES CBagVariableObject::setInfo(CBagIfstream &istr) {
 
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("SIZE")) {
+			if (!sStr.find("SIZE")) {
 				istr.eatWhite();
 				GetIntFromStream(istr, m_nPointSize);
 				nObjectUpdated = true;
@@ -104,7 +104,7 @@ PARSE_CODES CBagVariableObject::setInfo(CBagIfstream &istr) {
 
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("COLOR")) {
+			if (!sStr.find("COLOR")) {
 				int nColor;
 				istr.eatWhite();
 				GetIntFromStream(istr, nColor);
@@ -158,7 +158,7 @@ ErrorCode CBagVariableObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *p
 		// FIXME: Offset for the last accessed time and # times counter in
 		// entryway computer terminal. Otherwise, there's no space between
 		// them and the preceding text
-		Common::String name = xVar->GetName().GetBuffer();
+		Common::String name = xVar->GetName().getBuffer();
 		if (name.hasSuffix("_LAST") || name.hasSuffix("_TIMES"))
 			pt.x += 10;
 		// FIXME: Slight spacing out for Fleebix frequency display

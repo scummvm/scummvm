@@ -49,7 +49,7 @@ const char *formPath(const char *dir, const char *pszFile) {
 
 	CBofString cStr(dir);
 	MACROREPLACE(cStr);
-	Common::Path path(cStr.GetBuffer());
+	Common::Path path(cStr.getBuffer());
 	path = path.append(pszFile);
 
 	Common::strcpy_s(szBuf, path.toString().c_str());

@@ -287,7 +287,7 @@ void CBagSaveDialog::saveAndClose() {
 
 		// Save the game
 		g_engine->saveGameState(_nSelectedItem + 1,
-			_pEditText->getText().GetBuffer());
+			_pEditText->getText().getBuffer());
 
 		close();
 		setReturnValue(SAVE_BTN);

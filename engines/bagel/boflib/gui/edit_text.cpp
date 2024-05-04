@@ -106,7 +106,7 @@ void CBofEditText::onPaint(CBofRect *pRect) {
 	if (!_text.isEmpty()) {
 		CBofString tmp = _text + "|";
 
-		paintText(this, &_cRect, tmp.GetBuffer(),
+		paintText(this, &_cRect, tmp.getBuffer(),
 			12, 0, CTEXT_COLOR,
 			JUSTIFY_LEFT,
 			FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE);
@@ -117,7 +117,7 @@ void CBofEditText::onPaint(CBofRect *pRect) {
 void CBofEditText::onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
 	// First click focuses text input
 	setFocus();
-	_cursorPos = _text.GetBufferSize();
+	_cursorPos = _text.getBufferSize();
 
 	updateWindow();
 }
@@ -132,7 +132,7 @@ void CBofEditText::onKeyHit(uint32 lKey, uint32 lRepCount) {
 		}
 	
 	} else if (lKey == BKEY_BACK && !_text.isEmpty()) {
-		_text.DeleteLastChar();
+		_text.deleteLastChar();
 		updateWindow();
 	}
 }

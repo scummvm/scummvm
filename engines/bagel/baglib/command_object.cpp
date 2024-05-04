@@ -55,20 +55,20 @@ bool CBagCommandObject::runObject() {
 		CBofString dstSDev = _destSDev;
 
 		// Check if these items should be replaced by the current sdev
-		if (!srcSDev.isEmpty() && !srcSDev.Find(CURRSDEV_TOKEN)) {
+		if (!srcSDev.isEmpty() && !srcSDev.find(CURRSDEV_TOKEN)) {
 			srcSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->GetName();
 		}
 
-		if (!dstSDev.isEmpty() && !dstSDev.Find(CURRSDEV_TOKEN)) {
+		if (!dstSDev.isEmpty() && !dstSDev.find(CURRSDEV_TOKEN)) {
 			dstSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->GetName();
 		}
 
 		// Check if these items should be replaced by the previous sdev
-		if (!srcSDev.isEmpty() && !srcSDev.Find(PREVSDEV_TOKEN)) {
+		if (!srcSDev.isEmpty() && !srcSDev.find(PREVSDEV_TOKEN)) {
 			srcSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->getPrevSDev();
 		}
 
-		if (!dstSDev.isEmpty() && !dstSDev.Find(PREVSDEV_TOKEN)) {
+		if (!dstSDev.isEmpty() && !dstSDev.find(PREVSDEV_TOKEN)) {
 			dstSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->getPrevSDev();
 		}
 
@@ -101,7 +101,7 @@ bool CBagCommandObject::runObject() {
 				SDEV_MANAGER->MoveObject(dstSDev, srcSDev, _objName);
 			}
 
-		} else if (getFileName().Find("FLUSHQUEUE") == 0) {
+		} else if (getFileName().find("FLUSHQUEUE") == 0) {
 			char buffer[20];
 			int slot;
 
@@ -367,8 +367,8 @@ bool CBagCommandObject::runObject() {
 				MACROREPLACE(smkName);
 
 				// Play the movie only if it exists
-				if (fileExists(smkName.GetBuffer())) {
-					bofPlayMovie(mainWin, smkName.GetBuffer());
+				if (fileExists(smkName.getBuffer())) {
+					bofPlayMovie(mainWin, smkName.getBuffer());
 					bmp.paint(mainWin, 0, 0);
 				}
 			}
@@ -414,7 +414,7 @@ PARSE_CODES CBagCommandObject::setInfo(CBagIfstream &istr) {
 			CBofString curStr(localBuffer, 256);
 			GetAlphaNumFromStream(istr, curStr);
 
-			if (!curStr.Find("OBJECT")) {
+			if (!curStr.find("OBJECT")) {
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, _objName);
 				objectUpdatedFl = true;
@@ -432,7 +432,7 @@ PARSE_CODES CBagCommandObject::setInfo(CBagIfstream &istr) {
 			CBofString curStr(localBuffer, 256);
 			GetAlphaNumFromStream(istr, curStr);
 
-			if (!curStr.Find("FROM")) {
+			if (!curStr.find("FROM")) {
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, _srcSDev);
 				objectUpdatedFl = true;
@@ -450,7 +450,7 @@ PARSE_CODES CBagCommandObject::setInfo(CBagIfstream &istr) {
 			CBofString curStr(localBuffer, 256);
 			GetAlphaNumFromStream(istr, curStr);
 
-			if (!curStr.Find("TO")) {
+			if (!curStr.find("TO")) {
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, _destSDev);
 				objectUpdatedFl = true;

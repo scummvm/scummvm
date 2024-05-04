@@ -214,7 +214,7 @@ PARSE_CODES CBagTimeObject::setInfo(CBagIfstream &istr) {
 
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("VALUE")) {
+			if (!sStr.find("VALUE")) {
 				istr.eatWhite();
 				char szLocalBuff1[256];
 				szLocalBuff[0] = '\0';

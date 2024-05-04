@@ -51,11 +51,11 @@ bool CBagExpressionObject::runObject() {
 			if (getFileName().isEmpty())
 				return false;
 
-			int nIndex = getFileName().Find("~~");
+			int nIndex = getFileName().find("~~");
 			if (nIndex > 0) {
 				// This is a reference
-				CBofString objectStr = getFileName().Left(nIndex);
-				CBofString propertyStr = getFileName().Mid(nIndex + 2);
+				CBofString objectStr = getFileName().left(nIndex);
+				CBofString propertyStr = getFileName().mid(nIndex + 2);
 
 				SDEV_MANAGER->SetObjectValue(objectStr, propertyStr, localVar.GetNumValue());
 

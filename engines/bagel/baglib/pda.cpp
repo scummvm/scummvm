@@ -75,7 +75,7 @@ void CBagPDA::AddToMovieQueue(CBagMovieObject *pMObj) {
 	int nCount = m_pMovieList->getCount();
 	for (int i = 0; i < nCount; i++) {
 		CBagMovieObject *p = m_pMovieList->getNodeItem(i);
-		if (p->getFileName().Find(pMObj->getFileName()) == 0) {
+		if (p->getFileName().find(pMObj->getFileName()) == 0) {
 			return;
 		}
 	}

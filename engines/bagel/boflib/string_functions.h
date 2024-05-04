@@ -33,7 +33,7 @@ namespace Bagel {
  * @param c         Character to count in str
  * @return          Number of times character c occurs in string str
  */
-extern int StrCharCount(const char *str, char c);
+extern int strCharCount(const char *str, char c);
 
 /**
  * Replaces all occurence of cOld in string with cNew
@@ -42,7 +42,7 @@ extern int StrCharCount(const char *str, char c);
  * @param cNew      Character to replace cOld
  * @return          Pointer to pszBuf
  */
-extern char *StrReplaceChar(char *pszbuf, char cOld, char cNew);
+extern char *strreplaceChar(char *pszbuf, char cOld, char cNew);
 
 /**
  * Replaces every occurrence of 1 character with another
@@ -51,7 +51,7 @@ extern char *StrReplaceChar(char *pszbuf, char cOld, char cNew);
  * @param chNew     New character to replace with
  * @param lSize     Size of buffer
  */
-extern void MemReplaceChar(byte *pBuf, byte chOld, byte chNew, int32 lSize);
+extern void memreplaceChar(byte *pBuf, byte chOld, byte chNew, int32 lSize);
 
 /**
  * Replaces all tokens in string with new token
@@ -60,7 +60,7 @@ extern void MemReplaceChar(byte *pBuf, byte chOld, byte chNew, int32 lSize);
  * @param pszTok2   Replacement token
  * @return          Pointer to pszBuf.
  */
-extern char *StrReplaceStr(char *pszBuf, const char *pszTok1, const char *pszTok2);
+extern char *strreplaceStr(char *pszBuf, const char *pszTok1, const char *pszTok2);
 
 } // namespace Bagel
 

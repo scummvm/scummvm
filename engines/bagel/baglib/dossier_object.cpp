@@ -74,13 +74,13 @@ PARSE_CODES CBagDossierObject::setInfo(CBagIfstream &istr) {
 		case 'S':
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("SIZE")) {
+			if (!sStr.find("SIZE")) {
 				istr.eatWhite();
 				int size;
 				GetIntFromStream(istr, size);
 				setPointSize((byte)size);
 				objectUpdatedFl = true;
-			} else if (!sStr.Find("SUSPECTVAR")) {
+			} else if (!sStr.find("SUSPECTVAR")) {
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 				m_sSuspectVar = sStr;
@@ -96,7 +96,7 @@ PARSE_CODES CBagDossierObject::setInfo(CBagIfstream &istr) {
 		case 'N':
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("NOTACTIVE")) {
+			if (!sStr.find("NOTACTIVE")) {
 				setNotActive(true);
 				objectUpdatedFl = true;
 			} else {
@@ -110,7 +110,7 @@ PARSE_CODES CBagDossierObject::setInfo(CBagIfstream &istr) {
 		case 'F':
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("FONT")) {
+			if (!sStr.find("FONT")) {
 				istr.eatWhite();
 				int fontId;
 				GetIntFromStream(istr, fontId);
@@ -129,13 +129,13 @@ PARSE_CODES CBagDossierObject::setInfo(CBagIfstream &istr) {
 		case 'I':
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("INDEX")) {
+			if (!sStr.find("INDEX")) {
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 
 				// replace underlines with spaces.
 
-				sStr.ReplaceChar('_', ' ');
+				sStr.replaceChar('_', ' ');
 				_indexLine = sStr;
 
 				objectUpdatedFl = true;
@@ -159,14 +159,14 @@ PARSE_CODES CBagDossierObject::setInfo(CBagIfstream &istr) {
 		case 'A':
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("AS")) {
+			if (!sStr.find("AS")) {
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
-				if (!sStr.Find("CAPTION")) {
+				if (!sStr.find("CAPTION")) {
 					m_bCaption = true;
 					objectUpdatedFl = true;
 
-				} else if (!sStr.Find("TITLE")) {
+				} else if (!sStr.find("TITLE")) {
 					m_bTitle = true;
 					objectUpdatedFl = true;
 
@@ -187,7 +187,7 @@ PARSE_CODES CBagDossierObject::setInfo(CBagIfstream &istr) {
 		case 'C':
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("COLOR")) {
+			if (!sStr.find("COLOR")) {
 				int nColor;
 				istr.eatWhite();
 				GetIntFromStream(istr, nColor);
