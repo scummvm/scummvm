@@ -39,6 +39,7 @@ struct Picture {
 		return _paletteColors * 3;
 	}
 
+	Picture() {}
 	Picture(Image::ImageDecoder &img);
 	Picture(Picture &picture);
 	~Picture();
