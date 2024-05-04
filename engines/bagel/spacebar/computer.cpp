@@ -133,7 +133,7 @@ ErrorCode SBarComputer::attach() {
 
 	ErrorCode rc = CBagStorageDevWnd::attach();
 	if (rc == ERR_NONE) {
-		g_bWaitOK = false;
+		g_waitOKFl = false;
 
 		_pDrinkList = new CBofList<SBarCompItem>;
 		_pIngList = new CBofList<SBarCompItem>;

@@ -228,7 +228,7 @@ ErrorCode CMainWindow::attach() {
 					_pEvtSDev->attach();
 
 				setTimer(EVAL_EXPR, 1000);
-				g_bPauseTimer = false;
+				g_pauseTimerFl = false;
 
 			} else {
 				killTimer(EVAL_EXPR);
@@ -239,7 +239,7 @@ ErrorCode CMainWindow::attach() {
 				_pEvtSDev->SetAssociateWnd(this);
 				setTimer(EVAL_EXPR, 1000);
 
-				g_bPauseTimer = false;
+				g_pauseTimerFl = false;
 			}
 		}
 

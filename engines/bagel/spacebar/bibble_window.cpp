@@ -263,7 +263,7 @@ ErrorCode CBibbleWindow::attach() {
 
 	CBagStorageDevWnd::attach();
 
-	g_bWaitOK = false;
+	g_waitOKFl = false;
 
 	CBagVar *pVar;
 
@@ -510,7 +510,7 @@ ErrorCode CBibbleWindow::detach() {
 
 	killBackdrop();
 
-	g_bWaitOK = true;
+	g_waitOKFl = true;
 
 	CBagStorageDevWnd::detach();
 
