@@ -320,6 +320,30 @@ on checkkaiwa kaiwatrue, kaiwafalse \r\
 end \r\
 ";
 
+/*
+ * Virtual Nightclub has a number of cheat codes for debugging.
+ * These are normally enabled by pressing Option + 0, however the
+ * released game has this code stubbed out with a return.
+ */
+
+const char *vncEnableCheats = " \
+on togCh\r\
+  if getFlag(#cheats) then\r\
+    setFlag(#cheats, 0)\r\
+    set the foreColor of field \"viewName_cast\" to 255\r\
+    alert(\"VNC Cheats off\")\r\
+  else\r\
+    if platform() < 256 then\r\
+      set the textFont of field \"viewName_cast\" to \"Monaco\"\r\
+    end if\r\
+    set the foreColor of field \"viewName_cast\" to 172\r\
+    set the textSize of field \"viewName_cast\" to 9\r\
+    setFlag(#cheats)\r\
+    alert(\"VNC Cheats on\")\r\
+  end if\r\
+end\r\
+";
+
 /* AMBER: Journeys Beyond has a check to ensure that the CD and hard disk data are on
  * different drive letters. ScummVM will pretend that every drive letter contains the
  * game contents, so we need to hotpatch the CD detection routine to return D:.
@@ -352,6 +376,7 @@ struct ScriptHandlerPatch {
 	{"kyoto", nullptr, kPlatformWindows, "ck_data\\opening\\shared.dxr", kMovieScript, 802, DEFAULT_CAST_LIB, &kyotoTextEntryFix},
 	{"kyoto", nullptr, kPlatformWindows, "ck_data\\rajoumon\\shared.dxr", kMovieScript, 840, DEFAULT_CAST_LIB, &kyotoTextEntryFix},
 	{"kyoto", nullptr, kPlatformWindows, "ck_data\\rokudou\\shared.dxr", kMovieScript, 846, DEFAULT_CAST_LIB, &kyotoTextEntryFix},
+	{"vnc", nullptr, kPlatformWindows, "VNC2\\SHARED.DXR", kMovieScript, 1248, DEFAULT_CAST_LIB, &vncEnableCheats},
 	{"amber", nullptr, kPlatformWindows, "AMBER_F\\AMBER_JB.EXE", kMovieScript, 7, DEFAULT_CAST_LIB, &amberDriveDetectionFix},
 	{nullptr, nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, nullptr},
 
