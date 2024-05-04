@@ -99,13 +99,12 @@ void ScummEngine::towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, in
 				uint16 *d = reinterpret_cast<uint16*>(dst1);
 				for (int w = 0; w < width; ++w) {
 					t = (*src1++) & 0x0f;
-					t |= (t << 4);
 					*d++ = (t << 8) | t;
 				}
 			} else if (m == 1) {
 				for (int w = 0; w < width; ++w) {
 					t = (*src1++) & 0x0f;
-					*dst1++ = (t << 4) | t;
+					*dst1++ = t;
 				}
 			} else {
 				error ("ScummEngine::towns_drawStripToScreen(): Unexpected text surface multiplier %d", m);
@@ -122,8 +121,8 @@ void ScummEngine::towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, in
 					src3 += lp1;
 					for (int w = 0; w < (width << 1); ++w) {
 						t = *dst1;
-						s2 = *src2++;
-						s3 = *src3++;
+						s2 = *src2++ & 0x0f;
+						s3 = *src3++ & 0x0f;
 						*dst2++ = (s3 | (t & _townsLayer2Mask[s3]));
 						*dst1++ = (s2 | (t & _townsLayer2Mask[s2]));
 					}
@@ -132,7 +131,7 @@ void ScummEngine::towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, in
 					src3 += width;
 					for (int w = 0; w < width; ++w) {
 						t = *dst1;
-						s2 = *src2++;
+						s2 = *src2++ & 0x0f;
 						*dst1++ = (s2 | (t & _townsLayer2Mask[s2]));
 					}
 				} else {
@@ -147,6 +146,20 @@ void ScummEngine::towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, in
 	}
 
 	_townsScreen->addDirtyRect(dstX * m, dstY * m, width * m, height * m);
+}
+
+
+void ScummEngine::towns_fillTopLayerRect(int x1, int y1, int x2, int y2, int col) {
+	if (!_townsScreen)
+		return;
+	_townsScreen->fillRect(1, x1, y1, x2, y2, col);
+}
+
+void ScummEngine::towns_swapVirtScreenArea(VirtScreen *vs, int x, int y, int w, int h) {
+	if (!_townsScreen)
+		return;
+
+	_townsScreen->swapAreaWithBuffer(1, x, y, w, h, vs->getPixels(0, 0));
 }
 
 void ScummEngine::towns_clearStrip(int strip) {
@@ -346,22 +359,7 @@ void ScummEngine::towns_resetPalCycleFields() {
 }
 
 const uint8 ScummEngine::_townsLayer2Mask[] = {
-	0xFF, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0,
-	0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+	0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
 TownsScreen::TownsScreen(OSystem *system) :	_system(system), _width(0), _height(0), _pixelFormat(system->getScreenFormat()), _numDirtyRects(0) {
@@ -433,7 +431,7 @@ void TownsScreen::clearLayer(int layer) {
 }
 
 
-void TownsScreen::fillLayerRect(int layer, int x, int y, int w, int h, int col) {
+void TownsScreen::fillRect(int layer, int x, int y, int w, int h, int col) {
 	if ((layer & ~1) || w <= 0 || h <= 0)
 		return;
 
@@ -455,6 +453,35 @@ void TownsScreen::fillLayerRect(int layer, int x, int y, int w, int h, int col) 
 		} else {
 			memset(pos, col, w);
 			pos += l->pitch;
+		}
+	}
+	addDirtyRect(x * l->scaleW, y * l->scaleH, w * l->scaleW, h * l->scaleH);
+}
+
+void TownsScreen::swapAreaWithBuffer(int layer, int x, int y, int w, int h, byte *buffer) {
+	if ((layer & ~1) || w <= 0 || h <= 0)
+		return;
+
+	TownsScreenLayer *l = &_layers[layer];
+	if (!l->ready)
+		return;
+
+	assert(x >= 0 && y >= 0 && ((x + w) * l->bpp) <= (l->pitch) && (y + h) <= (l->height));
+
+	uint8 *pos = l->pixels + y * l->pitch + x * l->bpp;
+
+	for (int i = 0; i < h; ++i) {
+		if (l->bpp == 2) {
+			for (int ii = 0; ii < w; ++ii) {
+				SWAP(*(uint16*)buffer, *(uint16*)pos);
+				pos += 2;
+				buffer += 2;
+			}
+			pos += (l->pitch - w * 2);
+		} else {
+			for (int ii = 0; ii < w; ++ii)
+				SWAP(*buffer++, *pos++);
+			pos += (l->pitch - w);
 		}
 	}
 	addDirtyRect(x * l->scaleW, y * l->scaleH, w * l->scaleW, h * l->scaleH);
@@ -486,42 +513,25 @@ void TownsScreen::addDirtyRect(int x, int y, int w, int h) {
 	int x2 = x + w - 1;
 	int y2 = y + h - 1;
 
-	assert(x >= 0 && y >= 0 && x2 <= _width && y2 <= _height);
+	assert(x >= 0 && y >= 0 && x2 < _width && y2 < _height);
 
 	bool skip = false;
 	for (Common::List<Common::Rect>::iterator r = _dirtyRects.begin(); r != _dirtyRects.end(); ++r) {
 		// Try to merge new rect with an existing rect (only once, since trying to merge
 		// more than one overlapping rect would be causing more overhead than doing any good).
-		if (x > r->left && x < r->right && y > r->top && y < r->bottom) {
-			x = r->left;
-			y = r->top;
-			skip = true;
+		if (y == r->top && y2 == r->bottom) {
+			if ((x >= r->left && x <= r->right) || (x2 >= r->left - 1 && x2 <= r->right)) {
+				r->left = MIN<int>(x, r->left);
+				r->right = MAX<int>(x2, r->right);
+				skip = true;
+			}
 		}
-
-		if (x2 > r->left && x2 < r->right && y > r->top && y < r->bottom) {
-			x2 = r->right;
-			y = r->top;
-			skip = true;
-		}
-
-		if (x2 > r->left && x2 < r->right && y2 > r->top && y2 < r->bottom) {
-			x2 = r->right;
-			y2 = r->bottom;
-			skip = true;
-		}
-
-		if (x > r->left && x < r->right && y2 > r->top && y2 < r->bottom) {
-			x = r->left;
-			y2 = r->bottom;
-			skip = true;
-		}
-
-		if (skip) {
-			r->left = x;
-			r->top = y;
-			r->right = x2;
-			r->bottom = y2;
-			break;
+		if (x == r->left && x2 == r->right) {
+			if ((y >= r->top && y <= r->bottom) || (y2 >= r->top - 1 && y2 <= r->bottom)) {
+				r->top = MIN<int>(y, r->top);
+				r->bottom = MAX<int>(y2, r->bottom);
+				skip = true;
+			}
 		}
 	}
 
@@ -632,7 +642,7 @@ template<typename dstPixelType, typename srcPixelType, int scaleW, int scaleH, b
 				if (sizeof(srcPixelType) == 1) {
 					if (col || l->onBottom) {
 						if (srcCol4bit)
-							col = (col >> 4) & (col & 0x0f);
+							col = col & 0x0f;
 						dstPixelType col2 = l->bltTmpPal[col];
 						*dst10a = col2;
 						if (scaleW == 2)
@@ -657,7 +667,7 @@ template<typename dstPixelType, typename srcPixelType, int scaleW, int scaleH, b
 			} else {
 				if (col || l->onBottom) {
 					if (srcCol4bit)
-						col = (col >> 4) & (col & 0x0f);
+						col = col & 0x0f;
 					*dst10a = col;
 					if (scaleW == 2)
 						*++dst10a = col;

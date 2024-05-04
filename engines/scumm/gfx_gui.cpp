@@ -500,8 +500,18 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 
 	_forceBannerVirtScreen = false;
 
-	drawDirtyScreenParts();
-	updateDirtyScreen(kBannerVirtScreen);
+	if (_game.platform == Common::kPlatformFMTowns) {
+		// FM-Towns games just exchange the vs content with the respective screen layer area
+		// without making any virtscreen strips dirty. It can make a difference, e. g. in bug
+		// no. 15027 ("INDY3 (FMTowns): Map lines are drawn incorrectly, plus more issues when
+		// leaving Germany"). Making the virtscreen dirty, would cause some wrong colors, due
+		// to the way the scripts handle the shadow palette there.
+		VirtScreen *vs = &_virtscr[kBannerVirtScreen];
+		towns_swapVirtScreenArea(vs, 0, vs->topline * _textSurfaceMultiplier, vs->w, vs->h);
+	} else {
+		drawDirtyScreenParts();
+		updateDirtyScreen(kBannerVirtScreen);
+	}
 
 	// Wait until the engine receives a new Keyboard or Mouse input,
 	// unless we have specified a positive waitTime: in that case, the banner
@@ -510,10 +520,15 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 	bool leftBtnPressed = false, rightBtnPressed = false;
 	if (waitTime) {
 		waitForBannerInput(waitTime, ks, leftBtnPressed, rightBtnPressed);
-		memset(_virtscr[kBannerVirtScreen].getBasePtr(0, 0), 0, _virtscr[kBannerVirtScreen].w * _virtscr[kBannerVirtScreen].h);
-		_virtscr[kBannerVirtScreen].setDirtyRange(0, _virtscr[kBannerVirtScreen].h);
-		updateDirtyScreen(kBannerVirtScreen);
-		_virtscr[kMainVirtScreen].setDirtyRange(startingPointY - _virtscr[kMainVirtScreen].topline, startingPointY - _virtscr[kMainVirtScreen].topline + _virtscr[kBannerVirtScreen].h);
+		if (_game.platform == Common::kPlatformFMTowns) {
+			VirtScreen *vs = &_virtscr[kBannerVirtScreen];
+			towns_swapVirtScreenArea(vs, 0, vs->topline * _textSurfaceMultiplier, vs->w, vs->h);
+		} else {
+			memset(_virtscr[kBannerVirtScreen].getBasePtr(0, 0), 0, _virtscr[kBannerVirtScreen].w * _virtscr[kBannerVirtScreen].h);
+			_virtscr[kBannerVirtScreen].setDirtyRange(0, _virtscr[kBannerVirtScreen].h);
+			updateDirtyScreen(kBannerVirtScreen);
+			_virtscr[kMainVirtScreen].setDirtyRange(startingPointY - _virtscr[kMainVirtScreen].topline, startingPointY - _virtscr[kMainVirtScreen].topline + _virtscr[kBannerVirtScreen].h);
+		}
 	}
 
 	// Restore the text surface...

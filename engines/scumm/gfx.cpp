@@ -1313,11 +1313,7 @@ void ScummEngine::clearCharsetMask() {
 }
 
 void ScummEngine::clearTextSurface() {
-#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-	if (_townsScreen)
-		_townsScreen->fillLayerRect(1, 0, 0, _textSurface.w, _textSurface.h, 0);
-#endif
-
+	towns_fillTopLayerRect(0, 0, _textSurface.w, _textSurface.h, 0);
 	fill((byte *)_textSurface.getPixels(),  _textSurface.pitch,
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		_game.platform == Common::kPlatformFMTowns ? 0 :
@@ -1507,7 +1503,14 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 	if (width <= 0 || height <= 0)
 		return;
 
-	markRectAsDirty(vs->number, x, x2, y, y2);
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	// Some FM-Towns games draw directly on layer 2, without setting the virtscreen dirty, bypassing the normal drawing
+	// routines. It can make a difference, e. g. bug no. 15027 ("INDY3 (FMTowns): Map lines are drawn incorrectly, plus
+	// more issues when leaving Germany"). Making the virtscreen dirty, would cause some wrong colors, due to the way the
+	// scripts handle the shadow palette there.
+	if (!_townsScreen || _game.platform != Common::kPlatformFMTowns || _game.version != 3 || vs->number == kTextVirtScreen)
+#endif
+		markRectAsDirty(vs->number, x, x2, y, y2);
 
 	backbuff = vs->getPixels(x, y);
 	bgbuff = vs->getBackPixels(x, y);
@@ -1581,11 +1584,25 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 						height++;
 				}
 
-				color = ((color & 0x0f) << 4) | (color & 0x0f);
-				byte *mask = (byte *)_textSurface.getBasePtr(x * _textSurfaceMultiplier, (y - _screenTop + vs->topline) * _textSurfaceMultiplier);
-				fill(mask, _textSurface.pitch, color, width * _textSurfaceMultiplier, height * _textSurfaceMultiplier, _textSurface.format.bytesPerPixel);
+				// Some FM-Towns games draw directly on layer 2, without setting the virtscreeb dirty, bypassing the
+				// normal drawing routines. It can make a difference, e. g. bug no. 15027 ("INDY3 (FMTowns): Map lines
+				// are drawn incorrectly, plus more issues when leaving Germany"). Making the virtscreen dirty, would
+				// cause some wrong colors, due to the way the scripts handle the shadow palette there.
+				if (_game.version == 3 && vs->number != kTextVirtScreen) {
+					towns_fillTopLayerRect(x * _textSurfaceMultiplier,
+						(y - _screenTop + vs->topline) * _textSurfaceMultiplier, width * _textSurfaceMultiplier, height * _textSurfaceMultiplier, color);
+					return;
+				}
 
-				if (_game.id == GID_MONKEY2 || _game.id == GID_INDY4 || ((_game.id == GID_INDY3 || _game.id == GID_ZAK) && vs->number != kTextVirtScreen) || (_game.id == GID_LOOM && vs->number == kMainVirtScreen))
+				if (vs->number == kBannerVirtScreen) {
+					byte *mask = _virtscr[kBannerVirtScreen].getPixels(x, y);
+					fill(mask, vs->pitch, color, width * _textSurfaceMultiplier, height * _textSurfaceMultiplier, vs->format.bytesPerPixel);
+				} else {
+					byte *mask = (byte *)_textSurface.getBasePtr(x * _textSurfaceMultiplier, (y - _screenTop + vs->topline) * _textSurfaceMultiplier);
+					fill(mask, _textSurface.pitch, color, width * _textSurfaceMultiplier, height * _textSurfaceMultiplier, _textSurface.format.bytesPerPixel);
+				}
+
+				if (_game.id != GID_MONKEY && !(_game.version == 3 && vs->number == kTextVirtScreen))
 					return;
 			}
 #endif

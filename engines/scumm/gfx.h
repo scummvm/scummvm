@@ -563,7 +563,7 @@ public:
 class TownsScreen {
 public:
 	enum {
-		kDirtyRectsMax = 20,
+		kDirtyRectsMax = 50,
 		kFullRedraw = (kDirtyRectsMax + 1)
 	};
 public:
@@ -572,7 +572,8 @@ public:
 
 	void setupLayer(int layer, int width, int height, int scaleW, int scaleH, int numCol, void *srcPal = 0);
 	void clearLayer(int layer);
-	void fillLayerRect(int layer, int x, int y, int w, int h, int col);
+	void fillRect(int layer, int x, int y, int w, int h, int col);
+	void swapAreaWithBuffer(int layer, int x, int y, int w, int h, byte *buffer);
 	void addDirtyRect(int x, int y, int w, int h);
 	void toggleLayers(int flags);
 	void scrollLayer(int layer, int offset, int top, int bottom, bool fast);
