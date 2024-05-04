@@ -134,8 +134,8 @@ bool SBBasePda::showMovie() {
 		}
 
 		// Save the current PDA mode so we can return to it when done.
-		((CBagMoo *)_mooWnd)->SavePDAMode(_pdaMode);
-		((CBagMoo *)_mooWnd)->SavePDAPosition(_pdaPos);
+		((CBagMoo *)_mooWnd)->savePDAMode(_pdaMode);
+		((CBagMoo *)_mooWnd)->savePDAPosition(_pdaPos);
 
 		// Turn on the inventory
 		_mooWnd->SetVisible(true);
@@ -155,13 +155,13 @@ bool SBBasePda::showMovie() {
 
 void SBBasePda::stopMovie(bool bResetPDA) {
 	if (_mooWnd && _mooWnd == _curDisplay) {
-		((CBagMoo *)_mooWnd)->StopMovie(bResetPDA);
+		((CBagMoo *)_mooWnd)->stopMovie(bResetPDA);
 	}
 }
 
 bool SBBasePda::setMovie(CBofString &movieName) {
 	if (_mooWnd) {
-		((CBagMoo *)_mooWnd)->SetPDAMovie(movieName);
+		((CBagMoo *)_mooWnd)->setPDAMovie(movieName);
 		return true;
 	}
 	return false;

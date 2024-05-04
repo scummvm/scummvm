@@ -25,27 +25,27 @@
 
 namespace Bagel {
 
-CBagCharacterObject *CBagMoo::m_pMovie;
-PDAMODE CBagMoo::m_eSavePDAMode;
-PDAPOS CBagMoo::m_eSavePDAPos;
+CBagCharacterObject *CBagMoo::_pMovie;
+PDAMODE CBagMoo::_eSavePDAMode;
+PDAPOS CBagMoo::_eSavePDAPos;
 
 void CBagMoo::initialize() {
-	m_pMovie = nullptr;
-	m_eSavePDAMode = NOMODE;
-	m_eSavePDAPos = UNINITIALIZED;
+	_pMovie = nullptr;
+	_eSavePDAMode = NOMODE;
+	_eSavePDAPos = UNINITIALIZED;
 }
 
 ErrorCode CBagMoo::update(CBofBitmap *pBmp, CBofPoint /*pt*/, CBofRect *pSrcRect, int nMaskColor) {
 	ErrorCode    ec = ERR_NONE;
 
-	if (m_pMovie) {
+	if (_pMovie) {
 		// Update the movie, assume only unzoomed pda right now
 		CBofPoint cPos(116, 61);
-		ec = m_pMovie->update(pBmp, cPos, pSrcRect, nMaskColor);
+		ec = _pMovie->update(pBmp, cPos, pSrcRect, nMaskColor);
 
 		// If we're done or we encountered an error, then roll over and die.
-		if (ec != ERR_NONE || m_pMovie->isModalDone()) {
-			StopMovie(true);
+		if (ec != ERR_NONE || _pMovie->isModalDone()) {
+			stopMovie(true);
 		}
 	}
 
@@ -54,46 +54,46 @@ ErrorCode CBagMoo::update(CBofBitmap *pBmp, CBofPoint /*pt*/, CBofRect *pSrcRect
 
 CBagMoo::~CBagMoo() {
 	// Can possibly have a movie left over.
-	if (m_pMovie) {
-		delete m_pMovie;
-		m_pMovie = nullptr;
+	if (_pMovie) {
+		delete _pMovie;
+		_pMovie = nullptr;
 	}
 }
 
-ErrorCode CBagMoo::SetPDAMovie(CBofString &s) {
+ErrorCode CBagMoo::setPDAMovie(CBofString &s) {
 	ErrorCode ec = ERR_NONE;
 
 	// Should never happen, but just make sure.
-	if (m_pMovie) {
-		delete m_pMovie;
-		m_pMovie = nullptr;
+	if (_pMovie) {
+		delete _pMovie;
+		_pMovie = nullptr;
 	}
 
 	// Get a new movie object
-	m_pMovie = new CBagCharacterObject();
-	assert(m_pMovie != nullptr);
+	_pMovie = new CBagCharacterObject();
+	assert(_pMovie != nullptr);
 
-	if (m_pMovie) {
-		m_pMovie->setFileName(s);
+	if (_pMovie) {
+		_pMovie->setFileName(s);
 
 		// Attach this bad baby...
-		ec = m_pMovie->attach();
+		ec = _pMovie->attach();
 		if (ec == ERR_NONE) {
-			m_pMovie->SetModal(false);
-			m_pMovie->setNumOfLoops(1);
+			_pMovie->SetModal(false);
+			_pMovie->setNumOfLoops(1);
 		}
 	}
 
 	return ec;
 }
 
-void CBagMoo::StopMovie(bool bResetPDA) {
+void CBagMoo::stopMovie(bool bResetPDA) {
 	CBagPDA *pPDA = (CBagPDA *)SDEV_MANAGER->GetStorageDevice("BPDA_WLD");
 
 	if (bResetPDA) {
 		if (pPDA) {
 			// Assume this marks the end of the movie.
-			switch (m_eSavePDAMode) {
+			switch (_eSavePDAMode) {
 			case MAPMODE:
 				pPDA->showMap();
 				break;
@@ -114,10 +114,10 @@ void CBagMoo::StopMovie(bool bResetPDA) {
 		}
 	}
 
-	if (m_pMovie) {
-		m_pMovie->detach();
-		delete m_pMovie;
-		m_pMovie = nullptr;
+	if (_pMovie) {
+		_pMovie->detach();
+		delete _pMovie;
+		_pMovie = nullptr;
 	}
 
 	// If we're done playing, then deactivate the PDA.

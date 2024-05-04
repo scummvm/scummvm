@@ -30,11 +30,11 @@ namespace Bagel {
 
 class CBagMenu : public CBagStorageDev {
 private:
-	static CBofList<CBagObject *> *m_pUniversalObjectList; // Objects used in every menu
-	static int m_nDefaultDelay;
+	static CBofList<CBagObject *> *_pUniversalObjectList; // Objects used in every menu
+	static int _nDefaultDelay;
 
-	int16 m_nDelay;
-	int16 m_nY; // Replaces m_nNextPos
+	int16 _nDelay;
+	int16 _nY; // Replaces _nNextPos
 
 public:
 	CBagMenu();
@@ -52,35 +52,35 @@ public:
 	bool addItem(CBagObject *pObj, void *(*func)(int, void *), void *info);
 	bool deleteItem(const CBofString &sLabel);
 
-	bool IsChecked(const CBofString &sLabel, const CBofString &sSubLabel = CBofString());
-	bool IsChecked(int nRefId);
-	bool IsCheckedPos(int nRow, int nCol = -1);
-	bool Check(const CBofString &sLabel, const CBofString &sSubLabel = CBofString());
-	bool Check(int nRefId);
-	bool UnCheck(const CBofString &sLabel, const CBofString &sSubLabel = CBofString());
-	bool UnCheck(int nRefId);
+	bool isChecked(const CBofString &sLabel, const CBofString &sSubLabel = CBofString());
+	bool isChecked(int nRefId);
+	bool isCheckedPos(int nRow, int nCol = -1);
+	bool check(const CBofString &sLabel, const CBofString &sSubLabel = CBofString());
+	bool check(int nRefId);
+	bool unCheck(const CBofString &sLabel, const CBofString &sSubLabel = CBofString());
+	bool unCheck(int nRefId);
 
-	bool TrackPopupMenu(uint32 nFlags, int x, int y, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *lpRect = 0);
+	bool trackPopupMenu(uint32 nFlags, int x, int y, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *lpRect = 0);
 
 	// bool AddUniversalObject(CBagObject *pObj);
 	static bool removeUniversalObjectList();
-	static bool SetUniversalObjectList(CBofList<CBagObject *> *pObjList);
-	static CBofList<CBagObject *> *GetUniversalObjectList() {
-		return m_pUniversalObjectList;
+	static bool setUniversalObjectList(CBofList<CBagObject *> *pObjList);
+	static CBofList<CBagObject *> *getUniversalObjectList() {
+		return _pUniversalObjectList;
 	}
 
-	CBagObject *OnNewSpriteObject(const CBofString &);
+	CBagObject *onNewSpriteObject(const CBofString &);
 };
 
 class CBagMenuDlg : public CBagStorageDevDlg {
 	friend class CBagMenu;
 
 private:
-	bool m_bMultipleDialogs;
-	bool m_bAcceptInput;
+	bool _bMultipleDialogs;
+	bool _bAcceptInput;
 
 public:
-	static CBagObject *m_pSelectedObject;
+	static CBagObject *_pSelectedObject;
 	static void initialize();
 
 	CBagMenuDlg();

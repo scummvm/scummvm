@@ -35,9 +35,9 @@ namespace Bagel {
 #define TIMER_HACK_ID    109
 #define DELAY_DEFAULT      0
 
-CBagObject *CBagMenuDlg::m_pSelectedObject;
-CBofList<CBagObject *> *CBagMenu::m_pUniversalObjectList;   // Objects used in every menu
-int CBagMenu::m_nDefaultDelay;
+CBagObject *CBagMenuDlg::_pSelectedObject;
+CBofList<CBagObject *> *CBagMenu::_pUniversalObjectList;   // Objects used in every menu
+int CBagMenu::_nDefaultDelay;
 
 bool g_pauseTimerFl = false;
 extern bool g_bAAOk;
@@ -45,16 +45,16 @@ extern bool g_bAAOk;
 #define EXAMINEBMP          "$SBARDIR\\GENERAL\\MENUS\\EXAMINE.BMP"
 
 void CBagMenuDlg::initialize() {
-	m_pSelectedObject = nullptr;
+	_pSelectedObject = nullptr;
 }
 
 void CBagMenu::initialize() {
-	m_pUniversalObjectList = nullptr;
-	m_nDefaultDelay = DELAY_DEFAULT;
+	_pUniversalObjectList = nullptr;
+	_nDefaultDelay = DELAY_DEFAULT;
 }
 
 CBagMenu::CBagMenu() {
-	m_nY = 0;
+	_nY = 0;
 
 	static bool bFirstTime = true;
 
@@ -62,34 +62,34 @@ CBagMenu::CBagMenu() {
 	if (bFirstTime) {
 		bFirstTime = false;
 
-		m_nDefaultDelay = DELAY_DEFAULT;
+		_nDefaultDelay = DELAY_DEFAULT;
 
 		CBagel *pBagel = (CBagel *)CBagel::getApp();
 		if (pBagel != nullptr) {
-			pBagel->getOption("UserOptions", "TextDelay", &m_nDefaultDelay, DELAY_DEFAULT);
+			pBagel->getOption("UserOptions", "TextDelay", &_nDefaultDelay, DELAY_DEFAULT);
 
-			if (m_nDefaultDelay < 0) {
-				m_nDefaultDelay = -1;
-			} else if (m_nDefaultDelay > 0x7FFF) {
-				m_nDefaultDelay = 0x7FFF;
+			if (_nDefaultDelay < 0) {
+				_nDefaultDelay = -1;
+			} else if (_nDefaultDelay > 0x7FFF) {
+				_nDefaultDelay = 0x7FFF;
 			}
 		}
 	}
 
-	m_nDelay = (int16)m_nDefaultDelay;
+	_nDelay = (int16)_nDefaultDelay;
 }
 
-CBagObject *CBagMenu::OnNewSpriteObject(const CBofString &) {
+CBagObject *CBagMenu::onNewSpriteObject(const CBofString &) {
 	CBagSpriteObject *pObj = new CBagSpriteObject();
 
-	CBofPoint pt(0, m_nY);
+	CBofPoint pt(0, _nY);
 	pObj->setPosition(pt);
 	pObj->SetTransparent(false);
 
 	return pObj;
 }
 
-bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd, CBofPalette * /*pPal*/, CBofRect * /*lpRect*/) {
+bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd, CBofPalette * /*pPal*/, CBofRect * /*lpRect*/) {
 	static int nNumCalls = 0;
 	CBagMenuDlg dlg;
 	CBagObject *pObj;
@@ -116,10 +116,10 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 	if ((GetObjectList()->getCount() == 1) && (GetObjectList()->getTail()->getNodeItem()->GetType() == TEXTOBJ) && (((CBagTextObject *)GetObjectList()->getTail()->getNodeItem())->isCaption())) {
 		nBaseMenuLocX = 0;
 
-	} else if (nNumCalls == 1 && m_pUniversalObjectList && m_pUniversalObjectList != GetObjectList()) {
-		for (int i = 0; i < m_pUniversalObjectList->getCount(); ++i) {
+	} else if (nNumCalls == 1 && _pUniversalObjectList && _pUniversalObjectList != GetObjectList()) {
+		for (int i = 0; i < _pUniversalObjectList->getCount(); ++i) {
 
-			pObj = m_pUniversalObjectList->getNodeItem(i);
+			pObj = _pUniversalObjectList->getNodeItem(i);
 
 			if (pObj->IsLocal() && (!pObj->GetExpression() || pObj->GetExpression()->evaluate(pObj->IsNegative()))) {
 				// Only attach if not attached
@@ -443,8 +443,8 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 				dlg.saveBackground();
 
 				// Set this caption to automatically go away after specified delay
-				if (m_nDelay > 0) {
-					dlg.setTimer(TIMER_CLOSE_ID, m_nDelay + (80 * nNumChars));
+				if (_nDelay > 0) {
+					dlg.setTimer(TIMER_CLOSE_ID, _nDelay + (80 * nNumChars));
 				}
 			} else {
 				dlg.move(tmpRect.topLeft().x, tmpRect.topLeft().y, true);
@@ -460,7 +460,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			dlg.doModal();
 			g_pauseTimerFl = false;
 
-			pObj = dlg.m_pSelectedObject;
+			pObj = dlg._pSelectedObject;
 			dlg.destroy();
 
 			for (int i = 0; i < GetObjectCount(); ++i) {
@@ -479,7 +479,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 				}
 			} else if (bCaption && (nNumCalls == 2)) {
 				// Selecting this menu item causes a turn to go by
-				dlg.m_pSelectedObject = nullptr;
+				dlg._pSelectedObject = nullptr;
 				if (pCurSDEV->IsCustom() == false) {
 					VAR_MANAGER->IncrementTimers();
 				}
@@ -493,9 +493,9 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 }
 
 bool CBagMenu::addItem(CBagObject *pObj, void *( * /*func*/)(int, void *), void * /*info*/) {
-	pObj->setPosition(CBofPoint(0, m_nY));
+	pObj->setPosition(CBofPoint(0, _nY));
 
-	m_nY = (int16)(m_nY + (int16)(pObj->getRect().height() + 1));
+	_nY = (int16)(_nY + (int16)(pObj->getRect().height() + 1));
 	AddObject(pObj);
 
 	return true;
@@ -505,53 +505,53 @@ bool CBagMenu::deleteItem(const CBofString & /*sLabel*/) {
 	return false;
 }
 
-bool CBagMenu::IsChecked(const CBofString & /*sLabel*/, const CBofString & /*sSubLabel*/) {
+bool CBagMenu::isChecked(const CBofString & /*sLabel*/, const CBofString & /*sSubLabel*/) {
 	int nRow = 0;
 	int nCol = 0;
 
-	return IsCheckedPos(nRow, nCol);
+	return isCheckedPos(nRow, nCol);
 }
 
-bool CBagMenu::IsCheckedPos(int /*nRow*/, int /*nCol*/) {
+bool CBagMenu::isCheckedPos(int /*nRow*/, int /*nCol*/) {
 	return false;
 }
 
-bool CBagMenu::IsChecked(int /*nRefId*/) {
+bool CBagMenu::isChecked(int /*nRefId*/) {
 	return false;
 }
 
-bool CBagMenu::Check(const CBofString & /*sLabel*/, const CBofString & /*sSubLabel*/) {
+bool CBagMenu::check(const CBofString & /*sLabel*/, const CBofString & /*sSubLabel*/) {
 	return false;
 }
 
-bool CBagMenu::UnCheck(const CBofString & /*sLabel*/, const CBofString & /*sSubLabel*/) {
+bool CBagMenu::unCheck(const CBofString & /*sLabel*/, const CBofString & /*sSubLabel*/) {
 	return false;
 }
 
-bool CBagMenu::Check(int /*nRefId*/) {
+bool CBagMenu::check(int /*nRefId*/) {
 	return true;
 }
 
-bool CBagMenu::UnCheck(int /*nRefId*/) {
+bool CBagMenu::unCheck(int /*nRefId*/) {
 	return true;
 }
 
-bool CBagMenu::SetUniversalObjectList(CBofList<CBagObject *> *pObjList) {
-	if (m_pUniversalObjectList != nullptr) {
+bool CBagMenu::setUniversalObjectList(CBofList<CBagObject *> *pObjList) {
+	if (_pUniversalObjectList != nullptr) {
 		removeUniversalObjectList();
 	}
 
-	m_pUniversalObjectList = pObjList;
+	_pUniversalObjectList = pObjList;
 
 	return true;
 }
 
 bool CBagMenu::removeUniversalObjectList() {
-	if (m_pUniversalObjectList == nullptr) {
+	if (_pUniversalObjectList == nullptr) {
 		return true;
 	}
 
-	m_pUniversalObjectList = nullptr;
+	_pUniversalObjectList = nullptr;
 
 	return true;
 }
@@ -573,8 +573,8 @@ CBagMenuDlg::~CBagMenuDlg() {
 ErrorCode CBagMenuDlg::create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRect *pRect, uint32 /*nStyle*/) {
 	CBofRect r;
 
-	m_bMultipleDialogs = false;
-	m_bAcceptInput = true;
+	_bMultipleDialogs = false;
+	_bAcceptInput = true;
 	_nReturnValue = 0;
 
 	if (!pRect) {
@@ -602,28 +602,28 @@ ErrorCode CBagMenuDlg::create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRec
 
 void CBagMenuDlg::onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 	// We are ignoring all input until the dialog is actually visible
-	if (m_bAcceptInput) {
-		m_pSelectedObject = nullptr;
+	if (_bAcceptInput) {
+		_pSelectedObject = nullptr;
 
 		onClose();
 
-		if (m_bMultipleDialogs) {
+		if (_bMultipleDialogs) {
 			CBofRect r = getWindowRect();
 			r.offsetRect(-r.left, -r.top);
 			if (r.ptInRect(*pPoint)) {
 				CBagStorageDevDlg::onLButtonUp(nFlags, pPoint);
-				m_pSelectedObject = GetLActiveObject();
+				_pSelectedObject = GetLActiveObject();
 			}
 
 		} else {
 			CBofPoint pt = DevPtToViewPort(*pPoint);
-			m_pSelectedObject = GetObject(pt);
-			if (m_pSelectedObject != nullptr) {
-				m_pSelectedObject->onLButtonUp(nFlags, pPoint);
+			_pSelectedObject = GetObject(pt);
+			if (_pSelectedObject != nullptr) {
+				_pSelectedObject->onLButtonUp(nFlags, pPoint);
 			}
 		}
 
-		_nReturnValue = (m_pSelectedObject != nullptr);
+		_nReturnValue = (_pSelectedObject != nullptr);
 	}
 }
 
@@ -660,7 +660,7 @@ void CBagMenuDlg::onTimer(uint32 nID) {
 	// Can now allow user input
 	case TIMER_HACK_ID:
 		killTimer(nID);
-		m_bAcceptInput = true;
+		_bAcceptInput = true;
 		break;
 
 	default:

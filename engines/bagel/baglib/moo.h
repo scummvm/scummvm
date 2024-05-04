@@ -32,9 +32,9 @@ namespace Bagel {
 class CBagMoo : public CBagStorageDevBmp {
 protected:
 private:
-	static CBagCharacterObject *m_pMovie;
-	static PDAMODE m_eSavePDAMode;
-	static PDAPOS m_eSavePDAPos;
+	static CBagCharacterObject *_pMovie;
+	static PDAMODE _eSavePDAMode;
+	static PDAPOS _eSavePDAPos;
 
 public:
 	CBagMoo() : CBagStorageDevBmp() {}
@@ -49,21 +49,21 @@ public:
 
 	// For public access to our movie object
 
-	ErrorCode SetPDAMovie(CBofString &s);
-	CBagCharacterObject *GetPDAMovie() {
-		return m_pMovie;
+	ErrorCode setPDAMovie(CBofString &s);
+	CBagCharacterObject *getPDAMovie() {
+		return _pMovie;
 	}
 
-	void StopMovie(bool);
-	bool MoviePlaying() {
-		return m_pMovie != nullptr;
+	void stopMovie(bool);
+	bool moviePlaying() {
+		return _pMovie != nullptr;
 	}
 
-	void SavePDAMode(PDAMODE pdaMode) {
-		m_eSavePDAMode = pdaMode;
+	void savePDAMode(PDAMODE pdaMode) {
+		_eSavePDAMode = pdaMode;
 	}
-	void SavePDAPosition(PDAPOS pdaPos) {
-		m_eSavePDAPos = pdaPos;
+	void savePDAPosition(PDAPOS pdaPos) {
+		_eSavePDAPos = pdaPos;
 	}
 };
 

@@ -40,23 +40,23 @@ public:
 	enum class DISP_TYPE { MOVIE, EXAMINE, PDAMSG, ASYNCH_PDAMSG };
 
 private:
-	DISP_TYPE m_xDisplayType;
-	byte m_bFlyThru;
-	int16 m_nAsynchFlags;
-	bool m_bIncrement : 1;      // Increment timer for this movie?
-	bool m_bOnBlack : 1;        // Play movie on a black background.
-	CBagSoundObject *m_pSndObj; // associated sound object
+	DISP_TYPE _xDisplayType;
+	byte _bFlyThru;
+	int16 _nAsynchFlags;
+	bool _bIncrement : 1;      // Increment timer for this movie?
+	bool _bOnBlack : 1;        // Play movie on a black background.
+	CBagSoundObject *_pSndObj; // associated sound object
 
 public:
 	CBagMovieObject();
 	virtual ~CBagMovieObject();
 
 	// Associated sound object access members
-	void SetAssociatedSound(CBagSoundObject *p) {
-		m_pSndObj = p;
+	void setAssociatedSound(CBagSoundObject *p) {
+		_pSndObj = p;
 	}
-	CBagSoundObject *GetAssociatedSound() const {
-		return m_pSndObj;
+	CBagSoundObject *getAssociatedSound() const {
+		return _pSndObj;
 	}
 
 	PARSE_CODES setInfo(CBagIfstream &istr);
@@ -67,36 +67,36 @@ public:
 	bool asynchPDAMovieCanPlay();
 
 	// Special routines for handling asynch zelda movies
-	void SetDontQueue() {
-		m_nAsynchFlags |= ASYNCH_DONTQUEUE;
+	void setDontQueue() {
+		_nAsynchFlags |= ASYNCH_DONTQUEUE;
 	}
-	void SetDontOverride() {
-		m_nAsynchFlags |= ASYNCH_DONTOVERRIDE;
+	void setDontOverride() {
+		_nAsynchFlags |= ASYNCH_DONTOVERRIDE;
 	}
-	void SetPlayImmediate() {
-		m_nAsynchFlags |= ASYNCH_PLAYIMMEDIATE;
+	void setPlayImmediate() {
+		_nAsynchFlags |= ASYNCH_PLAYIMMEDIATE;
 	}
 	void setIncrement(bool b = true) {
-		m_bIncrement = b;
+		_bIncrement = b;
 	}
 	void setOnBlack(bool b = true) {
-		m_bOnBlack = b;
+		_bOnBlack = b;
 	}
 
-	bool IsDontQueue() const {
-		return (m_nAsynchFlags & ASYNCH_DONTQUEUE) != 0;
+	bool isDontQueue() const {
+		return (_nAsynchFlags & ASYNCH_DONTQUEUE) != 0;
 	}
-	bool IsDontOverride() const {
-		return (m_nAsynchFlags & ASYNCH_DONTOVERRIDE) != 0;
+	bool isDontOverride() const {
+		return (_nAsynchFlags & ASYNCH_DONTOVERRIDE) != 0;
 	}
-	bool IsPlayImmediate() const {
-		return (m_nAsynchFlags & ASYNCH_PLAYIMMEDIATE) != 0;
+	bool isPlayImmediate() const {
+		return (_nAsynchFlags & ASYNCH_PLAYIMMEDIATE) != 0;
 	}
-	bool IsIncrement() const {
-		return m_bIncrement;
+	bool isIncrement() const {
+		return _bIncrement;
 	}
-	bool IsOnBlack() const {
-		return m_bOnBlack;
+	bool isOnBlack() const {
+		return _bOnBlack;
 	}
 };
 

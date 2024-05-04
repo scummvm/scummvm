@@ -335,7 +335,7 @@ public:
 	virtual ErrorCode onCursorUpdate(int /*nCurrObj*/) {
 		return ERR_NONE;
 	}
-	virtual CBagObject *OnNewSpriteObject(const CBofString &sInit);
+	virtual CBagObject *onNewSpriteObject(const CBofString &sInit);
 	virtual CBagObject *OnNewBitmapObject(const CBofString &sInit);
 	virtual CBagObject *OnNewTextObject(const CBofString &sInit);
 	virtual CBagObject *onNewLinkObject(const CBofString &sInit);

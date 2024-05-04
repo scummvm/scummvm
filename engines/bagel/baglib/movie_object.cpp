@@ -39,11 +39,11 @@ namespace Bagel {
 CBagMovieObject::CBagMovieObject() {
 	_xObjType = MOVIEOBJ;
 	SetVisible(true);
-	m_xDisplayType = DISP_TYPE::MOVIE;
-	m_bFlyThru = false;
+	_xDisplayType = DISP_TYPE::MOVIE;
+	_bFlyThru = false;
 
 	// Initialize asynch flags to be off by default.
-	m_nAsynchFlags = 0;
+	_nAsynchFlags = 0;
 
 	// Allow user to force movie not to increment (default = increment = true)
 	setIncrement();
@@ -52,7 +52,7 @@ CBagMovieObject::CBagMovieObject() {
 	setOnBlack(false);
 
 	// Default is no associated sound.
-	SetAssociatedSound(nullptr);
+	setAssociatedSound(nullptr);
 }
 
 CBagMovieObject::~CBagMovieObject() {
@@ -60,14 +60,14 @@ CBagMovieObject::~CBagMovieObject() {
 
 	// Could still by lying around in the pda movie queue,
 	// Make sure it has been removed.
-	if (m_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
+	if (_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
 		CBagPDA::removeFromMovieQueue(this);
 	}
 
 	// If there's a sound with this guy, then trash it here.
-	if (GetAssociatedSound()) {
-		delete GetAssociatedSound();
-		SetAssociatedSound(nullptr);
+	if (getAssociatedSound()) {
+		delete getAssociatedSound();
+		setAssociatedSound(nullptr);
 	}
 }
 
@@ -81,7 +81,7 @@ bool CBagMovieObject::runObject() {
 	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev());
 
 	bool rc = true;
-	if (!m_bFlyThru || CBagMasterWin::getFlyThru()) {
+	if (!_bFlyThru || CBagMasterWin::getFlyThru()) {
 		rc = false;
 
 		CBofString sFileName = getFileName();
@@ -156,7 +156,7 @@ bool CBagMovieObject::runObject() {
 
 			// If we have an asnych movie to play, make sure it is a good
 			// time to play it, if not, then queue it up so it can play at a much better time.
-			if (m_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
+			if (_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
 				if (asynchPDAMovieCanPlay() == false) {
 					pPDA->AddToMovieQueue(this);
 					return rc;
@@ -172,7 +172,7 @@ bool CBagMovieObject::runObject() {
 				}
 			}
 
-			if (m_xDisplayType == DISP_TYPE::EXAMINE) {
+			if (_xDisplayType == DISP_TYPE::EXAMINE) {
 				CBofRect r(160, 60, 480, 300);
 
 				// Offset the rect for the movies to compensate for all screen sizes
@@ -185,7 +185,7 @@ bool CBagMovieObject::runObject() {
 
 				if (pMovie) {
 					// If there is an associated sound file, then start it up here.
-					CBagSoundObject *pSObj = GetAssociatedSound();
+					CBagSoundObject *pSObj = getAssociatedSound();
 					if (pSObj) {
 						if (pSObj->isAttached() == false) {
 							pSObj->attach();
@@ -213,13 +213,13 @@ bool CBagMovieObject::runObject() {
 				// Offset the rect for the movies to compensate for all screen sizes
 				r.offsetRect(((CBofWindow *)pMainWin)->getWindowRect().topLeft());
 
-				if (m_xDisplayType == DISP_TYPE::PDAMSG || m_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
+				if (_xDisplayType == DISP_TYPE::PDAMSG || _xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
 					// Pull up the PDA (if it exists)
 					// Only pull up the PDA if we're not playing an asynch movie
-					if (m_xDisplayType == DISP_TYPE::PDAMSG) {
+					if (_xDisplayType == DISP_TYPE::PDAMSG) {
 						// Increment timer one, pda message counts as one turn
 						// Allow scripter to override timer increment
-						if (IsIncrement()) {
+						if (isIncrement()) {
 							VAR_MANAGER->IncrementTimers();
 						}
 					}
@@ -280,7 +280,7 @@ bool CBagMovieObject::runObject() {
 					}
 				} else {
 					// Hack.. allow script to override some other movies.
-					if ((m_xDisplayType == DISP_TYPE::PDAMSG) && pMainWin->IsCIC() && IsDontOverride() == false) {
+					if ((_xDisplayType == DISP_TYPE::PDAMSG) && pMainWin->IsCIC() && isDontOverride() == false) {
 
 						char szLocalBuff[256];
 						CBofString cStr(szLocalBuff, 256);
@@ -292,7 +292,7 @@ bool CBagMovieObject::runObject() {
 						sFileName = cStr;
 					}
 
-					if (m_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
+					if (_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
 						// Tell our PDA to switch gears to do asynch movie time.
 						if (pPDA) {
 							if (pPDA->showMovie()) {       // Returns false if another movie playing
@@ -304,7 +304,7 @@ bool CBagMovieObject::runObject() {
 					} else {
 						CBofMovie *pMovie;
 
-						if (bZoomed && m_xDisplayType != DISP_TYPE::ASYNCH_PDAMSG && m_xDisplayType != DISP_TYPE::PDAMSG) {
+						if (bZoomed && _xDisplayType != DISP_TYPE::ASYNCH_PDAMSG && _xDisplayType != DISP_TYPE::PDAMSG) {
 							pNewWin = new CBofWindow();
 							if (pNewWin) {
 								pNewWin->create("BLACK", 0, 0, 640, 480, CBofApp::getApp()->getMainWindow(), 0);
@@ -314,7 +314,7 @@ bool CBagMovieObject::runObject() {
 						}
 
 						// If playing a PDA message while the PDA is zoomed
-						if (m_xDisplayType == DISP_TYPE::PDAMSG && bZoomed) {
+						if (_xDisplayType == DISP_TYPE::PDAMSG && bZoomed) {
 							// Then stretch it to fit into the PDA's viewscreen
 							r.setRect(24, 47, 28 + 600 - 1, 47 + 302 - 1);
 							pMovie = new CBofMovie(CBofApp::getApp()->getMainWindow(), sFileName, &r, true);
@@ -346,13 +346,13 @@ bool CBagMovieObject::runObject() {
 				}
 
 				// Put the pda down if we brought it up. (8638)
-				if (m_xDisplayType != DISP_TYPE::ASYNCH_PDAMSG && bActivated) {
+				if (_xDisplayType != DISP_TYPE::ASYNCH_PDAMSG && bActivated) {
 					((CBagPanWindow *)pMainWin)->DeactivatePDA();
 					((CBagPanWindow *)pMainWin)->WaitForPDA();
 				}
 
 				// If we're asynch, then let it know to deactivate when done playing.
-				if (m_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
+				if (_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
 					pPDA->setDeactivate(bActivated);
 				}
 			}
@@ -412,17 +412,17 @@ PARSE_CODES CBagMovieObject::setInfo(CBagIfstream &istr) {
 				istr.eatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 				if (!sStr.find("EXAMINE")) {
-					m_xDisplayType = DISP_TYPE::EXAMINE;
+					_xDisplayType = DISP_TYPE::EXAMINE;
 				} else if (!sStr.find("MOVIE")) {
-					m_xDisplayType = DISP_TYPE::MOVIE;
+					_xDisplayType = DISP_TYPE::MOVIE;
 
 				} else if (!sStr.find("FLYTHRU")) {
-					m_xDisplayType = DISP_TYPE::MOVIE;
-					m_bFlyThru = true;
+					_xDisplayType = DISP_TYPE::MOVIE;
+					_bFlyThru = true;
 				} else if (!sStr.find("PDAMSG")) {
-					m_xDisplayType = DISP_TYPE::PDAMSG;
+					_xDisplayType = DISP_TYPE::PDAMSG;
 				} else if (!sStr.find("ASYNCH_PDAMSG")) {
-					m_xDisplayType = DISP_TYPE::ASYNCH_PDAMSG;
+					_xDisplayType = DISP_TYPE::ASYNCH_PDAMSG;
 
 					// see if this improves performance any...
 					SetPreload(true);
@@ -439,10 +439,10 @@ PARSE_CODES CBagMovieObject::setInfo(CBagIfstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("DONTQUEUE")) {
-				SetDontQueue();
+				setDontQueue();
 				nObjectUpdated = true;
 			} else if (!sStr.find("DONTOVERRIDE")) {
-				SetDontOverride();
+				setDontOverride();
 				nObjectUpdated = true;
 			} else if (!sStr.find("DONTINCREMENT")) {
 				// Don't increment the timer when playing this movie
@@ -460,7 +460,7 @@ PARSE_CODES CBagMovieObject::setInfo(CBagIfstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("PLAYIMMEDIATE")) {
-				SetPlayImmediate();
+				setPlayImmediate();
 				nObjectUpdated = true;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -476,7 +476,7 @@ PARSE_CODES CBagMovieObject::setInfo(CBagIfstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("ONBLACK")) {
-				SetPlayImmediate();
+				setPlayImmediate();
 				nObjectUpdated = true;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -491,8 +491,8 @@ PARSE_CODES CBagMovieObject::setInfo(CBagIfstream &istr) {
 			if (!sStr.find("SND")) {
 				nObjectUpdated = true;
 
-				m_pSndObj = new CBagSoundObject();
-				if (m_pSndObj && m_pSndObj->setInfo(istr) == PARSING_DONE) {
+				_pSndObj = new CBagSoundObject();
+				if (_pSndObj && _pSndObj->setInfo(istr) == PARSING_DONE) {
 					return PARSING_DONE;
 				}
 			} else {
@@ -532,7 +532,7 @@ bool CBagMovieObject::asynchPDAMovieCanPlay() {
 	bool bCanPlay = true;
 
 	// Obvious case, if it is set for immediate, return true.
-	if (IsPlayImmediate()) {
+	if (isPlayImmediate()) {
 		return bCanPlay;
 	}
 
@@ -553,7 +553,7 @@ bool CBagMovieObject::asynchPDAMovieCanPlay() {
 
 	if (pPDA && pPDAz) {
 		if (pPDAz->getZoomed() ||              // We're zoomed
-		        (pMainWin->IsCIC() && !IsDontOverride()) || // We're in a character closeup
+		        (pMainWin->IsCIC() && !isDontOverride()) || // We're in a character closeup
 		        CBofSound::soundsPlayingNotOver() ||        // A sound is playing
 		        pPDA->getPdaMode() == MOOMODE) {            // An asynch movie is already playing
 			bCanPlay = false;

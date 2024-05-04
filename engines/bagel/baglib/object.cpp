@@ -349,7 +349,7 @@ void CBagObject::onLButtonUp(uint32 nFlags, CBofPoint * /*xPoint*/, void *) {
 
 		// Just send the mouse pos
 		CRect r = getRect();
-		getMenuPtr()->TrackPopupMenu(nFlags, pt.x, pt.y, pWnd, nullptr, &r);
+		getMenuPtr()->trackPopupMenu(nFlags, pt.x, pt.y, pWnd, nullptr, &r);
 
 	} else {
 		g_noMenuFl = true;

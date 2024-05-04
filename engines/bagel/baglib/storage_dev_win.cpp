@@ -735,10 +735,10 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 			}
 		} else if (!sWorkStr.find("BMP")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
-			pObj = OnNewSpriteObject(sWorkStr);
+			pObj = onNewSpriteObject(sWorkStr);
 		} else if (!sWorkStr.find("SPR")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
-			pObj = OnNewSpriteObject(sWorkStr);
+			pObj = onNewSpriteObject(sWorkStr);
 		} else if (!sWorkStr.find("LNK")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = onNewLinkObject(sWorkStr);
@@ -1006,7 +1006,7 @@ ErrorCode CBagStorageDev::close() {
 }
 
 
-CBagObject *CBagStorageDev::OnNewSpriteObject(const CBofString &) {
+CBagObject *CBagStorageDev::onNewSpriteObject(const CBofString &) {
 	return new CBagSpriteObject();
 }
 
