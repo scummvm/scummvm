@@ -40,7 +40,7 @@ CBagVariableObject::~CBagVariableObject() {
 ErrorCode CBagVariableObject::attach() {
 	CBagVar *xVar = VAR_MANAGER->GetVariable(getFileName());
 
-	if (xVar && !GetRefName().IsEmpty())
+	if (xVar && !GetRefName().isEmpty())
 		xVar->SetValue(GetRefName());
 
 	return CBagObject::attach();
@@ -154,7 +154,7 @@ ErrorCode CBagVariableObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *p
 	ErrorCode rc = ERR_NONE;
 	CBagVar *xVar = VAR_MANAGER->GetVariable(getFileName());
 
-	if (isAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
+	if (isAttached() && xVar && !(xVar->GetValue().isEmpty())) {
 		// FIXME: Offset for the last accessed time and # times counter in
 		// entryway computer terminal. Otherwise, there's no space between
 		// them and the preceding text
@@ -180,7 +180,7 @@ ErrorCode CBagVariableObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *p
 	ErrorCode rc = ERR_NONE;
 	CBagVar *xVar = VAR_MANAGER->GetVariable(getFileName());
 
-	if (isAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
+	if (isAttached() && xVar && !(xVar->GetValue().isEmpty())) {
 		CBofRect r(pt, pSrcRect->Size());
 
 		rc = paintText(pWnd, &r, xVar->GetValue(), MapFontPointSize(m_nPointSize), TEXT_NORMAL, m_nFGColor);

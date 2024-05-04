@@ -89,9 +89,9 @@ private:
 	static int32 m_nLastRPQCheck;                // last time we surfed the queue.
 	static CBagVar *m_pTurncount;               // Ptr to turncount global
 	static CBagVar *m_pLogStateVar;             // Ptr to log state global
-	static CBagVar *m_pPrevLogStateVar;         // Ptr to prev log state global
+	static CBagVar *_pPrevLogStateVar;         // Ptr to prev log state global
 	static CBagVar *m_pBarLogPages;             // Ptr to total pages global
-	static CBagVar *m_pPrevBarPage;             //
+	static CBagVar *_pPrevBarPage;             //
 	static CBagVar *m_pCurBarPage;              // current bar page
 	static CBagRPObject *m_pCurRPObject;        // Most recent residue print object.
 	static CBagRPObject *m_pActivateThisGuy;    // The one we want to activate
@@ -155,7 +155,7 @@ public:
 	static void HideRPReview();
 
 	static int RPResultsWaiting();
-	static void RemoveAllFromMsgQueue(CBagRPObject *pRPObj);
+	static void removeAllFromMsgQueue(CBagRPObject *pRPObj);
 
 	static void ShowPDALog();
 

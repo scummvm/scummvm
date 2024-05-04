@@ -53,9 +53,9 @@ namespace Bagel {
 CBofList<CBagRPObject *> *CBagRPObject::m_pRPList = nullptr;
 CBagVar *CBagRPObject::m_pTurncount = nullptr;
 CBagVar *CBagRPObject::m_pLogStateVar = nullptr;
-CBagVar *CBagRPObject::m_pPrevLogStateVar = nullptr;
+CBagVar *CBagRPObject::_pPrevLogStateVar = nullptr;
 CBagVar *CBagRPObject::m_pBarLogPages = nullptr;
-CBagVar *CBagRPObject::m_pPrevBarPage = nullptr;
+CBagVar *CBagRPObject::_pPrevBarPage = nullptr;
 CBagVar *CBagRPObject::m_pCurBarPage = nullptr;
 int32 CBagRPObject::m_nLastRPQCheck = 0;
 CBagRPObject *CBagRPObject::m_pCurRPObject = nullptr;
@@ -122,9 +122,9 @@ CBagRPObject::~CBagRPObject() {
 
 	// Trash the expression list
 	if (m_pTouchedList != nullptr) {
-		int nCount = m_pTouchedList->GetCount();
+		int nCount = m_pTouchedList->getCount();
 		for (int i = 0; i < nCount; i++) {
-			pDObj = m_pTouchedList->Remove(0);
+			pDObj = m_pTouchedList->remove(0);
 			if (pDObj) {
 				delete pDObj;
 			}
@@ -138,9 +138,9 @@ CBagRPObject::~CBagRPObject() {
 	//  Only trash them if they are not the same list.
 	if (bSame == false) {
 		if (m_pUntouchedList != nullptr) {
-			int nCount = m_pUntouchedList->GetCount();
+			int nCount = m_pUntouchedList->getCount();
 			for (int i = 0; i < nCount; i++) {
-				pDObj = m_pUntouchedList->Remove(0);
+				pDObj = m_pUntouchedList->remove(0);
 				if (pDObj) {
 					delete pDObj;
 				}
@@ -166,9 +166,9 @@ CBagRPObject::~CBagRPObject() {
 	// Clear our statics, yes, I mean to do that here.
 	m_pTurncount = nullptr;
 	m_pLogStateVar = nullptr;
-	m_pPrevLogStateVar = nullptr;
+	_pPrevLogStateVar = nullptr;
 	m_pBarLogPages = nullptr;
-	m_pPrevBarPage = nullptr;
+	_pPrevBarPage = nullptr;
 	m_pCurBarPage = nullptr;
 }
 
@@ -453,17 +453,17 @@ ErrorCode CBagRPObject::detach() {
 
 	// If we're in the current list, then remove us!
 	if (m_pRPList) {
-		int nCount = m_pRPList->GetCount();
+		int nCount = m_pRPList->getCount();
 		for (int i = 0; i < nCount; i++) {
-			CBagObject *pObj = m_pRPList->GetNodeItem(i);
+			CBagObject *pObj = m_pRPList->getNodeItem(i);
 
 			if (pObj == this) {
-				m_pRPList->Remove(i);
+				m_pRPList->remove(i);
 				break;
 			}
 		}
 
-		if (m_pRPList->GetCount() == 0) {
+		if (m_pRPList->getCount() == 0) {
 			delete m_pRPList;
 			m_pRPList = nullptr;
 		}
@@ -539,14 +539,14 @@ int CBagRPObject::RunRPQueue() {
 
 		// Check the first guy in the queue to see if he's been initialized, if not,
 		// then cruise the whole thing.
-		int nCount = m_pRPList->GetCount();
+		int nCount = m_pRPList->getCount();
 		if (nCount == 0) {
 			return 0;
 		}
 
-		CBagRPObject *pRPObj = m_pRPList->GetNodeItem(0);
+		CBagRPObject *pRPObj = m_pRPList->getNodeItem(0);
 		for (int i = 0; i < nCount; i++) {
-			pRPObj = m_pRPList->GetNodeItem(i);
+			pRPObj = m_pRPList->getNodeItem(i);
 
 			// This could fail if we are not initialized properly
 			if (pRPObj->m_bInitialized == false) {
@@ -611,10 +611,10 @@ int CBagRPObject::RunRPQueue() {
 
 		// Get the current time
 		int nCurSBTime = m_pTurncount->GetNumValue();
-		int nCount = m_pRPList->GetCount();
+		int nCount = m_pRPList->getCount();
 
 		for (int i = 0; i < nCount; i++) {
-			CBagRPObject *pRPObj = m_pRPList->GetNodeItem(i);
+			CBagRPObject *pRPObj = m_pRPList->getNodeItem(i);
 
 			// Find out if there are any events worth reporting.
 			//
@@ -640,13 +640,13 @@ int CBagRPObject::RunRPQueue() {
 int CBagRPObject::UpdateRPQueue() {
 	Assert(m_pRPList != nullptr);
 
-	int nCount = m_pRPList->GetCount();
+	int nCount = m_pRPList->getCount();
 	char szLocalBuff[256];
 	CBofString cStr(szLocalBuff, 256);
 
 	// Cruise through and find if we have one that has had it's value changed.
 	for (int i = 0; i < nCount; i++) {
-		CBagRPObject *pRPObj = m_pRPList->GetNodeItem(i);
+		CBagRPObject *pRPObj = m_pRPList->getNodeItem(i);
 		if (pRPObj) {
 			cStr = pRPObj->m_pVarObj->GetValue();
 
@@ -681,11 +681,11 @@ int CBagRPObject::UpdateRPQueue() {
 void CBagRPObject::DeactivateRPQueue() {
 	Assert(m_pRPList != nullptr);
 
-	int nCount = m_pRPList->GetCount();
+	int nCount = m_pRPList->getCount();
 
 	// Cruise through and find if we have one that has had it's value changed.
 	for (int i = 0; i < nCount; i++) {
-		CBagRPObject *pRPObj = m_pRPList->GetNodeItem(i);
+		CBagRPObject *pRPObj = m_pRPList->getNodeItem(i);
 		if (pRPObj) {
 			pRPObj->DeactivateRPObject();
 		}
@@ -760,7 +760,7 @@ bool CBagRPObject::runObject() {
 	if (bLocalMoviePlayed == true && !Zoomed() && RPResultsWaiting() >= 1) {
 
 		// Remove all these from the message waiting queue.
-		RemoveAllFromMsgQueue(this);
+		removeAllFromMsgQueue(this);
 
 		ActivateRPReview();
 	} else {
@@ -831,10 +831,10 @@ bool CBagRPObject::ActivateRPObject() {
 
 	// Now go through each one and make sure we have the backp
 	CBofList<DossierObj *> *pDosList = (m_bTouched ? m_pTouchedList : m_pUntouchedList);
-	int nCount = pDosList->GetCount();
+	int nCount = pDosList->getCount();
 
 	for (int i = 0; i < nCount; i++) {
-		DossierObj *pDosObj = pDosList->GetNodeItem(i);
+		DossierObj *pDosObj = pDosList->getNodeItem(i);
 
 		// By default, include the dossier in the list
 		if (pDosObj->m_bDisplayDossier) {
@@ -879,19 +879,19 @@ void CBagRPObject::DeactivateRPObject() {
 	}
 
 	// Make sure that all our objects that we care about are no longer active
-	int nCount = m_pTouchedList->GetCount();
+	int nCount = m_pTouchedList->getCount();
 	DossierObj *pDosLObj;
 
 	for (int i = 0; i < nCount; i++) {
-		pDosLObj = m_pTouchedList->GetNodeItem(i);
+		pDosLObj = m_pTouchedList->getNodeItem(i);
 		pDosLObj->m_pDossier->deactivateDossierObject(pLogWld);
 	}
 
 	if (m_pTouchedList != m_pUntouchedList) {
-		nCount = m_pUntouchedList->GetCount();
+		nCount = m_pUntouchedList->getCount();
 
 		for (int i = 0; i < nCount; i++) {
-			pDosLObj = m_pUntouchedList->GetNodeItem(i);
+			pDosLObj = m_pUntouchedList->getNodeItem(i);
 			pDosLObj->m_pDossier->deactivateDossierObject(pLogWld);
 		}
 	}
@@ -942,17 +942,17 @@ void CBagRPObject::DeactivateRPReview() {
 	}
 
 	// Now in review mode, this is used in our update code to determine what to show.
-	CBagRPObject *pRPObj = m_pRPList->GetNodeItem(0);
+	CBagRPObject *pRPObj = m_pRPList->getNodeItem(0);
 	if (pRPObj == nullptr) {
 		return;
 	}
 
 	// Cruise the whole list, fill in missing vars, set all our text
 	// objects to inactive so they don't get drawn.
-	int nCount = m_pRPList->GetCount();
+	int nCount = m_pRPList->getCount();
 
 	for (int i = 0; i < nCount; i++) {
-		pRPObj = m_pRPList->GetNodeItem(i);
+		pRPObj = m_pRPList->getNodeItem(i);
 
 		// We know this object is attached, but it might not be visible.
 		if (pRPObj->m_pObjectName) {
@@ -996,11 +996,11 @@ void CBagRPObject::EvaluateDossiers() {
 	CBofList<DossierObj *> *pDosList = (m_bTouched ? m_pTouchedList : m_pUntouchedList);
 	Assert(pDosList != nullptr);
 
-	int nCount = pDosList->GetCount();
+	int nCount = pDosList->getCount();
 	CBagLog *pLogZWld = nullptr;
 
 	for (int i = 0; i < nCount; i++) {
-		DossierObj *pDosLObj = pDosList->GetNodeItem(i);
+		DossierObj *pDosLObj = pDosList->getNodeItem(i);
 
 		// By default, include the dossier in the list
 		pDosLObj->m_bDisplayDossier = true;
@@ -1013,7 +1013,7 @@ void CBagRPObject::EvaluateDossiers() {
 		// that this guy's DNA has shown up on some object.
 		if (pDosLObj->m_bDisplayDossier &&
 		        pDosLObj->m_pDossier &&
-		        pDosLObj->m_pDossier->m_sSuspectVar.IsEmpty() == false) {
+		        pDosLObj->m_pDossier->m_sSuspectVar.isEmpty() == false) {
 
 			if (pLogZWld == nullptr) {
 				pLogZWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZWLD);
@@ -1041,13 +1041,13 @@ void CBagRPObject::SetLogState(RPSTATES eLogMode) {
 		m_pLogStateVar = VAR_MANAGER->GetVariable("LOG_STATE");
 	}
 
-	if (m_pPrevLogStateVar == nullptr) {
-		m_pPrevLogStateVar = VAR_MANAGER->GetVariable("PREV_LOG_STATE");
+	if (_pPrevLogStateVar == nullptr) {
+		_pPrevLogStateVar = VAR_MANAGER->GetVariable("PREV_LOG_STATE");
 	}
 
-	Assert(m_pLogStateVar != nullptr && m_pPrevLogStateVar != nullptr);
+	Assert(m_pLogStateVar != nullptr && _pPrevLogStateVar != nullptr);
 
-	if (m_pLogStateVar != nullptr && m_pPrevLogStateVar != nullptr) {
+	if (m_pLogStateVar != nullptr && _pPrevLogStateVar != nullptr) {
 		char szLocalBuff[256];
 		CBofString cStr(szLocalBuff, 256);
 		bool bRemember = false;
@@ -1077,27 +1077,27 @@ void CBagRPObject::SetLogState(RPSTATES eLogMode) {
 
 		if (m_eRPMode != RP_READ_DOSSIER) {
 			if (bRemember) {
-				m_pPrevLogStateVar->SetValue(m_pLogStateVar->GetValue());
+				_pPrevLogStateVar->SetValue(m_pLogStateVar->GetValue());
 			}
 		}
 		m_pLogStateVar->SetValue(cStr);
 
 		if (bSavePage || bRestorePage) {
-			if (m_pPrevBarPage == nullptr) {
-				m_pPrevBarPage = VAR_MANAGER->GetVariable("PREV_BAR_LOG_PAGE");
+			if (_pPrevBarPage == nullptr) {
+				_pPrevBarPage = VAR_MANAGER->GetVariable("PREV_BAR_LOG_PAGE");
 			}
 
 			if (m_pCurBarPage == nullptr) {
 				m_pCurBarPage = VAR_MANAGER->GetVariable("CUR_BAR_LOG_PAGE");
 			}
 
-			if (m_pPrevBarPage && m_pCurBarPage) {
+			if (_pPrevBarPage && m_pCurBarPage) {
 				if (bSavePage) {
-					m_pPrevBarPage->SetValue(m_pCurBarPage->GetValue());
+					_pPrevBarPage->SetValue(m_pCurBarPage->GetValue());
 				}
 
 				if (bRestorePage) {
-					m_pCurBarPage->SetValue(m_pPrevBarPage->GetValue());
+					m_pCurBarPage->SetValue(_pPrevBarPage->GetValue());
 				}
 			}
 		}
@@ -1206,13 +1206,13 @@ void CBagRPObject::SaveRPVars() {
 	}
 
 	// Now handle touched dossier's
-	int nCount = m_pTouchedList->GetCount();
+	int nCount = m_pTouchedList->getCount();
 	Assert(nCount <= 3);
 	DossierObj *pDosObj;
 
 	if (m_pTouchedList) {
 		for (int i = 0; i < nCount; i++) {
-			pDosObj = m_pTouchedList->GetNodeItem(i);
+			pDosObj = m_pTouchedList->getNodeItem(i);
 			switch (i) {
 			case 0:
 				nVars |= (pDosObj->m_bDisplayDossier ? mRPTDos1Eval : 0);
@@ -1228,12 +1228,12 @@ void CBagRPObject::SaveRPVars() {
 	}
 
 	// Now handle untouched dossier's
-	nCount = m_pUntouchedList->GetCount();
+	nCount = m_pUntouchedList->getCount();
 	Assert(nCount <= 3);
 
 	if (m_pUntouchedList) {
 		for (int i = 0; i < nCount; i++) {
-			pDosObj = m_pUntouchedList->GetNodeItem(i);
+			pDosObj = m_pUntouchedList->getNodeItem(i);
 			switch (i) {
 			case 0:
 				nVars |= (pDosObj->m_bDisplayDossier ? mRPUDos1Eval : 0);
@@ -1292,13 +1292,13 @@ void CBagRPObject::RestoreRPVars() {
 	}
 
 	// Now handle touched dossier's
-	int nCount = m_pTouchedList->GetCount();
+	int nCount = m_pTouchedList->getCount();
 	Assert(nCount <= 3);
 	DossierObj *pDosObj;
 
 	if (m_pTouchedList) {
 		for (int i = 0; i < nCount; i++) {
-			pDosObj = m_pTouchedList->GetNodeItem(i);
+			pDosObj = m_pTouchedList->getNodeItem(i);
 			switch (i) {
 			case 0:
 				pDosObj->m_bDisplayDossier = (nVars & mRPTDos1Eval ? true : false);
@@ -1314,12 +1314,12 @@ void CBagRPObject::RestoreRPVars() {
 	}
 
 	// Now handle untouched dossier's
-	nCount = m_pUntouchedList->GetCount();
+	nCount = m_pUntouchedList->getCount();
 	Assert(nCount <= 3);
 
 	if (m_pUntouchedList) {
 		for (int i = 0; i < nCount; i++) {
-			pDosObj = m_pUntouchedList->GetNodeItem(i);
+			pDosObj = m_pUntouchedList->getNodeItem(i);
 			switch (i) {
 			case 0:
 				pDosObj->m_bDisplayDossier = (nVars & mRPUDos1Eval ? true : false);
@@ -1346,16 +1346,16 @@ void CBagRPObject::HideRPReview() {
 		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
 	}
 
-	pRPObj = m_pRPList->GetNodeItem(0);
+	pRPObj = m_pRPList->getNodeItem(0);
 	if (pRPObj == nullptr) {
 		return;
 	}
 
 	// Count items in this queue.
-	int nCount = m_pRPList->GetCount();
+	int nCount = m_pRPList->getCount();
 
 	for (int i = 0; i < nCount; i++) {
-		pRPObj = m_pRPList->GetNodeItem(i);
+		pRPObj = m_pRPList->getNodeItem(i);
 
 		// If the object txt var is not found yet, then get it.
 		if (pRPObj->m_pObjectName == nullptr) {
@@ -1412,7 +1412,7 @@ void CBagRPObject::ShowRPReview() {
 						int nHr = pRPObj->m_nRPTime / 100;
 						int nMn = pRPObj->m_nRPTime - (nHr * 100);
 
-						s += BuildString("%02d:%02d", nHr, nMn);
+						s += buildString("%02d:%02d", nHr, nMn);
 
 						pRPObj->m_pObjectName->setText(s);
 						pRPObj->m_bRPTimeSet = true;
@@ -1426,11 +1426,11 @@ void CBagRPObject::ShowRPReview() {
 
 // Count the number of residue print objects waiting to be reported;
 int CBagRPObject::RPResultsWaiting() {
-	int nCount = m_pRPList->GetCount();
+	int nCount = m_pRPList->getCount();
 	int nWaiting = 0;
 
 	for (int i = 0; i < nCount; i++) {
-		CBagRPObject *pRPObj = m_pRPList->GetNodeItem(i);
+		CBagRPObject *pRPObj = m_pRPList->getNodeItem(i);
 		if (pRPObj->m_bRPReported && pRPObj->m_bRPRead == false) {
 			nWaiting++;
 		}
@@ -1440,14 +1440,14 @@ int CBagRPObject::RPResultsWaiting() {
 }
 
 // Remove all residue print results from the message queue
-void CBagRPObject::RemoveAllFromMsgQueue(CBagRPObject *pCurRPObj) {
+void CBagRPObject::removeAllFromMsgQueue(CBagRPObject *pCurRPObj) {
 	// we really only care about the log world, not the logz.
 	CBagLog *pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
 	Assert(pLogWld != nullptr);
-	int nCount = m_pRPList->GetCount();
+	int nCount = m_pRPList->getCount();
 
 	for (int i = 0; i < nCount; i++) {
-		CBagRPObject *pRPObj = m_pRPList->GetNodeItem(i);
+		CBagRPObject *pRPObj = m_pRPList->getNodeItem(i);
 
 		if (pRPObj->m_bRPReported && pRPObj->m_bRPRead == false && pRPObj != pCurRPObj) {
 			pLogWld->removeFromMsgQueue(pRPObj);
@@ -1498,10 +1498,10 @@ bool CBagRPObject::initialize() {
 
 	// Scoff the dossier out of the LOG_WLD SDEV.  If it's not there then hurl.
 	bool bDoUntouched = (m_pTouchedList != m_pUntouchedList);
-	int nCount = m_pTouchedList->GetCount();
+	int nCount = m_pTouchedList->getCount();
 
 	for (int i = 0; i < nCount; i++) {
-		pDosObj = m_pTouchedList->GetNodeItem(i);
+		pDosObj = m_pTouchedList->getNodeItem(i);
 		pDosObj->m_pDossier = (CBagDossierObject *)pSDev->GetObject(pDosObj->m_sDossier);
 		if (pDosObj->m_pDossier == nullptr) {
 			return false;
@@ -1514,9 +1514,9 @@ bool CBagRPObject::initialize() {
 	}
 
 	if (bDoUntouched) {
-		nCount = m_pUntouchedList->GetCount();
+		nCount = m_pUntouchedList->getCount();
 		for (int i = 0; i < nCount; i++) {
-			pDosObj = m_pUntouchedList->GetNodeItem(i);
+			pDosObj = m_pUntouchedList->getNodeItem(i);
 			pDosObj->m_pDossier = (CBagDossierObject *)pSDev->GetObject(pDosObj->m_sDossier);
 			if (pDosObj->m_pDossier == nullptr) {
 				return false;
@@ -1531,7 +1531,7 @@ bool CBagRPObject::initialize() {
 	}
 
 	// Fill in the movie object if we have one.
-	if (!m_sMovieObj.IsEmpty()) {
+	if (!m_sMovieObj.isEmpty()) {
 		m_pMovieObj = (CBagMovieObject *)pSDev->GetObject(m_sMovieObj);
 		if (m_pMovieObj == nullptr) {
 			return false;
@@ -1619,7 +1619,7 @@ void CBagRPObject::SynchronizeRPObjects(bool bLogFrontmost) {
 CBagDossierObject *CBagRPObject::GetActiveDossier() {
 	CBofList<DossierObj *> *pDosList = (m_bTouched ? m_pTouchedList : m_pUntouchedList);
 
-	return pDosList->GetNodeItem(m_nCurDossier)->m_pDossier;
+	return pDosList->getNodeItem(m_nCurDossier)->m_pDossier;
 }
 
 // Used to set the currently active dossier when one is displayed to the user.
@@ -1627,10 +1627,10 @@ void CBagRPObject::setActiveDossier(CBagDossierObject *pDosObj) {
 	CBofList<DossierObj *> *pDosList = (m_bTouched ? m_pTouchedList : m_pUntouchedList);
 	DossierObj *p = nullptr;
 
-	int nCount = pDosList->GetCount();
+	int nCount = pDosList->getCount();
 
 	for (int i = 0; i < nCount; i++) {
-		p = pDosList->GetNodeItem(i);
+		p = pDosList->getNodeItem(i);
 		if (p->m_pDossier == pDosObj) {
 			m_nCurDossier = i;
 			SaveRPVars();

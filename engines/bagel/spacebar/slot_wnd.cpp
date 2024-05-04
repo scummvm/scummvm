@@ -243,7 +243,7 @@ ErrorCode  SBarSlotWnd::attach() {
 
 			_pCredText->SetSize(20);
 			_pCredText->setWeight(TEXT_BOLD);
-			_pCredText->setText(BuildString("%d", _nCredit));
+			_pCredText->setText(buildString("%d", _nCredit));
 		} else {
 			reportError(ERR_MEMORY);
 		}
@@ -261,7 +261,7 @@ ErrorCode  SBarSlotWnd::attach() {
 
 			_pBetText->SetSize(20);
 			_pBetText->setWeight(TEXT_BOLD);
-			_pBetText->setText(BuildString("%d", _nBet));
+			_pBetText->setText(buildString("%d", _nBet));
 		} else {
 			reportError(ERR_MEMORY);
 		}
@@ -776,17 +776,17 @@ void SBarSlotWnd::updateText() {
 		return;
 
 	if (_nPayOff1 > 0 && _pOddsText != nullptr) {
-		_pOddsText->setText(BuildString("%d:%d", _nPayOff1, _nPayOff2));
+		_pOddsText->setText(buildString("%d:%d", _nPayOff1, _nPayOff2));
 	}
 
 	if (_pCredText != nullptr) {
-		_pCredText->setText(BuildString("%d", _nCredit));
+		_pCredText->setText(buildString("%d", _nCredit));
 		_pCredText->display(this);
 	}
 
 	// Update bet
 	if (_pBetText != nullptr) {
-		_pBetText->setText(BuildString("%d", _nBet));
+		_pBetText->setText(buildString("%d", _nBet));
 		_pBetText->display(this);
 	}
 
@@ -877,12 +877,12 @@ void SBarSlotWnd::onBofButton(CBofObject *pObject, int nState) {
 		go();
 		break;
 	case SLOTQUIT:
-		LogInfo("\tClicked Quit");
+		logInfo("\tClicked Quit");
 		close();
 		break;
 
 	case SLOTHELP: {
-		LogInfo("\tClicked Help");
+		logInfo("\tClicked Help");
 
 		CBagel *pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
@@ -897,7 +897,7 @@ void SBarSlotWnd::onBofButton(CBofObject *pObject, int nState) {
 		break;
 
 	default:
-		LogWarning(BuildString("Clicked Unknown Button with ID %d", pButton->getControlID()));
+		logWarning(buildString("Clicked Unknown Button with ID %d", pButton->getControlID()));
 		break;
 	}
 }

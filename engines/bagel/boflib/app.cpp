@@ -228,7 +228,7 @@ void CBofApp::addCursor(CBofCursor &cCursor) {
 }
 
 void CBofApp::delCursor(int nIndex) {
-	_cCursorList.Remove(nIndex);
+	_cCursorList.remove(nIndex);
 }
 
 bool CBofApp::consolePlayVideo(const Common::Path &path) {

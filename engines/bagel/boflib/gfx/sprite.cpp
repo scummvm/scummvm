@@ -135,7 +135,7 @@ void CBofSprite::linkSprite() {
 		}
 
 		// _pSpriteChain must always point to the head of the linked list
-		Assert(_pSpriteChain == (CBofSprite *)_pSpriteChain->GetHead());
+		Assert(_pSpriteChain == (CBofSprite *)_pSpriteChain->getHead());
 	}
 }
 

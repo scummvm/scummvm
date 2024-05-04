@@ -88,7 +88,7 @@ public:
 	int getLength() const {
 		return m_nLength;
 	}
-	bool IsEmpty() const {
+	bool isEmpty() const {
 		return m_nLength == 0;
 	}
 

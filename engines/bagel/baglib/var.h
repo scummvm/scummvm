@@ -142,7 +142,7 @@ public:
 		return m_xVarList[i];
 	}
 	int GetNumVars() {
-		return m_xVarList.GetCount();
+		return m_xVarList.getCount();
 	}
 
 	// Use a hash table to lookup variables.

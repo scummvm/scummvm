@@ -70,7 +70,7 @@ CBagVar::~CBagVar() {
 void CBagVar::SetValue(const CBofString &s) {
 	Assert(IsValidObject(this));
 
-	if (!s.IsEmpty()) {
+	if (!s.isEmpty()) {
 		char c = s[0];
 		if (Common::isDigit(c) || c == '-')
 			SetNumeric();
@@ -91,7 +91,7 @@ const CBofString &CBagVar::GetValue() {
 	}
 
 	// Check if these items should be replaced by the current sdev
-	if (!m_sVarName.IsEmpty() && !m_sVarName.Find(CURRSDEV_TOKEN)) {
+	if (!m_sVarName.isEmpty() && !m_sVarName.Find(CURRSDEV_TOKEN)) {
 		CBofString CurrSDev;
 		if (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()) {
 			m_sVarValue = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->GetName();
@@ -99,7 +99,7 @@ const CBofString &CBagVar::GetValue() {
 	} else {
 
 		// Check if these items should be replaced by the previous sdev
-		if (!m_sVarName.IsEmpty() && !m_sVarName.Find(PREVSDEV_TOKEN)) {
+		if (!m_sVarName.isEmpty() && !m_sVarName.Find(PREVSDEV_TOKEN)) {
 			CBofString CurrSDev;
 			if (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()) {
 				m_sVarValue = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->GetPrevSDev();
@@ -206,10 +206,10 @@ CBagVarManager::~CBagVarManager() {
 	if (nVarMngrs) {
 		nVarMngrs--;
 		ReleaseVariables();
-		m_xVarList.RemoveAll();
+		m_xVarList.removeAll();
 
 		for (int i = 0; i < VAR_HTABLE_SIZE; i++) {
-			m_xVarHashList[i].RemoveAll();
+			m_xVarHashList[i].removeAll();
 		}
 	}
 }
@@ -235,7 +235,7 @@ ErrorCode CBagVarManager::UpdateRegistration() {
 	int i;
 
 	// Read the timers at the beginning
-	for (i = 0; i < m_xVarList.GetCount() && !bFoundLastTimer; ++i) {
+	for (i = 0; i < m_xVarList.getCount() && !bFoundLastTimer; ++i) {
 		if (!m_xVarList[i]->IsTimer()) {
 			bFoundLastTimer = true;
 		}
@@ -243,10 +243,10 @@ ErrorCode CBagVarManager::UpdateRegistration() {
 
 	// Make sure there are no more timers in the list
 	if (bFoundLastTimer) {
-		for (/*- i determined in previous for loop -*/ ; i < m_xVarList.GetCount(); ++i) {
+		for (/*- i determined in previous for loop -*/ ; i < m_xVarList.getCount(); ++i) {
 			if (m_xVarList[i]->IsTimer()) {
 				CBagVar *pVar = m_xVarList[i];
-				m_xVarList.Remove(i);
+				m_xVarList.remove(i);
 				m_xVarList.addToHead(pVar);
 			}
 		}
@@ -259,15 +259,15 @@ ErrorCode CBagVarManager::UnRegisterVariable(CBagVar *pVar) {
 	// Find and remove specified variable from the Var manager list
 	//
 
-	CBofListNode<CBagVar *> *pList = m_xVarList.GetTail();
+	CBofListNode<CBagVar *> *pList = m_xVarList.getTail();
 	while (pList != nullptr) {
 
-		if (pList->GetNodeItem() == pVar) {
-			m_xVarList.Remove(pList);
+		if (pList->getNodeItem() == pVar) {
+			m_xVarList.remove(pList);
 			break;
 		}
 
-		pList = pList->m_pPrev;
+		pList = pList->_pPrev;
 	}
 
 	// Remove it from the hash table also.
@@ -280,10 +280,10 @@ ErrorCode CBagVarManager::UnRegisterVariable(CBagVar *pVar) {
 	CBofList<CBagVar *> *pVarList = &m_xVarHashList[nHashVal];
 
 	// Search the hash table and remove it when we're done.
-	for (int i = 0; i < pVarList->GetCount(); ++i) {
-		CBagVar *pHashVar = pVarList->GetNodeItem(i);
+	for (int i = 0; i < pVarList->getCount(); ++i) {
+		CBagVar *pHashVar = pVarList->getNodeItem(i);
 		if (pVar == pHashVar) {
-			pVarList->Remove(i);
+			pVarList->remove(i);
 			break;
 		}
 	}
@@ -296,7 +296,7 @@ ErrorCode CBagVarManager::IncrementTimers() {
 	volatile bool bFoundLastTimer = false;
 
 	// Read the timers at the beginning
-	for (int i = 0; i < m_xVarList.GetCount() && !bFoundLastTimer; ++i) {
+	for (int i = 0; i < m_xVarList.getCount() && !bFoundLastTimer; ++i) {
 		CBagVar *pVar = m_xVarList[i];
 		if (pVar->IsTimer()) {
 
@@ -320,18 +320,18 @@ ErrorCode CBagVarManager::IncrementTimers() {
 ErrorCode CBagVarManager::ReleaseVariables(bool bIncludeGlobals) {
 
 	if (bIncludeGlobals) {
-		while (m_xVarList.GetCount()) {
-			CBagVar *pVar = m_xVarList.RemoveHead();
+		while (m_xVarList.getCount()) {
+			CBagVar *pVar = m_xVarList.removeHead();
 
 			if (pVar) {
 				delete pVar;
 			}
 		}
 	} else { // Do not include globals
-		for (int i = m_xVarList.GetCount() - 1; i >= 0; i--) {
+		for (int i = m_xVarList.getCount() - 1; i >= 0; i--) {
 			CBagVar *pVar = m_xVarList[i];
 			if (pVar && !pVar->IsGlobal()) {
-				m_xVarList.Remove(i);
+				m_xVarList.remove(i);
 				delete pVar;
 			}
 		}
@@ -350,8 +350,8 @@ CBagVar *CBagVarManager::GetVariable(const CBofString &sName) {
 	int nHashVal = HASHVAR(szLocalBuff, varStr.getLength());
 
 	CBofList<CBagVar *> *pVarList = &m_xVarHashList[nHashVal];
-	for (int i = 0; i < pVarList->GetCount(); ++i) {
-		pVar = pVarList->GetNodeItem(i);
+	for (int i = 0; i < pVarList->getCount(); ++i) {
+		pVar = pVarList->getNodeItem(i);
 		if (pVar != nullptr && (pVar->GetName().getLength() == sName.getLength()) && !pVar->GetName().Find(sName)) {
 			return pVar;
 		}
@@ -367,7 +367,7 @@ void CBagVar::SetName(const CBofString &s) {
 	if (pApp) {
 		CBagMasterWin *pMainWin = pApp->getMasterWnd();
 
-		if (!s.IsEmpty() && pMainWin && pMainWin->getVariableManager()) {
+		if (!s.isEmpty() && pMainWin && pMainWin->getVariableManager()) {
 			char szLocalBuff[256];
 			CBofString varStr(szLocalBuff, 256);
 			varStr = m_sVarName;

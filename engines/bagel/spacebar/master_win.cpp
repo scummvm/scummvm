@@ -45,7 +45,7 @@ namespace Bagel {
 namespace SpaceBar {
 
 static const char *GetBuildVersion() {
-	return BuildString("Version: %s, %s", __DATE__, __TIME__);
+	return buildString("Version: %s, %s", __DATE__, __TIME__);
 }
 
 CBagStorageDev *CSBarMasterWin::onNewStorageDev(const CBofString &typestr) {
@@ -184,7 +184,7 @@ CBagStorageDev *CSBarMasterWin::onNewStorageDev(int nType) {
 		break;
 
 	default:
-		LogError(BuildString("FAILED to init storage device of type %d", nType));
+		logError(buildString("FAILED to init storage device of type %d", nType));
 		break;
 	};
 

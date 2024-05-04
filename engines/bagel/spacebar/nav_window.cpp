@@ -129,7 +129,7 @@ const char *MakeDir(const char *pszFile) {
 }
 
 CNavWindow::CNavWindow() {
-	LogInfo("Constructing NAV...");
+	logInfo("Constructing NAV...");
 
 	_level = 0;
 	_pPinna = nullptr;
@@ -183,7 +183,7 @@ CNavWindow::CNavWindow() {
 ErrorCode CNavWindow::attach() {
 	Assert(IsValidObject(this));
 
-	LogInfo("\tCNavWindow::attach()");
+	logInfo("\tCNavWindow::attach()");
 	CBagStorageDevWnd::attach();
 
 	_level = 0;
@@ -319,7 +319,7 @@ ErrorCode CNavWindow::detach() {
 		_bNavAttached = false;
 	}
 
-	LogInfo("\tCNavWindow::detach()");
+	logInfo("\tCNavWindow::detach()");
 
 	CBofApp::getApp()->setPalette(_pOldPal);
 
@@ -579,18 +579,18 @@ void CNavWindow::refreshData() {
 	pBmp->paint(&cBmp, 0, 0, &cRect);
 
 	cRect.SetRect(0, 10, 199, 25);
-	paintText(&cBmp, &cRect, BuildString("Current Port of call:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, buildString("Current Port of call:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.left += 10;       // Indent this section
 	cRect.top += 15;
 	cRect.bottom += 15;
-	paintText(&cBmp, &cRect, BuildString("%s", _pPortName->GetBuffer()), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, buildString("%s", _pPortName->GetBuffer()), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.left -= 10;       // Un-indent
 
 	// Leave blank space before next section
 	cRect.top += 30;
 	cRect.bottom += 30;
 
-	paintText(&cBmp, &cRect, BuildString("Current Manifest:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, buildString("Current Manifest:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 
 	cRect.left += 10;       // Indent this section
 	char szBuf[100];
@@ -617,21 +617,21 @@ void CNavWindow::refreshData() {
 	cRect.top += 30;
 	cRect.bottom += 30;
 
-	paintText(&cBmp, &cRect, BuildString("Current Fuel:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, buildString("Current Fuel:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.left += 10;       // Indent this section
 	cRect.top += 15;
 	cRect.bottom += 15;
 	if (_fuel != 1)
-		paintText(&cBmp, &cRect, BuildString("%3d tons", _fuel), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+		paintText(&cBmp, &cRect, buildString("%3d tons", _fuel), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	else
-		paintText(&cBmp, &cRect, BuildString("%3d ton", _fuel), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+		paintText(&cBmp, &cRect, buildString("%3d ton", _fuel), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.left -= 10;       // Un-indent
 
 	// Leave blank space before next section
 	cRect.top += 30;
 	cRect.bottom += 30;
 
-	paintText(&cBmp, &cRect, BuildString("Current Tonnage:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, buildString("Current Tonnage:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.top += 15;
 	cRect.bottom += 15;
 
@@ -684,13 +684,13 @@ void CNavWindow::onBofButton(CBofObject *pObject, int nState) {
 	CBofButton *pButton = (CBofButton *)pObject;
 	switch (pButton->getControlID()) {
 	case QUIT: {
-		LogInfo("\tClicked Quit");
+		logInfo("\tClicked Quit");
 		VAR_MANAGER->GetVariable("NPLAYEDNAV")->SetBoolValue(true);
 		close();
 		break;
 	}
 	case HELP: {
-		LogInfo("\tClicked Help");
+		logInfo("\tClicked Help");
 
 		killTimer(777);
 		CBagel *pApp = CBagel::getBagApp();
@@ -704,7 +704,7 @@ void CNavWindow::onBofButton(CBofObject *pObject, int nState) {
 	}
 
 	default:
-		LogWarning(BuildString("Clicked Unknown Button with ID %d", pButton->getControlID()));
+		logWarning(buildString("Clicked Unknown Button with ID %d", pButton->getControlID()));
 		break;
 	}
 

@@ -241,7 +241,7 @@ void CBagRestartDialog::onBofButton(CBofObject *pObject, int nFlags) {
 	}
 
 	default:
-		LogWarning(BuildString("Restart/Restore: Unknown button: %d", pButton->getControlID()));
+		logWarning(buildString("Restart/Restore: Unknown button: %d", pButton->getControlID()));
 		break;
 	}
 }

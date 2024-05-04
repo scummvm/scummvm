@@ -69,7 +69,7 @@ CCache::~CCache() {
 	Assert(_bValid);
 
 	// There can be only one cache list per EXE/DLL
-	Assert(this->GetHead() == _pCacheList);
+	Assert(this->getHead() == _pCacheList);
 
 	// Object must be released by the derived class destructor
 	Assert(_bCached == false);
@@ -104,7 +104,7 @@ bool CCache::flush() {
 }
 
 bool CCache::optimize(uint32 lRequestedFreeSpace) {
-	LogInfo(BuildString("CCache::optimize(%ld)", lRequestedFreeSpace));
+	logInfo(buildString("CCache::optimize(%ld)", lRequestedFreeSpace));
 
 	bool bSuccess = true;
 	while (GetFreePhysMem() < lRequestedFreeSpace) {
@@ -118,7 +118,7 @@ bool CCache::optimize(uint32 lRequestedFreeSpace) {
 			if (pCache->_bCached && (pCache->_nLockCount <= 0)) {
 				nObjects++;
 				if (pCache->_lAge >= lAvgAge) {
-					LogInfo(BuildString("Freeing Object: %08lx from the Cache list", pCache));
+					logInfo(buildString("Freeing Object: %08lx from the Cache list", pCache));
 					pCache->release();
 				}
 			}

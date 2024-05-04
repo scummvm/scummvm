@@ -158,7 +158,7 @@ const char *CBofStringTable::GetString(int nId) {
 	}
 
 	if (pCurString == nullptr) {
-		LogWarning(BuildString("Resource String %d not found in %s", nId, _szFileName));
+		logWarning(buildString("Resource String %d not found in %s", nId, _szFileName));
 	}
 
 	return pszString;

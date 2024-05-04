@@ -91,7 +91,7 @@ public:
 		return (CBofSound *)_pNext;
 	}
 	CBofSound *GetPrev() {
-		return (CBofSound *)m_pPrev;
+		return (CBofSound *)_pPrev;
 	}
 
 	char *getFileName() {

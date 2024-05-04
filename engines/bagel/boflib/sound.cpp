@@ -143,7 +143,7 @@ CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, c
 		m_pSoundChain->Insert(this);
 
 		// m_pSoundchain must always be the head of the list
-		Assert(m_pSoundChain == m_pSoundChain->GetHead());
+		Assert(m_pSoundChain == m_pSoundChain->getHead());
 	} else {
 		m_pSoundChain = this;
 	}
@@ -673,7 +673,7 @@ bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot) {
 		nFlags |= SOUND_AUTODELETE;
 
 		if (!fileExists(pszSoundFile)) {
-			LogError(BuildString("Warning: Sound File '%s' not found", pszSoundFile));
+			logError(buildString("Warning: Sound File '%s' not found", pszSoundFile));
 			return false;
 		}
 
@@ -714,7 +714,7 @@ bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot, bool bW
 		}
 
 		if (!fileExists(pszSoundFile)) {
-			LogError(BuildString("Warning: Sound File '%s' not found", pszSoundFile));
+			logError(buildString("Warning: Sound File '%s' not found", pszSoundFile));
 			return false;
 		}
 

@@ -1318,13 +1318,13 @@ void SrafComputer::activateDealSummary() {
 	_pLBox->addToTail(sStr, false);
 
 	// Populate the listbox with the sellers
-	int numItems = _pSellerSummaryList->GetCount();
+	int numItems = _pSellerSummaryList->getCount();
 	int totalAsking = 0;
 
 	char szRightCol[128];
 	bool bAskKnown = true;
 	for (int i = 0; i < numItems; i++) {
-		DealSummarySellerItem sellerItem = _pSellerSummaryList->GetNodeItem(i);
+		DealSummarySellerItem sellerItem = _pSellerSummaryList->getNodeItem(i);
 		sStr = sellerItem._pSellerName;
 
 		// Put the appropriate info in the right hand column
@@ -1384,11 +1384,11 @@ void SrafComputer::activateDealSummary() {
 	_pLBox->addToTail(sStr, false);
 
 	// Populate the listbox with the buyers
-	numItems = _pBuyerSummaryList->GetCount();
+	numItems = _pBuyerSummaryList->getCount();
 	totalAsking = 0;
 
 	for (int i = 0; i < numItems; i++) {
-		DealSummaryBuyerItem buyerItem = _pBuyerSummaryList->GetNodeItem(i);
+		DealSummaryBuyerItem buyerItem = _pBuyerSummaryList->getNodeItem(i);
 		sStr = buyerItem._pBuyerName;
 
 		// Put the appropriate info in the right hand column, don't want it
@@ -2127,14 +2127,14 @@ void SrafComputer::activateCheckTeams() {
 	sStr = " ";
 	_pLBox->addToTail(sStr, false);
 
-	int numItems = (_pTeamList == nullptr ? 0 : _pTeamList->GetCount());
+	int numItems = (_pTeamList == nullptr ? 0 : _pTeamList->getCount());
 
 	// Walk through the list and build individual strings and add to the list.
 	int  nNumAttendees = 0;
 	int  nMaxNumAttendees = 0;
 
 	for (int i = 0; i < numItems; i++) {
-		DispatchedTeamItem teamListItem = _pTeamList->GetNodeItem(i);
+		DispatchedTeamItem teamListItem = _pTeamList->getNodeItem(i);
 
 		// Figure out who they are meeting with...
 		if (teamListItem._nFlags & mOtherParty) {
@@ -3113,14 +3113,14 @@ bool SrafComputer::reportMeetingStatus(int nTeamNumber) {
 		return bNeedRedraw;
 	}
 
-	int numItems = _pTeamList->GetCount();
+	int numItems = _pTeamList->getCount();
 
 	// Handle out of range case first.
 	if (nTeamNumber < 0 || nTeamNumber >= numItems) {
 		return bNeedRedraw;
 	}
 
-	DispatchedTeamItem teamListItem = _pTeamList->GetNodeItem(nTeamNumber);
+	DispatchedTeamItem teamListItem = _pTeamList->getNodeItem(nTeamNumber);
 
 	// Start by counting the number of team members.  Count up how powerful this team
 	// is in terms of negotiating strength.
@@ -3551,7 +3551,7 @@ bool SrafComputer::reportMeetingStatus(int nTeamNumber) {
 				g_stBuyerBids[teamListItem._nMeetWithID]._bAvailable = true;
 			}
 
-			_pTeamList->Remove(nTeamNumber);
+			_pTeamList->remove(nTeamNumber);
 			bNeedRedraw = true;
 		}
 	}
@@ -3694,11 +3694,11 @@ void SrafComputer::activateMainScreen() {
 	ErrorCode error = createListBox();
 	Assert(error == ERR_NONE);
 
-	int numItems = _pMainList->GetCount();
+	int numItems = _pMainList->getCount();
 
 	// Populate listbox
 	for (int i = 0; i < numItems; i++) {
-		SrafCompItem compItem = _pMainList->GetNodeItem(i);
+		SrafCompItem compItem = _pMainList->getNodeItem(i);
 		_pLBox->addToTail(CBofString(compItem._pItem), false);
 	}
 
@@ -4439,9 +4439,9 @@ void SrafComputer::incrementTurnCount() {
 	// Automatically give the user the status of the meeting if the
 	// meeting time has expired...
 	if (_pTeamList) {
-		int nTeams = _pTeamList->GetCount();
+		int nTeams = _pTeamList->getCount();
 		for (int i = 0; i < nTeams; i++) {
-			DispatchedTeamItem teamListItem = _pTeamList->GetNodeItem(i);
+			DispatchedTeamItem teamListItem = _pTeamList->getNodeItem(i);
 
 			if (nTurncount > (teamListItem._nDispatchTime + teamListItem._nMeetingTime)) {
 				if (reportMeetingStatus(i)) {
@@ -5142,7 +5142,7 @@ void SrafComputer::saveSraffanVars() {
 
 	// Get the number of outstanding teams, we don't want to overkill
 	if (_pTeamList) {
-		nOutstandingTeams = _pTeamList->GetCount();
+		nOutstandingTeams = _pTeamList->getCount();
 	}
 
 	for (int i = 0; i < nNumToSave; i++) {
@@ -5154,7 +5154,7 @@ void SrafComputer::saveSraffanVars() {
 		Common::sprintf_s(szMEETINGTIME, "%s%d%s", "TEAM", i + 1, "MEETINGTIME");
 
 		if (i < nOutstandingTeams) {
-			teamListItem = _pTeamList->GetNodeItem(i);
+			teamListItem = _pTeamList->getNodeItem(i);
 		} else {
 			teamListItem._nFlags = 0;
 			teamListItem._nMeetWithID = 0;

@@ -78,7 +78,7 @@ ErrorCode CBagWield::detach() {
 bool CBagWield::onObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
 	CBofString sObjName = pObj->GetRefName();
 
-	if (sObjName.IsEmpty())
+	if (sObjName.isEmpty())
 		return false;
 
 	// Find the storage device

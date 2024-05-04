@@ -103,7 +103,7 @@ void CBofEditText::onPaint(CBofRect *pRect) {
 		fillRect(nullptr, 255);
 
 	// Draw the text, if any
-	if (!_text.IsEmpty()) {
+	if (!_text.isEmpty()) {
 		CBofString tmp = _text + "|";
 
 		paintText(this, &_cRect, tmp.GetBuffer(),
@@ -131,7 +131,7 @@ void CBofEditText::onKeyHit(uint32 lKey, uint32 lRepCount) {
 			setText(tmp);
 		}
 	
-	} else if (lKey == BKEY_BACK && !_text.IsEmpty()) {
+	} else if (lKey == BKEY_BACK && !_text.isEmpty()) {
 		_text.DeleteLastChar();
 		updateWindow();
 	}

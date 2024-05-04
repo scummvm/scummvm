@@ -72,9 +72,9 @@ void CBagPDA::AddToMovieQueue(CBagMovieObject *pMObj) {
 
 	// Go through the whole movie list, make sure there are no dup's of
 	// this movie.
-	int nCount = m_pMovieList->GetCount();
+	int nCount = m_pMovieList->getCount();
 	for (int i = 0; i < nCount; i++) {
-		CBagMovieObject *p = m_pMovieList->GetNodeItem(i);
+		CBagMovieObject *p = m_pMovieList->getNodeItem(i);
 		if (p->getFileName().Find(pMObj->getFileName()) == 0) {
 			return;
 		}
@@ -100,16 +100,16 @@ ErrorCode CBagPDA::loadFile(const CBofString &sFile) {
 
 	error = CBagStorageDev::loadFile(sFile);
 	if (_mooWnd) {
-		RemoveObject(_mooWnd);
+		removeObject(_mooWnd);
 	}
 	if (_invWnd) {
-		RemoveObject(_invWnd);
+		removeObject(_invWnd);
 	}
 	if (_mapWnd) {
-		RemoveObject(_mapWnd);
+		removeObject(_mapWnd);
 	}
 	if (_logWnd) {
-		RemoveObject(_logWnd);
+		removeObject(_logWnd);
 	}
 
 	return error;
@@ -381,11 +381,11 @@ void CBagPDA::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 		if (isActivated()) {
 			bool bButtonHit = false;
 			CBofList<CBagObject *> *pList = GetObjectList();
-			int  nCount = (pList == nullptr ? 0 : pList->GetCount());
+			int  nCount = (pList == nullptr ? 0 : pList->getCount());
 
 			// Go through all the buttons and see if we hit any of them.
 			for (int i = 0; i < nCount; i++) {
-				CBagObject *pObj = pList->GetNodeItem(i);
+				CBagObject *pObj = pList->getNodeItem(i);
 				if (pObj->GetType() == BUTTONOBJ && pObj->getRect().PtInRect(RealPt)) {
 					bButtonHit = true;
 					break;
@@ -504,13 +504,13 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 	}
 }
 
-void CBagPDA::RemoveFromMovieQueue(CBagMovieObject *pMObj) {
+void CBagPDA::removeFromMovieQueue(CBagMovieObject *pMObj) {
 	if (m_pMovieList != nullptr) {
-		int nCount = m_pMovieList->GetCount();
+		int nCount = m_pMovieList->getCount();
 		for (int i = 0; i < nCount; i++) {
-			CBagMovieObject *p = m_pMovieList->GetNodeItem(i);
+			CBagMovieObject *p = m_pMovieList->getNodeItem(i);
 			if (pMObj == p) {
-				m_pMovieList->Remove(i);
+				m_pMovieList->remove(i);
 				break;
 			}
 		}
@@ -521,7 +521,7 @@ bool CBagPDA::IsMovieWaiting() {
 	bool bMovieWaiting = false;
 
 	if (m_pMovieList) {
-		bMovieWaiting = (m_pMovieList->GetCount() > 0);
+		bMovieWaiting = (m_pMovieList->getCount() > 0);
 	}
 
 	// If our sounds are paused, and our movie is done playing,
@@ -537,15 +537,15 @@ bool CBagPDA::IsMovieWaiting() {
 void CBagPDA::RunWaitingMovie() {
 	// Will only run a movie if it is ready to be run
 	if (m_pMovieList) {
-		int nCount = m_pMovieList->GetCount();
+		int nCount = m_pMovieList->getCount();
 		if (nCount > 0) {
 			for (int i = 0; i < nCount; i++) {
-				CBagMovieObject *pMObj = m_pMovieList->GetNodeItem(i);
+				CBagMovieObject *pMObj = m_pMovieList->getNodeItem(i);
 				if (pMObj->asynchPDAMovieCanPlay()) {
 					m_bSoundsPaused = true;
 					CSound::PauseSounds();              // pause all sounds
 					pMObj->runObject();
-					RemoveFromMovieQueue(pMObj);
+					removeFromMovieQueue(pMObj);
 				}
 			}
 		}

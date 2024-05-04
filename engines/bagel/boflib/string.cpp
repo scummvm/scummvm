@@ -526,7 +526,7 @@ void CBofString::Left(int nCount, CBofString *lStr) const {
 }
 
 void CBofString::DeleteLastChar() {
-	if (!IsEmpty()) {
+	if (!isEmpty()) {
 		*(m_pszData + m_nLength - 1) = '\0';
 		--m_nLength;
 	}

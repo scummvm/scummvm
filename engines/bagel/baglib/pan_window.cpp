@@ -96,7 +96,7 @@ CBofRect CBagPanWindow::UnSetSlidebitmap() {
 }
 
 CBofPalette *CBagPanWindow::SetSlidebitmap(const CBofString &xSlideBmp, const CBofRect &xSlideRect) {
-	if (!xSlideBmp.IsEmpty()) {
+	if (!xSlideBmp.isEmpty()) {
 		CBofRect viewRect = UnSetSlidebitmap();
 		CBofRect cRect = getWindowRect();
 
@@ -284,14 +284,14 @@ ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 	// can't use a null pointer
 	Assert(pBmp != nullptr);
 
-	int nCount = list->GetCount();
+	int nCount = list->getCount();
 	if (nCount != 0) {
 		int nW = m_pSlideBitmap->width();
 		CBofPoint xCursorLocation = DevPtToViewPort(*m_xCursorLocation);
 		int nMouseOverObj = -1;
 
 		for (int i = 0; i < nCount; ++i) {
-			CBagObject *pObj = list->GetNodeItem(i);
+			CBagObject *pObj = list->getNodeItem(i);
 			CBofRect xBmpRect = pObj->getRect();
 
 			// If it is a panorama we have to check for exceeded bounds
@@ -367,7 +367,7 @@ ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 
 // Delete the foreground objects
 void CBagPanWindow::DeleteFGObjects() {
-	m_pFGObjectList->RemoveAll();
+	m_pFGObjectList->removeAll();
 }
 
 ErrorCode CBagPanWindow::InsertFGObjects(CBagObject *pBmp) {
@@ -380,7 +380,7 @@ ErrorCode CBagPanWindow::InsertFGObjects(CBagObject *pBmp) {
 }
 
 CBagObject *CBagPanWindow::GetFGObjects(const CBofString &sObjName) {
-	int nListLen = m_pFGObjectList->GetCount();
+	int nListLen = m_pFGObjectList->getCount();
 
 	for (int i = 0; i < nListLen; ++i) {
 		CBagObject *pObj = (*m_pFGObjectList)[i];
@@ -524,9 +524,9 @@ void CBagPanWindow::onMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 	CBofList<CBagObject *> *pList = m_pFGObjectList;
 	if (pList != nullptr) {
 		CBagObject *pOverObj = nullptr;
-		int nCount = pList->GetCount();
+		int nCount = pList->getCount();
 		for (int i = 0; i < nCount; ++i) {
-			CBagObject *pObj = pList->GetNodeItem(i);
+			CBagObject *pObj = pList->getNodeItem(i);
 
 			if (pObj->isInside(xPoint)) {
 				pOverObj = pObj;
@@ -562,7 +562,7 @@ void CBagPanWindow::onMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 	CBagObject *pObj = GetLActiveObject();
 
 	if (m_bDraggingObject) {
-		pObj = m_pFGObjectList->GetNodeItem(m_pFGObjectList->GetCount() - 1);
+		pObj = m_pFGObjectList->getNodeItem(m_pFGObjectList->getCount() - 1);
 		pObj->setPosition(xPoint);
 	}
 
@@ -570,10 +570,10 @@ void CBagPanWindow::onMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 }
 
 void CBagPanWindow::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
-	int nCount = m_pFGObjectList->GetCount();
+	int nCount = m_pFGObjectList->getCount();
 	if (nCount != 0) {
 		for (int i = 0; i < nCount; ++i) {
-			CBagObject *pObj = m_pFGObjectList->GetNodeItem(i);
+			CBagObject *pObj = m_pFGObjectList->getNodeItem(i);
 
 			if (pObj->isInside(*xPoint)) {
 				pObj->onLButtonDown(nFlags, xPoint, this);
@@ -611,12 +611,12 @@ void CBagPanWindow::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 
 		if (m_bDraggingObject) {
 			m_bDraggingObject = false;
-			pActObj = m_pFGObjectList->RemoveTail();
+			pActObj = m_pFGObjectList->removeTail();
 
-			int nCount = m_pFGObjectList->GetCount();
+			int nCount = m_pFGObjectList->getCount();
 			if (nCount != 0) {
 				for (int i = 0; i < nCount; ++i) {
-					CBagObject *pObj = m_pFGObjectList->GetNodeItem(i);
+					CBagObject *pObj = m_pFGObjectList->getNodeItem(i);
 					CBofRect xBmpRect = pObj->getRect();
 					if (xBmpRect.PtInRect(*xPoint)) {
 						pObj->onObjInteraction(pActObj, this);
@@ -632,10 +632,10 @@ void CBagPanWindow::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 
 		if (!bMoved) {
 			// Parse backwards to get topmost obj 1st
-			int nCount = m_pFGObjectList->GetCount();
+			int nCount = m_pFGObjectList->getCount();
 			if (nCount != 0) {
 				for (int i = nCount - 1; i >= 0; --i) {
-					CBagObject *pObj = m_pFGObjectList->GetNodeItem(i);
+					CBagObject *pObj = m_pFGObjectList->getNodeItem(i);
 					if (pObj->isInside(*xPoint)) {
 						pObj->onLButtonUp(nFlags, xPoint, this);
 						return;

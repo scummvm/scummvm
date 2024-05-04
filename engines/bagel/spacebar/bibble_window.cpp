@@ -204,7 +204,7 @@ CBetArea::CBetArea(const CBetAreaDef &def) :
 
 
 CBibbleWindow::CBibbleWindow() {
-	LogInfo("Constructing BibbleBonk...");
+	logInfo("Constructing BibbleBonk...");
 
 	// Inits
 	_pCreditsText = nullptr;
@@ -259,7 +259,7 @@ ErrorCode CBibbleWindow::attach() {
 		SHOUT_4
 	};
 
-	LogInfo("\tCBibbleWindow::attach()");
+	logInfo("\tCBibbleWindow::attach()");
 
 	CBagStorageDevWnd::attach();
 
@@ -270,7 +270,7 @@ ErrorCode CBibbleWindow::attach() {
 	if ((pVar = VAR_MANAGER->GetVariable("NUGGETS")) != nullptr) {
 		_nNumCredits = pVar->GetNumValue();
 	}
-	LogInfo(BuildString("\tCredits: %d", _nNumCredits));
+	logInfo(buildString("\tCredits: %d", _nNumCredits));
 
 	g_bBibbleHack = false;
 	if ((pVar = VAR_MANAGER->GetVariable("BIBBLEHACK")) != nullptr) {
@@ -310,7 +310,7 @@ ErrorCode CBibbleWindow::attach() {
 
 		_pCreditsText->SetSize(MapWindowsPointSize(20));
 		_pCreditsText->setWeight(TEXT_BOLD);
-		_pCreditsText->setText(BuildString("%d", _nNumCredits));
+		_pCreditsText->setText(buildString("%d", _nNumCredits));
 	} else {
 		reportError(ERR_MEMORY);
 	}
@@ -431,7 +431,7 @@ ErrorCode CBibbleWindow::attach() {
 ErrorCode CBibbleWindow::detach() {
 	Assert(IsValidObject(this));
 
-	LogInfo("\tCBibbleWindow::detach()");
+	logInfo("\tCBibbleWindow::detach()");
 
 	CBagCursor::hideSystemCursor();
 
@@ -595,64 +595,64 @@ void CBibbleWindow::onBofButton(CBofObject *pObject, int nState) {
 
 	switch (pButton->getControlID()) {
 	case BIBBLE_BUTTON_READY:
-		LogInfo("\tClicked READY button");
+		logInfo("\tClicked READY button");
 		playGame();
 		break;
 
 	case BIBBLE_BUTTON_BET1:
-		LogInfo("\tClicked BET 1");
+		logInfo("\tClicked BET 1");
 		nBet = MIN((int)_nNumCredits, 1);
 		break;
 
 	case BIBBLE_BUTTON_BET5:
-		LogInfo("\tClicked BET 5");
+		logInfo("\tClicked BET 5");
 		nBet = MIN((int)_nNumCredits, 5);
 		break;
 
 	case BIBBLE_BUTTON_BET10:
-		LogInfo("\tClicked BET 10");
+		logInfo("\tClicked BET 10");
 		nBet = MIN((int)_nNumCredits, 10);
 		break;
 
 	case BIBBLE_BUTTON_BET50:
-		LogInfo("\tClicked BET 50");
+		logInfo("\tClicked BET 50");
 		nBet = MIN((int)_nNumCredits, 50);
 		break;
 
 	case BIBBLE_BUTTON_BET100:
-		LogInfo("\tClicked BET 100");
+		logInfo("\tClicked BET 100");
 		nBet = MIN((int)_nNumCredits, 100);
 		break;
 
 	case BIBBLE_BUTTON_BET500:
-		LogInfo("\tClicked BET 500");
+		logInfo("\tClicked BET 500");
 		nBet = MIN((int)_nNumCredits, 500);
 		break;
 
 	case BIBBLE_BUTTON_BET1000:
-		LogInfo("\tClicked BET 1000");
+		logInfo("\tClicked BET 1000");
 		nBet = MIN((int)_nNumCredits, 1000);
 		break;
 
 	case BIBBLE_BUTTON_BET5000:
-		LogInfo("\tClicked BET 5000");
+		logInfo("\tClicked BET 5000");
 		nBet = MIN((int)_nNumCredits, 5000);
 		break;
 
 	case BIBBLE_BUTTON_CLEARBET:
-		LogInfo("\tClicked Clear Bet");
+		logInfo("\tClicked Clear Bet");
 		if (_pSelected != nullptr) {
 			nBet -= _pSelected->_nBet;
 		}
 		break;
 
 	case BIBBLE_BUTTON_QUIT:
-		LogInfo("\tClicked Quit");
+		logInfo("\tClicked Quit");
 		close();
 		break;
 
 	case BIBBLE_BUTTON_HELP: {
-		LogInfo("\tClicked Help");
+		logInfo("\tClicked Help");
 
 		CBagel *pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
@@ -665,17 +665,17 @@ void CBibbleWindow::onBofButton(CBofObject *pObject, int nState) {
 	}
 
 	default:
-		LogWarning(BuildString("Clicked Unknown Button with ID %d", pButton->getControlID()));
+		logWarning(buildString("Clicked Unknown Button with ID %d", pButton->getControlID()));
 		break;
 	}
 
 	if (nBet != 0) {
 		if (_nNumCredits < MAX_AMOUNT) {
 			if (_pSelected != nullptr) {
-				LogInfo(BuildString("\tHave %d Credits, Betting %d credits", _nNumCredits, nBet));
+				logInfo(buildString("\tHave %d Credits, Betting %d credits", _nNumCredits, nBet));
 				_nNumCredits -= nBet;
 				_pSelected->_nBet += nBet;
-				LogInfo(BuildString("\t%d Credits remaining.", _nNumCredits));
+				logInfo(buildString("\t%d Credits remaining.", _nNumCredits));
 				highlight(_pSelected, HIGHLIGHT_COLOR);
 			}
 
@@ -721,7 +721,7 @@ ErrorCode CBibbleWindow::displayCredits() {
 
 
 ErrorCode CBibbleWindow::playGame() {
-	LogInfo(BuildString("\tPlaying BibbleBonk, Starting Credits: %d", _nNumCredits));
+	logInfo(buildString("\tPlaying BibbleBonk, Starting Credits: %d", _nNumCredits));
 
 	// Remove any current highlight
 	if (_pSelected != nullptr)
@@ -749,7 +749,7 @@ ErrorCode CBibbleWindow::playGame() {
 
 			if (g_engine->g_cBetAreas[i]._nBet != 0) {
 				if (!bWin) {
-					LogInfo("\tWinner");
+					logInfo("\tWinner");
 
 					BofPlaySoundEx(BuildDir(BIBBLE_AUDIO_WINNER), SOUND_MIX | SOUND_QUEUE, 7, false);
 				}
@@ -793,20 +793,20 @@ ErrorCode CBibbleWindow::playGame() {
 				// Display new number of credits
 				displayCredits();
 
-				LogInfo(BuildString("\tWinner on square %d.  Pays %d credits", i, nPayoff));
+				logInfo(buildString("\tWinner on square %d.  Pays %d credits", i, nPayoff));
 			}
 		}
 	}
 
 	// Otherwise, play loser audios
 	if (!bWin) {
-		LogInfo("\tLoser");
+		logInfo("\tLoser");
 	}
 
 	Sleep(2000);
 
 	// Clear all bets (On table)
-	LogInfo("\tClearing all Bets");
+	logInfo("\tClearing all Bets");
 	for (int i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
 		g_engine->g_cBetAreas[i]._nBet = 0;
 		unHighlight(&g_engine->g_cBetAreas[i]);
@@ -814,7 +814,7 @@ ErrorCode CBibbleWindow::playGame() {
 
 	_pSelected = nullptr;
 
-	LogInfo(BuildString("\tDone BibbleBonk.  Credits: %d", _nNumCredits));
+	logInfo(buildString("\tDone BibbleBonk.  Credits: %d", _nNumCredits));
 
 	return _errCode;
 }
@@ -918,8 +918,8 @@ void CBibbleWindow::calcOutcome() {
 	// Ball 1
 	_nBall1 = g_nBibbleTable[g_engine->getRandomNumber() % 10];
 	_nBall1Said = (g_engine->getRandomNumber() % g_nPayTable[_nBall1 - 1]) + 1;
-	LogInfo(BuildString("\tBall 1 hit Bibble %d", _nBall1));
-	LogInfo(BuildString("\tBibble says: %d", _nBall1Said));
+	logInfo(buildString("\tBall 1 hit Bibble %d", _nBall1));
+	logInfo(buildString("\tBibble says: %d", _nBall1Said));
 
 	// Count number of each Shout
 	switch (_nBall1Said) {
@@ -940,15 +940,15 @@ void CBibbleWindow::calcOutcome() {
 		break;
 
 	default:
-		LogWarning("Invalid case");
+		logWarning("Invalid case");
 		break;
 	}
 
 	// Ball 2
 	_nBall2 = g_nBibbleTable[g_engine->getRandomNumber() % 10];
 	_nBall2Said = (g_engine->getRandomNumber() % g_nPayTable[_nBall2 - 1]) + 1;
-	LogInfo(BuildString("\tBall 2 hit Bibble %d", _nBall2));
-	LogInfo(BuildString("\tBibble says: %d", _nBall2Said));
+	logInfo(buildString("\tBall 2 hit Bibble %d", _nBall2));
+	logInfo(buildString("\tBibble says: %d", _nBall2Said));
 
 	// Count number of each Shout
 	switch (_nBall2Said) {
@@ -969,15 +969,15 @@ void CBibbleWindow::calcOutcome() {
 		break;
 
 	default:
-		LogWarning("Invalid case");
+		logWarning("Invalid case");
 		break;
 	}
 
 	// Ball 3
 	_nBall3 = g_nBibbleTable[g_engine->getRandomNumber() % 10];
 	_nBall3Said = (g_engine->getRandomNumber() % g_nPayTable[_nBall3 - 1]) + 1;
-	LogInfo(BuildString("\tBall 3 hit Bibble %d", _nBall3));
-	LogInfo(BuildString("\tBibble says: %d", _nBall3Said));
+	logInfo(buildString("\tBall 3 hit Bibble %d", _nBall3));
+	logInfo(buildString("\tBibble says: %d", _nBall3Said));
 
 	// Count number of each Shout
 	switch (_nBall3Said) {
@@ -998,7 +998,7 @@ void CBibbleWindow::calcOutcome() {
 		break;
 
 	default:
-		LogWarning("Invalid case");
+		logWarning("Invalid case");
 		break;
 	}
 
@@ -1040,14 +1040,14 @@ void CBibbleWindow::calcOutcome() {
 		}
 	}
 
-	LogInfo(BuildString("\tNumber of Top Bonks: %d", _nNumTopBonks));
-	LogInfo(BuildString("\tNumber of Mid Bonks: %d", _nNumMidBonks));
-	LogInfo(BuildString("\tNumber of Bot Bonks: %d", _nNumBotBonks));
+	logInfo(buildString("\tNumber of Top Bonks: %d", _nNumTopBonks));
+	logInfo(buildString("\tNumber of Mid Bonks: %d", _nNumMidBonks));
+	logInfo(buildString("\tNumber of Bot Bonks: %d", _nNumBotBonks));
 
-	LogInfo(BuildString("\tNumber of '1' Babbles: %d", _nNumShout1));
-	LogInfo(BuildString("\tNumber of '2' Babbles: %d", _nNumShout2));
-	LogInfo(BuildString("\tNumber of '3' Babbles: %d", _nNumShout3));
-	LogInfo(BuildString("\tNumber of '4' Babbles: %d", _nNumShout4));
+	logInfo(buildString("\tNumber of '1' Babbles: %d", _nNumShout1));
+	logInfo(buildString("\tNumber of '2' Babbles: %d", _nNumShout2));
+	logInfo(buildString("\tNumber of '3' Babbles: %d", _nNumShout3));
+	logInfo(buildString("\tNumber of '4' Babbles: %d", _nNumShout4));
 }
 
 void CBibbleWindow::onLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
@@ -1066,17 +1066,17 @@ void CBibbleWindow::onLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 			// Keep track of selected area
 			_pSelected = pArea;
 
-			LogInfo(BuildString("\tDouble Clicked on Square: %d", i));
+			logInfo(buildString("\tDouble Clicked on Square: %d", i));
 
 			// Remove any previous selection highlight
 			if (pPrevArea != nullptr) {
 				unHighlight(pPrevArea);
 			}
 
-			LogInfo(BuildString("\tHave %d Credits, Betting %d credits", _nNumCredits, nBet));
+			logInfo(buildString("\tHave %d Credits, Betting %d credits", _nNumCredits, nBet));
 			_nNumCredits -= nBet;
 			_pSelected->_nBet += nBet;
-			LogInfo(BuildString("\t%d Credits remaining.", _nNumCredits));
+			logInfo(buildString("\t%d Credits remaining.", _nNumCredits));
 
 			// Highlight the area selected
 			highlight(_pSelected, HIGHLIGHT_COLOR);
@@ -1108,7 +1108,7 @@ void CBibbleWindow::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) 
 			// Keep track of selected area
 			_pSelected = pArea;
 
-			LogInfo(BuildString("\tSelected %d", i));
+			logInfo(buildString("\tSelected %d", i));
 
 			// remove any previous selection highlight
 			if (pPrevArea != nullptr) {

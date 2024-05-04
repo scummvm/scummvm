@@ -263,9 +263,9 @@ ErrorCode CBagTimeObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pS
 	CBagVar *xVar = VAR_MANAGER->GetVariable(m_sVariable);
 
 	// If everything looks good
-	if (isAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
+	if (isAttached() && xVar && !(xVar->GetValue().isEmpty())) {
 		int nTimeVal = xVar->GetNumValue();
-		sTimeString = BuildString("%04d", nTimeVal);
+		sTimeString = buildString("%04d", nTimeVal);
 		char sDigString[2] = "0";
 
 		// Digit 1
@@ -314,9 +314,9 @@ ErrorCode CBagTimeObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, int
 	CBagVar *xVar = VAR_MANAGER->GetVariable(m_sVariable);
 
 	// If everything looks good
-	if (isAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
+	if (isAttached() && xVar && !(xVar->GetValue().isEmpty())) {
 		int nTimeVal = xVar->GetNumValue();
-		sTimeString = BuildString("%04d", nTimeVal);
+		sTimeString = buildString("%04d", nTimeVal);
 		char sDigString[2] = "0";
 
 		// Digit 1

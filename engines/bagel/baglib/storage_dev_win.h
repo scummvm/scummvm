@@ -209,7 +209,7 @@ public:
 	virtual ErrorCode activateLocalObject(const CBofString &sName);
 	virtual ErrorCode AttachActiveObjects();
 
-	virtual ErrorCode RemoveObject(CBagObject *pObj);
+	virtual ErrorCode removeObject(CBagObject *pObj);
 	virtual ErrorCode deactivateLocalObject(CBagObject *pObj);
 	virtual ErrorCode deactivateLocalObject(const CBofString &sName);
 	virtual ErrorCode DetachActiveObjects();
@@ -568,7 +568,7 @@ public:
 	void SetObjectValue(const CBofString &sObject, const CBofString &sProperty, int nValue);
 
 	int GetNumStorageDevices() {
-		return m_xStorageDeviceList.GetCount();
+		return m_xStorageDeviceList.getCount();
 	}
 
 	CBagStorageDev *GetStorageDevice(int nIndex) {
@@ -579,7 +579,7 @@ public:
 	CBagStorageDev *GetStorageDevice(const CBofString &sName);
 	bool MoveObject(const CBofString &sDstName, const CBofString &sSrcName, const CBofString &sObjName);
 	bool AddObject(const CBofString &sDstName, const CBofString &sObjName);
-	bool RemoveObject(const CBofString &sSrcName, const CBofString &sObjName);
+	bool removeObject(const CBofString &sSrcName, const CBofString &sObjName);
 
 	void SaveObjList(ST_OBJ *pObjList, int nNumEntries);
 	void RestoreObjList(ST_OBJ *pObjList, int nNumEntries);

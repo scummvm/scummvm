@@ -140,7 +140,7 @@ ErrorCode CBagel::initialize() {
 		_numRetries = 100;
 	}
 
-	LogInfo("Initializing BAGEL");
+	logInfo("Initializing BAGEL");
 
 	// Turn off System cursor
 	CBofCursor::hide();
@@ -167,7 +167,7 @@ ErrorCode CBagel::runApp() {
 ErrorCode CBagel::shutdown() {
 	Assert(IsValidObject(this));
 
-	LogInfo("Shutting down BAGEL");
+	logInfo("Shutting down BAGEL");
 
 	// Just in case the child class forgot to delete the main window,
 	// I'll do it.
@@ -207,7 +207,7 @@ ErrorCode CBagel::verifyCDInDrive(int diskId, const char *waveFile) {
 		while (!shouldQuit() && !fileExists(cString.GetBuffer())) {
 			// display a dialog box that tells the user to put the CD back into
 			// the drive, or Abort.
-			LogInfo(BuildString("Unable to find game's DiskID as '%s'", cString.GetBuffer()));
+			logInfo(buildString("Unable to find game's DiskID as '%s'", cString.GetBuffer()));
 
 			if (i++ > _numRetries) {
 				reportError(ERR_FFIND, "Could not recover from missing CD");

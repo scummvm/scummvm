@@ -381,9 +381,9 @@ void CBagObject::SetRefName(const CBofString &s) {
 	m_psName = nullptr;
 
 	// If it's the same as the filename, then point to the filename
-	if (!m_sFileName.IsEmpty() && m_sFileName.Compare(s) == 0) {
+	if (!m_sFileName.isEmpty() && m_sFileName.Compare(s) == 0) {
 		m_psName = &m_sFileName;
-	} else if (!s.IsEmpty()) {
+	} else if (!s.isEmpty()) {
 		m_psName = new CBofString(s);
 	}
 }

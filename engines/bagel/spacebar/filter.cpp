@@ -533,7 +533,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			case 28:
 			case 29: {
 				paintText(pBmp, &txtRect,
-					BuildString("You have been assigned Maintenance Mode PIN: %d%d%d%d",
+					buildString("You have been assigned Maintenance Mode PIN: %d%d%d%d",
 					g_pTDig1->GetNumValue(), g_pTDig2->GetNumValue(),
 					g_pTDig3->GetNumValue(), g_pTDig4->GetNumValue()),
 					VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0),

@@ -162,7 +162,7 @@ ErrorCode CBagMasterWin::showSystemDialog(bool bSaveBackground) {
 	CBagStorageDevWnd *pSdev = getCurrentStorageDev();
 
 	if ((pSdev == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
-		LogInfo("Showing System Screen");
+		logInfo("Showing System Screen");
 
 		CBagOptWindow cOptionDialog;
 
@@ -190,7 +190,7 @@ ErrorCode CBagMasterWin::showSystemDialog(bool bSaveBackground) {
 
 		g_hackWindow = pLastWin;
 
-		LogInfo("Exiting System Screen");
+		logInfo("Exiting System Screen");
 
 		// User chose to Quit
 		if (nReturnValue == 0) {
@@ -204,7 +204,7 @@ ErrorCode CBagMasterWin::showSystemDialog(bool bSaveBackground) {
 ErrorCode CBagMasterWin::showCreditsDialog(CBofWindow *win, bool bSaveBkg) {
 	Assert(IsValidObject(this));
 
-	LogInfo("Showing Credits Screen");
+	logInfo("Showing Credits Screen");
 
 	CBagCreditsDialog cCreditsDialog;
 
@@ -235,7 +235,7 @@ ErrorCode CBagMasterWin::showCreditsDialog(CBofWindow *win, bool bSaveBkg) {
 	cCreditsDialog.doModal();
 	g_bPauseTimer = bSaveTimer;
 
-	LogInfo("Exiting Credits Screen");
+	logInfo("Exiting Credits Screen");
 
 	return _errCode;
 }
@@ -247,7 +247,7 @@ bool CBagMasterWin::showQuitDialog(CBofWindow *win, bool bSaveBackground) {
 	bool bQuit = false;
 
 	if ((pSdev == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
-		LogInfo("Showing Quit Screen");
+		logInfo("Showing Quit Screen");
 
 		CBagQuitDialog cQuitDialog;
 
@@ -295,7 +295,7 @@ bool CBagMasterWin::showQuitDialog(CBofWindow *win, bool bSaveBackground) {
 			CBofSound::ResumeSounds();
 		}
 
-		LogInfo("Exiting Quit Screen");
+		logInfo("Exiting Quit Screen");
 	}
 
 	return bQuit;
@@ -502,11 +502,11 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 		g_restoreObjectListFl = true;
 
 		// If a start wld is passed in then use it
-		if (!startWldName.IsEmpty()) {
+		if (!startWldName.isEmpty()) {
 			_startWld = startWldName;
 		}
 		if (setStartFl) {
-			if (!_startWld.IsEmpty()) {
+			if (!_startWld.isEmpty()) {
 				setStorageDev(_startWld);
 			}
 		}
@@ -516,7 +516,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 	} else {
 		reportError(ERR_FFIND, "Could not find World Script: %s", sWldFileName.GetBuffer());
 	}
-	LogInfo(BuildString("Time to Load %s, %ld ms", sWldFileName.GetBuffer(), timerStop()));
+	logInfo(buildString("Time to Load %s, %ld ms", sWldFileName.GetBuffer(), timerStop()));
 
 	return _errCode;
 }
@@ -535,13 +535,13 @@ void CBagMasterWin::saveSDevStack() {
 		int i = 0;
 
 		CBofString cStr = pSDevWin->GetName();
-		if (!cStr.IsEmpty()) {
+		if (!cStr.isEmpty()) {
 			Common::strcpy_s(szLocStack[i], cStr.GetBuffer());
 			cStr = pSDevWin->GetPrevSDev();
 			i++;
 		}
 
-		while ((i < MAX_CLOSEUP_DEPTH) && !cStr.IsEmpty()) {
+		while ((i < MAX_CLOSEUP_DEPTH) && !cStr.isEmpty()) {
 			pSDevWin = (CBagStorageDevWnd *)_storageDeviceList->GetStorageDevice(cStr);
 			if (pSDevWin != nullptr) {
 
@@ -716,7 +716,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 					GetIntFromStream(input, nFadeId);
 				} else {
 					// There is an error here
-					LogError(BuildString("FAILED on argument of storage device %s : %s", namestr.GetBuffer(), typestr.GetBuffer()));
+					logError(buildString("FAILED on argument of storage device %s : %s", namestr.GetBuffer(), typestr.GetBuffer()));
 					return ERR_UNKNOWN;
 				}
 
@@ -724,7 +724,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 			}
 			pSDev = onNewStorageDev(typestr);
 			if (!pSDev) {
-				LogError(BuildString("FAILED on open of storage device %s : %s", namestr.GetBuffer(), typestr.GetBuffer()));
+				logError(buildString("FAILED on open of storage device %s : %s", namestr.GetBuffer(), typestr.GetBuffer()));
 				return ERR_UNKNOWN;
 			}
 
@@ -765,7 +765,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 
 				// Only use the start wld if not specified elsewhere
 				_startWld = sStr;
-				LogInfo(BuildString("START_WLD set to %s", _startWld.GetBuffer()));
+				logInfo(buildString("START_WLD set to %s", _startWld.GetBuffer()));
 			}
 			break;
 		}
@@ -861,7 +861,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				} else if (sStr.Find("LOG") != -1) {
 					SBBasePda::setPdaMode(LOGMODE);
 				}
-				LogInfo(BuildString("PDASTATE = %s", szPDAState));
+				logInfo(buildString("PDASTATE = %s", szPDAState));
 			}
 			break;
 		}
@@ -882,7 +882,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				// Read the palette in and keep it hanging around for later use
 				CBofPalette::setSharedPalette(sStr);
 
-				LogInfo(BuildString("SHAREDPAL = %s", sStr.GetBuffer()));
+				logInfo(buildString("SHAREDPAL = %s", sStr.GetBuffer()));
 			}
 			break;
 		}
@@ -897,7 +897,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				GetAlphaNumFromStream(input, _sysScreen);
 				MACROREPLACE(_sysScreen);
 
-				LogInfo(BuildString("SYSSCREEN = %s", _sysScreen.GetBuffer()));
+				logInfo(buildString("SYSSCREEN = %s", _sysScreen.GetBuffer()));
 			}
 			break;
 		}
@@ -916,7 +916,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				GetAlphaNumFromStream(input, _cdChangeAudio);
 				MACROREPLACE(_cdChangeAudio);
 
-				LogInfo(BuildString("DISKAUDIO = %s", _cdChangeAudio.GetBuffer()));
+				logInfo(buildString("DISKAUDIO = %s", _cdChangeAudio.GetBuffer()));
 			}
 			break;
 		}
@@ -931,7 +931,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				GetIntFromStream(input, n);
 				_diskId = (uint16)n;
 
-				LogInfo(BuildString("DISKID = %d", _diskId));
+				logInfo(buildString("DISKID = %d", _diskId));
 
 			} else {
 			}
@@ -940,7 +940,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 
 		case VARIABLE: {
 			CBagVar *xVar = new CBagVar;
-			// LogInfo("New global variable");
+			// logInfo("New global variable");
 			input.eatWhite();
 			xVar->setInfo(input);
 			break;
@@ -1018,7 +1018,7 @@ ErrorCode CBagMasterWin::onHelp(const CBofString &helpFile, bool /*bSaveBkg*/, C
 	if (g_engine->isDemo())
 		return ERR_NONE;
 
-	if (!helpFile.IsEmpty()) {
+	if (!helpFile.isEmpty()) {
 		CBagHelp cHelp;
 
 		char szLocalBuff[256];
@@ -1033,7 +1033,7 @@ ErrorCode CBagMasterWin::onHelp(const CBofString &helpFile, bool /*bSaveBkg*/, C
 		szBkg[0] = '\0';
 		CBofString sBkg(szBkg, 256);
 
-		sBkg = BuildString("$SBARDIR%sGENERAL%sRULES%sHELPSCRN.BMP", PATH_DELIMETER, PATH_DELIMETER, PATH_DELIMETER);
+		sBkg = buildString("$SBARDIR%sGENERAL%sRULES%sHELPSCRN.BMP", PATH_DELIMETER, PATH_DELIMETER, PATH_DELIMETER);
 		MACROREPLACE(sBkg);
 
 		CBofBitmap *pBmp = Bagel::loadBitmap(sBkg);
@@ -1210,7 +1210,7 @@ ErrorCode CBagMasterWin::gotoNewWindow(const CBofString *str) {
 	pSDev = _storageDeviceList->GetStorageDevice(sWorkStr);
 	if (pSDev != nullptr) {
 
-		LogInfo(BuildString("Switching to SDEV: %s", sWorkStr.GetBuffer()));
+		logInfo(buildString("Switching to SDEV: %s", sWorkStr.GetBuffer()));
 
 		if (_gameWindow) {
 			_gameWindow->detach();
@@ -1218,7 +1218,7 @@ ErrorCode CBagMasterWin::gotoNewWindow(const CBofString *str) {
 			//  If the new storage device is equal to the last windows previous
 			//  lets not go in a circle
 			//  If the current game window did not have a previous win
-			if ((_gameWindow->GetPrevSDev().IsEmpty()) || (_gameWindow->GetPrevSDev() != pSDev->GetName())) {
+			if ((_gameWindow->GetPrevSDev().isEmpty()) || (_gameWindow->GetPrevSDev() != pSDev->GetName())) {
 				if (!bPrev) {
 					pSDev->SetPrevSDev(_gameWindow->GetName());
 				}
@@ -1226,7 +1226,7 @@ ErrorCode CBagMasterWin::gotoNewWindow(const CBofString *str) {
 		}
 
 		// Don't allow recursion
-		if (!pSDev->GetPrevSDev().IsEmpty() && pSDev->GetPrevSDev().CompareNoCase(pSDev->GetName()) == 0) {
+		if (!pSDev->GetPrevSDev().isEmpty() && pSDev->GetPrevSDev().CompareNoCase(pSDev->GetName()) == 0) {
 			pSDev->SetPrevSDev("");
 		}
 
@@ -1259,7 +1259,7 @@ bool CBagMasterWin::showRestartDialog(CBofWindow *win, bool bSaveBkg) {
 	CBagStorageDevWnd *pSdev = getCurrentStorageDev();
 	if ((pSdev == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
 
-		LogInfo("Showing Restart Screen");
+		logInfo("Showing Restart Screen");
 
 		if (win == nullptr) {
 			win = this;
@@ -1283,7 +1283,7 @@ bool CBagMasterWin::showRestartDialog(CBofWindow *win, bool bSaveBkg) {
 
 		g_hackWindow = pLastWin;
 
-		LogInfo("Exiting Restart Screen");
+		logInfo("Exiting Restart Screen");
 
 		return nReturn == RESTART_BTN;
 	}
@@ -1310,7 +1310,7 @@ void CBagMasterWin::onUserMessage(uint32 message, uint32 param) {
 		CBofSound::StopSounds();
 
 		// Kill any waiting PDA messages that are queued up...
-		CBagPDA::RemoveFromMovieQueue(nullptr);
+		CBagPDA::removeFromMovieQueue(nullptr);
 
 		CBofBitmap cBmp(width(), height(), CBagel::getApp()->getPalette());
 		cBmp.fillRect(nullptr, COLOR_BLACK);
@@ -1461,12 +1461,12 @@ void CBagMasterWin::fillSaveBuffer(ST_BAGEL_SAVE *saveBuf) {
 						//
 						// If it's a global variable, then we need to store it
 
-						if (!pVar->GetName().IsEmpty()) {
+						if (!pVar->GetName().isEmpty()) {
 							Assert(strlen(pVar->GetName()) < MAX_VAR_NAME);
 							Common::strcpy_s(saveBuf->m_stVarList[j].m_szName, pVar->GetName());
 						}
 
-						if (!pVar->GetValue().IsEmpty()) {
+						if (!pVar->GetValue().isEmpty()) {
 							Assert(strlen(pVar->GetValue()) < MAX_VAR_VALUE);
 							Common::strcpy_s(saveBuf->m_stVarList[j].m_szValue, pVar->GetValue());
 						}
@@ -1523,7 +1523,7 @@ void CBagMasterWin::fillSaveBuffer(ST_BAGEL_SAVE *saveBuf) {
 					// Save current storage device location (stack)
 					int i = 0;
 					cStr = pSDevWin->GetName();
-					while ((i < MAX_CLOSEUP_DEPTH) && !cStr.IsEmpty()) {
+					while ((i < MAX_CLOSEUP_DEPTH) && !cStr.isEmpty()) {
 						pSDevWin = (CBagStorageDevWnd *)pManager->GetStorageDevice(cStr);
 						Common::strcpy_s(saveBuf->m_szLocStack[i], cStr.GetBuffer());
 						i++;
@@ -1552,7 +1552,7 @@ bool CBagMasterWin::showSaveDialog(CBofWindow *win, bool bSaveBkg) {
 	CBagStorageDevWnd *pSdev = getCurrentStorageDev();
 	if ((pSdev == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
 
-		LogInfo("Showing Save Screen");
+		logInfo("Showing Save Screen");
 		CBofSound::PauseSounds();
 		ST_BAGEL_SAVE *pSaveBuf = (ST_BAGEL_SAVE *)BofAlloc(sizeof(ST_BAGEL_SAVE));
 
@@ -1593,7 +1593,7 @@ bool CBagMasterWin::showSaveDialog(CBofWindow *win, bool bSaveBkg) {
 
 		CBofSound::ResumeSounds();
 
-		LogInfo("Exiting Save Screen");
+		logInfo("Exiting Save Screen");
 	}
 
 	return bSaved;
@@ -1662,7 +1662,7 @@ void CBagMasterWin::doRestore(ST_BAGEL_SAVE *saveBuf) {
 						pVar->SetValue(saveBuf->m_stVarList[i].m_szValue);
 
 					} else {
-						LogError(BuildString("Global Variable NOT found: %s", saveBuf->m_stVarList[i].m_szName));
+						logError(buildString("Global Variable NOT found: %s", saveBuf->m_stVarList[i].m_szName));
 					}
 				}
 			}
@@ -1702,7 +1702,7 @@ void CBagMasterWin::doRestore(ST_BAGEL_SAVE *saveBuf) {
 		}
 
 		// Now set the start storage device and let the game start
-		if (!_startWld.IsEmpty()) {
+		if (!_startWld.isEmpty()) {
 			setStorageDev(_startWld);
 		}
 
@@ -1724,7 +1724,7 @@ bool CBagMasterWin::showRestoreDialog(CBofWindow *win, bool bSaveBkg) {
 
 	if (g_bAllowRestore || ((pSdev = getCurrentStorageDev()) == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
 
-		LogInfo("Showing Restore Screen");
+		logInfo("Showing Restore Screen");
 
 		CBofSound::PauseSounds();
 
@@ -1765,7 +1765,7 @@ bool CBagMasterWin::showRestoreDialog(CBofWindow *win, bool bSaveBkg) {
 
 		CBofSound::ResumeSounds();
 
-		LogInfo("Exiting Restore Screen");
+		logInfo("Exiting Restore Screen");
 	}
 
 	return bRestored;

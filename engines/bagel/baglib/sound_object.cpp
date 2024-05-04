@@ -123,7 +123,7 @@ bool CBagSoundObject::runObject() {
 				int nExt = getFileName().getLength() - 4; // ".EXT"
 
 				if (nExt <= 0) {
-					LogError("Sound does not have a file name or proper extension.  Please write better scripts.");
+					logError("Sound does not have a file name or proper extension.  Please write better scripts.");
 					return false;
 				}
 
@@ -137,7 +137,7 @@ bool CBagSoundObject::runObject() {
 					f.close();
 					return true;
 				} else {
-					LogError(BuildString("Sound TEXT file could not be read: %s.  Why? because we like you ...", getFileName().GetBuffer()));
+					logError(buildString("Sound TEXT file could not be read: %s.  Why? because we like you ...", getFileName().GetBuffer()));
 					return false;
 				}
 			}

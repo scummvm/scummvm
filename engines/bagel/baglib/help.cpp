@@ -275,7 +275,7 @@ void CBagHelp::onBofButton(CBofObject *object, int flags) {
 		break;
 
 	default:
-		LogWarning("Unknown button");
+		logWarning("Unknown button");
 		break;
 	}
 }

@@ -145,7 +145,7 @@ ErrorCode CBofListBox::delItem(int nIndex, bool bRepaint) {
 	Assert(IsValidObject(this));
 	Assert(nIndex >= 0 && nIndex < _nNumItems);
 
-	_cTextItems.Remove(nIndex);
+	_cTextItems.remove(nIndex);
 
 	// One less item
 	_nNumItems--;
@@ -170,14 +170,14 @@ ErrorCode CBofListBox::deleteAll(bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	// Switch item to be pointer to cbofstring instead of the item itself
-	int nCount = _cTextItems.GetCount();
+	int nCount = _cTextItems.getCount();
 
 	for (int i = 0; i < nCount; i++) {
-		ListBoxItem lbi = _cTextItems.GetNodeItem(i);
+		ListBoxItem lbi = _cTextItems.getNodeItem(i);
 		delete lbi._pTextStr;
 	}
 
-	_cTextItems.RemoveAll();
+	_cTextItems.removeAll();
 	_nNumItems = 0;
 	_n1stVisible = 0;
 
@@ -407,7 +407,7 @@ ErrorCode CBofListBox::repaintAll() {
 						// display text highlighted
 						paintText(_pWork,
 						          &cRect,
-						          *(_cTextItems.GetNodeItem(i + _n1stVisible)._pTextStr),
+						          *(_cTextItems.getNodeItem(i + _n1stVisible)._pTextStr),
 						          _nTextSize,
 						          _nTextWeight,
 						          _cHighColor,
@@ -418,13 +418,13 @@ ErrorCode CBofListBox::repaintAll() {
 						// Display text
 						// Allow list items of different colors.
 						RGBCOLOR rgbTextColor = _cTextColor;
-						if (_cTextItems.GetNodeItem(i + _n1stVisible)._nTextLineColor != COLOR_USE_DEFAULT) {
-							rgbTextColor = _cTextItems.GetNodeItem(i + _n1stVisible)._nTextLineColor;
+						if (_cTextItems.getNodeItem(i + _n1stVisible)._nTextLineColor != COLOR_USE_DEFAULT) {
+							rgbTextColor = _cTextItems.getNodeItem(i + _n1stVisible)._nTextLineColor;
 						}
 
 						paintText(_pWork,
 						          &cRect,
-						          *(_cTextItems.GetNodeItem(i + _n1stVisible)._pTextStr),
+						          *(_cTextItems.getNodeItem(i + _n1stVisible)._pTextStr),
 						          _nTextSize,
 						          _nTextWeight,
 						          rgbTextColor,
@@ -482,7 +482,7 @@ ErrorCode CBofListBox::repaintItem(int nIndex) {
 				// Display text highlighted
 				paintText(_pWork,
 				          &cRect,
-				          *(_cTextItems.GetNodeItem(nIndex)._pTextStr),
+				          *(_cTextItems.getNodeItem(nIndex)._pTextStr),
 				          _nTextSize,
 				          _nTextWeight,
 				          _cHighColor,
@@ -494,12 +494,12 @@ ErrorCode CBofListBox::repaintItem(int nIndex) {
 				// Display text
 				// Allow list items of different colors.
 				RGBCOLOR rgbTextColor = _cTextColor;
-				if (_cTextItems.GetNodeItem(i + _n1stVisible)._nTextLineColor != COLOR_USE_DEFAULT) {
-					rgbTextColor = _cTextItems.GetNodeItem(i + _n1stVisible)._nTextLineColor;
+				if (_cTextItems.getNodeItem(i + _n1stVisible)._nTextLineColor != COLOR_USE_DEFAULT) {
+					rgbTextColor = _cTextItems.getNodeItem(i + _n1stVisible)._nTextLineColor;
 				}
 				paintText(_pWork,
 				          &cRect,
-				          *(_cTextItems.GetNodeItem(nIndex)._pTextStr),
+				          *(_cTextItems.getNodeItem(nIndex)._pTextStr),
 				          _nTextSize,
 				          _nTextWeight,
 				          rgbTextColor,
@@ -537,25 +537,25 @@ void CBofListBox::setSelectedItem(int nItem, bool bRepaint) {
 
 
 CBofString CBofListBox::getText(int nIndex) {
-	return *(_cTextItems.GetNodeItem(nIndex)._pTextStr);
+	return *(_cTextItems.getNodeItem(nIndex)._pTextStr);
 }
 
 
 void CBofListBox::setText(int nIndex, const CBofString &cStr) {
 
-	ListBoxItem lbi = _cTextItems.GetNodeItem(nIndex);
+	ListBoxItem lbi = _cTextItems.getNodeItem(nIndex);
 	*lbi._pTextStr = cStr;
 
-	_cTextItems.SetNodeItem(nIndex, lbi);
+	_cTextItems.setNodeItem(nIndex, lbi);
 }
 
 
 void CBofListBox::setTextLineColor(int nIndex, RGBCOLOR rgbColor) {
 
-	ListBoxItem lbi = _cTextItems.GetNodeItem(nIndex);
+	ListBoxItem lbi = _cTextItems.getNodeItem(nIndex);
 	lbi._nTextLineColor = rgbColor;
 
-	_cTextItems.SetNodeItem(nIndex, lbi);
+	_cTextItems.setNodeItem(nIndex, lbi);
 }
 
 } // namespace Bagel

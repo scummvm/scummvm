@@ -70,7 +70,7 @@ ErrorCode CBofFile::create(const char *pszFileName, uint32 lFlags) {
 		_stream = new SaveReadWriteStream(save);
 
 		if (g_pDebugOptions != nullptr && g_pDebugOptions->_bShowIO) {
-			LogInfo(BuildString("Creating file '%s'", _szFileName));
+			logInfo(buildString("Creating file '%s'", _szFileName));
 		}
 
 	} else {
@@ -122,7 +122,7 @@ ErrorCode CBofFile::open(const char *pszFileName, uint32 lFlags) {
 				_stream = f;
 
 				if (g_pDebugOptions != nullptr && g_pDebugOptions->_bShowIO) {
-					LogInfo(BuildString("Opened file '%s'", _szFileName));
+					logInfo(buildString("Opened file '%s'", _szFileName));
 				}
 			} else {
 				delete f;
@@ -139,7 +139,7 @@ void CBofFile::close() {
 
 	if (_stream != nullptr) {
 		if (g_pDebugOptions != nullptr && g_pDebugOptions->_bShowIO) {
-			LogInfo(BuildString("Closed file '%s'", _szFileName));
+			logInfo(buildString("Closed file '%s'", _szFileName));
 		}
 
 		delete _stream;
@@ -203,11 +203,11 @@ ErrorCode CBofFile::write(const void *pSrcBuf, int32 lBytes) {
 			commit();
 
 		} else {
-			LogWarning(BuildString("Attempted to write to the READONLY file '%s'", _szFileName));
+			logWarning(buildString("Attempted to write to the READONLY file '%s'", _szFileName));
 		}
 
 	} else {
-		LogWarning("Attempt to write to a file that is not open");
+		logWarning("Attempt to write to a file that is not open");
 	}
 
 	return _errCode;
@@ -267,7 +267,7 @@ ErrorCode CBofFile::seekToEnd() {
 ErrorCode CBofFile::setLength(uint32 /*lNewLength*/) {
 	Assert(IsValidObject(this));
 
-	LogWarning("CBofFile::setLength() is not yet supported");
+	logWarning("CBofFile::setLength() is not yet supported");
 
 	return _errCode;
 }

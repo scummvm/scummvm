@@ -55,20 +55,20 @@ bool CBagCommandObject::runObject() {
 		CBofString dstSDev = _destSDev;
 
 		// Check if these items should be replaced by the current sdev
-		if (!srcSDev.IsEmpty() && !srcSDev.Find(CURRSDEV_TOKEN)) {
+		if (!srcSDev.isEmpty() && !srcSDev.Find(CURRSDEV_TOKEN)) {
 			srcSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->GetName();
 		}
 
-		if (!dstSDev.IsEmpty() && !dstSDev.Find(CURRSDEV_TOKEN)) {
+		if (!dstSDev.isEmpty() && !dstSDev.Find(CURRSDEV_TOKEN)) {
 			dstSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->GetName();
 		}
 
 		// Check if these items should be replaced by the previous sdev
-		if (!srcSDev.IsEmpty() && !srcSDev.Find(PREVSDEV_TOKEN)) {
+		if (!srcSDev.isEmpty() && !srcSDev.Find(PREVSDEV_TOKEN)) {
 			srcSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->GetPrevSDev();
 		}
 
-		if (!dstSDev.IsEmpty() && !dstSDev.Find(PREVSDEV_TOKEN)) {
+		if (!dstSDev.isEmpty() && !dstSDev.Find(PREVSDEV_TOKEN)) {
 			dstSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->GetPrevSDev();
 		}
 
@@ -77,27 +77,27 @@ bool CBagCommandObject::runObject() {
 			if (!removeFl) {
 				removeFl = true;
 
-				if (!_objName.IsEmpty() && !srcSDev.IsEmpty()) {
-					SDEV_MANAGER->RemoveObject(srcSDev, _objName);
+				if (!_objName.isEmpty() && !srcSDev.isEmpty()) {
+					SDEV_MANAGER->removeObject(srcSDev, _objName);
 				}
 				removeFl = false;
 			}
 
 		} else if (getFileName() == "INSERT2") {
-			if (!_objName.IsEmpty() && !dstSDev.IsEmpty()) {
+			if (!_objName.isEmpty() && !dstSDev.isEmpty()) {
 				g_allowAttachActiveObjectsFl = false;
 				SDEV_MANAGER->AddObject(dstSDev, _objName);
 				g_allowAttachActiveObjectsFl = true;
 			}
 
 		} else if (getFileName() == "INSERT") {
-			if (!_objName.IsEmpty() && !dstSDev.IsEmpty()) {
+			if (!_objName.isEmpty() && !dstSDev.isEmpty()) {
 				SDEV_MANAGER->AddObject(dstSDev, _objName);
 			}
 
 		} else if (getFileName() == "TRANSFER") {
 
-			if (!_objName.IsEmpty() && !srcSDev.IsEmpty() && !dstSDev.IsEmpty()) {
+			if (!_objName.isEmpty() && !srcSDev.isEmpty() && !dstSDev.isEmpty()) {
 				SDEV_MANAGER->MoveObject(dstSDev, srcSDev, _objName);
 			}
 
@@ -154,7 +154,7 @@ bool CBagCommandObject::runObject() {
 			if (CBagPanWindow::_pWieldBmp != nullptr) {
 				CBagObject *currObj = CBagPanWindow::_pWieldBmp->getCurrObj();
 				if (currObj != nullptr) {
-					SDEV_MANAGER->RemoveObject(CBagPanWindow::_pWieldBmp->GetName(), currObj->GetRefName());
+					SDEV_MANAGER->removeObject(CBagPanWindow::_pWieldBmp->GetName(), currObj->GetRefName());
 				}
 			}
 

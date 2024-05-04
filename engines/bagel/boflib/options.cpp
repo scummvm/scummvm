@@ -94,7 +94,7 @@ ErrorCode CBofOptions::Load() {
 
 		if (m_pOptionList != nullptr) {
 			// m_pOptionList must always be the head of the list!
-			Assert(m_pOptionList == m_pOptionList->GetHead());
+			Assert(m_pOptionList == m_pOptionList->getHead());
 		}
 
 		f.close();
@@ -126,7 +126,7 @@ ErrorCode CBofOptions::commit() {
 
 	if ((m_pOptionList != nullptr) && m_bDirty) {
 		// m_pOptionList must always be the head of the list!
-		Assert(m_pOptionList == m_pOptionList->GetHead());
+		Assert(m_pOptionList == m_pOptionList->getHead());
 
 		warning("TODO: Look into refactoring options to ConfMan if needed");
 	}
@@ -251,7 +251,7 @@ ErrorCode CBofOptions::readSetting(const char *section, const char *option, char
 				Common::strcpy_s(stringValue, maxLen, p);
 
 		} else {
-			LogError(BuildString("Error in %s, section: %s, entry: %s", _szFileName, section, option));
+			logError(buildString("Error in %s, section: %s, entry: %s", _szFileName, section, option));
 			errCode = ERR_FTYPE;
 		}
 	}
