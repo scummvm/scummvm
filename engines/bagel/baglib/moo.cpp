@@ -71,7 +71,7 @@ ErrorCode CBagMoo::SetPDAMovie(CBofString &s) {
 
 	// Get a new movie object
 	m_pMovie = new CBagCharacterObject();
-	Assert(m_pMovie != nullptr);
+	assert(m_pMovie != nullptr);
 
 	if (m_pMovie) {
 		m_pMovie->setFileName(s);

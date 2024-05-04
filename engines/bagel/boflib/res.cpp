@@ -28,19 +28,19 @@
 namespace Bagel {
 
 CBofStringTable::CBofStringTable(const char *pszFileName) : CBofFile(nullptr) {
-	Assert(pszFileName != nullptr);
+	assert(pszFileName != nullptr);
 
 	Load(pszFileName);
 }
 
 CBofStringTable::~CBofStringTable() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	release();
 }
 
 ErrorCode CBofStringTable::Load(const char *pszFileName) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Deallocate any previous data
 	release();
@@ -50,11 +50,11 @@ ErrorCode CBofStringTable::Load(const char *pszFileName) {
 
 	m_lBufSize = getLength();
 
-	Assert(m_lBufSize > 0);
+	assert(m_lBufSize > 0);
 
 	// Allocate a buffer to hold entire file
-	if ((m_pBuf = (byte *)BofAlloc(m_lBufSize + 1)) != nullptr) {
-		BofMemSet(m_pBuf, 0, m_lBufSize + 1);
+	if ((m_pBuf = (byte *)bofAlloc(m_lBufSize + 1)) != nullptr) {
+		bofMemSet(m_pBuf, 0, m_lBufSize + 1);
 
 		// Read in entire file
 		read(m_pBuf, m_lBufSize);
@@ -72,18 +72,18 @@ ErrorCode CBofStringTable::Load(const char *pszFileName) {
 }
 
 void CBofStringTable::release() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	KillTable();
 
 	if (m_pBuf != nullptr) {
-		BofFree(m_pBuf);
+		bofFree(m_pBuf);
 		m_pBuf = nullptr;
 	}
 }
 
 void CBofStringTable::KillTable() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CResString *pString = m_pStringTable;
 	while (pString != nullptr) {
@@ -97,13 +97,13 @@ void CBofStringTable::KillTable() {
 }
 
 ErrorCode CBofStringTable::BuildTable() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Deallocate any previous table
 	KillTable();
 
-	Assert(m_pStringTable == nullptr);
-	Assert(m_pBuf != nullptr);
+	assert(m_pStringTable == nullptr);
+	assert(m_pBuf != nullptr);
 
 	MemReplaceChar(m_pBuf, '\r', '\0', m_lBufSize);
 	MemReplaceChar(m_pBuf, '\n', '\0', m_lBufSize);
@@ -143,7 +143,7 @@ ErrorCode CBofStringTable::BuildTable() {
 }
 
 const char *CBofStringTable::GetString(int nId) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CResString *pCurString = m_pStringTable;
 	const char *pszString = nullptr;

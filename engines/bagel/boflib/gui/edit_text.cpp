@@ -36,8 +36,8 @@ CBofEditText::CBofEditText(const char *pszName, int x, int y, int nWidth,
 
 ErrorCode CBofEditText::create(const char *pszName, CBofRect *pRect,
 		CBofWindow *pParent, uint32 nControlID) {
-	Assert(IsValidObject(this));
-	Assert(pszName != nullptr);
+	assert(isValidObject(this));
+	assert(pszName != nullptr);
 
 	// Remember who our parent is
 	_parent = pParent;
@@ -60,8 +60,8 @@ ErrorCode CBofEditText::create(const char *pszName, CBofRect *pRect,
 
 ErrorCode CBofEditText::create(const char *pszName, int x, int y,
 		int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {
-	Assert(IsValidObject(this));
-	Assert(pszName != nullptr);
+	assert(isValidObject(this));
+	assert(pszName != nullptr);
 
 	// Remember who our parent is
 	_parent = pParent;
@@ -85,9 +85,9 @@ ErrorCode CBofEditText::create(const char *pszName, int x, int y,
 }
 
 void CBofEditText::setText(const char *pszString) {
-	Assert(IsValidObject(this));
-	Assert(isCreated());
-	Assert(pszString != nullptr);
+	assert(isValidObject(this));
+	assert(isCreated());
+	assert(pszString != nullptr);
 
 	_text = pszString;
 
@@ -96,8 +96,8 @@ void CBofEditText::setText(const char *pszString) {
 
 
 void CBofEditText::onPaint(CBofRect *pRect) {
-	Assert(IsValidObject(this));
-	Assert(pRect != nullptr);
+	assert(isValidObject(this));
+	assert(pRect != nullptr);
 
 	if (hasFocus())
 		fillRect(nullptr, 255);

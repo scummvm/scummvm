@@ -65,7 +65,7 @@ CBofText::CBofText() {
 
 CBofText::CBofText(const CBofRect *pRect, int nJustify, uint32 nFormatFlags) {
 	// Can't access null pointers
-	Assert(pRect != nullptr);
+	assert(pRect != nullptr);
 
 	// Initialize stuff
 	initializeFields();
@@ -110,7 +110,7 @@ void CBofText::initializeFields() {
 
 ErrorCode CBofText::setupText(const CBofRect *pRect, int nJustify, uint32 nFormatFlags) {
 	// Can't access null pointers
-	Assert(pRect != nullptr);
+	assert(pRect != nullptr);
 
 	_nJustify = nJustify;
 
@@ -148,7 +148,7 @@ ErrorCode CBofText::setupText(const CBofRect *pRect, int nJustify, uint32 nForma
 
 ErrorCode CBofText::setupTextOpt(const CBofRect *pRect, int nJustify, uint32 nFormatFlags) {
 	// Can't access null pointers
-	Assert(pRect != nullptr);
+	assert(pRect != nullptr);
 
 	_nJustify = nJustify;
 	_nFormatFlags = nFormatFlags;
@@ -163,7 +163,7 @@ ErrorCode CBofText::setupTextOpt(const CBofRect *pRect, int nJustify, uint32 nFo
 
 ErrorCode CBofText::erase(CBofWindow *pWnd) {
 	// Can't access null pointers
-	Assert(pWnd != nullptr);
+	assert(pWnd != nullptr);
 
 	if (_pBackground != nullptr && _bSaved) {
 		// Simply splat the background art back where it came from
@@ -175,7 +175,7 @@ ErrorCode CBofText::erase(CBofWindow *pWnd) {
 
 ErrorCode CBofText::erase(CBofBitmap *pBmp) {
 	// Can't access null pointers
-	Assert(pBmp != nullptr);
+	assert(pBmp != nullptr);
 
 	if (_pBackground != nullptr && _bSaved) {
 		// Simply splat the background art back where it came from
@@ -186,10 +186,10 @@ ErrorCode CBofText::erase(CBofBitmap *pBmp) {
 }
 
 ErrorCode CBofText::display(CBofWindow *pWnd, const char *pszText, const int nSize, const int nWeight, const RGBCOLOR cColor, int nFont) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Can't access null pointers
-	Assert(pWnd != nullptr);
+	assert(pWnd != nullptr);
 
 	_cTextColor = cColor;
 
@@ -197,22 +197,22 @@ ErrorCode CBofText::display(CBofWindow *pWnd, const char *pszText, const int nSi
 }
 
 ErrorCode CBofText::display(CBofWindow *pWnd) {
-	Assert(IsValidObject(this));
-	Assert(pWnd != nullptr);
+	assert(isValidObject(this));
+	assert(pWnd != nullptr);
 
 	return display(pWnd, _cCurString, _nCurSize, _nCurWeight, _cTextColor);
 }
 
 ErrorCode CBofText::display(CBofBitmap *pBmp) {
-	Assert(IsValidObject(this));
-	Assert(pBmp != nullptr);
+	assert(isValidObject(this));
+	assert(pBmp != nullptr);
 
 	return display(pBmp, _cCurString, _nCurSize, _nCurWeight, _cTextColor);
 }
 
 ErrorCode CBofText::display(CBofBitmap *pBmp, const char *pszText, const int nSize, const int nWeight, const RGBCOLOR cColor, int nFont) {
 	// Can't access null pointers
-	Assert(pBmp != nullptr);
+	assert(pBmp != nullptr);
 
 	_cTextColor = cColor;
 
@@ -221,7 +221,7 @@ ErrorCode CBofText::display(CBofBitmap *pBmp, const char *pszText, const int nSi
 
 ErrorCode CBofText::displayShadowed(CBofWindow *pWnd, const char *pszText, const int nSize, const int nWeight, const RGBCOLOR cColor, const RGBCOLOR cShadow, const int nDX, const int nDY, int nFont) {
 	// Can't access null pointers
-	Assert(pWnd != nullptr);
+	assert(pWnd != nullptr);
 
 	_cTextColor = cColor;
 	_cShadowColor = cShadow;
@@ -233,7 +233,7 @@ ErrorCode CBofText::displayShadowed(CBofWindow *pWnd, const char *pszText, const
 
 ErrorCode CBofText::displayShadowed(CBofBitmap *pBmp, const char *pszText, const int nSize, const int nWeight, const RGBCOLOR cColor, const RGBCOLOR cShadow, const int nDX, const int nDY, int nFont) {
 	// Can't access null pointers
-	Assert(pBmp != nullptr);
+	assert(pBmp != nullptr);
 
 	_cTextColor = cColor;
 	_cShadowColor = cShadow;
@@ -244,15 +244,15 @@ ErrorCode CBofText::displayShadowed(CBofBitmap *pBmp, const char *pszText, const
 }
 
 ErrorCode CBofText::displayText(CBofWindow *pWnd, const char *pszText, CBofRect *pRect, const int nSize, const int nWeight, const bool bShadowed, int nFont) {
-	Assert(IsValidObject(this));
-	Assert(pWnd != nullptr);
-	Assert(pszText != nullptr);
-	Assert(pRect != nullptr);
+	assert(isValidObject(this));
+	assert(pWnd != nullptr);
+	assert(pszText != nullptr);
+	assert(pRect != nullptr);
 
 	CBofRect cRect(0, 0, pRect->width() - 1, pRect->height() - 1);
 
-	Assert(_pBackground != nullptr);
-	Assert(_pWork != nullptr);
+	assert(_pBackground != nullptr);
+	assert(_pWork != nullptr);
 
 	if (!_bSaved) {
 		CBofBitmap::setUseBackdrop(true);
@@ -271,16 +271,16 @@ ErrorCode CBofText::displayText(CBofWindow *pWnd, const char *pszText, CBofRect 
 }
 
 ErrorCode CBofText::displayText(CBofBitmap *pBmp, const char *pszText, CBofRect *pRect, const int nSize, const int nWeight, const bool bShadowed, int nFont) {
-	Assert(IsValidObject(this));
-	Assert(pBmp != nullptr);
-	Assert(pszText != nullptr);
-	Assert(pRect != nullptr);
+	assert(isValidObject(this));
+	assert(pBmp != nullptr);
+	assert(pszText != nullptr);
+	assert(pRect != nullptr);
 
 	CBofRect cRect(0, 0, pRect->width() - 1, pRect->height() - 1);
 
-	Assert(_pWork != nullptr);
+	assert(_pWork != nullptr);
 
-	Assert(_pBackground != nullptr);
+	assert(_pBackground != nullptr);
 
 	if (!_bSaved) {
 		CBofRect r = _pBackground->getRect();
@@ -322,12 +322,12 @@ Graphics::Font *CBofText::getFont(int nFont, int nSize, int nWeight) {
 }
 
 ErrorCode CBofText::displayTextEx(CBofBitmap *pBmp, const char *pszText, CBofRect *pRect, const int nSize, const int nWeight, const bool bShadowed, int nFont) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// can't access null pointers
-	Assert(pBmp != nullptr);
-	Assert(pszText != nullptr);
-	Assert(pRect != nullptr);
+	assert(pBmp != nullptr);
+	assert(pszText != nullptr);
+	assert(pRect != nullptr);
 
 	Graphics::ManagedSurface surface = pBmp->getSurface();
 	Graphics::Font *font = getFont(nFont, nSize, nWeight);
@@ -440,16 +440,16 @@ void CBofText::displayLine(Graphics::Font *font, Graphics::ManagedSurface &surfa
 }
 
 ErrorCode paintText(CBofWindow *pWnd, CBofRect *pRect, const char *pszString, const int nSize, const int nWeight, const RGBCOLOR cColor, int nJustify, uint32 nFormatFlags, int nFont) {
-	Assert(pWnd != nullptr);
-	Assert(pRect != nullptr);
+	assert(pWnd != nullptr);
+	assert(pRect != nullptr);
 
 	CBofText cText(pRect, nJustify, nFormatFlags);
 	return cText.display(pWnd, pszString, nSize, nWeight, cColor, nFont);
 }
 
 ErrorCode paintText(CBofBitmap *pBmp, CBofRect *pRect, const char *pszString, const int nSize, const int nWeight, const RGBCOLOR cColor, int nJustify, uint32 nFormatFlags, int nFont) {
-	Assert(pBmp != nullptr);
-	Assert(pRect != nullptr);
+	assert(pBmp != nullptr);
+	assert(pRect != nullptr);
 
 	CBofText cText;
 	cText.setupTextOpt(pRect, nJustify, nFormatFlags);
@@ -460,16 +460,16 @@ ErrorCode paintText(CBofBitmap *pBmp, CBofRect *pRect, const char *pszString, co
 }
 
 ErrorCode paintShadowedText(CBofWindow *pWnd, CBofRect *pRect, const char *pszString, const int nSize, const int nWeight, const RGBCOLOR cColor, int nJustify, uint32 nFormatFlags, int /*nFont*/) {
-	Assert(pWnd != nullptr);
-	Assert(pRect != nullptr);
+	assert(pWnd != nullptr);
+	assert(pRect != nullptr);
 
 	CBofText cText(pRect, nJustify, nFormatFlags);
 	return cText.displayShadowed(pWnd, pszString, nSize, nWeight, cColor);
 }
 
 ErrorCode paintShadowedText(CBofBitmap *pBmp, CBofRect *pRect, const char *pszString, const int nSize, const int nWeight, const RGBCOLOR cColor, int nJustify, uint32 nFormatFlags, int nFont) {
-	Assert(pBmp != nullptr);
-	Assert(pRect != nullptr);
+	assert(pBmp != nullptr);
+	assert(pRect != nullptr);
 
 	CBofText cText;
 	cText.setupTextOpt(pRect, nJustify, nFormatFlags);

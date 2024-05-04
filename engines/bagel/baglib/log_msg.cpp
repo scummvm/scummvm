@@ -902,7 +902,7 @@ ErrorCode CBagEnergyDetectorObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRe
 }
 
 ErrorCode CBagEnergyDetectorObject::attach() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	int nMsgTime;
 	char localBuffer[256];
@@ -973,7 +973,7 @@ ErrorCode CBagLogClue::attach() {
 	char szClueStr[256];
 	CBofString cFormat(szFormatStr, 256);
 
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	ErrorCode ec = CBagTextObject::attach();
 

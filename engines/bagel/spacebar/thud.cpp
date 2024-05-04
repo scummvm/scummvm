@@ -67,7 +67,7 @@ ErrorCode SBarThud::attach() {
 			pObj->detach();
 			nActiveObj--;
 			// This can be removed later
-			Assert(nActiveObj < 2);
+			assert(nActiveObj < 2);
 		}
 	}
 

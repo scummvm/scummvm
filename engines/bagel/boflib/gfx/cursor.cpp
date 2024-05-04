@@ -30,13 +30,13 @@ void CBofCursor::initialize() {
 }
 
 CBofCursor::~CBofCursor() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	unLoad();
 }
 
 ErrorCode CBofCursor::load() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// kill any previous cursor
 	unLoad();
@@ -45,13 +45,13 @@ ErrorCode CBofCursor::load() {
 }
 
 ErrorCode CBofCursor::unLoad() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	return _errCode;
 }
 
 ErrorCode CBofCursor::set() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	return _errCode;
 }

@@ -28,7 +28,7 @@ CBagChatWnd::CBagChatWnd() : CBagStorageDevWnd() {
 }
 
 ErrorCode CBagChatWnd::attach() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (CBagStorageDevWnd::attach() == ERR_NONE) {
 		show();
@@ -40,12 +40,12 @@ ErrorCode CBagChatWnd::attach() {
 }
 
 void CBagChatWnd::onTimer(uint32 /*nTimerId*/) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 }
 
 void CBagChatWnd::onMouseMove(uint32 flags, CBofPoint *pos, void *) {
-	Assert(IsValidObject(this));
-	Assert(pos != nullptr);
+	assert(isValidObject(this));
+	assert(pos != nullptr);
 
 	// Use default behavior 1st
 	CBagStorageDevWnd::onMouseMove(flags, pos);

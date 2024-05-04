@@ -71,7 +71,7 @@ ErrorCode CBagFMovie::initialize(CBofWindow *pParent) {
 bool CBagFMovie::open(const char *filename, CBofRect *bounds) {
 	// No filename, so put up an open file box
 	if (filename == nullptr) {
-		Assert(filename);
+		assert(filename);
 		return false;
 	}
 
@@ -97,7 +97,7 @@ bool CBagFMovie::open(const char *filename, CBofRect *bounds) {
 }
 
 bool CBagFMovie::openMovie(const char *sFilename) {
-	Assert(sFilename[0] != '\0');
+	assert(sFilename[0] != '\0');
 
 	if (_smk) {
 		closeMovie();

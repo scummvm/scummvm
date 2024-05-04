@@ -69,9 +69,9 @@ CBofRect CBagTextObject::getRect() {
 }
 
 ErrorCode CBagTextObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int) {
-	Assert(IsValidObject(this));
-	Assert(pBmp != nullptr);
-	Assert(pSrcRect != nullptr);
+	assert(isValidObject(this));
+	assert(pBmp != nullptr);
+	assert(pSrcRect != nullptr);
 
 	// assume no error
 	 ErrorCode errCode = ERR_NONE;
@@ -120,7 +120,7 @@ ErrorCode CBagTextObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 				r.left += 1;
 			}
 
-			errCode = paintText(pBmp, &r, getText(), MapWindowsPointSize(nPointSize), TEXT_NORMAL, m_nFGColor, JUSTIFY_WRAP, nFormat, m_nTextFont);
+			errCode = paintText(pBmp, &r, getText(), mapWindowsPointSize(nPointSize), TEXT_NORMAL, m_nFGColor, JUSTIFY_WRAP, nFormat, m_nTextFont);
 
 			// This object does not need to be updated now...
 			SetDirty(false);
@@ -131,7 +131,7 @@ ErrorCode CBagTextObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 }
 
 ErrorCode CBagTextObject::attach() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (!getFileName().Right(4).Find(".TXT") || !getFileName().Right(4).Find(".txt")) {
 		// Prevent memory leak
@@ -148,7 +148,7 @@ ErrorCode CBagTextObject::attach() {
 			if (!fpTextFile.errorOccurred()) {
 				// Allocate the buffers
 				uint32 nFileLen = fpTextFile.getLength();
-				char *pTextBuff = (char *)BofCAlloc(nFileLen + 1, 1);
+				char *pTextBuff = (char *)bofCAlloc(nFileLen + 1, 1);
 				if (pTextBuff != nullptr) {
 					// Read the text file into buffers
 					fpTextFile.read(pTextBuff, nFileLen);
@@ -165,7 +165,7 @@ ErrorCode CBagTextObject::attach() {
 						}
 					}
 
-					BofFree(pTextBuff); // Changed from delete.
+					bofFree(pTextBuff); // Changed from delete.
 
 				} else {
 					reportError(ERR_MEMORY);
@@ -214,7 +214,7 @@ ErrorCode CBagTextObject::attach() {
 }
 
 ErrorCode CBagTextObject::detach() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (m_psText != nullptr) {
 		delete m_psText;
@@ -262,7 +262,7 @@ PARSE_CODES CBagTextObject::setInfo(CBagIfstream &istr) {
 			CBofString sStr(szLocalStr, 256);
 
 			// Need to use this field, so no one else can
-			Assert(m_psInitInfo == nullptr);
+			assert(m_psInitInfo == nullptr);
 
 			GetAlphaNumFromStream(istr, sStr);
 
@@ -504,8 +504,8 @@ bool CBagTextObject::runObject() {
 
 				if (pPDAZ && pPDAZ->getZoomed() == true) {
 					CBofRect zRect = pPDAZ->getViewRect();
-					Assert(zRect.height() > 0 && zRect.height() < 480);
-					Assert(zRect.width() > 0 && zRect.width() < 640);
+					assert(zRect.height() > 0 && zRect.height() < 480);
+					assert(zRect.width() > 0 && zRect.width() < 640);
 					cDlg.move(80, zRect.bottom - cRect.height(), true); // xxx
 				} else if ((pPDA != nullptr) && (pPDA->isActivated() || pPDA->isActivating())) {
 					cDlg.move(80, 10, true);
@@ -549,7 +549,7 @@ void CBagTextObject::RecalcTextRect(bool bTextFromFile) {
 	CBofSize cDisplaySize;  // Size of rect needed to display font
 	CBofSize cSize;         // Size of rect needed to display font
 
-	Assert(m_psText != nullptr);
+	assert(m_psText != nullptr);
 
 	// The window where the object are displayed
 	CBagPanWindow *pPanWin = (CBagPanWindow *)(CBagel::getBagApp()->getMasterWnd()->getCurrentGameWindow());
@@ -620,7 +620,7 @@ void CBagTextObject::RecalcTextRect(bool bTextFromFile) {
 }
 
 void CBagTextObject::SetPSText(CBofString *p) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	delete m_psText;
 	m_psText = nullptr;

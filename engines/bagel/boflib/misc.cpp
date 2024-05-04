@@ -32,7 +32,7 @@ namespace Bagel {
 
 static uint32 lStart;
 
-void TimerStart() {
+void timerStart() {
 	lStart = g_system->getMillis();
 }
 
@@ -40,21 +40,21 @@ uint32 timerStop() {
 	return g_system->getMillis() - lStart;
 }
 
-uint32 GetTimer() {
+uint32 getTimer() {
 	return g_system->getMillis();
 }
 
-void Sleep(uint32 milli) {
+void bofSleep(uint32 milli) {
 
 	g_system->delayMillis(milli);
 }
 
 #define ALLOC_FAIL_RETRIES 2
 
-void *BofMemAlloc(uint32 lSize, const char *pszFile, int nLine, bool bClear) {
+void *bofMemAlloc(uint32 lSize, const char *pszFile, int nLine, bool bClear) {
 	// For now, until I fix it, pszFile MUST be valid.
-	Assert(pszFile != nullptr);
-	Assert(lSize != 0);
+	assert(pszFile != nullptr);
+	assert(lSize != 0);
 
 	// Assume failure
 	void *pNewBlock = nullptr;
@@ -67,7 +67,7 @@ void *BofMemAlloc(uint32 lSize, const char *pszFile, int nLine, bool bClear) {
 		// If allocation was successful, then we're outta here
 		if (pNewBlock != nullptr) {
 			if (bClear)
-				BofMemSet((byte *)pNewBlock, 0, lSize);
+				bofMemSet((byte *)pNewBlock, 0, lSize);
 
 			break;
 		}
@@ -83,28 +83,28 @@ void *BofMemAlloc(uint32 lSize, const char *pszFile, int nLine, bool bClear) {
 	return pNewBlock;
 }
 
-void BofMemFree(void *pBuf, const char *pszFile, int nLine) {
-	Assert(pszFile != nullptr);
+void bofMemFree(void *pBuf, const char *pszFile, int nLine) {
+	assert(pszFile != nullptr);
 
 	free(pBuf);
 }
 
-Fixed FixedMultiply(Fixed Multiplicand, Fixed Multiplier) {
+Fixed fixedMultiply(Fixed Multiplicand, Fixed Multiplier) {
 	int64 nTmpNum = (int64)Multiplicand * Multiplier;
 	Fixed fixResult = (Fixed)(nTmpNum >> 16);
 
 	return fixResult;
 }
 
-Fixed FixedDivide(Fixed Dividend, Fixed Divisor) {
+Fixed fixedDivide(Fixed Dividend, Fixed Divisor) {
 	int64 nBigNum = (int64)Dividend << 16;
 	Fixed fixResult = (Fixed)(nBigNum / Divisor);
 
 	return fixResult;
 }
 
-void BofMemSet(void *pSrc, byte chByte, int32 lBytes) {
-	Assert(pSrc != nullptr);
+void bofMemSet(void *pSrc, byte chByte, int32 lBytes) {
+	assert(pSrc != nullptr);
 
 	byte *pBuf = (byte *)pSrc;
 
@@ -112,10 +112,10 @@ void BofMemSet(void *pSrc, byte chByte, int32 lBytes) {
 		*pBuf++ = chByte;
 }
 
-void BofMemCopy(void *pDst, const void *pSrc, int32 lLength) {
-	Assert(pDst != nullptr);
-	Assert(pSrc != nullptr);
-	Assert(lLength >= 0);
+void bofMemCopy(void *pDst, const void *pSrc, int32 lLength) {
+	assert(pDst != nullptr);
+	assert(pSrc != nullptr);
+	assert(lLength >= 0);
 
 	byte *p1 = (byte *)pDst;
 	const byte *p2 = (const byte *)pSrc;
@@ -136,8 +136,8 @@ bool readLine(Common::SeekableReadStream *fp, char *pszBuf) {
 	return true;
 }
 
-void Encrypt(void *pBuf, int32 size, const char *pszPassword) {
-	Assert(pBuf != nullptr);
+void encrypt(void *pBuf, int32 size, const char *pszPassword) {
+	assert(pBuf != nullptr);
 
 	const char *pStart = pszPassword;
 	if (!pszPassword || strlen(pszPassword) == 0) {
@@ -156,8 +156,8 @@ void Encrypt(void *pBuf, int32 size, const char *pszPassword) {
 	}
 }
 
-void EncryptPartial(void *pBuf, int32 fullSize, int32 lBytes, const char *pszPassword) {
-	Assert(pBuf != nullptr);
+void encryptPartial(void *pBuf, int32 fullSize, int32 lBytes, const char *pszPassword) {
+	assert(pBuf != nullptr);
 
 	const char *pStart = pszPassword;
 	if (!pszPassword || strlen(pszPassword) == 0) {
@@ -177,7 +177,7 @@ void EncryptPartial(void *pBuf, int32 fullSize, int32 lBytes, const char *pszPas
 	}
 }
 
-int MapWindowsPointSize(int pointSize) {
+int mapWindowsPointSize(int pointSize) {
 	return pointSize;
 }
 

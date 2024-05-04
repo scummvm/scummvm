@@ -60,7 +60,7 @@ CBofWindow::CBofWindow(const char *pszName, int x, int y, int nWidth, int nHeigh
 }
 
 CBofWindow::~CBofWindow() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	delete _surface;
 	_surface = nullptr;
@@ -111,7 +111,7 @@ void CBofWindow::destroy() {
 }
 
 void CBofWindow::validateAnscestors(CBofRect *pRect) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBofWindow *pParent;
 
@@ -124,9 +124,9 @@ void CBofWindow::validateAnscestors(CBofRect *pRect) {
 }
 
 ErrorCode CBofWindow::create(const char *pszName, int x, int y, int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {
-	Assert(IsValidObject(this));
-	Assert(pszName != nullptr);
-	Assert(pParent != this);
+	assert(isValidObject(this));
+	assert(pszName != nullptr);
+	assert(pParent != this);
 
 	// Remember who our parent is
 	if (pParent != nullptr)
@@ -183,8 +183,8 @@ void CBofWindow::setParent(CBofWindow *parent) {
 
 
 ErrorCode CBofWindow::create(const char *pszName, const CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
-	Assert(IsValidObject(this));
-	Assert(pszName != nullptr);
+	assert(isValidObject(this));
+	assert(pszName != nullptr);
 
 	int x, y, nWidth, nHeight;
 
@@ -229,7 +229,7 @@ bool CBofWindow::hasFocus() const {
 }
 
 void CBofWindow::center() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBofWindow *pParent;
 	int x, y;
@@ -250,8 +250,8 @@ void CBofWindow::center() {
 }
 
 void CBofWindow::move(const int x, const int y, bool bRepaint) {
-	Assert(IsValidObject(this));
-	Assert(isCreated());
+	assert(isValidObject(this));
+	assert(isCreated());
 
 	// We now have a new position (in screen coordinates)
 	_cWindowRect.SetRect(x, y, x + _cRect.width() - 1, y + _cRect.height() - 1);
@@ -262,9 +262,9 @@ void CBofWindow::move(const int x, const int y, bool bRepaint) {
 }
 
 void CBofWindow::reSize(CBofRect *pRect, bool bRepaint) {
-	Assert(IsValidObject(this));
-	Assert(isCreated());
-	Assert(pRect != nullptr);
+	assert(isValidObject(this));
+	assert(isCreated());
+	assert(pRect != nullptr);
 
 	// We now have a new position (in screen coordinates)
 	_cWindowRect = *pRect;
@@ -280,10 +280,10 @@ void CBofWindow::select() {
 }
 
 void CBofWindow::show() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (!errorOccurred()) {
-		Assert(isCreated());
+		assert(isCreated());
 
 		if (isCreated()) {
 			_visible = true;
@@ -293,23 +293,23 @@ void CBofWindow::show() {
 }
 
 void CBofWindow::hide() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (!errorOccurred()) {
-		Assert(isCreated());
+		assert(isCreated());
 
 		_visible = false;
 	}
 }
 
 void CBofWindow::postMessage(uint32 nMessage, uint32 lParam1, uint32 lParam2) {
-	Assert(IsValidObject(this));
-	Assert(isCreated());
+	assert(isValidObject(this));
+	assert(isCreated());
 }
 
 void CBofWindow::setTimer(uint32 nID, uint32 nInterval, BofCallback pCallBack) {
-	Assert(IsValidObject(this));
-	Assert(isCreated());
+	assert(isValidObject(this));
+	assert(isCreated());
 
 	// Don't add it if there's already a timer there with the same id.
 	CBofTimerPacket *pPacket = _pTimerList;
@@ -340,7 +340,7 @@ void CBofWindow::setTimer(uint32 nID, uint32 nInterval, BofCallback pCallBack) {
 }
 
 void CBofWindow::killTimer(uint32 nID) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Remove the timer from the window timer list
 	for (Common::List<WindowTimer>::iterator it = _timers.begin(); it != _timers.end(); ++it) {
@@ -368,7 +368,7 @@ void CBofWindow::killTimer(uint32 nID) {
 }
 
 void CBofWindow::killMyTimers() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBofTimerPacket *pTimer, *pNextTimer;
 
@@ -427,7 +427,7 @@ void CBofWindow::clientToScreen(CBofPoint *pPoint) {
 }
 
 CBofRect CBofWindow::getClientRect() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBofRect cRect(0, 0, _cRect.width() - 1, _cRect.height() - 1);
 	return cRect;
@@ -443,7 +443,7 @@ void CBofWindow::postUserMessage(uint32 lMessage, uint32 lExtraInfo) {
 }
 
 CBofWindow *CBofWindow::getAnscestor() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBofWindow *pCurWnd, *pLastWnd;
 
@@ -461,8 +461,8 @@ CBofWindow *CBofWindow::getAnscestor() {
 
 void CBofWindow::flushAllMessages() {
 	// Make sure this is a valid window
-	Assert(IsValidObject(this));
-	Assert(isCreated());
+	assert(isValidObject(this));
+	assert(isCreated());
 }
 
 void CBofWindow::validateRect(const CBofRect *pRect) {
@@ -473,8 +473,8 @@ void CBofWindow::invalidateRect(const CBofRect *pRect) {
 }
 
 ErrorCode CBofWindow::setBackdrop(CBofBitmap *pNewBitmap, bool bRefresh) {
-	Assert(IsValidObject(this));
-	Assert(pNewBitmap != nullptr);
+	assert(isValidObject(this));
+	assert(pNewBitmap != nullptr);
 
 	// Destroy old backdrop (if any)
 	killBackdrop();
@@ -490,8 +490,8 @@ ErrorCode CBofWindow::setBackdrop(CBofBitmap *pNewBitmap, bool bRefresh) {
 }
 
 ErrorCode CBofWindow::setBackdrop(const char *pszFileName, bool bRefresh) {
-	Assert(IsValidObject(this));
-	Assert(pszFileName != nullptr);
+	assert(isValidObject(this));
+	assert(pszFileName != nullptr);
 
 	CBofBitmap *pBmp;
 	CBofPalette *pPalette;
@@ -510,7 +510,7 @@ ErrorCode CBofWindow::setBackdrop(const char *pszFileName, bool bRefresh) {
 }
 
 void CBofWindow::killBackdrop() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (_pBackdrop != nullptr) {
 		delete _pBackdrop;
@@ -519,7 +519,7 @@ void CBofWindow::killBackdrop() {
 }
 
 ErrorCode CBofWindow::paintBackdrop(CBofRect *pRect, int nTransparentColor) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (_pBackdrop != nullptr) {
 		if (pRect == nullptr) {
@@ -534,8 +534,8 @@ ErrorCode CBofWindow::paintBackdrop(CBofRect *pRect, int nTransparentColor) {
 }
 
 void CBofWindow::selectPalette(CBofPalette *pPal) {
-	Assert(IsValidObject(this));
-	Assert(isCreated());
+	assert(isValidObject(this));
+	assert(isCreated());
 }
 
 Graphics::ManagedSurface *CBofWindow::getSurface() {
@@ -576,7 +576,7 @@ void CBofWindow::onActivate() {}
 void CBofWindow::onDeActivate() {}
 
 void CBofWindow::onMCINotify(uint32 wParam, uint32 lParam) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 }
 
 void CBofWindow::handleEvents() {
@@ -606,7 +606,7 @@ void CBofWindow::handleEvents() {
 }
 
 void CBofWindow::handleEvent(const Common::Event &event) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (!_enabled || !_visible)
 		// Window is disabled or hidden

@@ -88,7 +88,7 @@ CBagRestoreDialog::CBagRestoreDialog() {
 }
 
 ErrorCode CBagRestoreDialog::attach() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	_bRestored = false;
 
@@ -113,7 +113,7 @@ ErrorCode CBagRestoreDialog::attach() {
 
 	// Build all our buttons
 	for (int i = 0; i < NUM_RESTORE_BTNS; i++) {
-		Assert(_pButtons[i] == nullptr);
+		assert(_pButtons[i] == nullptr);
 
 		if ((_pButtons[i] = new CBofBmpButton) != nullptr) {
 			CBofBitmap *pUp, *pDown, *pFocus, *pDis;
@@ -151,7 +151,7 @@ ErrorCode CBagRestoreDialog::attach() {
 	}
 
 	// The list box must not be currently allocated
-	Assert(_pListBox == nullptr);
+	assert(_pListBox == nullptr);
 
 	// Create a list box for the user to choose the slot to save into
 	CBofRect cRect(LIST_X, LIST_Y, LIST_X + LIST_DX - 1, LIST_Y + LIST_DY - 1);
@@ -200,7 +200,7 @@ ErrorCode CBagRestoreDialog::attach() {
 
 	if (!errorOccurred()) {
 		// There could not already be a text field
-		Assert(_pText == nullptr);
+		assert(_pText == nullptr);
 
 		if ((_pText = new CBofText) != nullptr) {
 			cRect.SetRect(170, 405, 470, 435);
@@ -227,7 +227,7 @@ ErrorCode CBagRestoreDialog::attach() {
 }
 
 ErrorCode CBagRestoreDialog::detach() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBagCursor::hideSystemCursor();
 
@@ -263,7 +263,7 @@ ErrorCode CBagRestoreDialog::detach() {
 }
 
 void CBagRestoreDialog::onPaint(CBofRect *pRect) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	paintBackdrop(pRect);
 
@@ -279,12 +279,12 @@ void CBagRestoreDialog::onPaint(CBofRect *pRect) {
 }
 
 ErrorCode CBagRestoreDialog::RestoreAndclose() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (!errorOccurred()) {
 		// We should not be able to access the save button if we
 		// have not yet chosen a slot to save into.
-		Assert(_nSelectedItem != -1);
+		assert(_nSelectedItem != -1);
 		if (_nSelectedItem != -1) {
 			logInfo(buildString("Restoring from slot #%d", _nSelectedItem));
 
@@ -306,7 +306,7 @@ ErrorCode CBagRestoreDialog::RestoreAndclose() {
 }
 
 void CBagRestoreDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	switch (lKey) {
 	case BKEY_UP:
@@ -352,8 +352,8 @@ void CBagRestoreDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 }
 
 void CBagRestoreDialog::onBofButton(CBofObject *pObject, int nFlags) {
-	Assert(IsValidObject(this));
-	Assert(pObject != nullptr);
+	assert(isValidObject(this));
+	assert(pObject != nullptr);
 
 	if (nFlags != BUTTON_CLICKED)
 		return;
@@ -403,8 +403,8 @@ void CBagRestoreDialog::onBofButton(CBofObject *pObject, int nFlags) {
 }
 
 void CBagRestoreDialog::onBofListBox(CBofObject *pObject, int nItemIndex) {
-	Assert(IsValidObject(this));
-	Assert(pObject != nullptr);
+	assert(isValidObject(this));
+	assert(pObject != nullptr);
 
 	CBofListBox *pListBox = (CBofListBox *)pObject;
 
@@ -438,7 +438,7 @@ void CBagRestoreDialog::onBofListBox(CBofObject *pObject, int nItemIndex) {
 }
 
 void CBagRestoreDialog::onInitDialog() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBofDialog::onInitDialog();
 

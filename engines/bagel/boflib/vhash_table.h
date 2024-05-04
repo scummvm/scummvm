@@ -88,13 +88,13 @@ template<class T, int S>
 void CBofVHashTable<T, S>::insert(const T &val) {
 	T *pNodeValue = new T(val);
 	CBofListNode<T *> *pNode = new CBofListNode<T *>(pNodeValue);
-	Assert(pNode != nullptr);
+	assert(pNode != nullptr);
 
 	int nHashBucketIndex = ((*m_pHashFunction)(val)) % m_nHashTableSize;
-	Assert(nHashBucketIndex < m_nHashTableSize);
+	assert(nHashBucketIndex < m_nHashTableSize);
 
 	CBofList<T *> *pHashBucket = &m_xHashTable[nHashBucketIndex];
-	Assert(pHashBucket != nullptr);
+	assert(pHashBucket != nullptr);
 	pHashBucket->addToTail(pNode);
 }
 
@@ -103,11 +103,11 @@ template<class T, int S>
 bool CBofVHashTable<T, S>::contains(const T &val) {
 	bool returnValue = false;
 	int nHashBucketIndex = ((*m_pHashFunction)(val)) % m_nHashTableSize;
-	Assert(nHashBucketIndex < m_nHashTableSize);
+	assert(nHashBucketIndex < m_nHashTableSize);
 
 	CBofVHashTable<T, S> *const fakeThis = (CBofVHashTable<T, S> *const)this;
 	CBofList<T *> *pHashBucket = &(fakeThis->m_xHashTable[nHashBucketIndex]);
-	Assert(pHashBucket != nullptr);
+	assert(pHashBucket != nullptr);
 	int nItemsInBucket = pHashBucket->getCount();
 	for (int i = 0; i < nItemsInBucket; i++) {
 		T *TableEntry = pHashBucket->getNodeItem(i);

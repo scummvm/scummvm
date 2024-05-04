@@ -138,7 +138,7 @@ CBagOptWindow::CBagOptWindow() {
 }
 
 ErrorCode CBagOptWindow::detach() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBagCursor::hideSystemCursor();
 
@@ -188,8 +188,8 @@ ErrorCode CBagOptWindow::detach() {
 }
 
 void CBagOptWindow::onPaint(CBofRect *pRect) {
-	Assert(IsValidObject(this));
-	Assert(pRect != nullptr);
+	assert(isValidObject(this));
+	assert(pRect != nullptr);
 
 	paintBackdrop(pRect);
 
@@ -232,7 +232,7 @@ ErrorCode CBagOptWindow::attach() {
 
 	// Build all our buttons
 	for (int i = 0; i < NUM_SYS_BUTTONS; i++) {
-		Assert(_pButtons[i] == nullptr);
+		assert(_pButtons[i] == nullptr);
 
 		if ((_pButtons[i] = new CBofBmpButton) != nullptr) {
 			CBofBitmap *pUp, *pDown, *pFocus, *pDis;
@@ -343,7 +343,7 @@ ErrorCode CBagOptWindow::attach() {
 }
 
 void CBagOptWindow::putDialogData() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (_pMidiVolumeScroll != nullptr)
 		_pMidiVolumeScroll->setPos(_cSystemData._nMusicVolume, true, true);
@@ -365,7 +365,7 @@ void CBagOptWindow::putDialogData() {
 }
 
 void CBagOptWindow::getDialogData() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (_pMidiVolumeScroll != nullptr) {
 		_cSystemData._nMusicVolume = _pMidiVolumeScroll->getPos();
@@ -393,8 +393,8 @@ void CBagOptWindow::getDialogData() {
 }
 
 void CBagOptWindow::onBofButton(CBofObject *pObject, int nState) {
-	Assert(IsValidObject(this));
-	Assert(pObject != nullptr);
+	assert(isValidObject(this));
+	assert(pObject != nullptr);
 
 	if (nState == BUTTON_CLICKED) {
 		CBofButton *pButton = (CBofButton *)pObject;
@@ -514,7 +514,7 @@ void CBagOptWindow::onBofButton(CBofObject *pObject, int nState) {
 }
 
 void CBagOptWindow::onBofScrollBar(CBofObject *pObj, int nPos) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBofScrollBar *pScroll = (CBofScrollBar *)pObj;
 
@@ -535,7 +535,7 @@ void CBagOptWindow::onBofScrollBar(CBofObject *pObj, int nPos) {
 }
 
 void CBagOptWindow::saveOutNewSettings() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBagel *pApp = CBagel::getBagApp();
 
@@ -575,7 +575,7 @@ void CBagOptWindow::saveOutNewSettings() {
 }
 
 void CBagOptWindow::loadIniSettings() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 	int nTemp;
 
 	ConfMan.registerDefault("Panimations", true);
@@ -608,7 +608,7 @@ void CBagOptWindow::loadIniSettings() {
 }
 
 void CBagOptWindow::returnToDefaults() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	_cSystemData._bPanimations = true;
 	_cSystemData._bFlythroughs = true;
@@ -623,7 +623,7 @@ void CBagOptWindow::returnToDefaults() {
 }
 
 void CBagOptWindow::onInitDialog() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBofDialog::onInitDialog();
 
@@ -631,7 +631,7 @@ void CBagOptWindow::onInitDialog() {
 }
 
 void CBagOptWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBagMasterWin *pWin;
 	CBagel *pApp;
@@ -720,7 +720,7 @@ void CBagOptWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 }
 
 const char *buildSysDir(const char *pszFile) {
-	Assert(pszFile != nullptr);
+	assert(pszFile != nullptr);
 	static char szBuf[MAX_DIRPATH];
 
 	// Get the path to the system directory

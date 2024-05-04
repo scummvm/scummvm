@@ -117,7 +117,7 @@ void SBarBibOddsWnd::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 }
 
 ErrorCode SBarBibOddsWnd::attach() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// If we have something wielded, put it on hold for now.
 	if (CBagPanWindow::_pWieldBmp != nullptr) {

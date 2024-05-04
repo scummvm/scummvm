@@ -30,7 +30,7 @@ namespace Bagel {
 
 class CQueue : public CBofObject {
 protected:
-	CLList *m_pQueueList = nullptr;
+	CLList *_pQueueList = nullptr;
 
 public:
 	/**
@@ -65,25 +65,25 @@ public:
 	 * Pushes object onto stack
 	 * @param pObject       Pointer to object to be pushed
 	 */
-	void AddItem(void *pObject);
+	void addItem(void *pObject);
 
 	/**
 	 * Removes 1 object off stack
 	 * @return      Pointer to top object on stack
 	 */
-	void *RemoveItem();
+	void *removeItem();
 
 	/**
 	 * Retrieves the 1st item (FIFO order) without removing it.
 	 * @return      1st item in Queue (or nullptr is Queue is empty)
 	 */
-	void *GetQItem();
+	void *getQItem();
 
 	/**
 	 * Deletes specified item from the QUEUE (Illegally)
 	 * @param pObject       Object to remove
 	 */
-	void DeleteItem(void *pObject);
+	void deleteItem(void *pObject);
 
 	/**
 	 * Removes all items from the queue

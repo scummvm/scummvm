@@ -57,7 +57,7 @@ CBagStartDialog::CBagStartDialog(const char *pszFileName, CBofWindow *pWin)
 }
 
 void CBagStartDialog::onInitDialog() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBofDialog::onInitDialog();
 	setReturnValue(-1);
@@ -74,7 +74,7 @@ void CBagStartDialog::onInitDialog() {
 
 	// Build all our buttons
 	for (int i = 0; i < NUM_START_BTNS; i++) {
-		Assert(_buttons[i] == nullptr);
+		assert(_buttons[i] == nullptr);
 
 		if ((_buttons[i] = new CBofBmpButton) != nullptr) {
 			CBofBitmap *pUp = loadBitmap(buildSysDir(g_stStartButtons[i]._pszUp), pPal);
@@ -103,7 +103,7 @@ void CBagStartDialog::onInitDialog() {
 
 
 void CBagStartDialog::onClose() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBagCursor::hideSystemCursor();
 
@@ -122,7 +122,7 @@ void CBagStartDialog::onClose() {
 
 
 void CBagStartDialog::onPaint(CBofRect *pRect) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	paintBackdrop(pRect);
 
@@ -131,7 +131,7 @@ void CBagStartDialog::onPaint(CBofRect *pRect) {
 
 
 void CBagStartDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	switch (lKey) {
 	case BKEY_ESC:
@@ -147,8 +147,8 @@ void CBagStartDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 
 
 void CBagStartDialog::onBofButton(CBofObject *pObject, int nFlags) {
-	Assert(IsValidObject(this));
-	Assert(pObject != nullptr);
+	assert(isValidObject(this));
+	assert(pObject != nullptr);
 
 	if (nFlags != BUTTON_CLICKED)
 		return;

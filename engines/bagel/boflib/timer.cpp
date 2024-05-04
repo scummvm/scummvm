@@ -79,7 +79,7 @@ CBofTimer::CBofTimer(uint32 nID, uint32 nInterval, void *lUserInfo, BofCallback 
 
 
 CBofTimer::~CBofTimer() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (m_pTimerList == this) {
 		m_pTimerList = (CBofTimer *)m_pTimerList->GetNext();

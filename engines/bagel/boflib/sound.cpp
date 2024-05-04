@@ -58,8 +58,8 @@ int CBofSound::m_nSlotVol[NUM_QUEUES];
 
 CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, const int nLoops) {
 	// Validate input
-	Assert(pszPathName != nullptr);
-	Assert(strlen(pszPathName) < MAX_FNAME);
+	assert(pszPathName != nullptr);
+	assert(strlen(pszPathName) < MAX_FNAME);
 
 	//
 	// Initialize data fields
@@ -143,7 +143,7 @@ CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, c
 		m_pSoundChain->Insert(this);
 
 		// m_pSoundchain must always be the head of the list
-		Assert(m_pSoundChain == m_pSoundChain->getHead());
+		assert(m_pSoundChain == m_pSoundChain->getHead());
 	} else {
 		m_pSoundChain = this;
 	}
@@ -151,7 +151,7 @@ CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, c
 
 
 CBofSound::~CBofSound() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	stop();
 	ReleaseSound();
@@ -192,7 +192,7 @@ void CBofSound::shutdown() {
 
 
 void CBofSound::SetVolume(int nVolume) {
-	Assert(nVolume >= VOLUME_INDEX_MIN && nVolume <= VOLUME_INDEX_MAX);
+	assert(nVolume >= VOLUME_INDEX_MIN && nVolume <= VOLUME_INDEX_MAX);
 	int nLocalVolume = nVolume;
 
 	if (nLocalVolume < VOLUME_INDEX_MIN) {
@@ -211,11 +211,11 @@ void CBofSound::SetVolume(int nVolume) {
 
 
 void CBofSound::SetVolume(int nMidiVolume, int nWaveVolume) {
-	Assert(nMidiVolume >= VOLUME_INDEX_MIN && nMidiVolume <= VOLUME_INDEX_MAX);
-	Assert(nWaveVolume >= VOLUME_INDEX_MIN && nWaveVolume <= VOLUME_INDEX_MAX);
+	assert(nMidiVolume >= VOLUME_INDEX_MIN && nMidiVolume <= VOLUME_INDEX_MAX);
+	assert(nWaveVolume >= VOLUME_INDEX_MIN && nWaveVolume <= VOLUME_INDEX_MAX);
 
-    Assert(nMidiVolume >= VOLUME_INDEX_MIN && nMidiVolume <= VOLUME_INDEX_MAX);
-	Assert(nWaveVolume >= VOLUME_INDEX_MIN && nWaveVolume <= VOLUME_INDEX_MAX);
+    assert(nMidiVolume >= VOLUME_INDEX_MIN && nMidiVolume <= VOLUME_INDEX_MAX);
+	assert(nWaveVolume >= VOLUME_INDEX_MIN && nWaveVolume <= VOLUME_INDEX_MAX);
 
 	if (nWaveVolume < VOLUME_INDEX_MIN) {
 		nWaveVolume = VOLUME_INDEX_MIN;
@@ -241,25 +241,25 @@ void CBofSound::SetVolume(int nMidiVolume, int nWaveVolume) {
 
 
 bool CBofSound::play(uint32 dwBeginHere, uint32 TimeFormatFlag) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Assume failure
 	bool bSuccess = false;
 
 	if (_errCode == ERR_NONE) {
 		// We must be attached to a valid window
-		Assert((m_pWnd != nullptr) || (_pMainWnd != nullptr));
+		assert((m_pWnd != nullptr) || (_pMainWnd != nullptr));
 
 		// If already playing, then stop and start again
 		if (Playing()) {
 			// Can't replay an autodelete sound
-			Assert(!(m_wFlags & SOUND_AUTODELETE));
+			assert(!(m_wFlags & SOUND_AUTODELETE));
 
 			stop();
 		}
 
 		// WAVE and MIX are mutually exclusive
-		Assert(!((m_wFlags & SOUND_WAVE) && (m_wFlags & SOUND_MIX)));
+		assert(!((m_wFlags & SOUND_WAVE) && (m_wFlags & SOUND_MIX)));
 
 		if (m_wFlags & SOUND_WAVE) {
 			if (m_wFlags & SOUND_QUEUE)
@@ -276,7 +276,7 @@ bool CBofSound::play(uint32 dwBeginHere, uint32 TimeFormatFlag) {
 		}
 
 		// Make sure this sound is still valid
-		Assert(m_pSoundChain != nullptr);
+		assert(m_pSoundChain != nullptr);
 
 		if (m_pFileBuf == nullptr) {
 			if ((m_wFlags & (SOUND_MIX | SOUND_QUEUE)) == (SOUND_MIX | SOUND_QUEUE)) {
@@ -319,9 +319,9 @@ bool CBofSound::play(uint32 dwBeginHere, uint32 TimeFormatFlag) {
 				PlayWAV();
 
 			} else {
-				Assert(m_iQSlot >= 0 && m_iQSlot < NUM_QUEUES);
+				assert(m_iQSlot >= 0 && m_iQSlot < NUM_QUEUES);
 
-				m_cQueue[m_iQSlot]->AddItem(this);
+				m_cQueue[m_iQSlot]->addItem(this);
 				m_bPlaying = true;
 				m_bInQueue = true;
 				SetVolume(m_nSlotVol[m_iQSlot]);
@@ -335,7 +335,7 @@ bool CBofSound::play(uint32 dwBeginHere, uint32 TimeFormatFlag) {
 
 
 bool CBofSound::MidiLoopPlaySegment(uint32 dwLoopFrom, uint32 dwLoopTo, uint32 dwBegin, uint32 TimeFmt) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	m_wFlags |= SOUND_LOOP;
 	m_dwRePlayStart = dwLoopFrom;
@@ -371,7 +371,7 @@ bool CBofSound::PauseSounds() {
 
 
 bool CBofSound::pause() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	bool bSuccess = false;
 
@@ -414,7 +414,7 @@ bool CBofSound::ResumeSounds() {
 
 
 bool CBofSound::Resume() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	bool bSuccess = false;
 
@@ -480,7 +480,7 @@ void CBofSound::StopMidiSounds() {
 
 
 void CBofSound::stop() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// If this sound is currently playing
 	if (m_wFlags & SOUND_MIDI) {
@@ -491,8 +491,8 @@ void CBofSound::stop() {
 	}
 
 	if (m_bInQueue) {
-		Assert(m_iQSlot >= 0 && m_iQSlot < NUM_QUEUES);
-		m_cQueue[m_iQSlot]->DeleteItem(this);
+		assert(m_iQSlot >= 0 && m_iQSlot < NUM_QUEUES);
+		m_cQueue[m_iQSlot]->deleteItem(this);
 		m_bInQueue = false;
 	}
 
@@ -515,7 +515,7 @@ void CBofSound::ClearSounds() {
 		pSound = pNextSound;
 	}
 
-	Assert(m_pSoundChain == nullptr);
+	assert(m_pSoundChain == nullptr);
 }
 
 
@@ -654,7 +654,7 @@ bool CBofSound::HandleMessages() {
 
 
 
-bool CBofSound::Sleep(uint32 wait) {
+bool CBofSound::bofSleep(uint32 wait) {
 	uint32 goal = wait + g_system->getMillis();
 	while (goal > g_system->getMillis()) {
 		if (HandleMessages())
@@ -745,8 +745,8 @@ bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot, bool bW
 
 
 bool CBofSound::LoadSound() {
-	Assert(IsValidObject(this));
-	Assert(_szFileName[0] != '\0');
+	assert(isValidObject(this));
+	assert(_szFileName[0] != '\0');
 
 	// Assume failure
 	bool bSuccess = false;
@@ -772,7 +772,7 @@ bool CBofSound::LoadSound() {
 
 
 bool CBofSound::ReleaseSound() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (m_pFileBuf != nullptr) {
 		free(m_pFileBuf);
@@ -792,7 +792,7 @@ void CBofSound::SetDrivePath(const char *pszDrivePath) {
 }
 
 void CBofSound::GetDrivePath(char *pszDrivePath) {
-	Assert(pszDrivePath != nullptr);
+	assert(pszDrivePath != nullptr);
 
 	*pszDrivePath = '\0';
 	if (m_szDrivePath[0] != '\0') {
@@ -863,7 +863,7 @@ void CBofSound::AudioTask() {
 	static bool bAlready = false;
 
 	// Don't allow recursion here
-	Assert(!bAlready);
+	assert(!bAlready);
 
 	bAlready = true;
 
@@ -886,7 +886,7 @@ void CBofSound::AudioTask() {
 					// If this is a Queued sound, and has not already started
 					if (pSound->m_bInQueue && !pSound->m_bStarted) {
 						// And it is time to play
-						if ((CBofSound *)m_cQueue[pSound->m_iQSlot]->GetQItem() == pSound) {
+						if ((CBofSound *)m_cQueue[pSound->m_iQSlot]->getQItem() == pSound) {
 							pSound->PlayWAV();
 						}
 					}
@@ -910,7 +910,7 @@ void CBofSound::AudioTask() {
 }
 
 ErrorCode CBofSound::PlayWAV() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (!errorOccurred()) {
 		// If it's not yet loaded, then load it now
@@ -918,7 +918,7 @@ ErrorCode CBofSound::PlayWAV() {
 			LoadSound();
 		}
 
-		Assert(m_pFileBuf != nullptr);
+		assert(m_pFileBuf != nullptr);
 
 		if (m_pFileBuf != nullptr) {
 			if (m_bInQueue) {
@@ -944,7 +944,7 @@ ErrorCode CBofSound::PlayWAV() {
 
 
 ErrorCode CBofSound::FlushQueue(int nSlot) {
-	Assert(nSlot >= 0 && nSlot < NUM_QUEUES);
+	assert(nSlot >= 0 && nSlot < NUM_QUEUES);
 
 	// Assume no error
 	ErrorCode errCode = ERR_NONE;
@@ -973,8 +973,8 @@ ErrorCode CBofSound::FlushQueue(int nSlot) {
 
 void CBofSound::SetQVol(int nSlot, int nVol) {
 	// Validate input
-	Assert(nSlot >= 0 && nSlot < NUM_QUEUES);
-	Assert(nVol >= 0 && nVol <= VOLUME_INDEX_MAX);
+	assert(nSlot >= 0 && nSlot < NUM_QUEUES);
+	assert(nVol >= 0 && nVol <= VOLUME_INDEX_MAX);
 
 	m_nSlotVol[nSlot] = nVol;
 

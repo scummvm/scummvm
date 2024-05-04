@@ -61,7 +61,7 @@ CBofButton::CBofButton() {
 
 
 CBofButton::CBofButton(ST_COLORSCHEME *pColorScheme) {
-	Assert(pColorScheme != nullptr);
+	assert(pColorScheme != nullptr);
 
 	// Inits
 	_nState = BUTTON_UP;
@@ -71,12 +71,12 @@ CBofButton::CBofButton(ST_COLORSCHEME *pColorScheme) {
 
 
 CBofButton::~CBofButton() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 }
 
 
 ErrorCode CBofButton::paint(CBofRect *) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Only continue if this button is visible
 	if (isVisible() && (_parent != nullptr) && _parent->isVisible()) {
@@ -154,9 +154,9 @@ ErrorCode CBofButton::paint(CBofRect *) {
 
 
 void CBofButton::loadColorScheme(ST_COLORSCHEME *pColorScheme) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
-	Assert(pColorScheme != nullptr);
+	assert(pColorScheme != nullptr);
 
 	// Save all of the color info we need to build a button
 	_cFaceColor = pColorScheme->_cFace;
@@ -169,7 +169,7 @@ void CBofButton::loadColorScheme(ST_COLORSCHEME *pColorScheme) {
 
 
 void CBofButton::enable() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBofWindow::enable();
 
@@ -178,7 +178,7 @@ void CBofButton::enable() {
 
 
 void CBofButton::disable() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	setState(BUTTON_DISABLED);
 
@@ -187,8 +187,8 @@ void CBofButton::disable() {
 
 
 ErrorCode CBofButton::setState(int nNewState, bool bRepaintNow) {
-	Assert(IsValidObject(this));
-	Assert(nNewState >= BUTTON_UP && nNewState <= BUTTON_DISABLED);
+	assert(isValidObject(this));
+	assert(nNewState >= BUTTON_UP && nNewState <= BUTTON_DISABLED);
 
 	// Remember last button state
 	int nOldState = _nState;
@@ -201,7 +201,7 @@ ErrorCode CBofButton::setState(int nNewState, bool bRepaintNow) {
 	}
 
 	// I must have a valid parent
-	Assert(_parent != nullptr);
+	assert(_parent != nullptr);
 
 	// Tell parent the new state of this button
 	if (_parent != nullptr) {
@@ -213,17 +213,17 @@ ErrorCode CBofButton::setState(int nNewState, bool bRepaintNow) {
 
 
 void CBofButton::onPaint(CBofRect *pRect) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
-	Assert(pRect != nullptr);
+	assert(pRect != nullptr);
 
 	paint(pRect);
 }
 
 
 void CBofButton::onLButtonDown(uint32, CBofPoint *pPoint, void *) {
-	Assert(IsValidObject(this));
-	Assert(pPoint != nullptr);
+	assert(isValidObject(this));
+	assert(pPoint != nullptr);
 
 	if (!_bCaptured && _nState != BUTTON_DISABLED) {
 
@@ -235,8 +235,8 @@ void CBofButton::onLButtonDown(uint32, CBofPoint *pPoint, void *) {
 
 
 void CBofButton::onLButtonUp(uint32, CBofPoint *pPoint, void *) {
-	Assert(IsValidObject(this));
-	Assert(pPoint != nullptr);
+	assert(isValidObject(this));
+	assert(pPoint != nullptr);
 
 	if (_bCaptured) {
 		releaseCapture();
@@ -255,8 +255,8 @@ void CBofButton::onLButtonUp(uint32, CBofPoint *pPoint, void *) {
 
 
 void CBofRadioButton::onLButtonDown(uint32, CBofPoint *pPoint, void *) {
-	Assert(IsValidObject(this));
-	Assert(pPoint != nullptr);
+	assert(isValidObject(this));
+	assert(pPoint != nullptr);
 
 	if ((_nState != BUTTON_DISABLED) && (_nState == BUTTON_UP)) {
 
@@ -266,13 +266,13 @@ void CBofRadioButton::onLButtonDown(uint32, CBofPoint *pPoint, void *) {
 
 
 void CBofRadioButton::onLButtonUp(uint32, CBofPoint *pPoint, void *) {
-	Assert(IsValidObject(this));
-	Assert(pPoint != nullptr);
+	assert(isValidObject(this));
+	assert(pPoint != nullptr);
 }
 
 
 ErrorCode CBofRadioButton::paint(CBofRect *) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Only continue if this button is visible
 	if (isVisible() && (_parent != nullptr) && _parent->isVisible()) {
@@ -344,8 +344,8 @@ ErrorCode CBofRadioButton::paint(CBofRect *) {
 
 
 void CBofCheckButton::onLButtonDown(uint32, CBofPoint *pPoint, void *) {
-	Assert(IsValidObject(this));
-	Assert(pPoint != nullptr);
+	assert(isValidObject(this));
+	assert(pPoint != nullptr);
 
 	if (_nState != BUTTON_DISABLED) {
 
@@ -362,15 +362,15 @@ void CBofCheckButton::onLButtonDown(uint32, CBofPoint *pPoint, void *) {
 
 
 void CBofCheckButton::onLButtonUp(uint32, CBofPoint *pPoint, void *) {
-	Assert(IsValidObject(this));
-	Assert(pPoint != nullptr);
+	assert(isValidObject(this));
+	assert(pPoint != nullptr);
 
 	// Do nothing, and don't call the base class version of this function
 }
 
 
 ErrorCode CBofCheckButton::paint(CBofRect *) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Only continue if this button is visible
 	if (isVisible() && (_parent != nullptr) && _parent->isVisible()) {
@@ -430,7 +430,7 @@ ErrorCode CBofCheckButton::paint(CBofRect *) {
 
 
 ErrorCode CBofCheckButton::SetCheck(bool bChecked) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	setState(bChecked ? BUTTON_CHECKED : BUTTON_UNCHECKED, false);
 
@@ -479,13 +479,13 @@ CBofBmpButton::~CBofBmpButton() {
 
 
 ErrorCode CBofBmpButton::paint(CBofRect *) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// loadBitmaps must be called before the button can be painted
-	Assert(_pButtonUp != nullptr);
-	Assert(_pButtonDown != nullptr);
-	Assert(_pButtonFocus != nullptr);
-	Assert(_pButtonDisabled != nullptr);
+	assert(_pButtonUp != nullptr);
+	assert(_pButtonDown != nullptr);
+	assert(_pButtonFocus != nullptr);
+	assert(_pButtonDisabled != nullptr);
 
 	// Only continue if this button is visible
 	if (isVisible() && (_parent != nullptr) && _parent->isVisible()) {
@@ -534,10 +534,10 @@ ErrorCode CBofBmpButton::paint(CBofRect *) {
 
 
 ErrorCode CBofBmpButton::loadBitmaps(CBofBitmap *pUp, CBofBitmap *pDown, CBofBitmap *pFocus, CBofBitmap *pDisabled, int nMaskColor) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
-	Assert(pUp != nullptr);
-	Assert(pDown != nullptr);
+	assert(pUp != nullptr);
+	assert(pDown != nullptr);
 
 	// Use the bitmaps passed in
 	_pButtonUp = pUp;
@@ -553,13 +553,13 @@ ErrorCode CBofBmpButton::loadBitmaps(CBofBitmap *pUp, CBofBitmap *pDown, CBofBit
 
 
 ErrorCode CBofBmpButton::loadBitmaps(CBofPalette *pPalette, const char *pszUp, const char *pszDown, const char *pszFocus, const char *pszDisabled, int nMaskColor) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
-	Assert(pPalette != nullptr);
-	Assert(pszUp != nullptr);
-	Assert(pszDown != nullptr);
-	Assert(pszFocus != nullptr);
-	Assert(pszDisabled != nullptr);
+	assert(pPalette != nullptr);
+	assert(pszUp != nullptr);
+	assert(pszDown != nullptr);
+	assert(pszFocus != nullptr);
+	assert(pszDisabled != nullptr);
 
 	// Remember the button transparent color
 	_nMaskColor = nMaskColor;
@@ -583,8 +583,8 @@ ErrorCode CBofBmpButton::loadBitmaps(CBofPalette *pPalette, const char *pszUp, c
 
 
 ErrorCode CBofBmpButton::setState(int nNewState, bool bRepaintNow) {
-	Assert(IsValidObject(this));
-	Assert(nNewState >= BUTTON_UP && nNewState <= BUTTON_DISABLED);
+	assert(isValidObject(this));
+	assert(nNewState >= BUTTON_UP && nNewState <= BUTTON_DISABLED);
 
 	// Remember last button state
 	int nOldState = _nState;
@@ -597,7 +597,7 @@ ErrorCode CBofBmpButton::setState(int nNewState, bool bRepaintNow) {
 	}
 
 	// I MUST have a valid parent
-	Assert(_parent != nullptr);
+	assert(_parent != nullptr);
 
 	// Tell parent the new state of this button
 	if (_parent != nullptr) {
@@ -609,17 +609,17 @@ ErrorCode CBofBmpButton::setState(int nNewState, bool bRepaintNow) {
 
 
 void CBofBmpButton::onPaint(CBofRect *pRect) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
-	Assert(pRect != nullptr);
+	assert(pRect != nullptr);
 
 	paint(pRect);
 }
 
 
 void CBofBmpButton::onLButtonDown(uint32, CBofPoint *pPoint, void *) {
-	Assert(IsValidObject(this));
-	Assert(pPoint != nullptr);
+	assert(isValidObject(this));
+	assert(pPoint != nullptr);
 
 	if (!_bCaptured && _nState != BUTTON_DISABLED) {
 		setCapture();
@@ -630,8 +630,8 @@ void CBofBmpButton::onLButtonDown(uint32, CBofPoint *pPoint, void *) {
 
 
 void CBofBmpButton::onLButtonUp(uint32, CBofPoint *pPoint, void *) {
-	Assert(IsValidObject(this));
-	Assert(pPoint != nullptr);
+	assert(isValidObject(this));
+	assert(pPoint != nullptr);
 
 	if (_bCaptured) {
 		releaseCapture();

@@ -41,16 +41,16 @@ public:
 	static void initialize();
 
 	ErrorCode setBackground(CBofBitmap * /*pBmp*/) {
-		Assert(false);
+		assert(false);
 		return ERR_NONE;
 	}
 	CBofBitmap *getBackground() {
-		Assert(false);
+		assert(false);
 		return nullptr;
 	}
 
-	bool AddItem(CBagObject *pObj, void *(*func)(int, void *), void *info);
-	bool DeleteItem(const CBofString &sLabel);
+	bool addItem(CBagObject *pObj, void *(*func)(int, void *), void *info);
+	bool deleteItem(const CBofString &sLabel);
 
 	bool IsChecked(const CBofString &sLabel, const CBofString &sSubLabel = CBofString());
 	bool IsChecked(int nRefId);

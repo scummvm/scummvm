@@ -90,7 +90,7 @@ CBagCursor::CBagCursor(CBofBitmap *bmp) {
 }
 
 CBagCursor::CBagCursor(const char *fileName, bool sharedPalFl) {
-	Assert(fileName != nullptr);
+	assert(fileName != nullptr);
 
 	_bitmap = nullptr;
 	_x = 0;
@@ -103,14 +103,14 @@ CBagCursor::CBagCursor(const char *fileName, bool sharedPalFl) {
 }
 
 CBagCursor::~CBagCursor() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	unLoad();
 }
 
 ErrorCode CBagCursor::load(CBofBitmap *bmp) {
-	Assert(IsValidObject(this));
-	Assert(bmp != nullptr);
+	assert(isValidObject(this));
+	assert(bmp != nullptr);
 
 	unLoad();
 
@@ -120,8 +120,8 @@ ErrorCode CBagCursor::load(CBofBitmap *bmp) {
 }
 
 ErrorCode CBagCursor::load(const char *fileName, CBofPalette *pal) {
-	Assert(IsValidObject(this));
-	Assert(fileName != nullptr);
+	assert(isValidObject(this));
+	assert(fileName != nullptr);
 
 	unLoad();
 
@@ -131,7 +131,7 @@ ErrorCode CBagCursor::load(const char *fileName, CBofPalette *pal) {
 }
 
 void CBagCursor::unLoad() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	delete _bitmap;
 	_bitmap = nullptr;

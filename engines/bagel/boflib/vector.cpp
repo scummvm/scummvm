@@ -45,14 +45,14 @@ CVector::CVector(double xx, double yy, double zz) {
 
 double CVector::Length() {
 	// Make sure this object is not used after it is destructed
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	return sqrt(x * x + y * y);
 }
 
 double CVector::AngleBetween(const Vector &vector) {
 	// Make sure this object is not used after it is destructed
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CVector vTmp(vector);
 
@@ -72,14 +72,14 @@ double CVector::AngleBetween(const Vector &vector) {
 
 double CVector::DotProduct(const Vector &vector) {
 	// Make sure this object is not used after it is destructed
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	return (this->x * vector.x) + (this->y * vector.y);
 }
 
 void CVector::Rotate(double angle) {
 	// Make sure this object is not used after it is destructed
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Get the sine and cosine of the angle
 	double co = cos(angle);
@@ -94,7 +94,7 @@ void CVector::Rotate(double angle) {
 
 double CVector::RealAngle(const Vector &vector) {
 	// Make sure this object is not used after it is destructed
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CVector vTmp = *this;
 	double angle = vTmp.AngleBetween(vector);
@@ -113,7 +113,7 @@ double CVector::RealAngle(const Vector &vector) {
 
 CVector CVector::operator+(Vector vector) {
 	// Make sure this object is not used after it is destructed
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CVector vSum(this->x + vector.x, this->y + vector.y, this->z + vector.z);
 
@@ -122,7 +122,7 @@ CVector CVector::operator+(Vector vector) {
 
 CVector CVector::operator+(double offset) {
 	// Make sure this object is not used after it is destructed
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CVector vSum(this->x + offset, this->y + offset, this->z + offset);
 
@@ -131,7 +131,7 @@ CVector CVector::operator+(double offset) {
 
 CVector CVector::operator-(Vector vector) {
 	// Make sure this object is not used after it is destructed
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CVector vDif(this->x - vector.x, this->y - vector.y, this->z - vector.z);
 
@@ -140,7 +140,7 @@ CVector CVector::operator-(Vector vector) {
 
 CVector CVector::operator-(double offset) {
 	// Make sure this object is not used after it is destructed
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CVector vDif(this->x - offset, this->y - offset, this->z - offset);
 
@@ -149,7 +149,7 @@ CVector CVector::operator-(double offset) {
 
 void CVector::operator+=(Vector vector) {
 	// Make sure this object is not used after it is destructed
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	this->x += vector.x;
 	this->y += vector.y;
@@ -158,7 +158,7 @@ void CVector::operator+=(Vector vector) {
 
 void CVector::operator-=(Vector vector) {
 	// Make sure this object is not used after it is destructed
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	this->x -= vector.x;
 	this->y -= vector.y;
@@ -167,7 +167,7 @@ void CVector::operator-=(Vector vector) {
 
 CVector CVector::operator*(double scalar) {
 	// Make sure this object is not used after it is destructed
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CVector vProduct(this->x * scalar, this->y * scalar, this->z * scalar);
 
@@ -176,10 +176,10 @@ CVector CVector::operator*(double scalar) {
 
 CVector CVector::operator/(double scalar) {
 	// Make sure this object is not used after it is destructed
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Can't divide by 0
-	Assert(scalar != (double)0.0);
+	assert(scalar != (double)0.0);
 
 	CVector vDividend;
 
@@ -194,7 +194,7 @@ CVector CVector::operator/(double scalar) {
 
 void CVector::operator*=(double scalar) {
 	// Make sure this object is not used after it is destructed
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	this->x *= scalar;
 	this->y *= scalar;
@@ -203,10 +203,10 @@ void CVector::operator*=(double scalar) {
 
 void CVector::operator/=(double scalar) {
 	// Make sure this object is not used after it is destructed
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// can't divide by 0
-	Assert(scalar != (double)0.0);
+	assert(scalar != (double)0.0);
 
 	if (scalar != (double)0.0) {
 		this->x /= scalar;
@@ -217,7 +217,7 @@ void CVector::operator/=(double scalar) {
 
 bool CVector::operator==(Vector v) {
 	// Make sure this object is not used after it is destructed
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	bool bReturn = false;
 

@@ -51,7 +51,7 @@ ErrorCode CBagSpriteObject::attach() {
 	// If it's not already attached
 	if (!isAttached()) {
 		// Could not already have a sprite
-		Assert(m_xSprite == nullptr);
+		assert(m_xSprite == nullptr);
 
 		if ((m_xSprite = new CBofSprite()) != nullptr) {
 			if (m_xSprite->loadSprite(getFileName(), GetCels()) != false && (m_xSprite->width() != 0) && (m_xSprite->height() != 0)) {
@@ -218,7 +218,7 @@ ErrorCode CBagSpriteObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*
 		int nFrameInterval = getFrameRate();
 
 		if (nFrameInterval != 0) {
-			uint32 nCurTime = GetTimer();
+			uint32 nCurTime = getTimer();
 			if (nCurTime > m_nLastUpdate + nFrameInterval) {
 				m_xSprite->setBlockAdvance(false);
 				m_nLastUpdate = nCurTime;

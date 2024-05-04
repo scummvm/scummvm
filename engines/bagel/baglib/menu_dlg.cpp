@@ -492,7 +492,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 	return bReturn;
 }
 
-bool CBagMenu::AddItem(CBagObject *pObj, void *( * /*func*/)(int, void *), void * /*info*/) {
+bool CBagMenu::addItem(CBagObject *pObj, void *( * /*func*/)(int, void *), void * /*info*/) {
 	pObj->setPosition(CBofPoint(0, m_nY));
 
 	m_nY = (int16)(m_nY + (int16)(pObj->getRect().height() + 1));
@@ -501,7 +501,7 @@ bool CBagMenu::AddItem(CBagObject *pObj, void *( * /*func*/)(int, void *), void 
 	return true;
 }
 
-bool CBagMenu::DeleteItem(const CBofString & /*sLabel*/) {
+bool CBagMenu::deleteItem(const CBofString & /*sLabel*/) {
 	return false;
 }
 
@@ -567,7 +567,7 @@ CBagMenuDlg::CBagMenuDlg() {
 }
 
 CBagMenuDlg::~CBagMenuDlg() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 }
 
 ErrorCode CBagMenuDlg::create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRect *pRect, uint32 /*nStyle*/) {
@@ -590,7 +590,7 @@ ErrorCode CBagMenuDlg::create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRec
 	CBofBitmap *pBmp = new CBofBitmap(r.width(), r.height(), pPal);
 	if (pBmp != nullptr) {
 		r.OffsetRect(-r.left, -r.top);
-		Assert(pPal != nullptr);
+		assert(pPal != nullptr);
 		pBmp->fillRect(&r, pPal->getNearestIndex(RGB(82, 82, 82)) /*RGB(0,0,0)*/);
 		pBmp->drawRect(&r, pPal->getNearestIndex(RGB(0, 0, 0)) /*RGB(0,0,0)*/);
 		setBackdrop(pBmp);
@@ -648,7 +648,7 @@ void CBagMenuDlg::onMouseMove(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 }
 
 void CBagMenuDlg::onTimer(uint32 nID) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	switch (nID) {
 	// Auto close for text-Captions
@@ -670,7 +670,7 @@ void CBagMenuDlg::onTimer(uint32 nID) {
 }
 
 void CBagMenuDlg::onPaint(CBofRect *pRect) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBagStorageDevDlg::onPaint(pRect);
 
@@ -679,7 +679,7 @@ void CBagMenuDlg::onPaint(CBofRect *pRect) {
 }
 
 void CBagMenuDlg::onDeActivate() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	close();
 }

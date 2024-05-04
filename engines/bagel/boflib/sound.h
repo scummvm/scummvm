@@ -172,7 +172,7 @@ public:
 	static void WaitWaveSounds();
 	static void WaitMidiSounds();
 	static bool HandleMessages();
-	static bool Sleep(uint32 dwTime);
+	static bool bofSleep(uint32 dwTime);
 	static void AudioTask();
 	static bool SoundsPlaying();
 

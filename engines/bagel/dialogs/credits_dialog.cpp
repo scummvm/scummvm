@@ -82,7 +82,7 @@ CBagCreditsDialog::CBagCreditsDialog() {
 }
 
 void CBagCreditsDialog::onInitDialog() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Hide cursor for credit screens
 	CursorMan.showMouse(false);
@@ -96,7 +96,7 @@ void CBagCreditsDialog::onInitDialog() {
 	// Start at 1st credit screen
 	_iScreen = 0;
 
-	Assert(_pBackdrop != nullptr);
+	assert(_pBackdrop != nullptr);
 	pPal = _pBackdrop->getPalette();
 	selectPalette(pPal);
 	g_b1 = true;
@@ -106,10 +106,10 @@ void CBagCreditsDialog::onInitDialog() {
 }
 
 ErrorCode CBagCreditsDialog::loadNextTextFile() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Our credits text must exist
-	Assert(fileExists(buildSysDir(g_cScreen[_iScreen]._pszTextFile)));
+	assert(fileExists(buildSysDir(g_cScreen[_iScreen]._pszTextFile)));
 
 	CBofRect cRect;
 	cRect.left = g_cScreen[_iScreen]._nLeft;
@@ -143,7 +143,7 @@ ErrorCode CBagCreditsDialog::loadNextTextFile() {
 
 	// Get rid of any previous credits screen
 	if (_pszText != nullptr) {
-		BofFree(_pszText);
+		bofFree(_pszText);
 		_pszText = nullptr;
 	}
 
@@ -154,7 +154,7 @@ ErrorCode CBagCreditsDialog::loadNextTextFile() {
 
 		// Read in text file
 		lSize = cFile.getLength();
-		if ((_pszText = (char *)BofCAlloc(lSize + 1, 1)) != nullptr) {
+		if ((_pszText = (char *)bofCAlloc(lSize + 1, 1)) != nullptr) {
 
 			cFile.read(_pszText, lSize);
 
@@ -183,7 +183,7 @@ ErrorCode CBagCreditsDialog::loadNextTextFile() {
 }
 
 int CBagCreditsDialog::linesPerPage() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	int n;
 	n = (g_cScreen[_iScreen]._nBottom - g_cScreen[_iScreen]._nTop) / (LINE_HEIGHT + 2) + 1;
@@ -192,7 +192,7 @@ int CBagCreditsDialog::linesPerPage() {
 }
 
 void CBagCreditsDialog::onClose() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (_pCreditsBmp != nullptr) {
 		delete _pCreditsBmp;
@@ -204,7 +204,7 @@ void CBagCreditsDialog::onClose() {
 	}
 
 	if (_pszText != nullptr) {
-		BofFree(_pszText);
+		bofFree(_pszText);
 		_pszText = nullptr;
 	}
 
@@ -223,7 +223,7 @@ void CBagCreditsDialog::onClose() {
 }
 
 void CBagCreditsDialog::onPaint(CBofRect *pRect) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	paintBackdrop(pRect);
 
@@ -231,19 +231,19 @@ void CBagCreditsDialog::onPaint(CBofRect *pRect) {
 }
 
 void CBagCreditsDialog::onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	nextScreen();
 }
 
 void CBagCreditsDialog::onKeyHit(uint32 /*lKey*/, uint32 /*nRepCount*/) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	nextScreen();
 }
 
 void CBagCreditsDialog::onMainLoop() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// If it's OK to show the credits
 	if (_bDisplay) {
@@ -253,20 +253,20 @@ void CBagCreditsDialog::onMainLoop() {
 	// Check again...could have changed in displayCredits()
 	if (_bDisplay) {
 		// Control the scroll rate
-		Assert(_iScreen >= 0 && _iScreen < NUM_SCREENS);
-		Sleep(g_cScreen[_iScreen]._nScrollRate);
+		assert(_iScreen >= 0 && _iScreen < NUM_SCREENS);
+		bofSleep(g_cScreen[_iScreen]._nScrollRate);
 	}
 }
 
 ErrorCode CBagCreditsDialog::displayCredits() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (_nNumPixels < (_nLines + linesPerPage() + 1) * LINE_HEIGHT) {
-		Assert(_pCreditsBmp != nullptr);
+		assert(_pCreditsBmp != nullptr);
 
 		if (_pCreditsBmp != nullptr) {
-			Assert(_pBackdrop != nullptr);
-			Assert(_pSaveBmp != nullptr);
+			assert(_pBackdrop != nullptr);
+			assert(_pSaveBmp != nullptr);
 
 			_pSaveBmp->paint(_pBackdrop, g_cScreen[_iScreen]._nLeft, g_cScreen[_iScreen]._nTop);
 			CBofRect cRect;
@@ -310,7 +310,7 @@ ErrorCode CBagCreditsDialog::displayCredits() {
 }
 
 ErrorCode CBagCreditsDialog::nextScreen() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (++_iScreen < NUM_SCREENS) {
 		CBofBitmap *pBmp;
@@ -334,10 +334,10 @@ ErrorCode CBagCreditsDialog::nextScreen() {
 }
 
 ErrorCode CBagCreditsDialog::paintLine(int nLine, char *pszText) {
-	Assert(IsValidObject(this));
-	Assert(pszText != nullptr);
-	Assert(nLine >= 0 && nLine <= linesPerPage());
-	Assert(_pCreditsBmp != nullptr);
+	assert(isValidObject(this));
+	assert(pszText != nullptr);
+	assert(nLine >= 0 && nLine <= linesPerPage());
+	assert(_pCreditsBmp != nullptr);
 
 	CBofRect cRect;
 
@@ -353,9 +353,9 @@ ErrorCode CBagCreditsDialog::paintLine(int nLine, char *pszText) {
 }
 
 void CBagCreditsDialog::nextLine() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
-	Assert(_pszNextLine != nullptr);
+	assert(_pszNextLine != nullptr);
 
 	if ((_pszNextLine != nullptr) && (_pszNextLine < _pszEnd)) {
 		while (*_pszNextLine != '\0') {
@@ -366,7 +366,7 @@ void CBagCreditsDialog::nextLine() {
 			_pszNextLine++;
 		}
 
-		Assert(_pszNextLine <= _pszEnd);
+		assert(_pszNextLine <= _pszEnd);
 	}
 }
 

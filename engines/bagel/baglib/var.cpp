@@ -68,7 +68,7 @@ CBagVar::~CBagVar() {
 }
 
 void CBagVar::SetValue(const CBofString &s) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (!s.isEmpty()) {
 		char c = s[0];
@@ -79,7 +79,7 @@ void CBagVar::SetValue(const CBofString &s) {
 }
 
 const CBofString &CBagVar::GetValue() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// WORKAROUND: If you finish the Deven7 flashback without having previously
 	// asked him about betting, it hangs him. Work around this by force setting
@@ -111,7 +111,7 @@ const CBofString &CBagVar::GetValue() {
 }
 
 void CBagVar::SetBoolValue(bool bVal) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (bVal)
 		m_sVarValue = "TRUE";
@@ -120,7 +120,7 @@ void CBagVar::SetBoolValue(bool bVal) {
 }
 
 void CBagVar::SetValue(int nVal) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	SetNumeric();
 
@@ -129,7 +129,7 @@ void CBagVar::SetValue(int nVal) {
 }
 
 int CBagVar::GetNumValue() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (IsRandom())
 		return g_engine->getRandomNumber();
@@ -138,14 +138,14 @@ int CBagVar::GetNumValue() {
 }
 
 void CBagVar::Increment() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (IsNumeric())
 		SetValue(GetNumValue() + 1);
 }
 
 PARSE_CODES CBagVar::setInfo(CBagIfstream &istr) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	char szLocalStr[256];
 	szLocalStr[0] = 0;

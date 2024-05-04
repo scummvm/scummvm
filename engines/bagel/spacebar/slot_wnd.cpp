@@ -129,14 +129,14 @@ SBarSlotWnd::SBarSlotWnd() : CBagStorageDevWnd() {
 
 
 void SBarSlotWnd::onPaint(CBofRect *pRect) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (!errorOccurred()) {
 		CBofBitmap *pBackBmp;
 
 		//Paint the storage device
 		if ((pBackBmp = getBackdrop()) != nullptr) {
-			Assert(GetWorkBmp() != nullptr);
+			assert(GetWorkBmp() != nullptr);
 
 			// Erase everything from the background
 			GetWorkBmp()->paint(pBackBmp, pRect, pRect);
@@ -183,7 +183,7 @@ ErrorCode  SBarSlotWnd::attach() {
 
 	if (CBagStorageDevWnd::attach() == ERR_NONE) {
 		// Must have a valid backdrop by now
-		Assert(_pBackdrop != nullptr);
+		assert(_pBackdrop != nullptr);
 		CBofPalette *pPal = _pBackdrop->getPalette();
 
 		_bFixBmp = new CBofBitmap(BuildSlotDir(FIXBMP));
@@ -251,7 +251,7 @@ ErrorCode  SBarSlotWnd::attach() {
 		// Setup the Bet text fields
 		//
 		// Make sure that we don't already have one
-		Assert(_pBetText == nullptr);
+		assert(_pBetText == nullptr);
 
 		_pBetText = new CBofText;
 		if (_pBetText != nullptr) {
@@ -269,7 +269,7 @@ ErrorCode  SBarSlotWnd::attach() {
 		// Setup the Odds text fields
 		//
 		// Make sure that we don't already have one
-		Assert(_pOddsText == nullptr);
+		assert(_pOddsText == nullptr);
 
 		_pOddsText = new CBofText;
 		if (_pOddsText != nullptr) {
@@ -487,7 +487,7 @@ void SBarSlotWnd::go() {
 	g_bFix = false;
 
 	if (_bFixBet && _nBet != 0) {
-		Sleep(3000);
+		bofSleep(3000);
 		_pSlotButs[GO]->show();
 		_pSlotButs[GO]->paint();
 	}
@@ -669,7 +669,7 @@ void SBarSlotWnd::setPayOff(int nPay1, int nPay2) {
 }
 
 void SBarSlotWnd::slideSlots() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (!errorOccurred()) {
 		int nIncrement = 30;	// Number of pixels to move
@@ -689,7 +689,7 @@ void SBarSlotWnd::slideSlots() {
 		CBofRect DestRect = _cSlots[0]._cSlotRect;
 
 		for (int i = 1; SrcRect.left > BmpRect.left; i++) {
-			Sleep(30);
+			bofSleep(30);
 
 			SrcRect.left = SrcRect.right - (i * nIncrement);
 
@@ -711,7 +711,7 @@ void SBarSlotWnd::slideSlots() {
 		DestRect = _cSlots[1]._cSlotRect;
 
 		for (int i = 1; SrcRect.top > BmpRect.top; i++) {
-			Sleep(30);
+			bofSleep(30);
 
 			SrcRect.top = SrcRect.bottom - (i * nIncrement);
 
@@ -733,7 +733,7 @@ void SBarSlotWnd::slideSlots() {
 		DestRect = _cSlots[2]._cSlotRect;
 
 		for (int i = 1; SrcRect.right < BmpRect.right; i++) {
-			Sleep(30);
+			bofSleep(30);
 
 			SrcRect.right = SrcRect.left + (i * nIncrement);
 
@@ -754,7 +754,7 @@ void SBarSlotWnd::slideSlots() {
 		DestRect = _cSlots[3]._cSlotRect;
 
 		for (int i = 1; SrcRect.bottom < BmpRect.bottom; i++) {
-			Sleep(30);
+			bofSleep(30);
 
 			SrcRect.bottom = SrcRect.top + (i * nIncrement);
 
@@ -771,7 +771,7 @@ void SBarSlotWnd::slideSlots() {
 }
 
 void SBarSlotWnd::updateText() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 	if (errorOccurred())
 		return;
 
@@ -822,8 +822,8 @@ void SBarSlotWnd::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 }
 
 void SBarSlotWnd::onBofButton(CBofObject *pObject, int nState) {
-	Assert(IsValidObject(this));
-	Assert(pObject != nullptr);
+	assert(isValidObject(this));
+	assert(pObject != nullptr);
 
 	if (nState != BUTTON_CLICKED)
 		return;
@@ -904,7 +904,7 @@ void SBarSlotWnd::onBofButton(CBofObject *pObject, int nState) {
 
 
 const char *BuildSlotDir(const char *pszFile) {
-	Assert(pszFile != nullptr);
+	assert(pszFile != nullptr);
 
 	static char szBuf[MAX_DIRPATH];
 

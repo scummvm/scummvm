@@ -37,15 +37,15 @@ namespace Bagel {
 class COption : public CLList, public CBofObject {
 public:
 	COption(const char *pszInit = nullptr) {
-		m_szBuf[0] = '\0';
+		_szBuf[0] = '\0';
 
 		if (pszInit != nullptr) {
-			Assert(strlen(pszInit) < MAX_OPTION_LEN);
-			Common::strcpy_s(m_szBuf, pszInit);
+			assert(strlen(pszInit) < MAX_OPTION_LEN);
+			Common::strcpy_s(_szBuf, pszInit);
 		}
 	}
 
-	char m_szBuf[MAX_OPTION_LEN];
+	char _szBuf[MAX_OPTION_LEN];
 };
 
 class CBofOptions : public CBofObject { // CCache
@@ -55,7 +55,7 @@ private:
 	 * @param pszSection    INI section
 	 * @return              Pointer to option where this section starts
 	 */
-	COption *FindSection(const char *pszSection);
+	COption *findSection(const char *pszSection);
 
 	/**
 	 * Finds the variable (option) in specified section
@@ -63,7 +63,7 @@ private:
 	 * @param pszVar        Variable name for this option
 	 * @return              Pointer to option containing this variable
 	 */
-	COption *FindOption(const char *pszSection, const char *pszVar);
+	COption *findOption(const char *pszSection, const char *pszVar);
 
 	/**
 	 * Reads one line of text from specified file
@@ -74,8 +74,8 @@ private:
 
 protected:
 	char _szFileName[MAX_FNAME];
-	COption *m_pOptionList;
-	bool m_bDirty;
+	COption *_pOptionList;
+	bool _bDirty;
 
 public:
 	/**
@@ -102,7 +102,7 @@ public:
 	 * @param pszFile   Name of .INI file to load
 	 * @return          Error return code
 	**/
-	ErrorCode LoadOptionFile(const char *pszFile);
+	ErrorCode loadOptionFile(const char *pszFile);
 
 	const char *getFileName() const {
 		return ((const char *)_szFileName);
@@ -115,7 +115,7 @@ public:
 	 * @param pszValue          New value
 	 * @return                  Error return code
 	 */
-	ErrorCode WriteSetting(const char *pszSection, const char *pszOption, const char *pszValue);
+	ErrorCode writeSetting(const char *pszSection, const char *pszOption, const char *pszValue);
 
 	/**
 	 * Adds or modifies 1 option in list
@@ -124,7 +124,7 @@ public:
 	 * @param pszValue          New value
 	 * @return                  Error return code
 	 */
-	ErrorCode WriteSetting(const char *pszSection, const char *pszOption, int nValue);
+	ErrorCode writeSetting(const char *pszSection, const char *pszOption, int nValue);
 
 	/**
 	 * Reads value for the specified option
@@ -161,7 +161,7 @@ public:
 	 * Loads current .INI options file
 	 * @return          Error return code
 	 */
-	ErrorCode Load();
+	ErrorCode load();
 
 	/**
 	 * Updates and Releases current option list

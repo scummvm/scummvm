@@ -187,8 +187,8 @@ ErrorCode CBagPanWindow::RunModal(CBagObject *pObj) {
 }
 
 ErrorCode CBagPanWindow::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
-	Assert(IsValidObject(this));
-	Assert(pBmp != nullptr);
+	assert(isValidObject(this));
+	assert(pBmp != nullptr);
 
 	if (m_pSlideBitmap != nullptr) {
 		m_pSlideBitmap->UpdateView();
@@ -282,7 +282,7 @@ ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 	ErrorCode errCode = ERR_NONE;
 
 	// can't use a null pointer
-	Assert(pBmp != nullptr);
+	assert(pBmp != nullptr);
 
 	int nCount = list->getCount();
 	if (nCount != 0) {
@@ -372,7 +372,7 @@ void CBagPanWindow::DeleteFGObjects() {
 
 ErrorCode CBagPanWindow::InsertFGObjects(CBagObject *pBmp) {
 	// Can't use a nullptr pointer
-	Assert(pBmp != nullptr);
+	assert(pBmp != nullptr);
 
 	m_pFGObjectList->addToTail(pBmp);
 
@@ -415,7 +415,7 @@ void CBagPanWindow::disable() {
 }
 
 ErrorCode CBagPanWindow::onCursorUpdate(int nCurrObj) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 	CBagObject *pObj;
 
 	if ((nCurrObj >= 0) && ((pObj = GetObjectByPos(nCurrObj)) != nullptr)) {
@@ -429,7 +429,7 @@ ErrorCode CBagPanWindow::onCursorUpdate(int nCurrObj) {
 }
 
 void CBagPanWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (m_pSlideBitmap != nullptr) {
 		switch (lKey) {
@@ -479,8 +479,8 @@ void CBagPanWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 }
 
 void CBagPanWindow::onMouseMove(uint32 nFlags, CBofPoint *p, void *) {
-	Assert(IsValidObject(this));
-	Assert(p != nullptr);
+	assert(isValidObject(this));
+	assert(p != nullptr);
 
 	CBofPoint xPoint = *p;
 
@@ -727,7 +727,7 @@ void CBagPanWindow::FlushInputEvents() {
 #define HALF_PAN_WIDTH   (PAN_WIDTH/2)
 
 uint32 CBagPanWindow::RotateTo(CBofPoint xPoint, int nRate) {
-	Assert(nRate > 0);
+	assert(nRate > 0);
 
 	if (m_pSlideBitmap && (xPoint.x != -1) && (xPoint.y != -1)) {
 		CBofRect r = m_pSlideBitmap->GetCurrView();
@@ -775,7 +775,7 @@ uint32 CBagPanWindow::Benchmark() {
 	m_pSlideBitmap->SetRotateRate(CBofPoint(8, 0));
 	m_pSlideBitmap->SetDirection(CBagPanBitmap::kDirLEFT);
 
-	TimerStart();
+	timerStart();
 	for (int i = 0; i < 50; i++)
 		PaintScreen();
 	uint32 dTime = timerStop();

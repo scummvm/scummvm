@@ -295,7 +295,7 @@ bool SBBasePda::msgLight() {
 }
 
 void *SBBasePda::pdaButtonHandler(int refId, void *info) {
-	Assert(info != nullptr);
+	assert(info != nullptr);
 
 	SBBasePda *curPda = (SBBasePda *)info;
 
@@ -499,7 +499,7 @@ int SBBasePda::getProperCursor(const CBofPoint &pos, CBofRect &pdaRect) {
 	case INVMODE:
 	case LOGMODE:
 		// Make sure our cur display is synchronized.
-		Assert(_pdaMode == INVMODE ? _curDisplay == _invWnd : _curDisplay == _logWnd);
+		assert(_pdaMode == INVMODE ? _curDisplay == _invWnd : _curDisplay == _logWnd);
 
 		// If we have a display, then parouse its list and see if we're over something worth
 		// mousedowning on.

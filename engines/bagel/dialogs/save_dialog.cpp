@@ -97,7 +97,7 @@ CBagSaveDialog::CBagSaveDialog() {
 }
 
 ErrorCode CBagSaveDialog::attach() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Save off the current game's palette
 	_pSavePalette = CBofApp::getApp()->getPalette();
@@ -118,7 +118,7 @@ ErrorCode CBagSaveDialog::attach() {
 
 	// Build all our buttons
 	for (int i = 0; i < NUM_BUTTONS; i++) {
-		Assert(_pButtons[i] == nullptr);
+		assert(_pButtons[i] == nullptr);
 
 		if ((_pButtons[i] = new CBofBmpButton) != nullptr) {
 			CBofBitmap *pUp, *pDown, *pFocus, *pDis;
@@ -139,7 +139,7 @@ ErrorCode CBagSaveDialog::attach() {
 	}
 
 	// The edit text control must not be currently allocated
-	Assert(_pEditText == nullptr);
+	assert(_pEditText == nullptr);
 
 	if ((_pEditText = new CBofEditText("", EDIT_X, EDIT_Y, EDIT_DX, EDIT_DY, this)) != nullptr) {
 		_pEditText->setText("");
@@ -157,7 +157,7 @@ ErrorCode CBagSaveDialog::attach() {
 	}
 
 	// The list box must not be currently allocated
-	Assert(_pListBox == nullptr);
+	assert(_pListBox == nullptr);
 
 	// Create a list box for the user to choose the slot to save into
 	if ((_pListBox = new CBofListBox()) != nullptr) {
@@ -227,7 +227,7 @@ ErrorCode CBagSaveDialog::attach() {
 }
 
 ErrorCode CBagSaveDialog::detach() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBagCursor::hideSystemCursor();
 
@@ -263,7 +263,7 @@ ErrorCode CBagSaveDialog::detach() {
 }
 
 void CBagSaveDialog::onPaint(CBofRect *pRect) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	paintBackdrop(pRect);
 
@@ -275,11 +275,11 @@ void CBagSaveDialog::onPaint(CBofRect *pRect) {
 }
 
 void CBagSaveDialog::saveAndClose() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// We should not be able to access the save button if we
 	// have not yet chosen a slot to save into.
-	Assert(_nSelectedItem != -1);
+	assert(_nSelectedItem != -1);
 	if (_nSelectedItem != -1) {
 		logInfo(buildString("Saving into slot #%d", _nSelectedItem));
 
@@ -296,7 +296,7 @@ void CBagSaveDialog::saveAndClose() {
 
 
 void CBagSaveDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	switch (lKey) {
 	case BKEY_UP:
@@ -342,8 +342,8 @@ void CBagSaveDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 
 
 void CBagSaveDialog::onBofButton(CBofObject *pObject, int nFlags) {
-	Assert(IsValidObject(this));
-	Assert(pObject != nullptr);
+	assert(isValidObject(this));
+	assert(pObject != nullptr);
 
 	if (nFlags != BUTTON_CLICKED)
 		return;
@@ -395,7 +395,7 @@ void CBagSaveDialog::onBofButton(CBofObject *pObject, int nFlags) {
 
 
 void CBagSaveDialog::onBofListBox(CBofObject * /*pObject*/, int nItemIndex) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Reset the focus away from the text field if set
 	releaseFocus();
@@ -420,7 +420,7 @@ void CBagSaveDialog::onBofListBox(CBofObject * /*pObject*/, int nItemIndex) {
 }
 
 void CBagSaveDialog::onInitDialog() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBofDialog::onInitDialog();
 	attach();

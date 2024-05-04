@@ -66,7 +66,7 @@ int CBagIfstream::get(char *buffer, int count, char delimiter) {
 		}
 		memcpy(buffer, _currPtr, count);
 		_currPtr += count;
-		Assert(_currPtr <= _eof);
+		assert(_currPtr <= _eof);
 
 		return _currPtr == _eof ? -1 : 0;
 	}

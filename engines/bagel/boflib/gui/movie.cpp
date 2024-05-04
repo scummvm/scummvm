@@ -66,7 +66,7 @@ ErrorCode CBofMovie::initialize(CBofWindow *pParent) {
 
 bool CBofMovie::open(const char *sFilename, CBofRect *pBounds) {
 	if (sFilename == nullptr) {
-		Assert(sFilename);
+		assert(sFilename);
 		return false;
 	}
 
@@ -89,7 +89,7 @@ bool CBofMovie::open(const char *sFilename, CBofRect *pBounds) {
 }
 
 bool CBofMovie::openMovie(const char *sFilename) {
-	Assert(sFilename[0] != '\0');
+	assert(sFilename[0] != '\0');
 
 	if (_pSmk) {
 		closeMovie();
@@ -369,8 +369,8 @@ void CBofMovie::onButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/) {
 
 
 ErrorCode bofPlayMovie(CBofWindow *pParent, const char *pszMovieFile, CBofRect *pRect) {
-	Assert(pParent != nullptr);
-	Assert(pszMovieFile != nullptr);
+	assert(pParent != nullptr);
+	assert(pszMovieFile != nullptr);
 
 	CBofMovie cMovie(pParent, pszMovieFile, pRect);
 	if (!cMovie.errorOccurred()) {

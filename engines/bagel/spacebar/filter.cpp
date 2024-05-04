@@ -455,7 +455,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		} else if (g_pDChipID->GetNumValue() == 3) {
 			CBofRect txtRect(g_engine->viewRect);
 			uint32 lDiff;
-			uint32 timer = GetTimer();
+			uint32 timer = getTimer();
 
 			if (waitCount == 0)
 				waitCount = timer;
@@ -561,9 +561,9 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			}
 
 			if (waitCount == 0)
-				waitCount = GetTimer();
+				waitCount = getTimer();
 
-			if ((GetTimer() - waitCount) > 15000) {
+			if ((getTimer() - waitCount) > 15000) {
 				CMainWindow::chipdisp = false;
 				waitCount = 0;
 				g_pDChipID->SetValue(0);
@@ -741,7 +741,7 @@ static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 }
 
 static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
-	Assert(pBmp != nullptr);
+	assert(pBmp != nullptr);
 
 	bool bReturnValue = true;
 
@@ -762,7 +762,7 @@ static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		}
 
 		// Check to see if it's time to "flash" a bolt of lightning.
-		if (dwTimeOfNextBolt < GetTimer()) {
+		if (dwTimeOfNextBolt < getTimer()) {
 			// Time to paint the effect of a lightning bolt
 			// flash and play the sound of a thunderbolt.
 			if (pRect != nullptr) {
@@ -806,7 +806,7 @@ static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 			// Set the time that the next bolt of lightning will occur.
 			// If only nature were so precise...
-			dwTimeOfNextBolt = GetTimer() + nLightningDelay;
+			dwTimeOfNextBolt = getTimer() + nLightningDelay;
 		}
 
 	}

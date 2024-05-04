@@ -194,7 +194,7 @@ ErrorCode CBagStorageDev::AddObject(CBagObject *pObj, int /*nPos*/) {
 	ErrorCode errCode = ERR_NONE;
 
 	// can't use a null pointer
-	Assert(pObj != nullptr);
+	assert(pObj != nullptr);
 
 	m_pObjectList->addToTail(pObj);
 
@@ -243,7 +243,7 @@ ErrorCode CBagStorageDev::activateLocalObject(CBagObject  *pObj) {
 
 ErrorCode CBagStorageDev::activateLocalObject(const CBofString &sName) {
 	// can't use a empty string
-	Assert(!sName.isEmpty());
+	assert(!sName.isEmpty());
 
 	return activateLocalObject(GetObject(sName));
 }
@@ -267,7 +267,7 @@ ErrorCode CBagStorageDev::deactivateLocalObject(CBagObject *pObj) {
 
 ErrorCode CBagStorageDev::deactivateLocalObject(const CBofString &sName) {
 	// Can't use a empty string
-	Assert(!sName.isEmpty());
+	assert(!sName.isEmpty());
 
 	return deactivateLocalObject(GetObject(sName));
 }
@@ -574,7 +574,7 @@ ErrorCode CBagStorageDev::loadFile(const CBofString &sWldName) {
 	// Force buffer to be big enough so that the entire script
 	// is pre-loaded
 	int nLength = fileLength(sWldFileName);
-	char *pBuf = (char *)BofAlloc(nLength);
+	char *pBuf = (char *)bofAlloc(nLength);
 	if (pBuf != nullptr) {
 		CBagIfstream fpInput(pBuf, nLength);
 
@@ -585,7 +585,7 @@ ErrorCode CBagStorageDev::loadFile(const CBofString &sWldName) {
 
 		CBagStorageDev::loadFileFromStream(fpInput, sWldFileName);
 
-		BofFree(pBuf);
+		bofFree(pBuf);
 	}
 
 	// Add everything to the window
@@ -668,7 +668,7 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 		if (!sWorkStr.Find("BKG")) {
 			setInfo(fpInput);
 			if (bAttach && attach()) {
-				Assert(false);
+				assert(false);
 			}
 
 		} else if (!sWorkStr.Find("DISKID")) {
@@ -719,11 +719,11 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 			// Added a bPrevNeg to keep track of nested else-if's
 			CBagExpression *pExp = new CBagExpression(pActiveExpr, bPrevNeg);
 
-			Assert(pExp != nullptr);
+			assert(pExp != nullptr);
 			pExp->setInfo(fpInput);
 			if (!m_pExpressionList)
 				m_pExpressionList = new CBofList<CBagExpression * >;
-			Assert(m_pExpressionList != nullptr);
+			assert(m_pExpressionList != nullptr);
 			m_pExpressionList->addToTail(pExp);
 			pActiveExpr = pExp;
 		} else if (!sWorkStr.Find("ELSE")) {
@@ -793,7 +793,7 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 		}
 
 		if (pObj != nullptr) {
-			Assert(CBofObject::IsValidObject(pObj));
+			assert(CBofObject::isValidObject(pObj));
 
 			if (!bElseExprList.isEmpty() && bElseExprList[0]) {
 				pObj->SetNegative();
@@ -856,15 +856,15 @@ int CBagStorageDev::GetObjectCount() {
 
 
 CBagObject *CBagStorageDev::GetObjectByPos(int nIndex) {
-	Assert(m_pObjectList != nullptr);
-	Assert((nIndex >= 0) && (nIndex < m_pObjectList->getCount()));
+	assert(m_pObjectList != nullptr);
+	assert((nIndex >= 0) && (nIndex < m_pObjectList->getCount()));
 
 	return m_pObjectList->getNodeItem(nIndex);
 }
 
 
 CBagObject *CBagStorageDev::GetObject(int nRefId, bool bActiveOnly) {
-	Assert(m_pObjectList != nullptr);
+	assert(m_pObjectList != nullptr);
 
 	int nListLen = m_pObjectList->getCount();
 
@@ -880,7 +880,7 @@ CBagObject *CBagStorageDev::GetObject(int nRefId, bool bActiveOnly) {
 
 
 CBagObject *CBagStorageDev::GetObject(const CBofString &sName, bool bActiveOnly) {
-	Assert(m_pObjectList != nullptr);
+	assert(m_pObjectList != nullptr);
 
 	CBagObject *pObjFound = nullptr;
 	CBofListNode<CBagObject *> *pNode = m_pObjectList->getHead();
@@ -902,7 +902,7 @@ CBagObject *CBagStorageDev::GetObject(const CBofString &sName, bool bActiveOnly)
 
 
 CBagObject *CBagStorageDev::GetObjectByType(const CBofString &sType, bool bActiveOnly) {
-	Assert(m_pObjectList != nullptr);
+	assert(m_pObjectList != nullptr);
 
 	int nListLen = m_pObjectList->getCount();
 
@@ -1161,7 +1161,7 @@ CBagStorageDevWnd::CBagStorageDevWnd() : CBofWindow() {
 
 
 CBagStorageDevWnd::~CBagStorageDevWnd() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	KillWorkBmp();
 }
@@ -1243,7 +1243,7 @@ ErrorCode CBagStorageDevWnd::attach() {
 }
 
 void CBagStorageDevWnd::onTimer(uint32 nEventID) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 	static bool bAlready = false;
 
 	if (!g_bPauseTimer) {
@@ -1336,13 +1336,13 @@ ErrorCode CBagStorageDevWnd::KillWorkBmp() {
 }
 
 void CBagStorageDevWnd::onPaint(CBofRect *) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	PaintScreen();
 }
 
 void CBagStorageDevWnd::onMainLoop() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	PaintScreen();
 
@@ -1350,7 +1350,7 @@ void CBagStorageDevWnd::onMainLoop() {
 }
 
 ErrorCode CBagStorageDevWnd::PaintScreen(CBofRect *pRect) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (_pBackdrop != nullptr) {
 		onRender(_pBackdrop, pRect);
@@ -1370,8 +1370,8 @@ ErrorCode CBagStorageDevWnd::PaintScreen(CBofRect *pRect) {
 
 
 ErrorCode CBagStorageDevWnd::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
-	Assert(IsValidObject(this));
-	Assert(pBmp != nullptr);
+	assert(isValidObject(this));
+	assert(pBmp != nullptr);
 
 	if (PreFilterPan()) {
 		PreFilter(pBmp, pRect, nullptr);
@@ -1395,7 +1395,7 @@ ErrorCode CBagStorageDevWnd::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 
 ErrorCode CBagStorageDevWnd::RunModal(CBagObject *pObj) {
-	Assert(pObj != nullptr);
+	assert(pObj != nullptr);
 
 	if (pObj->IsModal() && pObj->IsActive()) {
 
@@ -1441,7 +1441,7 @@ ErrorCode CBagStorageDevWnd::loadFile(const CBofString &sFile) {
 	// Force buffer to be big enough so that the entire script
 	// is pre-loaded
 	int nLength = fileLength(sWldFile);
-	char *pBuf = (char *)BofAlloc(nLength);
+	char *pBuf = (char *)bofAlloc(nLength);
 	if (pBuf != nullptr) {
 		CBagIfstream fpInput(pBuf, nLength);
 
@@ -1457,7 +1457,7 @@ ErrorCode CBagStorageDevWnd::loadFile(const CBofString &sFile) {
 		if (isCreated())
 			invalidateRect(nullptr);
 
-		BofFree(pBuf);
+		bofFree(pBuf);
 
 	} else {
 		reportError(ERR_MEMORY);
@@ -1574,7 +1574,7 @@ CBagStorageDevDlg::CBagStorageDevDlg() : CBofDialog() {
 
 
 ErrorCode CBagStorageDevDlg::attach() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBagStorageDev::attach();
 
@@ -1614,8 +1614,8 @@ ErrorCode CBagStorageDevDlg::close() {
 
 
 ErrorCode CBagStorageDevDlg::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
-	Assert(IsValidObject(this));
-	Assert(pBmp != nullptr);
+	assert(isValidObject(this));
+	assert(pBmp != nullptr);
 
 	PaintStorageDevice(this, pBmp, pRect);
 
@@ -1629,13 +1629,13 @@ ErrorCode CBagStorageDevDlg::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 
 void CBagStorageDevDlg::onMainLoop() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// The background of a storage device might be in motion, i.e. it
 	// might need updates, but since it is a background screen, it probably isn't that
 	// important, so we'll update it 4 times / second.
 
-	int nCurTime = GetTimer();
+	int nCurTime = getTimer();
 	gLastBackgroundUpdate = nCurTime;
 	if (g_pLastWindow) {
 		g_pLastWindow->SetPreFilterPan(true);
@@ -1646,7 +1646,7 @@ void CBagStorageDevDlg::onMainLoop() {
 
 
 void CBagStorageDevDlg::onPaint(CBofRect *) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	PaintScreen();
 
@@ -1657,7 +1657,7 @@ void CBagStorageDevDlg::onPaint(CBofRect *) {
 
 
 ErrorCode CBagStorageDevDlg::PaintScreen(CBofRect *pRect) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (_pBackdrop != nullptr) {
 		CBagStorageDevWnd *pWin = g_pLastWindow;
@@ -1717,7 +1717,7 @@ ErrorCode CBagStorageDevDlg::loadFile(const CBofString &sFile) {
 
 	// Force buffer to be big enough so that the entire script is pre-loaded
 	int nLength = fileLength(sWldFile);
-	char *pBuf = (char *)BofAlloc(nLength);
+	char *pBuf = (char *)bofAlloc(nLength);
 	if (pBuf != nullptr) {
 		CBagIfstream fpInput(pBuf, nLength);
 
@@ -1728,7 +1728,7 @@ ErrorCode CBagStorageDevDlg::loadFile(const CBofString &sFile) {
 
 		CBagStorageDev::loadFileFromStream(fpInput, sWldFile);
 
-		BofFree(pBuf);
+		bofFree(pBuf);
 
 		if (isCreated())
 			invalidateRect(nullptr);
@@ -1807,19 +1807,19 @@ void CBagStorageDevDlg::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 }
 
 CBagStorageDevManager::CBagStorageDevManager() {
-	Assert(++nSDevMngrs < 2);
+	assert(++nSDevMngrs < 2);
 }
 
 CBagStorageDevManager::~CBagStorageDevManager() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
-	Assert(--nSDevMngrs >= 0);
+	assert(--nSDevMngrs >= 0);
 	ReleaseStorageDevices();
 	m_xStorageDeviceList.removeAll();
 }
 
 ErrorCode CBagStorageDevManager::RegisterStorageDev(CBagStorageDev *pSDev) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	m_xStorageDeviceList.addToTail(pSDev);
 
@@ -1827,7 +1827,7 @@ ErrorCode CBagStorageDevManager::RegisterStorageDev(CBagStorageDev *pSDev) {
 }
 
 ErrorCode CBagStorageDevManager::UnRegisterStorageDev(CBagStorageDev *pSDev) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBofListNode<CBagStorageDev *> *pList = m_xStorageDeviceList.getHead();
 	while (pList != nullptr) {
@@ -1842,7 +1842,7 @@ ErrorCode CBagStorageDevManager::UnRegisterStorageDev(CBagStorageDev *pSDev) {
 }
 
 ErrorCode CBagStorageDevManager::ReleaseStorageDevices() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	while (m_xStorageDeviceList.getCount()) {
 		CBagStorageDev *pSDev = m_xStorageDeviceList[0];
@@ -1855,7 +1855,7 @@ ErrorCode CBagStorageDevManager::ReleaseStorageDevices() {
 }
 
 CBagStorageDev *CBagStorageDevManager::GetStorageDeviceContaining(CBagObject *pObj) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	for (int i = 0; i < m_xStorageDeviceList.getCount(); ++i) {
 		CBagStorageDev *pSDev = m_xStorageDeviceList[i];
@@ -1866,7 +1866,7 @@ CBagStorageDev *CBagStorageDevManager::GetStorageDeviceContaining(CBagObject *pO
 }
 
 CBagStorageDev *CBagStorageDevManager::GetStorageDeviceContaining(const CBofString &sName) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	for (int i = 0; i < m_xStorageDeviceList.getCount(); ++i) {
 		CBagStorageDev *pSDev = m_xStorageDeviceList[i];
@@ -1877,7 +1877,7 @@ CBagStorageDev *CBagStorageDevManager::GetStorageDeviceContaining(const CBofStri
 }
 
 CBagStorageDev *CBagStorageDevManager::GetStorageDevice(const CBofString &sName) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	for (int i = 0; i < m_xStorageDeviceList.getCount(); ++i) {
 		CBagStorageDev *pSDev = m_xStorageDeviceList[i];
@@ -1889,7 +1889,7 @@ CBagStorageDev *CBagStorageDevManager::GetStorageDevice(const CBofString &sName)
 }
 
 bool CBagStorageDevManager::MoveObject(const CBofString &sDstName, const CBofString &sSrcName, const CBofString &sObjName) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBagStorageDev *pDstSDev = SDEV_MANAGER->GetStorageDevice(sDstName);
 
@@ -1913,7 +1913,7 @@ bool CBagStorageDevManager::MoveObject(const CBofString &sDstName, const CBofStr
 }
 
 bool CBagStorageDevManager::AddObject(const CBofString &sDstName, const CBofString &sObjName) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBagStorageDev *pDstSDev = SDEV_MANAGER->GetStorageDevice(sDstName);
 
@@ -1930,7 +1930,7 @@ bool CBagStorageDevManager::AddObject(const CBofString &sDstName, const CBofStri
 
 
 bool CBagStorageDevManager::removeObject(const CBofString &sSrcName, const CBofString &sObjName) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBagStorageDev *pSrcSDev = SDEV_MANAGER->GetStorageDevice(sSrcName);
 
@@ -1947,7 +1947,7 @@ bool CBagStorageDevManager::removeObject(const CBofString &sSrcName, const CBofS
 
 
 int CBagStorageDevManager::GetObjectValue(const CBofString &sObject, const CBofString &sProperty) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	for (int i = 0; i < m_xStorageDeviceList.getCount(); ++i) {
 		CBagStorageDev *pSDev = m_xStorageDeviceList[i];
@@ -1966,7 +1966,7 @@ int CBagStorageDevManager::GetObjectValue(const CBofString &sObject, const CBofS
 // Set object will set a property to a numeric value or set the object to a string value -
 // I am too lazy to write two funtions
 void CBagStorageDevManager::SetObjectValue(const CBofString &sObject, const CBofString &sProperty, int nValue/*=DO_NOT_USE_THIS_VALUE*/) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Make sure that all objects are set and not just one?
 	// Make sure that the first object is changed?
@@ -1984,8 +1984,8 @@ void CBagStorageDevManager::SetObjectValue(const CBofString &sObject, const CBof
 
 
 void CBagStorageDevManager::SaveObjList(ST_OBJ *pObjList, int nNumEntries) {
-	Assert(IsValidObject(this));
-	Assert(pObjList != nullptr);
+	assert(isValidObject(this));
+	assert(pObjList != nullptr);
 
 
 	int k = 0;
@@ -1999,13 +1999,13 @@ void CBagStorageDevManager::SaveObjList(ST_OBJ *pObjList, int nNumEntries) {
 				CBagObject *pObj = pSDev->GetObjectByPos(j);
 
 				if (!pObj->GetRefName().isEmpty()) {
-					Assert(strlen(pObj->GetRefName()) < MAX_OBJ_NAME);
+					assert(strlen(pObj->GetRefName()) < MAX_OBJ_NAME);
 					strncpy((pObjList + k)->m_szName, pObj->GetRefName(), MAX_OBJ_NAME);
 
 					// We MUST have put something in here
-					Assert((pObjList + k)->m_szName[0] != '\0');
+					assert((pObjList + k)->m_szName[0] != '\0');
 
-					Assert(strlen(pSDev->GetName()) < MAX_SDEV_NAME);
+					assert(strlen(pSDev->GetName()) < MAX_SDEV_NAME);
 					strncpy((pObjList + k)->m_szSDev, pSDev->GetName(), MAX_SDEV_NAME);
 
 					// Save if this guy is waiting to play
@@ -2016,7 +2016,7 @@ void CBagStorageDevManager::SaveObjList(ST_OBJ *pObjList, int nNumEntries) {
 					(pObjList + k)->m_bUsed = 1;
 
 					k++;
-					Assert(k < nNumEntries);
+					assert(k < nNumEntries);
 
 					// This is pretty dangerous, put up an error
 					if (k >= nNumEntries) {
@@ -2031,8 +2031,8 @@ void CBagStorageDevManager::SaveObjList(ST_OBJ *pObjList, int nNumEntries) {
 
 
 void CBagStorageDevManager::RestoreObjList(ST_OBJ *pObjList, int nNumEntries) {
-	Assert(IsValidObject(this));
-	Assert(pObjList != nullptr);
+	assert(isValidObject(this));
+	assert(pObjList != nullptr);
 
 	// Restore the state of all objects
 	for (int i = 0; i < nNumEntries; i++) {

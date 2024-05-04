@@ -36,7 +36,7 @@ CBofFile::CBofFile() {
 
 CBofFile::CBofFile(const char *pszFileName, uint32 lFlags) {
 	_szFileName[0] = '\0';
-	Assert(pszFileName != nullptr);
+	assert(pszFileName != nullptr);
 
 	// Open now?
 	if (pszFileName != nullptr) {
@@ -45,19 +45,19 @@ CBofFile::CBofFile(const char *pszFileName, uint32 lFlags) {
 }
 
 CBofFile::~CBofFile() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	close();
 }
 
 ErrorCode CBofFile::create(const char *pszFileName, uint32 lFlags) {
-	Assert(IsValidObject(this));
-	Assert(pszFileName != nullptr);
-	Assert(strlen(pszFileName) < MAX_DIRPATH);
-	Assert(*pszFileName != '\0');
+	assert(isValidObject(this));
+	assert(pszFileName != nullptr);
+	assert(strlen(pszFileName) < MAX_DIRPATH);
+	assert(*pszFileName != '\0');
 
 	// Can't create a read-only file
-	Assert(!(lFlags & CBF_READONLY));
+	assert(!(lFlags & CBF_READONLY));
 
 	_lFlags = lFlags;
 
@@ -81,19 +81,19 @@ ErrorCode CBofFile::create(const char *pszFileName, uint32 lFlags) {
 }
 
 ErrorCode CBofFile::open(const char *pszFileName, uint32 lFlags) {
-	Assert(IsValidObject(this));
-	Assert(pszFileName != nullptr);
-	Assert(strlen(pszFileName) < MAX_DIRPATH);
-	Assert(*pszFileName != '\0');
+	assert(isValidObject(this));
+	assert(pszFileName != nullptr);
+	assert(strlen(pszFileName) < MAX_DIRPATH);
+	assert(*pszFileName != '\0');
 
 	// Can't open for both Text and Binary modes
-	Assert(!((lFlags & CBF_TEXT) && (lFlags & CBF_BINARY)));
+	assert(!((lFlags & CBF_TEXT) && (lFlags & CBF_BINARY)));
 
 	// Can't overwrite a readonly file
-	Assert(!((lFlags & CBF_READONLY) && (lFlags & CBF_OVERWRITE)));
+	assert(!((lFlags & CBF_READONLY) && (lFlags & CBF_OVERWRITE)));
 
 	// Can't create a new file to be readonly (there would be nothing to read!)
-	Assert(!((lFlags & CBF_READONLY) && (lFlags & CBF_CREATE)));
+	assert(!((lFlags & CBF_READONLY) && (lFlags & CBF_CREATE)));
 
 	// Keep a copy of these flags
 	_lFlags = lFlags;
@@ -135,7 +135,7 @@ ErrorCode CBofFile::open(const char *pszFileName, uint32 lFlags) {
 }
 
 void CBofFile::close() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (_stream != nullptr) {
 		if (g_pDebugOptions != nullptr && g_pDebugOptions->_bShowIO) {
@@ -148,9 +148,9 @@ void CBofFile::close() {
 }
 
 ErrorCode CBofFile::read(void *pDestBuf, int32 lBytes) {
-	Assert(IsValidObject(this));
-	Assert(pDestBuf != nullptr);
-	Assert(lBytes >= 0);
+	assert(isValidObject(this));
+	assert(pDestBuf != nullptr);
+	assert(lBytes >= 0);
 
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_stream);
 	assert(rs);
@@ -179,7 +179,7 @@ ErrorCode CBofFile::read(void *pDestBuf, int32 lBytes) {
 }
 
 ErrorCode CBofFile::write(const void *pSrcBuf, int32 lBytes) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	Common::WriteStream *ws = dynamic_cast<Common::WriteStream *>(_stream);
 
@@ -214,10 +214,10 @@ ErrorCode CBofFile::write(const void *pSrcBuf, int32 lBytes) {
 }
 
 ErrorCode CBofFile::setPosition(uint32 lPos) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Only supports files up to 2Gig
-	Assert(lPos < 0x80000000);
+	assert(lPos < 0x80000000);
 
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_stream);
 	Common::SeekableWriteStream *ws = dynamic_cast<Common::SeekableWriteStream *>(_stream);
@@ -235,7 +235,7 @@ ErrorCode CBofFile::setPosition(uint32 lPos) {
 }
 
 uint32 CBofFile::getPosition() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_stream);
 	Common::SeekableWriteStream *ws = dynamic_cast<Common::SeekableWriteStream *>(_stream);
@@ -249,7 +249,7 @@ uint32 CBofFile::getPosition() {
 }
 
 ErrorCode CBofFile::seekToEnd() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_stream);
 	Common::SeekableWriteStream *ws = dynamic_cast<Common::SeekableWriteStream *>(_stream);
@@ -265,7 +265,7 @@ ErrorCode CBofFile::seekToEnd() {
 }
 
 ErrorCode CBofFile::setLength(uint32 /*lNewLength*/) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	logWarning("CBofFile::setLength() is not yet supported");
 
@@ -273,7 +273,7 @@ ErrorCode CBofFile::setLength(uint32 /*lNewLength*/) {
 }
 
 uint32 CBofFile::getLength() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_stream);
 	Common::SeekableWriteStream *ws = dynamic_cast<Common::SeekableWriteStream *>(_stream);
@@ -287,7 +287,7 @@ uint32 CBofFile::getLength() {
 }
 
 void CBofFile::commit() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	Common::SeekableWriteStream *ws = dynamic_cast<Common::SeekableWriteStream *>(_stream);
 	if (ws)

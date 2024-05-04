@@ -49,13 +49,13 @@ CCache::CCache() {
 
 	if (_pCacheList == nullptr) {
 		// There can't be any other entries
-		Assert(_nEntries == 0);
+		assert(_nEntries == 0);
 
 		// This object is the start of the cache list
 		_pCacheList = this;
 
 	} else {
-		Assert(_nEntries != 0);
+		assert(_nEntries != 0);
 
 		_pCacheList->Insert(this);
 	}
@@ -66,13 +66,13 @@ CCache::CCache() {
 
 CCache::~CCache() {
 	// Make sure this object is not deleted twice
-	Assert(_bValid);
+	assert(_bValid);
 
 	// There can be only one cache list per EXE/DLL
-	Assert(this->getHead() == _pCacheList);
+	assert(this->getHead() == _pCacheList);
 
 	// Object must be released by the derived class destructor
-	Assert(_bCached == false);
+	assert(_bCached == false);
 
 	_nEntries--;
 
@@ -107,7 +107,7 @@ bool CCache::optimize(uint32 lRequestedFreeSpace) {
 	logInfo(buildString("CCache::optimize(%ld)", lRequestedFreeSpace));
 
 	bool bSuccess = true;
-	while (GetFreePhysMem() < lRequestedFreeSpace) {
+	while (getFreePhysMem() < lRequestedFreeSpace) {
 		uint32 lAvgAge = ((_lOldest - _lYoungest) / 2) + _lYoungest;
 		_lOldest = lAvgAge;
 
@@ -139,7 +139,7 @@ bool CCache::optimize(uint32 lRequestedFreeSpace) {
 
 void CCache::load() {
 	// Make sure this object is not used after it is destructed
-	Assert(_bValid);
+	assert(_bValid);
 
 	// Timestamp this object
 	_lAge = --_lYoungest;
@@ -157,7 +157,7 @@ void CCache::load() {
 
 bool CCache::release() {
 	// Make sure this object is not used after it is destructed
-	Assert(_bValid);
+	assert(_bValid);
 
 	// If this object is in the cache
 	bool bReleased = false;

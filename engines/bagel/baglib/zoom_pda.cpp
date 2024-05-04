@@ -48,8 +48,8 @@ SBZoomPda::SBZoomPda(CBofWindow *pParent, const CBofRect &xRect, bool bActivated
 }
 
 ErrorCode SBZoomPda::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
-	Assert(IsValidObject(this));
-	Assert(pBmp != nullptr);
+	assert(isValidObject(this));
+	assert(pBmp != nullptr);
 
 	// Paint the storage device
 	if (pBmp != nullptr) {
@@ -277,7 +277,7 @@ void SBZoomPda::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 }
 
 void SBZoomPda::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBagStorageDev::onMouseMove(nFlags, pPoint, GetAssociateWnd());
 
@@ -292,7 +292,7 @@ void SBZoomPda::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 }
 
 void SBZoomPda::onMainLoop() {
-	uint32 nCurTime = GetTimer();
+	uint32 nCurTime = getTimer();
 
 	// Force an update every 1/4 second
 	if (_pdaMode == INVMODE || _pdaMode == MAPMODE) {

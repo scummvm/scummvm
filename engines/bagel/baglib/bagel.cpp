@@ -44,14 +44,14 @@ CBofVHashTable<CBofString, HASH_TABLE_SIZE> *CBagel::_cacheFileList;
 CBofWindow *g_hackWindow;
 
 CBagel::CBagel(const BagelReg *gameReg) {
-	Assert(gameReg != nullptr);
+	assert(gameReg != nullptr);
 	_cacheFileList = new CBofVHashTable<CBofString, HASH_TABLE_SIZE>(&stringHashFunction);
 
 	registerGame(gameReg);
 }
 
 CBagel::~CBagel() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Release options file
 	release();
@@ -68,7 +68,7 @@ CBagel::~CBagel() {
 }
 
 void CBagel::registerGame(const BagelReg *gameReg) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 	_gameReg = gameReg;
 
 	// Init statics
@@ -81,40 +81,40 @@ void CBagel::registerGame(const BagelReg *gameReg) {
 
 		// Load this game's .ini file
 		if (gameReg->_optionFile != nullptr)
-			LoadOptionFile(gameReg->_optionFile);
+			loadOptionFile(gameReg->_optionFile);
 	}
 }
 
 ErrorCode CBagel::setOption(const char *section, const char *option, const char *stringValue) {
-	Assert(IsValidObject(this));
-	return WriteSetting(section, option, stringValue);
+	assert(isValidObject(this));
+	return writeSetting(section, option, stringValue);
 }
 
 ErrorCode CBagel::setOption(const char *section, const char *option, int intValue) {
-	Assert(IsValidObject(this));
-	return WriteSetting(section, option, intValue);
+	assert(isValidObject(this));
+	return writeSetting(section, option, intValue);
 }
 
 ErrorCode CBagel::getOption(const char *section, const char *option, char *stringValue, const char *defaultValue, uint32 size) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 	return readSetting(section, option, stringValue, defaultValue, size);
 }
 
 ErrorCode CBagel::getOption(const char *section, const char *option, int *intValue, int defaultValue) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 	return readSetting(section, option, intValue, defaultValue);
 }
 
 ErrorCode CBagel::getOption(const char *section, const char *option, bool *boolValue, int defaultValue) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 	return readSetting(section, option, boolValue, defaultValue);
 }
 
 ErrorCode CBagel::initialize() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Game must already be registered with registerGame()
-	Assert(_gameReg != nullptr);
+	assert(_gameReg != nullptr);
 
 	CBofApp::initialize();
 
@@ -156,16 +156,16 @@ ErrorCode CBagel::initialize() {
 }
 
 ErrorCode CBagel::runApp() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// The main game window must have been created by now
-	Assert(_pMainWnd != nullptr);
+	assert(_pMainWnd != nullptr);
 
 	return CBofApp::runApp();
 }
 
 ErrorCode CBagel::shutdown() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	logInfo("Shutting down BAGEL");
 
@@ -181,7 +181,7 @@ ErrorCode CBagel::shutdown() {
 
 
 ErrorCode CBagel::initLocalFilePaths() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	// Check for Installed state of game
 	getOption("Startup", "InstallCode", &_installCode, BAG_INSTALL_DEFAULT);
@@ -190,7 +190,7 @@ ErrorCode CBagel::initLocalFilePaths() {
 }
 
 ErrorCode CBagel::verifyCDInDrive(int diskId, const char *waveFile) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	if (_gameReg->_numberOfCDs > 0) {
 		char szBuf[MAX_DIRPATH];
@@ -231,8 +231,8 @@ ErrorCode CBagel::verifyCDInDrive(int diskId, const char *waveFile) {
 }
 
 ErrorCode CBagel::verifyRequirements() {
-	Assert(IsValidObject(this));
-	Assert(_gameReg != nullptr);
+	assert(isValidObject(this));
+	assert(_gameReg != nullptr);
 
 	return _errCode;
 }
@@ -275,7 +275,7 @@ void CBagel::showNextCDDialog(CBofWindow *parentWin, int diskId) {
 
 	// Shouldn't ever get here
 	default:
-		Assert(false);
+		assert(false);
 		break;
 	}
 

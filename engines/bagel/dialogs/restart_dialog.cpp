@@ -63,11 +63,11 @@ CBagRestartDialog::CBagRestartDialog(const char *pszFileName, CBofWindow *pWin)
 
 
 void CBagRestartDialog::onInitDialog() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBofDialog::onInitDialog();
 
-	Assert(_pBackdrop != nullptr);
+	assert(_pBackdrop != nullptr);
 
 	// Save off the current game's palette
 	_pSavePalette = CBofApp::getApp()->getPalette();
@@ -85,7 +85,7 @@ void CBagRestartDialog::onInitDialog() {
 
 	// Build all our buttons
 	for (int i = 0; i < NUM_RESTART_BTNS; i++) {
-		Assert(_pButtons[i] == nullptr);
+		assert(_pButtons[i] == nullptr);
 
 		if ((_pButtons[i] = new CBofBmpButton) != nullptr) {
 
@@ -110,7 +110,7 @@ void CBagRestartDialog::onInitDialog() {
 
 
 void CBagRestartDialog::onClose() {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	CBagCursor::hideSystemCursor();
 
@@ -133,7 +133,7 @@ void CBagRestartDialog::onClose() {
 
 
 void CBagRestartDialog::onPaint(CBofRect *pRect) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	paintBackdrop(pRect);
 
@@ -142,7 +142,7 @@ void CBagRestartDialog::onPaint(CBofRect *pRect) {
 
 
 void CBagRestartDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
-	Assert(IsValidObject(this));
+	assert(isValidObject(this));
 
 	switch (lKey) {
 
@@ -191,8 +191,8 @@ void CBagRestartDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 }
 
 void CBagRestartDialog::onBofButton(CBofObject *pObject, int nFlags) {
-	Assert(IsValidObject(this));
-	Assert(pObject != nullptr);
+	assert(isValidObject(this));
+	assert(pObject != nullptr);
 
 	if (nFlags != BUTTON_CLICKED)
 		return;
