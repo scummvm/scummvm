@@ -57,7 +57,7 @@ ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CB
 	CBofRect r;
 	if (!rect) {
 		r = wnd->getWindowRect();
-		r.OffsetRect(-r.left, -r.top);
+		r.offsetRect(-r.left, -r.top);
 		r.bottom = r.top + MENU_DFLT_HEIGHT;
 	} else {
 		r = *rect;

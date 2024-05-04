@@ -399,7 +399,7 @@ ErrorCode CBofListBox::repaintAll() {
 
 			for (int i = 0; i < _nPageSize; i++) {
 				CBofRect cRect;
-				cRect.SetRect(0, i * _nItemHeight, width() - 1, (i + 1) * _nItemHeight - 1);
+				cRect.setRect(0, i * _nItemHeight, width() - 1, (i + 1) * _nItemHeight - 1);
 
 				if (i + _n1stVisible < _nNumItems) {
 					// If this item is currently selected and we have a high color
@@ -433,7 +433,7 @@ ErrorCode CBofListBox::repaintAll() {
 						          getFont());
 					}
 
-					CBofPoint bl(cRect.BottomLeft()), br(cRect.BottomRight());
+					CBofPoint bl(cRect.bottomLeft()), br(cRect.bottomRight());
 					_pWork->line(&bl, &br, (byte)nIndexedColor);
 				}
 			}
@@ -471,7 +471,7 @@ ErrorCode CBofListBox::repaintItem(int nIndex) {
 
 			// Calculate area for this text item
 			CBofRect cRect;
-			cRect.SetRect(0, i * _nItemHeight, width() - 1, (i + 1) * _nItemHeight - 1);
+			cRect.setRect(0, i * _nItemHeight, width() - 1, (i + 1) * _nItemHeight - 1);
 
 			// Prepare the background
 			assert(_pBackdrop != nullptr);
@@ -507,7 +507,7 @@ ErrorCode CBofListBox::repaintItem(int nIndex) {
 				          FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE,
 				          getFont());
 			}
-			CBofPoint bl(cRect.BottomLeft()), br(cRect.BottomRight());
+			CBofPoint bl(cRect.bottomLeft()), br(cRect.bottomRight());
 			_pWork->line(&bl, &br, (byte)nIndexedColor);
 
 			// Show final image on screen

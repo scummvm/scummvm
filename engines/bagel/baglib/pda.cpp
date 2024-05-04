@@ -213,7 +213,7 @@ void CBagPDA::setPosInWindow(int cx, int cy, int nDist) {
 	else
 		pt.y = cy - bmpRect.height() + _moveDist * _numMoves;
 
-	SetRect(CBofRect(pt.x, pt.y, pt.x + pBmp->width() - 1, pt.y + pBmp->height() - 1));
+	setRect(CBofRect(pt.x, pt.y, pt.x + pBmp->width() - 1, pt.y + pBmp->height() - 1));
 }
 
 bool CBagPDA::hideCurDisplay() {
@@ -329,7 +329,7 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 bool CBagPDA::isInside(const CBofPoint &xPoint) {
 	CBofBitmap *pSrcBmp = getBitmap();
 
-	if (getRect().PtInRect(xPoint) && m_nMaskColor >= 0) {
+	if (getRect().ptInRect(xPoint) && m_nMaskColor >= 0) {
 		if (pSrcBmp) {
 			int x = xPoint.x - getRect().left;
 			int y = xPoint.y - getRect().top;
@@ -361,7 +361,7 @@ void CBagPDA::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 	// Else, call the default func
 	CBofPoint RealPt = DevPtToViewPort(*xPoint);
 
-	if (_curDisplay && _curDisplay->getRect().PtInRect(RealPt)) {
+	if (_curDisplay && _curDisplay->getRect().ptInRect(RealPt)) {
 		_curDisplay->onLButtonUp(nFlags, &RealPt, info);
 	} else {
 		// if not in the PDA view port then check and make sure it is activated.
@@ -386,7 +386,7 @@ void CBagPDA::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 			// Go through all the buttons and see if we hit any of them.
 			for (int i = 0; i < nCount; i++) {
 				CBagObject *pObj = pList->getNodeItem(i);
-				if (pObj->GetType() == BUTTONOBJ && pObj->getRect().PtInRect(RealPt)) {
+				if (pObj->GetType() == BUTTONOBJ && pObj->getRect().ptInRect(RealPt)) {
 					bButtonHit = true;
 					break;
 				}

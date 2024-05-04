@@ -51,7 +51,7 @@ int CBagParseObject::GetIntFromStream(CBagIfstream &istr, int &nNum) {
 	return ch;
 }
 
-int CBagParseObject::GetStringFromStream(CBagIfstream &istr, CBofString &sStr, const CBofString &sEndChars, bool bPutBack) {
+int CBagParseObject::getStringFromStream(CBagIfstream &istr, CBofString &sStr, const CBofString &sEndChars, bool bPutBack) {
 	bool bDone = false;
 	char ch = 0;
 
@@ -76,8 +76,8 @@ int CBagParseObject::GetStringFromStream(CBagIfstream &istr, CBofString &sStr, c
 	return ch;
 }
 
-int CBagParseObject::GetStringFromStream(CBagIfstream &istr, CBofString &sStr, const char cEndChar, bool bPutBack) {
-	return GetStringFromStream(istr, sStr, CBofString(cEndChar), bPutBack);
+int CBagParseObject::getStringFromStream(CBagIfstream &istr, CBofString &sStr, const char cEndChar, bool bPutBack) {
+	return getStringFromStream(istr, sStr, CBofString(cEndChar), bPutBack);
 }
 
 int CBagParseObject::getRectFromStream(CBagIfstream &istr, CBofRect &rect) {
@@ -91,22 +91,22 @@ int CBagParseObject::getRectFromStream(CBagIfstream &istr, CBofRect &rect) {
 		return -1;
 
 	// Get the left-coord
-	GetStringFromStream(istr, str, ",");
+	getStringFromStream(istr, str, ",");
 	rect.left = atoi(str);
 
 	// Get the top-coord
-	GetStringFromStream(istr, str, "],", true);
+	getStringFromStream(istr, str, "],", true);
 	rect.top = atoi(str);
 
 	// If ',' then get the size coords
 	ch = (char)istr.getCh();
 	if (ch == ',') {
 		// Get the right-coord (optional)
-		GetStringFromStream(istr, str, ",");
+		getStringFromStream(istr, str, ",");
 		rect.right = atoi(str);
 
 		// Get the bottom-coord (optional)
-		GetStringFromStream(istr, str, "]");
+		getStringFromStream(istr, str, "]");
 		rect.bottom = atoi(str);
 	} else {
 		rect.right = rect.left - 1;
@@ -127,11 +127,11 @@ int CBagParseObject::GetVectorFromStream(CBagIfstream &istr, CBagVector &vector)
 		return -1;
 
 	// Get the x-coord
-	GetStringFromStream(istr, str, ",");
+	getStringFromStream(istr, str, ",");
 	vector.x = atoi(str);
 
 	// Get the y-coord
-	GetStringFromStream(istr, str, ",):@", true);
+	getStringFromStream(istr, str, ",):@", true);
 	vector.y = atoi(str);
 
 	// Vector rate
@@ -139,7 +139,7 @@ int CBagParseObject::GetVectorFromStream(CBagIfstream &istr, CBagVector &vector)
 	ch = (char)istr.peek();
 	if (ch == ',') {
 		ch = (char)istr.getCh();
-		GetStringFromStream(istr, str, "):@", true);
+		getStringFromStream(istr, str, "):@", true);
 		vector.nMoveRate = atoi(str);
 	}
 
@@ -157,7 +157,7 @@ int CBagParseObject::GetVectorFromStream(CBagIfstream &istr, CBagVector &vector)
 	ch = (char)istr.peek();
 	if (ch == '@') {
 		ch = (char)istr.getCh();
-		GetStringFromStream(istr, str, ")");
+		getStringFromStream(istr, str, ")");
 		vector.nChangeRate = atoi(str);
 	}
 

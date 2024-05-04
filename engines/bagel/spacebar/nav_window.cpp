@@ -578,7 +578,7 @@ void CNavWindow::refreshData() {
 	CBofBitmap cBmp(200, 440, _pPal);
 	pBmp->paint(&cBmp, 0, 0, &cRect);
 
-	cRect.SetRect(0, 10, 199, 25);
+	cRect.setRect(0, 10, 199, 25);
 	paintText(&cBmp, &cRect, buildString("Current Port of call:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.left += 10;       // Indent this section
 	cRect.top += 15;
@@ -717,119 +717,119 @@ void CNavWindow::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 
 	switch (_level) {
 	case 0: {
-		if (_pPinna->PtInRect(*pPoint))
+		if (_pPinna->ptInRect(*pPoint))
 			onPinna();
 
-		if (_pHpoctyl->PtInRect(*pPoint))
+		if (_pHpoctyl->ptInRect(*pPoint))
 			onHpoctyl();
 
-		if (_pArmpit->PtInRect(*pPoint))
+		if (_pArmpit->ptInRect(*pPoint))
 			onArmpit();
 
-		if (_pYzore->PtInRect(*pPoint))
+		if (_pYzore->ptInRect(*pPoint))
 			onYzore();
 
-		if (_pBulbus->PtInRect(*pPoint))
+		if (_pBulbus->ptInRect(*pPoint))
 			onBulbus();
 
-		if (_pDingle->PtInRect(*pPoint))
+		if (_pDingle->ptInRect(*pPoint))
 			onDingle();
 
-		if (_pKarkas->PtInRect(*pPoint))
+		if (_pKarkas->ptInRect(*pPoint))
 			onKarkas();
 
-		if (_pFruufnia->PtInRect(*pPoint))
+		if (_pFruufnia->ptInRect(*pPoint))
 			onFruufnia();
 		break;
 	}//close case
 
 	case 1: {
-		if (_pWilbur->PtInRect(*pPoint))
+		if (_pWilbur->ptInRect(*pPoint))
 			onWilbur();
 
-		if (_pMcKelvey->PtInRect(*pPoint))
+		if (_pMcKelvey->ptInRect(*pPoint))
 			onMcKelvey();
 
-		if (_pMedge->PtInRect(*pPoint))
+		if (_pMedge->ptInRect(*pPoint))
 			onMedge();
 
-		if (_pWall->PtInRect(*pPoint))
+		if (_pWall->ptInRect(*pPoint))
 			onWall();
 
-		if (_pWoo->PtInRect(*pPoint))
+		if (_pWoo->ptInRect(*pPoint))
 			onWoo();
 
-		if (_pRoman->PtInRect(*pPoint))
+		if (_pRoman->ptInRect(*pPoint))
 			onRoman();
 
-		if (_pWeed->PtInRect(*pPoint))
+		if (_pWeed->ptInRect(*pPoint))
 			onWeed();
 
-		if (_pBok->PtInRect(*pPoint))
+		if (_pBok->ptInRect(*pPoint))
 			onBok();
 
-		if (_pPizer->PtInRect(*pPoint))
+		if (_pPizer->ptInRect(*pPoint))
 			onPizer();
 
 		break;
 	}//close case
 
 	case 2: {
-		if (_pBackwater->PtInRect(*pPoint))
+		if (_pBackwater->ptInRect(*pPoint))
 			onBackwater();
 
-		if (_pUranus->PtInRect(*pPoint))
+		if (_pUranus->ptInRect(*pPoint))
 			onUranus();
 
-		if (_pToejam->PtInRect(*pPoint))
+		if (_pToejam->ptInRect(*pPoint))
 			onToejam();
 
-		if (_pHellhole->PtInRect(*pPoint))
+		if (_pHellhole->ptInRect(*pPoint))
 			onHellhole();
 
-		if (_pPustule->PtInRect(*pPoint))
+		if (_pPustule->ptInRect(*pPoint))
 			onPustule();
 
-		if (_pSwamprock->PtInRect(*pPoint))
+		if (_pSwamprock->ptInRect(*pPoint))
 			onSwamprock();
 
-		if (_pSlug->PtInRect(*pPoint))
+		if (_pSlug->ptInRect(*pPoint))
 			onSlug();
 
-		if (_pMaggotsnest->PtInRect(*pPoint))
+		if (_pMaggotsnest->ptInRect(*pPoint))
 			onMaggotsnest();
 
 		break;
 	}
 	case 3: {
-		if (_pPeggleboz->PtInRect(*pPoint))
+		if (_pPeggleboz->ptInRect(*pPoint))
 			onPeggleboz();
 
-		if (_pNoVacancy->PtInRect(*pPoint))
+		if (_pNoVacancy->ptInRect(*pPoint))
 			onNoVacancy();
 
-		if (_pArcheroids->PtInRect(*pPoint))
+		if (_pArcheroids->ptInRect(*pPoint))
 			onArcheroids();
 
-		if (_pPackRat->PtInRect(*pPoint))
+		if (_pPackRat->ptInRect(*pPoint))
 			onPackRat();
 
-		if (_pBeacon->PtInRect(*pPoint))
+		if (_pBeacon->ptInRect(*pPoint))
 			onBeacon();
 
-		if (_pMankala->PtInRect(*pPoint))
+		if (_pMankala->ptInRect(*pPoint))
 			onMankala();
 
-		if (_pLife->PtInRect(*pPoint))
+		if (_pLife->ptInRect(*pPoint))
 			onLife();
 
-		if (_pFuge->PtInRect(*pPoint))
+		if (_pFuge->ptInRect(*pPoint))
 			onFuge();
 
-		if (_pGarfunkel->PtInRect(*pPoint))
+		if (_pGarfunkel->ptInRect(*pPoint))
 			onGarfunkel();
 
-		if (_pBattlefish->PtInRect(*pPoint))
+		if (_pBattlefish->ptInRect(*pPoint))
 			onBattlefish();
 
 		break;

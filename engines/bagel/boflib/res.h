@@ -32,19 +32,19 @@ namespace Bagel {
 class CResString : public CLList, public CBofObject {
 public:
 	CResString(int nId, const char *pszString) {
-		m_nId = nId;
-		m_pszString = pszString;
+		_nId = nId;
+		_pszString = pszString;
 	}
 
-	int m_nId;
-	const char *m_pszString;
+	int _nId;
+	const char *_pszString;
 };
 
 class CBofStringTable : public CBofFile {
 private:
-	CResString *m_pStringTable = nullptr;
-	byte *m_pBuf = nullptr;
-	uint32 m_lBufSize = 0;
+	CResString *_pStringTable = nullptr;
+	byte *_pBuf = nullptr;
+	uint32 _lBufSize = 0;
 
 protected:
 	/**
@@ -52,7 +52,7 @@ protected:
 	 * @param pszFileName   Name of file containing resources
 	 * @return              Error return code
 	 */
-	ErrorCode Load(const char *pszFileName);
+	ErrorCode load(const char *pszFileName);
 
 	/**
 	 * De-allocates the current Resource String Table
@@ -63,12 +63,12 @@ protected:
 	 * Allocates the current Resource String Table
 	 * @return      Error return code
 	 */
-	ErrorCode BuildTable();
+	ErrorCode buildTable();
 
 	/**
 	 * De-allocates the current Resource String Table
 	 */
-	void KillTable();
+	void killTable();
 
 public:
 	/**
@@ -86,7 +86,7 @@ public:
 	 * Retrieves the specified resource string
 	 * @param nId       Res ID for string to be retrieved
 	 */
-	const char *GetString(int nId);
+	const char *getString(int nId);
 };
 
 } // namespace Bagel

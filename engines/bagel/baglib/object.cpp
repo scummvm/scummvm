@@ -27,7 +27,7 @@ namespace Bagel {
 
 extern bool g_noMenuFl;
 
-CBofString GetStringTypeOfObject(BAG_OBJECT_TYPE n) {
+CBofString getStringTypeOfObject(BAG_OBJECT_TYPE n) {
 	switch (n) {
 	case BASEOBJ:
 		return "UKN";
@@ -253,7 +253,7 @@ PARSE_CODES CBagObject::setInfo(CBagIfstream &istr) {
 			CBofRect r;
 			istr.putBack();
 			getRectFromStream(istr, r);
-			setPosition(r.TopLeft());
+			setPosition(r.topLeft());
 			if (r.width() && r.height())
 				setSize(CSize(r.width(), r.height()));
 			break;

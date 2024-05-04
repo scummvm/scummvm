@@ -167,7 +167,7 @@ ErrorCode CBagVariableObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *p
 		else if (name == "NDJAM_OUTERDIAL_DISPLAY")
 			pt.x += 5;
 
-		CBofRect r(pt, pSrcRect->Size());
+		CBofRect r(pt, pSrcRect->size());
 		rc = paintText(pBmp, &r, xVar->GetValue(), MapFontPointSize(m_nPointSize), TEXT_NORMAL, m_nFGColor);
 
 		// Don't need to redraw!
@@ -181,10 +181,10 @@ ErrorCode CBagVariableObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *p
 	CBagVar *xVar = VAR_MANAGER->GetVariable(getFileName());
 
 	if (isAttached() && xVar && !(xVar->GetValue().isEmpty())) {
-		CBofRect r(pt, pSrcRect->Size());
+		CBofRect r(pt, pSrcRect->size());
 
 		rc = paintText(pWnd, &r, xVar->GetValue(), MapFontPointSize(m_nPointSize), TEXT_NORMAL, m_nFGColor);
-	
+
 		// Don't need to redraw!
 		SetDirty(false);
 	}

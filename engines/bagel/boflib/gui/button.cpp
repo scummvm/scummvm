@@ -243,7 +243,7 @@ void CBofButton::onLButtonUp(uint32, CBofPoint *pPoint, void *) {
 
 		setState(BUTTON_UP, true);
 
-		if (_cRect.PtInRect(*pPoint) && (_parent != nullptr)) {
+		if (_cRect.ptInRect(*pPoint) && (_parent != nullptr)) {
 			_parent->onBofButton(this, BUTTON_CLICKED);
 		}
 	}
@@ -406,7 +406,7 @@ ErrorCode CBofCheckButton::paint(CBofRect *) {
 		}
 
 		// Create a temporary text object
-		cTempRect.SetRect(CHECK_BOX_SIZE + CHECK_BOX_OFFSET_DX, CHECK_BOX_OFFSET_DX, _cRect.right, _cRect.bottom - CHECK_BOX_OFFSET_DX);
+		cTempRect.setRect(CHECK_BOX_SIZE + CHECK_BOX_OFFSET_DX, CHECK_BOX_OFFSET_DX, _cRect.right, _cRect.bottom - CHECK_BOX_OFFSET_DX);
 		CBofText cText(&cTempRect, JUSTIFY_LEFT);
 
 		// Put a box around the whole button
@@ -638,7 +638,7 @@ void CBofBmpButton::onLButtonUp(uint32, CBofPoint *pPoint, void *) {
 
 		setState(BUTTON_UP, true);
 
-		if (_cRect.PtInRect(*pPoint) && (_parent != nullptr)) {
+		if (_cRect.ptInRect(*pPoint) && (_parent != nullptr)) {
 			_parent->onBofButton(this, BUTTON_CLICKED);
 		}
 	}

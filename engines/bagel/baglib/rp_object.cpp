@@ -93,7 +93,7 @@ CBagRPObject::CBagRPObject() {
 
 	// Have to save the original rectangle since we'll be messing with it later
 	// on.
-	m_cOrigRect.SetRect(0, 0, 0, 0);
+	m_cOrigRect.setRect(0, 0, 0, 0);
 	m_bOrigRectInit = false;
 
 	// the object's name, we pull this out of the wld sdev.
@@ -779,7 +779,7 @@ ErrorCode CBagRPObject::update(CBofBitmap *pBmp, CBofPoint /*pt*/, CBofRect * /*
 	if (GetLogState() == RP_RESULTS) {
 		if (m_pDescObj) {
 			CBofRect txRect = m_pDescObj->getRect();
-			CBofPoint txPt = txRect.TopLeft();
+			CBofPoint txPt = txRect.topLeft();
 			m_pDescObj->update(pBmp, txPt, &txRect, 0);
 		}
 	}

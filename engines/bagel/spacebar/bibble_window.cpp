@@ -1060,7 +1060,7 @@ void CBibbleWindow::onLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 		CBetArea *pArea = &g_engine->g_cBetAreas[i];
 
 		// If this is the area the user selected
-		if (pArea->_cRect.PtInRect(*pPoint)) {
+		if (pArea->_cRect.ptInRect(*pPoint)) {
 			CBetArea *pPrevArea = _pSelected;
 
 			// Keep track of selected area
@@ -1102,7 +1102,7 @@ void CBibbleWindow::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) 
 
 		// If this is the area the user selected
 		//
-		if (pArea->_cRect.PtInRect(*pPoint)) {
+		if (pArea->_cRect.ptInRect(*pPoint)) {
 			CBetArea *pPrevArea = _pSelected;
 
 			// Keep track of selected area

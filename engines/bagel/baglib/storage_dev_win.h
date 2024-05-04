@@ -196,11 +196,11 @@ public:
 	CBofRect getRect() {
 		return m_cDestRect;
 	}
-	void SetRect(const CBofRect &xRect) {
+	void setRect(const CBofRect &xRect) {
 		m_cDestRect = xRect;
 	}
 	CBofPoint getPosition() {
-		return m_cDestRect.TopLeft();
+		return m_cDestRect.topLeft();
 	}
 	void setPosition(const CBofPoint &pos);
 

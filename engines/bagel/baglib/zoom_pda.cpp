@@ -251,8 +251,8 @@ void SBZoomPda::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 
 		if (_curDisplay) {
 			CBofRect offset = CBagStorageDev::getRect();
-			xPoint->x -= offset.TopLeft().x;
-			xPoint->y -= offset.TopLeft().y;
+			xPoint->x -= offset.topLeft().x;
+			xPoint->y -= offset.topLeft().y;
 
 			// Make sure this stuff is nice and dirty before calling off
 			// to the button handling routine, this assures that if we go from one screen

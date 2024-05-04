@@ -203,7 +203,7 @@ ErrorCode CBagRestoreDialog::attach() {
 		assert(_pText == nullptr);
 
 		if ((_pText = new CBofText) != nullptr) {
-			cRect.SetRect(170, 405, 470, 435);
+			cRect.setRect(170, 405, 470, 435);
 			_pText->setupText(&cRect, JUSTIFY_LEFT, FORMAT_CENTER_LEFT);
 			_pText->SetSize(16);
 			_pText->setWeight(TEXT_BOLD);

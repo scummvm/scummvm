@@ -52,7 +52,7 @@ struct ST_CREDITS {
 #define PIX_SCROLL_DY 1
 
 static const ST_CREDITS g_cScreen[NUM_SCREENS] = {
-	// Background        Credit text    TopLeft   BotRight  Delay   PointSize
+	// Background        Credit text    topLeft   BotRight  Delay   PointSize
 	{ "BARAREA.BMP",    "CREDITS1.TXT", 370,   6, 636, 150, 30,     20 },
 	{ "CILIA.BMP",      "CREDITS2.TXT",   6, 120, 310, 360, 10,     24 },
 	{ "AUDITON.BMP",    "CREDITS3.TXT", 320, 120, 636, 360, 10,     24 },
@@ -270,7 +270,7 @@ ErrorCode CBagCreditsDialog::displayCredits() {
 
 			_pSaveBmp->paint(_pBackdrop, g_cScreen[_iScreen]._nLeft, g_cScreen[_iScreen]._nTop);
 			CBofRect cRect;
-			cRect.SetRect(0, 0, _pCreditsBmp->width() - 1, _pCreditsBmp->height() - 1 - (LINE_HEIGHT + 2));
+			cRect.setRect(0, 0, _pCreditsBmp->width() - 1, _pCreditsBmp->height() - 1 - (LINE_HEIGHT + 2));
 			_pCreditsBmp->paint(_pBackdrop, g_cScreen[_iScreen]._nLeft, g_cScreen[_iScreen]._nTop, &cRect, MY_MASK_COLOR);
 
 			if (g_b1) {
@@ -341,7 +341,7 @@ ErrorCode CBagCreditsDialog::paintLine(int nLine, char *pszText) {
 
 	CBofRect cRect;
 
-	cRect.SetRect(0, nLine * LINE_HEIGHT, _pCreditsBmp->width() - 1, (nLine + 1) * LINE_HEIGHT - 1);
+	cRect.setRect(0, nLine * LINE_HEIGHT, _pCreditsBmp->width() - 1, (nLine + 1) * LINE_HEIGHT - 1);
 
 	_pCreditsBmp->fillRect(&cRect, MY_MASK_COLOR);
 

@@ -324,7 +324,7 @@ bool CBagCharacterObject::doAdvance() {
 }
 
 bool CBagCharacterObject::isInside(const CBofPoint &point) {
-	if (getRect().PtInRect(point) && _charTransColor >= 0) {
+	if (getRect().ptInRect(point) && _charTransColor >= 0) {
 		if (_bmpBuf) {
 			int x = point.x - getRect().left;
 			int y = point.y - getRect().top;

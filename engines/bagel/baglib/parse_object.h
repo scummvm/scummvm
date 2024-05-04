@@ -115,8 +115,8 @@ public:
 		return m_bBinaryData;
 	}
 
-	int GetStringFromStream(CBagIfstream &istr, CBofString &sStr, const char cEndChar, bool bPutBack = false);
-	int GetStringFromStream(CBagIfstream &istr, CBofString &sStr, const CBofString &sEndChars, bool bPutBack = false);
+	int getStringFromStream(CBagIfstream &istr, CBofString &sStr, const char cEndChar, bool bPutBack = false);
+	int getStringFromStream(CBagIfstream &istr, CBofString &sStr, const CBofString &sEndChars, bool bPutBack = false);
 	int GetAlphaNumFromStream(CBagIfstream &istr, CBofString &sStr);
 	int GetOperStrFromStream(CBagIfstream &istr, CBofString &sStr);
 	int GetIntFromStream(CBagIfstream &istr, int &nNum);

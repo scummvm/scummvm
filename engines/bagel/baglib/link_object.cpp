@@ -64,7 +64,7 @@ PARSE_CODES CBagLinkObject::setInfo(CBagIfstream &istr) {
 			CBofRect r;
 			istr.getCh();
 			getRectFromStream(istr, r);
-			setDstLoc(r.TopLeft());
+			setDstLoc(r.topLeft());
 			objectUpdatedFl = true;
 			break;
 		}
@@ -76,7 +76,7 @@ PARSE_CODES CBagLinkObject::setInfo(CBagIfstream &istr) {
 			CBofRect r;
 			istr.getCh();
 			getRectFromStream(istr, r);
-			setSrcLoc(r.TopLeft());
+			setSrcLoc(r.topLeft());
 			objectUpdatedFl = true;
 			break;
 		}

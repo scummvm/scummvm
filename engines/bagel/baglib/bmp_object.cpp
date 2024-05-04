@@ -90,7 +90,7 @@ ErrorCode CBagBmpObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect
 }
 
 bool CBagBmpObject::isInside(const CBofPoint &pt) {
-	if (_bmp && getRect().PtInRect(pt)) {
+	if (_bmp && getRect().ptInRect(pt)) {
 		if (_transparency >= 0) {
 			int x = pt.x - getRect().left;
 			int y = pt.y - getRect().top;

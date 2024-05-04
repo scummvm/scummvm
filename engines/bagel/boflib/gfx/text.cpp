@@ -92,7 +92,7 @@ void CBofText::initializeFields() {
 
 	_cPosition = CBofPoint(0, 0);
 	_cSize = CBofSize(0, 0);
-	_cRect.SetRect(0, 0, 0, 0);
+	_cRect.setRect(0, 0, 0, 0);
 
 	_cShadowColor = RGB(0, 0, 0);
 	_nShadow_DX = 0;
@@ -369,7 +369,7 @@ ErrorCode CBofText::displayTextEx(CBofBitmap *pBmp, const char *pszText, CBofRec
 	}
 
 	// text starts relative to area for painting
-	_cPosition += pRect->TopLeft();
+	_cPosition += pRect->topLeft();
 
 	// Note: Under ScummVM, even single line drawing uses the multiLine code
 	Common::Rect newRect = *pRect;

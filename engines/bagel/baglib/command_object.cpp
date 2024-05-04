@@ -313,7 +313,7 @@ bool CBagCommandObject::runObject() {
 					int y = getPosition().y;
 
 					CBofRect cRect;
-					cRect.SetRect(x, y, x + 480 - 1, y + 360 - 1);
+					cRect.setRect(x, y, x + 480 - 1, y + 360 - 1);
 					currWin->GetSlideBitmap()->SetCurrView(cRect);
 				}
 			}

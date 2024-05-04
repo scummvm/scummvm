@@ -83,11 +83,11 @@ CBagMasterWin::CBagMasterWin() {
 
 	CBofApp *pApp = CBofApp::getApp();
 	if (pApp != nullptr) {
-		cRect.SetRect(0, 0, pApp->screenWidth() - 1, pApp->screenHeight() - 1);
+		cRect.setRect(0, 0, pApp->screenWidth() - 1, pApp->screenHeight() - 1);
 		pAppName = pApp->getAppName();
 	}
 
-	cRect.SetRect(0, 0, 640 - 1, 480 - 1);
+	cRect.setRect(0, 0, 640 - 1, 480 - 1);
 	_fadeIn = 0;
 	_gameWindow = nullptr;
 
@@ -733,7 +733,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 			pSDev->SetDiskID(_diskId);
 
 			if (rRect.width() && rRect.height())
-				pSDev->SetRect(rRect);
+				pSDev->setRect(rRect);
 
 			pSDev->loadFileFromStream(input, namestr, false);
 			if (nFilter) {

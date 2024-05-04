@@ -268,7 +268,7 @@ ErrorCode CBagOptWindow::attach() {
 
 	// Midi volume control
 	CBofRect cRect;
-	cRect.SetRect(73, 48, 73 + 120 - 1, 48 + 20 - 1);
+	cRect.setRect(73, 48, 73 + 120 - 1, 48 + 20 - 1);
 	if ((_pMidiVolumeScroll = new CBofScrollBar) != nullptr) {
 		_pMidiVolumeScroll->create("", &cRect, this, MIDI_VOL_ID);
 
@@ -281,7 +281,7 @@ ErrorCode CBagOptWindow::attach() {
 	}
 
 	// Digital Audio volume control
-	cRect.SetRect(73, 98, 73 + 120 - 1, 98 + 20 - 1);
+	cRect.setRect(73, 98, 73 + 120 - 1, 98 + 20 - 1);
 	if ((_pWaveVolumeScroll = new CBofScrollBar) != nullptr) {
 		_pWaveVolumeScroll->create("", &cRect, this, WAVE_VOL_ID);
 
@@ -294,7 +294,7 @@ ErrorCode CBagOptWindow::attach() {
 	}
 
 	// Pan Correction control
-	cRect.SetRect(73, 268, 73 + 120 - 1, 268 + 20 - 1);
+	cRect.setRect(73, 268, 73 + 120 - 1, 268 + 20 - 1);
 	if ((_pCorrectionScroll = new CBofScrollBar) != nullptr) {
 		_pCorrectionScroll->create("", &cRect, this, CORRECTION_ID);
 
@@ -307,7 +307,7 @@ ErrorCode CBagOptWindow::attach() {
 	}
 
 	// Pan Speed control
-	cRect.SetRect(73, 318, 73 + 120 - 1, 318 + 20 - 1);
+	cRect.setRect(73, 318, 73 + 120 - 1, 318 + 20 - 1);
 	if ((_pPanSpeedScroll = new CBofScrollBar) != nullptr) {
 		_pPanSpeedScroll->create("", &cRect, this, PANSPEED_ID);
 
@@ -319,14 +319,14 @@ ErrorCode CBagOptWindow::attach() {
 		reportError(ERR_MEMORY, "Could not allocate the Pan Speed Scroll Bar");
 	}
 
-	cRect.SetRect(FLYTHROUGHS_LEFT, FLYTHROUGHS_TOP, FLYTHROUGHS_LEFT + CHECKBOX_WIDTH, FLYTHROUGHS_TOP + CHECKBOX_HEIGHT);
+	cRect.setRect(FLYTHROUGHS_LEFT, FLYTHROUGHS_TOP, FLYTHROUGHS_LEFT + CHECKBOX_WIDTH, FLYTHROUGHS_TOP + CHECKBOX_HEIGHT);
 	if ((_pFlythroughs = new CBofCheckButton()) != nullptr) {
 		_pFlythroughs->loadColorScheme(&_cColorScheme);
 		_errCode = _pFlythroughs->create("", &cRect, this, FLYTHROUGHS_ID);
 		_pFlythroughs->show();
 	}
 
-	cRect.SetRect(PANIMATIONS_LEFT, PANIMATIONS_TOP, PANIMATIONS_LEFT + CHECKBOX_WIDTH, PANIMATIONS_TOP + CHECKBOX_HEIGHT);
+	cRect.setRect(PANIMATIONS_LEFT, PANIMATIONS_TOP, PANIMATIONS_LEFT + CHECKBOX_WIDTH, PANIMATIONS_TOP + CHECKBOX_HEIGHT);
 	if ((_pPanimations = new CBofCheckButton()) != nullptr) {
 		_pPanimations->loadColorScheme(&_cColorScheme);
 		_errCode = _pPanimations->create("", &cRect, this, PAN_CHECK_ID);
