@@ -56,6 +56,8 @@ typedef struct ImGuiState {
 		Common::HashMap<Graphics::Surface *, ImGuiImage> _textures;
 		bool _listView = true;
 		int _thumbnailSize = 64;
+		ImGuiTextFilter _nameFilter;
+		int _typeFilter = 0x7FFF;
 	} _cast;
 	bool _showControlPanel = true;
 	bool _showCallStack = false;
@@ -331,18 +333,40 @@ static void showCast() {
 	ImGui::SetNextWindowSize(ImVec2(520, 240), ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Cast", &_state->_showCast)) {
-		Movie *movie = g_director->getCurrentMovie();
-		ImGui::BeginDisabled(_state->_cast._listView);
+		// display a toolbar with: grid/list/filters buttons + name filter
 		if (ImGui::Button("\ue07e")) {
 			_state->_cast._listView = true;
 		}
-		ImGui::EndDisabled();
 		ImGui::SameLine();
-		ImGui::BeginDisabled(!_state->_cast._listView);
 		if (ImGui::Button("\ue06e")) {
 			_state->_cast._listView = false;
 		}
-		ImGui::EndDisabled();
+		ImGui::SameLine();
+
+		if (ImGui::Button("\ue063")) {
+			ImGui::OpenPopup("filters_popup");
+		}
+		ImGui::SameLine();
+
+		if (ImGui::BeginPopup("filters_popup")) {
+			ImGui::CheckboxFlags("All", &_state->_cast._typeFilter, 0x7FFF);
+			ImGui::Separator();
+			for (int i = 0; i <= 14; i++) {
+				ImGui::PushID(i);
+				Common::String option(Common::String::format("%s %s", toIcon((CastType)i), toString((CastType)i)));
+				ImGui::CheckboxFlags(option.c_str(), &_state->_cast._typeFilter, 1 << i);
+				ImGui::PopID();
+			}
+			ImGui::EndPopup();
+		}
+		_state->_cast._nameFilter.Draw();
+		ImGui::Separator();
+
+		// display a list or a grid
+		const float sliderHeight = _state->_cast._listView ? 0.f : 38.f;
+		const ImVec2 childsize = ImGui::GetContentRegionAvail();
+		Movie *movie = g_director->getCurrentMovie();
+		ImGui::BeginChild("##cast", ImVec2(childsize.x, childsize.y - sliderHeight));
 		if (_state->_cast._listView) {
 			if (ImGui::BeginTable("Resources", 5, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg)) {
 				ImGui::TableSetupColumn("Name", 0, 120.f);
@@ -361,9 +385,15 @@ static void showCast() {
 						CastMemberInfo *castMemberInfo = cast->getCastMemberInfo(castMember._key);
 						if (!castMember._value->isLoaded())
 							continue;
+
+						const char *name = castMemberInfo ? castMemberInfo->name.c_str() : "";
+						if (!_state->_cast._nameFilter.PassFilter(name))
+							continue;
+						if (!(_state->_cast._typeFilter & (1 << (int)castMember._value->_type)))
+							continue;
+
 						ImGui::TableNextRow();
 						ImGui::TableNextColumn();
-						const char *name = castMemberInfo ? castMemberInfo->name.c_str() : "";
 						ImGui::Text("%s %s", toIcon(castMember._value->_type), name);
 
 						ImGui::TableNextColumn();
@@ -388,60 +418,74 @@ static void showCast() {
 				ImGui::EndTable();
 			}
 		} else {
-			ImGui::SliderInt("Thumbnail Size", &_state->_cast._thumbnailSize, 32, 256);
 			const float thumbnailSize = (float)_state->_cast._thumbnailSize;
-
 			const float contentWidth = ImGui::GetContentRegionAvail().x;
 			int columns = contentWidth / (thumbnailSize + 8.f);
 			columns = columns < 1 ? 1 : columns;
-			ImGui::Columns(columns, nullptr, false);
-			for (auto it : *movie->getCasts()) {
-				Cast *cast = it._value;
-				if (!cast->_loadedCast)
-					continue;
-
-				for (auto castMember : *cast->_loadedCast) {
-					CastMemberInfo *castMemberInfo = cast->getCastMemberInfo(castMember._key);
-					if (!castMember._value->isLoaded())
+			if (ImGui::BeginTable("Cast", columns)) {
+				for (auto it : *movie->getCasts()) {
+					Cast *cast = it._value;
+					if (!cast->_loadedCast)
 						continue;
 
-					ImGui::BeginGroup();
-					Common::String name(castMemberInfo ? castMemberInfo->name : "");
-					if (name.empty()) {
-						name = Common::String::format("%d", castMember._key);
-					}
+					for (auto castMember : *cast->_loadedCast) {
+						CastMemberInfo *castMemberInfo = cast->getCastMemberInfo(castMember._key);
+						if (!castMember._value->isLoaded())
+							continue;
 
-					const ImVec2 textSize = ImGui::CalcTextSize(name.c_str());
-					float textWidth = textSize.x;
-					float textHeight = textSize.y;
-					if (textWidth > thumbnailSize) {
-						textWidth = thumbnailSize;
-						textHeight *= (textSize.x / textWidth);
-						if (textHeight > thumbnailSize) {
-							textHeight = thumbnailSize;
+						Common::String name(castMemberInfo ? castMemberInfo->name : "");
+						if (name.empty()) {
+							name = Common::String::format("%d", castMember._key);
 						}
-					}
+						if (!_state->_cast._nameFilter.PassFilter(name.c_str()))
+							continue;
+						if (!(_state->_cast._typeFilter & (1 << (int)castMember._value->_type)))
+							continue;
 
-					ImGuiImage imgID = getImageID(castMember._value);
-					if (imgID.id) {
-						showImage(imgID, name.c_str(), thumbnailSize);
-					} else {
-						ImGui::PushID(castMember._key);
-						ImGui::InvisibleButton("##canvas", ImVec2(thumbnailSize, thumbnailSize));
-						ImGui::PopID();
-						const ImVec2 p0 = ImGui::GetItemRectMin();
-						const ImVec2 p1 = ImGui::GetItemRectMax();
-						ImGui::PushClipRect(p0, p1, true);
-						ImDrawList *draw_list = ImGui::GetWindowDrawList();
-						draw_list->AddRect(p0, p1, IM_COL32_WHITE);
-						const ImVec2 pos = p0 + ImVec2((thumbnailSize - textWidth) * 0.5f, (thumbnailSize - textHeight) * 0.5f);
-						draw_list->AddText(nullptr, 0.f, pos, IM_COL32_WHITE, name.c_str(), 0, thumbnailSize);
-						ImGui::PopClipRect();
+						ImGui::TableNextColumn();
+
+						ImGui::BeginGroup();
+						const ImVec2 textSize = ImGui::CalcTextSize(name.c_str());
+						float textWidth = textSize.x;
+						float textHeight = textSize.y;
+						if (textWidth > thumbnailSize) {
+							textWidth = thumbnailSize;
+							textHeight *= (textSize.x / textWidth);
+							if (textHeight > thumbnailSize) {
+								textHeight = thumbnailSize;
+							}
+						}
+
+						ImGuiImage imgID = getImageID(castMember._value);
+						if (imgID.id) {
+							showImage(imgID, name.c_str(), thumbnailSize);
+						} else {
+							ImGui::PushID(castMember._key);
+							ImGui::InvisibleButton("##canvas", ImVec2(thumbnailSize, thumbnailSize));
+							ImGui::PopID();
+							const ImVec2 p0 = ImGui::GetItemRectMin();
+							const ImVec2 p1 = ImGui::GetItemRectMax();
+							ImGui::PushClipRect(p0, p1, true);
+							ImDrawList *draw_list = ImGui::GetWindowDrawList();
+							draw_list->AddRect(p0, p1, IM_COL32_WHITE);
+							const ImVec2 pos = p0 + ImVec2((thumbnailSize - textWidth) * 0.5f, (thumbnailSize - textHeight) * 0.5f);
+							draw_list->AddText(nullptr, 0.f, pos, IM_COL32_WHITE, name.c_str(), 0, thumbnailSize);
+							ImGui::PopClipRect();
+						}
+						ImGui::EndGroup();
 					}
-					ImGui::EndGroup();
-					ImGui::NextColumn();
 				}
+				ImGui::EndTable();
 			}
+		}
+		ImGui::EndChild();
+
+		// in the footer display a slider for the grid view: thumbnail size
+		if (!_state->_cast._listView) {
+			ImGui::Spacing();
+			ImGui::Separator();
+			ImGui::Spacing();
+			ImGui::SliderInt("Thumbnail Size", &_state->_cast._thumbnailSize, 32, 256);
 		}
 		ImGui::End();
 	}
