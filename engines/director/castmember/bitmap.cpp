@@ -43,7 +43,7 @@ namespace Director {
 BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint32 castTag, uint16 version, uint8 flags1)
 		: CastMember(cast, castId, stream) {
 	_type = kCastBitmap;
-	_picture = nullptr;
+	_picture = new Picture();
 	_ditheredImg = nullptr;
 	_matte = nullptr;
 	_noMatte = false;
@@ -692,7 +692,7 @@ void BitmapCastMember::unload() {
 		return;
 
 	delete _picture;
-	_picture = nullptr;
+	_picture = new Picture();
 
 	delete _ditheredImg;
 	_ditheredImg = nullptr;
