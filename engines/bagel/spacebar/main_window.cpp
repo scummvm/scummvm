@@ -99,7 +99,7 @@ ErrorCode CMainWindow::attach() {
 	}
 
 	// Get rid of any extra mouse button clicks
-	FlushInputEvents();
+	flushInputEvents();
 
 	// Create the window
 	CBofString s = GetName();
@@ -120,13 +120,13 @@ ErrorCode CMainWindow::attach() {
 
 	CBofSound::audioTask();
 
-	CBofPalette *bofpal = SetSlidebitmap(GetBackgroundName(), rView);
+	CBofPalette *bofpal = setSlidebitmap(GetBackgroundName(), rView);
 	setPalPtr(bofpal);
 
 	CBagel::getBagApp()->getMasterWnd()->selectPalette(bofpal);
 	CBofApp::getApp()->setPalette(bofpal);
 
-	ActivateView();
+	activateView();
 	CBofSound::audioTask();
 
 	g_pLastWindow = this;
@@ -139,15 +139,15 @@ ErrorCode CMainWindow::attach() {
 				_pThudBmp->SetAssociateWnd(this);
 				if (!_pThudBmp->isAttached())
 					_pThudBmp->attach();
-				InsertFGObjects(_pThudBmp);
+				insertFGObjects(_pThudBmp);
 				_pThudBmp->setVisible(true);
 			}
 		}
 
-		if (_pThudBmp && (CBagObject *)nullptr == GetFGObjects(CBofString(THUDWLD))) {
+		if (_pThudBmp && (CBagObject *)nullptr == getFGObjects(CBofString(THUDWLD))) {
 			CBofRect r(1, tmpRect.height() - 101, 101, tmpRect.height() - 1);
 			_pThudBmp->SetAssociateWnd(this);
-			InsertFGObjects(_pThudBmp);
+			insertFGObjects(_pThudBmp);
 		}
 
 		if (!_pWieldBmp) {
@@ -164,7 +164,7 @@ ErrorCode CMainWindow::attach() {
 					r = getClientRect();
 				}
 
-				InsertFGObjects(_pWieldBmp);
+				insertFGObjects(_pWieldBmp);
 				_pWieldBmp->setVisible(true);
 
 			} else {
@@ -172,9 +172,9 @@ ErrorCode CMainWindow::attach() {
 			}
 		}
 
-		if ((CBagObject *)nullptr == GetFGObjects(CBofString(WIELDWLD))) {
+		if ((CBagObject *)nullptr == getFGObjects(CBofString(WIELDWLD))) {
 			_pWieldBmp->SetAssociateWnd(this);
-			InsertFGObjects(_pWieldBmp);
+			insertFGObjects(_pWieldBmp);
 		}
 
 		// Create the PDA for the game
@@ -198,8 +198,8 @@ ErrorCode CMainWindow::attach() {
 					g_nPDAIncrement = PDA_INCREMENT;
 					_pPDABmp->setPosInWindow(r.width(), r.height(), g_nPDAIncrement);
 				}
-				InsertFGObjects(_pPDABmp);
-				DeactivatePDA();
+				insertFGObjects(_pPDABmp);
+				deactivatePDA();
 				_pPDABmp->setVisible(true);
 
 			} else {
@@ -207,12 +207,12 @@ ErrorCode CMainWindow::attach() {
 			}
 		}
 
-		if ((CBagObject *)nullptr == GetFGObjects(CBofString(PDAWLD))) {
+		if ((CBagObject *)nullptr == getFGObjects(CBofString(PDAWLD))) {
 			CBofRect r(0, 0, 300, 200);
 			_pPDABmp->SetAssociateWnd(this);
 
 			// To fix pda not updating problem
-			InsertFGObjects(_pPDABmp);
+			insertFGObjects(_pPDABmp);
 		}
 
 		_pPDABmp->attachActiveObjects();
@@ -248,9 +248,9 @@ ErrorCode CMainWindow::attach() {
 		//
 		// Only do it if we're coming from somewhere other than the zoom
 		if (bForegroundObj == true) {
-			if ((CBagObject *)nullptr == GetFGObjects(CBofString(WIELDWLD))) {
+			if ((CBagObject *)nullptr == getFGObjects(CBofString(WIELDWLD))) {
 				_pWieldBmp->SetAssociateWnd(this);
-				InsertFGObjects(_pWieldBmp);
+				insertFGObjects(_pWieldBmp);
 			}
 		}
 	}
@@ -261,7 +261,7 @@ ErrorCode CMainWindow::attach() {
 	// won't run until the window is ready
 	_bFirstPaint = true;
 
-	AttachActiveObjects();
+	attachActiveObjects();
 	CBofSound::audioTask();
 
 	show();
@@ -295,17 +295,17 @@ ErrorCode CMainWindow::attach() {
 
 ErrorCode CMainWindow::detach() {
 	// If this was a closeup then save the leaving position
-	_cLastLoc = GetViewPort().topLeft();
+	_cLastLoc = getViewPort().topLeft();
 
 	CBagPanWindow::detach();
 
-	UnSetSlidebitmap();
+	unSetSlidebitmap();
 
 	destroy();
 
 	// When we move from room to room, we should delete
 	// all our foreground objects (remove from memory).
-	DeleteFGObjects();
+	deleteFGObjects();
 
 	return _errCode;
 }
@@ -313,7 +313,7 @@ ErrorCode CMainWindow::detach() {
 
 void CMainWindow::onSize(uint32 nType, int cx, int cy) {
 	if (_pPDABmp) {
-		if (GetStretchToScreen()) {
+		if (getStretchToScreen()) {
 			_pPDABmp->setPosInWindow(500, 370, g_nPDAIncrement);
 		} else
 			_pPDABmp->setPosInWindow(cx, cy, g_nPDAIncrement);
@@ -358,7 +358,7 @@ void CMainWindow::correctZzazzlePoint(CBofPoint *p) {
 		return;
 	}
 
-	if (!GetMovementRect().ptInRect(*p))
+	if (!getMovementRect().ptInRect(*p))
 		return;
 
 	int dx = _xFilterRect->width();

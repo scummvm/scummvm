@@ -300,7 +300,7 @@ ErrorCode CBagMasterWin::newGame() {
 
 	CBofString initWld(cInit, 256);
 
-	CBagPanWindow::FlushInputEvents();
+	CBagPanWindow::flushInputEvents();
 
 	// Inits for a New Game
 	_objSaveFl = false;
@@ -1071,7 +1071,7 @@ void CBagMasterWin::onKeyHit(uint32 keyCode, uint32 repCount) {
 			// pan or the PDA or a closeup.
 			_gameWindow->SetPreFilterPan(true);
 
-			_gameWindow->AttachActiveObjects();
+			_gameWindow->attachActiveObjects();
 		}
 		break;
 
@@ -1477,7 +1477,7 @@ void CBagMasterWin::fillSaveBuffer(ST_BAGEL_SAVE *saveBuf) {
 				// Remember the pan's position
 				if (saveBuf->m_nLocType == SDEV_GAMEWIN) {
 					CBagPanWindow *pPanWin = (CBagPanWindow *)pSDevWin;
-					CBofRect cPos = pPanWin->GetViewPort();
+					CBofRect cPos = pPanWin->getViewPort();
 
 					saveBuf->m_nLocX = (uint16)cPos.left;
 					saveBuf->m_nLocY = (uint16)cPos.top;

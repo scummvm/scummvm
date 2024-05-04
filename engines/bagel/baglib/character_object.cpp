@@ -548,7 +548,7 @@ void CBagCharacterObject::setNumOfLoops(int n) {
 		CBagStorageDevWnd *win = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev();
 
 		if (win != nullptr) {
-			win->RunModal(this);
+			win->runModal(this);
 		}
 	}
 }

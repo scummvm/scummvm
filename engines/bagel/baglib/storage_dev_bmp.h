@@ -31,7 +31,7 @@ namespace Bagel {
 class CBagStorageDevBmp : public CBagBmpObject, public CBagStorageDev {
 protected:
 	int m_nMaskColor;
-	CBofPoint m_xCursorLocation; // Current cursor location in bmp.
+	CBofPoint _xCursorLocation; // Current cursor location in bmp.
 	CBofRect m_cSrcRect;
 	bool m_bTrans;
 	CBofBitmap *m_pWorkBmp;
@@ -103,7 +103,7 @@ public:
 	 */
 	virtual void onLButtonDown(uint32 nFlags, CPoint *xPoint, void *info = nullptr);
 
-	virtual const CBofPoint DevPtToViewPort(const CBofPoint &xPoint);
+	virtual const CBofPoint devPtToViewPort(const CBofPoint &xPoint);
 };
 
 } // namespace Bagel

@@ -226,7 +226,7 @@ bool SBBasePda::showMap() {
 		// Set the current display = Map
 		_curDisplay = _mapWnd;
 		_pdaMode = MAPMODE;
-		_mapWnd->AttachActiveObjects();
+		_mapWnd->attachActiveObjects();
 		setPdaState();
 
 		return true;
@@ -276,7 +276,7 @@ bool SBBasePda::showLog() {
 		// Set the current display = Map
 		_curDisplay = _logWnd;
 		_pdaMode = LOGMODE;
-		_logWnd->AttachActiveObjects();
+		_logWnd->attachActiveObjects();
 		setPdaState();
 
 		return true;
@@ -565,13 +565,13 @@ ErrorCode SBBasePda::attachActiveObjects() {
 	}
 
 	if (_mooWnd)
-		_mooWnd->AttachActiveObjects();
+		_mooWnd->attachActiveObjects();
 	if (_invWnd)
-		_invWnd->AttachActiveObjects();
+		_invWnd->attachActiveObjects();
 	if (_mapWnd)
-		_mapWnd->AttachActiveObjects();
+		_mapWnd->attachActiveObjects();
 	if (_logWnd)
-		_logWnd->AttachActiveObjects();
+		_logWnd->attachActiveObjects();
 
 	return ERR_NONE;
 }

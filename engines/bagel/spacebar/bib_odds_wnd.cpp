@@ -72,19 +72,19 @@ void SBarBibOddsWnd::onKeyHit(uint32 lKey, uint32 lRepCount) {
 			switch (lKey) {
 			case BKEY_1:
 				pVar->SetValue("VIDINFO");
-				AttachActiveObjects();
+				attachActiveObjects();
 				break;
 			case BKEY_2:
 				pVar->SetValue("SETBIBBLE");
-				AttachActiveObjects();
+				attachActiveObjects();
 				break;
 			case BKEY_3:
 				pVar->SetValue("BADCODE");
-				AttachActiveObjects();
+				attachActiveObjects();
 				break;
 			case BKEY_4:
 				pVar->SetValue("TIPS");
-				AttachActiveObjects();
+				attachActiveObjects();
 				break;
 			case BKEY_5:
 				close();
@@ -97,11 +97,11 @@ void SBarBibOddsWnd::onKeyHit(uint32 lKey, uint32 lRepCount) {
 			switch (lKey) {
 			case BKEY_1:
 				pVar->SetValue("SETBONK");
-				AttachActiveObjects();
+				attachActiveObjects();
 				break;
 			case BKEY_2:
 				pVar->SetValue("SETBAB");
-				AttachActiveObjects();
+				attachActiveObjects();
 				break;
 			default:
 				break;

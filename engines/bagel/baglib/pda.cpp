@@ -34,7 +34,7 @@ bool CBagPDA::m_bFlashing;
 bool CBagPDA::m_bSoundsPaused;
 CBofList<CBagMovieObject *> *CBagPDA::m_pMovieList;
 
-extern bool g_allowAttachActiveObjectsFl;
+extern bool g_allowattachActiveObjectsFl;
 static bool g_bAutoUpdate;
 
 void CBagPDA::initialize() {
@@ -359,7 +359,7 @@ void CBagPDA::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 	}
 
 	// Else, call the default func
-	CBofPoint RealPt = DevPtToViewPort(*xPoint);
+	CBofPoint RealPt = devPtToViewPort(*xPoint);
 
 	if (_curDisplay && _curDisplay->getRect().ptInRect(RealPt)) {
 		_curDisplay->onLButtonUp(nFlags, &RealPt, info);
@@ -473,10 +473,10 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 			// Make the zoom button blink, to indicate more icons
 			if (m_bFlashing == false) {
 				// Don't allow attachActiveObjects() to be called in here
-				g_allowAttachActiveObjectsFl = false;
+				g_allowattachActiveObjectsFl = false;
 				pPda->activateLocalObject(pZoomFlash);
 				pPda->deactivateLocalObject(pZoomRegular);
-				g_allowAttachActiveObjectsFl = true;
+				g_allowattachActiveObjectsFl = true;
 
 				pZoomFlash->setActive(true);
 				pZoomRegular->setActive(false);
@@ -488,10 +488,10 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 			}
 		} else if (m_bFlashing) {
 			// Don't allow attachActiveObjects() to be called in here
-			g_allowAttachActiveObjectsFl = false;
+			g_allowattachActiveObjectsFl = false;
 			pPda->deactivateLocalObject(pZoomFlash);
 			pPda->activateLocalObject(pZoomRegular);
-			g_allowAttachActiveObjectsFl = true;
+			g_allowattachActiveObjectsFl = true;
 
 			pZoomFlash->setActive(false);
 			pZoomRegular->setActive(true);
@@ -561,7 +561,7 @@ ErrorCode CBagPDA::attachActiveObjects() {
 		bAlready = true;
 
 		SBBasePda::attachActiveObjects();
-		CBagStorageDevBmp::AttachActiveObjects();
+		CBagStorageDevBmp::attachActiveObjects();
 
 		bAlready = false;
 	}

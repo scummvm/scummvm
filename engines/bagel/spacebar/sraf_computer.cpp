@@ -866,7 +866,7 @@ SrafComputer::~SrafComputer() {
 void SrafComputer::onMainLoop() {
 	if (_bFirstPaint) {
 		_bFirstPaint = false;
-		AttachActiveObjects();
+		attachActiveObjects();
 	}
 }
 

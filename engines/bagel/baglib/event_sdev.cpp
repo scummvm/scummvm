@@ -34,7 +34,7 @@ ErrorCode CBagEventSDev::attach() {
 	// for immediate run objects to run
 	if (_bFirstPaint) {
 		_bFirstPaint = false;
-		AttachActiveObjects();
+		attachActiveObjects();
 	}
 
 	return errCode;

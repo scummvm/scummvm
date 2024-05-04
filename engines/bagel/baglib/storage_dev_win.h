@@ -105,11 +105,11 @@ private:
 
 protected:
 	uint16 _xSDevType;                 // Type of storage device
-	static CBofPoint *m_xCursorLocation; // Current cursor location in bmp.
+	static CBofPoint *_xCursorLocation; // Current cursor location in bmp.
 	static CBofRect *gRepaintRect;
 	static bool m_bHandledUpEvent;      // Hack to stop
 	static bool m_bHidePDA;
-	FilterFunction m_pBitmapFilter; // Pointer to the bitmap filter.
+	FilterFunction _pBitmapFilter; // Pointer to the bitmap filter.
 
 	bool m_bForiegnList : 1;   // True if SetObjectList has been called
 	bool m_bCloseOnOpen : 1;   // True if other SDev should be closed when this is opened
@@ -182,7 +182,7 @@ public:
 	CBagObject *GetObject(const CBofString &sName, bool bActiveOnly = false);
 	CBagObject *GetObjectByType(const CBofString &sName, bool bActiveOnly = false);
 	CBofPoint &GetLastCursorLocation() {
-		return *m_xCursorLocation;
+		return *_xCursorLocation;
 	}
 	CBofList<CBagObject *> *
 	GetObjectList() {
@@ -207,7 +207,7 @@ public:
 	virtual ErrorCode AddObject(CBagObject *pObj, int nPos = 0); // Add a new object
 	virtual ErrorCode activateLocalObject(CBagObject *pObj);
 	virtual ErrorCode activateLocalObject(const CBofString &sName);
-	virtual ErrorCode AttachActiveObjects();
+	virtual ErrorCode attachActiveObjects();
 
 	virtual ErrorCode removeObject(CBagObject *pObj);
 	virtual ErrorCode deactivateLocalObject(CBagObject *pObj);
@@ -317,10 +317,10 @@ public:
 	// virtual ErrorCode   InsertObjects(CBagObject *);
 	virtual ErrorCode NoObjectsUnderMouse();
 
-	virtual const CBofPoint DevPtToViewPort(const CBofPoint &xPoint) {
+	virtual const CBofPoint devPtToViewPort(const CBofPoint &xPoint) {
 		return xPoint;
 	}
-	virtual const CBofPoint ViewPortToDevPt(const CBofPoint &xPoint) {
+	virtual const CBofPoint viewPortToDevPt(const CBofPoint &xPoint) {
 		return xPoint;
 	}
 
@@ -431,7 +431,7 @@ public:
 	virtual ErrorCode detach(); // This function attaches the background and necessary bitmaps
 
 	virtual ErrorCode close();
-	virtual ErrorCode RunModal(CBagObject *pObj);
+	virtual ErrorCode runModal(CBagObject *pObj);
 	virtual void onTimer(uint32 nTimerId);
 
 	void setOnUpdate(bool bVal = true) {
@@ -442,11 +442,11 @@ public:
 	}
 
 	virtual ErrorCode PaintScreen(CBofRect *pRect = nullptr);
-	ErrorCode PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
+	ErrorCode paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
 	                        CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = true);
-	ErrorCode PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
+	ErrorCode paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
 		CBofRect emptyRect;
-		return PaintObjects(list, pBmp, emptyRect);
+		return paintObjects(list, pBmp, emptyRect);
 	}
 
 	ErrorCode PaintWithCursor(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
@@ -500,11 +500,11 @@ public:
 	CBagStorageDevDlg();
 
 	virtual ErrorCode PaintScreen(CBofRect *pRect = nullptr);
-	ErrorCode PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
+	ErrorCode paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
 	                        CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = true);
-	ErrorCode PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
+	ErrorCode paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
 		CBofRect emptyRect;
-		return PaintObjects(list, pBmp, emptyRect);
+		return paintObjects(list, pBmp, emptyRect);
 	}
 
 	virtual CBofRect GetLocation() {

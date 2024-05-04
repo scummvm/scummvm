@@ -150,11 +150,11 @@ void CBagButtonObject::onLButtonUp(uint32 flags, CBofPoint *point, void *extraIn
 
 		// Get the mouse point relative to the pan window
 		CBagPanWindow *pWnd = (CBagPanWindow *)extraInfo;
-		CBofRect r = pWnd->GetSlideBitmap()->GetCurrView();
+		CBofRect r = pWnd->getSlideBitmap()->getCurrView();
 
 		CBofPoint mLoc;
-		mLoc.x = point->x + r.left - pWnd->GetViewPortPos().x;
-		mLoc.y = point->y + r.top - pWnd->GetViewPortPos().y;
+		mLoc.x = point->x + r.left - pWnd->getViewPortPos().x;
+		mLoc.y = point->y + r.top - pWnd->getViewPortPos().y;
 
 		int xIncrement = _slideRect.width() / (_numPos - 1);
 
@@ -224,10 +224,10 @@ bool CBagButtonObject::onMouseMove(uint32 /*nFlags*/, CBofPoint point, void *ext
 			CBofPoint mLoc;
 			CBofPoint NewPoint = getPosition();
 			CBagPanWindow *pWnd = (CBagPanWindow *)extraInfo;
-			CBofRect r = pWnd->GetSlideBitmap()->GetCurrView();
+			CBofRect r = pWnd->getSlideBitmap()->getCurrView();
 
-			mLoc.x = point.x + r.left - pWnd->GetViewPortPos().x;
-			mLoc.y = point.y + r.top - pWnd->GetViewPortPos().y;
+			mLoc.x = point.x + r.left - pWnd->getViewPortPos().x;
+			mLoc.y = point.y + r.top - pWnd->getViewPortPos().y;
 
 			int NewXPos = mLoc.x;
 

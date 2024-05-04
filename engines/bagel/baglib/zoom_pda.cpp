@@ -153,7 +153,7 @@ ErrorCode SBZoomPda::attach() {
 			}
 		} else {
 			// Already attached just update
-			_mooWnd->AttachActiveObjects();
+			_mooWnd->attachActiveObjects();
 		}
 
 		if (!_invWnd) {
@@ -171,7 +171,7 @@ ErrorCode SBZoomPda::attach() {
 			}
 		} else {
 			// Already attached just update
-			_invWnd->AttachActiveObjects();
+			_invWnd->attachActiveObjects();
 		}
 
 		if (!_mapWnd) {
@@ -189,7 +189,7 @@ ErrorCode SBZoomPda::attach() {
 			}
 		} else {
 			// Already attached just update
-			_mapWnd->AttachActiveObjects();
+			_mapWnd->attachActiveObjects();
 		}
 
 		if (!_logWnd) {
@@ -204,7 +204,7 @@ ErrorCode SBZoomPda::attach() {
 			}
 		} else {
 			// Already attached just update
-			_logWnd->AttachActiveObjects();
+			_logWnd->attachActiveObjects();
 		}
 
 		if (_pdaMode == INVMODE) {
@@ -237,8 +237,8 @@ void SBZoomPda::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	// Need to override the CBagStorageDevWnd::onLButtonUp(nFlags, xPoint)
 	// to do our own thing.
 
-	*m_xCursorLocation = *xPoint;
-	CBofPoint xCursorLocation = DevPtToViewPort(*xPoint);
+	*_xCursorLocation = *xPoint;
+	CBofPoint xCursorLocation = devPtToViewPort(*xPoint);
 
 	CBagObject *pObj = GetObject(xCursorLocation, true);
 	if (pObj != nullptr) {
@@ -308,7 +308,7 @@ void SBZoomPda::onMainLoop() {
 
 ErrorCode SBZoomPda::attachActiveObjects() {
 	SBBasePda::attachActiveObjects();
-	return CBagStorageDevWnd::AttachActiveObjects();
+	return CBagStorageDevWnd::attachActiveObjects();
 }
 
 ErrorCode SBZoomPda::detachActiveObjects() {

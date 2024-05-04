@@ -125,7 +125,7 @@ void CBagStorageDevBmp::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info
 	CBagStorageDev::onLButtonUp(nFlags, xPoint, info);
 }
 
-const CBofPoint CBagStorageDevBmp::DevPtToViewPort(const CBofPoint &xPoint) {
+const CBofPoint CBagStorageDevBmp::devPtToViewPort(const CBofPoint &xPoint) {
 	CBofPoint p;
 
 	// Get the storage device rect
@@ -167,7 +167,7 @@ ErrorCode CBagStorageDevBmp::update(CBofBitmap *pBmp, CBofPoint /*xPoint*/, CBof
 	// Set the firstpaint flag and attach objects to allow for immediate run objects to run
 	if (_bFirstPaint) {
 		_bFirstPaint = false;
-		AttachActiveObjects();
+		attachActiveObjects();
 	}
 
 	return _errCode;

@@ -228,20 +228,20 @@ bool CBagMovieObject::runObject() {
 						// If the pda is going up or down, then wait for it
 						// To do its thing before attempting to activate it.
 						if (pPDA->isActivating()) {
-							((CBagPanWindow *)pMainWin)->WaitForPDA();
+							((CBagPanWindow *)pMainWin)->waitForPDA();
 						}
 
 						if (pPDA->isActivated() == false) {
-							bActivated = ((CBagPanWindow *)pMainWin)->ActivatePDA();
-							((CBagPanWindow *)pMainWin)->WaitForPDA();
+							bActivated = ((CBagPanWindow *)pMainWin)->activatePDA();
+							((CBagPanWindow *)pMainWin)->waitForPDA();
 						}
 					}
 				} else {
 
 					// Pull down the PDA (if it exists)
 					if (pMainWin->GetDeviceType() == SDEV_GAMEWIN) {
-						((CBagPanWindow *)pMainWin)->DeactivatePDA();
-						((CBagPanWindow *)pMainWin)->WaitForPDA();
+						((CBagPanWindow *)pMainWin)->deactivatePDA();
+						((CBagPanWindow *)pMainWin)->waitForPDA();
 					}
 				}
 
@@ -347,8 +347,8 @@ bool CBagMovieObject::runObject() {
 
 				// Put the pda down if we brought it up. (8638)
 				if (_xDisplayType != DISP_TYPE::ASYNCH_PDAMSG && bActivated) {
-					((CBagPanWindow *)pMainWin)->DeactivatePDA();
-					((CBagPanWindow *)pMainWin)->WaitForPDA();
+					((CBagPanWindow *)pMainWin)->deactivatePDA();
+					((CBagPanWindow *)pMainWin)->waitForPDA();
 				}
 
 				// If we're asynch, then let it know to deactivate when done playing.
