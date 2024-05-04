@@ -51,7 +51,6 @@ class LingoCompiler;
 typedef void (*inst)(void);
 #define	STOP (inst)0
 #define ENTITY_INDEX(t,id) ((t) * 100000 + (id))
-#define printWithArgList g_lingo->printSTUBWithArglist
 
 int calcStringAlignment(const char *s);
 int calcCodeAlignment(int l);
@@ -413,7 +412,8 @@ public:
 	Datum getVoid();
 	void pushVoid();
 
-	void printSTUBWithArglist(const char *funcname, int nargs, const char *prefix = "STUB:");
+	void printArgs(const char *funcname, int nargs, const char *prefix = nullptr);
+	inline void printSTUBWithArglist(const char *funcname, int nargs) { printArgs(funcname, nargs, "STUB: "); }
 	void convertVOIDtoString(int arg, int nargs);
 	void dropStack(int nargs);
 	void drop(uint num);

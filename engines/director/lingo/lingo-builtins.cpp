@@ -306,9 +306,12 @@ void Lingo::cleanupBuiltIns(BuiltinProto protos[]) {
 	}
 }
 
-void Lingo::printSTUBWithArglist(const char *funcname, int nargs, const char *prefix) {
-	Common::String s(funcname);
+void Lingo::printArgs(const char *funcname, int nargs, const char *prefix) {
+	Common::String s;
+	if (prefix)
+		s += Common::String(prefix);
 
+	s += Common::String(funcname);
 	s += '(';
 
 	for (int i = 0; i < nargs; i++) {
@@ -322,7 +325,7 @@ void Lingo::printSTUBWithArglist(const char *funcname, int nargs, const char *pr
 
 	s += ")";
 
-	debug(3, "%s %s", prefix, s.c_str());
+	debug(3, "%s", s.c_str());
 }
 
 void Lingo::convertVOIDtoString(int arg, int nargs) {
