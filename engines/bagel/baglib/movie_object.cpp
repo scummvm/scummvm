@@ -74,7 +74,7 @@ CBagMovieObject::~CBagMovieObject() {
 bool CBagMovieObject::runObject() {
 	CBagPDA *pPDA = nullptr;
 	CBofWindow *pNewWin = nullptr;
-	SBZoomPda *pPDAz = (SBZoomPda *)SDEV_MANAGER->getStorageDevice("BPDAZ_WLD");
+	SBZoomPda *pPDAz = (SBZoomPda *)g_SDevManager->getStorageDevice("BPDAZ_WLD");
 	bool bZoomed = (pPDAz == nullptr ? false : pPDAz->getZoomed());
 
 	// Get a pointer to the current game window
@@ -150,7 +150,7 @@ bool CBagMovieObject::runObject() {
 
 			// Get the pda here, we need it so much anyway.
 			if (pPDA == nullptr) {
-				pPDA = (CBagPDA *)SDEV_MANAGER->getStorageDevice("BPDA_WLD");
+				pPDA = (CBagPDA *)g_SDevManager->getStorageDevice("BPDA_WLD");
 			}
 			assert(pPDA != nullptr);
 
@@ -540,10 +540,10 @@ bool CBagMovieObject::asynchPDAMovieCanPlay() {
 	CBofString sStr(szLocalBuff, 256);
 
 	sStr = "BPDAZ_WLD";
-	SBZoomPda *pPDAz = (SBZoomPda *)SDEV_MANAGER->getStorageDevice(sStr);
+	SBZoomPda *pPDAz = (SBZoomPda *)g_SDevManager->getStorageDevice(sStr);
 
 	sStr = "BPDA_WLD";
-	CBagPDA *pPDA = (CBagPDA *)SDEV_MANAGER->getStorageDevice(sStr);
+	CBagPDA *pPDA = (CBagPDA *)g_SDevManager->getStorageDevice(sStr);
 
 	CBagPanWindow *pMainWin = (CBagPanWindow *)(CBagel::getBagApp()->getMasterWnd()->getCurrentGameWindow());
 

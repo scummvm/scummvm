@@ -2057,7 +2057,7 @@ void SrafComputer::doShowChowButtons() {
 	bool bAllowBeverage = true;
 	bool bAllowSnack = true;
 
-	CBagStorageDev *pSDev = SDEV_MANAGER->getStorageDevice("INV_WLD");
+	CBagStorageDev *pSDev = g_SDevManager->getStorageDevice("INV_WLD");
 	if (pSDev) {
 		CBagObject *pBevObj = pSDev->getObject("SZTB", true);
 		CBagObject *pSnackObj = pSDev->getObject("SZTA", true);
@@ -4294,8 +4294,8 @@ void SrafComputer::doOrderBeverage() {
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
 
-	SDEV_MANAGER->addObject("INV_WLD", "SZTB");
-	SDEV_MANAGER->addObject("INVZ_WLD", "SZTB");
+	g_SDevManager->addObject("INV_WLD", "SZTB");
+	g_SDevManager->addObject("INVZ_WLD", "SZTB");
 
 	// Build the string to indicate that the beverage has been stashed
 	sStr = BuildSrafDir(g_stOfferings[0]._pszRcvOfferingFile);
@@ -4310,8 +4310,8 @@ void SrafComputer::doOrderSnack() {
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
 
-	SDEV_MANAGER->addObject("INV_WLD", "SZTA");
-	SDEV_MANAGER->addObject("INVZ_WLD", "SZTA");
+	g_SDevManager->addObject("INV_WLD", "SZTA");
+	g_SDevManager->addObject("INVZ_WLD", "SZTA");
 
 	// Build the string to indicate that the beverage has been stashed
 	sStr = BuildSrafDir(g_stOfferings[1]._pszRcvOfferingFile);

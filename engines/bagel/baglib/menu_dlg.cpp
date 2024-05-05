@@ -208,7 +208,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 					// If we're zoomed, then do things differently
 					CBagTextObject *pTXObj = (CBagTextObject *)pObj;
 					if (pTXObj->isCaption()) {
-						SBZoomPda *pZPDA = (SBZoomPda *)SDEV_MANAGER->getStorageDevice("BPDAZ_WLD");
+						SBZoomPda *pZPDA = (SBZoomPda *)g_SDevManager->getStorageDevice("BPDAZ_WLD");
 						if (pZPDA && pZPDA->getZoomed()) {
 							bZoomed = true;
 
@@ -399,7 +399,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 			// If we were requested to put a dialog over the PDA, then shift it upward
 			// a bit... unless of course the mousedown occurred in the PDA itself.
-			CBagPDA *pPDA = (CBagPDA *)SDEV_MANAGER->getStorageDevice("BPDA_WLD");
+			CBagPDA *pPDA = (CBagPDA *)g_SDevManager->getStorageDevice("BPDA_WLD");
 
 			if (pPDA != nullptr && (pPDA->isActivated() && bZoomed == false)) {
 				if (!pPDA->isInside(cMouseDown)) {
@@ -563,7 +563,7 @@ bool CBagMenu::removeUniversalObjectList() {
 CBagMenuDlg::CBagMenuDlg() {
 	// Remove this SDEV from the storage device list so that it is not deleted
 	// when we switch .WLD files, and there may still be a Dialog open.
-	SDEV_MANAGER->unregisterStorageDev(this);
+	g_SDevManager->unregisterStorageDev(this);
 }
 
 CBagMenuDlg::~CBagMenuDlg() {

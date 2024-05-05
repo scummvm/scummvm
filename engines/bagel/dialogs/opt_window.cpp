@@ -407,7 +407,7 @@ void CBagOptWindow::onBofButton(CBofObject *pObject, int nState) {
 			if (pApp != nullptr) {
 				pWin = pApp->getMasterWnd();
 				if ((pWin != nullptr) && pWin->getCurrentGameWindow() != nullptr) {
-					pWin->onHelp(((CBagStorageDevWnd *)pWin->getCurrentGameWindow())->GetHelpFilename(), false, this);
+					pWin->onHelp(((CBagStorageDevWnd *)pWin->getCurrentGameWindow())->getHelpFilename(), false, this);
 				}
 			}
 			break;
@@ -643,7 +643,7 @@ void CBagOptWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 		if (pApp != nullptr) {
 			pWin = pApp->getMasterWnd();
 			if ((pWin != nullptr) && (pWin->getCurrentGameWindow() != nullptr)) {
-				pWin->onHelp(((CBagStorageDevWnd *)pWin->getCurrentGameWindow())->GetHelpFilename(), false, this);
+				pWin->onHelp(((CBagStorageDevWnd *)pWin->getCurrentGameWindow())->getHelpFilename(), false, this);
 			}
 		}
 		break;

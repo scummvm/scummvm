@@ -57,7 +57,7 @@ bool CBagExpressionObject::runObject() {
 				CBofString objectStr = getFileName().left(nIndex);
 				CBofString propertyStr = getFileName().mid(nIndex + 2);
 
-				SDEV_MANAGER->SetObjectValue(objectStr, propertyStr, localVar.GetNumValue());
+				g_SDevManager->setObjectValue(objectStr, propertyStr, localVar.GetNumValue());
 
 			} else {
 				CBagVar *pVar = VAR_MANAGER->GetVariable(getFileName());

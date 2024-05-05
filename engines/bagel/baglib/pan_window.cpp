@@ -540,7 +540,7 @@ void CBagPanWindow::onMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 
 			// the logz case is handled by onmousemove in zoompda
 			if (pOverObj->getRefName().find("BPDA_WLD") != -1) {
-				CBagPDA *pPda = (CBagPDA *)SDEV_MANAGER->getStorageDevice(pOverObj->getRefName());
+				CBagPDA *pPda = (CBagPDA *)g_SDevManager->getStorageDevice(pOverObj->getRefName());
 				if (pPda != nullptr) {
 					CBofRect cRect = pOverObj->getRect();
 					nCursorID = pPda->getProperCursor(xPoint, cRect);

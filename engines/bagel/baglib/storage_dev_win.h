@@ -191,7 +191,7 @@ public:
 
 	bool contains(CBagObject *pObj, bool bActive = true);
 
-	// virtual CBofRect GetLocation()                       { return CBofRect(); }
+	// virtual CBofRect getLocation()                       { return CBofRect(); }
 	CBofRect getRect() {
 		return _cDestRect;
 	}
@@ -445,7 +445,7 @@ public:
 	                        CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = true);
 	ErrorCode paintWithCursor(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
 
-	virtual CBofRect GetLocation() {
+	virtual CBofRect getLocation() {
 		return getWindowRect();
 	}
 
@@ -460,7 +460,7 @@ public:
 
 	ErrorCode loadFile(const CBofString &sWldFile) override;
 
-	virtual const CBofString &GetHelpFilename() {
+	virtual const CBofString &getHelpFilename() {
 		return _sHelpFileName;
 	}
 
@@ -503,7 +503,7 @@ public:
 		return paintObjects(list, pBmp, emptyRect);
 	}
 
-	virtual CBofRect GetLocation() {
+	virtual CBofRect getLocation() {
 		return getWindowRect();
 	}
 
@@ -526,7 +526,7 @@ public:
 
 	ErrorCode close() override;
 
-	virtual const CBofString &GetHelpFilename() {
+	virtual const CBofString &getHelpFilename() {
 		return _sHelpFileName;
 	}
 
@@ -561,7 +561,7 @@ public:
 	ErrorCode releaseStorageDevices();
 
 	int getObjectValue(const CBofString &sObject, const CBofString &sProperty);
-	void SetObjectValue(const CBofString &sObject, const CBofString &sProperty, int nValue);
+	void setObjectValue(const CBofString &sObject, const CBofString &sProperty, int nValue);
 
 	int getNumStorageDevices() {
 		return _xStorageDeviceList.getCount();

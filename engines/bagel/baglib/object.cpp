@@ -193,7 +193,7 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 					// Try to cut down the number of Storage Devices by
 					// removing these unused ones from the list.
 					//
-					SDEV_MANAGER->unregisterStorageDev(_pMenu);
+					g_SDevManager->unregisterStorageDev(_pMenu);
 				}
 			}
 
