@@ -43,8 +43,8 @@ void PaintTable::initialize(Common::SeekableReadStream &src) {
 				int result = sscanf(line.c_str(), "{ %d,%d}", &y1, &y2);
 				assert(result == 2);
 
-				STRIP_POINTS[stripNum][pointIndex].top = y1;
-				STRIP_POINTS[stripNum][pointIndex].bottom = y2;
+				STRIP_POINTS[stripNum][pointIndex]._top = y1;
+				STRIP_POINTS[stripNum][pointIndex]._bottom = y2;
 
 				// Move to next point on line
 				line = Common::String(strchr(line.c_str() + 1, '{'));

@@ -47,7 +47,7 @@ void CBagPanWindow::initialize() {
 CBagPanWindow::CBagPanWindow() : CBagStorageDevWnd() {
 	CBofRect tmpRect;
 
-	_xVeiwPortPos = CBofPoint(0, 20);
+	_xViewPortPos = CBofPoint(0, 20);
 	_xMovementRect.setRectEmpty();
 
 	_nCorrection = CBagMasterWin::getCorrection();
@@ -58,7 +58,7 @@ CBagPanWindow::CBagPanWindow() : CBagStorageDevWnd() {
 	_bStretchToScreen = false;
 	_bDraggingObject = false;
 	_bDraggingStart = CBofPoint(0, 0);
-	_pVeiwPortBitmap = nullptr;
+	_pViewPortBitmap = nullptr;
 
 	// Objects to be painted to the window
 	_pFGObjectList = new CBofList<CBagObject *>();
@@ -72,7 +72,7 @@ CBagPanWindow::CBagPanWindow() : CBagStorageDevWnd() {
 	LoadObjects();
 }
 
-CBofRect CBagPanWindow::unSetSlidebitmap() {
+CBofRect CBagPanWindow::unSetSlideBitmap() {
 	CBofRect        viewRect;
 
 	SetLActiveObject(nullptr);
@@ -82,9 +82,9 @@ CBofRect CBagPanWindow::unSetSlidebitmap() {
 		delete _pSlideBitmap;
 		_pSlideBitmap = nullptr;
 	}
-	if (_pVeiwPortBitmap) {
-		delete _pVeiwPortBitmap;
-		_pVeiwPortBitmap = nullptr;
+	if (_pViewPortBitmap) {
+		delete _pViewPortBitmap;
+		_pViewPortBitmap = nullptr;
 	}
 
 	CBofSprite::closeLibrary();
@@ -95,9 +95,9 @@ CBofRect CBagPanWindow::unSetSlidebitmap() {
 	return viewRect;
 }
 
-CBofPalette *CBagPanWindow::setSlidebitmap(const CBofString &xSlideBmp, const CBofRect &xSlideRect) {
+CBofPalette *CBagPanWindow::setSlideBitmap(const CBofString &xSlideBmp, const CBofRect &xSlideRect) {
 	if (!xSlideBmp.isEmpty()) {
-		CBofRect viewRect = unSetSlidebitmap();
+		CBofRect viewRect = unSetSlideBitmap();
 		CBofRect cRect = getWindowRect();
 
 		if ((cRect.width() <= 0) || (cRect.width() > DEF_WIDTH))
@@ -133,8 +133,8 @@ CBofPalette *CBagPanWindow::setSlidebitmap(const CBofString &xSlideBmp, const CB
 			if (!pBackDropBitmap || pBackDropBitmap->height() <= 0 || pBackDropBitmap->width() <= 0) {
 				reportError(ERR_FOPEN, "Error opening bitmap");
 			}
-			_pVeiwPortBitmap = new CBofBitmap(DEF_WIDTH + 1, _pSlideBitmap->height() + 1, _pPalette);
-			if (!_pVeiwPortBitmap || !_pVeiwPortBitmap->height() || !_pVeiwPortBitmap->width()) {
+			_pViewPortBitmap = new CBofBitmap(DEF_WIDTH + 1, _pSlideBitmap->height() + 1, _pPalette);
+			if (!_pViewPortBitmap || !_pViewPortBitmap->height() || !_pViewPortBitmap->width()) {
 				reportError(ERR_FOPEN);
 			}
 			setBackdrop(pBackDropBitmap);
@@ -154,9 +154,9 @@ CBagPanWindow::~CBagPanWindow() {
 		delete _pSlideBitmap;
 		_pSlideBitmap = nullptr;
 	}
-	if (_pVeiwPortBitmap) {
-		delete _pVeiwPortBitmap;
-		_pVeiwPortBitmap = nullptr;
+	if (_pViewPortBitmap) {
+		delete _pViewPortBitmap;
+		_pViewPortBitmap = nullptr;
 	}
 
 	CBofSprite::closeLibrary();		// Free the off screen bitmap
@@ -210,21 +210,21 @@ ErrorCode CBagPanWindow::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 				SetPreFilterPan(false);
 			}
 
-			_pSlideBitmap->paintUncorrected(_pVeiwPortBitmap, offsetRect);  // Paint and return size
+			_pSlideBitmap->paintUncorrected(_pViewPortBitmap, offsetRect);  // Paint and return size
 			srcRect.offsetRect(0, currViewRect.top - offsetRect.top);            //   less the offset from full
 
 			// Paint the objects to the backdrop
-			paintObjects(GetObjectList(), _pVeiwPortBitmap, offsetRect, nullptr);
+			paintObjects(GetObjectList(), _pViewPortBitmap, offsetRect, nullptr);
 
-			dstRect.offsetRect(_xVeiwPortPos);
+			dstRect.offsetRect(_xViewPortPos);
 
 			// No correction ?
 			if (_nCorrection == 0) {
-				_pVeiwPortBitmap->paint(pBmp, &dstRect, &srcRect);
+				_pViewPortBitmap->paint(pBmp, &dstRect, &srcRect);
 
 			} else {
 				// Warp the backdrop to itself
-				_pSlideBitmap->paintWarped(pBmp, dstRect, srcRect, 0, _pVeiwPortBitmap, offsetRect);
+				_pSlideBitmap->paintWarped(pBmp, dstRect, srcRect, 0, _pViewPortBitmap, offsetRect);
 			}
 
 			if (IsFiltered()) {
@@ -249,11 +249,11 @@ ErrorCode CBagPanWindow::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 				// Only paint the slide the first time around, if we paint
 				// it in subsequent calls, then we will trash our PDA in this closeup,
 				// and that will be a bad thing.
-				dstRect.offsetRect(_xVeiwPortPos);
-				((CBofBitmap *)_pSlideBitmap)->paint(pBmp, _xVeiwPortPos.x, _xVeiwPortPos.y);
+				dstRect.offsetRect(_xViewPortPos);
+				((CBofBitmap *)_pSlideBitmap)->paint(pBmp, _xViewPortPos.x, _xViewPortPos.y);
 			}
 
-			clientArea.offsetRect(-_xVeiwPortPos.x, -_xVeiwPortPos.y);
+			clientArea.offsetRect(-_xViewPortPos.x, -_xViewPortPos.y);
 			paintObjects(GetObjectList(), pBmp, clientArea, nullptr);
 
 			if (IsFiltered()) {
@@ -810,8 +810,8 @@ const CBofPoint CBagPanWindow::devPtToViewPort(const CBofPoint &xPoint) {
 	CRect r = _pSlideBitmap->getCurrView();
 	CBofPoint p;
 
-	p.x = xPoint.x + r.left - _xVeiwPortPos.x;
-	p.y = xPoint.y + r.top - _xVeiwPortPos.y;
+	p.x = xPoint.x + r.left - _xViewPortPos.x;
+	p.y = xPoint.y + r.top - _xViewPortPos.y;
 
 	if (_pSlideBitmap->isPan()) {
 		if (p.x >= _pSlideBitmap->width())
@@ -846,6 +846,34 @@ ErrorCode CBagPanWindow::attachActiveObjects() {
 	}
 
 	return _errCode;
+}
+
+void CBagPanWindow::setViewPortSize(const CSize &xViewSize) {
+	if (_pSlideBitmap)
+		_pSlideBitmap->setViewSize(xViewSize);
+}
+
+const CRect CBagPanWindow::getViewPort() {
+	CRect r;
+	if (_pSlideBitmap)
+		r = _pSlideBitmap->getCurrView();
+	return r;
+}
+
+const CSize CBagPanWindow::getViewPortSize() {
+	CRect r;
+	if (_pSlideBitmap)
+		r = _pSlideBitmap->getCurrView();
+	return r.size();
+}
+
+void CBagPanWindow::waitForPDA() {
+	// Make sure we have a non-null pda
+	while (_pPDABmp && _pPDABmp->isActivating()) {
+		SetPreFilterPan(true);
+		_pPDABmp->setDirty(true);
+		PaintScreen();
+	}
 }
 
 } // namespace Bagel
