@@ -49,9 +49,9 @@ private:
 	CBagObject *_pRPObject;
 
 protected:
-	bool _bCaption : 1;
-	bool _bTitle : 1;
-	bool _bReAttach : 1;
+	bool _bCaption : true;
+	bool _bTitle : true;
+	bool _bReAttach : true;
 	CBofString *_psText;
 
 public:
@@ -63,7 +63,7 @@ public:
 	CBofSize getSize() const {
 		return CBofSize(_nDX, _nDY);
 	}
-	void setSize(const CBofSize &xSize) {
+	void setSize(const CBofSize &xSize) override {
 		_nDX = (int16)xSize.cx;
 		_nDY = (int16)xSize.cy;
 	}
@@ -88,14 +88,13 @@ public:
 		_nTextFont = nFont;
 	}
 
-	virtual bool runObject();
+	bool runObject() override;
 
-	const CBofString *getInitInfo() const {
+	const CBofString *getInitInfo() const override {
 		return _psInitInfo;
 	}
-	void setInitInfo(const CBofString &info) {
-		if (_psInitInfo)
-			delete _psInitInfo;
+	void setInitInfo(const CBofString &info) override {
+		delete _psInitInfo;
 		_psInitInfo = new CBofString();
 		*_psInitInfo = info;
 	}
@@ -113,15 +112,15 @@ public:
 	 */
 	void recalcTextRect(bool bTextFromFile);
 
-	virtual ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
+	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1) override;
 
-	ErrorCode attach();
-	ErrorCode detach();
+	ErrorCode attach() override;
+	ErrorCode detach() override;
 
-	ParseCodes setInfo(CBagIfstream &istr);
+	ParseCodes setInfo(CBagIfstream &istr) override;
 
-	void setProperty(const CBofString &sProp, int nVal);
-	int getProperty(const CBofString &sProp);
+	void setProperty(const CBofString &sProp, int nVal) override;
+	int getProperty(const CBofString &sProp) override;
 
 	bool isCaption() const {
 		return _bCaption;
@@ -134,8 +133,8 @@ public:
 		return _bTitle;
 	}
 
-	// Wxtra stuff to handle mouse downs on floaters in the log pda/residue printing code.
-	virtual void onLButtonUp(uint32, CBofPoint *, void * = nullptr);
+	// Extra stuff to handle mouse downs on floaters in the log pda/residue printing code.
+	void onLButtonUp(uint32, CBofPoint *, void * = nullptr) override;
 
 	void setRPObject(CBagObject *prp) {
 		_pRPObject = prp;
