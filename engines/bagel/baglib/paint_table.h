@@ -28,8 +28,8 @@
 namespace Bagel {
 
 struct stripEnds {
-	int16 top;
-	int16 bottom;
+	int16 _top;
+	int16 _bottom;
 };
 
 extern stripEnds STRIP_POINTS[153][120];

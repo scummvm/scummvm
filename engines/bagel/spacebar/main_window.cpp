@@ -120,7 +120,7 @@ ErrorCode CMainWindow::attach() {
 
 	CBofSound::audioTask();
 
-	CBofPalette *bofpal = setSlidebitmap(GetBackgroundName(), rView);
+	CBofPalette *bofpal = setSlideBitmap(GetBackgroundName(), rView);
 	setPalPtr(bofpal);
 
 	CBagel::getBagApp()->getMasterWnd()->selectPalette(bofpal);
@@ -299,7 +299,7 @@ ErrorCode CMainWindow::detach() {
 
 	CBagPanWindow::detach();
 
-	unSetSlidebitmap();
+	unSetSlideBitmap();
 
 	destroy();
 

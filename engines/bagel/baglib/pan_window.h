@@ -55,7 +55,7 @@ private:
 	//
 	// private data members
 	//
-	CPoint _xVeiwPortPos; // Position of the viewport
+	CPoint _xViewPortPos; // Position of the viewport
 	CRect _xMovementRect; // if mouse is in this region will not scroll
 	CRect _cLeftRect;
 	CRect _cRightRect;
@@ -63,7 +63,7 @@ private:
 	CRect _cBottomRect;
 
 	CBagPanBitmap *_pSlideBitmap; // Contains the full bitmap of the world
-	CBofBitmap *_pVeiwPortBitmap; // Contains the current viewport bitmap
+	CBofBitmap *_pViewPortBitmap; // Contains the current viewport bitmap
 	CBofPalette *_pPalette;
 
 	CBofPoint _bDraggingStart; // Starting location of the dragged object
@@ -71,12 +71,8 @@ private:
 
 	bool _bStretchToScreen;                 // Whether or not the backdrop is painted full screen
 	bool _bPaintToBackdrop;                 // Whether or not the backdrop is a extra paint surface
-	// Access via CSprite::getBackdrop()
-	CBofList<CBagObject *> *_pFGObjectList; // Objects to be painted to the window
 
-	// CPoint              _xCursorLocation;           // Current cursor location in bmp.
-	// double                _fxAspectRation;          // Maintain the current aspect ratio
-	// double                _fyAspectRation;          // Maintain the current aspect ratio
+	CBofList<CBagObject *> *_pFGObjectList; // Objects to be painted to the window
 
 public:
 	static CBagWield *_pWieldBmp; // Pointer to the WEILD object
@@ -85,9 +81,9 @@ public:
 	virtual ~CBagPanWindow();
 	static void initialize();
 
-	virtual ErrorCode attachActiveObjects();
+	ErrorCode attachActiveObjects() override;
 
-	virtual ErrorCode onRender(CBofBitmap *pBmp, CRect *pRect = nullptr);
+	ErrorCode onRender(CBofBitmap *pBmp, CRect *pRect = nullptr) override;
 
 	/**
 	 * The modal object is painted to the screen until it is done with
@@ -95,27 +91,43 @@ public:
 	 * when the loop value of a modal character is set, before execution
 	 * of the next line of script.
 	 */
-	ErrorCode runModal(CBagObject *pObj);
+	ErrorCode runModal(CBagObject *pObj) override;
 
 	ErrorCode insertFGObjects(CBagObject *pBmp);
 	void deleteFGObjects();
 	CBagObject *getFGObjects(const CBofString &sObjName);
 
-	CBofPalette *setSlidebitmap(const CBofString &xSlideBmp, const CRect &xSlideRect = CRect(0, 0, 0, 0));
+	CBofPalette *setSlideBitmap(const CBofString &xSlideBmp, const CRect &xSlideRect = CRect(0, 0, 0, 0));
 
 	/**
 	 * Clear the last pan bitmaps and return a rect of the current view
 	 */
-	CBofRect unSetSlidebitmap();
-
-	CBagPanBitmap *getSlideBitmap() {
-		return _pSlideBitmap;
-	}
+	CBofRect unSetSlideBitmap();
 
 	uint32 rotateTo(CPoint xPoint, int nRate = 8);
 
 	void activateView();
 	void deActivateView();
+
+	void enable() override;
+	void disable() override;
+
+	ErrorCode paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CRect &viewOffsetRect,
+	                        CBofList<CRect> * = nullptr, bool tempVar = true);
+
+	const CBofPoint devPtToViewPort(const CBofPoint &xPoint) override;
+	const CBofPoint viewPortToDevPt(const CBofPoint &xPoint) override;
+
+	void setViewPortSize(const CSize &xViewSize);
+	const CRect getViewPort();
+	const CSize getViewPortSize();
+
+	CBagPanBitmap *getSlideBitmap() const {
+		return _pSlideBitmap;
+	}
+	void setViewPortPos(const CPoint &pos) {
+		_xViewPortPos = pos;    // Position of the viewport
+	}
 
 	static void setPanSpeed(int nSpeed) {
 		_nPanSpeed = nSpeed;
@@ -124,38 +136,10 @@ public:
 		return _nPanSpeed;
 	}
 
-	virtual void enable();
-	virtual void disable();
-
-	ErrorCode paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CRect &viewOffsetRect,
-	                        CBofList<CRect> * = nullptr, bool tempVar = true);
-	ErrorCode paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
-		CRect emptyRect;
-		return paintObjects(list, pBmp, emptyRect);
-	}
-
-	void setViewPortPos(const CPoint &pos) {
-		_xVeiwPortPos = pos;    // Position of the viewport
-	}
-	void setViewPortSize(const CSize &xViewSize) {
-		if (_pSlideBitmap)
-			_pSlideBitmap->setViewSize(xViewSize);
-	}
-	const CRect getViewPort() {
-		CRect r;
-		if (_pSlideBitmap)
-			r = _pSlideBitmap->getCurrView();
-		return r;
-	}
 	const CPoint getViewPortPos() {
-		return _xVeiwPortPos;
+		return _xViewPortPos;
 	}
-	const CSize getViewPortSize() {
-		CRect r;
-		if (_pSlideBitmap)
-			r = _pSlideBitmap->getCurrView();
-		return r.size();
-	}
+
 	const CRect getMaxView() {
 		return _pSlideBitmap->getMaxView();
 	}
@@ -168,23 +152,18 @@ public:
 	void setPaintToBackdrop(const bool bPaint) {
 		_bPaintToBackdrop = bPaint;
 	}
-
-	virtual const CBofPoint devPtToViewPort(const CBofPoint &xPoint);
-	virtual const CBofPoint viewPortToDevPt(const CBofPoint &xPoint);
 	bool getStretchToScreen() {
 		return _bStretchToScreen;
 	}
 	bool setStretchToScreen(bool val = true) {
 		return _bStretchToScreen = val;
 	}
-
 	static int getRealCorrection() {
 		return _nCorrection;
 	}
 	static void setRealCorrection(int n) {
 		_nCorrection = n;
 	}
-
 	int getCorrection() {
 		return _pSlideBitmap->getCorrWidth();
 	}
@@ -207,15 +186,15 @@ public:
 public:
 	static void flushInputEvents();
 
-	void onClose();
-	void onMouseMove(uint32 nFlags, CBofPoint *p, void * = nullptr);
-	void onLButtonDown(uint32 nFlags, CBofPoint *point, void * = nullptr);
-	void onLButtonUp(uint32 nFlags, CBofPoint *point, void * = nullptr);
-	void onKeyHit(uint32 lKey, uint32 lRepCount);
-	void onSize(uint32 nType, int cx, int cy);
+	void onClose() override;
+	void onMouseMove(uint32 nFlags, CBofPoint *p, void * = nullptr) override;
+	void onLButtonDown(uint32 nFlags, CBofPoint *point, void * = nullptr) override;
+	void onLButtonUp(uint32 nFlags, CBofPoint *point, void * = nullptr) override;
+	void onKeyHit(uint32 lKey, uint32 lRepCount) override;
+	virtual void onSize(uint32 nType, int cx, int cy);
 	void OnWindowPosChanging(WindowPos *lpwndpos);
 
-	ErrorCode onCursorUpdate(int nCurrObj);
+	ErrorCode onCursorUpdate(int nCurrObj) override;
 
 	static CBagPDA *_pPDABmp; // Pointer to the PDA object
 
@@ -231,14 +210,7 @@ public:
 	 */
 	bool activatePDA();
 
-	void waitForPDA() {
-		// Make sure we have a non-null pda
-		while (_pPDABmp && _pPDABmp->isActivating()) {
-			SetPreFilterPan(true);
-			_pPDABmp->setDirty(true);
-			PaintScreen();
-		}
-	}
+	void waitForPDA();
 };
 
 } // namespace Bagel
