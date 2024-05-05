@@ -145,9 +145,9 @@ bool CBagFMovie::openMovie(const char *sFilename) {
 	CBagMasterWin *curWin = CBagel::getBagApp()->getMasterWnd();
 	if (curWin != nullptr) {
 		CBagStorageDevWnd *curSDev = curWin->getCurrentStorageDev();
-		if ((curSDev != nullptr) && curSDev->IsFiltered()) {
-			uint16 filterId = curSDev->GetFilterId();
-			FilterFunction filterFunction = curSDev->GetFilter();
+		if ((curSDev != nullptr) && curSDev->isFiltered()) {
+			uint16 filterId = curSDev->getFilterId();
+			FilterFunction filterFunction = curSDev->getFilter();
 			_bmpBuf->paint(_filterBmp);
 			(*filterFunction)(filterId, _filterBmp, &_bounds);
 		}
@@ -185,9 +185,9 @@ void CBagFMovie::onMainLoop() {
 	CBagMasterWin *curWin = CBagel::getBagApp()->getMasterWnd();
 	if (curWin != nullptr) {
 		CBagStorageDevWnd *curSDev = curWin->getCurrentStorageDev();
-		if ((curSDev != nullptr) && curSDev->IsFiltered()) {
-			uint16 filterId = curSDev->GetFilterId();
-			FilterFunction filterFunction = curSDev->GetFilter();
+		if ((curSDev != nullptr) && curSDev->isFiltered()) {
+			uint16 filterId = curSDev->getFilterId();
+			FilterFunction filterFunction = curSDev->getFilter();
 			(*filterFunction)(filterId, _filterBmp, &_bounds);
 		}
 	}

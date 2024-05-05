@@ -557,7 +557,7 @@ void CBagOptWindow::saveOutNewSettings() {
 
 			int n = pWin->getCorrection();
 			CBagStorageDevWnd *pSDev = pWin->getCurrentStorageDev();
-			if ((pSDev != nullptr) && pSDev->GetDeviceType() == SDEV_GAMEWIN) {
+			if ((pSDev != nullptr) && pSDev->getDeviceType() == SDEV_GAMEWIN) {
 				CBagPanWindow *pPan = (CBagPanWindow *)pSDev;
 
 				CBagPanWindow::setRealCorrection(n);

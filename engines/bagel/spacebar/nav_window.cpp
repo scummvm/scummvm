@@ -548,7 +548,7 @@ void CNavWindow::onPaint(CBofRect *pRect) {
 
 	// Render offscreen
 	if (_pBackdrop != nullptr) {
-		CBofBitmap *pBmp = GetWorkBmp();
+		CBofBitmap *pBmp = getWorkBmp();
 		if (pBmp != nullptr) {
 			_pBackdrop->paint(pBmp, pRect, pRect);
 
@@ -570,7 +570,7 @@ void CNavWindow::refreshData() {
 		return;
 
 	// Render offscreen
-	CBofBitmap *pBmp = GetWorkBmp();
+	CBofBitmap *pBmp = getWorkBmp();
 	if (pBmp == nullptr)
 		return;
 

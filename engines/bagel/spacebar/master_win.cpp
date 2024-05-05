@@ -67,36 +67,36 @@ CBagStorageDev *CSBarMasterWin::onNewStorageDev(const CBofString &typestr) {
 
 	} else if (!typestr.find("BARCOMP")) {
 		pSDev = new SBarComputer();
-		pSDev->SetCustom(true);
+		pSDev->setCustom(true);
 
 	} else if (!typestr.find("SRACOMP")) {
 		pSDev = new SrafComputer();
-		pSDev->SetExitOnEdge(10);
+		pSDev->setExitOnEdge(10);
 
 	} else if (!typestr.find("VIDEQUIP")) {
 		pSDev = new SBarVidWnd();
-		pSDev->SetCloseup(true);
-		pSDev->SetExitOnEdge(80);
-		pSDev->SetCustom(true);
+		pSDev->setCloseup(true);
+		pSDev->setExitOnEdge(80);
+		pSDev->setCustom(true);
 
 	} else if (!typestr.find("FULLSCREEN2")) {
 		pSDev = new SBarFullWnd();
-		pSDev->SetCloseup(true);
+		pSDev->setCloseup(true);
 		((SBarFullWnd *)pSDev)->_bAllowEventWorld = false;
 
 	} else if (!typestr.find("FULLSCREEN")) {
 		pSDev = new SBarFullWnd();
-		pSDev->SetCloseup(true);
+		pSDev->setCloseup(true);
 
 	} else if (!typestr.find("SBARSLOT")) {
 		pSDev = new SBarSlotWnd();
-		pSDev->SetCustom(true);
+		pSDev->setCustom(true);
 
 	} else if (!typestr.find("BIBODDS")) {
 		pSDev = new SBarBibOddsWnd();
-		pSDev->SetCloseup(true);
-		// pSDev->SetExitOnEdge(10);
-		pSDev->SetCustom(true);
+		pSDev->setCloseup(true);
+		// pSDev->setExitOnEdge(10);
+		pSDev->setCustom(true);
 
 	} else if (!typestr.find("INVWLD")) {
 		pSDev = new CBagInv();
@@ -106,11 +106,11 @@ CBagStorageDev *CSBarMasterWin::onNewStorageDev(const CBofString &typestr) {
 
 	} else if (!typestr.find("ZOOMPDA")) {
 		pSDev = new SBZoomPda();
-		pSDev->SetCloseup(true);
+		pSDev->setCloseup(true);
 
 	} else if (!typestr.find("PLAYBIBBLE")) {
 		pSDev = new CBibbleWindow();
-		pSDev->SetCustom(true);
+		pSDev->setCustom(true);
 
 	} else if (!typestr.find("PLAYNAV")) {
 		pSDev = new CNavWindow();
@@ -118,21 +118,21 @@ CBagStorageDev *CSBarMasterWin::onNewStorageDev(const CBofString &typestr) {
 		// delineate cic's
 	} else if (!typestr.find("CIC")) {
 		if ((pSDev = new GAMEWINDOW()) != nullptr) {
-			pSDev->SetCloseup(true);
-			pSDev->SetCIC(true);
-			pSDev->SetExitOnEdge(80);
+			pSDev->setCloseup(true);
+			pSDev->setCIC(true);
+			pSDev->setExitOnEdge(80);
 		}
 
 	} else if (!typestr.find("CLOSEUP")) {
 		if ((pSDev = new GAMEWINDOW()) != nullptr) {
-			pSDev->SetCloseup(true);
-			pSDev->SetExitOnEdge(80);
+			pSDev->setCloseup(true);
+			pSDev->setExitOnEdge(80);
 		}
 
 	} else if (!typestr.find("CHAT")) {
 		if ((pSDev = new CBagChatWnd()) != nullptr) {
-			pSDev->SetCloseup(true);
-			//          pSDev->SetExitOnEdge(80);
+			pSDev->setCloseup(true);
+			//          pSDev->setExitOnEdge(80);
 		}
 
 	} else if (!typestr.find("EVENT")) {        // EVT STUFF
@@ -176,7 +176,7 @@ CBagStorageDev *CSBarMasterWin::onNewStorageDev(int nType) {
 
 	case SDEV_CLOSEP:
 		pSDev = new GAMEWINDOW();
-		pSDev->SetExitOnEdge(10);
+		pSDev->setExitOnEdge(10);
 		break;
 
 	case SDEV_WND:
@@ -206,7 +206,7 @@ void CSBarMasterWin::onNewFilter(CBagStorageDev *pSDev, const CBofString &typest
 	assert(isValidObject(this));
 
 	FilterFxn filterFunction = nullptr;
-	int filterId = pSDev->GetFilterId();
+	int filterId = pSDev->getFilterId();
 
 	if (filterId != 0) {
 		filterFunction = &doFilters;
@@ -216,7 +216,7 @@ void CSBarMasterWin::onNewFilter(CBagStorageDev *pSDev, const CBofString &typest
 	} else if (!typestr.find("WIELD")) {
 	} else if (!typestr.find("BMP")) {
 	} else if (!typestr.find("DLG")) {
-		pSDev->OnSetFilter(filterFunction);
+		pSDev->onSetFilter(filterFunction);
 	} else if (!typestr.find("BARCOMP")) {
 	} else if (!typestr.find("SRACOMP")) {
 	} else if (!typestr.find("VIDEQUIP")) {
@@ -229,15 +229,15 @@ void CSBarMasterWin::onNewFilter(CBagStorageDev *pSDev, const CBofString &typest
 	} else if (!typestr.find("PLAYBIBBLE")) {
 	} else if (!typestr.find("PLAYNAV")) {
 	} else if (!typestr.find("CLOSEUP")) {
-		pSDev->OnSetFilter(filterFunction);
+		pSDev->onSetFilter(filterFunction);
 	} else if (!typestr.find("CHAT")) {
-		pSDev->OnSetFilter(filterFunction);
+		pSDev->onSetFilter(filterFunction);
 	} else if (!typestr.find("EVENT")) {
 	} else if (!typestr.find("TURNEVENT")) {
 	} else if (!typestr.find("LOG")) {
 	} else {
 		// The game window
-		pSDev->OnSetFilter(filterFunction);
+		pSDev->onSetFilter(filterFunction);
 	}
 }
 
@@ -245,7 +245,7 @@ void CSBarMasterWin::onNewFilter(CBagStorageDev *pSDev, const int nType) {
 	assert(isValidObject(this));
 
 	FilterFxn filterFunction = nullptr;
-	int filterId = pSDev->GetFilterId();
+	int filterId = pSDev->getFilterId();
 
 	if (filterId != 0) {
 		filterFunction = &doFilters;
@@ -258,15 +258,15 @@ void CSBarMasterWin::onNewFilter(CBagStorageDev *pSDev, const int nType) {
 		break;
 
 	case SDEV_DLG:
-		pSDev->OnSetFilter(filterFunction);
+		pSDev->onSetFilter(filterFunction);
 		break;
 
 	case SDEV_CLOSEP:
-		pSDev->OnSetFilter(filterFunction);
+		pSDev->onSetFilter(filterFunction);
 		break;
 
 	case SDEV_WND:
-		pSDev->OnSetFilter(filterFunction);
+		pSDev->onSetFilter(filterFunction);
 		break;
 
 	default:

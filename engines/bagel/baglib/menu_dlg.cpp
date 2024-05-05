@@ -113,10 +113,10 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 	CBofWindow *pParent = pWnd;
 	int nNumWieldChoices = 0;
 
-	if ((GetObjectList()->getCount() == 1) && (GetObjectList()->getTail()->getNodeItem()->getType() == TEXTOBJ) && (((CBagTextObject *)GetObjectList()->getTail()->getNodeItem())->isCaption())) {
+	if ((getObjectList()->getCount() == 1) && (getObjectList()->getTail()->getNodeItem()->getType() == TEXTOBJ) && (((CBagTextObject *)getObjectList()->getTail()->getNodeItem())->isCaption())) {
 		nBaseMenuLocX = 0;
 
-	} else if (nNumCalls == 1 && _pUniversalObjectList && _pUniversalObjectList != GetObjectList()) {
+	} else if (nNumCalls == 1 && _pUniversalObjectList && _pUniversalObjectList != getObjectList()) {
 		for (int i = 0; i < _pUniversalObjectList->getCount(); ++i) {
 
 			pObj = _pUniversalObjectList->getNodeItem(i);
@@ -177,9 +177,9 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 	bool bNoMenu = false;
 
-	for (int i = 0; i < GetObjectList()->getCount(); ++i) {
+	for (int i = 0; i < getObjectList()->getCount(); ++i) {
 
-		pObj = GetObjectList()->getNodeItem(i);
+		pObj = getObjectList()->getNodeItem(i);
 
 		if (pObj->isLocal() && (!pObj->getExpression() || pObj->getExpression()->evaluate(pObj->isNegative()))) {
 			// Only attach if not attached
@@ -370,7 +370,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 		if (xObjList.getCount() && !bNoMenu) {
 			bReturn = true;
 
-			dlg.SetObjectList(&xObjList);
+			dlg.setObjectList(&xObjList);
 
 			for (int i = 0; i < xObjList.getCount(); i++) {
 				pObj = xObjList[i];
@@ -463,8 +463,8 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			pObj = dlg._pSelectedObject;
 			dlg.destroy();
 
-			for (int i = 0; i < GetObjectCount(); ++i) {
-				GetObjectByPos(i)->detach();
+			for (int i = 0; i < getObjectCount(); ++i) {
+				getObjectByPos(i)->detach();
 			}
 
 			// If our current storage device is "AS CUSTOM" then don't allow
@@ -474,13 +474,13 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 				pObj->runCallBack();
 
 				// Selecting this menu item causes a turn to go by
-				if (nNumCalls == 1 && pCurSDEV->IsCustom() == false) {
+				if (nNumCalls == 1 && pCurSDEV->isCustom() == false) {
 					VAR_MANAGER->IncrementTimers();
 				}
 			} else if (bCaption && (nNumCalls == 2)) {
 				// Selecting this menu item causes a turn to go by
 				dlg._pSelectedObject = nullptr;
-				if (pCurSDEV->IsCustom() == false) {
+				if (pCurSDEV->isCustom() == false) {
 					VAR_MANAGER->IncrementTimers();
 				}
 			}
@@ -496,7 +496,7 @@ bool CBagMenu::addItem(CBagObject *pObj, void *( * /*func*/)(int, void *), void 
 	pObj->setPosition(CBofPoint(0, _nY));
 
 	_nY = (int16)(_nY + (int16)(pObj->getRect().height() + 1));
-	AddObject(pObj);
+	addObject(pObj);
 
 	return true;
 }
@@ -612,12 +612,12 @@ void CBagMenuDlg::onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 			r.offsetRect(-r.left, -r.top);
 			if (r.ptInRect(*pPoint)) {
 				CBagStorageDevDlg::onLButtonUp(nFlags, pPoint);
-				_pSelectedObject = GetLActiveObject();
+				_pSelectedObject = getLActiveObject();
 			}
 
 		} else {
 			CBofPoint pt = devPtToViewPort(*pPoint);
-			_pSelectedObject = GetObject(pt);
+			_pSelectedObject = getObject(pt);
 			if (_pSelectedObject != nullptr) {
 				_pSelectedObject->onLButtonUp(nFlags, pPoint);
 			}
@@ -629,19 +629,19 @@ void CBagMenuDlg::onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 
 void CBagMenuDlg::onMouseMove(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	CBagMasterWin::setActiveCursor(0);
-	CBagObject *pObj = GetObject(*pPoint);
+	CBagObject *pObj = getObject(*pPoint);
 	if (pObj != nullptr) {
 
 		// Switch to that cursor
 		CBagMasterWin::setActiveCursor(pObj->getOverCursor());
 
-		if (pObj != GetLActiveObject()) {
+		if (pObj != getLActiveObject()) {
 			if (pObj->getCallBack() || pObj->getMenuPtr()) {
 
 				pObj->setHighlight();
-				if (GetLActiveObject())
-					GetLActiveObject()->setHighlight(false);
-				SetLActiveObject(pObj);
+				if (getLActiveObject())
+					getLActiveObject()->setHighlight(false);
+				setLActiveObject(pObj);
 			}
 		}
 	}

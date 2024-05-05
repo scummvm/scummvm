@@ -32,19 +32,19 @@ class CBagStorageDevBmp : public CBagBmpObject, public CBagStorageDev {
 protected:
 	int _nMaskColor;
 	CBofPoint _xCursorLocation; // Current cursor location in bmp.
-	CBofRect m_cSrcRect;
-	bool m_bTrans;
-	CBofBitmap *m_pWorkBmp;
+	CBofRect _cSrcRect;
+	bool _bTrans;
+	CBofBitmap *_pWorkBmp;
 
 public:
 	CBagStorageDevBmp(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), bool bTrans = true);
 	virtual ~CBagStorageDevBmp();
 
-	CBofBitmap *GetWorkBmp() {
-		return m_pWorkBmp;
+	CBofBitmap *getWorkBmp() {
+		return _pWorkBmp;
 	}
-	ErrorCode SetWorkBmp();
-	ErrorCode KillWorkBmp();
+	ErrorCode setWorkBmp();
+	ErrorCode killWorkBmp();
 
 	CBofRect getRect() {
 		return CBagStorageDev::getRect();
@@ -59,17 +59,17 @@ public:
 		CBagStorageDev::setPosition(pos);
 	}
 
-	bool GetTransparent() {
-		return m_bTrans;
+	bool getTransparent() {
+		return _bTrans;
 	}
 	void setTransparent(bool bTrans = true) {
-		m_bTrans = bTrans;
+		_bTrans = bTrans;
 	}
 
 	/**
 	 * Return a scaled point from the screen to the bitmap
 	 */
-	CBofPoint GetScaledPt(CBofPoint xPoint);
+	CBofPoint getScaledPt(CBofPoint xPoint);
 
 	ErrorCode setBackground(CBofBitmap *pBmp);
 	CBofBitmap *getBackground() {

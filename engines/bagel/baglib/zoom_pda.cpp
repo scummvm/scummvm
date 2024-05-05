@@ -57,23 +57,23 @@ ErrorCode SBZoomPda::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		// Only clear the background and paint the backdrop if we've
 		// been instructed to.
 
-		if (PreFilterPan()) {
-			PreFilter(pBmp, pRect, (_curDisplay == nullptr ? nullptr : _curDisplay->GetObjectList()));
+		if (preFilterPan()) {
+			preFilter(pBmp, pRect, (_curDisplay == nullptr ? nullptr : _curDisplay->getObjectList()));
 
 			// Paint our storage device the first time through and the next time
 			// through, this takes care of multiple text drawing problems (trust me!).
 			if (_bFirstPaint == false) {
-				SetPreFilterPan(false);
+				setPreFilterPan(false);
 			}
 
-			if (GetWorkBmp() != nullptr) {
-				GetWorkBmp()->paint(pBmp, pRect, pRect);
+			if (getWorkBmp() != nullptr) {
+				getWorkBmp()->paint(pBmp, pRect, pRect);
 			}
 
 			bUpdate = true;
 		}
 
-		PaintStorageDevice(nullptr, pBmp, pRect);
+		paintStorageDevice(nullptr, pBmp, pRect);
 
 		// Paint the inventory or Map to backdrop
 		if (bUpdate) {
@@ -146,7 +146,7 @@ ErrorCode SBZoomPda::attach() {
 
 			if (pSDev != nullptr) {
 				_mooWnd = (CBagStorageDevBmp *)pSDev;
-				_mooWnd->SetAssociateWnd(GetAssociateWnd());
+				_mooWnd->setAssociateWnd(getAssociateWnd());
 				_mooWnd->setTransparent(false);
 				_mooWnd->setVisible(false);
 				rc = _mooWnd->attach();
@@ -160,7 +160,7 @@ ErrorCode SBZoomPda::attach() {
 			pSDev = SDEV_MANAGER->GetStorageDevice(ZOOMINVWLD);
 			if (pSDev != nullptr) {
 				_invWnd = (CBagStorageDevBmp *)pSDev;
-				_invWnd->SetAssociateWnd(GetAssociateWnd());
+				_invWnd->setAssociateWnd(getAssociateWnd());
 
 				_invWnd->setTransparent(false);
 				_invWnd->setVisible(false);
@@ -178,7 +178,7 @@ ErrorCode SBZoomPda::attach() {
 			pSDev = SDEV_MANAGER->GetStorageDevice(ZOOMMAPWLD);
 			if (pSDev != nullptr) {
 				_mapWnd = (CBagStorageDevBmp *)pSDev;
-				_mapWnd->SetAssociateWnd(GetAssociateWnd());
+				_mapWnd->setAssociateWnd(getAssociateWnd());
 
 				_mapWnd->setTransparent(false);
 				_mapWnd->setVisible(false);
@@ -196,7 +196,7 @@ ErrorCode SBZoomPda::attach() {
 			pSDev = SDEV_MANAGER->GetStorageDevice(ZOOMLOGWLD);
 			if (pSDev != nullptr) {
 				_logWnd = (CBagStorageDevBmp *)pSDev;
-				_logWnd->SetAssociateWnd(GetAssociateWnd());
+				_logWnd->setAssociateWnd(getAssociateWnd());
 
 				_logWnd->setTransparent(false);
 				_logWnd->setVisible(false);
@@ -240,14 +240,14 @@ void SBZoomPda::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	*_xCursorLocation = *xPoint;
 	CBofPoint xCursorLocation = devPtToViewPort(*xPoint);
 
-	CBagObject *pObj = GetObject(xCursorLocation, true);
+	CBagObject *pObj = getObject(xCursorLocation, true);
 	if (pObj != nullptr) {
 		if (pObj->isActive()) {
 			pObj->onLButtonUp(nFlags, xPoint);
-			SetLActiveObject(pObj);
+			setLActiveObject(pObj);
 		}
 	} else {
-		SetLActivity(kMouseNONE);
+		setLActivity(kMouseNONE);
 
 		if (_curDisplay) {
 			CBofRect offset = CBagStorageDev::getRect();
@@ -257,8 +257,8 @@ void SBZoomPda::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 			// Make sure this stuff is nice and dirty before calling off
 			// to the button handling routine, this assures that if we go from one screen
 			// to the next, then we'll get redrawn.
-			SetPreFilterPan(true);
-			MakeListDirty(_curDisplay->GetObjectList());
+			setPreFilterPan(true);
+			makeListDirty(_curDisplay->getObjectList());
 
 			_curDisplay->onLButtonUp(nFlags, xPoint, nullptr);
 		} else {
@@ -279,11 +279,11 @@ void SBZoomPda::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 void SBZoomPda::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 	assert(isValidObject(this));
 
-	CBagStorageDev::onMouseMove(nFlags, pPoint, GetAssociateWnd());
+	CBagStorageDev::onMouseMove(nFlags, pPoint, getAssociateWnd());
 
 
 	// This should be on update cursor virtual func
-	if (GetExitOnEdge() && (pPoint->x < GetExitOnEdge()) && (pPoint->y < 300) && !(getPrevSDev().isEmpty())) {
+	if (getExitOnEdge() && (pPoint->x < getExitOnEdge()) && (pPoint->y < 300) && !(getPrevSDev().isEmpty())) {
 		CBagMasterWin::setActiveCursor(10);
 	} else {
 		CBofRect cRect = getBackdrop()->getRect();
@@ -299,7 +299,7 @@ void SBZoomPda::onMainLoop() {
 		if (nCurTime > (g_lZoomPDALastUpdate + 250)) {
 			g_lZoomPDALastUpdate = nCurTime;
 
-			SetPreFilterPan(true);
+			setPreFilterPan(true);
 		}
 	}
 
@@ -314,7 +314,7 @@ ErrorCode SBZoomPda::attachActiveObjects() {
 ErrorCode SBZoomPda::detachActiveObjects() {
 	SBBasePda::detachActiveObjects();
 
-	return CBagStorageDevWnd::DetachActiveObjects();
+	return CBagStorageDevWnd::detachActiveObjects();
 }
 
 } // namespace Bagel

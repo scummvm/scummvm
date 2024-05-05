@@ -49,7 +49,7 @@ ErrorCode SBarThud::attach() {
 	ErrorCode rc = CBagStorageDevBmp::attach();
 
 	// save a copy of the you icon
-	_xYouBmp = new CBofBitmap(GetBackgroundName());
+	_xYouBmp = new CBofBitmap(getBackgroundName());
 
 	if ((_xYouBmp == nullptr) || (_xYouBmp->height() <= 0) || (_xYouBmp->width() <= 0)) {
 		bofMessageBox("You icon in Thud: Background Opened Failed", __FILE__);
@@ -57,8 +57,8 @@ ErrorCode SBarThud::attach() {
 	}
 
 	// Take care of objects being held
-	for (int i = 0; i < GetObjectCount(); ++i) {
-		CBagObject *pObj = GetObjectByPos(i);
+	for (int i = 0; i < getObjectCount(); ++i) {
+		CBagObject *pObj = getObjectByPos(i);
 		if (pObj->isActive() && (pObj->getType() == BOFSPRITEOBJ || pObj->getType() == BOFBMPOBJ))
 			nActiveObj++;
 

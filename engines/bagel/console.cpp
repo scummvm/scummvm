@@ -63,7 +63,7 @@ bool Console::cmdVars(int argc, const char **argv) {
 	for (int i = 0; i < VAR_MANAGER->GetNumVars(); i++) {
 		CBagVar *pVar = VAR_MANAGER->GetVariable(i);
 		if (pVar != nullptr) {
-			debugPrintf("VAR[%d]: %s = %s\n", i, (const char *)pVar->GetName(),
+			debugPrintf("VAR[%d]: %s = %s\n", i, (const char *)pVar->getName(),
 				(const char *)pVar->GetValue());
 		}
 	}

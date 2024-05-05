@@ -47,7 +47,7 @@ ErrorCode CBagInv::activateLocalObject(const CBofString &objectName) {
 	bool zoomedFl = (zoomPda ? zoomPda->getZoomed() : false);
 
 	if (pdaSDev && zoomedFl == false) {
-		CBagCharacterObject *wand = (CBagCharacterObject *)pdaSDev->GetObject("WANDANIM");
+		CBagCharacterObject *wand = (CBagCharacterObject *)pdaSDev->getObject("WANDANIM");
 		CBagPDA *pda = (CBagPDA *)pdaSDev;
 
 		if (wand) {
@@ -70,7 +70,7 @@ ErrorCode CBagInv::activateLocalObject(const CBofString &objectName) {
 
 			// If this is our first stash, play the smacker associated with it.
 			if ((var != nullptr) && (var->GetNumValue() == 0)) {
-				CBagMovieObject *pMovie = (CBagMovieObject *)GetObject(FIRS_STASH_MOV);
+				CBagMovieObject *pMovie = (CBagMovieObject *)getObject(FIRS_STASH_MOV);
 				if (pMovie) {
 					if (pMovie->isAttached() == false) {
 						pMovie->attach();
@@ -101,7 +101,7 @@ ErrorCode CBagInv::deactivateLocalObject(const CBofString &objectName) {
 	bool zoomedFl = (zoomPDA ? zoomPDA->getZoomed() : false);
 
 	if (pdaSDev && zoomedFl == false) {
-		CBagCharacterObject *wand = (CBagCharacterObject *)pdaSDev->GetObject("WANDANIM");
+		CBagCharacterObject *wand = (CBagCharacterObject *)pdaSDev->getObject("WANDANIM");
 		if (wand) {
 			wand->setPlaybackSpeed(-1);
 			wand->setNumOfLoops(1);

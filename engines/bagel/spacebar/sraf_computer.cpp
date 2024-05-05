@@ -872,13 +872,13 @@ void SrafComputer::onMainLoop() {
 
 void SrafComputer::onPaint(CBofRect *pRect) {
 	if (getBackdrop()) {
-		assert(GetWorkBmp() != nullptr);
+		assert(getWorkBmp() != nullptr);
 
 		// erase everything from the background
-		GetWorkBmp()->paint(getBackdrop(), pRect, pRect);
+		getWorkBmp()->paint(getBackdrop(), pRect, pRect);
 
 		// paint all the objects to the background
-		PaintStorageDevice(nullptr, getBackdrop(), pRect);
+		paintStorageDevice(nullptr, getBackdrop(), pRect);
 	}
 
 	// Paint the backdrop
@@ -2059,8 +2059,8 @@ void SrafComputer::doShowChowButtons() {
 
 	CBagStorageDev *pSDev = SDEV_MANAGER->GetStorageDevice("INV_WLD");
 	if (pSDev) {
-		CBagObject *pBevObj = pSDev->GetObject("SZTB", true);
-		CBagObject *pSnackObj = pSDev->GetObject("SZTA", true);
+		CBagObject *pBevObj = pSDev->getObject("SZTB", true);
+		CBagObject *pSnackObj = pSDev->getObject("SZTA", true);
 
 		if (pSnackObj) {
 			bAllowSnack = false;
@@ -4294,8 +4294,8 @@ void SrafComputer::doOrderBeverage() {
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
 
-	SDEV_MANAGER->AddObject("INV_WLD", "SZTB");
-	SDEV_MANAGER->AddObject("INVZ_WLD", "SZTB");
+	SDEV_MANAGER->addObject("INV_WLD", "SZTB");
+	SDEV_MANAGER->addObject("INVZ_WLD", "SZTB");
 
 	// Build the string to indicate that the beverage has been stashed
 	sStr = BuildSrafDir(g_stOfferings[0]._pszRcvOfferingFile);
@@ -4310,8 +4310,8 @@ void SrafComputer::doOrderSnack() {
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
 
-	SDEV_MANAGER->AddObject("INV_WLD", "SZTA");
-	SDEV_MANAGER->AddObject("INVZ_WLD", "SZTA");
+	SDEV_MANAGER->addObject("INV_WLD", "SZTA");
+	SDEV_MANAGER->addObject("INVZ_WLD", "SZTA");
 
 	// Build the string to indicate that the beverage has been stashed
 	sStr = BuildSrafDir(g_stOfferings[1]._pszRcvOfferingFile);

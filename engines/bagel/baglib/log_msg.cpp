@@ -60,7 +60,7 @@ CBofPoint CBagLog::arrangeFloater(CBofPoint pos, CBagObject *bagObj) {
 	// so we will not require a backdrop.
 
 	if (getBackground() != nullptr) {
-		CBofString sdevName = GetName();
+		CBofString sdevName = getName();
 		int borderSize = 0;
 
 		// Get this from script, allows individual log states to set border.
@@ -87,7 +87,7 @@ CBofPoint CBagLog::arrangeFloater(CBofPoint pos, CBagObject *bagObj) {
 		int pageNum = ((nextPos.y + bagObj->getRect().height()) / floatRect.height());
 		// page numbering is 1-N
 		pageNum++;
-		SetNumFloatPages(pageNum);
+		setNumFloatPages(pageNum);
 
 		int totalPages = getCurFltPage();
 		// Now position this object int the sdev
@@ -128,15 +128,15 @@ void CBagLog::arrangePages() {
 	CBagLog *lastFloat = _lastFloatPage;
 
 	// Get the up button and the down button...
-	CBagObject *upObj = lastFloat->GetObject("LOGPAGUP");
-	CBagObject *downObj = lastFloat->GetObject("LOGPAGDOWN");
+	CBagObject *upObj = lastFloat->getObject("LOGPAGUP");
+	CBagObject *downObj = lastFloat->getObject("LOGPAGDOWN");
 
 	if (upObj == nullptr || downObj == nullptr) {
 		return;
 	}
 
 	// Get current page number and last page number
-	int lastPage = lastFloat->GetNumFloatPages();
+	int lastPage = lastFloat->getNumFloatPages();
 	int curPage = lastFloat->getCurFltPage();
 	int firstPage = 1;
 
@@ -215,7 +215,7 @@ ErrorCode CBagLog::releaseMsg() {
 		// get uglier and uglier... since zoomed pda doesn't have a message light,
 		// only set this thing as waiting if we are in the regular PDA,
 		// otherwise, we get superfluous blinking of the PDA light.
-		CBofString  devName = GetName();
+		CBofString  devName = getName();
 		if (devName == "LOG_WLD") {
 			curObj->setMsgWaiting(true);
 		}
@@ -228,7 +228,7 @@ ErrorCode CBagLog::releaseMsg() {
 CBagObject *CBagLog::onNewUserObject(const CBofString &initStr) {
 	CBagTextObject *retLogObj = nullptr;
 	CBofRect sdevRect = getRect();
-	CBofString  sdevName = GetName();
+	CBofString  sdevName = getName();
 	int     pointSize = 10;
 
 	if (sdevName == "LOG_WLD")
@@ -297,7 +297,7 @@ ErrorCode CBagLog::activateLocalObject(CBagObject *bagObj) {
 		// Since zoomed pda doesn't  have a message light, only set this thing
 		// as waiting if we are in the  regular PDA, otherwise, we get superfluous
 		// blinking of the PDA light.
-		CBofString  sdevName = GetName();
+		CBofString  sdevName = getName();
 		if (sdevName == "LOG_WLD") {
 			bagObj->setMsgWaiting(true);
 		}
@@ -305,7 +305,7 @@ ErrorCode CBagLog::activateLocalObject(CBagObject *bagObj) {
 		CBagStorageDev *pda = SDEV_MANAGER->GetStorageDevice("BPDA_WLD");
 
 		if (pda) {
-			CBagButtonObject *msgLight = (CBagButtonObject *)pda->GetObject("MSGLIGHT");
+			CBagButtonObject *msgLight = (CBagButtonObject *)pda->getObject("MSGLIGHT");
 
 			if (msgLight) {
 				if (!msgLight->isAttached()) {
@@ -340,7 +340,7 @@ ErrorCode CBagLog::playMsgQueue() {
 		CBagStorageDev *sdev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev();
 		bool playMsgFl = true;
 
-		if ((sdev != nullptr) && sdev->IsCIC()) {
+		if ((sdev != nullptr) && sdev->isCIC()) {
 			playMsgFl = false;
 
 			char localBuffer[256];
@@ -349,7 +349,7 @@ ErrorCode CBagLog::playMsgQueue() {
 			smkName = OVERRIDE_SMK;
 			MACROREPLACE(smkName);
 
-			CBagMovieObject *pMovie = (CBagMovieObject *)GetObject(OVERRIDE_MOVIE);
+			CBagMovieObject *pMovie = (CBagMovieObject *)getObject(OVERRIDE_MOVIE);
 			if (pMovie) {
 				if (pMovie->isAttached() == false) {
 					pMovie->attach();
@@ -387,7 +387,7 @@ ErrorCode CBagLog::playMsgQueue() {
 			// messages in the queue.
 
 			if (bpda) {
-				CBagButtonObject *pMsgLight = (CBagButtonObject *)bpda->GetObject("MSGLIGHT");
+				CBagButtonObject *pMsgLight = (CBagButtonObject *)bpda->getObject("MSGLIGHT");
 
 				if (pMsgLight) {
 					if (count) {

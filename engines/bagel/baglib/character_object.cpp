@@ -650,7 +650,7 @@ bool CBagCharacterObject::pdaWandAnimating() {
 	if (_pdaWand == nullptr || !_pdaWand->isAttached()) {
 		CBagStorageDev *pda = SDEV_MANAGER->GetStorageDevice("BPDA_WLD");
 		if (pda != nullptr) {
-			CBagCharacterObject *wand = (CBagCharacterObject *)pda->GetObject("WANDANIM");
+			CBagCharacterObject *wand = (CBagCharacterObject *)pda->getObject("WANDANIM");
 			if (wand != nullptr) {
 				CBagCharacterObject::setPdaWand(wand);
 			}

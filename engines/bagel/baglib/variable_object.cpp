@@ -158,7 +158,7 @@ ErrorCode CBagVariableObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *p
 		// FIXME: Offset for the last accessed time and # times counter in
 		// entryway computer terminal. Otherwise, there's no space between
 		// them and the preceding text
-		Common::String name = xVar->GetName().getBuffer();
+		Common::String name = xVar->getName().getBuffer();
 		if (name.hasSuffix("_LAST") || name.hasSuffix("_TIMES"))
 			pt.x += 10;
 		// FIXME: Slight spacing out for Fleebix frequency display

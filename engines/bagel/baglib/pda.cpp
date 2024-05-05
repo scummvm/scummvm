@@ -141,7 +141,7 @@ ErrorCode CBagPDA::attach() {
 	if (!_mooWnd) {
 		if ((pSDev = SDEV_MANAGER->GetStorageDevice(MOOWLD)) != nullptr) {
 			_mooWnd = (CBagStorageDevBmp *)pSDev;
-			_mooWnd->SetAssociateWnd(GetAssociateWnd());
+			_mooWnd->setAssociateWnd(getAssociateWnd());
 			_mooWnd->setTransparent(false);
 			_mooWnd->setVisible(false);
 			rc = _mooWnd->attach();
@@ -151,7 +151,7 @@ ErrorCode CBagPDA::attach() {
 	if (!_invWnd) {
 		if ((pSDev = SDEV_MANAGER->GetStorageDevice(INVWLD)) != nullptr) {
 			_invWnd = (CBagStorageDevBmp *)pSDev;
-			_invWnd->SetAssociateWnd(GetAssociateWnd());
+			_invWnd->setAssociateWnd(getAssociateWnd());
 
 			_invWnd->setTransparent(false);
 			_invWnd->setVisible(false);
@@ -165,7 +165,7 @@ ErrorCode CBagPDA::attach() {
 	if (!_mapWnd) {
 		if ((pSDev = SDEV_MANAGER->GetStorageDevice(MAPWLD)) != nullptr) {
 			_mapWnd = (CBagStorageDevBmp *)pSDev;
-			_mapWnd->SetAssociateWnd(GetAssociateWnd());
+			_mapWnd->setAssociateWnd(getAssociateWnd());
 
 			_mapWnd->setTransparent(false);
 			_mapWnd->setVisible(false);
@@ -178,7 +178,7 @@ ErrorCode CBagPDA::attach() {
 	if (!_logWnd) {
 		if ((pSDev = SDEV_MANAGER->GetStorageDevice(LOGWLD)) != nullptr) {
 			_logWnd = (CBagStorageDevBmp *)pSDev;
-			_logWnd->SetAssociateWnd(GetAssociateWnd());
+			_logWnd->setAssociateWnd(getAssociateWnd());
 
 			_logWnd->setTransparent(false);
 			_logWnd->setVisible(false);
@@ -292,7 +292,7 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 		         (bIsMovieWaiting && _pdaMode != MOOMODE))) {
 
 			// Reset to reflect we know it happened
-			SetPreFiltered(false);
+			setPreFiltered(false);
 
 			// Play the movie if it is ready.
 			if (bIsMovieWaiting == true) {
@@ -314,7 +314,7 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 
 		if (isActivating() || bWandAnimating || bMoviePlaying) {
 			CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev());
-			((CBagPanWindow *)pMainWin)->SetPreFilterPan(true);
+			((CBagPanWindow *)pMainWin)->setPreFilterPan(true);
 		} else if (!isActivated() && (SBBasePda::_pdaMode != MAPMODE)) {
 			// If it is not activated, then don't bother redrawing it or the objects
 			// inside of it.
@@ -348,7 +348,7 @@ void CBagPDA::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 	if (!isActivated() && _pdaMode != INVMODE) {          // if the PDA is not active, activate it
 		if (isInside(*xPoint)) {
 			// Make sure the entire screen gets redrawn for an activate
-			((CBagPanWindow *)pMainWin)->SetPreFilterPan(true);
+			((CBagPanWindow *)pMainWin)->setPreFilterPan(true);
 
 			activate();
 			setDirty(true);
@@ -368,7 +368,7 @@ void CBagPDA::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 		if (SBBasePda::_pdaMode == INVMODE && !isActivated()) {
 			if (isInside(*xPoint)) {
 				// Make sure the entire screen gets redrawn for an activate
-				((CBagPanWindow *)pMainWin)->SetPreFilterPan(true);
+				((CBagPanWindow *)pMainWin)->setPreFilterPan(true);
 
 				activate();
 				setDirty(true);
@@ -380,7 +380,7 @@ void CBagPDA::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 		// sdev bmp code.
 		if (isActivated()) {
 			bool bButtonHit = false;
-			CBofList<CBagObject *> *pList = GetObjectList();
+			CBofList<CBagObject *> *pList = getObjectList();
 			int  nCount = (pList == nullptr ? 0 : pList->getCount());
 
 			// Go through all the buttons and see if we hit any of them.
@@ -396,7 +396,7 @@ void CBagPDA::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 			if (bButtonHit || _pdaMode == NOMODE) {
 				CBagStorageDevBmp::onLButtonUp(nFlags, xPoint, info);
 			} else {
-				((CBagPanWindow *)pMainWin)->SetPreFilterPan(true);
+				((CBagPanWindow *)pMainWin)->setPreFilterPan(true);
 				deactivate();
 			}
 		}
@@ -432,7 +432,7 @@ bool  CBagPDA::paintFGObjects(CBofBitmap *pBmp) {
 		// If we get here, then we are guaranteed that our pda
 		// needs updating, so dirty the whole list before updating...
 		// this assures that all objects will be updated (that are active).
-		MakeListDirty(_curDisplay->GetObjectList());
+		makeListDirty(_curDisplay->getObjectList());
 
 		CBofRect tmp = getRect();
 		_curDisplay->update(pBmp, getPosition(), &tmp);
@@ -463,13 +463,13 @@ void CBagPDA::handleZoomButton(bool bButtonDown) {
 	CBagStorageDev *pPda = SDEV_MANAGER->GetStorageDevice(sDevice);
 	if (pPda) {
 		sDevice = PDA_ZOOMFLASH;
-		pZoomFlash = (CBagButtonObject *)pPda->GetObject(sDevice);
-		pZoomRegular = (CBagButtonObject *)pPda->GetObject(PDA_ZOOM);
+		pZoomFlash = (CBagButtonObject *)pPda->getObject(sDevice);
+		pZoomRegular = (CBagButtonObject *)pPda->getObject(PDA_ZOOM);
 	}
 
 	// Only change the flashing state if we're not in a button down situation
 	if (pZoomFlash && pZoomRegular && pZoomRegular->getState() != 1) {
-		if (bButtonDown == false && _pdaMode == INVMODE && (_pdaPos == PDAUP) && _invWnd && _invWnd->GetNumFloatPages() > 1) {
+		if (bButtonDown == false && _pdaMode == INVMODE && (_pdaPos == PDAUP) && _invWnd && _invWnd->getNumFloatPages() > 1) {
 			// Make the zoom button blink, to indicate more icons
 			if (_flashingFl == false) {
 				// Don't allow attachActiveObjects() to be called in here
@@ -571,7 +571,7 @@ ErrorCode CBagPDA::attachActiveObjects() {
 
 ErrorCode CBagPDA::detachActiveObjects() {
 	SBBasePda::detachActiveObjects();
-	return CBagStorageDevBmp::DetachActiveObjects();
+	return CBagStorageDevBmp::detachActiveObjects();
 }
 
 } // namespace Bagel

@@ -232,10 +232,10 @@ CBibbleWindow::CBibbleWindow() {
 	for (int i = 0; i < BIBBLE_NUM_BUTTONS; i++)
 		_pButtons[i] = nullptr;
 
-	SetHelpFilename(BuildDir("BIBBLE.TXT"));
+	setHelpFilename(BuildDir("BIBBLE.TXT"));
 
 	// Call this thing a closeup so that time won't go  by when entering the closeup
-	SetCloseup(true);
+	setCloseup(true);
 }
 
 ErrorCode CBibbleWindow::attach() {
@@ -286,7 +286,7 @@ ErrorCode CBibbleWindow::attach() {
 		if (pSDev != nullptr) {
 			for (int i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
 				// The sprite object start in the script at 500
-				CBagObject *pObj = pSDev->GetObject(500 + i);
+				CBagObject *pObj = pSDev->getObject(500 + i);
 				if (pObj != nullptr) {
 
 					int nPayOff = pObj->getState();
@@ -533,7 +533,7 @@ void CBibbleWindow::onPaint(CBofRect *pRect) {
 	CBofBitmap *pBmp;
 
 	// Render offscreen
-	if (_pBackdrop != nullptr && (pBmp = GetWorkBmp()) != nullptr) {
+	if (_pBackdrop != nullptr && (pBmp = getWorkBmp()) != nullptr) {
 
 		_pBackdrop->paint(pBmp, pRect, pRect);
 

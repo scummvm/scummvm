@@ -509,7 +509,7 @@ int SBBasePda::getProperCursor(const CBofPoint &pos, CBofRect &pdaRect) {
 			if (pdaViewRect.ptInRect(pos)) {
 				// Go through the list of inventory items and see if we're over any of them
 				// in particular.
-				CBofList<CBagObject *> *objList = _curDisplay->GetObjectList();
+				CBofList<CBagObject *> *objList = _curDisplay->getObjectList();
 				if (objList != nullptr) {
 					// Localize pda view rect
 					pdaViewRect = _curDisplay->getRect() + pdaRect.topLeft();
@@ -578,13 +578,13 @@ ErrorCode SBBasePda::attachActiveObjects() {
 
 ErrorCode SBBasePda::detachActiveObjects() {
 	if (_mooWnd)
-		_mooWnd->DetachActiveObjects();
+		_mooWnd->detachActiveObjects();
 	if (_invWnd)
-		_invWnd->DetachActiveObjects();
+		_invWnd->detachActiveObjects();
 	if (_mapWnd)
-		_mapWnd->DetachActiveObjects();
+		_mapWnd->detachActiveObjects();
 	if (_logWnd)
-		_logWnd->DetachActiveObjects();
+		_logWnd->detachActiveObjects();
 
 	return ERR_NONE;
 }

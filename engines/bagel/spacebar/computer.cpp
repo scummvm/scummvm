@@ -92,7 +92,7 @@ SBarComputer::SBarComputer() : CBagStorageDevWnd(),
 
 	// Call this thing a closeup so that time won't go by when
 	// entering the closeup
-	SetCloseup(true);
+	setCloseup(true);
 }
 SBarComputer::~SBarComputer() {
 }
@@ -112,12 +112,12 @@ void SBarComputer::eraseBackdrop() {
 
 void  SBarComputer::onPaint(CBofRect *pRect) {
 	if (getBackdrop()) {
-		assert(GetWorkBmp() != nullptr);
+		assert(getWorkBmp() != nullptr);
 
 		// Erase everything from the background
-		GetWorkBmp()->paint(getBackdrop(), pRect, pRect);
+		getWorkBmp()->paint(getBackdrop(), pRect, pRect);
 		// Paint all the objects to the background
-		PaintStorageDevice(nullptr, getBackdrop(), pRect);
+		paintStorageDevice(nullptr, getBackdrop(), pRect);
 	}
 
 	if (_pTBox != nullptr)
@@ -733,19 +733,19 @@ void SBarComputer::order() {
 				// Don't allow him to order if he has other drinks in the Soldier CIC or stash
 				if (pSoldierSDev) {
 					bool bRefuse = false;
-					if (pSoldierSDev->GetObject("DRINK1", true))
+					if (pSoldierSDev->getObject("DRINK1", true))
 						bRefuse = true;
-					else if (pSoldierSDev->GetObject("DRINK2", true))
+					else if (pSoldierSDev->getObject("DRINK2", true))
 						bRefuse = true;
-					else if (pSoldierSDev->GetObject("DRINK3", true))
+					else if (pSoldierSDev->getObject("DRINK3", true))
 						bRefuse = true;
-					else if (pSoldierSDev->GetObject("DRINK4", true))
+					else if (pSoldierSDev->getObject("DRINK4", true))
 						bRefuse = true;
-					else if (pSoldierSDev->GetObject("DRINK5", true))
+					else if (pSoldierSDev->getObject("DRINK5", true))
 						bRefuse = true;
-					else if (pSoldierSDev->GetObject("DRINK6", true))
+					else if (pSoldierSDev->getObject("DRINK6", true))
 						bRefuse = true;
-					else if (pSoldierSDev->GetObject("DRINK7", true))
+					else if (pSoldierSDev->getObject("DRINK7", true))
 						bRefuse = true;
 					else if (nHaveDrink > 0)
 						bRefuse = true;
