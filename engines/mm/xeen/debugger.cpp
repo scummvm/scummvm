@@ -216,7 +216,7 @@ bool Debugger::cmdLoadOriginal(int argc, const char **argv) {
 
 	// Loop through loading the sides' save archives
 	SaveArchive *archives[2] = { files._xeenSave, files._darkSave };
-	CCArchive *cc[2] = { files._xeenCc, files._darkCc };
+	//CCArchive *cc[2] = { files._xeenCc, files._darkCc };
 	const char *prefix[2] = { "XEEN", "DARK" };
 
 	Common::FSNode folder(argv[1]);
