@@ -365,6 +365,28 @@ void Dialog::drawFindSelectionXY() {
 	}
 }
 
+
+/**
+ * Get offsets into a string for a given set of wrapped lines.
+ *
+ * Font::wordWrapText will wrap the lines on a space or a CR, so each
+ * line's offset is the total chars from the previous line plus 1.
+ * each
+ *
+ * Returns one more value than the number of lines - the last one is
+ * s.size() for convenience.
+ */
+static Common::Array<int> _wrappedLineOffsets(const Common::String &s, const Common::Array<Common::String> &lines) {
+	Common::Array<int> ret;
+	int off = 0;
+	for (const Common::String &l : lines) {
+		ret.push_back(off);
+		off += l.size() + 1;
+	}
+	ret.push_back(s.size());
+	return ret;
+}
+
 void Dialog::drawFindSelectionTxtOffset() {
 	if (!_state)
 		return;
@@ -379,18 +401,21 @@ void Dialog::drawFindSelectionTxtOffset() {
 	int dlgy = _state->_loc.y;
 
 	Common::Array<Common::String> lines;
-	int maxWidth = font->wordWrapText(_str, dlgy, lines);
+	int maxWidth = font->wordWrapText(_str, _state->_loc.width, lines);
 
 	if (hasFlag(kDlgFlagLeftJust)) {
+		int textHeight = lines.size() * lineHeight;
 		dlgx += (_state->_loc.width - maxWidth - 1) / 2;
-		dlgy += (_state->_loc.height - (lines.size() * lineHeight) - 1) / 2;
+		dlgy += (_state->_loc.height - textHeight - 1) / 2;
 	}
+
+	const Common::Array<int> lineOffs = _wrappedLineOffsets(_str, lines);
 
 	uint lineno;
 	uint totalchars = 0;
 	for (lineno = 0; lineno < lines.size() && dlgy + lineHeight < lastMouseY; lineno++) {
-		totalchars += lines[lineno].size() + 1;
-		dlgy = dlgy + lineHeight;
+		totalchars = lineOffs[lineno + 1];
+		dlgy += lineHeight;
 	}
 
 	int startx = dlgx;
@@ -426,25 +451,42 @@ void Dialog::drawForeground(Graphics::ManagedSurface *dst, uint16 fontcol, const
 	int ystart = _state->_loc.y + (_state->_loc.height - (int)lines.size() * h) / 2;
 
 	int x = _state->_loc.x;
+
+	int highlightStart = INT_MAX;
+	int highlightEnd = INT_MAX;
+	if (_state->_selectedAction) {
+		// find the txt in the full dlg string, as action offsets include the heading
+		int txtoffset = _str.find(txt);
+		highlightStart = (int)_state->_selectedAction->strStart - txtoffset;
+		highlightEnd = (int)_state->_selectedAction->strEnd - txtoffset;
+	}
+
+	const Common::Array<int> lineOffs = _wrappedLineOffsets(txt, lines);
+
+	Graphics::TextAlign align;
+	int xwidth;
 	if (hasFlag(kDlgFlagLeftJust)) {
+		int maxlen = 0;
 		// each line left-aligned, but overall block is still centered
-		int maxlen = -1;
 		for (const auto &line : lines)
 			maxlen = MAX(maxlen, font->getStringWidth(line));
-
 		x += (_state->_loc.width - maxlen) / 2;
-
-		for (uint i = 0; i < lines.size(); i++)
-			font->drawString(dst, lines[i], x, ystart + i * h, maxlen, fontcol, Graphics::kTextAlignLeft);
+		align = Graphics::kTextAlignLeft;
+		xwidth = maxlen;
 	} else {
-		// center each line
-		for (uint i = 0; i < lines.size(); i++)
-			font->drawString(dst, lines[i], x, ystart + i * h, _state->_loc.width, fontcol, Graphics::kTextAlignCenter);
+		align =  Graphics::kTextAlignCenter;
+		xwidth = _state->_loc.width;
 	}
 
-	if (_state->_selectedAction) {
-		warning("TODO: Draw highlight on selected action.");
+	for (uint i = 0; i < lines.size(); i++) {
+		font->drawString(dst, lines[i], x, ystart + i * h, xwidth, fontcol, align);
+		if (highlightStart < lineOffs[i + 1] && highlightEnd > lineOffs[i]) {
+			// highlight on this line
+			// TODO: What if it's only a partial line??
+			font->drawString(dst, lines[i], x, ystart + i * h, xwidth, _selectonFontCol, align);
+		}
 	}
+
 }
 
 void Dialog::setFlag(DialogFlags flg) {
@@ -524,9 +566,9 @@ struct DialogAction *Dialog::pickAction(bool isClosing) {
 	assert(_state);
 	const Common::Point lastMouse = engine->getLastMouse();
 	if (_state->_loc.x <= lastMouse.x &&
-		_state->_loc.x + _state->_loc.width <= lastMouse.x &&
+		_state->_loc.x + _state->_loc.width >= lastMouse.x &&
 		_state->_loc.y <= lastMouse.y &&
-		_state->_loc.y + _state->_loc.height <= lastMouse.y) {
+		_state->_loc.y + _state->_loc.height >= lastMouse.y) {
 		_state->_lastMouseX = lastMouse.x;
 		_state->_lastMouseY = lastMouse.y;
 		draw(nullptr, kDlgDrawFindSelectionTxtOffset);
