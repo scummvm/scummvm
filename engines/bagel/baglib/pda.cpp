@@ -21,7 +21,6 @@
 
 #include "bagel/baglib/pda.h"
 #include "bagel/baglib/pan_window.h"
-#include "bagel/boflib/app.h"
 #include "bagel/boflib/sound.h"
 #include "bagel/baglib/master_win.h"
 #include "bagel/baglib/button_object.h"
@@ -115,11 +114,6 @@ ErrorCode CBagPDA::loadFile(const CBofString &sFile) {
 	return error;
 }
 
-#define MOOWLD      "MOO_WLD"
-#define INVWLD      "INV_WLD"
-#define MAPWLD      "MAP_WLD"
-#define LOGWLD      "LOG_WLD"
-
 ErrorCode CBagPDA::attach() {
 	CBagStorageDev *pSDev;
 	ErrorCode rc = CBagStorageDevBmp::attach();
@@ -139,7 +133,7 @@ ErrorCode CBagPDA::attach() {
 
 	// Should be allowed to not find one.
 	if (!_mooWnd) {
-		if ((pSDev = SDEV_MANAGER->GetStorageDevice(MOOWLD)) != nullptr) {
+		if ((pSDev = SDEV_MANAGER->GetStorageDevice(MOO_WLD)) != nullptr) {
 			_mooWnd = (CBagStorageDevBmp *)pSDev;
 			_mooWnd->setAssociateWnd(getAssociateWnd());
 			_mooWnd->setTransparent(false);
@@ -149,7 +143,7 @@ ErrorCode CBagPDA::attach() {
 	}
 
 	if (!_invWnd) {
-		if ((pSDev = SDEV_MANAGER->GetStorageDevice(INVWLD)) != nullptr) {
+		if ((pSDev = SDEV_MANAGER->GetStorageDevice(INV_WLD)) != nullptr) {
 			_invWnd = (CBagStorageDevBmp *)pSDev;
 			_invWnd->setAssociateWnd(getAssociateWnd());
 
@@ -163,7 +157,7 @@ ErrorCode CBagPDA::attach() {
 	}
 
 	if (!_mapWnd) {
-		if ((pSDev = SDEV_MANAGER->GetStorageDevice(MAPWLD)) != nullptr) {
+		if ((pSDev = SDEV_MANAGER->GetStorageDevice(MAP_WLD)) != nullptr) {
 			_mapWnd = (CBagStorageDevBmp *)pSDev;
 			_mapWnd->setAssociateWnd(getAssociateWnd());
 
@@ -176,7 +170,7 @@ ErrorCode CBagPDA::attach() {
 		}
 	}
 	if (!_logWnd) {
-		if ((pSDev = SDEV_MANAGER->GetStorageDevice(LOGWLD)) != nullptr) {
+		if ((pSDev = SDEV_MANAGER->GetStorageDevice(LOG_WLD)) != nullptr) {
 			_logWnd = (CBagStorageDevBmp *)pSDev;
 			_logWnd->setAssociateWnd(getAssociateWnd());
 

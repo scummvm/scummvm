@@ -29,10 +29,7 @@
 namespace Bagel {
 namespace SpaceBar {
 
-#define PLAYMODEONLY    1
-#define PDAWLD          "BPDA_WLD"
-#define WIELDWLD        "BWIELD_WLD"
-#define THUDWLD         "THUD_WLD"
+#define PLAY_MODE_ONLY    1
 
 SBarThud *CMainWindow::_pThudBmp = nullptr;    // Pointer to the WEILD object
 int CMainWindow::_nInstances = 0;      // Number of space bar windows
@@ -133,7 +130,7 @@ ErrorCode CMainWindow::attach() {
 
 	if (_nGameMode == VRPLAYMODE && bForegroundObj == true) {
 		if (!_pThudBmp) {
-			pSDev = SDEV_MANAGER->GetStorageDevice(THUDWLD);
+			pSDev = SDEV_MANAGER->GetStorageDevice(THUD_WLD);
 			if (pSDev != nullptr) {
 				_pThudBmp = (SBarThud *)pSDev;
 				_pThudBmp->setAssociateWnd(this);
@@ -144,14 +141,14 @@ ErrorCode CMainWindow::attach() {
 			}
 		}
 
-		if (_pThudBmp && (CBagObject *)nullptr == getFGObjects(CBofString(THUDWLD))) {
+		if (_pThudBmp && (CBagObject *)nullptr == getFGObjects(CBofString(THUD_WLD))) {
 			CBofRect r(1, tmpRect.height() - 101, 101, tmpRect.height() - 1);
 			_pThudBmp->setAssociateWnd(this);
 			insertFGObjects(_pThudBmp);
 		}
 
 		if (!_pWieldBmp) {
-			pSDev = SDEV_MANAGER->GetStorageDevice(WIELDWLD);
+			pSDev = SDEV_MANAGER->GetStorageDevice(WIELD_WLD);
 			if (pSDev != nullptr) {
 				_pWieldBmp = (CBagWield *)pSDev;
 				_pWieldBmp->setAssociateWnd(this);
@@ -172,14 +169,14 @@ ErrorCode CMainWindow::attach() {
 			}
 		}
 
-		if ((CBagObject *)nullptr == getFGObjects(CBofString(WIELDWLD))) {
+		if ((CBagObject *)nullptr == getFGObjects(CBofString(WIELD_WLD))) {
 			_pWieldBmp->setAssociateWnd(this);
 			insertFGObjects(_pWieldBmp);
 		}
 
 		// Create the PDA for the game
 		if (!_pPDABmp) {
-			pSDev = SDEV_MANAGER->GetStorageDevice(PDAWLD);
+			pSDev = SDEV_MANAGER->GetStorageDevice(PDA_WLD);
 			if (pSDev != nullptr) {
 				_pPDABmp = (CBagPDA *)pSDev;
 				CBofRect r(0, 0, 300, 200);
@@ -207,7 +204,7 @@ ErrorCode CMainWindow::attach() {
 			}
 		}
 
-		if ((CBagObject *)nullptr == getFGObjects(CBofString(PDAWLD))) {
+		if ((CBagObject *)nullptr == getFGObjects(CBofString(PDA_WLD))) {
 			CBofRect r(0, 0, 300, 200);
 			_pPDABmp->setAssociateWnd(this);
 
@@ -248,7 +245,7 @@ ErrorCode CMainWindow::attach() {
 		//
 		// Only do it if we're coming from somewhere other than the zoom
 		if (bForegroundObj == true) {
-			if ((CBagObject *)nullptr == getFGObjects(CBofString(WIELDWLD))) {
+			if ((CBagObject *)nullptr == getFGObjects(CBofString(WIELD_WLD))) {
 				_pWieldBmp->setAssociateWnd(this);
 				insertFGObjects(_pWieldBmp);
 			}
