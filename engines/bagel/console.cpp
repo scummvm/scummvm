@@ -90,7 +90,7 @@ bool Console::cmdLoad(int argc, const char **argv) {
 
 	delete saveFile;
 	CBagSaveGameFile saves(false);
-	const int count = saves.GetNumSavedGames();
+	const int count = saves.getNumSavedGames();
 
 	if (argc == 1) {
 		char nameBuffer[MAX_SAVETITLE];
@@ -120,7 +120,7 @@ bool Console::cmdSave(int argc, const char **argv) {
 	g_system->getSavefileManager()->removeSavefile("spacebar.sav");
 
 	CBagSaveGameFile saves(true);
-	saves.WriteSavedGame();
+	saves.writeSavedGame();
 
 	saves.close();
 

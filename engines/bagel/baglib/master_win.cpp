@@ -67,7 +67,7 @@ static char g_stringArray[NUM_MSG_STRINGS][512];
 // static initializations
 
 bool CBagMasterWin::_objSaveFl = false;
-ST_OBJ *CBagMasterWin::_objList = nullptr;
+StObj *CBagMasterWin::_objList = nullptr;
 CBagCursor *CBagMasterWin::_cursorList[MAX_CURSORS];
 int CBagMasterWin::_menuCount = 0;
 int CBagMasterWin::_curCursor = 0;
@@ -372,10 +372,10 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 
 			// Only allocate the object list when we really need it...
 			if (_objList == nullptr) {
-				_objList = (ST_OBJ *)bofAlloc(MAX_OBJS * sizeof(ST_OBJ));
+				_objList = (StObj *)bofAlloc(MAX_OBJS * sizeof(StObj));
 				if (_objList != nullptr) {
 					// Init to zero (we might not use all slots)
-					bofMemSet(_objList, 0, MAX_OBJS * sizeof(ST_OBJ));
+					bofMemSet(_objList, 0, MAX_OBJS * sizeof(StObj));
 
 				} else {
 					reportError(ERR_MEMORY, "Could not allocate Object list");
@@ -1405,7 +1405,7 @@ void CBagMasterWin::setActiveCursor(int cursorId) {
 	}
 }
 
-void CBagMasterWin::fillSaveBuffer(ST_BAGEL_SAVE *saveBuf) {
+void CBagMasterWin::fillSaveBuffer(StBagelSave *saveBuf) {
 	assert(isValidObject(this));
 	assert(saveBuf != nullptr);
 
@@ -1414,7 +1414,7 @@ void CBagMasterWin::fillSaveBuffer(ST_BAGEL_SAVE *saveBuf) {
 	//
 
 	// 1st, wipe it
-	bofMemSet(saveBuf, 0, sizeof(ST_BAGEL_SAVE));
+	bofMemSet(saveBuf, 0, sizeof(StBagelSave));
 
 	CBagel *app = CBagel::getBagApp();
 	if (app != nullptr) {
@@ -1490,7 +1490,7 @@ void CBagMasterWin::fillSaveBuffer(ST_BAGEL_SAVE *saveBuf) {
 
 						assert(_objList != nullptr);
 
-						bofMemCopy(&saveBuf->m_stObjListEx[0], _objList, sizeof(ST_OBJ) * MAX_OBJS);
+						bofMemCopy(&saveBuf->m_stObjListEx[0], _objList, sizeof(StObj) * MAX_OBJS);
 						saveBuf->m_bUseEx = 1;
 					}
 
@@ -1528,12 +1528,12 @@ bool CBagMasterWin::showSaveDialog(CBofWindow *win, bool bSaveBkg) {
 
 		logInfo("Showing Save Screen");
 		CBofSound::pauseSounds();
-		ST_BAGEL_SAVE *saveBuf = (ST_BAGEL_SAVE *)bofAlloc(sizeof(ST_BAGEL_SAVE));
+		StBagelSave *saveBuf = (StBagelSave *)bofAlloc(sizeof(StBagelSave));
 
 		if (saveBuf != nullptr) {
 			fillSaveBuffer(saveBuf);
 			CBagSaveDialog saveDialog;
-			saveDialog.setSaveGameBuffer((byte *)saveBuf, sizeof(ST_BAGEL_SAVE));
+			saveDialog.setSaveGameBuffer((byte *)saveBuf, sizeof(StBagelSave));
 
 			// Use specified bitmap as this dialog's image
 			CBofBitmap *bmp = Bagel::loadBitmap(_sysScreen.getBuffer());
@@ -1573,7 +1573,7 @@ bool CBagMasterWin::showSaveDialog(CBofWindow *win, bool bSaveBkg) {
 	return savedFl;
 }
 
-void CBagMasterWin::doRestore(ST_BAGEL_SAVE *saveBuf) {
+void CBagMasterWin::doRestore(StBagelSave *saveBuf) {
 	assert(isValidObject(this));
 	assert(saveBuf != nullptr);
 
@@ -1647,17 +1647,17 @@ void CBagMasterWin::doRestore(ST_BAGEL_SAVE *saveBuf) {
 		if (sdevManager != nullptr) {
 			// Restore any extra obj list info (for .WLD swapping)
 			if (_objList == nullptr) {
-				_objList = (ST_OBJ *)bofAlloc(MAX_OBJS * sizeof(ST_OBJ));
+				_objList = (StObj *)bofAlloc(MAX_OBJS * sizeof(StObj));
 				if (_objList != nullptr) {
 					// Init to nullptr (might not use all slots)
-					bofMemSet(_objList, 0, MAX_OBJS * sizeof(ST_OBJ));
+					bofMemSet(_objList, 0, MAX_OBJS * sizeof(StObj));
 
 				} else {
 					reportError(ERR_MEMORY);
 				}
 			}
 
-			bofMemCopy(getObjList(), &saveBuf->m_stObjListEx[0], sizeof(ST_OBJ) * MAX_OBJS);
+			bofMemCopy(getObjList(), &saveBuf->m_stObjListEx[0], sizeof(StObj) * MAX_OBJS);
 
 			if (saveBuf->m_bUseEx) {
 				setSaveObjs(true);

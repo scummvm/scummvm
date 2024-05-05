@@ -44,7 +44,7 @@ private:
 	CBofText *_pText = nullptr;
 	CBofListBox *_pListBox = nullptr;
 	int _nSelectedItem = -1;
-	ST_BAGEL_SAVE *_pSaveBuf = nullptr;
+	StBagelSave *_pSaveBuf = nullptr;
 	int _nBufSize = 0;
 	bool _bRestored = false;
 	CBofPalette *_pSavePalette = nullptr;
@@ -63,12 +63,12 @@ public:
 	virtual ErrorCode attach();
 	virtual ErrorCode detach();
 
-	ST_BAGEL_SAVE *getSaveGameBuffer(int &nLength) {
+	StBagelSave *getSaveGameBuffer(int &nLength) {
 		nLength = _nBufSize;
 		return _pSaveBuf;
 	}
 
-	void setSaveGameBuffer(ST_BAGEL_SAVE *pBuf, int nLength) {
+	void setSaveGameBuffer(StBagelSave *pBuf, int nLength) {
 		_pSaveBuf = pBuf;
 		_nBufSize = nLength;
 	}

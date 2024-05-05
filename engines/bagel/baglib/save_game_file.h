@@ -31,7 +31,7 @@ namespace Bagel {
 #define MAX_SAVETITLE 128
 #define MAX_USERNAME 64
 
-struct ST_SAVEDGAME_HEADER {
+struct StSavegameHeader {
 	char _szTitle[MAX_SAVETITLE] = { '\0' };
 	char m_szUserName[MAX_USERNAME] = { '\0' };
 	uint32 m_bUsed = 0;
@@ -49,7 +49,7 @@ struct ST_SAVEDGAME_HEADER {
 #define MAX_VAR_NAME 40
 #define MAX_VAR_VALUE 60
 
-struct ST_VAR {
+struct StVar {
 	char m_szName[MAX_VAR_NAME];
 	char m_szValue[MAX_VAR_VALUE];
 	uint16 m_nType;
@@ -73,7 +73,7 @@ struct ST_VAR {
 #define MAX_SDEV_NAME 40
 #define MAX_OBJS 1000
 
-struct ST_OBJ {
+struct StObj {
 	char m_szName[MAX_OBJ_NAME];
 	char m_szSDev[MAX_SDEV_NAME];
 	uint32 m_lState;
@@ -100,10 +100,10 @@ struct ST_OBJ {
 /**
  * Savegame data structure
  */
-struct ST_BAGEL_SAVE {
-	ST_VAR m_stVarList[MAX_VARS];
-	ST_OBJ m_stObjList[MAX_OBJS];
-	ST_OBJ m_stObjListEx[MAX_OBJS];
+struct StBagelSave {
+	StVar m_stVarList[MAX_VARS];
+	StObj m_stObjList[MAX_OBJS];
+	StObj m_stObjListEx[MAX_OBJS];
 	char m_szScript[MAX_FNAME];                          // Name of current world file (no path)
 	uint32 m_nLocType;                                    // TYPE_PAN, TYPE_CLOSUP, etc...
 	char m_szLocStack[MAX_CLOSEUP_DEPTH][MAX_SDEV_NAME]; // Your storage device stack
@@ -128,16 +128,16 @@ class CBagSaveGameFile : public CBofDataFile {
 public:
 	CBagSaveGameFile(bool isSaving);
 
-	int32 GetNumSavedGames() const {
+	int32 getNumSavedGames() const {
 		return getNumberOfRecs();
 	}
-	int32 GetActualNumSaves();
-	bool AnySavedGames();
+	int32 getActualNumSaves();
+	bool anySavedGames();
 
 	/**
 	 * Saves a BAGEL game to current save game file
 	 */
-	ErrorCode WriteSavedGame();
+	ErrorCode writeSavedGame();
 
 	/**
 	 * Restore a BAGEL saved game
@@ -147,7 +147,7 @@ public:
 	/**
 	 * Reads a BAGEL saved game title
 	 */
-	ErrorCode readTitle(int32 lSlot, ST_SAVEDGAME_HEADER *pSavedGame);
+	ErrorCode readTitle(int32 lSlot, StSavegameHeader *pSavedGame);
 
 	ErrorCode readTitleOnly(int32 lSlot, char *pGameTitle);
 };

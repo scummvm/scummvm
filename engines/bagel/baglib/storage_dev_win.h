@@ -581,8 +581,8 @@ public:
 	bool AddObject(const CBofString &sDstName, const CBofString &sObjName);
 	bool removeObject(const CBofString &sSrcName, const CBofString &sObjName);
 
-	void SaveObjList(ST_OBJ *pObjList, int nNumEntries);
-	void RestoreObjList(ST_OBJ *pObjList, int nNumEntries);
+	void SaveObjList(StObj *pObjList, int nNumEntries);
+	void RestoreObjList(StObj *pObjList, int nNumEntries);
 };
 
 extern bool g_allowPaintFl;

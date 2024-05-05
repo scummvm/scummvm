@@ -158,7 +158,7 @@ Common::Error BagelEngine::saveGameState(int slot, const Common::String &desc, b
 }
 
 Common::Error BagelEngine::saveGameState(int slot, const Common::String &desc,
-		bool isAutosave, ST_BAGEL_SAVE &saveData) {
+		bool isAutosave, StBagelSave &saveData) {
 	_saveData = saveData;
 	return Engine::saveGameState(slot, desc, isAutosave);
 }

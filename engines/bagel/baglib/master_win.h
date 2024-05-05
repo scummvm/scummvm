@@ -66,7 +66,7 @@ bool getCICStatus();
 class CBagMasterWin : public CBofWindow, public CBagParseObject {
 protected:
 	static bool _objSaveFl;
-	static ST_OBJ *_objList;
+	static StObj *_objList;
 	static CBagCursor *_cursorList[MAX_CURSORS];
 
 	CBagStorageDevWnd *_gameWindow;
@@ -137,8 +137,8 @@ public:
 	bool showQuitDialog(CBofWindow *win, bool saveFl = true);
 	ErrorCode showCreditsDialog(CBofWindow *win, bool saveFl = true);
 
-	void fillSaveBuffer(ST_BAGEL_SAVE *saveBuf);
-	void doRestore(ST_BAGEL_SAVE *saveBuf);
+	void fillSaveBuffer(StBagelSave *saveBuf);
+	void doRestore(StBagelSave *saveBuf);
 
 	ErrorCode newGame();
 
@@ -188,7 +188,7 @@ public:
 	void onKeyHit(uint32 keyCode, uint32 repCount) override;
 	void onClose() override;
 
-	ST_OBJ *getObjList() {
+	StObj *getObjList() {
 		return _objList;
 	}
 	void setSaveObjs(bool saveFl) {
