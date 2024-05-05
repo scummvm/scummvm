@@ -27,13 +27,13 @@
 
 namespace Bagel {
 
-int CBagWield::m_nWieldCursor = -1;
+int CBagWield::_nWieldCursor = -1;
 
 CBagWield::CBagWield(CBofWindow *pParent, const CBofRect &xRect) :
 	CBagStorageDevBmp(pParent, xRect) {
 	_xSDevType = SDEV_WIELD;
-	m_nObjects = 0;         // This should be changed on the attach
-	m_pCurrObj = nullptr;
+	_nObjects = 0;         // This should be changed on the attach
+	_pCurrObj = nullptr;
 }
 
 
@@ -51,7 +51,7 @@ ErrorCode CBagWield::attach() {
 
 	// Take care of objects being held
 	int nObjects = 0;
-	m_nObjects = 0;
+	_nObjects = 0;
 
 	for (int i = 0; i < getObjectCount(); ++i) {
 		CBagObject *pObj = getObjectByPos(i);
@@ -100,7 +100,7 @@ ErrorCode CBagWield::activateLocalObject(CBagObject *pObj) {
 		// Since we can only hold one object at a time, put the object that
 		// the user is currently holding into their stash (Inventory), and then
 		// put the new object that they are trying to pick up into their wield.
-		if (m_nObjects == 1) {
+		if (_nObjects == 1) {
 			CBagObject *pPrevObj = getCurrObj();
 
 			if (pPrevObj != nullptr) {
@@ -112,7 +112,7 @@ ErrorCode CBagWield::activateLocalObject(CBagObject *pObj) {
 			}
 
 			// There are no objects in wield
-			m_nObjects = 0;
+			_nObjects = 0;
 		}
 
 		// Add to wield
@@ -122,7 +122,7 @@ ErrorCode CBagWield::activateLocalObject(CBagObject *pObj) {
 
 		if (pObj->getType() == SPRITE_OBJ) {
 			setCurrObj(pObj);
-			m_nObjects++;
+			_nObjects++;
 			CBagSpriteObject *pSpObj = (CBagSpriteObject *)pObj;
 			setWieldCursor(pSpObj->getWieldCursor());
 		}
@@ -141,11 +141,11 @@ ErrorCode CBagWield::activateLocalObject(CBagObject *pObj) {
 }
 
 ErrorCode CBagWield::deactivateLocalObject(CBagObject *pObj) {
-	if (m_nObjects == 1) {
+	if (_nObjects == 1) {
 
 		if (pObj->getType() == SPRITE_OBJ) {
 			setWieldCursor(-1);
-			m_nObjects--;
+			_nObjects--;
 		}
 
 		CBagMenu::setUniversalObjectList(nullptr);
