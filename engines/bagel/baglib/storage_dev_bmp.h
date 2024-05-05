@@ -46,16 +46,16 @@ public:
 	ErrorCode setWorkBmp();
 	ErrorCode killWorkBmp();
 
-	CBofRect getRect() {
+	CBofRect getRect() override {
 		return CBagStorageDev::getRect();
 	}
 	void setRect(const CBofRect &xRect) {
 		CBagStorageDev::setRect(xRect);
 	}
-	CBofPoint getPosition() {
+	CBofPoint getPosition() override {
 		return CBagStorageDev::getPosition();
 	}
-	void setPosition(const CBofPoint &pos) {
+	void setPosition(const CBofPoint &pos) override {
 		CBagStorageDev::setPosition(pos);
 	}
 
