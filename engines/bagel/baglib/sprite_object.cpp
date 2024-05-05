@@ -28,9 +28,9 @@ namespace Bagel {
 
 CBagSpriteObject::CBagSpriteObject() : CBagObject() {
 	_xObjType = SPRITEOBJ;
-	m_xSprite = nullptr;
-	m_nCels = 1;
-	m_nWieldCursor = -1;
+	_xSprite = nullptr;
+	_nCels = 1;
+	_nWieldCursor = -1;
 
 	// Transparent by default
 	setTransparent();
@@ -40,7 +40,7 @@ CBagSpriteObject::CBagSpriteObject() : CBagObject() {
 
 	// implement sprite framerates
 	setFrameRate(0);
-	m_nLastUpdate = 0;
+	_nLastUpdate = 0;
 }
 
 CBagSpriteObject::~CBagSpriteObject() {
@@ -51,25 +51,25 @@ ErrorCode CBagSpriteObject::attach() {
 	// If it's not already attached
 	if (!isAttached()) {
 		// Could not already have a sprite
-		assert(m_xSprite == nullptr);
+		assert(_xSprite == nullptr);
 
-		if ((m_xSprite = new CBofSprite()) != nullptr) {
-			if (m_xSprite->loadSprite(getFileName(), getCels()) != false && (m_xSprite->width() != 0) && (m_xSprite->height() != 0)) {
+		if ((_xSprite = new CBofSprite()) != nullptr) {
+			if (_xSprite->loadSprite(getFileName(), getCels()) != false && (_xSprite->width() != 0) && (_xSprite->height() != 0)) {
 				if (isTransparent()) {
 					int nMaskColor = CBagel::getBagApp()->getChromaColor();
 
-					m_xSprite->setMaskColor(nMaskColor);
+					_xSprite->setMaskColor(nMaskColor);
 				}
 
 				// Set animated of the sprite to be the same as it's parent
-				m_xSprite->setAnimated(IsAnimated());
+				_xSprite->setAnimated(isAnimated());
 
 				CBofPoint p = CBagObject::getPosition();
 
 				if (p.x == -1 && p.y == -1) // Fixed to allow for [0,0] positioning
 					setFloating();
 				else
-					m_xSprite->setPosition(p.x, p.y);
+					_xSprite->setPosition(p.x, p.y);
 
 				setProperty("CURR_CEL", getState());
 
@@ -80,7 +80,7 @@ ErrorCode CBagSpriteObject::attach() {
 					pMainWin->SetPreFilterPan(true);
 				}
 			} else {
-				reportError(ERR_FOPEN, "Could Not Open Sprite: %s", m_xSprite->getFileName());
+				reportError(ERR_FOPEN, "Could Not Open Sprite: %s", _xSprite->getFileName());
 			}
 
 		} else {
@@ -92,30 +92,30 @@ ErrorCode CBagSpriteObject::attach() {
 }
 
 ErrorCode CBagSpriteObject::detach() {
-	if (m_xSprite != nullptr) {
-		delete m_xSprite;
-		m_xSprite = nullptr;
+	if (_xSprite != nullptr) {
+		delete _xSprite;
+		_xSprite = nullptr;
 	}
 	return CBagObject::detach();
 }
 
 void CBagSpriteObject::setCels(int nCels) {
-	m_nCels = nCels;
-	if (m_xSprite)
-		m_xSprite->setupCels(nCels);
+	_nCels = nCels;
+	if (_xSprite)
+		_xSprite->setupCels(nCels);
 }
 
 void CBagSpriteObject::setPosition(const CBofPoint &pos) {
 	CBagObject::setPosition(pos);
-	if (m_xSprite)
-		m_xSprite->setPosition(pos.x, pos.y);
+	if (_xSprite)
+		_xSprite->setPosition(pos.x, pos.y);
 }
 
 CBofRect CBagSpriteObject::getRect() {
 	CBofPoint p = getPosition();
 	CBofSize s;
-	if (m_xSprite)
-		s = m_xSprite->getSize();
+	if (_xSprite)
+		s = _xSprite->getSize();
 	return CBofRect(p, s);
 }
 
@@ -145,7 +145,7 @@ ParseCodes CBagSpriteObject::setInfo(CBagIfstream &istr) {
 			int curs;
 			istr.getCh();
 			getIntFromStream(istr, curs);
-			SetWieldCursor(curs);
+			setWieldCursor(curs);
 			nObjectUpdated = true;
 		}
 		break;
@@ -213,21 +213,21 @@ ParseCodes CBagSpriteObject::setInfo(CBagIfstream &istr) {
 }
 
 ErrorCode CBagSpriteObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, int) {
-	if (m_xSprite) {
+	if (_xSprite) {
 		bool b = true;
 		int nFrameInterval = getFrameRate();
 
 		if (nFrameInterval != 0) {
 			uint32 nCurTime = getTimer();
-			if (nCurTime > m_nLastUpdate + nFrameInterval) {
-				m_xSprite->setBlockAdvance(false);
-				m_nLastUpdate = nCurTime;
+			if (nCurTime > _nLastUpdate + nFrameInterval) {
+				_xSprite->setBlockAdvance(false);
+				_nLastUpdate = nCurTime;
 			} else {
-				m_xSprite->setBlockAdvance(true);
+				_xSprite->setBlockAdvance(true);
 			}
 		}
 
-		b = m_xSprite->paintSprite(pBmp, pt.x, pt.y);
+		b = _xSprite->paintSprite(pBmp, pt.x, pt.y);
 
 		// Don't have to redraw this item...
 		// setDirty (false);
@@ -238,9 +238,9 @@ ErrorCode CBagSpriteObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*
 	return ERR_NONE;
 }
 
-ErrorCode CBagSpriteObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, int) {
-	if (m_xSprite) {
-		bool b = m_xSprite->paintSprite(pWnd, pt.x, pt.y);
+ErrorCode CBagSpriteObject::update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, int) {
+	if (_xSprite) {
+		bool b = _xSprite->paintSprite(pWnd, pt.x, pt.y);
 
 		// don't have to redraw this item...
 		// setDirty (false);
@@ -252,12 +252,12 @@ ErrorCode CBagSpriteObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, i
 }
 
 bool CBagSpriteObject::isInside(const CBofPoint &xPoint) {
-	if (m_xSprite && getRect().ptInRect(xPoint)) {
+	if (_xSprite && getRect().ptInRect(xPoint)) {
 		if (isTransparent()) {
 			int x = xPoint.x - getRect().left;
 			int y = xPoint.y - getRect().top;
-			int c = m_xSprite->readPixel(x, y);
-			int d = m_xSprite->getMaskColor();
+			int c = _xSprite->readPixel(x, y);
+			int d = _xSprite->getMaskColor();
 			return (c != d);
 		}
 
@@ -269,20 +269,20 @@ bool CBagSpriteObject::isInside(const CBofPoint &xPoint) {
 void CBagSpriteObject::setProperty(const CBofString &sProp, int nVal) {
 	if (!sProp.find("STATE")) {
 		setState(nVal);
-		if (m_xSprite)
-			m_xSprite->setCel(nVal);
+		if (_xSprite)
+			_xSprite->setCel(nVal);
 	} else if (!sProp.find("CURR_CEL")) {
 		setState(nVal);
-		if (m_xSprite)
-			m_xSprite->setCel(nVal);
+		if (_xSprite)
+			_xSprite->setCel(nVal);
 	} else
 		CBagObject::setProperty(sProp, nVal);
 }
 
 int CBagSpriteObject::getProperty(const CBofString &sProp) {
 	if (!sProp.find("CURR_CEL")) {
-		if (m_xSprite) {
-			return m_xSprite->getCelIndex();
+		if (_xSprite) {
+			return _xSprite->getCelIndex();
 		}
 		return 0;
 	}
@@ -291,9 +291,9 @@ int CBagSpriteObject::getProperty(const CBofString &sProp) {
 }
 
 void CBagSpriteObject::setAnimated(bool b) {
-	m_bAnimated = b;
-	if (m_xSprite)
-		m_xSprite->setAnimated(b);
+	_bAnimated = b;
+	if (_xSprite)
+		_xSprite->setAnimated(b);
 }
 
 } // namespace Bagel

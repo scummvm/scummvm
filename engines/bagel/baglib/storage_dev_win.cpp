@@ -1495,8 +1495,8 @@ void CBagStorageDevWnd::onMouseMove(uint32 n, CBofPoint *pPoint, void *) {
 	} else {
 		// Added wield cursors
 		bool bWield = false;
-		if (CBagWield::GetWieldCursor() >= 0 && !CBagCursor::isSystemCursorVisible()) {
-			CBagMasterWin::setActiveCursor(CBagWield::GetWieldCursor());
+		if (CBagWield::getWieldCursor() >= 0 && !CBagCursor::isSystemCursorVisible()) {
+			CBagMasterWin::setActiveCursor(CBagWield::getWieldCursor());
 			bWield = true;
 		}
 

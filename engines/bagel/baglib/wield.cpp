@@ -124,7 +124,7 @@ ErrorCode CBagWield::activateLocalObject(CBagObject *pObj) {
 			setCurrObj(pObj);
 			m_nObjects++;
 			CBagSpriteObject *pSpObj = (CBagSpriteObject *)pObj;
-			SetWieldCursor(pSpObj->GetWieldCursor());
+			setWieldCursor(pSpObj->getWieldCursor());
 		}
 
 		// Fix for sometimes getting the wield menu instead of thud's order
@@ -144,7 +144,7 @@ ErrorCode CBagWield::deactivateLocalObject(CBagObject *pObj) {
 	if (m_nObjects == 1) {
 
 		if (pObj->getType() == SPRITEOBJ) {
-			SetWieldCursor(-1);
+			setWieldCursor(-1);
 			m_nObjects--;
 		}
 

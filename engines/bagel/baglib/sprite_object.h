@@ -33,11 +33,11 @@ namespace Bagel {
  */
 class CBagSpriteObject : public CBagObject {
 private:
-	CBofSprite *m_xSprite;
-	int m_nCels;
-	int m_nWieldCursor; // Ref Id for the objects over cursor
-	bool m_bAnimated : 1;
-	int m_nMaxFrameRate;
+	CBofSprite *_xSprite;
+	int _nCels;
+	int _nWieldCursor; // Ref Id for the objects over cursor
+	bool _bAnimated : 1;
+	int _nMaxFrameRate;
 
 public:
 	CBagSpriteObject();
@@ -46,29 +46,29 @@ public:
 	ErrorCode attach();
 	ErrorCode detach();
 	bool isAttached() {
-		return m_xSprite != nullptr;
+		return _xSprite != nullptr;
 	}
 	ParseCodes setInfo(CBagIfstream &istr);
 
 	bool isInside(const CBofPoint &xPoint);
 
-	int GetWieldCursor() {
-		return m_nWieldCursor;
+	int getWieldCursor() {
+		return _nWieldCursor;
 	}
-	void SetWieldCursor(int n) {
-		m_nWieldCursor = n;
+	void setWieldCursor(int n) {
+		_nWieldCursor = n;
 	}
 
-	CBofSprite *GetSprite() {
-		return m_xSprite;
+	CBofSprite *getSprite() {
+		return _xSprite;
 	}
 	CBofRect getRect();
 	int getCels() {
-		return m_nCels;
+		return _nCels;
 	}
 
-	bool IsAnimated() {
-		return m_bAnimated;
+	bool isAnimated() {
+		return _bAnimated;
 	}
 
 	void setAnimated(bool b = true);
@@ -76,19 +76,19 @@ public:
 	virtual void setPosition(const CBofPoint &pos);
 
 	virtual ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
-	virtual ErrorCode Update(CBofWindow *pWnd, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
+	virtual ErrorCode update(CBofWindow *pWnd, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 
 	void setProperty(const CBofString &sProp, int nVal);
 	int getProperty(const CBofString &sProp);
 
 	int getFrameRate() {
-		return m_nMaxFrameRate;
+		return _nMaxFrameRate;
 	}
 	void setFrameRate(int nFR) {
-		m_nMaxFrameRate = nFR;
+		_nMaxFrameRate = nFR;
 	}
 
-	uint32 m_nLastUpdate;
+	uint32 _nLastUpdate;
 };
 
 } // namespace Bagel

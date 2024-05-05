@@ -421,8 +421,8 @@ ErrorCode CBagPanWindow::onCursorUpdate(int nCurrObj) {
 	if ((nCurrObj >= 0) && ((pObj = GetObjectByPos(nCurrObj)) != nullptr)) {
 		CBagMasterWin::setActiveCursor(pObj->getOverCursor());
 
-	} else if (CBagWield::GetWieldCursor() >= 0) {
-		CBagMasterWin::setActiveCursor(CBagWield::GetWieldCursor());
+	} else if (CBagWield::getWieldCursor() >= 0) {
+		CBagMasterWin::setActiveCursor(CBagWield::getWieldCursor());
 	}
 
 	return _errCode;
@@ -550,8 +550,8 @@ void CBagPanWindow::onMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 			// Still no luck, if we're wielding, use that cursor.
 			if (nCursorID == -1) {
 				nCursorID = pOverObj->getOverCursor();
-				if (CBagWield::GetWieldCursor() >= 0 && ((pOverObj->getRefName().find("BWIELD_WLD") != -1) || (pOverObj->getRefName().find("THUD_WLD") != -1))) {
-					nCursorID = CBagWield::GetWieldCursor();
+				if (CBagWield::getWieldCursor() >= 0 && ((pOverObj->getRefName().find("BWIELD_WLD") != -1) || (pOverObj->getRefName().find("THUD_WLD") != -1))) {
+					nCursorID = CBagWield::getWieldCursor();
 				}
 			}
 
