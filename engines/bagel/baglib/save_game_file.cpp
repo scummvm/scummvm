@@ -224,7 +224,7 @@ ErrorCode CBagSaveGameFile::readTitle(int32 lSlot, StSavegameHeader *pSavedGame)
 	assert(isValidObject(this));
 
 	// validate input
-	assert(lSlot >= 0 && lSlot < MAX_SAVEDGAMES);
+	assert(lSlot >= 0 && lSlot < MAX_SAVED_GAMES);
 	assert(pSavedGame != nullptr);
 
 	int32 lRecNum = findRecord(lSlot);
@@ -255,7 +255,7 @@ ErrorCode CBagSaveGameFile::readTitleOnly(int32 lSlot, char *pGameTitle) {
 	assert(isValidObject(this));
 
 	// Validate input
-	assert(lSlot >= 0 && lSlot < MAX_SAVEDGAMES);
+	assert(lSlot >= 0 && lSlot < MAX_SAVED_GAMES);
 	assert(pGameTitle != nullptr);
 
 	byte pBuf[MAX_SAVE_TITLE + 1];

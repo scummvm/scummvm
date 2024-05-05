@@ -53,14 +53,14 @@ public:
 	ErrorCode newSound(CBofWindow *pWin);
 
 	// Return true if the Object had members that are properly initialized/de-initialized
-	ErrorCode attach() {
+	ErrorCode attach() override {
 		return attach((CBofWindow *)CBagel::getBagApp()->getMasterWnd());
 	}
 	ErrorCode attach(CBofWindow *pWnd);
-	bool isAttached() {
+	bool isAttached() override {
 		return _pSound != nullptr;
 	}
-	ErrorCode detach();
+	ErrorCode detach() override;
 
 	CBofSound *getLastMidi() {
 		return _pMidiSound;
@@ -95,21 +95,21 @@ public:
 	}
 	void setQueue(bool b = true);
 
-	virtual bool runObject();
+	bool runObject() override;
 
 	void setVolume(int nVol);
 	int getVolume();
 
 	void setNumOfLoops(int n);
 
-	int getProperty(const CBofString &sProp);
-	void setProperty(const CBofString &sProp, int nVal);
+	int getProperty(const CBofString &sProp) override;
+	void setProperty(const CBofString &sProp, int nVal) override;
 
 	/**
 	 * Takes in info and then removes the relative information and returns
 	 * the info without the relevant info.
 	 */
-	ParseCodes setInfo(CBagIfstream &istr);
+	ParseCodes setInfo(CBagIfstream &istr) override;
 
 	//  Added properties to sound object
 	bool isPlaying();
