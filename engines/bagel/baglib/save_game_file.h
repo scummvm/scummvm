@@ -27,18 +27,18 @@
 
 namespace Bagel {
 
-#define MAX_SAVEDGAMES 40
-#define MAX_SAVETITLE 128
-#define MAX_USERNAME 64
+#define MAX_SAVED_GAMES 40
+#define MAX_SAVE_TITLE 128
+#define MAX_USER_NAME 64
 
 struct StSavegameHeader {
-	char _szTitle[MAX_SAVETITLE] = { '\0' };
-	char _szUserName[MAX_USERNAME] = { '\0' };
+	char _szTitle[MAX_SAVE_TITLE] = { '\0' };
+	char _szUserName[MAX_USER_NAME] = { '\0' };
 	uint32 _bUsed = 0;
 
 	void synchronize(Common::Serializer &s);
 	static int size() {
-		return MAX_SAVETITLE + MAX_USERNAME + 4;
+		return MAX_SAVE_TITLE + MAX_USER_NAME + 4;
 	}
 };
 
@@ -93,7 +93,7 @@ struct StObj {
 	void clear();
 };
 
-// Flags for the st_obj strucuture
+// Flags for the st_obj structure
 
 #define mIsMsgWaiting 0x0001
 
@@ -105,7 +105,7 @@ struct StBagelSave {
 	StObj _stObjList[MAX_OBJS];
 	StObj _stObjListEx[MAX_OBJS];
 	char _szScript[MAX_FNAME];                          // Name of current world file (no path)
-	uint32 _nLocType;                                    // TYPE_PAN, TYPE_CLOSUP, etc...
+	uint32 _nLocType;                                    // TYPE_PAN, TYPE_CLOSEUP, etc...
 	char _szLocStack[MAX_CLOSEUP_DEPTH][MAX_SDEV_NAME]; // Your storage device stack
 	uint16 _nLocX;                                      // X Location in PAN
 	uint16 _nLocY;                                      // Y Location in PAN

@@ -177,8 +177,8 @@ ErrorCode CBagSaveDialog::attach() {
 		}
 
 		// Fill the list box with save game entries
-		for (int i = 0; i < MAX_SAVEDGAMES; i++) {
-			char title[MAX_SAVETITLE];
+		for (int i = 0; i < MAX_SAVED_GAMES; i++) {
+			char title[MAX_SAVE_TITLE];
 			Common::strcpy_s(title, "Empty");		// Default empty string
 
 			for (const auto &entry : _savesList) {
