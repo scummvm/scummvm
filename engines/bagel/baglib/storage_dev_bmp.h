@@ -30,7 +30,7 @@ namespace Bagel {
 
 class CBagStorageDevBmp : public CBagBmpObject, public CBagStorageDev {
 protected:
-	int m_nMaskColor;
+	int _nMaskColor;
 	CBofPoint _xCursorLocation; // Current cursor location in bmp.
 	CBofRect m_cSrcRect;
 	bool m_bTrans;

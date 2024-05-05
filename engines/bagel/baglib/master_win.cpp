@@ -1437,23 +1437,23 @@ void CBagMasterWin::fillSaveBuffer(StBagelSave *saveBuf) {
 
 						if (!curVar->GetName().isEmpty()) {
 							assert(strlen(curVar->GetName()) < MAX_VAR_NAME);
-							Common::strcpy_s(saveBuf->m_stVarList[j].m_szName, curVar->GetName());
+							Common::strcpy_s(saveBuf->_stVarList[j]._szName, curVar->GetName());
 						}
 
 						if (!curVar->GetValue().isEmpty()) {
 							assert(strlen(curVar->GetValue()) < MAX_VAR_VALUE);
-							Common::strcpy_s(saveBuf->m_stVarList[j].m_szValue, curVar->GetValue());
+							Common::strcpy_s(saveBuf->_stVarList[j]._szValue, curVar->GetValue());
 						}
 
-						saveBuf->m_stVarList[j].m_nType = (uint16)curVar->getType();
-						saveBuf->m_stVarList[j].m_bGlobal = (byte)curVar->IsGlobal();
-						saveBuf->m_stVarList[j].m_bConstant = (byte)curVar->IsConstant();
-						saveBuf->m_stVarList[j].m_bReference = (byte)curVar->IsReference();
-						saveBuf->m_stVarList[j].m_bTimer = (byte)curVar->IsTimer();
-						saveBuf->m_stVarList[j].m_bRandom = (byte)curVar->IsRandom();
-						saveBuf->m_stVarList[j].m_bNumeric = (byte)curVar->IsNumeric();
-						saveBuf->m_stVarList[j].m_bAttached = (byte)curVar->isAttached();
-						saveBuf->m_stVarList[j].m_bUsed = 1;
+						saveBuf->_stVarList[j]._nType = (uint16)curVar->getType();
+						saveBuf->_stVarList[j]._bGlobal = (byte)curVar->IsGlobal();
+						saveBuf->_stVarList[j]._bConstant = (byte)curVar->IsConstant();
+						saveBuf->_stVarList[j]._bReference = (byte)curVar->IsReference();
+						saveBuf->_stVarList[j]._bTimer = (byte)curVar->IsTimer();
+						saveBuf->_stVarList[j]._bRandom = (byte)curVar->IsRandom();
+						saveBuf->_stVarList[j]._bNumeric = (byte)curVar->IsNumeric();
+						saveBuf->_stVarList[j]._bAttached = (byte)curVar->isAttached();
+						saveBuf->_stVarList[j]._bUsed = 1;
 						j++;
 
 						// Can't exceed MAX_VARS
@@ -1464,7 +1464,7 @@ void CBagMasterWin::fillSaveBuffer(StBagelSave *saveBuf) {
 			}
 
 			// Remember current script file
-			strncpy(saveBuf->m_szScript, getWldScript().getBuffer(), MAX_FNAME - 1);
+			strncpy(saveBuf->_szScript, getWldScript().getBuffer(), MAX_FNAME - 1);
 
 			CBagStorageDevWnd *sdevWin = getCurrentStorageDev();
 			if (sdevWin != nullptr) {
@@ -1472,26 +1472,26 @@ void CBagMasterWin::fillSaveBuffer(StBagelSave *saveBuf) {
 				stringBuffer[0] = 0;
 				CBofString curString(stringBuffer, 256);
 
-				saveBuf->m_nLocType = sdevWin->GetDeviceType();
+				saveBuf->_nLocType = sdevWin->GetDeviceType();
 
 				// Remember the pan's position
-				if (saveBuf->m_nLocType == SDEV_GAMEWIN) {
+				if (saveBuf->_nLocType == SDEV_GAMEWIN) {
 					CBagPanWindow *panWin = (CBagPanWindow *)sdevWin;
 					CBofRect cPos = panWin->getViewPort();
 
-					saveBuf->m_nLocX = (uint16)cPos.left;
-					saveBuf->m_nLocY = (uint16)cPos.top;
+					saveBuf->_nLocX = (uint16)cPos.left;
+					saveBuf->_nLocY = (uint16)cPos.top;
 				}
 
 				CBagStorageDevManager *sdevManager = getStorageDevManager();
 				if (sdevManager != nullptr) {
-					sdevManager->SaveObjList(&saveBuf->m_stObjList[0], MAX_OBJS);
+					sdevManager->SaveObjList(&saveBuf->_stObjList[0], MAX_OBJS);
 					if (isObjSave()) {
 
 						assert(_objList != nullptr);
 
-						bofMemCopy(&saveBuf->m_stObjListEx[0], _objList, sizeof(StObj) * MAX_OBJS);
-						saveBuf->m_bUseEx = 1;
+						bofMemCopy(&saveBuf->_stObjListEx[0], _objList, sizeof(StObj) * MAX_OBJS);
+						saveBuf->_bUseEx = 1;
 					}
 
 					// Save current storage device location (stack)
@@ -1499,7 +1499,7 @@ void CBagMasterWin::fillSaveBuffer(StBagelSave *saveBuf) {
 					curString = sdevWin->GetName();
 					while ((i < MAX_CLOSEUP_DEPTH) && !curString.isEmpty()) {
 						sdevWin = (CBagStorageDevWnd *)sdevManager->GetStorageDevice(curString);
-						Common::strcpy_s(saveBuf->m_szLocStack[i], curString.getBuffer());
+						Common::strcpy_s(saveBuf->_szLocStack[i], curString.getBuffer());
 						i++;
 						curString.free();
 						if (sdevWin != nullptr) {
@@ -1581,7 +1581,7 @@ void CBagMasterWin::doRestore(StBagelSave *saveBuf) {
 	scriptBuf[0] = '\0';
 	CBofString script(scriptBuf, 256);
 
-	script = saveBuf->m_szScript;
+	script = saveBuf->_szScript;
 
 	char workBuf[60], closeUpBuf[256];
 	char stringBuf[256];
@@ -1592,8 +1592,8 @@ void CBagMasterWin::doRestore(StBagelSave *saveBuf) {
 	// Rebuild the stack of locations (Could be 3 closups deep)
 	closeUpBuf[0] = '\0';
 	for (i = MAX_CLOSEUP_DEPTH - 1; i >= 0; i--) {
-		if (saveBuf->m_szLocStack[i][0] != '\0') {
-			Common::sprintf_s(workBuf, "%s~~", saveBuf->m_szLocStack[i]);
+		if (saveBuf->_szLocStack[i][0] != '\0') {
+			Common::sprintf_s(workBuf, "%s~~", saveBuf->_szLocStack[i]);
 			Common::strcat_s(closeUpBuf, workBuf);
 		}
 	}
@@ -1604,7 +1604,7 @@ void CBagMasterWin::doRestore(StBagelSave *saveBuf) {
 	}
 
 	// Designate closeups
-	if (saveBuf->m_nLocType == SDEV_CLOSEP) {
+	if (saveBuf->_nLocType == SDEV_CLOSEP) {
 		Common::strcat_s(closeUpBuf, " AS CLOSEUP");
 	}
 
@@ -1629,14 +1629,14 @@ void CBagMasterWin::doRestore(StBagelSave *saveBuf) {
 			// Reset the Global Vars with these new settings
 			for (i = 0; i < MAX_VARS; i++) {
 				// If this entry is actually used to store Var info
-				if (saveBuf->m_stVarList[i].m_bUsed) {
+				if (saveBuf->_stVarList[i]._bUsed) {
 					// Find the Global Var (already in memory)
-					CBagVar *var = varManager->GetVariable(saveBuf->m_stVarList[i].m_szName);
+					CBagVar *var = varManager->GetVariable(saveBuf->_stVarList[i]._szName);
 					if (var != nullptr) {
-						var->SetValue(saveBuf->m_stVarList[i].m_szValue);
+						var->SetValue(saveBuf->_stVarList[i]._szValue);
 
 					} else {
-						logError(buildString("Global Variable NOT found: %s", saveBuf->m_stVarList[i].m_szName));
+						logError(buildString("Global Variable NOT found: %s", saveBuf->_stVarList[i]._szName));
 					}
 				}
 			}
@@ -1657,21 +1657,21 @@ void CBagMasterWin::doRestore(StBagelSave *saveBuf) {
 				}
 			}
 
-			bofMemCopy(getObjList(), &saveBuf->m_stObjListEx[0], sizeof(StObj) * MAX_OBJS);
+			bofMemCopy(getObjList(), &saveBuf->_stObjListEx[0], sizeof(StObj) * MAX_OBJS);
 
-			if (saveBuf->m_bUseEx) {
+			if (saveBuf->_bUseEx) {
 				setSaveObjs(true);
 			} else {
 				setSaveObjs(false);
 			}
 
-			sdevManager->RestoreObjList(&saveBuf->m_stObjList[0], MAX_OBJS);
+			sdevManager->RestoreObjList(&saveBuf->_stObjList[0], MAX_OBJS);
 		}
 
 		// If it's a Panorama, the set it's View position.
-		if (saveBuf->m_nLocType == SDEV_GAMEWIN) {
-			g_engine->g_cInitLoc.x = saveBuf->m_nLocX;
-			g_engine->g_cInitLoc.y = saveBuf->m_nLocY;
+		if (saveBuf->_nLocType == SDEV_GAMEWIN) {
+			g_engine->g_cInitLoc.x = saveBuf->_nLocX;
+			g_engine->g_cInitLoc.y = saveBuf->_nLocY;
 			g_engine->g_bUseInitLoc = true;
 		}
 

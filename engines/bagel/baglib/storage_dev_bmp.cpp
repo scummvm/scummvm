@@ -43,7 +43,7 @@ CBagStorageDevBmp::~CBagStorageDevBmp() {
 }
 
 ErrorCode CBagStorageDevBmp::attach() {
-	m_nMaskColor = CBagel::getBagApp()->getChromaColor();
+	_nMaskColor = CBagel::getBagApp()->getChromaColor();
 	return CBagStorageDev::attach();
 }
 
@@ -158,7 +158,7 @@ ErrorCode CBagStorageDevBmp::update(CBofBitmap *pBmp, CBofPoint /*xPoint*/, CBof
 
 			// Paint to screen
 			if (m_bTrans)
-				pSrcBmp->paint(pBmp, getPosition().x, getPosition().y, nullptr, m_nMaskColor);
+				pSrcBmp->paint(pBmp, getPosition().x, getPosition().y, nullptr, _nMaskColor);
 			else
 				pSrcBmp->paint(pBmp, getPosition().x, getPosition().y, nullptr, -1);
 		}
