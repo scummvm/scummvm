@@ -381,7 +381,7 @@ void OSystem_Atari::logMessage(LogMessageType::Type type, const char *message) {
 		output = stderr;
 
 	static char str[1024+1];
-	sprintf(str, "[%08d] %s", getMillis(), message);
+	snprintf(str, sizeof(str), "[%08d] %s", getMillis(), message);
 
 	fputs(str, output);
 	fflush(output);
