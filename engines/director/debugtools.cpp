@@ -172,9 +172,9 @@ static void showControlPanel() {
 			ImGui::SameLine();
 		}
 
-		char buf[5];
+		char buf[6];
 
-		snprintf(buf, 5, "%d", score->getCurrentFrameNum());
+		snprintf(buf, 6, "%d", score->getCurrentFrameNum());
 
 		ImGui::SetNextItemWidth(30);
 		ImGui::InputText("##frame", buf, 5, ImGuiInputTextFlags_CharsDecimal);
