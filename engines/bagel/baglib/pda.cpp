@@ -241,7 +241,7 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 	// Update the zoom button (it might need to blink).
 	handleZoomButton(false);
 	ErrorCode errCode = ERR_NONE;
-	if (!m_bHidePDA) {
+	if (!_bHidePDA) {
 		CBofRect *pr = pSrcRect;
 
 		if (_activating) {
@@ -306,7 +306,7 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 
 		// If the official decree from on high has been given to update, do so!
 		if (bUpdate) {
-			errCode = CBagStorageDevBmp::update(pBmp, pt, pr, m_nMaskColor);
+			errCode = CBagStorageDevBmp::update(pBmp, pt, pr, _nMaskColor);
 		}
 
 		// If the PDA is activating then redraw our black background
@@ -329,12 +329,12 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 bool CBagPDA::isInside(const CBofPoint &xPoint) {
 	CBofBitmap *pSrcBmp = getBitmap();
 
-	if (getRect().ptInRect(xPoint) && m_nMaskColor >= 0) {
+	if (getRect().ptInRect(xPoint) && _nMaskColor >= 0) {
 		if (pSrcBmp) {
 			int x = xPoint.x - getRect().left;
 			int y = xPoint.y - getRect().top;
 			int c = pSrcBmp->readPixel(x, y);
-			return (c != m_nMaskColor);
+			return (c != _nMaskColor);
 		}
 
 		return true;

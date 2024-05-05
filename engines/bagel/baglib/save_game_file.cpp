@@ -32,117 +32,117 @@ namespace Bagel {
 
 void StSavegameHeader::synchronize(Common::Serializer &s) {
 	s.syncBytes((byte *)_szTitle, MAX_SAVETITLE);
-	s.syncBytes((byte *)m_szUserName, MAX_USERNAME);
-	s.syncAsUint32LE(m_bUsed);
+	s.syncBytes((byte *)_szUserName, MAX_USERNAME);
+	s.syncAsUint32LE(_bUsed);
 }
 
 void StVar::synchronize(Common::Serializer &s) {
-	s.syncBytes((byte *)m_szName, MAX_VAR_NAME);
-	s.syncBytes((byte *)m_szValue, MAX_VAR_VALUE);
-	s.syncAsUint16LE(m_nType);
+	s.syncBytes((byte *)_szName, MAX_VAR_NAME);
+	s.syncBytes((byte *)_szValue, MAX_VAR_VALUE);
+	s.syncAsUint16LE(_nType);
 
-	s.syncAsByte(m_bGlobal);
-	s.syncAsByte(m_bConstant);
-	s.syncAsByte(m_bReference);
-	s.syncAsByte(m_bTimer);
+	s.syncAsByte(_bGlobal);
+	s.syncAsByte(_bConstant);
+	s.syncAsByte(_bReference);
+	s.syncAsByte(_bTimer);
 
-	s.syncAsByte(m_bRandom);
-	s.syncAsByte(m_bNumeric);
-	s.syncAsByte(m_bAttached);
+	s.syncAsByte(_bRandom);
+	s.syncAsByte(_bNumeric);
+	s.syncAsByte(_bAttached);
 
-	s.syncAsByte(m_bUsed);
+	s.syncAsByte(_bUsed);
 }
 
 void StVar::clear() {
-	Common::fill(m_szName, m_szName + MAX_VAR_NAME, '\0');
-	Common::fill(m_szValue, m_szValue + MAX_VAR_VALUE, '\0');
+	Common::fill(_szName, _szName + MAX_VAR_NAME, '\0');
+	Common::fill(_szValue, _szValue + MAX_VAR_VALUE, '\0');
 
-	m_nType = 0;
-	m_bGlobal = 0;
-	m_bConstant = 0;
-	m_bReference = 0;
-	m_bTimer = 0;
-	m_bRandom = 0;
-	m_bNumeric = 0;
-	m_bAttached = 0;
-	m_bUsed = 0;
+	_nType = 0;
+	_bGlobal = 0;
+	_bConstant = 0;
+	_bReference = 0;
+	_bTimer = 0;
+	_bRandom = 0;
+	_bNumeric = 0;
+	_bAttached = 0;
+	_bUsed = 0;
 }
 
 void StObj::synchronize(Common::Serializer &s) {
-	s.syncBytes((byte *)m_szName, MAX_OBJ_NAME);
-	s.syncBytes((byte *)m_szSDev, MAX_SDEV_NAME);
-	s.syncAsUint32LE(m_lState);
+	s.syncBytes((byte *)_szName, MAX_OBJ_NAME);
+	s.syncBytes((byte *)_szSDev, MAX_SDEV_NAME);
+	s.syncAsUint32LE(_lState);
 
-	s.syncAsUint32LE(m_lProperties);
-	s.syncAsUint32LE(m_lType);
+	s.syncAsUint32LE(_lProperties);
+	s.syncAsUint32LE(_lType);
 
-	s.syncAsUint32LE(m_lLoop);
-	s.syncAsUint32LE(m_lSpeed);
+	s.syncAsUint32LE(_lLoop);
+	s.syncAsUint32LE(_lSpeed);
 
-	s.syncAsByte(m_bAttached);
-	s.syncAsByte(m_bUsed);
+	s.syncAsByte(_bAttached);
+	s.syncAsByte(_bUsed);
 
-	s.syncAsUint16LE(m_nFlags);
+	s.syncAsUint16LE(_nFlags);
 }
 
 void StObj::clear() {
-	Common::fill(m_szName, m_szName + MAX_OBJ_NAME, '\0');
-	Common::fill(m_szSDev, m_szSDev + MAX_SDEV_NAME, '\0');
+	Common::fill(_szName, _szName + MAX_OBJ_NAME, '\0');
+	Common::fill(_szSDev, _szSDev + MAX_SDEV_NAME, '\0');
 
-	m_lState = 0;
-	m_lProperties = 0;
-	m_lType = 0;
-	m_lLoop = 0;
-	m_lSpeed = 0;
-	m_bAttached = 0;
-	m_bUsed = 0;
-	m_nFlags = 0;
+	_lState = 0;
+	_lProperties = 0;
+	_lType = 0;
+	_lLoop = 0;
+	_lSpeed = 0;
+	_bAttached = 0;
+	_bUsed = 0;
+	_nFlags = 0;
 }
 
 void StBagelSave::synchronize(Common::Serializer &s) {
 	for (int i = 0; i < MAX_VARS; ++i)
-		m_stVarList[i].synchronize(s);
+		_stVarList[i].synchronize(s);
 	for (int i = 0; i < MAX_OBJS; ++i)
-		m_stObjList[i].synchronize(s);
+		_stObjList[i].synchronize(s);
 	for (int i = 0; i < MAX_OBJS; ++i)
-		m_stObjListEx[i].synchronize(s);
+		_stObjListEx[i].synchronize(s);
 
-	s.syncBytes((byte *)m_szScript, MAX_FNAME);
-	s.syncAsUint32LE(m_nLocType);
+	s.syncBytes((byte *)_szScript, MAX_FNAME);
+	s.syncAsUint32LE(_nLocType);
 
 	for (int i = 0; i < MAX_CLOSEUP_DEPTH; ++i)
-		s.syncBytes((byte *)m_szLocStack[i], MAX_SDEV_NAME);
+		s.syncBytes((byte *)_szLocStack[i], MAX_SDEV_NAME);
 
-	s.syncAsUint16LE(m_nLocX);
-	s.syncAsUint16LE(m_nLocY);
-	s.syncAsUint16LE(m_bUseEx);
-	s.syncAsUint16LE(m_nFiller);
+	s.syncAsUint16LE(_nLocX);
+	s.syncAsUint16LE(_nLocY);
+	s.syncAsUint16LE(_bUseEx);
+	s.syncAsUint16LE(_nFiller);
 }
 
 void StBagelSave::clear() {
 	for (int i = 0; i < MAX_VARS; ++i)
-		m_stVarList[i].clear();
+		_stVarList[i].clear();
 	for (int i = 0; i < MAX_OBJS; ++i)
-		m_stObjList[i].clear();
+		_stObjList[i].clear();
 	for (int i = 0; i < MAX_OBJS; ++i)
-		m_stObjListEx[i].clear();
+		_stObjListEx[i].clear();
 
-	Common::fill(m_szScript, m_szScript + MAX_FNAME, '\0');
-	m_nLocType = 0;
+	Common::fill(_szScript, _szScript + MAX_FNAME, '\0');
+	_nLocType = 0;
 
 	for (int i = 0; i < MAX_CLOSEUP_DEPTH; ++i)
-		Common::fill(m_szLocStack[i], m_szLocStack[i] + MAX_SDEV_NAME, '\0');
+		Common::fill(_szLocStack[i], _szLocStack[i] + MAX_SDEV_NAME, '\0');
 
-	m_nLocX = 0;
-	m_nLocY = 0;
-	m_bUseEx = 0;
-	m_nFiller = 0;
+	_nLocX = 0;
+	_nLocY = 0;
+	_bUseEx = 0;
+	_nFiller = 0;
 }
 
 
 CBagSaveGameFile::CBagSaveGameFile(bool isSaving) {
 	setFile("spacebar.sav",
-		isSaving ? 
+		isSaving ?
 		(CDF_MEMORY | CDF_ENCRYPT | CDF_KEEPOPEN | CDF_CREATE | CDF_SAVEFILE) :
 		(CDF_MEMORY | CDF_ENCRYPT | CDF_KEEPOPEN | CDF_SAVEFILE)
 	);
@@ -155,15 +155,15 @@ ErrorCode CBagSaveGameFile::writeSavedGame() {
 	StBagelSave saveData;
 	g_engine->_masterWin->fillSaveBuffer(&saveData);
 
-	Common::String str = "./" + Common::String(saveData.m_szScript);
+	Common::String str = "./" + Common::String(saveData._szScript);
 	str.replace('/', '\\');
-	Common::strcpy_s(saveData.m_szScript, str.c_str());
+	Common::strcpy_s(saveData._szScript, str.c_str());
 
 	// Set up header fields
 	StSavegameHeader header;
 	Common::strcpy_s(header._szTitle, "ScummVM Save");
-	Common::strcpy_s(header.m_szUserName, "ScummVM User");
-	header.m_bUsed = 1;
+	Common::strcpy_s(header._szUserName, "ScummVM User");
+	header._bUsed = 1;
 
 	// Create the data buffer
 	Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
@@ -204,11 +204,11 @@ ErrorCode CBagSaveGameFile::readSavedGame(int32 slotNum) {
 
 			bofFree(pBuf);
 
-			CBofString str(saveData.m_szScript);
+			CBofString str(saveData._szScript);
 			MACROREPLACE(str);
 			const char *path = str.getBuffer();
 			assert(!strncmp(path, "./", 2));
-			Common::strcpy_s(saveData.m_szScript, path + 2);
+			Common::strcpy_s(saveData._szScript, path + 2);
 
 			// Restore the game
 			g_engine->_masterWin->doRestore(&saveData);
@@ -283,7 +283,7 @@ int32 CBagSaveGameFile::getActualNumSaves() {
 	for (int32 i = 0; i < lNumRecs; i++) {
 		StSavegameHeader stGameInfo;
 		if (readTitle(i, &stGameInfo) == ERR_NONE) {
-			if (stGameInfo.m_bUsed) {
+			if (stGameInfo._bUsed) {
 				lNumSaves++;
 			}
 		} else {
@@ -302,7 +302,7 @@ bool CBagSaveGameFile::anySavedGames() {
 		StSavegameHeader stGameInfo;
 		if (readTitle(i, &stGameInfo) == ERR_NONE) {
 
-			if (stGameInfo.m_bUsed) {
+			if (stGameInfo._bUsed) {
 				return true;
 			}
 		} else {

@@ -33,8 +33,8 @@ namespace Bagel {
 
 struct StSavegameHeader {
 	char _szTitle[MAX_SAVETITLE] = { '\0' };
-	char m_szUserName[MAX_USERNAME] = { '\0' };
-	uint32 m_bUsed = 0;
+	char _szUserName[MAX_USERNAME] = { '\0' };
+	uint32 _bUsed = 0;
 
 	void synchronize(Common::Serializer &s);
 	static int size() {
@@ -50,20 +50,20 @@ struct StSavegameHeader {
 #define MAX_VAR_VALUE 60
 
 struct StVar {
-	char m_szName[MAX_VAR_NAME];
-	char m_szValue[MAX_VAR_VALUE];
-	uint16 m_nType;
+	char _szName[MAX_VAR_NAME];
+	char _szValue[MAX_VAR_VALUE];
+	uint16 _nType;
 
-	byte m_bGlobal;
-	byte m_bConstant;
-	byte m_bReference;
-	byte m_bTimer;
+	byte _bGlobal;
+	byte _bConstant;
+	byte _bReference;
+	byte _bTimer;
 
-	byte m_bRandom;
-	byte m_bNumeric;
-	byte m_bAttached;
+	byte _bRandom;
+	byte _bNumeric;
+	byte _bAttached;
 
-	byte m_bUsed; // If this entry is used or not
+	byte _bUsed; // If this entry is used or not
 
 	void synchronize(Common::Serializer &s);
 	void clear();
@@ -74,20 +74,20 @@ struct StVar {
 #define MAX_OBJS 1000
 
 struct StObj {
-	char m_szName[MAX_OBJ_NAME];
-	char m_szSDev[MAX_SDEV_NAME];
-	uint32 m_lState;
+	char _szName[MAX_OBJ_NAME];
+	char _szSDev[MAX_SDEV_NAME];
+	uint32 _lState;
 
-	uint32 m_lProperties;
-	uint32 m_lType;
+	uint32 _lProperties;
+	uint32 _lType;
 
-	uint32 m_lLoop;
-	uint32 m_lSpeed;
+	uint32 _lLoop;
+	uint32 _lSpeed;
 
-	byte m_bAttached;
-	byte m_bUsed;
+	byte _bAttached;
+	byte _bUsed;
 
-	uint16 m_nFlags; // Flags for kicks...
+	uint16 _nFlags; // Flags for kicks...
 
 	void synchronize(Common::Serializer &s);
 	void clear();
@@ -101,16 +101,16 @@ struct StObj {
  * Savegame data structure
  */
 struct StBagelSave {
-	StVar m_stVarList[MAX_VARS];
-	StObj m_stObjList[MAX_OBJS];
-	StObj m_stObjListEx[MAX_OBJS];
-	char m_szScript[MAX_FNAME];                          // Name of current world file (no path)
-	uint32 m_nLocType;                                    // TYPE_PAN, TYPE_CLOSUP, etc...
-	char m_szLocStack[MAX_CLOSEUP_DEPTH][MAX_SDEV_NAME]; // Your storage device stack
-	uint16 m_nLocX;                                      // X Location in PAN
-	uint16 m_nLocY;                                      // Y Location in PAN
-	uint16 m_bUseEx;
-	uint16 m_nFiller; // Make structs align
+	StVar _stVarList[MAX_VARS];
+	StObj _stObjList[MAX_OBJS];
+	StObj _stObjListEx[MAX_OBJS];
+	char _szScript[MAX_FNAME];                          // Name of current world file (no path)
+	uint32 _nLocType;                                    // TYPE_PAN, TYPE_CLOSUP, etc...
+	char _szLocStack[MAX_CLOSEUP_DEPTH][MAX_SDEV_NAME]; // Your storage device stack
+	uint16 _nLocX;                                      // X Location in PAN
+	uint16 _nLocY;                                      // Y Location in PAN
+	uint16 _bUseEx;
+	uint16 _nFiller; // Make structs align
 
 	void synchronize(Common::Serializer &s);
 	void clear();

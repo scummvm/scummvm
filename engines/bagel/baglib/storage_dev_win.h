@@ -45,26 +45,26 @@ namespace Bagel {
  */
 class CResource {
 private:
-	const char *m_lpszResourceName;
-	uint32 m_nResId;
+	const char *_lpszResourceName;
+	uint32 _nResId;
 
 public:
 	CResource() {
-		m_lpszResourceName = nullptr;
-		m_nResId = 0;
+		_lpszResourceName = nullptr;
+		_nResId = 0;
 	}
 
 	void SetResource(const char *lpszResourceName) {
-		m_lpszResourceName = lpszResourceName;
+		_lpszResourceName = lpszResourceName;
 	}
 	void SetResource(uint32 nResId) {
-		m_nResId = nResId;
+		_nResId = nResId;
 	}
 	const char *GetResourceName() {
-		return m_lpszResourceName;
+		return _lpszResourceName;
 	}
 	uint32 GetResourceId() {
-		return m_nResId;
+		return _nResId;
 	}
 };
 
@@ -80,50 +80,50 @@ public:
 	enum MOUSE_ACTIVITY { kMouseNONE = 0x0000, kMouseDRAGGING = 0x0001 };
 
 private:
-	CBofString m_sName;           // Name of this storage device
-	CBofString m_sBackgroundName; // Name of this storage devices background
-	CBofString m_sPrevSDev;       // Name of the previous storage device
+	CBofString _sName;           // Name of this storage device
+	CBofString _sBackgroundName; // Name of this storage devices background
+	CBofString _sPrevSDev;       // Name of the previous storage device
 
-	CBofRect m_cDestRect;      // Position of storage device
-	CBofPoint m_xPrevLocation; // Previous view location in bmp.
+	CBofRect _cDestRect;      // Position of storage device
+	CBofPoint _xPrevLocation; // Previous view location in bmp.
 
-	CBagObject *m_pLActiveObject; // The last object selected on mouse down
-	// CBagObject          *m_pRActiveObject;       // The last object selected on mouse down
+	CBagObject *_pLActiveObject; // The last object selected on mouse down
+	// CBagObject          *_pRActiveObject;       // The last object selected on mouse down
 
-	CBofList<CBagObject *> *m_pObjectList;         // Objects to be painted to the pan
-	CBofList<CBagExpression *> *m_pExpressionList; // Condition for painting to the pan
+	CBofList<CBagObject *> *_pObjectList;         // Objects to be painted to the pan
+	CBofList<CBagExpression *> *_pExpressionList; // Condition for painting to the pan
 
-	CBofWindow *m_pAssociateWnd; // Sounds need a window
+	CBofWindow *_pAssociateWnd; // Sounds need a window
 
-	MOUSE_ACTIVITY m_nCurrMouseActivity; // What is up with the mouse currently
+	MOUSE_ACTIVITY _nCurrMouseActivity; // What is up with the mouse currently
 
-	uint16 m_nExitOnEdge; // Non zero if SDev should be closed when an outside edge is clicked on, and and prev sdev is set, m_nExitOnEdge is the thickness of the edge
+	uint16 _nExitOnEdge; // Non zero if SDev should be closed when an outside edge is clicked on, and and prev sdev is set, _nExitOnEdge is the thickness of the edge
 
-	uint16 m_nFilterId; // Filter id number 0 for normal view
-	uint16 m_nFadeId;   // Fade id number 0 for no fade in
-	uint16 m_nDiskID;
+	uint16 _nFilterId; // Filter id number 0 for normal view
+	uint16 _nFadeId;   // Fade id number 0 for no fade in
+	uint16 _nDiskID;
 
 protected:
 	uint16 _xSDevType;                 // Type of storage device
 	static CBofPoint *_xCursorLocation; // Current cursor location in bmp.
 	static CBofRect *gRepaintRect;
-	static bool m_bHandledUpEvent;      // Hack to stop
-	static bool m_bHidePDA;
+	static bool _bHandledUpEvent;      // Hack to stop
+	static bool _bHidePDA;
 	FilterFunction _pBitmapFilter; // Pointer to the bitmap filter.
 
-	bool m_bForiegnList : 1;   // True if SetObjectList has been called
-	bool m_bCloseOnOpen : 1;   // True if other SDev should be closed when this is opened
-	bool m_bContainsModal : 1; // True if SDev contains a modal object
-	bool m_bCloseup : 1;       // true if is a closeup (includes CIC, or CHAT)
-	bool m_bCIC : 1;           // true if is a CIC
-	bool m_bCustom : 1;        // true if is a hand coded closeup
+	bool _bForiegnList : 1;   // True if SetObjectList has been called
+	bool _bCloseOnOpen : 1;   // True if other SDev should be closed when this is opened
+	bool _bContainsModal : 1; // True if SDev contains a modal object
+	bool _bCloseup : 1;       // true if is a closeup (includes CIC, or CHAT)
+	bool _bCIC : 1;           // true if is a CIC
+	bool _bCustom : 1;        // true if is a hand coded closeup
 	bool _bFirstPaint : 1;    // run object stuff
 
-	static bool m_bPanPreFiltered;  // Let pda know if screens been prefiltered
-	static bool m_bDirtyAllObjects; // Dirty all objects in prefilter?
-	static bool m_bPreFilter;
+	static bool _bPanPreFiltered;  // Let pda know if screens been prefiltered
+	static bool _bDirtyAllObjects; // Dirty all objects in prefilter?
+	static bool _bPreFilter;
 
-	int m_nFloatPages; // The number of pages required to display all floating objects
+	int _nFloatPages; // The number of pages required to display all floating objects
 
 public:
 	CBagStorageDev();
@@ -140,10 +140,10 @@ public:
 	void MakeListDirty(CBofList<CBagObject *> *pList);
 
 	void SetDiskID(uint16 nDiskID) {
-		m_nDiskID = nDiskID;
+		_nDiskID = nDiskID;
 	}
 	uint16 GetDiskID() {
-		return m_nDiskID;
+		return _nDiskID;
 	}
 
 	virtual ErrorCode setloadFilePos(const CBofPoint) {
@@ -151,24 +151,24 @@ public:
 	}
 
 	bool IsCloseup() {
-		return m_bCloseup;
+		return _bCloseup;
 	}
 	void SetCloseup(bool b = true) {
-		m_bCloseup = b;
+		_bCloseup = b;
 	}
 
 	// Set true if sdef is "AS CIC"
 	bool IsCIC();
 	void SetCIC(bool b = true) {
-		m_bCIC = b;
+		_bCIC = b;
 	}
 
 	// Set to true if this is a hand coded closeup
 	bool IsCustom() {
-		return m_bCustom;
+		return _bCustom;
 	}
 	void SetCustom(bool b = true) {
-		m_bCustom = b;
+		_bCustom = b;
 	}
 
 	int GetDeviceType() {
@@ -186,7 +186,7 @@ public:
 	}
 	CBofList<CBagObject *> *
 	GetObjectList() {
-		return m_pObjectList;
+		return _pObjectList;
 	}
 	void SetObjectList(CBofList<CBagObject *> *pList, CBofList<CBagExpression *> *pEList = nullptr);
 
@@ -194,13 +194,13 @@ public:
 
 	// virtual CBofRect GetLocation()                       { return CBofRect(); }
 	CBofRect getRect() {
-		return m_cDestRect;
+		return _cDestRect;
 	}
 	void setRect(const CBofRect &xRect) {
-		m_cDestRect = xRect;
+		_cDestRect = xRect;
 	}
 	CBofPoint getPosition() {
-		return m_cDestRect.topLeft();
+		return _cDestRect.topLeft();
 	}
 	void setPosition(const CBofPoint &pos);
 
@@ -217,73 +217,73 @@ public:
 	virtual void SetHelpFilename(const CBofString &) {}
 
 	const CBofString &GetName() {
-		return m_sName;
+		return _sName;
 	}
 	void SetName(const CBofString &str) {
-		m_sName = str;
+		_sName = str;
 	}
 
 	void SetFilterId(uint16 nId) {
-		m_nFilterId = nId;
+		_nFilterId = nId;
 	}
 	uint16 GetFilterId() {
-		return m_nFilterId;
+		return _nFilterId;
 	}
 
 	void SetFadeId(uint16 nId) {
-		m_nFadeId = nId;
+		_nFadeId = nId;
 	}
 	uint16 GetFadeId() {
-		return m_nFadeId;
+		return _nFadeId;
 	}
 
 	const CBofString &getPrevSDev() {
-		return m_sPrevSDev;
+		return _sPrevSDev;
 	}
 	const CBofPoint getPrevLoc() {
-		return m_xPrevLocation;
+		return _xPrevLocation;
 	}
 	void SetPrevSDev(const CBofString &str) {
-		m_sPrevSDev = str;
+		_sPrevSDev = str;
 	}
 
 	bool getCloseOnOpen() {
-		return m_bCloseOnOpen;
+		return _bCloseOnOpen;
 	}
 	void setCloseOnOpen(bool bVal) {
-		m_bCloseOnOpen = bVal;
+		_bCloseOnOpen = bVal;
 	}
 
 	bool GetContainsModal() {
-		return m_bContainsModal;
+		return _bContainsModal;
 	}
 	void SetContainsModal(bool bVal) {
-		m_bContainsModal = bVal;
+		_bContainsModal = bVal;
 	}
 
 	uint16 GetExitOnEdge() {
-		return m_nExitOnEdge;
+		return _nExitOnEdge;
 	}
 	void SetExitOnEdge(uint16 nVal) {
-		m_nExitOnEdge = nVal;
+		_nExitOnEdge = nVal;
 	}
 
 	CBagObject *GetLActiveObject() {
-		return m_pLActiveObject;
+		return _pLActiveObject;
 	}
-	// CBagObject*      GetRActiveObject()                  { return m_pRActiveObject; }
+	// CBagObject*      GetRActiveObject()                  { return _pRActiveObject; }
 	ErrorCode SetLActiveObject(CBagObject *pObj) {
-		m_pLActiveObject = pObj;
+		_pLActiveObject = pObj;
 		return ERR_NONE;
 	}
 
 	virtual ErrorCode OnLActiveObject(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 
 	MOUSE_ACTIVITY GetLActivity() {
-		return m_nCurrMouseActivity;
+		return _nCurrMouseActivity;
 	}
 	void SetLActivity(MOUSE_ACTIVITY ma) {
-		m_nCurrMouseActivity = ma;
+		_nCurrMouseActivity = ma;
 	}
 
 	ErrorCode PaintStorageDevice(CBofWindow *pWnd, CBofBitmap *pBmp = nullptr, CBofRect * = nullptr);
@@ -293,10 +293,10 @@ public:
 	// The associated window describes which window to get screen information from and
 	// where to paint objects and most importantly what info to send to the callbacks
 	virtual void SetAssociateWnd(CBofWindow *pWnd) {
-		m_pAssociateWnd = pWnd;
+		_pAssociateWnd = pWnd;
 	}
 	virtual CBofWindow *GetAssociateWnd() {
-		return m_pAssociateWnd;
+		return _pAssociateWnd;
 	}
 
 	virtual PARSE_CODES setInfo(CBagIfstream &fpInput); // This function call the pure virt set background
@@ -304,7 +304,7 @@ public:
 	virtual ErrorCode setBackground(CBofBitmap *pBmp) = 0; // This could be eliminated but is kept in to insure good class usage
 	virtual CBofBitmap *getBackground() = 0;                // Think about it, you can figure this out
 	const CBofString &GetBackgroundName() {
-		return m_sBackgroundName;
+		return _sBackgroundName;
 	}
 
 	virtual ErrorCode attach(); // This function attaches the background and necessary bitmaps
@@ -358,10 +358,10 @@ public:
 
 	// Set and Get the number of pages required to display all floating objects
 	int GetNumFloatPages() {
-		return m_nFloatPages;
+		return _nFloatPages;
 	}
 	void SetNumFloatPages(int nFloatPages) {
-		m_nFloatPages = nFloatPages;
+		_nFloatPages = nFloatPages;
 	}
 
 	// Correctly set the filter function for the storage device.
@@ -375,32 +375,32 @@ public:
 	// Predicate to test if this storage device is filtered.
 	//
 	bool IsFiltered() {
-		return m_nFilterId != 0;
+		return _nFilterId != 0;
 	}
 
 	// Provide a method to get at the above vars
 	static void setDirtyAllObjects(bool b) {
-		m_bDirtyAllObjects = b;
+		_bDirtyAllObjects = b;
 	}
 	static bool GetDirtyAllObjects() {
-		return m_bDirtyAllObjects;
+		return _bDirtyAllObjects;
 	}
 
 	// Provide a method to let PDA know that it should update everything
 	static void SetPreFiltered(bool b = true) {
-		m_bPanPreFiltered = b;
+		_bPanPreFiltered = b;
 	}
 	static bool GetPreFiltered() {
-		return m_bPanPreFiltered;
+		return _bPanPreFiltered;
 	}
 
 	// We won't always call the prefilter, just when explicitly instructed to.
 	static bool PreFilterPan() {
-		return m_bPreFilter;
+		return _bPreFilter;
 	}
 	static void SetPreFilterPan(bool b = true) {
-		m_bPreFilter = b;
-		m_bDirtyAllObjects = b;
+		_bPreFilter = b;
+		_bDirtyAllObjects = b;
 	}
 };
 
@@ -413,10 +413,10 @@ class CBagEventSDev;
 //
 class CBagStorageDevWnd : public CBofWindow, public CBagStorageDev {
 private:
-	//bool m_bMadeSelection;
-	bool m_bOnUpdate;
-	CBofBitmap *m_pWorkBmp;
-	CBofString m_sHelpFileName; // Name of the help file for this device
+	//bool _bMadeSelection;
+	bool _bOnUpdate;
+	CBofBitmap *_pWorkBmp;
+	CBofString _sHelpFileName; // Name of the help file for this device
 
 public:
 	static CBagEventSDev *_pEvtSDev; // Pointer to the Event Storage Device
@@ -435,10 +435,10 @@ public:
 	virtual void onTimer(uint32 nTimerId);
 
 	void setOnUpdate(bool bVal = true) {
-		m_bOnUpdate = bVal;
+		_bOnUpdate = bVal;
 	}
 	bool GetOnUpdate() {
-		return m_bOnUpdate;
+		return _bOnUpdate;
 	}
 
 	virtual ErrorCode PaintScreen(CBofRect *pRect = nullptr);
@@ -460,16 +460,16 @@ public:
 		return getBackdrop();
 	}
 	virtual CBofBitmap *GetWorkBmp() {
-		return m_pWorkBmp;
+		return _pWorkBmp;
 	}
 
 	virtual ErrorCode loadFile(const CBofString &sWldFile);
 
 	virtual const CBofString &GetHelpFilename() {
-		return m_sHelpFileName;
+		return _sHelpFileName;
 	}
 	virtual void SetHelpFilename(const CBofString &s) {
-		m_sHelpFileName = s;
+		_sHelpFileName = s;
 	}
 
 	virtual ErrorCode onRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
@@ -493,8 +493,8 @@ protected:
  */
 class CBagStorageDevDlg : public CBofDialog, public CBagStorageDev {
 private:
-	//bool m_bMadeSelection;
-	CBofString m_sHelpFileName; // Name of the help file for this device
+	//bool _bMadeSelection;
+	CBofString _sHelpFileName; // Name of the help file for this device
 
 public:
 	CBagStorageDevDlg();
@@ -532,10 +532,10 @@ public:
 	virtual ErrorCode close();
 
 	virtual const CBofString &GetHelpFilename() {
-		return m_sHelpFileName;
+		return _sHelpFileName;
 	}
 	virtual void SetHelpFilename(const CBofString &s) {
-		m_sHelpFileName = s;
+		_sHelpFileName = s;
 	}
 
 	virtual void onMainLoop();
@@ -554,7 +554,7 @@ public:
 class CBagStorageDevManager : public CBofObject {
 private:
 	static int nSDevMngrs;
-	CBofList<CBagStorageDev *> m_xStorageDeviceList;
+	CBofList<CBagStorageDev *> _xStorageDeviceList;
 
 public:
 	CBagStorageDevManager();
@@ -568,11 +568,11 @@ public:
 	void SetObjectValue(const CBofString &sObject, const CBofString &sProperty, int nValue);
 
 	int GetNumStorageDevices() {
-		return m_xStorageDeviceList.getCount();
+		return _xStorageDeviceList.getCount();
 	}
 
 	CBagStorageDev *GetStorageDevice(int nIndex) {
-		return m_xStorageDeviceList[nIndex];
+		return _xStorageDeviceList[nIndex];
 	}
 	CBagStorageDev *GetStorageDeviceContaining(const CBofString &sName);
 	CBagStorageDev *GetStorageDeviceContaining(CBagObject *pObj);
