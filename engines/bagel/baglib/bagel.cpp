@@ -21,6 +21,8 @@
 
 #include "common/engine_data.h"
 #include "common/file.h"
+#include "engines/engine.h"
+
 #include "bagel/baglib/bagel.h"
 #include "bagel/boflib/sound.h"
 #include "bagel/dialogs/next_cd_dialog.h"
@@ -121,6 +123,7 @@ ErrorCode CBagel::initialize() {
 	// Initialise engine data for the game
 	Common::U32String errMsg;
 	if (!Common::load_engine_data("bagel.dat", "", 1, 0, errMsg)) {
+		GUIErrorMessage("Could not find bagel.dat data file");
 		Common::String msg(errMsg);
 		bofMessageBox("Engine Data", msg.c_str());
 		_errCode = ERR_FREAD;
