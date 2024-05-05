@@ -66,6 +66,7 @@ typedef struct ImGuiState {
 	bool _showCast = false;
 	Common::List<CastMemberID> _scripts;
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _breakpoints;
+	int _prevFrame = -1;
 } ImGuiState;
 
 ImGuiState *_state = nullptr;
@@ -89,10 +90,19 @@ static void showControlPanel() {
 		ImVec2 buttonSize(20, 14);
 		float bgX1 = -4.0f, bgX2 = 21.0f;
 
+		int frameNum = score->getCurrentFrameNum();
+
+		if (_state->_prevFrame != -1 && _state->_prevFrame != frameNum) {
+			score->_playState = kPlayPaused;
+			_state->_prevFrame = -1;
+		}
+
 		{ // Rewind
 			ImGui::InvisibleButton("Rewind", buttonSize);
 
 			if (ImGui::IsItemClicked(0)) {
+				score->_playState = kPlayStarted;
+				score->setCurrentFrame(1);
 			}
 
 			if (ImGui::IsItemHovered())
@@ -110,6 +120,10 @@ static void showControlPanel() {
 			ImGui::InvisibleButton("Step Back", ImVec2(18, 16));
 
 			if (ImGui::IsItemClicked(0)) {
+				score->_playState = kPlayStarted;
+
+				score->setCurrentFrame(frameNum - 1);
+				_state->_prevFrame = frameNum;
 			}
 
 			if (ImGui::IsItemHovered())
@@ -144,6 +158,10 @@ static void showControlPanel() {
 			ImGui::InvisibleButton("Step", buttonSize);
 
 			if (ImGui::IsItemClicked(0)) {
+				score->_playState = kPlayStarted;
+
+				score->setCurrentFrame(frameNum + 1);
+				_state->_prevFrame = frameNum;
 			}
 
 			if (ImGui::IsItemHovered())
