@@ -436,7 +436,7 @@ ParseCodes CBagLogMsg::setInfo(CBagIfstream &istr) {
 
 	while (!istr.eof()) {
 		istr.eatWhite();
-		
+
 		char ch = (char)istr.peek();
 		switch (ch) {
 		//
@@ -554,7 +554,7 @@ ErrorCode CBagLogResidue::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRec
 
 CBagLogSuspect::CBagLogSuspect(int sdevWidth) : CBagTextObject() {
 	_xObjType = USER_OBJ;
-	m_nSdevWidth = sdevWidth;
+	_nSdevWidth = sdevWidth;
 
 	_bTitle = true;
 
@@ -721,7 +721,7 @@ int CBagLogSuspect::getProperty(const CBofString &prop) {
 
 
 void CBagLogSuspect::setSize(const CBofSize &size) {
-	CBagTextObject::setSize(CBofSize(m_nSdevWidth, size.cy));
+	CBagTextObject::setSize(CBofSize(_nSdevWidth, size.cy));
 
 }
 
@@ -789,7 +789,7 @@ ParseCodes CBagEnergyDetectorObject::setInfo(CBagIfstream &istr) {
 
 	while (!istr.eof()) {
 		istr.eatWhite();
-		
+
 		char ch = (char)istr.peek();
 		switch (ch) {
 		//
