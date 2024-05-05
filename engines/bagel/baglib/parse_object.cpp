@@ -135,12 +135,12 @@ int CBagParseObject::getVectorFromStream(CBagIfstream &istr, CBagVector &vector)
 	vector.y = atoi(str);
 
 	// Vector rate
-	vector.nMoveRate = 1;
+	vector._moveRate = 1;
 	ch = (char)istr.peek();
 	if (ch == ',') {
 		ch = (char)istr.getCh();
 		getStringFromStream(istr, str, "):@", true);
-		vector.nMoveRate = atoi(str);
+		vector._moveRate = atoi(str);
 	}
 
 	// Start-Stop index
@@ -149,8 +149,8 @@ int CBagParseObject::getVectorFromStream(CBagIfstream &istr, CBagVector &vector)
 		ch = (char)istr.getCh();
 		CBofRect r;
 		getRectFromStream(istr, r);
-		vector.nSprStartIndex = r.left;
-		vector.nSprEndIndex = r.top;
+		vector._sprStartIndex = r.left;
+		vector._sprEndIndex = r.top;
 	}
 
 	// Start-Stop index
@@ -158,7 +158,7 @@ int CBagParseObject::getVectorFromStream(CBagIfstream &istr, CBagVector &vector)
 	if (ch == '@') {
 		ch = (char)istr.getCh();
 		getStringFromStream(istr, str, ")");
-		vector.nChangeRate = atoi(str);
+		vector._changeRate = atoi(str);
 	}
 
 	return 0;

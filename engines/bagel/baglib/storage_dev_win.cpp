@@ -482,7 +482,7 @@ ErrorCode CBagStorageDev::onMouseOver(uint32 /*nFlags*/, CBofPoint * /*xPoint*/,
 
 
 void CBagStorageDev::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *vpInfo) {
-	if (CBagPDA::IsMoviePlaying() && CBagMasterWin::getActiveCursor() == 6) {
+	if (CBagPDA::isMoviePlaying() && CBagMasterWin::getActiveCursor() == 6) {
 		return;
 	}
 
@@ -508,7 +508,7 @@ void CBagStorageDev::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 	char szLocalBuff[256];
 	CBofString sCurrSDev(szLocalBuff, 256);
 
-	if (CBagPDA::IsMoviePlaying() && CBagMasterWin::getActiveCursor() == 6) {
+	if (CBagPDA::isMoviePlaying() && CBagMasterWin::getActiveCursor() == 6) {
 		return;
 	}
 
@@ -1484,7 +1484,7 @@ void CBagStorageDevWnd::onMouseMove(uint32 n, CBofPoint *pPoint, void *) {
 
 	// If a zelda movie is playing then just give 'em the wait cursor
 	// as we're not gonna allow them to do squat anyway.
-	if (CBagPDA::IsMoviePlaying()) {
+	if (CBagPDA::isMoviePlaying()) {
 		CBagMasterWin::setActiveCursor(6);
 		return;
 	}
@@ -1530,7 +1530,7 @@ void CBagStorageDevWnd::onMouseMove(uint32 n, CBofPoint *pPoint, void *) {
 void CBagStorageDevWnd::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 	// If asynch movie playing in PDA don't react to mouse down (8033)
 	//  if it's not a wait cursor, then allow the user to access that hotspot.
-	if (CBagPDA::IsMoviePlaying() && CBagMasterWin::getActiveCursor() == 6) {
+	if (CBagPDA::isMoviePlaying() && CBagMasterWin::getActiveCursor() == 6) {
 		return;
 	}
 
@@ -1541,7 +1541,7 @@ void CBagStorageDevWnd::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) 
 void CBagStorageDevWnd::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	// If asynch movie playing in PDA don't react to mouse down (8033)
 	// if it's not a wait cursor, then allow the user to access that hotspot.
-	if (CBagPDA::IsMoviePlaying() && CBagMasterWin::getActiveCursor() == 6) {
+	if (CBagPDA::isMoviePlaying() && CBagMasterWin::getActiveCursor() == 6) {
 		return;
 	}
 

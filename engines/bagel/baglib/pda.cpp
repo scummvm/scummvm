@@ -30,17 +30,17 @@
 
 namespace Bagel {
 
-bool CBagPDA::m_bFlashing;
-bool CBagPDA::m_bSoundsPaused;
-CBofList<CBagMovieObject *> *CBagPDA::m_pMovieList;
+bool CBagPDA::_flashingFl;
+bool CBagPDA::_soundsPausedFl;
+CBofList<CBagMovieObject *> *CBagPDA::_movieList;
 
 extern bool g_allowattachActiveObjectsFl;
 static bool g_bAutoUpdate;
 
 void CBagPDA::initialize() {
-	m_bFlashing = false;
-	m_bSoundsPaused = false;
-	m_pMovieList = nullptr;
+	_flashingFl = false;
+	_soundsPausedFl = false;
+	_movieList = nullptr;
 
 	g_bAutoUpdate = false;
 }
@@ -50,14 +50,14 @@ CBagPDA::CBagPDA(CBofWindow *pParent, const CBofRect &xRect, bool bActivated)
 	  SBBasePda(pParent, xRect, bActivated) {
 	_xSDevType = SDEV_PDA;
 
-	m_nActiveHeight = 0;
-	m_nDeactiveHeight = 0;
+	_activeHeight = 0;
+	_deactiveHeight = 0;
 }
 
-void CBagPDA::AddToMovieQueue(CBagMovieObject *pMObj) {
+void CBagPDA::addToMovieQueue(CBagMovieObject *pMObj) {
 	// Make sure we've got a list.
-	if (m_pMovieList == nullptr) {
-		m_pMovieList = new CBofList<CBagMovieObject *>;
+	if (_movieList == nullptr) {
+		_movieList = new CBofList<CBagMovieObject *>;
 	}
 
 	// Handle simple case first, if it is marked for don't queue, then don't
@@ -68,28 +68,28 @@ void CBagPDA::AddToMovieQueue(CBagMovieObject *pMObj) {
 		return;
 	}
 
-	assert(m_pMovieList != nullptr);
+	assert(_movieList != nullptr);
 
 	// Go through the whole movie list, make sure there are no dup's of
 	// this movie.
-	int nCount = m_pMovieList->getCount();
+	int nCount = _movieList->getCount();
 	for (int i = 0; i < nCount; i++) {
-		CBagMovieObject *p = m_pMovieList->getNodeItem(i);
+		CBagMovieObject *p = _movieList->getNodeItem(i);
 		if (p->getFileName().find(pMObj->getFileName()) == 0) {
 			return;
 		}
 	}
 
-	m_pMovieList->addToTail(pMObj);
+	_movieList->addToTail(pMObj);
 }
 
 CBagPDA::~CBagPDA() {
 	assert(isValidObject(this));
 
 	// Does not own list item, so no need to delete individual nodes
-	if (m_pMovieList) {
-		delete m_pMovieList;
-		m_pMovieList = nullptr;
+	if (_movieList) {
+		delete _movieList;
+		_movieList = nullptr;
 	}
 }
 
@@ -133,9 +133,9 @@ ErrorCode CBagPDA::attach() {
 	CBofRect GameRect = pGameWin->getRect();
 
 	// When the pda is active it should sit flush with the bottom of the screen
-	m_nActiveHeight = GameRect.height() - bmpRect.height();
+	_activeHeight = GameRect.height() - bmpRect.height();
 	// When it is deactivated it should be the active height less the total movement distance
-	m_nDeactiveHeight = GameRect.height() - (bmpRect.height() - (_moveDist * _numMoves));
+	_deactiveHeight = GameRect.height() - (bmpRect.height() - (_moveDist * _numMoves));
 
 	// Should be allowed to not find one.
 	if (!_mooWnd) {
@@ -239,7 +239,7 @@ bool CBagPDA::showInventory() {
 
 ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int /* nMaskColor */) {
 	// Update the zoom button (it might need to blink).
-	HandleZoomButton(false);
+	handleZoomButton(false);
 	ErrorCode errCode = ERR_NONE;
 	if (!m_bHidePDA) {
 		CBofRect *pr = pSrcRect;
@@ -250,7 +250,7 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 			_activating--;
 
 			if (_activated) {
-				if (loc.y > m_nActiveHeight) {
+				if (loc.y > _activeHeight) {
 					loc.y -= _moveDist;
 					if (pSrcRect) {
 						CBofRect r = *pSrcRect;
@@ -258,7 +258,7 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 						pr = &r;
 					}
 				}
-			} else if (loc.y < m_nDeactiveHeight) {
+			} else if (loc.y < _deactiveHeight) {
 				loc.y += _moveDist;
 				if (pSrcRect) {
 					CBofRect r = *pSrcRect;
@@ -284,7 +284,7 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 		}
 
 		bool bUpdate = true;
-		bool bIsMovieWaiting = IsMovieWaiting();
+		bool bIsMovieWaiting = isMovieWaiting();
 		bool bMoviePlaying = false;
 
 		if ((!isActivated()) &&                             // Must be down
@@ -296,7 +296,7 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 
 			// Play the movie if it is ready.
 			if (bIsMovieWaiting == true) {
-				RunWaitingMovie();
+				runWaitingMovie();
 			}
 		} else if (_pdaMode == MOOMODE) {
 			// If we're playing a pda movie, then make sure we continue to update.
@@ -404,7 +404,7 @@ void CBagPDA::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 
 	// After a change of state, check if we should be flashing our
 	// zoom button or not.
-	HandleZoomButton(false);
+	handleZoomButton(false);
 }
 
 void CBagPDA::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *info) {
@@ -412,7 +412,7 @@ void CBagPDA::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *info) {
 	// zoom button, then make sure we have the real zoom button current (that
 	// is, if we have the inventory front and center).
 
-	HandleZoomButton(true);
+	handleZoomButton(true);
 
 	CBagStorageDevBmp::onLButtonDown(nFlags, xPoint, info);
 }
@@ -427,7 +427,7 @@ CBagObject *CBagPDA::onNewButtonObject(const CBofString &) {
 	return PdaButtObj;
 }
 
-bool  CBagPDA::PaintFGObjects(CBofBitmap *pBmp) {
+bool  CBagPDA::paintFGObjects(CBofBitmap *pBmp) {
 	if (_curDisplay) {
 		// If we get here, then we are guaranteed that our pda
 		// needs updating, so dirty the whole list before updating...
@@ -452,7 +452,7 @@ CBagObject *CBagPDA::onNewUserObject(const CBofString &sInit) {
 	return pTimeObj;
 }
 
-void CBagPDA::HandleZoomButton(bool bButtonDown) {
+void CBagPDA::handleZoomButton(bool bButtonDown) {
 	CBagButtonObject *pZoomRegular = nullptr;
 	CBagButtonObject *pZoomFlash = nullptr;
 
@@ -471,7 +471,7 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 	if (pZoomFlash && pZoomRegular && pZoomRegular->getState() != 1) {
 		if (bButtonDown == false && _pdaMode == INVMODE && (_pdaPos == PDAUP) && _invWnd && _invWnd->GetNumFloatPages() > 1) {
 			// Make the zoom button blink, to indicate more icons
-			if (m_bFlashing == false) {
+			if (_flashingFl == false) {
 				// Don't allow attachActiveObjects() to be called in here
 				g_allowattachActiveObjectsFl = false;
 				pPda->activateLocalObject(pZoomFlash);
@@ -484,9 +484,9 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 				pZoomFlash->setAnimated(true);
 				pZoomFlash->setAlwaysUpdate(true);
 
-				m_bFlashing = true;
+				_flashingFl = true;
 			}
-		} else if (m_bFlashing) {
+		} else if (_flashingFl) {
 			// Don't allow attachActiveObjects() to be called in here
 			g_allowattachActiveObjectsFl = false;
 			pPda->deactivateLocalObject(pZoomFlash);
@@ -499,50 +499,50 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 			pZoomFlash->setAnimated(false);
 			pZoomFlash->setAlwaysUpdate(false);
 
-			m_bFlashing = false;
+			_flashingFl = false;
 		}
 	}
 }
 
 void CBagPDA::removeFromMovieQueue(CBagMovieObject *pMObj) {
-	if (m_pMovieList != nullptr) {
-		int nCount = m_pMovieList->getCount();
+	if (_movieList != nullptr) {
+		int nCount = _movieList->getCount();
 		for (int i = 0; i < nCount; i++) {
-			CBagMovieObject *p = m_pMovieList->getNodeItem(i);
+			CBagMovieObject *p = _movieList->getNodeItem(i);
 			if (pMObj == p) {
-				m_pMovieList->remove(i);
+				_movieList->remove(i);
 				break;
 			}
 		}
 	}
 }
 
-bool CBagPDA::IsMovieWaiting() {
+bool CBagPDA::isMovieWaiting() {
 	bool bMovieWaiting = false;
 
-	if (m_pMovieList) {
-		bMovieWaiting = (m_pMovieList->getCount() > 0);
+	if (_movieList) {
+		bMovieWaiting = (_movieList->getCount() > 0);
 	}
 
 	// If our sounds are paused, and our movie is done playing,
 	// then start up our sounds again.
-	if (m_bSoundsPaused == true && IsMoviePlaying() == false) {
+	if (_soundsPausedFl == true && isMoviePlaying() == false) {
 		CSound::resumeSounds();
-		m_bSoundsPaused = false;
+		_soundsPausedFl = false;
 	}
 
 	return bMovieWaiting;
 }
 
-void CBagPDA::RunWaitingMovie() {
+void CBagPDA::runWaitingMovie() {
 	// Will only run a movie if it is ready to be run
-	if (m_pMovieList) {
-		int nCount = m_pMovieList->getCount();
+	if (_movieList) {
+		int nCount = _movieList->getCount();
 		if (nCount > 0) {
 			for (int i = 0; i < nCount; i++) {
-				CBagMovieObject *pMObj = m_pMovieList->getNodeItem(i);
+				CBagMovieObject *pMObj = _movieList->getNodeItem(i);
 				if (pMObj->asynchPDAMovieCanPlay()) {
-					m_bSoundsPaused = true;
+					_soundsPausedFl = true;
 					CSound::pauseSounds();              // pause all sounds
 					pMObj->runObject();
 					removeFromMovieQueue(pMObj);

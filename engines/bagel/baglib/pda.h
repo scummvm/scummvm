@@ -32,18 +32,18 @@ namespace Bagel {
 
 class CBagPDA : public CBagStorageDevBmp, public SBBasePda {
 protected:
-	int m_nActiveHeight;
-	int m_nDeactiveHeight;
-	static bool m_bFlashing;
-	static bool m_bSoundsPaused;
+	int _activeHeight;
+	int _deactiveHeight;
+	static bool _flashingFl;
+	static bool _soundsPausedFl;
 
-	static CBofList<CBagMovieObject *> *m_pMovieList;
+	static CBofList<CBagMovieObject *> *_movieList;
 
 public:
 	/**
 	 * Constructor
 	 * @param pParent       Pointer to the parent window
-	 * @param xPoint        Upper-left corner of PDA in parent window
+	 * @param xRect         Rect of the pda
 	 * @param bActivated    State of PDA whe constructed (optional)
 	 */
 	CBagPDA(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), bool bActivated = false);
@@ -71,16 +71,16 @@ public:
 	 * @param pSrcRect      Clip rect of the object to be painted
 	 * @param nMaskColor    Mask color for the object
 	*/
-	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /* nMaskColor */ = -1) override;
+	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1) override;
 
 	/**
 	 * Called to overload specific types of sprite objects
 	 * @param pBmp          Bitmap
 	 * @return              Success/failure
 	 */
-	virtual bool PaintFGObjects(CBofBitmap *pBmp) override;
+	bool paintFGObjects(CBofBitmap *pBmp) override;
 
-	virtual ErrorCode loadFile(const CBofString &sFile) override;
+	ErrorCode loadFile(const CBofString &sFile) override;
 
 	/**
 	 * Called to overload specific types of sprite objects
@@ -105,7 +105,7 @@ public:
 	 * @param xPoint        X, Y position
 	 * @param info          Optional info
 	 */
-	virtual void onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *info = nullptr) override;
+	void onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *info = nullptr) override;
 
 	bool isInside(const CBofPoint &xPoint) override;
 
@@ -115,7 +115,7 @@ public:
 	 * Allow the movie code to queue up asynch pda messages
 	 * Must be before the destructor
 	 */
-	static void AddToMovieQueue(CBagMovieObject *);
+	static void addToMovieQueue(CBagMovieObject *);
 
 	/**
 	 * Just remove this message from the queue, remember that we
@@ -126,41 +126,41 @@ public:
 	/**
 	 * Return true if a movie is waiting to play.
 	 */
-	static bool IsMovieWaiting();
+	static bool isMovieWaiting();
 
-	static bool IsMoviePlaying() {
+	static bool isMoviePlaying() {
 		return _pdaMode == MOOMODE;
 	}
 
-	static void RunWaitingMovie();
+	static void runWaitingMovie();
 
 	/**
 	 * SHow the inventory
 	*/
-	virtual bool showInventory() override;
+	bool showInventory() override;
 
 	/**
 	 * Hide the inventory
 	 */
-	virtual bool hideInventory() override;
+	bool hideInventory() override;
 
 	/**
 	 * Hide the current display
 	 */
-	virtual bool hideCurDisplay() override;
+	bool hideCurDisplay() override;
 
 	/**
 	 * Restore display
 	 */
-	virtual bool restoreCurDisplay() override;
+	bool restoreCurDisplay() override;
 
-	virtual ErrorCode attachActiveObjects() override;
-	virtual ErrorCode detachActiveObjects() override;
+	ErrorCode attachActiveObjects() override;
+	ErrorCode detachActiveObjects() override;
 
 	/**
 	 * Handle switching back and forth from our flashing zoom button
 	 */
-	void HandleZoomButton(bool bButtonDown);
+	void handleZoomButton(bool bButtonDown);
 };
 
 } // namespace Bagel

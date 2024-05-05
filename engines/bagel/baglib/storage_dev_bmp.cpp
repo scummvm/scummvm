@@ -154,7 +154,7 @@ ErrorCode CBagStorageDevBmp::update(CBofBitmap *pBmp, CBofPoint /*xPoint*/, CBof
 			PaintStorageDevice(nullptr, pSrcBmp, &r);
 
 			// Paint child storage devices
-			PaintFGObjects(pSrcBmp);
+			paintFGObjects(pSrcBmp);
 
 			// Paint to screen
 			if (m_bTrans)
