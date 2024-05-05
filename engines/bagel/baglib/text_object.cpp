@@ -207,7 +207,7 @@ ErrorCode CBagTextObject::attach() {
 	CBagRPObject *pRPObj = (CBagRPObject *)getRPObject();
 
 	if (pRPObj != nullptr) {
-		pRPObj->SetTimeSet(false);
+		pRPObj->setTimeSet(false);
 	}
 
 	return CBagObject::attach();

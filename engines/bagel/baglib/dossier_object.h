@@ -41,7 +41,7 @@ private:
 	bool _dosRectInitFl : 1;
 
 public:
-	CBofString m_sSuspectVar;
+	CBofString _sSuspectVar;
 
 public:
 	CBagDossierObject();

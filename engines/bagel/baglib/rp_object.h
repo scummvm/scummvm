@@ -42,13 +42,13 @@ public:
 	DossierObj();
 	virtual ~DossierObj();
 
-	CBagDossierObject *m_pDossier;
-	CBofString m_sDossier;
-	CBagExpression *m_xDosExp;
-	bool m_bDisplayDossier;
+	CBagDossierObject *_pDossier;
+	CBofString _sDossier;
+	CBagExpression *_xDosExp;
+	bool _bDisplayDossier;
 };
 
-enum RPSTATES {
+enum RPStates {
 	RP_NOMODE = 0,
 	RP_RESULTS,
 	RP_READ_DOSSIER,
@@ -58,44 +58,44 @@ enum RPSTATES {
 
 class CBagRPObject : public CBagObject {
 private:
-	CBofList<DossierObj *> *m_pTouchedList;   // dossiers to show if alias touched it
-	CBofList<DossierObj *> *m_pUntouchedList; // dossiers to show if alias did not touch it
-	CBagMovieObject *m_pMovieObj;             // a movie to play
-	CBofString m_sMovieObj;                   // Name of movie
-	CBagVar *m_pVarObj;                       // associated global var
-	CBagTextObject *m_pDescObj;               // description of residue printed object
-	CBagTextObject *m_pObjectName;            // description of residue printed object
-	CBofString m_sObjectName;                 // description of residue printed object
+	CBofList<DossierObj *> *_pTouchedList;   // dossiers to show if alias touched it
+	CBofList<DossierObj *> *_pUntouchedList; // dossiers to show if alias did not touch it
+	CBagMovieObject *_pMovieObj;             // a movie to play
+	CBofString _sMovieObj;                   // Name of movie
+	CBagVar *_pVarObj;                       // associated global var
+	CBagTextObject *_pDescObj;               // description of residue printed object
+	CBagTextObject *_pObjectName;            // description of residue printed object
+	CBofString _sObjectName;                 // description of residue printed object
 
-	CBagVar *m_pSaveVar;    // Var to save info to
-	CBagVar *m_pTouchedVar; // variable indicating touched or not
-	int m_nRPTime;          // time to execute
+	CBagVar *_pSaveVar;    // Var to save info to
+	CBagVar *_pTouchedVar; // variable indicating touched or not
+	int _nRPTime;          // time to execute
 
-	CBofRect m_cOrigRect; // Original text rect
+	CBofRect _cOrigRect; // Original text rect
 
-	int16 m_nCurDossier;      // index of current dossier
+	int16 _nCurDossier;      // index of current dossier
 	// member data boolS
-	bool m_bOrigRectInit : 1; // Original text initialized
-	bool m_bRPReported : 1;   // been reported yet?
-	bool m_bResPrinted : 1;   // been submitted?
-	bool m_bTouched : 1;      // been touched?
-	bool m_bRPRead : 1;       // been read
-	bool m_bRPTimeSet : 1;    // had time residue printing occurred?
-	bool m_bCurVisible : 1;   // Current one being displayed?
-	bool m_bInitialized : 1;  // initialization state
-	bool m_bMoviePlayed : 1;  // Has the movie played yet?
+	bool _bOrigRectInit : 1; // Original text initialized
+	bool _bRPReported : 1;   // been reported yet?
+	bool _bResPrinted : 1;   // been submitted?
+	bool _bTouched : 1;      // been touched?
+	bool _bRPRead : 1;       // been read
+	bool _bRPTimeSet : 1;    // had time residue printing occurred?
+	bool _bCurVisible : 1;   // Current one being displayed?
+	bool _bInitialized : 1;  // initialization state
+	bool _bMoviePlayed : 1;  // Has the movie played yet?
 
-	static CBofList<CBagRPObject *> *m_pRPList; // all the residue print objects
-	static int32 m_nLastRPQCheck;                // last time we surfed the queue.
-	static CBagVar *m_pTurncount;               // Ptr to turncount global
-	static CBagVar *m_pLogStateVar;             // Ptr to log state global
+	static CBofList<CBagRPObject *> *_pRPList; // all the residue print objects
+	static int32 _nLastRPQCheck;                // last time we surfed the queue.
+	static CBagVar *_pTurncount;               // Ptr to turncount global
+	static CBagVar *_pLogStateVar;             // Ptr to log state global
 	static CBagVar *_pPrevLogStateVar;         // Ptr to prev log state global
-	static CBagVar *m_pBarLogPages;             // Ptr to total pages global
+	static CBagVar *_pBarLogPages;             // Ptr to total pages global
 	static CBagVar *_pPrevBarPage;             //
-	static CBagVar *m_pCurBarPage;              // current bar page
-	static CBagRPObject *m_pCurRPObject;        // Most recent residue print object.
-	static CBagRPObject *m_pActivateThisGuy;    // The one we want to activate
-	static RPSTATES m_eRPMode;                  // Current state of display
+	static CBagVar *_pCurBarPage;              // current bar page
+	static CBagRPObject *_pCurRPObject;        // Most recent residue print object.
+	static CBagRPObject *_pActivateThisGuy;    // The one we want to activate
+	static RPStates _eRPMode;                  // Current state of display
 public:
 	CBagRPObject();
 	virtual ~CBagRPObject();
@@ -111,55 +111,55 @@ public:
 
 	virtual void onLButtonUp(uint32, CBofPoint *, void * = nullptr);
 
-	void SetTouchedDos(CBofString &s, CBagExpression *x);
-	void SetUntouchedDos(CBofString &s, CBagExpression *x);
+	void setTouchedDos(CBofString &s, CBagExpression *x);
+	void setUntouchedDos(CBofString &s, CBagExpression *x);
 
-	bool ActivateRPObject();
-	void DeactivateRPObject();
+	bool activateRPObject();
+	void deactivateRPObject();
 
-	bool GetTimeSet() {
-		return m_bRPTimeSet;
+	bool getTimeSet() {
+		return _bRPTimeSet;
 	}
-	void SetTimeSet(bool b = true) {
-		m_bRPTimeSet = b;
+	void setTimeSet(bool b = true) {
+		_bRPTimeSet = b;
 	}
 
-	void EvaluateDossiers();
+	void evaluateDossiers();
 
-	void SaveRPVars();
-	void RestoreRPVars();
+	void saveRPVars();
+	void restoreRPVars();
 
 	bool initialize();
 
-	CBagDossierObject *GetActiveDossier();
+	CBagDossierObject *getActiveDossier();
 	void setActiveDossier(CBagDossierObject *);
 
-	static bool AddToMsgQueue(CBagRPObject *);
+	static bool addToMsgQueue(CBagRPObject *);
 
-	static bool Zoomed();
+	static bool zoomed();
 
 	// Command (bagcoobj) objects, activated from script
-	static int RunRPQueue();
-	static int UpdateRPQueue();
-	static void DeactivateRPQueue();
+	static int runRPQueue();
+	static int updateRPQueue();
+	static void deactivateRPQueue();
 
-	static void ActivateRPReview();
-	static void DeactivateRPReview();
+	static void activateRPReview();
+	static void deactivateRPReview();
 
-	static void SetLogState(RPSTATES eLogMode);
-	static RPSTATES GetLogState();
+	static void setLogState(RPStates eLogMode);
+	static RPStates getLogState();
 
-	static void SetLogPages(int);
+	static void setLogPages(int);
 
-	static void ShowRPReview();
-	static void HideRPReview();
+	static void showRPReview();
+	static void hideRPReview();
 
 	static int RPResultsWaiting();
 	static void removeAllFromMsgQueue(CBagRPObject *pRPObj);
 
-	static void ShowPDALog();
+	static void showPDALog();
 
-	static void SynchronizeRPObjects(bool);
+	static void synchronizeRPObjects(bool);
 };
 
 } // namespace Bagel

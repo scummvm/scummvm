@@ -83,7 +83,7 @@ PARSE_CODES CBagDossierObject::setInfo(CBagIfstream &istr) {
 			} else if (!sStr.find("SUSPECTVAR")) {
 				istr.eatWhite();
 				getAlphaNumFromStream(istr, sStr);
-				m_sSuspectVar = sStr;
+				_sSuspectVar = sStr;
 				objectUpdatedFl = true;
 			} else {
 				putbackStringOnStream(istr, sStr);
@@ -296,7 +296,7 @@ void CBagDossierObject::activateDossierObject(CBagLog *logWld) {
 		logWld->activateLocalObject(this);
 	}
 
-	if (CBagRPObject::GetLogState() == RP_READ_DOSSIER) {
+	if (CBagRPObject::getLogState() == RP_READ_DOSSIER) {
 		setFloating(false); // This is not floating
 	} else {
 		setFloating(); // This is not floating
@@ -311,7 +311,7 @@ void CBagDossierObject::activateDossierObject(CBagLog *logWld) {
 }
 
 void CBagDossierObject::deactivateDossierObject(CBagLog *logWld) {
-	if (CBagRPObject::GetLogState() == RP_READ_DOSSIER) {
+	if (CBagRPObject::getLogState() == RP_READ_DOSSIER) {
 		setFloating(false); // This is not floating
 	} else {
 		setFloating(); // This is not floating
@@ -331,7 +331,7 @@ void CBagDossierObject::deactivateCurDossier() {
 		CBagRPObject *residuePrintedObj = ((CBagRPObject *)(_curDossier->_residuePrintedObject));
 
 		if (residuePrintedObj) {
-			if (residuePrintedObj->Zoomed()) {
+			if (residuePrintedObj->zoomed()) {
 				logWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZWLD);
 			} else {
 				logWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
@@ -344,7 +344,7 @@ void CBagDossierObject::deactivateCurDossier() {
 		_curDossier->_showIndexFl = true;
 		_curDossier->_dossierSetFl = false;
 
-		((CBagRPObject *)(_curDossier->_residuePrintedObject))->ActivateRPObject();
+		((CBagRPObject *)(_curDossier->_residuePrintedObject))->activateRPObject();
 
 		_curDossier = nullptr;
 	}
@@ -352,15 +352,15 @@ void CBagDossierObject::deactivateCurDossier() {
 
 void CBagDossierObject::showDossierText() {
 	// Make sure our script knows where we're going with this.
-	CBagRPObject::SetLogState(RP_READ_DOSSIER);
+	CBagRPObject::setLogState(RP_READ_DOSSIER);
 
 	// We got a mouse down on one of our dossier's, so now we have to deactivate
 	// everything that is in the residue print object that this dossier is
 	// contained in.
 	bool zoomedFl = false;
 	if (_residuePrintedObject) {
-		zoomedFl = ((CBagRPObject *)_residuePrintedObject)->Zoomed();
-		((CBagRPObject *)_residuePrintedObject)->DeactivateRPObject();
+		zoomedFl = ((CBagRPObject *)_residuePrintedObject)->zoomed();
+		((CBagRPObject *)_residuePrintedObject)->deactivateRPObject();
 	}
 
 	// Get the appropriate storage device
