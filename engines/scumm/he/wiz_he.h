@@ -81,7 +81,7 @@ namespace Scumm {
 
 #define WIZRAWPIXEL_R_SHIFT   (_uses16BitColor ? 10 : 0)
 #define WIZRAWPIXEL_G_SHIFT   (_uses16BitColor ? 5  : 0)
-#define WIZRAWPIXEL_B_SHIFT   (_uses16BitColor ? 0  : 0)
+#define WIZRAWPIXEL_B_SHIFT   (0)
 
 #define WIZRAWPIXEL_MASK   (_uses16BitColor ? 0xFFFF : 0xFF)
 
