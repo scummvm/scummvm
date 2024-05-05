@@ -371,13 +371,17 @@ static SQInteger getUserPref(HSQUIRRELVM v) {
 		SQObjectType type = sq_gettype(v, 3);
 		if (type == SQObjectType::OT_STRING) {
 			Common::String str;
-			sqget(v, 3, str);
+			if (SQ_FAILED(sqget(v, 3, str))) {
+				return sq_throwerror(v, _SC("failed to get string"));
+			}
 			sqpush(v, ConfMan.hasKey(key) ? ConfMan.get(key) : str);
 			return 1;
 		}
 		if (type == SQObjectType::OT_INTEGER) {
 			SQInteger integer;
-			sqget(v, 3, integer);
+			if (SQ_FAILED(sqget(v, 3, integer))) {
+				return sq_throwerror(v, _SC("failed to get integer"));
+			}
 			if (ConfMan.hasKey(key)) {
 				Common::String value = ConfMan.get(key);
 				bool bValue = false;
@@ -394,7 +398,9 @@ static SQInteger getUserPref(HSQUIRRELVM v) {
 		}
 		if (type == SQObjectType::OT_FLOAT) {
 			SQFloat fl;
-			sqget(v, 3, fl);
+			if (SQ_FAILED(sqget(v, 3, fl))) {
+				return sq_throwerror(v, _SC("failed to get float"));
+			}
 			sqpush(v, ConfMan.hasKey(key) ? atof(ConfMan.get(key).c_str()) : fl);
 			return 1;
 		}
