@@ -1705,6 +1705,11 @@ const Game games[] = {
 		MTBOOT_ALBERT1_WIN_FR,
 		&BootScriptContext::bootGeneric
 	},
+	// Uncle Albert's Magical Album - Dutch - Windows
+	{
+		MTBOOT_ALBERT1_WIN_NL,
+		&BootScriptContext::bootGeneric
+	},
 	// Uncle Albert's Fabulous Voyage - German - Windows
 	{
 		MTBOOT_ALBERT2_WIN_DE,
@@ -1720,6 +1725,11 @@ const Game games[] = {
 		MTBOOT_ALBERT2_WIN_FR,
 		&BootScriptContext::bootGeneric
 	},
+	// Uncle Albert's Fabulous Voyage - Dutch - Windows
+	{
+		MTBOOT_ALBERT2_WIN_NL,
+		&BootScriptContext::bootGeneric
+	},
 	// Uncle Albert's Mysterious Island - German - Windows
 	{
 		MTBOOT_ALBERT3_WIN_DE,
@@ -1733,6 +1743,16 @@ const Game games[] = {
 	// Uncle Albert's Mysterious Island - French - Windows
 	{
 		MTBOOT_ALBERT3_WIN_FR,
+		&BootScriptContext::bootGeneric
+	},
+	// Uncle Albert's Mysterious Island - Dutch - Windows
+	{
+		MTBOOT_ALBERT3_WIN_NL,
+		&BootScriptContext::bootGeneric
+	},
+	// Uncle Albert's Mysterious Island - Catalan - Windows
+	{
+		MTBOOT_ALBERT3_WIN_CA,
 		&BootScriptContext::bootGeneric
 	},
 	// SPQR: The Empire's Darkest Hour - Retail - Windows - English

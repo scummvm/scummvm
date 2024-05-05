@@ -652,6 +652,33 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		MTBOOT_ALBERT1_WIN_FR,
 	},
 
+	{ // Uncle Albert's Magical Album (Dutch, Windows)
+	  // Original title: Het Magische Boek Van Oom Ernest
+	  // Published by Emme, 1999
+		{
+			"albert1",
+			"",
+			{
+				{"Boek.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
+				{"boek1.MPL", 0, "4d10ee9943bdf9d8b751c7527e1c3a13", 18053917},
+				{"boek2.MPX", 0, "53f3df424a09b957da89dbf84828d92b", 297560609},
+				// { "BASIC.X95",    0, "a1b474e90cc285bfdcfa87355f890b9e", 242688 },
+				// { "BITMAP.R95",   0, "2bf7305eca9df63dbc75f55093b84cc0", 81408 },
+				// { "CURSORS.C95",  0, "c1e2eebe7183b5ea33de7872a8ea4d2b", 87040 },
+				// { "EXTRAS.R95",   0, "c5830771609c774de9dbeaa5dff69b3e", 185344 },
+				// { "ROTATORK.R95", 0, "c271f786f028c0076635bea49a2be890", 66560 },
+			 	AD_LISTEND
+			},
+			Common::NL_NLD,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_ALBERT1,
+		0,
+		MTBOOT_ALBERT1_WIN_NL,
+	},
+
 	{ // Uncle Albert's Fabulous Voyage (German, Windows)
 	  // Original title: Alberts abenteuerliche Reise
 	  // Published by Tivola, 2000
@@ -730,6 +757,33 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		MTBOOT_ALBERT2_WIN_FR,
 	},
 
+	{ // Uncle Albert's Fabulous Voyage (Dutch, Windows)
+	  // Original title: De Fabelachtige Reis Van Oom Ernest
+	  // Published by Emme, 1999
+		{
+			"albert2",
+			"",
+			{
+				{"reis.exe", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
+				{"voyage1.MPL", 0, "1bda2dd6149cc398296031439dc3d25b", 25618601},
+				{"voyage2.MPX", 0, "a02b7be7dd5a2324bd691299c66e4477", 246786921},
+				// { "BASIC.X95",    0, "a1b474e90cc285bfdcfa87355f890b9e", 242688 },
+				// { "BITMAP.R95",   0, "2bf7305eca9df63dbc75f55093b84cc0", 81408 },
+				// { "CURSORS.C95",  0, "c1e2eebe7183b5ea33de7872a8ea4d2b", 87040 },
+				// { "EXTRAS.R95",   0, "c5830771609c774de9dbeaa5dff69b3e", 185344 },
+				// { "ROTATORK.R95", 0, "c271f786f028c0076635bea49a2be890", 66560 },
+				AD_LISTEND
+			},
+			Common::NL_NLD,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_ALBERT2,
+		0,
+		MTBOOT_ALBERT2_WIN_NL,
+	},
+
 	{ // Uncle Albert's Mysterious Island (German, Windows)
 	  // Original title: Alberts mysteriöse Insel
 	  // Published by Tivola, 2001
@@ -806,6 +860,60 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		GID_ALBERT3,
 		0,
 		MTBOOT_ALBERT3_WIN_FR,
+	},
+
+	{ // Uncle Albert's Mysterious Island (Dutch, Windows)
+	  // Original title: Het Mysterieuze Eiland Van Oom Ernest
+	  // Published by Emme, 2001
+		{
+			"albert3",
+			"",
+			{
+				{"Eiland.exe", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
+				{"ile_myst1.MPL", 0, "d851ca7a48c7adc98445624e154dc0bb", 21866179},
+				{"ile_myst2.MPX", 0, "637470c04417dafb55dee53e954857d8", 277233382},
+				// { "BASIC.X95",     0, "a1b474e90cc285bfdcfa87355f890b9e", 242688 },
+				// { "BITMAP.R95",    0, "2bf7305eca9df63dbc75f55093b84cc0", 81408 },
+				// { "CURSORS.C95",   0, "c1e2eebe7183b5ea33de7872a8ea4d2b", 87040 },
+				// { "EXTRAS.R95",    0, "c5830771609c774de9dbeaa5dff69b3e", 185344 },
+				// { "ROTATORK.R95",  0, "c271f786f028c0076635bea49a2be890", 66560 },
+			 	AD_LISTEND
+			},
+			Common::NL_NLD,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_ALBERT3,
+		0,
+		MTBOOT_ALBERT3_WIN_NL,
+	},
+
+	{ // Uncle Albert's Mysterious Island (Catalan, Windows)
+	  // Original title: L'Illa Misteriosa de l'oncle Albert
+	  // Published by Emme, 2001
+		{
+			"albert3",
+			"",
+			{
+				{"Ile_Myst.exe", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
+				{"ile_myst1.MPL", 0, "9ca7bddd55bf755df6508dd4aca3fa69", 21280759},
+				{"ile_myst2.MPX", 0, "a0f49ee642ecc3b2bc18221f19855de1", 271726516},
+				// { "BASIC.X95",     0, "a1b474e90cc285bfdcfa87355f890b9e", 242688 },
+				// { "BITMAP.R95",    0, "2bf7305eca9df63dbc75f55093b84cc0", 81408 },
+				// { "CURSORS.C95",   0, "c1e2eebe7183b5ea33de7872a8ea4d2b", 87040 },
+				// { "EXTRAS.R95",    0, "c5830771609c774de9dbeaa5dff69b3e", 185344 },
+				// { "ROTATORK.R95",  0, "c271f786f028c0076635bea49a2be890", 66560 },
+				AD_LISTEND
+			},
+			Common::CA_ESP,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_ALBERT3,
+		0,
+		MTBOOT_ALBERT3_WIN_CA,
 	},
 
 	{ // SPQR: The Empire's Darkest Hour Windows CD-ROM
