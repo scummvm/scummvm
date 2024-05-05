@@ -140,13 +140,11 @@ Common::Path OSystem_POSIX::getDefaultConfigFileName() {
 	envVar = getenv("XDG_CONFIG_HOME");
 	if (!envVar || !*envVar) {
 		envVar = getenv("HOME");
-		if (!envVar) {
-			return 0;
-		}
-
-		if (Posix::assureDirectoryExists(".config", envVar)) {
-			prefix = envVar;
-			prefix += "/.config";
+		if (envVar && *envVar) {
+			if (Posix::assureDirectoryExists(".config", envVar)) {
+				prefix = envVar;
+				prefix += "/.config";
+			}
 		}
 	} else {
 		prefix = envVar;
