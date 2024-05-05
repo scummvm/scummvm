@@ -374,7 +374,7 @@ void SBBasePda::setPdaState() {
 	const char *pdaMode;
 	const char *pdaPos;
 
-	CBagVar *curVar = VAR_MANAGER->GetVariable("INBAR");
+	CBagVar *curVar = g_VarManager->getVariable("INBAR");
 
 	if (curVar != nullptr) {
 		// Defined as global
@@ -386,35 +386,35 @@ void SBBasePda::setPdaState() {
 	}
 
 	// Save the pda state and position
-	curVar = VAR_MANAGER->GetVariable(pdaMode);
+	curVar = g_VarManager->getVariable(pdaMode);
 	if (curVar != nullptr) {
 		switch (_pdaMode) {
 		case NOMODE:
-			curVar->SetValue("NOMODE");
+			curVar->setValue("NOMODE");
 			break;
 		case MAPMODE:
-			curVar->SetValue("MAPMODE");
+			curVar->setValue("MAPMODE");
 			break;
 		case INVMODE:
-			curVar->SetValue("INVMODE");
+			curVar->setValue("INVMODE");
 			break;
 		case LOGMODE:
-			curVar->SetValue("LOGMODE");
+			curVar->setValue("LOGMODE");
 			break;
 		case MOOMODE:
-			curVar->SetValue("MOOMODE");
+			curVar->setValue("MOOMODE");
 			break;
 		}
 	}
 
-	curVar = VAR_MANAGER->GetVariable(pdaPos);
+	curVar = g_VarManager->getVariable(pdaPos);
 	if (curVar != nullptr) {
 		switch (_pdaPos) {
 		case PDAUP:
-			curVar->SetValue("UP");
+			curVar->setValue("UP");
 			break;
 		case PDADOWN:
-			curVar->SetValue("DOWN");
+			curVar->setValue("DOWN");
 			break;
 		default:
 			break;
@@ -428,7 +428,7 @@ void SBBasePda::getPdaState() {
 	const char *pdaMode;
 	const char *pdaPos;
 
-	CBagVar *curVar = VAR_MANAGER->GetVariable("INBAR");
+	CBagVar *curVar = g_VarManager->getVariable("INBAR");
 
 	if (curVar != nullptr) {
 		// Defined as global
@@ -439,9 +439,9 @@ void SBBasePda::getPdaState() {
 		pdaPos = "PDAPOSITION";
 	}
 
-	curVar = VAR_MANAGER->GetVariable(pdaMode);
+	curVar = g_VarManager->getVariable(pdaMode);
 	if (curVar) {
-		pdaState = curVar->GetValue();
+		pdaState = curVar->getValue();
 		// Now set the internal PDA state based on this info.
 		// If we saved during a movie, then restore to map mode.
 		if (pdaState.find("MAP") != -1 || pdaState.find("MOO") != -1) {
@@ -458,9 +458,9 @@ void SBBasePda::getPdaState() {
 	}
 
 	// Get the PDA up/down position
-	curVar = VAR_MANAGER->GetVariable(pdaPos);
+	curVar = g_VarManager->getVariable(pdaPos);
 	if (curVar) {
-		pdaState = curVar->GetValue();
+		pdaState = curVar->getValue();
 		if (pdaState.find("UP") != -1) {
 			_pdaPos = PDAUP;
 		} else {

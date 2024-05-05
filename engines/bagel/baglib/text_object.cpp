@@ -157,11 +157,11 @@ ErrorCode CBagTextObject::attach() {
 					*_psText += pTextBuff;
 
 					if (_psInitInfo != nullptr) {
-						CBagVar *pVar = VAR_MANAGER->GetVariable(*_psInitInfo);
+						CBagVar *pVar = g_VarManager->getVariable(*_psInitInfo);
 
 						if (pVar != nullptr) {
 							_bReAttach = true;
-							_psText->replaceStr("%s", pVar->GetValue());
+							_psText->replaceStr("%s", pVar->getValue());
 						}
 					}
 

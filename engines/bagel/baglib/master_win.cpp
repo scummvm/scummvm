@@ -393,7 +393,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 	}
 
 	if (_variableList != nullptr) {
-		_variableList->ReleaseVariables(false);
+		_variableList->releaseVariables(false);
 	}
 
 	delete _gameSDevList;
@@ -546,10 +546,10 @@ void CBagMasterWin::saveSDevStack() {
 		assert(strlen(tempBuf) < MAX_VAR_VALUE);
 
 		// Store our current sdev location stack in a global variable.
-		CBagVar *var = VAR_MANAGER->GetVariable("$LASTWORLD");
+		CBagVar *var = g_VarManager->getVariable("$LASTWORLD");
 		if (var != nullptr) {
 			curStr = tempBuf;
-			var->SetValue(curStr);
+			var->setValue(curStr);
 		}
 	}
 }
@@ -599,7 +599,7 @@ ErrorCode CBagMasterWin::loadGlobalVars(const CBofString &wldName) {
 						CBagVar *var = new CBagVar;
 						fpInput.eatWhite();
 						var->setInfo(fpInput);
-						var->SetGlobal();
+						var->setGlobal();
 						break;
 					}
 
@@ -1065,7 +1065,7 @@ void CBagMasterWin::onKeyHit(uint32 keyCode, uint32 repCount) {
 				_waitSound->play();
 			}
 
-			VAR_MANAGER->IncrementTimers();
+			g_VarManager->incrementTimers();
 
 			// Prefilter this guy, could cause something to change in the
 			// pan or the PDA or a closeup.
@@ -1426,9 +1426,9 @@ void CBagMasterWin::fillSaveBuffer(StBagelSave *saveBuf) {
 
 				// Walk variable list and save each global variable
 				int j = 0;
-				int n = varManager->GetNumVars();
+				int n = varManager->getNumVars();
 				for (int i = 0; i < n; i++) {
-					CBagVar *curVar = varManager->GetVariable(i);
+					CBagVar *curVar = varManager->getVariable(i);
 					if (curVar != nullptr) {
 						// Need to save local variables in flashbacks.
 						// Let me know if this breaks anything.
@@ -1440,18 +1440,18 @@ void CBagMasterWin::fillSaveBuffer(StBagelSave *saveBuf) {
 							Common::strcpy_s(saveBuf->_stVarList[j]._szName, curVar->getName());
 						}
 
-						if (!curVar->GetValue().isEmpty()) {
-							assert(strlen(curVar->GetValue()) < MAX_VAR_VALUE);
-							Common::strcpy_s(saveBuf->_stVarList[j]._szValue, curVar->GetValue());
+						if (!curVar->getValue().isEmpty()) {
+							assert(strlen(curVar->getValue()) < MAX_VAR_VALUE);
+							Common::strcpy_s(saveBuf->_stVarList[j]._szValue, curVar->getValue());
 						}
 
 						saveBuf->_stVarList[j]._nType = (uint16)curVar->getType();
-						saveBuf->_stVarList[j]._bGlobal = (byte)curVar->IsGlobal();
-						saveBuf->_stVarList[j]._bConstant = (byte)curVar->IsConstant();
-						saveBuf->_stVarList[j]._bReference = (byte)curVar->IsReference();
-						saveBuf->_stVarList[j]._bTimer = (byte)curVar->IsTimer();
-						saveBuf->_stVarList[j]._bRandom = (byte)curVar->IsRandom();
-						saveBuf->_stVarList[j]._bNumeric = (byte)curVar->IsNumeric();
+						saveBuf->_stVarList[j]._bGlobal = (byte)curVar->isGlobal();
+						saveBuf->_stVarList[j]._bConstant = (byte)curVar->isConstant();
+						saveBuf->_stVarList[j]._bReference = (byte)curVar->isReference();
+						saveBuf->_stVarList[j]._bTimer = (byte)curVar->isTimer();
+						saveBuf->_stVarList[j]._bRandom = (byte)curVar->isRandom();
+						saveBuf->_stVarList[j]._bNumeric = (byte)curVar->isNumeric();
 						saveBuf->_stVarList[j]._bAttached = (byte)curVar->isAttached();
 						saveBuf->_stVarList[j]._bUsed = 1;
 						j++;
@@ -1631,9 +1631,9 @@ void CBagMasterWin::doRestore(StBagelSave *saveBuf) {
 				// If this entry is actually used to store Var info
 				if (saveBuf->_stVarList[i]._bUsed) {
 					// Find the Global Var (already in memory)
-					CBagVar *var = varManager->GetVariable(saveBuf->_stVarList[i]._szName);
+					CBagVar *var = varManager->getVariable(saveBuf->_stVarList[i]._szName);
 					if (var != nullptr) {
-						var->SetValue(saveBuf->_stVarList[i]._szValue);
+						var->setValue(saveBuf->_stVarList[i]._szValue);
 
 					} else {
 						logError(buildString("Global Variable NOT found: %s", saveBuf->_stVarList[i]._szName));
@@ -2049,10 +2049,10 @@ void setCICStatus(CBagStorageDev *sdev) {
 	// that this is the case.  Don't reset when we're zooming the PDA.
 	if (sdev && sdev->getName() != "BPDAZ_WLD") {
 		workStr = "IN_CIC";
-		CBagVar *cicVar = VAR_MANAGER->GetVariable(workStr);
+		CBagVar *cicVar = g_VarManager->getVariable(workStr);
 		if (cicVar) {
 			workStr = sdev->isCIC() ? "TRUE" : "FALSE";
-			cicVar->SetValue(workStr);
+			cicVar->setValue(workStr);
 		}
 	}
 }
@@ -2063,9 +2063,9 @@ bool getCICStatus() {
 	bool retValFl = false;
 
 	workStr = "IN_CIC";
-	CBagVar *cicVar = VAR_MANAGER->GetVariable(workStr);
+	CBagVar *cicVar = g_VarManager->getVariable(workStr);
 	if (cicVar) {
-		retValFl = (cicVar->GetValue() == "TRUE");
+		retValFl = (cicVar->getValue() == "TRUE");
 	}
 
 	return retValFl;

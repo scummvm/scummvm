@@ -221,7 +221,7 @@ bool CBagCommandObject::runObject() {
 		} else if (getFileName() == "TURN") {
 
 			// Cause 1 turn to go by
-			VAR_MANAGER->IncrementTimers();
+			g_VarManager->incrementTimers();
 
 		} else if (getFileName() == "RP_UPDATE_QUEUE") {
 			// Execute any waiting residue printing results.

@@ -475,13 +475,13 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 				// Selecting this menu item causes a turn to go by
 				if (nNumCalls == 1 && pCurSDEV->isCustom() == false) {
-					VAR_MANAGER->IncrementTimers();
+					g_VarManager->incrementTimers();
 				}
 			} else if (bCaption && (nNumCalls == 2)) {
 				// Selecting this menu item causes a turn to go by
 				dlg._pSelectedObject = nullptr;
 				if (pCurSDEV->isCustom() == false) {
-					VAR_MANAGER->IncrementTimers();
+					g_VarManager->incrementTimers();
 				}
 			}
 		}

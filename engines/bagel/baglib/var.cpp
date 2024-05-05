@@ -36,112 +36,112 @@ void CBagVarManager::initialize() {
 }
 
 CBagVar::CBagVar() {
-	SetGlobal(false);
-	SetConstant(false);
-	SetReference(false);
+	setGlobal(false);
+	setConstant(false);
+	setReference(false);
 	setTimer(false);
-	SetString();
-	SetRandom(false);
-	VAR_MANAGER->RegisterVariable(this);
+	setString();
+	setRandom(false);
+	g_VarManager->registerVariable(this);
 }
 
 CBagVar::CBagVar(const CBofString &sName, const CBofString &sValue, bool bAddToList) {
-	SetConstant(false);
-	SetReference(false);
+	setConstant(false);
+	setReference(false);
 	setTimer(false);
-	SetString();
+	setString();
 	setName(sName);
 
-	SetValue(sValue);
-	SetRandom(false);
-	SetGlobal(false);
+	setValue(sValue);
+	setRandom(false);
+	setGlobal(false);
 
 	if (bAddToList)
-		VAR_MANAGER->RegisterVariable(this);
+		g_VarManager->registerVariable(this);
 }
 
 CBagVar::~CBagVar() {
 	if (CBagel::getBagApp() &&
 		CBagel::getBagApp()->getMasterWnd() &&
 		CBagel::getBagApp()->getMasterWnd()->getVariableManager())
-		VAR_MANAGER->UnRegisterVariable(this);
+		g_VarManager->unRegisterVariable(this);
 }
 
-void CBagVar::SetValue(const CBofString &s) {
+void CBagVar::setValue(const CBofString &s) {
 	assert(isValidObject(this));
 
 	if (!s.isEmpty()) {
 		char c = s[0];
 		if (Common::isDigit(c) || c == '-')
-			SetNumeric();
+			setNumeric();
 	}
-	m_sVarValue = s;
+	_sVarValue = s;
 }
 
-const CBofString &CBagVar::GetValue() {
+const CBofString &CBagVar::getValue() {
 	assert(isValidObject(this));
 
 	// WORKAROUND: If you finish the Deven7 flashback without having previously
 	// asked him about betting, it hangs him. Work around this by force setting
 	// betting to have been discussed
-	if (m_sVarName == "BETWITHDEVEN") {
-		if (VAR_MANAGER->GetVariable("DEVENCODE1")->GetValue() != "NOTSETYET")
+	if (_sVarName == "BETWITHDEVEN") {
+		if (g_VarManager->getVariable("DEVENCODE1")->getValue() != "NOTSETYET")
 			// Finished flashback, so ensure betting flag is set
-			m_sVarValue = "1";
+			_sVarValue = "1";
 	}
 
 	// Check if these items should be replaced by the current sdev
-	if (!m_sVarName.isEmpty() && !m_sVarName.find(CURRSDEV_TOKEN)) {
+	if (!_sVarName.isEmpty() && !_sVarName.find(CURRSDEV_TOKEN)) {
 		CBofString CurrSDev;
 		if (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()) {
-			m_sVarValue = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->getName();
+			_sVarValue = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->getName();
 		}
 	} else {
 
 		// Check if these items should be replaced by the previous sdev
-		if (!m_sVarName.isEmpty() && !m_sVarName.find(PREVSDEV_TOKEN)) {
+		if (!_sVarName.isEmpty() && !_sVarName.find(PREVSDEV_TOKEN)) {
 			CBofString CurrSDev;
 			if (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()) {
-				m_sVarValue = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->getPrevSDev();
+				_sVarValue = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->getPrevSDev();
 			}
 		}
 	}
 
-	return m_sVarValue;
+	return _sVarValue;
 }
 
-void CBagVar::SetBoolValue(bool bVal) {
+void CBagVar::setBoolValue(bool bVal) {
 	assert(isValidObject(this));
 
 	if (bVal)
-		m_sVarValue = "TRUE";
+		_sVarValue = "TRUE";
 	else
-		m_sVarValue = "FALSE";
+		_sVarValue = "FALSE";
 }
 
-void CBagVar::SetValue(int nVal) {
+void CBagVar::setValue(int nVal) {
 	assert(isValidObject(this));
 
-	SetNumeric();
+	setNumeric();
 
 	Common::String tmp = Common::String::format("%d", nVal);
-	m_sVarValue = tmp.c_str();
+	_sVarValue = tmp.c_str();
 }
 
-int CBagVar::GetNumValue() {
+int CBagVar::getNumValue() {
 	assert(isValidObject(this));
 
-	if (IsRandom())
+	if (isRandom())
 		return g_engine->getRandomNumber();
 
-	return atoi(m_sVarValue);
+	return atoi(_sVarValue);
 }
 
-void CBagVar::Increment() {
+void CBagVar::increment() {
 	assert(isValidObject(this));
 
-	if (IsNumeric())
-		SetValue(GetNumValue() + 1);
+	if (isNumeric())
+		setValue(getNumValue() + 1);
 }
 
 ParseCodes CBagVar::setInfo(CBagIfstream &istr) {
@@ -168,13 +168,13 @@ ParseCodes CBagVar::setInfo(CBagIfstream &istr) {
 			getAlphaNumFromStream(istr, sStr);
 			if (!sStr.find("TIMER")) {
 				setTimer();
-				VAR_MANAGER->UpdateRegistration();
+				g_VarManager->updateRegistration();
 			} else if (!sStr.find("RANDOM")) {
-				SetRandom(true);
-				VAR_MANAGER->UpdateRegistration();
+				setRandom(true);
+				g_VarManager->updateRegistration();
 			} else if (!sStr.find("GLOBAL")) {
-				SetGlobal(true);
-				VAR_MANAGER->UpdateRegistration();
+				setGlobal(true);
+				g_VarManager->updateRegistration();
 			} else {
 				putbackStringOnStream(istr, sStr);
 				putbackStringOnStream(istr, "AS ");
@@ -190,7 +190,7 @@ ParseCodes CBagVar::setInfo(CBagIfstream &istr) {
 		istr.getCh();
 		istr.eatWhite();
 		getAlphaNumFromStream(istr, sStr);
-		SetValue(sStr);
+		setValue(sStr);
 	}
 
 	istr.eatWhite();
@@ -205,11 +205,11 @@ CBagVarManager::CBagVarManager() {
 CBagVarManager::~CBagVarManager() {
 	if (nVarMngrs) {
 		nVarMngrs--;
-		ReleaseVariables();
-		m_xVarList.removeAll();
+		releaseVariables();
+		_xVarList.removeAll();
 
 		for (int i = 0; i < VAR_HTABLE_SIZE; i++) {
-			m_xVarHashList[i].removeAll();
+			_xVarHashList[i].removeAll();
 		}
 	}
 }
@@ -223,31 +223,31 @@ static int HASHVAR(const char *p, int l) {
 
 	return h;
 }
-ErrorCode CBagVarManager::RegisterVariable(CBagVar *pVar) {
-	m_xVarList.addToTail(pVar);
+ErrorCode CBagVarManager::registerVariable(CBagVar *pVar) {
+	_xVarList.addToTail(pVar);
 
 	return ERR_NONE;
 }
 
 // Arranges the list so that timer variables are in the front
-ErrorCode CBagVarManager::UpdateRegistration() {
+ErrorCode CBagVarManager::updateRegistration() {
 	bool bFoundLastTimer = false;
 	int i;
 
 	// Read the timers at the beginning
-	for (i = 0; i < m_xVarList.getCount() && !bFoundLastTimer; ++i) {
-		if (!m_xVarList[i]->IsTimer()) {
+	for (i = 0; i < _xVarList.getCount() && !bFoundLastTimer; ++i) {
+		if (!_xVarList[i]->isTimer()) {
 			bFoundLastTimer = true;
 		}
 	}
 
 	// Make sure there are no more timers in the list
 	if (bFoundLastTimer) {
-		for (/*- i determined in previous for loop -*/ ; i < m_xVarList.getCount(); ++i) {
-			if (m_xVarList[i]->IsTimer()) {
-				CBagVar *pVar = m_xVarList[i];
-				m_xVarList.remove(i);
-				m_xVarList.addToHead(pVar);
+		for (/*- i determined in previous for loop -*/ ; i < _xVarList.getCount(); ++i) {
+			if (_xVarList[i]->isTimer()) {
+				CBagVar *pVar = _xVarList[i];
+				_xVarList.remove(i);
+				_xVarList.addToHead(pVar);
 			}
 		}
 	}
@@ -255,15 +255,15 @@ ErrorCode CBagVarManager::UpdateRegistration() {
 	return ERR_UNKNOWN;
 }
 
-ErrorCode CBagVarManager::UnRegisterVariable(CBagVar *pVar) {
+ErrorCode CBagVarManager::unRegisterVariable(CBagVar *pVar) {
 	// Find and remove specified variable from the Var manager list
 	//
 
-	CBofListNode<CBagVar *> *pList = m_xVarList.getTail();
+	CBofListNode<CBagVar *> *pList = _xVarList.getTail();
 	while (pList != nullptr) {
 
 		if (pList->getNodeItem() == pVar) {
-			m_xVarList.remove(pList);
+			_xVarList.remove(pList);
 			break;
 		}
 
@@ -277,7 +277,7 @@ ErrorCode CBagVarManager::UnRegisterVariable(CBagVar *pVar) {
 
 	// Hash it
 	int nHashVal = HASHVAR(szLocalBuff, varStr.getLength());
-	CBofList<CBagVar *> *pVarList = &m_xVarHashList[nHashVal];
+	CBofList<CBagVar *> *pVarList = &_xVarHashList[nHashVal];
 
 	// Search the hash table and remove it when we're done.
 	for (int i = 0; i < pVarList->getCount(); ++i) {
@@ -292,21 +292,21 @@ ErrorCode CBagVarManager::UnRegisterVariable(CBagVar *pVar) {
 }
 
 // The timers must be at the beginning of the list
-ErrorCode CBagVarManager::IncrementTimers() {
+ErrorCode CBagVarManager::incrementTimers() {
 	volatile bool bFoundLastTimer = false;
 
 	// Read the timers at the beginning
-	for (int i = 0; i < m_xVarList.getCount() && !bFoundLastTimer; ++i) {
-		CBagVar *pVar = m_xVarList[i];
-		if (pVar->IsTimer()) {
+	for (int i = 0; i < _xVarList.getCount() && !bFoundLastTimer; ++i) {
+		CBagVar *pVar = _xVarList[i];
+		if (pVar->isTimer()) {
 
 			// Hack to keep the game time from exceeding 22:50
 			if (pVar->getName().compareNoCase("TURNCOUNT") == 0) {
-				if (pVar->GetNumValue() == 2250) {
+				if (pVar->getNumValue() == 2250) {
 					continue;
 				}
 			}
-			pVar->Increment();
+			pVar->increment();
 		}
 	}
 
@@ -317,21 +317,21 @@ ErrorCode CBagVarManager::IncrementTimers() {
 	return ERR_NONE;
 }
 
-ErrorCode CBagVarManager::ReleaseVariables(bool bIncludeGlobals) {
+ErrorCode CBagVarManager::releaseVariables(bool bIncludeGlobals) {
 
 	if (bIncludeGlobals) {
-		while (m_xVarList.getCount()) {
-			CBagVar *pVar = m_xVarList.removeHead();
+		while (_xVarList.getCount()) {
+			CBagVar *pVar = _xVarList.removeHead();
 
 			if (pVar) {
 				delete pVar;
 			}
 		}
 	} else { // Do not include globals
-		for (int i = m_xVarList.getCount() - 1; i >= 0; i--) {
-			CBagVar *pVar = m_xVarList[i];
-			if (pVar && !pVar->IsGlobal()) {
-				m_xVarList.remove(i);
+		for (int i = _xVarList.getCount() - 1; i >= 0; i--) {
+			CBagVar *pVar = _xVarList[i];
+			if (pVar && !pVar->isGlobal()) {
+				_xVarList.remove(i);
 				delete pVar;
 			}
 		}
@@ -339,7 +339,7 @@ ErrorCode CBagVarManager::ReleaseVariables(bool bIncludeGlobals) {
 	return ERR_NONE;
 }
 
-CBagVar *CBagVarManager::GetVariable(const CBofString &sName) {
+CBagVar *CBagVarManager::getVariable(const CBofString &sName) {
 	CBagVar *pVar = nullptr;
 
 	// Use the hash table to find the variable.
@@ -349,7 +349,7 @@ CBagVar *CBagVarManager::GetVariable(const CBofString &sName) {
 
 	int nHashVal = HASHVAR(szLocalBuff, varStr.getLength());
 
-	CBofList<CBagVar *> *pVarList = &m_xVarHashList[nHashVal];
+	CBofList<CBagVar *> *pVarList = &_xVarHashList[nHashVal];
 	for (int i = 0; i < pVarList->getCount(); ++i) {
 		pVar = pVarList->getNodeItem(i);
 		if (pVar != nullptr && (pVar->getName().getLength() == sName.getLength()) && !pVar->getName().find(sName)) {
@@ -361,7 +361,7 @@ CBagVar *CBagVarManager::GetVariable(const CBofString &sName) {
 }
 
 void CBagVar::setName(const CBofString &s) {
-	m_sVarName = s;
+	_sVarName = s;
 
 	CBagel *pApp = CBagel::getBagApp();
 	if (pApp) {
@@ -370,9 +370,9 @@ void CBagVar::setName(const CBofString &s) {
 		if (!s.isEmpty() && pMainWin && pMainWin->getVariableManager()) {
 			char szLocalBuff[256];
 			CBofString varStr(szLocalBuff, 256);
-			varStr = m_sVarName;
+			varStr = _sVarName;
 			int nHashVal = HASHVAR(szLocalBuff, varStr.getLength());
-			VAR_MANAGER->m_xVarHashList[nHashVal].addToTail(this);
+			g_VarManager->_xVarHashList[nHashVal].addToTail(this);
 		}
 	}
 }

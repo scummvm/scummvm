@@ -38,10 +38,10 @@ CBagVariableObject::~CBagVariableObject() {
 }
 
 ErrorCode CBagVariableObject::attach() {
-	CBagVar *xVar = VAR_MANAGER->GetVariable(getFileName());
+	CBagVar *xVar = g_VarManager->getVariable(getFileName());
 
 	if (xVar && !getRefName().isEmpty())
-		xVar->SetValue(getRefName());
+		xVar->setValue(getRefName());
 
 	return CBagObject::attach();
 }
@@ -152,9 +152,9 @@ ParseCodes CBagVariableObject::setInfo(CBagIfstream &istr) {
 
 ErrorCode CBagVariableObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int) {
 	ErrorCode rc = ERR_NONE;
-	CBagVar *xVar = VAR_MANAGER->GetVariable(getFileName());
+	CBagVar *xVar = g_VarManager->getVariable(getFileName());
 
-	if (isAttached() && xVar && !(xVar->GetValue().isEmpty())) {
+	if (isAttached() && xVar && !(xVar->getValue().isEmpty())) {
 		// FIXME: Offset for the last accessed time and # times counter in
 		// entryway computer terminal. Otherwise, there's no space between
 		// them and the preceding text
@@ -168,7 +168,7 @@ ErrorCode CBagVariableObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *p
 			pt.x += 5;
 
 		CBofRect r(pt, pSrcRect->size());
-		rc = paintText(pBmp, &r, xVar->GetValue(), MapFontPointSize(m_nPointSize), TEXT_NORMAL, m_nFGColor);
+		rc = paintText(pBmp, &r, xVar->getValue(), MapFontPointSize(m_nPointSize), TEXT_NORMAL, m_nFGColor);
 
 		// Don't need to redraw!
 		setDirty(false);
@@ -178,12 +178,12 @@ ErrorCode CBagVariableObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *p
 
 ErrorCode CBagVariableObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int) {
 	ErrorCode rc = ERR_NONE;
-	CBagVar *xVar = VAR_MANAGER->GetVariable(getFileName());
+	CBagVar *xVar = g_VarManager->getVariable(getFileName());
 
-	if (isAttached() && xVar && !(xVar->GetValue().isEmpty())) {
+	if (isAttached() && xVar && !(xVar->getValue().isEmpty())) {
 		CBofRect r(pt, pSrcRect->size());
 
-		rc = paintText(pWnd, &r, xVar->GetValue(), MapFontPointSize(m_nPointSize), TEXT_NORMAL, m_nFGColor);
+		rc = paintText(pWnd, &r, xVar->getValue(), MapFontPointSize(m_nPointSize), TEXT_NORMAL, m_nFGColor);
 
 		// Don't need to redraw!
 		setDirty(false);

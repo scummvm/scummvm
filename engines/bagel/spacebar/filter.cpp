@@ -236,43 +236,43 @@ static void GetVilVars() {
 
 	// check if HUD is on
 	cStr = "HUDON";
-	g_pHudOn = VAR_MANAGER->GetVariable(cStr);
+	g_pHudOn = g_VarManager->getVariable(cStr);
 
 	cStr = "DGRAFITTI";
-	g_pDGrafiti = VAR_MANAGER->GetVariable(cStr);
+	g_pDGrafiti = g_VarManager->getVariable(cStr);
 
 	cStr = "DRADIO";
-	g_pDRadio = VAR_MANAGER->GetVariable(cStr);
+	g_pDRadio = g_VarManager->getVariable(cStr);
 
 	cStr = "PRECIPITATION";
-	g_pPrecip = VAR_MANAGER->GetVariable(cStr);
+	g_pPrecip = g_VarManager->getVariable(cStr);
 
 	cStr = "PRECDECIMAL";
-	g_pPrecDecimal = VAR_MANAGER->GetVariable(cStr);
+	g_pPrecDecimal = g_VarManager->getVariable(cStr);
 
 	cStr = "DUST";
-	g_pDust = VAR_MANAGER->GetVariable(cStr);
+	g_pDust = g_VarManager->getVariable(cStr);
 
 	cStr = "DUSTDECIMAL";
-	g_pDustDecimal = VAR_MANAGER->GetVariable(cStr);
+	g_pDustDecimal = g_VarManager->getVariable(cStr);
 
 	cStr = "DVOICEID";
-	g_pDVoiceID = VAR_MANAGER->GetVariable(cStr);
+	g_pDVoiceID = g_VarManager->getVariable(cStr);
 
 	cStr = "DCHIPID";
-	g_pDChipID = VAR_MANAGER->GetVariable(cStr);
+	g_pDChipID = g_VarManager->getVariable(cStr);
 
 	cStr = "TDIG1";
-	g_pTDig1 = VAR_MANAGER->GetVariable(cStr);
+	g_pTDig1 = g_VarManager->getVariable(cStr);
 
 	cStr = "TDIG2";
-	g_pTDig2 = VAR_MANAGER->GetVariable(cStr);
+	g_pTDig2 = g_VarManager->getVariable(cStr);
 
 	cStr = "TDIG3";
-	g_pTDig3 = VAR_MANAGER->GetVariable(cStr);
+	g_pTDig3 = g_VarManager->getVariable(cStr);
 
 	cStr = "TDIG4";
-	g_pTDig4 = VAR_MANAGER->GetVariable(cStr);
+	g_pTDig4 = g_VarManager->getVariable(cStr);
 }
 
 
@@ -301,8 +301,8 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		g_engine->viewRect.intersectRect(pBmp->getRect(), g_engine->viewPortRect);
 	}
 
-	if (g_pHudOn->GetNumValue() == 1) {
-		if (g_pDGrafiti->GetNumValue()) {
+	if (g_pHudOn->getNumValue() == 1) {
+		if (g_pDGrafiti->getNumValue()) {
 			CBofRect SrcRect(pGrafittiBmp->getRect());
 			pGrafittiBmp->paint(pBmp, g_engine->viewRect.left, g_engine->viewRect.top, &SrcRect, 1);
 		}
@@ -310,7 +310,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		CBofRect rect(g_engine->viewRect.left, g_engine->viewRect.top, g_engine->viewRect.right, g_engine->viewRect.top + 20);
 
 		// Display internal radio setting.
-		if (g_pDRadio->GetNumValue()) {
+		if (g_pDRadio->getNumValue()) {
 			paintText(pBmp, &rect, kRadioOnString, VILDROIDSTATSTEXTSIZE, TEXT_BOLD, RGB(0, 255, 6), JUSTIFY_LEFT, FORMAT_DEFAULT);
 		} else {
 			paintText(pBmp, &rect, kRadioOffString, VILDROIDSTATSTEXTSIZE, TEXT_BOLD, RGB(0, 255, 6), JUSTIFY_LEFT, FORMAT_DEFAULT);
@@ -318,17 +318,17 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 		// Display chance of precipitation.
 		char szVBuff2[256];
-		Common::sprintf_s(szVBuff2, "%s%d.%d%%", kPrecipString, g_pPrecip->GetNumValue(), g_pPrecDecimal->GetNumValue());
+		Common::sprintf_s(szVBuff2, "%s%d.%d%%", kPrecipString, g_pPrecip->getNumValue(), g_pPrecDecimal->getNumValue());
 		CBofRect cleanRect((g_engine->viewRect.right - 250), g_engine->viewRect.top, g_engine->viewRect.right - 5, g_engine->viewRect.top + 20);
 		paintText(pBmp, &cleanRect, szVBuff2, VILDROIDSTATSTEXTSIZE, TEXT_BOLD, RGB(0, 255, 6), JUSTIFY_RIGHT, FORMAT_DEFAULT);
 
 		// Display dust level.
-		Common::sprintf_s(szVBuff2, "%s%d.%dp/cmm", kDustString, g_pDust->GetNumValue(), g_pDustDecimal->GetNumValue());
+		Common::sprintf_s(szVBuff2, "%s%d.%dp/cmm", kDustString, g_pDust->getNumValue(), g_pDustDecimal->getNumValue());
 		cleanRect.bottom += 20;
 		cleanRect.top += 20;
 		paintText(pBmp, &cleanRect, szVBuff2, VILDROIDSTATSTEXTSIZE, TEXT_BOLD, RGB(0, 255, 6), JUSTIFY_RIGHT, FORMAT_DEFAULT);
 
-		int voiceId = g_pDVoiceID->GetNumValue();
+		int voiceId = g_pDVoiceID->getNumValue();
 		const char *pVoiceIdString = voiceNameArray[voiceId];
 
 		rect.top += 20;
@@ -350,7 +350,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		pTipBmp->paint(pBmp, &rect, &srcTipRect, 0);
 
 		// moved up here to use chipID later on bar
-		int chipID = g_pDChipID->GetNumValue();
+		int chipID = g_pDChipID->getNumValue();
 
 		if (CMainWindow::chipdisp == false) {
 			switch (chipID) {
@@ -452,7 +452,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				break;
 			}
 			}
-		} else if (g_pDChipID->GetNumValue() == 3) {
+		} else if (g_pDChipID->getNumValue() == 3) {
 			CBofRect txtRect(g_engine->viewRect);
 			uint32 lDiff;
 			uint32 timer = getTimer();
@@ -534,8 +534,8 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			case 29: {
 				paintText(pBmp, &txtRect,
 					buildString("You have been assigned Maintenance Mode PIN: %d%d%d%d",
-					g_pTDig1->GetNumValue(), g_pTDig2->GetNumValue(),
-					g_pTDig3->GetNumValue(), g_pTDig4->GetNumValue()),
+					g_pTDig1->getNumValue(), g_pTDig2->getNumValue(),
+					g_pTDig3->getNumValue(), g_pTDig4->getNumValue()),
 					VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0),
 					JUSTIFY_CENTER, FORMAT_TOP_CENTER);
 				break;
@@ -544,7 +544,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			default: {
 				CMainWindow::chipdisp = false;
 				waitCount = 0;
-				g_pDChipID->SetValue(0);
+				g_pDChipID->setValue(0);
 				break;
 			}
 
@@ -566,7 +566,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			if ((getTimer() - waitCount) > 15000) {
 				CMainWindow::chipdisp = false;
 				waitCount = 0;
-				g_pDChipID->SetValue(0);
+				g_pDChipID->setValue(0);
 
 				char szCString[256];
 				CBofString cString(szCString, 256);
@@ -606,7 +606,7 @@ static bool TriFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		g_engine->viewRect.intersectRect(pBmp->getRect(), g_engine->viewPortRect);
 	}
 
-	if (VAR_MANAGER->GetVariable("GLASSESON")->GetNumValue()) {
+	if (g_VarManager->getVariable("GLASSESON")->getNumValue()) {
 		CBofRect SrcRect(pTriBmp->getRect());
 		pTriBmp->paint(pBmp, g_engine->viewRect.left, g_engine->viewRect.top, &SrcRect, 1);
 	}
@@ -632,11 +632,11 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	}
 
 	zStr = "ZZAZZLVISION";
-	CBagVar *pVar = VAR_MANAGER->GetVariable(zStr);
+	CBagVar *pVar = g_VarManager->getVariable(zStr);
 	if (pVar != nullptr) {
 
 		bZzazzlVision = true;
-		if (pVar->GetNumValue() > 0) {
+		if (pVar->getNumValue() > 0) {
 			CMainWindow::setZzazzlVision(true);             // zzazzl paint is on in the script
 			int dx = g_engine->viewRect.width() / 3;  // + 1;
 			int dy = g_engine->viewRect.height() / 3; // + 1;
@@ -697,7 +697,7 @@ static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 	hStr = "HALLUCINATE";
 
-	if (VAR_MANAGER->GetVariable(hStr)->GetNumValue() > 0) {
+	if (g_VarManager->getVariable(hStr)->getNumValue() > 0) {
 		bHallucinating = true;
 		CBofPalette *pPal = pBmp->getPalette();
 		CBofBitmap *pTempBitmap = new CBofBitmap(g_engine->viewRect.width(), g_engine->viewRect.height(), pPal);
@@ -749,11 +749,11 @@ static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	char szVBuf[256];
 	CBofString vStr(szVBuf, 256);
 	vStr = "LIGHTNINGDELAY";
-	CBagVar *pVar = VAR_MANAGER->GetVariable(vStr);
+	CBagVar *pVar = g_VarManager->getVariable(vStr);
 	int nLightningDelay = 0;
 
 	if (pVar != nullptr) {
-		nLightningDelay = pVar->GetNumValue();
+		nLightningDelay = pVar->getNumValue();
 	}
 
 	if (nLightningDelay > 0) {

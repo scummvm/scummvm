@@ -64,26 +64,26 @@ ErrorCode SBarBibOddsWnd::detach() {
 }
 
 void SBarBibOddsWnd::onKeyHit(uint32 lKey, uint32 lRepCount) {
-	CBagVar *pVar = VAR_MANAGER->GetVariable("TORSOSTATE");
+	CBagVar *pVar = g_VarManager->getVariable("TORSOSTATE");
 
 	if (pVar != nullptr) {
-		CBofString StateStr = pVar->GetValue();
+		CBofString StateStr = pVar->getValue();
 		if (StateStr == "MAINMENU") {
 			switch (lKey) {
 			case BKEY_1:
-				pVar->SetValue("VIDINFO");
+				pVar->setValue("VIDINFO");
 				attachActiveObjects();
 				break;
 			case BKEY_2:
-				pVar->SetValue("SETBIBBLE");
+				pVar->setValue("SETBIBBLE");
 				attachActiveObjects();
 				break;
 			case BKEY_3:
-				pVar->SetValue("BADCODE");
+				pVar->setValue("BADCODE");
 				attachActiveObjects();
 				break;
 			case BKEY_4:
-				pVar->SetValue("TIPS");
+				pVar->setValue("TIPS");
 				attachActiveObjects();
 				break;
 			case BKEY_5:
@@ -96,11 +96,11 @@ void SBarBibOddsWnd::onKeyHit(uint32 lKey, uint32 lRepCount) {
 		} else if (StateStr == "SETBIBBLE") {
 			switch (lKey) {
 			case BKEY_1:
-				pVar->SetValue("SETBONK");
+				pVar->setValue("SETBONK");
 				attachActiveObjects();
 				break;
 			case BKEY_2:
-				pVar->SetValue("SETBAB");
+				pVar->setValue("SETBAB");
 				attachActiveObjects();
 				break;
 			default:

@@ -64,12 +64,12 @@ ErrorCode CBagInv::activateLocalObject(const CBofString &objectName) {
 
 	if (zoomedFl == false) {
 		// Check to see if we are in the bar
-		CBagVar *var = VAR_MANAGER->GetVariable("INBAR");
+		CBagVar *var = g_VarManager->getVariable("INBAR");
 		if (var != nullptr) {
-			var = VAR_MANAGER->GetVariable("FIRST_STASH");
+			var = g_VarManager->getVariable("FIRST_STASH");
 
 			// If this is our first stash, play the smacker associated with it.
-			if ((var != nullptr) && (var->GetNumValue() == 0)) {
+			if ((var != nullptr) && (var->getNumValue() == 0)) {
 				CBagMovieObject *pMovie = (CBagMovieObject *)getObject(FIRS_STASH_MOV);
 				if (pMovie) {
 					if (pMovie->isAttached() == false) {
@@ -80,7 +80,7 @@ ErrorCode CBagInv::activateLocalObject(const CBofString &objectName) {
 					pMovie->runObject();
 				}
 
-				var->SetValue(1);
+				var->setValue(1);
 			}
 		}
 	}
