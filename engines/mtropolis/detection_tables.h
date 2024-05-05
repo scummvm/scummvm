@@ -26,6 +26,8 @@
 
 #include "mtropolis/detection.h"
 
+#include "common/translation.h"
+
 namespace MTropolis {
 
 static const MTropolisGameDescription gameDescriptions[] = {
@@ -579,7 +581,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Tivola, 1998
 		{
 			"albert1",
-			"",
+			_s("Missing game code"),
 			{
 				{ "Albert.exe",   0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
 				{ "album411.MPL", 0, "08a742f5087d25e8ee45c2fcd57ad9a6", 17979781 },
@@ -605,7 +607,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by VTech, 1999
 		{
 			"albert1",
-			"",
+			_s("Missing game code"),
 			{
 				{"ALBUM.EXE",    0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"album411.MPL", 0, "ad34822a1d7a4fd2c69487566c383b2e", 17658069},
@@ -632,7 +634,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 1998
 		{
 			"albert1",
-			"",
+			_s("Missing game code"),
 			{
 				{"MTPLAY95.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"album421.MPL", 0, "2f3cc30f13ecc99e8e4818353cef1d34", 18879823},
@@ -659,7 +661,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 1999
 		{
 			"albert1",
-			"",
+			_s("Missing game code"),
 			{
 				{"Boek.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"boek1.MPL", 0, "4d10ee9943bdf9d8b751c7527e1c3a13", 18053917},
@@ -686,7 +688,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Tivola, 2000
 		{
 			"albert2",
-			"",
+			_s("Missing game code"),
 			{
 				{ "reise.exe",    0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
 				{ "voyage1.MPL",  0, "fe202ad897cb6cf5303f2f046e8123d5", 26122297 },
@@ -712,7 +714,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 2000
 		{
 			"albert2",
-			"",
+			_s("Missing game code"),
 			{
 				{"voyage.exe",  0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"voyage1.MPL", 0, "1859b9507c118f52402ecb248fa4ae9c", 25972983},
@@ -739,7 +741,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 1999
 		{
 			"albert2",
-			"",
+			_s("Missing game code"),
 			{
 				{"voyage.exe", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"voyage1.MPL", 0, "174683d29a1c8511830262940223cc8a", 27889879},
@@ -766,7 +768,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 1999
 		{
 			"albert2",
-			"",
+			_s("Missing game code"),
 			{
 				{"reis.exe", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"voyage1.MPL", 0, "1bda2dd6149cc398296031439dc3d25b", 25618601},
@@ -793,7 +795,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Tivola, 2001
 		{
 			"albert3",
-			"",
+			_s("Missing game code"),
 			{
 				{ "insel.exe",      0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
 				{ "ile_myst1.MPL",  0, "44ac2e944a61303f4028408165bafeb4", 24080377 },
@@ -819,7 +821,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 2000
 		{
 			"albert3",
-			"",
+			_s("Missing game code"),
 			{
 				{"Ile_myst.exe",  0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"ile_myst1.MPL", 0, "90a71952e2336bddd30d0bacd59aa510", 22167812},
@@ -846,7 +848,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 2000
 		{
 			"albert3",
-			"",
+			_s("Missing game code"),
 			{
 				{"Ile_myst.exe", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"ile_myst1.MPL", 0, "426868b7ea8fa555fa9240594c5e9903", 22181982},
@@ -873,7 +875,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 2001
 		{
 			"albert3",
-			"",
+			_s("Missing game code"),
 			{
 				{"Eiland.exe", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"ile_myst1.MPL", 0, "d851ca7a48c7adc98445624e154dc0bb", 21866179},
@@ -900,7 +902,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 2001
 		{
 			"albert3",
-			"",
+			_s("Missing game code"),
 			{
 				{"Ile_Myst.exe", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"ile_myst1.MPL", 0, "9ca7bddd55bf755df6508dd4aca3fa69", 21280759},
