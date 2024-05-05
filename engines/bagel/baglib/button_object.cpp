@@ -27,7 +27,7 @@
 namespace Bagel {
 
 CBagButtonObject::CBagButtonObject() {
-	_xObjType = BUTTONOBJ;
+	_xObjType = BUTTON_OBJ;
 	_buttonType = BTN_PUSH;
 
 	// Set to first cel

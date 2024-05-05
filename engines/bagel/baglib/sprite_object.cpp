@@ -27,7 +27,7 @@
 namespace Bagel {
 
 CBagSpriteObject::CBagSpriteObject() : CBagObject() {
-	_xObjType = SPRITEOBJ;
+	_xObjType = SPRITE_OBJ;
 	_xSprite = nullptr;
 	_nCels = 1;
 	_nWieldCursor = -1;

@@ -69,7 +69,7 @@ CBagRPObject *CBagRPObject::_pActivateThisGuy = nullptr;
 //  printing.
 //
 CBagRPObject::CBagRPObject() {
-	_xObjType = RESPRNTOBJ;
+	_xObjType = RESPRNT_OBJ;
 
 	// Dossier list
 	_pTouchedList = nullptr;
@@ -1387,7 +1387,7 @@ void CBagRPObject::showRPReview() {
 	// then cruise the whole thing.
 	for (int i = 0; i < nCount; i++) {
 		CBagObject *pObj = pLogWld->getObjectByPos(i);
-		if (pObj && pObj->getType() == RESPRNTOBJ) {
+		if (pObj && pObj->getType() == RESPRNT_OBJ) {
 
 			CBagRPObject *pRPObj = (CBagRPObject *)pObj;
 			// Find out if there are any events worth reporting.
@@ -1582,7 +1582,7 @@ void CBagRPObject::synchronizeRPObjects(bool bLogFrontmost) {
 	// then cruise the whole thing.
 	for (int i = 0; i < nCount; i++) {
 		CBagObject *pObj = pLogWld->getObjectByPos(i);
-		if (pObj->getType() == RESPRNTOBJ) {
+		if (pObj->getType() == RESPRNT_OBJ) {
 			CBagRPObject *pRPObj = (CBagRPObject *)pObj;
 			pRPObj->restoreRPVars();
 

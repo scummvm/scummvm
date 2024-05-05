@@ -113,7 +113,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 	CBofWindow *pParent = pWnd;
 	int nNumWieldChoices = 0;
 
-	if ((getObjectList()->getCount() == 1) && (getObjectList()->getTail()->getNodeItem()->getType() == TEXTOBJ) && (((CBagTextObject *)getObjectList()->getTail()->getNodeItem())->isCaption())) {
+	if ((getObjectList()->getCount() == 1) && (getObjectList()->getTail()->getNodeItem()->getType() == TEXT_OBJ) && (((CBagTextObject *)getObjectList()->getTail()->getNodeItem())->isCaption())) {
 		nBaseMenuLocX = 0;
 
 	} else if (nNumCalls == 1 && _pUniversalObjectList && _pUniversalObjectList != getObjectList()) {
@@ -129,7 +129,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 					// Otherwise, we need to re-calculate the size of the text object,
 					// since we are gonna trash is with our own values soon.
 
-				} else if (pObj->getType() == TEXTOBJ) {
+				} else if (pObj->getType() == TEXT_OBJ) {
 					((CBagTextObject *)pObj)->recalcTextRect(((CBagTextObject *)pObj)->isCaption());
 				}
 
@@ -145,7 +145,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 					pObj->setPosition(menuLoc);
 					pObj->setHighlight(false);
 
-					if (!nMenuCount && (pObj->getType() == TEXTOBJ)) {
+					if (!nMenuCount && (pObj->getType() == TEXT_OBJ)) {
 						menuLoc.y += objSize.height();
 					} else {
 						menuLoc.x += objSize.width();
@@ -189,7 +189,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 				// Otherwise, we need to re-calculate the size of the text object,
 				// since we are gonna trash is with our own values soon.
 
-			} else if (pObj->getType() == TEXTOBJ) {
+			} else if (pObj->getType() == TEXT_OBJ) {
 				((CBagTextObject *)pObj)->recalcTextRect(((CBagTextObject *)pObj)->isCaption());
 			}
 
@@ -198,7 +198,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 				objSize = pObj->getRect();
 
 				// If it is a text object increment next position by its height
-				if (pObj->getType() == TEXTOBJ) {
+				if (pObj->getType() == TEXT_OBJ) {
 
 					if (tmpVal)
 						// If we have a value move text to next line
@@ -258,7 +258,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 					pObj->setPosition(menuLoc);
 					pObj->setHighlight(false);
 
-					if ((nObjectPal < 0) && ((pObj->getType() == BMPOBJ) || (pObj->getType() == SPRITEOBJ)))
+					if ((nObjectPal < 0) && ((pObj->getType() == BMP_OBJ) || (pObj->getType() == SPRITE_OBJ)))
 						nObjectPal = i;
 					menuLoc.x += objSize.width();
 					tmpVal = objSize.height();//save the obj height for use later if we get a text obj
@@ -276,7 +276,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			} else {
 				nRunItems++;
 				pObj->runObject();
-				if (pObj->getType() == LINKOBJ) {
+				if (pObj->getType() == LINK_OBJ) {
 					g_bAAOk = false;
 				}
 			}
@@ -302,7 +302,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 		bool bMoved = false;
 		bool bCaption = false;
 		int nNumChars = 0;
-		if ((nNumItems == 1) && (xObjList.getTail()->getNodeItem()->getType() == TEXTOBJ) && (((CBagTextObject *)xObjList.getTail()->getNodeItem())->isCaption())) {
+		if ((nNumItems == 1) && (xObjList.getTail()->getNodeItem()->getType() == TEXT_OBJ) && (((CBagTextObject *)xObjList.getTail()->getNodeItem())->isCaption())) {
 			while (nNumWieldChoices-- != 0) {
 				pObj = xObjList.removeHead();
 				pObj->detach();
@@ -375,7 +375,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			for (int i = 0; i < xObjList.getCount(); i++) {
 				pObj = xObjList[i];
 
-				if (pObj->getType() == TEXTOBJ) {
+				if (pObj->getType() == TEXT_OBJ) {
 					int cx = tmpRect.size().cx - 1;
 					int cy = tmpRect.size().cy - 1;
 					if (!bCaption) {

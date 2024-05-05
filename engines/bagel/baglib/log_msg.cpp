@@ -291,7 +291,7 @@ ErrorCode CBagLog::activateLocalObject(CBagObject *bagObj) {
 		return errCode;
 
 	if (bagObj->isMsgWaiting() ||
-	        (bagObj->getType() == USEROBJ && (bagObj->getInitInfo() != nullptr) && (*bagObj->getInitInfo() == "MSG"))) {
+	        (bagObj->getType() == USER_OBJ && (bagObj->getInitInfo() != nullptr) && (*bagObj->getInitInfo() == "MSG"))) {
 		_queuedMsgList->addToTail(bagObj);
 
 		// Since zoomed pda doesn't  have a message light, only set this thing
@@ -404,7 +404,7 @@ ErrorCode CBagLog::playMsgQueue() {
 }
 
 CBagLogResidue::CBagLogResidue(int sdevWidth) : CBagTextObject() {
-	_xObjType = USEROBJ;
+	_xObjType = USER_OBJ;
 	_sdevWidth = sdevWidth;
 	_bTitle = true;
 }
@@ -414,7 +414,7 @@ void CBagLogResidue::setSize(const CBofSize &size) {
 }
 
 CBagLogMsg::CBagLogMsg(int sdevWidth) : CBagTextObject() {
-	_xObjType = USEROBJ;
+	_xObjType = USER_OBJ;
 	_sdevWidth = sdevWidth;
 	_bTitle = true;
 
@@ -553,7 +553,7 @@ ErrorCode CBagLogResidue::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRec
 }
 
 CBagLogSuspect::CBagLogSuspect(int sdevWidth) : CBagTextObject() {
-	_xObjType = USEROBJ;
+	_xObjType = USER_OBJ;
 	m_nSdevWidth = sdevWidth;
 
 	_bTitle = true;
@@ -951,7 +951,7 @@ ErrorCode CBagEnergyDetectorObject::attach() {
 }
 
 CBagLogClue::CBagLogClue(const CBofString &initStr, int sdevWidth, int pointSize) : CBagTextObject() {
-	_xObjType = USEROBJ;
+	_xObjType = USER_OBJ;
 	_sdevWidth = sdevWidth;
 
 	_bTitle = true;

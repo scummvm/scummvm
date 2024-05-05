@@ -26,35 +26,35 @@
 namespace Bagel {
 
 // This section should not change, the first cursor is always invalid
-#define BOFINVALID 0
+#define BOF_INVALID 0
 
 // OBJ
 // Lists object types
-#define BOFBMPOBJ 1
-#define BOFSPRITEOBJ 2
-#define BOFBUTTONOBJ 3
-#define BOFSOUNDOBJ 4
-#define BOFLINKOBJ 5
-#define BOFTEXTOBJ 6
-#define BOFCHAROBJ 7
-#define BOFVAROBJ 8
-#define BOFAREAOBJ 9
-#define BOFMOVIEOBJ 11
-#define BOFCOMMOBJ 12
-#define BOFEXPRESSOBJ 13
-#define BOFTHINGOBJ 14
-#define BOFRESPRNTOBJ 15
-#define BOFDOSSIEROBJ 16
+#define BOF_BMP_OBJ 1
+#define BOF_SPRITE_OBJ 2
+#define BOF_BUTTON_OBJ 3
+#define BOF_SOUND_OBJ 4
+#define BOF_LINK_OBJ 5
+#define BOF_TEXT_OBJ 6
+#define BOF_CHAR_OBJ 7
+#define BOF_VAR_OBJ 8
+#define BOF_AREA_OBJ 9
+#define BOF_MOVIE_OBJ 11
+#define BOF_COMM_OBJ 12
+#define BOF_EXPRESS_OBJ 13
+#define BOF_THING_OBJ 14
+#define BOF_RESPRNT_OBJ 15
+#define BOF_DOSSIER_OBJ 16
 
 // PAN
 // These CANNOT change
 
-#define BOFLTCURSOR 14
-#define BOFUPCURSOR 15
-#define BOFRTCURSOR 16
-#define BOFDNCURSOR 17
-#define BOFTAKEHAND 18
-#define BOFHAND 19
+#define BOF_LT_CURSOR 14
+#define BOF_UP_CURSOR 15
+#define BOF_RT_CURSOR 16
+#define BOF_DN_CURSOR 17
+#define BOF_TAKE_HAND 18
+#define BOF_HAND 19
 
 } // namespace Bagel
 

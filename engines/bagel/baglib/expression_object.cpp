@@ -27,7 +27,7 @@
 namespace Bagel {
 
 CBagExpressionObject::CBagExpressionObject() : CBagObject() {
-	_xObjType = EXPRESSOBJ;
+	_xObjType = EXPRESS_OBJ;
 	_expression = nullptr;
 	setConditional(false);
 	setVisible(false);
