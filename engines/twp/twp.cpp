@@ -845,6 +845,10 @@ static bool isOnScreen(Common::SharedPtr<Object> obj) {
 	return Common::Rect(0.0f, 0.0f, size.getX(), size.getY()).contains(pos.getX(), pos.getY());
 }
 
+static void moveCursorTo(const Math::Vector2d &pos) {
+	g_twp->_moveCursorTo.reset(new MoveCursorTo(pos, 0.1f));
+}
+
 static void gotoObject(bool next) {
 	if (!g_twp->_room || !g_twp->_inputState._inputActive || !g_twp->_inputState._showCursor)
 		return;
@@ -905,7 +909,108 @@ static void gotoObject(bool next) {
 	// move the cursor to this object
 	Math::Vector2d pos(objPos[index]._pos);
 	pos = g_twp->roomToScreen(pos);
-	g_twp->_moveCursorTo.reset(new MoveCursorTo(g_twp->screenToWin(pos), 0.1f));
+	moveCursorTo(g_twp->screenToWin(pos));
+}
+
+static void selectVerbInventory(int direction) {
+	if (!g_twp->_room || !g_twp->_inputState._inputActive || !g_twp->_hud->isVisible())
+		return;
+
+	ActorSlot *slot = g_twp->_hud->actorSlot(g_twp->_actor);
+	if (!slot)
+		return;
+
+	if (g_twp->_uiInv.isOver()) {
+		int invIndex = g_twp->_uiInv.getOverIndex();
+		if (invIndex != -1) {
+			switch (direction) {
+			case 0: // Left
+			{
+				if (invIndex == 0) {
+					moveCursorTo(g_twp->_hud->getVerbPos(slot->verbSlots[7]));
+					return;
+				}
+				if (invIndex == 4) {
+					moveCursorTo(g_twp->_hud->getVerbPos(slot->verbSlots[8]));
+					return;
+				}
+				invIndex--;
+			} break;
+			case 1: // Right
+			{
+				if (invIndex == 3 || invIndex == 7)
+					return;
+				invIndex++;
+			} break;
+			case 2: // Up
+			{
+				if (invIndex < 4) {
+					g_twp->_actor->inventoryScrollUp();
+					return;
+				}
+				invIndex -= 4;
+			} break;
+			case 3: // Down
+				if (invIndex > 3) {
+					g_twp->_actor->inventoryScrollDown();
+					return;
+				}
+				invIndex += 4;
+				break;
+			}
+			moveCursorTo(g_twp->screenToWin(g_twp->_uiInv.getPos(invIndex)));
+			return;
+		}
+	}
+
+	// get the verb where the cursor is
+	int id = 0;
+	for (int i = 1; i < MAX_VERBS; i++) {
+		const VerbSlot &verbSlot = slot->verbSlots[i];
+		if (verbSlot._over) {
+			id = i;
+			break;
+		}
+	}
+
+	if (!id) {
+		const VerbSlot &verbSlot = slot->verbSlots[5];
+		Math::Vector2d pos(g_twp->_hud->getVerbPos(verbSlot));
+		moveCursorTo(pos);
+		return;
+	}
+
+	switch (direction) {
+	case 0: // Left
+	{
+		if (id < 4)
+			break;
+		id -= 3;
+	} break;
+	case 1: // Right
+	{
+		if (id > 6) {
+			moveCursorTo(g_twp->screenToWin(g_twp->_uiInv.getPos(id == 7 ? 0 : 4)));
+			return;
+		}
+		id += 3;
+	} break;
+	case 2: // Up
+	{
+		if ((id % 3) == 1)
+			break;
+		id--;
+	} break;
+	case 3: // Down
+		if ((id % 3) == 0)
+			break;
+		id++;
+		break;
+	}
+
+	const VerbSlot &verbSlot = slot->verbSlots[id];
+	Math::Vector2d pos(g_twp->_hud->getVerbPos(verbSlot));
+	moveCursorTo(pos);
 }
 
 Common::Error TwpEngine::run() {
@@ -1006,6 +1111,12 @@ Common::Error TwpEngine::run() {
 				case TwpAction::kGotoPreviousObject:
 					gotoObject((TwpAction)e.customType == TwpAction::kGotoNextObject);
 					break;
+				case TwpAction::kSelectVerbInventoryLeft:
+				case TwpAction::kSelectVerbInventoryRight:
+				case TwpAction::kSelectVerbInventoryUp:
+				case TwpAction::kSelectVerbInventoryDown:
+					selectVerbInventory(e.customType - (int)TwpAction::kSelectVerbInventoryLeft);
+					break;
 				case TwpAction::kSelectActor1:
 				case TwpAction::kSelectActor2:
 				case TwpAction::kSelectActor3:
@@ -1095,14 +1206,14 @@ Common::Error TwpEngine::run() {
 					break;
 				case Common::KEYCODE_UP:
 					if (_dialog->getState() == WaitingForChoice) {
-						_moveCursorTo.reset(new MoveCursorTo(screenToWin(_dialog->getPreviousChoicePos(winToScreen(_cursor.pos))), 0.1f));
+						moveCursorTo(screenToWin(_dialog->getPreviousChoicePos(winToScreen(_cursor.pos))));
 					} else {
 						_cursor.holdUp = true;
 					}
 					break;
 				case Common::KEYCODE_DOWN:
 					if (_dialog->getState() == WaitingForChoice) {
-						_moveCursorTo.reset(new MoveCursorTo(screenToWin(_dialog->getNextChoicePos(winToScreen(_cursor.pos))), 0.1f));
+						moveCursorTo(screenToWin(_dialog->getNextChoicePos(winToScreen(_cursor.pos))));
 					} else {
 						_cursor.holdDown = true;
 					}

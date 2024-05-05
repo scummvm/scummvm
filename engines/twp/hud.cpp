@@ -279,4 +279,14 @@ void Hud::setVisible(bool visible) {
 	}
 }
 
+Math::Vector2d Hud::getVerbPos(const VerbSlot &verbSlot) const {
+	SpriteSheet *verbSheet = g_twp->_resManager->spriteSheet("VerbSheet");
+	bool retroVerbs = ConfMan.getBool("retroVerbs");
+	Common::String verbSuffix = retroVerbs ? "_retro" : "";
+	Common::String lang = ConfMan.get("language");
+	const SpriteSheetFrame &verbFrame = verbSheet->getFrame(Common::String::format("%s%s_%s", verbSlot._verb.image.c_str(), verbSuffix.c_str(), lang.c_str()));
+	Common::Rect r = verbFrame.spriteSourceSize;
+	return Math::Vector2d(r.left + r.width() / 2.f, r.top + r.height() / 2.f);
+}
+
 } // namespace Twp

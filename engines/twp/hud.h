@@ -126,6 +126,8 @@ public:
 	void setVisible(bool visible) override;
 	void selectVerb(const Verb &verb);
 
+	Math::Vector2d getVerbPos(const VerbSlot &verbSlot) const;
+
 private:
 	void drawCore(const Math::Matrix4 &trsf) final;
 	void drawSprite(const SpriteSheetFrame &sf, Texture *texture, const Color &color, const Math::Matrix4 &trsf);

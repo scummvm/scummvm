@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -301,6 +300,8 @@ public:
 	bool isOver() const { return _over; }
 	Common::SharedPtr<Object> getObject() const { return _obj; }
 	Math::Vector2d getPos(Common::SharedPtr<Object> inv) const;
+	Math::Vector2d getPos(int index) const;
+	int getOverIndex() const;
 
 	void setVisible(bool visible) override;
 

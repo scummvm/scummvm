@@ -611,6 +611,19 @@ Math::Vector2d Inventory::getPos(Common::SharedPtr<Object> inv) const {
 	return {};
 }
 
+Math::Vector2d Inventory::getPos(int i) const {
+	assert((i >= 0) && (i < 8));
+	return Math::Vector2d(_itemRects[i].left + _itemRects[i].width() / 2.f, _itemRects[i].top + _itemRects[i].height() / 2.f);
+}
+
+int Inventory::getOverIndex() const {
+	for (int i = 0; i < NUMOBJECTS; i++) {
+		if (_inventoryOver[i])
+			return i;
+	}
+	return -1;
+}
+
 void Inventory::drawSprite(const SpriteSheetFrame &sf, Texture *texture, const Color &color, const Math::Matrix4 &t) {
 	Math::Matrix4 trsf(t);
 	Math::Vector3d pos(sf.spriteSourceSize.left - sf.sourceSize.getX() / 2.f, -sf.spriteSourceSize.height() - sf.spriteSourceSize.top + sf.sourceSize.getY() / 2.f, 0.f);
@@ -746,6 +759,8 @@ void Inventory::update(float elapsed, Common::SharedPtr<Object> actor, const Col
 						_shake[i] = Common::ScopedPtr<Motor>(new ShakeInventory(_shakeOffset[i], 0.4f));
 						_inventoryOver[i] = true;
 					}
+				} else {
+					_inventoryOver[i] = true;
 				}
 			} else {
 				_inventoryOver[i] = false;
