@@ -343,7 +343,7 @@ void CBagButtonObject::setSize(const CBofSize &size) {
 	CBagSpriteObject::setSize(size);
 }
 
-PARSE_CODES CBagButtonObject::setInfo(CBagIfstream &istr) {
+ParseCodes CBagButtonObject::setInfo(CBagIfstream &istr) {
 	bool nObjectUpdated = false;
 
 	while (!istr.eof()) {
@@ -433,7 +433,7 @@ PARSE_CODES CBagButtonObject::setInfo(CBagIfstream &istr) {
 		// No match return from function
 		//
 		default: {
-			PARSE_CODES rc = CBagObject::setInfo(istr);
+			ParseCodes rc = CBagObject::setInfo(istr);
 			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
 			}

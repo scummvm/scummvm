@@ -380,7 +380,7 @@ public:
 	 * UPDATED_OBJECT   if something has changed
 	 * PARSING_DONE     if done processing
 	 */
-	virtual PARSE_CODES setInfo(CBagIfstream &istr);
+	virtual ParseCodes setInfo(CBagIfstream &istr);
 
 	virtual int handleError(int nErrID) {
 		assert(!nErrID);

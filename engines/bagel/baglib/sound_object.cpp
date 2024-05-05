@@ -29,24 +29,24 @@
 namespace Bagel {
 
 // There is only one allowed at a time
-CBofSound *CBagSoundObject::m_pMidiSound;
+CBofSound *CBagSoundObject::_pMidiSound;
 
 void CBagSoundObject::initialize() {
-	m_pMidiSound = nullptr;
+	_pMidiSound = nullptr;
 }
 
 CBagSoundObject::CBagSoundObject() {
 	_xObjType = SOUNDOBJ;
-	m_pSound = nullptr;
+	_pSound = nullptr;
 
 	// Assume MIX if not specified
-	m_wFlags = SOUND_MIX; //(SOUND_WAVE | SOUND_ASYNCH);
+	_wFlags = SOUND_MIX; //(SOUND_WAVE | SOUND_ASYNCH);
 
-	m_nVol = VOLUME_INDEX_DEFAULT;
+	_nVol = VOLUME_INDEX_DEFAULT;
 	setState(0);
-	m_bWait = false;
+	_bWait = false;
 
-	m_nLoops = 1;
+	_nLoops = 1;
 
 	setVisible(false);
 	setOverCursor(3);
@@ -57,20 +57,20 @@ CBagSoundObject::~CBagSoundObject() {
 }
 
 ErrorCode CBagSoundObject::attach(CBofWindow *pWnd) {
-	NewSound(pWnd);
+	newSound(pWnd);
 
 	return CBagObject::attach();
 }
 
-ErrorCode CBagSoundObject::NewSound(CBofWindow *pWin) {
+ErrorCode CBagSoundObject::newSound(CBofWindow *pWin) {
 	// assume no error
 	ErrorCode errCode = ERR_NONE;
 
-	KillSound();
+	killSound();
 
-	if ((m_pSound = new CBofSound(pWin, getFileName(), m_wFlags, m_nLoops)) != nullptr) {
-		m_pSound->setVolume(m_nVol);
-		m_pSound->setQSlot(getState());
+	if ((_pSound = new CBofSound(pWin, getFileName(), _wFlags, _nLoops)) != nullptr) {
+		_pSound->setVolume(_nVol);
+		_pSound->setQSlot(getState());
 
 	} else {
 		errCode = ERR_MEMORY;
@@ -79,46 +79,46 @@ ErrorCode CBagSoundObject::NewSound(CBofWindow *pWin) {
 	return errCode;
 }
 
-void CBagSoundObject::KillSound() {
-	if (m_pSound != nullptr) {
-		delete m_pSound;
-		m_pSound = nullptr;
+void CBagSoundObject::killSound() {
+	if (_pSound != nullptr) {
+		delete _pSound;
+		_pSound = nullptr;
 	}
 }
 
 ErrorCode CBagSoundObject::detach() {
-	KillSound();
+	killSound();
 	return CBagObject::detach();
 }
 
 bool CBagSoundObject::runObject() {
-	if (((m_wFlags & SOUND_MIDI) && CBagMasterWin::getMidi()) || (((m_wFlags & SOUND_WAVE) || (m_wFlags & SOUND_MIX)) && CBagMasterWin::getDigitalAudio())) {
+	if (((_wFlags & SOUND_MIDI) && CBagMasterWin::getMidi()) || (((_wFlags & SOUND_WAVE) || (_wFlags & SOUND_MIX)) && CBagMasterWin::getDigitalAudio())) {
 
-		if (m_pSound && m_pMidiSound != m_pSound) {
+		if (_pSound && _pMidiSound != _pSound) {
 
-			m_pSound->setQSlot(getState());
-			m_pSound->play();
+			_pSound->setQSlot(getState());
+			_pSound->play();
 
 			// If waiting until this sound finishes
-			if (m_bWait) {
+			if (_bWait) {
 				// Show busy cursor
 				CBagMasterWin::setActiveCursor(6);
 
 				EventLoop limiter(EventLoop::FORCE_REPAINT);
-				while (m_pSound->isPlaying()) {
+				while (_pSound->isPlaying()) {
 					CBofSound::audioTask();
 
 					if (limiter.frame()) {
-						m_pSound->stop();
+						_pSound->stop();
 						break;
 					}
 				}
 			}
 
-			if (m_wFlags & SOUND_MIDI)
-				m_pMidiSound = m_pSound;
+			if (_wFlags & SOUND_MIDI)
+				_pMidiSound = _pSound;
 		} else { /* if no sound */
-			if (!(m_wFlags & SOUND_MIDI)) {
+			if (!(_wFlags & SOUND_MIDI)) {
 
 				int nExt = getFileName().getLength() - 4; // ".EXT"
 
@@ -147,7 +147,7 @@ bool CBagSoundObject::runObject() {
 	return CBagObject::runObject();
 }
 
-PARSE_CODES CBagSoundObject::setInfo(CBagIfstream &istr) {
+ParseCodes CBagSoundObject::setInfo(CBagIfstream &istr) {
 	bool nObjectUpdated = false;
 
 	while (!istr.eof()) {
@@ -191,46 +191,46 @@ PARSE_CODES CBagSoundObject::setInfo(CBagIfstream &istr) {
 				getAlphaNumFromStream(istr, sStr);
 
 				if (!sStr.find("WAVE")) {
-					// m_xSndType  = WAVE;
-					SetWave();
+					// _xSndType  = WAVE;
+					setWave();
 					nObjectUpdated = true;
 
 				} else if (!sStr.find("MIDI")) {
-					// m_xSndType  = MIDI;
-					SetMidi();
+					// _xSndType  = MIDI;
+					setMidi();
 					nObjectUpdated = true;
 
 				} else if (!sStr.find("SYNC")) {
-					SetSync();
+					setSync();
 					nObjectUpdated = true;
 
 				} else if (!sStr.find("ASYNC")) {
-					SetASync();
+					setASync();
 					nObjectUpdated = true;
 
 					// Mix and Wait
 					//
 				} else if (!sStr.find("WAITMIX")) {
 
-					SetMix();
-					m_bWait = true;
+					setMix();
+					_bWait = true;
 					nObjectUpdated = true;
 
 					// Queue and Wait
 					//
 				} else if (!sStr.find("WAITQUEUE")) {
 
-					SetQueue();
-					m_bWait = true;
+					setQueue();
+					_bWait = true;
 					nObjectUpdated = true;
 
 				} else if (!sStr.find("QUEUE")) {
 
-					SetQueue();
+					setQueue();
 					nObjectUpdated = true;
 
 				} else if (!sStr.find("MIX")) {
-					SetMix();
+					setMix();
 					nObjectUpdated = true;
 
 				} else {
@@ -254,7 +254,7 @@ PARSE_CODES CBagSoundObject::setInfo(CBagIfstream &istr) {
 
 			if (!sStr.find("LOOP")) {
 				istr.eatWhite();
-				getIntFromStream(istr, m_nLoops);
+				getIntFromStream(istr, _nLoops);
 				nObjectUpdated = true;
 			} else {
 				putbackStringOnStream(istr, sStr);
@@ -271,7 +271,7 @@ PARSE_CODES CBagSoundObject::setInfo(CBagIfstream &istr) {
 			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("SOUNDOVEROK")) {
-				SetSoundOver();
+				setSoundOver();
 				nObjectUpdated = true;
 			} else {
 				putbackStringOnStream(istr, sStr);
@@ -283,7 +283,7 @@ PARSE_CODES CBagSoundObject::setInfo(CBagIfstream &istr) {
 		//  No match return from funtion
 		//
 		default: {
-			PARSE_CODES rc = CBagObject::setInfo(istr);
+			ParseCodes rc = CBagObject::setInfo(istr);
 			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
 			}
@@ -305,33 +305,33 @@ PARSE_CODES CBagSoundObject::setInfo(CBagIfstream &istr) {
 	return PARSING_DONE;
 }
 
-void CBagSoundObject::SetQueue(bool b) {
+void CBagSoundObject::setQueue(bool b) {
 	if (b) {
-		m_wFlags = SOUND_MIX | SOUND_QUEUE;
+		_wFlags = SOUND_MIX | SOUND_QUEUE;
 
 	} else {
-		m_wFlags &= ~SOUND_QUEUE;
+		_wFlags &= ~SOUND_QUEUE;
 	}
 }
 
 int CBagSoundObject::getVolume() {
-	return m_nVol;
+	return _nVol;
 }
 
 void CBagSoundObject::setVolume(int nVol) {
-	m_nVol = (byte)nVol;
+	_nVol = (byte)nVol;
 	if (isAttached()) {
 
-		if (m_pSound != nullptr) {
-			m_pSound->setVolume(m_nVol);
+		if (_pSound != nullptr) {
+			_pSound->setVolume(_nVol);
 		}
 	}
 }
 
 bool CBagSoundObject::isPlaying() {
 	bool bPlaying = false;
-	if (m_pSound != nullptr) {
-		bPlaying = m_pSound->playing();
+	if (_pSound != nullptr) {
+		bPlaying = _pSound->playing();
 	}
 
 	return bPlaying;
@@ -339,55 +339,55 @@ bool CBagSoundObject::isPlaying() {
 
 bool CBagSoundObject::isQueued() {
 	bool bQueued = false;
-	if (m_pSound != nullptr) {
-		bQueued = m_pSound->isQueued();
+	if (_pSound != nullptr) {
+		bQueued = _pSound->isQueued();
 	}
 
 	return bQueued;
 }
 
-void CBagSoundObject::SetPlaying(bool bVal) {
-	if (((m_wFlags & SOUND_MIDI) && CBagMasterWin::getMidi()) || (((m_wFlags & SOUND_WAVE) || (m_wFlags & SOUND_MIX)) && CBagMasterWin::getDigitalAudio())) {
+void CBagSoundObject::setPlaying(bool bVal) {
+	if (((_wFlags & SOUND_MIDI) && CBagMasterWin::getMidi()) || (((_wFlags & SOUND_WAVE) || (_wFlags & SOUND_MIX)) && CBagMasterWin::getDigitalAudio())) {
 
 		if (bVal) {
 
-			if (m_pSound && m_pMidiSound != m_pSound) {
+			if (_pSound && _pMidiSound != _pSound) {
 
-				m_pSound->setQSlot(getState());
-				m_pSound->play();
+				_pSound->setQSlot(getState());
+				_pSound->play();
 
 				// If we are supposed to wait until this audio finishes
-				if (m_bWait) {
+				if (_bWait) {
 					// Show busy cursor
 					CBagMasterWin::setActiveCursor(6);
 
 					EventLoop limiter(EventLoop::FORCE_REPAINT);
-					while (m_pSound->isPlaying()) {
+					while (_pSound->isPlaying()) {
 						CBofSound::audioTask();
 
 						if (limiter.frame()) {
-							m_pSound->stop();
+							_pSound->stop();
 							break;
 						}
 					}
 				}
 
-				if (m_wFlags & SOUND_MIDI)
-					m_pMidiSound = m_pSound;
+				if (_wFlags & SOUND_MIDI)
+					_pMidiSound = _pSound;
 			}
 		} else {
 
-			if (m_pSound) {
-				m_pSound->stop();
-				if (m_wFlags & SOUND_MIDI)
-					m_pMidiSound = nullptr;
+			if (_pSound) {
+				_pSound->stop();
+				if (_wFlags & SOUND_MIDI)
+					_pMidiSound = nullptr;
 			}
 		}
 	}
 }
 
-void CBagSoundObject::SetNumOfLoops(int n) {
-	m_nLoops = n; // Only have ability to set at creation of BofSound
+void CBagSoundObject::setNumOfLoops(int n) {
+	_nLoops = n; // Only have ability to set at creation of BofSound
 }
 
 int CBagSoundObject::getProperty(const CBofString &sProp) {
@@ -407,7 +407,7 @@ int CBagSoundObject::getProperty(const CBofString &sProp) {
 	}
 
 	if (!sProp.find("LOOP")) {
-		return m_nLoops;
+		return _nLoops;
 	}
 
 	return CBagObject::getProperty(sProp);
@@ -420,21 +420,21 @@ void CBagSoundObject::setProperty(const CBofString &sProp, int nVal) {
 	} else if (!sProp.find("PLAYING")) {
 
 		if (nVal == 1)
-			SetPlaying();
+			setPlaying();
 		else
-			SetPlaying(false);
+			setPlaying(false);
 
 	} else if (!sProp.find("LOOP")) {
-		SetNumOfLoops(nVal);
+		setNumOfLoops(nVal);
 	} else {
 		CBagObject::setProperty(sProp, nVal);
 	}
 }
 
-void CBagSoundObject::SetSync(bool b) {
-	m_wFlags = SOUND_WAVE;
+void CBagSoundObject::setSync(bool b) {
+	_wFlags = SOUND_WAVE;
 	if (!b)
-		m_wFlags |= SOUND_ASYNCH;
+		_wFlags |= SOUND_ASYNCH;
 }
 
 } // namespace Bagel

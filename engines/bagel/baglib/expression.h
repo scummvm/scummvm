@@ -94,7 +94,7 @@ public:
 	CBagVar *getVariable(int itemPos);
 	OPERATION getOperation(int itemPos);
 
-	PARSE_CODES setInfo(CBagIfstream &istr) override;
+	ParseCodes setInfo(CBagIfstream &istr) override;
 	ErrorCode getOperatorFromStream(CBagIfstream &istr, OPERATION &oper);
 
 	CBagExpression *getPrevExpression() const {

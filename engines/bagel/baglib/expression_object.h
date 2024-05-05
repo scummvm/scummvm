@@ -41,7 +41,7 @@ public:
 	virtual ~CBagExpressionObject();
 
 	bool runObject() override;
-	PARSE_CODES setInfo(CBagIfstream &istr) override;
+	ParseCodes setInfo(CBagIfstream &istr) override;
 
 	bool isConditional() const {
 		return _conditionalFl;

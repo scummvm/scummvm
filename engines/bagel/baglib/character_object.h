@@ -108,7 +108,7 @@ public:
 	void setEndFrame(int n);
 	void setCurrentFrame(int n);
 
-	PARSE_CODES setInfo(CBagIfstream &istr) override;
+	ParseCodes setInfo(CBagIfstream &istr) override;
 
 	void setProperty(const CBofString &prop, int val) override;
 	int getProperty(const CBofString &prop) override;

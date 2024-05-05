@@ -47,7 +47,7 @@ public:
 	virtual ~CBagLinkObject();
 
 	// Return UPDATED_OBJECT if the Object had members that are properly initialized/de-initialized
-	PARSE_CODES setInfo(CBagIfstream &istr) override;
+	ParseCodes setInfo(CBagIfstream &istr) override;
 
 	bool runObject() override;
 

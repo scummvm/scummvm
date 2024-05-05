@@ -50,7 +50,7 @@ public:
 	int _changeRate;
 };
 
-enum PARSE_CODES { PARSING_DONE = 0, UPDATED_OBJECT, UNKNOWN_TOKEN };
+enum ParseCodes { PARSING_DONE = 0, UPDATED_OBJECT, UNKNOWN_TOKEN };
 
 class CBagParseObject {
 public:
@@ -91,7 +91,7 @@ public:
 		return _bAttached;
 	}
 
-	virtual PARSE_CODES setInfo(CBagIfstream &) {
+	virtual ParseCodes setInfo(CBagIfstream &) {
 		return PARSING_DONE;
 	}
 
