@@ -48,7 +48,7 @@ public:
 	bool isAttached() {
 		return m_xSprite != nullptr;
 	}
-	PARSE_CODES setInfo(CBagIfstream &istr);
+	ParseCodes setInfo(CBagIfstream &istr);
 
 	bool isInside(const CBofPoint &xPoint);
 

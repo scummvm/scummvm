@@ -392,7 +392,7 @@ bool CBagMovieObject::runObject() {
 	return rc;
 }
 
-PARSE_CODES CBagMovieObject::setInfo(CBagIfstream &istr) {
+ParseCodes CBagMovieObject::setInfo(CBagIfstream &istr) {
 	bool nObjectUpdated = false;
 	char szLocalStr[256];
 	CBofString sStr(szLocalStr, 256);
@@ -505,7 +505,7 @@ PARSE_CODES CBagMovieObject::setInfo(CBagIfstream &istr) {
 		//  No match return from funtion
 		//
 		default: {
-			PARSE_CODES rc = CBagObject::setInfo(istr);
+			ParseCodes rc = CBagObject::setInfo(istr);
 			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
 			}

@@ -757,7 +757,7 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 			pObj = OnNewDosObject(sWorkStr);
 		} else if (!sWorkStr.find("SND")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
-			pObj = OnNewSoundObject(sWorkStr);
+			pObj = OnnewSoundObject(sWorkStr);
 		} else if (!sWorkStr.find("BUT")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = onNewButtonObject(sWorkStr);
@@ -940,7 +940,7 @@ void CBagStorageDev::handleError(ErrorCode errCode) {
 }
 
 
-PARSE_CODES CBagStorageDev::setInfo(CBagIfstream &fpInput) {
+ParseCodes CBagStorageDev::setInfo(CBagIfstream &fpInput) {
 	char szStr[256];
 	szStr[0] = 0;
 	CBofString str(szStr, 256);
@@ -1036,7 +1036,7 @@ CBagObject *CBagStorageDev::OnNewTextObject(const CBofString &) {
 	return new CBagTextObject();
 }
 
-CBagObject *CBagStorageDev::OnNewSoundObject(const CBofString &) {
+CBagObject *CBagStorageDev::OnnewSoundObject(const CBofString &) {
 	return new CBagSoundObject();
 }
 

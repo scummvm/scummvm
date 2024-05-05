@@ -34,23 +34,23 @@ namespace Bagel {
  */
 class CBagSoundObject : public CBagObject {
 private:
-	static CBofSound *m_pMidiSound; // There is only one allowed at a time
-	CBofSound *m_pSound;
+	static CBofSound *_pMidiSound; // There is only one allowed at a time
+	CBofSound *_pSound;
 
-	uint16 m_wFlags;
-	int m_nLoops;
-	byte m_nVol;
+	uint16 _wFlags;
+	int _nLoops;
+	byte _nVol;
 
 protected:
-	byte m_bWait;
+	byte _bWait;
 
 public:
 	CBagSoundObject();
 	virtual ~CBagSoundObject();
 	static void initialize();
 
-	void KillSound();
-	ErrorCode NewSound(CBofWindow *pWin);
+	void killSound();
+	ErrorCode newSound(CBofWindow *pWin);
 
 	// Return true if the Object had members that are properly initialized/de-initialized
 	ErrorCode attach() {
@@ -58,49 +58,49 @@ public:
 	}
 	ErrorCode attach(CBofWindow *pWnd);
 	bool isAttached() {
-		return m_pSound != nullptr;
+		return _pSound != nullptr;
 	}
 	ErrorCode detach();
 
-	CBofSound *GetLastMidi() {
-		return m_pMidiSound;
+	CBofSound *getLastMidi() {
+		return _pMidiSound;
 	}
 
-	CBofSound *GetSound() {
-		return m_pSound;
+	CBofSound *getSound() {
+		return _pSound;
 	}
 
-	void SetWave() {
-		m_wFlags = SOUND_WAVE;
+	void setWave() {
+		_wFlags = SOUND_WAVE;
 	}
-	void SetMidi() {
-		m_wFlags = (SOUND_MIDI | SOUND_LOOP);
+	void setMidi() {
+		_wFlags = (SOUND_MIDI | SOUND_LOOP);
 	}
 
 	// Gives ability to sound over certain sounds
-	void SetSoundOver() {
-		m_wFlags |= SOUND_OVEROK;
+	void setSoundOver() {
+		_wFlags |= SOUND_OVEROK;
 	}
 
-	void SetSync(bool b = true);
-	void SetASync(bool b = true) {
-		SetSync(!b);
+	void setSync(bool b = true);
+	void setASync(bool b = true) {
+		setSync(!b);
 	}
-	bool IsSync() {
-		return m_wFlags & SOUND_ASYNCH;
+	bool isSync() {
+		return _wFlags & SOUND_ASYNCH;
 	}
 
-	void SetMix() {
-		m_wFlags = SOUND_MIX;
+	void setMix() {
+		_wFlags = SOUND_MIX;
 	}
-	void SetQueue(bool b = true);
+	void setQueue(bool b = true);
 
 	virtual bool runObject();
 
 	void setVolume(int nVol);
 	int getVolume();
 
-	void SetNumOfLoops(int n);
+	void setNumOfLoops(int n);
 
 	int getProperty(const CBofString &sProp);
 	void setProperty(const CBofString &sProp, int nVal);
@@ -109,13 +109,13 @@ public:
 	 * Takes in info and then removes the relative information and returns
 	 * the info without the relevant info.
 	 */
-	PARSE_CODES setInfo(CBagIfstream &istr);
+	ParseCodes setInfo(CBagIfstream &istr);
 
 	//  Added properties to sound object
 	bool isPlaying();
 	bool isQueued();
 
-	void SetPlaying(bool bVal = true);
+	void setPlaying(bool bVal = true);
 };
 
 } // namespace Bagel

@@ -172,7 +172,7 @@ CBagRPObject::~CBagRPObject() {
 	_pCurBarPage = nullptr;
 }
 
-PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
+ParseCodes CBagRPObject::setInfo(CBagIfstream &istr) {
 	bool nObjectUpdated = false;
 	char szLocalStr[256];
 	CBofString sStr(szLocalStr, 256);
@@ -372,7 +372,7 @@ PARSE_CODES CBagRPObject::setInfo(CBagIfstream &istr) {
 		break;
 
 		default: {
-			PARSE_CODES rc;
+			ParseCodes rc;
 			if ((rc = CBagObject::setInfo(istr)) == PARSING_DONE) {
 				return PARSING_DONE;
 			}

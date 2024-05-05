@@ -299,7 +299,7 @@ public:
 		return _pAssociateWnd;
 	}
 
-	virtual PARSE_CODES setInfo(CBagIfstream &fpInput); // This function call the pure virt set background
+	virtual ParseCodes setInfo(CBagIfstream &fpInput); // This function call the pure virt set background
 
 	virtual ErrorCode setBackground(CBofBitmap *pBmp) = 0; // This could be eliminated but is kept in to insure good class usage
 	virtual CBofBitmap *getBackground() = 0;                // Think about it, you can figure this out
@@ -342,7 +342,7 @@ public:
 	virtual CBagObject *OnNewRPObject(const CBofString &sInit);
 	virtual CBagObject *OnNewEDObject(const CBofString &sInit);
 	virtual CBagObject *OnNewDosObject(const CBofString &sInit);
-	virtual CBagObject *OnNewSoundObject(const CBofString &sInit);
+	virtual CBagObject *OnnewSoundObject(const CBofString &sInit);
 	virtual CBagObject *onNewButtonObject(const CBofString &sInit);
 	virtual CBagObject *OnNewCharacterObject(const CBofString &sInit);
 	virtual CBagObject *OnNewMovieObject(const CBofString &);

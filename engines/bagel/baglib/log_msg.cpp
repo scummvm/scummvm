@@ -426,7 +426,7 @@ void CBagLogMsg::setSize(const CBofSize &size) {
 	CBagTextObject::setSize(CBofSize(_sdevWidth, size.cy));
 }
 
-PARSE_CODES CBagLogMsg::setInfo(CBagIfstream &istr) {
+ParseCodes CBagLogMsg::setInfo(CBagIfstream &istr) {
 	bool nObjectUpdated = false;
 	char localBuffer[256];
 	CBofString string1(localBuffer, 256);
@@ -486,7 +486,7 @@ PARSE_CODES CBagLogMsg::setInfo(CBagIfstream &istr) {
 		}
 
 		default: {
-			PARSE_CODES rc = CBagObject::setInfo(istr);
+			ParseCodes rc = CBagObject::setInfo(istr);
 			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
 			}
@@ -562,7 +562,7 @@ CBagLogSuspect::CBagLogSuspect(int sdevWidth) : CBagTextObject() {
 	CBagObject::setState(0);
 }
 
-PARSE_CODES CBagLogSuspect::setInfo(CBagIfstream &istr) {
+ParseCodes CBagLogSuspect::setInfo(CBagIfstream &istr) {
 	bool objectUpdatedFl = false;
 	char localBuffer[256];
 	CBofString string1(localBuffer, 256);
@@ -634,7 +634,7 @@ PARSE_CODES CBagLogSuspect::setInfo(CBagIfstream &istr) {
 		}
 
 		default: {
-			PARSE_CODES rc = CBagObject::setInfo(istr);
+			ParseCodes rc = CBagObject::setInfo(istr);
 			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
 			}
@@ -779,7 +779,7 @@ CBagEnergyDetectorObject::CBagEnergyDetectorObject() {
 CBagEnergyDetectorObject::~CBagEnergyDetectorObject() {
 }
 
-PARSE_CODES CBagEnergyDetectorObject::setInfo(CBagIfstream &istr) {
+ParseCodes CBagEnergyDetectorObject::setInfo(CBagIfstream &istr) {
 	bool objectUpdatedFl = false;
 	char localBuffer[256];
 	CBofString string1(localBuffer, 256);
@@ -871,7 +871,7 @@ PARSE_CODES CBagEnergyDetectorObject::setInfo(CBagIfstream &istr) {
 		}
 
 		default: {
-			PARSE_CODES rc = CBagObject::setInfo(istr);
+			ParseCodes rc = CBagObject::setInfo(istr);
 			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
 			}
@@ -997,7 +997,7 @@ ErrorCode CBagLogClue::attach() {
 	return ec;
 }
 
-PARSE_CODES CBagLogClue::setInfo(CBagIfstream &istr) {
+ParseCodes CBagLogClue::setInfo(CBagIfstream &istr) {
 	bool nObjectUpdated = false;
 
 	char szLocalBuff[256];
@@ -1043,7 +1043,7 @@ PARSE_CODES CBagLogClue::setInfo(CBagIfstream &istr) {
 		}
 
 		default: {
-			PARSE_CODES rc = CBagObject::setInfo(istr);
+			ParseCodes rc = CBagObject::setInfo(istr);
 			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
 			}

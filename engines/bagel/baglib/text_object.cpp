@@ -244,7 +244,7 @@ void CBagTextObject::setText(const CBofString &s) {
 //   Takes in info and then removes the relative information and returns the info
 //   without the relevant info.
 //
-PARSE_CODES CBagTextObject::setInfo(CBagIfstream &istr) {
+ParseCodes CBagTextObject::setInfo(CBagIfstream &istr) {
 	bool nObjectUpdated = false;
 
 	while (!istr.eof()) {
@@ -384,7 +384,7 @@ PARSE_CODES CBagTextObject::setInfo(CBagIfstream &istr) {
 		// No match return from funtion
 		//
 		default: {
-			PARSE_CODES rc;
+			ParseCodes rc;
 			if ((rc = CBagObject::setInfo(istr)) == PARSING_DONE) {
 				return PARSING_DONE;
 			}

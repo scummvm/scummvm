@@ -558,7 +558,7 @@ bool CBagExpression::onOr(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar
 }
 
 
-PARSE_CODES CBagExpression::setInfo(CBagIfstream &istr) {
+ParseCodes CBagExpression::setInfo(CBagIfstream &istr) {
 	char buffer[256];
 	buffer[0] = 0;
 	CBofString tmpStr(buffer, 256);
@@ -568,7 +568,7 @@ PARSE_CODES CBagExpression::setInfo(CBagIfstream &istr) {
 	// CHECKME: Should we put this string in a debugC at the end of the function? (Currently unused)
 	CBofString errStr(errBuffer, 256);
 
-	PARSE_CODES rc = PARSING_DONE;
+	ParseCodes rc = PARSING_DONE;
 	bool doneFl = false;
 
 	while (!doneFl && rc == PARSING_DONE) {

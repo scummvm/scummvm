@@ -100,7 +100,7 @@ public:
 	CBagRPObject();
 	virtual ~CBagRPObject();
 
-	PARSE_CODES setInfo(CBagIfstream &istr);
+	ParseCodes setInfo(CBagIfstream &istr);
 
 	ErrorCode attach();
 	ErrorCode detach();

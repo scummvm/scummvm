@@ -81,7 +81,7 @@ public:
 	 * Takes in info and then removes the relative information and returns
 	 * the info without the relevant info.
 	 */
-	PARSE_CODES setInfo(CBagIfstream &istr) override;
+	ParseCodes setInfo(CBagIfstream &istr) override;
 	bool runObject() override;
 
 	// Callback function functionality - probably can be phased out
