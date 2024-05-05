@@ -31,7 +31,19 @@ const ADGameDescription gameDescriptions[] = {
 	{
 		"spacebar",
 		nullptr,
-		AD_ENTRY1s("wld/bar.wld", "34b52995cb7e6c68bac22c14cb6813da", 812794),
+		AD_ENTRY2s("wld/bar.wld", "34b52995cb7e6c68bac22c14cb6813da", 812794,
+				   "zzazzl/pda/zzoom.bmp", "b64f8b34f5107d8812e1372993d43adb", 1678),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+
+	{
+		"spacebar",
+		"Not Installed",
+		AD_ENTRY2s("spacebar/wld/bar.wld", "34b52995cb7e6c68bac22c14cb6813da", 812794,
+				   "zzazzl/pda/zzoom.bmp", "b64f8b34f5107d8812e1372993d43adb", 1678),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
@@ -41,7 +53,8 @@ const ADGameDescription gameDescriptions[] = {
 	{
 		"spacebar",
 		"Small Demo",
-		AD_ENTRY1s("wld/bar.wld", "47b51863dfaba358843c152a78da664e", 13187),
+		AD_ENTRY2s("wld/bar.wld", "47b51863dfaba358843c152a78da664e", 13187,
+				   "bar/pda/bzoom.bmp", "c05189dee78365eca067f58d444e8488", 4114),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DEMO,
@@ -51,7 +64,8 @@ const ADGameDescription gameDescriptions[] = {
 	{
 		"spacebar",
 		"Medium Demo",
-		AD_ENTRY1s("wld/bar.wld", "4d6a0926484e1660035af0ed4004a47f", 27495),
+		AD_ENTRY2s("wld/bar.wld", "4d6a0926484e1660035af0ed4004a47f", 27495,
+				   "zzazzl/pda/zzoom.bmp", "b64f8b34f5107d8812e1372993d43adb", 1678),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DEMO,
