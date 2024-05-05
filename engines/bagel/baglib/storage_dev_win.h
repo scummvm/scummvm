@@ -507,18 +507,18 @@ public:
 		return getWindowRect();
 	}
 
-	virtual ErrorCode setBackground(CBofBitmap *pBmp) {
+	virtual ErrorCode setBackground(CBofBitmap *pBmp) override {
 		if (pBmp)
 			return setBackdrop(pBmp);
 
 		killBackdrop();
 		return ERR_NONE;
 	}
-	virtual CBofBitmap *getBackground() {
+	virtual CBofBitmap *getBackground() override {
 		return getBackdrop();
 	}
 
-	virtual ErrorCode loadFile(const CBofString &sWldFile);
+	virtual ErrorCode loadFile(const CBofString &sWldFile) override;
 
 	ErrorCode create(const char *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 

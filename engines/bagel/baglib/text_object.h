@@ -58,7 +58,7 @@ public:
 	CBagTextObject();
 	virtual ~CBagTextObject();
 
-	CBofRect getRect();
+	CBofRect getRect() override;
 
 	CBofSize getSize() const {
 		return CBofSize(_nDX, _nDY);

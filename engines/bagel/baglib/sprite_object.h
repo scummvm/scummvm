@@ -73,7 +73,7 @@ public:
 
 	void setAnimated(bool b = true);
 	void setCels(int nCels);
-	virtual void setPosition(const CBofPoint &pos);
+	virtual void setPosition(const CBofPoint &pos) override;
 
 	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1) override;
 
