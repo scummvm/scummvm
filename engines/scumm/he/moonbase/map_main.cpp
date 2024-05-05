@@ -169,7 +169,7 @@ bool Map::generateMapWithInfo(Common::String encodedMap, uint8 generator, int se
 	_encodedMap = encodedMap;
 
 	// Decode base64 encoded map file
-	debug(1, "Map: Generating map with base64: encodedMap: %s, generator = %d, seed = %d, mapSize = %d, tileset = %d , energy = %d, terrain = %d, water = %d.", encodedMap.c_str(), generator, getSeed(), mapSize, tileset, energy, terrain, water);
+	debug(2, "Map: Generating map with base64: encodedMap: %s, generator = %d, seed = %d, mapSize = %d, tileset = %d , energy = %d, terrain = %d, water = %d.", encodedMap.c_str(), generator, getSeed(), mapSize, tileset, energy, terrain, water);
 	_generatedMap = new MapFile();
 	bool success = Common::b64DecodeData(encodedMap, _generatedMap);
 	if (!success) {
