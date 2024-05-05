@@ -25,6 +25,7 @@
 
 #include "common/stream.h"
 #include "common/array.h"
+#include "common/serializer.h"
 
 #include "dgds/dialog.h"
 #include "dgds/dgds_rect.h"
@@ -114,7 +115,7 @@ struct SceneOp {
 struct GameItem : public HotArea {
 	Common::Array<struct SceneOp> opList4;
 	Common::Array<struct SceneOp> opList5;
-	uint16 altCursor;
+	uint16 _altCursor;
 	uint16 _iconNum;
 	uint16 _inSceneNum;
 	uint16 _flags;
@@ -186,6 +187,7 @@ public:
 	void mouseClicked(const Common::Point pt);
 
 	bool runOps(const Common::Array<SceneOp> &ops);
+	virtual Common::Error syncState(Common::Serializer &s) = 0;
 
 protected:
 	bool readConditionList(Common::SeekableReadStream *s, Common::Array<SceneConditions> &list) const;
@@ -250,6 +252,8 @@ public:
 	const Common::Array<struct ObjectInteraction> &getObjInteractions1() { return _objInteractions1; }
 	const Common::Array<struct ObjectInteraction> &getObjInteractions2() { return _objInteractions2; }
 
+	Common::Error syncState(Common::Serializer &s) override;
+
 private:
 	//byte _unk[32];
 	Common::String _iconFile;
@@ -302,6 +306,9 @@ public:
 	const Common::Array<struct ObjectInteraction> &getObjInteractions1() { return _objInteractions1; }
 	const Common::Array<struct ObjectInteraction> &getObjInteractions2() { return _objInteractions2; }
 
+	bool hasVisibleDialog();
+	Common::Error syncState(Common::Serializer &s) override;
+
 private:
 	HotArea *findAreaUnderMouse(const Common::Point &pt);
 	void enableTrigger(uint16 num) override;
@@ -325,6 +332,7 @@ private:
 
 	GameItem *_dragItem;
 	bool _shouldClearDlg;
+	bool _ignoreMouseUp;
 
 	static bool _dlgWithFlagLo8IsClosing;
 	static DialogFlags _sceneDialogFlags;

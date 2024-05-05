@@ -561,11 +561,42 @@ Common::String Dialog::dump(const Common::String &indent) const {
 	return str;
 }
 
+Common::Error Dialog::syncState(Common::Serializer &s) {
+	s.syncAsUint32LE(_flags);
+	bool hasState = _state.get() != nullptr;
+	s.syncAsByte(hasState);
+	if (hasState) {
+		if (!_state)
+			_state.reset(new DialogState());
+		_state->syncState(s);
+	} else {
+		_state.reset();
+	}
+	return Common::kNoError;
+}
+
 Common::String DialogState::dump(const Common::String &indent) const {
 	return Common::String::format("%sDialogState<hide %d loc %s lastmouse %d %d charsz %d %d mousestr %d selaction %p>",
 			indent.c_str(), _hideTime, _loc.dump("").c_str(), _lastMouseX, _lastMouseY, _charWidth,
 			_charHeight, _strMouseLoc, (void *)_selectedAction);
 }
+
+Common::Error DialogState::syncState(Common::Serializer &s) {
+	s.syncAsUint32LE(_hideTime);
+	s.syncAsSint16LE(_lastMouseX);
+	s.syncAsSint16LE(_lastMouseY);
+	s.syncAsUint16LE(_charWidth);
+	s.syncAsUint16LE(_charHeight);
+	s.syncAsUint32LE(_strMouseLoc);
+
+	s.syncAsUint16LE(_loc.x);
+	s.syncAsUint16LE(_loc.y);
+	s.syncAsUint16LE(_loc.width);
+	s.syncAsUint16LE(_loc.height);
+
+	return Common::kNoError;
+}
+
 
 Common::String DialogAction::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format("%sDialogueAction<%d span: %d-%d", indent.c_str(), val, strStart, strEnd);

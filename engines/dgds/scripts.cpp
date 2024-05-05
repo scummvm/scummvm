@@ -43,6 +43,107 @@
 
 namespace Dgds {
 
+Common::Error TTMEnviro::syncState(Common::Serializer &s) {
+	DgdsEngine *engine = dynamic_cast<DgdsEngine *>(g_engine);
+	for (auto &shape : _scriptShapes) {
+		bool hasShape = shape.get() != nullptr;
+		s.syncAsByte(hasShape);
+		if (hasShape) {
+			Common::String name;
+			if (s.isLoading()) {
+				s.syncString(name);
+				shape.reset(new Image(engine->getResourceManager(), engine->getDecompressor()));
+				shape->loadBitmap(name);
+			} else {
+				name = shape->getFilename();
+				s.syncString(name);
+			}
+		}
+	}
+
+	uint16 ngetput = _getPutAreas.size();
+	s.syncAsUint16LE(ngetput);
+	_getPutAreas.resize(ngetput);
+	_getPutSurfaces.resize(ngetput);
+	for (uint i = 0; i < ngetput; i++) {
+		s.syncAsUint16LE(_getPutAreas[i].left);
+		s.syncAsUint16LE(_getPutAreas[i].top);
+		s.syncAsUint16LE(_getPutAreas[i].right);
+		s.syncAsUint16LE(_getPutAreas[i].bottom);
+		if (s.isLoading()) {
+			_getPutSurfaces[i].reset(new Graphics::ManagedSurface());
+		} else {
+			// TODO: Save the getput buffer contents here?
+		}
+	}
+	for (uint i = 0; i < ARRAYSIZE(_scriptPals); i++)
+		s.syncAsSint32LE(_scriptPals[i]);
+	for (uint i = 0; i < ARRAYSIZE(_strings); i++)
+		s.syncString(_strings[i]);
+
+	return Common::kNoError;
+}
+
+Common::Error TTMSeq::syncState(Common::Serializer &s) {
+	s.syncAsSint16LE(_gotoFrame);
+	s.syncAsSint16LE(_currentFrame);
+	s.syncAsSint16LE(_lastFrame);
+	s.syncAsByte(_selfLoop);
+	s.syncAsByte(_executed);
+	s.syncAsUint32LE(_timeNext);
+	s.syncAsUint32LE(_timeCut);
+
+	s.syncAsUint16LE(_drawWin.left);
+	s.syncAsUint16LE(_drawWin.top);
+	s.syncAsUint16LE(_drawWin.right);
+	s.syncAsUint16LE(_drawWin.bottom);
+
+	s.syncAsSint16LE(_currentFontId);
+	s.syncAsSint16LE(_currentPalId);
+	s.syncAsSint16LE(_currentSongId);
+	s.syncAsSint16LE(_currentBmpId);
+	s.syncAsSint16LE(_currentGetPutId);
+	s.syncAsSint16LE(_brushNum);
+	s.syncAsByte(_drawColFG);
+	s.syncAsByte(_drawColBG);
+	s.syncAsSint16LE(_runPlayed);
+	s.syncAsSint16LE(_runCount);
+	s.syncAsSint16LE(_timeInterval);
+	s.syncAsUint32LE(_runFlag);
+	s.syncAsSint16LE(_scriptFlag);
+
+	return Common::kNoError;
+}
+
+Common::Error ADSData::syncState(Common::Serializer &s) {
+	uint16 arrSize = ARRAYSIZE(_state);
+	s.syncAsUint16LE(arrSize);
+	if (arrSize != ARRAYSIZE(_state))
+		error("Expected fixed size state array");
+	for (uint i = 0; i < arrSize; i++)
+		s.syncAsSint16LE(_state[i]);
+
+	uint16 nenvs = _scriptEnvs.size();
+	s.syncAsUint16LE(nenvs);
+	// This should be the same on load as the data comes from the ADS/TTM files.
+	if (nenvs != _scriptEnvs.size())
+		error("Unexpected number of script envs (%d in save vs %d in ADS)", nenvs, _scriptEnvs.size());
+
+	for (auto &env : _scriptEnvs)
+		env.syncState(s);
+
+	uint16 nseqs = _ttmSeqs.size();
+	s.syncAsUint16LE(nseqs);
+	if (nseqs != _ttmSeqs.size())
+		error("Unexpected number of ttm seqeunces (%d in save vs %d in ADS)", nseqs, _ttmSeqs.size());
+
+	for (auto &seq : _ttmSeqs)
+		seq.syncState(s);
+
+	return Common::kNoError;
+}
+
+
 TTMInterpreter::TTMInterpreter(DgdsEngine *vm) : _vm(vm) {}
 
 bool TTMInterpreter::load(const Common::String &filename, TTMEnviro &scriptData) {
@@ -158,7 +259,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 	case 0x0020: // SAVE (free?) BACKGROUND
 		if (seq._executed) // this is a one-shot op
 			break;
-		_vm->getBackgroundBuffer().copyFrom(_vm->getForegroundBuffer());
+		_vm->getStoredAreaBuffer().fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		//_vm->getBackgroundBuffer().fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		break;
 	case 0x0070: // FREE PALETTE
 		if (seq._executed) // this is a one-shot op
@@ -1453,6 +1555,35 @@ int ADSInterpreter::numArgs(uint16 opcode) const {
 	default:
 		return 0;
 	}
+}
+
+Common::Error ADSInterpreter::syncState(Common::Serializer &s) {
+	uint32 numTexts = _adsTexts.size();
+	s.syncAsUint32LE(numTexts);
+
+	Common::Array<Common::String> scriptNames;
+
+	if (s.isLoading()) {
+		for (uint32 i = 0; i < numTexts; i++) {
+			Common::String txtName;
+			s.syncString(txtName);
+			load(txtName);
+			scriptNames.push_back(txtName);
+		}
+	} else {
+		for (const auto &node : _adsTexts) {
+			Common::String txtName = node._key;
+			s.syncString(txtName);
+			scriptNames.push_back(txtName);
+		}
+	}
+
+	// Text order should be the same
+	for (const Common::String &name : scriptNames) {
+		_adsTexts[name].syncState(s);
+	}
+
+	return Common::kNoError;
 }
 
 

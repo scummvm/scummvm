@@ -25,6 +25,7 @@
 #include "common/file.h"
 #include "common/rect.h"
 #include "common/system.h"
+#include "common/util.h"
 #include "graphics/cursorman.h"
 
 #include "graphics/surface.h"
@@ -158,7 +159,7 @@ Common::String GameItem::dump(const Common::String &indent) const {
 
 	Common::String str = Common::String::format(
 			"%sGameItem<\n%s\n%saltCursor %d icon %d sceneNum %d flags %d quality %d",
-			indent.c_str(), super.c_str(), indent.c_str(), altCursor,
+			indent.c_str(), super.c_str(), indent.c_str(), _altCursor,
 			_iconNum, _inSceneNum, _flags, _quality);
 	str += _dumpStructList(indent, "opList4", opList4);
 	str += _dumpStructList(indent, "opList5", opList5);
@@ -258,7 +259,7 @@ bool Scene::readGameItemList(Common::SeekableReadStream *s, Common::Array<GameIt
 		if (!isVersionUnder(" 1.211"))
 			dst._flags = s->readUint16LE() & 0xfffe;
 		if (!isVersionUnder(" 1.204")) {
-			dst.altCursor = s->readUint16LE();
+			dst._altCursor = s->readUint16LE();
 			readOpList(s, dst.opList4);
 			readOpList(s, dst.opList5);
 		}
@@ -639,7 +640,7 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 bool SDSScene::_dlgWithFlagLo8IsClosing = false;;
 DialogFlags SDSScene::_sceneDialogFlags = kDlgFlagNone;
 
-SDSScene::SDSScene() : _num(-1), _dragItem(nullptr), _shouldClearDlg(false) {
+SDSScene::SDSScene() : _num(-1), _dragItem(nullptr), _shouldClearDlg(false), _ignoreMouseUp(false) {
 }
 
 bool SDSScene::load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor) {
@@ -807,7 +808,7 @@ bool SDSScene::checkDialogActive() {
 		// Mark finished if we are manually clearing *or* the timer has expired.
 		bool finished = false;
 		if (dlg._state->_hideTime &&
-			((dlg._state->_hideTime < timeNow && clearDlgFlag) || timeNow > dlg._state->_hideTime)) {
+			((dlg._state->_hideTime < timeNow && clearDlgFlag) || timeNow >= dlg._state->_hideTime)) {
 			finished = true;
 		}
 
@@ -909,7 +910,7 @@ bool SDSScene::drawAndUpdateDialogs(Graphics::ManagedSurface *dst) {
 			dlg.draw(dst, kDlgDrawStageForeground);
 			if (dlg.hasFlag(kDlgFlagHi20)) {
 				// Reset the dialog time and selected action
-				int delay = -1;
+				int delay = 0xffff;
 				if (dlg._time)
 					delay = dlg._time;
 
@@ -977,6 +978,7 @@ void SDSScene::mouseLDown(const Common::Point &pt) {
 	Dialog *dlg = getVisibleDialog();
 	if (dlg) {
 		_shouldClearDlg = true;
+		_ignoreMouseUp = true;
 		return;
 	}
 
@@ -995,6 +997,11 @@ void SDSScene::mouseLDown(const Common::Point &pt) {
 }
 
 void SDSScene::mouseLUp(const Common::Point &pt) {
+	if (_ignoreMouseUp) {
+		_ignoreMouseUp = false;
+		return;
+	}
+
 	const HotArea *area = findAreaUnderMouse(pt);
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 
@@ -1063,6 +1070,10 @@ Dialog *SDSScene::getVisibleDialog() {
 	return nullptr;
 }
 
+bool SDSScene::hasVisibleDialog() {
+	return getVisibleDialog() != nullptr;
+}
+
 HotArea *SDSScene::findAreaUnderMouse(const Common::Point &pt) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 
@@ -1111,6 +1122,33 @@ void SDSScene::removeInvButtonFromHotAreaList() {
 		_hotAreaList.remove_at(0);
 }
 
+Common::Error SDSScene::syncState(Common::Serializer &s) {
+	// num should be synced as part of the engine -
+	// at this point we are already loaded.
+	assert(_num);
+
+	// The dialogs and triggers are stateful, everthing else is stateless.
+	uint16 ndlgs = _dialogs.size();
+	s.syncAsUint16LE(ndlgs);
+	if (ndlgs != _dialogs.size()) {
+		error("Dialog count in save doesn't match count in game (%d vs %d)",
+				ndlgs, _dialogs.size());
+	}
+	for (auto &dlg : _dialogs) {
+		dlg.syncState(s);
+	}
+
+	uint16 ntrig = _triggers.size();
+	s.syncAsUint16LE(ntrig);
+	if (ntrig != _triggers.size()) {
+		error("Trigger count in save doesn't match count in game (%d vs %d)",
+				ntrig, _triggers.size());
+	}
+	for (auto &trg : _triggers)
+		s.syncAsByte(trg._enabled);
+
+	return Common::kNoError;
+}
 
 GDSScene::GDSScene() {
 }
@@ -1276,6 +1314,13 @@ void GDSScene::drawItems(Graphics::ManagedSurface &surf) {
 		if (item._inSceneNum == currentScene && &item != engine->getScene()->getDragItem()) {
 			if (!(item._flags & 1)) {
 				// Dropped item.
+				// Update the rect for the icon - Note: original doesn't do this,
+				// but then the napent icon is offset??
+				Common::SharedPtr<Graphics::ManagedSurface> icon = icons->getSurface(item._iconNum);
+				if (icon) {
+					item.rect.width = MIN((int)icon->w, item.rect.width);
+					item.rect.height = MIN((int)icon->h, item.rect.height);
+				}
 				if (xoff + item.rect.width > maxx)
 					xoff = 20;
 				int yoff = SCREEN_HEIGHT - (item.rect.height + 2);
@@ -1297,6 +1342,42 @@ int GDSScene::countItemsInScene2() const {
 			result++;
 	}
 	return result;
+}
+
+Common::Error GDSScene::syncState(Common::Serializer &s) {
+	// Only items and globals are stateful - everything else is stateless.
+	// Game should already be loaded at this point so the lsits are already
+	// filled out.
+
+	assert(!_gameItems.empty());
+	assert(!_perSceneGlobals.empty());
+
+	// TODO: Maybe it would be nicer to save the item/global numbers
+	// with the values in case the order changed in some other version of the game data?  This assumes they will be
+	// the same order.
+
+	uint16 nitems = _gameItems.size();
+	s.syncAsUint16LE(nitems);
+	if (nitems != _gameItems.size()) {
+		error("Item count in save doesn't match count in game (%d vs %d)",
+				nitems, _gameItems.size());
+	}
+	for (auto &item : _gameItems) {
+		s.syncAsUint16LE(item._inSceneNum);
+		s.syncAsUint16LE(item._quality);
+	}
+
+	uint16 nglobals = _perSceneGlobals.size();
+	s.syncAsUint16LE(nglobals);
+	if (nglobals != _perSceneGlobals.size()) {
+		error("Scene global count in save doesn't match count in game (%d vs %d)",
+				nglobals, _perSceneGlobals.size());
+	}
+	for (auto &glob : _perSceneGlobals) {
+		s.syncAsUint16LE(glob._val);
+	}
+
+	return Common::kNoError;
 }
 
 } // End of namespace Dgds

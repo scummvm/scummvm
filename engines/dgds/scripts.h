@@ -48,6 +48,9 @@ public:
 	TTMEnviro() : _totalFrames(330), _enviro(0), ScriptParserData() {
 		ARRAYCLEAR(_scriptPals);
 	}
+
+	Common::Error syncState(Common::Serializer &s);
+
 	uint16 _enviro;
 	uint16 _totalFrames;
 	Common::Array<int> _frameOffsets;
@@ -76,6 +79,7 @@ struct TTMSeq {
 	}
 
 	void reset();
+	Common::Error syncState(Common::Serializer &s);
 
 	int16 _enviro;
 	int16 _seqNum;
@@ -106,9 +110,8 @@ struct TTMSeq {
 
 class ADSData : public ScriptParserData {
 public:
-	ADSData() : _initFlag(false), _maxSegments(0), _scriptDelay(-1),
-			_hitTTMOp0110(false), _hitBranchOp(false), _gotoTarget(-1),
-			_runningSegmentIdx(0) {
+	ADSData() : _maxSegments(0), _scriptDelay(-1), _hitTTMOp0110(false), _hitBranchOp(false),
+			_gotoTarget(-1), _runningSegmentIdx(0) {
 		for (int i = 0; i < ARRAYSIZE(_state); i++)
 			_state[i] = 8;
 
@@ -121,7 +124,6 @@ public:
 	Common::Array<Common::String> _scriptNames;
 	Common::Array<TTMEnviro> _scriptEnvs;
 	Common::Array<TTMSeq> _ttmSeqs;
-	bool _initFlag;
 	int _maxSegments;
 	// TODO: replace these with dynamic arrays - fixed arrays inherited from original.
 	int _state[80];
@@ -135,6 +137,8 @@ public:
 	bool _hitTTMOp0110;
 	bool _hitBranchOp;
 	int16 _runningSegmentIdx;
+
+	Common::Error syncState(Common::Serializer &s);
 };
 
 class TTMInterpreter {
@@ -170,6 +174,8 @@ public:
 	int16 getStateForSceneOp(uint16 segnum);
 	void setScriptDelay(int16 delay) { _adsData->_scriptDelay = delay; }
 
+	Common::Error syncState(Common::Serializer &s);
+
 protected:
 	bool handleOperation(uint16 code, Common::SeekableReadStream *scr);
 	void handleRandomOp(uint16 code, Common::SeekableReadStream *scr);
@@ -186,6 +192,7 @@ protected:
 	void findEndOrInitOp();
 	bool updateSeqTimeAndFrame(TTMSeq &seq);
 	int getArrIndexOfSegNum(uint16 segnum);
+
 	DgdsEngine *_vm;
 	TTMInterpreter *_ttmInterpreter;
 
