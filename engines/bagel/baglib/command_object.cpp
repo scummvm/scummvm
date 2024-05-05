@@ -225,19 +225,19 @@ bool CBagCommandObject::runObject() {
 
 		} else if (getFileName() == "RP_UPDATE_QUEUE") {
 			// Execute any waiting residue printing results.
-			CBagRPObject::UpdateRPQueue();
+			CBagRPObject::updateRPQueue();
 
 		} else if (getFileName() == "RP_RUN_QUEUE") {
 			// Execute any waiting residue printing results.
-			CBagRPObject::RunRPQueue();
+			CBagRPObject::runRPQueue();
 
 		} else if (getFileName() == "RP_DEACTIVATE_RESULTS") {
 			// Execute any waiting residue printing results.
-			CBagRPObject::DeactivateRPQueue();
+			CBagRPObject::deactivateRPQueue();
 
 		} else if (getFileName() == "RP_DEACTIVATE_REVIEW") {
 			// Execute any waiting residue printing results.
-			CBagRPObject::DeactivateRPReview();
+			CBagRPObject::deactivateRPReview();
 
 		} else if (getFileName() == "RP_DEACTIVATE_DOSSIER") {
 			// Execute any waiting residue printing results.
@@ -245,7 +245,7 @@ bool CBagCommandObject::runObject() {
 
 		} else if (getFileName() == "RP_ACTIVATE_REVIEW") {
 			// Execute any waiting residue printing results.
-			CBagRPObject::ActivateRPReview();
+			CBagRPObject::activateRPReview();
 
 		} else if (getFileName() == "SAVESTACK") {
 			CBagMasterWin *pWin = CBagel::getBagApp()->getMasterWnd();
