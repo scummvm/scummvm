@@ -30,6 +30,35 @@ namespace Common {
 
 static const String encodingTable = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
+bool b64Validate(String &string) {
+	bool paddingStarted = false;
+	// Base64 encoded strings uses 4 characters to encode 3 bytes.
+	// and thus, a fully encoded string are always divisable by 4.
+	// A padding character (=) may be used to ensure divisibility.
+	if ((strlen(string.c_str()) % 4) > 0)
+		return false;
+
+	// It must also use characters defined in the encoding table,
+	for (char c : string) {
+		if (!encodingTable.contains(c)) {
+			// or the padding character (=).
+			if (c != '=')
+				return false;
+		}
+
+		if (paddingStarted && c != '=') {
+			// Excess data after padding are not allowed.
+			return false;
+		}
+
+		if (c == '=' && !paddingStarted) {
+			paddingStarted = true;
+		}
+	}
+
+	return true;
+}
+
 String b64EncodeString(String &string) {
 	String out;
 	int32 val = 0, valb = -6;
@@ -94,7 +123,9 @@ String b64DecodeString(String &string) {
 	String out;
 	Common::Array<int> T(256, -1);
 
-	// TODO: Verify if its a proper Base64 encoded string.
+	if (!b64Validate(string))
+		// Return empty string.
+		return out;
 
 	for (int i = 0; i < 64; i++) {
 		T[encodingTable[i]] = i;
@@ -119,7 +150,11 @@ MemoryReadStream *b64DecodeStream(String &string, uint32 outputLength) {
 	char *out = (char *)malloc(outputLength);
 	Common::Array<int> T(256, -1);
 
-	// TODO: Verify if its a proper Base64 encoded string.
+	if (!b64Validate(string)) {
+		// Return nothing.
+		free(out);
+		return nullptr;
+	}
 
 	for (int i = 0; i < 64; i++) {
 		T[encodingTable[i]] = i;
@@ -144,7 +179,8 @@ bool b64DecodeData(String &string, void *dataPtr) {
 	uint8 *p = (uint8 *)dataPtr;
 	Common::Array<int> T(256, -1);
 
-	// TODO: Verify if its a proper Base64 encoded string.
+	if (!b64Validate(string))
+		return false;
 
 	for (int i = 0; i < 64; i++) {
 		T[encodingTable[i]] = i;
