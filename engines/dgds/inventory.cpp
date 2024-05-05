@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/util.h"
 #include "graphics/managed_surface.h"
 #include "dgds/inventory.h"
 #include "dgds/dgds.h"
@@ -171,7 +172,15 @@ void Inventory::drawItems(Graphics::ManagedSurface &surf) {
 			surf.fillRect(highlightRect, 4);
 		}
 
-		// draw offset for the image
+		// Update the icon bounds - Note: original doesn't do this here, but if we don't then
+		// the Napent in Dragon is weirdly offset in y because its rect has a large height?
+		Common::SharedPtr<Graphics::ManagedSurface> icon = icons->getSurface(item._iconNum);
+		if (icon) {
+			item.rect.width = MIN((int)icon->w, item.rect.width);
+			item.rect.height = MIN((int)icon->h, item.rect.height);
+		}
+
+		// calculate draw offset for the image
 		int drawX = imgAreaX + x + (xstep - item.rect.width) / 2;
 		int drawY = imgAreaY + y +  (ystep - item.rect.height) / 2;
 
@@ -295,6 +304,15 @@ void Inventory::mouseRUp(const Common::Point &pt) {
 	if (underMouse) {
 		engine->getScene()->runOps(underMouse->onRClickOps);
 	}
+}
+
+Common::Error Inventory::syncState(Common::Serializer &s) {
+	s.syncAsUint16LE(_openedFromSceneNum);
+	s.syncAsByte(_isOpen);
+	s.syncAsSint16LE(_highlightItemNo);
+	s.syncAsSint16LE(_itemOffset);
+
+	return Common::kNoError;
 }
 
 

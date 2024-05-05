@@ -24,6 +24,7 @@
 #define DGDS_IMAGE_H
 
 #include <common/ptr.h>
+#include <graphics/palette.h>
 
 namespace Common {
 class SeekableReadStream;
@@ -40,10 +41,13 @@ class Decompressor;
 class DgdsChunkReader;
 class ResourceManager;
 
-class Palette {
+class DgdsPal : public Graphics::Palette {
 public:
-	Palette();
-	byte _palette[256 * 3];
+	DgdsPal();
+	const Common::String &getName() { return _name; }
+	void setName(const Common::String &name) { _name = name; }
+private:
+	Common::String _name;
 };
 
 class GamePalettes {
@@ -58,14 +62,15 @@ public:
 	// Add coloff to the result to move toward white.
 	void setFade(int col, int ncols, int coloff, int fade);
 
+	Common::Error syncState(Common::Serializer &s);
+
 private:
 	ResourceManager *_resourceMan;
 	Decompressor *_decompressor;
 
-	Palette _curPal;
+	DgdsPal _curPal;
 	uint _curPalNum;
-	Common::Array<Palette> _palettes;
-	Palette _blacks;
+	Common::Array<DgdsPal> _palettes;
 };
 
 class Image {

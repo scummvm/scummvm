@@ -164,4 +164,27 @@ void Clock::update(bool gameRunning) {
 		addGameTime(mins_to_add);
 }
 
+Common::Error Clock::syncState(Common::Serializer &s) {
+	s.syncAsUint32LE(_lastPlayTime);
+	s.syncAsUint32LE(_millis);
+
+	s.syncAsSint16LE(_gameMinsAdded);
+	s.syncAsSint16LE(_gameTicksUp);
+	s.syncAsSint16LE(_gameTicksDown);
+	s.syncAsSint16LE(_days);
+	s.syncAsSint16LE(_days2);
+	s.syncAsSint16LE(_hours);
+	s.syncAsSint16LE(_mins);
+
+	s.syncAsSint16LE(_drawPos.left);
+	s.syncAsSint16LE(_drawPos.top);
+	s.syncAsSint16LE(_drawPos.right);
+	s.syncAsSint16LE(_drawPos.bottom);
+
+	s.syncAsByte(_visibleScript);
+	s.syncAsByte(_visibleUser);
+
+	return Common::kNoError;
+}
+
 } // end namespace Dgds

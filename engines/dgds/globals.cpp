@@ -114,10 +114,10 @@ private:
 ////////////////////////////////
 
 DragonGlobals::DragonGlobals(Clock &_clock) : Globals(),
-_gameCounterTicksUp(0), _gameCounterTicksDown(0), _lastOpcode1SceneChageNum(0),
-_sceneOp12SceneNum(0), _currentSelectedItem(0), _gameMinsToAdd_1(0), _gameMinsToAdd_2(0),
-_gameMinsToAdd_3(0), _gameMinsToAdd_4(0), _gameMinsToAdd_5(0), _gameGlobal0x57(0),
-_sceneOpcode15FromScene(0), _sceneOpcode15ToScene(0), _sceneOpcode100Var(0), _arcadeModeFlag_3cdc(0),
+_lastOpcode1SceneChageNum(0), _sceneOp12SceneNum(0), _currentSelectedItem(0),
+_gameMinsToAdd_1(0), _gameMinsToAdd_2(0), _gameMinsToAdd_3(0), _gameMinsToAdd_4(0),
+_gameMinsToAdd_5(0), _gameGlobal0x57(0), _sceneOpcode15FromScene(0),
+_sceneOpcode15ToScene(0), _sceneOpcode100Var(0), _arcadeModeFlag_3cdc(0),
 _opcode106EndMinutes(0) {
 	_globals.push_back(_clock.getGameMinsAddedGlobal(1));
 	_globals.push_back(_clock.getGameTicksUpGlobal(0x64));
@@ -147,5 +147,28 @@ _opcode106EndMinutes(0) {
 	_globals.push_back(new DetailLevelROGlobal(0x27));
 }
 
+Common::Error DragonGlobals::syncState(Common::Serializer &s) {
+	s.syncAsSint16LE(_lastOpcode1SceneChageNum);
+	s.syncAsSint16LE(_sceneOp12SceneNum);
+	s.syncAsSint16LE(_currentSelectedItem);
+	s.syncAsSint16LE(_gameMinsToAdd_1);
+	s.syncAsSint16LE(_gameMinsToAdd_2);
+	s.syncAsSint16LE(_gameMinsToAdd_3);
+	s.syncAsSint16LE(_gameMinsToAdd_4);
+	s.syncAsSint16LE(_gameMinsToAdd_5);
+	s.syncAsSint16LE(_gameGlobal0x57);
+	s.syncAsSint16LE(_sceneOpcode15FromScene);
+	s.syncAsSint16LE(_sceneOpcode15ToScene);
+	s.syncAsSint16LE(_sceneOpcode100Var);
+	s.syncAsSint16LE(_arcadeModeFlag_3cdc);
+	s.syncAsSint16LE(_opcode106EndMinutes);
+
+	s.syncAsSint16LE(_table._row);
+	s.syncAsSint16LE(_table._col);
+	s.syncAsSint16LE(_table._divBy4);
+	s.syncAsSint16LE(_table._output);
+
+	return Common::kNoError;
+}
 
 } // end namespace Dgds

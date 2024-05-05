@@ -40,8 +40,7 @@
 
 namespace Dgds {
 
-Palette::Palette() {
-	memset(_palette, 0, 256 * 3);
+DgdsPal::DgdsPal() : Palette(256) {
 }
 
 GamePalettes::GamePalettes(ResourceManager *resourceMan, Decompressor *decompressor) : _curPalNum(0),
@@ -58,19 +57,18 @@ int GamePalettes::loadPalette(Common::String filename) {
 
 	_palettes.resize(_palettes.size() + 1);
 
-	Palette &pal = _palettes.back();
+	DgdsPal &pal = _palettes.back();
 
 	DgdsChunkReader chunk(fileStream);
 	while (chunk.readNextHeader(EX_PAL, filename)) {
 		chunk.readContent(_decompressor);
 		Common::SeekableReadStream *chunkStream = chunk.getContent();
 		if (chunk.isSection(ID_VGA)) {
-			chunkStream->read(pal._palette, 256 * 3);
-
-			for (uint k = 0; k < 256 * 3; k += 3) {
-				pal._palette[k + 0] <<= 2;
-				pal._palette[k + 1] <<= 2;
-				pal._palette[k + 2] <<= 2;
+			for (uint k = 0; k < 256; k++) {
+				byte r = chunkStream->readByte() << 2;
+				byte g = chunkStream->readByte() << 2;
+				byte b = chunkStream->readByte() << 2;
+				pal.set(k, r, g, b);
 			}
 		}
 	}
@@ -91,12 +89,12 @@ void GamePalettes::setPalette() {
 		error("request to set pal %d but only have %d pals", _curPalNum, _palettes.size());
 
 	_curPal = _palettes[_curPalNum];
-	g_system->getPaletteManager()->setPalette(_curPal._palette, 0, 256);
+	g_system->getPaletteManager()->setPalette(_curPal.data(), 0, 256);
 }
 
 void GamePalettes::clearPalette() {
-	_curPal = _blacks;
-	g_system->getPaletteManager()->setPalette(_curPal._palette, 0, 256);
+	_curPal = DgdsPal();
+	g_system->getPaletteManager()->setPalette(_curPal.data(), 0, 256);
 }
 
 void GamePalettes::setFade(int col, int ncols, int targetcol, int fade) {
@@ -106,22 +104,46 @@ void GamePalettes::setFade(int col, int ncols, int targetcol, int fade) {
 	if (col + ncols > 256)
 		error("GamePalettes::setFade: request to fade past the end of the palette");
 
-	Palette &pal = _palettes[_curPalNum];
+	const DgdsPal &pal = _palettes[_curPalNum];
 
-	byte r2 = pal._palette[targetcol * 3 + 0];
-	byte g2 = pal._palette[targetcol * 3 + 1];
-	byte b2 = pal._palette[targetcol * 3 + 2];
+	byte r2, b2, g2;
+	pal.get(targetcol, r2, b2, g2);
 
 	for (int c = col; c < col + ncols; c++) {
-		byte r = pal._palette[c * 3 + 0];
-		byte g = pal._palette[c * 3 + 1];
-		byte b = pal._palette[c * 3 + 2];
+		byte r, g, b;
+		pal.get(c, r, g, b);
 
-		_curPal._palette[c * 3 + 0] = r2 * fade / 255 + r * (255 - fade) / 255;
-		_curPal._palette[c * 3 + 1] = g2 * fade / 255 + g * (255 - fade) / 255;
-		_curPal._palette[c * 3 + 2] = b2 * fade / 255 + b * (255 - fade) / 255;
+		_curPal.set(c,
+			r2 * fade / 255 + r * (255 - fade) / 255,
+			g2 * fade / 255 + g * (255 - fade) / 255,
+			b2 * fade / 255 + b * (255 - fade) / 255);
 	}
-	g_system->getPaletteManager()->setPalette(_curPal._palette, 0, 256);
+	g_system->getPaletteManager()->setPalette(_curPal.data(), 0, 256);
+}
+
+Common::Error GamePalettes::syncState(Common::Serializer &s) {
+	s.syncAsUint16LE(_curPalNum);
+	uint npals = _palettes.size();
+	s.syncAsUint16LE(npals);
+
+	if (s.isLoading()) {
+		for (uint i = 0; i < npals; i++) {
+			Common::String name;
+			s.syncString(name);
+			loadPalette(name);
+		}
+		if (_curPalNum >= _palettes.size())
+			error("Current palette number %d greater than available palettes", _curPalNum);
+
+		setPalette();
+	} else {
+		for (uint i = 0; i < npals; i++) {
+			Common::String name = _palettes[i].getName();
+			s.syncString(name);
+		}
+	}
+
+	return Common::kNoError;
 }
 
 Image::Image(ResourceManager *resourceMan, Decompressor *decompressor) : _resourceMan(resourceMan), _decompressor(decompressor) {

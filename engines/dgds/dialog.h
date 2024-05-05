@@ -25,6 +25,7 @@
 #include "common/stream.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/serializer.h"
 
 #include "dgds/dgds_rect.h"
 
@@ -93,6 +94,7 @@ public:
 	struct DialogAction *_selectedAction;
 
 	Common::String dump(const Common::String &indent) const;
+	Common::Error syncState(Common::Serializer &s);
 };
 
 class Dialog {
@@ -124,6 +126,8 @@ public:
 	struct DialogAction *pickAction(bool isClosing);
 	Common::String dump(const Common::String &indent) const;
 	void clear();
+
+	Common::Error syncState(Common::Serializer &s);
 
 private:
 	void drawType1(Graphics::ManagedSurface *dst, DialogDrawStage stage);

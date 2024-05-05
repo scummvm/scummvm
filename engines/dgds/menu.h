@@ -36,6 +36,7 @@
 #include "gui/debugger.h"
 
 #include "dgds/resource.h"
+#include "dgds/request.h"
 
 namespace Dgds {
 
@@ -51,15 +52,20 @@ public:
 	virtual ~Menu();
 
 	void setScreenBuffer();
-	void drawMenu(REQFileData &vcrRequestData, int16 menu = 0);
-	void handleMenu(REQFileData &vcrRequestData, Common::Point &mouse);
+	void drawMenu(int16 menu = 0);
+	void handleMenu(Common::Point &mouse);
 	bool menuShown() const { return _curMenu >= 0; }
 	void hideMenu() { _curMenu = -1; }
 
+	void setRequestData(const REQFileData &data) {
+		_reqData = data;
+	}
+
 private:
-	int16 getClickedMenuItem(REQFileData &vcrRequestData, Common::Point mouseClick);
-	void drawMenuText(REQFileData &vcrRequestData, Graphics::Surface *dst);
-	void toggleGadget(REQFileData &vcrRequestData, int16 gadgetId, bool enable);
+	int16 getClickedMenuItem(Common::Point mouseClick);
+	void drawMenuText(Graphics::Surface *dst);
+	void toggleGadget(int16 gadgetId, bool enable);
+	REQFileData _reqData;
 };
 
 } // End of namespace Dgds

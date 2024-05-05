@@ -146,7 +146,8 @@ bool DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
 		return false;
 	}
 
-	_scene->runLeaveSceneOps();
+	if (runChangeOps)
+		_scene->runLeaveSceneOps();
 
 	// store the last scene num
 	_gameGlobals->setGlobal(0x61, _scene->getNum());
@@ -154,7 +155,8 @@ bool DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
 	_scene->unload();
 	_soundPlayer->unloadMusic();
 
-	_gdsScene->runChangeSceneOps();
+	if (runChangeOps)
+		_gdsScene->runChangeSceneOps();
 
 	setMouseCursor(0);
 
@@ -230,7 +232,7 @@ Graphics::ManagedSurface &DgdsEngine::getForegroundBuffer() {
 	return _foregroundBuffer;
 }
 
-Common::Error DgdsEngine::run() {
+void DgdsEngine::init() {
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	_console = new Console(this);
@@ -253,10 +255,9 @@ Common::Error DgdsEngine::run() {
 	_compositionBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 
 	g_system->fillScreen(0);
+}
 
-	Common::EventManager *eventMan = g_system->getEventManager();
-	Common::Event ev;
-
+void DgdsEngine::loadGameFiles() {
 	REQFileData invRequestData;
 	REQFileData vcrRequestData;
 	RequestParser reqParser(_resource, _decompressor);
@@ -313,11 +314,20 @@ Common::Error DgdsEngine::run() {
 	setMouseCursor(0);
 
 	_inventory->setRequestData(invRequestData);
+	_menu->setRequestData(vcrRequestData);
 
 	//getDebugger()->attach();
 
 	debug("Parsed Inv Request:\n%s", invRequestData.dump().c_str());
 	debug("Parsed VCR Request:\n%s", vcrRequestData.dump().c_str());
+}
+
+Common::Error DgdsEngine::run() {
+	init();
+	loadGameFiles();
+
+	Common::EventManager *eventMan = g_system->getEventManager();
+	Common::Event ev;
 
 	bool moveToNext = false;
 	bool triggerMenu = false;
@@ -354,7 +364,7 @@ Common::Error DgdsEngine::run() {
 				_menu->setScreenBuffer();
 
 				CursorMan.showMouse(true);
-				_menu->drawMenu(vcrRequestData);
+				_menu->drawMenu();
 			} else {
 				_menu->hideMenu();
 				CursorMan.showMouse(false);
@@ -365,7 +375,7 @@ Common::Error DgdsEngine::run() {
 
 		if (_menu->menuShown()) {
 			if (mouseEvent == Common::EVENT_LBUTTONUP) {
-				_menu->handleMenu(vcrRequestData, _lastMouse);
+				_menu->handleMenu(_lastMouse);
 				mouseEvent = Common::EVENT_INVALID;
 			}
 			g_system->updateScreen();
@@ -498,5 +508,72 @@ Common::Error DgdsEngine::run() {
 Common::SeekableReadStream *DgdsEngine::getResource(const Common::String &name, bool ignorePatches) {
 	return _resource->getResource(name, ignorePatches);
 }
+
+
+bool DgdsEngine::canLoadGameStateCurrently(Common::U32String *msg /*= nullptr*/) {
+	return _gdsScene != nullptr;
+}
+
+
+bool DgdsEngine::canSaveGameStateCurrently(Common::U32String *msg /*= nullptr*/) {
+	return _gdsScene && _scene && _scene->getNum() != 2
+			&& !_scene->hasVisibleDialog() && !_menu->menuShown()
+			&& _scene->getDragItem() == nullptr;
+}
+
+
+Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
+	//
+	// Version history:
+	//
+	// 1: First version
+	//
+
+	assert(_scene && _gdsScene);
+
+	if (!s.syncVersion(1))
+		error("Save game version too new: %d", s.getVersion());
+
+	Common::Error result;
+
+	result = _gdsScene->syncState(s);
+	if (result.getCode() != Common::kNoError) return result;
+
+	int sceneNum = _scene->getNum();
+	s.syncAsUint16LE(sceneNum);
+	if (s.isLoading()) {
+		// load scene data before syncing state
+		const Common::String sceneFile = Common::String::format("S%d.SDS", sceneNum);
+		if (!_resource->hasResource(sceneFile))
+			error("Game references non-existant scene %d", sceneNum);
+
+		_scene->load(sceneFile, _resource, _decompressor);
+	}
+
+	result = _scene->syncState(s);
+	if (result.getCode() != Common::kNoError) return result;
+
+	result = _gameGlobals->syncState(s);
+	if (result.getCode() != Common::kNoError) return result;
+
+	result = _clock.syncState(s);
+	if (result.getCode() != Common::kNoError) return result;
+
+	result = _inventory->syncState(s);
+	if (result.getCode() != Common::kNoError) return result;
+
+	result = _gamePals->syncState(s);
+	if (result.getCode() != Common::kNoError) return result;
+
+	result = _adsInterp->syncState(s);
+	if (result.getCode() != Common::kNoError) return result;
+
+	s.syncAsSint16LE(_textSpeed);
+	s.syncAsByte(_justChangedScene1);
+	s.syncAsByte(_justChangedScene2);
+
+	return Common::kNoError;
+}
+
 
 } // End of namespace Dgds

@@ -24,6 +24,7 @@
 
 #include "common/types.h"
 #include "common/rect.h"
+#include "common/serializer.h"
 
 namespace Graphics {
 class ManagedSurface;
@@ -58,6 +59,8 @@ public:
 
 	const Common::Rect &getPos() const { return _drawPos; }
 
+	Common::Error syncState(Common::Serializer &s);
+
 private:
 	uint32 _lastPlayTime;
 	uint32 _millis;
@@ -76,7 +79,6 @@ private:
 	// Clock is shown if both are true;
 	bool _visibleScript;
 	bool _visibleUser;
-
 };
 
 } // end namespace Dgds

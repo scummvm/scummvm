@@ -22,6 +22,7 @@
 #ifndef DGDS_INVENTORY_H
 #define DGDS_INVENTORY_H
 
+#include "common/serializer.h"
 #include "dgds/request.h"
 
 namespace Graphics {
@@ -50,6 +51,8 @@ public:
 	void mouseRUp(const Common::Point &pt);
 
 	void setRequestData(const REQFileData &data);
+
+	Common::Error syncState(Common::Serializer &s);
 
 private:
 	GameItem *itemUnderMouse(const Common::Point &pt);

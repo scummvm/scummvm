@@ -127,10 +127,10 @@ void Menu::setScreenBuffer() {
 	g_system->unlockScreen();
 }
 
-void Menu::drawMenu(REQFileData &vcrRequestData, int16 menu) {
+void Menu::drawMenu(int16 menu) {
 	_curMenu = menu;
 
-	Common::Array<Common::SharedPtr<Gadget> > gadgets = vcrRequestData._requests[_curMenu]._gadgets;
+	Common::Array<Common::SharedPtr<Gadget> > gadgets = _reqData._requests[_curMenu]._gadgets;
 
 	// Restore background when drawing submenus
 	g_system->copyRectToScreen(_screenBuffer.getPixels(), _screenBuffer.pitch, 0, 0, _screenBuffer.w, _screenBuffer.h);
@@ -138,7 +138,7 @@ void Menu::drawMenu(REQFileData &vcrRequestData, int16 menu) {
 	Graphics::Surface *dst = g_system->lockScreen();
 
 	Graphics::ManagedSurface managed(dst, DisposeAfterUse::NO);
-	vcrRequestData._requests[_curMenu].drawBg(&managed);
+	_reqData._requests[_curMenu].drawBg(&managed);
 
 	for (Common::SharedPtr<Gadget> &gptr : gadgets) {
 		Gadget *gadget = gptr.get();
@@ -146,15 +146,15 @@ void Menu::drawMenu(REQFileData &vcrRequestData, int16 menu) {
 			gadget->draw(dst);
 	}
 
-	drawMenuText(vcrRequestData, dst);
+	drawMenuText(dst);
 
 	g_system->unlockScreen();
 	g_system->updateScreen();
 }
 
-void Menu::drawMenuText(REQFileData &vcrRequestData, Graphics::Surface *dst) {
-	Common::Array<Common::SharedPtr<Gadget> > gadgets = vcrRequestData._requests[_curMenu]._gadgets;
-	Common::Array<TextItem> textItems = vcrRequestData._requests[_curMenu]._textItemList;
+void Menu::drawMenuText(Graphics::Surface *dst) {
+	Common::Array<Common::SharedPtr<Gadget> > gadgets = _reqData._requests[_curMenu]._gadgets;
+	Common::Array<TextItem> textItems = _reqData._requests[_curMenu]._textItemList;
 
 	// TODO: Get the parent coordinates properly
 	uint16 parentX = gadgets[0].get()->_parentX;
@@ -175,11 +175,11 @@ void Menu::drawMenuText(REQFileData &vcrRequestData, Graphics::Surface *dst) {
 	}
 }
 
-int16 Menu::getClickedMenuItem(REQFileData &vcrRequestData, Common::Point mouseClick) {
+int16 Menu::getClickedMenuItem(Common::Point mouseClick) {
 	if (_curMenu < 0)
 		return -1;
 
-	Common::Array<Common::SharedPtr<Gadget> > gadgets = vcrRequestData._requests[_curMenu]._gadgets;
+	Common::Array<Common::SharedPtr<Gadget> > gadgets = _reqData._requests[_curMenu]._gadgets;
 
 	for (Common::SharedPtr<Gadget> &gptr : gadgets) {
 		Gadget *gadget = gptr.get();
@@ -192,16 +192,16 @@ int16 Menu::getClickedMenuItem(REQFileData &vcrRequestData, Common::Point mouseC
 	return -1;
 }
 
-void Menu::handleMenu(REQFileData &vcrRequestData, Common::Point &mouse) {
-	const int16 clickedMenuItem = getClickedMenuItem(vcrRequestData, mouse);
+void Menu::handleMenu(Common::Point &mouse) {
+	const int16 clickedMenuItem = getClickedMenuItem(mouse);
 
 	// Click animation
 	// TODO: Handle on/off buttons
 	if (clickedMenuItem >= 0) {
-		toggleGadget(vcrRequestData, clickedMenuItem, false);
-		drawMenu(vcrRequestData, _curMenu);
+		toggleGadget(clickedMenuItem, false);
+		drawMenu(_curMenu);
 		g_system->delayMillis(500);
-		toggleGadget(vcrRequestData, clickedMenuItem, true);
+		toggleGadget(clickedMenuItem, true);
 	}
 
 	switch (clickedMenuItem) {
@@ -216,22 +216,22 @@ void Menu::handleMenu(REQFileData &vcrRequestData, Common::Point &mouse) {
 		CursorMan.showMouse(false);
 		break;
 	case kMenuMainControls:
-		drawMenu(vcrRequestData, kMenuControls);
+		drawMenu(kMenuControls);
 		break;
 	case kMenuMainOptions:
-		drawMenu(vcrRequestData, kMenuOptions);
+		drawMenu(kMenuOptions);
 		break;
 	case kMenuMainCalibrate:
 	case kMenuJoystickCalibrationOK:
 	case kMenuMouseCalibrationCalibrate:
-		drawMenu(vcrRequestData, kMenuCalibrate);
+		drawMenu(kMenuCalibrate);
 		break;
 	case kMenuMainFiles:
 	case kMenuSaveCancel:
-		drawMenu(vcrRequestData, kMenuFiles);
+		drawMenu(kMenuFiles);
 		break;
 	case kMenuMainQuit:
-		drawMenu(vcrRequestData, kMenuQuit);
+		drawMenu(kMenuQuit);
 		break;
 	case kMenuControlsVCR:
 	case kMenuOptionsVCR:
@@ -240,7 +240,7 @@ void Menu::handleMenu(REQFileData &vcrRequestData, Common::Point &mouse) {
 	case kMenuFilesVCR:
 	case kMenuQuitNo:
 	case kMenuRestartNo:
-		drawMenu(vcrRequestData, kMenuMain);
+		drawMenu(kMenuMain);
 		break;
 	case kMenuOptionsJoystickOnOff:
 	case kMenuOptionsMouseOnOff:
@@ -250,21 +250,21 @@ void Menu::handleMenu(REQFileData &vcrRequestData, Common::Point &mouse) {
 		debug("Clicked option with ID %d", clickedMenuItem);
 		break;
 	case kMenuCalibrateJoystick:
-		drawMenu(vcrRequestData, kMenuJoystick);
+		drawMenu(kMenuJoystick);
 		break;
 	case kMenuCalibrateMouse:
-		drawMenu(vcrRequestData, kMenuMouse);
+		drawMenu(kMenuMouse);
 		break;
 	case kMenuFilesSave:
 	case kMenuChangeDirectoryCancel:
-		drawMenu(vcrRequestData, kMenuSave);
+		drawMenu(kMenuSave);
 		break;
 	case kMenuFilesRestore:
 		// TODO
 		debug("Clicked Files - Restore %d", clickedMenuItem);
 		break;
 	case kMenuFilesRestart:
-		drawMenu(vcrRequestData, kMenuRestart);
+		drawMenu(kMenuRestart);
 		break;
 	case kMenuSavePrevious:
 	case kMenuSaveNext:
@@ -273,7 +273,7 @@ void Menu::handleMenu(REQFileData &vcrRequestData, Common::Point &mouse) {
 		debug("Clicked Save - %d", clickedMenuItem);
 		break;
 	case kMenuSaveChangeDirectory:
-		drawMenu(vcrRequestData, kMenuChangeDirectory);
+		drawMenu(kMenuChangeDirectory);
 		break;
 	case kMenuChangeDirectoryOK:
 		// TODO
@@ -292,8 +292,8 @@ void Menu::handleMenu(REQFileData &vcrRequestData, Common::Point &mouse) {
 	}
 }
 
-void Menu::toggleGadget(REQFileData &vcrRequestData, int16 gadgetId, bool enable) {
-	Common::Array<Common::SharedPtr<Gadget> > gadgets = vcrRequestData._requests[_curMenu]._gadgets;
+void Menu::toggleGadget(int16 gadgetId, bool enable) {
+	Common::Array<Common::SharedPtr<Gadget> > gadgets = _reqData._requests[_curMenu]._gadgets;
 
 	for (Common::SharedPtr<Gadget> &gptr : gadgets) {
 		Gadget *gadget = gptr.get();

@@ -27,6 +27,7 @@
 #include "common/events.h"
 #include "common/platform.h"
 #include "common/random.h"
+#include "common/serializer.h"
 
 #include "graphics/surface.h"
 #include "graphics/managed_surface.h"
@@ -148,11 +149,28 @@ public:
 
 	Clock &getClock() { return _clock; }
 
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override {
+		Common::Serializer s(nullptr, stream);
+		return syncGame(s);
+	}
+
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override {
+		Common::Serializer s(stream, nullptr);
+		return syncGame(s);
+	}
+
 private:
+	Common::Error syncGame(Common::Serializer &s);
+
 	void loadCorners(const Common::String &filename);
 	void loadIcons();
 	void checkDrawInventoryButton();
 
+	void init();
+	void loadGameFiles();
 };
 
 } // End of namespace Dgds

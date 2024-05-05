@@ -78,6 +78,7 @@ public:
 	int16 getGlobal(uint16 num);
 	int16 setGlobal(uint16 num, int16 val);
 
+	virtual Common::Error syncState(Common::Serializer &s) { return Common::kNoError; };
 protected:
 	Common::Array<Global *> _globals;
 };
@@ -103,8 +104,6 @@ public:
 	DragonGlobals(Clock &clock);
 
 private:
-	int16 _gameCounterTicksUp;
-	int16 _gameCounterTicksDown;
 	int16 _lastOpcode1SceneChageNum;
 	int16 _sceneOp12SceneNum;
 	int16 _currentSelectedItem;
@@ -122,6 +121,8 @@ private:
 	DragonDataTable _table;
 	// Clock _clock; // kept in the engine
 	// uint16 _detailSliderSetting; // kept in the engine
+
+	Common::Error syncState(Common::Serializer &s) override;
 };
 
 } // end namespace Dgds
