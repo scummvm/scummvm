@@ -88,7 +88,7 @@ ErrorCode CBagMoo::setPDAMovie(CBofString &s) {
 }
 
 void CBagMoo::stopMovie(bool bResetPDA) {
-	CBagPDA *pPDA = (CBagPDA *)SDEV_MANAGER->getStorageDevice("BPDA_WLD");
+	CBagPDA *pPDA = (CBagPDA *)g_SDevManager->getStorageDevice("BPDA_WLD");
 
 	if (bResetPDA) {
 		if (pPDA) {

@@ -78,7 +78,7 @@ bool CBagCommandObject::runObject() {
 				removeFl = true;
 
 				if (!_objName.isEmpty() && !srcSDev.isEmpty()) {
-					SDEV_MANAGER->removeObject(srcSDev, _objName);
+					g_SDevManager->removeObject(srcSDev, _objName);
 				}
 				removeFl = false;
 			}
@@ -86,19 +86,19 @@ bool CBagCommandObject::runObject() {
 		} else if (getFileName() == "INSERT2") {
 			if (!_objName.isEmpty() && !dstSDev.isEmpty()) {
 				g_allowattachActiveObjectsFl = false;
-				SDEV_MANAGER->addObject(dstSDev, _objName);
+				g_SDevManager->addObject(dstSDev, _objName);
 				g_allowattachActiveObjectsFl = true;
 			}
 
 		} else if (getFileName() == "INSERT") {
 			if (!_objName.isEmpty() && !dstSDev.isEmpty()) {
-				SDEV_MANAGER->addObject(dstSDev, _objName);
+				g_SDevManager->addObject(dstSDev, _objName);
 			}
 
 		} else if (getFileName() == "TRANSFER") {
 
 			if (!_objName.isEmpty() && !srcSDev.isEmpty() && !dstSDev.isEmpty()) {
-				SDEV_MANAGER->moveObject(dstSDev, srcSDev, _objName);
+				g_SDevManager->moveObject(dstSDev, srcSDev, _objName);
 			}
 
 		} else if (getFileName().find("FLUSHQUEUE") == 0) {
@@ -154,7 +154,7 @@ bool CBagCommandObject::runObject() {
 			if (CBagPanWindow::_pWieldBmp != nullptr) {
 				CBagObject *currObj = CBagPanWindow::_pWieldBmp->getCurrObj();
 				if (currObj != nullptr) {
-					SDEV_MANAGER->removeObject(CBagPanWindow::_pWieldBmp->getName(), currObj->getRefName());
+					g_SDevManager->removeObject(CBagPanWindow::_pWieldBmp->getName(), currObj->getRefName());
 				}
 			}
 
@@ -174,7 +174,7 @@ bool CBagCommandObject::runObject() {
 			if (CBagPanWindow::_pWieldBmp != nullptr) {
 				CBagObject *currObj = CBagPanWindow::_pWieldBmp->getCurrObj();
 				if (currObj != nullptr) {
-					SDEV_MANAGER->moveObject("INV_WLD", CBagPanWindow::_pWieldBmp->getName(), currObj->getRefName());
+					g_SDevManager->moveObject("INV_WLD", CBagPanWindow::_pWieldBmp->getName(), currObj->getRefName());
 					CBagPanWindow::_pWieldBmp->setCurrObj(nullptr);
 				}
 			}
@@ -345,7 +345,7 @@ bool CBagCommandObject::runObject() {
 
 		} else if (getFileName() == "SHOWPDALOG") {
 			// Get a pointer to the current game window
-			CBagPDA *pda = (CBagPDA *)SDEV_MANAGER->getStorageDevice("BPDA_WLD");
+			CBagPDA *pda = (CBagPDA *)g_SDevManager->getStorageDevice("BPDA_WLD");
 			if (pda) {
 				pda->showLog();
 			}

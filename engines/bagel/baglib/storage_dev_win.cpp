@@ -138,7 +138,7 @@ CBagStorageDev::CBagStorageDev() {
 	// Not sure what the hell is going on here...
 	setLActivity(kMouseNONE);
 
-	SDEV_MANAGER->registerStorageDev(this);
+	g_SDevManager->registerStorageDev(this);
 }
 
 CBagStorageDev::~CBagStorageDev() {
@@ -159,7 +159,7 @@ CBagStorageDev::~CBagStorageDev() {
 		}
 	}  // If the lists belong to this storage device
 
-	SDEV_MANAGER->unregisterStorageDev(this);
+	g_SDevManager->unregisterStorageDev(this);
 
 	if (CBagStorageDevWnd::_pEvtSDev == this) {
 		CBagStorageDevWnd::_pEvtSDev = nullptr;
@@ -1216,7 +1216,7 @@ ErrorCode CBagStorageDevWnd::attach() {
 	setPreFilterPan(true);
 	g_lastWindow = this;
 
-	CBagStorageDev *pSDev = SDEV_MANAGER->getStorageDevice("EVT_WLD");
+	CBagStorageDev *pSDev = g_SDevManager->getStorageDevice("EVT_WLD");
 
 	if (pSDev != nullptr) {
 		// Have we allocated one yet ?
@@ -1259,7 +1259,7 @@ void CBagStorageDevWnd::onTimer(uint32 nEventID) {
 					// for the turncount dependent storage device.
 					if (CBagEventSDev::getEvalTurnEvents() == true) {
 						CBagEventSDev::setEvalTurnEvents(false);
-						CBagTurnEventSDev *pSDev = (CBagTurnEventSDev *) SDEV_MANAGER->getStorageDevice("TURN_WLD");
+						CBagTurnEventSDev *pSDev = (CBagTurnEventSDev *) g_SDevManager->getStorageDevice("TURN_WLD");
 						if (pSDev != nullptr) {
 							// If unable to execute event world, try again next time through.
 							if (pSDev->evaluateExpressions() == ERR_UNKNOWN) {
@@ -1885,13 +1885,13 @@ CBagStorageDev *CBagStorageDevManager::getStorageDevice(const CBofString &sName)
 bool CBagStorageDevManager::moveObject(const CBofString &sDstName, const CBofString &sSrcName, const CBofString &sObjName) {
 	assert(isValidObject(this));
 
-	CBagStorageDev *pDstSDev = SDEV_MANAGER->getStorageDevice(sDstName);
+	CBagStorageDev *pDstSDev = g_SDevManager->getStorageDevice(sDstName);
 
 	// Find the storage device
 	if (pDstSDev == nullptr)
 		return false;
 
-	CBagStorageDev *pSrcSDev = SDEV_MANAGER->getStorageDevice(sSrcName);
+	CBagStorageDev *pSrcSDev = g_SDevManager->getStorageDevice(sSrcName);
 	if (pSrcSDev == nullptr)
 		return false;
 
@@ -1909,7 +1909,7 @@ bool CBagStorageDevManager::moveObject(const CBofString &sDstName, const CBofStr
 bool CBagStorageDevManager::addObject(const CBofString &sDstName, const CBofString &sObjName) {
 	assert(isValidObject(this));
 
-	CBagStorageDev *pDstSDev = SDEV_MANAGER->getStorageDevice(sDstName);
+	CBagStorageDev *pDstSDev = g_SDevManager->getStorageDevice(sDstName);
 
 	// Find the storage device
 	if (pDstSDev == nullptr)
@@ -1926,7 +1926,7 @@ bool CBagStorageDevManager::addObject(const CBofString &sDstName, const CBofStri
 bool CBagStorageDevManager::removeObject(const CBofString &sSrcName, const CBofString &sObjName) {
 	assert(isValidObject(this));
 
-	CBagStorageDev *pSrcSDev = SDEV_MANAGER->getStorageDevice(sSrcName);
+	CBagStorageDev *pSrcSDev = g_SDevManager->getStorageDevice(sSrcName);
 
 	// Find the storage device
 	if (pSrcSDev == nullptr)
@@ -1959,7 +1959,7 @@ int CBagStorageDevManager::getObjectValue(const CBofString &sObject, const CBofS
 
 // Set object will set a property to a numeric value or set the object to a string value -
 // I am too lazy to write two funtions
-void CBagStorageDevManager::SetObjectValue(const CBofString &sObject, const CBofString &sProperty, int nValue/*=DO_NOT_USE_THIS_VALUE*/) {
+void CBagStorageDevManager::setObjectValue(const CBofString &sObject, const CBofString &sProperty, int nValue/*=DO_NOT_USE_THIS_VALUE*/) {
 	assert(isValidObject(this));
 
 	// Make sure that all objects are set and not just one?

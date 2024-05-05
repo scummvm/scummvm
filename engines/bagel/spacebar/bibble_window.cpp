@@ -281,7 +281,7 @@ ErrorCode CBibbleWindow::attach() {
 
 	// If player has modified the payoffs, then load new payoffs from Bar script
 	if (g_bBibbleHack) {
-		CBagStorageDev *pSDev = SDEV_MANAGER->getStorageDevice("BGNM_WLD");
+		CBagStorageDev *pSDev = g_SDevManager->getStorageDevice("BGNM_WLD");
 
 		if (pSDev != nullptr) {
 			for (int i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {

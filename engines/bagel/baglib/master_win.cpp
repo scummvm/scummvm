@@ -1087,7 +1087,7 @@ void CBagMasterWin::onKeyHit(uint32 keyCode, uint32 repCount) {
 	//  Help
 	case BKEY_F1:
 		if (_gameWindow != nullptr) {
-			onHelp(_gameWindow->GetHelpFilename(), false);
+			onHelp(_gameWindow->getHelpFilename(), false);
 		}
 		break;
 

@@ -56,7 +56,7 @@ ErrorCode SBarBibOddsWnd::detach() {
 	}
 
 	if (_wieldedObject) {
-		SDEV_MANAGER->addObject(CBagPanWindow::_pWieldBmp->getName(), _wieldedObject->getRefName());
+		g_SDevManager->addObject(CBagPanWindow::_pWieldBmp->getName(), _wieldedObject->getRefName());
 		_wieldedObject = nullptr;
 	}
 
@@ -122,7 +122,7 @@ ErrorCode SBarBibOddsWnd::attach() {
 	// If we have something wielded, put it on hold for now.
 	if (CBagPanWindow::_pWieldBmp != nullptr) {
 		if ((_wieldedObject = CBagPanWindow::_pWieldBmp->getCurrObj()) != nullptr) {
-			SDEV_MANAGER->removeObject(CBagPanWindow::_pWieldBmp->getName(), _wieldedObject->getRefName());
+			g_SDevManager->removeObject(CBagPanWindow::_pWieldBmp->getName(), _wieldedObject->getRefName());
 		}
 	}
 
