@@ -24,6 +24,12 @@ static const char *base64_test_encoded[] = {
 		"c4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTA=")
 };
 
+static const char *base64_validate_tests[] = {
+	"YQ", // missing padding
+	"!@#$" // characters not in encoding table
+	"YQ==YWJj", // data after padding
+};
+
 #include <common/pack-start.h>	// START STRUCT PACKING
 
 struct Base64TestStruct {
@@ -38,11 +44,25 @@ struct Base64TestStruct {
 
 class Base64TestSuite : public CxxTest::TestSuite {
 	public:
+	void test_b64Validate() {
+		for (int i = 0; i < 6; i++) {
+			Common::String encoded = base64_test_encoded[i];
+			// All of these should return true.
+			TS_ASSERT_EQUALS(Common::b64Validate(encoded), true);
+		}
+		for (int i = 0; i < 3; i++) {
+			Common::String encoded = base64_validate_tests[i];
+			// All of these should return false.
+			TS_ASSERT_EQUALS(Common::b64Validate(encoded), false);
+		}
+
+	}
+
 	void test_b64EncodeString() {
 		for (int i = 0; i < 6; i++) {
 			Common::String string = base64_test_string[i];
 			Common::String encoded = Common::b64EncodeString(string);
-			TS_ASSERT_EQUALS(encoded, base64_test_encoded[i])
+			TS_ASSERT_EQUALS(encoded, base64_test_encoded[i]);
 		}
 	}
 
@@ -50,7 +70,7 @@ class Base64TestSuite : public CxxTest::TestSuite {
 		for (int i = 0; i < 6; i++) {
 			Common::MemoryReadStream stream((const byte *)base64_test_string[i], strlen(base64_test_string[i]));
 			Common::String encoded = Common::b64EncodeStream(stream);
-			TS_ASSERT_EQUALS(encoded, base64_test_encoded[i])
+			TS_ASSERT_EQUALS(encoded, base64_test_encoded[i]);
 		}
 	}
 
