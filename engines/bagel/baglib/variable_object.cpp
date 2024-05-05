@@ -27,8 +27,8 @@ namespace Bagel {
 
 CBagVariableObject::CBagVariableObject() : CBagObject() {
 	_xObjType = VAR_OBJ;
-	m_nPointSize = 16;
-	m_nFGColor = CTEXT_COLOR;
+	_nPointSize = 16;
+	_nFGColor = CTEXT_COLOR;
 	setVisible(true);
 	setTimeless(true);
 }
@@ -83,7 +83,7 @@ ParseCodes CBagVariableObject::setInfo(CBagIfstream &istr) {
 
 			if (!sStr.find("SIZE")) {
 				istr.eatWhite();
-				getIntFromStream(istr, m_nPointSize);
+				getIntFromStream(istr, _nPointSize);
 				nObjectUpdated = true;
 				nChanged++;
 			} else {
@@ -109,14 +109,14 @@ ParseCodes CBagVariableObject::setInfo(CBagIfstream &istr) {
 				istr.eatWhite();
 				getIntFromStream(istr, nColor);
 				switch (nColor) {
-				case 0:	m_nFGColor = RGB(0, 0, 0); break;							// black
-				case 1:	m_nFGColor = RGB(255, 0, 0); break;
-				case 2:	m_nFGColor = CTEXT_YELLOW; break;						// yellow
-				case 3:	m_nFGColor = RGB(0, 255, 0); break;
-				case 4:	m_nFGColor = RGB(0, 255, 255); break;
-				case 5:	m_nFGColor = RGB(0, 0, 255); break;
-				case 6:	m_nFGColor = RGB(255, 0, 255); break;
-				case 7:	m_nFGColor = CTEXT_WHITE; break;						// white
+				case 0:	_nFGColor = RGB(0, 0, 0); break;							// black
+				case 1:	_nFGColor = RGB(255, 0, 0); break;
+				case 2:	_nFGColor = CTEXT_YELLOW; break;						// yellow
+				case 3:	_nFGColor = RGB(0, 255, 0); break;
+				case 4:	_nFGColor = RGB(0, 255, 255); break;
+				case 5:	_nFGColor = RGB(0, 0, 255); break;
+				case 6:	_nFGColor = RGB(255, 0, 255); break;
+				case 7:	_nFGColor = CTEXT_WHITE; break;						// white
 				default:
 					break;
 				}
@@ -168,7 +168,7 @@ ErrorCode CBagVariableObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *p
 			pt.x += 5;
 
 		CBofRect r(pt, pSrcRect->size());
-		rc = paintText(pBmp, &r, xVar->getValue(), MapFontPointSize(m_nPointSize), TEXT_NORMAL, m_nFGColor);
+		rc = paintText(pBmp, &r, xVar->getValue(), mapFontPointSize(_nPointSize), TEXT_NORMAL, _nFGColor);
 
 		// Don't need to redraw!
 		setDirty(false);
@@ -176,14 +176,14 @@ ErrorCode CBagVariableObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *p
 	return rc;
 }
 
-ErrorCode CBagVariableObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int) {
+ErrorCode CBagVariableObject::update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int) {
 	ErrorCode rc = ERR_NONE;
 	CBagVar *xVar = g_VarManager->getVariable(getFileName());
 
 	if (isAttached() && xVar && !(xVar->getValue().isEmpty())) {
 		CBofRect r(pt, pSrcRect->size());
 
-		rc = paintText(pWnd, &r, xVar->getValue(), MapFontPointSize(m_nPointSize), TEXT_NORMAL, m_nFGColor);
+		rc = paintText(pWnd, &r, xVar->getValue(), mapFontPointSize(_nPointSize), TEXT_NORMAL, _nFGColor);
 
 		// Don't need to redraw!
 		setDirty(false);

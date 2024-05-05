@@ -33,9 +33,9 @@ namespace Bagel {
  */
 class CBagVariableObject : public CBagObject {
 private:
-	CBofSize m_xSize;
-	int m_nPointSize;
-	RGBCOLOR m_nFGColor;
+	CBofSize _xSize;
+	int _nPointSize;
+	RGBCOLOR _nFGColor;
 
 public:
 	CBagVariableObject();
@@ -48,19 +48,19 @@ public:
 	CBofRect getRect() override;
 
 	CBofSize getSize() {
-		return m_xSize;
+		return _xSize;
 	}
 
 	void setSize(const CBofSize &xSize) override {
-		m_xSize = xSize;
+		_xSize = xSize;
 	}
 
 	ParseCodes setInfo(CBagIfstream &istr) override;
 
 	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int) override;
-	ErrorCode Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int);
+	ErrorCode update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int);
 
-	int MapFontPointSize(int size) const {
+	int mapFontPointSize(int size) const {
 		return size;
 	}
 };
