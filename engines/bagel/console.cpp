@@ -93,7 +93,7 @@ bool Console::cmdLoad(int argc, const char **argv) {
 	const int count = saves.getNumSavedGames();
 
 	if (argc == 1) {
-		char nameBuffer[MAX_SAVETITLE];
+		char nameBuffer[MAX_SAVE_TITLE];
 		// No slot specified, so just list saves
 		for (int i = 0; i < count; ++i) {
 			if (saves.findRecord(i) != -1) {

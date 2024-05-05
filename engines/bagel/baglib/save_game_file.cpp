@@ -31,8 +31,8 @@ namespace Bagel {
 #define WORLDDIR "$SBARDIR\\WLD\\%s"
 
 void StSavegameHeader::synchronize(Common::Serializer &s) {
-	s.syncBytes((byte *)_szTitle, MAX_SAVETITLE);
-	s.syncBytes((byte *)_szUserName, MAX_USERNAME);
+	s.syncBytes((byte *)_szTitle, MAX_SAVE_TITLE);
+	s.syncBytes((byte *)_szUserName, MAX_USER_NAME);
 	s.syncAsUint32LE(_bUsed);
 }
 
@@ -258,10 +258,10 @@ ErrorCode CBagSaveGameFile::readTitleOnly(int32 lSlot, char *pGameTitle) {
 	assert(lSlot >= 0 && lSlot < MAX_SAVEDGAMES);
 	assert(pGameTitle != nullptr);
 
-	byte pBuf[MAX_SAVETITLE + 1];
+	byte pBuf[MAX_SAVE_TITLE + 1];
 	int32 lRecNum = findRecord(lSlot);
 	if (lRecNum != -1) {
-		int32 lSize = MAX_SAVETITLE;
+		int32 lSize = MAX_SAVE_TITLE;
 		readFromFile(lRecNum, pBuf, lSize);
 
 		// Fill with current game title
