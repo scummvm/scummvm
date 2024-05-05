@@ -188,11 +188,13 @@ Common::String ScummEngine_v60he::convertSavePathOld(const byte *src) {
 }
 
 Common::SeekableReadStream *ScummEngine_v60he::openFileForReading(const byte *fileName) {
+#ifdef ENABLE_HE
 	if (_moonbase) {
 		Common::SeekableReadStream *substitutedFile = _moonbase->_map->substituteFile(fileName);
 		if (substitutedFile)
 			return substitutedFile;
 	}
+#endif
 	Common::SeekableReadStream *saveFile = openSaveFileForReading(fileName);
 
 	if (saveFile)

@@ -47,7 +47,9 @@ class Moonbase;
 #endif
 
 class ScummEngine_v60he : public ScummEngine_v6 {
+#ifdef ENABLE_HE
 	friend class Moonbase;
+#endif
 protected:
 	enum SubOpType {
 		SO_ACTOR_DEFAULT_CLIPPED = 30,
@@ -77,8 +79,10 @@ public:
 	void setHETimer(int timer);
 	void pauseHETimers(bool pause);
 
+#ifdef ENABLE_HE
 public:
 	Moonbase *_moonbase;
+#endif
 
 public:
 	ScummEngine_v60he(OSystem *syst, const DetectorResult &dr);
