@@ -43,17 +43,17 @@ CBagSoundObject::CBagSoundObject() {
 	_wFlags = SOUND_MIX; //(SOUND_WAVE | SOUND_ASYNCH);
 
 	_nVol = VOLUME_INDEX_DEFAULT;
-	setState(0);
+	CBagObject::setState(0);
 	_bWait = false;
 
 	_nLoops = 1;
 
 	setVisible(false);
-	setOverCursor(3);
+	CBagObject::setOverCursor(3);
 }
 
 CBagSoundObject::~CBagSoundObject() {
-	detach();
+	CBagSoundObject::detach();
 }
 
 ErrorCode CBagSoundObject::attach(CBofWindow *pWnd) {
@@ -280,7 +280,7 @@ ParseCodes CBagSoundObject::setInfo(CBagIfstream &istr) {
 		break;
 
 		//
-		//  No match return from funtion
+		//  No match return from function
 		//
 		default: {
 			ParseCodes rc = CBagObject::setInfo(istr);

@@ -52,9 +52,9 @@ public:
 	/**
 	 * Create all 5 sprite objects for the clock and set their positions
 	 */
-	ErrorCode attach();
-	ErrorCode detach();
-	bool isAttached() {
+	ErrorCode attach() override;
+	ErrorCode detach() override;
+	bool isAttached() override {
 		return _xDig1 != nullptr;
 	}
 
@@ -62,23 +62,22 @@ public:
 	 * Takes in info and then removes the relative information and returns the info
 	 * without the relevant info.
 	 */
-	ParseCodes setInfo(CBagIfstream &istr);
+	ParseCodes setInfo(CBagIfstream &istr) override;
 
-	CBofRect getRect();
+	CBofRect getRect() override;
 	int getCels() {
 		return _nCels;
 	}
 
 	void setCels(int nCels);
-	virtual void setPosition(const CBofPoint &pos);
+	void setPosition(const CBofPoint &pos) override;
 
 	/**
 	 * Read in the value of the associated variable and set the time equal
 	 * to the first 4 digits of the variable if the variable is less the 4 digits
 	 * the time is padded with 0's if it is greater the 4 we truncate to remaining digits
 	 */
-	virtual ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
-	virtual ErrorCode update(CBofWindow *pWnd, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
+	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1) override;
 
 	void setVariable(const CBofString &sProp) {
 		_sVariable = sProp;

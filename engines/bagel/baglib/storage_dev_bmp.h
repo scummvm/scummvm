@@ -71,14 +71,14 @@ public:
 	 */
 	CBofPoint getScaledPt(CBofPoint xPoint);
 
-	ErrorCode setBackground(CBofBitmap *pBmp);
-	CBofBitmap *getBackground() {
+	ErrorCode setBackground(CBofBitmap *pBmp) override;
+	CBofBitmap *getBackground() override {
 		return getBitmap();
 	}
 
-	virtual ErrorCode loadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName, bool bAttach = true);
+	ErrorCode loadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName, bool bAttach = true) override;
 
-	virtual bool isAttached() {
+	bool isAttached() override {
 		return CBagBmpObject::isAttached();
 	}
 
@@ -86,24 +86,24 @@ public:
 		return true;
 	}
 
-	virtual ErrorCode attach();
-	virtual ErrorCode detach();
+	ErrorCode attach() override;
+	ErrorCode detach() override;
 
-	virtual ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);
+	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1) override;
 
 	/**
 	 * Called on the mouse left button up of the bagbmobj
 	 *  and redirected to the lbutton up of the CBagStorageDev
 	 */
-	void onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info);
+	void onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) override;
 
 	/**
 	 * Called on the mouse left button down of the bagbmobj
 	 * and redirected to the lbutton down of the CBagStorageDev
 	 */
-	virtual void onLButtonDown(uint32 nFlags, CPoint *xPoint, void *info = nullptr);
+	void onLButtonDown(uint32 nFlags, CPoint *xPoint, void *info = nullptr) override;
 
-	virtual const CBofPoint devPtToViewPort(const CBofPoint &xPoint);
+	const CBofPoint devPtToViewPort(const CBofPoint &xPoint) override;
 };
 
 } // namespace Bagel

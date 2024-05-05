@@ -34,7 +34,7 @@ CBagSpriteObject::CBagSpriteObject() : CBagObject() {
 
 	// Transparent by default
 	setTransparent();
-	setOverCursor(1);
+	CBagObject::setOverCursor(1);
 	setAnimated();
 	setTimeless(true);
 
@@ -44,7 +44,7 @@ CBagSpriteObject::CBagSpriteObject() : CBagObject() {
 }
 
 CBagSpriteObject::~CBagSpriteObject() {
-	detach();
+	CBagSpriteObject::detach();
 }
 
 ErrorCode CBagSpriteObject::attach() {
@@ -92,10 +92,9 @@ ErrorCode CBagSpriteObject::attach() {
 }
 
 ErrorCode CBagSpriteObject::detach() {
-	if (_xSprite != nullptr) {
-		delete _xSprite;
-		_xSprite = nullptr;
-	}
+	delete _xSprite;
+	_xSprite = nullptr;
+
 	return CBagObject::detach();
 }
 
@@ -177,7 +176,7 @@ ParseCodes CBagSpriteObject::setInfo(CBagIfstream &istr) {
 				istr.eatWhite();
 				getIntFromStream(istr, nFrameRate);
 
-				// The framerate is expressed in frames/second, so do some division
+				// The frame rate is expressed in frames/second, so do some division
 				// here to store the number of milliseconds.
 				setFrameRate(1000 / nFrameRate);
 
@@ -188,7 +187,7 @@ ParseCodes CBagSpriteObject::setInfo(CBagIfstream &istr) {
 		}
 		break;
 		//
-		//  no match return from funtion
+		//  no match return from function
 		//
 		default: {
 			ParseCodes rc = CBagObject::setInfo(istr);

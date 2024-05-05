@@ -113,7 +113,6 @@ public:
 	void setBoolean() {
 		_xVarType = BOOLEAN;
 	}
-	// void setType(VARTYPE xType)      { _xVarType  = xType; }
 
 	void increment();
 };

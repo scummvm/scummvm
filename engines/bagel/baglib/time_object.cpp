@@ -35,12 +35,12 @@ CBagTimeObject::CBagTimeObject() : CBagObject() {
 	_xDig4 = nullptr;
 	_nCels = 1;
 
-	setOverCursor(1);
+	CBagObject::setOverCursor(1);
 	setTimeless(true);
 }
 
 CBagTimeObject::~CBagTimeObject() {
-	detach();
+	CBagTimeObject::detach();
 }
 
 ErrorCode CBagTimeObject::attach() {
@@ -60,25 +60,20 @@ ErrorCode CBagTimeObject::attach() {
 	} else {
 		reportError(ERR_MEMORY, "Could not allocate  Dig1 sprite");
 	}
+
 	if ((_xDig2 = new CBofSprite()) != nullptr) {
-
 		if (_xDig2->loadSprite(getFileName(), getCels()) != 0 && (_xDig2->width() != 0) && (_xDig2->height() != 0)) {
-
 			_xDig2->setAnimated(false);
-
 			_xDig2->setPosition(p.x, p.y);
-
 			p.offset(_xDig2->width(), 0);
-
 		} else {
 			reportError(ERR_FOPEN, "Could Not Open Dig2 Sprite: %s", _xDig2->getFileName());
 		}
-
 	} else {
 		reportError(ERR_MEMORY, "Could not allocate  Dig2 sprite");
 	}
-	if ((_xColon = new CBofSprite()) != nullptr) {
 
+	if ((_xColon = new CBofSprite()) != nullptr) {
 		if (_xColon->loadSprite(getFileName(), getCels()) != 0 && (_xColon->width() != 0) && (_xColon->height() != 0)) {
 
 			_xColon->setAnimated(false);
@@ -94,35 +89,27 @@ ErrorCode CBagTimeObject::attach() {
 	} else {
 		reportError(ERR_MEMORY, "Could not allocate  Colon sprite");
 	}
+
 	if ((_xDig3 = new CBofSprite()) != nullptr) {
-
 		if (_xDig3->loadSprite(getFileName(), getCels()) != 0 && (_xDig3->width() != 0) && (_xDig3->height() != 0)) {
-
 			_xDig3->setAnimated(false);
-
 			_xDig3->setPosition(p.x, p.y);
-
 			p.offset(_xDig3->width(), 0);
 		} else {
 			reportError(ERR_FOPEN, "Could Not Open Dig3 Sprite: %s", _xDig3->getFileName());
 		}
-
 	} else {
 		reportError(ERR_MEMORY, "Could not allocate  Dig3 sprite");
 	}
+
 	if ((_xDig4 = new CBofSprite()) != nullptr) {
-
 		if (_xDig4->loadSprite(getFileName(), getCels()) != 0 && (_xDig4->width() != 0) && (_xDig4->height() != 0)) {
-
 			_xDig4->setAnimated(false);
-
 			_xDig4->setPosition(p.x, p.y);
-
 			p.offset(_xDig4->width(), 0);
 		} else {
 			reportError(ERR_FOPEN, "Could Not Open Dig4 Sprite: %s", _xDig4->getFileName());
 		}
-
 	} else {
 		reportError(ERR_MEMORY, "Could not allocate  Dig4 sprite");
 	}
@@ -131,26 +118,20 @@ ErrorCode CBagTimeObject::attach() {
 }
 
 ErrorCode CBagTimeObject::detach() {
-	if (_xDig1) {
-		delete _xDig1;
-		_xDig1 = nullptr;
-	}
-	if (_xDig2) {
-		delete _xDig2;
-		_xDig2 = nullptr;
-	}
-	if (_xColon) {
-		delete _xColon;
-		_xColon = nullptr;
-	}
-	if (_xDig3) {
-		delete _xDig3;
-		_xDig3 = nullptr;
-	}
-	if (_xDig4) {
-		delete _xDig4;
-		_xDig4 = nullptr;
-	}
+	delete _xDig1;
+	_xDig1 = nullptr;
+
+	delete _xDig2;
+	_xDig2 = nullptr;
+
+	delete _xColon;
+	_xColon = nullptr;
+
+	delete _xDig3;
+	_xDig3 = nullptr;
+
+	delete _xDig4;
+	_xDig4 = nullptr;
 
 	return CBagObject::detach();
 }
@@ -181,7 +162,7 @@ CBofRect CBagTimeObject::getRect() {
 	if (_xDig1) {
 		s = _xDig1->getSize();
 
-		// Increase the width to accomadate all 5 sprites
+		// Increase the width to accomodate all 5 sprites
 		s.cx = s.cx * 5;
 	}
 	return CBofRect(p, s);
@@ -298,57 +279,6 @@ ErrorCode CBagTimeObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pS
 			sDigString[0] = sTimeString[3];
 			_xDig4->setCel(atoi(sDigString));
 			_xDig4->paintSprite(pBmp, pt.x, pt.y);
-		}
-	}
-
-	return rc;
-}
-
-ErrorCode CBagTimeObject::update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, int) {
-	char szLocalBuff[256];
-	szLocalBuff[0] = '\0';
-	CBofString sTimeString(szLocalBuff, 256);
-
-	ErrorCode rc = ERR_NONE;
-
-	CBagVar *xVar = g_VarManager->getVariable(_sVariable);
-
-	// If everything looks good
-	if (isAttached() && xVar && !(xVar->getValue().isEmpty())) {
-		int nTimeVal = xVar->getNumValue();
-		sTimeString = buildString("%04d", nTimeVal);
-		char sDigString[2] = "0";
-
-		// Digit 1
-		if (_xDig1) {
-			sDigString[0] = sTimeString[0];
-			_xDig1->setCel(atoi(sDigString));
-			_xDig1->paintSprite(pWnd, pt.x, pt.y);
-			pt.offset(_xDig1->width(), 0);
-		}
-		// Digit 2
-		if (_xDig2) {
-			sDigString[0] = sTimeString[1];
-			_xDig2->setCel(atoi(sDigString));
-			_xDig2->paintSprite(pWnd, pt.x, pt.y);
-			pt.offset(_xDig2->width(), 0);
-		}
-		if (_xColon) {
-			_xColon->paintSprite(pWnd, pt.x, pt.y);
-			pt.offset(_xColon->width(), 0);
-		}
-		// Digit 3
-		if (_xDig3) {
-			sDigString[0] = sTimeString[2];
-			_xDig3->setCel(atoi(sDigString));
-			_xDig3->paintSprite(pWnd, pt.x, pt.y);
-			pt.offset(_xDig3->width(), 0);
-		}
-		// Digit 4
-		if (_xDig4) {
-			sDigString[0] = sTimeString[3];
-			_xDig4->setCel(atoi(sDigString));
-			_xDig4->paintSprite(pWnd, pt.x, pt.y);
 		}
 	}
 

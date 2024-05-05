@@ -32,7 +32,7 @@ CBagStorageDevBmp::CBagStorageDevBmp(CBofWindow *pParent, const CBofRect &xRect,
 	setRect(xRect);
 	_pWorkBmp = nullptr;
 
-	setAssociateWnd(pParent);
+	CBagStorageDev::setAssociateWnd(pParent);
 
 	setVisible();       // This object is visible
 }
@@ -84,10 +84,8 @@ ErrorCode CBagStorageDevBmp::setWorkBmp() {
 }
 
 ErrorCode CBagStorageDevBmp::killWorkBmp() {
-	if (_pWorkBmp != nullptr) {
-		delete _pWorkBmp;
-		_pWorkBmp = nullptr;
-	}
+	delete _pWorkBmp;
+	_pWorkBmp = nullptr;
 
 	return _errCode;
 }
@@ -100,14 +98,9 @@ ErrorCode CBagStorageDevBmp::loadFileFromStream(CBagIfstream &fpInput, const CBo
 }
 
 CBofPoint CBagStorageDevBmp::getScaledPt(CBofPoint xPoint) {
-	CBofRect        SDevDstRect;
-	CBofRect        SDevSrcRect;
-	CBofPoint           pt;
-	CBofRect        rDestRect = getRect();
+	CBofRect rDestRect = getRect();
 
-	SDevDstRect = getRect();                // Get the destination (screen) rect
-	SDevSrcRect = CBagBmpObject::getRect(); // Get the source (origin) rect
-
+	CBofPoint pt;
 	pt.x = _cSrcRect.width() * xPoint.x / rDestRect.width();
 	pt.y = _cSrcRect.height() * xPoint.y / rDestRect.height();
 
@@ -126,12 +119,11 @@ void CBagStorageDevBmp::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info
 }
 
 const CBofPoint CBagStorageDevBmp::devPtToViewPort(const CBofPoint &xPoint) {
-	CBofPoint p;
-
 	// Get the storage device rect
 	CBofRect SDevDstRect = getRect();
 
 	// move point relative to storage device top, left
+	CBofPoint p;
 	p.x = xPoint.x - SDevDstRect.left;
 	p.y = xPoint.y - SDevDstRect.top;
 

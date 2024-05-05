@@ -92,18 +92,13 @@ const CBofString &CBagVar::getValue() {
 
 	// Check if these items should be replaced by the current sdev
 	if (!_sVarName.isEmpty() && !_sVarName.find(CURRSDEV_TOKEN)) {
-		CBofString CurrSDev;
 		if (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()) {
 			_sVarValue = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->getName();
 		}
-	} else {
-
+	} else if (!_sVarName.isEmpty() && !_sVarName.find(PREVSDEV_TOKEN)) {
 		// Check if these items should be replaced by the previous sdev
-		if (!_sVarName.isEmpty() && !_sVarName.find(PREVSDEV_TOKEN)) {
-			CBofString CurrSDev;
-			if (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()) {
-				_sVarValue = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->getPrevSDev();
-			}
+		if (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()) {
+			_sVarValue = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->getPrevSDev();
 		}
 	}
 
@@ -322,10 +317,7 @@ ErrorCode CBagVarManager::releaseVariables(bool bIncludeGlobals) {
 	if (bIncludeGlobals) {
 		while (_xVarList.getCount()) {
 			CBagVar *pVar = _xVarList.removeHead();
-
-			if (pVar) {
-				delete pVar;
-			}
+			delete pVar;
 		}
 	} else { // Do not include globals
 		for (int i = _xVarList.getCount() - 1; i >= 0; i--) {

@@ -40,7 +40,7 @@ CBagTextObject::CBagTextObject() : CBagObject() {
 	_nDX = 80;
 	_nDY = 20;
 	_psText = nullptr;
-	setOverCursor(1); // Switch to cursor 1, 4 doesn't exist.
+	CBagObject::setOverCursor(1); // Switch to cursor 1, 4 doesn't exist.
 
 	_nPointSize = 16;
 	_nFGColor = CTEXT_COLOR;
@@ -58,7 +58,7 @@ CBagTextObject::~CBagTextObject() {
 		delete _psInitInfo;
 		_psInitInfo = nullptr;
 	}
-	detach();
+	CBagTextObject::detach();
 }
 
 CBofRect CBagTextObject::getRect() {
@@ -85,13 +85,10 @@ ErrorCode CBagTextObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 			int nPointSize = _nPointSize;
 			int nFormat = FORMAT_CENTER_LEFT;
 			if (!_bTitle) {
-
-				CBofRect cBevel;
-				int i;
-
 				byte c1 = 3;
 				byte c2 = 9;
 
+				CBofRect cBevel;
 				cBevel.intersectRect(pBmp->getRect(), r);
 
 				int left = cBevel.left;
@@ -104,6 +101,7 @@ ErrorCode CBagTextObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 				r.right -= 5;
 				r.bottom -= 5;
 
+				int i;
 				for (i = 1; i <= 3; i++) {
 					pBmp->line(left + i, bottom - i, right - i, bottom - i, c1);
 					pBmp->line(right - i, bottom - i, right - i, top + i - 1, c1);
@@ -135,10 +133,8 @@ ErrorCode CBagTextObject::attach() {
 
 	if (!getFileName().right(4).find(".TXT") || !getFileName().right(4).find(".txt")) {
 		// Prevent memory leak
-		if (_psText != nullptr) {
-			delete _psText;
-			_psText = nullptr;
-		}
+		delete _psText;
+		_psText = nullptr;
 
 		// Allocate a new string
 		_psText = new CBofString;
@@ -183,13 +179,12 @@ ErrorCode CBagTextObject::attach() {
 	} else {
 		// The Text is in the Bagel script, rather than a .txt file
 		// Prevent memory leak
-		if (_psText != nullptr) {
-			delete _psText;
-			_psText = nullptr;
-		}
+		delete _psText;
+		_psText = nullptr;
 
 		// Allocate a new string
-		if ((_psText = new CBofString) != nullptr) {
+		_psText = new CBofString;
+		if (_psText != nullptr) {
 			*_psText = getFileName();
 
 			// Replace any underscores with spaces
@@ -216,10 +211,8 @@ ErrorCode CBagTextObject::attach() {
 ErrorCode CBagTextObject::detach() {
 	assert(isValidObject(this));
 
-	if (_psText != nullptr) {
-		delete _psText;
-		_psText = nullptr;
-	}
+	delete _psText;
+	_psText = nullptr;
 
 	return CBagObject::detach();
 }
@@ -381,7 +374,7 @@ ParseCodes CBagTextObject::setInfo(CBagIfstream &istr) {
 		}
 
 		//
-		// No match return from funtion
+		// No match return from function
 		//
 		default: {
 			ParseCodes rc;
