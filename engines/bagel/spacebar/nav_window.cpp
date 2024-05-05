@@ -39,13 +39,13 @@ namespace SpaceBar {
 #define MASK_COLOR 1
 #define HIGHLIGHT_COLOR     13
 
-#define NAVDIR      "$SBARDIR\\NEBLITZ\\CLOSEUP\\NAV\\"
-#define NEBSIM2BMP  "$SBARDIR\\NEBLITZ\\CLOSEUP\\NAV\\nebsim2.bmp"
-#define NEBSIM3BMP  "$SBARDIR\\NEBLITZ\\CLOSEUP\\NAV\\nebsim3.bmp"
-#define NEBSIM4BMP  "$SBARDIR\\NEBLITZ\\CLOSEUP\\NAV\\nebsim4.bmp"
+#define NAV_DIR      "$SBARDIR\\NEBLITZ\\CLOSEUP\\NAV\\"
+#define NEBSIM2_BMP  "$SBARDIR\\NEBLITZ\\CLOSEUP\\NAV\\nebsim2.bmp"
+#define NEBSIM3_BMP  "$SBARDIR\\NEBLITZ\\CLOSEUP\\NAV\\nebsim3.bmp"
+#define NEBSIM4_BMP  "$SBARDIR\\NEBLITZ\\CLOSEUP\\NAV\\nebsim4.bmp"
 
 // New background bmps are black, so text will be white
-#define NAVTEXT_COLOR         RGB(255,255,255)
+#define NAV_TEXT_COLOR         RGB(255,255,255)
 
 struct ST_BUTTONS {
 	const char *_pszName;
@@ -61,7 +61,7 @@ struct ST_BUTTONS {
 
 };
 
-NPLANET g_Level[9] = {
+NPLANET g_level[9] = {
 	{ "Pinna", 36, 54, 45, 63, {nullptr, 0, true} },
 	{ "H'poctyl", 181, 19, 190, 28, { "Mattresses", 72, true} },
 	{ "Armpit", 108, 251, 117, 260, { "Spam", 56, true} },
@@ -73,7 +73,7 @@ NPLANET g_Level[9] = {
 	{ nullptr, 0, 0, 0, 0, {nullptr, 0, true} }
 };
 
-NPLANET g_LevelOne[10] = {
+NPLANET g_levelOne[10] = {
 	{ "Wilbur", 108, 38, 116, 49, {nullptr, 0, true} },
 	{ "McKelvey", 394, 37, 403, 46, {nullptr, 0, true} },
 	{ "Medge", 19, 90, 28, 99, { "Memory Chips", 127, true} },
@@ -85,7 +85,7 @@ NPLANET g_LevelOne[10] = {
 	{ "Pizer", 339, 412, 348, 421, { "Bird Seed", 54, true} },
 	{nullptr, 0, 0, 0, 0, {nullptr, 0, true}}
 };
-NPLANET g_LevelTwo[9] = {
+NPLANET g_levelTwo[9] = {
 	{ "Backwater", 108, 18, 117, 27, { "Kayaks", 28, true} },
 	{ "Uranus", 161, 126, 170, 135, { "Toilet Paper", 14, true} },
 	{ "Toe Jam", 252, 126, 261, 135, { "Peanutbutter", 45, true} },
@@ -96,7 +96,7 @@ NPLANET g_LevelTwo[9] = {
 	{ "Maggot's Nest", 251, 376, 260, 385, {nullptr, 0, true} },
 	{ nullptr, 0, 0, 0, 0, {nullptr, 0, false}}
 };
-NPLANET g_LevelThree[11] = {
+NPLANET g_levelThree[11] = {
 	{ "Peggleboz", 90, 20, 99, 29, { "Shot Glasses", 99, true} },
 	{ "Archeroids", 144, 89, 153, 98, { "Arrows", 8, true} },
 	{ "Pack-Rat", 324, 55, 333, 64, { "Turtle Food", 24, true} },
@@ -110,12 +110,12 @@ NPLANET g_LevelThree[11] = {
 	{ nullptr, 0, 0, 0, 0, {nullptr, 0, true} }
 };
 
-ST_BUTTONS g_NavButtons[2] = {
+ST_BUTTONS g_navButtons[2] = {
 	{ "Quit", "QUP.bmp", "QDOWN.bmp", "QDIS.bmp", "QDIS.bmp", 432, 443, 200, 30, QUIT },
 	{ "Instructions", "HUP.bmp", "HDOWN.bmp", "HDIS.bmp", "HDIS.bmp", 4, 443, 200, 30, HELP },
 };
 
-const char *g_LevelTitle[4] = {
+const char *g_levelTitle[4] = {
 	"Novice",
 	"Moderate",
 	"Hard",
@@ -124,8 +124,8 @@ const char *g_LevelTitle[4] = {
 
 
 // Local functions
-const char *MakeDir(const char *pszFile) {
-	return formPath(NAVDIR, pszFile);
+const char *makeDir(const char *pszFile) {
+	return formPath(NAV_DIR, pszFile);
 }
 
 CNavWindow::CNavWindow() {
@@ -239,19 +239,19 @@ ErrorCode CNavWindow::attach() {
 	// Reset all levels
 	int i;
 	for (i = 0; i < 9; i++) {
-		g_Level[i].cargo._bUsed = true;
+		g_level[i].cargo._bUsed = true;
 	}
 	for (i = 0; i < 10; i++) {
-		g_LevelOne[i].cargo._bUsed = true;
+		g_levelOne[i].cargo._bUsed = true;
 	}
 	for (i = 0; i < 9; i++) {
-		g_LevelTwo[i].cargo._bUsed = true;
+		g_levelTwo[i].cargo._bUsed = true;
 	}
 	for (i = 0; i < 11; i++) {
-		g_LevelThree[i].cargo._bUsed = true;
+		g_levelThree[i].cargo._bUsed = true;
 	}
 
-	_pLevel = g_Level;
+	_pLevel = g_level;
 	_pCurPos = new CBofRect(*_pYzore);
 
 	_pOldPal = CBofApp::getApp()->getPalette();
@@ -259,7 +259,7 @@ ErrorCode CNavWindow::attach() {
 	CBofApp::getApp()->setPalette(_pPal);
 	_pCurLoc = new CBofSprite;
 	if (_pCurLoc != nullptr) {
-		_pCurLoc->loadSprite(MakeDir(CUR_LOC), 2);
+		_pCurLoc->loadSprite(makeDir(CUR_LOC), 2);
 		_pCurLoc->setMaskColor(MASK_COLOR);
 		_pCurLoc->setZOrder(SPRITE_TOPMOST);
 		_pCurLoc->setAnimated(true);
@@ -275,13 +275,13 @@ ErrorCode CNavWindow::attach() {
 		_pButtons[i] = new CBofBmpButton;
 		if (_pButtons[i] != nullptr) {
 
-			CBofBitmap *pUp = loadBitmap(MakeDir(g_NavButtons[i]._pszUp), _pPal);
-			CBofBitmap *pDown = loadBitmap(MakeDir(g_NavButtons[i]._pszDown), _pPal);
-			CBofBitmap *pFocus = loadBitmap(MakeDir(g_NavButtons[i]._pszFocus), _pPal);
-			CBofBitmap *pDis = loadBitmap(MakeDir(g_NavButtons[i]._pszDisabled), _pPal);
+			CBofBitmap *pUp = loadBitmap(makeDir(g_navButtons[i]._pszUp), _pPal);
+			CBofBitmap *pDown = loadBitmap(makeDir(g_navButtons[i]._pszDown), _pPal);
+			CBofBitmap *pFocus = loadBitmap(makeDir(g_navButtons[i]._pszFocus), _pPal);
+			CBofBitmap *pDis = loadBitmap(makeDir(g_navButtons[i]._pszDisabled), _pPal);
 
 			_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
-			_pButtons[i]->create(g_NavButtons[i]._pszName, g_NavButtons[i]._nLeft, g_NavButtons[i]._nTop, g_NavButtons[i]._nWidth, g_NavButtons[i]._nHeight, this, g_NavButtons[i]._nID);
+			_pButtons[i]->create(g_navButtons[i]._pszName, g_navButtons[i]._nLeft, g_navButtons[i]._nTop, g_navButtons[i]._nWidth, g_navButtons[i]._nHeight, this, g_navButtons[i]._nID);
 			_pButtons[i]->show();
 		} else {
 			reportError(ERR_MEMORY);
@@ -293,7 +293,7 @@ ErrorCode CNavWindow::attach() {
 	updateWindow();
 	setTimer(777, 200, nullptr);
 
-	BofPlaySound(MakeDir(WELCOME_SND), SOUND_WAVE);
+	BofPlaySound(makeDir(WELCOME_SND), SOUND_WAVE);
 	CSound::waitWaveSounds();
 
 	CBagCursor::showSystemCursor();
@@ -323,200 +323,122 @@ ErrorCode CNavWindow::detach() {
 
 	CBofApp::getApp()->setPalette(_pOldPal);
 
-	if (_pPal != nullptr) {
-		delete _pPal;
-		_pPal = nullptr;
-	}
+	delete _pPal;
+	_pPal = nullptr;
 
-	if (_pPortName != nullptr) {
-		delete _pPortName;
-		_pPortName = nullptr;
-	}
+	delete _pPortName;
+	_pPortName = nullptr;
 
-	if (_pPinna != nullptr) {
-		delete _pPinna;
-		_pPinna = nullptr;
-	}
+	delete _pPinna;
+	_pPinna = nullptr;
 
-	if (_pHpoctyl != nullptr) {
-		delete _pHpoctyl;
-		_pHpoctyl = nullptr;
-	}
+	delete _pHpoctyl;
+	_pHpoctyl = nullptr;
 
-	if (_pArmpit != nullptr) {
-		delete _pArmpit;
-		_pArmpit = nullptr;
-	}
+	delete _pArmpit;
+	_pArmpit = nullptr;
 
-	if (_pYzore != nullptr) {
-		delete _pYzore;
-		_pYzore = nullptr;
-	}
+	delete _pYzore;
+	_pYzore = nullptr;
 
-	if (_pBulbus != nullptr) {
-		delete _pBulbus;
-		_pBulbus = nullptr;
-	}
+	delete _pBulbus;
+	_pBulbus = nullptr;
 
-	if (_pDingle != nullptr) {
-		delete _pDingle;
-		_pDingle = nullptr;
-	}
+	delete _pDingle;
+	_pDingle = nullptr;
 
-	if (_pKarkas != nullptr) {
-		delete _pKarkas;
-		_pKarkas = nullptr;
-	}
+	delete _pKarkas;
+	_pKarkas = nullptr;
 
-	if (_pFruufnia != nullptr) {
-		delete _pFruufnia;
-		_pFruufnia = nullptr;
-	}
+	delete _pFruufnia;
+	_pFruufnia = nullptr;
 
-	if (_pCurPos != nullptr) {
-		delete _pCurPos;
-		_pCurPos = nullptr;
-	}
+	delete _pCurPos;
+	_pCurPos = nullptr;
 
-	if (_pWilbur != nullptr) {
-		delete _pWilbur;
-		_pWilbur = nullptr;
-	}
+	delete _pWilbur;
+	_pWilbur = nullptr;
 
-	if (_pMcKelvey != nullptr) {
-		delete _pMcKelvey;
-		_pMcKelvey = nullptr;
-	}
+	delete _pMcKelvey;
+	_pMcKelvey = nullptr;
 
-	if (_pMedge != nullptr) {
-		delete _pMedge;
-		_pMedge = nullptr;
-	}
+	delete _pMedge;
+	_pMedge = nullptr;
 
-	if (_pWall != nullptr) {
-		delete _pWall;
-		_pWall = nullptr;
-	}
+	delete _pWall;
+	_pWall = nullptr;
 
-	if (_pWoo != nullptr) {
-		delete _pWoo;
-		_pWoo = nullptr;
-	}
+	delete _pWoo;
+	_pWoo = nullptr;
 
-	if (_pRoman != nullptr) {
-		delete _pRoman;
-		_pRoman = nullptr;
-	}
+	delete _pRoman;
+	_pRoman = nullptr;
 
-	if (_pWeed != nullptr) {
-		delete _pWeed;
-		_pWeed = nullptr;
-	}
+	delete _pWeed;
+	_pWeed = nullptr;
 
-	if (_pBok != nullptr) {
-		delete _pBok;
-		_pBok = nullptr;
-	}
+	delete _pBok;
+	_pBok = nullptr;
 
-	if (_pPizer != nullptr) {
-		delete _pPizer;
-		_pPizer = nullptr;
-	}
+	delete _pPizer;
+	_pPizer = nullptr;
 
-	if (_pBackwater != nullptr) {
-		delete _pBackwater;
-		_pBackwater = nullptr;
-	}
+	delete _pBackwater;
+	_pBackwater = nullptr;
 
-	if (_pUranus != nullptr) {
-		delete _pUranus;
-		_pUranus = nullptr;
-	}
+	delete _pUranus;
+	_pUranus = nullptr;
 
-	if (_pToejam != nullptr) {
-		delete _pToejam;
-		_pToejam = nullptr;
-	}
+	delete _pToejam;
+	_pToejam = nullptr;
 
-	if (_pHellhole != nullptr) {
-		delete _pHellhole;
-		_pHellhole = nullptr;
-	}
+	delete _pHellhole;
+	_pHellhole = nullptr;
 
-	if (_pPustule != nullptr) {
-		delete _pPustule;
-		_pPustule = nullptr;
-	}
+	delete _pPustule;
+	_pPustule = nullptr;
 
-	if (_pSlug != nullptr) {
-		delete _pSlug;
-		_pSlug = nullptr;
-	}
+	delete _pSlug;
+	_pSlug = nullptr;
 
-	if (_pSwamprock != nullptr) {
-		delete _pSwamprock;
-		_pSwamprock = nullptr;
-	}
+	delete _pSwamprock;
+	_pSwamprock = nullptr;
 
-	if (_pMaggotsnest != nullptr) {
-		delete _pMaggotsnest;
-		_pMaggotsnest = nullptr;
-	}
+	delete _pMaggotsnest;
+	_pMaggotsnest = nullptr;
 
-	if (_pPeggleboz != nullptr) {
-		delete _pPeggleboz;
-		_pPeggleboz = nullptr;
-	}
+	delete _pPeggleboz;
+	_pPeggleboz = nullptr;
 
-	if (_pArcheroids != nullptr) {
-		delete _pArcheroids;
-		_pArcheroids = nullptr;
-	}
+	delete _pArcheroids;
+	_pArcheroids = nullptr;
 
-	if (_pPackRat != nullptr) {
-		delete _pPackRat;
-		_pPackRat = nullptr;
-	}
+	delete _pPackRat;
+	_pPackRat = nullptr;
 
-	if (_pBeacon != nullptr) {
-		delete _pBeacon;
-		_pBeacon = nullptr;
-	}
+	delete _pBeacon;
+	_pBeacon = nullptr;
 
-	if (_pMankala != nullptr) {
-		delete _pMankala;
-		_pMankala = nullptr;
-	}
+	delete _pMankala;
+	_pMankala = nullptr;
 
-	if (_pLife != nullptr) {
-		delete _pLife;
-		_pLife = nullptr;
-	}
+	delete _pLife;
+	_pLife = nullptr;
 
-	if (_pFuge != nullptr) {
-		delete _pFuge;
-		_pFuge = nullptr;
-	}
+	delete _pFuge;
+	_pFuge = nullptr;
 
-	if (_pGarfunkel != nullptr) {
-		delete _pGarfunkel;
-		_pGarfunkel = nullptr;
-	}
+	delete _pGarfunkel;
+	_pGarfunkel = nullptr;
 
-	if (_pBattlefish != nullptr) {
-		delete _pBattlefish;
-		_pBattlefish = nullptr;
-	}
+	delete _pBattlefish;
+	_pBattlefish = nullptr;
 
-	if (_pCurLoc != nullptr) {
-		delete _pCurLoc;
-		_pCurLoc = nullptr;
-	}
+	delete _pCurLoc;
+	_pCurLoc = nullptr;
 
-	if (_pNoVacancy != nullptr) {
-		delete _pNoVacancy;
-		_pNoVacancy = nullptr;
-	}
+	delete _pNoVacancy;
+	_pNoVacancy = nullptr;
 
 	// Destroy all buttons
 	for (int i = 0; i < 2; i++) {
@@ -579,18 +501,18 @@ void CNavWindow::refreshData() {
 	pBmp->paint(&cBmp, 0, 0, &cRect);
 
 	cRect.setRect(0, 10, 199, 25);
-	paintText(&cBmp, &cRect, buildString("Current Port of call:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, buildString("Current Port of call:"), 14, TEXT_NORMAL, NAV_TEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.left += 10;       // Indent this section
 	cRect.top += 15;
 	cRect.bottom += 15;
-	paintText(&cBmp, &cRect, buildString("%s", _pPortName->getBuffer()), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, buildString("%s", _pPortName->getBuffer()), 14, TEXT_NORMAL, NAV_TEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.left -= 10;       // Un-indent
 
 	// Leave blank space before next section
 	cRect.top += 30;
 	cRect.bottom += 30;
 
-	paintText(&cBmp, &cRect, buildString("Current Manifest:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, buildString("Current Manifest:"), 14, TEXT_NORMAL, NAV_TEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 
 	cRect.left += 10;       // Indent this section
 	char szBuf[100];
@@ -600,14 +522,14 @@ void CNavWindow::refreshData() {
 			cRect.top += 15;
 			cRect.bottom += 15;
 			if (_pLevel[i].cargo.Weight != 1)
-				Common::sprintf_s(szBuf, "%3d tons of %s", _pLevel[i].cargo.Weight, _pLevel[i].cargo._pszCargo/*, _pLevel[i].Name*/);
+				Common::sprintf_s(szBuf, "%3d tons of %s", _pLevel[i].cargo.Weight, _pLevel[i].cargo._pszCargo);
 			else
-				Common::sprintf_s(szBuf, "%3d ton of %s", _pLevel[i].cargo.Weight, _pLevel[i].cargo._pszCargo/*, _pLevel[i].Name*/);
-			paintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+				Common::sprintf_s(szBuf, "%3d ton of %s", _pLevel[i].cargo.Weight, _pLevel[i].cargo._pszCargo);
+			paintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAV_TEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 			cRect.top += 15;
 			cRect.bottom += 15;
 			Common::sprintf_s(szBuf, "    for %s", _pLevel[i].Name);
-			paintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+			paintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAV_TEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 		};
 		i++;
 	};
@@ -617,21 +539,21 @@ void CNavWindow::refreshData() {
 	cRect.top += 30;
 	cRect.bottom += 30;
 
-	paintText(&cBmp, &cRect, buildString("Current Fuel:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, buildString("Current Fuel:"), 14, TEXT_NORMAL, NAV_TEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.left += 10;       // Indent this section
 	cRect.top += 15;
 	cRect.bottom += 15;
 	if (_fuel != 1)
-		paintText(&cBmp, &cRect, buildString("%3d tons", _fuel), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+		paintText(&cBmp, &cRect, buildString("%3d tons", _fuel), 14, TEXT_NORMAL, NAV_TEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	else
-		paintText(&cBmp, &cRect, buildString("%3d ton", _fuel), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+		paintText(&cBmp, &cRect, buildString("%3d ton", _fuel), 14, TEXT_NORMAL, NAV_TEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.left -= 10;       // Un-indent
 
 	// Leave blank space before next section
 	cRect.top += 30;
 	cRect.bottom += 30;
 
-	paintText(&cBmp, &cRect, buildString("Current Tonnage:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, buildString("Current Tonnage:"), 14, TEXT_NORMAL, NAV_TEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.top += 15;
 	cRect.bottom += 15;
 
@@ -640,36 +562,36 @@ void CNavWindow::refreshData() {
 		Common::sprintf_s(szBuf, "%3d tons Cargo", _cargo);
 	else
 		Common::sprintf_s(szBuf, "%3d ton Cargo", _cargo);
-	paintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAV_TEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.top += 15;
 	cRect.bottom += 15;
 	if (_ship != 1)
 		Common::sprintf_s(szBuf, "%3d tons Ship", _ship);
 	else
 		Common::sprintf_s(szBuf, "%3d ton Ship", _ship);
-	paintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAV_TEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.top += 15;
 	cRect.bottom += 15;
 	if (_fuel != 1)
 		Common::sprintf_s(szBuf, "%3d tons Fuel", _fuel);
 	else
 		Common::sprintf_s(szBuf, "%3d ton Fuel", _fuel);
-	paintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAV_TEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.top += 15;
 	cRect.bottom += 15;
 	Common::sprintf_s(szBuf, "%3d tons TOTAL", _ship + _fuel + _cargo);
-	paintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAV_TEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.left -= 10;       // Un-indent
 
 	cRect.top += 30;
 	cRect.bottom += 30;
 	Common::sprintf_s(szBuf, "Simulation Level:");
-	paintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	paintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAV_TEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.left += 10;       // Indent
 	cRect.top += 15;
 	cRect.bottom += 15;
-	Common::sprintf_s(szBuf, "%s", g_LevelTitle[_level]);
-	paintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
+	Common::sprintf_s(szBuf, "%s", g_levelTitle[_level]);
+	paintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAV_TEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 	cRect.left -= 10;       // Un-indent
 	cBmp.paint(this, 443, 0);
 }
@@ -697,7 +619,7 @@ void CNavWindow::onBofButton(CBofObject *pObject, int nState) {
 		if (pApp != nullptr) {
 			CBagMasterWin *pWin = pApp->getMasterWnd();
 			if (pWin != nullptr) {
-				pWin->onHelp(MakeDir("NAVHELP.TXT"));
+				pWin->onHelp(makeDir("NAVHELP.TXT"));
 			}
 		}
 		break;
@@ -884,8 +806,8 @@ void CNavWindow::onHpoctyl() {
 	if (*_pCurPos == *_pHpoctyl) {
 
 		*_pPortName = "H'poctyl";
-		if (g_Level[1].cargo._pszCargo != nullptr && g_Level[1].cargo._bUsed) {
-			g_Level[1].cargo._bUsed = false;
+		if (g_level[1].cargo._pszCargo != nullptr && g_level[1].cargo._bUsed) {
+			g_level[1].cargo._bUsed = false;
 			_cargo -= 72;
 		}
 		delete _pCurPos;
@@ -894,8 +816,8 @@ void CNavWindow::onHpoctyl() {
 		calcFuel(0);
 	} else if (*_pCurPos == *_pArmpit) {
 		*_pPortName = "H'poctyl";
-		if (g_Level[1].cargo._pszCargo != nullptr && g_Level[1].cargo._bUsed) {
-			g_Level[1].cargo._bUsed = false;
+		if (g_level[1].cargo._pszCargo != nullptr && g_level[1].cargo._bUsed) {
+			g_level[1].cargo._bUsed = false;
 			_cargo -= 72;
 		}
 		delete _pCurPos;
@@ -904,8 +826,8 @@ void CNavWindow::onHpoctyl() {
 		calcFuel(3.2);
 	} else if (*_pCurPos == *_pPinna) {
 		*_pPortName = "H'poctyl";
-		if (g_Level[1].cargo._pszCargo != nullptr && g_Level[1].cargo._bUsed) {
-			g_Level[1].cargo._bUsed = false;
+		if (g_level[1].cargo._pszCargo != nullptr && g_level[1].cargo._bUsed) {
+			g_level[1].cargo._bUsed = false;
 			_cargo -= 72;
 		}
 		delete _pCurPos;
@@ -914,8 +836,8 @@ void CNavWindow::onHpoctyl() {
 		calcFuel(1.6);
 	} else if (*_pCurPos == *_pDingle) {
 		*_pPortName = "H'poctyl";
-		if (g_Level[1].cargo._pszCargo != nullptr && g_Level[1].cargo._bUsed) {
-			g_Level[1].cargo._bUsed = false;
+		if (g_level[1].cargo._pszCargo != nullptr && g_level[1].cargo._bUsed) {
+			g_level[1].cargo._bUsed = false;
 			_cargo -= 72;
 		}
 		delete _pCurPos;
@@ -924,8 +846,8 @@ void CNavWindow::onHpoctyl() {
 		calcFuel(2.4);
 	} else if (*_pCurPos == *_pBulbus) {
 		*_pPortName = "H'poctyl";
-		if (g_Level[1].cargo._pszCargo != nullptr && g_Level[1].cargo._bUsed) {
-			g_Level[1].cargo._bUsed = false;
+		if (g_level[1].cargo._pszCargo != nullptr && g_level[1].cargo._bUsed) {
+			g_level[1].cargo._bUsed = false;
 			_cargo -= 72;
 		}
 		delete _pCurPos;
@@ -944,8 +866,8 @@ void CNavWindow::onArmpit() {
 		delete _pCurPos;
 		_pCurPos = new CBofRect(*_pArmpit);
 		*_pPortName = "Armpit";
-		if (g_Level[2].cargo._pszCargo != nullptr && g_Level[2].cargo._bUsed) {
-			g_Level[2].cargo._bUsed = false;
+		if (g_level[2].cargo._pszCargo != nullptr && g_level[2].cargo._bUsed) {
+			g_level[2].cargo._bUsed = false;
 			_cargo -= 56;
 		}
 
@@ -954,8 +876,8 @@ void CNavWindow::onArmpit() {
 		delete _pCurPos;
 		_pCurPos = new CBofRect(*_pArmpit);
 		*_pPortName = "Armpit";
-		if (g_Level[2].cargo._pszCargo != nullptr && g_Level[2].cargo._bUsed) {
-			g_Level[2].cargo._bUsed = false;
+		if (g_level[2].cargo._pszCargo != nullptr && g_level[2].cargo._bUsed) {
+			g_level[2].cargo._bUsed = false;
 			_cargo -= 56;
 		}
 		calcFuel(3.2);
@@ -964,8 +886,8 @@ void CNavWindow::onArmpit() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pArmpit);
 		*_pPortName = "Armpit";
-		if (g_Level[2].cargo._pszCargo != nullptr && g_Level[2].cargo._bUsed) {
-			g_Level[2].cargo._bUsed = false;
+		if (g_level[2].cargo._pszCargo != nullptr && g_level[2].cargo._bUsed) {
+			g_level[2].cargo._bUsed = false;
 			_cargo -= 56;
 		}
 		calcFuel(1.5);
@@ -974,8 +896,8 @@ void CNavWindow::onArmpit() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pArmpit);
 		*_pPortName = "Armpit";
-		if (g_Level[2].cargo._pszCargo != nullptr && g_Level[2].cargo._bUsed) {
-			g_Level[2].cargo._bUsed = false;
+		if (g_level[2].cargo._pszCargo != nullptr && g_level[2].cargo._bUsed) {
+			g_level[2].cargo._bUsed = false;
 			_cargo -= 56;
 		}
 		calcFuel(2.3);
@@ -1106,8 +1028,8 @@ void CNavWindow::onFruufnia() {
 		*_pPortName = "Fruufnia";
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pFruufnia);
-		if (g_Level[7].cargo._pszCargo != nullptr && g_Level[7].cargo._bUsed) {
-			g_Level[7].cargo._bUsed = false;
+		if (g_level[7].cargo._pszCargo != nullptr && g_level[7].cargo._bUsed) {
+			g_level[7].cargo._bUsed = false;
 			_cargo -= 86;
 		}
 	} else if (*_pCurPos == *_pKarkas) {
@@ -1115,8 +1037,8 @@ void CNavWindow::onFruufnia() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pFruufnia);
 		*_pPortName = "Fruufnia";
-		if (g_Level[7].cargo._pszCargo != nullptr && g_Level[7].cargo._bUsed) {
-			g_Level[7].cargo._bUsed = false;
+		if (g_level[7].cargo._pszCargo != nullptr && g_level[7].cargo._bUsed) {
+			g_level[7].cargo._bUsed = false;
 			_cargo -= 86;
 		}
 		calcFuel(1.7);
@@ -1125,8 +1047,8 @@ void CNavWindow::onFruufnia() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pFruufnia);
 		*_pPortName = "Fruufnia";
-		if (g_Level[7].cargo._pszCargo != nullptr && g_Level[7].cargo._bUsed) {
-			g_Level[7].cargo._bUsed = false;
+		if (g_level[7].cargo._pszCargo != nullptr && g_level[7].cargo._bUsed) {
+			g_level[7].cargo._bUsed = false;
 			_cargo -= 86;
 		}
 		calcFuel(4.0);
@@ -1135,8 +1057,8 @@ void CNavWindow::onFruufnia() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pFruufnia);
 		*_pPortName = "Fruufnia";
-		if (g_Level[7].cargo._pszCargo != nullptr && g_Level[7].cargo._bUsed) {
-			g_Level[7].cargo._bUsed = false;
+		if (g_level[7].cargo._pszCargo != nullptr && g_level[7].cargo._bUsed) {
+			g_level[7].cargo._bUsed = false;
 			_cargo -= 86;
 		}
 		calcFuel(3.7);
@@ -1210,8 +1132,8 @@ void CNavWindow::onMedge() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pMedge);
 		*_pPortName = "Medge";
-		if (g_LevelOne[2].cargo._pszCargo != nullptr && g_LevelOne[2].cargo._bUsed) {
-			g_LevelOne[2].cargo._bUsed = false;
+		if (g_levelOne[2].cargo._pszCargo != nullptr && g_levelOne[2].cargo._bUsed) {
+			g_levelOne[2].cargo._bUsed = false;
 			_cargo -= 127;
 		}
 	} else if (*_pCurPos == *_pWilbur) {
@@ -1219,8 +1141,8 @@ void CNavWindow::onMedge() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pMedge);
 		*_pPortName = "Medge";
-		if (g_LevelOne[2].cargo._pszCargo != nullptr && g_LevelOne[2].cargo._bUsed) {
-			g_LevelOne[2].cargo._bUsed = false;
+		if (g_levelOne[2].cargo._pszCargo != nullptr && g_levelOne[2].cargo._bUsed) {
+			g_levelOne[2].cargo._bUsed = false;
 			_cargo -= 127;
 		}
 		calcFuel(2.1);
@@ -1229,8 +1151,8 @@ void CNavWindow::onMedge() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pMedge);
 		*_pPortName = "Medge";
-		if (g_LevelOne[2].cargo._pszCargo != nullptr && g_LevelOne[2].cargo._bUsed) {
-			g_LevelOne[2].cargo._bUsed = false;
+		if (g_levelOne[2].cargo._pszCargo != nullptr && g_levelOne[2].cargo._bUsed) {
+			g_levelOne[2].cargo._bUsed = false;
 			_cargo -= 127;
 		}
 		calcFuel(1.2);
@@ -1315,8 +1237,8 @@ void CNavWindow::onRoman() {
 		_pCurPos = nullptr;
 		*_pPortName = "Roman";
 		_pCurPos = new CBofRect(*_pRoman);
-		if (g_LevelOne[5].cargo._pszCargo != nullptr && g_LevelOne[5].cargo._bUsed) {
-			g_LevelOne[5].cargo._bUsed = false;
+		if (g_levelOne[5].cargo._pszCargo != nullptr && g_levelOne[5].cargo._bUsed) {
+			g_levelOne[5].cargo._bUsed = false;
 			_cargo -= 20;
 		}
 	} else if (*_pCurPos == *_pWall) {
@@ -1324,8 +1246,8 @@ void CNavWindow::onRoman() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pRoman);
 		*_pPortName = "Roman";
-		if (g_LevelOne[5].cargo._pszCargo != nullptr && g_LevelOne[5].cargo._bUsed) {
-			g_LevelOne[5].cargo._bUsed = false;
+		if (g_levelOne[5].cargo._pszCargo != nullptr && g_levelOne[5].cargo._bUsed) {
+			g_levelOne[5].cargo._bUsed = false;
 			_cargo -= 20;
 		}
 		calcFuel(1.9);
@@ -1334,8 +1256,8 @@ void CNavWindow::onRoman() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pRoman);
 		*_pPortName = "Roman";
-		if (g_LevelOne[5].cargo._pszCargo != nullptr && g_LevelOne[5].cargo._bUsed) {
-			g_LevelOne[5].cargo._bUsed = false;
+		if (g_levelOne[5].cargo._pszCargo != nullptr && g_levelOne[5].cargo._bUsed) {
+			g_levelOne[5].cargo._bUsed = false;
 			_cargo -= 20;
 		}
 		calcFuel(2.7);
@@ -1344,8 +1266,8 @@ void CNavWindow::onRoman() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pRoman);
 		*_pPortName = "Roman";
-		if (g_LevelOne[5].cargo._pszCargo != nullptr && g_LevelOne[5].cargo._bUsed) {
-			g_LevelOne[5].cargo._bUsed = false;
+		if (g_levelOne[5].cargo._pszCargo != nullptr && g_levelOne[5].cargo._bUsed) {
+			g_levelOne[5].cargo._bUsed = false;
 			_cargo -= 20;
 		}
 		calcFuel(4.6);
@@ -1393,7 +1315,7 @@ void CNavWindow::calcFuel(double hf) {
 
 		if (_level == 2) {
 			pause();
-			CBofString sNebDir(NEBSIM4BMP);
+			CBofString sNebDir(NEBSIM4_BMP);
 			MACROREPLACE(sNebDir);
 			assert(_pBackdrop != nullptr);
 			bmptwo = new CBofBitmap(sNebDir.getBuffer(), _pPal);
@@ -1405,13 +1327,13 @@ void CNavWindow::calcFuel(double hf) {
 			_pCurPos = nullptr;
 			_pCurPos = new CBofRect(*_pMankala);
 			_level = 3;
-			_pLevel = g_LevelThree;
+			_pLevel = g_levelThree;
 			*_pPortName = "Mankala";
 		}
 
 		if (_level == 1) {
 			pause();
-			CBofString sNebDir(NEBSIM3BMP);
+			CBofString sNebDir(NEBSIM3_BMP);
 			MACROREPLACE(sNebDir);
 			assert(_pBackdrop != nullptr);
 			bmptwo = new CBofBitmap(sNebDir.getBuffer(), _pPal);
@@ -1423,13 +1345,13 @@ void CNavWindow::calcFuel(double hf) {
 			_pCurPos = nullptr;
 			_pCurPos = new CBofRect(*_pMaggotsnest);
 			_level = 2;
-			_pLevel = g_LevelTwo;
+			_pLevel = g_levelTwo;
 			*_pPortName = "Maggot's Nest";
 		}
 
 		if (_level == 0) {
 			pause();
-			CBofString sNebDir(NEBSIM2BMP);
+			CBofString sNebDir(NEBSIM2_BMP);
 			MACROREPLACE(sNebDir);
 			assert(_pBackdrop != nullptr);
 			bmptwo = new CBofBitmap(sNebDir.getBuffer(), _pPal);
@@ -1441,7 +1363,7 @@ void CNavWindow::calcFuel(double hf) {
 			_pCurPos = nullptr;
 			_pCurPos = new CBofRect(*_pMcKelvey);
 			_level = 1;
-			_pLevel = g_LevelOne;
+			_pLevel = g_levelOne;
 			*_pPortName = "McKelvey";
 		}
 
@@ -1499,8 +1421,8 @@ void CNavWindow::onBok() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pBok);
 		*_pPortName = "Bok";
-		if (g_LevelOne[7].cargo._pszCargo != nullptr && g_LevelOne[7].cargo._bUsed) {
-			g_LevelOne[7].cargo._bUsed = false;
+		if (g_levelOne[7].cargo._pszCargo != nullptr && g_levelOne[7].cargo._bUsed) {
+			g_levelOne[7].cargo._bUsed = false;
 			_cargo -= 119;
 		}
 	} else if (*_pCurPos == *_pWoo) {
@@ -1508,8 +1430,8 @@ void CNavWindow::onBok() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pBok);
 		*_pPortName = "Bok";
-		if (g_LevelOne[7].cargo._pszCargo != nullptr && g_LevelOne[7].cargo._bUsed) {
-			g_LevelOne[7].cargo._bUsed = false;
+		if (g_levelOne[7].cargo._pszCargo != nullptr && g_levelOne[7].cargo._bUsed) {
+			g_levelOne[7].cargo._bUsed = false;
 			_cargo -= 119;
 		}
 		calcFuel(3.9);
@@ -1524,8 +1446,8 @@ void CNavWindow::onPizer() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pPizer);
 		*_pPortName = "Pizer";
-		if (g_LevelOne[8].cargo._pszCargo != nullptr && g_LevelOne[8].cargo._bUsed) {
-			g_LevelOne[8].cargo._bUsed = false;
+		if (g_levelOne[8].cargo._pszCargo != nullptr && g_levelOne[8].cargo._bUsed) {
+			g_levelOne[8].cargo._bUsed = false;
 			_cargo -= 54;
 		}
 	} else if (*_pCurPos == *_pWoo) {
@@ -1533,8 +1455,8 @@ void CNavWindow::onPizer() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pPizer);
 		*_pPortName = "Pizer";
-		if (g_LevelOne[8].cargo._pszCargo != nullptr && g_LevelOne[8].cargo._bUsed) {
-			g_LevelOne[8].cargo._bUsed = false;
+		if (g_levelOne[8].cargo._pszCargo != nullptr && g_levelOne[8].cargo._bUsed) {
+			g_levelOne[8].cargo._bUsed = false;
 			_cargo -= 54;
 		}
 		calcFuel(1.7);
@@ -1543,8 +1465,8 @@ void CNavWindow::onPizer() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pPizer);
 		*_pPortName = "Pizer";
-		if (g_LevelOne[8].cargo._pszCargo != nullptr && g_LevelOne[8].cargo._bUsed) {
-			g_LevelOne[8].cargo._bUsed = false;
+		if (g_levelOne[8].cargo._pszCargo != nullptr && g_levelOne[8].cargo._bUsed) {
+			g_levelOne[8].cargo._bUsed = false;
 			_cargo -= 54;
 		}
 		calcFuel(4.6);
@@ -1553,8 +1475,8 @@ void CNavWindow::onPizer() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pPizer);
 		*_pPortName = "Pizer";
-		if (g_LevelOne[8].cargo._pszCargo != nullptr && g_LevelOne[8].cargo._bUsed) {
-			g_LevelOne[8].cargo._bUsed = false;
+		if (g_levelOne[8].cargo._pszCargo != nullptr && g_levelOne[8].cargo._bUsed) {
+			g_levelOne[8].cargo._bUsed = false;
 			_cargo -= 54;
 		}
 		calcFuel(2.2);
@@ -1569,8 +1491,8 @@ void CNavWindow::onBackwater() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pBackwater);
 		*_pPortName = "Backwater";
-		if (g_LevelTwo[0].cargo._pszCargo != nullptr && g_LevelTwo[0].cargo._bUsed) {
-			g_LevelTwo[0].cargo._bUsed = false;
+		if (g_levelTwo[0].cargo._pszCargo != nullptr && g_levelTwo[0].cargo._bUsed) {
+			g_levelTwo[0].cargo._bUsed = false;
 			_cargo -= 28;
 		}
 		calcFuel(0);
@@ -1579,8 +1501,8 @@ void CNavWindow::onBackwater() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pBackwater);
 		*_pPortName = "Backwater";
-		if (g_LevelTwo[0].cargo._pszCargo != nullptr && g_LevelTwo[0].cargo._bUsed) {
-			g_LevelTwo[0].cargo._bUsed = false;
+		if (g_levelTwo[0].cargo._pszCargo != nullptr && g_levelTwo[0].cargo._bUsed) {
+			g_levelTwo[0].cargo._bUsed = false;
 			_cargo -= 28;
 		}
 		calcFuel(4.5);
@@ -1595,8 +1517,8 @@ void CNavWindow::onUranus() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pUranus);
 		*_pPortName = "Uranus";
-		if (g_LevelTwo[1].cargo._pszCargo != nullptr && g_LevelTwo[1].cargo._bUsed) {
-			g_LevelTwo[1].cargo._bUsed = false;
+		if (g_levelTwo[1].cargo._pszCargo != nullptr && g_levelTwo[1].cargo._bUsed) {
+			g_levelTwo[1].cargo._bUsed = false;
 			_cargo -= 14;
 		}
 		calcFuel(0);
@@ -1605,8 +1527,8 @@ void CNavWindow::onUranus() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pUranus);
 		*_pPortName = "Uranus";
-		if (g_LevelTwo[1].cargo._pszCargo != nullptr && g_LevelTwo[1].cargo._bUsed) {
-			g_LevelTwo[1].cargo._bUsed = false;
+		if (g_levelTwo[1].cargo._pszCargo != nullptr && g_levelTwo[1].cargo._bUsed) {
+			g_levelTwo[1].cargo._bUsed = false;
 			_cargo -= 14;
 		}
 		calcFuel(4.5);
@@ -1615,8 +1537,8 @@ void CNavWindow::onUranus() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pUranus);
 		*_pPortName = "Uranus";
-		if (g_LevelTwo[1].cargo._pszCargo != nullptr && g_LevelTwo[1].cargo._bUsed) {
-			g_LevelTwo[1].cargo._bUsed = false;
+		if (g_levelTwo[1].cargo._pszCargo != nullptr && g_levelTwo[1].cargo._bUsed) {
+			g_levelTwo[1].cargo._bUsed = false;
 			_cargo -= 14;
 		}
 		calcFuel(2.6);
@@ -1625,8 +1547,8 @@ void CNavWindow::onUranus() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pUranus);
 		*_pPortName = "Uranus";
-		if (g_LevelTwo[1].cargo._pszCargo != nullptr && g_LevelTwo[1].cargo._bUsed) {
-			g_LevelTwo[1].cargo._bUsed = false;
+		if (g_levelTwo[1].cargo._pszCargo != nullptr && g_levelTwo[1].cargo._bUsed) {
+			g_levelTwo[1].cargo._bUsed = false;
 			_cargo -= 14;
 		}
 		calcFuel(2.9);
@@ -1641,8 +1563,8 @@ void CNavWindow::onToejam() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pToejam);
 		*_pPortName = "Toe Jam";
-		if (g_LevelTwo[2].cargo._pszCargo != nullptr && g_LevelTwo[2].cargo._bUsed) {
-			g_LevelTwo[2].cargo._bUsed = false;
+		if (g_levelTwo[2].cargo._pszCargo != nullptr && g_levelTwo[2].cargo._bUsed) {
+			g_levelTwo[2].cargo._bUsed = false;
 			_cargo -= 45;
 		}
 		calcFuel(0);
@@ -1651,8 +1573,8 @@ void CNavWindow::onToejam() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pToejam);
 		*_pPortName = "Toe Jam";
-		if (g_LevelTwo[2].cargo._pszCargo != nullptr && g_LevelTwo[2].cargo._bUsed) {
-			g_LevelTwo[2].cargo._bUsed = false;
+		if (g_levelTwo[2].cargo._pszCargo != nullptr && g_levelTwo[2].cargo._bUsed) {
+			g_levelTwo[2].cargo._bUsed = false;
 			_cargo -= 45;
 		}
 		calcFuel(2.6);
@@ -1661,8 +1583,8 @@ void CNavWindow::onToejam() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pToejam);
 		*_pPortName = "Toe Jam";
-		if (g_LevelTwo[2].cargo._pszCargo != nullptr && g_LevelTwo[2].cargo._bUsed) {
-			g_LevelTwo[2].cargo._bUsed = false;
+		if (g_levelTwo[2].cargo._pszCargo != nullptr && g_levelTwo[2].cargo._bUsed) {
+			g_levelTwo[2].cargo._bUsed = false;
 			_cargo -= 45;
 		}
 		calcFuel(2.0);
@@ -1671,8 +1593,8 @@ void CNavWindow::onToejam() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pToejam);
 		*_pPortName = "Toe Jam";
-		if (g_LevelTwo[2].cargo._pszCargo != nullptr && g_LevelTwo[2].cargo._bUsed) {
-			g_LevelTwo[2].cargo._bUsed = false;
+		if (g_levelTwo[2].cargo._pszCargo != nullptr && g_levelTwo[2].cargo._bUsed) {
+			g_levelTwo[2].cargo._bUsed = false;
 			_cargo -= 45;
 		}
 		calcFuel(1.1);
@@ -1681,8 +1603,8 @@ void CNavWindow::onToejam() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pToejam);
 		*_pPortName = "Toe Jam";
-		if (g_LevelTwo[2].cargo._pszCargo != nullptr && g_LevelTwo[2].cargo._bUsed) {
-			g_LevelTwo[2].cargo._bUsed = false;
+		if (g_levelTwo[2].cargo._pszCargo != nullptr && g_levelTwo[2].cargo._bUsed) {
+			g_levelTwo[2].cargo._bUsed = false;
 			_cargo -= 45;
 		}
 		calcFuel(1.8);
@@ -1697,8 +1619,8 @@ void CNavWindow::onHellhole() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pHellhole);
 		*_pPortName = "Hellhole";
-		if (g_LevelTwo[3].cargo._pszCargo != nullptr && g_LevelTwo[3].cargo._bUsed) {
-			g_LevelTwo[3].cargo._bUsed = false;
+		if (g_levelTwo[3].cargo._pszCargo != nullptr && g_levelTwo[3].cargo._bUsed) {
+			g_levelTwo[3].cargo._bUsed = false;
 			_cargo -= 100;
 		}
 		calcFuel(1.8);
@@ -1707,8 +1629,8 @@ void CNavWindow::onHellhole() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pHellhole);
 		*_pPortName = "Hellhole";
-		if (g_LevelTwo[3].cargo._pszCargo != nullptr && g_LevelTwo[3].cargo._bUsed) {
-			g_LevelTwo[3].cargo._bUsed = false;
+		if (g_levelTwo[3].cargo._pszCargo != nullptr && g_levelTwo[3].cargo._bUsed) {
+			g_levelTwo[3].cargo._bUsed = false;
 			_cargo -= 100;
 		}
 		calcFuel(2.0);
@@ -1717,8 +1639,8 @@ void CNavWindow::onHellhole() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pHellhole);
 		*_pPortName = "Hellhole";
-		if (g_LevelTwo[3].cargo._pszCargo != nullptr && g_LevelTwo[3].cargo._bUsed) {
-			g_LevelTwo[3].cargo._bUsed = false;
+		if (g_levelTwo[3].cargo._pszCargo != nullptr && g_levelTwo[3].cargo._bUsed) {
+			g_levelTwo[3].cargo._bUsed = false;
 			_cargo -= 100;
 		}
 		calcFuel(1.3);
@@ -1800,8 +1722,8 @@ void CNavWindow::onSlug() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pSlug);
 		*_pPortName = "Slug";
-		if (g_LevelTwo[6].cargo._pszCargo != nullptr && g_LevelTwo[6].cargo._bUsed) {
-			g_LevelTwo[6].cargo._bUsed = false;
+		if (g_levelTwo[6].cargo._pszCargo != nullptr && g_levelTwo[6].cargo._bUsed) {
+			g_levelTwo[6].cargo._bUsed = false;
 			_cargo -= 75;
 		}
 		calcFuel(0);
@@ -1810,8 +1732,8 @@ void CNavWindow::onSlug() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pSlug);
 		*_pPortName = "Slug";
-		if (g_LevelTwo[6].cargo._pszCargo != nullptr && g_LevelTwo[6].cargo._bUsed) {
-			g_LevelTwo[6].cargo._bUsed = false;
+		if (g_levelTwo[6].cargo._pszCargo != nullptr && g_levelTwo[6].cargo._bUsed) {
+			g_levelTwo[6].cargo._bUsed = false;
 			_cargo -= 75;
 		}
 		calcFuel(3.4);
@@ -1820,8 +1742,8 @@ void CNavWindow::onSlug() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pSlug);
 		*_pPortName = "Slug";
-		if (g_LevelTwo[6].cargo._pszCargo != nullptr && g_LevelTwo[6].cargo._bUsed) {
-			g_LevelTwo[6].cargo._bUsed = false;
+		if (g_levelTwo[6].cargo._pszCargo != nullptr && g_levelTwo[6].cargo._bUsed) {
+			g_levelTwo[6].cargo._bUsed = false;
 			_cargo -= 75;
 		}
 		calcFuel(1.7);
@@ -1867,8 +1789,8 @@ void CNavWindow::onPeggleboz() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pPeggleboz);
 		*_pPortName = "Peggleboz";
-		if (g_LevelThree[0].cargo._pszCargo != nullptr && g_LevelThree[0].cargo._bUsed) {
-			g_LevelThree[0].cargo._bUsed = false;
+		if (g_levelThree[0].cargo._pszCargo != nullptr && g_levelThree[0].cargo._bUsed) {
+			g_levelThree[0].cargo._bUsed = false;
 			_cargo -= 99;
 		}
 		calcFuel(0);
@@ -1877,8 +1799,8 @@ void CNavWindow::onPeggleboz() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pPeggleboz);
 		*_pPortName = "Peggleboz";
-		if (g_LevelThree[0].cargo._pszCargo != nullptr && g_LevelThree[0].cargo._bUsed) {
-			g_LevelThree[0].cargo._bUsed = false;
+		if (g_levelThree[0].cargo._pszCargo != nullptr && g_levelThree[0].cargo._bUsed) {
+			g_levelThree[0].cargo._bUsed = false;
 			_cargo -= 99;
 		}
 		calcFuel(4.7);
@@ -1887,8 +1809,8 @@ void CNavWindow::onPeggleboz() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pPeggleboz);
 		*_pPortName = "Peggleboz";
-		if (g_LevelThree[0].cargo._pszCargo != nullptr && g_LevelThree[0].cargo._bUsed) {
-			g_LevelThree[0].cargo._bUsed = false;
+		if (g_levelThree[0].cargo._pszCargo != nullptr && g_levelThree[0].cargo._bUsed) {
+			g_levelThree[0].cargo._bUsed = false;
 			_cargo -= 99;
 		}
 		calcFuel(2.4);
@@ -1903,8 +1825,8 @@ void CNavWindow::onArcheroids() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pArcheroids);
 		*_pPortName = "Archeroids";
-		if (g_LevelThree[1].cargo._pszCargo != nullptr && g_LevelThree[1].cargo._bUsed) {
-			g_LevelThree[1].cargo._bUsed = false;
+		if (g_levelThree[1].cargo._pszCargo != nullptr && g_levelThree[1].cargo._bUsed) {
+			g_levelThree[1].cargo._bUsed = false;
 			_cargo -= 8;
 		}
 		calcFuel(0);
@@ -1913,8 +1835,8 @@ void CNavWindow::onArcheroids() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pArcheroids);
 		*_pPortName = "Archeroids";
-		if (g_LevelThree[1].cargo._pszCargo != nullptr && g_LevelThree[1].cargo._bUsed) {
-			g_LevelThree[1].cargo._bUsed = false;
+		if (g_levelThree[1].cargo._pszCargo != nullptr && g_levelThree[1].cargo._bUsed) {
+			g_levelThree[1].cargo._bUsed = false;
 			_cargo -= 8;
 		}
 		calcFuel(4.7);
@@ -1923,8 +1845,8 @@ void CNavWindow::onArcheroids() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pArcheroids);
 		*_pPortName = "Archeroids";
-		if (g_LevelThree[1].cargo._pszCargo != nullptr && g_LevelThree[1].cargo._bUsed) {
-			g_LevelThree[1].cargo._bUsed = false;
+		if (g_levelThree[1].cargo._pszCargo != nullptr && g_levelThree[1].cargo._bUsed) {
+			g_levelThree[1].cargo._bUsed = false;
 			_cargo -= 8;
 		}
 		calcFuel(3.3);
@@ -1933,8 +1855,8 @@ void CNavWindow::onArcheroids() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pArcheroids);
 		*_pPortName = "Archeroids";
-		if (g_LevelThree[1].cargo._pszCargo != nullptr && g_LevelThree[1].cargo._bUsed) {
-			g_LevelThree[1].cargo._bUsed = false;
+		if (g_levelThree[1].cargo._pszCargo != nullptr && g_levelThree[1].cargo._bUsed) {
+			g_levelThree[1].cargo._bUsed = false;
 			_cargo -= 8;
 		}
 		calcFuel(2.6);
@@ -1943,8 +1865,8 @@ void CNavWindow::onArcheroids() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pArcheroids);
 		*_pPortName = "Archeroids";
-		if (g_LevelThree[1].cargo._pszCargo != nullptr && g_LevelThree[1].cargo._bUsed) {
-			g_LevelThree[1].cargo._bUsed = false;
+		if (g_levelThree[1].cargo._pszCargo != nullptr && g_levelThree[1].cargo._bUsed) {
+			g_levelThree[1].cargo._bUsed = false;
 			_cargo -= 8;
 		}
 		calcFuel(1.2);
@@ -1959,8 +1881,8 @@ void CNavWindow::onPackRat() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pPackRat);
 		*_pPortName = "Pack-Rat";
-		if (g_LevelThree[2].cargo._pszCargo != nullptr && g_LevelThree[2].cargo._bUsed) {
-			g_LevelThree[2].cargo._bUsed = false;
+		if (g_levelThree[2].cargo._pszCargo != nullptr && g_levelThree[2].cargo._bUsed) {
+			g_levelThree[2].cargo._bUsed = false;
 			_cargo -= 24;
 		}
 		calcFuel(0);
@@ -1969,8 +1891,8 @@ void CNavWindow::onPackRat() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pPackRat);
 		*_pPortName = "Pack-Rat";
-		if (g_LevelThree[2].cargo._pszCargo != nullptr && g_LevelThree[2].cargo._bUsed) {
-			g_LevelThree[2].cargo._bUsed = false;
+		if (g_levelThree[2].cargo._pszCargo != nullptr && g_levelThree[2].cargo._bUsed) {
+			g_levelThree[2].cargo._bUsed = false;
 			_cargo -= 24;
 		}
 		calcFuel(3.3);
@@ -1979,8 +1901,8 @@ void CNavWindow::onPackRat() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pPackRat);
 		*_pPortName = "Pack-Rat";
-		if (g_LevelThree[2].cargo._pszCargo != nullptr && g_LevelThree[2].cargo._bUsed) {
-			g_LevelThree[2].cargo._bUsed = false;
+		if (g_levelThree[2].cargo._pszCargo != nullptr && g_levelThree[2].cargo._bUsed) {
+			g_levelThree[2].cargo._bUsed = false;
 			_cargo -= 24;
 		}
 		calcFuel(5.2);
@@ -1995,8 +1917,8 @@ void CNavWindow::onBeacon() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pBeacon);
 		*_pPortName = "Beacon";
-		if (g_LevelThree[3].cargo._pszCargo != nullptr && g_LevelThree[3].cargo._bUsed) {
-			g_LevelThree[3].cargo._bUsed = false;
+		if (g_levelThree[3].cargo._pszCargo != nullptr && g_levelThree[3].cargo._bUsed) {
+			g_levelThree[3].cargo._bUsed = false;
 			_cargo -= 125;
 		}
 		calcFuel(0);
@@ -2005,8 +1927,8 @@ void CNavWindow::onBeacon() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pBeacon);
 		*_pPortName = "Beacon";
-		if (g_LevelThree[3].cargo._pszCargo != nullptr && g_LevelThree[3].cargo._bUsed) {
-			g_LevelThree[3].cargo._bUsed = false;
+		if (g_levelThree[3].cargo._pszCargo != nullptr && g_levelThree[3].cargo._bUsed) {
+			g_levelThree[3].cargo._bUsed = false;
 			_cargo -= 125;
 		}
 		calcFuel(1.2);
@@ -2015,8 +1937,8 @@ void CNavWindow::onBeacon() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pBeacon);
 		*_pPortName = "Beacon";
-		if (g_LevelThree[3].cargo._pszCargo != nullptr && g_LevelThree[3].cargo._bUsed) {
-			g_LevelThree[3].cargo._bUsed = false;
+		if (g_levelThree[3].cargo._pszCargo != nullptr && g_levelThree[3].cargo._bUsed) {
+			g_levelThree[3].cargo._bUsed = false;
 			_cargo -= 125;
 		}
 		calcFuel(5.2);
@@ -2025,8 +1947,8 @@ void CNavWindow::onBeacon() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pBeacon);
 		*_pPortName = "Beacon";
-		if (g_LevelThree[3].cargo._pszCargo != nullptr && g_LevelThree[3].cargo._bUsed) {
-			g_LevelThree[3].cargo._bUsed = false;
+		if (g_levelThree[3].cargo._pszCargo != nullptr && g_levelThree[3].cargo._bUsed) {
+			g_levelThree[3].cargo._bUsed = false;
 			_cargo -= 125;
 		}
 		calcFuel(3.8);
@@ -2035,8 +1957,8 @@ void CNavWindow::onBeacon() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pBeacon);
 		*_pPortName = "Beacon";
-		if (g_LevelThree[3].cargo._pszCargo != nullptr && g_LevelThree[3].cargo._bUsed) {
-			g_LevelThree[3].cargo._bUsed = false;
+		if (g_levelThree[3].cargo._pszCargo != nullptr && g_levelThree[3].cargo._bUsed) {
+			g_levelThree[3].cargo._bUsed = false;
 			_cargo -= 125;
 		}
 		calcFuel(3.1);
@@ -2045,8 +1967,8 @@ void CNavWindow::onBeacon() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pBeacon);
 		*_pPortName = "Beacon";
-		if (g_LevelThree[3].cargo._pszCargo != nullptr && g_LevelThree[3].cargo._bUsed) {
-			g_LevelThree[3].cargo._bUsed = false;
+		if (g_levelThree[3].cargo._pszCargo != nullptr && g_levelThree[3].cargo._bUsed) {
+			g_levelThree[3].cargo._bUsed = false;
 			_cargo -= 125;
 		}
 		calcFuel(1.8);
@@ -2127,8 +2049,8 @@ void CNavWindow::onFuge() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pFuge);
 		*_pPortName = "Fuge";
-		if (g_LevelThree[6].cargo._pszCargo != nullptr && g_LevelThree[6].cargo._bUsed) {
-			g_LevelThree[6].cargo._bUsed = false;
+		if (g_levelThree[6].cargo._pszCargo != nullptr && g_levelThree[6].cargo._bUsed) {
+			g_levelThree[6].cargo._bUsed = false;
 			_cargo -= 10;
 		}
 		calcFuel(0);
@@ -2137,8 +2059,8 @@ void CNavWindow::onFuge() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pFuge);
 		*_pPortName = "Fuge";
-		if (g_LevelThree[6].cargo._pszCargo != nullptr && g_LevelThree[6].cargo._bUsed) {
-			g_LevelThree[6].cargo._bUsed = false;
+		if (g_levelThree[6].cargo._pszCargo != nullptr && g_levelThree[6].cargo._bUsed) {
+			g_levelThree[6].cargo._bUsed = false;
 			_cargo -= 10;
 		}
 		calcFuel(1.5);
@@ -2147,8 +2069,8 @@ void CNavWindow::onFuge() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pFuge);
 		*_pPortName = "Fuge";
-		if (g_LevelThree[6].cargo._pszCargo != nullptr && g_LevelThree[6].cargo._bUsed) {
-			g_LevelThree[6].cargo._bUsed = false;
+		if (g_levelThree[6].cargo._pszCargo != nullptr && g_levelThree[6].cargo._bUsed) {
+			g_levelThree[6].cargo._bUsed = false;
 			_cargo -= 10;
 		}
 		calcFuel(1.8);
@@ -2157,8 +2079,8 @@ void CNavWindow::onFuge() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pFuge);
 		*_pPortName = "Fuge";
-		if (g_LevelThree[6].cargo._pszCargo != nullptr && g_LevelThree[6].cargo._bUsed) {
-			g_LevelThree[6].cargo._bUsed = false;
+		if (g_levelThree[6].cargo._pszCargo != nullptr && g_levelThree[6].cargo._bUsed) {
+			g_levelThree[6].cargo._bUsed = false;
 			_cargo -= 10;
 		}
 		calcFuel(2.9);
@@ -2167,8 +2089,8 @@ void CNavWindow::onFuge() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pFuge);
 		*_pPortName = "Fuge";
-		if (g_LevelThree[6].cargo._pszCargo != nullptr && g_LevelThree[6].cargo._bUsed) {
-			g_LevelThree[6].cargo._bUsed = false;
+		if (g_levelThree[6].cargo._pszCargo != nullptr && g_levelThree[6].cargo._bUsed) {
+			g_levelThree[6].cargo._bUsed = false;
 			_cargo -= 10;
 		}
 		calcFuel(2.0);
@@ -2207,8 +2129,8 @@ void CNavWindow::onBattlefish() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pBattlefish);
 		*_pPortName = "Battlefish";
-		if (g_LevelThree[8].cargo._pszCargo != nullptr && g_LevelThree[8].cargo._bUsed) {
-			g_LevelThree[8].cargo._bUsed = false;
+		if (g_levelThree[8].cargo._pszCargo != nullptr && g_levelThree[8].cargo._bUsed) {
+			g_levelThree[8].cargo._bUsed = false;
 			_cargo -= 17;
 		}
 		calcFuel(0);
@@ -2217,8 +2139,8 @@ void CNavWindow::onBattlefish() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pBattlefish);
 		*_pPortName = "Battlefish";
-		if (g_LevelThree[8].cargo._pszCargo != nullptr && g_LevelThree[8].cargo._bUsed) {
-			g_LevelThree[8].cargo._bUsed = false;
+		if (g_levelThree[8].cargo._pszCargo != nullptr && g_levelThree[8].cargo._bUsed) {
+			g_levelThree[8].cargo._bUsed = false;
 			_cargo -= 17;
 		}
 		calcFuel(2);
@@ -2229,8 +2151,8 @@ void CNavWindow::onBattlefish() {
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pBattlefish);
 		*_pPortName = "Battlefish";
-		if (g_LevelThree[8].cargo._pszCargo != nullptr && g_LevelThree[8].cargo._bUsed) {
-			g_LevelThree[8].cargo._bUsed = false;
+		if (g_levelThree[8].cargo._pszCargo != nullptr && g_levelThree[8].cargo._bUsed) {
+			g_levelThree[8].cargo._bUsed = false;
 			_cargo -= 17;
 		}
 		calcFuel(1.1);
