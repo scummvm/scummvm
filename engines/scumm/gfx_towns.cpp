@@ -515,29 +515,47 @@ void TownsScreen::addDirtyRect(int x, int y, int w, int h) {
 
 	assert(x >= 0 && y >= 0 && x2 < _width && y2 < _height);
 
-	bool skip = false;
+	bool merge = false;
+	Common::List<Common::Rect>::iterator r2 = _dirtyRects.end();
+
 	for (Common::List<Common::Rect>::iterator r = _dirtyRects.begin(); r != _dirtyRects.end(); ++r) {
-		// Try to merge new rect with an existing rect (only once, since trying to merge
-		// more than one overlapping rect would be causing more overhead than doing any good).
+		// Try to merge new rect with existing rects.
+		if (merge) {
+			r = _dirtyRects.begin();
+			merge = false;
+		}
+		if (r == r2)
+			continue;
 		if (y == r->top && y2 == r->bottom) {
 			if ((x >= r->left && x <= r->right) || (x2 >= r->left - 1 && x2 <= r->right)) {
-				r->left = MIN<int>(x, r->left);
-				r->right = MAX<int>(x2, r->right);
-				skip = true;
+				x = MIN<int>(x, r->left);
+				x2 = MAX<int>(x2, r->right);
+				merge = true;
 			}
 		}
 		if (x == r->left && x2 == r->right) {
 			if ((y >= r->top && y <= r->bottom) || (y2 >= r->top - 1 && y2 <= r->bottom)) {
-				r->top = MIN<int>(y, r->top);
-				r->bottom = MAX<int>(y2, r->bottom);
-				skip = true;
+				y = MIN<int>(y, r->top);
+				y2 = MAX<int>(y2, r->bottom);
+				merge = true;
 			}
+		}
+		if (merge) {
+			if (r2 == _dirtyRects.end())
+				r2 = r;
+			else
+				_dirtyRects.erase(r);
 		}
 	}
 
-	if (!skip) {
+	if (r2 == _dirtyRects.end()) {
 		_dirtyRects.push_back(Common::Rect(x, y, x2, y2));
 		_numDirtyRects++;
+	} else {
+		r2->left = x;
+		r2->top = y;
+		r2->right = x2;
+		r2->bottom = y2;
 	}
 }
 
