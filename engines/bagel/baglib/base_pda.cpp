@@ -473,7 +473,7 @@ void SBBasePda::getPdaState() {
 #define HANDCURSOR 1
 
 int SBBasePda::getProperCursor(const CBofPoint &pos, CBofRect &pdaRect) {
-	int wieldCursor = CBagWield::GetWieldCursor();
+	int wieldCursor = CBagWield::getWieldCursor();
 
 	// Assume can't click
 	int cursorID = NULLCURSOR;

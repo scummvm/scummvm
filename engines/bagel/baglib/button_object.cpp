@@ -52,8 +52,8 @@ CBagButtonObject::~CBagButtonObject() {
 ErrorCode CBagButtonObject::attach() {
 	ErrorCode rc = CBagSpriteObject::attach();
 
-	if (GetSprite()) {
-		GetSprite()->setAnimated(false);
+	if (getSprite()) {
+		getSprite()->setAnimated(false);
 	}
 
 	if (_buttonType == BTN_VLEVER || _buttonType == BTN_HLEVER) {
@@ -61,7 +61,7 @@ ErrorCode CBagButtonObject::attach() {
 		_midPoint.y = getRect().topLeft().y + (getRect().height() / 2);
 	}
 
-	if (GetSprite()->getCelCount() == 1 && _buttonType != BTN_SLIDER) {
+	if (getSprite()->getCelCount() == 1 && _buttonType != BTN_SLIDER) {
 		// Only given down state
 		setVisible(false);
 	}
@@ -92,7 +92,7 @@ bool CBagButtonObject::runObject() {
 		if (_active && !_activeUp) {
 			_activeUp = true;
 		}
-		if (GetSprite() && (GetSprite()->getCelCount() == 1)) {
+		if (getSprite() && (getSprite()->getCelCount() == 1)) {
 			// Only given down state
 			setVisible(false);
 		}
@@ -112,7 +112,7 @@ void CBagButtonObject::onLButtonDown(uint32 /*nFlags*/, CBofPoint *point, void *
 			_activeDown = true;
 			_active = true;
 		}
-		if (GetSprite() && (GetSprite()->getCelCount() == 1)) {
+		if (getSprite() && (getSprite()->getCelCount() == 1)) {
 			// Only given down state
 			setVisible();
 		}
@@ -193,7 +193,7 @@ void CBagButtonObject::onLButtonUp(uint32 flags, CBofPoint *point, void *extraIn
 			_active = true;
 			_activeDown = !_activeDown;
 
-			if (GetSprite() && (GetSprite()->getCelCount() == 1)) {
+			if (getSprite() && (getSprite()->getCelCount() == 1)) {
 				// Only given down state
 				setVisible(_activeDown);
 				_active = false;
@@ -249,13 +249,13 @@ bool CBagButtonObject::onMouseMove(uint32 /*nFlags*/, CBofPoint point, void *ext
 	}
 
 	if (_buttonType == BTN_PUSH) {
-		if (GetSprite() && (GetSprite()->getCelCount() > 1)) {
+		if (getSprite() && (getSprite()->getCelCount() > 1)) {
 			if (!this->getRect().ptInRect(point) &&
 			        _active && !_activeUp) {
 				_activeUp = true;
 			}
 		}
-		if (GetSprite() && (GetSprite()->getCelCount() == 1)) { // Only given down state
+		if (getSprite() && (getSprite()->getCelCount() == 1)) { // Only given down state
 			setVisible(false);
 		}
 
@@ -270,19 +270,19 @@ ErrorCode CBagButtonObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcR
 
 	if (_buttonType == BTN_PUSH) {
 
-		if (GetSprite() && (GetSprite()->getCelCount() > 1)) {
+		if (getSprite() && (getSprite()->getCelCount() > 1)) {
 
 			if (_active) { // If the button is doing something
 				if (_activeDown) {
-					GetSprite()->nextCel(); //  Increment frame
+					getSprite()->nextCel(); //  Increment frame
 					// If this is animated, the bring it back up immediately
-					if (GetSprite()->getCelIndex() == GetSprite()->getCelCount() - 1 || GetSprite()->getAnimated()) {
+					if (getSprite()->getCelIndex() == getSprite()->getCelCount() - 1 || getSprite()->getAnimated()) {
 						_activeDown = false;
 					}
 				} else if (_activeUp) {   // else (going back up)
-					GetSprite()->prevCel(); //  decrement frame
+					getSprite()->prevCel(); //  decrement frame
 					// If this is animated, the let it go immediately
-					if (GetSprite()->getCelIndex() == 0 || GetSprite()->getAnimated()) {
+					if (getSprite()->getCelIndex() == 0 || getSprite()->getAnimated()) {
 						_activeUp = false;
 						_active = false;
 					}
@@ -291,15 +291,15 @@ ErrorCode CBagButtonObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcR
 		}
 
 	} else if (_buttonType == BTN_CHECKBOX) {
-		if (GetSprite() && (GetSprite()->getCelCount() > 1) && _active) {
+		if (getSprite() && (getSprite()->getCelCount() > 1) && _active) {
 			if (_activeDown) {
-				GetSprite()->nextCel(); // Increment frame
-				if (GetSprite()->getCelIndex() == GetSprite()->getCelCount() - 1) {
+				getSprite()->nextCel(); // Increment frame
+				if (getSprite()->getCelIndex() == getSprite()->getCelCount() - 1) {
 					_active = false;
 				}
 			} else {                    // else (going back up)
-				GetSprite()->prevCel(); // decrement frame
-				if (GetSprite()->getCelIndex() == 0) {
+				getSprite()->prevCel(); // decrement frame
+				if (getSprite()->getCelIndex() == 0) {
 					_active = false;
 				}
 			}
@@ -312,22 +312,22 @@ ErrorCode CBagButtonObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcR
 
 	} else if (_buttonType == BTN_HLEVER || _buttonType == BTN_VLEVER) {
 
-		if (GetSprite() && (GetSprite()->getCelCount() > 1)) {
+		if (getSprite() && (getSprite()->getCelCount() > 1)) {
 			if (_activeDown) {
-				if (GetSprite()->getCelIndex() < (GetSprite()->getCelCount() - 1))
-					GetSprite()->nextCel();
+				if (getSprite()->getCelIndex() < (getSprite()->getCelCount() - 1))
+					getSprite()->nextCel();
 				_activeDown = false;
 			} else if (_activeUp) {
-				if (GetSprite()->getCelIndex() > 0)
-					GetSprite()->prevCel();
+				if (getSprite()->getCelIndex() > 0)
+					getSprite()->prevCel();
 				_activeUp = false;
 			}
 
-			setState(GetSprite()->getCelIndex());
+			setState(getSprite()->getCelIndex());
 		}
 	}
 
-	if (GetSprite() && ((GetSprite()->getCelCount() > 1) || isVisible())) {
+	if (getSprite() && ((getSprite()->getCelCount() > 1) || isVisible())) {
 		ErrorCode err = CBagSpriteObject::update(bmp, pt, srcRect, maskColor);
 		setDirty(bDirty);
 		return err;
@@ -456,7 +456,7 @@ ParseCodes CBagButtonObject::setInfo(CBagIfstream &istr) {
 
 void CBagButtonObject::setProperty(const CBofString &prop, int val) {
 	if (!prop.find("STATE")) {
-		if (GetSprite()) {
+		if (getSprite()) {
 			if (_buttonType == BTN_CHECKBOX) {
 				_active = true;
 				if (val == 0)
@@ -464,7 +464,7 @@ void CBagButtonObject::setProperty(const CBofString &prop, int val) {
 				else
 					_activeDown = true;
 
-				if (GetSprite() && (GetSprite()->getCelCount() == 1)) { // Only given down state
+				if (getSprite() && (getSprite()->getCelCount() == 1)) { // Only given down state
 					setVisible(_activeDown);
 					_active = false;
 				}
@@ -482,21 +482,21 @@ void CBagButtonObject::setProperty(const CBofString &prop, int val) {
 					setDirty(true);
 				}
 				setState(val);
-				GetSprite()->setCel(val);
+				getSprite()->setCel(val);
 			}
 		}
 	} else if (!prop.find("CURR_CEL")) {
 		setState(val);
-		if (GetSprite())
-			GetSprite()->setCel(val);
+		if (getSprite())
+			getSprite()->setCel(val);
 	} else
 		CBagObject::setProperty(prop, val);
 }
 
 int CBagButtonObject::getProperty(const CBofString &prop) {
 	if (!prop.find("CURR_CEL")) {
-		if (GetSprite()) {
-			return GetSprite()->getCelIndex();
+		if (getSprite()) {
+			return getSprite()->getCelIndex();
 		}
 		return 0;
 	}

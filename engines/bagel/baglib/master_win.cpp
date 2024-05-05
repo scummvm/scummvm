@@ -460,7 +460,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 		}
 
 		setActiveCursor(0);
-		CBagWield::SetWieldCursor(-1);
+		CBagWield::setWieldCursor(-1);
 
 		if (g_restoreObjectListFl) {
 

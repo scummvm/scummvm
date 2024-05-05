@@ -48,10 +48,10 @@ public:
 		return m_pCurrObj = pObj;
 	}
 
-	static int GetWieldCursor() {
+	static int getWieldCursor() {
 		return m_nWieldCursor;
 	}
-	static void SetWieldCursor(int n) {
+	static void setWieldCursor(int n) {
 		m_nWieldCursor = n;
 	}
 
