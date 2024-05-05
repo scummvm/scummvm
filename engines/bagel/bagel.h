@@ -36,7 +36,7 @@ class BagelEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-	ST_BAGEL_SAVE _saveData;
+	StBagelSave _saveData;
 
 	bool canSaveLoadFromWindow() const;
 
@@ -92,7 +92,7 @@ public:
 	 */
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave,
-		ST_BAGEL_SAVE &saveData);
+		StBagelSave &saveData);
 
 	/**
 	 * Load a game state

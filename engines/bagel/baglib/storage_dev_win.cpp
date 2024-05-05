@@ -1983,7 +1983,7 @@ void CBagStorageDevManager::SetObjectValue(const CBofString &sObject, const CBof
 }
 
 
-void CBagStorageDevManager::SaveObjList(ST_OBJ *pObjList, int nNumEntries) {
+void CBagStorageDevManager::SaveObjList(StObj *pObjList, int nNumEntries) {
 	assert(isValidObject(this));
 	assert(pObjList != nullptr);
 
@@ -2030,7 +2030,7 @@ void CBagStorageDevManager::SaveObjList(ST_OBJ *pObjList, int nNumEntries) {
 }
 
 
-void CBagStorageDevManager::RestoreObjList(ST_OBJ *pObjList, int nNumEntries) {
+void CBagStorageDevManager::RestoreObjList(StObj *pObjList, int nNumEntries) {
 	assert(isValidObject(this));
 	assert(pObjList != nullptr);
 

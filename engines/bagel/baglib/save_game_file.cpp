@@ -30,13 +30,13 @@ namespace Bagel {
 
 #define WORLDDIR "$SBARDIR\\WLD\\%s"
 
-void ST_SAVEDGAME_HEADER::synchronize(Common::Serializer &s) {
+void StSavegameHeader::synchronize(Common::Serializer &s) {
 	s.syncBytes((byte *)_szTitle, MAX_SAVETITLE);
 	s.syncBytes((byte *)m_szUserName, MAX_USERNAME);
 	s.syncAsUint32LE(m_bUsed);
 }
 
-void ST_VAR::synchronize(Common::Serializer &s) {
+void StVar::synchronize(Common::Serializer &s) {
 	s.syncBytes((byte *)m_szName, MAX_VAR_NAME);
 	s.syncBytes((byte *)m_szValue, MAX_VAR_VALUE);
 	s.syncAsUint16LE(m_nType);
@@ -53,7 +53,7 @@ void ST_VAR::synchronize(Common::Serializer &s) {
 	s.syncAsByte(m_bUsed);
 }
 
-void ST_VAR::clear() {
+void StVar::clear() {
 	Common::fill(m_szName, m_szName + MAX_VAR_NAME, '\0');
 	Common::fill(m_szValue, m_szValue + MAX_VAR_VALUE, '\0');
 
@@ -68,7 +68,7 @@ void ST_VAR::clear() {
 	m_bUsed = 0;
 }
 
-void ST_OBJ::synchronize(Common::Serializer &s) {
+void StObj::synchronize(Common::Serializer &s) {
 	s.syncBytes((byte *)m_szName, MAX_OBJ_NAME);
 	s.syncBytes((byte *)m_szSDev, MAX_SDEV_NAME);
 	s.syncAsUint32LE(m_lState);
@@ -85,7 +85,7 @@ void ST_OBJ::synchronize(Common::Serializer &s) {
 	s.syncAsUint16LE(m_nFlags);
 }
 
-void ST_OBJ::clear() {
+void StObj::clear() {
 	Common::fill(m_szName, m_szName + MAX_OBJ_NAME, '\0');
 	Common::fill(m_szSDev, m_szSDev + MAX_SDEV_NAME, '\0');
 
@@ -99,7 +99,7 @@ void ST_OBJ::clear() {
 	m_nFlags = 0;
 }
 
-void ST_BAGEL_SAVE::synchronize(Common::Serializer &s) {
+void StBagelSave::synchronize(Common::Serializer &s) {
 	for (int i = 0; i < MAX_VARS; ++i)
 		m_stVarList[i].synchronize(s);
 	for (int i = 0; i < MAX_OBJS; ++i)
@@ -119,7 +119,7 @@ void ST_BAGEL_SAVE::synchronize(Common::Serializer &s) {
 	s.syncAsUint16LE(m_nFiller);
 }
 
-void ST_BAGEL_SAVE::clear() {
+void StBagelSave::clear() {
 	for (int i = 0; i < MAX_VARS; ++i)
 		m_stVarList[i].clear();
 	for (int i = 0; i < MAX_OBJS; ++i)
@@ -148,11 +148,11 @@ CBagSaveGameFile::CBagSaveGameFile(bool isSaving) {
 	);
 }
 
-ErrorCode CBagSaveGameFile::WriteSavedGame() {
+ErrorCode CBagSaveGameFile::writeSavedGame() {
 	assert(isValidObject(this));
 
 	// Populate the save data
-	ST_BAGEL_SAVE saveData;
+	StBagelSave saveData;
 	g_engine->_masterWin->fillSaveBuffer(&saveData);
 
 	Common::String str = "./" + Common::String(saveData.m_szScript);
@@ -160,7 +160,7 @@ ErrorCode CBagSaveGameFile::WriteSavedGame() {
 	Common::strcpy_s(saveData.m_szScript, str.c_str());
 
 	// Set up header fields
-	ST_SAVEDGAME_HEADER header;
+	StSavegameHeader header;
 	Common::strcpy_s(header._szTitle, "ScummVM Save");
 	Common::strcpy_s(header.m_szUserName, "ScummVM User");
 	header.m_bUsed = 1;
@@ -170,7 +170,7 @@ ErrorCode CBagSaveGameFile::WriteSavedGame() {
 	Common::Serializer s(nullptr, &stream);
 
 	header.synchronize(s);
-	stream.writeUint32LE(ST_BAGEL_SAVE::size());
+	stream.writeUint32LE(StBagelSave::size());
 	saveData.synchronize(s);
 
 	// Add the record
@@ -186,7 +186,7 @@ ErrorCode CBagSaveGameFile::readSavedGame(int32 slotNum) {
 	if (lRecNum != -1) {
 		int32 lSize = getRecSize(lRecNum);
 
-		if (lSize == ST_SAVEDGAME_HEADER::size()) {
+		if (lSize == StSavegameHeader::size()) {
 			_errCode = ERR_FREAD;
 		} else {
 			byte *pBuf = (byte *)bofAlloc(lSize);
@@ -196,10 +196,10 @@ ErrorCode CBagSaveGameFile::readSavedGame(int32 slotNum) {
 			// Load in the savegame
 			Common::MemoryReadStream stream(pBuf, lSize);
 			Common::Serializer s(&stream, nullptr);
-			ST_SAVEDGAME_HEADER header;
+			StSavegameHeader header;
 			header.synchronize(s);
 			s.skip(4);		// Skip save data structure size
-			ST_BAGEL_SAVE saveData;
+			StBagelSave saveData;
 			saveData.synchronize(s);
 
 			bofFree(pBuf);
@@ -220,7 +220,7 @@ ErrorCode CBagSaveGameFile::readSavedGame(int32 slotNum) {
 	return _errCode;
 }
 
-ErrorCode CBagSaveGameFile::readTitle(int32 lSlot, ST_SAVEDGAME_HEADER *pSavedGame) {
+ErrorCode CBagSaveGameFile::readTitle(int32 lSlot, StSavegameHeader *pSavedGame) {
 	assert(isValidObject(this));
 
 	// validate input
@@ -236,8 +236,8 @@ ErrorCode CBagSaveGameFile::readTitle(int32 lSlot, ST_SAVEDGAME_HEADER *pSavedGa
 		if (pBuf != nullptr) {
 			readRecord(lRecNum, pBuf);
 
-			// Fill ST_SAVEDGAME_HEADER structure with this game's saved info
-			bofMemCopy(pSavedGame, pBuf, sizeof(ST_SAVEDGAME_HEADER));
+			// Fill StSavegameHeader structure with this game's saved info
+			bofMemCopy(pSavedGame, pBuf, sizeof(StSavegameHeader));
 			bofFree(pBuf);
 
 		} else {
@@ -275,13 +275,13 @@ ErrorCode CBagSaveGameFile::readTitleOnly(int32 lSlot, char *pGameTitle) {
 }
 
 
-int32 CBagSaveGameFile::GetActualNumSaves() {
+int32 CBagSaveGameFile::getActualNumSaves() {
 	assert(isValidObject(this));
 
 	int32 lNumSaves = 0;
-	int32 lNumRecs = GetNumSavedGames();
+	int32 lNumRecs = getNumSavedGames();
 	for (int32 i = 0; i < lNumRecs; i++) {
-		ST_SAVEDGAME_HEADER stGameInfo;
+		StSavegameHeader stGameInfo;
 		if (readTitle(i, &stGameInfo) == ERR_NONE) {
 			if (stGameInfo.m_bUsed) {
 				lNumSaves++;
@@ -294,12 +294,12 @@ int32 CBagSaveGameFile::GetActualNumSaves() {
 	return(lNumSaves);
 }
 
-bool CBagSaveGameFile::AnySavedGames() {
+bool CBagSaveGameFile::anySavedGames() {
 	assert(isValidObject(this));
 
-	int32 lNumRecs = GetNumSavedGames();
+	int32 lNumRecs = getNumSavedGames();
 	for (int32 i = 0; i < lNumRecs; i++) {
-		ST_SAVEDGAME_HEADER stGameInfo;
+		StSavegameHeader stGameInfo;
 		if (readTitle(i, &stGameInfo) == ERR_NONE) {
 
 			if (stGameInfo.m_bUsed) {
