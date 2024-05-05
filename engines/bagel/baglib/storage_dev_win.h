@@ -426,12 +426,12 @@ public:
 		_pEvtSDev = nullptr;
 	}
 
-	virtual ErrorCode attach(); // This function attaches the background and necessary bitmaps
-	virtual ErrorCode detach(); // This function attaches the background and necessary bitmaps
+	ErrorCode attach() override; // This function attaches the background and necessary bitmaps
+	ErrorCode detach() override; // This function attaches the background and necessary bitmaps
 
-	virtual ErrorCode close();
+	ErrorCode close() override;
 	virtual ErrorCode runModal(CBagObject *pObj);
-	virtual void onTimer(uint32 nTimerId);
+	void onTimer(uint32 nTimerId) override;
 
 	void setOnUpdate(bool bVal = true) {
 		_bOnUpdate = bVal;
@@ -443,43 +443,40 @@ public:
 	virtual ErrorCode paintScreen(CBofRect *pRect = nullptr);
 	ErrorCode paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
 	                        CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = true);
-	ErrorCode paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
-		CBofRect emptyRect;
-		return paintObjects(list, pBmp, emptyRect);
-	}
-
-	ErrorCode PaintWithCursor(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
+	ErrorCode paintWithCursor(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
 
 	virtual CBofRect GetLocation() {
 		return getWindowRect();
 	}
 
-	virtual ErrorCode setBackground(CBofBitmap *pBmp);
-	virtual CBofBitmap *getBackground() {
+	ErrorCode setBackground(CBofBitmap *pBmp) override;
+
+	CBofBitmap *getBackground() override {
 		return getBackdrop();
 	}
 	virtual CBofBitmap *getWorkBmp() {
 		return _pWorkBmp;
 	}
 
-	virtual ErrorCode loadFile(const CBofString &sWldFile);
+	ErrorCode loadFile(const CBofString &sWldFile) override;
 
 	virtual const CBofString &GetHelpFilename() {
 		return _sHelpFileName;
 	}
-	virtual void setHelpFilename(const CBofString &s) {
+
+	void setHelpFilename(const CBofString &s) override {
 		_sHelpFileName = s;
 	}
 
 	virtual ErrorCode onRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
-	virtual void onPaint(CBofRect *);
-	virtual void onMainLoop();
-	void onClose();
-	void onMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
-	void onLButtonDown(uint32 nFlags, CBofPoint *point, void * = nullptr);
-	void onLButtonUp(uint32 nFlags, CBofPoint *point, void * = nullptr);
+	void onPaint(CBofRect *) override;
+	void onMainLoop() override;
+	void onClose() override;
+	void onMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr) override;
+	void onLButtonDown(uint32 nFlags, CBofPoint *point, void * = nullptr) override;
+	void onLButtonUp(uint32 nFlags, CBofPoint *point, void * = nullptr) override;
 
-	void onKeyHit(uint32 lKey, uint32 nRepCount);
+	void onKeyHit(uint32 lKey, uint32 nRepCount) override;
 
 protected:
 	virtual ErrorCode setWorkBmp();
@@ -513,8 +510,8 @@ public:
 	virtual ErrorCode setBackground(CBofBitmap *pBmp) {
 		if (pBmp)
 			return setBackdrop(pBmp);
-		else
-			killBackdrop();
+
+		killBackdrop();
 		return ERR_NONE;
 	}
 	virtual CBofBitmap *getBackground() {
@@ -523,28 +520,28 @@ public:
 
 	virtual ErrorCode loadFile(const CBofString &sWldFile);
 
-	ErrorCode create(const char *pszName, int x = 0, int y = 0, int nWidth = USE_DEFAULT, int nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 	ErrorCode create(const char *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
-	virtual ErrorCode attach(); // This function attaches the background and necessary bitmaps
+	ErrorCode attach() override; // This function attaches the background and necessary bitmaps
 
-	virtual ErrorCode close();
+	ErrorCode close() override;
 
 	virtual const CBofString &GetHelpFilename() {
 		return _sHelpFileName;
 	}
-	virtual void setHelpFilename(const CBofString &s) {
+
+	void setHelpFilename(const CBofString &s) override {
 		_sHelpFileName = s;
 	}
 
-	virtual void onMainLoop();
+	void onMainLoop() override;
 	virtual ErrorCode onRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
 
-	virtual void onPaint(CBofRect *);
-	virtual void onClose();
-	void onMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
-	void onLButtonDown(uint32 nFlags, CBofPoint *point, void * = nullptr);
-	void onLButtonUp(uint32 nFlags, CBofPoint *point, void * = nullptr);
+	void onPaint(CBofRect *) override;
+	void onClose() override;
+	void onMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr) override;
+	void onLButtonDown(uint32 nFlags, CBofPoint *point, void * = nullptr) override;
+	void onLButtonUp(uint32 nFlags, CBofPoint *point, void * = nullptr) override;
 };
 
 /**
@@ -559,33 +556,33 @@ public:
 	CBagStorageDevManager();
 	~CBagStorageDevManager();
 
-	ErrorCode RegisterStorageDev(CBagStorageDev *pSDev);
-	ErrorCode UnRegisterStorageDev(CBagStorageDev *pSDev);
-	ErrorCode ReleaseStorageDevices();
+	ErrorCode registerStorageDev(CBagStorageDev *pSDev);
+	ErrorCode unregisterStorageDev(CBagStorageDev *pSDev);
+	ErrorCode releaseStorageDevices();
 
 	int getObjectValue(const CBofString &sObject, const CBofString &sProperty);
 	void SetObjectValue(const CBofString &sObject, const CBofString &sProperty, int nValue);
 
-	int GetNumStorageDevices() {
+	int getNumStorageDevices() {
 		return _xStorageDeviceList.getCount();
 	}
 
-	CBagStorageDev *GetStorageDevice(int nIndex) {
+	CBagStorageDev *getStorageDevice(int nIndex) {
 		return _xStorageDeviceList[nIndex];
 	}
-	CBagStorageDev *GetStorageDeviceContaining(const CBofString &sName);
-	CBagStorageDev *GetStorageDeviceContaining(CBagObject *pObj);
-	CBagStorageDev *GetStorageDevice(const CBofString &sName);
-	bool MoveObject(const CBofString &sDstName, const CBofString &sSrcName, const CBofString &sObjName);
+	CBagStorageDev *getStorageDeviceContaining(const CBofString &sName);
+	CBagStorageDev *getStorageDeviceContaining(CBagObject *pObj);
+	CBagStorageDev *getStorageDevice(const CBofString &sName);
+	bool moveObject(const CBofString &sDstName, const CBofString &sSrcName, const CBofString &sObjName);
 	bool addObject(const CBofString &sDstName, const CBofString &sObjName);
 	bool removeObject(const CBofString &sSrcName, const CBofString &sObjName);
 
-	void SaveObjList(StObj *pObjList, int nNumEntries);
-	void RestoreObjList(StObj *pObjList, int nNumEntries);
+	void saveObjList(StObj *pObjList, int nNumEntries);
+	void restoreObjList(StObj *pObjList, int nNumEntries);
 };
 
 extern bool g_allowPaintFl;
-extern CBagStorageDevWnd *g_pLastWindow;
+extern CBagStorageDevWnd *g_lastWindow;
 
 } // namespace Bagel
 

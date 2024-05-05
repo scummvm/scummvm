@@ -2057,7 +2057,7 @@ void SrafComputer::doShowChowButtons() {
 	bool bAllowBeverage = true;
 	bool bAllowSnack = true;
 
-	CBagStorageDev *pSDev = SDEV_MANAGER->GetStorageDevice("INV_WLD");
+	CBagStorageDev *pSDev = SDEV_MANAGER->getStorageDevice("INV_WLD");
 	if (pSDev) {
 		CBagObject *pBevObj = pSDev->getObject("SZTB", true);
 		CBagObject *pSnackObj = pSDev->getObject("SZTA", true);

@@ -426,7 +426,7 @@ bool CBagExpression::onMinusAssign(CBagVar *leftHandOper, CBagVar *rightHandOper
 bool CBagExpression::onContains(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar & /* resultOper, unused */) {
 	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
-	CBagStorageDev *sDev = SDEV_MANAGER->GetStorageDevice(leftHandOper->GetValue());
+	CBagStorageDev *sDev = SDEV_MANAGER->getStorageDevice(leftHandOper->GetValue());
 	if (sDev == nullptr)
 		return false;
 
@@ -440,7 +440,7 @@ bool CBagExpression::onContains(CBagVar *leftHandOper, CBagVar *rightHandOper, C
 bool CBagExpression::onHas(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar & /* resultOper, unused */) {
 	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
-	CBagStorageDev *sDev = SDEV_MANAGER->GetStorageDevice(leftHandOper->GetValue());
+	CBagStorageDev *sDev = SDEV_MANAGER->getStorageDevice(leftHandOper->GetValue());
 	if (sDev == nullptr)
 		return false;
 
@@ -454,7 +454,7 @@ bool CBagExpression::onHas(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVa
 bool CBagExpression::onStatus(CBagVar *pLHOper, CBagVar * /* rightHandOper, unused */, CBagVar & /* resultOper, unused */) {
 	assert(pLHOper != nullptr);
 
-	CBagStorageDev *sDev = SDEV_MANAGER->GetStorageDeviceContaining(pLHOper->GetValue());
+	CBagStorageDev *sDev = SDEV_MANAGER->getStorageDeviceContaining(pLHOper->GetValue());
 	if (sDev == nullptr)
 		return false;
 

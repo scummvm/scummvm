@@ -302,7 +302,7 @@ ErrorCode CBagLog::activateLocalObject(CBagObject *bagObj) {
 			bagObj->setMsgWaiting(true);
 		}
 
-		CBagStorageDev *pda = SDEV_MANAGER->GetStorageDevice("BPDA_WLD");
+		CBagStorageDev *pda = SDEV_MANAGER->getStorageDevice("BPDA_WLD");
 
 		if (pda) {
 			CBagButtonObject *msgLight = (CBagButtonObject *)pda->getObject("MSGLIGHT");
@@ -334,7 +334,7 @@ ErrorCode CBagLog::playMsgQueue() {
 	// Only play one message per click on the pda message light.
 	if (count) {
 
-		CBagStorageDev *bpda = SDEV_MANAGER->GetStorageDevice("BPDA_WLD");
+		CBagStorageDev *bpda = SDEV_MANAGER->getStorageDevice("BPDA_WLD");
 
 		// If we're in a closeup, then don't play the message!
 		CBagStorageDev *sdev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev();

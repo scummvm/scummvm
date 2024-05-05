@@ -43,14 +43,14 @@ public:
 	CBagSpriteObject();
 	virtual ~CBagSpriteObject();
 
-	ErrorCode attach();
-	ErrorCode detach();
-	bool isAttached() {
+	ErrorCode attach() override;
+	ErrorCode detach() override;
+	bool isAttached() override {
 		return _xSprite != nullptr;
 	}
-	ParseCodes setInfo(CBagIfstream &istr);
+	ParseCodes setInfo(CBagIfstream &istr) override;
 
-	bool isInside(const CBofPoint &xPoint);
+	bool isInside(const CBofPoint &xPoint) override;
 
 	int getWieldCursor() {
 		return _nWieldCursor;
@@ -62,7 +62,7 @@ public:
 	CBofSprite *getSprite() {
 		return _xSprite;
 	}
-	CBofRect getRect();
+	CBofRect getRect() override;
 	int getCels() {
 		return _nCels;
 	}
@@ -75,11 +75,10 @@ public:
 	void setCels(int nCels);
 	virtual void setPosition(const CBofPoint &pos);
 
-	virtual ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
-	virtual ErrorCode update(CBofWindow *pWnd, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
+	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1) override;
 
-	void setProperty(const CBofString &sProp, int nVal);
-	int getProperty(const CBofString &sProp);
+	void setProperty(const CBofString &sProp, int nVal) override;
+	int getProperty(const CBofString &sProp) override;
 
 	int getFrameRate() {
 		return _nMaxFrameRate;

@@ -39,10 +39,10 @@ bool CBagInv::_firstStashFl;
 
 ErrorCode CBagInv::activateLocalObject(const CBofString &objectName) {
 
-	CBagStorageDev *pdaSDev = SDEV_MANAGER->GetStorageDevice("BPDA_WLD");
+	CBagStorageDev *pdaSDev = SDEV_MANAGER->getStorageDevice("BPDA_WLD");
 
 	// Don't do any wand animation if we are zoomed.
-	SBZoomPda *zoomPda = (SBZoomPda *)SDEV_MANAGER->GetStorageDevice("BPDAZ_WLD");
+	SBZoomPda *zoomPda = (SBZoomPda *)SDEV_MANAGER->getStorageDevice("BPDAZ_WLD");
 	assert(zoomPda != nullptr);
 	bool zoomedFl = (zoomPda ? zoomPda->getZoomed() : false);
 
@@ -93,10 +93,10 @@ ErrorCode CBagInv::activateLocalObject(const CBofString &objectName) {
  * The wand on the PDA should animate
  */
 ErrorCode CBagInv::deactivateLocalObject(const CBofString &objectName) {
-	CBagStorageDev *pdaSDev = SDEV_MANAGER->GetStorageDevice("BPDA_WLD");
+	CBagStorageDev *pdaSDev = SDEV_MANAGER->getStorageDevice("BPDA_WLD");
 
 	// Don't do any wand animation if we are zoomed.
-	SBZoomPda *zoomPDA = (SBZoomPda *)SDEV_MANAGER->GetStorageDevice("BPDAZ_WLD");
+	SBZoomPda *zoomPDA = (SBZoomPda *)SDEV_MANAGER->getStorageDevice("BPDAZ_WLD");
 	assert(zoomPDA != nullptr);
 	bool zoomedFl = (zoomPDA ? zoomPDA->getZoomed() : false);
 

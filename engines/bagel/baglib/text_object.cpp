@@ -494,13 +494,13 @@ bool CBagTextObject::runObject() {
 
 				CBagPDA *pPDA = nullptr;
 				sStr = "BPDA_WLD";
-				pPDA = (CBagPDA *)SDEV_MANAGER->GetStorageDevice(sStr);
+				pPDA = (CBagPDA *)SDEV_MANAGER->getStorageDevice(sStr);
 
 				// If we're in the zoom pda then put this box at the
 				// bottom of the zoom rect.
 				SBZoomPda *pPDAZ = nullptr;
 				sStr = "BPDAZ_WLD";
-				pPDAZ = (SBZoomPda *)SDEV_MANAGER->GetStorageDevice(sStr);
+				pPDAZ = (SBZoomPda *)SDEV_MANAGER->getStorageDevice(sStr);
 
 				if (pPDAZ && pPDAZ->getZoomed() == true) {
 					CBofRect zRect = pPDAZ->getViewRect();

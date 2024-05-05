@@ -98,7 +98,7 @@ bool CBagCommandObject::runObject() {
 		} else if (getFileName() == "TRANSFER") {
 
 			if (!_objName.isEmpty() && !srcSDev.isEmpty() && !dstSDev.isEmpty()) {
-				SDEV_MANAGER->MoveObject(dstSDev, srcSDev, _objName);
+				SDEV_MANAGER->moveObject(dstSDev, srcSDev, _objName);
 			}
 
 		} else if (getFileName().find("FLUSHQUEUE") == 0) {
@@ -174,7 +174,7 @@ bool CBagCommandObject::runObject() {
 			if (CBagPanWindow::_pWieldBmp != nullptr) {
 				CBagObject *currObj = CBagPanWindow::_pWieldBmp->getCurrObj();
 				if (currObj != nullptr) {
-					SDEV_MANAGER->MoveObject("INV_WLD", CBagPanWindow::_pWieldBmp->getName(), currObj->getRefName());
+					SDEV_MANAGER->moveObject("INV_WLD", CBagPanWindow::_pWieldBmp->getName(), currObj->getRefName());
 					CBagPanWindow::_pWieldBmp->setCurrObj(nullptr);
 				}
 			}
@@ -345,7 +345,7 @@ bool CBagCommandObject::runObject() {
 
 		} else if (getFileName() == "SHOWPDALOG") {
 			// Get a pointer to the current game window
-			CBagPDA *pda = (CBagPDA *)SDEV_MANAGER->GetStorageDevice("BPDA_WLD");
+			CBagPDA *pda = (CBagPDA *)SDEV_MANAGER->getStorageDevice("BPDA_WLD");
 			if (pda) {
 				pda->showLog();
 			}

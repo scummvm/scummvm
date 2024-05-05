@@ -725,7 +725,7 @@ void SBarComputer::order() {
 
 			} else {
 				CBagStorageDev *pSoldierSDev = nullptr;
-				pSoldierSDev = SDEV_MANAGER->GetStorageDevice("SOLDIER_WLD");
+				pSoldierSDev = SDEV_MANAGER->getStorageDevice("SOLDIER_WLD");
 
 				CBofBitmap saveBackgroundTwo(640, 480, (CBofPalette *)nullptr, false);
 				saveBackgroundTwo.captureScreen(this, &_compTextWindow);

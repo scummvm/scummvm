@@ -184,7 +184,7 @@ bool CBagLinkObject::runObject() {
 	CBagStorageDevWnd *curSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev();
 
 	// Set the link position for the storage device we are about to jump to
-	CBagStorageDev *destWin = SDEV_MANAGER->GetStorageDevice(curStr);
+	CBagStorageDev *destWin = SDEV_MANAGER->getStorageDevice(curStr);
 	if (destWin) {
 		destWin->setloadFilePos(getDestLoc());
 	}

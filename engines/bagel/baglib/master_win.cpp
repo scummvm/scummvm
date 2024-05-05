@@ -382,7 +382,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 				}
 			}
 
-			_storageDeviceList->SaveObjList(_objList, MAX_OBJS); // xxx
+			_storageDeviceList->saveObjList(_objList, MAX_OBJS); // xxx
 
 			// Save our SDEV location, so we can restore it from Kerpupu
 			saveSDevStack();
@@ -469,7 +469,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 				if (_storageDeviceList != nullptr) {
 					// Use a preallocated buffer, trash it when we're done.
 					assert(_objList != nullptr);
-					_storageDeviceList->RestoreObjList(_objList, MAX_OBJS);
+					_storageDeviceList->restoreObjList(_objList, MAX_OBJS);
 
 					// All done with this list, can trash it now
 					bofFree(_objList);
@@ -520,7 +520,7 @@ void CBagMasterWin::saveSDevStack() {
 		}
 
 		while ((i < MAX_CLOSEUP_DEPTH) && !curStr.isEmpty()) {
-			sdevWin = (CBagStorageDevWnd *)_storageDeviceList->GetStorageDevice(curStr);
+			sdevWin = (CBagStorageDevWnd *)_storageDeviceList->getStorageDevice(curStr);
 			if (sdevWin != nullptr) {
 
 				Common::strcpy_s(locStack[i], curStr.getBuffer());
@@ -1166,14 +1166,14 @@ ErrorCode CBagMasterWin::gotoNewWindow(const CBofString *str) {
 		n = workString.find("~~");
 		if (n > 0) {
 			currSDevString = workString.left(n);
-			sdev = _storageDeviceList->GetStorageDevice(currSDevString);
+			sdev = _storageDeviceList->getStorageDevice(currSDevString);
 			if (sdev != nullptr) {
 				sdev->setPrevSDev(prevSDevString);
 				prevFl = true;
 			}
 		} else {
 			currSDevString = workString;
-			sdev = _storageDeviceList->GetStorageDevice(currSDevString);
+			sdev = _storageDeviceList->getStorageDevice(currSDevString);
 			if (sdev != nullptr) {
 				sdev->setPrevSDev(prevSDevString);
 				prevFl = true;
@@ -1181,7 +1181,7 @@ ErrorCode CBagMasterWin::gotoNewWindow(const CBofString *str) {
 		}
 	}
 
-	sdev = _storageDeviceList->GetStorageDevice(workString);
+	sdev = _storageDeviceList->getStorageDevice(workString);
 	if (sdev != nullptr) {
 
 		logInfo(buildString("Switching to SDEV: %s", workString.getBuffer()));
@@ -1364,7 +1364,7 @@ void CBagMasterWin::onUserMessage(uint32 message, uint32 param) {
 		assert(param < NUM_MSG_STRINGS);
 		deviceStr = g_stringArray[(int)param];
 
-		CBagStorageDev *sdev = _storageDeviceList->GetStorageDevice(deviceStr);
+		CBagStorageDev *sdev = _storageDeviceList->getStorageDevice(deviceStr);
 
 		if (sdev) {
 			if (_gameWindow) {
@@ -1485,7 +1485,7 @@ void CBagMasterWin::fillSaveBuffer(StBagelSave *saveBuf) {
 
 				CBagStorageDevManager *sdevManager = getStorageDevManager();
 				if (sdevManager != nullptr) {
-					sdevManager->SaveObjList(&saveBuf->_stObjList[0], MAX_OBJS);
+					sdevManager->saveObjList(&saveBuf->_stObjList[0], MAX_OBJS);
 					if (isObjSave()) {
 
 						assert(_objList != nullptr);
@@ -1498,7 +1498,7 @@ void CBagMasterWin::fillSaveBuffer(StBagelSave *saveBuf) {
 					int i = 0;
 					curString = sdevWin->getName();
 					while ((i < MAX_CLOSEUP_DEPTH) && !curString.isEmpty()) {
-						sdevWin = (CBagStorageDevWnd *)sdevManager->GetStorageDevice(curString);
+						sdevWin = (CBagStorageDevWnd *)sdevManager->getStorageDevice(curString);
 						Common::strcpy_s(saveBuf->_szLocStack[i], curString.getBuffer());
 						i++;
 						curString.free();
@@ -1665,7 +1665,7 @@ void CBagMasterWin::doRestore(StBagelSave *saveBuf) {
 				setSaveObjs(false);
 			}
 
-			sdevManager->RestoreObjList(&saveBuf->_stObjList[0], MAX_OBJS);
+			sdevManager->restoreObjList(&saveBuf->_stObjList[0], MAX_OBJS);
 		}
 
 		// If it's a Panorama, the set it's View position.
@@ -2022,9 +2022,9 @@ void CBagMasterWin::restoreActiveMessages(CBagStorageDevManager *sdevManager) {
 	if (sdevManager != nullptr) {
 		// Make sure the Message Log light will flash if user has
 		// waiting messages.
-		int n = sdevManager->GetNumStorageDevices();
+		int n = sdevManager->getNumStorageDevices();
 		for (int i = 0; i < n; i++) {
-			CBagStorageDev *sdev = sdevManager->GetStorageDevice(i);
+			CBagStorageDev *sdev = sdevManager->getStorageDevice(i);
 			if (sdev != nullptr) {
 
 				int m = sdev->getObjectCount();
