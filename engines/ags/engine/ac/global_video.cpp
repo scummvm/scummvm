@@ -156,7 +156,7 @@ void pause_sound_if_necessary_and_play_video(const char *name, int flags, VideoS
 
 	if (strlen(filename) > 3) {
 		char *file_ext = &(filename[strlen(filename) - 3]);
-		if ((ags_stricmp(file_ext, "wmv") == 0) || (ags_stricmp(file_ext, "wfl") == 0)) {
+		if ((ags_stricmp(file_ext, "wmv") == 0) || (ags_stricmp(file_ext, "wfl") == 0) || (ags_stricmp(file_ext, "cfg") == 0)) {
 			// WMV is not supported, so let's look for reencoded videos
 			debug("Attempt to load unsupported WMV file - will look for reencoded equivalents");
 			strncpy(file_ext, "ogv", 4);
