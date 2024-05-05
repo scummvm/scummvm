@@ -808,7 +808,7 @@ bool SDSScene::checkDialogActive() {
 		// Mark finished if we are manually clearing *or* the timer has expired.
 		bool finished = false;
 		if (dlg._state->_hideTime &&
-			((dlg._state->_hideTime < timeNow && clearDlgFlag) || timeNow >= dlg._state->_hideTime)) {
+			((dlg._state->_hideTime > timeNow && clearDlgFlag) || timeNow >= dlg._state->_hideTime)) {
 			finished = true;
 		}
 

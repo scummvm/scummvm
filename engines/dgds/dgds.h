@@ -162,6 +162,12 @@ public:
 		return syncGame(s);
 	}
 
+    bool hasFeature(EngineFeature f) const override {
+        return
+            (f == kSupportsLoadingDuringRuntime) ||
+            (f == kSupportsSavingDuringRuntime);
+    };
+
 private:
 	Common::Error syncGame(Common::Serializer &s);
 

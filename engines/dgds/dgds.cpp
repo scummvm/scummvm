@@ -346,6 +346,14 @@ Common::Error DgdsEngine::run() {
 				case Common::KEYCODE_F5:
 					triggerMenu = true;
 					break;
+				case Common::KEYCODE_s:
+					if (ev.kbd.hasFlags(Common::KBD_CTRL))
+						saveGameDialog();
+					break;
+				case Common::KEYCODE_l:
+					if (ev.kbd.hasFlags(Common::KBD_CTRL))
+						loadGameDialog();
+					break;
 				case Common::KEYCODE_c:
 					_clock.toggleVisibleUser();
 					break;
