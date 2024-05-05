@@ -704,7 +704,7 @@ bool CBagRPObject::addToMsgQueue(CBagRPObject *pRPObj) {
 		return false;
 	}
 
-	CBagLog *pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
+	CBagLog *pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOG_WLD);
 
 	if (pLogWld) {
 		pRPObj->setMsgWaiting(true); // mark this guy as waiting
@@ -808,9 +808,9 @@ bool CBagRPObject::activateRPObject() {
 
 	CBagLog *pLogWld;
 	if (zoomed()) {
-		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZWLD);
+		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZ_WLD);
 	} else {
-		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
+		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOG_WLD);
 	}
 
 	if (pLogWld == nullptr) {
@@ -868,9 +868,9 @@ void CBagRPObject::deactivateRPObject() {
 
 	// Get the appropriate storage device
 	if (zoomed()) {
-		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZWLD);
+		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZ_WLD);
 	} else {
-		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
+		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOG_WLD);
 	}
 
 	// Can't bloody well do much without our storage device
@@ -930,9 +930,9 @@ void CBagRPObject::deactivateRPReview() {
 
 	// Get the appropriate storage device
 	if (zoomed()) {
-		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZWLD);
+		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZ_WLD);
 	} else {
-		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
+		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOG_WLD);
 	}
 
 	// can't bloody well get anywhere without this info.
@@ -1016,7 +1016,7 @@ void CBagRPObject::evaluateDossiers() {
 		        pDosLObj->_pDossier->_sSuspectVar.isEmpty() == false) {
 
 			if (pLogZWld == nullptr) {
-				pLogZWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZWLD);
+				pLogZWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZ_WLD);
 			}
 
 			if (pLogZWld != nullptr) {
@@ -1149,9 +1149,9 @@ void CBagRPObject::setLogPages(int nPages) {
 	// Let the float code know how many pages we have.
 	CBagLog *pLogWld;
 	if (zoomed()) {
-		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZWLD);
+		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZ_WLD);
 	} else {
-		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
+		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOG_WLD);
 	}
 
 	assert(pLogWld != nullptr);
@@ -1341,9 +1341,9 @@ void CBagRPObject::hideRPReview() {
 	CBagLog *pLogWld;
 
 	if (zoomed()) {
-		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZWLD);
+		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZ_WLD);
 	} else {
-		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
+		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOG_WLD);
 	}
 
 	pRPObj = _pRPList->getNodeItem(0);
@@ -1375,9 +1375,9 @@ void CBagRPObject::showRPReview() {
 	CBagLog *pLogWld;
 
 	if (zoomed()) {
-		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZWLD);
+		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZ_WLD);
 	} else {
-		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
+		pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOG_WLD);
 	}
 
 	// Count items in this queue.
@@ -1442,7 +1442,7 @@ int CBagRPObject::RPResultsWaiting() {
 // Remove all residue print results from the message queue
 void CBagRPObject::removeAllFromMsgQueue(CBagRPObject *pCurRPObj) {
 	// we really only care about the log world, not the logz.
-	CBagLog *pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
+	CBagLog *pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOG_WLD);
 	assert(pLogWld != nullptr);
 	int nCount = _pRPList->getCount();
 
@@ -1462,12 +1462,12 @@ void CBagRPObject::removeAllFromMsgQueue(CBagRPObject *pCurRPObj) {
 //  We're going to need to switch the PDA to log mode.
 void CBagRPObject::showPDALog() {
 	if (zoomed()) {
-		SBZoomPda *pZoomPDA = (SBZoomPda *)SDEV_MANAGER->GetStorageDevice(PDAZWLD);
+		SBZoomPda *pZoomPDA = (SBZoomPda *)SDEV_MANAGER->GetStorageDevice(PDAZ_WLD);
 		if (pZoomPDA) {
 			pZoomPDA->showLog();
 		}
 	} else {
-		CBagPDA *pPDA = (CBagPDA *)SDEV_MANAGER->GetStorageDevice(PDAWLD);
+		CBagPDA *pPDA = (CBagPDA *)SDEV_MANAGER->GetStorageDevice(PDA_WLD);
 		if (pPDA) {
 			pPDA->showLog();
 		}
@@ -1475,7 +1475,7 @@ void CBagRPObject::showPDALog() {
 }
 
 bool CBagRPObject::zoomed() {
-	SBZoomPda *pPDA = (SBZoomPda *)SDEV_MANAGER->GetStorageDevice(PDAZWLD);
+	SBZoomPda *pPDA = (SBZoomPda *)SDEV_MANAGER->GetStorageDevice(PDAZ_WLD);
 	if (pPDA == nullptr) {
 		return false;
 	}
@@ -1490,9 +1490,9 @@ bool CBagRPObject::initialize() {
 	DossierObj *pDosObj;
 
 	if (zoomed()) {
-		pSDev = SDEV_MANAGER->GetStorageDevice(LOGZWLD);
+		pSDev = SDEV_MANAGER->GetStorageDevice(LOGZ_WLD);
 	} else {
-		pSDev = SDEV_MANAGER->GetStorageDevice(LOGWLD);
+		pSDev = SDEV_MANAGER->GetStorageDevice(LOG_WLD);
 	}
 	assert(pSDev != nullptr);
 
@@ -1570,7 +1570,7 @@ void CBagRPObject::synchronizeRPObjects(bool bLogFrontmost) {
 		return;
 	}
 
-	CBagLog *pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
+	CBagLog *pLogWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOG_WLD);
 	if (pLogWld == nullptr) {
 		return;
 	}

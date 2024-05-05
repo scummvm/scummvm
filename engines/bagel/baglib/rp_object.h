@@ -31,12 +31,6 @@
 
 namespace Bagel {
 
-// Locals
-#define LOGWLD "LOG_WLD"
-#define LOGZWLD "LOGZ_WLD"
-#define PDAWLD "BPDA_WLD"
-#define PDAZWLD "BPDAZ_WLD"
-
 class DossierObj {
 public:
 	DossierObj();

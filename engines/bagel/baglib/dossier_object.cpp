@@ -332,9 +332,9 @@ void CBagDossierObject::deactivateCurDossier() {
 
 		if (residuePrintedObj) {
 			if (residuePrintedObj->zoomed()) {
-				logWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZWLD);
+				logWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZ_WLD);
 			} else {
-				logWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
+				logWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOG_WLD);
 			}
 		}
 		_curDossier->deactivateDossierObject(logWld);
@@ -367,9 +367,9 @@ void CBagDossierObject::showDossierText() {
 
 	CBagLog *logWld;
 	if (zoomedFl) {
-		logWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZWLD);
+		logWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGZ_WLD);
 	} else {
-		logWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOGWLD);
+		logWld = (CBagLog *)SDEV_MANAGER->GetStorageDevice(LOG_WLD);
 	}
 
 	// Now reactivate this object.

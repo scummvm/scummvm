@@ -56,6 +56,17 @@ namespace Bagel {
 #define BOF_TAKE_HAND 18
 #define BOF_HAND 19
 
+// WLD
+#define INV_WLD "INV_WLD"
+#define LOG_WLD "LOG_WLD"
+#define LOGZ_WLD "LOGZ_WLD"
+#define MAP_WLD "MAP_WLD"
+#define MOO_WLD "MOO_WLD"
+#define PDA_WLD "BPDA_WLD"
+#define PDAZ_WLD "BPDAZ_WLD"
+#define THUD_WLD "THUD_WLD"
+#define WIELD_WLD "BWIELD_WLD"
+
 } // namespace Bagel
 
 #endif
