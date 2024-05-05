@@ -69,19 +69,19 @@ private:
 
 	int16 _nCurDossier;      // index of current dossier
 	// member data boolS
-	bool _bOrigRectInit : 1; // Original text initialized
-	bool _bRPReported : 1;   // been reported yet?
-	bool _bResPrinted : 1;   // been submitted?
-	bool _bTouched : 1;      // been touched?
-	bool _bRPRead : 1;       // been read
-	bool _bRPTimeSet : 1;    // had time residue printing occurred?
-	bool _bCurVisible : 1;   // Current one being displayed?
-	bool _bInitialized : 1;  // initialization state
-	bool _bMoviePlayed : 1;  // Has the movie played yet?
+	bool _bOrigRectInit : true; // Original text initialized
+	bool _bRPReported : true;   // been reported yet?
+	bool _bResPrinted : true;   // been submitted?
+	bool _bTouched : true;      // been touched?
+	bool _bRPRead : true;       // been read
+	bool _bRPTimeSet : true;    // had time residue printing occurred?
+	bool _bCurVisible : true;   // Current one being displayed?
+	bool _bInitialized : true;  // initialization state
+	bool _bMoviePlayed : true;  // Has the movie played yet?
 
 	static CBofList<CBagRPObject *> *_pRPList; // all the residue print objects
 	static int32 _nLastRPQCheck;                // last time we surfed the queue.
-	static CBagVar *_pTurncount;               // Ptr to turncount global
+	static CBagVar *_turnCount;               // Ptr to turnCount global
 	static CBagVar *_pLogStateVar;             // Ptr to log state global
 	static CBagVar *_pPrevLogStateVar;         // Ptr to prev log state global
 	static CBagVar *_pBarLogPages;             // Ptr to total pages global
@@ -94,16 +94,16 @@ public:
 	CBagRPObject();
 	virtual ~CBagRPObject();
 
-	ParseCodes setInfo(CBagIfstream &istr);
+	ParseCodes setInfo(CBagIfstream &istr) override;
 
-	ErrorCode attach();
-	ErrorCode detach();
+	ErrorCode attach() override;
+	ErrorCode detach() override;
 
-	virtual bool runObject();
+	bool runObject() override;
 
-	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int);
+	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int) override;
 
-	virtual void onLButtonUp(uint32, CBofPoint *, void * = nullptr);
+	void onLButtonUp(uint32, CBofPoint *, void * = nullptr) override;
 
 	void setTouchedDos(CBofString &s, CBagExpression *x);
 	void setUntouchedDos(CBofString &s, CBagExpression *x);
@@ -114,14 +114,14 @@ public:
 	bool getTimeSet() {
 		return _bRPTimeSet;
 	}
-	void setTimeSet(bool b = true) {
+	void setTimeSet(bool b) {
 		_bRPTimeSet = b;
 	}
 
 	void evaluateDossiers();
 
-	void saveRPVars();
-	void restoreRPVars();
+	void saveResiduePrintedVars();
+	void restoreResiduePrintedVars();
 
 	bool initialize();
 
@@ -133,27 +133,27 @@ public:
 	static bool zoomed();
 
 	// Command (bagcoobj) objects, activated from script
-	static int runRPQueue();
-	static int updateRPQueue();
-	static void deactivateRPQueue();
+	static int runResiduePrintedQueue();
+	static int updateResiduePrintedQueue();
+	static void deactivateResiduePrintedQueue();
 
-	static void activateRPReview();
-	static void deactivateRPReview();
+	static void activateResiduePrintedReview();
+	static void deactivateResiduePrintedReview();
 
 	static void setLogState(RPStates eLogMode);
 	static RPStates getLogState();
 
 	static void setLogPages(int);
 
-	static void showRPReview();
-	static void hideRPReview();
+	static void showResiduePrintedReview();
+	static void hideResiduePrintedReview();
 
-	static int RPResultsWaiting();
+	static int residuePrintedResultsWaiting();
 	static void removeAllFromMsgQueue(CBagRPObject *pRPObj);
 
-	static void showPDALog();
+	static void showPdaLog();
 
-	static void synchronizeRPObjects(bool);
+	static void synchronizeResiduePrintedObjects(bool);
 };
 
 } // namespace Bagel

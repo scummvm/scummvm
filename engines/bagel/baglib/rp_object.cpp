@@ -51,7 +51,7 @@ namespace Bagel {
 
 // Initialize statics
 CBofList<CBagRPObject *> *CBagRPObject::_pRPList = nullptr;
-CBagVar *CBagRPObject::_pTurncount = nullptr;
+CBagVar *CBagRPObject::_turnCount = nullptr;
 CBagVar *CBagRPObject::_pLogStateVar = nullptr;
 CBagVar *CBagRPObject::_pPrevLogStateVar = nullptr;
 CBagVar *CBagRPObject::_pBarLogPages = nullptr;
@@ -158,13 +158,13 @@ CBagRPObject::~CBagRPObject() {
 
 	// We got these vars from the var manager, so just null it out, don't delete it!
 	_pVarObj = nullptr;
-	_pTurncount = nullptr;
+	_turnCount = nullptr;
 	_pTouchedVar = nullptr;
 	_pMovieObj = nullptr;
 	_pSaveVar = nullptr;
 
 	// Clear our statics, yes, I mean to do that here.
-	_pTurncount = nullptr;
+	_turnCount = nullptr;
 	_pLogStateVar = nullptr;
 	_pPrevLogStateVar = nullptr;
 	_pBarLogPages = nullptr;
@@ -415,7 +415,7 @@ ErrorCode CBagRPObject::attach() {
 	// Start this object off as invisible (so that we don't receive update events).
 	setVisible(false);
 
-	restoreRPVars();
+	restoreResiduePrintedVars();
 
 	if (_bInitialized == false) {
 		_bInitialized = initialize();
@@ -434,7 +434,7 @@ ErrorCode CBagRPObject::attach() {
 		break;
 	case RP_REVIEW:
 		if (_bRPRead) {
-			activateRPReview();
+			activateResiduePrintedReview();
 		}
 		break;
 
@@ -517,7 +517,7 @@ void CBagRPObject::setUntouchedDos(CBofString &s, CBagExpression *x) {
 
 // This static is the tough guy that is in charge of checking the rp queue for
 // any objects that have results that should be returned.
-int CBagRPObject::runRPQueue() {
+int CBagRPObject::runResiduePrintedQueue() {
 	// Might get called with no residue printing list
 	if (_pRPList == nullptr) {
 		return 0;
@@ -533,7 +533,7 @@ int CBagRPObject::runRPQueue() {
 			if (_pCurRPObject) {
 				_pCurRPObject->deactivateRPObject();
 				_pCurRPObject->_bCurVisible = false;
-				_pCurRPObject->saveRPVars();
+				_pCurRPObject->saveResiduePrintedVars();
 			}
 		}
 
@@ -565,7 +565,7 @@ int CBagRPObject::runRPQueue() {
 				switch (rpState) {
 				case RP_REVIEW:
 					if (_pActivateThisGuy->_bRPRead) {
-						_pActivateThisGuy->activateRPReview();
+						_pActivateThisGuy->activateResiduePrintedReview();
 					}
 					break;
 
@@ -593,7 +593,7 @@ int CBagRPObject::runRPQueue() {
 		// If our last update is zero, then we have to parouse our list and fill in all the
 		// missing vars.  This is considered our initialization trigger.
 		if (_nLastRPQCheck == 0) {
-			deactivateRPReview();
+			deactivateResiduePrintedReview();
 		}
 	}
 
@@ -603,14 +603,14 @@ int CBagRPObject::runRPQueue() {
 	if (nCurTime > _nLastRPQCheck + 5000) {
 
 		// Get the turncount variable.
-		if (_pTurncount == nullptr) {
-			_pTurncount = VAR_MANAGER->GetVariable("TURNCOUNT");
+		if (_turnCount == nullptr) {
+			_turnCount = VAR_MANAGER->GetVariable("TURNCOUNT");
 		}
 		//
-		assert(_pTurncount != nullptr);
+		assert(_turnCount != nullptr);
 
 		// Get the current time
-		int nCurSBTime = _pTurncount->GetNumValue();
+		int nCurSBTime = _turnCount->GetNumValue();
 		int nCount = _pRPList->getCount();
 
 		for (int i = 0; i < nCount; i++) {
@@ -637,7 +637,7 @@ int CBagRPObject::runRPQueue() {
 // This static will cruise through the whole queue, check the value of each
 // associated variable, find a non-null one and activate the return time associated
 // with that residue print request.
-int CBagRPObject::updateRPQueue() {
+int CBagRPObject::updateResiduePrintedQueue() {
 	assert(_pRPList != nullptr);
 
 	int nCount = _pRPList->getCount();
@@ -663,7 +663,7 @@ int CBagRPObject::updateRPQueue() {
 				// time that they were submitted.  Trust me, this statement makes
 				// perfect sense.
 				pRPObj->evaluateDossiers();
-				pRPObj->saveRPVars();
+				pRPObj->saveResiduePrintedVars();
 				// Reset back to "3000"
 
 				cStr = "3000";
@@ -678,7 +678,7 @@ int CBagRPObject::updateRPQueue() {
 // This static runs through the entire chain and makes sure that everything
 // has been deactivated and is not displayed to the PDA.  Called from
 // script.
-void CBagRPObject::deactivateRPQueue() {
+void CBagRPObject::deactivateResiduePrintedQueue() {
 	assert(_pRPList != nullptr);
 
 	int nCount = _pRPList->getCount();
@@ -691,7 +691,7 @@ void CBagRPObject::deactivateRPQueue() {
 		}
 	}
 
-	deactivateRPReview();
+	deactivateResiduePrintedReview();
 }
 
 // Add this guy to the message queue and make that little message
@@ -713,7 +713,7 @@ bool CBagRPObject::addToMsgQueue(CBagRPObject *pRPObj) {
 		pRPObj->setVisible(true);     // make sure it gets updated.
 		pRPObj->_bRPRead = false;    // hasn't been read yet
 		pRPObj->_bRPReported = true; // been reported though
-		pRPObj->saveRPVars();         // Update the variable store
+		pRPObj->saveResiduePrintedVars();         // Update the variable store
 		bAddedToQueue = true;
 	}
 
@@ -738,13 +738,13 @@ bool CBagRPObject::runObject() {
 	// we're going to need this guy marked as read.
 
 	_bRPRead = true;
-	saveRPVars(); // Update the variable store
+	saveResiduePrintedVars(); // Update the variable store
 
 	// Make sure that nothing from a previous res print is showing
 	if (_pCurRPObject) {
 		_pCurRPObject->deactivateRPObject();
 		_pCurRPObject->_bCurVisible = false;
-		_pCurRPObject->saveRPVars();
+		_pCurRPObject->saveResiduePrintedVars();
 		_pCurRPObject = nullptr;
 	}
 
@@ -757,12 +757,12 @@ bool CBagRPObject::runObject() {
 	//
 	// only want to remove everything waiting if this movie
 	// was actually played.
-	if (bLocalMoviePlayed == true && !zoomed() && RPResultsWaiting() >= 1) {
+	if (bLocalMoviePlayed == true && !zoomed() && residuePrintedResultsWaiting() >= 1) {
 
 		// Remove all these from the message waiting queue.
 		removeAllFromMsgQueue(this);
 
-		activateRPReview();
+		activateResiduePrintedReview();
 	} else {
 		activateRPObject();
 	}
@@ -793,14 +793,14 @@ bool CBagRPObject::activateRPObject() {
 	if (_pCurRPObject && _pCurRPObject != this) {
 		_pCurRPObject->deactivateRPObject();
 		_pCurRPObject->_bCurVisible = false;
-		_pCurRPObject->saveRPVars();
+		_pCurRPObject->saveResiduePrintedVars();
 	}
 
 	// Set current and make sure our variable knows that this one is being shown,
 	// this is important for snapping from zoom to regular and vice-versa.
 	_pCurRPObject = this;
 	_bCurVisible = true;
-	saveRPVars();
+	saveResiduePrintedVars();
 
 	// Make sure this guy is active and ready to get drawn.
 	setVisible(); // show this guy
@@ -820,7 +820,7 @@ bool CBagRPObject::activateRPObject() {
 	// If we're coming from residue print review, make sure none of those objects
 	// are visible.
 	if (getLogState() == RP_REVIEW) {
-		hideRPReview();
+		hideResiduePrintedReview();
 	}
 
 	// We're ready to display a RP result, so switch to results mode
@@ -848,7 +848,7 @@ bool CBagRPObject::activateRPObject() {
 		pDosObj->_pDossier->setResiduePrintedObject(this);
 	}
 
-	showPDALog();
+	showPdaLog();
 
 	// Attach the description object.
 	assert(_pDescObj != nullptr);
@@ -911,10 +911,10 @@ void CBagRPObject::deactivateRPObject() {
 
 // This static will cruise the entire rpo object list, mark each one that has
 // had a result returned as active and floater.  also, update the mode var
-void CBagRPObject::activateRPReview() {
+void CBagRPObject::activateResiduePrintedReview() {
 	// Make sure the log is frontmost
 	if (getLogState() != RP_REVIEW) {
-		showPDALog();
+		showPdaLog();
 
 		// Now in review mode, this is used in our update code to determine what to
 		// show.
@@ -922,10 +922,10 @@ void CBagRPObject::activateRPReview() {
 	}
 
 	setLogPages(99);
-	showRPReview();
+	showResiduePrintedReview();
 }
 
-void CBagRPObject::deactivateRPReview() {
+void CBagRPObject::deactivateResiduePrintedReview() {
 	CBagLog *pLogWld;
 
 	// Get the appropriate storage device
@@ -965,7 +965,7 @@ void CBagRPObject::deactivateRPReview() {
 
 void CBagRPObject::onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * /*pv*/) {
 	// Deactivate everything in the rp list
-	hideRPReview();
+	hideResiduePrintedReview();
 
 	// We're ready to display a RP result, so switch to results mode
 	setLogState(RP_RESULTS);
@@ -1028,7 +1028,7 @@ void CBagRPObject::evaluateDossiers() {
 			}
 		}
 	}
-	saveRPVars(); // Update the variable store
+	saveResiduePrintedVars(); // Update the variable store
 }
 
 // This is really ugly, so put it all in the same place
@@ -1166,7 +1166,7 @@ void CBagRPObject::setLogPages(int nPages) {
 
 // Save the residue print variables
 
-void CBagRPObject::saveRPVars() {
+void CBagRPObject::saveResiduePrintedVars() {
 	if (_pSaveVar == nullptr) {
 		return;
 	}
@@ -1252,7 +1252,7 @@ void CBagRPObject::saveRPVars() {
 }
 
 // Restore the residue print variable from memory
-void CBagRPObject::restoreRPVars() {
+void CBagRPObject::restoreResiduePrintedVars() {
 	if (_pSaveVar == nullptr) {
 		return;
 	}
@@ -1336,7 +1336,7 @@ void CBagRPObject::restoreRPVars() {
 }
 
 // Hide the list of rp results, don't purge them from memory, just set to not visible.
-void CBagRPObject::hideRPReview() {
+void CBagRPObject::hideResiduePrintedReview() {
 	CBagRPObject *pRPObj;
 	CBagLog *pLogWld;
 
@@ -1371,7 +1371,7 @@ void CBagRPObject::hideRPReview() {
 	}
 }
 
-void CBagRPObject::showRPReview() {
+void CBagRPObject::showResiduePrintedReview() {
 	CBagLog *pLogWld;
 
 	if (zoomed()) {
@@ -1416,7 +1416,7 @@ void CBagRPObject::showRPReview() {
 
 						pRPObj->_pObjectName->setText(s);
 						pRPObj->_bRPTimeSet = true;
-						pRPObj->saveRPVars();
+						pRPObj->saveResiduePrintedVars();
 					}
 				}
 			}
@@ -1425,7 +1425,7 @@ void CBagRPObject::showRPReview() {
 }
 
 // Count the number of residue print objects waiting to be reported;
-int CBagRPObject::RPResultsWaiting() {
+int CBagRPObject::residuePrintedResultsWaiting() {
 	int nCount = _pRPList->getCount();
 	int nWaiting = 0;
 
@@ -1454,13 +1454,13 @@ void CBagRPObject::removeAllFromMsgQueue(CBagRPObject *pCurRPObj) {
 
 			pRPObj->_bRPRead = true;
 			pRPObj->_bMoviePlayed = true; // Don't want this guys movie again
-			pRPObj->saveRPVars();          // Update the variable store
+			pRPObj->saveResiduePrintedVars();          // Update the variable store
 		}
 	}
 }
 
 //  We're going to need to switch the PDA to log mode.
-void CBagRPObject::showPDALog() {
+void CBagRPObject::showPdaLog() {
 	if (zoomed()) {
 		SBZoomPda *pZoomPDA = (SBZoomPda *)SDEV_MANAGER->GetStorageDevice(PDAZ_WLD);
 		if (pZoomPDA) {
@@ -1563,7 +1563,7 @@ bool CBagRPObject::initialize() {
 
 // This hack is used to make sure that any variable values that were altered by
 // the zoom pda are propagated down to the regular PDA.
-void CBagRPObject::synchronizeRPObjects(bool bLogFrontmost) {
+void CBagRPObject::synchronizeResiduePrintedObjects(bool bLogFrontmost) {
 	// only synchronize in the bar
 	CBagVar *pVar = VAR_MANAGER->GetVariable("INBAR");
 	if (pVar == nullptr) {
@@ -1584,7 +1584,7 @@ void CBagRPObject::synchronizeRPObjects(bool bLogFrontmost) {
 		CBagObject *pObj = pLogWld->getObjectByPos(i);
 		if (pObj->getType() == RESPRNT_OBJ) {
 			CBagRPObject *pRPObj = (CBagRPObject *)pObj;
-			pRPObj->restoreRPVars();
+			pRPObj->restoreResiduePrintedVars();
 
 			if (bLogFrontmost) {
 				switch (rpState) {
@@ -1603,7 +1603,7 @@ void CBagRPObject::synchronizeRPObjects(bool bLogFrontmost) {
 					break;
 				case RP_REVIEW:
 					if (pRPObj->_bRPRead) {
-						pRPObj->activateRPReview();
+						pRPObj->activateResiduePrintedReview();
 					}
 					break;
 				default:
@@ -1633,7 +1633,7 @@ void CBagRPObject::setActiveDossier(CBagDossierObject *pDosObj) {
 		p = pDosList->getNodeItem(i);
 		if (p->_pDossier == pDosObj) {
 			_nCurDossier = i;
-			saveRPVars();
+			saveResiduePrintedVars();
 			break;
 		}
 	}

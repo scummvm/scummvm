@@ -127,7 +127,7 @@ ErrorCode SBZoomPda::detach() {
 	// varible values.  We do this so that any values that were changed in
 	// the zoomed version are propagated down to the unzoomed pda.
 
-	CBagRPObject::synchronizeRPObjects(bLogZoomed);
+	CBagRPObject::synchronizeResiduePrintedObjects(bLogZoomed);
 
 	CBagStorageDevWnd::detach();
 
