@@ -345,7 +345,7 @@ struct HINT : public EngineData {
 struct SPUZ : public EngineData {
 	SPUZ(Common::SeekableReadStream *chunkStream);
 
-	Common::Array<Common::Array<int16>> tileOrder;
+	Common::Array<Common::Array<Common::Array<int16>>> tileOrder;
 };
 
 // Contains data for the clock UI that appears at the bottom left of the screen (top left in TVD)

@@ -559,10 +559,13 @@ HINT::HINT(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 SPUZ::SPUZ(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	tileOrder.resize(3);
 
-	for (uint i = 0; i < 3; ++i) {
-		tileOrder[i].resize(36);
-		for (uint j = 0; j < 36; ++j) {
-			tileOrder[i][j] = chunkStream->readSint16LE();
+	for (uint difficulty = 0; difficulty < 3; ++difficulty) {
+		tileOrder[difficulty].resize(6);
+		for (uint y = 0; y < 6; ++y) {
+			tileOrder[difficulty][y].resize(6);
+			for (uint x = 0; x < 6; ++x) {
+				tileOrder[difficulty][y][x] = chunkStream->readSint16LE();
+			}
 		}
 	}
 }

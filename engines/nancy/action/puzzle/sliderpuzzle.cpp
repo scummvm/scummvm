@@ -86,7 +86,7 @@ void SliderPuzzle::readData(Common::SeekableReadStream &stream) {
 	} else {
 		auto *spuzData = GetEngineData(SPUZ);
 		assert(spuzData);
-		_startTileOrder = spuzData->tileOrder;
+		_startTileOrder = spuzData->tileOrder[NancySceneState.getDifficulty()];
 	}
 
 	_correctTileOrder.resize(_height);
