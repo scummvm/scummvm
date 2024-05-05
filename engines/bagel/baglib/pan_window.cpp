@@ -583,7 +583,7 @@ void CBagPanWindow::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 	}
 	CBagStorageDevWnd::onLButtonDown(nFlags, xPoint);
 
-	MOUSE_ACTIVITY  nMA = getLActivity();
+	MouseActivity  nMA = getLActivity();
 	CBagObject *pActObj = getLActiveObject();
 
 	if (nMA && pActObj && pActObj->isMovable()) {
@@ -594,7 +594,7 @@ void CBagPanWindow::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 }
 
 void CBagPanWindow::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
-	MOUSE_ACTIVITY  nMA = getLActivity();
+	MouseActivity  nMA = getLActivity();
 	CBagObject *pActObj = getLActiveObject();
 
 	if ((pActObj != nullptr) && (nMA == kMouseDRAGGING) &&
