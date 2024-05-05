@@ -43,7 +43,7 @@ ErrorCode CBagEventSDev::attach() {
 
 ErrorCode CBagEventSDev::evaluateExpressions() {
 	// If a Zelda movie is playing, don't execute the event world
-	if (CBagPDA::IsMoviePlaying())
+	if (CBagPDA::isMoviePlaying())
 		return ERR_NONE;
 
 	ErrorCode errCode = ERR_NONE;
@@ -75,7 +75,7 @@ ErrorCode CBagEventSDev::evaluateExpressions() {
 
 ErrorCode CBagTurnEventSDev::evaluateExpressions() {
 	// If a zelda movie is playing, don't execute the turncount world
-	if (CBagPDA::IsMoviePlaying()) {
+	if (CBagPDA::isMoviePlaying()) {
 		return ERR_UNKNOWN;
 	}
 

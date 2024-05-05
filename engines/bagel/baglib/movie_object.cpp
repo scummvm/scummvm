@@ -158,7 +158,7 @@ bool CBagMovieObject::runObject() {
 			// time to play it, if not, then queue it up so it can play at a much better time.
 			if (_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
 				if (asynchPDAMovieCanPlay() == false) {
-					pPDA->AddToMovieQueue(this);
+					pPDA->addToMovieQueue(this);
 					return rc;
 				}
 			} else {

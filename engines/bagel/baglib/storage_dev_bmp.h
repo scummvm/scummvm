@@ -82,7 +82,7 @@ public:
 		return CBagBmpObject::isAttached();
 	}
 
-	virtual bool PaintFGObjects(CBofBitmap *) {
+	virtual bool paintFGObjects(CBofBitmap *) {
 		return true;
 	}
 

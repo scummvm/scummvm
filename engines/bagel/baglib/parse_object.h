@@ -44,10 +44,10 @@ namespace Bagel {
 // Support Vector Class
 class CBagVector : public CVector {
 public:
-	int nMoveRate;
-	int nSprStartIndex;
-	int nSprEndIndex;
-	int nChangeRate;
+	int _moveRate;
+	int _sprStartIndex;
+	int _sprEndIndex;
+	int _changeRate;
 };
 
 enum PARSE_CODES { PARSING_DONE = 0, UPDATED_OBJECT, UNKNOWN_TOKEN };
