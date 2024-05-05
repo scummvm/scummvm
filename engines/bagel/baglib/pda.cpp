@@ -133,7 +133,7 @@ ErrorCode CBagPDA::attach() {
 
 	// Should be allowed to not find one.
 	if (!_mooWnd) {
-		if ((pSDev = SDEV_MANAGER->GetStorageDevice(MOO_WLD)) != nullptr) {
+		if ((pSDev = SDEV_MANAGER->getStorageDevice(MOO_WLD)) != nullptr) {
 			_mooWnd = (CBagStorageDevBmp *)pSDev;
 			_mooWnd->setAssociateWnd(getAssociateWnd());
 			_mooWnd->setTransparent(false);
@@ -143,7 +143,7 @@ ErrorCode CBagPDA::attach() {
 	}
 
 	if (!_invWnd) {
-		if ((pSDev = SDEV_MANAGER->GetStorageDevice(INV_WLD)) != nullptr) {
+		if ((pSDev = SDEV_MANAGER->getStorageDevice(INV_WLD)) != nullptr) {
 			_invWnd = (CBagStorageDevBmp *)pSDev;
 			_invWnd->setAssociateWnd(getAssociateWnd());
 
@@ -157,7 +157,7 @@ ErrorCode CBagPDA::attach() {
 	}
 
 	if (!_mapWnd) {
-		if ((pSDev = SDEV_MANAGER->GetStorageDevice(MAP_WLD)) != nullptr) {
+		if ((pSDev = SDEV_MANAGER->getStorageDevice(MAP_WLD)) != nullptr) {
 			_mapWnd = (CBagStorageDevBmp *)pSDev;
 			_mapWnd->setAssociateWnd(getAssociateWnd());
 
@@ -170,7 +170,7 @@ ErrorCode CBagPDA::attach() {
 		}
 	}
 	if (!_logWnd) {
-		if ((pSDev = SDEV_MANAGER->GetStorageDevice(LOG_WLD)) != nullptr) {
+		if ((pSDev = SDEV_MANAGER->getStorageDevice(LOG_WLD)) != nullptr) {
 			_logWnd = (CBagStorageDevBmp *)pSDev;
 			_logWnd->setAssociateWnd(getAssociateWnd());
 
@@ -454,7 +454,7 @@ void CBagPDA::handleZoomButton(bool bButtonDown) {
 	CBofString sDevice(szLocalBuff, 256);
 	sDevice = "BPDA_WLD";
 
-	CBagStorageDev *pPda = SDEV_MANAGER->GetStorageDevice(sDevice);
+	CBagStorageDev *pPda = SDEV_MANAGER->getStorageDevice(sDevice);
 	if (pPda) {
 		sDevice = PDA_ZOOMFLASH;
 		pZoomFlash = (CBagButtonObject *)pPda->getObject(sDevice);

@@ -57,7 +57,7 @@ namespace Bagel {
 bool g_allowPaintFl = true;
 bool g_bAAOk = true;            // Prevent attachActiveObjects() after a RUN LNK
 bool g_allowattachActiveObjectsFl = true;        // Prevent attachActiveObjects() after a RUN LNK
-CBagStorageDevWnd *g_pLastWindow = nullptr;
+CBagStorageDevWnd *g_lastWindow = nullptr;
 extern bool g_pauseTimerFl;
 extern bool g_waitOKFl;
 
@@ -84,7 +84,7 @@ void CBagStorageDev::initialize() {
 	g_allowPaintFl = true;
 	g_bAAOk = true;
 	g_allowattachActiveObjectsFl = true;
-	g_pLastWindow = nullptr;
+	g_lastWindow = nullptr;
 
 	_xCursorLocation = new CBofPoint();
 	gRepaintRect = new CBofRect();
@@ -138,7 +138,7 @@ CBagStorageDev::CBagStorageDev() {
 	// Not sure what the hell is going on here...
 	setLActivity(kMouseNONE);
 
-	SDEV_MANAGER->RegisterStorageDev(this);
+	SDEV_MANAGER->registerStorageDev(this);
 }
 
 CBagStorageDev::~CBagStorageDev() {
@@ -159,7 +159,7 @@ CBagStorageDev::~CBagStorageDev() {
 		}
 	}  // If the lists belong to this storage device
 
-	SDEV_MANAGER->UnRegisterStorageDev(this);
+	SDEV_MANAGER->unregisterStorageDev(this);
 
 	if (CBagStorageDevWnd::_pEvtSDev == this) {
 		CBagStorageDevWnd::_pEvtSDev = nullptr;
@@ -1214,9 +1214,9 @@ ErrorCode CBagStorageDevWnd::attach() {
 	}
 
 	setPreFilterPan(true);
-	g_pLastWindow = this;
+	g_lastWindow = this;
 
-	CBagStorageDev *pSDev = SDEV_MANAGER->GetStorageDevice("EVT_WLD");
+	CBagStorageDev *pSDev = SDEV_MANAGER->getStorageDevice("EVT_WLD");
 
 	if (pSDev != nullptr) {
 		// Have we allocated one yet ?
@@ -1259,7 +1259,7 @@ void CBagStorageDevWnd::onTimer(uint32 nEventID) {
 					// for the turncount dependent storage device.
 					if (CBagEventSDev::getEvalTurnEvents() == true) {
 						CBagEventSDev::setEvalTurnEvents(false);
-						CBagTurnEventSDev *pSDev = (CBagTurnEventSDev *) SDEV_MANAGER->GetStorageDevice("TURN_WLD");
+						CBagTurnEventSDev *pSDev = (CBagTurnEventSDev *) SDEV_MANAGER->getStorageDevice("TURN_WLD");
 						if (pSDev != nullptr) {
 							// If unable to execute event world, try again next time through.
 							if (pSDev->evaluateExpressions() == ERR_UNKNOWN) {
@@ -1346,7 +1346,7 @@ void CBagStorageDevWnd::onMainLoop() {
 
 	paintScreen();
 
-	g_pLastWindow = this;
+	g_lastWindow = this;
 }
 
 ErrorCode CBagStorageDevWnd::paintScreen(CBofRect *pRect) {
@@ -1637,8 +1637,8 @@ void CBagStorageDevDlg::onMainLoop() {
 
 	int nCurTime = getTimer();
 	gLastBackgroundUpdate = nCurTime;
-	if (g_pLastWindow) {
-		g_pLastWindow->setPreFilterPan(true);
+	if (g_lastWindow) {
+		g_lastWindow->setPreFilterPan(true);
 	}
 
 	paintScreen();
@@ -1660,7 +1660,7 @@ ErrorCode CBagStorageDevDlg::paintScreen(CBofRect *pRect) {
 	assert(isValidObject(this));
 
 	if (_pBackdrop != nullptr) {
-		CBagStorageDevWnd *pWin = g_pLastWindow;
+		CBagStorageDevWnd *pWin = g_lastWindow;
 
 		if (pWin != nullptr) {
 			CBofBitmap *pBmp = pWin->getBackdrop();
@@ -1738,12 +1738,6 @@ ErrorCode CBagStorageDevDlg::loadFile(const CBofString &sFile) {
 	return _errCode;
 }
 
-ErrorCode CBagStorageDevDlg::create(const char *pszName, int x, int y, int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {
-	ErrorCode rc = CBofDialog::create(pszName, x, y, nWidth, nHeight, pParent, nControlID);
-	setCapture();
-	return rc;
-}
-
 ErrorCode CBagStorageDevDlg::create(const char *pszName, CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
 	ErrorCode rc = CBofDialog::create(pszName, pRect, pParent, nControlID);
 	setCapture();
@@ -1776,15 +1770,15 @@ void CBagStorageDevDlg::onClose() {
 	destroy();		// Destruct the main window
 
 	// Our dlog may have dirtied our backdrop, make sure it is redrawn.
-	if (g_pLastWindow != nullptr) {
-		g_pLastWindow->setPreFilterPan(true);
-		g_pLastWindow->paintScreen(nullptr);
+	if (g_lastWindow != nullptr) {
+		g_lastWindow->setPreFilterPan(true);
+		g_lastWindow->paintScreen(nullptr);
 
 		// This is fairly shameful, but for some reason, some
 		// updates don't work in the above paintscreen and must be updated the
 		// next time through.  Don't know why, would love to find out, but
 		// running out of time.
-		g_pLastWindow->setPreFilterPan(true);
+		g_lastWindow->setPreFilterPan(true);
 	}
 }
 
@@ -1814,11 +1808,11 @@ CBagStorageDevManager::~CBagStorageDevManager() {
 	assert(isValidObject(this));
 
 	assert(--nSDevMngrs >= 0);
-	ReleaseStorageDevices();
+	releaseStorageDevices();
 	_xStorageDeviceList.removeAll();
 }
 
-ErrorCode CBagStorageDevManager::RegisterStorageDev(CBagStorageDev *pSDev) {
+ErrorCode CBagStorageDevManager::registerStorageDev(CBagStorageDev *pSDev) {
 	assert(isValidObject(this));
 
 	_xStorageDeviceList.addToTail(pSDev);
@@ -1826,7 +1820,7 @@ ErrorCode CBagStorageDevManager::RegisterStorageDev(CBagStorageDev *pSDev) {
 	return ERR_NONE;
 }
 
-ErrorCode CBagStorageDevManager::UnRegisterStorageDev(CBagStorageDev *pSDev) {
+ErrorCode CBagStorageDevManager::unregisterStorageDev(CBagStorageDev *pSDev) {
 	assert(isValidObject(this));
 
 	CBofListNode<CBagStorageDev *> *pList = _xStorageDeviceList.getHead();
@@ -1841,7 +1835,7 @@ ErrorCode CBagStorageDevManager::UnRegisterStorageDev(CBagStorageDev *pSDev) {
 	return ERR_NONE;
 }
 
-ErrorCode CBagStorageDevManager::ReleaseStorageDevices() {
+ErrorCode CBagStorageDevManager::releaseStorageDevices() {
 	assert(isValidObject(this));
 
 	while (_xStorageDeviceList.getCount()) {
@@ -1854,7 +1848,7 @@ ErrorCode CBagStorageDevManager::ReleaseStorageDevices() {
 	return ERR_NONE;
 }
 
-CBagStorageDev *CBagStorageDevManager::GetStorageDeviceContaining(CBagObject *pObj) {
+CBagStorageDev *CBagStorageDevManager::getStorageDeviceContaining(CBagObject *pObj) {
 	assert(isValidObject(this));
 
 	for (int i = 0; i < _xStorageDeviceList.getCount(); ++i) {
@@ -1865,7 +1859,7 @@ CBagStorageDev *CBagStorageDevManager::GetStorageDeviceContaining(CBagObject *pO
 	return nullptr;
 }
 
-CBagStorageDev *CBagStorageDevManager::GetStorageDeviceContaining(const CBofString &sName) {
+CBagStorageDev *CBagStorageDevManager::getStorageDeviceContaining(const CBofString &sName) {
 	assert(isValidObject(this));
 
 	for (int i = 0; i < _xStorageDeviceList.getCount(); ++i) {
@@ -1876,7 +1870,7 @@ CBagStorageDev *CBagStorageDevManager::GetStorageDeviceContaining(const CBofStri
 	return nullptr;
 }
 
-CBagStorageDev *CBagStorageDevManager::GetStorageDevice(const CBofString &sName) {
+CBagStorageDev *CBagStorageDevManager::getStorageDevice(const CBofString &sName) {
 	assert(isValidObject(this));
 
 	for (int i = 0; i < _xStorageDeviceList.getCount(); ++i) {
@@ -1888,16 +1882,16 @@ CBagStorageDev *CBagStorageDevManager::GetStorageDevice(const CBofString &sName)
 	return nullptr;
 }
 
-bool CBagStorageDevManager::MoveObject(const CBofString &sDstName, const CBofString &sSrcName, const CBofString &sObjName) {
+bool CBagStorageDevManager::moveObject(const CBofString &sDstName, const CBofString &sSrcName, const CBofString &sObjName) {
 	assert(isValidObject(this));
 
-	CBagStorageDev *pDstSDev = SDEV_MANAGER->GetStorageDevice(sDstName);
+	CBagStorageDev *pDstSDev = SDEV_MANAGER->getStorageDevice(sDstName);
 
 	// Find the storage device
 	if (pDstSDev == nullptr)
 		return false;
 
-	CBagStorageDev *pSrcSDev = SDEV_MANAGER->GetStorageDevice(sSrcName);
+	CBagStorageDev *pSrcSDev = SDEV_MANAGER->getStorageDevice(sSrcName);
 	if (pSrcSDev == nullptr)
 		return false;
 
@@ -1915,7 +1909,7 @@ bool CBagStorageDevManager::MoveObject(const CBofString &sDstName, const CBofStr
 bool CBagStorageDevManager::addObject(const CBofString &sDstName, const CBofString &sObjName) {
 	assert(isValidObject(this));
 
-	CBagStorageDev *pDstSDev = SDEV_MANAGER->GetStorageDevice(sDstName);
+	CBagStorageDev *pDstSDev = SDEV_MANAGER->getStorageDevice(sDstName);
 
 	// Find the storage device
 	if (pDstSDev == nullptr)
@@ -1932,7 +1926,7 @@ bool CBagStorageDevManager::addObject(const CBofString &sDstName, const CBofStri
 bool CBagStorageDevManager::removeObject(const CBofString &sSrcName, const CBofString &sObjName) {
 	assert(isValidObject(this));
 
-	CBagStorageDev *pSrcSDev = SDEV_MANAGER->GetStorageDevice(sSrcName);
+	CBagStorageDev *pSrcSDev = SDEV_MANAGER->getStorageDevice(sSrcName);
 
 	// Find the storage device
 	if (pSrcSDev == nullptr)
@@ -1983,15 +1977,15 @@ void CBagStorageDevManager::SetObjectValue(const CBofString &sObject, const CBof
 }
 
 
-void CBagStorageDevManager::SaveObjList(StObj *pObjList, int nNumEntries) {
+void CBagStorageDevManager::saveObjList(StObj *pObjList, int nNumEntries) {
 	assert(isValidObject(this));
 	assert(pObjList != nullptr);
 
 
 	int k = 0;
-	int n = GetNumStorageDevices();
+	int n = getNumStorageDevices();
 	for (int i = 0; i < n; i++) {
-		CBagStorageDev *pSDev = GetStorageDevice(i);
+		CBagStorageDev *pSDev = getStorageDevice(i);
 		if (pSDev != nullptr) {
 
 			int m = pSDev->getObjectCount();
@@ -2020,7 +2014,7 @@ void CBagStorageDevManager::SaveObjList(StObj *pObjList, int nNumEntries) {
 
 					// This is pretty dangerous, put up an error
 					if (k >= nNumEntries) {
-						bofMessageBox("SaveObjList encountered too many objects", "Internal Error");
+						bofMessageBox("saveObjList encountered too many objects", "Internal Error");
 						break;
 					}
 				}
@@ -2030,14 +2024,14 @@ void CBagStorageDevManager::SaveObjList(StObj *pObjList, int nNumEntries) {
 }
 
 
-void CBagStorageDevManager::RestoreObjList(StObj *pObjList, int nNumEntries) {
+void CBagStorageDevManager::restoreObjList(StObj *pObjList, int nNumEntries) {
 	assert(isValidObject(this));
 	assert(pObjList != nullptr);
 
 	// Restore the state of all objects
 	for (int i = 0; i < nNumEntries; i++) {
 		if ((pObjList + i)->_bUsed) {
-			CBagStorageDev *pSDev = GetStorageDevice((pObjList + i)->_szSDev);
+			CBagStorageDev *pSDev = getStorageDevice((pObjList + i)->_szSDev);
 			if (pSDev != nullptr) {
 				CBagObject *pObj = pSDev->getObject((pObjList + i)->_szName);
 				if (pObj != nullptr) {

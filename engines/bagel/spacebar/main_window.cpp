@@ -90,7 +90,7 @@ ErrorCode CMainWindow::attach() {
 
 	g_allowPaintFl = true;
 
-	CBagStorageDev *pSDev = SDEV_MANAGER->GetStorageDevice(getPrevSDev());
+	CBagStorageDev *pSDev = SDEV_MANAGER->getStorageDevice(getPrevSDev());
 	if (pSDev && pSDev->getDeviceType() == SDEV_ZOOMPDA) {
 		bForegroundObj = false;
 	}
@@ -126,11 +126,11 @@ ErrorCode CMainWindow::attach() {
 	activateView();
 	CBofSound::audioTask();
 
-	g_pLastWindow = this;
+	g_lastWindow = this;
 
 	if (_nGameMode == VRPLAYMODE && bForegroundObj == true) {
 		if (!_pThudBmp) {
-			pSDev = SDEV_MANAGER->GetStorageDevice(THUD_WLD);
+			pSDev = SDEV_MANAGER->getStorageDevice(THUD_WLD);
 			if (pSDev != nullptr) {
 				_pThudBmp = (SBarThud *)pSDev;
 				_pThudBmp->setAssociateWnd(this);
@@ -148,7 +148,7 @@ ErrorCode CMainWindow::attach() {
 		}
 
 		if (!_pWieldBmp) {
-			pSDev = SDEV_MANAGER->GetStorageDevice(WIELD_WLD);
+			pSDev = SDEV_MANAGER->getStorageDevice(WIELD_WLD);
 			if (pSDev != nullptr) {
 				_pWieldBmp = (CBagWield *)pSDev;
 				_pWieldBmp->setAssociateWnd(this);
@@ -176,7 +176,7 @@ ErrorCode CMainWindow::attach() {
 
 		// Create the PDA for the game
 		if (!_pPDABmp) {
-			pSDev = SDEV_MANAGER->GetStorageDevice(PDA_WLD);
+			pSDev = SDEV_MANAGER->getStorageDevice(PDA_WLD);
 			if (pSDev != nullptr) {
 				_pPDABmp = (CBagPDA *)pSDev;
 				CBofRect r(0, 0, 300, 200);
@@ -215,7 +215,7 @@ ErrorCode CMainWindow::attach() {
 		_pPDABmp->attachActiveObjects();
 
 		// If this world file contains an evt_wld
-		pSDev = SDEV_MANAGER->GetStorageDevice("EVT_WLD");
+		pSDev = SDEV_MANAGER->getStorageDevice("EVT_WLD");
 		if (pSDev != nullptr) {
 			// Have we allocated one yet ?
 			if (_pEvtSDev == nullptr) {
@@ -350,7 +350,7 @@ void CMainWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 
 void CMainWindow::correctZzazzlePoint(CBofPoint *p) {
 	// Don't correct this boy if he's inside the PDA.
-	CBagPDA *pPDA = (CBagPDA *)SDEV_MANAGER->GetStorageDevice("BPDA_WLD");
+	CBagPDA *pPDA = (CBagPDA *)SDEV_MANAGER->getStorageDevice("BPDA_WLD");
 	if (pPDA && pPDA->isInside(*p)) {
 		return;
 	}

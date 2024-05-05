@@ -238,19 +238,6 @@ ErrorCode CBagSpriteObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*
 	return ERR_NONE;
 }
 
-ErrorCode CBagSpriteObject::update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, int) {
-	if (_xSprite) {
-		bool b = _xSprite->paintSprite(pWnd, pt.x, pt.y);
-
-		// don't have to redraw this item...
-		// setDirty (false);
-
-		if (!b)
-			return ERR_UNKNOWN;
-	}
-	return ERR_NONE;
-}
-
 bool CBagSpriteObject::isInside(const CBofPoint &xPoint) {
 	if (_xSprite && getRect().ptInRect(xPoint)) {
 		if (isTransparent()) {
