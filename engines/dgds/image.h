@@ -44,6 +44,7 @@ class ResourceManager;
 class DgdsPal : public Graphics::Palette {
 public:
 	DgdsPal();
+	virtual ~DgdsPal() {}
 	const Common::String &getName() { return _name; }
 	void setName(const Common::String &name) { _name = name; }
 private:
