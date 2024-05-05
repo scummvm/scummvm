@@ -98,7 +98,7 @@ public:
 
 class CBagLogSuspect : public CBagTextObject {
 protected:
-	int m_nSdevWidth;
+	int _nSdevWidth;
 
 	CBofString _susName;
 	CBofString _susSpecies;
