@@ -467,6 +467,7 @@ public:
 		StaticTextWidget(boss, x, y, w, h, scale,
 				path.empty() ? placeholder : Common::U32String(path.toString(Common::Path::kNativeSeparator)),
 				align, tooltip, font, Common::UNK_LANG, useEllipsis),
+		_path(path),
 		_placeholder(placeholder) { }
 	PathWidget(GuiObject *boss, int x, int y, int w, int h,
 			const Common::Path &path, Graphics::TextAlign align,
@@ -477,6 +478,7 @@ public:
 		StaticTextWidget(boss, x, y, w, h,
 				path.empty() ? placeholder : Common::U32String(path.toString(Common::Path::kNativeSeparator)),
 				align, tooltip, font, Common::UNK_LANG, useEllipsis),
+		_path(path),
 		_placeholder(placeholder) {}
 	PathWidget(GuiObject *boss, const Common::String &name,
 			const Common::Path &path,
@@ -487,6 +489,7 @@ public:
 		StaticTextWidget(boss, name,
 				path.empty() ? placeholder : Common::U32String(path.toString(Common::Path::kNativeSeparator)),
 				tooltip, font, Common::UNK_LANG, useEllipsis),
+		_path(path),
 		_placeholder(placeholder) {}
 	void setLabel(const Common::Path &path) {
 		_path = path;
