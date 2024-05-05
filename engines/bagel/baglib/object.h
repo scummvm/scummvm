@@ -150,8 +150,8 @@ public:
 	}
 
 	// Return true if the Object had members that are properly initialized/de-initialized
-	virtual ErrorCode attach();
-	virtual ErrorCode detach();
+	virtual ErrorCode attach() override;
+	virtual ErrorCode detach() override;
 
 	BagObjectType getType() {
 		return (BagObjectType)_xObjType;
@@ -395,7 +395,7 @@ public:
 
 	virtual void onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr) {}
 	virtual void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr); // run menu if available
-	virtual bool onMouseMove(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr); 
+	virtual bool onMouseMove(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr);
 	virtual bool onMouseOver(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr) {
 		return false;
 	}
