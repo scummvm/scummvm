@@ -31,17 +31,17 @@ namespace Bagel {
 
 class CBagVar : public CBagParseObject, public CBofObject {
 public:
-	enum VARTYPE { STRING = 0, NUMBER = 1, boolEAN = 2 };
+	enum VARTYPE { STRING = 0, NUMBER = 1, BOOLEAN = 2 };
 
 private:
-	CBofString m_sVarName;  // Name of the variable
-	CBofString m_sVarValue; // Value of the variable if not a reference
-	VARTYPE m_xVarType;     // Type of variable, string
-	bool m_bGlobal : 1;     // Is the variable a constant
-	bool m_bConstant : 1;   // Is the variable a constant
-	bool m_bReference : 1;  // Is the variable a reference to an objects state date
-	bool m_bTimer : 1;      // Is the variable updated on object timer events
-	bool m_bRandom : 1;     // Is the variable updated as a random number
+	CBofString _sVarName;  // Name of the variable
+	CBofString _sVarValue; // Value of the variable if not a reference
+	VARTYPE _xVarType;     // Type of variable, string
+	bool _bGlobal : 1;     // Is the variable a constant
+	bool _bConstant : 1;   // Is the variable a constant
+	bool _bReference : 1;  // Is the variable a reference to an objects state date
+	bool _bTimer : 1;      // Is the variable updated on object timer events
+	bool _bRandom : 1;     // Is the variable updated as a random number
 
 public:
 	CBagVar();
@@ -51,71 +51,71 @@ public:
 	ParseCodes setInfo(CBagIfstream &);
 
 	const CBofString &getName() {
-		return m_sVarName;
+		return _sVarName;
 	}
-	//  const CBofString&   GetValue()      { return m_sVarValue; }
-	const CBofString &GetValue();
-	int GetNumValue();
-	bool IsGlobal() {
-		return m_bGlobal;
+	//  const CBofString&   getValue()      { return _sVarValue; }
+	const CBofString &getValue();
+	int getNumValue();
+	bool isGlobal() {
+		return _bGlobal;
 	}
-	bool IsConstant() {
-		return m_bConstant;
+	bool isConstant() {
+		return _bConstant;
 	}
-	bool IsNumeric() {
-		return m_xVarType == NUMBER;
+	bool isNumeric() {
+		return _xVarType == NUMBER;
 	}
-	bool IsBoolean() {
-		return m_xVarType == boolEAN;
+	bool isBoolean() {
+		return _xVarType == BOOLEAN;
 	}
-	bool IsString() {
-		return m_xVarType == STRING;
+	bool isString() {
+		return _xVarType == STRING;
 	}
-	bool IsReference() {
-		return m_bReference;
+	bool isReference() {
+		return _bReference;
 	}
-	bool IsTimer() {
-		return m_bTimer;
+	bool isTimer() {
+		return _bTimer;
 	}
-	bool IsRandom() {
-		return m_bRandom;
+	bool isRandom() {
+		return _bRandom;
 	}
 	VARTYPE getType() {
-		return m_xVarType;
+		return _xVarType;
 	}
 
 	// Whenever setting the name, add this object to the hash table.
 	void setName(const CBofString &s);
-	void SetValue(const CBofString &s);
-	void SetValue(int nVal);
-	void SetBoolValue(bool bVal);
-	void SetGlobal(bool bVal = true) {
-		m_bGlobal = bVal;
+	void setValue(const CBofString &s);
+	void setValue(int nVal);
+	void setBoolValue(bool bVal);
+	void setGlobal(bool bVal = true) {
+		_bGlobal = bVal;
 	}
-	void SetConstant(bool bVal = true) {
-		m_bConstant = bVal;
+	void setConstant(bool bVal = true) {
+		_bConstant = bVal;
 	}
-	void SetReference(bool bVal = true) {
-		m_bReference = bVal;
+	void setReference(bool bVal = true) {
+		_bReference = bVal;
 	}
 	void setTimer(bool bVal = true) {
-		m_bTimer = bVal;
+		_bTimer = bVal;
 	}
-	void SetRandom(bool bVal = true) {
-		m_bRandom = bVal;
+	void setRandom(bool bVal = true) {
+		_bRandom = bVal;
 	}
-	void SetString() {
-		m_xVarType = STRING;
+	void setString() {
+		_xVarType = STRING;
 	}
-	void SetNumeric() {
-		m_xVarType = NUMBER;
+	void setNumeric() {
+		_xVarType = NUMBER;
 	}
-	void SetBoolean() {
-		m_xVarType = boolEAN;
+	void setBoolean() {
+		_xVarType = BOOLEAN;
 	}
-	// void setType(VARTYPE xType)      { m_xVarType  = xType; }
+	// void setType(VARTYPE xType)      { _xVarType  = xType; }
 
-	void Increment();
+	void increment();
 };
 
 //  This could be templated with the storage device manager
@@ -124,29 +124,29 @@ public:
 class CBagVarManager : public CBagParseObject, public CBofObject {
 private:
 	static int nVarMngrs;
-	CBofList<CBagVar *> m_xVarList;
+	CBofList<CBagVar *> _xVarList;
 
 public:
 	CBagVarManager();
 	virtual ~CBagVarManager();
 	static void initialize();
 
-	ErrorCode RegisterVariable(CBagVar *pVar);
-	ErrorCode UnRegisterVariable(CBagVar *pVar);
-	ErrorCode UpdateRegistration();
-	ErrorCode ReleaseVariables(bool bIncludeGlobals = true);
+	ErrorCode registerVariable(CBagVar *pVar);
+	ErrorCode unRegisterVariable(CBagVar *pVar);
+	ErrorCode updateRegistration();
+	ErrorCode releaseVariables(bool bIncludeGlobals = true);
 
-	ErrorCode IncrementTimers();
-	CBagVar *GetVariable(const CBofString &sName);
-	CBagVar *GetVariable(int i) {
-		return m_xVarList[i];
+	ErrorCode incrementTimers();
+	CBagVar *getVariable(const CBofString &sName);
+	CBagVar *getVariable(int i) {
+		return _xVarList[i];
 	}
-	int GetNumVars() {
-		return m_xVarList.getCount();
+	int getNumVars() {
+		return _xVarList.getCount();
 	}
 
 	// Use a hash table to lookup variables.
-	CBofList<CBagVar *> m_xVarHashList[VAR_HTABLE_SIZE];
+	CBofList<CBagVar *> _xVarHashList[VAR_HTABLE_SIZE];
 };
 
 } // namespace Bagel

@@ -260,11 +260,11 @@ ErrorCode CBagTimeObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pS
 	CBofString sTimeString(szLocalBuff, 256);
 	ErrorCode rc = ERR_NONE;
 
-	CBagVar *xVar = VAR_MANAGER->GetVariable(_sVariable);
+	CBagVar *xVar = g_VarManager->getVariable(_sVariable);
 
 	// If everything looks good
-	if (isAttached() && xVar && !(xVar->GetValue().isEmpty())) {
-		int nTimeVal = xVar->GetNumValue();
+	if (isAttached() && xVar && !(xVar->getValue().isEmpty())) {
+		int nTimeVal = xVar->getNumValue();
 		sTimeString = buildString("%04d", nTimeVal);
 		char sDigString[2] = "0";
 
@@ -311,11 +311,11 @@ ErrorCode CBagTimeObject::update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, int
 
 	ErrorCode rc = ERR_NONE;
 
-	CBagVar *xVar = VAR_MANAGER->GetVariable(_sVariable);
+	CBagVar *xVar = g_VarManager->getVariable(_sVariable);
 
 	// If everything looks good
-	if (isAttached() && xVar && !(xVar->GetValue().isEmpty())) {
-		int nTimeVal = xVar->GetNumValue();
+	if (isAttached() && xVar && !(xVar->getValue().isEmpty())) {
+		int nTimeVal = xVar->getNumValue();
 		sTimeString = buildString("%04d", nTimeVal);
 		char sDigString[2] = "0";
 

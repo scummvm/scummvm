@@ -199,7 +199,7 @@ ParseCodes CBagRPObject::setInfo(CBagIfstream &istr) {
 
 				// Get the variable name from the definition line, then find it
 				// in the global list.
-				_pTouchedVar = VAR_MANAGER->GetVariable(sStr);
+				_pTouchedVar = g_VarManager->getVariable(sStr);
 
 				break;
 			}
@@ -288,7 +288,7 @@ ParseCodes CBagRPObject::setInfo(CBagIfstream &istr) {
 				// Get the variable name from the definition line, then find it
 				// in the global list.
 				getAlphaNumFromStream(istr, sStr);
-				_pSaveVar = VAR_MANAGER->GetVariable(sStr);
+				_pSaveVar = g_VarManager->getVariable(sStr);
 
 				// the variable must have been found, if it wasn't, then
 				// complain violently.
@@ -356,7 +356,7 @@ ParseCodes CBagRPObject::setInfo(CBagIfstream &istr) {
 				// Get the variable name from the definition line, then find it
 				// in the global list.
 				getAlphaNumFromStream(istr, sStr);
-				_pVarObj = VAR_MANAGER->GetVariable(sStr);
+				_pVarObj = g_VarManager->getVariable(sStr);
 
 				// the variable must have been found, if it wasn't, then
 				// complain violently.
@@ -604,13 +604,13 @@ int CBagRPObject::runResiduePrintedQueue() {
 
 		// Get the turncount variable.
 		if (_turnCount == nullptr) {
-			_turnCount = VAR_MANAGER->GetVariable("TURNCOUNT");
+			_turnCount = g_VarManager->getVariable("TURNCOUNT");
 		}
 		//
 		assert(_turnCount != nullptr);
 
 		// Get the current time
-		int nCurSBTime = _turnCount->GetNumValue();
+		int nCurSBTime = _turnCount->getNumValue();
 		int nCount = _pRPList->getCount();
 
 		for (int i = 0; i < nCount; i++) {
@@ -648,7 +648,7 @@ int CBagRPObject::updateResiduePrintedQueue() {
 	for (int i = 0; i < nCount; i++) {
 		CBagRPObject *pRPObj = _pRPList->getNodeItem(i);
 		if (pRPObj) {
-			cStr = pRPObj->_pVarObj->GetValue();
+			cStr = pRPObj->_pVarObj->getValue();
 
 			// If it's value is NOT 3000, then store its value in the associative
 			// rp object.
@@ -667,7 +667,7 @@ int CBagRPObject::updateResiduePrintedQueue() {
 				// Reset back to "3000"
 
 				cStr = "3000";
-				pRPObj->_pVarObj->SetValue(cStr);
+				pRPObj->_pVarObj->setValue(cStr);
 			}
 		}
 	}
@@ -979,7 +979,7 @@ void CBagRPObject::evaluateDossiers() {
 	// If we have a touched variable, then evaluate and if it is not 3000, then
 	// we know it's been touched.
 	if (_pTouchedVar) {
-		if (_pTouchedVar->GetValue() != "3000") {
+		if (_pTouchedVar->getValue() != "3000") {
 			_bTouched = true;
 		}
 	}
@@ -1038,11 +1038,11 @@ void CBagRPObject::setLogState(RPStates eLogMode) {
 	// Also, so we know where to return to, make sure we set the previous log
 	// state to whatever LOG_STATE is right now.
 	if (_pLogStateVar == nullptr) {
-		_pLogStateVar = VAR_MANAGER->GetVariable("LOG_STATE");
+		_pLogStateVar = g_VarManager->getVariable("LOG_STATE");
 	}
 
 	if (_pPrevLogStateVar == nullptr) {
-		_pPrevLogStateVar = VAR_MANAGER->GetVariable("PREV_LOG_STATE");
+		_pPrevLogStateVar = g_VarManager->getVariable("PREV_LOG_STATE");
 	}
 
 	assert(_pLogStateVar != nullptr && _pPrevLogStateVar != nullptr);
@@ -1077,27 +1077,27 @@ void CBagRPObject::setLogState(RPStates eLogMode) {
 
 		if (_eRPMode != RP_READ_DOSSIER) {
 			if (bRemember) {
-				_pPrevLogStateVar->SetValue(_pLogStateVar->GetValue());
+				_pPrevLogStateVar->setValue(_pLogStateVar->getValue());
 			}
 		}
-		_pLogStateVar->SetValue(cStr);
+		_pLogStateVar->setValue(cStr);
 
 		if (bSavePage || bRestorePage) {
 			if (_pPrevBarPage == nullptr) {
-				_pPrevBarPage = VAR_MANAGER->GetVariable("PREV_BAR_LOG_PAGE");
+				_pPrevBarPage = g_VarManager->getVariable("PREV_BAR_LOG_PAGE");
 			}
 
 			if (_pCurBarPage == nullptr) {
-				_pCurBarPage = VAR_MANAGER->GetVariable("CUR_BAR_LOG_PAGE");
+				_pCurBarPage = g_VarManager->getVariable("CUR_BAR_LOG_PAGE");
 			}
 
 			if (_pPrevBarPage && _pCurBarPage) {
 				if (bSavePage) {
-					_pPrevBarPage->SetValue(_pCurBarPage->GetValue());
+					_pPrevBarPage->setValue(_pCurBarPage->getValue());
 				}
 
 				if (bRestorePage) {
-					_pCurBarPage->SetValue(_pPrevBarPage->GetValue());
+					_pCurBarPage->setValue(_pPrevBarPage->getValue());
 				}
 			}
 		}
@@ -1109,7 +1109,7 @@ void CBagRPObject::setLogState(RPStates eLogMode) {
 // Return the current log state
 RPStates CBagRPObject::getLogState() {
 	if (_pLogStateVar == nullptr) {
-		_pLogStateVar = VAR_MANAGER->GetVariable("LOG_STATE");
+		_pLogStateVar = g_VarManager->getVariable("LOG_STATE");
 	}
 
 	_eRPMode = RP_NOMODE;
@@ -1119,7 +1119,7 @@ RPStates CBagRPObject::getLogState() {
 		char szLocalBuff[256];
 		CBofString cStr(szLocalBuff, 256);
 
-		cStr = _pLogStateVar->GetValue();
+		cStr = _pLogStateVar->getValue();
 		if (cStr == "CODE_RP_RESULTS") {
 			_eRPMode = RP_RESULTS;
 		} else if (cStr == "CODE_RP_DOSSIER") {
@@ -1137,13 +1137,13 @@ RPStates CBagRPObject::getLogState() {
 // Set the current number of pages in both script and code.
 void CBagRPObject::setLogPages(int nPages) {
 	if (_pBarLogPages == nullptr) {
-		_pBarLogPages = VAR_MANAGER->GetVariable("CODE_TOTAL_LOG_PAGES");
+		_pBarLogPages = g_VarManager->getVariable("CODE_TOTAL_LOG_PAGES");
 	}
 
 	assert(_pBarLogPages != nullptr);
 
 	if (_pBarLogPages) {
-		_pBarLogPages->SetValue(nPages);
+		_pBarLogPages->setValue(nPages);
 	}
 
 	// Let the float code know how many pages we have.
@@ -1248,7 +1248,7 @@ void CBagRPObject::saveResiduePrintedVars() {
 		}
 	}
 
-	_pSaveVar->SetValue(nVars);
+	_pSaveVar->setValue(nVars);
 }
 
 // Restore the residue print variable from memory
@@ -1257,7 +1257,7 @@ void CBagRPObject::restoreResiduePrintedVars() {
 		return;
 	}
 
-	uint32 nVars = _pSaveVar->GetNumValue();
+	uint32 nVars = _pSaveVar->getNumValue();
 
 	for (int i = 0; i < NUM_RP_FIELDS; i++) {
 		switch (i) {
@@ -1565,7 +1565,7 @@ bool CBagRPObject::initialize() {
 // the zoom pda are propagated down to the regular PDA.
 void CBagRPObject::synchronizeResiduePrintedObjects(bool bLogFrontmost) {
 	// only synchronize in the bar
-	CBagVar *pVar = VAR_MANAGER->GetVariable("INBAR");
+	CBagVar *pVar = g_VarManager->getVariable("INBAR");
 	if (pVar == nullptr) {
 		return;
 	}

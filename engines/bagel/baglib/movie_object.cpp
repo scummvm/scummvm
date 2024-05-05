@@ -220,7 +220,7 @@ bool CBagMovieObject::runObject() {
 						// Increment timer one, pda message counts as one turn
 						// Allow scripter to override timer increment
 						if (isIncrement()) {
-							VAR_MANAGER->IncrementTimers();
+							g_VarManager->incrementTimers();
 						}
 					}
 

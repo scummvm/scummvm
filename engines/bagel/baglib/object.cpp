@@ -157,7 +157,7 @@ bool CBagObject::runObject() {
 	if (isTimeless())
 		return true;
 
-	VAR_MANAGER->IncrementTimers();
+	g_VarManager->incrementTimers();
 
 	return true;
 }

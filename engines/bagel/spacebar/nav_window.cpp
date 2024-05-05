@@ -314,7 +314,7 @@ ErrorCode CNavWindow::detach() {
 		CBagCursor::hideSystemCursor();
 
 		// One turn has gone by
-		VAR_MANAGER->IncrementTimers();
+		g_VarManager->incrementTimers();
 
 		_bNavAttached = false;
 	}
@@ -685,7 +685,7 @@ void CNavWindow::onBofButton(CBofObject *pObject, int nState) {
 	switch (pButton->getControlID()) {
 	case QUIT: {
 		logInfo("\tClicked Quit");
-		VAR_MANAGER->GetVariable("NPLAYEDNAV")->SetBoolValue(true);
+		g_VarManager->getVariable("NPLAYEDNAV")->setBoolValue(true);
 		close();
 		break;
 	}
@@ -845,7 +845,7 @@ void CNavWindow::onKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	assert(isValidObject(this));
 
 	if (lKey == BKEY_ALT_q || lKey == BKEY_ALT_F4) {
-		VAR_MANAGER->GetVariable("NPLAYEDNAV")->SetBoolValue(true);
+		g_VarManager->getVariable("NPLAYEDNAV")->setBoolValue(true);
 		close();
 	}
 }
@@ -1386,8 +1386,8 @@ void CNavWindow::calcFuel(double hf) {
 		bool isDone = (_level == 3);
 
 		if (_level == 3) {
-			VAR_MANAGER->GetVariable("NPASSEDTEST")->SetBoolValue(true);
-			VAR_MANAGER->GetVariable("NPLAYEDNAV")->SetBoolValue(true);
+			g_VarManager->getVariable("NPASSEDTEST")->setBoolValue(true);
+			g_VarManager->getVariable("NPLAYEDNAV")->setBoolValue(true);
 			close();
 		}
 
@@ -1454,7 +1454,7 @@ void CNavWindow::calcFuel(double hf) {
 	}
 
 	if (_fuel <= 0) {
-		VAR_MANAGER->GetVariable("NPLAYEDNAV")->SetBoolValue(true);
+		g_VarManager->getVariable("NPLAYEDNAV")->setBoolValue(true);
 		killTimer(777);
 		close();
 	}

@@ -187,9 +187,9 @@ ErrorCode CMainWindow::attach() {
 					_pPDABmp->attach();
 
 				// Allow the script to specify the increment height.
-				CBagVar *pVar = VAR_MANAGER->GetVariable("PDAINCREMENT");
+				CBagVar *pVar = g_VarManager->getVariable("PDAINCREMENT");
 				if (pVar) {
-					g_nPDAIncrement = pVar->GetNumValue();
+					g_nPDAIncrement = pVar->getNumValue();
 					_pPDABmp->setPosInWindow(r.width(), r.height(), g_nPDAIncrement);
 				} else {
 					g_nPDAIncrement = PDA_INCREMENT;
@@ -335,10 +335,10 @@ void CMainWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 	if (lKey == BKEY_SCRL_LOCK) {               // Get a scroll lock hit
 		if (getFilterId() == 0x08) {            // If we're in zzazzl filter
 			_bZzazzlVision = !_bZzazzlVision; // toggle the paint zzazzl flag
-			CBagVar *pVar = VAR_MANAGER->GetVariable("ZZAZZLVISION");
+			CBagVar *pVar = g_VarManager->getVariable("ZZAZZLVISION");
 
 			if (pVar != nullptr) {
-				pVar->SetValue(_bZzazzlVision ? 1 : 0);
+				pVar->setValue(_bZzazzlVision ? 1 : 0);
 			}
 		}
 	} else {

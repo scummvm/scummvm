@@ -745,10 +745,10 @@ bool SrafComputer::verifyDispatchTeam() {
 
 		pTeamItem->_nFlags = nTeam | nDispatchFlags;
 		pTeamItem->_nMeetWithID = nMeetingWith;
-		CBagVar *pVar = VAR_MANAGER->GetVariable("SRATURNCOUNT");
+		CBagVar *pVar = g_VarManager->getVariable("SRATURNCOUNT");
 		assert(pVar != nullptr);
 
-		pTeamItem->_nDispatchTime = pVar->GetNumValue();
+		pTeamItem->_nDispatchTime = pVar->getNumValue();
 		pTeamItem->_nMeetingTime = calculateMeetingTime(pTeamItem->_nFlags);
 
 		// The spokesperson will be the majority of the sexes
@@ -942,9 +942,9 @@ ErrorCode SrafComputer::attach() {
 
 		// Set the starting time...
 		if (_nStartingTime == 0) {
-			CBagVar *pVar = VAR_MANAGER->GetVariable("SRATURNCOUNT");
+			CBagVar *pVar = g_VarManager->getVariable("SRATURNCOUNT");
 			assert(pVar != nullptr);
-			_nStartingTime = pVar->GetNumValue();
+			_nStartingTime = pVar->getNumValue();
 		}
 
 		assert(_pszGroup1Word != nullptr);
@@ -962,9 +962,9 @@ ErrorCode SrafComputer::attach() {
 		restoreSraffanVars();
 
 		// Finally, if we're hallucinating, turn off the hallucination filter.
-		CBagVar *pVar = VAR_MANAGER->GetVariable("HALLUCINATE");
-		if (pVar && pVar->GetNumValue() > 0) {
-			pVar->SetValue(0);
+		CBagVar *pVar = g_VarManager->getVariable("HALLUCINATE");
+		if (pVar && pVar->getNumValue() > 0) {
+			pVar->setValue(0);
 		}
 	}
 
@@ -1283,14 +1283,14 @@ void SrafComputer::activateDealSummary() {
 	}
 
 	// Retrieve IRK's and QUOSH's terms
-	CBagVar *pVar = VAR_MANAGER->GetVariable("IRKSTERMS");
+	CBagVar *pVar = g_VarManager->getVariable("IRKSTERMS");
 	if (pVar != nullptr) {
-		g_stSellerNames[IRK4]._nAmount = pVar->GetNumValue();
+		g_stSellerNames[IRK4]._nAmount = pVar->getNumValue();
 	}
 
-	pVar = VAR_MANAGER->GetVariable("QUOSHSTERMS");
+	pVar = g_VarManager->getVariable("QUOSHSTERMS");
 	if (pVar != nullptr) {
-		g_stSellerNames[QUOSH23]._nAmount = pVar->GetNumValue();
+		g_stSellerNames[QUOSH23]._nAmount = pVar->getNumValue();
 	}
 
 	recalcSellerSummaryList();
@@ -3038,8 +3038,8 @@ void SrafComputer::onListAudioSettings() {
 	// Add a selection for random play.
 	if (g_stAudioSetting[nTrackSelection]->_pszAudioFile == nullptr) {
 		_bRandomAudio = true;
-		CBagVar *pVar = VAR_MANAGER->GetVariable("SRATURNCOUNT");
-		_nRandomTime = pVar->GetNumValue();
+		CBagVar *pVar = g_VarManager->getVariable("SRATURNCOUNT");
+		_nRandomTime = pVar->getNumValue();
 		nTrackSelection = g_engine->getRandomNumber() % (NUM_MUSICAL_SCORES - 1);
 	} else {
 		_bRandomAudio = false;
@@ -3134,9 +3134,9 @@ bool SrafComputer::reportMeetingStatus(int nTeamNumber) {
 	}
 
 	// Get the current time...
-	CBagVar *pVar = VAR_MANAGER->GetVariable("SRATURNCOUNT");
+	CBagVar *pVar = g_VarManager->getVariable("SRATURNCOUNT");
 	assert(pVar != nullptr);
-	int nCurTime = pVar->GetNumValue();
+	int nCurTime = pVar->getNumValue();
 
 	// If less then 5 turns have elapsed, then we're still in the driving stage...
 	if ((teamListItem._nDispatchTime + kDrivingTime) >= nCurTime) {
@@ -3157,7 +3157,7 @@ bool SrafComputer::reportMeetingStatus(int nTeamNumber) {
 
 	// Meeting not done yet, let 'em know it.
 	if (bDone == false) {
-		if (teamListItem._nDispatchTime + teamListItem._nMeetingTime > pVar->GetNumValue()) {
+		if (teamListItem._nDispatchTime + teamListItem._nMeetingTime > pVar->getNumValue()) {
 			bDone = true;
 			bTimeElapsed = false;
 
@@ -4348,28 +4348,28 @@ void SrafComputer::onButtonFinished(bool bVictorious) {
 		}
 
 		// Pass our codewords back to the bar...
-		pVar = VAR_MANAGER->GetVariable("DEVENCODE1");
+		pVar = g_VarManager->getVariable("DEVENCODE1");
 		assert(pVar != nullptr);
 
 		if (pVar)
-			pVar->SetValue(_pszGroup1Word->getBuffer());
+			pVar->setValue(_pszGroup1Word->getBuffer());
 
-		pVar = VAR_MANAGER->GetVariable("DEVENCODE2");
+		pVar = g_VarManager->getVariable("DEVENCODE2");
 		assert(pVar != nullptr);
 		if (pVar)
-			pVar->SetValue(_pszGroup2Word->getBuffer());
+			pVar->setValue(_pszGroup2Word->getBuffer());
 	}
 
 	// Setting the flashback variable will trigger the
 	// event world condition which gets us back to the bar.
-	pVar = VAR_MANAGER->GetVariable("RFLASHBACK");
+	pVar = g_VarManager->getVariable("RFLASHBACK");
 	assert(pVar != nullptr);
 
 	if (pVar) {
 		if (bVictorious == true) {
-			pVar->SetValue(2);
+			pVar->setValue(2);
 		} else {
-			pVar->SetValue(1);
+			pVar->setValue(1);
 		}
 	}
 
@@ -4415,7 +4415,7 @@ void SrafComputer::setMainScreen() {
 }
 
 void SrafComputer::incrementTurnCount() {
-	CBagVar *pVar = VAR_MANAGER->GetVariable("SRATURNCOUNT");
+	CBagVar *pVar = g_VarManager->getVariable("SRATURNCOUNT");
 	int nTurncount = 0;
 
 	assert(pVar != nullptr);
@@ -4427,8 +4427,8 @@ void SrafComputer::incrementTurnCount() {
 
 
 	if (pVar != nullptr) {
-		nTurncount = pVar->GetNumValue();
-		pVar->SetValue(++nTurncount);
+		nTurncount = pVar->getNumValue();
+		pVar->setValue(++nTurncount);
 	}
 
 	// If we're in a screen that has a time count, then update it here...
@@ -4510,13 +4510,13 @@ void SrafComputer::incrementTurnCount() {
 }
 
 void SrafComputer::displayTurnCount(int nLineNo) {
-	CBagVar *pVar = VAR_MANAGER->GetVariable("SRATURNCOUNT");
+	CBagVar *pVar = g_VarManager->getVariable("SRATURNCOUNT");
 	assert(pVar != nullptr);
 
 	char        szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString  sStr(szLocalBuff, 256);
-	int         nCurrentTime = pVar->GetNumValue();
+	int         nCurrentTime = pVar->getNumValue();
 
 	Common::sprintf_s(szLocalBuff,
 	                  "CURRENT TIME: %02d:%02d",
@@ -4727,9 +4727,9 @@ void SrafComputer::restoreSraffanVars() {
 			break;
 		}
 
-		pVar = VAR_MANAGER->GetVariable(pVarName);
+		pVar = g_VarManager->getVariable(pVarName);
 		if (pVar != nullptr) {
-			g_stSellerNames[nSellerID]._nAmount = pVar->GetNumValue();
+			g_stSellerNames[nSellerID]._nAmount = pVar->getNumValue();
 		}
 	}
 
@@ -4768,9 +4768,9 @@ void SrafComputer::restoreSraffanVars() {
 			break;
 		}
 
-		pVar = VAR_MANAGER->GetVariable(pVarName);
+		pVar = g_VarManager->getVariable(pVarName);
 		if (pVar != nullptr) {
-			g_stBuyerBids[nBuyerID]._nMineralVal[nMineralID] = pVar->GetNumValue();
+			g_stBuyerBids[nBuyerID]._nMineralVal[nMineralID] = pVar->getNumValue();
 
 			// total each one...
 			int nBidSum = 0;
@@ -4785,9 +4785,9 @@ void SrafComputer::restoreSraffanVars() {
 	// Save the list of who is in on this deal... use a bit to indicate if they are in or not.
 	uint32 nBuyersMask = 0;
 
-	pVar = VAR_MANAGER->GetVariable("BUYERSMASK");
+	pVar = g_VarManager->getVariable("BUYERSMASK");
 	if (pVar != nullptr) {
-		nBuyersMask = pVar->GetNumValue();
+		nBuyersMask = pVar->getNumValue();
 	}
 
 	for (int i = 0; i < NUM_BUYERS; i++) {
@@ -4803,9 +4803,9 @@ void SrafComputer::restoreSraffanVars() {
 	uint32 nAvailMask = 0;
 	uint32 nIndex = 0;
 
-	pVar = VAR_MANAGER->GetVariable("AVAILABLEMASK");
+	pVar = g_VarManager->getVariable("AVAILABLEMASK");
 	if (pVar != nullptr) {
-		nAvailMask = pVar->GetNumValue();
+		nAvailMask = pVar->getNumValue();
 	}
 
 	for (int i = 0; i < NUM_BUYERS; i++, nIndex++) {
@@ -4854,16 +4854,16 @@ void SrafComputer::restoreSraffanVars() {
 			break;
 		}
 
-		pVar = VAR_MANAGER->GetVariable(pVarName);
+		pVar = g_VarManager->getVariable(pVarName);
 		if (pVar != nullptr) {
-			g_stOtherPartys[nOtherID]._nPaymentAmount = pVar->GetNumValue();
+			g_stOtherPartys[nOtherID]._nPaymentAmount = pVar->getNumValue();
 		}
 	}
 
 	// Retrieve swonza's state
-	pVar = VAR_MANAGER->GetVariable("SWONZAENLIGHTENED");
+	pVar = g_VarManager->getVariable("SWONZAENLIGHTENED");
 	if (pVar != nullptr) {
-		_bSwonzaEnlightened = pVar->GetNumValue();
+		_bSwonzaEnlightened = pVar->getNumValue();
 	}
 
 	// Mark each of our staffers as available before we start.
@@ -4890,9 +4890,9 @@ void SrafComputer::restoreSraffanVars() {
 		Common::sprintf_s(szMEETINGTIME, "%s%d%s", "TEAM", i + 1, "MEETINGTIME");
 
 		// Restore the whole block...
-		pVar = VAR_MANAGER->GetVariable(szFLAGS);
+		pVar = g_VarManager->getVariable(szFLAGS);
 		if (pVar != nullptr) {
-			teamListItem._nFlags = pVar->GetNumValue();
+			teamListItem._nFlags = pVar->getNumValue();
 
 			// If we have a meeting going on, then mark that
 			// sraffan staffer as unavailable.
@@ -4904,21 +4904,21 @@ void SrafComputer::restoreSraffanVars() {
 				}
 			}
 		}
-		pVar = VAR_MANAGER->GetVariable(szMEETWITH);
+		pVar = g_VarManager->getVariable(szMEETWITH);
 		if (pVar != nullptr) {
-			teamListItem._nMeetWithID = pVar->GetNumValue();
+			teamListItem._nMeetWithID = pVar->getNumValue();
 		}
-		pVar = VAR_MANAGER->GetVariable(szDISPATCHTIME);
+		pVar = g_VarManager->getVariable(szDISPATCHTIME);
 		if (pVar != nullptr) {
-			teamListItem._nDispatchTime = pVar->GetNumValue();
+			teamListItem._nDispatchTime = pVar->getNumValue();
 		}
-		pVar = VAR_MANAGER->GetVariable(szCAPTAIN);
+		pVar = g_VarManager->getVariable(szCAPTAIN);
 		if (pVar != nullptr) {
-			teamListItem._nTeamCaptain = pVar->GetNumValue();
+			teamListItem._nTeamCaptain = pVar->getNumValue();
 		}
-		pVar = VAR_MANAGER->GetVariable(szMEETINGTIME);
+		pVar = g_VarManager->getVariable(szMEETINGTIME);
 		if (pVar != nullptr) {
-			teamListItem._nMeetingTime = pVar->GetNumValue();
+			teamListItem._nMeetingTime = pVar->getNumValue();
 		}
 
 		// If we have a list established, then add this item to it if there's anything
@@ -4945,14 +4945,14 @@ void SrafComputer::restoreSraffanVars() {
 	int nMetWithVal = 0;
 	int nMeetingResultVal = 0;
 
-	pVar = VAR_MANAGER->GetVariable("METWITH");
+	pVar = g_VarManager->getVariable("METWITH");
 	if (pVar != nullptr) {
-		nMetWithVal = pVar->GetNumValue();
+		nMetWithVal = pVar->getNumValue();
 	}
 
-	pVar = VAR_MANAGER->GetVariable("MEETINGRESULTS");
+	pVar = g_VarManager->getVariable("MEETINGRESULTS");
 	if (pVar != nullptr) {
-		nMeetingResultVal = pVar->GetNumValue();
+		nMeetingResultVal = pVar->getNumValue();
 	}
 
 	int nBitNo = 0;
@@ -5009,9 +5009,9 @@ void SrafComputer::saveSraffanVars() {
 			break;
 		}
 
-		CBagVar *pVar = VAR_MANAGER->GetVariable(pVarName);
+		CBagVar *pVar = g_VarManager->getVariable(pVarName);
 		if (pVar != nullptr) {
-			pVar->SetValue(g_stSellerNames[nSellerID]._nAmount);
+			pVar->setValue(g_stSellerNames[nSellerID]._nAmount);
 		}
 	}
 
@@ -5050,9 +5050,9 @@ void SrafComputer::saveSraffanVars() {
 			break;
 		}
 
-		pVar = VAR_MANAGER->GetVariable(pVarName);
+		pVar = g_VarManager->getVariable(pVarName);
 		if (pVar != nullptr) {
-			pVar->SetValue(g_stBuyerBids[nBuyerID]._nMineralVal[nMineralID]);
+			pVar->setValue(g_stBuyerBids[nBuyerID]._nMineralVal[nMineralID]);
 		}
 	}
 
@@ -5064,9 +5064,9 @@ void SrafComputer::saveSraffanVars() {
 		}
 	}
 
-	pVar = VAR_MANAGER->GetVariable("BUYERSMASK");
+	pVar = g_VarManager->getVariable("BUYERSMASK");
 	if (pVar != nullptr) {
-		pVar->SetValue(nBuyersMask);
+		pVar->setValue(nBuyersMask);
 	}
 
 	// Save the list of who is available and who is not.
@@ -5093,9 +5093,9 @@ void SrafComputer::saveSraffanVars() {
 
 	assert(nIndex < 32);
 
-	pVar = VAR_MANAGER->GetVariable("AVAILABLEMASK");
+	pVar = g_VarManager->getVariable("AVAILABLEMASK");
 	if (pVar != nullptr) {
-		pVar->SetValue(nAvailMask);
+		pVar->setValue(nAvailMask);
 	}
 
 	// Save other party's info
@@ -5118,15 +5118,15 @@ void SrafComputer::saveSraffanVars() {
 			break;
 		}
 
-		if ((pVar = VAR_MANAGER->GetVariable(pVarName)) != nullptr) {
-			pVar->SetValue(g_stOtherPartys[nOtherID]._nPaymentAmount);
+		if ((pVar = g_VarManager->getVariable(pVarName)) != nullptr) {
+			pVar->setValue(g_stOtherPartys[nOtherID]._nPaymentAmount);
 		}
 	}
 
 	// Save swonza's state
-	pVar = VAR_MANAGER->GetVariable("SWONZAENLIGHTENED");
+	pVar = g_VarManager->getVariable("SWONZAENLIGHTENED");
 	if (pVar != nullptr) {
-		pVar->SetValue(_bSwonzaEnlightened);
+		pVar->setValue(_bSwonzaEnlightened);
 	}
 
 	// Now the real pain in the ass... saving team information...
@@ -5163,29 +5163,29 @@ void SrafComputer::saveSraffanVars() {
 			teamListItem._nMeetingTime = 0;
 		}
 
-		pVar = VAR_MANAGER->GetVariable(szFLAGS);
+		pVar = g_VarManager->getVariable(szFLAGS);
 		if (pVar != nullptr) {
-			pVar->SetValue(teamListItem._nFlags);
+			pVar->setValue(teamListItem._nFlags);
 		}
 
-		pVar = VAR_MANAGER->GetVariable(szMEETWITH);
+		pVar = g_VarManager->getVariable(szMEETWITH);
 		if (pVar != nullptr) {
-			pVar->SetValue(teamListItem._nMeetWithID);
+			pVar->setValue(teamListItem._nMeetWithID);
 		}
 
-		pVar = VAR_MANAGER->GetVariable(szDISPATCHTIME);
+		pVar = g_VarManager->getVariable(szDISPATCHTIME);
 		if (pVar != nullptr) {
-			pVar->SetValue(teamListItem._nDispatchTime);
+			pVar->setValue(teamListItem._nDispatchTime);
 		}
 
-		pVar = VAR_MANAGER->GetVariable(szCAPTAIN);
+		pVar = g_VarManager->getVariable(szCAPTAIN);
 		if (pVar != nullptr) {
-			pVar->SetValue(teamListItem._nTeamCaptain);
+			pVar->setValue(teamListItem._nTeamCaptain);
 		}
 
-		pVar = VAR_MANAGER->GetVariable(szMEETINGTIME);
+		pVar = g_VarManager->getVariable(szMEETINGTIME);
 		if (pVar != nullptr) {
-			pVar->SetValue(teamListItem._nMeetingTime);
+			pVar->setValue(teamListItem._nMeetingTime);
 		}
 	}
 
@@ -5230,14 +5230,14 @@ void SrafComputer::saveSraffanVars() {
 	}
 
 	// Now save the variables
-	pVar = VAR_MANAGER->GetVariable("METWITH");
+	pVar = g_VarManager->getVariable("METWITH");
 	if (pVar != nullptr) {
-		pVar->SetValue(nMetWithVal);
+		pVar->setValue(nMetWithVal);
 	}
 
-	pVar = VAR_MANAGER->GetVariable("MEETINGRESULTS");
+	pVar = g_VarManager->getVariable("MEETINGRESULTS");
 	if (pVar != nullptr) {
-		pVar->SetValue(nMeetingResultVal);
+		pVar->setValue(nMeetingResultVal);
 	}
 
 	// All done!

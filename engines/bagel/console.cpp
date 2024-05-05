@@ -46,13 +46,13 @@ bool Console::cmdVar(int argc, const char **argv) {
 		return true;
 	}
 
-	CBagVar *var = VAR_MANAGER->GetVariable(argv[1]);
+	CBagVar *var = g_VarManager->getVariable(argv[1]);
 	assert(var);
 
 	if (argc == 2) {
-		debugPrintf("Current value = %s\n", var->GetValue().getBuffer());
+		debugPrintf("Current value = %s\n", var->getValue().getBuffer());
 	} else {
-		var->SetValue(argv[2]);
+		var->setValue(argv[2]);
 		debugPrintf("Variable set\n");
 	}
 
@@ -60,11 +60,11 @@ bool Console::cmdVar(int argc, const char **argv) {
 }
 
 bool Console::cmdVars(int argc, const char **argv) {
-	for (int i = 0; i < VAR_MANAGER->GetNumVars(); i++) {
-		CBagVar *pVar = VAR_MANAGER->GetVariable(i);
+	for (int i = 0; i < g_VarManager->getNumVars(); i++) {
+		CBagVar *pVar = g_VarManager->getVariable(i);
 		if (pVar != nullptr) {
 			debugPrintf("VAR[%d]: %s = %s\n", i, (const char *)pVar->getName(),
-				(const char *)pVar->GetValue());
+				(const char *)pVar->getValue());
 		}
 	}
 
@@ -72,8 +72,8 @@ bool Console::cmdVars(int argc, const char **argv) {
 }
 
 bool Console::cmdFleebix(int argc, const char **argv) {
-	CBofString inner = VAR_MANAGER->GetVariable("NDJAM_INNERDIAL_DISPLAY")->GetValue();
-	CBofString outer = VAR_MANAGER->GetVariable("NDJAM_OUTERDIAL_DISPLAY")->GetValue();
+	CBofString inner = g_VarManager->getVariable("NDJAM_INNERDIAL_DISPLAY")->getValue();
+	CBofString outer = g_VarManager->getVariable("NDJAM_OUTERDIAL_DISPLAY")->getValue();
 
 	debugPrintf("Frequency is %s.%s\n", inner.getBuffer(), outer.getBuffer());
 	return true;

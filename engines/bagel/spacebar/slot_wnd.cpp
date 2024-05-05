@@ -226,10 +226,10 @@ ErrorCode  SBarSlotWnd::attach() {
 		// Read in their total nuggets from game
 		CBagVar *pVar = nullptr;
 
-		pVar = VAR_MANAGER->GetVariable("NUGGETS");
+		pVar = g_VarManager->getVariable("NUGGETS");
 
 		if (pVar)
-			_nCredit = pVar->GetNumValue();
+			_nCredit = pVar->getNumValue();
 
 		// Initialize their bet
 		_nBet = 0;
@@ -311,9 +311,9 @@ ErrorCode SBarSlotWnd::detach() {
 	}
 
 	// Write out new value of nuggets
-	CBagVar *pVar = VAR_MANAGER->GetVariable("NUGGETS");
+	CBagVar *pVar = g_VarManager->getVariable("NUGGETS");
 	if (pVar)
-		pVar->SetValue(_nCredit);
+		pVar->setValue(_nCredit);
 
 	if (_pBkgSnd->isPlaying()) {
 		_pBkgSnd->stop();
@@ -379,7 +379,7 @@ ErrorCode SBarSlotWnd::detach() {
 	CBagStorageDevWnd::detach();
 
 	// One turn has gone by
-	VAR_MANAGER->IncrementTimers();
+	g_VarManager->incrementTimers();
 
 	return _errCode;
 }

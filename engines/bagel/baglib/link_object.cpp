@@ -173,9 +173,9 @@ bool CBagLinkObject::runObject() {
 	if (getFileName().find("$LASTWORLD") != -1) {
 		curStr = getFileName();
 
-		CBagVar *var = VAR_MANAGER->GetVariable("$LASTWORLD");
+		CBagVar *var = g_VarManager->getVariable("$LASTWORLD");
 		if (var != nullptr) {
-			curStr.replaceStr("$LASTWORLD", var->GetValue());
+			curStr.replaceStr("$LASTWORLD", var->getValue());
 		}
 	}
 
@@ -197,7 +197,7 @@ bool CBagLinkObject::runObject() {
 
 	CBagStorageDevWnd *otherSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev();
 	if (!curSDev->isCloseup() && !otherSDev->isCloseup()) {
-		VAR_MANAGER->IncrementTimers();
+		g_VarManager->incrementTimers();
 	}
 
 	return CBagObject::runObject();

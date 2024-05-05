@@ -267,14 +267,14 @@ ErrorCode CBibbleWindow::attach() {
 
 	CBagVar *pVar;
 
-	if ((pVar = VAR_MANAGER->GetVariable("NUGGETS")) != nullptr) {
-		_nNumCredits = pVar->GetNumValue();
+	if ((pVar = g_VarManager->getVariable("NUGGETS")) != nullptr) {
+		_nNumCredits = pVar->getNumValue();
 	}
 	logInfo(buildString("\tCredits: %d", _nNumCredits));
 
 	g_bBibbleHack = false;
-	if ((pVar = VAR_MANAGER->GetVariable("BIBBLEHACK")) != nullptr) {
-		if (pVar->GetNumValue() != 0) {
+	if ((pVar = g_VarManager->getVariable("BIBBLEHACK")) != nullptr) {
+		if (pVar->getNumValue() != 0) {
 			g_bBibbleHack = true;
 		}
 	}
@@ -446,8 +446,8 @@ ErrorCode CBibbleWindow::detach() {
 
 	// Write out new value of nuggets
 	CBagVar *pVar;
-	if ((pVar = VAR_MANAGER->GetVariable("NUGGETS")) != nullptr) {
-		pVar->SetValue(_nNumCredits);
+	if ((pVar = g_VarManager->getVariable("NUGGETS")) != nullptr) {
+		pVar->setValue(_nNumCredits);
 	}
 
 	if (_pBkgSnd->isPlaying()) {
@@ -515,7 +515,7 @@ ErrorCode CBibbleWindow::detach() {
 	CBagStorageDevWnd::detach();
 
 	// Playing BibbleBonk has made 1 turn go by.
-	VAR_MANAGER->IncrementTimers();
+	g_VarManager->incrementTimers();
 
 	return _errCode;
 }

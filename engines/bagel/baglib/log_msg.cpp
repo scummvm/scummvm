@@ -64,9 +64,9 @@ CBofPoint CBagLog::arrangeFloater(CBofPoint pos, CBagObject *bagObj) {
 		int borderSize = 0;
 
 		// Get this from script, allows individual log states to set border.
-		CBagVar *curVar = VAR_MANAGER->GetVariable("LOGBORDER");
+		CBagVar *curVar = g_VarManager->getVariable("LOGBORDER");
 		if (curVar != nullptr) {
-			borderSize = curVar->GetNumValue();
+			borderSize = curVar->getNumValue();
 		}
 
 		if (borderSize == 0) {
@@ -187,10 +187,10 @@ int CBagLog::getCurFltPage() {
 	int nCurFltPage = 0;
 
 	// Read in their total nuggets from game
-	CBagVar *curVar = VAR_MANAGER->GetVariable("CUR_BAR_LOG_PAGE");
+	CBagVar *curVar = g_VarManager->getVariable("CUR_BAR_LOG_PAGE");
 
 	if (curVar) {
-		nCurFltPage = curVar->GetNumValue();
+		nCurFltPage = curVar->getNumValue();
 	}
 
 	return nCurFltPage;
@@ -198,10 +198,10 @@ int CBagLog::getCurFltPage() {
 
 void CBagLog::setCurFltPage(int fltPage) {
 	// Read in their total nuggets from game
-	CBagVar *curVar = VAR_MANAGER->GetVariable("CUR_BAR_LOG_PAGE");
+	CBagVar *curVar = g_VarManager->getVariable("CUR_BAR_LOG_PAGE");
 
 	if (curVar)
-		curVar->SetValue(fltPage);
+		curVar->setValue(fltPage);
 }
 
 ErrorCode CBagLog::releaseMsg() {
@@ -533,8 +533,8 @@ int CBagLogMsg::getProperty(const CBofString &prop) {
 ErrorCode CBagLogMsg::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect, int maskColor) {
 	// We could use a variable here, translate it's value if that's the case.
 	if (getMsgTime() == 0) {
-		CBagVar *pVar = VAR_MANAGER->GetVariable(_msgTimeStr);
-		int nMsgTime = pVar->GetNumValue();
+		CBagVar *pVar = g_VarManager->getVariable(_msgTimeStr);
+		int nMsgTime = pVar->getNumValue();
 		setMsgTime(nMsgTime);
 	}
 
@@ -912,9 +912,9 @@ ErrorCode CBagEnergyDetectorObject::attach() {
 	CBofString zhapsString(zhapsBuffer, 256);
 
 	// We could use a variable here, translate it's value if that's the case.
-	CBagVar *curVar = VAR_MANAGER->GetVariable(_energyTimeStr);
+	CBagVar *curVar = g_VarManager->getVariable(_energyTimeStr);
 	if (curVar) {
-		nMsgTime = curVar->GetNumValue();
+		nMsgTime = curVar->getNumValue();
 	} else {
 		nMsgTime = atoi(_energyTimeStr.getBuffer());
 	}
@@ -923,17 +923,17 @@ ErrorCode CBagEnergyDetectorObject::attach() {
 	int minute = nMsgTime - (hour * 100);
 
 	// Get the number of zhaps.
-	curVar = VAR_MANAGER->GetVariable(_zhapsStr);
+	curVar = g_VarManager->getVariable(_zhapsStr);
 	if (curVar) {
-		zhapsString = curVar->GetValue();
+		zhapsString = curVar->getValue();
 	} else {
 		zhapsString = _zhapsStr;
 	}
 
 	// Get the cause
-	curVar = VAR_MANAGER->GetVariable(_causeStr);
+	curVar = g_VarManager->getVariable(_causeStr);
 	if (curVar) {
-		causeString = curVar->GetValue();
+		causeString = curVar->getValue();
 	} else {
 		causeString = _causeStr;
 	}
@@ -986,10 +986,10 @@ ErrorCode CBagLogClue::attach() {
 
 	// Format the text appropriately.
 	Common::sprintf_s(szClueStr, cFormat.getBuffer(),
-	                  (_stringVar1 ? (const char *)_stringVar1->GetValue() : (const char *)""),
-	                  (_stringVar2 ? (const char *)_stringVar2->GetValue() : (const char *)""),
-	                  (_stringVar3 ? (const char *)_stringVar3->GetValue() : (const char *)""),
-	                  (_stringVar4 ? (const char *)_stringVar4->GetValue() : (const char *)""));
+	                  (_stringVar1 ? (const char *)_stringVar1->getValue() : (const char *)""),
+	                  (_stringVar2 ? (const char *)_stringVar2->getValue() : (const char *)""),
+	                  (_stringVar3 ? (const char *)_stringVar3->getValue() : (const char *)""),
+	                  (_stringVar4 ? (const char *)_stringVar4->getValue() : (const char *)""));
 
 	CBofString cStr(szClueStr);
 	setPSText(&cStr);
@@ -1017,7 +1017,7 @@ ParseCodes CBagLogClue::setInfo(CBagIfstream &istr) {
 			if (!sStr.find("STRINGVAR")) {
 				istr.eatWhite();
 				getAlphaNumFromStream(istr, sStr);
-				CBagVar *pVar = VAR_MANAGER->GetVariable(sStr);
+				CBagVar *pVar = g_VarManager->getVariable(sStr);
 				// The variable must have been found, if it wasn't, then
 				// complain violently.
 

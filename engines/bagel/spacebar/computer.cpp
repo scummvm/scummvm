@@ -229,7 +229,7 @@ ErrorCode SBarComputer::detach() {
 	CBagStorageDevWnd::detach();
 
 	// Going into mr drinkmaster makes 1 turn go by
-	VAR_MANAGER->IncrementTimers();
+	g_VarManager->incrementTimers();
 
 	logInfo("Detached SBarComputer");
 
@@ -706,12 +706,12 @@ void SBarComputer::order() {
 
 		// Deduct 1 Nugget from the player
 		// Read in their total nuggets from game
-		CBagVar *pVar = VAR_MANAGER->GetVariable("NUGGETS");
-		CBagVar *pVar2 = VAR_MANAGER->GetVariable("HAVEDRINK");
+		CBagVar *pVar = g_VarManager->getVariable("NUGGETS");
+		CBagVar *pVar2 = g_VarManager->getVariable("HAVEDRINK");
 
 		if (pVar) {
-			int nCredits = pVar->GetNumValue();
-			int nHaveDrink = pVar2->GetNumValue();
+			int nCredits = pVar->getNumValue();
+			int nHaveDrink = pVar2->getNumValue();
 
 			// If the player is out of nuggets, then put up a text message.
 			if (nCredits < 1) {
@@ -752,8 +752,8 @@ void SBarComputer::order() {
 					else {
 						pSoldierSDev->activateLocalObject(CompItem._pDrink);
 						BofPlaySound(BuildBarcDir(ORDERAUDIO), SOUND_MIX);
-						pVar->SetValue(nCredits - 1);
-						pVar2->SetValue(1);
+						pVar->setValue(nCredits - 1);
+						pVar2->setValue(1);
 					}
 
 					if (bRefuse) {
