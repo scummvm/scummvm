@@ -505,7 +505,7 @@ bool Object::inInventory() {
 }
 
 bool Object::contains(const Math::Vector2d &pos) {
-	Math::Vector2d p = pos - _node->getPos() - _node->getOffset();
+	Math::Vector2d p = pos - _node->getAbsPos();
 	return _hotspot.contains(p.getX(), p.getY());
 }
 

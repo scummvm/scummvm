@@ -153,6 +153,8 @@ Common::Array<Common::Keymap *> TwpMetaEngine::initKeymaps(const char *target) c
 		{Common::kStandardActionMoveRight, _s("Right"), Twp::kMoveRight, "RIGHT|JOY_RIGHT", Common::EVENT_INVALID, Common::KEYCODE_RIGHT},
 		{Common::kStandardActionMoveUp, _s("Up"), Twp::kMoveUp, "UP|JOY_UP", Common::EVENT_INVALID, Common::KEYCODE_UP},
 		{Common::kStandardActionMoveDown, _s("Down"), Twp::kMoveDown, "DOWN|JOY_DOWN", Common::EVENT_INVALID, Common::KEYCODE_DOWN},
+		{"GOTONPREVOBJECT", _s("Go to previous object"), Twp::kGotoPreviousObject, "JOY_LEFT_SHOULDER", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
+		{"GOTONEXTOBJECT", _s("Go to next object"), Twp::kGotoNextObject, "JOY_RIGHT_SHOULDER", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
 		{"SKIPCUTSCENE", _s("Skip cutscene"), Twp::kSkipCutscene, "ESCAPE", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
 		{"SELECTACTOR1", _s("Select Actor 1"), Twp::kSelectActor1, "1", Common::EVENT_INVALID, Common::KEYCODE_INVALID},
 		{"SELECTACTOR2", _s("Select Actor 2"), Twp::kSelectActor2, "2", Common::EVENT_INVALID, Common::KEYCODE_INVALID},

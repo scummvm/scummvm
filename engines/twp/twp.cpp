@@ -60,6 +60,118 @@ namespace Twp {
 
 TwpEngine *g_twp;
 
+struct GetNoun {
+	GetNoun(int verbId, Common::SharedPtr<Object> &obj) : _verbId(verbId), _noun(obj) {
+		_noun = nullptr;
+	}
+
+	bool operator()(Common::SharedPtr<Object> obj) {
+		if (((_verbId == VERB_TALKTO) || (_verbId == VERB_WALKTO) || !g_twp->_resManager->isActor(obj->getId())) && (obj->_node->getZSort() <= _zOrder)) {
+			_noun = obj;
+			_zOrder = obj->_node->getZSort();
+		}
+		return false;
+	}
+
+public:
+	Common::SharedPtr<Object> &_noun;
+	int _zOrder = INT_MAX;
+	const int _verbId;
+};
+
+struct GetUseNoun2 {
+	explicit GetUseNoun2(Common::SharedPtr<Object> &obj) : _noun2(obj) {
+		_noun2 = nullptr;
+	}
+
+	bool operator()(Common::SharedPtr<Object> obj) {
+		if (obj->_node->getZSort() <= _zOrder) {
+			if ((obj != g_twp->_actor) && (g_twp->_noun2 != obj)) {
+				_noun2 = obj;
+				_zOrder = obj->_node->getZSort();
+			}
+		}
+		return false;
+	}
+
+public:
+	Common::SharedPtr<Object> &_noun2;
+	int _zOrder = INT_MAX;
+};
+
+struct GetGiveableNoun2 {
+	explicit GetGiveableNoun2(Common::SharedPtr<Object> &obj) : _noun2(obj) {
+		_noun2 = nullptr;
+	}
+
+	bool operator()(Common::SharedPtr<Object> obj) {
+		if ((obj != g_twp->_actor) && (obj->getFlags() & GIVEABLE) && (g_twp->_noun2 != obj)) {
+			_noun2 = obj;
+			return true;
+		}
+		return false;
+	}
+
+public:
+	Common::SharedPtr<Object> &_noun2;
+};
+
+struct InInventory {
+	explicit InInventory(Common::SharedPtr<Object> &obj) : _obj(obj) { _obj = nullptr; }
+	bool operator()(Common::SharedPtr<Object> obj) {
+		if (obj->inInventory()) {
+			_obj = obj;
+			return true;
+		}
+		return false;
+	}
+
+public:
+	Common::SharedPtr<Object> &_obj;
+};
+
+typedef struct ObjPos {
+	ObjPos(Common::SharedPtr<Object> obj, const Math::Vector2d &pos, float distance, int index) : _obj(obj), _pos(pos), _distance(distance), _index(index) {}
+	float _distance = 0.f;
+	Math::Vector2d _pos;
+	Common::SharedPtr<Object> _obj;
+	int _index;
+} ObjPos;
+
+struct ObjPosComparer {
+	bool operator()(const ObjPos &x, const ObjPos &y) const {
+		return x._distance < y._distance;
+	}
+};
+
+struct GetByZOrder {
+	explicit GetByZOrder(Common::SharedPtr<Object> &result) : _result(result) {
+		result = nullptr;
+	}
+
+	bool operator()(Common::SharedPtr<Object> obj) {
+		if (obj->_node->getZSort() <= _zOrder) {
+			if (!g_twp->_resManager->isActor(obj->getId()) || !obj->_key.empty()) {
+				_result = obj;
+				_zOrder = obj->_node->getZSort();
+			}
+		}
+		return false;
+	}
+
+public:
+	Common::SharedPtr<Object> &_result;
+
+private:
+	int _zOrder = INT_MAX;
+};
+
+struct DefineObjectParams {
+	HSQUIRRELVM v;
+	bool pseudo;
+	Common::SharedPtr<Room> room;
+};
+
 TwpEngine::TwpEngine(OSystem *syst, const TwpGameDescription *gameDesc)
 	: Engine(syst),
 	  _gameDescription(gameDesc),
@@ -326,20 +438,6 @@ void objsAt(Math::Vector2d pos, TFunc func) {
 	}
 }
 
-struct InInventory {
-	explicit InInventory(Common::SharedPtr<Object> &obj) : _obj(obj) { _obj = nullptr; }
-	bool operator()(Common::SharedPtr<Object> obj) {
-		if (obj->inInventory()) {
-			_obj = obj;
-			return true;
-		}
-		return false;
-	}
-
-public:
-	Common::SharedPtr<Object> &_obj;
-};
-
 Common::SharedPtr<Object> inventoryAt(Math::Vector2d pos) {
 	Common::SharedPtr<Object> result;
 	objsAt(Common::move(pos), InInventory(result));
@@ -389,62 +487,6 @@ Common::Array<ActorSwitcherSlot> TwpEngine::actorSwitcherSlots() {
 	}
 	return result;
 }
-
-struct GetNoun {
-	GetNoun(int verbId, Common::SharedPtr<Object> &obj) : _verbId(verbId), _noun(obj) {
-		_noun = nullptr;
-	}
-
-	bool operator()(Common::SharedPtr<Object> obj) {
-		if (((_verbId == VERB_TALKTO) || (_verbId == VERB_WALKTO) || !g_twp->_resManager->isActor(obj->getId())) && (obj->_node->getZSort() <= _zOrder)) {
-			_noun = obj;
-			_zOrder = obj->_node->getZSort();
-		}
-		return false;
-	}
-
-public:
-	Common::SharedPtr<Object> &_noun;
-	int _zOrder = INT_MAX;
-	const int _verbId;
-};
-
-struct GetUseNoun2 {
-	explicit GetUseNoun2(Common::SharedPtr<Object> &obj) : _noun2(obj) {
-		_noun2 = nullptr;
-	}
-
-	bool operator()(Common::SharedPtr<Object> obj) {
-		if (obj->_node->getZSort() <= _zOrder) {
-			if ((obj != g_twp->_actor) && (g_twp->_noun2 != obj)) {
-				_noun2 = obj;
-				_zOrder = obj->_node->getZSort();
-			}
-		}
-		return false;
-	}
-
-public:
-	Common::SharedPtr<Object> &_noun2;
-	int _zOrder = INT_MAX;
-};
-
-struct GetGiveableNoun2 {
-	explicit GetGiveableNoun2(Common::SharedPtr<Object> &obj) : _noun2(obj) {
-		_noun2 = nullptr;
-	}
-
-	bool operator()(Common::SharedPtr<Object> obj) {
-		if ((obj != g_twp->_actor) && (obj->getFlags() & GIVEABLE) && (g_twp->_noun2 != obj)) {
-			_noun2 = obj;
-			return true;
-		}
-		return false;
-	}
-
-public:
-	Common::SharedPtr<Object> &_noun2;
-};
 
 void TwpEngine::update(float elapsed) {
 	const uint32 startUpdateTime = _system->getMillis();
@@ -797,6 +839,75 @@ static void setVerbAction(int verbSlot) {
 	g_twp->_hud->selectVerb(slot->verbSlots[verbSlot]._verb);
 }
 
+static bool isOnScreen(Common::SharedPtr<Object> obj) {
+	Math::Vector2d pos = obj->_node->getPos() - g_twp->getGfx().cameraPos();
+	Math::Vector2d size = g_twp->getGfx().camera();
+	return Common::Rect(0.0f, 0.0f, size.getX(), size.getY()).contains(pos.getX(), pos.getY());
+}
+
+static void gotoObject(bool next) {
+	if (!g_twp->_room || !g_twp->_inputState._inputActive || !g_twp->_inputState._showCursor)
+		return;
+
+	// get all objects touchable and on screen and get their distance to the actor
+	Math::Vector2d actorPos(g_twp->_actor->_node->getAbsPos());
+	Common::Array<ObjPos> objPos;
+	for (size_t i = 0; i < g_twp->_room->_layers.size(); i++) {
+		Common::SharedPtr<Layer> layer = g_twp->_room->_layers[i];
+		for (size_t j = 0; j < layer->_objects.size(); j++) {
+			Common::SharedPtr<Object> obj(layer->_objects[j]);
+			if (g_twp->_resManager->isActor(obj->getId()) || !obj->isTouchable() || !isOnScreen(obj))
+				continue;
+
+			Math::Vector2d pos(obj->_node->getAbsPos());
+			if (pos == Math::Vector2d())
+				continue;
+
+			Common::Rect hotspot = obj->_hotspot;
+			Math::Vector2d center(hotspot.left + hotspot.width() / 2.f, hotspot.top + hotspot.height() / 2.f);
+			pos += center;
+			const float d = actorPos.getX() - pos.getX();
+			objPos.push_back(ObjPos(obj, pos, d, j));
+		}
+	}
+
+	if (objPos.empty())
+		return;
+
+	// sort these objects by distance
+	Common::sort(objPos.begin(), objPos.end(), ObjPosComparer());
+
+	// find between them if the cursor is currently on one object if so find the next object
+	int index = 0;
+	int zsort = INT_MAX;
+	int objIndex = INT_MAX;
+	Math::Vector2d mousePos(g_twp->screenToRoom(g_twp->winToScreen(g_twp->_cursor.pos)));
+	for (size_t i = 0; i < objPos.size(); i++) {
+		if (objPos[i]._obj->contains(mousePos)) {
+			const int objZ = objPos[i]._obj->_node->getZSort();
+			if (objZ > zsort)
+				continue;
+			if (objZ == zsort && objPos[i]._index >= objIndex)
+				continue;
+			objIndex = objPos[i]._index;
+			zsort = objZ;
+			if (next) {
+				index = (i + 1) % objPos.size();
+			} else {
+				index = i - 1;
+				if (index < 0) {
+					index = objPos.size() - 1;
+				}
+			}
+		}
+	}
+
+	// move the cursor to this object
+	Math::Vector2d pos(objPos[index]._pos);
+	pos = g_twp->roomToScreen(pos);
+	g_twp->_moveCursorTo.reset(new MoveCursorTo(g_twp->screenToWin(pos), 0.1f));
+}
+
 Common::Error TwpEngine::run() {
 	const Common::String &gameTarget = ConfMan.getActiveDomainName();
 	AchMan.setActiveDomain(getMetaEngine()->getAchievementsInfo(gameTarget));
@@ -890,6 +1001,10 @@ Common::Error TwpEngine::run() {
 				switch ((TwpAction)e.customType) {
 				case TwpAction::kSkipCutscene:
 					skipCutscene();
+					break;
+				case TwpAction::kGotoNextObject:
+				case TwpAction::kGotoPreviousObject:
+					gotoObject((TwpAction)e.customType == TwpAction::kGotoNextObject);
 					break;
 				case TwpAction::kSelectActor1:
 				case TwpAction::kSelectActor2:
@@ -1163,12 +1278,6 @@ Common::Error TwpEngine::saveGameStream(Common::WriteStream *stream, bool isAuto
 	stream->writeUint16LE(TWP_SAVEGAME_VERSION);
 	return Common::kNoError;
 }
-
-struct DefineObjectParams {
-	HSQUIRRELVM v;
-	bool pseudo;
-	Common::SharedPtr<Room> room;
-};
 
 static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
 	DefineObjectParams *params = static_cast<DefineObjectParams *>(data);
@@ -1580,28 +1689,6 @@ void TwpEngine::fadeTo(FadeEffect effect, float duration, bool fadeToSep) {
 	_fadeShader->_movement = effect == FadeEffect::Wobble ? 0.005f : 0.f;
 	_fadeShader->_elapsed = 0.f;
 }
-
-struct GetByZOrder {
-	explicit GetByZOrder(Common::SharedPtr<Object> &result) : _result(result) {
-		result = nullptr;
-	}
-
-	bool operator()(Common::SharedPtr<Object> obj) {
-		if (obj->_node->getZSort() <= _zOrder) {
-			if (!g_twp->_resManager->isActor(obj->getId()) || !obj->_key.empty()) {
-				_result = obj;
-				_zOrder = obj->_node->getZSort();
-			}
-		}
-		return false;
-	}
-
-public:
-	Common::SharedPtr<Object> &_result;
-
-private:
-	int _zOrder = INT_MAX;
-};
 
 Common::SharedPtr<Object> TwpEngine::objAt(const Math::Vector2d &pos) {
 	Common::SharedPtr<Object> result;

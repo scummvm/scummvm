@@ -31,6 +31,8 @@ enum TwpAction {
 	kMoveRight,
 	kMoveUp,
 	kMoveDown,
+	kGotoNextObject,
+	kGotoPreviousObject,
 	kSkipCutscene,
 	kSelectActor1,
 	kSelectActor2,
