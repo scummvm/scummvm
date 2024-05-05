@@ -653,7 +653,7 @@ int ScummEngine::readVar(uint var) {
 					return powerStatModified;
 				case 1:  // Power swing
 					powerStat = vm.localvar[_currentScript][var];
-					powerStatModified = 20 + powerStat * 7 / 10;;
+					powerStatModified = 10 + powerStat * 17 / 20;;
 					return powerStatModified;
 				default:
 					break;
