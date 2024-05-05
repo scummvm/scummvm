@@ -77,7 +77,7 @@ typedef bool (*FilterFunction)(const uint16 nFilterId, CBofBitmap *, CBofRect *)
  */
 class CBagStorageDev : public CBagParseObject {
 public:
-	enum MOUSE_ACTIVITY { kMouseNONE = 0x0000, kMouseDRAGGING = 0x0001 };
+	enum MouseActivity { kMouseNONE = 0x0000, kMouseDRAGGING = 0x0001 };
 
 private:
 	CBofString _sName;           // Name of this storage device
@@ -95,7 +95,7 @@ private:
 
 	CBofWindow *_pAssociateWnd; // Sounds need a window
 
-	MOUSE_ACTIVITY _nCurrMouseActivity; // What is up with the mouse currently
+	MouseActivity _nCurrMouseActivity; // What is up with the mouse currently
 
 	uint16 _nExitOnEdge; // Non zero if SDev should be closed when an outside edge is clicked on, and and prev sdev is set, _nExitOnEdge is the thickness of the edge
 
@@ -278,10 +278,10 @@ public:
 
 	virtual ErrorCode onLActiveObject(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 
-	MOUSE_ACTIVITY getLActivity() {
+	MouseActivity getLActivity() {
 		return _nCurrMouseActivity;
 	}
-	void setLActivity(MOUSE_ACTIVITY ma) {
+	void setLActivity(MouseActivity ma) {
 		_nCurrMouseActivity = ma;
 	}
 
