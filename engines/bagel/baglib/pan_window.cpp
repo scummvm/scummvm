@@ -310,7 +310,7 @@ ErrorCode CBagPanWindow::paintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 
 				// Only update dirty objects...
 				if (pObj->isDirty() || pObj->isAlwaysUpdate()) {
-					if (!(pObj->getType() == TEXTOBJ && ((CBagTextObject *)pObj)->isCaption() && pObj->isImmediateRun())) {
+					if (!(pObj->getType() == TEXT_OBJ && ((CBagTextObject *)pObj)->isCaption() && pObj->isImmediateRun())) {
 						pObj->update(pBmp, pt, &xIntrRect);
 
 						// If we're in a closeup and we have a character animation
@@ -318,7 +318,7 @@ ErrorCode CBagPanWindow::paintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 						CBagCharacterObject *pCharObj = (CBagCharacterObject *)pObj;
 
 						// Only in closeups
-						if (!_pSlideBitmap->isPan() && pObj->getType() == CHAROBJ) {
+						if (!_pSlideBitmap->isPan() && pObj->getType() == CHAR_OBJ) {
 							// Handle non-modal movies also...
 							if (pCharObj->getNumberOfLoops() == 1) {
 								setPreFilterPan(true);
@@ -491,22 +491,22 @@ void CBagPanWindow::onMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 			if (_cRightRect.ptInRect(xPoint)) {
 				_pSlideBitmap->setRotateRate(CBofPoint(((xPoint.x - _xMovementRect.right) * (_nPanSpeed + 1)) / 2, 0));
 				_pSlideBitmap->setDirection(CBagPanBitmap::kDirLEFT);
-				CBagMasterWin::setActiveCursor(BOFRTCURSOR);
+				CBagMasterWin::setActiveCursor(BOF_RT_CURSOR);
 
 			} else if (_cLeftRect.ptInRect(xPoint)) {
 				_pSlideBitmap->setRotateRate(CBofPoint(((_xMovementRect.left - xPoint.x) * (_nPanSpeed + 1)) / 2, 0));
 				_pSlideBitmap->setDirection(CBagPanBitmap::kDirRIGHT);
-				CBagMasterWin::setActiveCursor(BOFLTCURSOR);
+				CBagMasterWin::setActiveCursor(BOF_LT_CURSOR);
 
 			} else if (_cBottomRect.ptInRect(xPoint)) {
 				_pSlideBitmap->setRotateRate(CBofPoint(0, (xPoint.y - _xMovementRect.bottom)));
 				_pSlideBitmap->setDirection(CBagPanBitmap::kDirUP);
-				CBagMasterWin::setActiveCursor(BOFDNCURSOR);
+				CBagMasterWin::setActiveCursor(BOF_DN_CURSOR);
 
 			} else if (_cTopRect.ptInRect(xPoint)) {
 				_pSlideBitmap->setRotateRate(CBofPoint(0, (_xMovementRect.top - xPoint.y)));
 				_pSlideBitmap->setDirection(CBagPanBitmap::kDirDOWN);
-				CBagMasterWin::setActiveCursor(BOFUPCURSOR);
+				CBagMasterWin::setActiveCursor(BOF_UP_CURSOR);
 
 			} else {
 				_pSlideBitmap->setDirection(CBagPanBitmap::kDirNONE);
@@ -598,7 +598,7 @@ void CBagPanWindow::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	CBagObject *pActObj = getLActiveObject();
 
 	if ((pActObj != nullptr) && (nMA == kMouseDRAGGING) &&
-			(pActObj->getType() == BUTTONOBJ) &&
+			(pActObj->getType() == BUTTON_OBJ) &&
 			(((CBagButtonObject *)pActObj)->getButtonType() == CBagButtonObject::BTN_SLIDER)) {
 		pActObj->onLButtonUp(nFlags, xPoint, this);
 

@@ -27,7 +27,7 @@
 namespace Bagel {
 
 CBagTimeObject::CBagTimeObject() : CBagObject() {
-	_xObjType = SPRITEOBJ;
+	_xObjType = SPRITE_OBJ;
 	_xDig1 = nullptr;
 	_xDig2 = nullptr;
 	_xColon = nullptr;

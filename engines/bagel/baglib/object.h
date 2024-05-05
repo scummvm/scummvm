@@ -36,23 +36,23 @@ class CBagObject;
 typedef void *(*BagFuncPtr)(int, void *);
 
 enum BagObjectType {
-	BASEOBJ = 0x0000,
-	BMPOBJ = BOFBMPOBJ,
-	SPRITEOBJ = BOFSPRITEOBJ,
-	BUTTONOBJ = BOFBUTTONOBJ,
-	SOUNDOBJ = BOFSOUNDOBJ,
-	LINKOBJ = BOFLINKOBJ,
-	TEXTOBJ = BOFTEXTOBJ,
-	CHAROBJ = BOFCHAROBJ,
-	VAROBJ = BOFVAROBJ,
-	AREAOBJ = BOFAREAOBJ,
-	EXPRESSOBJ = BOFEXPRESSOBJ,
-	COMMANDOBJ = BOFCOMMOBJ,
-	MOVIEOBJ = BOFMOVIEOBJ,
-	THNGOBJ = BOFTHINGOBJ,
-	RESPRNTOBJ = BOFRESPRNTOBJ,
-	DOSSIEROBJ = BOFDOSSIEROBJ,
-	USEROBJ = 0x1000
+	BASE_OBJ = 0x0000,
+	BMP_OBJ = BOF_BMP_OBJ,
+	SPRITE_OBJ = BOF_SPRITE_OBJ,
+	BUTTON_OBJ = BOF_BUTTON_OBJ,
+	SOUND_OBJ = BOF_SOUND_OBJ,
+	LINK_OBJ = BOF_LINK_OBJ,
+	TEXT_OBJ = BOF_TEXT_OBJ,
+	CHAR_OBJ = BOF_CHAR_OBJ,
+	VAR_OBJ = BOF_VAR_OBJ,
+	AREA_OBJ = BOF_AREA_OBJ,
+	EXPRESS_OBJ = BOF_EXPRESS_OBJ,
+	COMMAND_OBJ = BOF_COMM_OBJ,
+	MOVIE_OBJ = BOF_MOVIE_OBJ,
+	THING_OBJ = BOF_THING_OBJ,
+	RESPRNT_OBJ = BOF_RESPRNT_OBJ,
+	DOSSIER_OBJ = BOF_DOSSIER_OBJ,
+	USER_OBJ = 0x1000
 };
 
 enum BAG_OBJECT_PROPERTIES {
@@ -95,7 +95,7 @@ private:
 	uint16 _nId = 0;           // Ref Id for an object
 
 protected:
-	uint16 _xObjType = AREAOBJ;
+	uint16 _xObjType = AREA_OBJ;
 
 private:
 	uint16 _nProperties = 0;   // Properties of object
@@ -189,14 +189,14 @@ public:
 	virtual bool isModalDone() {
 		return true;
 	}
-	//  Is object visible within sceene
+	//  Is object visible within scene
 	bool isVisible() {
 		return isProperty(VISIBLE);
 	}
 	void setVisible(bool b = true) {
 		setProperty(VISIBLE, b);
 	}
-	// Sould object be hightlighed when the mouse is over
+	// Should object be highlighted when the mouse is over
 	bool isHighlight() {
 		return isProperty(HIGHLIGHT);
 	}
@@ -210,7 +210,7 @@ public:
 	void setActive(bool b = true) {
 		setProperty(ACTIVE, b);
 	}
-	// Is the object has a trasparent bkground
+	// Is the object has a transparent background
 	bool isTransparent() {
 		return isProperty(TRANSPAR);
 	}
@@ -380,7 +380,7 @@ public:
 	 * UPDATED_OBJECT   if something has changed
 	 * PARSING_DONE     if done processing
 	 */
-	virtual ParseCodes setInfo(CBagIfstream &istr);
+	ParseCodes setInfo(CBagIfstream &istr) override;
 
 	virtual int handleError(int nErrID) {
 		assert(!nErrID);
@@ -394,9 +394,8 @@ public:
 	}
 
 	virtual void onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr) {}
-	virtual void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr); //{ } run menu if available
-	// virtual bool        onLButtonDblClk(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr);    //{ return false; }
-	virtual bool onMouseMove(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr); //{ return false; }
+	virtual void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr); // run menu if available
+	virtual bool onMouseMove(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr); 
 	virtual bool onMouseOver(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr) {
 		return false;
 	}

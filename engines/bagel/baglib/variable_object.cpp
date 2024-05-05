@@ -26,7 +26,7 @@
 namespace Bagel {
 
 CBagVariableObject::CBagVariableObject() : CBagObject() {
-	_xObjType = VAROBJ;
+	_xObjType = VAR_OBJ;
 	m_nPointSize = 16;
 	m_nFGColor = CTEXT_COLOR;
 	setVisible(true);

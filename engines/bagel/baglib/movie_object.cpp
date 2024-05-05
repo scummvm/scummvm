@@ -37,7 +37,7 @@ namespace Bagel {
 #define OVERRIDESMK "$SBARDIR\\BAR\\LOG\\OVERRIDE.SMK"
 
 CBagMovieObject::CBagMovieObject() {
-	_xObjType = MOVIEOBJ;
+	_xObjType = MOVIE_OBJ;
 	setVisible(true);
 	_xDisplayType = DISP_TYPE::MOVIE;
 	_bFlyThru = false;

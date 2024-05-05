@@ -36,7 +36,7 @@ namespace Bagel {
 extern bool g_pauseTimerFl;
 
 CBagTextObject::CBagTextObject() : CBagObject() {
-	_xObjType = TEXTOBJ;
+	_xObjType = TEXT_OBJ;
 	_nDX = 80;
 	_nDY = 20;
 	_psText = nullptr;

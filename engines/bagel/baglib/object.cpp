@@ -29,33 +29,33 @@ extern bool g_noMenuFl;
 
 CBofString getStringTypeOfObject(BagObjectType n) {
 	switch (n) {
-	case BASEOBJ:
+	case BASE_OBJ:
 		return "UKN";
-	case BMPOBJ:
+	case BMP_OBJ:
 		return "BMP";
-	case SPRITEOBJ:
+	case SPRITE_OBJ:
 		return "SPR";
-	case BUTTONOBJ:
+	case BUTTON_OBJ:
 		return "BUT";
-	case SOUNDOBJ:
+	case SOUND_OBJ:
 		return "SND";
-	case LINKOBJ:
+	case LINK_OBJ:
 		return "LNK";
-	case RESPRNTOBJ:
+	case RESPRNT_OBJ:
 		return "RPO";
-	case DOSSIEROBJ:
+	case DOSSIER_OBJ:
 		return "DOS";
-	case CHAROBJ:
+	case CHAR_OBJ:
 		return "CHR";
-	case AREAOBJ:
+	case AREA_OBJ:
 		return "ARE";
-	case MOVIEOBJ:
+	case MOVIE_OBJ:
 		return "MOVIE";
-	case VAROBJ:
+	case VAR_OBJ:
 		return "VAR";
-	case COMMANDOBJ:
+	case COMMAND_OBJ:
 		return "COMMAND";
-	case THNGOBJ:
+	case THING_OBJ:
 		return "TNG";
 	default:
 		return "UKN";
@@ -63,7 +63,7 @@ CBofString getStringTypeOfObject(BagObjectType n) {
 }
 
 CBagObject::CBagObject() {
-	_xObjType = BASEOBJ;
+	_xObjType = BASE_OBJ;
 	_nX = -1;
 	_nY = -1;
 

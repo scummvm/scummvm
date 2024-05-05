@@ -386,7 +386,7 @@ void CBagPDA::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 			// Go through all the buttons and see if we hit any of them.
 			for (int i = 0; i < nCount; i++) {
 				CBagObject *pObj = pList->getNodeItem(i);
-				if (pObj->getType() == BUTTONOBJ && pObj->getRect().ptInRect(RealPt)) {
+				if (pObj->getType() == BUTTON_OBJ && pObj->getRect().ptInRect(RealPt)) {
 					bButtonHit = true;
 					break;
 				}

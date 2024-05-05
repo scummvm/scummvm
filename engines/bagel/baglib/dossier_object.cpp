@@ -32,7 +32,7 @@ void CBagDossierObject::initialize() {
 }
 
 CBagDossierObject::CBagDossierObject() {
-	_xObjType = DOSSIEROBJ;
+	_xObjType = DOSSIER_OBJ;
 
 	_dossierSetFl = false;
 	_indexRect.setRect(0, 0, 0, 0);

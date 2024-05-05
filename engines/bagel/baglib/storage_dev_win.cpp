@@ -337,7 +337,7 @@ ErrorCode CBagStorageDev::attachActiveObjects() {
 
 							pObj->runObject();
 
-							if (pObj->getType() == LINKOBJ) {
+							if (pObj->getType() == LINK_OBJ) {
 								break;
 							}
 						}
@@ -349,7 +349,7 @@ ErrorCode CBagStorageDev::attachActiveObjects() {
 					}
 				} else if (pObj->isAttached()) {
 
-					if (pObj->getType() != SOUNDOBJ || !((CBagSoundObject *)pObj)->isPlaying()) {
+					if (pObj->getType() != SOUND_OBJ || !((CBagSoundObject *)pObj)->isPlaying()) {
 						pObj->setActive(false);
 						pObj->detach();
 					}
@@ -1515,7 +1515,7 @@ void CBagStorageDevWnd::onMouseMove(uint32 n, CBofPoint *pPoint, void *) {
 				//
 				if (pObj->isAttached() && pObj->isInside(cCursorLocation)) {
 					int nCursor = pObj->getOverCursor();
-					if (!bWield || (nCursor == 2 || nCursor == 5 || nCursor == 55 || pObj->getType() == TEXTOBJ || pObj->getType() == BUTTONOBJ)) {
+					if (!bWield || (nCursor == 2 || nCursor == 5 || nCursor == 55 || pObj->getType() == TEXT_OBJ || pObj->getType() == BUTTON_OBJ)) {
 						CBagMasterWin::setActiveCursor(nCursor);
 					}
 					break;

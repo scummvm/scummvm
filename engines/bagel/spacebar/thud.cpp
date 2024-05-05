@@ -59,7 +59,7 @@ ErrorCode SBarThud::attach() {
 	// Take care of objects being held
 	for (int i = 0; i < getObjectCount(); ++i) {
 		CBagObject *pObj = getObjectByPos(i);
-		if (pObj->isActive() && (pObj->getType() == BOFSPRITEOBJ || pObj->getType() == BOFBMPOBJ))
+		if (pObj->isActive() && (pObj->getType() == BOF_SPRITE_OBJ || pObj->getType() == BOF_BMP_OBJ))
 			nActiveObj++;
 
 		// Detach all activated objects after the first
@@ -135,12 +135,12 @@ ErrorCode SBarThud::deactivateLocalObject(CBagObject *pObj) {
 	if (_nObjects != 1)
 		return ERR_NONE;
 
-	if (pObj->getType() == SPRITEOBJ) {
+	if (pObj->getType() == SPRITE_OBJ) {
 		setThudCursor(-1);
 
 	}
 
-	if (pObj->getType() == BOFSPRITEOBJ || pObj->getType() == SPRITEOBJ) {
+	if (pObj->getType() == BOF_SPRITE_OBJ || pObj->getType() == SPRITE_OBJ) {
 		_nObjects--;
 	}
 

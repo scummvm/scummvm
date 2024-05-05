@@ -56,7 +56,7 @@ ErrorCode CBagWield::attach() {
 	for (int i = 0; i < getObjectCount(); ++i) {
 		CBagObject *pObj = getObjectByPos(i);
 
-		if (pObj->isActive() && (pObj->getType() == BOFSPRITEOBJ || pObj->getType() == BOFBMPOBJ)) {
+		if (pObj->isActive() && (pObj->getType() == BOF_SPRITE_OBJ || pObj->getType() == BOF_BMP_OBJ)) {
 			if (nObjects == 0) {
 				nObjects++;
 				activateLocalObject(pObj);
@@ -120,7 +120,7 @@ ErrorCode CBagWield::activateLocalObject(CBagObject *pObj) {
 			CBagMenu::setUniversalObjectList(pObj->getMenuPtr()->getObjectList());
 		}
 
-		if (pObj->getType() == SPRITEOBJ) {
+		if (pObj->getType() == SPRITE_OBJ) {
 			setCurrObj(pObj);
 			m_nObjects++;
 			CBagSpriteObject *pSpObj = (CBagSpriteObject *)pObj;
@@ -143,7 +143,7 @@ ErrorCode CBagWield::activateLocalObject(CBagObject *pObj) {
 ErrorCode CBagWield::deactivateLocalObject(CBagObject *pObj) {
 	if (m_nObjects == 1) {
 
-		if (pObj->getType() == SPRITEOBJ) {
+		if (pObj->getType() == SPRITE_OBJ) {
 			setWieldCursor(-1);
 			m_nObjects--;
 		}
