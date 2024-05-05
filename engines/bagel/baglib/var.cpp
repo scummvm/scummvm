@@ -50,7 +50,7 @@ CBagVar::CBagVar(const CBofString &sName, const CBofString &sValue, bool bAddToL
 	SetReference(false);
 	setTimer(false);
 	SetString();
-	SetName(sName);
+	setName(sName);
 
 	SetValue(sValue);
 	SetRandom(false);
@@ -94,7 +94,7 @@ const CBofString &CBagVar::GetValue() {
 	if (!m_sVarName.isEmpty() && !m_sVarName.find(CURRSDEV_TOKEN)) {
 		CBofString CurrSDev;
 		if (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()) {
-			m_sVarValue = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->GetName();
+			m_sVarValue = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->getName();
 		}
 	} else {
 
@@ -153,7 +153,7 @@ ParseCodes CBagVar::setInfo(CBagIfstream &istr) {
 	istr.eatWhite();
 
 	getAlphaNumFromStream(istr, sStr);
-	SetName(sStr);
+	setName(sStr);
 
 	istr.eatWhite();
 
@@ -273,7 +273,7 @@ ErrorCode CBagVarManager::UnRegisterVariable(CBagVar *pVar) {
 	// Remove it from the hash table also.
 	char szLocalBuff[256];
 	CBofString varStr(szLocalBuff, 256);
-	varStr = pVar->GetName();
+	varStr = pVar->getName();
 
 	// Hash it
 	int nHashVal = HASHVAR(szLocalBuff, varStr.getLength());
@@ -301,7 +301,7 @@ ErrorCode CBagVarManager::IncrementTimers() {
 		if (pVar->IsTimer()) {
 
 			// Hack to keep the game time from exceeding 22:50
-			if (pVar->GetName().compareNoCase("TURNCOUNT") == 0) {
+			if (pVar->getName().compareNoCase("TURNCOUNT") == 0) {
 				if (pVar->GetNumValue() == 2250) {
 					continue;
 				}
@@ -352,7 +352,7 @@ CBagVar *CBagVarManager::GetVariable(const CBofString &sName) {
 	CBofList<CBagVar *> *pVarList = &m_xVarHashList[nHashVal];
 	for (int i = 0; i < pVarList->getCount(); ++i) {
 		pVar = pVarList->getNodeItem(i);
-		if (pVar != nullptr && (pVar->GetName().getLength() == sName.getLength()) && !pVar->GetName().find(sName)) {
+		if (pVar != nullptr && (pVar->getName().getLength() == sName.getLength()) && !pVar->getName().find(sName)) {
 			return pVar;
 		}
 	}
@@ -360,7 +360,7 @@ CBagVar *CBagVarManager::GetVariable(const CBofString &sName) {
 	return nullptr;
 }
 
-void CBagVar::SetName(const CBofString &s) {
+void CBagVar::setName(const CBofString &s) {
 	m_sVarName = s;
 
 	CBagel *pApp = CBagel::getBagApp();

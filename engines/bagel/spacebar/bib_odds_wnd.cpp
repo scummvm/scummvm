@@ -46,7 +46,7 @@ ErrorCode SBarBibOddsWnd::detach() {
 	for (int i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
 
 		// The sprite object start in the script at 500
-		CBagObject *pObj = GetObject(500 + i);
+		CBagObject *pObj = getObject(500 + i);
 
 		if (pObj != nullptr) {
 			int nPayIdx = pObj->getState();
@@ -56,7 +56,7 @@ ErrorCode SBarBibOddsWnd::detach() {
 	}
 
 	if (_wieldedObject) {
-		SDEV_MANAGER->AddObject(CBagPanWindow::_pWieldBmp->GetName(), _wieldedObject->getRefName());
+		SDEV_MANAGER->addObject(CBagPanWindow::_pWieldBmp->getName(), _wieldedObject->getRefName());
 		_wieldedObject = nullptr;
 	}
 
@@ -122,7 +122,7 @@ ErrorCode SBarBibOddsWnd::attach() {
 	// If we have something wielded, put it on hold for now.
 	if (CBagPanWindow::_pWieldBmp != nullptr) {
 		if ((_wieldedObject = CBagPanWindow::_pWieldBmp->getCurrObj()) != nullptr) {
-			SDEV_MANAGER->removeObject(CBagPanWindow::_pWieldBmp->GetName(), _wieldedObject->getRefName());
+			SDEV_MANAGER->removeObject(CBagPanWindow::_pWieldBmp->getName(), _wieldedObject->getRefName());
 		}
 	}
 

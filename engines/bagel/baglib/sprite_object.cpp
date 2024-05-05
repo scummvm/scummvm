@@ -77,7 +77,7 @@ ErrorCode CBagSpriteObject::attach() {
 				CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev());
 
 				if (pMainWin != nullptr) {
-					pMainWin->SetPreFilterPan(true);
+					pMainWin->setPreFilterPan(true);
 				}
 			} else {
 				reportError(ERR_FOPEN, "Could Not Open Sprite: %s", _xSprite->getFileName());

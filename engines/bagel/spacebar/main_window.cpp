@@ -94,7 +94,7 @@ ErrorCode CMainWindow::attach() {
 	g_allowPaintFl = true;
 
 	CBagStorageDev *pSDev = SDEV_MANAGER->GetStorageDevice(getPrevSDev());
-	if (pSDev && pSDev->GetDeviceType() == SDEV_ZOOMPDA) {
+	if (pSDev && pSDev->getDeviceType() == SDEV_ZOOMPDA) {
 		bForegroundObj = false;
 	}
 
@@ -102,12 +102,12 @@ ErrorCode CMainWindow::attach() {
 	flushInputEvents();
 
 	// Create the window
-	CBofString s = GetName();
+	CBofString s = getName();
 	create(s.getBuffer(), &tmpRect, CBagel::getBagApp()->getMasterWnd());
 
 	// Associate this window with callbacks so that any public member function can
 	// be accessed by objects inserted into this class.
-	SetAssociateWnd(this);
+	setAssociateWnd(this);
 
 	// Assume we will use the view we had last time.
 	CBofRect rView;
@@ -120,7 +120,7 @@ ErrorCode CMainWindow::attach() {
 
 	CBofSound::audioTask();
 
-	CBofPalette *bofpal = setSlideBitmap(GetBackgroundName(), rView);
+	CBofPalette *bofpal = setSlideBitmap(getBackgroundName(), rView);
 	setPalPtr(bofpal);
 
 	CBagel::getBagApp()->getMasterWnd()->selectPalette(bofpal);
@@ -136,7 +136,7 @@ ErrorCode CMainWindow::attach() {
 			pSDev = SDEV_MANAGER->GetStorageDevice(THUDWLD);
 			if (pSDev != nullptr) {
 				_pThudBmp = (SBarThud *)pSDev;
-				_pThudBmp->SetAssociateWnd(this);
+				_pThudBmp->setAssociateWnd(this);
 				if (!_pThudBmp->isAttached())
 					_pThudBmp->attach();
 				insertFGObjects(_pThudBmp);
@@ -146,7 +146,7 @@ ErrorCode CMainWindow::attach() {
 
 		if (_pThudBmp && (CBagObject *)nullptr == getFGObjects(CBofString(THUDWLD))) {
 			CBofRect r(1, tmpRect.height() - 101, 101, tmpRect.height() - 1);
-			_pThudBmp->SetAssociateWnd(this);
+			_pThudBmp->setAssociateWnd(this);
 			insertFGObjects(_pThudBmp);
 		}
 
@@ -154,7 +154,7 @@ ErrorCode CMainWindow::attach() {
 			pSDev = SDEV_MANAGER->GetStorageDevice(WIELDWLD);
 			if (pSDev != nullptr) {
 				_pWieldBmp = (CBagWield *)pSDev;
-				_pWieldBmp->SetAssociateWnd(this);
+				_pWieldBmp->setAssociateWnd(this);
 				if (!_pWieldBmp->isAttached())
 					_pWieldBmp->attach();
 
@@ -173,7 +173,7 @@ ErrorCode CMainWindow::attach() {
 		}
 
 		if ((CBagObject *)nullptr == getFGObjects(CBofString(WIELDWLD))) {
-			_pWieldBmp->SetAssociateWnd(this);
+			_pWieldBmp->setAssociateWnd(this);
 			insertFGObjects(_pWieldBmp);
 		}
 
@@ -183,7 +183,7 @@ ErrorCode CMainWindow::attach() {
 			if (pSDev != nullptr) {
 				_pPDABmp = (CBagPDA *)pSDev;
 				CBofRect r(0, 0, 300, 200);
-				_pPDABmp->SetAssociateWnd(this);
+				_pPDABmp->setAssociateWnd(this);
 				_pPDABmp->setRect(r);
 				r = getClientRect();
 				if (!_pPDABmp->isAttached())
@@ -209,7 +209,7 @@ ErrorCode CMainWindow::attach() {
 
 		if ((CBagObject *)nullptr == getFGObjects(CBofString(PDAWLD))) {
 			CBofRect r(0, 0, 300, 200);
-			_pPDABmp->SetAssociateWnd(this);
+			_pPDABmp->setAssociateWnd(this);
 
 			// To fix pda not updating problem
 			insertFGObjects(_pPDABmp);
@@ -223,7 +223,7 @@ ErrorCode CMainWindow::attach() {
 			// Have we allocated one yet ?
 			if (_pEvtSDev == nullptr) {
 				_pEvtSDev = (CBagEventSDev *)pSDev;
-				_pEvtSDev->SetAssociateWnd(this);
+				_pEvtSDev->setAssociateWnd(this);
 				if (!_pEvtSDev->isAttached())
 					_pEvtSDev->attach();
 
@@ -236,7 +236,7 @@ ErrorCode CMainWindow::attach() {
 				// We already allocated one
 				// we just need to re-associate the parent
 				// window and reset the timer
-				_pEvtSDev->SetAssociateWnd(this);
+				_pEvtSDev->setAssociateWnd(this);
 				setTimer(EVAL_EXPR, 1000);
 
 				g_pauseTimerFl = false;
@@ -249,7 +249,7 @@ ErrorCode CMainWindow::attach() {
 		// Only do it if we're coming from somewhere other than the zoom
 		if (bForegroundObj == true) {
 			if ((CBagObject *)nullptr == getFGObjects(CBofString(WIELDWLD))) {
-				_pWieldBmp->SetAssociateWnd(this);
+				_pWieldBmp->setAssociateWnd(this);
 				insertFGObjects(_pWieldBmp);
 			}
 		}
@@ -269,8 +269,8 @@ ErrorCode CMainWindow::attach() {
 	onRender(_pBackdrop, nullptr);
 
 	// Perform fade
-	if ((_pBackdrop != nullptr) && GetFadeId()) {
-		int nFade = GetFadeId() & 0x0F;
+	if ((_pBackdrop != nullptr) && getFadeId()) {
+		int nFade = getFadeId() & 0x0F;
 
 		switch (nFade) {
 		case 1:
@@ -336,7 +336,7 @@ void CMainWindow::onKeyHit(uint32 lKey, uint32 lRepCount) {
 	}
 
 	if (lKey == BKEY_SCRL_LOCK) {               // Get a scroll lock hit
-		if (GetFilterId() == 0x08) {            // If we're in zzazzl filter
+		if (getFilterId() == 0x08) {            // If we're in zzazzl filter
 			_bZzazzlVision = !_bZzazzlVision; // toggle the paint zzazzl flag
 			CBagVar *pVar = VAR_MANAGER->GetVariable("ZZAZZLVISION");
 
@@ -400,7 +400,7 @@ void CMainWindow::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 	if (_cLastPos != *pPoint) {
 		_cLastPos = *pPoint;
 
-		if (GetFilterId() & 0x08) {
+		if (getFilterId() & 0x08) {
 			if (_bZzazzlVision)                // If zzazzl paint is toggled on
 				correctZzazzlePoint(pPoint);
 		}
@@ -411,7 +411,7 @@ void CMainWindow::onMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 
 
 void CMainWindow::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
-	if (GetFilterId() & 0x08) {
+	if (getFilterId() & 0x08) {
 		if (_bZzazzlVision)                // If zzazzl paint is toggled on
 			correctZzazzlePoint(xPoint);
 	}
@@ -421,7 +421,7 @@ void CMainWindow::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 
 
 void CMainWindow::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
-	if (GetFilterId() & 0x08) {
+	if (getFilterId() & 0x08) {
 		if (_bZzazzlVision)                // If zzazzl paint is toggled on
 			correctZzazzlePoint(xPoint);
 	}

@@ -47,10 +47,10 @@ ErrorCode CBagEventSDev::evaluateExpressions() {
 		return ERR_NONE;
 
 	ErrorCode errCode = ERR_NONE;
-	int count = GetObjectCount();
+	int count = getObjectCount();
 	for (int i = 0; i < count; ++i) {
 
-		CBagObject *posObj = GetObjectByPos(i);
+		CBagObject *posObj = getObjectByPos(i);
 		if (posObj != nullptr) {
 			// Find the local Expression objects
 			// This code says... only evaluate if we're in an if statement, this must be wrong.
@@ -80,9 +80,9 @@ ErrorCode CBagTurnEventSDev::evaluateExpressions() {
 	}
 
 	ErrorCode errCode = ERR_NONE;
-	int count = GetObjectCount();
+	int count = getObjectCount();
 	for (int i = 0; i < count; ++i) {
-		CBagObject *posObj = GetObjectByPos(i);
+		CBagObject *posObj = getObjectByPos(i);
 		if (posObj != nullptr) {
 			// Find the local Expression objects
 			// This code says... only evaluate if we're in an if statement, this must be wrong.

@@ -53,8 +53,8 @@ ErrorCode CBagWield::attach() {
 	int nObjects = 0;
 	m_nObjects = 0;
 
-	for (int i = 0; i < GetObjectCount(); ++i) {
-		CBagObject *pObj = GetObjectByPos(i);
+	for (int i = 0; i < getObjectCount(); ++i) {
+		CBagObject *pObj = getObjectByPos(i);
 
 		if (pObj->isActive() && (pObj->getType() == BOFSPRITEOBJ || pObj->getType() == BOFBMPOBJ)) {
 			if (nObjects == 0) {
@@ -105,7 +105,7 @@ ErrorCode CBagWield::activateLocalObject(CBagObject *pObj) {
 
 			if (pPrevObj != nullptr) {
 				// Move current object to stash
-				SDEV_MANAGER->MoveObject("INV_WLD", GetName(), pPrevObj->getRefName());
+				SDEV_MANAGER->MoveObject("INV_WLD", getName(), pPrevObj->getRefName());
 
 			} else {
 				reportError(ERR_UNKNOWN, "Wielded Object has been lost");
@@ -117,7 +117,7 @@ ErrorCode CBagWield::activateLocalObject(CBagObject *pObj) {
 
 		// Add to wield
 		if (pObj->getMenuPtr() != nullptr) {
-			CBagMenu::setUniversalObjectList(pObj->getMenuPtr()->GetObjectList());
+			CBagMenu::setUniversalObjectList(pObj->getMenuPtr()->getObjectList());
 		}
 
 		if (pObj->getType() == SPRITEOBJ) {

@@ -120,11 +120,11 @@ SBarSlotWnd::SBarSlotWnd() : CBagStorageDevWnd() {
 	_pSlotSound = nullptr;
 	_pLoseBmp = nullptr;
 
-	SetHelpFilename(BuildSlotDir("SLOT.TXT"));
+	setHelpFilename(BuildSlotDir("SLOT.TXT"));
 
 	// Call this thing a closeup so that time won't go
 	// by when entering the closeup
-	SetCloseup(true);
+	setCloseup(true);
 }
 
 
@@ -136,13 +136,13 @@ void SBarSlotWnd::onPaint(CBofRect *pRect) {
 
 		//Paint the storage device
 		if ((pBackBmp = getBackdrop()) != nullptr) {
-			assert(GetWorkBmp() != nullptr);
+			assert(getWorkBmp() != nullptr);
 
 			// Erase everything from the background
-			GetWorkBmp()->paint(pBackBmp, pRect, pRect);
+			getWorkBmp()->paint(pBackBmp, pRect, pRect);
 
 			// Paint all the objects to the background
-			PaintStorageDevice(nullptr, pBackBmp, pRect);
+			paintStorageDevice(nullptr, pBackBmp, pRect);
 		}
 
 		// Paint all our slotbmp

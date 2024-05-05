@@ -152,7 +152,7 @@ ErrorCode CBagMasterWin::showSystemDialog(bool bSaveBackground) {
 
 	CBagStorageDevWnd *sdev = getCurrentStorageDev();
 
-	if ((sdev == nullptr) || (sdev->GetDeviceType() == SDEV_GAMEWIN) || (sdev->GetDeviceType() == SDEV_ZOOMPDA)) {
+	if ((sdev == nullptr) || (sdev->getDeviceType() == SDEV_GAMEWIN) || (sdev->getDeviceType() == SDEV_ZOOMPDA)) {
 		logInfo("Showing System Screen");
 
 		// Use specified bitmap as this dialog's image
@@ -235,7 +235,7 @@ bool CBagMasterWin::showQuitDialog(CBofWindow *win, bool bSaveBackground) {
 	CBagStorageDevWnd *sdev = getCurrentStorageDev();
 	bool quitFl = false;
 
-	if ((sdev == nullptr) || (sdev->GetDeviceType() == SDEV_GAMEWIN) || (sdev->GetDeviceType() == SDEV_ZOOMPDA)) {
+	if ((sdev == nullptr) || (sdev->getDeviceType() == SDEV_GAMEWIN) || (sdev->getDeviceType() == SDEV_ZOOMPDA)) {
 		logInfo("Showing Quit Screen");
 
 		CBofSound::pauseSounds();
@@ -512,7 +512,7 @@ void CBagMasterWin::saveSDevStack() {
 	if (sdevWin != nullptr) {
 		int i = 0;
 
-		CBofString curStr = sdevWin->GetName();
+		CBofString curStr = sdevWin->getName();
 		if (!curStr.isEmpty()) {
 			Common::strcpy_s(locStack[i], curStr.getBuffer());
 			curStr = sdevWin->getPrevSDev();
@@ -707,21 +707,21 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 
 			// Default DISK ID for this storage device is the same
 			// as the ID specified for this .WLD script file.
-			sdev->SetDiskID(_diskId);
+			sdev->setDiskID(_diskId);
 
 			if (curRect.width() && curRect.height())
 				sdev->setRect(curRect);
 
 			sdev->loadFileFromStream(input, nameStr, false);
 			if (filter) {
-				sdev->SetFilterId((uint16)filter);
+				sdev->setFilterId((uint16)filter);
 
 				// Set the filter on the window.
 				onNewFilter(sdev, typeStr);
 			}
 
 			if (fadeId != 0) {
-				sdev->SetFadeId((uint16)fadeId);
+				sdev->setFadeId((uint16)fadeId);
 			}
 
 			_gameSDevList->addToTail(sdev);
@@ -1069,7 +1069,7 @@ void CBagMasterWin::onKeyHit(uint32 keyCode, uint32 repCount) {
 
 			// Prefilter this guy, could cause something to change in the
 			// pan or the PDA or a closeup.
-			_gameWindow->SetPreFilterPan(true);
+			_gameWindow->setPreFilterPan(true);
 
 			_gameWindow->attachActiveObjects();
 		}
@@ -1168,14 +1168,14 @@ ErrorCode CBagMasterWin::gotoNewWindow(const CBofString *str) {
 			currSDevString = workString.left(n);
 			sdev = _storageDeviceList->GetStorageDevice(currSDevString);
 			if (sdev != nullptr) {
-				sdev->SetPrevSDev(prevSDevString);
+				sdev->setPrevSDev(prevSDevString);
 				prevFl = true;
 			}
 		} else {
 			currSDevString = workString;
 			sdev = _storageDeviceList->GetStorageDevice(currSDevString);
 			if (sdev != nullptr) {
-				sdev->SetPrevSDev(prevSDevString);
+				sdev->setPrevSDev(prevSDevString);
 				prevFl = true;
 			}
 		}
@@ -1192,32 +1192,32 @@ ErrorCode CBagMasterWin::gotoNewWindow(const CBofString *str) {
 			//  If the new storage device is equal to the last windows previous
 			//  lets not go in a circle
 			//  If the current game window did not have a previous win
-			if ((_gameWindow->getPrevSDev().isEmpty()) || (_gameWindow->getPrevSDev() != sdev->GetName())) {
+			if ((_gameWindow->getPrevSDev().isEmpty()) || (_gameWindow->getPrevSDev() != sdev->getName())) {
 				if (!prevFl) {
-					sdev->SetPrevSDev(_gameWindow->GetName());
+					sdev->setPrevSDev(_gameWindow->getName());
 				}
 			}
 		}
 
 		// Don't allow recursion
-		if (!sdev->getPrevSDev().isEmpty() && sdev->getPrevSDev().compareNoCase(sdev->GetName()) == 0) {
-			sdev->SetPrevSDev("");
+		if (!sdev->getPrevSDev().isEmpty() && sdev->getPrevSDev().compareNoCase(sdev->getName()) == 0) {
+			sdev->setPrevSDev("");
 		}
 
 		_gameWindow = (CBagStorageDevWnd *)sdev;
 		setCICStatus(sdev);
 
-		int fadeId = sdev->GetFadeId();
+		int fadeId = sdev->getFadeId();
 
 		if (_fadeIn != 0)
-			sdev->SetFadeId((uint16)_fadeIn);
+			sdev->setFadeId((uint16)_fadeIn);
 
 		// Reset paints
 		g_allowPaintFl = true;
 
 		sdev->attach();
 
-		sdev->SetFadeId((uint16)fadeId);
+		sdev->setFadeId((uint16)fadeId);
 		_fadeIn = 0;
 	}
 
@@ -1231,7 +1231,7 @@ bool CBagMasterWin::showRestartDialog(CBofWindow *win, bool saveBkgFl) {
 		return false;
 
 	CBagStorageDevWnd *sdev = getCurrentStorageDev();
-	if ((sdev == nullptr) || (sdev->GetDeviceType() == SDEV_GAMEWIN) || (sdev->GetDeviceType() == SDEV_ZOOMPDA)) {
+	if ((sdev == nullptr) || (sdev->getDeviceType() == SDEV_GAMEWIN) || (sdev->getDeviceType() == SDEV_ZOOMPDA)) {
 
 		logInfo("Showing Restart Screen");
 
@@ -1372,7 +1372,7 @@ void CBagMasterWin::onUserMessage(uint32 message, uint32 param) {
 			}
 
 			sdev->attach();
-			sdev->SetPreFilterPan(true);
+			sdev->setPreFilterPan(true);
 
 			_gameWindow = (CBagStorageDevWnd *)sdev;
 
@@ -1435,9 +1435,9 @@ void CBagMasterWin::fillSaveBuffer(StBagelSave *saveBuf) {
 						//
 						// If it's a global variable, then we need to store it
 
-						if (!curVar->GetName().isEmpty()) {
-							assert(strlen(curVar->GetName()) < MAX_VAR_NAME);
-							Common::strcpy_s(saveBuf->_stVarList[j]._szName, curVar->GetName());
+						if (!curVar->getName().isEmpty()) {
+							assert(strlen(curVar->getName()) < MAX_VAR_NAME);
+							Common::strcpy_s(saveBuf->_stVarList[j]._szName, curVar->getName());
 						}
 
 						if (!curVar->GetValue().isEmpty()) {
@@ -1472,7 +1472,7 @@ void CBagMasterWin::fillSaveBuffer(StBagelSave *saveBuf) {
 				stringBuffer[0] = 0;
 				CBofString curString(stringBuffer, 256);
 
-				saveBuf->_nLocType = sdevWin->GetDeviceType();
+				saveBuf->_nLocType = sdevWin->getDeviceType();
 
 				// Remember the pan's position
 				if (saveBuf->_nLocType == SDEV_GAMEWIN) {
@@ -1496,7 +1496,7 @@ void CBagMasterWin::fillSaveBuffer(StBagelSave *saveBuf) {
 
 					// Save current storage device location (stack)
 					int i = 0;
-					curString = sdevWin->GetName();
+					curString = sdevWin->getName();
 					while ((i < MAX_CLOSEUP_DEPTH) && !curString.isEmpty()) {
 						sdevWin = (CBagStorageDevWnd *)sdevManager->GetStorageDevice(curString);
 						Common::strcpy_s(saveBuf->_szLocStack[i], curString.getBuffer());
@@ -1524,7 +1524,7 @@ bool CBagMasterWin::showSaveDialog(CBofWindow *win, bool bSaveBkg) {
 
 	bool savedFl = false;
 	CBagStorageDevWnd *sdev = getCurrentStorageDev();
-	if ((sdev == nullptr) || (sdev->GetDeviceType() == SDEV_GAMEWIN) || (sdev->GetDeviceType() == SDEV_ZOOMPDA)) {
+	if ((sdev == nullptr) || (sdev->getDeviceType() == SDEV_GAMEWIN) || (sdev->getDeviceType() == SDEV_ZOOMPDA)) {
 
 		logInfo("Showing Save Screen");
 		CBofSound::pauseSounds();
@@ -1696,7 +1696,7 @@ bool CBagMasterWin::showRestoreDialog(CBofWindow *win, bool bSaveBkg) {
 	bool restoredFl = false;
 	CBagStorageDevWnd *sdev;
 
-	if (g_allowRestoreFl || ((sdev = getCurrentStorageDev()) == nullptr) || (sdev->GetDeviceType() == SDEV_GAMEWIN) || (sdev->GetDeviceType() == SDEV_ZOOMPDA)) {
+	if (g_allowRestoreFl || ((sdev = getCurrentStorageDev()) == nullptr) || (sdev->getDeviceType() == SDEV_GAMEWIN) || (sdev->getDeviceType() == SDEV_ZOOMPDA)) {
 
 		logInfo("Showing Restore Screen");
 
@@ -1940,7 +1940,7 @@ void CBagMasterWin::forcePaintScreen() {
 		if (win != nullptr) {
 			CBagStorageDevWnd *sdev = win->getCurrentStorageDev();
 			if (sdev != nullptr) {
-				sdev->PaintScreen(nullptr);
+				sdev->paintScreen(nullptr);
 			}
 		}
 	}
@@ -2027,9 +2027,9 @@ void CBagMasterWin::restoreActiveMessages(CBagStorageDevManager *sdevManager) {
 			CBagStorageDev *sdev = sdevManager->GetStorageDevice(i);
 			if (sdev != nullptr) {
 
-				int m = sdev->GetObjectCount();
+				int m = sdev->getObjectCount();
 				for (int j = 0; j < m; j++) {
-					CBagObject *curObj = sdev->GetObjectByPos(j);
+					CBagObject *curObj = sdev->getObjectByPos(j);
 					if (curObj != nullptr && curObj->isMsgWaiting()) {
 						sdev->activateLocalObject(curObj);
 					}
@@ -2047,11 +2047,11 @@ void setCICStatus(CBagStorageDev *sdev) {
 
 	// If the new game window is a CIC, then set the global var indicating
 	// that this is the case.  Don't reset when we're zooming the PDA.
-	if (sdev && sdev->GetName() != "BPDAZ_WLD") {
+	if (sdev && sdev->getName() != "BPDAZ_WLD") {
 		workStr = "IN_CIC";
 		CBagVar *cicVar = VAR_MANAGER->GetVariable(workStr);
 		if (cicVar) {
-			workStr = sdev->IsCIC() ? "TRUE" : "FALSE";
+			workStr = sdev->isCIC() ? "TRUE" : "FALSE";
 			cicVar->SetValue(workStr);
 		}
 	}

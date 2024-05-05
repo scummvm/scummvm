@@ -67,15 +67,15 @@ CBagPanWindow::CBagPanWindow() : CBagStorageDevWnd() {
 	_xSDevType = SDEV_GAMEWIN;
 
 	// Make sure the prefilter gets called.
-	SetPreFilterPan(true);
+	setPreFilterPan(true);
 
-	LoadObjects();
+	loadObjects();
 }
 
 CBofRect CBagPanWindow::unSetSlideBitmap() {
 	CBofRect        viewRect;
 
-	SetLActiveObject(nullptr);
+	setLActiveObject(nullptr);
 
 	if (_pSlideBitmap) {
 		viewRect = _pSlideBitmap->getCurrView();
@@ -148,7 +148,7 @@ CBofPalette *CBagPanWindow::setSlideBitmap(const CBofString &xSlideBmp, const CB
 }
 
 CBagPanWindow::~CBagPanWindow() {
-	ReleaseObjects();   // Delete all master sprite objects
+	releaseObjects();   // Delete all master sprite objects
 
 	if (_pSlideBitmap) {
 		delete _pSlideBitmap;
@@ -180,7 +180,7 @@ ErrorCode CBagPanWindow::runModal(CBagObject *pObj) {
 		// we're not really sure what got trashed, also,
 		// the cursor background will contain bogus information,
 		// so make sure that gets overwritten
-		SetPreFilterPan(true);
+		setPreFilterPan(true);
 	}
 
 	return _errCode;
@@ -205,16 +205,16 @@ ErrorCode CBagPanWindow::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 			// If we've been given the go ahead to call prefilter, then
 			// do so but don't do it again unless asked.
-			if (PreFilterPan()) {
-				PreFilter(pBmp, pRect, _pFGObjectList);
-				SetPreFilterPan(false);
+			if (preFilterPan()) {
+				preFilter(pBmp, pRect, _pFGObjectList);
+				setPreFilterPan(false);
 			}
 
 			_pSlideBitmap->paintUncorrected(_pViewPortBitmap, offsetRect);  // Paint and return size
 			srcRect.offsetRect(0, currViewRect.top - offsetRect.top);            //   less the offset from full
 
 			// Paint the objects to the backdrop
-			paintObjects(GetObjectList(), _pViewPortBitmap, offsetRect, nullptr);
+			paintObjects(getObjectList(), _pViewPortBitmap, offsetRect, nullptr);
 
 			dstRect.offsetRect(_xViewPortPos);
 
@@ -227,8 +227,8 @@ ErrorCode CBagPanWindow::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 				_pSlideBitmap->paintWarped(pBmp, dstRect, srcRect, 0, _pViewPortBitmap, offsetRect);
 			}
 
-			if (IsFiltered()) {
-				uint16 nFilterId = GetFilterId();
+			if (isFiltered()) {
+				uint16 nFilterId = getFilterId();
 				(*_pBitmapFilter)(nFilterId, pBmp, pRect);
 			}
 
@@ -242,9 +242,9 @@ ErrorCode CBagPanWindow::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 			// If we've been given the go ahead to call prefilter, then
 			// do so but don't do it again unless asked.
-			if (PreFilterPan()) {
-				PreFilter(pBmp, pRect, _pFGObjectList);
-				SetPreFilterPan(false);
+			if (preFilterPan()) {
+				preFilter(pBmp, pRect, _pFGObjectList);
+				setPreFilterPan(false);
 
 				// Only paint the slide the first time around, if we paint
 				// it in subsequent calls, then we will trash our PDA in this closeup,
@@ -254,15 +254,15 @@ ErrorCode CBagPanWindow::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 			}
 
 			clientArea.offsetRect(-_xViewPortPos.x, -_xViewPortPos.y);
-			paintObjects(GetObjectList(), pBmp, clientArea, nullptr);
+			paintObjects(getObjectList(), pBmp, clientArea, nullptr);
 
-			if (IsFiltered()) {
-				uint16 nFilterId = GetFilterId();
+			if (isFiltered()) {
+				uint16 nFilterId = getFilterId();
 				bool bFiltered = false;
 				bFiltered = (*_pBitmapFilter)(nFilterId, pBmp, pRect);
 
 				if (bFiltered) {
-					SetPreFilterPan(true);
+					setPreFilterPan(true);
 				}
 			}
 
@@ -321,7 +321,7 @@ ErrorCode CBagPanWindow::paintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 						if (!_pSlideBitmap->isPan() && pObj->getType() == CHAROBJ) {
 							// Handle non-modal movies also...
 							if (pCharObj->getNumberOfLoops() == 1) {
-								SetPreFilterPan(true);
+								setPreFilterPan(true);
 							} else if (pObj->isAttached() &&                       // don't care if it's not running...
 								        (pCharObj->isStationary() == false) &&
 								        (pCharObj->getNumberOfLoops() != 0) &&     // Plays multiple or infinite (fly == -1)
@@ -334,8 +334,8 @@ ErrorCode CBagPanWindow::paintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 								// if our prefilter pan is already dirty, then don't mess with dirty
 								// object list.
 
-								bool b = PreFilterPan();
-								SetPreFilterPan(true);
+								bool b = preFilterPan();
+								setPreFilterPan(true);
 
 								if (!b) {
 									setDirtyAllObjects(false);
@@ -359,7 +359,7 @@ ErrorCode CBagPanWindow::paintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 		}  // While a valid object
 
 		if ((nMouseOverObj < 0) && tempVar)
-			NoObjectsUnderMouse();
+			noObjectsUnderMouse();
 	}
 
 	return errCode;
@@ -418,7 +418,7 @@ ErrorCode CBagPanWindow::onCursorUpdate(int nCurrObj) {
 	assert(isValidObject(this));
 	CBagObject *pObj;
 
-	if ((nCurrObj >= 0) && ((pObj = GetObjectByPos(nCurrObj)) != nullptr)) {
+	if ((nCurrObj >= 0) && ((pObj = getObjectByPos(nCurrObj)) != nullptr)) {
 		CBagMasterWin::setActiveCursor(pObj->getOverCursor());
 
 	} else if (CBagWield::getWieldCursor() >= 0) {
@@ -486,7 +486,7 @@ void CBagPanWindow::onMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 
 	CBagStorageDevWnd::onMouseMove(nFlags, &xPoint);
 
-	if (!IsCloseup()) {
+	if (!isCloseup()) {
 		if (_pSlideBitmap != nullptr) {
 			if (_cRightRect.ptInRect(xPoint)) {
 				_pSlideBitmap->setRotateRate(CBofPoint(((xPoint.x - _xMovementRect.right) * (_nPanSpeed + 1)) / 2, 0));
@@ -512,7 +512,7 @@ void CBagPanWindow::onMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 				_pSlideBitmap->setDirection(CBagPanBitmap::kDirNONE);
 			}
 
-			if (GetLActiveObject() && GetLActivity()) {
+			if (getLActiveObject() && getLActivity()) {
 				_pSlideBitmap->setDirection((CBagPanBitmap::Direction)(_pSlideBitmap->getDirection() | CBagPanBitmap::kDirVIEW));
 			}
 		}
@@ -559,7 +559,7 @@ void CBagPanWindow::onMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 		}
 	}
 
-	CBagObject *pObj = GetLActiveObject();
+	CBagObject *pObj = getLActiveObject();
 
 	if (_bDraggingObject) {
 		pObj = _pFGObjectList->getNodeItem(_pFGObjectList->getCount() - 1);
@@ -583,8 +583,8 @@ void CBagPanWindow::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 	}
 	CBagStorageDevWnd::onLButtonDown(nFlags, xPoint);
 
-	MOUSE_ACTIVITY  nMA = GetLActivity();
-	CBagObject *pActObj = GetLActiveObject();
+	MOUSE_ACTIVITY  nMA = getLActivity();
+	CBagObject *pActObj = getLActiveObject();
 
 	if (nMA && pActObj && pActObj->isMovable()) {
 		_bDraggingObject = true;
@@ -594,8 +594,8 @@ void CBagPanWindow::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 }
 
 void CBagPanWindow::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
-	MOUSE_ACTIVITY  nMA = GetLActivity();
-	CBagObject *pActObj = GetLActiveObject();
+	MOUSE_ACTIVITY  nMA = getLActivity();
+	CBagObject *pActObj = getLActiveObject();
 
 	if ((pActObj != nullptr) && (nMA == kMouseDRAGGING) &&
 			(pActObj->getType() == BUTTONOBJ) &&
@@ -603,8 +603,8 @@ void CBagPanWindow::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 		pActObj->onLButtonUp(nFlags, xPoint, this);
 
 		// We are not dragging a slider anymore
-		SetLActivity(kMouseNONE);
-		SetLActiveObject(nullptr);
+		setLActivity(kMouseNONE);
+		setLActiveObject(nullptr);
 
 	} else {
 		bool bMoved = false;
@@ -760,7 +760,7 @@ uint32 CBagPanWindow::rotateTo(CBofPoint xPoint, int nRate) {
 			r.offsetRect(nRateX, nRateY);
 
 			_pSlideBitmap->setCurrView(r);
-			PaintScreen();
+			paintScreen();
 		}
 	}
 
@@ -777,7 +777,7 @@ uint32 CBagPanWindow::benchmark() {
 
 	timerStart();
 	for (int i = 0; i < 50; i++)
-		PaintScreen();
+		paintScreen();
 	uint32 dTime = timerStop();
 
 	activateView();
@@ -870,9 +870,9 @@ const CSize CBagPanWindow::getViewPortSize() {
 void CBagPanWindow::waitForPDA() {
 	// Make sure we have a non-null pda
 	while (_pPDABmp && _pPDABmp->isActivating()) {
-		SetPreFilterPan(true);
+		setPreFilterPan(true);
 		_pPDABmp->setDirty(true);
-		PaintScreen();
+		paintScreen();
 	}
 }
 

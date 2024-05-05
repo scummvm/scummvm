@@ -52,9 +52,9 @@ bool CBagExpression::evaluate(CBagVar *leftHandOper, CBagVar *rightHandOper, OPE
 	bool retVal = false;
 
 	// If the variable is named "RANDOM", generate a random number for its value
-	if (leftHandOper->GetName() == "RANDOM")
+	if (leftHandOper->getName() == "RANDOM")
 		leftHandOper->SetValue(g_engine->getRandomNumber());
-	if (rightHandOper->GetName() == "RANDOM")
+	if (rightHandOper->getName() == "RANDOM")
 		rightHandOper->SetValue(g_engine->getRandomNumber());
 
 	switch (oper) {
@@ -143,7 +143,7 @@ CBagVar *CBagExpression::getVariable(int itemPos) {
 	// If the variable is a reference (OBJ.PROPERTY)
 	if (curVar->IsReference()) {
 		char frontStr[256];
-		Common::strcpy_s(frontStr, curVar->GetName());
+		Common::strcpy_s(frontStr, curVar->getName());
 
 		char *p = strstr(frontStr, "~~");
 		if (p != nullptr) {
@@ -154,7 +154,7 @@ CBagVar *CBagExpression::getVariable(int itemPos) {
 			CBofString stringObject(frontStr, 256);
 			CBofString stringProperty(backStr, 256);
 
-			int newVal = SDEV_MANAGER->GetObjectValue(stringObject, stringProperty);
+			int newVal = SDEV_MANAGER->getObjectValue(stringObject, stringProperty);
 			curVar->SetValue(newVal);
 		}
 	}
@@ -430,7 +430,7 @@ bool CBagExpression::onContains(CBagVar *leftHandOper, CBagVar *rightHandOper, C
 	if (sDev == nullptr)
 		return false;
 
-	CBagObject *curObj = sDev->GetObject(rightHandOper->GetValue());
+	CBagObject *curObj = sDev->getObject(rightHandOper->GetValue());
 	if ((curObj != nullptr) && curObj->isActive())
 		return true;
 
@@ -444,7 +444,7 @@ bool CBagExpression::onHas(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVa
 	if (sDev == nullptr)
 		return false;
 
-	CBagObject *curObj = sDev->GetObjectByType(rightHandOper->GetValue(), true);
+	CBagObject *curObj = sDev->getObjectByType(rightHandOper->GetValue(), true);
 	if (curObj == nullptr)
 		return false;
 
@@ -458,7 +458,7 @@ bool CBagExpression::onStatus(CBagVar *pLHOper, CBagVar * /* rightHandOper, unus
 	if (sDev == nullptr)
 		return false;
 
-	CBagObject *curObj = sDev->GetObject(pLHOper->GetValue());
+	CBagObject *curObj = sDev->getObject(pLHOper->GetValue());
 	if (curObj == nullptr)
 		return false;
 
@@ -585,12 +585,12 @@ ParseCodes CBagExpression::setInfo(CBagIfstream &istr) {
 				// This must be a reference, make a new variable
 				if (tmpStr.find("~~") > 0) {
 					curVar = new CBagVar;
-					curVar->SetName(tmpStr);
+					curVar->setName(tmpStr);
 					curVar->SetReference();
 				} else {
 					// This is an error condition, constants can only be rhopers
 					curVar = new CBagVar;
-					curVar->SetName(tmpStr);
+					curVar->setName(tmpStr);
 					curVar->SetValue(tmpStr);
 					curVar->SetConstant();
 				}
@@ -616,12 +616,12 @@ ParseCodes CBagExpression::setInfo(CBagIfstream &istr) {
 					if (tmpStr.find("~~") > 0) {
 						// This must be a reference, make a new variable
 						curVar = new CBagVar;
-						curVar->SetName(tmpStr);
+						curVar->setName(tmpStr);
 						curVar->SetReference();
 					} else {
 						// This must be a constant, make a new variable
 						curVar = new CBagVar;
-						curVar->SetName(tmpStr);
+						curVar->setName(tmpStr);
 						curVar->SetValue(tmpStr);
 						curVar->SetConstant();
 					}

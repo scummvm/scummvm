@@ -125,18 +125,18 @@ CBagStorageDev::CBagStorageDev() {
 	_pBitmapFilter = nullptr;
 
 	setCloseOnOpen(false);
-	SetExitOnEdge(0);
-	SetFilterId(0);
-	SetFadeId(0);
+	setExitOnEdge(0);
+	setFilterId(0);
+	setFadeId(0);
 
 	// Default is this thing is not a customized sdev.
-	SetCustom(false);
+	setCustom(false);
 
 	// Make sure all objects that are prefiltered are dirty
 	setDirtyAllObjects(true);
 
 	// Not sure what the hell is going on here...
-	SetLActivity(kMouseNONE);
+	setLActivity(kMouseNONE);
 
 	SDEV_MANAGER->RegisterStorageDev(this);
 }
@@ -145,7 +145,7 @@ CBagStorageDev::~CBagStorageDev() {
 	if (!_bForiegnList) {
 
 		if (_pObjectList != nullptr) {
-			ReleaseObjects();                            // Delete all master sprite objects
+			releaseObjects();                            // Delete all master sprite objects
 			delete _pObjectList;
 			_pObjectList = nullptr;
 		}
@@ -176,11 +176,11 @@ void CBagStorageDev::setPosition(const CBofPoint &pos) {
 }
 
 
-bool CBagStorageDev::Contains(CBagObject *pObj, bool bActive) {
-	int nCount = GetObjectCount();
+bool CBagStorageDev::contains(CBagObject *pObj, bool bActive) {
+	int nCount = getObjectCount();
 	if (nCount != 0) {
 		for (int i = 0; i < nCount; ++i) {
-			if (pObj == GetObjectByPos(i)) {
+			if (pObj == getObjectByPos(i)) {
 				if (bActive && (pObj->isActive()))
 					return true;
 			}
@@ -190,7 +190,7 @@ bool CBagStorageDev::Contains(CBagObject *pObj, bool bActive) {
 }
 
 
-ErrorCode CBagStorageDev::AddObject(CBagObject *pObj, int /*nPos*/) {
+ErrorCode CBagStorageDev::addObject(CBagObject *pObj, int /*nPos*/) {
 	ErrorCode errCode = ERR_NONE;
 
 	// can't use a null pointer
@@ -206,9 +206,9 @@ ErrorCode CBagStorageDev::removeObject(CBagObject *pRObj) {
 	ErrorCode errCode = ERR_NONE;
 
 	if (!_bForiegnList) {
-		int nCount = GetObjectCount();
+		int nCount = getObjectCount();
 		for (int i = 0; i < nCount; ++i) {
-			if (pRObj == GetObjectByPos(i)) {
+			if (pRObj == getObjectByPos(i)) {
 				_pObjectList->remove(i);
 				return errCode;
 			}
@@ -245,7 +245,7 @@ ErrorCode CBagStorageDev::activateLocalObject(const CBofString &sName) {
 	// can't use a empty string
 	assert(!sName.isEmpty());
 
-	return activateLocalObject(GetObject(sName));
+	return activateLocalObject(getObject(sName));
 }
 
 ErrorCode CBagStorageDev::deactivateLocalObject(CBagObject *pObj) {
@@ -269,7 +269,7 @@ ErrorCode CBagStorageDev::deactivateLocalObject(const CBofString &sName) {
 	// Can't use a empty string
 	assert(!sName.isEmpty());
 
-	return deactivateLocalObject(GetObject(sName));
+	return deactivateLocalObject(getObject(sName));
 }
 
 
@@ -299,7 +299,7 @@ CBofPoint CBagStorageDev::arrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 			nPageNum++;
 		}
 
-		SetNumFloatPages(nPageNum);
+		setNumFloatPages(nPageNum);
 
 		NextPos.x += pObj->getRect().width();
 	}
@@ -314,15 +314,15 @@ ErrorCode CBagStorageDev::attachActiveObjects() {
 
 	CBagLog::initArrangePages();
 
-	int nCount = GetObjectCount();
+	int nCount = getObjectCount();
 	if (nCount != 0) {
-		SetContainsModal(false);
+		setContainsModal(false);
 
 		for (int i = 0; i < nCount; ++i) {
 			if (g_engine->shouldQuit())
 				return ERR_NONE;
 
-			CBagObject *pObj = GetObjectByPos(i);
+			CBagObject *pObj = getObjectByPos(i);
 			if (pObj != nullptr) {
 				if (pObj->isLocal() && (!pObj->getExpression() || pObj->getExpression()->evaluate(pObj->isNegative()))) {
 					if (!pObj->isAttached()) {
@@ -343,7 +343,7 @@ ErrorCode CBagStorageDev::attachActiveObjects() {
 						}
 					}
 					if (pObj->isModal())
-						SetContainsModal(true);
+						setContainsModal(true);
 					if (pObj->isFloating()) {
 						nArrangePos = arrangeFloater(nArrangePos, pObj);
 					}
@@ -364,13 +364,13 @@ ErrorCode CBagStorageDev::attachActiveObjects() {
 	return errCode;
 }
 
-ErrorCode CBagStorageDev::DetachActiveObjects() {
+ErrorCode CBagStorageDev::detachActiveObjects() {
 	ErrorCode  errCode = ERR_NONE;
-	int nCount = GetObjectCount();
+	int nCount = getObjectCount();
 
 	if (nCount != 0) {
 		for (int i = 0; i < nCount; ++i) {
-			CBagObject *pObj = GetObjectByPos(i);
+			CBagObject *pObj = getObjectByPos(i);
 			if (pObj != nullptr) {
 				if (pObj->isAttached()) {
 					// If this object is not removed from memory, then
@@ -385,14 +385,14 @@ ErrorCode CBagStorageDev::DetachActiveObjects() {
 	return errCode;
 }
 
-ErrorCode CBagStorageDev::LoadObjects() {
+ErrorCode CBagStorageDev::loadObjects() {
 	ErrorCode errCode = ERR_NONE;
 	return errCode;
 }
 
-ErrorCode CBagStorageDev::ReleaseObjects() {
+ErrorCode CBagStorageDev::releaseObjects() {
 	ErrorCode errCode = ERR_NONE;
-	int nCount = GetObjectCount();
+	int nCount = getObjectCount();
 
 	if (!_bForiegnList) {
 		if (nCount) {
@@ -408,7 +408,7 @@ ErrorCode CBagStorageDev::ReleaseObjects() {
 }
 
 
-void CBagStorageDev::SetObjectList(CBofList<CBagObject *> *pOList, CBofList<CBagExpression *> *pEList) {
+void CBagStorageDev::setObjectList(CBofList<CBagObject *> *pOList, CBofList<CBagExpression *> *pEList) {
 	delete _pObjectList;
 
 	_bForiegnList    = true;
@@ -417,9 +417,9 @@ void CBagStorageDev::SetObjectList(CBofList<CBagObject *> *pOList, CBofList<CBag
 }
 
 
-ErrorCode CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *pBmp, CBofRect * /*pRect*/) {
+ErrorCode CBagStorageDev::paintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *pBmp, CBofRect * /*pRect*/) {
 	bool        bMouseOverObj = false;
-	int         nCount        = GetObjectCount();
+	int         nCount        = getObjectCount();
 
 	if (nCount) {
 		CBofWindow *pWnd1 = CBagel::getBagApp()->getMasterWnd();
@@ -427,7 +427,7 @@ ErrorCode CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *
 			pWnd1->screenToClient(&*_xCursorLocation);
 
 		for (int i = 0; i < nCount; ++i) {
-			CBagObject *pObj = GetObjectByPos(i);
+			CBagObject *pObj = getObjectByPos(i);
 			if (pObj->isAttached()) {
 				CBofRect xBmpRect = pObj->getRect();
 				CBofPoint pt = xBmpRect.topLeft();
@@ -453,25 +453,25 @@ ErrorCode CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *
 	}   // if there is any valid objects
 
 	if (!bMouseOverObj)
-		NoObjectsUnderMouse();
+		noObjectsUnderMouse();
 
 	return ERR_NONE;
 }
 
-ErrorCode CBagStorageDev::OnLActiveObject(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * /*vpInfo*/) {
+ErrorCode CBagStorageDev::onLActiveObject(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * /*vpInfo*/) {
 	return ERR_NONE;
 }
 
 
-ErrorCode CBagStorageDev::NoObjectsUnderMouse() {
+ErrorCode CBagStorageDev::noObjectsUnderMouse() {
 	return ERR_NONE;
 }
 
 void CBagStorageDev::onMouseMove(uint32 nFlags, CBofPoint *xPoint, void *vpInfo) {
 	*_xCursorLocation = *xPoint;
 
-	if (GetLActiveObject() && GetLActivity()) {
-		GetLActiveObject()->onMouseMove(nFlags, *xPoint, vpInfo);
+	if (getLActiveObject() && getLActivity()) {
+		getLActiveObject()->onMouseMove(nFlags, *xPoint, vpInfo);
 	}
 }
 
@@ -489,15 +489,15 @@ void CBagStorageDev::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *vpInf
 	*_xCursorLocation = *xPoint;
 	CBofPoint xCursorLocation = devPtToViewPort(*xPoint);
 
-	SetLActivity(kMouseNONE);
+	setLActivity(kMouseNONE);
 
-	CBagObject *pObj = GetObject(xCursorLocation, true);
+	CBagObject *pObj = getObject(xCursorLocation, true);
 	if ((pObj != nullptr) && (pObj->isActive())) {
 		pObj->onLButtonDown(nFlags, xPoint, vpInfo);
-		SetLActivity(kMouseDRAGGING);
+		setLActivity(kMouseDRAGGING);
 	}
 
-	SetLActiveObject(pObj);
+	setLActiveObject(pObj);
 }
 
 // TODO: This is a global, move it to the main class
@@ -512,13 +512,13 @@ void CBagStorageDev::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 		return;
 	}
 
-	sCurrSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->GetName();
+	sCurrSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->getName();
 
 	*_xCursorLocation = *xPoint;
 	CBofPoint xCursorLocation = devPtToViewPort(*xPoint);
 
 	bool bUseWield = true;
-	CBagObject *pObj = GetObject(xCursorLocation, true);
+	CBagObject *pObj = getObject(xCursorLocation, true);
 	if (pObj != nullptr) {
 		bUseWield = false;
 
@@ -530,7 +530,7 @@ void CBagStorageDev::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 				g_noMenuFl = false;
 				bUseWield = true;
 			}
-			SetLActiveObject(pObj);
+			setLActiveObject(pObj);
 		}
 		_bHandledUpEvent = true;
 	}
@@ -545,7 +545,7 @@ void CBagStorageDev::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 					pObj = pWin->_pWieldBmp->getCurrObj();
 					if ((pObj != nullptr) && pObj->isActive()) {
 						pObj->onLButtonUp(nFlags, xPoint, vpInfo);
-						SetLActiveObject(pObj);
+						setLActiveObject(pObj);
 						_bHandledUpEvent = true;
 					}
 				}
@@ -553,9 +553,9 @@ void CBagStorageDev::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 		}
 	}
 
-	SetLActivity(kMouseNONE);
+	setLActivity(kMouseNONE);
 
-	if (g_bAAOk && (sCurrSDev == (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->GetName()))) {
+	if (g_bAAOk && (sCurrSDev == (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev()->getName()))) {
 		attachActiveObjects();
 	}
 
@@ -603,9 +603,9 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 	CBagExpression      *pActiveExpr = nullptr;
 	CBofList<bool>      bElseExprList;
 
-	ReleaseObjects();
+	releaseObjects();
 
-	SetName(sWldName);
+	setName(sWldName);
 
 	fpInput.eatWhite();
 	int ch = fpInput.getCh();
@@ -689,7 +689,7 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 				getAlphaNumFromStream(fpInput, str);
 				fpInput.eatWhite();
 
-				SetHelpFilename(str);
+				setHelpFilename(str);
 
 				if (fpInput.peek() == ';') {
 					fpInput.getCh();
@@ -746,45 +746,45 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 		} else if (!sWorkStr.find("RPO")) {
 			// Allow residue printing objects
 			getStringFromStream(fpInput, sWorkStr, "=", true);
-			pObj = OnNewRPObject(sWorkStr);
+			pObj = onNewRPObject(sWorkStr);
 
 		} else if (!sWorkStr.find("EDO")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
-			pObj = OnNewEDObject(sWorkStr);
+			pObj = onNewEDObject(sWorkStr);
 
 		} else if (!sWorkStr.find("DOS")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
-			pObj = OnNewDosObject(sWorkStr);
+			pObj = onNewDosObject(sWorkStr);
 		} else if (!sWorkStr.find("SND")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
-			pObj = OnnewSoundObject(sWorkStr);
+			pObj = onNewSoundObject(sWorkStr);
 		} else if (!sWorkStr.find("BUT")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = onNewButtonObject(sWorkStr);
 		} else if (!sWorkStr.find("CHR")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
-			pObj = OnNewCharacterObject(sWorkStr);
+			pObj = onNewCharacterObject(sWorkStr);
 		} else if (!sWorkStr.find("TNG")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
-			pObj = OnNewThingObject(sWorkStr);
+			pObj = onNewThingObject(sWorkStr);
 		} else if (!sWorkStr.find("ARE")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
-			pObj = OnNewAreaObject(sWorkStr);
+			pObj = onNewAreaObject(sWorkStr);
 		} else if (!sWorkStr.find("VAR")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
-			pObj = OnNewVariableObject(sWorkStr);
+			pObj = onNewVariableObject(sWorkStr);
 		} else if (!sWorkStr.find("TXT")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
-			pObj = OnNewTextObject(sWorkStr);
+			pObj = onNewTextObject(sWorkStr);
 		} else if (!sWorkStr.find("MOVIE")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
-			pObj = OnNewMovieObject(sWorkStr);
+			pObj = onNewMovieObject(sWorkStr);
 		} else if (!sWorkStr.find("COMMAND")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
-			pObj = OnNewCommandObject(sWorkStr);
+			pObj = onNewCommandObject(sWorkStr);
 		} else if (!sWorkStr.find("EXPR")) {
 			getStringFromStream(fpInput, sWorkStr, "=", true);
-			pObj = OnNewExpressionObject(sWorkStr);
+			pObj = onNewExpressionObject(sWorkStr);
 		} else if (!sWorkStr.find("REM") || !sWorkStr.find("//")) {
 			char s[256];
 			fpInput.getCh(s, 256);
@@ -817,7 +817,7 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 			pObj->setInfo(fpInput);
 			pObj->setExpression(pActiveExpr);
 
-			AddObject(pObj);
+			addObject(pObj);
 		}
 
 		fpInput.eatWhite();
@@ -845,7 +845,7 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 }
 
 
-int CBagStorageDev::GetObjectCount() {
+int CBagStorageDev::getObjectCount() {
 	if (_pObjectList != nullptr) {
 		return _pObjectList->getCount();
 
@@ -855,7 +855,7 @@ int CBagStorageDev::GetObjectCount() {
 }
 
 
-CBagObject *CBagStorageDev::GetObjectByPos(int nIndex) {
+CBagObject *CBagStorageDev::getObjectByPos(int nIndex) {
 	assert(_pObjectList != nullptr);
 	assert((nIndex >= 0) && (nIndex < _pObjectList->getCount()));
 
@@ -863,13 +863,13 @@ CBagObject *CBagStorageDev::GetObjectByPos(int nIndex) {
 }
 
 
-CBagObject *CBagStorageDev::GetObject(int nRefId, bool bActiveOnly) {
+CBagObject *CBagStorageDev::getObject(int nRefId, bool bActiveOnly) {
 	assert(_pObjectList != nullptr);
 
 	int nListLen = _pObjectList->getCount();
 
 	for (int i = 0; i < nListLen; ++i) {
-		CBagObject *pObj = GetObjectByPos(i);
+		CBagObject *pObj = getObjectByPos(i);
 
 		if ((pObj->getRefId() == nRefId) && (!bActiveOnly || (pObj->isActive() && pObj->isAttached())))
 			return pObj;
@@ -879,7 +879,7 @@ CBagObject *CBagStorageDev::GetObject(int nRefId, bool bActiveOnly) {
 }
 
 
-CBagObject *CBagStorageDev::GetObject(const CBofString &sName, bool bActiveOnly) {
+CBagObject *CBagStorageDev::getObject(const CBofString &sName, bool bActiveOnly) {
 	assert(_pObjectList != nullptr);
 
 	CBagObject *pObjFound = nullptr;
@@ -901,13 +901,13 @@ CBagObject *CBagStorageDev::GetObject(const CBofString &sName, bool bActiveOnly)
 }
 
 
-CBagObject *CBagStorageDev::GetObjectByType(const CBofString &sType, bool bActiveOnly) {
+CBagObject *CBagStorageDev::getObjectByType(const CBofString &sType, bool bActiveOnly) {
 	assert(_pObjectList != nullptr);
 
 	int nListLen = _pObjectList->getCount();
 
 	for (int i = 0; i < nListLen; ++i) {
-		CBagObject *pObj = GetObjectByPos(i);
+		CBagObject *pObj = getObjectByPos(i);
 
 		if (bActiveOnly) {
 			if (pObj->isActive() && !getStringTypeOfObject(pObj->getType()).find(sType))
@@ -920,13 +920,13 @@ CBagObject *CBagStorageDev::GetObjectByType(const CBofString &sType, bool bActiv
 }
 
 
-CBagObject *CBagStorageDev::GetObject(const CBofPoint &xPoint, bool bActiveOnly) {
-	int nCount = GetObjectCount();
+CBagObject *CBagStorageDev::getObject(const CBofPoint &xPoint, bool bActiveOnly) {
+	int nCount = getObjectCount();
 
 	// Resolve in reverse order since the last painted is on top
 	if (nCount != 0) {
 		for (int i = nCount - 1; i >= 0; --i) {
-			CBagObject *pObj = GetObjectByPos(i);
+			CBagObject *pObj = getObjectByPos(i);
 
 			if (pObj->isInside(xPoint) && (!bActiveOnly || (pObj->isActive() && pObj->isAttached())))
 				return pObj;
@@ -994,10 +994,10 @@ ErrorCode CBagStorageDev::detach() {
 	// Notify the main window that we need to redraw the background filter.
 	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev());
 	if (pMainWin != nullptr) {
-		((CBagPanWindow *)pMainWin)->SetPreFilterPan(true);
+		((CBagPanWindow *)pMainWin)->setPreFilterPan(true);
 	}
 
-	return DetachActiveObjects();
+	return detachActiveObjects();
 }
 
 
@@ -1011,7 +1011,7 @@ CBagObject *CBagStorageDev::onNewSpriteObject(const CBofString &) {
 }
 
 
-CBagObject *CBagStorageDev::OnNewBitmapObject(const CBofString &) {
+CBagObject *CBagStorageDev::onNewBitmapObject(const CBofString &) {
 	return new CBagBmpObject();
 }
 
@@ -1020,23 +1020,23 @@ CBagObject *CBagStorageDev::onNewLinkObject(const CBofString &) {
 	return new CBagLinkObject();
 }
 
-CBagObject *CBagStorageDev::OnNewRPObject(const CBofString &) {
+CBagObject *CBagStorageDev::onNewRPObject(const CBofString &) {
 	return new CBagRPObject();
 }
 
-CBagObject *CBagStorageDev::OnNewEDObject(const CBofString &) {
+CBagObject *CBagStorageDev::onNewEDObject(const CBofString &) {
 	return new CBagEnergyDetectorObject();
 }
 
-CBagObject *CBagStorageDev::OnNewDosObject(const CBofString &) {
+CBagObject *CBagStorageDev::onNewDosObject(const CBofString &) {
 	return new CBagDossierObject();
 }
 
-CBagObject *CBagStorageDev::OnNewTextObject(const CBofString &) {
+CBagObject *CBagStorageDev::onNewTextObject(const CBofString &) {
 	return new CBagTextObject();
 }
 
-CBagObject *CBagStorageDev::OnnewSoundObject(const CBofString &) {
+CBagObject *CBagStorageDev::onNewSoundObject(const CBofString &) {
 	return new CBagSoundObject();
 }
 
@@ -1046,34 +1046,34 @@ CBagObject *CBagStorageDev::onNewButtonObject(const CBofString &) {
 }
 
 
-CBagObject *CBagStorageDev::OnNewCharacterObject(const CBofString &) {
+CBagObject *CBagStorageDev::onNewCharacterObject(const CBofString &) {
 	return new CBagCharacterObject();
 }
 
-CBagObject *CBagStorageDev::OnNewThingObject(const CBofString &) {
+CBagObject *CBagStorageDev::onNewThingObject(const CBofString &) {
 	return new CBagThingObject();
 }
 
-CBagObject *CBagStorageDev::OnNewMovieObject(const CBofString &) {
+CBagObject *CBagStorageDev::onNewMovieObject(const CBofString &) {
 	return new CBagMovieObject();
 }
 
-CBagObject *CBagStorageDev::OnNewCommandObject(const CBofString &) {
+CBagObject *CBagStorageDev::onNewCommandObject(const CBofString &) {
 	return new CBagCommandObject();
 }
 
 
-CBagObject *CBagStorageDev::OnNewAreaObject(const CBofString &) {
+CBagObject *CBagStorageDev::onNewAreaObject(const CBofString &) {
 	return new CBagAreaObject();
 }
 
 
-CBagObject *CBagStorageDev::OnNewExpressionObject(const CBofString &) {
+CBagObject *CBagStorageDev::onNewExpressionObject(const CBofString &) {
 	return new CBagExpressionObject();
 }
 
 
-CBagObject *CBagStorageDev::OnNewVariableObject(const CBofString &) {
+CBagObject *CBagStorageDev::onNewVariableObject(const CBofString &) {
 	return new CBagVariableObject();
 }
 
@@ -1089,22 +1089,22 @@ CBagObject *CBagStorageDev::onNewUserObject(const CBofString &str) {
 	return nullptr;
 }
 
-void CBagStorageDev::OnSetFilter(bool (*filterFunction)(const uint16 nFilterid, CBofBitmap *, CBofRect *)) {
+void CBagStorageDev::onSetFilter(bool (*filterFunction)(const uint16 nFilterid, CBofBitmap *, CBofRect *)) {
 	_pBitmapFilter = filterFunction;
 }
 
-FilterFunction CBagStorageDev::GetFilter() {
+FilterFunction CBagStorageDev::getFilter() {
 	return _pBitmapFilter;
 }
 
 
-ErrorCode CBagStorageDev::PreFilter(CBofBitmap *pBmp, CBofRect *pRect, CBofList<CBagObject *> *pList) {
+ErrorCode CBagStorageDev::preFilter(CBofBitmap *pBmp, CBofRect *pRect, CBofList<CBagObject *> *pList) {
 	if (pBmp != nullptr) {
 
 		// If we are not dirtying all the objects, then only fill up the viewport.
 		CBofRect viewPortRect(80, 10, 559, 369);
 		CBofRect *fillRect;
-		if (GetDirtyAllObjects()) {
+		if (getDirtyAllObjects()) {
 			fillRect = pRect;
 		} else {
 			fillRect = &viewPortRect;
@@ -1114,11 +1114,11 @@ ErrorCode CBagStorageDev::PreFilter(CBofBitmap *pBmp, CBofRect *pRect, CBofList<
 	}
 
 	// Let pda know that we've been prefiltered
-	SetPreFiltered(true);
+	setPreFiltered(true);
 
-	if (GetDirtyAllObjects()) {
-		MakeListDirty(_pObjectList);
-		MakeListDirty(pList);
+	if (getDirtyAllObjects()) {
+		makeListDirty(_pObjectList);
+		makeListDirty(pList);
 	} else {
 		setDirtyAllObjects(true);
 	}
@@ -1127,7 +1127,7 @@ ErrorCode CBagStorageDev::PreFilter(CBofBitmap *pBmp, CBofRect *pRect, CBofList<
 }
 
 
-void CBagStorageDev::MakeListDirty(CBofList<CBagObject *> *pList) {
+void CBagStorageDev::makeListDirty(CBofList<CBagObject *> *pList) {
 	if (pList) {
 		int nCount = pList->getCount();
 		if (nCount != 0) {
@@ -1163,7 +1163,7 @@ CBagStorageDevWnd::CBagStorageDevWnd() : CBofWindow() {
 CBagStorageDevWnd::~CBagStorageDevWnd() {
 	assert(isValidObject(this));
 
-	KillWorkBmp();
+	killWorkBmp();
 }
 
 
@@ -1171,18 +1171,18 @@ ErrorCode CBagStorageDevWnd::attach() {
 	char szLocalBuff[256];
 	CBofString s(szLocalBuff, 256);
 
-	s = GetName();
+	s = getName();
 
-	if (!GetBackgroundName().isEmpty()) {
+	if (!getBackgroundName().isEmpty()) {
 		// This should actually be moved to sbarapp, but the load file will then
 		// need to be removed from the constructor.
 		//CBofApp::getApp()->setMainWindow(this);
 
 		// Associate this window with callbacks so that any public member function can
 		// be accessed by objects inserted into this class.
-		SetAssociateWnd(this);
+		setAssociateWnd(this);
 
-		CBofBitmap *pBmp  = new CBofBitmap(GetBackgroundName());
+		CBofBitmap *pBmp  = new CBofBitmap(getBackgroundName());
 
 		if ((pBmp == nullptr) || (pBmp->height() <= 0) || (pBmp->width() <= 0)) {
 			reportError(ERR_FOPEN, "BarComputer Background Opened Failed");
@@ -1213,7 +1213,7 @@ ErrorCode CBagStorageDevWnd::attach() {
 		reportError(ERR_UNKNOWN, "No background for this storage device window");
 	}
 
-	SetPreFilterPan(true);
+	setPreFilterPan(true);
 	g_pLastWindow = this;
 
 	CBagStorageDev *pSDev = SDEV_MANAGER->GetStorageDevice("EVT_WLD");
@@ -1222,7 +1222,7 @@ ErrorCode CBagStorageDevWnd::attach() {
 		// Have we allocated one yet ?
 		if (_pEvtSDev == nullptr) {
 			_pEvtSDev = (CBagEventSDev *)pSDev;
-			_pEvtSDev->SetAssociateWnd(this);
+			_pEvtSDev->setAssociateWnd(this);
 			if (!_pEvtSDev->isAttached())
 				_pEvtSDev->attach();
 
@@ -1232,7 +1232,7 @@ ErrorCode CBagStorageDevWnd::attach() {
 		} else {
 			// We already allocated one
 			// We just need to re-associate the parent window and reset the timer
-			_pEvtSDev->SetAssociateWnd(this);
+			_pEvtSDev->setAssociateWnd(this);
 
 			setTimer(EVAL_EXPR, 1000);
 			g_pauseTimerFl = false;
@@ -1278,7 +1278,7 @@ void CBagStorageDevWnd::onTimer(uint32 nEventID) {
 
 
 ErrorCode CBagStorageDevWnd::detach() {
-	DetachActiveObjects();
+	detachActiveObjects();
 
 	CBofApp::getApp()->setPalette(nullptr);
 
@@ -1303,18 +1303,18 @@ ErrorCode CBagStorageDevWnd::close() {
 ErrorCode CBagStorageDevWnd::setBackground(CBofBitmap *pBmp) {
 	if (pBmp) {
 		setBackdrop(pBmp);
-		SetWorkBmp();
+		setWorkBmp();
 	} else {
 		killBackdrop();
-		KillWorkBmp();
+		killWorkBmp();
 	}
 	return _errCode;
 }
 
 
-ErrorCode CBagStorageDevWnd::SetWorkBmp() {
+ErrorCode CBagStorageDevWnd::setWorkBmp() {
 	// Delete any previous work area
-	KillWorkBmp();
+	killWorkBmp();
 
 	CBofBitmap *pBmp = getBackground();
 	if (pBmp != nullptr) {
@@ -1326,7 +1326,7 @@ ErrorCode CBagStorageDevWnd::SetWorkBmp() {
 }
 
 
-ErrorCode CBagStorageDevWnd::KillWorkBmp() {
+ErrorCode CBagStorageDevWnd::killWorkBmp() {
 	if (_pWorkBmp != nullptr) {
 		delete _pWorkBmp;
 		_pWorkBmp = nullptr;
@@ -1338,18 +1338,18 @@ ErrorCode CBagStorageDevWnd::KillWorkBmp() {
 void CBagStorageDevWnd::onPaint(CBofRect *) {
 	assert(isValidObject(this));
 
-	PaintScreen();
+	paintScreen();
 }
 
 void CBagStorageDevWnd::onMainLoop() {
 	assert(isValidObject(this));
 
-	PaintScreen();
+	paintScreen();
 
 	g_pLastWindow = this;
 }
 
-ErrorCode CBagStorageDevWnd::PaintScreen(CBofRect *pRect) {
+ErrorCode CBagStorageDevWnd::paintScreen(CBofRect *pRect) {
 	assert(isValidObject(this));
 
 	if (_pBackdrop != nullptr) {
@@ -1373,20 +1373,20 @@ ErrorCode CBagStorageDevWnd::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	assert(isValidObject(this));
 	assert(pBmp != nullptr);
 
-	if (PreFilterPan()) {
-		PreFilter(pBmp, pRect, nullptr);
-		SetPreFilterPan(false);
+	if (preFilterPan()) {
+		preFilter(pBmp, pRect, nullptr);
+		setPreFilterPan(false);
 
 		if (_pWorkBmp != nullptr) {
 			_pWorkBmp->paint(pBmp, pRect, pRect);
 		}
 	}
 
-	PaintStorageDevice(this, pBmp, pRect);
+	paintStorageDevice(this, pBmp, pRect);
 
 
-	if (IsFiltered()) {
-		uint16 nFilterId = GetFilterId();
+	if (isFiltered()) {
+		uint16 nFilterId = getFilterId();
 		(*_pBitmapFilter)(nFilterId, pBmp, pRect);
 	}
 
@@ -1405,7 +1405,7 @@ ErrorCode CBagStorageDevWnd::runModal(CBagObject *pObj) {
 		if (pBmp != nullptr) {
 			while (!g_engine->shouldQuit() && !pObj->isModalDone()) {
 				// Make sure we redraw each and every frame!
-				SetPreFilterPan(true);
+				setPreFilterPan(true);
 				onRender(pBmp, nullptr);
 				if (g_allowPaintFl) {
 					pBmp->paint(this, 0, 0);
@@ -1475,7 +1475,7 @@ void CBagStorageDevWnd::onClose() {
 }
 
 void CBagStorageDevWnd::onMouseMove(uint32 n, CBofPoint *pPoint, void *) {
-	CBagStorageDev::onMouseMove(n, pPoint, GetAssociateWnd());
+	CBagStorageDev::onMouseMove(n, pPoint, getAssociateWnd());
 
 	if (CBagCursor::isSystemCursorVisible())
 		return;
@@ -1489,7 +1489,7 @@ void CBagStorageDevWnd::onMouseMove(uint32 n, CBofPoint *pPoint, void *) {
 		return;
 	}
 
-	if (GetExitOnEdge() && (pPoint->x < GetExitOnEdge()) && (pPoint->y < 360 + 10) && !(getPrevSDev().isEmpty())) {
+	if (getExitOnEdge() && (pPoint->x < getExitOnEdge()) && (pPoint->y < 360 + 10) && !(getPrevSDev().isEmpty())) {
 		CBagMasterWin::setActiveCursor(10);
 
 	} else {
@@ -1501,7 +1501,7 @@ void CBagStorageDevWnd::onMouseMove(uint32 n, CBofPoint *pPoint, void *) {
 		}
 
 		// Run thru background object list and find if the cursor is over an object
-		CBofList<CBagObject *> *pList = GetObjectList();
+		CBofList<CBagObject *> *pList = getObjectList();
 		if (pList != nullptr) {
 			CBofPoint cCursorLocation = devPtToViewPort(*_xCursorLocation);
 
@@ -1534,7 +1534,7 @@ void CBagStorageDevWnd::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) 
 		return;
 	}
 
-	CBagStorageDev::onLButtonDown(nFlags, xPoint, GetAssociateWnd());
+	CBagStorageDev::onLButtonDown(nFlags, xPoint, getAssociateWnd());
 	CBofWindow::onLButtonDown(nFlags, xPoint);
 }
 
@@ -1546,14 +1546,14 @@ void CBagStorageDevWnd::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	}
 
 	// React to a mouse up, it will probably involve drawing a new window...
-	SetPreFilterPan(true);
+	setPreFilterPan(true);
 
-	if (GetExitOnEdge() && xPoint->x < GetExitOnEdge() && !(getPrevSDev().isEmpty())) {
+	if (getExitOnEdge() && xPoint->x < getExitOnEdge() && !(getPrevSDev().isEmpty())) {
 		// Set the initial location as the last full panoramas position
 		close();
 
 	} else {
-		CBagStorageDev::onLButtonUp(nFlags, xPoint, GetAssociateWnd());
+		CBagStorageDev::onLButtonUp(nFlags, xPoint, getAssociateWnd());
 		CBofWindow::onLButtonUp(nFlags, xPoint);
 	}
 }
@@ -1580,7 +1580,7 @@ ErrorCode CBagStorageDevDlg::attach() {
 
 	char szLocalBuff[256];
 	CBofString s(szLocalBuff, 256);
-	s = GetName();
+	s = getName();
 
 	CBofBitmap *pBmp = getBackground();
 	CBofRect r;
@@ -1594,7 +1594,7 @@ ErrorCode CBagStorageDevDlg::attach() {
 		create(s.getBuffer(), nullptr, CBagel::getBagApp()->getMasterWnd());
 	}
 
-	SetPreFilterPan(true);
+	setPreFilterPan(true);
 
 	CBofDialog::doModal();
 
@@ -1617,10 +1617,10 @@ ErrorCode CBagStorageDevDlg::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	assert(isValidObject(this));
 	assert(pBmp != nullptr);
 
-	PaintStorageDevice(this, pBmp, pRect);
+	paintStorageDevice(this, pBmp, pRect);
 
-	if (IsFiltered()) {
-		uint16 nFilterId = GetFilterId();
+	if (isFiltered()) {
+		uint16 nFilterId = getFilterId();
 		(*_pBitmapFilter)(nFilterId, pBmp, pRect);
 	}
 
@@ -1638,17 +1638,17 @@ void CBagStorageDevDlg::onMainLoop() {
 	int nCurTime = getTimer();
 	gLastBackgroundUpdate = nCurTime;
 	if (g_pLastWindow) {
-		g_pLastWindow->SetPreFilterPan(true);
+		g_pLastWindow->setPreFilterPan(true);
 	}
 
-	PaintScreen();
+	paintScreen();
 }
 
 
 void CBagStorageDevDlg::onPaint(CBofRect *) {
 	assert(isValidObject(this));
 
-	PaintScreen();
+	paintScreen();
 
 	validateAnscestors();
 
@@ -1656,7 +1656,7 @@ void CBagStorageDevDlg::onPaint(CBofRect *) {
 }
 
 
-ErrorCode CBagStorageDevDlg::PaintScreen(CBofRect *pRect) {
+ErrorCode CBagStorageDevDlg::paintScreen(CBofRect *pRect) {
 	assert(isValidObject(this));
 
 	if (_pBackdrop != nullptr) {
@@ -1667,8 +1667,8 @@ ErrorCode CBagStorageDevDlg::PaintScreen(CBofRect *pRect) {
 
 			if (pBmp != nullptr) {
 				// Don't redraw the background window unless we have to.
-				if (pWin->PreFilterPan()) {
-					CBofBitmap *pWorkBmp = pWin->GetWorkBmp();
+				if (pWin->preFilterPan()) {
+					CBofBitmap *pWorkBmp = pWin->getWorkBmp();
 					if (pWorkBmp != nullptr) {
 						pWorkBmp->paint(pBmp, pRect, pRect);
 					}
@@ -1761,10 +1761,10 @@ void CBagStorageDevDlg::onClose() {
 	// method, we will have to manually take all the existing objects and
 	// tell them to redraw themselves should they ever be called on in life
 	// to do as such.
-	int nCount = GetObjectCount();
+	int nCount = getObjectCount();
 	if (nCount != 0) {
 		for (int i = 0; i < nCount; ++i) {
-			CBagObject *pObj = GetObjectByPos(i);
+			CBagObject *pObj = getObjectByPos(i);
 			if (pObj != nullptr) {
 				pObj->setDirty(true);
 			}
@@ -1777,29 +1777,29 @@ void CBagStorageDevDlg::onClose() {
 
 	// Our dlog may have dirtied our backdrop, make sure it is redrawn.
 	if (g_pLastWindow != nullptr) {
-		g_pLastWindow->SetPreFilterPan(true);
-		g_pLastWindow->PaintScreen(nullptr);
+		g_pLastWindow->setPreFilterPan(true);
+		g_pLastWindow->paintScreen(nullptr);
 
 		// This is fairly shameful, but for some reason, some
 		// updates don't work in the above paintscreen and must be updated the
 		// next time through.  Don't know why, would love to find out, but
 		// running out of time.
-		g_pLastWindow->SetPreFilterPan(true);
+		g_pLastWindow->setPreFilterPan(true);
 	}
 }
 
 void CBagStorageDevDlg::onMouseMove(uint32 n, CBofPoint *xPoint, void *) {
-	CBagStorageDev::onMouseMove(n, xPoint, GetAssociateWnd());
+	CBagStorageDev::onMouseMove(n, xPoint, getAssociateWnd());
 }
 
 void CBagStorageDevDlg::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
-	CBagStorageDev::onLButtonDown(nFlags, xPoint, GetAssociateWnd());
+	CBagStorageDev::onLButtonDown(nFlags, xPoint, getAssociateWnd());
 	CBofDialog::onLButtonDown(nFlags, xPoint);
 }
 
 void CBagStorageDevDlg::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	if (CBofDialog::getRect().ptInRect(*xPoint)) {
-		CBagStorageDev::onLButtonUp(nFlags, xPoint, GetAssociateWnd());
+		CBagStorageDev::onLButtonUp(nFlags, xPoint, getAssociateWnd());
 		CBofDialog::onLButtonUp(nFlags, xPoint);
 	} else  {
 		close();
@@ -1859,7 +1859,7 @@ CBagStorageDev *CBagStorageDevManager::GetStorageDeviceContaining(CBagObject *pO
 
 	for (int i = 0; i < _xStorageDeviceList.getCount(); ++i) {
 		CBagStorageDev *pSDev = _xStorageDeviceList[i];
-		if (pSDev && pSDev->Contains(pObj))
+		if (pSDev && pSDev->contains(pObj))
 			return _xStorageDeviceList[i];
 	}
 	return nullptr;
@@ -1870,7 +1870,7 @@ CBagStorageDev *CBagStorageDevManager::GetStorageDeviceContaining(const CBofStri
 
 	for (int i = 0; i < _xStorageDeviceList.getCount(); ++i) {
 		CBagStorageDev *pSDev = _xStorageDeviceList[i];
-		if (pSDev && pSDev->GetObject(sName))
+		if (pSDev && pSDev->getObject(sName))
 			return _xStorageDeviceList[i];
 	}
 	return nullptr;
@@ -1881,8 +1881,8 @@ CBagStorageDev *CBagStorageDevManager::GetStorageDevice(const CBofString &sName)
 
 	for (int i = 0; i < _xStorageDeviceList.getCount(); ++i) {
 		CBagStorageDev *pSDev = _xStorageDeviceList[i];
-		if (pSDev && (pSDev->GetName().getLength() == sName.getLength()) &&
-		        !pSDev->GetName().find(sName))
+		if (pSDev && (pSDev->getName().getLength() == sName.getLength()) &&
+		        !pSDev->getName().find(sName))
 			return _xStorageDeviceList[i];
 	}
 	return nullptr;
@@ -1912,7 +1912,7 @@ bool CBagStorageDevManager::MoveObject(const CBofString &sDstName, const CBofStr
 	return true;
 }
 
-bool CBagStorageDevManager::AddObject(const CBofString &sDstName, const CBofString &sObjName) {
+bool CBagStorageDevManager::addObject(const CBofString &sDstName, const CBofString &sObjName) {
 	assert(isValidObject(this));
 
 	CBagStorageDev *pDstSDev = SDEV_MANAGER->GetStorageDevice(sDstName);
@@ -1946,14 +1946,14 @@ bool CBagStorageDevManager::removeObject(const CBofString &sSrcName, const CBofS
 }
 
 
-int CBagStorageDevManager::GetObjectValue(const CBofString &sObject, const CBofString &sProperty) {
+int CBagStorageDevManager::getObjectValue(const CBofString &sObject, const CBofString &sProperty) {
 	assert(isValidObject(this));
 
 	for (int i = 0; i < _xStorageDeviceList.getCount(); ++i) {
 		CBagStorageDev *pSDev = _xStorageDeviceList[i];
 
 		if (pSDev) {
-			CBagObject *pObj = pSDev->GetObject(sObject);
+			CBagObject *pObj = pSDev->getObject(sObject);
 			if (pObj != nullptr)
 				return pObj->getProperty(sProperty);
 		}
@@ -1974,7 +1974,7 @@ void CBagStorageDevManager::SetObjectValue(const CBofString &sObject, const CBof
 		CBagStorageDev *pSDev = _xStorageDeviceList[i];
 
 		if (pSDev) {
-			CBagObject *pObj = pSDev->GetObject(sObject);
+			CBagObject *pObj = pSDev->getObject(sObject);
 			if (pObj != nullptr) {
 				pObj->setProperty(sProperty, nValue);
 			}
@@ -1994,9 +1994,9 @@ void CBagStorageDevManager::SaveObjList(StObj *pObjList, int nNumEntries) {
 		CBagStorageDev *pSDev = GetStorageDevice(i);
 		if (pSDev != nullptr) {
 
-			int m = pSDev->GetObjectCount();
+			int m = pSDev->getObjectCount();
 			for (int j = 0; j < m; j++) {
-				CBagObject *pObj = pSDev->GetObjectByPos(j);
+				CBagObject *pObj = pSDev->getObjectByPos(j);
 
 				if (!pObj->getRefName().isEmpty()) {
 					assert(strlen(pObj->getRefName()) < MAX_OBJ_NAME);
@@ -2005,8 +2005,8 @@ void CBagStorageDevManager::SaveObjList(StObj *pObjList, int nNumEntries) {
 					// We MUST have put something in here
 					assert((pObjList + k)->_szName[0] != '\0');
 
-					assert(strlen(pSDev->GetName()) < MAX_SDEV_NAME);
-					strncpy((pObjList + k)->_szSDev, pSDev->GetName(), MAX_SDEV_NAME);
+					assert(strlen(pSDev->getName()) < MAX_SDEV_NAME);
+					strncpy((pObjList + k)->_szSDev, pSDev->getName(), MAX_SDEV_NAME);
 
 					// Save if this guy is waiting to play
 					(pObjList + k)->_nFlags = (uint16)(pObj->isMsgWaiting() ? mIsMsgWaiting : 0);
@@ -2039,7 +2039,7 @@ void CBagStorageDevManager::RestoreObjList(StObj *pObjList, int nNumEntries) {
 		if ((pObjList + i)->_bUsed) {
 			CBagStorageDev *pSDev = GetStorageDevice((pObjList + i)->_szSDev);
 			if (pSDev != nullptr) {
-				CBagObject *pObj = pSDev->GetObject((pObjList + i)->_szName);
+				CBagObject *pObj = pSDev->getObject((pObjList + i)->_szName);
 				if (pObj != nullptr) {
 					pObj->setProperties((pObjList + i)->_lProperties);
 					pObj->setState((pObjList + i)->_lState);
@@ -2052,7 +2052,7 @@ void CBagStorageDevManager::RestoreObjList(StObj *pObjList, int nNumEntries) {
 	}
 }
 
-bool CBagStorageDev::IsCIC() {
+bool CBagStorageDev::isCIC() {
 	// Slightly more complicated then before... if we're in a CIC, then return true,
 	// however, if we're in the zoompda, then return the previous SDEV's cic value.
 	if (_bCIC != false) {

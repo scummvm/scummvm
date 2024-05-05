@@ -1020,7 +1020,7 @@ void CBagRPObject::evaluateDossiers() {
 			}
 
 			if (pLogZWld != nullptr) {
-				CBagLogSuspect *pSusObj = (CBagLogSuspect *)pLogZWld->GetObject(pDosLObj->_pDossier->_sSuspectVar);
+				CBagLogSuspect *pSusObj = (CBagLogSuspect *)pLogZWld->getObject(pDosLObj->_pDossier->_sSuspectVar);
 
 				if (pSusObj != nullptr) {
 					pSusObj->setSusResiduePrinted(true);
@@ -1157,7 +1157,7 @@ void CBagRPObject::setLogPages(int nPages) {
 	assert(pLogWld != nullptr);
 	if (pLogWld) {
 		// Let the float code know how many pages we have.
-		pLogWld->SetNumFloatPages(nPages);
+		pLogWld->setNumFloatPages(nPages);
 		if (nPages == 1) {
 			pLogWld->setCurFltPage(1);
 		}
@@ -1359,7 +1359,7 @@ void CBagRPObject::hideRPReview() {
 
 		// If the object txt var is not found yet, then get it.
 		if (pRPObj->_pObjectName == nullptr) {
-			pRPObj->_pObjectName = (CBagTextObject *)pLogWld->GetObject(pRPObj->_sObjectName);
+			pRPObj->_pObjectName = (CBagTextObject *)pLogWld->getObject(pRPObj->_sObjectName);
 		}
 
 		// We know this object is attached, but it might not be visible.
@@ -1381,12 +1381,12 @@ void CBagRPObject::showRPReview() {
 	}
 
 	// Count items in this queue.
-	int nCount = pLogWld->GetObjectCount();
+	int nCount = pLogWld->getObjectCount();
 
 	// Check the first guy in the queue to see if he's been initialized, if not,
 	// then cruise the whole thing.
 	for (int i = 0; i < nCount; i++) {
-		CBagObject *pObj = pLogWld->GetObjectByPos(i);
+		CBagObject *pObj = pLogWld->getObjectByPos(i);
 		if (pObj && pObj->getType() == RESPRNTOBJ) {
 
 			CBagRPObject *pRPObj = (CBagRPObject *)pObj;
@@ -1502,7 +1502,7 @@ bool CBagRPObject::initialize() {
 
 	for (int i = 0; i < nCount; i++) {
 		pDosObj = _pTouchedList->getNodeItem(i);
-		pDosObj->_pDossier = (CBagDossierObject *)pSDev->GetObject(pDosObj->_sDossier);
+		pDosObj->_pDossier = (CBagDossierObject *)pSDev->getObject(pDosObj->_sDossier);
 		if (pDosObj->_pDossier == nullptr) {
 			return false;
 		}
@@ -1517,7 +1517,7 @@ bool CBagRPObject::initialize() {
 		nCount = _pUntouchedList->getCount();
 		for (int i = 0; i < nCount; i++) {
 			pDosObj = _pUntouchedList->getNodeItem(i);
-			pDosObj->_pDossier = (CBagDossierObject *)pSDev->GetObject(pDosObj->_sDossier);
+			pDosObj->_pDossier = (CBagDossierObject *)pSDev->getObject(pDosObj->_sDossier);
 			if (pDosObj->_pDossier == nullptr) {
 				return false;
 			}
@@ -1532,7 +1532,7 @@ bool CBagRPObject::initialize() {
 
 	// Fill in the movie object if we have one.
 	if (!_sMovieObj.isEmpty()) {
-		_pMovieObj = (CBagMovieObject *)pSDev->GetObject(_sMovieObj);
+		_pMovieObj = (CBagMovieObject *)pSDev->getObject(_sMovieObj);
 		if (_pMovieObj == nullptr) {
 			return false;
 		}
@@ -1540,7 +1540,7 @@ bool CBagRPObject::initialize() {
 
 	// Fill in the object name if we have one.
 	if (_pObjectName == nullptr) {
-		_pObjectName = (CBagTextObject *)pSDev->GetObject(_sObjectName);
+		_pObjectName = (CBagTextObject *)pSDev->getObject(_sObjectName);
 		if (_pObjectName == nullptr) {
 			return false;
 		}
@@ -1576,12 +1576,12 @@ void CBagRPObject::synchronizeRPObjects(bool bLogFrontmost) {
 	}
 
 	RPStates rpState = getLogState();
-	int nCount = pLogWld->GetObjectCount();
+	int nCount = pLogWld->getObjectCount();
 
 	// Check the first guy in the queue to see if he's been initialized, if not,
 	// then cruise the whole thing.
 	for (int i = 0; i < nCount; i++) {
-		CBagObject *pObj = pLogWld->GetObjectByPos(i);
+		CBagObject *pObj = pLogWld->getObjectByPos(i);
 		if (pObj->getType() == RESPRNTOBJ) {
 			CBagRPObject *pRPObj = (CBagRPObject *)pObj;
 			pRPObj->restoreRPVars();

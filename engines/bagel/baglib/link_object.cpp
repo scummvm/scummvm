@@ -196,7 +196,7 @@ bool CBagLinkObject::runObject() {
 	}
 
 	CBagStorageDevWnd *otherSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev();
-	if (!curSDev->IsCloseup() && !otherSDev->IsCloseup()) {
+	if (!curSDev->isCloseup() && !otherSDev->isCloseup()) {
 		VAR_MANAGER->IncrementTimers();
 	}
 

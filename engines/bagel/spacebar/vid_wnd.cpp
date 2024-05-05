@@ -230,7 +230,7 @@ ErrorCode SBarVidWnd::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	assert(isValidObject(this));
 	assert(pBmp != nullptr);
 
-	SetPreFilterPan(true);
+	setPreFilterPan(true);
 
 	CMainWindow::onRender(pBmp, pRect);
 

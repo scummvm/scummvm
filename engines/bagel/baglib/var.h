@@ -50,7 +50,7 @@ public:
 
 	ParseCodes setInfo(CBagIfstream &);
 
-	const CBofString &GetName() {
+	const CBofString &getName() {
 		return m_sVarName;
 	}
 	//  const CBofString&   GetValue()      { return m_sVarValue; }
@@ -85,7 +85,7 @@ public:
 	}
 
 	// Whenever setting the name, add this object to the hash table.
-	void SetName(const CBofString &s);
+	void setName(const CBofString &s);
 	void SetValue(const CBofString &s);
 	void SetValue(int nVal);
 	void SetBoolValue(bool bVal);

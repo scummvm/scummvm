@@ -166,8 +166,8 @@ bool CBagMovieObject::runObject() {
 				// messes things up in the PDA redraw code
 				if (pWnd != nullptr) {
 					if (pSDevWnd != nullptr) {
-						pSDevWnd->PaintScreen(nullptr);
-						isFiltered = pSDevWnd->IsFiltered();
+						pSDevWnd->paintScreen(nullptr);
+						isFiltered = pSDevWnd->isFiltered();
 					}
 				}
 			}
@@ -224,7 +224,7 @@ bool CBagMovieObject::runObject() {
 						}
 					}
 
-					if (pMainWin->GetDeviceType() == SDEV_GAMEWIN) {
+					if (pMainWin->getDeviceType() == SDEV_GAMEWIN) {
 						// If the pda is going up or down, then wait for it
 						// To do its thing before attempting to activate it.
 						if (pPDA->isActivating()) {
@@ -239,7 +239,7 @@ bool CBagMovieObject::runObject() {
 				} else {
 
 					// Pull down the PDA (if it exists)
-					if (pMainWin->GetDeviceType() == SDEV_GAMEWIN) {
+					if (pMainWin->getDeviceType() == SDEV_GAMEWIN) {
 						((CBagPanWindow *)pMainWin)->deactivatePDA();
 						((CBagPanWindow *)pMainWin)->waitForPDA();
 					}
@@ -280,7 +280,7 @@ bool CBagMovieObject::runObject() {
 					}
 				} else {
 					// Hack.. allow script to override some other movies.
-					if ((_xDisplayType == DISP_TYPE::PDAMSG) && pMainWin->IsCIC() && isDontOverride() == false) {
+					if ((_xDisplayType == DISP_TYPE::PDAMSG) && pMainWin->isCIC() && isDontOverride() == false) {
 
 						char szLocalBuff[256];
 						CBofString cStr(szLocalBuff, 256);
@@ -361,7 +361,7 @@ bool CBagMovieObject::runObject() {
 			// but not necessarily a change of sdev's, so make sure we repaint the
 			// backdrop
 			if (pMainWin) {
-				pMainWin->SetPreFilterPan(true);
+				pMainWin->setPreFilterPan(true);
 			}
 
 		} else if (nMovFileType == MOVFILETYPE::SOUND) {
@@ -553,7 +553,7 @@ bool CBagMovieObject::asynchPDAMovieCanPlay() {
 
 	if (pPDA && pPDAz) {
 		if (pPDAz->getZoomed() ||              // We're zoomed
-		        (pMainWin->IsCIC() && !isDontOverride()) || // We're in a character closeup
+		        (pMainWin->isCIC() && !isDontOverride()) || // We're in a character closeup
 		        CBofSound::soundsPlayingNotOver() ||        // A sound is playing
 		        pPDA->getPdaMode() == MOOMODE) {            // An asynch movie is already playing
 			bCanPlay = false;

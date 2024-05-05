@@ -54,7 +54,7 @@ void CBagChatWnd::onMouseMove(uint32 flags, CBofPoint *pos, void *) {
 	CBofList<CBagObject *> *bagObjectList;
 
 	// Run thru background object list and find if the cursor is over an object
-	if ((bagObjectList = GetObjectList()) != nullptr) {
+	if ((bagObjectList = getObjectList()) != nullptr) {
 		// Go thru list backwards to find the 1st top-most object
 		CBofListNode<CBagObject *> *currNode = bagObjectList->getTail();
 		while (currNode != nullptr) {

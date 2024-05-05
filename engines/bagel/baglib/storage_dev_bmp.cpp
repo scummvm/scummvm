@@ -26,20 +26,20 @@ namespace Bagel {
 
 CBagStorageDevBmp::CBagStorageDevBmp(CBofWindow *pParent, const CBofRect &xRect, bool bTrans)
 	: CBagBmpObject() {
-	m_cSrcRect.setRect(0, 0, 0, 0);
-	m_bTrans = bTrans;
+	_cSrcRect.setRect(0, 0, 0, 0);
+	_bTrans = bTrans;
 	_xSDevType = SDEV_BMP;
 	setRect(xRect);
-	m_pWorkBmp = nullptr;
+	_pWorkBmp = nullptr;
 
-	SetAssociateWnd(pParent);
+	setAssociateWnd(pParent);
 
 	setVisible();       // This object is visible
 }
 
 CBagStorageDevBmp::~CBagStorageDevBmp() {
 	// Delete any current work bmp
-	KillWorkBmp();
+	killWorkBmp();
 }
 
 ErrorCode CBagStorageDevBmp::attach() {
@@ -49,14 +49,14 @@ ErrorCode CBagStorageDevBmp::attach() {
 
 
 ErrorCode CBagStorageDevBmp::detach() {
-	KillWorkBmp();
+	killWorkBmp();
 	return CBagStorageDev::detach();
 }
 
 ErrorCode CBagStorageDevBmp::setBackground(CBofBitmap *pBmp) {
 	if (pBmp != nullptr) {
 		setBitmap(pBmp);
-		SetWorkBmp();
+		setWorkBmp();
 	} else {
 		// Hope and pray that this is the right thing to do
 		if (getBitmap()) {
@@ -64,29 +64,29 @@ ErrorCode CBagStorageDevBmp::setBackground(CBofBitmap *pBmp) {
 		}
 
 		setBitmap(nullptr);
-		KillWorkBmp();
+		killWorkBmp();
 	}
 
 	return _errCode;
 }
 
-ErrorCode CBagStorageDevBmp::SetWorkBmp() {
+ErrorCode CBagStorageDevBmp::setWorkBmp() {
 	// Delete any previous work area
-	KillWorkBmp();
+	killWorkBmp();
 
 	CBofBitmap *pBmp = getBackground();
 	if (pBmp != nullptr) {
-		m_pWorkBmp = new CBofBitmap(pBmp->width(), pBmp->height(), pBmp->getPalette());
-		pBmp->paint(m_pWorkBmp);
+		_pWorkBmp = new CBofBitmap(pBmp->width(), pBmp->height(), pBmp->getPalette());
+		pBmp->paint(_pWorkBmp);
 	}
 
 	return _errCode;
 }
 
-ErrorCode CBagStorageDevBmp::KillWorkBmp() {
-	if (m_pWorkBmp != nullptr) {
-		delete m_pWorkBmp;
-		m_pWorkBmp = nullptr;
+ErrorCode CBagStorageDevBmp::killWorkBmp() {
+	if (_pWorkBmp != nullptr) {
+		delete _pWorkBmp;
+		_pWorkBmp = nullptr;
 	}
 
 	return _errCode;
@@ -99,7 +99,7 @@ ErrorCode CBagStorageDevBmp::loadFileFromStream(CBagIfstream &fpInput, const CBo
 	return CBagStorageDev::loadFileFromStream(fpInput, sWldName, bAttach);
 }
 
-CBofPoint CBagStorageDevBmp::GetScaledPt(CBofPoint xPoint) {
+CBofPoint CBagStorageDevBmp::getScaledPt(CBofPoint xPoint) {
 	CBofRect        SDevDstRect;
 	CBofRect        SDevSrcRect;
 	CBofPoint           pt;
@@ -108,11 +108,11 @@ CBofPoint CBagStorageDevBmp::GetScaledPt(CBofPoint xPoint) {
 	SDevDstRect = getRect();                // Get the destination (screen) rect
 	SDevSrcRect = CBagBmpObject::getRect(); // Get the source (origin) rect
 
-	pt.x = m_cSrcRect.width() * xPoint.x / rDestRect.width();
-	pt.y = m_cSrcRect.height() * xPoint.y / rDestRect.height();
+	pt.x = _cSrcRect.width() * xPoint.x / rDestRect.width();
+	pt.y = _cSrcRect.height() * xPoint.y / rDestRect.height();
 
-	pt.x += m_cSrcRect.left;
-	pt.y += m_cSrcRect.top;
+	pt.x += _cSrcRect.left;
+	pt.y += _cSrcRect.top;
 
 	return pt;
 }
@@ -145,19 +145,19 @@ ErrorCode CBagStorageDevBmp::update(CBofBitmap *pBmp, CBofPoint /*xPoint*/, CBof
 	if (isVisible() && isAttached()) {
 		// Paint the storage device
 		if ((pSrcBmp = getBitmap()) != nullptr) {
-			assert(GetWorkBmp() != nullptr);
+			assert(getWorkBmp() != nullptr);
 			// Erase everything from the background
-			GetWorkBmp()->paint(pSrcBmp);
+			getWorkBmp()->paint(pSrcBmp);
 
 			// Paint all the objects to the background
 			CBofRect r = pSrcBmp->getRect();
-			PaintStorageDevice(nullptr, pSrcBmp, &r);
+			paintStorageDevice(nullptr, pSrcBmp, &r);
 
 			// Paint child storage devices
 			paintFGObjects(pSrcBmp);
 
 			// Paint to screen
-			if (m_bTrans)
+			if (_bTrans)
 				pSrcBmp->paint(pBmp, getPosition().x, getPosition().y, nullptr, _nMaskColor);
 			else
 				pSrcBmp->paint(pBmp, getPosition().x, getPosition().y, nullptr, -1);

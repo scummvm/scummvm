@@ -54,16 +54,16 @@ public:
 		_nResId = 0;
 	}
 
-	void SetResource(const char *lpszResourceName) {
+	void setResource(const char *lpszResourceName) {
 		_lpszResourceName = lpszResourceName;
 	}
-	void SetResource(uint32 nResId) {
+	void setResource(uint32 nResId) {
 		_nResId = nResId;
 	}
-	const char *GetResourceName() {
+	const char *getResourceName() {
 		return _lpszResourceName;
 	}
-	uint32 GetResourceId() {
+	uint32 getResourceId() {
 		return _nResId;
 	}
 };
@@ -111,7 +111,7 @@ protected:
 	static bool _bHidePDA;
 	FilterFunction _pBitmapFilter; // Pointer to the bitmap filter.
 
-	bool _bForiegnList : 1;   // True if SetObjectList has been called
+	bool _bForiegnList : 1;   // True if setObjectList has been called
 	bool _bCloseOnOpen : 1;   // True if other SDev should be closed when this is opened
 	bool _bContainsModal : 1; // True if SDev contains a modal object
 	bool _bCloseup : 1;       // true if is a closeup (includes CIC, or CHAT)
@@ -129,7 +129,7 @@ public:
 	CBagStorageDev();
 	virtual ~CBagStorageDev();
 
-	virtual ErrorCode PreFilter(CBofBitmap *pBmp, CBofRect *pRect, CBofList<CBagObject *> *pList = nullptr);
+	virtual ErrorCode preFilter(CBofBitmap *pBmp, CBofRect *pRect, CBofList<CBagObject *> *pList = nullptr);
 
 	static void initialize();
 	static void shutdown();
@@ -137,12 +137,12 @@ public:
 	/**
 	 * Make all the objects in a list dirty
 	 */
-	void MakeListDirty(CBofList<CBagObject *> *pList);
+	void makeListDirty(CBofList<CBagObject *> *pList);
 
-	void SetDiskID(uint16 nDiskID) {
+	void setDiskID(uint16 nDiskID) {
 		_nDiskID = nDiskID;
 	}
-	uint16 GetDiskID() {
+	uint16 getDiskID() {
 		return _nDiskID;
 	}
 
@@ -150,47 +150,46 @@ public:
 		return ERR_NONE;
 	}
 
-	bool IsCloseup() {
+	bool isCloseup() {
 		return _bCloseup;
 	}
-	void SetCloseup(bool b = true) {
+	void setCloseup(bool b = true) {
 		_bCloseup = b;
 	}
 
 	// Set true if sdef is "AS CIC"
-	bool IsCIC();
-	void SetCIC(bool b = true) {
+	bool isCIC();
+	void setCIC(bool b = true) {
 		_bCIC = b;
 	}
 
 	// Set to true if this is a hand coded closeup
-	bool IsCustom() {
+	bool isCustom() {
 		return _bCustom;
 	}
-	void SetCustom(bool b = true) {
+	void setCustom(bool b = true) {
 		_bCustom = b;
 	}
 
-	int GetDeviceType() {
+	int getDeviceType() {
 		return _xSDevType;
 	}
 
-	int GetObjectCount();
-	CBagObject *GetObjectByPos(int nIndex);
-	CBagObject *GetObject(int nRefId, bool bActiveOnly = false);
-	CBagObject *GetObject(const CBofPoint &xPoint, bool bActiveOnly = false);
-	CBagObject *GetObject(const CBofString &sName, bool bActiveOnly = false);
-	CBagObject *GetObjectByType(const CBofString &sName, bool bActiveOnly = false);
-	CBofPoint &GetLastCursorLocation() {
+	int getObjectCount();
+	CBagObject *getObjectByPos(int nIndex);
+	CBagObject *getObject(int nRefId, bool bActiveOnly = false);
+	CBagObject *getObject(const CBofPoint &xPoint, bool bActiveOnly = false);
+	CBagObject *getObject(const CBofString &sName, bool bActiveOnly = false);
+	CBagObject *getObjectByType(const CBofString &sName, bool bActiveOnly = false);
+	CBofPoint &getLastCursorLocation() {
 		return *_xCursorLocation;
 	}
-	CBofList<CBagObject *> *
-	GetObjectList() {
+	CBofList<CBagObject *> *getObjectList() {
 		return _pObjectList;
 	}
-	void SetObjectList(CBofList<CBagObject *> *pList, CBofList<CBagExpression *> *pEList = nullptr);
+	void setObjectList(CBofList<CBagObject *> *pList, CBofList<CBagExpression *> *pEList = nullptr);
 
-	bool Contains(CBagObject *pObj, bool bActive = true);
+	bool contains(CBagObject *pObj, bool bActive = true);
 
 	// virtual CBofRect GetLocation()                       { return CBofRect(); }
 	CBofRect getRect() {
@@ -204,7 +203,7 @@ public:
 	}
 	void setPosition(const CBofPoint &pos);
 
-	virtual ErrorCode AddObject(CBagObject *pObj, int nPos = 0); // Add a new object
+	virtual ErrorCode addObject(CBagObject *pObj, int nPos = 0); // Add a new object
 	virtual ErrorCode activateLocalObject(CBagObject *pObj);
 	virtual ErrorCode activateLocalObject(const CBofString &sName);
 	virtual ErrorCode attachActiveObjects();
@@ -212,28 +211,28 @@ public:
 	virtual ErrorCode removeObject(CBagObject *pObj);
 	virtual ErrorCode deactivateLocalObject(CBagObject *pObj);
 	virtual ErrorCode deactivateLocalObject(const CBofString &sName);
-	virtual ErrorCode DetachActiveObjects();
+	virtual ErrorCode detachActiveObjects();
 
-	virtual void SetHelpFilename(const CBofString &) {}
+	virtual void setHelpFilename(const CBofString &) {}
 
-	const CBofString &GetName() {
+	const CBofString &getName() {
 		return _sName;
 	}
-	void SetName(const CBofString &str) {
+	void setName(const CBofString &str) {
 		_sName = str;
 	}
 
-	void SetFilterId(uint16 nId) {
+	void setFilterId(uint16 nId) {
 		_nFilterId = nId;
 	}
-	uint16 GetFilterId() {
+	uint16 getFilterId() {
 		return _nFilterId;
 	}
 
-	void SetFadeId(uint16 nId) {
+	void setFadeId(uint16 nId) {
 		_nFadeId = nId;
 	}
-	uint16 GetFadeId() {
+	uint16 getFadeId() {
 		return _nFadeId;
 	}
 
@@ -243,7 +242,7 @@ public:
 	const CBofPoint getPrevLoc() {
 		return _xPrevLocation;
 	}
-	void SetPrevSDev(const CBofString &str) {
+	void setPrevSDev(const CBofString &str) {
 		_sPrevSDev = str;
 	}
 
@@ -254,48 +253,48 @@ public:
 		_bCloseOnOpen = bVal;
 	}
 
-	bool GetContainsModal() {
+	bool getContainsModal() {
 		return _bContainsModal;
 	}
-	void SetContainsModal(bool bVal) {
+	void setContainsModal(bool bVal) {
 		_bContainsModal = bVal;
 	}
 
-	uint16 GetExitOnEdge() {
+	uint16 getExitOnEdge() {
 		return _nExitOnEdge;
 	}
-	void SetExitOnEdge(uint16 nVal) {
+	void setExitOnEdge(uint16 nVal) {
 		_nExitOnEdge = nVal;
 	}
 
-	CBagObject *GetLActiveObject() {
+	CBagObject *getLActiveObject() {
 		return _pLActiveObject;
 	}
 	// CBagObject*      GetRActiveObject()                  { return _pRActiveObject; }
-	ErrorCode SetLActiveObject(CBagObject *pObj) {
+	ErrorCode setLActiveObject(CBagObject *pObj) {
 		_pLActiveObject = pObj;
 		return ERR_NONE;
 	}
 
-	virtual ErrorCode OnLActiveObject(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
+	virtual ErrorCode onLActiveObject(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 
-	MOUSE_ACTIVITY GetLActivity() {
+	MOUSE_ACTIVITY getLActivity() {
 		return _nCurrMouseActivity;
 	}
-	void SetLActivity(MOUSE_ACTIVITY ma) {
+	void setLActivity(MOUSE_ACTIVITY ma) {
 		_nCurrMouseActivity = ma;
 	}
 
-	ErrorCode PaintStorageDevice(CBofWindow *pWnd, CBofBitmap *pBmp = nullptr, CBofRect * = nullptr);
+	ErrorCode paintStorageDevice(CBofWindow *pWnd, CBofBitmap *pBmp = nullptr, CBofRect * = nullptr);
 
 	virtual void handleError(ErrorCode errCode);
 
 	// The associated window describes which window to get screen information from and
 	// where to paint objects and most importantly what info to send to the callbacks
-	virtual void SetAssociateWnd(CBofWindow *pWnd) {
+	virtual void setAssociateWnd(CBofWindow *pWnd) {
 		_pAssociateWnd = pWnd;
 	}
-	virtual CBofWindow *GetAssociateWnd() {
+	virtual CBofWindow *getAssociateWnd() {
 		return _pAssociateWnd;
 	}
 
@@ -303,7 +302,7 @@ public:
 
 	virtual ErrorCode setBackground(CBofBitmap *pBmp) = 0; // This could be eliminated but is kept in to insure good class usage
 	virtual CBofBitmap *getBackground() = 0;                // Think about it, you can figure this out
-	const CBofString &GetBackgroundName() {
+	const CBofString &getBackgroundName() {
 		return _sBackgroundName;
 	}
 
@@ -312,10 +311,10 @@ public:
 
 	virtual ErrorCode close();
 
-	virtual ErrorCode LoadObjects();
-	virtual ErrorCode ReleaseObjects();
+	virtual ErrorCode loadObjects();
+	virtual ErrorCode releaseObjects();
 	// virtual ErrorCode   InsertObjects(CBagObject *);
-	virtual ErrorCode NoObjectsUnderMouse();
+	virtual ErrorCode noObjectsUnderMouse();
 
 	virtual const CBofPoint devPtToViewPort(const CBofPoint &xPoint) {
 		return xPoint;
@@ -336,45 +335,45 @@ public:
 		return ERR_NONE;
 	}
 	virtual CBagObject *onNewSpriteObject(const CBofString &sInit);
-	virtual CBagObject *OnNewBitmapObject(const CBofString &sInit);
-	virtual CBagObject *OnNewTextObject(const CBofString &sInit);
+	virtual CBagObject *onNewBitmapObject(const CBofString &sInit);
+	virtual CBagObject *onNewTextObject(const CBofString &sInit);
 	virtual CBagObject *onNewLinkObject(const CBofString &sInit);
-	virtual CBagObject *OnNewRPObject(const CBofString &sInit);
-	virtual CBagObject *OnNewEDObject(const CBofString &sInit);
-	virtual CBagObject *OnNewDosObject(const CBofString &sInit);
-	virtual CBagObject *OnnewSoundObject(const CBofString &sInit);
+	virtual CBagObject *onNewRPObject(const CBofString &sInit);
+	virtual CBagObject *onNewEDObject(const CBofString &sInit);
+	virtual CBagObject *onNewDosObject(const CBofString &sInit);
+	virtual CBagObject *onNewSoundObject(const CBofString &sInit);
 	virtual CBagObject *onNewButtonObject(const CBofString &sInit);
-	virtual CBagObject *OnNewCharacterObject(const CBofString &sInit);
-	virtual CBagObject *OnNewMovieObject(const CBofString &);
-	virtual CBagObject *OnNewCommandObject(const CBofString &sInit);
-	virtual CBagObject *OnNewAreaObject(const CBofString &sInit);
-	virtual CBagObject *OnNewExpressionObject(const CBofString &sInit);
-	virtual CBagObject *OnNewVariableObject(const CBofString &sInit);
+	virtual CBagObject *onNewCharacterObject(const CBofString &sInit);
+	virtual CBagObject *onNewMovieObject(const CBofString &);
+	virtual CBagObject *onNewCommandObject(const CBofString &sInit);
+	virtual CBagObject *onNewAreaObject(const CBofString &sInit);
+	virtual CBagObject *onNewExpressionObject(const CBofString &sInit);
+	virtual CBagObject *onNewVariableObject(const CBofString &sInit);
 	virtual CBagObject *onNewUserObject(const CBofString &sInit);
-	virtual CBagObject *OnNewThingObject(const CBofString &sInit);
+	virtual CBagObject *onNewThingObject(const CBofString &sInit);
 
 	// Call to arrange floating object, override to customize layout
 	virtual CBofPoint arrangeFloater(CBofPoint nPos, CBagObject *pObj);
 
 	// Set and Get the number of pages required to display all floating objects
-	int GetNumFloatPages() {
+	int getNumFloatPages() {
 		return _nFloatPages;
 	}
-	void SetNumFloatPages(int nFloatPages) {
+	void setNumFloatPages(int nFloatPages) {
 		_nFloatPages = nFloatPages;
 	}
 
 	// Correctly set the filter function for the storage device.
 	//
-	void OnSetFilter(bool (*FilterFxn)(const uint16 nFilterId, CBofBitmap *, CBofRect *));
+	void onSetFilter(bool (*FilterFxn)(const uint16 nFilterId, CBofBitmap *, CBofRect *));
 
 	// Get a pointer to the filter function
 	//
-	FilterFunction GetFilter();
+	FilterFunction getFilter();
 
 	// Predicate to test if this storage device is filtered.
 	//
-	bool IsFiltered() {
+	bool isFiltered() {
 		return _nFilterId != 0;
 	}
 
@@ -382,23 +381,23 @@ public:
 	static void setDirtyAllObjects(bool b) {
 		_bDirtyAllObjects = b;
 	}
-	static bool GetDirtyAllObjects() {
+	static bool getDirtyAllObjects() {
 		return _bDirtyAllObjects;
 	}
 
 	// Provide a method to let PDA know that it should update everything
-	static void SetPreFiltered(bool b = true) {
+	static void setPreFiltered(bool b = true) {
 		_bPanPreFiltered = b;
 	}
-	static bool GetPreFiltered() {
+	static bool getPreFiltered() {
 		return _bPanPreFiltered;
 	}
 
 	// We won't always call the prefilter, just when explicitly instructed to.
-	static bool PreFilterPan() {
+	static bool preFilterPan() {
 		return _bPreFilter;
 	}
-	static void SetPreFilterPan(bool b = true) {
+	static void setPreFilterPan(bool b = true) {
 		_bPreFilter = b;
 		_bDirtyAllObjects = b;
 	}
@@ -437,11 +436,11 @@ public:
 	void setOnUpdate(bool bVal = true) {
 		_bOnUpdate = bVal;
 	}
-	bool GetOnUpdate() {
+	bool getOnUpdate() {
 		return _bOnUpdate;
 	}
 
-	virtual ErrorCode PaintScreen(CBofRect *pRect = nullptr);
+	virtual ErrorCode paintScreen(CBofRect *pRect = nullptr);
 	ErrorCode paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
 	                        CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = true);
 	ErrorCode paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
@@ -459,7 +458,7 @@ public:
 	virtual CBofBitmap *getBackground() {
 		return getBackdrop();
 	}
-	virtual CBofBitmap *GetWorkBmp() {
+	virtual CBofBitmap *getWorkBmp() {
 		return _pWorkBmp;
 	}
 
@@ -468,7 +467,7 @@ public:
 	virtual const CBofString &GetHelpFilename() {
 		return _sHelpFileName;
 	}
-	virtual void SetHelpFilename(const CBofString &s) {
+	virtual void setHelpFilename(const CBofString &s) {
 		_sHelpFileName = s;
 	}
 
@@ -483,8 +482,8 @@ public:
 	void onKeyHit(uint32 lKey, uint32 nRepCount);
 
 protected:
-	virtual ErrorCode SetWorkBmp();
-	virtual ErrorCode KillWorkBmp();
+	virtual ErrorCode setWorkBmp();
+	virtual ErrorCode killWorkBmp();
 };
 
 /**
@@ -499,7 +498,7 @@ private:
 public:
 	CBagStorageDevDlg();
 
-	virtual ErrorCode PaintScreen(CBofRect *pRect = nullptr);
+	virtual ErrorCode paintScreen(CBofRect *pRect = nullptr);
 	ErrorCode paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
 	                        CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = true);
 	ErrorCode paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
@@ -534,7 +533,7 @@ public:
 	virtual const CBofString &GetHelpFilename() {
 		return _sHelpFileName;
 	}
-	virtual void SetHelpFilename(const CBofString &s) {
+	virtual void setHelpFilename(const CBofString &s) {
 		_sHelpFileName = s;
 	}
 
@@ -564,7 +563,7 @@ public:
 	ErrorCode UnRegisterStorageDev(CBagStorageDev *pSDev);
 	ErrorCode ReleaseStorageDevices();
 
-	int GetObjectValue(const CBofString &sObject, const CBofString &sProperty);
+	int getObjectValue(const CBofString &sObject, const CBofString &sProperty);
 	void SetObjectValue(const CBofString &sObject, const CBofString &sProperty, int nValue);
 
 	int GetNumStorageDevices() {
@@ -578,7 +577,7 @@ public:
 	CBagStorageDev *GetStorageDeviceContaining(CBagObject *pObj);
 	CBagStorageDev *GetStorageDevice(const CBofString &sName);
 	bool MoveObject(const CBofString &sDstName, const CBofString &sSrcName, const CBofString &sObjName);
-	bool AddObject(const CBofString &sDstName, const CBofString &sObjName);
+	bool addObject(const CBofString &sDstName, const CBofString &sObjName);
 	bool removeObject(const CBofString &sSrcName, const CBofString &sObjName);
 
 	void SaveObjList(StObj *pObjList, int nNumEntries);
