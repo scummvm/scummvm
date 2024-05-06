@@ -163,4 +163,8 @@ static inline void execute_on_main_thread(void (^block)(void)) {
 	[super initSurface];
 }
 
+- (uint)getOpenGLRenderBufferID {
+	return _viewRenderbuffer;
+}
+
 @end

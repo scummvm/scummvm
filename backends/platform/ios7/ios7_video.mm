@@ -101,6 +101,15 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	return 0;
 }
 
+- (bool)doOffScreenRendering {
+	return false;
+}
+
+- (uint)getOpenGLRenderBufferID {
+	NSAssert(false, @"Must be overrided by subclass");
+	return 0;
+}
+
 - (void)setupRenderBuffer {
 	NSAssert(false, @"Must be overrided by subclass");
 }

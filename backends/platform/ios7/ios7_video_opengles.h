@@ -42,6 +42,7 @@
 - (int)getScreenHeight;
 
 - (void)initSurface;
+- (bool)doOffScreenRendering;
 @end
 
 #endif

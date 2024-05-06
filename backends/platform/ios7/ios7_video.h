@@ -69,6 +69,8 @@ uint getSizeNextPOT(uint size);
 - (void)adjustViewFrameForSafeArea;
 
 - (void)initSurface;
+- (bool)doOffScreenRendering;
+- (uint)getOpenGLRenderBufferID;
 
 #if TARGET_OS_IOS
 - (void)interfaceOrientationChanged:(UIInterfaceOrientation)orientation;

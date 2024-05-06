@@ -281,4 +281,12 @@ static inline void execute_on_main_thread(void (^block)(void)) {
 	[_metalLayer setDrawableSize:CGSizeMake(self.frame.size.width * self.contentScaleFactor, self.frame.size.height * self.contentScaleFactor)];
 }
 
+- (bool)doOffScreenRendering {
+	return true;
+}
+
+- (uint)getOpenGLRenderBufferID {
+	return CVOpenGLESTextureGetName(_openGLTextureRef);
+}
+
 @end
