@@ -380,15 +380,15 @@ static inline __m256i blendPixelSIMD2Bpp(__m256i srcCols, __m256i destCols, __m2
 		return _mm256_or_si256(ch1, ch2);
 	case kTintBlenderMode:
 	case kTintLightBlenderMode:
-		__m256i srcColsLo = simd2BppTo4Bpp(_mm256_and_si256(srcCols, _mm256_set_epi32(0, 0, 0, 0, -1, -1, -1, -1)));
-		__m256i srcColsHi = simd2BppTo4Bpp(_mm256_srli_si256(srcCols, 16));
-		__m256i destColsLo = simd2BppTo4Bpp(_mm256_and_si256(destCols, _mm256_set_epi32(0, 0, 0, 0, -1, -1, -1, -1)));
-		__m256i destColsHi = simd2BppTo4Bpp(_mm256_srli_si256(destCols, 16));
-		__m256i alphasLo = _mm256_unpacklo_epi16(_mm256_and_si256(alphas, _mm256_set_epi32(0, 0, 0, 0, -1, -1, -1, -1)), _mm256_setzero_si256());
-		__m256i alphasHi = _mm256_unpacklo_epi16(_mm256_srli_si256(alphas, 16), _mm256_setzero_si256());
+		__m256i srcColsLo = simd2BppTo4Bpp(srcCols);
+		__m256i srcColsHi = simd2BppTo4Bpp(_mm256_permute2x128_si256(srcCols, srcCols, _MM_SHUFFLE(2, 0, 0, 1)));
+		__m256i destColsLo = simd2BppTo4Bpp(destCols);
+		__m256i destColsHi = simd2BppTo4Bpp(_mm256_permute2x128_si256(destCols, destCols, _MM_SHUFFLE(2, 0, 0, 1)));
+		__m256i alphasLo = _mm256_unpacklo_epi16(alphas, _mm256_setzero_si256());
+		__m256i alphasHi = _mm256_unpacklo_epi16(_mm256_permute2x128_si256(alphas, alphas, _MM_SHUFFLE(2, 3, 0, 1)), _mm256_setzero_si256());
 		__m256i lo = simd4BppTo2Bpp(blendTintSpriteSIMD(srcColsLo, destColsLo, alphasLo, _G(_blender_mode) == kTintLightBlenderMode));
 		__m256i hi = simd4BppTo2Bpp(blendTintSpriteSIMD(srcColsHi, destColsHi, alphasHi, _G(_blender_mode) == kTintLightBlenderMode));
-		return _mm256_or_si256(lo, _mm256_slli_si256(hi, 16));
+		return _mm256_or_si256(lo, _mm256_permute2x128_si256(hi, hi, _MM_SHUFFLE(0, 0, 2, 0)));
 	}
 	return _mm256_setzero_si256();
 }
