@@ -371,13 +371,14 @@ bool CBagCommandObject::runObject() {
 					bofPlayMovie(mainWin, smkName.getBuffer());
 					bmp.paint(mainWin, 0, 0);
 				}
+
+				// Display Credits
+				mainWin->showCreditsDialog(mainWin);
+
+				// Exit the game
+				CBagel::getBagApp()->getMasterWnd()->close();
 			}
 
-			// Display Credits
-			mainWin->showCreditsDialog(mainWin);
-
-			// Exit the game
-			CBagel::getBagApp()->getMasterWnd()->close();
 			g_engine->quitGame();
 
 		} else if (getFileName() == "BREAK") {
