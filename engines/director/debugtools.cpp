@@ -33,6 +33,7 @@
 #include "director/cast.h"
 #include "director/castmember/bitmap.h"
 #include "director/castmember/castmember.h"
+#include "director/castmember/text.h"
 #include "director/castmember/script.h"
 #include "director/channel.h"
 #include "director/debugtools.h"
@@ -345,6 +346,18 @@ static void showImage(const ImGuiImage &image, const char *name, float thumbnail
 	setToolTipImage(image, name);
 }
 
+static Common::String getDisplayName(CastMember *castMember) {
+	const CastMemberInfo *castMemberInfo = castMember->getInfo();
+	Common::String name(castMemberInfo ? castMemberInfo->name : "");
+	if (!name.empty())
+		return name;
+	if (castMember->_type == kCastText) {
+		TextCastMember *textCastMember = (TextCastMember *)castMember;
+		return textCastMember->getText();
+	}
+	return Common::String::format("%u", castMember->getID());
+}
+
 static void showCast() {
 	if (!_state->_showCast)
 		return;
@@ -402,19 +415,18 @@ static void showCast() {
 						continue;
 
 					for (auto castMember : *cast->_loadedCast) {
-						CastMemberInfo *castMemberInfo = cast->getCastMemberInfo(castMember._key);
 						if (!castMember._value->isLoaded())
 							continue;
 
-						const char *name = castMemberInfo ? castMemberInfo->name.c_str() : "";
-						if (!_state->_cast._nameFilter.PassFilter(name))
+						Common::String name(getDisplayName(castMember._value));
+						if (!_state->_cast._nameFilter.PassFilter(name.c_str()))
 							continue;
 						if ((castMember._value->_type != kCastTypeAny) && !(_state->_cast._typeFilter & (1 << (int)castMember._value->_type)))
 							continue;
 
 						ImGui::TableNextRow();
 						ImGui::TableNextColumn();
-						ImGui::Text("%s %s", toIcon(castMember._value->_type), name);
+						ImGui::Text("%s %s", toIcon(castMember._value->_type), name.c_str());
 
 						ImGui::TableNextColumn();
 						ImGui::Text("%d", castMember._key);
@@ -430,7 +442,7 @@ static void showCast() {
 						ImGui::TableNextColumn();
 						ImGuiImage imgID = getImageID(castMember._value);
 						if (imgID.id) {
-							showImage(imgID, name, 32.f);
+							showImage(imgID, name.c_str(), 32.f);
 						}
 					}
 				}
@@ -449,14 +461,10 @@ static void showCast() {
 						continue;
 
 					for (auto castMember : *cast->_loadedCast) {
-						CastMemberInfo *castMemberInfo = cast->getCastMemberInfo(castMember._key);
 						if (!castMember._value->isLoaded())
 							continue;
 
-						Common::String name(castMemberInfo ? castMemberInfo->name : "");
-						if (name.empty()) {
-							name = Common::String::format("%d", castMember._key);
-						}
+						Common::String name(getDisplayName(castMember._value));
 						if (!_state->_cast._nameFilter.PassFilter(name.c_str()))
 							continue;
 						if ((castMember._value->_type != kCastTypeAny) && !(_state->_cast._typeFilter & (1 << (int)castMember._value->_type)))
@@ -471,9 +479,6 @@ static void showCast() {
 						if (textWidth > thumbnailSize) {
 							textWidth = thumbnailSize;
 							textHeight *= (textSize.x / textWidth);
-							if (textHeight > thumbnailSize) {
-								textHeight = thumbnailSize;
-							}
 						}
 
 						ImGuiImage imgID = getImageID(castMember._value);
@@ -490,6 +495,7 @@ static void showCast() {
 							draw_list->AddRect(p0, p1, IM_COL32_WHITE);
 							const ImVec2 pos = p0 + ImVec2((thumbnailSize - textWidth) * 0.5f, (thumbnailSize - textHeight) * 0.5f);
 							draw_list->AddText(nullptr, 0.f, pos, IM_COL32_WHITE, name.c_str(), 0, thumbnailSize);
+							draw_list->AddText(nullptr, 0.f, p1 - ImVec2(16, 16), IM_COL32_WHITE, toIcon(castMember._value->_type));
 							ImGui::PopClipRect();
 						}
 						ImGui::EndGroup();
