@@ -810,6 +810,7 @@ static void showFuncList() {
 			ImGui::TreePop();
 		}
 
+		ImGui::SetNextItemOpen(true, ImGuiCond_Once);
 		if (ImGui::TreeNode("Cast functions")) {
 			for (auto it : *movie->getCasts()) {
 				Common::String header = Common::String::format("Cast %d functions", it._key);
@@ -827,6 +828,7 @@ static void showFuncList() {
 			ImGui::TreePop();
 		}
 
+		ImGui::SetNextItemOpen(true, ImGuiCond_Once);
 		if (ImGui::TreeNode("Shared cast functions")) {
 			Cast *sharedCast = movie->getSharedCast();
 			if (sharedCast && sharedCast->_lingoArchive) {
