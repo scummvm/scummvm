@@ -22,7 +22,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "backends/platform/ios7/ios7_app_delegate.h"
 #include "backends/platform/ios7/ios7_scummvm_view_controller.h"
-#include "backends/platform/ios7/ios7_video.h"
+#include "backends/platform/ios7/ios7_video_opengles.h"
 
 @implementation iOS7AppDelegate {
 	UIWindow *_window;
@@ -56,7 +56,7 @@
 
 	_controller = [[iOS7ScummVMViewController alloc] init];
 
-	_view = [[iPhoneView alloc] initWithFrame:rect];
+	_view = [[iPhoneViewOpenGLES alloc] initWithFrame:rect];
 #if TARGET_OS_IOS
 	// This property does not affect the gesture recognizers attached to the view.
 	// Gesture recognizers receive all touches that occur in the view.

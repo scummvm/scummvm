@@ -52,13 +52,6 @@ uint getSizeNextPOT(uint size);
 	UIInterfaceOrientation _currentOrientation;
 #endif
 	UIBackgroundTaskIdentifier _backgroundSaveStateTask;
-
-	EAGLContext *_mainContext;
-	EAGLContext *_openGLContext;
-	GLuint _viewRenderbuffer;
-
-	GLint _renderBufferWidth;
-	GLint _renderBufferHeight;
 }
 
 @property (nonatomic, assign) BOOL isInGame;
@@ -66,6 +59,7 @@ uint getSizeNextPOT(uint size);
 
 - (id)initWithFrame:(struct CGRect)frame;
 
+// OpenGL ES functions to be overrided
 - (uint)createOpenGLContext;
 - (void)destroyOpenGLContext;
 - (void)refreshScreen;

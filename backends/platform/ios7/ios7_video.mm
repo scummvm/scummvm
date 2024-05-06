@@ -40,22 +40,6 @@ static long g_lastTick = 0;
 static int g_frames = 0;
 #endif
 
-void printError(const char *error_message) {
-	NSString *messageString = [NSString stringWithUTF8String:error_message];
-	NSLog(@"%@", messageString);
-	fprintf(stderr, "%s\n", error_message);
-}
-
-#define printOpenGLError() printOglError(__FILE__, __LINE__)
-
-void printOglError(const char *file, int line) {
-	GLenum glErr = glGetError();
-	while (glErr != GL_NO_ERROR) {
-		Common::String error = Common::String::format("glError: %u (%s: %d)", glErr, file, line);
-		printError(error.c_str());
-		glErr = glGetError();
-	}
-}
 
 bool iOS7_isBigDevice() {
 #if TARGET_OS_IOS
@@ -94,101 +78,35 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 #endif
 }
 
-+ (Class)layerClass {
-	return [CAEAGLLayer class];
-}
-
-// According to Apple doc layoutSublayersOfLayer: is supported from iOS 10.0.
-// This doesn't seem to be correct since the instance method layoutSublayers,
-// supported from iOS 2.0, default calls the layoutSublayersOfLayer: method
-// of the layer’s delegate object. It's been verified that this function is
-// called in at least iOS 9.3.5.
-- (void)layoutSublayersOfLayer:(CAEAGLLayer *)layer {
-	if (layer == self.layer) {
-		[self addEvent:InternalEvent(kInputScreenChanged, 0, 0)];
-	}
-	[super layoutSublayersOfLayer:layer];
-}
-
-- (void)createContext {
-	CAEAGLLayer *eaglLayer = (CAEAGLLayer *)self.layer;
-
-	eaglLayer.opaque = YES;
-	eaglLayer.drawableProperties = @{
-	                                 kEAGLDrawablePropertyRetainedBacking: @NO,
-	                                 kEAGLDrawablePropertyColorFormat: kEAGLColorFormatRGBA8,
-	                                };
-
-	_mainContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
-
-	// In case creating the OpenGL ES context failed, we will error out here.
-	if (_mainContext == nil) {
-		printError("Could not create OpenGL ES context.");
-		abort();
-	}
-
-	// main thread will always use _mainContext
-	[EAGLContext setCurrentContext:_mainContext];
-}
-
 - (uint)createOpenGLContext {
-	// Create OpenGL context with the sharegroup from the context
-	// connected to the Apple Core Animation layer
-	if (!_openGLContext && _mainContext) {
-		_openGLContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2 sharegroup:_mainContext.sharegroup];
-
-		if (_openGLContext == nil) {
-			printError("Could not create OpenGL ES context using sharegroup");
-			abort();
-		}
-		// background thread will always use _openGLContext
-		if ([EAGLContext setCurrentContext:_openGLContext]) {
-			[self setupRenderBuffer];
-		}
-	}
-	return _viewRenderbuffer;
+	NSAssert(false, @"Must be overrided by subclass");
+	return 0;
 }
 
 - (void)destroyOpenGLContext {
-	[_openGLContext release];
-	_openGLContext = nil;
+	NSAssert(false, @"Must be overrided by subclass");
 }
 
 - (void)refreshScreen {
-	glBindRenderbuffer(GL_RENDERBUFFER, _viewRenderbuffer);
-	[_openGLContext presentRenderbuffer:GL_RENDERBUFFER];
+	NSAssert(false, @"Must be overrided by subclass");
 }
 
 - (int)getScreenWidth {
-	return _renderBufferWidth;
+	NSAssert(false, @"Must be overrided by subclass");
+	return 0;
 }
 
 - (int)getScreenHeight {
-	return _renderBufferHeight;
+	NSAssert(false, @"Must be overrided by subclass");
+	return 0;
 }
 
 - (void)setupRenderBuffer {
-	execute_on_main_thread(^{
-		if (!_viewRenderbuffer) {
-			glGenRenderbuffers(1, &_viewRenderbuffer);
-			printOpenGLError();
-		}
-		glBindRenderbuffer(GL_RENDERBUFFER, _viewRenderbuffer);
-		printOpenGLError();
-		if (![_mainContext renderbufferStorage:GL_RENDERBUFFER fromDrawable:(id <EAGLDrawable>) self.layer]) {
-			printError("Failed renderbufferStorage");
-		}
-		// Retrieve the render buffer size. This *should* match the frame size,
-		// i.e. g_fullWidth and g_fullHeight.
-		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &_renderBufferWidth);
-		printOpenGLError();
-		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &_renderBufferHeight);
-		printOpenGLError();
-	});
+	NSAssert(false, @"Must be overrided by subclass");
 }
 
 - (void)deleteRenderbuffer {
-	glDeleteRenderbuffers(1, &_viewRenderbuffer);
+	NSAssert(false, @"Must be overrided by subclass");
 }
 
 - (void)setupGestureRecognizers {
@@ -382,9 +300,6 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	_keyboardView = nil;
 	_eventLock = [[NSLock alloc] init];
 
-	// Initialize the OpenGL ES context
-	[self createContext];
-
 	return self;
 }
 
@@ -444,8 +359,6 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 }
 
 - (void)initSurface {
-	[self setupRenderBuffer];
-
 	if (_keyboardView == nil) {
 		_keyboardView = [[SoftKeyboard alloc] initWithFrame:CGRectZero];
 		[_keyboardView setInputDelegate:self];
