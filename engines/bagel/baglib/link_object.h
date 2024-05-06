@@ -32,14 +32,13 @@ namespace Bagel {
  */
 class CBagLinkObject : public CBagObject {
 public:
-	enum LINK_TYPE { LINK = 0, CLOSEUP = 1 };
+	enum LinkType { LINK = 0, CLOSEUP = 1 };
 
 private:
 	CBofSize _size;
-	int _outline;
 	CBofPoint _destLocation;
 	CBofPoint _srcLocation;
-	LINK_TYPE _linkType;
+	LinkType _linkType;
 	int _fade;
 
 public:
@@ -71,9 +70,6 @@ public:
 	}
 	void setSrcLoc(CBofPoint loc) {
 		_srcLocation = loc;
-	}
-	void setOutline(int color) {
-		_outline = color;
 	}
 };
 

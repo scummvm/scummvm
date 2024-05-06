@@ -33,6 +33,7 @@ CBagLinkObject::CBagLinkObject() {
 	_destLocation = CBofPoint(0, 0);
 	_srcLocation = CBofPoint(-1, -1);
 	_fade = 0;
+	
 	setVisible(false);
 	CBagObject::setOverCursor(5);
 }
