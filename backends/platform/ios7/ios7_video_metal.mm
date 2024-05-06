@@ -24,6 +24,8 @@
 
 #include "backends/platform/ios7/ios7_video_metal.h"
 
+#include <CoreVideo/CoreVideo.h>
+
 extern void printError(const char *error_message);
 #define printOpenGLError() printOglError(__FILE__, __LINE__)
 extern void printOglError(const char *file, int line);
@@ -107,12 +109,71 @@ static inline void execute_on_main_thread(void (^block)(void)) {
 			[self setupRenderBuffer];
 		}
 	}
-	return _offScreenRenderbuffer;
+	return CVOpenGLESTextureGetName(_openGLTextureRef);
 }
 
 - (void)destroyOpenGLContext {
 	[_openGLContext release];
 	_openGLContext = nil;
+}
+
+- (void)setupOpenGLTextureCache {
+	if (_openGLTextureCache == nullptr) {
+		CVOpenGLESTextureCacheCreate(
+			kCFAllocatorDefault,
+			NULL, _openGLContext,
+			NULL, &_openGLTextureCache);
+	}
+
+	CFDictionaryRef emptyDict = CFDictionaryCreate(
+		kCFAllocatorDefault,
+		NULL, NULL, 0,
+		&kCFTypeDictionaryKeyCallBacks,
+		&kCFTypeDictionaryValueCallBacks);
+
+	CFMutableDictionaryRef attributes = CFDictionaryCreateMutable(
+		kCFAllocatorDefault, 1,
+		&kCFTypeDictionaryKeyCallBacks,
+		&kCFTypeDictionaryValueCallBacks);
+
+	CFDictionarySetValue(
+		attributes,
+		kCVPixelBufferIOSurfacePropertiesKey, // This creates a shared IOSSurface
+		emptyDict);
+
+	if (_sharedPixelBuffer != nullptr) {
+		CFRelease(IOSurfaceRef(_sharedPixelBuffer));
+		_sharedPixelBuffer = nullptr;
+	}
+
+	CVPixelBufferCreate(
+		kCFAllocatorDefault,
+		_drawableWidth, _drawableHeight,
+		kCVPixelFormatType_32BGRA,
+		attributes,
+		&_sharedPixelBuffer);
+
+	CFRelease(attributes);
+	CFRelease(emptyDict);
+
+	if (_openGLTextureRef != nullptr) {
+		CVBufferRelease(_openGLTextureRef);
+	}
+	CVOpenGLESTextureCacheFlush(_openGLTextureCache, 0);
+
+	CVOpenGLESTextureCacheCreateTextureFromImage(
+		kCFAllocatorDefault,
+		_openGLTextureCache,
+		_sharedPixelBuffer,
+		NULL,
+		GL_TEXTURE_2D,
+		GL_RGBA,
+		_drawableWidth,
+		_drawableHeight,
+		GL_RGBA,
+		GL_UNSIGNED_BYTE,
+		0,
+		&_openGLTextureRef);
 }
 
 - (void)refreshScreen {
@@ -133,9 +194,9 @@ static inline void execute_on_main_thread(void (^block)(void)) {
 		_drawableHeight = _metalLayer.drawableSize.height;
 
 		// TODO: Setup interoperable pixel buffers
+		[self setupOpenGLTextureCache];
 	});
 }
-
 
 - (void)initSurface {
 	[self setupRenderBuffer];

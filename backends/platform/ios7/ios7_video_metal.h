@@ -32,13 +32,19 @@ API_AVAILABLE(ios(11.0))
 	// OpenGL ES context
 	EAGLContext *_mainContext;
 	EAGLContext *_openGLContext;
-	GLuint _offScreenRenderbuffer;
 
 	// Metal context
 	CAMetalLayer *_metalLayer;
 
 	uint _drawableWidth;
 	uint _drawableHeight;
+
+	// Shared CoreVideo OpenGL ES context
+	CVOpenGLESTextureCacheRef _openGLTextureCache;
+	CVOpenGLESTextureRef _openGLTextureRef;
+
+	// Shared pixel buffer
+	CVPixelBufferRef _sharedPixelBuffer;
 }
 
 // Metal properties
