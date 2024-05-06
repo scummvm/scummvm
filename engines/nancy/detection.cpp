@@ -464,6 +464,23 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 		},
 		Nancy::kGameTypeNancy6
 	},
+	{
+		{
+			"nancy6", nullptr,
+			{
+				{ "data1.hdr", 0, "9c8b51b33a652b2faeec0d952bd4675a", 298551 },
+				{ "data1.cab", 0, "f9aea73829703169a5200c7c9def06b0", 4470086 },
+				{ "data2.cab", 0, "6b25be9f6aab19d5f6f95d45b47ea73d", 206382676 },
+				{ "is:data1.cab:ciftree.dat", 0, "A:a97b848651fdcf38f5cad7092d98e4a1", 28888006 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE | ADGF_DROPPLATFORM | Nancy::GF_COMPRESSED,
+			NANCY6_7_GUIOPTIONS
+		},
+		Nancy::kGameTypeNancy6
+	},
 	{ // MD5 by fracturehill
 		{
 			"nancy6", nullptr,
