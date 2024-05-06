@@ -182,8 +182,6 @@ ParseCodes CBagDossierObject::setInfo(CBagIfstream &istr) {
 			//
 			//  COLOR n - n color index
 			//
-#define CTEXT_YELLOW RGB(255, 255, 0)
-#define CTEXT_WHITE RGB(255, 255, 255)
 		case 'C':
 			getAlphaNumFromStream(istr, sStr);
 

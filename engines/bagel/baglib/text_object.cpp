@@ -31,8 +31,6 @@
 
 namespace Bagel {
 
-#define CTEXT_WHITE RGB(255, 255, 255)
-
 extern bool g_pauseTimerFl;
 
 CBagTextObject::CBagTextObject() : CBagObject() {
@@ -425,7 +423,7 @@ void CBagTextObject::setColor(int nColor) {
 		_nFGColor = CTEXT_WHITE;
 		break; // White
 	case 8:
-		_nFGColor = RGB(255, 255, 0);
+		_nFGColor = CTEXT_YELLOW;
 		break; // Yellow (chat highlight)
 	default:
 		break;

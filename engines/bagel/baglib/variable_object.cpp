@@ -34,7 +34,7 @@ CBagVariableObject::CBagVariableObject() : CBagObject() {
 }
 
 CBagVariableObject::~CBagVariableObject() {
-	detach();
+	CBagVariableObject::detach();
 }
 
 ErrorCode CBagVariableObject::attach() {
@@ -61,12 +61,11 @@ CBofRect CBagVariableObject::getRect() {
 //   Takes in info and then removes the relative information and returns the info
 //   without the relevant info.
 ParseCodes CBagVariableObject::setInfo(CBagIfstream &istr) {
-	int nChanged;
 	bool nObjectUpdated = false;
 	char ch;
 
 	while (!istr.eof()) {
-		nChanged = 0;
+		int nChanged = 0;
 
 		istr.eatWhite();
 
@@ -95,8 +94,6 @@ ParseCodes CBagVariableObject::setInfo(CBagIfstream &istr) {
 		//
 		// COLOR n - n color index
 		//
-		#define		CTEXT_YELLOW		RGB(255,255,0)
-		#define     CTEXT_WHITE			RGB(255,255,255)
 		case 'C': {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;

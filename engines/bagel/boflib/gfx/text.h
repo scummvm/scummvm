@@ -35,6 +35,8 @@ namespace Bagel {
 // Text color and offset definitions
 #define CTEXT_COLOR         RGB(0,0,0)
 #define CTEXT_SHADOW_COLOR  RGB(0,0,0)
+#define CTEXT_YELLOW        RGB(255, 255, 0)
+#define CTEXT_WHITE         RGB(255, 255, 255)
 
 #define CTEXT_SHADOW_DX     2
 #define CTEXT_SHADOW_DY     2
