@@ -65,6 +65,7 @@ typedef struct ImGuiState {
 	bool _showVars = false;
 	bool _showChannels = false;
 	bool _showCast = false;
+	bool _showFuncList = false;
 	Common::List<CastMemberID> _scripts;
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _breakpoints;
 	int _prevFrame = -1;
@@ -773,7 +774,10 @@ static bool showScript(CastMemberID &id) {
 	return true;
 }
 
-static void showScripts() {
+/**
+ * Display all open scripts
+ */
+static void displayScripts() {
 	if (_state->_scripts.empty())
 		return;
 
@@ -783,6 +787,45 @@ static void showScripts() {
 		else
 			scr++;
 	}
+}
+
+static void showFuncList() {
+	if (!_state->_showFuncList)
+		return;
+
+	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(120, 120), ImGuiCond_FirstUseEver);
+	if (ImGui::Begin("Functions", &_state->_showFuncList)) {
+		Lingo *lingo = g_director->getLingo();
+		Movie *movie = g_director->getCurrentMovie();
+		Score *score = movie->getScore();
+		ScriptContext *csc = lingo->_state->context;
+		if (csc) {
+			ImGui::Text("Functions attached to frame %d:", score->getCurrentFrameNum());
+			ImGui::Text("  %d: %s", csc->_id, csc->formatFunctionList("    ").c_str());
+		} else {
+			ImGui::Text("Functions attached to frame %d:", score->getCurrentFrameNum());
+			ImGui::Text("  [empty]");
+		}
+
+		for (auto it : *movie->getCasts()) {
+			ImGui::Text("Cast %d functions:", it._key);
+			Cast *cast = it._value;
+			if (cast && cast->_lingoArchive) {
+				ImGui::Text("%s", cast->_lingoArchive->formatFunctionList("  ").c_str());
+			} else {
+				ImGui::Text("  [empty]\n");
+			}
+		}
+		ImGui::Text("Shared cast functions:\n");
+		Cast *sharedCast = movie->getSharedCast();
+		if (sharedCast && sharedCast->_lingoArchive) {
+			ImGui::Text("%s", sharedCast->_lingoArchive->formatFunctionList("  ").c_str());
+		} else {
+			ImGui::Text("  [empty]");
+		}
+	}
+	ImGui::End();
 }
 
 void onImGuiInit() {
@@ -821,17 +864,21 @@ void onImGuiRender() {
 			ImGui::MenuItem("Vars", NULL, &_state->_showVars);
 			ImGui::MenuItem("Channels", NULL, &_state->_showChannels);
 			ImGui::MenuItem("Cast", NULL, &_state->_showCast);
+			ImGui::MenuItem("Functions", NULL, &_state->_showFuncList);
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
 	}
 
+	displayScripts();
+
 	showControlPanel();
 	showVars();
 	showCallStack();
 	showChannels();
-	showScripts();
+	displayScripts();
 	showCast();
+	showFuncList();
 }
 
 void onImGuiCleanup() {
