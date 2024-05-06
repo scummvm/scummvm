@@ -982,29 +982,23 @@ static void selectVerbInventory(int direction) {
 
 	switch (direction) {
 	case 0: // Left
-	{
-		if (id < 4)
-			break;
-		id -= 3;
-	} break;
+		if (id >= 4)
+			id -= 3;
+		break;
 	case 1: // Right
-	{
 		if (id > 6) {
 			moveCursorTo(g_twp->screenToWin(g_twp->_uiInv.getPos(id == 7 ? 0 : 4)));
 			return;
 		}
 		id += 3;
-	} break;
+		break;
 	case 2: // Up
-	{
-		if ((id % 3) == 1)
-			break;
-		id--;
-	} break;
+		if ((id % 3) != 1)
+			id--;
+		break;
 	case 3: // Down
-		if ((id % 3) == 0)
-			break;
-		id++;
+		if ((id % 3) != 0)
+			id++;
 		break;
 	}
 
