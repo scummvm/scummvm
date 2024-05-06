@@ -3062,7 +3062,7 @@ void SrafComputer::onListAudioSettings() {
 void SrafComputer::onListRoboButler() {
 	int nSelection = _nSelection - 2;
 
-	if (nSelection < 0 || nSelection > NUM_OFFERINGS) {
+	if (nSelection < 0 || nSelection >= NUM_OFFERINGS) {
 		return;
 	}
 
