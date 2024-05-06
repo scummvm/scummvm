@@ -226,6 +226,8 @@ static const char *toString(ScriptType scriptType) {
 		"Movie",
 		"Event",
 		"Test",
+		"???",
+		"???",
 		"Parent",
 	};
 	if (scriptType < 0 || scriptType > kMaxScriptType)
