@@ -800,29 +800,42 @@ static void showFuncList() {
 		Movie *movie = g_director->getCurrentMovie();
 		Score *score = movie->getScore();
 		ScriptContext *csc = lingo->_state->context;
-		if (csc) {
-			ImGui::Text("Functions attached to frame %d:", score->getCurrentFrameNum());
-			ImGui::Text("  %d: %s", csc->_id, csc->formatFunctionList("    ").c_str());
-		} else {
-			ImGui::Text("Functions attached to frame %d:", score->getCurrentFrameNum());
-			ImGui::Text("  [empty]");
+		if (ImGui::TreeNode("Functions attached to current frame")) {
+			ImGui::Text("Frame %d:", score->getCurrentFrameNum());
+			if (csc) {
+				ImGui::Text("  %d: %s", csc->_id, csc->formatFunctionList("    ").c_str());
+			} else {
+				ImGui::Text("  [empty]");
+			}
+			ImGui::TreePop();
 		}
 
-		for (auto it : *movie->getCasts()) {
-			ImGui::Text("Cast %d functions:", it._key);
-			Cast *cast = it._value;
-			if (cast && cast->_lingoArchive) {
-				ImGui::Text("%s", cast->_lingoArchive->formatFunctionList("  ").c_str());
-			} else {
-				ImGui::Text("  [empty]\n");
+		if (ImGui::TreeNode("Cast functions")) {
+			for (auto it : *movie->getCasts()) {
+				Common::String header = Common::String::format("Cast %d functions", it._key);
+				if (ImGui::TreeNode(header.c_str())) {
+					Cast *cast = it._value;
+					if (cast && cast->_lingoArchive) {
+						ImGui::Text("%s", cast->_lingoArchive->formatFunctionList("  ").c_str());
+					} else {
+						ImGui::Text("  [empty]");
+					}
+
+					ImGui::TreePop();
+				}
 			}
+			ImGui::TreePop();
 		}
-		ImGui::Text("Shared cast functions:\n");
-		Cast *sharedCast = movie->getSharedCast();
-		if (sharedCast && sharedCast->_lingoArchive) {
-			ImGui::Text("%s", sharedCast->_lingoArchive->formatFunctionList("  ").c_str());
-		} else {
-			ImGui::Text("  [empty]");
+
+		if (ImGui::TreeNode("Shared cast functions")) {
+			Cast *sharedCast = movie->getSharedCast();
+			if (sharedCast && sharedCast->_lingoArchive) {
+				ImGui::Text("%s", sharedCast->_lingoArchive->formatFunctionList("  ").c_str());
+			} else {
+				ImGui::Text("  [empty]");
+			}
+
+			ImGui::TreePop();
 		}
 	}
 	ImGui::End();
