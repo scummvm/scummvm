@@ -487,8 +487,8 @@ static void showCast() {
 			ImGui::Spacing();
 			ImGui::SliderInt("Thumbnail Size", &_state->_cast._thumbnailSize, 32, 256);
 		}
-		ImGui::End();
 	}
+	ImGui::End();
 }
 
 static void showVars() {
@@ -738,8 +738,8 @@ static bool showScript(CastMemberID &id) {
 			ImGui::Text("[Nothing]");
 		}
 
-		ImGui::End();
 	}
+	ImGui::End();
 
 	if (!closed)
 		return false;
