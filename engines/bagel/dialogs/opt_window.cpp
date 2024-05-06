@@ -125,7 +125,7 @@ CBagOptWindow::CBagOptWindow() {
 	_cColorScheme._cHighlight = RGB(255, 255, 255);
 	_cColorScheme._cShadow = RGB(255, 255, 255);
 	_cColorScheme._cText = RGB(0, 0, 0);
-	_cColorScheme._cTextDisabled = RGB(255, 255, 255);
+	_cColorScheme._cTextDisabled = CTEXT_WHITE;
 	_cColorScheme._cOutline = RGB(123, 156, 206);
 
 	// Don't need to save the background behind this dialog

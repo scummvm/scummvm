@@ -45,7 +45,7 @@ namespace SpaceBar {
 #define NEBSIM4_BMP  "$SBARDIR\\NEBLITZ\\CLOSEUP\\NAV\\nebsim4.bmp"
 
 // New background bmps are black, so text will be white
-#define NAV_TEXT_COLOR         RGB(255,255,255)
+#define NAV_TEXT_COLOR         CTEXT_WHITE
 
 struct ST_BUTTONS {
 	const char *_pszName;

@@ -306,7 +306,7 @@ ErrorCode CBibbleWindow::attach() {
 		CBofRect cRect(CREDITS_AREA_X1, CREDITS_AREA_Y1, CREDITS_AREA_X2, CREDITS_AREA_Y2);
 
 		_pCreditsText->setupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
-		_pCreditsText->setColor(RGB(255, 255, 255));
+		_pCreditsText->setColor(CTEXT_WHITE);
 
 		_pCreditsText->SetSize(mapWindowsPointSize(20));
 		_pCreditsText->setWeight(TEXT_BOLD);
@@ -690,7 +690,7 @@ void CBibbleWindow::onBofButton(CBofObject *pObject, int nState) {
 			CBofBitmap cBmp(cRect.width(), cRect.height(), (CBofPalette *)nullptr, false);
 			cBmp.captureScreen(this, &cRect);
 
-			paintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
+			paintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, CTEXT_WHITE, JUSTIFY_WRAP, FORMAT_TOP_LEFT);
 			waitForInput();
 
 			cBmp.paint(this, &cRect);

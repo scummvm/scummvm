@@ -499,7 +499,7 @@ SrafComputer::SrafComputer() :
 	gStafferDisplay(0, 0, 640 - 1, 480 - 1), gSrafTextWindow(0, 440, 640 - 1, 480 - 1) {
 	int i;
 
-	_cTextColor = RGB(255, 255, 255);			// Start out with white as our text color
+	_cTextColor = CTEXT_WHITE;			// Start out with white as our text color
 	_cTextHiliteColor = RGB(255, 255, 255);	// and some other color as our hilite
 	_cTextLineColor = RGB(0xFF, 0xFF, 0x00);
 
@@ -4616,7 +4616,7 @@ int SrafTextScreen::createTextScreen(CBofWindow *pParent) {
 
 	if ((_pTextBox = new CBofTextBox(this, &cRect, _text)) != nullptr) {
 		_pTextBox->setPageLength(24);
-		_pTextBox->setColor(RGB(255, 255, 255));
+		_pTextBox->setColor(CTEXT_WHITE);
 		_pTextBox->setFont(FONT_MONO);
 		_pTextBox->setPointSize(FONT_14POINT);
 	} else {

@@ -717,7 +717,7 @@ void SBarComputer::order() {
 			if (nCredits < 1) {
 				CBofBitmap saveBackground(640, 480, (CBofPalette *)nullptr, false);
 				saveBackground.captureScreen(this, &_compTextWindow);
-				paintBeveledText(this, &_compTextWindow, szBroke, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
+				paintBeveledText(this, &_compTextWindow, szBroke, FONT_15POINT, TEXT_NORMAL, CTEXT_WHITE, JUSTIFY_WRAP, FORMAT_TOP_LEFT);
 
 				waitForInput();
 
@@ -757,7 +757,7 @@ void SBarComputer::order() {
 					}
 
 					if (bRefuse) {
-						paintBeveledText(this, &_compTextWindow, szRefuse, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
+						paintBeveledText(this, &_compTextWindow, szRefuse, FONT_15POINT, TEXT_NORMAL, CTEXT_WHITE, JUSTIFY_WRAP, FORMAT_TOP_LEFT);
 						waitForInput();
 
 						saveBackgroundTwo.paint(this, &_compTextWindow);

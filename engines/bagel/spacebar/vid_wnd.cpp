@@ -36,7 +36,7 @@ namespace SpaceBar {
 #define START_TIME1 174000
 #define END_TIME1   225000
 
-#define CLOSEUPVIDEODIR     "$SBARDIR\\BAR\\CLOSEUP\\BRCC2\\"
+#define CLOSEUP_VIDEO_DIR     "$SBARDIR\\BAR\\CLOSEUP\\BRCC2\\"
 
 #define NUM_FRAME_TYPES 11
 
@@ -284,7 +284,7 @@ ErrorCode SBarVidWnd::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 		Common::sprintf_s(szBuf, "%02d:%02d:%02d", nHr, nMn, nSc);
 
-		paintText(pBmp, &cRect, szBuf, 14, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_DEFAULT, FONT_MONO);
+		paintText(pBmp, &cRect, szBuf, 14, TEXT_NORMAL, CTEXT_WHITE, JUSTIFY_WRAP, FORMAT_DEFAULT, FONT_MONO);
 	}
 
 	return _errCode;
@@ -300,7 +300,7 @@ CBagObject *SBarVidWnd::onNewButtonObject(const CBofString &) {
 
 
 const char *BuildVidDir(const char *pszFile) {
-	return formPath(CLOSEUPVIDEODIR, pszFile);
+	return formPath(CLOSEUP_VIDEO_DIR, pszFile);
 }
 
 

@@ -25,7 +25,6 @@
 #include "bagel/boflib/app.h"
 #include "bagel/baglib/master_win.h"
 #include "bagel/baglib/pan_window.h"
-#include "bagel/boflib/misc.h"
 #include "bagel/boflib/std_keys.h"
 
 namespace Bagel {
@@ -125,7 +124,7 @@ bool CBagFMovie::openMovie(const char *sFilename) {
 
 	if (_bmpBuf) {
 		_bmpBuf->lock();
-		_bmpBuf->fillRect(nullptr, _smackerPal->getNearestIndex(RGB(255, 255, 255)));
+		_bmpBuf->fillRect(nullptr, _smackerPal->getNearestIndex(CTEXT_WHITE));
 
 		_reversedFl = !(_bmpBuf->isTopDown());
 		_bufferStart = (char *)_bmpBuf->getPixelAddress(0, _reversedFl * (_bmpBuf->height() - 1));

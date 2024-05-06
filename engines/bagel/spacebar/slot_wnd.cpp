@@ -33,9 +33,9 @@ namespace SpaceBar {
 // return $1; for casino background sounds
 #define CASINO_AUDIO            "CASINO.WAV"
 
-#define BGCBDIR         "$SBARDIR\\BAR\\CLOSEUP\\BGCB\\"
-#define WINAUDIO        "BGNWIN.WAV"
-#define SLOTAUDIO       "BGNSLOT.WAV"
+#define BGCB_DIR         "$SBARDIR\\BAR\\CLOSEUP\\BGCB\\"
+#define WIN_AUDIO        "BGNWIN.WAV"
+#define SLOT_AUDIO       "BGNSLOT.WAV"
 
 struct ST_BUTTONS {
 	const char *_pszName;
@@ -174,7 +174,7 @@ ErrorCode  SBarSlotWnd::attach() {
 	_bLose = false;
 	_bFixBet = false;
 
-	if ((_pSlotSound = new CBofSound(this, BuildSlotDir(SLOTAUDIO), SOUND_MIX, 1)) != nullptr) {
+	if ((_pSlotSound = new CBofSound(this, BuildSlotDir(SLOT_AUDIO), SOUND_MIX, 1)) != nullptr) {
 
 	} else {
 		reportError(ERR_MEMORY, "Could not allocate a CBofSound");
@@ -239,8 +239,7 @@ ErrorCode  SBarSlotWnd::attach() {
 		if (_pCredText != nullptr) {
 			CBofRect cRect(CreditRect.left, CreditRect.top, CreditRect.right, CreditRect.bottom);
 			_pCredText->setupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
-			_pCredText->setColor(RGB(255, 255, 255));
-
+			_pCredText->setColor(CTEXT_WHITE);
 			_pCredText->SetSize(20);
 			_pCredText->setWeight(TEXT_BOLD);
 			_pCredText->setText(buildString("%d", _nCredit));
@@ -257,8 +256,7 @@ ErrorCode  SBarSlotWnd::attach() {
 		if (_pBetText != nullptr) {
 			CBofRect cRect(BetRect.left, BetRect.top, BetRect.right, BetRect.bottom);
 			_pBetText->setupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
-			_pBetText->setColor(RGB(255, 255, 255));
-
+			_pBetText->setColor(CTEXT_WHITE);
 			_pBetText->SetSize(20);
 			_pBetText->setWeight(TEXT_BOLD);
 			_pBetText->setText(buildString("%d", _nBet));
@@ -275,7 +273,7 @@ ErrorCode  SBarSlotWnd::attach() {
 		if (_pOddsText != nullptr) {
 			CBofRect cRect(OddRect.left, OddRect.top, OddRect.right, OddRect.bottom);
 			_pOddsText->setupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
-			_pOddsText->setColor(RGB(255, 255, 255));
+			_pOddsText->setColor(CTEXT_WHITE);
 
 			_pOddsText->SetSize(32);
 			_pOddsText->setWeight(TEXT_BOLD);
@@ -411,7 +409,7 @@ void SBarSlotWnd::addBet(int nBetVal) {
 		CBofBitmap cBmp(cRect.width(), cRect.height(), (CBofPalette *)nullptr, false);
 		cBmp.captureScreen(this, &cRect);
 
-		paintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
+		paintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, CTEXT_WHITE, JUSTIFY_WRAP, FORMAT_TOP_LEFT);
 		waitForInput();
 
 		cBmp.paint(this, &cRect);
@@ -441,7 +439,7 @@ void SBarSlotWnd::betAll() {
 		CBofBitmap cBmp(cRect.width(), cRect.height(), (CBofPalette *)nullptr, false);
 		cBmp.captureScreen(this, &cRect);
 
-		paintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
+		paintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, CTEXT_WHITE, JUSTIFY_WRAP, FORMAT_TOP_LEFT);
 		waitForInput();
 
 		cBmp.paint(this, &cRect);
@@ -549,7 +547,7 @@ void SBarSlotWnd::calcOutcome() {
 	// Do we have a winner ?
 	if (_nPayOff1 > 0) {
 		// Play winning audio
-		_pWinSound = new CBofSound(this, BuildSlotDir(WINAUDIO), SOUND_MIX, 1);
+		_pWinSound = new CBofSound(this, BuildSlotDir(WIN_AUDIO), SOUND_MIX, 1);
 		if (_pWinSound != nullptr) {
 			_pWinSound->play();
 		} else {
@@ -909,7 +907,7 @@ const char *BuildSlotDir(const char *pszFile) {
 	static char szBuf[MAX_DIRPATH];
 
 	// Where Slot assets
-	Common::sprintf_s(szBuf, "%s%s%s", BGCBDIR, PATH_DELIMETER, pszFile);
+	Common::sprintf_s(szBuf, "%s%s%s", BGCB_DIR, PATH_DELIMETER, pszFile);
 
 	CBofString sSlotDir(szBuf, MAX_DIRPATH);
 	MACROREPLACE(sSlotDir);
