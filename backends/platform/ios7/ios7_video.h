@@ -66,6 +66,8 @@ uint getSizeNextPOT(uint size);
 - (int)getScreenWidth;
 - (int)getScreenHeight;
 
+- (void)adjustViewFrameForSafeArea;
+
 - (void)initSurface;
 
 #if TARGET_OS_IOS
