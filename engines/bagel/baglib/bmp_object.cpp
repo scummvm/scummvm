@@ -27,6 +27,8 @@ namespace Bagel {
 CBagBmpObject::CBagBmpObject() : CBagObject() {
 	_xObjType = BMP_OBJ;
 	_bmp = nullptr;
+	_transparency = -1;
+
 	CBagObject::setOverCursor(1);
 	setTimeless(true);
 }
