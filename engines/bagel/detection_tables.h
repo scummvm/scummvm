@@ -75,7 +75,19 @@ const ADGameDescription gameDescriptions[] = {
 	{
 		"spacebar",
 		nullptr,
-		AD_ENTRY1s("wld/bar.wld", "a1c4ef26823d729c03b10bcee3063051", 836864),
+		AD_ENTRY2s("wld/bar.wld", "a1c4ef26823d729c03b10bcee3063051", 836864,
+				   "zzazzl/pda/zzoom.bmp", "b64f8b34f5107d8812e1372993d43adb", 1678),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+
+	{
+		"spacebar",
+		"Not Installed",
+		AD_ENTRY2s("spacebar/wld/bar.wld", "a1c4ef26823d729c03b10bcee3063051", 836864,
+				   "zzazzl/pda/zzoom.bmp", "b64f8b34f5107d8812e1372993d43adb", 1678),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
 		ADGF_UNSTABLE,
