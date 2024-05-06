@@ -346,33 +346,23 @@ ErrorCode SBarSlotWnd::detach() {
 		}
 	}
 
-	if (_pCredText != nullptr) {
-		delete _pCredText;
-		_pCredText = nullptr;
-	}
-	if (_pBetText != nullptr) {
-		delete _pBetText;
-		_pBetText = nullptr;
-	}
+	delete _pCredText;
+	_pCredText = nullptr;
 
-	if (_bFixBmp != nullptr) {
-		delete _bFixBmp;
-		_bFixBmp = nullptr;
-	}
+	delete _pBetText;
+	_pBetText = nullptr;
 
-	if (_pWinSound != nullptr) {
-		delete _pWinSound;
-		_pWinSound = nullptr;
-	}
+	delete _bFixBmp;
+	_bFixBmp = nullptr;
 
-	if (_pSlotSound != nullptr) {
-		delete _pSlotSound;
-		_pSlotSound = nullptr;
-	}
-	if (_pOddsText != nullptr) {
-		delete _pOddsText;
-		_pOddsText = nullptr;
-	}
+	delete _pWinSound;
+	_pWinSound = nullptr;
+
+	delete _pSlotSound;
+	_pSlotSound = nullptr;
+
+	delete _pOddsText;
+	_pOddsText = nullptr;
 
 	CBagStorageDevWnd::detach();
 
