@@ -28,7 +28,7 @@
 
 namespace Bagel {
 
-#define WORLDDIR "$SBARDIR\\WLD\\%s"
+#define WORLD_DIR "$SBARDIR\\WLD\\%s"
 
 void StSavegameHeader::synchronize(Common::Serializer &s) {
 	s.syncBytes((byte *)_szTitle, MAX_SAVE_TITLE);
@@ -122,10 +122,10 @@ void StBagelSave::synchronize(Common::Serializer &s) {
 void StBagelSave::clear() {
 	for (int i = 0; i < MAX_VARS; ++i)
 		_stVarList[i].clear();
-	for (int i = 0; i < MAX_OBJS; ++i)
+	for (int i = 0; i < MAX_OBJS; ++i) {
 		_stObjList[i].clear();
-	for (int i = 0; i < MAX_OBJS; ++i)
 		_stObjListEx[i].clear();
+	}
 
 	Common::fill(_szScript, _szScript + MAX_FNAME, '\0');
 	_nLocType = 0;

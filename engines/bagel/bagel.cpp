@@ -92,6 +92,8 @@ BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	CBofSound::initialize();
 	CBofSprite::initialize();
 	CBofWindow::initialize();
+
+	_saveData.clear();
 }
 
 BagelEngine::~BagelEngine() {
