@@ -337,18 +337,22 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 	}
 }
 
-void Movie::queueUserEvent(LEvent event, int targetId) {
-	queueEvent(_userEventQueue, event, targetId);
+void Movie::queueInputEvent(LEvent event, int targetId) {
+	queueEvent(_inputEventQueue, event, targetId);
 }
 
 void Movie::processEvent(LEvent event, int targetId) {
 	Common::Queue<LingoEvent> queue;
 	queueEvent(queue, event, targetId);
 	_vm->setCurrentWindow(this->getWindow());
-	_lingo->processEvents(queue);
+	_lingo->processEvents(queue, false);
 }
 
-void Lingo::processEvents(Common::Queue<LingoEvent> &queue) {
+void Lingo::processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent) {
+	if (isInputEvent && _currentInputEvent.type != VOIDSYM) {
+		// only one input event should be in flight at a time.
+		return;
+	}
 	int lastEventId = -1;
 	Movie *movie = _vm->getCurrentMovie();
 	Score *sc = movie->getScore();
@@ -367,12 +371,20 @@ void Lingo::processEvents(Common::Queue<LingoEvent> &queue) {
 		}
 
 		_passEvent = el.passByDefault;
-		processEvent(el.event, el.scriptType, el.scriptId, el.channelId);
+
+		bool completed = processEvent(el.event, el.scriptType, el.scriptId, el.channelId);
+
+		if (isInputEvent && !completed) {
+			debugC(5, kDebugEvents, "Lingo::processEvents: context frozen on an input event, stopping");
+			LingoState *state = g_director->getCurrentWindow()->getLastFrozenLingoState();
+			_currentInputEvent = state->callstack.front()->sp;
+			break;
+		}
 		lastEventId = el.eventId;
 	}
 }
 
-void Lingo::processEvent(LEvent event, ScriptType st, CastMemberID scriptId, int channelId) {
+bool Lingo::processEvent(LEvent event, ScriptType st, CastMemberID scriptId, int channelId) {
 	_currentChannelId = channelId;
 
 	if (!_eventHandlerTypes.contains(event))
@@ -384,10 +396,11 @@ void Lingo::processEvent(LEvent event, ScriptType st, CastMemberID scriptId, int
 		debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %s): executing event handler", _eventHandlerTypes[event], scriptType2str(st), scriptId.asString().c_str());
 		g_debugger->eventHook(event);
 		LC::call(script->_eventHandlers[event], 0, false);
-		execute();
+		return execute();
 	} else {
 		debugC(9, kDebugEvents, "Lingo::processEvent(%s, %s, %s): no handler", _eventHandlerTypes[event], scriptType2str(st), scriptId.asString().c_str());
 	}
+	return true;
 }
 
 } // End of namespace Director

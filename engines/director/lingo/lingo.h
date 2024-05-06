@@ -102,6 +102,7 @@ struct Symbol {	/* symbol table entry */
 	Symbol();
 	Symbol(const Symbol &s);
 	Symbol& operator=(const Symbol &s);
+	bool operator==(Symbol &s) const;
 	void reset();
 	~Symbol();
 };
@@ -373,16 +374,16 @@ public:
 	// lingo-events.cpp
 private:
 	void initEventHandlerTypes();
-	void processEvent(LEvent event, ScriptType st, CastMemberID scriptId, int channelId = -1);
+	bool processEvent(LEvent event, ScriptType st, CastMemberID scriptId, int channelId = -1);
 
 public:
 	ScriptType event2script(LEvent ev);
 	Symbol getHandler(const Common::String &name);
 
-	void processEvents(Common::Queue<LingoEvent> &queue);
+	void processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent);
 
 public:
-	void execute();
+	bool execute();
 	void switchStateFromWindow();
 	void freezeState();
 	void pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal, int paramCount);
@@ -532,6 +533,7 @@ public:
 	Datum _perFrameHook;
 
 	Datum _windowList;
+	Symbol _currentInputEvent;
 
 public:
 	void executeImmediateScripts(Frame *frame);
