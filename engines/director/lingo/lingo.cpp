@@ -107,6 +107,10 @@ Symbol& Symbol::operator=(const Symbol &s) {
 	return *this;
 }
 
+bool Symbol::operator==(Symbol &s) const {
+	return ctx == s.ctx && (*name == *s.name);
+}
+
 void Symbol::reset() {
 	*refCount -= 1;
 	// Coverity thinks that we always free memory, as it assumes
@@ -606,7 +610,7 @@ Common::String Lingo::formatFunctionBody(Symbol &sym) {
 	return result;
 }
 
-void Lingo::execute() {
+bool Lingo::execute() {
 	uint localCounter = 0;
 
 	while (!_abort && !_freezeState && _state->script && (*_state->script)[_state->pc] != STOP) {
@@ -670,6 +674,7 @@ void Lingo::execute() {
 		}
 	}
 
+	bool result = !_freezeState;
 	if (_freezeState) {
 		debugC(5, kDebugLingoExec, "Lingo::execute(): Context is frozen, pausing execution");
 		freezeState();
@@ -683,6 +688,8 @@ void Lingo::execute() {
 	_freezeState = false;
 
 	g_debugger->stepHook();
+	// return true if execution finished, false if the context froze for later
+	return result;
 }
 
 void Lingo::executeScript(ScriptType type, CastMemberID id) {

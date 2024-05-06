@@ -215,7 +215,7 @@ bool Movie::processEvent(Common::Event &event) {
 				_lastTimeOut = _lastEventTime;
 
 			debugC(3, kDebugEvents, "Movie::processEvent(): Button Down @(%d, %d), movie '%s', sprite id: %d", pos.x, pos.y, _macName.c_str(), spriteId);
-			queueUserEvent(kEventMouseDown, spriteId);
+			queueInputEvent(kEventMouseDown, spriteId);
 
 			if (sc->_channels[spriteId]->_sprite->_moveable) {
 				_draggingSpriteOffset = sc->_channels[spriteId]->_currentPoint - pos;
@@ -256,7 +256,7 @@ bool Movie::processEvent(Common::Event &event) {
 				cast->_hilite = !cast->_hilite;
 		}
 
-		queueUserEvent(kEventMouseUp, spriteId);
+		queueInputEvent(kEventMouseUp, spriteId);
 		sc->renderCursor(pos);
 
 		_currentHiliteChannelId = 0;
@@ -284,7 +284,7 @@ bool Movie::processEvent(Common::Event &event) {
 		if (_timeOutKeyDown)
 			_lastTimeOut = _lastEventTime;
 
-		queueUserEvent(kEventKeyDown);
+		queueInputEvent(kEventKeyDown);
 		g_director->loadSlowdownCooloff();
 		return true;
 

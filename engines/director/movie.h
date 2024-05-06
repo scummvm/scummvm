@@ -131,7 +131,7 @@ public:
 	// lingo/lingo-events.cpp
 	void setPrimaryEventHandler(LEvent event, const Common::String &code);
 	void processEvent(LEvent event, int targetId = 0);
-	void queueUserEvent(LEvent event, int targetId = 0);
+	void queueInputEvent(LEvent event, int targetId = 0);
 
 private:
 	void loadFileInfo(Common::SeekableReadStreamEndian &stream);
@@ -168,7 +168,7 @@ public:
 	bool _videoPlayback;
 
 	int _nextEventId;
-	Common::Queue<LingoEvent> _userEventQueue;
+	Common::Queue<LingoEvent> _inputEventQueue;
 
 	unsigned char _key;
 	int _keyCode;
