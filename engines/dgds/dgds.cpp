@@ -137,7 +137,9 @@ bool DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
 	}
 
 	if (sceneNum != 2 && _scene->getNum() != 2 && _inventory->isOpen()) {
+		// not going to or from inventory, ensure it's closed and clear drag item.
 		_inventory->close();
+		_scene->setDragItem(nullptr);
 	}
 
 	const Common::String sceneFile = Common::String::format("S%d.SDS", sceneNum);
@@ -158,7 +160,8 @@ bool DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
 	if (runChangeOps)
 		_gdsScene->runChangeSceneOps();
 
-	setMouseCursor(0);
+	if (!_scene->getDragItem())
+		setMouseCursor(0);
 
 	_scene->load(sceneFile, _resource, _decompressor);
 	// These are done inside the load function in the original.. cleaner here..

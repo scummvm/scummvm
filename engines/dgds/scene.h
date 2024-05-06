@@ -301,6 +301,7 @@ public:
 	const Common::Array<struct HotArea> &getHotAreas() const { return _hotAreaList; }
 
 	const GameItem *getDragItem() const { return _dragItem; }
+	GameItem *getDragItem() { return _dragItem; }
 	void setDragItem(GameItem *item) { _dragItem = item; }
 
 	const Common::Array<struct ObjectInteraction> &getObjInteractions1() { return _objInteractions1; }
