@@ -4,7 +4,6 @@ import android.media.AudioAttributes;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
-
 import android.view.View;
 import android.view.Window;
 import android.view.WindowInsets;

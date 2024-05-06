@@ -4,17 +4,12 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-//import android.util.Log;
-import android.view.MotionEvent;
 import android.view.InputDevice;
+import android.view.MotionEvent;
 
 import androidx.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
-//import java.util.ArrayList;
-//import java.util.Collections;
-//import java.util.Comparator;
-//import java.util.List;
 
 // A class that extends the basic ScummVMEventsBase, supporting Android APIs > HONEYCOMB_MR1 (API 12)
 public class ScummVMEventsModern extends ScummVMEventsBase {

@@ -2,11 +2,9 @@ package org.scummvm.scummvm;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
-//import android.util.Log;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-//import android.view.SurfaceView;
 import android.view.View;
 
 /**

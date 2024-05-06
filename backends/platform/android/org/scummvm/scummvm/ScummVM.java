@@ -1,15 +1,15 @@
 package org.scummvm.scummvm;
 
-import androidx.annotation.NonNull;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
-import android.os.Build;
 import android.util.Log;
 import android.view.SurfaceHolder;
+
+import androidx.annotation.NonNull;
 
 import java.util.LinkedHashMap;
 import java.util.Locale;

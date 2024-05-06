@@ -1,20 +1,17 @@
 package org.scummvm.scummvm;
 
+import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.content.Context;
-import android.util.Log;
-import android.view.KeyEvent;
+import android.view.GestureDetector;
+import android.view.HapticFeedbackConstants;
 import android.view.KeyCharacterMap;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.GestureDetector;
-import android.view.HapticFeedbackConstants;
-import android.view.InputDevice;
-//import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 
