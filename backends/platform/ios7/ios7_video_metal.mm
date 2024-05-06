@@ -30,6 +30,21 @@ extern void printError(const char *error_message);
 #define printOpenGLError() printOglError(__FILE__, __LINE__)
 extern void printOglError(const char *file, int line);
 
+const char* kernelFunction = R"(
+	#include <metal_stdlib>
+	#include <simd/simd.h>
+	using namespace metal;
+
+	kernel void flip_y(
+	texture2d<float, access::write> dst [[texture(0)]],
+	texture2d<float, access::read> src [[texture(1)]],
+	uint2 gid [[thread_position_in_grid]])
+	{
+		float4 flipColor = src.read(uint2(gid.x, src.get_height() - gid.y));
+		dst.write(flipColor, gid);
+	}
+)";
+
 @implementation iPhoneViewMetal
 
 static inline void execute_on_main_thread(void (^block)(void)) {
@@ -79,6 +94,9 @@ static inline void execute_on_main_thread(void (^block)(void)) {
 	_commandQueue = [_metalDevice newCommandQueue];
 	[_metalLayer setDevice:_metalDevice];
 	[_metalLayer setDrawableSize:CGSizeMake(self.frame.size.width * self.contentScaleFactor, self.frame.size.height * self.contentScaleFactor)];
+
+	_metalLibrary = [_metalDevice newLibraryWithSource:[NSString stringWithUTF8String:kernelFunction] options:nil error:nil];
+	_kernelFunctionFlipY = [_metalLibrary newFunctionWithName:@"flip_y"];
 }
 
 - (void)createOpenGLESContext {
@@ -205,7 +223,32 @@ static inline void execute_on_main_thread(void (^block)(void)) {
 }
 
 - (void)refreshScreen {
-	// TODO: Implement drawing in Metal drawable
+	NSError *error = NULL;
+
+	glFinish();
+
+	@autoreleasepool {
+		id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
+		id<CAMetalDrawable> drawable = [_metalLayer nextDrawable];
+		id<MTLComputeCommandEncoder> encoder = [commandBuffer computeCommandEncoder];
+
+		[encoder setComputePipelineState:[_metalDevice newComputePipelineStateWithFunction:_kernelFunctionFlipY error:&error]];
+		// dst
+		[encoder setTexture:[drawable texture] atIndex:0];
+		// src
+		[encoder setTexture:_metalTexture atIndex:1];
+
+		MTLSize threadgroupSize = MTLSizeMake(16, 16, 1);
+		MTLSize threadgroupCount;
+		threadgroupCount.width = (_metalTexture.width + threadgroupSize.width - 1) / threadgroupSize.width;
+		threadgroupCount.height = (_metalTexture.height + threadgroupSize.height - 1) / threadgroupSize.height;
+		threadgroupCount.depth = 1;
+		[encoder dispatchThreadgroups:threadgroupCount threadsPerThreadgroup:threadgroupSize];
+
+		[encoder endEncoding];
+		[commandBuffer presentDrawable:drawable];
+		[commandBuffer commit];
+	}
 }
 
 - (int)getScreenWidth {
