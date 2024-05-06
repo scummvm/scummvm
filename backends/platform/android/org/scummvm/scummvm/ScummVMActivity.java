@@ -49,7 +49,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -57,9 +56,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -1357,58 +1354,14 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 	}
 
-	/**
-	 * Auxiliary function to read our ini configuration file
-	 * Code is from https://stackoverflow.com/a/41084504
-	 * returns The sections of the ini file as a Map of the header Strings to a Properties object (the key=value list of each section)
-	 */
-	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
-	private static Map<String, Properties> parseINI(Reader reader) throws IOException {
-		final HashMap<String, Properties> result = new HashMap<>();
-		new Properties() {
-
-			private Properties section;
-
-			@Override
-			public Object put(Object key, Object value) {
-				String header = (key + " " + value).trim();
-				if (header.startsWith("[") && header.endsWith("]"))
-					return result.put(header.substring(1, header.length() - 1),
-						section = new Properties());
-				else
-					return section.put(key, value);
-			}
-
-		}.load(reader);
-		return result;
-	}
-
 	private static String getVersionInfoFromScummvmConfiguration(String fullIniFilePath) {
-		try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fullIniFilePath))) {
-			Map<String, Properties> parsedIniMap = parseINI(bufferedReader);
-			if (!parsedIniMap.isEmpty()
-			    && parsedIniMap.containsKey("scummvm")
-			    && parsedIniMap.get("scummvm") != null) {
-				return parsedIniMap.get("scummvm").getProperty("versioninfo", "");
-			}
+		Map<String, Map<String, String>> parsedIniMap;
+		try (FileReader reader = new FileReader(fullIniFilePath)) {
+			parsedIniMap = INIParser.parse(reader);
 		} catch (IOException ignored) {
-		} catch (NullPointerException ignored) {
+			return null;
 		}
-		return "";
-	}
-
-	private static String getSavepathInfoFromScummvmConfiguration(String fullIniFilePath) {
-		try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fullIniFilePath))) {
-			Map<String, Properties> parsedIniMap = parseINI(bufferedReader);
-			if (!parsedIniMap.isEmpty()
-			    && parsedIniMap.containsKey("scummvm")
-			    && parsedIniMap.get("scummvm") != null) {
-				return parsedIniMap.get("scummvm").getProperty("savepath", "");
-			}
-		} catch (IOException ignored) {
-		} catch (NullPointerException ignored) {
-		}
-		return "";
+		return INIParser.get(parsedIniMap, "scummvm", "versioninfo", null);
 	}
 
 	private boolean seekAndInitScummvmConfiguration() {
@@ -1570,9 +1523,9 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				Log.d(ScummVM.LOG_TAG, "ScummVM Config file already exists!");
 				Log.d(ScummVM.LOG_TAG, "Existing ScummVM INI: " + _configScummvmFile.getPath());
 				String existingVersionInfo = getVersionInfoFromScummvmConfiguration(_configScummvmFile.getPath());
-				if (!TextUtils.isEmpty(existingVersionInfo) && !TextUtils.isEmpty(existingVersionInfo.trim()) ) {
-					Log.d(ScummVM.LOG_TAG, "Existing ScummVM Version: " + existingVersionInfo.trim());
-					Version tmpOldVersionFound = new Version(existingVersionInfo.trim());
+				if (!TextUtils.isEmpty(existingVersionInfo) && !TextUtils.isEmpty(existingVersionInfo) ) {
+					Log.d(ScummVM.LOG_TAG, "Existing ScummVM Version: " + existingVersionInfo);
+					Version tmpOldVersionFound = new Version(existingVersionInfo);
 					if (tmpOldVersionFound.compareTo(maxOldVersionFound) > 0) {
 						maxOldVersionFound = tmpOldVersionFound;
 						existingVersionFoundInScummVMDataDir = tmpOldVersionFound;
