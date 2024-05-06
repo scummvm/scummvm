@@ -26,13 +26,13 @@
 namespace Bagel {
 
 CBagCharacterObject *CBagMoo::_pMovie;
-PDAMODE CBagMoo::_eSavePDAMode;
-PDAPOS CBagMoo::_eSavePDAPos;
+PdaMode CBagMoo::_eSavePDAMode;
+PdaPos CBagMoo::_eSavePDAPos;
 
 void CBagMoo::initialize() {
 	_pMovie = nullptr;
-	_eSavePDAMode = NOMODE;
-	_eSavePDAPos = UNINITIALIZED;
+	_eSavePDAMode = PDA_NO_MODE;
+	_eSavePDAPos = PDA_POS_UNINITIALIZED;
 }
 
 ErrorCode CBagMoo::update(CBofBitmap *pBmp, CBofPoint /*pt*/, CBofRect *pSrcRect, int nMaskColor) {
@@ -54,10 +54,8 @@ ErrorCode CBagMoo::update(CBofBitmap *pBmp, CBofPoint /*pt*/, CBofRect *pSrcRect
 
 CBagMoo::~CBagMoo() {
 	// Can possibly have a movie left over.
-	if (_pMovie) {
-		delete _pMovie;
-		_pMovie = nullptr;
-	}
+	delete _pMovie;
+	_pMovie = nullptr;
 }
 
 ErrorCode CBagMoo::setPDAMovie(CBofString &s) {
@@ -94,19 +92,19 @@ void CBagMoo::stopMovie(bool bResetPDA) {
 		if (pPDA) {
 			// Assume this marks the end of the movie.
 			switch (_eSavePDAMode) {
-			case MAPMODE:
+			case PDA_MAP_MODE:
 				pPDA->showMap();
 				break;
 
-			case INVMODE:
+			case PDA_INV_MODE:
 				pPDA->showInventory();
 				break;
 
-			case LOGMODE:
+			case PDA_LOG_MODE:
 				pPDA->showLog();
 				break;
 
-			case NOMODE:
+			case PDA_NO_MODE:
 			default:
 				pPDA->hideMovie();
 				break;

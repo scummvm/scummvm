@@ -33,8 +33,8 @@ class CBagMoo : public CBagStorageDevBmp {
 protected:
 private:
 	static CBagCharacterObject *_pMovie;
-	static PDAMODE _eSavePDAMode;
-	static PDAPOS _eSavePDAPos;
+	static PdaMode _eSavePDAMode;
+	static PdaPos _eSavePDAPos;
 
 public:
 	CBagMoo() : CBagStorageDevBmp() {}
@@ -59,10 +59,10 @@ public:
 		return _pMovie != nullptr;
 	}
 
-	void savePDAMode(PDAMODE pdaMode) {
+	void savePDAMode(PdaMode pdaMode) {
 		_eSavePDAMode = pdaMode;
 	}
-	void savePDAPosition(PDAPOS pdaPos) {
+	void savePDAPosition(PdaPos pdaPos) {
 		_eSavePDAPos = pdaPos;
 	}
 };

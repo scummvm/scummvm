@@ -830,11 +830,11 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				getAlphaNumFromStream(input, pdaState);
 
 				if (pdaState.find("MAP") != -1) {
-					SBBasePda::setPdaMode(MAPMODE);
+					SBBasePda::setPdaMode(PDA_MAP_MODE);
 				} else if (pdaState.find("INV") != -1) {
-					SBBasePda::setPdaMode(INVMODE);
+					SBBasePda::setPdaMode(PDA_INV_MODE);
 				} else if (pdaState.find("LOG") != -1) {
-					SBBasePda::setPdaMode(LOGMODE);
+					SBBasePda::setPdaMode(PDA_LOG_MODE);
 				}
 				logInfo(buildString("PDASTATE = %s", pdaStateBuf));
 			}

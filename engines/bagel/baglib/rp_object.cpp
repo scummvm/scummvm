@@ -524,7 +524,7 @@ int CBagRPObject::runResiduePrintedQueue() {
 	}
 
 	// The first part of this static should only run if the log is frontmost.
-	if (SBBasePda::getPdaMode() == LOGMODE) {
+	if (SBBasePda::getPdaMode() == PDA_LOG_MODE) {
 		// If our script switched us to the main menu, then make sure that we
 		// have a chance to deactivate anything that we have active.
 		RPStates prevRPState = _eRPMode;

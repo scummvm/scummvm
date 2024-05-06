@@ -36,24 +36,24 @@ namespace Bagel {
 #define PDA_MSGLIGHT (110)
 #define PDA_ZOOMFLASH "ZOOMFLASH"
 
-enum PDAMODE {
-	NOMODE,
-	MAPMODE,
-	INVMODE,
-	LOGMODE,
-	MOOMODE
+enum PdaMode {
+	PDA_NO_MODE,
+	PDA_MAP_MODE,
+	PDA_INV_MODE,
+	PDA_LOG_MODE,
+	PDA_MOO_MODE
 };
-enum PDAPOS {
-	UNINITIALIZED,
-	PDAUP,
-	PDADOWN
+enum PdaPos {
+	PDA_POS_UNINITIALIZED,
+	PDA_UP,
+	PDA_DOWN
 };
 
 class SBBasePda {
 protected:
 	// All PDA's in the game should share the same mode
-	static PDAMODE _pdaMode;
-	static PDAPOS _pdaPos;
+	static PdaMode _pdaMode;
+	static PdaPos _pdaPos;
 	int _numMoves;
 	int _activating;
 	bool _activated;
@@ -64,12 +64,12 @@ protected:
 	CBagStorageDevBmp *_logWnd;     // Pointer to the Map object
 	CBagStorageDevBmp *_curDisplay; // Pointer to the object currently displayed in PDA
 	CBofWindow *_parent;
-	bool _zoomed;
-	bool _deactivate; // should we deactivate when done w/movie?
+	bool _zoomedFl;
+	bool _deactivateFl; // should we deactivate when done w/movie?
 
 	// hold this info for restore method
 	CBagStorageDevBmp *_holdDisplay;
-	static PDAMODE _holdMode;
+	static PdaMode _holdMode;
 
 public:
 	SBBasePda(CBofWindow *parent = nullptr, const CBofRect &rect = CBofRect(), bool activated = false);
@@ -79,10 +79,10 @@ public:
 	/**
 	 * Allows PDA mode to be set by script
 	 */
-	static void setPdaMode(PDAMODE pdaMode) {
+	static void setPdaMode(PdaMode pdaMode) {
 		_pdaMode = pdaMode;
 	}
-	static PDAMODE getPdaMode() {
+	static PdaMode getPdaMode() {
 		return _pdaMode;
 	}
 	bool isActivated() {
@@ -136,11 +136,11 @@ public:
 	void stopMovie(bool bResetPDA);
 
 	void setDeactivate(bool b) {
-		_deactivate = b;
+		_deactivateFl = b;
 	}
 	
 	bool getDeactivate() {
-		return _deactivate;
+		return _deactivateFl;
 	}
 
 	/**
@@ -182,10 +182,10 @@ public:
 	void getPdaState();
 
 	void setZoomed(bool newVal) {
-		_zoomed = newVal;
+		_zoomedFl = newVal;
 	}
 	bool getZoomed() {
-		return _zoomed;
+		return _zoomedFl;
 	}
 
 	int getProperCursor(const CBofPoint &pos, CBofRect &pdaRect);

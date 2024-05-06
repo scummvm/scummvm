@@ -32,14 +32,14 @@
 namespace Bagel {
 
 // Init static members
-PDAMODE SBBasePda::_pdaMode;
-PDAPOS SBBasePda::_pdaPos;
-PDAMODE SBBasePda::_holdMode;
+PdaMode SBBasePda::_pdaMode;
+PdaPos SBBasePda::_pdaPos;
+PdaMode SBBasePda::_holdMode;
 
 void SBBasePda::initialize() {
-	_pdaMode = NOMODE;
-	_pdaPos = UNINITIALIZED;
-	_holdMode = NOMODE;
+	_pdaMode = PDA_NO_MODE;
+	_pdaPos = PDA_POS_UNINITIALIZED;
+	_holdMode = PDA_NO_MODE;
 }
 
 SBBasePda::SBBasePda(CBofWindow *parent, const CBofRect & /* xRect*/, bool activated) {
@@ -55,9 +55,12 @@ SBBasePda::SBBasePda(CBofWindow *parent, const CBofRect & /* xRect*/, bool activ
 	_logWnd = nullptr;
 
 	_curDisplay = nullptr;
+	_holdDisplay = nullptr;
 
 	// Other classes need to know if we're zoomed
 	setZoomed(false);
+	setDeactivate(false);
+	
 }
 
 SBBasePda::~SBBasePda() {
@@ -79,7 +82,7 @@ bool SBBasePda::hideCurDisplay() {
 		_holdMode = _pdaMode;
 
 		_curDisplay = nullptr;
-		_pdaMode = NOMODE;
+		_pdaMode = PDA_NO_MODE;
 		setPdaState();
 		return true;
 	}
@@ -111,7 +114,7 @@ bool SBBasePda::hideMovie() {
 		// if we have an inventory window
 		_mooWnd->setVisible(false);
 		_curDisplay = nullptr;
-		_pdaMode = NOMODE;
+		_pdaMode = PDA_NO_MODE;
 		setPdaState();
 		return true;
 	}
@@ -123,7 +126,7 @@ bool SBBasePda::showMovie() {
 	synchronizePdaState();
 
 	// if we're already playing a movie, then return false
-	if (_pdaMode == MOOMODE) {
+	if (_pdaMode == PDA_MOO_MODE) {
 		return false;
 	}
 
@@ -142,7 +145,7 @@ bool SBBasePda::showMovie() {
 
 		// Set the current display = Inventory
 		_curDisplay = _mooWnd;
-		_pdaMode = MOOMODE;
+		_pdaMode = PDA_MOO_MODE;
 		setPdaState();
 
 		// Set default state of movie to don't deactivate PDA
@@ -174,7 +177,7 @@ bool SBBasePda::hideInventory() {
 	if (_invWnd) {
 		_invWnd->setVisible(false);
 		_curDisplay = nullptr;
-		_pdaMode = NOMODE;
+		_pdaMode = PDA_NO_MODE;
 		setPdaState();
 		return true;
 	}
@@ -199,7 +202,7 @@ bool SBBasePda::showInventory() {
 
 		// Set the current display = Inventory
 		_curDisplay = _invWnd;
-		_pdaMode = INVMODE;
+		_pdaMode = PDA_INV_MODE;
 		setPdaState();
 		return true;
 	}
@@ -225,7 +228,7 @@ bool SBBasePda::showMap() {
 
 		// Set the current display = Map
 		_curDisplay = _mapWnd;
-		_pdaMode = MAPMODE;
+		_pdaMode = PDA_MAP_MODE;
 		_mapWnd->attachActiveObjects();
 		setPdaState();
 
@@ -246,7 +249,7 @@ bool SBBasePda::hideMap() {
 		// set the current display to nullptr
 		_curDisplay = nullptr;
 		setPdaState();
-		_pdaMode = NOMODE;
+		_pdaMode = PDA_NO_MODE;
 		return true;
 	}
 
@@ -275,7 +278,7 @@ bool SBBasePda::showLog() {
 
 		// Set the current display = Map
 		_curDisplay = _logWnd;
-		_pdaMode = LOGMODE;
+		_pdaMode = PDA_LOG_MODE;
 		_logWnd->attachActiveObjects();
 		setPdaState();
 
@@ -343,9 +346,9 @@ void *SBBasePda::pdaButtonHandler(int refId, void *info) {
 }
 
 void SBBasePda::synchronizePdaState() {
-	if (_pdaPos == PDADOWN && isActivated()) {
+	if (_pdaPos == PDA_DOWN && isActivated()) {
 		deactivate();
-	} else if (_pdaPos == PDAUP && isActivated() == false) {
+	} else if (_pdaPos == PDA_UP && isActivated() == false) {
 		activate();
 	}
 }
@@ -356,7 +359,7 @@ void SBBasePda::activate() {
 		_activated = true;
 	}
 
-	_pdaPos = PDAUP;
+	_pdaPos = PDA_UP;
 	setPdaState();
 }
 
@@ -366,7 +369,7 @@ void SBBasePda::deactivate() {
 		_activated = false;
 	}
 
-	_pdaPos = PDADOWN;
+	_pdaPos = PDA_DOWN;
 	setPdaState();
 }
 
@@ -389,19 +392,19 @@ void SBBasePda::setPdaState() {
 	curVar = g_VarManager->getVariable(pdaMode);
 	if (curVar != nullptr) {
 		switch (_pdaMode) {
-		case NOMODE:
+		case PDA_NO_MODE:
 			curVar->setValue("NOMODE");
 			break;
-		case MAPMODE:
+		case PDA_MAP_MODE:
 			curVar->setValue("MAPMODE");
 			break;
-		case INVMODE:
+		case PDA_INV_MODE:
 			curVar->setValue("INVMODE");
 			break;
-		case LOGMODE:
+		case PDA_LOG_MODE:
 			curVar->setValue("LOGMODE");
 			break;
-		case MOOMODE:
+		case PDA_MOO_MODE:
 			curVar->setValue("MOOMODE");
 			break;
 		}
@@ -410,10 +413,10 @@ void SBBasePda::setPdaState() {
 	curVar = g_VarManager->getVariable(pdaPos);
 	if (curVar != nullptr) {
 		switch (_pdaPos) {
-		case PDAUP:
+		case PDA_UP:
 			curVar->setValue("UP");
 			break;
-		case PDADOWN:
+		case PDA_DOWN:
 			curVar->setValue("DOWN");
 			break;
 		default:
@@ -445,15 +448,15 @@ void SBBasePda::getPdaState() {
 		// Now set the internal PDA state based on this info.
 		// If we saved during a movie, then restore to map mode.
 		if (pdaState.find("MAP") != -1 || pdaState.find("MOO") != -1) {
-			_pdaMode = MAPMODE;
+			_pdaMode = PDA_MAP_MODE;
 		} else if (pdaState.find("INV") != -1) {
-			_pdaMode = INVMODE;
+			_pdaMode = PDA_INV_MODE;
 		} else if (pdaState.find("LOG") != -1) {
-			_pdaMode = LOGMODE;
+			_pdaMode = PDA_LOG_MODE;
 		} else if (pdaState.find("MOO") != -1) {
-			_pdaMode = MOOMODE;
+			_pdaMode = PDA_MOO_MODE;
 		} else {
-			_pdaMode = NOMODE;
+			_pdaMode = PDA_NO_MODE;
 		}
 	}
 
@@ -462,9 +465,9 @@ void SBBasePda::getPdaState() {
 	if (curVar) {
 		pdaState = curVar->getValue();
 		if (pdaState.find("UP") != -1) {
-			_pdaPos = PDAUP;
+			_pdaPos = PDA_UP;
 		} else {
-			_pdaPos = PDADOWN;
+			_pdaPos = PDA_DOWN;
 		}
 	}
 }
@@ -481,9 +484,9 @@ int SBBasePda::getProperCursor(const CBofPoint &pos, CBofRect &pdaRect) {
 	// If we're in the map, return the nullptr cursor, if on the pda but not in the
 	// map window, return the hand.  Same rules for nomode.
 	switch (_pdaMode) {
-	case MAPMODE:
-	case NOMODE:
-	case MOOMODE:
+	case PDA_MAP_MODE:
+	case PDA_NO_MODE:
+	case PDA_MOO_MODE:
 		if (_mapWnd) {
 			CBofRect pdaViewRect = _mapWnd->getRect() + pdaRect.topLeft();
 			if (pdaViewRect.ptInRect(pos)) {
@@ -496,10 +499,10 @@ int SBBasePda::getProperCursor(const CBofPoint &pos, CBofRect &pdaRect) {
 		}
 		break;
 
-	case INVMODE:
-	case LOGMODE:
+	case PDA_INV_MODE:
+	case PDA_LOG_MODE:
 		// Make sure our cur display is synchronized.
-		assert(_pdaMode == INVMODE ? _curDisplay == _invWnd : _curDisplay == _logWnd);
+		assert(_pdaMode == PDA_INV_MODE ? _curDisplay == _invWnd : _curDisplay == _logWnd);
 
 		// If we have a display, then parouse its list and see if we're over something worth
 		// mousedowning on.
@@ -527,7 +530,7 @@ int SBBasePda::getProperCursor(const CBofPoint &pos, CBofRect &pdaRect) {
 					}
 				}
 
-				if (_pdaMode == LOGMODE) {
+				if (_pdaMode == PDA_LOG_MODE) {
 					if (overObj) {
 						return overObj->getOverCursor();
 					}
@@ -536,7 +539,7 @@ int SBBasePda::getProperCursor(const CBofPoint &pos, CBofRect &pdaRect) {
 					}
 				}
 
-				if (_pdaMode == INVMODE) {
+				if (_pdaMode == PDA_INV_MODE) {
 					if (wieldCursor >= 0) {
 						return wieldCursor;
 					}

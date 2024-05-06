@@ -207,11 +207,11 @@ ErrorCode SBZoomPda::attach() {
 			_logWnd->attachActiveObjects();
 		}
 
-		if (_pdaMode == INVMODE) {
+		if (_pdaMode == PDA_INV_MODE) {
 			showInventory();
-		} else if (_pdaMode == MAPMODE) {
+		} else if (_pdaMode == PDA_MAP_MODE) {
 			showMap();
-		} else if (_pdaMode == LOGMODE) {
+		} else if (_pdaMode == PDA_LOG_MODE) {
 			showLog();
 		}
 
@@ -263,7 +263,7 @@ void SBZoomPda::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 			_curDisplay->onLButtonUp(nFlags, xPoint, nullptr);
 		} else {
 			// We have no mode yet, then pass it to the default method
-			if (_pdaMode == NOMODE) {
+			if (_pdaMode == PDA_NO_MODE) {
 				CBagStorageDevWnd::onLButtonUp(nFlags, xPoint);
 			}
 		}
@@ -295,7 +295,7 @@ void SBZoomPda::onMainLoop() {
 	uint32 nCurTime = getTimer();
 
 	// Force an update every 1/4 second
-	if (_pdaMode == INVMODE || _pdaMode == MAPMODE) {
+	if (_pdaMode == PDA_INV_MODE || _pdaMode == PDA_MAP_MODE) {
 		if (nCurTime > (g_lZoomPDALastUpdate + 250)) {
 			g_lZoomPDALastUpdate = nCurTime;
 

@@ -129,7 +129,7 @@ public:
 	static bool isMovieWaiting();
 
 	static bool isMoviePlaying() {
-		return _pdaMode == MOOMODE;
+		return _pdaMode == PDA_MOO_MODE;
 	}
 
 	static void runWaitingMovie();

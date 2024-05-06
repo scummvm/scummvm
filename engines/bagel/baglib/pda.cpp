@@ -179,11 +179,11 @@ ErrorCode CBagPDA::attach() {
 			rc = _logWnd->attach();
 		}
 	}
-	if (_pdaMode == INVMODE) {
+	if (_pdaMode == PDA_INV_MODE) {
 		showInventory();
-	} else if (_pdaMode == MAPMODE) {
+	} else if (_pdaMode == PDA_MAP_MODE) {
 		showMap();
-	} else if (_pdaMode == LOGMODE) {
+	} else if (_pdaMode == PDA_LOG_MODE) {
 		showLog();
 	}
 
@@ -267,13 +267,13 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 		}
 
 		// We have gotten back from a zoom and we need to straighten up
-		if (SBBasePda::_pdaMode == INVMODE && _curDisplay != _invWnd) {
+		if (SBBasePda::_pdaMode == PDA_INV_MODE && _curDisplay != _invWnd) {
 			showInventory();
 
-		} else if (SBBasePda::_pdaMode == MAPMODE && _curDisplay != _mapWnd) {
+		} else if (SBBasePda::_pdaMode == PDA_MAP_MODE && _curDisplay != _mapWnd) {
 
 			showMap();
-		} else if (SBBasePda::_pdaMode == LOGMODE && _curDisplay != _logWnd) {
+		} else if (SBBasePda::_pdaMode == PDA_LOG_MODE && _curDisplay != _logWnd) {
 			showLog();
 		}
 
@@ -282,8 +282,8 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 		bool bMoviePlaying = false;
 
 		if ((!isActivated()) &&                             // Must be down
-		        ((_pdaMode == MAPMODE) ||
-		         (bIsMovieWaiting && _pdaMode != MOOMODE))) {
+		        ((_pdaMode == PDA_MAP_MODE) ||
+		         (bIsMovieWaiting && _pdaMode != PDA_MOO_MODE))) {
 
 			// Reset to reflect we know it happened
 			setPreFiltered(false);
@@ -292,7 +292,7 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 			if (bIsMovieWaiting == true) {
 				runWaitingMovie();
 			}
-		} else if (_pdaMode == MOOMODE) {
+		} else if (_pdaMode == PDA_MOO_MODE) {
 			// If we're playing a pda movie, then make sure we continue to update.
 			bMoviePlaying = true;
 			bUpdate = true;
@@ -309,7 +309,7 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 		if (isActivating() || bWandAnimating || bMoviePlaying) {
 			CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev());
 			((CBagPanWindow *)pMainWin)->setPreFilterPan(true);
-		} else if (!isActivated() && (SBBasePda::_pdaMode != MAPMODE)) {
+		} else if (!isActivated() && (SBBasePda::_pdaMode != PDA_MAP_MODE)) {
 			// If it is not activated, then don't bother redrawing it or the objects
 			// inside of it.
 			setDirty(false);
@@ -339,7 +339,7 @@ bool CBagPDA::isInside(const CBofPoint &xPoint) {
 void CBagPDA::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev());
 
-	if (!isActivated() && _pdaMode != INVMODE) {          // if the PDA is not active, activate it
+	if (!isActivated() && _pdaMode != PDA_INV_MODE) {          // if the PDA is not active, activate it
 		if (isInside(*xPoint)) {
 			// Make sure the entire screen gets redrawn for an activate
 			((CBagPanWindow *)pMainWin)->setPreFilterPan(true);
@@ -359,7 +359,7 @@ void CBagPDA::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 		_curDisplay->onLButtonUp(nFlags, &RealPt, info);
 	} else {
 		// if not in the PDA view port then check and make sure it is activated.
-		if (SBBasePda::_pdaMode == INVMODE && !isActivated()) {
+		if (SBBasePda::_pdaMode == PDA_INV_MODE && !isActivated()) {
 			if (isInside(*xPoint)) {
 				// Make sure the entire screen gets redrawn for an activate
 				((CBagPanWindow *)pMainWin)->setPreFilterPan(true);
@@ -387,7 +387,7 @@ void CBagPDA::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 			}
 
 			// Deactivate the PDA if we didn't hit a button.
-			if (bButtonHit || _pdaMode == NOMODE) {
+			if (bButtonHit || _pdaMode == PDA_NO_MODE) {
 				CBagStorageDevBmp::onLButtonUp(nFlags, xPoint, info);
 			} else {
 				((CBagPanWindow *)pMainWin)->setPreFilterPan(true);
@@ -463,7 +463,7 @@ void CBagPDA::handleZoomButton(bool bButtonDown) {
 
 	// Only change the flashing state if we're not in a button down situation
 	if (pZoomFlash && pZoomRegular && pZoomRegular->getState() != 1) {
-		if (bButtonDown == false && _pdaMode == INVMODE && (_pdaPos == PDAUP) && _invWnd && _invWnd->getNumFloatPages() > 1) {
+		if (bButtonDown == false && _pdaMode == PDA_INV_MODE && (_pdaPos == PDA_UP) && _invWnd && _invWnd->getNumFloatPages() > 1) {
 			// Make the zoom button blink, to indicate more icons
 			if (_flashingFl == false) {
 				// Don't allow attachActiveObjects() to be called in here
