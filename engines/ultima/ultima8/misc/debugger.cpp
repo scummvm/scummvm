@@ -1056,7 +1056,7 @@ bool Debugger::cmdUseBackpack(int argc, const char **argv) {
 		return false;
 	}
 	MainActor *av = getMainActor();
-	Item *backpack = getItem(av->getEquip(7));
+	Item *backpack = getItem(av->getEquip(ShapeInfo::SE_BACKPACK));
 	if (backpack)
 		backpack->callUsecodeEvent_use();
 	return false;

@@ -414,7 +414,7 @@ bool GameMapGump::DraggingItem(Item *item, int mx, int my) {
 
 	MainActor *avatar = getMainActor();
 	if (trace == 1) { // dropping on self
-		ObjId bp = avatar->getEquip(7); // !! constant
+		ObjId bp = avatar->getEquip(ShapeInfo::SE_BACKPACK);
 		Container *backpack = getContainer(bp);
 		return  backpack->CanAddItem(item, true);
 	}
@@ -474,7 +474,7 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 
 	ObjId trace = TraceCoordinates(mx, my, _draggingPos, dox, doy, item);
 	if (trace == 1) { // dropping on self
-		ObjId bp = avatar->getEquip(7); // !! constant
+		ObjId bp = avatar->getEquip(ShapeInfo::SE_BACKPACK);
 		Container *backpack = getContainer(bp);
 		if (backpack && item->moveToContainer(backpack)) {
 			debugC(kDebugObject, "Dropped item in backpack");

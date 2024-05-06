@@ -80,13 +80,14 @@ public:
 	};
 
 	enum SEquipType {
-		SE_NONE   = 0,
-		SE_SHIELD = 1,
-		SE_ARM    = 2,
-		SE_HEAD   = 3,
-		SE_BODY   = 4,
-		SE_LEGS   = 5,
-		SE_WEAPON = 6
+		SE_NONE     = 0,
+		SE_SHIELD   = 1,
+		SE_ARM      = 2,
+		SE_HEAD     = 3,
+		SE_BODY     = 4,
+		SE_LEGS     = 5,
+		SE_WEAPON   = 6,
+		SE_BACKPACK = 7
 	};
 
 	uint32 _flags;

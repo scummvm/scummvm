@@ -109,7 +109,7 @@ bool Container::CanAddItem(Item *item, bool checkwghtvol) {
 		                   || shapeid == 78 || shapeid == 117 /*Chests*/)) {
 			// TODO: make this off by default, but can enable it through config
 			MainActor *avatar = getMainActor();
-			ObjId bp = avatar->getEquip(7); // !! constant
+			ObjId bp = avatar->getEquip(ShapeInfo::SE_BACKPACK);
 			Container *avatarbackpack = getContainer(bp);
 			if (avatarbackpack == this) {
 				capacity = 500;

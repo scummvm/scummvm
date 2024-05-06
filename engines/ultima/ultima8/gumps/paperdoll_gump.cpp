@@ -250,8 +250,9 @@ uint16 PaperdollGump::TraceObjId(int32 mx, int32 my) {
 
 	// try backpack
 	if (_backpackRect.contains(mx - _itemArea.left, my - _itemArea.top)) {
-		if (a->getEquip(7)) // constants
-			return a->getEquip(7);
+		ObjId bp = a->getEquip(ShapeInfo::SE_BACKPACK);
+		if (bp)
+			return bp;
 	}
 
 	// didn't find anything, so return self
