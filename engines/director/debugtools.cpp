@@ -389,7 +389,7 @@ static void showCast() {
 						const char *name = castMemberInfo ? castMemberInfo->name.c_str() : "";
 						if (!_state->_cast._nameFilter.PassFilter(name))
 							continue;
-						if (!(_state->_cast._typeFilter & (1 << (int)castMember._value->_type)))
+						if ((castMember._value->_type != kCastTypeAny) && !(_state->_cast._typeFilter & (1 << (int)castMember._value->_type)))
 							continue;
 
 						ImGui::TableNextRow();
@@ -439,7 +439,7 @@ static void showCast() {
 						}
 						if (!_state->_cast._nameFilter.PassFilter(name.c_str()))
 							continue;
-						if (!(_state->_cast._typeFilter & (1 << (int)castMember._value->_type)))
+						if ((castMember._value->_type != kCastTypeAny) && !(_state->_cast._typeFilter & (1 << (int)castMember._value->_type)))
 							continue;
 
 						ImGui::TableNextColumn();
