@@ -22,10 +22,8 @@ $(PATH_BUILD_GRADLE): $(GRADLE_FILES) | $(PATH_BUILD)
 	$(CP) -r $(PATH_DIST)/gradle/ $(PATH_BUILD)/gradle/
 	$(INSTALL) -c -m 755 $(PATH_DIST)/gradlew $(PATH_BUILD)
 	$(INSTALL) -c -m 644 $(PATH_DIST)/build.gradle $(PATH_BUILD)
-	$(ECHO) "srcdir=$(realpath $(srcdir))\n" > $(PATH_BUILD)/gradle.properties
-	$(ECHO) "org.gradle.jvmargs=-Xmx4096m\n" >> $(PATH_BUILD)/gradle.properties
-	$(ECHO) "android.useAndroidX=true\n" >> $(PATH_BUILD)/gradle.properties
-	$(ECHO) "android.enableJetifier=true\n" >> $(PATH_BUILD)/gradle.properties
+	$(INSTALL) -c -m 644 $(PATH_DIST)/gradle.properties $(PATH_BUILD)
+	$(ECHO) "srcdir=$(realpath $(srcdir))\n" > $(PATH_BUILD)/src.properties
 	$(ECHO) "sdk.dir=$(realpath $(ANDROID_SDK_ROOT))\n" > $(PATH_BUILD)/local.properties
 
 $(PATH_BUILD_ASSETS): $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_ENGINEDATA_BIG) $(DIST_FILES_SOUNDFONTS) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_FILES_DOCS) $(DIST_FILES_HELP) | $(PATH_BUILD)
