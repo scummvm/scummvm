@@ -416,6 +416,19 @@ CastMember *Movie::getCastMember(CastMemberID memberID) {
 	return result;
 }
 
+Cast *Movie::getCast(CastMemberID memberID) {
+	if (memberID.castLib == SHARED_CAST_LIB)
+		return _sharedCast;
+
+	if (_casts.contains(memberID.castLib)) {
+		return _casts.getVal(memberID.castLib);
+	} else if (memberID.castLib != 0) {
+		warning("Movie::getCast: Unknown castLib %d", memberID.castLib);
+		return nullptr;
+	}
+	return nullptr;
+}
+
 CastMember* Movie::createOrReplaceCastMember(CastMemberID memberID, CastMember* cast) {
 	warning("Movie::createOrReplaceCastMember: stubbed: functions only handles create");
 	CastMember *result = nullptr;

@@ -20,6 +20,7 @@
  */
 
 #define IMGUI_DEFINE_MATH_OPERATORS
+
 #include "backends/imgui/imgui.h"
 #include "backends/imgui/imgui_fonts.h"
 #include "common/config-manager.h"
@@ -66,7 +67,7 @@ typedef struct ImGuiState {
 	bool _showChannels = false;
 	bool _showCast = false;
 	bool _showFuncList = false;
-	Common::List<CastMemberID> _scripts;
+	Common::List<CastMemberID> _scriptCasts;
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _breakpoints;
 	int _prevFrame = -1;
 } ImGuiState;
@@ -546,9 +547,9 @@ static ImVec4 convertColor(uint32 color) {
 	return ImGui::ColorConvertU32ToFloat4(color);
 }
 
-static void addScriptToDisplay(CastMemberID &id) {
-	_state->_scripts.remove(id);
-	_state->_scripts.push_back(id);
+static void addScriptCastToDisplay(CastMemberID &id) {
+	_state->_scriptCasts.remove(id);
+	_state->_scriptCasts.push_back(id);
 }
 
 static void showChannels() {
@@ -646,7 +647,7 @@ static void showChannels() {
 						ImGui::TextColored(ImVec4(0.5f, 0.5f, 1.0f, 1.0f), "%s", sprite._scriptId.asString().c_str());
 
 						if (ImGui::IsItemClicked(0))
-							addScriptToDisplay(sprite._scriptId);
+							addScriptCastToDisplay(sprite._scriptId);
 					}
 					ImGui::TableNextColumn();
 					ImGui::Text("0x%x", sprite._colorcode);
@@ -740,7 +741,7 @@ static void renderScript(Symbol &sym) {
 	}
 }
 
-static bool showScript(CastMemberID &id) {
+static bool showScriptCast(CastMemberID &id) {
 	Common::String wName("Script ");
 	wName += id.asString();
 
@@ -777,13 +778,13 @@ static bool showScript(CastMemberID &id) {
 /**
  * Display all open scripts
  */
-static void displayScripts() {
-	if (_state->_scripts.empty())
+static void displayScriptCasts() {
+	if (_state->_scriptCasts.empty())
 		return;
 
-	for (Common::List<CastMemberID>::iterator scr = _state->_scripts.begin(); scr != _state->_scripts.end(); ) {
-		if (!showScript(*scr))
-			scr = _state->_scripts.erase(scr);
+	for (Common::List<CastMemberID>::iterator scr = _state->_scriptCasts.begin(); scr != _state->_scriptCasts.end(); ) {
+		if (!showScriptCast(*scr))
+			scr = _state->_scriptCasts.erase(scr);
 		else
 			scr++;
 	}
@@ -885,13 +886,12 @@ void onImGuiRender() {
 		ImGui::EndMainMenuBar();
 	}
 
-	displayScripts();
+	displayScriptCasts();
 
 	showControlPanel();
 	showVars();
 	showCallStack();
 	showChannels();
-	displayScripts();
 	showCast();
 	showFuncList();
 }

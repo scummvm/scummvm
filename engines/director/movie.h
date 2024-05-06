@@ -23,6 +23,7 @@
 #define DIRECTOR_MOVIE_H
 
 #define DEFAULT_CAST_LIB 1
+#define SHARED_CAST_LIB -1337
 #define CAST_LIB_OFFSET 1023
 
 namespace Common {
@@ -99,6 +100,7 @@ public:
 	Window *getWindow() const { return _window; }
 	DirectorEngine *getVM() const { return _vm; }
 	Cast *getCast() const { return _casts.getValOrDefault(DEFAULT_CAST_LIB, nullptr); }
+	Cast *getCast(CastMemberID memberID);
 	Cast *getSharedCast() const { return _sharedCast; }
 	const Common::HashMap<int, Cast *> *getCasts() const { return &_casts; }
 	Score *getScore() const { return _score; }
