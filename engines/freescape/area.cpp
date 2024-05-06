@@ -23,6 +23,7 @@
 // available at https://github.com/TomHarte/Phantasma/ (MIT)
 
 #include "common/algorithm.h"
+#include "common/hash-ptr.h"
 
 #include "freescape/freescape.h"
 #include "freescape/area.h"
@@ -221,18 +222,68 @@ void Area::resetArea() {
 }
 
 
-void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks) {
+void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d camera, Math::Vector3d direction) {
 	bool runAnimation = animationTicks != _lastTick;
 	assert(_drawableObjects.size() > 0);
+	ObjectArray planarObjects;
+	ObjectArray nonPlanarObjects;
+
 	for (auto &obj : _drawableObjects) {
 		if (!obj->isDestroyed() && !obj->isInvisible()) {
-			if (obj->getType() != ObjectType::kGroupType)
-				obj->draw(gfx);
-			else {
+			if (obj->getType() == ObjectType::kGroupType) {
 				drawGroup(gfx, (Group *)obj, runAnimation);
+				continue;
 			}
+
+			if (obj->isPlanar() && (obj->getType() != ObjectType::kSensorType))
+				planarObjects.push_back(obj);
+			else
+				nonPlanarObjects.push_back(obj);
 		}
 	}
+
+	Common::HashMap<Object *, float> offsetMap;
+	for (auto &planar : planarObjects)
+		offsetMap[planar] = 0;
+
+	for (auto &planar : planarObjects) {
+		Math::Vector3d centerPlanar = planar->_boundingBox.getMin() + planar->_boundingBox.getMax();
+		centerPlanar /= 2;
+		Math::Vector3d distance;
+		for (auto &object : nonPlanarObjects) {
+			distance = object->_boundingBox.distance(centerPlanar);
+			if (distance.length() > 0)
+				continue;
+
+			float offset = 1;
+			if (planar->getSize().x() == 0) {
+				if (object->getOrigin().x() >= centerPlanar.x())
+					offsetMap[planar] = -offset;
+				else
+					offsetMap[planar] = offset;
+			} else if (planar->getSize().y() == 0) {
+				if (object->getOrigin().y() >= centerPlanar.y())
+					offsetMap[planar] = -offset;
+				else
+					offsetMap[planar] = offset;
+			} else if (planar->getSize().z() == 0) {
+				if (object->getOrigin().z() >= centerPlanar.z())
+					offsetMap[planar] = -offset;
+				else
+					offsetMap[planar] = offset;
+			} else
+				; //It was not really planar?!
+		}
+	}
+
+	for (auto &pair : offsetMap) {
+		pair._key->draw(gfx, pair._value);
+	}
+
+	for (auto &obj : nonPlanarObjects) {
+		obj->draw(gfx);
+	}
+
 	_lastTick = animationTicks;
 }
 

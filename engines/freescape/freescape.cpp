@@ -348,7 +348,7 @@ void FreescapeEngine::drawFrame() {
 
 	drawBackground();
 	if (_avoidRenderingFrames == 0) // Avoid rendering inside objects
-		_currentArea->draw(_gfx, _ticks / 10);
+		_currentArea->draw(_gfx, _ticks / 10, _position, _cameraFront);
 	else
 		_avoidRenderingFrames--;
 

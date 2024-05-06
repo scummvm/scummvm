@@ -50,7 +50,7 @@ public:
 	ObjectType getType() override { return ObjectType::kEntranceType; };
 	Math::Vector3d getRotation() { return _rotation; }
 
-	void draw(Freescape::Renderer *gfx) override { error("cannot render Entrance"); };
+	void draw(Freescape::Renderer *gfx, float offset = 0.0) override { error("cannot render Entrance"); };
 };
 
 } // End of namespace Freescape

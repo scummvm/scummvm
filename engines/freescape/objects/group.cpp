@@ -138,7 +138,7 @@ void Group::reset() {
 	}
 }
 
-void Group::draw(Renderer *gfx) {
+void Group::draw(Renderer *gfx, float offset) {
 	uint32 groupSize = _objects.size();
 	for (uint32 i = 0; i < groupSize ; i++) {
 		if (!_objects[i]->isDestroyed() && !_objects[i]->isInvisible())

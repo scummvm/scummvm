@@ -61,7 +61,7 @@ public:
 
 	ObjectType getType() override { return ObjectType::kGroupType; };
 	bool isDrawable() override { return true; }
-	void draw(Renderer *gfx) override;
+	void draw(Renderer *gfx, float offset = 0.0) override;
 	void scale(int scale_) override { _scale = scale_; };
 	Object *duplicate() override;
 };

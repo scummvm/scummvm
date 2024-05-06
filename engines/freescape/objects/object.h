@@ -81,7 +81,7 @@ public:
 	virtual ~Object() {}
 	virtual Object *duplicate() = 0;
 
-	virtual void draw(Freescape::Renderer *gfx) = 0;
+	virtual void draw(Freescape::Renderer *gfx, float offset = 0.0) = 0;
 
 	uint16 _flags;
 	ObjectType _type;

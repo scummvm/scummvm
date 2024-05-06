@@ -64,7 +64,7 @@ public:
 	Math::Vector3d getRotation() { return _rotation; }
 	void shouldShoot(bool shooting) { _isShooting = shooting; }
 
-	void draw(Freescape::Renderer *gfx) override;
+	void draw(Freescape::Renderer *gfx, float offset = 0.0) override;
 
 	bool playerDetected(const Math::Vector3d &position, Area *area);
 

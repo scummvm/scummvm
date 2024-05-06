@@ -742,13 +742,23 @@ void Renderer::renderPyramid(const Math::Vector3d &origin, const Math::Vector3d 
 	}
 }
 
-void Renderer::renderCube(const Math::Vector3d &origin, const Math::Vector3d &size, Common::Array<uint8> *colours, Common::Array<uint8> *ecolours) {
+void Renderer::renderCube(const Math::Vector3d &originalOrigin, const Math::Vector3d &size, Common::Array<uint8> *colours, Common::Array<uint8> *ecolours, float offset) {
+	Math::Vector3d origin = originalOrigin;
+
 	byte *stipple = nullptr;
 	uint8 r1, g1, b1, r2, g2, b2;
 	Common::Array<Math::Vector3d> face;
 
 	uint color = (*colours)[0];
 	uint ecolor = ecolours ? (*ecolours)[0] : 0;
+
+	if (size.x() <= 1) {
+		origin.x() += offset;
+	} else if (size.y() <= 1) {
+		origin.y() += offset;
+	} else if (size.z() <= 1) {
+		origin.z() += offset;
+	}
 
 	if (getRGBAt(color, ecolor, r1, g1, b1, r2, g2, b2, stipple)) {
 		setStippleData(stipple);
@@ -867,9 +877,11 @@ void Renderer::renderCube(const Math::Vector3d &origin, const Math::Vector3d &si
 	}
 }
 
-void Renderer::renderRectangle(const Math::Vector3d &origin, const Math::Vector3d &originalSize, Common::Array<uint8> *colours, Common::Array<uint8> *ecolours) {
+void Renderer::renderRectangle(const Math::Vector3d &originalOrigin, const Math::Vector3d &originalSize, Common::Array<uint8> *colours, Common::Array<uint8> *ecolours, float offset) {
 
 	Math::Vector3d size = originalSize;
+	Math::Vector3d origin = originalOrigin;
+
 	if (size.x() > 0 && size.y() > 0 && size.z() > 0) {
 		/* According to https://www.shdon.com/freescape/
 		If the bounding box is has all non-zero dimensions
@@ -895,14 +907,20 @@ void Renderer::renderRectangle(const Math::Vector3d &origin, const Math::Vector3
 			error("Invalid size!");
 	}
 
-	polygonOffset(true);
-
 	float dx, dy, dz;
 	uint8 r1, g1, b1, r2, g2, b2;
 	byte *stipple = nullptr;
 	Common::Array<Math::Vector3d> vertices;
 	uint color = 0;
 	uint ecolor = 0;
+
+	if (size.x() == 0) {
+		origin.x() += offset;
+	} else if (size.y() == 0) {
+		origin.y() += offset;
+	} else if (size.z() == 0) {
+		origin.z() += offset;
+	}
 
 	for (int i = 0; i < 2; i++) {
 
@@ -951,19 +969,21 @@ void Renderer::renderRectangle(const Math::Vector3d &origin, const Math::Vector3
 	polygonOffset(false);
 }
 
-void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours, Common::Array<uint8> *ecolours) {
+void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *originalOrdinates, Common::Array<uint8> *colours, Common::Array<uint8> *ecolours, float offset) {
+	Common::Array<uint16> *ordinates = new Common::Array<uint16>(*originalOrdinates);
+
 	uint8 r1, g1, b1, r2, g2, b2;
 	byte *stipple = nullptr;
 	if (ordinates->size() % 3 > 0 && ordinates->size() > 0)
 		error("Invalid polygon with size %f %f %f and ordinates %d", size.x(), size.y(), size.z(), ordinates->size());
 
 	Common::Array<Math::Vector3d> vertices;
-	polygonOffset(true);
 
 	uint color = 0;
 	uint ecolor = 0;
 
 	if (ordinates->size() == 6) { // Line
+		polygonOffset(true);
 		color = (*colours)[0];
 		ecolor = ecolours ? (*ecolours)[0] : 0;
 
@@ -996,8 +1016,25 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 			renderFace(vertices);
 			useStipple(false);
 		}
-
+		polygonOffset(false);
 	} else {
+		if (size.x() == 0) {
+			for (int i = 0; i < int(ordinates->size()); i++) {
+				if (i % 3 == 0)
+					(*ordinates)[i] += (offset);
+			}
+		} else if (size.y() == 0) {
+			for (int i = 0; i < int(ordinates->size()); i++) {
+				if (i % 3 == 1)
+					(*ordinates)[i] += (offset);
+			}
+		} else if (size.z() == 0) {
+			for (int i = 0; i < int(ordinates->size()); i++) {
+				if (i % 3 == 2)
+					(*ordinates)[i] += (offset);
+			}
+		}
+
 		color = (*colours)[0];
 		ecolor = ecolours ? (*ecolours)[0] : 0;
 
@@ -1036,6 +1073,7 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 	}
 
 	polygonOffset(false);
+	delete(ordinates);
 }
 
 void Renderer::drawBackground(uint8 color) {

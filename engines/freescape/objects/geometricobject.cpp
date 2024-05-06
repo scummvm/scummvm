@@ -178,7 +178,8 @@ GeometricObject::GeometricObject(
 			_ordinates->push_back(_origin.y() + _size.y());
 			_ordinates->push_back(_origin.z() + _size.z());
 		}
-	}
+	} else if (isPyramid(_type))
+		assert(_size.x() > 0 && _size.y() > 0 && _size.z() > 0);
 
 	computeBoundingBox();
 }
@@ -426,7 +427,7 @@ bool GeometricObject::collides(const Math::AABB &boundingBox_) {
 	return _boundingBox.collides(boundingBox_);
 }
 
-void GeometricObject::draw(Renderer *gfx) {
+void GeometricObject::draw(Renderer *gfx, float offset) {
 	if (_cyclingColors) {
 		if (g_system->getMillis() % 10 == 0)
 			for (uint i = 0; i < _colours->size(); i++) {
@@ -436,16 +437,16 @@ void GeometricObject::draw(Renderer *gfx) {
 	}
 
 	if (this->getType() == kCubeType) {
-		gfx->renderCube(_origin, _size, _colours, _ecolours);
+		gfx->renderCube(_origin, _size, _colours, _ecolours, offset);
 	} else if (this->getType() == kRectangleType) {
-		gfx->renderRectangle(_origin, _size, _colours, _ecolours);
+		gfx->renderRectangle(_origin, _size, _colours, _ecolours, offset);
 	} else if (isPyramid(this->getType())) {
 		gfx->renderPyramid(_origin, _size, _ordinates, _colours, _ecolours, this->getType());
 	} else if (this->isPlanar() && _type <= 14) {
 		if (this->getType() == kTriangleType)
 			assert(_ordinates->size() == 9);
 
-		gfx->renderPolygon(_origin, _size, _ordinates, _colours, _ecolours);
+		gfx->renderPolygon(_origin, _size, _ordinates, _colours, _ecolours, offset);
 	}
 }
 
