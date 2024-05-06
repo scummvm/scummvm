@@ -121,7 +121,7 @@ bool Movie::processEvent(Common::Event &event) {
 
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
-		pos = _window->getMousePos();
+		pos = event.mouse;
 
 		_lastEventTime = g_director->getMacTicks();
 		_lastRollTime =	 _lastEventTime;
@@ -158,7 +158,7 @@ bool Movie::processEvent(Common::Event &event) {
 
 		if (_currentDraggedChannel) {
 			if (_currentDraggedChannel->_sprite->_moveable) {
-				pos = _draggingSpriteOffset + _window->getMousePos();
+				pos = _draggingSpriteOffset + event.mouse;
 				if (!_currentDraggedChannel->_sprite->_trails) {
 					g_director->getCurrentMovie()->getWindow()->addDirtyRect(_currentDraggedChannel->getBbox());
 				}
@@ -173,11 +173,12 @@ bool Movie::processEvent(Common::Event &event) {
 
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN:
+		pos = event.mouse;
 		if (sc->_waitForClick) {
 			sc->_waitForClick = false;
-			sc->renderCursor(_window->getMousePos(), true);
+			sc->renderCursor(pos, true);
 		} else {
-			pos = _window->getMousePos();
+			pos = event.mouse;
 
 			// D3 doesn't have both mouse up and down.
 			// But we still want to know if the mouse is down for press effects.
@@ -187,7 +188,7 @@ bool Movie::processEvent(Common::Event &event) {
 			else
 				spriteId = sc->getMouseSpriteIDFromPos(pos);
 
-			_currentActiveSpriteId = sc->getActiveSpriteIDFromPos(pos);
+			_currentActiveSpriteId = sc->getActiveSpriteIDFromPos(pos); // the clickOn
 			_currentMouseSpriteId = sc->getMouseSpriteIDFromPos(pos);
 			_currentMouseDownCastID = sc->_channels[spriteId]->_sprite->_castId;
 
@@ -217,7 +218,7 @@ bool Movie::processEvent(Common::Event &event) {
 			queueUserEvent(kEventMouseDown, spriteId);
 
 			if (sc->_channels[spriteId]->_sprite->_moveable) {
-				_draggingSpriteOffset = sc->_channels[spriteId]->_currentPoint - _window->getMousePos();
+				_draggingSpriteOffset = sc->_channels[spriteId]->_currentPoint - pos;
 				_currentDraggedChannel = sc->_channels[spriteId];
 			}
 		}
@@ -226,7 +227,7 @@ bool Movie::processEvent(Common::Event &event) {
 
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONUP:
-		pos = _window->getMousePos();
+		pos = event.mouse;
 
 		if (g_director->getVersion() < 400)
 			spriteId = _currentActiveSpriteId;
