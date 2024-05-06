@@ -39,6 +39,7 @@ Character *View1::GetCharacterByIndex(uint16 index) {
 View1::View1() : UIElement("View1") {
 		_backgroundSurface = g_engine->_bgImageShip;
 		int mode = (int)g_engine->_cursorMode;
+		g_engine->_cursorData[mode][(g_engine->_cursorWidths[mode] >> 1) + (g_engine->_cursorHeights[0] >> 1) * g_engine->_cursorWidths[mode]] = 0xFF;
 		CursorMan.replaceCursor(g_engine->_cursorData[mode], g_engine->_cursorWidths[mode], g_engine->_cursorHeights[mode], g_engine->_cursorWidths[mode] >> 1, g_engine->_cursorHeights[0] >> 1, 0);
 		CursorMan.showMouse(true);
 
@@ -51,7 +52,7 @@ View1::View1() : UIElement("View1") {
 		protagonist->Position = protagonist->GameObject->Position;
 		characters.push_back(protagonist);
 
-		inventoryItems.push_back(GameObjects::instance().Objects[0x8 - 1]);
+		// inventoryItems.push_back(GameObjects::instance().Objects[0x8 - 1]);
 	}
 
 	AnimFrame *View1::GetInventoryIcon(GameObject *gameObject) {
@@ -275,9 +276,19 @@ View1::View1() : UIElement("View1") {
 		if (_continueScriptAfterUI) {
 			_continueScriptAfterUI = false;
 			// TODO: Check which one it should be
-			g_engine->RunScriptExecutor();
+			g_engine->RunScriptExecutor(false);
 		}
 		
+	}
+
+	int View1::GetCharacterArrayIndex(const Character *c) const {
+		// TODO: Check if there is a find function somewhere
+		for (int i = 0; i < characters.size(); i++) {
+			if (characters[i] == c) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	void View1::startFading() {
@@ -293,13 +304,44 @@ View1::View1() : UIElement("View1") {
 	bool View1::msgMouseDown(const MouseDownMessage& msg)
 	{
 		if (msg._button == MouseMessage::MB_LEFT) {
+			// Handle string boxes
 			if (_isShowingStringBox) {
 				clearStringBox();
 				return true;
 			}
+			if (_isShowingInventory) {
+				// Check if we hit an item
+				// TODO: Skipping this for now while we only have one item
+				if (inventoryItems.size() == 1) {
+					activeInventoryItem = inventoryItems[0];
+				}
+				return true;
+			}
+
+
+
 			uint32 value = getSurface().getPixel(msg._pos.x, msg._pos.y);
 			g_system->setWindowCaption(Common::String::format("%u,%u: %u", msg._pos.x, msg._pos.y, value));
-			g_engine->CalculatePath(Common::Point(154, 136), Common::Point(msg._pos.x, msg._pos.y));
+			//g_engine->CalculatePath(Common::Point(154, 136), Common::Point(msg._pos.x, msg._pos.y));
+			// Check if we hit something
+			uint16 index = GetHitObjectID(Common::Point(msg._pos.x, msg._pos.y));
+			if (index != 0) {
+				debug("*** New interaction started");
+				// TODO: Mode hardcoded
+				Script::MouseMode m = Script::MouseMode::Use;
+				if (activeInventoryItem != nullptr) {
+					m = Script::MouseMode::UseInventory;
+				}
+				g_engine->_scriptExecutor->_mouseMode = m;
+				g_engine->_scriptExecutor->_interactedObjectID = index;
+				g_engine->_scriptExecutor->_interactedOtherObjectID = activeInventoryItem != nullptr ? activeInventoryItem->Index + 0x0400 : 0x0000;
+
+				// Set the script
+				g_engine->_scriptExecutor->SetScript(Scenes::instance().CurrentSceneScript);
+				// TODO: Not sure where the original code rewinds the script
+				Scenes::instance().CurrentSceneScript->seek(0, SEEK_SET);
+				g_engine->RunScriptExecutor(false);
+			}
 			return true;
 		} else if (msg._button == MouseMessage::MB_RIGHT) {
 			g_engine->NextCursorMode();
@@ -323,7 +365,7 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		redraw();
 	} else if (msg.ascii == (uint16)'s') {
 		// g_engine->ExecuteScript(g_engine->_scriptStream);
-		g_engine->RunScriptExecutor();
+		g_engine->RunScriptExecutor(true);
 		// Also test the lerping
 		characters[0]->StartLerpTo(Common::Point(200, 100), 5000);
 	} else if (msg.ascii == (uint16)'i') {
@@ -430,6 +472,11 @@ void View1::draw() {
 
 	if (_isShowingInventory) {
 		drawInventory(s);
+	}
+
+	if (activeInventoryItem != nullptr) {
+		AnimFrame *icon = GetInventoryIcon(activeInventoryItem);
+		DrawSprite(0x00, 0x00, icon->Width, icon->Height, icon->Data, s);
 	}
 
 	drawPathfindingPoints(s);
@@ -600,22 +647,47 @@ void View1::ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 	// TODO: Add position: position.x, position.y,
 	setStringBox(strings);
 	_continueScriptAfterUI = true;
+
+	if (autoclickActive) {
+		clearStringBox();
+	}
+}
+
+uint16 View1::GetHitObjectID(const Common::Point& pos) const {
+	// TODO: Naive implementation for now
+	for (auto currentCharacter : characters) {
+		auto animFrame = currentCharacter->GetCurrentAnimationFrame();
+
+		// Saved point of the object is at the bottom in the middle, frame local space starts
+		// at top left
+		Common::Point localPoint = pos - (currentCharacter->Position - animFrame->GetBottomMiddleOffset());
+		bool isHit = animFrame->PixelHit(localPoint);
+		if (isHit) {
+			return 0x0400 + currentCharacter->GameObject->Index;
+		}
+	}
+	// TODO: Ignore background image lookup for now
+	return 0x0000;
 }
 
 Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	int blobIndex = 0x2;
-	int offset = 0x1C;
+	// int offset = 0x1C;
 
 	// TODO: Need to figure out the access pattern more systematically
 	if (GameObject->Index == 0x8) {
 		blobIndex = 4;
-		offset = 23;
+	//	offset = 23;
 	}
+	Common::MemoryReadStream stream(this->GameObject->Blobs[blobIndex].data(), this->GameObject->Blobs[blobIndex].size());
+	stream.seek(0xA, SEEK_SET);
+	uint16 offset = stream.readUint16LE();
+	offset += 0x8;
+	stream.seek(offset, SEEK_CUR);
 
 	AnimFrame* result = new AnimFrame();
-	Common::MemoryReadStream stream(this->GameObject->Blobs[blobIndex].data(), this->GameObject->Blobs[blobIndex].size());
+	
 	// TODO: Need to check how the offset really is calculated by the game code
-	stream.seek(offset, SEEK_SET);
 	result->ReadFromStream(&stream);
 	return result;
 	// TODO: Think about proper memory management
@@ -644,6 +716,12 @@ void Character::StartLerpTo(const Common::Point &target, uint32 duration) {
 	IsLerping = true;
 }
 
+void Character::StartPickup(Character *object) {
+	objectToPickUp = object;
+	ExecuteScriptOnFinishLerp = true;
+	StartLerpTo(objectToPickUp->Position, 1000);
+}
+
 void Character::RegisterWaitForMovementFinishedEvent() {
 
 	// For now, we are treating this one as a flag to send an event
@@ -660,7 +738,7 @@ void Character::Update() {
 		// TODO: Consider which run function to use
 		if (ExecuteScriptOnFinishLerp) {
 			ExecuteScriptOnFinishLerp = false;
-			g_engine->RunScriptExecutor();
+			g_engine->RunScriptExecutor(false);
 		}
 		return;
 	}
@@ -669,11 +747,23 @@ void Character::Update() {
 	
 	if (isDone) {
 		IsLerping = false;
+
+		// Check if we need to pick something up
+		if (objectToPickUp != nullptr) {
+
+			View1 *currentView = (View1 *)g_engine->findView("View1");
+			int index = currentView->GetCharacterArrayIndex(objectToPickUp);
+			currentView->inventoryItems.push_back(objectToPickUp->GameObject);
+			currentView->characters.remove_at(index);
+			objectToPickUp = nullptr;
+		}
+
+
 		// Check if we need to execute the script
 		// TODO: Consider which run function to use
 		if (ExecuteScriptOnFinishLerp) {
 			ExecuteScriptOnFinishLerp = false;
-			g_engine->RunScriptExecutor();
+			g_engine->RunScriptExecutor(false);
 		}
 		return;
 	}

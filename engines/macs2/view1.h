@@ -53,6 +53,10 @@ private:
 
 	bool IsLerping = false;
 
+	// If this is set, a lerp to a location becomes picking up
+	// TODO: Replace by more proper task implementation later
+	Character *objectToPickUp = nullptr;
+
 
 	public:
 	Common::Point Position;
@@ -64,6 +68,9 @@ private:
 	Macs2::AnimFrame *GetCurrentAnimationFrame();
 		Macs2::AnimFrame *GetCurrentPortrait();
 		void StartLerpTo(const Common::Point &target, uint32 duration);
+
+		void StartPickup(Character *object);
+
 		// Handles setting this character up to send an event to the script executor when finished
 		// and will send the event right away in case the last movement is already done
 		// TODO: Check if the code also handles it this way
@@ -74,8 +81,7 @@ private:
 class View1 : public UIElement {
 private:
 
-	// TODO: Find a better place for those
-	Common::Array<GameObject *> inventoryItems;
+	
 
 	AnimFrame *GetInventoryIcon(GameObject *gameObject);
 	
@@ -128,9 +134,20 @@ private:
 
 public:
 
+	// As long as this debug bool is active, apply any click possible whenever it makes sense
+	bool autoclickActive = false;
+
 	Common::Array<Character *> characters;
 
+	// TODO: Find a better place for those
+	Common::Array<GameObject *> inventoryItems;
+
+	// If this is not null, we are using this object
+	GameObject *activeInventoryItem = nullptr;
+
 	Character *GetCharacterByIndex(uint16 index);
+
+	int GetCharacterArrayIndex(const Character *c) const;
 
 	View1();
 	virtual ~View1() {}
@@ -156,6 +173,9 @@ public:
 	void DrawCharacters(Graphics::ManagedSurface &s);
 
 	void ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::String> &strings, const Common::Point &position, bool onRightSide = false);
+
+
+	uint16 GetHitObjectID(const Common::Point &pos) const;
 };
 
 } // namespace Macs2

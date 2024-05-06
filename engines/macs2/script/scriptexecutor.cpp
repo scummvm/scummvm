@@ -46,7 +46,7 @@ ScriptExecutor::ScriptExecutor() {
 	// Hardcoding for the box to start open for testing
 	*/
 	// Hardcoded values for failed throw at leopard below
-	_interactedObjectID = 0x409;
+	// _interactedObjectID = 0x409;
 	// _variables[0xa].a = 0x1;
 	_variables[0x26].a = 0x1;
 }
@@ -158,6 +158,15 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 			out2 = 0;
 			debug("- 9F4D results: %.4x %.4x", out1, out2);
 			return;
+		} else if (_mouseMode == MouseMode::UseInventory) {
+			// l0037_9FD9:
+			// TODO: Not sure why the original code looks so complex
+			out1 = _interactedObjectID;
+			out2 = _interactedOtherObjectID;
+			debug("- 9F4D results: %.4x %.4x", out1, out2);
+			return;
+		} else {
+			out1 = out2 = 0x0000;
 		}
 	} else if (value == 0x2) {
 		// TODO: We should actually look up the cursor mode and the interacted object
@@ -341,7 +350,7 @@ else if (value == 0x6) {
 	debug("- 9F4D results: %.4x %.4x", out1, out2);
 	return;
 	} else if (value == 0xb) {
-		out1 = (uint16)IsNormalRun;
+		out1 = (uint16)IsRepeatRun;
 		out2 = 0;
 		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
@@ -1206,13 +1215,19 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Just mocking these calls, they are there for deciding if we
 			// skip the following. TBC if this is the difference between a successful and
 			// a failed throw
+			// TODO: Naive implementation: Just comparing - but the actual one looks more complex
 			ReadByte();
-			uint16 throwaway1;
-			uint16 throwaway2;
-			Func9F4D(throwaway1, throwaway2);
-			Func9F4D(throwaway1, throwaway2);
-			Func9F4D(throwaway1, throwaway2);
+			uint16 interacted1;
+			uint16 interacted2;
+			Func9F4D(interacted1, interacted2);
+			uint16 object1 = Func9F4D_16();
+			uint16 object2 = Func9F4D_16();
 			// TODO: This one might also do a skip
+			if (!((interacted1 == object1) && (interacted2 == object2))) {
+				// Skip
+				// TODO: Would it make more sense to return and then to start skipping?
+				FuncA3D2();
+			}
 			continue;
 		} else if (opcode1 == 0x07) {
 			// TODO: Need to figure out what exactly this does
@@ -1321,6 +1336,18 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// for this run
 			_stream->seek(_stream->size(), SEEK_SET);
 			requestCallback = true;
+			return;
+		} else if (opcode1 == 0x19) {
+			// Walk to and pick up an object
+			uint32 actorIndex = Func9F4D_32() - 0x400;
+			uint32 objectIndex = Func9F4D_32() -0x400;
+
+			// TODO: For now, handle this as a special case of lerping to a position
+			View1 *currentView = (View1 *)_engine->findView("View1");
+			Character *actor = currentView->GetCharacterByIndex(actorIndex);
+			Character *object = currentView->GetCharacterByIndex(objectIndex);
+			actor->StartPickup(object);
+			requestCallback = false;
 			return;
 		} else if (opcode1 == 0x1b) {
 			// TODO: No idea yet what this does, it seems to be around move commands in some cases,
@@ -2631,11 +2658,11 @@ void Script::ScriptExecutor::ExecuteScript() {
 		debug("----- Scripting function left");
 	}
 	
-	void ScriptExecutor::Run() {
+	void ScriptExecutor::Run(bool firstRun) {
 		// Scene initialization run
 		// TODO: Need to better encapsulate this down the road
-		IsNormalRun = false;
-		IsSceneInitRun = true;
+		IsRepeatRun = false;
+		IsSceneInitRun = firstRun;
 		do {
 			ExecuteScript();
 			if (_stream->pos() == _stream->size()) {
@@ -2670,7 +2697,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 		// Reset to start
 		_stream = originalStream;
 		_stream->seek(0, SEEK_SET);
-		IsNormalRun = true;
+		IsRepeatRun = true;
 		do {
 			ExecuteScript();
 			if (_stream->pos() == _stream->size()) {
@@ -2681,7 +2708,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 			return;
 		}
 		requestCallback = false;
-		IsNormalRun = false;
+		IsRepeatRun = false;
 	}
 
 	void ScriptExecutor::SetScript(Common::MemoryReadStream *stream) {
