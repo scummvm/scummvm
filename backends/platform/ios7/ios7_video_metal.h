@@ -45,11 +45,16 @@ API_AVAILABLE(ios(11.0))
 
 	// Shared pixel buffer
 	CVPixelBufferRef _sharedPixelBuffer;
+
+	// Shared CoreVideo Metal context
+	CVMetalTextureCacheRef _metalTextureCache;
+	CVMetalTextureRef _metalTextureRef;
 }
 
 // Metal properties
 @property (readonly, nonnull, nonatomic) id<MTLDevice> metalDevice;
 @property (readonly, nonnull, nonatomic) id<MTLCommandQueue> commandQueue;
+@property (readonly, nonnull, nonatomic) id<MTLTexture> metalTexture;
 
 - (id)initWithFrame:(struct CGRect)frame andMetalDevice:(id<MTLDevice>_Nonnull) device;
 

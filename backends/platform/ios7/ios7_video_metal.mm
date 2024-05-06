@@ -176,6 +176,34 @@ static inline void execute_on_main_thread(void (^block)(void)) {
 		&_openGLTextureRef);
 }
 
+- (void)setupMetalTextureCache {
+	if (_metalTextureCache == nullptr) {
+		CVMetalTextureCacheCreate(
+			kCFAllocatorDefault,
+			nil,
+			_metalDevice,
+			nil,
+			&_metalTextureCache);
+	}
+
+	if (_metalTextureRef != nullptr) {
+		CVBufferRelease(_metalTextureRef);
+	}
+	CVMetalTextureCacheFlush(_metalTextureCache, 0);
+
+	CVMetalTextureCacheCreateTextureFromImage(
+		kCFAllocatorDefault,
+		_metalTextureCache,
+		_sharedPixelBuffer,
+		NULL,
+		MTLPixelFormatRGBA8Unorm,
+		_drawableWidth, _drawableHeight,
+		0,
+		&_metalTextureRef);
+
+	_metalTexture = CVMetalTextureGetTexture(_metalTextureRef);
+}
+
 - (void)refreshScreen {
 	// TODO: Implement drawing in Metal drawable
 }
@@ -193,8 +221,8 @@ static inline void execute_on_main_thread(void (^block)(void)) {
 		_drawableWidth = _metalLayer.drawableSize.width;
 		_drawableHeight = _metalLayer.drawableSize.height;
 
-		// TODO: Setup interoperable pixel buffers
 		[self setupOpenGLTextureCache];
+		[self setupMetalTextureCache];
 	});
 }
 
