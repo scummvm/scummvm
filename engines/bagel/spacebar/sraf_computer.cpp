@@ -33,13 +33,13 @@
 namespace Bagel {
 namespace SpaceBar {
 
-#define SRAFDIR         "$SBARDIR\\SRAFFA\\CLOSEUP\\COMPUTER\\"
-#define SRAFMALEDIR     "$SBARDIR\\SRAFFA\\CHAR\\GMALE\\"
-#define SRAFFEMALEDIR   "$SBARDIR\\SRAFFA\\CHAR\\GFEMALE\\"
-#define SRAFAUDIODIR    "$SBARDIR\\SRAFFA\\AUDIO\\EVENTS\\"
-#define SRAFTIMEOUT     "SFTIMOUT.WAV"
+#define SRAF_DIR         "$SBARDIR\\SRAFFA\\CLOSEUP\\COMPUTER\\"
+#define SRAF_MALE_DIR    "$SBARDIR\\SRAFFA\\CHAR\\GMALE\\"
+#define SRAF_FEMALE_DIR  "$SBARDIR\\SRAFFA\\CHAR\\GFEMALE\\"
+#define SRAF_AUDIO_DIR   "$SBARDIR\\SRAFFA\\AUDIO\\EVENTS\\"
+#define SRAF_TIMEOUT     "SFTIMOUT.WAV"
 
-#define USETEXTWIDTHS       true
+#define USE_TEXT_WIDTHS       true
 
 // Local constants
 //
@@ -181,9 +181,9 @@ struct ST_BUTTONS {
 
 };
 
-#define NOMEETING 0
-#define GOODMEETING 1
-#define BADMEETING 2
+#define SRAF_NO_MEETING 0
+#define SRAF_GOOD_MEETING 1
+#define SRAF_BAD_MEETING 2
 
 struct SELLERITEM {
 	const char *_pszName;
@@ -302,9 +302,9 @@ static const char *g_stMainItems[NUM_MAIN_ITEMS] = {
 };
 
 static SELLERITEM g_stSellerNames[NUM_SELLERS] = {
-	{ "Irk-4", -1, IRK4, "IRK4BIO.TXT", false, true, NOMEETING },
-	{ "Yeef-8", 38, YEEF8, "YEE8BIO.TXT", false, true, NOMEETING },
-	{ "Quosh-23", -1, QUOSH23, "QUO11BIO.TXT", false, true, NOMEETING },
+	{ "Irk-4", -1, IRK4, "IRK4BIO.TXT", false, true, SRAF_NO_MEETING },
+	{ "Yeef-8", 38, YEEF8, "YEE8BIO.TXT", false, true, SRAF_NO_MEETING },
+	{ "Quosh-23", -1, QUOSH23, "QUO11BIO.TXT", false, true, SRAF_NO_MEETING },
 };
 
 // Yeef can be talked down!
@@ -330,32 +330,32 @@ static SELLERITEM g_stSellerNames[NUM_SELLERS] = {
 #define kGildMineralID1             ZINC
 #define kGildMineralID2             PLATINUM
 
-#define MINMARTENTRIES              6
+#define MIN_MART_ENTRIES              6
 
 // Buyer bids grid, dork, gung sinjin and gild can be talked up, but the
 // rest of them are non-negotiable. Only dork and gung are part of the
 // final solution.
 static BUYERBIDSREC g_stBuyerBids[NUM_BUYERS] = {
-	{ "Pylon-3",    { 0,  0, 0, 0, 0, 0,  7,  9, 2, 3, 4, 8, 0, 0 }, 33, false, PYLON3, "PYL3BIO.TXT", false, true, mBuyerFemale, NOMEETING },
-	{ "Dippik-10",  { 0,  0, 0, 0, 0, 0,  5,  4, 0, 0, 0, 0, 6, 8 }, 23, false, DIPPIK10, "DIP10BIO.TXT", false, true, mBuyerMale, NOMEETING },
-	{ "Vebbil-18",  { 0,  0, 0, 0, 0, 0,  0,  0, 0, 0, 0, 7, 0, 0 }, 7, false, VEBBIL18, "VEB18BIO.TXT", false, true, mBuyerFemale, NOMEETING },
-	{ "Gung-14",    { 0,  4, 2, 0, 0, 10, 0,  0, 0, 0, 0, 0, 0, 0 }, 16, false, GUNG14, "GUN14BIO.TXT", false, true, mBuyerMale, NOMEETING },
-	{ "Reyes-24",   { 10, 0, 0, 7, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 17, false, REYES24, "REY24BIO.TXT", false, true, mBuyerMale, NOMEETING },
-	{ "Gild-13",    { 6,  0, 0, 0, 4, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 10, false, GILD13, "GIL13BIO.TXT", false, true, mBuyerFemale, NOMEETING },
-	{ "Hem-20",     { 0,  0, 3, 0, 5, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 8, false, HEM20, "HEM20BIO.TXT", false, true, mBuyerFemale, NOMEETING },
-	{ "Dork-44",    { 0,  6, 0, 4, 0, 11, 0,  0, 0, 0, 0, 0, 0, 0 }, 21, false, DORK44, "DOR44BIO.TXT", false, true, mBuyerMale, NOMEETING },
-	{ "Rawley-23",  { 0,  0, 0, 0, 0, 0,  0,  0, 0, 0, 8, 0, 0, 0 }, 8, false, RAWLEY23, "RAW23BIO.TXT", false, true, mBuyerFemale, NOMEETING },
-	{ "Jella-37",   { 0,  0, 0, 0, 0, 0,  0,  0, 4, 0, 0, 0, 0, 0 }, 4, false, JELLA37, "JEL37BIO.TXT", false, true, mBuyerFemale, NOMEETING },
-	{ "Sinjin-11",  { 0,  0, 0, 0, 0, 0,  12, 0, 0, 0, 0, 0, 5, 6 }, 23, false, SINJIN11, "SIN11BIO.TXT", false, true, mBuyerMale, NOMEETING },
-	{ "Hundey-42",  { 0,  0, 4, 0, 0, 0,  0,  0, 3, 0, 0, 0, 0, 6 }, 13, false, HUNDEY42, "HUN42BIO.TXT", false, true, mBuyerMale, NOMEETING },
-	{ "Chandra-15", { 0,  0, 0, 0, 0, 0,  0, 13, 0, 2, 4, 0, 0, 0 }, 19, false, CHANDRA15, "CHA15BIO.TXT", false, true, mBuyerFemale, NOMEETING },
-	{ "Clang-2",    { 0,  0, 0, 0, 0, 0,  0,  0, 0, 0, 0, 0, 0, 9 }, 9, false, CLANG2, "CLA2BIO.TXT", false, true, mBuyerMale, NOMEETING },
-	{ "Min. Mart",  { 4,  0, 0, 0, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 4, false, MINMARTZN, "MINBIO.TXT", false, true, 0, NOMEETING },
-	{ "Min. Mart",  { 0,  3, 0, 0, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 3, false, MINMARTBA, "MINBIO.TXT", false, true, 0, NOMEETING },
-	{ "Min. Mart",  { 0,  0, 1, 0, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 1, false, MINMARTRG, "MINBIO.TXT", false, true, 0, NOMEETING },
-	{ "Min. Mart",  { 0,  0, 0, 3, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 3, false, MINMARTUT, "MINBIO.TXT", false, true, 0, NOMEETING },
-	{ "Min. Mart",  { 0,  0, 0, 0, 3, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 3, false, MINMARTPN, "MINBIO.TXT", false, true, 0, NOMEETING },
-	{ "Min. Mart",  { 0,  0, 0, 0, 0, 7,  0,  0, 0, 0, 0, 0, 0, 0 }, 7, false, MINMARTSZ,  "MINBIO.TXT", false, true, 0, NOMEETING },
+	{ "Pylon-3",    { 0,  0, 0, 0, 0, 0,  7,  9, 2, 3, 4, 8, 0, 0 }, 33, false, PYLON3, "PYL3BIO.TXT", false, true, mBuyerFemale, SRAF_NO_MEETING },
+	{ "Dippik-10",  { 0,  0, 0, 0, 0, 0,  5,  4, 0, 0, 0, 0, 6, 8 }, 23, false, DIPPIK10, "DIP10BIO.TXT", false, true, mBuyerMale, SRAF_NO_MEETING },
+	{ "Vebbil-18",  { 0,  0, 0, 0, 0, 0,  0,  0, 0, 0, 0, 7, 0, 0 }, 7, false, VEBBIL18, "VEB18BIO.TXT", false, true, mBuyerFemale, SRAF_NO_MEETING },
+	{ "Gung-14",    { 0,  4, 2, 0, 0, 10, 0,  0, 0, 0, 0, 0, 0, 0 }, 16, false, GUNG14, "GUN14BIO.TXT", false, true, mBuyerMale, SRAF_NO_MEETING },
+	{ "Reyes-24",   { 10, 0, 0, 7, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 17, false, REYES24, "REY24BIO.TXT", false, true, mBuyerMale, SRAF_NO_MEETING },
+	{ "Gild-13",    { 6,  0, 0, 0, 4, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 10, false, GILD13, "GIL13BIO.TXT", false, true, mBuyerFemale, SRAF_NO_MEETING },
+	{ "Hem-20",     { 0,  0, 3, 0, 5, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 8, false, HEM20, "HEM20BIO.TXT", false, true, mBuyerFemale, SRAF_NO_MEETING },
+	{ "Dork-44",    { 0,  6, 0, 4, 0, 11, 0,  0, 0, 0, 0, 0, 0, 0 }, 21, false, DORK44, "DOR44BIO.TXT", false, true, mBuyerMale, SRAF_NO_MEETING },
+	{ "Rawley-23",  { 0,  0, 0, 0, 0, 0,  0,  0, 0, 0, 8, 0, 0, 0 }, 8, false, RAWLEY23, "RAW23BIO.TXT", false, true, mBuyerFemale, SRAF_NO_MEETING },
+	{ "Jella-37",   { 0,  0, 0, 0, 0, 0,  0,  0, 4, 0, 0, 0, 0, 0 }, 4, false, JELLA37, "JEL37BIO.TXT", false, true, mBuyerFemale, SRAF_NO_MEETING },
+	{ "Sinjin-11",  { 0,  0, 0, 0, 0, 0,  12, 0, 0, 0, 0, 0, 5, 6 }, 23, false, SINJIN11, "SIN11BIO.TXT", false, true, mBuyerMale, SRAF_NO_MEETING },
+	{ "Hundey-42",  { 0,  0, 4, 0, 0, 0,  0,  0, 3, 0, 0, 0, 0, 6 }, 13, false, HUNDEY42, "HUN42BIO.TXT", false, true, mBuyerMale, SRAF_NO_MEETING },
+	{ "Chandra-15", { 0,  0, 0, 0, 0, 0,  0, 13, 0, 2, 4, 0, 0, 0 }, 19, false, CHANDRA15, "CHA15BIO.TXT", false, true, mBuyerFemale, SRAF_NO_MEETING },
+	{ "Clang-2",    { 0,  0, 0, 0, 0, 0,  0,  0, 0, 0, 0, 0, 0, 9 }, 9, false, CLANG2, "CLA2BIO.TXT", false, true, mBuyerMale, SRAF_NO_MEETING },
+	{ "Min. Mart",  { 4,  0, 0, 0, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 4, false, MINMARTZN, "MINBIO.TXT", false, true, 0, SRAF_NO_MEETING },
+	{ "Min. Mart",  { 0,  3, 0, 0, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 3, false, MINMARTBA, "MINBIO.TXT", false, true, 0, SRAF_NO_MEETING },
+	{ "Min. Mart",  { 0,  0, 1, 0, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 1, false, MINMARTRG, "MINBIO.TXT", false, true, 0, SRAF_NO_MEETING },
+	{ "Min. Mart",  { 0,  0, 0, 3, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 3, false, MINMARTUT, "MINBIO.TXT", false, true, 0, SRAF_NO_MEETING },
+	{ "Min. Mart",  { 0,  0, 0, 0, 3, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 3, false, MINMARTPN, "MINBIO.TXT", false, true, 0, SRAF_NO_MEETING },
+	{ "Min. Mart",  { 0,  0, 0, 0, 0, 7,  0,  0, 0, 0, 0, 0, 0, 0 }, 7, false, MINMARTSZ,  "MINBIO.TXT", false, true, 0, SRAF_NO_MEETING },
 };
 
 static MINERAL_NAMES g_stMinerals[NUM_MINERALS] = {
@@ -391,9 +391,9 @@ enum OTHERPARTYS {
 };
 
 static OTHERITEM g_stOtherPartys[NUM_OTHER_PARTYS] = {
-	{ "Swonza-5", "SWO5BIO.TXT", false, true, -1, NOMEETING },
-	{ "Politicians", "POLITBIO.TXT", false, true, -30, NOMEETING },
-	{ "Environmentalists", "ENVIRBIO.TXT", false, true, -1, NOMEETING },
+	{ "Swonza-5", "SWO5BIO.TXT", false, true, -1, SRAF_NO_MEETING },
+	{ "Politicians", "POLITBIO.TXT", false, true, -30, SRAF_NO_MEETING },
+	{ "Environmentalists", "ENVIRBIO.TXT", false, true, -1, SRAF_NO_MEETING },
 };
 
 // Sraffin computer buttons
@@ -487,10 +487,10 @@ bool SrafComputer::_bFailureNotified = false;
 CBofWindow *SrafTextScreen::_pSaveActiveWin = nullptr;
 
 // Local prototype functions
-const char *BuildSrafDir(const char *pszFile);
-const char *BuildAudioDir(const char *pszFile);
-const char *BuildMaleSrafDir(const char *pszFile);
-const char *BuildFemaleSrafDir(const char *pszFile);
+const char *buildSrafDir(const char *pszFile);
+const char *buildAudioDir(const char *pszFile);
+const char *buildMaleSrafDir(const char *pszFile);
+const char *buildFemaleSrafDir(const char *pszFile);
 
 // Local prototypes
 
@@ -707,21 +707,21 @@ bool SrafComputer::verifyDispatchTeam() {
 	// has already been successfully negotiated with.
 	if (bValidTeam) {
 		if (nMeetSellers != -1) {
-			if (g_stSellerNames[nMeetSellers]._nMeetingResult == GOODMEETING) {
+			if (g_stSellerNames[nMeetSellers]._nMeetingResult == SRAF_GOOD_MEETING) {
 				Common::strcpy_s(szFailureReason, kszCantRenegSeller);
 				bValidTeam = false;
 			}
 		}
 
 		if (nMeetOthers != -1) {
-			if (g_stOtherPartys[nMeetOthers]._nMeetingResult == GOODMEETING) {
+			if (g_stOtherPartys[nMeetOthers]._nMeetingResult == SRAF_GOOD_MEETING) {
 				Common::strcpy_s(szFailureReason, kszCantRenegOther);
 				bValidTeam = false;
 			}
 		}
 
 		if (nMeetBuyers != -1) {
-			if (g_stBuyerBids[nMeetBuyers]._nMeetingResult == GOODMEETING) {
+			if (g_stBuyerBids[nMeetBuyers]._nMeetingResult == SRAF_GOOD_MEETING) {
 				Common::strcpy_s(szFailureReason, kszCantRenegBuyer);
 				bValidTeam = false;
 			}
@@ -811,9 +811,9 @@ bool SrafComputer::verifyDispatchTeam() {
 
 		// Also have to give the boss a sound or text file to play.
 		if (pTeamItem->_nFlags & mStafferMale) {
-			sStr = BuildMaleSrafDir(kGSM1SraMaleStr);
+			sStr = buildMaleSrafDir(kGSM1SraMaleStr);
 		} else {
-			sStr = BuildFemaleSrafDir(kGSM1SraFemStr);
+			sStr = buildFemaleSrafDir(kGSM1SraFemStr);
 		}
 
 		// Notify Deven...
@@ -911,7 +911,7 @@ ErrorCode SrafComputer::attach() {
 		// Bring in all our audio tracks
 		for (int i = 0; i < (NUM_MUSICAL_SCORES - 1); i++) {
 			if (g_stAudioSetting[i]->_pMidiTrack == nullptr) {
-				g_stAudioSetting[i]->_pMidiTrack = new CBofSound(this, BuildAudioDir(g_stAudioSetting[i]->_pszAudioFile), SOUND_MIDI | SOUND_ASYNCH | SOUND_LOOP, 32000);
+				g_stAudioSetting[i]->_pMidiTrack = new CBofSound(this, buildAudioDir(g_stAudioSetting[i]->_pszAudioFile), SOUND_MIDI | SOUND_ASYNCH | SOUND_LOOP, 32000);
 				assert(g_stAudioSetting[i]->_pMidiTrack != nullptr);
 			}
 		}
@@ -924,10 +924,10 @@ ErrorCode SrafComputer::attach() {
 			_pButtons[i] = new CBofBmpButton;
 			if (_pButtons[i] != nullptr) {
 
-				CBofBitmap *pUp = loadBitmap(BuildSrafDir(g_stButtons[i]._pszUp), pPal);
-				CBofBitmap *pDown = loadBitmap(BuildSrafDir(g_stButtons[i]._pszDown), pPal);
-				CBofBitmap *pFocus = loadBitmap(BuildSrafDir(g_stButtons[i]._pszFocus), pPal);
-				CBofBitmap *pDis = loadBitmap(BuildSrafDir(g_stButtons[i]._pszDisabled), pPal);
+				CBofBitmap *pUp = loadBitmap(buildSrafDir(g_stButtons[i]._pszUp), pPal);
+				CBofBitmap *pDown = loadBitmap(buildSrafDir(g_stButtons[i]._pszDown), pPal);
+				CBofBitmap *pFocus = loadBitmap(buildSrafDir(g_stButtons[i]._pszFocus), pPal);
+				CBofBitmap *pDis = loadBitmap(buildSrafDir(g_stButtons[i]._pszDisabled), pPal);
 
 				_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 				_pButtons[i]->create(g_stButtons[i]._pszName, g_stButtons[i]._nLeft, g_stButtons[i]._nTop, g_stButtons[i]._nWidth, g_stButtons[i]._nHeight, this, g_stButtons[i]._nID);
@@ -1516,7 +1516,7 @@ void SrafComputer::activateDealBackground() {
 
 	_eCurScreen = SCBACKGROUNDDATA;
 
-	sStr = BuildSrafDir("SRAFDEAL.TXT");
+	sStr = buildSrafDir("SRAFDEAL.TXT");
 	displayTextScreen(sStr);
 }
 
@@ -1729,7 +1729,7 @@ void SrafComputer::recalcDispatchList(int mExpansionFlag) {
 		break;
 
 	case mBuyersExpanded:
-		nListEntries = NUM_BUYERS - MINMARTENTRIES + 3;
+		nListEntries = NUM_BUYERS - MIN_MART_ENTRIES + 3;
 		break;
 	}
 
@@ -1781,7 +1781,7 @@ void SrafComputer::recalcDispatchList(int mExpansionFlag) {
 				sStr += pMeetWith[i];
 				break;
 
-			case NUM_BUYERS - MINMARTENTRIES + 2:
+			case NUM_BUYERS - MIN_MART_ENTRIES + 2:
 				sStr += pMeetWith[2];
 				break;
 
@@ -1790,7 +1790,7 @@ void SrafComputer::recalcDispatchList(int mExpansionFlag) {
 				// show them.
 				// щnly include those that are not being met with already.
 				if (g_stBuyerBids[i - 2]._bAvailable == true) {
-					if (i <= (NUM_BUYERS - MINMARTENTRIES + 1)) {
+					if (i <= (NUM_BUYERS - MIN_MART_ENTRIES + 1)) {
 						sStr += "[ ] ";
 						sStr += g_stBuyerBids[i - 2]._pszName;
 						if (g_stBuyerBids[i - 2]._bMeetWith) {
@@ -2264,8 +2264,8 @@ void SrafComputer::activateCheckTeams() {
 	sBadMeetings = "";
 
 	for (int i = 0; i < NUM_SELLERS; i++) {
-		if (g_stSellerNames[i]._nMeetingResult != NOMEETING) {
-			if (g_stSellerNames[i]._nMeetingResult == GOODMEETING) {
+		if (g_stSellerNames[i]._nMeetingResult != SRAF_NO_MEETING) {
+			if (g_stSellerNames[i]._nMeetingResult == SRAF_GOOD_MEETING) {
 				if (bSFirstTime == true) {
 					bSFirstTime = false;
 				} else {
@@ -2285,8 +2285,8 @@ void SrafComputer::activateCheckTeams() {
 
 	// Scan the buyers for meetings
 	for (int i = 0; i < NUM_BUYERS; i++) {
-		if (g_stBuyerBids[i]._nMeetingResult != NOMEETING) {
-			if (g_stBuyerBids[i]._nMeetingResult == GOODMEETING) {
+		if (g_stBuyerBids[i]._nMeetingResult != SRAF_NO_MEETING) {
+			if (g_stBuyerBids[i]._nMeetingResult == SRAF_GOOD_MEETING) {
 				if (bSFirstTime == true) {
 					bSFirstTime = false;
 				} else {
@@ -2306,8 +2306,8 @@ void SrafComputer::activateCheckTeams() {
 
 	// Scan the other partys for meetings
 	for (int i = 0; i < NUM_OTHER_PARTYS; i++) {
-		if (g_stOtherPartys[i]._nMeetingResult != NOMEETING) {
-			if (g_stOtherPartys[i]._nMeetingResult == GOODMEETING) {
+		if (g_stOtherPartys[i]._nMeetingResult != SRAF_NO_MEETING) {
+			if (g_stOtherPartys[i]._nMeetingResult == SRAF_GOOD_MEETING) {
 				if (bSFirstTime == true) {
 					bSFirstTime = false;
 				} else {
@@ -2714,7 +2714,7 @@ void SrafComputer::onListBuyerBids() {
 		CBofString sStr2(szLocalBuff, 256);
 
 		if (index >= 0 && index < NUM_BUYERS) {
-			sStr2 = BuildSrafDir(g_stBuyerBids[index]._pszBuyerBio);
+			sStr2 = buildSrafDir(g_stBuyerBids[index]._pszBuyerBio);
 			displayTextScreen(sStr2);
 		}
 	}
@@ -2729,7 +2729,7 @@ void SrafComputer::onListSellerBios() {
 	CBofString sStr(szLocalBuff, 256);
 
 	if (_nSelection >= 2) {
-		sStr = BuildSrafDir(g_stSellerNames[_nSelection - 2]._pszSellerBio);
+		sStr = buildSrafDir(g_stSellerNames[_nSelection - 2]._pszSellerBio);
 		displayTextScreen(sStr);
 	}
 }
@@ -2740,7 +2740,7 @@ void SrafComputer::onListOtherBios() {
 	CBofString sStr(szLocalBuff, 256);
 
 	if (_nSelection >= 2) {
-		sStr = BuildSrafDir(g_stOtherPartys[_nSelection - 2]._pszOtherPartyBio);
+		sStr = buildSrafDir(g_stOtherPartys[_nSelection - 2]._pszOtherPartyBio);
 		displayTextScreen(sStr);
 	}
 }
@@ -2752,7 +2752,7 @@ void SrafComputer::onListStaffBios() {
 	CBofString sStr(szLocalBuff, 256);
 
 	if (_nSelection >= 2) {
-		sStr = BuildSrafDir(g_staffers[_nSelection - 2]._pszStafferBio);
+		sStr = buildSrafDir(g_staffers[_nSelection - 2]._pszStafferBio);
 		displayTextScreen(sStr);
 	}
 }
@@ -2826,7 +2826,7 @@ void SrafComputer::onListDispatchTeam() {
 					break;
 
 				if (cMeetBio.ptInRect(cPoint)) {        // if so, bring up biography.
-					sStr = BuildSrafDir(g_stOtherPartys[nElementIndex]._pszOtherPartyBio);
+					sStr = buildSrafDir(g_stOtherPartys[nElementIndex]._pszOtherPartyBio);
 					displayTextScreen(sStr);
 				} else if (cMeetMember.ptInRect(cPoint)) {         // if so, put a checkmark in that column.
 					// Uncheck any member we already have checked, this is a singular operation
@@ -2875,7 +2875,7 @@ void SrafComputer::onListDispatchTeam() {
 				}
 
 				if (cMeetBio.ptInRect(cPoint)) {        // If so, bring up biography.
-					sStr = BuildSrafDir(g_stSellerNames[nElementIndex]._pszSellerBio);
+					sStr = buildSrafDir(g_stSellerNames[nElementIndex]._pszSellerBio);
 					displayTextScreen(sStr);
 				} else if (cMeetMember.ptInRect(cPoint)) {
 					// If so, put a checkmark in that column.
@@ -2914,8 +2914,8 @@ void SrafComputer::onListDispatchTeam() {
 				nElementIndex -= nPreceedingHeaders;    // Correct for other headers
 				nElementIndex = getAdjustedIndex(nListToCheck, nElementIndex, true);
 
-				if (nElementIndex >= (NUM_BUYERS - MINMARTENTRIES)) {
-					if (nElementIndex == (NUM_BUYERS - MINMARTENTRIES + 1 - nPreceedingHeaders)) {
+				if (nElementIndex >= (NUM_BUYERS - MIN_MART_ENTRIES)) {
+					if (nElementIndex == (NUM_BUYERS - MIN_MART_ENTRIES + 1 - nPreceedingHeaders)) {
 						bDeleteAll = true;
 						nrecalcVal = mOthersExpanded;       // Collapse list, expand others
 					}
@@ -2926,7 +2926,7 @@ void SrafComputer::onListDispatchTeam() {
 
 				if (cMeetBio.ptInRect(cPoint)) {
 					// if so, bring up biography.
-					sStr = BuildSrafDir(g_stBuyerBids[nElementIndex]._pszBuyerBio);
+					sStr = buildSrafDir(g_stBuyerBids[nElementIndex]._pszBuyerBio);
 					displayTextScreen(sStr);
 				} else if (cMeetMember.ptInRect(cPoint)) {
 					// if so, put a checkmark in that column.
@@ -2987,7 +2987,7 @@ void SrafComputer::onListDispatchTeam() {
 
 			//  If in the staff names column, then show the biography
 			if (cStaffNames.ptInRect(cPoint)) {
-				sStr = BuildSrafDir(g_staffers[nElementIndex]._pszStafferBio);
+				sStr = buildSrafDir(g_staffers[nElementIndex]._pszStafferBio);
 				displayTextScreen(sStr);
 			} else {
 				// if in the "include on team" column, then handle appropriately
@@ -3020,7 +3020,7 @@ void SrafComputer::onListCurrentEMail() {
 	CBofString sStr(szLocalBuff, 256);
 
 	if (_nSelection >= 2) {
-		sStr = BuildSrafDir(g_stEmailMessages[_nSelection - 2]._pszMessageFile);
+		sStr = buildSrafDir(g_stEmailMessages[_nSelection - 2]._pszMessageFile);
 		displayTextScreen(sStr);
 	}
 }
@@ -3070,7 +3070,7 @@ void SrafComputer::onListRoboButler() {
 	szLocalBuff[0] = '\0';
 	CBofString  sStr(szLocalBuff, 256);
 
-	sStr = BuildSrafDir(g_stOfferings[nSelection]._pszFile);
+	sStr = buildSrafDir(g_stOfferings[nSelection]._pszFile);
 	displayTextScreen(sStr);
 }
 
@@ -3536,9 +3536,9 @@ bool SrafComputer::reportMeetingStatus(int nTeamNumber) {
 		// Pick the team captain and build the response file.
 		nTeamCaptain = teamListItem._nTeamCaptain;
 		if (teamListItem._nFlags & mStafferMale) {
-			sResponse = BuildMaleSrafDir(pszFailureFile == nullptr ? pszSuccessFile : pszFailureFile);
+			sResponse = buildMaleSrafDir(pszFailureFile == nullptr ? pszSuccessFile : pszFailureFile);
 		} else {
-			sResponse = BuildFemaleSrafDir(pszFailureFile == nullptr ? pszSuccessFile : pszFailureFile);
+			sResponse = buildFemaleSrafDir(pszFailureFile == nullptr ? pszSuccessFile : pszFailureFile);
 		}
 
 		if (bTimeElapsed) {
@@ -4032,7 +4032,7 @@ void SrafComputer::onButtonBuyerBids(CBofButton *pButton, int nState) {
 		szLocalBuff[0] = '\0';
 		CBofString sStr(szLocalBuff, 256);
 
-		sStr = BuildSrafDir("KEYINFO.TXT");
+		sStr = buildSrafDir("KEYINFO.TXT");
 		displayTextScreen(sStr);
 		break;
 	}
@@ -4154,7 +4154,7 @@ void SrafComputer::notifyBoss(CBofString &sSoundFile, int nStafferID) {         
 			szLocalBuff[0] = '\0';
 			CBofString  sStr(szLocalBuff, 256);
 
-			sStr = BuildSrafDir(g_staffers[nStafferID]._pszStafferBmp);
+			sStr = buildSrafDir(g_staffers[nStafferID]._pszStafferBmp);
 
 			_pStafferBmp[nStafferID] = new CBofBitmap(szLocalBuff);
 			assert(_pStafferBmp[nStafferID] != nullptr);
@@ -4298,7 +4298,7 @@ void SrafComputer::doOrderBeverage() {
 	g_SDevManager->addObject("INVZ_WLD", "SZTB");
 
 	// Build the string to indicate that the beverage has been stashed
-	sStr = BuildSrafDir(g_stOfferings[0]._pszRcvOfferingFile);
+	sStr = buildSrafDir(g_stOfferings[0]._pszRcvOfferingFile);
 	notifyBoss(sStr, -1);
 
 	// state of buttons has changed
@@ -4314,7 +4314,7 @@ void SrafComputer::doOrderSnack() {
 	g_SDevManager->addObject("INVZ_WLD", "SZTA");
 
 	// Build the string to indicate that the beverage has been stashed
-	sStr = BuildSrafDir(g_stOfferings[1]._pszRcvOfferingFile);
+	sStr = buildSrafDir(g_stOfferings[1]._pszRcvOfferingFile);
 	notifyBoss(sStr, -1);
 
 	// state of buttons has changed
@@ -4490,7 +4490,7 @@ void SrafComputer::incrementTurnCount() {
 			szLocalBuff[0] = '\0';
 			CBofString  sResponse(szLocalBuff, 256);
 
-			sResponse = BuildMaleSrafDir(SRAFTIMEOUT);
+			sResponse = buildMaleSrafDir(SRAF_TIMEOUT);
 
 			notifyBoss(sResponse, DURTEEN97);
 			onButtonFinished(false);
@@ -4593,10 +4593,10 @@ int SrafTextScreen::createTextScreen(CBofWindow *pParent) {
 	_pOKButton = new CBofBmpButton;
 	if (_pOKButton != nullptr) {
 
-		CBofBitmap *pUp = loadBitmap(BuildSrafDir(g_stButtons[DONE_BUTTON]._pszUp), pPal);
-		CBofBitmap *pDown = loadBitmap(BuildSrafDir(g_stButtons[DONE_BUTTON]._pszDown), pPal);
-		CBofBitmap *pFocus = loadBitmap(BuildSrafDir(g_stButtons[DONE_BUTTON]._pszFocus), pPal);
-		CBofBitmap *pDis = loadBitmap(BuildSrafDir(g_stButtons[DONE_BUTTON]._pszDisabled), pPal);
+		CBofBitmap *pUp = loadBitmap(buildSrafDir(g_stButtons[DONE_BUTTON]._pszUp), pPal);
+		CBofBitmap *pDown = loadBitmap(buildSrafDir(g_stButtons[DONE_BUTTON]._pszDown), pPal);
+		CBofBitmap *pFocus = loadBitmap(buildSrafDir(g_stButtons[DONE_BUTTON]._pszFocus), pPal);
+		CBofBitmap *pDis = loadBitmap(buildSrafDir(g_stButtons[DONE_BUTTON]._pszDisabled), pPal);
 
 		_pOKButton->loadBitmaps(pUp, pDown, pFocus, pDis);
 
@@ -4686,20 +4686,20 @@ void SrafTextScreen::onBofButton(CBofObject *pObject, int nState) {
 }
 
 
-const char *BuildAudioDir(const char *pszFile) {
-	return formPath(SRAFAUDIODIR, pszFile);
+const char *buildAudioDir(const char *pszFile) {
+	return formPath(SRAF_AUDIO_DIR, pszFile);
 }
 
-const char *BuildSrafDir(const char *pszFile) {
-	return formPath(SRAFDIR, pszFile);
+const char *buildSrafDir(const char *pszFile) {
+	return formPath(SRAF_DIR, pszFile);
 }
 
-const char *BuildMaleSrafDir(const char *pszFile) {
-	return formPath(SRAFMALEDIR, pszFile);
+const char *buildMaleSrafDir(const char *pszFile) {
+	return formPath(SRAF_MALE_DIR, pszFile);
 }
 
-const char *BuildFemaleSrafDir(const char *pszFile) {
-	return formPath(SRAFFEMALEDIR, pszFile);
+const char *buildFemaleSrafDir(const char *pszFile) {
+	return formPath(SRAF_FEMALE_DIR, pszFile);
 }
 
 void SrafComputer::restoreSraffanVars() {
@@ -4959,7 +4959,7 @@ void SrafComputer::restoreSraffanVars() {
 	// Restore seller meeting history
 	for (int i = 0; i < NUM_SELLERS; i++, nBitNo++) {
 		if (nMetWithVal & (1 << nBitNo)) {
-			g_stSellerNames[i]._nMeetingResult = (((1 << nBitNo) & nMeetingResultVal) ? GOODMEETING : BADMEETING);
+			g_stSellerNames[i]._nMeetingResult = (((1 << nBitNo) & nMeetingResultVal) ? SRAF_GOOD_MEETING : SRAF_BAD_MEETING);
 		} else {
 			g_stSellerNames[i]._nMeetingResult = 0;
 		}
@@ -4968,7 +4968,7 @@ void SrafComputer::restoreSraffanVars() {
 	// Save buyer meeting history
 	for (int i = 0; i < NUM_BUYERS; i++, nBitNo++) {
 		if (nMetWithVal & (1 << nBitNo)) {
-			g_stBuyerBids[i]._nMeetingResult = (((1 << nBitNo) & nMeetingResultVal) ? GOODMEETING : BADMEETING);
+			g_stBuyerBids[i]._nMeetingResult = (((1 << nBitNo) & nMeetingResultVal) ? SRAF_GOOD_MEETING : SRAF_BAD_MEETING);
 		} else {
 			g_stBuyerBids[i]._nMeetingResult = 0;
 		}
@@ -4977,7 +4977,7 @@ void SrafComputer::restoreSraffanVars() {
 	// Save other party meeting history
 	for (int i = 0; i < NUM_OTHER_PARTYS; i++, nBitNo++) {
 		if (nMetWithVal & (1 << nBitNo)) {
-			g_stOtherPartys[i]._nMeetingResult = (((1 << nBitNo) & nMeetingResultVal) ? GOODMEETING : BADMEETING);
+			g_stOtherPartys[i]._nMeetingResult = (((1 << nBitNo) & nMeetingResultVal) ? SRAF_GOOD_MEETING : SRAF_BAD_MEETING);
 		} else {
 			g_stOtherPartys[i]._nMeetingResult = 0;
 		}
@@ -5207,25 +5207,25 @@ void SrafComputer::saveSraffanVars() {
 
 	// Save seller meeting history
 	for (int i = 0; i < NUM_SELLERS; i++, nBitNo++) {
-		if (g_stSellerNames[i]._nMeetingResult != NOMEETING) {
+		if (g_stSellerNames[i]._nMeetingResult != SRAF_NO_MEETING) {
 			nMetWithVal |= (1 << nBitNo);
-			nMeetingResultVal |= (g_stSellerNames[i]._nMeetingResult == GOODMEETING ? 1 << nBitNo : 0);
+			nMeetingResultVal |= (g_stSellerNames[i]._nMeetingResult == SRAF_GOOD_MEETING ? 1 << nBitNo : 0);
 		}
 	}
 
 	// Save buyer meeting history
 	for (int i = 0; i < NUM_BUYERS; i++, nBitNo++) {
-		if (g_stBuyerBids[i]._nMeetingResult != NOMEETING) {
+		if (g_stBuyerBids[i]._nMeetingResult != SRAF_NO_MEETING) {
 			nMetWithVal |= (1 << nBitNo);
-			nMeetingResultVal |= (g_stBuyerBids[i]._nMeetingResult == GOODMEETING ? 1 << nBitNo : 0);
+			nMeetingResultVal |= (g_stBuyerBids[i]._nMeetingResult == SRAF_GOOD_MEETING ? 1 << nBitNo : 0);
 		}
 	}
 
 	// Save other party meeting history
 	for (int i = 0; i < NUM_OTHER_PARTYS; i++, nBitNo++) {
-		if (g_stOtherPartys[i]._nMeetingResult != NOMEETING) {
+		if (g_stOtherPartys[i]._nMeetingResult != SRAF_NO_MEETING) {
 			nMetWithVal |= (1 << nBitNo);
-			nMeetingResultVal |= (g_stOtherPartys[i]._nMeetingResult == GOODMEETING ? 1 << nBitNo : 0);
+			nMeetingResultVal |= (g_stOtherPartys[i]._nMeetingResult == SRAF_GOOD_MEETING ? 1 << nBitNo : 0);
 		}
 	}
 
@@ -5245,15 +5245,15 @@ void SrafComputer::saveSraffanVars() {
 
 void SrafComputer::setMeetingResult(int nFlags, int nMetWith, bool bSucceeded) {
 	if (nFlags & mSeller) {
-		g_stSellerNames[nMetWith]._nMeetingResult = (bSucceeded ? GOODMEETING : BADMEETING);
+		g_stSellerNames[nMetWith]._nMeetingResult = (bSucceeded ? SRAF_GOOD_MEETING : SRAF_BAD_MEETING);
 	}
 
 	if (nFlags & mBuyer) {
-		g_stBuyerBids[nMetWith]._nMeetingResult = (bSucceeded ? GOODMEETING : BADMEETING);
+		g_stBuyerBids[nMetWith]._nMeetingResult = (bSucceeded ? SRAF_GOOD_MEETING : SRAF_BAD_MEETING);
 	}
 
 	if (nFlags & mOtherParty) {
-		g_stOtherPartys[nMetWith]._nMeetingResult = (bSucceeded ? GOODMEETING : BADMEETING);
+		g_stOtherPartys[nMetWith]._nMeetingResult = (bSucceeded ? SRAF_GOOD_MEETING : SRAF_BAD_MEETING);
 	}
 }
 
