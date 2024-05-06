@@ -1141,6 +1141,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	int dummy = 0;
 	s.syncAsUint32LE(dummy);
 
+
 	return Common::kNoError;
 }
 

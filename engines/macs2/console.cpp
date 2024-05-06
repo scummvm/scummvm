@@ -20,18 +20,47 @@
  */
 
 #include "macs2/console.h"
+#include "macs2/view1.h"
+#include "macs2/macs2.h"
+#include "macs2/gameobjects.h"
 
 namespace Macs2 {
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("test",   WRAP_METHOD(Console, Cmd_test));
+	registerCmd("dumpblobs", WRAP_METHOD(Console, Cmd_dumpBlobs));
+	registerCmd("autoclick", WRAP_METHOD(Console, Cmd_toggleAutoClick));
 }
 
 Console::~Console() {
 }
 
-bool Console::Cmd_test(int argc, const char **argv) {
-	debugPrintf("Test\n");
+bool Console::Cmd_toggleAutoClick(int argc, const char **argv) {
+	View1 *currentView = (View1 *)g_engine->findView("View1");
+	currentView->autoclickActive = !currentView->autoclickActive;
+	debugPrintf("Auto clicking set to %s.\n",
+				currentView->autoclickActive ? "on" : "off"
+		);
+	return true;
+}
+
+bool Console::Cmd_dumpBlobs(int argc, const char **argv) {
+	Common::DumpFile df;
+	// TODO: Read from args
+	Common::String path = "C:\\Users\\Flori\\Downloads\\test.dmp";
+	df.open(path);
+	for (auto currentObject : GameObjects::instance().Objects) {
+		df.writeString(Common::String::format("Object %.2xh\n", currentObject->Index));
+		for (int i = 0; i < currentObject->Blobs.size(); i++) {
+			auto currentBlob = currentObject->Blobs[i];
+			df.writeString(Common::String::format("Blob %.2xh\n", i));
+			for (const uint8 value : currentBlob) {
+				df.writeString(Common::String::format("%.2x", value));
+			}
+			df.writeString("\n");
+		}
+	}
+	df.close();
+	debugPrintf("Dumping blobs to %s.\n", path.c_str());
 	return true;
 }
 
