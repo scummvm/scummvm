@@ -30,7 +30,7 @@ namespace SpaceBar {
 
 class SBarThud : public CBagStorageDevBmp {
 private:
-	CBagObject *pCurrObj;
+	CBagObject *_currObj;
 	int _nObjects;         // The number of currently active objects
 	CBofBitmap *_xYouBmp;
 	static int  _nThudCursor;
@@ -39,10 +39,10 @@ public:
 	virtual ~SBarThud();
 
 	CBagObject *getCurrObj() {
-		return pCurrObj;
+		return _currObj;
 	}
 	CBagObject *setCurrObj(CBagObject *pObj) {
-		return pCurrObj = pObj;
+		return _currObj = pObj;
 	}
 
 	static int      getThudCursor() {
@@ -52,18 +52,18 @@ public:
 		_nThudCursor = n;
 	}
 
-	virtual ErrorCode loadFile(const CBofString &sFile);
-	virtual ErrorCode loadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName, bool bAttach);
-	virtual bool       onObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev);
+	ErrorCode loadFile(const CBofString &sFile) override;
+	ErrorCode loadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName, bool bAttach) override;
+	bool       onObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) override;
 
-	virtual ErrorCode  attach();
-	virtual ErrorCode  detach();
+	ErrorCode  attach() override;
+	ErrorCode  detach() override;
 
-	virtual ErrorCode activateLocalObject(CBagObject *pObj);
-	virtual ErrorCode deactivateLocalObject(CBagObject *pObj);
+	ErrorCode activateLocalObject(CBagObject *pObj) override;
+	ErrorCode deactivateLocalObject(CBagObject *pObj) override;
 
-	virtual ErrorCode  activateLocalObject(const CBofString &sName);
-	virtual ErrorCode  deactivateLocalObject(const CBofString &sName);
+	ErrorCode  activateLocalObject(const CBofString &sName) override;
+	ErrorCode  deactivateLocalObject(const CBofString &sName) override;
 };
 
 } // namespace SpaceBar
