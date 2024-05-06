@@ -31,6 +31,7 @@ namespace Bagel {
 
 CDevDlg::CDevDlg(int nButtonX, int buttonY) {
 	_titleText = nullptr;
+	_guessText = nullptr;
 	_buttonX = nButtonX;
 	_buttonY = buttonY;
 	_achGuess[0] = '\0';
@@ -39,10 +40,8 @@ CDevDlg::CDevDlg(int nButtonX, int buttonY) {
 }
 
 CDevDlg::~CDevDlg() {
-	if (_titleText != nullptr) {
-		delete _titleText;
-		_titleText = nullptr;
-	}
+	delete _titleText;
+	_titleText = nullptr;
 }
 
 ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CBofRect *rect, bool useExtraFl) {
