@@ -16,6 +16,10 @@ dependencies {
     }
 }
 
+// Load our source dependent properties
+def srcProperties = new Properties()
+srcProperties.load(new FileInputStream(rootProject.file("src.properties")))
+
 // Enable to see use of deprecated API
 tasks.withType(JavaCompile) {
     options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
@@ -102,16 +106,15 @@ android {
             // the Android Gradle plugin. To learn more, go to the section about
             // R8 configuration files.
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            zipAlignEnabled true
         }
     }
     sourceSets {
         main {
             assets.srcDirs 'assets/'
-            java.srcDirs srcdir + '/backends/platform/android/'
+            java.srcDirs srcProperties['srcdir'] + '/backends/platform/android/'
             jniLibs.srcDirs 'lib/'
-            res.srcDirs srcdir + '/dists/android/res/'
-            manifest.srcFile srcdir + '/dists/android/AndroidManifest.xml'
+            res.srcDirs srcProperties['srcdir'] + '/dists/android/res/'
+            manifest.srcFile srcProperties['srcdir'] + '/dists/android/AndroidManifest.xml'
         }
     }
     lintOptions {
