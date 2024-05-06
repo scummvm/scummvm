@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath 'com.android.tools.build:gradle:8.4.0'
     }
 }
 
@@ -21,8 +21,8 @@ def srcProperties = new Properties()
 srcProperties.load(new FileInputStream(rootProject.file("src.properties")))
 
 // Enable to see use of deprecated API
-tasks.withType(JavaCompile) {
-    options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
+tasks.withType(JavaCompile).configureEach {
+	options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
 }
 
 //gradle.startParameter.showStacktrace = ShowStacktrace.ALWAYS_FULL
@@ -31,7 +31,6 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdk 33
-    buildToolsVersion "33.0.1"
     ndkVersion "21.3.6528147"
 
     namespace "org.scummvm.scummvm"
@@ -39,7 +38,7 @@ android {
     defaultConfig {
         applicationId "org.scummvm.scummvm"
 
-        setProperty("archivesBaseName", "ScummVM")
+        base.archivesName = "ScummVM"
 
         minSdkVersion 16
         targetSdkVersion 33
@@ -87,7 +86,7 @@ android {
     }
     buildTypes {
         debug{
-            applicationIdSuffix "debug"
+            applicationIdSuffix ".debug"
             manifestPlaceholders = [nameSuffix:"_debug"]
             debuggable true
         }
@@ -123,6 +122,6 @@ android {
 }
 
 dependencies {
-    implementation "androidx.annotation:annotation:1.5.0"
+    implementation "androidx.annotation:annotation:1.7.1"
     implementation "androidx.appcompat:appcompat:1.6.1"
 }
