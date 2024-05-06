@@ -40,7 +40,9 @@ class Macs2Engine;
 		};
 
 		enum class MouseMode {
-			Use = 0x15
+			Use = 0x15,
+			// TODO: Check if correct
+			UseInventory = 0x17
 		};
 
 		class ScriptExecutor {
@@ -57,7 +59,9 @@ class Macs2Engine;
 
 			// [1012h] global - current assumption is that this guards script runs that
 			// are not guarded by the [1014h] global
-			bool IsNormalRun = false;
+			// TODO: I think I had this one right before, the meaning of "is repeated run"
+			// could be better
+			bool IsRepeatRun = false;
 
 			// Does pretty much what 9F07 does
 			byte ReadByte();
@@ -101,15 +105,18 @@ class Macs2Engine;
 			// TODO: Identify number of variables and default values
 			ScriptVariable _variables[10000];
 
-			MouseMode _mouseMode = MouseMode::Use;
-
-			uint16 _interactedObjectID = 0;
+			
 
 			// TODO: Expose in a better place
 			uint16 _charPosX = 276;
 			uint16 _charPosY = 140;
 
 			public:
+
+			MouseMode _mouseMode = MouseMode::Use;
+
+			uint16 _interactedObjectID = 0;
+			uint16 _interactedOtherObjectID = 0;
 
 			// TODO: Mockup variable to simulate conditions where the scripting
 			// function would be called again, like after a walk to event
@@ -124,13 +131,15 @@ class Macs2Engine;
 			// Will execute the script and any object scripts until execution should be stopped
 			// TODO: Consider if we should let the executor also figure out where to get the
 			// first script from
-			void Run();
+			void Run(bool firstRun = false);
 
 			void SetScript(Common::MemoryReadStream *stream);
 
 			void tick();
 
 			void StartTimer(uint32 duration);
+
+			
 
 	};
 }	// namespace Script

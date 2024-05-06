@@ -82,7 +82,7 @@ class Macs2Engine : public Engine, public Events {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-	Script::ScriptExecutor *_scriptExecutor;
+	
 	Adlib *_adlib;
 
 protected:
@@ -106,6 +106,7 @@ public:
 	Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc);
 	~Macs2Engine() override;
 
+	Script::ScriptExecutor *_scriptExecutor;
 	struct Graphics::ManagedSurface _bgImageShip;
 	Graphics::ManagedSurface _map;
 	// Note: This is used both for pathfinding as well as for area IDs
@@ -190,8 +191,8 @@ public:
 
 	void ExecuteScript(Common::MemoryReadStream* stream);
 
-	void RunScriptExecutor() {
-		_scriptExecutor->Run();
+	void RunScriptExecutor(bool firstRun = false) {
+		_scriptExecutor->Run(firstRun);
 	}
 
 	int MeasureString(Common::String &s);
