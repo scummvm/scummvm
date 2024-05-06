@@ -423,7 +423,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 
 	timerStart();
 
-	if (fileExists(wldFileName)) {
+	if (fileExists(wldFileName) && (fileLength(wldFileName) > 0)) {
 		// Force buffer to be big enough so that the entire script
 		// is pre-loaded
 		int length = fileLength(wldFileName);
@@ -494,7 +494,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 	} else {
 		reportError(ERR_FFIND, "Could not find World Script: %s", wldFileName.getBuffer());
 	}
-	logInfo(buildString("Time to Load %s, %ld ms", wldFileName.getBuffer(), timerStop()));
+	logInfo(buildString("Time to Load %s, %u ms", wldFileName.getBuffer(), timerStop()));
 
 	return _errCode;
 }
