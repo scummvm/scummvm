@@ -705,7 +705,6 @@ bool SDSScene::parse(Common::SeekableReadStream *stream) {
 
 void SDSScene::unload() {
 	_num = 0;
-	_dragItem = nullptr;
 	_enterSceneOps.clear();
 	_leaveSceneOps.clear();
 	_preTickOps.clear();

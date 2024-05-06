@@ -202,13 +202,14 @@ void Inventory::drawItems(Graphics::ManagedSurface &surf) {
 
 void Inventory::mouseMoved(const Common::Point &pt) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	const GameItem *dragItem = engine->getScene()->getDragItem();
+	GameItem *dragItem = engine->getScene()->getDragItem();
 	if (dragItem) {
 		engine->setMouseCursor(dragItem->_iconNum);
 		const RequestData &req = _reqData._requests[0];
 		const Common::Rect bgsize(Common::Point(req._x, req._y), req._width, req._height);
 		if (!bgsize.contains(pt)) {
 			// dragged an item outside the inventory
+			dragItem->_inSceneNum = _openedFromSceneNum;
 			close();
 		}
 	} else {

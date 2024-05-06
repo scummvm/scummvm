@@ -957,10 +957,10 @@ TTMEnviro *ADSInterpreter::findTTMEnviro(int16 enviro) {
 	return nullptr;
 }
 
-TTMSeq *ADSInterpreter::findTTMSeq(int16 enviro, int16 seq) {
-	for (auto & ttm : _adsData->_ttmSeqs) {
-		if (ttm._enviro == enviro && ttm._seqNum == seq)
-			return &ttm;
+TTMSeq *ADSInterpreter::findTTMSeq(int16 enviro, int16 seqno) {
+	for (auto &seq : _adsData->_ttmSeqs) {
+		if (seq._enviro == enviro && seq._seqNum == seqno)
+			return &seq;
 	}
 	return nullptr;
 }
@@ -1241,31 +1241,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		handleRandomOp(code, scr);
 		break;
 
-	case 0x4000: { // MOVE SEQ TO FRONT
-		enviro = scr->readUint16LE();
-		seqnum = scr->readUint16LE();
-		/*uint16 unk = */scr->readUint16LE();
-		// This is O(N) but the N is small and it's not called often.
-		TTMSeq seq;
-		bool success = false;
-		for (uint i = 0; i < _adsData->_ttmSeqs.size(); i++) {
-			if (_adsData->_ttmSeqs[i]._enviro == enviro && _adsData->_ttmSeqs[i]._seqNum == seqnum) {
-				seq = _adsData->_ttmSeqs[i];
-				_adsData->_ttmSeqs.remove_at(i);
-				success = true;
-				break;
-			}
-		}
-
-		if (success)
-			_adsData->_ttmSeqs.insert_at(0, seq);
-		else
-			warning("ADS: 0x4000 Request to move env %d seq %d which doesn't exist", enviro, seqnum);
-
-		break;
-	}
-
-	case 0x4010: { // MOVE SEQ TO BACK
+	case 0x4000: { // MOVE SEQ TO BACK
 		enviro = scr->readUint16LE();
 		seqnum = scr->readUint16LE();
 		/*uint16 unk = */scr->readUint16LE();
@@ -1283,6 +1259,30 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 
 		if (success)
 			_adsData->_ttmSeqs.push_back(seq);
+		else
+			warning("ADS: 0x4000 Request to move env %d seq %d which doesn't exist", enviro, seqnum);
+
+		break;
+	}
+
+	case 0x4010: { // MOVE SEQ TO FRONT
+		enviro = scr->readUint16LE();
+		seqnum = scr->readUint16LE();
+		/*uint16 unk = */scr->readUint16LE();
+		// This is O(N) but the N is small and it's not called often.
+		TTMSeq seq;
+		bool success = false;
+		for (uint i = 0; i < _adsData->_ttmSeqs.size(); i++) {
+			if (_adsData->_ttmSeqs[i]._enviro == enviro && _adsData->_ttmSeqs[i]._seqNum == seqnum) {
+				seq = _adsData->_ttmSeqs[i];
+				_adsData->_ttmSeqs.remove_at(i);
+				success = true;
+				break;
+			}
+		}
+
+		if (success)
+			_adsData->_ttmSeqs.insert_at(0, seq);
 		else
 			warning("ADS: 0x4010 Request to move env %d seq %d which doesn't exist", enviro, seqnum);
 
