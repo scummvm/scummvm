@@ -644,12 +644,13 @@ protected:
 
 	VideoParameters _videoParams;
 
-	int32 _heObject, _heObjectNum;
-	int32 _hePaletteNum;
+	int32 _heObject = 0;
+	int32 _heObjectNum = 0;
+	int32 _hePaletteNum = 0;
 
 	int32 _maxSpriteNum = 0;
 	int32 _minSpriteNum = 0;
-	int32 _curSpriteGroupId;
+	int32 _curSpriteGroupId = 0;
 
 	LogicHE *_logicHE = nullptr;
 	MoviePlayer *_moviePlay;
@@ -783,9 +784,9 @@ protected:
 	byte VAR_U32_ARRAY_UNK;
 
 #ifdef USE_ENET
-	byte VAR_REMOTE_START_SCRIPT;
-	byte VAR_NETWORK_AVAILABLE;
-	byte VAR_NETWORK_RECEIVE_ARRAY_SCRIPT;
+	byte VAR_REMOTE_START_SCRIPT = 98;
+	byte VAR_NETWORK_AVAILABLE = 109;
+	byte VAR_NETWORK_RECEIVE_ARRAY_SCRIPT = 101;
 
 public:
 	int networkSessionDialog();

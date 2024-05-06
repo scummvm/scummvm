@@ -219,6 +219,7 @@ WarpWizOneSpanTable *Wiz::warpCreateSpanTable(int spanCount) {
 	if (!spanTable) {
 		return nullptr;
 	}
+	memset(spanTable, 0, sizeof(WarpWizOneSpanTable));
 
 	spanTable->spanCount = spanCount;
 	spanTable->spans = (WarpWizOneSpan *)malloc(spanCount * sizeof(WarpWizOneSpan));
@@ -226,6 +227,7 @@ WarpWizOneSpanTable *Wiz::warpCreateSpanTable(int spanCount) {
 		warpDestroySpanTable(spanTable);
 		return nullptr;
 	}
+	memset(spanTable->spans, 0, spanCount * sizeof(WarpWizOneSpan));
 
 	spanPtr = spanTable->spans;
 	for (counter = 0; counter < spanCount; counter++) {
@@ -239,6 +241,7 @@ WarpWizOneSpanTable *Wiz::warpCreateSpanTable(int spanCount) {
 		warpDestroySpanTable(spanTable);
 		return nullptr;
 	}
+	memset(spanTable->drawSpans, 0, spanCount * sizeof(WarpWizOneDrawSpan));
 
 	return spanTable;
 }

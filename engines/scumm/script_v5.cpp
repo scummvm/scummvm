@@ -3321,20 +3321,20 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 	const int len = resStrLen(_scriptPointer);
 
 	if (_game.id == GID_LOOM && _game.version == 4 && _language == Common::EN_ANY &&
-		vm.slot[_currentScript].number == 95 && enhancementEnabled(kEnhTextLocFixes) &&
+		_currentScript != 0xFF && vm.slot[_currentScript].number == 95 && enhancementEnabled(kEnhTextLocFixes) &&
 			strcmp((const char *)_scriptPointer, "I am Choas.") == 0) {
 		// WORKAROUND: This happens when Chaos introduces
 		// herself to bishop Mandible. Of all the places to put
 		// a typo...
 		printString(textSlot, (const byte *)"I am Chaos.");
 	} else if (_game.id == GID_LOOM && _game.version == 4 && _roomResource == 90 &&
-			   vm.slot[_currentScript].number == 203 && _string[textSlot].color == 0x0F && enhancementEnabled(kEnhSubFmtCntChanges)) {
+		_currentScript != 0xFF && vm.slot[_currentScript].number == 203 && _string[textSlot].color == 0x0F && enhancementEnabled(kEnhSubFmtCntChanges)) {
 		// WORKAROUND: When Mandible speaks with Goodmold, his second
 		// speech line is missing its color parameter.
 		_string[textSlot].color = 0x0A;
 		printString(textSlot, _scriptPointer);
 	} else if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformFMTowns && _roomResource == 80 &&
-			   vm.slot[_currentScript].number == 201 && enhancementEnabled(kEnhSubFmtCntChanges)) {
+		_currentScript != 0xFF && vm.slot[_currentScript].number == 201 && enhancementEnabled(kEnhSubFmtCntChanges)) {
 		// WORKAROUND: When Indy and his father escape the zeppelin
 		// with the biplane in the FM-TOWNS version, they share the
 		// same text color. Indeed, they're not given any explicit
@@ -3347,8 +3347,8 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 		else
 			_string[textSlot].color = 0x0E;
 		printString(textSlot, _scriptPointer);
-	} else if (_game.id == GID_INDY4 && _roomResource == 23 && vm.slot[_currentScript].number == 167 &&
-			len == 24 && enhancementEnabled(kEnhTextLocFixes) && memcmp(_scriptPointer+16, "pregod", 6) == 0) {
+	} else if (_game.id == GID_INDY4 && _roomResource == 23 && _currentScript != 0xFF && vm.slot[_currentScript].number == 167 &&
+		len == 24 && enhancementEnabled(kEnhTextLocFixes) && memcmp(_scriptPointer+16, "pregod", 6) == 0) {
 		// WORKAROUND for bug #2961: At the end of Indy4, if Ubermann is told
 		// to use 20 orichalcum beads, he'll count "pregod8" and "pregod9"
 		// instead of "18" and "19", in some releases.
@@ -3364,7 +3364,7 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 			Common::strlcpy((char *)tmpBuf+16, "^19^", sizeof(tmpBuf) - 16);
 		printString(textSlot, tmpBuf);
 	} else if (_game.id == GID_INDY4 && _language == Common::EN_ANY && _roomResource == 10 &&
-			vm.slot[_currentScript].number == 209 && _actorToPrintStrFor == 4 && len == 81 &&
+		_currentScript != 0xFF && vm.slot[_currentScript].number == 209 && _actorToPrintStrFor == 4 && len == 81 &&
 			strcmp(_game.variant, "Floppy") != 0 && enhancementEnabled(kEnhSubFmtCntChanges)) {
 		// WORKAROUND: The English Talkie version of Indy4 changed Kerner's
 		// lines when he uses the phone booth in New York, but the text doesn't
@@ -3381,8 +3381,8 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 		} else {
 			printString(textSlot, _scriptPointer);
 		}
-	} else if (_game.id == GID_INDY4 && vm.slot[_currentScript].number == 161 && _actorToPrintStrFor == 2 &&
-			_game.platform != Common::kPlatformAmiga && strcmp(_game.variant, "Floppy") != 0 &&
+	} else if (_game.id == GID_INDY4 && _currentScript != 0xFF && vm.slot[_currentScript].number == 161 && _actorToPrintStrFor == 2 &&
+		_game.platform != Common::kPlatformAmiga && strcmp(_game.variant, "Floppy") != 0 &&
 			enhancementEnabled(kEnhAudioChanges)) {
 		// WORKAROUND: In Indy 4, if one plays as Sophia and looks at Indy, then
 		// her "There's nothing to look at." reaction line will be said with
@@ -3390,7 +3390,7 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 		// case. Script 68-4 has a "There's nothing to look at." line for Sophia,
 		// though, so we reuse this if the current line contains the expected
 		// audio offset.
-		if (memcmp(_scriptPointer, "\xFF\x0A\x5D\x8E\xFF\x0A\x63\x08\xFF\x0A\x0E\x00\xFF\x0A\x00\x00", 16) == 0) {
+		if (memcmp(_scriptPointer, "\xFF\x0A\x5D\x8E\xFF\x0A\x63\x08\xFF\x0A\x0E\x00\xFF\x0A\x00\x00", 16) == 0 && len >= 16) {
 			byte *tmpBuf = new byte[len];
 			memcpy(tmpBuf, "\xFF\x0A\xCE\x3B\xFF\x0A\x01\x05\xFF\x0A\x0E\x00\xFF\x0A\x00\x00", 16);
 			memcpy(tmpBuf + 16, _scriptPointer + 16, len - 16);
@@ -3399,8 +3399,8 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 		} else {
 			printString(textSlot, _scriptPointer);
 		}
-	} else if (_game.id == GID_MONKEY_EGA && _roomResource == 30 && vm.slot[_currentScript].number == 411 &&
-				strstr((const char *)_scriptPointer, "NCREDIT-NOTE-AMOUNT")) {
+	} else if (_game.id == GID_MONKEY_EGA && _roomResource == 30 && _currentScript != 0xFF && vm.slot[_currentScript].number == 411 &&
+		strstr((const char *)_scriptPointer, "NCREDIT-NOTE-AMOUNT")) {
 		// WORKAROUND for bug #4886 (MI1EGA German: Credit text incorrect)
 		// The script contains buggy text.
 		const char *tmp = strstr((const char *)_scriptPointer, "NCREDIT-NOTE-AMOUNT");
@@ -3411,8 +3411,8 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 		Common::strlcpy(tmpBuf + diff + 4, tmp + sizeof("NCREDIT-NOTE-AMOUNT") - 1, sizeof(tmpBuf) - diff - 4);
 		printString(textSlot, (byte *)tmpBuf);
 	} else if (_game.id == GID_MONKEY && !(_game.features & GF_ULTIMATE_TALKIE) &&
-			_game.platform != Common::kPlatformSegaCD &&
-			((_roomResource == 78 && vm.slot[_currentScript].number == 201) ||
+		_game.platform != Common::kPlatformSegaCD &&
+			_currentScript != 0xFF && ((_roomResource == 78 && vm.slot[_currentScript].number == 201) ||
 			(_roomResource == 45 && vm.slot[_currentScript].number == 200 &&
 			isValidActor(10) && _actors[10]->isInCurrentRoom())) &&
 			_actorToPrintStrFor == 255 && _string[textSlot].color != 0x0F &&
@@ -3425,7 +3425,7 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 		_string[textSlot].color = (_game.platform == Common::kPlatformFMTowns) ? 0x0A : 0xF9;
 		printString(textSlot, _scriptPointer);
 	} else if (_game.id == GID_MONKEY && !(_game.features & GF_ULTIMATE_TALKIE) &&
-			_game.platform != Common::kPlatformSegaCD &&
+			_game.platform != Common::kPlatformSegaCD && _currentScript != 0xFF && 
 			(vm.slot[_currentScript].number == 140 || vm.slot[_currentScript].number == 294) &&
 			_actorToPrintStrFor == 255 && _string[textSlot].color == 0x06 &&
 			enhancementEnabled(kEnhSubFmtCntChanges)) {
@@ -3438,7 +3438,7 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 		// different releases and scenes, so we don't know the original intent.
 		_string[textSlot].color = (_game.platform == Common::kPlatformFMTowns) ? 0x0C : 0xEA;
 		printString(textSlot, _scriptPointer);
-	} else if (_game.id == GID_MONKEY && _roomResource == 25 && vm.slot[_currentScript].number == 205) {
+	} else if (_game.id == GID_MONKEY && _roomResource == 25 && _currentScript != 0xFF && vm.slot[_currentScript].number == 205) {
 		printPatchedMI1CannibalString(textSlot, _scriptPointer);
 	} else {
 		printString(textSlot, _scriptPointer);

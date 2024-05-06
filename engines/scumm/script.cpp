@@ -813,6 +813,7 @@ int ScummEngine::pop() {
 void ScummEngine::stopObjectCode() {
 	ScriptSlot *ss;
 
+	assert(_currentScript != 0xFF);
 	ss = &vm.slot[_currentScript];
 	if (_game.version <= 2) {
 		if (ss->where == WIO_GLOBAL || ss->where == WIO_LOCAL) {

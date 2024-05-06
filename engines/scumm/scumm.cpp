@@ -3188,6 +3188,7 @@ void ScummEngine_v3::terminateSaveMenuScript() {
 		int cur = _currentScript;
 		int scriptToChain = _game.platform == Common::kPlatformFMTowns ? 6 : 5;
 
+		assert(cur != 0xFF);
 		chainedArgs[0] = 0;
 		vm.slot[cur].number = 0;
 		vm.slot[cur].status = ssDead;

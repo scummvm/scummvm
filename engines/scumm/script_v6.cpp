@@ -2001,7 +2001,7 @@ void ScummEngine_v6::o6_roomOps() {
 		// this way, we avoid some graphics glitches that the original
 		// interpreter had.
 
-		if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 64)
+		if (_game.id == GID_SAMNMAX && _currentScript != 0xFF && vm.slot[_currentScript].number == 64)
 			setDirtyColors(0, 255);
 		else
 			setCurrentPalette(a);
