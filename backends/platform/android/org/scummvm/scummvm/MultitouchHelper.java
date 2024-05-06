@@ -1,19 +1,18 @@
 
 package org.scummvm.scummvm;
 
+import static org.scummvm.scummvm.ScummVMEventsBase.JE_MOUSE_WHEEL_DOWN;
+import static org.scummvm.scummvm.ScummVMEventsBase.JE_MOUSE_WHEEL_UP;
+import static org.scummvm.scummvm.ScummVMEventsBase.JE_MULTI;
+
+import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import android.view.MotionEvent;
-import android.os.Handler;
 
 import androidx.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
-
-import static org.scummvm.scummvm.ScummVMEventsBase.JE_MOUSE_WHEEL_DOWN;
-import static org.scummvm.scummvm.ScummVMEventsBase.JE_MOUSE_WHEEL_UP;
-import static org.scummvm.scummvm.ScummVMEventsBase.JE_MULTI;
 
 public class MultitouchHelper {
 	private final ScummVM _scummvm;
@@ -254,7 +253,7 @@ public class MultitouchHelper {
 									//  - and the movement distance of both fingers on y axis is around >= MOVE_THRESHOLD_FOR_TOUCH_MOUSE_WHEEL_DECISION
 									//         (plus some other qualifying checks to determine significant and similar movement on both fingers)
 									// NOTE the movementOfFinger2onY and movementOfFinger1onY gets higher (on subsequent events)
-									//     if the user keeps moving their fingers (in the same direction), 
+									//     if the user keeps moving their fingers (in the same direction),
 									//     since it's in reference to the starting points for the fingers
 									int movementOfFinger2onY = actionEventY - _cachedActionEventOnPointer2DownY;
 									int movementOfFinger1onY = actionEventFirstPointerCoordY - _cachedActionEventOnPointer1DownY;

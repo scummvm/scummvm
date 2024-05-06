@@ -1,5 +1,6 @@
 package org.scummvm.scummvm;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -7,7 +8,6 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.Selection;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.PointerIcon;
@@ -15,7 +15,6 @@ import android.view.SurfaceView;
 import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
-import android.annotation.TargetApi;
 
 public class EditableSurfaceView extends SurfaceView {
 	final Context _context;

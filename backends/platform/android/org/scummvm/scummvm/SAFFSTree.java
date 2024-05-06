@@ -1,15 +1,5 @@
 package org.scummvm.scummvm;
 
-import java.io.FileNotFoundException;
-
-import java.lang.ref.SoftReference;
-
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-
-import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +12,12 @@ import android.provider.DocumentsContract;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
+
+import java.io.FileNotFoundException;
+import java.lang.ref.SoftReference;
+import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.HashMap;
 
 /**
  * SAF primitives for C++ FSNode
