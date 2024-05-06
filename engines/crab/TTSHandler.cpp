@@ -26,18 +26,22 @@ namespace Crab {
 void TTSHandler::onEntry(const Common::String &dialog) const {
 	Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
 
-	_ttsMan->enable(true);
-	_ttsMan->setPitch(50);
-	_ttsMan->setVolume(100);
-	_ttsMan->setRate(20);
-	_ttsMan->setVoice(1);
-	_ttsMan->say(dialog);
+	if (_ttsMan) {
+		_ttsMan->enable(true);
+		_ttsMan->setPitch(50);
+		_ttsMan->setVolume(100);
+		_ttsMan->setRate(20);
+		_ttsMan->setVoice(1);
+		_ttsMan->say(dialog);
+	}
 }
 
 void TTSHandler::onExit() const {
 	Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
 
-	_ttsMan->stop();
+	if(_ttsMan) {
+		_ttsMan->stop();
+	}
 }
 
 } // End of namespace Crab
