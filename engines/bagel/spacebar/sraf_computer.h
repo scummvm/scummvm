@@ -143,15 +143,15 @@ class SrafComputer : public CBagStorageDevWnd {
 public:
 	SrafComputer();
 	virtual ~SrafComputer();
-	virtual void onKeyHit(uint32 lKey, uint32 nRepCount);
-	virtual ErrorCode attach();
-	virtual ErrorCode detach();
-	void onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
-	void onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
-	void onMainLoop();
-	void onPaint(CBofRect *pRect);
-	void onBofButton(CBofObject *, int);
-	void onBofListBox(CBofObject *pListBox, int nItemIndex);
+	void onKeyHit(uint32 lKey, uint32 nRepCount) override;
+	ErrorCode attach() override;
+	ErrorCode detach() override;
+	void onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void * = nullptr) override;
+	void onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr) override;
+	void onMainLoop() override;
+	void onPaint(CBofRect *pRect) override;
+	void onBofButton(CBofObject *, int) override;
+	void onBofListBox(CBofObject *pListBox, int nItemIndex) override;
 	void setOn();
 	void setOff();
 	void setQuit();
@@ -286,15 +286,17 @@ public:
 	void restoreSraffanVars();
 
 protected:
-	enum SRAFCOMPMODE {
-		SCON, SCOFF, SCDONE
+	enum SrafCompModeC {
+		SC_ON, SC_OFF, SC_DONE
 	} _eMode;
-	enum SRAFCURSCREEN {
-		SCMAIN, SCDEAL, SCBIDS, SCBACKGROUNDDATA,
-		SCSELLER_BIOS, SCOTHER_BIOS, SCSTAFF_BIOS,
-		SCDISPATCH, SCEMAIL, SCAUDIO, SCORDER,
-		SCCHECK_TEAMS, SCCODE_WORDS
+	
+	enum SrafCurScreen {
+		SC_MAIN, SC_DEAL, SC_BIDS, SC_BACKGROUND_DATA,
+		SC_SELLER_BIOS, SC_OTHER_BIOS, SC_STAFF_BIOS,
+		SC_DISPATCH, SC_EMAIL, SC_AUDIO, SC_ORDER,
+		SC_CHECK_TEAMS, SC_CODE_WORDS
 	} _eCurScreen;
+	
 	CBofBmpButton *_pButtons[NUM_SRAFCOMPBUTT];
 	RGBCOLOR _cTextColor;
 	RGBCOLOR _cTextHiliteColor;

@@ -501,11 +501,11 @@ SrafComputer::SrafComputer() :
 
 	_cTextColor = CTEXT_WHITE;			// Start out with white as our text color
 	_cTextHiliteColor = RGB(255, 255, 255);	// and some other color as our hilite
-	_cTextLineColor = RGB(0xFF, 0xFF, 0x00);
+	_cTextLineColor = CTEXT_YELLOW;
 
 	// Computer starts as off and at the main screen
-	_eMode = SCOFF;
-	_eCurScreen = SCMAIN;
+	_eMode = SC_OFF;
+	_eCurScreen = SC_MAIN;
 
 	// initialize our three buttons
 	for (i = 0; i < NUM_SRAFCOMPBUTT; i++) {
@@ -886,7 +886,7 @@ void SrafComputer::onPaint(CBofRect *pRect) {
 		paintBackdrop();
 	}
 
-	if (_eMode == SCOFF) {
+	if (_eMode == SC_OFF) {
 		_pButtons[ON_BUTTON]->paint(nullptr);
 	} else {
 		_pButtons[OFF_BUTTON]->paint(nullptr);
@@ -979,7 +979,7 @@ ErrorCode SrafComputer::attach() {
 
 ErrorCode SrafComputer::detach() {
 	// Computer gets turned off
-	_eMode = SCOFF;
+	_eMode = SC_OFF;
 
 	// Get rid of the system cursor
 	if (_bSrafAttached) {
@@ -1055,7 +1055,7 @@ void SrafComputer::onKeyHit(uint32 lKey, uint32 nRepCount) {
 	switch (lKey) {
 	case BKEY_BACK:                 // Temporary, go back to main screen.
 		deleteListBox();
-		_eCurScreen = SCMAIN;
+		_eCurScreen = SC_MAIN;
 		break;
 
 	case BKEY_ALT_q:
@@ -1085,43 +1085,43 @@ void SrafComputer::onBofButton(CBofObject *pObject, int nState) {
 	CBofButton *pButton = (CBofButton *)pObject;
 
 	switch (_eCurScreen) {
-	case SCMAIN:
+	case SC_MAIN:
 		onButtonMainScreen(pButton, nState);
 		break;
-	case SCDEAL:
+	case SC_DEAL:
 		onButtonDealSummary(pButton, nState);
 		break;
-	case SCBIDS:
+	case SC_BIDS:
 		onButtonBuyerBids(pButton, nState);
 		break;
-	case SCBACKGROUNDDATA:
+	case SC_BACKGROUND_DATA:
 		onButtonDealBackground(pButton, nState);
 		break;
-	case SCSELLER_BIOS:
+	case SC_SELLER_BIOS:
 		onButtonSellerBios(pButton, nState);
 		break;
-	case SCOTHER_BIOS:
+	case SC_OTHER_BIOS:
 		onButtonOtherBios(pButton, nState);
 		break;
-	case SCSTAFF_BIOS:
+	case SC_STAFF_BIOS:
 		onButtonStaffBios(pButton, nState);
 		break;
-	case SCDISPATCH:
+	case SC_DISPATCH:
 		onButtonDispatchTeam(pButton, nState);
 		break;
-	case SCEMAIL:
+	case SC_EMAIL:
 		onButtonCurrentEMail(pButton, nState);
 		break;
-	case SCAUDIO:
+	case SC_AUDIO:
 		onButtonAudioSettings(pButton, nState);
 		break;
-	case SCORDER:
+	case SC_ORDER:
 		onButtonRoboButler(pButton, nState);
 		break;
-	case SCCHECK_TEAMS:
+	case SC_CHECK_TEAMS:
 		onButtonCheckTeams(pButton, nState);
 		break;
-	case SCCODE_WORDS:
+	case SC_CODE_WORDS:
 		onButtonCodeWords(pButton, nState);
 		break;
 	default:
@@ -1131,14 +1131,14 @@ void SrafComputer::onBofButton(CBofObject *pObject, int nState) {
 
 
 void SrafComputer::setOn() {
-	_eMode = SCON;
+	_eMode = SC_ON;
 
 	activateMainScreen();
 }
 
 void SrafComputer::setOff() {
-	if (_eMode != SCOFF) {
-		_eMode = SCOFF;
+	if (_eMode != SC_OFF) {
+		_eMode = SC_OFF;
 
 		_pButtons[QUIT_BUTTON]->hide();
 		_pButtons[OFF_BUTTON]->hide();
@@ -1212,43 +1212,43 @@ void SrafComputer::onBofListBox(CBofObject * /*pListBox*/, int nItemIndex) {
 
 	// Do all kinds of neat things based on our current screen.
 	switch (_eCurScreen) {
-	case SCMAIN:
+	case SC_MAIN:
 		onListMainScreen();
 		break;
-	case SCDEAL:
+	case SC_DEAL:
 		onListDealSummary();
 		break;
-	case SCBIDS:
+	case SC_BIDS:
 		onListBuyerBids();
 		break;
-	case SCBACKGROUNDDATA:
+	case SC_BACKGROUND_DATA:
 		onListDealBackground();
 		break;
-	case SCSELLER_BIOS:
+	case SC_SELLER_BIOS:
 		onListSellerBios();
 		break;
-	case SCOTHER_BIOS:
+	case SC_OTHER_BIOS:
 		onListOtherBios();
 		break;
-	case SCSTAFF_BIOS:
+	case SC_STAFF_BIOS:
 		onListStaffBios();
 		break;
-	case SCDISPATCH:
+	case SC_DISPATCH:
 		onListDispatchTeam();
 		break;
-	case SCEMAIL:
+	case SC_EMAIL:
 		onListCurrentEMail();
 		break;
-	case SCAUDIO:
+	case SC_AUDIO:
 		onListAudioSettings();
 		break;
-	case SCORDER:
+	case SC_ORDER:
 		onListRoboButler();
 		break;
-	case SCCHECK_TEAMS:
+	case SC_CHECK_TEAMS:
 		onListCheckTeams();
 		break;
-	case SCCODE_WORDS:
+	case SC_CODE_WORDS:
 		onListCodeWords();
 		break;
 	default:
@@ -1265,7 +1265,7 @@ void SrafComputer::activateDealSummary() {
 	CBofString sStr(szLocalBuff, 256);
 
 	// Current screen is now the DEAL screen.
-	_eCurScreen = SCDEAL;
+	_eCurScreen = SC_DEAL;
 
 	// initialize point size and item height
 	_nListPointSize = kBuyerBidsPointSize;
@@ -1437,7 +1437,7 @@ void SrafComputer::activateBuyerBids() {
 	CBofString sStr(szLocalBuff, 256);
 
 	// Current screen is now the BIDS screen.
-	_eCurScreen = SCBIDS;
+	_eCurScreen = SC_BIDS;
 
 	// initialize point size and item height
 	_nListPointSize = kBuyerBidsPointSize;
@@ -1514,7 +1514,7 @@ void SrafComputer::activateDealBackground() {
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
 
-	_eCurScreen = SCBACKGROUNDDATA;
+	_eCurScreen = SC_BACKGROUND_DATA;
 
 	sStr = buildSrafDir("SRAFDEAL.TXT");
 	displayTextScreen(sStr);
@@ -1536,7 +1536,7 @@ void SrafComputer::activateSellerBios() {
 	CBofString sStr(szLocalBuff, 256);
 
 	// Current screen is now the SELLER BIOS screen.
-	_eCurScreen = SCSELLER_BIOS;
+	_eCurScreen = SC_SELLER_BIOS;
 
 	// initialize point size and item height
 	_nListPointSize = kOtherPointSize;
@@ -1581,7 +1581,7 @@ void SrafComputer::activateOtherBios() {
 	CBofString sStr(szLocalBuff, 256);
 
 	// Current screen is now the OTHER BIOS screen.
-	_eCurScreen = SCOTHER_BIOS;
+	_eCurScreen = SC_OTHER_BIOS;
 
 	// initialize point size and item height
 	_nListPointSize = kOtherPointSize;
@@ -1625,7 +1625,7 @@ void SrafComputer::activateStaffBios() {
 	CBofString sStr(szLocalBuff, 256);
 
 	// Current screen is now the STAFF BIOS screen.
-	_eCurScreen = SCSTAFF_BIOS;
+	_eCurScreen = SC_STAFF_BIOS;
 
 	// initialize point size and item height
 	_nListPointSize = kOtherPointSize;
@@ -1665,7 +1665,7 @@ void SrafComputer::activateStaffBios() {
 
 void SrafComputer::activateDispatchTeam() {
 	// Current screen is now the DISPATCH screen.
-	_eCurScreen = SCDISPATCH;
+	_eCurScreen = SC_DISPATCH;
 
 	// initialize point size and item height
 	_nListPointSize = kBuyerBidsPointSize;
@@ -1884,7 +1884,7 @@ void SrafComputer::activateCurrentEMail() {
 	char szRightCol[256];
 
 	// Current screen is now the EMAIL screen.
-	_eCurScreen = SCEMAIL;
+	_eCurScreen = SC_EMAIL;
 
 	// initialize point size and item height
 	_nListPointSize = kOtherPointSize;
@@ -1941,7 +1941,7 @@ void SrafComputer::activateAudioSettings() {
 	CBofString sStr(szLocalBuff, 256);
 
 	// current screen is now the AUDIO screen.
-	_eCurScreen = SCAUDIO;
+	_eCurScreen = SC_AUDIO;
 
 	// initialize point size and item height
 	_nListPointSize = kOtherPointSize;
@@ -2004,7 +2004,7 @@ void SrafComputer::activateRoboButler() {
 	char szRightCol[256];
 
 	// Current screen is now the robobutler screen.
-	_eCurScreen = SCORDER;
+	_eCurScreen = SC_ORDER;
 
 	// initialize point size and item height
 	_nListPointSize = kOtherPointSize;
@@ -2093,7 +2093,7 @@ void SrafComputer::activateCheckTeams() {
 	CBofString aStr(szAttendeesBuff, 256);
 
 	// Current screen is now the Check teams screen.
-	_eCurScreen = SCCHECK_TEAMS;
+	_eCurScreen = SC_CHECK_TEAMS;
 
 	// initialize point size and item height
 	//
@@ -2363,7 +2363,7 @@ void SrafComputer::activateCodeWords() {
 	char szRightCol[128];
 
 	// Current screen is now the CODE WORDS screen.
-	_eCurScreen = SCCODE_WORDS;
+	_eCurScreen = SC_CODE_WORDS;
 
 	// initialize point size and item height
 	_nListPointSize = kOtherPointSize;
@@ -3658,7 +3658,7 @@ void SrafComputer::deactivateMainScreen() {
 	deleteListBox();
 
 	//  Hide the on/off button
-	if (_eMode == SCON) {
+	if (_eMode == SC_ON) {
 		_pButtons[ON_BUTTON]->hide();
 	} else {
 		_pButtons[OFF_BUTTON]->hide();
@@ -3671,7 +3671,7 @@ void SrafComputer::activateMainScreen() {
 	CBofString sStr(szLocalStr, 256);
 
 	// Current screen is now the MAIN screen.
-	_eCurScreen = SCMAIN;
+	_eCurScreen = SC_MAIN;
 
 	// Delete the list box
 	deleteListBox();
@@ -4409,8 +4409,8 @@ void SrafComputer::setMainScreen() {
 	}
 
 	SrafComputer *srafComp = _pHead;
-	if (srafComp->_eCurScreen == SCBACKGROUNDDATA) {
-		srafComp->_eCurScreen = SCMAIN;
+	if (srafComp->_eCurScreen == SC_BACKGROUND_DATA) {
+		srafComp->_eCurScreen = SC_MAIN;
 	}
 }
 
@@ -4421,7 +4421,7 @@ void SrafComputer::incrementTurnCount() {
 	assert(pVar != nullptr);
 
 	// If the puzzle is already solved, then don't increment.
-	if (_eCurScreen == SCCODE_WORDS) {
+	if (_eCurScreen == SC_CODE_WORDS) {
 		return;
 	}
 
@@ -4432,7 +4432,7 @@ void SrafComputer::incrementTurnCount() {
 	}
 
 	// If we're in a screen that has a time count, then update it here...
-	if (_eCurScreen == SCCHECK_TEAMS || _eCurScreen == SCMAIN) {
+	if (_eCurScreen == SC_CHECK_TEAMS || _eCurScreen == SC_MAIN) {
 		displayTurnCount(gTurncountLineNo);
 	}
 
@@ -4448,21 +4448,21 @@ void SrafComputer::incrementTurnCount() {
 					// If current screen is the check teams screen, then make sure we update
 					// it.
 					switch (_eCurScreen) {
-					case SCCHECK_TEAMS:
+					case SC_CHECK_TEAMS:
 						activateCheckTeams();
 						break;
 
 					// update the buyer bids screen if that's our underlying
 					// guy.
-					case SCBIDS:
+					case SC_BIDS:
 						activateBuyerBids();
 						break;
 
-					case SCDEAL:
+					case SC_DEAL:
 						activateDealSummary();
 						break;
 
-					case SCDISPATCH:
+					case SC_DISPATCH:
 						activateDispatchTeam();
 						break;
 
