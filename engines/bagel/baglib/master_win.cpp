@@ -569,7 +569,7 @@ ErrorCode CBagMasterWin::loadGlobalVars(const CBofString &wldName) {
 
 		MACROREPLACE(wldFileName);
 
-		if (fileExists(wldFileName)) {
+		if (fileExists(wldFileName) && (fileLength(wldFileName) > 0)) {
 			// Force buffer to be big enough so that the entire script
 			// is pre-loaded
 			int length = fileLength(wldFileName);
@@ -585,16 +585,14 @@ ErrorCode CBagMasterWin::loadGlobalVars(const CBofString &wldName) {
 				while (!fpInput.eof()) {
 					fpInput.eatWhite();
 
-					KEYWORDS keyword;
-
 					if (!fpInput.eatWhite()) {
 						break;
 					}
 
+					KEYWORDS keyword;
 					getKeywordFromStream(fpInput, keyword);
 
 					switch (keyword) {
-
 					case VARIABLE: {
 						CBagVar *var = new CBagVar;
 						fpInput.eatWhite();
