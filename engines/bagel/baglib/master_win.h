@@ -144,7 +144,6 @@ public:
 
 	ErrorCode loadFile(const CBofString &wldName, const CBofString &startWldName, bool restartFl = false, bool setStartFl = true);
 
-	ErrorCode saveFile(const CBofString &wldName);
 	ErrorCode loadFileFromStream(CBagIfstream &input, const CBofString &wldName);
 	ErrorCode loadGlobalVars(const CBofString &wldName);
 
@@ -199,14 +198,6 @@ public:
 	}
 
 	void saveSDevStack();
-
-	void *getDataStart() override {
-		return &_gameWindow;
-	}
-
-	void *getDataEnd() override {
-		return &_variableList + sizeof(CBagVarManager *);
-	}
 
 	// Since we do this from load file and do restore, centralize it in one location.
 	void restoreActiveMessages(CBagStorageDevManager *sdevManager);
