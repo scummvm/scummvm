@@ -37,7 +37,8 @@ public:
 };
 
 bool DgdsMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return (f == kSupportsListSaves) ||
+	return checkExtendedSaves(f) ||
+		   (f == kSupportsListSaves) ||
 	       (f == kSupportsLoadingDuringStartup) ||
 	       (f == kSupportsDeleteSave) ||
 	       (f == kSavesSupportMetaInfo) ||

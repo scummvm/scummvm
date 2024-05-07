@@ -558,6 +558,7 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 		if (!_resource->hasResource(sceneFile))
 			error("Game references non-existant scene %d", sceneNum);
 
+		_scene->unload();
 		_scene->load(sceneFile, _resource, _decompressor);
 	}
 

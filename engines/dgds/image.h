@@ -54,7 +54,7 @@ private:
 class GamePalettes {
 public:
 	GamePalettes(ResourceManager *resourceMan, Decompressor *decompressor);
-	int loadPalette(Common::String filename);
+	int loadPalette(const Common::String &filename);
 	void selectPalNum(int num);
 	void setPalette();
 	void clearPalette();
