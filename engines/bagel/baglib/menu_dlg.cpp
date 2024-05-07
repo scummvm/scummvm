@@ -564,6 +564,9 @@ CBagMenuDlg::CBagMenuDlg() {
 	// Remove this SDEV from the storage device list so that it is not deleted
 	// when we switch .WLD files, and there may still be a Dialog open.
 	g_SDevManager->unregisterStorageDev(this);
+
+	_bAcceptInput = false;
+	_bMultipleDialogs = false;
 }
 
 CBagMenuDlg::~CBagMenuDlg() {
@@ -591,8 +594,8 @@ ErrorCode CBagMenuDlg::create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRec
 	if (pBmp != nullptr) {
 		r.offsetRect(-r.left, -r.top);
 		assert(pPal != nullptr);
-		pBmp->fillRect(&r, pPal->getNearestIndex(RGB(82, 82, 82)) /*RGB(0,0,0)*/);
-		pBmp->drawRect(&r, pPal->getNearestIndex(RGB(0, 0, 0)) /*RGB(0,0,0)*/);
+		pBmp->fillRect(&r, pPal->getNearestIndex(RGB(82, 82, 82)));
+		pBmp->drawRect(&r, pPal->getNearestIndex(RGB(0, 0, 0)));
 		setBackdrop(pBmp);
 	}
 
