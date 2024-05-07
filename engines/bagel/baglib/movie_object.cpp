@@ -32,9 +32,9 @@
 
 namespace Bagel {
 
-#define SOUNDFILEEXTLOWER ".wav"
-#define SOUNDFILEEXTUPPER ".WAV"
-#define OVERRIDESMK "$SBARDIR\\BAR\\LOG\\OVERRIDE.SMK"
+#define SOUND_FILE_EXT_LOWER ".wav"
+#define SOUND_FILE_EXT_UPPER ".WAV"
+#define OVERRIDE_SMK "$SBARDIR\\BAR\\LOG\\OVERRIDE.SMK"
 
 CBagMovieObject::CBagMovieObject() {
 	_xObjType = MOVIE_OBJ;
@@ -106,7 +106,7 @@ bool CBagMovieObject::runObject() {
 
 		if (sFileName.find(".smk") > 0 || sFileName.find(".SMK") > 0) {
 			nMovFileType = MOVFILETYPE::MOVIE;
-		} else if (sFileName.find(SOUNDFILEEXTLOWER) > 0 || sFileName.find(SOUNDFILEEXTUPPER) > 0) {
+		} else if (sFileName.find(SOUND_FILE_EXT_LOWER) > 0 || sFileName.find(SOUND_FILE_EXT_UPPER) > 0) {
 			nMovFileType = MOVFILETYPE::SOUND;
 		} else if (sFileName.find(".txt") > 0 || sFileName.find(".TXT") > 0) {
 			nMovFileType = MOVFILETYPE::TEXT;
@@ -119,7 +119,7 @@ bool CBagMovieObject::runObject() {
 			switch (nMovFileType) {
 
 			case MOVFILETYPE::MOVIE:
-				sFileName = sBaseStr + SOUNDFILEEXTLOWER;
+				sFileName = sBaseStr + SOUND_FILE_EXT_LOWER;
 				nMovFileType = MOVFILETYPE::SOUND;
 				break;
 
@@ -161,15 +161,11 @@ bool CBagMovieObject::runObject() {
 					pPDA->addToMovieQueue(this);
 					return rc;
 				}
-			} else {
+			} else if ((pWnd != nullptr) && (pSDevWnd != nullptr)) {
 				// Don't need to redraw for asynch pda messages, this just
 				// messes things up in the PDA redraw code
-				if (pWnd != nullptr) {
-					if (pSDevWnd != nullptr) {
-						pSDevWnd->paintScreen(nullptr);
-						isFiltered = pSDevWnd->isFiltered();
-					}
-				}
+				pSDevWnd->paintScreen(nullptr);
+				isFiltered = pSDevWnd->isFiltered();
 			}
 
 			if (_xDisplayType == dispType::EXAMINE) {
@@ -284,7 +280,7 @@ bool CBagMovieObject::runObject() {
 						CBofString cStr(szLocalBuff, 256);
 
 						// Play the override message.
-						cStr = OVERRIDESMK;
+						cStr = OVERRIDE_SMK;
 						MACROREPLACE(cStr);
 
 						sFileName = cStr;

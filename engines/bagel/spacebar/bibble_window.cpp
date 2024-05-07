@@ -39,7 +39,6 @@ namespace SpaceBar {
 // Max number of credits the users is allowed to bet with
 #define MAX_AMOUNT  50000
 
-//#define BIBBLE_BACKDROP "BIBBLE.BMP"
 #define BIBBLE_BMP      "BIBSTRIP.BMP"
 #define BIBBLE_CELS     16
 #define BALL_BMP        "BALL2.BMP"
@@ -48,9 +47,6 @@ namespace SpaceBar {
 #define ARCH2_BMP       "ARCH2.BMP"
 #define ARCH3_BMP       "ARCH3.BMP"
 #define CASINO_AUDIO            "CASINO.WAV"
-
-#define SOUNDFILEEXTLOWER       ".wav"
-#define SOUNDFILEEXTUPPER       ".WAV"
 
 #define BIBBLE_AUDIO_STARTGAME  "TEMP.WAV"
 #define BIBBLE_AUDIO_WINNER     "EVBWIN01.WAV"
