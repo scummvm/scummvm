@@ -28,19 +28,19 @@
 
 namespace Bagel {
 
-#define ASYNCH_DONTQUEUE 0x0001
-#define ASYNCH_PLAYIMMEDIATE 0x0002
-#define ASYNCH_DONTOVERRIDE 0x0004
+#define ASYNCH_DONT_QUEUE 0x0001
+#define ASYNCH_PLAY_IMMEDIATE 0x0002
+#define ASYNCH_DONT_OVERRIDE 0x0004
 
 /**
  * CBagMovieObject is an object that can be place within the slide window.
  */
 class CBagMovieObject : public CBagObject {
 public:
-	enum class DISP_TYPE { MOVIE, EXAMINE, PDAMSG, ASYNCH_PDAMSG };
+	enum class dispType { MOVIE, EXAMINE, PDA_MSG, ASYNCH_PDA_MSG };
 
 private:
-	DISP_TYPE _xDisplayType;
+	dispType _xDisplayType;
 	byte _bFlyThru;
 	int16 _nAsynchFlags;
 	bool _bIncrement : 1;      // Increment timer for this movie?
@@ -55,46 +55,55 @@ public:
 	void setAssociatedSound(CBagSoundObject *p) {
 		_pSndObj = p;
 	}
+	
 	CBagSoundObject *getAssociatedSound() const {
 		return _pSndObj;
 	}
 
-	ParseCodes setInfo(CBagIfstream &istr);
+	ParseCodes setInfo(CBagIfstream &istr) override;
 
-	virtual bool runObject();
+	bool runObject() override;
 
 	// Return true if this asynch zelda movie can play right now
 	bool asynchPDAMovieCanPlay();
 
 	// Special routines for handling asynch zelda movies
 	void setDontQueue() {
-		_nAsynchFlags |= ASYNCH_DONTQUEUE;
+		_nAsynchFlags |= ASYNCH_DONT_QUEUE;
 	}
+	
 	void setDontOverride() {
-		_nAsynchFlags |= ASYNCH_DONTOVERRIDE;
+		_nAsynchFlags |= ASYNCH_DONT_OVERRIDE;
 	}
+	
 	void setPlayImmediate() {
-		_nAsynchFlags |= ASYNCH_PLAYIMMEDIATE;
+		_nAsynchFlags |= ASYNCH_PLAY_IMMEDIATE;
 	}
+	
 	void setIncrement(bool b = true) {
 		_bIncrement = b;
 	}
+	
 	void setOnBlack(bool b = true) {
 		_bOnBlack = b;
 	}
 
 	bool isDontQueue() const {
-		return (_nAsynchFlags & ASYNCH_DONTQUEUE) != 0;
+		return (_nAsynchFlags & ASYNCH_DONT_QUEUE) != 0;
 	}
+	
 	bool isDontOverride() const {
-		return (_nAsynchFlags & ASYNCH_DONTOVERRIDE) != 0;
+		return (_nAsynchFlags & ASYNCH_DONT_OVERRIDE) != 0;
 	}
+	
 	bool isPlayImmediate() const {
-		return (_nAsynchFlags & ASYNCH_PLAYIMMEDIATE) != 0;
+		return (_nAsynchFlags & ASYNCH_PLAY_IMMEDIATE) != 0;
 	}
+	
 	bool isIncrement() const {
 		return _bIncrement;
 	}
+	
 	bool isOnBlack() const {
 		return _bOnBlack;
 	}
