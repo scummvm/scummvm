@@ -78,7 +78,7 @@ bool CBagMovieObject::runObject() {
 	bool bZoomed = (pPDAz == nullptr ? false : pPDAz->getZoomed());
 
 	// Get a pointer to the current game window
-	CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev());
+	CBagStorageDevWnd *pMainWin = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev();
 
 	bool rc = true;
 	if (!_bFlyThru || CBagMasterWin::getFlyThru()) {
@@ -97,7 +97,7 @@ bool CBagMovieObject::runObject() {
 		// This would be much cooler if it were a cast to another object type and
 		// then a run.  But this is a quicker fix.
 		//
-		enum class MOVFILETYPE { NONE = 0,
+		enum class MovieFileType { NONE = 0,
 		                   TEXT = 1,
 		                   SOUND = 2,
 		                   MOVIE = 3
@@ -105,43 +105,43 @@ bool CBagMovieObject::runObject() {
 		CBofString sBaseStr = sFileName.left(nExt);
 
 		if (sFileName.find(".smk") > 0 || sFileName.find(".SMK") > 0) {
-			nMovFileType = MOVFILETYPE::MOVIE;
+			nMovFileType = MovieFileType::MOVIE;
 		} else if (sFileName.find(SOUND_FILE_EXT_LOWER) > 0 || sFileName.find(SOUND_FILE_EXT_UPPER) > 0) {
-			nMovFileType = MOVFILETYPE::SOUND;
+			nMovFileType = MovieFileType::SOUND;
 		} else if (sFileName.find(".txt") > 0 || sFileName.find(".TXT") > 0) {
-			nMovFileType = MOVFILETYPE::TEXT;
+			nMovFileType = MovieFileType::TEXT;
 		} else {
-			nMovFileType = MOVFILETYPE::NONE;
+			nMovFileType = MovieFileType::NONE;
 		}
 
 		// Look for .SMK then .WAV, then .TXT
 		while (!fileExists(sFileName.getBuffer())) {
 			switch (nMovFileType) {
 
-			case MOVFILETYPE::MOVIE:
+			case MovieFileType::MOVIE:
 				sFileName = sBaseStr + SOUND_FILE_EXT_LOWER;
-				nMovFileType = MOVFILETYPE::SOUND;
+				nMovFileType = MovieFileType::SOUND;
 				break;
 
-			case MOVFILETYPE::SOUND:
+			case MovieFileType::SOUND:
 				sFileName = sBaseStr + ".txt";
-				nMovFileType = MOVFILETYPE::TEXT;
+				nMovFileType = MovieFileType::TEXT;
 				break;
 
-			case MOVFILETYPE::TEXT:
+			case MovieFileType::TEXT:
 				bofMessageBox(sFileName.getBuffer(), "Could not find asset");
-				nMovFileType = MOVFILETYPE::NONE;
+				nMovFileType = MovieFileType::NONE;
 				break;
 
 			// We should never get here
-			case MOVFILETYPE::NONE:
+			case MovieFileType::NONE:
 			default:
 				logError(buildString("Movie does not have a correct file name: %s.", sFileName.getBuffer()));
 				return rc;
 			}
 		}
 
-		if (nMovFileType == MOVFILETYPE::MOVIE) {
+		if (nMovFileType == MovieFileType::MOVIE) {
 #endif
 
 			bool isFiltered = false;
@@ -357,7 +357,7 @@ bool CBagMovieObject::runObject() {
 				pMainWin->setPreFilterPan(true);
 			}
 
-		} else if (nMovFileType == MOVFILETYPE::SOUND) {
+		} else if (nMovFileType == MovieFileType::SOUND) {
 			CBofSound *pSound = new CBofSound(CBofApp::getApp()->getMainWindow(), sFileName, SOUND_WAVE);
 			if (pSound) {
 				pSound->play();
@@ -365,7 +365,7 @@ bool CBagMovieObject::runObject() {
 			} else {
 				logError(buildString("Movie SOUND file could not be read: %s.  Where? Not in Kansas ...", sFileName.getBuffer()));
 			}
-		} else if (nMovFileType == MOVFILETYPE::TEXT) {
+		} else if (nMovFileType == MovieFileType::TEXT) {
 			Common::File f;
 			if (f.open(sFileName.getBuffer())) {
 				Common::String line = f.readLine();

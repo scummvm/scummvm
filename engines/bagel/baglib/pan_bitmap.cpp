@@ -84,58 +84,11 @@ CBagPanBitmap::CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, con
 
 		normalizeViewSize();
 
-		setFOV(DEF_FOV); // If FOV is set to 0 then unity FOV is assumed (faster redraws)
+		// If FOV is set to 0 then unity FOV is assumed (faster redraws)
+		// The update parameter is set to false to avoid to update the cosine table as _nCorrWidth isn't set yet
+		setFOV(DEF_FOV, false);
 
-		// _nCorrWidth is uninitialized for the call to setFOV below,
-		// this causes the cosine table to be allocated incorrectly in
-		// generateCosineTable.  Move the initialization before setFOV.
-		if (_bPanorama)
-			setCorrWidth(4);
-		else
-			setCorrWidth(0);
-
-		_bIsValid = true;
-
-		return;
-	}
-	_bIsValid = false;
-}
-
-CBagPanBitmap::CBagPanBitmap(int dx, int dy, CBofPalette *pPalette, const CBofRect &xViewSize) :
-		CBofBitmap(dx, dy, pPalette) {
-	int nW = width();
-	int nH = height();
-
-	if (nW && nH) {
-		CBofRect xMaxViewSize(0, 0, nW - 1, nH - 1);
-		if (nW > 1000) {
-			xMaxViewSize.left = (long)(nW / MAX_DIV_VIEW);
-			_bPanorama = true;
-		} else
-			_bPanorama = false;
-
-		_pCosineTable = nullptr;
-		_bActiveScrolling = false;		// The scrolling is not active
-		_xDirection = kDirNONE;		// Direction is not moving
-
-		pPalette = getPalette();
-
-		if (xViewSize.isRectEmpty())
-			_xCurrView = xMaxViewSize;
-		else
-			_xCurrView = xViewSize;
-
-		if (_xCurrView.width() > xMaxViewSize.width()) {
-			_xCurrView.setRect(0, _xCurrView.top, xMaxViewSize.width() - 1, _xCurrView.bottom);
-		}
-
-		_xRotateRate.x = (nW - _xCurrView.width()) / 64 + 1;
-		_xRotateRate.y = (nH - _xCurrView.height()) / 64 + 1;
-
-		normalizeViewSize();
-
-		setFOV(DEF_FOV); // If FOV is set to 0 then unity FOV is assumed (faster redraws)
-
+		// Initialize _nCorrWidth and generate the cosine table.
 		if (_bPanorama)
 			setCorrWidth(4);
 		else
@@ -157,7 +110,7 @@ CBagPanBitmap::~CBagPanBitmap() {
 	}
 }
 
-// This must be updated whenever the size, view size, or correction witdh changes
+// This must be updated whenever the size, view size, or correction width changes
 void CBagPanBitmap::generateCosineTable() {
 	int nWidth = 1 << _nCorrWidth;
 	int offset = nWidth >> 1; // This is not really needed just more correction to move angle to center
@@ -165,11 +118,7 @@ void CBagPanBitmap::generateCosineTable() {
 
 	_nNumDegrees = (viewWidth >> _nCorrWidth) + 1;
 
-	if (_pCosineTable) {
-		delete[] _pCosineTable;
-		_pCosineTable = nullptr;
-	}
-
+	delete[] _pCosineTable;
 	_pCosineTable = new CBofFixed[_nNumDegrees];
 
 	for (int i = 0; i < _nNumDegrees; i++) {

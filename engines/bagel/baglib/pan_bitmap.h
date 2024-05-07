@@ -59,7 +59,6 @@ private:
 
 public:
 	CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, const CBofRect &xViewSize = CBofRect());
-	CBagPanBitmap(int dx, int dy, CBofPalette *pPalette, const CBofRect &xViewSize = CBofRect());
 	virtual ~CBagPanBitmap();
 
 	bool isValid() const {
