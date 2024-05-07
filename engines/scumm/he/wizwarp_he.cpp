@@ -219,7 +219,16 @@ WarpWizOneSpanTable *Wiz::warpCreateSpanTable(int spanCount) {
 	if (!spanTable) {
 		return nullptr;
 	}
-	memset(spanTable, 0, sizeof(WarpWizOneSpanTable));
+
+	// Clear spanTable structure
+	spanTable->dstMinPt = WarpWizPoint();
+	spanTable->dstMaxPt = WarpWizPoint();
+	spanTable->srcMinPt = WarpWizPoint();
+	spanTable->srcMaxPt = WarpWizPoint();
+	spanTable->drawSpans = nullptr;
+	spanTable->spans = nullptr;
+	spanTable->drawSpanCount = 0;
+	spanTable->spanCount = 0;
 
 	spanTable->spanCount = spanCount;
 	spanTable->spans = (WarpWizOneSpan *)malloc(spanCount * sizeof(WarpWizOneSpan));
@@ -227,7 +236,14 @@ WarpWizOneSpanTable *Wiz::warpCreateSpanTable(int spanCount) {
 		warpDestroySpanTable(spanTable);
 		return nullptr;
 	}
-	memset(spanTable->spans, 0, spanCount * sizeof(WarpWizOneSpan));
+
+	// Clear spanTable spans structure
+	for (counter = 0; counter < spanCount; counter++) {
+		spanTable->spans[counter].dstLeft = 0;
+		spanTable->spans[counter].dstRight = 0;
+		spanTable->spans[counter].srcLeft = WarpWizPoint();
+		spanTable->spans[counter].srcRight = WarpWizPoint();
+	}
 
 	spanPtr = spanTable->spans;
 	for (counter = 0; counter < spanCount; counter++) {
