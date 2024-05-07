@@ -107,11 +107,13 @@ class Macs2Engine;
 
 			
 
-			// TODO: Expose in a better place
-			uint16 _charPosX = 276;
-			uint16 _charPosY = 140;
+			
 
 			public:
+
+			// TODO: Expose in a better place and keep in sync
+			uint16 _charPosX = 276;
+			uint16 _charPosY = 140;
 
 			MouseMode _mouseMode = MouseMode::Use;
 
