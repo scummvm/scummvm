@@ -54,6 +54,7 @@ public:
 
 	virtual void useColor(uint8 r, uint8 g, uint8 b) override;
 	virtual void polygonOffset(bool enabled) override;
+	virtual void depthTesting(bool enabled) override;
 
 	Texture *createTexture(const Graphics::Surface *surface) override;
 	void freeTexture(Texture *texture) override;

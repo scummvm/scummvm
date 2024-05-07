@@ -435,6 +435,14 @@ void OpenGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 	glDisableClientState(GL_VERTEX_ARRAY);
 }
 
+void OpenGLRenderer::depthTesting(bool enabled) {
+	if (enabled) {
+		glEnable(GL_DEPTH_TEST);
+	} else {
+		glDisable(GL_DEPTH_TEST);
+	}
+};
+
 void OpenGLRenderer::polygonOffset(bool enabled) {
 	if (enabled) {
 		glEnable(GL_POLYGON_OFFSET_FILL);

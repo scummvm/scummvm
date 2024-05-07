@@ -227,9 +227,15 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 	assert(_drawableObjects.size() > 0);
 	ObjectArray planarObjects;
 	ObjectArray nonPlanarObjects;
+	Object *floor = nullptr;
 
 	for (auto &obj : _drawableObjects) {
 		if (!obj->isDestroyed() && !obj->isInvisible()) {
+			if (obj->getObjectID() == 0 && _groundColor < 255 && _skyColor < 255) {
+				floor = obj;
+				continue;
+			}
+
 			if (obj->getType() == ObjectType::kGroupType) {
 				drawGroup(gfx, (Group *)obj, runAnimation);
 				continue;
@@ -240,6 +246,12 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 			else
 				nonPlanarObjects.push_back(obj);
 		}
+	}
+
+	if (floor) {
+		gfx->depthTesting(false);
+		floor->draw(gfx);
+		gfx->depthTesting(true);
 	}
 
 	Common::HashMap<Object *, float> offsetMap;
@@ -472,7 +484,7 @@ void Area::addFloor() {
 		id,
 		0,                                           // flags
 		Math::Vector3d(-maxSize, -3, -maxSize),      // Position
-		Math::Vector3d(maxSize * 4, 1, maxSize * 4), // size
+		Math::Vector3d(maxSize * 4, 3, maxSize * 4), // size
 		gColors,
 		nullptr,
 		nullptr,

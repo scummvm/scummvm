@@ -94,6 +94,7 @@ public:
 	virtual void polygonOffset(bool enabled) override;
 	virtual void setStippleData(byte *data) override;
 	virtual void useStipple(bool enabled) override;
+	virtual void depthTesting(bool enabled) override;
 
 
 	Texture *createTexture(const Graphics::Surface *surface) override;

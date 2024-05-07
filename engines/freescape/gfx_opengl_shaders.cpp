@@ -434,6 +434,14 @@ void OpenGLShaderRenderer::renderFace(const Common::Array<Math::Vector3d> &verti
 	glDrawArrays(GL_TRIANGLES, 0, vi + 3);
 }
 
+void OpenGLShaderRenderer::depthTesting(bool enabled) {
+	if (enabled) {
+		glEnable(GL_DEPTH_TEST);
+	} else {
+		glDisable(GL_DEPTH_TEST);
+	}
+};
+
 void OpenGLShaderRenderer::polygonOffset(bool enabled) {
 	if (enabled) {
 		glEnable(GL_POLYGON_OFFSET_FILL);

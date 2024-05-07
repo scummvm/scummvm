@@ -240,6 +240,14 @@ void TinyGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 	tglDisableClientState(TGL_VERTEX_ARRAY);
 }
 
+void TinyGLRenderer::depthTesting(bool enabled) {
+	if (enabled) {
+		tglEnable(TGL_DEPTH_TEST);
+	} else {
+		tglDisable(TGL_DEPTH_TEST);
+	}
+};
+
 void TinyGLRenderer::polygonOffset(bool enabled) {
 	if (enabled) {
 		tglEnable(TGL_POLYGON_OFFSET_FILL);

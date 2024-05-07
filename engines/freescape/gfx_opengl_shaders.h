@@ -73,6 +73,8 @@ public:
 
 	virtual void useColor(uint8 r, uint8 g, uint8 b) override;
 	virtual void polygonOffset(bool enabled) override;
+	virtual void depthTesting(bool enabled) override;
+
 	virtual void setStippleData(byte *data) override;
 	virtual void useStipple(bool enabled) override;
 
