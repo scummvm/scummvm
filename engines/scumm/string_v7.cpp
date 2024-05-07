@@ -466,6 +466,9 @@ void ScummEngine_v7::drawBlastTexts() {
 
 		_charset->setCurID(_blastTextQueue[i].charset);
 
+		if (_game.version == 7)
+			memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], _game.id == GID_DIG ? sizeof(_charsetColorMap) : 4);
+
 		if (bt.flags & kStyleWordWrap) {
 			bt.rect = _wrappedTextClipRect;
 
@@ -648,8 +651,10 @@ void ScummEngine_v7::displayDialog() {
 		_charset->_startLeft = _charset->_left = _string[0].xpos;
 		_charset->_right = _string[0].right;
 		_charset->_center = _string[0].center;
-		memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);
 	}
+
+	if (_game.version == 7)
+		memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], _game.id == GID_DIG ? sizeof(_charsetColorMap) : 4);
 
 	if (usingOldSystem && a && a->_charset) {
 		_charset->setCurID(a->_charset);

@@ -1232,7 +1232,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	bool shadowModeFlag = (vs && vs->number == kMainVirtScreen);
 
 	if (_game.version >= 5)
-		memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);
+		memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], _game.id == GID_DIG ? sizeof(_charsetColorMap) : 4);
 
 	fontHeight = _charset->getFontHeight();
 
