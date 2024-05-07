@@ -69,7 +69,7 @@ CBagPanWindow::CBagPanWindow() : CBagStorageDevWnd() {
 	// Make sure the prefilter gets called.
 	setPreFilterPan(true);
 
-	loadObjects();
+	CBagStorageDev::loadObjects();
 }
 
 CBofRect CBagPanWindow::unSetSlideBitmap() {
@@ -148,7 +148,7 @@ CBofPalette *CBagPanWindow::setSlideBitmap(const CBofString &xSlideBmp, const CB
 }
 
 CBagPanWindow::~CBagPanWindow() {
-	releaseObjects();   // Delete all master sprite objects
+	CBagStorageDev::releaseObjects();   // Delete all master sprite objects
 
 	if (_pSlideBitmap) {
 		delete _pSlideBitmap;
@@ -266,7 +266,7 @@ ErrorCode CBagPanWindow::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 				}
 			}
 
-			// This must be changed so that the forground objects are actually
+			// This must be changed so that the foreground objects are actually
 			// a list of child windows.  The on paint message is then called with
 			// the background bitmap
 			paintObjects(_pFGObjectList, pBmp, clientArea, nullptr);
@@ -674,7 +674,7 @@ void CBagPanWindow::onSize(uint32 nType, int cx, int cy) {
 	if (vs.cx > xMaxPanBmpRect.width())
 		vs.cx = xMaxPanBmpRect.width();
 
-	if (getSlideBitmap()->width() > 480)
+	if (_pSlideBitmap && _pSlideBitmap->width() > 480)
 		vs.cy = 3 * vs.cx / 4;
 
 	if (vs.cy > xMaxPanBmpRect.height())
@@ -790,26 +790,32 @@ bool CBagPanWindow::deactivatePDA() {
 		// deactivate it
 		_pPDABmp->deactivate();
 
-		return true;        // PDA successfully deactivated
+		// PDA successfully deactivated
+		return true;
 	}
-	return false;               // PDA already deactivated
+
+	// PDA already deactivated
+	return false;
 }
 
 bool CBagPanWindow::activatePDA() {
 	// If we have a BMP and the pda is not active
-	if (_pPDABmp&& (!_pPDABmp->isActivated() || _pPDABmp->isActivating())) {
+	if (_pPDABmp && (!_pPDABmp->isActivated() || _pPDABmp->isActivating())) {
 		_pPDABmp->activate();  // activate it
 
-		return true;            // PDA successfully activated
+		// PDA successfully activated
+		return true;
 	}
 
-	return false;                   // PDA already activated
+	// PDA already activated
+	return false;
+	
 }
 
 const CBofPoint CBagPanWindow::devPtToViewPort(const CBofPoint &xPoint) {
 	CRect r = _pSlideBitmap->getCurrView();
-	CBofPoint p;
 
+	CBofPoint p;
 	p.x = xPoint.x + r.left - _xViewPortPos.x;
 	p.y = xPoint.y + r.top - _xViewPortPos.y;
 
