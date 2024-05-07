@@ -47,7 +47,7 @@ GamePalettes::GamePalettes(ResourceManager *resourceMan, Decompressor *decompres
 _resourceMan(resourceMan), _decompressor(decompressor) {
 }
 
-int GamePalettes::loadPalette(Common::String filename) {
+int GamePalettes::loadPalette(const Common::String &filename) {
 	Common::SeekableReadStream *fileStream = _resourceMan->getResource(filename);
 	if (!fileStream) {
 		// Happens in the Amiga version of Dragon
@@ -72,6 +72,7 @@ int GamePalettes::loadPalette(Common::String filename) {
 			}
 		}
 	}
+	pal.setName(filename);
 
 	delete fileStream;
 	selectPalNum(_palettes.size() - 1);
@@ -133,7 +134,8 @@ Common::Error GamePalettes::syncState(Common::Serializer &s) {
 			loadPalette(name);
 		}
 		if (_curPalNum >= _palettes.size())
-			error("Current palette number %d greater than available palettes", _curPalNum);
+			error("Current palette number %d greater than available palettes %d",
+					_curPalNum, _palettes.size());
 
 		setPalette();
 	} else {
