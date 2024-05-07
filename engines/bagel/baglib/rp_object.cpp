@@ -59,7 +59,7 @@ CBagVar *CBagRPObject::_pPrevBarPage = nullptr;
 CBagVar *CBagRPObject::_pCurBarPage = nullptr;
 int32 CBagRPObject::_nLastRPQCheck = 0;
 CBagRPObject *CBagRPObject::_pCurRPObject = nullptr;
-RPStates CBagRPObject::_eRPMode = RP_NOMODE;
+RPStates CBagRPObject::_eRPMode = RP_NO_MODE;
 CBagRPObject *CBagRPObject::_pActivateThisGuy = nullptr;
 
 // Local globals
@@ -82,7 +82,6 @@ CBagRPObject::CBagRPObject() {
 
 	_nRPTime = 0;
 	_bRPReported = false;
-	_bResPrinted = false;
 	_bResPrinted = false;
 	_bTouched = false;
 	_bRPRead = false;
@@ -108,12 +107,14 @@ CBagRPObject::CBagRPObject() {
 
 	// Current dossier
 	_nCurDossier = 0;
+
+	_pVarObj = nullptr;
 }
 
 CBagRPObject::~CBagRPObject() {
 	// If still attached, then detach
-	if (isAttached()) {
-		detach();
+	if (CBagParseObject::isAttached()) {
+		CBagRPObject::detach();
 	}
 
 	// Explicitly delete everything in the list
@@ -136,25 +137,21 @@ CBagRPObject::~CBagRPObject() {
 
 	//  Explicitly delete everything in the list
 	//  Only trash them if they are not the same list.
-	if (bSame == false) {
-		if (_pUntouchedList != nullptr) {
-			int nCount = _pUntouchedList->getCount();
-			for (int i = 0; i < nCount; i++) {
-				pDObj = _pUntouchedList->remove(0);
-				if (pDObj) {
-					delete pDObj;
-				}
+	if ((bSame == false) && (_pUntouchedList != nullptr)) {
+		int nCount = _pUntouchedList->getCount();
+		for (int i = 0; i < nCount; i++) {
+			pDObj = _pUntouchedList->remove(0);
+			if (pDObj) {
+				delete pDObj;
 			}
-			delete _pUntouchedList;
-			_pUntouchedList = nullptr;
 		}
+		delete _pUntouchedList;
+		_pUntouchedList = nullptr;
 	}
 
 	// Delete the description object
-	if (_pDescObj) {
-		delete _pDescObj;
-		_pDescObj = nullptr;
-	}
+	delete _pDescObj;
+	_pDescObj = nullptr;
 
 	// We got these vars from the var manager, so just null it out, don't delete it!
 	_pVarObj = nullptr;
@@ -423,7 +420,7 @@ ErrorCode CBagRPObject::attach() {
 
 	RPStates rpState = getLogState();
 	switch (rpState) {
-	case RP_NOMODE:
+	case RP_NO_MODE:
 		break;
 	case RP_RESULTS:
 	case RP_READ_DOSSIER:
@@ -529,7 +526,7 @@ int CBagRPObject::runResiduePrintedQueue() {
 		// have a chance to deactivate anything that we have active.
 		RPStates prevRPState = _eRPMode;
 		RPStates curRPState = getLogState();
-		if (prevRPState != curRPState && curRPState == RP_MAINMENU) {
+		if (prevRPState != curRPState && curRPState == RP_MAIN_MENU) {
 			if (_pCurRPObject) {
 				_pCurRPObject->deactivateRPObject();
 				_pCurRPObject->_bCurVisible = false;
@@ -1112,7 +1109,7 @@ RPStates CBagRPObject::getLogState() {
 		_pLogStateVar = g_VarManager->getVariable("LOG_STATE");
 	}
 
-	_eRPMode = RP_NOMODE;
+	_eRPMode = RP_NO_MODE;
 
 	assert(_pLogStateVar != nullptr);
 	if (_pLogStateVar) {
@@ -1127,7 +1124,7 @@ RPStates CBagRPObject::getLogState() {
 		} else if (cStr == "RES_PRINT_REVIEW") {
 			_eRPMode = RP_REVIEW;
 		} else if (cStr == "MAINMENU") {
-			_eRPMode = RP_MAINMENU;
+			_eRPMode = RP_MAIN_MENU;
 		}
 	}
 
@@ -1588,7 +1585,7 @@ void CBagRPObject::synchronizeResiduePrintedObjects(bool bLogFrontmost) {
 
 			if (bLogFrontmost) {
 				switch (rpState) {
-				case RP_NOMODE:
+				case RP_NO_MODE:
 					break;
 				case RP_RESULTS:
 					// If this guy was being shown before, bring it up now.

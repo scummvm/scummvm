@@ -43,11 +43,11 @@ public:
 };
 
 enum RPStates {
-	RP_NOMODE = 0,
+	RP_NO_MODE = 0,
 	RP_RESULTS,
 	RP_READ_DOSSIER,
 	RP_REVIEW,
-	RP_MAINMENU
+	RP_MAIN_MENU
 };
 
 class CBagRPObject : public CBagObject {
