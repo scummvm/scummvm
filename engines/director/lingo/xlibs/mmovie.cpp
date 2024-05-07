@@ -163,7 +163,7 @@ void MMovieXObject::updateScreenBlocking() {
 	while (_currentMovieIndex && _currentSegmentIndex) {
 		Common::Event event;
 		bool keepPlaying = true;
-		if (g_system->getEventManager()->pollEvent(event)) {
+		if (g_director->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
 				g_director->processEventQUIT();

@@ -229,9 +229,11 @@ public:
 	bool desktopEnabled();
 
 	// events.cpp
+	bool pollEvent(Common::Event &event);
 	bool processEvents(bool captureClick = false, bool skipWindowManager = false);
 	void processEventQUIT();
 	uint32 getMacTicks();
+	Common::Array<Common::Event> _injectedEvents;
 
 	// game-quirks.cpp
 	void gameQuirks(const char *target, Common::Platform platform);

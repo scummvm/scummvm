@@ -93,7 +93,7 @@ void Quicktime::m_playStage(int nargs) {
     bool keepPlaying = true;
     Common::Event event;
     while (!video->endOfVideo()) {
-        if (g_system->getEventManager()->pollEvent(event)) {
+        if (g_director->pollEvent(event)) {
             switch(event.type) {
                 case Common::EVENT_QUIT:
                     g_director->processEventQUIT();
