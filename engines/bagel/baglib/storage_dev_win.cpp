@@ -65,7 +65,7 @@ extern bool g_waitOKFl;
 CBagEventSDev *CBagStorageDevWnd::_pEvtSDev = nullptr;    // Pointer to the EventSDev
 CBofPoint *CBagStorageDev::_xCursorLocation;
 CBofRect *CBagStorageDev::gRepaintRect;
-bool CBagStorageDev::_bHidePDA = false;
+bool CBagStorageDev::_hidePdaFl = false;
 bool CBagStorageDev::_bHandledUpEvent = false;
 
 // Dirty object variables
@@ -88,7 +88,7 @@ void CBagStorageDev::initialize() {
 
 	_xCursorLocation = new CBofPoint();
 	gRepaintRect = new CBofRect();
-	_bHidePDA = false;
+	_hidePdaFl = false;
 	_bHandledUpEvent = false;
 
 	_bPanPreFiltered = false;

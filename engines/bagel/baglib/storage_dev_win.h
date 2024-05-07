@@ -108,7 +108,7 @@ protected:
 	static CBofPoint *_xCursorLocation; // Current cursor location in bmp.
 	static CBofRect *gRepaintRect;
 	static bool _bHandledUpEvent;      // Hack to stop
-	static bool _bHidePDA;
+	static bool _hidePdaFl;
 	FilterFunction _pBitmapFilter; // Pointer to the bitmap filter.
 
 	bool _bForiegnList : 1;   // True if setObjectList has been called

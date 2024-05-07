@@ -235,85 +235,88 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 	// Update the zoom button (it might need to blink).
 	handleZoomButton(false);
 	ErrorCode errCode = ERR_NONE;
-	if (!_bHidePDA) {
-		CBofRect *pr = pSrcRect;
 
-		if (_activating) {
+	if (_hidePdaFl)
+		return errCode;
+	
+	CBofRect r;
+	CBofRect *pr = pSrcRect;
 
-			CBofPoint loc = getPosition();
-			_activating--;
+	if (_activating) {
 
-			if (_activated) {
-				if (loc.y > _activeHeight) {
-					loc.y -= _moveDist;
-					if (pSrcRect) {
-						CBofRect r = *pSrcRect;
-						pSrcRect->bottom += _moveDist;
-						pr = &r;
-					}
-				}
-			} else if (loc.y < _deactiveHeight) {
-				loc.y += _moveDist;
+		CBofPoint loc = getPosition();
+		_activating--;
+
+		if (_activated) {
+			if (loc.y > _activeHeight) {
+				loc.y -= _moveDist;
 				if (pSrcRect) {
-					CBofRect r = *pSrcRect;
-					pSrcRect->top -= _moveDist;
+					r = *pSrcRect;
+					pSrcRect->bottom += _moveDist;
 					pr = &r;
 				}
 			}
-
-			setPosition(loc);
-
-			pt = loc;
-		}
-
-		// We have gotten back from a zoom and we need to straighten up
-		if (SBBasePda::_pdaMode == PDA_INV_MODE && _curDisplay != _invWnd) {
-			showInventory();
-
-		} else if (SBBasePda::_pdaMode == PDA_MAP_MODE && _curDisplay != _mapWnd) {
-
-			showMap();
-		} else if (SBBasePda::_pdaMode == PDA_LOG_MODE && _curDisplay != _logWnd) {
-			showLog();
-		}
-
-		bool bUpdate = true;
-		bool bIsMovieWaiting = isMovieWaiting();
-		bool bMoviePlaying = false;
-
-		if ((!isActivated()) &&                             // Must be down
-		        ((_pdaMode == PDA_MAP_MODE) ||
-		         (bIsMovieWaiting && _pdaMode != PDA_MOO_MODE))) {
-
-			// Reset to reflect we know it happened
-			setPreFiltered(false);
-
-			// Play the movie if it is ready.
-			if (bIsMovieWaiting == true) {
-				runWaitingMovie();
+		} else if (loc.y < _deactiveHeight) {
+			loc.y += _moveDist;
+			if (pSrcRect) {
+				r = *pSrcRect;
+				pSrcRect->top -= _moveDist;
+				pr = &r;
 			}
-		} else if (_pdaMode == PDA_MOO_MODE) {
-			// If we're playing a pda movie, then make sure we continue to update.
-			bMoviePlaying = true;
-			bUpdate = true;
 		}
 
-		// If the official decree from on high has been given to update, do so!
-		if (bUpdate) {
-			errCode = CBagStorageDevBmp::update(pBmp, pt, pr, _nMaskColor);
-		}
+		setPosition(loc);
 
-		// If the PDA is activating then redraw our black background
-		bool bWandAnimating = CBagCharacterObject::pdaWandAnimating();
+		pt = loc;
+	}
 
-		if (isActivating() || bWandAnimating || bMoviePlaying) {
-			CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev());
-			((CBagPanWindow *)pMainWin)->setPreFilterPan(true);
-		} else if (!isActivated() && (SBBasePda::_pdaMode != PDA_MAP_MODE)) {
-			// If it is not activated, then don't bother redrawing it or the objects
-			// inside of it.
-			setDirty(false);
+	// We have gotten back from a zoom and we need to straighten up
+	if (SBBasePda::_pdaMode == PDA_INV_MODE && _curDisplay != _invWnd) {
+		showInventory();
+
+	} else if (SBBasePda::_pdaMode == PDA_MAP_MODE && _curDisplay != _mapWnd) {
+
+		showMap();
+	} else if (SBBasePda::_pdaMode == PDA_LOG_MODE && _curDisplay != _logWnd) {
+		showLog();
+	}
+
+	bool bUpdate = true;
+	bool bIsMovieWaiting = isMovieWaiting();
+	bool bMoviePlaying = false;
+
+	if ((!isActivated()) &&                             // Must be down
+	        ((_pdaMode == PDA_MAP_MODE) ||
+	         (bIsMovieWaiting && _pdaMode != PDA_MOO_MODE))) {
+
+		// Reset to reflect we know it happened
+		setPreFiltered(false);
+
+		// Play the movie if it is ready.
+		if (bIsMovieWaiting == true) {
+			runWaitingMovie();
 		}
+	} else if (_pdaMode == PDA_MOO_MODE) {
+		// If we're playing a pda movie, then make sure we continue to update.
+		bMoviePlaying = true;
+		bUpdate = true;
+	}
+
+	// If the official decree from on high has been given to update, do so!
+	if (bUpdate) {
+		errCode = CBagStorageDevBmp::update(pBmp, pt, pr, _nMaskColor);
+	}
+
+	// If the PDA is activating then redraw our black background
+	bool bWandAnimating = CBagCharacterObject::pdaWandAnimating();
+
+	if (isActivating() || bWandAnimating || bMoviePlaying) {
+		CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev());
+		((CBagPanWindow *)pMainWin)->setPreFilterPan(true);
+	} else if (!isActivated() && (SBBasePda::_pdaMode != PDA_MAP_MODE)) {
+		// If it is not activated, then don't bother redrawing it or the objects
+		// inside of it.
+		setDirty(false);
 	}
 
 	return errCode;
@@ -412,10 +415,7 @@ void CBagPDA::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *info) {
 }
 
 CBagObject *CBagPDA::onNewButtonObject(const CBofString &) {
-	CBagButtonObject *PdaButtObj;
-
-	PdaButtObj = new CBagButtonObject();
-
+	CBagButtonObject *PdaButtObj = new CBagButtonObject();
 	PdaButtObj->setCallBack(pdaButtonHandler, (SBBasePda *)this);
 
 	return PdaButtObj;
@@ -436,9 +436,7 @@ bool  CBagPDA::paintFGObjects(CBofBitmap *pBmp) {
 }
 
 CBagObject *CBagPDA::onNewUserObject(const CBofString &sInit) {
-	CBagTimeObject *pTimeObj;
-
-	pTimeObj = nullptr;
+	CBagTimeObject *pTimeObj = nullptr;
 	if (sInit == "TIME") {
 		pTimeObj = new CBagTimeObject();
 	}
@@ -530,17 +528,19 @@ bool CBagPDA::isMovieWaiting() {
 
 void CBagPDA::runWaitingMovie() {
 	// Will only run a movie if it is ready to be run
-	if (_movieList) {
-		int nCount = _movieList->getCount();
-		if (nCount > 0) {
-			for (int i = 0; i < nCount; i++) {
-				CBagMovieObject *pMObj = _movieList->getNodeItem(i);
-				if (pMObj->asynchPDAMovieCanPlay()) {
-					_soundsPausedFl = true;
-					CSound::pauseSounds();              // pause all sounds
-					pMObj->runObject();
-					removeFromMovieQueue(pMObj);
-				}
+	if (!_movieList)
+	return;
+	
+	int nCount = _movieList->getCount();
+	if (nCount > 0) {
+		for (int i = 0; i < nCount; i++) {
+			CBagMovieObject *pMObj = _movieList->getNodeItem(i);
+			if (pMObj->asynchPDAMovieCanPlay()) {
+				_soundsPausedFl = true;
+				// pause all sounds
+				CSound::pauseSounds();
+				pMObj->runObject();
+				removeFromMovieQueue(pMObj);
 			}
 		}
 	}
