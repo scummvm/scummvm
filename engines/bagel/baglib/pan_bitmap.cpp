@@ -90,9 +90,9 @@ CBagPanBitmap::CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, con
 
 		// Initialize _nCorrWidth and generate the cosine table.
 		if (_bPanorama)
-			setCorrWidth(4);
+			setCorrWidth(4, true);
 		else
-			setCorrWidth(0);
+			setCorrWidth(0, true);
 
 		_bIsValid = true;
 
