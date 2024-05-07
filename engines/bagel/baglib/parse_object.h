@@ -41,15 +41,6 @@ namespace Bagel {
 #define OBJ_START_DELIM '='
 #define OBJ_END_DELIM ';'
 
-// Support Vector Class
-class CBagVector : public CVector {
-public:
-	int _moveRate;
-	int _sprStartIndex;
-	int _sprEndIndex;
-	int _changeRate;
-};
-
 enum ParseCodes { PARSING_DONE = 0, UPDATED_OBJECT, UNKNOWN_TOKEN };
 
 class CBagParseObject {
@@ -70,8 +61,6 @@ public:
 	};
 
 private:
-	static int _nIndentation;
-	static bool _bBinaryData;
 	bool _bAttached;
 
 public:
@@ -95,33 +84,11 @@ public:
 		return PARSING_DONE;
 	}
 
-	int setIndent(int n) {
-		return _nIndentation = n;
-	}
-	int getIndent() const {
-		return _nIndentation;
-	}
-	int tab(int n = 2) {
-		return _nIndentation += n;
-	}
-	int unTab(int n = 2) {
-		return _nIndentation -= n;
-	}
-
-	int setBinaryData(bool b = true) const {
-		return _bBinaryData = b;
-	}
-	int isBinaryData() {
-		return _bBinaryData;
-	}
-
-	int getStringFromStream(CBagIfstream &istr, CBofString &sStr, const char cEndChar, bool bPutBack = false);
 	int getStringFromStream(CBagIfstream &istr, CBofString &sStr, const CBofString &sEndChars, bool bPutBack = false);
 	int getAlphaNumFromStream(CBagIfstream &istr, CBofString &sStr);
 	int getOperStrFromStream(CBagIfstream &istr, CBofString &sStr);
 	int getIntFromStream(CBagIfstream &istr, int &nNum);
 	int getRectFromStream(CBagIfstream &istr, CBofRect &rect);
-	int getVectorFromStream(CBagIfstream &istr, CBagVector &vector);
 	int getKeywordFromStream(CBagIfstream &istr, KEYWORDS &keyword);
 	int putbackStringOnStream(CBagIfstream &istr, const CBofString &sStr);
 

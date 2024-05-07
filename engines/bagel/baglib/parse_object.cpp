@@ -24,10 +24,7 @@
 
 namespace Bagel {
 
-int CBagParseObject::_nIndentation;
-
 void CBagParseObject::initialize() {
-	_nIndentation = 0;
 }
 
 CBagParseObject::CBagParseObject() {
@@ -76,10 +73,6 @@ int CBagParseObject::getStringFromStream(CBagIfstream &istr, CBofString &sStr, c
 	return ch;
 }
 
-int CBagParseObject::getStringFromStream(CBagIfstream &istr, CBofString &sStr, const char cEndChar, bool bPutBack) {
-	return getStringFromStream(istr, sStr, CBofString(cEndChar), bPutBack);
-}
-
 int CBagParseObject::getRectFromStream(CBagIfstream &istr, CBofRect &rect) {
 	char szLocalStr[256];
 	szLocalStr[0] = 0;
@@ -111,54 +104,6 @@ int CBagParseObject::getRectFromStream(CBagIfstream &istr, CBofRect &rect) {
 	} else {
 		rect.right = rect.left - 1;
 		rect.bottom = rect.top - 1;
-	}
-
-	return 0;
-}
-
-int CBagParseObject::getVectorFromStream(CBagIfstream &istr, CBagVector &vector) {
-	char szLocalStr[256];
-	szLocalStr[0] = 0;
-	CBofString str(szLocalStr, 256);
-
-	// The first char must be a (
-	char ch = (char)istr.getCh();
-	if (ch != '(')
-		return -1;
-
-	// Get the x-coord
-	getStringFromStream(istr, str, ",");
-	vector.x = atoi(str);
-
-	// Get the y-coord
-	getStringFromStream(istr, str, ",):@", true);
-	vector.y = atoi(str);
-
-	// Vector rate
-	vector._moveRate = 1;
-	ch = (char)istr.peek();
-	if (ch == ',') {
-		istr.getCh();
-		getStringFromStream(istr, str, "):@", true);
-		vector._moveRate = atoi(str);
-	}
-
-	// Start-Stop index
-	ch = (char)istr.peek();
-	if (ch == '~') {
-		istr.getCh();
-		CBofRect r;
-		getRectFromStream(istr, r);
-		vector._sprStartIndex = r.left;
-		vector._sprEndIndex = r.top;
-	}
-
-	// Start-Stop index
-	ch = (char)istr.peek();
-	if (ch == '@') {
-		istr.getCh();
-		getStringFromStream(istr, str, ")");
-		vector._changeRate = atoi(str);
 	}
 
 	return 0;
