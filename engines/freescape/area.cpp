@@ -288,6 +288,57 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 		}
 	}
 
+	for (auto &planar : planarObjects) {
+		Math::Vector3d centerPlanar = planar->_boundingBox.getMin() + planar->_boundingBox.getMax();
+		centerPlanar /= 2;
+		Math::Vector3d distance;
+		for (auto &object : planarObjects) {
+			if (object == planar)
+				continue;
+
+			distance = object->_boundingBox.distance(centerPlanar);
+			if (distance.length() > 0)
+				continue;
+
+			if (planar->getSize().x() == 0) {
+				if (object->getSize().x() > 0)
+					continue;
+			} else if (planar->getSize().y() == 0) {
+				if (object->getSize().y() > 0)
+					continue;
+			} else if (planar->getSize().z() == 0) {
+				if (object->getSize().z() > 0)
+					continue;
+			} else
+				continue;
+
+			//debug("planar object %d collides with planar object %d", planar->getObjectID(), object->getObjectID());
+			if (offsetMap[planar] == offsetMap[object] && offsetMap[object] != 0) {
+				// Nothing to do?
+			} else if (offsetMap[planar] == offsetMap[object] && offsetMap[object] == 0) {
+				float offset = 1.0;
+				if (planar->getSize().x() == 0) {
+					if (object->getOrigin().x() < centerPlanar.x())
+						offsetMap[planar] = -offset;
+					else
+						offsetMap[planar] = offset;
+				} else if (planar->getSize().y() == 0) {
+					if (object->getOrigin().y() < centerPlanar.y())
+						offsetMap[planar] = -offset;
+					else
+						offsetMap[planar] = offset;
+				} else if (planar->getSize().z() == 0) {
+					if (object->getOrigin().z() < centerPlanar.z())
+						offsetMap[planar] = -offset;
+					else
+						offsetMap[planar] = offset;
+				} else
+					; //It was not really planar?!
+			}
+		}
+	}
+
+
 	for (auto &pair : offsetMap) {
 		pair._key->draw(gfx, pair._value);
 	}
