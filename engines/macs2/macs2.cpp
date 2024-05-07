@@ -1138,8 +1138,24 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	// if you need to specific steps; for example setting
 	// an array size after reading it's length, whereas
 	// for saving it would write the existing array's length
-	int dummy = 0;
-	s.syncAsUint32LE(dummy);
+
+	// Some assumptions
+	// We assume that the objects data array has been loaded completely before we ever load or save
+	// If we make changes to any game object data we have to save it
+
+	// Iterate over objects
+	// Iterate over characters?
+	for (auto currentObject : GameObjects::instance().Objects) {
+		s.syncAsUint16LE(currentObject->Index);
+	}
+
+	// Handle the view
+	View1 *currentView = (View1 *)findView("View1");
+	uint32 numCharacters;
+	if (s.isSaving()) {
+		numCharacters = currentView->characters.size();
+	}
+	s.syncAsUint32LE(numCharacters);
 
 
 	return Common::kNoError;

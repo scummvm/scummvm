@@ -333,6 +333,8 @@ View1::View1() : UIElement("View1") {
 					m = Script::MouseMode::UseInventory;
 				}
 				g_engine->_scriptExecutor->_mouseMode = m;
+				g_engine->_scriptExecutor->_charPosX = characters[0]->Position.x;
+				g_engine->_scriptExecutor->_charPosY = characters[0]->Position.y;
 				g_engine->_scriptExecutor->_interactedObjectID = index;
 				g_engine->_scriptExecutor->_interactedOtherObjectID = activeInventoryItem != nullptr ? activeInventoryItem->Index + 0x0400 : 0x0000;
 

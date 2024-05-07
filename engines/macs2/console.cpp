@@ -24,11 +24,13 @@
 #include "macs2/macs2.h"
 #include "macs2/gameobjects.h"
 
+
 namespace Macs2 {
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("dumpblobs", WRAP_METHOD(Console, Cmd_dumpBlobs));
 	registerCmd("autoclick", WRAP_METHOD(Console, Cmd_toggleAutoClick));
+	registerCmd("marker", WRAP_METHOD(Console, Cmd_marker));
 }
 
 Console::~Console() {
@@ -61,6 +63,17 @@ bool Console::Cmd_dumpBlobs(int argc, const char **argv) {
 	}
 	df.close();
 	debugPrintf("Dumping blobs to %s.\n", path.c_str());
+	return true;
+}
+
+bool Console::Cmd_marker(int argc, const char **argv) {
+	// TODO: I tried implementing a CLS command but it's non-trivial, so using this marker instead
+	Common::String marker;
+	for (int i = 0; i < argc; i++) {
+		marker += argv[i];
+		marker += " ";
+	}
+	debug("***** %s", marker.c_str());
 	return true;
 }
 
