@@ -126,13 +126,6 @@ public:
 	int putbackStringOnStream(CBagIfstream &istr, const CBofString &sStr);
 
 	int parseAlertBox(CBagIfstream &istr, const char *sTitle, const char *sFile, int nLine);
-
-	virtual void *getDataStart() {
-		return &_bAttached;
-	}
-	virtual void *getDataEnd() {
-		return &_bAttached + sizeof(bool);
-	}
 };
 
 } // namespace Bagel
