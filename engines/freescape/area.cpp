@@ -546,7 +546,6 @@ void Area::addFloor() {
 
 void Area::addStructure(Area *global) {
 	if (!global || !_entrancesByID->contains(255)) {
-		addFloor();
 		return;
 	}
 	GlobalStructure *rs = (GlobalStructure *)(*_entrancesByID)[255];

@@ -189,6 +189,7 @@ void CastleEngine::loadAssetsDOSFullGame() {
 		for (auto &it : _areaMap)
 			it._value->addStructure(_areaMap[255]);
 
+		_areaMap[1]->addFloor();
 		_areaMap[2]->addFloor();
 		delete stream;
 	} else
@@ -271,6 +272,7 @@ void CastleEngine::loadAssetsAmigaDemo() {
 	for (auto &it : _areaMap)
 		it._value->addStructure(_areaMap[255]);
 
+	_areaMap[1]->addFloor();
 	_areaMap[2]->addFloor();
 }
 
