@@ -4590,7 +4590,7 @@ void ScummEngine::scrollEffect(int dir) {
 			{
 				src = vs->getPixels(0, y - step);
 				_system->copyRectToScreen(src,
-					vsPitch,
+					vsPitch * m,
 					0, (vs->h - step) * m,
 					vs->w * m, step * m);
 			}
@@ -4612,7 +4612,7 @@ void ScummEngine::scrollEffect(int dir) {
 			{
 				src = vs->getPixels(0, vs->h - y);
 				_system->copyRectToScreen(src,
-					vsPitch,
+					vsPitch * m,
 					0, 0,
 					vs->w * m, step * m);
 			}
@@ -4626,13 +4626,15 @@ void ScummEngine::scrollEffect(int dir) {
 		x = 1 + step;
 		while (x < vs->w) {
 			moveScreen(-step * m, 0, vs->h * m);
-
-			src = vs->getPixels(x - step, 0);
-			_system->copyRectToScreen(src,
-				vsPitch,
-				(vs->w - step) * m, 0,
-				step * m, vs->h * m);
-
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+			if (_townsScreen) {
+				towns_drawStripToScreen(vs, vs->w - step, vs->topline, x - step, vs->topline, step, vs->h);
+			} else
+#endif
+			{
+				src = vs->getPixels(x - step, 0);
+				_system->copyRectToScreen(src, vsPitch * m, (vs->w - step) * m, 0, step * m, vs->h * m);
+			}
 			waitForTimer(delay, true);
 			x += step;
 		}
@@ -4642,12 +4644,15 @@ void ScummEngine::scrollEffect(int dir) {
 		x = 1 + step;
 		while (x < vs->w) {
 			moveScreen(step * m, 0, vs->h * m);
-
-			src = vs->getPixels(vs->w - x, 0);
-			_system->copyRectToScreen(src,
-				vsPitch,
-				0, 0,
-				step, vs->h);
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+			if (_townsScreen) {
+				towns_drawStripToScreen(vs, 0, vs->topline, vs->w - x, vs->topline, step, vs->h);
+			} else
+#endif
+			{
+				src = vs->getPixels(vs->w - x, 0);
+				_system->copyRectToScreen(src, vsPitch * m, 0, 0, step * m, vs->h * m);
+			}
 
 			waitForTimer(delay, true);
 			x += step;
