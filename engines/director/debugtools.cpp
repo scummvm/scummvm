@@ -53,6 +53,28 @@ typedef struct ImGuiImage {
 	int16 height;
 } ImGuiImage;
 
+typedef struct ImGuiScriptCode {
+	uint pc;
+	Common::String code;
+} ImGuiScriptCode;
+
+typedef struct ImGuiScript {
+	bool score = false;
+	CastMemberID id;
+	ScriptType type;
+	Common::String handlerId;
+	Common::String handlerName;
+	Common::String moviePath;
+	Common::Array<ImGuiScriptCode> code;
+
+	bool operator==(const ImGuiScript &c) const {
+		return moviePath == c.moviePath && score == c.score && id == c.id && type == c.type && handlerId == c.handlerId;
+	}
+	bool operator!=(const ImGuiScript &c) const {
+		return !(*this == c);
+	}
+} ImGuiScript;
+
 typedef struct ImGuiState {
 	struct {
 		Common::HashMap<Graphics::Surface *, ImGuiImage> _textures;
@@ -61,6 +83,11 @@ typedef struct ImGuiState {
 		ImGuiTextFilter _nameFilter;
 		int _typeFilter = 0x7FFF;
 	} _cast;
+	struct {
+		ImGuiScript _script;
+		ImGuiTextFilter _nameFilter;
+		bool _showScript = false;
+	} _functions;
 	bool _showControlPanel = true;
 	bool _showCallStack = false;
 	bool _showVars = false;
@@ -552,6 +579,11 @@ static void addScriptCastToDisplay(CastMemberID &id) {
 	_state->_scriptCasts.push_back(id);
 }
 
+static void setScriptToDisplay(ImGuiScript &script) {
+	_state->_functions._script = script;
+	_state->_functions._showScript = true;
+}
+
 static void showChannels() {
 	if (!_state->_showChannels)
 		return;
@@ -681,7 +713,7 @@ static void showChannels() {
 	ImGui::End();
 }
 
-static void renderScript(Symbol &sym) {
+static void renderCastScript(Symbol &sym) {
 	if (sym.type != HANDLER)
 		return;
 
@@ -741,6 +773,50 @@ static void renderScript(Symbol &sym) {
 	}
 }
 
+static void renderScript(ImGuiScript &script) {
+	ImDrawList *dl = ImGui::GetWindowDrawList();
+
+	const ImU32 bp_color_disabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 0.0f));
+	const ImU32 bp_color_enabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 1.0f));
+	const ImU32 bp_color_hover = ImGui::GetColorU32(ImVec4(0.42f, 0.17f, 0.13f, 1.0f));
+	const ImU32 line_color = ImGui::GetColorU32(ImVec4(0.44f, 0.44f, 0.44f, 1.0f));
+	ImU32 color;
+
+	for (const auto& line : script.code) {
+		ImVec2 pos = ImGui::GetCursorScreenPos();
+		const ImVec2 mid(pos.x + 7, pos.y + 7);
+		Common::String bpName = Common::String::format("%s-%d", script.handlerId.c_str(), line.pc);
+
+		color = bp_color_disabled;
+
+		if (_state->_breakpoints.contains(bpName))
+			color = bp_color_enabled;
+
+		ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
+		if (ImGui::IsItemClicked(0)) {
+			if (color == bp_color_enabled) {
+				_state->_breakpoints.erase(bpName);
+				color = bp_color_disabled;
+			} else {
+				_state->_breakpoints[bpName] = true;
+				color = bp_color_enabled;
+			}
+		}
+
+		if (color == bp_color_disabled && ImGui::IsItemHovered()) {
+			color = bp_color_hover;
+		}
+
+		dl->AddCircleFilled(mid, 4.0f, color);
+		dl->AddLine(ImVec2(pos.x + 16.0f, pos.y), ImVec2(pos.x + 16.0f, pos.y + 17), line_color);
+
+		ImGui::SetItemTooltip("Click to add a breakpoint");
+
+		ImGui::SameLine();
+		ImGui::Text("[%5d] %s", line.pc, line.code.c_str());
+	}
+}
+
 static bool showScriptCast(CastMemberID &id) {
 	Common::String wName("Script ");
 	wName += id.asString();
@@ -756,16 +832,15 @@ static bool showScriptCast(CastMemberID &id) {
 
 		if (ctx) {
 			for (auto &handler : ctx->_functionHandlers)
-				renderScript(handler._value);
+				renderCastScript(handler._value);
 		} else if (cast->_lingoArchive->factoryContexts.contains(id.member)) {
 			for (auto &it : *cast->_lingoArchive->factoryContexts.getVal(id.member)) {
 				for (auto &handler : it._value->_functionHandlers)
-					renderScript(handler._value);
+					renderCastScript(handler._value);
 			}
 		} else {
 			ImGui::Text("[Nothing]");
 		}
-
 	}
 	ImGui::End();
 
@@ -782,7 +857,7 @@ static void displayScriptCasts() {
 	if (_state->_scriptCasts.empty())
 		return;
 
-	for (Common::List<CastMemberID>::iterator scr = _state->_scriptCasts.begin(); scr != _state->_scriptCasts.end(); ) {
+	for (Common::List<CastMemberID>::iterator scr = _state->_scriptCasts.begin(); scr != _state->_scriptCasts.end();) {
 		if (!showScriptCast(*scr))
 			scr = _state->_scriptCasts.erase(scr);
 		else
@@ -790,56 +865,173 @@ static void displayScriptCasts() {
 	}
 }
 
+static void displayScripts() {
+	if (!_state->_functions._showScript)
+		return;
+
+	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(240, 240), ImGuiCond_FirstUseEver);
+
+	if (ImGui::Begin("Script", &_state->_functions._showScript)) {
+		ImGui::Text("%s", _state->_functions._script.handlerName.c_str());
+		renderScript(_state->_functions._script);
+	}
+	ImGui::End();
+}
+
+static void getScriptCode(ImGuiScript& script, Symbol &sym) {
+	uint pc = 0;
+	while (pc < sym.u.defn->size()) {
+		script.code.push_back({pc, g_lingo->decodeInstruction(sym.u.defn, pc, &pc)});
+	}
+}
+
+static Common::String getHandlerName(Symbol &sym) {
+	Common::String handlerName;
+
+	if (sym.ctx && sym.ctx->_id)
+		handlerName = Common::String::format("%d:", sym.ctx->_id);
+	handlerName += g_lingo->formatFunctionName(sym);
+
+	return handlerName;
+}
+
 static void showFuncList() {
 	if (!_state->_showFuncList)
 		return;
 
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(120, 120), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(480, 240), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Functions", &_state->_showFuncList)) {
 		Lingo *lingo = g_director->getLingo();
 		Movie *movie = g_director->getCurrentMovie();
-		Score *score = movie->getScore();
 		ScriptContext *csc = lingo->_state->context;
-		if (ImGui::TreeNode("Functions attached to current frame")) {
-			ImGui::Text("Frame %d:", score->getCurrentFrameNum());
+
+		_state->_functions._nameFilter.Draw();
+		ImGui::Separator();
+		const ImVec2 childSize = ImGui::GetContentRegionAvail();
+		ImGui::BeginChild("##functions", ImVec2(childSize.x, childSize.y));
+
+		if (ImGui::BeginTable("Functions", 4, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg)) {
+			ImGui::TableSetupColumn("Function", 0, 240.f);
+			ImGui::TableSetupColumn("Movie", 0, 60.f);
+			ImGui::TableSetupColumn("Cast", 0, 60.f);
+			ImGui::TableSetupColumn("Type", 0, 80.f);
+			ImGui::TableHeadersRow();
+
 			if (csc) {
-				ImGui::Text("  %d: %s", csc->_id, csc->formatFunctionList("    ").c_str());
-			} else {
-				ImGui::Text("  [empty]");
-			}
-			ImGui::TreePop();
-		}
+				Common::String scriptType(scriptType2str(csc->_scriptType));
+				for (auto &functionHandler : csc->_functionHandlers) {
+					Common::String function(g_lingo->formatFunctionName(functionHandler._value));
+					if (!_state->_functions._nameFilter.PassFilter(function.c_str()))
+						continue;
 
-		ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-		if (ImGui::TreeNode("Cast functions")) {
-			for (auto it : *movie->getCasts()) {
-				Common::String header = Common::String::format("Cast %d functions", it._key);
-				if (ImGui::TreeNode(header.c_str())) {
-					Cast *cast = it._value;
-					if (cast && cast->_lingoArchive) {
-						ImGui::Text("%s", cast->_lingoArchive->formatFunctionList("  ").c_str());
-					} else {
-						ImGui::Text("  [empty]");
+					ImGui::TableNextRow();
+					ImGui::TableNextColumn();
+					if(ImGui::Selectable(function.c_str())) {
+						ImGuiScript script;
+						script.moviePath = movie->getArchive()->getPathName().toString();
+						script.score = true;
+						script.type = csc->_scriptType;
+						script.handlerId = functionHandler._key;
+						script.handlerName = getHandlerName(functionHandler._value);
+						getScriptCode(script, functionHandler._value);
+						setScriptToDisplay(script);
 					}
+					ImGui::TableNextColumn();
+					ImGui::Text("%s", movie->getArchive()->getPathName().toString().c_str());
+					ImGui::TableNextColumn();
+					ImGui::Text("-");
+					ImGui::TableNextColumn();
+					ImGui::Text("%s", scriptType.c_str());
 
-					ImGui::TreePop();
 				}
 			}
-			ImGui::TreePop();
-		}
 
-		ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-		if (ImGui::TreeNode("Shared cast functions")) {
-			Cast *sharedCast = movie->getSharedCast();
-			if (sharedCast && sharedCast->_lingoArchive) {
-				ImGui::Text("%s", sharedCast->_lingoArchive->formatFunctionList("  ").c_str());
-			} else {
-				ImGui::Text("  [empty]");
+			for (auto cast : *movie->getCasts()) {
+				for (int i = 0; i <= kMaxScriptType; i++) {
+					if (cast._value->_lingoArchive->scriptContexts[i].empty())
+						continue;
+					Common::String scriptType(scriptType2str((ScriptType)i));
+					for (auto &scriptContext : cast._value->_lingoArchive->scriptContexts[i]) {
+						Common::String name = Common::String::format("%d", scriptContext._key);
+						CastMemberInfo *cmi = cast._value->getCastMemberInfo(scriptContext._key);
+						if (cmi && !cmi->name.empty()) {
+							name += Common::String::format(" \"%s\"", cmi->name.c_str());
+						}
+						for (auto &functionHandler : scriptContext._value->_functionHandlers) {
+							Common::String function = Common::String::format("%s: %s", name.c_str(), g_lingo->formatFunctionName(functionHandler._value).c_str());
+							if (!_state->_functions._nameFilter.PassFilter(function.c_str()))
+								continue;
+
+							ImGui::TableNextRow();
+							ImGui::TableNextColumn();
+							if(ImGui::Selectable(function.c_str())) {
+								CastMemberID memberID(scriptContext._key, cast._key);
+								ImGuiScript script;
+								script.moviePath = movie->getArchive()->getPathName().toString();
+								script.id = memberID;
+								script.type = (ScriptType)i;
+								script.handlerId = functionHandler._key;
+								script.handlerName = getHandlerName(functionHandler._value);
+								getScriptCode(script, functionHandler._value);
+								setScriptToDisplay(script);
+							}
+							ImGui::TableNextColumn();
+							ImGui::Text("%s", movie->getArchive()->getPathName().toString().c_str());
+							ImGui::TableNextColumn();
+							ImGui::Text("%d", cast._key);
+							ImGui::TableNextColumn();
+							ImGui::Text("%s", scriptType.c_str());
+
+						}
+					}
+				}
 			}
 
-			ImGui::TreePop();
+			Cast *sharedCast = movie->getSharedCast();
+			if (sharedCast && sharedCast->_lingoArchive) {
+				for (int i = 0; i <= kMaxScriptType; i++) {
+					if (sharedCast->_lingoArchive->scriptContexts[i].empty())
+						continue;
+					Common::String scriptType(scriptType2str((ScriptType)i));
+					for (auto &scriptContext : sharedCast->_lingoArchive->scriptContexts[i]) {
+						Common::String name = Common::String::format("%d", scriptContext._key);
+						CastMemberInfo *cmi = sharedCast->getCastMemberInfo(scriptContext._key);
+						if (cmi && !cmi->name.empty()) {
+							name += Common::String::format(" \"%s\"", cmi->name.c_str());
+						}
+						for (auto &functionHandler : scriptContext._value->_functionHandlers) {
+							Common::String function = Common::String::format("%s: %s", name.c_str(), g_lingo->formatFunctionName(functionHandler._value).c_str());
+							if (!_state->_functions._nameFilter.PassFilter(function.c_str()))
+								continue;
+
+							ImGui::TableNextRow();
+							ImGui::TableNextColumn();
+							if(ImGui::Selectable(function.c_str())) {
+								CastMemberID memberID(scriptContext._key, SHARED_CAST_LIB);
+								ImGuiScript script;
+								script.moviePath = movie->getArchive()->getPathName().toString();
+								script.id = memberID;
+								script.type = (ScriptType)i;
+								script.handlerId = functionHandler._key;
+								script.handlerName = getHandlerName(functionHandler._value);
+								getScriptCode(script, functionHandler._value);
+								setScriptToDisplay(script);
+							}
+							ImGui::TableNextColumn();
+							ImGui::Text("%s", movie->getArchive()->getPathName().toString().c_str());
+							ImGui::TableNextColumn();
+							ImGui::Text("SHARED");
+							ImGui::TableNextColumn();
+							ImGui::Text("%s", scriptType.c_str());
+						}
+					}
+				}
+			}
+			ImGui::EndTable();
 		}
+		ImGui::EndChild();
 	}
 	ImGui::End();
 }
@@ -887,6 +1079,7 @@ void onImGuiRender() {
 	}
 
 	displayScriptCasts();
+	displayScripts();
 
 	showControlPanel();
 	showVars();
