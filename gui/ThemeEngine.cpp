@@ -1240,7 +1240,7 @@ void ThemeEngine::drawPopUpWidget(const Common::Rect &r, const Common::U32String
 	}
 }
 
-void ThemeEngine::drawManagedSurface(const Common::Point &p, const Graphics::ManagedSurface &surface) {
+void ThemeEngine::drawManagedSurface(const Common::Point &p, const Graphics::ManagedSurface &surface, Graphics::AlphaType alphaType) {
 	if (!ready())
 		return;
 
@@ -1248,7 +1248,7 @@ void ThemeEngine::drawManagedSurface(const Common::Point &p, const Graphics::Man
 		return;
 
 	_vectorRenderer->setClippingRect(_clip);
-	_vectorRenderer->blitManagedSurface(&surface, p);
+	_vectorRenderer->blitManagedSurface(&surface, p, alphaType);
 
 	Common::Rect dirtyRect = Common::Rect(p.x, p.y, p.x + surface.w, p.y + surface.h);
 	dirtyRect.clip(_clip);

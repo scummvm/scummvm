@@ -51,6 +51,7 @@ typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, co
 struct DrawStep {
 	DrawingFunctionCallback drawingCall; /**< Pointer to drawing function */
 	Graphics::ManagedSurface *blitSrc;
+	Graphics::AlphaType alphaType;
 
 	struct Color {
 		uint8 r, g, b;
@@ -99,6 +100,7 @@ struct DrawStep {
 	DrawStep() {
 		drawingCall = nullptr;
 		blitSrc = nullptr;
+		alphaType = Graphics::ALPHA_OPAQUE;
 		// fgColor, bgColor, gradColor1, gradColor2, bevelColor initialized by Color default constructor
 		autoWidth = autoHeight = false;
 		x = y = w = h = 0;
@@ -472,7 +474,7 @@ public:
 	void drawCallback_BITMAP(const Common::Rect &area, const DrawStep &step) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		blitManagedSurface(step.blitSrc, Common::Point(x, y));
+		blitManagedSurface(step.blitSrc, Common::Point(x, y), step.alphaType);
 	}
 
 	void drawCallback_CROSS(const Common::Rect &area, const DrawStep &step) {
@@ -523,7 +525,7 @@ public:
 	 */
 	virtual void blitSurface(const Graphics::ManagedSurface *source, const Common::Rect &r) = 0;
 
-	virtual void blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &p) = 0;
+	virtual void blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &p, Graphics::AlphaType alphaType) = 0;
 
 	/**
 	 * Draws a string into the screen. Wrapper for the Graphics::Font string drawing

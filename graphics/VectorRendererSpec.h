@@ -88,7 +88,7 @@ public:
 
 	void fillSurface() override;
 	void blitSurface(const Graphics::ManagedSurface *source, const Common::Rect &r) override;
-	void blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &p) override;
+	void blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &p, Graphics::AlphaType alphaType) override;
 
 	void applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle) override;
 

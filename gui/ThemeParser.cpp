@@ -537,6 +537,8 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 
 			if (!drawstep->blitSrc)
 				return parserError("The given filename hasn't been loaded into the GUI.");
+
+			drawstep->alphaType = drawstep->blitSrc->detectAlpha();
 		}
 
 		if (functionName == "roundedsq" || functionName == "circle" || functionName == "tab") {
