@@ -140,7 +140,7 @@ RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 	delete[] pFileData;
 
 	_doCleanup = true;
-	_alphaType = checkForTransparency();
+	_alphaType = _surface.detectAlpha();
 
 	return;
 }
@@ -258,26 +258,6 @@ void RenderedImage::copyDirectly(int posX, int posY) {
 	h = CLIP((int)h, 0, (int)MAX((int)_backSurface->h - posY, 0));
 
 	g_system->copyRectToScreen(data, _backSurface->pitch, posX, posY, w, h);
-}
-
-Graphics::AlphaType RenderedImage::checkForTransparency() const {
-	// Check if the source bitmap has any transparent pixels at all
-	Graphics::AlphaType alphaType = Graphics::ALPHA_OPAQUE;
-	uint32 mask = _surface.format.ARGBToColor(0xff, 0, 0, 0);
-	const uint32 *data = (const uint32 *)_surface.getPixels();
-
-	for (int i = 0; i < _surface.h; i++) {
-		for (int j = 0; j < _surface.w; j++) {
-			if ((*data & mask) != mask) {
-				if ((*data & mask) != 0)
-					return Graphics::ALPHA_FULL;
-				else
-					alphaType = Graphics::ALPHA_BINARY;
-			}
-			data++;
-		}
-	}
-	return alphaType;
 }
 
 } // End of namespace Sword25
