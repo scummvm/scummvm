@@ -74,6 +74,7 @@ ErrorCode CBagCharacterObject::attach() {
 	decoder->setSoundType(Audio::Mixer::kSFXSoundType);
 	if (!decoder->loadFile(filename.getBuffer())) {
 		logError(buildString("CHAR SmackOpen failed: %s ", filename.getBuffer()));
+		delete decoder;
 		return ERR_FOPEN;
 	}
 

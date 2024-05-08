@@ -4558,12 +4558,11 @@ SrafTextScreen::SrafTextScreen(const CBofString &str, bool isText) :
 		_text = str;
 
 	} else {
-		CBofFile *file = new CBofFile(str, CBF_BINARY | CBF_READONLY);
-		assert(file != nullptr);
+		CBofFile file(str, CBF_BINARY | CBF_READONLY);
 
-		size_t len = file->getLength();
+		size_t len = file.getLength();
 		char *tmp = new char[len + 1];
-		file->read(tmp, len);
+		file.read(tmp, len);
 		tmp[len] = '\0';
 
 		_text = CBofString(tmp);
