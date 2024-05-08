@@ -41,8 +41,7 @@ namespace Bagel {
 #define PATH_DELIMETER "/"
 #define DISK_1 1
 
-#define BAG_INSTALL_NONE 0 /* play entire game from where it was executed */
-#define BAG_INSTALL_DEFAULT BAG_INSTALL_NONE
+#define BAG_INSTALL_DEFAULT 0 /* play entire game from where it was executed */
 
 #define HOMEDIR_TOKEN "$SBARDIR" /* Change this to $HOMEDIR  */
 // THE CURRENT STORAGE DEVICE OF THE GAME

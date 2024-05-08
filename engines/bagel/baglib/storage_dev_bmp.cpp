@@ -31,7 +31,8 @@ CBagStorageDevBmp::CBagStorageDevBmp(CBofWindow *pParent, const CBofRect &xRect,
 	_xSDevType = SDEV_BMP;
 	setRect(xRect);
 	_pWorkBmp = nullptr;
-
+	_nMaskColor = CBagel::getBagApp()->getChromaColor();
+	
 	CBagStorageDev::setAssociateWnd(pParent);
 
 	setVisible();       // This object is visible
