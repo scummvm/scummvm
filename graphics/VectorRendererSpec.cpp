@@ -785,7 +785,7 @@ blitSurface(const Graphics::ManagedSurface *source, const Common::Rect &r) {
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &p) {
+blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &p, Graphics::AlphaType alphaType) {
 	Common::Rect drawRect(p.x, p.y, p.x + source->w, p.y + source->h);
 	drawRect.clip(_clippingArea);
 	drawRect.translate(-p.x, -p.y);
@@ -803,7 +803,11 @@ blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &
 		np = p;
 	}
 
-	_activeSurface->blitFrom(*source, drawRect, np);
+	if (alphaType != Graphics::ALPHA_OPAQUE) {
+		_activeSurface->transBlitFrom(*source, drawRect, np);
+	} else {
+		_activeSurface->simpleBlitFrom(*source, drawRect, np);
+	}
 }
 
 template<typename PixelType>
