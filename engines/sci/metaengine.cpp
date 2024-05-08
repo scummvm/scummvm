@@ -181,8 +181,8 @@ static bool isSierraDemo(const Common::String &sierraId, uint32 resourceCount) {
 }
 
 /**
- * Converts the builtin Sierra game IDs to the ones we use in ScummVM
- * @param[in] sierraId		The internal game ID
+ * Converts the builtin Sierra game object name to the ID we use in ScummVM
+ * @param[in] sierraId		The internal `Game` object's name
  * @param[in] sciVersion    The detected SCI version
  * @param[in] resMan		The resource manager
  * @param[in] isDemo        Returns a flag if it's a demo
@@ -261,7 +261,8 @@ static Common::String convertSierraGameId(Common::String sierraId, SciVersion sc
 		return "qfg3";
 	}
 
-	return sierraId;
+	// We don't recognize the game object name; assume it's a fan game.
+	return "sci-fanmade";
 }
 
 } // End of namespace Sci
