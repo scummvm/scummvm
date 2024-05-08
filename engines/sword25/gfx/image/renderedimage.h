@@ -113,8 +113,6 @@ private:
 	bool _doCleanup;
 
 	Graphics::ManagedSurface *_backSurface;
-
-	Graphics::AlphaType checkForTransparency() const;
 };
 
 } // End of namespace Sword25

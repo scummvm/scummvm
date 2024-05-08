@@ -32,6 +32,7 @@ struct Point;
 }
 
 #include "graphics/pixelformat.h"
+#include "graphics/transform_struct.h"
 
 namespace Graphics {
 
@@ -511,6 +512,11 @@ public:
 	 * @param skipTransparent  if set to true, then do not touch pixels with alpha=0
 	 */
 	bool setAlpha(uint8 alpha, bool skipTransparent = false);
+
+	/**
+	 * Checks if the given surface contains alpha transparency
+	 */
+	AlphaType detectAlpha() const;
 
 	/**
 	 * Scale the data to the given size.

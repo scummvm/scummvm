@@ -443,6 +443,28 @@ bool Surface::setAlpha(uint8 alpha, bool skipTransparent) {
 	                          skipTransparent, alpha);
 }
 
+AlphaType Surface::detectAlpha() const {
+	if (format.isCLUT8() || format.aBits() == 0)
+		return ALPHA_OPAQUE;
+
+	const uint32 mask = format.ARGBToColor(0xff, 0, 0, 0);
+	AlphaType alphaType = ALPHA_OPAQUE;
+
+	for (int y = 0; y < h; y++) {
+		for (int x = 0; x < w; x++) {
+			uint32 pixel = getPixel(x, y);
+			if ((pixel & mask) != mask) {
+				if ((pixel & mask) == 0)
+					alphaType = ALPHA_BINARY;
+				else
+					return ALPHA_FULL;
+			}
+		}
+	}
+
+	return alphaType;
+}
+
 Graphics::Surface *Surface::scale(int16 newWidth, int16 newHeight, bool filtering) const {
 	Graphics::Surface *target = new Graphics::Surface();
 

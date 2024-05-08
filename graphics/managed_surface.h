@@ -714,6 +714,13 @@ public:
 	}
 
 	/**
+	 * Checks if the given surface contains alpha transparency
+	 */
+	AlphaType detectAlpha() const {
+		return _innerSurface.detectAlpha();
+	}
+
+	/**
 	 * Return a sub-area of the screen, but only add a single initial dirty rect
 	 * for the retrieved area.
 	 */
