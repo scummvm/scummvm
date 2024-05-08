@@ -1145,6 +1145,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "ukiukistamp",		"うきうきスタンプ" },
 	{ "ukyo1",				"うきょー1" },
 	{ "ursaminorblue",		"銀河の魚 URSA minor BLUE" },				// Galaxy Fish: Ursa Minor Blue
+	{ "uruuruexcellent",	"うるうる The Excellent Edition" }, // Uruuru: The Excellent Edition
 	{ "victorianpark",		"Victorian Park" },
 	{ "void",				"VOID" },
 	{ "vvs",				"Virtual Variety Show" },
@@ -5671,6 +5672,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("universe", "", "xn--Invisible Universe -ere/Invisible Universe", "78138a77207907642744d0960c14d9e5", 596510, 404),
 	WINGAME2t("universe", "", "UNIVERSE/UNIVERSE.EXE", "2ae0654d19de7b366e9d6e9ac4588c50", 700157,
 							  "UNIVERSE/STARTUP.DIR",  "34d4084b17cea8982fd24f9561d77d65", 24958, 404),
+
+	// Original filename is "はじめる"
+	MACGAME1t_l("uruuruexcellent", "", "xn--78j2bxcxb", "bd4b12aa33ec2deae4e26b2f6f744ba7", 294107, Common::JA_JPN, 404),
+	// Decomposed variant of the above
+	MACGAME1t_l("uruuruexcellent", "", "xn--68j4bvcxb0d", "bd4b12aa33ec2deae4e26b2f6f744ba7", 294107, Common::JA_JPN, 404),
 
 	WINGAME1t("ushistory", "", "HISTORY.EXE", "5660e6a7b772b5bf8867627ab0d7a58b", 703629, 404),
 
