@@ -145,7 +145,8 @@ CBagStorageDev::~CBagStorageDev() {
 	if (!_bForiegnList) {
 
 		if (_pObjectList != nullptr) {
-			releaseObjects();                            // Delete all master sprite objects
+			// Delete all master sprite objects
+			CBagStorageDev::releaseObjects();
 			delete _pObjectList;
 			_pObjectList = nullptr;
 		}
@@ -1327,10 +1328,8 @@ ErrorCode CBagStorageDevWnd::setWorkBmp() {
 
 
 ErrorCode CBagStorageDevWnd::killWorkBmp() {
-	if (_pWorkBmp != nullptr) {
-		delete _pWorkBmp;
-		_pWorkBmp = nullptr;
-	}
+	delete _pWorkBmp;
+	_pWorkBmp = nullptr;
 
 	return _errCode;
 }
@@ -1746,22 +1745,18 @@ ErrorCode CBagStorageDevDlg::create(const char *pszName, CBofRect *pRect, CBofWi
 
 
 void CBagStorageDevDlg::onClose() {
-	if (_pDlgBackground != nullptr) {
-		delete _pDlgBackground;
-		_pDlgBackground = nullptr;
-	}
+	delete _pDlgBackground;
+	_pDlgBackground = nullptr;
 
 	// Since our sdevdlg doesn't have a detach active objects
 	// method, we will have to manually take all the existing objects and
 	// tell them to redraw themselves should they ever be called on in life
 	// to do as such.
 	int nCount = getObjectCount();
-	if (nCount != 0) {
-		for (int i = 0; i < nCount; ++i) {
-			CBagObject *pObj = getObjectByPos(i);
-			if (pObj != nullptr) {
-				pObj->setDirty(true);
-			}
+	for (int i = 0; i < nCount; ++i) {
+		CBagObject *pObj = getObjectByPos(i);
+		if (pObj != nullptr) {
+			pObj->setDirty(true);
 		}
 	}
 
@@ -1801,13 +1796,14 @@ void CBagStorageDevDlg::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 }
 
 CBagStorageDevManager::CBagStorageDevManager() {
-	assert(++nSDevMngrs < 2);
+	++nSDevMngrs;
+	assert(nSDevMngrs < 2);
 }
 
 CBagStorageDevManager::~CBagStorageDevManager() {
 	assert(isValidObject(this));
-
-	assert(--nSDevMngrs >= 0);
+	--nSDevMngrs;
+	assert(nSDevMngrs >= 0);
 	releaseStorageDevices();
 	_xStorageDeviceList.removeAll();
 }
@@ -1898,6 +1894,7 @@ bool CBagStorageDevManager::moveObject(const CBofString &sDstName, const CBofStr
 	// Find the storage device
 	if (pDstSDev->activateLocalObject(sObjName) != ERR_NONE)
 		return false;
+	
 	if (pSrcSDev->deactivateLocalObject(sObjName) != ERR_NONE) {
 		pDstSDev->deactivateLocalObject(sObjName);
 		return false;
