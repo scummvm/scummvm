@@ -1202,12 +1202,13 @@ void CBagRPObject::saveResiduePrintedVars() {
 		}
 	}
 
-	// Now handle touched dossier's
-	int nCount = _pTouchedList->getCount();
-	assert(nCount <= 3);
 	DossierObj *pDosObj;
 
 	if (_pTouchedList) {
+		// Now handle touched dossier's
+		int nCount = _pTouchedList->getCount();
+		assert(nCount <= 3);
+
 		for (int i = 0; i < nCount; i++) {
 			pDosObj = _pTouchedList->getNodeItem(i);
 			switch (i) {
@@ -1224,11 +1225,11 @@ void CBagRPObject::saveResiduePrintedVars() {
 		}
 	}
 
-	// Now handle untouched dossier's
-	nCount = _pUntouchedList->getCount();
-	assert(nCount <= 3);
-
 	if (_pUntouchedList) {
+		// Now handle untouched dossier's
+		int nCount = _pUntouchedList->getCount();
+		assert(nCount <= 3);
+
 		for (int i = 0; i < nCount; i++) {
 			pDosObj = _pUntouchedList->getNodeItem(i);
 			switch (i) {
@@ -1288,12 +1289,13 @@ void CBagRPObject::restoreResiduePrintedVars() {
 		}
 	}
 
-	// Now handle touched dossier's
-	int nCount = _pTouchedList->getCount();
-	assert(nCount <= 3);
 	DossierObj *pDosObj;
 
 	if (_pTouchedList) {
+		// Now handle touched dossier's
+		int nCount = _pTouchedList->getCount();
+		assert(nCount <= 3);
+
 		for (int i = 0; i < nCount; i++) {
 			pDosObj = _pTouchedList->getNodeItem(i);
 			switch (i) {
@@ -1310,11 +1312,11 @@ void CBagRPObject::restoreResiduePrintedVars() {
 		}
 	}
 
-	// Now handle untouched dossier's
-	nCount = _pUntouchedList->getCount();
-	assert(nCount <= 3);
-
 	if (_pUntouchedList) {
+		// Now handle untouched dossier's
+		int nCount = _pUntouchedList->getCount();
+		assert(nCount <= 3);
+
 		for (int i = 0; i < nCount; i++) {
 			pDosObj = _pUntouchedList->getNodeItem(i);
 			switch (i) {
