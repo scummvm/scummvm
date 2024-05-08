@@ -1530,7 +1530,6 @@ void LB::b_halt(int nargs) {
 
 void LB::b_pass(int nargs) {
 	g_lingo->_passEvent = true;
-	warning("pass raised");
 }
 
 void LB::b_pause(int nargs) {

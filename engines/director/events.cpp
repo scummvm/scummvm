@@ -189,33 +189,6 @@ bool Movie::processEvent(Common::Event &event) {
 		} else {
 			pos = event.mouse;
 
-			// D3 doesn't have both mouse up and down.
-			// But we still want to know if the mouse is down for press effects.
-			// Since we don't have mouse up and down before D3, then we use ActiveSprite
-			if (g_director->getVersion() < 400)
-				spriteId = sc->getActiveSpriteIDFromPos(pos);
-			else
-				spriteId = sc->getMouseSpriteIDFromPos(pos);
-
-			_currentActiveSpriteId = sc->getActiveSpriteIDFromPos(pos); // the clickOn
-			_currentMouseSpriteId = sc->getMouseSpriteIDFromPos(pos);
-			_currentMouseDownCastID = sc->_channels[spriteId]->_sprite->_castId;
-
-			if (!spriteId && _isBeepOn) {
-				g_lingo->func_beep(1);
-			}
-
-			if (spriteId > 0 && sc->_channels[spriteId]->_sprite->shouldHilite()) {
-				_currentHiliteChannelId = spriteId;
-				g_director->_wm->_hilitingWidget = true;
-				g_director->getCurrentWindow()->setDirty(true);
-				g_director->getCurrentWindow()->addDirtyRect(sc->_channels[_currentHiliteChannelId]->getBbox());
-			}
-
-			CastMember *cast = getCastMember(sc->_channels[spriteId]->_sprite->_castId);
-			if (cast && cast->_type == kCastButton)
-				_mouseDownWasInButton = true;
-
 			_lastEventTime = g_director->getMacTicks();
 			_lastClickTime2 = _lastClickTime;
 			_lastClickTime = _lastEventTime;
@@ -223,13 +196,8 @@ bool Movie::processEvent(Common::Event &event) {
 			if (_timeOutMouse)
 				_lastTimeOut = _lastEventTime;
 
-			debugC(3, kDebugEvents, "Movie::processEvent(): Button Down @(%d, %d), movie '%s', sprite id: %d", pos.x, pos.y, _macName.c_str(), spriteId);
-			queueInputEvent(kEventMouseDown, spriteId);
-
-			if (sc->_channels[spriteId]->_sprite->_moveable) {
-				_draggingSpriteOffset = sc->_channels[spriteId]->_currentPoint - pos;
-				_currentDraggedChannel = sc->_channels[spriteId];
-			}
+			debugC(3, kDebugEvents, "Movie::processEvent(): Button Down @(%d, %d), movie '%s'", pos.x, pos.y, _macName.c_str());
+			queueInputEvent(kEventMouseDown, 0, pos);
 		}
 
 		return true;
@@ -238,39 +206,10 @@ bool Movie::processEvent(Common::Event &event) {
 	case Common::EVENT_RBUTTONUP:
 		pos = event.mouse;
 
-		if (g_director->getVersion() < 400)
-			spriteId = _currentActiveSpriteId;
-		else
-			spriteId = _currentMouseSpriteId;
+		debugC(3, kDebugEvents, "Movie::processEvent(): Button Up @(%d, %d), movie '%s'", pos.x, pos.y, _macName.c_str());
 
-		if (_currentHiliteChannelId && sc->_channels[_currentHiliteChannelId]) {
-			g_director->getCurrentWindow()->setDirty(true);
-			g_director->getCurrentWindow()->addDirtyRect(sc->_channels[_currentHiliteChannelId]->getBbox());
-		}
-
-		g_director->_wm->_hilitingWidget = false;
-
-		debugC(3, kDebugEvents, "Movie::processEvent(): Button Up @(%d, %d), movie '%s', sprite id: %d", pos.x, pos.y, _macName.c_str(), spriteId);
-
-		_currentDraggedChannel = nullptr;
-
-		// If this is a button cast member, and the last mouse down event was in a button
-		// (any button), flip this button's hilite flag.
-		// Now you might think, "Wait, we don't flip this flag in the mouseDown event.
-		// And why any button??? This doesn't make any sense."
-		// No, it doesn't make sense, but it's what Director does.
-		if (_mouseDownWasInButton) {
-			CastMember *cast = getCastMember(sc->_channels[spriteId]->_sprite->_castId);
-			if (cast && cast->_type == kCastButton)
-				cast->_hilite = !cast->_hilite;
-		}
-
-		queueInputEvent(kEventMouseUp, spriteId);
+		queueInputEvent(kEventMouseUp, 0, pos);
 		sc->renderCursor(pos);
-
-		_currentHiliteChannelId = 0;
-		_mouseDownWasInButton = false;
-		g_director->loadSlowdownCooloff();
 		return true;
 
 	case Common::EVENT_KEYDOWN:

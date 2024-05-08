@@ -71,6 +71,15 @@ enum ScriptType {
 	kMaxScriptType = 7	// Sync with types.cpp:28, array scriptTypes[]
 };
 
+enum EventHandlerSourceType {
+	kNoneHandler = 0,
+	kPrimaryHandler = 1,
+	kSpriteHandler = 2,
+	kCastHandler = 3,
+	kFrameHandler = 4,
+	kMovieHandler = 5
+};
+
 enum ScriptFlag {
 	kScriptFlagUnused		= (1 << 0x0),
 	kScriptFlagFuncsGlobal	= (1 << 0x1),

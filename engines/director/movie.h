@@ -130,16 +130,15 @@ public:
 
 	// lingo/lingo-events.cpp
 	void setPrimaryEventHandler(LEvent event, const Common::String &code);
+	void resolveScriptEvent(LingoEvent &event);
 	void processEvent(LEvent event, int targetId = 0);
-	void queueInputEvent(LEvent event, int targetId = 0);
+	void queueInputEvent(LEvent event, int targetId = 0, Common::Point pos = Common::Point(-1, -1));
 
 private:
 	void loadFileInfo(Common::SeekableReadStreamEndian &stream);
 
-	void queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targetId = 0);
+	void queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targetId = 0, Common::Point pos = Common::Point(-1, -1));
 	void queueSpriteEvent(Common::Queue<LingoEvent> &queue, LEvent event, int eventId, int spriteId);
-	void queueFrameEvent(Common::Queue<LingoEvent> &queue, LEvent event, int eventId);
-	void queueMovieEvent(Common::Queue<LingoEvent> &queue, LEvent event, int eventId);
 
 public:
 	Archive *_movieArchive;
