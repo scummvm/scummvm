@@ -228,6 +228,73 @@ void ManagedSurface::copyFrom(const Surface &surf) {
 	}
 }
 
+void ManagedSurface::simpleBlitFrom(const Surface &src, const Palette *srcPalette) {
+	simpleBlitFrom(src, Common::Rect(0, 0, src.w, src.h), Common::Point(0, 0), srcPalette);
+}
+
+void ManagedSurface::simpleBlitFrom(const Surface &src, const Common::Point &destPos, const Palette *srcPalette) {
+	simpleBlitFrom(src, Common::Rect(0, 0, src.w, src.h), destPos, srcPalette);
+}
+
+void ManagedSurface::simpleBlitFrom(const Surface &src, const Common::Rect &srcRect,
+		const Common::Point &destPos, const Palette *srcPalette) {
+	simpleBlitFromInner(src, srcRect, destPos, srcPalette, false, 0);
+}
+
+void ManagedSurface::simpleBlitFrom(const ManagedSurface &src) {
+	simpleBlitFrom(src, Common::Rect(0, 0, src.w, src.h), Common::Point(0, 0));
+}
+
+void ManagedSurface::simpleBlitFrom(const ManagedSurface &src, const Common::Point &destPos) {
+	simpleBlitFrom(src, Common::Rect(0, 0, src.w, src.h), destPos);
+}
+
+void ManagedSurface::simpleBlitFrom(const ManagedSurface &src, const Common::Rect &srcRect,
+		const Common::Point &destPos) {
+	simpleBlitFromInner(src._innerSurface, srcRect, destPos, src._palette,
+		src._transparentColorSet, src._transparentColor);
+}
+
+void ManagedSurface::simpleBlitFromInner(const Surface &src, const Common::Rect &srcRect,
+		const Common::Point &destPos, const Palette *srcPalette,
+		bool transparentColorSet, uint transparentColor) {
+
+	Common::Rect srcRectC = srcRect;
+	Common::Rect dstRectC = srcRect;
+
+	dstRectC.moveTo(destPos.x, destPos.y);
+	clip(srcRectC, dstRectC);
+
+	const byte *srcPtr = (const byte *)src.getBasePtr(srcRectC.left, srcRectC.top);
+	byte *dstPtr = (byte *)getBasePtr(dstRectC.left, dstRectC.top);
+
+	if (src.format.isCLUT8()) {
+		assert(srcPalette);
+		assert(format.isCLUT8());
+
+		uint32 map[256];
+		convertPaletteToMap(map, srcPalette->data(), srcPalette->size(), format);
+
+		if (transparentColorSet) {
+			crossKeyBlitMap(dstPtr, srcPtr, pitch, src.pitch, srcRectC.width(), srcRectC.height(),
+				format.bytesPerPixel, map, transparentColor);
+		} else {
+			crossBlitMap(dstPtr, srcPtr, pitch, src.pitch, srcRectC.width(), srcRectC.height(),
+				format.bytesPerPixel, map);
+		}
+	} else {
+		if (transparentColorSet) {
+			crossKeyBlit(dstPtr, srcPtr, pitch, src.pitch, srcRectC.width(), srcRectC.height(),
+				format, src.format, transparentColor);
+		} else {
+			crossBlit(dstPtr, srcPtr, pitch, src.pitch, srcRectC.width(), srcRectC.height(),
+				format, src.format);
+		}
+	}
+
+	addDirtyRect(dstRectC);
+}
+
 void ManagedSurface::blitFrom(const Surface &src, const Palette *srcPalette) {
 	blitFrom(src, Common::Rect(0, 0, src.w, src.h), Common::Point(0, 0), srcPalette);
 }
