@@ -261,18 +261,33 @@ struct CFrame {	/* proc/func call stack frame */
 struct LingoEvent {
 	LEvent event;
 	int eventId;
+	EventHandlerSourceType eventHandlerSourceType;
 	ScriptType scriptType;
-	CastMemberID scriptId;
 	bool passByDefault;
-	int channelId;
+	uint16 channelId;
+	CastMemberID scriptId;
+	Common::Point mousePos;
 
-	LingoEvent (LEvent e, int ei, ScriptType st, CastMemberID si, bool pass, int ci = -1) {
+	LingoEvent (LEvent e, int ei, ScriptType st, bool pass, CastMemberID si = CastMemberID(), Common::Point mp = Common::Point(-1, -1)) {
 		event = e;
 		eventId = ei;
+		eventHandlerSourceType = kNoneHandler;
 		scriptType = st;
-		scriptId = si;
 		passByDefault = pass;
-		channelId = ci;
+		channelId = 0;
+		scriptId = si;
+		mousePos = mp;
+	}
+
+	LingoEvent (LEvent e, int ei, EventHandlerSourceType ehst, bool pass, Common::Point mp = Common::Point(-1, -1)) {
+		event = e;
+		eventId = ei;
+		eventHandlerSourceType = ehst;
+		scriptType = kNoneScript;
+		passByDefault = pass;
+		channelId = 0;
+		scriptId = CastMemberID();
+		mousePos = mp;
 	}
 };
 
