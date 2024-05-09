@@ -104,7 +104,7 @@ bool CCache::flush() {
 }
 
 bool CCache::optimize(uint32 lRequestedFreeSpace) {
-	logInfo(buildString("CCache::optimize(%ld)", lRequestedFreeSpace));
+	logInfo(buildString("CCache::optimize(%u)", lRequestedFreeSpace));
 
 	bool bSuccess = true;
 	while (getFreePhysMem() < lRequestedFreeSpace) {
@@ -118,7 +118,7 @@ bool CCache::optimize(uint32 lRequestedFreeSpace) {
 			if (pCache->_bCached && (pCache->_nLockCount <= 0)) {
 				nObjects++;
 				if (pCache->_lAge >= lAvgAge) {
-					logInfo(buildString("Freeing Object: %08lx from the Cache list", pCache));
+					logInfo(buildString("Freeing Object: %p from the Cache list", pCache));
 					pCache->release();
 				}
 			}

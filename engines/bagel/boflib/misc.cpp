@@ -77,7 +77,7 @@ void *bofMemAlloc(uint32 nSize, const char *pFile, int nLine, bool bClear) {
 	}
 
 	if (pNewBlock == nullptr) {
-		logError(buildString("Could not allocate %ld bytes, file %s, line %d", nSize, pFile, nLine));
+		logError(buildString("Could not allocate %u bytes, file %s, line %d", nSize, pFile, nLine));
 	}
 
 	return pNewBlock;
