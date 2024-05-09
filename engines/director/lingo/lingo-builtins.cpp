@@ -687,8 +687,11 @@ void LB::b_count(int nargs) {
 	case PARRAY:
 		result.u.i = list.u.parr->arr.size();
 		break;
+	case OBJECT:
+		result.u.i = list.u.obj->getPropCount();
+		break;
 	default:
-		TYPECHECK2(list, ARRAY, PARRAY);
+		TYPECHECK3(list, ARRAY, PARRAY, OBJECT);
 	}
 
 	g_lingo->push(result);
@@ -822,8 +825,21 @@ void LB::b_getaProp(int nargs) {
 		g_lingo->push(d);
 		break;
 	}
+	case OBJECT:
+		{
+			if (prop.type != SYMBOL) {
+				g_lingo->lingoError("b_getaProp(): symbol expected");
+				return;
+			}
+			Datum d;
+			if (list.u.obj->hasProp(*prop.u.s))
+				d = list.u.obj->getProp(*prop.u.s);
+			g_lingo->push(d);
+		}
+		break;
 	default:
-		TYPECHECK2(list, ARRAY, PARRAY);
+		TYPECHECK3(list, ARRAY, PARRAY, OBJECT);
+		break;
 	}
 }
 
@@ -927,7 +943,6 @@ void LB::b_getPos(int nargs) {
 void LB::b_getProp(int nargs) {
 	Datum prop = g_lingo->pop();
 	Datum list = g_lingo->pop();
-	TYPECHECK2(list, ARRAY, PARRAY);
 
 	switch (list.type) {
 	case ARRAY:
@@ -944,7 +959,20 @@ void LB::b_getProp(int nargs) {
 		}
 		break;
 	}
+	case OBJECT:
+		{
+			if (prop.type != SYMBOL) {
+				g_lingo->lingoError("b_getProp(): symbol expected");
+				return;
+			}
+			Datum d;
+			if (list.u.obj->hasProp(*prop.u.s))
+				d = list.u.obj->getProp(*prop.u.s);
+			g_lingo->push(d);
+		}
+		break;
 	default:
+		TYPECHECK3(list, ARRAY, PARRAY, OBJECT);
 		break;
 	}
 }
@@ -953,10 +981,34 @@ void LB::b_getPropAt(int nargs) {
 	Datum indexD = g_lingo->pop();
 	Datum list = g_lingo->pop();
 	TYPECHECK2(indexD, INT, FLOAT);
-	TYPECHECK(list, PARRAY);
 	int index = indexD.asInt();
+	switch (list.type) {
+	case PARRAY:
+		{
+			if ((index <= 0) || (index > (int)list.u.parr->arr.size())) {
+				g_lingo->lingoError("b_getPropAt(): index out of range");
+				return;
+			}
+			g_lingo->push(list.u.parr->arr[index - 1].p);
+		}
+		break;
+	case OBJECT:
+		{
+			if ((index <= 0) || (index > (int)list.u.obj->getPropCount())) {
+				g_lingo->lingoError("b_getPropAt(): index out of range");
+				return;
+			}
+			Common::String key = list.u.obj->getPropAt(index);
+			Datum result(key);
+			result.type = SYMBOL;
+			g_lingo->push(result);
+		}
+		break;
+	default:
+		TYPECHECK2(list, PARRAY, OBJECT);
+		break;
+	}
 
-	g_lingo->push(list.u.parr->arr[index - 1].p);
 }
 
 void LB::b_list(int nargs) {
@@ -1067,6 +1119,15 @@ void LB::b_setaProp(int nargs) {
 		}
 		break;
 	}
+	case OBJECT:
+		{
+			if (prop.type != SYMBOL) {
+				g_lingo->lingoError("b_setaProp(): symbol expected");
+				return;
+			}
+			list.u.obj->setProp(*prop.u.s, value);
+		}
+		break;
 	default:
 		TYPECHECK2(list, ARRAY, PARRAY);
 	}
@@ -1108,13 +1169,32 @@ void LB::b_setProp(int nargs) {
 	Datum value = g_lingo->pop();
 	Datum prop = g_lingo->pop();
 	Datum list = g_lingo->pop();
-	TYPECHECK(list, PARRAY);
 
-	int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
-	if (index > 0) {
-		list.u.parr->arr[index - 1].v = value;
-	} else {
-		warning("b_setProp: Property not found");
+	switch (list.type) {
+	case PARRAY:
+		{
+			int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
+			if (index > 0) {
+				list.u.parr->arr[index - 1].v = value;
+			} else {
+				warning("b_setProp: Property not found");
+			}
+		}
+		break;
+	case OBJECT:
+		{
+			if (prop.type != SYMBOL) {
+				g_lingo->lingoError("b_setProp(): symbol expected");
+				return;
+			}
+			// unlike the PARRAY case, OBJECT seems to create
+			// new properties without throwing an error
+			list.u.obj->setProp(*prop.u.s, value);
+		}
+		break;
+	default:
+		TYPECHECK2(list, PARRAY, OBJECT);
+		break;
 	}
 }
 

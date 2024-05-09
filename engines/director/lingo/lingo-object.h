@@ -54,6 +54,8 @@ public:
 	virtual Symbol getMethod(const Common::String &methodName) = 0;
 	virtual bool hasProp(const Common::String &propName) = 0;
 	virtual Datum getProp(const Common::String &propName) = 0;
+	virtual Common::String getPropAt(uint32 index) = 0;
+	virtual uint32 getPropCount() = 0;
 	virtual bool setProp(const Common::String &propName, const Datum &value) = 0;
 	virtual bool hasField(int field) = 0;
 	virtual Datum getField(int field) = 0;
@@ -173,6 +175,12 @@ public:
 	Datum getProp(const Common::String &propName) override {
 		return Datum();
 	};
+	Common::String getPropAt(uint32 index) override {
+		return Common::String();
+	};
+	uint32 getPropCount() override {
+		return 0;
+	};
 	bool setProp(const Common::String &propName, const Datum &value) override {
 		return false;
 	};
@@ -227,6 +235,8 @@ public:
 	Symbol getMethod(const Common::String &methodName) override;
 	bool hasProp(const Common::String &propName) override;
 	Datum getProp(const Common::String &propName) override;
+	Common::String getPropAt(uint32 index) override;
+	uint32 getPropCount() override;
 	bool setProp(const Common::String &propName, const Datum &value) override;
 
 	Symbol define(const Common::String &name, ScriptData *code, Common::Array<Common::String> *argNames, Common::Array<Common::String> *varNames);
