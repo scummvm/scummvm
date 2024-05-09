@@ -107,13 +107,14 @@ static void showControlPanel() {
 
 	ImVec2 vp(ImGui::GetMainViewport()->Size);
 	ImGui::SetNextWindowPos(ImVec2(vp.x - 220.0f, 20.0f), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(200, 55), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(200, 80), ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Control Panel", &_state->_showControlPanel)) {
 		Score *score = g_director->getCurrentMovie()->getScore();
 		ImDrawList *dl = ImGui::GetWindowDrawList();
 
 		ImU32 color = ImGui::GetColorU32(ImVec4(0.8f, 0.8f, 0.8f, 1.0f));
+		ImU32 color_red = ImGui::GetColorU32(ImVec4(1.0f, 0.6f, 0.6f, 1.0f));
 		ImU32 active_color = ImGui::GetColorU32(ImVec4(1.0f, 1.0f, 0.4f, 1.0f));
 		ImU32 bgcolor = ImGui::GetColorU32(ImVec4(0.2f, 0.2f, 1.0f, 1.0f));
 		ImVec2 p = ImGui::GetCursorScreenPos();
@@ -227,6 +228,68 @@ static void showControlPanel() {
 		ImGui::SetNextItemWidth(30);
 		ImGui::InputText("##frame", buf, 5, ImGuiInputTextFlags_CharsDecimal);
 		ImGui::SetItemTooltip("Frame");
+
+		ImGui::Separator();
+		ImGui::Separator();
+		ImGui::Text("Lingo:");
+		ImGui::SameLine();
+		{ // Step over
+			p = ImGui::GetCursorScreenPos();
+			ImGui::InvisibleButton("Step Over", buttonSize);
+
+			if (ImGui::IsItemClicked(0))
+				score->_playState = kPlayStarted;
+
+			if (ImGui::IsItemHovered())
+				dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
+
+			dl->PathArcToFast(ImVec2(p.x + 9, p.y + 15), 10.0f, 7, 11);
+			dl->PathStroke(color_red, 0, 2);
+			dl->AddLine(ImVec2(p.x + 18, p.y + 5), ImVec2(p.x + 18, p.y + 10), color_red, 2);
+			dl->AddLine(ImVec2(p.x + 14, p.y + 10), ImVec2(p.x + 18, p.y + 10), color_red, 2);
+			dl->AddCircleFilled(ImVec2(p.x + 9, p.y + 15), 2.0f, color);
+
+			ImGui::SetItemTooltip("Step Over");
+			ImGui::SameLine();
+		}
+
+		{ // Step into
+			p = ImGui::GetCursorScreenPos();
+			ImGui::InvisibleButton("Step Into", buttonSize);
+
+			if (ImGui::IsItemClicked(0))
+				score->_playState = kPlayStarted;
+
+			if (ImGui::IsItemHovered())
+				dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
+
+			dl->AddLine(ImVec2(p.x + 8.5f, p.y + 1), ImVec2(p.x + 8.5f, p.y + 10), color_red, 2);
+			dl->AddLine(ImVec2(p.x + 5.5f, p.y + 6), ImVec2(p.x + 8.5f, p.y + 9), color_red, 2);
+			dl->AddLine(ImVec2(p.x + 12, p.y + 6),   ImVec2(p.x + 8.5f, p.y + 9), color_red, 2);
+			dl->AddCircleFilled(ImVec2(p.x + 9, p.y + 15), 2.0f, color);
+
+			ImGui::SetItemTooltip("Step Into");
+			ImGui::SameLine();
+		}
+
+		{ // Step out
+			p = ImGui::GetCursorScreenPos();
+			ImGui::InvisibleButton("Step Out", buttonSize);
+
+			if (ImGui::IsItemClicked(0))
+				score->_playState = kPlayStarted;
+
+			if (ImGui::IsItemHovered())
+				dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
+
+			dl->AddLine(ImVec2(p.x + 8.5f, p.y + 1), ImVec2(p.x + 8.5f, p.y + 10), color_red, 2);
+			dl->AddLine(ImVec2(p.x + 5.5f, p.y + 5), ImVec2(p.x + 8.5f, p.y + 1), color_red, 2);
+			dl->AddLine(ImVec2(p.x + 12, p.y + 5),   ImVec2(p.x + 8.5f, p.y + 1), color_red, 2);
+			dl->AddCircleFilled(ImVec2(p.x + 9, p.y + 15), 2.0f, color);
+
+			ImGui::SetItemTooltip("Step Out");
+			ImGui::SameLine();
+		}
 	}
 	ImGui::End();
 }
