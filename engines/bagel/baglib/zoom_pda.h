@@ -33,31 +33,31 @@ public:
 	/**
 	 * Constructor
 	 * @param pParent       Pointer to the parent window
-	 * @param xPoint        Upper-left corner of PDA in parent window
+	 * @param xRect         Pda in parent window
 	 * @param bActivated    State of PDA whe constructed (optional)
 	 */
 	SBZoomPda(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), bool bActivated = true);
 	static void initialize();
 
-	virtual ErrorCode attach();
-	virtual ErrorCode detach();
+	ErrorCode attach() override;
+	ErrorCode detach() override;
 
-	virtual ErrorCode loadFile(const CBofString &sFile);
-	virtual void onMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
+	ErrorCode loadFile(const CBofString &sFile) override;
+	void onMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr) override;
 
 	/**
 	 * Called to overload specific types of sprite objects
 	 * @retrn       Pointer to the new object
 	 */
-	CBagObject *onNewButtonObject(const CBofString &sInit);
+	CBagObject *onNewButtonObject(const CBofString &sInit) override;
 
-	virtual void onMainLoop();
+	void onMainLoop() override;
 
-	void onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
-	virtual ErrorCode onRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
+	void onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr) override;
+	ErrorCode onRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr) override;
 
-	virtual ErrorCode attachActiveObjects();
-	virtual ErrorCode detachActiveObjects();
+	ErrorCode attachActiveObjects() override;
+	ErrorCode detachActiveObjects() override;
 };
 
 } // namespace Bagel

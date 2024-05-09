@@ -52,10 +52,9 @@ CBagTextObject::CBagTextObject() : CBagObject() {
 }
 
 CBagTextObject::~CBagTextObject() {
-	if (_psInitInfo != nullptr) {
-		delete _psInitInfo;
-		_psInitInfo = nullptr;
-	}
+	delete _psInitInfo;
+	_psInitInfo = nullptr;
+
 	CBagTextObject::detach();
 }
 
@@ -159,7 +158,7 @@ ErrorCode CBagTextObject::attach() {
 						}
 					}
 
-					bofFree(pTextBuff); // Changed from delete.
+					bofFree(pTextBuff);
 
 				} else {
 					reportError(ERR_MEMORY);

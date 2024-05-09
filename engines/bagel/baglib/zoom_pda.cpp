@@ -25,14 +25,13 @@
 #include "bagel/baglib/rp_object.h"
 #include "bagel/baglib/wield.h"
 #include "bagel/baglib/zoom_pda.h"
-#include "bagel/boflib/app.h"
 
 namespace Bagel {
 
-#define ZOOMMOOWLD      "MOOZ_WLD"
-#define ZOOMINVWLD      "INVZ_WLD"
-#define ZOOMMAPWLD      "MAPZ_WLD"
-#define ZOOMLOGWLD      "LOGZ_WLD"
+#define ZOOM_MOO_WLD      "MOOZ_WLD"
+#define ZOOM_INV_WLD      "INVZ_WLD"
+#define ZOOM_MAP_WLD      "MAPZ_WLD"
+#define ZOOM_LOG_WLD      "LOGZ_WLD"
 
 // Keep track of updates...
 static uint32 g_lZoomPDALastUpdate;
@@ -76,24 +75,21 @@ ErrorCode SBZoomPda::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		paintStorageDevice(nullptr, pBmp, pRect);
 
 		// Paint the inventory or Map to backdrop
-		if (bUpdate) {
-			if (_curDisplay != nullptr) {
-				_curDisplay->update(pBmp, _curDisplay->getPosition(), pRect);
-			}
-		}
+		if (bUpdate && (_curDisplay != nullptr))
+			_curDisplay->update(pBmp, _curDisplay->getPosition(), pRect);
 	}
-
+	
 	return _errCode;
 }
 
 ErrorCode SBZoomPda::loadFile(const CBofString &sFile) {
-	ErrorCode error = CBagStorageDev::loadFile(sFile);
+	ErrorCode errorCode = CBagStorageDev::loadFile(sFile);
 	removeObject(_mooWnd);
 	removeObject(_invWnd);
 	removeObject(_mapWnd);
 	removeObject(_logWnd);
 
-	return error;
+	return errorCode;
 }
 
 ErrorCode SBZoomPda::detach() {
@@ -124,8 +120,8 @@ ErrorCode SBZoomPda::detach() {
 	// Since the regular PDA does not have a detach method (it doesn't get
 	// flushed out until you go to a flashback or quit the game), go through
 	// the entire list of RPO's (residue print objects) and restore the saved
-	// varible values.  We do this so that any values that were changed in
-	// the zoomed version are propagated down to the unzoomed pda.
+	// variable values.  We do this so that any values that were changed in
+	// the zoomed version are propagated down to the un-zoomed pda.
 
 	CBagRPObject::synchronizeResiduePrintedObjects(bLogZoomed);
 
@@ -142,7 +138,7 @@ ErrorCode SBZoomPda::attach() {
 	if (rc == ERR_NONE) {
 		CBagStorageDev *pSDev;
 		if (!_mooWnd) {
-			pSDev = g_SDevManager->getStorageDevice(ZOOMMOOWLD);
+			pSDev = g_SDevManager->getStorageDevice(ZOOM_MOO_WLD);
 
 			if (pSDev != nullptr) {
 				_mooWnd = (CBagStorageDevBmp *)pSDev;
@@ -157,7 +153,7 @@ ErrorCode SBZoomPda::attach() {
 		}
 
 		if (!_invWnd) {
-			pSDev = g_SDevManager->getStorageDevice(ZOOMINVWLD);
+			pSDev = g_SDevManager->getStorageDevice(ZOOM_INV_WLD);
 			if (pSDev != nullptr) {
 				_invWnd = (CBagStorageDevBmp *)pSDev;
 				_invWnd->setAssociateWnd(getAssociateWnd());
@@ -175,7 +171,7 @@ ErrorCode SBZoomPda::attach() {
 		}
 
 		if (!_mapWnd) {
-			pSDev = g_SDevManager->getStorageDevice(ZOOMMAPWLD);
+			pSDev = g_SDevManager->getStorageDevice(ZOOM_MAP_WLD);
 			if (pSDev != nullptr) {
 				_mapWnd = (CBagStorageDevBmp *)pSDev;
 				_mapWnd->setAssociateWnd(getAssociateWnd());
@@ -193,7 +189,7 @@ ErrorCode SBZoomPda::attach() {
 		}
 
 		if (!_logWnd) {
-			pSDev = g_SDevManager->getStorageDevice(ZOOMLOGWLD);
+			pSDev = g_SDevManager->getStorageDevice(ZOOM_LOG_WLD);
 			if (pSDev != nullptr) {
 				_logWnd = (CBagStorageDevBmp *)pSDev;
 				_logWnd->setAssociateWnd(getAssociateWnd());

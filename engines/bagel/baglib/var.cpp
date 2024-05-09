@@ -203,7 +203,7 @@ CBagVarManager::~CBagVarManager() {
 		releaseVariables();
 		_xVarList.removeAll();
 
-		for (int i = 0; i < VAR_HTABLE_SIZE; i++) {
+		for (int i = 0; i < VAR_HASH_TABLE_SIZE; i++) {
 			_xVarHashList[i].removeAll();
 		}
 	}
@@ -214,7 +214,7 @@ static int HASHVAR(const char *p, int l) {
 	for (int j = 0; j < l; j++) {
 		h += p[j];
 	}
-	h %= VAR_HTABLE_SIZE;
+	h %= VAR_HASH_TABLE_SIZE;
 
 	return h;
 }

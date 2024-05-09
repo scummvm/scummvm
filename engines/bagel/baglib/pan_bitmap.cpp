@@ -104,10 +104,8 @@ CBagPanBitmap::CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, con
 CBagPanBitmap::~CBagPanBitmap() {
 	assert(isValidObject(this));
 
-	if (_pCosineTable) {
-		delete[] _pCosineTable;
-		_pCosineTable = nullptr;
-	}
+	delete[] _pCosineTable;
+	_pCosineTable = nullptr;
 }
 
 // This must be updated whenever the size, view size, or correction width changes

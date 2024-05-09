@@ -48,7 +48,7 @@ public:
 	CBagVar(const CBofString &sName, const CBofString &sValue, bool bAddToList);
 	virtual ~CBagVar();
 
-	ParseCodes setInfo(CBagIfstream &);
+	ParseCodes setInfo(CBagIfstream &) override;
 
 	const CBofString &getName() {
 		return _sVarName;
@@ -118,7 +118,7 @@ public:
 };
 
 //  This could be templated with the storage device manager
-#define VAR_HTABLE_SIZE 131
+#define VAR_HASH_TABLE_SIZE 131
 
 class CBagVarManager : public CBagParseObject, public CBofObject {
 private:
@@ -145,7 +145,7 @@ public:
 	}
 
 	// Use a hash table to lookup variables.
-	CBofList<CBagVar *> _xVarHashList[VAR_HTABLE_SIZE];
+	CBofList<CBagVar *> _xVarHashList[VAR_HASH_TABLE_SIZE];
 };
 
 } // namespace Bagel
