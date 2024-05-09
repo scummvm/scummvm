@@ -56,17 +56,6 @@ CBofDataFile::CBofDataFile() {
 	_bHeaderDirty = false;
 }
 
-CBofDataFile::CBofDataFile(const char *pszFileName, uint32 lFlags, const char *pPassword) {
-	_szFileName[0] = '\0';
-	_szPassWord[0] = '\0';
-	_lHeaderLength = 0;
-	_lNumRecs = 0;
-	_pHeader = nullptr;
-	_bHeaderDirty = false;
-
-	setFile(pszFileName, lFlags, pPassword);
-}
-
 ErrorCode CBofDataFile::setFile(const char *pszFileName, uint32 lFlags, const char *pPassword) {
 	assert(isValidObject(this));
 
@@ -576,10 +565,12 @@ ErrorCode CBofDataFile::writeRecord(int32 lRecNum, void *pBuf, int32 lSize, bool
 					byte *pTmpBuf = (byte *)bofAlloc((int)getMaxRecSize());
 					if (pTmpBuf != nullptr) {
 						for (int i = (int)lRecNum + 1; i < (int)_lNumRecs - 1; i++) {
-							if ((_errCode = readRecord(i, pTmpBuf)) != ERR_NONE)
+							_errCode = readRecord(i, pTmpBuf);
+							if (_errCode != ERR_NONE)
 								break;
 
-							if ((_errCode = writeRecord(i + 1, pTmpBuf)) != ERR_NONE)
+							_errCode = writeRecord(i + 1, pTmpBuf);
+							if (_errCode != ERR_NONE)
 								break;
 						}
 
@@ -636,7 +627,8 @@ ErrorCode CBofDataFile::verifyAllRecords() {
 	if (_errCode == ERR_NONE) {
 		int32 n = getNumberOfRecs();
 		for (int32 i = 0; i < n; i++) {
-			if ((_errCode = verifyRecord(i)) != ERR_NONE) {
+			_errCode = verifyRecord(i);
+			if (_errCode != ERR_NONE) {
 				break;
 			}
 		}
@@ -691,65 +683,6 @@ ErrorCode CBofDataFile::addRecord(void *pBuf, int32 lLength, bool bUpdateHeader,
 				} else {
 					reportError(ERR_MEMORY, "Could not allocate a data file header");
 				}
-			}
-		}
-	}
-
-	return _errCode;
-}
-
-ErrorCode CBofDataFile::deleteRecord(int32 lRecNum, bool bUpdateHeader) {
-	assert(isValidObject(this));
-
-	//
-	// I don't think this function works yet!
-	//
-
-	// Only continue if there is no current error
-	if (_errCode == ERR_NONE) {
-		// Validate record number
-		assert(lRecNum >= 0 && lRecNum < _lNumRecs);
-
-		_bHeaderDirty = true;
-
-		// Header has moved
-		_lHeaderStart -= _pHeader[(int)lRecNum]._lLength;
-
-		// Header has changed size
-		memmove(_pHeader + lRecNum, _pHeader + lRecNum + 1, (size_t)((_lNumRecs - lRecNum - 1) * HEADER_REC::size()));
-
-		// On less record
-		_lNumRecs--;
-
-		_lHeaderLength = _lNumRecs * HEADER_REC::size();
-
-		// Open the data file if it's not already
-		if (_stream == nullptr) {
-			open();
-		}
-
-		if (_errCode == ERR_NONE) {
-			// Allocate a buffer that could hold the largest record
-			byte *pBuf = (byte *)bofAlloc((int)getMaxRecSize());
-			if (pBuf != nullptr) {
-				// Remove this record from the file
-				for (int i = (int)lRecNum; i < (int)_lNumRecs - 1; i++) {
-					if ((_errCode = readRecord(i + 1, pBuf)) != ERR_NONE)
-						break;
-
-					if ((_errCode = writeRecord(i, pBuf)) != ERR_NONE)
-						break;
-				}
-
-				// If we are to update the header now
-				if (bUpdateHeader) {
-					writeHeader();
-				}
-
-				bofFree(pBuf);
-
-			} else {
-				_errCode = ERR_MEMORY;
 			}
 		}
 	}

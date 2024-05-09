@@ -97,15 +97,6 @@ public:
 	CBofDataFile();
 
 	/**
-	 * Constructor
-	 * @param pszFileName       Name of .DAT file
-	 * @param lFlags            Flags for open, and ecnryption, etc.
-	 * @param pPassword         Password for encryption
-	 */
-
-	CBofDataFile(const char *pszFileName, uint32 lFlags = CDF_DEFAULT, const char *pPassword = nullptr);
-
-	/**
 	 * Destructor
 	 */
 	virtual ~CBofDataFile();
@@ -113,7 +104,7 @@ public:
 	/**
 	 * Initializes a CBofDataFile with specified info
 	 * @param pszFileName       Name of .DAT file
-	 * @param lFlags            Flags for open, and ecnryption, etc.
+	 * @param lFlags            Flags for open, and encryption, etc.
 	 * @param pPassword         Password for encryption
 	 * @return                  Error return code
 	 */
@@ -206,14 +197,6 @@ public:
 	 * @return                  Error return code
 	 */
 	ErrorCode addRecord(void *pBuf, int32 lRecSize, bool bUpdateHeader = false, uint32 lKey = 0xFFFFFFFF);
-
-	/**
-	 * Deletes specified record from data-file.
-	 * @param lRecNum           Record number to read
-	 * @param bUpdateHeader     true if header is to be committed to disk
-	 * @return                  Error return code
-	 */
-	ErrorCode deleteRecord(int32 lRecNum, bool bUpdateHeader = false);
 
 	/**
 	 * Finds record by it's key.
