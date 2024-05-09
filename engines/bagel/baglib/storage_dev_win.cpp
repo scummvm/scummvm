@@ -108,7 +108,7 @@ CBagStorageDev::CBagStorageDev() {
 
 	_pAssociateWnd = nullptr;         // The associate window for attaching sounds
 
-	_bForiegnList = false;
+	_bForeignList = false;
 	_pObjectList = new CBofList<CBagObject *>;
 	_pExpressionList = nullptr;
 	_nDiskID = 1;
@@ -117,11 +117,8 @@ CBagStorageDev::CBagStorageDev() {
 
 	// run object stuff
 	_bFirstPaint = true;
-
 	_nFloatPages = 0;
-
 	_xSDevType = SDEV_UNDEF;
-
 	_pBitmapFilter = nullptr;
 
 	setCloseOnOpen(false);
@@ -142,7 +139,7 @@ CBagStorageDev::CBagStorageDev() {
 }
 
 CBagStorageDev::~CBagStorageDev() {
-	if (!_bForiegnList) {
+	if (!_bForeignList) {
 
 		if (_pObjectList != nullptr) {
 			// Delete all master sprite objects
@@ -206,7 +203,7 @@ ErrorCode CBagStorageDev::addObject(CBagObject *pObj, int /*nPos*/) {
 ErrorCode CBagStorageDev::removeObject(CBagObject *pRObj) {
 	ErrorCode errCode = ERR_NONE;
 
-	if (!_bForiegnList) {
+	if (!_bForeignList) {
 		int nCount = getObjectCount();
 		for (int i = 0; i < nCount; ++i) {
 			if (pRObj == getObjectByPos(i)) {
@@ -395,7 +392,7 @@ ErrorCode CBagStorageDev::releaseObjects() {
 	ErrorCode errCode = ERR_NONE;
 	int nCount = getObjectCount();
 
-	if (!_bForiegnList) {
+	if (!_bForeignList) {
 		if (nCount) {
 			for (int i = 0; i < nCount; ++i) {
 				CBagObject *pObj = _pObjectList->removeHead();
@@ -412,7 +409,7 @@ ErrorCode CBagStorageDev::releaseObjects() {
 void CBagStorageDev::setObjectList(CBofList<CBagObject *> *pOList, CBofList<CBagExpression *> *pEList) {
 	delete _pObjectList;
 
-	_bForiegnList    = true;
+	_bForeignList    = true;
 	_pObjectList     = pOList;
 	_pExpressionList = pEList;
 }
@@ -575,6 +572,9 @@ ErrorCode CBagStorageDev::loadFile(const CBofString &sWldName) {
 	// Force buffer to be big enough so that the entire script
 	// is pre-loaded
 	int nLength = fileLength(sWldFileName);
+	if (nLength <= 0)
+		error("Unable to open or read %s", sWldFileName.getBuffer());
+
 	char *pBuf = (char *)bofAlloc(nLength);
 	if (pBuf != nullptr) {
 		CBagIfstream fpInput(pBuf, nLength);
@@ -588,7 +588,6 @@ ErrorCode CBagStorageDev::loadFile(const CBofString &sWldName) {
 
 		bofFree(pBuf);
 	}
-
 	// Add everything to the window
 	return ERR_NONE;
 }
@@ -1440,26 +1439,30 @@ ErrorCode CBagStorageDevWnd::loadFile(const CBofString &sFile) {
 	// Force buffer to be big enough so that the entire script
 	// is pre-loaded
 	int nLength = fileLength(sWldFile);
-	char *pBuf = (char *)bofAlloc(nLength);
-	if (pBuf != nullptr) {
-		CBagIfstream fpInput(pBuf, nLength);
+	if (nLength <= 0)
+		reportError(ERR_FOPEN);
+	else {
+		char *pBuf = (char *)bofAlloc(nLength);
+		if (pBuf != nullptr) {
+			CBagIfstream fpInput(pBuf, nLength);
 
-		CBofFile cFile;
-		cFile.open(sWldFile);
-		cFile.read(pBuf, nLength);
-		cFile.close();
+			CBofFile cFile;
+			cFile.open(sWldFile);
+			cFile.read(pBuf, nLength);
+			cFile.close();
 
-		CBagStorageDev::loadFileFromStream(fpInput, sWldFile);
+			CBagStorageDev::loadFileFromStream(fpInput, sWldFile);
 
-		// If the window.isCreated()
-		//
-		if (isCreated())
-			invalidateRect(nullptr);
+			// If the window.isCreated()
+			//
+			if (isCreated())
+				invalidateRect(nullptr);
 
-		bofFree(pBuf);
+			bofFree(pBuf);
 
-	} else {
-		reportError(ERR_MEMORY);
+		} else {
+			reportError(ERR_MEMORY);
+		}
 	}
 
 	// Add everything to the window
@@ -1470,7 +1473,8 @@ ErrorCode CBagStorageDevWnd::loadFile(const CBofString &sFile) {
 
 void CBagStorageDevWnd::onClose() {
 	CBofWindow::onClose();
-	destroyWindow();                            // destruct the main window
+	// destruct the main window
+	destroyWindow();
 }
 
 void CBagStorageDevWnd::onMouseMove(uint32 n, CBofPoint *pPoint, void *) {
@@ -1716,23 +1720,26 @@ ErrorCode CBagStorageDevDlg::loadFile(const CBofString &sFile) {
 
 	// Force buffer to be big enough so that the entire script is pre-loaded
 	int nLength = fileLength(sWldFile);
-	char *pBuf = (char *)bofAlloc(nLength);
-	if (pBuf != nullptr) {
-		CBagIfstream fpInput(pBuf, nLength);
+	if (nLength <= 0)
+		reportError(ERR_FOPEN);
+	else {
+		char *pBuf = (char *)bofAlloc(nLength);
+		if (pBuf != nullptr) {
+			CBagIfstream fpInput(pBuf, nLength);
 
-		CBofFile cFile;
-		cFile.open(sWldFile);
-		cFile.read(pBuf, nLength);
-		cFile.close();
+			CBofFile cFile;
+			cFile.open(sWldFile);
+			cFile.read(pBuf, nLength);
+			cFile.close();
 
-		CBagStorageDev::loadFileFromStream(fpInput, sWldFile);
+			CBagStorageDev::loadFileFromStream(fpInput, sWldFile);
 
-		bofFree(pBuf);
+			bofFree(pBuf);
 
-		if (isCreated())
-			invalidateRect(nullptr);
+			if (isCreated())
+				invalidateRect(nullptr);
+		}
 	}
-
 	// Add everything to the window
 	return _errCode;
 }

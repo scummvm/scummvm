@@ -111,13 +111,13 @@ protected:
 	static bool _hidePdaFl;
 	FilterFunction _pBitmapFilter; // Pointer to the bitmap filter.
 
-	bool _bForiegnList : 1;   // True if setObjectList has been called
-	bool _bCloseOnOpen : 1;   // True if other SDev should be closed when this is opened
-	bool _bContainsModal : 1; // True if SDev contains a modal object
-	bool _bCloseup : 1;       // true if is a closeup (includes CIC, or CHAT)
-	bool _bCIC : 1;           // true if is a CIC
-	bool _bCustom : 1;        // true if is a hand coded closeup
-	bool _bFirstPaint : 1;    // run object stuff
+	bool _bForeignList : true;   // True if setObjectList has been called
+	bool _bCloseOnOpen : true;   // True if other SDev should be closed when this is opened
+	bool _bContainsModal : true; // True if SDev contains a modal object
+	bool _bCloseup : true;       // true if is a closeup (includes CIC, or CHAT)
+	bool _bCIC : true;           // true if is a CIC
+	bool _bCustom : true;        // true if is a hand coded closeup
+	bool _bFirstPaint : true;    // run object stuff
 
 	static bool _bPanPreFiltered;  // Let pda know if screens been prefiltered
 	static bool _bDirtyAllObjects; // Dirty all objects in prefilter?
