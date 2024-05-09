@@ -45,6 +45,7 @@ public:
 	void Close(bool no_del = false) override;
 	void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
 	void onMouseUp(int button, int32 mx, int32 my) override;
+	bool OnKeyDown(int key, int mod) override;
 
 	INTRINSIC(I_target);
 

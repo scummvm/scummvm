@@ -36,9 +36,9 @@ TargetGump::TargetGump() : ModalGump(), _targetTracing(false) {
 
 }
 
-
+// Skip pause as usecode processes need to complete & matches orginal game
 TargetGump::TargetGump(int x, int y)
-	: ModalGump(x, y, 0, 0), _targetTracing(false) {
+	: ModalGump(x, y, 0, 0, false), _targetTracing(false) {
 
 }
 
@@ -75,23 +75,37 @@ bool TargetGump::PointOnGump(int mx, int my) {
 }
 
 void TargetGump::onMouseUp(int button, int32 mx, int32 my) {
-	_targetTracing = true;
+	if (button == Mouse::BUTTON_LEFT) {
+		_targetTracing = true;
 
-	_parent->GumpToScreenSpace(mx, my);
+		_parent->GumpToScreenSpace(mx, my);
 
-	Gump *desktopgump = _parent;
-	ObjId objId = desktopgump->TraceObjId(mx, my);
-	Item *item = getItem(objId);
+		Gump *desktopgump = _parent;
+		ObjId objId = desktopgump->TraceObjId(mx, my);
+		Item *item = getItem(objId);
 
-	if (item) {
-		// done
-		debugC(kDebugObject, "Target result: %s", item->dumpInfo().c_str());
+		if (item) {
+			// done
+			debugC(kDebugObject, "Target result: %s", item->dumpInfo().c_str());
 
-		_processResult = objId;
+			_processResult = objId;
+			Close();
+		}
+
+		_targetTracing = false;
+	}
+}
+
+bool TargetGump::OnKeyDown(int key, int mod) {
+	switch (key) {
+	case Common::KEYCODE_ESCAPE: {
 		Close();
+	} break;
+	default:
+		break;
 	}
 
-	_targetTracing = false;
+	return true;
 }
 
 uint32 TargetGump::I_target(const uint8 * /*args*/, unsigned int /*argsize*/) {
@@ -100,8 +114,6 @@ uint32 TargetGump::I_target(const uint8 * /*args*/, unsigned int /*argsize*/) {
 
 	return targetgump->GetNotifyProcess()->getPid();
 }
-
-
 
 void TargetGump::saveData(Common::WriteStream *ws) {
 	warning("Trying to save ModalGump");

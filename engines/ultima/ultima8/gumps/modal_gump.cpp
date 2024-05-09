@@ -35,9 +35,9 @@ ModalGump::ModalGump() : Gump() {
 }
 
 
-ModalGump::ModalGump(int x, int y, int width, int height, uint16 owner,
-					 uint32 flags, int32 layer)
-	: Gump(x, y, width, height, owner, flags, layer) {
+ModalGump::ModalGump(int x, int y, int width, int height, bool pauseGame,
+					 uint16 owner, uint32 flags, int32 layer)
+	: Gump(x, y, width, height, owner, flags, layer), _pauseGame(pauseGame) {
 
 }
 
@@ -47,10 +47,13 @@ ModalGump::~ModalGump() {
 void ModalGump::InitGump(Gump *newparent, bool take_focus) {
 	Gump::InitGump(newparent, take_focus);
 
-	Kernel::get_instance()->pause();
+	if (_pauseGame) {
+		Kernel::get_instance()->pause();
 
-	AudioProcess *ap = AudioProcess::get_instance();
-	if (ap) ap->pauseAllSamples();
+		AudioProcess *ap = AudioProcess::get_instance();
+		if (ap)
+			ap->pauseAllSamples();
+	}
 }
 
 Gump *ModalGump::FindGump(int mx, int my) {
@@ -72,10 +75,13 @@ uint16 ModalGump::TraceObjId(int32 mx, int32 my) {
 }
 
 void ModalGump::Close(bool no_del) {
-	Kernel::get_instance()->unpause();
+	if (_pauseGame) {
+		Kernel::get_instance()->unpause();
 
-	AudioProcess *ap = AudioProcess::get_instance();
-	if (ap) ap->unpauseAllSamples();
+		AudioProcess *ap = AudioProcess::get_instance();
+		if (ap)
+			ap->unpauseAllSamples();
+	}
 
 	Gump::Close(no_del);
 }
