@@ -323,6 +323,14 @@ View1::View1() : UIElement("View1") {
 			uint32 value = getSurface().getPixel(msg._pos.x, msg._pos.y);
 			g_system->setWindowCaption(Common::String::format("%u,%u: %u", msg._pos.x, msg._pos.y, value));
 			//g_engine->CalculatePath(Common::Point(154, 136), Common::Point(msg._pos.x, msg._pos.y));
+
+			if (g_engine->_cursorMode == CursorMode::Walk) {
+				// TODO: Should address the protagonist differently
+				// TODO: Sort out the different modes and only define them once
+				characters[0]->StartLerpTo(msg._pos, 1000);
+				return true;
+			}
+
 			// Check if we hit something
 			uint16 index = GetHitObjectID(Common::Point(msg._pos.x, msg._pos.y));
 			if (index != 0) {
@@ -633,6 +641,11 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 	int i = -1;
 	for (auto current : characters) {
 		int index = current->GameObject->Index;
+		// TODO: Object 50h is a special one, it is the invisible object that moves along the
+		// ground during the stick throw. Need to check how this is handled it the game
+		if (index == 0x50) {
+			continue;
+		}
 		AnimFrame* frame = current->GetCurrentAnimationFrame();
 		
 		
