@@ -51,7 +51,7 @@ namespace Bagel {
 // Defines default chroma color to be palette index 1
 #define DEFAULT_CHROMA_COLOR 1
 
-extern bool MACROREPLACE(CBofString &s);
+extern void MACROREPLACE(CBofString &s);
 
 class CBagMasterWin;
 

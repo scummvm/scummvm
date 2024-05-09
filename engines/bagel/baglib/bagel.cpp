@@ -240,7 +240,7 @@ ErrorCode CBagel::verifyRequirements() {
 	return _errCode;
 }
 
-bool MACROREPLACE(CBofString &s) {
+void MACROREPLACE(CBofString &s) {
 	// Remove any homedir prefix. In ScummVM, all paths are relative
 	// to the game folder automatically
 	char *p = strstr(s.getBuffer(), HOMEDIR_TOKEN);
@@ -250,8 +250,6 @@ bool MACROREPLACE(CBofString &s) {
 	// Replace any backslashes with forward slashes
 	while ((p = strchr(s.getBuffer(), '\\')) != nullptr)
 		*p = '/';
-
-	return true;
 }
 
 
