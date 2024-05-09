@@ -508,6 +508,22 @@ Datum ScriptContext::getProp(const Common::String &propName) {
 	return _properties[propName]; // return new property
 }
 
+Common::String ScriptContext::getPropAt(uint32 index) {
+	// FIXME: Refactor the whole thing to have ordered keys
+	uint32 target = 1;
+	for (auto &it : _properties) {
+		if (target == index) {
+			return it._key;
+		}
+		target += 1;
+	}
+	return Common::String();
+}
+
+uint32 ScriptContext::getPropCount() {
+	return _properties.size();
+}
+
 bool ScriptContext::setProp(const Common::String &propName, const Datum &value) {
 	if (_disposed) {
 		error("Property '%s' accessed on disposed object <%s>", propName.c_str(), Datum(this).asString(true).c_str());
