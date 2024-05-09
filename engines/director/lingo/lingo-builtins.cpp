@@ -356,13 +356,14 @@ void Lingo::drop(uint num) {
 ///////////////////
 void LB::b_abs(int nargs) {
 	Datum d = g_lingo->pop();
+	Datum res(0);
 
 	if (d.type == INT)
-		d.u.i = ABS(d.u.i);
+		res = Datum(ABS(d.u.i));
 	else if (d.type == FLOAT)
-		d.u.f = ABS(d.u.f);
+		res = Datum(ABS(d.u.f));
 
-	g_lingo->push(d);
+	g_lingo->push(res);
 }
 
 void LB::b_atan(int nargs) {
