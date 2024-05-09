@@ -1154,8 +1154,27 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	uint32 numCharacters;
 	if (s.isSaving()) {
 		numCharacters = currentView->characters.size();
+	} else {
+		currentView->characters.clear();
 	}
 	s.syncAsUint32LE(numCharacters);
+	for (int i = 0; i < numCharacters; i++) {
+		uint32 characterIndex;
+		if (s.isSaving()) {
+			characterIndex = currentView->characters[i]->GameObject->Index;
+		}
+		s.syncAsUint32LE(characterIndex);
+		Character *currentCharacter;
+		if (s.isSaving()) {
+			currentCharacter = currentView->characters[i];
+		} else {
+			currentCharacter = new Character();
+			currentCharacter->GameObject = GameObjects::instance().Objects[characterIndex - 1];
+			currentView->characters.push_back(currentCharacter);
+		}
+		s.syncAsSint16LE(currentCharacter->Position.x);
+		s.syncAsSint16LE(currentCharacter->Position.y);
+	}
 
 
 	return Common::kNoError;

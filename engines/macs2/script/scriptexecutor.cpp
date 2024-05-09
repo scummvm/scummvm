@@ -1373,6 +1373,15 @@ void Script::ScriptExecutor::ExecuteScript() {
 			Func9F4D_32();
 			Func9F4D_32();
 			continue;
+		} else if (opcode1 == 0x1f) {
+			// TODO: We should run a pathfinding test and save the result for 9F4D opcode 23 to read
+			// Object ID
+			Func9F4D_Placeholder();
+			// Target x and y
+			Func9F4D_Placeholder();
+			Func9F4D_Placeholder();
+
+			continue;
 		}
 		else if (opcode1 == 0x22) {
 			// TODO: Properly implement fn0037_C2C4 proc
