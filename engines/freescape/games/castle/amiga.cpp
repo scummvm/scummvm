@@ -19,30 +19,35 @@
  *
  */
 
+#include "common/file.h"
+#include "common/memstream.h"
+
+#include "freescape/freescape.h"
+#include "freescape/games/castle/castle.h"
+#include "freescape/language/8bitDetokeniser.h"
+
 namespace Freescape {
 
-class CastleEngine : public FreescapeEngine {
-public:
-	CastleEngine(OSystem *syst, const ADGameDescription *gd);
-	~CastleEngine();
+void CastleEngine::loadAssetsAmigaDemo() {
+	Common::File file;
+	file.open("x");
+	if (!file.isOpen())
+		error("Failed to open 'x' file");
 
-	Graphics::ManagedSurface *_option;
-	void initGameState() override;
-	void endGame() override;
-	void loadAssetsDOSFullGame() override;
-	void loadAssetsDOSDemo() override;
-	void loadAssetsAmigaDemo() override;
+	loadMessagesVariableSize(&file, 0x8bb2, 164);
+	load8bitBinary(&file, 0x162a6, 16);
+	loadPalettes(&file, 0x151a6);
 
-	void drawDOSUI(Graphics::Surface *surface) override;
+	file.seek(0x2be96); // Area 255
+	_areaMap[255] = load8bitArea(&file, 16);
+	file.close();
 
-	void executePrint(FCLInstruction &instruction) override;
-	void gotoArea(uint16 areaID, int entranceID) override;
-	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
-	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
-private:
-	Common::SeekableReadStream *decryptFile(const Common::Path &filename);
-};
+	_areaMap[2]->_groundColor = 1;
+	for (auto &it : _areaMap)
+		it._value->addStructure(_areaMap[255]);
 
-extern byte kFreescapeCastleFont[];
-
+	_areaMap[1]->addFloor();
+	_areaMap[2]->addFloor();
 }
+
+} // End of namespace Freescape

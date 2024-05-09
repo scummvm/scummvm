@@ -37,6 +37,7 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_playerWidth = 8;
 	_playerDepth = 8;
 	_stepUpDistance = 32;
+	_maxFallingDistance = 8192;
 	_option = nullptr;
 }
 
@@ -109,174 +110,6 @@ byte kFreescapeCastleFont[] = {
 	0x7f, 0x87, 0x0e, 0x1c, 0x38, 0x71, 0xfd, 0xe6,
 };
 
-Common::SeekableReadStream *CastleEngine::decryptFile(const Common::Path &filename) {
-	Common::File file;
-	file.open(filename);
-	if (!file.isOpen())
-		error("Failed to open %s", filename.toString().c_str());
-
-	int size = file.size();
-	byte *encryptedBuffer = (byte *)malloc(size);
-	file.read(encryptedBuffer, size);
-	file.close();
-
-	int seed = 24;
-	for (int i = 0; i < size; i++) {
-		encryptedBuffer[i] ^= seed;
-		seed = (seed + 1) & 0xff;
-	}
-
-	return (new Common::MemoryReadStream(encryptedBuffer, size));
-}
-
-extern byte kEGADefaultPalette[16][3];
-extern Common::MemoryReadStream *unpackEXE(Common::File &ms);
-
-void CastleEngine::loadAssetsDOSFullGame() {
-	Common::File file;
-	Common::SeekableReadStream *stream = nullptr;
-
-	if (_renderMode == Common::kRenderEGA) {
-		_viewArea = Common::Rect(40, 33, 280, 152);
-
-		file.open("CME.EXE");
-		stream = unpackEXE(file);
-		if (stream) {
-			loadSpeakerFxDOS(stream, 0x636d + 0x200, 0x63ed + 0x200);
-		}
-
-		delete stream;
-		file.close();
-
-		file.open("CMLE.DAT");
-		_title = load8bitBinImage(&file, 0x0);
-		_title->setPalette((byte *)&kEGADefaultPalette, 0, 16);
-		file.close();
-
-		file.open("CMOE.DAT");
-		_option = load8bitBinImage(&file, 0x0);
-		_option->setPalette((byte *)&kEGADefaultPalette, 0, 16);
-		file.close();
-
-		file.open("CME.DAT");
-		_border = load8bitBinImage(&file, 0x0);
-		_border->setPalette((byte *)&kEGADefaultPalette, 0, 16);
-		file.close();
-
-		switch (_language) {
-			case Common::ES_ESP:
-				stream = decryptFile("CMLS");
-				break;
-			case Common::FR_FRA:
-				stream = decryptFile("CMLF");
-				break;
-			case Common::DE_DEU:
-				stream = decryptFile("CMLG");
-				break;
-			case Common::EN_ANY:
-				stream = decryptFile("CMLE");
-				break;
-			default:
-				error("Invalid or unsupported language: %x", _language);
-		}
-
-		loadFonts(kFreescapeCastleFont, 59);
-		loadMessagesVariableSize(stream, 0x11, 164);
-		delete stream;
-
-		stream = decryptFile("CMEDF");
-		load8bitBinary(stream, 0, 16);
-		for (auto &it : _areaMap)
-			it._value->addStructure(_areaMap[255]);
-
-		_areaMap[1]->addFloor();
-		_areaMap[2]->addFloor();
-		delete stream;
-	} else
-		error("Not implemented yet");
-
-	for (auto &it : _areaMap) {
-		for (auto &sensor : it._value->getSensors()) {
-			if (sensor->getObjectID() == 125)
-				_areaMap[it._key]->addGroupFromArea(195, _areaMap[255]);
-			else if (sensor->getObjectID() == 126)
-				_areaMap[it._key]->addGroupFromArea(191, _areaMap[255]);
-			else if (sensor->getObjectID() == 127)
-				_areaMap[it._key]->addGroupFromArea(182, _areaMap[255]);
-			else
-				debugC(1, kFreescapeDebugParser, "Sensor %d in area %d", sensor->getObjectID(), it._key);
-		}
-	}
-	// CPC
-	// file = gameDir.createReadStreamForMember("cm.bin");
-	// if (file == nullptr)
-	//	error("Failed to open cm.bin");
-	// load8bitBinary(file, 0x791a, 16);
-}
-
-void CastleEngine::loadAssetsDOSDemo() {
-	Common::File file;
-	Common::SeekableReadStream *stream = nullptr;
-
-	if (_renderMode == Common::kRenderEGA) {
-		_viewArea = Common::Rect(40, 33, 280, 152);
-
-		file.open("CMLE.DAT");
-		_title = load8bitBinImage(&file, 0x0);
-		_title->setPalette((byte *)&kEGADefaultPalette, 0, 16);
-		file.close();
-
-		file.open("CMOE.DAT");
-		_option = load8bitBinImage(&file, 0x0);
-		_option->setPalette((byte *)&kEGADefaultPalette, 0, 16);
-		file.close();
-
-		file.open("CME.DAT");
-		_border = load8bitBinImage(&file, 0x0);
-		_border->setPalette((byte *)&kEGADefaultPalette, 0, 16);
-		file.close();
-
-		stream = decryptFile("CMLD"); // Only english
-
-		loadFonts(kFreescapeCastleFont, 59);
-		loadMessagesVariableSize(stream, 0x11, 164);
-		delete stream;
-
-		stream = decryptFile("CDEDF");
-		load8bitBinary(stream, 0, 16);
-		for (auto &it : _areaMap)
-			it._value->addStructure(_areaMap[255]);
-
-		_areaMap[2]->addFloor();
-		delete stream;
-	} else
-		error("Not implemented yet");
-}
-
-void CastleEngine::loadAssetsAmigaDemo() {
-	Common::File file;
-	file.open("x");
-	if (!file.isOpen())
-		error("Failed to open 'x' file");
-
-	loadMessagesVariableSize(&file, 0x8bb2, 164);
-	load8bitBinary(&file, 0x162a6, 16);
-	loadPalettes(&file, 0x151a6);
-
-	file.seek(0x2be96); // Area 255
-	_areaMap[255] = load8bitArea(&file, 16);
-	file.close();
-
-
-	_areaMap[2]->_groundColor = 1;
-	for (auto &it : _areaMap)
-		it._value->addStructure(_areaMap[255]);
-
-	_areaMap[1]->addFloor();
-	_areaMap[2]->addFloor();
-}
-
-
 void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	debugC(1, kFreescapeDebugMove, "Jumping to area: %d, entrance: %d", areaID, entranceID);
 
@@ -318,32 +151,6 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	swapPalette(areaID);
 	resetInput();
-}
-
-void CastleEngine::drawDOSUI(Graphics::Surface *surface) {
-	uint32 color = 10;
-	uint8 r, g, b;
-
-	_gfx->readFromPalette(color, r, g, b);
-	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
-
-	color = 0;
-
-	_gfx->readFromPalette(color, r, g, b);
-	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
-
-	Common::Rect backRect(97, 181, 232, 190);
-	surface->fillRect(backRect, back);
-
-	Common::String message;
-	int deadline;
-	getLatestMessages(message, deadline);
-	if (deadline <= _countdown) {
-		drawStringInSurface(message, 97, 182, front, back, surface);
-		_temporaryMessages.push_back(message);
-		_temporaryMessageDeadlines.push_back(deadline);
-	} else
-		drawStringInSurface(_currentArea->_name, 97, 182, front, back, surface);
 }
 
 void CastleEngine::initGameState() {

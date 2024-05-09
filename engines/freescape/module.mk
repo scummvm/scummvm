@@ -7,6 +7,8 @@ MODULE_OBJS := \
 	demo.o \
 	freescape.o \
 	games/castle/castle.o \
+	games/castle/amiga.o \
+	games/castle/dos.o \
 	games/dark/amiga.o \
 	games/dark/atari.o \
 	games/dark/cpc.o \
