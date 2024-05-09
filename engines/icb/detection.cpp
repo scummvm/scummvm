@@ -79,6 +79,21 @@ static const IcbGameDescription gameDescriptions[] = {
 
 	{
 		{
+			// In Cold Blood (De Sang Froid)
+			// French 3 CD version
+			"icb",
+			"",
+			AD_ENTRY2s("g/speech.clu", "5dfeb58bd1974e8a36d532c7c0002a49", 7872320, "g/g", "167c680f29d3ac160fd2e9f4a2591bf7", 67060),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		GType_ICB
+	},
+
+	{
+		{
 			// In Cold Blood
 			// English Demo
 			"icb",
