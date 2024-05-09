@@ -706,6 +706,11 @@ Datum LC::mapBinaryOp(Datum (*mapFunc)(Datum &, Datum &), Datum &d1, Datum &d2) 
 }
 
 Datum LC::addData(Datum &d1, Datum &d2) {
+	if (d1.type == CASTREF || d2.type == CASTREF) {
+		warning("LC::addData(): attempting to add a cast reference! This always produces 0, but might be a sign that an earlier part of the script has returned incorrect data.");
+		return Datum(0);
+	}
+
 	if (d1.isArray() || d2.isArray()) {
 		return LC::mapBinaryOp(LC::addData, d1, d2);
 	}
@@ -730,6 +735,11 @@ void LC::c_add() {
 }
 
 Datum LC::subData(Datum &d1, Datum &d2) {
+	if (d1.type == CASTREF || d2.type == CASTREF) {
+		warning("LC::subData(): attempting to subtract a cast reference! This always produces 0, but might be a sign that an earlier part of the script has returned incorrect data.");
+		return Datum(0);
+	}
+
 	if (d1.isArray() || d2.isArray()) {
 		return LC::mapBinaryOp(LC::subData, d1, d2);
 	}
@@ -754,6 +764,11 @@ void LC::c_sub() {
 }
 
 Datum LC::mulData(Datum &d1, Datum &d2) {
+	if (d1.type == CASTREF || d2.type == CASTREF) {
+		warning("LC::mulData(): attempting to multiply a cast reference! This always produces 0, but might be a sign that an earlier part of the script has returned incorrect data.");
+		return Datum(0);
+	}
+
 	if (d1.isArray() || d2.isArray()) {
 		return LC::mapBinaryOp(LC::mulData, d1, d2);
 	}
@@ -778,6 +793,11 @@ void LC::c_mul() {
 }
 
 Datum LC::divData(Datum &d1, Datum &d2) {
+	if (d1.type == CASTREF || d2.type == CASTREF) {
+		warning("LC::divData(): attempting to divide a cast reference! This always produces 0, but might be a sign that an earlier part of the script has returned incorrect data.");
+		return Datum(0);
+	}
+
 	if (d1.isArray() || d2.isArray()) {
 		return LC::mapBinaryOp(LC::divData, d1, d2);
 	}
