@@ -71,10 +71,8 @@ CBofString::CBofString(char ch, int nRepeat) {
 	assert(nRepeat > 0);
 
 	init();
-
 	allocBuffer(nRepeat);
-
-	bofMemSet(_pszData, ch, nRepeat);
+	memset(_pszData, ch, nRepeat);
 }
 
 CBofString::~CBofString() {
@@ -104,11 +102,11 @@ void CBofString::allocBuffer(int nLen) {
 	free();
 
 	// Don't do anything about zero length allocations
-	if (nLen) {
-
-		if ((_pszData = (char *)bofAlloc(nLen + 1)) != nullptr) {
+	if (nLen > 0) {
+		_pszData = (char *)bofAlloc(nLen + 1);
+		if (_pszData != nullptr) {
 			// Set the entire buffer to nullptr
-			bofMemSet(_pszData, '\0', nLen + 1);
+			memset(_pszData, '\0', nLen + 1);
 		}
 	}
 
@@ -179,7 +177,7 @@ void CBofString::allocCopy(CBofString &dest, int nCopyLen, int nCopyIndex, int n
 		dest.allocBuffer(nNewLen);
 
 		assert(_pszData != nullptr);
-		bofMemCopy(dest._pszData, &_pszData[nCopyIndex], nCopyLen * sizeof(char));
+		memcpy(dest._pszData, &_pszData[nCopyIndex], nCopyLen * sizeof(char));
 	}
 }
 
@@ -206,8 +204,8 @@ void CBofString::concatCopy(int nSrc1Len, const char *lpszSrc1Data, int nSrc2Len
 
 	int nNewLen = nSrc1Len + nSrc2Len;
 	allocBuffer((nAllocLen == 0 ? nNewLen : nAllocLen));
-	bofMemCopy(_pszData, lpszSrc1Data, nSrc1Len * sizeof(char));
-	bofMemCopy(&_pszData[nSrc1Len], lpszSrc2Data, nSrc2Len * sizeof(char));
+	memcpy(_pszData, lpszSrc1Data, nSrc1Len * sizeof(char));
+	memcpy(&_pszData[nSrc1Len], lpszSrc2Data, nSrc2Len * sizeof(char));
 	// RMS
 	_nLength = (uint16)nNewLen;
 }
@@ -251,7 +249,7 @@ void CBofString::concatInPlace(int nSrcLen, const char *lpszSrcData) {
 
 		if (NORMALIZEBUFFERSIZE() == 0) {
 			allocBuffer(_nLength + nAllocAmount);
-			bofMemCopy(_pszData, lpszSrcData, nSrcLen);
+			memcpy(_pszData, lpszSrcData, nSrcLen);
 			*(_pszData + nSrcLen) = '\0';
 			_nLength = (uint16)(_nLength + (uint16)nSrcLen);
 
@@ -272,7 +270,7 @@ void CBofString::concatInPlace(int nSrcLen, const char *lpszSrcData) {
 				lpszOldData = new char[_nLength + nSrcLen + 1];
 
 			if (lpszOldData != nullptr) {
-				bofMemCopy(lpszOldData, _pszData, (_nLength /*+ nSrcLen*/ + 1) * sizeof(char));
+				memcpy(lpszOldData, _pszData, (_nLength /*+ nSrcLen*/ + 1) * sizeof(char));
 
 				concatCopy(_nLength, lpszOldData, nSrcLen, lpszSrcData, _nLength + nAllocAmount);
 
@@ -288,7 +286,7 @@ void CBofString::concatInPlace(int nSrcLen, const char *lpszSrcData) {
 		if (nSrcLen == 1) {
 			_pszData[_nLength] = *lpszSrcData;
 		} else {
-			bofMemCopy(&_pszData[_nLength], lpszSrcData, nSrcLen * sizeof(char));
+			memcpy(&_pszData[_nLength], lpszSrcData, nSrcLen * sizeof(char));
 		}
 		_nLength = (uint16)(_nLength + (uint16)nSrcLen);
 	}

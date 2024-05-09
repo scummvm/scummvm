@@ -4184,7 +4184,7 @@ void SrafComputer::notifyBoss(CBofString &sSoundFile, int nStafferID) {         
 		int nLength = fTxtFile.getLength();
 
 		if (nLength != 0 && (pszBuf = (char *)bofAlloc(nLength + 1)) != nullptr) {
-			bofMemSet(pszBuf, 0, nLength + 1);
+			memset(pszBuf, 0, nLength + 1);
 			fTxtFile.read(pszBuf, nLength);
 
 			// Put it up on the screen

@@ -396,7 +396,7 @@ ErrorCode CBofBitmap::paint1To1(CBofBitmap *pBmp) {
 		pBmp->lock();
 
 		// Direct 1 to 1 copy
-		bofMemCopy(pBmp->_pBits, _pBits, _nScanDX * _nDY);
+		memcpy(pBmp->_pBits, _pBits, _nScanDX * _nDY);
 
 		pBmp->unlock();
 		unlock();
@@ -795,7 +795,7 @@ void CBofBitmap::line(int nSrcX, int nSrcY, int nDstX, int nDstY, byte iColor) {
 		// Horizontal lines are a special case that can be done optimally
 		if (nSrcY == nDstY) {
 			lock();
-			bofMemSet(getPixelAddress(MIN(nSrcX, nDstX), nSrcY), iColor, ABS(nDstX - nSrcX));
+			memset(getPixelAddress(MIN(nSrcX, nDstX), nSrcY), iColor, ABS(nDstX - nSrcX));
 			unlock();
 
 		} else {
@@ -885,18 +885,18 @@ ErrorCode CBofBitmap::scrollRight(int nPixels, CBofRect * /*pRect*/) {
 
 				if (nPixels > 0) {
 					for (int i = 0; i < _nDY; i++) {
-						bofMemCopy(pTemp, p + nBytes, nPixels);
-						bofMemMove(p + nPixels, p, nBytes);
-						bofMemCopy(p, pTemp, nPixels);
+						memcpy(pTemp, p + nBytes, nPixels);
+						memmove(p + nPixels, p, nBytes);
+						memcpy(p, pTemp, nPixels);
 						p += _nScanDX;
 					}
 				} else {
 					nPixels = -nPixels;
 
 					for (int i = 0; i < _nDY; i++) {
-						bofMemCopy(pTemp, p, nPixels);
-						bofMemMove(p, p + nPixels, nBytes);
-						bofMemCopy(p + nBytes, pTemp, nPixels);
+						memcpy(pTemp, p, nPixels);
+						memmove(p, p + nPixels, nBytes);
+						memcpy(p + nBytes, pTemp, nPixels);
 						p += _nScanDX;
 					}
 				}
@@ -976,7 +976,7 @@ ErrorCode CBofBitmap::scrollUp(int nPixels, CBofRect *pRect) {
 				byte *pCurRow = pStart;
 
 				// Copy 1st row into temp row buffer
-				bofMemCopy(pRowBuf, pCurRow, dx);
+				memcpy(pRowBuf, pCurRow, dx);
 
 				int32 lJump = dx1 * nPixels;
 
@@ -987,7 +987,7 @@ ErrorCode CBofBitmap::scrollUp(int nPixels, CBofRect *pRect) {
 				// Working row by row
 				for (int32 i = 1; i < dy; i++) {
 					// Copy this row to row above it
-					bofMemCopy(pLastRow, pCurRow, dx);
+					memcpy(pLastRow, pCurRow, dx);
 
 					pLastRow = pCurRow;
 
@@ -1000,13 +1000,13 @@ ErrorCode CBofBitmap::scrollUp(int nPixels, CBofRect *pRect) {
 							i++;
 
 							// Copy 1st row into this row
-							bofMemCopy(pLastRow, pRowBuf, dx);
+							memcpy(pLastRow, pRowBuf, dx);
 
 							pCurRow += dx1;
 							p1stRow = pLastRow = pCurRow;
 
 							// Copy this next row into temp row buffer
-							bofMemCopy(pRowBuf, p1stRow, dx);
+							memcpy(pRowBuf, p1stRow, dx);
 
 							pCurRow += lJump;
 						}
@@ -1014,7 +1014,7 @@ ErrorCode CBofBitmap::scrollUp(int nPixels, CBofRect *pRect) {
 				}
 
 				// Copy 1st row into last row
-				bofMemCopy(pLastRow, pRowBuf, dx);
+				memcpy(pLastRow, pRowBuf, dx);
 
 				bofFree(pRowBuf);
 
@@ -1034,7 +1034,6 @@ ErrorCode CBofBitmap::scrollUp(int nPixels, CBofRect *pRect) {
 #define BIT16   0x00010000
 #define BIT17   0x00020000
 #define SEQ     (BIT17)
-#define BLOCK   4
 
 ErrorCode CBofBitmap::fadeIn(CBofWindow *pWnd, int xStart, int yStart, int nMaskColor, int nBlockSize, int /*nSpeed*/) {
 	assert(isValidObject(this));

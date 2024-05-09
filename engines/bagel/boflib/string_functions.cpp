@@ -77,7 +77,7 @@ char *strreplaceStr(char *pszBuf, const char *pszTok, const char *pszNewTok) {
 		if (nDiff != 0) {
 			memmove(pszEndTok - nDiff, pszEndTok, strlen(pszEndTok) + 1);
 		}
-		bofMemCopy(pszSearch, pszNewTok, nNewTok);
+		memcpy(pszSearch, pszNewTok, nNewTok);
 	}
 
 	return pszBuf;

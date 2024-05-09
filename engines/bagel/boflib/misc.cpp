@@ -67,7 +67,7 @@ void *bofMemAlloc(uint32 nSize, const char *pFile, int nLine, bool bClear) {
 		// If allocation was successful, then we're outta here
 		if (pNewBlock != nullptr) {
 			if (bClear)
-				bofMemSet((byte *)pNewBlock, 0, nSize);
+				memset((byte *)pNewBlock, 0, nSize);
 
 			break;
 		}

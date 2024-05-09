@@ -375,7 +375,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 				_objList = (StObj *)bofAlloc(MAX_OBJS * sizeof(StObj));
 				if (_objList != nullptr) {
 					// Init to zero (we might not use all slots)
-					bofMemSet(_objList, 0, MAX_OBJS * sizeof(StObj));
+					memset(_objList, 0, MAX_OBJS * sizeof(StObj));
 
 				} else {
 					reportError(ERR_MEMORY, "Could not allocate Object list");
@@ -1412,7 +1412,7 @@ void CBagMasterWin::fillSaveBuffer(StBagelSave *saveBuf) {
 	//
 
 	// 1st, wipe it
-	bofMemSet(saveBuf, 0, sizeof(StBagelSave));
+	memset(saveBuf, 0, sizeof(StBagelSave));
 
 	CBagel *app = CBagel::getBagApp();
 	if (app != nullptr) {
@@ -1488,7 +1488,7 @@ void CBagMasterWin::fillSaveBuffer(StBagelSave *saveBuf) {
 
 						assert(_objList != nullptr);
 
-						bofMemCopy(&saveBuf->_stObjListEx[0], _objList, sizeof(StObj) * MAX_OBJS);
+						memcpy(&saveBuf->_stObjListEx[0], _objList, sizeof(StObj) * MAX_OBJS);
 						saveBuf->_bUseEx = 1;
 					}
 
@@ -1648,14 +1648,14 @@ void CBagMasterWin::doRestore(StBagelSave *saveBuf) {
 				_objList = (StObj *)bofAlloc(MAX_OBJS * sizeof(StObj));
 				if (_objList != nullptr) {
 					// Init to nullptr (might not use all slots)
-					bofMemSet(_objList, 0, MAX_OBJS * sizeof(StObj));
+					memset(_objList, 0, MAX_OBJS * sizeof(StObj));
 
 				} else {
 					reportError(ERR_MEMORY);
 				}
 			}
 
-			bofMemCopy(getObjList(), &saveBuf->_stObjListEx[0], sizeof(StObj) * MAX_OBJS);
+			memcpy(getObjList(), &saveBuf->_stObjListEx[0], sizeof(StObj) * MAX_OBJS);
 
 			if (saveBuf->_bUseEx) {
 				setSaveObjs(true);

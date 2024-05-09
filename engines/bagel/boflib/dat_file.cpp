@@ -666,7 +666,7 @@ ErrorCode CBofDataFile::addRecord(void *pBuf, int32 lLength, bool bUpdateHeader,
 				HEADER_REC *pTmpHeader = new HEADER_REC[(int)_lNumRecs];
 				if (pTmpHeader != nullptr) {
 					if (_pHeader != nullptr) {
-						bofMemCopy(pTmpHeader, _pHeader, (size_t)(HEADER_REC::size() * (_lNumRecs - 1)));
+						memcpy(pTmpHeader, _pHeader, (size_t)(HEADER_REC::size() * (_lNumRecs - 1)));
 
 						delete[] _pHeader;
 					}
@@ -716,7 +716,7 @@ ErrorCode CBofDataFile::deleteRecord(int32 lRecNum, bool bUpdateHeader) {
 		_lHeaderStart -= _pHeader[(int)lRecNum]._lLength;
 
 		// Header has changed size
-		bofMemMove(_pHeader + lRecNum, _pHeader + lRecNum + 1, (size_t)((_lNumRecs - lRecNum - 1) * HEADER_REC::size()));
+		memmove(_pHeader + lRecNum, _pHeader + lRecNum + 1, (size_t)((_lNumRecs - lRecNum - 1) * HEADER_REC::size()));
 
 		// On less record
 		_lNumRecs--;

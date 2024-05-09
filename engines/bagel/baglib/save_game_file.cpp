@@ -237,7 +237,7 @@ ErrorCode CBagSaveGameFile::readTitle(int32 lSlot, StSavegameHeader *pSavedGame)
 			readRecord(lRecNum, pBuf);
 
 			// Fill StSavegameHeader structure with this game's saved info
-			bofMemCopy(pSavedGame, pBuf, sizeof(StSavegameHeader));
+			memcpy(pSavedGame, pBuf, sizeof(StSavegameHeader));
 			bofFree(pBuf);
 
 		} else {
@@ -265,7 +265,7 @@ ErrorCode CBagSaveGameFile::readTitleOnly(int32 lSlot, char *pGameTitle) {
 		readFromFile(lRecNum, pBuf, lSize);
 
 		// Fill with current game title
-		bofMemCopy(pGameTitle, pBuf, lSize);
+		memcpy(pGameTitle, pBuf, lSize);
 
 	} else {
 		reportError(ERR_UNKNOWN, "Unable to find saved game #%ld in %s", lSlot, _szFileName);

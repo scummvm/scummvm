@@ -86,10 +86,6 @@ extern void bofMemFree(void *pBuf, const char *pFile, int nLine);
 #define bofCAlloc(n, m) bofMemAlloc((uint32)(n) * (m), __FILE__, __LINE__, true)
 #define bofFree(p) bofMemFree((p), __FILE__, __LINE__)
 
-#define bofMemSet memset
-#define bofMemCopy memcpy
-#define bofMemMove memmove
-
 inline uint32 getFreePhysMem() {
 	return 999999;
 }
