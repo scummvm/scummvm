@@ -615,9 +615,52 @@ static void showVars() {
 
 	Director::Lingo *lingo = g_director->getLingo();
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(120, 120), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(300, 250), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Vars", &_state->_showVars)) {
-		ImGui::Text("%s", lingo->formatAllVars().c_str());
+		Common::Array<Common::String> keyBuffer;
+		const ImVec4 head_color = ImVec4(0.9f, 0.08f, 0.0f, 1.0f);
+
+
+		ImGui::TextColored(head_color, "Local vars:");
+		if (lingo->_state->localVars) {
+			for (auto &it : *lingo->_state->localVars) {
+				keyBuffer.push_back(it._key);
+			}
+			Common::sort(keyBuffer.begin(), keyBuffer.end());
+			for (auto &i : keyBuffer) {
+				Datum &val = lingo->_state->localVars->getVal(i);
+				ImGui::Text("  %s - [%s] %s", i.c_str(), val.type2str(), formatStringForDump(val.asString(true)).c_str());
+			}
+			keyBuffer.clear();
+		} else {
+			ImGui::Text("  (no local vars)");
+		}
+
+		if (lingo->_state->me.type == OBJECT && lingo->_state->me.u.obj->getObjType() & (kFactoryObj | kScriptObj)) {
+			ScriptContext *script = static_cast<ScriptContext *>(lingo->_state->me.u.obj);
+			ImGui::TextColored(head_color, "Instance/property vars:");
+			for (auto &it : script->_properties) {
+				keyBuffer.push_back(it._key);
+			}
+			Common::sort(keyBuffer.begin(), keyBuffer.end());
+			for (auto &i : keyBuffer) {
+				Datum &val = script->_properties.getVal(i);
+				ImGui::Text("  %s - [%s] %s", i.c_str(), val.type2str(), formatStringForDump(val.asString(true)).c_str());
+			}
+			keyBuffer.clear();
+		}
+
+		ImGui::TextColored(head_color, "Global vars:");
+		for (auto &it : lingo->_globalvars) {
+			keyBuffer.push_back(it._key);
+		}
+		Common::sort(keyBuffer.begin(), keyBuffer.end());
+		for (auto &i : keyBuffer) {
+			Datum &val = lingo->_globalvars.getVal(i);
+			ImGui::Text("  %s - [%s] %s", i.c_str(), val.type2str(), formatStringForDump(val.asString(true)).c_str());
+		}
+		keyBuffer.clear();
+
 		ImGui::Separator();
 		ImGuiIO &io = ImGui::GetIO();
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
@@ -792,10 +835,10 @@ static void renderCastScript(Symbol &sym) {
 
 	ImDrawList *dl = ImGui::GetWindowDrawList();
 
-	ImU32 bp_color_disabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 0.0f));
-	ImU32 bp_color_enabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 1.0f));
-	ImU32 bp_color_hover = ImGui::GetColorU32(ImVec4(0.42f, 0.17f, 0.13f, 1.0f));
-	ImU32 line_color = ImGui::GetColorU32(ImVec4(0.44f, 0.44f, 0.44f, 1.0f));
+	const ImU32 bp_color_disabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 0.0f));
+	const ImU32 bp_color_enabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 1.0f));
+	const ImU32 bp_color_hover = ImGui::GetColorU32(ImVec4(0.42f, 0.17f, 0.13f, 1.0f));
+	const ImU32 line_color = ImGui::GetColorU32(ImVec4(0.44f, 0.44f, 0.44f, 1.0f));
 	ImU32 color;
 
 	uint pc = 0;
