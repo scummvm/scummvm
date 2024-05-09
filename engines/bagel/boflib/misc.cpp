@@ -51,10 +51,10 @@ void bofSleep(uint32 milli) {
 
 #define ALLOC_FAIL_RETRIES 2
 
-void *bofMemAlloc(uint32 lSize, const char *pszFile, int nLine, bool bClear) {
-	// For now, until I fix it, pszFile MUST be valid.
-	assert(pszFile != nullptr);
-	assert(lSize != 0);
+void *bofMemAlloc(uint32 nSize, const char *pFile, int nLine, bool bClear) {
+	// For now, until I fix it, pFile MUST be valid.
+	assert(pFile != nullptr);
+	assert(nSize != 0);
 
 	// Assume failure
 	void *pNewBlock = nullptr;
@@ -62,29 +62,29 @@ void *bofMemAlloc(uint32 lSize, const char *pszFile, int nLine, bool bClear) {
 	// Try a few times to allocate the desired amount of memory.
 	// Flush objects from Cache is necessary.
 	for (int nRetries = 0; nRetries < ALLOC_FAIL_RETRIES; nRetries++) {
-		pNewBlock = (void *)malloc(lSize);
+		pNewBlock = (void *)malloc(nSize);
 
 		// If allocation was successful, then we're outta here
 		if (pNewBlock != nullptr) {
 			if (bClear)
-				bofMemSet((byte *)pNewBlock, 0, lSize);
+				bofMemSet((byte *)pNewBlock, 0, nSize);
 
 			break;
 		}
 		// Otherwise, we need to free up some memory by flushing old
 		// objects from the Cache.
-		CCache::optimize(lSize + 2 * sizeof(uint16) + sizeof(uint32));
+		CCache::optimize(nSize + 2 * sizeof(uint16) + sizeof(uint32));
 	}
 
 	if (pNewBlock == nullptr) {
-		logError(buildString("Could not allocate %ld bytes, file %s, line %d", lSize, pszFile, nLine));
+		logError(buildString("Could not allocate %ld bytes, file %s, line %d", nSize, pFile, nLine));
 	}
 
 	return pNewBlock;
 }
 
-void bofMemFree(void *pBuf, const char *pszFile, int nLine) {
-	assert(pszFile != nullptr);
+void bofMemFree(void *pBuf, const char *pFile, int nLine) {
+	assert(pFile != nullptr);
 
 	free(pBuf);
 }

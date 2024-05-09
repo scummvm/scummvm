@@ -75,26 +75,15 @@ extern Fixed fixedMultiply(Fixed Multiplicand, Fixed Multiplier);
 extern void *bofMemAlloc(uint32 nSize, const char *pFile, int nLine, bool bClear);
 
 /**
- * Re-Allocates a memory block to the specified size
- * @param pOldPointer   Old memory pointer
- * @param nNewSize      New buffer size
- * @param pFile         Source file name
- * @param nLine         Source file line number
- * @return              Pointer to new buffer
- */
-extern void *bofMemReAlloc(void *pOldPtr, uint32 nNewSize, const char *pFile, int nLine);
-
-/**
  * Frees specified memory block
  * @param pBuf          Buffer to de-allocate
  * @param pFile         Source file name
  * @param nLine         Source file line number
  **/
-extern void bofMemFree(void *pBuf, const char *pszFile, int nLine);
+extern void bofMemFree(void *pBuf, const char *pFile, int nLine);
 
 #define bofAlloc(n) bofMemAlloc((n), __FILE__, __LINE__, false)
 #define bofCAlloc(n, m) bofMemAlloc((uint32)(n) * (m), __FILE__, __LINE__, true)
-#define bofReAlloc(p, n) bofMemReAlloc((p), (n), __FILE__, __LINE__)
 #define bofFree(p) bofMemFree((p), __FILE__, __LINE__)
 
 #define bofMemSet memset

@@ -154,7 +154,8 @@ ErrorCode CBagCreditsDialog::loadNextTextFile() {
 
 		// Read in text file
 		lSize = cFile.getLength();
-		if ((_pszText = (char *)bofCAlloc(lSize + 1, 1)) != nullptr) {
+		_pszText = (char *)bofCAlloc(lSize + 1, 1);
+		if (_pszText != nullptr) {
 
 			cFile.read(_pszText, lSize);
 

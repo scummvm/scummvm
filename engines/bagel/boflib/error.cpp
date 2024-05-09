@@ -63,7 +63,8 @@ void CBofError::initialize() {
 }
 
 void CBofError::reportError(ErrorCode errCode, const char *format, ...) {
-	if ((_errCode = errCode) != ERR_NONE) {
+	_errCode = errCode;
+	if (_errCode != ERR_NONE) {
 		Common::String buf;
 
 		// Set global last error
@@ -85,7 +86,7 @@ void CBofError::reportError(ErrorCode errCode, const char *format, ...) {
 		if (_nErrorCount < MAX_ERRORS)
 			bofMessageBox(buf, g_errList[errCode]);
 
-		auto *console = g_engine->getDebugger();
+		GUI::Debugger *console = g_engine->getDebugger();
 		if (console->isActive())
 			console->debugPrintf("%s\n", buf.c_str());
 	}
