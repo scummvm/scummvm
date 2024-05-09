@@ -96,6 +96,7 @@ typedef struct ImGuiState {
 	bool _showFuncList = false;
 	Common::List<CastMemberID> _scriptCasts;
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _breakpoints;
+	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
 	int _prevFrame = -1;
 } ImGuiState;
 
@@ -609,6 +610,43 @@ static void showCast() {
 	ImGui::End();
 }
 
+static void displayVariable(Common::String &name) {
+	const ImU32 var_color = ImGui::GetColorU32(ImVec4(0.9f, 0.9f, 0.0f, 1.0f));
+
+	const ImU32 disp_color_disabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 0.0f));
+	const ImU32 disp_color_enabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 1.0f));
+	const ImU32 disp_color_hover = ImGui::GetColorU32(ImVec4(0.42f, 0.17f, 0.13f, 1.0f));
+	ImU32 color;
+
+	color = disp_color_disabled;
+
+	if (_state->_variables.contains(name))
+		color = disp_color_enabled;
+
+	ImDrawList *dl = ImGui::GetWindowDrawList();
+	ImVec2 pos = ImGui::GetCursorScreenPos();
+	ImVec2 eyeSize = ImGui::CalcTextSize("\ue05b ");
+	ImVec2 textSize = ImGui::CalcTextSize(name.c_str());
+
+	ImGui::InvisibleButton("Line", ImVec2(textSize.x + eyeSize.x, textSize.y));
+	if (ImGui::IsItemClicked(0)) {
+		if (color == disp_color_enabled) {
+			_state->_variables.erase(name);
+			color = disp_color_disabled;
+		} else {
+			_state->_variables[name] = true;
+			color = disp_color_enabled;
+		}
+	}
+
+	if (color == disp_color_disabled && ImGui::IsItemHovered()) {
+		color = disp_color_hover;
+	}
+
+	dl->AddText(pos, color, "\ue05b ");
+	dl->AddText(ImVec2(pos.x + eyeSize.x, pos.y), var_color, name.c_str());
+}
+
 static void showVars() {
 	if (!_state->_showVars)
 		return;
@@ -629,7 +667,9 @@ static void showVars() {
 			Common::sort(keyBuffer.begin(), keyBuffer.end());
 			for (auto &i : keyBuffer) {
 				Datum &val = lingo->_state->localVars->getVal(i);
-				ImGui::Text("  %s - [%s] %s", i.c_str(), val.type2str(), formatStringForDump(val.asString(true)).c_str());
+				displayVariable(i);
+				ImGui::SameLine();
+				ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
 			}
 			keyBuffer.clear();
 		} else {
@@ -645,7 +685,9 @@ static void showVars() {
 			Common::sort(keyBuffer.begin(), keyBuffer.end());
 			for (auto &i : keyBuffer) {
 				Datum &val = script->_properties.getVal(i);
-				ImGui::Text("  %s - [%s] %s", i.c_str(), val.type2str(), formatStringForDump(val.asString(true)).c_str());
+				displayVariable(i);
+				ImGui::SameLine();
+				ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
 			}
 			keyBuffer.clear();
 		}
@@ -657,13 +699,11 @@ static void showVars() {
 		Common::sort(keyBuffer.begin(), keyBuffer.end());
 		for (auto &i : keyBuffer) {
 			Datum &val = lingo->_globalvars.getVal(i);
-			ImGui::Text("  %s - [%s] %s", i.c_str(), val.type2str(), formatStringForDump(val.asString(true)).c_str());
+			displayVariable(i);
+			ImGui::SameLine();
+			ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
 		}
 		keyBuffer.clear();
-
-		ImGui::Separator();
-		ImGuiIO &io = ImGui::GetIO();
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 	}
 	ImGui::End();
 }
