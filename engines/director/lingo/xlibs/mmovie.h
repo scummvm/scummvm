@@ -62,6 +62,7 @@ struct MMovieFile {
 class MMovieXObject : public Object<MMovieXObject> {
 public:
 	MMovieXObject(ObjectType objType);
+	~MMovieXObject();
 
 	int _rate = 100;
 	Common::Rect _bounds;
@@ -78,6 +79,7 @@ public:
 	Common::HashMap<int, MMovieFile> _movies;
 	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _moviePathMap;
 
+	Graphics::Surface _lastFrame;
 
 	bool playSegment(int movieIndex, int segIndex, bool looping, bool restore, bool shiftAbort, bool abortOnClick, bool purge, bool async);
 	bool stopSegment();

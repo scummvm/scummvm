@@ -117,6 +117,10 @@ MMovieXObject::MMovieXObject(ObjectType ObjectType) :Object<MMovieXObject>("MMov
 	_objType = ObjectType;
 }
 
+MMovieXObject::~MMovieXObject() {
+	_lastFrame.free();
+}
+
 bool MMovieXObject::playSegment(int movieIndex, int segIndex, bool looping, bool restore, bool shiftAbort, bool abortOnClick, bool purge, bool async) {
 	if (_movies.contains(movieIndex)) {
 		MMovieFile &movie = _movies.getVal(movieIndex);
@@ -198,11 +202,12 @@ void MMovieXObject::updateScreen() {
 					debugC(8, kDebugXObj, "MMovieXObject: rendering movie %s (%d), time %d", movie._path.toString().c_str(), _currentMovieIndex, movie._video->getTime());
 					Graphics::Surface *temp1 = frame->scale(_bounds.width(), _bounds.height(), false);
 					Graphics::Surface *temp2 = temp1->convertTo(g_director->_pixelformat, movie._video->getPalette());
-					g_system->copyRectToScreen(temp2->getPixels(), temp2->pitch, _bounds.left, _bounds.top, _bounds.width(), _bounds.height());
+					_lastFrame.copyFrom(*temp2);
 					delete temp2;
 					delete temp1;
 				}
 			}
+			g_system->copyRectToScreen(_lastFrame.getPixels(), _lastFrame.pitch, _bounds.left, _bounds.top, _bounds.width(), _bounds.height());
 			// do a time check
 			uint32 endTime = Audio::Timestamp(0, seg._length + seg._start, movie._video->getTimeScale()).msecs();
 			debugC(8, kDebugXObj, "MMovieXObject::updateScreen(): time: %d, endTime: %d", movie._video->getTime(), endTime);
@@ -366,7 +371,7 @@ void MMovieXObj::m_playSegment(int nargs) {
 			}
 			int result = me->getTicks();
 			debugC(5, kDebugXObj, "MMovieXObj::m_playSegment: ticks: %d", result);
-			g_lingo->push(result);
+			g_lingo->push(0);
 			return;
 		}
 	}
@@ -401,7 +406,7 @@ void MMovieXObj::m_playSegLoop(int nargs) {
 			me->playSegment(it._key, segIndex, true, restore, shiftAbort, abortOnClick, purge, async);
 			int result = me->getTicks();
 			debugC(5, kDebugXObj, "MMovieXObj::m_playSegLoop: ticks: %d", result);
-			g_lingo->push(result);
+			g_lingo->push(0);
 			return;
 		}
 	}
@@ -465,6 +470,8 @@ void MMovieXObj::m_setDisplayBounds(int nargs) {
 	Datum top = g_lingo->pop();
 	Datum left = g_lingo->pop();
 	me->_bounds = Common::Rect((int16)left.asInt(), (int16)top.asInt(), (int16)right.asInt(), (int16)bottom.asInt());
+	me->_lastFrame.free();
+	me->_lastFrame.create(me->_bounds.width(), me->_bounds.height(), g_director->_pixelformat);
 	g_lingo->push(Datum(0));
 }
 
