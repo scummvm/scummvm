@@ -87,7 +87,7 @@ ErrorCode CBofDialog::create(const char *pszName, int x, int y, int nWidth, int 
 	_nID = nControlID;
 
 	// Remember the name of this window
-	strncpy(_szTitle, pszName, MAX_TITLE);
+	Common::strlcpy(_szTitle, pszName, MAX_TITLE);
 
 	// Calculate effective bounds
 	Common::Rect stRect(x, y, x + nWidth, y + nHeight);
