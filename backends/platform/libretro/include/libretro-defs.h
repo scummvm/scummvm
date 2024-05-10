@@ -38,6 +38,8 @@
 #define AUDIO_STATUS_BUFFER_UNDERRUN    (1 << 3)
 #define AUDIO_STATUS_UPDATE_LATENCY     (1 << 4)
 #define AUDIO_STATUS_UPDATE_AV_INFO	    (1 << 5)
+#define AUDIO_STATUS_RESET_PENDING	    (1 << 6)
+#define AUDIO_STATUS_UPDATE_GEOMETRY    (1 << 7)
 
 // Video status
 #define VIDEO_GRAPHIC_MODE_REQUEST_SW     (1 << 0)

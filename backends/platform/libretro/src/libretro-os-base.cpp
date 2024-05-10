@@ -37,7 +37,10 @@
 #include "backends/platform/libretro/include/libretro-timer.h"
 #include "backends/platform/libretro/include/libretro-os.h"
 #include "backends/platform/libretro/include/libretro-fs.h"
-#include "backends/platform/libretro/include/libretro-graphics.h"
+#include "backends/platform/libretro/include/libretro-graphics-surface.h"
+#ifdef USE_OPENGL
+#include "backends/platform/libretro/include/libretro-graphics-opengl.h"
+#endif
 
 OSystem_libretro::OSystem_libretro() : _mouseX(0), _mouseY(0), _mouseXAcc(0.0), _mouseYAcc(0.0), _dpadXAcc(0.0), _dpadYAcc(0.0), _dpadXVel(0.0f), _dpadYVel(0.0f), _mixer(0), _startTime(0), _cursorStatus(0) {
 	_fsFactory = new FS_SYSTEM_FACTORY();
@@ -125,10 +128,10 @@ void OSystem_libretro::engineInit() {
 	}
 
 	/* See LibretroPalette::set workaround */
-	if (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_SW){
+	/*if (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_SW){
 		dynamic_cast<LibretroGraphics *>(_graphicsManager)->_mousePalette.reset();
 		dynamic_cast<LibretroGraphics *>(_graphicsManager)->_gamePalette.reset();
-	}
+	}*/
 }
 
 Audio::Mixer *OSystem_libretro::getMixer() {
@@ -167,7 +170,7 @@ void OSystem_libretro::setLibretroDir(const char * path, Common::String &var) {
 	return;
 }
 
-void OSystem_libretro::getScreen(const Graphics::Surface *&screen) {
+void OSystem_libretro::getScreen(const Graphics::ManagedSurface *&screen) {
 	if (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_SW)
 		screen = dynamic_cast<LibretroGraphics *>(_graphicsManager)->getScreen();
 }
@@ -178,10 +181,11 @@ void OSystem_libretro::refreshScreen(void) {
 }
 
 #ifdef USE_OPENGL
+#ifdef USE_GLAD
 void *OSystem_libretro::getOpenGLProcAddress(const char *name) const {
 	return retro_get_proc_address(name);
 }
-
+#endif
 void OSystem_libretro::resetGraphicsContext(void) {
 	if ((retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_HW) && (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_HAVE_OPENGL))
 		dynamic_cast<LibretroOpenGLGraphics *>(_graphicsManager)->resetContext(OpenGL::kContextGL);
@@ -191,25 +195,11 @@ void OSystem_libretro::resetGraphicsContext(void) {
 #endif
 
 int16 OSystem_libretro::getScreenWidth(void){
-#ifdef USE_OPENGL
-	if (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_HW)
-		return dynamic_cast<LibretroOpenGLGraphics *>(_graphicsManager)->getWindowWidth();
-#endif
-	if (dynamic_cast<LibretroGraphics *>(_graphicsManager)->isOverlayInGUI())
-		return dynamic_cast<LibretroGraphics *>(_graphicsManager)->getOverlayWidth();
-	else
-		return dynamic_cast<LibretroGraphics *>(_graphicsManager)->getWidth();
+	return dynamic_cast<WindowedGraphicsManager *>(_graphicsManager)->getWindowWidth();
 }
 
 int16 OSystem_libretro::getScreenHeight(void){
-#ifdef USE_OPENGL
-	if (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_HW)
-		return dynamic_cast<LibretroOpenGLGraphics *>(_graphicsManager)->getWindowHeight();
-#endif
-	if (dynamic_cast<LibretroGraphics *>(_graphicsManager)->isOverlayInGUI())
-		return dynamic_cast<LibretroGraphics *>(_graphicsManager)->getOverlayHeight();
-	else
-		return dynamic_cast<LibretroGraphics *>(_graphicsManager)->getHeight();
+	return dynamic_cast<WindowedGraphicsManager *>(_graphicsManager)->getWindowHeight();
 }
 
 bool OSystem_libretro::isOverlayInGUI(void) {

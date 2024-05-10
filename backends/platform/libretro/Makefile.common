@@ -168,7 +168,11 @@ LIBRETRO_OBJS := $(CORE_PATH)/libretro-core.o \
 	$(CORE_PATH)/libretro-timer.o \
 	$(CORE_PATH)/libretro-mapper.o \
 	$(CORE_PATH)/libretro-options-widget.o \
-	$(CORE_PATH)/libretro-graphics.o
+	$(CORE_PATH)/libretro-graphics-surface.o
+
+ifeq ($(or $(HAVE_OPENGL), $(HAVE_OPENGLES2)), 1)
+	LIBRETRO_OBJS += $(CORE_PATH)/libretro-graphics-opengl.o
+endif
 
 OBJS += $(LIBRETRO_OBJS)
 

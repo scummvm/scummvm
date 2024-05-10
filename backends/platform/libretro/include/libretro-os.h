@@ -19,12 +19,13 @@
 
 #include "audio/mixer_intern.h"
 #include "base/main.h"
-#include "backends/base-backend.h"
+//#include "backends/base-backend.h"
 #include "common/system.h"
 #include "common/mutex.h"
 #include "common/list.h"
 #include "common/events.h"
 #include "backends/modular-backend.h"
+#include "graphics/managed_surface.h"
 
 #define BASE_CURSOR_SPEED 4
 #define CURSOR_STATUS_DOING_JOYSTICK  (1 << 0)
@@ -87,14 +88,16 @@ public:
 	void quit() override {}
 
 	void resetGraphicsManager(void);
-	void getScreen(const Graphics::Surface *&screen);
+	void getScreen(const Graphics::ManagedSurface *&screen);
 	int16 getScreenWidth(void);
 	int16 getScreenHeight(void);
 	bool isOverlayInGUI(void);
 
 #ifdef USE_OPENGL
 	void resetGraphicsContext(void);
+#ifdef USE_GLAD
 	void *getOpenGLProcAddress(const char *name) const override;
+#endif
 #endif
 
 private:

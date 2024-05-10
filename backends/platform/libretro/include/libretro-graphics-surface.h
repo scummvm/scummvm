@@ -14,44 +14,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef BACKENDS_LIBRETRO_GRAPHICS_H
-#define BACKENDS_LIBRETRO_GRAPHICS_H
+#ifndef BACKENDS_LIBRETRO_GRAPHICS_SURFACE_H
+#define BACKENDS_LIBRETRO_GRAPHICS_SURFACE_H
 
 #include "common/system.h"
-#include "graphics/paletteman.h"
-#include "graphics/surface.h"
-#include "backends/graphics/graphics.h"
+#include "graphics/palette.h"
+#include "graphics/managed_surface.h"
+#include "backends/graphics/windowed.h"
 
-#ifdef USE_OPENGL
-#include "backends/graphics/opengl/opengl-graphics.h"
-#endif
-
-class LibretroPalette {
-public:
-	const byte *_prevColorsSource;
-	unsigned char _colors[256 * 3];
-	LibretroPalette(void);
-	~LibretroPalette(void) {};
-	void set(const byte *colors, uint start, uint num);
-	void get(byte *colors, uint start, uint num) const;
-	unsigned char *getColor(uint aIndex) const;
-	void reset(void) {
-		_prevColorsSource = NULL;
-	}
-};
-
-class LibretroGraphics : public GraphicsManager {
+class LibretroGraphics : public WindowedGraphicsManager {
 
 public:
-	Graphics::Surface _screen;
+	Graphics::ManagedSurface _screen;
 	Graphics::Surface _gameScreen;
 	Graphics::Surface _overlay;
 	Graphics::Surface _mouseImage;
-	LibretroPalette _mousePalette;
-	LibretroPalette _gamePalette;
+	Graphics::Palette _mousePalette;
+	Graphics::Palette _gamePalette;
 
 private:
-	bool _overlayInGUI;
+	//bool _overlayInGUI;
 	bool _overlayVisible;
 	bool _mouseDontScale;
 	bool _mousePaletteEnabled;
@@ -60,6 +42,7 @@ private:
 	int _mouseHotspotX;
 	int _mouseHotspotY;
 	int _mouseKeyColor;
+	int _screenChangeID;
 
 public:
 	LibretroGraphics();
@@ -72,15 +55,13 @@ public:
 	Graphics::PixelFormat getScreenFormat(void) const override;
 	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override;
 	void updateScreen(void) override;
-	void showOverlay(bool inGUI) override;
-	void hideOverlay(void) override;
 	void clearOverlay(void) override;
 	void grabOverlay(Graphics::Surface &surface) const override;
 	void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override;
 	int16 getOverlayHeight(void) const override;
 	int16 getOverlayWidth(void) const override;
 	Graphics::PixelFormat getOverlayFormat() const override;
-	const Graphics::Surface *getScreen(void);
+	const Graphics::ManagedSurface *getScreen(void);
 	bool showMouse(bool visible) override;
 	void warpMouse(int x, int y) override;
 	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 255, bool dontScale = false, const Graphics::PixelFormat *format = NULL, const byte *mask = nullptr) override;
@@ -91,64 +72,31 @@ public:
 	void setFeatureState(OSystem::Feature f, bool enable) override;
 	bool getFeatureState(OSystem::Feature f) const override;
 
-	int getDefaultGraphicsMode() const override {
-		return 0;
-	}
-	bool isOverlayVisible() const override {
-		return _overlayVisible;
-	}
-	bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags) override {
-		return true;
-	}
-	int getGraphicsMode() const override {
-		return 0;
-	}
-	Graphics::Surface *lockScreen() override {
-		return &_gameScreen;
-	}
+	int getDefaultGraphicsMode() const override { return 0; }
+	bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags) override { return true; }
+	int getGraphicsMode() const override { return 0; }
+	Graphics::Surface *lockScreen() override { return &_gameScreen; }
 	void unlockScreen() override {}
 
-	void setShakePos(int shakeXOffset, int shakeYOffset) override {}
-	int getScreenChangeID() const override {
-		return 0;
-	}
+	int getScreenChangeID() const override;
 	void beginGFXTransaction() override {}
-	OSystem::TransactionError endGFXTransaction() override {
-		return OSystem::kTransactionSuccess;
-	}
+	OSystem::TransactionError endGFXTransaction() override { return OSystem::kTransactionSuccess; }
 	void fillScreen(uint32 col) override {}
 	void fillScreen(const Common::Rect &r, uint32 col) override {}
 	void setFocusRectangle(const Common::Rect &rect) override {}
 	void clearFocusRectangle() override {}
-	void displayMessageOnOSD(const Common::U32String &msg) override;
-	void displayActivityIconOnOSD(const Graphics::Surface *icon) override {}
 
 	void realUpdateScreen(void);
+
+	bool gameNeedsAspectRatioCorrection() const override { return false; }
+	void handleResizeImpl(const int width, const int height) override {};
+	void setSystemMousePosition(const int x, const int y) override {}
+	void setMousePosition(int x, int y);
+
+	void displayMessageOnOSD(const Common::U32String &msg) override;
 
 protected:
 	void setPalette(const byte *colors, uint start, uint num) override;
 	void grabPalette(byte *colors, uint start, uint num) const override;
 };
-
-#ifdef USE_OPENGL
-class LibretroOpenGLGraphics : public OpenGL::OpenGLGraphicsManager {
-public:
-	LibretroOpenGLGraphics(OpenGL::ContextType contextType);
-	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) override { return true; };
-	void refreshScreen() override;
-	void setSystemMousePosition(const int x, const int y) override {};
-	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) override;
-
-	bool isOverlayInGUI(void){ return _overlayInGUI; }
-	void setMousePosition(int x, int y);
-	Common::Point convertWindowToVirtual(int x, int y) const;
-	void resetContext(OpenGL::ContextType contextType);
-};
-
-class LibretroHWFramebuffer : public OpenGL::Backbuffer {
-
-protected:
-	void activateInternal() override;
-};
-#endif
-#endif //BACKENDS_LIBRETRO_GRAPHICS_H
+#endif //BACKENDS_LIBRETRO_GRAPHICS_SURFACE_H

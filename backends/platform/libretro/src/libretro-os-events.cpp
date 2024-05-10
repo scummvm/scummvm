@@ -25,7 +25,10 @@
 #include "backends/platform/libretro/include/libretro-core.h"
 #include "backends/platform/libretro/include/libretro-os.h"
 #include "backends/platform/libretro/include/libretro-timer.h"
-#include "backends/platform/libretro/include/libretro-graphics.h"
+#include "backends/platform/libretro/include/libretro-graphics-surface.h"
+#ifdef USE_OPENGL
+#include "backends/platform/libretro/include/libretro-graphics-opengl.h"
+#endif
 
 bool OSystem_libretro::pollEvent(Common::Event &event) {
 	((LibretroTimerManager *)_timerManager)->checkThread(THREAD_SWITCH_POLL);
@@ -77,20 +80,22 @@ Common::MutexInternal *OSystem_libretro::createMutex(void) {
 }
 
 void OSystem_libretro::requestQuit() {
-        Common::Event ev;
-        ev.type = Common::EVENT_QUIT;
-        LIBRETRO_G_SYSTEM->getEventManager()->pushEvent(ev);
+	Common::Event ev;
+	ev.type = Common::EVENT_QUIT;
+	LIBRETRO_G_SYSTEM->getEventManager()->pushEvent(ev);
 }
 
 void OSystem_libretro::resetQuit() {
-        LIBRETRO_G_SYSTEM->getEventManager()->resetQuit();
+	LIBRETRO_G_SYSTEM->getEventManager()->resetQuit();
 }
 
 void OSystem_libretro::setMousePosition(int x, int y) {
 #ifdef USE_OPENGL
 	if (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_HW)
 		dynamic_cast<LibretroOpenGLGraphics *>(_graphicsManager)->setMousePosition(x, y);
+	else
 #endif
+		dynamic_cast<LibretroGraphics *>(_graphicsManager)->setMousePosition(x, y);
 }
 
 Common::Point OSystem_libretro::convertWindowToVirtual(int x, int y) const {
@@ -99,5 +104,5 @@ Common::Point OSystem_libretro::convertWindowToVirtual(int x, int y) const {
 		return dynamic_cast<LibretroOpenGLGraphics *>(_graphicsManager)->convertWindowToVirtual(x, y);
 	else
 #endif
-	return Common::Point(x, y);
+		return dynamic_cast<LibretroGraphics *>(_graphicsManager)->convertWindowToVirtual(x, y);
 }
