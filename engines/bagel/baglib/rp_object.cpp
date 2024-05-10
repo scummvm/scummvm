@@ -1336,7 +1336,6 @@ void CBagRPObject::restoreResiduePrintedVars() {
 
 // Hide the list of rp results, don't purge them from memory, just set to not visible.
 void CBagRPObject::hideResiduePrintedReview() {
-	CBagRPObject *pRPObj;
 	CBagLog *pLogWld;
 
 	if (zoomed()) {
@@ -1345,7 +1344,7 @@ void CBagRPObject::hideResiduePrintedReview() {
 		pLogWld = (CBagLog *)g_SDevManager->getStorageDevice(LOG_WLD);
 	}
 
-	pRPObj = _pRPList->getNodeItem(0);
+	CBagRPObject *pRPObj = _pRPList->getNodeItem(0);
 	if (pRPObj == nullptr) {
 		return;
 	}
@@ -1356,8 +1355,14 @@ void CBagRPObject::hideResiduePrintedReview() {
 	for (int i = 0; i < nCount; i++) {
 		pRPObj = _pRPList->getNodeItem(i);
 
+		if (!pRPObj)
+			error("hideResiduePrintedReview() - Unexpected null pRPObj");
+		
 		// If the object txt var is not found yet, then get it.
 		if (pRPObj->_pObjectName == nullptr) {
+			if (!pLogWld)
+				error("hideResiduePrintedReview() - Unexpected null pLogWld");
+
 			pRPObj->_pObjectName = (CBagTextObject *)pLogWld->getObject(pRPObj->_sObjectName);
 		}
 
