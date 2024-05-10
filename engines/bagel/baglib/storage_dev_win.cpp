@@ -1898,7 +1898,7 @@ bool CBagStorageDevManager::moveObject(const CBofString &sDstName, const CBofStr
 	// Find the storage device
 	if (pDstSDev->activateLocalObject(sObjName) != ERR_NONE)
 		return false;
-	
+
 	if (pSrcSDev->deactivateLocalObject(sObjName) != ERR_NONE) {
 		pDstSDev->deactivateLocalObject(sObjName);
 		return false;
@@ -1995,7 +1995,7 @@ void CBagStorageDevManager::saveObjList(StObj *pObjList, int nNumEntries) {
 
 				if (!pObj->getRefName().isEmpty()) {
 					assert(strlen(pObj->getRefName()) < MAX_OBJ_NAME);
-					strncpy((pObjList + k)->_szName, pObj->getRefName(), MAX_OBJ_NAME);
+					Common::strlcpy((pObjList + k)->_szName, pObj->getRefName(), MAX_OBJ_NAME);
 
 					// We MUST have put something in here
 					assert((pObjList + k)->_szName[0] != '\0');
