@@ -125,7 +125,7 @@ void vilInitFilters(CBofBitmap *pBmp) {
 		CBofRect rct(0, 0, (nfile.getLength() + 1) * 7, 20);
 		paintText(pTipBmp, &rct, buff, VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(107, 0, 255), JUSTIFY_LEFT, FORMAT_DEFAULT);
 		nfile.close();
-		delete buff;
+		delete[] buff;
 
 		// Graffiti bitmap.
 		//
@@ -397,7 +397,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				}
 				nfile.close();
 				CMainWindow::chipdisp = true;
-				delete buff;
+				delete[] buff;
 				break;
 			}
 			case 2: {
@@ -440,7 +440,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				}
 				nfile.close();
 				CMainWindow::chipdisp = true;
-				delete buff;
+				delete[] buff;
 				break;
 			}
 			case 3: {
