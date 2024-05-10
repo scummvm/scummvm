@@ -105,8 +105,6 @@ public:
 protected:
 	bool _highRes;
 
-protected:
-
 	struct Traits {
 		static bool isSpace(Std::string::const_iterator &i, bool u8specials) {
 			char c = *i;
