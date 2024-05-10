@@ -380,7 +380,7 @@ ErrorCode CBofDataFile::readRecord(int32 lRecNum, void *pBuf) {
 				}
 
 			} else {
-				logError(buildString("Error reading record %ld in file '%s'", lRecNum, _szFileName));
+				logError(buildString("Error reading record %d in file '%s'", lRecNum, _szFileName));
 				_errCode = ERR_FREAD;
 			}
 		}
