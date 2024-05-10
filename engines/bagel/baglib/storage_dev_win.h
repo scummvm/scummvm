@@ -113,7 +113,6 @@ protected:
 
 	bool _bForeignList : true;   // True if setObjectList has been called
 	bool _bCloseOnOpen : true;   // True if other SDev should be closed when this is opened
-	bool _bContainsModal : true; // True if SDev contains a modal object
 	bool _bCloseup : true;       // true if is a closeup (includes CIC, or CHAT)
 	bool _bCIC : true;           // true if is a CIC
 	bool _bCustom : true;        // true if is a hand coded closeup
@@ -251,13 +250,6 @@ public:
 	}
 	void setCloseOnOpen(bool bVal) {
 		_bCloseOnOpen = bVal;
-	}
-
-	bool getContainsModal() {
-		return _bContainsModal;
-	}
-	void setContainsModal(bool bVal) {
-		_bContainsModal = bVal;
 	}
 
 	uint16 getExitOnEdge() {

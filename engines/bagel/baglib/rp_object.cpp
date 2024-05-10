@@ -1380,7 +1380,7 @@ void CBagRPObject::showResiduePrintedReview() {
 	}
 
 	if (!pLogWld) {
-		warning("Unexpected null logWld in showResiduePrintedReview");
+		warning("showResiduePrintedReview() - Unexpected null logWld");
 		return;
 	}
 	

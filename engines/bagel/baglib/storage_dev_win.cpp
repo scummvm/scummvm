@@ -314,8 +314,6 @@ ErrorCode CBagStorageDev::attachActiveObjects() {
 
 	int nCount = getObjectCount();
 	if (nCount != 0) {
-		setContainsModal(false);
-
 		for (int i = 0; i < nCount; ++i) {
 			if (g_engine->shouldQuit())
 				return ERR_NONE;
@@ -340,8 +338,7 @@ ErrorCode CBagStorageDev::attachActiveObjects() {
 							}
 						}
 					}
-					if (pObj->isModal())
-						setContainsModal(true);
+
 					if (pObj->isFloating()) {
 						nArrangePos = arrangeFloater(nArrangePos, pObj);
 					}
