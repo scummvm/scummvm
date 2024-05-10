@@ -1379,6 +1379,11 @@ void CBagRPObject::showResiduePrintedReview() {
 		pLogWld = (CBagLog *)g_SDevManager->getStorageDevice(LOG_WLD);
 	}
 
+	if (!pLogWld) {
+		warning("Unexpected null logWld in showResiduePrintedReview");
+		return;
+	}
+	
 	// Count items in this queue.
 	int nCount = pLogWld->getObjectCount();
 
