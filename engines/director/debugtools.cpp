@@ -1074,7 +1074,7 @@ static void showFuncList() {
 
 					ImGui::TableNextRow();
 					ImGui::TableNextColumn();
-					if(ImGui::Selectable(function.c_str())) {
+					if (ImGui::Selectable(function.c_str())) {
 						ImGuiScript script;
 						script.moviePath = movie->getArchive()->getPathName().toString();
 						script.score = true;
@@ -1112,7 +1112,7 @@ static void showFuncList() {
 
 							ImGui::TableNextRow();
 							ImGui::TableNextColumn();
-							if(ImGui::Selectable(function.c_str())) {
+							if (ImGui::Selectable(function.c_str())) {
 								CastMemberID memberID(scriptContext._key, cast._key);
 								ImGuiScript script;
 								script.moviePath = movie->getArchive()->getPathName().toString();
@@ -1154,7 +1154,7 @@ static void showFuncList() {
 
 							ImGui::TableNextRow();
 							ImGui::TableNextColumn();
-							if(ImGui::Selectable(function.c_str())) {
+							if (ImGui::Selectable(function.c_str())) {
 								CastMemberID memberID(scriptContext._key, SHARED_CAST_LIB);
 								ImGuiScript script;
 								script.moviePath = movie->getArchive()->getPathName().toString();
