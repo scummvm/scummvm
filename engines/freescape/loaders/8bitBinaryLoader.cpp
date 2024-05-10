@@ -937,6 +937,8 @@ void FreescapeEngine::loadMessagesVariableSize(Common::SeekableReadStream *file,
 		Common::String message = "";
 		while (true) {
 			byte c = file->readByte();
+			if (c > 0xf0)
+				c = ' ';
 			if (c <= 1)
 				break;
 			message = message + c;
@@ -945,6 +947,7 @@ void FreescapeEngine::loadMessagesVariableSize(Common::SeekableReadStream *file,
 		_messagesList.push_back(message);
 		debugC(1, kFreescapeDebugParser, "'%s'", _messagesList[i].c_str());
 	}
+	debugC(1, kFreescapeDebugParser, "End of messages at %lx", file->pos());
 }
 
 void FreescapeEngine::loadGlobalObjects(Common::SeekableReadStream *file, int offset, int size) {

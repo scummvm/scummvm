@@ -39,8 +39,11 @@ public:
 	void gotoArea(uint16 areaID, int entranceID) override;
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
+
+	Common::StringArray _riddleList;
 private:
 	Common::SeekableReadStream *decryptFile(const Common::Path &filename);
+	void loadRiddles(Common::SeekableReadStream *file, int offset, int number);
 };
 
 extern byte kFreescapeCastleFont[];

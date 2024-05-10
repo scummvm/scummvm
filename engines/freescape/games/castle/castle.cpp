@@ -188,6 +188,36 @@ void CastleEngine::executePrint(FCLInstruction &instruction) {
 }
 
 
+void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int number) {
+	file->seek(offset);
+	debugC(1, kFreescapeDebugParser, "Riddle table:");
+
+	for (int i = 0; i < 6 * number; i++) {
+		if (i % 6 == 0 && i > 0) {
+			debug("extra byte: %x", file->readByte());
+		}
+		int size = file->readByte();
+		if (size > 22)
+			size = 22;
+		debugC(1, kFreescapeDebugParser, "size: %d", size);
+		debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
+		Common::String message = "";
+		while (size-- > 0) {
+			byte c = file->readByte();
+			if (c != 0)
+				message = message + c;
+		}
+		if (isAmiga() || isAtariST())
+			debug("extra byte: %x", file->readByte());
+		debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
+		debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
+		_riddleList.push_back(message);
+		debugC(1, kFreescapeDebugParser, "'%s'", _riddleList[i].c_str());
+	}
+	debugC(1, kFreescapeDebugParser, "End of riddles at %lx", file->pos());
+}
+
+
 Common::Error CastleEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
 	return Common::kNoError;
 }

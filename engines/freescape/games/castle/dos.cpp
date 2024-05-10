@@ -140,6 +140,15 @@ void CastleEngine::loadAssetsDOSDemo() {
 	if (_renderMode == Common::kRenderEGA) {
 		_viewArea = Common::Rect(40, 33, 280, 152);
 
+		file.open("CMDE.EXE");
+		stream = unpackEXE(file);
+		if (stream) {
+			loadSpeakerFxDOS(stream, 0x636d + 0x200, 0x63ed + 0x200);
+		}
+
+		delete stream;
+		file.close();
+
 		file.open("CMLE.DAT");
 		_title = load8bitBinImage(&file, 0x0);
 		_title->setPalette((byte *)&kEGADefaultPalette, 0, 16);
@@ -156,9 +165,18 @@ void CastleEngine::loadAssetsDOSDemo() {
 		file.close();
 
 		stream = decryptFile("CMLD"); // Only english
-
 		loadFonts(kFreescapeCastleFont, 59);
 		loadMessagesVariableSize(stream, 0x11, 164);
+		loadRiddles(stream, 0xaaf, 2);
+
+		/*for (int i = 0; i < 16; i++) {
+			debug("%lx", stream->pos());
+			for (int j = 0; j < 16; j++) {
+				byte c = stream->readByte();
+				debugN("%x/%c", c, c);
+			}
+			debugN("\n");
+		}*/
 		delete stream;
 
 		stream = decryptFile("CDEDF");
