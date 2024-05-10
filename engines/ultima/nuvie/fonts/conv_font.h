@@ -47,8 +47,6 @@ public:
 	}
 	uint16 drawChar(Screen *screen, uint8 char_num, uint16 x, uint16 y,
 	                uint8 color) override;
-protected:
-
 };
 
 } // End of namespace Nuvie

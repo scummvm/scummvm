@@ -676,8 +676,6 @@ public:
 };
 
 class HailStormEffect : public Effect {
-protected:
-
 public:
 	HailStormEffect(const MapCoord &target);
 
