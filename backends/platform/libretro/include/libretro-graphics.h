@@ -120,6 +120,8 @@ public:
 	void fillScreen(const Common::Rect &r, uint32 col) override {}
 	void setFocusRectangle(const Common::Rect &rect) override {}
 	void clearFocusRectangle() override {}
+	void displayMessageOnOSD(const Common::U32String &msg) override;
+	void displayActivityIconOnOSD(const Graphics::Surface *icon) override {}
 
 	void realUpdateScreen(void);
 

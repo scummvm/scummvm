@@ -27,6 +27,8 @@
 #include "backends/platform/libretro/include/libretro-timer.h"
 #include "backends/platform/libretro/include/libretro-graphics.h"
 
+#include "gui/message.h"
+
 #ifdef USE_OPENGL
 #include "backends/graphics/opengl/opengl-graphics.h"
 #include "backends/graphics/opengl/framebuffer.h"
@@ -444,6 +446,12 @@ bool LibretroGraphics::hasFeature(OSystem::Feature f) const {
 void LibretroGraphics::setFeatureState(OSystem::Feature f, bool enable) {
 	if (f == OSystem::kFeatureCursorPalette)
 		_mousePaletteEnabled = enable;
+}
+
+void LibretroGraphics::displayMessageOnOSD(const Common::U32String &msg) {
+	// Display the message for 3 seconds
+	GUI::TimedMessageDialog dialog(msg, 3000);
+	dialog.runModal();
 }
 
 bool LibretroGraphics::getFeatureState(OSystem::Feature f) const {
