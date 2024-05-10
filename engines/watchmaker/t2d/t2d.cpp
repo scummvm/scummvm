@@ -175,7 +175,7 @@ int32 diarioCurrentPage;
 //Varabili PDA
 int32  StartAcquiring;
 //Funzioni e Variabili  PDAHelp
-void (*HelpFunc)(void);
+void (*HelpFunc)();
 //Funzioni e Variabili PDALog
 extern int32   t3dCurTime;
 void SetPDALogItem(Init &init, int32 log_item);
@@ -893,7 +893,7 @@ void AddKeyToString(char Key, char *String, int MaxChars) {
 }
 
 //Gestione Tastiera
-void T2DResetKeyboard(void) {
+void T2DResetKeyboard() {
 	t2dKeyTableT = 0;
 	t2dKeyTableH = 0;
 }
@@ -5506,7 +5506,7 @@ void CaricaSaves(WGame &game) {
 	t3dForceNOFastFile(0);
 }
 
-void SortSaves(void) {
+void SortSaves() {
 	warning("STUBBED: SortSaves");
 #if 0
 	qsort(Saves, NSaves, sizeof(SavesS), CompareSaves);
@@ -5596,7 +5596,7 @@ void RefreshSaveImg(WGame &game, int Pos, uint8 Type) {
 }
 
 
-void PDA_Tone_Acquire_Help_Func(void) {
+void PDA_Tone_Acquire_Help_Func() {
 	t2dBUTTON *b;
 	t2dWINDOW *w;
 
@@ -5623,7 +5623,7 @@ void PDA_Tone_Acquire_Help_Func(void) {
 //	Event( EventClass::MC_T2D, ME_T2DSETWINDOW, MP_WAITA, T2D_WIN_PDA_TONE, 0, FALSE, NULL, NULL, NULL );
 }
 
-void SetHelpWin(Fonts &fonts, void (*Func)(void), int NArg, ...) {
+void SetHelpWin(Fonts &fonts, void (*Func)(), int NArg, ...) {
 	va_list vl;
 	char *Text = nullptr;
 	int i, Dx = 0, Dy = 0;

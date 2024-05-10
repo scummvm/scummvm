@@ -28,7 +28,7 @@ namespace Watchmaker {
 unsigned int jStringLimit = J_MAXSTRLEN, jTillEOL = 0, jUsingComments = 0;
 
 // PELS: supporto per il parsing dei .nl **********************************
-static void (*ErrorFunc)(void) = nullptr;
+static void (*ErrorFunc)() = nullptr;
 
 int ParseError(const char *ln, ...) {
 	char err[J_MAXSTRLEN];

@@ -25,7 +25,7 @@
 
 namespace Watchmaker {
 
-void ResetDIKbd(void) {
+void ResetDIKbd() {
 	warning("STUBBED ResetDIKbd");
 }
 

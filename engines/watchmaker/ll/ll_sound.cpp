@@ -24,12 +24,12 @@
 
 namespace Watchmaker {
 
-bool mInitMusicSystem(void) {
+bool mInitMusicSystem() {
 	warning("STUBBED: mInitMusicSystem");
 	return true;
 }
 
-bool mCloseMusicSystem(void) {
+bool mCloseMusicSystem() {
 	warning("STUBBED: mCloseMusicSystem");
 	return true;
 }
@@ -44,12 +44,12 @@ bool mPlayMusic(const char *FileName) {
 	return true;
 }
 
-bool mStopMusic(void) {
+bool mStopMusic() {
 	warning("STUBBED: mStopMusic");
 	return true;
 }
 
-bool mRestoreMixerVolume(void) {
+bool mRestoreMixerVolume() {
 	warning("STUBBED: mRestoreMixerVolume");
 	return true;
 }
@@ -69,7 +69,7 @@ bool sStopSound(int32 index) {
 	return true;
 }
 
-bool sStopAllSounds(void) {
+bool sStopAllSounds() {
 	warning("STUBBED: sStopAllSounds");
 	return true;
 }

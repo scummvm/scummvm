@@ -60,7 +60,7 @@ bool InitMusic() {
 	return true;
 }
 
-bool ListenerUpdate(void) {
+bool ListenerUpdate() {
 	sListener CurListener;
 
 	CurListener.flDistanceFactor = 1.0f;

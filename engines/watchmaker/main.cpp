@@ -139,7 +139,7 @@ void CloseSys(WGame &game) {
 /* -----------------16/10/98 12.07-------------------
  *                  ReadTime
  * --------------------------------------------------*/
-uint32 ReadTime(void) {
+uint32 ReadTime() {
 //	LARGE_INTEGER t;
 //	QueryPerformanceCounter( &t );
 	return (t3dReadTime());

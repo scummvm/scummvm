@@ -55,7 +55,7 @@ void Text(uint16 x, uint16 y, uint16 dx, char *text) {
 /* -----------------17/03/98 17.48-------------------
  *                      ClearText
  * --------------------------------------------------*/
-void ClearText(void) {
+void ClearText() {
 	if (!(bUseWith & UW_ON)) {
 		TheString.x = 0;
 		TheString.y = 0;

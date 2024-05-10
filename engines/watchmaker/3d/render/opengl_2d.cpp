@@ -100,7 +100,7 @@ void rGetExtends(int *x1, int *y1, int *x2, int *y2) {
 }
 
 //************************************************************************************************************************
-void rResetExtends(void) {
+void rResetExtends() {
 	gBlitterExtends.left = 99999999;
 	gBlitterExtends.top = 99999999;
 	gBlitterExtends.right = -99999999;
