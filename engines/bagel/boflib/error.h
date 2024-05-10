@@ -34,22 +34,13 @@ enum ErrorCode {
 	ERR_NONE    =  0,   /* no error */
 	ERR_MEMORY  =  1,   /* not enough memory */
 	ERR_FOPEN   =  2,   /* error opening a file */
-	ERR_FCLOSE  =  3,   /* error closing a file */
 	ERR_FREAD   =  4,   /* error reading a file */
 	ERR_FWRITE  =  5,   /* error writing a file */
 	ERR_FSEEK   =  6,   /* error seeking a file */
-	ERR_FDEL    =  7,   /* error deleting a file */
 	ERR_FFIND   =  8,   /* could not find file */
 	ERR_FTYPE   =  9,   /* invalid file type */
-	ERR_PATH    = 10,   /* invalid path or filename */
-	ERR_DISK    = 11,   /* unrecoverable disk error */
 	ERR_UNKNOWN = 12,   /* unknown error */
 	ERR_CRC     = 13,   /* file or data failed CRC check */
-	ERR_SPACE   = 14,   /* not enough disk space */
-
-	ERR_FUTURE3 = 15,   /* future use */
-	ERR_FUTURE4 = 16,   /*            */
-	ERR_FUTURE5 = 17    /* future use */
 };
 
 #define NUM_ERR_CODES 18
