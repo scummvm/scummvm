@@ -606,9 +606,6 @@ get_system_exe_extension() {
 	3ds | dreamcast | ds | gamecube | n64 | psp | switch | wii)
 		_exeext=".elf"
 		;;
-	gph-linux)
-		_exeext=".gph"
-		;;
 	kolibrios | kos32)
 		_exeext=".dll"
 		;;
@@ -855,7 +852,7 @@ Usage: $0 [OPTIONS]...
 Configuration:
   -h, --help              display this help and exit
   --backend=BACKEND       backend to build (3ds, atari, android, dc, dingux, ds, gcw0,
-                          gph, ios7, maemo, n64, null, opendingux, openpandora,
+                          ios7, maemo, n64, null, opendingux, openpandora,
                           psp, psp2, samsungtv, sdl, switch, wii) [sdl]
 
 Installation directories:
@@ -887,15 +884,12 @@ Special configuration feature:
                                            android-arm64-v8a for Android ARMv8-A (arm64-v8a)
                                            android-x86 for Android x86
                                            android-x86_64 for Android x86_64
-                                           caanoo for Caanoo
                                            dingux for Dingux
                                            raspberrypi for Raspberry Pi
                                            dreamcast for Sega Dreamcast
                                            ds for Nintendo DS
                                            gamecube for Nintendo GameCube
                                            gcw0 for GCW Zero
-                                           gp2x for GP2X
-                                           gp2xwiz for GP2X Wiz
                                            ios7 for Apple iPhone / iPad (iOS >= 7)
                                            ios7-arm64 for Apple iPhone / iPad (iOS >= 7, 64-bit)
                                            kos32 for Kolibri OS
@@ -1697,11 +1691,6 @@ raspberrypi)
 	# It may change in the future.
 	_host_alias=arm-linux-gnueabihf
 	;;
-caanoo)
-	_host_os=gph-linux
-	_host_cpu=arm
-	_host_alias=arm-none-linux-gnueabi
-	;;
 dingux | gcw0 | opendingux-*)
 	_host_os=linux
 	_host_cpu=mipsel
@@ -1723,16 +1712,6 @@ gamecube)
 	_host_os=gamecube
 	_host_cpu=powerpc
 	_host_alias=powerpc-eabi
-	;;
-gp2x)
-	_host_os=gph-linux
-	_host_cpu=arm
-	_host_alias=arm-open2x-linux
-	;;
-gp2xwiz)
-	_host_os=gph-linux
-	_host_cpu=arm
-	_host_alias=arm-open2x-linux
 	;;
 i586-mingw32msvc)
 	_host_os=mingw32msvc
@@ -1901,7 +1880,7 @@ else
 fi
 
 case $_host in
-arm-*riscos | caanoo | ds | gp2x | gp2xwiz | openpandora | psp | psp2 | switch)
+arm-*riscos | ds | gp2x | gp2xwiz | openpandora | psp | psp2 | switch)
 	if test "$_debug_build" = auto; then
 		# If you want to debug one of these platforms, use '--disable-optimizations --enable-debug'
 		_debug_build=no
@@ -2760,7 +2739,7 @@ case $_host_cpu in
 			openpandora)
 				define_in_config_if_yes yes 'USE_ARM_NEON_ASPECT_CORRECTOR'
 				;;
-			caanoo | gp2x | gp2xwiz | maemo )
+			maemo )
 				define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
 				define_in_config_if_yes yes 'USE_ARM_SMUSH_ASM'
 				define_in_config_if_yes yes 'USE_ARM_GFX_ASM'
@@ -3192,7 +3171,7 @@ EOF
 		fi
 
 		# activate emscripten-ports
-		if test "$_sdl" != no; then # we enable SDL2 by default 
+		if test "$_sdl" != no; then # we enable SDL2 by default
 			append_var LDFLAGS "-s USE_SDL=2 "
 		fi
 
@@ -3205,37 +3184,37 @@ EOF
 			_freetypepath="$EMSDK/upstream/emscripten/cache/sysroot/include/freetype2/"
 			FREETYPE2_CFLAGS="-I$_freetypepath"
 		else
-			_freetype2=no 
+			_freetype2=no
 		fi
 		if test "$_gif" = yes; then
 		 	append_var LDFLAGS "-s USE_GIFLIB=1"
 		else
-			_gif=no 
+			_gif=no
 		fi
 		if test "$_jpeg" = yes; then
 			append_var LDFLAGS "-s USE_LIBJPEG=1"
 		else
-			_jpeg=no 
+			_jpeg=no
 		fi
 		if test "$_ogg" = yes; then
-			append_var LDFLAGS "-s USE_OGG=1" 
+			append_var LDFLAGS "-s USE_OGG=1"
 		else
-			_ogg=no 
+			_ogg=no
 		fi
 		if test "$_png" = yes; then
 			append_var LDFLAGS "-s USE_LIBPNG=1"
 		else
-			_png=no 
+			_png=no
 		fi
 		if test "$_vorbis" = yes; then
-			append_var LDFLAGS "-s USE_VORBIS=1" 
+			append_var LDFLAGS "-s USE_VORBIS=1"
 		else
-			_vorbis=no 
+			_vorbis=no
 		fi
 		if test "$_zlib" = yes; then
 			append_var LDFLAGS "-s USE_ZLIB=1"
 		else
-			_zlib=no 
+			_zlib=no
 		fi
 	;;
 	freebsd* | dragonfly*)
@@ -3527,23 +3506,6 @@ if test -n "$_host"; then
 			;;
 		bfin*)
 			;;
-		caanoo)
-			append_var DEFINES "-DCAANOO"
-			if test "$_debug_build" = no; then
-				# Use -O3 on the Caanoo for non-debug builds.
-				_optimization_level=-O3
-			fi
-			append_var CXXFLAGS "-mcpu=arm926ej-s"
-			append_var CXXFLAGS "-mtune=arm926ej-s"
-			_backend="gph"
-			_build_hq_scalers=no
-			_savegame_timestamp=no
-			_vkeybd=yes
-			_seq_midi=no
-			_mt32emu=no
-			_timidity=no
-			_port_mk="backends/platform/gph/caanoo-bundle.mk"
-			;;
 		*darwin*)
 			_ranlib=$_host-ranlib
 			_strip=$_host-strip
@@ -3684,34 +3646,6 @@ if test -n "$_host"; then
 			_vkeybd=yes
 			_vorbis=no
 			_port_mk="backends/platform/dingux/dingux.mk"
-			;;
-		gp2x)
-			append_var DEFINES "-DGP2X"
-			append_var CXXFLAGS "-march=armv4t"
-			append_var ASFLAGS "-mfloat-abi=soft"
-			append_var LDFLAGS "-static"
-			_backend="gph"
-			_build_hq_scalers=no
-			_savegame_timestamp=no
-			_vkeybd=yes
-			_seq_midi=no
-			_mt32emu=no
-			_timidity=no
-			_port_mk="backends/platform/gph/gp2x-bundle.mk"
-			;;
-		gp2xwiz)
-			append_var DEFINES "-DGP2XWIZ"
-			append_var CXXFLAGS "-mcpu=arm926ej-s"
-			append_var CXXFLAGS "-mtune=arm926ej-s"
-			append_var ASFLAGS "-mfloat-abi=soft"
-			_backend="gph"
-			_build_hq_scalers=no
-			_savegame_timestamp=no
-			_vkeybd=yes
-			_seq_midi=no
-			_mt32emu=no
-			_timidity=no
-			_port_mk="backends/platform/gph/gp2xwiz-bundle.mk"
 			;;
 		ios7*)
 			add_line_to_config_mk 'IPHONE = 1'
@@ -4098,17 +4032,6 @@ case $_backend in
 		;;
 	ds)
 		append_var INCLUDES '-I$(srcdir)/backends/platform/ds'
-		;;
-	gph)
-		# On the GPH devices we want fancy themes but do not want the load/save thumbnail grid.
-		append_var DEFINES "-DDISABLE_SAVELOADCHOOSER_GRID"
-		append_var DEFINES "-DGPH_DEVICE"
-		append_var DEFINES "-DREDUCE_MEMORY_USAGE"
-		if test "$_debug_build" = yes; then
-			append_var DEFINES "-DGPH_DEBUG"
-		fi
-		_sdlconfig=sdl-config
-		_sdl=auto
 		;;
 	ios7)
 		append_var LIBS "-lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
@@ -4567,7 +4490,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	3ds | android | dingux | dc | ds | gph | ios7 | kolibrios | maemo | null | opendingux | miyoomini | miyoo | openpandora | psp | psp2 | samsungtv | sdl | switch | wii)
+	3ds | android | dingux | dc | ds | ios7 | kolibrios | maemo | null | opendingux | miyoomini | miyoo | openpandora | psp | psp2 | samsungtv | sdl | switch | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -4583,7 +4506,7 @@ esac
 # Enable High resolution engines (>320x240) support only for backends which support it
 #
 case $_host in
-	caanoo | ds | dingux | gcw0 | gp2x | gp2xwiz)
+	ds | dingux | gcw0)
 		if test "$_highres" = yes ; then
 			_highres=yes
 		else
@@ -4614,7 +4537,7 @@ esac
 # Disable savegame timestamp support for backends which don't have a reliable real time clock
 #
 case $_backend in
-	gph | n64)
+	n64)
 		if test "$_savegame_timestamp" = auto ; then
 			_savegame_timestamp=no
 		else
@@ -4643,7 +4566,7 @@ case $_host_os in
 	amigaos* | dreamcast | ds | gamecube | kolibrios | mingw* | morphos | n64 | ps3 | psp2 | psp | riscos | wii)
 		_posix=no
 		;;
-	3ds | android | beos* | bsd* | cygwin* | darwin* | dragonfly* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphoneos | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | redox* | serenity* | solaris* | sunos* | switch | uclinux*)
+	3ds | android | beos* | bsd* | cygwin* | darwin* | dragonfly* | freebsd* | gnu* | haiku* | hpux* | iphoneos | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | redox* | serenity* | solaris* | sunos* | switch | uclinux*)
 		_posix=yes
 		;;
 	os2-emx*)
@@ -4911,18 +4834,6 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 		append_var DEFINES "-DUNCACHED_PLUGINS"
 _mak_plugins='
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/wii/plugin.ld
-'
-		;;
-	gph*)
-		_plugin_prefix=""
-		_plugin_suffix=".plugin"
-		append_var CXXFLAGS "-fpic"
-		append_var LIBS "-ldl"
-_mak_plugins='
-PLUGIN_EXTRA_DEPS = $(EXECUTABLE)
-PLUGIN_LDFLAGS  += -shared
-PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
-POST_OBJS_FLAGS := -Wl,-no-whole-archive
 '
 		;;
 	irix*)
