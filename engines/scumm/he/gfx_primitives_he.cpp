@@ -33,9 +33,9 @@ int Wiz::pgReadPixel(const WizSimpleBitmap *srcBM, int x, int y, int defaultValu
 		return defaultValue;
 	} else {
 		if (_uses16BitColor) {
-			return *(((WizRawPixel16 *)srcBM->bufferPtr) + y * srcBM->bitmapWidth + x);
+			return *(((WizRawPixel16 *)srcBM->bufferPtr()) + y * srcBM->bitmapWidth + x);
 		} else {
-			return *(((WizRawPixel8 *)srcBM->bufferPtr) + y * srcBM->bitmapWidth + x);
+			return *(((WizRawPixel8 *)srcBM->bufferPtr()) + y * srcBM->bitmapWidth + x);
 		}
 	}
 }
@@ -43,9 +43,9 @@ int Wiz::pgReadPixel(const WizSimpleBitmap *srcBM, int x, int y, int defaultValu
 void Wiz::pgWritePixel(WizSimpleBitmap *srcBM, int x, int y, WizRawPixel value) {
 	if ((x >= 0) && (y >= 0) && (x < srcBM->bitmapWidth) && (y < srcBM->bitmapHeight)) {
 		if (_uses16BitColor) {
-			*(((WizRawPixel16 *)srcBM->bufferPtr) + y * srcBM->bitmapWidth + x) = value;
+			*(((WizRawPixel16 *)srcBM->bufferPtr()) + y * srcBM->bitmapWidth + x) = value;
 		} else {
-			*(((WizRawPixel8 *)srcBM->bufferPtr) + y * srcBM->bitmapWidth + x) = value;
+			*(((WizRawPixel8 *)srcBM->bufferPtr()) + y * srcBM->bitmapWidth + x) = value;
 		}
 	}
 }
@@ -53,9 +53,9 @@ void Wiz::pgWritePixel(WizSimpleBitmap *srcBM, int x, int y, WizRawPixel value) 
 void Wiz::pgClippedWritePixel(WizSimpleBitmap *srcBM, int x, int y, const Common::Rect *clipRectPtr, WizRawPixel value) {
 	if ((x >= clipRectPtr->left) && (y >= clipRectPtr->top) && (x <= clipRectPtr->right) && (y <= clipRectPtr->bottom)) {
 		if (_uses16BitColor) {
-			*(((WizRawPixel16 *)srcBM->bufferPtr) + y * srcBM->bitmapWidth + x) = value;
+			*(((WizRawPixel16 *)srcBM->bufferPtr()) + y * srcBM->bitmapWidth + x) = value;
 		} else {
-			*(((WizRawPixel8 *)srcBM->bufferPtr) + y * srcBM->bitmapWidth + x) = value;
+			*(((WizRawPixel8 *)srcBM->bufferPtr()) + y * srcBM->bitmapWidth + x) = value;
 		}
 	}
 }
@@ -395,8 +395,8 @@ void Wiz::pgDrawSolidRect(WizSimpleBitmap *destBM, const Common::Rect *rectPtr, 
 	cw = x2 - x1 + 1;
 	ch = y2 - y1 + 1;
 
-	d16bit = ((WizRawPixel16 *)destBM->bufferPtr) + y1 * dw + x1;
-	d8bit = ((WizRawPixel8 *)destBM->bufferPtr) + y1 * dw + x1;
+	d16bit = ((WizRawPixel16 *)destBM->bufferPtr()) + y1 * dw + x1;
+	d8bit = ((WizRawPixel8 *)destBM->bufferPtr()) + y1 * dw + x1;
 
 	if (cw > 1) {
 		while (--ch >= 0) {
@@ -465,7 +465,7 @@ void Wiz::pgHistogramBitmapSubRect(int *tablePtr, const WizSimpleBitmap *bitmapP
 		clipRect.bottom = (bitmapPtr->bitmapHeight - 1);
 
 		if (findRectOverlap(&rect, &clipRect)) {
-			srcPtr = ((WizRawPixel8 *)bitmapPtr->bufferPtr) + bitmapPtr->bitmapWidth * rect.top + rect.left;
+			srcPtr = ((WizRawPixel8 *)bitmapPtr->bufferPtr()) + bitmapPtr->bitmapWidth * rect.top + rect.left;
 
 			w = getRectWidth(&rect);
 			h = getRectHeight(&rect);
@@ -489,9 +489,9 @@ void Wiz::pgSimpleBitmapFromDrawBuffer(WizSimpleBitmap *bitmapPtr, bool backgrou
 	bitmapPtr->bitmapHeight = vs->h;
 
 	if (background) {
-		bitmapPtr->bufferPtr = (WizRawPixel *)vs->getBackPixels(0, vs->topline);
+		bitmapPtr->bufferPtr = WizPxShrdBuffer(vs->getBackPixels(0, vs->topline), false);
 	} else {
-		bitmapPtr->bufferPtr = (WizRawPixel *)vs->getPixels(0, vs->topline);
+		bitmapPtr->bufferPtr = WizPxShrdBuffer(vs->getPixels(0, vs->topline), false);
 	}
 }
 
@@ -577,11 +577,11 @@ void Wiz::pgDrawRawDataFormatImage(WizRawPixel *bufferPtr, const WizRawPixel *ra
 	}
 
 	// Setup the fake simple bitmaps...
-	dstBitmap.bufferPtr = bufferPtr;
+	dstBitmap.bufferPtr = WizPxShrdBuffer(bufferPtr, false);
 	dstBitmap.bitmapWidth = bufferWidth;
 	dstBitmap.bitmapHeight = bufferHeight;
 
-	srcBitmap.bufferPtr = const_cast<WizRawPixel *>(rawData);
+	srcBitmap.bufferPtr = WizPxShrdBuffer(const_cast<WizRawPixel *>(rawData), false);
 	srcBitmap.bitmapWidth = width;
 	srcBitmap.bitmapHeight = height;
 
@@ -625,10 +625,10 @@ void Wiz::pgSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpl
 	cw = abs(sourceRect->right - sourceRect->left) + 1;
 	ch = abs(sourceRect->bottom - sourceRect->top) + 1;
 
-	d8 = ((WizRawPixel8 *)destBM->bufferPtr) + destRect->top * dw + destRect->left;
-	s8 = ((WizRawPixel8 *)sourceBM->bufferPtr) + sourceRect->top * sw + sourceRect->left;
-	d16 = ((WizRawPixel16 *)destBM->bufferPtr) + destRect->top * dw + destRect->left;
-	s16 = ((WizRawPixel16 *)sourceBM->bufferPtr) + sourceRect->top * sw + sourceRect->left;
+	d8 = ((WizRawPixel8 *)destBM->bufferPtr()) + destRect->top * dw + destRect->left;
+	s8 = ((WizRawPixel8 *)sourceBM->bufferPtr()) + sourceRect->top * sw + sourceRect->left;
+	d16 = ((WizRawPixel16 *)destBM->bufferPtr()) + destRect->top * dw + destRect->left;
+	s16 = ((WizRawPixel16 *)sourceBM->bufferPtr()) + sourceRect->top * sw + sourceRect->left;
 
 	// Going up or down?
 	if (sourceRect->top > sourceRect->bottom) {
@@ -687,10 +687,10 @@ void Wiz::pgSimpleBlitRemapColors(WizSimpleBitmap *destBM, Common::Rect *destRec
 	cw = abs(sourceRect->right - sourceRect->left) + 1;
 	ch = abs(sourceRect->bottom - sourceRect->top) + 1;
 
-	d8 = ((WizRawPixel8 *)destBM->bufferPtr) + destRect->top * dw + destRect->left;
-	s8 = ((WizRawPixel8 *)sourceBM->bufferPtr) + sourceRect->top * sw + sourceRect->left;
-	d16 = ((WizRawPixel16 *)destBM->bufferPtr) + destRect->top * dw + destRect->left;
-	s16 = ((WizRawPixel16 *)sourceBM->bufferPtr) + sourceRect->top * sw + sourceRect->left;
+	d8 = ((WizRawPixel8 *)destBM->bufferPtr()) + destRect->top * dw + destRect->left;
+	s8 = ((WizRawPixel8 *)sourceBM->bufferPtr()) + sourceRect->top * sw + sourceRect->left;
+	d16 = ((WizRawPixel16 *)destBM->bufferPtr()) + destRect->top * dw + destRect->left;
+	s16 = ((WizRawPixel16 *)sourceBM->bufferPtr()) + sourceRect->top * sw + sourceRect->left;
 
 	// Going up or down?
 	if (sourceRect->top > sourceRect->bottom) {
@@ -750,10 +750,10 @@ void Wiz::pgSimpleBlitTransparentRemapColors(WizSimpleBitmap *destBM, Common::Re
 	cw = abs(sourceRect->right - sourceRect->left) + 1;
 	ch = abs(sourceRect->bottom - sourceRect->top) + 1;
 
-	d8 = ((WizRawPixel8 *)destBM->bufferPtr) + destRect->top * dw + destRect->left;
-	s8 = ((WizRawPixel8 *)sourceBM->bufferPtr) + sourceRect->top * sw + sourceRect->left;
-	d16 = ((WizRawPixel16 *)destBM->bufferPtr) + destRect->top * dw + destRect->left;
-	s16 = ((WizRawPixel16 *)sourceBM->bufferPtr) + sourceRect->top * sw + sourceRect->left;
+	d8 = ((WizRawPixel8 *)destBM->bufferPtr()) + destRect->top * dw + destRect->left;
+	s8 = ((WizRawPixel8 *)sourceBM->bufferPtr()) + sourceRect->top * sw + sourceRect->left;
+	d16 = ((WizRawPixel16 *)destBM->bufferPtr()) + destRect->top * dw + destRect->left;
+	s16 = ((WizRawPixel16 *)sourceBM->bufferPtr()) + sourceRect->top * sw + sourceRect->left;
 
 	// Going up or down?
 	if (sourceRect->top > sourceRect->bottom) {
@@ -813,10 +813,10 @@ void Wiz::pgSimpleBlitMixColors(WizSimpleBitmap *destBM, Common::Rect *destRect,
 	cw = abs(sourceRect->right - sourceRect->left) + 1;
 	ch = abs(sourceRect->bottom - sourceRect->top) + 1;
 
-	d8 = ((WizRawPixel8 *)destBM->bufferPtr) + destRect->top * dw + destRect->left;
-	s8 = ((WizRawPixel8 *)sourceBM->bufferPtr) + sourceRect->top * sw + sourceRect->left;
-	d16 = ((WizRawPixel16 *)destBM->bufferPtr) + destRect->top * dw + destRect->left;
-	s16 = ((WizRawPixel16 *)sourceBM->bufferPtr) + sourceRect->top * sw + sourceRect->left;
+	d8 = ((WizRawPixel8 *)destBM->bufferPtr()) + destRect->top * dw + destRect->left;
+	s8 = ((WizRawPixel8 *)sourceBM->bufferPtr()) + sourceRect->top * sw + sourceRect->left;
+	d16 = ((WizRawPixel16 *)destBM->bufferPtr()) + destRect->top * dw + destRect->left;
+	s16 = ((WizRawPixel16 *)sourceBM->bufferPtr()) + sourceRect->top * sw + sourceRect->left;
 
 	// Going up or down?
 	if (sourceRect->top > sourceRect->bottom) {
@@ -876,10 +876,10 @@ void Wiz::pgSimpleBlitTransparentMixColors(WizSimpleBitmap *destBM, Common::Rect
 	cw = abs(sourceRect->right - sourceRect->left) + 1;
 	ch = abs(sourceRect->bottom - sourceRect->top) + 1;
 
-	d8 = ((WizRawPixel8 *)destBM->bufferPtr) + destRect->top * dw + destRect->left;
-	s8 = ((WizRawPixel8 *)sourceBM->bufferPtr) + sourceRect->top * sw + sourceRect->left;
-	d16 = ((WizRawPixel16 *)destBM->bufferPtr) + destRect->top * dw + destRect->left;
-	s16 = ((WizRawPixel16 *)sourceBM->bufferPtr) + sourceRect->top * sw + sourceRect->left;
+	d8 = ((WizRawPixel8 *)destBM->bufferPtr()) + destRect->top * dw + destRect->left;
+	s8 = ((WizRawPixel8 *)sourceBM->bufferPtr()) + sourceRect->top * sw + sourceRect->left;
+	d16 = ((WizRawPixel16 *)destBM->bufferPtr()) + destRect->top * dw + destRect->left;
+	s16 = ((WizRawPixel16 *)sourceBM->bufferPtr()) + sourceRect->top * sw + sourceRect->left;
 
 	// Going up or down?
 	if (sourceRect->top > sourceRect->bottom) {
@@ -939,10 +939,10 @@ void Wiz::pgTransparentSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRec
 	cw = abs(sourceRect->right - sourceRect->left) + 1;
 	ch = abs(sourceRect->bottom - sourceRect->top) + 1;
 
-	d8 = ((WizRawPixel8 *)destBM->bufferPtr) + destRect->top * dw + destRect->left;
-	s8 = ((WizRawPixel8 *)sourceBM->bufferPtr) + sourceRect->top * sw + sourceRect->left;
-	d16 = ((WizRawPixel16 *)destBM->bufferPtr) + destRect->top * dw + destRect->left;
-	s16 = ((WizRawPixel16 *)sourceBM->bufferPtr) + sourceRect->top * sw + sourceRect->left;
+	d8 = ((WizRawPixel8 *)destBM->bufferPtr()) + destRect->top * dw + destRect->left;
+	s8 = ((WizRawPixel8 *)sourceBM->bufferPtr()) + sourceRect->top * sw + sourceRect->left;
+	d16 = ((WizRawPixel16 *)destBM->bufferPtr()) + destRect->top * dw + destRect->left;
+	s16 = ((WizRawPixel16 *)sourceBM->bufferPtr()) + sourceRect->top * sw + sourceRect->left;
 
 	tColor = (int)transparentColor;
 
@@ -1102,11 +1102,11 @@ void Wiz::pgDraw8BppFormatImage(WizRawPixel *bufferPtr, const byte *rawData, int
 	}
 
 	// Setup the fake simple bitmaps...
-	dstBitmap.bufferPtr = bufferPtr;
+	dstBitmap.bufferPtr = WizPxShrdBuffer(bufferPtr, false);
 	dstBitmap.bitmapWidth = bufferWidth;
 	dstBitmap.bitmapHeight = bufferHeight;
 
-	srcBitmap.bufferPtr = (WizRawPixel *)const_cast<byte *>(rawData);
+	srcBitmap.bufferPtr = WizPxShrdBuffer(const_cast<byte *>(rawData), false);
 	srcBitmap.bitmapWidth = width;
 	srcBitmap.bitmapHeight = height;
 
@@ -1129,8 +1129,8 @@ void Wiz::pgDraw8BppSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRect, 
 	cw = abs(sourceRect->right - sourceRect->left) + 1;
 	ch = abs(sourceRect->bottom - sourceRect->top) + 1;
 
-	d16 = ((WizRawPixel16 *)destBM->bufferPtr) + destRect->top * dw + destRect->left;
-	s8 = ((const WizRawPixel8 *)sourceBM->bufferPtr) + sourceRect->top * sw + sourceRect->left;
+	d16 = ((WizRawPixel16 *)destBM->bufferPtr()) + destRect->top * dw + destRect->left;
+	s8 = ((const WizRawPixel8 *)sourceBM->bufferPtr()) + sourceRect->top * sw + sourceRect->left;
 
 	// Going up or down?
 	if (sourceRect->top > sourceRect->bottom) {
@@ -1172,8 +1172,8 @@ void Wiz::pgDraw8BppTransparentSimpleBlit(WizSimpleBitmap *destBM, Common::Rect 
 	sw = sourceBM->bitmapWidth;
 	cw = abs(sourceRect->right - sourceRect->left) + 1;
 	ch = abs(sourceRect->bottom - sourceRect->top) + 1;
-	d16 = ((WizRawPixel16 *)destBM->bufferPtr) + destRect->top * dw + destRect->left;
-	s8 = ((const WizRawPixel8 *)sourceBM->bufferPtr) + sourceRect->top * sw + sourceRect->left;
+	d16 = ((WizRawPixel16 *)destBM->bufferPtr()) + destRect->top * dw + destRect->left;
+	s8 = ((const WizRawPixel8 *)sourceBM->bufferPtr()) + sourceRect->top * sw + sourceRect->left;
 
 	// Going up or down?
 	if (sourceRect->top > sourceRect->bottom) {
@@ -1259,8 +1259,8 @@ void Wiz::pgDrawImageWith16BitZBuffer(WizSimpleBitmap *psbDst, const WizSimpleBi
 	const int drawHeight = (prcClip->bottom - prcClip->top + 1);
 
 	WizRawPixel *pSrc = (WizRawPixel *)const_cast<byte *>(imgData) + (prcClip->top - y) * width + (prcClip->left - x);
-	WizRawPixel *pDst = (WizRawPixel *)psbDst->bufferPtr + prcClip->top * dstWidth + prcClip->left;
-	WizRawPixel *pZB = (WizRawPixel *)psbZBuffer->bufferPtr + prcClip->top * dstWidth + prcClip->left;
+	WizRawPixel *pDst = psbDst->bufferPtr() + prcClip->top * dstWidth + prcClip->left;
+	WizRawPixel *pZB = psbZBuffer->bufferPtr() + prcClip->top * dstWidth + prcClip->left;
 
 	for (int row = 0; row < drawHeight; ++row) {
 		for (int col = 0; col < drawWidth; ++col, ++pZB, ++pDst, ++pSrc) {
@@ -1661,8 +1661,8 @@ void Wiz::pgBlit90DegreeRotateCore(WizSimpleBitmap *dstBitmap, int x, int y, con
 	srcOffset = srcBitmap->bitmapWidth;
 
 	if (!_uses16BitColor) {
-		dst8 = ((WizRawPixel8 *)dstBitmap->bufferPtr) + dstX + (dstY * dstBitmap->bitmapWidth);
-		src8 = ((WizRawPixel8 *)srcBitmap->bufferPtr) + clippedSrcRect.left + (clippedSrcRect.top * srcBitmap->bitmapWidth);
+		dst8 = ((WizRawPixel8 *)dstBitmap->bufferPtr()) + dstX + (dstY * dstBitmap->bitmapWidth);
+		src8 = ((WizRawPixel8 *)srcBitmap->bufferPtr()) + clippedSrcRect.left + (clippedSrcRect.top * srcBitmap->bitmapWidth);
 
 		while (--h >= 0) {
 			(*srcTransferFP)(this, (WizRawPixel *)dst8, dstStep, (const WizRawPixel *)src8, w, userParam, userParam2);
@@ -1670,8 +1670,8 @@ void Wiz::pgBlit90DegreeRotateCore(WizSimpleBitmap *dstBitmap, int x, int y, con
 			src8 += srcOffset;
 		}
 	} else {
-		dst16 = ((WizRawPixel16 *)dstBitmap->bufferPtr) + dstX + (dstY * dstBitmap->bitmapWidth);
-		src16 = ((WizRawPixel16 *)srcBitmap->bufferPtr) + clippedSrcRect.left + (clippedSrcRect.top * srcBitmap->bitmapWidth);
+		dst16 = ((WizRawPixel16 *)dstBitmap->bufferPtr()) + dstX + (dstY * dstBitmap->bitmapWidth);
+		src16 = ((WizRawPixel16 *)srcBitmap->bufferPtr()) + clippedSrcRect.left + (clippedSrcRect.top * srcBitmap->bitmapWidth);
 
 		while (--h >= 0) {
 			(*srcTransferFP)(this, (WizRawPixel *)dst16, dstStep, (const WizRawPixel *)src16, w, userParam, userParam2);

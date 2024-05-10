@@ -2541,7 +2541,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 			break;
 
 		WizSimpleBitmap dstBitmap;
-		dstBitmap.bufferPtr = (WizRawPixel *)dst;
+		dstBitmap.bufferPtr = WizPxShrdBuffer(dst, false);
 		dstBitmap.bitmapWidth = vs->w;
 		dstBitmap.bitmapHeight = vs->h;
 		Common::Rect fillRect(0, 0, (dstBitmap.bitmapWidth - 1), (dstBitmap.bitmapHeight - 1));
@@ -2604,14 +2604,14 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 
 	byte code = *bmapPtr++;
 	int scrX = _vm->_screenStartStrip * 8 * _vm->_bytesPerPixel;
-	WizRawPixel *dst = (WizRawPixel *)(_vm->_virtscr[kMainVirtScreen].backBuf + scrX);
+	WizPxShrdBuffer dst(_vm->_virtscr[kMainVirtScreen].backBuf + scrX, false);
 
 	switch (code) {
 	case BMCOMP_RLE8BIT:
 	case BMCOMP_TRLE8BIT:
 	{
 		Common::Rect rScreen(0, 0, vs->w, vs->h);
-		((ScummEngine_v71he *)_vm)->_wiz->auxDecompTRLEImage(dst, bmapPtr, vs->w, vs->h, x + scrX, y, w, h, &rScreen, nullptr);
+		((ScummEngine_v71he *)_vm)->_wiz->auxDecompTRLEImage(dst(), bmapPtr, vs->w, vs->h, x + scrX, y, w, h, &rScreen, nullptr);
 		break;
 	}
 	case BMCOMP_SOLID_COLOR_FILL:
@@ -2623,7 +2623,7 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 			break;
 
 		WizSimpleBitmap dstBitmap;
-		dstBitmap.bufferPtr = (WizRawPixel *)dst;
+		dstBitmap.bufferPtr = dst;
 		dstBitmap.bitmapWidth = w;
 		dstBitmap.bitmapHeight = h;
 		Common::Rect fillRect(x + scrX, y, x + scrX + w - 1, y + h - 1);
