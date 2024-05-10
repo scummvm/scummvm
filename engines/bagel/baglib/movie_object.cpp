@@ -92,7 +92,6 @@ bool CBagMovieObject::runObject() {
 			return rc;
 		}
 
-#ifndef BOF_FINAL_RELEASE
 		//
 		// This would be much cooler if it were a cast to another object type and
 		// then a run.  But this is a quicker fix.
@@ -142,8 +141,6 @@ bool CBagMovieObject::runObject() {
 		}
 
 		if (nMovFileType == MovieFileType::MOVIE) {
-#endif
-
 			bool isFiltered = false;
 			CBagMasterWin *pWnd = CBagel::getBagApp()->getMasterWnd();
 			CBagStorageDevWnd *pSDevWnd = (pWnd ? pWnd->getCurrentStorageDev() : nullptr);
