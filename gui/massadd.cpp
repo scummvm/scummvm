@@ -82,7 +82,7 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	_dirProgressText->setAlign(Graphics::kTextAlignCenter);
 	_gameProgressText->setAlign(Graphics::kTextAlignCenter);
 
-	_list = new ListWidget(this, "MassAdd.GameList");
+	_list = new MassAddListWidget(this, "MassAdd.GameList");
 	_list->setEditable(false);
 	_list->setNumberingMode(kListNumberingOff);
 	_list->setList(l);
@@ -100,7 +100,7 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 
 		// Remove trailing slash, so that "/foo" and "/foo/" match.
 		// This works around a bug in the POSIX FS code (and others?)
-		// where paths are not normalized (so FSNodes refering to identical
+		// where paths are not normalized (so FSNodes referring to identical
 		// FS objects may return different values in path()).
 		path.removeTrailingSeparators();
 		if (!path.empty()) {

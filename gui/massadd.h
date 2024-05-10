@@ -32,6 +32,7 @@
 namespace GUI {
 
 class StaticTextWidget;
+class MassAddListWidget;
 
 class MassAddDialog : public Dialog {
 public:
@@ -54,7 +55,7 @@ private:
 	void updateGameList();
 
 	/**
-	 * Map each path occuring in the config file to the target(s) using that path.
+	 * Map each path occurring in the config file to the target(s) using that path.
 	 * Used to detect whether a potential new target is already present in the
 	 * config manager.
 	 */
@@ -69,9 +70,29 @@ private:
 	StaticTextWidget *_dirProgressText;
 	StaticTextWidget *_gameProgressText;
 
-	ListWidget *_list;
+	MassAddListWidget *_list;
 };
 
+class MassAddListWidget : public ListWidget {
+public:
+	MassAddListWidget(Dialog *boss, const Common::String &name)
+		: ListWidget(boss, name) { }
+
+	void appendToSelectedList(bool selected) { _listSelected.push_back(selected); }
+	void clearSelectedList() { _listSelected.clear(); }
+
+protected:
+	ThemeEngine::WidgetStateInfo getItemState(int item) const override {
+		// Display selected/unselected games in mass detection as enabled/disabled items.
+		if (item < (signed int)_listSelected.size() && _listSelected[item]) {
+			return ThemeEngine::kStateEnabled;
+		} else {
+			return ThemeEngine::kStateDisabled;
+		}
+	}
+
+	Common::Array<bool>	_listSelected;
+};
 
 } // End of namespace GUI
 

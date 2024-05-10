@@ -559,11 +559,8 @@ void ListWidget::drawWidget() {
 		if (_selectedItem == pos)
 			inverted = _inversion;
 
-		// Display selected/unselected games in mass detection as enabled/disabled items.
-		if (pos < (signed int)_listSelected.size() && _listSelected[pos])
-			_state = ThemeEngine::kStateEnabled;
-		else
-			_state = ThemeEngine::kStateDisabled;
+		// Get state for drawing the item text
+		ThemeEngine::WidgetStateInfo itemState = getItemState(pos);
 
 		Common::Rect r(getEditRect());
 		int pad = _leftPadding;
@@ -573,7 +570,7 @@ void ListWidget::drawWidget() {
 		if (_numberingMode != kListNumberingOff && g_gui.useRTL() == false) {
 			buffer = Common::String::format("%2d. ", (pos + _numberingMode));
 			g_gui.theme()->drawText(Common::Rect(_x + _hlLeftPadding, y, _x + r.left + _leftPadding, y + fontHeight),
-									buffer, _state, _drawAlign, inverted, _leftPadding, true);
+									buffer, itemState, _drawAlign, inverted, _leftPadding, true);
 			pad = 0;
 		}
 
@@ -599,7 +596,7 @@ void ListWidget::drawWidget() {
 			buffer = _list[pos];
 		}
 
-		drawFormattedText(r1, buffer, _state, _drawAlign, inverted, pad, true, color);
+		drawFormattedText(r1, buffer, itemState, _drawAlign, inverted, pad, true, color);
 
 		// If in numbering mode & using RTL layout in GUI, we print a number suffix after drawing the text
 		if (_numberingMode != kListNumberingOff && g_gui.useRTL()) {
@@ -610,7 +607,7 @@ void ListWidget::drawWidget() {
 			r2.left = r1.right;
 			r2.right = r1.right + rtlPad;
 
-			g_gui.theme()->drawText(r2, buffer, _state, _drawAlign, inverted, _leftPadding, true);
+			g_gui.theme()->drawText(r2, buffer, itemState, _drawAlign, inverted, _leftPadding, true);
 		}
 	}
 
