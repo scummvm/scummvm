@@ -35,8 +35,8 @@ ModalGump::ModalGump() : Gump() {
 }
 
 
-ModalGump::ModalGump(int x, int y, int width, int height, bool pauseGame,
-					 uint16 owner, uint32 flags, int32 layer)
+ModalGump::ModalGump(int x, int y, int width, int height, uint16 owner,
+					 uint32 flags, int32 layer, bool pauseGame)
 	: Gump(x, y, width, height, owner, flags, layer), _pauseGame(pauseGame) {
 
 }

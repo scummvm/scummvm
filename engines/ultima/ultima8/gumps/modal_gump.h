@@ -39,8 +39,9 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	ModalGump();
-	ModalGump(int x, int y, int width, int height, bool pauseGame = true, uint16 owner = 0,
-			  uint32 flags = FLAG_DONT_SAVE | FLAG_PREVENT_SAVE, int32 layer = LAYER_MODAL);
+	ModalGump(int x, int y, int width, int height, uint16 owner = 0,
+			  uint32 flags = FLAG_DONT_SAVE | FLAG_PREVENT_SAVE, int32 layer = LAYER_MODAL,
+			  bool pauseGame = true);
 
 	~ModalGump() override;
 
