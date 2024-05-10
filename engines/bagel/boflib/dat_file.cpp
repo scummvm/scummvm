@@ -426,7 +426,7 @@ ErrorCode CBofDataFile::readFromFile(int32 lRecNum, void *pBuf, int32 lBytes) {
 				// Don't bother with a CRC as this chunk of input won't generate a proper
 				// CRC anyway.
 			} else {
-				logError(buildString("Error reading record %ld in file '%s'", lRecNum, _szFileName));
+				logError(buildString("Error reading record %u in file '%s'", lRecNum, _szFileName));
 				_errCode = ERR_FREAD;
 			}
 		}
