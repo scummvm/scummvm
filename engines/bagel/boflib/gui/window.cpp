@@ -135,7 +135,7 @@ ErrorCode CBofWindow::create(const char *pszName, int x, int y, int nWidth, int 
 	_nID = nControlID;
 
 	// Remember the name of this window
-	strncpy(_szTitle, pszName, MAX_TITLE);
+	Common::strlcpy(_szTitle, pszName, MAX_TITLE);
 
 	// Retain screen coordinates for this window
 	_cWindowRect.setRect(x, y, x + nWidth - 1, y + nHeight - 1);
