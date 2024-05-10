@@ -163,6 +163,8 @@ bool DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
 	if (!_scene->getDragItem())
 		setMouseCursor(0);
 
+	_foregroundBuffer.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+
 	_scene->load(sceneFile, _resource, _decompressor);
 	// These are done inside the load function in the original.. cleaner here..
 	_scene->addInvButtonToHotAreaList();
@@ -232,6 +234,11 @@ void DgdsEngine::checkDrawInventoryButton() {
 }
 
 Graphics::ManagedSurface &DgdsEngine::getForegroundBuffer() {
+	if (_usedForegroundBuffer) {
+		_foregroundBuffer.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		_usedForegroundBuffer = false;
+	}
+
 	return _foregroundBuffer;
 }
 
@@ -332,7 +339,6 @@ Common::Error DgdsEngine::run() {
 	Common::EventManager *eventMan = g_system->getEventManager();
 	Common::Event ev;
 
-	bool moveToNext = false;
 	bool triggerMenu = false;
 
 	while (!shouldQuit()) {
@@ -341,10 +347,7 @@ Common::Error DgdsEngine::run() {
 			if (ev.type == Common::EVENT_KEYDOWN) {
 				switch (ev.kbd.keycode) {
 				case Common::KEYCODE_ESCAPE:
-					if (_menu->menuShown())
-						triggerMenu = true;
-					else
-						moveToNext = true;
+					triggerMenu = true;
 					break;
 				case Common::KEYCODE_F5:
 					triggerMenu = true;
@@ -371,10 +374,13 @@ Common::Error DgdsEngine::run() {
 		}
 
 		if (triggerMenu) {
-			if (!_menu->menuShown()) {
+			if (_inventory->isOpen()) {
+				_inventory->close();
+			} else	if (!_menu->menuShown()) {
 				_menu->setScreenBuffer();
 
 				CursorMan.showMouse(true);
+				setMouseCursor(0);
 				_menu->drawMenu();
 			} else {
 				_menu->hideMenu();
@@ -402,14 +408,7 @@ Common::Error DgdsEngine::run() {
 
 			_scene->drawActiveDialogBgs(&_compositionBuffer);
 
-			if (moveToNext && _inventory->isOpen()) {
-				_inventory->close();
-				moveToNext = false;
-			}
-
-			if (moveToNext || !_adsInterp->run()) {
-				moveToNext = false;
-			}
+			_adsInterp->run();
 
 			if (mouseEvent != Common::EVENT_INVALID) {
 				if (_inventory->isOpen()) {
@@ -487,7 +486,7 @@ Common::Error DgdsEngine::run() {
 				outf.close();
 			}*/
 
-			_foregroundBuffer.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+			_usedForegroundBuffer = true;
 
 			if (!_inventory->isOpen()) {
 				_gdsScene->drawItems(_compositionBuffer);

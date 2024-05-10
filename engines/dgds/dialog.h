@@ -123,7 +123,7 @@ public:
 	void flipFlag(DialogFlags flg);
 	bool hasFlag(DialogFlags flg) const;
 	void updateSelectedAction(int delta);
-	struct DialogAction *pickAction(bool isClosing);
+	struct DialogAction *pickAction(bool isClosing, bool isForceClose);
 	Common::String dump(const Common::String &indent) const;
 	void clear();
 

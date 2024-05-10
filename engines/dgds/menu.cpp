@@ -135,24 +135,28 @@ void Menu::drawMenu(int16 menu) {
 	// Restore background when drawing submenus
 	g_system->copyRectToScreen(_screenBuffer.getPixels(), _screenBuffer.pitch, 0, 0, _screenBuffer.w, _screenBuffer.h);
 
-	Graphics::Surface *dst = g_system->lockScreen();
-
-	Graphics::ManagedSurface managed(dst, DisposeAfterUse::NO);
+	// This is not very efficient, but it only happens once when the menu is opened.
+	Graphics::Surface *screen = g_system->lockScreen();
+	Graphics::ManagedSurface managed(screen->w, screen->h, screen->format);
+	managed.blitFrom(*screen);
 	_reqData._requests[_curMenu].drawBg(&managed);
 
 	for (Common::SharedPtr<Gadget> &gptr : gadgets) {
 		Gadget *gadget = gptr.get();
 		if (gadget->_gadgetType == kGadgetButton || gadget->_gadgetType == kGadgetSlider)
-			gadget->draw(dst);
+			gadget->draw(managed.surfacePtr());
 	}
 
-	drawMenuText(dst);
+	drawMenuText(managed);
+
+	// Can't use transparent blit here as the font is often color 0.
+	screen->copyRectToSurface(*managed.surfacePtr(), 0, 0, Common::Rect(screen->w, screen->h));
 
 	g_system->unlockScreen();
 	g_system->updateScreen();
 }
 
-void Menu::drawMenuText(Graphics::Surface *dst) {
+void Menu::drawMenuText(Graphics::ManagedSurface &dst) {
 	Common::Array<Common::SharedPtr<Gadget> > gadgets = _reqData._requests[_curMenu]._gadgets;
 	Common::Array<TextItem> textItems = _reqData._requests[_curMenu]._textItemList;
 
@@ -170,7 +174,7 @@ void Menu::drawMenuText(Graphics::Surface *dst) {
 
 		const Font *font = RequestData::getMenuFont();
 		int w = font->getStringWidth(textItem._txt);
-		font->drawString(dst, textItem._txt, parentX + textItem._x, parentY + textItem._y, w, 0);
+		font->drawString(dst.surfacePtr(), textItem._txt, parentX + textItem._x, parentY + textItem._y, w, 0);
 		pos++;
 	}
 }

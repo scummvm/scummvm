@@ -104,6 +104,7 @@ private:
 
 	bool _justChangedScene1;
 	bool _justChangedScene2;
+	bool _usedForegroundBuffer;
 
 	Common::RandomSource _random;
 	Common::Point _lastMouse; // originals start mouse at 0,0.

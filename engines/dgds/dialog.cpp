@@ -554,10 +554,10 @@ void Dialog::updateSelectedAction(int delta) {
 	}
 }
 
-struct DialogAction *Dialog::pickAction(bool isClosing) {
+struct DialogAction *Dialog::pickAction(bool isClosing, bool isForceClose) {
 	struct DialogAction *retval = nullptr;
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	if (/* some game flags?? && */isClosing) {
+	if (!isForceClose && isClosing) {
 		if (_action.empty())
 			return nullptr;
 		else
