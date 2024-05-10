@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	events.o \
 	messages.o \
 	metaengine.o \
+	view.o \
 	view1.o
 
 # This module can be built as a plugin

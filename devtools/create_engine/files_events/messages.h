@@ -71,6 +71,7 @@ struct MouseUpMessage : public MouseMessage {
 	MouseUpMessage(Common::EventType type, const Common::Point &pos) :
 		MouseMessage(type, pos) {}
 };
+typedef MouseMessage MouseMoveMessage;
 
 struct GameMessage : public Message {
 	Common::String _name;

@@ -56,9 +56,10 @@ static const char *const FILENAMES_EVENTS[] = {
 	"files_events/messages.cpp", "files_events/messages.h",
 	"files/metaengine.cpp", "files/metaengine.h",
 	"files_events/module.mk", "files_events/xyzzy.cpp",
-	"files_events/xyzzy.h", "files/POTFILES",
-	"files_events/views.h", "files_events/view1.cpp",
-	"files_events/view1.h", nullptr
+	"files_events/xyzzy.h", "files/POTFILES", "files_events/views.h",
+	"files_events/view.cpp", "files_events/view.h",
+	"files_events/view1.cpp", "files_events/view1.h",
+	nullptr
 };
 
 const char *const ENGINES = "create_project ..\\.. --msvc\n";

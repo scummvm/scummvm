@@ -207,6 +207,12 @@ public:
 	/**
 	 * Handles events
 	 */
+	// Mouse move only has a minimal implementation for performance reasons
+protected:
+	virtual bool msgMouseMove(const MouseMoveMessage &msg) { return false; }
+public:
+	bool send(const MouseMoveMessage &msg) { return msgMouseMove(msg); }
+
 	#define MESSAGE(NAME) \
 	protected: \
 		virtual bool msg##NAME(const NAME##Message &e) { \
@@ -223,7 +229,7 @@ public:
 			return view->msg##NAME(msg); \
 		} \
 		bool send(const NAME##Message &msg) { \
-			return send("Root", msg); \
+			return msg##NAME(msg); \
 		} \
 
 	MESSAGE(Focus);
@@ -272,6 +278,7 @@ protected:
 	MESSAGE(Keypress);
 	MESSAGE(MouseDown);
 	MESSAGE(MouseUp);
+	MESSAGE(MouseMove);
 	#undef MESSAGE
 public:
 	Events();

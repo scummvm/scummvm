@@ -22,17 +22,17 @@
 #ifndef XYZZY_VIEW1_H
 #define XYZZY_VIEW1_H
 
-#include "xyzzy/events.h"
+#include "xyzzy/view.h"
 
 namespace Xyzzy {
 
-class View1 : public UIElement {
+class View1 : public View {
 private:
 	byte _pal[256 * 3] = { 0 };
 	int _offset = 0;
 
 public:
-	View1() : UIElement("View1") {}
+	View1() : View("View1") {}
 	virtual ~View1() {}
 
 	bool msgFocus(const FocusMessage &msg) override;
