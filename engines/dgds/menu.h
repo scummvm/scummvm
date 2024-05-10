@@ -63,7 +63,7 @@ public:
 
 private:
 	int16 getClickedMenuItem(Common::Point mouseClick);
-	void drawMenuText(Graphics::Surface *dst);
+	void drawMenuText(Graphics::ManagedSurface &dst);
 	void toggleGadget(int16 gadgetId, bool enable);
 	REQFileData _reqData;
 };

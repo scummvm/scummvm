@@ -622,7 +622,7 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 		if (cflag & kSceneCondNegate)
 			result = !result;
 
-		debug(10, "Cond: %s -> %s", c.dump("").c_str(), result ? "true": "false");
+		debug(11, "Cond: %s -> %s", c.dump("").c_str(), result ? "true": "false");
 
 		if (!result) {
 			// Skip to the next or, or the end.
@@ -817,7 +817,7 @@ bool SDSScene::checkDialogActive() {
 
 		if ((!finished && !no_options) || dlg.hasFlag(kDlgFlagHi20) || dlg.hasFlag(kDlgFlagHi40)) {
 			if (!finished && dlg._action.size() > 1 && !dlg.hasFlag(kDlgFlagHiFinished)) {
-				struct DialogAction *action = dlg.pickAction(false);
+				struct DialogAction *action = dlg.pickAction(false, clearDlgFlag);
 				if (dlg._state->_selectedAction != action) {
 					dlg._state->_selectedAction = action;
 					dlg.clearFlag(kDlgFlagHi10);
@@ -827,7 +827,7 @@ bool SDSScene::checkDialogActive() {
 		} else {
 			// this dialog is finished - call the ops and maybe show the next one
 			_dlgWithFlagLo8IsClosing = dlg.hasFlag(kDlgFlagLo8);
-			struct DialogAction *action = dlg.pickAction(true);
+			struct DialogAction *action = dlg.pickAction(true, clearDlgFlag);
 			if (action || dlg._action.empty()) {
 				dlg.setFlag(kDlgFlagHiFinished);
 				if (action) {
@@ -920,7 +920,7 @@ bool SDSScene::drawAndUpdateDialogs(Graphics::ManagedSurface *dst) {
 				dlg._state->_selectedAction = nullptr;
 				dlg.updateSelectedAction(0);
 				if (dlg._action.size() > 1 && !dlg._state->_selectedAction) {
-					dlg._state->_selectedAction = dlg.pickAction(false);
+					dlg._state->_selectedAction = dlg.pickAction(false, false);
 					if (dlg._state->_selectedAction)
 						dlg.draw(dst, kDlgDrawStageForeground);
 				}
