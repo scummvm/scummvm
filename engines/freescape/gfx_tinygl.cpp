@@ -246,7 +246,7 @@ void TinyGLRenderer::depthTesting(bool enabled) {
 	} else {
 		tglDisable(TGL_DEPTH_TEST);
 	}
-};
+}
 
 void TinyGLRenderer::polygonOffset(bool enabled) {
 	if (enabled) {

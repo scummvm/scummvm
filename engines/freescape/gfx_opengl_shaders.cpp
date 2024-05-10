@@ -440,7 +440,7 @@ void OpenGLShaderRenderer::depthTesting(bool enabled) {
 	} else {
 		glDisable(GL_DEPTH_TEST);
 	}
-};
+}
 
 void OpenGLShaderRenderer::polygonOffset(bool enabled) {
 	if (enabled) {
