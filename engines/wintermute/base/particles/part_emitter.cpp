@@ -93,7 +93,7 @@ PartEmitter::PartEmitter(BaseGame *inGame, BaseScriptHolder *owner) : BaseObject
 
 
 //////////////////////////////////////////////////////////////////////////
-PartEmitter::~PartEmitter(void) {
+PartEmitter::~PartEmitter() {
 	for (uint32 i = 0; i < _particles.size(); i++) {
 		delete _particles[i];
 	}

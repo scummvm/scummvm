@@ -96,7 +96,7 @@ public:
 public:
 	DECLARE_PERSISTENT(BaseFontTT, BaseFont)
 	BaseFontTT(BaseGame *inGame);
-	~BaseFontTT(void) override;
+	~BaseFontTT() override;
 
 	int getTextWidth(const byte *text, int maxLength = -1) override;
 	int getTextHeight(const byte *text, int width) override;

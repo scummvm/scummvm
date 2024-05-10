@@ -40,7 +40,7 @@ public:
 	DECLARE_PERSISTENT(PartEmitter, BaseObject)
 
 	PartEmitter(BaseGame *inGame, BaseScriptHolder *Owner);
-	~PartEmitter(void) override;
+	~PartEmitter() override;
 
 	int32 _fadeOutTime;
 

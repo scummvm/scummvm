@@ -33,7 +33,7 @@ namespace Wintermute {
 class BasePersistenceManager;
 
 // persistence support
-typedef void *(*PERSISTBUILD)(void);
+typedef void *(*PERSISTBUILD)();
 typedef bool(*PERSISTLOAD)(void *, BasePersistenceManager *);
 typedef void(*SYS_INSTANCE_CALLBACK)(void *instance, void *data);
 } // End of namespace Wintermute
@@ -44,7 +44,7 @@ namespace Wintermute {
 
 #define DECLARE_PERSISTENT(className, parentClass)\
 	static const char _className[];\
-	static void *persistBuild(void);\
+	static void *persistBuild();\
 	const char *getClassName() override;\
 	static bool persistLoad(void* Instance, BasePersistenceManager* PersistMgr);\
 	className(TDynamicConstructor p1, TDynamicConstructor p2) : parentClass(p1, p2) { /*memset(this, 0, sizeof(class_name));*/ };\

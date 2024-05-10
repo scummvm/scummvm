@@ -62,7 +62,7 @@ PartParticle::PartParticle(BaseGame *inGame) : BaseClass(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-PartParticle::~PartParticle(void) {
+PartParticle::~PartParticle() {
 	delete _sprite;
 	_sprite = nullptr;
 }

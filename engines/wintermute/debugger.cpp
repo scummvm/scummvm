@@ -55,7 +55,7 @@ Console::Console(WintermuteEngine *vm) : GUI::Debugger(), _engineRef(vm) {
 	registerCmd(TOP_CMD, WRAP_METHOD(Console, Cmd_Top));
 }
 
-Console::~Console(void) {
+Console::~Console() {
 }
 
 bool Console::Cmd_Help(int argc, const char **argv) {

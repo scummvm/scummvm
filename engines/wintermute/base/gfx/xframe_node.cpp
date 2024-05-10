@@ -53,7 +53,7 @@ FrameNode::FrameNode(BaseGame *inGame) : BaseNamedObject(inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-FrameNode::~FrameNode(void) {
+FrameNode::~FrameNode() {
 	// remove child frames
 	for (uint32 i = 0; i < _frames.size(); i++) {
 		delete _frames[i];

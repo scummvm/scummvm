@@ -42,7 +42,7 @@ public:
 	};
 
 	PartForce(BaseGame *inGame);
-	~PartForce(void) override;
+	~PartForce() override;
 
 	Vector2 _pos;
 	Vector2 _direction;

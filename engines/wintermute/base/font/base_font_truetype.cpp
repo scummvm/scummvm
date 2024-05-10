@@ -64,7 +64,7 @@ BaseFontTT::BaseFontTT(BaseGame *inGame) : BaseFont(inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-BaseFontTT::~BaseFontTT(void) {
+BaseFontTT::~BaseFontTT() {
 	clearCache();
 
 	for (uint32 i = 0; i < _layers.size(); i++) {

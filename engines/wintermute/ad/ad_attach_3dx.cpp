@@ -46,7 +46,7 @@ AdAttach3DX::AdAttach3DX(BaseGame *inGame, BaseObject *owner) : AdObject3D(inGam
 }
 
 //////////////////////////////////////////////////////////////////////////
-AdAttach3DX::~AdAttach3DX(void) {
+AdAttach3DX::~AdAttach3DX() {
 	_owner = nullptr; // ref only
 }
 
