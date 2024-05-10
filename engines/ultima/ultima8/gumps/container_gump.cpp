@@ -390,13 +390,19 @@ void ContainerGump::onMouseDouble(int button, int32 mx, int32 my) {
 		if (item) {
 			debugC(kDebugObject, "%s", item->dumpInfo().c_str());
 
+			if (objID == _owner) {
+				// call the 'use' event
+				item->use();
+				return;
+			}
+
 			if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 				debugC(kDebugObject, "Can't use: avatarInStasis");
 				return;
 			}
 
 			MainActor *avatar = getMainActor();
-			if (objID == _owner || avatar->canReach(item, 128)) { // CONSTANT!
+			if (avatar->canReach(item, 128)) { // CONSTANT!
 				// call the 'use' event
 				item->use();
 			} else {
