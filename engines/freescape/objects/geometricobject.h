@@ -46,7 +46,7 @@ public:
 		const Math::Vector3d &size,
 		Common::Array<uint8> *colours,
 		Common::Array<uint8> *ecolours,
-		Common::Array<uint16> *ordinates,
+		Common::Array<float> *ordinates,
 		FCLInstructionVector conditionInstructions,
 		Common::String conditionSource = "");
 	virtual ~GeometricObject();
@@ -69,8 +69,8 @@ public:
 private:
 	Common::Array<uint8> *_colours;
 	Common::Array<uint8> *_ecolours;
-	Common::Array<uint16> *_ordinates;
-	Common::Array<uint16> *_initialOrdinates;
+	Common::Array<float> *_ordinates;
+	Common::Array<float> *_initialOrdinates;
 };
 
 } // End of namespace Freescape
