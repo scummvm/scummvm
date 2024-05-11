@@ -59,21 +59,21 @@ public:
 private:
 	int _seed;
 
-	int numPoolsG; // per quadrant
-	int energyAmountG; // 2048 = min energy on small map, 51200 = max energy on max map, etc.
-	int cliffAmountG; // amount of cliffs, 10 is min, 70 is max
-	int waterAmountG; // 0 is min, 30 is max
-	int totalMapSizeG;
+	int _numPoolsG; // per quadrant
+	int _energyAmountG; // 2048 = min energy on small map, 51200 = max energy on max map, etc.
+	int _cliffAmountG; // amount of cliffs, 10 is min, 70 is max
+	int _waterAmountG; // 0 is min, 30 is max
+	int _totalMapSizeG;
 
-	int terrainSeedFlagG; // disables HIGH or LOW terrain for the initial elevation when appropriate
-	int islandsFlagG; // enables islands
-	int advancedMirrorOK_G; // low terrain roughness can leave too abrupt changes at the edge, so set false to disable some mirroring types
-	int mirrorTypeG; // what mirroring is used
+	int _terrainSeedFlagG; // disables HIGH or LOW terrain for the initial elevation when appropriate
+	int _islandsFlagG; // enables islands
+	int _advancedMirrorOK_G; // low terrain roughness can leave too abrupt changes at the edge, so set false to disable some mirroring types
+	int _mirrorTypeG; // what mirroring is used
 
-	int mapCornerMaxG; // size of random section
-	int mapMiddleMaxG;
-	int mapCorner[MAXSIZE+1][MAXSIZE+1];
-	int mapMiddle[MAXSIZE][MAXSIZE];
+	int _mapCornerMaxG; // size of random section
+	int _mapMiddleMaxG;
+	int _mapCorner[MAXSIZE+1][MAXSIZE+1];
+	int _mapMiddle[MAXSIZE][MAXSIZE];
 
 	float getRandomFloat();
 	int spiffRand(int min, int max);

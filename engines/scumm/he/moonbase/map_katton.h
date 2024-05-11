@@ -41,11 +41,11 @@ public:
 private:
 	int _seed;
 
-	int size; // 32, 40, 48, or 56
-	int tileset;
-	int startloc[20][2];
-	int board[MAX_TILE_COUNT][MAX_TILE_COUNT];
-	int special[MAX_TILE_COUNT][MAX_TILE_COUNT];
+	int _size; // 32, 40, 48, or 56
+	int _tileset;
+	int _startloc[20][2];
+	int _board[MAX_TILE_COUNT][MAX_TILE_COUNT];
+	int _special[MAX_TILE_COUNT][MAX_TILE_COUNT];
 
 	int getRandomNumber();
 

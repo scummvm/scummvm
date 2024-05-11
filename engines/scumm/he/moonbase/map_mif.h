@@ -81,11 +81,11 @@ public:
 
 	void generateMap(MapFile *map);
 
-	int dimension; // 32 (small), 40 (medium), 48 (large), 56 (huge), 64 (SAI)
-	int mapType;
-	char name[17];
-	byte cornerMap[MAX_TILE_COUNT][MAX_TILE_COUNT];
-	char centerMap[MAX_TILE_COUNT][MAX_TILE_COUNT];
+	int _dimension; // 32 (small), 40 (medium), 48 (large), 56 (huge), 64 (SAI)
+	int _mapType;
+	char _name[17];
+	byte _cornerMap[MAX_TILE_COUNT][MAX_TILE_COUNT];
+	char _centerMap[MAX_TILE_COUNT][MAX_TILE_COUNT];
 private:
 
 	void defineStartLocations(MapFile *map);
@@ -94,99 +94,99 @@ private:
 	uint16 findTileFor(int x, int y);
 
 	inline char tlCenter(int x, int y) const {
-		return centerMap[(0 == x) ? dimension - 1 : x - 1][(0 == y) ? dimension - 1 : y - 1];
+		return _centerMap[(0 == x) ? _dimension - 1 : x - 1][(0 == y) ? _dimension - 1 : y - 1];
 	}
 
 	inline char tCenter(int x, int y) const {
-		return centerMap[x][(0 == y) ? dimension - 1 : y - 1];
+		return _centerMap[x][(0 == y) ? _dimension - 1 : y - 1];
 	}
 
 	inline char trCenter(int x, int y) const {
-		return centerMap[(x + 1) % dimension][(0 == y) ? dimension - 1 : y - 1];
+		return _centerMap[(x + 1) % _dimension][(0 == y) ? _dimension - 1 : y - 1];
 	}
 
 	inline char lCenter(int x, int y) const {
-		return centerMap[(0 == x) ? dimension - 1 : x - 1][y];
+		return _centerMap[(0 == x) ? _dimension - 1 : x - 1][y];
 	}
 
 	inline char rCenter(int x, int y) const {
-		return centerMap[(x + 1) % dimension][y];
+		return _centerMap[(x + 1) % _dimension][y];
 	}
 
 	inline char blCenter(int x, int y) const {
-		return centerMap[(0 == x) ? dimension - 1 : x - 1][(y + 1) % dimension];
+		return _centerMap[(0 == x) ? _dimension - 1 : x - 1][(y + 1) % _dimension];
 	}
 
 	inline char bCenter(int x, int y) const {
-		return centerMap[x][(y + 1) % dimension];
+		return _centerMap[x][(y + 1) % _dimension];
 	}
 
 	inline char brCenter(int x, int y) const {
-		return centerMap[(x + 1) % dimension][(y + 1) % dimension];
+		return _centerMap[(x + 1) % _dimension][(y + 1) % _dimension];
 	}
 
 	inline byte tlCorner(int x, int y) const {
-		return cornerMap[x][y];
+		return _cornerMap[x][y];
 	}
 
 	inline byte trCorner(int x, int y) const {
-		return cornerMap[(x + 1) % dimension][y];
+		return _cornerMap[(x + 1) % _dimension][y];
 	}
 
 	inline byte blCorner(int x, int y) const {
-		return cornerMap[x][(y + 1) % dimension];
+		return _cornerMap[x][(y + 1) % _dimension];
 	}
 
 	inline byte brCorner(int x, int y) const {
-		return cornerMap[(x + 1) % dimension][(y + 1) % dimension];
+		return _cornerMap[(x + 1) % _dimension][(y + 1) % _dimension];
 	}
 
 	inline byte ttllCorner(int x, int y) const {
-		return tlCorner((x == 0) ? dimension - 1 : x - 1, (y == 0) ? dimension - 1: y - 1);
+		return tlCorner((x == 0) ? _dimension - 1 : x - 1, (y == 0) ? _dimension - 1: y - 1);
 	}
 
 	inline byte ttlCorner(int x, int y) const {
-		return trCorner((x == 0) ? dimension - 1 : x - 1, (y == 0) ? dimension - 1: y - 1);
+		return trCorner((x == 0) ? _dimension - 1 : x - 1, (y == 0) ? _dimension - 1: y - 1);
 	}
 
 	inline byte ttrCorner(int x, int y) const {
-		return tlCorner((x + 1) % dimension, (y == 0) ? dimension - 1: y - 1);
+		return tlCorner((x + 1) % _dimension, (y == 0) ? _dimension - 1: y - 1);
 	}
 
 	inline byte ttrrCorner(int x, int y) const {
-		return trCorner((x + 1) % dimension, (y == 0) ? dimension - 1: y - 1);
+		return trCorner((x + 1) % _dimension, (y == 0) ? _dimension - 1: y - 1);
 	}
 
 	inline byte tllCorner(int x, int y) const {
-		return tlCorner((x == 0) ? dimension - 1 : x - 1, y);
+		return tlCorner((x == 0) ? _dimension - 1 : x - 1, y);
 	}
 
 	inline byte trrCorner(int x, int y) const {
-		return trCorner((x + 1) % dimension, y);
+		return trCorner((x + 1) % _dimension, y);
 	}
 
 	inline byte bllCorner(int x, int y) const {
-		return blCorner((x == 0) ? dimension - 1 : x - 1, y);
+		return blCorner((x == 0) ? _dimension - 1 : x - 1, y);
 	}
 
 	inline byte brrCorner(int x, int y) const {
-		return brCorner((x + 1) % dimension, y);
+		return brCorner((x + 1) % _dimension, y);
 	}
 
 	inline byte bbllCorner(int x, int y) const {
-		return blCorner((x == 0) ? dimension - 1 : x - 1, (y + 1) % dimension);
+		return blCorner((x == 0) ? _dimension - 1 : x - 1, (y + 1) % _dimension);
 	}
 
 	inline byte bblCorner(int x, int y) const {
-		return brCorner((x == 0) ? dimension - 1 : x - 1, (y + 1) % dimension);
+		return brCorner((x == 0) ? _dimension - 1 : x - 1, (y + 1) % _dimension);
 	}
 
 	inline byte bbrCorner(int x, int y) const {
-		return blCorner((x + 1) % dimension, (y + 1) % dimension);
+		return blCorner((x + 1) % _dimension, (y + 1) % _dimension);
 	}
 
 	inline byte bbrrCorner(int x, int y) const {
-		return brCorner((x + 1) % dimension, (y + 1) % dimension);
+		return brCorner((x + 1) % _dimension, (y + 1) % _dimension);
 	}
 
 };

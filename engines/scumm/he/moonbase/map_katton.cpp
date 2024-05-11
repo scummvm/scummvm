@@ -44,8 +44,8 @@ int KattonGenerator::getRandomNumber() {
 }
 
 MapFile *KattonGenerator::generateMap(int water, int tileSet, int mapSize, int energy, int terrain) {
-	size = mapSize;
-	tileset = tileSet;
+	_size = mapSize;
+	_tileset = tileSet;
 	int inEnergy = energy;
 	int inTerrain = terrain;
 	int inWater = water;
@@ -82,39 +82,39 @@ MapFile *KattonGenerator::generateMap(int water, int tileSet, int mapSize, int e
 
 	//****************************************Make the basic landmass shapes.
 
-	numsplotches = (int)(size / 4) + (int)((terrainpercent - 0.5) * size / 2);
+	numsplotches = (int)(_size / 4) + (int)((terrainpercent - 0.5) * _size / 2);
 
 	for (i = 0; i < numsplotches; i++) {
-		length = (int)(((1 - waterpercent) / 6 * size * size) / numsplotches);
+		length = (int)(((1 - waterpercent) / 6 * _size * _size) / numsplotches);
 		length = length + plusminus((int)(length / 2));
 		stringiness = 1 + plusminus(1);
-		randomx = getRandomNumber() % size;
-		randomy = getRandomNumber() % size;
+		randomx = getRandomNumber() % _size;
+		randomy = getRandomNumber() % _size;
 		randomsplotch(length, 1 + stringiness, 2, randomx, randomy);
 	}
 
 	for (i = 0; i < (int)numsplotches / 4; i++) {
-		length = (int)(((1 - waterpercent) / 3 * size * size) / numsplotches);
+		length = (int)(((1 - waterpercent) / 3 * _size * _size) / numsplotches);
 		length = length + plusminus((int)(length / 4));
 		stringiness = 1 + plusminus(1);
-		randomx = getRandomNumber() % size;
-		randomy = getRandomNumber() % size;
+		randomx = getRandomNumber() % _size;
+		randomy = getRandomNumber() % _size;
 		randomsplotch(length, stringiness, 1, randomx, randomy);
 	}
 
 	for (i = 0; i < (int)numsplotches / 2; i++) {
-		length = (int)(size + plusminus((int)(size / 2)));
+		length = (int)(_size + plusminus((int)(_size / 2)));
 		stringiness = 1 + plusminus(1);
-		randomx = getRandomNumber() % size;
-		randomy = getRandomNumber() % size;
+		randomx = getRandomNumber() % _size;
+		randomy = getRandomNumber() % _size;
 		randomsplotch(length, stringiness, 0, randomx, randomy);
 	}
 
-	for (i = 0; i < (int)waterpercent * size; i++) {
-		length = (int)(size + plusminus((int)(size / 2)));
+	for (i = 0; i < (int)waterpercent * _size; i++) {
+		length = (int)(_size + plusminus((int)(_size / 2)));
 		stringiness = 1 + plusminus(1);
-		randomx = getRandomNumber() % size;
-		randomy = getRandomNumber() % size;
+		randomx = getRandomNumber() % _size;
+		randomy = getRandomNumber() % _size;
 		randomsplotch(length, stringiness, 0, randomx, randomy);
 	}
 
@@ -137,7 +137,7 @@ MapFile *KattonGenerator::generateMap(int water, int tileSet, int mapSize, int e
 
 	//****************************************Smooth out/rough up the landmasses
 
-	randomflip((int)(terrainpercent * terrainpercent * size * size / 4 + size / 4), inWater);
+	randomflip((int)(terrainpercent * terrainpercent * _size * _size / 4 + _size / 4), inWater);
 
 	//****************************************Make the start locations
 
@@ -145,8 +145,8 @@ MapFile *KattonGenerator::generateMap(int water, int tileSet, int mapSize, int e
 
 	//****************************************Put down some water
 
-	for (i = 0; i < size; i += 2) {
-		for (j = 0; j < size; j += 2) {
+	for (i = 0; i < _size; i += 2) {
+		for (j = 0; j < _size; j += 2) {
 			if (goodforwater(i, j)) {
 				goodwater[numwaterplaces][0] = i;
 				goodwater[numwaterplaces][1] = j;
@@ -155,7 +155,7 @@ MapFile *KattonGenerator::generateMap(int water, int tileSet, int mapSize, int e
 		}
 	}
 
-	numwatersplotches = (int)(size * waterpercent * waterpercent * 5);
+	numwatersplotches = (int)(_size * waterpercent * waterpercent * 5);
 
 	if (numwaterplaces <= numwatersplotches) {
 		numwatersplotches = numwaterplaces;
@@ -167,7 +167,7 @@ MapFile *KattonGenerator::generateMap(int water, int tileSet, int mapSize, int e
 			z = getRandomNumber() % multiplier + i * multiplier;
 			x = goodwater[z][0];
 			y = goodwater[z][1];
-			length = size + plusminus(size / 2);
+			length = _size + plusminus(_size / 2);
 			stringiness = getRandomNumber() % 3;
 			randomwater(length, stringiness, x, y);
 		}
@@ -177,32 +177,32 @@ MapFile *KattonGenerator::generateMap(int water, int tileSet, int mapSize, int e
 	if (inEnergy >= 90) {
 		maxnumclose = 2;
 		maxnumfar = 3;
-		maxnumrand = (int)(size * size / 150);
+		maxnumrand = (int)(_size * _size / 150);
 		smallmed = 2;
 	} else if (inEnergy >= 75) {
 		maxnumclose = 2;
 		maxnumfar = 1;
-		maxnumrand = (int)(size * size / 250) + 4;
+		maxnumrand = (int)(_size * _size / 250) + 4;
 		smallmed = 3;
 	} else if (inEnergy >= 60) {
 		maxnumclose = 1;
 		maxnumfar = 2;
-		maxnumrand = (int)(size * size / 250);
+		maxnumrand = (int)(_size * _size / 250);
 		smallmed = 4;
 	} else if (inEnergy >= 45) {
 		maxnumclose = 1;
 		maxnumfar = 1;
-		maxnumrand = (int)(size * size / 250);
+		maxnumrand = (int)(_size * _size / 250);
 		smallmed = 6;
 	} else if (inEnergy >= 30) {
 		maxnumclose = 1;
 		maxnumfar = 0;
-		maxnumrand = (int)(size * size / 350) + 2;
+		maxnumrand = (int)(_size * _size / 350) + 2;
 		smallmed = 8;
 	} else if (inEnergy >= 15) {
 		maxnumclose = 0;
 		maxnumfar = 1;
-		maxnumrand = (int)(size * size / 450);
+		maxnumrand = (int)(_size * _size / 450);
 		smallmed = 10;
 	} else if (inEnergy >= 0) {
 		maxnumclose = 0;
@@ -214,13 +214,13 @@ MapFile *KattonGenerator::generateMap(int water, int tileSet, int mapSize, int e
 	for (i = 0; i < 4; i++) {
 		numplaceClose = 0;
 		numplaceFar = 0;
-		for (j = 0; j < size; j++) {
-			for (k = 0; k < size; k++) {
-				if ((goodforenergy(j, k, 0)) && (distance(startloc[i][0], startloc[i][1], j, k) >= (int)(size / 10)) && (distance(startloc[i][0], startloc[i][1], j, k) <= (int)(size / 8))) {
+		for (j = 0; j < _size; j++) {
+			for (k = 0; k < _size; k++) {
+				if ((goodforenergy(j, k, 0)) && (distance(_startloc[i][0], _startloc[i][1], j, k) >= (int)(_size / 10)) && (distance(_startloc[i][0], _startloc[i][1], j, k) <= (int)(_size / 8))) {
 					goodplaceClose[numplaceClose][0] = j;
 					goodplaceClose[numplaceClose][1] = k;
 					numplaceClose++;
-				} else if ((goodforenergy(j, k, 0)) && (distance(startloc[i][0], startloc[i][1], j, k) >= (int)(size / 7)) && (distance(startloc[i][0], startloc[i][1], j, k) <= (int)(size / 5))) {
+				} else if ((goodforenergy(j, k, 0)) && (distance(_startloc[i][0], _startloc[i][1], j, k) >= (int)(_size / 7)) && (distance(_startloc[i][0], _startloc[i][1], j, k) <= (int)(_size / 5))) {
 					goodplaceFar[numplaceFar][0] = j;
 					goodplaceFar[numplaceFar][1] = k;
 					numplaceFar++;
@@ -236,11 +236,11 @@ MapFile *KattonGenerator::generateMap(int water, int tileSet, int mapSize, int e
 
 		if (numplaceClose >= maxnumclose) {
 			for (l = 0; l < maxnumclose; l++) {
-				special[goodplaceClose[placeClose[l]][0]][goodplaceClose[placeClose[l]][1]] = 100;
+				_special[goodplaceClose[placeClose[l]][0]][goodplaceClose[placeClose[l]][1]] = 100;
 			}
 		} else {
 			for (l = 0; l < numplaceClose; l++) {
-				special[goodplaceClose[placeClose[l]][0]][goodplaceClose[placeClose[l]][1]] = 100;
+				_special[goodplaceClose[placeClose[l]][0]][goodplaceClose[placeClose[l]][1]] = 100;
 			}
 		}
 
@@ -256,11 +256,11 @@ MapFile *KattonGenerator::generateMap(int water, int tileSet, int mapSize, int e
 
 		if (numplaceFar >= maxnumfar) {
 			for (l = 0; l < maxnumfar; l++) {
-				special[goodplaceFar[placeFar[l]][0]][goodplaceFar[placeFar[l]][1]] = 100;
+				_special[goodplaceFar[placeFar[l]][0]][goodplaceFar[placeFar[l]][1]] = 100;
 			}
 		} else {
 			for (l = 0; l < numplaceFar; l++) {
-				special[goodplaceFar[placeFar[l]][0]][goodplaceFar[placeFar[l]][1]] = 100;
+				_special[goodplaceFar[placeFar[l]][0]][goodplaceFar[placeFar[l]][1]] = 100;
 			}
 		}
 	}
@@ -269,40 +269,40 @@ MapFile *KattonGenerator::generateMap(int water, int tileSet, int mapSize, int e
 	counterpools = 4 * (maxnumfar + maxnumclose);
 	for (k = 0; k < maxnumrand && counterpools < 50; k++) {
 		do {
-			i = getRandomNumber() % size;
-			j = getRandomNumber() % size;
+			i = getRandomNumber() % _size;
+			j = getRandomNumber() % _size;
 			counter++;
-		} while (!((distance(i, j, startloc[0][0], startloc[0][1]) >= 10) && (distance(i, j, startloc[1][0], startloc[1][1]) >= 10) && (distance(i, j, startloc[2][0], startloc[2][1]) >= 10) && (distance(i, j, startloc[3][0], startloc[3][1]) >= 10) && (goodforenergy(i, j, 1)) && (counter < 5000)));
+		} while (!((distance(i, j, _startloc[0][0], _startloc[0][1]) >= 10) && (distance(i, j, _startloc[1][0], _startloc[1][1]) >= 10) && (distance(i, j, _startloc[2][0], _startloc[2][1]) >= 10) && (distance(i, j, _startloc[3][0], _startloc[3][1]) >= 10) && (goodforenergy(i, j, 1)) && (counter < 5000)));
 		if (getRandomNumber() % smallmed == 0) {
-			special[i][j] = 200;
+			_special[i][j] = 200;
 			counterpools++;
 		} else {
-			special[i][j] = 100;
+			_special[i][j] = 100;
 			counterpools++;
 		}
 	}
 
 	//****************************************Do that saving thing that you do, BABY!
 	MIF mif = MIF();
-	Common::sprintf_s(mif.name, "Katton %04X", (uint16)_seed);
-	mif.dimension = size;
-	mif.mapType = tileset;
-	for (j = 0; j < size; j++) {
-		for (i = 0; i < size; i++)
-			mif.cornerMap[i][j] = board[i][j];
-		for (i = 0; i < size; i++)
-			if (special[i][j] == 0)
-				mif.centerMap[i][j] = '.';
-			else if (special[i][j] == -1)
-				mif.centerMap[i][j] = 'W';
-			else if (special[i][j] == 100)
-				mif.centerMap[i][j] = 'S';
-			else if (special[i][j] == 200)
-				mif.centerMap[i][j] = 'M';
-			else if (special[i][j] == 300)
-				mif.centerMap[i][j] = 'L';
+	Common::sprintf_s(mif._name, "Katton %04X", (uint16)_seed);
+	mif._dimension = _size;
+	mif._mapType = _tileset;
+	for (j = 0; j < _size; j++) {
+		for (i = 0; i < _size; i++)
+			mif._cornerMap[i][j] = _board[i][j];
+		for (i = 0; i < _size; i++)
+			if (_special[i][j] == 0)
+				mif._centerMap[i][j] = '.';
+			else if (_special[i][j] == -1)
+				mif._centerMap[i][j] = 'W';
+			else if (_special[i][j] == 100)
+				mif._centerMap[i][j] = 'S';
+			else if (_special[i][j] == 200)
+				mif._centerMap[i][j] = 'M';
+			else if (_special[i][j] == 300)
+				mif._centerMap[i][j] = 'L';
 			else
-				mif.centerMap[i][j] = -special[i][j];
+				mif._centerMap[i][j] = -_special[i][j];
 	}
 
 	// Generate new map:
@@ -314,8 +314,8 @@ MapFile *KattonGenerator::generateMap(int water, int tileSet, int mapSize, int e
 
 int KattonGenerator::distance(int x1, int y1, int x2, int y2) {
 	int dx, dy, disp;
-	dx = min((abs(x1 - x2)), (abs(x1 + size - x2)), (abs(x2 + size - x1)));
-	dy = min((abs(y1 - y2)), (abs(y1 + size - y2)), (abs(y2 + size - y1)));
+	dx = min((abs(x1 - x2)), (abs(x1 + _size - x2)), (abs(x2 + _size - x1)));
+	dy = min((abs(y1 - y2)), (abs(y1 + _size - y2)), (abs(y2 + _size - y1)));
 	disp = (int)sqrt((double)(dx * dx + dy * dy));
 	return disp;
 }
@@ -335,9 +335,9 @@ int KattonGenerator::min(int a, int b, int c) {
 int KattonGenerator::goodforenergy(int x, int y, int poolsize) {
 	switch (poolsize) {
 	case 0:
-		if ((board[x][y] == board[findcoord(x, +1)][y]) && (board[findcoord(x, +1)][y] == board[x][findcoord(y, +1)]) && (board[x][findcoord(y, +1)] == board[findcoord(x, +1)][findcoord(y, +1)])) {
+		if ((_board[x][y] == _board[findcoord(x, +1)][y]) && (_board[findcoord(x, +1)][y] == _board[x][findcoord(y, +1)]) && (_board[x][findcoord(y, +1)] == _board[findcoord(x, +1)][findcoord(y, +1)])) {
 			//check main map
-			if (special[x][y] == 0) { //specials are clear
+			if (_special[x][y] == 0) { //specials are clear
 				return 1;
 			} else {
 				return 0;
@@ -346,8 +346,8 @@ int KattonGenerator::goodforenergy(int x, int y, int poolsize) {
 			return 0;
 		}
 	case 1:
-		if ((board[x][y] == board[findcoord(x, +1)][y]) && (board[findcoord(x, +1)][y] == board[x][findcoord(y, +1)]) && (board[x][findcoord(y, +1)] == board[findcoord(x, +1)][findcoord(y, +1)])) { //check main map
-			if ((special[x][y] == 0) && (special[findcoord(x, +1)][y] == 0) && (special[x][findcoord(y, +1)] == 0) && (special[findcoord(x, +1)][findcoord(y, +1)] == 0)) {                           //specials are clear
+		if ((_board[x][y] == _board[findcoord(x, +1)][y]) && (_board[findcoord(x, +1)][y] == _board[x][findcoord(y, +1)]) && (_board[x][findcoord(y, +1)] == _board[findcoord(x, +1)][findcoord(y, +1)])) { //check main map
+			if ((_special[x][y] == 0) && (_special[findcoord(x, +1)][y] == 0) && (_special[x][findcoord(y, +1)] == 0) && (_special[findcoord(x, +1)][findcoord(y, +1)] == 0)) {                           //specials are clear
 				return 1;
 			} else {
 				return 0;
@@ -370,10 +370,10 @@ int KattonGenerator::plusminus(int max) {
 
 int KattonGenerator::fillboards(int num) {
 	int i, j;
-	for (i = 0; i < size; i++) {
-		for (j = 0; j < size; j++) {
-			board[i][j] = num;
-			special[i][j] = num;
+	for (i = 0; i < _size; i++) {
+		for (j = 0; j < _size; j++) {
+			_board[i][j] = num;
+			_special[i][j] = num;
 		}
 	}
 	return 0;
@@ -382,9 +382,9 @@ int KattonGenerator::fillboards(int num) {
 int KattonGenerator::randomplace(int numberofplaces, int placer) {
 	int i, randx, randy;
 	for (i = 0; i < numberofplaces; i++) {
-		randx = (getRandomNumber() % size);
-		randy = (getRandomNumber() % size);
-		board[randx][randy] = placer;
+		randx = (getRandomNumber() % _size);
+		randy = (getRandomNumber() % _size);
+		_board[randx][randy] = placer;
 	}
 	return 0;
 }
@@ -394,7 +394,7 @@ int KattonGenerator::randomsplotch(int length, int stringiness, int placer, int 
 	currx = x;
 	curry = y;
 	while (i <= length) {
-		board[currx][curry] = placer;
+		_board[currx][curry] = placer;
 		prevdirection = direction;
 		direction = (getRandomNumber() % 4);
 		if ((((direction + 2) == prevdirection) || ((direction - 2) == prevdirection)) && (stringiness == 2)) {
@@ -428,23 +428,23 @@ int KattonGenerator::randomsplotch(int length, int stringiness, int placer, int 
 }
 
 int KattonGenerator::findcoord(int value, int move) {
-	move = move % size;
+	move = move % _size;
 	int final = value + move;
 	if (final < 0) {
-		final = size + final;
+		final = _size + final;
 	}
-	if (final >= size) {
-		final = final % size;
+	if (final >= _size) {
+		final = final % _size;
 	}
 	return final;
 }
 
 int KattonGenerator::replacenum(int replacee, int replacer) {
 	int i, j;
-	for (j = 0; j < size; j++) {
-		for (i = 0; i < size; i++) {
-			if (board[i][j] == replacee) {
-				board[i][j] = replacer;
+	for (j = 0; j < _size; j++) {
+		for (i = 0; i < _size; i++) {
+			if (_board[i][j] == replacee) {
+				_board[i][j] = replacer;
 			}
 		}
 	}
@@ -453,9 +453,9 @@ int KattonGenerator::replacenum(int replacee, int replacer) {
 
 int KattonGenerator::fattenall(int howfat, int middle, int ignorer, int replacer) {
 	int i, j, temp;
-	for (j = 0; j < size; j++) {
-		for (i = 0; i < size; i++) {
-			if (board[i][j] == middle) {
+	for (j = 0; j < _size; j++) {
+		for (i = 0; i < _size; i++) {
+			if (_board[i][j] == middle) {
 				if (howfat <= 0) {
 					temp = (int)(abs(howfat) + plusminus(2));
 					if (temp <= 1) {
@@ -474,50 +474,50 @@ int KattonGenerator::fattenall(int howfat, int middle, int ignorer, int replacer
 }
 int KattonGenerator::fattenone(int x, int y, int howfat, int middle, int ignorer, int replacer) {
 	if (howfat == -100) {
-		board[x][y] = replacer;
-		board[findcoord(x, +1)][y] = replacer;
-		board[x][findcoord(y, +1)] = replacer;
-		board[findcoord(x, +1)][findcoord(y, +1)] = replacer;
+		_board[x][y] = replacer;
+		_board[findcoord(x, +1)][y] = replacer;
+		_board[x][findcoord(y, +1)] = replacer;
+		_board[findcoord(x, +1)][findcoord(y, +1)] = replacer;
 	}
 	if (howfat >= 1) {
-		board[x][findcoord(y, -1)] = ((board[x][findcoord(y, -1)] == middle) || (board[x][findcoord(y, -1)] == ignorer)) ? board[x][findcoord(y, -1)] : replacer;
-		board[x][findcoord(y, +1)] = ((board[x][findcoord(y, +1)] == middle) || (board[x][findcoord(y, +1)] == ignorer)) ? board[x][findcoord(y, +1)] : replacer;
-		board[findcoord(x, -1)][y] = ((board[findcoord(x, -1)][y] == middle) || (board[findcoord(x, -1)][y] == ignorer)) ? board[findcoord(x, -1)][y] : replacer;
-		board[findcoord(x, +1)][y] = ((board[findcoord(x, +1)][y] == middle) || (board[findcoord(x, +1)][y] == ignorer)) ? board[findcoord(x, +1)][y] : replacer;
+		_board[x][findcoord(y, -1)] = ((_board[x][findcoord(y, -1)] == middle) || (_board[x][findcoord(y, -1)] == ignorer)) ? _board[x][findcoord(y, -1)] : replacer;
+		_board[x][findcoord(y, +1)] = ((_board[x][findcoord(y, +1)] == middle) || (_board[x][findcoord(y, +1)] == ignorer)) ? _board[x][findcoord(y, +1)] : replacer;
+		_board[findcoord(x, -1)][y] = ((_board[findcoord(x, -1)][y] == middle) || (_board[findcoord(x, -1)][y] == ignorer)) ? _board[findcoord(x, -1)][y] : replacer;
+		_board[findcoord(x, +1)][y] = ((_board[findcoord(x, +1)][y] == middle) || (_board[findcoord(x, +1)][y] == ignorer)) ? _board[findcoord(x, +1)][y] : replacer;
 	}
 	if (howfat >= 2) {
-		board[findcoord(x, -1)][findcoord(y, -1)] = ((board[findcoord(x, -1)][findcoord(y, -1)] == middle) || (board[findcoord(x, -1)][findcoord(y, -1)] == ignorer)) ? board[findcoord(x, -1)][findcoord(y, -1)] : replacer;
-		board[findcoord(x, -1)][findcoord(y, +1)] = ((board[findcoord(x, -1)][findcoord(y, +1)] == middle) || (board[findcoord(x, -1)][findcoord(y, +1)] == ignorer)) ? board[findcoord(x, -1)][findcoord(y, +1)] : replacer;
-		board[findcoord(x, +1)][findcoord(y, -1)] = ((board[findcoord(x, +1)][findcoord(y, -1)] == middle) || (board[findcoord(x, +1)][findcoord(y, -1)] == ignorer)) ? board[findcoord(x, +1)][findcoord(y, -1)] : replacer;
-		board[findcoord(x, +1)][findcoord(y, +1)] = ((board[findcoord(x, +1)][findcoord(y, +1)] == middle) || (board[findcoord(x, +1)][findcoord(y, +1)] == ignorer)) ? board[findcoord(x, +1)][findcoord(y, +1)] : replacer;
+		_board[findcoord(x, -1)][findcoord(y, -1)] = ((_board[findcoord(x, -1)][findcoord(y, -1)] == middle) || (_board[findcoord(x, -1)][findcoord(y, -1)] == ignorer)) ? _board[findcoord(x, -1)][findcoord(y, -1)] : replacer;
+		_board[findcoord(x, -1)][findcoord(y, +1)] = ((_board[findcoord(x, -1)][findcoord(y, +1)] == middle) || (_board[findcoord(x, -1)][findcoord(y, +1)] == ignorer)) ? _board[findcoord(x, -1)][findcoord(y, +1)] : replacer;
+		_board[findcoord(x, +1)][findcoord(y, -1)] = ((_board[findcoord(x, +1)][findcoord(y, -1)] == middle) || (_board[findcoord(x, +1)][findcoord(y, -1)] == ignorer)) ? _board[findcoord(x, +1)][findcoord(y, -1)] : replacer;
+		_board[findcoord(x, +1)][findcoord(y, +1)] = ((_board[findcoord(x, +1)][findcoord(y, +1)] == middle) || (_board[findcoord(x, +1)][findcoord(y, +1)] == ignorer)) ? _board[findcoord(x, +1)][findcoord(y, +1)] : replacer;
 	}
 	if (howfat >= 3) {
-		board[x][findcoord(y, -2)] = ((board[x][findcoord(y, -2)] == middle) || (board[x][findcoord(y, -2)] == ignorer)) ? board[x][findcoord(y, -2)] : replacer;
-		board[x][findcoord(y, +2)] = ((board[x][findcoord(y, +2)] == middle) || (board[x][findcoord(y, +2)] == ignorer)) ? board[x][findcoord(y, +2)] : replacer;
-		board[findcoord(x, -2)][y] = ((board[findcoord(x, -2)][y] == middle) || (board[findcoord(x, -2)][y] == ignorer)) ? board[findcoord(x, -2)][y] : replacer;
-		board[findcoord(x, +2)][y] = ((board[findcoord(x, +2)][y] == middle) || (board[findcoord(x, +2)][y] == ignorer)) ? board[findcoord(x, +2)][y] : replacer;
+		_board[x][findcoord(y, -2)] = ((_board[x][findcoord(y, -2)] == middle) || (_board[x][findcoord(y, -2)] == ignorer)) ? _board[x][findcoord(y, -2)] : replacer;
+		_board[x][findcoord(y, +2)] = ((_board[x][findcoord(y, +2)] == middle) || (_board[x][findcoord(y, +2)] == ignorer)) ? _board[x][findcoord(y, +2)] : replacer;
+		_board[findcoord(x, -2)][y] = ((_board[findcoord(x, -2)][y] == middle) || (_board[findcoord(x, -2)][y] == ignorer)) ? _board[findcoord(x, -2)][y] : replacer;
+		_board[findcoord(x, +2)][y] = ((_board[findcoord(x, +2)][y] == middle) || (_board[findcoord(x, +2)][y] == ignorer)) ? _board[findcoord(x, +2)][y] : replacer;
 	}
 	if (howfat >= 4) {
-		board[findcoord(x, -1)][findcoord(y, -2)] = ((board[findcoord(x, -1)][findcoord(y, -2)] == middle) || (board[findcoord(x, -1)][findcoord(y, -2)] == ignorer)) ? board[findcoord(x, -1)][findcoord(y, -2)] : replacer;
-		board[findcoord(x, -1)][findcoord(y, +2)] = ((board[findcoord(x, -1)][findcoord(y, +2)] == middle) || (board[findcoord(x, -1)][findcoord(y, +2)] == ignorer)) ? board[findcoord(x, -1)][findcoord(y, +2)] : replacer;
-		board[findcoord(x, +1)][findcoord(y, -2)] = ((board[findcoord(x, +1)][findcoord(y, -2)] == middle) || (board[findcoord(x, +1)][findcoord(y, -2)] == ignorer)) ? board[findcoord(x, +1)][findcoord(y, -2)] : replacer;
-		board[findcoord(x, +1)][findcoord(y, +2)] = ((board[findcoord(x, +1)][findcoord(y, +2)] == middle) || (board[findcoord(x, +1)][findcoord(y, +2)] == ignorer)) ? board[findcoord(x, +1)][findcoord(y, +2)] : replacer;
+		_board[findcoord(x, -1)][findcoord(y, -2)] = ((_board[findcoord(x, -1)][findcoord(y, -2)] == middle) || (_board[findcoord(x, -1)][findcoord(y, -2)] == ignorer)) ? _board[findcoord(x, -1)][findcoord(y, -2)] : replacer;
+		_board[findcoord(x, -1)][findcoord(y, +2)] = ((_board[findcoord(x, -1)][findcoord(y, +2)] == middle) || (_board[findcoord(x, -1)][findcoord(y, +2)] == ignorer)) ? _board[findcoord(x, -1)][findcoord(y, +2)] : replacer;
+		_board[findcoord(x, +1)][findcoord(y, -2)] = ((_board[findcoord(x, +1)][findcoord(y, -2)] == middle) || (_board[findcoord(x, +1)][findcoord(y, -2)] == ignorer)) ? _board[findcoord(x, +1)][findcoord(y, -2)] : replacer;
+		_board[findcoord(x, +1)][findcoord(y, +2)] = ((_board[findcoord(x, +1)][findcoord(y, +2)] == middle) || (_board[findcoord(x, +1)][findcoord(y, +2)] == ignorer)) ? _board[findcoord(x, +1)][findcoord(y, +2)] : replacer;
 
-		board[findcoord(x, -2)][findcoord(y, -1)] = ((board[findcoord(x, -2)][findcoord(y, -1)] == middle) || (board[findcoord(x, -2)][findcoord(y, -1)] == ignorer)) ? board[findcoord(x, -2)][findcoord(y, -1)] : replacer;
-		board[findcoord(x, -2)][findcoord(y, +1)] = ((board[findcoord(x, -2)][findcoord(y, +1)] == middle) || (board[findcoord(x, -2)][findcoord(y, +1)] == ignorer)) ? board[findcoord(x, -2)][findcoord(y, +1)] : replacer;
-		board[findcoord(x, +2)][findcoord(y, -1)] = ((board[findcoord(x, +2)][findcoord(y, -1)] == middle) || (board[findcoord(x, +2)][findcoord(y, -1)] == ignorer)) ? board[findcoord(x, +2)][findcoord(y, -1)] : replacer;
-		board[findcoord(x, +2)][findcoord(y, +1)] = ((board[findcoord(x, +2)][findcoord(y, +1)] == middle) || (board[findcoord(x, +2)][findcoord(y, +1)] == ignorer)) ? board[findcoord(x, +2)][findcoord(y, +1)] : replacer;
+		_board[findcoord(x, -2)][findcoord(y, -1)] = ((_board[findcoord(x, -2)][findcoord(y, -1)] == middle) || (_board[findcoord(x, -2)][findcoord(y, -1)] == ignorer)) ? _board[findcoord(x, -2)][findcoord(y, -1)] : replacer;
+		_board[findcoord(x, -2)][findcoord(y, +1)] = ((_board[findcoord(x, -2)][findcoord(y, +1)] == middle) || (_board[findcoord(x, -2)][findcoord(y, +1)] == ignorer)) ? _board[findcoord(x, -2)][findcoord(y, +1)] : replacer;
+		_board[findcoord(x, +2)][findcoord(y, -1)] = ((_board[findcoord(x, +2)][findcoord(y, -1)] == middle) || (_board[findcoord(x, +2)][findcoord(y, -1)] == ignorer)) ? _board[findcoord(x, +2)][findcoord(y, -1)] : replacer;
+		_board[findcoord(x, +2)][findcoord(y, +1)] = ((_board[findcoord(x, +2)][findcoord(y, +1)] == middle) || (_board[findcoord(x, +2)][findcoord(y, +1)] == ignorer)) ? _board[findcoord(x, +2)][findcoord(y, +1)] : replacer;
 	}
 	if (howfat >= 5) {
-		board[findcoord(x, -2)][findcoord(y, -2)] = ((board[findcoord(x, -2)][findcoord(y, -2)] == middle) || (board[findcoord(x, -2)][findcoord(y, -2)] == ignorer)) ? board[findcoord(x, -2)][findcoord(y, -2)] : replacer;
-		board[findcoord(x, -2)][findcoord(y, +2)] = ((board[findcoord(x, -2)][findcoord(y, +2)] == middle) || (board[findcoord(x, -2)][findcoord(y, +2)] == ignorer)) ? board[findcoord(x, -2)][findcoord(y, +2)] : replacer;
-		board[findcoord(x, +2)][findcoord(y, -2)] = ((board[findcoord(x, +2)][findcoord(y, -2)] == middle) || (board[findcoord(x, +2)][findcoord(y, -2)] == ignorer)) ? board[findcoord(x, +2)][findcoord(y, -2)] : replacer;
-		board[findcoord(x, +2)][findcoord(y, +2)] = ((board[findcoord(x, +2)][findcoord(y, +2)] == middle) || (board[findcoord(x, +2)][findcoord(y, +2)] == ignorer)) ? board[findcoord(x, +2)][findcoord(y, +2)] : replacer;
+		_board[findcoord(x, -2)][findcoord(y, -2)] = ((_board[findcoord(x, -2)][findcoord(y, -2)] == middle) || (_board[findcoord(x, -2)][findcoord(y, -2)] == ignorer)) ? _board[findcoord(x, -2)][findcoord(y, -2)] : replacer;
+		_board[findcoord(x, -2)][findcoord(y, +2)] = ((_board[findcoord(x, -2)][findcoord(y, +2)] == middle) || (_board[findcoord(x, -2)][findcoord(y, +2)] == ignorer)) ? _board[findcoord(x, -2)][findcoord(y, +2)] : replacer;
+		_board[findcoord(x, +2)][findcoord(y, -2)] = ((_board[findcoord(x, +2)][findcoord(y, -2)] == middle) || (_board[findcoord(x, +2)][findcoord(y, -2)] == ignorer)) ? _board[findcoord(x, +2)][findcoord(y, -2)] : replacer;
+		_board[findcoord(x, +2)][findcoord(y, +2)] = ((_board[findcoord(x, +2)][findcoord(y, +2)] == middle) || (_board[findcoord(x, +2)][findcoord(y, +2)] == ignorer)) ? _board[findcoord(x, +2)][findcoord(y, +2)] : replacer;
 
-		board[x][findcoord(y, -3)] = ((board[x][findcoord(y, -3)] == middle) || (board[x][findcoord(y, -3)] == ignorer)) ? board[x][findcoord(y, -3)] : replacer;
-		board[x][findcoord(y, +3)] = ((board[x][findcoord(y, +3)] == middle) || (board[x][findcoord(y, +3)] == ignorer)) ? board[x][findcoord(y, +3)] : replacer;
-		board[findcoord(x, -3)][y] = ((board[findcoord(x, -3)][y] == middle) || (board[findcoord(x, -3)][y] == ignorer)) ? board[findcoord(x, -3)][y] : replacer;
-		board[findcoord(x, +3)][y] = ((board[findcoord(x, +3)][y] == middle) || (board[findcoord(x, +3)][y] == ignorer)) ? board[findcoord(x, +3)][y] : replacer;
+		_board[x][findcoord(y, -3)] = ((_board[x][findcoord(y, -3)] == middle) || (_board[x][findcoord(y, -3)] == ignorer)) ? _board[x][findcoord(y, -3)] : replacer;
+		_board[x][findcoord(y, +3)] = ((_board[x][findcoord(y, +3)] == middle) || (_board[x][findcoord(y, +3)] == ignorer)) ? _board[x][findcoord(y, +3)] : replacer;
+		_board[findcoord(x, -3)][y] = ((_board[findcoord(x, -3)][y] == middle) || (_board[findcoord(x, -3)][y] == ignorer)) ? _board[findcoord(x, -3)][y] : replacer;
+		_board[findcoord(x, +3)][y] = ((_board[findcoord(x, +3)][y] == middle) || (_board[findcoord(x, +3)][y] == ignorer)) ? _board[findcoord(x, +3)][y] : replacer;
 	}
 	return 0;
 }
@@ -525,19 +525,19 @@ int KattonGenerator::fattenone(int x, int y, int howfat, int middle, int ignorer
 int KattonGenerator::findstartloc() {
 	int temp, i, j, shiftx, shifty, secondshift;
 	int start[4][2];
-	shiftx = getRandomNumber() % size;
-	shifty = getRandomNumber() % size;
-	start[0][0] = findcoord((int)size / 4, (plusminus(3) + shiftx));
-	start[0][1] = findcoord((int)size / 4, (plusminus(3) + shifty));
-	start[1][0] = findcoord((int)3 * size / 4, (plusminus(3) + shiftx));
-	start[1][1] = findcoord((int)size / 4, (plusminus(3) + shifty));
-	start[2][0] = findcoord((int)size / 4, (plusminus(3) + shiftx));
-	start[2][1] = findcoord((int)3 * size / 4, (plusminus(3) + shifty));
-	start[3][0] = findcoord((int)3 * size / 4, (plusminus(3) + shiftx));
-	start[3][1] = findcoord((int)3 * size / 4, (plusminus(3) + shifty));
+	shiftx = getRandomNumber() % _size;
+	shifty = getRandomNumber() % _size;
+	start[0][0] = findcoord((int)_size / 4, (plusminus(3) + shiftx));
+	start[0][1] = findcoord((int)_size / 4, (plusminus(3) + shifty));
+	start[1][0] = findcoord((int)3 * _size / 4, (plusminus(3) + shiftx));
+	start[1][1] = findcoord((int)_size / 4, (plusminus(3) + shifty));
+	start[2][0] = findcoord((int)_size / 4, (plusminus(3) + shiftx));
+	start[2][1] = findcoord((int)3 * _size / 4, (plusminus(3) + shifty));
+	start[3][0] = findcoord((int)3 * _size / 4, (plusminus(3) + shiftx));
+	start[3][1] = findcoord((int)3 * _size / 4, (plusminus(3) + shifty));
 
 	temp = getRandomNumber() % 2;
-	secondshift = getRandomNumber() % size;
+	secondshift = getRandomNumber() % _size;
 
 	if (temp == 0) {
 		start[0][0] = findcoord(start[0][0], secondshift);
@@ -563,7 +563,7 @@ int KattonGenerator::findstartloc() {
 
 	for (j = 0; j < 4; j++) {
 		for (i = 0; i < 2; i++) {
-			startloc[j][i] = start[j][i];
+			_startloc[j][i] = start[j][i];
 		}
 	}
 
@@ -572,53 +572,53 @@ int KattonGenerator::findstartloc() {
 	for (i = 0; i < 4; i++) {
 		if (temp == i) {
 		} else {
-			startloc[j][0] = start[i][0];
-			startloc[j][1] = start[i][1];
+			_startloc[j][0] = start[i][0];
+			_startloc[j][1] = start[i][1];
 			j++;
 		}
 	}
 
-	startloc[7][0] = startloc[4][0];
-	startloc[7][1] = startloc[4][1];
-	startloc[8][0] = startloc[6][0];
-	startloc[8][1] = startloc[6][1];
+	_startloc[7][0] = _startloc[4][0];
+	_startloc[7][1] = _startloc[4][1];
+	_startloc[8][0] = _startloc[6][0];
+	_startloc[8][1] = _startloc[6][1];
 
 	for (j = 9; j < 13; j++) {
 		for (i = 0; i < 2; i++) {
-			startloc[j][i] = start[j - 9][i];
+			_startloc[j][i] = start[j - 9][i];
 		}
 	}
 
 	for (j = 13; j < 17; j++) {
 		for (i = 0; i < 2; i++) {
-			startloc[j][i] = start[j - 13][i];
+			_startloc[j][i] = start[j - 13][i];
 		}
 	}
 
 	for (j = 17; j < 20; j++) {
 		for (i = 0; i < 2; i++) {
-			startloc[j][i] = startloc[j - 13][i];
+			_startloc[j][i] = _startloc[j - 13][i];
 		}
 	}
 
 	// place on special map
 	for (i = 0; i < 4; i++) {
-		special[startloc[i][0]][startloc[i][1]] += 1;
+		_special[_startloc[i][0]][_startloc[i][1]] += 1;
 	}
 	for (i = 4; i < 7; i++) {
-		special[startloc[i][0]][startloc[i][1]] += 2;
+		_special[_startloc[i][0]][_startloc[i][1]] += 2;
 	}
 	for (i = 7; i < 9; i++) {
-		special[startloc[i][0]][startloc[i][1]] += 4;
+		_special[_startloc[i][0]][_startloc[i][1]] += 4;
 	}
 	for (i = 9; i < 13; i++) {
-		special[startloc[i][0]][startloc[i][1]] += 8;
+		_special[_startloc[i][0]][_startloc[i][1]] += 8;
 	}
 	for (i = 13; i < 17; i++) {
-		special[startloc[i][0]][startloc[i][1]] += 16;
+		_special[_startloc[i][0]][_startloc[i][1]] += 16;
 	}
 	for (i = 17; i < 20; i++) {
-		special[startloc[i][0]][startloc[i][1]] += 32;
+		_special[_startloc[i][0]][_startloc[i][1]] += 32;
 	}
 	return 0;
 }
@@ -626,25 +626,25 @@ int KattonGenerator::findstartloc() {
 int KattonGenerator::whatheightstartloc(int x, int y) {
 	int heightfield[3] = {0, 0, 0};
 
-	heightfield[board[findcoord(x, +2)][findcoord(y, -1)]]++;
-	heightfield[board[findcoord(x, +2)][y]]++;
-	heightfield[board[findcoord(x, +2)][findcoord(y, +1)]]++;
-	heightfield[board[findcoord(x, +2)][findcoord(y, +2)]]++;
+	heightfield[_board[findcoord(x, +2)][findcoord(y, -1)]]++;
+	heightfield[_board[findcoord(x, +2)][y]]++;
+	heightfield[_board[findcoord(x, +2)][findcoord(y, +1)]]++;
+	heightfield[_board[findcoord(x, +2)][findcoord(y, +2)]]++;
 
-	heightfield[board[findcoord(x, -1)][findcoord(y, -1)]]++;
-	heightfield[board[findcoord(x, -1)][y]]++;
-	heightfield[board[findcoord(x, -1)][findcoord(y, +1)]]++;
-	heightfield[board[findcoord(x, -1)][findcoord(y, +2)]]++;
+	heightfield[_board[findcoord(x, -1)][findcoord(y, -1)]]++;
+	heightfield[_board[findcoord(x, -1)][y]]++;
+	heightfield[_board[findcoord(x, -1)][findcoord(y, +1)]]++;
+	heightfield[_board[findcoord(x, -1)][findcoord(y, +2)]]++;
 
-	heightfield[board[x][findcoord(y, -1)]]++;
-	heightfield[board[x][y]]++;
-	heightfield[board[x][findcoord(y, +1)]]++;
-	heightfield[board[x][findcoord(y, +2)]]++;
+	heightfield[_board[x][findcoord(y, -1)]]++;
+	heightfield[_board[x][y]]++;
+	heightfield[_board[x][findcoord(y, +1)]]++;
+	heightfield[_board[x][findcoord(y, +2)]]++;
 
-	heightfield[board[findcoord(x, +1)][findcoord(y, -1)]]++;
-	heightfield[board[findcoord(x, +1)][y]]++;
-	heightfield[board[findcoord(x, +1)][findcoord(y, +1)]]++;
-	heightfield[board[findcoord(x, +1)][findcoord(y, +2)]]++;
+	heightfield[_board[findcoord(x, +1)][findcoord(y, -1)]]++;
+	heightfield[_board[findcoord(x, +1)][y]]++;
+	heightfield[_board[findcoord(x, +1)][findcoord(y, +1)]]++;
+	heightfield[_board[findcoord(x, +1)][findcoord(y, +2)]]++;
 
 	if (heightfield[0] == 0) {
 		if (heightfield[1] >= heightfield[2]) {
@@ -670,8 +670,8 @@ int KattonGenerator::whatheightstartloc(int x, int y) {
 }
 
 int KattonGenerator::goodforwater(int x, int y) {
-	if ((board[x][y] == 0) && (board[findcoord(x, +1)][y] == 0) && (board[x][findcoord(y, +1)] == 0) && (board[findcoord(x, +1)][findcoord(y, +1)] == 0)) {                                                                                                                                                                                                                                                       //check main map
-		if ((special[x][y] <= 0) && (special[x][findcoord(y, 1)] <= 0) && (special[findcoord(x, 1)][findcoord(y, 1)] <= 0) && (special[findcoord(x, 1)][y] <= 0) && (special[findcoord(x, 1)][findcoord(y, -1)] <= 0) && (special[x][findcoord(y, -1)] <= 0) && (special[findcoord(x, -1)][findcoord(y, -1)] <= 0) && (special[findcoord(x, -1)][y] <= 0) && (special[findcoord(x, -1)][findcoord(y, 1)] <= 0)) { //specials are clear
+	if ((_board[x][y] == 0) && (_board[findcoord(x, +1)][y] == 0) && (_board[x][findcoord(y, +1)] == 0) && (_board[findcoord(x, +1)][findcoord(y, +1)] == 0)) {                                                                                                                                                                                                                                                       //check main map
+		if ((_special[x][y] <= 0) && (_special[x][findcoord(y, 1)] <= 0) && (_special[findcoord(x, 1)][findcoord(y, 1)] <= 0) && (_special[findcoord(x, 1)][y] <= 0) && (_special[findcoord(x, 1)][findcoord(y, -1)] <= 0) && (_special[x][findcoord(y, -1)] <= 0) && (_special[findcoord(x, -1)][findcoord(y, -1)] <= 0) && (_special[findcoord(x, -1)][y] <= 0) && (_special[findcoord(x, -1)][findcoord(y, 1)] <= 0)) { //specials are clear
 			return 1;
 		} else {
 			return 0;
@@ -686,7 +686,7 @@ int KattonGenerator::randomwater(int length, int stringiness, int x, int y) {
 	currx = x;
 	curry = y;
 	while (i <= length) {
-		special[currx][curry] = -1;
+		_special[currx][curry] = -1;
 		prevdirection = direction;
 		direction = (getRandomNumber() % 4);
 		if ((((direction + 2) == prevdirection) || ((direction - 2) == prevdirection)) && (stringiness == 2)) {
@@ -728,26 +728,26 @@ int KattonGenerator::randomwater(int length, int stringiness, int x, int y) {
 int KattonGenerator::tileaverage(int x, int y, int threshold) {
 	int heightfield[3] = {0, 0, 0};
 
-	heightfield[board[findcoord(x, -1)][findcoord(y, -1)]]++;
-	heightfield[board[findcoord(x, -1)][y]]++;
-	heightfield[board[findcoord(x, -1)][findcoord(y, +1)]]++;
+	heightfield[_board[findcoord(x, -1)][findcoord(y, -1)]]++;
+	heightfield[_board[findcoord(x, -1)][y]]++;
+	heightfield[_board[findcoord(x, -1)][findcoord(y, +1)]]++;
 
-	heightfield[board[x][findcoord(y, -1)]]++;
-	heightfield[board[x][y]]++;
-	heightfield[board[x][findcoord(y, +1)]]++;
+	heightfield[_board[x][findcoord(y, -1)]]++;
+	heightfield[_board[x][y]]++;
+	heightfield[_board[x][findcoord(y, +1)]]++;
 
-	heightfield[board[findcoord(x, +1)][findcoord(y, -1)]]++;
-	heightfield[board[findcoord(x, +1)][y]]++;
-	heightfield[board[findcoord(x, +1)][findcoord(y, +1)]]++;
+	heightfield[_board[findcoord(x, +1)][findcoord(y, -1)]]++;
+	heightfield[_board[findcoord(x, +1)][y]]++;
+	heightfield[_board[findcoord(x, +1)][findcoord(y, +1)]]++;
 
 	if ((heightfield[2] == 0) && (heightfield[1] < heightfield[0]) && (heightfield[0] >= threshold)) {
-		board[x][y] = 0;
+		_board[x][y] = 0;
 		return 0;
 	} else if ((heightfield[0] == 0) && (heightfield[1] < heightfield[2]) && (heightfield[2] >= threshold)) {
-		board[x][y] = 2;
+		_board[x][y] = 2;
 		return 2;
 	} else if (heightfield[1] >= threshold) {
-		board[x][y] = 1;
+		_board[x][y] = 1;
 		return 1;
 	} else {
 		return 0;
@@ -757,9 +757,9 @@ int KattonGenerator::tileaverage(int x, int y, int threshold) {
 int KattonGenerator::randomflip(int numberofplaces, int inWater) {
 	int i, x, y, temp;
 	for (i = 0; i < numberofplaces; i++) {
-		x = getRandomNumber() % size;
-		y = getRandomNumber() % size;
-		if (board[x][y] == 0) {
+		x = getRandomNumber() % _size;
+		y = getRandomNumber() % _size;
+		if (_board[x][y] == 0) {
 			if (inWater == 0) {
 				temp = 0;
 			} else {
@@ -767,30 +767,30 @@ int KattonGenerator::randomflip(int numberofplaces, int inWater) {
 			}
 
 			if (temp <= 50) {
-				board[x][y] = 1;
+				_board[x][y] = 1;
 			}
-		} else if (board[x][y] == 2) {
-			board[x][y] = 1;
-		} else if (board[x][y] == 1) {
+		} else if (_board[x][y] == 2) {
+			_board[x][y] = 1;
+		} else if (_board[x][y] == 1) {
 
 			temp = getRandomNumber() % 2;
 			int heightfield[3] = {0, 0, 0};
 
-			heightfield[board[findcoord(x, -1)][findcoord(y, -1)]]++;
-			heightfield[board[findcoord(x, -1)][y]]++;
-			heightfield[board[findcoord(x, -1)][findcoord(y, +1)]]++;
+			heightfield[_board[findcoord(x, -1)][findcoord(y, -1)]]++;
+			heightfield[_board[findcoord(x, -1)][y]]++;
+			heightfield[_board[findcoord(x, -1)][findcoord(y, +1)]]++;
 
-			heightfield[board[x][findcoord(y, -1)]]++;
-			heightfield[board[x][findcoord(y, +1)]]++;
+			heightfield[_board[x][findcoord(y, -1)]]++;
+			heightfield[_board[x][findcoord(y, +1)]]++;
 
-			heightfield[board[findcoord(x, +1)][findcoord(y, -1)]]++;
-			heightfield[board[findcoord(x, +1)][y]]++;
-			heightfield[board[findcoord(x, +1)][findcoord(y, +1)]]++;
+			heightfield[_board[findcoord(x, +1)][findcoord(y, -1)]]++;
+			heightfield[_board[findcoord(x, +1)][y]]++;
+			heightfield[_board[findcoord(x, +1)][findcoord(y, +1)]]++;
 			temp = getRandomNumber() % 2;
 			if (heightfield[0] == 0) {
-				board[x][y] = 2;
+				_board[x][y] = 2;
 			} else if (heightfield[2] == 0) {
-				board[x][y] = 0;
+				_board[x][y] = 0;
 			}
 		}
 	}

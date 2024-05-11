@@ -33,30 +33,30 @@ SpiffGenerator::~SpiffGenerator() {
 }
 
 MapFile *SpiffGenerator::generateMap(int water, int tileset, int mapSize, int energy, int terrain) {
-	totalMapSizeG = mapSize;
-	energyAmountG = (2 + energy) * totalMapSizeG * totalMapSizeG;
+	_totalMapSizeG = mapSize;
+	_energyAmountG = (2 + energy) * _totalMapSizeG * _totalMapSizeG;
 
-	islandsFlagG = pickFrom2(0, 1, water - 4, (water >= 5)); // 1 is large islands, 2 is small
-	if (islandsFlagG) {
+	_islandsFlagG = pickFrom2(0, 1, water - 4, (water >= 5)); // 1 is large islands, 2 is small
+	if (_islandsFlagG) {
 		water -= 3;
-		energyAmountG = (int)(energyAmountG * (5 - islandsFlagG) / 6); // *2/3 or *1/2
+		_energyAmountG = (int)(_energyAmountG * (5 - _islandsFlagG) / 6); // *2/3 or *1/2
 	}
 
-	waterAmountG = 4 * water;
-	cliffAmountG = 1 << terrain;
-	advancedMirrorOK_G = ((terrain > 1) && (water < 6)) || islandsFlagG;
-	terrainSeedFlagG = 2 * water - terrain;
+	_waterAmountG = 4 * water;
+	_cliffAmountG = 1 << terrain;
+	_advancedMirrorOK_G = ((terrain > 1) && (water < 6)) || _islandsFlagG;
+	_terrainSeedFlagG = 2 * water - terrain;
 
-	int n = (int)(energyAmountG / 2700);
+	int n = (int)(_energyAmountG / 2700);
 	if (n > 12) {
 		n = 12;
 	}
 	if (n < 1) {
 		n = 1;
 	}
-	numPoolsG = spiffRand((int)(energyAmountG / 4000) + 1, n);
-	if (numPoolsG > 12) {
-		numPoolsG = 12;
+	_numPoolsG = spiffRand((int)(_energyAmountG / 4000) + 1, n);
+	if (_numPoolsG > 12) {
+		_numPoolsG = 12;
 	}
 
 	generate();
@@ -69,29 +69,29 @@ MapFile *SpiffGenerator::generateMap(int water, int tileset, int mapSize, int en
 	levelMap[MEDIUM] = 1;
 	levelMap[LOW] = 0;
 
-	mif.mapType = tileset;
-	Common::sprintf_s(mif.name, "Spiff %04X", (uint16)_seed);
+	mif._mapType = tileset;
+	Common::sprintf_s(mif._name, "Spiff %04X", (uint16)_seed);
 
-	mif.dimension = totalMapSizeG;
+	mif._dimension = _totalMapSizeG;
 
 	int y;
 	int x;
 	char t;
-	int XOffset = spiffRand(0, totalMapSizeG-1);
-	int YOffset = spiffRand(0, totalMapSizeG-1);
+	int XOffset = spiffRand(0, _totalMapSizeG-1);
+	int YOffset = spiffRand(0, _totalMapSizeG-1);
 	int newX;
 	int newY;
 
-	for (y = 0, newY = YOffset; y < totalMapSizeG; ++y, ++newY) {
-		for (x = 0, newX = XOffset; x < totalMapSizeG; ++x, ++newX) {
-			if (newX == totalMapSizeG)
+	for (y = 0, newY = YOffset; y < _totalMapSizeG; ++y, ++newY) {
+		for (x = 0, newX = XOffset; x < _totalMapSizeG; ++x, ++newX) {
+			if (newX == _totalMapSizeG)
 				newX = 0;
-			if (newY == totalMapSizeG)
+			if (newY == _totalMapSizeG)
 				newY = 0;
-			mif.cornerMap[newX][newY] = levelMap[mapCorner[x][y]];
-			switch (mapMiddle[x][y]) {
+			mif._cornerMap[newX][newY] = levelMap[_mapCorner[x][y]];
+			switch (_mapMiddle[x][y]) {
 			case HUB:
-				t = -1;
+				t = '\xFF';
 				break;
 			case SMALLPOOL:
 				t = 'S';
@@ -112,7 +112,7 @@ MapFile *SpiffGenerator::generateMap(int water, int tileset, int mapSize, int en
 			default:
 				t = '?';
 			}
-			mif.centerMap[newX][newY] = t;
+			mif._centerMap[newX][newY] = t;
 		}
 	}
 
@@ -180,32 +180,32 @@ int SpiffGenerator::pickFrom4(int a, int probA, int b, int probB, int c, int pro
 void SpiffGenerator::getSpecials() {
 	// choose where the starting points and pools are
 	int x, y, p, t;
-	int edgeWaterA = (int)(islandsFlagG * totalMapSizeG / 16 + 0.5);
-	int edgeWaterB = (int)(islandsFlagG * totalMapSizeG / 16); // don't put pools between islands
+	int edgeWaterA = (int)(_islandsFlagG * _totalMapSizeG / 16 + 0.5);
+	int edgeWaterB = (int)(_islandsFlagG * _totalMapSizeG / 16); // don't put pools between islands
 
 	// No matter what, they get a start hub spot.
-	if (mirrorTypeG == MAXDISTMIRROR)
-		x = (int)((totalMapSizeG * 3 + 8) / 16);
+	if (_mirrorTypeG == MAXDISTMIRROR)
+		x = (int)((_totalMapSizeG * 3 + 8) / 16);
 	else
-		x = (int)(mapMiddleMaxG / 2);
+		x = (int)(_mapMiddleMaxG / 2);
 	y = x;
 
-	mapMiddle[x][y] = HUB; // hub start position
+	_mapMiddle[x][y] = HUB; // hub start position
 
-	for (p = 1; p <= numPoolsG; ++p) {
-		x = spiffRand(edgeWaterA, mapMiddleMaxG - edgeWaterB);
-		y = spiffRand(edgeWaterA, mapMiddleMaxG - edgeWaterB);
-		if (mapMiddle[x][y] != UNASSIGNED)
+	for (p = 1; p <= _numPoolsG; ++p) {
+		x = spiffRand(edgeWaterA, _mapMiddleMaxG - edgeWaterB);
+		y = spiffRand(edgeWaterA, _mapMiddleMaxG - edgeWaterB);
+		if (_mapMiddle[x][y] != UNASSIGNED)
 			--p; // repick this pool
 		else {
-			t = pickFrom3(SMALLPOOL, 40000 * numPoolsG, MEDIUMPOOL, 20000 * numPoolsG + energyAmountG, LARGEPOOLTOP, 2 * energyAmountG);
+			t = pickFrom3(SMALLPOOL, 40000 * _numPoolsG, MEDIUMPOOL, 20000 * _numPoolsG + _energyAmountG, LARGEPOOLTOP, 2 * _energyAmountG);
 			if (t == LARGEPOOLTOP) {
-				if ((y == mapMiddleMaxG - edgeWaterB) || (mapMiddle[x][y + 1] != UNASSIGNED))
+				if ((y == _mapMiddleMaxG - edgeWaterB) || (_mapMiddle[x][y + 1] != UNASSIGNED))
 					t = SMALLPOOL; // keep large pool from being too high or overlapping another pool or start
 				else
-					mapMiddle[x][y + 1] = LARGEPOOLBOTTOM;
+					_mapMiddle[x][y + 1] = LARGEPOOLBOTTOM;
 			}
-			mapMiddle[x][y] = t;
+			_mapMiddle[x][y] = t;
 		}
 	}
 }
@@ -219,33 +219,33 @@ void SpiffGenerator::copyMap(int XOffset, int YOffset, int XDirection, int YDire
 	int newMX, newMY;
 
 	if (YDirection < 0)
-		newCY += mapCornerMaxG;
+		newCY += _mapCornerMaxG;
 
-	for (y = 0; y <= mapCornerMaxG; ++y) {
+	for (y = 0; y <= _mapCornerMaxG; ++y) {
 		if (newCY < 0)
-			newCY += totalMapSizeG;
-		else if (newCY >= totalMapSizeG)
-			newCY -= totalMapSizeG;
+			newCY += _totalMapSizeG;
+		else if (newCY >= _totalMapSizeG)
+			newCY -= _totalMapSizeG;
 
 		newCX = XOffset;
 		if (XDirection < 0)
-			newCX += mapCornerMaxG;
+			newCX += _mapCornerMaxG;
 
-		for (x = 0; x <= mapCornerMaxG; ++x) {
+		for (x = 0; x <= _mapCornerMaxG; ++x) {
 			if (newCX < 0)
-				newCX += totalMapSizeG;
-			else if (newCX >= totalMapSizeG)
-				newCX -= totalMapSizeG;
+				newCX += _totalMapSizeG;
+			else if (newCX >= _totalMapSizeG)
+				newCX -= _totalMapSizeG;
 
-			mapCorner[newCX][newCY] = mapCorner[x][y];
-			if ((x != mapCornerMaxG) && (y != mapCornerMaxG)) {
-				tempMiddle = mapMiddle[x][y];
+			_mapCorner[newCX][newCY] = _mapCorner[x][y];
+			if ((x != _mapCornerMaxG) && (y != _mapCornerMaxG)) {
+				tempMiddle = _mapMiddle[x][y];
 				newMX = newCX;
 				newMY = newCY;
 				if (YDirection < 0) {
 					newMY--;
 					if (newMY == -1)
-						newMY = totalMapSizeG - 1;
+						newMY = _totalMapSizeG - 1;
 					if (tempMiddle == LARGEPOOLTOP)
 						tempMiddle = LARGEPOOLBOTTOM;
 					else if (tempMiddle == LARGEPOOLBOTTOM)
@@ -254,9 +254,9 @@ void SpiffGenerator::copyMap(int XOffset, int YOffset, int XDirection, int YDire
 				if (XDirection < 0) {
 					newMX--;
 					if (newMX == -1)
-						newMX = totalMapSizeG - 1;
+						newMX = _totalMapSizeG - 1;
 				}
-				mapMiddle[newMX][newMY] = tempMiddle;
+				_mapMiddle[newMX][newMY] = tempMiddle;
 			}
 
 			newCX += XDirection;
@@ -271,21 +271,21 @@ void SpiffGenerator::mirrorMap() {
 	//  mirror map
 	// --------------------------------------------------------------
 
-	int swapXa = pickFrom2(-1, 1, 1, advancedMirrorOK_G);
-	int swapYa = pickFrom2(-1, advancedMirrorOK_G, 1, 1);
-	int swapXb = pickFrom2(-1, advancedMirrorOK_G, 1, 1);
-	int swapYb = pickFrom2(-1, 1, 1, advancedMirrorOK_G);
+	int swapXa = pickFrom2(-1, 1, 1, _advancedMirrorOK_G);
+	int swapYa = pickFrom2(-1, _advancedMirrorOK_G, 1, 1);
+	int swapXb = pickFrom2(-1, _advancedMirrorOK_G, 1, 1);
+	int swapYb = pickFrom2(-1, 1, 1, _advancedMirrorOK_G);
 
-	switch (mirrorTypeG) {
+	switch (_mirrorTypeG) {
 	case NORMALMIRROR: // four quadrants
 		// ABCBA
 		// DEFED
 		// GHIHG
 		// DEFED
 		// ABCBA
-		copyMap(mapCornerMaxG, 0, swapXa, swapYa);
-		copyMap(0, mapCornerMaxG, swapXb, swapYb);
-		copyMap(mapCornerMaxG, mapCornerMaxG, swapXa * swapXb, swapYa * swapYb);
+		copyMap(_mapCornerMaxG, 0, swapXa, swapYa);
+		copyMap(0, _mapCornerMaxG, swapXb, swapYb);
+		copyMap(_mapCornerMaxG, _mapCornerMaxG, swapXa * swapXb, swapYa * swapYb);
 		break;
 	case XOFFSETMIRROR: // Like normal, but one half is moved horizontally by 1/4 totalmapsize
 		// ABABABABA
@@ -295,16 +295,16 @@ void SpiffGenerator::mirrorMap() {
 		// ABABABABA
 		if (swapYa == -1) // ensures fairness
 			swapXb = -1;
-		copyMap(mapCornerMaxG, 0, 1, swapYa);
-		copyMap(mapCornerMaxG / 2, mapCornerMaxG, swapXb, swapYb);
-		copyMap(mapCornerMaxG * 3 / 2, mapCornerMaxG, swapXb, swapYa * swapYb);
+		copyMap(_mapCornerMaxG, 0, 1, swapYa);
+		copyMap(_mapCornerMaxG / 2, _mapCornerMaxG, swapXb, swapYb);
+		copyMap(_mapCornerMaxG * 3 / 2, _mapCornerMaxG, swapXb, swapYa * swapYb);
 		break;
 	case YOFFSETMIRROR:   // Like normal, but one half is moved vertically by 1/4 totalmapsize
 		if (swapXb == -1) // ensures fairness
 			swapYa = -1;
-		copyMap(mapCornerMaxG, mapCornerMaxG / 2, swapXa, swapYa);
-		copyMap(0, mapCornerMaxG, swapXb, 1);
-		copyMap(mapCornerMaxG, mapCornerMaxG * 3 / 2, swapXa * swapXb, swapYa);
+		copyMap(_mapCornerMaxG, _mapCornerMaxG / 2, swapXa, swapYa);
+		copyMap(0, _mapCornerMaxG, swapXb, 1);
+		copyMap(_mapCornerMaxG, _mapCornerMaxG * 3 / 2, swapXa * swapXb, swapYa);
 		break;
 	case MAXDISTMIRROR: // Allows maximum distance between starting points
 	default:
@@ -316,15 +316,15 @@ void SpiffGenerator::mirrorMap() {
 		// EJIHG*E
 		// ABCDCBA
 
-		copyMap(mapCornerMaxG, 0, 1, -1);
-		copyMap(0, mapCornerMaxG, -1, 1);
-		copyMap(mapCornerMaxG, mapCornerMaxG, -1, -1);
+		copyMap(_mapCornerMaxG, 0, 1, -1);
+		copyMap(0, _mapCornerMaxG, -1, 1);
+		copyMap(_mapCornerMaxG, _mapCornerMaxG, -1, -1);
 	}
 }
 
 void SpiffGenerator::errorCorrection() {
 	// corrects errors caused by pool placement and mirroring
-	// doesn't correct mapCorner[x][totalMapSizeG+1] or mapCorner[totalMapSizeG+1][y], since it isn't used
+	// doesn't correct _mapCorner[x][_totalMapSizeG+1] or _mapCorner[_totalMapSizeG+1][y], since it isn't used
 
 	// for any HIGH to LOW transitions, makes the HIGH MEDIUM
 	// for pools on nonflat terrain, makes the terrain MEDIUM
@@ -339,60 +339,60 @@ void SpiffGenerator::errorCorrection() {
 	int redo;
 	int elev;
 
-	for (y = 0; y < totalMapSizeG; ++y) {
-		for (x = 0; x < totalMapSizeG; ++x) {
-			if (mapCorner[x][y] == HIGH) {
+	for (y = 0; y < _totalMapSizeG; ++y) {
+		for (x = 0; x < _totalMapSizeG; ++x) {
+			if (_mapCorner[x][y] == HIGH) {
 				for (dy = -1; dy <= 1; ++dy) {
 					tempY = y + dy;
-					if (tempY == totalMapSizeG) {
+					if (tempY == _totalMapSizeG) {
 						tempY = 0;
 					} else if (tempY == -1) {
-						tempY = totalMapSizeG - 1;
+						tempY = _totalMapSizeG - 1;
 					}
 
 					for (dx = -1; dx <= 1; ++dx) {
 						tempX = x + dx;
-						if (tempX == totalMapSizeG) {
+						if (tempX == _totalMapSizeG) {
 							tempX = 0;
 						} else if (tempX == -1) {
-							tempX = totalMapSizeG - 1;
+							tempX = _totalMapSizeG - 1;
 						}
 
-						if (mapCorner[tempX][tempY] == LOW) {
-							mapCorner[x][y] = MEDIUM;
+						if (_mapCorner[tempX][tempY] == LOW) {
+							_mapCorner[x][y] = MEDIUM;
 						}
 					}
 				}
-			} else if ((mapCorner[x][y] != LOW) && (mapCorner[x][y] != MEDIUM)) {
-				mapCorner[x][y] = MEDIUM; // should not happen anymore
+			} else if ((_mapCorner[x][y] != LOW) && (_mapCorner[x][y] != MEDIUM)) {
+				_mapCorner[x][y] = MEDIUM; // should not happen anymore
 			}
 		}
 	}
 
 	do {
 		redo = 0;
-		for (y = 0; y < totalMapSizeG; ++y) {
-			for (x = 0; x < totalMapSizeG; ++x) {
-				if (mapMiddle[x][y] != UNASSIGNED) {
+		for (y = 0; y < _totalMapSizeG; ++y) {
+			for (x = 0; x < _totalMapSizeG; ++x) {
+				if (_mapMiddle[x][y] != UNASSIGNED) {
 					tempY = y + 1;
-					if (tempY == totalMapSizeG)
+					if (tempY == _totalMapSizeG)
 						tempY = 0;
 
 					tempX = x + 1;
-					if (tempX == totalMapSizeG)
+					if (tempX == _totalMapSizeG)
 						tempX = 0;
 
-					elev = mapCorner[x][y];
-					if ((mapMiddle[x][y] == WATER) && (elev != LOW))
-						mapMiddle[x][y] = UNASSIGNED;
-					else if ((elev != mapCorner[x][tempY]) || (elev != mapCorner[tempX][y]) || (elev != mapCorner[tempX][tempY])) {
-						if (mapMiddle[x][y] == WATER)
-							mapMiddle[x][y] = UNASSIGNED;
+					elev = _mapCorner[x][y];
+					if ((_mapMiddle[x][y] == WATER) && (elev != LOW))
+						_mapMiddle[x][y] = UNASSIGNED;
+					else if ((elev != _mapCorner[x][tempY]) || (elev != _mapCorner[tempX][y]) || (elev != _mapCorner[tempX][tempY])) {
+						if (_mapMiddle[x][y] == WATER)
+							_mapMiddle[x][y] = UNASSIGNED;
 						else {
-							mapCorner[x][y] = MEDIUM;
-							mapCorner[x][tempY] = MEDIUM;
-							mapCorner[tempX][y] = MEDIUM;
-							mapCorner[tempX][tempY] = MEDIUM;
+							_mapCorner[x][y] = MEDIUM;
+							_mapCorner[x][tempY] = MEDIUM;
+							_mapCorner[tempX][y] = MEDIUM;
+							_mapCorner[tempX][tempY] = MEDIUM;
 							redo = 1;
 						}
 					}
@@ -415,36 +415,36 @@ void SpiffGenerator::generate() {
 	int nextElevation;
 	int special;
 
-	mapCornerMaxG = totalMapSizeG / 2;
-	mapMiddleMaxG = mapCornerMaxG - 1;
+	_mapCornerMaxG = _totalMapSizeG / 2;
+	_mapMiddleMaxG = _mapCornerMaxG - 1;
 
-	for (y = 0; y <= mapCornerMaxG; ++y) {
+	for (y = 0; y <= _mapCornerMaxG; ++y) {
 		// initialise map to UNASSIGNED tiles
-		for (x = 0; x <= mapCornerMaxG; ++x) {
-			mapCorner[x][y] = UNASSIGNED;
-			mapMiddle[x][y] = UNASSIGNED;
+		for (x = 0; x <= _mapCornerMaxG; ++x) {
+			_mapCorner[x][y] = UNASSIGNED;
+			_mapMiddle[x][y] = UNASSIGNED;
 		}
 	}
-	if (advancedMirrorOK_G)
-		mirrorTypeG = pickFrom4(NORMALMIRROR, 1, XOFFSETMIRROR, 2, YOFFSETMIRROR, 2, MAXDISTMIRROR, 4);
+	if (_advancedMirrorOK_G)
+		_mirrorTypeG = pickFrom4(NORMALMIRROR, 1, XOFFSETMIRROR, 2, YOFFSETMIRROR, 2, MAXDISTMIRROR, 4);
 	else
-		mirrorTypeG = NORMALMIRROR;
+		_mirrorTypeG = NORMALMIRROR;
 	getSpecials(); // get start and pools
 
 	// --------------------------------------------------------------
 	//  loop through each square
 	// --------------------------------------------------------------
-	mapCorner[0][0] = pickFrom3(LOW, 1, MEDIUM, (terrainSeedFlagG < 9), HIGH, (terrainSeedFlagG < 8)); // seed
+	_mapCorner[0][0] = pickFrom3(LOW, 1, MEDIUM, (_terrainSeedFlagG < 9), HIGH, (_terrainSeedFlagG < 8)); // seed
 	// fill in the rest of the random map
-	for (y = 0; y <= mapCornerMaxG; ++y) {
-		for (x = 0; x <= mapCornerMaxG; ++x) {
-			special = mapMiddle[x][y]; // water wouldn't have been assigned yet, so must be pool, start, or UNASSIGNED
+	for (y = 0; y <= _mapCornerMaxG; ++y) {
+		for (x = 0; x <= _mapCornerMaxG; ++x) {
+			special = _mapMiddle[x][y]; // water wouldn't have been assigned yet, so must be pool, start, or UNASSIGNED
 
 			// --------------------------------------------------------------
 			//  check neighbors
 			// --------------------------------------------------------------
-			if ((mapCorner[x][y] != UNASSIGNED) && (mapCorner[x][y] != LOW_OR_WATER))
-				nextElevation = mapCorner[x][y]; // already defined because of a special or (0,0), so no change
+			if ((_mapCorner[x][y] != UNASSIGNED) && (_mapCorner[x][y] != LOW_OR_WATER))
+				nextElevation = _mapCorner[x][y]; // already defined because of a special or (0,0), so no change
 			else {
 				neighbors[HIGH] = 0;
 				neighbors[MEDIUM] = 0;
@@ -452,28 +452,28 @@ void SpiffGenerator::generate() {
 				neighbors[WATER] = 0;
 
 				if (x > 0) {
-					a = mapCorner[x - 1][y];
-					if ((y > 1) && (mapMiddle[x - 1][y - 2] == WATER))
+					a = _mapCorner[x - 1][y];
+					if ((y > 1) && (_mapMiddle[x - 1][y - 2] == WATER))
 						++neighbors[WATER];
 					if (y > 0)
-						neighbors[mapCorner[x - 1][y - 1]] += 3;
+						neighbors[_mapCorner[x - 1][y - 1]] += 3;
 				} else {
-					a = mapCorner[x][y - 1];
+					a = _mapCorner[x][y - 1];
 				}
 
 				neighbors[a] += 3;
 				if (y > 0) {
-					b = mapCorner[x][y - 1];
+					b = _mapCorner[x][y - 1];
 					neighbors[b] += 3;
-					if (x < mapCornerMaxG) {
-						++neighbors[mapCorner[x + 1][y - 1]]; // so this value can be ignored when choosing water
-						if ((special != UNASSIGNED) && (x < mapCornerMaxG - 1))
-							++neighbors[mapCorner[x + 2][y - 1]];
+					if (x < _mapCornerMaxG) {
+						++neighbors[_mapCorner[x + 1][y - 1]]; // so this value can be ignored when choosing water
+						if ((special != UNASSIGNED) && (x < _mapCornerMaxG - 1))
+							++neighbors[_mapCorner[x + 2][y - 1]];
 					}
-					if ((x > 1) && (mapMiddle[x - 2][y - 1] == WATER))
+					if ((x > 1) && (_mapMiddle[x - 2][y - 1] == WATER))
 						++neighbors[WATER];
 				} else {
-					b = mapCorner[x - 1][y]; // for probability equations for edges
+					b = _mapCorner[x - 1][y]; // for probability equations for edges
 				}
 
 				// --------------------------------------------------------------
@@ -487,9 +487,9 @@ void SpiffGenerator::generate() {
 				// HIGH with LOW or WATER     MEDIUM
 
 				static int highAmt = 105;
-				static int mediumAmt = 100 + waterAmountG;
-				static int lowAmt = 105 + 3 * waterAmountG;
-				static int waterAmt = 15 * waterAmountG;
+				static int mediumAmt = 100 + _waterAmountG;
+				static int lowAmt = 105 + 3 * _waterAmountG;
+				static int waterAmt = 15 * _waterAmountG;
 
 
 
@@ -500,17 +500,17 @@ void SpiffGenerator::generate() {
 						if (a != b) {
 							nextElevation = pickFrom2(LOW, lowAmt, MEDIUM, mediumAmt);
 						} else if (a == LOW) {
-							nextElevation = pickFrom2(LOW, 100 * lowAmt, MEDIUM, mediumAmt * cliffAmountG);
+							nextElevation = pickFrom2(LOW, 100 * lowAmt, MEDIUM, mediumAmt * _cliffAmountG);
 						} else {
-							nextElevation = pickFrom2(LOW, lowAmt * cliffAmountG, MEDIUM, 100 * mediumAmt);
+							nextElevation = pickFrom2(LOW, lowAmt * _cliffAmountG, MEDIUM, 100 * mediumAmt);
 						}
 					} else { // LOW or WATER only, possibly MEDIUM down-right
 						if (neighbors[WATER] == 1) {
-							nextElevation = pickFrom3(WATER, 100 * waterAmt, LOW, 100 * lowAmt, MEDIUM, mediumAmt * cliffAmountG);
+							nextElevation = pickFrom3(WATER, 100 * waterAmt, LOW, 100 * lowAmt, MEDIUM, mediumAmt * _cliffAmountG);
 						} else if (neighbors[WATER] == 0) {
-							nextElevation = pickFrom3(WATER, waterAmt * cliffAmountG, LOW, 100 * lowAmt, MEDIUM, mediumAmt * cliffAmountG);
+							nextElevation = pickFrom3(WATER, waterAmt * _cliffAmountG, LOW, 100 * lowAmt, MEDIUM, mediumAmt * _cliffAmountG);
 						} else {
-							nextElevation = pickFrom3(WATER, 10000 * waterAmt, LOW, lowAmt * 100 * cliffAmountG, MEDIUM, mediumAmt * cliffAmountG * cliffAmountG);
+							nextElevation = pickFrom3(WATER, 10000 * waterAmt, LOW, lowAmt * 100 * _cliffAmountG, MEDIUM, mediumAmt * _cliffAmountG * _cliffAmountG);
 						}
 					}
 				} else {
@@ -518,98 +518,98 @@ void SpiffGenerator::generate() {
 						if (a != b) {
 							nextElevation = pickFrom2(MEDIUM, mediumAmt, HIGH, highAmt);
 						} else if (a == HIGH) {
-							nextElevation = pickFrom2(MEDIUM, mediumAmt * cliffAmountG, HIGH, 100 * highAmt);
+							nextElevation = pickFrom2(MEDIUM, mediumAmt * _cliffAmountG, HIGH, 100 * highAmt);
 						} else {
-							nextElevation = pickFrom2(MEDIUM, 100 * mediumAmt, HIGH, highAmt * cliffAmountG);
+							nextElevation = pickFrom2(MEDIUM, 100 * mediumAmt, HIGH, highAmt * _cliffAmountG);
 						}
 					} else {
-						nextElevation = pickFrom3(LOW, lowAmt * cliffAmountG, MEDIUM, 200 * mediumAmt, HIGH, highAmt * cliffAmountG);
+						nextElevation = pickFrom3(LOW, lowAmt * _cliffAmountG, MEDIUM, 200 * mediumAmt, HIGH, highAmt * _cliffAmountG);
 					}
 				}
 
 				// --------------------------------------------------------------
 				//  set elevation
 				// --------------------------------------------------------------
-				if ((mapCorner[x][y] == LOW_OR_WATER) && (nextElevation != WATER)) {
+				if ((_mapCorner[x][y] == LOW_OR_WATER) && (nextElevation != WATER)) {
 					// bottom and left edges of a special on LOW ground there may only be LOW or WATER
 					nextElevation = LOW;
 				}
 
 				if (nextElevation == WATER) {
-					if ((x != 0) && (y != 0) && (mapMiddle[x - 1][y - 1] == UNASSIGNED)) {
-						mapMiddle[x - 1][y - 1] = WATER; // set WATER
+					if ((x != 0) && (y != 0) && (_mapMiddle[x - 1][y - 1] == UNASSIGNED)) {
+						_mapMiddle[x - 1][y - 1] = WATER; // set WATER
 					}
 					nextElevation = LOW;
 				}
 
-				mapCorner[x][y] = nextElevation; // set elevation
+				_mapCorner[x][y] = nextElevation; // set elevation
 
 				if (special != UNASSIGNED) { // if special, make flat spot (don't worry about going over map edge, will go into mirrored part)
 					tempElevation = nextElevation;
 					if (tempElevation == LOW)
 						tempElevation = LOW_OR_WATER; // allow for water on left and bottom edges
-					mapCorner[x + 1][y + 1] = nextElevation;
-					mapCorner[x + 1][y] = tempElevation;
-					mapCorner[x][y + 1] = tempElevation;
+					_mapCorner[x + 1][y + 1] = nextElevation;
+					_mapCorner[x + 1][y] = tempElevation;
+					_mapCorner[x][y + 1] = tempElevation;
 				}
 			}
 		}
 	}
 
-	if (islandsFlagG) { // replace borders with water, errorCorrection() finishes it.
-		int edgeWaterA = (int)(islandsFlagG * totalMapSizeG / 16 + 0.5);
-		int edgeWaterB = mapMiddleMaxG - (int)(islandsFlagG * totalMapSizeG / 16);
-		for (y = 0; y <= mapCornerMaxG; ++y) {
+	if (_islandsFlagG) { // replace borders with water, errorCorrection() finishes it.
+		int edgeWaterA = (int)(_islandsFlagG * _totalMapSizeG / 16 + 0.5);
+		int edgeWaterB = _mapMiddleMaxG - (int)(_islandsFlagG * _totalMapSizeG / 16);
+		for (y = 0; y <= _mapCornerMaxG; ++y) {
 			for (x = 0; x < edgeWaterA; ++x) {
-				mapCorner[x][y] = LOW;
-				mapMiddle[x][y] = WATER;
+				_mapCorner[x][y] = LOW;
+				_mapMiddle[x][y] = WATER;
 			}
-			if (mapCorner[edgeWaterA + 1][y] == HIGH)
-				mapCorner[edgeWaterA][y] = MEDIUM;
+			if (_mapCorner[edgeWaterA + 1][y] == HIGH)
+				_mapCorner[edgeWaterA][y] = MEDIUM;
 
-			for (x = mapMiddleMaxG; x > edgeWaterB; --x) {
-				mapCorner[x + 1][y] = LOW;
-				mapMiddle[x][y] = WATER;
+			for (x = _mapMiddleMaxG; x > edgeWaterB; --x) {
+				_mapCorner[x + 1][y] = LOW;
+				_mapMiddle[x][y] = WATER;
 			}
-			if (mapCorner[edgeWaterB][y] == HIGH) {
-				mapCorner[edgeWaterB + 1][y] = MEDIUM;
+			if (_mapCorner[edgeWaterB][y] == HIGH) {
+				_mapCorner[edgeWaterB + 1][y] = MEDIUM;
 			}
 		}
 
 		for (x = edgeWaterA; x <= edgeWaterB + 1; ++x) {
 			for (y = 0; y < edgeWaterA; ++y) {
-				mapCorner[x][y] = LOW;
-				mapMiddle[x][y] = WATER;
+				_mapCorner[x][y] = LOW;
+				_mapMiddle[x][y] = WATER;
 			}
-			if (mapCorner[x][edgeWaterA + 1] == HIGH)
-				mapCorner[x][edgeWaterA] = MEDIUM;
+			if (_mapCorner[x][edgeWaterA + 1] == HIGH)
+				_mapCorner[x][edgeWaterA] = MEDIUM;
 
-			for (y = mapMiddleMaxG; y > edgeWaterB; --y) {
-				mapCorner[x][y + 1] = LOW;
-				mapMiddle[x][y] = WATER;
+			for (y = _mapMiddleMaxG; y > edgeWaterB; --y) {
+				_mapCorner[x][y + 1] = LOW;
+				_mapMiddle[x][y] = WATER;
 			}
-			if (mapCorner[x][edgeWaterB] == HIGH) {
-				mapCorner[x][edgeWaterB + 1] = MEDIUM;
+			if (_mapCorner[x][edgeWaterB] == HIGH) {
+				_mapCorner[x][edgeWaterB + 1] = MEDIUM;
 			}
 		}
 
-		if (islandsFlagG == 2) { // add tiny islands to help bridge wide channels
+		if (_islandsFlagG == 2) { // add tiny islands to help bridge wide channels
 			int j;
-			for (int i = 0; i < totalMapSizeG / 16; ++i) {
-				x = (int)(totalMapSizeG / 16 - .5);
-				y = spiffRand(x, totalMapSizeG / 2 - 1 - x);
+			for (int i = 0; i < _totalMapSizeG / 16; ++i) {
+				x = (int)(_totalMapSizeG / 16 - .5);
+				y = spiffRand(x, _totalMapSizeG / 2 - 1 - x);
 				if (spiffRand(0, 1)) {
-					x = totalMapSizeG / 2 - 1 - x;
+					x = _totalMapSizeG / 2 - 1 - x;
 				}
 				if (spiffRand(0, 1)) {
-					mapMiddle[x][y] = UNASSIGNED;
+					_mapMiddle[x][y] = UNASSIGNED;
 					for (j = 0; j < 4; ++j) {
-						mapMiddle[x + spiffRand(-1, 1)][y + spiffRand(-1, 1)] = UNASSIGNED;
+						_mapMiddle[x + spiffRand(-1, 1)][y + spiffRand(-1, 1)] = UNASSIGNED;
 					}
 				} else {
-					mapMiddle[y][x] = UNASSIGNED;
+					_mapMiddle[y][x] = UNASSIGNED;
 					for (j = 0; j < 4; ++j) {
-						mapMiddle[y + spiffRand(-1, 1)][x + spiffRand(-1, 1)] = UNASSIGNED;
+						_mapMiddle[y + spiffRand(-1, 1)][x + spiffRand(-1, 1)] = UNASSIGNED;
 					}
 				}
 			}

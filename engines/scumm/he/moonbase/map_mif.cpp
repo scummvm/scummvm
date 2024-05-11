@@ -80,14 +80,14 @@ MIF::MIF() {
 }
 
 void MIF::generateMap(MapFile *map) {
-	map->terrainDimX = dimension;
-	map->terrainDimY = dimension;
-	map->mapType = mapType;
-	Common::strlcpy(map->name, name, 17);
+	map->terrainDimX = _dimension;
+	map->terrainDimY = _dimension;
+	map->mapType = _mapType;
+	Common::strlcpy(map->name, _name, 17);
 
 	int x, y;
-	for (y = 0; y < dimension; ++y) {
-		for (x = 0; x < dimension; ++x) {
+	for (y = 0; y < _dimension; ++y) {
+		for (x = 0; x < _dimension; ++x) {
 			map->terrainStates[x][y] = findTileFor(x, y);
 		}
 	}
@@ -100,9 +100,9 @@ void MIF::generateMap(MapFile *map) {
 void MIF::defineStartLocations(MapFile *map) {
 	int x, y;
 
-	for (y = 0; y < dimension; ++y) {
-		for (x = 0; x < dimension; ++x) {
-			char ch = centerMap[x][y];
+	for (y = 0; y < _dimension; ++y) {
+		for (x = 0; x < _dimension; ++x) {
+			char ch = _centerMap[x][y];
 
 			if (ch < 0) {
 				int i;
@@ -193,9 +193,9 @@ void MIF::defineStartLocations(MapFile *map) {
 void MIF::defineEnergyPools(MapFile *map) {
 	int x, y;
 
-	for (y = 0; y < dimension; ++y) {
-		for (x = 0; x < dimension; ++x) {
-			char ch = centerMap[x][y];
+	for (y = 0; y < _dimension; ++y) {
+		for (x = 0; x < _dimension; ++x) {
+			char ch = _centerMap[x][y];
 
 			if ('S' == ch || 'M' == ch || 'L' == ch) {
 				// Verify legal position
@@ -272,8 +272,8 @@ void MIF::makeCraters(MapFile *map) {
 		{2, 3, 4, 5, 6, 7, 0, 1, 2, 3}
 	};
 
-	for (int i = 0; i < dimension / 8; i++) {
-		for (int j = 0; j < dimension / 8; j++) {
+	for (int i = 0; i < _dimension / 8; i++) {
+		for (int j = 0; j < _dimension / 8; j++) {
 			for (int nCrater = 0; nCrater < 3; nCrater++) {
 				if (9 == locations[largegrid[j][i]][nCrater][0]) {
 					continue;
@@ -284,9 +284,9 @@ void MIF::makeCraters(MapFile *map) {
 
 				byte nLevel = tlCorner(x, y);
 				if ((tlCorner(x, y) == nLevel) && (trCorner(x, y) == nLevel) && (trrCorner(x, y) == nLevel) &&
-					(centerMap[x][y] != 'W') && (centerMap[x + 1][y] != 'W') &&
+					(_centerMap[x][y] != 'W') && (_centerMap[x + 1][y] != 'W') &&
 					(blCorner(x, y) == nLevel) && (brCorner(x, y) == nLevel) && (brrCorner(x, y) == nLevel) &&
-					(centerMap[x][y + 1] != 'W') && (centerMap[x + 1][y + 1] != 'W') &&
+					(_centerMap[x][y + 1] != 'W') && (_centerMap[x + 1][y + 1] != 'W') &&
 					(bblCorner(x, y) == nLevel) && (bbrCorner(x, y) == nLevel) && (bbrrCorner(x, y) == nLevel)) {
 					// The tile values follow a predictable pattern, level one craters in order, etc.
 					int16 nBase = 0xA6 + (tlCorner(x, y) * 12) + (nCrater * 4);
@@ -308,7 +308,7 @@ uint16 MIF::findTileFor(int x, int y) {
 	byte aLowBlanks[] = {0x93, 0x94, 0x00, 0x96};
 	byte aMedBlanks[] = {0x97, 0x99, 0x0D, 0x9A};
 	byte aHiBlanks[] = {0x9B, 0x9C, 0x1A, 0x9D};
-	ch = centerMap[x][y];
+	ch = _centerMap[x][y];
 
 	debug(5, "MIF: Tile for %d, %d is %c", x, y, ch);
 
