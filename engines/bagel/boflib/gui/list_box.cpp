@@ -43,18 +43,17 @@ CBofListBox::CBofListBox() {
 	_pWork = nullptr;
 	_nItemHeight = TEXT_ITEM_HEIGHT;
 	_nState = LISTBOX_NORMAL;
+	_nTextFont = FONT_DEFAULT;
 
 	// Initialized the selected item
-	clearSelection();
+	CBofListBox::clearSelection();
 }
 
 
 CBofListBox::~CBofListBox() {
 	// Kill the temporary work area
-	if (_pWork != nullptr) {
-		delete _pWork;
-		_pWork  = nullptr;
-	}
+	delete _pWork;
+	_pWork  = nullptr;
 
 	deleteAll(false);
 }
@@ -328,10 +327,8 @@ void CBofListBox::onPaint(CBofRect * /*pRect*/) {
 void CBofListBox::killBackground() {
 	assert(isValidObject(this));
 
-	if (_pBackdrop != nullptr) {
-		delete _pBackdrop;
-		_pBackdrop = nullptr;
-	}
+	delete _pBackdrop;
+	_pBackdrop = nullptr;
 }
 
 
@@ -339,8 +336,8 @@ ErrorCode CBofListBox::saveBackground() {
 	assert(isValidObject(this));
 
 	killBackground();
-
-	if ((_pBackdrop = new CBofBitmap(width(), height(), CBofApp::getApp()->getPalette())) != nullptr) {
+	_pBackdrop = new CBofBitmap(width(), height(), CBofApp::getApp()->getPalette());
+	if (_pBackdrop != nullptr) {
 		if ((_parent != nullptr) && (_parent->getBackdrop() != nullptr)) {
 			CBofRect cRect = _pBackdrop->getRect();
 
@@ -366,8 +363,8 @@ ErrorCode CBofListBox::createWorkArea() {
 
 	if (_pWork == nullptr) {
 		assert(_pBackdrop != nullptr);
-
-		if ((_pWork = new CBofBitmap(width(), height(), _pBackdrop->getPalette())) == nullptr) {
+		_pWork = new CBofBitmap(width(), height(), _pBackdrop->getPalette());
+		if (_pWork == nullptr) {
 			reportError(ERR_MEMORY, "Unable to allocate a %d x %d CBofBitmap", width(), height());
 		}
 	}
