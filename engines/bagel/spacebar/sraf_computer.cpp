@@ -2501,9 +2501,9 @@ int SrafComputer::getAdjustedIndex(int nListToSearch, int nElementIndex, bool bS
 		// Adjust for out of range.
 		nElementIndex = (nElementIndex >= NUM_OTHER_PARTYS ? (NUM_OTHER_PARTYS - 1) : nElementIndex);
 
-		for (int i = 0; i <= NUM_OTHER_PARTYS; i++) {
+		for (int i = 0; i < NUM_OTHER_PARTYS; i++) {
 			// Get all consecutive that are not available.
-			while (i <= NUM_OTHER_PARTYS && g_stOtherPartys[i]._bAvailable == false) {
+			while (i < NUM_OTHER_PARTYS && g_stOtherPartys[i]._bAvailable == false) {
 				nTotalNotAvail++;
 				i++;
 			}
@@ -2520,9 +2520,9 @@ int SrafComputer::getAdjustedIndex(int nListToSearch, int nElementIndex, bool bS
 		// Adjust for out of range.
 		nElementIndex = (nElementIndex >= NUM_SELLERS ? (NUM_SELLERS - 1) : nElementIndex);
 
-		for (int i = 0; i <= NUM_BUYERS; i++) {
+		for (int i = 0; i < NUM_BUYERS; i++) {
 			// get all consecutive that are not available.
-			while (i <= NUM_SELLERS && g_stSellerNames[i]._bAvailable == false) {
+			while (i < NUM_SELLERS && g_stSellerNames[i]._bAvailable == false) {
 				nTotalNotAvail++;
 				i++;
 			}
@@ -2539,9 +2539,9 @@ int SrafComputer::getAdjustedIndex(int nListToSearch, int nElementIndex, bool bS
 		// Adjust for out of range.
 		nElementIndex = (nElementIndex >= NUM_BUYERS ? (NUM_BUYERS - 1) : nElementIndex);
 
-		for (int i = 0; i <= NUM_BUYERS; i++) {
+		for (int i = 0; i < NUM_BUYERS; i++) {
 			// Get all consecutive that are not available.
-			while (i <= NUM_BUYERS && g_stBuyerBids[i]._bAvailable == false) {
+			while (i < NUM_BUYERS && g_stBuyerBids[i]._bAvailable == false) {
 				nTotalNotAvail++;
 				i++;
 			}
@@ -2558,9 +2558,9 @@ int SrafComputer::getAdjustedIndex(int nListToSearch, int nElementIndex, bool bS
 		// Adjust for out of range.
 		nElementIndex = (nElementIndex >= NUM_STAFFERS ? (NUM_STAFFERS - 1) : nElementIndex);
 
-		for (int i = 0; i <= NUM_BUYERS; i++) {
+		for (int i = 0; i < NUM_BUYERS; i++) {
 			// Get all consecutive that are not available.
-			while (i <= NUM_STAFFERS && g_staffers[i]._bAvailable == false) {
+			while (i < NUM_STAFFERS && g_staffers[i]._bAvailable == false) {
 				nTotalNotAvail++;
 				i++;
 			}
