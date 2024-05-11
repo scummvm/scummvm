@@ -65,9 +65,9 @@ MapFile *SpiffGenerator::generateMap(int water, int tileset, int mapSize, int en
 	MIF mif = MIF();
 
 	int levelMap[MAXELEVVAL];
-	levelMap[HIGH] = 2;
-	levelMap[MEDIUM] = 1;
-	levelMap[LOW] = 0;
+	levelMap[kElevHigh] = 2;
+	levelMap[kElevMedium] = 1;
+	levelMap[kElevLow] = 0;
 
 	mif._mapType = tileset;
 	Common::sprintf_s(mif._name, "Spiff %04X", (uint16)_seed);
@@ -326,8 +326,8 @@ void SpiffGenerator::errorCorrection() {
 	// corrects errors caused by pool placement and mirroring
 	// doesn't correct _mapCorner[x][_totalMapSizeG+1] or _mapCorner[_totalMapSizeG+1][y], since it isn't used
 
-	// for any HIGH to LOW transitions, makes the HIGH MEDIUM
-	// for pools on nonflat terrain, makes the terrain MEDIUM
+	// for any kElevHigh to kElevLow transitions, makes the kElevHigh kElevMedium
+	// for pools on nonflat terrain, makes the terrain kElevMedium
 	// removes invalid water
 
 	int x;
@@ -341,7 +341,7 @@ void SpiffGenerator::errorCorrection() {
 
 	for (y = 0; y < _totalMapSizeG; ++y) {
 		for (x = 0; x < _totalMapSizeG; ++x) {
-			if (_mapCorner[x][y] == HIGH) {
+			if (_mapCorner[x][y] == kElevHigh) {
 				for (dy = -1; dy <= 1; ++dy) {
 					tempY = y + dy;
 					if (tempY == _totalMapSizeG) {
@@ -358,13 +358,13 @@ void SpiffGenerator::errorCorrection() {
 							tempX = _totalMapSizeG - 1;
 						}
 
-						if (_mapCorner[tempX][tempY] == LOW) {
-							_mapCorner[x][y] = MEDIUM;
+						if (_mapCorner[tempX][tempY] == kElevLow) {
+							_mapCorner[x][y] = kElevMedium;
 						}
 					}
 				}
-			} else if ((_mapCorner[x][y] != LOW) && (_mapCorner[x][y] != MEDIUM)) {
-				_mapCorner[x][y] = MEDIUM; // should not happen anymore
+			} else if ((_mapCorner[x][y] != kElevLow) && (_mapCorner[x][y] != kElevMedium)) {
+				_mapCorner[x][y] = kElevMedium; // should not happen anymore
 			}
 		}
 	}
@@ -383,16 +383,16 @@ void SpiffGenerator::errorCorrection() {
 						tempX = 0;
 
 					elev = _mapCorner[x][y];
-					if ((_mapMiddle[x][y] == WATER) && (elev != LOW))
+					if ((_mapMiddle[x][y] == WATER) && (elev != kElevLow))
 						_mapMiddle[x][y] = UNASSIGNED;
 					else if ((elev != _mapCorner[x][tempY]) || (elev != _mapCorner[tempX][y]) || (elev != _mapCorner[tempX][tempY])) {
 						if (_mapMiddle[x][y] == WATER)
 							_mapMiddle[x][y] = UNASSIGNED;
 						else {
-							_mapCorner[x][y] = MEDIUM;
-							_mapCorner[x][tempY] = MEDIUM;
-							_mapCorner[tempX][y] = MEDIUM;
-							_mapCorner[tempX][tempY] = MEDIUM;
+							_mapCorner[x][y] = kElevMedium;
+							_mapCorner[x][tempY] = kElevMedium;
+							_mapCorner[tempX][y] = kElevMedium;
+							_mapCorner[tempX][tempY] = kElevMedium;
 							redo = 1;
 						}
 					}
@@ -434,7 +434,7 @@ void SpiffGenerator::generate() {
 	// --------------------------------------------------------------
 	//  loop through each square
 	// --------------------------------------------------------------
-	_mapCorner[0][0] = pickFrom3(LOW, 1, MEDIUM, (_terrainSeedFlagG < 9), HIGH, (_terrainSeedFlagG < 8)); // seed
+	_mapCorner[0][0] = pickFrom3(kElevLow, 1, kElevMedium, (_terrainSeedFlagG < 9), kElevHigh, (_terrainSeedFlagG < 8)); // seed
 	// fill in the rest of the random map
 	for (y = 0; y <= _mapCornerMaxG; ++y) {
 		for (x = 0; x <= _mapCornerMaxG; ++x) {
@@ -446,9 +446,9 @@ void SpiffGenerator::generate() {
 			if ((_mapCorner[x][y] != UNASSIGNED) && (_mapCorner[x][y] != LOW_OR_WATER))
 				nextElevation = _mapCorner[x][y]; // already defined because of a special or (0,0), so no change
 			else {
-				neighbors[HIGH] = 0;
-				neighbors[MEDIUM] = 0;
-				neighbors[LOW] = 0;
+				neighbors[kElevHigh] = 0;
+				neighbors[kElevMedium] = 0;
+				neighbors[kElevLow] = 0;
 				neighbors[WATER] = 0;
 
 				if (x > 0) {
@@ -480,11 +480,11 @@ void SpiffGenerator::generate() {
 				//  pick new elevation
 				// --------------------------------------------------------------
 				// neighbors                  possible new elevation
-				// HIGH or HIGH with MEDIUM   HIGH or MEDIUM
-				// MEDIUM only                HIGH, MEDIUM or LOW
-				// LOW or WATER only          MEDIUM, LOW or WATER
-				// MEDIUM with LOW or WATER   MEDIUM or LOW, possible WATER if no MEDIUM left, down, or down-left
-				// HIGH with LOW or WATER     MEDIUM
+				// kElevHigh or kElevHigh with kElevMedium   kElevHigh or kElevMedium
+				// kElevMedium only                kElevHigh, kElevMedium or kElevLow
+				// kElevLow or WATER only          kElevMedium, kElevLow or WATER
+				// kElevMedium with kElevLow or WATER   kElevMedium or kElevLow, possible WATER if no kElevMedium left, down, or down-left
+				// kElevHigh with kElevLow or WATER     kElevMedium
 
 				static int highAmt = 105;
 				static int mediumAmt = 100 + _waterAmountG;
@@ -493,37 +493,37 @@ void SpiffGenerator::generate() {
 
 
 
-				if (neighbors[LOW]) {
-					if (neighbors[HIGH]) { // HIGH with LOW or WATER
-						nextElevation = MEDIUM;
-					} else if (neighbors[MEDIUM] >= 3) { // MEDIUM with LOW or WATER
+				if (neighbors[kElevLow]) {
+					if (neighbors[kElevHigh]) { // kElevHigh with kElevLow or WATER
+						nextElevation = kElevMedium;
+					} else if (neighbors[kElevMedium] >= 3) { // kElevMedium with kElevLow or WATER
 						if (a != b) {
-							nextElevation = pickFrom2(LOW, lowAmt, MEDIUM, mediumAmt);
-						} else if (a == LOW) {
-							nextElevation = pickFrom2(LOW, 100 * lowAmt, MEDIUM, mediumAmt * _cliffAmountG);
+							nextElevation = pickFrom2(kElevLow, lowAmt, kElevMedium, mediumAmt);
+						} else if (a == kElevLow) {
+							nextElevation = pickFrom2(kElevLow, 100 * lowAmt, kElevMedium, mediumAmt * _cliffAmountG);
 						} else {
-							nextElevation = pickFrom2(LOW, lowAmt * _cliffAmountG, MEDIUM, 100 * mediumAmt);
+							nextElevation = pickFrom2(kElevLow, lowAmt * _cliffAmountG, kElevMedium, 100 * mediumAmt);
 						}
-					} else { // LOW or WATER only, possibly MEDIUM down-right
+					} else { // kElevLow or WATER only, possibly kElevMedium down-right
 						if (neighbors[WATER] == 1) {
-							nextElevation = pickFrom3(WATER, 100 * waterAmt, LOW, 100 * lowAmt, MEDIUM, mediumAmt * _cliffAmountG);
+							nextElevation = pickFrom3(WATER, 100 * waterAmt, kElevLow, 100 * lowAmt, kElevMedium, mediumAmt * _cliffAmountG);
 						} else if (neighbors[WATER] == 0) {
-							nextElevation = pickFrom3(WATER, waterAmt * _cliffAmountG, LOW, 100 * lowAmt, MEDIUM, mediumAmt * _cliffAmountG);
+							nextElevation = pickFrom3(WATER, waterAmt * _cliffAmountG, kElevLow, 100 * lowAmt, kElevMedium, mediumAmt * _cliffAmountG);
 						} else {
-							nextElevation = pickFrom3(WATER, 10000 * waterAmt, LOW, lowAmt * 100 * _cliffAmountG, MEDIUM, mediumAmt * _cliffAmountG * _cliffAmountG);
+							nextElevation = pickFrom3(WATER, 10000 * waterAmt, kElevLow, lowAmt * 100 * _cliffAmountG, kElevMedium, mediumAmt * _cliffAmountG * _cliffAmountG);
 						}
 					}
 				} else {
-					if (neighbors[HIGH]) { // HIGH or HIGH with MEDIUM
+					if (neighbors[kElevHigh]) { // kElevHigh or kElevHigh with kElevMedium
 						if (a != b) {
-							nextElevation = pickFrom2(MEDIUM, mediumAmt, HIGH, highAmt);
-						} else if (a == HIGH) {
-							nextElevation = pickFrom2(MEDIUM, mediumAmt * _cliffAmountG, HIGH, 100 * highAmt);
+							nextElevation = pickFrom2(kElevMedium, mediumAmt, kElevHigh, highAmt);
+						} else if (a == kElevHigh) {
+							nextElevation = pickFrom2(kElevMedium, mediumAmt * _cliffAmountG, kElevHigh, 100 * highAmt);
 						} else {
-							nextElevation = pickFrom2(MEDIUM, 100 * mediumAmt, HIGH, highAmt * _cliffAmountG);
+							nextElevation = pickFrom2(kElevMedium, 100 * mediumAmt, kElevHigh, highAmt * _cliffAmountG);
 						}
 					} else {
-						nextElevation = pickFrom3(LOW, lowAmt * _cliffAmountG, MEDIUM, 200 * mediumAmt, HIGH, highAmt * _cliffAmountG);
+						nextElevation = pickFrom3(kElevLow, lowAmt * _cliffAmountG, kElevMedium, 200 * mediumAmt, kElevHigh, highAmt * _cliffAmountG);
 					}
 				}
 
@@ -531,22 +531,22 @@ void SpiffGenerator::generate() {
 				//  set elevation
 				// --------------------------------------------------------------
 				if ((_mapCorner[x][y] == LOW_OR_WATER) && (nextElevation != WATER)) {
-					// bottom and left edges of a special on LOW ground there may only be LOW or WATER
-					nextElevation = LOW;
+					// bottom and left edges of a special on kElevLow ground there may only be kElevLow or WATER
+					nextElevation = kElevLow;
 				}
 
 				if (nextElevation == WATER) {
 					if ((x != 0) && (y != 0) && (_mapMiddle[x - 1][y - 1] == UNASSIGNED)) {
 						_mapMiddle[x - 1][y - 1] = WATER; // set WATER
 					}
-					nextElevation = LOW;
+					nextElevation = kElevLow;
 				}
 
 				_mapCorner[x][y] = nextElevation; // set elevation
 
 				if (special != UNASSIGNED) { // if special, make flat spot (don't worry about going over map edge, will go into mirrored part)
 					tempElevation = nextElevation;
-					if (tempElevation == LOW)
+					if (tempElevation == kElevLow)
 						tempElevation = LOW_OR_WATER; // allow for water on left and bottom edges
 					_mapCorner[x + 1][y + 1] = nextElevation;
 					_mapCorner[x + 1][y] = tempElevation;
@@ -561,35 +561,35 @@ void SpiffGenerator::generate() {
 		int edgeWaterB = _mapMiddleMaxG - (int)(_islandsFlagG * _totalMapSizeG / 16);
 		for (y = 0; y <= _mapCornerMaxG; ++y) {
 			for (x = 0; x < edgeWaterA; ++x) {
-				_mapCorner[x][y] = LOW;
+				_mapCorner[x][y] = kElevLow;
 				_mapMiddle[x][y] = WATER;
 			}
-			if (_mapCorner[edgeWaterA + 1][y] == HIGH)
-				_mapCorner[edgeWaterA][y] = MEDIUM;
+			if (_mapCorner[edgeWaterA + 1][y] == kElevHigh)
+				_mapCorner[edgeWaterA][y] = kElevMedium;
 
 			for (x = _mapMiddleMaxG; x > edgeWaterB; --x) {
-				_mapCorner[x + 1][y] = LOW;
+				_mapCorner[x + 1][y] = kElevLow;
 				_mapMiddle[x][y] = WATER;
 			}
-			if (_mapCorner[edgeWaterB][y] == HIGH) {
-				_mapCorner[edgeWaterB + 1][y] = MEDIUM;
+			if (_mapCorner[edgeWaterB][y] == kElevHigh) {
+				_mapCorner[edgeWaterB + 1][y] = kElevMedium;
 			}
 		}
 
 		for (x = edgeWaterA; x <= edgeWaterB + 1; ++x) {
 			for (y = 0; y < edgeWaterA; ++y) {
-				_mapCorner[x][y] = LOW;
+				_mapCorner[x][y] = kElevLow;
 				_mapMiddle[x][y] = WATER;
 			}
-			if (_mapCorner[x][edgeWaterA + 1] == HIGH)
-				_mapCorner[x][edgeWaterA] = MEDIUM;
+			if (_mapCorner[x][edgeWaterA + 1] == kElevHigh)
+				_mapCorner[x][edgeWaterA] = kElevMedium;
 
 			for (y = _mapMiddleMaxG; y > edgeWaterB; --y) {
-				_mapCorner[x][y + 1] = LOW;
+				_mapCorner[x][y + 1] = kElevLow;
 				_mapMiddle[x][y] = WATER;
 			}
-			if (_mapCorner[x][edgeWaterB] == HIGH) {
-				_mapCorner[x][edgeWaterB + 1] = MEDIUM;
+			if (_mapCorner[x][edgeWaterB] == kElevHigh) {
+				_mapCorner[x][edgeWaterB + 1] = kElevMedium;
 			}
 		}
 
