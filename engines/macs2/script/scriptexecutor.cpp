@@ -35,7 +35,9 @@ namespace Script {
 
 ScriptExecutor::ScriptExecutor() {
 	// TODO: Hardcoded values for testing
-	for (int i = 0; i != 10000; i++) {
+	constexpr int numVariables = 1000;
+	_variables.resize(numVariables);
+	for (int i = 0; i < numVariables; i++) {
 		_variables[i].a = 0;
 		_variables[i].b = 0;
 	}
@@ -1442,9 +1444,22 @@ void Script::ScriptExecutor::ExecuteScript() {
 			
 		} else if (opcode1 == 0x3E) {
 			// TODO: Seems to have no visual difference
+		} else if (opcode1 == 0x3F) {
+			// TODO: Not yet identified opcode.
+			// No arguments and seems to do something low-level
 		} else if (opcode1 == 0x40) {
 			// TODO: Called function has some outputs to DMA functions - could be something very
 			// specific related to memory management
+		} else if (opcode1 == 0x41) {
+			// TODO: Not yet identified opcode
+
+			// Has no further data, but looks like it changes the cursor mode after
+			// checking some globals
+		} else if (opcode1 == 0x42) {
+			// TODO: Not yet identified opcode
+			// Seems to do some low-level operation as it calls a function from the
+			// low-level part of the code
+			// No arguments
 		} else if (opcode1 == 0x43) {
 			// TODO: Not yet identified opcode
 			Func9F4D_Placeholder();

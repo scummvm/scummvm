@@ -1143,6 +1143,14 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	// We assume that the objects data array has been loaded completely before we ever load or save
 	// If we make changes to any game object data we have to save it
 
+	// Sync script variables
+	int32 numVariables = _scriptExecutor->_variables.size();
+	// TODO: Assuming that this array will always be the same size
+	for (int i = 0; i < numVariables; i++) {
+		s.syncAsUint16LE(_scriptExecutor->_variables[i].a);
+		s.syncAsUint16LE(_scriptExecutor->_variables[i].b);
+	}
+	
 	// Iterate over objects
 	// Iterate over characters?
 	for (auto currentObject : GameObjects::instance().Objects) {
@@ -1176,6 +1184,25 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		s.syncAsSint16LE(currentCharacter->Position.y);
 	}
 
+	uint32 numInventoryItems;
+	if (s.isSaving()) {
+		numInventoryItems = currentView->inventoryItems.size();
+	} else {
+		currentView->inventoryItems.clear();
+	}
+	s.syncAsUint32LE(numInventoryItems);
+	for (int i = 0; i < numInventoryItems; i++) {
+		uint32 objectIndex;
+		if (s.isSaving()) {
+			objectIndex = currentView->inventoryItems[i]->Index;
+		}
+		s.syncAsUint32LE(objectIndex);
+		GameObject *currentItem;
+		if (s.isLoading()) {
+			currentItem = GameObjects::instance().Objects[objectIndex - 1];
+			currentView->inventoryItems.push_back(currentItem);
+		}
+	}
 
 	return Common::kNoError;
 }
