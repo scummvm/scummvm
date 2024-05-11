@@ -34,6 +34,12 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_playerHeights.push_back(48);
 	_playerHeight = _playerHeights[_playerHeightNumber];
 
+	_playerSteps.clear();
+	_playerSteps.push_back(1);
+	_playerSteps.push_back(10);
+	_playerSteps.push_back(25);
+	_playerStepIndex = 2;
+
 	_playerWidth = 8;
 	_playerDepth = 8;
 	_stepUpDistance = 32;
