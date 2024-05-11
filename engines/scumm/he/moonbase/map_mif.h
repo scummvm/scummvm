@@ -32,15 +32,15 @@ namespace Scumm {
 
 #include "common/pack-start.h"	// START STRUCT PACKING
 
-typedef struct PixelLoc {
+struct PixelLoc {
 	uint16 x;
 	uint16 y;
-} PixelLoc;
+};
 
-typedef struct EnergyPoolLoc {
+struct EnergyPoolLoc {
 	PixelLoc location;
 	PixelLoc dummy;
-} EnergyPoolLoc;
+};
 
 
 struct MapFile {
