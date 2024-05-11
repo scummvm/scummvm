@@ -23,6 +23,7 @@
 #define MACS2_SCRIPTEXECUTOR_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 
 namespace Common {
 	class MemoryReadStream;
@@ -102,14 +103,16 @@ class Macs2Engine;
 			void ScriptPrintString();
 
 
-			// TODO: Identify number of variables and default values
-			ScriptVariable _variables[10000];
+			
 
 			
 
 			
 
 			public:
+
+			// TODO: Identify number of variables and default values
+			Common::Array<ScriptVariable> _variables;
 
 			// TODO: Expose in a better place and keep in sync
 			uint16 _charPosX = 276;
