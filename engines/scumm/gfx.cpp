@@ -1584,6 +1584,7 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 						height++;
 				}
 
+				color = ((color & 0x0f) << 4) | (color & 0x0f);
 				// Some FM-Towns games draw directly on layer 2, without setting the virtscreeb dirty, bypassing the
 				// normal drawing routines. It can make a difference, e. g. bug no. 15027 ("INDY3 (FMTowns): Map lines
 				// are drawn incorrectly, plus more issues when leaving Germany"). Making the virtscreen dirty, would
