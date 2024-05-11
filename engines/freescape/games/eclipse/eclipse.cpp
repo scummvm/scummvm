@@ -374,6 +374,9 @@ void EclipseEngine::pressedKey(const int keycode) {
 				insertTemporaryMessage(_messagesList[7], _countdown - 2);
 			_countdown = _countdown - 5;
 		}
+	} else if (keycode == Common::KEYCODE_f) {
+		_pitch = 0;
+		updateCamera();
 	}
 }
 
