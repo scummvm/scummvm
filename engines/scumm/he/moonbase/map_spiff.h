@@ -27,9 +27,14 @@
 #include "engines/scumm/he/moonbase/map_mif.h"
 
 #define MAXELEVVAL 4 // for array size
-#define HIGH 3 // elevations
-#define MEDIUM 2
-#define LOW 1
+
+// These were "HIGH", "MEDIUM", and "LOW", but
+// was renamed to prevent potential clashing
+// with different platforms.
+#define kElevHigh 3 // elevations
+#define kElevMedium 2
+#define kElevLow 1
+
 #define WATER 0 // special types
 #define HUB 1
 #define SMALLPOOL 2
@@ -65,7 +70,7 @@ private:
 	int _waterAmountG; // 0 is min, 30 is max
 	int _totalMapSizeG;
 
-	int _terrainSeedFlagG; // disables HIGH or LOW terrain for the initial elevation when appropriate
+	int _terrainSeedFlagG; // disables kElevHigh or kElevLow terrain for the initial elevation when appropriate
 	int _islandsFlagG; // enables islands
 	int _advancedMirrorOK_G; // low terrain roughness can leave too abrupt changes at the edge, so set false to disable some mirroring types
 	int _mirrorTypeG; // what mirroring is used
