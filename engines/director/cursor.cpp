@@ -82,7 +82,13 @@ void Cursor::readFromCast(Datum cursorCasts) {
 	_usePalette = false;
 	_keyColor = 3;
 
-	resetCursor(Graphics::kMacCursorCustom, true, Datum(cursorId.member));
+	Datum cursorRes;
+	if (g_director->getVersion() < 500) {
+		cursorRes = Datum(cursorId.member);
+	} else {
+		cursorRes = Datum((cursorId.castLib << 16) + cursorId.member);
+	}
+	resetCursor(Graphics::kMacCursorCustom, true, cursorRes);
 
 	BitmapCastMember *cursorBitmap = (BitmapCastMember *)cursorCast;
 	BitmapCastMember *maskBitmap = (BitmapCastMember *)maskCast;
