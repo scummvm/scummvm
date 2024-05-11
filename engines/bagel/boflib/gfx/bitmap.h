@@ -141,17 +141,13 @@ public:
 
 	/**
 	 * Assigns specified palette to this bitmap
-	 * @param pBofPalette   Pointer to CBofPalette to be assigned
+	 * @param pPalette      Pointer to CBofPalette to be assigned
 	 * @param bOwnPalette   true if bitmap is to own this palette
 	 */
 	void setPalette(CBofPalette *pPalette, bool bOwnPalette = false);
 
 	CBofPalette *getPalette() {
 		return _pPalette;
-	}
-
-	bool isOwnPalette() {
-		return _bOwnPalette;
 	}
 
 	void setIsOwnPalette(bool own) {

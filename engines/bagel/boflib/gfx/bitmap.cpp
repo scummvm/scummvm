@@ -28,7 +28,6 @@
 #include "bagel/boflib/app.h"
 #include "bagel/boflib/file.h"
 #include "bagel/boflib/file_functions.h"
-#include "bagel/boflib/log.h"
 #include "bagel/boflib/misc.h"
 
 namespace Bagel {
@@ -66,17 +65,14 @@ CBofBitmap::CBofBitmap(int dx, int dy, CBofPalette *pPalette, bool bOwnPalette, 
 	_bInitialized = true;
 
 	// Allow privatization of the bitmap (used only on mac from displayTextEx).;
+	_pBits = pPrivateBuff;
 	if (pPrivateBuff != nullptr) {
-		_pBits = pPrivateBuff;
-
 		_bitmap.w = dx;
 		_bitmap.h = dy;
 		_bitmap.pitch = _nScanDX;
 		_bitmap.format = Graphics::PixelFormat::createFormatCLUT8();
 		_bitmap.setPixels(pPrivateBuff);
 
-	} else {
-		_pBits = nullptr;
 	}
 
 	_pPalette = pPalette;
@@ -127,7 +123,6 @@ ErrorCode CBofBitmap::buildBitmap(CBofPalette *pPalette) {
 	assert(pPalette != nullptr);
 
 	if (_errCode == ERR_NONE) {
-
 		_bitmap.create(_nDX, _nDY, Graphics::PixelFormat::createFormatCLUT8());
 		_pBits = (byte *)_bitmap.getBasePtr(0, 0);
 		_nScanDX = _bitmap.pitch;
