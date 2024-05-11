@@ -81,17 +81,17 @@ CBofBitmap::CBofBitmap(int dx, int dy, CBofPalette *pPalette, bool bOwnPalette, 
 	}
 
 	// Fill the info structure
-	_cBitmapInfo.cInfoHeader.biSize = sizeof(BOFBITMAPINFOHEADER);
-	_cBitmapInfo.cInfoHeader.biWidth = dx;
-	_cBitmapInfo.cInfoHeader.biHeight = dy;
-	_cBitmapInfo.cInfoHeader.biPlanes = 1;
-	_cBitmapInfo.cInfoHeader.biBitCount = 8;
-	_cBitmapInfo.cInfoHeader.biCompression = 0;
-	_cBitmapInfo.cInfoHeader.biSizeImage = 0;
-	_cBitmapInfo.cInfoHeader.biXPelsPerMeter = 0;
-	_cBitmapInfo.cInfoHeader.biYPelsPerMeter = 0;
-	_cBitmapInfo.cInfoHeader.biClrUsed = 0;
-	_cBitmapInfo.cInfoHeader.biClrImportant = 0;
+	_cBitmapInfo._infoHeader._infoSize = sizeof(BOFBITMAPINFOHEADER);
+	_cBitmapInfo._infoHeader._width = dx;
+	_cBitmapInfo._infoHeader._height = dy;
+	_cBitmapInfo._infoHeader._planes = 1;
+	_cBitmapInfo._infoHeader._bitCount = 8;
+	_cBitmapInfo._infoHeader._compression = 0;
+	_cBitmapInfo._infoHeader._sizeImage = 0;
+	_cBitmapInfo._infoHeader._xPelsPerMeter = 0;
+	_cBitmapInfo._infoHeader._yPelsPerMeter = 0;
+	_cBitmapInfo._infoHeader._clrUsed = 0;
+	_cBitmapInfo._infoHeader._clrImportant = 0;
 
 	_pPalette = pPalette;
 	load();
@@ -104,7 +104,8 @@ CBofBitmap::CBofBitmap(const char *pszFileName, CBofPalette *pPalette, bool bOwn
 	_bInitialized = true;
 
 	if (pPalette == nullptr) {
-		if ((pPalette = new CBofPalette(pszFileName)) != nullptr) {
+		pPalette = new CBofPalette(pszFileName);
+		if (pPalette != nullptr) {
 			_bOwnPalette = true;
 		}
 	}
@@ -736,29 +737,6 @@ void CBofBitmap::circle(int xCenter, int yCenter, uint16 nRadius, byte iColor) {
 	}
 }
 
-void CBofBitmap::circle(CBofPoint *pCenter, uint16 nRadius, byte iColor) {
-	assert(isValidObject(this));
-
-	assert(pCenter != nullptr);
-
-	circle(pCenter->x, pCenter->y, nRadius, iColor);
-}
-
-void CBofBitmap::fillCircle(int x, int y, uint16 nRadius, byte iColor) {
-	assert(isValidObject(this));
-
-	circle(x, y, nRadius, iColor);
-
-	// Still need to fill it
-}
-
-void CBofBitmap::fillCircle(CBofPoint *pCenter, uint16 nRadius, byte iColor) {
-	assert(isValidObject(this));
-	assert(pCenter != nullptr);
-
-	fillCircle(pCenter->x, pCenter->y, nRadius, iColor);
-}
-
 void CBofBitmap::drawRect(CBofRect *pRect, byte iColor) {
 	assert(isValidObject(this));
 	assert(pRect != nullptr);
@@ -836,33 +814,6 @@ void CBofBitmap::line(CBofPoint *pSrc, CBofPoint *pDest, byte iColor) {
 	assert(pDest != nullptr);
 
 	line(pSrc->x, pSrc->y, pDest->x, pDest->y, iColor);
-}
-
-CBofBitmap *CBofBitmap::extractBitmap(CBofRect *pRect) {
-	assert(isValidObject(this));
-	assert(pRect != nullptr);
-
-	CBofBitmap *pNewBmp = nullptr;
-
-	if (_errCode == ERR_NONE) {
-		CBofPalette *pPalette = getPalette();
-		if (pPalette != nullptr) {
-			if (_bOwnPalette) {
-				pPalette = pPalette->copyPalette();
-			}
-
-			if ((pNewBmp = new CBofBitmap(pRect->width(), pRect->height(), pPalette, _bOwnPalette)) != nullptr) {
-				paint(pNewBmp, 0, 0, pRect);
-			} else {
-				logFatal("Unable to allocate a new CBofBitmap");
-			}
-
-		} else {
-			logFatal("This bitmap does not have a valid palette");
-		}
-	}
-
-	return pNewBmp;
 }
 
 ErrorCode CBofBitmap::scrollRight(int nPixels, CBofRect * /*pRect*/) {
@@ -1214,39 +1165,6 @@ ErrorCode paintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofRect *pD
 	}
 
 	return errCode;
-}
-
-ErrorCode paintBitmap(CBofBitmap *pBitmap, const char *pszFileName, CBofRect *pDstRect, CBofRect *pSrcRect, CBofPalette *pPalette, int nMaskColor) {
-	assert(pBitmap != nullptr);
-	assert(pszFileName != nullptr);
-
-	// Assume no error
-	ErrorCode errCode = ERR_NONE;
-	CBofBitmap *pBmp = new CBofBitmap(pszFileName, pPalette);
-	if (pBmp != nullptr) {
-
-		CBofRect cRect = pBmp->getRect();
-
-		if (pSrcRect == nullptr)
-			pSrcRect = &cRect;
-
-		if (pDstRect == nullptr)
-			pDstRect = &cRect;
-
-		errCode = pBmp->paint(pBitmap, pDstRect, pSrcRect, nMaskColor);
-
-		delete pBmp;
-
-	} else {
-		errCode = ERR_MEMORY;
-	}
-
-	return errCode;
-}
-
-void CBofBitmap::flipVerticalFast() {
-	_bTopDown = !_bTopDown;
-	_cBitmapInfo.cInfoHeader.biHeight = -_cBitmapInfo.cInfoHeader.biHeight;
 }
 
 Graphics::ManagedSurface CBofBitmap::getSurface() {

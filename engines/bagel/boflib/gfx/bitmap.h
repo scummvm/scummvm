@@ -55,17 +55,17 @@ class CBofWindow;
 #include "common/pack-start.h" // START STRUCT PACKING
 
 struct bofBITMAPINFOHEADER {
-	uint32 biSize;
-	int32 biWidth;
-	int32 biHeight;
-	uint16 biPlanes;
-	uint16 biBitCount;
-	uint32 biCompression;
-	uint32 biSizeImage;
-	int32 biXPelsPerMeter;
-	int32 biYPelsPerMeter;
-	uint32 biClrUsed;
-	uint32 biClrImportant;
+	uint32 _infoSize;
+	int32 _width;
+	int32 _height;
+	uint16 _planes;
+	uint16 _bitCount;
+	uint32 _compression;
+	uint32 _sizeImage;
+	int32 _xPelsPerMeter;
+	int32 _yPelsPerMeter;
+	uint32 _clrUsed;
+	uint32 _clrImportant;
 } PACKED_STRUCT;
 typedef bofBITMAPINFOHEADER BOFBITMAPINFOHEADER;
 
@@ -76,18 +76,18 @@ struct bofBITMAPINFO {
 typedef bofBITMAPINFO BOFBITMAPINFO;
 
 struct bofBITMAPFILEHEADER {
-	uint16 bfType;
-	uint32 bfSize;
-	uint16 bfReserved1;
-	uint16 bfReserved2;
-	uint32 bfOffBits;
+	uint16 _fileType;
+	uint32 _fileSize;
+	uint16 _reserved1;
+	uint16 _reserved2;
+	uint32 _offBits;
 } PACKED_STRUCT;
 typedef bofBITMAPFILEHEADER BOFBITMAPFILEHEADER;
 
 struct bofBITMAP_EX {
-	BOFBITMAPFILEHEADER cFileHeader;
-	BOFBITMAPINFOHEADER cInfoHeader;
-	BOFRGBQUAD cRgbValues[256];
+	BOFBITMAPFILEHEADER _fileHeader;
+	BOFBITMAPINFOHEADER _infoHeader;
+	BOFRGBQUAD _rgbValues[256];
 } PACKED_STRUCT;
 typedef bofBITMAP_EX BITMAP_EX;
 
@@ -358,13 +358,6 @@ public:
 	ErrorCode captureScreen(CBofWindow *pWnd, CBofRect *pSrcRect, CBofRect *pDstRect = nullptr);
 
 	/**
-	 * Creates a new bitmap based on a section of current bitmap
-	 * @param pRect     Section of bitmap to extract
-	 * @return          New bitmap
-	 */
-	CBofBitmap *extractBitmap(CBofRect *pRect);
-
-	/**
 	 * Performs a "Fade" onto the specified window
 	 * @param pWnd          Pointer to window to fade into
 	 * @param x             Fade upper left X
@@ -405,14 +398,6 @@ public:
 	void circle(int x, int y, uint16 nRadius, byte iColor);
 
 	/**
-	 * Writes a circle into this bitmap
-	 * @param pCenter   Center position
-	 * @param nRadius   Radius of circle
-	 * @param iColor    Pixel value
-	 */
-	void circle(CBofPoint *pCenter, uint16 nRadius, byte iColor);
-
-	/**
 	 * Writes a line into this bitmap
 	 * @param nSrcX     Endpoint 1 x
 	 * @param nSrcY     Endpoint 1 y
@@ -431,23 +416,6 @@ public:
 	void line(CBofPoint *pSrc, CBofPoint *pDest, byte iColor);
 
 	/**
-	 * Writes a filled circle into this bitmap
-	 * @param x         X center position
-	 * @param y         Y center position
-	 * @param nRadius   Radius of circle
-	 * @param iColor    Pixel value
-	 */
-	void fillCircle(int x, int y, uint16 nRadius, byte iColor);
-
-	/**
-	 * Writes a filled circle into this bitmap
-	 * @param pCenter   Center position
-	 * @param nRadius   Radius of circle
-	 * @param iColor    Pixel value
-	 */
-	void fillCircle(CBofPoint *pCenter, uint16 nRadius, byte iColor);
-
-	/**
 	 * Writes a Rectangle into this bitmap
 	 * @param cRect     Pointer to rectangle Coordinates
 	 * @param iColor    Color of rectangle
@@ -460,8 +428,6 @@ public:
 	 * @param iColor    Color of rectangle
 	 */
 	void fillRect(CBofRect *cRect, byte iColor);
-
-	void flipVerticalFast();
 
 	/**
 	 * Scrolls current bitmap horizontally
@@ -523,19 +489,6 @@ extern CBofBitmap *loadBitmap(const char *pszFileName, CBofPalette *pPalette = n
  * @return                  Error return code
  */
 extern ErrorCode paintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofRect *pDstRect = nullptr,
-                              CBofRect *pSrcRect = nullptr, CBofPalette *pPalette = nullptr, int nMaskColor = NOT_TRANSPARENT);
-
-/**
- * Paints specified bitmap to specified bitmap
- * @param pBmp              Bitmap to paint to
- * @param pszFileName       Bitmap filename
- * @param pDstRect          Destination area to paint to
- * @param pSrcRect          Source area to paint from
- * @param pPalette          Optional palette to re-map with
- * @param nMaskColor        Optional transparent color
- * @return                  Error return code
- */
-extern ErrorCode paintBitmap(CBofBitmap *pBmp, const char *pszFileName, CBofRect *pDstRect = nullptr,
                               CBofRect *pSrcRect = nullptr, CBofPalette *pPalette = nullptr, int nMaskColor = NOT_TRANSPARENT);
 
 } // namespace Bagel
