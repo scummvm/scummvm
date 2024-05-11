@@ -76,7 +76,7 @@ MapFile *SpiffGenerator::generateMap(int water, int tileset, int mapSize, int en
 
 	int y;
 	int x;
-	char t;
+	byte t;
 	int XOffset = spiffRand(0, _totalMapSizeG-1);
 	int YOffset = spiffRand(0, _totalMapSizeG-1);
 	int newX;
