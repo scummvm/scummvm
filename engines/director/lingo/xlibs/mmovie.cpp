@@ -545,7 +545,10 @@ XOBJSTUB(MMovieXObj::m_invalidateRect, 0)
 void MMovieXObj::m_readFile(int nargs) {
 	g_lingo->printArgs("MMovieXObj::m_readFile", nargs);
 	if (nargs != 2) {
-		warning("MMovieXObj::m_readFile(): expecting 2 argument");
+		warning("MMovieXObj::m_readFile(): expecting 2 arguments");
+		g_lingo->dropStack(nargs);
+		g_lingo->push(Datum(""));
+		return;
 	}
 	Common::SaveFileManager *saves = g_system->getSavefileManager();
 	bool scramble = g_lingo->pop().asInt() != 0;
@@ -607,6 +610,9 @@ void MMovieXObj::m_writeFile(int nargs) {
 	g_lingo->printArgs("MMovieXObj::m_writeFile", nargs);
 	if (nargs != 3) {
 		warning("MMovieXObj::m_writeFile(): expecting 3 arguments");
+		g_lingo->dropStack(nargs);
+		g_lingo->push(Datum(""));
+		return;
 	}
 	Common::SaveFileManager *saves = g_system->getSavefileManager();
 	bool scramble = g_lingo->pop().asInt() != 0;
