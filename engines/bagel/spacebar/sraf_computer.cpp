@@ -2558,7 +2558,7 @@ int SrafComputer::getAdjustedIndex(int nListToSearch, int nElementIndex, bool bS
 		// Adjust for out of range.
 		nElementIndex = (nElementIndex >= NUM_STAFFERS ? (NUM_STAFFERS - 1) : nElementIndex);
 
-		for (int i = 0; i < NUM_BUYERS; i++) {
+		for (int i = 0; i < NUM_STAFFERS; i++) {
 			// Get all consecutive that are not available.
 			while (i < NUM_STAFFERS && g_staffers[i]._bAvailable == false) {
 				nTotalNotAvail++;
