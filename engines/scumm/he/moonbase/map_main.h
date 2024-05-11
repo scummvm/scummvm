@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCUMM_HE_MOONBASE_MAP_MAIN
-#define SCUMM_HE_MOONBASE_MAP_MAIN
+#ifndef SCUMM_HE_MOONBASE_MAP_MAIN_H
+#define SCUMM_HE_MOONBASE_MAP_MAIN_H
 
 #ifdef ENABLE_HE
 
@@ -109,4 +109,4 @@ private:
 
 #endif // ENABLE_HE
 
-#endif // SCUMM_HE_MOONBASE_MAP_MAIN
+#endif // SCUMM_HE_MOONBASE_MAP_MAIN_H
