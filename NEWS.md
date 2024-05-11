@@ -23,6 +23,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added MT32/LAPC-1 support for Xeen engine.
    - Fixed Xeen regression which caused some sound effects to stop abruptly.
 
+ SCUMM:
+   - Added map generator from Moonbase Console for Moonbase Commander.
+
  Tony:
    - Fix crash with rapid cursor switching.
 
