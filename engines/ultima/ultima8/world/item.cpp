@@ -1874,13 +1874,19 @@ uint32 Item::enterFastArea() {
 		if (actor && actor->isDead() && !call_even_if_dead) {
 			// dead actor, don't call the usecode
 		} else {
-			if (actor && _objId != 1 && GAME_IS_CRUSADER) {
-				uint16 lastactivity = actor->getLastActivityNo();
-				actor->clearLastActivityNo();
-				actor->clearInCombat();
-				actor->setToStartOfAnim(Animation::stand);
-				actor->clearActorFlag(Actor::ACT_WEAPONREADY);
-				actor->setActivity(lastactivity);
+			if (actor && _objId != 1) {
+				if (GAME_IS_CRUSADER) {
+					uint16 lastactivity = actor->getLastActivityNo();
+					actor->clearLastActivityNo();
+					actor->clearInCombat();
+					actor->setToStartOfAnim(Animation::stand);
+					actor->clearActorFlag(Actor::ACT_WEAPONREADY);
+					actor->setActivity(lastactivity);
+				} else {
+					actor->clearInCombat();
+					actor->setToStartOfAnim(Animation::stand);
+					actor->clearActorFlag(Actor::ACT_WEAPONREADY);
+				}
 			}
 
 			// TODO: For eggs, Crusader also resets the NPC info if a
