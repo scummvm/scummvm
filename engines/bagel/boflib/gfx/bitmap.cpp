@@ -272,11 +272,11 @@ ErrorCode CBofBitmap::paintMaskBackdrop(CBofWindow *pWnd, CBofRect *pDstRect, CB
 		}
 
 		CBofBitmap cTempBitmap(cSourceRect.width(), cSourceRect.height(), _pPalette);
-		CBofBitmap *pBackdrop;
+		CBofBitmap *pBackdrop = pWnd->getBackdrop();
 
 		// Use the backdrop to get the background instead of trying to
 		// capture the screen
-		if ((pBackdrop = pWnd->getBackdrop()) != nullptr) {
+		if (pBackdrop != nullptr) {
 			CBofRect cTempRect = cTempBitmap.getRect();
 			pBackdrop->paint(&cTempBitmap, &cTempRect, &cDestRect);
 		}
@@ -431,8 +431,8 @@ ErrorCode CBofBitmap::paintStretch4(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRe
 			dx2 = -dx2;
 		}
 
-		Fixed SourceStepY = fixedDivide(intToFixed(dy), intToFixed(nDstHeight));
-		Fixed PosY = 0;
+		Fixed sourceStepY = fixedDivide(intToFixed(dy), intToFixed(nDstHeight));
+		Fixed posY = 0;
 		byte *pSrcEnd = pSrcBits + (dy - 1) * dx1;
 		byte *pDestEnd = pDestBits + (nDstHeight - 1) * dx2;
 
@@ -441,62 +441,62 @@ ErrorCode CBofBitmap::paintStretch4(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRe
 		while (nDstHeight > 0) {
 			nDstHeight -= 4;
 
-			if (PosY >= 0x00010000) {
+			if (posY >= 0x00010000) {
 
 				pSrcBits += dx1;
 				pSrcEnd -= dx1;
 
-				PosY &= 0x0000FFFF;
+				posY &= 0x0000FFFF;
 			}
 			*(uint32 *)pDestBits = *(uint32 *)pSrcBits;
 			*(uint32 *)pDestEnd = *(uint32 *)pSrcEnd;
 
-			PosY += SourceStepY;
+			posY += sourceStepY;
 
 			pDestBits += dx2;
 			pDestEnd -= dx2;
 
-			if (PosY >= 0x00010000) {
+			if (posY >= 0x00010000) {
 
 				pSrcBits += dx1;
 				pSrcEnd -= dx1;
 
-				PosY &= 0x0000FFFF;
+				posY &= 0x0000FFFF;
 			}
 			*(uint32 *)pDestBits = *(uint32 *)pSrcBits;
 			*(uint32 *)pDestEnd = *(uint32 *)pSrcEnd;
 
-			PosY += SourceStepY;
+			posY += sourceStepY;
 
 			pDestBits += dx2;
 			pDestEnd -= dx2;
 
-			if (PosY >= 0x00010000) {
+			if (posY >= 0x00010000) {
 
 				pSrcBits += dx1;
 				pSrcEnd -= dx1;
 
-				PosY &= 0x0000FFFF;
+				posY &= 0x0000FFFF;
 			}
 			*(uint32 *)pDestBits = *(uint32 *)pSrcBits;
 			*(uint32 *)pDestEnd = *(uint32 *)pSrcEnd;
 
-			PosY += SourceStepY;
+			posY += sourceStepY;
 
 			pDestBits += dx2;
 			pDestEnd -= dx2;
 
-			if (PosY >= 0x00010000) {
+			if (posY >= 0x00010000) {
 
 				pSrcBits += dx1;
 				pSrcEnd -= dx1;
 
-				PosY &= 0x0000FFFF;
+				posY &= 0x0000FFFF;
 			}
 			*(uint32 *)pDestBits = *(uint32 *)pSrcBits;
 			*(uint32 *)pDestEnd = *(uint32 *)pSrcEnd;
 
-			PosY += SourceStepY;
+			posY += sourceStepY;
 
 			pDestBits += dx2;
 			pDestEnd -= dx2;
@@ -550,8 +550,8 @@ ErrorCode CBofBitmap::paintStretchOpt(CBofBitmap *pBmp, CBofRect *pDstRect, CBof
 			dx2 = -dx2;
 		}
 
-		Fixed SourceStepY = fixedDivide(intToFixed(dy), intToFixed(nDstHeight));
-		Fixed PosY = 0;
+		Fixed sourceStepY = fixedDivide(intToFixed(dy), intToFixed(nDstHeight));
+		Fixed posY = 0;
 		byte *pSrcEnd = pSrcBits + (dy - 1) * dx1;
 		byte *pDestEnd = pDestBits + (nDstHeight - 1) * dx2;
 
@@ -560,13 +560,13 @@ ErrorCode CBofBitmap::paintStretchOpt(CBofBitmap *pBmp, CBofRect *pDstRect, CBof
 
 		while (nDstHeight-- > 0) {
 
-			if (PosY >= 0x00010000) {
+			if (posY >= 0x00010000) {
 
-				int32 lInc = fixedToInt(PosY) * dx1;
+				int32 lInc = fixedToInt(posY) * dx1;
 				pSrcBits += lInc;
 				pSrcEnd -= lInc;
 
-				PosY &= 0x0000FFFF;
+				posY &= 0x0000FFFF;
 			}
 
 			for (int i = 0; i < nOptSize; i += 4) {
@@ -574,7 +574,7 @@ ErrorCode CBofBitmap::paintStretchOpt(CBofBitmap *pBmp, CBofRect *pDstRect, CBof
 				*(uint32 *)(pDestEnd + i) = *(uint32 *)(pSrcEnd + i);
 			}
 
-			PosY += SourceStepY;
+			posY += sourceStepY;
 
 			pDestBits += dx2;
 			pDestEnd -= dx2;
@@ -629,17 +629,15 @@ void CBofBitmap::setPalette(CBofPalette *pBofPalette, bool bOwnPalette) {
 	assert(isValidObject(this));
 	assert(pBofPalette != nullptr);
 
-	if (_errCode == ERR_NONE) {
-		if (pBofPalette != nullptr) {
-			if (_bOwnPalette && (_pPalette != nullptr) && (_pPalette != pBofPalette)) {
-				delete _pPalette;
-			}
-
-			_bOwnPalette = bOwnPalette;
-			_pPalette = pBofPalette;
-
-			_bitmap.setPalette(_pPalette->getData(), 0, PALETTE_COUNT);
+	if ((_errCode == ERR_NONE) && (pBofPalette != nullptr)) {
+		if (_bOwnPalette && (_pPalette != nullptr) && (_pPalette != pBofPalette)) {
+			delete _pPalette;
 		}
+
+		_bOwnPalette = bOwnPalette;
+		_pPalette = pBofPalette;
+
+		_bitmap.setPalette(_pPalette->getData(), 0, PALETTE_COUNT);
 	}
 }
 
