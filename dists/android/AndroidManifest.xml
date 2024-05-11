@@ -7,7 +7,8 @@
 	android:sharedUserMaxSdkVersion="32"
 	tools:targetApi="tiramisu">
 
-	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+	<uses-permission
+		android:name="android.permission.WRITE_EXTERNAL_STORAGE"
 		tools:ignore="ScopedStorage" />
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -28,26 +29,26 @@
 		android:required="true" />
 
 	<supports-screens
-		android:resizeable="true"
 		android:largeScreens="true"
 		android:normalScreens="true"
+		android:resizeable="true"
 		android:smallScreens="true"
 		android:xlargeScreens="true" />
 
 	<application
 		android:allowBackup="true"
+		android:appCategory="game"
 		android:description="@string/app_desc"
 		android:icon="@mipmap/scummvm"
-		android:appCategory="game"
 		android:label="@string/app_name${nameSuffix}"
 		android:resizeableActivity="false"
 		android:requestLegacyExternalStorage="true">
 		<activity
 			android:name=".SplashActivity"
-			android:exported="true"
 			android:banner="@drawable/leanback_icon"
 			android:configChanges="orientation|keyboard|keyboardHidden|navigation|screenSize|smallestScreenSize|screenLayout"
 			android:resizeableActivity="true"
+			android:exported="true"
 			android:theme="@style/SplashTheme"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
@@ -60,14 +61,13 @@
 		</activity>
 		<activity
 			android:name=".ScummVMActivity"
-			android:exported="false"
 			android:banner="@drawable/leanback_icon"
 			android:configChanges="orientation|keyboard|keyboardHidden|navigation|screenSize|smallestScreenSize|screenLayout"
 			android:resizeableActivity="true"
+			android:exported="false"
 			android:launchMode="singleInstance"
 			android:theme="@style/AppTheme"
-			android:windowSoftInputMode="adjustResize">
-		</activity>
+			android:windowSoftInputMode="adjustResize" />
 	</application>
 
 </manifest>
