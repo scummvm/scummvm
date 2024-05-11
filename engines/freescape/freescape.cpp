@@ -473,27 +473,6 @@ void FreescapeEngine::processInput() {
 			case Common::KEYCODE_u:
 				rotate(180, 0);
 				break;
-			case Common::KEYCODE_q:
-				rotate(-_angleRotations[_angleRotationIndex], 0);
-				break;
-			case Common::KEYCODE_w:
-				rotate(_angleRotations[_angleRotationIndex], 0);
-				break;
-			case Common::KEYCODE_s:
-				increaseStepSize();
-				break;
-			case Common::KEYCODE_x:
-				decreaseStepSize();
-				break;
-			case Common::KEYCODE_r:
-				if (isEclipse())
-					pressedKey(Common::KEYCODE_r);
-				else
-					rise();
-				break;
-			case Common::KEYCODE_f:
-				lower();
-				break;
 			case Common::KEYCODE_n:
 				_noClipMode = !_noClipMode;
 				_flyMode = _noClipMode;

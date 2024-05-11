@@ -180,6 +180,37 @@ void CastleEngine::endGame() {
 	}
 }
 
+void CastleEngine::pressedKey(const int keycode) {
+	// This code is duplicated in the DrillerEngine::pressedKey (except for the J case)
+	if (keycode == Common::KEYCODE_z) {
+		rotate(-_angleRotations[_angleRotationIndex], 0);
+	} else if (keycode == Common::KEYCODE_x) {
+		rotate(_angleRotations[_angleRotationIndex], 0);
+	} else if (keycode == Common::KEYCODE_s) {
+		// TODO: show score
+	} else if (keycode ==  Common::KEYCODE_r) {
+		if (_playerHeightNumber == 0)
+			rise();
+		// TODO: raising can fail if there is no room, so the action should fail
+		_playerStepIndex = 1;
+		insertTemporaryMessage(_messagesList[15], _countdown - 2);
+	} else if (keycode == Common::KEYCODE_w) {
+		if (_playerHeightNumber == 0)
+			rise();
+		// TODO: raising can fail if there is no room, so the action should fail
+		_playerStepIndex = 1;
+		insertTemporaryMessage(_messagesList[14], _countdown - 2);
+	} else if (keycode == Common::KEYCODE_c) {
+		if (_playerHeightNumber == 1)
+			lower();
+		_playerStepIndex = 0;
+		insertTemporaryMessage(_messagesList[13], _countdown - 2);
+	} else if (keycode == Common::KEYCODE_f) {
+		_pitch = 0;
+		updateCamera();
+	}
+}
+
 void CastleEngine::executePrint(FCLInstruction &instruction) {
 	uint16 index = instruction._source;
 	_currentAreaMessages.clear();

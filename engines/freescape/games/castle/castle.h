@@ -34,6 +34,7 @@ public:
 	void loadAssetsAmigaDemo() override;
 
 	void drawDOSUI(Graphics::Surface *surface) override;
+	void pressedKey(const int keycode) override;
 
 	void executePrint(FCLInstruction &instruction) override;
 	void gotoArea(uint16 areaID, int entranceID) override;

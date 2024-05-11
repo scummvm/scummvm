@@ -562,7 +562,20 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 }
 
 void DarkEngine::pressedKey(const int keycode) {
-	if (keycode == Common::KEYCODE_j) {
+	// This code is duplicated in the DrillerEngine::pressedKey (except for the J case)
+	if (keycode == Common::KEYCODE_q) {
+		rotate(-_angleRotations[_angleRotationIndex], 0);
+	} else if (keycode == Common::KEYCODE_w) {
+		rotate(_angleRotations[_angleRotationIndex], 0);
+	} else if (keycode == Common::KEYCODE_s) {
+		increaseStepSize();
+	} else if (keycode ==  Common::KEYCODE_x) {
+		decreaseStepSize();
+	} else if (keycode == Common::KEYCODE_r) {
+		rise();
+	} else if (keycode == Common::KEYCODE_f) {
+		lower();
+	} else if (keycode == Common::KEYCODE_j) {
 		_flyMode = !_flyMode;
 		//debugC(1, kFreescapeDebugMedia, "raw %d, hz: %f", freq, hzFreq);
 
