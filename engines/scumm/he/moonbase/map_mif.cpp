@@ -327,9 +327,9 @@ uint16 MIF::findTileFor(int x, int y) {
 		if (0 == tlCorner(x, y) || 0 == trCorner(x, y) || 0 == blCorner(x, y) || 0 == brCorner(x, y)) {
 			// Corner cases
 
-			int CornerSum = tlCorner(x, y) + trCorner(x, y) + blCorner(x, y) + brCorner(x, y);
+			int cornerSum = tlCorner(x, y) + trCorner(x, y) + blCorner(x, y) + brCorner(x, y);
 
-			if (1 == CornerSum) {
+			if (1 == cornerSum) {
 				if (tlCorner(x, y)) {
 					if (tllCorner(x, y) > 0 && ttlCorner(x, y) > 0)
 						return 0x03;
@@ -531,9 +531,9 @@ uint16 MIF::findTileFor(int x, int y) {
 		if (1 == tlCorner(x, y) || 1 == trCorner(x, y) || 1 == blCorner(x, y) || 1 == brCorner(x, y)) {
 			// Corner cases
 
-			int CornerSum = (tlCorner(x, y) == 2) + (trCorner(x, y) == 2) + (blCorner(x, y) == 2) + (brCorner(x, y) == 2);
+			int cornerSum = (tlCorner(x, y) == 2) + (trCorner(x, y) == 2) + (blCorner(x, y) == 2) + (brCorner(x, y) == 2);
 
-			if (1 == CornerSum) {
+			if (1 == cornerSum) {
 				if (tlCorner(x, y) == 2) {
 					if (tllCorner(x, y) == 2 && ttlCorner(x, y) == 2)
 						return 0x10;
