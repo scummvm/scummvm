@@ -228,6 +228,7 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 	ObjectArray planarObjects;
 	ObjectArray nonPlanarObjects;
 	Object *floor = nullptr;
+	float offset = 0.5;
 
 	for (auto &obj : _drawableObjects) {
 		if (!obj->isDestroyed() && !obj->isInvisible()) {
@@ -267,7 +268,6 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 			if (distance.length() > 0)
 				continue;
 
-			float offset = 1;
 			if (planar->getSize().x() == 0) {
 				if (object->getOrigin().x() >= centerPlanar.x())
 					offsetMap[planar] = -offset;
@@ -316,7 +316,6 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 			if (offsetMap[planar] == offsetMap[object] && offsetMap[object] != 0) {
 				// Nothing to do?
 			} else if (offsetMap[planar] == offsetMap[object] && offsetMap[object] == 0) {
-				float offset = 1.0;
 				if (planar->getSize().x() == 0) {
 					if (object->getOrigin().x() < centerPlanar.x())
 						offsetMap[planar] = -offset;
