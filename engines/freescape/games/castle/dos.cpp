@@ -167,7 +167,7 @@ void CastleEngine::loadAssetsDOSDemo() {
 		stream = decryptFile("CMLD"); // Only english
 		loadFonts(kFreescapeCastleFont, 59);
 		loadMessagesVariableSize(stream, 0x11, 164);
-		loadRiddles(stream, 0xaaf, 2);
+		loadRiddles(stream, 0xaae, 10);
 
 		/*for (int i = 0; i < 16; i++) {
 			debug("%lx", stream->pos());
@@ -184,6 +184,7 @@ void CastleEngine::loadAssetsDOSDemo() {
 		for (auto &it : _areaMap)
 			it._value->addStructure(_areaMap[255]);
 
+		_areaMap[1]->addFloor();
 		_areaMap[2]->addFloor();
 		delete stream;
 	} else

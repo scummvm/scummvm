@@ -177,10 +177,12 @@ void CastleEngine::endGame() {
 void CastleEngine::executePrint(FCLInstruction &instruction) {
 	uint16 index = instruction._source;
 	_currentAreaMessages.clear();
-	if (index > 127) {
-		index = _messagesList.size() - (index - 254) - 2;
-		// TODO
-		//drawFullscreenMessage(_messagesList[index]);
+	if (index > 129) {
+		index = index - 129;
+		if (index < _riddleList.size())
+			drawFullscreenRiddleAndWait(index);
+		else
+			debugC(1, kFreescapeDebugCode, "Riddle index %d out of bounds", index);
 		return;
 	}
 	debugC(1, kFreescapeDebugCode, "Printing message %d: \"%s\"", index, _messagesList[index].c_str());
@@ -192,29 +194,160 @@ void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int
 	file->seek(offset);
 	debugC(1, kFreescapeDebugParser, "Riddle table:");
 
-	for (int i = 0; i < 6 * number; i++) {
-		if (i % 6 == 0 && i > 0) {
-			debug("extra byte: %x", file->readByte());
+	int numberAsteriskLines = 0;
+	for (int i = 0; i < number; i++) {
+		numberAsteriskLines = 0;
+		debugC(1, kFreescapeDebugParser, "riddle %d extra byte each 6: %x", i, file->readByte());
+
+		for (int j = 0; j < 6; j++) {
+			int size = file->readByte();
+			debugC(1, kFreescapeDebugParser, "size: %d (max 22?)", size);
+			//if (size > 22)
+			//	size = 22;
+			int padSpaces = (22 - size) / 2;
+			debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
+			Common::String message = "";
+			int k = padSpaces;
+
+			if (size > 0) {
+				while (k-- > 0)
+					message = message + " ";
+
+				while (size-- > 0) {
+					byte c = file->readByte();
+					if (c != 0)
+						message = message + c;
+				}
+
+				k = padSpaces;
+				while (k-- > 0)
+					message = message + " ";
+			}
+
+
+			if (isAmiga() || isAtariST())
+				debug("extra byte: %x", file->readByte());
+			debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
+			debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
+			debugC(1, kFreescapeDebugParser, "'%s'", message.c_str());
+
+			_riddleList.push_back(message);
+			if (message.size() > 0 && message[0] == '*')
+				numberAsteriskLines++;
+
+			if (numberAsteriskLines == 2 && j < 5) {
+				assert(j == 4);
+				_riddleList.push_back("");
+				debugC(1, kFreescapeDebugParser, "Padded with ''");
+				break;
+			}
 		}
-		int size = file->readByte();
-		if (size > 22)
-			size = 22;
-		debugC(1, kFreescapeDebugParser, "size: %d", size);
-		debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
-		Common::String message = "";
-		while (size-- > 0) {
-			byte c = file->readByte();
-			if (c != 0)
-				message = message + c;
-		}
-		if (isAmiga() || isAtariST())
-			debug("extra byte: %x", file->readByte());
-		debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
-		debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
-		_riddleList.push_back(message);
-		debugC(1, kFreescapeDebugParser, "'%s'", _riddleList[i].c_str());
+
 	}
 	debugC(1, kFreescapeDebugParser, "End of riddles at %lx", file->pos());
+}
+
+void CastleEngine::drawFullscreenRiddleAndWait(uint16 riddle) {
+	_savedScreen = _gfx->getScreenshot();
+	uint32 color = 0;
+	switch (_renderMode) {
+		case Common::kRenderCPC:
+			color = 14;
+			break;
+		case Common::kRenderCGA:
+			color = 1;
+			break;
+		case Common::kRenderZX:
+			color = 6;
+			break;
+		default:
+			color = 14;
+	}
+	uint8 r, g, b;
+	_gfx->readFromPalette(6, r, g, b);
+	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+	_gfx->readFromPalette(color, r, g, b);
+	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
+
+	Common::Event event;
+	bool cont = true;
+	while (!shouldQuit() && cont) {
+		while (_eventManager->pollEvent(event)) {
+
+			// Events
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_SPACE) {
+					cont = false;
+				}
+				break;
+			case Common::EVENT_SCREEN_CHANGED:
+				_gfx->computeScreenViewport();
+				break;
+			case Common::EVENT_RBUTTONDOWN:
+				// fallthrough
+			case Common::EVENT_LBUTTONDOWN:
+				if (g_system->hasFeature(OSystem::kFeatureTouchscreen))
+					cont = false;
+				break;
+			default:
+				break;
+			}
+		}
+		_gfx->clear(0, 0, 0, true);
+		drawBorder();
+		if (_currentArea)
+			drawUI();
+		drawRiddle(riddle, front, back, surface);
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(15); // try to target ~60 FPS
+	}
+
+	_savedScreen->free();
+	delete _savedScreen;
+	surface->free();
+	delete surface;
+}
+
+void CastleEngine::drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics::Surface *surface) {
+
+	Common::StringArray riddleMessages;
+	for (int i = 6 * riddle; i < 6 * (riddle + 1); i++) {
+		riddleMessages.push_back(_riddleList[i]);
+	}
+
+	uint32 noColor = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
+	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+	uint32 frame = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xA7, 0xA7, 0xA7);
+
+	surface->fillRect(_fullscreenViewArea, noColor);
+	surface->fillRect(_viewArea, black);
+
+	surface->frameRect(Common::Rect(47, 47, 271, 147), frame);
+	surface->frameRect(Common::Rect(53, 53, 266, 141), frame);
+
+	surface->fillRect(Common::Rect(54, 54, 266, 139), back);
+	int x = 0;
+	int y = 0;
+	int numberOfLines = 6;
+
+	if (isDOS()) {
+		x = 58;
+		y = 66;
+	} else if (isSpectrum() || isCPC()) {
+		x = 60;
+		y = 40;
+	}
+
+	for (int i = 0; i < numberOfLines; i++) {
+		drawStringInSurface(riddleMessages[i], x, y, front, back, surface);
+		y = y + 12;
+	}
+	drawFullscreenSurface(surface);
 }
 
 
