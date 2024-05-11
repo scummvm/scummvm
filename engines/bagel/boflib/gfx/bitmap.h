@@ -52,59 +52,18 @@ namespace Bagel {
 // forward declare CBofWindow
 class CBofWindow;
 
-#include "common/pack-start.h" // START STRUCT PACKING
-
-struct bofBITMAPINFOHEADER {
-	uint32 _infoSize;
-	int32 _width;
-	int32 _height;
-	uint16 _planes;
-	uint16 _bitCount;
-	uint32 _compression;
-	uint32 _sizeImage;
-	int32 _xPelsPerMeter;
-	int32 _yPelsPerMeter;
-	uint32 _clrUsed;
-	uint32 _clrImportant;
-} PACKED_STRUCT;
-typedef bofBITMAPINFOHEADER BOFBITMAPINFOHEADER;
-
-struct bofBITMAPINFO {
-	BOFBITMAPINFOHEADER bmiHeader;
-	BOFRGBQUAD bmiColors[1];
-} PACKED_STRUCT;
-typedef bofBITMAPINFO BOFBITMAPINFO;
-
-struct bofBITMAPFILEHEADER {
-	uint16 _fileType;
-	uint32 _fileSize;
-	uint16 _reserved1;
-	uint16 _reserved2;
-	uint32 _offBits;
-} PACKED_STRUCT;
-typedef bofBITMAPFILEHEADER BOFBITMAPFILEHEADER;
-
-struct bofBITMAP_EX {
-	BOFBITMAPFILEHEADER _fileHeader;
-	BOFBITMAPINFOHEADER _infoHeader;
-	BOFRGBQUAD _rgbValues[256];
-} PACKED_STRUCT;
-typedef bofBITMAP_EX BITMAP_EX;
-
-#include "common/pack-end.h" // END STRUCT PACKING
-
 class CBofBitmap : public CBofError, public CBofObject, public CCache {
 protected:
 	/**
 	 * Does the actual allocation for this bitmap
 	 * @return  true is this bitmap was successfully loaded into the cache
 	 */
-	virtual bool alloc();
+	bool alloc() override;
 
 	/**
 	 * Frees the data used by this bitmap (removes from cache)
 	 */
-	virtual void free();
+	void free() override;
 
 	//
 	// data members
@@ -112,8 +71,6 @@ protected:
 	static bool _bUseBackdrop;
 
 	char _szFileName[MAX_FNAME];
-
-	BITMAP_EX _cBitmapInfo;
 
 	Graphics::ManagedSurface _bitmap;
 
@@ -130,8 +87,6 @@ protected:
 	bool _bReadOnly = false;
 	bool _bInitialized = false;
 
-	bool _bPrivateBmp = false;
-
 public:
 	/**
 	 * Default constructor
@@ -144,6 +99,7 @@ public:
 	 * @param dy            Height of new bitmap
 	 * @param pPalette      Palette to use for this bitmap
 	 * @param bOwnPalette   true if destructor should delete palette
+	 * @param pPrivateBuff
 	 */
 	CBofBitmap(int dx, int dy, CBofPalette *pPalette, bool bOwnPalette = false, byte *pPrivateBuff = nullptr);
 
@@ -162,7 +118,7 @@ public:
 
 	/**
 	 * Allocates the structures needed for a CBofBitmap
-	 * @param       Palette to be assigned into this bitmap
+	 * @param pPalette      Palette to be assigned into this bitmap
 	 */
 	ErrorCode buildBitmap(CBofPalette *pPalette);
 

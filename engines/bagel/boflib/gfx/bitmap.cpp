@@ -65,9 +65,8 @@ CBofBitmap::CBofBitmap(int dx, int dy, CBofPalette *pPalette, bool bOwnPalette, 
 	_pPalette = nullptr;
 	_bInitialized = true;
 
-	// Allow privatization of the bitmap (used only on mac from displaytextex).;
-	_bPrivateBmp = (pPrivateBuff != nullptr);
-	if (_bPrivateBmp == true) {
+	// Allow privatization of the bitmap (used only on mac from displayTextEx).;
+	if (pPrivateBuff != nullptr) {
 		_pBits = pPrivateBuff;
 
 		_bitmap.w = dx;
@@ -79,19 +78,6 @@ CBofBitmap::CBofBitmap(int dx, int dy, CBofPalette *pPalette, bool bOwnPalette, 
 	} else {
 		_pBits = nullptr;
 	}
-
-	// Fill the info structure
-	_cBitmapInfo._infoHeader._infoSize = sizeof(BOFBITMAPINFOHEADER);
-	_cBitmapInfo._infoHeader._width = dx;
-	_cBitmapInfo._infoHeader._height = dy;
-	_cBitmapInfo._infoHeader._planes = 1;
-	_cBitmapInfo._infoHeader._bitCount = 8;
-	_cBitmapInfo._infoHeader._compression = 0;
-	_cBitmapInfo._infoHeader._sizeImage = 0;
-	_cBitmapInfo._infoHeader._xPelsPerMeter = 0;
-	_cBitmapInfo._infoHeader._yPelsPerMeter = 0;
-	_cBitmapInfo._infoHeader._clrUsed = 0;
-	_cBitmapInfo._infoHeader._clrImportant = 0;
 
 	_pPalette = pPalette;
 	load();
