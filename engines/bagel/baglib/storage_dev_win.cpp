@@ -2001,7 +2001,7 @@ void CBagStorageDevManager::saveObjList(StObj *pObjList, int nNumEntries) {
 					assert((pObjList + k)->_szName[0] != '\0');
 
 					assert(strlen(pSDev->getName()) < MAX_SDEV_NAME);
-					strncpy((pObjList + k)->_szSDev, pSDev->getName(), MAX_SDEV_NAME);
+					Common::strlcpy((pObjList + k)->_szSDev, pSDev->getName(), MAX_SDEV_NAME);
 
 					// Save if this guy is waiting to play
 					(pObjList + k)->_nFlags = (uint16)(pObj->isMsgWaiting() ? mIsMsgWaiting : 0);
