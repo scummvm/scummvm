@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCUMM_HE_MOONBASE_MAP_MIF
-#define SCUMM_HE_MOONBASE_MAP_MIF
+#ifndef SCUMM_HE_MOONBASE_MAP_MIF_H
+#define SCUMM_HE_MOONBASE_MAP_MIF_H
 
 #ifdef ENABLE_HE
 
@@ -30,7 +30,7 @@ namespace Scumm {
 
 #define MAX_TILE_COUNT 80
 
-#include <common/pack-start.h>	// START STRUCT PACKING
+#include "common/pack-start.h"	// START STRUCT PACKING
 
 typedef struct PixelLoc {
 	uint16 x;
@@ -73,7 +73,7 @@ struct MapFile {
 	}
 } PACKED_STRUCT;
 
-#include <common/pack-end.h>	// END STRUCT PACKING
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 class MIF {
 public:
@@ -195,4 +195,4 @@ private:
 
 #endif // ENABLE_HE
 
-#endif // SCUMM_HE_MOONBASE_MAP_MIF
+#endif // SCUMM_HE_MOONBASE_MAP_MIF_H

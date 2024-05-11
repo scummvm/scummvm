@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCUMM_HE_MOONBASE_MAP_DATA
-#define SCUMM_HE_MOONBASE_MAP_DATA
+#ifndef SCUMM_HE_MOONBASE_MAP_DATA_H
+#define SCUMM_HE_MOONBASE_MAP_DATA_H
 
 // This header contains file data used by the map generator, mostly
 // the Template.thm and Template.wiz data taken from the Moonbase Console
@@ -390,4 +390,4 @@ const byte Template_wiz[] = {
   0xd1, 0xe8, 0xeb, 0x3a, 0x9b, 0x00, 0x00
 };
 
-#endif // SCUMM_HE_MOONBASE_MAP_DATA
+#endif // SCUMM_HE_MOONBASE_MAP_DATA_H
