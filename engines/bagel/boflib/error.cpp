@@ -50,7 +50,6 @@ const char *const g_errList[] = {
 // Static members
 //
 int CBofError::_nErrorCount;
-ErrorCode CBofError::_errGlobal;
 
 
 CBofError::CBofError() {
@@ -59,37 +58,35 @@ CBofError::CBofError() {
 
 void CBofError::initialize() {
 	_nErrorCount = 0;
-	_errGlobal = ERR_NONE;
 }
 
 void CBofError::reportError(ErrorCode errCode, const char *format, ...) {
 	_errCode = errCode;
-	if (_errCode != ERR_NONE) {
-		Common::String buf;
 
-		// Set global last error
-		setLastError(errCode);
+	if (_errCode == ERR_NONE)
+		return;
 
-		// One more error
-		_nErrorCount++;
+	Common::String buf;
 
-		// Don't parse the variable input if there isn't any
-		if (format != nullptr) {
-			// Parse the arguments
-			va_list argptr;
-			va_start(argptr, format);
-			buf = Common::String::vformat(format, argptr);
-			va_end(argptr);
-		}
+	// One more error
+	_nErrorCount++;
 
-		// Tell user about error, unless there were too many errors
-		if (_nErrorCount < MAX_ERRORS)
-			bofMessageBox(buf, g_errList[errCode]);
-
-		GUI::Debugger *console = g_engine->getDebugger();
-		if (console->isActive())
-			console->debugPrintf("%s\n", buf.c_str());
+	// Don't parse the variable input if there isn't any
+	if (format != nullptr) {
+		// Parse the arguments
+		va_list argptr;
+		va_start(argptr, format);
+		buf = Common::String::vformat(format, argptr);
+		va_end(argptr);
 	}
+
+	// Tell user about error, unless there were too many errors
+	if (_nErrorCount < MAX_ERRORS)
+		bofMessageBox(buf, g_errList[errCode]);
+
+	GUI::Debugger *console = g_engine->getDebugger();
+	if (console->isActive())
+		console->debugPrintf("%s\n", buf.c_str());
 }
 
 } // namespace Bagel

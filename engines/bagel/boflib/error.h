@@ -82,12 +82,6 @@ public:
 	}
 
 	static void initialize();
-	static ErrorCode getLastError() {
-		return _errGlobal;
-	}
-	static void setLastError(ErrorCode errCode) {
-		_errGlobal = errCode;
-	}
 
 	static int getErrorCount() {
 		return _nErrorCount;

@@ -228,7 +228,7 @@ CBibbleWindow::CBibbleWindow() {
 	for (int i = 0; i < BIBBLE_NUM_BUTTONS; i++)
 		_pButtons[i] = nullptr;
 
-	setHelpFilename(BuildDir("BIBBLE.TXT"));
+	CBagStorageDevWnd::setHelpFilename(BuildDir("BIBBLE.TXT"));
 
 	// Call this thing a closeup so that time won't go  by when entering the closeup
 	setCloseup(true);
@@ -261,18 +261,17 @@ ErrorCode CBibbleWindow::attach() {
 
 	g_waitOKFl = false;
 
-	CBagVar *pVar;
+	CBagVar *pVar = g_VarManager->getVariable("NUGGETS");
 
-	if ((pVar = g_VarManager->getVariable("NUGGETS")) != nullptr) {
+	if (pVar != nullptr) {
 		_nNumCredits = pVar->getNumValue();
 	}
 	logInfo(buildString("\tCredits: %d", _nNumCredits));
 
 	g_bBibbleHack = false;
-	if ((pVar = g_VarManager->getVariable("BIBBLEHACK")) != nullptr) {
-		if (pVar->getNumValue() != 0) {
-			g_bBibbleHack = true;
-		}
+	pVar = g_VarManager->getVariable("BIBBLEHACK");
+	if ((pVar != nullptr) && (pVar->getNumValue() != 0)) {
+		g_bBibbleHack = true;
 	}
 
 	// If player has modified the payoffs, then load new payoffs from Bar script
@@ -298,7 +297,8 @@ ErrorCode CBibbleWindow::attach() {
 	CBofPalette *pPal = _pBackdrop->getPalette();
 
 	// Setup the text fields
-	if ((_pCreditsText = new CBofText) != nullptr) {
+	_pCreditsText = new CBofText;
+	if (_pCreditsText != nullptr) {
 		CBofRect cRect(CREDITS_AREA_X1, CREDITS_AREA_Y1, CREDITS_AREA_X2, CREDITS_AREA_Y2);
 
 		_pCreditsText->setupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
@@ -313,16 +313,16 @@ ErrorCode CBibbleWindow::attach() {
 
 	// Pre-load the "One", "Two", "Three", and "Four" shouts
 	for (int i = 0; i < BIBBLE_NUM_SHOUTS; i++) {
-		if ((_pShouts[i] = new CBofSound(this, BuildDir(pszShouts[i]), SOUND_MIX)) != nullptr) {
-
-		} else {
+		_pShouts[i] = new CBofSound(this, BuildDir(pszShouts[i]), SOUND_MIX);
+		if (_pShouts[i] == nullptr) {
 			reportError(ERR_MEMORY);
 			break;
 		}
 	}
 
 	// Pre-load the ball
-	if ((_pBall = new CBofSprite) != nullptr) {
+	_pBall = new CBofSprite;
+	if (_pBall != nullptr) {
 		_pBall->loadSprite(BuildDir(BALL_BMP), BALL_CELS);
 		_pBall->setMaskColor(MASK_COLOR);
 		_pBall->setZOrder(SPRITE_HINDMOST);
@@ -334,7 +334,8 @@ ErrorCode CBibbleWindow::attach() {
 	}
 
 	// Pre-load the bibbles
-	if ((_pMasterBibble = new CBofSprite) != nullptr) {
+	_pMasterBibble = new CBofSprite;
+	if (_pMasterBibble != nullptr) {
 		_pMasterBibble->loadSprite(BuildDir(BIBBLE_BMP), BIBBLE_CELS);
 		_pMasterBibble->setMaskColor(MASK_COLOR);
 		_pMasterBibble->setZOrder(SPRITE_TOPMOST);
@@ -346,7 +347,8 @@ ErrorCode CBibbleWindow::attach() {
 
 	// Dup the bibbles
 	for (int i = 0; i < BIBBLE_NUM_BIBBLES; i++) {
-		if ((_pBibble[i] = _pMasterBibble->duplicateSprite()) != nullptr) {
+		_pBibble[i] = _pMasterBibble->duplicateSprite();
+		if (_pBibble[i] != nullptr) {
 			_pBibble[i]->setPosition(nBibbleXPos[i], nBibbleYPos[i]);
 			_pBibble[i]->linkSprite();
 
@@ -356,7 +358,8 @@ ErrorCode CBibbleWindow::attach() {
 	}
 
 	// Load the arch bitmaps that the ball needs to go behind
-	if ((_pArch1 = new CBofSprite) != nullptr) {
+	_pArch1 = new CBofSprite;
+	if (_pArch1 != nullptr) {
 		_pArch1->loadSprite(BuildDir(ARCH1_BMP));
 		_pArch1->setMaskColor(MASK_COLOR);
 		_pArch1->setZOrder(SPRITE_MIDDLE);
@@ -365,7 +368,8 @@ ErrorCode CBibbleWindow::attach() {
 		reportError(ERR_MEMORY);
 	}
 
-	if ((_pArch2 = new CBofSprite) != nullptr) {
+	_pArch2 = new CBofSprite;
+	if (_pArch2 != nullptr) {
 		_pArch2->loadSprite(BuildDir(ARCH2_BMP));
 		_pArch2->setMaskColor(MASK_COLOR);
 		_pArch2->setZOrder(SPRITE_MIDDLE);
@@ -375,7 +379,8 @@ ErrorCode CBibbleWindow::attach() {
 		reportError(ERR_MEMORY);
 	}
 
-	if ((_pArch3 = new CBofSprite) != nullptr) {
+	_pArch3 = new CBofSprite;
+	if (_pArch3 != nullptr) {
 		_pArch3->loadSprite(BuildDir(ARCH3_BMP));
 		_pArch3->setMaskColor(MASK_COLOR);
 		_pArch3->setZOrder(SPRITE_MIDDLE);
@@ -388,7 +393,8 @@ ErrorCode CBibbleWindow::attach() {
 
 	// Build all our buttons
 	for (int i = 0; i < BIBBLE_NUM_BUTTONS; i++) {
-		if ((_pButtons[i] = new CBofBmpButton) != nullptr) {
+		_pButtons[i] = new CBofBmpButton;
+		if (_pButtons[i] != nullptr) {
 
 			CBofBitmap *pUp = loadBitmap(BuildDir(g_stButtons[i]._pszUp), pPal);
 			CBofBitmap *pDown = loadBitmap(BuildDir(g_stButtons[i]._pszDown), pPal);
@@ -405,7 +411,8 @@ ErrorCode CBibbleWindow::attach() {
 		}
 	}
 
-	if ((_pBkgSnd = new CBofSound(this, BuildDir(CASINO_AUDIO), SOUND_MIX, 99999)) != nullptr) {
+	_pBkgSnd = new CBofSound(this, BuildDir(CASINO_AUDIO), SOUND_MIX, 99999);
+	if (_pBkgSnd != nullptr) {
 		_pBkgSnd->play();
 	} else {
 		reportError(ERR_MEMORY);
@@ -441,65 +448,52 @@ ErrorCode CBibbleWindow::detach() {
 	}
 
 	// Write out new value of nuggets
-	CBagVar *pVar;
-	if ((pVar = g_VarManager->getVariable("NUGGETS")) != nullptr) {
+	CBagVar *pVar = g_VarManager->getVariable("NUGGETS");
+	if (pVar != nullptr) {
 		pVar->setValue(_nNumCredits);
 	}
 
 	if (_pBkgSnd->isPlaying()) {
 		_pBkgSnd->stop();
 	}
-	if (_pBkgSnd != nullptr) {
-		delete _pBkgSnd;
-		_pBkgSnd = nullptr;
-	}
+
+	delete _pBkgSnd;
+	_pBkgSnd = nullptr;
 
 	// Destroy the ball, bibbles, and bibble shouts
-	if (_pArch3 != nullptr) {
-		delete _pArch3;
-		_pArch3 = nullptr;
-	}
-	if (_pArch2 != nullptr) {
-		delete _pArch2;
-		_pArch2 = nullptr;
-	}
-	if (_pArch1 != nullptr) {
-		delete _pArch1;
-		_pArch1 = nullptr;
-	}
+	delete _pArch3;
+	_pArch3 = nullptr;
+
+	delete _pArch2;
+	_pArch2 = nullptr;
+
+	delete _pArch1;
+	_pArch1 = nullptr;
+
 	for (int i = 0; i < BIBBLE_NUM_BIBBLES; i++) {
-		if (_pBibble[i] != nullptr) {
-			delete _pBibble[i];
-			_pBibble[i] = nullptr;
-		}
+		delete _pBibble[i];
+		_pBibble[i] = nullptr;
 	}
-	if (_pMasterBibble != nullptr) {
-		delete _pMasterBibble;
-		_pMasterBibble = nullptr;
-	}
-	if (_pBall != nullptr) {
-		delete _pBall;
-		_pBall = nullptr;
-	}
+
+	delete _pMasterBibble;
+	_pMasterBibble = nullptr;
+
+	delete _pBall;
+	_pBall = nullptr;
+
 	for (int i = 0; i < BIBBLE_NUM_SHOUTS; i++) {
-		if (_pShouts[i] != nullptr) {
-			delete _pShouts[i];
-			_pShouts[i] = nullptr;
-		}
+		delete _pShouts[i];
+		_pShouts[i] = nullptr;
 	}
 
 	// Destroy all buttons
 	for (int i = 0; i < BIBBLE_NUM_BUTTONS; i++) {
-		if (_pButtons[i] != nullptr) {
-			delete _pButtons[i];
-			_pButtons[i] = nullptr;
-		}
+		delete _pButtons[i];
+		_pButtons[i] = nullptr;
 	}
 
-	if (_pCreditsText != nullptr) {
-		delete _pCreditsText;
-		_pCreditsText = nullptr;
-	}
+	delete _pCreditsText;
+	_pCreditsText = nullptr;
 
 	// Close sprite lib
 	CBofSprite::closeLibrary();
