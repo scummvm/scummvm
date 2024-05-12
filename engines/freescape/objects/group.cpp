@@ -89,10 +89,7 @@ void Group::assemble(int index) {
 	//gobj->makeVisible();
 	Math::Vector3d position = _operations[_step]->position;
 
-	if (!GeometricObject::isPolygon(gobj->getType()))
-		position = 32 * position / _scale;
-	else
-		position = position / _scale;
+	position = 32 * position / _scale;
 	gobj->offsetOrigin(position + _origins[index] - _origins[0]);
 }
 
@@ -102,7 +99,9 @@ void Group::run() {
 
 	int opcode = _operations[_step]->opcode;
 	if (opcode == 0x80 || opcode == 0xff) {
-		reset();
+		_step = -1;
+		_active = false;
+		_finished = false;
 	} else if (opcode == 0x01) {
 		g_freescape->executeCode(_operations[_step]->condition, false, true, false, false);
 	} else if (opcode == 0x6e) {
@@ -124,18 +123,18 @@ void Group::run() {
 }
 
 void Group::reset() {
-	_step = -1;
+	/*_step = -1;
 	_active = false;
 	_finished = false;
 	uint32 groupSize = _objects.size();
 	for (uint32 i = 0; i < groupSize ; i++) {
 		GeometricObject *gobj = (GeometricObject *)_objects[i];
 		if (GeometricObject::isPolygon(_objects[i]->getType())) {
-			gobj->setOrigin(_origins[i]);
-			gobj->restoreOrdinates();
-			gobj->makeInvisible();
+			//gobj->setOrigin(_origins[i]);
+			//gobj->restoreOrdinates();
+			//gobj->makeInvisible();
 		}
-	}
+	}*/
 }
 
 void Group::draw(Renderer *gfx, float offset) {

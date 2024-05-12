@@ -454,7 +454,7 @@ public:
 	bool _forceEndGame;
 	bool _playerWasCrushed;
 	ObjectArray _sensors;
-	void checkSensors();
+	virtual void checkSensors();
 	virtual void drawSensorShoot(Sensor *sensor);
 	void takeDamageFromSensor();
 

@@ -114,18 +114,7 @@ void CastleEngine::loadAssetsDOSFullGame() {
 	} else
 		error("Not implemented yet");
 
-	for (auto &it : _areaMap) {
-		for (auto &sensor : it._value->getSensors()) {
-			if (sensor->getObjectID() == 125)
-				_areaMap[it._key]->addGroupFromArea(195, _areaMap[255]);
-			else if (sensor->getObjectID() == 126)
-				_areaMap[it._key]->addGroupFromArea(191, _areaMap[255]);
-			else if (sensor->getObjectID() == 127)
-				_areaMap[it._key]->addGroupFromArea(182, _areaMap[255]);
-			else
-				debugC(1, kFreescapeDebugParser, "Sensor %d in area %d", sensor->getObjectID(), it._key);
-		}
-	}
+	addGhosts();
 	// CPC
 	// file = gameDir.createReadStreamForMember("cm.bin");
 	// if (file == nullptr)

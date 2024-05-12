@@ -192,23 +192,22 @@ void GeometricObject::setOrigin(Math::Vector3d origin_) {
 void GeometricObject::offsetOrigin(Math::Vector3d origin_) {
 	if (isPolygon(_type)) {
 		Math::Vector3d offset = origin_ - _origin;
-		offset = 32 * offset;
 		for (int i = 0; i < int(_ordinates->size()); i = i + 3) {
-			int16 ordinate = 0;
+			float ordinate = 0;
 			ordinate = (*_ordinates)[i];
-			ordinate +=  int16(offset.x());
+			ordinate +=  offset.x();
 			assert(ordinate >= 0);
-			(*_ordinates)[i] = uint16(ordinate);
+			(*_ordinates)[i] = ordinate;
 
 			ordinate = (*_ordinates)[i + 1];
-			ordinate +=  int16(offset.y());
+			ordinate +=  offset.y();
 			assert(ordinate >= 0);
-			(*_ordinates)[i + 1] = uint16(ordinate);
+			(*_ordinates)[i + 1] = ordinate;
 
 			ordinate = (*_ordinates)[i + 2];
-			ordinate +=  int16(offset.z());
+			ordinate +=  offset.z();
 			assert(ordinate >= 0);
-			(*_ordinates)[i + 2] = uint16(ordinate);
+			(*_ordinates)[i + 2] = ordinate;
 		}
 	}
 	setOrigin(origin_);
@@ -219,7 +218,6 @@ void GeometricObject::scale(int factor) {
 	_size = _size / factor;
 	if (_ordinates) {
 		for (uint i = 0; i < _ordinates->size(); i++) {
-			// This division is always exact because each ordinate was multipled by 32
 			(*_ordinates)[i] = (*_ordinates)[i] / factor;
 			if (_initialOrdinates)
 				(*_initialOrdinates)[i] = (*_initialOrdinates)[i] / factor;

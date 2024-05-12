@@ -358,6 +358,17 @@ void Area::drawGroup(Freescape::Renderer *gfx, Group* group, bool runAnimation) 
 		group->draw(gfx);
 }
 
+bool Area::hasActiveGroups() {
+	for (auto &obj : _drawableObjects) {
+		if (obj->getType() == kGroupType) {
+			Group *group = (Group *)obj;
+			if (group->isActive())
+				return true;
+		}
+	}
+	return false;
+}
+
 Object *Area::checkCollisionRay(const Math::Ray &ray, int raySize) {
 	float distance = 1.0;
 	float size = 16.0 * 8192.0; // TODO: check if this is the max size
@@ -508,7 +519,7 @@ void Area::addGroupFromArea(int16 id, Area *global) {
 	assert(obj->getType() == ObjectType::kGroupType);
 
 	addObjectFromArea(id, global);
-	//Group *group = (Group *)objectWithID(id);
+	Group *group = (Group *)objectWithID(id);
 	for (auto &it : ((Group *)obj)->_objectIds) {
 		if (it == 0 || it == 0xffff)
 			break;
@@ -516,7 +527,7 @@ void Area::addGroupFromArea(int16 id, Area *global) {
 			continue;
 
 		addObjectFromArea(it, global);
-		//group->linkObject(objectWithID(it));
+		group->linkObject(objectWithID(it));
 	}
 }
 
