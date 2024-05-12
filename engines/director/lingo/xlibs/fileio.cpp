@@ -220,7 +220,7 @@ FileIOError FileObject::open(const Common::String &origpath, const Common::Strin
 	Common::String option = mode;
 	char dirSeparator = g_director->_dirSeparator;
 
-	Common::String prefix = g_director->getTargetName() + '-';
+	Common::String prefix = savePrefix();
 
 	if (option.hasPrefix("?")) {
 		option = option.substr(1);
@@ -576,7 +576,7 @@ void FileIO::m_fileName(int nargs) {
 	FileObject *me = static_cast<FileObject *>(g_lingo->_state->me.u.obj);
 
 	if (me->_filename) {
-		Common::String prefix = g_director->getTargetName() + '-';
+		Common::String prefix = savePrefix();
 		Common::String res = *me->_filename;
 		if (res.hasPrefix(prefix)) {
 			res = Common::String(&me->_filename->c_str()[prefix.size()]);

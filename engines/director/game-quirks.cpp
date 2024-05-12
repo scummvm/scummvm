@@ -268,7 +268,7 @@ void DirectorEngine::gameQuirks(const char *target, Common::Platform platform) {
 				// Inject files from the save game storage into the path
 				Common::SaveFileManager *saves = g_system->getSavefileManager();
 				// As save games are name-mangled by FileIO, demangle them here
-				Common::String prefix = g_director->getTargetName() + '-' + '*';
+				Common::String prefix = savePrefix() + '*';
 				for (auto &it : saves->listSavefiles(prefix.c_str())) {
 					Common::String demangled = f->path + it.substr(prefix.size() - 1);
 					if (demangled.hasSuffixIgnoreCase(".txt")) {

@@ -555,7 +555,7 @@ void MMovieXObj::m_readFile(int nargs) {
 	Common::String origPath = g_lingo->pop().asString();
 	Common::String path = origPath;
 
-	Common::String prefix = g_director->getTargetName() + '-';
+	Common::String prefix = savePrefix();
 	Common::String result;
 	if (origPath.empty()) {
 		path = getFileNameFromModal(false, Common::String(), "txt");
@@ -617,7 +617,7 @@ void MMovieXObj::m_writeFile(int nargs) {
 	Common::String path = origPath;
 	Common::String result;
 
-	Common::String prefix = g_director->getTargetName() + '-';
+	Common::String prefix = savePrefix();
 	if (origPath.empty()) {
 		path = getFileNameFromModal(false, Common::String(), "txt");
 		if (path.empty()) {
