@@ -974,7 +974,7 @@ Common::Path findAudioPath(const Common::String &path, bool currentFolder, bool 
 }
 
 Common::String getFileNameFromModal(bool save, const Common::String &suggested, const char *ext) {
-	Common::String prefix = g_director->getTargetName() + '-';
+	Common::String prefix = savePrefix();
 	Common::String mask = prefix + "*";
 	if (ext) {
 		mask += ".";
@@ -988,6 +988,10 @@ Common::String getFileNameFromModal(bool save, const Common::String &suggested, 
 	if (!result.empty() && !result.hasPrefixIgnoreCase(prefix))
 		result = prefix + result;
 	return result;
+}
+
+Common::String savePrefix() {
+	return g_director->getTargetName() + '-';
 }
 
 
