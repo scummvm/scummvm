@@ -77,7 +77,8 @@ void CBagQuitDialog::onInitDialog() {
 	for (int i = 0; i < NUM_QUIT_BUTTONS; i++) {
 		assert(_pButtons[i] == nullptr);
 
-		if ((_pButtons[i] = new CBofBmpButton) != nullptr) {
+		_pButtons[i] = new CBofBmpButton;
+		if (_pButtons[i] != nullptr) {
 			CBofBitmap *pUp = loadBitmap(buildSysDir(g_stQuitButtons[i]._pszUp), pPal);
 			CBofBitmap *pDown = loadBitmap(buildSysDir(g_stQuitButtons[i]._pszDown), pPal);
 			CBofBitmap *pFocus = loadBitmap(buildSysDir(g_stQuitButtons[i]._pszFocus), pPal);
@@ -88,7 +89,7 @@ void CBagQuitDialog::onInitDialog() {
 			_pButtons[i]->create(g_stQuitButtons[i]._pszName, g_stQuitButtons[i]._nLeft, g_stQuitButtons[i]._nTop, g_stQuitButtons[i]._nWidth, g_stQuitButtons[i]._nHeight, this, g_stQuitButtons[i]._nID);
 			_pButtons[i]->show();
 		} else {
-			reportError(ERR_MEMORY);
+			reportError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
 			break;
 		}
 	}
@@ -105,10 +106,8 @@ void CBagQuitDialog::onClose() {
 
 	// Destroy all buttons
 	for (int i = 0; i < NUM_QUIT_BUTTONS; i++) {
-		if (_pButtons[i] != nullptr) {
-			delete _pButtons[i];
-			_pButtons[i] = nullptr;
-		}
+		delete _pButtons[i];
+		_pButtons[i] = nullptr;
 	}
 
 	if (_nReturnValue == QUIT_BTN || _nReturnValue == SAVE_BTN)
@@ -122,7 +121,6 @@ void CBagQuitDialog::onPaint(CBofRect *pRect) {
 	assert(isValidObject(this));
 
 	paintBackdrop(pRect);
-
 	validateAnscestors();
 }
 
@@ -158,7 +156,6 @@ void CBagQuitDialog::onBofButton(CBofObject *pObject, int nFlags) {
 			if (pApp != nullptr) {
 				CBagMasterWin *pWin = pApp->getMasterWnd();
 				if (pWin != nullptr) {
-
 					bQuit = pWin->showSaveDialog(this, false);
 				}
 			}

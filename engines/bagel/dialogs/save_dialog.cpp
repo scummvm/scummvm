@@ -28,8 +28,6 @@
 
 namespace Bagel {
 
-#define USE_CBAGDIALOG 0
-
 const char *buildSysDir(const char *pszFile);
 
 #define DIALOG_WIDTH    640

@@ -206,7 +206,7 @@ ErrorCode  SBarSlotWnd::attach() {
 		if (_pLoseBmp == nullptr) {
 			_pLoseBmp = new CBofBitmap(BuildSlotDir("BGNV.BMP"), pPal);
 			if (_pLoseBmp == nullptr) {
-				reportError(ERR_MEMORY);
+				reportError(ERR_MEMORY, "Unable to allocate a CBofBitmap");
 			}
 		}
 

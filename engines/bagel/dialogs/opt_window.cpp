@@ -147,40 +147,27 @@ ErrorCode CBagOptWindow::detach() {
 
 	// Destroy all buttons
 	for (int i = 0; i < NUM_SYS_BUTTONS; i++) {
-		if (_pButtons[i] != nullptr) {
-			delete _pButtons[i];
-			_pButtons[i] = nullptr;
-		}
+		delete _pButtons[i];
+		_pButtons[i] = nullptr;
 	}
 
-	if (_pFlythroughs != nullptr) {
-		delete _pFlythroughs;
-		_pFlythroughs = nullptr;
-	}
-	if (_pPanimations != nullptr) {
-		delete _pPanimations;
-		_pPanimations = nullptr;
-	}
+	delete _pFlythroughs;
+	_pFlythroughs = nullptr;
 
-	if (_pMidiVolumeScroll != nullptr) {
-		delete _pMidiVolumeScroll;
-		_pMidiVolumeScroll = nullptr;
-	}
+	delete _pPanimations;
+	_pPanimations = nullptr;
 
-	if (_pWaveVolumeScroll != nullptr) {
-		delete _pWaveVolumeScroll;
-		_pWaveVolumeScroll = nullptr;
-	}
+	delete _pMidiVolumeScroll;
+	_pMidiVolumeScroll = nullptr;
 
-	if (_pCorrectionScroll != nullptr) {
-		delete _pCorrectionScroll;
-		_pCorrectionScroll = nullptr;
-	}
+	delete _pWaveVolumeScroll;
+	_pWaveVolumeScroll = nullptr;
 
-	if (_pPanSpeedScroll != nullptr) {
-		delete _pPanSpeedScroll;
-		_pPanSpeedScroll = nullptr;
-	}
+	delete _pCorrectionScroll;
+	_pCorrectionScroll = nullptr;
+
+	delete _pPanSpeedScroll;
+	_pPanSpeedScroll = nullptr;
 
 	CBofApp::getApp()->setPalette(_pSavePalette);
 
@@ -234,7 +221,8 @@ ErrorCode CBagOptWindow::attach() {
 	for (int i = 0; i < NUM_SYS_BUTTONS; i++) {
 		assert(_pButtons[i] == nullptr);
 
-		if ((_pButtons[i] = new CBofBmpButton) != nullptr) {
+		_pButtons[i] = new CBofBmpButton;
+		if (_pButtons[i] != nullptr) {
 			CBofBitmap *pUp, *pDown, *pFocus, *pDis;
 
 			pUp = loadBitmap(buildSysDir(g_stButtons[i]._pszUp), pPal);
@@ -247,7 +235,7 @@ ErrorCode CBagOptWindow::attach() {
 			_pButtons[i]->create(g_stButtons[i]._pszName, g_stButtons[i]._nLeft, g_stButtons[i]._nTop, g_stButtons[i]._nWidth, g_stButtons[i]._nHeight, this, g_stButtons[i]._nID);
 			_pButtons[i]->show();
 		} else {
-			reportError(ERR_MEMORY);
+			reportError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
 			break;
 		}
 	}
@@ -269,7 +257,8 @@ ErrorCode CBagOptWindow::attach() {
 	// Midi volume control
 	CBofRect cRect;
 	cRect.setRect(73, 48, 73 + 120 - 1, 48 + 20 - 1);
-	if ((_pMidiVolumeScroll = new CBofScrollBar) != nullptr) {
+	_pMidiVolumeScroll = new CBofScrollBar;
+	if (_pMidiVolumeScroll != nullptr) {
 		_pMidiVolumeScroll->create("", &cRect, this, MIDI_VOL_ID);
 
 		_pMidiVolumeScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
@@ -282,7 +271,8 @@ ErrorCode CBagOptWindow::attach() {
 
 	// Digital Audio volume control
 	cRect.setRect(73, 98, 73 + 120 - 1, 98 + 20 - 1);
-	if ((_pWaveVolumeScroll = new CBofScrollBar) != nullptr) {
+	_pWaveVolumeScroll = new CBofScrollBar;
+	if (_pWaveVolumeScroll != nullptr) {
 		_pWaveVolumeScroll->create("", &cRect, this, WAVE_VOL_ID);
 
 		_pWaveVolumeScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
@@ -295,7 +285,8 @@ ErrorCode CBagOptWindow::attach() {
 
 	// Pan Correction control
 	cRect.setRect(73, 268, 73 + 120 - 1, 268 + 20 - 1);
-	if ((_pCorrectionScroll = new CBofScrollBar) != nullptr) {
+	_pCorrectionScroll = new CBofScrollBar;
+	if (_pCorrectionScroll != nullptr) {
 		_pCorrectionScroll->create("", &cRect, this, CORRECTION_ID);
 
 		_pCorrectionScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
@@ -308,7 +299,8 @@ ErrorCode CBagOptWindow::attach() {
 
 	// Pan Speed control
 	cRect.setRect(73, 318, 73 + 120 - 1, 318 + 20 - 1);
-	if ((_pPanSpeedScroll = new CBofScrollBar) != nullptr) {
+	_pPanSpeedScroll = new CBofScrollBar;
+	if (_pPanSpeedScroll != nullptr) {
 		_pPanSpeedScroll->create("", &cRect, this, PANSPEED_ID);
 
 		_pPanSpeedScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
@@ -320,14 +312,16 @@ ErrorCode CBagOptWindow::attach() {
 	}
 
 	cRect.setRect(FLYTHROUGHS_LEFT, FLYTHROUGHS_TOP, FLYTHROUGHS_LEFT + CHECKBOX_WIDTH, FLYTHROUGHS_TOP + CHECKBOX_HEIGHT);
-	if ((_pFlythroughs = new CBofCheckButton()) != nullptr) {
+	_pFlythroughs = new CBofCheckButton();
+	if (_pFlythroughs != nullptr) {
 		_pFlythroughs->loadColorScheme(&_cColorScheme);
 		_errCode = _pFlythroughs->create("", &cRect, this, FLYTHROUGHS_ID);
 		_pFlythroughs->show();
 	}
 
 	cRect.setRect(PANIMATIONS_LEFT, PANIMATIONS_TOP, PANIMATIONS_LEFT + CHECKBOX_WIDTH, PANIMATIONS_TOP + CHECKBOX_HEIGHT);
-	if ((_pPanimations = new CBofCheckButton()) != nullptr) {
+	_pPanimations = new CBofCheckButton();
+	if (_pPanimations != nullptr) {
 		_pPanimations->loadColorScheme(&_cColorScheme);
 		_errCode = _pPanimations->create("", &cRect, this, PAN_CHECK_ID);
 		_pPanimations->show();

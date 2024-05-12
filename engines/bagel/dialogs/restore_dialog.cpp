@@ -31,8 +31,6 @@
 
 namespace Bagel {
 
-#define USE_CBAGDIALOG 0
-
 #define DIALOG_WIDTH    640
 #define DIALOG_HEIGHT   480
 
