@@ -26,7 +26,7 @@ static const char *base64_test_encoded[] = {
 
 static const char *base64_validate_tests[] = {
 	"YQ", // missing padding
-	"!@#$" // characters not in encoding table
+	"!@#$", // characters not in encoding table
 	"YQ==YWJj", // data after padding
 };
 
