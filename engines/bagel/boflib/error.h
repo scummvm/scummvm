@@ -69,7 +69,7 @@ public:
 	 * @param errCode       Error to report
 	 * @param format        printf style format string
 	 */
-	void reportError(ErrorCode errCode, const char *format = nullptr, ...);
+	void reportError(ErrorCode errCode, const char *format, ...);
 
 	bool errorOccurred() {
 		return _errCode != ERR_NONE;
