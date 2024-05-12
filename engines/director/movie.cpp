@@ -98,11 +98,16 @@ Movie::Movie(Window *window) {
 }
 
 Movie::~Movie() {
-	if (_sharedCast && _sharedCast->getArchive())
-		g_director->_allOpenResFiles.remove(_sharedCast->getArchive()->getPathName());
+	if (_sharedCast && _sharedCast->getArchive()) {
+		debug(0, "@@   Clearing shared cast '%s'", _sharedCast->getArchive()->getPathName().toString().c_str());
 
-	if (_cast && _cast->getArchive())
+		g_director->_allOpenResFiles.remove(_sharedCast->getArchive()->getPathName());
+	}
+
+	if (_cast && _cast->getArchive()) {
+		debug(0, "@@   Clearing movie cast '%s'", _cast->getArchive()->getPathName().toString().c_str());
 		g_director->_allOpenResFiles.remove(_cast->getArchive()->getPathName());
+	}
 
 	delete _cast;
 	delete _sharedCast;
@@ -358,6 +363,8 @@ void Movie::loadFileInfo(Common::SeekableReadStreamEndian &stream) {
 void Movie::clearSharedCast() {
 	if (!_sharedCast)
 		return;
+
+	debug(0, "@@   Clearing shared cast '%s'", _sharedCast->getArchive()->getPathName().toString().c_str());
 
 	g_director->_allOpenResFiles.remove(_sharedCast->getArchive()->getPathName());
 
