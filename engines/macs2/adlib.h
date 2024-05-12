@@ -65,6 +65,8 @@ namespace Macs2 {
 	public:
 	void Init();
 
+	void Deinit();
+
 		// TODO: Check where these contents live
 		// Memory pointed to by [2250] global
 		Common::MemoryReadStream *data = nullptr;
