@@ -56,7 +56,7 @@ public:
 	virtual Datum getProp(const Common::String &propName) = 0;
 	virtual Common::String getPropAt(uint32 index) = 0;
 	virtual uint32 getPropCount() = 0;
-	virtual bool setProp(const Common::String &propName, const Datum &value) = 0;
+	virtual bool setProp(const Common::String &propName, const Datum &value, bool force = false) = 0;
 	virtual bool hasField(int field) = 0;
 	virtual Datum getField(int field) = 0;
 	virtual bool setField(int field, const Datum &value) = 0;
@@ -181,7 +181,7 @@ public:
 	uint32 getPropCount() override {
 		return 0;
 	};
-	bool setProp(const Common::String &propName, const Datum &value) override {
+	bool setProp(const Common::String &propName, const Datum &value, bool force = false) override {
 		return false;
 	};
 	bool hasField(int field) override {
@@ -213,11 +213,12 @@ public:
 	SymbolHash _functionHandlers;
 	Common::HashMap<uint32, Symbol> _eventHandlers;
 	Common::Array<Datum> _constants;
-	DatumHash _properties;
 	Common::HashMap<uint32, Datum> _objArray;
 	MethodHash _methodNames;
 
 private:
+	DatumHash _properties;
+	Common::Array<Common::String> _propertyNames;
 	bool _onlyInLctxContexts = false;
 
 public:
@@ -237,7 +238,7 @@ public:
 	Datum getProp(const Common::String &propName) override;
 	Common::String getPropAt(uint32 index) override;
 	uint32 getPropCount() override;
-	bool setProp(const Common::String &propName, const Datum &value) override;
+	bool setProp(const Common::String &propName, const Datum &value, bool force = false) override;
 
 	Symbol define(const Common::String &name, ScriptData *code, Common::Array<Common::String> *argNames, Common::Array<Common::String> *varNames);
 

@@ -108,7 +108,7 @@ Symbol& Symbol::operator=(const Symbol &s) {
 }
 
 bool Symbol::operator==(Symbol &s) const {
-	return ctx == s.ctx && (*name == *s.name);
+	return ctx == s.ctx && (name->equalsIgnoreCase(*s.name));
 }
 
 void Symbol::reset() {
@@ -1556,12 +1556,12 @@ Common::String Lingo::formatAllVars() {
 	if (_state->me.type == OBJECT && _state->me.u.obj->getObjType() & (kFactoryObj | kScriptObj)) {
 		ScriptContext *script = static_cast<ScriptContext *>(_state->me.u.obj);
 		result += Common::String("  Instance/property vars: \n");
-		for (auto &it : script->_properties) {
-			keyBuffer.push_back(it._key);
+		for (uint32 i = 1; i <= script->getPropCount(); i++) {
+			keyBuffer.push_back(script->getPropAt(i));
 		}
 		Common::sort(keyBuffer.begin(), keyBuffer.end());
 		for (auto &i : keyBuffer) {
-			Datum &val = script->_properties.getVal(i);
+			Datum val = script->getProp(i);
 			result += Common::String::format("    %s - [%s] %s\n", i.c_str(), val.type2str(), formatStringForDump(val.asString(true)).c_str());
 		}
 		keyBuffer.clear();

@@ -679,12 +679,12 @@ static void showVars() {
 		if (lingo->_state->me.type == OBJECT && lingo->_state->me.u.obj->getObjType() & (kFactoryObj | kScriptObj)) {
 			ScriptContext *script = static_cast<ScriptContext *>(lingo->_state->me.u.obj);
 			ImGui::TextColored(head_color, "Instance/property vars:");
-			for (auto &it : script->_properties) {
-				keyBuffer.push_back(it._key);
+			for (uint32 i = 1; i <= script->getPropCount(); i++) {
+				keyBuffer.push_back(script->getPropAt(i));
 			}
 			Common::sort(keyBuffer.begin(), keyBuffer.end());
 			for (auto &i : keyBuffer) {
-				Datum &val = script->_properties.getVal(i);
+				Datum val = script->getProp(i);
 				displayVariable(i);
 				ImGui::SameLine();
 				ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
