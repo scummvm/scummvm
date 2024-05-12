@@ -2557,13 +2557,14 @@ void EfhEngine::writeTechAndMapFiles() {
 	// This function is therefore not useful and is not implemented.
 }
 
-uint16 EfhEngine::getStringWidth(const char *buffer) {
+uint16 EfhEngine::getStringWidth(const Common::String &str) const {
+	const char *buffer = str.c_str();
 	debugC(6, kDebugEngine, "getStringWidth %s", buffer);
 
 	uint16 retVal = 0;
 
 	for (;;) {
-		uint8 curChar = (uint8) *buffer++;
+		byte curChar = (byte) *buffer++;
 		if (curChar == 0) {
 			--buffer;
 			break;

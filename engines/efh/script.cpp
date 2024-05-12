@@ -90,7 +90,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 
 			nextWord[curWordPos] = 0;
 			int16 widthNextWord = getStringWidth(nextWord);
-			int16 widthCurrentLine = spaceWidth + getStringWidth(curLine.c_str());
+			int16 widthCurrentLine = spaceWidth + getStringWidth(curLine);
 
 			if (widthCurrentLine + widthNextWord > width || curChar == 0x7C) { // '|'
 				if (curLineNb >= numbLines) {
