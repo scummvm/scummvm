@@ -1384,14 +1384,43 @@ void Script::ScriptExecutor::ExecuteScript() {
 			Func9F4D_Placeholder();
 
 			continue;
-		}
-		else if (opcode1 == 0x22) {
+		} else if (opcode1 == 0x20) {
+			// TODO: This one should add an offset to the y axis, skipping for now
+
+			// Object ID
+			Func9F4D_Placeholder();
+
+			// Offset
+			Func9F4D_Placeholder();
+		} else if (opcode1 == 0x21) {
+			// TODO: This one adds upward motion to an animation/movement
+			// Can be found when the panther jumps
+			// Object ID
+			Func9F4D_Placeholder();
+			Func9F4D_Placeholder();
+			Func9F4D_Placeholder();
+			Func9F4D_Placeholder();
+		} else if (opcode1 == 0x22) {
 			// TODO: Properly implement fn0037_C2C4 proc
 			// Based on previous experimentation, this will play the fumbling animation
 			uint16 throwaway1;
 			uint16 throwaway2;
 			Func9F4D(throwaway1, throwaway2);
 			Func9F4D(throwaway1, throwaway2);
+		} else if (opcode1 == 0x23) {
+			// TODO: Not fully understood - need to check how exactly it works
+			// Basically implements a move to (maybe in conjunction with an offset applied
+			// by opcode 0x20
+			uint32 objectID = Func9F4D_32() - 0x400;
+			uint32 x = Func9F4D_32();
+			uint32 y = Func9F4D_32();
+			uint32 unknown = Func9F4D_32();
+
+			View1 *currentView = (View1 *)_engine->findView("View1");
+			// TODO: Need to be able to address the character objects by ID, now relying
+			// on the fact that they were added in a specific order
+			Character *c = currentView->GetCharacterByIndex(objectID);
+			c->StartLerpTo(Common::Point(x, y), 2 * 1000);
 		} else if (opcode1 == 0x25) {
 			// TODO: No visual difference, so only implementing mocked reads here
 			// TODO: There is the weird "rewind" in the log here, to be investigated separately

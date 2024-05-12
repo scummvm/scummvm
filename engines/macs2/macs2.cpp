@@ -577,7 +577,7 @@ Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 }
 
 Macs2Engine::~Macs2Engine() {
-
+	_adlib->Deinit(); 
 
 }
 
