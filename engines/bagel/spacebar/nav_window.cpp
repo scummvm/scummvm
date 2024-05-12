@@ -188,7 +188,8 @@ ErrorCode CNavWindow::attach() {
 
 	_level = 0;
 
-	_pPortName = new CBofString("Yzore");      // always starts at Yzore
+	// always starts at Yzore
+	_pPortName = new CBofString("Yzore");
 	_ship = 120;
 	_cargo = 86 + 72 + 56;
 	_fuel = 40;
@@ -267,7 +268,7 @@ ErrorCode CNavWindow::attach() {
 		_pCurLoc->setPosition(_pCurPos->left, _pCurPos->top);
 
 	} else {
-		reportError(ERR_MEMORY);
+		reportError(ERR_MEMORY, "Unable to allocate a CBofSprite");
 	}
 
 	// Build all our buttons
@@ -284,7 +285,7 @@ ErrorCode CNavWindow::attach() {
 			_pButtons[i]->create(g_navButtons[i]._pszName, g_navButtons[i]._nLeft, g_navButtons[i]._nTop, g_navButtons[i]._nWidth, g_navButtons[i]._nHeight, this, g_navButtons[i]._nID);
 			_pButtons[i]->show();
 		} else {
-			reportError(ERR_MEMORY);
+			reportError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
 			break;
 		}
 	}

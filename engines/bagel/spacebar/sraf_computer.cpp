@@ -4613,7 +4613,8 @@ int SrafTextScreen::createTextScreen(CBofWindow *pParent) {
 	//  Create our text box.
 	cRect.setRect(gCompDisplay.left, gCompDisplay.top, gCompDisplay.right, gCompDisplay.bottom);
 
-	if ((_pTextBox = new CBofTextBox(this, &cRect, _text)) != nullptr) {
+	_pTextBox = new CBofTextBox(this, &cRect, _text);
+	if (_pTextBox != nullptr) {
 		_pTextBox->setPageLength(24);
 		_pTextBox->setColor(CTEXT_WHITE);
 		_pTextBox->setFont(FONT_MONO);

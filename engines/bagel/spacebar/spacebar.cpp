@@ -38,10 +38,10 @@
 namespace Bagel {
 namespace SpaceBar {
 
-#define LOGOSMK1        "$SBARDIR\\INTRO\\LOGO1.SMK"
-#define LOGOSMK2        "$SBARDIR\\INTRO\\LOGO2.SMK"
-#define LOGOSMK3        "$SBARDIR\\INTRO\\LOGO3.SMK"
-#define LOGOSMK3EX      "$SBARDIR\\INTRO\\LOGO3EX.SMK"
+#define SMK_LOGO1        "$SBARDIR\\INTRO\\LOGO1.SMK"
+#define SMK_LOGO2        "$SBARDIR\\INTRO\\LOGO2.SMK"
+#define SMK_LOGO3        "$SBARDIR\\INTRO\\LOGO3.SMK"
+#define SMK_LOGO3EX      "$SBARDIR\\INTRO\\LOGO3EX.SMK"
 
 static const BagelReg SPACEBAR_REG = {
 	"The Space Bar",
@@ -88,7 +88,8 @@ ErrorCode SpaceBarEngine::initialize() {
 	if (!errorOccurred()) {
 		bool bShowLogo = true;
 
-		if ((_masterWin = new CSBarMasterWin()) != nullptr) {
+		_masterWin = new CSBarMasterWin();
+		if (_masterWin != nullptr) {
 			// This is the primary game window
 			setMainWindow(_masterWin);
 
@@ -159,7 +160,7 @@ ErrorCode SpaceBarEngine::initialize() {
 
 				// Play intro movies, logo screens, etc...
 				if (bShowLogo) {
-					CBofString cString(LOGOSMK1);
+					CBofString cString(SMK_LOGO1);
 					MACROREPLACE(cString);
 
 					// Play the movie only if it exists
@@ -172,7 +173,7 @@ ErrorCode SpaceBarEngine::initialize() {
 					if (shouldQuit())
 						goto exit;
 
-					cString = LOGOSMK2;
+					cString = SMK_LOGO2;
 					MACROREPLACE(cString);
 					if (fileExists(cString.getBuffer())) {
 						bofPlayMovie(_masterWin, cString.getBuffer());
@@ -184,7 +185,7 @@ ErrorCode SpaceBarEngine::initialize() {
 						goto exit;
 
 					// Use hi-res movie if user has a fast machine
-					cString = (getMachineSpeed() < 100) ? LOGOSMK3EX : LOGOSMK3;
+					cString = (getMachineSpeed() < 100) ? SMK_LOGO3EX : SMK_LOGO3;
 					MACROREPLACE(cString);
 
 					if (fileExists(cString.getBuffer())) {

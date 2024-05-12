@@ -120,7 +120,7 @@ SBarSlotWnd::SBarSlotWnd() : CBagStorageDevWnd() {
 	_pSlotSound = nullptr;
 	_pLoseBmp = nullptr;
 
-	setHelpFilename(BuildSlotDir("SLOT.TXT"));
+	CBagStorageDevWnd::setHelpFilename(BuildSlotDir("SLOT.TXT"));
 
 	// Call this thing a closeup so that time won't go
 	// by when entering the closeup
@@ -174,9 +174,8 @@ ErrorCode  SBarSlotWnd::attach() {
 	_bLose = false;
 	_bFixBet = false;
 
-	if ((_pSlotSound = new CBofSound(this, BuildSlotDir(SLOT_AUDIO), SOUND_MIX, 1)) != nullptr) {
-
-	} else {
+	_pSlotSound = new CBofSound(this, BuildSlotDir(SLOT_AUDIO), SOUND_MIX, 1);
+	if (_pSlotSound == nullptr) {
 		reportError(ERR_MEMORY, "Could not allocate a CBofSound");
 	}
 
@@ -205,9 +204,8 @@ ErrorCode  SBarSlotWnd::attach() {
 		}
 
 		if (_pLoseBmp == nullptr) {
-			if ((_pLoseBmp = new CBofBitmap(BuildSlotDir("BGNV.BMP"), pPal)) != nullptr) {
-
-			} else {
+			_pLoseBmp = new CBofBitmap(BuildSlotDir("BGNV.BMP"), pPal);
+			if (_pLoseBmp == nullptr) {
 				reportError(ERR_MEMORY);
 			}
 		}
@@ -244,7 +242,7 @@ ErrorCode  SBarSlotWnd::attach() {
 			_pCredText->setWeight(TEXT_BOLD);
 			_pCredText->setText(buildString("%d", _nCredit));
 		} else {
-			reportError(ERR_MEMORY);
+			reportError(ERR_MEMORY, "Unable to allocate a CBofText");
 		}
 
 		// Setup the Bet text fields
@@ -261,7 +259,7 @@ ErrorCode  SBarSlotWnd::attach() {
 			_pBetText->setWeight(TEXT_BOLD);
 			_pBetText->setText(buildString("%d", _nBet));
 		} else {
-			reportError(ERR_MEMORY);
+			reportError(ERR_MEMORY, "Unable to allocate a CBofText");
 		}
 
 		// Setup the Odds text fields
@@ -279,7 +277,7 @@ ErrorCode  SBarSlotWnd::attach() {
 			_pOddsText->setWeight(TEXT_BOLD);
 			_pOddsText->setText("");
 		} else {
-			reportError(ERR_MEMORY);
+			reportError(ERR_MEMORY, "Unable to allocate a CBofText");
 		}
 
 		show();
@@ -292,7 +290,7 @@ ErrorCode  SBarSlotWnd::attach() {
 	if (_pBkgSnd != nullptr) {
 		_pBkgSnd->play();
 	} else {
-		reportError(ERR_MEMORY);
+		reportError(ERR_MEMORY, "Unable to allocate a CBofSound");
 	}
 
 	CBofCursor::show();
@@ -541,7 +539,7 @@ void SBarSlotWnd::calcOutcome() {
 		if (_pWinSound != nullptr) {
 			_pWinSound->play();
 		} else {
-			reportError(ERR_MEMORY);
+			reportError(ERR_MEMORY, "Unable to allocate a CBofSound");
 		}
 
 		// Calc new credit
