@@ -264,8 +264,6 @@ bool Window::setStageRect(Datum datum) {
 	// Unpack rect from datum
 	Common::Rect rect = Common::Rect(datum.u.farr->arr[0].asInt(), datum.u.farr->arr[1].asInt(), datum.u.farr->arr[2].asInt(), datum.u.farr->arr[3].asInt());
 
-	ensureMovieIsLoaded();
-
 	setInnerDimensions(rect);
 
 	return true;
