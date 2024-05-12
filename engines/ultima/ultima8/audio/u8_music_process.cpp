@@ -90,8 +90,12 @@ void U8MusicProcess::unqueueMusic() {
 }
 
 void U8MusicProcess::restoreMusic() {
-	_trackState._queued = 0;
 	_combatMusicActive = false;
+	if (_trackState._queued) {
+		_trackState._queued = _trackState._lastRequest;
+		return;
+	}
+
 	playMusic_internal(_trackState._lastRequest);
 }
 
