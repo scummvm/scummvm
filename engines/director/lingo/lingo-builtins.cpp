@@ -453,10 +453,10 @@ void LB::b_random(int nargs) {
 	Datum res;
 	// Output in D4/D5 seems to be bounded from 1-65535, regardless of input.
 	if (max <= 0) {
-		res = Datum(g_director->_rnd.getRandom(65535) + 1);
+		res = Datum((int)(g_director->_rnd.getRandom(65535) + 1));
 	} else {
 		max = MIN(max, 65535);
-		res = Datum(g_director->_rnd.getRandom(max) + 1);
+		res = Datum((int)(g_director->_rnd.getRandom(max) + 1));
 	}
 	g_lingo->push(res);
 }
