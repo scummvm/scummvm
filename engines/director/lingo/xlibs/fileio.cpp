@@ -120,18 +120,16 @@ delete object me -- deletes the open file
 
  */
 
-#include "gui/filebrowser-dialog.h"
-
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
 
 #include "director/director.h"
+#include "director/util.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
 #include "director/lingo/xlibs/fileio.h"
-#include "savestate.h"
 
 namespace Director {
 
@@ -226,14 +224,11 @@ FileIOError FileObject::open(const Common::String &origpath, const Common::Strin
 
 	if (option.hasPrefix("?")) {
 		option = option.substr(1);
-		Common::String mask = prefix + "*.txt";
-		dirSeparator = '/';
-
-		GUI::FileBrowserDialog browser(nullptr, "txt", option.equalsIgnoreCase("write") ? GUI::kFBModeSave : GUI::kFBModeLoad, mask.c_str(), origpath.c_str());
-		if (browser.runModal() <= 0) {
+		path = getFileNameFromModal(option.equalsIgnoreCase("write"), origpath, "txt");
+		if (path.empty()) {
 			return kErrorFileNotFound;
 		}
-		path = browser.getResult();
+		dirSeparator = '/';
 	} else if (!path.hasSuffixIgnoreCase(".txt")) {
 		path += ".txt";
 	}
@@ -379,27 +374,11 @@ void FileIO::m_closeFile(int nargs) {
 XOBJSTUB(FileIO::m_createFile, 0);
 
 void FileIO::m_displayOpen(int nargs) {
-	Common::String prefix = g_director->getTargetName() + '-';
-	Common::String mask = prefix + "*.txt";
-
-	GUI::FileBrowserDialog browser(nullptr, "txt", GUI::kFBModeLoad, mask.c_str());
-	Datum result("");
-	if (browser.runModal() > 0) {
-		result = browser.getResult();
-	}
-	g_lingo->push(result);
+	g_lingo->push(getFileNameFromModal(false, Common::String(), "txt"));
 }
 
 void FileIO::m_displaySave(int nargs) {
-	Common::String prefix = g_director->getTargetName() + '-';
-	Common::String mask = prefix + "*.txt";
-
-	GUI::FileBrowserDialog browser(nullptr, "txt", GUI::kFBModeSave, mask.c_str());
-	Datum result("");
-	if (browser.runModal() > 0) {
-		result = browser.getResult();
-	}
-	g_lingo->push(result);
+	g_lingo->push(getFileNameFromModal(true, Common::String(), "txt"));
 }
 
 XOBJSTUB(FileIO::m_setFilterMask, 0)

@@ -30,6 +30,7 @@
 
 #include "director/types.h"
 #include "graphics/macgui/macwindowmanager.h"
+#include "gui/filebrowser-dialog.h"
 
 #include "director/director.h"
 #include "director/movie.h"
@@ -971,6 +972,24 @@ Common::Path findAudioPath(const Common::String &path, bool currentFolder, bool 
 	Common::Path result = findPath(path, currentFolder, searchPaths, false, exts);
 	return result;
 }
+
+Common::String getFileNameFromModal(bool save, const Common::String &suggested, const char *ext) {
+	Common::String prefix = g_director->getTargetName() + '-';
+	Common::String mask = prefix + "*";
+	if (ext) {
+		mask += ".";
+		mask += ext;
+	}
+	GUI::FileBrowserDialog browser(nullptr, "txt", save ? GUI::kFBModeSave : GUI::kFBModeLoad, mask.c_str(), suggested.c_str());
+	if (browser.runModal() <= 0) {
+		return Common::String();
+	}
+	Common::String result = browser.getResult();
+	if (!result.empty() && !result.hasPrefixIgnoreCase(prefix))
+		result = prefix + result;
+	return result;
+}
+
 
 bool hasExtension(Common::String filename) {
 	uint len = filename.size();

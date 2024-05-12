@@ -558,16 +558,12 @@ void MMovieXObj::m_readFile(int nargs) {
 	Common::String prefix = g_director->getTargetName() + '-';
 	Common::String result;
 	if (origPath.empty()) {
-		Common::String mask = prefix + "*.txt";
-
-		GUI::FileBrowserDialog browser(nullptr, "txt", GUI::kFBModeLoad, mask.c_str());
-		if (browser.runModal() <= 0) {
+		path = getFileNameFromModal(false, Common::String(), "txt");
+		if (path.empty()) {
 			debugC(5, kDebugXObj, "MMovieXObj::m_readFile(): read cancelled by modal");
 			g_lingo->push(result);
 			return;
 		}
-		path = browser.getResult();
-
 	} else {
 		path = lastPathComponent(origPath, g_director->_dirSeparator);
 		if (path.hasSuffixIgnoreCase(".txt"))
@@ -623,16 +619,12 @@ void MMovieXObj::m_writeFile(int nargs) {
 
 	Common::String prefix = g_director->getTargetName() + '-';
 	if (origPath.empty()) {
-		Common::String mask = prefix + "*.txt";
-
-		GUI::FileBrowserDialog browser(nullptr, "txt", GUI::kFBModeSave, mask.c_str());
-		if (browser.runModal() <= 0) {
-			debugC(5, kDebugXObj, "MMovieXObj::m_writeFile(): write cancelled by modal");
+		path = getFileNameFromModal(false, Common::String(), "txt");
+		if (path.empty()) {
+			debugC(5, kDebugXObj, "MMovieXObj::m_writeFile(): read cancelled by modal");
 			g_lingo->push(result);
 			return;
 		}
-		path = browser.getResult();
-
 	} else {
 		path = lastPathComponent(origPath, g_director->_dirSeparator);
 		if (path.hasSuffixIgnoreCase(".txt"))
