@@ -67,30 +67,23 @@ CBofScrollBar::~CBofScrollBar() {
 
 	_szScrollText[0] = '\0';
 
-	if (_pScrollText != nullptr) {
-		delete _pScrollText;
-		_pScrollText = nullptr;
-	}
-	if (_pThumb != nullptr) {
-		delete _pThumb;
-		_pThumb = nullptr;
-	}
-	if (_pLeftBtnUp != nullptr) {
-		delete _pLeftBtnUp;
-		_pLeftBtnUp = nullptr;
-	}
-	if (_pRightBtnUp != nullptr) {
-		delete _pRightBtnUp;
-		_pRightBtnUp = nullptr;
-	}
-	if (_pLeftBtnDn != nullptr) {
-		delete _pLeftBtnDn;
-		_pLeftBtnDn = nullptr;
-	}
-	if (_pRightBtnDn != nullptr) {
-		delete _pRightBtnDn;
-		_pRightBtnDn = nullptr;
-	}
+	delete _pScrollText;
+	_pScrollText = nullptr;
+
+	delete _pThumb;
+	_pThumb = nullptr;
+
+	delete _pLeftBtnUp;
+	_pLeftBtnUp = nullptr;
+
+	delete _pRightBtnUp;
+	_pRightBtnUp = nullptr;
+
+	delete _pLeftBtnDn;
+	_pLeftBtnDn = nullptr;
+
+	delete _pRightBtnDn;
+	_pRightBtnDn = nullptr;
 }
 
 
@@ -205,92 +198,87 @@ void CBofScrollBar::setScrollRange(int nMin, int nMax, bool bRepaint) {
 ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, const char *pszLeftBtnUp, const char *pszRightBtnUp, const char *pszLeftBtnDn, const char *pszRightBtnDn) {
 	assert(isValidObject(this));
 
-	if ((pszBack != nullptr) && (pszThumb != nullptr)) {
-		_cLeftBtnRect.setRect(0, 0, 0, 0);
-		_cRightBtnRect.setRect(0, 0, 0, 0);
+	if ((pszBack == nullptr) || (pszThumb == nullptr))
+		return _errCode;
 
-		if (_pThumb != nullptr) {
-			_pThumb->eraseSprite(this);
-			delete _pThumb;
-			_pThumb = nullptr;
+	_cLeftBtnRect.setRect(0, 0, 0, 0);
+	_cRightBtnRect.setRect(0, 0, 0, 0);
+
+	if (_pThumb != nullptr) {
+		_pThumb->eraseSprite(this);
+		delete _pThumb;
+		_pThumb = nullptr;
+	}
+
+	killBackdrop();
+	setBackdrop(pszBack);
+
+	CBofPalette *pPalette = CBofApp::getApp()->getPalette();
+
+	_cBkSize = _pBackdrop->getSize();
+	_nScrollWidth = _cBkSize.cx;
+
+	_pThumb = new CBofSprite;
+	if (_pThumb != nullptr) {
+		if (_pThumb->loadSprite(pszThumb) != false) {
+			_pThumb->setMaskColor(COLOR_WHITE);
+			_cThumbSize = _pThumb->getSize();
 		}
+	}
 
-		killBackdrop();
-		setBackdrop(pszBack);
+	delete _pLeftBtnUp;
+	_pLeftBtnUp = nullptr;
 
-		CBofPalette *pPalette = CBofApp::getApp()->getPalette();
-
-		_cBkSize = _pBackdrop->getSize();
-		_nScrollWidth = _cBkSize.cx;
-
-		if ((_pThumb = new CBofSprite) != nullptr) {
-			if (_pThumb->loadSprite(pszThumb) != false) {
-				_pThumb->setMaskColor(COLOR_WHITE);
-				_cThumbSize = _pThumb->getSize();
-			}
-		}
-
+	CBofPoint cPoint;
+	if (pszLeftBtnUp != nullptr) {
+		_pLeftBtnUp = new CBofBitmap(pszLeftBtnUp, pPalette);
 		if (_pLeftBtnUp != nullptr) {
-			delete _pLeftBtnUp;
-			_pLeftBtnUp = nullptr;
+			cPoint.x = 0;
+			cPoint.y = (_pBackdrop->height() / 2) - (_pLeftBtnUp->height() / 2);
+
+			_cLeftBtnRect = _pLeftBtnUp->getRect() + cPoint;
+
+			_nOffset = _pLeftBtnUp->width();
+			_nScrollWidth -= _nOffset;
+
+		} else {
+			reportError(ERR_MEMORY, "Could not allocate a new CBofBitmap(%s)", pszLeftBtnUp);
 		}
+	}
 
-		CBofPoint cPoint;
-		if (pszLeftBtnUp != nullptr) {
-			if ((_pLeftBtnUp = new CBofBitmap(pszLeftBtnUp, pPalette)) != nullptr) {
-				cPoint.x = 0;
-				cPoint.y = (_pBackdrop->height() / 2) - (_pLeftBtnUp->height() / 2);
+	delete _pRightBtnUp;
+	_pRightBtnUp = nullptr;
 
-				_cLeftBtnRect = _pLeftBtnUp->getRect() + cPoint;
-
-				_nOffset = _pLeftBtnUp->width();
-				_nScrollWidth -= _nOffset;
-
-			} else {
-				reportError(ERR_MEMORY, "Could not allocate a new CBofBitmap(%s)", pszLeftBtnUp);
-			}
-		}
-
+	if (pszRightBtnUp != nullptr) {
+		_pRightBtnUp = new CBofBitmap(pszRightBtnUp, pPalette);
 		if (_pRightBtnUp != nullptr) {
-			delete _pRightBtnUp;
-			_pRightBtnUp = nullptr;
+			cPoint.x = _pBackdrop->width() - _pRightBtnUp->width();
+			cPoint.y = (_pBackdrop->height() / 2) - (_pRightBtnUp->height() / 2);
+			_cRightBtnRect = _pLeftBtnUp->getRect() + cPoint;
+
+			_nScrollWidth -= _cRightBtnRect.width();
+		} else {
+			reportError(ERR_MEMORY, "Could not allocate a new CBofBitmap(%s)", pszRightBtnUp);
 		}
+	}
 
-		if (pszRightBtnUp != nullptr) {
-			if ((_pRightBtnUp = new CBofBitmap(pszRightBtnUp, pPalette)) != nullptr) {
-				cPoint.x = _pBackdrop->width() - _pRightBtnUp->width();
-				cPoint.y = (_pBackdrop->height() / 2) - (_pRightBtnUp->height() / 2);
-				_cRightBtnRect = _pLeftBtnUp->getRect() + cPoint;
+	delete _pLeftBtnDn;
+	_pLeftBtnDn = nullptr;
 
-				_nScrollWidth -= _cRightBtnRect.width();
-
-			} else {
-				reportError(ERR_MEMORY, "Could not allocate a new CBofBitmap(%s)", pszRightBtnUp);
-			}
+	if (pszLeftBtnDn != nullptr) {
+		_pLeftBtnDn = new CBofBitmap(pszLeftBtnDn, pPalette);
+		if (_pLeftBtnDn == nullptr) {
+			reportError(ERR_MEMORY, "Could not allocate a new CBofBitmap(%s)", pszLeftBtnDn);
 		}
+	}
 
-		if (_pLeftBtnDn != nullptr) {
-			delete _pLeftBtnDn;
-			_pLeftBtnDn = nullptr;
-		}
-		if (pszLeftBtnDn != nullptr) {
-			if ((_pLeftBtnDn = new CBofBitmap(pszLeftBtnDn, pPalette)) != nullptr) {
+	delete _pRightBtnDn;
+	_pRightBtnDn = nullptr;
 
-			} else {
-				reportError(ERR_MEMORY, "Could not allocate a new CBofBitmap(%s)", pszLeftBtnDn);
-			}
-		}
-
-		if (_pRightBtnDn != nullptr) {
-			delete _pRightBtnDn;
-			_pRightBtnDn = nullptr;
-		}
-		if (pszRightBtnDn != nullptr) {
-			if ((_pRightBtnDn = new CBofBitmap(pszRightBtnDn, pPalette)) != nullptr) {
-
-			} else {
-				reportError(ERR_MEMORY, "Could not allocate a new CBofBitmap(%s)", pszRightBtnDn);
-			}
+	if (pszRightBtnDn != nullptr) {
+		_pRightBtnDn = new CBofBitmap(pszRightBtnDn, pPalette);
+		if (_pRightBtnDn == nullptr) {
+			reportError(ERR_MEMORY, "Could not allocate a new CBofBitmap(%s)", pszRightBtnDn);
 		}
 	}
 
