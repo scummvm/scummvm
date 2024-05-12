@@ -1115,7 +1115,7 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 		} else if (0 <= index && index < (int16)archive->names.size()) {
 			const char *name = archive->names[index].c_str();
 			debugC(5, kDebugLoading, "%d: %s", i, name);
-			_assemblyContext->_properties[name] = Datum();
+			_assemblyContext->setProp(name, Datum(), true);
 		} else {
 			warning("Property %d has unknown name id %d, skipping define", i, index);
 		}

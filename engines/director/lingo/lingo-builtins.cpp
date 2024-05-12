@@ -453,10 +453,10 @@ void LB::b_random(int nargs) {
 	Datum res;
 	// Output in D4/D5 seems to be bounded from 1-65535, regardless of input.
 	if (max <= 0) {
-		res = g_director->_rnd.getRandom(65535) + 1;
+		res = Datum(g_director->_rnd.getRandom(65535) + 1);
 	} else {
 		max = MIN(max, 65535);
-		res = g_director->_rnd.getRandom(max) + 1;
+		res = Datum(g_director->_rnd.getRandom(max) + 1);
 	}
 	g_lingo->push(res);
 }
@@ -962,7 +962,7 @@ void LB::b_getProp(int nargs) {
 	case OBJECT:
 		{
 			if (prop.type != SYMBOL) {
-				g_lingo->lingoError("b_getProp(): symbol expected");
+				g_lingo->lingoError("BUILDBOT: b_getProp(): symbol expected, got %s", prop.type2str());
 				return;
 			}
 			Datum d;
@@ -1184,7 +1184,7 @@ void LB::b_setProp(int nargs) {
 	case OBJECT:
 		{
 			if (prop.type != SYMBOL) {
-				g_lingo->lingoError("b_setProp(): symbol expected");
+				g_lingo->lingoError("BUILDBOT: b_setProp(): symbol expected, got %s", prop.type2str());
 				return;
 			}
 			// unlike the PARRAY case, OBJECT seems to create
