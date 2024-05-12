@@ -673,4 +673,9 @@ void Adlib::Init() {
 
 }
 
+void Adlib::Deinit() {
+	_opl->stop();
+	delete _opl;
+}
+
 } // End of namespace Macs2
