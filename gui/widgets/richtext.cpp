@@ -34,11 +34,12 @@
 
 namespace GUI {
 
-Common::Array<Graphics::TTFMap> ttfFamily = {
+const Graphics::TTFMap ttfFamily[] = {
 	{"NotoSans-Regular.ttf", Graphics::kMacFontRegular},
 	{"NotoSans-Bold.ttf", Graphics::kMacFontBold},
 	{"NotoSerif-Italic.ttf", Graphics::kMacFontItalic},
 	{"NotoSerif-Bold-Italic.ttf", Graphics::kMacFontBold | Graphics::kMacFontItalic},
+	{nullptr, 0}
 };
 
 RichTextWidget::RichTextWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &text, const Common::U32String &tooltip)

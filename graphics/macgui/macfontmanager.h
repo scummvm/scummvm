@@ -179,7 +179,7 @@ public:
 
 	void printFontRegistry(int debugLevel, uint32 channel);
 
-	int registerTTFFont(const Common::Array<Graphics::TTFMap> &ttfList);
+	int registerTTFFont(const Graphics::TTFMap ttfList[]);
 
 	int getFamilyId(int newId, int newSlant);
 
