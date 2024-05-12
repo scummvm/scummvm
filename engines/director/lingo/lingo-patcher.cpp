@@ -338,21 +338,21 @@ struct ScriptHandlerPatch {
 	ScriptType type;
 	uint16 id;
 	uint16 castLib;
-	const char *handlerBody;
+	const char **handlerBody;
 } const scriptHandlerPatches[] = {
-	{"kyoto", nullptr, kPlatformWindows, "ck_data\\dd_dairi\\shared.dxr", kMovieScript, 906, DEFAULT_CAST_LIB, kyotoTextEntryFix},
-	{"kyoto", nullptr, kPlatformWindows, "ck_data\\findfldr\\shared.dxr", kMovieScript, 802, DEFAULT_CAST_LIB, kyotoTextEntryFix},
-	{"kyoto", nullptr, kPlatformWindows, "ck_data\\ichi\\shared.dxr", kMovieScript, 906, DEFAULT_CAST_LIB, kyotoTextEntryFix},
-	{"kyoto", nullptr, kPlatformWindows, "ck_data\\jigoku\\shared.dxr", kMovieScript, 840, DEFAULT_CAST_LIB, kyotoTextEntryFix},
-	{"kyoto", nullptr, kPlatformWindows, "ck_data\\kusamura\\shared.dxr", kMovieScript, 906, DEFAULT_CAST_LIB, kyotoTextEntryFix},
-	{"kyoto", nullptr, kPlatformWindows, "ck_data\\map01\\shared.dxr", kMovieScript, 906, DEFAULT_CAST_LIB, kyotoTextEntryFix},
-	{"kyoto", nullptr, kPlatformWindows, "ck_data\\map02\\shared.dxr", kMovieScript, 906, DEFAULT_CAST_LIB, kyotoTextEntryFix},
-	{"kyoto", nullptr, kPlatformWindows, "ck_data\\map03\\shared.dxr", kMovieScript, 906, DEFAULT_CAST_LIB, kyotoTextEntryFix},
-	{"kyoto", nullptr, kPlatformWindows, "ck_data\\map04\\shared.dxr", kMovieScript, 906, DEFAULT_CAST_LIB, kyotoTextEntryFix},
-	{"kyoto", nullptr, kPlatformWindows, "ck_data\\opening\\shared.dxr", kMovieScript, 802, DEFAULT_CAST_LIB, kyotoTextEntryFix},
-	{"kyoto", nullptr, kPlatformWindows, "ck_data\\rajoumon\\shared.dxr", kMovieScript, 840, DEFAULT_CAST_LIB, kyotoTextEntryFix},
-	{"kyoto", nullptr, kPlatformWindows, "ck_data\\rokudou\\shared.dxr", kMovieScript, 846, DEFAULT_CAST_LIB, kyotoTextEntryFix},
-	{"amber", nullptr, kPlatformWindows, "AMBER_F\\AMBER_JB.EXE", kMovieScript, 7, DEFAULT_CAST_LIB, amberDriveDetectionFix},
+	{"kyoto", nullptr, kPlatformWindows, "ck_data\\dd_dairi\\shared.dxr", kMovieScript, 906, DEFAULT_CAST_LIB, &kyotoTextEntryFix},
+	{"kyoto", nullptr, kPlatformWindows, "ck_data\\findfldr\\shared.dxr", kMovieScript, 802, DEFAULT_CAST_LIB, &kyotoTextEntryFix},
+	{"kyoto", nullptr, kPlatformWindows, "ck_data\\ichi\\shared.dxr", kMovieScript, 906, DEFAULT_CAST_LIB, &kyotoTextEntryFix},
+	{"kyoto", nullptr, kPlatformWindows, "ck_data\\jigoku\\shared.dxr", kMovieScript, 840, DEFAULT_CAST_LIB, &kyotoTextEntryFix},
+	{"kyoto", nullptr, kPlatformWindows, "ck_data\\kusamura\\shared.dxr", kMovieScript, 906, DEFAULT_CAST_LIB, &kyotoTextEntryFix},
+	{"kyoto", nullptr, kPlatformWindows, "ck_data\\map01\\shared.dxr", kMovieScript, 906, DEFAULT_CAST_LIB, &kyotoTextEntryFix},
+	{"kyoto", nullptr, kPlatformWindows, "ck_data\\map02\\shared.dxr", kMovieScript, 906, DEFAULT_CAST_LIB, &kyotoTextEntryFix},
+	{"kyoto", nullptr, kPlatformWindows, "ck_data\\map03\\shared.dxr", kMovieScript, 906, DEFAULT_CAST_LIB, &kyotoTextEntryFix},
+	{"kyoto", nullptr, kPlatformWindows, "ck_data\\map04\\shared.dxr", kMovieScript, 906, DEFAULT_CAST_LIB, &kyotoTextEntryFix},
+	{"kyoto", nullptr, kPlatformWindows, "ck_data\\opening\\shared.dxr", kMovieScript, 802, DEFAULT_CAST_LIB, &kyotoTextEntryFix},
+	{"kyoto", nullptr, kPlatformWindows, "ck_data\\rajoumon\\shared.dxr", kMovieScript, 840, DEFAULT_CAST_LIB, &kyotoTextEntryFix},
+	{"kyoto", nullptr, kPlatformWindows, "ck_data\\rokudou\\shared.dxr", kMovieScript, 846, DEFAULT_CAST_LIB, &kyotoTextEntryFix},
+	{"amber", nullptr, kPlatformWindows, "AMBER_F\\AMBER_JB.EXE", kMovieScript, 7, DEFAULT_CAST_LIB, &amberDriveDetectionFix},
 	{nullptr, nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, nullptr},
 
 };
@@ -377,7 +377,7 @@ void LingoArchive::patchScriptHandler(ScriptType type, CastMemberID id) {
 			patch++;
 			continue;
 		}
-		patchCode(Common::U32String(patch->handlerBody), patch->type, patch->id);
+		patchCode(Common::U32String(*patch->handlerBody), patch->type, patch->id);
 		patch++;
 	}
 }
