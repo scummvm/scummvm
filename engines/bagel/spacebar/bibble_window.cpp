@@ -308,14 +308,14 @@ ErrorCode CBibbleWindow::attach() {
 		_pCreditsText->setWeight(TEXT_BOLD);
 		_pCreditsText->setText(buildString("%d", _nNumCredits));
 	} else {
-		reportError(ERR_MEMORY);
+		reportError(ERR_MEMORY, "Unable to allocate a CBofText");
 	}
 
 	// Pre-load the "One", "Two", "Three", and "Four" shouts
 	for (int i = 0; i < BIBBLE_NUM_SHOUTS; i++) {
 		_pShouts[i] = new CBofSound(this, BuildDir(pszShouts[i]), SOUND_MIX);
 		if (_pShouts[i] == nullptr) {
-			reportError(ERR_MEMORY);
+			reportError(ERR_MEMORY, "Unable to allocate a CBofSound");
 			break;
 		}
 	}
@@ -330,7 +330,7 @@ ErrorCode CBibbleWindow::attach() {
 		_pBall->linkSprite();
 
 	} else {
-		reportError(ERR_MEMORY);
+		reportError(ERR_MEMORY, "Unable to allocate a CBofSprite");
 	}
 
 	// Pre-load the bibbles
@@ -342,7 +342,7 @@ ErrorCode CBibbleWindow::attach() {
 		_pMasterBibble->setAnimated(false);
 
 	} else {
-		reportError(ERR_MEMORY);
+		reportError(ERR_MEMORY, "Unable to allocate a CBofSprite");
 	}
 
 	// Dup the bibbles
@@ -353,7 +353,7 @@ ErrorCode CBibbleWindow::attach() {
 			_pBibble[i]->linkSprite();
 
 		} else {
-			reportError(ERR_MEMORY);
+			reportError(ERR_MEMORY, "Unable to duplicate a CBofSprite");
 		}
 	}
 
@@ -365,7 +365,7 @@ ErrorCode CBibbleWindow::attach() {
 		_pArch1->setZOrder(SPRITE_MIDDLE);
 		_pArch1->linkSprite();
 	} else {
-		reportError(ERR_MEMORY);
+		reportError(ERR_MEMORY, "Unable to allocate a CBofSprite");
 	}
 
 	_pArch2 = new CBofSprite;
@@ -376,7 +376,7 @@ ErrorCode CBibbleWindow::attach() {
 		_pArch2->linkSprite();
 
 	} else {
-		reportError(ERR_MEMORY);
+		reportError(ERR_MEMORY, "Unable to allocate a CBofSprite");
 	}
 
 	_pArch3 = new CBofSprite;
@@ -387,7 +387,7 @@ ErrorCode CBibbleWindow::attach() {
 		_pArch3->linkSprite();
 
 	} else {
-		reportError(ERR_MEMORY);
+		reportError(ERR_MEMORY, "Unable to allocate a CBofSprite");
 	}
 
 
@@ -406,7 +406,7 @@ ErrorCode CBibbleWindow::attach() {
 			_pButtons[i]->show();
 
 		} else {
-			reportError(ERR_MEMORY);
+			reportError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
 			break;
 		}
 	}
@@ -415,7 +415,7 @@ ErrorCode CBibbleWindow::attach() {
 	if (_pBkgSnd != nullptr) {
 		_pBkgSnd->play();
 	} else {
-		reportError(ERR_MEMORY);
+		reportError(ERR_MEMORY, "Unable to allocate a CBofSound");
 	}
 
 	// No bet area currently selected

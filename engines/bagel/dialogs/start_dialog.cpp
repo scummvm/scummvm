@@ -87,7 +87,7 @@ void CBagStartDialog::onInitDialog() {
 			_buttons[i]->show();
 
 		} else {
-			reportError(ERR_MEMORY);
+			reportError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
 			break;
 		}
 	}

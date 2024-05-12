@@ -176,7 +176,7 @@ ErrorCode  SBarSlotWnd::attach() {
 
 	_pSlotSound = new CBofSound(this, BuildSlotDir(SLOT_AUDIO), SOUND_MIX, 1);
 	if (_pSlotSound == nullptr) {
-		reportError(ERR_MEMORY, "Could not allocate a CBofSound");
+		reportError(ERR_MEMORY, "Unable to allocate a CBofSound");
 	}
 
 

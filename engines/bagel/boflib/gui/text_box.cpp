@@ -106,15 +106,12 @@ ErrorCode CBofTextBox::setBox(const CBofRect *pRect) {
 	assert(pRect != nullptr);
 
 	// Remove previous text field (if any)
-	if (_pTextField != nullptr) {
-		delete _pTextField;
-		_pTextField = nullptr;
-	}
+	delete _pTextField;
+	_pTextField = nullptr;
 
 	// Create a new text field the size of the box we want
-	if ((_pTextField = new CBofText(pRect, JUSTIFY_WRAP)) != nullptr) {
-
-	} else {
+	_pTextField = new CBofText(pRect, JUSTIFY_WRAP);
+	if (_pTextField == nullptr) {
 		reportError(ERR_MEMORY, "Could not allocate a CBofText");
 	}
 

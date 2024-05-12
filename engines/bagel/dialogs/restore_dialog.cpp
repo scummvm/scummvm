@@ -115,20 +115,19 @@ ErrorCode CBagRestoreDialog::attach() {
 	for (int i = 0; i < NUM_RESTORE_BTNS; i++) {
 		assert(_pButtons[i] == nullptr);
 
-		if ((_pButtons[i] = new CBofBmpButton) != nullptr) {
-			CBofBitmap *pUp, *pDown, *pFocus, *pDis;
-
-			pUp = loadBitmap(buildSysDir(g_stButtons[i]._pszUp), pPal);
-			pDown = loadBitmap(buildSysDir(g_stButtons[i]._pszDown), pPal);
-			pFocus = loadBitmap(buildSysDir(g_stButtons[i]._pszFocus), pPal);
-			pDis = loadBitmap(buildSysDir(g_stButtons[i]._pszDisabled), pPal);
+		_pButtons[i] = new CBofBmpButton;
+		if (_pButtons[i] != nullptr) {
+			CBofBitmap *pUp = loadBitmap(buildSysDir(g_stButtons[i]._pszUp), pPal);
+			CBofBitmap *pDown = loadBitmap(buildSysDir(g_stButtons[i]._pszDown), pPal);
+			CBofBitmap *pFocus = loadBitmap(buildSysDir(g_stButtons[i]._pszFocus), pPal);
+			CBofBitmap *pDis = loadBitmap(buildSysDir(g_stButtons[i]._pszDisabled), pPal);
 
 			_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 
 			_pButtons[i]->create(g_stButtons[i]._pszName, g_stButtons[i]._nLeft, g_stButtons[i]._nTop, g_stButtons[i]._nWidth, g_stButtons[i]._nHeight, this, g_stButtons[i]._nID);
 			_pButtons[i]->show();
 		} else {
-			reportError(ERR_MEMORY);
+			reportError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
 			break;
 		}
 	}
@@ -155,7 +154,9 @@ ErrorCode CBagRestoreDialog::attach() {
 
 	// Create a list box for the user to choose the slot to save into
 	CBofRect cRect(LIST_X, LIST_Y, LIST_X + LIST_DX - 1, LIST_Y + LIST_DY - 1);
-	if ((_pListBox = new CBofListBox()) != nullptr) {
+
+	_pListBox = new CBofListBox();
+	if (_pListBox != nullptr) {
 		_pListBox->create("SaveGameList", &cRect, this);
 
 		_pListBox->setPointSize(LIST_FONT_SIZE);
@@ -163,10 +164,7 @@ ErrorCode CBagRestoreDialog::attach() {
 
 		// Set a color for selection highlighting
 		if (_pBackdrop != nullptr) {
-			CBofPalette *pPal2;
-
-			pPal2 = _pBackdrop->getPalette();
-
+			CBofPalette *pPal2 = _pBackdrop->getPalette();
 			byte iPalIdx = pPal2->getNearestIndex(RGB(255, 0, 0));
 
 			_pListBox->setHighlightColor(pPal2->getColor(iPalIdx));
@@ -195,14 +193,15 @@ ErrorCode CBagRestoreDialog::attach() {
 		_pListBox->updateWindow();
 
 	} else {
-		reportError(ERR_MEMORY);
+		reportError(ERR_MEMORY, "Unable to allocate a CBofListBox");
 	}
 
 	if (!errorOccurred()) {
 		// There could not already be a text field
 		assert(_pText == nullptr);
 
-		if ((_pText = new CBofText) != nullptr) {
+		_pText = new CBofText;
+		if (_pText != nullptr) {
 			cRect.setRect(170, 405, 470, 435);
 			_pText->setupText(&cRect, JUSTIFY_LEFT, FORMAT_CENTER_LEFT);
 			_pText->SetSize(16);
@@ -231,28 +230,19 @@ ErrorCode CBagRestoreDialog::detach() {
 
 	CBagCursor::hideSystemCursor();
 
-	if (_pText != nullptr) {
-		delete _pText;
-		_pText = nullptr;
-	}
+	delete _pText;
+	_pText = nullptr;
 
-	if (_pScrollBar != nullptr) {
-		delete _pScrollBar;
-		_pScrollBar = nullptr;
-	}
+	delete _pScrollBar;
+	_pScrollBar = nullptr;
 
-	if (_pListBox != nullptr) {
-		delete _pListBox;
-		_pListBox = nullptr;
-	}
+	delete _pListBox;
+	_pListBox = nullptr;
 
 	// Destroy all buttons
 	for (int i = 0; i < NUM_RESTORE_BTNS; i++) {
-
-		if (_pButtons[i] != nullptr) {
-			delete _pButtons[i];
-			_pButtons[i] = nullptr;
-		}
+		delete _pButtons[i];
+		_pButtons[i] = nullptr;
 	}
 
 	_nSelectedItem = -1;

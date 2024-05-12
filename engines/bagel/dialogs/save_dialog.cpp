@@ -120,20 +120,19 @@ ErrorCode CBagSaveDialog::attach() {
 	for (int i = 0; i < NUM_BUTTONS; i++) {
 		assert(_pButtons[i] == nullptr);
 
-		if ((_pButtons[i] = new CBofBmpButton) != nullptr) {
-			CBofBitmap *pUp, *pDown, *pFocus, *pDis;
-
-			pUp = loadBitmap(buildSysDir(g_stButtons[i]._up), pPal);
-			pDown = loadBitmap(buildSysDir(g_stButtons[i]._down), pPal);
-			pFocus = loadBitmap(buildSysDir(g_stButtons[i]._focus), pPal);
-			pDis = loadBitmap(buildSysDir(g_stButtons[i]._disabled), pPal);
+		_pButtons[i] = new CBofBmpButton;
+		if (_pButtons[i] != nullptr) {
+			CBofBitmap *pUp = loadBitmap(buildSysDir(g_stButtons[i]._up), pPal);
+			CBofBitmap *pDown = loadBitmap(buildSysDir(g_stButtons[i]._down), pPal);
+			CBofBitmap *pFocus = loadBitmap(buildSysDir(g_stButtons[i]._focus), pPal);
+			CBofBitmap *pDis = loadBitmap(buildSysDir(g_stButtons[i]._disabled), pPal);
 
 			_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
 
 			_pButtons[i]->create(g_stButtons[i]._name, g_stButtons[i]._left, g_stButtons[i]._top, g_stButtons[i]._width, g_stButtons[i]._height, this, g_stButtons[i]._id);
 			_pButtons[i]->show();
 		} else {
-			reportError(ERR_MEMORY);
+			reportError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
 			break;
 		}
 	}
@@ -160,7 +159,8 @@ ErrorCode CBagSaveDialog::attach() {
 	assert(_pListBox == nullptr);
 
 	// Create a list box for the user to choose the slot to save into
-	if ((_pListBox = new CBofListBox()) != nullptr) {
+	_pListBox = new CBofListBox();
+	if (_pListBox != nullptr) {
 		CBofRect cRect(LIST_X, LIST_Y, LIST_X + LIST_DX - 1, LIST_Y + LIST_DY - 1);
 
 		_pListBox->create("SaveGameList", &cRect, this);
@@ -201,7 +201,7 @@ ErrorCode CBagSaveDialog::attach() {
 		_pListBox->updateWindow();
 
 	} else {
-		reportError(ERR_MEMORY);
+		reportError(ERR_MEMORY, "Unable to allocate a CBofListBox");
 	}
 
 	if (_nSelectedItem != -1) {
@@ -231,27 +231,19 @@ ErrorCode CBagSaveDialog::detach() {
 
 	CBagCursor::hideSystemCursor();
 
-	if (_pScrollBar != nullptr) {
-		delete _pScrollBar;
-		_pScrollBar = nullptr;
-	}
+	delete _pScrollBar;
+	_pScrollBar = nullptr;
 
-	if (_pEditText != nullptr) {
-		delete _pEditText;
-		_pEditText = nullptr;
-	}
+	delete _pEditText;
+	_pEditText = nullptr;
 
-	if (_pListBox != nullptr) {
-		delete _pListBox;
-		_pListBox = nullptr;
-	}
+	delete _pListBox;
+	_pListBox = nullptr;
 
 	// Destroy all buttons
 	for (int i = 0; i < NUM_BUTTONS; i++) {
-		if (_pButtons[i] != nullptr) {
-			delete _pButtons[i];
-			_pButtons[i] = nullptr;
-		}
+		delete _pButtons[i];
+		_pButtons[i] = nullptr;
 	}
 
 	_nSelectedItem = -1;
