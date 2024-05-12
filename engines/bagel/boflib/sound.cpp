@@ -673,7 +673,7 @@ bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot) {
 		nFlags |= SOUND_AUTODELETE;
 
 		if (!fileExists(pszSoundFile)) {
-			logError(buildString("Warning: Sound File '%s' not found", pszSoundFile));
+			logWarning(buildString("Sound File '%s' not found", pszSoundFile));
 			return false;
 		}
 
@@ -714,7 +714,7 @@ bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot, bool bW
 		}
 
 		if (!fileExists(pszSoundFile)) {
-			logError(buildString("Warning: Sound File '%s' not found", pszSoundFile));
+			logWarning(buildString("Sound File '%s' not found", pszSoundFile));
 			return false;
 		}
 

@@ -161,11 +161,11 @@ ErrorCode CBagTextObject::attach() {
 					bofFree(pTextBuff);
 
 				} else {
-					reportError(ERR_MEMORY);
+					reportError(ERR_MEMORY, "Unable to allocate a Text buffer of %u bytes", nFileLen + 1);
 				}
 
 			} else {
-				reportError(ERR_MEMORY);
+				reportError(ERR_FOPEN, "Failed to create a CBofFile for %s", getFileName().getBuffer());
 			}
 		}
 
@@ -190,7 +190,7 @@ ErrorCode CBagTextObject::attach() {
 			recalcTextRect(false);
 
 		} else {
-			reportError(ERR_MEMORY);
+			reportError(ERR_MEMORY, "Unable to allocate a CBofString");
 		}
 	}
 

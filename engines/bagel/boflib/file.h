@@ -195,11 +195,6 @@ public:
 	uint32 getPosition();
 
 	/**
-	 * Set the length of a file
-	 */
-	ErrorCode setLength(uint32 lNewLength);
-
-	/**
 	 * Get the length of a file
 	 */
 	uint32 getLength();

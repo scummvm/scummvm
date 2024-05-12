@@ -116,7 +116,7 @@ CBofPalette *CBagPanWindow::setSlideBitmap(const CBofString &xSlideBmp, const CB
 		// Make sure the file was found
 		if (_pSlideBitmap == nullptr || !_pSlideBitmap->isValid()) {
 			_pPalette = nullptr;
-			reportError(ERR_FOPEN);
+			reportError(ERR_FOPEN, "Unable to open file %s", xSlideBmp.getBuffer());
 		} else {
 			// Set the bagel crap
 			_pPalette = _pSlideBitmap->getPalette();
@@ -135,7 +135,7 @@ CBofPalette *CBagPanWindow::setSlideBitmap(const CBofString &xSlideBmp, const CB
 			}
 			_pViewPortBitmap = new CBofBitmap(DEF_WIDTH + 1, _pSlideBitmap->height() + 1, _pPalette);
 			if (!_pViewPortBitmap || !_pViewPortBitmap->height() || !_pViewPortBitmap->width()) {
-				reportError(ERR_FOPEN);
+				reportError(ERR_FOPEN, "Error opening bitmap");
 			}
 			setBackdrop(pBackDropBitmap);
 

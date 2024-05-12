@@ -49,11 +49,6 @@ void logError(const char *msg) {
 		debug("%s%s", g_pszLogTypes[1], msg);
 }
 
-void logFatal(const char *msg) {
-	if (gDebugLevel > 0)
-		debug("%s%s", g_pszLogTypes[0], msg);
-}
-
 const char *buildString(const char *pszFormat, ...) {
 	static char szBuf[256];
 	va_list argptr;

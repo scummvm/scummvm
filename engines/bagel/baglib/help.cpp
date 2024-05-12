@@ -97,7 +97,7 @@ ErrorCode CBagHelp::attach() {
 		_okButton->create("OK", HELP_OK_X, HELP_OK_Y, HELP_OK_CX, HELP_OK_CY, this, HELP_OK_ID);
 		_okButton->show();
 	} else {
-		reportError(ERR_MEMORY);
+		reportError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
 	}
 
 	_pageUp = new CBofBmpButton;
@@ -113,7 +113,7 @@ ErrorCode CBagHelp::attach() {
 		_pageUp->create("PageUp", HELP_PAGE_UP_X, HELP_PAGE_UP_Y, HELP_PAGE_UP_CX, HELP_PAGE_UP_CY, this, HELP_PAGE_UP_ID);
 		_pageUp->show();
 	} else {
-		reportError(ERR_MEMORY);
+		reportError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
 	}
 
 	_pageDown = new CBofBmpButton;
@@ -129,7 +129,7 @@ ErrorCode CBagHelp::attach() {
 		_pageDown->create("PageDown", HELP_PAGE_DOWN_X, HELP_PAGE_DOWN_Y, HELP_PAGE_DOWN_CX, HELP_PAGE_DOWN_CY, this, HELP_PAGE_DOWN_ID);
 		_pageDown->show();
 	} else {
-		reportError(ERR_MEMORY);
+		reportError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
 	}
 
 	CBofFile file(_textFile, CBF_BINARY | CBF_READONLY);

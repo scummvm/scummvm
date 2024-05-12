@@ -103,12 +103,11 @@ ErrorCode CBagCharacterObject::attach() {
 		CBofFile cInputFile(filename.getBuffer());
 
 		_binBufLen = cInputFile.getLength();
-
-		if ((_binBuf = (char *)bofAlloc(_binBufLen + 1)) != nullptr) {
+		_binBuf = (char *)bofAlloc(_binBufLen + 1);
+		if (_binBuf != nullptr) {
 			cInputFile.read(_binBuf, _binBufLen);
-
 		} else {
-			reportError(ERR_MEMORY);
+			reportError(ERR_MEMORY, "Unable to allocate a buffer of %d bytes", _binBufLen + 1);
 		}
 	}
 

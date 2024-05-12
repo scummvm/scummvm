@@ -1651,7 +1651,7 @@ void CBagMasterWin::doRestore(StBagelSave *saveBuf) {
 					memset(_objList, 0, MAX_OBJS * sizeof(StObj));
 
 				} else {
-					reportError(ERR_MEMORY);
+					reportError(ERR_MEMORY, "Unable to allocate a array of %d StObj", MAX_OBJS);
 				}
 			}
 

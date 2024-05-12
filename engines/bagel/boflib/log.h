@@ -34,7 +34,6 @@ const char *buildString(const char *pszFormat, ...);
 extern void logInfo(const char *msg);
 extern void logWarning(const char *msg);
 extern void logError(const char *msg);
-extern void logFatal(const char *msg);
 
 } // namespace Bagel
 

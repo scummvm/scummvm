@@ -75,7 +75,7 @@ ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CB
 	if (bmp != nullptr) {
 		bitmap = new CBofBitmap(bmp, pal);
 		if (bitmap == nullptr) {
-			reportError(ERR_MEMORY);
+			reportError(ERR_MEMORY, "Unable to allocate a CBofBitmap");
 		}
 	}
 
@@ -92,7 +92,7 @@ ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CB
 			bitmap->fillRect(rect, pal->getNearestIndex(RGB(255, 255, 255)));
 
 		} else {
-			reportError(ERR_MEMORY);
+			reportError(ERR_MEMORY, "Unable to allocate a CBofBitmap");
 		}
 	}
 

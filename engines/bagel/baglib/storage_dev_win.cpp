@@ -1437,7 +1437,7 @@ ErrorCode CBagStorageDevWnd::loadFile(const CBofString &sFile) {
 	// is pre-loaded
 	int nLength = fileLength(sWldFile);
 	if (nLength <= 0)
-		reportError(ERR_FOPEN);
+		reportError(ERR_FOPEN, "Unable to open file %s", sWldFile.getBuffer());
 	else {
 		char *pBuf = (char *)bofAlloc(nLength);
 		if (pBuf != nullptr) {
@@ -1458,7 +1458,7 @@ ErrorCode CBagStorageDevWnd::loadFile(const CBofString &sFile) {
 			bofFree(pBuf);
 
 		} else {
-			reportError(ERR_MEMORY);
+			reportError(ERR_MEMORY, "Unable to allocate a buffer of %d bytes", nLength);
 		}
 	}
 
@@ -1718,7 +1718,7 @@ ErrorCode CBagStorageDevDlg::loadFile(const CBofString &sFile) {
 	// Force buffer to be big enough so that the entire script is pre-loaded
 	int nLength = fileLength(sWldFile);
 	if (nLength <= 0)
-		reportError(ERR_FOPEN);
+		reportError(ERR_FOPEN, "Unable to open file %s", sWldFile.getBuffer());
 	else {
 		char *pBuf = (char *)bofAlloc(nLength);
 		if (pBuf != nullptr) {
