@@ -69,7 +69,7 @@ bool Socket::receive() {
 
 	int receivedLength = enet_socket_receive(_socket, &_address, &buffer, 1);
 	if (receivedLength < 0) {
-		warning("ENet: An error has occured when receiving data from socket");
+		warning("ENet: An error has occurred when receiving data from socket");
 		return false;
 	}
 
