@@ -180,6 +180,11 @@ MODULE_OBJS += \
 	graphics/opengl/pipelines/shader.o
 endif
 
+ifdef USE_METAL_CPP
+MODULE_OBJS += \
+	graphics/metal/metal-graphics.o
+endif
+
 # SDL specific source files.
 # We cannot just check $BACKEND = sdl, as various other backends
 # derive from the SDL backend, and they all need the following files.
