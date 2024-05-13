@@ -14,6 +14,10 @@ For a more comprehensive changelog of the latest experimental code, see:
   - The "Aspect ratio correction" option within the Global Options section
     is now active by default.
 
+ AGI:
+  - Fixed duration of timed text boxes. They were shown only half as long as
+    they should be, making e.g. the King's Quest III intro hard to read.
+
  AGS:
   - Syncronized with upstream AGS 3.6.0.58
   - Fixed glitchy staircase in old Maniac Mansion Mania episodes, caused by
