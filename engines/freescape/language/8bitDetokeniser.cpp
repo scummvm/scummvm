@@ -48,7 +48,7 @@ Common::String detokenise8bitCondition(Common::Array<uint16> &tokenisedCondition
 		 2, 1, 1, 2, 1, 1, 2, 1,
 		 1, 2, 2, 1, 2, 0, 0, 0,
 		 1, 1, 0, 1, 1, 1, 1, 1,
-		 2, 2, 1, 1, 0, 1, 0, 0,
+		 2, 2, 1, 1, 1, 1, 0, 0,
 		 0, 1, 0, 0, 0, 0, 2, 2,
 		 1};
 
@@ -303,6 +303,16 @@ Common::String detokenise8bitCondition(Common::Array<uint16> &tokenisedCondition
 			currentInstruction = FCLInstruction(Token::PRINT);
 			break;
 
+		case 35:
+			detokenisedStream += "SCREEN (";
+			currentInstruction = FCLInstruction(Token::SCREEN);
+			break;
+
+		case 36: // Not sure about this one
+			detokenisedStream += "SETFLAGS (";
+			currentInstruction = FCLInstruction(Token::MODE);
+			break;
+
 		case 37:
 			detokenisedStream += "STARTANIM (";
 			currentInstruction = FCLInstruction(Token::STARTANIM);
@@ -350,6 +360,14 @@ Common::String detokenise8bitCondition(Common::Array<uint16> &tokenisedCondition
 			bytePointer++;
 			numberOfArguments = 0;
 			break;
+
+		/*
+		case 22:
+		case 23:
+		case 24:
+			UNUSED
+		*/
+
 		case 26:
 			detokenisedStream += "REDRAW";
 			currentInstruction = FCLInstruction(Token::REDRAW);
@@ -391,11 +409,6 @@ Common::String detokenise8bitCondition(Common::Array<uint16> &tokenisedCondition
 		case 20:
 			detokenisedStream += "SETVAR (v";
 			currentInstruction = FCLInstruction(Token::SETVAR);
-			break;
-
-		case 35:
-			detokenisedStream += "SCREEN (";
-			currentInstruction = FCLInstruction(Token::SCREEN);
 			break;
 
 		case 44:
