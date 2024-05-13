@@ -165,7 +165,7 @@ int AgiEngine::decodeView(byte *resourceData, uint16 resourceSize, int16 viewNr)
 		//  relativeCelOffset[0]:WORD
 		//  relativeCelOffset[1]:WORD
 		//  etc.
-		int16 loopHeaderCelCount = resourceData[loopOffset];
+		byte loopHeaderCelCount = resourceData[loopOffset];
 
 		loopData->celCount = loopHeaderCelCount;
 		loopData->cel = nullptr;
@@ -192,8 +192,8 @@ int AgiEngine::decodeView(byte *resourceData, uint16 resourceSize, int16 viewNr)
 				//  height:BYTE
 				//  Transparency + Mirroring:BYTE
 				//  celData follows
-				int16 celHeaderWidth = resourceData[celOffset + 0];
-				int16 celHeaderHeight = resourceData[celOffset + 1];
+				byte celHeaderWidth = resourceData[celOffset + 0];
+				byte celHeaderHeight = resourceData[celOffset + 1];
 				byte celHeaderTransparencyMirror = resourceData[celOffset + 2];
 
 				byte celHeaderClearKey;
