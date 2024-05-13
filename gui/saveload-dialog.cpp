@@ -740,6 +740,7 @@ void SaveLoadChooserSimple::updateSaveList() {
 	int saveSlot = 0;
 	Common::U32StringArray saveNames;
 	ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal;
+	Common::U32String emptyDesc;
 	for (SaveStateList::const_iterator x = _saveList.begin(); x != _saveList.end(); ++x) {
 		// Handle gaps in the list of save games
 		saveSlot = x->getSaveSlot();
@@ -747,7 +748,7 @@ void SaveLoadChooserSimple::updateSaveList() {
 			while (curSlot < saveSlot) {
 				SaveStateDescriptor dummySave(_metaEngine, curSlot, "");
 				_saveList.insert_at(curSlot, dummySave);
-				saveNames.push_back(GUI::ListWidget::getThemeColor(color) + dummySave.getDescription());
+				saveNames.push_back(emptyDesc);
 				curSlot++;
 			}
 
@@ -785,8 +786,6 @@ void SaveLoadChooserSimple::updateSaveList() {
 	}
 #endif
 
-	Common::U32String emptyDesc;
-	color = ThemeEngine::kFontColorNormal;
 	for (int i = curSlot; i <= maximumSaveSlots; i++) {
 		saveNames.push_back(emptyDesc);
 		SaveStateDescriptor dummySave(_metaEngine, i, "");
