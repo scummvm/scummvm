@@ -114,20 +114,17 @@ ErrorCode CBagRestoreDialog::attach() {
 		assert(_pButtons[i] == nullptr);
 
 		_pButtons[i] = new CBofBmpButton;
-		if (_pButtons[i] != nullptr) {
-			CBofBitmap *pUp = loadBitmap(buildSysDir(g_stButtons[i]._pszUp), pPal);
-			CBofBitmap *pDown = loadBitmap(buildSysDir(g_stButtons[i]._pszDown), pPal);
-			CBofBitmap *pFocus = loadBitmap(buildSysDir(g_stButtons[i]._pszFocus), pPal);
-			CBofBitmap *pDis = loadBitmap(buildSysDir(g_stButtons[i]._pszDisabled), pPal);
+		if (_pButtons[i] == nullptr)
+			fatalError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
 
-			_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
+		CBofBitmap *pUp = loadBitmap(buildSysDir(g_stButtons[i]._pszUp), pPal);
+		CBofBitmap *pDown = loadBitmap(buildSysDir(g_stButtons[i]._pszDown), pPal);
+		CBofBitmap *pFocus = loadBitmap(buildSysDir(g_stButtons[i]._pszFocus), pPal);
+		CBofBitmap *pDis = loadBitmap(buildSysDir(g_stButtons[i]._pszDisabled), pPal);
 
-			_pButtons[i]->create(g_stButtons[i]._pszName, g_stButtons[i]._nLeft, g_stButtons[i]._nTop, g_stButtons[i]._nWidth, g_stButtons[i]._nHeight, this, g_stButtons[i]._nID);
-			_pButtons[i]->show();
-		} else {
-			reportError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
-			break;
-		}
+		_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
+		_pButtons[i]->create(g_stButtons[i]._pszName, g_stButtons[i]._nLeft, g_stButtons[i]._nTop, g_stButtons[i]._nWidth, g_stButtons[i]._nHeight, this, g_stButtons[i]._nID);
+		_pButtons[i]->show();
 	}
 
 	if (_nSelectedItem == -1) {
@@ -154,67 +151,61 @@ ErrorCode CBagRestoreDialog::attach() {
 	CBofRect cRect(LIST_X, LIST_Y, LIST_X + LIST_DX - 1, LIST_Y + LIST_DY - 1);
 
 	_pListBox = new CBofListBox();
-	if (_pListBox != nullptr) {
-		_pListBox->create("SaveGameList", &cRect, this);
+	if (_pListBox == nullptr)
+		fatalError(ERR_MEMORY, "Unable to allocate a CBofListBox");
 
-		_pListBox->setPointSize(LIST_FONT_SIZE);
-		_pListBox->setItemHeight(LIST_TEXT_DY);
+	_pListBox->create("SaveGameList", &cRect, this);
+	_pListBox->setPointSize(LIST_FONT_SIZE);
+	_pListBox->setItemHeight(LIST_TEXT_DY);
 
-		// Set a color for selection highlighting
-		if (_pBackdrop != nullptr) {
-			CBofPalette *pPal2 = _pBackdrop->getPalette();
-			byte iPalIdx = pPal2->getNearestIndex(RGB(255, 0, 0));
+	// Set a color for selection highlighting
+	if (_pBackdrop != nullptr) {
+		CBofPalette *pPal2 = _pBackdrop->getPalette();
+		byte iPalIdx = pPal2->getNearestIndex(RGB(255, 0, 0));
 
-			_pListBox->setHighlightColor(pPal2->getColor(iPalIdx));
-		}
-
-		// Fill the list box with save game entries
-		for (int i = 0; i < nNumSavedGames; i++) {
-			Common::String desc = "Empty";
-
-			for (const auto &entry : _savesList) {
-				if (entry.getSaveSlot() == (i + 1)) {
-					desc = entry.getDescription();
-					break;
-				}
-			}
-
-			_pListBox->addToTail(desc.c_str(), false);
-		}
-
-		// Must be a valid item by now
-		if (_nSelectedItem != -1) {
-			_pListBox->setSelectedItem(_nSelectedItem, false);
-		}
-
-		_pListBox->show();
-		_pListBox->updateWindow();
-
-	} else {
-		reportError(ERR_MEMORY, "Unable to allocate a CBofListBox");
+		_pListBox->setHighlightColor(pPal2->getColor(iPalIdx));
 	}
+
+	// Fill the list box with save game entries
+	for (int i = 0; i < nNumSavedGames; i++) {
+		Common::String desc = "Empty";
+
+		for (const auto &entry : _savesList) {
+			if (entry.getSaveSlot() == (i + 1)) {
+				desc = entry.getDescription();
+				break;
+			}
+		}
+
+		_pListBox->addToTail(desc.c_str(), false);
+	}
+
+	// Must be a valid item by now
+	if (_nSelectedItem != -1) {
+		_pListBox->setSelectedItem(_nSelectedItem, false);
+	}
+
+	_pListBox->show();
+	_pListBox->updateWindow();
 
 	if (!errorOccurred()) {
 		// There could not already be a text field
 		assert(_pText == nullptr);
 
 		_pText = new CBofText;
-		if (_pText != nullptr) {
-			cRect.setRect(170, 405, 470, 435);
-			_pText->setupText(&cRect, JUSTIFY_LEFT, FORMAT_CENTER_LEFT);
-			_pText->SetSize(16);
-			_pText->setWeight(TEXT_BOLD);
+		if (_pText == nullptr)
+			fatalError(ERR_MEMORY, "Could not allocate a CBofText for the Restore Dialog");
 
-			// Set initial selected item
-			if (_pListBox != nullptr && _nSelectedItem != -1) {
-				_pText->setText(_pListBox->getText(_nSelectedItem));
+		cRect.setRect(170, 405, 470, 435);
+		_pText->setupText(&cRect, JUSTIFY_LEFT, FORMAT_CENTER_LEFT);
+		_pText->SetSize(16);
+		_pText->setWeight(TEXT_BOLD);
 
-			} else {
-				_pText->setText("");
-			}
-
+		// Set initial selected item
+		if (_pListBox != nullptr && _nSelectedItem != -1) {
+			_pText->setText(_pListBox->getText(_nSelectedItem));
 		} else {
-			reportError(ERR_MEMORY, "Could not allocate a CBofText for the Restore Dialog");
+			_pText->setText("");
 		}
 	}
 

@@ -88,19 +88,17 @@ void CBagRestartDialog::onInitDialog() {
 		assert(_pButtons[i] == nullptr);
 
 		_pButtons[i] = new CBofBmpButton;
-		if (_pButtons[i] != nullptr) {
-			CBofBitmap *pUp = loadBitmap(buildSysDir(g_stRestartButtons[i]._pszUp), pPal);
-			CBofBitmap *pDown = loadBitmap(buildSysDir(g_stRestartButtons[i]._pszDown), pPal);
-			CBofBitmap *pFocus = loadBitmap(buildSysDir(g_stRestartButtons[i]._pszFocus), pPal);
-			CBofBitmap *pDis = loadBitmap(buildSysDir(g_stRestartButtons[i]._pszDisabled), pPal);
+		if (_pButtons[i] == nullptr)
+			fatalError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
 
-			_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
-			_pButtons[i]->create(g_stRestartButtons[i]._pszName, g_stRestartButtons[i]._nLeft, g_stRestartButtons[i]._nTop, g_stRestartButtons[i]._nWidth, g_stRestartButtons[i]._nHeight, this, g_stRestartButtons[i]._nID);
-			_pButtons[i]->show();
-		} else {
-			reportError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
-			break;
-		}
+		CBofBitmap *pUp = loadBitmap(buildSysDir(g_stRestartButtons[i]._pszUp), pPal);
+		CBofBitmap *pDown = loadBitmap(buildSysDir(g_stRestartButtons[i]._pszDown), pPal);
+		CBofBitmap *pFocus = loadBitmap(buildSysDir(g_stRestartButtons[i]._pszFocus), pPal);
+		CBofBitmap *pDis = loadBitmap(buildSysDir(g_stRestartButtons[i]._pszDisabled), pPal);
+
+		_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
+		_pButtons[i]->create(g_stRestartButtons[i]._pszName, g_stRestartButtons[i]._nLeft, g_stRestartButtons[i]._nTop, g_stRestartButtons[i]._nWidth, g_stRestartButtons[i]._nHeight, this, g_stRestartButtons[i]._nID);
+		_pButtons[i]->show();
 	}
 
 	// Show System cursor
@@ -133,7 +131,6 @@ void CBagRestartDialog::onPaint(CBofRect *pRect) {
 	assert(isValidObject(this));
 
 	paintBackdrop(pRect);
-
 	validateAnscestors();
 }
 
