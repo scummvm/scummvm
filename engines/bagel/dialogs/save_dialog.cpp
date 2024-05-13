@@ -119,26 +119,24 @@ ErrorCode CBagSaveDialog::attach() {
 		assert(_pButtons[i] == nullptr);
 
 		_pButtons[i] = new CBofBmpButton;
-		if (_pButtons[i] != nullptr) {
-			CBofBitmap *pUp = loadBitmap(buildSysDir(g_stButtons[i]._up), pPal);
-			CBofBitmap *pDown = loadBitmap(buildSysDir(g_stButtons[i]._down), pPal);
-			CBofBitmap *pFocus = loadBitmap(buildSysDir(g_stButtons[i]._focus), pPal);
-			CBofBitmap *pDis = loadBitmap(buildSysDir(g_stButtons[i]._disabled), pPal);
+		if (_pButtons[i] == nullptr)
+			fatalError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
 
-			_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
+		CBofBitmap *pUp = loadBitmap(buildSysDir(g_stButtons[i]._up), pPal);
+		CBofBitmap *pDown = loadBitmap(buildSysDir(g_stButtons[i]._down), pPal);
+		CBofBitmap *pFocus = loadBitmap(buildSysDir(g_stButtons[i]._focus), pPal);
+		CBofBitmap *pDis = loadBitmap(buildSysDir(g_stButtons[i]._disabled), pPal);
 
-			_pButtons[i]->create(g_stButtons[i]._name, g_stButtons[i]._left, g_stButtons[i]._top, g_stButtons[i]._width, g_stButtons[i]._height, this, g_stButtons[i]._id);
-			_pButtons[i]->show();
-		} else {
-			reportError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
-			break;
-		}
+		_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
+		_pButtons[i]->create(g_stButtons[i]._name, g_stButtons[i]._left, g_stButtons[i]._top, g_stButtons[i]._width, g_stButtons[i]._height, this, g_stButtons[i]._id);
+		_pButtons[i]->show();
 	}
 
 	// The edit text control must not be currently allocated
 	assert(_pEditText == nullptr);
 
-	if ((_pEditText = new CBofEditText("", EDIT_X, EDIT_Y, EDIT_DX, EDIT_DY, this)) != nullptr) {
+	_pEditText = new CBofEditText("", EDIT_X, EDIT_Y, EDIT_DX, EDIT_DY, this);
+	if (_pEditText != nullptr) {
 		_pEditText->setText("");
 		_pEditText->show();
 	}
@@ -158,49 +156,46 @@ ErrorCode CBagSaveDialog::attach() {
 
 	// Create a list box for the user to choose the slot to save into
 	_pListBox = new CBofListBox();
-	if (_pListBox != nullptr) {
-		CBofRect cRect(LIST_X, LIST_Y, LIST_X + LIST_DX - 1, LIST_Y + LIST_DY - 1);
+	if (_pListBox == nullptr)
+		fatalError(ERR_MEMORY, "Unable to allocate a CBofListBox");
 
-		_pListBox->create("SaveGameList", &cRect, this);
+	CBofRect cRect(LIST_X, LIST_Y, LIST_X + LIST_DX - 1, LIST_Y + LIST_DY - 1);
 
-		_pListBox->setPointSize(LIST_FONT_SIZE);
-		_pListBox->setItemHeight(LIST_TEXT_DY);
+	_pListBox->create("SaveGameList", &cRect, this);
+	_pListBox->setPointSize(LIST_FONT_SIZE);
+	_pListBox->setItemHeight(LIST_TEXT_DY);
 
-		// Set a color for selection highlighting
-		if (_pBackdrop != nullptr) {
-			CBofPalette *pPal2 = _pBackdrop->getPalette();
-			byte iPalIdx = pPal2->getNearestIndex(RGB(255, 0, 0));
+	// Set a color for selection highlighting
+	if (_pBackdrop != nullptr) {
+		CBofPalette *pPal2 = _pBackdrop->getPalette();
+		byte iPalIdx = pPal2->getNearestIndex(RGB(255, 0, 0));
 
-			_pListBox->setHighlightColor(pPal2->getColor(iPalIdx));
-		}
-
-		// Fill the list box with save game entries
-		for (int i = 0; i < MAX_SAVED_GAMES; i++) {
-			char title[MAX_SAVE_TITLE];
-			Common::strcpy_s(title, "Empty");		// Default empty string
-
-			for (const auto &entry : _savesList) {
-				if (entry.getSaveSlot() == (i + 1)) {
-					Common::String desc = entry.getDescription();
-					Common::strcpy_s(title, desc.c_str());
-
-					if (_nSelectedItem == -1) {
-						_nSelectedItem = i;
-						_pEditText->setText(desc.c_str());
-					}
-					break;
-				}
-			}
-
-			_pListBox->addToTail(title, false);
-		}
-
-		_pListBox->show();
-		_pListBox->updateWindow();
-
-	} else {
-		reportError(ERR_MEMORY, "Unable to allocate a CBofListBox");
+		_pListBox->setHighlightColor(pPal2->getColor(iPalIdx));
 	}
+
+	// Fill the list box with save game entries
+	for (int i = 0; i < MAX_SAVED_GAMES; i++) {
+		char title[MAX_SAVE_TITLE];
+		Common::strcpy_s(title, "Empty");		// Default empty string
+
+		for (const auto &entry : _savesList) {
+			if (entry.getSaveSlot() == (i + 1)) {
+				Common::String desc = entry.getDescription();
+				Common::strcpy_s(title, desc.c_str());
+
+				if (_nSelectedItem == -1) {
+					_nSelectedItem = i;
+					_pEditText->setText(desc.c_str());
+				}
+				break;
+			}
+		}
+
+		_pListBox->addToTail(title, false);
+	}
+
+	_pListBox->show();
+	_pListBox->updateWindow();
 
 	if (_nSelectedItem != -1) {
 		if (_pEditText != nullptr) {

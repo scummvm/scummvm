@@ -283,7 +283,6 @@ ErrorCode CBibbleWindow::attach() {
 				// The sprite object start in the script at 500
 				CBagObject *pObj = pSDev->getObject(500 + i);
 				if (pObj != nullptr) {
-
 					int nPayOff = pObj->getState();
 					g_engine->g_cBetAreas[i]._nPayOff1 = PAY_OFFS[nPayOff]._nPay1;
 					g_engine->g_cBetAreas[i]._nPayOff2 = PAY_OFFS[nPayOff]._nPay2;
@@ -298,125 +297,105 @@ ErrorCode CBibbleWindow::attach() {
 
 	// Setup the text fields
 	_pCreditsText = new CBofText;
-	if (_pCreditsText != nullptr) {
-		CBofRect cRect(CREDITS_AREA_X1, CREDITS_AREA_Y1, CREDITS_AREA_X2, CREDITS_AREA_Y2);
+	if (_pCreditsText == nullptr)
+		fatalError(ERR_MEMORY, "Unable to allocate a CBofText");
 
-		_pCreditsText->setupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
-		_pCreditsText->setColor(CTEXT_WHITE);
+	CBofRect cRect(CREDITS_AREA_X1, CREDITS_AREA_Y1, CREDITS_AREA_X2, CREDITS_AREA_Y2);
 
-		_pCreditsText->SetSize(mapWindowsPointSize(20));
-		_pCreditsText->setWeight(TEXT_BOLD);
-		_pCreditsText->setText(buildString("%d", _nNumCredits));
-	} else {
-		reportError(ERR_MEMORY, "Unable to allocate a CBofText");
-	}
+	_pCreditsText->setupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
+	_pCreditsText->setColor(CTEXT_WHITE);
+	_pCreditsText->SetSize(mapWindowsPointSize(20));
+	_pCreditsText->setWeight(TEXT_BOLD);
+	_pCreditsText->setText(buildString("%d", _nNumCredits));
 
 	// Pre-load the "One", "Two", "Three", and "Four" shouts
 	for (int i = 0; i < BIBBLE_NUM_SHOUTS; i++) {
 		_pShouts[i] = new CBofSound(this, BuildDir(pszShouts[i]), SOUND_MIX);
-		if (_pShouts[i] == nullptr) {
-			reportError(ERR_MEMORY, "Unable to allocate a CBofSound");
-			break;
-		}
+		if (_pShouts[i] == nullptr)
+			fatalError(ERR_MEMORY, "Unable to allocate a CBofSound");
 	}
 
 	// Pre-load the ball
 	_pBall = new CBofSprite;
-	if (_pBall != nullptr) {
-		_pBall->loadSprite(BuildDir(BALL_BMP), BALL_CELS);
-		_pBall->setMaskColor(MASK_COLOR);
-		_pBall->setZOrder(SPRITE_HINDMOST);
-		_pBall->setAnimated(true);
-		_pBall->linkSprite();
+	if (_pBall == nullptr)
+		fatalError(ERR_MEMORY, "Unable to allocate a CBofSprite");
 
-	} else {
-		reportError(ERR_MEMORY, "Unable to allocate a CBofSprite");
-	}
+	_pBall->loadSprite(BuildDir(BALL_BMP), BALL_CELS);
+	_pBall->setMaskColor(MASK_COLOR);
+	_pBall->setZOrder(SPRITE_HINDMOST);
+	_pBall->setAnimated(true);
+	_pBall->linkSprite();
 
 	// Pre-load the bibbles
 	_pMasterBibble = new CBofSprite;
-	if (_pMasterBibble != nullptr) {
-		_pMasterBibble->loadSprite(BuildDir(BIBBLE_BMP), BIBBLE_CELS);
-		_pMasterBibble->setMaskColor(MASK_COLOR);
-		_pMasterBibble->setZOrder(SPRITE_TOPMOST);
-		_pMasterBibble->setAnimated(false);
+	if (_pMasterBibble == nullptr)
+		fatalError(ERR_MEMORY, "Unable to allocate a CBofSprite");
 
-	} else {
-		reportError(ERR_MEMORY, "Unable to allocate a CBofSprite");
-	}
+	_pMasterBibble->loadSprite(BuildDir(BIBBLE_BMP), BIBBLE_CELS);
+	_pMasterBibble->setMaskColor(MASK_COLOR);
+	_pMasterBibble->setZOrder(SPRITE_TOPMOST);
+	_pMasterBibble->setAnimated(false);
 
 	// Dup the bibbles
 	for (int i = 0; i < BIBBLE_NUM_BIBBLES; i++) {
 		_pBibble[i] = _pMasterBibble->duplicateSprite();
-		if (_pBibble[i] != nullptr) {
-			_pBibble[i]->setPosition(nBibbleXPos[i], nBibbleYPos[i]);
-			_pBibble[i]->linkSprite();
+		if (_pBibble[i] == nullptr)
+			fatalError(ERR_MEMORY, "Unable to duplicate a CBofSprite");
 
-		} else {
-			reportError(ERR_MEMORY, "Unable to duplicate a CBofSprite");
-		}
+		_pBibble[i]->setPosition(nBibbleXPos[i], nBibbleYPos[i]);
+		_pBibble[i]->linkSprite();
 	}
 
 	// Load the arch bitmaps that the ball needs to go behind
 	_pArch1 = new CBofSprite;
-	if (_pArch1 != nullptr) {
-		_pArch1->loadSprite(BuildDir(ARCH1_BMP));
-		_pArch1->setMaskColor(MASK_COLOR);
-		_pArch1->setZOrder(SPRITE_MIDDLE);
-		_pArch1->linkSprite();
-	} else {
-		reportError(ERR_MEMORY, "Unable to allocate a CBofSprite");
-	}
+	if (_pArch1 == nullptr)
+		fatalError(ERR_MEMORY, "Unable to allocate a CBofSprite");
+
+	_pArch1->loadSprite(BuildDir(ARCH1_BMP));
+	_pArch1->setMaskColor(MASK_COLOR);
+	_pArch1->setZOrder(SPRITE_MIDDLE);
+	_pArch1->linkSprite();
 
 	_pArch2 = new CBofSprite;
-	if (_pArch2 != nullptr) {
-		_pArch2->loadSprite(BuildDir(ARCH2_BMP));
-		_pArch2->setMaskColor(MASK_COLOR);
-		_pArch2->setZOrder(SPRITE_MIDDLE);
-		_pArch2->linkSprite();
+	if (_pArch2 == nullptr)
+		fatalError(ERR_MEMORY, "Unable to allocate a CBofSprite");
 
-	} else {
-		reportError(ERR_MEMORY, "Unable to allocate a CBofSprite");
-	}
+	_pArch2->loadSprite(BuildDir(ARCH2_BMP));
+	_pArch2->setMaskColor(MASK_COLOR);
+	_pArch2->setZOrder(SPRITE_MIDDLE);
+	_pArch2->linkSprite();
 
 	_pArch3 = new CBofSprite;
-	if (_pArch3 != nullptr) {
-		_pArch3->loadSprite(BuildDir(ARCH3_BMP));
-		_pArch3->setMaskColor(MASK_COLOR);
-		_pArch3->setZOrder(SPRITE_MIDDLE);
-		_pArch3->linkSprite();
+	if (_pArch3 == nullptr)
+		fatalError(ERR_MEMORY, "Unable to allocate a CBofSprite");
 
-	} else {
-		reportError(ERR_MEMORY, "Unable to allocate a CBofSprite");
-	}
+	_pArch3->loadSprite(BuildDir(ARCH3_BMP));
+	_pArch3->setMaskColor(MASK_COLOR);
+	_pArch3->setZOrder(SPRITE_MIDDLE);
+	_pArch3->linkSprite();
 
 
 	// Build all our buttons
 	for (int i = 0; i < BIBBLE_NUM_BUTTONS; i++) {
 		_pButtons[i] = new CBofBmpButton;
-		if (_pButtons[i] != nullptr) {
+		if (_pButtons[i] == nullptr)
+			fatalError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
 
-			CBofBitmap *pUp = loadBitmap(BuildDir(g_stButtons[i]._pszUp), pPal);
-			CBofBitmap *pDown = loadBitmap(BuildDir(g_stButtons[i]._pszDown), pPal);
-			CBofBitmap *pFocus = loadBitmap(BuildDir(g_stButtons[i]._pszFocus), pPal);
-			CBofBitmap *pDis = loadBitmap(BuildDir(g_stButtons[i]._pszDisabled), pPal);
+		CBofBitmap *pUp = loadBitmap(BuildDir(g_stButtons[i]._pszUp), pPal);
+		CBofBitmap *pDown = loadBitmap(BuildDir(g_stButtons[i]._pszDown), pPal);
+		CBofBitmap *pFocus = loadBitmap(BuildDir(g_stButtons[i]._pszFocus), pPal);
+		CBofBitmap *pDis = loadBitmap(BuildDir(g_stButtons[i]._pszDisabled), pPal);
 
-			_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
-			_pButtons[i]->create(g_stButtons[i]._pszName, g_stButtons[i]._nLeft, g_stButtons[i]._nTop, g_stButtons[i]._nWidth, g_stButtons[i]._nHeight, this, g_stButtons[i]._nID);
-			_pButtons[i]->show();
-
-		} else {
-			reportError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
-			break;
-		}
+		_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
+		_pButtons[i]->create(g_stButtons[i]._pszName, g_stButtons[i]._nLeft, g_stButtons[i]._nTop, g_stButtons[i]._nWidth, g_stButtons[i]._nHeight, this, g_stButtons[i]._nID);
+		_pButtons[i]->show();
 	}
 
 	_pBkgSnd = new CBofSound(this, BuildDir(CASINO_AUDIO), SOUND_MIX, 99999);
-	if (_pBkgSnd != nullptr) {
-		_pBkgSnd->play();
-	} else {
-		reportError(ERR_MEMORY, "Unable to allocate a CBofSound");
-	}
+	if (_pBkgSnd == nullptr)
+		fatalError(ERR_MEMORY, "Unable to allocate a CBofSound");
+
+	_pBkgSnd->play();
 
 	// No bet area currently selected
 	_pSelected = nullptr;

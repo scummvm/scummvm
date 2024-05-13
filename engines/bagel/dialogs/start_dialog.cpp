@@ -76,20 +76,18 @@ void CBagStartDialog::onInitDialog() {
 	for (int i = 0; i < NUM_START_BTNS; i++) {
 		assert(_buttons[i] == nullptr);
 
-		if ((_buttons[i] = new CBofBmpButton) != nullptr) {
-			CBofBitmap *pUp = loadBitmap(buildSysDir(g_stStartButtons[i]._pszUp), pPal);
-			CBofBitmap *pDown = loadBitmap(buildSysDir(g_stStartButtons[i]._pszDown), pPal);
-			CBofBitmap *pFocus = loadBitmap(buildSysDir(g_stStartButtons[i]._pszFocus), pPal);
-			CBofBitmap *pDis = loadBitmap(buildSysDir(g_stStartButtons[i]._pszDisabled), pPal);
+		_buttons[i] = new CBofBmpButton;
+		if (_buttons[i] == nullptr)
+			fatalError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
 
-			_buttons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
-			_buttons[i]->create(g_stStartButtons[i]._pszName, g_stStartButtons[i]._nLeft, g_stStartButtons[i]._nTop, g_stStartButtons[i]._nWidth, g_stStartButtons[i]._nHeight, this, g_stStartButtons[i]._nID);
-			_buttons[i]->show();
+		CBofBitmap *pUp = loadBitmap(buildSysDir(g_stStartButtons[i]._pszUp), pPal);
+		CBofBitmap *pDown = loadBitmap(buildSysDir(g_stStartButtons[i]._pszDown), pPal);
+		CBofBitmap *pFocus = loadBitmap(buildSysDir(g_stStartButtons[i]._pszFocus), pPal);
+		CBofBitmap *pDis = loadBitmap(buildSysDir(g_stStartButtons[i]._pszDisabled), pPal);
 
-		} else {
-			reportError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
-			break;
-		}
+		_buttons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
+		_buttons[i]->create(g_stStartButtons[i]._pszName, g_stStartButtons[i]._nLeft, g_stStartButtons[i]._nTop, g_stStartButtons[i]._nWidth, g_stStartButtons[i]._nHeight, this, g_stStartButtons[i]._nID);
+		_buttons[i]->show();
 	}
 
 	// Disable the restore button if there are no saved games
@@ -109,10 +107,8 @@ void CBagStartDialog::onClose() {
 
 	// Destroy all buttons
 	for (int i = 0; i < NUM_START_BTNS; i++) {
-		if (_buttons[i] != nullptr) {
-			delete _buttons[i];
-			_buttons[i] = nullptr;
-		}
+		delete _buttons[i];
+		_buttons[i] = nullptr;
 	}
 
 	killBackground();
@@ -125,7 +121,6 @@ void CBagStartDialog::onPaint(CBofRect *pRect) {
 	assert(isValidObject(this));
 
 	paintBackdrop(pRect);
-
 	validateAnscestors();
 }
 
