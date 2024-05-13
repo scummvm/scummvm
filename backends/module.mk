@@ -184,6 +184,7 @@ ifdef USE_METAL_CPP
 MODULE_OBJS += \
 	graphics/metal/framebuffer.o \
 	graphics/metal/metal-graphics.o \
+	graphics/metal/renderer.o \
 	graphics/metal/shader.o \
 	graphics/metal/texture.o \
 	graphics/metal/pipelines/pipeline.o
