@@ -611,7 +611,9 @@ void ListWidget::drawWidget() {
 		}
 	}
 
-	EditableWidget::drawWidget();
+	if (_editMode) {
+		EditableWidget::drawWidget();
+	}
 }
 
 Common::Rect ListWidget::getEditRect() const {
@@ -704,8 +706,6 @@ void ListWidget::abortEditMode() {
 	// undo any changes made
 	assert(_selectedItem >= 0);
 	_editMode = false;
-	//drawCaret(true);
-	//markAsDirty();
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
