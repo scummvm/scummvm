@@ -92,7 +92,7 @@ public:
 	 * to the given message.
 	 *
 	 * In case no stream is associated with this logger, this function will
-	 * quit immediatly.
+	 * quit immediately.
 	 *
 	 * @param message            The message to write.
 	 * @param printTimeOnNewline Whether to print a timestamp on the start of
