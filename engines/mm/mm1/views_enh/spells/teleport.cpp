@@ -38,7 +38,7 @@ bool Teleport::msgFocus(const FocusMessage &msg) {
 	ScrollView::msgFocus(msg);
 
 	_mode = SELECT_DIRECTION;
-	return 0;
+	return false;
 }
 
 void Teleport::draw() {
