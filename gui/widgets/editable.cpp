@@ -107,7 +107,7 @@ bool EditableWidget::tryInsertChar(Common::u32char_type_t c, int pos) {
 	return true;
 }
 
-int EditableWidget::caretVisualPos(int logicalPos) {
+int EditableWidget::caretVisualPos(int logicalPos) const {
 	return Common::convertBiDiU32String(_editString + " ").getVisualPosition(logicalPos);
 }
 
