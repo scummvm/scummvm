@@ -32,6 +32,8 @@ struct Viewport;
 
 namespace Metal {
 
+class Pipeline;
+
 /**
  * Object describing a framebuffer Metal can render to.
  */
@@ -127,7 +129,7 @@ public:
 	void copyRenderStateFrom(const Framebuffer &other, uint copyMask);
 
 protected:
-	bool isActive() const { return false; }
+	bool isActive() const { return _pipeline != nullptr; }
 
 	MTL::Viewport *_viewport;
 	void applyViewport();
@@ -159,7 +161,7 @@ public:
 	/**
 	 * Accessor to activate framebuffer for pipeline.
 	 */
-	void activate();
+	void activate(Pipeline *pipeline);
 
 	/**
 	 * Accessor to deactivate framebuffer from pipeline.
@@ -172,6 +174,8 @@ protected:
 	float _clearColor[4];
 
 private:
+	Pipeline *_pipeline;
+
 	void applyClearColor();
 
 	BlendMode _blendState;

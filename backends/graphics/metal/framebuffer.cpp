@@ -22,6 +22,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/graphics/metal/framebuffer.h"
+#include "backends/graphics/metal/pipelines/pipeline.h"
 #include "backends/graphics/metal/texture.h"
 
 #include <Metal/Metal.hpp>
@@ -30,11 +31,14 @@ namespace Metal {
 
 Framebuffer::Framebuffer()
 	: _viewport(new MTL::Viewport()), _projectionMatrix(),
-	  _clearColor(),
+	  _pipeline(nullptr), _clearColor(),
 	  _blendState(kBlendModeDisabled), _scissorBox() {
 }
 
-void Framebuffer::activate() {
+void Framebuffer::activate(Pipeline *pipeline) {
+	assert(pipeline);
+	_pipeline = pipeline;
+
 	applyViewport();
 	applyProjectionMatrix();
 	applyClearColor();
@@ -47,6 +51,8 @@ void Framebuffer::activate() {
 
 void Framebuffer::deactivate() {
 	deactivateInternal();
+
+	_pipeline = nullptr;
 }
 
 void Framebuffer::setClearColor(float r, float g, float b, float a) {
@@ -104,26 +110,33 @@ void Framebuffer::setViewport(int x, int y, int w, int h) {
 }
 
 void Framebuffer::applyViewport() {
-	//TODO: Implement
+	assert(_pipeline);
+	_pipeline->setViewport(_viewport->originX, _viewport->originY, _viewport->width, _viewport->height);
 }
 
 void Framebuffer::applyProjectionMatrix() {
-	//TODO: Implement
+	assert(_pipeline);
+	_pipeline->setProjectionMatrix(_projectionMatrix);
 }
 
 void Framebuffer::applyClearColor() {
-	//TODO: Implement
+	assert(_pipeline);
+	_pipeline->setClearColor(_clearColor[0], _clearColor[1], _clearColor[2], _clearColor[3]);
 }
 
 void Framebuffer::applyBlendState() {
-	//TODO: Implement
+	assert(_pipeline);
+	_pipeline->setBlendMode(_blendState);
 }
 
 void Framebuffer::applyScissorTestState() {
+	assert(_pipeline);
+	_pipeline->enableScissorTest(_scissorTestState);
 }
 
 void Framebuffer::applyScissorBox() {
-	//TODO: Implement
+	assert(_pipeline);
+	_pipeline->setScissorBox(_scissorBox[0], _scissorBox[1], _scissorBox[2], _scissorBox[3]);
 }
 
 void Framebuffer::copyRenderStateFrom(const Framebuffer &other, uint copyMask) {

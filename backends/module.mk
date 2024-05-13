@@ -185,7 +185,8 @@ MODULE_OBJS += \
 	graphics/metal/framebuffer.o \
 	graphics/metal/metal-graphics.o \
 	graphics/metal/shader.o \
-	graphics/metal/texture.o
+	graphics/metal/texture.o \
+	graphics/metal/pipelines/pipeline.o
 endif
 
 # SDL specific source files.
