@@ -30,7 +30,7 @@ namespace NGI {
 
 BehaviorManager::BehaviorManager() {
 	_scene = nullptr;
-	_isActive = 1;
+	_isActive = true;
 }
 
 BehaviorManager::~BehaviorManager() {

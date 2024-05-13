@@ -36,7 +36,7 @@ namespace NGI {
 void sceneDbgMenu_initScene(Scene *sc) {
 	g_vars->selector = sc->getPictureObjectById(PIC_SCD_SEL, 0);
 	getGameLoaderInteractionController()->disableFlag24();
-	setInputDisabled(0);
+	setInputDisabled(false);
 }
 
 GameObject *sceneHandlerDbgMenu_getObjectAtXY(int x, int y) {

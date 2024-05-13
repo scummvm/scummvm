@@ -46,11 +46,11 @@ void sceneFinal_initScene() {
 	g_nmi->_gameLoader->loadScene(SC_FINAL4);
 	g_nmi->accessScene(SC_FINAL4)->setPictureObjectsFlag4();
 
-	getGameLoaderInventory()->setIsLocked(0);
+	getGameLoaderInventory()->setIsLocked(false);
 	getGameLoaderInventory()->slideIn();
 
-	g_nmi->_updateFlag = 0;
-	g_nmi->_flgCanOpenMap = 0;
+	g_nmi->_updateFlag = false;
+	g_nmi->_flgCanOpenMap = false;
 
 	g_vars->sceneFinal_var01 = 0;
 	g_vars->sceneFinal_var02 = 0;
