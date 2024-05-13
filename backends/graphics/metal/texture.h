@@ -311,6 +311,65 @@ private:
 	Graphics::Surface _userPixelData;
 };
 
+class TextureTarget;
+class CLUT8LookUpPipeline;
+class Renderer;
+
+class TextureCLUT8GPU : public Surface {
+public:
+	TextureCLUT8GPU(MTL::Device *device, Renderer *renderer);
+	~TextureCLUT8GPU() override;
+
+	void destroy() override;
+
+	void recreate() override;
+
+	void enableLinearFiltering(bool enable) override;
+
+	void allocate(uint width, uint height) override;
+
+	bool isDirty() const override { return _paletteDirty || Surface::isDirty(); }
+
+	uint getWidth() const override { return _userPixelData.w; }
+	uint getHeight() const override { return _userPixelData.h; }
+
+	Graphics::PixelFormat getFormat() const override;
+
+	bool hasPalette() const override { return true; }
+
+	void setColorKey(uint colorKey) override;
+	void setPalette(uint start, uint colors, const byte *palData) override;
+
+	Graphics::Surface *getSurface() override { return &_userPixelData; }
+	const Graphics::Surface *getSurface() const override { return &_userPixelData; }
+
+	void updateMetalTexture() override;
+	const MetalTexture &getMetalTexture() const override;
+
+	static bool isSupportedByContext() {
+		return true;
+	}
+private:
+	void lookUpColors();
+
+	MTL::Device *_device;
+	MetalTexture _clut8Texture;
+	MetalTexture _paletteTexture;
+
+	TextureTarget *_target;
+	CLUT8LookUpPipeline *_clut8Pipeline;
+
+	float _clut8Vertices[4*2];
+
+	Graphics::Surface _clut8Data;
+	Graphics::Surface _userPixelData;
+
+	Renderer *_renderer;
+
+	byte _palette[4 * 256];
+	bool _paletteDirty;
+};
+
 } // end namespace Metal
 
 #endif // BACKENDS_GRAPHICS_METAL_TEXTURE_H
