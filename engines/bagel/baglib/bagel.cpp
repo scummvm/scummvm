@@ -59,10 +59,8 @@ CBagel::~CBagel() {
 	release();
 
 	// Empty the file cache.
-	if (_cacheFileList) {
-		delete _cacheFileList;
-		_cacheFileList = nullptr;
-	}
+	delete _cacheFileList;
+	_cacheFileList = nullptr;
 
 	_szAppName[0] = '\0';
 	_pMainWnd = nullptr;
@@ -174,10 +172,8 @@ ErrorCode CBagel::shutdown() {
 
 	// Just in case the child class forgot to delete the main window,
 	// I'll do it.
-	if (_pMainWnd != nullptr) {
-		delete _pMainWnd;
-		_pMainWnd = nullptr;
-	}
+	delete _pMainWnd;
+	_pMainWnd = nullptr;
 
 	return CBofApp::shutdown();
 }

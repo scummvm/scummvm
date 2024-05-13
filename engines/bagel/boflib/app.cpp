@@ -137,10 +137,10 @@ ErrorCode CBofApp::runApp() {
 			limiter.startFrame();
 			continue;
 
-		} else if (_consoleVideo) {
-			delete _consoleVideo;
-			_consoleVideo = nullptr;
 		}
+
+		delete _consoleVideo;
+		_consoleVideo = nullptr;
 
 		// Handle sounds and timers
 		CBofSound::audioTask();
@@ -187,25 +187,15 @@ ErrorCode CBofApp::shutdown() {
 }
 
 
-ErrorCode CBofApp::preShutDown() {
-	return _errCode;
-}
-
-ErrorCode CBofApp::postShutDown() {
-	if (_pWindow != nullptr) {
-		delete _pWindow;
-		_pWindow = nullptr;
-	}
+void CBofApp::postShutDown() {
+	delete _pWindow;
+	_pWindow = nullptr;
 
 	// No more palettes
 	_pPalette = nullptr;
 
-	if (_pDefPalette != nullptr) {
-		delete _pDefPalette;
-		_pDefPalette = nullptr;
-	}
-
-	return _errCode;
+	delete _pDefPalette;
+	_pDefPalette = nullptr;
 }
 
 void CBofApp::setPalette(CBofPalette *pPalette) {

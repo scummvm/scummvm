@@ -4172,28 +4172,30 @@ void SrafComputer::notifyBoss(CBofString &sSoundFile, int nStafferID) {         
 	// Play the voice file... Depends on if we have a voice file or a text file...
 	// the last three will tell us.
 
-	if (sSoundFile.find(".WAV") != -1 ||
-	        sSoundFile.find(".wav") != -1) {
+	if (sSoundFile.find(".WAV") != -1 || sSoundFile.find(".wav") != -1) {
 		CBofCursor::hide();
 		BofPlaySound(sSoundFile.getBuffer(), SOUND_WAVE);
 		CBofCursor::show();
 	} else if (sSoundFile.find(".TXT") || sSoundFile.find(".txt")) {
 		// Make sure the file is there, read it in to our own buffer.
 		CBofFile fTxtFile(sSoundFile, CBF_BINARY | CBF_READONLY);
-		char *pszBuf;
-		int nLength = fTxtFile.getLength();
+		uint32 nLength = fTxtFile.getLength();
 
-		if (nLength != 0 && (pszBuf = (char *)bofAlloc(nLength + 1)) != nullptr) {
+		if (nLength == 0) {
+			reportError(ERR_FREAD, "Unexpected empty file %s", sSoundFile.getBuffer());
+		} else {
+			char *pszBuf = (char *)bofAlloc(nLength + 1);
+			if (pszBuf == nullptr)
+				fatalError(ERR_MEMORY, "Could not allocate a buffer of %u bytes", nLength + 1);
+
 			memset(pszBuf, 0, nLength + 1);
 			fTxtFile.read(pszBuf, nLength);
 
 			// Put it up on the screen
 			displayMessage(pszBuf);
 			bofFree(pszBuf);
-			fTxtFile.close();
-		} else {
-			reportError(ERR_MEMORY, "Could not read %s into memory", sSoundFile.getBuffer());
 		}
+		fTxtFile.close();
 	}
 
 	// allow for no staffer screen
@@ -4614,14 +4616,13 @@ int SrafTextScreen::createTextScreen(CBofWindow *pParent) {
 	cRect.setRect(gCompDisplay.left, gCompDisplay.top, gCompDisplay.right, gCompDisplay.bottom);
 
 	_pTextBox = new CBofTextBox(this, &cRect, _text);
-	if (_pTextBox != nullptr) {
-		_pTextBox->setPageLength(24);
-		_pTextBox->setColor(CTEXT_WHITE);
-		_pTextBox->setFont(FONT_MONO);
-		_pTextBox->setPointSize(FONT_14POINT);
-	} else {
-		reportError(ERR_MEMORY, "Unable to allocate a CBofTextBox");
-	}
+	if (_pTextBox == nullptr)
+		fatalError(ERR_MEMORY, "Unable to allocate a CBofTextBox");
+
+	_pTextBox->setPageLength(24);
+	_pTextBox->setColor(CTEXT_WHITE);
+	_pTextBox->setFont(FONT_MONO);
+	_pTextBox->setPointSize(FONT_14POINT);
 
 	return ERR_NONE;
 }

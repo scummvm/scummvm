@@ -258,7 +258,6 @@ Common::Error SpaceBarEngine::run() {
 		runApp();
 
 	// shutdown
-	preShutDown();
 	shutdown();
 	postShutDown();
 

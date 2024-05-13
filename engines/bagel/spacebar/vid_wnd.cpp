@@ -107,14 +107,12 @@ ErrorCode SBarVidWnd::attach() {
 		}
 
 		_pMovie = new CBagCharacterObject;
-		if (_pMovie != nullptr) {
-			_pMovie->setFileName(BuildVidDir("BRNL.SMK"));
-			_pMovie->setPosition(CBofPoint(209, 10));
-			_pMovie->attach();
+		if (_pMovie == nullptr)
+			fatalError(ERR_MEMORY, "Unable to allocate a CBagCharacterObject");
 
-		} else {
-			reportError(ERR_MEMORY, "Unable to allocate a CBagCharacterObject");
-		}
+		_pMovie->setFileName(BuildVidDir("BRNL.SMK"));
+		_pMovie->setPosition(CBofPoint(209, 10));
+		_pMovie->attach();
 
 		_fTimerDiff = 0;
 
