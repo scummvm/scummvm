@@ -33,7 +33,7 @@ void KyraEngine_HoF::restorePage3() {
 void KyraEngine_HoF::clearAnimObjects() {
 	_animObjects[0].index = 0;
 	_animObjects[0].type = 0;
-	_animObjects[0].enabled = 1;
+	_animObjects[0].enabled = true;
 	_animObjects[0].flags = 0x800;
 	_animObjects[0].width = 32;
 	_animObjects[0].height = 49;

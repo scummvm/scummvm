@@ -29,14 +29,14 @@ namespace Kyra {
 #define TimerV3(x) new Common::Functor1Mem<int, void, KyraEngine_MR>(this, &KyraEngine_MR::x)
 
 void KyraEngine_MR::setupTimers() {
-	_timer->addTimer(0, TimerV3(timerRestoreCommandLine), -1, 1);
+	_timer->addTimer(0, TimerV3(timerRestoreCommandLine), -1, true);
 	for (int i = 1; i <= 3; ++i)
-		_timer->addTimer(i, TimerV3(timerRunSceneScript7), -1, 0);
-	_timer->addTimer(4, TimerV3(timerFleaDeath), -1, 0);
+		_timer->addTimer(i, TimerV3(timerRunSceneScript7), -1, false);
+	_timer->addTimer(4, TimerV3(timerFleaDeath), -1, false);
 	for (int i = 5; i <= 11; ++i)
-		_timer->addTimer(i, TimerV3(timerRunSceneScript7), -1, 0);
+		_timer->addTimer(i, TimerV3(timerRunSceneScript7), -1, false);
 	for (int i = 12; i <= 13; ++i)
-		_timer->addTimer(i, TimerV3(timerRunSceneScript7), 0, 0);
+		_timer->addTimer(i, TimerV3(timerRunSceneScript7), 0, false);
 }
 
 void KyraEngine_MR::timerRestoreCommandLine(int arg) {

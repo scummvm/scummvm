@@ -31,7 +31,7 @@
 namespace Kyra {
 
 SoundTowns_LoK::SoundTowns_LoK(KyraEngine_v1 *vm, Audio::Mixer *mixer)
-	: Sound(vm, mixer), _lastTrack(-1), _musicTrackData(nullptr), _sfxFileData(nullptr), _cdaPlaying(0),
+	: Sound(vm, mixer), _lastTrack(-1), _musicTrackData(nullptr), _sfxFileData(nullptr), _cdaPlaying(false),
 	_sfxFileIndex((uint)-1), _musicFadeTable(nullptr), _sfxWDTable(nullptr), _sfxBTTable(nullptr), _sfxChannel(0x46), _currentResourceSet(0) {
 	memset(&_resInfo, 0, sizeof(_resInfo));
 	_player = new EuphonyPlayer(_mixer);

@@ -27,17 +27,17 @@ namespace Kyra {
 #define TimerV2(x) new Common::Functor1Mem<int, void, KyraEngine_HoF>(this, &KyraEngine_HoF::x)
 
 void KyraEngine_HoF::setupTimers() {
-	_timer->addTimer(0, nullptr, 5, 1);
-	_timer->addTimer(1, TimerV2(timerFadeOutMessage), -1, 1);
-	_timer->addTimer(2, TimerV2(timerCauldronAnimation), 1, 1);
-	_timer->addTimer(3, TimerV2(timerFunc4), 1, 0);
-	_timer->addTimer(4, TimerV2(timerFunc5), 1, 0);
-	_timer->addTimer(5, TimerV2(timerBurnZanthia), 1, 0);
+	_timer->addTimer(0, nullptr, 5, true);
+	_timer->addTimer(1, TimerV2(timerFadeOutMessage), -1, true);
+	_timer->addTimer(2, TimerV2(timerCauldronAnimation), 1, true);
+	_timer->addTimer(3, TimerV2(timerFunc4), 1, false);
+	_timer->addTimer(4, TimerV2(timerFunc5), 1, false);
+	_timer->addTimer(5, TimerV2(timerBurnZanthia), 1, false);
 }
 
 void KyraEngine_HoF::timerFadeOutMessage(int arg) {
 	if (!_shownMessage.empty())
-		_fadeMessagePalette = 1;
+		_fadeMessagePalette = true;
 }
 
 void KyraEngine_HoF::timerCauldronAnimation(int arg) {
