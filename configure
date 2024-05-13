@@ -3282,7 +3282,7 @@ EOF
 		# We have to use 'long' for our 4 byte typedef because MorphOS already typedefs (u)int32
 		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
 		type_4_byte='long'
-		# Supress format warnings as the long 4 byte causes noisy warnings.
+		# Suppress format warnings as the long 4 byte causes noisy warnings.
 		append_var CXXFLAGS "-Wno-format"
 		add_line_to_config_mk 'MORPHOS = 1'
 		_port_mk="backends/platform/sdl/morphos/morphos.mk"
