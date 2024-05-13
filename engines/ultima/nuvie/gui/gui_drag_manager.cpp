@@ -34,7 +34,7 @@ GUI_DragManager::GUI_DragManager(Screen *s): screen(s), message(0),
 }
 
 GUI_status GUI_DragManager::start_drag(GUI_DragArea *src, int msg, void *d, unsigned char *icon_buf, uint16 w, uint16 h, uint8 bpp, bool out_of_range) {
-	DEBUG(0, LEVEL_DEBUGGING, "Start Drag\n");
+	DEBUG(false, LEVEL_DEBUGGING, "Start Drag\n");
 
 	drag_source = src;
 	message = msg;
