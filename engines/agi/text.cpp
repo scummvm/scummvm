@@ -387,7 +387,7 @@ bool TextMgr::messageBox(const char *textPtr) {
 	uint32 windowTimer = _vm->getVar(VM_VAR_WINDOW_AUTO_CLOSE_TIMER);
 	debugC(3, kDebugLevelText, "blocking window v21=%d", windowTimer);
 
-	windowTimer = windowTimer * 10; // 1 = 0.5 seconds
+	windowTimer = windowTimer * 20; // 1 = 0.5 seconds (20 cycles)
 	_messageBoxCancelled = false;
 
 	_vm->inGameTimerResetPassedCycles();
