@@ -311,6 +311,50 @@ private:
 	Graphics::Surface _userPixelData;
 };
 
+class FakeTexture : public Texture {
+public:
+	FakeTexture(MTL::Device *device, const MTL::PixelFormat metalPixelFormat, const Graphics::PixelFormat &format, const Graphics::PixelFormat &fakeFormat);
+	~FakeTexture() override;
+
+	void allocate(uint width, uint height) override;
+	void setMask(const byte *mask) override;
+
+	Graphics::PixelFormat getFormat() const override { return _fakeFormat; }
+
+	bool hasPalette() const override { return (_palette != nullptr); }
+
+	void setColorKey(uint colorKey) override;
+	void setPalette(uint start, uint colors, const byte *palData) override;
+
+	Graphics::Surface *getSurface() override { return &_rgbData; }
+	const Graphics::Surface *getSurface() const override { return &_rgbData; }
+
+	void updateMetalTexture() override;
+protected:
+	void applyPaletteAndMask(byte *dst, const byte *src, uint dstPitch, uint srcPitch, uint srcWidth, const Common::Rect &dirtyArea, const Graphics::PixelFormat &dstFormat, const Graphics::PixelFormat &srcFormat) const;
+
+	Graphics::Surface _rgbData;
+	Graphics::PixelFormat _fakeFormat;
+	uint32 *_palette;
+	uint8 *_mask;
+};
+
+class TextureRGB555 : public FakeTexture {
+public:
+	TextureRGB555(MTL::Device *device);
+	~TextureRGB555() override {}
+
+	void updateMetalTexture() override;
+};
+
+class TextureRGBA8888Swap : public FakeTexture {
+public:
+	TextureRGBA8888Swap(MTL::Device *device);
+	~TextureRGBA8888Swap() override {}
+
+	void updateMetalTexture() override;
+};
+
 class TextureTarget;
 class CLUT8LookUpPipeline;
 class Renderer;
