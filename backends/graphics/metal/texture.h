@@ -28,6 +28,8 @@
 
 #include <Metal/Metal.hpp>
 
+class Scaler;
+
 namespace Metal {
 
 enum WrapMode {
@@ -354,6 +356,35 @@ public:
 
 	void updateMetalTexture() override;
 };
+
+#ifdef USE_SCALERS
+class ScaledTexture : public FakeTexture {
+public:
+	ScaledTexture(MTL::Device *device, const MTL::PixelFormat metalPixelFormat, const Graphics::PixelFormat &format, const Graphics::PixelFormat &fakeFormat);
+	~ScaledTexture() override;
+
+	void allocate(uint width, uint height) override;
+
+	uint getWidth() const override { return _rgbData.w; }
+	uint getHeight() const override { return _rgbData.h; }
+	Graphics::PixelFormat getFormat() const override { return _fakeFormat; }
+
+	bool hasPalette() const override { return (_palette != nullptr); }
+
+	Graphics::Surface *getSurface() override { return &_rgbData; }
+	const Graphics::Surface *getSurface() const override { return &_rgbData; }
+
+	void updateMetalTexture() override;
+
+	void setScaler(uint scalerIndex, int scaleFactor) override;
+protected:
+	Graphics::Surface *_convData;
+	Scaler *_scaler;
+	uint _scalerIndex;
+	uint _extraPixels;
+	uint _scaleFactor;
+};
+#endif
 
 class TextureTarget;
 class CLUT8LookUpPipeline;

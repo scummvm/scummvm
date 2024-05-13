@@ -27,6 +27,10 @@
 #include "backends/graphics/metal/pipelines/clut8.h"
 #include "backends/graphics/metal/pipelines/pipeline.h"
 
+#ifdef USE_SCALERS
+#include "graphics/scalerplugin.h"
+#endif
+
 namespace Metal {
 
 MetalTexture::MetalTexture(MTL::Device *device, MTL::PixelFormat pixelFormat, MTL::TextureUsage usage)
@@ -496,6 +500,111 @@ void TextureRGBA8888Swap::updateMetalTexture() {
 	Texture::updateMetalTexture();
 }
 
+#ifdef USE_SCALERS
+ScaledTexture::ScaledTexture(MTL::Device *device, const MTL::PixelFormat metalPixelFormat, const Graphics::PixelFormat &format, const Graphics::PixelFormat &fakeFormat)
+	: FakeTexture(device, metalPixelFormat, format, fakeFormat), _convData(nullptr), _scaler(nullptr), _scalerIndex(0), _scaleFactor(1), _extraPixels(0) {
+}
+
+ScaledTexture::~ScaledTexture() {
+	delete _scaler;
+
+	if (_convData) {
+		_convData->free();
+		delete _convData;
+	}
+}
+
+void ScaledTexture::allocate(uint width, uint height) {
+	Texture::allocate(width * _scaleFactor, height * _scaleFactor);
+
+	// We only need to reinitialize our surface when the output size
+	// changed.
+	if (width != (uint)_rgbData.w || height != (uint)_rgbData.h) {
+		_rgbData.create(width, height, _fakeFormat);
+	}
+
+	if (_format != _fakeFormat || _extraPixels != 0) {
+		if (!_convData)
+			_convData = new Graphics::Surface();
+
+		_convData->create(width + (_extraPixels * 2), height + (_extraPixels * 2), _format);
+	} else if (_convData) {
+		_convData->free();
+		delete _convData;
+		_convData = nullptr;
+	}
+}
+
+void ScaledTexture::updateMetalTexture() {
+	if (!isDirty()) {
+		return;
+	}
+
+	// Convert color space.
+	Graphics::Surface *outSurf = Texture::getSurface();
+
+	Common::Rect dirtyArea = getDirtyArea();
+
+	// Extend the dirty region for scalers
+	// that "smear" the screen, e.g. 2xSAI
+	dirtyArea.grow(_extraPixels);
+	dirtyArea.clip(Common::Rect(0, 0, _rgbData.w, _rgbData.h));
+
+	const byte *src = (const byte *)_rgbData.getBasePtr(dirtyArea.left, dirtyArea.top);
+	uint srcPitch = _rgbData.pitch;
+	byte *dst;
+	uint dstPitch;
+
+	if (_convData) {
+		dst = (byte *)_convData->getBasePtr(dirtyArea.left + _extraPixels, dirtyArea.top + _extraPixels);
+		dstPitch = _convData->pitch;
+
+		applyPaletteAndMask(dst, src, dstPitch, srcPitch, _rgbData.w, dirtyArea, _convData->format, _rgbData.format);
+
+		src = dst;
+		srcPitch = dstPitch;
+	}
+
+	dst = (byte *)outSurf->getBasePtr(dirtyArea.left * _scaleFactor, dirtyArea.top * _scaleFactor);
+	dstPitch = outSurf->pitch;
+
+	if (_scaler && (uint)dirtyArea.height() >= _extraPixels) {
+		_scaler->scale(src, srcPitch, dst, dstPitch, dirtyArea.width(), dirtyArea.height(), dirtyArea.left, dirtyArea.top);
+	} else {
+		Graphics::scaleBlit(dst, src, dstPitch, srcPitch,
+							dirtyArea.width() * _scaleFactor, dirtyArea.height() * _scaleFactor,
+							dirtyArea.width(), dirtyArea.height(), outSurf->format);
+	}
+
+	dirtyArea.left   *= _scaleFactor;
+	dirtyArea.right  *= _scaleFactor;
+	dirtyArea.top    *= _scaleFactor;
+	dirtyArea.bottom *= _scaleFactor;
+
+	// Do generic handling of updating the texture.
+	Texture::updateMetalTexture(dirtyArea);
+}
+
+void ScaledTexture::setScaler(uint scalerIndex, int scaleFactor) {
+	const PluginList &scalerPlugins = ScalerMan.getPlugins();
+	const ScalerPluginObject &scalerPlugin = scalerPlugins[scalerIndex]->get<ScalerPluginObject>();
+
+	// If the scalerIndex has changed, change scaler plugins
+	if (_scaler && scalerIndex != _scalerIndex) {
+		delete _scaler;
+		_scaler = nullptr;
+	}
+
+	if (!_scaler) {
+		_scaler = scalerPlugin.createInstance(_format);
+	}
+	_scaler->setFactor(scaleFactor);
+
+	_scalerIndex = scalerIndex;
+	_scaleFactor = _scaler->getFactor();
+	_extraPixels = scalerPlugin.extraPixels();
+}
+#endif
 
 TextureCLUT8GPU::TextureCLUT8GPU(MTL::Device *device, Renderer *renderer)
 	: _device(device), _clut8Texture(MetalTexture(device, MTL::PixelFormatA8Unorm)), _paletteTexture(MetalTexture(device, MTL::PixelFormatRGBA8Unorm)), _renderer(renderer),
