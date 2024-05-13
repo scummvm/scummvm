@@ -194,7 +194,7 @@ bool AIScriptBulletBob::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Force_Stop_Walking(kActorMcCoy);
 		Ambient_Sounds_Play_Speech_Sound(kActorMcCoy, 9900, 100, 0, 0, 0);
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
-		Actor_Retired_Here(kActorMcCoy, 6, 6, 1, -1);
+		Actor_Retired_Here(kActorMcCoy, 6, 6, true, -1);
 		Scene_Exits_Enable();
 		return true;
 	}

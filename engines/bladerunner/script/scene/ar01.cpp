@@ -309,7 +309,7 @@ bool SceneScriptAR01::ClickedOnExit(int exitId) {
 			Actor_Says(kActorMcCoy, 1800, 21);
 			Actor_Change_Animation_Mode(kActorMcCoy, 48);
 			Player_Gains_Control();
-			Actor_Retired_Here(kActorMcCoy, 12, 48, 1, kActorIzo);
+			Actor_Retired_Here(kActorMcCoy, 12, 48, true, kActorIzo);
 		} else if (!v1) {
 			if ( Game_Flag_Query(kFlagDNARowAvailable)
 			 && !Game_Flag_Query(kFlagDNARowAvailableTalk)

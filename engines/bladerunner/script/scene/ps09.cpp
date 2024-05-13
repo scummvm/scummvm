@@ -277,7 +277,7 @@ void SceneScriptPS09::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagMcCoyArrested)) {
 		Player_Loses_Control();
 		Delay(2000);
-		Actor_Retired_Here(kActorMcCoy, 6, 6, 1, -1);
+		Actor_Retired_Here(kActorMcCoy, 6, 6, true, -1);
 		//return true;
 		return;
 	}

@@ -186,7 +186,7 @@ bool AIScriptMoraji::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case kGoalMorajiLayDown:
-		Actor_Retired_Here(kActorMoraji, 60, 16, 0, -1);
+		Actor_Retired_Here(kActorMoraji, 60, 16, false, -1);
 		Actor_Set_Targetable(kActorMoraji, true);
 		return true;
 
@@ -204,7 +204,7 @@ bool AIScriptMoraji::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalMorajiDead:
 		Actor_Set_Targetable(kActorMoraji, false);
 		_animationState = 14;
-		Actor_Retired_Here(kActorMoraji, 60, 16, 1, -1);
+		Actor_Retired_Here(kActorMoraji, 60, 16, true, -1);
 		return true;
 		break;
 

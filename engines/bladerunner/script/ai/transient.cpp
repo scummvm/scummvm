@@ -357,7 +357,7 @@ bool AIScriptTransient::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 15;
 			_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationTransientShotDeadCollapseInPlace) - 1;
 			Actor_Set_Targetable(kActorTransient, false);
-			Actor_Retired_Here(kActorTransient, 120, 24, 1, -1);
+			Actor_Retired_Here(kActorTransient, 120, 24, true, -1);
 		}
 		break;
 
