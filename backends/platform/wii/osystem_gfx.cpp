@@ -263,7 +263,7 @@ void OSystem_Wii::initSize(uint width, uint height,
 		assert((newWidth <= 640) && (newHeight <= 480));
 
 		if (width != newWidth || height != newHeight)
-			printf("extending texture for compability: %ux%u -> %ux%u\n",
+			printf("extending texture for compatibility: %ux%u -> %ux%u\n",
 					width, height, newWidth, newHeight);
 
 		_gameWidth = newWidth;
