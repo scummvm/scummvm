@@ -303,7 +303,7 @@ void Mp3PspStream::decodeMP3Data() {
 		if (_state == MP3_STATE_EOS)
 			return;
 
-		findValidHeader();	// seach for next valid header
+		findValidHeader();	// search for next valid header
 
 		while (_state == MP3_STATE_READY) {	// not a real 'while'. Just for easy flow
 			_stream.error = MAD_ERROR_NONE;
