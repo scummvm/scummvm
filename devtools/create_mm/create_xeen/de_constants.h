@@ -1823,7 +1823,7 @@ public:
 				("And so the call went out to the people throughout the lands of Xeen"
 				" that the prophecy was nearing completion."),
 				"They came in great numbers to witness the momentous occasion.",
-				"\v026The Dragon Pharoah presided over the ceremony.",
+				"\v026The Dragon Pharaoh presided over the ceremony.",
 				"\v026Queen Kalindra presented the Cube of Power.",
 				"\v026Prince Roland presented the Xeen Sceptre.",
 				"\v026Together, they placed the Cube of Power...",
