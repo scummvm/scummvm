@@ -19,8 +19,19 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "backends/graphics/metal/metal-graphics.h"
 #include "common/translation.h"
+
+// metal-cpp is a header-only library.
+// Generate the implementation by defining the following:
+#define NS_PRIVATE_IMPLEMENTATION
+#define CA_PRIVATE_IMPLEMENTATION
+#define MTL_PRIVATE_IMPLEMENTATION
+#include <Foundation/Foundation.hpp>
+#include <Metal/Metal.hpp>
+#include <QuartzCore/QuartzCore.hpp>
 
 enum {
 	GFX_METAL = 0
