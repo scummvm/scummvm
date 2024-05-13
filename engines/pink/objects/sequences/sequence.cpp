@@ -33,7 +33,7 @@
 namespace Pink {
 
 Sequence::Sequence()
-		: _canBeSkipped(0), _context(nullptr),
+		: _canBeSkipped(false), _context(nullptr),
 		  _sequencer(nullptr) {}
 
 Sequence::~Sequence() {
