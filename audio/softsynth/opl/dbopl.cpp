@@ -96,7 +96,7 @@ namespace DBOPL {
 #endif
 
 
-//How much to substract from the base value for the final attenuation
+//How much to subtract from the base value for the final attenuation
 static const Bit8u KslCreateTable[16] = {
 	//0 will always be be lower than 7 * 8
 	64, 32, 24, 19,
