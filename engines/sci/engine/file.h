@@ -61,7 +61,6 @@ enum {
 
 struct SavegameDesc {
 	int16 id;
-	int virtualId; // straight numbered, according to id but w/o gaps
 	int date;
 	int time;
 	int version;
