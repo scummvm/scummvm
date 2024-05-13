@@ -163,6 +163,7 @@ _faad=auto
 _fluidsynth=auto
 _fluidlite=auto
 _sonivox=auto
+_metal_cpp=auto
 _opengl_mode=auto
 _opengl_game_classic=auto
 _opengl_game_shaders=auto
@@ -976,6 +977,8 @@ Optional Features:
   --enable-tts             build support for text to speech
   --disable-tts            don't build support for text to speech
   --disable-bink           don't build with Bink video support
+  --enable-metal-cpp       build with Apple Metal C++ support (only for compatible devices)
+  --disable-metal-cpp      don't build with Apple Metal C++ support
   --opengl-mode=MODE       OpenGL (ES) mode to use for OpenGL output [auto]
                            available modes: auto for autodetection
                                             none for disabling any OpenGL usage
@@ -1286,6 +1289,8 @@ for ac_option in $@; do
 	--disable-gtk)                _gtk=no                ;;
 	--disable-imgui)              _imgui=no              ;;
 	--enable-imgui)               _imgui=yes             ;;
+	--disable-metal-cpp)          _metal_cpp=no          ;;
+	--enable-metal-cpp)           _metal_cpp=yes         ;;
 	--opengl-mode=*)
 		_opengl_mode=`echo $ac_option | cut -d '=' -f 2`
 		;;
@@ -6331,6 +6336,34 @@ echo "$_freetype2"
 
 define_in_config_if_yes "$_freetype2" "USE_FREETYPE2"
 
+
+#
+# Check for Metal C++
+#
+echocheck "Metal C++"
+echo "$_metal_cpp"
+
+if test "$_metal_cpp" = "yes"; then
+	# Apple metal-cpp requires C++17, check if compiler supports it
+	echo_n "Checking if compiler supports C++17... "
+	have_cxx17=no
+	cat > $TMPC << EOF
+int main(int argc, char *argv[]) { if (argv == nullptr) return -1; else return 0; }
+EOF
+	cc_check -std=c++17 && have_cxx17=yes
+	echo $have_cxx17
+
+	if test "$have_cxx17" = "no" ; then
+		echo
+		echo "Apple metal-cpp requires C++17 compiler support. Apple metal-cpp will be disabled"
+		_metal_cpp=no
+	else
+		append_var CXXFLAGS "-std=c++17"
+		append_var INCLUDES '-I$(srcdir)/graphics/metal-cpp'
+	fi
+fi
+
+define_in_config_if_yes "$_metal_cpp" "USE_METAL_CPP"
 
 #
 # Check for OpenGL (ES)
