@@ -406,6 +406,7 @@ const char *gameDataEn[] =  {
 	"Apart from the letter for you I posted, nothing very important!$",
 	"I was very happy she gave me her bound bible as a present$",
 	"It happened fast and she didn't have time to make any particular will$",
+	// FIXME: Spelling incorrect. suprised should be surprised. Fixing changes game data and thus may cause issues
 	"Her last gift suprised me$",
 	"Which gift?$",
 	"A chandelier...$",
