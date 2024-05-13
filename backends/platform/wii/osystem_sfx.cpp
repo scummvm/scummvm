@@ -56,7 +56,7 @@ static void * sfx_thread_func(void *arg) {
 			break;
 
 		// the hardware uses two buffers: a front and a back buffer
-		// we use 3 buffers here: two are beeing pushed to the DSP,
+		// we use 3 buffers here: two are being pushed to the DSP,
 		// and the free one is where our mixer writes to
 		// thus the latency of our stream is:
 		// 8192 [frag size] / 48000 / 2 [16bit] / 2 [stereo] * 2 [hw buffers]
