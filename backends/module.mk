@@ -187,6 +187,7 @@ MODULE_OBJS += \
 	graphics/metal/renderer.o \
 	graphics/metal/shader.o \
 	graphics/metal/texture.o \
+	graphics/metal/pipelines/clut8.o \
 	graphics/metal/pipelines/pipeline.o \
 	graphics/metal/pipelines/shader.o
 endif
