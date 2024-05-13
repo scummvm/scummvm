@@ -24,6 +24,10 @@
 #include "backends/graphics/metal/metal-graphics.h"
 #include "common/translation.h"
 
+#ifdef USE_SCALERS
+#include "graphics/scalerplugin.h"
+#endif
+
 // metal-cpp is a header-only library.
 // Generate the implementation by defining the following:
 #define NS_PRIVATE_IMPLEMENTATION
@@ -33,20 +37,36 @@
 #include <Metal/Metal.hpp>
 #include <QuartzCore/QuartzCore.hpp>
 
-enum {
-	GFX_METAL = 0
-};
+// The implementation of the Metal library has to be generated
+// before including these header files.
+#include "backends/graphics/metal/shader.h"
+#include "backends/graphics/metal/renderer.h"
+#include "backends/graphics/metal/pipelines/pipeline.h"
+#include "backends/graphics/metal/pipelines/shader.h"
 
 namespace Metal {
 
 MetalGraphicsManager::MetalGraphicsManager()
+	: _pipeline(nullptr), _currentState(), _oldState(), _defaultFormat(), _defaultFormatAlpha(),
+	_gameScreen(nullptr), _overlay(nullptr), _cursor(nullptr), _cursorMask(nullptr),
+	_cursorHotspotX(0), _cursorHotspotY(0), _targetBuffer(nullptr), _renderer(nullptr),
+	_cursorHotspotXScaled(0), _cursorHotspotYScaled(0), _cursorWidthScaled(0), _cursorHeightScaled(0),
+	_cursorKeyColor(0), _cursorUseKey(true), _cursorDontScale(false), _cursorPaletteEnabled(false),
+	_screenChangeID(1 << (sizeof(int) * 8 - 2)), _stretchMode(STRETCH_FIT)
+#ifdef USE_SCALERS
+	, _scalerPlugins(ScalerMan.getPlugins())
+#endif
 {
-	//TODO: Implement
+	memset(_gamePalette, 0, sizeof(_gamePalette));
 }
 
 MetalGraphicsManager::~MetalGraphicsManager()
 {
-	//TODO: Implement
+	delete _gameScreen;
+	delete _overlay;
+	delete _cursor;
+	delete _cursorMask;
+	delete _pipeline;
 }
 
 // Windowed
@@ -223,8 +243,7 @@ int16 MetalGraphicsManager::getOverlayWidth() const {
 }
 
 bool MetalGraphicsManager::showMouse(bool visible) {
-	//TODO: Implement
-	return false;
+	return WindowedGraphicsManager::showMouse(visible);
 }
 
 void MetalGraphicsManager::warpMouse(int x, int y) {
@@ -246,6 +265,169 @@ void MetalGraphicsManager::setPalette(const byte *colors, uint start, uint num) 
 
 void MetalGraphicsManager::grabPalette(byte *colors, uint start, uint num) const {
 	//TODO: Implement
+}
+
+Surface *MetalGraphicsManager::createSurface(const Graphics::PixelFormat &format, bool wantAlpha, bool wantScaler, bool wantMask) {
+	uint metalPixelFormat;
+
+#ifdef USE_SCALERS
+	if (wantScaler) {
+		// TODO: Ensure that the requested pixel format is supported by the scaler
+		if (getMetalPixelFormat(format, metalPixelFormat)) {
+			return new ScaledTexture(_device, (MTL::PixelFormat)metalPixelFormat, format, format);
+		} else {
+#ifdef SCUMM_LITTLE_ENDIAN
+			return new ScaledTexture(_device, MTL::PixelFormatRGBA8Unorm, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), format);
+
+#else
+			return new ScaledTexture(_device, MTL::PixelFormatRGBA8Unorm, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), format);
+#endif
+		}
+	}
+#endif
+	if (format.bytesPerPixel == 1) {
+		if (!wantMask) {
+			return new TextureCLUT8GPU(_device, _renderer);
+		}
+
+		const Graphics::PixelFormat &virtFormat = wantAlpha ? _defaultFormatAlpha : _defaultFormat;
+		const bool supported = getMetalPixelFormat(virtFormat, metalPixelFormat);
+		if (!supported) {
+			return nullptr;
+		} else {
+			return new FakeTexture(_device, (MTL::PixelFormat)metalPixelFormat, virtFormat, format);
+		}
+	} else if (getMetalPixelFormat(format, metalPixelFormat)) {
+		return new Texture(_device, (MTL::PixelFormat)metalPixelFormat, format);
+#ifdef SCUMM_LITTLE_ENDIAN
+	} else if (format == Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) { // RGBA8888
+#else
+	} else if (format == Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) { // ABGR8888
+#endif
+		return new TextureRGBA8888Swap(_device);
+	} else if (format == Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)) {
+		// Metaldoes not support a texture format usable for RGB555.
+		// Since SCUMM uses this pixel format for some games we use
+		// pixel format conversion to a supported texture format.
+		return new TextureRGB555(_device);
+	} else {
+		return nullptr;
+	}
+}
+
+bool MetalGraphicsManager::getMetalPixelFormat(const Graphics::PixelFormat &pixelFormat, uint &metalPixelFormat) const {
+#ifdef SCUMM_LITTLE_ENDIAN
+	if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) { // ABGR8888
+#else
+	if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) { // RGBA8888
+#endif
+		metalPixelFormat = MTL::PixelFormatRGBA8Unorm;
+		return true;
+	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)) { // RGB565
+		metalPixelFormat = MTL::PixelFormatB5G6R5Unorm;
+		return true;
+	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0)) { // RGBA5551
+		metalPixelFormat = MTL::PixelFormatBGR5A1Unorm;
+		return true;
+	} else if (pixelFormat == Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0)) { // RGBA4444
+		// TODO may need to convert this
+		metalPixelFormat = MTL::PixelFormatABGR4Unorm;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+int MetalGraphicsManager::getGameRenderScale() const {
+	return _currentState.scaleFactor;
+}
+
+void MetalGraphicsManager::recalculateDisplayAreas() {
+	if (!_gameScreen) {
+		return;
+	}
+
+	WindowedGraphicsManager::recalculateDisplayAreas();
+
+	// Setup drawing limitation for game graphics.
+	_targetBuffer->setScissorBox(
+		_gameDrawRect.left,
+		_gameDrawRect.top,
+		_gameDrawRect.width(),
+		_gameDrawRect.height());
+
+	_shakeOffsetScaled = Common::Point(_gameScreenShakeXOffset * _gameDrawRect.width() / (int)_currentState.gameWidth,
+		_gameScreenShakeYOffset * _gameDrawRect.height() / (int)_currentState.gameHeight);
+
+	// Update the cursor position to adjust for new display area.
+	setMousePosition(_cursorX, _cursorY);
+
+	// Force a redraw to assure screen is properly redrawn.
+	_forceRedraw = true;
+}
+
+void MetalGraphicsManager::updateCursorPalette() {
+	if (!_cursor || !_cursor->hasPalette()) {
+		return;
+	}
+
+	if (_cursorPaletteEnabled) {
+		_cursor->setPalette(0, 256, _cursorPalette);
+	} else {
+		_cursor->setPalette(0, 256, _gamePalette);
+	}
+
+	if (_cursorUseKey)
+		_cursor->setColorKey(_cursorKeyColor);
+}
+
+void MetalGraphicsManager::recalculateCursorScaling() {
+	if (!_cursor || !_gameScreen) {
+		return;
+	}
+
+	uint cursorWidth = _cursor->getWidth();
+	uint cursorHeight = _cursor->getHeight();
+
+	// By default we use the unscaled versions.
+	_cursorHotspotXScaled = _cursorHotspotX;
+	_cursorHotspotYScaled = _cursorHotspotY;
+	_cursorWidthScaled = cursorWidth;
+	_cursorHeightScaled = cursorHeight;
+
+	// In case scaling is actually enabled we will scale the cursor according
+	// to the game screen.
+	if (!_cursorDontScale) {
+		const frac_t screenScaleFactorX = intToFrac(_gameDrawRect.width()) / _gameScreen->getWidth();
+		const frac_t screenScaleFactorY = intToFrac(_gameDrawRect.height()) / _gameScreen->getHeight();
+
+		_cursorHotspotXScaled = fracToInt(_cursorHotspotXScaled * screenScaleFactorX);
+		_cursorWidthScaled    = fracToDouble(cursorWidth        * screenScaleFactorX);
+
+		_cursorHotspotYScaled = fracToInt(_cursorHotspotYScaled * screenScaleFactorY);
+		_cursorHeightScaled   = fracToDouble(cursorHeight       * screenScaleFactorY);
+	}
+}
+
+void MetalGraphicsManager::updateLinearFiltering() {
+	if (_gameScreen) {
+		_gameScreen->enableLinearFiltering(_currentState.filtering);
+	}
+
+	if (_cursor) {
+		_cursor->enableLinearFiltering(_currentState.filtering);
+	}
+
+	if (_cursorMask) {
+		_cursorMask->enableLinearFiltering(_currentState.filtering);
+	}
+
+	// The overlay UI should also obey the filtering choice (managed via the Filter Graphics checkbox in Graphics Tab).
+	// Thus, when overlay filtering is disabled, scaling in Metal is done with nearest (nearest neighbor scaling).
+	// It may look crude, but it should be crispier and it's left to user choice to enable filtering.
+	if (_overlay) {
+		_overlay->enableLinearFiltering(_currentState.filtering);
+	}
 }
 
 }
