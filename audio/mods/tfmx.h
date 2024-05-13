@@ -133,7 +133,7 @@ private:
 		uint16	macroReturnStep;
 		uint8	macroLoopCount;
 		bool	macroRun;
-		int8	macroSfxRun;	///< values are the folowing: -1 macro disabled, 0 macro init, 1 macro running
+		int8	macroSfxRun;	///< values are the following: -1 macro disabled, 0 macro init, 1 macro running
 
 		uint32	customMacro;
 		uint8	customMacroIndex;
