@@ -1119,6 +1119,7 @@ const Feature s_features[] = {
 	{             "opengl",                    "USE_OPENGL", false, true,  "OpenGL support" },
 	{"opengl_game_classic",               "USE_OPENGL_GAME", false, true,  "OpenGL support (classic) in 3d games" },
 	{"opengl_game_shaders",            "USE_OPENGL_SHADERS", false, true,  "OpenGL support (shaders) in 3d games" },
+	{          "metal-cpp",                 "USE_METAL_CPP", false, false, "Metal C++ support" },
 	{            "taskbar",                   "USE_TASKBAR", false, true,  "Taskbar integration support" },
 	{              "cloud",                     "USE_CLOUD", false, true,  "Cloud integration support" },
 	{               "enet",                      "USE_ENET", false, true,  "ENet networking support" },
