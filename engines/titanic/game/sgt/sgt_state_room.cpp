@@ -43,7 +43,7 @@ void CSGTStateRoom::deinit() {
 	delete _statics;
 }
 
-CSGTStateRoom::CSGTStateRoom() : CBackground(), _isClosed(1),
+CSGTStateRoom::CSGTStateRoom() : CBackground(), _isClosed(true),
 	_displayFlag(true), _savedFrame(0), _savedIsClosed(true), _savedVisible(true) {
 }
 

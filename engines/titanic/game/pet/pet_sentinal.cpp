@@ -29,7 +29,7 @@ BEGIN_MESSAGE_MAP(CPETSentinal, CGameObject)
 END_MESSAGE_MAP()
 
 CPETSentinal::CPETSentinal() : CGameObject(), _elevatorNum(0),
-		_wellEntry(0), _resetHighlight(0) {
+		_wellEntry(0), _resetHighlight(false) {
 }
 
 void CPETSentinal::save(SimpleFile *file, int indent) {

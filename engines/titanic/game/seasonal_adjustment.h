@@ -40,7 +40,7 @@ private:
 	bool _enabled;
 public:
 	CLASSDEF;
-	CSeasonalAdjustment() : CBackground(), _switching(false), _enabled(0) {}
+	CSeasonalAdjustment() : CBackground(), _switching(false), _enabled(false) {}
 
 	/**
 	 * Save the data for the class to file

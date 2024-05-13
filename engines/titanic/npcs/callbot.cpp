@@ -31,7 +31,7 @@ BEGIN_MESSAGE_MAP(CCallBot, CGameObject)
 	ON_MESSAGE(EnterViewMsg)
 END_MESSAGE_MAP()
 
-CCallBot::CCallBot() : CGameObject(), _enabled(0) {
+CCallBot::CCallBot() : CGameObject(), _enabled(false) {
 }
 
 void CCallBot::save(SimpleFile *file, int indent) {

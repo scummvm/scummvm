@@ -35,7 +35,7 @@ END_MESSAGE_MAP()
 
 CHammerDispensorButton::CHammerDispensorButton() : CStartAction(),
 	_active(false), _open(false), _hitCounter(0), _btnPos(Point(56, 6)),
-	_perch(nullptr), _hammerTaken(0) {
+	_perch(nullptr), _hammerTaken(false) {
 }
 
 void CHammerDispensorButton::save(SimpleFile *file, int indent) {

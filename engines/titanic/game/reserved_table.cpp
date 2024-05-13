@@ -48,7 +48,7 @@ void CReservedTable::load(SimpleFile *file) {
 
 bool CReservedTable::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (!_flag) {
-		CPlayerTriesRestaurantTableMsg tryMsg(_tableId, 0);
+		CPlayerTriesRestaurantTableMsg tryMsg(_tableId, false);
 		tryMsg.execute(findRoom(), CReservedTable::_type, MSGFLAG_CLASS_DEF | MSGFLAG_SCAN);
 	}
 

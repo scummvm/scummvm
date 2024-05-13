@@ -30,7 +30,7 @@ BEGIN_MESSAGE_MAP(CHeadPiece, CCarry)
 END_MESSAGE_MAP()
 
 CHeadPiece::CHeadPiece() : CCarry(), _string6("Not Working"),
-		_flag(0), _field13C(false) {
+		_flag(false), _field13C(false) {
 }
 
 void CHeadPiece::save(SimpleFile *file, int indent) {

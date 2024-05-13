@@ -29,7 +29,7 @@ BEGIN_MESSAGE_MAP(CSummonBots, CRobotController)
 END_MESSAGE_MAP()
 
 CSummonBots::CSummonBots() : CRobotController(), _validSummonLocations("NULL"),
-		_canSummonBellbot(0), _canSummonDoorbot(0) {
+		_canSummonBellbot(false), _canSummonDoorbot(false) {
 }
 
 void CSummonBots::save(SimpleFile *file, int indent) {
