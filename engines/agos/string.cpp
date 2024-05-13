@@ -33,7 +33,7 @@ namespace AGOS {
 
 void AGOSEngine::uncompressText(byte *ptr) {
 	byte a;
-	while (1) {
+	while (true) {
 		if (_awaitTwoByteToken != 0)
 			a = _awaitTwoByteToken;
 		else
