@@ -1,14 +1,14 @@
 #ifndef __QD_ANIMATION_H__
 #define __QD_ANIMATION_H__
 
-#include "xml_fwd.h"
+#include "qdengine/core/parser/xml_fwd.h"
 
-#include "gr_screen_region.h"
-#include "gr_tile_animation.h"
+#include "qdengine/core/system/graphics/gr_screen_region.h"
+#include "qdengine/core/system/graphics/gr_tile_animation.h"
 
-#include "qd_resource.h"
-#include "qd_animation_frame.h"
-#include "qd_named_object.h"
+#include "qdengine/core/qdcore/qd_resource.h"
+#include "qdengine/core/qdcore/qd_animation_frame.h"
+#include "qdengine/core/qdcore/qd_named_object.h"
 
 class qdAnimationInfo;
 
@@ -292,4 +292,3 @@ private:
 };
 
 #endif /* __QD_ANIMATION_H__ */
-

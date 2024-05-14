@@ -1,21 +1,16 @@
 #ifndef __QD_GAME_SCENE_H__
 #define __QD_GAME_SCENE_H__
 
-#include "xml_fwd.h"
-#include "mouse_input.h"
-
-#include "gr_screen_region.h"
-
-#include "qd_camera.h"
-#include "qd_conditional_object.h"
-#include "qd_game_dispatcher_base.h"
-
-#include "qd_object_map_container.h"
-#include "qd_object_list_container.h"
-
-#include "qd_file_owner.h"
-
-#include "fps_counter.h"
+#include "qdengine/core/parser/xml_fwd.h"
+#include "qdengine/core/qdcore/qd_camera.h"
+#include "qdengine/core/qdcore/qd_conditional_object.h"
+#include "qdengine/core/qdcore/qd_game_dispatcher_base.h"
+#include "qdengine/core/qdcore/qd_object_map_container.h"
+#include "qdengine/core/qdcore/qd_object_list_container.h"
+#include "qdengine/core/qdcore/qd_file_owner.h"
+#include "qdengine/core/qdcore/util/fps_counter.h"
+#include "qdengine/core/system/input/mouse_input.h"
+#include "qdengine/core/system/graphics/gr_screen_region.h"
 
 class qdMiniGame;
 

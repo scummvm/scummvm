@@ -1,8 +1,8 @@
 #ifndef __QD_MINIGAME_H__
 #define __QD_MINIGAME_H__
 
-#include "qd_named_object.h"
-#include "qd_minigame_config.h"
+#include "qdengine/core/qdcore/qd_named_object.h"
+#include "qdengine/core/qdcore/qd_minigame_config.h"
 
 class qdMiniGameInterface;
 

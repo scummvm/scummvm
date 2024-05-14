@@ -1,10 +1,10 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "qd_camera.h"
-#include "qd_animation_set.h"
-#include "qd_animation_set_preview.h"
+#include "qdengine/core/qdcore/qd_camera.h"
+#include "qdengine/core/qdcore/qd_animation_set.h"
+#include "qdengine/core/qdcore/qd_animation_set_preview.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */

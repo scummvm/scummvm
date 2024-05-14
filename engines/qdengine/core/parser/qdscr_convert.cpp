@@ -4,7 +4,7 @@
 #include "common/textconsole.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/qdscr_parser.h"
-#include "qdeninge/core/parser/qdscr_convert.h"
+#include "qdengine/core/parser/qdscr_convert.h"
 #include "qdengine/core/parser/xml_parser.h"
 #include "qdengine/core/system/app_error_handler.h"
 #include "qdengine/xlibs/xutil/xutil.h"

@@ -1,8 +1,8 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "qd_textdb.h"
+#include "qdengine/core/qdcore/qd_textdb.h"
 //#include <tchar.h>
 
 char const DELIMETER = '.';

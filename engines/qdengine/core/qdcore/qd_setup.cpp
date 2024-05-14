@@ -1,14 +1,14 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "qd_setup.h"
-#include "gr_dispatcher.h"
+#include "qdengine/core/qdcore/qd_setup.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
 
 #ifndef __QD_SYSLIB__
-#include "snd_dispatcher.h"
-#include "qd_game_scene.h"
-#include "plaympp_api.h"
+#include "qdengine/core/system/sound/snd_dispatcher.h"
+#include "qdengine/core/qdcore/qd_game_scene.h"
+#include "qdengine/core/qdcore/util/plaympp_api.h"
 #endif
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */

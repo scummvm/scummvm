@@ -1,17 +1,16 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "app_core.h"
-#include "qdscr_parser.h"
-#include "xml_tag_buffer.h"
+#include "qdengine/core/parser/qdscr_parser.h"
+#include "qdengine/core/parser/xml_tag_buffer.h"
 
-#include "qd_game_dispatcher.h"
-#include "qd_interface_save.h"
-#include "qd_interface_screen.h"
-#include "qd_interface_dispatcher.h"
-
-#include "gr_dispatcher.h"
+#include "qdengine/core/qdcore/qd_game_dispatcher.h"
+#include "qdengine/core/qdcore/qd_interface_save.h"
+#include "qdengine/core/qdcore/qd_interface_screen.h"
+#include "qdengine/core/qdcore/qd_interface_dispatcher.h"
+#include "qdengine/core/system/app_core.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -372,4 +371,3 @@ const char *qdInterfaceSave::thumbnail_file() const {
 const char *qdInterfaceSave::description_file() const {
 	return qdGameDispatcher::get_save_name(save_ID_, qdGameDispatcher::SAVE_DESCRIPTION);
 }
-

@@ -1,8 +1,7 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
-
-#include "qd_file_owner.h"
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/qdcore/qd_file_owner.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */

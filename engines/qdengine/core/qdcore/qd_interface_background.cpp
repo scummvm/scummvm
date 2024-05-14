@@ -1,9 +1,9 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "qdscr_parser.h"
-#include "xml_tag.h"
+#include "qdengine/core/parser/qdscr_parser.h"
+#include "qdengine/core/parser/xml_tag.h"
 
 #include "qd_interface_background.h"
 

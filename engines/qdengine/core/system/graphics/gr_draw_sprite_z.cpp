@@ -1,6 +1,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
 #include "gr_dispatcher.h"
 
@@ -545,4 +545,3 @@ void grDispatcher::PutSpr_z(int x, int y, int z, int sx, int sy, const unsigned 
 	}
 }
 #endif
-

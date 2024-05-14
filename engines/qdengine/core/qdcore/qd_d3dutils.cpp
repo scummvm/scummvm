@@ -9,10 +9,10 @@
 */
 
 // Note:  Must Define D3D_OVERLOADS to get C++ version of MATRIX3D
-#include "qd_precomp.h"
 #include <cfloat>
 #include <cmath>
-#include "qd_d3dutils.h"
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/qdcore/qd_d3dutils.h"
 
 /*
 **-----------------------------------------------------------------------------

@@ -1,10 +1,9 @@
 #ifndef __QD_INTERFACE_COUNTER__
 #define __QD_INTERFACE_COUNTER__
 
-#include "qd_named_object_reference.h"
-#include "qd_screen_text.h"
-
-#include "qd_interface_element.h"
+#include "qdengine/core/qdcore/qd_named_object_reference.h"
+#include "qdengine/core/qdcore/qd_screen_text.h"
+#include "qdengine/core/qdcore/qd_interface_element.h"
 
 //! Интерфейсный элемент для отображения значения счётчика.
 

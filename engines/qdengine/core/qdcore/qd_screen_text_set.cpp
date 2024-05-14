@@ -1,13 +1,13 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "gr_dispatcher.h"
-#include "qdscr_parser.h"
-#include "qd_screen_text_set.h"
-#include "qd_game_dispatcher.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
+#include "qdengine/core/parser/qdscr_parser.h"
+#include "qdengine/core/parser/xml_tag_buffer.h"
+#include "qdengine/core/qdcore/qd_screen_text_set.h"
+#include "qdengine/core/qdcore/qd_game_dispatcher.h"
 
-#include "xml_tag_buffer.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -227,4 +227,3 @@ void qdScreenTextSet::format_texts() {
 	for (texts_container_t::iterator it = texts_.begin(); it != texts_.end(); ++it)
 		it -> format_text(max_text_width_);
 }
-

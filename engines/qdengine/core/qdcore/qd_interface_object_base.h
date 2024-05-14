@@ -2,7 +2,7 @@
 #ifndef __QD_INTERFACE_OBJECT_BASE_H__
 #define __QD_INTERFACE_OBJECT_BASE_H__
 
-#include "qd_named_object_base.h"
+#include "qdengine/core/qdcore/qd_named_object_base.h"
 
 //! Базовый класс для всех интерфейсных объектов.
 class qdInterfaceObjectBase : public qdNamedObjectBase {

@@ -1,9 +1,9 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "qd_animation.h"
-#include "qd_animation_maker.h"
+#include "qdengine/core/qdcore/qd_animation.h"
+#include "qdengine/core/qdcore/qd_animation_maker.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */

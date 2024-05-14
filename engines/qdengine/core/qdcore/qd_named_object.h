@@ -1,7 +1,7 @@
 #ifndef __QD_NAMED_OBJECT_H__
 #define __QD_NAMED_OBJECT_H__
 
-#include "qd_named_object_base.h"
+#include "qdengine/core/qdcore/qd_named_object_base.h"
 
 //! Типы поименованных объектов.
 enum qdNamedObjectType {

@@ -2,10 +2,9 @@
 #ifndef __QD_RESOURCE_CONTAINER_H__
 #define __QD_RESOURCE_CONTAINER_H__
 
-#include "qd_animation.h"
-#include "qd_sound.h"
-
-#include "qd_resource_dispatcher.h"
+#include "qdengine/core/qdcore/qd_animation.h"
+#include "qdengine/core/qdcore/qd_resource_dispatcher.h"
+#include "qdengine/core/qdcore/qd_sound.h"
 
 //! Контейнер для хранения игровых ресурсов.
 /**

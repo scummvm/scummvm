@@ -1,11 +1,11 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "qdscr_parser.h"
-#include "xml_tag_buffer.h"
+#include "qdengine/core/parser/qdscr_parser.h"
+#include "qdengine/core/parser/xml_tag_buffer.h"
 
-#include "qd_condition_group.h"
+#include "qdengine/core/qdcore/qd_condition_group.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */

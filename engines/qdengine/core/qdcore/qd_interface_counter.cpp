@@ -1,13 +1,10 @@
-#include "qd_precomp.h"
-
-#include "xml_tag_buffer.h"
-#include "qdscr_parser.h"
-
-#include "gr_dispatcher.h"
-
-#include "qd_game_dispatcher.h"
-#include "qd_counter.h"
-#include "qd_interface_counter.h"
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/parser/xml_tag_buffer.h"
+#include "qdengine/core/parser/qdscr_parser.h"
+#include "qdengine/core/qdcore/qd_game_dispatcher.h"
+#include "qdengine/core/qdcore/qd_counter.h"
+#include "qdengine/core/qdcore/qd_interface_counter.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
 
 qdInterfaceCounter::qdInterfaceCounter() : counter_(0) {
 	digits_ = 4;
@@ -180,4 +177,3 @@ const char *qdInterfaceCounter::counterName() const {
 void qdInterfaceCounter::setCounterName(const char *name) {
 	counterName_ = name;
 }
-

@@ -1,8 +1,8 @@
 #ifndef __QD_NAMED_OBJECT_REFERENCE_H__
 #define __QD_NAMED_OBJECT_REFERENCE_H__
 
-#include "xml_fwd.h"
-#include "qd_named_object.h"
+#include "qdengine/core/parser/xml_fwd.h"
+#include "qdengine/core/qdcore/qd_named_object.h"
 
 class qdNamedObjectReference {
 public:
@@ -53,4 +53,3 @@ private:
 };
 
 #endif /* __QD_NAMED_OBJECT_REFERENCE_H__ */
-

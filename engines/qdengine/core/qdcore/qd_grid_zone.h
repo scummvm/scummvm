@@ -1,10 +1,9 @@
 #ifndef __QD_GRID_ZONE_H__
 #define __QD_GRID_ZONE_H__
 
-#include "xml_fwd.h"
-
-#include "qd_contour.h"
-#include "qd_grid_zone_state.h"
+#include "qdengine/core/parser/xml_fwd.h"
+#include "qdengine/core/qdcore/qd_contour.h"
+#include "qdengine/core/qdcore/qd_grid_zone_state.h"
 
 class qdCamera;
 
@@ -130,4 +129,3 @@ private:
 };
 
 #endif /* __QD_GRID_ZONE_H__ */
-

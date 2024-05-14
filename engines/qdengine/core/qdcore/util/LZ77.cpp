@@ -3,7 +3,7 @@
 //
 // Implemented by Arkadi Kagan.
 //
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
 #include "LZ77.h"
 

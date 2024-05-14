@@ -1,6 +1,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
 #include "app_core.h"
 #include "gr_dispatcher.h"
@@ -184,4 +184,3 @@ void ds_sndDispatcher::resume_sounds() {
 			it -> resume();
 	}
 }
-

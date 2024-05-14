@@ -1,9 +1,9 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "qd_grid_zone.h"
-#include "qd_grid_zone_state.h"
+#include "qdengine/core/qdcore/qd_grid_zone.h"
+#include "qdengine/core/qdcore/qd_grid_zone_state.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */

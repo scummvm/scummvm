@@ -1,12 +1,12 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "xml_tag.h"
-#include "qdscr_parser.h"
+#include "qdengine/core/parser/xml_tag.h"
+#include "qdengine/core/parser/qdscr_parser.h"
 
-#include "qd_game_object_static.h"
-#include "qd_game_scene.h"
+#include "qdengine/core/qdcore/qd_game_object_static.h"
+#include "qdengine/core/qdcore/qd_game_scene.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -107,4 +107,3 @@ bool qdGameObjectStatic::remove_sprite_edges() {
 	return true;
 }
 #endif //_QUEST_EDITOR
-

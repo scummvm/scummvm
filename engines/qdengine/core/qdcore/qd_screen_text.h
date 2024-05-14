@@ -1,10 +1,9 @@
 #ifndef __QD_SCREEN_TEXT_H__
 #define __QD_SCREEN_TEXT_H__
 
-#include "xml_fwd.h"
-
-#include "gr_screen_region.h"
-#include "gr_font.h"
+#include "qdengine/core/parser/xml_fwd.h"
+#include "qdengine/core/system/graphics/gr_screen_region.h"
+#include "qdengine/core/system/graphics/gr_font.h"
 
 class qdGameObjectState;
 

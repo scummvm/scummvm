@@ -1,16 +1,15 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "common/textconsole.h"
 
-#include "gr_dispatcher.h"
-#include "qdscr_parser.h"
-#include "xml_tag_buffer.h"
-
-#include "qd_video.h"
-#include "qd_setup.h"
-
-#include "qd_game_dispatcher.h"
-#include "qd_file_manager.h"
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
+#include "qdengine/core/parser/qdscr_parser.h"
+#include "qdengine/core/parser/xml_tag_buffer.h"
+#include "qdengine/core/qdcore/qd_video.h"
+#include "qdengine/core/qdcore/qd_setup.h"
+#include "qdengine/core/qdcore/qd_game_dispatcher.h"
+#include "qdengine/core/qdcore/qd_file_manager.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */

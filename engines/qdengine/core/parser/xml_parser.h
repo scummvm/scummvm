@@ -1,7 +1,7 @@
 #ifndef __XML_PARSER_H__
 #define __XML_PARSER_H__
 
-#include "xml_tag_buffer.h"
+#include "qdengine/core/parser/xml_tag_buffer.h"
 #include <unordered_map>
 
 namespace xml {

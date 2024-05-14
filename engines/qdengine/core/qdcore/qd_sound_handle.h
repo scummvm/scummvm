@@ -1,7 +1,7 @@
 #ifndef __QD_SOUND_HANDLE_H__
 #define __QD_SOUND_HANDLE_H__
 
-#include "snd_sound.h"
+#include "qdengine/core/system/sound/snd_sound.h"
 
 //! Класс для управления звуками.
 class qdSoundHandle : public sndHandle {
@@ -21,4 +21,3 @@ private:
 };
 
 #endif /* __QD_SOUND_HANDLE_H__ */
-

@@ -2,7 +2,7 @@
 #ifndef __QD_INTERFACE_ELEMENT_STATE_MODE_H__
 #define __QD_INTERFACE_ELEMENT_STATE_MODE_H__
 
-#include "qd_contour.h"
+#include "qdengine/core/qdcore/qd_contour.h"
 
 //! Событие, привязанное к состоянию интерфейсного элемента.
 /**

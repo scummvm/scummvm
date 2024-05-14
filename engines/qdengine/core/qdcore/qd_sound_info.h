@@ -2,7 +2,7 @@
 #ifndef __QD_SOUND_INFO_H__
 #define __QD_SOUND_INFO_H__
 
-#include "qd_named_object.h"
+#include "qdengine/core/qdcore/qd_named_object.h"
 
 class qdSound;
 

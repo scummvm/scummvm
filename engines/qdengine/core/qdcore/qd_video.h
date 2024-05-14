@@ -1,12 +1,10 @@
 #ifndef __QD_VIDEO_H__
 #define __QD_VIDEO_H__
 
-#include "xml_fwd.h"
-
-#include "qd_sprite.h"
-#include "qd_conditional_object.h"
-
-#include "qd_file_owner.h"
+#include "qdengine/core/parser/xml_fwd.h"
+#include "qdengine/core/qdcore/qd_sprite.h"
+#include "qdengine/core/qdcore/qd_conditional_object.h"
+#include "qdengine/core/qdcore/qd_file_owner.h"
 
 //! Видеовставка.
 class qdVideo : public qdConditionalObject, public qdFileOwner {
@@ -78,4 +76,3 @@ private:
 };
 
 #endif /* __QD_VIDEO_H__ */
-

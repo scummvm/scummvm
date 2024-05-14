@@ -1,7 +1,7 @@
 #ifndef __ANIMATION_SET_PREVIEW_H__
 #define __ANIMATION_SET_PREVIEW_H__
 
-#include "gr_dispatcher.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
 
 class qdCamera;
 

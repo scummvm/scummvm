@@ -1,23 +1,21 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "gr_dispatcher.h"
-#include "gr_tile_animation.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
+#include "qdengine/core/system/graphics/gr_tile_animation.h"
 
 #ifndef __QD_SYSLIB__
-#include "qdscr_parser.h"
-#include "xml_tag_buffer.h"
+#include "qdengine/core/parser/qdscr_parser.h"
+#include "qdengine/core/parser/xml_tag_buffer.h"
 
-#include "qd_animation_info.h"
-#include "qd_named_object_reference.h"
-
-#include "qd_game_dispatcher.h"
+#include "qdengine/core/qdcore/qd_animation_info.h"
+#include "qdengine/core/qdcore/qd_named_object_reference.h"
+#include "qdengine/core/qdcore/qd_game_dispatcher.h"
 #endif
 
-#include "qd_animation.h"
-
-#include "qd_file_manager.h"
+#include "qdengine/core/qdcore/qd_animation.h"
+#include "qdengine/core/qdcore/qd_file_manager.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */

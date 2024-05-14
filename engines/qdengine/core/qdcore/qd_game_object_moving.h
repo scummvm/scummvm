@@ -1,9 +1,8 @@
 #ifndef __QD_GAME_OBJECT_MOVING_H__
 #define __QD_GAME_OBJECT_MOVING_H__
 
-#include "xml_fwd.h"
-
-#include "qd_game_object_animated.h"
+#include "qdengine/core/parser/xml_fwd.h"
+#include "qdengine/core/qdcore/qd_game_object_animated.h"
 
 class qdInterfaceButton;
 

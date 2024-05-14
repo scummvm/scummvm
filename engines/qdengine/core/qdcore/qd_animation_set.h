@@ -1,11 +1,11 @@
 #ifndef __QD_ANIMATION_SET_H__
 #define __QD_ANIMATION_SET_H__
 
-#include "xml_fwd.h"
+#include "qdengine/core/parser/xml_fwd.h"
 
-#include "qd_named_object.h"
-#include "qd_animation.h"
-#include "qd_animation_info.h"
+#include "qdengine/core/qdcore/qd_named_object.h"
+#include "qdengine/core/qdcore/qd_animation.h"
+#include "qdengine/core/qdcore/qd_animation_info.h"
 
 class qdAnimationSet : public qdNamedObject {
 public:

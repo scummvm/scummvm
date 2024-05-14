@@ -1,5 +1,5 @@
 //Balmer
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 #include <windows.h>
 #include <dsound.h>
 #include "PlayOgg.h"

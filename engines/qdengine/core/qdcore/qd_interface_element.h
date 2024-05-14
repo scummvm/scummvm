@@ -1,14 +1,12 @@
 #ifndef __QD_INTERFACE_ELEMENT_H__
 #define __QD_INTERFACE_ELEMENT_H__
 
-#include "snd_sound.h"
-#include "mouse_input.h"
-
-#include "gr_screen_region.h"
-
-#include "qd_animation.h"
-#include "qd_interface_object_base.h"
-#include "qd_sound_handle.h"
+#include "qdengine/core/system/sound/snd_sound.h"
+#include "qdengine/core/system/input/mouse_input.h"
+#include "qdengine/core/system/graphics/gr_screen_region.h"
+#include "qdengine/core/qdcore/qd_animation.h"
+#include "qdengine/core/qdcore/qd_interface_object_base.h"
+#include "qdengine/core/qdcore/qd_sound_handle.h"
 
 //class qdInterfaceScreen;
 class qdInterfaceElementState;

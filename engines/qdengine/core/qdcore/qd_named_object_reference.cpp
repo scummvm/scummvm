@@ -1,12 +1,12 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "xml_tag_buffer.h"
-#include "qdscr_parser.h"
+#include "qdengine/core/parser/xml_tag_buffer.h"
+#include "qdengine/core/parser/qdscr_parser.h"
 
-#include "qd_named_object_reference.h"
-#include "qd_game_dispatcher.h"
+#include "qdengine/core/qdcore/qd_named_object_reference.h"
+#include "qdengine/core/qdcore/qd_game_dispatcher.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */

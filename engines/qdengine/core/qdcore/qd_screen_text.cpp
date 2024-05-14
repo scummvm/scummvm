@@ -1,15 +1,15 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "qd_setup.h"
-#include "qd_screen_text.h"
-#include "gr_dispatcher.h"
+#include "qdengine/core/qdcore/qd_setup.h"
+#include "qdengine/core/qdcore/qd_screen_text.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
 
-#include "qd_game_object.h"
-#include "qd_game_object_state.h"
+#include "qdengine/core/qdcore/qd_game_object.h"
+#include "qdengine/core/qdcore/qd_game_object_state.h"
 
-#include "qd_game_dispatcher.h" // В qdGameDispather хранятся шрифты
+#include "qdengine/core/qdcore/qd_game_dispatcher.h" // В qdGameDispather хранятся шрифты
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */

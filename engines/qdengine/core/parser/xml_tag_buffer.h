@@ -1,7 +1,7 @@
 #ifndef __XML_TAG_BUFFER_H__
 #define __XML_TAG_BUFFER_H__
 
-#include "xml_tag.h"
+#include "qdengine/core/parser/xml_tag.h"
 
 #ifdef _DEBUG
 #define XML_ASSERT(a) assert(a)

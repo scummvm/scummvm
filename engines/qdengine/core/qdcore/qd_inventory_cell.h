@@ -4,9 +4,9 @@
 #include <vector>
 #include <algorithm>
 
-#include "xml_fwd.h"
+#include "qdengine/core/parser/xml_fwd.h"
 
-#include "qd_sprite.h"
+#include "qdengine/core/qdcore/qd_sprite.h"
 
 class qdGameObjectAnimated;
 

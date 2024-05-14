@@ -1,29 +1,28 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "app_log_file.h"
+#include "qdengine/core/system/app_log_file.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
+#include "qdengine/core/parser/xml_tag_buffer.h"
+#include "qdengine/core/system/input/mouse_input.h"
+#include "qdengine/core/qdcore/util/plaympp_api.h"
 
-#include "gr_dispatcher.h"
-#include "xml_tag_buffer.h"
-#include "mouse_input.h"
-#include "plaympp_api.h"
+#include "qdengine/core/parser/qdscr_parser.h"
+#include "qdengine/core/qdcore/qd_minigame.h"
+#include "qdengine/core/qdcore/qd_grid_zone.h"
+#include "qdengine/core/qdcore/qd_music_track.h"
+#include "qdengine/core/qdcore/qd_game_object_static.h"
+#include "qdengine/core/qdcore/qd_game_object_animated.h"
+#include "qdengine/core/qdcore/qd_game_object_moving.h"
+#include "qdengine/core/qdcore/qd_game_object_mouse.h"
+#include "qdengine/core/qdcore/qd_game_scene.h"
+#include "qdengine/core/qdcore/qd_named_object_reference.h"
+#include "qdengine/core/qdcore/qd_setup.h"
 
-#include "qdscr_parser.h"
-#include "qd_minigame.h"
-#include "qd_grid_zone.h"
-#include "qd_music_track.h"
-#include "qd_game_object_static.h"
-#include "qd_game_object_animated.h"
-#include "qd_game_object_moving.h"
-#include "qd_game_object_mouse.h"
-#include "qd_game_scene.h"
-#include "qd_named_object_reference.h"
-#include "qd_setup.h"
-
-#include "qd_interface_button.h"
-#include "qd_interface_screen.h"
-#include "qd_game_dispatcher.h"
+#include "qdengine/core/qdcore/qd_interface_button.h"
+#include "qdengine/core/qdcore/qd_interface_screen.h"
+#include "qdengine/core/qdcore/qd_game_dispatcher.h"
 
 #include <stdio.h>
 /* ----------------------------- STRUCT SECTION ----------------------------- */

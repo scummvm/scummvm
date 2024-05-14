@@ -1,8 +1,8 @@
 #ifndef __QD_CAMERA_H__
 #define __QD_CAMERA_H__
 
-#include "qd_d3dutils.h"
-#include "qd_camera_mode.h"
+#include "qdengine/core/qdcore/qd_d3dutils.h"
+#include "qdengine/core/qdcore/qd_camera_mode.h"
 
 class sGridCell {
 public:

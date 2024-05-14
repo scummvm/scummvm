@@ -1,11 +1,10 @@
 #ifndef __CONDITIONAL_OBJECT_H__
 #define __CONDITIONAL_OBJECT_H__
 
-#include "xml_fwd.h"
-
-#include "qd_condition.h"
-#include "qd_condition_group.h"
-#include "qd_named_object.h"
+#include "qdengine/core/parser/xml_fwd.h"
+#include "qdengine/core/qdcore/qd_condition.h"
+#include "qdengine/core/qdcore/qd_condition_group.h"
+#include "qdengine/core/qdcore/qd_named_object.h"
 
 //! Объект с условиями.
 class qdConditionalObject : public qdNamedObject {
