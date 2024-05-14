@@ -1235,8 +1235,7 @@ void Actor::receiveHitU8(uint16 other, Direction dir, int damage, uint16 damage_
 		if ((damage_type & WeaponInfo::DMG_FALLING) && damage >= 6) {
 			// high falling damage knocks you down
 			doAnim(Animation::fallBackwards, dir_current);
-
-			// TODO: shake head after getting back up when not in combat
+			setActorFlag(ACT_STUNNED);
 			return;
 		}
 
