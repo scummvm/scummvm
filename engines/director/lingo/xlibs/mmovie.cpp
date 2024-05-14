@@ -119,6 +119,12 @@ MMovieXObject::MMovieXObject(ObjectType ObjectType) :Object<MMovieXObject>("MMov
 
 MMovieXObject::~MMovieXObject() {
 	_lastFrame.free();
+	for (auto &it : _movies) {
+		if (it._value._video) {
+			delete it._value._video;
+			it._value._video = nullptr;
+		}
+	}
 }
 
 bool MMovieXObject::playSegment(int movieIndex, int segIndex, bool looping, bool restore, bool shiftAbort, bool abortOnClick, bool purge, bool async) {
@@ -203,7 +209,9 @@ void MMovieXObject::updateScreen() {
 					Graphics::Surface *temp1 = frame->scale(_bounds.width(), _bounds.height(), false);
 					Graphics::Surface *temp2 = temp1->convertTo(g_director->_pixelformat, movie._video->getPalette());
 					_lastFrame.copyFrom(*temp2);
+					temp2->free();
 					delete temp2;
+					temp1->free();
 					delete temp1;
 				}
 			}
