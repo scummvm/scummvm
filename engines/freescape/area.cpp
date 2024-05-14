@@ -264,6 +264,9 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 		centerPlanar /= 2;
 		Math::Vector3d distance;
 		for (auto &object : nonPlanarObjects) {
+			if (object->_partOfGroup)
+				continue;
+
 			distance = object->_boundingBox.distance(centerPlanar);
 			if (distance.length() > 0)
 				continue;
