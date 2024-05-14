@@ -797,6 +797,7 @@ static void showChannels() {
 				ImGui::TableNextColumn();
 
 				if (sprite._castId.member) {
+					Common::Point position = channel.getPosition();
 					ImGui::Text("%s", sprite._castId.asString().c_str());
 					ImGui::TableNextColumn();
 					ImGui::Checkbox("", &channel._visible);
@@ -811,7 +812,7 @@ static void showChannels() {
 					ImGui::TableNextColumn();
 					ImGui::Text("%d", sprite._thickness);
 					ImGui::TableNextColumn();
-					ImGui::Text("%dx%d@%d,%d", channel._width, channel._height, channel._currentPoint.x, channel._currentPoint.y);
+					ImGui::Text("%dx%d@%d,%d", channel.getWidth(), channel.getHeight(), position.x, position.y);
 					ImGui::TableNextColumn();
 					ImGui::Text("%d (%s)", sprite._spriteType, spriteType2str(sprite._spriteType));
 					ImGui::TableNextColumn();

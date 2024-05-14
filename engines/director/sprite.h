@@ -83,6 +83,17 @@ public:
 	void setAutoPuppet(AutoPuppetProperty property, bool value);
 	bool getAutoPuppet(AutoPuppetProperty property);
 
+	inline int getWidth() { return _width; }
+	void setWidth(int w);
+	inline int getHeight() { return _height; }
+	void setHeight(int h);
+
+	Common::Rect getBbox(bool unstretched);
+	void setBbox(int l, int t, int r, int b);
+
+	Common::Point getPosition();
+	void setPosition(int x, int y);
+
 	Frame *_frame;
 	Score *_score;
 	Movie *_movie;
