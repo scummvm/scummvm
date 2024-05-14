@@ -63,7 +63,7 @@ Host *ENet::createHost(const Common::String &address, int port, int numClients, 
 
 	ENetHost *_host = enet_host_create(&enetAddress, numClients, numChannels, incBand, outBand);
 	if (_host == nullptr) {
-		warning("ENet: An error occured when trying to create host with address %s:%d", address.c_str(), port);
+		warning("ENet: An error occurred when trying to create host with address %s:%d", address.c_str(), port);
 		return nullptr;
 	}
 
@@ -79,7 +79,7 @@ Host *ENet::connectToHost(const Common::String &hostAddress, int hostPort, const
 	// NOTE: Number of channels must match with the server's.
 	ENetHost *enetHost = enet_host_create(&enetHostAddress, 1, numChannels, incBand, outBand);
 	if (enetHost == nullptr) {
-		warning("ENet: An error occured when trying to create client host");
+		warning("ENet: An error occurred when trying to create client host");
 		return nullptr;
 	}
 
