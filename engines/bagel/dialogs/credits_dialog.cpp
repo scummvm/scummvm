@@ -121,19 +121,18 @@ ErrorCode CBagCreditsDialog::loadNextTextFile() {
 
 	// Create a new work area
 	_pCreditsBmp = new CBofBitmap(cRect.width(), cRect.height() + LINE_HEIGHT + 2, _pBackdrop->getPalette());
-	if (_pCreditsBmp != nullptr) {
+	if (_pCreditsBmp != nullptr)
+	{
 		_pCreditsBmp->fillRect(nullptr, MY_MASK_COLOR);
 
 		// Kill any previous work area
 		delete _pSaveBmp;
 		_pSaveBmp = new CBofBitmap(_pCreditsBmp->width(), _pCreditsBmp->height(), _pBackdrop->getPalette());
-		if (_pSaveBmp != nullptr) {
-			CBofRect tmpRect = _pSaveBmp->getRect();
-			_pBackdrop->paint(_pSaveBmp, &tmpRect, &cRect);
+		if (_pSaveBmp == nullptr)
+			fatalError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
 
-		} else {
-			reportError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
-		}
+		CBofRect tmpRect = _pSaveBmp->getRect();
+		_pBackdrop->paint(_pSaveBmp, &tmpRect, &cRect);
 	}
 
 	// Get rid of any previous credits screen
@@ -148,28 +147,26 @@ ErrorCode CBagCreditsDialog::loadNextTextFile() {
 		// Read in text file
 		uint32 lSize = cFile.getLength();
 		_pszText = (char *)bofCAlloc(lSize + 1, 1);
-		if (_pszText != nullptr) {
-			cFile.read(_pszText, lSize);
+		if (_pszText == nullptr)
+			fatalError(ERR_MEMORY, "Unable to allocate %d bytes for Credits.", lSize);
 
-			_pszNextLine = _pszText;
-			_pszEnd = _pszText + lSize;
-			_nNumPixels = 0;
+		cFile.read(_pszText, lSize);
 
-			// Determine the number of lines of text in credits
-			_nLines = strCharCount(_pszText, '\n');
-			strreplaceChar(_pszText, '\r', ' ');
-			strreplaceChar(_pszText, '\n', '\0');
+		_pszNextLine = _pszText;
+		_pszEnd = _pszText + lSize;
+		_nNumPixels = 0;
 
-			paintLine(linesPerPage() - 1, _pszNextLine);
-			nextLine();
-			paintLine(linesPerPage(), _pszNextLine);
-			nextLine();
+		// Determine the number of lines of text in credits
+		_nLines = strCharCount(_pszText, '\n');
+		strreplaceChar(_pszText, '\r', ' ');
+		strreplaceChar(_pszText, '\n', '\0');
 
-			_bDisplay = true;
+		paintLine(linesPerPage() - 1, _pszNextLine);
+		nextLine();
+		paintLine(linesPerPage(), _pszNextLine);
+		nextLine();
 
-		} else {
-			reportError(ERR_MEMORY, "Unable to allocate %d bytes for Credits.", lSize);
-		}
+		_bDisplay = true;
 	}
 
 	return _errCode;
@@ -178,9 +175,9 @@ ErrorCode CBagCreditsDialog::loadNextTextFile() {
 int CBagCreditsDialog::linesPerPage() {
 	assert(isValidObject(this));
 
-	int n = (g_cScreen[_iScreen]._nBottom - g_cScreen[_iScreen]._nTop) / (LINE_HEIGHT + 2) + 1;
+	int retVal = (g_cScreen[_iScreen]._nBottom - g_cScreen[_iScreen]._nTop) / (LINE_HEIGHT + 2) + 1;
 
-	return n;
+	return retVal;
 }
 
 void CBagCreditsDialog::onClose() {
@@ -276,8 +273,7 @@ ErrorCode CBagCreditsDialog::displayCredits() {
 
 
 			// Strip off top layer so it won't wrap around
-			int i;
-			for (i = 0; i < PIX_SCROLL_DY; i++) {
+			for (int i = 0; i < PIX_SCROLL_DY; i++) {
 				_pCreditsBmp->line(0, i, _pCreditsBmp->width() - 1, i, MY_MASK_COLOR);
 			}
 

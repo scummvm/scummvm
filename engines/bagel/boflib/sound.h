@@ -205,8 +205,8 @@ private:
 	static int _nCount;                    // Count of active sounds
 	static int _nWavCount;                 // Number of wave sound devices
 	static int _nMidiCount;                // Number of midi sound devices
-	static bool _bsoundAvailable;          // Whether wave sound is available
-	static bool _bmidiAvailable;           // Whether midi sound is available
+	static bool _bSoundAvailable;          // Whether wave sound is available
+	static bool _bMidiAvailable;           // Whether midi sound is available
 	static bool _bWaveVolume;              // Whether wave volume can be set
 	static bool _bMidiVolume;              // Whether midi volume can be set
 	static CBofWindow *_pMainWnd;          // Window for message processing

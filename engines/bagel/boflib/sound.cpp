@@ -44,8 +44,8 @@ CBofSound  *CBofSound::_pSoundChain = nullptr;  // Pointer to chain of linked So
 int     CBofSound::_nCount = 0;                 // Count of currently active Sounds
 int     CBofSound::_nWavCount = 0;              // Available wave sound devices
 int     CBofSound::_nMidiCount = 0;             // Available midi sound devices
-bool    CBofSound::_bsoundAvailable = false;    // Whether wave sound is available
-bool    CBofSound::_bmidiAvailable = false;     // Whether midi sound is available
+bool    CBofSound::_bSoundAvailable = false;    // Whether wave sound is available
+bool    CBofSound::_bMidiAvailable = false;     // Whether midi sound is available
 bool    CBofSound::_bWaveVolume = false;        // Whether wave volume can be set
 bool    CBofSound::_bMidiVolume = false;        // Whether midi volume can be set
 CBofWindow   *CBofSound::_pMainWnd = nullptr;   // Window for message processing
@@ -87,8 +87,7 @@ CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, c
 	_bInQueue = false;
 	_iQSlot = 0;
 
-	int i;
-	for (i = 0; i < NUM_QUEUES; i++) {
+	for (int i = 0; i < NUM_QUEUES; i++) {
 		_nSlotVol[i] = VOLUME_INDEX_DEFAULT;
 	}
 
@@ -122,19 +121,17 @@ CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, c
 				}
 			}
 
-		} else {
+		} else if (_wFlags & SOUND_MIDI) {
 			// Try both MIDI formats
-			if (_wFlags & SOUND_MIDI) {
-				strreplaceStr(szTempPath, ".MID", ".MOV");
-				if (fileExists(szTempPath)) {
-					fileGetFullPath(_szFileName, szTempPath);
-					_chType = SOUND_TYPE_QT;
-				} else {
-					reportError(ERR_FFIND, szTempPath);
-				}
+			strreplaceStr(szTempPath, ".MID", ".MOV");
+			if (fileExists(szTempPath)) {
+				fileGetFullPath(_szFileName, szTempPath);
+				_chType = SOUND_TYPE_QT;
 			} else {
 				reportError(ERR_FFIND, szTempPath);
 			}
+		} else {
+			reportError(ERR_FFIND, szTempPath);
 		}
 	}
 
@@ -164,8 +161,8 @@ CBofSound::~CBofSound() {
 
 
 void CBofSound::initialize() {
-	_bsoundAvailable = true;
-	_bmidiAvailable = false;
+	_bSoundAvailable = true;
+	_bMidiAvailable = false;
 
 	for (int i = 0; i < NUM_QUEUES; ++i)
 		_cQueue[i] = new CQueue();
@@ -546,12 +543,12 @@ void CBofSound::clearMidiSounds() {
 
 
 bool CBofSound::soundAvailable() {
-	return _bsoundAvailable;                     // Return requested info
+	return _bSoundAvailable;                     // Return requested info
 }
 
 
 bool CBofSound::midiAvailable() {
-	return _bmidiAvailable;                      // Return requested info
+	return _bMidiAvailable;                      // Return requested info
 }
 
 

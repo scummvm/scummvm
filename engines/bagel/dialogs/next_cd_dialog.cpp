@@ -49,19 +49,17 @@ void CBagNextCDDialog::onInitDialog() {
 
 	// Build all our buttons
 	_pButton = new CBofBmpButton;
-	if (_pButton != nullptr) {
-		CBofBitmap *pUp = loadBitmap(buildSysDir("CDOKUP.BMP"), pPal);
-		CBofBitmap *pDown = loadBitmap(buildSysDir("CDOKDN.BMP"), pPal);
-		CBofBitmap *pFocus = loadBitmap(buildSysDir("CDOKUP.BMP"), pPal);
-		CBofBitmap *pDis = loadBitmap(buildSysDir("CDOKUP.BMP"), pPal);
+	if (_pButton == nullptr)
+		fatalError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
 
-		_pButton->loadBitmaps(pUp, pDown, pFocus, pDis);
-		_pButton->create("NextCD", 77, 127, 60, 30, this, OK_BTN);
-		_pButton->show();
+	CBofBitmap *pUp = loadBitmap(buildSysDir("CDOKUP.BMP"), pPal);
+	CBofBitmap *pDown = loadBitmap(buildSysDir("CDOKDN.BMP"), pPal);
+	CBofBitmap *pFocus = loadBitmap(buildSysDir("CDOKUP.BMP"), pPal);
+	CBofBitmap *pDis = loadBitmap(buildSysDir("CDOKUP.BMP"), pPal);
 
-	} else {
-		reportError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
-	}
+	_pButton->loadBitmaps(pUp, pDown, pFocus, pDis);
+	_pButton->create("NextCD", 77, 127, 60, 30, this, OK_BTN);
+	_pButton->show();
 
 	// Show System cursor
 	CBagCursor::showSystemCursor();
