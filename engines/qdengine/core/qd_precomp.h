@@ -4,6 +4,9 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/system.h"
 
+#define FOR_EACH(list, iterator) \
+    for(iterator = (list).begin(); iterator != (list).end(); ++iterator)
+
  // STUB: XZipStream
 #define _NO_ZIP_
 
