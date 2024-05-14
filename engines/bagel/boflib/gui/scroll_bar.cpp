@@ -111,10 +111,8 @@ ErrorCode CBofScrollBar::setText(const char *pszText, int nJustify) {
 			cTempRect.right += 20;
 
 			_pScrollText = new CBofText(&cTempRect, nJustify);
-			if (_pScrollText != nullptr) {
-
-			} else {
-				reportError(ERR_MEMORY, "Could not allocate a new CBofText");
+			if (_pScrollText == nullptr) {
+				fatalError(ERR_MEMORY, "Could not allocate a new CBofText");
 			}
 		}
 
@@ -219,11 +217,12 @@ ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, 
 	_nScrollWidth = _cBkSize.cx;
 
 	_pThumb = new CBofSprite;
-	if (_pThumb != nullptr) {
-		if (_pThumb->loadSprite(pszThumb) != false) {
-			_pThumb->setMaskColor(COLOR_WHITE);
-			_cThumbSize = _pThumb->getSize();
-		}
+	if (_pThumb == nullptr)
+		fatalError(ERR_MEMORY, "Could not allocate a new CBofSprite");
+
+	if (_pThumb->loadSprite(pszThumb) != false) {
+		_pThumb->setMaskColor(COLOR_WHITE);
+		_cThumbSize = _pThumb->getSize();
 	}
 
 	delete _pLeftBtnUp;
@@ -232,18 +231,16 @@ ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, 
 	CBofPoint cPoint;
 	if (pszLeftBtnUp != nullptr) {
 		_pLeftBtnUp = new CBofBitmap(pszLeftBtnUp, pPalette);
-		if (_pLeftBtnUp != nullptr) {
-			cPoint.x = 0;
-			cPoint.y = (_pBackdrop->height() / 2) - (_pLeftBtnUp->height() / 2);
+		if (_pLeftBtnUp == nullptr)
+			fatalError(ERR_MEMORY, "Could not allocate a new CBofBitmap(%s)", pszLeftBtnUp);
 
-			_cLeftBtnRect = _pLeftBtnUp->getRect() + cPoint;
+		cPoint.x = 0;
+		cPoint.y = (_pBackdrop->height() / 2) - (_pLeftBtnUp->height() / 2);
 
-			_nOffset = _pLeftBtnUp->width();
-			_nScrollWidth -= _nOffset;
+		_cLeftBtnRect = _pLeftBtnUp->getRect() + cPoint;
 
-		} else {
-			reportError(ERR_MEMORY, "Could not allocate a new CBofBitmap(%s)", pszLeftBtnUp);
-		}
+		_nOffset = _pLeftBtnUp->width();
+		_nScrollWidth -= _nOffset;
 	}
 
 	delete _pRightBtnUp;
@@ -251,15 +248,14 @@ ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, 
 
 	if (pszRightBtnUp != nullptr) {
 		_pRightBtnUp = new CBofBitmap(pszRightBtnUp, pPalette);
-		if (_pRightBtnUp != nullptr) {
-			cPoint.x = _pBackdrop->width() - _pRightBtnUp->width();
-			cPoint.y = (_pBackdrop->height() / 2) - (_pRightBtnUp->height() / 2);
-			_cRightBtnRect = _pLeftBtnUp->getRect() + cPoint;
+		if (_pRightBtnUp == nullptr)
+			fatalError(ERR_MEMORY, "Could not allocate a new CBofBitmap(%s)", pszRightBtnUp);
 
-			_nScrollWidth -= _cRightBtnRect.width();
-		} else {
-			reportError(ERR_MEMORY, "Could not allocate a new CBofBitmap(%s)", pszRightBtnUp);
-		}
+		cPoint.x = _pBackdrop->width() - _pRightBtnUp->width();
+		cPoint.y = (_pBackdrop->height() / 2) - (_pRightBtnUp->height() / 2);
+		_cRightBtnRect = _pLeftBtnUp->getRect() + cPoint;
+
+		_nScrollWidth -= _cRightBtnRect.width();
 	}
 
 	delete _pLeftBtnDn;
@@ -268,7 +264,7 @@ ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, 
 	if (pszLeftBtnDn != nullptr) {
 		_pLeftBtnDn = new CBofBitmap(pszLeftBtnDn, pPalette);
 		if (_pLeftBtnDn == nullptr) {
-			reportError(ERR_MEMORY, "Could not allocate a new CBofBitmap(%s)", pszLeftBtnDn);
+			fatalError(ERR_MEMORY, "Could not allocate a new CBofBitmap(%s)", pszLeftBtnDn);
 		}
 	}
 
@@ -278,7 +274,7 @@ ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, 
 	if (pszRightBtnDn != nullptr) {
 		_pRightBtnDn = new CBofBitmap(pszRightBtnDn, pPalette);
 		if (_pRightBtnDn == nullptr) {
-			reportError(ERR_MEMORY, "Could not allocate a new CBofBitmap(%s)", pszRightBtnDn);
+			fatalError(ERR_MEMORY, "Could not allocate a new CBofBitmap(%s)", pszRightBtnDn);
 		}
 	}
 
@@ -307,44 +303,43 @@ ErrorCode CBofScrollBar::paint(CBofRect *pDirtyRect) {
 		if ((_pBackdrop != nullptr) && (_pThumb != nullptr)) {
 			// Do all painting offscreen
 			CBofBitmap *pBmp = new CBofBitmap(_cBkSize.cx, _cBkSize.cy, pPalette);
-			if (pBmp != nullptr) {
-				_pBackdrop->paint(pBmp, 0, 0, nullptr, COLOR_WHITE);
+			if (pBmp == nullptr)
+				fatalError(ERR_MEMORY, "Could not allocate a new CBofBitmap(%d x %d))", _cBkSize.cx, _cBkSize.cy);
 
-				if ((_nScrollState == 1) && (_pLeftBtnDn != nullptr)) {
-					cPoint = _cLeftBtnRect.topLeft();
-					_pLeftBtnDn->paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
+			_pBackdrop->paint(pBmp, 0, 0, nullptr, COLOR_WHITE);
 
-				} else if (_pLeftBtnUp != nullptr) {
-					cPoint = _cLeftBtnRect.topLeft();
-					_pLeftBtnUp->paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
-				}
+			if ((_nScrollState == 1) && (_pLeftBtnDn != nullptr)) {
+				cPoint = _cLeftBtnRect.topLeft();
+				_pLeftBtnDn->paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
 
-				if ((_nScrollState == 4) && (_pRightBtnDn != nullptr)) {
-					cPoint = _cRightBtnRect.topLeft();
-					_pRightBtnDn->paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
-
-				} else if (_pRightBtnUp != nullptr) {
-					cPoint = _cRightBtnRect.topLeft();
-					_pRightBtnUp->paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
-				}
-
-				_cThumbPos.x = (int)(((int32)(_nScrollWidth - _cThumbSize.cx) * _nPos) / (_nRange - 1)) + _nOffset;
-				_cThumbPos.y = (int)(_cBkSize.cy / 2) - (int)(_cThumbSize.cy / 2);
-
-				if (_cThumbPos.x < 0)
-					_cThumbPos.x = 0;
-				if (_cThumbPos.x > (_nScrollWidth - _cThumbSize.cx + _nOffset))
-					_cThumbPos.x = _nScrollWidth - _cThumbSize.cx + _nOffset;
-
-				_pThumb->paintSprite(pBmp, _cThumbPos);
-
-				// now we can paint the offscreen buffer to the screen
-				pBmp->paint(this, 0, 0);
-
-				delete pBmp;
-			} else {
-				reportError(ERR_MEMORY, "Could not allocate a new CBofBitmap(%d x %d))", _cBkSize.cx, _cBkSize.cy);
+			} else if (_pLeftBtnUp != nullptr) {
+				cPoint = _cLeftBtnRect.topLeft();
+				_pLeftBtnUp->paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
 			}
+
+			if ((_nScrollState == 4) && (_pRightBtnDn != nullptr)) {
+				cPoint = _cRightBtnRect.topLeft();
+				_pRightBtnDn->paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
+
+			} else if (_pRightBtnUp != nullptr) {
+				cPoint = _cRightBtnRect.topLeft();
+				_pRightBtnUp->paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
+			}
+
+			_cThumbPos.x = (int)(((int32)(_nScrollWidth - _cThumbSize.cx) * _nPos) / (_nRange - 1)) + _nOffset;
+			_cThumbPos.y = (int)(_cBkSize.cy / 2) - (int)(_cThumbSize.cy / 2);
+
+			if (_cThumbPos.x < 0)
+				_cThumbPos.x = 0;
+			if (_cThumbPos.x > (_nScrollWidth - _cThumbSize.cx + _nOffset))
+				_cThumbPos.x = _nScrollWidth - _cThumbSize.cx + _nOffset;
+
+			_pThumb->paintSprite(pBmp, _cThumbPos);
+
+			// now we can paint the offscreen buffer to the screen
+			pBmp->paint(this, 0, 0);
+
+			delete pBmp;
 		}
 
 		if ((_pScrollText != nullptr) && (_parent != nullptr)) {

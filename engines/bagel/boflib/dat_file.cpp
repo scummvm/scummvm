@@ -93,7 +93,9 @@ ErrorCode CBofDataFile::setFile(const char *pszFileName, uint32 lFlags, const ch
 			if (!(_lFlags & CDF_KEEPOPEN)) {
 				close();
 			}
-		}
+		} else
+			reportError(ERR_FOPEN, "Could not open file %s", _szFileName);
+
 	} else {
 		reportError(ERR_FFIND, "Could not build full path to %s", pszFileName);
 	}

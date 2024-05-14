@@ -111,9 +111,8 @@ ErrorCode CBofTextBox::setBox(const CBofRect *pRect) {
 
 	// Create a new text field the size of the box we want
 	_pTextField = new CBofText(pRect, JUSTIFY_WRAP);
-	if (_pTextField == nullptr) {
-		reportError(ERR_MEMORY, "Could not allocate a CBofText");
-	}
+	if (_pTextField == nullptr)
+		fatalError(ERR_MEMORY, "Could not allocate a CBofText");
 
 	return _errCode;
 }

@@ -337,18 +337,14 @@ ErrorCode CBofListBox::saveBackground() {
 
 	killBackground();
 	_pBackdrop = new CBofBitmap(width(), height(), CBofApp::getApp()->getPalette());
-	if (_pBackdrop != nullptr) {
-		if ((_parent != nullptr) && (_parent->getBackdrop() != nullptr)) {
-			CBofRect cRect = _pBackdrop->getRect();
+	if (_pBackdrop == nullptr)
+		fatalError(ERR_MEMORY, "Unable to allocate a %d x %d CBofBitmap", width(), height());
 
-			_parent->getBackdrop()->paint(_pBackdrop, &cRect, &_cWindowRect);
-
-		} else {
-			_pBackdrop->captureScreen(this, &_cRect);
-		}
-
+	if ((_parent != nullptr) && (_parent->getBackdrop() != nullptr)) {
+		CBofRect cRect = _pBackdrop->getRect();
+		_parent->getBackdrop()->paint(_pBackdrop, &cRect, &_cWindowRect);
 	} else {
-		reportError(ERR_MEMORY, "Unable to allocate a %d x %d CBofBitmap", width(), height());
+		_pBackdrop->captureScreen(this, &_cRect);
 	}
 
 	return _errCode;
@@ -365,7 +361,7 @@ ErrorCode CBofListBox::createWorkArea() {
 		assert(_pBackdrop != nullptr);
 		_pWork = new CBofBitmap(width(), height(), _pBackdrop->getPalette());
 		if (_pWork == nullptr) {
-			reportError(ERR_MEMORY, "Unable to allocate a %d x %d CBofBitmap", width(), height());
+			fatalError(ERR_MEMORY, "Unable to allocate a %d x %d CBofBitmap", width(), height());
 		}
 	}
 

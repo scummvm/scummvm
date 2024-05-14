@@ -107,14 +107,13 @@ ErrorCode CBofDialog::create(const char *pszName, CBofRect *pRect, CBofWindow *p
 	assert(isValidObject(this));
 	assert(pszName != nullptr);
 
-	CBofRect cRect;
 	int x = 0;
 	int y = 0;
 	int nWidth = USE_DEFAULT;
 	int nHeight = USE_DEFAULT;
 
 	if ((pRect == nullptr) && (_pBackdrop != nullptr)) {
-		cRect = _pBackdrop->getRect();
+		CBofRect cRect = _pBackdrop->getRect();
 		pRect = &cRect;
 	}
 
@@ -204,13 +203,11 @@ ErrorCode CBofDialog::saveBackground() {
 		delete _pDlgBackground;
 		// Save a copy of the background
 		_pDlgBackground = new CBofBitmap(width(), height(), pPalette);
-		if (_pDlgBackground != nullptr) {
-			_pDlgBackground->captureScreen(this, &_cRect);
-			_pDlgBackground->setReadOnly(true);
+		if (_pDlgBackground == nullptr)
+			fatalError(ERR_MEMORY, "Unable to allocate a new CBofBitmap(%d x %d)", width(), height());
 
-		} else {
-			reportError(ERR_MEMORY, "Unable to allocate a new CBofBitmap(%d x %d)", width(), height());
-		}
+		_pDlgBackground->captureScreen(this, &_cRect);
+		_pDlgBackground->setReadOnly(true);
 	}
 
 	_bFirstTime = false;
