@@ -1263,16 +1263,9 @@ enum ProjectPlatform {
 	kProjectPlatformMacintosh,
 };
 
-enum ProjectMajorVersion {
-	kProjectMajorVersionUnknown,
-
-	kProjectMajorVersion1,
-	kProjectMajorVersion2,
-};
-
 class ProjectDescription {
 public:
-	ProjectDescription(ProjectPlatform platform, ProjectMajorVersion majorVersion, Common::Archive *rootArchive, const Common::Path &projectRootDir);
+	ProjectDescription(ProjectPlatform platform, RuntimeVersion runtimeVersion, bool autoDetectVersion, Common::Archive *rootArchive, const Common::Path &projectRootDir);
 	~ProjectDescription();
 
 	void addSegment(int volumeID, const char *filePath);
@@ -1292,15 +1285,14 @@ public:
 	const Common::Language &getLanguage() const;
 
 	ProjectPlatform getPlatform() const;
-	ProjectMajorVersion getMajorVersion() const;
+	RuntimeVersion getRuntimeVersion() const;
+	bool isRuntimeVersionAuto() const;
 
 	Common::Archive *getRootArchive() const;
 	const Common::Path &getProjectRootDir() const;
 
 	const SubtitleTables &getSubtitles() const;
 	void setSubtitles(const SubtitleTables &subs);
-
-
 
 private:
 	Common::Array<SegmentDescription> _segments;
@@ -1310,7 +1302,8 @@ private:
 	Common::Language _language;
 	SubtitleTables _subtitles;
 	ProjectPlatform _platform;
-	ProjectMajorVersion _majorVersion;
+	RuntimeVersion _runtimeVersion;
+	bool _isRuntimeVersionAuto;
 
 	Common::Archive *_rootArchive;
 	Common::Path _projectRootDir;
@@ -2583,7 +2576,9 @@ private:
 
 	Common::Archive *_rootArchive;
 	Common::Path _projectRootDir;
-	ProjectMajorVersion _majorVersion;
+
+	RuntimeVersion _runtimeVersion;
+	bool _isRuntimeVersionAutoDetect;
 };
 
 class Section : public Structural {

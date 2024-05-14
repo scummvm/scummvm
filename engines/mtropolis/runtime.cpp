@@ -2550,8 +2550,8 @@ Common::SharedPtr<CursorGraphic> CursorGraphicCollection::getGraphicByID(uint32 
 	return nullptr;
 }
 
-ProjectDescription::ProjectDescription(ProjectPlatform platform, ProjectMajorVersion majorVersion, Common::Archive *rootArchive, const Common::Path &projectRootDir)
-	: _language(Common::EN_ANY), _platform(platform), _rootArchive(rootArchive), _projectRootDir(projectRootDir), _majorVersion(majorVersion) {
+ProjectDescription::ProjectDescription(ProjectPlatform platform, RuntimeVersion runtimeVersion, bool autoDetectVersion, Common::Archive *rootArchive, const Common::Path &projectRootDir)
+	: _language(Common::EN_ANY), _platform(platform), _rootArchive(rootArchive), _projectRootDir(projectRootDir), _runtimeVersion(runtimeVersion), _isRuntimeVersionAuto(autoDetectVersion) {
 }
 
 ProjectDescription::~ProjectDescription() {
@@ -2614,8 +2614,12 @@ ProjectPlatform ProjectDescription::getPlatform() const {
 	return _platform;
 }
 
-ProjectMajorVersion ProjectDescription::getMajorVersion() const {
-	return _majorVersion;
+RuntimeVersion ProjectDescription::getRuntimeVersion() const {
+	return _runtimeVersion;
+}
+
+bool ProjectDescription::isRuntimeVersionAuto() const {
+	return _isRuntimeVersionAuto;
 }
 
 Common::Archive *ProjectDescription::getRootArchive() const {
@@ -7012,7 +7016,7 @@ Project::Project(Runtime *runtime)
 	: Structural(runtime), _projectFormat(Data::kProjectFormatUnknown),
 	  _haveGlobalObjectInfo(false), _haveProjectStructuralDef(false), _playMediaSignaller(new PlayMediaSignaller()),
 	  _keyboardEventSignaller(new KeyboardEventSignaller()), _guessedVersion(MTropolisVersions::kMTropolisVersion1_0),
-	  _platform(kProjectPlatformUnknown), _rootArchive(nullptr), _majorVersion(kProjectMajorVersionUnknown) {
+	  _platform(kProjectPlatformUnknown), _rootArchive(nullptr), _runtimeVersion(kRuntimeVersion100) {
 }
 
 Project::~Project() {
@@ -7067,7 +7071,7 @@ void Project::loadFromDescription(const ProjectDescription &desc, const Hacks &h
 	_platform = desc.getPlatform();
 	_rootArchive = desc.getRootArchive();
 	_projectRootDir = desc.getProjectRootDir();
-	_majorVersion = desc.getMajorVersion();
+	_runtimeVersion = desc.getRuntimeVersion();
 
 	debug(1, "Loading new project...");
 
@@ -7113,13 +7117,19 @@ void Project::loadFromDescription(const ProjectDescription &desc, const Hacks &h
 
 	Common::SeekableSubReadStream stream(baseStream, 2, baseStream->size());
 
-	Data::DataReader catReader(2, stream, (_projectFormat == Data::kProjectFormatMacintosh) ? Data::kDataFormatMacintosh : Data::kDataFormatWindows);
+	Data::DataReader catReader(2, stream, (_projectFormat == Data::kProjectFormatMacintosh) ? Data::kDataFormatMacintosh : Data::kDataFormatWindows, desc.getRuntimeVersion(), desc.isRuntimeVersionAuto());
 
 	uint32 magic = 0;
 	uint32 hdr1 = 0;
 	uint32 hdr2 = 0;
 	if (!catReader.readMultiple(magic, hdr1, hdr2) || magic != 0xaa55a5a5 || (hdr1 != 0 && hdr1 != 0x2000000) || hdr2 != 14) {
 		error("Unrecognized project segment header (%x, %x, %d)", magic, hdr1, hdr2);
+	}
+
+	if (hdr1 == 0x2000000 && _isRuntimeVersionAutoDetect && _runtimeVersion < kRuntimeVersion200) {
+		debug(1, "Version auto-detect: Detected as 2.0.0 from V2 project header");
+		catReader.setRuntimeVersion(kRuntimeVersion200);
+		_runtimeVersion = kRuntimeVersion200;
 	}
 
 	Common::SharedPtr<Data::DataObject> dataObject;
@@ -7133,6 +7143,9 @@ void Project::loadFromDescription(const ProjectDescription &desc, const Hacks &h
 	if (!dataObject || dataObject->getType() != Data::DataObjectTypes::kProjectCatalog) {
 		error("Expected project catalog but found something else");
 	}
+
+	// Catalog version can update version auto-detect
+	_runtimeVersion = catReader.getRuntimeVersion();
 
 	Data::ProjectCatalog *catalog = static_cast<Data::ProjectCatalog *>(dataObject.get());
 
@@ -7193,7 +7206,7 @@ void Project::loadSceneFromStream(const Common::SharedPtr<Structural> &scene, ui
 	openSegmentStream(segmentIndex);
 
 	Common::SeekableSubReadStream stream(_segments[segmentIndex].weakStream, streamDesc.pos, streamDesc.pos + streamDesc.size);
-	Data::DataReader reader(streamDesc.pos, stream, (_platform == kProjectPlatformMacintosh) ? Data::kDataFormatMacintosh : Data::kDataFormatWindows);
+	Data::DataReader reader(streamDesc.pos, stream, (_platform == kProjectPlatformMacintosh) ? Data::kDataFormatMacintosh : Data::kDataFormatWindows, _runtimeVersion, _isRuntimeVersionAutoDetect);
 
 	if (getRuntime()->getHacks().mtiHispaniolaDamagedStringHack && scene->getName() == "C01b : Main Deck Helm Kidnap")
 		reader.setPermitDamagedStrings(true);
@@ -7321,7 +7334,7 @@ void Project::forceLoadAsset(uint32 assetID, Common::Array<Common::SharedPtr<Ass
 	openSegmentStream(segmentIndex);
 
 	Common::SeekableSubReadStream stream(_segments[segmentIndex].weakStream, streamDesc.pos, streamDesc.pos + streamDesc.size);
-	Data::DataReader reader(streamDesc.pos, stream, (_projectFormat == Data::kProjectFormatMacintosh) ? Data::kDataFormatMacintosh : Data::kDataFormatWindows);
+	Data::DataReader reader(streamDesc.pos, stream, (_projectFormat == Data::kProjectFormatMacintosh) ? Data::kDataFormatMacintosh : Data::kDataFormatWindows, _runtimeVersion, _isRuntimeVersionAutoDetect);
 
 	const Data::PlugInModifierRegistry &plugInDataLoaderRegistry = _plugInRegistry.getDataLoaderRegistry();
 
@@ -7511,7 +7524,7 @@ void Project::loadBootStream(size_t streamIndex, const Hacks &hacks) {
 	openSegmentStream(segmentIndex);
 
 	Common::SeekableSubReadStream stream(_segments[segmentIndex].weakStream, streamDesc.pos, streamDesc.pos + streamDesc.size);
-	Data::DataReader reader(streamDesc.pos, stream, (_platform == kProjectPlatformMacintosh) ? Data::kDataFormatMacintosh : Data::kDataFormatWindows);
+	Data::DataReader reader(streamDesc.pos, stream, (_platform == kProjectPlatformMacintosh) ? Data::kDataFormatMacintosh : Data::kDataFormatWindows, _runtimeVersion, _isRuntimeVersionAutoDetect);
 
 	ChildLoaderStack loaderStack;
 	AssetDefLoaderContext assetDefLoader;
@@ -7820,12 +7833,12 @@ void Project::initAdditionalSegments(const Common::String &projectName) {
 		if (_projectFormat == Data::kProjectFormatNeutral) {
 			segmentName += ".mxx";
 		} else if (_projectFormat == Data::kProjectFormatWindows) {
-			if (_majorVersion == kProjectMajorVersion2)
+			if (_runtimeVersion >= kRuntimeVersion200)
 				segmentName += ".mxw";
 			else
 				segmentName += ".mpx";
 		} else if (_projectFormat == Data::kProjectFormatMacintosh) {
-			if (_majorVersion == kProjectMajorVersion2)
+			if (_runtimeVersion >= kRuntimeVersion200)
 				segmentName += ".mxm";
 		}
 

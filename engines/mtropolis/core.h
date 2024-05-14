@@ -34,6 +34,16 @@ struct IInterfaceBase {
 	virtual ~IInterfaceBase();
 };
 
+enum RuntimeVersion {
+	kRuntimeVersion100,
+
+	kRuntimeVersion110,
+	kRuntimeVersion111,
+	kRuntimeVersion112,
+
+	kRuntimeVersion200,
+};
+
 } // End of namespace MTropolis
 
 #endif /* MTROPOLIS_CORE_H */

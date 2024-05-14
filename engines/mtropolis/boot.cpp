@@ -1090,6 +1090,18 @@ public:
 		kBitDepth32
 	};
 
+	enum RuntimeVersion {
+		kRuntimeVersionAuto,
+
+		kRuntimeVersion100,
+
+		kRuntimeVersion110,
+		kRuntimeVersion111,
+		kRuntimeVersion112,
+
+		kRuntimeVersion200,
+	};
+
 	explicit BootScriptContext(bool isMac);
 
 	void bootObsidianRetailMacEn();
@@ -1113,6 +1125,7 @@ public:
 
 	BitDepth getBitDepth() const;
 	BitDepth getEnhancedBitDepth() const;
+	RuntimeVersion getRuntimeVersion() const;
 	const Common::Point &getResolution() const;
 
 private:
@@ -1136,6 +1149,7 @@ private:
 	void setResolution(uint width, uint height);
 	void setBitDepth(BitDepth bitDepth);
 	void setEnhancedBitDepth(BitDepth bitDepth);
+	void setRuntimeVersion(RuntimeVersion version);
 
 	void executeFunction(const Common::String &functionName, const Common::Array<Common::String> &paramTokens);
 
@@ -1159,9 +1173,10 @@ private:
 	Common::Point _preferredResolution;
 	BitDepth _bitDepth;
 	BitDepth _enhancedBitDepth;
+	RuntimeVersion _runtimeVersion;
 };
 
-BootScriptContext::BootScriptContext(bool isMac) : _isMac(isMac), _preferredResolution(0, 0), _bitDepth(kBitDepthAuto), _enhancedBitDepth(kBitDepthAuto) {
+BootScriptContext::BootScriptContext(bool isMac) : _isMac(isMac), _preferredResolution(0, 0), _bitDepth(kBitDepthAuto), _enhancedBitDepth(kBitDepthAuto), _runtimeVersion(kRuntimeVersionAuto) {
 	_vfsLayout._pathSeparator = isMac ? ':' : '/';
 
 	VirtualFileSystemLayout::ArchiveJunction fsJunction;
@@ -1269,6 +1284,10 @@ void BootScriptContext::setBitDepth(BitDepth bitDepth) {
 
 void BootScriptContext::setEnhancedBitDepth(BitDepth bitDepth) {
 	_enhancedBitDepth = bitDepth;
+}
+
+void BootScriptContext::setRuntimeVersion(RuntimeVersion version) {
+	_runtimeVersion = version;
 }
 
 void BootScriptContext::bootObsidianRetailMacEn() {
@@ -1446,6 +1465,13 @@ void BootScriptContext::executeFunction(const Common::String &functionName, cons
 										   ENUM_BINDING(kArchiveTypeInstallShieldV3),
 										   ENUM_BINDING(kArchiveTypeInstallShieldCab)};
 
+	const EnumBinding runtimeVersionEnum[] = {ENUM_BINDING(kRuntimeVersionAuto),
+											  ENUM_BINDING(kRuntimeVersion100),
+											  ENUM_BINDING(kRuntimeVersion110),
+											  ENUM_BINDING(kRuntimeVersion111),
+											  ENUM_BINDING(kRuntimeVersion112),
+											  ENUM_BINDING(kRuntimeVersion200)};
+
 
 	Common::String str1, str2, str3, str4;
 	uint ui1 = 0;
@@ -1498,6 +1524,11 @@ void BootScriptContext::executeFunction(const Common::String &functionName, cons
 		parseEnum(functionName, paramTokens, 0, bitDepthEnum, ui1);
 
 		setEnhancedBitDepth(static_cast<BitDepth>(ui1));
+	} else if (functionName == "setRuntimeVersion") {
+		checkParams(functionName, paramTokens, 1);
+		parseEnum(functionName, paramTokens, 0, runtimeVersionEnum, ui1);
+
+		setRuntimeVersion(static_cast<RuntimeVersion>(ui1));
 	} else {
 		error("Unknown function '%s'", functionName.c_str());
 	}
@@ -1578,6 +1609,10 @@ BootScriptContext::BitDepth BootScriptContext::getBitDepth() const {
 
 BootScriptContext::BitDepth BootScriptContext::getEnhancedBitDepth() const {
 	return _enhancedBitDepth;
+}
+
+BootScriptContext::RuntimeVersion BootScriptContext::getRuntimeVersion() const {
+	return _runtimeVersion;
 }
 
 const Common::Point &BootScriptContext::getResolution() const {
@@ -2168,8 +2203,9 @@ void safeResolveBitDepthAndResolutionFromPresentationSettings(Common::SeekableRe
 		error("Unknown main segment signature");
 
 	bool isBE = (sigType == kSegmentSignatureMacV1 || sigType == kSegmentSignatureMacV2);
+	bool isRuntimeV2 = (sigType == kSegmentSignatureMacV2 || sigType == kSegmentSignatureWinV2 || sigType == kSegmentSignatureCrossV2);
 
-	Data::DataReader catReader(kSignatureHeaderSize, mainSegmentStream, isBE ? Data::kDataFormatMacintosh : Data::kDataFormatWindows);
+	Data::DataReader catReader(kSignatureHeaderSize, mainSegmentStream, isBE ? Data::kDataFormatMacintosh : Data::kDataFormatWindows, isRuntimeV2 ? kRuntimeVersion200 : kRuntimeVersion100, true);
 
 	uint32 hdrUnknown = 0;
 
@@ -2249,7 +2285,7 @@ void safeResolveBitDepthAndResolutionFromPresentationSettings(Common::SeekableRe
 		error("Failed to seek to boot stream");
 
 	// NOTE: Endianness switches from isBE to isMac here!
-	Data::DataReader streamReader(bootStreamPos, mainSegmentStream, isMac ? Data::kDataFormatMacintosh : Data::kDataFormatWindows);
+	Data::DataReader streamReader(bootStreamPos, mainSegmentStream, isMac ? Data::kDataFormatMacintosh : Data::kDataFormatWindows, catReader.getRuntimeVersion(), catReader.isVersionAutoDetect());
 
 	uint32 shTypeID = 0;
 	uint16 shRevision = 0;
@@ -2484,7 +2520,35 @@ BootConfiguration bootProject(const MTropolisGameDescription &gameDesc) {
 
 	ProjectPlatform projectPlatform = (gameDesc.desc.platform == Common::kPlatformMacintosh) ? kProjectPlatformMacintosh : kProjectPlatformWindows;
 
-	desc.reset(new ProjectDescription(projectPlatform, isV2Project ? kProjectMajorVersion2 : kProjectMajorVersion1, vfs.get(), mainSegmentDirectory));
+	RuntimeVersion runtimeVersion = kRuntimeVersion100;
+	bool isAutoVersion = false;
+
+	switch (bootScriptContext.getRuntimeVersion()) {
+	case Boot::BootScriptContext::kRuntimeVersionAuto:
+		if (isV2Project)
+			runtimeVersion = kRuntimeVersion200;
+		isAutoVersion = true;
+		break;
+	case Boot::BootScriptContext::kRuntimeVersion100:
+		runtimeVersion = kRuntimeVersion100;
+		break;
+	case Boot::BootScriptContext::kRuntimeVersion110:
+		runtimeVersion = kRuntimeVersion110;
+		break;
+	case Boot::BootScriptContext::kRuntimeVersion111:
+		runtimeVersion = kRuntimeVersion111;
+		break;
+	case Boot::BootScriptContext::kRuntimeVersion112:
+		runtimeVersion = kRuntimeVersion112;
+		break;
+	case Boot::BootScriptContext::kRuntimeVersion200:
+		runtimeVersion = kRuntimeVersion200;
+		break;
+	default:
+		error("Boot script runtime version was not handled");
+	}
+
+	desc.reset(new ProjectDescription(projectPlatform, runtimeVersion, isAutoVersion, vfs.get(), mainSegmentDirectory));
 	desc->setCursorGraphics(cursorGraphics);
 
 	for (const Common::SharedPtr<PlugIn> &plugIn : plugIns)

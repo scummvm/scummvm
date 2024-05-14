@@ -380,7 +380,7 @@ bool MiniscriptParser::parse(const Data::MiniscriptProgram &program, Common::Sha
 	}
 
 	Common::MemoryReadStream stream(&program.bytecode[0], program.bytecode.size());
-	Data::DataReader reader(0, stream, program.dataFormat);
+	Data::DataReader reader(0, stream, program.dataFormat, kRuntimeVersion100, false);
 
 	Common::Array<InstructionData> rawInstructions;
 	rawInstructions.resize(program.numOfInstructions);
@@ -450,7 +450,7 @@ bool MiniscriptParser::parse(const Data::MiniscriptProgram &program, Common::Sha
 			dataLoc = &rawInstruction.contents[0];
 
 		Common::MemoryReadStream instrContentsStream(static_cast<const byte *>(dataLoc), rawInstruction.contents.size());
-		Data::DataReader instrContentsReader(0, instrContentsStream, reader.getDataFormat());
+		Data::DataReader instrContentsReader(0, instrContentsStream, reader.getDataFormat(), reader.getRuntimeVersion(), reader.isVersionAutoDetect());
 
 		if (!rawInstruction.instrFactory->create(&programData[baseOffset + rawInstruction.pdPosition], rawInstruction.flags, instrContentsReader, miniscriptInstructions[i], parserFeedback)) {
 			// Destroy any already-created instructions

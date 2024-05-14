@@ -260,7 +260,7 @@ namespace StructuralFlags {
 
 class DataReader {
 public:
-	DataReader(int64 globalPosition, Common::SeekableReadStream &stream, DataFormat dataFormat);
+	DataReader(int64 globalPosition, Common::SeekableReadStream &stream, DataFormat dataFormat, RuntimeVersion runtimeVersion, bool autoDetectVersion);
 
 	bool readU8(uint8 &value);
 	bool readU16(uint16 &value);
@@ -300,6 +300,10 @@ public:
 
 	void setPermitDamagedStrings(bool permit);
 
+	bool isVersionAutoDetect() const;
+	RuntimeVersion getRuntimeVersion() const;
+	void setRuntimeVersion(RuntimeVersion runtimeVersion);
+
 private:
 	bool checkErrorAndReset();
 
@@ -308,6 +312,9 @@ private:
 	int64 _globalPosition;
 
 	bool _permitDamagedStrings;
+
+	RuntimeVersion _runtimeVersion;	// NOTE: May change during parsing if auto-detecting
+	bool _autoDetect;
 };
 
 template<class... T>

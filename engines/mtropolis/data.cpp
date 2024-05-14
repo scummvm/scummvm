@@ -157,8 +157,8 @@ bool isAsset(DataObjectType type) {
 
 } // End of namespace DataObjectTypes
 
-DataReader::DataReader(int64 globalPosition, Common::SeekableReadStream &stream, DataFormat dataFormat)
-	: _globalPosition(globalPosition), _stream(stream), _dataFormat(dataFormat), _permitDamagedStrings(false) {
+DataReader::DataReader(int64 globalPosition, Common::SeekableReadStream &stream, DataFormat dataFormat, RuntimeVersion runtimeVersion, bool autoDetectRuntimeVersion)
+	: _globalPosition(globalPosition), _stream(stream), _dataFormat(dataFormat), _permitDamagedStrings(false), _runtimeVersion(runtimeVersion), _autoDetect(autoDetectRuntimeVersion) {
 }
 
 bool DataReader::readU8(uint8 &value) {
@@ -284,6 +284,18 @@ DataFormat DataReader::getDataFormat() const {
 
 void DataReader::setPermitDamagedStrings(bool permit) {
 	_permitDamagedStrings = permit;
+}
+
+bool DataReader::isVersionAutoDetect() const {
+	return _autoDetect;
+}
+
+RuntimeVersion DataReader::getRuntimeVersion() const {
+	return _runtimeVersion;
+}
+
+void DataReader::setRuntimeVersion(RuntimeVersion runtimeVersion) {
+	_runtimeVersion = runtimeVersion;
 }
 
 bool DataReader::checkErrorAndReset() {
@@ -422,7 +434,7 @@ bool InternalTypeTaggedValue::load(DataReader &reader) {
 
 	Common::MemoryReadStream contentsStream(contents, sizeof(contents));
 
-	DataReader valueReader(valueGlobalPos, contentsStream, reader.getDataFormat());
+	DataReader valueReader(valueGlobalPos, contentsStream, reader.getDataFormat(), reader.getRuntimeVersion(), reader.isVersionAutoDetect());
 
 	switch (type) {
 	case kNull:
@@ -468,6 +480,9 @@ bool InternalTypeTaggedValue::load(DataReader &reader) {
 		warning("Unknown tagged value type %x", type);
 		return false;
 	}
+
+	// Sync any version changes
+	reader.setRuntimeVersion(valueReader.getRuntimeVersion());
 
 	return true;
 }
@@ -1036,6 +1051,11 @@ ProjectCatalog::ProjectCatalog() : persistFlags(0), sizeOfStreamAndSegmentDescs(
 DataReadErrorCode ProjectCatalog::load(DataReader &reader) {
 	if (_revision != 2 && _revision != 3) {
 		return kDataReadErrorUnsupportedRevision;
+	}
+
+	if (_revision == 3 && reader.isVersionAutoDetect() && reader.getRuntimeVersion() < kRuntimeVersion111) {
+		debug(1, "Version auto-detect: Detected as 1.1.1 from revision 3 project catalog");
+		reader.setRuntimeVersion(kRuntimeVersion111);
 	}
 
 	uint16 numSegments;
@@ -1990,7 +2010,7 @@ DataReadErrorCode PlugInModifier::load(DataReader &reader) {
 	modifierName[16] = 0;
 
 	subObjectSize = codedSize;
-	if (reader.getDataFormat() == kDataFormatWindows) {
+	if (reader.getDataFormat() == kDataFormatWindows && reader.getRuntimeVersion() < kRuntimeVersion112) {
 		// This makes no sense but it's how it's stored...
 		if (subObjectSize < lengthOfName * 256u)
 			return kDataReadErrorReadFailed;
