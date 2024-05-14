@@ -94,7 +94,7 @@ TinyGL::BlitImage *tglGenBlitImage();
 /**
 @brief Copies a surface data into the provided blit image.
 @param pointer to the blit image.
-@param referece to the surface that's being copied
+@param reference to the surface that's being copied
 @param color key value for alpha color keying
 @param boolean that enables alpha color keying
 */
