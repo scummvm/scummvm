@@ -732,7 +732,7 @@ static const char *const kEoB2SpellNamesDOSChinese[68] = {
 	"\xb3\x7a\xb5\xf8\xb3\x4e", /* "透視術"; "true seeing" */
 	"\xb6\xcb\xae\x60\xb3\x4e", /* "傷害術"; "harm" */
 	"\xa7\xb9\xa5\xfe\xc2\xe5\xc0\xf8", /* "完全醫療"; "heal" */
-	"\xa6\x41\xb3\x79\xa5\xcd\xa9\x52", /* "再造生命"; "ressurection" */
+	"\xa6\x41\xb3\x79\xa5\xcd\xa9\x52", /* "再造生命"; "resurrection" */
 	"\xb6\xc7\xa5\xa4\x6a\xaa\x6b", /* "傳奶j法"; "lay on hands" */
 	"\xb6\x57\xb4\xe7\xa4\x60\xbb\xee", /* "超渡亡魂"; "turn undead" */
 	"",
