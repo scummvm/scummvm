@@ -495,12 +495,12 @@ msgid "Downloading %S list... %d entries"
 msgstr "正在下载 %S 列表... %d 项"
 
 #: gui/downloadpacksdialog.cpp:265
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Detected %d new packs, %s %S"
 msgstr "偵測到 %d 新組件包, %s %S"
 
 #: gui/downloadpacksdialog.cpp:291
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
 msgstr "下載完成, 已下載 %d 組件包, %s %S"
 
@@ -808,7 +808,8 @@ msgstr "所選取的資料夾不能被寫入.請選擇另一資料夾."
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
-msgstr "游戏存档同步功能无法同步非默认的目录。如果你想同步存档，请使用默认目录。"
+msgstr ""
+"游戏存档同步功能无法同步非默认的目录。如果你想同步存档，请使用默认目录。"
 
 #: gui/editgamedialog.cpp:613
 msgid "This game ID is already taken. Please choose another one."
@@ -2156,7 +2157,9 @@ msgid ""
 "When starting a game, change the ScummVM GUI language to the game language. "
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
 "same language as the game."
-msgstr "當開啟遊戲的時候切換ScummVM的介面語言. 這樣的話, 如果遊戲使用 ScummVM 儲存與讀取, 它就會與遊戲中語言保持一致."
+msgstr ""
+"當開啟遊戲的時候切換ScummVM的介面語言. 這樣的話, 如果遊戲使用 ScummVM 儲存與"
+"讀取, 它就會與遊戲中語言保持一致."
 
 #: gui/options.cpp:2646
 #, fuzzy
@@ -11011,8 +11014,9 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
-"在玩这个游戏之前，你要先将特定的字体复制到 ScummVM 的 extras 目录或游戏目录里。在 Windows 系统中，请在 Windows "
-"字体目录中找到以下字体文件：Times New Roman，Century Schoolbook，Garamond，Courier New 和 "
-"Arial。或者，你也可以下载 Liberation Fonts 或 GNU FreeFont "
-"这两套字体包，并二选一。你会需要用到其中任意一套中的全部字体，也就是：LiberationMono，LiberationSans "
-"和LiberationSerif ，或者 FreeMono，FreeSans 和 FreeSerif。"
+"在玩这个游戏之前，你要先将特定的字体复制到 ScummVM 的 extras 目录或游戏目录"
+"里。在 Windows 系统中，请在 Windows 字体目录中找到以下字体文件：Times New "
+"Roman，Century Schoolbook，Garamond，Courier New 和 Arial。或者，你也可以下"
+"载 Liberation Fonts 或 GNU FreeFont 这两套字体包，并二选一。你会需要用到其中"
+"任意一套中的全部字体，也就是：LiberationMono，LiberationSans 和"
+"LiberationSerif ，或者 FreeMono，FreeSans 和 FreeSerif。"
