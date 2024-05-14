@@ -43,7 +43,7 @@ namespace Common {
 class U32String;
 
 /**
- * Simple string class for ScummVM. Provides automatic storage managment,
+ * Simple string class for ScummVM. Provides automatic storage management,
  * and overloads several operators in a 'natural' fashion, mimicking
  * the std::string class. Even provides simple iterators.
  *
