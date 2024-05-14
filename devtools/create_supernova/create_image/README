@@ -58,7 +58,7 @@ This would be the contents of a file describing 2 sections
 --palette Contains info about palette. On the first row should be a number saying
 how many colors there are and on the following rows are the individual RGB values of
 colors (don't forget, that the engine shifts each color by 2 places to the left
-(brightening the image), so the palette basicaly has to be shifted by 2 to the right
+(brightening the image), so the palette basically has to be shifted by 2 to the right
 to get the right colors). For example:
 3
 50 50 50
