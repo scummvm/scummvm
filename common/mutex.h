@@ -46,7 +46,7 @@ public:
 };
 
 /**
- * Auxillary class to (un)lock a mutex on the stack.
+ * Auxiliary class to (un)lock a mutex on the stack.
  */
 class StackLock {
 	MutexInternal *_mutex;
