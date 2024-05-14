@@ -39,11 +39,11 @@ void Handler::readRecord(Common::SeekableReadStream &stream) {
 void Handler::readData(Common::SeekableReadStream &stream) {
 	stream.seek(compiledOffset);
 	while (stream.pos() < compiledOffset + compiledLen) {
-		uint32_t pos = stream.pos() - compiledOffset;
-		uint8_t op = stream.readByte();
+		uint32 pos = stream.pos() - compiledOffset;
+		byte op = stream.readByte();
 		OpCode opcode = static_cast<OpCode>(op >= 0x40 ? 0x40 + op % 0x40 : op);
 		// argument can be one, two or four bytes
-		int32_t obj = 0;
+		int32 obj = 0;
 		if (op >= 0xc0) {
 			// four bytes
 			obj = stream.readSint32BE();
@@ -75,9 +75,9 @@ void Handler::readData(Common::SeekableReadStream &stream) {
 	globalNameIDs = readVarnamesTable(stream, globalsCount, globalsOffset);
 }
 
-Common::Array<int16_t> Handler::readVarnamesTable(Common::SeekableReadStream &stream, uint16_t count, uint32_t offset) {
+Common::Array<int16> Handler::readVarnamesTable(Common::SeekableReadStream &stream, uint16 count, uint32 offset) {
 	stream.seek(offset);
-	Common::Array<int16_t> nameIDs;
+	Common::Array<int16> nameIDs;
 	nameIDs.resize(count);
 	for (size_t i = 0; i < count; i++) {
 		nameIDs[i] = stream.readUint16BE();
@@ -329,15 +329,15 @@ void Handler::tagLoops() {
 	// Tag any instructions which are internal loop logic with kTagSkip, so that
 	// they will be skipped during translation.
 
-	for (uint32_t startIndex = 0; startIndex < bytecodeArray.size(); startIndex++) {
+	for (uint32 startIndex = 0; startIndex < bytecodeArray.size(); startIndex++) {
 		// All loops begin with jmpifz...
 		auto &jmpifz = bytecodeArray[startIndex];
 		if (jmpifz.opcode != kOpJmpIfZ)
 			continue;
 
 		// ...and end with endrepeat.
-		uint32_t jmpPos = jmpifz.pos + jmpifz.obj;
-		uint32_t endIndex = bytecodePosMap[jmpPos];
+		uint32 jmpPos = jmpifz.pos + jmpifz.obj;
+		uint32 endIndex = bytecodePosMap[jmpPos];
 		auto &endRepeat = bytecodeArray[endIndex - 1];
 		if (endRepeat.opcode != kOpEndRepeat || (endRepeat.pos - endRepeat.obj) > jmpifz.pos)
 			continue;
@@ -346,9 +346,9 @@ void Handler::tagLoops() {
 		bytecodeArray[startIndex].tag = loopType;
 
 		if (loopType == kTagRepeatWithIn) {
-			for (uint32_t i = startIndex - 7, end = startIndex - 1; i <= end; i++)
+			for (uint32 i = startIndex - 7, end = startIndex - 1; i <= end; i++)
 				bytecodeArray[i].tag = kTagSkip;
-			for (uint32_t i = startIndex + 1, end = startIndex + 5; i <= end; i++)
+			for (uint32 i = startIndex + 1, end = startIndex + 5; i <= end; i++)
 				bytecodeArray[i].tag = kTagSkip;
 			bytecodeArray[endIndex - 3].tag = kTagNextRepeatTarget; // pushint8 1
 			bytecodeArray[endIndex - 3].ownerLoop = startIndex;
@@ -357,7 +357,7 @@ void Handler::tagLoops() {
 			bytecodeArray[endIndex - 1].ownerLoop = startIndex;
 			bytecodeArray[endIndex].tag = kTagSkip; // pop 3
 		} else if (loopType == kTagRepeatWithTo || loopType == kTagRepeatWithDownTo) {
-			uint32_t conditionStartIndex = bytecodePosMap[endRepeat.pos - endRepeat.obj];
+			uint32 conditionStartIndex = bytecodePosMap[endRepeat.pos - endRepeat.obj];
 			bytecodeArray[conditionStartIndex - 1].tag = kTagSkip; // set
 			bytecodeArray[conditionStartIndex].tag = kTagSkip; // get
 			bytecodeArray[startIndex - 1].tag = kTagSkip; // lteq / gteq
@@ -375,7 +375,7 @@ void Handler::tagLoops() {
 	}
 }
 
-bool Handler::isRepeatWithIn(uint32_t startIndex, uint32_t endIndex) {
+bool Handler::isRepeatWithIn(uint32 startIndex, uint32 endIndex) {
 	if (startIndex < 7 || startIndex > bytecodeArray.size() - 6)
 		return false;
 	if (!(bytecodeArray[startIndex - 7].opcode == kOpPeek && bytecodeArray[startIndex - 7].obj == 0))
@@ -420,7 +420,7 @@ bool Handler::isRepeatWithIn(uint32_t startIndex, uint32_t endIndex) {
 	return true;
 }
 
-BytecodeTag Handler::identifyLoop(uint32_t startIndex, uint32_t endIndex) {
+BytecodeTag Handler::identifyLoop(uint32 startIndex, uint32 endIndex) {
 	if (isRepeatWithIn(startIndex, endIndex))
 		return kTagRepeatWithIn;
 
@@ -440,7 +440,7 @@ BytecodeTag Handler::identifyLoop(uint32_t startIndex, uint32_t endIndex) {
 	}
 
 	auto &endRepeat = bytecodeArray[endIndex - 1];
-	uint32_t conditionStartIndex = bytecodePosMap[endRepeat.pos - endRepeat.obj];
+	uint32 conditionStartIndex = bytecodePosMap[endRepeat.pos - endRepeat.obj];
 
 	if (conditionStartIndex < 1)
 		return kTagRepeatWhile;
@@ -466,7 +466,7 @@ BytecodeTag Handler::identifyLoop(uint32_t startIndex, uint32_t endIndex) {
 		return kTagRepeatWhile;
 	}
 	OpCode setOp = bytecodeArray[conditionStartIndex - 1].opcode;
-	int32_t varID = bytecodeArray[conditionStartIndex - 1].obj;
+	int32 varID = bytecodeArray[conditionStartIndex - 1].obj;
 
 	if (!(bytecodeArray[conditionStartIndex].opcode == getOp && bytecodeArray[conditionStartIndex].obj == varID))
 		return kTagRepeatWhile;
@@ -493,10 +493,10 @@ BytecodeTag Handler::identifyLoop(uint32_t startIndex, uint32_t endIndex) {
 void Handler::parse() {
 	tagLoops();
 	stack.clear();
-	uint32_t i = 0;
+	uint32 i = 0;
 	while (i < bytecodeArray.size()) {
 		auto &bytecode = bytecodeArray[i];
-		uint32_t pos = bytecode.pos;
+		uint32 pos = bytecode.pos;
 		// exit last block if at end
 		while (pos == ast.currentBlock->endPos) {
 			auto exitedBlock = ast.currentBlock;
@@ -530,7 +530,7 @@ void Handler::parse() {
 	}
 }
 
-uint32_t Handler::translateBytecode(Bytecode &bytecode, uint32_t index) {
+uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 	if (bytecode.tag == kTagSkip || bytecode.tag == kTagNextRepeatTarget) {
 		// This is internal loop logic. Skip it.
 		return 1;
@@ -774,7 +774,7 @@ uint32_t Handler::translateBytecode(Bytecode &bytecode, uint32_t index) {
 		break;
 	case kOpJmp:
 		{
-			uint32_t targetPos = bytecode.pos + bytecode.obj;
+			uint32 targetPos = bytecode.pos + bytecode.obj;
 			size_t targetIndex = bytecodePosMap[targetPos];
 			auto &targetBytecode = bytecodeArray[targetIndex];
 			auto ancestorLoop = ast.currentBlock->ancestorLoop();
@@ -825,8 +825,8 @@ uint32_t Handler::translateBytecode(Bytecode &bytecode, uint32_t index) {
 		break;
 	case kOpJmpIfZ:
 		{
-			uint32_t endPos = bytecode.pos + bytecode.obj;
-			uint32_t endIndex = bytecodePosMap[endPos];
+			uint32 endPos = bytecode.pos + bytecode.obj;
+			uint32 endIndex = bytecodePosMap[endPos];
 			switch (bytecode.tag) {
 			case kTagRepeatWhile:
 				{
@@ -854,7 +854,7 @@ uint32_t Handler::translateBytecode(Bytecode &bytecode, uint32_t index) {
 					auto end = pop();
 					auto start = pop();
 					auto endRepeat = bytecodeArray[endIndex - 1];
-					uint32_t conditionStartIndex = bytecodePosMap[endRepeat.pos - endRepeat.obj];
+					uint32 conditionStartIndex = bytecodePosMap[endRepeat.pos - endRepeat.obj];
 					Common::String varName = getVarNameFromSet(bytecodeArray[conditionStartIndex - 1]);
 					auto loop = Common::SharedPtr<RepeatWithToStmtNode>(new RepeatWithToStmtNode(index, varName, Common::move(start), up, Common::move(end)));
 					loop->block->endPos = endPos;
@@ -915,7 +915,7 @@ uint32_t Handler::translateBytecode(Bytecode &bytecode, uint32_t index) {
 	case kOpPut:
 		{
 			PutType putType = static_cast<PutType>((bytecode.obj >> 4) & 0xF);
-			uint32_t varType = bytecode.obj & 0xF;
+			uint32 varType = bytecode.obj & 0xF;
 			auto var = readVar(varType);
 			auto val = pop();
 			translation = Common::SharedPtr<Node>(new PutStmtNode(putType, Common::move(var), Common::move(val)));
@@ -924,7 +924,7 @@ uint32_t Handler::translateBytecode(Bytecode &bytecode, uint32_t index) {
 	case kOpPutChunk:
 		{
 			PutType putType = static_cast<PutType>((bytecode.obj >> 4) & 0xF);
-			uint32_t varType = bytecode.obj & 0xF;
+			uint32 varType = bytecode.obj & 0xF;
 			auto var = readVar(varType);
 			auto chunk = readChunkRef(Common::move(var));
 			auto val = pop();
@@ -1011,7 +1011,7 @@ uint32_t Handler::translateBytecode(Bytecode &bytecode, uint32_t index) {
 
 			// This must be a case. Find the comparison against the switch expression.
 			auto originalStackSize = stack.size();
-			uint32_t currIndex = index + 1;
+			uint32 currIndex = index + 1;
 			Bytecode *currBytecode = &bytecodeArray[currIndex];
 			do {
 				translateBytecode(*currBytecode, currIndex);
@@ -1228,7 +1228,7 @@ uint32_t Handler::translateBytecode(Bytecode &bytecode, uint32_t index) {
 	return 1;
 }
 
-Common::String posToString(int32_t pos) {
+Common::String posToString(int32 pos) {
 	return Common::String::format("[%3d]", pos);
 }
 

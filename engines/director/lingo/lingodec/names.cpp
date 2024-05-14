@@ -295,7 +295,7 @@ Common::StableMap<unsigned int, Common::String> StandardNames::memberPropertyNam
 	{ 0x13, "type" }
 });
 
-Common::String StandardNames::getOpcodeName(uint8_t id) {
+Common::String StandardNames::getOpcodeName(byte id) {
 	if (id >= 0x40)
 		id = 0x40 + id % 0x40;
 	auto it = opcodeNames.find(id);

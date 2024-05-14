@@ -40,7 +40,7 @@ void ScriptContext::read(Common::SeekableReadStream &stream) {
 	}
 
 	lnam = resolver->getScriptNames(lnamSectionID);
-	for (uint32_t i = 1; i <= entryCount; i++) {
+	for (uint32 i = 1; i <= entryCount; i++) {
 		auto section = sectionMap[i - 1];
 		if (section.sectionID > -1) {
 			Script *script = resolver->getScript(section.sectionID);

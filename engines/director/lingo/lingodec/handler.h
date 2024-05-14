@@ -27,29 +27,29 @@ struct Script;
 /* Handler */
 
 struct Handler {
-	int16_t nameID = 0;
-	uint16_t vectorPos = 0;
-	uint32_t compiledLen = 0;
-	uint32_t compiledOffset = 0;
-	uint16_t argumentCount = 0;
-	uint32_t argumentOffset = 0;
-	uint16_t localsCount = 0;
-	uint32_t localsOffset = 0;
-	uint16_t globalsCount = 0;
-	uint32_t globalsOffset = 0;
-	uint32_t unknown1 = 0;
-	uint16_t unknown2 = 0;
-	uint16_t lineCount = 0;
-	uint32_t lineOffset = 0;
-	uint32_t stackHeight = 0;
+	int16 nameID = 0;
+	uint16 vectorPos = 0;
+	uint32 compiledLen = 0;
+	uint32 compiledOffset = 0;
+	uint16 argumentCount = 0;
+	uint32 argumentOffset = 0;
+	uint16 localsCount = 0;
+	uint32 localsOffset = 0;
+	uint16 globalsCount = 0;
+	uint32 globalsOffset = 0;
+	uint32 unknown1 = 0;
+	uint16 unknown2 = 0;
+	uint16 lineCount = 0;
+	uint32 lineOffset = 0;
+	uint32 stackHeight = 0;
 
-	Common::Array<int16_t> argumentNameIDs;
-	Common::Array<int16_t> localNameIDs;
-	Common::Array<int16_t> globalNameIDs;
+	Common::Array<int16> argumentNameIDs;
+	Common::Array<int16> localNameIDs;
+	Common::Array<int16> globalNameIDs;
 
 	Script *script = nullptr;
 	Common::Array<Bytecode> bytecodeArray;
-	Common::StableMap<uint32_t, size_t> bytecodePosMap;
+	Common::StableMap<uint32, size_t> bytecodePosMap;
 	Common::Array<Common::String> argumentNames;
 	Common::Array<Common::String> localNames;
 	Common::Array<Common::String> globalNames;
@@ -68,7 +68,7 @@ struct Handler {
 
 	void readRecord(Common::SeekableReadStream &stream);
 	void readData(Common::SeekableReadStream &stream);
-	Common::Array<int16_t> readVarnamesTable(Common::SeekableReadStream &stream, uint16_t count, uint32_t offset);
+	Common::Array<int16> readVarnamesTable(Common::SeekableReadStream &stream, uint16 count, uint32 offset);
 	void readNames();
 	bool validName(int id) const;
 	Common::String getName(int id) const;
@@ -81,25 +81,25 @@ struct Handler {
 	Common::SharedPtr<Node> readV4Property(int propertyType, int propertyID);
 	Common::SharedPtr<Node> readChunkRef(Common::SharedPtr<Node> string);
 	void tagLoops();
-	bool isRepeatWithIn(uint32_t startIndex, uint32_t endIndex);
-	BytecodeTag identifyLoop(uint32_t startIndex, uint32_t endIndex);
+	bool isRepeatWithIn(uint32 startIndex, uint32 endIndex);
+	BytecodeTag identifyLoop(uint32 startIndex, uint32 endIndex);
 	void parse();
-	uint32_t translateBytecode(Bytecode &bytecode, uint32_t index);
+	uint32 translateBytecode(Bytecode &bytecode, uint32 index);
 	void writeBytecodeText(CodeWriter &code, bool dotSyntax) const;
 };
 
 /* Bytecode */
 
 struct Bytecode {
-	uint8_t opID;
+	byte opID;
 	OpCode opcode;
-	int32_t obj;
-	uint32_t pos;
+	int32 obj;
+	uint32 pos;
 	BytecodeTag tag;
-	uint32_t ownerLoop;
+	uint32 ownerLoop;
 	Common::SharedPtr<Node> translation;
 
-	Bytecode(uint8_t op, int32_t o, uint32_t p)
+	Bytecode(byte op, int32 o, uint32 p)
 		: opID(op), obj(o), pos(p), tag(kTagNone), ownerLoop(UINT32_MAX) {
 		opcode = static_cast<OpCode>(op >= 0x40 ? 0x40 + op % 0x40 : op);
 	}

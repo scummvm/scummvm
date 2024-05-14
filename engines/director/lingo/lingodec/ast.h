@@ -104,9 +104,9 @@ struct LabelNode : Node {
 /* LoopNode */
 
 struct LoopNode : StmtNode {
-	uint32_t startIndex;
+	uint32 startIndex;
 
-	LoopNode(NodeType t, uint32_t startIndex) : StmtNode(t), startIndex(startIndex) {
+	LoopNode(NodeType t, uint32 startIndex) : StmtNode(t), startIndex(startIndex) {
 		isLoop = true;
 	}
 	virtual ~LoopNode() = default;
@@ -151,7 +151,7 @@ struct BlockNode : Node {
 	Common::Array<Common::SharedPtr<Node>> children;
 
 	// for use during translation:
-	uint32_t endPos;
+	uint32 endPos;
 	CaseLabelNode *currentCaseLabel;
 
 	BlockNode() : Node(kBlockNode), endPos(-1), currentCaseLabel(nullptr) {}
@@ -386,7 +386,7 @@ struct RepeatWhileStmtNode : LoopNode {
 	Common::SharedPtr<Node> condition;
 	Common::SharedPtr<BlockNode> block;
 
-	RepeatWhileStmtNode(uint32_t startIndex, Common::SharedPtr<Node> c)
+	RepeatWhileStmtNode(uint32 startIndex, Common::SharedPtr<Node> c)
 		: LoopNode(kRepeatWhileStmtNode, startIndex) {
 		condition = Common::move(c);
 		condition->parent = this;
@@ -404,7 +404,7 @@ struct RepeatWithInStmtNode : LoopNode {
 	Common::SharedPtr<Node> list;
 	Common::SharedPtr<BlockNode> block;
 
-	RepeatWithInStmtNode(uint32_t startIndex, Common::String v, Common::SharedPtr<Node> l)
+	RepeatWithInStmtNode(uint32 startIndex, Common::String v, Common::SharedPtr<Node> l)
 		: LoopNode(kRepeatWithInStmtNode, startIndex) {
 		varName = v;
 		list = Common::move(l);
@@ -425,7 +425,7 @@ struct RepeatWithToStmtNode : LoopNode {
 	Common::SharedPtr<Node> end;
 	Common::SharedPtr<BlockNode> block;
 
-	RepeatWithToStmtNode(uint32_t startIndex, Common::String v, Common::SharedPtr<Node> s, bool up, Common::SharedPtr<Node> e)
+	RepeatWithToStmtNode(uint32 startIndex, Common::String v, Common::SharedPtr<Node> s, bool up, Common::SharedPtr<Node> e)
 		: LoopNode(kRepeatWithToStmtNode, startIndex), up(up) {
 		varName = v;
 		start = Common::move(s);
@@ -487,8 +487,8 @@ struct CaseStmtNode : StmtNode {
 	Common::SharedPtr<OtherwiseNode> otherwise;
 
 	// for use during translation:
-	int32_t endPos = -1;
-	int32_t potentialOtherwisePos = -1;
+	int32 endPos = -1;
+	int32 potentialOtherwisePos = -1;
 
 	CaseStmtNode(Common::SharedPtr<Node> v) : StmtNode(kCaseStmtNode) {
 		value = Common::move(v);

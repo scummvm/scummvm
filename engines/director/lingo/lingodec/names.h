@@ -35,19 +35,19 @@ struct StandardNames {
 	static Common::StableMap<unsigned int, Common::String> animation2PropertyNames;
 	static Common::StableMap<unsigned int, Common::String> memberPropertyNames;
 
-	static Common::String getOpcodeName(uint8_t id);
+	static Common::String getOpcodeName(byte id);
 	static Common::String getName(const Common::StableMap<unsigned int, Common::String> &nameMap, unsigned int id);
 };
 
 /* ScriptNames */
 
 struct ScriptNames {
-	int32_t unknown0;
-	int32_t unknown1;
-	uint32_t len1;
-	uint32_t len2;
-	uint16_t namesOffset;
-	uint16_t namesCount;
+	int32 unknown0;
+	int32 unknown1;
+	uint32 len1;
+	uint32 len2;
+	uint16 namesOffset;
+	uint16 namesCount;
 	Common::Array<Common::String> names;
 
 	unsigned int version;

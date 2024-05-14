@@ -26,43 +26,43 @@ struct ScriptContext;
 
 struct LiteralStore {
 	LiteralType type;
-	uint32_t offset;
+	uint32 offset;
 	Common::SharedPtr<Datum> value;
 
 	void readRecord(Common::SeekableReadStream &stream, int version);
-	void readData(Common::SeekableReadStream &stream, uint32_t startOffset);
+	void readData(Common::SeekableReadStream &stream, uint32 startOffset);
 };
 
 /* Script */
 
 struct Script {
-	/*  8 */ uint32_t totalLength;
-	/* 12 */ uint32_t totalLength2;
-	/* 16 */ uint16_t headerLength;
-	/* 18 */ uint16_t scriptNumber;
-	/* 20 */ int16_t unk20;
-	/* 22 */ int16_t parentNumber;
+	/*  8 */ uint32 totalLength;
+	/* 12 */ uint32 totalLength2;
+	/* 16 */ uint16 headerLength;
+	/* 18 */ uint16 scriptNumber;
+	/* 20 */ int16 unk20;
+	/* 22 */ int16 parentNumber;
 
-	/* 38 */ uint32_t scriptFlags;
-	/* 42 */ int16_t unk42;
-	/* 44 */ int32_t castID;
-	/* 48 */ int16_t factoryNameID;
-	/* 50 */ uint16_t handlerVectorsCount;
-	/* 52 */ uint32_t handlerVectorsOffset;
-	/* 56 */ uint32_t handlerVectorsSize;
-	/* 60 */ uint16_t propertiesCount;
-	/* 62 */ uint32_t propertiesOffset;
-	/* 66 */ uint16_t globalsCount;
-	/* 68 */ uint32_t globalsOffset;
-	/* 72 */ uint16_t handlersCount;
-	/* 74 */ uint32_t handlersOffset;
-	/* 78 */ uint16_t literalsCount;
-	/* 80 */ uint32_t literalsOffset;
-	/* 84 */ uint32_t literalsDataCount;
-	/* 88 */ uint32_t literalsDataOffset;
+	/* 38 */ uint32 scriptFlags;
+	/* 42 */ int16 unk42;
+	/* 44 */ int32 castID;
+	/* 48 */ int16 factoryNameID;
+	/* 50 */ uint16 handlerVectorsCount;
+	/* 52 */ uint32 handlerVectorsOffset;
+	/* 56 */ uint32 handlerVectorsSize;
+	/* 60 */ uint16 propertiesCount;
+	/* 62 */ uint32 propertiesOffset;
+	/* 66 */ uint16 globalsCount;
+	/* 68 */ uint32 globalsOffset;
+	/* 72 */ uint16 handlersCount;
+	/* 74 */ uint32 handlersOffset;
+	/* 78 */ uint16 literalsCount;
+	/* 80 */ uint32 literalsOffset;
+	/* 84 */ uint32 literalsDataCount;
+	/* 88 */ uint32 literalsDataOffset;
 
-	Common::Array<int16_t> propertyNameIDs;
-	Common::Array<int16_t> globalNameIDs;
+	Common::Array<int16> propertyNameIDs;
+	Common::Array<int16> globalNameIDs;
 
 	Common::String factoryName;
 	Common::Array<Common::String> propertyNames;
@@ -77,7 +77,7 @@ struct Script {
 	Script(unsigned int version);
 	~Script();
 	void read(Common::SeekableReadStream &stream);
-	Common::Array<int16_t> readVarnamesTable(Common::SeekableReadStream &stream, uint16_t count, uint32_t offset);
+	Common::Array<int16> readVarnamesTable(Common::SeekableReadStream &stream, uint16 count, uint32 offset);
 	bool validName(int id) const;
 	Common::String getName(int id) const;
 	void setContext(ScriptContext *ctx);

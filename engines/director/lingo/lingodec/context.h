@@ -24,25 +24,25 @@ struct ScriptNames;
 /* ScriptContext */
 
 struct ScriptContext {
-	int32_t unknown0;
-	int32_t unknown1;
-	uint32_t entryCount;
-	uint32_t entryCount2;
-	uint16_t entriesOffset;
-	int16_t unknown2;
-	int32_t unknown3;
-	int32_t unknown4;
-	int32_t unknown5;
-	int32_t lnamSectionID;
-	uint16_t validCount;
-	uint16_t flags;
-	int16_t freePointer;
+	int32 unknown0;
+	int32 unknown1;
+	uint32 entryCount;
+	uint32 entryCount2;
+	uint16 entriesOffset;
+	int16 unknown2;
+	int32 unknown3;
+	int32 unknown4;
+	int32 unknown5;
+	int32 lnamSectionID;
+	uint16 validCount;
+	uint16 flags;
+	int16 freePointer;
 
 	unsigned int version;
 	ChunkResolver *resolver;
 	ScriptNames *lnam;
 	Common::Array<ScriptContextMapEntry> sectionMap;
-	Common::StableMap<uint32_t, Script *> scripts;
+	Common::StableMap<uint32, Script *> scripts;
 
 	ScriptContext(unsigned int version, ChunkResolver *resolver) : version(version),
 																   resolver(resolver),
@@ -57,10 +57,10 @@ struct ScriptContext {
 /* ScriptContextMapEntry */
 
 struct ScriptContextMapEntry {
-	int32_t unknown0;
-	int32_t sectionID;
-	uint16_t unknown1;
-	uint16_t unknown2;
+	int32 unknown0;
+	int32 sectionID;
+	uint16 unknown1;
+	uint16 unknown2;
 
 	void read(Common::SeekableReadStream &stream);
 };

@@ -81,10 +81,10 @@ void Script::read(Common::SeekableReadStream &stream) {
 	}
 }
 
-Common::Array<int16_t> Script::readVarnamesTable(Common::SeekableReadStream &stream, uint16_t count, uint32_t offset) {
+Common::Array<int16> Script::readVarnamesTable(Common::SeekableReadStream &stream, uint16 count, uint32 offset) {
 	stream.seek(offset);
-	Common::Array<int16_t> nameIDs(count);
-	for (uint16_t i = 0; i < count; i++) {
+	Common::Array<int16> nameIDs(count);
+	for (uint16 i = 0; i < count; i++) {
 		nameIDs[i] = stream.readSint16BE();
 	}
 	return nameIDs;
@@ -224,7 +224,7 @@ void LiteralStore::readRecord(Common::SeekableReadStream &stream, int version) {
 	offset = stream.readUint32BE();
 }
 
-void LiteralStore::readData(Common::SeekableReadStream &stream, uint32_t startOffset) {
+void LiteralStore::readData(Common::SeekableReadStream &stream, uint32 startOffset) {
 	if (type == kLiteralInt) {
 		value = Common::SharedPtr<LingoDec::Datum>(new LingoDec::Datum((int)offset));
 	} else {
@@ -241,7 +241,7 @@ void LiteralStore::readData(Common::SeekableReadStream &stream, uint32_t startOf
 			if (length == 8) {
 				floatVal = stream.readDoubleBE();
 			} else if (length == 10) {
-				uint8_t buf[10];
+				byte buf[10];
 				stream.read(buf, 10);
 				floatVal = readAppleFloat80(buf);
 			}

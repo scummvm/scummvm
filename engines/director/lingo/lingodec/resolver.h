@@ -16,8 +16,8 @@ class ChunkResolver {
 public:
 	ChunkResolver() {}
 	virtual ~ChunkResolver() {}
-	virtual Script *getScript(int32_t id) = 0;
-	virtual ScriptNames *getScriptNames(int32_t id) = 0;
+	virtual Script *getScript(int32 id) = 0;
+	virtual ScriptNames *getScriptNames(int32 id) = 0;
 };
 
 }
