@@ -638,9 +638,16 @@ void DarkEngine::drawBinaryClock(Graphics::Surface *surface, int xPosition, int 
 		number = (1 << 15) - 1;
 
 	int bits = 0;
-	while (bits <= 15) {
-		int y = yPosition - (7 * bits);
-		surface->drawLine(xPosition, y, xPosition + 3, y, number & 1 ? front : back);
+	int maxBits = isAtariST() || isAmiga() ? 14 : 15;
+	while (bits <= maxBits) {
+		int y = 0;
+		if (isAmiga() || isAtariST()) {
+			y = yPosition - (3 * bits);
+			surface->fillRect(Common::Rect(xPosition, y - 2, xPosition + 4, y), number & 1 ? front : back);
+		} else {
+			y = yPosition - (7 * bits);
+			surface->drawLine(xPosition, y, xPosition + 3, y, number & 1 ? front : back);
+		}
 		number = number >> 1;
 		bits++;
 	}
@@ -740,7 +747,7 @@ void DarkEngine::drawInfoMenu() {
 					_gfx->setViewport(_viewArea);
 				} else if (isDOS() && event.kbd.keycode == Common::KEYCODE_t) {
 					playSound(6, true);
-				} else if ((isDOS() || isCPC()) && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				} else if (!isSpectrum() && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					_forceEndGame = true;
 					cont = false;
 				} else if (isSpectrum() && event.kbd.keycode == Common::KEYCODE_1) {
