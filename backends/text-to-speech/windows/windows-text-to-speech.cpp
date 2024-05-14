@@ -365,7 +365,7 @@ void WindowsTextToSpeechManager::createVoice(void *cpVoiceToken) {
 	}
 
 	if (desc == "Sample TTS Voice") {
-		// This is really bad voice, it is basicaly unusable
+		// This is really a bad voice, it is basically unusable
 		return;
 	}
 
