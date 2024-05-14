@@ -215,7 +215,7 @@ void QuickTimeAudioDecoder::QuickTimeAudioTrack::queueAudio(const Timestamp &len
 			_skipAACPrimer = false;
 			_curChunk++;
 
-			// If we have any samples that we need to skip (ie. we seeked into
+			// If we have any samples that we need to skip (ie. we seek'ed into
 			// the middle of a chunk), skip them here.
 			if (_skipSamples != Timestamp()) {
 				if (_skipSamples > chunkLength) {
