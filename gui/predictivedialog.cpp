@@ -854,7 +854,7 @@ void PredictiveDialog::addWord(Dict &dict, const Common::String &word, const Com
 					Common::strlcpy(ptr, word.c_str(), word.size() + 1);
 				}
 			} else {
-				// if we didnt find line in predictive dialog, we should copy to user dictionary
+				// if we didn't find line in predictive dialog, we should copy to user dictionary
 				// code + word
 				Common::String tmp;
 				tmp = tmpCode + word;
