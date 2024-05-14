@@ -52,7 +52,7 @@ struct ScriptNames {
 
 	unsigned int version;
 
-	ScriptNames(unsigned int version) : version(version) {}
+	ScriptNames(unsigned int version_) : version(version_) {}
 	void read(Common::SeekableReadStream &stream);
 	bool validName(int id) const;
 	Common::String getName(int id) const;

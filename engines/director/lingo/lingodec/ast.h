@@ -106,7 +106,7 @@ struct LabelNode : Node {
 struct LoopNode : StmtNode {
 	uint32 startIndex;
 
-	LoopNode(NodeType t, uint32 startIndex) : StmtNode(t), startIndex(startIndex) {
+	LoopNode(NodeType t, uint32 startIndex_) : StmtNode(t), startIndex(startIndex_) {
 		isLoop = true;
 	}
 	virtual ~LoopNode() = default;
@@ -316,8 +316,8 @@ struct MemberExprNode : ExprNode {
 	Common::SharedPtr<Node> memberID;
 	Common::SharedPtr<Node> castID;
 
-	MemberExprNode(Common::String type, Common::SharedPtr<Node> memberID, Common::SharedPtr<Node> castID)
-		: ExprNode(kMemberExprNode), type(type) {
+	MemberExprNode(Common::String type_, Common::SharedPtr<Node> memberID, Common::SharedPtr<Node> castID)
+		: ExprNode(kMemberExprNode), type(type_) {
 		this->memberID = Common::move(memberID);
 		this->memberID->parent = this;
 		if (castID) {
@@ -348,8 +348,8 @@ struct AssignmentStmtNode : StmtNode {
 	Common::SharedPtr<Node> value;
 	bool forceVerbose;
 
-	AssignmentStmtNode(Common::SharedPtr<Node> var, Common::SharedPtr<Node> val, bool forceVerbose = false)
-		: StmtNode(kAssignmentStmtNode), forceVerbose(forceVerbose) {
+	AssignmentStmtNode(Common::SharedPtr<Node> var, Common::SharedPtr<Node> val, bool forceVerbose_ = false)
+		: StmtNode(kAssignmentStmtNode), forceVerbose(forceVerbose_) {
 		variable = Common::move(var);
 		variable->parent = this;
 		value = Common::move(val);
@@ -386,8 +386,8 @@ struct RepeatWhileStmtNode : LoopNode {
 	Common::SharedPtr<Node> condition;
 	Common::SharedPtr<BlockNode> block;
 
-	RepeatWhileStmtNode(uint32 startIndex, Common::SharedPtr<Node> c)
-		: LoopNode(kRepeatWhileStmtNode, startIndex) {
+	RepeatWhileStmtNode(uint32 startIndex_, Common::SharedPtr<Node> c)
+		: LoopNode(kRepeatWhileStmtNode, startIndex_) {
 		condition = Common::move(c);
 		condition->parent = this;
 		block = Common::SharedPtr<BlockNode>(new BlockNode());
@@ -404,8 +404,8 @@ struct RepeatWithInStmtNode : LoopNode {
 	Common::SharedPtr<Node> list;
 	Common::SharedPtr<BlockNode> block;
 
-	RepeatWithInStmtNode(uint32 startIndex, Common::String v, Common::SharedPtr<Node> l)
-		: LoopNode(kRepeatWithInStmtNode, startIndex) {
+	RepeatWithInStmtNode(uint32 startIndex_, Common::String v, Common::SharedPtr<Node> l)
+		: LoopNode(kRepeatWithInStmtNode, startIndex_) {
 		varName = v;
 		list = Common::move(l);
 		list->parent = this;
@@ -425,8 +425,8 @@ struct RepeatWithToStmtNode : LoopNode {
 	Common::SharedPtr<Node> end;
 	Common::SharedPtr<BlockNode> block;
 
-	RepeatWithToStmtNode(uint32 startIndex, Common::String v, Common::SharedPtr<Node> s, bool up, Common::SharedPtr<Node> e)
-		: LoopNode(kRepeatWithToStmtNode, startIndex), up(up) {
+	RepeatWithToStmtNode(uint32 startIndex_, Common::String v, Common::SharedPtr<Node> s, bool up, Common::SharedPtr<Node> e)
+		: LoopNode(kRepeatWithToStmtNode, startIndex_), up(up) {
 		varName = v;
 		start = Common::move(s);
 		start->parent = this;
