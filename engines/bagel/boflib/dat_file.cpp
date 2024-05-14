@@ -174,20 +174,18 @@ ErrorCode CBofDataFile::open() {
 	assert(isValidObject(this));
 
 	// Only continue if there is no current error
-	if (_errCode == ERR_NONE) {
-		if (_stream == nullptr) {
-			if (!(_lFlags & CDF_READONLY)) {
-				if (_lFlags & CDF_SAVEFILE) {
-					if (_lFlags & CDF_CREATE)
-						create();
-				} else if (!fileExists(_szFileName))
+	if (_errCode == ERR_NONE && _stream == nullptr) {
+		if (!(_lFlags & CDF_READONLY)) {
+			if (_lFlags & CDF_SAVEFILE) {
+				if (_lFlags & CDF_CREATE)
 					create();
-			}
+			} else if (!fileExists(_szFileName))
+				create();
+		}
 
-			if (_stream == nullptr) {
-				// Open data file
-				CBofFile::open(_szFileName, _lFlags);
-			}
+		if (_stream == nullptr) {
+			// Open data file
+			CBofFile::open(_szFileName, _lFlags);
 		}
 	}
 
@@ -242,32 +240,30 @@ ErrorCode CBofDataFile::readHeader() {
 
 					if (_lHeaderLength != 0) {
 						// Allocate buffer to hold header
-						if ((_pHeader = new HEADER_REC[(int)_lNumRecs]) != nullptr) {
-							// Seek to start of header
-							seek(_lHeaderStart);
+						_pHeader = new HEADER_REC[(int)_lNumRecs];
+						if (_pHeader == nullptr)
+							fatalError(ERR_MEMORY, buildString("Could not allocate footer for file '%s'", _szFileName));
 
-							// Read header
-							ErrorCode errCode = ERR_NONE;
-							for (int i = 0; i < _lNumRecs && errCode == ERR_NONE; ++i) {
-								errCode = read(_pHeader[i]);
-							}
+						// Seek to start of header
+						seek(_lHeaderStart);
 
-							if (errCode == ERR_NONE) {
-								uint32 lCrc = calculateCRC(&_pHeader->_lOffset, 4 * _lNumRecs);
+						// Read header
+						ErrorCode errCode = ERR_NONE;
+						for (int i = 0; i < _lNumRecs && errCode == ERR_NONE; ++i) {
+							errCode = read(_pHeader[i]);
+						}
 
-								if (lCrc != stHeaderInfo._lFootCrc) {
-									logError(buildString("Error: '%s' has invalid footer", _szFileName));
-									_errCode = ERR_CRC;
-								}
+						if (errCode == ERR_NONE) {
+							uint32 lCrc = calculateCRC(&_pHeader->_lOffset, 4 * _lNumRecs);
 
-							} else {
-								logError(buildString("Error: Could not read footer in file '%s'", _szFileName));
-								_errCode = ERR_FREAD;
+							if (lCrc != stHeaderInfo._lFootCrc) {
+								logError(buildString("Error: '%s' has invalid footer", _szFileName));
+								_errCode = ERR_CRC;
 							}
 
 						} else {
-							logError(buildString("Error: Could not allocate footer for file '%s'", _szFileName));
-							_errCode = ERR_MEMORY;
+							logError(buildString("Error: Could not read footer in file '%s'", _szFileName));
+							_errCode = ERR_FREAD;
 						}
 					}
 
@@ -505,34 +501,32 @@ ErrorCode CBofDataFile::writeRecord(int32 lRecNum, void *pBuf, int32 lSize, bool
 
 			// Allocate a buffer big enough for one chunk
 			byte *pTmpBuf = (byte *)bofAlloc(lChunkSize);
-			if (pTmpBuf != nullptr) {
-				// While there is data to move
-				while (lBufLength > 0) {
-					// Seek to beginning of the source for this chunk
-					setPosition(pRecInfo->_lOffset + pRecInfo->_lLength + lBufLength - lChunkSize);
+			if (pTmpBuf == nullptr)
+				fatalError(ERR_MEMORY, "Unable to allocate %ld bytes to expand record size in writeRecord()", lBufLength);
 
-					// Read the chunk
-					read(pTmpBuf, lChunkSize);
+			// While there is data to move
+			while (lBufLength > 0) {
+				// Seek to beginning of the source for this chunk
+				setPosition(pRecInfo->_lOffset + pRecInfo->_lLength + lBufLength - lChunkSize);
 
-					// Seek to this chunks new positon (offset by 'lDiff' bytes)
-					setPosition(pRecInfo->_lOffset + pRecInfo->_lLength + lBufLength - lChunkSize + lDiff);
+				// Read the chunk
+				read(pTmpBuf, lChunkSize);
 
-					// Write chunk to new position
-					write(pTmpBuf, lChunkSize);
+				// Seek to this chunks new position (offset by 'lDiff' bytes)
+				setPosition(pRecInfo->_lOffset + pRecInfo->_lLength + lBufLength - lChunkSize + lDiff);
 
-					// That much less to do next time thru
-					lBufLength -= lChunkSize;
+				// Write chunk to new position
+				write(pTmpBuf, lChunkSize);
 
-					// Last chunk is lBufLength
-					lChunkSize = MIN(lBufLength, lChunkSize);
-				}
+				// That much less to do next time thru
+				lBufLength -= lChunkSize;
 
-				// Don't need that temp buffer anymore
-				bofFree(pTmpBuf);
-
-			} else {
-				reportError(ERR_MEMORY, "Unable to allocate %ld bytes to expand record size in writeRecord()", lBufLength);
+				// Last chunk is lBufLength
+				lChunkSize = MIN(lBufLength, lChunkSize);
 			}
+
+			// Don't need that temp buffer anymore
+			bofFree(pTmpBuf);
 
 			// Tell the rest of the records that they moved
 			for (int i = lRecNum + 1; i < getNumberOfRecs(); i++) {
@@ -563,22 +557,20 @@ ErrorCode CBofDataFile::writeRecord(int32 lRecNum, void *pBuf, int32 lSize, bool
 
 					// Allocate a buffer that could hold the largest record
 					byte *pTmpBuf = (byte *)bofAlloc((int)getMaxRecSize());
-					if (pTmpBuf != nullptr) {
-						for (int i = (int)lRecNum + 1; i < (int)_lNumRecs - 1; i++) {
-							_errCode = readRecord(i, pTmpBuf);
-							if (_errCode != ERR_NONE)
-								break;
+					if (pTmpBuf == nullptr)
+						fatalError(ERR_MEMORY, "unable to allocate a buffer of %ld bytes", getMaxRecSize());
 
-							_errCode = writeRecord(i + 1, pTmpBuf);
-							if (_errCode != ERR_NONE)
-								break;
-						}
+					for (int i = (int)lRecNum + 1; i < (int)_lNumRecs - 1; i++) {
+						_errCode = readRecord(i, pTmpBuf);
+						if (_errCode != ERR_NONE)
+							break;
 
-						bofFree(pTmpBuf);
-
-					} else {
-						_errCode = ERR_MEMORY;
+						_errCode = writeRecord(i + 1, pTmpBuf);
+						if (_errCode != ERR_NONE)
+							break;
 					}
+
+					bofFree(pTmpBuf);
 				}
 
 				// If we are to update the header now
@@ -609,13 +601,11 @@ ErrorCode CBofDataFile::verifyRecord(int32 lRecNum) {
 
 		// Allocate space to hold this record
 		void *pBuf = bofAlloc((int)getRecSize(lRecNum));
-		if (pBuf != nullptr) {
-			_errCode = readRecord(lRecNum, pBuf);
-			bofFree(pBuf);
+		if (pBuf == nullptr)
+			fatalError(ERR_MEMORY, "Unable to allocate a buffer of %ld bytes", getRecSize(lRecNum));
 
-		} else {
-			_errCode = ERR_MEMORY;
-		}
+		_errCode = readRecord(lRecNum, pBuf);
+		bofFree(pBuf);
 	}
 
 	return _errCode;
@@ -656,33 +646,30 @@ ErrorCode CBofDataFile::addRecord(void *pBuf, int32 lLength, bool bUpdateHeader,
 				_lNumRecs++;
 
 				HEADER_REC *pTmpHeader = new HEADER_REC[(int)_lNumRecs];
-				if (pTmpHeader != nullptr) {
-					if (_pHeader != nullptr) {
-						memcpy(pTmpHeader, _pHeader, (size_t)(HEADER_REC::size() * (_lNumRecs - 1)));
+				if (pTmpHeader == nullptr)
+					fatalError(ERR_MEMORY, "Could not allocate a data file header");
 
-						delete[] _pHeader;
-					}
-
-					_pHeader = pTmpHeader;
-
-					int32 lRecNum = _lNumRecs - 1;
-					HEADER_REC *pCurRec = &_pHeader[lRecNum];
-					int32 lPrevLength = HEAD_INFO::size();
-					int32 lPrevOffset = 0;
-
-					if (lRecNum != 0) {
-						lPrevLength = _pHeader[lRecNum - 1]._lLength;
-						lPrevOffset = _pHeader[lRecNum - 1]._lOffset;
-					}
-
-					pCurRec->_lLength = lLength;
-					pCurRec->_lOffset = lPrevOffset + lPrevLength;
-
-					writeRecord(lRecNum, pBuf, lLength, bUpdateHeader, lKey);
-
-				} else {
-					reportError(ERR_MEMORY, "Could not allocate a data file header");
+				if (_pHeader != nullptr) {
+					memcpy(pTmpHeader, _pHeader, (size_t)(HEADER_REC::size() * (_lNumRecs - 1)));
+					delete[] _pHeader;
 				}
+
+				_pHeader = pTmpHeader;
+
+				int32 lRecNum = _lNumRecs - 1;
+				HEADER_REC *pCurRec = &_pHeader[lRecNum];
+				int32 lPrevLength = HEAD_INFO::size();
+				int32 lPrevOffset = 0;
+
+				if (lRecNum != 0) {
+					lPrevLength = _pHeader[lRecNum - 1]._lLength;
+					lPrevOffset = _pHeader[lRecNum - 1]._lOffset;
+				}
+
+				pCurRec->_lLength = lLength;
+				pCurRec->_lOffset = lPrevOffset + lPrevLength;
+
+				writeRecord(lRecNum, pBuf, lLength, bUpdateHeader, lKey);
 			}
 		}
 	}
