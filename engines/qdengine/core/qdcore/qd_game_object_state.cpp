@@ -17,6 +17,8 @@
 #include "qdengine/core/qdcore/qd_resource_dispatcher.h"
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
 
+#include "qdengine/xlibs/util/xmath/SafeMath.h"
+
 #ifdef _QUEST_EDITOR
 #include "qd_game_object_mouse.h"
 #endif // _QUEST_EDITOR

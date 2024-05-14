@@ -25,6 +25,26 @@
 #define UINT          unsigned int
 #define WPARAM        int
 #define WAVEFORMATEX  int
+#define _MAX_DRIVE    3
+#define _MAX_DIR      256
+#define _MAX_FNAME    256
+#define _MAX_EXT      4
+#define VK_ESCAPE     0x1B
+#define VK_RETURN     0x0D
+#define VK_SPACE      0x20
+#define VK_LEFT       0x25
+#define VK_UP         0x26
+#define VK_RIGHT      0x27
+#define VK_DOWN       0x28
+#define VK_BACK       0x08
+#define VK_DELETE     0x2E
+#define VK_HOME       0x24
+#define VK_END        0x23
+
+// STUB FIXME
+void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext) {
+    warning("STUB: _splitpath");
+}
 
 #ifndef _QUEST_EDITOR
 #else

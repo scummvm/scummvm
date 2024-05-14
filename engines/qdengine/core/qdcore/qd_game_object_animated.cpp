@@ -1,5 +1,7 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/str.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include "qdengine/core/parser/qdscr_parser.h"
@@ -1221,7 +1223,7 @@ bool qdGameObjectAnimated::handle_state_end() {
 bool qdGameObjectAnimated::update_screen_pos() {
 	if (qdGameObject::update_screen_pos()) {
 		Vect2i r = get_screen_R();
-		Vect2i delta = (cur_state_ != -1) ? states[cur_state_] -> center_offset() : Vect2i(0, 0);
+		Vect2i delta = (cur_state_ != -1) ? Vect2i(states[cur_state_] -> center_offset()) : Vect2i(0, 0);
 
 		if (current_transform_()) {
 			if (delta.x || delta.y) {
@@ -1412,7 +1414,7 @@ bool qdGameObjectAnimated::was_state_previous(const char *state_name) const {
 }
 
 bool qdGameObjectAnimated::is_state_waiting(const char *state_name) const {
-	if (queued_state_ && !stricmp(queued_state_ -> name(), state_name))
+	if (queued_state_ && !scumm_stricmp(queued_state_ -> name(), state_name))
 		return true;
 
 	return false;

@@ -222,6 +222,8 @@ void qdTextDB::getIdList(const char *mask, IdList &idList) const {
 }
 
 bool qdTextDB::getIdList(IdList &idList) const {
+	warning("STUB: qdTextDB::getIdList");
+#if 0
 	try {
 		std::transform(texts_.begin(),
 		               texts_.end(),
@@ -231,6 +233,7 @@ bool qdTextDB::getIdList(IdList &idList) const {
 	} catch (std::bad_alloc &) {
 		return false;
 	}
+#endif
 	return true;
 }
 
