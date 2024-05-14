@@ -264,7 +264,7 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 
 		case NPC_HEY_SIR:
 			// The 'Hey Sir' opcode causes the NPC to request your attention, and sets the active talk
-			// record to a designated offset. So any offset occurances need to be saved so that it can
+			// record to a designated offset. So any offset occurrences need to be saved so that it can
 			// be included in the resource for talk records
 			add_talk_offset(params[0]);
 			break;
