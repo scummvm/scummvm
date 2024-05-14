@@ -52,7 +52,7 @@ static inline T scalef(T in, float numerator, float denominator) {
 
 // analog joystick axis id (for internal use) - Should match the logic in ScummVMEventsModern.java
 enum {
-	// auxilliary movement axis bitflags
+	// auxiliary movement axis bitflags
 	JE_JOY_AXIS_X_bf        = 0x01, // (0x01 << 0)
 	JE_JOY_AXIS_Y_bf        = 0x02, // (0x01 << 1)
 	JE_JOY_AXIS_HAT_X_bf    = 0x04, // (0x01 << 2)
