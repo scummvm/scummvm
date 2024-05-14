@@ -73,6 +73,7 @@ MODULE_OBJS = \
 	core/qdcore/qd_trigger_chain.o \
 	core/qdcore/qd_trigger_element.o \
 	core/qdcore/qd_trigger_profiler.o \
+	core/qdcore/qd_video.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_QDENGINE), DYNAMIC_PLUGIN)
