@@ -754,7 +754,7 @@ static int build_table(VLC *vlc, int table_nb_bits,
 		table[i][0] = -1; //codes
 	}
 
-	// first pass: map codes and compute auxillary table sizes
+	// first pass: map codes and compute auxiliary table sizes
 	for(i = 0; i < nb_codes; i++) {
 		GET_DATA(n, bits, i, bits_wrap, bits_size);
 		GET_DATA(code, codes, i, codes_wrap, codes_size);
@@ -799,7 +799,7 @@ static int build_table(VLC *vlc, int table_nb_bits,
 		}
 	}
 
-	// second pass : fill auxillary tables recursively
+	// second pass : fill auxiliary tables recursively
 	for(i = 0;i < table_size; i++) {
 		n = table[i][1]; //bits
 		if (n < 0) {
