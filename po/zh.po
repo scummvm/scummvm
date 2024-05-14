@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-05-04 22:58+0000\n"
-"PO-Revision-Date: 2024-03-21 21:40+0000\n"
+"PO-Revision-Date: 2024-05-14 12:42+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/zh/>\n"
@@ -251,31 +251,31 @@ msgstr "载入"
 
 #: gui/cloudconnectionwizard.cpp:362
 msgid "Load code from file"
-msgstr ""
+msgstr "从文件载入代码"
 
 #: gui/cloudconnectionwizard.cpp:379
 msgid "Manual Mode: Something went wrong"
-msgstr ""
+msgstr "手动模式：出错了"
 
 #: gui/cloudconnectionwizard.cpp:383
 msgid "Cloud storage was not connected."
-msgstr ""
+msgstr "未连接云存储。"
 
 #: gui/cloudconnectionwizard.cpp:384
 msgid "Make sure the JSON code was copied correctly and retry."
-msgstr ""
+msgstr "请确保 JSON 代码复制正确并重试。"
 
 #: gui/cloudconnectionwizard.cpp:385
 msgid "If that doesn't work, try again from the beginning."
-msgstr ""
+msgstr "如果没有用，请从头再试。"
 
 #: gui/cloudconnectionwizard.cpp:386
 msgid "Error message: "
-msgstr ""
+msgstr "错误消息： "
 
 #: gui/cloudconnectionwizard.cpp:400
 msgid "Manual Mode: Success"
-msgstr ""
+msgstr "手动模式：成功"
 
 #: gui/cloudconnectionwizard.cpp:428 gui/dlcsdialog.cpp:59
 #: gui/downloaddlcsdialog.cpp:60 engines/crab/input/input.cpp:175
@@ -285,11 +285,11 @@ msgstr "返回"
 #: gui/cloudconnectionwizard.cpp:436 gui/imagealbum-dialog.cpp:104
 #: gui/saveload-dialog.cpp:829 engines/crab/input/input.cpp:181
 msgid "Next"
-msgstr ""
+msgstr "下一步"
 
 #: gui/cloudconnectionwizard.cpp:499
 msgid "Another Storage is working right now. Do you want to interrupt it?"
-msgstr ""
+msgstr "另一存储正工作中。您要中断它吗？"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
@@ -320,12 +320,12 @@ msgstr "否"
 
 #: gui/cloudconnectionwizard.cpp:508
 msgid "Wait until current Storage finishes and try again."
-msgstr ""
+msgstr "请等待当前存储工作完成后再试。"
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:536
 msgid "JSON code contents are malformed."
-msgstr ""
+msgstr "JSON 代码内容有误。"
 
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:363 gui/editrecorddialog.cpp:67
@@ -355,7 +355,7 @@ msgstr "确认"
 
 #: gui/cloudconnectionwizard.cpp:558
 msgid "Incorrect JSON."
-msgstr ""
+msgstr "JSON 不正确。"
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
 #: gui/cloudconnectionwizard.cpp:565
@@ -373,20 +373,20 @@ msgstr ""
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:631
 msgid "Select JSON file copied from scummvm.org site"
-msgstr ""
+msgstr "选择从 scummvm.org 网站复制的 JSON 文件"
 
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:637
 msgid "Failed to load JSON file"
-msgstr ""
+msgstr "无法载入 JSON 文件"
 
 #: gui/dlcsdialog.cpp:41
 msgid "Download Freeware Games and Demos"
-msgstr ""
+msgstr "下载免费游戏与演示游戏"
 
 #: gui/dlcsdialog.cpp:52
 msgid "Fetching DLCs..."
-msgstr ""
+msgstr "正在获取 DLC..."
 
 #: gui/dlcsdialog.cpp:60
 msgid "All Downloads"
@@ -536,7 +536,7 @@ msgstr "開始執行"
 
 #: gui/dump-all-dialogs.cpp:103 gui/options.cpp:3275
 msgid "icon packs"
-msgstr ""
+msgstr "图标包"
 
 #: gui/dump-all-dialogs.cpp:107 gui/options.cpp:3286
 msgid "shader packs"
