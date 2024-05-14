@@ -1651,6 +1651,8 @@ void DirectorEngine::delayMillis(uint32 delay) {
 	_system->delayMillis(delay);
 }
 
+} // End of namespace Director
+
 double readAppleFloat80(byte *ptr) {
 	// Floats in an "80 bit IEEE Standard 754 floating
 	// point number (Standard Apple Numeric Environment [SANE] data type
@@ -1661,5 +1663,3 @@ double readAppleFloat80(byte *ptr) {
 
 	return Common::XPFloat(signAndExponent, mantissa).toDouble(Common::XPFloat::kSemanticsSANE);
 }
-
-} // End of namespace Director
