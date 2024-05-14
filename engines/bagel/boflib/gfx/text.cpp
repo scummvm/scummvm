@@ -404,29 +404,29 @@ ErrorCode CBofText::displayTextEx(CBofBitmap *pBmp, const char *pszText, CBofRec
 }
 
 void CBofText::displayLine(Graphics::Font *font, Graphics::ManagedSurface &surface,
-		const Common::String &line, int left, int top, int width, int color, Graphics::TextAlign align) {
+		const Common::U32String &line, int left, int top, int width, int color, Graphics::TextAlign align) {
 	if (!line.contains('\t')) {
 		font->drawString(&surface, line, left, top, width, color, align);
 
 	} else {
 		// Special rendering of tabbed text
-		Common::String str = line;
+		Common::U32String str = line;
 
 		while (!str.empty()) {
-			if (str.hasPrefix("\t")) {
+			if (str[0] == '\t') {
 				// Move to next tab stop
 				left = (left + TAB_SIZE) / TAB_SIZE * TAB_SIZE;
 				str.deleteChar(0);
 
 			} else {
-				Common::String fragment;
+				Common::U32String fragment;
 				size_t tab = str.findFirstOf('\t');
-				if (tab == Common::String::npos) {
+				if (tab == Common::U32String::npos) {
 					fragment = str;
 					str.clear();
 				} else {
-					fragment = Common::String(str.c_str(), str.c_str() + tab);
-					str = Common::String(str.c_str() + tab);
+					fragment = Common::U32String(str.c_str(), str.c_str() + tab);
+					str = Common::U32String(str.c_str() + tab);
 				}
 
 				int fragmentWidth = font->getStringWidth(fragment);
