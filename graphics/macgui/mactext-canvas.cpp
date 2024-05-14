@@ -172,14 +172,14 @@ Common::String preprocessImageExt(const char *ptr) {
 				ptr++;
 
 			if (*ptr != '=') {
-				warning("MacTextCanvas: Malformatted image extention: '=' expected at '%s'", ptr);
+				warning("MacTextCanvas: Malformatted image extension: '=' expected at '%s'", ptr);
 				return "";
 			}
 		} else if (Common::isDigit(*ptr)) {
 			int num = 0;
 
 			if (state == kStateNone) {
-				warning("MacTextCanvas: Malformatted image extention: unexpected digit at '%s'", ptr);
+				warning("MacTextCanvas: Malformatted image extension: unexpected digit at '%s'", ptr);
 				return "";
 			}
 
@@ -203,11 +203,11 @@ Common::String preprocessImageExt(const char *ptr) {
 				while (*ptr && *ptr != ' ' && *ptr != '\t')
 					ptr++;
 			} else {
-				warning("MacTextCanvas: Malformatted image extention: %% or e[m] or p[x] expected at '%s'", ptr);
+				warning("MacTextCanvas: Malformatted image extension: %% or e[m] or p[x] expected at '%s'", ptr);
 				return "";
 			}
 		} else {
-			warning("MacTextCanvas: Malformatted image extention: w[idth] or h[eight] expected at '%s'", ptr);
+			warning("MacTextCanvas: Malformatted image extension: w[idth] or h[eight] expected at '%s'", ptr);
 			return "";
 		}
 
