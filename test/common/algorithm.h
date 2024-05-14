@@ -30,7 +30,7 @@ class AlgorithmTestSuite : public CxxTest::TestSuite {
 	/**
 	 * Auxiliary function to check the equality of two generic collections (A and B), from one_first to one_last.
 	 *
-	 * @note: It assumes that other has at least (one_last - one-first) lenght, starting from other_first.
+	 * @note: It assumes that other has at least (one_last - one-first) length, starting from other_first.
 	 *
 	 * @param one_first: The first element of the first collection to be compared.
 	 * @param one_last: The last element of the first collection to be compared.
