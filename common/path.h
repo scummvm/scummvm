@@ -157,7 +157,7 @@ private:
 
 	/**
 	 * Compares a path component by component by calling a comparator function
-	 * The function bails out as soon as the comparision fails.
+	 * The function bails out as soon as the comparison fails.
 	 *
 	 * @param comparator The function which compares the path components
 	 * @param other The other path to compare with
