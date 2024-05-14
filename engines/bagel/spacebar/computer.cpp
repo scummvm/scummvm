@@ -30,12 +30,12 @@
 namespace Bagel {
 namespace SpaceBar {
 
-#define DRINKFILE       "$SBARDIR\\BAR\\CLOSEUP\\BDCA\\DRINKS.TXT"
-#define INGRDFILE       "$SBARDIR\\BAR\\CLOSEUP\\BDCA\\ING.TXT"
-#define BDCADIR         "$SBARDIR\\BAR\\CLOSEUP\\BDCA\\"
-#define ORDERAUDIO      "BDNDPSC1.WAV"
-#define REFUSEAUDIO     "BDTOORC1.WAV"
-#define ONAUDIO         "ON.WAV"
+#define DRINK_FILE       "$SBARDIR\\BAR\\CLOSEUP\\BDCA\\DRINKS.TXT"
+#define INGRD_FILE       "$SBARDIR\\BAR\\CLOSEUP\\BDCA\\ING.TXT"
+#define BDCA_DIR         "$SBARDIR\\BAR\\CLOSEUP\\BDCA\\"
+#define ORDER_AUDIO      "BDNDPSC1.WAV"
+#define REFUSE_AUDIO     "BDTOORC1.WAV"
+#define ON_AUDIO         "ON.WAV"
 
 #define szBroke "You have insufficient funds for that purchase."
 #define szRefuse "The computer politely informs you that the House has a policy against two-fisted drinking."
@@ -152,17 +152,18 @@ ErrorCode SBarComputer::attach() {
 
 		// Build all our buttons
 		for (int i = 0; i < NUM_COMPBUTT; i++) {
-			if ((_pButtons[i] = new CBofBmpButton) != nullptr) {
+			_pButtons[i] = new CBofBmpButton;
+			if (_pButtons[i] == nullptr)
+				fatalError(ERR_MEMORY, "unable to allocate new CBofBmpButton");
 
-				CBofBitmap *pUp = loadBitmap(BuildBarcDir(g_stButtons[i]._pszUp), pPal);
-				CBofBitmap *pDown = loadBitmap(BuildBarcDir(g_stButtons[i]._pszDown), pPal);
-				CBofBitmap *pFocus = loadBitmap(BuildBarcDir(g_stButtons[i]._pszFocus), pPal);
-				CBofBitmap *pDis = loadBitmap(BuildBarcDir(g_stButtons[i]._pszDisabled), pPal);
+			CBofBitmap *pUp = loadBitmap(BuildBarcDir(g_stButtons[i]._pszUp), pPal);
+			CBofBitmap *pDown = loadBitmap(BuildBarcDir(g_stButtons[i]._pszDown), pPal);
+			CBofBitmap *pFocus = loadBitmap(BuildBarcDir(g_stButtons[i]._pszFocus), pPal);
+			CBofBitmap *pDis = loadBitmap(BuildBarcDir(g_stButtons[i]._pszDisabled), pPal);
 
-				_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
-				_pButtons[i]->create(g_stButtons[i]._pszName, g_stButtons[i]._nLeft, g_stButtons[i]._nTop, g_stButtons[i]._nWidth, g_stButtons[i]._nHeight, this, g_stButtons[i]._nID);
-				_pButtons[i]->hide();
-			}
+			_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
+			_pButtons[i]->create(g_stButtons[i]._pszName, g_stButtons[i]._nLeft, g_stButtons[i]._nTop, g_stButtons[i]._nWidth, g_stButtons[i]._nHeight, this, g_stButtons[i]._nID);
+			_pButtons[i]->hide();
 		}
 
 		show();
@@ -170,13 +171,11 @@ ErrorCode SBarComputer::attach() {
 		_pButtons[BCHELP]->show();
 		_pButtons[BCQUIT]->show();
 
-		// Fix drink already selected bug
-		if (_pDrinkBox != nullptr) {
+		if (_pDrinkBox != nullptr)
 			_pDrinkBox->setSelectedItem(-1, false);
-		}
-		if (_pIngBox != nullptr) {
+
+		if (_pIngBox != nullptr)
 			_pIngBox->setSelectedItem(-1, false);
-		}
 
 		updateWindow();
 	}
@@ -189,36 +188,25 @@ ErrorCode SBarComputer::attach() {
 ErrorCode SBarComputer::detach() {
 	CBagCursor::hideSystemCursor();
 
-	if (_pDrinkBuff != nullptr) {
-		delete _pDrinkBuff;
-		_pDrinkBuff = nullptr;
-	}
+	delete _pDrinkBuff;
+	_pDrinkBuff = nullptr;
 
-	if (_pIngBuff != nullptr) {
-		delete _pIngBuff;
-		_pIngBuff = nullptr;
-	}
+	delete _pIngBuff;
+	_pIngBuff = nullptr;
 
 	deleteListBox();
 	deleteTextBox();
 
-	if (_pDrinkList != nullptr) {
-		delete _pDrinkList;
-		_pDrinkList = nullptr;
-	}
+	delete _pDrinkList;
+	_pDrinkList = nullptr;
 
-	if (_pIngList != nullptr) {
-		delete _pIngList;
-		_pIngList = nullptr;
-	}
+	delete _pIngList;
+	_pIngList = nullptr;
 
 	// Destroy all buttons
 	for (int i = 0; i < NUM_COMPBUTT; i++) {
-
-		if (_pButtons[i] != nullptr) {
-			delete _pButtons[i];
-			_pButtons[i] = nullptr;
-		}
+		delete _pButtons[i];
+		_pButtons[i] = nullptr;
 	}
 
 	_nDrinkSelect = -1;
@@ -237,12 +225,12 @@ ErrorCode SBarComputer::detach() {
 }
 
 ErrorCode SBarComputer::readDrnkFile() {
-	CBofString DrinkString(DRINKFILE);
+	CBofString DrinkString(DRINK_FILE);
 	MACROREPLACE(DrinkString);
 
 	// Open the text files
 	CBofFile fpDrinkFile(DrinkString);
-	if (fpDrinkFile.getErrorCode() != ERR_NONE)
+	if (fpDrinkFile.errorOccurred())
 		return fpDrinkFile.getErrorCode();
 
 	// Check that buffers are null
@@ -264,7 +252,7 @@ ErrorCode SBarComputer::readDrnkFile() {
 	while (pPosInBuff < _pDrinkBuff + fpDrinkFile.getLength()) {
 		SBarCompItem *pCompItem = new SBarCompItem();
 		if (!pCompItem)
-			error("Couldn't allocate a new SBarCompItem");
+			fatalError(ERR_MEMORY, "Couldn't allocate a new SBarCompItem");
 
 		pCompItem->_pList = nullptr;
 		pCompItem->_pDrink = nullptr;
@@ -311,24 +299,22 @@ ErrorCode SBarComputer::readDrnkFile() {
 }
 
 ErrorCode SBarComputer::readIngFile() {
-	CBofString IngString(INGRDFILE);
+	CBofString IngString(INGRD_FILE);
 	MACROREPLACE(IngString);
 
 	// Open the text files
 	CBofFile fpIngFile(IngString);
-	if (fpIngFile.getErrorCode() != ERR_NONE)
+	if (fpIngFile.errorOccurred())
 		return fpIngFile.getErrorCode();
 
 	// Check that buffers are null
-	if (_pIngBuff) {
-		delete _pIngBuff;
-		_pIngBuff = nullptr;
-	}
+	delete _pIngBuff;
+	_pIngBuff = nullptr;
 
 	// Allocate the buffers
 	_pIngBuff = (char *)bofAlloc(fpIngFile.getLength() + 1);
 	if (_pIngBuff == nullptr)
-		return ERR_MEMORY;
+		fatalError(ERR_MEMORY, "Unable to allocate buffer of %u bytes", fpIngFile.getLength() + 1);
 
 	// Read the text file into buffers
 	fpIngFile.read(_pIngBuff, fpIngFile.getLength());
@@ -338,7 +324,7 @@ ErrorCode SBarComputer::readIngFile() {
 	while (pPosInBuff < _pIngBuff + fpIngFile.getLength()) {
 		SBarCompItem *pCompItem = new SBarCompItem();
 		if (!pCompItem)
-			error("Couldn't allocate a new SBarCompItem");
+			fatalError(ERR_MEMORY, "Couldn't allocate a new SBarCompItem");
 
 		pCompItem->_pList = nullptr;
 		pCompItem->_pDrink = nullptr;
@@ -412,74 +398,75 @@ void SBarComputer::deleteListBox() {
 }
 
 ErrorCode SBarComputer::createDrinksListBox() {
-	ErrorCode error = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
-	if (_pDrinkBox == nullptr) { // We need to create one
+	if (_pDrinkBox != nullptr)
+		return errorCode;
+	
+	// We need to create one
 
-		_pDrinkBox = new CBofListBox();
-		if (_pDrinkBox != nullptr) {
-			error = _pDrinkBox->create("ListBox", &_compDisplay, this);
-			if (error != ERR_NONE) {
-				return error;
-			}
+	_pDrinkBox = new CBofListBox();
+	if (_pDrinkBox == nullptr)
+		fatalError(ERR_MEMORY, "Couldn't allocate a new CBofListBox");
 
-			_pDrinkBox->hide();
-			_pDrinkBox->setPointSize(12);
-			_pDrinkBox->setItemHeight(20);
-
-			CBofPalette *pPal = _pBackdrop->getPalette();
-			byte PalIdx = pPal->getNearestIndex(RGB(255, 0, 0));
-
-			_pDrinkBox->setHighlightColor(pPal->getColor(PalIdx));
-
-			// Populate listbox
-			int numItems = _pDrinkList->getCount();
-			for (int i = 0; i < numItems; ++i) {
-				SBarCompItem CompItem = _pDrinkList->getNodeItem(i);
-				_pDrinkBox->addToTail(CBofString(CompItem._pItem), false);
-			}
-		} else {
-			return ERR_MEMORY;
-		}
+	errorCode = _pDrinkBox->create("ListBox", &_compDisplay, this);
+	if (errorCode != ERR_NONE) {
+		return errorCode;
 	}
 
-	return error;
+	_pDrinkBox->hide();
+	_pDrinkBox->setPointSize(12);
+	_pDrinkBox->setItemHeight(20);
+
+	CBofPalette *pPal = _pBackdrop->getPalette();
+	byte PalIdx = pPal->getNearestIndex(RGB(255, 0, 0));
+
+	_pDrinkBox->setHighlightColor(pPal->getColor(PalIdx));
+
+	// Populate listbox
+	int numItems = _pDrinkList->getCount();
+	for (int i = 0; i < numItems; ++i) {
+		SBarCompItem CompItem = _pDrinkList->getNodeItem(i);
+		_pDrinkBox->addToTail(CBofString(CompItem._pItem), false);
+	}
+
+	return errorCode;
 }
 
 ErrorCode SBarComputer::createIngListBox() {
-	ErrorCode error = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
-	if (_pIngBox == nullptr) {
-		// We need to create one
-		_pIngBox = new CBofListBox();
-		if (_pIngBox != nullptr) {
-			error = _pIngBox->create("ListBox", &_compDisplay, this);
-			if (error != ERR_NONE) {
-				return error;
-			}
+	if (_pIngBox != nullptr)
+		return errorCode;
 
-			_pIngBox->hide();
-			_pIngBox->setPointSize(12);
-			_pIngBox->setItemHeight(20);
+	// We need to create one
+	_pIngBox = new CBofListBox();
+	if (_pIngBox == nullptr)
+		fatalError(ERR_MEMORY, "Couldn't allocate a new CBofListBox");
 
-			CBofPalette *pPal = _pBackdrop->getPalette();
-			byte PalIdx = pPal->getNearestIndex(RGB(255, 0, 0));
-
-			_pIngBox->setHighlightColor(pPal->getColor(PalIdx));
-
-
-			// Populate listbox
-			int numItems = _pIngList->getCount();
-			for (int i = 0; i < numItems; ++i) {
-				SBarCompItem CompItem = _pIngList->getNodeItem(i);
-				_pIngBox->addToTail(CBofString(CompItem._pItem), false);
-			}
-
-		} else
-			return ERR_MEMORY;
+	errorCode = _pIngBox->create("ListBox", &_compDisplay, this);
+	if (errorCode != ERR_NONE) {
+		return errorCode;
 	}
 
-	return error;
+	_pIngBox->hide();
+	_pIngBox->setPointSize(12);
+	_pIngBox->setItemHeight(20);
+
+	CBofPalette *pPal = _pBackdrop->getPalette();
+	byte PalIdx = pPal->getNearestIndex(RGB(255, 0, 0));
+
+	_pIngBox->setHighlightColor(pPal->getColor(PalIdx));
+
+
+	// Populate listbox
+	int numItems = _pIngList->getCount();
+	for (int i = 0; i < numItems; ++i) {
+		SBarCompItem CompItem = _pIngList->getNodeItem(i);
+		_pIngBox->addToTail(CBofString(CompItem._pItem), false);
+	}
+
+	return errorCode;
 }
 
 void SBarComputer::onBofListBox(CBofObject * /*pListBox*/, int nItemIndex) {
@@ -522,7 +509,7 @@ void SBarComputer::setOn() {
 	_pButtons[ONBUT]->show();
 
 	// Play switching-on sound
-	BofPlaySound(BuildBarcDir(ONAUDIO), SOUND_MIX);
+	BofPlaySound(BuildBarcDir(ON_AUDIO), SOUND_MIX);
 
 	setDrink();
 	updateWindow();
@@ -552,7 +539,7 @@ void SBarComputer::setOff() {
 		_pButtons[ONBUT]->hide();
 		_pButtons[OFFBUT]->show();
 
-		BofPlaySound(BuildBarcDir(ONAUDIO), SOUND_MIX);
+		BofPlaySound(BuildBarcDir(ON_AUDIO), SOUND_MIX);
 
 		for (int i = 1; i < NUM_COMPBUTT; i++) {
 			// Hide all the buttons but HELP and QUIT
@@ -751,7 +738,7 @@ void SBarComputer::order() {
 						bRefuse = true;
 					else {
 						pSoldierSDev->activateLocalObject(CompItem._pDrink);
-						BofPlaySound(BuildBarcDir(ORDERAUDIO), SOUND_MIX);
+						BofPlaySound(BuildBarcDir(ORDER_AUDIO), SOUND_MIX);
 						pVar->setValue(nCredits - 1);
 						pVar2->setValue(1);
 					}
@@ -910,7 +897,7 @@ void SBarComputer::onMouseMove(uint32 nFlags, CBofPoint *xPoint, void *) {
 }
 
 const char *BuildBarcDir(const char *pszFile) {
-	return formPath(BDCADIR, pszFile);
+	return formPath(BDCA_DIR, pszFile);
 }
 
 } // namespace SpaceBar
