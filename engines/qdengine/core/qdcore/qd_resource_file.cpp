@@ -1,9 +1,9 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "app_error_handler.h"
-#include "qd_resource_file.h"
+#include "qdengine/core/system/app_error_handler.h"
+#include "qdengine/core/qdcore/qd_resource_file.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */

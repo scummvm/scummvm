@@ -1,7 +1,7 @@
 #ifndef __QD_RESOURCE_DISPATCHER_H__
 #define __QD_RESOURCE_DISPATCHER_H__
 
-#include "qd_resource.h"
+#include "qdengine/core/qdcore/qd_resource.h"
 
 //! Диспетчер ресурсов.
 template<class T>

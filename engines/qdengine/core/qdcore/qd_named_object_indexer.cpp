@@ -1,9 +1,9 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "qd_named_object_indexer.h"
-#include "qd_game_dispatcher.h"
+#include "qdengine/core/qdcore/qd_named_object_indexer.h"
+#include "qdengine/core/qdcore/qd_game_dispatcher.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */

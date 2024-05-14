@@ -1,12 +1,10 @@
 #ifndef __QD_GAME_OBJECT_H__
 #define __QD_GAME_OBJECT_H__
 
-#include "xml_fwd.h"
-
-#include "mouse_input.h"
-#include "gr_screen_region.h"
-
-#include "qd_named_object.h"
+#include "qdengine/core/parser/xml_fwd.h"
+#include "qdengine/core/system/input/mouse_input.h"
+#include "qdengine/core/system/graphics/gr_screen_region.h"
+#include "qdengine/core/qdcore/qd_named_object.h"
 
 const int QD_OBJ_MOVING_FLAG            = 0x01;
 const int QD_OBJ_HIDDEN_FLAG            = 0x02;
@@ -167,4 +165,3 @@ inline bool qdbg_is_object(const qdNamedObject *, const char *, const char *) {
 #endif
 
 #endif /* __QD_GAME_OBJECT_H__ */
-

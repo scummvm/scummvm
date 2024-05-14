@@ -1,11 +1,11 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "qd_sound_info.h"
-#include "qd_game_scene.h"
-#include "qd_game_dispatcher.h"
+#include "qdengine/core/qdcore/qd_sound_info.h"
+#include "qdengine/core/qdcore/qd_game_scene.h"
+#include "qdengine/core/qdcore/qd_game_dispatcher.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */

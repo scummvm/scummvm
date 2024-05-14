@@ -1,7 +1,7 @@
 #ifndef __QD_GAME_OBJECT_MOUSE_H__
 #define __QD_GAME_OBJECT_MOUSE_H__
 
-#include "qd_game_object_animated.h"
+#include "qdengine/core/qdcore/qd_game_object_animated.h"
 
 //! Мышь.
 class qdGameObjectMouse : public qdGameObjectAnimated {

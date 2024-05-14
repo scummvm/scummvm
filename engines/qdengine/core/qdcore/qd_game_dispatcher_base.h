@@ -1,15 +1,15 @@
 #ifndef __QD_GAME_DISPATCHER_BASE__
 #define __QD_GAME_DISPATCHER_BASE__
 
-#include "qd_conditional_object.h"
-#include "qd_object_map_container.h"
+#include "qdengine/core/qdcore/qd_conditional_object.h"
+#include "qdengine/core/qdcore/qd_object_map_container.h"
 
-#include "qd_scale_info.h"
+#include "qdengine/core/qdcore/qd_scale_info.h"
 
-#include "xml_fwd.h"
+#include "qdengine/core/parser/xml_fwd.h"
 
 #ifdef __QD_DEBUG_ENABLE__
-#include "qd_resource.h"
+#include "qdengine/core/qdcore/qd_resource.h"
 #endif
 
 typedef void (*qdLoadingProgressFnc)(int percents_loaded, void *data);
@@ -139,4 +139,3 @@ private:
 };
 
 #endif /* __QD_GAME_DISPATCHER_BASE__ */
-

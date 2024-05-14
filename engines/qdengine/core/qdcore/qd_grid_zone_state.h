@@ -1,9 +1,9 @@
 #ifndef __QD_GRID_ZONE_STATE_H__
 #define __QD_GRID_ZONE_STATE_H__
 
-#include "xml_fwd.h"
+#include "qdengine/core/parser/xml_fwd.h"
 
-#include "qd_conditional_object.h"
+#include "qdengine/core/qdcore/qd_conditional_object.h"
 
 class XStream;
 

@@ -2,10 +2,10 @@
 #ifndef __QD_INTERFACE_SLIDER_H__
 #define __QD_INTERFACE_SLIDER_H__
 
-#include "xml_fwd.h"
+#include "qdengine/core/parser/xml_fwd.h"
 
-#include "qd_interface_element.h"
-#include "qd_interface_element_state.h"
+#include "qdengine/core/qdcore/qd_interface_element.h"
+#include "qdengine/core/qdcore/qd_interface_element_state.h"
 
 //! Интерфейсный элемент - слайдер.
 /**

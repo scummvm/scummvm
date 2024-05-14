@@ -1,15 +1,13 @@
 #ifndef __QD_FONT_INFO_H__
 #define __QD_FONT_INFO_H__
 
-#include "xml_fwd.h"
-#include "xml_tag.h"
-#include "xml_tag_buffer.h"
-#include "qdscr_parser.h"
-
-#include "gr_font.h"
-#include "qd_named_object.h"
-
-#include "qd_object_list_container.h"
+#include "qdengine/core/parser/xml_fwd.h"
+#include "qdengine/core/parser/xml_tag.h"
+#include "qdengine/core/parser/xml_tag_buffer.h"
+#include "qdengine/core/parser/qdscr_parser.h"
+#include "qdengine/core/system/graphics/gr_font.h"
+#include "qdengine/core/qdcore/qd_named_object.h"
+#include "qdengine/core/qdcore/qd_object_list_container.h"
 
 
 //! Шрифт

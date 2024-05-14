@@ -1,8 +1,8 @@
 #ifndef __QD_GAME_OBJECT_STATIC_H__
 #define __QD_GAME_OBJECT_STATIC_H__
 
-#include "qd_sprite.h"
-#include "qd_game_object.h"
+#include "qdengine/core/qdcore/qd_sprite.h"
+#include "qdengine/core/qdcore/qd_game_object.h"
 
 class XStream;
 

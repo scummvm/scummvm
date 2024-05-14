@@ -1,11 +1,11 @@
 #ifndef __QD_INTERFACE_ELEMENT_STATE_H__
 #define __QD_INTERFACE_ELEMENT_STATE_H__
 
-#include "xml_fwd.h"
+#include "qdengine/core/parser/xml_fwd.h"
 
-#include "qd_animation_info.h"
-#include "qd_interface_object_base.h"
-#include "qd_interface_element_state_mode.h"
+#include "qdengine/core/qdcore/qd_animation_info.h"
+#include "qdengine/core/qdcore/qd_interface_object_base.h"
+#include "qdengine/core/qdcore/qd_interface_element_state_mode.h"
 
 //! Интерфейсное событие.
 class qdInterfaceEvent {

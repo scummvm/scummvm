@@ -1,10 +1,9 @@
 #ifndef __QD_INTERFACE_TEXT_WINDOW_H__
 #define __QD_INTERFACE_TEXT_WINDOW_H__
 
-#include "UI_TextParser.h"
-
-#include "qd_interface_element.h"
-#include "qd_interface_element_state.h"
+#include "qdengine/core/qdcore/qd_interface_element.h"
+#include "qdengine/core/qdcore/qd_interface_element_state.h"
+#include "qdengine/core/system/graphics/UI_TextParser.h"
 
 class qdScreenTextSet;
 class qdInterfaceSlider;
@@ -224,4 +223,3 @@ private:
 };
 
 #endif // __QD_INTERFACE_TEXT_WINDOW_H__
-

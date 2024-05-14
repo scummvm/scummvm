@@ -1,8 +1,8 @@
 #ifndef __QD_TRIGGER_CHAIN_H__
 #define __QD_TRIGGER_CHAIN_H__
 
-#include "xml_fwd.h"
-#include "qd_trigger_element.h"
+#include "qdengine/core/parser/xml_fwd.h"
+#include "qdengine/core/qdcore/qd_trigger_element.h"
 
 class qdTriggerChain : public qdNamedObject {
 public:
@@ -130,4 +130,3 @@ private:
 };
 
 #endif __QD_TRIGGER_CHAIN_H__
-

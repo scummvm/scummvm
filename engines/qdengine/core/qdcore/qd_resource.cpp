@@ -1,14 +1,14 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
 #ifdef __QD_DEBUG_ENABLE__
 #include <stdio.h>
 #endif
 
-#include "qd_resource.h"
-#include "qd_named_object.h"
-#include "qdscr_parser.h"
+#include "qdengine/core/qdcore/qd_resource.h"
+#include "qdengine/core/qdcore/qd_named_object.h"
+#include "qdengine/core/parser/qdscr_parser.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */

@@ -1,8 +1,8 @@
 #ifndef __QD_SPRITE_H__
 #define __QD_SPRITE_H__
 
-#include "gr_screen_region.h"
-#include "qd_resource.h"
+#include "qdengine/core/system/graphics/gr_screen_region.h"
+#include "qdengine/core/qdcore/qd_resource.h"
 
 class XZipStream;
 

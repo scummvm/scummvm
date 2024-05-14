@@ -1,8 +1,8 @@
 #ifndef __QD_SCREEN_TEXT_SET_H__
 #define __QD_SCREEN_TEXT_SET_H__
 
-#include "qd_screen_text.h"
-#include "xml_fwd.h"
+#include "qdengine/core/qdcore/qd_screen_text.h"
+#include "qdengine/core/parser/xml_fwd.h"
 
 //! Набор экранных текстов.
 class qdScreenTextSet {

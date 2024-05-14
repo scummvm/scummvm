@@ -1,20 +1,14 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
-
-#include "gr_dispatcher.h"
-
-#include "qd_sprite.h"
-#include "qd_setup.h"
-
-#include "app_error_handler.h"
-
-#include "rle_compress.h"
-
-#include "qd_file_manager.h"
-
-#include "2PassScale.h"
-#include "Filters.h"
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/qdcore/qd_file_manager.h"
+#include "qdengine/core/qdcore/qd_setup.h"
+#include "qdengine/core/qdcore/qd_sprite.h"
+#include "qdengine/core/qdcore/util/2PassScale.h"
+#include "qdengine/core/qdcore/util/Filters.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
+#include "qdengine/core/system/app_error_handler.h"
+#include "qdengine/core/system/graphics/rle_compress.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */

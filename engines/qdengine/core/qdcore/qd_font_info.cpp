@@ -1,6 +1,6 @@
-#include "qd_precomp.h"
-#include "qd_font_info.h"
-#include "qd_file_manager.h"
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/qdcore/qd_font_info.h"
+#include "qdengine/core/qdcore/qd_file_manager.h"
 
 qdFontInfo::qdFontInfo(const qdFontInfo &fi) : qdNamedObject(fi),
 	type_(fi.type()), font_file_name_(fi.font_file_name()) {

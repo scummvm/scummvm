@@ -1,22 +1,21 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "xml_tag_buffer.h"
-#include "qdscr_parser.h"
+#include "qdengine/core/parser/xml_tag_buffer.h"
+#include "qdengine/core/parser/qdscr_parser.h"
 
-#include "qd_trigger_element.h"
-#include "qd_trigger_chain.h"
-#include "qd_video.h"
-#include "qd_minigame.h"
-#include "qd_music_track.h"
-#include "qd_game_scene.h"
-#include "qd_grid_zone.h"
-#include "qd_game_object_state.h"
-#include "qd_game_object_animated.h"
-#include "qd_named_object_indexer.h"
-
-#include "qd_game_dispatcher.h"
+#include "qdengine/core/qdcore/qd_trigger_element.h"
+#include "qdengine/core/qdcore/qd_trigger_chain.h"
+#include "qdengine/core/qdcore/qd_video.h"
+#include "qdengine/core/qdcore/qd_minigame.h"
+#include "qdengine/core/qdcore/qd_music_track.h"
+#include "qdengine/core/qdcore/qd_game_scene.h"
+#include "qdengine/core/qdcore/qd_grid_zone.h"
+#include "qdengine/core/qdcore/qd_game_object_state.h"
+#include "qdengine/core/qdcore/qd_game_object_animated.h"
+#include "qdengine/core/qdcore/qd_named_object_indexer.h"
+#include "qdengine/core/qdcore/qd_game_dispatcher.h"
 
 #ifdef _QUEST_EDITOR
 #include <additional/qls.hpp>

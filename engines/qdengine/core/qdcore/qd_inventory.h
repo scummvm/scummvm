@@ -1,9 +1,9 @@
 #ifndef __QD_INVENTORY_H__
 #define __QD_INVENTORY_H__
 
-#include "mouse_input.h"
-#include "qd_named_object.h"
-#include "qd_inventory_cell.h"
+#include "qdengine/core/system/input/mouse_input.h"
+#include "qdengine/core/qdcore/qd_named_object.h"
+#include "qdengine/core/qdcore/qd_inventory_cell.h"
 
 //! Инвентори.
 class qdInventory : public qdNamedObject {

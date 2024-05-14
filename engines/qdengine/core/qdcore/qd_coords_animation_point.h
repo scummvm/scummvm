@@ -2,8 +2,7 @@
 #define __QD_COORDS_ANIMATION_FRAME_H__
 
 #include <vector>
-
-#include "xml_fwd.h"
+#include "qdengine/core/parser/xml_fwd.h"
 
 class XStream;
 

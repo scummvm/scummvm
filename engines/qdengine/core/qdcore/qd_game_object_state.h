@@ -1,21 +1,19 @@
 #ifndef __QD_GAME_OBJECT_STATE_H__
 #define __QD_GAME_OBJECT_STATE_H__
 
-#include "xml_fwd.h"
-
-#include "snd_sound.h"
-
-#include "qd_contour.h"
-#include "qd_sound_info.h"
-#include "qd_animation_info.h"
-#include "qd_animation_set_info.h"
-#include "qd_conditional_object.h"
-#include "qd_named_object.h"
-#include "qd_coords_animation.h"
-#include "qd_camera_mode.h"
-#include "qd_sound_handle.h"
-#include "qd_screen_text.h"
-#include "qd_grid_zone.h"
+#include "qdengine/core/parser/xml_fwd.h"
+#include "qdengine/core/qdcore/qd_contour.h"
+#include "qdengine/core/qdcore/qd_sound_info.h"
+#include "qdengine/core/qdcore/qd_animation_info.h"
+#include "qdengine/core/qdcore/qd_animation_set_info.h"
+#include "qdengine/core/qdcore/qd_conditional_object.h"
+#include "qdengine/core/qdcore/qd_named_object.h"
+#include "qdengine/core/qdcore/qd_coords_animation.h"
+#include "qdengine/core/qdcore/qd_camera_mode.h"
+#include "qdengine/core/qdcore/qd_sound_handle.h"
+#include "qdengine/core/qdcore/qd_screen_text.h"
+#include "qdengine/core/qdcore/qd_grid_zone.h"
+#include "qdengine/core/system/sound/snd_sound.h"
 
 class XStream;
 
@@ -944,4 +942,3 @@ inline bool qdbg_is_object_state(const qdNamedObject *obj, const char *scene_nam
 #endif
 
 #endif /* __QD_GAME_OBJECT_STATE_H__ */
-

@@ -2,15 +2,13 @@
 #ifndef __QD_INTERFACE_SCREEN_H__
 #define __QD_INTERFACE_SCREEN_H__
 
-#include "mouse_input.h"
-#include "xml_fwd.h"
-
-#include "gr_screen_region.h"
-
-#include "qd_interface_object_base.h"
-#include "qd_object_list_container.h"
-#include "qd_resource_dispatcher.h"
-#include "qd_music_track.h"
+#include "qdengine/core/parser/xml_fwd.h"
+#include "qdengine/core/qdcore/qd_interface_object_base.h"
+#include "qdengine/core/qdcore/qd_object_list_container.h"
+#include "qdengine/core/qdcore/qd_resource_dispatcher.h"
+#include "qdengine/core/qdcore/qd_music_track.h"
+#include "qdengine/core/system/graphics/gr_screen_region.h"
+#include "qdengine/core/system/input/mouse_input.h"
 
 class qdInterfaceElement;
 class qdInterfaceElementState;

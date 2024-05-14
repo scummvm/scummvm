@@ -1,7 +1,7 @@
 #ifndef __QD_NAMED_OBJECT_INDEXER_H__
 #define __QD_NAMED_OBJECT_INDEXER_H__
 
-#include "qd_named_object_reference.h"
+#include "qdengine/core/qdcore/qd_named_object_reference.h"
 
 class qdNamedObjectIndexer {
 public:
@@ -39,4 +39,3 @@ private:
 };
 
 #endif /* __QD_NAMED_OBJECT_INDEXER_H__ */
-

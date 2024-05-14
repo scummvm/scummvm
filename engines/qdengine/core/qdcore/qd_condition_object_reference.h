@@ -2,9 +2,8 @@
 #ifndef __QD_CONDITION_OBJECT_REFERENCE_H__
 #define __QD_CONDITION_OBJECT_REFERENCE_H__
 
-#include "xml_fwd.h"
-
-#include "qd_named_object_reference.h"
+#include "qdengine/core/parser/xml_fwd.h"
+#include "qdengine/core/qdcore/qd_named_object_reference.h"
 
 class qdNamedObject;
 

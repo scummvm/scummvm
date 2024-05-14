@@ -1,6 +1,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
 #include "AIAStar_API.h"
 
@@ -50,4 +50,3 @@ void qdHeuristic::init(const Vect3f trg) {
 	target_f_ = trg;
 	target_ = camera_ptr_ -> get_cell_index(trg.x, trg.y);
 }
-

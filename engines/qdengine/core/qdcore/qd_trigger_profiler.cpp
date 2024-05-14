@@ -1,13 +1,12 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
-
-#include "qd_trigger_profiler.h"
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/qdcore/qd_trigger_profiler.h"
 
 #ifdef __QD_TRIGGER_PROFILER__
 
-#include "qd_trigger_chain.h"
-#include "qd_game_dispatcher.h"
+#include "qdengine/core/qdcore/qd_trigger_chain.h"
+#include "qdengine/core/qdcore/qd_game_dispatcher.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -323,4 +322,3 @@ void qdTriggerProfiler::set_work_file(const char *fname) {
 }
 
 #endif /* __QD_TRIGGER_PROFILER__ */
-

@@ -1,19 +1,19 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "app_error_handler.h"
-#include "xml_tag_buffer.h"
-#include "gr_dispatcher.h"
-#include "mouse_input.h"
-#include "keyboard_input.h"
-#include "qdscr_parser.h"
+#include "qdengine/core/parser/qdscr_parser.h"
+#include "qdengine/core/parser/xml_tag_buffer.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
+#include "qdengine/core/system/app_error_handler.h"
+#include "qdengine/core/system/input/mouse_input.h"
+#include "qdengine/core/system/input/keyboard_input.h"
 
-#include "qd_game_dispatcher.h"
-#include "qd_minigame.h"
-#include "qd_setup.h"
-#include "qd_minigame_interface.h"
-#include "qd_engine_interface.h"
+#include "qdengine/core/qdcore/qd_game_dispatcher.h"
+#include "qdengine/core/qdcore/qd_minigame.h"
+#include "qdengine/core/qdcore/qd_setup.h"
+#include "qdengine/core/qdcore/qd_minigame_interface.h"
+#include "qdengine/core/qdcore/qd_engine_interface.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */

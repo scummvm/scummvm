@@ -2,9 +2,9 @@
 #ifndef __QD_INTERFACE_DISPATCHER_H__
 #define __QD_INTERFACE_DISPATCHER_H__
 
-#include "qd_resource_container.h"
-#include "qd_interface_object_base.h"
-#include "qd_object_list_container.h"
+#include "qdengine/core/qdcore/qd_resource_container.h"
+#include "qdengine/core/qdcore/qd_interface_object_base.h"
+#include "qdengine/core/qdcore/qd_object_list_container.h"
 
 class qdInterfaceScreen;
 class qdInterfaceElementState;

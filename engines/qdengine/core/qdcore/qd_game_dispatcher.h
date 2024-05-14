@@ -2,23 +2,20 @@
 #ifndef __QD_GAME_DISPATCHER_H__
 #define __QD_GAME_DISPATCHER_H__
 
-#include "xml_fwd.h"
+#include "qdengine/core/parser/xml_fwd.h"
+#include "qdengine/core/system/input/mouse_input.h"
+#include "qdengine/core/system/graphics/gr_screen_region.h"
+#include "qdengine/core/qdcore/qd_camera_mode.h"
+#include "qdengine/core/qdcore/qd_object_list_container.h"
+#include "qdengine/core/qdcore/qd_game_dispatcher_base.h"
+#include "qdengine/core/qdcore/qd_resource_dispatcher.h"
+#include "qdengine/core/qdcore/qd_screen_text_dispatcher.h"
+#include "qdengine/core/qdcore/qd_interface_dispatcher.h"
+#include "qdengine/core/qdcore/qd_inventory.h"
+#include "qdengine/core/qdcore/qd_font_info.h"
+#include "qdengine/core/qdcore/qd_file_owner.h"
+#include "qdengine/core/qdcore/util/WinVideo.h"
 
-#include "WinVideo.h"
-#include "mouse_input.h"
-#include "gr_screen_region.h"
-
-#include "qd_camera_mode.h"
-#include "qd_object_list_container.h"
-#include "qd_game_dispatcher_base.h"
-#include "qd_resource_dispatcher.h"
-#include "qd_screen_text_dispatcher.h"
-
-#include "qd_interface_dispatcher.h"
-
-#include "qd_inventory.h"
-#include "qd_font_info.h"
-#include "qd_file_owner.h"
 
 class grFont;
 class qdGameDispatcher : public qdGameDispatcherBase, public qdResourceDispatcher<qdNamedObject>, public qdFileOwner {
@@ -685,4 +682,3 @@ private:
 qdGameDispatcher *qd_get_game_dispatcher();
 
 #endif /* __QD_GAME_DISPATCHER_H__ */
-

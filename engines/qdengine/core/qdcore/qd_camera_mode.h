@@ -2,7 +2,7 @@
 #ifndef __QD_CAMERA_MODE_H__
 #define __QD_CAMERA_MODE_H__
 
-#include "xml_fwd.h"
+#include "qdengine/core/parser/xml_fwd.h"
 
 class qdGameObjectState;
 class qdGameObjectAnimated;

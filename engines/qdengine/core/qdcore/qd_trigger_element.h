@@ -1,10 +1,10 @@
 #ifndef __QD_TRIGGER_ELEMENT_H__
 #define __QD_TRIGGER_ELEMENT_H__
 
-#include "xml_fwd.h"
-#include "qd_named_object.h"
-#include "qd_named_object_reference.h"
-#include "qd_trigger_profiler.h"
+#include "qdengine/core/parser/xml_fwd.h"
+#include "qdengine/core/qdcore/qd_named_object.h"
+#include "qdengine/core/qdcore/qd_named_object_reference.h"
+#include "qdengine/core/qdcore/qd_trigger_profiler.h"
 
 #ifdef _QUEST_EDITOR
 #include "SharedCounter.hpp"

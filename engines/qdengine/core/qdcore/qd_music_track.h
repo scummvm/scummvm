@@ -1,10 +1,10 @@
 #ifndef __QD_MUSIC_TRACK_H__
 #define __QD_MUSIC_TRACK_H__
 
-#include "xml_fwd.h"
+#include "qdengine/core/parser/xml_fwd.h"
 
-#include "qd_named_object.h"
-#include "qd_conditional_object.h"
+#include "qdengine/core/qdcore/qd_named_object.h"
+#include "qdengine/core/qdcore/qd_conditional_object.h"
 
 //! Музыкальная композиция.
 /**

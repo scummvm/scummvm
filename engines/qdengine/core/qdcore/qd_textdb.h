@@ -52,7 +52,7 @@ private:
 #endif
 	};
 
-	typedef std::hash_map<std::string, qdText> qdTextMap;
+	typedef std::unordered_map<std::string, qdText> qdTextMap;
 	qdTextMap texts_;
 };
 

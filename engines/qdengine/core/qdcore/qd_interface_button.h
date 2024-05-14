@@ -2,8 +2,8 @@
 #ifndef __QD_INTERFACE_BUTTON_H__
 #define __QD_INTERFACE_BUTTON_H__
 
-#include "qd_interface_element.h"
-#include "qd_interface_element_state.h"
+#include "qdengine/core/qdcore/qd_interface_element.h"
+#include "qdengine/core/qdcore/qd_interface_element_state.h"
 
 #ifdef _QUEST_EDITOR
 #define _QD_INTERFACE_BUTTON_PTR_CONTAINER

@@ -1,7 +1,7 @@
 #ifndef __QD_ENGINE_INTERFACE_H__
 #define __QD_ENGINE_INTERFACE_H__
 
-#include "qd_rnd.h"
+#include "qdengine/core/qdcore/qd_rnd.h"
 
 class qdGameScene;
 

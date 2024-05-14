@@ -1,27 +1,26 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "xml_fwd.h"
+#include "qdengine/core/parser/xml_fwd.h"
 
-#include "qd_minigame.h"
-#include "qd_counter.h"
-#include "qd_minigame_interface.h"
-#include "qd_engine_interface.h"
+#include "qdengine/core/qdcore/qd_minigame.h"
+#include "qdengine/core/qdcore/qd_counter.h"
+#include "qdengine/core/qdcore/qd_minigame_interface.h"
+#include "qdengine/core/qdcore/qd_engine_interface.h"
+#include "qdengine/core/qdcore/qd_rnd.h"
 
-#include "gr_dispatcher.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
 
-#include "qd_rnd.h"
+#include "qdengine/core/qdcore/qd_game_dispatcher.h"
+#include "qdengine/core/qdcore/qd_game_scene.h"
+#include "qdengine/core/qdcore/qd_game_object_mouse.h"
+#include "qdengine/core/qdcore/qd_game_object_animated.h"
+#include "qdengine/core/qdcore/qd_game_object_moving.h"
 
-#include "qd_game_dispatcher.h"
-#include "qd_game_scene.h"
-#include "qd_game_object_mouse.h"
-#include "qd_game_object_animated.h"
-#include "qd_game_object_moving.h"
-
-#include "qd_interface_dispatcher.h"
-#include "qd_interface_screen.h"
-#include "qd_interface_text_window.h"
+#include "qdengine/core/qdcore/qd_interface_dispatcher.h"
+#include "qdengine/core/qdcore/qd_interface_screen.h"
+#include "qdengine/core/qdcore/qd_interface_text_window.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 

@@ -1,18 +1,16 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
-
-#include "gr_dispatcher.h"
-#include "xml_tag_buffer.h"
-
-#include "qdscr_parser.h"
-#include "qd_game_object_mouse.h"
-#include "qd_game_object_animated.h"
-#include "qd_game_scene.h"
-#include "qd_game_dispatcher.h"
-#include "qd_setup.h"
-#include "qd_grid_zone.h"
-#include "qd_animation_set.h"
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/parser/xml_tag_buffer.h"
+#include "qdengine/core/parser/qdscr_parser.h"
+#include "qdengine/core/qdcore/qd_game_object_mouse.h"
+#include "qdengine/core/qdcore/qd_game_object_animated.h"
+#include "qdengine/core/qdcore/qd_game_scene.h"
+#include "qdengine/core/qdcore/qd_game_dispatcher.h"
+#include "qdengine/core/qdcore/qd_setup.h"
+#include "qdengine/core/qdcore/qd_grid_zone.h"
+#include "qdengine/core/qdcore/qd_animation_set.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
 
 #include <stdio.h>
 /* ----------------------------- STRUCT SECTION ----------------------------- */

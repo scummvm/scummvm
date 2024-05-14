@@ -1,8 +1,8 @@
 #ifndef __QD_ANIMATION_INFO_H__
 #define __QD_ANIMATION_INFO_H__
 
-#include "xml_fwd.h"
-#include "qd_named_object.h"
+#include "qdengine/core/parser/xml_fwd.h"
+#include "qdengine/core/qdcore/qd_named_object.h"
 
 class XStream;
 class qdAnimation;
@@ -58,4 +58,3 @@ private:
 typedef std::vector<qdAnimationInfo> qdAnimationInfoVector;
 
 #endif /* __QD_ANIMATION_INFO_H__ */
-

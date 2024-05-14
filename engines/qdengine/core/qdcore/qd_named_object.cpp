@@ -1,9 +1,9 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "qd_named_object.h"
+#include "qdengine/core/qdcore/qd_named_object.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -89,4 +89,3 @@ appLog &operator << (appLog &log, const qdNamedObject *obj) {
 
 	return log;
 }
-

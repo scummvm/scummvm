@@ -1,11 +1,10 @@
 #ifndef __QD_COORDS_ANIMATION_H__
 #define __QD_COORDS_ANIMATION_H__
 
-#include "xml_fwd.h"
-
-#include "qd_named_object.h"
-#include "qd_coords_animation_point.h"
-#include "qd_named_object_reference.h"
+#include "qdengine/core/parser/xml_fwd.h"
+#include "qdengine/core/qdcore/qd_named_object.h"
+#include "qdengine/core/qdcore/qd_coords_animation_point.h"
+#include "qdengine/core/qdcore/qd_named_object_reference.h"
 
 const QD_COORDS_ANM_OBJECT_START_FLAG   = 0x01;
 const QD_COORDS_ANM_LOOP_FLAG           = 0x02;

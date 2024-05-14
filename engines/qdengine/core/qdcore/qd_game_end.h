@@ -1,8 +1,8 @@
 #ifndef __QD_GAME_END_H__
 #define __QD_GAME_END_H__
 
-#include "xml_fwd.h"
-#include "qd_conditional_object.h"
+#include "qdengine/core/parser/xml_fwd.h"
+#include "qdengine/core/qdcore/qd_conditional_object.h"
 
 //! Концовка игры.
 class qdGameEnd : public qdConditionalObject {
@@ -44,4 +44,3 @@ private:
 };
 
 #endif // __QD_GAME_END_H__
-

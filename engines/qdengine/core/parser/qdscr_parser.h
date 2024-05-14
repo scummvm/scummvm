@@ -2,7 +2,7 @@
 #ifndef __QDSCR_PARSER_H__
 #define __QDSCR_PARSER_H__
 
-#include "xml_fwd.h"
+#include "qdengine/core/parser/xml_fwd.h"
 
 //! Идентификаторы тэгов скрипта.
 enum qdscrTagID {

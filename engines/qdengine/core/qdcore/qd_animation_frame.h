@@ -1,7 +1,7 @@
 #ifndef __QD_ANIMATION_FRAME_H__
 #define __QD_ANIMATION_FRAME_H__
 
-#include "qd_sprite.h"
+#include "qdengine/core/qdcore/qd_sprite.h"
 
 //! Кадр анимации.
 class qdAnimationFrame : public qdSprite {
@@ -46,4 +46,3 @@ private:
 typedef std::list<qdAnimationFrame *> qdAnimationFrameList;
 
 #endif /* __QD_ANIMATION_FRAME_H__ */
-

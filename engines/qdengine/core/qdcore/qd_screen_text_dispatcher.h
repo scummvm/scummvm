@@ -1,8 +1,8 @@
 #ifndef __QD_SCREEN_TEXT_DISPATCHER__
 #define __QD_SCREEN_TEXT_DISPATCHER__
 
-#include "mouse_input.h"
-#include "qd_screen_text_set.h"
+#include "qdengine/core/qdcore/qd_screen_text_set.h"
+#include "qdengine/core/system/input/mouse_input.h"
 
 //! Диспетчер экранных текстов.
 class qdScreenTextDispatcher {
@@ -42,25 +42,3 @@ private:
 };
 
 #endif /* __QD_SCREEN_TEXT_DISPATCHER__ */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -3,12 +3,12 @@
 
 #include <vector>
 
-#include "xml_fwd.h"
+#include "qdengine/core/parser/xml_fwd.h"
 
-#include "qd_animation.h"
-#include "qd_coords_animation.h"
-#include "qd_game_object.h"
-#include "qd_game_object_state.h"
+#include "qdengine/core/qdcore/qd_animation.h"
+#include "qdengine/core/qdcore/qd_coords_animation.h"
+#include "qdengine/core/qdcore/qd_game_object.h"
+#include "qdengine/core/qdcore/qd_game_object_state.h"
 
 //! Динамический объект.
 /**
@@ -387,4 +387,3 @@ private:
 };
 
 #endif /* __QD_GAME_OBJECT_ANIMATED__ */
-

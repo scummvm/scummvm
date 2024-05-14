@@ -1,12 +1,12 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
 #ifndef __QD_SYSLIB__
-//#include "qdscr_parser.h"
+//#include "qdengine/core/parser/qdscr_parser.h"
 #endif
 
-#include "qd_animation_frame.h"
+#include "qdengine/core/qdcore/qd_animation_frame.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */

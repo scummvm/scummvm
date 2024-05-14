@@ -2,8 +2,8 @@
 #ifndef __QD_INTERFACE_BACKGROUND_H__
 #define __QD_INTERFACE_BACKGROUND_H__
 
-#include "qd_interface_element.h"
-#include "qd_interface_element_state.h"
+#include "qdengine/core/qdcore/qd_interface_element.h"
+#include "qdengine/core/qdcore/qd_interface_element_state.h"
 
 //! Интерфейсный элемент - фон.
 class qdInterfaceBackground : public qdInterfaceElement {
