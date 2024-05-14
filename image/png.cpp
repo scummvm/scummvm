@@ -271,7 +271,7 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 			png_read_row(pngPtr, (png_bytep)_outputSurface->getBasePtr(0, i), NULL);
 		}
 	} else {
-		// PNGs with interlacing require us to allocate an auxillary
+		// PNGs with interlacing require us to allocate an auxiliary
 		// buffer with pointers to all row starts.
 
 		// Allocate row pointer buffer
