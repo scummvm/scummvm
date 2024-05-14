@@ -421,7 +421,7 @@ public:
 	void giveWay(PPROCESS pReSchedProc = nullptr);
 
 	/**
-	 * Continously make a given process wait for another process to finish or event to signal.
+	 * Continuously make a given process wait for another process to finish or event to signal.
 	 *
 	 * @param pid           Process/Event identifier.
 	 * @param duration      Duration in milliseconds.
@@ -430,7 +430,7 @@ public:
 	void waitForSingleObject(CORO_PARAM, int pid, uint32 duration, bool *expired = nullptr);
 
 	/**
-	 * Continously make a given process wait for given processes to finish or events to be set.
+	 * Continuously make a given process wait for given processes to finish or events to be set.
 	 *
 	 * @param nCount        Number of IDs being passed.
 	 * @param pidList       List of process IDs to wait for.
