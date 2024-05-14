@@ -33,6 +33,8 @@ MODULE_OBJS = \
     core/qdcore/qd_animation_set_preview.o \
     core/qdcore/qd_animation_set.o \
 	core/qdcore/qd_animation.o \
+	core/qdcore/qd_camera_mode.o \
+	core/qdcore/qd_camera.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_QDENGINE), DYNAMIC_PLUGIN)
