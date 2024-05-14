@@ -22,7 +22,6 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/substream.h"
-#include "common/xpfloat.h"
 
 #include "director/director.h"
 #include "director/cast.h"
@@ -1242,10 +1241,7 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 					// Floats are stored as an "80 bit IEEE Standard 754 floating
 					// point number (Standard Apple Numeric Environment [SANE] data type
 					// Extended).
-					uint16 signAndExponent = READ_BE_UINT16(&constsStore[pointer]);
-					uint64 mantissa = READ_BE_UINT64(&constsStore[pointer+2]);
-
-					constant.u.f = Common::XPFloat(signAndExponent, mantissa).toDouble(Common::XPFloat::kSemanticsSANE);
+					constant.u.f = readAppleFloat80(&constsStore[pointer]);
 				} else if (length == 8) {
 					constant.u.f = READ_BE_FLOAT64(&constsStore[pointer]);
 				} else {

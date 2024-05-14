@@ -70,6 +70,8 @@ Common::Path dumpFactoryName(const char *prefix, const char *name, const char *e
 
 bool isButtonSprite(SpriteType spriteType);
 
+double readAppleFloat80(byte *ptr);
+
 class RandomState {
 public:
 	uint32 _seed;
