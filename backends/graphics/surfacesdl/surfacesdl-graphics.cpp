@@ -254,7 +254,7 @@ void SurfaceSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable)
 
 bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	// We need to allow this to be called from within a transaction, since we
-	// currently use it to retreive the graphics state, when switching from
+	// currently use it to retrieve the graphics state, when switching from
 	// SDL->OpenGL mode for example.
 	//assert(_transactionMode == kTransactionNone);
 
