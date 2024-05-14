@@ -827,7 +827,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Fehler beim Öffnen der Karte in Rose Tattoo behoben.
    - Der Klang der Klingelschnur in Serrated Scalpel wird nun korrekt abgespielt.
    - Das Inventar wird nun korrekt aktualisiert, wenn in Serrated Scalpel die Uhr untersucht wird.
-   - Nebel-Overlay von Kleopatras Nadel in Rose Tatoo korrigiert.Fix fog overlay at Cleopatra's Needle in Rose Tattoo.
+   - Nebel-Overlay von Kleopatras Nadel in Rose Tattoo korrigiert.Fix fog overlay at Cleopatra's Needle in Rose Tattoo.
    - Grafikfehler in Serrated Scalpel behoben, der auftritt, wenn Gegenstände untersucht werden, während das Inventar geöffnet ist.
    - Die Geschwindigkeit des Darts-Spiel in Serrated Scalpel ist nun näher am Original-Spiel.
    - Absturz behoben, der auftritt, wenn der Cursor an das Ende einer Zeichenkette im Speichern-Dialog von Rose Tattoo bewegt wird.
