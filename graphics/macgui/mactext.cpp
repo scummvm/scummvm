@@ -1699,7 +1699,7 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 	return _canvas.getTextChunk(startRow, startCol, endRow, endCol, formatted, newlines);
 }
 
-// mostly, we refering reshuffleParagraph to implement this function
+// mostly, we referring reshuffleParagraph to implement this function
 void MacText::insertTextFromClipboard() {
 	int ppos = 0;
 	Common::U32String str = _wm->getTextFromClipboard(Common::U32String(_defaultFormatting.toString()), &ppos);
