@@ -166,7 +166,9 @@ ErrorCode CBofBitmap::loadBitmap(const char *pszFileName, CBofPalette *pPalette)
 		CBofFile *pFile = new CBofFile(pszFileName, CBOFFILE_READONLY);
 
 		// Open bitmap
-		if (pFile != nullptr) {
+		if (pFile == nullptr)
+			reportError(ERR_MEMORY, "Could not allocate a CBofFile for %s", pszFileName);
+		else {
 			// filename must fit into our buffer
 			assert(strlen(pszFileName) < MAX_FNAME);
 
@@ -192,9 +194,6 @@ ErrorCode CBofBitmap::loadBitmap(const char *pszFileName, CBofPalette *pPalette)
 
 			// Close bitmap file
 			delete pFile;
-
-		} else {
-			reportError(ERR_MEMORY, "Could not allocate a CBofFile for %s", pszFileName);
 		}
 	}
 
@@ -886,71 +885,67 @@ ErrorCode CBofBitmap::scrollUp(int nPixels, CBofRect *pRect) {
 			byte *pRowBuf = (byte *)bofAlloc(dx);
 
 			// Allocate a buffer to hold one horizontal line
-			if (pRowBuf != nullptr) {
+			if (pRowBuf == nullptr)
+				fatalError(ERR_MEMORY, "Error: scrollUp - Could not allocate %ld bytes for row", dx);
 
-				byte *pEnd;
-				byte *pStart = pEnd = _pBits;
+			byte *pStart = _pBits;
+			byte *pEnd = _pBits;
 
-				int32 dx1 = _nScanDX;
-				int32 dy1 = _nDY;
+			int32 dx1 = _nScanDX;
+			int32 dy1 = _nDY;
 
-				// Is bitmap top-down or bottom up?
-				if (_bTopDown) {
-					pStart += y * dx1 + x;
-					pEnd += (y + dy - 1) * dx1 + x;
-				} else {
-					pStart += (dy1 - y - 1) * dx1 + x;
-					pEnd += (dy1 - (y + dy - 1) - 1) * dx1 + x;
-					dx1 = -dx1;
-				}
-				byte *pCurRow = pStart;
+			// Is bitmap top-down or bottom up?
+			if (_bTopDown) {
+				pStart += y * dx1 + x;
+				pEnd += (y + dy - 1) * dx1 + x;
+			} else {
+				pStart += (dy1 - y - 1) * dx1 + x;
+				pEnd += (dy1 - (y + dy - 1) - 1) * dx1 + x;
+				dx1 = -dx1;
+			}
+			byte *pCurRow = pStart;
 
-				// Copy 1st row into temp row buffer
-				memcpy(pRowBuf, pCurRow, dx);
+			// Copy 1st row into temp row buffer
+			memcpy(pRowBuf, pCurRow, dx);
 
-				int32 lJump = dx1 * nPixels;
+			int32 lJump = dx1 * nPixels;
 
-				byte *pLastRow = pCurRow;
+			byte *pLastRow = pCurRow;
+			pCurRow += lJump;
+			byte *p1stRow = pStart;
+
+			// Working row by row
+			for (int32 i = 1; i < dy; i++) {
+				// Copy this row to row above it
+				memcpy(pLastRow, pCurRow, dx);
+
+				pLastRow = pCurRow;
+
 				pCurRow += lJump;
-				byte *p1stRow = pStart;
+				if (pCurRow < pEnd && !_bTopDown) {
+					pCurRow = pStart - (pEnd - pCurRow) - dx1;
 
-				// Working row by row
-				for (int32 i = 1; i < dy; i++) {
-					// Copy this row to row above it
-					memcpy(pLastRow, pCurRow, dx);
+					if (pCurRow == p1stRow) {
+						i++;
 
-					pLastRow = pCurRow;
+						// Copy 1st row into this row
+						memcpy(pLastRow, pRowBuf, dx);
 
-					pCurRow += lJump;
-					if (pCurRow < pEnd && !_bTopDown) {
-						pCurRow = pStart - (pEnd - pCurRow) - dx1;
+						pCurRow += dx1;
+						p1stRow = pLastRow = pCurRow;
 
-						if (pCurRow == p1stRow) {
+						// Copy this next row into temp row buffer
+						memcpy(pRowBuf, p1stRow, dx);
 
-							i++;
-
-							// Copy 1st row into this row
-							memcpy(pLastRow, pRowBuf, dx);
-
-							pCurRow += dx1;
-							p1stRow = pLastRow = pCurRow;
-
-							// Copy this next row into temp row buffer
-							memcpy(pRowBuf, p1stRow, dx);
-
-							pCurRow += lJump;
-						}
+						pCurRow += lJump;
 					}
 				}
-
-				// Copy 1st row into last row
-				memcpy(pLastRow, pRowBuf, dx);
-
-				bofFree(pRowBuf);
-
-			} else {
-				reportError(ERR_MEMORY, "Error: scrollUp - Could not allocate %ld bytes for row", dx);
 			}
+
+			// Copy 1st row into last row
+			memcpy(pLastRow, pRowBuf, dx);
+
+			bofFree(pRowBuf);
 		}
 		unlock();
 	}

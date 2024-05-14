@@ -75,14 +75,11 @@ CBofText::CBofText(const CBofRect *pRect, int nJustify, uint32 nFormatFlags) {
 }
 
 CBofText::~CBofText() {
-	if (_pWork != nullptr) {
-		delete _pWork;
-		_pWork = nullptr;
-	}
-	if (_pBackground != nullptr) {
-		delete _pBackground;
-		_pBackground = nullptr;
-	}
+	delete _pWork;
+	_pWork = nullptr;
+
+	delete _pBackground;
+	_pBackground = nullptr;
 }
 
 void CBofText::initializeFields() {
@@ -119,28 +116,23 @@ ErrorCode CBofText::setupText(const CBofRect *pRect, int nJustify, uint32 nForma
 	_cSize.cx = _cRect.width();
 	_cSize.cy = _cRect.height();
 
-	if (_pWork != nullptr) {
-		delete _pWork;
-		_pWork = nullptr;
-	}
-	if (_pBackground != nullptr) {
-		delete _pBackground;
-		_pBackground = nullptr;
-	}
+	delete _pWork;
+	_pWork = nullptr;
 
-	CBofPalette *pPalette;
-	pPalette = CBofApp::getApp()->getPalette();
+	delete _pBackground;
+	_pBackground = nullptr;
+
+	CBofPalette *pPalette = CBofApp::getApp()->getPalette();
 
 	// Create a bitmap to serve as our work area as we output text
-	if ((_pWork = new CBofBitmap(_cSize.cx, _cSize.cy, pPalette)) != nullptr) {
-		// Create a bitmap to hold the background we overwrite
-		if ((_pBackground = new CBofBitmap(_cSize.cx, _cSize.cy, pPalette)) != nullptr) {
+	_pWork = new CBofBitmap(_cSize.cx, _cSize.cy, pPalette);
+	if (_pWork == nullptr)
+		fatalError(ERR_MEMORY, "Could not allocate a (%d x %d) CBofBitmap", _cSize.cx, _cSize.cy);
 
-		} else {
-			reportError(ERR_MEMORY, "Could not allocate a (%d x %d) CBofBitmap", _cSize.cx, _cSize.cy);
-		}
-	} else {
-		reportError(ERR_MEMORY, "Could not allocate a (%d x %d) CBofBitmap", _cSize.cx, _cSize.cy);
+	// Create a bitmap to hold the background we overwrite
+	_pBackground = new CBofBitmap(_cSize.cx, _cSize.cy, pPalette);
+	if (_pBackground == nullptr) {
+		fatalError(ERR_MEMORY, "Could not allocate a (%d x %d) CBofBitmap", _cSize.cx, _cSize.cy);
 	}
 
 	return _errCode;

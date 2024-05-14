@@ -1160,7 +1160,7 @@ CBagStorageDevWnd::CBagStorageDevWnd() : CBofWindow() {
 CBagStorageDevWnd::~CBagStorageDevWnd() {
 	assert(isValidObject(this));
 
-	killWorkBmp();
+	CBagStorageDevWnd::killWorkBmp();
 }
 
 
@@ -1440,26 +1440,24 @@ ErrorCode CBagStorageDevWnd::loadFile(const CBofString &sFile) {
 		reportError(ERR_FOPEN, "Unable to open file %s", sWldFile.getBuffer());
 	else {
 		char *pBuf = (char *)bofAlloc(nLength);
-		if (pBuf != nullptr) {
-			CBagIfstream fpInput(pBuf, nLength);
+		if (pBuf == nullptr)
+			fatalError(ERR_MEMORY, "Unable to allocate a buffer of %d bytes", nLength);
 
-			CBofFile cFile;
-			cFile.open(sWldFile);
-			cFile.read(pBuf, nLength);
-			cFile.close();
+		CBagIfstream fpInput(pBuf, nLength);
 
-			CBagStorageDev::loadFileFromStream(fpInput, sWldFile);
+		CBofFile cFile;
+		cFile.open(sWldFile);
+		cFile.read(pBuf, nLength);
+		cFile.close();
 
-			// If the window.isCreated()
-			//
-			if (isCreated())
-				invalidateRect(nullptr);
+		CBagStorageDev::loadFileFromStream(fpInput, sWldFile);
 
-			bofFree(pBuf);
+		// If the window.isCreated()
+		//
+		if (isCreated())
+			invalidateRect(nullptr);
 
-		} else {
-			reportError(ERR_MEMORY, "Unable to allocate a buffer of %d bytes", nLength);
-		}
+		bofFree(pBuf);
 	}
 
 	// Add everything to the window

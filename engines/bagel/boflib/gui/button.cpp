@@ -80,32 +80,26 @@ ErrorCode CBofButton::paint(CBofRect *) {
 
 	// Only continue if this button is visible
 	if (isVisible() && (_parent != nullptr) && _parent->isVisible()) {
-		CBofPalette *pPalette;
-		RGBCOLOR cTextColor;
-		byte iHighlight, iShadow, iTemp;
-		int nWidth, nHeight;
-		int i, left, right, top, bottom;
+		CBofPalette *pPalette = CBofApp::getApp()->getPalette();
 
-		pPalette = CBofApp::getApp()->getPalette();
-
-		nWidth = _cRect.width();
-		nHeight = _cRect.height();
+		int nWidth = _cRect.width();
+		int nHeight = _cRect.height();
 
 		// Create our off-screen buffer
 		CBofBitmap cBmp(nWidth, nHeight, pPalette);
 
 		cBmp.fillRect(&_cRect, pPalette->getNearestIndex(_cFaceColor));
 
-		left = _cRect.left;
-		right = _cRect.right;
-		top = _cRect.top;
-		bottom = _cRect.bottom;
+		int left = _cRect.left;
+		int right = _cRect.right;
+		int top = _cRect.top;
+		int bottom = _cRect.bottom;
 
-		iShadow = pPalette->getNearestIndex(_cShadowColor);
-		iHighlight = pPalette->getNearestIndex(_cHighlightColor);
+		byte iShadow = pPalette->getNearestIndex(_cShadowColor);
+		byte iHighlight = pPalette->getNearestIndex(_cHighlightColor);
 
 		if (_nState == BUTTON_DOWN) {
-			iTemp = iShadow;
+			byte iTemp = iShadow;
 			iShadow = iHighlight;
 			iHighlight = iTemp;
 		}
@@ -113,6 +107,7 @@ ErrorCode CBofButton::paint(CBofRect *) {
 		byte c1 = iShadow;
 		byte c2 = iHighlight;
 
+		int i;
 		for (i = 1; i <= 3; i++) {
 			cBmp.line(left + i, bottom - i, right - i, bottom - i, c1);
 			cBmp.line(right - i, bottom - i, right - i, top + i - 1, c1);
@@ -135,7 +130,7 @@ ErrorCode CBofButton::paint(CBofRect *) {
 		CBofText cText(&cTempRect);
 
 		// Print text into button
-		cTextColor = _cTextColor;
+		RGBCOLOR cTextColor = _cTextColor;
 		if (_nState == BUTTON_DISABLED)
 			cTextColor = _cTextDisabledColor;
 
@@ -214,7 +209,6 @@ ErrorCode CBofButton::setState(int nNewState, bool bRepaintNow) {
 
 void CBofButton::onPaint(CBofRect *pRect) {
 	assert(isValidObject(this));
-
 	assert(pRect != nullptr);
 
 	paint(pRect);
@@ -226,9 +220,7 @@ void CBofButton::onLButtonDown(uint32, CBofPoint *pPoint, void *) {
 	assert(pPoint != nullptr);
 
 	if (!_bCaptured && _nState != BUTTON_DISABLED) {
-
 		setCapture();
-
 		setState(BUTTON_DOWN, true);
 	}
 }
@@ -240,7 +232,6 @@ void CBofButton::onLButtonUp(uint32, CBofPoint *pPoint, void *) {
 
 	if (_bCaptured) {
 		releaseCapture();
-
 		setState(BUTTON_UP, true);
 
 		if (_cRect.ptInRect(*pPoint) && (_parent != nullptr)) {
@@ -259,7 +250,6 @@ void CBofRadioButton::onLButtonDown(uint32, CBofPoint *pPoint, void *) {
 	assert(pPoint != nullptr);
 
 	if ((_nState != BUTTON_DISABLED) && (_nState == BUTTON_UP)) {
-
 		setState(BUTTON_DOWN, true);
 	}
 }
@@ -347,16 +337,13 @@ void CBofCheckButton::onLButtonDown(uint32, CBofPoint *pPoint, void *) {
 	assert(isValidObject(this));
 	assert(pPoint != nullptr);
 
-	if (_nState != BUTTON_DISABLED) {
+	if (_nState == BUTTON_DISABLED)
+		return;
 
-		if (_nState == BUTTON_UP) {
-
-			setState(BUTTON_DOWN, true);
-
-		} else if (_nState == BUTTON_DOWN) {
-
-			setState(BUTTON_UP, true);
-		}
+	if (_nState == BUTTON_UP) {
+		setState(BUTTON_DOWN, true);
+	} else if (_nState == BUTTON_DOWN) {
+		setState(BUTTON_UP, true);
 	}
 }
 
@@ -455,26 +442,20 @@ CBofBmpButton::CBofBmpButton() {
 
 
 CBofBmpButton::~CBofBmpButton() {
-	if (_pButtonUp != nullptr) {
-		delete _pButtonUp;
-		_pButtonUp = nullptr;
-	}
-	if (_pButtonDown != nullptr) {
-		delete _pButtonDown;
-		_pButtonDown = nullptr;
-	}
-	if (_pButtonDisabled != nullptr) {
-		delete _pButtonDisabled;
-		_pButtonDisabled = nullptr;
-	}
-	if (_pButtonFocus != nullptr) {
-		delete _pButtonFocus;
-		_pButtonFocus = nullptr;
-	}
-	if (_pBackground != nullptr) {
-		delete _pBackground;
-		_pBackground = nullptr;
-	}
+	delete _pButtonUp;
+	_pButtonUp = nullptr;
+
+	delete _pButtonDown;
+	_pButtonDown = nullptr;
+
+	delete _pButtonDisabled;
+	_pButtonDisabled = nullptr;
+
+	delete _pButtonFocus;
+	_pButtonFocus = nullptr;
+
+	delete _pBackground;
+	_pBackground = nullptr;
 }
 
 
@@ -498,10 +479,9 @@ ErrorCode CBofBmpButton::paint(CBofRect *) {
 		CBofBitmap cOffScreen(nWidth, nHeight, pPalette);
 
 		if (_pBackground == nullptr) {
-			if ((_pBackground = new CBofBitmap(nWidth, nHeight, pPalette)) != nullptr) {
-
-			} else {
-				reportError(ERR_MEMORY, "Could not allocate a CBofBitmap(%d x %d)", nWidth, nHeight);
+			_pBackground = new CBofBitmap(nWidth, nHeight, pPalette);
+			if (_pBackground == nullptr) {
+				fatalError(ERR_MEMORY, "Could not allocate a CBofBitmap(%d x %d)", nWidth, nHeight);
 			}
 
 		} else {
@@ -535,7 +515,6 @@ ErrorCode CBofBmpButton::paint(CBofRect *) {
 
 ErrorCode CBofBmpButton::loadBitmaps(CBofBitmap *pUp, CBofBitmap *pDown, CBofBitmap *pFocus, CBofBitmap *pDisabled, int nMaskColor) {
 	assert(isValidObject(this));
-
 	assert(pUp != nullptr);
 	assert(pDown != nullptr);
 
@@ -554,7 +533,6 @@ ErrorCode CBofBmpButton::loadBitmaps(CBofBitmap *pUp, CBofBitmap *pDown, CBofBit
 
 ErrorCode CBofBmpButton::loadBitmaps(CBofPalette *pPalette, const char *pszUp, const char *pszDown, const char *pszFocus, const char *pszDisabled, int nMaskColor) {
 	assert(isValidObject(this));
-
 	assert(pPalette != nullptr);
 	assert(pszUp != nullptr);
 	assert(pszDown != nullptr);
@@ -565,16 +543,23 @@ ErrorCode CBofBmpButton::loadBitmaps(CBofPalette *pPalette, const char *pszUp, c
 	_nMaskColor = nMaskColor;
 
 	// Load each of the bitmaps that represent the button state
-	if ((_pButtonUp = new CBofBitmap(pszUp, pPalette)) != nullptr) {
+	_pButtonUp = new CBofBitmap(pszUp, pPalette);
+	if (_pButtonUp != nullptr) {
 		_pButtonUp->setReadOnly(true);
 	}
-	if ((_pButtonDown = new CBofBitmap(pszDown, pPalette)) != nullptr) {
+
+	_pButtonDown = new CBofBitmap(pszDown, pPalette);
+	if (_pButtonDown != nullptr) {
 		_pButtonDown->setReadOnly(true);
 	}
-	if ((_pButtonFocus = new CBofBitmap(pszFocus, pPalette)) != nullptr) {
+	
+	_pButtonFocus = new CBofBitmap(pszFocus, pPalette);
+	if (_pButtonFocus != nullptr) {
 		_pButtonFocus->setReadOnly(true);
 	}
-	if ((_pButtonDisabled = new CBofBitmap(pszDisabled, pPalette)) != nullptr) {
+
+	_pButtonDisabled = new CBofBitmap(pszDisabled, pPalette);
+	if (_pButtonDisabled != nullptr) {
 		_pButtonDisabled->setReadOnly(true);
 	}
 
@@ -610,7 +595,6 @@ ErrorCode CBofBmpButton::setState(int nNewState, bool bRepaintNow) {
 
 void CBofBmpButton::onPaint(CBofRect *pRect) {
 	assert(isValidObject(this));
-
 	assert(pRect != nullptr);
 
 	paint(pRect);

@@ -142,27 +142,25 @@ ErrorCode CBagTextObject::attach() {
 				// Allocate the buffers
 				uint32 nFileLen = fpTextFile.getLength();
 				char *pTextBuff = (char *)bofCAlloc(nFileLen + 1, 1);
-				if (pTextBuff != nullptr) {
-					// Read the text file into buffers
-					fpTextFile.read(pTextBuff, nFileLen);
-					fpTextFile.close();
+				if (pTextBuff == nullptr)
+					fatalError(ERR_MEMORY, "Unable to allocate a Text buffer of %u bytes", nFileLen + 1);
 
-					*_psText += pTextBuff;
+				// Read the text file into buffers
+				fpTextFile.read(pTextBuff, nFileLen);
+				fpTextFile.close();
 
-					if (_psInitInfo != nullptr) {
-						CBagVar *pVar = g_VarManager->getVariable(*_psInitInfo);
+				*_psText += pTextBuff;
 
-						if (pVar != nullptr) {
-							_bReAttach = true;
-							_psText->replaceStr("%s", pVar->getValue());
-						}
+				if (_psInitInfo != nullptr) {
+					CBagVar *pVar = g_VarManager->getVariable(*_psInitInfo);
+
+					if (pVar != nullptr) {
+						_bReAttach = true;
+						_psText->replaceStr("%s", pVar->getValue());
 					}
-
-					bofFree(pTextBuff);
-
-				} else {
-					reportError(ERR_MEMORY, "Unable to allocate a Text buffer of %u bytes", nFileLen + 1);
 				}
+
+				bofFree(pTextBuff);
 
 			} else {
 				reportError(ERR_FOPEN, "Failed to create a CBofFile for %s", getFileName().getBuffer());
@@ -181,17 +179,15 @@ ErrorCode CBagTextObject::attach() {
 
 		// Allocate a new string
 		_psText = new CBofString;
-		if (_psText != nullptr) {
-			*_psText = getFileName();
+		if (_psText == nullptr)
+			fatalError(ERR_MEMORY, "Unable to allocate a CBofString");
 
-			// Replace any underscores with spaces
-			_psText->replaceChar('_', ' ');
+		*_psText = getFileName();
 
-			recalcTextRect(false);
+		// Replace any underscores with spaces
+		_psText->replaceChar('_', ' ');
 
-		} else {
-			reportError(ERR_MEMORY, "Unable to allocate a CBofString");
-		}
+		recalcTextRect(false);
 	}
 
 	// If this guy is linked to a residue printing object, make sure he knows
