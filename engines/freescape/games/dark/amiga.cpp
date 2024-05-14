@@ -118,7 +118,7 @@ void DarkEngine::loadAssetsAmigaFullGame() {
 
 	_border = loadAndConvertNeoImage(stream, 0x1b762);
 	load8bitBinary(stream, 0x2e96a, 16);
-	loadPalettes(stream, 0x2e638);
+	loadPalettes(stream, 0x2e528);
 	loadGlobalObjects(stream, 0x30f0 - 50, 24);
 	loadMessagesVariableSize(stream, 0x3d37, 66);
 
