@@ -128,7 +128,7 @@ void DgdsEngine::loadIcons() {
 	_icons->loadBitmap(iconFileName);
 }
 
-bool DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
+bool DgdsEngine::changeScene(int sceneNum) {
 	assert(_scene && _adsInterp);
 
 	if (sceneNum == _scene->getNum()) {
@@ -148,8 +148,11 @@ bool DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
 		return false;
 	}
 
-	if (runChangeOps)
-		_scene->runLeaveSceneOps();
+	// Save the current foreground in case we are going to the inventory or
+	// a scene which doesn't draw its own
+	_backgroundBuffer.blitFrom(_compositionBuffer);
+
+	_scene->runLeaveSceneOps();
 
 	// store the last scene num
 	_gameGlobals->setGlobal(0x61, _scene->getNum());
@@ -157,8 +160,7 @@ bool DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
 	_scene->unload();
 	_soundPlayer->unloadMusic();
 
-	if (runChangeOps)
-		_gdsScene->runChangeSceneOps();
+	_gdsScene->runChangeSceneOps();
 
 	if (!_scene->getDragItem())
 		setMouseCursor(0);
@@ -175,6 +177,8 @@ bool DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
 
 	if (!_scene->getAdsFile().empty())
 		_adsInterp->load(_scene->getAdsFile());
+	else
+		_adsInterp->unload();
 
 	_scene->runEnterSceneOps();
 	debug("%s", _scene->dump("").c_str());
@@ -289,7 +293,7 @@ void DgdsEngine::loadGameFiles() {
 		_gdsScene->runStartGameOps();
 
 		// To skip credits for testing
-		changeScene(6, true);
+		changeScene(5);
 
 	} else if (getGameId() == GID_CHINA) {
 		_gameGlobals = new Globals();
@@ -378,13 +382,12 @@ Common::Error DgdsEngine::run() {
 				_inventory->close();
 			} else	if (!_menu->menuShown()) {
 				_menu->setScreenBuffer();
-
+				// force mouse on
 				CursorMan.showMouse(true);
 				setMouseCursor(0);
 				_menu->drawMenu();
 			} else {
 				_menu->hideMenu();
-				CursorMan.showMouse(false);
 			}
 
 			triggerMenu = false;
@@ -448,7 +451,7 @@ Common::Error DgdsEngine::run() {
 				}
 			}
 
-			// Note: Hard-coded logic for DRAGON, check others
+			// TODO: Hard-coded logic to match Rise of the Dragon, check others
 			if (getGameId() != GID_DRAGON || _scene->getNum() != 55)
 				_gdsScene->runPostTickOps();
 

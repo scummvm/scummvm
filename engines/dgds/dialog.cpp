@@ -555,7 +555,6 @@ void Dialog::updateSelectedAction(int delta) {
 }
 
 struct DialogAction *Dialog::pickAction(bool isClosing, bool isForceClose) {
-	struct DialogAction *retval = nullptr;
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	if (!isForceClose && isClosing) {
 		if (_action.empty())
@@ -586,7 +585,13 @@ struct DialogAction *Dialog::pickAction(bool isClosing, bool isForceClose) {
 			}
 		}
 	}
-	return retval;
+
+	// Note: maybe not in original, but if we are closing and
+	// there is only one action, always do that action.
+	if (isClosing && _action.size() == 1)
+		return &_action[0];
+
+	return nullptr;
 }
 
 

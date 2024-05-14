@@ -38,20 +38,25 @@ Inventory::Inventory() : _isOpen(false), _prevPageBtn(nullptr), _nextPageBtn(nul
 }
 
 void Inventory::open() {
-	if (_isOpen)
-		return;;
+	// Allow double-open becuase that's how the inventory shows item
+	// descriptions.r
 	_isOpen = true;
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	_openedFromSceneNum = engine->getScene()->getNum();
-	engine->changeScene(2, false);
+	int curScene = engine->getScene()->getNum();
+	if (curScene != 2) {
+		_openedFromSceneNum = curScene;
+		engine->changeScene(2);
+	} else {
+		engine->getScene()->runEnterSceneOps();
+	}
 }
 
 void Inventory::close() {
 	if (!_isOpen)
-		return;;
+		return;
 	_isOpen = false;
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	engine->changeScene(_openedFromSceneNum, false);
+	engine->changeScene(_openedFromSceneNum);
 	_openedFromSceneNum = -1;
 }
 

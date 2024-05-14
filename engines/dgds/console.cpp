@@ -105,7 +105,7 @@ bool Console::cmdFileDump(int argc, const char **argv) {
 		size = 0;
 
 		if ((dot = strrchr(fileName.c_str(), '.'))) {
-			ex = MKTAG24(dot[1], dot[2], dot[3]);
+			ex = MKTAG24(toupper(dot[1]), toupper(dot[2]), toupper(dot[3]));
 		}
 
 		DgdsChunkReader chunk(resStream);

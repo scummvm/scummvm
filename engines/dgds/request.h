@@ -97,7 +97,7 @@ public:
 	uint16 _parentY;
 
 	virtual Common::String dump() const;
-	virtual void draw(Graphics::Surface *dst) const;
+	virtual void draw(Graphics::ManagedSurface *dst) const;
 	virtual void toggle(bool enable) {}
 
 	bool containsPoint(const Common::Point &pt);
@@ -106,7 +106,7 @@ public:
 // Button gadget has no additional fields, but some behavior differences.
 class ButtonGadget : public Gadget {
 public:
-	void draw(Graphics::Surface *dst) const override;
+	void draw(Graphics::ManagedSurface *dst) const override;
 	void toggle(bool enable) override;
 };
 
@@ -117,7 +117,7 @@ public:
 	uint16 _bufLen;
 
 	Common::String dump() const override;
-	void draw(Graphics::Surface *dst) const override;
+	void draw(Graphics::ManagedSurface *dst) const override;
 };
 
 // extended gadget type 2 is 74 (0x4a) bytes
@@ -129,7 +129,7 @@ public:
 	uint16 _gadget2_i4;
 
 	Common::String dump() const override;
-	void draw(Graphics::Surface *dst) const override;
+	void draw(Graphics::ManagedSurface *dst) const override;
 };
 
 // extended gadget type 8 is 68 (0x44) bytes
@@ -139,7 +139,7 @@ public:
 	uint16 _yStep;
 
 	Common::String dump() const override;
-	void draw(Graphics::Surface *dst) const override;
+	void draw(Graphics::ManagedSurface *dst) const override;
 };
 
 class RequestData {

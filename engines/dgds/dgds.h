@@ -133,7 +133,7 @@ public:
 	const FontManager *getFontMan() const { return _fontManager; }
 	const Common::SharedPtr<Image> &getUICorners() { return _corners; }
 	const Common::SharedPtr<Image> &getIcons() { return _icons; }
-	bool changeScene(int sceneNum, bool runChangeOps);
+	bool changeScene(int sceneNum);
 	GamePalettes *getGamePals() { return _gamePals; }
 	Globals *getGameGlobals() { return _gameGlobals; }
 	Inventory *getInventory() { return _inventory; }
