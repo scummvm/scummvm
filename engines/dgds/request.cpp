@@ -301,7 +301,7 @@ Common::String Gadget::dump() const {
 		_buttonName.c_str(), _parentX, _parentY);
 }
 
-void Gadget::draw(Graphics::Surface *dst) const {}
+void Gadget::draw(Graphics::ManagedSurface *dst) const {}
 
 bool Gadget::containsPoint(const Common::Point &pt) {
 	int16 x = _x + _parentX;
@@ -312,7 +312,7 @@ bool Gadget::containsPoint(const Common::Point &pt) {
 	return gadgetRect.contains(pt);
 }
 
-void ButtonGadget::draw(Graphics::Surface *dst) const {
+void ButtonGadget::draw(Graphics::ManagedSurface *dst) const {
 	// TODO: Bounds calculation here might depend on parent.
 
 	int16 x = _x + _parentX;
@@ -407,7 +407,7 @@ Common::String TextAreaGadget::dump() const {
 	return Common::String::format("TextArea<%s, %d buflen %d>", base.c_str(), _textGadget_i1, _bufLen);
 }
 
-void TextAreaGadget::draw(Graphics::Surface *dst) const {
+void TextAreaGadget::draw(Graphics::ManagedSurface *dst) const {
 	const Font *font = RequestData::getMenuFont();
 	font->drawString(dst, _buttonName, _x + _parentX, _y + _parentY, 0, 0);
 }
@@ -440,7 +440,7 @@ static const char *_sliderLabelsForGadget(uint16 num) {
 	}
 }
 
-void SliderGadget::draw(Graphics::Surface *dst) const {
+void SliderGadget::draw(Graphics::ManagedSurface *dst) const {
 	const Font *font = RequestData::getMenuFont();
 
 	int16 x = _x + _parentX;
@@ -477,7 +477,7 @@ Common::String ImageGadget::dump() const {
 	return Common::String::format("Image<%s, xStep %d yStep %d>", base.c_str(), _xStep, _yStep);
 }
 
-static void _drawFrame(Graphics::Surface *dst, int16 x, int16 y, int16 w, int16 h, byte col1, byte col2) {
+static void _drawFrame(Graphics::ManagedSurface *dst, int16 x, int16 y, int16 w, int16 h, byte col1, byte col2) {
 	const int xmax = x + w - 1;
 	const int ymax = y + h - 1;
 	bool filled = true;
@@ -498,7 +498,7 @@ static void _drawFrame(Graphics::Surface *dst, int16 x, int16 y, int16 w, int16 
 	}
 }
 
-void ImageGadget::draw(Graphics::Surface *dst) const {
+void ImageGadget::draw(Graphics::ManagedSurface *dst) const {
 	int xstep = _xStep;
 	int ystep = _yStep;
 
@@ -511,6 +511,9 @@ void ImageGadget::draw(Graphics::Surface *dst) const {
 	dst->fillRect(drawRect, _col1);
 	// Note: not quite the same as the original logic here, but gets the same result.
 	_drawFrame(dst, xoff, yoff, _width, _height, _sval1I, _sval1I);
+
+	// NOTE: This only get done in inventory in original?
+	RequestData::drawCorners(dst, 19, xoff - 2, yoff - 2, _width + 4, _height + 4);
 }
 
 Common::String RequestData::dump() const {
@@ -569,7 +572,7 @@ void RequestData::drawInvType(Graphics::ManagedSurface *dst) {
 
 	for (auto &gadget : _gadgets) {
 		if (!(gadget->_flags3 & 0x40)) {
-			gadget->draw(dst->surfacePtr());
+			gadget->draw(dst);
 		}
 	}
 

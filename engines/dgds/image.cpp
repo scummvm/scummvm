@@ -171,7 +171,7 @@ void Image::drawScreen(const Common::String &filename, Graphics::ManagedSurface 
 		error("Couldn't get image resource %s", filename.c_str());
 
 	if ((dot = strrchr(filename.c_str(), '.'))) {
-		ex = MKTAG24(dot[1], dot[2], dot[3]);
+		ex = MKTAG24(toupper(dot[1]), toupper(dot[2]), toupper(dot[3]));
 	} else {
 		ex = 0;
 	}
@@ -231,7 +231,7 @@ void Image::loadBitmap(const Common::String &filename) {
 
 	const char *dot;
 	if ((dot = strrchr(filename.c_str(), '.'))) {
-		ex = MKTAG24(dot[1], dot[2], dot[3]);
+		ex = MKTAG24(toupper(dot[1]), toupper(dot[2]), toupper(dot[3]));
 	} else {
 		ex = 0;
 	}

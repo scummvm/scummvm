@@ -62,7 +62,7 @@ struct HotArea {
 	uint16 _cursorNum;
 	Common::Array<struct SceneConditions> enableConditions;
 	Common::Array<struct SceneOp> onRClickOps;
-	Common::Array<struct SceneOp> opList2;
+	Common::Array<struct SceneOp> onLDownOps;
 	Common::Array<struct SceneOp> onLClickOps;
 
 	virtual ~HotArea() {}
@@ -233,8 +233,6 @@ public:
 	const Common::String &getIconFile() const { return _iconFile; }
 	bool readPerSceneGlobals(Common::SeekableReadStream *s);
 
-	uint16 getGlobal(uint num);
-
 	Common::String dump(const Common::String &indent) const;
 
 	void runStartGameOps() { runOps(_startGameOps); }
@@ -315,6 +313,7 @@ private:
 	void enableTrigger(uint16 num) override;
 	void showDialog(uint16 num) override;
 	Dialog *getVisibleDialog();
+	void onDragFinish(const Common::Point &pt);
 
 	int _num;
 	Common::Array<struct SceneOp> _enterSceneOps;

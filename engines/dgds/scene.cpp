@@ -97,7 +97,7 @@ Common::String HotArea::dump(const Common::String &indent) const {
 			indent.c_str(), rect.dump("").c_str(), _num, _cursorNum);
 	str += _dumpStructList(indent, "enableConditions", enableConditions);
 	str += _dumpStructList(indent, "onRClickOps", onRClickOps);
-	str += _dumpStructList(indent, "opList2", opList2);
+	str += _dumpStructList(indent, "onLDownOps", onLDownOps);
 	str += _dumpStructList(indent, "onLClickOps", onLClickOps);
 	str += "\n";
 	str += indent + ">";
@@ -232,7 +232,7 @@ bool Scene::readHotArea(Common::SeekableReadStream *s, HotArea &dst) const {
 	dst._cursorNum = s->readUint16LE();
 	readConditionList(s, dst.enableConditions);
 	readOpList(s, dst.onRClickOps);
-	readOpList(s, dst.opList2);
+	readOpList(s, dst.onLDownOps);
 	readOpList(s, dst.onLClickOps);
 	return !s->err();
 }
@@ -492,7 +492,7 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops) {
 		debug(10, "Exec %s", op.dump("").c_str());
 		switch(op._opCode) {
 		case kSceneOpChangeScene:
-			if (engine->changeScene(op._args[0], true))
+			if (engine->changeScene(op._args[0]))
 				// This probably reset the list - stop now.
 				return false;
 			break;
@@ -522,7 +522,7 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops) {
 			break;
 		case kSceneOpChangeSceneToStored: {
 			uint16 sceneNo = engine->getGameGlobals()->getGlobal(0x61);
-			if (engine->changeScene(sceneNo, true))
+			if (engine->changeScene(sceneNo))
 				// This probably reset the list - stop now.
 				return false;
 			break;
@@ -582,8 +582,7 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 		int16 refval = c._val;
 		int16 checkval = -1;
 		SceneCondition cflag = c._flags;
-		// Two "or"s in a row, or an "or" at the start means true
-		// (as one side is empty)
+		// Hit an "or" here means the last result was true.
 		if (cflag & kSceneCondOr)
 			return true;
 
@@ -600,7 +599,7 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 				if (item._num == c._num) {
 					if (cflag & kSceneCondNeedItemSceneNum)
 						checkval = item._inSceneNum;
-					else // cflag & kSceneCondNeedItemField14
+					else // cflag & kSceneCondNeedItemQuality
 						checkval = item._quality;
 					break;
 				}
@@ -625,7 +624,7 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 		debug(11, "Cond: %s -> %s", c.dump("").c_str(), result ? "true": "false");
 
 		if (!result) {
-			// Skip to the next or, or the end.
+			// Skip just past the next or, or to the end.
 			while (cnum < conds.size() && !(conds[cnum]._flags & kSceneCondOr))
 				cnum++;
 			if (cnum >= conds.size())
@@ -806,8 +805,7 @@ bool SDSScene::checkDialogActive() {
 		// FIXME: double-check this logic.
 		// Mark finished if we are manually clearing *or* the timer has expired.
 		bool finished = false;
-		if (dlg._state->_hideTime &&
-			((dlg._state->_hideTime > timeNow && clearDlgFlag) || timeNow >= dlg._state->_hideTime)) {
+		if (clearDlgFlag || (dlg._state->_hideTime && timeNow >= dlg._state->_hideTime)) {
 			finished = true;
 		}
 
@@ -831,6 +829,7 @@ bool SDSScene::checkDialogActive() {
 			if (action || dlg._action.empty()) {
 				dlg.setFlag(kDlgFlagHiFinished);
 				if (action) {
+					debug("Dialog closing: run action %d op list (%d ops)", action->val, action->sceneOpList.size());
 					if (!runOps(action->sceneOpList)) {
 						_dlgWithFlagLo8IsClosing = false;
 						return true;
@@ -966,11 +965,6 @@ void SDSScene::mouseMoved(const Common::Point &pt) {
 		cursorNum = _dragItem->_iconNum;
 
 	engine->setMouseCursor(cursorNum);
-
-	if (area && area->_num == 0) {
-		// Object dragged over the inventory button
-		// static_cast<DgdsEngine *>(g_engine)->getInventory()-> ...
-	}
 }
 
 void SDSScene::mouseLDown(const Common::Point &pt) {
@@ -985,8 +979,11 @@ void SDSScene::mouseLDown(const Common::Point &pt) {
 	if (!area)
 		return;
 
+	debug(9, "Mouse LDown on area %d (%d,%d,%d,%d) cursor %d", area->_num, area->rect.x, area->rect.y,
+			area->rect.width, area->rect.height, area->_cursorNum);
+
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	runOps(area->opList2);
+	runOps(area->onLDownOps);
 	GameItem *item = dynamic_cast<GameItem *>(area);
 	if (item) {
 		_dragItem = item;
@@ -1001,49 +998,84 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 		return;
 	}
 
+	if (_dragItem) {
+		onDragFinish(pt);
+		return;
+	}
+
 	const HotArea *area = findAreaUnderMouse(pt);
+	if (!area)
+		return;
+
+	debug(9, "Mouse LUp on area %d (%d,%d,%d,%d) cursor %d", area->_num, area->rect.x, area->rect.y,
+			area->rect.width, area->rect.height, area->_cursorNum);
+
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	engine->setMouseCursor(area->_cursorNum);
+
+	if (area && area->_num == 0) {
+		debug("Mouseup on inventory.");
+		static_cast<DgdsEngine *>(g_engine)->getInventory()->open();
+	} else {
+		debug(" --> exec %d click ops for area %d", area->onLClickOps.size(), area->_num);
+		runOps(area->onLClickOps);
+	}
+}
+
+static bool _isInRect(const Common::Point &pt, const DgdsRect rect) {
+	return rect.x <= pt.x && (rect.x + rect.width) > pt.x
+			&& rect.y <= pt.y && (rect.y + rect.height) > pt.y;
+}
+
+void SDSScene::onDragFinish(const Common::Point &pt) {
+	assert(_dragItem);
+
+	// Unlike a click operation, this runs the drop event for *all* areas
+	// and items, ignoring enable condition.
 
 	GameItem *dragItem = _dragItem;
 	_dragItem = nullptr;
 
-	if (dragItem && !area)
-		engine->setMouseCursor(0);
+	runOps(dragItem->opList4);
 
-	if (!area)
-		return;
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	engine->setMouseCursor(0);
 
-	engine->setMouseCursor(area->_cursorNum);
+	// TODO: Both these loops are very similar.. there should be a cleaner way.
 
-	if (area->_num == 0) {
-		// dropped on the inventory button
-		if (dragItem) {
-			debug("Item %d dropped on inventory.", dragItem->_num);
-			dragItem->_inSceneNum = 2;
-			engine->setMouseCursor(0);
-		} else {
-			debug("Mouseup on inventory.");
-			static_cast<DgdsEngine *>(g_engine)->getInventory()->open();
-		}
-	} else {
-		if (dragItem) {
-			const GameItem *targetItem = dynamic_cast<const GameItem *>(area);
-			// Dropping one item on another -> use interactions from GDS
-			// Dropping item on an area -> interactions are in SDS
-			const Common::Array<struct ObjectInteraction> &interactions =
-				targetItem ? engine->getGDSScene()->getObjInteractions2()
-						: engine->getScene()->getObjInteractions1();
-			for (const auto &i : interactions) {
-				if (i._droppedItemNum == dragItem->_num && i._targetItemNum == area->_num) {
+	for (const auto &item : engine->getGDSScene()->getGameItems()) {
+		if (item._inSceneNum == _num && _isInRect(pt, item.rect)) {
+			debug("Dragged item %d onto item %d", dragItem->_num, item._num);
+			for (const auto &i : engine->getGDSScene()->getObjInteractions2()) {
+				if (i._droppedItemNum == dragItem->_num && i._targetItemNum == item._num) {
+					debug(" --> exec item %d drag ops", i.opList.size());
 					runOps(i.opList);
 					break;
 				}
 			}
+		}
+	}
+
+	for (const auto &area : _hotAreaList) {
+		if (!_isInRect(pt, area.rect))
+			continue;
+
+		if (area._num == 0) {
+			debug("Item %d dropped on inventory.", dragItem->_num);
+			dragItem->_inSceneNum = 2;
 		} else {
-			runOps(area->onLClickOps);
+			debug("Dragged item %d onto area %d", dragItem->_num, area._num);
+			for (const auto &i : engine->getScene()->getObjInteractions1()) {
+				if (i._droppedItemNum == dragItem->_num && i._targetItemNum == area._num) {
+					debug(" --> exec area %d drag ops", i.opList.size());
+					runOps(i.opList);
+					break;
+				}
+			}
 		}
 	}
 }
+
 
 void SDSScene::mouseRUp(const Common::Point &pt) {
 	Dialog *dlg = getVisibleDialog();
@@ -1077,17 +1109,14 @@ HotArea *SDSScene::findAreaUnderMouse(const Common::Point &pt) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 
 	for (auto &item : engine->getGDSScene()->getGameItems()) {
-		if (item._inSceneNum == _num && checkConditions(item.enableConditions) &&
-			item.rect.x < pt.x && (item.rect.x + item.rect.width) > pt.x
-			&& item.rect.y < pt.y && (item.rect.y + item.rect.height) > pt.y) {
+		if (item._inSceneNum == _num && checkConditions(item.enableConditions)
+			&& _isInRect(pt, item.rect)) {
 			return &item;
 		}
 	}
 
 	for (auto &area : _hotAreaList) {
-		if (checkConditions(area.enableConditions) &&
-			area.rect.x < pt.x && (area.rect.x + area.rect.width) > pt.x
-			&& area.rect.y < pt.y && (area.rect.y + area.rect.height) > pt.y) {
+		if (checkConditions(area.enableConditions) && _isInRect(pt, area.rect)) {
 			return &area;
 		}
 	}

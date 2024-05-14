@@ -765,7 +765,8 @@ ADSInterpreter::~ADSInterpreter() {
 }
 
 bool ADSInterpreter::load(const Common::String &filename) {
-	unload();
+	// Don't clear current _adsData, we reset that below.
+	_currentTTMSeq = nullptr;
 
 	// For high detail, replace extension ADS with ADH.  Low detail is ADL.
 	Common::String detailfile = filename.substr(0, filename.size() - 1);
@@ -778,10 +779,11 @@ bool ADSInterpreter::load(const Common::String &filename) {
 		detailfile = filename;
 
 	debug("ADSInterpreter: load %s", detailfile.c_str());
+	/* FIXME: quick hack - never reuse data.
 	if (_adsTexts.contains(detailfile)) {
 		_adsData = &(_adsTexts.getVal(detailfile));
 		return true;
-	}
+	}*/
 
 	_adsTexts.setVal(detailfile, ADSData());
 	_adsData = &(_adsTexts.getVal(detailfile));

@@ -144,7 +144,7 @@ void Menu::drawMenu(int16 menu) {
 	for (Common::SharedPtr<Gadget> &gptr : gadgets) {
 		Gadget *gadget = gptr.get();
 		if (gadget->_gadgetType == kGadgetButton || gadget->_gadgetType == kGadgetSlider)
-			gadget->draw(managed.surfacePtr());
+			gadget->draw(&managed);
 	}
 
 	drawMenuText(managed);
