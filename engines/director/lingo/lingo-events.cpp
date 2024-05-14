@@ -153,7 +153,7 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 					_mouseDownWasInButton = true;
 
 				if (_score->_channels[spriteId]->_sprite->_moveable) {
-					_draggingSpriteOffset = _score->_channels[spriteId]->_currentPoint - event.mousePos;
+					_draggingSpriteOffset = _score->_channels[spriteId]->getPosition() - event.mousePos;
 					_currentDraggedChannel = _score->_channels[spriteId];
 				}
 

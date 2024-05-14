@@ -47,13 +47,10 @@ Channel::Channel(Score *sc, Sprite *sp, int priority) {
 		_sprite = new Sprite(*sp);
 
 	_widget = nullptr;
-	_currentPoint = _sprite ? _sprite->_startPoint : Common::Point(0, 0);
 	_constraint = 0;
 	_mask = nullptr;
 
 	_priority = priority;
-	_width = _sprite ? _sprite->_width : 0;
-	_height = _sprite ? _sprite->_height : 0;
 
 	_movieRate = 0.0;
 	_movieTime = 0;
@@ -78,13 +75,10 @@ Channel& Channel::operator=(const Channel &channel) {
 	_sprite = channel._sprite ? new Sprite(*channel._sprite) : nullptr;
 
 	_widget = nullptr;
-	_currentPoint = channel._currentPoint;
 	_constraint = channel._constraint;
 	_mask = nullptr;
 
 	_priority = channel._priority;
-	_width = channel._width;
-	_height = channel._height;
 
 	_movieRate = channel._movieRate;
 	_movieTime = channel._movieTime;
@@ -263,17 +257,16 @@ bool Channel::isDirty(Sprite *nextSprite) {
 			_sprite->_ink != nextSprite->_ink || _sprite->_backColor != nextSprite->_backColor ||
 			_sprite->_foreColor != nextSprite->_foreColor;
 		if (!_sprite->_moveable)
-			isDirtyFlag |= _currentPoint != nextSprite->_startPoint;
+			isDirtyFlag |= _sprite->getPosition() != nextSprite->getPosition();
 		if (isStretched() && !hasTextCastMember(_sprite))
-			isDirtyFlag |= _width != nextSprite->_width || _height != nextSprite->_height;
+			isDirtyFlag |= _sprite->_width != nextSprite->_width || _sprite->_height != nextSprite->_height;
 	}
 
 	return isDirtyFlag;
 }
 
 bool Channel::isStretched() {
-	return _sprite->_stretch || (_sprite->_puppet &&
-		(_sprite->_width != _width || _sprite->_height != _height));
+	return _sprite->_stretch;
 }
 
 bool Channel::isEmpty() {
@@ -388,54 +381,12 @@ bool Channel::isVideoDirectToStage() {
 	return ((DigitalVideoCastMember *)_sprite->_cast)->_directToStage;
 }
 
-bool Channel::isBboxDeterminedByChannel() {
-	bool isShape = _sprite->_cast && _sprite->_cast->_type == kCastShape;
-	// Use the dimensions and position in the Channel:
-	// - if the sprite is of a shape, or
-	// - if the sprite has the puppet flag enabled
-	// Otherwise, use the Sprite dimensions and position (i.e. taken from the
-	// frame data in the Score).
-	return (isShape || _sprite->_puppet || _sprite->_moveable);
-}
-
-Common::Rect Channel::getBbox(bool unstretched) {
-	// Setting unstretched to true always returns the Sprite dimensions.
-	bool useOverride = isBboxDeterminedByChannel() && !unstretched;
-
-	Common::Rect result(
-		useOverride ? _width : _sprite->_width,
-		useOverride ? _height : _sprite->_height
-	);
-	// If this is a cast member, use the cast member's getBbox function
-	// so we start with a rect containing the correct registration offset.
-	if (_sprite->_cast)
-		result = _sprite->_cast->getBbox(result.width(), result.height());
-
-	// The origin of the rect should be at the registration offset,
-	// e.g. for bitmap sprites this defaults to the centre.
-	// Now we move the rect to the correct spot.
-	Common::Point startPos = getPosition(unstretched);
-	result.translate(startPos.x, startPos.y);
-	return result;
-}
-
-Common::Point Channel::getPosition(bool unstretched) {
-	bool useOverride = isBboxDeterminedByChannel() && !unstretched;
-
-	return Common::Point(
-		useOverride ? _currentPoint.x : _sprite->_startPoint.x,
-		useOverride ? _currentPoint.y : _sprite->_startPoint.y
-	);
-}
-
 void Channel::setCast(CastMemberID memberID) {
 	// release previous widget
 	if (_sprite->_cast)
 		_sprite->_cast->releaseWidget();
 
 	_sprite->setCast(memberID);
-	_width = _sprite->_width;
-	_height = _sprite->_height;
 	replaceWidget();
 
 	// Based on Director in a Nutshell, page 15
@@ -515,6 +466,21 @@ void Channel::setClean(Sprite *nextSprite, bool partial) {
 	_dirty = false;
 }
 
+void Channel::setStretch(bool enabled) {
+	if (!enabled) {
+		// when the stretch flag is manually disabled,
+		// revert whatever dimensions the sprite has to
+		// the default in the cast
+		g_director->getCurrentWindow()->addDirtyRect(getBbox());
+		_dirty = true;
+
+		Common::Rect bbox = _sprite->_cast->getBbox();
+		_sprite->setWidth(bbox.width());
+		_sprite->setHeight(bbox.height());
+	}
+	_sprite->_stretch = enabled;
+}
+
 // this is used to for setting and updating text castmember
 // e.g. set editable, update dims for auto expanding
 void Channel::updateTextCast() {
@@ -530,8 +496,6 @@ void Channel::updateTextCast() {
 		if (!textWidget->getFixDims() && (_sprite->_width != _widget->_dims.width() || _sprite->_height != _widget->_dims.height())) {
 			_sprite->_width = _widget->_dims.width();
 			_sprite->_height = _widget->_dims.height();
-			_width = _sprite->_width;
-			_height = _sprite->_height;
 			g_director->getCurrentWindow()->addDirtyRect(_widget->_dims);
 		}
 	}
@@ -582,7 +546,6 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 	if (!nextSprite)
 		return;
 
-	bool newSprite = (_sprite->_spriteType == kInactiveSprite && nextSprite->_spriteType != kInactiveSprite);
 	bool widgetKeeped = _sprite->_cast && _widget;
 
 	// if there's a video in the old sprite that's different, stop it before we continue
@@ -597,7 +560,6 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 	if (_sprite->_cast && !canKeepWidget(_sprite, nextSprite)) {
 		widgetKeeped = false;
 		_sprite->_cast->releaseWidget();
-		newSprite = true;
 	}
 
 	// If the cast member is the same, persist the editable flag
@@ -606,8 +568,8 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 		editable = _sprite->_editable;
 	}
 
-	int width = _width;
-	int height = _height;
+	int width = _sprite->_width;
+	int height = _sprite->_height;
 	bool immediate = _sprite->_immediate;
 
 	*_sprite = *nextSprite;
@@ -624,46 +586,6 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 		_sprite->_width = width;
 		_sprite->_height = height;
 	}
-
-	// Sprites marked moveable are constrained to the same bounding box until
-	// the moveable is disabled
-	if (!_sprite->_moveable || newSprite)
-		_currentPoint = _sprite->_startPoint;
-
-	_width = _sprite->_width;
-	_height = _sprite->_height;
-}
-
-void Channel::setWidth(int w) {
-	_width = MAX<int>(w, 0);
-
-	// Based on Director in a Nutshell, page 15
-	_sprite->setAutoPuppet(kAPWidth, true);
-}
-
-void Channel::setHeight(int h) {
-	_height = MAX<int>(h, 0);
-
-	// Based on Director in a Nutshell, page 15
-	_sprite->setAutoPuppet(kAPHeight, true);
-}
-
-void Channel::setBbox(int l, int t, int r, int b) {
-	_width = r - l;
-	_height = b - t;
-
-	Common::Rect source(_width, _height);
-	if (_sprite->_cast) {
-		source = _sprite->_cast->getBbox(_width, _height);
-	}
-	_currentPoint.x = (int16)(l - source.left);
-	_currentPoint.y = (int16)(t - source.top);
-
-	if (_width <= 0 || _height <= 0)
-		_width = _height = 0;
-
-	// Based on Director in a Nutshell, page 15
-	_sprite->setAutoPuppet(kAPBbox, true);
 }
 
 void Channel::setPosition(int x, int y, bool force) {
@@ -673,18 +595,7 @@ void Channel::setPosition(int x, int y, bool force) {
 		newPos.x = MIN(constraintBbox.right, MAX(constraintBbox.left, newPos.x));
 		newPos.y = MIN(constraintBbox.bottom, MAX(constraintBbox.top, newPos.y));
 	}
-	_currentPoint = newPos;
-	// Very occasionally, setPosition should override the
-	// sprite copy of the position.
-	// This is necessary for cases where aspects of the sprite
-	// are modified by the score, except for the position
-	// (e.g. dragging the animated parts in Face Kit)
-	if (force) {
-		_sprite->_startPoint = newPos;
-	}
-
-	// Based on Director in a Nutshell, page 15
-	_sprite->setAutoPuppet(kAPLoc, true);
+	_sprite->setPosition(newPos.x, newPos.y);
 }
 
 // here is the place for deciding whether the widget can be keep or not
@@ -743,8 +654,6 @@ void Channel::replaceWidget(CastMemberID previousCastId, bool force) {
 
 				_sprite->_width = _widget->_dims.width();
 				_sprite->_height = _widget->_dims.height();
-				_width = _sprite->_width;
-				_height = _sprite->_height;
 			}
 		}
 	}
