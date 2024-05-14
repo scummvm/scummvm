@@ -161,9 +161,6 @@ CBofSound::~CBofSound() {
 
 
 void CBofSound::initialize() {
-	_bSoundAvailable = true;
-	_bMidiAvailable = false;
-
 	for (int i = 0; i < NUM_QUEUES; ++i)
 		_cQueue[i] = new CQueue();
 
@@ -187,20 +184,10 @@ void CBofSound::shutdown() {
 }
 
 
-
 void CBofSound::setVolume(int nVolume) {
 	assert(nVolume >= VOLUME_INDEX_MIN && nVolume <= VOLUME_INDEX_MAX);
-	int nLocalVolume = nVolume;
 
-	if (nLocalVolume < VOLUME_INDEX_MIN) {
-		nLocalVolume = VOLUME_INDEX_MIN;
-
-	} else if (nLocalVolume > VOLUME_INDEX_MAX) {
-		nLocalVolume = VOLUME_INDEX_MAX;
-	}
-
-	_nVol = nLocalVolume;
-
+	_nVol = CLIP(nVolume, VOLUME_INDEX_MIN, VOLUME_INDEX_MAX);
 	g_system->getMixer()->setChannelVolume(_handle, VOLUME_SVM(_nVol));
 
 	// TODO: MIDI volume
@@ -211,29 +198,14 @@ void CBofSound::setVolume(int nMidiVolume, int nWaveVolume) {
 	assert(nMidiVolume >= VOLUME_INDEX_MIN && nMidiVolume <= VOLUME_INDEX_MAX);
 	assert(nWaveVolume >= VOLUME_INDEX_MIN && nWaveVolume <= VOLUME_INDEX_MAX);
 
-    assert(nMidiVolume >= VOLUME_INDEX_MIN && nMidiVolume <= VOLUME_INDEX_MAX);
-	assert(nWaveVolume >= VOLUME_INDEX_MIN && nWaveVolume <= VOLUME_INDEX_MAX);
-
-	if (nWaveVolume < VOLUME_INDEX_MIN) {
-		nWaveVolume = VOLUME_INDEX_MIN;
-
-	} else if (nWaveVolume > VOLUME_INDEX_MAX) {
-		nWaveVolume = VOLUME_INDEX_MAX;
-	}
-
 	// Set master wave volume
-	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, VOLUME_SVM(nWaveVolume));
-
-	if (nMidiVolume < VOLUME_INDEX_MIN) {
-		nMidiVolume = VOLUME_INDEX_MIN;
-
-	} else if (nMidiVolume > VOLUME_INDEX_MAX) {
-		nMidiVolume = VOLUME_INDEX_MAX;
-	}
+	int clippedVol = CLIP(nWaveVolume, VOLUME_INDEX_MIN, VOLUME_INDEX_MAX);
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, VOLUME_SVM(clippedVol));
 
 	// Set master Midi volume
-	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, VOLUME_SVM(nMidiVolume));
-	g_engine->_midi->setVolume(VOLUME_SVM(nMidiVolume));
+	clippedVol = CLIP(nMidiVolume, VOLUME_INDEX_MIN, VOLUME_INDEX_MAX);
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, VOLUME_SVM(clippedVol));
+	g_engine->_midi->setVolume(VOLUME_SVM(clippedVol));
 }
 
 
@@ -539,16 +511,6 @@ void CBofSound::clearMidiSounds() {
 
 		pSound = pNextSound;
 	}
-}
-
-
-bool CBofSound::soundAvailable() {
-	return _bSoundAvailable;                     // Return requested info
-}
-
-
-bool CBofSound::midiAvailable() {
-	return _bMidiAvailable;                      // Return requested info
 }
 
 

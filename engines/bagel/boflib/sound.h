@@ -131,14 +131,6 @@ public:
 	static void initialize();
 	static void shutdown();
 	static void setVolume(int MidiVolume, int WaveVolume);
-	static bool soundAvailable();
-	static bool midiAvailable();
-	static bool soundVolumeAvailable() {
-		return _bWaveVolume;
-	}
-	static bool midiVolumeAvailable() {
-		return _bMidiVolume;
-	}
 
 	static bool soundPlaying() {
 		return (_nCount > 0) ? true : false;
