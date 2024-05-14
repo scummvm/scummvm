@@ -62,7 +62,7 @@ Dialog::Dialog(const Common::String &name)
 	// resolution change, so widgets will be off screen. This forces it to
 	// recompute
 	//
-	// Fixes bug #2892: "HE: When 3x graphics are choosen, F5 crashes game"
+	// Fixes bug #2892: "HE: When 3x graphics are chosen, F5 crashes game"
 	// and bug #2903: "SCUMM: F5 crashes game (640x480)"
 	g_gui.checkScreenChange();
 
