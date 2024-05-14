@@ -659,7 +659,7 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 		break;
 	case kOpSwap:
 		if (stack.size() >= 2) {
-			std::swap(stack[stack.size() - 1], stack[stack.size() - 2]);
+			SWAP(stack[stack.size() - 1], stack[stack.size() - 2]);
 		} else {
 			warning("kOpSwap: Stack too small!");
 		}
