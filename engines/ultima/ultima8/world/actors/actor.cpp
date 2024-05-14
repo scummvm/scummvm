@@ -1194,7 +1194,7 @@ void Actor::receiveHitU8(uint16 other, Direction dir, int damage, uint16 damage_
 	}
 
 	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
-	if (damage >= 4 && _objId == 1 && attacker) {
+	if (damage >= 4 && _objId == 1 && hitter) {
 		// play blood sprite
 		int start = 0, end = 12;
 		if (dir > dir_east) {
