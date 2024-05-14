@@ -1032,7 +1032,7 @@ TEMPLATE void BASESTRING::assignAppend(const BaseString &str) {
 TEMPLATE bool BASESTRING::pointerInOwnBuffer(const value_type *str) const {
 	//compared pointers must be in the same array or UB
 	//cast to intptr however is IB
-	//which includes comparision of the values
+	//which includes comparison of the values
 	uintptr ownBuffStart = (uintptr)_str;
 	uintptr ownBuffEnd = (uintptr)(_str + _size);
 	uintptr candidateAddr = (uintptr)str;
