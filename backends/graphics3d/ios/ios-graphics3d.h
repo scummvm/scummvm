@@ -136,7 +136,7 @@ protected:
 	OpenGL::TiledSurface *_mouseSurface;
 	OpenGL::SurfaceRenderer *_surfaceRenderer;
 
-	// FBO used to render games not supporting arbitary resolutions
+	// FBO used to render games not supporting arbitrary resolutions
 	OpenGL::FrameBuffer *_frameBuffer;
 	// FBO used as a backbuffer for Apple API
 	GLuint _glFBO;
