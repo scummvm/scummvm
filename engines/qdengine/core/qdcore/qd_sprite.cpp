@@ -1,14 +1,16 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#define MAX_PATH 100
 #include "qdengine/core/qd_precomp.h"
-#include "qdengine/core/qdcore/qd_file_manager.h"
-#include "qdengine/core/qdcore/qd_setup.h"
-#include "qdengine/core/qdcore/qd_sprite.h"
-#include "qdengine/core/qdcore/util/2PassScale.h"
-#include "qdengine/core/qdcore/util/Filters.h"
+
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/system/app_error_handler.h"
 #include "qdengine/core/system/graphics/rle_compress.h"
+
+#include "qdengine/core/qdcore/qd_setup.h"
+#include "qdengine/core/qdcore/qd_sprite.h"
+#include "qdengine/core/qdcore/qd_file_manager.h"
+#include "qdengine/core/qdcore/util/2PassScale.h"
+#include "qdengine/core/qdcore/util/Filters.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -897,14 +899,14 @@ bool qdSprite::put_pixel(int x, int y, unsigned char r, unsigned char g, unsigne
 	case GR_RGB565:
 		bytes_per_pix = 2;
 		word = grDispatcher::make_rgb565u(r, g, b);
-		data_[bytes_per_pix * (y * size_.x + x) + 0] = unsigned char(word & 0x00FF);
-		data_[bytes_per_pix * (y * size_.x + x) + 1] = unsigned char(word >> 8 & 0x00FF);
+		data_[bytes_per_pix * (y * size_.x + x) + 0] = static_cast<unsigned char>(word & 0x00FF);
+		data_[bytes_per_pix * (y * size_.x + x) + 1] = static_cast<unsigned char>(word >> 8 & 0x00FF);
 		break;
 	case GR_ARGB1555:
 		bytes_per_pix = 2;
 		word = grDispatcher::make_rgb555u(r, g, b);
-		data_[bytes_per_pix * (y * size_.x + x) + 0] = unsigned char(word & 0x00FF);
-		data_[bytes_per_pix * (y * size_.x + x) + 1] = unsigned char(word >> 8 & 0x00FF);
+		data_[bytes_per_pix * (y * size_.x + x) + 0] = static_cast<unsigned char>(word & 0x00FF);
+		data_[bytes_per_pix * (y * size_.x + x) + 1] = static_cast<unsigned char>(word >> 8 & 0x00FF);
 		break;
 	case GR_RGB888:
 		bytes_per_pix = 3;
@@ -1486,7 +1488,7 @@ bool qdSprite::scale(float coeff_x, float coeff_y) {
 
 	unsigned char *dest_data = new unsigned char[sx * sy * 4];
 
-	scale_engine.Scale(reinterpret_cast<COLORREF *>(src_data), picture_size_.x, picture_size_.y, reinterpret_cast<COLORREF *>(dest_data), sx, sy);
+	scale_engine.Scale(reinterpret_cast<int *>(src_data), picture_size_.x, picture_size_.y, reinterpret_cast<int *>(dest_data), sx, sy);
 
 	delete [] data_;
 

@@ -83,6 +83,7 @@ bool qdFontInfo::load_font() {
 			char fname[_MAX_FNAME];
 
 			_splitpath(font_file_name(), drive, dir, fname, NULL);
+
 			std::string idx_fname = "";
 			idx_fname += drive;
 			idx_fname += dir;

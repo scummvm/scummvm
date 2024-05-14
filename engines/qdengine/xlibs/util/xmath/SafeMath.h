@@ -1,7 +1,8 @@
 #ifndef _PERIMETER_SAFE_MATH_
 #define _PERIMETER_SAFE_MATH_
 
-#include "XMath/fastMath.h"
+#include "qdengine/xlibs/util/XMath/fastMath.h"
+#include "qdengine/xlibs/util/xmath/xmath.h"
 
 inline float cycle(float f, float size) {
 	return fmodFast(fmodFast(f, size) + size, size);
@@ -41,5 +42,3 @@ inline bool isGreater(float x, float y, float eps = FLT_EPS) {
 }
 
 #endif
-
-

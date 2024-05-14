@@ -17,7 +17,7 @@
 #include "qdengine/core/qdcore/qd_interface_button.h"
 
 #include "qdengine/core/qdcore/util/AIAStar_API.h"
-
+#include "qdengine/xlibs/util/xmath/SafeMath.h"
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -1076,7 +1076,7 @@ float qdGameObjectMoving::radius() const {
 
 void qdGameObjectMoving::debug_redraw() const {
 	if (check_flag(QD_OBJ_MOVING_FLAG)) {
-		const cl = grDispatcher::instance()->make_rgb(255, 255, 255);
+		const int cl = grDispatcher::instance()->make_rgb(255, 255, 255);
 		Vect3f r = R();
 		r.z = 0;
 		Vect2s v0 = qdCamera::current_camera() -> global2scr(r);
@@ -1916,8 +1916,11 @@ void qdGameObjectMoving::redraw(int offs_x, int offs_y) const {
 bool qdGameObjectMoving::keyboard_move() {
 	if (!is_control_disabled() && has_control_type(CONTROL_KEYBOARD)) {
 		bool keypress = false;
-
+		warning("STUB: qdGameObjectMoving::keyboard_move()");
+		static int vkeys[6];
+#if 0
 		static int vkeys[6] = { VK_DOWN, VK_RIGHT, VK_UP, VK_LEFT, VK_DOWN, VK_RIGHT };
+#endif
 		bool key_state[6];
 
 		for (int i = 0; i < 6; i++) {
@@ -2668,9 +2671,9 @@ bool qdGameObjectMoving::toggle_grid_zone(bool make_walkable) {
 bool qdGameObjectMoving::move_from_personage_path() {
 	float dist = radius() / 2.0f;
 
-	const num_distances = 3;
+	const int num_distances = 3;
 	for (int i = 0; i < num_distances; i ++) {
-		const num_angles = 8;
+		const int num_angles = 8;
 		for (int j = 0; j < num_angles; j++) {
 			float dir = 2.0f * M_PI / float(num_angles) * float(j);
 
