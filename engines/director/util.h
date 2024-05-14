@@ -137,6 +137,6 @@ inline void lerpPalette(byte *target, byte *palA, int palALength, byte *palB, in
 
 } // End of namespace Director
 
-double readAppleFloat80(byte *ptr);
+double readAppleFloat80(void *ptr);
 
 #endif
