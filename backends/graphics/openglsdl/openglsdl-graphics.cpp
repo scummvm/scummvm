@@ -58,7 +58,7 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, 
 
 	// Set up proper SDL OpenGL context creation.
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	// Context version 1.4 is choosen arbitrarily based on what most shader
+	// Context version 1.4 is chosen arbitrarily based on what most shader
 	// extensions were written against.
 	enum {
 		DEFAULT_GL_MAJOR = 1,
