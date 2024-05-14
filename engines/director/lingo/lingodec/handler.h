@@ -100,7 +100,7 @@ struct Bytecode {
 	Common::SharedPtr<Node> translation;
 
 	Bytecode(byte op, int32 o, uint32 p)
-		: opID(op), obj(o), pos(p), tag(kTagNone), ownerLoop(UINT32_MAX) {
+		: opID(op), obj(o), pos(p), tag(kTagNone), ownerLoop(0xffffffff) {
 		opcode = static_cast<OpCode>(op >= 0x40 ? 0x40 + op % 0x40 : op);
 	}
 };
