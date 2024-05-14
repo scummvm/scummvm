@@ -9,6 +9,7 @@
 #include "qdengine/core/qdcore/qd_game_object_animated.h"
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
 
+#define DWORD int
 struct sPlane4f {
 	float A, B, C, D;
 	sPlane4f()                                              { }
@@ -23,7 +24,7 @@ struct sPlane4f {
 		GetNormal().normalize();
 		D = -A * a.x - B * a.y - C * a.z;
 	}
-	__forceinline void Set(const Vect3f &a, const Vect3f &b, const Vect3f &c) {
+	inline void Set(const Vect3f &a, const Vect3f &b, const Vect3f &c) {
 		// инициализация плоскости по трем точкам
 		A = (b.y - a.y) * (c.z - a.z) - (c.y - a.y) * (b.z - a.z);
 		B = (b.z - a.z) * (c.x - a.x) - (c.z - a.z) * (b.x - a.x);
@@ -31,12 +32,12 @@ struct sPlane4f {
 		GetNormal().normalize();
 		D = -A * a.x - B * a.y - C * a.z;
 	}
-	__forceinline float GetDistance(const Vect3f &a) {
+	inline float GetDistance(const Vect3f &a) {
 		// расстояние от точки до плоскости
 		float t = A * a.x + B * a.y + C * a.z + D;
 		return t;
 	}
-	__forceinline float GetCross(const Vect3f &a, const Vect3f &b) {
+	inline float GetCross(const Vect3f &a, const Vect3f &b) {
 		// поиск пересечения данной плоскости с прямой заданной двумя точками a и b
 		Vect3f v = a - b;
 		float t = A * v.x + B * v.y + C * v.z;
@@ -44,16 +45,16 @@ struct sPlane4f {
 		t = (A * a.x + B * a.y + C * a.z + D) / t;
 		return t;
 	}
-	__forceinline Vect3f &GetNormal()                           {
+	inline Vect3f &GetNormal()                           {
 		return *(Vect3f *)&A;
 	}
-	__forceinline void xform(MatXf &mat) {
+	inline void xform(MatXf &mat) {
 		Vect3f p;
 		mat.xformPoint(GetNormal()*D, p);
 		GetNormal() = mat.xformVect(GetNormal());
 		D = -A * p.x - B * p.y - C * p.z;
 	}
-	__forceinline void GetReflectionMatrix(const MatXf &in, MatXf &out) {
+	inline void GetReflectionMatrix(const MatXf &in, MatXf &out) {
 		// out - ReflectionMatrix
 		MatXf RefSurface(Mat3f(1 - 2 * A * A, -2 * A * B,     -2 * A * C,
 		                       -2 * B * A,     1 - 2 * B * B,    -2 * B * C,
@@ -61,15 +62,15 @@ struct sPlane4f {
 		                 Vect3f(-2 * D * A,      -2 * D * B,     -2 * D * C));
 		out = in * RefSurface;
 	}
-	__forceinline void GetReflectionVector(const Vect3f &in, Vect3f &out) {
+	inline void GetReflectionVector(const Vect3f &in, Vect3f &out) {
 		// out - поиск отражение вектора от плоскости
 		out = in - 2 * dot(GetNormal(), in) * GetNormal();
 	}
 };
 
-const DWORD IMPASSIBLE_CELL_CLR     = RGB(255, 0, 0);
-const DWORD SELECTED_CELL_CLR       = RGB(0, 0, 255);
-const DWORD NORMAL_CELL_CLR     = RGB(255, 255, 255);
+const DWORD IMPASSIBLE_CELL_CLR     = 0x00FF0000;
+const DWORD SELECTED_CELL_CLR       = 0x000000FF;
+const DWORD NORMAL_CELL_CLR     	= 0x00FFFFFF;
 
 const int DASH_LEN = 2;
 
@@ -660,7 +661,7 @@ bool qdCamera::draw_grid() const {
 	for (i = 0; i < GSY; i++) {
 		for (int j = 0; j < GSX; j++, cnt++) {
 			if (Grid[cnt].height()) {
-				draw_cell(j, i, Grid[cnt].height(), 1, RGB(255, 255, 255));
+				draw_cell(j, i, Grid[cnt].height(), 1, 0x00FFFFFF);
 			}
 		}
 	}
