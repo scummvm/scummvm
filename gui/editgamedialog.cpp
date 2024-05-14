@@ -429,7 +429,7 @@ void EditGameDialog::open() {
 			_langPopUp->setSelectedTag((uint32)Common::UNK_LANG);
 		}
 
-		if (_langPopUp->numEntries() <= 3) { // If only one language is avaliable
+		if (_langPopUp->numEntries() <= 3) { // If only one language is available
 			_langPopUpDesc->setEnabled(false);
 			_langPopUp->setEnabled(false);
 		}
