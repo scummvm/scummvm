@@ -474,7 +474,7 @@ bool BufferedSeekableReadStream::seek(int64 offset, int whence) {
 		if (whence == SEEK_CUR)
 			offset -= (_bufSize - _pos);
 		// We invalidate the buffer here. This assures that successive seeks
-		// do not have the chance to incorrectly think they seeked back into
+		// do not have the chance to incorrectly think they seek'ed back into
 		// the buffer.
 		// Note: This does not take full advantage of the buffer. But it is
 		// a simple way to prevent nasty errors. It would be possible to take
