@@ -167,7 +167,7 @@ void Win32TaskbarManager::setCount(int count) {
 
 	// FIXME: This isn't really nice and could use a cleanup.
 	//        The only good thing is that it doesn't use GDI+
-	//        and thus does not have a dependancy on it,
+	//        and thus does not have a dependency on it,
 	//        with the downside of being a lot more ugly.
 	//        Maybe replace it by a Graphic::Surface, use
 	//        ScummVM font drawing and extract the contents at
