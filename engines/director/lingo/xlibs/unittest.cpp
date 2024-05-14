@@ -102,34 +102,32 @@ void UnitTestXObj::m_isRealDirector(int nargs) {
 }
 
 void UnitTestXObj::m_screenshot(int nargs) {
-	Common::String filenameBase = g_director->getCurrentMovie()->getArchive()->getFileName();
-	if (filenameBase.hasSuffixIgnoreCase(".dir"))
-		filenameBase = filenameBase.substr(0, filenameBase.size() - 4);
-
+	if (nargs == 0) {
+		g_lingo->push(Datum(0));
+		warning("UnitTestXObj::m_screenshot(): expected filename argument");
+		return;
+	}
 	if (nargs > 1) {
 		g_lingo->dropStack(nargs - 1);
 		nargs = 1;
 	}
-	if (nargs == 1) {
-		Datum name = g_lingo->pop();
-		if (name.type == STRING) {
-			filenameBase = *name.u.s;
-		} else if (name.type != VOID) {
-			warning("UnitTestXObj::m_screenshot(): expected string for arg 1, ignoring");
-		}
+	Datum name = g_lingo->pop();
+	if (name.type != STRING) {
+		warning("UnitTestXObj::m_screenshot(): expected string for arg 1");
+		g_lingo->push(Datum(0));
+		return;
 	}
+	Common::String filenameBase = *name.u.s;
 
 	Common::FSNode gameDataDir = g_director->_gameDataDir;
-	Common::FSNode screenDir = gameDataDir.getChild("utscreen");
+	Common::FSNode screenDir = gameDataDir.getChild("scrtest");
 	if (!screenDir.exists()) {
 		screenDir.createDirectory();
 	}
 
-	// force a full screen redraw before taking the screenshot
-	Score *score = g_director->getCurrentMovie()->getScore();
-	score->renderSprites(kRenderForceUpdate);
+	// Fetch whatever is in the screen buffer.
+	// Don't force a redraw, we do that in the script with updateStage().
 	Window *window = g_director->getCurrentWindow();
-	window->render();
 	Graphics::ManagedSurface *windowSurface = window->getSurface();
 
 #ifdef USE_PNG
