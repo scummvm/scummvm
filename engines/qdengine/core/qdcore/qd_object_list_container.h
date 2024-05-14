@@ -1,6 +1,8 @@
 #ifndef __QD_OBJECT_LIST_CONTAINER_H__
 #define __QD_OBJECT_LIST_CONTAINER_H__
 
+#include "common/str.h"
+
 template <class T>
 class qdObjectListContainer {
 public:
@@ -59,8 +61,8 @@ template <class T>
 const T *qdObjectListContainer<T>::get_object(const char *name) const {
 	if (!name) return NULL;
 
-	for (object_list_t::const_iterator it = object_list_.begin(); it != object_list_.end(); ++it) {
-		if (!strcmp(name, (*it) -> name()))
+	for (typename object_list_t::const_iterator it = object_list_.begin(); it != object_list_.end(); ++it) {
+		if (!scumm_stricmp(name, (*it) -> name()))
 			return *it;
 	}
 
@@ -71,8 +73,8 @@ template <class T>
 T *qdObjectListContainer<T>::get_object(const char *name) {
 	if (!name) return NULL;
 
-	for (object_list_t::const_iterator it = object_list_.begin(); it != object_list_.end(); ++it) {
-		if (!strcmp(name, (*it) -> name()))
+	for (typename object_list_t::const_iterator it = object_list_.begin(); it != object_list_.end(); ++it) {
+		if (!scumm_stricmp(name, (*it) -> name()))
 			return *it;
 	}
 
@@ -81,7 +83,7 @@ T *qdObjectListContainer<T>::get_object(const char *name) {
 
 template <class T>
 bool qdObjectListContainer<T>::remove_object(T *p) {
-	for (object_list_t::iterator it = object_list_.begin(); it != object_list_.end(); ++it) {
+	for (typename object_list_t::iterator it = object_list_.begin(); it != object_list_.end(); ++it) {
 		if (*it == p) {
 			object_list_.erase(it);
 			return true;
@@ -116,7 +118,7 @@ qdObjectListContainer<T>::~qdObjectListContainer() {
 
 template <class T>
 bool qdObjectListContainer<T>::clear() {
-	for (object_list_t::iterator it = object_list_.begin(); it != object_list_.end(); ++it)
+	for (typename object_list_t::iterator it = object_list_.begin(); it != object_list_.end(); ++it)
 		delete *it;
 
 	object_list_.clear();
@@ -125,4 +127,3 @@ bool qdObjectListContainer<T>::clear() {
 }
 
 #endif /* __QD_OBJECT_LIST_CONTAINER_H__ */
-

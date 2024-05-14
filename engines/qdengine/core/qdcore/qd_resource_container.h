@@ -51,7 +51,7 @@ private:
 		}
 	};
 
-	typedef std::hash_map<const char *, qdResource *, std::hash<const char *>, eqstr> resource_map_t;
+	typedef std::unordered_map<const char *, qdResource *, std::hash<const char *>, eqstr> resource_map_t;
 	//! Хэш-мап с указателями на ресурсы, принадлежащие диспетчеру.
 	resource_map_t resource_map_;
 
@@ -73,7 +73,7 @@ qdResourceContainer<T>::~qdResourceContainer() {
 
 template<class T>
 qdResource *qdResourceContainer<T>::add_resource(const char *file_name, const T *owner) {
-	resource_map_t::iterator it = resource_map_.find(file_name);
+	typename resource_map_t::iterator it = resource_map_.find(file_name);
 	if (it != resource_map_.end()) {
 		resource_dispatcher_.register_resource(it -> second, owner);
 		return it -> second;
@@ -101,7 +101,7 @@ qdResource *qdResourceContainer<T>::add_resource(const char *file_name, const T 
 
 	if (!p) return NULL;
 
-	resource_map_.insert(resource_map_t::value_type(file_name, p));
+	resource_map_.insert(typename resource_map_t::value_type(file_name, p));
 	resource_list_.push_back(p);
 
 	resource_dispatcher_.register_resource(p, owner);
@@ -111,7 +111,7 @@ qdResource *qdResourceContainer<T>::add_resource(const char *file_name, const T 
 
 template<class T>
 bool qdResourceContainer<T>::remove_resource(const char *file_name, const T *owner) {
-	resource_map_t::iterator it = resource_map_.find(file_name);
+	typename resource_map_t::iterator it = resource_map_.find(file_name);
 
 	if (it == resource_map_.end()) return false;
 
@@ -137,7 +137,7 @@ template<class T>
 qdResource *qdResourceContainer<T>::get_resource(const char *file_name) const {
 	if (!file_name) return NULL;
 
-	resource_map_t::const_iterator it = resource_map_.find(file_name);
+	typename resource_map_t::const_iterator it = resource_map_.find(file_name);
 	if (it != resource_map_.end()) return it -> second;
 
 	return NULL;

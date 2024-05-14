@@ -22,8 +22,8 @@ qdAnimationSetPreview::qdAnimationSetPreview(qdAnimationSet *p) :
 	camera_angle_ = 45;
 
 	start_time_ = 0;
-	back_color_ = RGB(0, 0, 0);
-	grid_color_ = RGB(128, 128, 128);
+	back_color_ = 0x000000FF;
+	grid_color_ = 0x00FF00FF;
 
 	set_direction(0);
 

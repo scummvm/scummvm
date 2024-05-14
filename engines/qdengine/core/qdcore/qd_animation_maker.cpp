@@ -63,10 +63,12 @@ bool qdAnimationMaker::insert_frame(class qdAnimation *p, const char *fname, int
 bool qdAnimationMaker::insert_frames(class qdAnimation *p, const char *folder, int &insert_pos, bool insert_after) {
 	bool result = false;
 
+	warning("STUB: qdAnimationMaker::insert_frames");
+#if 0
 	char old_path[MAX_PATH];
 	GetCurrentDirectory(MAX_PATH, old_path);
 	SetCurrentDirectory(folder);
-
+#endif
 	qdFileNameList flist;
 
 	char *fname = XFindFirst("*.tga");
@@ -91,7 +93,8 @@ bool qdAnimationMaker::insert_frames(class qdAnimation *p, const char *folder, i
 		}
 		flist.clear();
 	}
-
+#if 0
 	SetCurrentDirectory(old_path);
+#endif
 	return result;
 }
