@@ -193,26 +193,28 @@ void CDevDlg::setText(CBofString &text, CBofRect *textRect) {
 	assert(isValidObject(this));
 
 	_titleText = new CBofText;
-	if (_titleText != nullptr) {
-		_titleText->setupText(textRect, JUSTIFY_CENTER, FORMAT_DEFAULT);
-		_titleText->setColor(CTEXT_WHITE);
-		_titleText->SetSize(FONT_14POINT);
-		_titleText->setWeight(TEXT_BOLD);
-		_titleText->setText(text);
-	}
+	
+	if (_titleText == nullptr)
+		fatalError(ERR_MEMORY, "Unable to instantiate a new CBofText");
+
+	_titleText->setupText(textRect, JUSTIFY_CENTER, FORMAT_DEFAULT);
+	_titleText->setColor(CTEXT_WHITE);
+	_titleText->SetSize(FONT_14POINT);
+	_titleText->setWeight(TEXT_BOLD);
+	_titleText->setText(text);
 }
 
 // Override on render to do the painting, but call the default anyway.
 ErrorCode CDevDlg::onRender(CBofBitmap *bmp, CBofRect *rect) {
 	assert(isValidObject(this));
 
-	ErrorCode errCode = CBagStorageDevDlg::onRender(bmp, rect);
+	ErrorCode errorCode = CBagStorageDevDlg::onRender(bmp, rect);
 
 	if (_titleText != nullptr) {
 		_titleText->display(getBackdrop());
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 } // namespace Bagel

@@ -401,7 +401,7 @@ ErrorCode CBagRPObject::attach() {
 
 	_pRPList->addToTail(this);
 
-	ErrorCode ec = CBagObject::attach();
+	ErrorCode errorCode = CBagObject::attach();
 
 	// If we haven't initialized this guys original rectangle, then do it
 	// here.
@@ -439,7 +439,7 @@ ErrorCode CBagRPObject::attach() {
 		break;
 	}
 
-	return ec;
+	return errorCode;
 }
 
 ErrorCode CBagRPObject::detach() {

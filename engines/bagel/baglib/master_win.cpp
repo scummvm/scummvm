@@ -1944,7 +1944,7 @@ ErrorCode paintBeveledText(CBofWindow *win, CBofRect *rect, const CBofString &cS
 	CBofBitmap bmp(rect->width(), rect->height(), nullptr, false);
 
 	// Assume no error
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	CBofRect r = bmp.getRect();
 	CBofPalette *palette = nullptr;
@@ -1989,7 +1989,7 @@ ErrorCode paintBeveledText(CBofWindow *win, CBofRect *rect, const CBofString &cS
 
 	bmp.paint(win, rect);
 
-	return errCode;
+	return errorCode;
 }
 
 ErrorCode waitForInput() {

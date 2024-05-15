@@ -1117,8 +1117,7 @@ ErrorCode paintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofRect *pD
 	assert(pWindow != nullptr);
 	assert(pszFileName != nullptr);
 
-	// Assume no error
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode;
 	CBofBitmap *pBmp = new CBofBitmap(pszFileName, pPalette);
 
 	if (pBmp != nullptr) {
@@ -1130,15 +1129,15 @@ ErrorCode paintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofRect *pD
 		if (pDstRect == nullptr)
 			pDstRect = &cRect;
 
-		errCode = pBmp->paint(pWindow, pDstRect, pSrcRect, nMaskColor);
+		errorCode = pBmp->paint(pWindow, pDstRect, pSrcRect, nMaskColor);
 
 		delete pBmp;
 
 	} else {
-		errCode = ERR_MEMORY;
+		errorCode = ERR_MEMORY;
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 Graphics::ManagedSurface CBofBitmap::getSurface() {

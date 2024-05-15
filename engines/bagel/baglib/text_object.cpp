@@ -71,7 +71,7 @@ ErrorCode CBagTextObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 	assert(pSrcRect != nullptr);
 
 	// assume no error
-	 ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	if ((pBmp != nullptr) && isAttached() && !(getText().isEmpty())) {
 
@@ -115,14 +115,14 @@ ErrorCode CBagTextObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 				r.left += 1;
 			}
 
-			errCode = paintText(pBmp, &r, getText(), mapWindowsPointSize(nPointSize), TEXT_NORMAL, _nFGColor, JUSTIFY_WRAP, nFormat, _nTextFont);
+			errorCode = paintText(pBmp, &r, getText(), mapWindowsPointSize(nPointSize), TEXT_NORMAL, _nFGColor, JUSTIFY_WRAP, nFormat, _nTextFont);
 
 			// This object does not need to be updated now...
 			setDirty(false);
 		}
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 ErrorCode CBagTextObject::attach() {

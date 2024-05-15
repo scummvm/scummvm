@@ -86,18 +86,15 @@ CBagPDA::~CBagPDA() {
 	assert(isValidObject(this));
 
 	// Does not own list item, so no need to delete individual nodes
-	if (_movieList) {
-		delete _movieList;
-		_movieList = nullptr;
-	}
+	delete _movieList;
+	_movieList = nullptr;
 }
 
 ErrorCode CBagPDA::loadFile(const CBofString &sFile) {
 	assert(isValidObject(this));
 
-	ErrorCode error;
-
-	error = CBagStorageDev::loadFile(sFile);
+	ErrorCode errorCode = CBagStorageDev::loadFile(sFile);
+	
 	if (_mooWnd) {
 		removeObject(_mooWnd);
 	}
@@ -111,12 +108,12 @@ ErrorCode CBagPDA::loadFile(const CBofString &sFile) {
 		removeObject(_logWnd);
 	}
 
-	return error;
+	return errorCode;
 }
 
 ErrorCode CBagPDA::attach() {
 	CBagStorageDev *pSDev;
-	ErrorCode rc = CBagStorageDevBmp::attach();
+	ErrorCode errorCode = CBagStorageDevBmp::attach();
 
 	// Get PDA state info
 	getPdaState();
@@ -139,7 +136,7 @@ ErrorCode CBagPDA::attach() {
 			_mooWnd->setAssociateWnd(getAssociateWnd());
 			_mooWnd->setTransparent(false);
 			_mooWnd->setVisible(false);
-			rc = _mooWnd->attach();
+			errorCode = _mooWnd->attach();
 		}
 	}
 
@@ -151,10 +148,10 @@ ErrorCode CBagPDA::attach() {
 
 			_invWnd->setTransparent(false);
 			_invWnd->setVisible(false);
-			rc = _invWnd->attach();
+			errorCode = _invWnd->attach();
 		} else {
 			bofMessageBox("No PDA INVENTORY found", __FILE__);
-			rc = ERR_UNKNOWN;
+			errorCode = ERR_UNKNOWN;
 		}
 	}
 
@@ -166,10 +163,10 @@ ErrorCode CBagPDA::attach() {
 
 			_mapWnd->setTransparent(false);
 			_mapWnd->setVisible(false);
-			rc = _mapWnd->attach();
+			errorCode = _mapWnd->attach();
 		} else {
 			bofMessageBox("No PDA MAP found", __FILE__);
-			rc = ERR_UNKNOWN;
+			errorCode = ERR_UNKNOWN;
 		}
 	}
 	if (!_logWnd) {
@@ -180,7 +177,7 @@ ErrorCode CBagPDA::attach() {
 
 			_logWnd->setTransparent(false);
 			_logWnd->setVisible(false);
-			rc = _logWnd->attach();
+			errorCode = _logWnd->attach();
 		}
 	}
 	if (_pdaMode == PDA_INV_MODE) {
@@ -191,7 +188,7 @@ ErrorCode CBagPDA::attach() {
 		showLog();
 	}
 
-	return rc;
+	return errorCode;
 }
 
 void CBagPDA::setPosInWindow(int cx, int cy, int nDist) {
@@ -238,10 +235,10 @@ bool CBagPDA::showInventory() {
 ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int /* nMaskColor */) {
 	// Update the zoom button (it might need to blink).
 	handleZoomButton(false);
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	if (_hidePdaFl)
-		return errCode;
+		return errorCode;
 	
 	CBofRect r;
 	CBofRect *pr = pSrcRect;
@@ -308,7 +305,7 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 
 	// If the official decree from on high has been given to update, do so!
 	if (bUpdate) {
-		errCode = CBagStorageDevBmp::update(pBmp, pt, pr, _nMaskColor);
+		errorCode = CBagStorageDevBmp::update(pBmp, pt, pr, _nMaskColor);
 	}
 
 	// If the PDA is activating then redraw our black background
@@ -323,7 +320,7 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 		setDirty(false);
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 

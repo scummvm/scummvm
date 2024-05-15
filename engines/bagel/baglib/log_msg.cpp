@@ -205,7 +205,7 @@ void CBagLog::setCurFltPage(int fltPage) {
 }
 
 ErrorCode CBagLog::releaseMsg() {
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 	int count = _queuedMsgList->getCount();
 
 	for (int i = 0; i < count; ++i) {
@@ -222,7 +222,7 @@ ErrorCode CBagLog::releaseMsg() {
 	}
 
 	_queuedMsgList->removeAll();
-	return errCode;
+	return errorCode;
 }
 
 CBagObject *CBagLog::onNewUserObject(const CBofString &initStr) {
@@ -285,10 +285,10 @@ bool CBagLog::removeFromMsgQueue(CBagObject *deletedObj) {
 }
 
 ErrorCode CBagLog::activateLocalObject(CBagObject *bagObj) {
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	if (bagObj == nullptr)
-		return errCode;
+		return errorCode;
 
 	if (bagObj->isMsgWaiting() ||
 	        (bagObj->getType() == USER_OBJ && (bagObj->getInitInfo() != nullptr) && (*bagObj->getInitInfo() == "MSG"))) {
@@ -320,14 +320,14 @@ ErrorCode CBagLog::activateLocalObject(CBagObject *bagObj) {
 			}
 		}
 	} else {
-		errCode = CBagStorageDev::activateLocalObject(bagObj);
+		errorCode = CBagStorageDev::activateLocalObject(bagObj);
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 ErrorCode CBagLog::playMsgQueue() {
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 	int count = _queuedMsgList->getCount();
 
 	// Walk through the message queue and play all the messages
@@ -367,7 +367,7 @@ ErrorCode CBagLog::playMsgQueue() {
 			if (curObj) {
 				CRect  r = getRect();
 
-				errCode = CBagStorageDev::activateLocalObject(curObj);
+				errorCode = CBagStorageDev::activateLocalObject(curObj);
 				CBagMenu *objMenu = curObj->getMenuPtr();
 				if (objMenu)
 					objMenu->trackPopupMenu(0, 0, 0, CBofApp::getApp()->getMainWindow(), nullptr, &r);
@@ -400,7 +400,7 @@ ErrorCode CBagLog::playMsgQueue() {
 		}
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 CBagLogResidue::CBagLogResidue(int sdevWidth) : CBagTextObject() {
@@ -975,7 +975,7 @@ ErrorCode CBagLogClue::attach() {
 
 	assert(isValidObject(this));
 
-	ErrorCode ec = CBagTextObject::attach();
+	ErrorCode errorCode = CBagTextObject::attach();
 
 	// Get what is defined in the script.
 	cFormat = getFileName();
@@ -994,7 +994,7 @@ ErrorCode CBagLogClue::attach() {
 	CBofString cStr(szClueStr);
 	setPSText(&cStr);
 
-	return ec;
+	return errorCode;
 }
 
 ParseCodes CBagLogClue::setInfo(CBagIfstream &istr) {

@@ -236,7 +236,7 @@ ErrorCode CBagTimeObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pS
 	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sTimeString(szLocalBuff, 256);
-	ErrorCode rc = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	CBagVar *xVar = g_VarManager->getVariable(_sVariable);
 
@@ -279,7 +279,7 @@ ErrorCode CBagTimeObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pS
 		}
 	}
 
-	return rc;
+	return errorCode;
 }
 
 } // namespace Bagel

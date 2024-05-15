@@ -279,7 +279,7 @@ ErrorCode CBagPanWindow::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 }
 
 ErrorCode CBagPanWindow::paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CBofRect &viewRect, CBofList<CBofRect> *pUpdateArea, bool tempVar) {
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	// can't use a null pointer
 	assert(pBmp != nullptr);
@@ -362,7 +362,7 @@ ErrorCode CBagPanWindow::paintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 			noObjectsUnderMouse();
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 // Delete the foreground objects

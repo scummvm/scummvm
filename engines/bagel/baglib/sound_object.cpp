@@ -64,7 +64,7 @@ ErrorCode CBagSoundObject::attach(CBofWindow *pWnd) {
 
 ErrorCode CBagSoundObject::newSound(CBofWindow *pWin) {
 	// assume no error
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	killSound();
 
@@ -74,10 +74,10 @@ ErrorCode CBagSoundObject::newSound(CBofWindow *pWin) {
 		_pSound->setQSlot(getState());
 
 	} else {
-		errCode = ERR_MEMORY;
+		errorCode = ERR_MEMORY;
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 void CBagSoundObject::killSound() {

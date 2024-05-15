@@ -665,7 +665,7 @@ ParseCodes CBagExpression::setInfo(CBagIfstream &istr) {
 
 
 ErrorCode CBagExpression::getOperatorFromStream(CBagIfstream &istr, OPERATION &oper) {
-	ErrorCode rc = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	char localBuff[256];
 	localBuff[0] = 0;
@@ -743,9 +743,9 @@ ErrorCode CBagExpression::getOperatorFromStream(CBagIfstream &istr, OPERATION &o
 	}
 
 	if (oper == OP_NONE)
-		rc = ERR_UNKNOWN;
+		errorCode = ERR_UNKNOWN;
 
-	return rc;
+	return errorCode;
 }
 
 } // namespace Bagel

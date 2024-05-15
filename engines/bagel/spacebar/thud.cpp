@@ -41,13 +41,13 @@ SBarThud::~SBarThud() {
 }
 
 ErrorCode SBarThud::loadFile(const CBofString &sFile) {
-	ErrorCode error = CBagStorageDev::loadFile(sFile);
-	return error;
+	ErrorCode errorCode = CBagStorageDev::loadFile(sFile);
+	return errorCode;
 }
 
 ErrorCode SBarThud::attach() {
 	int        nActiveObj = 0;
-	ErrorCode rc = CBagStorageDevBmp::attach();
+	ErrorCode errorCode = CBagStorageDevBmp::attach();
 
 	// save a copy of the you icon
 	_xYouBmp = new CBofBitmap(getBackgroundName());
@@ -75,7 +75,7 @@ ErrorCode SBarThud::attach() {
 	// The weild has been loaded with too many active objects
 	_nObjects = nActiveObj;
 
-	return rc;
+	return errorCode;
 }
 
 ErrorCode SBarThud::detach() {

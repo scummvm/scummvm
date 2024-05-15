@@ -894,9 +894,9 @@ void SrafComputer::onPaint(CBofRect *pRect) {
 }
 
 ErrorCode SrafComputer::attach() {
-	ErrorCode rc = CBagStorageDevWnd::attach();
+	ErrorCode errorCode = CBagStorageDevWnd::attach();
 
-	if (rc == ERR_NONE) {
+	if (errorCode == ERR_NONE) {
 		// Build our main menu list
 		assert(_pMainList == nullptr);
 
@@ -997,47 +997,33 @@ ErrorCode SrafComputer::detach() {
 
 	// Delete our computer buttons
 	for (int i = 0; i < NUM_SRAFCOMPBUTT; i++) {
-		if (_pButtons[i] != nullptr) {
-			delete _pButtons[i];
-			_pButtons[i] = nullptr;
-		}
+		delete _pButtons[i];
+		_pButtons[i] = nullptr;
 	}
 
-	if (_pLBox) {
-		delete _pLBox;
-		_pLBox = nullptr;
-	}
+	delete _pLBox;
+	_pLBox = nullptr;
 
 	// (one extra staffer, durteen)
 	for (int i = 0; i < (NUM_STAFFERS + 1); i++) {
-		if (_pStafferBmp[i] != nullptr) {
-			delete _pStafferBmp[i];
-			_pStafferBmp[i] = nullptr;
-		}
+		delete _pStafferBmp[i];
+		_pStafferBmp[i] = nullptr;
 	}
 
 	// Get rid of our codewords...
-	if (_pszGroup1Word) {
-		delete _pszGroup1Word;
-		_pszGroup1Word = nullptr;
-	}
+	delete _pszGroup1Word;
+	_pszGroup1Word = nullptr;
 
-	if (_pszGroup2Word) {
-		delete _pszGroup2Word;
-		_pszGroup2Word = nullptr;
-	}
+	delete _pszGroup2Word;
+	_pszGroup2Word = nullptr;
 
-	if (_pMainList != nullptr) {
-		delete _pMainList;
-		_pMainList = nullptr;
-	}
+	delete _pMainList;
+	_pMainList = nullptr;
 
 	// The attach method will restore the state of the dispatched teams...,
 	// we can trash that info here.
-	if (_pTeamList) {
-		delete _pTeamList;
-		_pTeamList = nullptr;
-	}
+	delete _pTeamList;
+	_pTeamList = nullptr;
 
 	CBagStorageDevWnd::detach();
 
@@ -1157,16 +1143,16 @@ void SrafComputer::setQuit() {
 }
 
 ErrorCode SrafComputer::createListBox() {
-	ErrorCode error = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	if (_pLBox == nullptr) {
 		// We need to create one
 		_pLBox = new CBofListBox;
 		if (_pLBox != nullptr) {
 
-			error = _pLBox->create("ListBox", &gCompDisplay, this);
-			if (error != ERR_NONE) {
-				return error;
+			errorCode = _pLBox->create("ListBox", &gCompDisplay, this);
+			if (errorCode != ERR_NONE) {
+				return errorCode;
 			}
 		}
 	}
@@ -1181,7 +1167,7 @@ ErrorCode SrafComputer::createListBox() {
 	_pLBox->setFont(FONT_MONO);
 	_pLBox->setFocus();
 
-	return error;
+	return errorCode;
 }
 
 
@@ -1301,8 +1287,8 @@ void SrafComputer::activateDealSummary() {
 
 	// load up the main list now with our deal summary data.
 
-	ErrorCode error = createListBox();
-	assert(error == ERR_NONE);
+	ErrorCode errorCode = createListBox();
+	assert(errorCode == ERR_NONE);
 
 	//  Populate first line of list with header
 
@@ -1431,7 +1417,6 @@ void SrafComputer::activateDealSummary() {
 }
 
 void SrafComputer::activateBuyerBids() {
-	ErrorCode error = ERR_NONE;
 	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
@@ -1449,8 +1434,8 @@ void SrafComputer::activateBuyerBids() {
 	deactivateMainScreen();
 
 	// Load up the main list now with our bid data.
-	error = createListBox();
-	assert(error == ERR_NONE);
+	ErrorCode errorCode = createListBox();
+	assert(errorCode == ERR_NONE);
 
 	// Make sure we start with the correct computer background
 	if (getBackdrop()) {
@@ -1551,8 +1536,8 @@ void SrafComputer::activateSellerBios() {
 	}
 
 	// Load up the main list now with our deal summary data.
-	ErrorCode error = createListBox();
-	assert(error == ERR_NONE);
+	ErrorCode errorCode = createListBox();
+	assert(errorCode == ERR_NONE);
 
 	// Populate first line of list with header
 	sStr = "SELLER BIOGRAPHIES";
@@ -1596,8 +1581,8 @@ void SrafComputer::activateOtherBios() {
 	}
 
 	// Load up the main list now with our deal summary data.
-	ErrorCode error = createListBox();
-	assert(error == ERR_NONE);
+	ErrorCode errorCode = createListBox();
+	assert(errorCode == ERR_NONE);
 
 	// Populate first line of list with header
 	sStr = "OTHER BIOGRAPHIES";
@@ -1640,8 +1625,8 @@ void SrafComputer::activateStaffBios() {
 	}
 
 	// Load up the main list now with our deal summary data.
-	ErrorCode error = createListBox();
-	assert(error == ERR_NONE);
+	ErrorCode errorCode = createListBox();
+	assert(errorCode == ERR_NONE);
 
 	// Populate first line of list with header
 	sStr = "STAFF BIOGRAPHIES";
@@ -1675,8 +1660,8 @@ void SrafComputer::activateDispatchTeam() {
 	deactivateMainScreen();
 
 	// Load up the main list now with our bid data.
-	ErrorCode error = createListBox();
-	assert(error == ERR_NONE);
+	ErrorCode errorCode = createListBox();
+	assert(errorCode == ERR_NONE);
 
 	// Make sure we start with the correct computer background
 	if (getBackdrop()) {
@@ -1876,7 +1861,6 @@ void SrafComputer::recalcDispatchList(int mExpansionFlag) {
 
 
 void SrafComputer::activateCurrentEMail() {
-	ErrorCode error = ERR_NONE;
 	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
@@ -1898,8 +1882,8 @@ void SrafComputer::activateCurrentEMail() {
 
 	// load up the main list now with our bid data.
 
-	error = createListBox();
-	assert(error == ERR_NONE);
+	ErrorCode errorCode = createListBox();
+	assert(errorCode == ERR_NONE);
 
 	// Make sure we start with the correct computer background
 	if (getBackdrop()) {
@@ -1935,7 +1919,6 @@ void SrafComputer::activateCurrentEMail() {
 
 
 void SrafComputer::activateAudioSettings() {
-	ErrorCode error = ERR_NONE;
 	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
@@ -1953,8 +1936,8 @@ void SrafComputer::activateAudioSettings() {
 	deactivateMainScreen();
 
 	// Load up the main list now with our bid data.
-	error = createListBox();
-	assert(error == ERR_NONE);
+	ErrorCode errorCode = createListBox();
+	assert(errorCode == ERR_NONE);
 
 	// Make sure we start with the correct computer background
 	if (getBackdrop()) {
@@ -2017,8 +2000,8 @@ void SrafComputer::activateRoboButler() {
 	deactivateMainScreen();
 
 	// Load up the main list now with our bid data.
-	ErrorCode error = createListBox();
-	assert(error == ERR_NONE);
+	ErrorCode errorCode = createListBox();
+	assert(errorCode == ERR_NONE);
 
 	// Make sure we start with the correct computer background
 	if (getBackdrop()) {
@@ -2109,8 +2092,8 @@ void SrafComputer::activateCheckTeams() {
 	deactivateMainScreen();
 
 	// Load up the main list now with our bid data.
-	ErrorCode error = createListBox();
-	assert(error == ERR_NONE);
+	ErrorCode errorCode = createListBox();
+	assert(errorCode == ERR_NONE);
 
 	// Make sure we start with the correct computer background
 	if (getBackdrop()) {
@@ -2378,8 +2361,8 @@ void SrafComputer::activateCodeWords() {
 	}
 
 	// Load up the main list now with our deal summary data.
-	ErrorCode error = createListBox();
-	assert(error == ERR_NONE);
+	ErrorCode errorCode = createListBox();
+	assert(errorCode == ERR_NONE);
 
 	// Populate first line of list with header
 	sStr = kCodeWordsHeader1;
@@ -3694,8 +3677,8 @@ void SrafComputer::activateMainScreen() {
 	_nListPointSize = kOtherPointSize;
 	_nListItemHeight = kLineItemHeight;
 
-	ErrorCode error = createListBox();
-	assert(error == ERR_NONE);
+	ErrorCode errorCode = createListBox();
+	assert(errorCode == ERR_NONE);
 
 	int numItems = _pMainList->getCount();
 

@@ -250,12 +250,12 @@ ErrorCode CBofDataFile::readHeader() {
 						seek(_lHeaderStart);
 
 						// Read header
-						ErrorCode errCode = ERR_NONE;
-						for (int i = 0; i < _lNumRecs && errCode == ERR_NONE; ++i) {
-							errCode = read(_pHeader[i]);
+						ErrorCode errorCode = ERR_NONE;
+						for (int i = 0; i < _lNumRecs && errorCode == ERR_NONE; ++i) {
+							errorCode = read(_pHeader[i]);
 						}
 
-						if (errCode == ERR_NONE) {
+						if (errorCode == ERR_NONE) {
 							uint32 lCrc = calculateCRC(&_pHeader->_lOffset, 4 * _lNumRecs);
 
 							if (lCrc != stHeaderInfo._lFootCrc) {
@@ -313,12 +313,12 @@ ErrorCode CBofDataFile::writeHeader() {
 				seek(_lHeaderStart);
 
 				// Write header to data file
-				ErrorCode errCode = ERR_NONE;
-				for (int i = 0; i < _lNumRecs && errCode == ERR_NONE; ++i) {
-					errCode = write(_pHeader[i]);
+				ErrorCode errorCode = ERR_NONE;
+				for (int i = 0; i < _lNumRecs && errorCode == ERR_NONE; ++i) {
+					errorCode = write(_pHeader[i]);
 				}
 
-				if (errCode == ERR_NONE) {
+				if (errorCode == ERR_NONE) {
 					// Header is now clean
 					_bHeaderDirty = false;
 
@@ -755,24 +755,24 @@ ErrorCode CBofDataFile::read(void *pDestBuf, int32 lBytes) {
 
 ErrorCode CBofDataFile::read(HEAD_INFO &rec) {
 	byte buf[16];
-	ErrorCode result = read(&buf[0], 16);
+	ErrorCode errorCode = read(&buf[0], 16);
 
 	Common::MemoryReadStream mem(buf, 16);
 	Common::Serializer s(&mem, nullptr);
 	rec.synchronize(s);
 
-	return result;
+	return errorCode;
 }
 
 ErrorCode CBofDataFile::read(HEADER_REC &rec) {
 	byte buf[16];
-	ErrorCode result = read(&buf[0], 16);
+	ErrorCode errorCode = read(&buf[0], 16);
 
 	Common::MemoryReadStream mem(buf, 16);
 	Common::Serializer s(&mem, nullptr);
 	rec.synchronize(s);
 
-	return result;
+	return errorCode;
 }
 
 ErrorCode CBofDataFile::write(const void *pSrcBuf, int32 lBytes) {

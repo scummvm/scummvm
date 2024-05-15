@@ -889,7 +889,7 @@ ErrorCode CBofSound::flushQueue(int nSlot) {
 	assert(nSlot >= 0 && nSlot < NUM_QUEUES);
 
 	// Assume no error
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	// Remove all queued sounds
 	_cQueue[nSlot]->flush();
@@ -910,7 +910,7 @@ ErrorCode CBofSound::flushQueue(int nSlot) {
 		pSound = pNextSound;
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 void CBofSound::setQVol(int nSlot, int nVol) {

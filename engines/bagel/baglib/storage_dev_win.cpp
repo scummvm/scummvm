@@ -189,31 +189,31 @@ bool CBagStorageDev::contains(CBagObject *pObj, bool bActive) {
 
 
 ErrorCode CBagStorageDev::addObject(CBagObject *pObj, int /*nPos*/) {
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	// can't use a null pointer
 	assert(pObj != nullptr);
 
 	_pObjectList->addToTail(pObj);
 
-	return errCode;
+	return errorCode;
 }
 
 
 ErrorCode CBagStorageDev::removeObject(CBagObject *pRObj) {
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	if (!_bForeignList) {
 		int nCount = getObjectCount();
 		for (int i = 0; i < nCount; ++i) {
 			if (pRObj == getObjectByPos(i)) {
 				_pObjectList->remove(i);
-				return errCode;
+				return errorCode;
 			}
 		}
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 
@@ -247,7 +247,7 @@ ErrorCode CBagStorageDev::activateLocalObject(const CBofString &sName) {
 }
 
 ErrorCode CBagStorageDev::deactivateLocalObject(CBagObject *pObj) {
-	ErrorCode  errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	if (pObj != nullptr) {
 		pObj->setLocal(false);
@@ -256,10 +256,10 @@ ErrorCode CBagStorageDev::deactivateLocalObject(CBagObject *pObj) {
 			pObj->detach();
 		}
 	} else  {
-		errCode = ERR_FFIND;
+		errorCode = ERR_FFIND;
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 
@@ -307,7 +307,7 @@ CBofPoint CBagStorageDev::arrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 
 
 ErrorCode CBagStorageDev::attachActiveObjects() {
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 	CBofPoint nArrangePos(0, 0);	// Removed 5,5 padding
 
 	CBagLog::initArrangePages();
@@ -350,17 +350,17 @@ ErrorCode CBagStorageDev::attachActiveObjects() {
 					}
 				}
 			} else
-				errCode = ERR_FFIND;
+				errorCode = ERR_FFIND;
 		}
 	}
 
 	CBagLog::arrangePages();
 
-	return errCode;
+	return errorCode;
 }
 
 ErrorCode CBagStorageDev::detachActiveObjects() {
-	ErrorCode  errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 	int nCount = getObjectCount();
 
 	if (nCount != 0) {
@@ -374,19 +374,19 @@ ErrorCode CBagStorageDev::detachActiveObjects() {
 					pObj->detach();
 				}
 			} else
-				errCode = ERR_FFIND;
+				errorCode = ERR_FFIND;
 		}
 	}
-	return errCode;
+	return errorCode;
 }
 
 ErrorCode CBagStorageDev::loadObjects() {
-	ErrorCode errCode = ERR_NONE;
-	return errCode;
+	ErrorCode errorCode = ERR_NONE;
+	return errorCode;
 }
 
 ErrorCode CBagStorageDev::releaseObjects() {
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 	int nCount = getObjectCount();
 
 	if (!_bForeignList) {
@@ -399,7 +399,7 @@ ErrorCode CBagStorageDev::releaseObjects() {
 
 		_pObjectList->removeAll();
 	}
-	return errCode;
+	return errorCode;
 }
 
 
@@ -964,7 +964,7 @@ ParseCodes CBagStorageDev::setInfo(CBagIfstream &fpInput) {
 
 ErrorCode CBagStorageDev::attach() {
 	// Assume no error
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	_bFirstPaint = true;
 
@@ -973,13 +973,13 @@ ErrorCode CBagStorageDev::attach() {
 
 		if ((pBmp != nullptr) && !pBmp->errorOccurred()) {
 			setBackground(pBmp);
-			errCode = attachActiveObjects();
+			errorCode = attachActiveObjects();
 		} else {
-			errCode = ERR_FOPEN;
+			errorCode = ERR_FOPEN;
 		}
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 
@@ -1740,9 +1740,9 @@ ErrorCode CBagStorageDevDlg::loadFile(const CBofString &sFile) {
 }
 
 ErrorCode CBagStorageDevDlg::create(const char *pszName, CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
-	ErrorCode rc = CBofDialog::create(pszName, pRect, pParent, nControlID);
+	ErrorCode errorCode = CBofDialog::create(pszName, pRect, pParent, nControlID);
 	setCapture();
-	return rc;
+	return errorCode;
 }
 
 

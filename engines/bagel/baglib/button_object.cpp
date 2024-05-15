@@ -50,7 +50,7 @@ CBagButtonObject::~CBagButtonObject() {
 }
 
 ErrorCode CBagButtonObject::attach() {
-	ErrorCode rc = CBagSpriteObject::attach();
+	ErrorCode errorCode = CBagSpriteObject::attach();
 
 	if (getSprite()) {
 		getSprite()->setAnimated(false);
@@ -74,7 +74,7 @@ ErrorCode CBagButtonObject::attach() {
 		setPosition(NewPoint);
 	}
 
-	return rc;
+	return errorCode;
 }
 
 ErrorCode CBagButtonObject::detach() {
@@ -328,9 +328,9 @@ ErrorCode CBagButtonObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcR
 	}
 
 	if (getSprite() && ((getSprite()->getCelCount() > 1) || isVisible())) {
-		ErrorCode err = CBagSpriteObject::update(bmp, pt, srcRect, maskColor);
+		ErrorCode errorCode = CBagSpriteObject::update(bmp, pt, srcRect, maskColor);
 		setDirty(bDirty);
-		return err;
+		return errorCode;
 	}
 
 	return _errCode;

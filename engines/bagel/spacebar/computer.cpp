@@ -131,16 +131,16 @@ void  SBarComputer::onPaint(CBofRect *pRect) {
 ErrorCode SBarComputer::attach() {
 	logInfo("Attaching SBarComputer...");
 
-	ErrorCode rc = CBagStorageDevWnd::attach();
-	if (rc == ERR_NONE) {
+	ErrorCode errorCode = CBagStorageDevWnd::attach();
+	if (errorCode == ERR_NONE) {
 		g_waitOKFl = false;
 
 		_pDrinkList = new CBofList<SBarCompItem>;
 		_pIngList = new CBofList<SBarCompItem>;
 
-		rc = readDrnkFile();
-		if (rc == ERR_NONE)
-			rc = readIngFile();
+		errorCode = readDrnkFile();
+		if (errorCode == ERR_NONE)
+			errorCode = readIngFile();
 
 		// Create the list box that display the lists
 		createDrinksListBox();
@@ -182,7 +182,7 @@ ErrorCode SBarComputer::attach() {
 
 	CBagCursor::showSystemCursor();
 
-	return rc;
+	return errorCode;
 }
 
 ErrorCode SBarComputer::detach() {

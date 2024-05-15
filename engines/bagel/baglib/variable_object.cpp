@@ -148,7 +148,7 @@ ParseCodes CBagVariableObject::setInfo(CBagIfstream &istr) {
 }
 
 ErrorCode CBagVariableObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int) {
-	ErrorCode rc = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 	CBagVar *xVar = g_VarManager->getVariable(getFileName());
 
 	if (isAttached() && xVar && !(xVar->getValue().isEmpty())) {
@@ -165,28 +165,28 @@ ErrorCode CBagVariableObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *p
 			pt.x += 5;
 
 		CBofRect r(pt, pSrcRect->size());
-		rc = paintText(pBmp, &r, xVar->getValue(), mapFontPointSize(_nPointSize), TEXT_NORMAL, _nFGColor);
+		errorCode = paintText(pBmp, &r, xVar->getValue(), mapFontPointSize(_nPointSize), TEXT_NORMAL, _nFGColor);
 
 		// Don't need to redraw!
 		setDirty(false);
 	}
-	return rc;
+	return errorCode;
 }
 
 ErrorCode CBagVariableObject::update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int) {
-	ErrorCode rc = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 	CBagVar *xVar = g_VarManager->getVariable(getFileName());
 
 	if (isAttached() && xVar && !(xVar->getValue().isEmpty())) {
 		CBofRect r(pt, pSrcRect->size());
 
-		rc = paintText(pWnd, &r, xVar->getValue(), mapFontPointSize(_nPointSize), TEXT_NORMAL, _nFGColor);
+		errorCode = paintText(pWnd, &r, xVar->getValue(), mapFontPointSize(_nPointSize), TEXT_NORMAL, _nFGColor);
 
 		// Don't need to redraw!
 		setDirty(false);
 	}
 
-	return rc;
+	return errorCode;
 }
 
 } // namespace Bagel
