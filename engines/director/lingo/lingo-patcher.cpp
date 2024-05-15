@@ -330,6 +330,7 @@ const char *vncEnableCheats = " \
 on togCh\r\
   if getFlag(#cheats) then\r\
     setFlag(#cheats, 0)\r\
+	setMode(0) -- disable debug logging\r\
     set the foreColor of field \"viewName_cast\" to 255\r\
     alert(\"VNC Cheats off\")\r\
   else\r\
@@ -339,6 +340,7 @@ on togCh\r\
     set the foreColor of field \"viewName_cast\" to 172\r\
     set the textSize of field \"viewName_cast\" to 9\r\
     setFlag(#cheats)\r\
+	setMode(10) -- enable debug logging\r\
     alert(\"VNC Cheats on\")\r\
   end if\r\
 end\r\
