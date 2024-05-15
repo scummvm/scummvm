@@ -51,7 +51,6 @@ void CBofSprite::openLibrary(CBofPalette *pPal) {
 	assert(pPal != nullptr);
 
 	clearDirtyRect();
-
 	setSharedPalette(pPal);
 
 	// Set up a default work area
@@ -61,7 +60,6 @@ void CBofSprite::openLibrary(CBofPalette *pPal) {
 
 void CBofSprite::closeLibrary() {
 	flushSpriteChain();
-
 	tearDownWorkArea();
 
 	_pSharedPalette = nullptr;
@@ -71,23 +69,23 @@ void CBofSprite::closeLibrary() {
 CBofSprite::CBofSprite() {
 	_pImage = nullptr;                                 // No initial bitmap image for the sprite
 
-	_cSize = CBofSize(0, 0);                           // There is no size to the sprite image
+	_cSize = CBofSize(0, 0);                // There is no size to the sprite image
 	_cRect.setRectEmpty();                             // Rectangular bounds not yet defined
 
-	_cImageRect = _cRect;                             // Image rectangle starts same as display bounds
-	_cPosition = CBofPoint(0, 0);                      // Default position to upper left corner of display
+	_cImageRect = _cRect;                              // Image rectangle starts same as display bounds
+	_cPosition = CBofPoint(0, 0);             // Default position to upper left corner of display
 	_bPositioned = false;                              // Not yet positioned
 	_bDuplicated = false;                              // Not sharing resources with other sprites
 	_nZOrder = SPRITE_TOPMOST;                         // Default to top most in fore/back ground order
 	_nCelCount = 1;                                    // Number of frames in animated cel strip
-	_nCelID = _nCelCount - 1;                         // Cel identifier not pointing at a cel
+	_nCelID = _nCelCount - 1;                          // Cel identifier not pointing at a cel
 	_bAnimated = false;                                // Not initially animated
 	_bLinked = false;                                  // Not initially linked into the sprite chain
 
 	_nMaskColor = NOT_TRANSPARENT;                     // Default to NO transparency
 	_bReadOnly = true;
 
-	setBlockAdvance(false);                             // Default always advance next sprite
+	setBlockAdvance(false);                          // Default always advance next sprite
 }
 
 
@@ -95,7 +93,6 @@ CBofSprite::~CBofSprite() {
 	assert(isValidObject(this));
 
 	unlinkSprite();
-
 	clearImage();   // Clear the sprite image bitmap and context
 }
 
@@ -156,12 +153,13 @@ void CBofSprite::unlinkSprite() {
 
 
 void CBofSprite::flushSpriteChain() {
-	CBofSprite *pSprite = nullptr;
+	CBofSprite *pSprite = getSpriteChain();
 
 	// Cycle getting head of chain, un-linking it and then deleting it
-	while ((pSprite = CBofSprite::getSpriteChain()) != nullptr) {
+	while (pSprite != nullptr) {
 		pSprite->unlinkSprite();
 		delete pSprite;
+		pSprite = getSpriteChain();
 	}
 }
 
@@ -177,7 +175,8 @@ bool CBofSprite::setupWorkArea(int dx, int dy) {
 	}
 
 	// Create an offscreen bitmap where we do all the work;
-	if ((_pWorkBmp = new CBofBitmap(dx, dy, _pSharedPalette)) != nullptr) {
+	_pWorkBmp = new CBofBitmap(dx, dy, _pSharedPalette);
+	if (_pWorkBmp != nullptr) {
 		_nWorkDX = dx;
 		_nWorkDY = dy;
 		bSuccess = true;
@@ -188,10 +187,8 @@ bool CBofSprite::setupWorkArea(int dx, int dy) {
 
 
 void CBofSprite::tearDownWorkArea() {
-	if (_pWorkBmp != nullptr) {
-		delete _pWorkBmp;
-		_pWorkBmp = nullptr;
-	}
+	delete _pWorkBmp;
+	_pWorkBmp = nullptr;
 }
 
 

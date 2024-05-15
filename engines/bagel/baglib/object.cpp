@@ -94,10 +94,8 @@ CBagObject::CBagObject() {
 }
 
 CBagObject::~CBagObject() {
-	if (_pMenu != nullptr) {
-		delete _pMenu;
-		_pMenu = nullptr;
-	}
+	delete _pMenu;
+	_pMenu = nullptr;
 
 	if (_psName && (_psName != &_sFileName)) {
 		delete _psName;
@@ -188,13 +186,14 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		case '{': {
 			rc = UPDATED_OBJECT;
 			if (!_pMenu) {
-				if ((_pMenu = new CBagMenu) != nullptr) {
+				_pMenu = new CBagMenu;
+				if (_pMenu == nullptr)
+					fatalError(ERR_MEMORY, "Unable to allocate a new CBagMenu");
 
-					// Try to cut down the number of Storage Devices by
-					// removing these unused ones from the list.
-					//
-					g_SDevManager->unregisterStorageDev(_pMenu);
-				}
+				// Try to cut down the number of Storage Devices by
+				// removing these unused ones from the list.
+				//
+				g_SDevManager->unregisterStorageDev(_pMenu);
 			}
 
 			istr.putBack();
