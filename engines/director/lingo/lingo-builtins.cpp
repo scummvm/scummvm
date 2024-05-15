@@ -260,16 +260,16 @@ void Lingo::initBuiltIns(BuiltinProto protos[]) {
 		case CBLTIN:
 			_builtinCmds[blt->name] = sym;
 			break;
-		case FBLTIN:
 		case FBLTIN_LIST:
+			_builtinListHandlers[blt->name] = sym; // fall-through
+		case FBLTIN:
 			_builtinFuncs[blt->name] = sym;
-			_builtinListHandlers[blt->name] = sym;
 			break;
-		case HBLTIN:
 		case HBLTIN_LIST:
+			_builtinListHandlers[blt->name] = sym; // fall-through
+		case HBLTIN:
 			_builtinCmds[blt->name] = sym;
 			_builtinFuncs[blt->name] = sym;
-			_builtinListHandlers[blt->name] = sym;
 			break;
 		case KBLTIN:
 			_builtinConsts[blt->name] = sym;
