@@ -83,6 +83,7 @@ private:
 
 	DgdsGameId _gameId;
 	Graphics::ManagedSurface _backgroundBuffer;
+	Common::String _backgroundFile;		// Record the background file name for save games.
 	Graphics::ManagedSurface _storedAreaBuffer;
 	Graphics::ManagedSurface _foregroundBuffer;
 	SDSScene *_scene;
@@ -168,6 +169,8 @@ public:
             (f == kSupportsLoadingDuringRuntime) ||
             (f == kSupportsSavingDuringRuntime);
     };
+
+    void setBackgroundFile(const Common::String &name) { _backgroundFile = name; }
 
 private:
 	Common::Error syncGame(Common::Serializer &s);

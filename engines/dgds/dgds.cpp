@@ -148,9 +148,11 @@ bool DgdsEngine::changeScene(int sceneNum) {
 		return false;
 	}
 
-	// Save the current foreground in case we are going to the inventory or
-	// a scene which doesn't draw its own
-	_backgroundBuffer.blitFrom(_compositionBuffer);
+	// Save the current foreground if we are going to the inventory, clear it otherwise.
+	if (sceneNum == 2)
+		_backgroundBuffer.blitFrom(_compositionBuffer);
+	else
+		_backgroundBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 
 	_scene->runLeaveSceneOps();
 
@@ -165,7 +167,7 @@ bool DgdsEngine::changeScene(int sceneNum) {
 	if (!_scene->getDragItem())
 		setMouseCursor(0);
 
-	_foregroundBuffer.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+	_foregroundBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 
 	_scene->load(sceneFile, _resource, _decompressor);
 	// These are done inside the load function in the original.. cleaner here..
@@ -239,7 +241,7 @@ void DgdsEngine::checkDrawInventoryButton() {
 
 Graphics::ManagedSurface &DgdsEngine::getForegroundBuffer() {
 	if (_usedForegroundBuffer) {
-		_foregroundBuffer.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		_foregroundBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		_usedForegroundBuffer = false;
 	}
 
@@ -561,6 +563,7 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 			error("Game references non-existant scene %d", sceneNum);
 
 		_scene->unload();
+		_adsInterp->unload();
 		_scene->load(sceneFile, _resource, _decompressor);
 	}
 
@@ -585,6 +588,16 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 	s.syncAsSint16LE(_textSpeed);
 	s.syncAsByte(_justChangedScene1);
 	s.syncAsByte(_justChangedScene2);
+
+	// sync engine play time to ensure various events run correctly.
+	uint32 playtime = g_engine->getTotalPlayTime();
+	s.syncAsUint32LE(playtime);
+	g_engine->setTotalPlayTime(playtime);
+
+	s.syncString(_backgroundFile);
+	if (s.isLoading()) {
+		Image(_resource, _decompressor).drawScreen(_backgroundFile, _backgroundBuffer);
+	}
 
 	return Common::kNoError;
 }

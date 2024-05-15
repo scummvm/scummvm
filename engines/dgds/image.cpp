@@ -184,7 +184,7 @@ void Image::drawScreen(const Common::String &filename, Graphics::ManagedSurface 
 
 	_filename = filename;
 
-	surface.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+	surface.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 
 	DgdsChunkReader chunk(fileStream);
 	while (chunk.readNextHeader(ex, filename)) {
