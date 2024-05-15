@@ -176,7 +176,7 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 			szLocalBuff[0] = 0;
 			CBofString s(szLocalBuff, 256);
 			getAlphaNumFromStream(istr, s);
-			MACROREPLACE(s);
+			fixPathName(s);
 			setFileName(s);
 			break;
 		}

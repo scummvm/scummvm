@@ -420,7 +420,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			char szBuf[256];
 			Common::strcpy_s(szBuf, EXAMINEBMP);
 			CBofString cString(szBuf, 256);
-			MACROREPLACE(cString);
+			fixPathName(cString);
 			CBofPalette      xPal;
 
 			xPal.loadPalette(cString);

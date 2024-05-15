@@ -51,7 +51,7 @@ namespace Bagel {
 // Defines default chroma color to be palette index 1
 #define DEFAULT_CHROMA_COLOR 1
 
-extern void MACROREPLACE(CBofString &s);
+extern void fixPathName(CBofString &s);
 
 class CBagMasterWin;
 
@@ -186,13 +186,6 @@ protected:
 	 * @return          Error return code
 	 */
 	ErrorCode initLocalFilePaths();
-
-	/**
-	 * Checks system resources, determining if user has the minimum
-	 * system requirements to play this game.
-	 * @return          Error return code
-	 */
-	ErrorCode verifyRequirements();
 
 	// Data members
 	const BagelReg *_gameReg = nullptr;

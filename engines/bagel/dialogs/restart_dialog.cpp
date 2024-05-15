@@ -150,7 +150,7 @@ void CBagRestartDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 				char szBuf[256];
 				Common::strcpy_s(szBuf, LOADING_BMP);
 				CBofString cStr(szBuf, 256);
-				MACROREPLACE(cStr);
+				fixPathName(cStr);
 
 				CBofRect cRect;
 				cRect.left = (640 - 180) / 2;
@@ -211,7 +211,7 @@ void CBagRestartDialog::onBofButton(CBofObject *pObject, int nFlags) {
 				char szBuf[256];
 				Common::strcpy_s(szBuf, LOADING_BMP);
 				CBofString cStr(szBuf, 256);
-				MACROREPLACE(cStr);
+				fixPathName(cStr);
 
 				CBofRect cRect;
 				cRect.left = (640 - 180) / 2;

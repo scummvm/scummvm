@@ -35,19 +35,12 @@
 
 namespace Bagel {
 
-// Static member variables.
-static unsigned stringHashFunction(const CBofString &s) {
-	return s.hash();
-}
-CBofVHashTable<CBofString, HASH_TABLE_SIZE> *CBagel::_cacheFileList;
-
 // Initialize global variables.
 //
 CBofWindow *g_hackWindow;
 
 CBagel::CBagel(const BagelReg *gameReg) {
 	assert(gameReg != nullptr);
-	_cacheFileList = new CBofVHashTable<CBofString, HASH_TABLE_SIZE>(&stringHashFunction);
 
 	registerGame(gameReg);
 }
@@ -57,10 +50,6 @@ CBagel::~CBagel() {
 
 	// Release options file
 	release();
-
-	// Empty the file cache.
-	delete _cacheFileList;
-	_cacheFileList = nullptr;
 
 	_szAppName[0] = '\0';
 	_pMainWnd = nullptr;
@@ -149,9 +138,6 @@ ErrorCode CBagel::initialize() {
 	// Initialize local game paths
 	initLocalFilePaths();
 
-	// Check for adequate system resources
-	verifyRequirements();
-
 	// Child class must instantiate the Main Window
 	return _errCode;
 }
@@ -199,7 +185,7 @@ ErrorCode CBagel::verifyCDInDrive(int diskId, const char *waveFile) {
 		Common::sprintf_s(szBuf, "$SBARDIR%sDISK%d", PATH_DELIMETER, diskId);
 
 		CBofString cString(szBuf, MAX_DIRPATH);
-		MACROREPLACE(cString);
+		fixPathName(cString);
 
 		// If the disk is not in drive, then inform the user
 		int i = 0;
@@ -229,14 +215,7 @@ ErrorCode CBagel::verifyCDInDrive(int diskId, const char *waveFile) {
 	return _errCode;
 }
 
-ErrorCode CBagel::verifyRequirements() {
-	assert(isValidObject(this));
-	assert(_gameReg != nullptr);
-
-	return _errCode;
-}
-
-void MACROREPLACE(CBofString &s) {
+void fixPathName(CBofString &s) {
 	// Remove any homedir prefix. In ScummVM, all paths are relative
 	// to the game folder automatically
 	char *p = strstr(s.getBuffer(), HOMEDIR_TOKEN);

@@ -884,7 +884,7 @@ const char *BuildSlotDir(const char *pszFile) {
 	Common::sprintf_s(szBuf, "%s%s%s", BGCB_DIR, PATH_DELIMETER, pszFile);
 
 	CBofString sSlotDir(szBuf, MAX_DIRPATH);
-	MACROREPLACE(sSlotDir);
+	fixPathName(sSlotDir);
 
 	return &szBuf[0];
 }

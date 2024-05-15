@@ -1317,7 +1317,7 @@ void CNavWindow::calcFuel(double hf) {
 		if (_level == 2) {
 			pause();
 			CBofString sNebDir(NEBSIM4_BMP);
-			MACROREPLACE(sNebDir);
+			fixPathName(sNebDir);
 			assert(_pBackdrop != nullptr);
 			_bmptwo = new CBofBitmap(sNebDir.getBuffer(), _pPal);
 			setBackground(_bmptwo);
@@ -1335,7 +1335,7 @@ void CNavWindow::calcFuel(double hf) {
 		if (_level == 1) {
 			pause();
 			CBofString sNebDir(NEBSIM3_BMP);
-			MACROREPLACE(sNebDir);
+			fixPathName(sNebDir);
 			assert(_pBackdrop != nullptr);
 			_bmptwo = new CBofBitmap(sNebDir.getBuffer(), _pPal);
 			setBackground(_bmptwo);
@@ -1353,7 +1353,7 @@ void CNavWindow::calcFuel(double hf) {
 		if (_level == 0) {
 			pause();
 			CBofString sNebDir(NEBSIM2_BMP);
-			MACROREPLACE(sNebDir);
+			fixPathName(sNebDir);
 			assert(_pBackdrop != nullptr);
 			_bmptwo = new CBofBitmap(sNebDir.getBuffer(), _pPal);
 			setBackground(_bmptwo);

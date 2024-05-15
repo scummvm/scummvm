@@ -154,23 +154,23 @@ public:
 	ErrorCode setStorageDev(const CBofString &wldName, bool entry = true);
 	ErrorCode gotoNewWindow(const CBofString *str);
 
-	uint16 getDiskID() {
+	uint16 getDiskID() const {
 		return _diskId;
 	}
 	void setDiskID(uint16 id) {
 		_diskId = id;
 	}
 
-	CBofWindow *getCurrentGameWindow() {
+	CBofWindow *getCurrentGameWindow() const {
 		return (CBofWindow *)_gameWindow;
 	}
-	CBagStorageDevWnd *getCurrentStorageDev() {
+	CBagStorageDevWnd *getCurrentStorageDev() const {
 		return _gameWindow;
 	}
-	CBagStorageDevManager *getStorageDevManager() {
+	CBagStorageDevManager *getStorageDevManager() const {
 		return _storageDeviceList;
 	}
-	CBagVarManager *getVariableManager() {
+	CBagVarManager *getVariableManager() const {
 		return _variableList;
 	}
 

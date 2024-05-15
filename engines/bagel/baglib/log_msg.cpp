@@ -347,7 +347,7 @@ ErrorCode CBagLog::playMsgQueue() {
 			CBofString smkName(localBuffer, 256);
 
 			smkName = OVERRIDE_SMK;
-			MACROREPLACE(smkName);
+			fixPathName(smkName);
 
 			CBagMovieObject *pMovie = (CBagMovieObject *)getObject(OVERRIDE_MOVIE);
 			if (pMovie) {

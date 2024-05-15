@@ -113,7 +113,7 @@ void vilInitFilters(CBofBitmap *pBmp) {
 		CBofString cString(szCString, 256);
 		cString = VILDROIDTIPFILE;
 
-		MACROREPLACE(cString);
+		fixPathName(cString);
 		CBofFile nfile(cString, CBF_READONLY);
 		buff = new char[nfile.getLength() + 1];
 		memset(buff, 0, nfile.getLength() + 1);
@@ -132,7 +132,7 @@ void vilInitFilters(CBofBitmap *pBmp) {
 		char szBString[256];
 		CBofString cBString(szBString, 256);
 		cBString = VILDROIDGRAFITTI;
-		MACROREPLACE(cBString);
+		fixPathName(cBString);
 		pGrafittiBmp = new CBofBitmap(cBString, pBmp->getPalette());
 
 		// No initialization of the pChipBmp is done here - it's
@@ -151,7 +151,7 @@ void triInitFilters(CBofBitmap *pBmp) {
 	char szTriStr[256];
 	CBofString cTriStr(szTriStr, 256);
 	cTriStr = TRIFILTERBMP;
-	MACROREPLACE(cTriStr);
+	fixPathName(cTriStr);
 	pTriBmp = new CBofBitmap(cTriStr, pBmp->getPalette());
 	triinitDone = true;
 }
@@ -161,7 +161,7 @@ void lightningInitFilters() {
 		char szThunderFileName[256];
 		CBofString cThunderFileName(szThunderFileName, 256);
 		cThunderFileName = THUNDERSOUND;
-		MACROREPLACE(cThunderFileName);
+		fixPathName(cThunderFileName);
 		pThunder = new CBofSound(CBofApp::getApp()->getMainWindow(), szThunderFileName, SOUND_MIX);
 		lightninginitDone = true;
 	}
@@ -365,7 +365,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				CBofString cString(szCString, 256);
 				cString = GREENCHIPFILE;
 
-				MACROREPLACE(cString);
+				fixPathName(cString);
 				CBofFile nfile(cString, CBF_READONLY);
 				buff = new char[nfile.getLength() + 1];
 				memset(buff, 0, nfile.getLength() + 1);
@@ -408,7 +408,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				CBofString cString(szCString, 256);
 				cString = BLUECHIPFILE;
 
-				MACROREPLACE(cString);
+				fixPathName(cString);
 				CBofFile nfile(cString, CBF_READONLY);
 				buff = new char[nfile.getLength() + 1];
 				memset(buff, 0, nfile.getLength() + 1);
@@ -571,7 +571,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				char szCString[256];
 				CBofString cString(szCString, 256);
 				cString = DISCEJECTSOUND;
-				MACROREPLACE(cString);
+				fixPathName(cString);
 				BofPlaySound(cString, SOUND_WAVE | SOUND_MIX);
 				CBagStorageDev *pWieldSDev = nullptr;
 				pWieldSDev = g_SDevManager->getStorageDevice("BWIELD_WLD");

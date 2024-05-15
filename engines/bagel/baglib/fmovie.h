@@ -33,14 +33,14 @@ namespace Bagel {
 
 class CBagFMovie : public CBofDialog {
 public:
-	enum MVSTATUS { MOVIE_STOPPED, MOVIE_PAUSED, MOVIE_FOREWARD, MOVIE_REVERSE };
+	enum MovieStatus { MOVIE_STOPPED, MOVIE_PAUSED, MOVIE_FOREWARD, MOVIE_REVERSE };
 
 protected:
 	Video::SmackerDecoder *_smk;
 
 	bool _escCanStopFl;
 	bool _loopFl;
-	MVSTATUS _movieStatus;
+	MovieStatus _movieStatus;
 
 	CBofBitmap *_bmpBuf;
 	CBofBitmap *_filterBmp;
@@ -116,7 +116,7 @@ public:
 	virtual bool pause();
 	virtual bool stop();
 
-	virtual MVSTATUS status() {
+	virtual MovieStatus status() {
 		return _movieStatus;
 	}
 

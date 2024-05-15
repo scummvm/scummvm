@@ -34,11 +34,11 @@ CBofSize CBagAreaObject::getSize() const {
 CBagAreaObject::CBagAreaObject() {
 	_xObjType = AREA_OBJ;
 	setVisible(false);
-	setOverCursor(4);
+	CBagObject::setOverCursor(4);
 }
 
 CBagAreaObject::~CBagAreaObject() {
-	detach();
+	CBagAreaObject::detach();
 }
 
 ErrorCode CBagAreaObject::attach() {

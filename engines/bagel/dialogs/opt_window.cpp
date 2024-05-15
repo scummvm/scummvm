@@ -706,7 +706,7 @@ const char *buildSysDir(const char *pszFile) {
 	Common::sprintf_s(szBuf, "$SBARDIR%sGENERAL%sSYSTEM%s%s", PATH_DELIMETER, PATH_DELIMETER, PATH_DELIMETER, pszFile);
 
 	CBofString cTemp(szBuf, MAX_DIRPATH);
-	MACROREPLACE(cTemp);
+	fixPathName(cTemp);
 
 	return &szBuf[0];
 }

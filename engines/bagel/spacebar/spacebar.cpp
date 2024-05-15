@@ -162,7 +162,7 @@ ErrorCode SpaceBarEngine::initialize() {
 			// Play intro movies, logo screens, etc...
 			if (bShowLogo) {
 				CBofString cString(SMK_LOGO1);
-				MACROREPLACE(cString);
+				fixPathName(cString);
 
 				// Play the movie only if it exists
 				if (fileExists(cString.getBuffer())) {
@@ -175,7 +175,7 @@ ErrorCode SpaceBarEngine::initialize() {
 					goto exit;
 
 				cString = SMK_LOGO2;
-				MACROREPLACE(cString);
+				fixPathName(cString);
 				if (fileExists(cString.getBuffer())) {
 					bofPlayMovie(_masterWin, cString.getBuffer());
 					if (pBmp != nullptr) {
@@ -187,7 +187,7 @@ ErrorCode SpaceBarEngine::initialize() {
 
 				// Use hi-res movie if user has a fast machine
 				cString = (getMachineSpeed() < 100) ? SMK_LOGO3EX : SMK_LOGO3;
-				MACROREPLACE(cString);
+				fixPathName(cString);
 
 				if (fileExists(cString.getBuffer())) {
 					bofPlayMovie(_masterWin, cString.getBuffer());

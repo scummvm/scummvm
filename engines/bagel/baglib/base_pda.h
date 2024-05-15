@@ -85,10 +85,10 @@ public:
 	static PdaMode getPdaMode() {
 		return _pdaMode;
 	}
-	bool isActivated() {
+	bool isActivated() const {
 		return _activating ? !_activated : _activated;
 	}
-	bool isActivating() {
+	bool isActivating() const {
 		return _activating;
 	}
 
@@ -139,7 +139,7 @@ public:
 		_deactivateFl = b;
 	}
 	
-	bool getDeactivate() {
+	bool getDeactivate() const {
 		return _deactivateFl;
 	}
 
@@ -184,7 +184,7 @@ public:
 	void setZoomed(bool newVal) {
 		_zoomedFl = newVal;
 	}
-	bool getZoomed() {
+	bool getZoomed() const {
 		return _zoomedFl;
 	}
 

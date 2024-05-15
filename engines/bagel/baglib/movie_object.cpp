@@ -278,7 +278,7 @@ bool CBagMovieObject::runObject() {
 
 						// Play the override message.
 						cStr = OVERRIDE_SMK;
-						MACROREPLACE(cStr);
+						fixPathName(cStr);
 
 						sFileName = cStr;
 					}

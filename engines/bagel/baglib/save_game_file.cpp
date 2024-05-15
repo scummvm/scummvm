@@ -205,7 +205,7 @@ ErrorCode CBagSaveGameFile::readSavedGame(int32 slotNum) {
 			bofFree(pBuf);
 
 			CBofString str(saveData._szScript);
-			MACROREPLACE(str);
+			fixPathName(str);
 			const char *path = str.getBuffer();
 			assert(!strncmp(path, "./", 2));
 			Common::strcpy_s(saveData._szScript, path + 2);

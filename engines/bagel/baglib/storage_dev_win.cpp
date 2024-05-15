@@ -564,7 +564,7 @@ ErrorCode CBagStorageDev::loadFile(const CBofString &sWldName) {
 
 	sWldFileName = sWldName;
 
-	MACROREPLACE(sWldFileName);
+	fixPathName(sWldFileName);
 
 	// Force buffer to be big enough so that the entire script
 	// is pre-loaded
@@ -949,7 +949,7 @@ ParseCodes CBagStorageDev::setInfo(CBagIfstream &fpInput) {
 		getAlphaNumFromStream(fpInput, str);
 		fpInput.eatWhite();
 
-		MACROREPLACE(str);
+		fixPathName(str);
 
 		_sBackgroundName = str;
 
@@ -1151,7 +1151,7 @@ CBagStorageDevWnd::CBagStorageDevWnd() : CBofWindow() {
 
 	// Set a default help file for when there is not one specified
 	_sHelpFileName = "$SBARDIR\\GENERAL\\RULES\\DEFAULT.TXT";
-	MACROREPLACE(_sHelpFileName);
+	fixPathName(_sHelpFileName);
 
 	_xSDevType = SDEV_WND;
 }
@@ -1431,7 +1431,7 @@ ErrorCode CBagStorageDevWnd::loadFile(const CBofString &sFile) {
 	else
 		sWldFile = sFile;
 
-	MACROREPLACE(sWldFile);
+	fixPathName(sWldFile);
 
 	// Force buffer to be big enough so that the entire script
 	// is pre-loaded
@@ -1567,7 +1567,7 @@ CBagStorageDevDlg::CBagStorageDevDlg() : CBofDialog() {
 	// Set a default help file for when there is not one specified
 	//
 	_sHelpFileName = "$SBARDIR\\GENERAL\\RULES\\DEFAULT.TXT";
-	MACROREPLACE(_sHelpFileName);
+	fixPathName(_sHelpFileName);
 }
 
 
@@ -1711,7 +1711,7 @@ ErrorCode CBagStorageDevDlg::loadFile(const CBofString &sFile) {
 	else
 		sWldFile = sFile;
 
-	MACROREPLACE(sWldFile);
+	fixPathName(sWldFile);
 
 	// Force buffer to be big enough so that the entire script is pre-loaded
 	int nLength = fileLength(sWldFile);

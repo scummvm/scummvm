@@ -226,7 +226,7 @@ ErrorCode SBarComputer::detach() {
 
 ErrorCode SBarComputer::readDrnkFile() {
 	CBofString DrinkString(DRINK_FILE);
-	MACROREPLACE(DrinkString);
+	fixPathName(DrinkString);
 
 	// Open the text files
 	CBofFile fpDrinkFile(DrinkString);
@@ -300,7 +300,7 @@ ErrorCode SBarComputer::readDrnkFile() {
 
 ErrorCode SBarComputer::readIngFile() {
 	CBofString IngString(INGRD_FILE);
-	MACROREPLACE(IngString);
+	fixPathName(IngString);
 
 	// Open the text files
 	CBofFile fpIngFile(IngString);

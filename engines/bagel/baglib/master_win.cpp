@@ -100,11 +100,11 @@ CBagMasterWin::CBagMasterWin() {
 
 	// Assume default system screen
 	_sysScreen = "$SBARDIR\\GENERAL\\SYSTEM\\GAMBHALL.BMP";
-	MACROREPLACE(_sysScreen);
+	fixPathName(_sysScreen);
 
 	// Load wait sound for when user hits the spacebar
 	CBofString waitName("$SBARDIR\\GENERAL\\WAIT.WAV");
-	MACROREPLACE(waitName);
+	fixPathName(waitName);
 
 	_waitSound = new CBofSound(this, waitName, SOUND_MIX);
 }
@@ -311,7 +311,7 @@ ErrorCode CBagMasterWin::newGame() {
 		app->getOption("Startup", "WLDFile", workStr, STARTWORLD, 255);
 
 		initWld = workStr;
-		MACROREPLACE(initWld);
+		fixPathName(initWld);
 	}
 
 	loadGlobalVars(GLOBALWORLD);
@@ -337,7 +337,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 
 	if (!paintedFl) {
 		paintedFl = true;
-		MACROREPLACE(wldFileName);
+		fixPathName(wldFileName);
 		CBofRect cRect;
 		cRect.left = (640 - 520) / 2;
 		cRect.top = (480 - 240) / 2;
@@ -417,7 +417,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 	}
 	_gameSDevList = new CBofList<CBagStorageDev *>;
 
-	MACROREPLACE(wldFileName);
+	fixPathName(wldFileName);
 
 	timerStart();
 
@@ -565,7 +565,7 @@ ErrorCode CBagMasterWin::loadGlobalVars(const CBofString &wldName) {
 
 	if (_variableList != nullptr) {
 
-		MACROREPLACE(wldFileName);
+		fixPathName(wldFileName);
 
 		if (fileExists(wldFileName) && (fileLength(wldFileName) > 0)) {
 			// Force buffer to be big enough so that the entire script
@@ -768,7 +768,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				input.eatWhite();
 
 				getAlphaNumFromStream(input, str);
-				MACROREPLACE(str);
+				fixPathName(str);
 
 				// Specify if we have a shared palette or not, look for
 				// the USESHAREDPAL token after the full cursor specification
@@ -846,7 +846,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				input.eatWhite();
 
 				getAlphaNumFromStream(input, bmpFileName);
-				MACROREPLACE(bmpFileName);
+				fixPathName(bmpFileName);
 
 				// Read the palette in and keep it hanging around for later use
 				CBofPalette::setSharedPalette(bmpFileName);
@@ -864,7 +864,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				input.eatWhite();
 
 				getAlphaNumFromStream(input, _sysScreen);
-				MACROREPLACE(_sysScreen);
+				fixPathName(_sysScreen);
 
 				logInfo(buildString("SYSSCREEN = %s", _sysScreen.getBuffer()));
 			}
@@ -883,7 +883,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				input.eatWhite();
 
 				getAlphaNumFromStream(input, _cdChangeAudio);
-				MACROREPLACE(_cdChangeAudio);
+				fixPathName(_cdChangeAudio);
 
 				logInfo(buildString("DISKAUDIO = %s", _cdChangeAudio.getBuffer()));
 			}
@@ -993,7 +993,7 @@ ErrorCode CBagMasterWin::onHelp(const CBofString &helpFile, bool /*bSaveBkg*/, C
 		CBofString fileName(localBuffer, 256);
 
 		fileName = helpFile;
-		MACROREPLACE(fileName);
+		fixPathName(fileName);
 
 		// use specified bitmap as this dialog's image
 		char backGroundBuffer[256];
@@ -1001,7 +1001,7 @@ ErrorCode CBagMasterWin::onHelp(const CBofString &helpFile, bool /*bSaveBkg*/, C
 		CBofString backGround(backGroundBuffer, 256);
 
 		backGround = buildString("$SBARDIR%sGENERAL%sRULES%sHELPSCRN.BMP", PATH_DELIMETER, PATH_DELIMETER, PATH_DELIMETER);
-		MACROREPLACE(backGround);
+		fixPathName(backGround);
 
 		CBofBitmap *bmp = Bagel::loadBitmap(backGround);
 		CBagHelp help;
