@@ -259,8 +259,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 	case 0x0020: // SAVE (free?) BACKGROUND
 		if (seq._executed) // this is a one-shot op
 			break;
-		_vm->getStoredAreaBuffer().fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
-		//_vm->getBackgroundBuffer().fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		_vm->getStoredAreaBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		//_vm->getBackgroundBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		break;
 	case 0x0070: // FREE PALETTE
 		if (seq._executed) // this is a one-shot op
@@ -282,7 +282,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		if (seq._executed) // this is a one-shot op
 			break;
 		env._getPutSurfaces[seq._currentGetPutId].reset();
-		env._getPutAreas[seq._currentGetPutId] = Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		env._getPutAreas[seq._currentGetPutId] = Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT);
 		break;
 	case 0x0110: // PURGE void
 		_vm->adsInterpreter()->setHitTTMOp0110();
@@ -377,7 +377,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 				g_system->delayMillis(5);
 			}
 		}
-		_vm->getBackgroundBuffer().fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		_vm->getBackgroundBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		break;
 	case 0x4120: { // FADE IN:	colorno,ncolors,targetcol,speed:byte
 		if (seq._executed) // this is a one-shot op.
@@ -527,7 +527,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 			break;
 		Image tmp = Image(_vm->getResourceManager(), _vm->getDecompressor());
 		tmp.drawScreen(sval, _vm->getBackgroundBuffer());
-		_vm->getStoredAreaBuffer().fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		_vm->getStoredAreaBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		_vm->setBackgroundFile(sval);
 		break;
 	}
 	case 0xf020: // LOAD BMP:	filename:str
@@ -670,6 +671,8 @@ int32 TTMInterpreter::findGOTOTarget(TTMEnviro &env, TTMSeq &seq, int16 targetFr
 	int64 startpos = env.scr->pos();
 	int32 retval = -1;
 	for (int32 i = 0; i < (int)env._frameOffsets.size(); i++) {
+		if (env._frameOffsets[i] < 0)
+			continue;
 		env.scr->seek(env._frameOffsets[i]);
 		uint16 op = env.scr->readUint16LE();
 		if (op == 0x1101 || op == 0x1111) {
@@ -750,7 +753,7 @@ void TTMSeq::reset() {
     _runFlag = kRunTypeStopped;
     _scriptFlag = 0;
     _selfLoop = false;
-    _drawWin = Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    _drawWin = Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 ADSInterpreter::ADSInterpreter(DgdsEngine *vm) : _vm(vm), _currentTTMSeq(nullptr), _adsData(nullptr) {
@@ -903,6 +906,7 @@ void ADSInterpreter::findUsedSequencesForSegment(int segno) {
 void ADSInterpreter::unload() {
 	_adsData = nullptr;
 	_currentTTMSeq = nullptr;
+	_adsTexts.clear();
 }
 
 bool ADSInterpreter::playScene() {
