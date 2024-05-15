@@ -165,6 +165,7 @@ bool qdInterfaceSave::init(bool is_game_active) {
 }
 
 bool qdInterfaceSave::redraw() const {
+	warning("STUB: qdInterfaceSave::redraw()");
 	if (qdInterfaceDispatcher * pid = qdInterfaceDispatcher::get_dispatcher()) {
 		if (pid->need_save_screenshot())
 			if (const qdAnimation * p = thumbnail_.animation())
@@ -181,6 +182,7 @@ bool qdInterfaceSave::redraw() const {
 		grDispatcher *gr_disp = grDispatcher::instance();
 		if (pid->need_show_save_time() && gr_disp) {
 #ifndef _QUEST_EDITOR
+#if 0
 			FILETIME file_time;
 			SYSTEMTIME global_time, time;
 			std::string str = save_file();
@@ -208,6 +210,7 @@ bool qdInterfaceSave::redraw() const {
 				text += buf;
 			}
 			CloseHandle(hFile);
+#endif
 		}
 
 		if (!text.empty()) {

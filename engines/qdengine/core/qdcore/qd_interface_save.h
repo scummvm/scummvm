@@ -43,20 +43,20 @@ public:
 	int size_y() const;
 
 	//! Возвращает размер картики-превью по горизонтали в пикселах.
-	int qdInterfaceSave::thumbnail_size_x() const {
+	int thumbnail_size_x() const {
 		return thumbnail_size_x_;
 	}
 	//! Возвращает размер картики-превью по вертикали в пикселах.
-	int qdInterfaceSave::thumbnail_size_y() const {
+	int thumbnail_size_y() const {
 		return thumbnail_size_y_;
 	}
 
 	//! Назначает размер картики-превью по горизонтали в пикселах.
-	void qdInterfaceSave::set_thumbnail_size_x(int sx) {
+	void set_thumbnail_size_x(int sx) {
 		thumbnail_size_x_ = sx;
 	}
 	//! Назначает размер картики-превью по вертикали в пикселах.
-	void qdInterfaceSave::set_thumbnail_size_y(int sy) {
+	void set_thumbnail_size_y(int sy) {
 		thumbnail_size_y_ = sy;
 	}
 

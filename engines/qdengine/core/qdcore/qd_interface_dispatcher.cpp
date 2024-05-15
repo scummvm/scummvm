@@ -725,7 +725,7 @@ bool qdInterfaceDispatcher::set_save_title(const char *title) {
 
 const char *qdInterfaceDispatcher::get_save_title() const {
 	if (!cur_screen_)
-		return false;
+		return nullptr;
 
 	const qdInterfaceScreen::element_list_t &lst = cur_screen_->element_list();
 	for (qdInterfaceScreen::element_list_t::const_iterator it = lst.begin(); it != lst.end(); ++it) {
@@ -736,5 +736,5 @@ const char *qdInterfaceDispatcher::get_save_title() const {
 		}
 	}
 
-	return false;
+	return nullptr;
 }

@@ -91,7 +91,8 @@ private:
 		if (pstr_ == lineBegin_)
 			return;
 		lineWidth_ += tagWidth_;
-		putNode(OutNode(lineBegin_, pstr_, tagWidth_));
+		OutNode node(lineBegin_, pstr_, tagWidth_);
+		putNode(node);
 	}
 
 	void endLine() {
