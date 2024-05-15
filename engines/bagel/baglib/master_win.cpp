@@ -373,13 +373,11 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 			// Only allocate the object list when we really need it...
 			if (_objList == nullptr) {
 				_objList = (StObj *)bofAlloc(MAX_OBJS * sizeof(StObj));
-				if (_objList != nullptr) {
-					// Init to zero (we might not use all slots)
-					memset(_objList, 0, MAX_OBJS * sizeof(StObj));
+				if (_objList == nullptr)
+					fatalError(ERR_MEMORY, "Could not allocate Object list");
 
-				} else {
-					reportError(ERR_MEMORY, "Could not allocate Object list");
-				}
+				// Init to zero (we might not use all slots)
+				memset(_objList, 0, MAX_OBJS * sizeof(StObj));
 			}
 
 			_storageDeviceList->saveObjList(_objList, MAX_OBJS); // xxx
@@ -793,22 +791,20 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				}
 
 				CBagCursor *cursor = new CBagCursor(str, bUseShared);
-				if (cursor != nullptr) {
-					cursor->setHotspot(x, y);
+				if (cursor == nullptr)
+					fatalError(ERR_MEMORY, "Could not allocate a CBagCursor");
 
-					assert(id >= 0 && id < MAX_CURSORS);
+				cursor->setHotspot(x, y);
 
-					// Delete any previous cursor
-					delete _cursorList[id];
-					_cursorList[id] = cursor;
+				assert(id >= 0 && id < MAX_CURSORS);
 
-					// Set the wielded cursor status (needed for
-					// a load time optimization)
-					cursor->setWieldCursor(isWieldCursorFl);
+				// Delete any previous cursor
+				delete _cursorList[id];
+				_cursorList[id] = cursor;
 
-				} else {
-					reportError(ERR_MEMORY, "Could not allocate a CBagCursor");
-				}
+				// Set the wielded cursor status (needed for
+				// a load time optimization)
+				cursor->setWieldCursor(isWieldCursorFl);
 
 			} else {
 				reportError(ERR_UNKNOWN, "Bad cursor syntax");
@@ -1528,40 +1524,39 @@ bool CBagMasterWin::showSaveDialog(CBofWindow *win, bool bSaveBkg) {
 		CBofSound::pauseSounds();
 		StBagelSave *saveBuf = (StBagelSave *)bofAlloc(sizeof(StBagelSave));
 
-		if (saveBuf != nullptr) {
-			fillSaveBuffer(saveBuf);
-			CBagSaveDialog saveDialog;
-			saveDialog.setSaveGameBuffer((byte *)saveBuf, sizeof(StBagelSave));
+		if (saveBuf == nullptr)
+			fatalError(ERR_MEMORY, "Unable to allocate the Save Game Buffer");
 
-			// Use specified bitmap as this dialog's image
-			CBofBitmap *bmp = Bagel::loadBitmap(_sysScreen.getBuffer());
+		fillSaveBuffer(saveBuf);
+		CBagSaveDialog saveDialog;
+		saveDialog.setSaveGameBuffer((byte *)saveBuf, sizeof(StBagelSave));
 
-			saveDialog.setBackdrop(bmp);
+		// Use specified bitmap as this dialog's image
+		CBofBitmap *bmp = Bagel::loadBitmap(_sysScreen.getBuffer());
 
-			CBofRect backRect = saveDialog.getBackdrop()->getRect();
+		saveDialog.setBackdrop(bmp);
 
-			// Don't allow save of background
-			if (!bSaveBkg) {
-				int fllags = saveDialog.getFlags();
-				saveDialog.setFlags(fllags & ~BOFDLG_SAVEBACKGND);
-			}
+		CBofRect backRect = saveDialog.getBackdrop()->getRect();
 
-			// Create the dialog box
-			saveDialog.create("Save Dialog", backRect.left, backRect.top, backRect.width(), backRect.height(), win);
-
-			bool saveTimerFl = g_pauseTimerFl;
-			g_pauseTimerFl = true;
-			int btnId = saveDialog.doModal();
-			g_pauseTimerFl = saveTimerFl;
-
-			savedFl = (btnId == SAVE_BTN);
-
-			saveDialog.detach();
-
-			bofFree(saveBuf);
-		} else {
-			reportError(ERR_MEMORY, "Unable to allocate the Save Game Buffer");
+		// Don't allow save of background
+		if (!bSaveBkg) {
+			int fllags = saveDialog.getFlags();
+			saveDialog.setFlags(fllags & ~BOFDLG_SAVEBACKGND);
 		}
+
+		// Create the dialog box
+		saveDialog.create("Save Dialog", backRect.left, backRect.top, backRect.width(), backRect.height(), win);
+
+		bool saveTimerFl = g_pauseTimerFl;
+		g_pauseTimerFl = true;
+		int btnId = saveDialog.doModal();
+		g_pauseTimerFl = saveTimerFl;
+
+		savedFl = (btnId == SAVE_BTN);
+
+		saveDialog.detach();
+
+		bofFree(saveBuf);
 
 		CBofSound::resumeSounds();
 
@@ -1646,13 +1641,11 @@ void CBagMasterWin::doRestore(StBagelSave *saveBuf) {
 			// Restore any extra obj list info (for .WLD swapping)
 			if (_objList == nullptr) {
 				_objList = (StObj *)bofAlloc(MAX_OBJS * sizeof(StObj));
-				if (_objList != nullptr) {
-					// Init to nullptr (might not use all slots)
-					memset(_objList, 0, MAX_OBJS * sizeof(StObj));
+				if (_objList == nullptr)
+					fatalError(ERR_MEMORY, "Unable to allocate a array of %d StObj", MAX_OBJS);
 
-				} else {
-					reportError(ERR_MEMORY, "Unable to allocate a array of %d StObj", MAX_OBJS);
-				}
+				// Init to nullptr (might not use all slots)
+				memset(_objList, 0, MAX_OBJS * sizeof(StObj));
 			}
 
 			memcpy(getObjList(), &saveBuf->_stObjListEx[0], sizeof(StObj) * MAX_OBJS);
