@@ -1,5 +1,7 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/str.h"
 #include "qdengine/core/qd_precomp.h"
 
 #ifdef __QD_DEBUG_ENABLE__
@@ -36,9 +38,9 @@ qdResource::file_format_t qdResource::file_format(const char *file_name) {
 	char ext[_MAX_EXT];
 	_splitpath(file_name, NULL, NULL, NULL, ext);
 
-	if (!stricmp(ext, ".qda")) return RES_ANIMATION;
-	if (!stricmp(ext, ".tga")) return RES_SPRITE;
-	if (!stricmp(ext, ".wav")) return RES_SOUND;
+	if (!scumm_stricmp(ext, ".qda")) return RES_ANIMATION;
+	if (!scumm_stricmp(ext, ".tga")) return RES_SPRITE;
+	if (!scumm_stricmp(ext, ".wav")) return RES_SOUND;
 
 	return RES_UNKNOWN;
 }

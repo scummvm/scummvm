@@ -5,7 +5,7 @@
 #include "qdengine/core/parser/qdscr_parser.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
 
-#include "gr_dispatcher.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
 
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
 
@@ -146,8 +146,11 @@ bool qdInterfaceTextWindow::keyboard_handler(int vkey) {
 }
 
 bool qdInterfaceTextWindow::char_input_handler(int input) {
+	warning("STUB: qdInterfaceTextWindow::char_input_handler");
+	bool ret = false;
+#if 0
 	bool ret = __super::char_input_handler(input);
-
+#endif
 	if (windowType_ == WINDOW_EDIT && isEditing_) {
 		if (!inputStringLimit_ || inputString_.length() < inputStringLimit_) {
 			if (isprint(input) || input == '_' || input == '-' || input == ' ') {
