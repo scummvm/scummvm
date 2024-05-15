@@ -95,7 +95,6 @@ CBagStorageDev *CSBarMasterWin::onNewStorageDev(const CBofString &typestr) {
 	} else if (!typestr.find("BIBODDS")) {
 		pSDev = new SBarBibOddsWnd();
 		pSDev->setCloseup(true);
-		// pSDev->setExitOnEdge(10);
 		pSDev->setCustom(true);
 
 	} else if (!typestr.find("INVWLD")) {
@@ -117,22 +116,24 @@ CBagStorageDev *CSBarMasterWin::onNewStorageDev(const CBofString &typestr) {
 
 		// delineate cic's
 	} else if (!typestr.find("CIC")) {
-		if ((pSDev = new GAMEWINDOW()) != nullptr) {
+		pSDev = new GAMEWINDOW();
+		if (pSDev != nullptr) {
 			pSDev->setCloseup(true);
 			pSDev->setCIC(true);
 			pSDev->setExitOnEdge(80);
 		}
 
 	} else if (!typestr.find("CLOSEUP")) {
-		if ((pSDev = new GAMEWINDOW()) != nullptr) {
+		pSDev = new GAMEWINDOW();
+		if (pSDev != nullptr) {
 			pSDev->setCloseup(true);
 			pSDev->setExitOnEdge(80);
 		}
 
 	} else if (!typestr.find("CHAT")) {
-		if ((pSDev = new CBagChatWnd()) != nullptr) {
+		pSDev = new CBagChatWnd();
+		if (pSDev != nullptr) {
 			pSDev->setCloseup(true);
-			//          pSDev->setExitOnEdge(80);
 		}
 
 	} else if (!typestr.find("EVENT")) {        // EVT STUFF

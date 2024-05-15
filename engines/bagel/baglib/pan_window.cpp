@@ -416,10 +416,11 @@ void CBagPanWindow::disable() {
 
 ErrorCode CBagPanWindow::onCursorUpdate(int nCurrObj) {
 	assert(isValidObject(this));
-	CBagObject *pObj;
 
-	if ((nCurrObj >= 0) && ((pObj = getObjectByPos(nCurrObj)) != nullptr)) {
-		CBagMasterWin::setActiveCursor(pObj->getOverCursor());
+	if (nCurrObj >= 0) {
+		CBagObject *pObj = getObjectByPos(nCurrObj);
+		if (pObj != nullptr)
+			CBagMasterWin::setActiveCursor(pObj->getOverCursor());
 
 	} else if (CBagWield::getWieldCursor() >= 0) {
 		CBagMasterWin::setActiveCursor(CBagWield::getWieldCursor());

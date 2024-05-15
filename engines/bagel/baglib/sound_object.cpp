@@ -68,7 +68,8 @@ ErrorCode CBagSoundObject::newSound(CBofWindow *pWin) {
 
 	killSound();
 
-	if ((_pSound = new CBofSound(pWin, getFileName(), _wFlags, _nLoops)) != nullptr) {
+	_pSound = new CBofSound(pWin, getFileName(), _wFlags, _nLoops);
+	if (_pSound != nullptr) {
 		_pSound->setVolume(_nVol);
 		_pSound->setQSlot(getState());
 
@@ -80,10 +81,8 @@ ErrorCode CBagSoundObject::newSound(CBofWindow *pWin) {
 }
 
 void CBagSoundObject::killSound() {
-	if (_pSound != nullptr) {
-		delete _pSound;
-		_pSound = nullptr;
-	}
+	delete _pSound;
+	_pSound = nullptr;
 }
 
 ErrorCode CBagSoundObject::detach() {

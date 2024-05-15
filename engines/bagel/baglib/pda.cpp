@@ -133,7 +133,8 @@ ErrorCode CBagPDA::attach() {
 
 	// Should be allowed to not find one.
 	if (!_mooWnd) {
-		if ((pSDev = g_SDevManager->getStorageDevice(MOO_WLD)) != nullptr) {
+		pSDev = g_SDevManager->getStorageDevice(MOO_WLD);
+		if (pSDev != nullptr) {
 			_mooWnd = (CBagStorageDevBmp *)pSDev;
 			_mooWnd->setAssociateWnd(getAssociateWnd());
 			_mooWnd->setTransparent(false);
@@ -143,7 +144,8 @@ ErrorCode CBagPDA::attach() {
 	}
 
 	if (!_invWnd) {
-		if ((pSDev = g_SDevManager->getStorageDevice(INV_WLD)) != nullptr) {
+		pSDev = g_SDevManager->getStorageDevice(INV_WLD);
+		if (pSDev != nullptr) {
 			_invWnd = (CBagStorageDevBmp *)pSDev;
 			_invWnd->setAssociateWnd(getAssociateWnd());
 
@@ -157,7 +159,8 @@ ErrorCode CBagPDA::attach() {
 	}
 
 	if (!_mapWnd) {
-		if ((pSDev = g_SDevManager->getStorageDevice(MAP_WLD)) != nullptr) {
+		pSDev = g_SDevManager->getStorageDevice(MAP_WLD);
+		if (pSDev != nullptr) {
 			_mapWnd = (CBagStorageDevBmp *)pSDev;
 			_mapWnd->setAssociateWnd(getAssociateWnd());
 
@@ -170,7 +173,8 @@ ErrorCode CBagPDA::attach() {
 		}
 	}
 	if (!_logWnd) {
-		if ((pSDev = g_SDevManager->getStorageDevice(LOG_WLD)) != nullptr) {
+		pSDev = g_SDevManager->getStorageDevice(LOG_WLD);
+		if (pSDev != nullptr) {
 			_logWnd = (CBagStorageDevBmp *)pSDev;
 			_logWnd->setAssociateWnd(getAssociateWnd());
 
@@ -497,14 +501,15 @@ void CBagPDA::handleZoomButton(bool bButtonDown) {
 }
 
 void CBagPDA::removeFromMovieQueue(CBagMovieObject *pMObj) {
-	if (_movieList != nullptr) {
-		int nCount = _movieList->getCount();
-		for (int i = 0; i < nCount; i++) {
-			CBagMovieObject *p = _movieList->getNodeItem(i);
-			if (pMObj == p) {
-				_movieList->remove(i);
-				break;
-			}
+	if (_movieList == nullptr)
+		return;
+
+	int nCount = _movieList->getCount();
+	for (int i = 0; i < nCount; i++) {
+		CBagMovieObject *p = _movieList->getNodeItem(i);
+		if (pMObj == p) {
+			_movieList->remove(i);
+			break;
 		}
 	}
 }
@@ -532,16 +537,14 @@ void CBagPDA::runWaitingMovie() {
 	return;
 	
 	int nCount = _movieList->getCount();
-	if (nCount > 0) {
-		for (int i = 0; i < nCount; i++) {
-			CBagMovieObject *pMObj = _movieList->getNodeItem(i);
-			if (pMObj->asynchPDAMovieCanPlay()) {
-				_soundsPausedFl = true;
-				// pause all sounds
-				CSound::pauseSounds();
-				pMObj->runObject();
-				removeFromMovieQueue(pMObj);
-			}
+	for (int i = 0; i < nCount; i++) {
+		CBagMovieObject *pMObj = _movieList->getNodeItem(i);
+		if (pMObj->asynchPDAMovieCanPlay()) {
+			_soundsPausedFl = true;
+			// pause all sounds
+			CSound::pauseSounds();
+			pMObj->runObject();
+			removeFromMovieQueue(pMObj);
 		}
 	}
 }

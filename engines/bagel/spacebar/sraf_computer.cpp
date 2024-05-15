@@ -2830,7 +2830,8 @@ void SrafComputer::onListDispatchTeam() {
 					displayTextScreen(sStr);
 				} else if (cMeetMember.ptInRect(cPoint)) {         // if so, put a checkmark in that column.
 					// Uncheck any member we already have checked, this is a singular operation
-					if ((nMeetMember = getMeetMember(nListToCheck)) != -1) {
+					nMeetMember = getMeetMember(nListToCheck);
+					if (nMeetMember != -1) {
 						g_stOtherPartys[nMeetMember]._bMeetWith = false;
 					}
 
@@ -2881,7 +2882,8 @@ void SrafComputer::onListDispatchTeam() {
 					// If so, put a checkmark in that column.
 
 					// Uncheck any member we already have checked, this is a singular operation
-					if ((nMeetMember = getMeetMember(nListToCheck)) != -1) {
+					nMeetMember = getMeetMember(nListToCheck);
+					if (nMeetMember != -1) {
 						g_stSellerNames[nMeetMember]._bMeetWith = false;
 					}
 
@@ -2931,7 +2933,8 @@ void SrafComputer::onListDispatchTeam() {
 				} else if (cMeetMember.ptInRect(cPoint)) {
 					// if so, put a checkmark in that column.
 					// Uncheck any member we already have checked, this is a singular operation
-					if ((nMeetMember = getMeetMember(nListToCheck)) != -1) {
+					nMeetMember = getMeetMember(nListToCheck);
+					if (nMeetMember != -1) {
 						g_stBuyerBids[nMeetMember]._bMeetWith = false;
 					}
 
@@ -5119,7 +5122,8 @@ void SrafComputer::saveSraffanVars() {
 			break;
 		}
 
-		if ((pVar = g_VarManager->getVariable(pVarName)) != nullptr) {
+		pVar = g_VarManager->getVariable(pVarName);
+		if (pVar != nullptr) {
 			pVar->setValue(g_stOtherPartys[nOtherID]._nPaymentAmount);
 		}
 	}

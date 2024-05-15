@@ -57,7 +57,6 @@ CBofOptions::~CBofOptions() {
 
 ErrorCode CBofOptions::loadOptionFile(const char *pszOptionFile) {
 	assert(isValidObject(this));
-
 	assert(pszOptionFile != nullptr);
 	assert(*pszOptionFile != '\0');
 	assert(strlen(pszOptionFile) < MAX_FNAME);
@@ -174,25 +173,23 @@ ErrorCode CBofOptions::writeSetting(const char *pszSection, const char *pszVar, 
 			Common::sprintf_s(szSectionBuf, "[%s]", pszSection);
 
 			pSection = new COption(szSectionBuf);
-			if (pSection != nullptr) {
-				if (_pOptionList != nullptr) {
-					_pOptionList->addToTail(pSection);
-				} else {
-					_pOptionList = pSection;
-				}
+			if (pSection == nullptr)
+				CBofError::fatalError(ERR_MEMORY, "Unable to instantiate a new COption");
+
+			if (_pOptionList != nullptr) {
+				_pOptionList->addToTail(pSection);
 			} else {
-				errCode = ERR_MEMORY;
+				_pOptionList = pSection;
 			}
 		}
 
 		// Add this option to the specified section
 		pOption = new COption(szValueBuf);
-		if (pOption != nullptr) {
-			assert(pSection != nullptr);
-			pSection->Insert(pOption);
-		} else {
-			errCode = ERR_MEMORY;
-		}
+		if (pOption == nullptr)
+			CBofError::fatalError(ERR_MEMORY, "Unable to instantiate a new COption");
+
+		assert(pSection != nullptr);
+		pSection->Insert(pOption);
 	}
 
 	return errCode;
@@ -340,9 +337,9 @@ COption *CBofOptions::findOption(const char *pszSection, const char *pszVar) {
 	COption *pFound = nullptr;
 
 	int nLength = strlen(pszVar);
-	COption *pStart;
+	COption *pStart = findSection(pszSection);
 
-	if ((pStart = findSection(pszSection)) != nullptr) {
+	if (pStart != nullptr) {
 		COption *pOption = (COption *)pStart->getNext();
 		while (pOption != nullptr) {
 			if (pOption->_szBuf[0] == '[') {

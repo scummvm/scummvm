@@ -532,10 +532,12 @@ void CBofString::replaceStr(const char *pszOld, const char *pszNew) {
 			int nDiff = nNewLen - nOldLen;
 			int nNeedLength = _nLength + 1;
 			p = _pszData;
-			while ((pszSearch = strstr(p, pszOld)) != nullptr) {
+			pszSearch = strstr(p, pszOld);
+			while (pszSearch != nullptr) {
 				p = pszSearch + nOldLen;
 
 				nNeedLength += nDiff;
+				pszSearch = strstr(p, pszOld);
 			}
 
 			// If we need more storage space for the buffer, then get some
@@ -549,9 +551,11 @@ void CBofString::replaceStr(const char *pszOld, const char *pszNew) {
 		// of the token that we are searching for.
 
 		p = _pszData;
-		while ((pszSearch = strstr(p, pszOld)) != nullptr) {
+		pszSearch = strstr(p, pszOld);
+		while (pszSearch != nullptr) {
 			strreplaceStr(p, pszOld, pszNew);
 			p = pszSearch + nNewLen;
+			pszSearch = strstr(p, pszOld);
 		}
 
 		// Get new length

@@ -132,10 +132,10 @@ void SBarSlotWnd::onPaint(CBofRect *pRect) {
 	assert(isValidObject(this));
 
 	if (!errorOccurred()) {
-		CBofBitmap *pBackBmp;
+		CBofBitmap *pBackBmp = getBackdrop();
 
 		//Paint the storage device
-		if ((pBackBmp = getBackdrop()) != nullptr) {
+		if (pBackBmp != nullptr) {
 			assert(getWorkBmp() != nullptr);
 
 			// Erase everything from the background
