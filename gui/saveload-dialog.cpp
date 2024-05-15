@@ -444,6 +444,7 @@ SaveLoadChooserSimple::SaveLoadChooserSimple(const Common::U32String &title, con
 	_list = new ListWidget(this, "SaveLoadChooser.List");
 	_list->setNumberingMode(kListNumberingZero);
 	_list->setEditable(saveMode);
+	_list->enableQuickSelect(false); // quick select is only useful on sorted list
 
 	_gfxWidget = new GraphicsWidget(this, 0, 0, 10, 10);
 
