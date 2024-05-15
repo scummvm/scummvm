@@ -72,12 +72,12 @@ public:
 	 * @param errCode       Error to report
 	 * @param format        printf style format string
 	 */
-	void fatalError(ErrorCode errCode, const char *format, ...);
+	static void fatalError(ErrorCode errCode, const char *format, ...);
 
-	bool errorOccurred() {
+	bool errorOccurred() const {
 		return _errCode != ERR_NONE;
 	}
-	ErrorCode getErrorCode() {
+	ErrorCode getErrorCode() const {
 		return _errCode;
 	}
 	void clearError() {

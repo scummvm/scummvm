@@ -86,9 +86,7 @@ void CBofError::reportError(ErrorCode errCode, const char *format, ...) {
 }
 
 void CBofError::fatalError(ErrorCode errCode, const char *format, ...) {
-	_errCode = errCode;
-
-	if (_errCode == ERR_NONE)
+	if (errCode == ERR_NONE)
 		return;
 
 	Common::String buf;
