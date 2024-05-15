@@ -496,6 +496,19 @@ void SaveLoadChooserSimple::handleCommand(CommandSender *sender, uint32 cmd, uin
 	int selItem = _list->getSelected();
 
 	switch (cmd) {
+	case kListItemSingleClickedCmd:
+		// This command is sent even if an item is clicked while in edit mode,
+		// but that's okay because startEditMode() does nothing when editing.
+		if (_list->isEditable() && _chooseButton->isEnabled()) {
+			_list->startEditMode();
+		}
+		break;
+	case kListItemEditModeStartedCmd:
+		if (_list->getSelectedString() == _("Untitled saved game")) {
+			_list->setEditString(Common::U32String());
+			_list->setEditColor(ThemeEngine::kFontColorNormal);
+		}
+		break;
 	case kListItemActivatedCmd:
 	case kListItemDoubleClickedCmd:
 		if (selItem >= 0 && _chooseButton->isEnabled()) {
@@ -530,10 +543,8 @@ void SaveLoadChooserSimple::handleCommand(CommandSender *sender, uint32 cmd, uin
 
 				setResult(-1);
 				int scrollPos = _list->getCurrentScrollPos();
-				_list->setSelected(-1); // resets scroll pos
+				updateSaveList(); // resets scroll pos
 				_list->scrollTo(scrollPos);
-
-				updateSaveList();
 				updateSelection(true);
 			}
 		}
@@ -622,7 +633,6 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 
 	bool isDeletable = _delSupport;
 	bool isWriteProtected = false;
-	bool startEditMode = _list->isEditable();
 	bool isLocked = false;
 
 	// We used to support letting the themes specify the fill color with our
@@ -641,10 +651,6 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 		isWriteProtected = desc.getWriteProtectedFlag() ||
 			_saveList[selItem].getWriteProtectedFlag();
 		isLocked = desc.getLocked();
-
-		// Don't allow the user to change the description of write protected games
-		if (isWriteProtected)
-			startEditMode = false;
 
 		if (_thumbnailSupport) {
 			const Graphics::Surface *thumb = desc.getThumbnail();
@@ -669,20 +675,10 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 		}
 	}
 
-
 	if (_list->isEditable()) {
 		// Disable the save button if slot is locked, nothing is selected,
 		// or if the selected game is write protected
 		_chooseButton->setEnabled(!isLocked && selItem >= 0 && !isWriteProtected);
-
-		if (startEditMode) {
-			_list->startEditMode();
-
-			if (_chooseButton->isEnabled() && _list->getSelectedString() == _("Untitled saved game")) {
-				_list->setEditString(Common::U32String());
-				_list->setEditColor(ThemeEngine::kFontColorNormal);
-			}
-		}
 	} else {
 		// Disable the load button if slot is locked, nothing is selected,
 		// or if an empty list item is selected.
