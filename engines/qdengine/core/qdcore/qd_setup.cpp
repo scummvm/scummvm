@@ -22,13 +22,14 @@ qdGameConfig qdGameConfig::config_;
 bool enumerateIniSections(const char *fname, std::list<std::string> &section_list) {
 	static char buf[4096];
 	static char path[_MAX_PATH];
-
+	warning("STUB: enumerateIniSections");
+#if 0
 	if (_fullpath(path, fname, _MAX_PATH) == NULL)
 		return false;
 
 	int sz = GetPrivateProfileSectionNames(buf, 4096, path);
 	if (!sz) return false;
-
+#endif
 	char *str = buf;
 	while (strlen(str)) {
 		section_list.push_back(str);
@@ -42,13 +43,15 @@ char *getIniKey(const char *fname, const char *section, const char *key) {
 	static char buf[256];
 	static char path[_MAX_PATH];
 
+	warning("STUB: getIniKey");
+#if 0
 	if (_fullpath(path, fname, _MAX_PATH) == NULL) {
 		*buf = 0;
 	} else {
 		if (!GetPrivateProfileString(section, key, NULL, buf, 256, path))
 			*buf = 0;
 	}
-
+#endif
 	return buf;
 }
 
@@ -64,9 +67,11 @@ void putIniKey(const char *fname, const char *section, const char *key, int val)
 void putIniKey(const char *fname, const char *section, const char *key, const char *val) {
 	static char path[_MAX_PATH];
 
+	warning("STUB: putIniKey");
+#if 0
 	if (_fullpath(path, fname, _MAX_PATH) == NULL) return;
-
 	WritePrivateProfileString(section, key, val, path);
+#endif
 }
 
 qdGameConfig::qdGameConfig() {

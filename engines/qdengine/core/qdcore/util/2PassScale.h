@@ -2,7 +2,6 @@
 #define _2_PASS_SCALE_H_
 
 #include <math.h>
-
 #include <vector>
 
 #define TRACE(a)
@@ -67,20 +66,26 @@ private:
 		return (r << 16) | (g << 8) | (b << 0) | (a << 24);
 	}
 
-	static __forceinline int round(double x) {
+	static inline int round(double x) {
 		int a;
+		warning("STUB: C2PassScale::round(double)");
+#if 0
 		_asm {
 			fld x
 			fistp dword ptr a
 		}
+#endif
 		return a;
 	}
-	static __forceinline int round(float x) {
+	static inline int round(float x) {
 		int a;
+		warning("STUB: C2PassScale::round(float)");
+#if 0
 		_asm {
 			fld x
 			fistp dword ptr a
 		}
+#endif
 		return a;
 	}
 };

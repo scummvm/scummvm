@@ -1,5 +1,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
+#include <string>
 #include "qdengine/core/qd_precomp.h"
 
 #include "qdengine/core/parser/xml_tag_buffer.h"
@@ -145,7 +146,7 @@ bool qdNamedObjectReference::load_data(qdSaveStream &fh, int version) {
 	object_types_.resize(num_levels);
 	object_names_.resize(num_levels);
 
-	std::string str(0, 256);
+	std::string str(256, '\0');
 
 	for (int i = 0; i < num_levels; i ++) {
 		int type, name_len;

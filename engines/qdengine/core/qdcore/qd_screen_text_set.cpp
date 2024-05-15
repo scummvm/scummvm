@@ -1,7 +1,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/parser/qdscr_parser.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
@@ -129,7 +128,7 @@ qdScreenText *qdScreenTextSet::get_text(int x, int y) {
 
 void qdScreenTextSet::clear_texts(qdNamedObject *owner) {
 	bool ret = false;
-	texts_container_t::iterator it = std::remove_if(texts_.begin(), texts_.end(), std::bind2nd(std::mem_fun_ref(qdScreenText::is_owned_by), owner));
+	texts_container_t::iterator it = std::remove_if(texts_.begin(), texts_.end(), std::bind2nd(std::mem_fun_ref(&qdScreenText::is_owned_by), owner));
 	if (it != texts_.end()) {
 		texts_.erase(it, texts_.end());
 		ret = true;

@@ -1488,7 +1488,7 @@ bool qdSprite::scale(float coeff_x, float coeff_y) {
 
 	unsigned char *dest_data = new unsigned char[sx * sy * 4];
 
-	scale_engine.Scale(reinterpret_cast<int *>(src_data), picture_size_.x, picture_size_.y, reinterpret_cast<int *>(dest_data), sx, sy);
+	scale_engine.Scale(reinterpret_cast<unsigned int *>(src_data), picture_size_.x, picture_size_.y, reinterpret_cast<unsigned int *>(dest_data), sx, sy);
 
 	delete [] data_;
 

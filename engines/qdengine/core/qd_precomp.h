@@ -18,6 +18,7 @@
 #define HWND          void *
 #define LPARAM        int
 #define LPSTR         char *
+#define LPCSTR        const char *
 #define LRESULT       long
 #define MMCKINFO      int
 #define MSG           int
@@ -25,10 +26,12 @@
 #define UINT          unsigned int
 #define WPARAM        int
 #define WAVEFORMATEX  int
-#define _MAX_DRIVE    3
-#define _MAX_DIR      256
-#define _MAX_FNAME    256
+#define DWORD         int
+#define COLORREF      unsigned
+#define BYTE          unsigned char
+#define DRIVE_CDROM   5
 #define _MAX_EXT      4
+#define _MAX_PATH     260
 #define VK_ESCAPE     0x1B
 #define VK_RETURN     0x0D
 #define VK_SPACE      0x20
@@ -40,10 +43,48 @@
 #define VK_DELETE     0x2E
 #define VK_HOME       0x24
 #define VK_END        0x23
+#define VK_F10        0x79
+#define VK_F9         0x78
+#define VK_F5         0x74
+#define VK_F6         0x75
+#define VK_PAUSE      0x13
+#define IDYES         6
+#define IDOK          1
+#define IDNO          7
+#define IDCANCEL      2
+#define MAX_PATH      260
+#define MB_YESNO      0x00000004L
+#define MB_TASKMODAL  0x00002000L
+#define MB_OKCANCEL   0x00000001L
+#define SW_SHOWMAXIMIZED 3
+#define MB_ICONEXCLAMATION 0x00000030L
 
 // STUB FIXME
 void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext) {
     warning("STUB: _splitpath");
+}
+
+int MessageBox(HWND hWnd, const char *lpText, const char *lpCaption, UINT uType) {
+    warning("STUB: MessageBox");
+    return 0;
+}
+
+void ShellExecute(HWND hwnd, const char *lpOperation, const char *lpFile, const char *lpParameters, const char *lpDirectory, int nShowCmd) {
+    warning("STUB: ShellExecute");
+}
+
+void Sleep(int dwMilliseconds) {
+    warning("STUB: Sleep");
+}
+
+int GetLogicalDrives() {
+    warning("STUB: GetLogicalDrives");
+    return 0;
+}
+
+uint GetDriveType(LPCSTR lpRootPathName) {
+    warning("STUB: GetDriveTypeA");
+    return 0;
 }
 
 #ifndef _QUEST_EDITOR

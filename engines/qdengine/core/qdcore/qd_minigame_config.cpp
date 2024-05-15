@@ -1,10 +1,10 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/str.h"
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/parser/qdscr_parser.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
-
 #include "qdengine/core/qdcore/qd_setup.h"
 #include "qdengine/core/qdcore/qd_minigame_config.h"
 
@@ -75,11 +75,11 @@ bool qdMinigameConfigParameter::load_ini(const char *ini_file, const char *ini_s
 	set_name(ini_section);
 	char *str = getIniKey(ini_file, ini_section, "type");
 	if (strlen(str)) {
-		if (!stricmp(str, "string"))
+		if (!scumm_stricmp(str, "string"))
 			set_data_type(PRM_DATA_STRING);
-		else if (!stricmp(str, "file"))
+		else if (!scumm_stricmp(str, "file"))
 			set_data_type(PRM_DATA_FILE);
-		else if (!stricmp(str, "object"))
+		else if (!scumm_stricmp(str, "object"))
 			set_data_type(PRM_DATA_OBJECT);
 	}
 
