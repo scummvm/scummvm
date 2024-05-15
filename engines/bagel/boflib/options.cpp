@@ -28,7 +28,14 @@
 
 namespace Bagel {
 
-#define USE_REGISTRY 1
+COption::COption(const char *pszInit) {
+	_szBuf[0] = '\0';
+
+	if (pszInit != nullptr) {
+		assert(strlen(pszInit) < MAX_OPTION_LEN);
+		Common::strcpy_s(_szBuf, pszInit);
+	}
+}
 
 CBofOptions::CBofOptions(const char *pszOptionFile) {
 	_szFileName[0] = '\0';

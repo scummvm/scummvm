@@ -36,14 +36,7 @@ namespace Bagel {
 
 class COption : public CLList, public CBofObject {
 public:
-	COption(const char *pszInit = nullptr) {
-		_szBuf[0] = '\0';
-
-		if (pszInit != nullptr) {
-			assert(strlen(pszInit) < MAX_OPTION_LEN);
-			Common::strcpy_s(_szBuf, pszInit);
-		}
-	}
+	COption(const char *pszInit = nullptr);
 
 	char _szBuf[MAX_OPTION_LEN];
 };
