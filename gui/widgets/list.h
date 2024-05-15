@@ -39,9 +39,11 @@ enum NumberingMode {
 
 /// Some special commands
 enum {
-	kListItemDoubleClickedCmd	= 'LIdb',	///< double click on item - 'data' will be item index
+	kListItemSingleClickedCmd	= 'LIsc',	///< single click on item (sent on mouse down) - 'data' will be item index
+	kListItemDoubleClickedCmd	= 'LIdc',	///< double click on item (sent on mouse up) - 'data' will be item index
 	kListItemActivatedCmd		= 'LIac',	///< item activated by return/enter - 'data' will be item index
 	kListItemRemovalRequestCmd	= 'LIrm',	///< request to remove the item with the delete/backspace keys - 'data' will be item index
+	kListItemEditModeStartedCmd = 'LIes',	///< edit mode started - 'data' will be item index
 	kListSelectionChangedCmd	= 'Lsch'	///< selection changed - 'data' will be item index
 };
 

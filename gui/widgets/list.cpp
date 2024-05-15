@@ -262,11 +262,15 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 		sendCommand(kListSelectionChangedCmd, _selectedItem);
 	}
 
+	// Notify clients if an item was clicked
+	if (newSelectedItem >= 0) {
+		sendCommand(kListItemSingleClickedCmd, _selectedItem);
+	}
+
 	// TODO: Determine where inside the string the user clicked and place the
 	// caret accordingly.
 	// See _editScrollOffset and EditTextWidget::handleMouseDown.
 	markAsDirty();
-
 }
 
 void ListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
@@ -685,6 +689,7 @@ void ListWidget::startEditMode() {
 		_editColor = ThemeEngine::kFontColorNormal;
 		markAsDirty();
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+		sendCommand(kListItemEditModeStartedCmd, _selectedItem);
 	}
 }
 
