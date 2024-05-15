@@ -406,11 +406,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 		case Common::KEYCODE_BACKSPACE:
 		case Common::KEYCODE_DELETE:
 			if (_selectedItem >= 0) {
-				if (_editable) {
-					// Ignore delete and backspace when the list item is editable
-				} else {
-					sendCommand(kListItemRemovalRequestCmd, _selectedItem);
-				}
+				sendCommand(kListItemRemovalRequestCmd, _selectedItem);
 			}
 			break;
 
