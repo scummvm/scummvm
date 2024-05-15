@@ -486,12 +486,12 @@ ParseCodes CBagLogMsg::setInfo(CBagIfstream &istr) {
 		}
 
 		default: {
-			ParseCodes rc = CBagObject::setInfo(istr);
-			if (rc == PARSING_DONE) {
+			ParseCodes parseCode = CBagObject::setInfo(istr);
+			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}
 
-			if (rc == UPDATED_OBJECT) {
+			if (parseCode == UPDATED_OBJECT) {
 				nObjectUpdated = true;
 			} else { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
@@ -634,12 +634,12 @@ ParseCodes CBagLogSuspect::setInfo(CBagIfstream &istr) {
 		}
 
 		default: {
-			ParseCodes rc = CBagObject::setInfo(istr);
-			if (rc == PARSING_DONE) {
+			ParseCodes parseCode = CBagObject::setInfo(istr);
+			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}
 
-			if (rc == UPDATED_OBJECT) {
+			if (parseCode == UPDATED_OBJECT) {
 				objectUpdatedFl = true;
 			} else { // rc==UNKNOWN_TOKEN
 				if (objectUpdatedFl)
@@ -871,12 +871,12 @@ ParseCodes CBagEnergyDetectorObject::setInfo(CBagIfstream &istr) {
 		}
 
 		default: {
-			ParseCodes rc = CBagObject::setInfo(istr);
-			if (rc == PARSING_DONE) {
+			ParseCodes parseCode = CBagObject::setInfo(istr);
+			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}
 
-			if (rc == UPDATED_OBJECT) {
+			if (parseCode == UPDATED_OBJECT) {
 				objectUpdatedFl = true;
 			} else { // rc==UNKNOWN_TOKEN
 				if (objectUpdatedFl)
@@ -1043,12 +1043,12 @@ ParseCodes CBagLogClue::setInfo(CBagIfstream &istr) {
 		}
 
 		default: {
-			ParseCodes rc = CBagObject::setInfo(istr);
-			if (rc == PARSING_DONE) {
+			ParseCodes parseCode = CBagObject::setInfo(istr);
+			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}
 
-			if (rc == UPDATED_OBJECT) {
+			if (parseCode == UPDATED_OBJECT) {
 				nObjectUpdated = true;
 			} else { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)

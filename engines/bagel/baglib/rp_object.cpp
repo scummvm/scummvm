@@ -359,7 +359,7 @@ ParseCodes CBagRPObject::setInfo(CBagIfstream &istr) {
 				// complain violently.
 				if (_pVarObj == nullptr) {
 					reportError(ERR_UNKNOWN, "Invalid Residue Print Variable=%s",
-					            sStr.getBuffer());
+								sStr.getBuffer());
 					return UNKNOWN_TOKEN;
 				}
 			} else {
@@ -369,12 +369,12 @@ ParseCodes CBagRPObject::setInfo(CBagIfstream &istr) {
 		break;
 
 		default: {
-			ParseCodes rc;
-			if ((rc = CBagObject::setInfo(istr)) == PARSING_DONE) {
+			ParseCodes parseCode = CBagObject::setInfo(istr);
+			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}
 
-			if (rc == UPDATED_OBJECT) {
+			if (parseCode == UPDATED_OBJECT) {
 				nObjectUpdated = true;
 			} else { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)

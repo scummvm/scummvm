@@ -161,7 +161,7 @@ bool CBagObject::runObject() {
 }
 
 ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
-	ParseCodes rc = UNKNOWN_TOKEN;
+	ParseCodes parseCode = UNKNOWN_TOKEN;
 
 	while (!istr.eof()) {
 		istr.eatWhite();
@@ -171,7 +171,7 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		//  =filename.ext
 		//
 		case '=': {
-			rc = UPDATED_OBJECT;
+			parseCode = UPDATED_OBJECT;
 			char szLocalBuff[256];
 			szLocalBuff[0] = 0;
 			CBofString s(szLocalBuff, 256);
@@ -184,7 +184,7 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		//  { menu objects .... }  - Add menu items
 		//
 		case '{': {
-			rc = UPDATED_OBJECT;
+			parseCode = UPDATED_OBJECT;
 			if (!_pMenu) {
 				_pMenu = new CBagMenu;
 				if (_pMenu == nullptr)
@@ -209,7 +209,7 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		//  ^id;  - Set id
 		//
 		case '^': {
-			rc = UPDATED_OBJECT;
+			parseCode = UPDATED_OBJECT;
 			char c = (char)istr.peek();
 			if (Common::isDigit(c)) {
 				int nId;
@@ -228,7 +228,7 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		//  *state;  - Set state
 		//
 		case '*': {
-			rc = UPDATED_OBJECT;
+			parseCode = UPDATED_OBJECT;
 			int nState;
 			getIntFromStream(istr, nState);
 			setState(nState);
@@ -238,7 +238,7 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		//  %cusror;  - Set cursor
 		//
 		case '%': {
-			rc = UPDATED_OBJECT;
+			parseCode = UPDATED_OBJECT;
 			int nCursor;
 			getIntFromStream(istr, nCursor);
 			setOverCursor(nCursor);
@@ -248,7 +248,7 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		//  [left,top,right,bottom]  - Set position
 		//
 		case '[': {
-			rc = UPDATED_OBJECT;
+			parseCode = UPDATED_OBJECT;
 			CBofRect r;
 			istr.putBack();
 			getRectFromStream(istr, r);
@@ -263,7 +263,7 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		case 'I': {
 			if (istr.peek() != 'S') {
 				istr.putBack();
-				return rc;
+				return parseCode;
 				break;
 			}
 			char szLocalBuff[256];
@@ -314,10 +314,10 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 				if (!b)
 					putbackStringOnStream(istr, " NOT ");
 				putbackStringOnStream(istr, "IS ");
-				return rc;
+				return parseCode;
 				break;
 			}
-			rc = UPDATED_OBJECT;
+			parseCode = UPDATED_OBJECT;
 			break;
 		}
 		//
@@ -332,11 +332,11 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		//
 		default:
 			istr.putBack();
-			return rc;
+			return parseCode;
 		}
 	}
 
-	return rc;
+	return parseCode;
 }
 
 void CBagObject::onLButtonUp(uint32 nFlags, CBofPoint * /*xPoint*/, void *) {
