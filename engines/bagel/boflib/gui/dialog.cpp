@@ -107,13 +107,14 @@ ErrorCode CBofDialog::create(const char *pszName, CBofRect *pRect, CBofWindow *p
 	assert(isValidObject(this));
 	assert(pszName != nullptr);
 
+	CBofRect cRect;
 	int x = 0;
 	int y = 0;
 	int nWidth = USE_DEFAULT;
 	int nHeight = USE_DEFAULT;
 
 	if ((pRect == nullptr) && (_pBackdrop != nullptr)) {
-		CBofRect cRect = _pBackdrop->getRect();
+		cRect = _pBackdrop->getRect();
 		pRect = &cRect;
 	}
 
