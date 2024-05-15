@@ -44,8 +44,8 @@ struct ScriptContext {
 	Common::Array<ScriptContextMapEntry> sectionMap;
 	Common::StableMap<uint32, Script *> scripts;
 
-	ScriptContext(unsigned int version, ChunkResolver *resolver) : version(version),
-																   resolver(resolver),
+	ScriptContext(unsigned int version_, ChunkResolver *resolver_) : version(version_),
+																   resolver(resolver_),
 																   lnam(nullptr) {}
 
 	void read(Common::SeekableReadStream &stream);

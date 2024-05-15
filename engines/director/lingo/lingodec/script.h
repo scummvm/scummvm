@@ -74,7 +74,7 @@ struct Script {
 	unsigned int version;
 	ScriptContext *context;
 
-	Script(unsigned int version);
+	Script(unsigned int version_);
 	~Script();
 	void read(Common::SeekableReadStream &stream);
 	Common::Array<int16> readVarnamesTable(Common::SeekableReadStream &stream, uint16 count, uint32 offset);

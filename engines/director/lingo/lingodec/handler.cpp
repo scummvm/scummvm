@@ -169,7 +169,7 @@ Common::SharedPtr<Node> Handler::readVar(int varType) {
 	case 0x6: // field
 		return Common::SharedPtr<Node>(new MemberExprNode("field", Common::move(id), Common::move(castID)));
 	default:
-		warning(Common::String::format("findVar: unhandled var type %d", varType).c_str());
+		warning("%s", Common::String::format("findVar: unhandled var type %d", varType).c_str());
 		break;
 	}
 	return Common::SharedPtr<Node>(new ErrorNode());

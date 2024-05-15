@@ -316,12 +316,12 @@ struct MemberExprNode : ExprNode {
 	Common::SharedPtr<Node> memberID;
 	Common::SharedPtr<Node> castID;
 
-	MemberExprNode(Common::String type_, Common::SharedPtr<Node> memberID, Common::SharedPtr<Node> castID)
+	MemberExprNode(Common::String type_, Common::SharedPtr<Node> memberID_, Common::SharedPtr<Node> castID_)
 		: ExprNode(kMemberExprNode), type(type_) {
-		this->memberID = Common::move(memberID);
+		this->memberID = Common::move(memberID_);
 		this->memberID->parent = this;
-		if (castID) {
-			this->castID = Common::move(castID);
+		if (castID_) {
+			this->castID = Common::move(castID_);
 			this->castID->parent = this;
 		}
 	}
@@ -425,8 +425,8 @@ struct RepeatWithToStmtNode : LoopNode {
 	Common::SharedPtr<Node> end;
 	Common::SharedPtr<BlockNode> block;
 
-	RepeatWithToStmtNode(uint32 startIndex_, Common::String v, Common::SharedPtr<Node> s, bool up, Common::SharedPtr<Node> e)
-		: LoopNode(kRepeatWithToStmtNode, startIndex_), up(up) {
+	RepeatWithToStmtNode(uint32 startIndex_, Common::String v, Common::SharedPtr<Node> s, bool up_, Common::SharedPtr<Node> e)
+		: LoopNode(kRepeatWithToStmtNode, startIndex_), up(up_) {
 		varName = v;
 		start = Common::move(s);
 		start->parent = this;

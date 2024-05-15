@@ -17,8 +17,8 @@ namespace LingoDec {
 
 /* Script */
 
-Script::Script(unsigned int version) :
-	version(version),
+Script::Script(unsigned int version_) :
+	version(version_),
 	context(nullptr) {}
 
 Script::~Script() = default;
