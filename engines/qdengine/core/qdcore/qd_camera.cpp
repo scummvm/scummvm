@@ -9,7 +9,6 @@
 #include "qdengine/core/qdcore/qd_game_object_animated.h"
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
 
-#define DWORD int
 struct sPlane4f {
 	float A, B, C, D;
 	sPlane4f()                                              { }

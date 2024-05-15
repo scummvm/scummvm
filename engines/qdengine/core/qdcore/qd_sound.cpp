@@ -103,8 +103,10 @@ bool qdSound::play(const qdSoundHandle *handle, bool loop, float start_position)
 #endif
 
 #ifndef __QD_SYSLIB__
-	if (sndDispatcher * p = sndDispatcher::get_dispatcher())
-		return p -> play_sound(&sndSound(&sound_, handle), loop, start_position, volume_);
+	if (sndDispatcher * p = sndDispatcher::get_dispatcher()) {
+		sndSound sound(&sound_, handle);
+		return p -> play_sound(&sound, loop, start_position, volume_);
+	}
 #endif
 
 	return false;
@@ -118,10 +120,12 @@ bool qdSound::stop(const qdSoundHandle *handle) const {
 
 #ifndef __QD_SYSLIB__
 	if (sndDispatcher * p = sndDispatcher::get_dispatcher()) {
-		if (!handle)
-			return p -> stop_sound(&sndSound(&sound_));
-		else
+		if (!handle) {
+			sndSound sound(&sound_);
+			return p -> stop_sound(&sound);
+		} else {
 			return p -> stop_sound(handle);
+		}
 	}
 #endif
 
@@ -142,10 +146,12 @@ float qdSound::position(const qdSoundHandle *handle) const {
 bool qdSound::is_stopped(const qdSoundHandle *handle) const {
 #ifndef __QD_SYSLIB__
 	if (sndDispatcher * p = sndDispatcher::get_dispatcher()) {
-		if (handle)
+		if (handle) {
 			return (p -> sound_status(handle) == sndSound::SOUND_STOPPED);
-		else
-			return (p -> sound_status(&sndSound(&sound_)) == sndSound::SOUND_STOPPED);
+		} else {
+			sndSound sound(&sound_);
+			return (p -> sound_status(&sound) == sndSound::SOUND_STOPPED);
+		}
 	}
 #endif
 

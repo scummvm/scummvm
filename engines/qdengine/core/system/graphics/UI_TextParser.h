@@ -1,6 +1,6 @@
 #ifndef __UI_TEXT_PARSER_H__
 #define __UI_TEXT_PARSER_H__
-typedef unsigned char BYTE;
+
 
 #include "qdengine/core/system/graphics/gr_font.h"
 

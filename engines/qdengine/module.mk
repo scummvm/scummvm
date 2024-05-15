@@ -46,12 +46,15 @@ MODULE_OBJS = \
 	core/qdcore/qd_counter.o \
 	core/qdcore/qd_d3dutils.o \
 	core/qdcore/qd_file_owner.o \
+	core/qdcore/qd_file_manager.o \
 	core/qdcore/qd_game_dispatcher_base.o \
+	core/qdcore/qd_game_dispatcher.o \
 	core/qdcore/qd_game_end.o \
 	core/qdcore/qd_game_object_animated.o \
 	core/qdcore/qd_game_object_mouse.o \
 	core/qdcore/qd_game_object_static.o \
 	core/qdcore/qd_game_object.o \
+	core/qdcore/qd_game_scene.o \
 	core/qdcore/qd_grid_zone_state.o \
 	core/qdcore/qd_grid_zone.o \
 	core/qdcore/qd_interface_background.o \
@@ -64,10 +67,13 @@ MODULE_OBJS = \
 	core/qdcore/qd_named_object_reference.o \
 	core/qdcore/qd_interface_dispatcher.o \
 	core/qdcore/qd_interface_element_state_mode.o \
+	core/qdcore/qd_interface_element_state.o \
 	core/qdcore/qd_interface_element.o \
 	core/qdcore/qd_interface_save.o \
 	core/qdcore/qd_inventory_cell.o \
 	core/qdcore/qd_inventory.o \
+	core/qdcore/qd_minigame_config.o \
+	core/qdcore/qd_minigame_interface.o \
 	core/qdcore/qd_music_track.o \
 	core/qdcore/qd_named_object_base.o \
 	core/qdcore/qd_named_object_indexer.o \
@@ -76,6 +82,11 @@ MODULE_OBJS = \
 	core/qdcore/qd_resource.o \
 	core/qdcore/qd_rnd.o \
 	core/qdcore/qd_scale_info.o \
+	core/qdcore/qd_screen_text_set.o \
+	core/qdcore/qd_screen_text.o \
+	core/qdcore/qd_setup.o \
+	core/qdcore/qd_sound.o \
+	core/qdcore/qd_sprite.o \
 	core/qdcore/qd_screen_text_dispatcher.o \
 	core/qdcore/qd_sound_info.o \
 	core/qdcore/qd_trigger_chain.o \

@@ -3217,8 +3217,10 @@ const char *qdGameDispatcher::cd_request_string(int cd_id) const {
 
 void qdGameDispatcher::hide_game_window() const {
 	HWND hwnd = (HWND)appGetHandle();
+#if 0
 	ShowWindow(hwnd, SW_HIDE);
 	UpdateWindow(hwnd);
+#endif
 }
 
 void qdGameDispatcher::restore_game_window() const {
@@ -3226,6 +3228,8 @@ void qdGameDispatcher::restore_game_window() const {
 
 	grDispatcher::instance() -> Fill(0);
 	grDispatcher::instance() -> Flush();
+	warning("STUB: qdGameDispatcher::restore_game_window()");
+#if 0
 	SetCursor(NULL);
 
 	if (grDispatcher::instance() -> is_in_fullscreen_mode())
@@ -3234,6 +3238,7 @@ void qdGameDispatcher::restore_game_window() const {
 		ShowWindow(hwnd, SW_SHOWNORMAL);
 
 	UpdateWindow(hwnd);
+#endif
 }
 
 void qdGameDispatcher::request_file_package(const qdFileOwner &file_owner) const {
@@ -3395,7 +3400,7 @@ bool qdGameDispatcher::copy_resources_to_folder(const char *dest_dir, const char
 	// в files_to_copy - все файлы, которые надо скопировать
 	files_to_copy.clear();
 	for (qdFileNameList::const_iterator it = files_to_pack.begin(); it != files_to_pack.end(); it++) {
-		if (0 == stricmp(file_extension, app_io::get_ext(it->c_str())))
+		if (0 == scumm_stricmp(file_extension, app_io::get_ext(it->c_str())))
 			files_to_copy.push_back(*it);
 	}
 
@@ -3434,7 +3439,7 @@ bool qdGameDispatcher::copy_resources_from_folder(const char *src_dir, const cha
 	// в files_to_copy - все файлы, которые надо скопировать
 	files_to_copy.clear();
 	for (qdFileNameList::const_iterator it = resource_files.begin(); it != resource_files.end(); it++) {
-		if (0 == stricmp(file_extension, app_io::get_ext(it->c_str())))
+		if (0 == scumm_stricmp(file_extension, app_io::get_ext(it->c_str())))
 			files_to_copy.push_back(*it);
 	}
 
@@ -3443,6 +3448,8 @@ bool qdGameDispatcher::copy_resources_from_folder(const char *src_dir, const cha
 	path += file_extension;
 
 	resource_files.clear();
+	warning("STUB: qdGameDispatcher::copy_resources_from_folder");
+#if 0
 	WIN32_FIND_DATA find_data;
 	HANDLE hFile = FindFirstFile(path.c_str(), &find_data);
 	while (INVALID_HANDLE_VALUE != hFile) {
@@ -3452,7 +3459,7 @@ bool qdGameDispatcher::copy_resources_from_folder(const char *src_dir, const cha
 	}
 
 	FindClose(hFile);
-
+#endif
 	int file_count = resource_files.size();
 	int files_processed = 0;
 
@@ -3462,15 +3469,17 @@ bool qdGameDispatcher::copy_resources_from_folder(const char *src_dir, const cha
 
 		// Ищем место файлу в глобальном списке
 		for (qdFileNameList::const_iterator c_it = files_to_copy.begin(); c_it != files_to_copy.end(); c_it++) {
-			if (0 == stricmp(it -> c_str(), app_io::path_to_file_name(*c_it).c_str())) {
+			if (0 == scumm_stricmp(it -> c_str(), app_io::path_to_file_name(*c_it).c_str())) {
 				// Нашли соотв. файл - копируем
 				fnd_flag = true;
 				path = src_dir;
 				path += '\\';
 				path += it -> c_str();
 				if (!app_io::copy_file((*c_it).c_str(), path.c_str())) {
+#if 0
 					appLog::default_log() << "Error: could not copy " << find_data.cFileName
 					                      << " to " << (*c_it).c_str() << "\r\n";
+#endif
 					all_copy_ok = false;
 				}
 				break;

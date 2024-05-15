@@ -1,13 +1,12 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/system/app_log_file.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include "qdengine/core/system/input/mouse_input.h"
 #include "qdengine/core/qdcore/util/plaympp_api.h"
-
+#include "qdengine/xlibs/util/xmath/SafeMath.h"
 #include "qdengine/core/parser/qdscr_parser.h"
 #include "qdengine/core/qdcore/qd_minigame.h"
 #include "qdengine/core/qdcore/qd_grid_zone.h"
@@ -936,13 +935,13 @@ bool qdGameScene::init() {
 	selected_object_ = NULL;
 
 	std::for_each(object_list().begin(), object_list().end(),
-	              std::mem_fun(qdGameObject::init));
+	              std::mem_fun(&qdGameObject::init));
 
 	std::for_each(grid_zone_list().begin(), grid_zone_list().end(),
-	              std::mem_fun(qdGridZone::init));
+	              std::mem_fun(&qdGridZone::init));
 
 	std::for_each(music_track_list().begin(), music_track_list().end(),
-	              std::mem_fun(qdMusicTrack::init));
+	              std::mem_fun(&qdMusicTrack::init));
 
 #ifndef _QUEST_EDITOR
 	if (has_minigame() && !minigame_) {

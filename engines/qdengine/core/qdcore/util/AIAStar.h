@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include <algorithm>
+#include "qdengine/xlibs/util/xmath/xmath.h"
 
 ///////////////////////////AIAStar/////////////////////
 //AIAStar::FindPath поиск пути из точки from
@@ -144,7 +145,7 @@ bool AIAStar<Heuristic, TypeH>::FindPath(Vect2i from, Heuristic *hr, std::vector
 	p->pt = from;
 	p->self_it = open_map.insert(type_point_map::value_type(p->f(), p));
 #else
-	open_map.insert(type_point_map::value_type(p->f(), from));
+	open_map.insert(typename type_point_map::value_type(p->f(), from));
 #endif
 	const int sx[8] = { 0, -1, 0, +1, -1, +1, +1, -1,};
 	const int sy[8] = {-1, 0, +1, 0, -1, -1, +1, +1 };
@@ -244,7 +245,7 @@ bool AIAStar<Heuristic, TypeH>::FindPath(Vect2i from, Heuristic *hr, std::vector
 			p->pt = child;
 			p->self_it = open_map.insert(type_point_map::value_type(p->f(), p));
 #else
-			open_map.insert(type_point_map::value_type(p->f(), child));
+			open_map.insert(typename type_point_map::value_type(p->f(), child));
 #endif
 			p->is_open = true;
 			p->used = is_used_num;

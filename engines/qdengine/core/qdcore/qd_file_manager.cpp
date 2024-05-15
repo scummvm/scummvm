@@ -14,6 +14,7 @@
 #endif
 #endif
 
+#if 0
 extern "C" int WINAPI OpenCD(BYTE drive_letter);
 extern "C" int WINAPI FindCD();
 extern "C" int WINAPI SetSpeed(BYTE speed);
@@ -22,6 +23,7 @@ extern "C" int WINAPI ReadCD2();
 extern "C" int WINAPI ReadCheck(int mode);
 extern "C" int WINAPI RunCheck(char *key);
 extern "C" int WINAPI CloseCD();
+#endif
 
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
@@ -352,4 +354,3 @@ bool qdFileManager::check_drive(int drive_letter) {
 
 	return !failed;
 }
-

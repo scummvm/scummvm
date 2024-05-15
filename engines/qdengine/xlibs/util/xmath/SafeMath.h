@@ -2,7 +2,6 @@
 #define _PERIMETER_SAFE_MATH_
 
 #include "qdengine/xlibs/util/XMath/fastMath.h"
-#include "qdengine/xlibs/util/xmath/xmath.h"
 
 inline float cycle(float f, float size) {
 	return fmodFast(fmodFast(f, size) + size, size);

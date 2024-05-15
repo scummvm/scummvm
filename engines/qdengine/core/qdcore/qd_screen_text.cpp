@@ -153,7 +153,7 @@ bool qdScreenText::format_text(int max_width) {
 	// пробела в конце всегда включится попытка форматирования конца).
 	// Пробел не отразиться на выводе, т.к. он в конце.
 
-	unsigned char *dp = (unsigned char *)data_.begin();
+	unsigned char *dp = (unsigned char *)data_.c_str();
 
 	for (int i = 0; i < data_.length(); i++) {
 		if (dp[i] == '\n') {
