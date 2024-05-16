@@ -52,6 +52,11 @@
 #include "director/castmember/transition.h"
 #include "director/lingo/lingo-codegen.h"
 
+#include "director/lingo/lingodec/context.h"
+#include "director/lingo/lingodec/names.h"
+#include "director/lingo/lingodec/resolver.h"
+#include "director/lingo/lingodec/script.h"
+
 namespace Director {
 
 Cast::Cast(Movie *movie, uint16 castLibID, bool isShared, bool isExternal) {
@@ -115,6 +120,9 @@ Cast::~Cast() {
 
 	delete _loadedCast;
 	delete _lingoArchive;
+
+	delete _chunkResolver;
+	delete _lingodec;
 }
 
 CastMember *Cast::getCastMember(int castId, bool load) {
@@ -1120,6 +1128,51 @@ struct LingoContextEntry {
 LingoContextEntry::LingoContextEntry(int32 i, int16 n)
 	: index(i), nextUnused(n), unused(false) {}
 
+class ChunkResolver : public LingoDec::ChunkResolver {
+public:
+	ChunkResolver(Cast *cast) : _cast(cast) {}
+	~ChunkResolver() {
+		for (auto &it : _scripts)
+			delete it._value;
+
+		for (auto &it : _scriptnames)
+			delete it._value;
+	}
+
+	virtual LingoDec::Script *getScript(int32 id) {
+		if (_scripts.contains(id))
+			return _scripts[id];
+
+		Common::SeekableReadStreamEndian *r;
+
+		r = _cast->_castArchive->getResource(MKTAG('L', 's', 'c', 'r'), id);
+		_scripts[id] = new LingoDec::Script(_cast->_version);
+		_scripts[id]->read(*r);
+		delete r;
+
+		return _scripts[id];
+	}
+
+	virtual LingoDec::ScriptNames *getScriptNames(int32 id) {
+		if (_scriptnames.contains(id))
+			return _scriptnames[id];
+
+		Common::SeekableReadStreamEndian *r;
+
+		r = _cast->_castArchive->getResource(MKTAG('L', 'n', 'a', 'm'), id);
+		_scriptnames[id] = new LingoDec::ScriptNames(_cast->_version);
+		_scriptnames[id]->read(*r);
+		delete r;
+
+		return _scriptnames[id];
+	}
+
+private:
+	Cast *_cast;
+	Common::HashMap<int32, LingoDec::Script *> _scripts;
+	Common::HashMap<int32, LingoDec::ScriptNames *> _scriptnames;
+};
+
 void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 	if (_version >= kFileVer400) {
 		debugC(1, kDebugCompile, "Add D4 script context");
@@ -1210,6 +1263,21 @@ void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 	} else {
 		error("Cast::loadLingoContext: unsupported Director version (%d)", _version);
 	}
+
+#if 0
+	// Rewind stream
+	stream.seek(0);
+	_chunkResolver = new ChunkResolver(this);
+	_lingodec = new LingoDec::ScriptContext(_version, _chunkResolver);
+	_lingodec->read(stream);
+
+	_lingodec->parseScripts();
+
+	for (auto it = _lingodec->scripts.begin(); it != _lingodec->scripts.end(); ++it) {
+		warning("%s", it->second->scriptText("\n", false).c_str());
+	}
+
+#endif
 }
 
 void Cast::loadScriptV2(Common::SeekableReadStreamEndian &stream, uint16 id) {

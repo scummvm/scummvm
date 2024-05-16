@@ -30,6 +30,11 @@ namespace Common {
 	class SeekableReadStreamEndian;
 }
 
+namespace LingoDec {
+	class ChunkResolver;
+	struct ScriptContext;
+}
+
 namespace Director {
 
 class Archive;
@@ -165,6 +170,9 @@ public:
 	TilePatternEntry _tiles[kNumBuiltinTiles];
 
 	LingoArchive *_lingoArchive;
+
+	LingoDec::ScriptContext *_lingodec = nullptr;
+	LingoDec::ChunkResolver *_chunkResolver = nullptr;
 
 private:
 	DirectorEngine *_vm;
