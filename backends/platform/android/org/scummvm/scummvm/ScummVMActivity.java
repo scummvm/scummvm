@@ -61,7 +61,6 @@ import java.util.Map;
 import java.util.TreeSet;
 
 public class ScummVMActivity extends Activity implements OnKeyboardVisibilityListener {
-
 	/* Establish whether the hover events are available */
 	private static boolean _hoverAvailable;
 
@@ -840,6 +839,18 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 
 		@Override
+		protected void setCurrentGame(String target) {
+			Uri data = null;
+			if (target != null) {
+				data = Uri.fromParts("scummvm", target, null);
+			}
+			Intent intent = new Intent(Intent.ACTION_MAIN, data,
+				ScummVMActivity.this, ScummVMActivity.class);
+			setIntent(intent);
+			Log.d(ScummVM.LOG_TAG, "Current activity Intent is: " + data);
+		}
+
+		@Override
 		protected String[] getSysArchives() {
 			Log.d(ScummVM.LOG_TAG, "Adding to Search Archive: " + _actualScummVMDataDir.getPath());
 			if (_externalPathAvailableForReadAccess && _possibleExternalScummVMDir != null) {
@@ -908,7 +919,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-//		Log.d(ScummVM.LOG_TAG, "onCreate");
+//		Log.d(ScummVM.LOG_TAG, "onCreate: " + getIntent().getData());
 
 		super.onCreate(savedInstanceState);
 
@@ -1009,9 +1020,19 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		// We should have a valid path to a configuration file here
 
 		// Start ScummVM
-		_scummvm.setArgs(new String[]{
-			"ScummVM"
-		});
+		final Uri intentData = getIntent().getData();
+		String[] args;
+		if (intentData == null) {
+			args = new String[]{
+				"ScummVM"
+			};
+		} else {
+			args = new String[]{
+				"ScummVM",
+				intentData.getSchemeSpecificPart()
+			};
+		}
+		_scummvm.setArgs(args);
 
 		Log.d(ScummVM.LOG_TAG, "Hover available: " + _hoverAvailable);
 		_mouseHelper = null;
@@ -1052,6 +1073,64 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 //		Log.d(ScummVM.LOG_TAG, "onStart");
 
 		super.onStart();
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+//		Log.d(ScummVM.LOG_TAG, "onNewIntent: " + intent.getData());
+
+		super.onNewIntent(intent);
+
+		Uri intentData = intent.getData();
+
+		// No specific game, we just continue
+		if (intentData == null) {
+			return;
+		}
+
+		// Same game requested, we continue too
+		if (intentData.equals(getIntent().getData())) {
+			return;
+		}
+
+		setIntent(intent);
+
+		if (_events == null) {
+			finish();
+			startActivity(intent);
+			return;
+		}
+
+		// Don't finish our activity on C++ end
+		_finishing = true;
+
+		_events.clearEventHandler();
+		_events.sendQuitEvent();
+
+		// Make sure the thread is actively polling for events
+		_scummvm.setPause(false);
+		try {
+			// 1s timeout
+			_scummvm_thread.join(2000);
+		} catch (InterruptedException e) {
+			Log.i(ScummVM.LOG_TAG, "Error while joining ScummVM thread", e);
+		}
+
+		// Our join failed: kill ourselves to not have two ScummVM running at the same time
+		if (_scummvm_thread.isAlive()) {
+			Process.killProcess(Process.myPid());
+		}
+
+		_finishing = false;
+
+		String[] args = new String[]{
+			"ScummVM",
+			intentData.getSchemeSpecificPart()
+		};
+		_scummvm.setArgs(args);
+
+		_scummvm_thread = new Thread(_scummvm, "ScummVM");
+		_scummvm_thread.start();
 	}
 
 	@Override
