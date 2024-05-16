@@ -28,6 +28,7 @@ namespace Director {
 
 // taken from shared:1124:mHandleError
 enum MMovieError {
+	MMOVIE_NONE = 0,
 	MMOVIE_NO_STAGE = -1,
 	MMOVIE_TOO_MANY_OPEN_FILES = -2,
 	MMOVIE_MOVIE_ALREADY_OPEN = -3,
@@ -39,6 +40,7 @@ enum MMovieError {
 	MMOVIE_INDEX_OUT_OF_RANGE = -9,
 	MMOVIE_CONTINUE_WITHOUT_PLAYING = -10,
 	MMOVIE_ABORT_DOUBLE_CLICK = -11,
+	MMOVIE_PLAYBACK_FINISHED = -12,
 };
 
 struct MMovieSegment {
@@ -75,16 +77,17 @@ public:
 	bool _abortOnClick = false;
 	bool _purge = false;
 	bool _async = false;
+	int _lastTicks = -1;
 
 	Common::HashMap<int, MMovieFile> _movies;
 	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _moviePathMap;
 
 	Graphics::Surface _lastFrame;
 
-	bool playSegment(int movieIndex, int segIndex, bool looping, bool restore, bool shiftAbort, bool abortOnClick, bool purge, bool async);
+	int playSegment(int movieIndex, int segIndex, bool looping, bool restore, bool shiftAbort, bool abortOnClick, bool purge, bool async);
 	bool stopSegment();
-	void updateScreenBlocking();
-	void updateScreen();
+	int updateScreenBlocking();
+	int updateScreen();
 	int getTicks();
 };
 
