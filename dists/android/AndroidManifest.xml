@@ -67,6 +67,16 @@
 			android:launchMode="singleInstance"
 			android:theme="@style/AppTheme"
 			android:windowSoftInputMode="adjustResize" />
+		<activity
+			android:name=".ShortcutCreatorActivity"
+			android:exported="true"
+			android:label="@string/shortcut_creator_title"
+			android:theme="@style/ShortcutCreatorTheme">
+			<intent-filter>
+				<action android:name="android.intent.action.CREATE_SHORTCUT" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
 	</application>
 
 </manifest>

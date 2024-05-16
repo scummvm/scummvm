@@ -10,4 +10,10 @@
 		<item name="android:windowBackground">@drawable/splash</item>
 	</style>
 
+	<!-- This base theme is overridden in values-v29 to allow for Day/Night theme selection -->
+	<style name="ShortcutCreatorThemeBase" parent="@android:style/Theme.DeviceDefault">
+	</style>
+
+	<style name="ShortcutCreatorTheme" parent="ShortcutCreatorThemeBase">
+	</style>
 </resources>

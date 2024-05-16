@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical">
+
+	<ImageView
+		android:id="@+id/shortcut_creator_customize_game_icon"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		android:contentDescription="@string/shortcut_creator_customize_game_icon_description"
+		tools:srcCompat="@drawable/ic_no_game_icon" />
+
+	<EditText
+		android:id="@+id/shortcut_creator_customize_game_description"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:autofillHints=""
+		android:hint="@string/shortcut_creator_customize_game_name_hint"
+		android:imeOptions="actionDone"
+		android:inputType="text"
+		android:minHeight="48dp"
+		android:paddingLeft="5dp"
+		android:paddingRight="5dp"
+		android:singleLine="true"
+		tools:text="Sample game" />
+</LinearLayout>
