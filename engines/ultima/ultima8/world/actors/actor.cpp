@@ -26,6 +26,7 @@
 #include "ultima/ultima8/kernel/delay_process.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/usecode/uc_list.h"
+#include "ultima/ultima8/usecode/uc_process.h"
 #include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/world/fire_type.h"
@@ -1282,7 +1283,9 @@ void Actor::receiveHitU8(uint16 other, Direction dir, int damage, uint16 damage_
 		}
 	}
 
-	if (damage && !fallingprocid) {
+	if (damage && !fallingprocid &&
+		getLastAnim() != Animation::die &&
+		getLastAnim() != Animation::fallBackwards) {
 		ProcId anim1pid = doAnim(Animation::stumbleBackwards, dir);
 		ProcId anim2pid;
 		if (isInCombat())
@@ -1318,8 +1321,28 @@ ProcId Actor::dieU8(uint16 damageType) {
 	Kernel::get_instance()->killProcesses(getObjId(), Kernel::PROC_TYPE_ALL, true);
 #endif
 
-	if (!animprocid)
+	if (!animprocid &&
+		getLastAnim() != Animation::die &&
+		getLastAnim() != Animation::fallBackwards) {
 		animprocid = doAnim(Animation::die, dir_current);
+	}
+
+	// Kill blue potion use process if running
+	if (_objId == 1) {
+		ProcessIter iter = Kernel::get_instance()->getProcessBeginIterator();
+		ProcessIter endproc = Kernel::get_instance()->getProcessEndIterator();
+		for (; iter != endproc; ++iter) {
+			UCProcess *p = dynamic_cast<UCProcess *>(*iter);
+			if (!p)
+				continue;
+			if (p->getClassId() != 766) // Potion
+				continue;
+			if (p->is_terminated())
+				continue;
+
+			p->fail();
+		}
+	}
 
 	MainActor *avatar = getMainActor();
 	// if hostile to avatar
