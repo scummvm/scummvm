@@ -58,7 +58,7 @@ public:
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "Alcachofa (C)";
+		return "Alcachofa Soft (C)";
 	}
 
 	const DebugChannelDef *getDebugChannels() const override {
