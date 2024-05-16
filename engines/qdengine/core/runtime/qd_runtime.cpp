@@ -247,7 +247,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 
 	ResourceDispatcher resD;
 	resD.setTimer(qdGameConfig::get_config().logic_synchro_by_clock(), qdGameConfig::get_config().logic_period(), 300);
-	resD.attach(new MemberFunctionCallResourceUser<qdGameDispatcher>(*qd_gameD, qdGameDispatcher::quant, qdGameConfig::get_config().logic_period()));
+	resD.attach(new MemberFunctionCallResourceUser<qdGameDispatcher>(*qd_gameD, &qdGameDispatcher::quant, qdGameConfig::get_config().logic_period()));
 	sndD -> set_frequency_coeff(qdGameConfig::get_config().game_speed());
 	resD.set_speed(qdGameConfig::get_config().game_speed());
 	resD.start();

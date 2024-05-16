@@ -20,7 +20,7 @@
 #define HMODULE       void *
 #define HRESULT       int
 #define FARPROC       int *
-#define LPARAM        int
+#define LPARAM        long int *
 #define LPSTR         char *
 #define LPCSTR        const char *
 #define LRESULT       long
@@ -79,8 +79,8 @@
 typedef struct MSG {
   HWND   hwnd;
   UINT   message;
-  WPARAM wParam;
-  LPARAM lParam;
+  int wParam;
+  int lParam;
   DWORD  time;
   DWORD  lPrivate;
 };
