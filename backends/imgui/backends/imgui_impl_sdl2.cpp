@@ -78,7 +78,7 @@
 
 #ifndef IMGUI_DISABLE
 #include "backends/platform/sdl/sdl.h"
-#include "imgui_impl_sdl2_scummvm.h"
+#include "imgui_impl_sdl2.h"
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 
 // Clang warnings with -Weverything

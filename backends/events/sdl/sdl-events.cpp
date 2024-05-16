@@ -33,7 +33,7 @@
 #include "gui/gui-manager.h"
 
 #if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
-#include "backends/imgui/backends/imgui_impl_sdl2_scummvm.h"
+#include "backends/imgui/backends/imgui_impl_sdl2.h"
 #endif
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)

@@ -500,8 +500,8 @@ endif
 ifdef USE_SDL2
 ifdef USE_IMGUI
 MODULE_OBJS += \
-	imgui/backends/imgui_impl_opengl3_scummvm.o \
-	imgui/backends/imgui_impl_sdl2_scummvm.o
+	imgui/backends/imgui_impl_opengl3.o \
+	imgui/backends/imgui_impl_sdl2.o
 endif
 endif
 

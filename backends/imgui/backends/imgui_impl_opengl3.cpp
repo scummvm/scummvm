@@ -111,7 +111,7 @@
 
 #include "backends/imgui/imgui.h"
 #ifndef IMGUI_DISABLE
-#include "imgui_impl_opengl3_scummvm.h"
+#include "imgui_impl_opengl3.h"
 #include <stdio.h>
 #include <stdint.h>     // intptr_t
 #if defined(__APPLE__)
@@ -163,7 +163,7 @@
 // Changes to this backend using new APIs should be accompanied by a regenerated stripped loader version.
 #define IMGL3W_SCUMMVM_LOADER
 #define IMGL3W_IMPL
-#include "backends/imgui/backends/imgui_impl_opengl3_loader.h"
+#include "imgui_impl_opengl3_loader.h"
 #endif
 
 // Vertex arrays are not supported on ES2/WebGL1 unless Emscripten which uses an extension

@@ -35,8 +35,8 @@
 #endif
 
 #ifdef USE_IMGUI
-#include "backends/imgui/backends/imgui_impl_sdl2_scummvm.h"
-#include "backends/imgui/backends/imgui_impl_opengl3_scummvm.h"
+#include "backends/imgui/backends/imgui_impl_sdl2.h"
+#include "backends/imgui/backends/imgui_impl_opengl3.h"
 #endif
 
 OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, SdlWindow *window)
