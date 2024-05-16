@@ -1,11 +1,9 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
-#include "AIAStar_API.h"
-
-#include "qd_camera.h"
-#include "qd_game_object_moving.h"
+#include "qdengine/core/qdcore/qd_camera.h"
+#include "qdengine/core/qdcore/qd_game_object_moving.h"
+#include "qdengine/core/qdcore/util/AIAStar_API.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
