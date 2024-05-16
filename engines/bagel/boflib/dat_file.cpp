@@ -557,10 +557,14 @@ ErrorCode CBofDataFile::writeRecord(int32 lRecNum, void *pBuf, int32 lSize, bool
 					// Remember it's length
 					pRecInfo->_lLength = lSize;
 
+					int bufferSize = getMaxRecSize();
+					if (bufferSize <= 0)
+						fatalError(ERR_FREAD, "Invalid size read in header data");
+
 					// Allocate a buffer that could hold the largest record
-					byte *pTmpBuf = (byte *)bofAlloc((int)getMaxRecSize());
+					byte *pTmpBuf = (byte *)bofAlloc(bufferSize);
 					if (pTmpBuf == nullptr)
-						fatalError(ERR_MEMORY, "unable to allocate a buffer of %ld bytes", getMaxRecSize());
+						fatalError(ERR_MEMORY, "unable to allocate a buffer of %d bytes", bufferSize);
 
 					for (int i = (int)lRecNum + 1; i < (int)_lNumRecs - 1; i++) {
 						_errCode = readRecord(i, pTmpBuf);
