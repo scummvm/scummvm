@@ -101,6 +101,7 @@ public:
 	virtual void drawBackground(uint8 color);
 
 	void drawEclipse(uint8 color1, uint8 color2, float difference);
+	virtual void drawSkybox(Texture *texture, Math::Vector3d camera) {};
 	virtual void drawCelestialBody(Math::Vector3d position, float radius, uint8 color) {};
 
 	Common::Rect viewport() const;

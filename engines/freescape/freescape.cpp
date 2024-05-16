@@ -127,8 +127,10 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 
 	_border = nullptr;
 	_title = nullptr;
+	_background = nullptr;
 	_titleTexture = nullptr;
 	_borderTexture = nullptr;
+	_skyTexture = nullptr;
 	_uiTexture = nullptr;
 	_fontLoaded = false;
 	_dataBundle = nullptr;
@@ -200,10 +202,16 @@ FreescapeEngine::~FreescapeEngine() {
 		delete _border;
 	}
 
+	if (_background) {
+		_background->free();
+		delete _background;
+	}
+
 	if (_gfx->_isAccelerated) {
 		delete _borderTexture;
 		delete _uiTexture;
 		delete _titleTexture;
+		delete _skyTexture;
 	}
 
 	for (auto &it : _areaMap) {
@@ -320,6 +328,13 @@ void FreescapeEngine::clearBackground() {
 void FreescapeEngine::drawBackground() {
 	clearBackground();
 	_gfx->drawBackground(_currentArea->_skyColor);
+
+	if (isCastle()) {
+		assert(_background);
+		if (!_skyTexture)
+			_skyTexture = _gfx->createTexture(_background);
+		_gfx->drawSkybox(_skyTexture, _position);
+	}
 }
 
 void FreescapeEngine::drawFrame() {

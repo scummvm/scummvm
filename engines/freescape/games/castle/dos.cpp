@@ -111,6 +111,10 @@ void CastleEngine::loadAssetsDOSFullGame() {
 		_areaMap[1]->addFloor();
 		_areaMap[2]->addFloor();
 		delete stream;
+
+		_background = loadBundledImage("castle_background");
+		assert(_background);
+		_background->convertToInPlace(_gfx->_texturePixelFormat);
 	} else
 		error("Not implemented yet");
 
@@ -176,6 +180,9 @@ void CastleEngine::loadAssetsDOSDemo() {
 		_areaMap[1]->addFloor();
 		_areaMap[2]->addFloor();
 		delete stream;
+		_background = loadBundledImage("background");
+		assert(_background);
+		_background->convertToInPlace(_gfx->_texturePixelFormat);
 	} else
 		error("Not implemented yet");
 }
