@@ -4,34 +4,33 @@
 
 #include <locale.h>
 
-#include "resource.h"
+#include "qdengine/core/resource.h"
 
-#include "gdi_gr_dispatcher.h"
-#include "ddraw_gr_dispatcher.h"
-#include "app_core.h"
-#include "app_error_handler.h"
-#include "qd_game_dispatcher.h"
-#include "qd_game_scene.h"
-#include "qd_trigger_chain.h"
-#include "qd_dialogs.h"
-#include "qd_setup.h"
-#include "ds_snd_dispatcher.h"
-#include "WinVideo.h"
-#include "qd_trigger_profiler.h"
-#include "qd_file_manager.h"
-#include "plaympp_api.h"
+#include "qdengine/core/qdcore/qd_game_dispatcher.h"
+#include "qdengine/core/qdcore/qd_game_scene.h"
+#include "qdengine/core/qdcore/qd_trigger_chain.h"
+#include "qdengine/core/qdcore/qd_setup.h"
+#include "qdengine/core/system/sound/ds_snd_dispatcher.h"
+#include "qdengine/core/qdcore/qd_trigger_profiler.h"
+#include "qdengine/core/qdcore/qd_file_manager.h"
+#include "qdengine/core/qdcore/util/plaympp_api.h"
+#include "qdengine/core/qdcore/util/splash_screen.h"
+#include "qdengine/core/qdcore/util/ResourceDispatcher.h"
+#include "qdengine/core/qdcore/util/WinVideo.h"
 
-#include "input_wndproc.h"
-#include "input_recorder.h"
-#include "mouse_input.h"
-#include "keyboard_input.h"
+#include "qdengine/core/system/app_core.h"
+#include "qdengine/core/system/app_error_handler.h"
+#include "qdengine/core/system/graphics/gdi_gr_dispatcher.h"
+#include "qdengine/core/system/graphics/ddraw_gr_dispatcher.h"
+#include "qdengine/core/system/input/input_wndproc.h"
+#include "qdengine/core/system/input/input_recorder.h"
+#include "qdengine/core/system/input/mouse_input.h"
+#include "qdengine/core/system/input/keyboard_input.h"
 
-#include "qd_dialogs.h"
-#include "splash_screen.h"
+#include "qdengine/core/runtime/comline_parser.h"
+#include "qdengine/core/runtime/qd_dialogs.h"
 
-#include "ResourceDispatcher.h"
 
-#include "comline_parser.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -79,8 +78,12 @@ qdGameDispatcher *qd_gameD = NULL;
 
 using namespace qdrt;
 
+#define WINAPI
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow) {
 	const char *const event_name = "QD Engine Game";
+	warning("STUB: qdrt::WinMain");
+#if 0
 	if (HANDLE event = OpenEvent(EVENT_ALL_ACCESS, FALSE, event_name)) {
 		if (HWND hwnd = FindWindow(grDispatcher::wnd_class_name(), NULL)) {
 			ShowWindow(hwnd, SW_RESTORE);
@@ -88,9 +91,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 			SetForegroundWindow(hwnd);
 		}
 		return 0;
-	} else
+	} else {
 		event = CreateEvent(0, TRUE, TRUE, event_name);
-
+	}
+#endif
 	ErrH.SetRestore(restore);
 
 	comlineParser comline_parser;
@@ -109,8 +113,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	comline_parser.register_option(qdTriggerProfiler::activation_comline(), COMLINE_TRIGGERS_PROFILER);
 #endif
 
+#if 0
 	comline_parser.parse_comline(__argc, __argv);
-
+#endif
 	std::string script_name;
 	if (comline_parser.has_argument(-1))
 		script_name = comline_parser.argument_string(-1);
@@ -192,11 +197,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 
 //	qdFileManager::instance().check_drive('E');
 	qdFileManager::instance().set_request_CD_handler(request_CD_handler);
-
-	for (int i = 1; i < __argc; i ++)
+#if 0
+	for (int i = 1; i < __argc; i ++) {
 		appLog::default_log() << " \"" << __argv[i] << "\"";
+	}
 	appLog::default_log() << "\r\n";
-
+#endif
 	grDispatcher::set_default_font(qdGameDispatcher::create_font(0));
 
 	qd_gameD = new qdGameDispatcher;
@@ -295,8 +301,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 			input::keyboard_wndproc(msg, keyboardDispatcher::instance());
 			input::mouse_wndproc(msg, mouseDispatcher::instance());
 
+#if 0
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+#endif
 		}
 
 		if (grDispatcher::is_active()) {

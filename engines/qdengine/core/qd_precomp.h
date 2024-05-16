@@ -16,13 +16,16 @@
 #define CALLBACK
 #define HMMIO         void *
 #define HWND          void *
+#define HINSTANCE     void *
+#define HMODULE       void *
+#define FARPROC       int *
 #define LPARAM        int
 #define LPSTR         char *
 #define LPCSTR        const char *
 #define LRESULT       long
 #define MMCKINFO      int
-#define MSG           int
 #define PASCAL
+#define WINAPI
 #define UINT          unsigned int
 #define WPARAM        int
 #define WAVEFORMATEX  int
@@ -32,6 +35,11 @@
 #define DRIVE_CDROM   5
 #define _MAX_EXT      4
 #define _MAX_PATH     260
+#define IDYES         6
+#define IDOK          1
+#define IDNO          7
+#define IDCANCEL      2
+#define MAX_PATH      260
 #define VK_ESCAPE     0x1B
 #define VK_RETURN     0x0D
 #define VK_SPACE      0x20
@@ -48,18 +56,34 @@
 #define VK_F5         0x74
 #define VK_F6         0x75
 #define VK_PAUSE      0x13
-#define IDYES         6
-#define IDOK          1
-#define IDNO          7
-#define IDCANCEL      2
-#define MAX_PATH      260
+#define VK_NEXT       0x22
+#define VK_PRIOR      0x21
+#define PM_REMOVE     0x0001
+#define SC_MAXIMIZE   0xF030
+#define WM_SYSCOMMAND 0x0112
+#define WM_SYSKEYDOWN 0x0104
+#define WM_KEYDOWN    0x0100
+#define WM_KEYUP      0x0101
+#define WM_QUIT       0x0012
+#define WM_SETTEXT    0x000C
+#define SW_HIDE       0
+#define SW_SHOWNORMAL 1
 #define MB_YESNO      0x00000004L
 #define MB_TASKMODAL  0x00002000L
 #define MB_OKCANCEL   0x00000001L
-#define SW_SHOWMAXIMIZED 3
+#define SW_SHOWMAXIMIZED   3
 #define MB_ICONEXCLAMATION 0x00000030L
+#define SEM_FAILCRITICALERRORS 1
 
-// STUB FIXME
+typedef struct MSG {
+  HWND   hwnd;
+  UINT   message;
+  WPARAM wParam;
+  LPARAM lParam;
+  DWORD  time;
+  DWORD  lPrivate;
+};
+
 void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext) {
     warning("STUB: _splitpath");
 }
@@ -85,6 +109,56 @@ int GetLogicalDrives() {
 uint GetDriveType(LPCSTR lpRootPathName) {
     warning("STUB: GetDriveTypeA");
     return 0;
+}
+
+FARPROC GetProcAddress(HMODULE hModule, LPCSTR lpProcName) {
+    warning("STUB: GetProcAddress");
+    return 0;
+}
+
+bool FreeLibrary(void *hModule) {
+    warning("STUB: FreeLibrary");
+    return false;
+}
+
+HMODULE LoadLibrary(const char *lpLibFileName) {
+    warning("STUB: LoadLibrary");
+    return 0;
+}
+
+bool ShowWindow(HWND hWnd, int nCmdShow) {
+    warning("STUB: ShowWindow");
+    return false;
+}
+
+bool CloseWindow(HWND hWnd) {
+    warning("STUB: CloseWindow");
+    return false;
+}
+
+bool DestroyWindow(HWND hWnd) {
+    warning("STUB: DestroyWindow");
+    return false;
+}
+
+bool UpdateWindow(HWND hWnd) {
+    warning("STUB: UpdateWindow");
+    return false;
+}
+
+bool PeekMessage(MSG *msg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilterMax, UINT wRemoveMsg) {
+    warning("STUB: PeakMessage");
+    return false;
+}
+
+bool SendMessage(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) {
+    warning("STUB: SendMessage");
+    return false;
+}
+
+bool SetErrorMode(UINT uMode) {
+    warning("STUB: SetErrorMode");
+    return false;
 }
 
 #ifndef _QUEST_EDITOR
