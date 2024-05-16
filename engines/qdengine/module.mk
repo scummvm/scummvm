@@ -16,6 +16,11 @@ MODULE_OBJS = \
 	core/system/app_log_file.o \
 	core/system/app_error_handler.o \
 	core/system/app_core.o \
+	core/system/sound/ds_snd_dispatcher.o \
+	core/system/sound/ds_sound.o \
+	core/system/sound/snd_dispatcher.o \
+	core/system/sound/wav_file.o \
+	core/system/sound/wav_sound.o \
 	core/system/graphics/gr_draw_sprite_rle_z.o \
 	core/system/graphics/gr_draw_sprite_rle.o \
 	core/system/graphics/gr_font.o \

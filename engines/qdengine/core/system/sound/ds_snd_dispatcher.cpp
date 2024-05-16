@@ -1,12 +1,10 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
-#include "app_core.h"
-#include "gr_dispatcher.h"
-#include "ds_snd_dispatcher.h"
-
-#include "plaympp_api.h"
+#include "qdengine/core/system/app_core.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
+#include "qdengine/core/system/sound/ds_snd_dispatcher.h"
+#include "qdengine/core/qdcore/util/plaympp_api.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -22,23 +20,26 @@ static bool operator == (const dsSound &snd, const sndHandle &h) {
 }
 
 ds_sndDispatcher::ds_sndDispatcher() : sound_device_(NULL) {
+	warning("STUB: ds_sndDispatcher::ds_sndDispatcher()");
+#if 0
 	HRESULT res = DirectSoundCreate(NULL, &sound_device_, NULL);
-
 	if (FAILED(res) || sound_device_ == NULL)
 		return;
+#endif
 
 	HWND hWnd = static_cast<HWND>(appGetHandle());
-
 	grDispatcher *gp = grDispatcher::instance();
 
+#if 0
 	if (gp && gp -> is_in_fullscreen_mode()) {
 		res = sound_device_ -> SetCooperativeLevel(hWnd, DSSCL_EXCLUSIVE);
 		if (FAILED(res))
 			sound_device_ -> SetCooperativeLevel(hWnd, DSSCL_PRIORITY);
-	} else
+	} else {
 		sound_device_ -> SetCooperativeLevel(hWnd, DSSCL_PRIORITY);
-
+	}
 	mpegPlayer::init_library(sound_device_);
+#endif
 }
 
 ds_sndDispatcher::~ds_sndDispatcher() {
@@ -46,12 +47,14 @@ ds_sndDispatcher::~ds_sndDispatcher() {
 
 	mpegPlayer::deinit_library();
 
+#if 0
 	if (sound_device_)
 		sound_device_-> Release();
+#endif
 }
 
 void ds_sndDispatcher::quant() {
-	sounds_.remove_if(std::mem_fun_ref(dsSound::is_stopped));
+	sounds_.remove_if(std::mem_fun_ref(&dsSound::is_stopped));
 }
 
 bool ds_sndDispatcher::play_sound(const sndSound *snd, bool loop, float start_position, int vol) {
