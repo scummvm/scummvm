@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-05-04 22:58+0000\n"
-"PO-Revision-Date: 2024-05-15 09:42+0000\n"
+"PO-Revision-Date: 2024-05-16 14:42+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/zh_Hans/>\n"
@@ -1088,6 +1088,32 @@ msgid ""
 "eBay, Game Trading Zone, or other auction sites. Be cautious of faulty games "
 "and illegal game copies.\n"
 msgstr ""
+"## ScummVM 概览\n"
+"\n"
+"ScummVM 是对多种游戏引擎的现代重新实现。在你将原始游戏数据移动到你的设备上后，它就会努力利用这些数据忠实再现原作体验。\n"
+"\n"
+"ScummVM 并非典型的 DOS、Windows "
+"或主机模拟器。它没有采用千篇一律的方法，而是采取了一丝不苟的路线，为其支持的每个特定游戏或引擎精准实现游戏逻辑。ScummVM 不会使用不支持的游戏引擎。"
+"\n"
+"\n"
+"ScummVM 是由一个志愿者团队开发的免费软件。我们缺乏庞大的测试团队，仅拥有有限的设备，因此无法满足所有要求。我们也不做广告或向您出售任何东西。请在提"
+"交投诉或错误报告时注意这一点。\n"
+"\n"
+"## 如何获取游戏\n"
+"\n"
+"访问[我们的 Wiki](https://wiki.scummvm.org/index."
+"php?title=Where_to_get_the_games)查看所有支持的游戏列表与购买方式。\n"
+"\n"
+"此外，你也可以直接从我们的网站下载多种[免费游戏](https://scummvm.org/games)与[演示游戏](https://www."
+"scummvm.org/demos/)。\n"
+"\n"
+"ScummVM 团队不支持任何特定游戏供应商。不过，本项目会通过 [ZOOM-Platform](https://www.zoom-platform."
+"com/?affiliate=c049516c-9c4c-42d6-8649-92ed870e8b53) 的联盟链接，从每笔交易中收取佣金。\n"
+"\n"
+"此外，ZOOM-Platform 上没有的游戏也可以在其他供应商（如 GOG.com 和 Steam）上找到。\n"
+"\n"
+"对于其他（绝版）游戏，可考虑在 Amazon、eBay、Game Trading Zone "
+"等平台或其他拍卖网站上搜索。请小心有问题的游戏和非法游戏拷贝（盗版）。\n"
 
 #: gui/helpdialog.cpp:68 gui/options.cpp:2313
 msgid "Cloud"
@@ -1144,6 +1170,47 @@ msgid ""
 "see our [Cloud documentation](https://docs.scummvm.org/en/latest/use_scummvm/"
 "connect_cloud.html) "
 msgstr ""
+"## 连接云服务 - 快速模式\n"
+"\n"
+"1. 点击启动器中的 **全局设置**，然后转到 **云** 标签页。\n"
+"\n"
+"2. 从 **活动存储** 中选择偏好的云存储服务，然后点击 **连接**。\n"
+"\n"
+"\t  ![选择云服务](choose_storage.png \"选择云服务\"){w=70%}\n"
+"\n"
+"3. 点击 **快速模式**。\n"
+"\n"
+"\t  ![快速模式](quick_mode.png \"快速模式\"){w=70%}\n"
+"\n"
+"4. 点击 **运行服务器**，然后点击 **下一步**\n"
+"\n"
+"\t  ![运行服务器](run_server.png \"运行服务器\"){w=70%}\n"
+"\n"
+"  ![下一步](server_next.png \"下一步\"){w=70%}\n"
+"\n"
+"5. 打开链接。\n"
+"\n"
+"\t  ![打开链接](open_link.png \"打开链接\"){w=70%}\n"
+"\n"
+"6. 在打开的浏览器窗口中选择要连接的云服务。\n"
+"\n"
+"\t  ![选择云服务](cloud_browser.png \"选择云服务\"){w=70%}\n"
+"\n"
+"7. 登录所选云服务，完成后返回 ScummVM。\n"
+"\n"
+"8. 在结束屏幕点击 **结束** 退出。\n"
+"\n"
+"\t  ![成功](cloud_success.png \"成功\"){w=70%}\n"
+"9. 回到“云”标签页，点击 **启用存储**。\n"
+"\n"
+"\t  ![启用存储](enable_storage.png \"启用存储\"){w=70%}\n"
+"\n"
+"10. 准备就绪！你可以使用云功能在设备间同步存档与游戏数据了。\n"
+"\n"
+"\t  ![云功能](cloud_functions.png \"云功能\"){w=70%}\n"
+"\n"
+"   要获取更多信息（包括手动连接向导的使用方法），请查看我们的[云服务文档](https://docs.scummvm.org/en/latest/"
+"use_scummvm/connect_cloud.html) "
 
 #: gui/imagealbum-dialog.cpp:103 gui/saveload-dialog.cpp:832
 msgid "Prev"
@@ -1229,7 +1296,7 @@ msgstr "选择项目分类规则"
 
 #: gui/launcher.cpp:262
 msgid "Click here to see Help"
-msgstr ""
+msgstr "点击此处查看帮助"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
 #: gui/launcher.cpp:266 engines/dialogs.cpp:91
@@ -1269,7 +1336,7 @@ msgstr "下载游戏"
 
 #: gui/launcher.cpp:276
 msgid "Download freeware games for ScummVM"
-msgstr ""
+msgstr "为 ScummVM 下载免费游戏"
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
 #: gui/launcher.cpp:283
@@ -1357,7 +1424,7 @@ msgstr "ScummVM 找不到能运行此游戏的引擎！"
 msgid ""
 "Did you add this directory to the SAF? Press the help button [?] on the top "
 "for detailed instructions"
-msgstr ""
+msgstr "你将此目录添加到 SAF 了吗？点击顶部的帮助按钮 [?] 获取详细说明"
 
 #: gui/launcher.cpp:683
 msgid "ScummVM could not find any game in the specified directory!"
@@ -1526,13 +1593,13 @@ msgstr "175% - 很大"
 #: gui/options.cpp:158
 #, c-format
 msgid "150% - Larger"
-msgstr ""
+msgstr "150% - 更大"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:160
 #, c-format
 msgid "125% - Large"
-msgstr ""
+msgstr "125% - 大"
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:162
@@ -1673,7 +1740,7 @@ msgstr "下载着色器"
 
 #: gui/options.cpp:1640
 msgid "Check on the scummvm.org website for updates of shader packs"
-msgstr ""
+msgstr "登陆 scummvm.org 网站获取光影包更新"
 
 #: gui/options.cpp:1647 backends/graphics/sdl/sdl-graphics.cpp:427
 msgid "Fullscreen mode"
@@ -2047,7 +2114,7 @@ msgstr "界面缩放："
 #: gui/options.cpp:2568
 #, c-format
 msgid "%d%% - Custom"
-msgstr ""
+msgstr "%d%% - 自定义"
 
 #: gui/options.cpp:2572
 msgid "GUI renderer:"
@@ -2081,7 +2148,7 @@ msgstr "禁用固定字体缩放"
 msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
-msgstr ""
+msgstr "不要放大界面中的固定大小字体。这会减少低分辨率屏幕上的模糊"
 
 #: gui/options.cpp:2607
 msgid "GUI language:"
@@ -2120,7 +2187,7 @@ msgstr "下载图标"
 
 #: gui/options.cpp:2655
 msgid "Check on the scummvm.org website for updates of icon packs"
-msgstr ""
+msgstr "登陆 scummvm.org 网站获取图标包更新"
 
 #: gui/options.cpp:2662
 msgid "Autosave:"
@@ -2133,15 +2200,15 @@ msgstr "自动存档："
 
 #: gui/options.cpp:2675
 msgid "Random seed:"
-msgstr ""
+msgstr "随机种子："
 
 #: gui/options.cpp:2675
 msgid "Seed for initializing all random number generators"
-msgstr ""
+msgstr "用于初始化所有随机数生成器的种子"
 
 #: gui/options.cpp:2683
 msgid "Debug level:"
-msgstr ""
+msgstr "调试等级："
 
 #. I18N: Debug level -1, no messages
 #: gui/options.cpp:2687 gui/options.cpp:2826
@@ -2151,7 +2218,7 @@ msgstr "无"
 #. I18N: Debug level 11, all messages
 #: gui/options.cpp:2693
 msgid "11 (all)"
-msgstr ""
+msgstr "11（全部）"
 
 #: gui/options.cpp:2697
 msgid "Enable Discord integration"
@@ -2266,16 +2333,16 @@ msgstr "下载游戏文件"
 
 #: gui/options.cpp:2759
 msgid "Open downloads manager dialog"
-msgstr ""
+msgstr "打开下载管理器对话框"
 
 #: gui/options.cpp:2762
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
+msgstr "要更改此存储使用的账户，请断开连接后重新连接："
 
 #: gui/options.cpp:2764
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
+msgstr "要更改此存储使用的账户，请断开连接后重新连接："
 
 #: gui/options.cpp:2765
 msgid "Disconnect"
@@ -2283,16 +2350,16 @@ msgstr "断开连接"
 
 #: gui/options.cpp:2765
 msgid "Stop using this storage on this device"
-msgstr ""
+msgstr "停止使用本设备的此存储"
 
 #: gui/options.cpp:2768
 msgctxt "lowres"
 msgid "This storage is not connected yet!"
-msgstr ""
+msgstr "此存储尚未连接！"
 
 #: gui/options.cpp:2770
 msgid "This storage is not connected yet!"
-msgstr ""
+msgstr "此存储尚未连接！"
 
 #: gui/options.cpp:2771
 msgid "Connect"
@@ -2300,24 +2367,24 @@ msgstr "连接"
 
 #: gui/options.cpp:2771
 msgid "Connect your cloud storage account"
-msgstr ""
+msgstr "连接你的云存储账户"
 
 #: gui/options.cpp:2784
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr ""
+msgstr "/root/ 路径："
 
 #: gui/options.cpp:2784 gui/options.cpp:2786 gui/options.cpp:2787
 msgid "Select which directory will be shown as /root/ in the Files Manager"
-msgstr ""
+msgstr "选择文件管理器中显示为 /root/ 的目录"
 
 #: gui/options.cpp:2786
 msgid "/root/ Path:"
-msgstr ""
+msgstr "/root/ 路径："
 
 #: gui/options.cpp:2792
 msgid "Server's port:"
-msgstr ""
+msgstr "服务器端口："
 
 #: gui/options.cpp:2792
 msgid "Port for server to use"
@@ -2326,28 +2393,28 @@ msgstr "服务器使用的端口"
 #: gui/options.cpp:2797
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
+msgstr "运行服务器以用浏览器管理文件（在同一网络下）。"
 
 #: gui/options.cpp:2798
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "关闭设置对话框时会停止服务器。"
 
 #: gui/options.cpp:2800
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
+msgstr "运行服务器以用浏览器管理文件（在同一网络下）。"
 
 #: gui/options.cpp:2801
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "关闭设置对话框时会停止服务器。"
 
 #: gui/options.cpp:2813
 msgid "Use Text to speech"
-msgstr ""
+msgstr "使用文本转语音"
 
 #: gui/options.cpp:2813
 msgid "Will read text in gui on mouse over."
-msgstr ""
+msgstr "将会读出鼠标悬停处的界面文本。"
 
 #: gui/options.cpp:2887
 msgid "Ignore"
@@ -2365,6 +2432,8 @@ msgid ""
 "overwrite a save).\n"
 "List of games:\n"
 msgstr ""
+"警告：自动保存已启用。部分游戏在自动存档位已有存档。你可以将这些存档移动到新位置、禁用自动保存，也可以直接忽略（自动存档将覆盖存档时会提醒你）。\n"
+"游戏列表：\n"
 
 #: gui/options.cpp:2898
 msgid ""
@@ -2432,41 +2501,45 @@ msgstr "选择文件管理器 /root/ 目录"
 
 #: gui/options.cpp:3440
 msgid "This Storage is working now. Do you want to interrupt it?"
-msgstr ""
+msgstr "此存储正在工作中。要中止它吗？"
 
 #: gui/options.cpp:3449
 msgid "Wait until current Storage finishes up and try again."
-msgstr ""
+msgstr "请等待当前存储处理完毕后再试。"
 
 #: gui/options.cpp:3652 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
-msgstr ""
+msgstr "<立即>"
 
 #: gui/options.cpp:3795
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
 msgstr ""
+"请求失败。\n"
+"请检查网络连接。"
 
 #: gui/options.cpp:3819
 msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scaler settings?"
 msgstr ""
+"应当显示测试图形。\n"
+"要保留着色器缩放设置吗？"
 
 #: gui/options.cpp:3822
 #, c-format
 msgid "Reverting automatically in %d seconds"
-msgstr ""
+msgstr "%d 秒后将自动恢复"
 
 #: gui/predictivedialog.cpp:66
 msgid "Enter Text"
-msgstr ""
+msgstr "输入文本"
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:101
 msgid "#  next"
-msgstr ""
+msgstr "#  下一步"
 
 #: gui/predictivedialog.cpp:102
 msgid "add"
@@ -2474,7 +2547,7 @@ msgstr "添加"
 
 #: gui/predictivedialog.cpp:107 gui/predictivedialog.cpp:183
 msgid "Delete char"
-msgstr ""
+msgstr "删除字符"
 
 #: gui/predictivedialog.cpp:111 gui/predictivedialog.cpp:186
 msgid "<"
@@ -2483,21 +2556,21 @@ msgstr "<"
 #. I18N: Pre means 'Predictive', leave '*' as is
 #: gui/predictivedialog.cpp:113 gui/predictivedialog.cpp:597
 msgid "*  Pre"
-msgstr ""
+msgstr "*  Pre"
 
 #. I18N: 'Num' means Numbers
 #: gui/predictivedialog.cpp:600
 msgid "*  Num"
-msgstr ""
+msgstr "*  Num"
 
 #. I18N: 'Abc' means Latin alphabet input
 #: gui/predictivedialog.cpp:603
 msgid "*  Abc"
-msgstr ""
+msgstr "*  Abc"
 
 #: gui/recorderdialog.cpp:67
 msgid "Recorder or Playback Gameplay"
-msgstr ""
+msgstr "录制或回放游玩"
 
 #: gui/recorderdialog.cpp:72 gui/recorderdialog.cpp:212
 #: gui/saveload-dialog.cpp:459 gui/saveload-dialog.cpp:526
@@ -2529,7 +2602,7 @@ msgstr "备注： "
 
 #: gui/recorderdialog.cpp:211
 msgid "Do you really want to delete this record?"
-msgstr ""
+msgstr "你真的要删除此录制吗？"
 
 #: gui/recorderdialog.cpp:228
 msgid "Unknown Author"
@@ -2550,23 +2623,23 @@ msgstr "后台运行"
 #: gui/saveload-dialog.cpp:126
 #, c-format
 msgid "%s (%s %S / %s %S, %s / %s files)"
-msgstr ""
+msgstr "%s（%s %S / %s %S，%s / %s 个文件）"
 
 #: gui/saveload-dialog.cpp:450 gui/saveload-dialog.cpp:630
 msgid "No date saved"
-msgstr ""
+msgstr "未保存日期"
 
 #: gui/saveload-dialog.cpp:451 gui/saveload-dialog.cpp:631
 msgid "No time saved"
-msgstr ""
+msgstr "未保存时间"
 
 #: gui/saveload-dialog.cpp:452 gui/saveload-dialog.cpp:632
 msgid "No playtime saved"
-msgstr ""
+msgstr "未保存游玩时长"
 
 #: gui/saveload-dialog.cpp:525
 msgid "Do you really want to delete this saved game?"
-msgstr ""
+msgstr "你真的要删除此存档吗？"
 
 #: gui/saveload-dialog.cpp:657 gui/saveload-dialog.cpp:1173
 msgid "Date: "
@@ -2582,36 +2655,36 @@ msgstr "游玩时长： "
 
 #: gui/saveload-dialog.cpp:680 gui/saveload-dialog.cpp:766
 msgid "Untitled saved game"
-msgstr ""
+msgstr "未命名存档"
 
 #: gui/saveload-dialog.cpp:1033
 msgid "New Save"
-msgstr ""
+msgstr "新建存档"
 
 #: gui/saveload-dialog.cpp:1033
 msgid "Create a new saved game"
-msgstr ""
+msgstr "创建新存档"
 
 #: gui/saveload-dialog.cpp:1166
 msgid "Name: "
-msgstr ""
+msgstr "名称： "
 
 #: gui/saveload-dialog.cpp:1244
 #, c-format
 msgid "Enter a description for slot %d:"
-msgstr ""
+msgstr "输入位置 %d 的描述："
 
 #: gui/shaderbrowser-dialog.cpp:52
 msgid "Choose shader from the list below (or pick a file instead)"
-msgstr ""
+msgstr "从列表中选择着色器（或者选择文件）"
 
 #: gui/shaderbrowser-dialog.cpp:70
 msgid "Pick file instead..."
-msgstr ""
+msgstr "选择文件..."
 
 #: gui/shaderbrowser-dialog.cpp:70
 msgid "Pick shader from file system"
-msgstr ""
+msgstr "从文件系统选择着色器"
 
 #: gui/shaderbrowser-dialog.cpp:136
 msgid "Select shader"
@@ -2619,63 +2692,63 @@ msgstr "选择着色器"
 
 #: gui/themebrowser.cpp:44
 msgid "Select a Theme"
-msgstr ""
+msgstr "选择主题"
 
 #: gui/ThemeEngine.cpp:270
 msgid "Disabled GFX"
-msgstr ""
+msgstr "禁用 GFX"
 
 #: gui/ThemeEngine.cpp:270
 msgctxt "lowres"
 msgid "Disabled GFX"
-msgstr ""
+msgstr "禁用 GFX"
 
 #: gui/ThemeEngine.cpp:271
 msgid "Standard renderer"
-msgstr ""
+msgstr "标准渲染器"
 
 #: gui/ThemeEngine.cpp:271 engines/scumm/dialogs.cpp:1026
 msgid "Standard"
-msgstr ""
+msgstr "标准"
 
 #: gui/ThemeEngine.cpp:273
 msgid "Antialiased renderer"
-msgstr ""
+msgstr "抗锯齿渲染器"
 
 #: gui/ThemeEngine.cpp:273
 msgid "Antialiased"
-msgstr ""
+msgstr "抗锯齿"
 
 #: gui/unknown-game-dialog.cpp:48
 msgid "Add anyway"
-msgstr ""
+msgstr "仍然添加"
 
 #: gui/unknown-game-dialog.cpp:57
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "复制到剪贴板"
 
 #: gui/unknown-game-dialog.cpp:63
 msgid "Report game"
-msgstr ""
+msgstr "报告游戏"
 
 #: gui/unknown-game-dialog.cpp:100
 msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
-msgstr ""
+msgstr "用下方的按钮将所需游戏信息复制到剪贴板。"
 
 #: gui/unknown-game-dialog.cpp:105
 msgid "You can also directly report your game to the Bug Tracker."
-msgstr ""
+msgstr "你也可以将游戏直接报告给问题跟踪器。"
 
 #: gui/unknown-game-dialog.cpp:155
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
-msgstr ""
+msgstr "已将必要信息复制到剪贴板"
 
 #: gui/unknown-game-dialog.cpp:157
 msgid "Copying the game information to the clipboard has failed!"
-msgstr ""
+msgstr "无法将游戏信息复制到剪贴板！"
 
 #: gui/updates-dialog.cpp:48
 msgid ""
@@ -2683,28 +2756,33 @@ msgid ""
 "which requires access to the Internet. Would you\n"
 "like to enable this feature?"
 msgstr ""
+"ScummVM 现在支持自动检查更新\n"
+"需要联网权限。\n"
+"你要启用此功能吗？"
 
 #: gui/updates-dialog.cpp:51
 msgid ""
 "You can change this setting later in the Misc tab\n"
 "in the Options dialog."
 msgstr ""
+"你可以稍后在“设置”对话框中的\n"
+"“杂项”标签页更改此设置。"
 
 #: gui/widget.cpp:448 gui/widget.cpp:450 gui/widget.cpp:455 gui/widget.cpp:457
 msgid "Clear value"
-msgstr ""
+msgstr "清除数值"
 
 #: gui/widgets/grid.cpp:280
 msgid "Play"
-msgstr ""
+msgstr "游玩"
 
 #: gui/widgets/grid.cpp:283
 msgid "Saves"
-msgstr ""
+msgstr "存档"
 
 #: base/main.cpp:604
 msgid "Bad config file format. overwrite?"
-msgstr ""
+msgstr "配置文件格式有误。要覆盖吗？"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:653
@@ -2729,6 +2807,16 @@ msgid ""
 "\n"
 "Repeat steps 1 and 6 for each game."
 msgstr ""
+"在 ScummVM 的 Android 新版本中，我们对文件访问系统做出了重大更改，以支持新版本 Android 操作系统。 \n"
+"如果你发现无法使用添加的游戏或自定义路径，请这样编辑：\n"
+"  1. 打开启动器，转到 **游戏设置 > 路径**。酌情点击 **游戏目录** 或 **附加目录**。 \n"
+"  2. 在 ScummVM 文件浏览器中，点击 **上一级**，直到到达根目录，此处有 **<新建文件夹>** 选项。 \n"
+"  3. 双击 **<新建文件夹>**。在设备的文件浏览器中，转到包含所有游戏的文件夹。例如 **SD 卡 > ScummVMgames** \n"
+"  4. 点击 **使用此文件夹**。 \n"
+"  5. 点击 **允许** 以给予 ScummVM 访问此文件夹的权限。 \n"
+"  6. 在 ScummVM 文件浏览器中，双击以浏览添加的文件夹。选择含有游戏文件的文件夹，然后点击 **选择**。 \n"
+"\n"
+"对每款游戏重复上述步骤。"
 
 #: base/main.cpp:671 base/main.cpp:696
 #: engines/director/lingo/lingo-builtins.cpp:1276
@@ -2741,7 +2829,7 @@ msgstr "好的"
 #. I18N: A button caption to dismiss a message and read it later
 #: base/main.cpp:673 base/main.cpp:698
 msgid "Read Later"
-msgstr ""
+msgstr "稍后阅读"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:680
@@ -2764,131 +2852,141 @@ msgid ""
 "**Choose**.\n"
 "Repeat steps 1 and 6 for each game."
 msgstr ""
+"在 ScummVM 的 Android 新版本中，我们对文件访问系统做出了重大更改，以支持新版本 Android 操作系统。 \n"
+"要添加游戏：\n"
+"\n"
+"  1. 打开启动器，点击 **添加游戏...**。 \n"
+"  2. 在 ScummVM 文件浏览器中，点击 **上一级**，直到到达根目录，此处有 **<新建文件夹>** 选项。 \n"
+"  3. 双击 **<新建文件夹>**。在设备的文件浏览器中，转到包含所有游戏的文件夹。例如 **SD 卡 > ScummVMgames** \n"
+"  4. 点击 **使用此文件夹**。 \n"
+"  5. 点击 **允许** 以给予 ScummVM 访问此文件夹的权限。 \n"
+"  6. 在 ScummVM 文件浏览器中，双击以浏览添加的文件夹。选择含有游戏文件的子文件夹，然后点击 **选择**。 \n"
+"对每款游戏重复上述步骤。"
 
 #: base/main.cpp:830
 msgid "Error running game:"
-msgstr ""
+msgstr "运行游戏时出错："
 
 #: base/main.cpp:877
 msgid "Could not find any engine capable of running the selected game"
-msgstr ""
+msgstr "找不到可运行所选游戏的引擎"
 
 #: common/error.cpp:37
 msgid "No error"
-msgstr ""
+msgstr "无错误"
 
 #: common/error.cpp:39
 msgid "Game data not found"
-msgstr ""
+msgstr "找不到游戏数据"
 
 #: common/error.cpp:41
 msgid "Game id not supported"
-msgstr ""
+msgstr "游戏 ID 不支持"
 
 #: common/error.cpp:43
 msgid "Unsupported color mode"
-msgstr ""
+msgstr "颜色模式不支持"
 
 #: common/error.cpp:45
 msgid "Audio device initialization failed"
-msgstr ""
+msgstr "音频设备初始化失败"
 
 #: common/error.cpp:48
 msgid "Read permission denied"
-msgstr ""
+msgstr "读取权限被拒绝"
 
 #: common/error.cpp:50
 msgid "Write permission denied"
-msgstr ""
+msgstr "写入权限被拒绝"
 
 #: common/error.cpp:53
 msgid "Path does not exist"
-msgstr ""
+msgstr "目录不存在"
 
 #: common/error.cpp:55
 msgid "Path not a directory"
-msgstr ""
+msgstr "路径不是目录"
 
 #: common/error.cpp:57
 msgid "Path not a file"
-msgstr ""
+msgstr "路径不是文件"
 
 #: common/error.cpp:60
 msgid "Cannot create file"
-msgstr ""
+msgstr "无法创建文件"
 
 #: common/error.cpp:62
 msgid "Reading data failed"
-msgstr ""
+msgstr "数据读取失败"
 
 #: common/error.cpp:64
 msgid "Writing data failed"
-msgstr ""
+msgstr "数据写入失败"
 
 #: common/error.cpp:67
 msgid "Could not find suitable engine plugin"
-msgstr ""
+msgstr "找不到适用的引擎插件"
 
 #: common/error.cpp:69
 msgid "Engine plugin does not support saved games"
-msgstr ""
+msgstr "引擎插件不支持存档"
 
 #: common/error.cpp:72
 msgid "User canceled"
-msgstr ""
+msgstr "用户取消"
 
 #: common/error.cpp:76
 msgid "Unknown error"
-msgstr ""
+msgstr "未知错误"
 
 #. I18N: Hercules is a graphics card name, Green is color
 #: common/rendermode.cpp:34
 msgid "Hercules Green"
-msgstr ""
+msgstr "Hercules 绿色"
 
 #. I18N: Hercules is a graphics card name, Amber is color
 #: common/rendermode.cpp:36
 msgid "Hercules Amber"
-msgstr ""
+msgstr "Hercules 琥珀色"
 
 #: common/rendermode.cpp:46
 msgid "PC-9821 (256 Colors)"
-msgstr ""
+msgstr "PC-9821（256 色）"
 
 #: common/rendermode.cpp:47
 msgid "PC-9801 (16 Colors)"
-msgstr ""
+msgstr "PC-9801（16 色）"
 
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:52
 msgid "Macintosh b/w"
-msgstr ""
+msgstr "Macintosh b/w"
 
 #: common/rendermode.cpp:88
 msgctxt "lowres"
 msgid "Hercules Green"
-msgstr ""
+msgstr "Hercules 绿色"
 
 #: common/rendermode.cpp:89
 msgctxt "lowres"
 msgid "Hercules Amber"
-msgstr ""
+msgstr "Hercules 琥珀色"
 
 #: common/updates.cpp:57
 msgid "Daily"
-msgstr ""
+msgstr "每天"
 
 #: common/updates.cpp:59
 msgid "Weekly"
-msgstr ""
+msgstr "每周"
 
 #: common/updates.cpp:61
 msgid "Monthly"
-msgstr ""
+msgstr "每月"
 
 #: common/updates.cpp:63
 msgid "<Bad value>"
-msgstr ""
+msgstr "<数值错误>"
 
 #. I18N: Abbreviation for 'bytes' as data size
 #. I18N: Hardware key
@@ -2899,47 +2997,47 @@ msgstr ""
 #: backends/platform/sdl/opendingux/opendingux.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:37
 msgid "B"
-msgstr ""
+msgstr "B"
 
 #. I18N: Abbreviation for 'kilobytes' as data size
 #: common/util.cpp:189
 msgid "KB"
-msgstr ""
+msgstr "KB"
 
 #. I18N: Abbreviation for 'megabytes' as data size
 #: common/util.cpp:194
 msgid "MB"
-msgstr ""
+msgstr "MB"
 
 #. I18N: Abbreviation for 'gigabytes' as data size
 #: common/util.cpp:200
 msgid "GB"
-msgstr ""
+msgstr "GB"
 
 #. I18N: Abbreviation for 'terabytes' as data size
 #: common/util.cpp:206
 msgid "TB"
-msgstr ""
+msgstr "TB"
 
 #: common/formats/formatinfo.cpp:102
 msgid "Bitmap Image File"
-msgstr ""
+msgstr "位图文件"
 
 #: common/formats/formatinfo.cpp:104
 msgid "PNG Image File"
-msgstr ""
+msgstr "PNG 图像文件"
 
 #: common/formats/formatinfo.cpp:106
 msgid "JPEG Image File"
-msgstr ""
+msgstr "JPEG 图像文件"
 
 #: common/formats/formatinfo.cpp:108
 msgid "QuickDraw PICT Image File"
-msgstr ""
+msgstr "QuickDraw PICT 图像文件"
 
 #: common/formats/formatinfo.cpp:111
 msgid "Data File"
-msgstr ""
+msgstr "数据文件"
 
 #: dists/android.strings.xml.cpp:30
 msgid "ScummVM"
@@ -2947,7 +3045,7 @@ msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
 msgid "Graphic adventure game engine"
-msgstr ""
+msgstr "图形冒险游戏引擎"
 
 #. I18N: This directly quits the game.
 #: dists/android.strings.xml.cpp:33
@@ -2963,11 +3061,11 @@ msgstr "退出"
 
 #: dists/android.strings.xml.cpp:34
 msgid "Config File Error"
-msgstr ""
+msgstr "配置文件错误"
 
 #: dists/android.strings.xml.cpp:35
 msgid "Unable to read ScummVM config file or create a new one!"
-msgstr ""
+msgstr "无法读取 ScummVM 配置文件，请考虑新建一个！"
 
 #: dists/android.strings.xml.cpp:36
 msgid "Save Path Error"
@@ -2993,31 +3091,31 @@ msgstr ""
 
 #: dists/android.strings.xml.cpp:41
 msgid "Toggle virtual keyboard"
-msgstr ""
+msgstr "切换虚拟键盘"
 
 #: dists/android.strings.xml.cpp:42 engines/scumm/help.cpp:82
 #: engines/scumm/help.cpp:86 engines/scumm/help.cpp:88
 #: engines/scumm/help.cpp:102 engines/scumm/help.cpp:103
 #: engines/scumm/help.cpp:104
 msgid "Alt"
-msgstr ""
+msgstr "Alt"
 
 #: dists/android.strings.xml.cpp:45
 msgid "Done"
-msgstr ""
+msgstr "完成"
 
 #: dists/android.strings.xml.cpp:46
 msgid "Mode change"
-msgstr ""
+msgstr "模式更改"
 
 #: dists/android.strings.xml.cpp:47
 msgid "Shift"
-msgstr ""
+msgstr "Shift"
 
 #: dists/android.strings.xml.cpp:48 engines/dragons/metaengine.cpp:154
 #: engines/scumm/help.cpp:88 engines/scumm/help.cpp:91
 msgid "Enter"
-msgstr ""
+msgstr "回车"
 
 #: dists/android.strings.xml.cpp:49
 msgid "Close popup"
@@ -3067,15 +3165,15 @@ msgstr ""
 
 #: engines/achievements.cpp:242
 msgid "Achievement unlocked!"
-msgstr ""
+msgstr "已解锁成就！"
 
 #: engines/advancedDetector.cpp:236
 msgid "Illegitimate game copy detected. We provide no support in such cases"
-msgstr ""
+msgstr "检测到非法游戏副本。我们不会支持此情况"
 
 #: engines/dialogs.cpp:68
 msgid "~R~esume"
-msgstr ""
+msgstr "继续 (~R~)"
 
 #: engines/dialogs.cpp:70
 msgid "~L~oad"
@@ -3083,7 +3181,7 @@ msgstr "加载 (~L~)"
 
 #: engines/dialogs.cpp:71
 msgid "~S~ave"
-msgstr ""
+msgstr "保存 (~S~)"
 
 #: engines/dialogs.cpp:73
 msgid "~O~ptions"
@@ -3091,20 +3189,20 @@ msgstr "设置 (~O~)"
 
 #: engines/dialogs.cpp:78
 msgid "~H~elp"
-msgstr ""
+msgstr "帮助 (~H~)"
 
 #: engines/dialogs.cpp:82
 msgid "~A~bout"
-msgstr ""
+msgstr "关于 (~A~)"
 
 #: engines/dialogs.cpp:85 engines/dialogs.cpp:156
 msgid "~R~eturn to Launcher"
-msgstr ""
+msgstr "回到启动器 (~R~)"
 
 #: engines/dialogs.cpp:87 engines/dialogs.cpp:158
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
-msgstr ""
+msgstr "回到启动器 (~R~)"
 
 #: engines/dialogs.cpp:95 engines/engine.cpp:961 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
@@ -3124,7 +3222,7 @@ msgstr ""
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:636
 #: engines/wage/saveload.cpp:746 engines/zvision/file/save_manager.cpp:48
 msgid "Save game:"
-msgstr ""
+msgstr "保存游戏："
 
 #: engines/dialogs.cpp:95 engines/engine.cpp:961 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
@@ -3147,7 +3245,7 @@ msgstr ""
 #: engines/wage/saveload.cpp:746 engines/zvision/file/save_manager.cpp:48
 #: engines/zvision/metaengine.cpp:262
 msgid "Save"
-msgstr ""
+msgstr "保存"
 
 #: engines/dialogs.cpp:125
 msgid ""
@@ -3183,11 +3281,11 @@ msgstr ""
 
 #: engines/dialogs.cpp:383
 msgid "~O~K"
-msgstr ""
+msgstr "好的 (~O~)"
 
 #: engines/dialogs.cpp:384
 msgid "~C~ancel"
-msgstr ""
+msgstr "取消 (~C~)"
 
 #: engines/engine.cpp:383
 #, c-format
@@ -3222,7 +3320,7 @@ msgstr ""
 
 #: engines/engine.cpp:500
 msgid "Error"
-msgstr ""
+msgstr "错误"
 
 #: engines/engine.cpp:563
 msgid ""
@@ -3264,11 +3362,11 @@ msgstr ""
 #: backends/platform/ios7/ios7_osys_main.cpp:294 engines/mm/xeen/saves.cpp:293
 #: engines/sky/metaengine.cpp:216
 msgid "Autosave"
-msgstr ""
+msgstr "自动保存"
 
 #: engines/engine.cpp:661
 msgid "Error occurred making autosave"
-msgstr ""
+msgstr "自动保存时出错"
 
 #: engines/engine.cpp:736
 #, c-format
@@ -3279,11 +3377,11 @@ msgstr ""
 
 #: engines/engine.cpp:760
 msgid "WARNING: "
-msgstr ""
+msgstr "警告： "
 
 #: engines/engine.cpp:760
 msgid " Shall we still run the game?"
-msgstr ""
+msgstr " 仍然运行游戏吗？"
 
 #: engines/engine.cpp:761
 msgid ""
@@ -3294,7 +3392,7 @@ msgstr ""
 
 #: engines/engine.cpp:764 engines/wintermute/wintermute.cpp:182
 msgid "Start anyway"
-msgstr ""
+msgstr "仍然运行"
 
 #: engines/engine.cpp:782
 msgid "This game is not supported."
@@ -3337,20 +3435,20 @@ msgstr ""
 #: engines/parallaction/metaengine.cpp:114
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:183
 msgid "Left Click"
-msgstr ""
+msgstr "左键点击"
 
 #: engines/metaengine.cpp:65 backends/platform/maemo/maemo.cpp:165
 #: engines/wintermute/keymapper_tables.h:256
 #: engines/wintermute/keymapper_tables.h:300
 #: engines/wintermute/keymapper_tables.h:2166
 msgid "Middle Click"
-msgstr ""
+msgstr "中键点击"
 
 #: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:169
 #: engines/asylum/metaengine.cpp:164 engines/parallaction/metaengine.cpp:120
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
 msgid "Right Click"
-msgstr ""
+msgstr "右键点击"
 
 #. I18N: Action in In Cold Blood
 #: engines/metaengine.cpp:76 engines/crab/input/input.cpp:261
@@ -3359,11 +3457,11 @@ msgstr ""
 #: engines/mohawk/riven.cpp:876 engines/sky/metaengine.cpp:125
 #: engines/twine/metaengine.cpp:231 engines/wintermute/keymapper_tables.h:1608
 msgid "Pause"
-msgstr ""
+msgstr "暂停"
 
 #: engines/metaengine.cpp:82 engines/parallaction/metaengine.cpp:139
 msgid "Game menu"
-msgstr ""
+msgstr "游戏菜单"
 
 #: engines/metaengine.cpp:89 engines/grim/grim.cpp:524
 #: engines/grim/grim.cpp:620 engines/mohawk/myst.cpp:566
@@ -3374,15 +3472,15 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1716
 #: engines/wintermute/keymapper_tables.h:2110
 msgid "Skip"
-msgstr ""
+msgstr "跳过"
 
 #: engines/metaengine.cpp:96 engines/sky/metaengine.cpp:120
 msgid "Skip line"
-msgstr ""
+msgstr "跳过行"
 
 #: engines/metaengine.cpp:103
 msgid "Predictive input dialog"
-msgstr ""
+msgstr "预测输入对话框"
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows confirming popup dialogue prompts (eg. for save game deletion or overwriting)
@@ -3392,7 +3490,7 @@ msgstr ""
 #: engines/grim/grim.cpp:626 engines/sky/metaengine.cpp:100
 #: engines/wintermute/keymapper_tables.h:54
 msgid "Confirm"
-msgstr ""
+msgstr "确认"
 
 #: engines/metaengine.cpp:407
 msgid "Autosave on"
@@ -3404,7 +3502,7 @@ msgstr "自动保存已关闭"
 
 #: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:179
 msgid "OpenGL"
-msgstr ""
+msgstr "OpenGL"
 
 #: graphics/renderer.cpp:36
 msgid "OpenGL with shaders"
@@ -3417,35 +3515,35 @@ msgstr ""
 
 #: audio/adlib.cpp:2301
 msgid "AdLib emulator"
-msgstr ""
+msgstr "AdLib 模拟器"
 
 #: audio/fmopl.cpp:85
 msgid "MAME OPL emulator"
-msgstr ""
+msgstr "MAME OPL 模拟器"
 
 #: audio/fmopl.cpp:87
 msgid "DOSBox OPL emulator"
-msgstr ""
+msgstr "DOSBox OPL 模拟器"
 
 #: audio/fmopl.cpp:90
 msgid "Nuked OPL emulator"
-msgstr ""
+msgstr "Nuked OPL 模拟器"
 
 #: audio/fmopl.cpp:93
 msgid "ALSA Direct FM"
-msgstr ""
+msgstr "ALSA Direct FM"
 
 #: audio/fmopl.cpp:96
 msgid "OPL2LPT"
-msgstr ""
+msgstr "OPL2LPT"
 
 #: audio/fmopl.cpp:97
 msgid "OPL3LPT"
-msgstr ""
+msgstr "OPL3LPT"
 
 #: audio/fmopl.cpp:100
 msgid "RetroWave OPL3"
-msgstr ""
+msgstr "RetroWave OPL3"
 
 #: audio/mididrv.cpp:219
 #, c-format
@@ -3545,7 +3643,7 @@ msgstr ""
 
 #: backends/cloud/cloudmanager.cpp:156
 msgid "<syncing...>"
-msgstr ""
+msgstr "<同步中...>"
 
 #: backends/cloud/storage.cpp:246
 msgid "Saved games sync was cancelled."
@@ -3586,7 +3684,7 @@ msgstr ""
 
 #: backends/events/default/default-events.cpp:332
 msgid "Global"
-msgstr ""
+msgstr "全局"
 
 #: backends/events/default/default-events.cpp:335
 #: engines/twine/metaengine.cpp:350
@@ -3673,7 +3771,7 @@ msgstr ""
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:246
 #: engines/twine/metaengine.cpp:360
 msgid "Center"
-msgstr ""
+msgstr "中心"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:259
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
@@ -4193,17 +4291,17 @@ msgstr ""
 #: backends/platform/3ds/options.cpp:70
 msgctxt "3ds-screen"
 msgid "Top"
-msgstr ""
+msgstr "顶部"
 
 #: backends/platform/3ds/options.cpp:71
 msgctxt "3ds-screen"
 msgid "Bottom"
-msgstr ""
+msgstr "底部"
 
 #: backends/platform/3ds/options.cpp:72
 msgctxt "3ds-screen"
 msgid "Both"
-msgstr ""
+msgstr "顶部与底部"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:45
@@ -4213,7 +4311,7 @@ msgstr ""
 #: backends/platform/sdl/opendingux/opendingux.cpp:49
 #: backends/platform/sdl/switch/switch.cpp:38
 msgid "A"
-msgstr ""
+msgstr "A"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:47
@@ -4223,7 +4321,7 @@ msgstr ""
 #: backends/platform/sdl/opendingux/opendingux.cpp:53
 #: backends/platform/sdl/switch/switch.cpp:40
 msgid "X"
-msgstr ""
+msgstr "X"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:48
@@ -4233,7 +4331,7 @@ msgstr ""
 #: backends/platform/sdl/opendingux/opendingux.cpp:55
 #: backends/platform/sdl/switch/switch.cpp:39
 msgid "Y"
-msgstr ""
+msgstr "Y"
 
 #. I18N: Hardware key
 #. I18N: Return key
@@ -4246,7 +4344,7 @@ msgstr ""
 #: backends/platform/sdl/ps3/ps3.cpp:44 backends/platform/sdl/psp2/psp2.cpp:47
 #: engines/mm/mm1/metaengine.cpp:49 engines/mm/mm1/metaengine.cpp:92
 msgid "Select"
-msgstr ""
+msgstr "Select"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:50
@@ -4261,12 +4359,12 @@ msgstr "Start"
 #: backends/platform/3ds/osystem-events.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:56
 msgid "ZL"
-msgstr ""
+msgstr "ZL"
 
 #: backends/platform/3ds/osystem-events.cpp:52
 #: backends/platform/sdl/switch/switch.cpp:57
 msgid "ZR"
-msgstr ""
+msgstr "ZR"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:53
@@ -4277,7 +4375,7 @@ msgstr ""
 #: backends/platform/sdl/psp2/psp2.cpp:49
 #: backends/platform/sdl/switch/switch.cpp:46
 msgid "L"
-msgstr ""
+msgstr "L"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:54
@@ -4288,7 +4386,7 @@ msgstr ""
 #: backends/platform/sdl/psp2/psp2.cpp:50
 #: backends/platform/sdl/switch/switch.cpp:47
 msgid "R"
-msgstr ""
+msgstr "R"
 
 #: backends/platform/3ds/osystem-events.cpp:63
 msgid "C-Pad X"
@@ -4301,7 +4399,7 @@ msgstr ""
 #: backends/platform/3ds/osystem-events.cpp:69
 #: backends/platform/ds/osystem_ds.cpp:192
 msgid "Touch"
-msgstr ""
+msgstr "触摸"
 
 #: backends/platform/3ds/osystem-events.cpp:309
 msgid "Toggle Drag Mode"
@@ -4579,14 +4677,14 @@ msgstr "自动"
 #: backends/platform/ios7/ios7_options.mm:147
 #: backends/platform/ios7/ios7_options.mm:162
 msgid "Portrait"
-msgstr ""
+msgstr "纵向"
 
 #: backends/platform/android/options.cpp:169
 #: backends/platform/android/options.cpp:184
 #: backends/platform/ios7/ios7_options.mm:148
 #: backends/platform/ios7/ios7_options.mm:163
 msgid "Landscape"
-msgstr ""
+msgstr "横向"
 
 #: backends/platform/android/options.cpp:175
 #: backends/platform/ios7/ios7_options.mm:154
@@ -4604,7 +4702,7 @@ msgstr "删除"
 
 #: backends/platform/ds/ds-graphics.cpp:281
 msgid "Unscaled"
-msgstr ""
+msgstr "不缩放"
 
 #: backends/platform/ds/ds-graphics.cpp:282
 msgid "Hardware scale (fast, but low quality)"
@@ -4629,11 +4727,11 @@ msgstr ""
 
 #: backends/platform/ios7/ios7_options.mm:105
 msgid "Thumbstick"
-msgstr ""
+msgstr "Thumbstick"
 
 #: backends/platform/ios7/ios7_options.mm:106
 msgid "Dpad"
-msgstr ""
+msgstr "Dpad"
 
 #: backends/platform/ios7/ios7_options.mm:107
 msgid "Use minimal gamepad layout"
@@ -4837,7 +4935,7 @@ msgstr ""
 
 #: backends/platform/sdl/sdl.cpp:1012
 msgid "Keyboard"
-msgstr ""
+msgstr "键盘"
 
 #: backends/platform/sdl/sdl.cpp:1015
 msgid ""
@@ -4905,11 +5003,11 @@ msgstr ""
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:255
 msgid "Window"
-msgstr ""
+msgstr "窗口"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:257
 msgid "Minimize"
-msgstr ""
+msgstr "最小化"
 
 #. I18N: This keymap opens KIA's HELP tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4918,7 +5016,7 @@ msgstr ""
 #: backends/platform/sdl/macosx/appmenu_osx.mm:262
 #: engines/bladerunner/metaengine.cpp:321 engines/zvision/metaengine.cpp:226
 msgid "Help"
-msgstr ""
+msgstr "帮助"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:267
 msgid "User Manual"
@@ -4934,7 +5032,7 @@ msgstr ""
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:272
 msgid "Credits"
-msgstr ""
+msgstr "鸣谢"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:273
 msgid "GPL License"
@@ -4961,21 +5059,21 @@ msgstr ""
 #: backends/platform/sdl/miyoo/miyoo.cpp:106
 #: backends/platform/sdl/ps3/ps3.cpp:59
 msgid "L2"
-msgstr ""
+msgstr "L2"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:81
 #: backends/platform/sdl/miyoo/miyoo.cpp:108
 #: backends/platform/sdl/ps3/ps3.cpp:60
 msgid "R2"
-msgstr ""
+msgstr "R2"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:83
 #: backends/platform/sdl/miyoo/miyoo.cpp:114 engines/grim/grim.cpp:536
 #: engines/grim/grim.cpp:632 engines/hdb/metaengine.cpp:264
 msgid "Menu"
-msgstr ""
+msgstr "菜单"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:110
@@ -4983,54 +5081,54 @@ msgstr ""
 #: backends/platform/sdl/ps3/ps3.cpp:47
 #: backends/platform/sdl/switch/switch.cpp:44
 msgid "L3"
-msgstr ""
+msgstr "L3"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:112
 #: backends/platform/sdl/ps3/ps3.cpp:48
 #: backends/platform/sdl/switch/switch.cpp:45
 msgid "R3"
-msgstr ""
+msgstr "R3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:40 backends/platform/sdl/psp2/psp2.cpp:43
 #: engines/dragons/metaengine.cpp:202
 msgid "Cross"
-msgstr ""
+msgstr "十字xing"
 
 #: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:44
 #: engines/dragons/metaengine.cpp:196
 msgid "Circle"
-msgstr ""
+msgstr "圆形"
 
 #: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:45
 #: engines/dragons/metaengine.cpp:184
 msgid "Square"
-msgstr ""
+msgstr "方形"
 
 #: backends/platform/sdl/ps3/ps3.cpp:45
 msgid "PS"
-msgstr ""
+msgstr "PS"
 
 #: backends/platform/sdl/ps3/ps3.cpp:49
 msgid "L1"
-msgstr ""
+msgstr "L1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:50
 msgid "R1"
-msgstr ""
+msgstr "R1"
 
 #: backends/platform/sdl/switch/switch.cpp:41
 msgid "Minus"
-msgstr ""
+msgstr "减"
 
 #: backends/platform/sdl/switch/switch.cpp:42
 #: backends/platform/sdl/switch/switch.cpp:43
 msgid "Plus"
-msgstr ""
+msgstr "加"
 
 #: backends/platform/wii/options.cpp:50
 msgid "Video"
-msgstr ""
+msgstr "视频"
 
 #: backends/platform/wii/options.cpp:53
 msgid "Current video mode:"
@@ -5050,7 +5148,7 @@ msgstr ""
 
 #: backends/platform/wii/options.cpp:70
 msgid "Input"
-msgstr ""
+msgstr "输入"
 
 #: backends/platform/wii/options.cpp:73
 msgid "GC Pad sensitivity:"
@@ -5062,15 +5160,15 @@ msgstr ""
 
 #: backends/platform/wii/options.cpp:85
 msgid "DVD"
-msgstr ""
+msgstr "DVD"
 
 #: backends/platform/wii/options.cpp:88 backends/platform/wii/options.cpp:100
 msgid "Status:"
-msgstr ""
+msgstr "状态："
 
 #: backends/platform/wii/options.cpp:89 backends/platform/wii/options.cpp:101
 msgid "Unknown"
-msgstr ""
+msgstr "未知"
 
 #: backends/platform/wii/options.cpp:92
 msgid "Mount DVD"
@@ -5082,19 +5180,19 @@ msgstr ""
 
 #: backends/platform/wii/options.cpp:97
 msgid "SMB"
-msgstr ""
+msgstr "SMB"
 
 #: backends/platform/wii/options.cpp:105
 msgid "Server:"
-msgstr ""
+msgstr "服务器："
 
 #: backends/platform/wii/options.cpp:109
 msgid "Share:"
-msgstr ""
+msgstr "分享："
 
 #: backends/platform/wii/options.cpp:117
 msgid "Password:"
-msgstr ""
+msgstr "密码："
 
 #: backends/platform/wii/options.cpp:120
 msgid "Init network"
@@ -5155,7 +5253,7 @@ msgstr ""
 
 #: backends/presence/discord/discord.cpp:46
 msgid "Launcher"
-msgstr ""
+msgstr "启动器"
 
 #: backends/updates/macosx/macosx-updates.mm:73
 msgid "Check for Updates..."
@@ -5348,7 +5446,7 @@ msgstr ""
 #: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3905
 #: engines/zvision/file/save_manager.cpp:61 engines/zvision/metaengine.cpp:267
 msgid "Restore"
-msgstr ""
+msgstr "恢复"
 
 #: engines/agos/saveload.cpp:139
 msgid "Quick load or save game isn't supported in this location"
@@ -5587,7 +5685,7 @@ msgstr ""
 
 #: engines/bladerunner/bladerunner.cpp:2759
 msgid "Continue"
-msgstr ""
+msgstr "继续"
 
 #: engines/bladerunner/detection_tables.h:90
 #: engines/bladerunner/detection_tables.h:101
@@ -6055,20 +6153,20 @@ msgstr "交流/互动"
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:873
 msgid "Attack"
-msgstr ""
+msgstr "攻击"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:130 engines/mm/mm1/metaengine.cpp:67
 msgid "Block"
-msgstr ""
+msgstr "阻挡"
 
 #: engines/crab/input/input.cpp:169 engines/twine/metaengine.cpp:449
 msgid "Accept"
-msgstr ""
+msgstr "接受"
 
 #: engines/crab/input/input.cpp:186
 msgid "Previous"
-msgstr ""
+msgstr "上一个"
 
 #: engines/crab/input/input.cpp:191
 msgid "Reply 1"
@@ -6104,11 +6202,11 @@ msgstr ""
 
 #: engines/crab/input/input.cpp:241
 msgid "Map"
-msgstr ""
+msgstr "地图"
 
 #: engines/crab/input/input.cpp:246
 msgid "Journal"
-msgstr ""
+msgstr "旅行路线"
 
 #. I18N: Action in In Cold Blood
 #: engines/crab/input/input.cpp:251 engines/dragons/metaengine.cpp:149
@@ -6120,7 +6218,7 @@ msgstr ""
 #: engines/scumm/help.cpp:253 engines/twine/metaengine.cpp:418
 #: engines/zvision/metaengine.cpp:232
 msgid "Inventory"
-msgstr ""
+msgstr "物品栏"
 
 #: engines/crab/input/input.cpp:256
 msgid "Traits"
@@ -6166,7 +6264,7 @@ msgstr ""
 
 #: engines/dragons/metaengine.cpp:137 engines/twp/metaengine.cpp:150
 msgid "Action"
-msgstr ""
+msgstr "行动"
 
 #: engines/dragons/metaengine.cpp:143
 msgid "Change Command"
@@ -6268,7 +6366,7 @@ msgstr "向右冲"
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:59 engines/mm/mm1/metaengine.cpp:79
 msgid "Shoot"
-msgstr ""
+msgstr "射击"
 
 #: engines/freescape/movement.cpp:65
 msgid "Rise/Fly up"
@@ -6353,7 +6451,7 @@ msgstr ""
 
 #: engines/glk/comprehend/game.cpp:321
 msgid "Savegame"
-msgstr ""
+msgstr "存档"
 
 #: engines/glk/comprehend/game.cpp:860
 msgid "Picture window toggled\n"
@@ -6381,7 +6479,7 @@ msgstr ""
 
 #: engines/glk/scott/scott.cpp:681
 msgid "Saved.\n"
-msgstr ""
+msgstr "已保存。\n"
 
 #: engines/glk/zcode/zcode.cpp:144
 msgid "Error writing save file\n"
@@ -6430,16 +6528,16 @@ msgstr ""
 #: engines/hpl1/metaengine.cpp:82 engines/icb/icb.cpp:131
 #: engines/icb/icb.cpp:197
 msgid "Run"
-msgstr ""
+msgstr "跑步"
 
 #: engines/grim/grim.cpp:498 engines/hpl1/metaengine.cpp:90
 #: engines/scumm/help.cpp:243 engines/scumm/help.cpp:251
 msgid "Examine"
-msgstr ""
+msgstr "观察"
 
 #: engines/grim/grim.cpp:503 engines/grim/grim.cpp:599
 msgid "Use/Talk"
-msgstr ""
+msgstr "使用/交流"
 
 #: engines/grim/grim.cpp:508 engines/grim/grim.cpp:604
 msgid "Pick up/Put away"
@@ -6463,7 +6561,7 @@ msgstr ""
 
 #: engines/grim/grim.cpp:594
 msgid "Examine/Look"
-msgstr ""
+msgstr "观察/看"
 
 #: engines/grim/grim.cpp:1370
 msgid "Error: the game could not be saved."
@@ -6646,7 +6744,7 @@ msgstr ""
 #: engines/twp/metaengine.cpp:180 engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:1552
 msgid "Use"
-msgstr ""
+msgstr "使用"
 
 #: engines/hdb/metaengine.cpp:244
 msgid "Clear waypoints"
@@ -6654,7 +6752,7 @@ msgstr ""
 
 #: engines/hdb/metaengine.cpp:270
 msgid "Debug"
-msgstr ""
+msgstr "调试"
 
 #: engines/hopkins/metaengine.cpp:43 engines/hopkins/metaengine.cpp:55
 msgid "Gore Mode"
@@ -6666,7 +6764,7 @@ msgstr ""
 
 #: engines/hpl1/metaengine.cpp:76
 msgid "Forward"
-msgstr ""
+msgstr "前进"
 
 #: engines/hpl1/metaengine.cpp:77
 msgid "Backward"
@@ -6682,7 +6780,7 @@ msgstr "右倾"
 
 #: engines/hpl1/metaengine.cpp:83
 msgid "Jump"
-msgstr ""
+msgstr "跳跃"
 
 #. I18N: Action in In Cold Blood
 #: engines/hpl1/metaengine.cpp:84 engines/icb/icb.cpp:119
@@ -6704,7 +6802,7 @@ msgstr ""
 
 #: engines/hpl1/metaengine.cpp:95
 msgid "Notebook"
-msgstr ""
+msgstr "笔记本"
 
 #: engines/hpl1/metaengine.cpp:96
 msgid "Personal Notes"
@@ -6712,11 +6810,11 @@ msgstr ""
 
 #: engines/hpl1/metaengine.cpp:97
 msgid "Flashlight"
-msgstr ""
+msgstr "手电筒"
 
 #: engines/hpl1/metaengine.cpp:98
 msgid "Glowstick"
-msgstr ""
+msgstr "荧光棒"
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
@@ -6761,12 +6859,12 @@ msgstr ""
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:89
 msgid "Fire"
-msgstr ""
+msgstr "火"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:107
 msgid "Arm"
-msgstr ""
+msgstr "武器"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:113
@@ -6942,7 +7040,7 @@ msgstr ""
 
 #: engines/kyra/engine/eobcommon.cpp:378
 msgid "Camp"
-msgstr ""
+msgstr "扎营"
 
 #: engines/kyra/engine/eobcommon.cpp:379 engines/mm/mm1/metaengine.cpp:102
 msgid "Cast Spell"
@@ -6999,7 +7097,7 @@ msgstr ""
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/kyra/engine/lol.cpp:516 engines/mm/mm1/metaengine.cpp:109
 msgid "Rest"
-msgstr ""
+msgstr "休息"
 
 #: engines/kyra/engine/lol.cpp:517
 msgid "Options"
@@ -7192,7 +7290,7 @@ msgstr ""
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:71
 msgid "Exchange"
-msgstr ""
+msgstr "交换"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:73
@@ -7212,18 +7310,18 @@ msgstr ""
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:84
 msgid "Delay"
-msgstr ""
+msgstr "延迟"
 
 #. I18N: Combat command in Might & Magic 1
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:86 engines/mm/mm1/metaengine.cpp:107
 msgid "Protect"
-msgstr ""
+msgstr "保护"
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:94
 msgid "Forwards"
-msgstr ""
+msgstr "前进"
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:96
@@ -7251,7 +7349,7 @@ msgstr ""
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:115 engines/scumm/help.cpp:148
 msgid "Unlock"
-msgstr ""
+msgstr "解锁"
 
 #: engines/mm/mm1/metaengine.cpp:122
 msgid "Goto location"
@@ -7396,7 +7494,7 @@ msgstr ""
 
 #: engines/mohawk/dialogs.cpp:360
 msgid "Transitions:"
-msgstr ""
+msgstr "转场："
 
 #: engines/mohawk/dialogs.cpp:360
 msgid ""
@@ -7406,15 +7504,15 @@ msgstr ""
 
 #: engines/mohawk/dialogs.cpp:365
 msgid "Fastest"
-msgstr ""
+msgstr "最快"
 
 #: engines/mohawk/dialogs.cpp:366
 msgid "Normal"
-msgstr ""
+msgstr "正常"
 
 #: engines/mohawk/dialogs.cpp:367 engines/scumm/dialogs.cpp:1455
 msgid "Best"
-msgstr ""
+msgstr "最佳"
 
 #: engines/mohawk/metaengine.cpp:292
 msgid "Myst ME support not compiled in"
@@ -7827,7 +7925,7 @@ msgstr ""
 
 #: engines/neverhood/dialogs.cpp:95
 msgid "<original>"
-msgstr ""
+msgstr "<原始>"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -7884,7 +7982,7 @@ msgstr ""
 
 #: engines/pegasus/pegasus.cpp:2754
 msgid "Action/Select"
-msgstr ""
+msgstr "行动/选择"
 
 #: engines/pegasus/pegasus.cpp:2774
 msgid "Display/Hide Inventory Tray"
@@ -8112,7 +8210,7 @@ msgstr ""
 
 #: engines/sci/engine/kfile.cpp:491 engines/sci/metaengine.cpp:369
 msgid "(Autosave)"
-msgstr ""
+msgstr "（自动保存）"
 
 #: engines/sci/engine/kgraphics32.cpp:361
 #, c-format
