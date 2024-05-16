@@ -74,7 +74,7 @@ public class SAFFSTree {
 		}
 	}
 
-	public static class SAFFSNode {
+	public static class SAFFSNode implements Comparable<SAFFSNode> {
 		public static final int DIRECTORY = 0x01;
 		public static final int WRITABLE  = 0x02;
 		public static final int READABLE  = 0x04;
@@ -120,6 +120,14 @@ public class SAFFSTree {
 				ourFlags |= SAFFSNode.REMOVABLE;
 			}
 			return ourFlags;
+		}
+
+		@Override
+		public int compareTo(SAFFSNode o) {
+			if (o == null) {
+				throw new NullPointerException();
+			}
+			return _path.compareTo(o._path);
 		}
 	}
 
