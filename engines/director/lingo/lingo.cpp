@@ -336,8 +336,6 @@ Symbol Lingo::getHandler(const Common::String &name) {
 	if (_state->context && _state->context->_functionHandlers.contains(name))
 		return _state->context->_functionHandlers[name];
 
-	warning("getHandler('%s'), movie is: %s", name.c_str(), g_director->getCurrentMovie()->getMacName().c_str());
-
 	sym = g_director->getCurrentMovie()->getHandler(name);
 	if (sym.type != VOIDSYM)
 		return sym;

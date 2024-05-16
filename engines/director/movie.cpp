@@ -607,23 +607,12 @@ ScriptContext *Movie::getScriptContext(ScriptType type, CastMemberID id) {
 
 Symbol Movie::getHandler(const Common::String &name) {
 	for (auto &it : _casts) {
-		if (name == "waitSignal") {
-			for (auto &i : it._value->_lingoArchive->functionHandlers)
-				debug("%s", i._key.c_str());
-		}
-
 		if (it._value->_lingoArchive->functionHandlers.contains(name))
 			return it._value->_lingoArchive->functionHandlers[name];
 	}
 
-	if (_sharedCast && _sharedCast->_lingoArchive->functionHandlers.contains(name)) {
-		if (name == "waitSignal") {
-			for (auto &i : _sharedCast->_lingoArchive->functionHandlers)
-				debug("sh: %s", i._key.c_str());
-		}
-
+	if (_sharedCast && _sharedCast->_lingoArchive->functionHandlers.contains(name))
 		return _sharedCast->_lingoArchive->functionHandlers[name];
-	}
 
 	return Symbol();
 }
