@@ -27,6 +27,7 @@
 #include "video/qt_decoder.h"
 
 #include "director/director.h"
+#include "director/movie.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
@@ -127,9 +128,11 @@ MMovieXObject::~MMovieXObject() {
 	}
 }
 
-bool MMovieXObject::playSegment(int movieIndex, int segIndex, bool looping, bool restore, bool shiftAbort, bool abortOnClick, bool purge, bool async) {
+int MMovieXObject::playSegment(int movieIndex, int segIndex, bool looping, bool restore, bool shiftAbort, bool abortOnClick, bool purge, bool async) {
+	int result = MMovieError::MMOVIE_INVALID_MOVIE_INDEX;
 	if (_movies.contains(movieIndex)) {
 		MMovieFile &movie = _movies.getVal(movieIndex);
+		result = MMovieError::MMOVIE_INDEX_OUT_OF_RANGE;
 		if (segIndex <= (int)movie.segments.size() && segIndex > 0) {
 			MMovieSegment &segment = movie.segments[segIndex - 1];
 			_currentMovieIndex = movieIndex;
@@ -143,15 +146,13 @@ bool MMovieXObject::playSegment(int movieIndex, int segIndex, bool looping, bool
 			debugC(5, kDebugXObj, "MMovieXObject::playSegment(): hitting play on movie %s (%d) segment %s (%d) - %d", movie._path.toString().c_str(), movieIndex, segment._name.c_str(), segIndex, segment._start);
 			movie._video->seek(Audio::Timestamp(0, segment._start, movie._video->getTimeScale()));
 			movie._video->start();
-
+			result = MMovieError::MMOVIE_NONE;
 			if (!_async) {
-				updateScreenBlocking();
+				result = updateScreenBlocking();
 			}
-
-			return true;
 		}
 	}
-	return false;
+	return result;
 }
 
 bool MMovieXObject::stopSegment() {
@@ -169,7 +170,8 @@ bool MMovieXObject::stopSegment() {
 	return false;
 }
 
-void MMovieXObject::updateScreenBlocking() {
+int MMovieXObject::updateScreenBlocking() {
+	MMovieError result = MMovieError::MMOVIE_PLAYBACK_FINISHED;
 	while (_currentMovieIndex && _currentSegmentIndex) {
 		Common::Event event;
 		bool keepPlaying = true;
@@ -181,8 +183,10 @@ void MMovieXObject::updateScreenBlocking() {
 			case Common::EVENT_KEYDOWN:
 			case Common::EVENT_RBUTTONDOWN:
 			case Common::EVENT_LBUTTONDOWN:
-				if (_abortOnClick)
+				if (_abortOnClick) {
+					result = MMovieError::MMOVIE_ABORT_DOUBLE_CLICK;
 					keepPlaying = false;
+				}
 				break;
 			default:
 				break;
@@ -195,17 +199,20 @@ void MMovieXObject::updateScreenBlocking() {
 			break;
 		updateScreen();
 	}
+	return result;
 }
 
-void MMovieXObject::updateScreen() {
+int MMovieXObject::updateScreen() {
+	int result = MMovieError::MMOVIE_CONTINUE_WITHOUT_PLAYING;
 	if (_currentMovieIndex) {
 		MMovieFile &movie = _movies.getVal(_currentMovieIndex);
 		if (_currentSegmentIndex) {
 			MMovieSegment &seg = movie.segments[_currentSegmentIndex - 1];
+			result = getTicks();
 			if (movie._video && movie._video->isPlaying() && movie._video->needsUpdate()) {
 				const Graphics::Surface *frame = movie._video->decodeNextFrame();
-				if (frame) {
-					debugC(8, kDebugXObj, "MMovieXObject: rendering movie %s (%d), time %d", movie._path.toString().c_str(), _currentMovieIndex, movie._video->getTime());
+				if (frame && !_bounds.isEmpty()) {
+					debugC(8, kDebugXObj, "MMovieXObject: rendering movie %s (%d), ticks %d", movie._path.toString().c_str(), _currentMovieIndex, getTicks());
 					Graphics::Surface *temp1 = frame->scale(_bounds.width(), _bounds.height(), false);
 					Graphics::Surface *temp2 = temp1->convertTo(g_director->_pixelformat, movie._video->getPalette());
 					_lastFrame.copyFrom(*temp2);
@@ -215,33 +222,38 @@ void MMovieXObject::updateScreen() {
 					delete temp1;
 				}
 			}
-			g_system->copyRectToScreen(_lastFrame.getPixels(), _lastFrame.pitch, _bounds.left, _bounds.top, _bounds.width(), _bounds.height());
+			if (!_bounds.isEmpty())
+				g_system->copyRectToScreen(_lastFrame.getPixels(), _lastFrame.pitch, _bounds.left, _bounds.top, _bounds.width(), _bounds.height());
 			// do a time check
 			uint32 endTime = Audio::Timestamp(0, seg._length + seg._start, movie._video->getTimeScale()).msecs();
-			debugC(8, kDebugXObj, "MMovieXObject::updateScreen(): time: %d, endTime: %d", movie._video->getTime(), endTime);
+			debugC(8, kDebugXObj, "MMovieXObject::updateScreen(): time: %d, endTime: %d, ticks: %d, endTicks: %d", movie._video->getTime(), endTime, getTicks(), seg._length + seg._start);
 			if (movie._video->getTime() >= endTime) {
 				if (_looping) {
-					debugC(5, kDebugXObj, "MMovieXObject::updateScreen(): rewinding loop on %s (%d), time %d", movie._path.toString().c_str(), _currentMovieIndex, movie._video->getTime());
+					debugC(5, kDebugXObj, "MMovieXObject::updateScreen(): rewinding loop on %s (%d), time: %d, ticks: %d", movie._path.toString().c_str(), _currentMovieIndex, movie._video->getTime(), getTicks());
 					movie._video->seek(Audio::Timestamp(0, seg._start, movie._video->getTimeScale()));
 				} else {
-					debugC(5, kDebugXObj, "MMovieXObject::updateScreen(): stopping %s (%d), time %d", movie._path.toString().c_str(), _currentMovieIndex, movie._video->getTime());
+					debugC(5, kDebugXObj, "MMovieXObject::updateScreen(): stopping %s (%d), time: %d, ticks: %d", movie._path.toString().c_str(), _currentMovieIndex, movie._video->getTime(), getTicks());
 					stopSegment();
+					result = MMovieError::MMOVIE_PLAYBACK_FINISHED;
 				}
 			}
 		}
 	}
 	g_system->updateScreen();
 	g_director->delayMillis(10);
+	return result;
 }
 
 int MMovieXObject::getTicks() {
-	if (_currentMovieIndex) {
+	if (_currentMovieIndex && _currentSegmentIndex) {
 		MMovieFile &movie = _movies.getVal(_currentMovieIndex);
+		MMovieSegment &segment = movie.segments[_currentSegmentIndex - 1];
 		if (movie._video) {
-			return movie._video->getTime() * 60 / 1000;
+			_lastTicks = movie._video->getTime() - Audio::Timestamp(0, segment._start, movie._video->getTimeScale()).msecs();
+			_lastTicks = _lastTicks * 60 / 1000;
 		}
 	}
-	return -1;
+	return _lastTicks;
 }
 
 void MMovieXObj::open(ObjectType type, const Common::Path &path) {
@@ -346,7 +358,7 @@ void MMovieXObj::m_closeMMovie(int nargs) {
 		file._video = nullptr;
 	}
 	me->_movies.erase(index);
-	g_lingo->push(0);
+	g_lingo->push(Datum(MMovieError::MMOVIE_NONE));
 }
 
 void MMovieXObj::m_playSegment(int nargs) {
@@ -368,18 +380,14 @@ void MMovieXObj::m_playSegment(int nargs) {
 	bool abortOnClick = abortOpt.equalsIgnoreCase("abortOnClick");
 	bool purge = purgeOpt.equalsIgnoreCase("purge");
 	bool async = asyncOpt.equalsIgnoreCase("async");
-
 	MMovieXObject *me = static_cast<MMovieXObject *>(g_lingo->_state->me.u.obj);
 	for (auto &it : me->_movies) {
 		if (it._value.segLookup.contains(segmentName)) {
 			int segIndex = it._value.segLookup.getVal(segmentName);
-			if (!me->playSegment(it._key, segIndex, false, restore, shiftAbort, abortOnClick, purge, async)) {
-				g_lingo->push(MMovieError::MMOVIE_INDEX_OUT_OF_RANGE);
-				return;
-			}
-			int result = me->getTicks();
-			debugC(5, kDebugXObj, "MMovieXObj::m_playSegment: ticks: %d", result);
-			g_lingo->push(0);
+			int result = me->playSegment(it._key, segIndex, false, restore, shiftAbort, abortOnClick, purge, async);
+			int ticks = me->getTicks();
+			debugC(5, kDebugXObj, "MMovieXObj::m_playSegment: ticks: %d, result: %d", ticks, result);
+			g_lingo->push(Datum(result));
 			return;
 		}
 	}
@@ -411,10 +419,10 @@ void MMovieXObj::m_playSegLoop(int nargs) {
 	for (auto &it : me->_movies) {
 		if (it._value.segLookup.contains(segmentName)) {
 			int segIndex = it._value.segLookup.getVal(segmentName);
-			me->playSegment(it._key, segIndex, true, restore, shiftAbort, abortOnClick, purge, async);
-			int result = me->getTicks();
-			debugC(5, kDebugXObj, "MMovieXObj::m_playSegLoop: ticks: %d", result);
-			g_lingo->push(0);
+			int result = me->playSegment(it._key, segIndex, true, restore, shiftAbort, abortOnClick, purge, async);
+			int ticks = me->getTicks();
+			debugC(5, kDebugXObj, "MMovieXObj::m_playSegLoop: ticks: %d, result: %d", ticks, result);
+			g_lingo->push(Datum(result));
 			return;
 		}
 	}
@@ -427,10 +435,11 @@ void MMovieXObj::m_idleSegment(int nargs) {
 		g_lingo->dropStack(nargs);
 	}
 	MMovieXObject *me = static_cast<MMovieXObject *>(g_lingo->_state->me.u.obj);
-	me->updateScreen();
-	int result = me->getTicks();
-	debugC(5, kDebugXObj, "MMovieXObj::m_idleSegment(): ticks: %d", result);
-	g_lingo->push(result);
+	int result = me->updateScreen();
+	int ticks = me->getTicks();
+	debugC(5, kDebugXObj, "MMovieXObj::m_idleSegment(): ticks: %d, result: %d", ticks, result);
+
+	g_lingo->push(Datum(result));
 }
 
 void MMovieXObj::m_stopSegment(int nargs) {
@@ -447,17 +456,18 @@ void MMovieXObj::m_seekSegment(int nargs) {
 	g_lingo->printArgs("MMovieXObj::m_seekSegment", nargs);
 	if (nargs != 1) {
 		g_lingo->dropStack(nargs);
-		g_lingo->push(MMovieError::MMOVIE_INVALID_SEGMENT_NAME);
+		g_lingo->push(Datum(MMovieError::MMOVIE_INVALID_SEGMENT_NAME));
 		return;
 	}
 	Common::String segmentName = g_lingo->pop().asString();
 	MMovieXObject *me = static_cast<MMovieXObject *>(g_lingo->_state->me.u.obj);
 	for (auto &it : me->_movies) {
 		if (it._value.segLookup.contains(segmentName)) {
-
+			g_lingo->push(Datum(MMovieError::MMOVIE_NONE));
+			return;
 		}
 	}
-
+	g_lingo->push(Datum(MMovieError::MMOVIE_INVALID_SEGMENT_NAME));
 }
 
 
@@ -480,6 +490,8 @@ void MMovieXObj::m_setDisplayBounds(int nargs) {
 	me->_bounds = Common::Rect((int16)left.asInt(), (int16)top.asInt(), (int16)right.asInt(), (int16)bottom.asInt());
 	me->_lastFrame.free();
 	me->_lastFrame.create(me->_bounds.width(), me->_bounds.height(), g_director->_pixelformat);
+	Common::Rect screen = g_director->getCurrentMovie()->_movieRect;
+	me->_bounds.clip(Common::Rect(screen.width(), screen.height()));
 	g_lingo->push(Datum(0));
 }
 
@@ -627,7 +639,7 @@ void MMovieXObj::m_writeFile(int nargs) {
 
 	Common::String prefix = savePrefix();
 	if (origPath.empty()) {
-		path = getFileNameFromModal(false, Common::String(), "txt");
+		path = getFileNameFromModal(true, Common::String(), "txt");
 		if (path.empty()) {
 			debugC(5, kDebugXObj, "MMovieXObj::m_writeFile(): read cancelled by modal");
 			g_lingo->push(result);
