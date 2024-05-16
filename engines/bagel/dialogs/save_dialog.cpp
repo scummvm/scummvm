@@ -97,6 +97,8 @@ CBagSaveDialog::CBagSaveDialog() {
 ErrorCode CBagSaveDialog::attach() {
 	assert(isValidObject(this));
 
+	g_engine->enableKeymapper(false);
+
 	// Save off the current game's palette
 	_pSavePalette = CBofApp::getApp()->getPalette();
 
@@ -221,6 +223,8 @@ ErrorCode CBagSaveDialog::attach() {
 
 ErrorCode CBagSaveDialog::detach() {
 	assert(isValidObject(this));
+
+	g_engine->enableKeymapper(true);
 
 	CBagCursor::hideSystemCursor();
 

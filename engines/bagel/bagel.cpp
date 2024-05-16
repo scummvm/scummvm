@@ -23,6 +23,8 @@
 #include "bagel/detection.h"
 #include "bagel/music.h"
 
+#include "backends/keymapper/keymapper.h"
+
 #include "bagel/baglib/bagel.h"
 #include "bagel/baglib/character_object.h"
 #include "bagel/baglib/cursor.h"
@@ -212,6 +214,10 @@ void BagelEngine::pauseEngineIntern(bool pause) {
 
 void BagelEngine::errorDialog(const char *msg) {
 	GUIErrorMessage(msg);
+}
+
+void BagelEngine::enableKeymapper(bool enabled) {
+	getEventManager()->getKeymapper()->setEnabled(enabled);
 }
 
 } // End of namespace Bagel

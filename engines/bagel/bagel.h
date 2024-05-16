@@ -125,6 +125,8 @@ public:
 	void pauseEngineIntern(bool pause) override;
 
 	void errorDialog(const char *msg);
+
+	void enableKeymapper(bool enabled);
 };
 
 extern BagelEngine *g_engine;
