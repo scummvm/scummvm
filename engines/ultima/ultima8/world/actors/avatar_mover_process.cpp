@@ -146,6 +146,8 @@ bool AvatarMoverProcess::standUpIfNeeded(Direction direction) {
 			ProcId pid = avatar->doAnim(Animation::standUp, direction);
 			if (avatar->hasActorFlags(Actor::ACT_STUNNED)) {
 				avatar->clearActorFlag(Actor::ACT_STUNNED);
+				// Shake head twice
+				pid = avatar->doAnimAfter(Animation::shakeHead, direction, pid);
 				pid = avatar->doAnimAfter(Animation::shakeHead, direction, pid);
 			}
 			waitFor(pid);
