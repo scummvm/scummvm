@@ -18,6 +18,7 @@
 #define HWND          void *
 #define HINSTANCE     void *
 #define HMODULE       void *
+#define HRESULT       int
 #define FARPROC       int *
 #define LPARAM        int
 #define LPSTR         char *

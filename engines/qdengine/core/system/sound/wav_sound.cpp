@@ -1,6 +1,4 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-#include "common/textconsole.h"
-
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/sound/wav_sound.h"
 

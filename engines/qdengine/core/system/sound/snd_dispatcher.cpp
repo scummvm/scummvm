@@ -1,8 +1,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include <math.h>
-#include "common/textconsole.h"
-
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/sound/snd_dispatcher.h"
 

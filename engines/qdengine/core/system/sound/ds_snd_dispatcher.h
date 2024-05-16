@@ -45,11 +45,9 @@ protected:
 
 private:
 
-#if 0
 	typedef std::list<dsSound> sound_list_t;
 	//! Список активных звуков.
 	sound_list_t sounds_;
-#endif
 
 	//! Указатель на DirectSound интерфейс.
 	LPDIRECTSOUND sound_device_;
