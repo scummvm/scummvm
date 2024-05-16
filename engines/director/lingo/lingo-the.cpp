@@ -2097,6 +2097,30 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 			obj.u.parr->arr.push_back(cell);
 		}
 		g_debugger->propWriteHook(propName);
+	} else if (obj.type == POINT) {
+		if (propName.equalsIgnoreCase("locH")) {
+			obj.u.farr->arr[0] = val.asInt();
+		} else if (propName.equalsIgnoreCase("locV")) {
+			obj.u.farr->arr[1] = val.asInt();
+		} else {
+			g_lingo->lingoError("Lingo::setObjectProp: Point <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
+		}
+		g_debugger->propWriteHook(propName);
+		return;
+	} else if (obj.type == RECT) {
+		if (propName.equalsIgnoreCase("left")) {
+			obj.u.farr->arr[0] = val.asInt();
+		} else if (propName.equalsIgnoreCase("top")) {
+			obj.u.farr->arr[1] = val.asInt();
+		} else if (propName.equalsIgnoreCase("right")) {
+			obj.u.farr->arr[2] = val.asInt();
+		} else if (propName.equalsIgnoreCase("bottom")) {
+			obj.u.farr->arr[3] = val.asInt();
+		} else {
+			g_lingo->lingoError("Lingo::setObjectProp: Rect <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
+		}
+		g_debugger->propWriteHook(propName);
+		return;
 	} else if (obj.type == CASTREF) {
 		Movie *movie = _vm->getCurrentMovie();
 		if (!movie) {
