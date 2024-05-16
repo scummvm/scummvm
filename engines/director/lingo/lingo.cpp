@@ -1348,6 +1348,7 @@ int Datum::equalTo(Datum &d, bool ignoreCase) const {
 	case PICTUREREF:
 		return 0; // Original always returns 0 on picture reference comparison
 	default:
+		warning("Datum::equalTo(): Invalid equality check between types %s and %s", type2str(), d.type2str());
 		break;
 	}
 	return 0;
@@ -1424,7 +1425,7 @@ uint32 Datum::compareTo(Datum &d) const {
 			return kCompareGreater;
 		}
 	} else {
-		warning("Invalid comparison between types %s and %s", type2str(), d.type2str());
+		warning("Datum::compareTo(): Invalid comparison between types %s and %s", type2str(), d.type2str());
 		return kCompareError;
 	}
 }
