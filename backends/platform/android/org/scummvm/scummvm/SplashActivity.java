@@ -40,7 +40,9 @@ public class SplashActivity extends Activity {
 			// and they are automatically denied -- onRequestPermissionsResult() will be called without user's input
 			requestPermissions(MY_PERMISSIONS_STR_LIST, MY_PERMISSION_ALL);
 		} else {
-			startActivity(new Intent(this, ScummVMActivity.class));
+			Intent next = new Intent(this, ScummVMActivity.class);
+			next.fillIn(getIntent(), Intent.FILL_IN_ACTION | Intent.FILL_IN_DATA);
+			startActivity(next);
 			finish();
 		}
 	}

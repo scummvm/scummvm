@@ -575,11 +575,13 @@ void OSystem_Android::engineInit() {
 	_engineRunning = true;
 	updateOnScreenControls();
 
+	JNI::setCurrentGame(ConfMan.getActiveDomainName());
 }
 
 void OSystem_Android::engineDone() {
 	_engineRunning = false;
 	updateOnScreenControls();
+	JNI::setCurrentGame("");
 }
 
 void OSystem_Android::updateOnScreenControls() {

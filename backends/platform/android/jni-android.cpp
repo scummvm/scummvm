@@ -98,6 +98,7 @@ jmethodID JNI::_MID_setOrientation = 0;
 jmethodID JNI::_MID_getScummVMBasePath;
 jmethodID JNI::_MID_getScummVMConfigPath;
 jmethodID JNI::_MID_getScummVMLogPath;
+jmethodID JNI::_MID_setCurrentGame = 0;
 jmethodID JNI::_MID_getSysArchives = 0;
 jmethodID JNI::_MID_getAllStorageLocations = 0;
 jmethodID JNI::_MID_initSurface = 0;
@@ -614,6 +615,27 @@ Common::String JNI::getScummVMLogPath() {
 	return path;
 }
 
+void JNI::setCurrentGame(const Common::String &target) {
+	JNIEnv *env = JNI::getEnv();
+	jstring java_target = nullptr;
+	if (!target.empty()) {
+		java_target = convertToJString(env, Common::U32String(target));
+	}
+
+	env->CallVoidMethod(_jobj, _MID_setCurrentGame, java_target);
+
+	if (env->ExceptionCheck()) {
+		LOGE("Failed to set current game");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+	}
+
+	if (java_target) {
+		env->DeleteLocalRef(java_target);
+	}
+}
+
 // The following adds assets folder to search set.
 // However searching and retrieving from "assets" on Android this is slow
 // so we also make sure to add the base directory, with a higher priority
@@ -804,6 +826,7 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, getScummVMBasePath, "()Ljava/lang/String;");
 	FIND_METHOD(, getScummVMConfigPath, "()Ljava/lang/String;");
 	FIND_METHOD(, getScummVMLogPath, "()Ljava/lang/String;");
+	FIND_METHOD(, setCurrentGame, "(Ljava/lang/String;)V");
 	FIND_METHOD(, getSysArchives, "()[Ljava/lang/String;");
 	FIND_METHOD(, getAllStorageLocations, "()[Ljava/lang/String;");
 	FIND_METHOD(, initSurface, "()Ljavax/microedition/khronos/egl/EGLSurface;");
