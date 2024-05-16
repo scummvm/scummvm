@@ -597,6 +597,8 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 	s.syncString(_backgroundFile);
 	if (s.isLoading()) {
 		Image(_resource, _decompressor).drawScreen(_backgroundFile, _backgroundBuffer);
+		_foregroundBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		_storedAreaBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 	}
 
 	return Common::kNoError;
