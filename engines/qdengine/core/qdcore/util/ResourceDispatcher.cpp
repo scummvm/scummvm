@@ -1,7 +1,6 @@
 
 #include "qdengine/core/qd_precomp.h"
-
-#include "ResourceDispatcher.h"
+#include "qdengine/core/qdcore/util/ResourceDispatcher.h"
 
 int ResourceUser::IDs;
 

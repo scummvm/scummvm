@@ -3,8 +3,6 @@
 #pragma once
 //Balmer
 
-#include <dsound.h>
-
 #define MPP_STAT
 #ifdef MPP_STAT
 double MpegCPUUsing();//Возвращает используемое на проигрывание Mpeg время (1 - всё время загрузки)

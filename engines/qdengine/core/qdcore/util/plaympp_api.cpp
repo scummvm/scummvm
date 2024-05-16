@@ -2,11 +2,8 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
-#include "plaympp_api.h"
-
-#include "PlayMpeg.h"
-#include "PlayOgg.h"
+#include "qdengine/core/qdcore/util/plaympp_api.h"
+#include "qdengine/core/system/sound/PlayOgg.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */

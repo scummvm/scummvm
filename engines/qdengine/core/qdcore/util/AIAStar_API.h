@@ -1,7 +1,7 @@
 #ifndef __AIASTAR_API_H__
 #define __AIASTAR_API_H__
 
-#include "AIAStar.h"
+#include "qdengine/core/qdcore/util/AIAStar.h"
 
 class qdCamera;
 class qdGameObjectMoving;

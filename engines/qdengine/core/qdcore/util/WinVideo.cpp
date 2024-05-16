@@ -1,13 +1,7 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
-#include <amstream.h>
-#include <control.h>
-#include <uuids.h>
-#include <evcode.h>
-
-#include "WinVideo.h"
+#include "qdengine/core/qdcore/util/WinVideo.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */

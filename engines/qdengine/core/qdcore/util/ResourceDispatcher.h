@@ -1,8 +1,8 @@
 #ifndef __RESOURCE_DISPATCHER_H__
 #define __RESOURCE_DISPATCHER_H__
 
-#include "SynchroTimer.h"
-#include "Handle.h"
+#include "qdengine/core/qdcore/util/Handle.h"
+#include "qdengine/core/qdcore/util/SynchroTimer.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //	General Time Resourcing
@@ -120,4 +120,3 @@ private:
 };
 
 #endif // __RESOURCE_DISPATCHER_H__
-

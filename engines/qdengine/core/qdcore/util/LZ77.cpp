@@ -4,8 +4,7 @@
 // Implemented by Arkadi Kagan.
 //
 #include "qdengine/core/qd_precomp.h"
-
-#include "LZ77.h"
+#include "qdengine/core/qdcore/util/LZ77.h"
 
 #define BITS_LEN    4
 
