@@ -22,17 +22,17 @@
 namespace Alcachofa {
 
 const PlainGameDescriptor alcachofaGames[] = {
-	{ "alcachofa", "Alcachofa" },
+	{ "mort_phil_adventura_de_cine", "Mort&Phil: A movie adventure" },
 	{ 0, 0 }
 };
 
 const ADGameDescription gameDescriptions[] = {
 	{
-		"alcachofa",
+		"mort_phil_adventura_de_cine",
 		nullptr,
-		AD_ENTRY1s("file1.bin", "00000000000000000000000000000000", 11111),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
+		AD_ENTRY1s("Textos/Objetos.nkr", "a2b1deff5ca7187f2ebf7f2ab20747e9", 17606),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
