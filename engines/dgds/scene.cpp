@@ -1049,7 +1049,8 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 			for (const auto &i : engine->getGDSScene()->getObjInteractions2()) {
 				if (i._droppedItemNum == dragItem->_num && i._targetItemNum == item._num) {
 					debug(" --> exec item %d drag ops", i.opList.size());
-					runOps(i.opList);
+					if (!runOps(i.opList))
+						return;
 					break;
 				}
 			}
@@ -1068,7 +1069,8 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 			for (const auto &i : engine->getScene()->getObjInteractions1()) {
 				if (i._droppedItemNum == dragItem->_num && i._targetItemNum == area._num) {
 					debug(" --> exec area %d drag ops", i.opList.size());
-					runOps(i.opList);
+					if (!runOps(i.opList))
+						return;
 					break;
 				}
 			}
