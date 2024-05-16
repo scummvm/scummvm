@@ -439,7 +439,7 @@ public class SAFFSTree {
 		return newnode;
 	}
 
-	private int createStream(SAFFSNode node, String mode) {
+	public ParcelFileDescriptor createFileDescriptor(SAFFSNode node, String mode) {
 		final ContentResolver resolver = _context.getContentResolver();
 		final Uri uri = DocumentsContract.buildDocumentUriUsingTree(_treeUri, node._documentId);
 
@@ -447,12 +447,17 @@ public class SAFFSTree {
 		try {
 			pfd = resolver.openFileDescriptor(uri, mode);
 		} catch(FileNotFoundException e) {
-			return -1;
+			return null;
 		}
+
+		return pfd;
+	}
+
+	private int createStream(SAFFSNode node, String mode) {
+		ParcelFileDescriptor pfd = createFileDescriptor(node, mode);
 		if (pfd == null) {
 			return -1;
 		}
-
 		return pfd.detachFd();
 	}
 
