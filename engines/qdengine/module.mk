@@ -21,13 +21,19 @@ MODULE_OBJS = \
 	core/system/sound/snd_dispatcher.o \
 	core/system/sound/wav_file.o \
 	core/system/sound/wav_sound.o \
+	core/system/graphics/gdi_gr_dispatcher.o \
+	core/system/graphics/gr_core.o \
+	core/system/graphics/gr_dispatcher.o \
 	core/system/graphics/gr_draw_sprite_rle_z.o \
 	core/system/graphics/gr_draw_sprite_rle.o \
+	core/system/graphics/gr_draw_sprite_z.o \
+	core/system/graphics/gr_draw_sprite.o \
 	core/system/graphics/gr_font.o \
 	core/system/graphics/gr_screen_region.o \
 	core/system/graphics/gr_tile_animation.o \
 	core/system/graphics/gr_tile_sprite.o \
 	core/system/graphics/rle_compress.o \
+	core/system/graphics/UI_TextParser.o \
 	core/system/input/mouse_input.o \
 	core/system/input/keyboard_input.o \
 	core/system/input/input_wndproc.o \

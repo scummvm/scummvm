@@ -45,7 +45,7 @@ void UI_TextParser::setFont(const grFont *font) {
 }
 
 OutNodes::const_iterator UI_TextParser::getLineBegin(int lineNum) const {
-	dassert(lineNum >= 0);
+	assert(lineNum >= 0);
 
 	if (!lineNum)
 		return outNodes_.begin();
@@ -79,7 +79,7 @@ bool UI_TextParser::testWidth(int width) {
 			tagWidth_ -= lastTagWidth_;
 			lastTagWidth_ = 0;
 		} else if (lineWidth_ > 0) {
-			dassert(lastTagWidth_ == 0);
+			assert(lastTagWidth_ == 0);
 			endLine();
 			testWidth(width);
 		} else if (tagWidth_ > 0) {
@@ -263,5 +263,6 @@ void UI_TextParser::getColor(int defColor) {
 	} else
 		++pstr_;
 
-	putNode(OutNode(color));
+	OutNode node(color);
+	putNode(node);
 }

@@ -230,9 +230,7 @@ int dummy_;
 #include <algorithm>
 #include <functional>
 
-#if 0
-#include "XMath\SafeMath.h"
-#endif
+#include "qdengine/xlibs/util/xmath/SafeMath.h"
 
 #include "qdengine/core/system/app_core.h"
 #include "qdengine/core/system/app_log.h"

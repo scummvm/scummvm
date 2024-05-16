@@ -1,6 +1,4 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-#include "common/textconsole.h"
-
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/system/input/mouse_input.h"
@@ -22,9 +20,9 @@ LRESULT CALLBACK GR_WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	grDispatcher *p = grDispatcher::instance(hwnd);
 	bool hittest = false;
 
+#if 0
 	switch (uMsg) {
 		warning("GR_WindowProc: %d", uMsg);
-#if 0
 	case WM_SYSKEYDOWN:
 		if ((int)wParam != VK_F4)
 			return 0;
@@ -100,6 +98,8 @@ grDispatcher *grDispatcher::instance(void *hwnd) {
 }
 
 bool grDispatcher::sys_init() {
+	warning("STUB: grDispatcher::sys_init()");
+#if 0
 	WNDCLASS wc;
 
 	wc.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS | CS_OWNDC;
@@ -116,13 +116,15 @@ bool grDispatcher::sys_init() {
 	if (!RegisterClass(&wc)) return false;
 
 	default_mouse_cursor_ = LoadCursor(NULL, IDC_ARROW);
-
+#endif
 	return true;
 }
 
 bool grDispatcher::sys_finit() {
+	warning("STUB: grDispatcher::sys_finit()");
+#if 0
 	UnregisterClass(grDispatcher::wnd_class_name(), GetModuleHandle(0));
 	DestroyCursor((HCURSOR)default_mouse_cursor_);
-
+#endif
 	return true;
 }

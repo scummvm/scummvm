@@ -404,7 +404,7 @@ void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const unsig
 	int dx = 0;
 	int dy = 0;
 
-	if (!(round(R2G(angle)) % 90)) {
+	if (!(int(round(R2G(angle))) % 90)) {
 		int angle_num = round(cycleAngle(angle) / (M_PI / 2.f));
 		switch (angle_num) {
 		case 1:
