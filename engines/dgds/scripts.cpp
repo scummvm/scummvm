@@ -1564,10 +1564,13 @@ int ADSInterpreter::numArgs(uint16 opcode) const {
 }
 
 Common::Error ADSInterpreter::syncState(Common::Serializer &s) {
+	//TODO: Currently sync all states then set the active one,
+	// do we need to load/save all?
 	uint32 numTexts = _adsTexts.size();
 	s.syncAsUint32LE(numTexts);
 
 	Common::Array<Common::String> scriptNames;
+	Common::String activeScript;
 
 	if (s.isLoading()) {
 		for (uint32 i = 0; i < numTexts; i++) {
@@ -1581,6 +1584,8 @@ Common::Error ADSInterpreter::syncState(Common::Serializer &s) {
 			Common::String txtName = node._key;
 			s.syncString(txtName);
 			scriptNames.push_back(txtName);
+			if (&node._value == _adsData)
+				activeScript = txtName;
 		}
 	}
 
@@ -1588,6 +1593,10 @@ Common::Error ADSInterpreter::syncState(Common::Serializer &s) {
 	for (const Common::String &name : scriptNames) {
 		_adsTexts[name].syncState(s);
 	}
+
+	s.syncString(activeScript);
+	assert(_adsTexts.contains(activeScript));
+	_adsData = &_adsTexts[activeScript];
 
 	return Common::kNoError;
 }
