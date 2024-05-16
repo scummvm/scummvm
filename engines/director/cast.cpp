@@ -657,26 +657,6 @@ void Cast::loadCast() {
 	// set up the cache used for cast member name lookups.
 	rebuildCastNameCache();
 
-	// For D4+ we may request to force Lingo scripts and skip precompiled bytecode
-	if (_version >= kFileVer400 && !debugChannelSet(-1, kDebugNoBytecode)) {
-		// Try to load script context
-		if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('L', 'c', 't', 'x'))) != nullptr) {
-			loadLingoContext(*r);
-			delete r;
-		}
-	}
-
-	// PICT resources
-	if (_castArchive->hasResource(MKTAG('P', 'I', 'C', 'T'), -1)) {
-		debug("STUB: Unhandled 'PICT' resource");
-	}
-
-	// External Cast Reference resources
-	// Used only by authoring tools for referring to the external casts
-	if (_castArchive->hasResource(MKTAG('S', 'C', 'R', 'F'), -1)) {
-		debugC(4, kDebugLoading, "'SCRF' resource skipped");
-	}
-
 	// Score Order List resources
 	if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('S', 'o', 'r', 'd'))) != nullptr) {
 		loadSord(*r);
@@ -732,6 +712,27 @@ void Cast::loadCast() {
 		_loadedRTE2s.setVal(iterator, new RTE2(this, *r));
 		delete r;
 	}
+
+	// For D4+ we may request to force Lingo scripts and skip precompiled bytecode
+	if (_version >= kFileVer400 && !debugChannelSet(-1, kDebugNoBytecode)) {
+		// Try to load script context
+		if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('L', 'c', 't', 'x'))) != nullptr) {
+			loadLingoContext(*r);
+			delete r;
+		}
+	}
+
+	// PICT resources
+	if (_castArchive->hasResource(MKTAG('P', 'I', 'C', 'T'), -1)) {
+		debug("STUB: Unhandled 'PICT' resource");
+	}
+
+	// External Cast Reference resources
+	// Used only by authoring tools for referring to the external casts
+	if (_castArchive->hasResource(MKTAG('S', 'C', 'R', 'F'), -1)) {
+		debugC(4, kDebugLoading, "'SCRF' resource skipped");
+	}
+
 }
 
 Common::String Cast::getLinkedPath(int castId) {
