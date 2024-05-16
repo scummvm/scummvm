@@ -39,12 +39,6 @@ void DarkEngine::loadAssetsAtariFullGame() {
 	loadGlobalObjects(stream, 0x32f6, 24);
 	loadSoundsFx(stream, 0x266e8, 11);
 
-	for (auto &it : _areaMap) {
-		addWalls(it._value);
-		addECDs(it._value);
-		addSkanner(it._value);
-	}
-
 	GeometricObject *obj = nullptr;
 	obj = (GeometricObject *)_areaMap[15]->objectWithID(18);
 	assert(obj);

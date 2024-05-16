@@ -114,12 +114,6 @@ void DarkEngine::loadAssetsDOSDemo() {
 		_border = load8bitBinImage(&file, 0x210);
 		_border->setPalette((byte *)&kEGADefaultPalette, 0, 16);
 
-		for (auto &it : _areaMap) {
-			addWalls(it._value);
-			addECDs(it._value);
-			addSkanner(it._value);
-		}
-
 		_indicators.push_back(loadBundledImage("dark_fallen_indicator"));
 		_indicators.push_back(loadBundledImage("dark_crouch_indicator"));
 		_indicators.push_back(loadBundledImage("dark_walk_indicator"));
@@ -149,11 +143,6 @@ void DarkEngine::loadAssetsDOSDemo() {
 		_border = load8bitBinImage(&file, 0x210);
 		_border->setPalette((byte *)&kDarkCGAPalettePinkBlue, 0, 4);
 
-		for (auto &it : _areaMap) {
-			addWalls(it._value);
-			addECDs(it._value);
-			addSkanner(it._value);
-		}
 		swapPalette(1);
 	} else
 		error("Invalid or unsupported render mode %s for Dark Side", Common::getRenderModeDescription(_renderMode));
@@ -180,12 +169,6 @@ void DarkEngine::loadAssetsDOSFullGame() {
 		load8bitBinary(&file, 0xa280, 16);
 		_border = load8bitBinImage(&file, 0x210);
 		_border->setPalette((byte *)&kEGADefaultPalette, 0, 16);
-
-		for (auto &it : _areaMap) {
-			addWalls(it._value);
-			addECDs(it._value);
-			addSkanner(it._value);
-		}
 
 		_indicators.push_back(loadBundledImage("dark_fallen_indicator"));
 		_indicators.push_back(loadBundledImage("dark_crouch_indicator"));
@@ -215,11 +198,6 @@ void DarkEngine::loadAssetsDOSFullGame() {
 		_border = load8bitBinImage(&file, 0x210);
 		_border->setPalette((byte *)&kDarkCGAPalettePinkBlue, 0, 4);
 
-		for (auto &it : _areaMap) {
-			addWalls(it._value);
-			addECDs(it._value);
-			addSkanner(it._value);
-		}
 		swapPalette(1);
 	} else
 		error("Invalid or unsupported render mode %s for Dark Side", Common::getRenderModeDescription(_renderMode));

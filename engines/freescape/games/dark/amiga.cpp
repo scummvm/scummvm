@@ -121,12 +121,6 @@ void DarkEngine::loadAssetsAmigaFullGame() {
 	loadPalettes(stream, 0x2e528);
 	loadGlobalObjects(stream, 0x30f0 - 50, 24);
 	loadMessagesVariableSize(stream, 0x3d37, 66);
-
-	for (auto &it : _areaMap) {
-		addWalls(it._value);
-		addECDs(it._value);
-		addSkanner(it._value);
-	}
 }
 
 void DarkEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {

@@ -194,6 +194,13 @@ void DarkEngine::initGameState() {
 void DarkEngine::loadAssets() {
 	FreescapeEngine::loadAssets();
 
+	for (auto &it : _areaMap) {
+		addWalls(it._value);
+		addECDs(it._value);
+		if (it._value->getAreaID() != 255)
+			addSkanner(it._value);
+	}
+
 	_timeoutMessage = _messagesList[14];
 	_noShieldMessage = _messagesList[15];
 	_noEnergyMessage = _messagesList[16];

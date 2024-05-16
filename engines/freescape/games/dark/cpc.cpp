@@ -65,11 +65,6 @@ void DarkEngine::loadAssetsCPCFullGame() {
 	loadFonts(&file, 0x60f3);
 	loadGlobalObjects(&file, 0x9a, 23);
 	load8bitBinary(&file, 0x6255, 16);
-	for (auto &it : _areaMap) {
-		addWalls(it._value);
-		addECDs(it._value);
-		addSkanner(it._value);
-	}
 	_indicators.push_back(loadBundledImage("dark_fallen_indicator"));
 	_indicators.push_back(loadBundledImage("dark_crouch_indicator"));
 	_indicators.push_back(loadBundledImage("dark_walk_indicator"));

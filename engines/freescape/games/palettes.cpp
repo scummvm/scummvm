@@ -165,7 +165,7 @@ void FreescapeEngine::loadPalettes(Common::SeekableReadStream *file, int offset)
 void FreescapeEngine::swapPalette(uint16 levelID) {
 	if (isAmiga() || isAtariST()) {
 		// The following palette was not available in the demo, so we select another one
-		if (isDemo() && levelID == 32)
+		if (isDriller() && isDemo() && levelID == 32)
 			levelID = 31;
 
 		_gfx->_palette = _paletteByArea[levelID];
