@@ -228,7 +228,7 @@ bool CBofSound::play(uint32 dwBeginHere, uint32 TimeFormatFlag) {
 		}
 
 		// WAVE and MIX are mutually exclusive
-		assert(!((_wFlags & SOUND_WAVE) && (_wFlags & SOUND_MIX)));
+		assert(!((_wFlags & SOUND_WAVE) && (_wFlags & SOUND_MIDI)));
 
 		if (_wFlags & SOUND_WAVE) {
 			if (_wFlags & SOUND_QUEUE)
