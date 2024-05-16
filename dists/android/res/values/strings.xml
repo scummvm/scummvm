@@ -60,4 +60,11 @@
 	<string name="saf_request_prompt">Please select the *root* of your external (physical) SD card. This is required for ScummVM to access this path: </string>
 	<string name="saf_revoke_done">Storage Access Framework Permissions for ScummVM were revoked!</string>
 	<string name="preference_saf_tree_key" translatable="false">pref_key__saf_tree_uri</string>
+
+	<string name="ini_parsing_error">Configuration file could not be parsed</string>
+	<string name="shortcut_creator_title">Run a game</string>
+	<string name="shortcut_creator_no_games">No games (yet)\nOpen ScummVM and add your games here.</string>
+	<string name="shortcut_creator_game_item_icon">Game icon</string>
+	<string name="shortcut_creator_customize_game_name_hint">Shortcut label</string>
+	<string name="shortcut_creator_customize_game_icon_description">Shortcut icon</string>
 </resources>

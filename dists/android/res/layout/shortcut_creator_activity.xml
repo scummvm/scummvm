@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	android:paddingLeft="5dp"
+	android:paddingTop="10dp"
+	android:paddingRight="5dp"
+	android:paddingBottom="10dp">
+
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1">
+
+		<ListView
+			android:id="@+id/shortcut_creator_games_list"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:divider="?android:attr/listDivider"
+			android:dividerHeight="1dp"
+			android:scrollbarAlwaysDrawVerticalTrack="true" />
+
+		<TextView
+			android:id="@+id/shortcut_creator_games_list_empty"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_marginStart="15dp"
+			android:layout_marginLeft="15dp"
+			android:gravity="center_horizontal|center_vertical"
+			android:text="@string/shortcut_creator_no_games" />
+
+	</FrameLayout>
+
+
+	<ProgressBar
+		android:id="@+id/shortcut_creator_progress_bar"
+		style="?android:attr/progressBarStyleHorizontal"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:max="100"
+		tools:progress="50" />
+
+
+</LinearLayout>
