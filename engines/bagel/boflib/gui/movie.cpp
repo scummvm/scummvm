@@ -146,41 +146,40 @@ void  CBofMovie::onKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 }
 
 void  CBofMovie::onMainLoop() {
-	if (_pSmk->needsUpdate()) {
-		if (_eMovStatus != STOPPED) {
-			// Smack the current frame into the buffer
-			const Graphics::Surface *frame = _pSmk->decodeNextFrame();
-			if (_pSmk->hasDirtyPalette()) {
-				_pSbuf->setPalette(_pSmk->getPalette(), 0, 256);
-			}
-			if (frame) {
-				_pSbuf->blitFrom(*frame, _srcRect, _dstRect);
-				updateWindow();
-			}
+	if (!_pSmk->needsUpdate() || _eMovStatus == STOPPED)
+		return;
 
-			if (_eMovStatus == FOREWARD) {
-				if (_pSmk->getCurFrame() == (int)_pSmk->getFrameCount() - 1) {
-					if (_bLoop == false) {
-						onMovieDone();
-					} else {
-						seekToStart();
-						_pSmk->start();
-					}
-				}
-			} else if (_eMovStatus == REVERSE) {
-				if ((_pSmk->getCurFrame() == 0) || (_pSmk->getCurFrame() == 1)) {
-					if (_bLoop == false) {
-						onMovieDone();
-					} else {
-						seekToEnd();
-						//_smk->start();
-					}
-				} else {
-					setFrame(_pSmk->getCurFrame() - 2); // HACK: Reverse playback
-				}
-			}// MOVIE_REVERSE
-		}// !MOVIE_STOPPED
-	}// !SMACKWAIT
+	// Smack the current frame into the buffer
+	const Graphics::Surface *frame = _pSmk->decodeNextFrame();
+	if (_pSmk->hasDirtyPalette()) {
+		_pSbuf->setPalette(_pSmk->getPalette(), 0, 256);
+	}
+	if (frame) {
+		_pSbuf->blitFrom(*frame, _srcRect, _dstRect);
+		updateWindow();
+	}
+
+	if (_eMovStatus == FOREWARD) {
+		if (_pSmk->getCurFrame() == (int)_pSmk->getFrameCount() - 1) {
+			if (_bLoop == false) {
+				onMovieDone();
+			} else {
+				seekToStart();
+				_pSmk->start();
+			}
+		}
+	} else if (_eMovStatus == REVERSE) {
+		if ((_pSmk->getCurFrame() == 0) || (_pSmk->getCurFrame() == 1)) {
+			if (_bLoop == false) {
+				onMovieDone();
+			} else {
+				seekToEnd();
+				//_pSmk->start();
+			}
+		} else {
+			setFrame(_pSmk->getCurFrame() - 2); // HACK: Reverse playback
+		}
+	}// MOVIE_REVERSE
 }
 
 void  CBofMovie::onPaint(CBofRect *) {
@@ -190,15 +189,11 @@ void  CBofMovie::onPaint(CBofRect *) {
 }
 
 void  CBofMovie::closeMovie() {
-	if (_pSbuf) {
-		delete _pSbuf;
-		_pSbuf = nullptr;
-	}
+	delete _pSbuf;
+	_pSbuf = nullptr;
 
-	if (_pSmk) {
-		delete _pSmk;
-		_pSmk = nullptr;
-	}
+	delete _pSmk;
+	_pSmk = nullptr;
 }
 
 void  CBofMovie::onClose() {
@@ -239,7 +234,7 @@ bool CBofMovie::play(bool bLoop, bool bEscCanStop) {
 bool CBofMovie::play() {
 	if (_pSmk) {
 		_pSmk->pauseVideo(false);
-		//_smk->setReverse(false); // TODO: Not supported by SMK
+		//_pSmk->setReverse(false); // TODO: Not supported by SMK
 		_pSmk->start();
 		_eMovStatus = FOREWARD;
 		return true;
