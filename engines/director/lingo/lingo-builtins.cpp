@@ -3368,7 +3368,7 @@ void LB::b_script(int nargs) {
 			if (!script)
 				script = g_director->getCurrentMovie()->getScriptContext(kParentScript, memberID);
 		} else {
-			g_director->getCurrentMovie()->getScriptContext(kCastScript, memberID);
+			script = g_director->getCurrentMovie()->getScriptContext(kCastScript, memberID);
 		}
 
 		if (script) {
