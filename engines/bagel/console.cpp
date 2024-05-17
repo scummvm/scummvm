@@ -29,13 +29,14 @@
 namespace Bagel {
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("var",      WRAP_METHOD(Console, cmdVar));
-	registerCmd("vars",     WRAP_METHOD(Console, cmdVars));
-	registerCmd("fleebix",  WRAP_METHOD(Console, cmdFleebix));
-	registerCmd("save",     WRAP_METHOD(Console, cmdSave));
-	registerCmd("load",     WRAP_METHOD(Console, cmdLoad));
-	registerCmd("video",    WRAP_METHOD(Console, cmdVideo));
-	registerCmd("megawave", WRAP_METHOD(Console, cmdMegawave));
+	registerCmd("var",       WRAP_METHOD(Console, cmdVar));
+	registerCmd("vars",      WRAP_METHOD(Console, cmdVars));
+	registerCmd("fleebix",   WRAP_METHOD(Console, cmdFleebix));
+	registerCmd("microwave", WRAP_METHOD(Console, cmdMegawave));
+	registerCmd("save",      WRAP_METHOD(Console, cmdSave));
+	registerCmd("load",      WRAP_METHOD(Console, cmdLoad));
+	registerCmd("video",     WRAP_METHOD(Console, cmdVideo));
+	registerCmd("megawave",  WRAP_METHOD(Console, cmdMegawave));
 }
 
 Console::~Console() {

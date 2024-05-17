@@ -32,6 +32,7 @@ private:
 	bool cmdVar(int argc, const char **argv);
 	bool cmdVars(int argc, const char **argv);
 	bool cmdFleebix(int argc, const char **argv);
+	bool cmdMegawave(int argc, const char **argv);
 	bool cmdLoad(int argc, const char **argv);
 	bool cmdSave(int argc, const char **argv);
 	bool cmdVideo(int argc, const char **argv);
