@@ -682,6 +682,8 @@ void LB::b_count(int nargs) {
 
 	switch (list.type) {
 	case ARRAY:
+	case RECT:
+	case POINT:
 		result.u.i = list.u.farr->arr.size();
 		break;
 	case PARRAY:
