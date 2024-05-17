@@ -168,33 +168,24 @@ void lightningInitFilters() {
 }
 
 void destroyFilters() {
-	if (pTipBmp) {
-		delete pTipBmp;
-		pTipBmp = nullptr;
-	}
-	if (pGrafittiBmp) {
-		delete pGrafittiBmp;
-		pGrafittiBmp = nullptr;
-	}
+	delete pTipBmp;
+	pTipBmp = nullptr;
+
+	delete pGrafittiBmp;
+	pGrafittiBmp = nullptr;
 
 	// clean up trisecks bmp
-	if (pTriBmp) {
-		delete pTriBmp;
-		pTriBmp = nullptr;
-	}
+	delete pTriBmp;
+	pTriBmp = nullptr;
 
 	// Chip bitmap is destroyed here is the cleanup function because
 	// presumably we're being called when the game is ending.
-	if (pChipBmp) {
-		delete pChipBmp;
-		pChipBmp = nullptr;
-	}
+	delete pChipBmp;
+	pChipBmp = nullptr;
 
 	// Clean up the lightning filter.
-	if (pThunder) {
-		delete pThunder;
-		pThunder = nullptr;
-	}
+	delete pThunder;
+	pThunder = nullptr;
 
 	// Record the fact that the filter bitmaps need to be instantiated
 	// before they can be used again.
@@ -555,7 +546,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			if (pChipBmp != nullptr) {
 				int rdef = g_engine->viewRect.width() - VILDROIDCHIPTEXTWIDTH;
 				int tdef = g_engine->viewRect.height() - 300;
-				CBofRect tmprct(0, 0, VILDROIDCHIPTEXTWIDTH, 300);                 // (tdef/2)
+				CBofRect tmprct(0, 0, VILDROIDCHIPTEXTWIDTH, 300);
 
 				pChipBmp->paint(pBmp, ((rdef / 2) + g_engine->viewRect.left), (tdef + g_engine->viewRect.top), &tmprct, 0);
 			}
@@ -572,7 +563,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				CBofString cString(szCString, 256);
 				cString = DISCEJECTSOUND;
 				fixPathName(cString);
-				BofPlaySound(cString, SOUND_WAVE | SOUND_MIX);
+				BofPlaySound(cString, SOUND_WAVE | SOUND_ASYNCH);
 				CBagStorageDev *pWieldSDev = nullptr;
 				pWieldSDev = g_SDevManager->getStorageDevice("BWIELD_WLD");
 				if (chipID == 1)
