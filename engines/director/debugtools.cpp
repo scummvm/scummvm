@@ -1186,6 +1186,15 @@ static void displayScripts() {
 	ImGui::SetNextWindowSize(ImVec2(240, 240), ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Script", &_state->_functions._showScript)) {
+		if (ImGui::Button("\ue025")) { // Lingo
+
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("\ue079")) { // Bytecode
+
+		}
+		ImGui::Separator();
+
 		ImGui::Text("%s", _state->_functions._script.handlerName.c_str());
 		renderScript(_state->_functions._script);
 	}
