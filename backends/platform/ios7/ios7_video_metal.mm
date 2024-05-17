@@ -222,10 +222,12 @@ static inline void execute_on_main_thread(void (^block)(void)) {
 	_metalTexture = CVMetalTextureGetTexture(_metalTextureRef);
 }
 
-- (void)refreshScreen {
+- (void)refreshScreen:(bool)isOpenGLES {
 	NSError *error = NULL;
 
-	glFinish();
+	if (isOpenGLES) {
+		glFinish();
+	}
 
 	@autoreleasepool {
 		id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
@@ -287,6 +289,14 @@ static inline void execute_on_main_thread(void (^block)(void)) {
 
 - (uint)getOpenGLRenderBufferID {
 	return CVOpenGLESTextureGetName(_openGLTextureRef);
+}
+
+- (MTL::Texture *)getMetalTargetTexture {
+	return (__bridge (MTL::Texture *)_metalTexture);
+}
+
+- (MTL::CommandQueue *)getMetalCommandQueue {
+	return (__bridge MTL::CommandQueue *)(_commandQueue);
 }
 
 @end

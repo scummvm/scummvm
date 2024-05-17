@@ -34,6 +34,7 @@
 #include "graphics/palette.h"
 
 #include <AudioToolbox/AudioQueue.h>
+#include <Metal/Metal.hpp>
 
 #define AUDIO_BUFFERS 3
 #define WAVE_BUFFER_SIZE 2048
@@ -109,12 +110,14 @@ public:
 
 	uint createOpenGLContext();
 	void destroyOpenGLContext();
-	void refreshScreen() const;
+	void refreshScreen(bool isOpenGLES) const;
 	int getScreenWidth() const;
 	int getScreenHeight() const;
 	float getSystemHiDPIScreenFactor() const;
 	bool doOffScreenRendering() const;
 	uint getOpenGLRenderBufferID() const;
+	MTL::CommandQueue* getMetalCommandQueue() const;
+	MTL::Texture *getMetalTargetTexture() const;
 
 #if defined(USE_OPENGL) && defined(USE_GLAD)
 	void *getOpenGLProcAddress(const char *name) const override;

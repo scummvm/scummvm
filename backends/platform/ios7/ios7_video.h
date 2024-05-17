@@ -25,6 +25,7 @@
 #include <UIKit/UIKit.h>
 #include <Foundation/Foundation.h>
 #include <QuartzCore/QuartzCore.h>
+#include <Metal/Metal.hpp>
 
 #include <OpenGLES/EAGL.h>
 #include <OpenGLES/ES2/gl.h>
@@ -62,7 +63,7 @@ uint getSizeNextPOT(uint size);
 // OpenGL ES functions to be overrided
 - (uint)createOpenGLContext;
 - (void)destroyOpenGLContext;
-- (void)refreshScreen;
+- (void)refreshScreen:(bool)isOpenGLES;
 - (int)getScreenWidth;
 - (int)getScreenHeight;
 
@@ -71,6 +72,8 @@ uint getSizeNextPOT(uint size);
 - (void)initSurface;
 - (bool)doOffScreenRendering;
 - (uint)getOpenGLRenderBufferID;
+- (MTL::CommandQueue *)getMetalCommandQueue;
+- (MTL::Texture *)getMetalTargetTexture;
 
 #if TARGET_OS_IOS
 - (void)interfaceOrientationChanged:(UIInterfaceOrientation)orientation;

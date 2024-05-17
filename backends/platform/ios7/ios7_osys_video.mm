@@ -278,8 +278,8 @@ void OSystem_iOS7::destroyOpenGLContext() {
 	[[iOS7AppDelegate iPhoneView] destroyOpenGLContext];
 }
 
-void OSystem_iOS7::refreshScreen() const {
-	[[iOS7AppDelegate iPhoneView] refreshScreen];
+void OSystem_iOS7::refreshScreen(bool isOpenGLES) const {
+	[[iOS7AppDelegate iPhoneView] refreshScreen:isOpenGLES];
 }
 
 int OSystem_iOS7::getScreenWidth() const {
@@ -300,4 +300,12 @@ bool OSystem_iOS7::doOffScreenRendering() const {
 
 uint OSystem_iOS7::getOpenGLRenderBufferID() const {
 	return [[iOS7AppDelegate iPhoneView] getOpenGLRenderBufferID];
+}
+
+MTL::CommandQueue *OSystem_iOS7::getMetalCommandQueue() const {
+	return [[iOS7AppDelegate iPhoneView] getMetalCommandQueue];
+}
+
+MTL::Texture *OSystem_iOS7::getMetalTargetTexture() const {
+	return [[iOS7AppDelegate iPhoneView] getMetalTargetTexture];
 }

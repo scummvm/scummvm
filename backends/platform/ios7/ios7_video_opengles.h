@@ -37,7 +37,7 @@
 
 - (uint)createOpenGLContext;
 - (void)destroyOpenGLContext;
-- (void)refreshScreen;
+- (void)refreshScreen:(bool)isOpenGLES;
 - (int)getScreenWidth;
 - (int)getScreenHeight;
 

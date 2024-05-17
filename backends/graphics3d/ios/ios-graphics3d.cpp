@@ -365,7 +365,7 @@ void iOSGraphics3dManager::updateScreen() {
 		_frameBuffer->attach();
 	}
 
-	dynamic_cast<OSystem_iOS7 *>(g_system)->refreshScreen();
+	dynamic_cast<OSystem_iOS7 *>(g_system)->refreshScreen(true);
 	glViewport(prevStateViewport[0], prevStateViewport[1], prevStateViewport[2], prevStateViewport[3]);
 }
 

@@ -87,7 +87,7 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	NSAssert(false, @"Must be overrided by subclass");
 }
 
-- (void)refreshScreen {
+- (void)refreshScreen:(bool)isOpenGLES {
 	NSAssert(false, @"Must be overrided by subclass");
 }
 
@@ -116,6 +116,16 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 
 - (void)deleteRenderbuffer {
 	NSAssert(false, @"Must be overrided by subclass");
+}
+
+- (MTL::CommandQueue *)getMetalCommandQueue {
+	NSAssert(false, @"Must be overrided by subclass");
+	return nullptr;
+}
+
+- (MTL::Texture *)getMetalTargetTexture {
+	NSAssert(false, @"Must be overrided by subclass");
+	return nullptr;
 }
 
 - (void)setupGestureRecognizers {

@@ -121,7 +121,9 @@ static inline void execute_on_main_thread(void (^block)(void)) {
 	_openGLContext = nil;
 }
 
-- (void)refreshScreen {
+- (void)refreshScreen:(bool)isOpenGLES
+ {
+	NSAssert(isOpenGLES, @"This view can only handle OpenGLES");
 	glBindRenderbuffer(GL_RENDERBUFFER, _viewRenderbuffer);
 	[_openGLContext presentRenderbuffer:GL_RENDERBUFFER];
 }

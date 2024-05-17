@@ -137,7 +137,7 @@ float iOSGraphicsManager::getHiDPIScreenFactor() const {
 }
 
 void iOSGraphicsManager::refreshScreen() {
-	dynamic_cast<OSystem_iOS7 *>(g_system)->refreshScreen();
+	dynamic_cast<OSystem_iOS7 *>(g_system)->refreshScreen(true);
 }
 
 bool iOSGraphicsManager::notifyMousePosition(Common::Point &mouse) {
