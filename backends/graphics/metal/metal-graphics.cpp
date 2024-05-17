@@ -79,6 +79,87 @@ void MetalGraphicsManager::handleResizeImpl(const int width, const int height) {
 	//TODO: Implement
 }
 
+void MetalGraphicsManager::notifyContextCreate(
+	MTL::CommandQueue *commandQueue,
+	Framebuffer *target,
+	const Graphics::PixelFormat &defaultFormat,
+	const Graphics::PixelFormat &defaultFormatAlpha) {
+	// Set up the target: backbuffer usually
+	delete _targetBuffer;
+	_targetBuffer = target;
+
+	// Initialize pipeline.
+	delete _pipeline;
+	_pipeline = nullptr;
+	//_commandQueue = commandQueue;
+	_device = commandQueue->device();
+
+	ShaderMan.notifyCreate(_device);
+	_renderer = new Renderer(commandQueue);
+
+	_pipeline = new ShaderPipeline(_renderer, ShaderMan.query(ShaderManager::kDefaultFragmentShader));
+
+	_pipeline->setColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+	// Setup backbuffer state.
+
+	// Default to opaque black as clear color.
+	_targetBuffer->setClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+	_pipeline->setFramebuffer(_targetBuffer);
+
+	_defaultFormat = defaultFormat;
+	_defaultFormatAlpha = defaultFormatAlpha;
+
+	// Refresh the output screen dimensions if some are set up.
+	if (_windowWidth != 0 && _windowHeight != 0) {
+		handleResize(_windowWidth, _windowHeight);
+	}
+
+	if (_gameScreen) {
+		_gameScreen->recreate();
+	}
+
+	if (_overlay) {
+		_overlay->recreate();
+	}
+
+	if (_cursor) {
+		_cursor->recreate();
+	}
+
+	if (_cursorMask) {
+		_cursorMask->recreate();
+	}
+}
+
+void MetalGraphicsManager::notifyContextDestroy() {
+	if (_gameScreen) {
+		_gameScreen->destroy();
+	}
+
+	if (_overlay) {
+		_overlay->destroy();
+	}
+
+	if (_cursor) {
+		_cursor->destroy();
+	}
+
+	if (_cursorMask) {
+		_cursorMask->destroy();
+	}
+
+	// Destroy rendering pipeline.
+	delete _pipeline;
+	_pipeline = nullptr;
+
+	// Destroy the target
+	delete _targetBuffer;
+	_targetBuffer = nullptr;
+}
+
+
 // GraphicsManager
 bool MetalGraphicsManager::hasFeature(OSystem::Feature f) const {
 	//TODO: Implement

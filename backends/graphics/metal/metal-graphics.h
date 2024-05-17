@@ -99,6 +99,31 @@ protected:
 	void renderCursor();
 
 	/**
+	 * Notify the manager of a Metal context change. This should be the first
+	 * thing to call after you created a Metal context!
+	 *
+	 * @param commandQueue The Metal command queue
+	 * @param target The framebuffer target
+	 * @param defaultFormat The new default format for the game screen
+	 *                     (this is used for the CLUT8 game screens).
+	 * @param defaultFormatAlpha The new default format with an alpha channel
+	 *                           (this is used for the overlay and cursor).
+	 */
+	void notifyContextCreate(
+			MTL::CommandQueue *commandQueue,
+			Framebuffer *target,
+			const Graphics::PixelFormat &defaultFormat,
+			const Graphics::PixelFormat &defaultFormatAlpha);
+
+	/**
+	 * Notify the manager that the Metal context is about to be destroyed.
+	 * This will free up/reset internal Metal related state and *must* be
+	 * called whenever a context might be created again after destroying a
+	 * context.
+	 */
+	void notifyContextDestroy();
+
+	/**
 	 * Create a surface with the specified pixel format.
 	 *
 	 * @param format The pixel format the Surface object should accept as
