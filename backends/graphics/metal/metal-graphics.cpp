@@ -53,7 +53,8 @@ MetalGraphicsManager::MetalGraphicsManager()
 	_cursorHotspotX(0), _cursorHotspotY(0), _targetBuffer(nullptr), _renderer(nullptr),
 	_cursorHotspotXScaled(0), _cursorHotspotYScaled(0), _cursorWidthScaled(0), _cursorHeightScaled(0),
 	_cursorKeyColor(0), _cursorUseKey(true), _cursorDontScale(false), _cursorPaletteEnabled(false),
-	_screenChangeID(1 << (sizeof(int) * 8 - 2)), _stretchMode(STRETCH_FIT)
+	_transactionMode(kTransactionNone), _screenChangeID(1 << (sizeof(int) * 8 - 2)),
+	_stretchMode(STRETCH_FIT)
 #ifdef USE_SCALERS
 	, _scalerPlugins(ScalerMan.getPlugins())
 #endif
@@ -371,7 +372,7 @@ uint MetalGraphicsManager::getDefaultScaleFactor() const {
 }
 
 bool MetalGraphicsManager::setScaler(uint mode, int factor) {
-	//assert(_transactionMode != kTransactionNone);
+	assert(_transactionMode != kTransactionNone);
 
 	int newFactor;
 	if (factor == -1)
@@ -416,17 +417,150 @@ void MetalGraphicsManager::initSize(uint width, uint height, const Graphics::Pix
 }
 
 int MetalGraphicsManager::getScreenChangeID() const {
-	//TODO: Implement
-	return 0;
+	return _screenChangeID;
 }
 
 void MetalGraphicsManager::beginGFXTransaction() {
-	//TODO: Implement
+	assert(_transactionMode == kTransactionNone);
+
+	// Start a transaction.
+	_oldState = _currentState;
+	_transactionMode = kTransactionActive;
 }
 
 OSystem::TransactionError MetalGraphicsManager::endGFXTransaction() {
-	//TODO: Implement
-	return OSystem::kTransactionSuccess;
+	assert(_transactionMode == kTransactionActive);
+
+	uint transactionError = OSystem::kTransactionSuccess;
+
+	bool setupNewGameScreen = false;
+	if (   _oldState.gameWidth  != _currentState.gameWidth
+		|| _oldState.gameHeight != _currentState.gameHeight) {
+		setupNewGameScreen = true;
+	}
+
+#ifdef USE_RGB_COLOR
+	if (_oldState.gameFormat != _currentState.gameFormat) {
+		setupNewGameScreen = true;
+	}
+
+	// Check whether the requested format can actually be used.
+	Common::List<Graphics::PixelFormat> supportedFormats = getSupportedFormats();
+	// In case the requested format is not usable we will fall back to CLUT8.
+	if (Common::find(supportedFormats.begin(), supportedFormats.end(), _currentState.gameFormat) == supportedFormats.end()) {
+		_currentState.gameFormat = Graphics::PixelFormat::createFormatCLUT8();
+		transactionError |= OSystem::kTransactionFormatNotSupported;
+	}
+#endif
+
+#ifdef USE_SCALERS
+	if (_oldState.scaleFactor != _currentState.scaleFactor ||
+		_oldState.scalerIndex != _currentState.scalerIndex) {
+		setupNewGameScreen = true;
+	}
+#endif
+
+	do {
+		if (_transactionMode == kTransactionActive) {
+			// Try to setup the old state in case its valid and is
+			// actually different from the new one.
+			if (_oldState.valid && _oldState != _currentState) {
+				// Give some hints on what failed to set up.
+				if (   _oldState.gameWidth  != _currentState.gameWidth
+					|| _oldState.gameHeight != _currentState.gameHeight) {
+					transactionError |= OSystem::kTransactionSizeChangeFailed;
+				}
+
+#ifdef USE_RGB_COLOR
+				if (_oldState.gameFormat != _currentState.gameFormat) {
+					transactionError |= OSystem::kTransactionFormatNotSupported;
+				}
+#endif
+
+				if (_oldState.aspectRatioCorrection != _currentState.aspectRatioCorrection) {
+					transactionError |= OSystem::kTransactionAspectRatioFailed;
+				}
+
+				if (_oldState.graphicsMode != _currentState.graphicsMode) {
+					transactionError |= OSystem::kTransactionModeSwitchFailed;
+				}
+
+				if (_oldState.filtering != _currentState.filtering) {
+					transactionError |= OSystem::kTransactionFilteringFailed;
+				}
+#ifdef USE_SCALERS
+				if (_oldState.scalerIndex != _currentState.scalerIndex) {
+					transactionError |= OSystem::kTransactionModeSwitchFailed;
+				}
+#endif
+
+				// Roll back to the old state.
+				_currentState = _oldState;
+				_transactionMode = kTransactionRollback;
+
+				// Try to set up the old state.
+				continue;
+			}
+
+			// DON'T use error(), as this tries to bring up the debug
+			// console, which WON'T WORK now that we might no have a
+			// proper screen.
+			warning("MetalGraphicsManager::endGFXTransaction: Could not load any graphics mode!");
+			g_system->quit();
+		}
+
+		// In case we reach this we have a valid state, yay.
+		_transactionMode = kTransactionNone;
+		_currentState.valid = true;
+	} while (_transactionMode == kTransactionRollback);
+
+	if (setupNewGameScreen) {
+		delete _gameScreen;
+		_gameScreen = nullptr;
+
+		bool wantScaler = _currentState.scaleFactor > 1;
+
+#ifdef USE_RGB_COLOR
+		_gameScreen = createSurface(_currentState.gameFormat, false, wantScaler);
+#else
+		_gameScreen = createSurface(Graphics::PixelFormat::createFormatCLUT8(), false, wantScaler);
+#endif
+		assert(_gameScreen);
+		if (_gameScreen->hasPalette()) {
+			_gameScreen->setPalette(0, 256, _gamePalette);
+		}
+
+#ifdef USE_SCALERS
+		if (wantScaler) {
+			_gameScreen->setScaler(_currentState.scalerIndex, _currentState.scaleFactor);
+		}
+#endif
+
+		_gameScreen->allocate(_currentState.gameWidth, _currentState.gameHeight);
+		// We fill the screen to all black or index 0 for CLUT8.
+#ifdef USE_RGB_COLOR
+		if (_currentState.gameFormat.bytesPerPixel == 1) {
+			_gameScreen->fill(0);
+		} else {
+			_gameScreen->fill(_gameScreen->getSurface()->format.RGBToColor(0, 0, 0));
+		}
+#else
+		_gameScreen->fill(0);
+#endif
+	}
+
+	// Update our display area and cursor scaling. This makes sure we pick up
+	// aspect ratio correction and game screen changes correctly.
+	recalculateDisplayAreas();
+	recalculateCursorScaling();
+	updateLinearFiltering();
+
+	// Something changed, so update the screen change ID.
+	++_screenChangeID;
+
+	// Since transactionError is a ORd list of TransactionErrors this is
+	// clearly wrong. But our API is simply broken.
+	return (OSystem::TransactionError)transactionError;
 }
 
 int16 MetalGraphicsManager::getHeight() const {
