@@ -128,7 +128,7 @@ Common::String Handler::getLocalName(int id) const {
 
 Common::SharedPtr<Node> Handler::pop() {
 	if (stack.empty())
-		return Common::SharedPtr<Node>(new ErrorNode());
+		return Common::SharedPtr<Node>(new ErrorNode(0));
 
 	auto res = stack.back();
 	stack.pop_back();
@@ -158,21 +158,21 @@ Common::SharedPtr<Node> Handler::readVar(int varType) {
 		{
 			Common::String name_ = getArgumentName(id->getValue()->i / variableMultiplier());
 			auto ref = Common::SharedPtr<Datum>(new Datum(kDatumVarRef, name_));
-			return Common::SharedPtr<Node>(new LiteralNode(Common::move(ref)));
+			return Common::SharedPtr<Node>(new LiteralNode(id->_startOffset, Common::move(ref)));
 		}
 	case 0x5: // local
 		{
 			Common::String name_ = getLocalName(id->getValue()->i / variableMultiplier());
 			auto ref = Common::SharedPtr<Datum>(new Datum(kDatumVarRef, name_));
-			return Common::SharedPtr<Node>(new LiteralNode(Common::move(ref)));
+			return Common::SharedPtr<Node>(new LiteralNode(id->_startOffset, Common::move(ref)));
 		}
 	case 0x6: // field
-		return Common::SharedPtr<Node>(new MemberExprNode("field", Common::move(id), Common::move(castID)));
+		return Common::SharedPtr<Node>(new MemberExprNode(id->_startOffset, "field", Common::move(id), Common::move(castID)));
 	default:
 		warning("%s", Common::String::format("findVar: unhandled var type %d", varType).c_str());
 		break;
 	}
-	return Common::SharedPtr<Node>(new ErrorNode());
+	return Common::SharedPtr<Node>(new ErrorNode(id->_startOffset));
 }
 
 Common::String Handler::getVarNameFromSet(const Bytecode &bytecode) {
@@ -198,64 +198,64 @@ Common::String Handler::getVarNameFromSet(const Bytecode &bytecode) {
 	return varName;
 }
 
-Common::SharedPtr<Node> Handler::readV4Property(int propertyType, int propertyID) {
+Common::SharedPtr<Node> Handler::readV4Property(uint32 offset, int propertyType, int propertyID) {
 	switch (propertyType) {
 	case 0x00:
 		{
 			if (propertyID <= 0x0b) { // movie property
 				auto propName = StandardNames::getName(StandardNames::moviePropertyNames, propertyID);
-				return Common::SharedPtr<Node>(new TheExprNode(propName));
+				return Common::SharedPtr<Node>(new TheExprNode(offset, propName));
 			} else { // last chunk
 				auto string = pop();
 				auto chunkType = static_cast<ChunkExprType>(propertyID - 0x0b);
-				return Common::SharedPtr<Node>(new LastStringChunkExprNode(chunkType, Common::move(string)));
+				return Common::SharedPtr<Node>(new LastStringChunkExprNode(offset, chunkType, Common::move(string)));
 			}
 		}
 		break;
 	case 0x01: // number of chunks
 		{
 			auto string = pop();
-			return Common::SharedPtr<Node>(new StringChunkCountExprNode(static_cast<ChunkExprType>(propertyID), Common::move(string)));
+			return Common::SharedPtr<Node>(new StringChunkCountExprNode(offset, static_cast<ChunkExprType>(propertyID), Common::move(string)));
 		}
 		break;
 	case 0x02: // menu property
 		{
 			auto menuID = pop();
-			return Common::SharedPtr<Node>(new MenuPropExprNode(Common::move(menuID), propertyID));
+			return Common::SharedPtr<Node>(new MenuPropExprNode(offset, Common::move(menuID), propertyID));
 		}
 		break;
 	case 0x03: // menu item property
 		{
 			auto menuID = pop();
 			auto itemID = pop();
-			return Common::SharedPtr<Node>(new MenuItemPropExprNode(Common::move(menuID), Common::move(itemID), propertyID));
+			return Common::SharedPtr<Node>(new MenuItemPropExprNode(offset, Common::move(menuID), Common::move(itemID), propertyID));
 		}
 		break;
 	case 0x04: // sound property
 		{
 			auto soundID = pop();
-			return Common::SharedPtr<Node>(new SoundPropExprNode(Common::move(soundID), propertyID));
+			return Common::SharedPtr<Node>(new SoundPropExprNode(offset, Common::move(soundID), propertyID));
 		}
 		break;
 	case 0x05: // resource property - unused?
-		return Common::SharedPtr<Node>(new CommentNode("ERROR: Resource property"));
+		return Common::SharedPtr<Node>(new CommentNode(offset, "ERROR: Resource property"));
 	case 0x06: // sprite property
 		{
 			auto spriteID = pop();
-			return Common::SharedPtr<Node>(new SpritePropExprNode(Common::move(spriteID), propertyID));
+			return Common::SharedPtr<Node>(new SpritePropExprNode(offset, Common::move(spriteID), propertyID));
 		}
 		break;
 	case 0x07: // animation property
-		return Common::SharedPtr<Node>(new TheExprNode(StandardNames::getName(StandardNames::animationPropertyNames, propertyID)));
+		return Common::SharedPtr<Node>(new TheExprNode(offset, StandardNames::getName(StandardNames::animationPropertyNames, propertyID)));
 	case 0x08: // animation 2 property
 		if (propertyID == 0x02 && script->version >= 500) { // the number of castMembers supports castLib selection from Director 5.0
 			auto castLib = pop();
 			if (!(castLib->type == kLiteralNode && castLib->getValue()->type == kDatumInt && castLib->getValue()->toInt() == 0)) {
-				auto castLibNode = Common::SharedPtr<Node>(new MemberExprNode("castLib", castLib, nullptr));
-				return Common::SharedPtr<Node>(new ThePropExprNode(castLibNode, StandardNames::getName(StandardNames::animation2PropertyNames, propertyID)));
+				auto castLibNode = Common::SharedPtr<Node>(new MemberExprNode(offset, "castLib", castLib, nullptr));
+				return Common::SharedPtr<Node>(new ThePropExprNode(offset, castLibNode, StandardNames::getName(StandardNames::animation2PropertyNames, propertyID)));
 			}
 		}
-		return Common::SharedPtr<Node>(new TheExprNode(StandardNames::getName(StandardNames::animation2PropertyNames, propertyID)));
+		return Common::SharedPtr<Node>(new TheExprNode(offset, StandardNames::getName(StandardNames::animation2PropertyNames, propertyID)));
 	case 0x09: // generic cast member
 	case 0x0a: // chunk of cast member
 	case 0x0b: // field
@@ -284,23 +284,23 @@ Common::SharedPtr<Node> Handler::readV4Property(int propertyType, int propertyID
 			} else {
 				prefix = (script->version >= 500) ? "member" : "cast";
 			}
-			auto member = Common::SharedPtr<Node>(new MemberExprNode(prefix, Common::move(memberID), Common::move(castID)));
+			auto member = Common::SharedPtr<Node>(new MemberExprNode(offset, prefix, Common::move(memberID), Common::move(castID)));
 			Common::SharedPtr<Node> entity;
 			if (propertyType == 0x0a || propertyType == 0x0c || propertyType == 0x15) {
-				entity = readChunkRef(Common::move(member));
+				entity = readChunkRef(offset, Common::move(member));
 			} else {
 				entity = member;
 			}
-			return Common::SharedPtr<Node>(new ThePropExprNode(Common::move(entity), propName));
+			return Common::SharedPtr<Node>(new ThePropExprNode(offset, Common::move(entity), propName));
 		}
 		break;
 	default:
 		break;
 	}
-	return Common::SharedPtr<Node>(new CommentNode(Common::String::format("ERROR: Unknown property type %d", propertyType)));
+	return Common::SharedPtr<Node>(new CommentNode(offset, Common::String::format("ERROR: Unknown property type %d", propertyType)));
 }
 
-Common::SharedPtr<Node> Handler::readChunkRef(Common::SharedPtr<Node> string) {
+Common::SharedPtr<Node> Handler::readChunkRef(uint32 offset, Common::SharedPtr<Node> string) {
 	auto lastLine = pop();
 	auto firstLine = pop();
 	auto lastItem = pop();
@@ -311,13 +311,13 @@ Common::SharedPtr<Node> Handler::readChunkRef(Common::SharedPtr<Node> string) {
 	auto firstChar = pop();
 
 	if (!(firstLine->type == kLiteralNode && firstLine->getValue()->type == kDatumInt && firstLine->getValue()->toInt() == 0))
-		string = Common::SharedPtr<Node>(new ChunkExprNode(kChunkLine, Common::move(firstLine), Common::move(lastLine), Common::move(string)));
+		string = Common::SharedPtr<Node>(new ChunkExprNode(offset, kChunkLine, Common::move(firstLine), Common::move(lastLine), Common::move(string)));
 	if (!(firstItem->type == kLiteralNode && firstItem->getValue()->type == kDatumInt && firstItem->getValue()->toInt() == 0))
-		string = Common::SharedPtr<Node>(new ChunkExprNode(kChunkItem, Common::move(firstItem), Common::move(lastItem), Common::move(string)));
+		string = Common::SharedPtr<Node>(new ChunkExprNode(offset, kChunkItem, Common::move(firstItem), Common::move(lastItem), Common::move(string)));
 	if (!(firstWord->type == kLiteralNode && firstWord->getValue()->type == kDatumInt && firstWord->getValue()->toInt() == 0))
-		string = Common::SharedPtr<Node>(new ChunkExprNode(kChunkWord, Common::move(firstWord), Common::move(lastWord), Common::move(string)));
+		string = Common::SharedPtr<Node>(new ChunkExprNode(offset, kChunkWord, Common::move(firstWord), Common::move(lastWord), Common::move(string)));
 	if (!(firstChar->type == kLiteralNode && firstChar->getValue()->type == kDatumInt && firstChar->getValue()->toInt() == 0))
-		string = Common::SharedPtr<Node>(new ChunkExprNode(kChunkChar, Common::move(firstChar), Common::move(lastChar), Common::move(string)));
+		string = Common::SharedPtr<Node>(new ChunkExprNode(offset, kChunkChar, Common::move(firstChar), Common::move(lastChar), Common::move(string)));
 
 	return string;
 }
@@ -514,7 +514,7 @@ void Handler::parse() {
 					if (caseLabel) {
 						if (caseLabel->expect == kCaseExpectOtherwise) {
 							ast.currentBlock->currentCaseLabel = nullptr;
-							caseStmt->addOtherwise();
+							caseStmt->addOtherwise(i);
 							size_t otherwiseIndex = bytecodePosMap[caseStmt->potentialOtherwisePos];
 							bytecodeArray[otherwiseIndex].translation = Common::SharedPtr<Node>(caseStmt->otherwise);
 							ast.enterBlock(caseStmt->otherwise->block.get());
@@ -543,12 +543,14 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 	case kOpRet:
 	case kOpRetFactory:
 		if (index == bytecodeArray.size() - 1) {
+			ast.root->_endOffset = bytecode.pos;
+			ast.currentBlock->_endOffset = bytecode.pos;
 			return 1; // end of handler
 		}
-		translation = Common::SharedPtr<Node>(new ExitStmtNode());
+		translation = Common::SharedPtr<Node>(new ExitStmtNode(index));
 		break;
 	case kOpPushZero:
-		translation = Common::SharedPtr<Node>(new LiteralNode(Common::SharedPtr<Datum>(new Datum(0))));
+		translation = Common::SharedPtr<Node>(new LiteralNode(index, Common::SharedPtr<Datum>(new Datum(0))));
 		break;
 	case kOpMul:
 	case kOpAdd:
@@ -570,25 +572,25 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 		{
 			auto b = pop();
 			auto a = pop();
-			translation = Common::SharedPtr<Node>(new BinaryOpNode(bytecode.opcode, Common::move(a), Common::move(b)));
+			translation = Common::SharedPtr<Node>(new BinaryOpNode(index, bytecode.opcode, Common::move(a), Common::move(b)));
 		}
 		break;
 	case kOpInv:
 		{
 			auto x = pop();
-			translation = Common::SharedPtr<Node>(new InverseOpNode(Common::move(x)));
+			translation = Common::SharedPtr<Node>(new InverseOpNode(index, Common::move(x)));
 		}
 		break;
 	case kOpNot:
 		{
 			auto x = pop();
-			translation = Common::SharedPtr<Node>(new NotOpNode(Common::move(x)));
+			translation = Common::SharedPtr<Node>(new NotOpNode(index, Common::move(x)));
 		}
 		break;
 	case kOpGetChunk:
 		{
 			auto string = pop();
-			translation = readChunkRef(Common::move(string));
+			translation = readChunkRef(index, Common::move(string));
 		}
 		break;
 	case kOpHiliteChunk:
@@ -597,12 +599,12 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 			if (script->version >= 500)
 				castID = pop();
 			auto fieldID = pop();
-			auto field = Common::SharedPtr<Node>(new MemberExprNode("field", Common::move(fieldID), Common::move(castID)));
-			auto chunk = readChunkRef(Common::move(field));
+			auto field = Common::SharedPtr<Node>(new MemberExprNode(index, "field", Common::move(fieldID), Common::move(castID)));
+			auto chunk = readChunkRef(index, Common::move(field));
 			if (chunk->type == kCommentNode) { // error comment
 				translation = chunk;
 			} else {
-				translation = Common::SharedPtr<Node>(new ChunkHiliteStmtNode(Common::move(chunk)));
+				translation = Common::SharedPtr<Node>(new ChunkHiliteStmtNode(index, Common::move(chunk)));
 			}
 		}
 		break;
@@ -610,14 +612,14 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 		{
 			auto secondSprite = pop();
 			auto firstSprite = pop();
-			translation = Common::SharedPtr<Node>(new SpriteIntersectsExprNode(Common::move(firstSprite), Common::move(secondSprite)));
+			translation = Common::SharedPtr<Node>(new SpriteIntersectsExprNode(index, Common::move(firstSprite), Common::move(secondSprite)));
 		}
 		break;
 	case kOpIntoSpr:
 		{
 			auto secondSprite = pop();
 			auto firstSprite = pop();
-			translation = Common::SharedPtr<Node>(new SpriteWithinExprNode(Common::move(firstSprite), Common::move(secondSprite)));
+			translation = Common::SharedPtr<Node>(new SpriteWithinExprNode(index, Common::move(firstSprite), Common::move(secondSprite)));
 		}
 		break;
 	case kOpGetField:
@@ -626,13 +628,13 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 			if (script->version >= 500)
 				castID = pop();
 			auto fieldID = pop();
-			translation = Common::SharedPtr<Node>(new MemberExprNode("field", Common::move(fieldID), Common::move(castID)));
+			translation = Common::SharedPtr<Node>(new MemberExprNode(index, "field", Common::move(fieldID), Common::move(castID)));
 		}
 		break;
 	case kOpStartTell:
 		{
 			auto window = pop();
-			auto tellStmt = Common::SharedPtr<TellStmtNode>(new TellStmtNode(Common::move(window)));
+			auto tellStmt = Common::SharedPtr<TellStmtNode>(new TellStmtNode(index, Common::move(window)));
 			translation = tellStmt;
 			nextBlock = tellStmt->block.get();
 		}
@@ -669,13 +671,13 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 	case kOpPushInt32:
 		{
 			auto i = Common::SharedPtr<Datum>(new Datum((int)bytecode.obj));
-			translation = Common::SharedPtr<Node>(new LiteralNode(Common::move(i)));
+			translation = Common::SharedPtr<Node>(new LiteralNode(index, Common::move(i)));
 		}
 		break;
 	case kOpPushFloat32:
 		{
 			auto f = Common::SharedPtr<Datum>(new Datum(*(float *)(&bytecode.obj)));
-			translation = Common::SharedPtr<Node>(new LiteralNode(Common::move(f)));
+			translation = Common::SharedPtr<Node>(new LiteralNode(index, Common::move(f)));
 		}
 		break;
 	case kOpPushArgListNoRet:
@@ -688,7 +690,7 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 				args[argCount] = pop();
 			}
 			auto argList = Common::SharedPtr<Datum>(new Datum(kDatumArgListNoRet, args));
-			translation = Common::SharedPtr<Node>(new LiteralNode(Common::move(argList)));
+			translation = Common::SharedPtr<Node>(new LiteralNode(bytecode.pos, Common::move(argList)));
 		}
 		break;
 	case kOpPushArgList:
@@ -701,75 +703,75 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 				args[argCount] = pop();
 			}
 			auto argList = Common::SharedPtr<Datum>(new Datum(kDatumArgList, args));
-			translation = Common::SharedPtr<Node>(new LiteralNode(Common::move(argList)));
+			translation = Common::SharedPtr<Node>(new LiteralNode(bytecode.pos, Common::move(argList)));
 		}
 		break;
 	case kOpPushCons:
 		{
 			int literalID = bytecode.obj / variableMultiplier();
 			if (-1 < literalID && (unsigned)literalID < script->literals.size()) {
-				translation = Common::SharedPtr<Node>(new LiteralNode(script->literals[literalID].value));
+				translation = Common::SharedPtr<Node>(new LiteralNode(bytecode.pos, script->literals[literalID].value));
 			} else {
-				translation = Common::SharedPtr<Node>(new ErrorNode());
+				translation = Common::SharedPtr<Node>(new ErrorNode(bytecode.pos));
 			}
 			break;
 		}
 	case kOpPushSymb:
 		{
 			auto sym = Common::SharedPtr<Datum>(new Datum(kDatumSymbol, getName(bytecode.obj)));
-			translation = Common::SharedPtr<Node>(new LiteralNode(Common::move(sym)));
+			translation = Common::SharedPtr<Node>(new LiteralNode(bytecode.pos, Common::move(sym)));
 		}
 		break;
 	case kOpPushVarRef:
 		{
 			auto ref = Common::SharedPtr<Datum>(new Datum(kDatumVarRef, getName(bytecode.obj)));
-			translation = Common::SharedPtr<Node>(new LiteralNode(Common::move(ref)));
+			translation = Common::SharedPtr<Node>(new LiteralNode(bytecode.pos, Common::move(ref)));
 		}
 		break;
 	case kOpGetGlobal:
 	case kOpGetGlobal2:
 		{
 			auto name_ = getName(bytecode.obj);
-			translation = Common::SharedPtr<Node>(new VarNode(name_));
+			translation = Common::SharedPtr<Node>(new VarNode(bytecode.pos, name_));
 		}
 		break;
 	case kOpGetProp:
-		translation = Common::SharedPtr<Node>(new VarNode(getName(bytecode.obj)));
+		translation = Common::SharedPtr<Node>(new VarNode(bytecode.pos, getName(bytecode.obj)));
 		break;
 	case kOpGetParam:
-		translation = Common::SharedPtr<Node>(new VarNode(getArgumentName(bytecode.obj / variableMultiplier())));
+		translation = Common::SharedPtr<Node>(new VarNode(bytecode.pos, getArgumentName(bytecode.obj / variableMultiplier())));
 		break;
 	case kOpGetLocal:
-		translation = Common::SharedPtr<Node>(new VarNode(getLocalName(bytecode.obj / variableMultiplier())));
+		translation = Common::SharedPtr<Node>(new VarNode(bytecode.pos, getLocalName(bytecode.obj / variableMultiplier())));
 		break;
 	case kOpSetGlobal:
 	case kOpSetGlobal2:
 		{
 			auto varName = getName(bytecode.obj);
-			auto var = Common::SharedPtr<Node>(new VarNode(varName));
+			auto var = Common::SharedPtr<Node>(new VarNode(bytecode.pos, varName));
 			auto value = pop();
-			translation = Common::SharedPtr<Node>(new AssignmentStmtNode(Common::move(var), Common::move(value)));
+			translation = Common::SharedPtr<Node>(new AssignmentStmtNode(bytecode.pos, Common::move(var), Common::move(value)));
 		}
 		break;
 	case kOpSetProp:
 		{
-			auto var = Common::SharedPtr<Node>(new VarNode(getName(bytecode.obj)));
+			auto var = Common::SharedPtr<Node>(new VarNode(bytecode.pos, getName(bytecode.obj)));
 			auto value = pop();
-			translation = Common::SharedPtr<Node>(new AssignmentStmtNode(Common::move(var), Common::move(value)));
+			translation = Common::SharedPtr<Node>(new AssignmentStmtNode(bytecode.pos, Common::move(var), Common::move(value)));
 		}
 		break;
 	case kOpSetParam:
 		{
-			auto var = Common::SharedPtr<Node>(new VarNode(getArgumentName(bytecode.obj / variableMultiplier())));
+			auto var = Common::SharedPtr<Node>(new VarNode(bytecode.pos, getArgumentName(bytecode.obj / variableMultiplier())));
 			auto value = pop();
-			translation = Common::SharedPtr<Node>(new AssignmentStmtNode(Common::move(var), Common::move(value)));
+			translation = Common::SharedPtr<Node>(new AssignmentStmtNode(bytecode.pos, Common::move(var), Common::move(value)));
 		}
 		break;
 	case kOpSetLocal:
 		{
-			auto var = Common::SharedPtr<Node>(new VarNode(getLocalName(bytecode.obj / variableMultiplier())));
+			auto var = Common::SharedPtr<Node>(new VarNode(bytecode.pos, getLocalName(bytecode.obj / variableMultiplier())));
 			auto value = pop();
-			translation = Common::SharedPtr<Node>(new AssignmentStmtNode(Common::move(var), Common::move(value)));
+			translation = Common::SharedPtr<Node>(new AssignmentStmtNode(bytecode.pos, Common::move(var), Common::move(value)));
 		}
 		break;
 	case kOpJmp:
@@ -780,10 +782,10 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 			auto ancestorLoop = ast.currentBlock->ancestorLoop();
 			if (ancestorLoop) {
 				if (bytecodeArray[targetIndex - 1].opcode == kOpEndRepeat && bytecodeArray[targetIndex - 1].ownerLoop == ancestorLoop->startIndex) {
-					translation = Common::SharedPtr<Node>(new ExitRepeatStmtNode());
+					translation = Common::SharedPtr<Node>(new ExitRepeatStmtNode(bytecode.pos));
 					break;
 				} else if (bytecodeArray[targetIndex].tag == kTagNextRepeatTarget && bytecodeArray[targetIndex].ownerLoop == ancestorLoop->startIndex) {
-					translation = Common::SharedPtr<Node>(new NextRepeatStmtNode());
+					translation = Common::SharedPtr<Node>(new NextRepeatStmtNode(bytecode.pos));
 					break;
 				}
 			}
@@ -794,13 +796,17 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 					auto ifStmt = static_cast<IfStmtNode *>(ancestorStatement);
 					if (ast.currentBlock == ifStmt->block1.get()) {
 						ifStmt->hasElse = true;
+						ifStmt->block2->_startOffset = ifStmt->block1->_endOffset;
 						ifStmt->block2->endPos = targetPos;
+						ifStmt->block2->_endOffset = targetPos;
+						ifStmt->_endOffset = targetPos;
 						return 1; // if statement amended, nothing to push
 					}
 				} else if (ancestorStatement->type == kCaseStmtNode) {
 					auto caseStmt = static_cast<CaseStmtNode *>(ancestorStatement);
 					caseStmt->potentialOtherwisePos = bytecode.pos;
 					caseStmt->endPos = targetPos;
+					caseStmt->_endOffset = targetPos;
 					targetBytecode.tag = kTagEndCase;
 					return 1;
 				}
@@ -808,20 +814,21 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 			if (targetBytecode.opcode == kOpPop && targetBytecode.obj == 1) {
 				// This is a case statement starting with 'otherwise'
 				auto value = pop();
-				auto caseStmt = Common::SharedPtr<CaseStmtNode>(new CaseStmtNode(Common::move(value)));
+				auto caseStmt = Common::SharedPtr<CaseStmtNode>(new CaseStmtNode(bytecode.pos, Common::move(value)));
 				caseStmt->endPos = targetPos;
+				caseStmt->_endOffset = targetPos;
 				targetBytecode.tag = kTagEndCase;
-				caseStmt->addOtherwise();
+				caseStmt->addOtherwise(bytecode.pos);
 				translation = caseStmt;
 				nextBlock = caseStmt->otherwise->block.get();
 				break;
 			}
-			translation = Common::SharedPtr<Node>(new CommentNode("ERROR: Could not identify jmp"));
+			translation = Common::SharedPtr<Node>(new CommentNode(bytecode.pos, "ERROR: Could not identify jmp"));
 		}
 		break;
 	case kOpEndRepeat:
 		// This should normally be tagged kTagSkip or kTagNextRepeatTarget and skipped.
-		translation = Common::SharedPtr<Node>(new CommentNode("ERROR: Stray endrepeat"));
+		translation = Common::SharedPtr<Node>(new CommentNode(bytecode.pos, "ERROR: Stray endrepeat"));
 		break;
 	case kOpJmpIfZ:
 		{
@@ -831,8 +838,10 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 			case kTagRepeatWhile:
 				{
 					auto condition = pop();
-					auto loop = Common::SharedPtr<RepeatWhileStmtNode>(new RepeatWhileStmtNode(index, Common::move(condition)));
+					auto loop = Common::SharedPtr<RepeatWhileStmtNode>(new RepeatWhileStmtNode(index, Common::move(condition), bytecode.pos));
 					loop->block->endPos = endPos;
+					loop->block->_endOffset = endPos;
+					loop->_endOffset = endPos;
 					translation = loop;
 					nextBlock = loop->block.get();
 				}
@@ -841,8 +850,10 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 				{
 					auto list = pop();
 					Common::String varName = getVarNameFromSet(bytecodeArray[index + 5]);
-					auto loop = Common::SharedPtr<RepeatWithInStmtNode>(new RepeatWithInStmtNode(index, varName, Common::move(list)));
+					auto loop = Common::SharedPtr<RepeatWithInStmtNode>(new RepeatWithInStmtNode(index, varName, Common::move(list), bytecode.pos));
 					loop->block->endPos = endPos;
+					loop->block->_endOffset = endPos;
+					loop->_endOffset = endPos;
 					translation = loop;
 					nextBlock = loop->block.get();
 				}
@@ -856,8 +867,10 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 					auto endRepeat = bytecodeArray[endIndex - 1];
 					uint32 conditionStartIndex = bytecodePosMap[endRepeat.pos - endRepeat.obj];
 					Common::String varName = getVarNameFromSet(bytecodeArray[conditionStartIndex - 1]);
-					auto loop = Common::SharedPtr<RepeatWithToStmtNode>(new RepeatWithToStmtNode(index, varName, Common::move(start), up, Common::move(end)));
+					auto loop = Common::SharedPtr<RepeatWithToStmtNode>(new RepeatWithToStmtNode(index, varName, Common::move(start), up, Common::move(end), bytecode.pos));
 					loop->block->endPos = endPos;
+					loop->block->_endOffset = endPos;
+					loop->_endOffset = endPos;
 					translation = loop;
 					nextBlock = loop->block.get();
 				}
@@ -865,8 +878,10 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 			default:
 				{
 					auto condition = pop();
-					auto ifStmt = Common::SharedPtr<IfStmtNode>(new IfStmtNode(Common::move(condition)));
+					auto ifStmt = Common::SharedPtr<IfStmtNode>(new IfStmtNode(bytecode.pos, Common::move(condition)));
 					ifStmt->block1->endPos = endPos;
+					ifStmt->block1->_endOffset = endPos;
+					ifStmt->_endOffset = endPos;
 					translation = ifStmt;
 					nextBlock = ifStmt->block1.get();
 				}
@@ -877,7 +892,7 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 	case kOpLocalCall:
 		{
 			auto argList = pop();
-			translation = Common::SharedPtr<Node>(new CallNode(script->handlers[bytecode.obj].name, Common::move(argList)));
+			translation = Common::SharedPtr<Node>(new CallNode(bytecode.pos, script->handlers[bytecode.obj].name, Common::move(argList)));
 		}
 		break;
 	case kOpExtCall:
@@ -891,11 +906,11 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 			if (isStatement && name_ == "sound" && nargs > 0 && rawArgList[0]->type == kLiteralNode && rawArgList[0]->getValue()->type == kDatumSymbol) {
 				Common::String cmd = rawArgList[0]->getValue()->s;
 				rawArgList.erase(rawArgList.begin());
-				translation = Common::SharedPtr<Node>(new SoundCmdStmtNode(cmd, Common::move(argList)));
+				translation = Common::SharedPtr<Node>(new SoundCmdStmtNode(bytecode.pos, cmd, Common::move(argList)));
 			} else if (isStatement && name_ == "play" && nargs <= 2) {
-				translation = Common::SharedPtr<Node>(new PlayCmdStmtNode(Common::move(argList)));
+				translation = Common::SharedPtr<Node>(new PlayCmdStmtNode(bytecode.pos, Common::move(argList)));
 			} else {
-				translation = Common::SharedPtr<Node>(new CallNode(name_, Common::move(argList)));
+				translation = Common::SharedPtr<Node>(new CallNode(bytecode.pos, name_, Common::move(argList)));
 			}
 		}
 		break;
@@ -907,9 +922,9 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 			if (rawArgList.size() > 0) {
 				// first arg is a symbol
 				// replace it with a variable
-				rawArgList[0] = Common::SharedPtr<Node>(new VarNode(rawArgList[0]->getValue()->s));
+				rawArgList[0] = Common::SharedPtr<Node>(new VarNode(bytecode.pos, rawArgList[0]->getValue()->s));
 			}
-			translation = Common::SharedPtr<Node>(new ObjCallV4Node(Common::move(object), Common::move(argList)));
+			translation = Common::SharedPtr<Node>(new ObjCallV4Node(bytecode.pos, Common::move(object), Common::move(argList)));
 		}
 		break;
 	case kOpPut:
@@ -918,7 +933,7 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 			uint32 varType = bytecode.obj & 0xF;
 			auto var = readVar(varType);
 			auto val = pop();
-			translation = Common::SharedPtr<Node>(new PutStmtNode(putType, Common::move(var), Common::move(val)));
+			translation = Common::SharedPtr<Node>(new PutStmtNode(bytecode.pos, putType, Common::move(var), Common::move(val)));
 		}
 		break;
 	case kOpPutChunk:
@@ -926,30 +941,30 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 			PutType putType = static_cast<PutType>((bytecode.obj >> 4) & 0xF);
 			uint32 varType = bytecode.obj & 0xF;
 			auto var = readVar(varType);
-			auto chunk = readChunkRef(Common::move(var));
+			auto chunk = readChunkRef(bytecode.pos, Common::move(var));
 			auto val = pop();
 			if (chunk->type == kCommentNode) { // error comment
 				translation = chunk;
 			} else {
-				translation = Common::SharedPtr<Node>(new PutStmtNode(putType, Common::move(chunk), Common::move(val)));
+				translation = Common::SharedPtr<Node>(new PutStmtNode(bytecode.pos, putType, Common::move(chunk), Common::move(val)));
 			}
 		}
 		break;
 	case kOpDeleteChunk:
 		{
 			auto var = readVar(bytecode.obj);
-			auto chunk = readChunkRef(Common::move(var));
+			auto chunk = readChunkRef(bytecode.pos, Common::move(var));
 			if (chunk->type == kCommentNode) { // error comment
 				translation = chunk;
 			} else {
-				translation = Common::SharedPtr<Node>(new ChunkDeleteStmtNode(Common::move(chunk)));
+				translation = Common::SharedPtr<Node>(new ChunkDeleteStmtNode(bytecode.pos, Common::move(chunk)));
 			}
 		}
 		break;
 	case kOpGet:
 		{
 			int propertyID = pop()->getValue()->toInt();
-			translation = readV4Property(bytecode.obj, propertyID);
+			translation = readV4Property(bytecode.pos, bytecode.obj, propertyID);
 		}
 		break;
 	case kOpSet:
@@ -962,42 +977,42 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 				// If the script contains a line break, it's definitely a when statement.
 				Common::String script_ = value->getValue()->s;
 				if (script_.size() > 0 && (script_[0] == ' ' || script_.find('\r') != Common::String::npos)) {
-					translation = Common::SharedPtr<Node>(new WhenStmtNode(propertyID, script_));
+					translation = Common::SharedPtr<Node>(new WhenStmtNode(bytecode.pos, propertyID, script_));
 				}
 			}
 			if (!translation) {
-				auto prop = readV4Property(bytecode.obj, propertyID);
+				auto prop = readV4Property(bytecode.pos, bytecode.obj, propertyID);
 				if (prop->type == kCommentNode) { // error comment
 					translation = prop;
 				} else {
-					translation = Common::SharedPtr<Node>(new AssignmentStmtNode(Common::move(prop), Common::move(value), true));
+					translation = Common::SharedPtr<Node>(new AssignmentStmtNode(bytecode.pos, Common::move(prop), Common::move(value), true));
 				}
 			}
 		}
 		break;
 	case kOpGetMovieProp:
-		translation = Common::SharedPtr<Node>(new TheExprNode(getName(bytecode.obj)));
+		translation = Common::SharedPtr<Node>(new TheExprNode(bytecode.pos, getName(bytecode.obj)));
 		break;
 	case kOpSetMovieProp:
 		{
 			auto value = pop();
-			auto prop = Common::SharedPtr<TheExprNode>(new TheExprNode(getName(bytecode.obj)));
-			translation = Common::SharedPtr<Node>(new AssignmentStmtNode(Common::move(prop), Common::move(value)));
+			auto prop = Common::SharedPtr<TheExprNode>(new TheExprNode(bytecode.pos, getName(bytecode.obj)));
+			translation = Common::SharedPtr<Node>(new AssignmentStmtNode(bytecode.pos, Common::move(prop), Common::move(value)));
 		}
 		break;
 	case kOpGetObjProp:
 	case kOpGetChainedProp:
 		{
 			auto object = pop();
-			translation = Common::SharedPtr<Node>(new ObjPropExprNode(Common::move(object), getName(bytecode.obj)));
+			translation = Common::SharedPtr<Node>(new ObjPropExprNode(bytecode.pos, Common::move(object), getName(bytecode.obj)));
 		}
 		break;
 	case kOpSetObjProp:
 		{
 			auto value = pop();
 			auto object = pop();
-			auto prop = Common::SharedPtr<ObjPropExprNode>(new ObjPropExprNode(Common::move(object), getName(bytecode.obj)));
-			translation = Common::SharedPtr<Node>(new AssignmentStmtNode(Common::move(prop), Common::move(value)));
+			auto prop = Common::SharedPtr<ObjPropExprNode>(new ObjPropExprNode(bytecode.pos, Common::move(object), getName(bytecode.obj)));
+			translation = Common::SharedPtr<Node>(new AssignmentStmtNode(bytecode.pos, Common::move(prop), Common::move(value)));
 		}
 		break;
 	case kOpPeek:
@@ -1022,7 +1037,7 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 				&& !(stack.size() == originalStackSize + 1 && (currBytecode->opcode == kOpEq || currBytecode->opcode == kOpNtEq))
 			);
 			if (currIndex >= bytecodeArray.size()) {
-				bytecode.translation = Common::SharedPtr<Node>(new CommentNode("ERROR: Expected eq or nteq!"));
+				bytecode.translation = Common::SharedPtr<Node>(new CommentNode(bytecode.pos, "ERROR: Expected eq or nteq!"));
 				ast.addStatement(bytecode.translation);
 				return currIndex - index + 1;
 			}
@@ -1035,7 +1050,7 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 			currIndex += 1;
 			currBytecode = &bytecodeArray[currIndex];
 			if (currIndex >= bytecodeArray.size() || currBytecode->opcode != kOpJmpIfZ) {
-				bytecode.translation = Common::SharedPtr<Node>(new CommentNode("ERROR: Expected jmpifz!"));
+				bytecode.translation = Common::SharedPtr<Node>(new CommentNode(bytecode.pos, "ERROR: Expected jmpifz!"));
 				ast.addStatement(bytecode.translation);
 				return currIndex - index + 1;
 			}
@@ -1058,13 +1073,13 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 				expect = kCaseExpectOtherwise; // Expect an 'otherwise' block.
 			}
 
-			auto currLabel = Common::SharedPtr<CaseLabelNode>(new CaseLabelNode(Common::move(caseValue), expect));
+			auto currLabel = Common::SharedPtr<CaseLabelNode>(new CaseLabelNode(bytecode.pos, Common::move(caseValue), expect));
 			jmpifz.translation = currLabel;
 			ast.currentBlock->currentCaseLabel = currLabel.get();
 
 			if (!prevLabel) {
 				auto peekedValue = pop();
-				auto caseStmt = Common::SharedPtr<CaseStmtNode>(new CaseStmtNode(Common::move(peekedValue)));
+				auto caseStmt = Common::SharedPtr<CaseStmtNode>(new CaseStmtNode(bytecode.pos, Common::move(peekedValue)));
 				caseStmt->firstLabel = currLabel;
 				currLabel->parent = caseStmt.get();
 				bytecode.translation = caseStmt;
@@ -1080,9 +1095,11 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 			// The block doesn't start until the after last equivalent case,
 			// so don't create a block yet if we're expecting an equivalent case.
 			if (currLabel->expect != kCaseExpectOr) {
-				currLabel->block = Common::SharedPtr<BlockNode>(new BlockNode());
+				currLabel->block = Common::SharedPtr<BlockNode>(new BlockNode(bytecode.pos));
 				currLabel->block->parent = currLabel.get();
 				currLabel->block->endPos = jmpPos;
+				currLabel->block->_endOffset = jmpPos;
+				currLabel->_endOffset = jmpPos;
 				ast.enterBlock(currLabel->block.get());
 			}
 
@@ -1102,7 +1119,7 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 				// We have an unused value on the stack, so this must be the end
 				// of a case statement with no labels.
 				auto value = pop();
-				translation = Common::SharedPtr<Node>(new CaseStmtNode(Common::move(value)));
+				translation = Common::SharedPtr<Node>(new CaseStmtNode(bytecode.pos, Common::move(value)));
 				break;
 			}
 			// Otherwise, this pop instruction occurs before a 'return' within
@@ -1113,7 +1130,7 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 	case kOpTheBuiltin:
 		{
 			pop(); // empty arglist
-			translation = Common::SharedPtr<Node>(new TheExprNode(getName(bytecode.obj)));
+			translation = Common::SharedPtr<Node>(new TheExprNode(bytecode.pos, getName(bytecode.obj)));
 		}
 		break;
 	case kOpObjCall:
@@ -1126,14 +1143,14 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 				// obj.getAt(i) => obj[i]
 				auto obj = rawArgList[0];
 				auto prop = rawArgList[1];
-				translation = Common::SharedPtr<Node>(new ObjBracketExprNode(Common::move(obj), Common::move(prop)));
+				translation = Common::SharedPtr<Node>(new ObjBracketExprNode(bytecode.pos, Common::move(obj), Common::move(prop)));
 			} else if (method == "setAt" && nargs == 3) {
 				// obj.setAt(i) => obj[i] = val
 				auto obj = rawArgList[0];
 				auto prop = rawArgList[1];
 				auto val = rawArgList[2];
-				Common::SharedPtr<Node> propExpr = Common::SharedPtr<Node>(new ObjBracketExprNode(Common::move(obj), Common::move(prop)));
-				translation = Common::SharedPtr<Node>(new AssignmentStmtNode(Common::move(propExpr), Common::move(val)));
+				Common::SharedPtr<Node> propExpr = Common::SharedPtr<Node>(new ObjBracketExprNode(bytecode.pos, Common::move(obj), Common::move(prop)));
+				translation = Common::SharedPtr<Node>(new AssignmentStmtNode(bytecode.pos, Common::move(propExpr), Common::move(val)));
 			} else if ((method == "getProp" || method == "getPropRef") && (nargs == 3 || nargs == 4) && rawArgList[1]->getValue()->type == kDatumSymbol) {
 				// obj.getProp(#prop, i) => obj.prop[i]
 				// obj.getProp(#prop, i, i2) => obj.prop[i..i2]
@@ -1141,7 +1158,7 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 				Common::String propName  = rawArgList[1]->getValue()->s;
 				auto i = rawArgList[2];
 				auto i2 = (nargs == 4) ? rawArgList[3] : nullptr;
-				translation = Common::SharedPtr<Node>(new ObjPropIndexExprNode(Common::move(obj), propName, Common::move(i), Common::move(i2)));
+				translation = Common::SharedPtr<Node>(new ObjPropIndexExprNode(bytecode.pos, Common::move(obj), propName, Common::move(i), Common::move(i2)));
 			} else if (method == "setProp" && (nargs == 4 || nargs == 5) && rawArgList[1]->getValue()->type == kDatumSymbol) {
 				// obj.setProp(#prop, i, val) => obj.prop[i] = val
 				// obj.setProp(#prop, i, i2, val) => obj.prop[i..i2] = val
@@ -1149,15 +1166,15 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 				Common::String propName  = rawArgList[1]->getValue()->s;
 				auto i = rawArgList[2];
 				auto i2 = (nargs == 5) ? rawArgList[3] : nullptr;
-				auto propExpr = Common::SharedPtr<ObjPropIndexExprNode>(new ObjPropIndexExprNode(Common::move(obj), propName, Common::move(i), Common::move(i2)));
+				auto propExpr = Common::SharedPtr<ObjPropIndexExprNode>(new ObjPropIndexExprNode(bytecode.pos, Common::move(obj), propName, Common::move(i), Common::move(i2)));
 				auto val = rawArgList[nargs - 1];
-				translation = Common::SharedPtr<Node>(new AssignmentStmtNode(Common::move(propExpr), Common::move(val)));
+				translation = Common::SharedPtr<Node>(new AssignmentStmtNode(bytecode.pos, Common::move(propExpr), Common::move(val)));
 			} else if (method == "count" && nargs == 2 && rawArgList[1]->getValue()->type == kDatumSymbol) {
 				// obj.count(#prop) => obj.prop.count
 				auto obj = rawArgList[0];
 				Common::String propName  = rawArgList[1]->getValue()->s;
-				auto propExpr = Common::SharedPtr<ObjPropExprNode>(new ObjPropExprNode(Common::move(obj), propName));
-				translation = Common::SharedPtr<Node>(new ObjPropExprNode(Common::move(propExpr), "count"));
+				auto propExpr = Common::SharedPtr<ObjPropExprNode>(new ObjPropExprNode(bytecode.pos, Common::move(obj), propName));
+				translation = Common::SharedPtr<Node>(new ObjPropExprNode(bytecode.pos, Common::move(propExpr), "count"));
 			} else if ((method == "setContents" || method == "setContentsAfter" || method == "setContentsBefore") && nargs == 2) {
 				// var.setContents(val) => put val into var
 				// var.setContentsAfter(val) => put val after var
@@ -1172,17 +1189,17 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 				}
 				auto var = rawArgList[0];
 				auto val = rawArgList[1];
-				translation = Common::SharedPtr<Node>(new PutStmtNode(putType, Common::move(var), Common::move(val)));
+				translation = Common::SharedPtr<Node>(new PutStmtNode(bytecode.pos, putType, Common::move(var), Common::move(val)));
 			} else if (method == "hilite" && nargs == 1) {
 				// chunk.hilite() => hilite chunk
 				auto chunk = rawArgList[0];
-				translation = Common::SharedPtr<Node>(new ChunkHiliteStmtNode(chunk));
+				translation = Common::SharedPtr<Node>(new ChunkHiliteStmtNode(bytecode.pos, chunk));
 			} else if (method == "delete" && nargs == 1) {
 				// chunk.delete() => delete chunk
 				auto chunk = rawArgList[0];
-				translation = Common::SharedPtr<Node>(new ChunkDeleteStmtNode(chunk));
+				translation = Common::SharedPtr<Node>(new ChunkDeleteStmtNode(bytecode.pos, chunk));
 			} else {
-				translation = Common::SharedPtr<Node>(new ObjCallNode(method, Common::move(argList)));
+				translation = Common::SharedPtr<Node>(new ObjCallNode(bytecode.pos, method, Common::move(argList)));
 			}
 		}
 		break;
@@ -1192,14 +1209,14 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 	case kOpGetTopLevelProp:
 		{
 			auto name_ = getName(bytecode.obj);
-			translation = Common::SharedPtr<VarNode>(new VarNode(name_));
+			translation = Common::SharedPtr<VarNode>(new VarNode(bytecode.pos, name_));
 		}
 		break;
 	case kOpNewObj:
 		{
 			auto objType = getName(bytecode.obj);
 			auto objArgs = pop();
-			translation = Common::SharedPtr<NewObjNode>(new NewObjNode(objType, Common::move(objArgs)));
+			translation = Common::SharedPtr<NewObjNode>(new NewObjNode(bytecode.pos, objType, Common::move(objArgs)));
 		}
 		break;
 	default:
@@ -1207,13 +1224,13 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 			auto commentText = StandardNames::getOpcodeName(bytecode.opID);
 			if (bytecode.opcode >= 0x40)
 				commentText += Common::String::format(" %d", bytecode.obj);
-			translation = Common::SharedPtr<CommentNode>(new CommentNode(commentText));
+			translation = Common::SharedPtr<CommentNode>(new CommentNode(bytecode.pos, commentText));
 			stack.clear(); // Clear stack so later bytecode won't be too screwed up
 		}
 	}
 
 	if (!translation)
-		translation = Common::SharedPtr<ErrorNode>(new ErrorNode());
+		translation = Common::SharedPtr<ErrorNode>(new ErrorNode(bytecode.pos));
 
 	bytecode.translation = translation;
 	if (translation->isExpression) {

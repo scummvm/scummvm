@@ -683,8 +683,8 @@ void CaseStmtNode::writeScriptText(CodeWriter &code, bool dot, bool sum) const {
 	}
 }
 
-void CaseStmtNode::addOtherwise() {
-	otherwise = Common::SharedPtr<OtherwiseNode>(new OtherwiseNode());
+void CaseStmtNode::addOtherwise(uint32 offset) {
+	otherwise = Common::SharedPtr<OtherwiseNode>(new OtherwiseNode(offset));
 	otherwise->parent = this;
 	otherwise->block->endPos = endPos;
 }
@@ -1165,5 +1165,53 @@ void NewObjNode::writeScriptText(CodeWriter &code, bool dot, bool sum) const {
 	objArgs->writeScriptText(code, dot, sum);
 	code.write(")");
 }
+
+void ErrorNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void CommentNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void LiteralNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void IfStmtNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void NewObjNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void EndCaseNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void HandlerNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void ObjCallNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void PutStmtNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void TheExprNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void BinaryOpNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void CaseStmtNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void ExitStmtNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void TellStmtNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void WhenStmtNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void CaseLabelNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void ChunkExprNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void InverseOpNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void ObjCallV4Node::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void OtherwiseNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void MemberExprNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void ObjPropExprNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void PlayCmdStmtNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void ThePropExprNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void MenuPropExprNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void SoundCmdStmtNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void SoundPropExprNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void AssignmentStmtNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void ExitRepeatStmtNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void NextRepeatStmtNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void ObjBracketExprNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void SpritePropExprNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void ChunkDeleteStmtNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void ChunkHiliteStmtNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void RepeatWhileStmtNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void MenuItemPropExprNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void ObjPropIndexExprNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void RepeatWithInStmtNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void RepeatWithToStmtNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void SpriteWithinExprNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void LastStringChunkExprNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void SpriteIntersectsExprNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void StringChunkCountExprNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void VarNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void CallNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void BlockNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
+void NotOpNode::accept(NodeVisitor &visitor) const { visitor.visit(*this); }
 
 } // namespace LingoDec

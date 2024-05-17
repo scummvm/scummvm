@@ -31,6 +31,12 @@
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
+#include "director/lingo/lingodec/ast.h"
+#include "director/lingo/lingodec/codewriter.h"
+#include "director/lingo/lingodec/context.h"
+#include "director/lingo/lingodec/handler.h"
+#include "director/lingo/lingodec/resolver.h"
+#include "director/lingo/lingodec/script.h"
 #include "director/cast.h"
 #include "director/castmember/bitmap.h"
 #include "director/castmember/castmember.h"
@@ -54,7 +60,7 @@ typedef struct ImGuiImage {
 } ImGuiImage;
 
 typedef struct ImGuiScriptCode {
-	uint pc;
+	uint32 pc;
 	Common::String code;
 } ImGuiScriptCode;
 
@@ -74,6 +80,167 @@ typedef struct ImGuiScript {
 		return !(*this == c);
 	}
 } ImGuiScript;
+
+class ImGuiNodeVisitor : public LingoDec::NodeVisitor {
+public:
+	explicit ImGuiNodeVisitor(ImGuiScript &script) : _script(script) {}
+
+	virtual void visit(const LingoDec::BlockNode &node) override {
+		_indent++;
+		for (const auto &child : node.children) {
+			child->accept(*this);
+		}
+		_indent--;
+	}
+
+	virtual void visit(const LingoDec::HandlerNode &node) override {
+		if (node.handler->isGenericEvent) {
+			node.block->accept(*this);
+			return;
+		}
+
+		LingoDec::Script *script = node.handler->script;
+		bool isMethod = script->isFactory();
+		{
+			LingoDec::CodeWriter code("\n");
+			if (isMethod) {
+				code.write("method ");
+			} else {
+				code.write("on ");
+			}
+			code.write(node.handler->name);
+
+			if (node.handler->argumentNames.size() > 0) {
+				code.write(" ");
+				for (size_t i = 0; i < node.handler->argumentNames.size(); i++) {
+					if (i > 0)
+						code.write(", ");
+					code.write(node.handler->argumentNames[i]);
+				}
+			}
+			write(node._startOffset, code.str());
+		}
+
+		{
+			LingoDec::CodeWriter code("\n");
+			if (isMethod && node.handler->script->propertyNames.size() > 0 && node.handler == &node.handler->script->handlers[0]) {
+				code.write("instance ");
+				for (size_t i = 0; i < node.handler->script->propertyNames.size(); i++) {
+					if (i > 0)
+						code.write(", ");
+					code.write(node.handler->script->propertyNames[i]);
+				}
+				write(node._startOffset, code.str());
+			}
+		}
+
+		{
+			if (node.handler->globalNames.size() > 0) {
+				LingoDec::CodeWriter code("\n");
+				code.write("global ");
+				for (size_t i = 0; i < node.handler->globalNames.size(); i++) {
+					if (i > 0)
+						code.write(", ");
+					code.write(node.handler->globalNames[i]);
+				}
+				write(node._startOffset, code.str());
+			}
+		}
+
+		node.block->accept(*this);
+
+		{
+			LingoDec::CodeWriter code("\n");
+			if (!isMethod) {
+				code.writeLine("end");
+			}
+			_script.code.push_back({node.block->_endOffset, code.str()});
+		}
+	}
+
+	virtual void visit(const LingoDec::RepeatWhileStmtNode &node) override {
+		LingoDec::CodeWriter code("\n");
+		code.write("repeat while ");
+		node.condition->writeScriptText(code, _dot, false);
+		write(node._startOffset, code.str());
+
+		node.block->accept(*this);
+
+		write(node._endOffset, "end repeat");
+	}
+
+	virtual void visit(const LingoDec::RepeatWithInStmtNode &node) override {
+		LingoDec::CodeWriter code("\n");
+		code.write("repeat with ");
+		code.write(node.varName);
+		code.write(" in ");
+		node.list->writeScriptText(code, _dot, false);
+		write(node._startOffset, code.str());
+		node.block->accept(*this);
+		write(node._endOffset, "end repeat");
+	}
+
+	virtual void visit(const LingoDec::RepeatWithToStmtNode &node) override {
+		LingoDec::CodeWriter code("\n");
+		code.write("repeat with ");
+		code.write(node.varName);
+		code.write(" = ");
+		node.start->writeScriptText(code, _dot, false);
+		if (node.up) {
+			code.write(" to ");
+		} else {
+			code.write(" down to ");
+		}
+		node.end->writeScriptText(code, _dot, false);
+		write(node._startOffset, code.str());
+		node.block->accept(*this);
+		write(node._endOffset, "end repeat");
+	}
+
+	virtual void visit(const LingoDec::IfStmtNode &node) override {
+		{
+			LingoDec::CodeWriter code("\n");
+			code.write("if ");
+			node.condition->writeScriptText(code, _dot, false);
+			code.write(" then");
+			write(node._startOffset, code.str());
+		}
+		node.block1->accept(*this);
+		if (node.hasElse) {
+			write(node.block2->_startOffset, "else");
+			node.block2->accept(*this);
+		}
+		write(node._endOffset, "end if");
+	}
+
+	virtual void visit(const LingoDec::TellStmtNode &node) override {
+		LingoDec::CodeWriter code("\n");
+		code.write("tell ");
+		node.window->writeScriptText(code, _dot, false);
+		write(node._startOffset, code.str());
+		node.block->accept(*this);
+		write(node._endOffset, "end tell");
+	}
+
+	virtual void defaultVisit(const LingoDec::Node &node) override {
+		LingoDec::CodeWriter code("\n");
+		node.writeScriptText(code, _dot, false);
+		write(node._startOffset, code.str());
+	}
+
+	void write(uint32 offset, const Common::String &code) {
+		Common::String s;
+		for (int i = 0; i < _indent; i++) {
+			s += "  ";
+		}
+		_script.code.push_back({offset, s + code});
+	}
+
+private:
+	ImGuiScript &_script;
+	bool _dot = false;
+	int _indent = 0;
+};
 
 typedef struct ImGuiState {
 	struct {
@@ -1025,7 +1192,7 @@ static void displayScripts() {
 	ImGui::End();
 }
 
-static void getScriptCode(ImGuiScript& script, Symbol &sym) {
+static void getScriptCode(ImGuiScript &script, Symbol &sym) {
 	uint pc = 0;
 	while (pc < sym.u.defn->size()) {
 		script.code.push_back({pc, g_lingo->decodeInstruction(sym.u.defn, pc, &pc)});
@@ -1090,11 +1257,10 @@ static void showFuncList() {
 					ImGui::Text("-");
 					ImGui::TableNextColumn();
 					ImGui::Text("%s", scriptType.c_str());
-
 				}
 			}
 
-			for (auto cast : *movie->getCasts()) {
+			for (auto &cast : *movie->getCasts()) {
 				for (int i = 0; i <= kMaxScriptType; i++) {
 					if (cast._value->_lingoArchive->scriptContexts[i].empty())
 						continue;
@@ -1120,7 +1286,12 @@ static void showFuncList() {
 								script.type = (ScriptType)i;
 								script.handlerId = functionHandler._key;
 								script.handlerName = getHandlerName(functionHandler._value);
-								getScriptCode(script, functionHandler._value);
+								uint32 scriptId = movie->getCastMemberInfo(memberID)->scriptId;
+								const LingoDec::Script *s = cast._value->_lingodec->scripts[scriptId];
+								ImGuiNodeVisitor visitor(script);
+								for (auto &h : s->handlers) {
+									h.ast.root->accept(visitor);
+								}
 								setScriptToDisplay(script);
 							}
 							ImGui::TableNextColumn();
@@ -1129,7 +1300,6 @@ static void showFuncList() {
 							ImGui::Text("%d", cast._key);
 							ImGui::TableNextColumn();
 							ImGui::Text("%s", scriptType.c_str());
-
 						}
 					}
 				}

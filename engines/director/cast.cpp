@@ -1146,7 +1146,7 @@ public:
 		Common::SeekableReadStreamEndian *r;
 
 		r = _cast->_castArchive->getResource(MKTAG('L', 's', 'c', 'r'), id);
-		_scripts[id] = new LingoDec::Script(_cast->_version);
+		_scripts[id] = new LingoDec::Script(g_director->getVersion());
 		_scripts[id]->read(*r);
 		delete r;
 
@@ -1264,7 +1264,6 @@ void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 		error("Cast::loadLingoContext: unsupported Director version (%d)", _version);
 	}
 
-#if 0
 	// Rewind stream
 	stream.seek(0);
 	_chunkResolver = new ChunkResolver(this);
@@ -1274,10 +1273,8 @@ void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 	_lingodec->parseScripts();
 
 	for (auto it = _lingodec->scripts.begin(); it != _lingodec->scripts.end(); ++it) {
-		warning("%s", it->second->scriptText("\n", false).c_str());
+		warning("[%d/%d] %s", it->second->castID, it->first, it->second->scriptText("\n", false).c_str());
 	}
-
-#endif
 }
 
 void Cast::loadScriptV2(Common::SeekableReadStreamEndian &stream, uint16 id) {

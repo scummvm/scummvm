@@ -60,7 +60,7 @@ struct Handler {
 
 	bool isGenericEvent = false;
 
-	Handler(): ast(this) {}
+	Handler(): ast(0, this) {}
 
 	void setScript(Script *s) {
 		script = s;
@@ -78,8 +78,8 @@ struct Handler {
 	int variableMultiplier();
 	Common::SharedPtr<Node> readVar(int varType);
 	Common::String getVarNameFromSet(const Bytecode &bytecode);
-	Common::SharedPtr<Node> readV4Property(int propertyType, int propertyID);
-	Common::SharedPtr<Node> readChunkRef(Common::SharedPtr<Node> string);
+	Common::SharedPtr<Node> readV4Property(uint32 offset, int propertyType, int propertyID);
+	Common::SharedPtr<Node> readChunkRef(uint32 offset, Common::SharedPtr<Node> string);
 	void tagLoops();
 	bool isRepeatWithIn(uint32 startIndex, uint32 endIndex);
 	BytecodeTag identifyLoop(uint32 startIndex, uint32 endIndex);
