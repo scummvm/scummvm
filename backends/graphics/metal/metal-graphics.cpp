@@ -24,6 +24,7 @@
 #include "backends/graphics/metal/metal-graphics.h"
 #include "common/translation.h"
 
+#include "graphics/blit.h"
 #ifdef USE_SCALERS
 #include "graphics/scalerplugin.h"
 #endif
@@ -378,15 +379,23 @@ Graphics::PixelFormat MetalGraphicsManager::getOverlayFormat() const {
 }
 
 void MetalGraphicsManager::clearOverlay() {
-	//TODO: Implement
+	_overlay->fill(0);
 }
 
 void MetalGraphicsManager::grabOverlay(Graphics::Surface &surface) const {
-	//TODO: Implement
+	const Graphics::Surface *overlayData = _overlay->getSurface();
+
+	assert(surface.w >= overlayData->w);
+	assert(surface.h >= overlayData->h);
+	assert(surface.format.bytesPerPixel == overlayData->format.bytesPerPixel);
+
+	const byte *src = (const byte *)overlayData->getPixels();
+	byte *dst = (byte *)surface.getPixels();
+	Graphics::copyBlit(dst, src, surface.pitch, overlayData->pitch, overlayData->w, overlayData->h, overlayData->format.bytesPerPixel);
 }
 
 void MetalGraphicsManager::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
-	//TODO: Implement
+	_overlay->copyRectToTexture(x, y, w, h, buf, pitch);
 }
 
 int16 MetalGraphicsManager::getOverlayHeight() const {
