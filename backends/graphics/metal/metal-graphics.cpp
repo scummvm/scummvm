@@ -311,6 +311,56 @@ Common::List<Graphics::PixelFormat> MetalGraphicsManager::getSupportedFormats() 
 }
 #endif
 
+namespace {
+const OSystem::GraphicsMode metalStretchModes[] = {
+	{"center", _s("Center"), STRETCH_CENTER},
+	{"pixel-perfect", _s("Pixel-perfect scaling"), STRETCH_INTEGRAL},
+	{"even-pixels", _s("Even pixels scaling"), STRETCH_INTEGRAL_AR},
+	{"fit", _s("Fit to window"), STRETCH_FIT},
+	{"stretch", _s("Stretch to window"), STRETCH_STRETCH},
+	{"fit_force_aspect", _s("Fit to window (4:3)"), STRETCH_FIT_FORCE_ASPECT},
+	{nullptr, nullptr, 0}
+};
+
+} // End of anonymous namespace
+
+const OSystem::GraphicsMode *MetalGraphicsManager::getSupportedStretchModes() const {
+	return metalStretchModes;
+}
+
+int MetalGraphicsManager::getDefaultStretchMode() const {
+	return STRETCH_FIT;
+}
+
+bool MetalGraphicsManager::setStretchMode(int mode) {
+	//assert(getTransactionMode() != kTransactionNone);
+
+	if (mode == _stretchMode)
+		return true;
+
+	// Check this is a valid mode
+	const OSystem::GraphicsMode *sm = getSupportedStretchModes();
+	bool found = false;
+	while (sm->name) {
+		if (sm->id == mode) {
+			found = true;
+			break;
+		}
+		sm++;
+	}
+	if (!found) {
+		warning("unknown stretch mode %d", mode);
+		return false;
+	}
+
+	_stretchMode = mode;
+	return true;
+}
+
+int MetalGraphicsManager::getStretchMode() const {
+	return _stretchMode;
+}
+
 void MetalGraphicsManager::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
 	Graphics::PixelFormat requestedFormat;
 #ifdef USE_RGB_COLOR
