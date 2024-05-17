@@ -55,7 +55,7 @@ MODULE_OBJS = \
 	lingo/lingo-utils.o \
 	lingo/lingodec/ast.o \
 	lingo/lingodec/context.o \
-	lingo/lingodec/codewriter.o \
+	lingo/lingodec/codewritervisitor.o \
 	lingo/lingodec/handler.o \
 	lingo/lingodec/names.o \
 	lingo/lingodec/script.o \

@@ -95,10 +95,14 @@ ErrorCode CBagRestoreDialog::attach() {
 	// Save off the current game's palette
 	_pSavePalette = CBofApp::getApp()->getPalette();
 
-	// Insert ours
-	CBofPalette *pPal = _pBackdrop->getPalette();
-	CBofApp::getApp()->setPalette(pPal);
+	CBofPalette *pPal = nullptr;
 
+	// Insert ours
+	if (_pBackdrop != nullptr) {
+		pPal = _pBackdrop->getPalette();
+		CBofApp::getApp()->setPalette(pPal);
+	}
+	
 	// Paint the SaveList Box onto the background
 	if (_pBackdrop != nullptr) {
 		CBofBitmap cBmp(buildSysDir("SAVELIST.BMP"), pPal);

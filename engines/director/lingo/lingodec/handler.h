@@ -20,7 +20,7 @@ namespace LingoDec {
 
 struct AST;
 struct Bytecode;
-class CodeWriter;
+class CodeWriterVisitor;
 struct Node;
 struct Script;
 
@@ -85,7 +85,7 @@ struct Handler {
 	BytecodeTag identifyLoop(uint32 startIndex, uint32 endIndex);
 	void parse();
 	uint32 translateBytecode(Bytecode &bytecode, uint32 index);
-	void writeBytecodeText(CodeWriter &code, bool dotSyntax) const;
+	void writeBytecodeText(CodeWriterVisitor &code) const;
 };
 
 /* Bytecode */

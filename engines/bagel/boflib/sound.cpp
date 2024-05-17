@@ -228,7 +228,7 @@ bool CBofSound::play(uint32 dwBeginHere, uint32 TimeFormatFlag) {
 		}
 
 		// WAVE and MIX are mutually exclusive
-		assert(!((_wFlags & SOUND_WAVE) && (_wFlags & SOUND_MIDI)));
+		assert(!((_wFlags & SOUND_WAVE) && (_wFlags & SOUND_MIX)));
 
 		if (_wFlags & SOUND_WAVE) {
 			if (_wFlags & SOUND_QUEUE)
@@ -823,24 +823,19 @@ void CBofSound::audioTask() {
 						pSound->stop();
 					}
 
-				} else {
-
+				} else if (pSound->_bInQueue && !pSound->_bStarted) {
 					// If this is a Queued sound, and has not already started
-					if (pSound->_bInQueue && !pSound->_bStarted) {
-						// And it is time to play
-						if ((CBofSound *)_cQueue[pSound->_iQSlot]->getQItem() == pSound) {
-							pSound->playWAV();
-						}
+					// And it is time to play
+					if ((CBofSound *)_cQueue[pSound->_iQSlot]->getQItem() == pSound) {
+						pSound->playWAV();
 					}
 				}
 
-			} else if (pSound->_wFlags & SOUND_MIDI) {
-				if (pSound->_bPlaying) {
-					// And, Is it done?
-					if (!g_engine->_midi->isPlaying()) {
-						// Kill it
-						pSound->stop();
-					}
+			} else if ((pSound->_wFlags & SOUND_MIDI) && pSound->_bPlaying) {
+				// And, Is it done?
+				if (!g_engine->_midi->isPlaying()) {
+					// Kill it
+					pSound->stop();
 				}
 			}
 		}

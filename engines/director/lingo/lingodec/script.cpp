@@ -6,7 +6,7 @@
 
 #include "common/stream.h"
 #include "./ast.h"
-#include "./codewriter.h"
+#include "./codewritervisitor.h"
 #include "./context.h"
 #include "./handler.h"
 #include "./script.h"
@@ -127,7 +127,7 @@ void Script::parse() {
 	}
 }
 
-void Script::writeVarDeclarations(CodeWriter &code) const {
+void Script::writeVarDeclarations(CodeWriterVisitor &code) const {
 	if (!isFactory()) {
 		if (propertyNames.size() > 0) {
 			code.write("property ");
@@ -150,64 +150,64 @@ void Script::writeVarDeclarations(CodeWriter &code) const {
 	}
 }
 
-void Script::writeScriptText(CodeWriter &code, bool dotSyntax) const {
-	size_t origSize = code.size();
+void Script::writeScriptText(CodeWriterVisitor &code) const {
+	size_t origSize = code._str.size();
 	writeVarDeclarations(code);
 	if (isFactory()) {
-		if (code.size() != origSize) {
+		if (code._str.size() != origSize) {
 			code.writeLine();
 		}
 		code.write("factory ");
 		code.writeLine(factoryName);
 	}
 	for (size_t i = 0; i < handlers.size(); i++) {
-		if ((!isFactory() || i > 0) && code.size() != origSize) {
+		if ((!isFactory() || i > 0) && code._str.size() != origSize) {
 			code.writeLine();
 		}
-		handlers[i].ast.writeScriptText(code, dotSyntax, false);
+		handlers[i].ast.root->accept(code);
 	}
 	for (auto factory : factories) {
-		if (code.size() != origSize) {
+		if (code._str.size() != origSize) {
 			code.writeLine();
 		}
-		factory->writeScriptText(code, dotSyntax);
+		factory->writeScriptText(code);
 	}
 }
 
 Common::String Script::scriptText(const char *lineEnding, bool dotSyntax) const {
-	CodeWriter code(lineEnding);
-	writeScriptText(code, dotSyntax);
-	return code.str();
+	CodeWriterVisitor code(dotSyntax, false, lineEnding);
+	writeScriptText(code);
+	return code._str;
 }
 
-void Script::writeBytecodeText(CodeWriter &code, bool dotSyntax) const {
-	size_t origSize = code.size();
+void Script::writeBytecodeText(CodeWriterVisitor &code) const {
+	size_t origSize = code._str.size();
 	writeVarDeclarations(code);
 	if (isFactory()) {
-		if (code.size() != origSize) {
+		if (code._str.size() != origSize) {
 			code.writeLine();
 		}
 		code.write("factory ");
 		code.writeLine(factoryName);
 	}
 	for (size_t i = 0; i < handlers.size(); i++) {
-		if ((!isFactory() || i > 0) && code.size() != origSize) {
+		if ((!isFactory() || i > 0) && code._str.size() != origSize) {
 			code.writeLine();
 		}
-		handlers[i].writeBytecodeText(code, dotSyntax);
+		handlers[i].writeBytecodeText(code);
 	}
 	for (auto factory : factories) {
-		if (code.size() != origSize) {
+		if (code._str.size() != origSize) {
 			code.writeLine();
 		}
-		factory->writeBytecodeText(code, dotSyntax);
+		factory->writeBytecodeText(code);
 	}
 }
 
 Common::String Script::bytecodeText(const char *lineEnding, bool dotSyntax) const {
-	CodeWriter code(lineEnding);
-	writeBytecodeText(code, dotSyntax);
-	return code.str();
+	CodeWriterVisitor code(dotSyntax, true, lineEnding);
+	writeBytecodeText(code);
+	return code._str;
 }
 
 bool Script::isFactory() const {

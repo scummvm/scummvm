@@ -7,7 +7,7 @@
 #include "common/stream.h"
 #include "common/util.h"
 #include "./ast.h"
-#include "./codewriter.h"
+#include "./codewritervisitor.h"
 #include "./handler.h"
 #include "./names.h"
 #include "./script.h"
@@ -1249,7 +1249,7 @@ Common::String posToString(int32 pos) {
 	return Common::String::format("[%3d]", pos);
 }
 
-void Handler::writeBytecodeText(CodeWriter &code, bool dotSyntax) const {
+void Handler::writeBytecodeText(CodeWriterVisitor &code) const {
 	bool isMethod = script->isFactory();
 
 	if (!isGenericEvent) {
@@ -1304,7 +1304,7 @@ void Handler::writeBytecodeText(CodeWriter &code, bool dotSyntax) const {
 			if (bytecode.translation->isExpression) {
 				code.write("<");
 			}
-			bytecode.translation->writeScriptText(code, dotSyntax, true);
+			bytecode.translation->accept(code);
 			if (bytecode.translation->isExpression) {
 				code.write(">");
 			}

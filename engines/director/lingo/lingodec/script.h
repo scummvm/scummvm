@@ -17,7 +17,7 @@ class ReadStream;
 
 namespace LingoDec {
 
-class CodeWriter;
+class CodeWriterVisitor;
 struct Datum;
 struct Handler;
 struct ScriptContext;
@@ -82,10 +82,10 @@ struct Script {
 	Common::String getName(int id) const;
 	void setContext(ScriptContext *ctx);
 	void parse();
-	void writeVarDeclarations(CodeWriter &code) const;
-	void writeScriptText(CodeWriter &code, bool dotSyntax) const;
+	void writeVarDeclarations(CodeWriterVisitor &code) const;
+	void writeScriptText(CodeWriterVisitor &code) const;
 	Common::String scriptText(const char *lineEnding, bool dotSyntax) const;
-	void writeBytecodeText(CodeWriter &code, bool dotSyntax) const;
+	void writeBytecodeText(CodeWriterVisitor &code) const;
 	Common::String bytecodeText(const char *lineEnding, bool dotSyntax) const;
 
 	bool isFactory() const;

@@ -467,7 +467,7 @@ void OpenGLSdlGraphicsManager::refreshScreen() {
 #if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
 	if (_callbacks.render) {
 		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplSDL2_NewFrame(_window->getSDLWindow());
+		ImGui_ImplSDL2_NewFrame();
 
 		ImGui::NewFrame();
 		_callbacks.render();

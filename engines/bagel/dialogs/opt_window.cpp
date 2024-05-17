@@ -188,10 +188,13 @@ void CBagOptWindow::onPaint(CBofRect *pRect) {
 ErrorCode CBagOptWindow::attach() {
 	// Save off the current game's palette
 	_pSavePalette = CBofApp::getApp()->getPalette();
+	CBofPalette *pPal = nullptr;
 
 	// Insert ours
-	CBofPalette *pPal = _pBackdrop->getPalette();
-	CBofApp::getApp()->setPalette(pPal);
+	if (_pBackdrop != nullptr) {
+		pPal = _pBackdrop->getPalette();
+		CBofApp::getApp()->setPalette(pPal);
+	}
 
 	// Paint stuff
 	if (_pBackdrop != nullptr) {
