@@ -403,8 +403,8 @@ struct RepeatWithToStmtNode : LoopNode {
 	Common::SharedPtr<Node> end;
 	Common::SharedPtr<BlockNode> block;
 
-	RepeatWithToStmtNode(uint32 startIndex_, Common::String v, Common::SharedPtr<Node> s, bool up, Common::SharedPtr<Node> e, uint32 offset)
-		: LoopNode(kRepeatWithToStmtNode, startIndex_, offset), up(up) {
+	RepeatWithToStmtNode(uint32 startIndex_, Common::String v, Common::SharedPtr<Node> s, bool _up, Common::SharedPtr<Node> e, uint32 offset)
+		: LoopNode(kRepeatWithToStmtNode, startIndex_, offset), up(_up) {
 		varName = v;
 		start = Common::move(s);
 		start->parent = this;
