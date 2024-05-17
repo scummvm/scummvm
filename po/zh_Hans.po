@@ -3160,8 +3160,9 @@ msgid ""
 "replaces the executables shipped with the game, allowing you to play them on "
 "systems for which they were never designed!"
 msgstr ""
-"ScummVM 是一个在你拥有游戏数据文件的情况下，让你能够运行各种经典图形点击冒险游戏与角色扮演游戏的程序。它的聪明之处在于：ScummVM "
-"只替换了游戏附带的可执行文件，让你能在原本不兼容的系统上玩这些游戏！"
+"ScummVM 是一个在你拥有游戏数据文件的情况下，让你能够运行各种经典图形点击冒险"
+"游戏与角色扮演游戏的程序。它的聪明之处在于：ScummVM 只替换了游戏附带的可执行"
+"文件，让你能在原本不兼容的系统上玩这些游戏！"
 
 #. I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:45
@@ -3171,8 +3172,9 @@ msgid ""
 "like LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood "
 "Studios."
 msgstr ""
-"目前 ScummVM 一共支持超过 4000 款冒险游戏。它支持 LucasArts、Sierra On-Line、Revolution "
-"Software、Cyan, Inc. 和 Westwood Studios 等传奇工作室发行的许多经典游戏。"
+"目前 ScummVM 一共支持超过 4000 款冒险游戏。它支持 LucasArts、Sierra On-Line、"
+"Revolution Software、Cyan, Inc. 和 Westwood Studios 等传奇工作室发行的许多经"
+"典游戏。"
 
 #. I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:51
@@ -3180,7 +3182,9 @@ msgid ""
 "Next to ground-breaking titles like the Monkey Island series, Broken Sword, "
 "Myst, Blade Runner and countless other games you will find some really "
 "obscure adventures and truly hidden gems to explore."
-msgstr "除了《猴岛》系列、《断剑》、《迷雾》、《银翼杀手》等开创性的游戏之外，你还会发现一些真正名不见传的冒险游戏与等待探索的瑰宝。"
+msgstr ""
+"除了《猴岛》系列、《断剑》、《迷雾》、《银翼杀手》等开创性的游戏之外，你还会"
+"发现一些真正名不见传的冒险游戏与等待探索的瑰宝。"
 
 #: engines/achievements.cpp:242
 msgid "Achievement unlocked!"
@@ -3271,7 +3275,9 @@ msgid ""
 "Sorry, this engine does not currently provide in-game help. Please consult "
 "the README for basic information, and for instructions on how to obtain "
 "further assistance."
-msgstr "抱歉，此引擎目前无法提供游戏内帮助。请阅读 README 文件获取基本信息及寻求进一步帮助的指示。"
+msgstr ""
+"抱歉，此引擎目前无法提供游戏内帮助。请阅读 README 文件获取基本信息及寻求进一"
+"步帮助的指示。"
 
 #: engines/dialogs.cpp:193 engines/ags/ags.cpp:328
 #: engines/glk/magnetic/magnetic.h:1401 engines/scumm/saveload.cpp:170
@@ -3405,7 +3411,8 @@ msgstr "自动保存时出错"
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
 "information, and for instructions on how to obtain further assistance."
-msgstr "无法载入存档（%s）！请阅读 README 文件获取基本信息及寻求进一步帮助的指示。"
+msgstr ""
+"无法载入存档（%s）！请阅读 README 文件获取基本信息及寻求进一步帮助的指示。"
 
 #: engines/engine.cpp:760
 msgid "WARNING: "
@@ -3420,7 +3427,9 @@ msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
 "might not work in future versions of ScummVM."
-msgstr "警告：ScummVM 尚未完全支持你要启动的游戏。因此它可能会不稳定，所有存档在 ScummVM 的未来版本中可能无效。"
+msgstr ""
+"警告：ScummVM 尚未完全支持你要启动的游戏。因此它可能会不稳定，所有存档在 "
+"ScummVM 的未来版本中可能无效。"
 
 #: engines/engine.cpp:764 engines/wintermute/wintermute.cpp:182
 msgid "Start anyway"
@@ -3456,7 +3465,8 @@ msgid ""
 msgstr ""
 "“%s”中的游戏似乎是未知的游戏变体。\n"
 "\n"
-"请使用 %s 将如下数据报告给 ScummVM 团队，同时附上尝试添加的游戏名称、版本、语言等信息："
+"请使用 %s 将如下数据报告给 ScummVM 团队，同时附上尝试添加的游戏名称、版本、语"
+"言等信息："
 
 #: engines/game.cpp:207
 #, c-format
@@ -3639,7 +3649,9 @@ msgstr "Creative Music System 模拟器"
 msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
 "on MIDI tab. Music is off."
-msgstr "FluidSynth 需要“soundfont”设置。请在 ScummVM 界面的 MIDI 标签页指定。音乐已关闭。"
+msgstr ""
+"FluidSynth 需要“soundfont”设置。请在 ScummVM 界面的 MIDI 标签页指定。音乐已关"
+"闭。"
 
 #: audio/softsynth/fluidsynth.cpp:485
 #, c-format
@@ -4212,7 +4224,9 @@ msgstr "无法读取文件！"
 msgid ""
 "The page is not available without the resources. Make sure file wwwroot.zip "
 "from ScummVM distribution is available in 'themepath'."
-msgstr "页面需要资源才可使用。请确保来自 ScummVM 发行版的 wwwroot.zip 文件可在“themepath”访问。"
+msgstr ""
+"页面需要资源才可使用。请确保来自 ScummVM 发行版的 wwwroot.zip 文件可"
+"在“themepath”访问。"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:66
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:67
