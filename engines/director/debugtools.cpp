@@ -1287,14 +1287,10 @@ static void showFuncList() {
 								script.handlerId = functionHandler._key;
 								script.handlerName = getHandlerName(functionHandler._value);
 								uint32 scriptId = movie->getCastMemberInfo(memberID)->scriptId;
-								if (cast._value->_lingodec && cast._value->_lingodec->scripts.find(scriptId) != cast._value->_lingodec->scripts.end()) {
-									const LingoDec::Script *s = cast._value->_lingodec->scripts[scriptId];
-									ImGuiNodeVisitor visitor(script);
-									for (auto &h : s->handlers) {
-										h.ast.root->accept(visitor);
-									}
-								} else {
-									getScriptCode(script, functionHandler._value);
+								const LingoDec::Script *s = cast._value->_lingodec->scripts[scriptId];
+								ImGuiNodeVisitor visitor(script);
+								for (auto &h : s->handlers) {
+									h.ast.root->accept(visitor);
 								}
 								setScriptToDisplay(script);
 							}
