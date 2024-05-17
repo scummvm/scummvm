@@ -85,6 +85,7 @@ const char *opcodeNamesM[] = {
 	"deletechunk",		// kOpDeleteChunk		0x5b
 	"get",				// kOpGet				0x5c
 	"set",				// kOpSet				0x5d
+	"unk5e",
 	"getmovieprop",		// kOpGetMovieProp		0x5f
 	"setmovieprop",		// kOpSetMovieProp		0x60
 	"getobjprop",		// kOpGetObjProp		0x61
@@ -123,9 +124,9 @@ const char *binaryOpNames[] = {
 	"&&",		// kOpJoinPadStr	0x0b
 	"<",		// kOpLt			0x0c
 	"<=",		// kOpLtEq			0x0d
-	"<",		// kOpNtEq			0x0e
+	"<>",		// kOpNtEq			0x0e
 	"=",		// kOpEq			0x0f
-	"",		// kOpGt			0x10
+	">",		// kOpGt			0x10
 	">=",		// kOpGtEq			0x11
 	"and",		// kOpAnd			0x12
 	"or",		// kOpOr			0x13
