@@ -155,3 +155,30 @@ set the mood of templst to 2
 set tempmood to the mood of templst
 scummvmAssert(tempmood = 2)
 put templst
+
+-- deleteAt
+set testList to [1, 2, 3, 4, 5]
+deleteAt testList, 3
+scummvmAssert(testList = [1, 2, 4, 5])
+set testList to [#a: 1, #b: 2, #c: 3, #d: 4, #e: 5]
+deleteAt testList, 3
+scummvmAssert(testList = [#a: 1, #b: 2, #d: 4, #e: 5])
+
+-- deleteOne
+set testList to [5, 4, 3, 1, 4]
+deleteOne testList, 4
+scummvmAssert(testList = [5, 3, 1, 4])
+set testlist to [5, "4.0", 3, 1, 4]
+deleteOne testList, 4
+scummvmAssert(testList = [5, 3, 1, 4])
+set testlist to [5, 4.0, 3, 1, 4]
+deleteOne testList, 4
+scummvmAssert(testList = [5, 3, 1, 4])
+set testlist to [5, "urgh", 3, 1, "urgh"]
+deleteOne testList, "urgh"
+scummvmAssert(testList = [5, 3, 1, "urgh"])
+set testlist to [5, "URGH", 3, 1, "urgh"]
+deleteOne testList, "urgh"
+scummvmAssert(testList = [5, "URGH", 3, 1])
+
+

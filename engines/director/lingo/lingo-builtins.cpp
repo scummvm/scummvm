@@ -719,7 +719,6 @@ void LB::b_deleteAt(int nargs) {
 void LB::b_deleteOne(int nargs) {
 	Datum val = g_lingo->pop();
 	Datum list = g_lingo->pop();
-	TYPECHECK3(val, INT, FLOAT, SYMBOL);
 	TYPECHECK2(list, ARRAY, PARRAY);
 
 	switch (list.type) {
