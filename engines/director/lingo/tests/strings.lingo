@@ -80,6 +80,21 @@ scummvmAssert("incorrect" + 5 > 10000)
 scummvmAssert("    2.5     " + 5 > 10000)
 scummvmAssert("2 uhhh" + 5 > 10000)
 scummvmAssert("2.5 uhhh" + 5 > 10000)
+put "sausages" into testString
+put (testString + 0) into testPointer
+scummvmAssertEqual(testPointer > 10000, TRUE)
+scummvmAssertEqual(testString + 4, testPointer + 4)
+scummvmAssertEqual(testString - 4, testPointer - 4)
+scummvmAssertEqual(testString * 4, testPointer * 4)
+scummvmAssertEqual(testString / 4, testPointer / 4)
+-- same horrible logic should apply to symbols
+put #haggis into testString
+put (testString + 0) into testPointer
+scummvmAssertEqual(testPointer > 10000, TRUE)
+scummvmAssertEqual(testString + 4, testPointer + 4)
+scummvmAssertEqual(testString - 4, testPointer - 4)
+scummvmAssertEqual(testString * 4, testPointer * 4)
+scummvmAssertEqual(testString / 4, testPointer / 4)
 
 -- casting to integer
 scummvmAssertEqual(integer("2"), 2)
@@ -108,14 +123,6 @@ scummvmAssertEqual(float("     2 extra"), "     2 extra")
 scummvmAssertEqual(float("     2.5 extra"), "     2.5 extra")
 scummvmAssertEqual(float("2extra"), "2extra")
 scummvmAssertEqual(float("     2extra"), "     2extra")
-
-put "sausages" into testString
-put (testString + 0) into testPointer
-scummvmAssertEqual(testPointer > 10000, TRUE)
-scummvmAssertEqual(testString + 4, testPointer + 4)
-scummvmAssertEqual(testString - 4, testPointer - 4)
-scummvmAssertEqual(testString * 4, testPointer * 4)
-scummvmAssertEqual(testString / 4, testPointer / 4)
 
 
 -- LC::charOF
