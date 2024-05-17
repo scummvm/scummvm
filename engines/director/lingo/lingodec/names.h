@@ -19,25 +19,25 @@ namespace LingoDec {
 
 /* StandardNames */
 
-struct StandardNames {
-	static Common::StableMap<unsigned int, Common::String> opcodeNames;
-	static Common::StableMap<unsigned int, Common::String> binaryOpNames;
-	static Common::StableMap<unsigned int, Common::String> chunkTypeNames;
-	static Common::StableMap<unsigned int, Common::String> putTypeNames;
-	static Common::StableMap<unsigned int, Common::String> moviePropertyNames;
-	static Common::StableMap<unsigned int, Common::String> whenEventNames;
-	static Common::StableMap<unsigned int, Common::String> timeNames;
-	static Common::StableMap<unsigned int, Common::String> menuPropertyNames;
-	static Common::StableMap<unsigned int, Common::String> menuItemPropertyNames;
-	static Common::StableMap<unsigned int, Common::String> soundPropertyNames;
-	static Common::StableMap<unsigned int, Common::String> spritePropertyNames;
-	static Common::StableMap<unsigned int, Common::String> animationPropertyNames;
-	static Common::StableMap<unsigned int, Common::String> animation2PropertyNames;
-	static Common::StableMap<unsigned int, Common::String> memberPropertyNames;
+namespace StandardNames {
+extern const char *opcodeNamesS[];
+extern const char *opcodeNamesM[];
+extern const char *binaryOpNames[];
+extern const char *chunkTypeNames[];
+extern const char *putTypeNames[];
 
-	static Common::String getOpcodeName(byte id);
-	static Common::String getName(const Common::StableMap<unsigned int, Common::String> &nameMap, unsigned int id);
-};
+extern const char *moviePropertyNames[];
+extern const char *whenEventNames[];
+extern const char *menuPropertyNames[];
+extern const char *menuItemPropertyNames[];
+extern const char *soundPropertyNames[];
+extern const char *spritePropertyNames[];
+extern const char *animationPropertyNames[];
+extern const char *animation2PropertyNames[];
+extern const char *memberPropertyNames[];
+
+Common::String getOpcodeName(byte id);
+}
 
 /* ScriptNames */
 

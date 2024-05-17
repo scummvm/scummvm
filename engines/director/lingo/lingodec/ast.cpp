@@ -321,7 +321,7 @@ void BinaryOpNode::writeScriptText(CodeWriter &code, bool dot, bool sum) const {
 	}
 
 	code.write(" ");
-	code.write(StandardNames::getName(StandardNames::binaryOpNames, opcode));
+	code.write(StandardNames::binaryOpNames[opcode]);
 	code.write(" ");
 
 	if (parenRight) {
@@ -362,7 +362,7 @@ unsigned int BinaryOpNode::getPrecedence() const {
 /* ChunkExprNode */
 
 void ChunkExprNode::writeScriptText(CodeWriter &code, bool dot, bool sum) const {
-	code.write(StandardNames::getName(StandardNames::chunkTypeNames, type));
+	code.write(StandardNames::chunkTypeNames[type]);
 	code.write(" ");
 	first->writeScriptText(code, dot, sum);
 	if (!(last->type == kLiteralNode && last->getValue()->type == kDatumInt && last->getValue()->i == 0)) {
@@ -903,7 +903,7 @@ void TheExprNode::writeScriptText(CodeWriter &code, bool, bool) const {
 
 void LastStringChunkExprNode::writeScriptText(CodeWriter &code, bool, bool sum) const {
 	code.write("the last ");
-	code.write(StandardNames::getName(StandardNames::chunkTypeNames, type));
+	code.write(StandardNames::chunkTypeNames[type]);
 	code.write(" in ");
 
 	bool parenObj = (obj->type == kBinaryOpNode);
@@ -920,7 +920,7 @@ void LastStringChunkExprNode::writeScriptText(CodeWriter &code, bool, bool sum) 
 
 void StringChunkCountExprNode::writeScriptText(CodeWriter &code, bool, bool sum) const {
 	code.write("the number of ");
-	code.write(StandardNames::getName(StandardNames::chunkTypeNames, type)); // we want the object to always be verbose
+	code.write(StandardNames::chunkTypeNames[type]); // we want the object to always be verbose
 	code.write("s in ");
 
 	bool parenObj = (obj->type == kBinaryOpNode);
@@ -937,7 +937,7 @@ void StringChunkCountExprNode::writeScriptText(CodeWriter &code, bool, bool sum)
 
 void MenuPropExprNode::writeScriptText(CodeWriter &code, bool dot, bool sum) const {
 	code.write("the ");
-	code.write(StandardNames::getName(StandardNames::menuPropertyNames, prop));
+	code.write(StandardNames::menuPropertyNames[prop]);
 	code.write(" of menu ");
 
 	bool parenMenuID = (menuID->type == kBinaryOpNode);
@@ -954,7 +954,7 @@ void MenuPropExprNode::writeScriptText(CodeWriter &code, bool dot, bool sum) con
 
 void MenuItemPropExprNode::writeScriptText(CodeWriter &code, bool dot, bool sum) const {
 	code.write("the ");
-	code.write(StandardNames::getName(StandardNames::menuItemPropertyNames, prop));
+	code.write(StandardNames::menuItemPropertyNames[prop]);
 	code.write(" of menuItem ");
 
 	bool parenItemID = (itemID->type == kBinaryOpNode);
@@ -982,7 +982,7 @@ void MenuItemPropExprNode::writeScriptText(CodeWriter &code, bool dot, bool sum)
 
 void SoundPropExprNode::writeScriptText(CodeWriter &code, bool dot, bool sum) const {
 	code.write("the ");
-	code.write(StandardNames::getName(StandardNames::soundPropertyNames, prop));
+	code.write(StandardNames::soundPropertyNames[prop]);
 	code.write(" of sound ");
 
 	bool parenSoundID = (soundID->type == kBinaryOpNode);
@@ -999,7 +999,7 @@ void SoundPropExprNode::writeScriptText(CodeWriter &code, bool dot, bool sum) co
 
 void SpritePropExprNode::writeScriptText(CodeWriter &code, bool dot, bool sum) const {
 	code.write("the ");
-	code.write(StandardNames::getName(StandardNames::spritePropertyNames, prop));
+	code.write(StandardNames::spritePropertyNames[prop]);
 	code.write(" of sprite ");
 
 	bool parenSpriteID = (spriteID->type == kBinaryOpNode);
@@ -1130,7 +1130,7 @@ void PutStmtNode::writeScriptText(CodeWriter &code, bool dot, bool sum) const {
 	code.write("put ");
 	value->writeScriptText(code, dot, sum);
 	code.write(" ");
-	code.write(StandardNames::getName(StandardNames::putTypeNames, type));
+	code.write(StandardNames::putTypeNames[type]);
 	code.write(" ");
 	variable->writeScriptText(code, false, sum); // we want the variable to always be verbose
 }
@@ -1139,7 +1139,7 @@ void PutStmtNode::writeScriptText(CodeWriter &code, bool dot, bool sum) const {
 
 void WhenStmtNode::writeScriptText(CodeWriter &code, bool, bool) const {
 	code.write("when ");
-	code.write(StandardNames::getName(StandardNames::whenEventNames, event));
+	code.write(StandardNames::whenEventNames[event]);
 	code.write(" then");
 
 	code.doIndentation = false;

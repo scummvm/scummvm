@@ -203,7 +203,7 @@ Common::SharedPtr<Node> Handler::readV4Property(uint32 offset, int propertyType,
 	case 0x00:
 		{
 			if (propertyID <= 0x0b) { // movie property
-				auto propName = StandardNames::getName(StandardNames::moviePropertyNames, propertyID);
+				Common::String propName(StandardNames::moviePropertyNames[propertyID]);
 				return Common::SharedPtr<Node>(new TheExprNode(offset, propName));
 			} else { // last chunk
 				auto string = pop();
@@ -246,16 +246,16 @@ Common::SharedPtr<Node> Handler::readV4Property(uint32 offset, int propertyType,
 		}
 		break;
 	case 0x07: // animation property
-		return Common::SharedPtr<Node>(new TheExprNode(offset, StandardNames::getName(StandardNames::animationPropertyNames, propertyID)));
+		return Common::SharedPtr<Node>(new TheExprNode(offset, StandardNames::animationPropertyNames[propertyID]));
 	case 0x08: // animation 2 property
 		if (propertyID == 0x02 && script->version >= 500) { // the number of castMembers supports castLib selection from Director 5.0
 			auto castLib = pop();
 			if (!(castLib->type == kLiteralNode && castLib->getValue()->type == kDatumInt && castLib->getValue()->toInt() == 0)) {
 				auto castLibNode = Common::SharedPtr<Node>(new MemberExprNode(offset, "castLib", castLib, nullptr));
-				return Common::SharedPtr<Node>(new ThePropExprNode(offset, castLibNode, StandardNames::getName(StandardNames::animation2PropertyNames, propertyID)));
+				return Common::SharedPtr<Node>(new ThePropExprNode(offset, castLibNode, StandardNames::animation2PropertyNames[propertyID]));
 			}
 		}
-		return Common::SharedPtr<Node>(new TheExprNode(offset, StandardNames::getName(StandardNames::animation2PropertyNames, propertyID)));
+		return Common::SharedPtr<Node>(new TheExprNode(offset, StandardNames::animation2PropertyNames[propertyID]));
 	case 0x09: // generic cast member
 	case 0x0a: // chunk of cast member
 	case 0x0b: // field
@@ -270,7 +270,7 @@ Common::SharedPtr<Node> Handler::readV4Property(uint32 offset, int propertyType,
 	case 0x14: // scriptText
 	case 0x15: // chunk of scriptText
 		{
-			auto propName = StandardNames::getName(StandardNames::memberPropertyNames, propertyID);
+			auto propName = StandardNames::memberPropertyNames[propertyID];
 			Common::SharedPtr<Node> castID;
 			if (script->version >= 500) {
 				castID = pop();
