@@ -11,7 +11,6 @@
 #include "common/ptr.h"
 #include "common/str.h"
 #include "common/util.h"
-#include "./codewriter.h"
 #include "./enums.h"
 
 namespace LingoDec {
@@ -52,7 +51,6 @@ struct Datum {
 	}
 
 	int toInt();
-	void writeScriptText(CodeWriter &code, bool dot, bool sum) const;
 };
 
 class NodeVisitor;
@@ -71,7 +69,6 @@ struct Node {
 
 	Node(NodeType t, uint32 offset) : type(t), isExpression(false), isStatement(false), isLabel(false), isLoop(false), parent(nullptr), _startOffset(offset), _endOffset(offset) {}
 	virtual ~Node() {}
-	virtual void writeScriptText(CodeWriter&, bool, bool) const {}
 	virtual void accept(NodeVisitor& visitor) const = 0;
 	virtual Common::SharedPtr<Datum> getValue();
 	Node *ancestorStatement();
@@ -117,7 +114,6 @@ struct LoopNode : StmtNode {
 
 struct ErrorNode : ExprNode {
 	explicit ErrorNode(uint32 offset) : ExprNode(kErrorNode, offset) {}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual bool hasSpaces(bool dot) override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
@@ -128,7 +124,6 @@ struct CommentNode : Node {
 	Common::String text;
 
 	CommentNode(uint32 offset, Common::String t) : Node(kCommentNode, offset), text(t) {}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -140,7 +135,6 @@ struct LiteralNode : ExprNode {
 	LiteralNode(uint32 offset, Common::SharedPtr<Datum> d) : ExprNode(kLiteralNode, offset) {
 		value = Common::move(d);
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual Common::SharedPtr<Datum> getValue() override;
 	virtual bool hasSpaces(bool dot) override;
 	virtual void accept(NodeVisitor &visitor) const override;
@@ -156,7 +150,6 @@ struct BlockNode : Node {
 	CaseLabelNode *currentCaseLabel;
 
 	explicit BlockNode(uint32 offset) : Node(kBlockNode, offset), endPos(-1), currentCaseLabel(nullptr) {}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	void addChild(Common::SharedPtr<Node> child);
 	virtual void accept(NodeVisitor &visitor) const override;
 };
@@ -172,7 +165,6 @@ struct HandlerNode : Node {
 		block = Common::SharedPtr<BlockNode>(new BlockNode(offset));
 		block->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -180,7 +172,6 @@ struct HandlerNode : Node {
 
 struct ExitStmtNode : StmtNode {
 	explicit ExitStmtNode(uint32 offset) : StmtNode(kExitStmtNode, offset) {}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -193,7 +184,6 @@ struct InverseOpNode : ExprNode {
 		operand = Common::move(o);
 		operand->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -206,7 +196,6 @@ struct NotOpNode : ExprNode {
 		operand = Common::move(o);
 		operand->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -224,7 +213,6 @@ struct BinaryOpNode : ExprNode {
 		right = Common::move(b);
 		right->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual unsigned int getPrecedence() const;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
@@ -246,7 +234,6 @@ struct ChunkExprNode : ExprNode {
 		string = Common::move(s);
 		string->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -259,7 +246,6 @@ struct ChunkHiliteStmtNode : StmtNode {
 		chunk = Common::move(c);
 		chunk->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -272,7 +258,6 @@ struct ChunkDeleteStmtNode : StmtNode {
 		chunk = Common::move(c);
 		chunk->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -289,7 +274,6 @@ struct SpriteIntersectsExprNode : ExprNode {
 		secondSprite = Common::move(b);
 		secondSprite->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -306,7 +290,6 @@ struct SpriteWithinExprNode : ExprNode {
 		secondSprite = Common::move(b);
 		secondSprite->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -326,7 +309,6 @@ struct MemberExprNode : ExprNode {
 			this->castID->parent = this;
 		}
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual bool hasSpaces(bool dot) override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
@@ -337,7 +319,6 @@ struct VarNode : ExprNode {
 	Common::String varName;
 
 	VarNode(uint32 offset, Common::String v) : ExprNode(kVarNode, offset), varName(v) {}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual bool hasSpaces(bool dot) override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
@@ -357,7 +338,6 @@ struct AssignmentStmtNode : StmtNode {
 		value->parent = this;
 	}
 
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -377,7 +357,6 @@ struct IfStmtNode : StmtNode {
 		block2 = Common::SharedPtr<BlockNode>(new BlockNode(offset));
 		block2->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -394,7 +373,6 @@ struct RepeatWhileStmtNode : LoopNode {
 		block = Common::SharedPtr<BlockNode>(new BlockNode(offset));
 		block->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -413,7 +391,6 @@ struct RepeatWithInStmtNode : LoopNode {
 		block = Common::SharedPtr<BlockNode>(new BlockNode(offset));
 		block->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -436,7 +413,6 @@ struct RepeatWithToStmtNode : LoopNode {
 		block = Common::SharedPtr<BlockNode>(new BlockNode(offset));
 		block->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -455,7 +431,6 @@ struct CaseLabelNode : LabelNode {
 		value = Common::move(v);
 		value->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -468,7 +443,6 @@ struct OtherwiseNode : LabelNode {
 		block = Common::SharedPtr<BlockNode>(new BlockNode(offset));
 		block->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -476,7 +450,6 @@ struct OtherwiseNode : LabelNode {
 
 struct EndCaseNode : LabelNode {
 	explicit EndCaseNode(uint32 offset) : LabelNode(kEndCaseNode, offset) {}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -495,7 +468,6 @@ struct CaseStmtNode : StmtNode {
 		value = Common::move(v);
 		value->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	void addOtherwise(uint32 offset);
 	virtual void accept(NodeVisitor &visitor) const override;
 };
@@ -512,7 +484,6 @@ struct TellStmtNode : StmtNode {
 		block = Common::SharedPtr<BlockNode>(new BlockNode(offset));
 		block->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -527,7 +498,6 @@ struct SoundCmdStmtNode : StmtNode {
 		argList = Common::move(a);
 		argList->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -540,7 +510,6 @@ struct PlayCmdStmtNode : StmtNode {
 		argList = Common::move(a);
 		argList->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -561,7 +530,6 @@ struct CallNode : Node {
 	}
 	bool noParens() const;
 	bool isMemberExpr() const;
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual bool hasSpaces(bool dot) override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
@@ -581,7 +549,6 @@ struct ObjCallNode : Node {
 		else
 			isExpression = true;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual bool hasSpaces(bool dot) override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
@@ -601,7 +568,6 @@ struct ObjCallV4Node : Node {
 		else
 			isExpression = true;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual bool hasSpaces(bool dot) override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
@@ -612,7 +578,6 @@ struct TheExprNode : ExprNode {
 	Common::String prop;
 
 	TheExprNode(uint32 offset, Common::String p) : ExprNode(kTheExprNode, offset), prop(p) {}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -627,7 +592,6 @@ struct LastStringChunkExprNode : ExprNode {
 		obj = Common::move(o);
 		obj->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -642,7 +606,6 @@ struct StringChunkCountExprNode : ExprNode {
 		obj = Common::move(o);
 		obj->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -657,7 +620,6 @@ struct MenuPropExprNode : ExprNode {
 		menuID = Common::move(m);
 		menuID->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -675,7 +637,6 @@ struct MenuItemPropExprNode : ExprNode {
 		itemID = Common::move(i);
 		itemID->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -690,7 +651,6 @@ struct SoundPropExprNode : ExprNode {
 		soundID = Common::move(s);
 		soundID->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -705,7 +665,6 @@ struct SpritePropExprNode : ExprNode {
 		spriteID = Common::move(s);
 		spriteID->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -720,7 +679,6 @@ struct ThePropExprNode : ExprNode {
 		obj = Common::move(o);
 		obj->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -735,7 +693,6 @@ struct ObjPropExprNode : ExprNode {
 		obj = Common::move(o);
 		obj->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual bool hasSpaces(bool dot) override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
@@ -753,7 +710,6 @@ struct ObjBracketExprNode : ExprNode {
 		prop = Common::move(p);
 		prop->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual bool hasSpaces(bool dot) override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
@@ -777,7 +733,6 @@ struct ObjPropIndexExprNode : ExprNode {
 			index2->parent = this;
 		}
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual bool hasSpaces(bool dot) override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
@@ -786,7 +741,6 @@ struct ObjPropIndexExprNode : ExprNode {
 
 struct ExitRepeatStmtNode : StmtNode {
 	explicit ExitRepeatStmtNode(uint32 offset) : StmtNode(kExitRepeatStmtNode, offset) {}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -794,7 +748,6 @@ struct ExitRepeatStmtNode : StmtNode {
 
 struct NextRepeatStmtNode : StmtNode {
 	explicit NextRepeatStmtNode(uint32 offset) : StmtNode(kNextRepeatStmtNode, offset) {}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -812,7 +765,6 @@ struct PutStmtNode : StmtNode {
 		value = Common::move(val);
 		value->parent = this;
 	}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -824,7 +776,6 @@ struct WhenStmtNode : StmtNode {
 
 	WhenStmtNode(uint32 offset, int e, Common::String s)
 		: StmtNode(kWhenStmtNode, offset), event(e), script(s) {}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -835,7 +786,6 @@ struct NewObjNode : ExprNode {
 	Common::SharedPtr<Node> objArgs;
 
 	NewObjNode(uint32 offset, Common::String o, Common::SharedPtr<Node> args) : ExprNode(kNewObjNode, offset), objType(o), objArgs(args) {}
-	virtual void writeScriptText(CodeWriter &code, bool dot, bool sum) const override;
 	virtual void accept(NodeVisitor &visitor) const override;
 };
 
@@ -904,7 +854,6 @@ struct AST {
 		currentBlock = root->block.get();
 	}
 
-	void writeScriptText(CodeWriter &code, bool dot, bool sum) const;
 	void addStatement(Common::SharedPtr<Node> statement);
 	void enterBlock(BlockNode *block);
 	void exitBlock();
