@@ -35,6 +35,7 @@ private:
 	bool cmdLoad(int argc, const char **argv);
 	bool cmdSave(int argc, const char **argv);
 	bool cmdVideo(int argc, const char **argv);
+	bool cmdMegawave(int argc, const char **argv);
 
 public:
 	Console();
