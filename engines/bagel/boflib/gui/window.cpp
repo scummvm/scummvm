@@ -566,9 +566,7 @@ void CBofWindow::handleEvents() {
 	Common::Event e;
 	CBofWindow *capture = CBofApp::getApp()->getCaptureControl();
 	CBofWindow *focus = CBofApp::getApp()->getFocusControl();
-
-	// Check for expired timers before handling events
-	checkTimers();
+	bool eventsPresent = false;
 
 	while (g_system->getEventManager()->pollEvent(e)) {
 		if (capture)
@@ -583,9 +581,20 @@ void CBofWindow::handleEvents() {
 			_mouseY = e.mouse.y;
 		}
 
-		if (e.type != Common::EVENT_MOUSEMOVE)
+		if (e.type != Common::EVENT_MOUSEMOVE) {
+			eventsPresent = true;
 			break;
+		}
 	}
+
+	// Only do timer checks when not processing other pending events.
+	// This simulates Windows behaviour, where the WM_TIMER events
+	// would be added at the end of the event queue
+	if (!eventsPresent)
+		// Check for expired timers
+		checkTimers();
+
+
 }
 
 void CBofWindow::handleEvent(const Common::Event &event) {
