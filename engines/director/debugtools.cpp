@@ -1201,13 +1201,6 @@ static void displayScripts() {
 	ImGui::End();
 }
 
-static void getScriptCode(ImGuiScript &script, Symbol &sym) {
-	uint pc = 0;
-	while (pc < sym.u.defn->size()) {
-		script.code.push_back({pc, g_lingo->decodeInstruction(sym.u.defn, pc, &pc)});
-	}
-}
-
 static Common::String getHandlerName(Symbol &sym) {
 	Common::String handlerName;
 
@@ -1257,7 +1250,14 @@ static void showFuncList() {
 						script.type = csc->_scriptType;
 						script.handlerId = functionHandler._key;
 						script.handlerName = getHandlerName(functionHandler._value);
-						getScriptCode(script, functionHandler._value);
+						uint32 scriptId = movie->getCast()->getCastMemberInfo(csc->_id)->scriptId;
+						const LingoDec::Script *s = movie->getCast()->_lingodec->scripts[scriptId];
+						ImGuiNodeVisitor visitor(script);
+						for (auto &h : s->handlers) {
+							if (h.name != functionHandler._key)
+								continue;
+							h.ast.root->accept(visitor);
+						}
 						setScriptToDisplay(script);
 					}
 					ImGui::TableNextColumn();
@@ -1299,6 +1299,8 @@ static void showFuncList() {
 								const LingoDec::Script *s = cast._value->_lingodec->scripts[scriptId];
 								ImGuiNodeVisitor visitor(script);
 								for (auto &h : s->handlers) {
+									if (h.name != functionHandler._key)
+										continue;
 									h.ast.root->accept(visitor);
 								}
 								setScriptToDisplay(script);
@@ -1341,7 +1343,14 @@ static void showFuncList() {
 								script.type = (ScriptType)i;
 								script.handlerId = functionHandler._key;
 								script.handlerName = getHandlerName(functionHandler._value);
-								getScriptCode(script, functionHandler._value);
+								uint32 scriptId = sharedCast->getCastMemberInfo(scriptContext._key)->scriptId;
+								const LingoDec::Script *s = sharedCast->_lingodec->scripts[scriptId];
+								ImGuiNodeVisitor visitor(script);
+								for (auto &h : s->handlers) {
+									if (h.name != functionHandler._key)
+										continue;
+									h.ast.root->accept(visitor);
+								}
 								setScriptToDisplay(script);
 							}
 							ImGui::TableNextColumn();
