@@ -24,6 +24,7 @@
 #include "ultima/ultima8/gumps/gump_notify_process.h"
 #include "ultima/ultima8/gumps/slider_gump.h"
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
@@ -434,7 +435,7 @@ bool GameMapGump::DraggingItem(Item *item, int mx, int my) {
 			if (speed < 1) speed = 1;
 			int32 ax, ay, az;
 			avatar->getLocation(ax, ay, az);
-			MissileTracker t(item, ax, ay, az,
+			MissileTracker t(item, 1, ax, ay, az,
 			                 _draggingPos[0], _draggingPos[1], _draggingPos[2],
 			                 speed, 4);
 			if (t.isPathClear())
@@ -566,17 +567,14 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 		Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 		tx += rs.getRandomNumberRngSigned(-inaccuracy, inaccuracy);
 		ty += rs.getRandomNumberRngSigned(-inaccuracy, inaccuracy);
-		MissileTracker t(item, tx, ty, _draggingPos[2],
+		MissileTracker t(item, 1, tx, ty, _draggingPos[2],
 		                 speed, 4);
 		t.launchItem();
 
-		// FIXME: When doing this animation, sometimes items will
-		//        get stuck on the avatar. Why?
-#if 0
-		avatar->doAnim(Animation::stand,
-		               Get_WorldDirection(_draggingPos[1] - ay,
-		                                  _draggingPos[0] - ax));
-#endif
+		Direction dir = Direction_GetWorldDir(_draggingPos[1] - ay,
+											  _draggingPos[0] - ax,
+											   dirmode_8dirs);
+		avatar->doAnim(Animation::stand, dir);
 	} else {
 		debugC(kDebugObject, "Dropping item at (%d, %d, %d)",
 			   _draggingPos[0], _draggingPos[1], _draggingPos[2]);

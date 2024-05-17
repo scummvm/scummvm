@@ -29,10 +29,10 @@ class Item;
 
 class MissileTracker {
 public:
-	MissileTracker(const Item *item, int32 sx, int32 sy, int32 sz,
+	MissileTracker(const Item *item, ObjId owner, int32 sx, int32 sy, int32 sz,
 	               int32 tx, int32 ty, int32 tz,
 	               int32 speed, int32 gravity);
-	MissileTracker(const Item *item, int32 tx, int32 ty, int32 tz,
+	MissileTracker(const Item *item, ObjId owner, int32 tx, int32 ty, int32 tz,
 	               int32 speed, int32 gravity);
 	~MissileTracker();
 
@@ -44,7 +44,7 @@ protected:
 	void init(int32 sx, int32 sy, int32 sz, int32 speed);
 
 private:
-	ObjId _objId;
+	ObjId _objId, _owner;
 	int32 _destX, _destY, _destZ;
 	int32 _speedX, _speedY, _speedZ;
 	int32 _gravity;
