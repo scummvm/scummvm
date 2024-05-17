@@ -32,6 +32,18 @@
 SYM(asm_draw_4bpl_sprite):
 	movem.l	d0-d7/a0-a2,-(sp)		| 11 longs
 
+#ifdef __FASTCALL__
+	move.l	a0,a2					| a2: dstBuffer
+									| a1: srcBuffer
+	move.l	(4+11*4,sp),a0			| a0: srcMask
+									| d0.w: destX
+									| d1.w: destY
+	move.l	d2,d3					| d3.w: dstPitch
+	ext.l	d3						| d3.l: dstPitch
+	move.l	(8+11*4,sp),d6			| d6.w: w
+	lsr.w	#4,d6					| d6.w: w/16
+	move.l	(12+11*4,sp),d7			| d7.w: h
+#else
 	move.l	(4+11*4,sp),a2			| a2: dstBuffer
 	move.l	(8+11*4,sp),a1			| a1: srcBuffer
 	move.l	(12+11*4,sp),a0			| a0: srcMask
@@ -42,6 +54,7 @@ SYM(asm_draw_4bpl_sprite):
 	move.l	(28+11*4,sp),d6			| d6.w: w
 	lsr.w	#4,d6				| d6.w: w/16
 	move.l	(32+11*4,sp),d7			| d7.w: h
+#endif
 
 | Draws a 4 bitplane sprite at any position on screen.
 | (c) 1999 Pieter van der Meer (EarX)
@@ -130,6 +143,18 @@ sprite4_xloop:
 SYM(asm_draw_8bpl_sprite):
 	movem.l	d0-d7/a0-a2,-(sp)		| 11 longs
 
+#ifdef __FASTCALL__
+	move.l	a0,a2					| a2: dstBuffer
+									| a1: srcBuffer
+	move.l	(4+11*4,sp),a0			| a0: srcMask
+									| d0.w: destX
+									| d1.w: destY
+	move.l	d2,d3					| d3.w: dstPitch
+	ext.l	d3						| d3.l: dstPitch
+	move.l	(8+11*4,sp),d6			| d6.w: w
+	lsr.w	#4,d6					| d6.w: w/16
+	move.l	(12+11*4,sp),d7			| d7.w: h
+#else
 	move.l	(4+11*4,sp),a2			| a2: dstBuffer
 	move.l	(8+11*4,sp),a1			| a1: srcBuffer
 	move.l	(12+11*4,sp),a0			| a0: srcMask
@@ -140,6 +165,7 @@ SYM(asm_draw_8bpl_sprite):
 	move.l	(28+11*4,sp),d6			| d6.w: w
 	lsr.w	#4,d6				| d6.w: w/16
 	move.l	(32+11*4,sp),d7			| d7.w: h
+#endif
 
 	move.w  d0,d2				| / Calculate the
 	andi.w  #0b111111110000,d0		| | number of bits

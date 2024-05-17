@@ -35,9 +35,15 @@
 
 | void asm_c2p1x1_8(const byte *pChunky, const byte *pChunkyEnd, byte *pScreen);
 SYM(asm_c2p1x1_8):
+#ifdef __FASTCALL__
+									| a0: chunky
+	move.l	a1,d0					| chunky end
+	move.l	4(sp),a1				| screen
+#else
 	move.l	(4,sp),a0				| chunky
 	move.l	(8,sp),d0				| chunky end
 	move.l	(12,sp),a1				| screen
+#endif
 	movem.l	d2-d7/a2-a6,-(sp)
 	move.l	d0,a2
 	move.l	#0x0f0f0f0f,d4
@@ -234,10 +240,17 @@ c2p1x1_8_start:
 SYM(asm_c2p1x1_8_tt):
 	movem.l	d2-d7/a2-a6,-(sp)			| 6 + 5 = 11 longs
 
+#ifdef __FASTCALL__
+										| a0: chunky
+	move.l	a1,a2						| a2: chunky end
+	move.l	(11*4+4,sp),a1				| a1: screen
+										| d0.l: screen pitch (double width)
+#else
 	move.l	(11*4+4,sp),a0				| a0: chunky
 	move.l	(11*4+8,sp),a2				| a2: chunky end
 	move.l	(11*4+12,sp),a1				| a1: screen
 	move.l	(11*4+16,sp),d0				| d0.l: screen pitch (double width)
+#endif
 
 	move.l	sp,old_sp
 
@@ -449,12 +462,21 @@ c2p1x1_8_tt_start:
 SYM(asm_c2p1x1_8_rect):
 	movem.l	d2-d7/a2-a6,-(sp)			| 6 + 5 = 11 longs
 
+#ifdef __FASTCALL__
+										| a0: chunky
+	move.l	a1,chunky_end
+										| d0.l: chunky width
+	move.l	(11*4+4,sp),a1				| a1: screen
+	exg		d1,d2						| d2.l: chunky pitch
+										| d1.l: screen pitch
+#else
 	move.l	(11*4+4,sp),a0				| a0: chunky
 	move.l	(11*4+8,sp),chunky_end
 	move.l	(11*4+12,sp),d0				| d0.l: chunky width
 	move.l	(11*4+16,sp),d2				| d2.l: chunky pitch
 	move.l	(11*4+20,sp),a1				| a1: screen
 	move.l	(11*4+24,sp),d1				| d1.l: screen pitch
+#endif
 
 	move.l	sp,old_sp
 
@@ -679,9 +701,15 @@ c2p1x1_8_rect_done:
 
 | void asm_c2p1x1_4(const byte *pChunky, const byte *pChunkyEnd, byte *pScreen);
 SYM(asm_c2p1x1_4):
+#ifdef __FASTCALL__
+									| a0: chunky
+	move.l	a1,d0					| chunky end
+	move.l	4(sp),a1				| screen
+#else
 	move.l	(4,sp),a0				| chunky
 	move.l	(8,sp),d0				| chunky end
 	move.l	(12,sp),a1				| screen
+#endif
 	movem.l	d2-d7/a2-a6,-(sp)
 	move.l	d0,a2
 	move.l	#0x0f0f0f0f,d4
@@ -785,12 +813,21 @@ c2p1x1_4_start:
 SYM(asm_c2p1x1_4_rect):
 	movem.l	d2-d7/a2-a6,-(sp)			| 6 + 5 = 11 longs
 
+#ifdef __FASTCALL__
+										| a0: chunky
+	move.l	a1,chunky_end
+										| d0.l: chunky width
+	move.l	(11*4+4,sp),a1				| a1: screen
+	exg		d1,d2						| d2.l: chunky pitch
+										| d1.l: screen pitch
+#else
 	move.l	(11*4+4,sp),a0				| a0: chunky
 	move.l	(11*4+8,sp),chunky_end
 	move.l	(11*4+12,sp),d0				| d0.l: chunky width
 	move.l	(11*4+16,sp),d2				| d2.l: chunky pitch
 	move.l	(11*4+20,sp),a1				| a1: screen
 	move.l	(11*4+24,sp),d1				| d1.l: screen pitch
+#endif
 
 	move.l	sp,old_sp
 

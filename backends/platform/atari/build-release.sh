@@ -7,11 +7,19 @@ mkdir -p build-release
 cd build-release
 
 PLATFORM=m68k-atari-mintelf
+FASTCALL=false
 
 export ASFLAGS="-m68020-60"
 export CXXFLAGS="-m68020-60 -DUSE_MOVE16 -DUSE_SUPERVIDEL -DUSE_SV_BLITTER"
 export LDFLAGS="-m68020-60 -Wl,--msuper-memory"
 export PKG_CONFIG_LIBDIR="$(${PLATFORM}-gcc -print-sysroot)/usr/lib/m68020-60/pkgconfig"
+
+if $FASTCALL
+then
+	ASFLAGS="$ASFLAGS -mfastcall"
+	CXXFLAGS="$CXXFLAGS -mfastcall"
+	LDFLAGS="$LDFLAGS -mfastcall"
+fi
 
 if [ ! -f config.log ]
 then
