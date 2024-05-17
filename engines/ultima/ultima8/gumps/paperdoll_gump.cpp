@@ -79,6 +79,7 @@ static const int statbuttony = 84;
 
 
 PaperdollGump::PaperdollGump() : ContainerGump(), _statButtonId(0),
+		_draggingArmourClass(0), _draggingWeight(0),
 		_backpackRect(49, 25, 59, 50) {
 	Common::fill(_cachedText, _cachedText + 14, (RenderedText *)nullptr);
 	Common::fill(_cachedVal, _cachedVal + 7, 0);
@@ -87,7 +88,8 @@ PaperdollGump::PaperdollGump() : ContainerGump(), _statButtonId(0),
 PaperdollGump::PaperdollGump(const Shape *shape, uint32 frameNum, uint16 owner,
 		uint32 Flags, int32 layer)
 		: ContainerGump(shape, frameNum, owner, Flags, layer),
-		_statButtonId(0), _backpackRect(49, 25, 59, 50) {
+		_statButtonId(0), _draggingArmourClass(0), _draggingWeight(0),
+		_backpackRect(49, 25, 59, 50) {
 	_statButtonId = 0;
 
 	Common::fill(_cachedText, _cachedText + 14, (RenderedText *)nullptr);
@@ -167,13 +169,20 @@ void PaperdollGump::PaintStats(RenderSurface *surf, int32 lerp_factor) {
 	Actor *a = getActor(_owner);
 	assert(a);
 
+	int armour = a->getArmourClass();
+	int weight = a->getTotalWeight();
+	if (_displayDragging) {
+		armour += _draggingArmourClass;
+		weight += _draggingWeight;
+	}
+
 	PaintStat(surf, 0, _TL_("STR"), a->getStr());
 	PaintStat(surf, 1, _TL_("INT"), a->getInt());
 	PaintStat(surf, 2, _TL_("DEX"), a->getDex());
-	PaintStat(surf, 3, _TL_("ARMR"), a->getArmourClass());
+	PaintStat(surf, 3, _TL_("ARMR"), armour);
 	PaintStat(surf, 4, _TL_("HITS"), a->getHP());
 	PaintStat(surf, 5, _TL_("MANA"), a->getMana());
-	PaintStat(surf, 6, _TL_("WGHT"), a->getTotalWeight() / 10);
+	PaintStat(surf, 6, _TL_("WGHT"), weight / 10);
 }
 
 void PaperdollGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
@@ -338,14 +347,27 @@ bool PaperdollGump::DraggingItem(Item *item, int mx, int my) {
 	_draggingShape = item->getShape();
 	_draggingFrame = item->getFrame();
 	_draggingFlags = item->getFlags();
+	_draggingArmourClass = 0;
+	_draggingWeight = 0;
 
-	int equiptype = item->getShapeInfo()->_equipType;
+	if (item->getTopItem()->getObjId() != _owner)
+		_draggingWeight = item->getWeight();
+
+	const ShapeInfo *si = item->getShapeInfo();
+	int equiptype = si->_equipType;
 	// determine target location and set dragging_x/y
 	if (!over_backpack && equiptype) {
 		// check if item will fit (weight/volume/etc...)
 		if (!a->CanAddItem(item, true)) {
 			_displayDragging = false;
 			return false;
+		}
+
+		if (si->_armourInfo) {
+			_draggingArmourClass += si->_armourInfo[_draggingFrame]._armourClass;
+		}
+		if (si->_weaponInfo) {
+			_draggingArmourClass += si->_weaponInfo->_armourBonus;
 		}
 
 		_draggingFrame++;
@@ -367,6 +389,8 @@ bool PaperdollGump::DraggingItem(Item *item, int mx, int my) {
 
 void PaperdollGump::DropItem(Item *item, int mx, int my) {
 	_displayDragging = false;
+	_draggingArmourClass = 0;
+	_draggingWeight = 0;
 
 	Actor *a = getActor(_owner);
 	assert(a);
