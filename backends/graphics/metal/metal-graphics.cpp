@@ -778,16 +778,27 @@ void MetalGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int h
 }
 
 void MetalGraphicsManager::setCursorPalette(const byte *colors, uint start, uint num) {
-	//TODO: Implement
+	_cursorPaletteEnabled = true;
+
+	memcpy(_cursorPalette + start * 3, colors, num * 3);
+	updateCursorPalette();
 }
 
 // PaletteManager
 void MetalGraphicsManager::setPalette(const byte *colors, uint start, uint num) {
-	//TODO: Implement
+	assert(_gameScreen->hasPalette());
+
+	memcpy(_gamePalette + start * 3, colors, num * 3);
+	_gameScreen->setPalette(start, num, colors);
+
+	// We might need to update the cursor palette here.
+	updateCursorPalette();
 }
 
 void MetalGraphicsManager::grabPalette(byte *colors, uint start, uint num) const {
-	//TODO: Implement
+	assert(_gameScreen->hasPalette());
+
+	memcpy(colors, _gamePalette + start * 3, num * 3);
 }
 
 Surface *MetalGraphicsManager::createSurface(const Graphics::PixelFormat &format, bool wantAlpha, bool wantScaler, bool wantMask) {
