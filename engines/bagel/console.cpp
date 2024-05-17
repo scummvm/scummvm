@@ -46,10 +46,14 @@ bool Console::cmdVar(int argc, const char **argv) {
 		return true;
 	}
 
-	CBagVar *var = g_VarManager->getVariable(argv[1]);
-	assert(var);
+	Common::String varName = argv[1];
+	varName.toUppercase();
 
-	if (argc == 2) {
+	CBagVar *var = g_VarManager->getVariable(varName.c_str());
+
+	if (!var) {
+		debugPrintf("Unknown variable.\n");
+	} else if (argc == 2) {
 		debugPrintf("Current value = %s\n", var->getValue().getBuffer());
 	} else {
 		var->setValue(argv[2]);
