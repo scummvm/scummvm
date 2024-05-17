@@ -1233,7 +1233,7 @@ void Inter_v7::o7_getFreeMem(OpFuncParams &params) {
 	uint16 maxFreeVar = _vm->_game->_script->readVarIndex();
 
 	// HACK, with a higher value than o2_getFreeMem (16M vs 1M)
-	// This unlocks a nicer intro music in Adibou2
+	// This unlocks a nicer intro music in Adibou2/Adi4
 	WRITE_VAR_OFFSET(freeVar   , 16000000);
 	WRITE_VAR_OFFSET(maxFreeVar, 16000000);
 	WRITE_VAR(16, _vm->_game->_script->getVariablesCount() * 4);
