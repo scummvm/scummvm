@@ -29,12 +29,13 @@
 namespace Bagel {
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("var",     WRAP_METHOD(Console, cmdVar));
-	registerCmd("vars",    WRAP_METHOD(Console, cmdVars));
-	registerCmd("fleebix", WRAP_METHOD(Console, cmdFleebix));
-	registerCmd("save",    WRAP_METHOD(Console, cmdSave));
-	registerCmd("load",    WRAP_METHOD(Console, cmdLoad));
-	registerCmd("video",   WRAP_METHOD(Console, cmdVideo));
+	registerCmd("var",      WRAP_METHOD(Console, cmdVar));
+	registerCmd("vars",     WRAP_METHOD(Console, cmdVars));
+	registerCmd("fleebix",  WRAP_METHOD(Console, cmdFleebix));
+	registerCmd("save",     WRAP_METHOD(Console, cmdSave));
+	registerCmd("load",     WRAP_METHOD(Console, cmdLoad));
+	registerCmd("video",    WRAP_METHOD(Console, cmdVideo));
+	registerCmd("megawave", WRAP_METHOD(Console, cmdMegawave));
 }
 
 Console::~Console() {
@@ -80,6 +81,13 @@ bool Console::cmdFleebix(int argc, const char **argv) {
 	CBofString outer = g_VarManager->getVariable("NDJAM_OUTERDIAL_DISPLAY")->getValue();
 
 	debugPrintf("Frequency is %s.%s\n", inner.getBuffer(), outer.getBuffer());
+	return true;
+}
+
+bool Console::cmdMegawave(int argc, const char **argv) {
+	CBofString wavetime = g_VarManager->getVariable("VEDJWAVETICKS")->getValue();
+
+	debugPrintf("Megawave cooking time is %s\n", wavetime.getBuffer());
 	return true;
 }
 
