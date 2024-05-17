@@ -127,13 +127,13 @@ void Wiz::bufferAWiz(int image, int state, int x, int y, int z, int flags, int o
 	++_wizBufferIndex;
 }
 
-WizPxShrdBuffer &&Wiz::drawAWiz(int image, int state, int x, int y, int z, int flags, int optionalShadowImage, int optionalZBufferImage, Common::Rect *optionalClipRect, int whichPalette, WizSimpleBitmap *optionalBitmapOverride) {
+WizPxShrdBuffer Wiz::drawAWiz(int image, int state, int x, int y, int z, int flags, int optionalShadowImage, int optionalZBufferImage, Common::Rect *optionalClipRect, int whichPalette, WizSimpleBitmap *optionalBitmapOverride) {
 	return drawAWizEx(image, state, x, y, z, flags,
 		optionalShadowImage, optionalZBufferImage, optionalClipRect,
 		whichPalette, optionalBitmapOverride, nullptr);
 }
 
-WizPxShrdBuffer &&Wiz::drawAWizEx(int image, int state, int x, int y, int z, int flags, int optionalShadowImage, int optionalZBufferImage, Common::Rect *optionalClipRect, int whichPalette, WizSimpleBitmap *optionalBitmapOverride, const WizImageCommand *optionalICmdPtr) {
+WizPxShrdBuffer Wiz::drawAWizEx(int image, int state, int x, int y, int z, int flags, int optionalShadowImage, int optionalZBufferImage, Common::Rect *optionalClipRect, int whichPalette, WizSimpleBitmap *optionalBitmapOverride, const WizImageCommand *optionalICmdPtr) {
 	const WizRawPixel *colorConversionTable;
 	Common::Rect *clipRectPtr;
 
@@ -171,17 +171,17 @@ WizPxShrdBuffer &&Wiz::drawAWizEx(int image, int state, int x, int y, int z, int
 			image, state, x, flags, _vm->_game.heversion <= 90 ? 0x05 : _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR),
 			optionalBitmapOverride, colorConversionTable, optionalShadowImage);
 
-		return Common::move(WizPxShrdBuffer());
+		return WizPxShrdBuffer();
 	}
 }
 
-WizPxShrdBuffer &&Wiz::drawAWizPrim(int globNum, int state, int x, int y, int z, int shadowImage, int zbufferImage, const Common::Rect *optionalClipRect, int flags, WizSimpleBitmap *optionalBitmapOverride, const WizRawPixel *optionalColorConversionTable) {
+WizPxShrdBuffer Wiz::drawAWizPrim(int globNum, int state, int x, int y, int z, int shadowImage, int zbufferImage, const Common::Rect *optionalClipRect, int flags, WizSimpleBitmap *optionalBitmapOverride, const WizRawPixel *optionalColorConversionTable) {
 	return drawAWizPrimEx(globNum, state, x, y, z,
 		shadowImage, zbufferImage, optionalClipRect, flags,
 		optionalBitmapOverride, optionalColorConversionTable, 0);
 }
 
-WizPxShrdBuffer &&Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shadowImage, int zbufferImage, const Common::Rect *optionalClipRect, int flags, WizSimpleBitmap *optionalBitmapOverride, const WizRawPixel *optionalColorConversionTable, const WizImageCommand *optionalICmdPtr) {
+WizPxShrdBuffer Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shadowImage, int zbufferImage, const Common::Rect *optionalClipRect, int flags, WizSimpleBitmap *optionalBitmapOverride, const WizRawPixel *optionalColorConversionTable, const WizImageCommand *optionalICmdPtr) {
 	int destWidth, destHeight, srcWidth, srcHeight, srcComp, remapId;
 	byte *srcData, *srcPtr, *stateHeader, *remapPtr;
 	const byte *shadowPtr;
@@ -297,7 +297,7 @@ WizPxShrdBuffer &&Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int 
 
 		if (!destPtr()) {
 			warning("Wiz::drawAWizPrimEx(): Not enough memory for image operation (print / other)");
-			return Common::move(WizPxShrdBuffer());
+			return WizPxShrdBuffer();
 		} else if (flags & kWRFAlloc) {
 			memset8BppConversion(
 				destPtr(),
@@ -334,7 +334,7 @@ WizPxShrdBuffer &&Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int 
 
 	if (optionalClipRect && (!(flags & (kWRFPrint | kWRFAlloc)))) {
 		if (!findRectOverlap(&clipRect, optionalClipRect)) {
-			return Common::move(WizPxShrdBuffer());
+			return WizPxShrdBuffer();
 		}
 	}
 
@@ -480,7 +480,7 @@ WizPxShrdBuffer &&Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int 
 		}
 	}
 
-	return Common::move(destPtr);
+	return destPtr;
 }
 
 void Wiz::buildAWiz(const WizPxShrdBuffer &bufPtr, int bufWidth, int bufHeight, const byte *palettePtr, const Common::Rect *rectPtr, int compressionType, int globNum, int transparentColor) {

@@ -269,11 +269,10 @@ struct FloodFillCommand {
 #ifdef WIZ_DEBUG_BUFFERS
 #define WizPxShrdBufferD(a, b) WizPxShrdBuffer(a, b, __FUNCTION__, __LINE__)
 struct DbgEntry {
-	DbgEntry(const void *a, const char *lpr, int ln) : addr(a), crefs(0), msg(Common::String::format("   buffer allocated in: %s(), line %d\n", lpr, ln)) {}
+	DbgEntry(const void *a, const char *lpr, int ln) : addr(a), msg(Common::String::format("buffer allocated in: %s(), line %d", lpr, ln)) {}
 	bool operator==(const void *ptr) const { return addr == ptr; }
 	const void *addr;
 	Common::String msg;
-	int crefs;
 };
 #else
 #define WizPxShrdBufferD(a, b) WizPxShrdBuffer(a, b)
@@ -283,8 +282,10 @@ class WizPxShrdBuffer {
 public:
 #ifdef WIZ_DEBUG_BUFFERS
 	static void dbgLeakRpt() {
+		if (!_allocLocs)
+			return;
 		for (Common::Array<DbgEntry>::iterator i = _allocLocs->begin(); i != _allocLocs->end(); ++i)
-			debug("Leaked: \n%s (refcnt: %d)\n\n", i->msg.c_str(), i->crefs);
+			debug("Leaked: %s", i->msg.c_str());
 		_allocLocs->clear();
 		delete _allocLocs;
 		_allocLocs = nullptr;
@@ -312,11 +313,29 @@ public:
 		if (_lifes)
 			++*_lifes;
 	}
-	WizPxShrdBuffer(const WizPxShrdBuffer &&other) noexcept : _buff(other._buff), _lifes(other._lifes) {
-		if (_lifes)
-			++*_lifes;
+	WizPxShrdBuffer(WizPxShrdBuffer &&other) noexcept : _buff(other._buff), _lifes(other._lifes) {
+		other._lifes = nullptr;
 	}
 	~WizPxShrdBuffer() {
+		dcrlifes();
+	}
+	WizRawPixel *operator()() const { return _buff; }
+	WizPxShrdBuffer &operator=(const WizPxShrdBuffer &other) {
+		dcrlifes();
+		if ((_lifes = other._lifes) != nullptr) ++*_lifes;
+		_buff = other._buff;
+		return *this;
+	}
+	WizPxShrdBuffer &&operator=(WizPxShrdBuffer &&other) {
+		dcrlifes();
+		_lifes = other._lifes;
+		_buff = other._buff;
+		other._lifes = nullptr;
+		return Common::move(*this);
+	}
+	bool operator==(WizRawPixel *ptr) const { return _buff == ptr; }
+private:
+	void dcrlifes() {
 		if (_lifes && !--*_lifes) {
 			free(_buff);
 #ifdef WIZ_DEBUG_BUFFERS
@@ -328,24 +347,6 @@ public:
 		if (_lifes && !*_lifes)
 			delete _lifes;
 	}
-	WizRawPixel *operator()() const { return _buff; }
-	WizPxShrdBuffer &operator=(const WizPxShrdBuffer &other) {
-		if ((_lifes = other._lifes) != nullptr) ++*_lifes;
-		_buff = other._buff;
-#ifdef WIZ_DEBUG_BUFFERS
-		Common::Array<DbgEntry>::iterator i = Common::find(_allocLocs->begin(), _allocLocs->end(), _buff);
-		if (i != _allocLocs->end())
-			++i->crefs;
-#endif
-		return *this;
-	}
-	WizPxShrdBuffer &&operator=(WizPxShrdBuffer &&other) {
-		_lifes = other._lifes;
-		_buff = other._buff;
-		return Common::move(*this);
-	}
-	bool operator==(WizRawPixel *ptr) const { return _buff == ptr; }
-private:
 	WizRawPixel *_buff;
 	int *_lifes;
 };
@@ -713,12 +714,12 @@ public:
 	void takeAWiz(int globnum, int x1, int y1, int x2, int y2, bool back, bool compress);
 	void simpleDrawAWiz(int image, int state, int x, int y, int flags);
 	void bufferAWiz(int image, int state, int x, int y, int z, int flags, int optionalShadowImage, int optionalZBufferImage, int whichPalette);
-	WizPxShrdBuffer &&drawAWiz(int image, int state, int x, int y, int z, int flags, int optionalShadowImage, int optionalZBufferImage,
+	WizPxShrdBuffer drawAWiz(int image, int state, int x, int y, int z, int flags, int optionalShadowImage, int optionalZBufferImage,
 				   Common::Rect *optionalClipRect, int whichPalette, WizSimpleBitmap *optionalBitmapOverride);
-	WizPxShrdBuffer &&drawAWizEx(int image, int state, int x, int y, int z, int flags, int optionalShadowImage, int optionalZBufferImage, Common::Rect *optionalClipRect,
+	WizPxShrdBuffer drawAWizEx(int image, int state, int x, int y, int z, int flags, int optionalShadowImage, int optionalZBufferImage, Common::Rect *optionalClipRect,
 					 int whichPalette, WizSimpleBitmap *optionalBitmapOverride, const WizImageCommand *optionalICmdPtr);
-	WizPxShrdBuffer &&drawAWizPrim(int globNum, int state, int x, int y, int z, int shadowImage, int zbufferImage, const Common::Rect *optionalClipRect, int flags, WizSimpleBitmap *optionalBitmapOverride, const WizRawPixel *optionalColorConversionTable);
-	WizPxShrdBuffer &&drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shadowImage, int zbufferImage, const Common::Rect *optionalClipRect, int flags, WizSimpleBitmap *optionalBitmapOverride, const WizRawPixel *optionalColorConversionTable, const WizImageCommand *optionalICmdPtr);
+	WizPxShrdBuffer drawAWizPrim(int globNum, int state, int x, int y, int z, int shadowImage, int zbufferImage, const Common::Rect *optionalClipRect, int flags, WizSimpleBitmap *optionalBitmapOverride, const WizRawPixel *optionalColorConversionTable);
+	WizPxShrdBuffer drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shadowImage, int zbufferImage, const Common::Rect *optionalClipRect, int flags, WizSimpleBitmap *optionalBitmapOverride, const WizRawPixel *optionalColorConversionTable, const WizImageCommand *optionalICmdPtr);
 	void buildAWiz(const WizPxShrdBuffer &bufPtr, int bufWidth, int bufHeight, const byte *palettePtr, const Common::Rect *rectPtr, int compressionType, int globNum, int transparentColor);
 
 	int	pixelHitTestWiz(int image, int state, int x, int y, int32 flags);
