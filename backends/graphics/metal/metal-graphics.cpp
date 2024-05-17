@@ -76,7 +76,37 @@ bool MetalGraphicsManager::gameNeedsAspectRatioCorrection() const {
 }
 
 void MetalGraphicsManager::handleResizeImpl(const int width, const int height) {
-	//TODO: Implement
+	// Setup backbuffer size.
+	_targetBuffer->setSize(width, height);
+
+	uint overlayWidth = width;
+	uint overlayHeight = height;
+
+	// HACK: We limit the minimal overlay size to 256x200, which is the
+	// minimum of the dimensions of the two resolutions 256x240 (NES) and
+	// 320x200 (many DOS games use this). This hopefully assure that our
+	// GUI has working layouts.
+	overlayWidth = MAX<uint>(overlayWidth, 256);
+	overlayHeight = MAX<uint>(overlayHeight, 200);
+
+	if (!_overlay || _overlay->getFormat() != _defaultFormatAlpha) {
+		delete _overlay;
+		_overlay = nullptr;
+
+		_overlay = createSurface(_defaultFormatAlpha);
+		assert(_overlay);
+	}
+
+	_overlay->allocate(overlayWidth, overlayHeight);
+	_overlay->fill(0);
+
+	// Re-setup the scaling and filtering for the screen and cursor
+	recalculateDisplayAreas();
+	recalculateCursorScaling();
+	updateLinearFiltering();
+
+	// Something changed, so update the screen change ID.
+	++_screenChangeID;
 }
 
 void MetalGraphicsManager::notifyContextCreate(
@@ -273,7 +303,20 @@ Common::List<Graphics::PixelFormat> MetalGraphicsManager::getSupportedFormats() 
 #endif
 
 void MetalGraphicsManager::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
-	//TODO: Implement
+	Graphics::PixelFormat requestedFormat;
+#ifdef USE_RGB_COLOR
+	if (!format) {
+		requestedFormat = Graphics::PixelFormat::createFormatCLUT8();
+	} else {
+		requestedFormat = *format;
+	}
+	_currentState.gameFormat = requestedFormat;
+#endif
+
+	_currentState.gameWidth = width;
+	_currentState.gameHeight = height;
+	_gameScreenShakeXOffset = 0;
+	_gameScreenShakeYOffset = 0;
 }
 
 int MetalGraphicsManager::getScreenChangeID() const {
@@ -291,13 +334,11 @@ OSystem::TransactionError MetalGraphicsManager::endGFXTransaction() {
 }
 
 int16 MetalGraphicsManager::getHeight() const {
-	//TODO: Implement
-	return 0;
+	return _currentState.gameHeight;
 }
 
 int16 MetalGraphicsManager::getWidth() const {
-	//TODO: Implement
-	return 0;
+	return _currentState.gameWidth;
 }
 
 void MetalGraphicsManager::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
@@ -350,13 +391,19 @@ void MetalGraphicsManager::copyRectToOverlay(const void *buf, int pitch, int x, 
 }
 
 int16 MetalGraphicsManager::getOverlayHeight() const {
-	//TODO: Implement
-	return 0;
+	if (_overlay) {
+		return _overlay->getHeight();
+	} else {
+		return 0;
+	}
 }
 
 int16 MetalGraphicsManager::getOverlayWidth() const {
-	//TODO: Implement
-	return 0;
+	if (_overlay) {
+		return _overlay->getWidth();
+	} else {
+		return 0;
+	}
 }
 
 bool MetalGraphicsManager::showMouse(bool visible) {
