@@ -66,6 +66,14 @@ protected:
 	bool setStretchMode(int mode) override;
 	int getStretchMode() const override;
 
+#ifdef USE_SCALERS
+	uint getDefaultScaler() const override;
+	uint getDefaultScaleFactor() const override;
+	bool setScaler(uint mode, int factor) override;
+	uint getScaler() const override;
+	uint getScaleFactor() const override;
+#endif
+
 	void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) override;
 	int getScreenChangeID() const override;
 

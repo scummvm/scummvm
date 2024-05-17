@@ -361,6 +361,43 @@ int MetalGraphicsManager::getStretchMode() const {
 	return _stretchMode;
 }
 
+#ifdef USE_SCALERS
+uint MetalGraphicsManager::getDefaultScaler() const {
+	return ScalerMan.findScalerPluginIndex("normal");
+}
+
+uint MetalGraphicsManager::getDefaultScaleFactor() const {
+	return 1;
+}
+
+bool MetalGraphicsManager::setScaler(uint mode, int factor) {
+	//assert(_transactionMode != kTransactionNone);
+
+	int newFactor;
+	if (factor == -1)
+		newFactor = getDefaultScaleFactor();
+	else if (_scalerPlugins[mode]->get<ScalerPluginObject>().hasFactor(factor))
+		newFactor = factor;
+	else if (_scalerPlugins[mode]->get<ScalerPluginObject>().hasFactor(_oldState.scaleFactor))
+		newFactor = _oldState.scaleFactor;
+	else
+		newFactor = _scalerPlugins[mode]->get<ScalerPluginObject>().getDefaultFactor();
+
+	_currentState.scalerIndex = mode;
+	_currentState.scaleFactor = newFactor;
+
+	return true;
+}
+
+uint MetalGraphicsManager::getScaler() const {
+	return _currentState.scalerIndex;
+}
+
+uint MetalGraphicsManager::getScaleFactor() const {
+	return _currentState.scaleFactor;
+}
+#endif
+
 void MetalGraphicsManager::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
 	Graphics::PixelFormat requestedFormat;
 #ifdef USE_RGB_COLOR
