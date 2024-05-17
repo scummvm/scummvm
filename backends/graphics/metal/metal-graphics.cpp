@@ -262,8 +262,7 @@ const OSystem::GraphicsMode *MetalGraphicsManager::getSupportedGraphicsModes() c
 
 #ifdef USE_RGB_COLOR
 Graphics::PixelFormat MetalGraphicsManager::getScreenFormat() const {
-	//TODO: Use current state instead
-	return _currentFormat;
+	return _currentState.gameFormat;;
 }
 
 Common::List<Graphics::PixelFormat> MetalGraphicsManager::getSupportedFormats() const {
@@ -375,7 +374,7 @@ void MetalGraphicsManager::clearFocusRectangle() {
 }
 
 Graphics::PixelFormat MetalGraphicsManager::getOverlayFormat() const {
-	return _currentFormat;
+	return _overlay->getFormat();
 }
 
 void MetalGraphicsManager::clearOverlay() {

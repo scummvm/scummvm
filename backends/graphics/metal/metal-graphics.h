@@ -393,9 +393,6 @@ protected:
 	 */
 	const PluginList &_scalerPlugins;
 #endif
-
-private:
-	Graphics::PixelFormat _currentFormat;
 };
 
 } // End of namespace Metal
