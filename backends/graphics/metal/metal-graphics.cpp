@@ -162,24 +162,60 @@ void MetalGraphicsManager::notifyContextDestroy() {
 
 // GraphicsManager
 bool MetalGraphicsManager::hasFeature(OSystem::Feature f) const {
-	//TODO: Implement
 	switch (f) {
+	case OSystem::kFeatureAspectRatioCorrection:
+	case OSystem::kFeatureCursorPalette:
+	case OSystem::kFeatureCursorAlpha:
+	case OSystem::kFeatureFilteringMode:
+	case OSystem::kFeatureStretchMode:
+	case OSystem::kFeatureCursorMask:
+	case OSystem::kFeatureCursorMaskInvert:
+#ifdef USE_SCALERS
+	case OSystem::kFeatureScalers:
+#endif
+		return true;
+
+	case OSystem::kFeatureOverlaySupportsAlpha:
+		return _defaultFormatAlpha.aBits() > 3;
+
 	default:
 		return false;
 	}
 }
 
 void MetalGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
-	//TODO: Implement
 	switch (f) {
+	case OSystem::kFeatureAspectRatioCorrection:
+		assert(_transactionMode != kTransactionNone);
+		_currentState.aspectRatioCorrection = enable;
+		break;
+
+	case OSystem::kFeatureFilteringMode:
+		assert(_transactionMode != kTransactionNone);
+		_currentState.filtering = enable;
+		break;
+
+	case OSystem::kFeatureCursorPalette:
+		_cursorPaletteEnabled = enable;
+		updateCursorPalette();
+		break;
+
 	default:
 		break;
 	}
 }
 
 bool MetalGraphicsManager::getFeatureState(OSystem::Feature f) const {
-	//TODO: Implement
 	switch (f) {
+	case OSystem::kFeatureAspectRatioCorrection:
+		return _currentState.aspectRatioCorrection;
+
+	case OSystem::kFeatureFilteringMode:
+		return _currentState.filtering;
+
+	case OSystem::kFeatureCursorPalette:
+		return _cursorPaletteEnabled;
+
 	default:
 		return false;
 	}
