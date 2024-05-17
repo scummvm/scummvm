@@ -10,7 +10,7 @@ PLATFORM=m68k-atari-mintelf
 
 export ASFLAGS="-m68020-60"
 export CXXFLAGS="-m68020-60 -DUSE_MOVE16 -DUSE_SUPERVIDEL -DUSE_SV_BLITTER"
-export LDFLAGS="-m68020-60"
+export LDFLAGS="-m68020-60 -Wl,--msuper-memory"
 export PKG_CONFIG_LIBDIR="$(${PLATFORM}-gcc -print-sysroot)/usr/lib/m68020-60/pkgconfig"
 
 if [ ! -f config.log ]
@@ -37,12 +37,9 @@ then
 	--disable-detection-full
 fi
 
-make -j 16
+make -j$(getconf _NPROCESSORS_CONF)
 rm -rf dist-generic
 make dist-generic
-
-# make memory protection friendly
-${PLATFORM}-flags -S dist-generic/scummvm/scummvm.ttp
 
 # create symbol file and strip
 ${PLATFORM}-nm -C dist-generic/scummvm/scummvm.ttp | grep -vF ' .L' | grep ' [TtWV] ' | ${PLATFORM}-c++filt | sort -u > dist-generic/scummvm/scummvm.sym
