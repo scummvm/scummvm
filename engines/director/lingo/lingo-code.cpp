@@ -1596,7 +1596,8 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 		// If the first argument is an ARRAY or PARRAY, it will use the builtin.
 		// Otherwise, it will fall back to whatever handler is defined globally.
 		Datum firstArg = g_lingo->peek(nargs - 1);
-		if (firstArg.type == ARRAY || firstArg.type == PARRAY) {
+		if (firstArg.type == ARRAY || firstArg.type == PARRAY ||
+				firstArg.type == POINT || firstArg.type == RECT) {
 			funcSym = g_lingo->_builtinListHandlers[name];
 		}
 	}
