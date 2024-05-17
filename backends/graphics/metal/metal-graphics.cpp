@@ -342,28 +342,101 @@ int16 MetalGraphicsManager::getWidth() const {
 }
 
 void MetalGraphicsManager::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
-	//TODO: Implement
+	_gameScreen->copyRectToTexture(x, y, w, h, buf, pitch);
 }
 
 Graphics::Surface *MetalGraphicsManager::lockScreen() {
-	//TODO: Implement
-	return nullptr;
+	return _gameScreen->getSurface();
 }
 
 void MetalGraphicsManager::unlockScreen() {
-	//TODO: Implement
+	_gameScreen->flagDirty();
 }
 
 void MetalGraphicsManager::fillScreen(uint32 col) {
-	//TODO: Implement
+	_gameScreen->fill(col);
 }
 
 void MetalGraphicsManager::fillScreen(const Common::Rect &r, uint32 col) {
-	//TODO: Implement
+	_gameScreen->fill(r, col);
+}
+
+void MetalGraphicsManager::renderCursor() {
+	if (_cursorMask) {
+		_targetBuffer->enableBlend(Framebuffer::kBlendModeMaskAlphaAndInvertByColor);
+
+		_pipeline->drawTexture(
+			_cursorMask->getMetalTexture(),
+			_cursorX - _cursorHotspotXScaled + _shakeOffsetScaled.x,
+			_cursorY - _cursorHotspotYScaled + _shakeOffsetScaled.y,
+			_cursorWidthScaled, _cursorHeightScaled);
+
+		_targetBuffer->enableBlend(Framebuffer::kBlendModeAdditive);
+	} else
+		_targetBuffer->enableBlend(Framebuffer::kBlendModePremultipliedTransparency);
+
+	_pipeline->drawTexture(
+		_cursor->getMetalTexture(),
+		_cursorX - _cursorHotspotXScaled + _shakeOffsetScaled.x,
+		_cursorY - _cursorHotspotYScaled + _shakeOffsetScaled.y,
+		_cursorWidthScaled, _cursorHeightScaled);
 }
 
 void MetalGraphicsManager::updateScreen() {
-	//TODO: Implement
+	if (!_gameScreen || !_pipeline) {
+		return;
+	}
+
+	// We only update the screen when there actually have been any changes.
+	if (   !_forceRedraw
+		&& !_cursorNeedsRedraw
+		&& !_gameScreen->isDirty()
+		&& !(_overlayVisible && _overlay->isDirty())
+		&& !(_cursorVisible && ((_cursor && _cursor->isDirty()) || (_cursorMask && _cursorMask->isDirty())))
+		) {
+		return;
+	}
+
+	// Update changes to textures.
+	_gameScreen->updateMetalTexture();
+	if (_cursorVisible && _cursor) {
+		_cursor->updateMetalTexture();
+	}
+	if (_cursorVisible && _cursorMask) {
+		_cursorMask->updateMetalTexture();
+	}
+
+	_overlay->updateMetalTexture();
+
+	_pipeline->activate();
+	// Clear the screen buffer.
+	_pipeline->setLoadAction(MTL::LoadActionClear);
+
+	// Don't draw cursor if it's not visible or there is none
+	bool drawCursor = _cursorVisible && _cursor;
+
+	// Alpha blending is disabled when drawing the screen
+	_targetBuffer->enableBlend(Framebuffer::kBlendModeOpaque);
+
+	// First step: Draw the (virtual) game screen.
+	_pipeline->drawTexture(_gameScreen->getMetalTexture(), _gameDrawRect.left, _gameDrawRect.top, _gameDrawRect.width(), _gameDrawRect.height());
+
+	_pipeline->setLoadAction(MTL::LoadActionLoad);
+
+	// Third step: Draw the overlay if visible.
+	if (_overlayVisible) {
+		int dstX = (_windowWidth - _overlayDrawRect.width()) / 2;
+		int dstY = (_windowHeight - _overlayDrawRect.height()) / 2;
+		_targetBuffer->enableBlend(Framebuffer::kBlendModeTraditionalTransparency);
+		_pipeline->drawTexture(_overlay->getMetalTexture(), dstX, dstY, _overlayDrawRect.width(), _overlayDrawRect.height());
+	}
+
+	// Fourth step: Draw the cursor if we didn't before.
+	if (drawCursor)
+		renderCursor();
+
+	_cursorNeedsRedraw = false;
+	_forceRedraw = false;
 }
 
 void MetalGraphicsManager::setFocusRectangle(const Common::Rect& rect) {
