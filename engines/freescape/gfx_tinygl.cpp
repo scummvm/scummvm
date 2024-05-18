@@ -41,6 +41,7 @@ Renderer *CreateGfxTinyGL(int screenW, int screenH, Common::RenderMode renderMod
 TinyGLRenderer::TinyGLRenderer(int screenW, int screenH, Common::RenderMode renderMode) : Renderer(screenW, screenH, renderMode) {
 	_verts = (Vertex *)malloc(sizeof(Vertex) * kVertexArraySize);
 	_texturePixelFormat = TinyGLTexture::getRGBAPixelFormat();
+	_variableStippleArray = nullptr;
 }
 
 TinyGLRenderer::~TinyGLRenderer() {
@@ -206,6 +207,35 @@ void TinyGLRenderer::renderCrossair(const Common::Point crossairPosition) {
 	tglDisable(TGL_BLEND);
 	tglEnable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_TRUE);
+}
+
+void TinyGLRenderer::setStippleData(byte *data) {
+	if (!data)
+		return;
+
+	_variableStippleArray = data;
+	//for (int i = 0; i < 128; i++)
+	//	_variableStippleArray[i] = data[(i / 16) % 4];
+}
+
+void TinyGLRenderer::useStipple(bool enabled) {
+	if (enabled) {
+		TGLfloat factor = 0;
+		tglGetFloatv(TGL_POLYGON_OFFSET_FACTOR, &factor);
+		tglEnable(TGL_POLYGON_OFFSET_FILL);
+		tglPolygonOffset(factor - 5.0f, -1.0f);
+		tglEnable(TGL_POLYGON_STIPPLE);
+		if (_renderMode == Common::kRenderZX  ||
+			_renderMode == Common::kRenderCPC ||
+			_renderMode == Common::kRenderCGA)
+			tglPolygonStipple(_variableStippleArray);
+		/*else
+			tglPolygonStipple(_defaultStippleArray);*/
+	} else {
+		tglPolygonOffset(0, 0);
+		tglDisable(TGL_POLYGON_OFFSET_FILL);
+		tglDisable(TGL_POLYGON_STIPPLE);
+	}
 }
 
 void TinyGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
