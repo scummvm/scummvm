@@ -28,7 +28,7 @@
 
 namespace Common {
 
-static const String encodingTable = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+static const char *encodingTable = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 bool b64Validate(String &string) {
 	bool paddingStarted = false;
@@ -38,9 +38,11 @@ bool b64Validate(String &string) {
 	if ((strlen(string.c_str()) % 4) > 0)
 		return false;
 
+	String encodingStr(encodingTable);
+
 	// It must also use characters defined in the encoding table,
 	for (char c : string) {
-		if (!encodingTable.contains(c)) {
+		if (!encodingStr.contains(c)) {
 			// or the padding character (=).
 			if (c != '=')
 				return false;
