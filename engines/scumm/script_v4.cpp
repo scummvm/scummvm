@@ -341,9 +341,9 @@ void ScummEngine_v4::clearSeriesIQPoints() {
 		for (int i = 0; i < size; i++)
 			file->writeByte(0);
 
-		updateIQPoints();
-
 		delete file;
+
+		updateIQPoints();
 	}
 }
 
