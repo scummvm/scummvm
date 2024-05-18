@@ -193,7 +193,7 @@ static bool g_bBibbleHack = false;
 
 
 CBetArea::CBetArea(const CBetAreaDef &def) :
-	_cRect(def.left, def.top, def.right, def.bottom), _bWon(false),
+	_cRect(def._left, def._top, def._right, def._bottom), _bWon(false),
 	_nBet(def._nBet), _nPayOff1(def._nPayOff1), _nPayOff2(def._nPayOff2),
 	_cAudioFile(def._cAudioFile), _cPayFile(def._cPayFile) {
 }
