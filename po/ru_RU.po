@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-05-04 22:58+0000\n"
-"PO-Revision-Date: 2024-03-15 20:14+0000\n"
+"PO-Revision-Date: 2024-05-18 10:44+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -649,7 +649,7 @@ msgstr "Перекрыть глобальные настройки график�
 
 #: gui/editgamedialog.cpp:218 gui/options.cpp:2231 engines/dialogs.cpp:342
 msgid "Keymaps"
-msgstr "Таблица клавиш"
+msgstr "Раскладка клавиш"
 
 #: gui/editgamedialog.cpp:225 gui/options.cpp:2238 engines/dialogs.cpp:349
 msgid "Backend"
@@ -1331,7 +1331,7 @@ msgstr "Указать критерий для группирования игр
 
 #: gui/launcher.cpp:262
 msgid "Click here to see Help"
-msgstr ""
+msgstr "Нажмите здесь, чтобы просмотреть справку"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
 #: gui/launcher.cpp:266 engines/dialogs.cpp:91
@@ -3589,7 +3589,7 @@ msgstr "Возможные ID игры для движка %s:"
 
 #: engines/metaengine.cpp:55
 msgid "Default game keymap"
-msgstr "Назначение клавиш по умолчанию"
+msgstr "Раскладка клавиш по умолчанию"
 
 #: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:161
 #: engines/asylum/metaengine.cpp:158 engines/hdb/metaengine.cpp:207
@@ -6602,90 +6602,84 @@ msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "Использовать TTS для чтения игровых текстов вслух (если TTS доступна)"
 
 #: engines/cge/metaengine.cpp:199 engines/cge2/metaengine.cpp:212
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game Keymappings"
-msgstr "Настройки Игры"
+msgstr "Раскладки клавиш игры"
 
 #. I18N: 3-4 dialogs of game version info, (translation) credits, etc.
 #: engines/cge/metaengine.cpp:204 engines/cge2/metaengine.cpp:216
-#, fuzzy
-#| msgid "Game menu"
 msgid "Game Info"
-msgstr "Меню игры"
+msgstr "Информация об игре"
 
 #. I18N: This opens a Quit Prompt where you have to choose
 #. [Confirm] or [Continue Playing] lines with Left Click.
 #: engines/cge/metaengine.cpp:211 engines/cge2/metaengine.cpp:233
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit Prompt"
-msgstr "Выйти из игры"
+msgstr "Подтверждение выхода из игры"
 
 #. I18N: Here ALTered Item refers to the dice that has been altered/changed.
 #. In order to escape the dice game loop press Right/Left Alt
 #: engines/cge/metaengine.cpp:218
 msgid "ALTered Item"
-msgstr ""
+msgstr "АЛЬТернативный предмет"
 
 #: engines/cge/metaengine.cpp:224
 msgid "Inventory Item 1 (Select/Deselect)"
-msgstr ""
+msgstr "Предмет инвентаря 1 (выбрать/отменить выбор)"
 
 #: engines/cge/metaengine.cpp:229
 msgid "Inventory Item 2 (Select/Deselect)"
-msgstr ""
+msgstr "Предмет инвентаря 2 (выбрать/отменить выбор)"
 
 #: engines/cge/metaengine.cpp:234
 msgid "Inventory Item 3 (Select/Deselect)"
-msgstr ""
+msgstr "Предмет инвентаря 3 (выбрать/отменить выбор)"
 
 #: engines/cge/metaengine.cpp:239
 msgid "Inventory Item 4 (Select/Deselect)"
-msgstr ""
+msgstr "Предмет инвентаря 4 (выбрать/отменить выбор)"
 
 #: engines/cge/metaengine.cpp:244
 msgid "Inventory Item 5 (Select/Deselect)"
-msgstr ""
+msgstr "Предмет инвентаря 5 (выбрать/отменить выбор)"
 
 #: engines/cge/metaengine.cpp:249
 msgid "Inventory Item 6 (Select/Deselect)"
-msgstr ""
+msgstr "Предмет инвентаря 6 (выбрать/отменить выбор)"
 
 #: engines/cge/metaengine.cpp:254
 msgid "Inventory Item 7 (Select/Deselect)"
-msgstr ""
+msgstr "Предмет инвентаря 7 (выбрать/отменить выбор)"
 
 #: engines/cge/metaengine.cpp:259
 msgid "Inventory Item 8 (Select/Deselect)"
-msgstr ""
+msgstr "Предмет инвентаря 8 (выбрать/отменить выбор)"
 
 #. I18N: There are 24 single-room/screen locations in the game.
 #. You switch between them from numbered buttons on interface.
 #. Sets the current access to only the first Location
 #: engines/cge/metaengine.cpp:267
 msgid "DEBUG: Access to Location 1"
-msgstr ""
+msgstr "ОТЛАДКА: Доступ к локации 1"
 
 #. I18N: Sets the current access to Locations 1 to 8.
 #: engines/cge/metaengine.cpp:273
 msgid "DEBUG: Access to Locations 1-8"
-msgstr ""
+msgstr "ОТЛАДКА: Доступ к локациям 1-8"
 
 #. I18N: Sets the current access to Locations 1 to 16.
 #: engines/cge/metaengine.cpp:279
 msgid "DEBUG: Access to Locations 1-16"
-msgstr ""
+msgstr "ОТЛАДКА: Доступ к локациям 1-16"
 
 #. I18N: Sets the current access to Locations 1 to 23.
 #: engines/cge/metaengine.cpp:285
 msgid "DEBUG: Access to Locations 1-23"
-msgstr ""
+msgstr "ОТЛАДКА: Доступ к локациям 1-23"
 
 #. I18N: Sets the current access to Locations 1 to 24.
 #: engines/cge/metaengine.cpp:291
 msgid "DEBUG: Access to Locations 1-24"
-msgstr ""
+msgstr "ОТЛАДКА: Доступ к локациям 1-24"
 
 #: engines/cge2/metaengine.cpp:59
 msgid "Enable Text to Speech for Objects and Options"
@@ -6709,10 +6703,8 @@ msgstr "Использовать TTS для чтения субтитров вс
 
 #. I18N: This closes the Dialogue/text box.
 #: engines/cge2/metaengine.cpp:245
-#, fuzzy
-#| msgid "Close"
 msgid "Close the Dialogue box"
-msgstr "Закрыть"
+msgstr "Закрыть окно диалога"
 
 #: engines/cine/metaengine.cpp:53
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -9371,12 +9363,13 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1376
 msgid "Music Quality:"
-msgstr ""
+msgstr "Качество музыки:"
 
 #: engines/scumm/dialogs.cpp:1380
 msgid ""
 "Select music quality. The original lets you choose this from the Game menu."
 msgstr ""
+"Выберите качество музыки. В оригинале вы можете выбрать его из меню игры."
 
 #: engines/scumm/dialogs.cpp:1381
 msgid ""
@@ -9384,42 +9377,43 @@ msgid ""
 "detection and speed tests, but also allows changes through the Game menu to "
 "some degree."
 msgstr ""
+"Выбирает качество музыки. Оригинал определяет базовую настройку путем "
+"обнаружения оборудования и тестов скорости, но также в некоторой степени "
+"допускает изменения через меню игры."
 
 #: engines/scumm/dialogs.cpp:1454 engines/scumm/dialogs.cpp:1455
 msgid "auto"
-msgstr ""
+msgstr "автоматически"
 
 #: engines/scumm/dialogs.cpp:1454
 msgid "Low"
-msgstr ""
+msgstr "Низкое"
 
 #: engines/scumm/dialogs.cpp:1454
-#, fuzzy
-#| msgid "100% - Medium"
 msgid "Medium"
-msgstr "100% - Средний"
+msgstr "Среднее"
 
 #: engines/scumm/dialogs.cpp:1454
 msgid "High"
-msgstr ""
+msgstr "Высокое"
 
 #: engines/scumm/dialogs.cpp:1455
 msgid "Good"
-msgstr ""
+msgstr "Хорошее"
 
 #: engines/scumm/dialogs.cpp:1455
 msgid "Better"
-msgstr ""
+msgstr "Лучше"
 
 #: engines/scumm/dialogs.cpp:1456
 #, c-format
 msgid "Hardware Rating: %s   -   "
-msgstr ""
+msgstr "Рейтинг оборудования: %s  -   "
 
 #: engines/scumm/dialogs.cpp:1456
 #, c-format
 msgid "Quality Selection: %s"
-msgstr ""
+msgstr "Выбор качества: %s"
 
 #: engines/scumm/dialogs.cpp:1470
 msgid "Playback Adjust:"
@@ -10101,23 +10095,21 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:660
 msgid "Run in original 640 x 480 resolution"
-msgstr ""
+msgstr "Запуск в исходном разрешении 640 x 480"
 
 #: engines/scumm/metaengine.cpp:661
 msgid ""
 "This allows more accurate pause/restart banners, but might impact "
 "performance or shader/scaler usage."
 msgstr ""
+"Это обеспечивает более точные баннеры приостановки/перезапуска, но может "
+"повлиять на производительность или использование шейдеров/скейлеров."
 
 #: engines/scumm/metaengine.cpp:668
 msgid "Play simplified music"
 msgstr "Проигрывать упрощённую музыку"
 
 #: engines/scumm/metaengine.cpp:669
-#, fuzzy
-#| msgid ""
-#| "This music was presumably intended for low-end Macs, and uses only one "
-#| "channel."
 msgid "This music was intended for low-end Macs, and uses only one channel."
 msgstr ""
 "Эта музыка была предназначена для младших моделей Mac и использует только "
@@ -10608,10 +10600,8 @@ msgid "Saturn CD version is not yet supported"
 msgstr "Версия для Saturn CD ещё не поддерживается"
 
 #: engines/tinsel/metaengine.cpp:39
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Remove Black Bars"
-msgstr "Идти назад"
+msgstr "Убрать черные полосы"
 
 #: engines/tinsel/metaengine.cpp:40
 msgid ""
@@ -10619,6 +10609,10 @@ msgid ""
 "at 640x480. Enabling this option removes the forced letterbox effect, so "
 "that the game fits better on screens with an aspect ratio wider than 4:3."
 msgstr ""
+"Изначально игра отображалась в разрешении 640x432, а затем переводилась в "
+"Letterbox с разрешением 640x480. Включение этой опции удаляет эффект "
+"принудительного Letterbox, поэтому игра лучше выглядит на экранах с "
+"соотношением сторон шире 4:3."
 
 #: engines/tony/tony.cpp:248
 #, c-format
@@ -10904,26 +10898,26 @@ msgid "Voices: German"
 msgstr "Озвучка: немецкий"
 
 #: engines/twp/dialogs.cpp:32
-#, fuzzy
-#| msgid "Video"
 msgid "Video:"
-msgstr "Видео"
+msgstr "Видео:"
 
 #. I18N: Setting to switch toiled paper to be shown as "over".
 #: engines/twp/dialogs.cpp:37
 msgid "Toilet paper over"
-msgstr ""
+msgstr "Туалетная бумага закончилась"
 
 #: engines/twp/dialogs.cpp:38
 msgid ""
 "The toilet paper in some toilets will be shown \"over\".\n"
 "It's a joke option that has no effects on the gameplay."
 msgstr ""
+"Туалетная бумага в некоторых туалетах будет показана как «закончилась».\n"
+"Это шутка и не влияет на игровой процесс."
 
 #. I18N: Setting to enable or disable additional jokes in the game.
 #: engines/twp/dialogs.cpp:41
 msgid "Annoying in-jokes"
-msgstr ""
+msgstr "Раздражающие шутки"
 
 #: engines/twp/dialogs.cpp:42
 msgid ""
@@ -10932,133 +10926,103 @@ msgid ""
 "There is a game achievement that can be obtained only if the in-jokes option "
 "is switched on."
 msgstr ""
+"В игре будут шутки и отсылки к прошлым приключенческим играм, как в форме "
+"диалогов, так и в виде объектов.\n"
+"Есть игровое достижение, которое можно получить только когда эта опция "
+"включена."
 
 #: engines/twp/dialogs.cpp:44
-#, fuzzy
-#| msgid "Control"
 msgid "Controls:"
-msgstr "Управление"
+msgstr "Управление:"
 
 #. I18N: Setting to invert verb colors or keep the original verb colors.
 #: engines/twp/dialogs.cpp:48
 msgid "Invert verb colors"
-msgstr ""
+msgstr "Инвертировать цвета глаголов"
 
 #. I18N: Setting to use retro or modern fonts.
 #: engines/twp/dialogs.cpp:50
 msgid "Retro Fonts"
-msgstr ""
+msgstr "Ретро шрифты"
 
 #. I18N: Setting to use retro or modern verbs.
 #: engines/twp/dialogs.cpp:52
 msgid "Retro Verbs"
-msgstr ""
+msgstr "Ретро глаголы"
 
 #. I18N: Setting to use classic sentence or modern sentence.
 #: engines/twp/dialogs.cpp:54
 msgid "Classic Sentence"
-msgstr ""
+msgstr "Классические предложения"
 
 #. I18N: Settings to enable or disable Ransome unbeeped DLC.
 #: engines/twp/dialogs.cpp:57
 msgid "Ransome *unbeeped* (DLC)"
-msgstr ""
+msgstr "Ransome *unbeeped* (DLC)"
 
 #: engines/twp/metaengine.cpp:151
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select highlighted verb"
-msgstr "Выберите шейдер"
+msgstr "Выбрать выделенный глагол"
 
 #: engines/twp/metaengine.cpp:157
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 1"
-msgstr "Выбрать как группировать"
+msgstr "Выбрать актера 1"
 
 #: engines/twp/metaengine.cpp:158
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 2"
-msgstr "Выбрать как группировать"
+msgstr "Выбрать актера 2"
 
 #: engines/twp/metaengine.cpp:159
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 3"
-msgstr "Выбрать как группировать"
+msgstr "Выбрать актера 3"
 
 #: engines/twp/metaengine.cpp:160
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 4"
-msgstr "Выбрать как группировать"
+msgstr "Выбрать актера 4"
 
 #: engines/twp/metaengine.cpp:161
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 5"
-msgstr "Выбрать как группировать"
+msgstr "Выбрать актера 5"
 
 #: engines/twp/metaengine.cpp:162
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 1"
-msgstr "Выберите шейдер"
+msgstr "Выбрать опцию 1"
 
 #: engines/twp/metaengine.cpp:163
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 2"
-msgstr "Выберите шейдер"
+msgstr "Выбрать опцию 2"
 
 #: engines/twp/metaengine.cpp:164
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 3"
-msgstr "Выберите шейдер"
+msgstr "Выбрать опцию 3"
 
 #: engines/twp/metaengine.cpp:165
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 4"
-msgstr "Выберите шейдер"
+msgstr "Выбрать опцию 4"
 
 #: engines/twp/metaengine.cpp:166
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 5"
-msgstr "Выберите шейдер"
+msgstr "Выбрать опцию 5"
 
 #: engines/twp/metaengine.cpp:167
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 6"
-msgstr "Выберите шейдер"
+msgstr "Выбрать опцию 6"
 
 #: engines/twp/metaengine.cpp:168
-#, fuzzy
-#| msgid "Select next music record"
 msgid "Select Next Actor"
-msgstr "Выбрать следующую музыкальную запись"
+msgstr "Выбрать следующего актера"
 
 #: engines/twp/metaengine.cpp:169
-#, fuzzy
-#| msgid "Previous action"
 msgid "Select Previous Actor"
-msgstr "Предыдущее действие"
+msgstr "Выбрать предыдущего актера"
 
 #: engines/twp/metaengine.cpp:170
-#, fuzzy
-#| msgid "Skip text"
 msgid "Skip Text"
 msgstr "Пропустить текст"
 
 #: engines/twp/metaengine.cpp:171
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show hotspots"
-msgstr "Показать подсказки"
+msgstr "Показать горячие точки"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
@@ -11151,18 +11115,16 @@ msgid "Original Save"
 msgstr "Оригинальное сохранение"
 
 #: engines/ultima/nuvie/metaengine.cpp:206
-#, fuzzy
-#| msgid "Ultima VIII"
 msgid "Ultima VI"
-msgstr "Ultima VIII"
+msgstr "Ultima VI"
 
 #: engines/ultima/nuvie/metaengine.cpp:208
 msgid "Martian Dreams"
-msgstr ""
+msgstr "Martian Dreams"
 
 #: engines/ultima/nuvie/metaengine.cpp:210
 msgid "The Savage Empire"
-msgstr ""
+msgstr "The Savage Empire"
 
 #: engines/ultima/nuvie/save/save_game.cpp:207
 msgid "Transfer Character"
@@ -11225,16 +11187,12 @@ msgid "Starts a new game upon launching instead of going to the main menu."
 msgstr "Запускает новую игру при запуске вместо перехода в главное меню."
 
 #: engines/vcruise/metaengine.cpp:86
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Use 16-color graphics"
-msgstr "Цветная графика"
+msgstr "Использовать 16-цветную графику"
 
 #: engines/vcruise/metaengine.cpp:87
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Uses 16-color graphics."
-msgstr "Цветная графика"
+msgstr "Использует 16-цветную графику."
 
 #: engines/vcruise/metaengine.cpp:135
 msgid "Display help screen"
@@ -11282,7 +11240,7 @@ msgstr "Пропустить текущую анимацию"
 
 #: engines/vcruise/metaengine.cpp:200
 msgid "Cycle item in scene (debug cheat)"
-msgstr ""
+msgstr "Зациклить элемент в сцене (чит-отладка)"
 
 #: engines/vcruise/vcruise.cpp:92
 msgid "This game requires JPEG support, which was not compiled in."
