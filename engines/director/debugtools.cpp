@@ -355,6 +355,11 @@ typedef struct ImGuiState {
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _breakpoints;
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
 	int _prevFrame = -1;
+
+	struct {
+		int frame = -1;
+		int channel = -1;
+	} _selectedScoreCast;
 } ImGuiState;
 
 ImGuiState *_state = nullptr;
@@ -1475,12 +1480,32 @@ static void showScore() {
 	if (ImGui::Begin("Score", &_state->_showScore)) {
 		Score *score = g_director->getCurrentMovie()->getScore();
 		uint numFrames = score->_scoreCache.size();
+		Cast *cast = g_director->getCurrentMovie()->getCast();
 
 		if (!numFrames) {
 			ImGui::Text("No frames");
 			ImGui::End();
 
 			return;
+		}
+
+		{
+			Sprite *sprite = nullptr;
+
+			if (_state->_selectedScoreCast.frame != -1)
+				sprite = score->_scoreCache[_state->_selectedScoreCast.frame]->_sprites[_state->_selectedScoreCast.channel];
+
+			if (sprite) {
+				CastMember *castMember = cast->getCastMember(sprite->_castId.member, true);
+
+				ImGuiImage imgID = getImageID(castMember);
+				if (imgID.id) {
+					Common::String name(getDisplayName(castMember));
+					showImage(imgID, name.c_str(), 32.f);
+				} else {
+					ImGui::InvisibleButton("##canvas", ImVec2(32.f, 32.f));
+				}
+			}
 		}
 
 		uint numChannels = score->_scoreCache[0]->_sprites.size();
@@ -1490,8 +1515,8 @@ static void showScore() {
 		ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.7f, 0.7f, 0.0f, 0.65f));
 
 		if (ImGui::BeginTable("Score", tableColumns + 1,
-				ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedSame |
-				ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg)) {
+					ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedSame |
+					ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg)) {
 			ImGuiTableFlags flags = ImGuiTableColumnFlags_WidthFixed;
 
 			ImGui::TableSetupColumn("##", flags);
@@ -1515,6 +1540,11 @@ static void showScore() {
 
 					if (sprite._castId.member) {
 						ImGui::Text("%d", sprite._castId.member);
+
+						if (ImGui::IsItemClicked(0)) {
+							_state->_selectedScoreCast.frame = f;
+							_state->_selectedScoreCast.channel = ch + 1;
+						}
 					}
 				}
 			}
