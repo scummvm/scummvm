@@ -541,8 +541,10 @@ bool View1::tick() {
 
 	_lastMillis = tick_time;
 
+	int i = 0;
 	for (auto currentCharacter : characters) {
 		currentCharacter->Update();
+		i++;
 	}
 	
 	return true;
@@ -693,6 +695,9 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	if (GameObject->Index == 0x8) {
 		blobIndex = 4;
 	//	offset = 23;
+	} else if (GameObject->Index == 0x0a) {
+		// TODO: Figure out how we find these
+		blobIndex = 6;
 	}
 	Common::MemoryReadStream stream(this->GameObject->Blobs[blobIndex].data(), this->GameObject->Blobs[blobIndex].size());
 	stream.seek(0xA, SEEK_SET);
@@ -753,7 +758,7 @@ void Character::Update() {
 		// TODO: Consider which run function to use
 		if (ExecuteScriptOnFinishLerp) {
 			ExecuteScriptOnFinishLerp = false;
-			g_engine->RunScriptExecutor(false);
+			g_engine->ScheduleRun();
 		}
 		return;
 	}
@@ -778,7 +783,7 @@ void Character::Update() {
 		// TODO: Consider which run function to use
 		if (ExecuteScriptOnFinishLerp) {
 			ExecuteScriptOnFinishLerp = false;
-			g_engine->RunScriptExecutor(false);
+			g_engine->ScheduleRun();
 		}
 		return;
 	}
