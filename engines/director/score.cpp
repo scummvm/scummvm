@@ -100,6 +100,9 @@ Score::~Score() {
 
 	delete _labels;
 
+	for (auto &it : _scoreCache)
+		delete it;
+
 	if (_framesStream)
 		delete _framesStream;
 
@@ -1595,14 +1598,17 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 
 	// Calculate number of frames and their positions
 	// numOfFrames in the header is often incorrect
-	for (_numFrames = 1; loadFrame(_numFrames, false); _numFrames++) { }
+	for (_numFrames = 1; loadFrame(_numFrames, false); _numFrames++) {
+		if (debugChannelSet(-1, kDebugImGui)) {
+			_scoreCache.push_back(new Frame(*_currentFrame));
+		}
+	}
 
 	debugC(1, kDebugLoading, "Score::loadFrames(): Calculated, total number of frames %d!", _numFrames);
 
 	_currentFrame->reset();
 
 	loadFrame(1, true);
-
 
 	debugC(1, kDebugLoading, "Score::loadFrames(): Number of frames: %d, framesStreamSize: %d", _numFrames, _framesStreamSize);
 }

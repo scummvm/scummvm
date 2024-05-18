@@ -152,6 +152,8 @@ public:
 	Common::HashMap<uint16, Common::String> _actions;
 	Common::HashMap<uint16, bool> _immediateActions;
 
+	Common::Array<Frame *> _scoreCache;
+
 	// On demand frames loading
 	uint32 _version;
 	Frame *_currentFrame;

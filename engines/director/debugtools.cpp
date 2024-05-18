@@ -350,6 +350,7 @@ typedef struct ImGuiState {
 	bool _showChannels = false;
 	bool _showCast = false;
 	bool _showFuncList = false;
+	bool _showScore = false;
 	Common::List<CastMemberID> _scriptCasts;
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _breakpoints;
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
@@ -1461,6 +1462,68 @@ static void showFuncList() {
 	ImGui::End();
 }
 
+static void showScore() {
+	if (!_state->_showScore)
+		return;
+
+	ImVec2 pos(40, 40);
+	ImGui::SetNextWindowPos(pos, ImGuiCond_FirstUseEver);
+
+	ImVec2 windowSize = ImGui::GetMainViewport()->Size - pos - pos;
+	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
+
+	if (ImGui::Begin("Score", &_state->_showScore)) {
+		Score *score = g_director->getCurrentMovie()->getScore();
+		uint numFrames = score->_scoreCache.size();
+
+		if (!numFrames) {
+			ImGui::Text("No frames");
+			ImGui::End();
+
+			return;
+		}
+
+		uint numChannels = score->_scoreCache[0]->_sprites.size();
+		uint tableColumns = MAX(numFrames, 25U); // Set minimal table width to 25
+
+		int currentFrameNum = score->getCurrentFrameNum();
+		ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.7f, 0.7f, 0.0f, 0.65f));
+
+		if (ImGui::BeginTable("Score", tableColumns + 1,
+				ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedSame |
+				ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg)) {
+			ImGuiTableFlags flags = ImGuiTableColumnFlags_WidthFixed;
+
+			ImGui::TableSetupColumn("##", flags);
+			for (uint i = 0; i < tableColumns; i++)
+				ImGui::TableSetupColumn(Common::String::format("%-2d", i + 1).c_str(), flags);
+
+			ImGui::TableHeadersRow();
+			for (int ch = 0; ch < numChannels - 1; ch++) {
+				ImGui::TableNextRow();
+
+				ImGui::TableNextColumn();
+				ImGui::Text("%-3d", ch + 1);
+
+				for (uint f = 0; f < numFrames; f++) {
+					Sprite &sprite = *score->_scoreCache[f]->_sprites[ch + 1];
+
+					if (f == currentFrameNum)
+						ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+
+					ImGui::TableNextColumn();
+
+					if (sprite._castId.member) {
+						ImGui::Text("%d", sprite._castId.member);
+					}
+				}
+			}
+			ImGui::EndTable();
+		}
+	}
+	ImGui::End();
+}
+
 void onImGuiInit() {
 	ImGuiIO &io = ImGui::GetIO();
 	io.Fonts->AddFontDefault();
@@ -1498,6 +1561,7 @@ void onImGuiRender() {
 			ImGui::MenuItem("Channels", NULL, &_state->_showChannels);
 			ImGui::MenuItem("Cast", NULL, &_state->_showCast);
 			ImGui::MenuItem("Functions", NULL, &_state->_showFuncList);
+			ImGui::MenuItem("Score", NULL, &_state->_showScore);
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
@@ -1512,6 +1576,7 @@ void onImGuiRender() {
 	showChannels();
 	showCast();
 	showFuncList();
+	showScore();
 }
 
 void onImGuiCleanup() {
