@@ -10975,7 +10975,9 @@ msgstr "按键 i"
 msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
-msgstr "此存档使用的是版本 %u，但此引擎最多只支持到版本 %d。你需要更新版本的引擎才能使用此存档。"
+msgstr ""
+"此存档使用的是版本 %u，但此引擎最多只支持到版本 %d。你需要更新版本的引擎才能"
+"使用此存档。"
 
 #: engines/zvision/metaengine.cpp:58
 msgid "Double FPS"
