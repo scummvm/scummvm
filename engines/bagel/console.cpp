@@ -31,7 +31,7 @@ namespace Bagel {
 Console::Console() : GUI::Debugger() {
 	registerCmd("var",       WRAP_METHOD(Console, cmdVar));
 	registerCmd("vars",      WRAP_METHOD(Console, cmdVars));
-	registerCmd("fleebix",   WRAP_METHOD(Console, cmdFleebix));
+	registerCmd("jammer",    WRAP_METHOD(Console, cmdJammer));
 	registerCmd("megawave",  WRAP_METHOD(Console, cmdMegawave));
 	registerCmd("microwave", WRAP_METHOD(Console, cmdMegawave));
 	registerCmd("save",      WRAP_METHOD(Console, cmdSave));
@@ -77,11 +77,15 @@ bool Console::cmdVars(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdFleebix(int argc, const char **argv) {
+bool Console::cmdJammer(int argc, const char **argv) {
 	CBofString inner = g_VarManager->getVariable("NDJAM_INNERDIAL_DISPLAY")->getValue();
 	CBofString outer = g_VarManager->getVariable("NDJAM_OUTERDIAL_DISPLAY")->getValue();
-
-	debugPrintf("Frequency is %s.%s\n", inner.getBuffer(), outer.getBuffer());
+	bool isDone = g_VarManager->getVariable("HFJAM_DONE")->getNumValue() != 0;
+	
+	debugPrintf("Frequency is %s.%s, jammer is %s\n",
+		inner.getBuffer(), outer.getBuffer(),
+		isDone ? "correctly set" : "incorrectly set"
+	);
 	return true;
 }
 
