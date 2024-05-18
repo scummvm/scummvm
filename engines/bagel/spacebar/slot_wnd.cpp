@@ -120,7 +120,6 @@ SBarSlotWnd::SBarSlotWnd() : CBagStorageDevWnd() {
 	_pSlotSound = nullptr;
 	_pLoseBmp = nullptr;
 	_pBkgSnd = nullptr;
-	_bPaused = false;
 	_bLose = false;
 	
 	CBagStorageDevWnd::setHelpFilename(BuildSlotDir("SLOT.TXT"));
@@ -173,7 +172,6 @@ void SBarSlotWnd::onMainLoop() {
 }
 
 ErrorCode  SBarSlotWnd::attach() {
-	_bPaused = false;
 	_bLose = false;
 	_bFixBet = false;
 
@@ -858,11 +856,8 @@ void SBarSlotWnd::onBofButton(CBofObject *pObject, int nState) {
 		CBagel *pApp = CBagel::getBagApp();
 		if (pApp != nullptr) {
 			CBagMasterWin *pWin = pApp->getMasterWnd();
-			if (pWin != nullptr) {
-				_bPaused = true;
+			if (pWin != nullptr)
 				pWin->onHelp(BuildSlotDir("SLOT.TXT"));
-				_bPaused = false;
-			}
 		}
 		}
 		break;

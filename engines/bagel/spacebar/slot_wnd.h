@@ -96,7 +96,6 @@ protected:
 	CBofSound *_pBkgSnd;			// Casino background sounds
 	CBofSound *_pSlotSound;
 	CBofSound *_pWinSound;			// Allow all ambient noise to continue playing
-	bool _bPaused;
 	bool _bLose;
 
 public:
@@ -105,8 +104,8 @@ public:
 	virtual void onBofButton(CBofObject *pButton, int nState);
 	virtual void onMainLoop();
 
-	virtual ErrorCode attach();	// This function attachs the background and nessasary bitmaps
-	virtual ErrorCode detach();	// This function detachs the background and nessasary bitmaps
+	virtual ErrorCode attach();	// This function attachs the background and necessary bitmaps
+	virtual ErrorCode detach();	// This function detachs the background and necessary bitmaps
 
 	void addBet(int nBetVal);
 	void betAll();
