@@ -6068,6 +6068,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Space Quest 6 - English DOS/Win3.11 CD (from the Space Quest Collection)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.0"
+	// This is a different interpreter than in version 1.11, though both say "May 24 1995"
 	{"sq6", "", {
 		{"resource.map", 0, "6dddfa3a8f3a3a513ec9dfdfae955005", 10528},
 		{"resource.000", 0, "c4259ab7355aead07773397b1052827d", 41150806},
@@ -6075,7 +6076,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_SQ6 },
 
 	// Space Quest 6 - English DOS/Win3.11 CD ver 1.11 (from FRG)
-	// SCI interpreter version 2.100.002 (just a guess)
+	// Executable scanning reports "2.100.002", VERSION file reports "1.11"
+	// This is a different interpreter than in version 1.0, though both say "May 24 1995"
 	{"sq6", "", {
 		{"resource.map", 0, "e0615d6e4e10e37ae42e6a2a95aaf145", 10528},
 		{"resource.000", 0, "c4259ab7355aead07773397b1052827d", 41150806},

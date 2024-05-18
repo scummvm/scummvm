@@ -98,11 +98,14 @@ public:
 
 	inline bool usesModifiedAudioAttenuation() const {
 		switch (g_sci->getGameId()) {
-		// Assuming MGDX uses modified attenuation since SQ6 does and it was
-		// released earlier, but not verified (Phar Lap Windows-only release)
-		case GID_MOTHERGOOSEHIRES:
 		case GID_PQ4:
+		case GID_QFG4:
+			return g_sci->isCD();
+		case GID_MOTHERGOOSEHIRES:
 		case GID_SQ6:
+			// SQ6 1.0 uses modified attenuation, 1.11 does not.
+			// The interpreters are different even though they both have the
+			// same date and version string. ("May 24 1995", "2.100.002")
 			return true;
 		case GID_KQ7:
 			// KQ7 1.51 (SCI2.1early) uses the non-standard attenuation, but
