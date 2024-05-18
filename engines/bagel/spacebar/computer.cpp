@@ -529,8 +529,10 @@ void SBarComputer::setOff() {
 
 		_nDrinkSelect = -1;
 
-		_pDrinkBox->hide();
-		_pIngBox->hide();
+		if (_pDrinkBox != nullptr)
+			_pDrinkBox->hide();
+		if (_pIngBox != nullptr)
+			_pIngBox->hide();
 
 		deleteTextBox();
 
