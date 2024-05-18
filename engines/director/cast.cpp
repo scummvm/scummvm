@@ -1273,7 +1273,7 @@ void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 	_lingodec->parseScripts();
 
 	for (auto it = _lingodec->scripts.begin(); it != _lingodec->scripts.end(); ++it) {
-		warning("[%d/%d] %s", it->second->castID, it->first, it->second->scriptText("\n", false).c_str());
+		debug(5, "[%d/%d] %s", it->second->castID, it->first, it->second->scriptText("\n", false).c_str());
 	}
 }
 
