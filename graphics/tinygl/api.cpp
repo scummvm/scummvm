@@ -283,6 +283,16 @@ void tglStencilOp(TGLenum sfail, TGLenum dpfail, TGLenum dppass) {
 	c->gl_add_op(p);
 }
 
+void tglPolygonStipple(const TGLubyte *mask) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLParam p[2];
+
+	p[0].op = TinyGL::OP_PolygonStipple;
+	c->polygon_stipple_pattern = (void *)mask;
+
+	c->gl_add_op(p);
+}
+
 void tglPolygonMode(TGLenum face, TGLenum mode) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	TinyGL::GLParam p[3];
