@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-05-04 22:58+0000\n"
-"PO-Revision-Date: 2024-04-07 14:34+0000\n"
+"PO-Revision-Date: 2024-05-18 10:25+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -1334,7 +1334,7 @@ msgstr "Оберіть критерій для групування"
 
 #: gui/launcher.cpp:262
 msgid "Click here to see Help"
-msgstr ""
+msgstr "Натисніть тут, щоб переглянути довідку"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
 #: gui/launcher.cpp:266 engines/dialogs.cpp:91
@@ -6610,62 +6610,62 @@ msgstr "АЛЬТернативна річ"
 
 #: engines/cge/metaengine.cpp:224
 msgid "Inventory Item 1 (Select/Deselect)"
-msgstr ""
+msgstr "Інвентар 1 (Вибрати/Скасувати вибір)"
 
 #: engines/cge/metaengine.cpp:229
 msgid "Inventory Item 2 (Select/Deselect)"
-msgstr ""
+msgstr "Інвентар 2 (Вибрати/Скасувати вибір)"
 
 #: engines/cge/metaengine.cpp:234
 msgid "Inventory Item 3 (Select/Deselect)"
-msgstr ""
+msgstr "Інвентар 3 (Вибрати/Скасувати вибір)"
 
 #: engines/cge/metaengine.cpp:239
 msgid "Inventory Item 4 (Select/Deselect)"
-msgstr ""
+msgstr "Інвентар 4 (Вибрати/Скасувати вибір)"
 
 #: engines/cge/metaengine.cpp:244
 msgid "Inventory Item 5 (Select/Deselect)"
-msgstr ""
+msgstr "Інвентар 5 (Вибрати/Скасувати вибір)"
 
 #: engines/cge/metaengine.cpp:249
 msgid "Inventory Item 6 (Select/Deselect)"
-msgstr ""
+msgstr "Інвентар 6 (Вибрати/Скасувати вибір)"
 
 #: engines/cge/metaengine.cpp:254
 msgid "Inventory Item 7 (Select/Deselect)"
-msgstr ""
+msgstr "Інвентар 7 (Вибрати/Скасувати вибір)"
 
 #: engines/cge/metaengine.cpp:259
 msgid "Inventory Item 8 (Select/Deselect)"
-msgstr ""
+msgstr "Інвентар 8 (Вибрати/Скасувати вибір)"
 
 #. I18N: There are 24 single-room/screen locations in the game.
 #. You switch between them from numbered buttons on interface.
 #. Sets the current access to only the first Location
 #: engines/cge/metaengine.cpp:267
 msgid "DEBUG: Access to Location 1"
-msgstr ""
+msgstr "ВІДЛАДКА: Доступ до локації 1"
 
 #. I18N: Sets the current access to Locations 1 to 8.
 #: engines/cge/metaengine.cpp:273
 msgid "DEBUG: Access to Locations 1-8"
-msgstr ""
+msgstr "ВІДЛАДКА: Доступ до локацій 1-8"
 
 #. I18N: Sets the current access to Locations 1 to 16.
 #: engines/cge/metaengine.cpp:279
 msgid "DEBUG: Access to Locations 1-16"
-msgstr ""
+msgstr "ВІДЛАДКА: Доступ до локацій 1-16"
 
 #. I18N: Sets the current access to Locations 1 to 23.
 #: engines/cge/metaengine.cpp:285
 msgid "DEBUG: Access to Locations 1-23"
-msgstr ""
+msgstr "ВІДЛАДКА: Доступ до локацій 1-23"
 
 #. I18N: Sets the current access to Locations 1 to 24.
 #: engines/cge/metaengine.cpp:291
 msgid "DEBUG: Access to Locations 1-24"
-msgstr ""
+msgstr "ВІДЛАДКА: Доступ до локацій 1-24"
 
 #: engines/cge2/metaengine.cpp:59
 msgid "Enable Text to Speech for Objects and Options"
@@ -9338,12 +9338,12 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1376
 msgid "Music Quality:"
-msgstr ""
+msgstr "Якість музики:"
 
 #: engines/scumm/dialogs.cpp:1380
 msgid ""
 "Select music quality. The original lets you choose this from the Game menu."
-msgstr ""
+msgstr "Виберіть якість музики. Оригінал дозволяє вибрати це з меню гри."
 
 #: engines/scumm/dialogs.cpp:1381
 msgid ""
@@ -9351,40 +9351,43 @@ msgid ""
 "detection and speed tests, but also allows changes through the Game menu to "
 "some degree."
 msgstr ""
+"Виберіть якість музики. Оригінал визначає базові налаштування за допомогою "
+"виявлення апаратного забезпечення та тестів швидкості, але також дозволяє "
+"певною мірою змінювати через меню гри."
 
 #: engines/scumm/dialogs.cpp:1454 engines/scumm/dialogs.cpp:1455
 msgid "auto"
-msgstr ""
+msgstr "автоматично"
 
 #: engines/scumm/dialogs.cpp:1454
 msgid "Low"
-msgstr ""
+msgstr "Низька"
 
 #: engines/scumm/dialogs.cpp:1454
 msgid "Medium"
-msgstr "Середній"
+msgstr "Середня"
 
 #: engines/scumm/dialogs.cpp:1454
 msgid "High"
-msgstr ""
+msgstr "Висока"
 
 #: engines/scumm/dialogs.cpp:1455
 msgid "Good"
-msgstr ""
+msgstr "Хороша"
 
 #: engines/scumm/dialogs.cpp:1455
 msgid "Better"
-msgstr ""
+msgstr "Краща"
 
 #: engines/scumm/dialogs.cpp:1456
 #, c-format
 msgid "Hardware Rating: %s   -   "
-msgstr ""
+msgstr "Рейтинг обладнання: %s  -   "
 
 #: engines/scumm/dialogs.cpp:1456
 #, c-format
 msgid "Quality Selection: %s"
-msgstr ""
+msgstr "Вибір якості: %s"
 
 #: engines/scumm/dialogs.cpp:1470
 msgid "Playback Adjust:"
@@ -10064,13 +10067,15 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:660
 msgid "Run in original 640 x 480 resolution"
-msgstr ""
+msgstr "Запускати в оригінальній роздільній здатності 640 x 480"
 
 #: engines/scumm/metaengine.cpp:661
 msgid ""
 "This allows more accurate pause/restart banners, but might impact "
 "performance or shader/scaler usage."
 msgstr ""
+"Це дозволяє точніше призупиняти/перезапускати банери, але може вплинути на "
+"продуктивність або використання шейдерів/масштабувальників."
 
 #: engines/scumm/metaengine.cpp:668
 msgid "Play simplified music"
@@ -10573,6 +10578,10 @@ msgid ""
 "at 640x480. Enabling this option removes the forced letterbox effect, so "
 "that the game fits better on screens with an aspect ratio wider than 4:3."
 msgstr ""
+"Гра в оригіналі відображалася у розмірі 640x432, який потім перетворювався у "
+"форматі Letterbox у 640x480. Увімкнення цієї опції усуває примусовий ефект "
+"Letterbox, тому гра краще підходить для екранів із співвідношенням сторін "
+"більше 4:3."
 
 #: engines/tony/tony.cpp:248
 #, c-format
@@ -10864,18 +10873,20 @@ msgstr "Відео:"
 #. I18N: Setting to switch toiled paper to be shown as "over".
 #: engines/twp/dialogs.cpp:37
 msgid "Toilet paper over"
-msgstr ""
+msgstr "Нестача туалетного папіру"
 
 #: engines/twp/dialogs.cpp:38
 msgid ""
 "The toilet paper in some toilets will be shown \"over\".\n"
 "It's a joke option that has no effects on the gameplay."
 msgstr ""
+"Туалетний папір у деяких туалетах буде показаний \"закінчився\".\n"
+"Це форма жарту, і не впливає на ігровий процес."
 
 #. I18N: Setting to enable or disable additional jokes in the game.
 #: engines/twp/dialogs.cpp:41
 msgid "Annoying in-jokes"
-msgstr ""
+msgstr "Надокучливі жарти"
 
 #: engines/twp/dialogs.cpp:42
 msgid ""
@@ -10884,6 +10895,9 @@ msgid ""
 "There is a game achievement that can be obtained only if the in-jokes option "
 "is switched on."
 msgstr ""
+"Гра включатиме анекдоти та посилання на минулі пригодницькі ігри у формі як "
+"діалогів, так і об’єктів.\n"
+"Є ігрове досягнення, яке можна отримати, лише якщо ввімкнути опцію жартів."
 
 #: engines/twp/dialogs.cpp:44
 msgid "Controls:"
@@ -10892,22 +10906,22 @@ msgstr "Керування:"
 #. I18N: Setting to invert verb colors or keep the original verb colors.
 #: engines/twp/dialogs.cpp:48
 msgid "Invert verb colors"
-msgstr ""
+msgstr "Інвертувати кольори дієслів"
 
 #. I18N: Setting to use retro or modern fonts.
 #: engines/twp/dialogs.cpp:50
 msgid "Retro Fonts"
-msgstr ""
+msgstr "Ретро шрифти"
 
 #. I18N: Setting to use retro or modern verbs.
 #: engines/twp/dialogs.cpp:52
 msgid "Retro Verbs"
-msgstr ""
+msgstr "Ретро дієслова"
 
 #. I18N: Setting to use classic sentence or modern sentence.
 #: engines/twp/dialogs.cpp:54
 msgid "Classic Sentence"
-msgstr ""
+msgstr "Класичні речення"
 
 #. I18N: Settings to enable or disable Ransome unbeeped DLC.
 #: engines/twp/dialogs.cpp:57
@@ -10915,10 +10929,8 @@ msgid "Ransome *unbeeped* (DLC)"
 msgstr ""
 
 #: engines/twp/metaengine.cpp:151
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select highlighted verb"
-msgstr "Виберіть шейдер"
+msgstr "Виберіть виділене дієслово"
 
 #: engines/twp/metaengine.cpp:157
 msgid "Select Actor 1"
@@ -11073,11 +11085,11 @@ msgstr "Ultima VI"
 
 #: engines/ultima/nuvie/metaengine.cpp:208
 msgid "Martian Dreams"
-msgstr ""
+msgstr "Марсіанські сни"
 
 #: engines/ultima/nuvie/metaengine.cpp:210
 msgid "The Savage Empire"
-msgstr ""
+msgstr "Дика імперія"
 
 #: engines/ultima/nuvie/save/save_game.cpp:207
 msgid "Transfer Character"
@@ -11193,7 +11205,7 @@ msgstr "Пропускає поточну анімацію"
 
 #: engines/vcruise/metaengine.cpp:200
 msgid "Cycle item in scene (debug cheat)"
-msgstr ""
+msgstr "Міняти по колу елемент у сцені (debug cheat)"
 
 #: engines/vcruise/vcruise.cpp:92
 msgid "This game requires JPEG support, which was not compiled in."
