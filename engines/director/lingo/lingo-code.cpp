@@ -660,13 +660,13 @@ void LC::c_swap() {
 }
 
 static DatumType getArrayAlignedType(Datum &d1, Datum &d2) {
-	if (d1.type == POINT && d2.type == ARRAY && d2.u.farr->arr.size() < 2)
+	if (d1.type == POINT && (d2.type == RECT || (d2.type == ARRAY && d2.u.farr->arr.size() != 2)))
 		return ARRAY;
 
 	if (d1.type == POINT)
 		return POINT;
 
-	if (d1.type == RECT && (d2.type == POINT || (d2.type == ARRAY && d2.u.farr->arr.size() < 4)))
+	if (d1.type == RECT && (d2.type == POINT || (d2.type == ARRAY && d2.u.farr->arr.size() != 4)))
 		return ARRAY;
 
 	if (d1.type == RECT)
@@ -1263,23 +1263,17 @@ void LC::c_not() {
 
 Datum LC::compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2, bool location, bool value) {
 	// At least one of d1 and d2 must be an array
-	uint arraySize;
-	if (d1.isArray() && d2.isArray()) {
-		arraySize = MIN(d1.u.farr->arr.size(), d2.u.farr->arr.size());
-	} else if (d1.type == PARRAY && d2.type == PARRAY) {
-		arraySize = MIN(d1.u.parr->arr.size(), d2.u.parr->arr.size());
-	} else if (d1.isArray()) {
-		arraySize = d1.u.farr->arr.size();
-	} else if (d1.type == PARRAY) {
-		arraySize = d1.u.parr->arr.size();
-	} else if (d2.isArray()) {
-		arraySize = d2.u.farr->arr.size();
-	} else if (d2.type == PARRAY) {
-		arraySize = d2.u.parr->arr.size();
-	} else {
-		warning("LC::compareArrays(): Called with wrong data types: %s and %s", d1.type2str(), d2.type2str());
-		return Datum(0);
-	}
+	bool d1isArr = d1.isArray() || d1.type == PARRAY;
+	bool d2isArr = d2.isArray() || d2.type == PARRAY;
+	uint32 d1size = d1.isArray() ? d1.u.farr->arr.size() : d1.type == PARRAY ? d1.u.parr->arr.size() : 0;
+	uint32 d2size = d2.isArray() ? d2.u.farr->arr.size() : d2.type == PARRAY ? d2.u.parr->arr.size() : 0;
+	// The calling convention of this checking function is a bit weird:
+	// - If the location flag is set, you're searching for element d2 in list d1
+	// - If the location flag is not set and there are two array-like arguments passed, you are comparing
+	//   elements and therefore need to truncate output to the smaller size.
+	// - Otherwise, you are comparing an array to a single element, and all elements
+	//   of the array need to be checked.
+	uint arraySize = location ? d1size : ((d1isArr && d2isArr) ? MIN(d1size, d2size) : MAX(d1size, d2size));
 
 	Datum res;
 	res = location ? -1 : 1;
@@ -1293,9 +1287,9 @@ Datum LC::compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2, 
 			a = value ? t.v : t.p;
 		}
 
-		if (d2.isArray()) {
+		if (!location && d2.isArray()) {
 			b = d2.u.farr->arr[i];
-		} else if (d2.type == PARRAY) {
+		} else if (!location && d2.type == PARRAY) {
 			PCell t = d2.u.parr->arr[i];
 			b = value ? t.v : t.p;
 		}
@@ -1308,7 +1302,6 @@ Datum LC::compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2, 
 		} else if (a.type == STRING && b.type == SYMBOL) {
             b = Datum(b.asString());
         }
-
 
 		res = compareFunc(a, b);
 		if (!location) {
@@ -1327,32 +1320,49 @@ Datum LC::compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2, 
 }
 
 Datum LC::eqData(Datum d1, Datum d2) {
-	if ((d1.isArray() && d2.isArray()) || (d1.type == PARRAY && d2.type == PARRAY)) {
-		// D4 has a bug, and only checks the elements on the left array.
-		// Therefore if the left array is bigger, don't bother checking.
-		// LC::compareArrays will trim the inputs to the shortest length.
-		// (Mac 4.0.4 is fixed, Win 4.0.4 is not)
-		bool hasArrayBug = (g_director->getVersion() < 500 && g_director->getPlatform() == Common::kPlatformWindows) ||
-			(g_director->getVersion() < 404 && g_director->getPlatform() == Common::kPlatformMacintosh);
-		if (hasArrayBug &&
-			d1.u.farr->arr.size() > d2.u.farr->arr.size()) {
+	// D4 has a bug, and only checks the elements on the left array.
+	// Therefore if the left array is bigger, don't bother checking.
+	// LC::compareArrays will trim the inputs to the shortest length.
+	// (Mac 4.0.4 is fixed, Win 4.0.4 is not)
+	bool hasArrayBug = (g_director->getVersion() < 500 && g_director->getPlatform() == Common::kPlatformWindows) ||
+		(g_director->getVersion() < 404 && g_director->getPlatform() == Common::kPlatformMacintosh);
+
+	if (d1.isArray() || d2.isArray() || d1.type == PARRAY || d2.type == PARRAY) {
+		bool d1isArr = d1.isArray() || d1.type == PARRAY;
+		bool d2isArr = d2.isArray() || d2.type == PARRAY;
+		uint32 d1size = d1.isArray() ? d1.u.farr->arr.size() : d1.type == PARRAY ? d1.u.parr->arr.size() : 0;
+		uint32 d2size = d2.isArray() ? d2.u.farr->arr.size() : d2.type == PARRAY ? d2.u.parr->arr.size() : 0;
+		if (hasArrayBug && d1isArr && d2isArr && d1size > d2size) {
+			// D4; only check arrays if the left size is less than or equal to the right side
 			return Datum(0);
-		} else if (!hasArrayBug && d1.u.farr->arr.size() != d2.u.farr->arr.size()) {
+		} else if (!hasArrayBug && d1isArr && d2isArr && d1size != d2size) {
 			// D5 and up is fixed; only check arrays if the sizes are the same.
 			return Datum(0);
 		}
-	}
-	if (d1.type == PARRAY && d2.type == PARRAY &&
-			d1.u.parr->arr.size() != d2.u.parr->arr.size()) {
-		return Datum(0);
-	}
-	if (d1.isArray() || d2.isArray() ||
-			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::eqData, d1, d2, false, true);
 	}
 	Datum check;
 	check = d1.equalTo(d2, true);
 	return check;
+}
+
+Datum LC::eqDataStrict(Datum d1, Datum d2) {
+	// b_getPos and b_getOne will do case-sensitive
+	// string comparison when determining a match.
+	// As opposed to, y'know, the whole rest of
+	// Director which is case insensitive.
+	if (d1.type == STRING && d2.type == STRING) {
+		return Datum(*d1.u.s == *d2.u.s ? 1 : 0);
+	}
+	// ARRAYs and PARRAYs will do a pointer check,
+	// not a contents check
+	if (d1.isArray() && d2.isArray()) {
+		return Datum(d1.u.farr == d2.u.farr ? 1 : 0);
+	}
+	if (d1.type == PARRAY && d2.type == PARRAY) {
+		return Datum(d1.u.parr == d2.u.parr ? 1 : 0);
+	}
+	return LC::eqData(d1, d2);
 }
 
 void LC::c_eq() {
@@ -1373,8 +1383,7 @@ void LC::c_neq() {
 }
 
 Datum LC::gtData(Datum d1, Datum d2) {
-	if (d1.isArray() || d2.isArray() ||
-			d1.type == PARRAY || d2.type == PARRAY) {
+	if (d1.isArray() || d2.isArray() || d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::gtData, d1, d2, false, true);
 	}
 	Datum check;
@@ -1389,8 +1398,7 @@ void LC::c_gt() {
 }
 
 Datum LC::ltData(Datum d1, Datum d2) {
-	if (d1.isArray() || d2.isArray() ||
-			d1.type == PARRAY || d2.type == PARRAY) {
+	if (d1.isArray() || d2.isArray() || d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::ltData, d1, d2, false, true);
 	}
 	Datum check;
@@ -1405,8 +1413,7 @@ void LC::c_lt() {
 }
 
 Datum LC::geData(Datum d1, Datum d2) {
-	if (d1.isArray() || d2.isArray() ||
-			d1.type == PARRAY || d2.type == PARRAY) {
+	if (d1.isArray() || d2.isArray() || d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::geData, d1, d2, false, true);
 	}
 	Datum check;
@@ -1421,8 +1428,7 @@ void LC::c_ge() {
 }
 
 Datum LC::leData(Datum d1, Datum d2) {
-	if (d1.isArray() || d2.isArray() ||
-			d1.type == PARRAY || d2.type == PARRAY) {
+	if (d1.isArray() || d2.isArray() || d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::leData, d1, d2, false, true);
 	}
 	Datum check;
@@ -1907,7 +1913,7 @@ void LC::c_asserterror() {
 
 void LC::c_asserterrordone() {
 	if (!g_lingo->_caughtError) {
-		warning("c_asserterrordone: did not catch error");
+		warning("BUILDBOT: c_asserterrordone: did not catch error");
 	}
 	g_lingo->_expectError = false;
 }
