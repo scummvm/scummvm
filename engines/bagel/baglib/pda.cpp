@@ -282,7 +282,6 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 		showLog();
 	}
 
-	bool bUpdate = true;
 	bool bIsMovieWaiting = isMovieWaiting();
 	bool bMoviePlaying = false;
 
@@ -300,13 +299,10 @@ ErrorCode CBagPDA::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 	} else if (_pdaMode == PDA_MOO_MODE) {
 		// If we're playing a pda movie, then make sure we continue to update.
 		bMoviePlaying = true;
-		bUpdate = true;
 	}
 
 	// If the official decree from on high has been given to update, do so!
-	if (bUpdate) {
-		errorCode = CBagStorageDevBmp::update(pBmp, pt, pr, _nMaskColor);
-	}
+	errorCode = CBagStorageDevBmp::update(pBmp, pt, pr, _nMaskColor);
 
 	// If the PDA is activating then redraw our black background
 	bool bWandAnimating = CBagCharacterObject::pdaWandAnimating();

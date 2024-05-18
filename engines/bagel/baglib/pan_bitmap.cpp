@@ -316,7 +316,7 @@ void CBagPanBitmap::setCorrWidth(int nWidth, bool bUpdate) {
 	while (nWidth >>= 1)
 		++i;
 
-	if (i >= 0 && i < 6) {
+	if (i < 6) {
 		_nCorrWidth = i;
 		if (bUpdate) {
 			generateCosineTable();
