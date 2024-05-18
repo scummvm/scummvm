@@ -920,7 +920,7 @@ void LB::b_getPos(int nargs) {
 	switch (list.type) {
 	case ARRAY: {
 		Datum d(0);
-		int index = LC::compareArrays(LC::eqData, list, val, true).u.i;
+		int index = LC::compareArrays(LC::eqDataStrict, list, val, true).u.i;
 		if (index > 0) {
 			d.u.i = index;
 		}
@@ -929,7 +929,7 @@ void LB::b_getPos(int nargs) {
 	}
 	case PARRAY: {
 		Datum d(0);
-		int index = LC::compareArrays(LC::eqData, list, val, true, true).u.i;
+		int index = LC::compareArrays(LC::eqDataStrict, list, val, true, true).u.i;
 		if (index > 0) {
 			d.u.i = index;
 		}
@@ -947,16 +947,21 @@ void LB::b_getProp(int nargs) {
 
 	switch (list.type) {
 	case ARRAY:
-		g_lingo->push(list);
-		g_lingo->push(prop);
-		b_getPos(nargs);
+		if (g_director->getVersion() < 500) {
+			// D4 allows getProp to be called on ARRAYs
+			g_lingo->push(list);
+			g_lingo->push(prop);
+			b_getAt(nargs);
+		} else {
+			g_lingo->lingoError("BUILDBOT: b_getProp: Attempted to call on an ARRAY");
+		}
 		break;
 	case PARRAY: {
 		int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
 		if (index > 0) {
 			g_lingo->push(list.u.parr->arr[index - 1].v);
 		} else {
-			error("b_getProp: Property %s not found", prop.asString().c_str());
+			g_lingo->lingoError("BUILDBOT: b_getProp: Property %s not found", prop.asString().c_str());
 		}
 		break;
 	}
@@ -2968,8 +2973,8 @@ void LB::b_updateStage(int nargs) {
 // Point
 ///////////////////
 void LB::b_point(int nargs) {
-	Datum y(g_lingo->pop().asFloat());
-	Datum x(g_lingo->pop().asFloat());
+	Datum y(g_lingo->pop().asInt());
+	Datum x(g_lingo->pop().asInt());
 	Datum d;
 
 	d.u.farr = new FArray;
