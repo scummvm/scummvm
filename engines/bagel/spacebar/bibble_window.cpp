@@ -525,7 +525,7 @@ void CBibbleWindow::onPaint(CBofRect *pRect) {
 
 		CBofRect cRect;
 
-		// Update the display of all the bet areas;
+		// Update the display of all the bet areas
 		for (int i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
 			// Add bet amount text
 			char szBuf[20];
