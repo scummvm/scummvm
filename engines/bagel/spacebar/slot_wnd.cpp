@@ -119,7 +119,10 @@ SBarSlotWnd::SBarSlotWnd() : CBagStorageDevWnd() {
 	_pWinSound = nullptr;
 	_pSlotSound = nullptr;
 	_pLoseBmp = nullptr;
-
+	_pBkgSnd = nullptr;
+	_bPaused = false;
+	_bLose = false;
+	
 	CBagStorageDevWnd::setHelpFilename(BuildSlotDir("SLOT.TXT"));
 
 	// Call this thing a closeup so that time won't go
@@ -303,18 +306,14 @@ ErrorCode SBarSlotWnd::detach() {
 	if (pVar)
 		pVar->setValue(_nCredit);
 
-	if (_pBkgSnd->isPlaying()) {
+	if (_pBkgSnd != nullptr && _pBkgSnd->isPlaying())
 		_pBkgSnd->stop();
-	}
-	if (_pBkgSnd != nullptr) {
-		delete _pBkgSnd;
-		_pBkgSnd = nullptr;
-	}
 
-	if (_pLoseBmp != nullptr) {
-		delete _pLoseBmp;
-		_pLoseBmp = nullptr;
-	}
+	delete _pBkgSnd;
+	_pBkgSnd = nullptr;
+
+	delete _pLoseBmp;
+	_pLoseBmp = nullptr;
 
 	// Destroy all buttons
 	for (int i = 0; i < NUM_SLOTBUTT; i++) {
