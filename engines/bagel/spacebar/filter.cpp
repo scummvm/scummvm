@@ -566,6 +566,9 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				BofPlaySound(cString, SOUND_WAVE | SOUND_ASYNCH);
 				CBagStorageDev *pWieldSDev = nullptr;
 				pWieldSDev = g_SDevManager->getStorageDevice("BWIELD_WLD");
+				if (pWieldSDev == nullptr)
+					CBofError::fatalError(ERR_UNKNOWN, "Unable to get storage device 'BWIELD_WLD'");
+
 				if (chipID == 1)
 					pWieldSDev->activateLocalObject("GREENCHIP");
 				else
