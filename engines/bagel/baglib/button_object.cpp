@@ -52,8 +52,9 @@ CBagButtonObject::~CBagButtonObject() {
 ErrorCode CBagButtonObject::attach() {
 	ErrorCode errorCode = CBagSpriteObject::attach();
 
-	if (getSprite()) {
-		getSprite()->setAnimated(false);
+	CBofSprite *curSprite = getSprite();
+	if (curSprite) {
+		curSprite->setAnimated(false);
 	}
 
 	if (_buttonType == BTN_VLEVER || _buttonType == BTN_HLEVER) {
@@ -61,7 +62,7 @@ ErrorCode CBagButtonObject::attach() {
 		_midPoint.y = getRect().topLeft().y + (getRect().height() / 2);
 	}
 
-	if (getSprite()->getCelCount() == 1 && _buttonType != BTN_SLIDER) {
+	if (curSprite && curSprite->getCelCount() == 1 && _buttonType != BTN_SLIDER) {
 		// Only given down state
 		setVisible(false);
 	}
@@ -464,7 +465,7 @@ void CBagButtonObject::setProperty(const CBofString &prop, int val) {
 				else
 					_activeDown = true;
 
-				if (getSprite() && (getSprite()->getCelCount() == 1)) { // Only given down state
+				if (getSprite()->getCelCount() == 1) { // Only given down state
 					setVisible(_activeDown);
 					_active = false;
 				}
