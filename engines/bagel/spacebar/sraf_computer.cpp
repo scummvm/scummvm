@@ -5232,15 +5232,15 @@ void SrafComputer::saveSraffanVars() {
 }
 
 void SrafComputer::setMeetingResult(int nFlags, int nMetWith, bool bSucceeded) {
-	if (nFlags & mSeller) {
+	if ((nFlags & mSeller) && nMetWith < NUM_SELLERS) {
 		g_stSellerNames[nMetWith]._nMeetingResult = (bSucceeded ? SRAF_GOOD_MEETING : SRAF_BAD_MEETING);
 	}
 
-	if (nFlags & mBuyer) {
+	if ((nFlags & mBuyer) && nMetWith < NUM_BUYERS) {
 		g_stBuyerBids[nMetWith]._nMeetingResult = (bSucceeded ? SRAF_GOOD_MEETING : SRAF_BAD_MEETING);
 	}
 
-	if (nFlags & mOtherParty) {
+	if ((nFlags & mOtherParty) && nMetWith < NUM_OTHER_PARTYS) {
 		g_stOtherPartys[nMetWith]._nMeetingResult = (bSucceeded ? SRAF_GOOD_MEETING : SRAF_BAD_MEETING);
 	}
 }
