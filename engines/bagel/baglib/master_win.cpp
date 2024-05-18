@@ -1591,7 +1591,7 @@ void CBagMasterWin::doRestore(StBagelSave *saveBuf) {
 		}
 	}
 	int n = strlen(closeUpBuf);
-	if (closeUpBuf[n - 1] == '~') {
+	if (n > 2 && closeUpBuf[n - 1] == '~') {
 		closeUpBuf[n - 1] = '\0';
 		closeUpBuf[n - 2] = '\0';
 	}
@@ -1821,7 +1821,7 @@ int CBagMasterWin::getCorrection() {
 void CBagMasterWin::setCorrection(int correction) {
 	assert(correction >= 0 && correction <= 32);
 
-	int actualCorr = 2;
+	int actualCorr;
 
 	switch (correction) {
 	case 0:
@@ -1850,6 +1850,10 @@ void CBagMasterWin::setCorrection(int correction) {
 
 	case 32:
 		actualCorr = 5;
+		break;
+
+	default:
+		actualCorr = DEFAULT_CORRECTION;
 		break;
 	}
 

@@ -72,12 +72,8 @@ ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CB
 
 	CBofBitmap *bitmap = nullptr;
 
-	if (bmp != nullptr) {
+	if (bmp != nullptr)
 		bitmap = new CBofBitmap(bmp, pal);
-		if (bitmap == nullptr) {
-			reportError(ERR_MEMORY, "Unable to allocate a CBofBitmap");
-		}
-	}
 
 	// Fall back to original dialog on failure
 	if (bitmap == nullptr) {
