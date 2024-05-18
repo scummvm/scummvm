@@ -93,6 +93,9 @@ void GLContext::glopEnableDisable(GLParam *p) {
 	case TGL_ALPHA_TEST:
 		alpha_test_enabled = v != 0;
 		break;
+	case TGL_POLYGON_STIPPLE:
+		polygon_stipple_enabled = v != 0;
+		break;
 	case TGL_STENCIL_TEST:
 		stencil_test_enabled = v != 0;
 		break;
@@ -199,6 +202,10 @@ void GLContext::glopPolygonMode(GLParam *p) {
 
 void GLContext::glopHint(GLParam *) {
 	// do nothing
+}
+
+void GLContext::glopPolygonStipple(GLParam *p) {
+	// do nothing?
 }
 
 void GLContext::glopPolygonOffset(GLParam *p) {
