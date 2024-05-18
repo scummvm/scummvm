@@ -43,7 +43,6 @@ private:
 	GUI::StaticTextWidget *_algorDesc;
 	GUI::RadiobuttonGroup *_algorGroup;
 	GUI::RadiobuttonWidget *_algorSpiff;
-	GUI::RadiobuttonWidget *_algorKatton;
 	GUI::CheckboxWidget *_algorRandom;
 
 	GUI::StaticTextWidget *_sizeDesc;
