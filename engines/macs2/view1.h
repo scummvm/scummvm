@@ -79,7 +79,8 @@ private:
 	};
 
 class View1 : public UIElement {
-private:
+	// TODO: Clean up private and public
+		public:
 
 	
 

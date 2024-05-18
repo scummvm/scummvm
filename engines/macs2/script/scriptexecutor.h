@@ -70,6 +70,9 @@ class Macs2Engine;
 
 			Common::MemoryReadStream * _stream;
 
+			// We use this to keep track of whether we have read all bytes we should have read
+			uint32 expectedEndLocation;
+
 			void FuncA3D2();
 
 			// void Func101D(uint16 x, uint16 y);

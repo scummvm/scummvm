@@ -377,6 +377,8 @@ void Macs2Engine::readResourceFile() {
 		}
 	}
 
+	
+
 	// Load the palette
 	_fileStream->seek(0x00248BCB);
 	_fileStream->read(_pal, 256 * 3);
@@ -574,11 +576,108 @@ Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_scriptExecutor = new Script::ScriptExecutor();
 	_scriptExecutor->_engine = this;
 	_adlib = new Adlib();
+
+	DebugMan.addDebugChannel(DEBUG_RLE, "rle", "Verbose RLE decoding log");
 }
 
 Macs2Engine::~Macs2Engine() {
 	_adlib->Deinit(); 
 
+}
+
+void Macs2Engine::changeScene(uint32 newSceneIndex) {
+	// TODO: Release old resources
+
+	// Background image
+	// [0752h] is pointing to 3000h bytes data starting at Ch + 4h in the file
+	// Addressing the background image starts at l0037_25A9
+	_fileStream->seek(0xC + 0x4 + 0xC * newSceneIndex - 0xC, SEEK_SET);
+	uint32 bgImageOffset = _fileStream->readUint32LE();
+	_fileStream->seek(bgImageOffset, SEEK_SET);
+
+	// TODO: Copy-pasted code here
+	// _bgImageShip.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+
+	uint8 *data = new uint8[0x320];
+
+	// TODO: Consider if it can be that the data is more than this. Maybe the tooling of the engine can make bad calls and
+	// try to RLE something which would be better not RLE encoded.
+
+	for (int y = 0; y < 200; y++) {
+		// TODO: Use the proper read function, it seems to be available
+		uint16 length = _fileStream->readUint16LE();
+		_fileStream->read(data, length);
+		debugC(DEBUG_RLE, "RLE: Row %.4x with %.4x bytes of data.", y, length);
+		uint16 remainingPixels = 320;
+		uint8 *dataPointer = data;
+		uint16 x = 0;
+		while (remainingPixels > 0) {
+			const uint8 &value = dataPointer[0];
+			dataPointer++;
+			if (value != 0xF0) {
+				_bgImageShip.setPixel(x, y, value);
+				remainingPixels--;
+				debugC(DEBUG_RLE, "RLE : Literal pixel % .2x, remaining row data % .4x bytes.", value, remainingPixels);
+				x++;
+			} else {
+				// We need to decode the RLE data
+				const uint8 &runlength = dataPointer[0];
+				dataPointer++;
+				const uint8 &encodedValue = dataPointer[0];
+				dataPointer++;
+				for (int i = 0; i < runlength; i++) {
+					_bgImageShip.setPixel(x++, y, encodedValue);
+				}
+				remainingPixels -= runlength;
+				debugC(DEBUG_RLE, "RLE: Encoded pixel %.2x for %.2x reps, remaining row data %.4x bytes.", encodedValue, runlength, remainingPixels);
+			}
+		}
+	}
+
+	// We load the palette right afterwards - 0x300 is exactly 3 * 256d
+	Common::Array<uint8> palette;
+	palette.reserve(0x300);
+	_fileStream->read(palette.data(), 0x300);
+
+	// TODO: Copy-pasted code here
+	// Make a copy that will not be color corrected, for fading
+	memcpy(_palVanilla, palette.data(), 256 * 3);
+	memcpy(_pal, palette.data(), 0x300);
+
+	// Adjust the palette
+	for (int i = 0; i < 256 * 3; i++) {
+		_pal[i] = (_pal[i] * 259 + 33) >> 6;
+	}
+
+	
+
+	// Refresh characters
+	View1 *currentView = (View1 *)findView("View1");
+
+	// Refresh the surface
+	currentView->_backgroundSurface = _bgImageShip;
+
+
+	currentView->characters.clear();
+	for (auto currentObject : GameObjects::instance().Objects) {
+		if (currentObject->SceneIndex == newSceneIndex) {
+			Character *c = new Character();
+			c->GameObject = currentObject;
+			c->Position = currentObject->Position;
+			currentView->characters.push_back(c);
+		}
+	}
+
+	// Load the script and execute it
+	Scenes::instance().CurrentSceneIndex = newSceneIndex;
+	Scenes::instance().CurrentSceneScript = Scenes::instance().ReadSceneScript(newSceneIndex, _fileStream);
+	Scenes::instance().CurrentSceneStrings = Scenes::instance().ReadSceneStrings(newSceneIndex, _fileStream);
+	_scriptExecutor->SetScript(Scenes::instance().CurrentSceneScript);
+
+	// Start the execution
+	_scriptExecutor->Run(true);
+
+	// TODO: Other important areas
 }
 
 bool Macs2Engine::FindGlyph(char c, GlyphData &out) const {
@@ -1055,7 +1154,11 @@ void Macs2Engine::ExecuteScript(Common::MemoryReadStream *stream) {
 	}
 }
 
-int Macs2Engine::MeasureString(Common::String& s) {
+void Macs2Engine::ScheduleRun() {
+	runScheduled = true;
+}
+
+int Macs2Engine::MeasureString(Common::String &s) {
 	int sum = 0;
 	GlyphData currentGlyph;
 	bool found = false;
@@ -1209,6 +1312,10 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 
 bool Macs2Engine::tick() {
 	_scriptExecutor->tick();
+	if (runScheduled) {
+		runScheduled = false;
+		_scriptExecutor->Run();
+	}
 	return Events::tick();
 }
 

@@ -78,6 +78,10 @@ struct BackgroundAnimation {
 	uint32 FrameIndex;
 };
 
+enum DebugFlag {
+	DEBUG_RLE = 1 << 10
+};
+
 class Macs2Engine : public Engine, public Events {
 private:
 	const ADGameDescription *_gameDescription;
@@ -105,6 +109,8 @@ protected:
 public:
 	Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc);
 	~Macs2Engine() override;
+
+	void changeScene(uint32 newSceneIndex);
 
 	Script::ScriptExecutor *_scriptExecutor;
 	struct Graphics::ManagedSurface _bgImageShip;
@@ -194,6 +200,11 @@ public:
 	void RunScriptExecutor(bool firstRun = false) {
 		_scriptExecutor->Run(firstRun);
 	}
+
+	bool runScheduled = false;
+
+	// Schedules a run of the script the next time the executor is ticked
+	void ScheduleRun();
 
 	int MeasureString(Common::String &s);
 

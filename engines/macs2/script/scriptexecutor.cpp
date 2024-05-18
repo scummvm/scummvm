@@ -57,6 +57,7 @@ inline void ScriptExecutor::FuncA3D2() {
 	// TODO: Quality is not at the level of the rest - consider
 	// rewriting from the deassembly
 	debug("-- Entering A3D2");
+	assert(expectedEndLocation == _stream->pos());
 	uint16 skipValue = 1; // [bp-4h] - TODO: Better name
 	// TODO: Figure out end condition
 	for (;;) {
@@ -93,6 +94,8 @@ inline void ScriptExecutor::FuncA3D2() {
 		}
 		// TODO: Continue here
 	}
+	// Fix up the expected location after skipping
+	expectedEndLocation = _stream->pos();
 	debug("-- Leaving A3D2");
 }
 
@@ -1063,6 +1066,8 @@ void Script::ScriptExecutor::ExecuteScript() {
 
 	// l0037_DB89:
 
+		// We use this to keep track of cases where we did not read all information as we should have
+		expectedEndLocation = _stream->pos();
 		// The loop comprises the first labels in the file
 		// l0037_DB73:
 		for (;;) {
@@ -1071,10 +1076,16 @@ void Script::ScriptExecutor::ExecuteScript() {
 			break;
 		}
 
+		// Make sure we have read all the bytes we should have read
+		// TODO: Think about if we should also check this on exiting the function,
+		// maybe we miss some cases like this
+		assert(_stream->pos() == expectedEndLocation);
+
 		// Read an opcode and length
 		byte opcode1 = ReadByte(); // [bp - 1h]
 		debug("- First block opcode: %.2x", opcode1);
 		byte length = ReadByte();  // [bp-2h]
+		expectedEndLocation += length + 2;
 
 		
 
@@ -1294,6 +1305,19 @@ void Script::ScriptExecutor::ExecuteScript() {
 			c->Position = c->GameObject->Position = Common::Point(x,y);
 			c->GameObject->SceneIndex = sceneID;
 			currentView->characters.push_back(c);
+		} else if (opcode1 == 0x0c) {
+			// This is a scene change
+			uint32 newSceneID = Func9F4D_32();
+			// No idea what these here do
+
+			Func9F4D_Placeholder();
+			Func9F4D_Placeholder();
+			g_engine->changeScene(newSceneID);
+			// TODO: Confirm that script execution is also stopped always afer this command
+			// in the game code
+			requestCallback = false;
+			g_engine->ScheduleRun();
+			return;
 		} else if (opcode1 == 0x0d) {
 			// Show a dialogue option
 			uint32 objectID = Func9F4D_32() - 0x400;
@@ -1473,6 +1497,8 @@ void Script::ScriptExecutor::ExecuteScript() {
 			
 		} else if (opcode1 == 0x3E) {
 			// TODO: Seems to have no visual difference
+			// TODO: No idea what the byte does
+			ReadByte();
 		} else if (opcode1 == 0x3F) {
 			// TODO: Not yet identified opcode.
 			// No arguments and seems to do something low-level
@@ -2722,7 +2748,9 @@ void Script::ScriptExecutor::ExecuteScript() {
 				break;
 			}
 		} while (requestCallback);
-		if (!requestCallback) {
+		// During the first call, we want to try calling again
+		// TODO: Need to see if this is really the right way to go
+		if (!IsSceneInitRun && !requestCallback) {
 			return;
 		}
 		requestCallback = false;
@@ -2773,8 +2801,8 @@ void Script::ScriptExecutor::ExecuteScript() {
 			if (g_engine->currentMillis > timerEndMillis) {
 				isTimerActive = false;
 				// TODO: Think about if this is the right way of executing it, or maybe we rather need
-				// to use RUn
-				ExecuteScript();
+				// to use Execute
+				Run();
 			}
 		}
 	}
