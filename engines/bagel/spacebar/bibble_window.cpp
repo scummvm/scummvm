@@ -224,6 +224,7 @@ CBibbleWindow::CBibbleWindow() {
 	_pShouts[0] = _pShouts[1] = _pShouts[2] = _pShouts[3] = nullptr;
 	_pArch1 = _pArch2 = _pArch3 = nullptr;
 	_pBkgSnd = nullptr;
+	_pMasterBibble = nullptr;
 
 	for (int i = 0; i < BIBBLE_NUM_BUTTONS; i++)
 		_pButtons[i] = nullptr;
