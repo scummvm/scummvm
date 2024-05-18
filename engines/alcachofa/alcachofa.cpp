@@ -31,6 +31,8 @@
 #include "engines/util.h"
 #include "graphics/paletteman.h"
 
+#include "rooms.h"
+
 namespace Alcachofa {
 
 AlcachofaEngine *g_engine;
@@ -56,6 +58,9 @@ Common::Error AlcachofaEngine::run() {
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(320, 200);
 	_screen = new Graphics::Screen();
+
+	auto world = new World();
+	delete world;
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
