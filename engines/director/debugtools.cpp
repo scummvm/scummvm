@@ -35,6 +35,7 @@
 #include "director/lingo/lingodec/codewritervisitor.h"
 #include "director/lingo/lingodec/context.h"
 #include "director/lingo/lingodec/handler.h"
+#include "director/lingo/lingodec/names.h"
 #include "director/lingo/lingodec/resolver.h"
 #include "director/lingo/lingodec/script.h"
 #include "director/cast.h"
@@ -59,10 +60,10 @@ typedef struct ImGuiImage {
 	int16 height;
 } ImGuiImage;
 
-typedef struct ImGuiScriptCode {
+typedef struct ImGuiScriptCodeLine {
 	uint32 pc;
-	Common::String code;
-} ImGuiScriptCode;
+	Common::String codeLine;
+} ImGuiScriptCodeLine;
 
 typedef struct ImGuiScript {
 	bool score = false;
@@ -71,7 +72,8 @@ typedef struct ImGuiScript {
 	Common::String handlerId;
 	Common::String handlerName;
 	Common::String moviePath;
-	Common::Array<ImGuiScriptCode> code;
+	Common::Array<ImGuiScriptCodeLine> lingoCode;
+	Common::Array<ImGuiScriptCodeLine> byteCode;
 
 	bool operator==(const ImGuiScript &c) const {
 		return moviePath == c.moviePath && score == c.score && id == c.id && type == c.type && handlerId == c.handlerId;
@@ -94,6 +96,8 @@ public:
 	}
 
 	virtual void visit(const LingoDec::HandlerNode &node) override {
+		byteCode(node);
+
 		if (node.handler->isGenericEvent) {
 			node.block->accept(*this);
 			return;
@@ -154,7 +158,7 @@ public:
 			if (!isMethod) {
 				code += "end";
 			}
-			_script.code.push_back({node.block->_endOffset, code});
+			write(node.block->_endOffset, code);
 		}
 	}
 
@@ -228,12 +232,96 @@ public:
 		write(node._startOffset, code._str);
 	}
 
+private:
+	void byteCode(const LingoDec::HandlerNode &node) {
+		LingoDec::Handler *handler = node.handler;
+		bool isMethod = handler->script->isFactory();
+
+		if (!handler->isGenericEvent) {
+			Common::String code;
+			if (isMethod) {
+				code += "method ";
+			} else {
+				code += "on ";
+			}
+			code += handler->name;
+			if (handler->argumentNames.size() > 0) {
+				code += " ";
+				for (size_t i = 0; i < handler->argumentNames.size(); i++) {
+					if (i > 0)
+						code += ", ";
+					code += handler->argumentNames[i];
+				}
+			}
+			writeByteCode(0, code);
+		}
+		for (uint i = 0; i < handler->bytecodeArray.size(); i++) {
+			LingoDec::CodeWriterVisitor code(_dot, true);
+			code.indent();
+			auto &bytecode = handler->bytecodeArray[i];
+			code.write(LingoDec::StandardNames::getOpcodeName(bytecode.opID));
+			switch (bytecode.opcode) {
+			case LingoDec::kOpJmp:
+			case LingoDec::kOpJmpIfZ:
+				code.write(" ");
+				code.write(posToString(bytecode.pos + bytecode.obj));
+				break;
+			case LingoDec::kOpEndRepeat:
+				code.write(" ");
+				code.write(posToString(bytecode.pos - bytecode.obj));
+				break;
+			case LingoDec::kOpPushFloat32:
+				code.write(" ");
+				code.write(Common::String::format("%g", (*(const float *)(&bytecode.obj))));
+				break;
+			default:
+				if (bytecode.opID > 0x40) {
+					code.write(" ");
+					code.write(Common::String::format("%d", bytecode.obj));
+				}
+				break;
+			}
+			if (bytecode.translation) {
+				code.write(" ...");
+				while (code.lineWidth() < 49) {
+					code.write(".");
+				}
+				code.write(" ");
+				if (bytecode.translation->isExpression) {
+					code.write("<");
+				}
+				bytecode.translation->accept(code);
+				if (bytecode.translation->isExpression) {
+					code.write(">");
+				}
+			}
+			writeByteCode(bytecode.pos, code._str);
+		}
+		if (!handler->isGenericEvent) {
+			if (!isMethod) {
+				writeByteCode(node._endOffset, "end");
+			}
+		}
+	}
+
 	void write(uint32 offset, const Common::String &code) {
 		Common::String s;
 		for (int i = 0; i < _indent; i++) {
 			s += "  ";
 		}
-		_script.code.push_back({offset, s + code});
+		_script.lingoCode.push_back({offset, s + code});
+	}
+
+	void writeByteCode(uint32 offset, const Common::String &code) {
+		Common::String s;
+		for (int i = 0; i < _indent; i++) {
+			s += "  ";
+		}
+		_script.byteCode.push_back({offset, s + code});
+	}
+
+	Common::String posToString(int32 pos) {
+		return Common::String::format("[%3d]", pos);
 	}
 
 private:
@@ -254,6 +342,7 @@ typedef struct ImGuiState {
 		ImGuiScript _script;
 		ImGuiTextFilter _nameFilter;
 		bool _showScript = false;
+		bool _showByteCode = false;
 	} _functions;
 	bool _showControlPanel = true;
 	bool _showCallStack = false;
@@ -716,7 +805,7 @@ static void showCast() {
 			columns = columns < 1 ? 1 : columns;
 			if (ImGui::BeginTable("Cast", columns)) {
 				for (auto it : *movie->getCasts()) {
-					Cast *cast = it._value;
+					const Cast *cast = it._value;
 					if (!cast->_loadedCast)
 						continue;
 
@@ -892,7 +981,7 @@ static void addScriptCastToDisplay(CastMemberID &id) {
 	_state->_scriptCasts.push_back(id);
 }
 
-static void setScriptToDisplay(ImGuiScript &script) {
+static void setScriptToDisplay(const ImGuiScript &script) {
 	_state->_functions._script = script;
 	_state->_functions._showScript = true;
 }
@@ -1086,7 +1175,7 @@ static void renderCastScript(Symbol &sym) {
 	}
 }
 
-static void renderScript(ImGuiScript &script) {
+static void renderScript(ImGuiScript &script, bool showByteCode) {
 	ImDrawList *dl = ImGui::GetWindowDrawList();
 
 	const ImU32 bp_color_disabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 0.0f));
@@ -1095,7 +1184,8 @@ static void renderScript(ImGuiScript &script) {
 	const ImU32 line_color = ImGui::GetColorU32(ImVec4(0.44f, 0.44f, 0.44f, 1.0f));
 	ImU32 color;
 
-	for (const auto& line : script.code) {
+	const Common::Array<ImGuiScriptCodeLine> &code = showByteCode ? script.byteCode : script.lingoCode;
+	for (const auto& line : code) {
 		ImVec2 pos = ImGui::GetCursorScreenPos();
 		const ImVec2 mid(pos.x + 7, pos.y + 7);
 		Common::String bpName = Common::String::format("%s-%d", script.handlerId.c_str(), line.pc);
@@ -1126,7 +1216,7 @@ static void renderScript(ImGuiScript &script) {
 		ImGui::SetItemTooltip("Click to add a breakpoint");
 
 		ImGui::SameLine();
-		ImGui::Text("[%5d] %s", line.pc, line.code.c_str());
+		ImGui::Text("[%5d] %s", line.pc, line.codeLine.c_str());
 	}
 }
 
@@ -1187,16 +1277,16 @@ static void displayScripts() {
 
 	if (ImGui::Begin("Script", &_state->_functions._showScript)) {
 		if (ImGui::Button("\ue025")) { // Lingo
-
+			_state->_functions._showByteCode = false;
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("\ue079")) { // Bytecode
-
+			_state->_functions._showByteCode = true;
 		}
 		ImGui::Separator();
 
 		ImGui::Text("%s", _state->_functions._script.handlerName.c_str());
-		renderScript(_state->_functions._script);
+		renderScript(_state->_functions._script, _state->_functions._showByteCode);
 	}
 	ImGui::End();
 }
