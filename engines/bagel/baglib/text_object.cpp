@@ -135,36 +135,35 @@ ErrorCode CBagTextObject::attach() {
 
 		// Allocate a new string
 		_psText = new CBofString;
-		if (_psText != nullptr) {
-			CBofFile fpTextFile(getFileName());
 
-			if (!fpTextFile.errorOccurred()) {
-				// Allocate the buffers
-				uint32 nFileLen = fpTextFile.getLength();
-				char *pTextBuff = (char *)bofCAlloc(nFileLen + 1, 1);
-				if (pTextBuff == nullptr)
-					fatalError(ERR_MEMORY, "Unable to allocate a Text buffer of %u bytes", nFileLen + 1);
+		CBofFile fpTextFile(getFileName());
 
-				// Read the text file into buffers
-				fpTextFile.read(pTextBuff, nFileLen);
-				fpTextFile.close();
+		if (!fpTextFile.errorOccurred()) {
+			// Allocate the buffers
+			uint32 nFileLen = fpTextFile.getLength();
+			char *pTextBuff = (char *)bofCAlloc(nFileLen + 1, 1);
+			if (pTextBuff == nullptr)
+				fatalError(ERR_MEMORY, "Unable to allocate a Text buffer of %u bytes", nFileLen + 1);
 
-				*_psText += pTextBuff;
+			// Read the text file into buffers
+			fpTextFile.read(pTextBuff, nFileLen);
+			fpTextFile.close();
 
-				if (_psInitInfo != nullptr) {
-					CBagVar *pVar = g_VarManager->getVariable(*_psInitInfo);
+			*_psText += pTextBuff;
 
-					if (pVar != nullptr) {
-						_bReAttach = true;
-						_psText->replaceStr("%s", pVar->getValue());
-					}
+			if (_psInitInfo != nullptr) {
+				CBagVar *pVar = g_VarManager->getVariable(*_psInitInfo);
+
+				if (pVar != nullptr) {
+					_bReAttach = true;
+					_psText->replaceStr("%s", pVar->getValue());
 				}
-
-				bofFree(pTextBuff);
-
-			} else {
-				reportError(ERR_FOPEN, "Failed to create a CBofFile for %s", getFileName().getBuffer());
 			}
+
+			bofFree(pTextBuff);
+
+		} else {
+			reportError(ERR_FOPEN, "Failed to create a CBofFile for %s", getFileName().getBuffer());
 		}
 
 		if (isCaption()) {
@@ -179,9 +178,6 @@ ErrorCode CBagTextObject::attach() {
 
 		// Allocate a new string
 		_psText = new CBofString;
-		if (_psText == nullptr)
-			fatalError(ERR_MEMORY, "Unable to allocate a CBofString");
-
 		*_psText = getFileName();
 
 		// Replace any underscores with spaces

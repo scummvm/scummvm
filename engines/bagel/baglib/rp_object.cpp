@@ -218,9 +218,7 @@ ParseCodes CBagRPObject::setInfo(CBagIfstream &istr) {
 					istr.eatWhite();
 					if ((char)istr.peek() == '(') {
 						px = new CBagExpression();
-						if (px) {
-							px->setInfo(istr);
-						}
+						px->setInfo(istr);
 					}
 
 					// add this to the correct list.
@@ -332,7 +330,7 @@ ParseCodes CBagRPObject::setInfo(CBagIfstream &istr) {
 				nObjectUpdated = true;
 
 				_pDescObj = new CBagTextObject();
-				if (_pDescObj && _pDescObj->setInfo(istr) == PARSING_DONE) {
+				if (_pDescObj->setInfo(istr) == PARSING_DONE) {
 					return PARSING_DONE;
 				}
 			} else {
@@ -479,10 +477,7 @@ void CBagRPObject::setTouchedDos(CBofString &s, CBagExpression *x) {
 		_pTouchedList = new CBofList<DossierObj *>;
 	}
 
-	assert(_pTouchedList != nullptr);
-
 	DossierObj *pDosObj = new DossierObj();
-	assert(pDosObj != nullptr);
 
 	// Just store the name for now, we'll get the pointer to the dossier in
 	// the attach code.
@@ -499,10 +494,7 @@ void CBagRPObject::setUntouchedDos(CBofString &s, CBagExpression *x) {
 		_pUntouchedList = new CBofList<DossierObj *>;
 	}
 
-	assert(_pUntouchedList != nullptr);
-
 	DossierObj *pDosObj = new DossierObj();
-	assert(pDosObj != nullptr);
 
 	// Store the expression and the dossier string.
 	pDosObj->_sDossier = s;

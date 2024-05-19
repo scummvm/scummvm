@@ -716,11 +716,10 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 			// Added a bPrevNeg to keep track of nested else-if's
 			CBagExpression *pExp = new CBagExpression(pActiveExpr, bPrevNeg);
 
-			assert(pExp != nullptr);
 			pExp->setInfo(fpInput);
 			if (!_pExpressionList)
 				_pExpressionList = new CBofList<CBagExpression * >;
-			assert(_pExpressionList != nullptr);
+
 			_pExpressionList->addToTail(pExp);
 			pActiveExpr = pExp;
 		} else if (!sWorkStr.find("ELSE")) {
@@ -971,7 +970,7 @@ ErrorCode CBagStorageDev::attach() {
 	if (!_sBackgroundName.isEmpty()) {
 		CBofBitmap *pBmp = new CBofBitmap(_sBackgroundName);
 
-		if ((pBmp != nullptr) && !pBmp->errorOccurred()) {
+		if (!pBmp->errorOccurred()) {
 			setBackground(pBmp);
 			errorCode = attachActiveObjects();
 		} else {
@@ -1181,7 +1180,7 @@ ErrorCode CBagStorageDevWnd::attach() {
 
 		CBofBitmap *pBmp  = new CBofBitmap(getBackgroundName());
 
-		if ((pBmp == nullptr) || (pBmp->height() <= 0) || (pBmp->width() <= 0)) {
+		if ((pBmp->height() <= 0) || (pBmp->width() <= 0)) {
 			reportError(ERR_FOPEN, "BarComputer Background Opened Failed");
 		} else {
 

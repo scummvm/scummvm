@@ -54,8 +54,6 @@ ErrorCode CBagSpriteObject::attach() {
 		assert(_xSprite == nullptr);
 
 		_xSprite = new CBofSprite();
-		if (_xSprite == nullptr)
-			fatalError(ERR_MEMORY, "Could not allocate sprite");
 
 		if (_xSprite->loadSprite(getFileName(), getCels()) != false && (_xSprite->width() != 0) && (_xSprite->height() != 0)) {
 			if (isTransparent()) {

@@ -47,8 +47,6 @@ ErrorCode CBagTimeObject::attach() {
 	CBofPoint p = CBagObject::getPosition();
 
 	_xDig1 = new CBofSprite();
-	if (_xDig1 == nullptr)
-		fatalError(ERR_MEMORY, "Could not allocate  Dig1 sprite");
 
 	if (_xDig1->loadSprite(getFileName(), getCels()) != 0 && (_xDig1->width() != 0) && (_xDig1->height() != 0)) {
 		_xDig1->setAnimated(false);
@@ -61,8 +59,6 @@ ErrorCode CBagTimeObject::attach() {
 	}
 
 	_xDig2 = new CBofSprite();
-	if (_xDig2 == nullptr)
-		fatalError(ERR_MEMORY, "Could not allocate  Dig2 sprite");
 
 	if (_xDig2->loadSprite(getFileName(), getCels()) != 0 && (_xDig2->width() != 0) && (_xDig2->height() != 0)) {
 		_xDig2->setAnimated(false);
@@ -73,8 +69,6 @@ ErrorCode CBagTimeObject::attach() {
 	}
 
 	_xColon = new CBofSprite();
-	if (_xColon == nullptr)
-		fatalError(ERR_MEMORY, "Could not allocate  Colon sprite");
 
 	if (_xColon->loadSprite(getFileName(), getCels()) != 0 && (_xColon->width() != 0) && (_xColon->height() != 0)) {
 		_xColon->setAnimated(false);
@@ -88,8 +82,6 @@ ErrorCode CBagTimeObject::attach() {
 	}
 
 	_xDig3 = new CBofSprite();
-	if (_xDig3 == nullptr)
-		fatalError(ERR_MEMORY, "Could not allocate  Dig3 sprite");
 
 	if (_xDig3->loadSprite(getFileName(), getCels()) != 0 && (_xDig3->width() != 0) && (_xDig3->height() != 0)) {
 		_xDig3->setAnimated(false);
@@ -100,8 +92,6 @@ ErrorCode CBagTimeObject::attach() {
 	}
 
 	_xDig4 = new CBofSprite();
-	if (_xDig4 == nullptr)
-		fatalError(ERR_MEMORY, "Could not allocate  Dig4 sprite");
 
 	if (_xDig4->loadSprite(getFileName(), getCels()) != 0 && (_xDig4->width() != 0) && (_xDig4->height() != 0)) {
 		_xDig4->setAnimated(false);

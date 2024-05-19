@@ -69,13 +69,8 @@ ErrorCode CBagSoundObject::newSound(CBofWindow *pWin) {
 	killSound();
 
 	_pSound = new CBofSound(pWin, getFileName(), _wFlags, _nLoops);
-	if (_pSound != nullptr) {
-		_pSound->setVolume(_nVol);
-		_pSound->setQSlot(getState());
-
-	} else {
-		errorCode = ERR_MEMORY;
-	}
+	_pSound->setVolume(_nVol);
+	_pSound->setQSlot(getState());
 
 	return errorCode;
 }
