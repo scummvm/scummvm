@@ -693,33 +693,6 @@ void CBofSprite::setPosition(int x, int y) {
 }
 
 
-bool CBofSprite::cropImage(CBofWindow *pWnd, CBofRect *pRect, bool bUpdateNow) {
-	assert(isValidObject(this));
-	assert(pWnd != nullptr);
-	assert(pRect != nullptr);
-	assert(_pImage != nullptr);
-
-	if (_nMaskColor != NOT_TRANSPARENT) {
-
-		CBofRect myRect = *pRect; // Offset crop area by image rect
-		myRect.left += _cImageRect.left;
-		myRect.right += _cImageRect.left;
-		CBofRect cDestRect = myRect + _cPosition;
-
-		_pImage->fillRect(&myRect, (byte)_nMaskColor);
-
-		if (bUpdateNow) {
-			CBofBitmap *pBackdrop = pWnd->getBackdrop();
-			if (pBackdrop != nullptr) {
-				pBackdrop->paint(pWnd, &cDestRect, &myRect);
-			}
-		}
-	}
-
-	return true;
-}
-
-
 void CBofSprite::clearImage() {
 	assert(isValidObject(this));
 

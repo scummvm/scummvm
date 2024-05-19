@@ -77,8 +77,6 @@ public:
 	void nextCel();
 	void prevCel();
 
-	bool cropImage(CBofWindow *pWnd, CBofRect *pRect, bool bUpdateNow = true);
-
 	bool refreshSprite(CBofBitmap *pBmp) {
 		return paintSprite(pBmp, _cPosition.x, _cPosition.y);
 	}
