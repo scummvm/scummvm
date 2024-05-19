@@ -103,15 +103,21 @@ class DragonGlobals : public Globals {
 public:
 	DragonGlobals(Clock &clock);
 
+	int16 getGameMinsToAddOnLClick() const { return _gameMinsToAddOnLClick; }
+	int16 getGameMinsToAddOnStartDrag() const { return _gameMinsToAddOnStartDrag; }
+	int16 getGameMinsToAddOnRClick() const { return _gameMinsToAddOnRClick; }
+	int16 getGameMinsToAddOnDragFinished() const { return _gameMinsToAddOnDragFinished; }
+	int16 getGameMinsToAddOnObjInteraction() const { return _gameMinsToAddOnObjInteraction; }
+
 private:
 	int16 _lastOpcode1SceneChageNum;
 	int16 _sceneOp12SceneNum;
 	int16 _currentSelectedItem;
-	int16 _gameMinsToAdd_1;
-	int16 _gameMinsToAdd_2;
-	int16 _gameMinsToAdd_3;
-	int16 _gameMinsToAdd_4;
-	int16 _gameMinsToAdd_5;
+	int16 _gameMinsToAddOnLClick;
+	int16 _gameMinsToAddOnStartDrag;
+	int16 _gameMinsToAddOnRClick;
+	int16 _gameMinsToAddOnDragFinished;
+	int16 _gameMinsToAddOnObjInteraction;
 	int16 _gameGlobal0x57;
 	int16 _sceneOpcode15FromScene;
 	int16 _sceneOpcode15ToScene;

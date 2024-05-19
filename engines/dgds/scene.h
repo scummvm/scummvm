@@ -186,7 +186,7 @@ public:
 	void mouseMoved(const Common::Point pt);
 	void mouseClicked(const Common::Point pt);
 
-	bool runOps(const Common::Array<SceneOp> &ops);
+	bool runOps(const Common::Array<SceneOp> &ops, int16 addMinutes = 0);
 	virtual Common::Error syncState(Common::Serializer &s) = 0;
 
 protected:

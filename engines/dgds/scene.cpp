@@ -485,12 +485,16 @@ void Scene::segmentStateOps(const Common::Array<uint16> &args) {
 	}
 }
 
-bool Scene::runOps(const Common::Array<SceneOp> &ops) {
+bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 */) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	for (const SceneOp &op : ops) {
 		if (!checkConditions(op._conditionList))
 			continue;
 		debug(10, "Exec %s", op.dump("").c_str());
+		if (addMinuites) {
+			engine->getClock().addGameTime(addMinuites);
+			addMinuites = 0;
+		}
 		switch(op._opCode) {
 		case kSceneOpChangeScene:
 			if (engine->changeScene(op._args[0]))
@@ -984,7 +988,8 @@ void SDSScene::mouseLDown(const Common::Point &pt) {
 			area->rect.width, area->rect.height, area->_cursorNum);
 
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	runOps(area->onLDownOps);
+	int16 addmins = static_cast<DragonGlobals *>(engine->getGameGlobals())->getGameMinsToAddOnStartDrag();
+	runOps(area->onLDownOps, addmins);
 	GameItem *item = dynamic_cast<GameItem *>(area);
 	if (item) {
 		_dragItem = item;
@@ -1019,7 +1024,8 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 		static_cast<DgdsEngine *>(g_engine)->getInventory()->open();
 	} else {
 		debug(" --> exec %d click ops for area %d", area->onLClickOps.size(), area->_num);
-		runOps(area->onLClickOps);
+		int16 addmins = static_cast<DragonGlobals *>(engine->getGameGlobals())->getGameMinsToAddOnLClick();
+		runOps(area->onLClickOps, addmins);
 	}
 }
 
@@ -1037,9 +1043,11 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 	GameItem *dragItem = _dragItem;
 	_dragItem = nullptr;
 
-	runOps(dragItem->onDragFinishedOps);
-
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	const DragonGlobals *globals = static_cast<DragonGlobals *>(engine->getGameGlobals());
+
+	runOps(dragItem->onDragFinishedOps, globals->getGameMinsToAddOnDragFinished());
+
 	engine->setMouseCursor(0);
 
 	// TODO: Both these loops are very similar.. there should be a cleaner way.
@@ -1050,7 +1058,7 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 			for (const auto &i : engine->getGDSScene()->getObjInteractions2()) {
 				if (i._droppedItemNum == dragItem->_num && i._targetItemNum == item._num) {
 					debug(" --> exec item %d drag ops", i.opList.size());
-					if (!runOps(i.opList))
+					if (!runOps(i.opList, globals->getGameMinsToAddOnObjInteraction()))
 						return;
 					break;
 				}
@@ -1070,7 +1078,7 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 			for (const auto &i : engine->getScene()->getObjInteractions1()) {
 				if (i._droppedItemNum == dragItem->_num && i._targetItemNum == area._num) {
 					debug(" --> exec area %d drag ops", i.opList.size());
-					if (!runOps(i.opList))
+					if (!runOps(i.opList, globals->getGameMinsToAddOnObjInteraction()))
 						return;
 					break;
 				}
@@ -1092,7 +1100,10 @@ void SDSScene::mouseRUp(const Common::Point &pt) {
 	const HotArea *area = findAreaUnderMouse(pt);
 	if (!area)
 		return;
-	runOps(area->onRClickOps);
+
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	int16 addmins = static_cast<DragonGlobals *>(engine->getGameGlobals())->getGameMinsToAddOnLClick();
+	runOps(area->onRClickOps, addmins);
 }
 
 Dialog *SDSScene::getVisibleDialog() {

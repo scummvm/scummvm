@@ -115,8 +115,8 @@ private:
 
 DragonGlobals::DragonGlobals(Clock &_clock) : Globals(),
 _lastOpcode1SceneChageNum(0), _sceneOp12SceneNum(0), _currentSelectedItem(0),
-_gameMinsToAdd_1(0), _gameMinsToAdd_2(0), _gameMinsToAdd_3(0), _gameMinsToAdd_4(0),
-_gameMinsToAdd_5(0), _gameGlobal0x57(0), _sceneOpcode15FromScene(0),
+_gameMinsToAddOnLClick(0), _gameMinsToAddOnStartDrag(0), _gameMinsToAddOnRClick(0), _gameMinsToAddOnDragFinished(0),
+_gameMinsToAddOnObjInteraction(0), _gameGlobal0x57(0), _sceneOpcode15FromScene(0),
 _sceneOpcode15ToScene(0), _sceneOpcode100Var(0), _arcadeModeFlag_3cdc(0),
 _opcode106EndMinutes(0) {
 	_globals.push_back(_clock.getGameMinsAddedGlobal(1));
@@ -128,11 +128,11 @@ _opcode106EndMinutes(0) {
 	_globals.push_back(_clock.getDaysGlobal(0x5F));
 	_globals.push_back(_clock.getHoursGlobal(0x5E));
 	_globals.push_back(_clock.getMinsGlobal(0x5D));
-	_globals.push_back(new RWI16Global(0x5C, &_gameMinsToAdd_1));
-	_globals.push_back(new RWI16Global(0x5B, &_gameMinsToAdd_2));
-	_globals.push_back(new RWI16Global(0x5A, &_gameMinsToAdd_3));
-	_globals.push_back(new RWI16Global(0x59, &_gameMinsToAdd_4));
-	_globals.push_back(new RWI16Global(0x58, &_gameMinsToAdd_5));
+	_globals.push_back(new RWI16Global(0x5C, &_gameMinsToAddOnLClick));
+	_globals.push_back(new RWI16Global(0x5B, &_gameMinsToAddOnStartDrag));
+	_globals.push_back(new RWI16Global(0x5A, &_gameMinsToAddOnRClick));
+	_globals.push_back(new RWI16Global(0x59, &_gameMinsToAddOnDragFinished));
+	_globals.push_back(new RWI16Global(0x58, &_gameMinsToAddOnObjInteraction));
 	_globals.push_back(new RWI16Global(0x57, &_gameGlobal0x57)); // TODO: Function to get/set 1f1a:4ec1
 	_globals.push_back(_clock.getDays2Global(0x56));
 	_globals.push_back(new RWI16Global(0x55, &_sceneOpcode15FromScene));
@@ -151,11 +151,11 @@ Common::Error DragonGlobals::syncState(Common::Serializer &s) {
 	s.syncAsSint16LE(_lastOpcode1SceneChageNum);
 	s.syncAsSint16LE(_sceneOp12SceneNum);
 	s.syncAsSint16LE(_currentSelectedItem);
-	s.syncAsSint16LE(_gameMinsToAdd_1);
-	s.syncAsSint16LE(_gameMinsToAdd_2);
-	s.syncAsSint16LE(_gameMinsToAdd_3);
-	s.syncAsSint16LE(_gameMinsToAdd_4);
-	s.syncAsSint16LE(_gameMinsToAdd_5);
+	s.syncAsSint16LE(_gameMinsToAddOnLClick);
+	s.syncAsSint16LE(_gameMinsToAddOnStartDrag);
+	s.syncAsSint16LE(_gameMinsToAddOnRClick);
+	s.syncAsSint16LE(_gameMinsToAddOnDragFinished);
+	s.syncAsSint16LE(_gameMinsToAddOnObjInteraction);
 	s.syncAsSint16LE(_gameGlobal0x57);
 	s.syncAsSint16LE(_sceneOpcode15FromScene);
 	s.syncAsSint16LE(_sceneOpcode15ToScene);
