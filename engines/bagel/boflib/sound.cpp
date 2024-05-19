@@ -643,14 +643,11 @@ bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot) {
 		CBofSound::stopWaveSounds();
 
 		CBofSound *pSound = new CBofSound(pWnd, pszSoundFile, (uint16)nFlags);
-		if (pSound != nullptr) {
-			if ((nFlags & SOUND_QUEUE) == SOUND_QUEUE) {
-				pSound->setQSlot(iQSlot);
-			}
-
-			bSuccess = pSound->play();
+		if ((nFlags & SOUND_QUEUE) == SOUND_QUEUE) {
+			pSound->setQSlot(iQSlot);
 		}
 
+		bSuccess = pSound->play();
 	} else {
 		bSuccess = true;
 		CBofSound::stopWaveSounds();
@@ -683,19 +680,17 @@ bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot, bool bW
 		CBofSound::audioTask();
 
 		CBofSound *pSound = new CBofSound(pWnd, pszSoundFile, (uint16)nFlags);
-		if (pSound != nullptr) {
-			if ((nFlags & SOUND_QUEUE) == SOUND_QUEUE) {
-				pSound->setQSlot(iQSlot);
-			}
+		if ((nFlags & SOUND_QUEUE) == SOUND_QUEUE) {
+			pSound->setQSlot(iQSlot);
+		}
 
-			bSuccess = pSound->play();
+		bSuccess = pSound->play();
 
-			if (bWait) {
-				while (pSound->isPlaying()) {
-					CBofSound::audioTask();
-				}
-				delete pSound;
+		if (bWait) {
+			while (pSound->isPlaying()) {
+				CBofSound::audioTask();
 			}
+			delete pSound;
 		}
 	}
 

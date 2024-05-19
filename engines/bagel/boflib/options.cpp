@@ -85,16 +85,10 @@ ErrorCode CBofOptions::load() {
 
 		while (readLine(&f, szBuf)) {
 			COption *pNewOption = new COption(szBuf);
-			if (pNewOption != nullptr) {
-				if (_pOptionList != nullptr) {
-					_pOptionList->addToTail(pNewOption);
-				} else {
-					_pOptionList = pNewOption;
-				}
-
+			if (_pOptionList != nullptr) {
+				_pOptionList->addToTail(pNewOption);
 			} else {
-				errorCode = ERR_MEMORY;
-				break;
+				_pOptionList = pNewOption;
 			}
 		}
 
@@ -173,8 +167,6 @@ ErrorCode CBofOptions::writeSetting(const char *pszSection, const char *pszVar, 
 			Common::sprintf_s(szSectionBuf, "[%s]", pszSection);
 
 			pSection = new COption(szSectionBuf);
-			if (pSection == nullptr)
-				CBofError::fatalError(ERR_MEMORY, "Unable to instantiate a new COption");
 
 			if (_pOptionList != nullptr) {
 				_pOptionList->addToTail(pSection);
@@ -185,10 +177,6 @@ ErrorCode CBofOptions::writeSetting(const char *pszSection, const char *pszVar, 
 
 		// Add this option to the specified section
 		pOption = new COption(szValueBuf);
-		if (pOption == nullptr)
-			CBofError::fatalError(ERR_MEMORY, "Unable to instantiate a new COption");
-
-		assert(pSection != nullptr);
 		pSection->Insert(pOption);
 	}
 

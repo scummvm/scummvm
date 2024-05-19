@@ -243,8 +243,6 @@ ErrorCode CBofDataFile::readHeader() {
 					if (_lHeaderLength != 0) {
 						// Allocate buffer to hold header
 						_pHeader = new HeaderRec[(int)_lNumRecs];
-						if (_pHeader == nullptr)
-							fatalError(ERR_MEMORY, buildString("Could not allocate footer for file '%s'", _szFileName));
 
 						// Seek to start of header
 						seek(_lHeaderStart);
@@ -652,8 +650,6 @@ ErrorCode CBofDataFile::addRecord(void *pBuf, int32 lLength, bool bUpdateHeader,
 				_lNumRecs++;
 
 				HeaderRec *pTmpHeader = new HeaderRec[(int)_lNumRecs];
-				if (pTmpHeader == nullptr)
-					fatalError(ERR_MEMORY, "Could not allocate a data file header");
 
 				for (int i = 0; i < _lNumRecs; ++i) {
 					pTmpHeader[i]._lOffset = pTmpHeader[i]._lLength = 0;

@@ -66,9 +66,7 @@ void CBofApp::StartupCode() {
 
 	// Open the Boffo debug options file (BOFFO.INI)
 	g_pDebugOptions = new CBofDebugOptions(DEBUG_INI);
-	if (g_pDebugOptions != nullptr) {
-		g_pDebugOptions->readSetting("DebugOptions", "MainLoops", &_nIterations, DEFAULT_MAINLOOPS);
-	}
+	g_pDebugOptions->readSetting("DebugOptions", "MainLoops", &_nIterations, DEFAULT_MAINLOOPS);
 
 	//
 	// Initialize the boffo libraries
@@ -102,10 +100,8 @@ void CBofApp::ShutDownCode() {
 ErrorCode CBofApp::preInit() {
 	if ((_pPalette == nullptr) && (_pDefPalette == nullptr)) {
 		_pDefPalette = new CBofPalette();
-		if (_pDefPalette != nullptr) {
-			_pDefPalette->createDefault();
-			setPalette(_pDefPalette);
-		}
+		_pDefPalette->createDefault();
+		setPalette(_pDefPalette);
 	}
 
 	return _errCode;

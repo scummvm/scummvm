@@ -70,15 +70,13 @@ void CQueue::addItem(void *pObject) {
 	assert(isValidObject(this));
 
 	CLList *pNewItem = new CLList(pObject);
-	if (pNewItem != nullptr) {
-		if (_pQueueList != nullptr) {
-			_pQueueList->addToTail(pNewItem);
-		} else {
-			_pQueueList = pNewItem;
-		}
-
-		assert(pNewItem->getHead() == _pQueueList);
+	if (_pQueueList != nullptr) {
+		_pQueueList->addToTail(pNewItem);
+	} else {
+		_pQueueList = pNewItem;
 	}
+
+	assert(pNewItem->getHead() == _pQueueList);
 }
 
 void *CQueue::removeItem() {

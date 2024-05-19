@@ -117,8 +117,6 @@ ErrorCode CBofStringTable::buildTable() {
 		pBuf++;
 
 		CResString *pString = new CResString(nId, (const char *)pBuf);
-		if (pString == nullptr)
-			fatalError(ERR_MEMORY, "Unable to allocate a CResString");
 
 		// Add this string to the table
 		if (_pStringTable == nullptr) {
