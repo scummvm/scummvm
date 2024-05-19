@@ -175,6 +175,8 @@ public:
 
 	void ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::String> &strings, const Common::Point &position, bool onRightSide = false);
 
+	void ShowDialogueChoice(const Common::Array<Common::StringArray> &choices, const Common::Point &position, bool onRightSide = false);
+
 
 	uint16 GetHitObjectID(const Common::Point &pos) const;
 };

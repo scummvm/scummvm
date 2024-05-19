@@ -662,6 +662,9 @@ void View1::ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 	}
 }
 
+void View1::ShowDialogueChoice(const Common::Array<Common::StringArray> &choices, const Common::Point &position, bool onRightSide) {
+}
+
 uint16 View1::GetHitObjectID(const Common::Point& pos) const {
 	// TODO: Naive implementation for now
 	for (auto currentCharacter : characters) {

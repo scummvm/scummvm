@@ -1359,8 +1359,29 @@ void Script::ScriptExecutor::ExecuteScript() {
 
 		} else if (opcode1 == 0x15) {
 			// Mark that we are gathering strings for setting up a dialogue choice
+			DialogueChoices.clear();
 
-	
+		} else if (opcode1 == 0x16) {
+			// Add a dialogue choice
+			uint16 index = Func9F4D_16();
+			// We don't save the index, instead we make sure that we add them in the right
+			// order and use the array to keep track
+			assert(index - 1 == DialogueChoices.size());
+			uint16 offset = Func9F4D_16();
+			uint16 numLines = Func9F4D_16();
+			Common::StringArray lines = _engine->DecodeStrings(_engine->_stringsStream, offset, numLines);
+			DialogueChoices.push_back(lines);
+		} else if (opcode1 == 0x17) {
+			// Finish the dialogue choice
+
+			View1 *currentView = (View1 *)_engine->findView("View1");
+			uint32 x = Func9F4D_32();
+			uint32 y = Func9F4D_32();
+			uint16 side = Func9F4D_16();
+			currentView->ShowDialogueOption(DialogueChoices, Common::Point(x, y), side);
+
+			requestCallback = false;
+			return;
 		} else if (opcode1 == 0x18) {
 			// Set the stream to the end and let the calling code figure out that we are done
 			// for this run
