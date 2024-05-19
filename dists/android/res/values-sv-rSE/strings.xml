@@ -1,9 +1,14 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="app_name">Avsluta ScummVM</string>
   <string name="ok">OK</string>
   <string name="quit">Avsluta</string>
+  <string name="no_save_path_title">Sparsökväg:</string>
+  <string name="no_icons_path_title">Ikon sökväg:</string>
+  <string name="keyboard_toggle_btn_desc">Virtuellt tangentbord</string>
   <string name="customkeyboardview_keycode_alt">Alt</string>
   <string name="customkeyboardview_keycode_cancel">Avbryt</string>
   <string name="customkeyboardview_keycode_delete">Radera</string>
   <string name="customkeyboardview_keycode_enter">Enter</string>
+  <string name="customkeyboardview_popup_close">Stäng</string>
 </resources>

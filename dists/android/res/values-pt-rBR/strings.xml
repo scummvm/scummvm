@@ -1,10 +1,25 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="app_name">ScummVM</string>
+  <string name="app_desc">Engine de jogos de aventura</string>
   <string name="ok">OK</string>
   <string name="quit">Sair</string>
+  <string name="no_config_file_title">Erro no Arquivo de Configuração</string>
+  <string name="no_config_file">Não foi possível ler o arquivo de configuração do ScummVM ou criar um novo!</string>
+  <string name="no_save_path_title">Erro na Pasta de Jogo Salvo</string>
+  <string name="no_save_path_configured">Não foi possível criar ou acessar o caminho de salvamento padrão!</string>
+  <string name="no_icons_path_title">Erro na Pasta de Ícones</string>
+  <string name="no_icons_path_configured">Não foi possível criar ou acessar o caminho padrão de ícones e shaders!</string>
+  <string name="bad_explicit_save_path_configured">Não foi possível acessar o caminho de salvamento definido globalmente! Por favor, reverta para o padrão nas Opções do ScummVM</string>
+  <string name="keyboard_toggle_btn_desc">Alternar teclado virtual</string>
   <string name="customkeyboardview_keycode_alt">Alt</string>
   <string name="customkeyboardview_keycode_cancel">Cancelar</string>
   <string name="customkeyboardview_keycode_delete">Excluir</string>
+  <string name="customkeyboardview_keycode_done">Concluir</string>
+  <string name="customkeyboardview_keycode_mode_change">Alternar modo</string>
   <string name="customkeyboardview_keycode_shift">Shift</string>
   <string name="customkeyboardview_keycode_enter">Enter</string>
+  <string name="customkeyboardview_popup_close">Fechar caixa de diálogo</string>
+  <string name="saf_request_prompt">Selecione a *raiz* do seu cartão SD externo (físico). Isso é necessário para o ScummVM acessar este caminho: </string>
+  <string name="saf_revoke_done">As permissões do Framework de Acesso ao Armazenamento para ScummVM foram revogadas!</string>
 </resources>

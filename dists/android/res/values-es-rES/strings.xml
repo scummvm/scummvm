@@ -1,10 +1,25 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="app_name">ScummVM</string>
+  <string name="app_desc">Motor de aventuras gráficas</string>
   <string name="ok">Aceptar</string>
   <string name="quit">Salir</string>
+  <string name="no_config_file_title">Error en el archivo de configuración</string>
+  <string name="no_config_file">¡No se ha podido leer o crear el archivo de configuración de ScummVM!</string>
+  <string name="no_save_path_title">Error de la ruta de partidas guardadas</string>
+  <string name="no_save_path_configured">¡No se ha podido crear o acceder a la ruta predeterminada de partidas guardadas!</string>
+  <string name="no_icons_path_title">Error de la ruta de iconos</string>
+  <string name="no_icons_path_configured">¡No se ha podido crear o acceder a la ruta predeterminada de iconos y shaders!</string>
+  <string name="bad_explicit_save_path_configured">¡No se ha podido acceder a la ruta global de partidas guardadas! Cámbiala a la predeterminada dentro de las opciones de ScummVM</string>
+  <string name="keyboard_toggle_btn_desc">Alternar teclado virtual</string>
   <string name="customkeyboardview_keycode_alt">Alt</string>
   <string name="customkeyboardview_keycode_cancel">Cancelar</string>
   <string name="customkeyboardview_keycode_delete">Eliminar</string>
+  <string name="customkeyboardview_keycode_done">Terminar</string>
+  <string name="customkeyboardview_keycode_mode_change">Cambiar modo</string>
   <string name="customkeyboardview_keycode_shift">Mayúsculas</string>
   <string name="customkeyboardview_keycode_enter">Enter</string>
+  <string name="customkeyboardview_popup_close">Cerrar ventana</string>
+  <string name="saf_request_prompt">Selecciona la *raíz* de tu tarjeta SD externa (física). Debes indicarla para que ScummVM pueda acceder a la siguiente ruta: </string>
+  <string name="saf_revoke_done">¡Se han revocado los permisos del framework de acceso al almacenamiento para ScummVM!</string>
 </resources>

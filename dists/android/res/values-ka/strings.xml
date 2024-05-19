@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="app_name">ScummVM</string>
+  <string name="ok">დიახ</string>
+  <string name="quit">გასვლა</string>
+  <string name="no_config_file_title">კონფიგურაციის ფაილის სეცდომა</string>
+  <string name="no_save_path_title">ბილიკის შენახვის შეცდომა</string>
+  <string name="no_icons_path_title">ხატულების ბილიკის შეცდომა</string>
+  <string name="keyboard_toggle_btn_desc">ვირტუალური კლავიატურის გადართვა</string>
+  <string name="customkeyboardview_keycode_alt">Alt</string>
+  <string name="customkeyboardview_keycode_cancel">გაუქმება</string>
+  <string name="customkeyboardview_keycode_delete">წაშლა</string>
+  <string name="customkeyboardview_keycode_done">დასრულდა</string>
+  <string name="customkeyboardview_keycode_mode_change">რეჟიმის შეცვლა</string>
+  <string name="customkeyboardview_keycode_shift">Shift</string>
+  <string name="customkeyboardview_keycode_enter">Enter</string>
+  <string name="customkeyboardview_popup_close">მხტუნარას დახურვა</string>
+</resources>

@@ -1,8 +1,13 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="app_name">Sair do ScummVM</string>
   <string name="ok">OK</string>
   <string name="quit">Sair</string>
+  <string name="no_save_path_title">Jogos Guardados:</string>
+  <string name="no_icons_path_title">Ícones:</string>
+  <string name="keyboard_toggle_btn_desc">Teclado virtual</string>
   <string name="customkeyboardview_keycode_cancel">Cancelar</string>
   <string name="customkeyboardview_keycode_delete">Eliminar</string>
   <string name="customkeyboardview_keycode_enter">Centrado</string>
+  <string name="customkeyboardview_popup_close">Fechar</string>
 </resources>

@@ -1,10 +1,23 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="app_name">ScummVM</string>
+  <string name="app_desc">Grafikus kalandjáték motor</string>
   <string name="ok">OK</string>
   <string name="quit">Kilépés</string>
+  <string name="no_config_file_title">Konfigurációs fájl hiba</string>
+  <string name="no_config_file">Nem lehet olvasni a ScummVM konfigurációs fájlt, vagy nem lehet újat létrehozni!</string>
+  <string name="no_save_path_title">Mentési útvonal hiba</string>
+  <string name="no_save_path_configured">Nem lehet létrehozni vagy elérni az alapértelmezett mentési útvonalat!</string>
+  <string name="no_icons_path_title">Ikon útvonal hiba</string>
+  <string name="no_icons_path_configured">Nem lehet létrehozni vagy elérni az alapértelmezett ikonokat és árnyékolók elérési útját!</string>
+  <string name="bad_explicit_save_path_configured">Nem érhető el a globálisan beállított mentési útvonal! Kérjük, állítsa vissza az alapértelmezett beállításokat a ScummVM beállítások közül</string>
+  <string name="keyboard_toggle_btn_desc">Virtuális billentyűzet váltása</string>
   <string name="customkeyboardview_keycode_alt">Alt</string>
   <string name="customkeyboardview_keycode_cancel">Mégse</string>
   <string name="customkeyboardview_keycode_delete">Töröl</string>
+  <string name="customkeyboardview_keycode_done">Kész</string>
+  <string name="customkeyboardview_keycode_mode_change">Mód csere</string>
   <string name="customkeyboardview_keycode_shift">Shift</string>
   <string name="customkeyboardview_keycode_enter">Enter</string>
+  <string name="customkeyboardview_popup_close">Felugró ablak bezárása</string>
 </resources>

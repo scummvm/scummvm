@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="app_name">ScummVM बंद करें</string>
+  <string name="ok">ठीक है</string>
+  <string name="quit">अंत करे</string>
+  <string name="no_save_path_title">सेव पाथ:</string>
+  <string name="customkeyboardview_keycode_cancel">रद्द करें</string>
+  <string name="customkeyboardview_popup_close">बंद करें</string>
+</resources>

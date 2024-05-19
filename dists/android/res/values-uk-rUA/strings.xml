@@ -1,10 +1,25 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="app_name">ScummVM</string>
+  <string name="app_desc">Движок графічних квестів</string>
   <string name="ok">OK</string>
   <string name="quit">Вихід</string>
+  <string name="no_config_file_title">Помилка файла конфігурації</string>
+  <string name="no_config_file">Не вдалося прочитати файл конфігурації ScummVM або створити новий!</string>
+  <string name="no_save_path_title">Помилка шляху зберігання</string>
+  <string name="no_save_path_configured">Не вдалося створити або дістатися до шляху збереження ігор!</string>
+  <string name="no_icons_path_title">Помилка шляху іконок</string>
+  <string name="no_icons_path_configured">Не вдалося створити або дістатися до шляху іконок та шейдерів!</string>
+  <string name="bad_explicit_save_path_configured">Не вдалося дістатися до глобального шляху збереження ігор! Будь-ласка, поверніться до значень за замовченням в Налаштуваннях ScummVM</string>
+  <string name="keyboard_toggle_btn_desc">Перемикнути віртуальну клавіатуру</string>
   <string name="customkeyboardview_keycode_alt">Alt</string>
   <string name="customkeyboardview_keycode_cancel">Відміна</string>
   <string name="customkeyboardview_keycode_delete">Видалити</string>
+  <string name="customkeyboardview_keycode_done">Готове</string>
+  <string name="customkeyboardview_keycode_mode_change">Змінити режим</string>
   <string name="customkeyboardview_keycode_shift">Shift</string>
   <string name="customkeyboardview_keycode_enter">Enter</string>
+  <string name="customkeyboardview_popup_close">Закрити вискакуючий список</string>
+  <string name="saf_request_prompt">Будь-ласка, оберіть папку *root* (корень) у вашій зовнішній (фізичній) SD-картці. Це необхідно, щоб ScummVM міг дістатися цієї папки: </string>
+  <string name="saf_revoke_done">Дозвіл доступу ScummVM до Storage Access Framework було вилучено!</string>
 </resources>

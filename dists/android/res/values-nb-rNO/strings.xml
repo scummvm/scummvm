@@ -1,10 +1,25 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="app_name">ScummVM</string>
+  <string name="app_desc">Spillmotor for grafikkbaserte eventyr</string>
   <string name="ok">OK</string>
   <string name="quit">Avslutt</string>
+  <string name="no_config_file_title">Feil i konfigurasjonsfil</string>
+  <string name="no_config_file">Lesning eller opprettelse av ScummVM konfigurasjonsfil feilet!</string>
+  <string name="no_save_path_title">Feil i lagringsfilbane</string>
+  <string name="no_save_path_configured">Åpning eller opprettelse av standard lagringsfilbane feilet!</string>
+  <string name="no_icons_path_title">Feil i filbane til ikoner</string>
+  <string name="no_icons_path_configured">Åpning eller opprettelse av standard ikon- og shaders-filbane feilet!</string>
+  <string name="bad_explicit_save_path_configured">Åpning eller opprettelse av den globalt definerte lagringsfilbanen feilet. Vennligst gå tilbake til standard i ScummVM instillinger</string>
+  <string name="keyboard_toggle_btn_desc">Aktiver virtuelt tastatur</string>
   <string name="customkeyboardview_keycode_alt">Alt</string>
   <string name="customkeyboardview_keycode_cancel">Avbryt</string>
   <string name="customkeyboardview_keycode_delete">Slett</string>
+  <string name="customkeyboardview_keycode_done">Klar</string>
+  <string name="customkeyboardview_keycode_mode_change">Modusvalg</string>
   <string name="customkeyboardview_keycode_shift">Shift</string>
   <string name="customkeyboardview_keycode_enter">Enter</string>
+  <string name="customkeyboardview_popup_close">Lukk popup</string>
+  <string name="saf_request_prompt">Vennligst velg rotnivå for ditt eksterne (fysiske) SD-kort. Dette er nødvendig for at ScummVM får tillgang til denne filbanen: </string>
+  <string name="saf_revoke_done">Storage Access Framework Permissions for ScummVM ble opphevet!</string>
 </resources>

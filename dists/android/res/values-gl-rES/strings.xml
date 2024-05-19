@@ -1,9 +1,14 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="app_name">Saír de ScummVM</string>
   <string name="ok">Aceptar</string>
   <string name="quit">Saír</string>
+  <string name="no_save_path_title">Camiño de gardado:</string>
+  <string name="no_icons_path_title">Camiño de /root/:</string>
+  <string name="keyboard_toggle_btn_desc">Teclado virtual</string>
   <string name="customkeyboardview_keycode_alt">ALT</string>
   <string name="customkeyboardview_keycode_cancel">Cancelar</string>
   <string name="customkeyboardview_keycode_delete">Eliminar</string>
   <string name="customkeyboardview_keycode_enter">INTRO</string>
+  <string name="customkeyboardview_popup_close">Pechar</string>
 </resources>

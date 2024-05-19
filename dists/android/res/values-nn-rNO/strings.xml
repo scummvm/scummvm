@@ -1,9 +1,14 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="app_name">Avslutt ScummVM</string>
   <string name="ok">OK</string>
   <string name="quit">Avslutt</string>
+  <string name="no_save_path_title">Lagringssti:</string>
+  <string name="no_icons_path_title">Ekstrasti:</string>
+  <string name="keyboard_toggle_btn_desc">Virtuelt tastatur</string>
   <string name="customkeyboardview_keycode_alt">Alt</string>
   <string name="customkeyboardview_keycode_cancel">Avbryt</string>
   <string name="customkeyboardview_keycode_delete">Slett</string>
   <string name="customkeyboardview_keycode_enter">Enter</string>
+  <string name="customkeyboardview_popup_close">Steng</string>
 </resources>

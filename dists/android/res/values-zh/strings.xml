@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="app_name">cummVM</string>
+  <string name="ok">确认</string>
+  <string name="quit">離開</string>
+  <string name="no_save_path_title">保存路径错误</string>
+  <string name="no_icons_path_title">图标路径错误</string>
+  <string name="customkeyboardview_keycode_cancel">取消</string>
+  <string name="customkeyboardview_popup_close">关闭弹出窗口</string>
+</resources>
