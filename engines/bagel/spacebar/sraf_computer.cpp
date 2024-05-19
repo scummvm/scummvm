@@ -545,7 +545,6 @@ void SrafComputer::recalcSellerSummaryList() {
 	// initialize the initial state of the seller summary
 	if (_pSellerSummaryList == nullptr) {
 		_pSellerSummaryList = new CBofList<DealSummarySellerItem>;
-		assert(_pSellerSummaryList != nullptr);
 	} else {
 		delete _pSellerSummaryList;
 		_pSellerSummaryList = nullptr;
@@ -554,7 +553,6 @@ void SrafComputer::recalcSellerSummaryList() {
 	// Lets verify that its all set before we go to use it
 	if (_pSellerSummaryList == nullptr) {
 		_pSellerSummaryList = new CBofList<DealSummarySellerItem>;
-		assert(_pSellerSummaryList != nullptr);
 	}
 
 	int i = 0;
@@ -574,7 +572,6 @@ void SrafComputer::recalcBuyerSummaryList() {
 	// initialize the initial state of the deal summary
 	if (_pBuyerSummaryList == nullptr) {
 		_pBuyerSummaryList = new CBofList<DealSummaryBuyerItem>;
-		assert(_pBuyerSummaryList != nullptr);
 	} else {
 		delete _pBuyerSummaryList;
 		_pBuyerSummaryList = nullptr;
@@ -583,14 +580,12 @@ void SrafComputer::recalcBuyerSummaryList() {
 	// Lets verify that its all set before we go to use it
 	if (_pBuyerSummaryList == nullptr) {
 		_pBuyerSummaryList = new CBofList<DealSummaryBuyerItem>;
-		assert(_pBuyerSummaryList != nullptr);
 	}
 
 	int i = 0;
 	while (i < NUM_BUYERS) {
 		if (g_stBuyerBids[i]._bAccept) {
 			DealSummaryBuyerItem *pBuyerItem = new DealSummaryBuyerItem();
-			assert(pBuyerItem != nullptr);
 
 			pBuyerItem->_eBuyerID = g_stBuyerBids[i]._nBuyerID;
 			pBuyerItem->_nBuyerOffer = g_stBuyerBids[i]._nBidSum;
@@ -737,12 +732,9 @@ bool SrafComputer::verifyDispatchTeam() {
 
 		if (_pTeamList == nullptr) {
 			_pTeamList = new CBofList<DispatchedTeamItem>;
-			assert(_pTeamList != nullptr);
 		}
 
 		pTeamItem = new DispatchedTeamItem();
-		assert(pTeamItem != nullptr);
-
 		pTeamItem->_nFlags = nTeam | nDispatchFlags;
 		pTeamItem->_nMeetWithID = nMeetingWith;
 		CBagVar *pVar = g_VarManager->getVariable("SRATURNCOUNT");
@@ -901,7 +893,6 @@ ErrorCode SrafComputer::attach() {
 		assert(_pMainList == nullptr);
 
 		_pMainList = new CBofList<SrafCompItem>;
-		assert(_pMainList != nullptr);
 		fillMain();
 
 		// If we're on the Mac version, slot in the Chicken Dance song
@@ -912,7 +903,6 @@ ErrorCode SrafComputer::attach() {
 		for (int i = 0; i < (NUM_MUSICAL_SCORES - 1); i++) {
 			if (g_stAudioSetting[i]->_pMidiTrack == nullptr) {
 				g_stAudioSetting[i]->_pMidiTrack = new CBofSound(this, buildAudioDir(g_stAudioSetting[i]->_pszAudioFile), SOUND_MIDI | SOUND_ASYNCH | SOUND_LOOP, 32000);
-				assert(g_stAudioSetting[i]->_pMidiTrack != nullptr);
 			}
 		}
 
@@ -922,18 +912,15 @@ ErrorCode SrafComputer::attach() {
 
 		for (int i = 0; i < NUM_SRAFCOMPBUTT; i++) {
 			_pButtons[i] = new CBofBmpButton;
-			if (_pButtons[i] != nullptr) {
+			CBofBitmap *pUp = loadBitmap(buildSrafDir(g_stButtons[i]._pszUp), pPal);
+			CBofBitmap *pDown = loadBitmap(buildSrafDir(g_stButtons[i]._pszDown), pPal);
+			CBofBitmap *pFocus = loadBitmap(buildSrafDir(g_stButtons[i]._pszFocus), pPal);
+			CBofBitmap *pDis = loadBitmap(buildSrafDir(g_stButtons[i]._pszDisabled), pPal);
 
-				CBofBitmap *pUp = loadBitmap(buildSrafDir(g_stButtons[i]._pszUp), pPal);
-				CBofBitmap *pDown = loadBitmap(buildSrafDir(g_stButtons[i]._pszDown), pPal);
-				CBofBitmap *pFocus = loadBitmap(buildSrafDir(g_stButtons[i]._pszFocus), pPal);
-				CBofBitmap *pDis = loadBitmap(buildSrafDir(g_stButtons[i]._pszDisabled), pPal);
-
-				_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
-				_pButtons[i]->create(g_stButtons[i]._pszName, g_stButtons[i]._nLeft, g_stButtons[i]._nTop, g_stButtons[i]._nWidth, g_stButtons[i]._nHeight, this, g_stButtons[i]._nID);
-				if (i != QUIT_BUTTON)
-					_pButtons[i]->hide();
-			}
+			_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
+			_pButtons[i]->create(g_stButtons[i]._pszName, g_stButtons[i]._nLeft, g_stButtons[i]._nTop, g_stButtons[i]._nWidth, g_stButtons[i]._nHeight, this, g_stButtons[i]._nID);
+			if (i != QUIT_BUTTON)
+				_pButtons[i]->hide();
 		}
 
 		// Get our code words
@@ -947,11 +934,7 @@ ErrorCode SrafComputer::attach() {
 			_nStartingTime = pVar->getNumValue();
 		}
 
-		assert(_pszGroup1Word != nullptr);
-		assert(_pszGroup2Word != nullptr);
-
 		setOn();
-
 		show();
 		updateWindow();
 
@@ -1148,17 +1131,11 @@ ErrorCode SrafComputer::createListBox() {
 	if (_pLBox == nullptr) {
 		// We need to create one
 		_pLBox = new CBofListBox;
-		if (_pLBox != nullptr) {
-
-			errorCode = _pLBox->create("ListBox", &gCompDisplay, this);
-			if (errorCode != ERR_NONE) {
-				return errorCode;
-			}
+		errorCode = _pLBox->create("ListBox", &gCompDisplay, this);
+		if (errorCode != ERR_NONE) {
+			return errorCode;
 		}
 	}
-
-	if (_pLBox == nullptr)
-		return ERR_MEMORY;
 
 	_pLBox->setPointSize(_nListPointSize);
 	_pLBox->setItemHeight(_nListItemHeight);
@@ -1182,7 +1159,6 @@ void SrafComputer::fillMain() {
 
 	while (i < NUM_MAIN_ITEMS) {
 		SrafCompItem *pCompItem = new SrafCompItem();
-		assert(pCompItem != nullptr);
 
 		pCompItem->_pItem = g_stMainItems[i];
 
@@ -3747,13 +3723,9 @@ void SrafComputer::displayTextScreen(CBofString &sStr) {
 	gTextScreenFrontmost = true;
 
 	_pTextOnlyScreen = new SrafTextScreen(sStr);
-
-	if (_pTextOnlyScreen == nullptr)
-		return;
-
 	_pTextOnlyScreen->createTextScreen(this);
-
 	_pTextOnlyScreen->doModal();
+
 	delete _pTextOnlyScreen;
 	_pTextOnlyScreen = nullptr;
 
@@ -4127,12 +4099,6 @@ void SrafComputer::notifyBoss(CBofString &sSoundFile, int nStafferID) {         
 	// Allow for no staffer screen
 	if (nStafferID != -1) {
 		pSaveBackground = new CBofBitmap(gTextWindow.width(), gTextWindow.height(), (CBofPalette *)nullptr, false);
-		assert(pSaveBackground != nullptr);
-
-		if (pSaveBackground == nullptr) {
-			return;
-		}
-
 		pSaveBackground->captureScreen(this, &gTextWindow);
 
 		if (_pStafferBmp[nStafferID] == nullptr) {
@@ -4143,10 +4109,6 @@ void SrafComputer::notifyBoss(CBofString &sSoundFile, int nStafferID) {         
 			sStr = buildSrafDir(g_staffers[nStafferID]._pszStafferBmp);
 
 			_pStafferBmp[nStafferID] = new CBofBitmap(szLocalBuff);
-			assert(_pStafferBmp[nStafferID] != nullptr);
-			if (_pStafferBmp[nStafferID] == nullptr) {
-				return;
-			}
 		}
 
 		// Guaranteed to have it now.  Paste it to the screen.
@@ -4371,21 +4333,18 @@ void SrafComputer::displayMessage(const char *szMsg) {
 	gTextScreenFrontmost = true;
 
 	_pTextOnlyScreen = new SrafTextScreen(szMsg, true);
+	_pTextOnlyScreen->createTextScreen(this);
+	_pTextOnlyScreen->doModal();
 
-	if (_pTextOnlyScreen != nullptr) {
-		_pTextOnlyScreen->createTextScreen(this);
+	delete _pTextOnlyScreen;
+	_pTextOnlyScreen = nullptr;
 
-		_pTextOnlyScreen->doModal();
-		delete _pTextOnlyScreen;
-		_pTextOnlyScreen = nullptr;
-
-		// if we have a list, then return focus to it.
-		if (_pLBox) {
-			_pLBox->setFocus();
-		}
-
-		gTextScreenFrontmost = false;
+	// if we have a list, then return focus to it.
+	if (_pLBox) {
+		_pLBox->setFocus();
 	}
+
+	gTextScreenFrontmost = false;
 
 	updateWindow();
 }
@@ -4578,33 +4537,26 @@ int SrafTextScreen::createTextScreen(CBofWindow *pParent) {
 	// Create our OK button
 
 	_pOKButton = new CBofBmpButton;
-	if (_pOKButton != nullptr) {
 
-		CBofBitmap *pUp = loadBitmap(buildSrafDir(g_stButtons[DONE_BUTTON]._pszUp), pPal);
-		CBofBitmap *pDown = loadBitmap(buildSrafDir(g_stButtons[DONE_BUTTON]._pszDown), pPal);
-		CBofBitmap *pFocus = loadBitmap(buildSrafDir(g_stButtons[DONE_BUTTON]._pszFocus), pPal);
-		CBofBitmap *pDis = loadBitmap(buildSrafDir(g_stButtons[DONE_BUTTON]._pszDisabled), pPal);
+	CBofBitmap *pUp = loadBitmap(buildSrafDir(g_stButtons[DONE_BUTTON]._pszUp), pPal);
+	CBofBitmap *pDown = loadBitmap(buildSrafDir(g_stButtons[DONE_BUTTON]._pszDown), pPal);
+	CBofBitmap *pFocus = loadBitmap(buildSrafDir(g_stButtons[DONE_BUTTON]._pszFocus), pPal);
+	CBofBitmap *pDis = loadBitmap(buildSrafDir(g_stButtons[DONE_BUTTON]._pszDisabled), pPal);
 
-		_pOKButton->loadBitmaps(pUp, pDown, pFocus, pDis);
+	_pOKButton->loadBitmaps(pUp, pDown, pFocus, pDis);
 
-		_pOKButton->create(g_stButtons[DONE_BUTTON]._pszName,
-		                    g_stButtons[DONE_BUTTON]._nLeft,
-		                    g_stButtons[DONE_BUTTON]._nTop,
-		                    g_stButtons[DONE_BUTTON]._nWidth,
-		                    g_stButtons[DONE_BUTTON]._nHeight,
-		                    this,
-		                    g_stButtons[DONE_BUTTON]._nID);
-	}
-
-	assert(_pOKButton != nullptr);
+	_pOKButton->create(g_stButtons[DONE_BUTTON]._pszName,
+	                    g_stButtons[DONE_BUTTON]._nLeft,
+	                    g_stButtons[DONE_BUTTON]._nTop,
+	                    g_stButtons[DONE_BUTTON]._nWidth,
+	                    g_stButtons[DONE_BUTTON]._nHeight,
+	                    this,
+	                    g_stButtons[DONE_BUTTON]._nID);
 
 	//  Create our text box.
 	cRect.setRect(gCompDisplay.left, gCompDisplay.top, gCompDisplay.right, gCompDisplay.bottom);
 
 	_pTextBox = new CBofTextBox(this, &cRect, _text);
-	if (_pTextBox == nullptr)
-		fatalError(ERR_MEMORY, "Unable to allocate a CBofTextBox");
-
 	_pTextBox->setPageLength(24);
 	_pTextBox->setColor(CTEXT_WHITE);
 	_pTextBox->setFont(FONT_MONO);
@@ -4912,7 +4864,6 @@ void SrafComputer::restoreSraffanVars() {
 		// there.
 		if (_pTeamList == nullptr) {
 			_pTeamList = new CBofList<DispatchedTeamItem>;
-			assert(_pTeamList != nullptr);
 		}
 
 		if (teamListItem._nFlags != 0) {
