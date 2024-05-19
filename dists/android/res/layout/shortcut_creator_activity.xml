@@ -47,12 +47,4 @@
 
 	</FrameLayout>
 
-	<ProgressBar
-		android:id="@+id/shortcut_creator_progress_bar"
-		style="?android:attr/progressBarStyleHorizontal"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:max="100"
-		tools:progress="50" />
-
 </LinearLayout>
