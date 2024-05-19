@@ -77,7 +77,7 @@ bool Wiz::warpDrawWiz(int image, int state, int polygon, int32 flags, int transp
 
 bool Wiz::warpDrawWizTo4Points(int image, int state, const WarpWizPoint *dstPoints, int32 flags, int transparentColor, const Common::Rect *optionalClipRect, WizSimpleBitmap *optionalDestBitmap, const WizRawPixel *optionalColorConversionTable, const byte *colorMixTable) {
 	WizSimpleBitmap dstBitmap, srcBitmap;
-	bool rValue, freeBitmapBits;
+	bool rValue;
 	Common::Rect updateRect;
 	int x, y;
 	WarpWizPoint srcPoints[4];
@@ -97,8 +97,6 @@ bool Wiz::warpDrawWizTo4Points(int image, int state, const WarpWizPoint *dstPoin
 		if (!srcBitmap.bufferPtr()) {
 			return false;
 		}
-
-		freeBitmapBits = true;
 	} else {
 		ptr = (byte *)getWizStateDataPrim(image, state);
 		if (!ptr)
@@ -106,7 +104,6 @@ bool Wiz::warpDrawWizTo4Points(int image, int state, const WarpWizPoint *dstPoin
 
 		// Map the srcBitmap to the Wiz data...
 		srcBitmap.bufferPtr = WizPxShrdBuffer(ptr + _vm->_resourceHeaderSize, false);
-		freeBitmapBits = false;
 	}
 
 	// Fill in the dest bitmap structure...
@@ -127,15 +124,7 @@ bool Wiz::warpDrawWizTo4Points(int image, int state, const WarpWizPoint *dstPoin
 			error("Wiz::warpDrawWizTo4Points(): Missing drawing buffer?");
 		}
 
-		if (_uses16BitColor) {
-			WizRawPixel16 *buf16 = (WizRawPixel16 *)dstBitmap.bufferPtr();
-			buf16 += pvs->xstart;
-			dstBitmap.bufferPtr = WizPxShrdBuffer(buf16, false);
-		} else {
-			WizRawPixel8 *buf8 = (WizRawPixel8 *)dstBitmap.bufferPtr();
-			buf8 += pvs->xstart;
-			dstBitmap.bufferPtr = WizPxShrdBuffer(buf8, false);
-		}
+		dstBitmap.bufferPtr += (pvs->xstart * (_uses16BitColor ? 2 : 1));
 	}
 
 	// Find the bounding rect and double check the coords...
