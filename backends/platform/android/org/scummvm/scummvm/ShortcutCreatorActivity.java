@@ -12,11 +12,10 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.ParcelFileDescriptor;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,43 +27,33 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+
+import org.scummvm.scummvm.zip.ZipEntry;
+import org.scummvm.scummvm.zip.ZipFile;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
-import java.util.zip.ZipInputStream;
+
 
 public class ShortcutCreatorActivity extends Activity {
+	final protected static String LOG_TAG = "ShortcutCreatorActivity";
+
 	private IconsCache _cache;
-	private GameAdapter _listAdapter;
-
-	private final ExecutorService _executor = new ThreadPoolExecutor(
-		0, Runtime.getRuntime().availableProcessors(),
-		1L, TimeUnit.SECONDS,
-		new LinkedBlockingQueue<>());
-
-	private ProgressBar _progressBar;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -95,30 +84,27 @@ public class ShortcutCreatorActivity extends Activity {
 
 		games = Game.loadGames(parsedIniMap);
 
-		OpenFileResult defaultStream = openFile(new File(getFilesDir(), "gui-icons.dat"));
+		FileInputStream defaultStream = openFile(new File(getFilesDir(), "gui-icons.dat"));
 
 		File iconsPath = INIParser.getPath(parsedIniMap, "scummvm", "iconspath",
 			new File(getFilesDir(), "icons"));
-		OpenFileResult[] packsStream = openFiles(iconsPath, "gui-icons.*\\.dat");
+		FileInputStream[] packsStream = openFiles(iconsPath, "gui-icons.*\\.dat");
 
-		_cache = new IconsCache(this, _cacheListener,
-			games, defaultStream, packsStream,
-			_executor, new Handler(Looper.getMainLooper()));
-		_listAdapter = new GameAdapter(this, games, _cache);
+		_cache = new IconsCache(this, defaultStream, packsStream);
+
+		final GameAdapter listAdapter = new GameAdapter(this, games, _cache);
 
 		ListView listView = findViewById(R.id.shortcut_creator_games_list);
-		listView.setAdapter(_listAdapter);
+		listView.setAdapter(listAdapter);
 		listView.setEmptyView(findViewById(R.id.shortcut_creator_games_list_empty));
 		listView.setOnItemClickListener(_gameClicked);
-
-		_progressBar = findViewById(R.id.shortcut_creator_progress_bar);
 
 		EditText searchEdit = findViewById(R.id.shortcut_creator_search_edit);
 		searchEdit.addTextChangedListener(new TextWatcher() {
 
 			@Override
 			public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-				_listAdapter.getFilter().filter(cs.toString());
+				listAdapter.getFilter().filter(cs.toString());
 			}
 
 			@Override
@@ -137,42 +123,24 @@ public class ShortcutCreatorActivity extends Activity {
 		setResult(RESULT_CANCELED);
 	}
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-
-		_executor.shutdownNow();
-	}
-
-	private static class OpenFileResult {
-		@NonNull
-		public FileInputStream stream;
-		public long streamSize;
-		OpenFileResult(@NonNull FileInputStream stream, long streamSize) {
-			this.stream = stream;
-			this.streamSize = streamSize;
-		}
-	}
-
-	private OpenFileResult openFile(File path) {
+	private FileInputStream openFile(File path) {
 		 try {
-			FileInputStream stream = new FileInputStream(path);
-			return new OpenFileResult(stream, path.length());
+			return new FileInputStream(path);
 		} catch (FileNotFoundException e) {
 			return null;
 		}
 	}
 
-	private OpenFileResult[] openFiles(File basePath, String regex) {
+	private FileInputStream[] openFiles(File basePath, String regex) {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N ||
 			!basePath.getPath().startsWith("/saf/")) {
 			// This is a standard filesystem path
 			File[] children = basePath.listFiles((dir, name) -> name.matches(regex));
 			if (children == null) {
-				return new OpenFileResult[0];
+				return new FileInputStream[0];
 			}
 			Arrays.sort(children);
-			OpenFileResult[] ret = new OpenFileResult[children.length];
+			FileInputStream[] ret = new FileInputStream[children.length];
 			int i = 0;
 			for (File f: children) {
 				ret[i] = openFile(f);
@@ -191,19 +159,19 @@ public class ShortcutCreatorActivity extends Activity {
 
 		SAFFSTree tree = SAFFSTree.findTree(this, treeName);
 		if (tree == null) {
-			return new OpenFileResult[0];
+			return new FileInputStream[0];
 		}
 		SAFFSTree.SAFFSNode node = tree.pathToNode(path);
 		if (node == null) {
-			return new OpenFileResult[0];
+			return new FileInputStream[0];
 		}
 		SAFFSTree.SAFFSNode[] children = tree.getChildren(node);
 		if (children == null) {
-			return new OpenFileResult[0];
+			return new FileInputStream[0];
 		}
 		Arrays.sort(children);
 
-		ArrayList<OpenFileResult> ret = new ArrayList<>();
+		ArrayList<FileInputStream> ret = new ArrayList<>();
 		for (SAFFSTree.SAFFSNode child : children) {
 			if ((child._flags & SAFFSTree.SAFFSNode.DIRECTORY) != 0) {
 				continue;
@@ -216,12 +184,9 @@ public class ShortcutCreatorActivity extends Activity {
 			if (pfd == null) {
 				continue;
 			}
-			ret.add(new OpenFileResult(
-				new ParcelFileDescriptor.AutoCloseInputStream(pfd),
-				pfd.getStatSize()
-			));
+			ret.add(new ParcelFileDescriptor.AutoCloseInputStream(pfd));
 		}
-		return ret.toArray(new OpenFileResult[0]);
+		return ret.toArray(new FileInputStream[0]);
 	}
 
 	private final OnItemClickListener _gameClicked = new OnItemClickListener() {
@@ -268,21 +233,6 @@ public class ShortcutCreatorActivity extends Activity {
 			});
 
 			dialog.show();
-		}
-	};
-
-	private final IconsCache.IconsCacheListener _cacheListener = new IconsCache.IconsCacheListener() {
-		@Override
-		public void onIconUpdated(List<Game> games) {
-			_listAdapter.notifyDataSetChanged();
-		}
-
-		@Override
-		public void onLoadProgress(int percent) {
-			if (percent == 100) {
-				_progressBar.setVisibility(View.GONE);
-			}
-			_progressBar.setProgress(percent);
 		}
 	};
 
@@ -355,67 +305,43 @@ public class ShortcutCreatorActivity extends Activity {
 
 	private static class IconsCache {
 		/**
-		 * This kind of mimics Common::generateZipSet with asynchronous feature
+		 * This kind of mimics Common::generateZipSet
 		 */
-		public interface IconsCacheListener {
-			void onIconUpdated(List<Game> games);
-			void onLoadProgress(int percent);
-		}
-
 		private final Context _context;
-		private final IconsCacheListener _listener;
-		private final Map<String, byte[]> _icons = new HashMap<>();
-		private final Map<String, List<Game>> _candidates = new HashMap<>();
+		private final Map<String, byte[]> _icons = new LinkedHashMap<String, byte[]>(16,0.75f, true) {
+			@Override
+			protected boolean removeEldestEntry(Map.Entry<String, byte[]> eldest) {
+				return size() > 128;
+			}
+		};
+		private static final byte[] _noIconSentinel = new byte[0];
 
-		private long _totalSize;
-		private final long[] _totalSizes;
-		private final long[] _readSizes;
+		private final List<ZipFile> _zipFiles = new ArrayList<>();
 
-		public IconsCache(Context context, IconsCacheListener listener,
-		                  List<Game> games,
-		                  OpenFileResult defaultStream, OpenFileResult[] packsStream,
-		                  Executor executor, Handler handler) {
+		public IconsCache(Context context,
+		                  FileInputStream defaultStream,
+		                  FileInputStream[] packsStream) {
 			_context = context;
-			_listener = listener;
 
-			// Establish a list of candidates
-			for (Game game : games) {
-				for (String candidate : game.getIconCandidates()) {
-					List<Game> v = _candidates.get(candidate);
-					if (v == null) {
-						v = new ArrayList<>();
-						_candidates.put(candidate, v);
-					}
-					v.add(game);
-				}
-			}
-
-			_totalSizes = new long[1 + packsStream.length];
-			_readSizes = new long[1 + packsStream.length];
-
-			// Iterate over the files starting with default and continuing with packs
-			// This will let us erase outdated versions
-			if (defaultStream != null) {
-				_totalSizes[0] = defaultStream.streamSize;
-				_totalSize += _totalSizes[0];
-				executor.execute(() -> loadZip(defaultStream.stream, 0, handler));
-			}
-			int i = 1;
-			for (final OpenFileResult packStream : packsStream) {
+			for (int i = packsStream.length - 1; i >= 0; i--) {
+				final FileInputStream packStream = packsStream[i];
 				if (packStream == null) {
 					continue;
 				}
-
-				_totalSizes[i] = packStream.streamSize;
-				_totalSize += _totalSizes[i];
-				// Make it final for lambda
-				int argI = i;
-				executor.execute(() -> loadZip(packStream.stream, argI, handler));
-				i += 1;
+				try {
+					ZipFile zf = new ZipFile(packStream);
+					_zipFiles.add(zf);
+				} catch (IOException e) {
+					Log.e(LOG_TAG, "Error while loading pack ZipFile: " + i, e);
+				}
 			}
-
-			if (_totalSize == 0) {
-				handler.post(() -> _listener.onLoadProgress(100));
+			if (defaultStream != null) {
+				try {
+					ZipFile zf = new ZipFile(defaultStream);
+					_zipFiles.add(zf);
+				} catch (IOException e) {
+					Log.e(LOG_TAG, "Error while loading default ZipFile", e);
+				}
 			}
 		}
 
@@ -423,6 +349,9 @@ public class ShortcutCreatorActivity extends Activity {
 			for (String name : game.getIconCandidates()) {
 				byte[] data = _icons.get(name);
 				if (data == null) {
+					data = loadIcon(name);
+				}
+				if (data == _noIconSentinel) {
 					continue;
 				}
 
@@ -437,55 +366,35 @@ public class ShortcutCreatorActivity extends Activity {
 			return null;
 		}
 
-		private void loadZip(@NonNull FileInputStream zipStream, int id, @NonNull Handler handler) {
-			try (ZipInputStream zip = new ZipInputStream(zipStream)) {
-				ZipEntry entry;
-				while ((entry = zip.getNextEntry()) != null) {
-					_readSizes[id] = zipStream.getChannel().position();
-					handler.post(() -> {
-						long readSize = 0;
-						for (long pos : _readSizes) {
-							readSize += pos;
-						}
-						_listener.onLoadProgress((int)(readSize * 100 / _totalSize));
-					});
+		private byte[] loadIcon(String name) {
+			int zfi = 0;
+			for(ZipFile zf : _zipFiles) {
+				final ZipEntry ze = zf.getEntry(name);
+				if (ze == null) {
+					zfi++;
+					continue;
+				}
 
-					String name = entry.getName().toLowerCase();
-					if (entry.isDirectory()) {
-						zip.closeEntry();
-						continue;
-					}
-					if (!_candidates.containsKey(name)) {
-						zip.closeEntry();
-						continue;
-					}
+				int sz = (int) ze.getSize();
+				byte[] buffer = new byte[sz];
 
-					int sz = (int) entry.getSize();
-					byte[] buffer = new byte[sz];
-					int off = 0;
-					while (off < buffer.length && (sz = zip.read(buffer, off, buffer.length - off)) > 0) {
-						off += sz;
-					}
-					if (off != buffer.length) {
+				try (InputStream is = zf.getInputStream(ze)) {
+					if (is.read(buffer) != buffer.length) {
 						throw new IOException();
 					}
-
-					_icons.put(name, buffer);
-					handler.post(() -> _listener.onIconUpdated(_candidates.get(name)));
-
-					zip.closeEntry();
+				} catch (IOException e) {
+					Log.e(LOG_TAG, "Error while uncompressing: " + name + " from zip file " + zfi, e);
+					zfi++;
+					continue;
 				}
-				_readSizes[id] = _totalSizes[id];
-				handler.post(() -> {
-					long readSize = 0;
-					for (long pos : _readSizes) {
-						readSize += pos;
-					}
-					_listener.onLoadProgress((int)(readSize * 100 / _totalSize));
-				});
-			} catch (ZipException ignored) {
-			} catch (IOException ignored) {
+
+				_icons.put(name, buffer);
+				return buffer;
 			}
+
+			// Register failure
+			_icons.put(name, _noIconSentinel);
+			return _noIconSentinel;
 		}
 	}
 
