@@ -36,6 +36,13 @@ For a more comprehensive changelog of the latest experimental code, see:
  TsAGE:
    - Added support for Russian CD fan-translation for Ringworld.
 
+ Ultima:
+   - Alter Ultima VIII default gamepad bindings.
+   - Improved Ultima VIII keybind player movement.
+   - Alter Ultima VIII target gump to no longer pause game.
+   - Alter Ultima VIII minimap to use game palette.
+   - Fixed Ultima VIII item splitting & merging on game map.
+   - Fixed Ultima VIII animation, audio, and scene transition issues.
 
 #### 2.8.1 (2024-03-31)
 
