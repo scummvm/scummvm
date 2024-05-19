@@ -177,7 +177,7 @@ project.xcworkspace
 
 /snapshots
 
-#ignore thumbnails created by windows
+#Ignore thumbnails created by Windows
 Thumbs.db
 #Ignore files build by Visual Studio
 *.obj
