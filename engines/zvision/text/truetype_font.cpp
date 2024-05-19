@@ -25,6 +25,7 @@
 #include "common/file.h"
 #include "common/system.h"
 #include "common/compression/unzip.h"
+#include "common/unicode-bidi.h"
 #include "common/ustr.h"
 #include "graphics/font.h"
 #include "graphics/fonts/ttf.h"
@@ -186,7 +187,7 @@ void StyledTTFont::drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint
 void StyledTTFont::drawString(Graphics::Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, Graphics::TextAlign align) {
 	if (_font) {
 		Common::U32String u32str = Common::convertUtf8ToUtf32(str);
-		_font->drawString(dst, u32str, x, y, w, color, align);
+		_font->drawString(dst, Common::convertBiDiU32String(u32str).visual, x, y, w, color, align);
 		if (_style & TTF_STYLE_UNDERLINE) {
 			int16 pos = (int16)floor(_font->getFontHeight() * 0.87);
 			int16 wd = MIN(_font->getStringWidth(u32str), w);
