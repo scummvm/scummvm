@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="app_name">ScummVM</string>
+  <string name="app_desc">Μηχανή παιχνιδιών περιπέτειας</string>
+  <string name="ok">OK</string>
+  <string name="quit">Έξοδος</string>
+  <string name="no_config_file_title">Σφάλμα Αρχείου Ρυθμίσεων</string>
+  <string name="no_config_file">Αδυναμία ανάγνωσης του αρχείου ρυθμίσεων του ScummVM ή δημιουργίας νέου!</string>
+  <string name="no_save_path_title">Σφάλμα Διαδρομής Αποθήκευσης</string>
+  <string name="no_save_path_configured">Αδυναμία δημιουργίας ή πρόσβασης στην προεπιλεγμένη διαδρομή αποθήκευσης!</string>
+  <string name="no_icons_path_title">Σφάλμα Διαδρομής Εικονιδίων</string>
+  <string name="no_icons_path_configured">Αδυναμία δημιουργίας ή πρόσβασης στην προεπιλεγμένη διαδρομή εικονιδίων και σκιαστών!</string>
+  <string name="bad_explicit_save_path_configured">Αδυναμία πρόσβασης στη διαδρομή αποθήκευσης που έχει τεθεί στις καθολικές ρυθμίσεις! Παρακαλούμε να επαναφέρετε την προεπιλογή από της Ρυθμίσεις του ScummVM</string>
+  <string name="keyboard_toggle_btn_desc">Εναλλαγή εμφάνισης εικονικού πληκτρολογίου</string>
+  <string name="customkeyboardview_keycode_alt">Alt</string>
+  <string name="customkeyboardview_keycode_cancel">Ακύρωση</string>
+  <string name="customkeyboardview_keycode_delete">Σβήσιμο</string>
+  <string name="customkeyboardview_keycode_done">Έγινε</string>
+  <string name="customkeyboardview_keycode_mode_change">Αλλαγή κατάστασης λειτουργίας</string>
+  <string name="customkeyboardview_keycode_shift">Πλήκτρο Shift</string>
+  <string name="customkeyboardview_keycode_enter">Πλήκτρο Enter</string>
+  <string name="customkeyboardview_popup_close">Κλείσιμο αναδυόμενου παραθύρου</string>
+  <string name="saf_request_prompt">Παρακαλούμε, επιλέξετε τον *αρχικό κατάλογο* (root) της εξωτερικής (φυσικής) SD κάρτας σας. Αυτό απαιτείται ώστε να έχει το ScummVM πρόσβαση σε αυτή τη διαδρομή: </string>
+  <string name="saf_revoke_done">Τα Δικαιώματα για το Πλαίσιο Πρόσβασης Αποθηκευτικού Χώρου (Storage Access Framework) για το ScummVM ανακλήθηκαν!</string>
+</resources>

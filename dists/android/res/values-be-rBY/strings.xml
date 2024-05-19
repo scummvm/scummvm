@@ -1,10 +1,15 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="app_name">Завяршыць ScummVM</string>
   <string name="ok">OK</string>
   <string name="quit">Выхад</string>
+  <string name="no_save_path_title">Захаванні гульняў:</string>
+  <string name="no_icons_path_title">Каранёвая дырэкторыя:</string>
+  <string name="keyboard_toggle_btn_desc">Віртуальная клавіятура</string>
   <string name="customkeyboardview_keycode_alt">Alt</string>
   <string name="customkeyboardview_keycode_cancel">Адмена</string>
   <string name="customkeyboardview_keycode_delete">Выдаліць</string>
   <string name="customkeyboardview_keycode_shift">Shift</string>
   <string name="customkeyboardview_keycode_enter">Увод</string>
+  <string name="customkeyboardview_popup_close">Закрыць</string>
 </resources>

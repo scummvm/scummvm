@@ -1,9 +1,25 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="app_name">ScummVM</string>
+  <string name="app_desc">Silnik graficzny gier przygodowych</string>
   <string name="ok">OK</string>
   <string name="quit">Zakończ</string>
+  <string name="no_config_file_title">Błąd pliku konfiguracyjnego</string>
+  <string name="no_config_file">Nie można odczytać lub utworzyć pliku konfiguracyjnego ScummVM!</string>
+  <string name="no_save_path_title">Błąd ścieżki zapisów</string>
+  <string name="no_save_path_configured">Nie można utworzyć domyślnej ścieżki zapisu ani uzyskać do niej dostępu!</string>
+  <string name="no_icons_path_title">Błąd ścieżki ikon</string>
+  <string name="no_icons_path_configured">Nie można utworzyć domyślnych ścieżek ikon ani shaderów oraz uzyskać do nich dostępu!</string>
+  <string name="bad_explicit_save_path_configured">Nie można uzyskać dostępu do globalnie ustawionej ścieżki zapisu! Przywróć ustawienia domyślne z opcji ScummVM</string>
+  <string name="keyboard_toggle_btn_desc">Przełącz klawiaturę wirtualną</string>
   <string name="customkeyboardview_keycode_alt">Alt</string>
   <string name="customkeyboardview_keycode_cancel">Anuluj</string>
-  <string name="customkeyboardview_keycode_delete">Skasuj</string>
+  <string name="customkeyboardview_keycode_delete">Usuń</string>
+  <string name="customkeyboardview_keycode_done">Gotowe</string>
+  <string name="customkeyboardview_keycode_mode_change">Zmiana trybu</string>
+  <string name="customkeyboardview_keycode_shift">Shift</string>
   <string name="customkeyboardview_keycode_enter">Enter</string>
+  <string name="customkeyboardview_popup_close">Zamknij okno</string>
+  <string name="saf_request_prompt">Wybierz katalog główny *root* swojej fizycznej karty SD. Jest to wymagane, aby ScummVM mógł uzyskać dostęp do tej ścieżki: </string>
+  <string name="saf_revoke_done">Uprawnienia dostępu do pamięci masowej dla ScummVM zostały unieważnione!</string>
 </resources>

@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="app_name">ScummVM</string>
+  <string name="app_desc">Abendura grafikoen motorea</string>
+  <string name="ok">Ados</string>
+  <string name="quit">Irten</string>
+  <string name="no_config_file_title">Konfig Fitxategi Errorea</string>
+  <string name="no_config_file">Ezin izan da ScummVM konfig fitxategia irakurri edo berria sortu!</string>
+  <string name="no_save_path_title">Gordetakoen Bide Errorea:</string>
+  <string name="no_save_path_configured">Ezin izan da gordetze bidea sortu edo atzitu!</string>
+  <string name="no_icons_path_title">Ikono Bide Errorea</string>
+  <string name="no_icons_path_configured">Ezin izan da ikono eta shader-en bidea sortu edo atzitu!</string>
+  <string name="bad_explicit_save_path_configured">Ezin izan da gordetze bide orokorra atzitu! Itzuli defektuzko ScummVM Aukeretara, mesedez</string>
+  <string name="keyboard_toggle_btn_desc">Teklatu birtuala erakutsi/gorde</string>
+  <string name="customkeyboardview_keycode_alt">Alt</string>
+  <string name="customkeyboardview_keycode_cancel">Utzi</string>
+  <string name="customkeyboardview_keycode_delete">Ezabatu</string>
+  <string name="customkeyboardview_keycode_done">Eginda</string>
+  <string name="customkeyboardview_keycode_mode_change">Modua aldatu</string>
+  <string name="customkeyboardview_keycode_shift">Shift</string>
+  <string name="customkeyboardview_keycode_enter">Sartu</string>
+  <string name="customkeyboardview_popup_close">Itxi laster-leihoa</string>
+  <string name="saf_request_prompt">Mesedez aukeratu zure kanpo SD txartelaren *erroa*. Hau ScummVMek bidea atzitzeko beharrezkoa da: </string>
+  <string name="saf_revoke_done">ScummVMrentzako Biltegiratze Atzitze Baimena ukatu egin da!</string>
+</resources>

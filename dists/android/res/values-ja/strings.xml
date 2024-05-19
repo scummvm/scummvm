@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="app_name">ScummVM</string>
+  <string name="app_desc">グラフィックアドベンチャーエンジン</string>
+  <string name="ok">OK</string>
+  <string name="quit">終了</string>
+  <string name="no_config_file_title">設定ファイルエラー</string>
+  <string name="no_config_file">ScummVM設定ファイルの読込/作成ができません!</string>
+  <string name="no_save_path_title">セーブパスエラー</string>
+  <string name="no_save_path_configured">デフォルトのセーブフォルダーにアクセス/作成できません!</string>
+  <string name="no_icons_path_title">アイコンパスエラー</string>
+  <string name="no_icons_path_configured">デフォルトのアイコンパスにアクセス/作成できません!</string>
+  <string name="bad_explicit_save_path_configured">グローバルで設定されたセーブフォルダーにアクセスできません! リセットして下さい</string>
+  <string name="keyboard_toggle_btn_desc">仮想キーボードの切替</string>
+  <string name="customkeyboardview_keycode_alt">Alt</string>
+  <string name="customkeyboardview_keycode_cancel">キャンセル</string>
+  <string name="customkeyboardview_keycode_delete">削除</string>
+  <string name="customkeyboardview_keycode_done">実行</string>
+  <string name="customkeyboardview_keycode_mode_change">モード切替</string>
+  <string name="customkeyboardview_keycode_shift">シフト</string>
+  <string name="customkeyboardview_keycode_enter">Enter</string>
+  <string name="customkeyboardview_popup_close">ポップアップを閉じる</string>
+  <string name="saf_request_prompt">外付け(物理)SDカードのルートを選択して下さい。ScummVMがアクセスするために必要です： </string>
+  <string name="saf_revoke_done">ScummVMのStorage Access Frameworkの権限が取り消されました!</string>
+</resources>

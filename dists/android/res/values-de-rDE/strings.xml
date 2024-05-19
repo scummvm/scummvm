@@ -1,10 +1,25 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="app_name">ScummVM</string>
+  <string name="app_desc">Spiele-Engine für Grafik-Adventures</string>
   <string name="ok">OK</string>
   <string name="quit">Beenden</string>
+  <string name="no_config_file_title">Fehler in Konfigurationsdatei</string>
+  <string name="no_config_file">Fehler beim Lesen oder Erstellen der ScummVM-Konfigurationsdatei!</string>
+  <string name="no_save_path_title">Speicherpfad-Fehler</string>
+  <string name="no_save_path_configured">Fehler beim Erzeugen oder Zugriff auf den Speicherpfad!</string>
+  <string name="no_icons_path_title">Iconpfad-Fehler</string>
+  <string name="no_icons_path_configured">Fehler beim Erzeugen oder Zugriff auf den Icon- und Shader-Pfad!</string>
+  <string name="bad_explicit_save_path_configured">Auf den global gesetzten Speicherpfad konnte nicht zugegriffen werden! Bitte nutze die ScummVM-Optionen, um auf die Standard-Einstellung zurückzugekehren</string>
+  <string name="keyboard_toggle_btn_desc">Virtuelle Tastatur umschalten</string>
   <string name="customkeyboardview_keycode_alt">Alt</string>
   <string name="customkeyboardview_keycode_cancel">Abbrechen</string>
   <string name="customkeyboardview_keycode_delete">Löschen</string>
+  <string name="customkeyboardview_keycode_done">Fertig</string>
+  <string name="customkeyboardview_keycode_mode_change">Modus ändern</string>
   <string name="customkeyboardview_keycode_shift">Umschalt-Taste</string>
   <string name="customkeyboardview_keycode_enter">Enter</string>
+  <string name="customkeyboardview_popup_close">Popup schließen</string>
+  <string name="saf_request_prompt">Bitte wähle das *Stammverzeichnis* deiner externen SD-Karte. Dies wird von ScummVM für den Zugriff auf folgenden Pfad benötigt: </string>
+  <string name="saf_revoke_done">Die Storage Access Framework Permissions für ScummVM wurden widerrufen!</string>
 </resources>

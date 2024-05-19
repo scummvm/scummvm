@@ -1,9 +1,25 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="app_name">ScummVM</string>
+  <string name="app_desc">Motor de jocs d\'aventura gràfica</string>
   <string name="ok">D\'acord</string>
   <string name="quit">Surt</string>
+  <string name="no_config_file_title">Error en el fitxer de configuració</string>
+  <string name="no_config_file">No s\'ha pogut llegir el fitxer de configuració de ScummVM o crear-ne un de nou!</string>
+  <string name="no_save_path_title">Error en el camí de les partides desades</string>
+  <string name="no_save_path_configured">No s\'ha pogut crear o accedir a la ruta predeterminada de les partides desades!</string>
+  <string name="no_icons_path_title">Error en el camí de les icones</string>
+  <string name="no_icons_path_configured">No s\'han pogut crear o accedir a la ruta predeterminada de les icones i els shaders!</string>
+  <string name="bad_explicit_save_path_configured">No es pot accedir a la ruta de desament establerta globalment! Torneu al valor predeterminat des de les opcions de ScummVM</string>
+  <string name="keyboard_toggle_btn_desc">Commuta el teclat virtual</string>
   <string name="customkeyboardview_keycode_alt">Alt</string>
   <string name="customkeyboardview_keycode_cancel">Cancel·la</string>
   <string name="customkeyboardview_keycode_delete">Suprimeix</string>
+  <string name="customkeyboardview_keycode_done">Fet</string>
+  <string name="customkeyboardview_keycode_mode_change">Canvi de mode</string>
+  <string name="customkeyboardview_keycode_shift">Majúscules</string>
   <string name="customkeyboardview_keycode_enter">Intro</string>
+  <string name="customkeyboardview_popup_close">Tanca la finestra emergent</string>
+  <string name="saf_request_prompt">Seleccioneu l\'arrel de la targeta SD externa (física). És necessari perquè ScummVM accedeixi a aquest camí: </string>
+  <string name="saf_revoke_done">S\'han revocat els permisos del framework d\'accés a l\'emmagatzematge per a ScummVM!</string>
 </resources>

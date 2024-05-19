@@ -1,10 +1,15 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="app_name">ScummVM 종료</string>
   <string name="ok">확인</string>
   <string name="quit">종료</string>
+  <string name="no_save_path_title">저장 경로:</string>
+  <string name="no_icons_path_title">/icon/ 경로:</string>
+  <string name="keyboard_toggle_btn_desc">가상 키보드</string>
   <string name="customkeyboardview_keycode_alt">Alt</string>
   <string name="customkeyboardview_keycode_cancel">취소</string>
   <string name="customkeyboardview_keycode_delete">삭제</string>
   <string name="customkeyboardview_keycode_shift">시프트 키</string>
   <string name="customkeyboardview_keycode_enter">Enter</string>
+  <string name="customkeyboardview_popup_close">닫기</string>
 </resources>

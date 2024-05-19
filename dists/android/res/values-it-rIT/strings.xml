@@ -1,10 +1,25 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="app_name">ScummVM</string>
+  <string name="app_desc">Motore per avventure grafiche</string>
   <string name="ok">OK</string>
   <string name="quit">Esci</string>
+  <string name="no_config_file_title">Errore nel file di configurazione</string>
+  <string name="no_config_file">Non è stato possibile leggere o creare il file di configurazione di ScummVM!</string>
+  <string name="no_save_path_title">Errore percorso salvataggi</string>
+  <string name="no_save_path_configured">Non è stato possibile creare o accedere al percorso dei salvataggi predefinito!</string>
+  <string name="no_icons_path_title">Errore percorso icone</string>
+  <string name="no_icons_path_configured">Non è stato possibile creare o accedere al percorso predefinito per icone e shader!</string>
+  <string name="bad_explicit_save_path_configured">Non è stato possibile accedere al percorso salvataggi globale! Ripristina il percorso predefinito nelle Opzioni di ScummVM</string>
+  <string name="keyboard_toggle_btn_desc">Mostra/nascondi tastiera virtuale</string>
   <string name="customkeyboardview_keycode_alt">Alt</string>
   <string name="customkeyboardview_keycode_cancel">Annulla</string>
   <string name="customkeyboardview_keycode_delete">Elimina</string>
+  <string name="customkeyboardview_keycode_done">Fatto</string>
+  <string name="customkeyboardview_keycode_mode_change">Cambia modalità</string>
   <string name="customkeyboardview_keycode_shift">Tasto Maiusc</string>
   <string name="customkeyboardview_keycode_enter">Invio</string>
+  <string name="customkeyboardview_popup_close">Chiudi popup</string>
+  <string name="saf_request_prompt">Per favore, seleziona la *root* della tua scheda esterna SD (fisica). È necessario affinchè ScummVM possa accedere al percorso: </string>
+  <string name="saf_revoke_done">Permessi Storage Access Framework per ScummVM revocati!</string>
 </resources>

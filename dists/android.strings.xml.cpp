@@ -28,9 +28,12 @@
 #include "common/translation.h" // For catching the file during POTFILES reviews
 
 static Common::U32String app_name = _("ScummVM");
+static Common::U32String app_name_debug = _("ScummVM (debug)");
 static Common::U32String app_desc = _("Graphic adventure game engine");
 static Common::U32String ok = _("OK");
 static Common::U32String quit = _("Quit");
+static Common::U32String no_log_file_title = _("Log File Error");
+static Common::U32String no_log_file = _("Unable to read ScummVM log file or create a new one!");
 static Common::U32String no_config_file_title = _("Config File Error");
 static Common::U32String no_config_file = _("Unable to read ScummVM config file or create a new one!");
 static Common::U32String no_save_path_title = _("Save Path Error");

@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="app_name">اخرج من ScummVM</string>
+  <string name="ok">حسناً</string>
+  <string name="quit">غادر</string>
+  <string name="no_save_path_title">حفظ مسار:</string>
+  <string name="no_icons_path_title">مسار الرمز:</string>
+  <string name="keyboard_toggle_btn_desc">تبديل وضع السحب</string>
+  <string name="customkeyboardview_keycode_alt">بديل</string>
+  <string name="customkeyboardview_keycode_cancel">إلغاء</string>
+  <string name="customkeyboardview_keycode_delete">حذف</string>
+  <string name="customkeyboardview_keycode_mode_change">تبادل</string>
+  <string name="customkeyboardview_keycode_shift">مفتاح التحول</string>
+  <string name="customkeyboardview_keycode_enter">يدخل</string>
+  <string name="customkeyboardview_popup_close">إغلاق</string>
+</resources>

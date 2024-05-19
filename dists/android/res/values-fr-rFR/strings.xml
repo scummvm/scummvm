@@ -1,10 +1,25 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="app_name">ScummVM</string>
+  <string name="app_desc">Moteur de jeux d\'aventure graphiques</string>
   <string name="ok">OK</string>
   <string name="quit">Quitter</string>
+  <string name="no_config_file_title">Erreur de fichier de configuration</string>
+  <string name="no_config_file">Impossible de lire le fichier de configuration de ScummVM ou d\'en créer un nouveau !</string>
+  <string name="no_save_path_title">Erreur de chemin de sauvegarde</string>
+  <string name="no_save_path_configured">Impossible de créer ou d\'accéder au chemin de sauvegarde par défaut !</string>
+  <string name="no_icons_path_title">Erreur de chemin d\'icônes</string>
+  <string name="no_icons_path_configured">Impossible de créer ou d\'accéder au chemin d\'icônes et de shadders par défaut !</string>
+  <string name="bad_explicit_save_path_configured">Impossible d\'accéder au chemin de sauvegarde défini globalement ! Veuillez rétablir le chemin par défaut à partir des options de ScummVM</string>
+  <string name="keyboard_toggle_btn_desc">Act./Désact. Clavier virtuel</string>
   <string name="customkeyboardview_keycode_alt">Alt</string>
   <string name="customkeyboardview_keycode_cancel">Annuler</string>
   <string name="customkeyboardview_keycode_delete">Supprimer</string>
+  <string name="customkeyboardview_keycode_done">Terminé</string>
+  <string name="customkeyboardview_keycode_mode_change">Changement de mode</string>
   <string name="customkeyboardview_keycode_shift">Shift</string>
   <string name="customkeyboardview_keycode_enter">Entrer</string>
+  <string name="customkeyboardview_popup_close">Fermer popup</string>
+  <string name="saf_request_prompt">Veuillez sélectionner la *racine* de votre carte SD externe (physique). Cette sélection est nécessaire pour que ScummVM puisse accéder à ce chemin : </string>
+  <string name="saf_revoke_done">Les permissions de Storage Access Framework pour ScummVM ont été révoquées !</string>
 </resources>
