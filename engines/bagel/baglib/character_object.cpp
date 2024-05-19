@@ -85,7 +85,7 @@ ErrorCode CBagCharacterObject::attach() {
 
 	_bmpBuf = new CBofBitmap(_smacker->getWidth(), _smacker->getHeight(), smackPal);
 
-	if ((smackPal != nullptr) && (_bmpBuf != nullptr)) {
+	if (smackPal != nullptr) {
 		_bmpBuf->fillRect(nullptr, smackPal->getNearestIndex(RGB(255, 255, 255)));
 	}
 

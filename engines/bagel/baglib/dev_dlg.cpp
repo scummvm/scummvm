@@ -63,9 +63,7 @@ ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CB
 	}
 
 	_guessText = new CBofText();
-	if (_guessText != nullptr) {
-		_guessText->setupText(rect, JUSTIFY_LEFT);
-	}
+	_guessText->setupText(rect, JUSTIFY_LEFT);
 
 	_guessCount = 0;
 	Common::fill(_achGuess, _achGuess + ACH_GUESS_MAX_CHARS, 0);
@@ -78,21 +76,15 @@ ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CB
 	// Fall back to original dialog on failure
 	if (bitmap == nullptr) {
 		bitmap = new CBofBitmap(200, 100, pal);
-		if (bitmap != nullptr) {
-			assert(pal != nullptr);
+		assert(pal != nullptr);
 
-			bitmap->fillRect(nullptr, pal->getNearestIndex(RGB(92, 92, 92)));
+		bitmap->fillRect(nullptr, pal->getNearestIndex(RGB(92, 92, 92)));
 
-			CBofRect bmpRect(bitmap->getRect());
-			bitmap->drawRect(&bmpRect, pal->getNearestIndex(RGB(0, 0, 0)));
-			bitmap->fillRect(rect, pal->getNearestIndex(RGB(255, 255, 255)));
-
-		} else {
-			reportError(ERR_MEMORY, "Unable to allocate a CBofBitmap");
-		}
+		CBofRect bmpRect(bitmap->getRect());
+		bitmap->drawRect(&bmpRect, pal->getNearestIndex(RGB(0, 0, 0)));
+		bitmap->fillRect(rect, pal->getNearestIndex(RGB(255, 255, 255)));
 	}
 
-	assert(bitmap != nullptr);
 	CBofRect bmpRect(bitmap->getRect());
 	CBofString className = "CDevDlg";
 	CBagStorageDevDlg::create(className, &bmpRect, wnd, 0);
@@ -189,10 +181,6 @@ void CDevDlg::setText(CBofString &text, CBofRect *textRect) {
 	assert(isValidObject(this));
 
 	_titleText = new CBofText;
-	
-	if (_titleText == nullptr)
-		fatalError(ERR_MEMORY, "Unable to instantiate a new CBofText");
-
 	_titleText->setupText(textRect, JUSTIFY_CENTER, FORMAT_DEFAULT);
 	_titleText->setColor(CTEXT_WHITE);
 	_titleText->SetSize(FONT_14POINT);

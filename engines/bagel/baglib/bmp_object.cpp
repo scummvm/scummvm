@@ -39,9 +39,7 @@ CBagBmpObject::~CBagBmpObject() {
 
 ErrorCode CBagBmpObject::attach(CBofPalette *palette) {
 	_bmp = new CBofBitmap(getFileName(), palette);
-	if (_bmp == nullptr) {
-		bofMessageBox(_bmp->getFileName(), __FILE__);
-	}
+
 	return CBagObject::attach();
 }
 

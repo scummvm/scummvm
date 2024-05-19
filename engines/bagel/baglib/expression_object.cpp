@@ -78,15 +78,11 @@ ParseCodes CBagExpressionObject::setInfo(CBagIfstream &istr) {
 		//
 		//  AS  - n number of slides in sprite
 		//
-		case '(': {
+		case '(':
 			_expression = new CBagExpression();
-			if (_expression) {
-				_expression->setInfo(istr);
-				objectUpdatedFl = true;
-			} else {
-				// there was an error
-			}
-		} break;
+			_expression->setInfo(istr);
+			objectUpdatedFl = true;
+			break;
 		//
 		//  No match return from function
 		//

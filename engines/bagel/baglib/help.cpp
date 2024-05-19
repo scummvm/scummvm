@@ -85,76 +85,55 @@ ErrorCode CBagHelp::attach() {
 	CBofApp::getApp()->setPalette(backPal);
 
 	_okButton = new CBofBmpButton;
-	if (_okButton != nullptr) {
 
-		CBofBitmap *upBmp = loadBitmap(buildHelpDir(HELP_OK_UP), backPal);
-		CBofBitmap *downBmp = loadBitmap(buildHelpDir(HELP_OK_DOWN), backPal);
-		CBofBitmap *focusBmp = loadBitmap(buildHelpDir(HELP_OK_FOCUS), backPal);
-		CBofBitmap *disableBmp = loadBitmap(buildHelpDir(HELP_OK_DISABLED), backPal);
+	CBofBitmap *upBmp = loadBitmap(buildHelpDir(HELP_OK_UP), backPal);
+	CBofBitmap *downBmp = loadBitmap(buildHelpDir(HELP_OK_DOWN), backPal);
+	CBofBitmap *focusBmp = loadBitmap(buildHelpDir(HELP_OK_FOCUS), backPal);
+	CBofBitmap *disableBmp = loadBitmap(buildHelpDir(HELP_OK_DISABLED), backPal);
 
-		_okButton->loadBitmaps(upBmp, downBmp, focusBmp, disableBmp);
-
-		_okButton->create("OK", HELP_OK_X, HELP_OK_Y, HELP_OK_CX, HELP_OK_CY, this, HELP_OK_ID);
-		_okButton->show();
-	} else {
-		reportError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
-	}
+	_okButton->loadBitmaps(upBmp, downBmp, focusBmp, disableBmp);
+	_okButton->create("OK", HELP_OK_X, HELP_OK_Y, HELP_OK_CX, HELP_OK_CY, this, HELP_OK_ID);
+	_okButton->show();
 
 	_pageUp = new CBofBmpButton;
-	if (_pageUp != nullptr) {
 
-		CBofBitmap *upBmp = loadBitmap(buildHelpDir(HELP_PAGE_UP_UP), backPal);
-		CBofBitmap *downBmp = loadBitmap(buildHelpDir(HELP_PAGE_UP_DOWN), backPal);
-		CBofBitmap *focusBmp = loadBitmap(buildHelpDir(HELP_PAGE_UP_FOCUS), backPal);
-		CBofBitmap *disableBmp = loadBitmap(buildHelpDir(HELP_PAGE_UP_DISABLED), backPal);
+	upBmp = loadBitmap(buildHelpDir(HELP_PAGE_UP_UP), backPal);
+	downBmp = loadBitmap(buildHelpDir(HELP_PAGE_UP_DOWN), backPal);
+	focusBmp = loadBitmap(buildHelpDir(HELP_PAGE_UP_FOCUS), backPal);
+	disableBmp = loadBitmap(buildHelpDir(HELP_PAGE_UP_DISABLED), backPal);
 
-		_pageUp->loadBitmaps(upBmp, downBmp, focusBmp, disableBmp);
-
-		_pageUp->create("PageUp", HELP_PAGE_UP_X, HELP_PAGE_UP_Y, HELP_PAGE_UP_CX, HELP_PAGE_UP_CY, this, HELP_PAGE_UP_ID);
-		_pageUp->show();
-	} else {
-		reportError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
-	}
+	_pageUp->loadBitmaps(upBmp, downBmp, focusBmp, disableBmp);
+	_pageUp->create("PageUp", HELP_PAGE_UP_X, HELP_PAGE_UP_Y, HELP_PAGE_UP_CX, HELP_PAGE_UP_CY, this, HELP_PAGE_UP_ID);
+	_pageUp->show();
 
 	_pageDown = new CBofBmpButton;
-	if (_pageDown != nullptr) {
 
-		CBofBitmap *upBmp = loadBitmap(buildHelpDir(HELP_PAGE_DOWN_UP), backPal);
-		CBofBitmap *downBmp = loadBitmap(buildHelpDir(HELP_PAGE_DOWN_DOWN), backPal);
-		CBofBitmap *focusBmp = loadBitmap(buildHelpDir(HELP_PAGE_DOWN_FOCUS), backPal);
-		CBofBitmap *disableBmp = loadBitmap(buildHelpDir(HELP_PAGE_DOWN_DISABLED), backPal);
+	upBmp = loadBitmap(buildHelpDir(HELP_PAGE_DOWN_UP), backPal);
+	downBmp = loadBitmap(buildHelpDir(HELP_PAGE_DOWN_DOWN), backPal);
+	focusBmp = loadBitmap(buildHelpDir(HELP_PAGE_DOWN_FOCUS), backPal);
+	disableBmp = loadBitmap(buildHelpDir(HELP_PAGE_DOWN_DISABLED), backPal);
 
-		_pageDown->loadBitmaps(upBmp, downBmp, focusBmp, disableBmp);
+	_pageDown->loadBitmaps(upBmp, downBmp, focusBmp, disableBmp);
 
-		_pageDown->create("PageDown", HELP_PAGE_DOWN_X, HELP_PAGE_DOWN_Y, HELP_PAGE_DOWN_CX, HELP_PAGE_DOWN_CY, this, HELP_PAGE_DOWN_ID);
-		_pageDown->show();
-	} else {
-		reportError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
-	}
+	_pageDown->create("PageDown", HELP_PAGE_DOWN_X, HELP_PAGE_DOWN_Y, HELP_PAGE_DOWN_CX, HELP_PAGE_DOWN_CY, this, HELP_PAGE_DOWN_ID);
+	_pageDown->show();
 
 	CBofFile file(_textFile, CBF_BINARY | CBF_READONLY);
 
 	uint32 size = file.getLength();
 	char *buffer = (char *)bofCAlloc(size + 1, 1);
-	if (buffer != nullptr) {
-		file.read(buffer, size);
+	if (buffer == nullptr)
+		fatalError(ERR_MEMORY, "Unable to allocate %d bytes to read %s.", size, _textFile.getBuffer());
 
-		CBofRect cRect;
-		cRect.setRect(120, 100, 550, 348);
+	file.read(buffer, size);
 
-		_textBox = new CBofTextBox(this, &cRect, buffer);
-		if (_textBox != nullptr) {
-			_textBox->setPageLength(18);
+	CBofRect cRect;
+	cRect.setRect(120, 100, 550, 348);
 
-		} else {
-			reportError(ERR_MEMORY, "Unable to allocate a CBofTextBox");
-		}
+	_textBox = new CBofTextBox(this, &cRect, buffer);
+	_textBox->setPageLength(18);
 
-		bofFree(buffer);
-
-	} else {
-		reportError(ERR_MEMORY, "Unable to allocate %d bytes to read %s.", size, _textFile.getBuffer());
-	}
+	bofFree(buffer);
 
 	CBagCursor::showSystemCursor();
 
