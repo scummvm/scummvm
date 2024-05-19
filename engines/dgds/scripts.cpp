@@ -295,10 +295,9 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 	case 0x0ff0: // REFRESH:	void
 		break;
 	case 0x1020: // SET DELAY:	    i:int   [0..n]
-		// Delay of 240 should be 2 seconds, so this is in quarter-frames.
 		// TODO: Probably should do this accounting (as well as timeCut and dialogs)
 		// 		 in game frames, not millis.
-		_vm->adsInterpreter()->setScriptDelay((int)(ivals[0] * 8.33));
+		_vm->adsInterpreter()->setScriptDelay((int)(ivals[0] * 16.667));
 		break;
 	case 0x1030: // SET BRUSH:	id:int [-1:n]
 		seq._brushNum = ivals[0];
@@ -352,7 +351,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 			break;
 		uint sleep = _vm->getRandom().getRandomNumberRng(ivals[0], ivals[1]);
 		// TODO: do same time fix as for 0x1020
-		_vm->adsInterpreter()->setScriptDelay((int)(sleep * 8.33));
+		_vm->adsInterpreter()->setScriptDelay((int)(sleep * 16.667));
 		break;
 	}
 	case 0x4000: // SET CLIP WINDOW x,y,x2,y2:int	[0..320,0..200]
