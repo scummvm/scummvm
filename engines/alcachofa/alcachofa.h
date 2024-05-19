@@ -35,6 +35,7 @@
 #include "graphics/screen.h"
 
 #include "alcachofa/detection.h"
+#include "alcachofa/graphics.h"
 
 namespace Alcachofa {
 
@@ -48,10 +49,10 @@ protected:
 	// Engine APIs
 	Common::Error run() override;
 public:
-	Graphics::Screen *_screen = nullptr;
-public:
 	AlcachofaEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~AlcachofaEngine() override;
+
+	inline IRenderer &renderer() const { return *_renderer; }
 
 	uint32 getFeatures() const;
 
@@ -95,6 +96,10 @@ public:
 		Common::Serializer s(stream, nullptr);
 		return syncGame(s);
 	}
+
+private:
+	Graphics::Screen *_screen = nullptr;
+	Common::ScopedPtr<IRenderer> _renderer;
 };
 
 extern AlcachofaEngine *g_engine;
