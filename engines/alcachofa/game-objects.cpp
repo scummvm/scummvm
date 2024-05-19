@@ -159,7 +159,7 @@ void MainCharacter::serializeSave(Serializer &serializer) {
 
 Background::Background(Room *room, const String &animationFileName, int16 scale)
 	: GraphicObject(room, "BACKGROUND") {
-	_graphic._animation.reset(new Animation(animationFileName, AnimationFolder::Fondos));
+	_graphic._animation.reset(new Animation(animationFileName, AnimationFolder::Backgrounds));
 	_graphic._scale = scale;
 	_graphic._order = 59;
 }
