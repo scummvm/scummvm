@@ -161,7 +161,7 @@ Common::String GameItem::dump(const Common::String &indent) const {
 			"%sGameItem<\n%s\n%saltCursor %d icon %d sceneNum %d flags %d quality %d",
 			indent.c_str(), super.c_str(), indent.c_str(), _altCursor,
 			_iconNum, _inSceneNum, _flags, _quality);
-	str += _dumpStructList(indent, "opList4", opList4);
+	str += _dumpStructList(indent, "onDragFinishedOps", onDragFinishedOps);
 	str += _dumpStructList(indent, "opList5", opList5);
 	str += "\n";
 	str += indent + ">";
@@ -260,7 +260,7 @@ bool Scene::readGameItemList(Common::SeekableReadStream *s, Common::Array<GameIt
 			dst._flags = s->readUint16LE() & 0xfffe;
 		if (!isVersionUnder(" 1.204")) {
 			dst._altCursor = s->readUint16LE();
-			readOpList(s, dst.opList4);
+			readOpList(s, dst.onDragFinishedOps);
 			readOpList(s, dst.opList5);
 		}
 	}
@@ -1036,7 +1036,7 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 	GameItem *dragItem = _dragItem;
 	_dragItem = nullptr;
 
-	runOps(dragItem->opList4);
+	runOps(dragItem->onDragFinishedOps);
 
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	engine->setMouseCursor(0);
@@ -1411,4 +1411,3 @@ Common::Error GDSScene::syncState(Common::Serializer &s) {
 }
 
 } // End of namespace Dgds
-
