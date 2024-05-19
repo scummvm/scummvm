@@ -1356,7 +1356,11 @@ void Script::ScriptExecutor::ExecuteScript() {
 			Func9F4D(throwaway1, throwaway2);
 			Func9F4D(throwaway1, throwaway2);
 			Func9F4D(throwaway1, throwaway2);
-		
+
+		} else if (opcode1 == 0x15) {
+			// Mark that we are gathering strings for setting up a dialogue choice
+
+	
 		} else if (opcode1 == 0x18) {
 			// Set the stream to the end and let the calling code figure out that we are done
 			// for this run

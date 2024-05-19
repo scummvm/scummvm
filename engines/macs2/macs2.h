@@ -187,16 +187,11 @@ public:
 
 
 
-	Common::MemoryReadStream* _scriptStream;
-	byte* _scriptData;
-
+	
 	AnimFrame _stick;
 	
 
-	void ScriptPrintString(Common::MemoryReadStream *stream);
-
-	void ExecuteScript(Common::MemoryReadStream* stream);
-
+	
 	void RunScriptExecutor(bool firstRun = false) {
 		_scriptExecutor->Run(firstRun);
 	}
