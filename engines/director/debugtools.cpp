@@ -1486,7 +1486,7 @@ static void showScore() {
 		uint numChannels = score->_scoreCache[0]->_sprites.size();
 		uint tableColumns = MAX(numFrames, 25U); // Set minimal table width to 25
 
-		int currentFrameNum = score->getCurrentFrameNum();
+		uint currentFrameNum = score->getCurrentFrameNum();
 		ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.7f, 0.7f, 0.0f, 0.65f));
 
 		if (ImGui::BeginTable("Score", tableColumns + 1,
@@ -1499,7 +1499,7 @@ static void showScore() {
 				ImGui::TableSetupColumn(Common::String::format("%-2d", i + 1).c_str(), flags);
 
 			ImGui::TableHeadersRow();
-			for (int ch = 0; ch < numChannels - 1; ch++) {
+			for (int ch = 0; ch < (int)numChannels - 1; ch++) {
 				ImGui::TableNextRow();
 
 				ImGui::TableNextColumn();
