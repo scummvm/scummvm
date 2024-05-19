@@ -46,9 +46,8 @@ void Inventory::open() {
 	if (curScene != 2) {
 		_openedFromSceneNum = curScene;
 		engine->changeScene(2);
-	} else {
-		engine->getScene()->runEnterSceneOps();
 	}
+	engine->getScene()->runEnterSceneOps();
 }
 
 void Inventory::close() {
@@ -224,56 +223,61 @@ void Inventory::mouseMoved(const Common::Point &pt) {
 
 GameItem *Inventory::itemUnderMouse(const Common::Point &pt) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	if (!_itemArea || !_itemArea->containsPoint(pt))
+	if (!_itemArea)
 		return nullptr;
 
-	const int imgAreaX = _itemArea->_parentX + _itemArea->_x;
-	const int imgAreaY = _itemArea->_parentY + _itemArea->_y;
-	const int numacross = _itemArea->_width / _itemArea->_xStep;
-	const int itemrow = (pt.y - imgAreaY) / _itemArea->_yStep;
-	const int itemcol = (pt.x - imgAreaX) / _itemArea->_xStep;
-	int itemnum = numacross * itemrow + itemcol;
-
 	Common::Array<struct GameItem> &items = engine->getGDSScene()->getGameItems();
-	for (auto &item: items) {
-		if (item._inSceneNum != 2) // || !(item._flags & 4))
-			continue;
+	if (_itemArea->containsPoint(pt)) {
+		const int imgAreaX = _itemArea->_parentX + _itemArea->_x;
+		const int imgAreaY = _itemArea->_parentY + _itemArea->_y;
+		const int numacross = _itemArea->_width / _itemArea->_xStep;
+		const int itemrow = (pt.y - imgAreaY) / _itemArea->_yStep;
+		const int itemcol = (pt.x - imgAreaX) / _itemArea->_xStep;
+		int itemnum = numacross * itemrow + itemcol;
 
-		if (itemnum) {
-			itemnum--;
-			continue;
+		for (auto &item: items) {
+			if (item._inSceneNum != 2) // || !(item._flags & 4))
+				continue;
+
+			if (itemnum) {
+				itemnum--;
+				continue;
+			}
+			return &item;
 		}
-		return &item;
 	}
 	return nullptr;
 }
 
 void Inventory::mouseLDown(const Common::Point &pt) {
-	GameItem *underMouse = itemUnderMouse(pt);
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	if (underMouse) {
-		_highlightItemNo = underMouse->_num;
-		engine->getScene()->setDragItem(underMouse);
-		if (underMouse->_iconNum)
-			engine->setMouseCursor(underMouse->_iconNum);
+	if (_itemBox->containsPoint(pt)) {
+		GameItem *underMouse = itemUnderMouse(pt);
+		if (underMouse) {
+			_highlightItemNo = underMouse->_num;
+			engine->getScene()->runOps(underMouse->onLDownOps);
+			engine->getScene()->setDragItem(underMouse);
+			if (underMouse->_iconNum)
+				engine->setMouseCursor(underMouse->_iconNum);
+		}
+	} else {
+		return engine->getScene()->mouseLDown(pt);
 	}
 }
 
 void Inventory::mouseLUp(const Common::Point &pt) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	const GameItem *dragItem = engine->getScene()->getDragItem();
+	GameItem *dragItem = engine->getScene()->getDragItem();
 	engine->setMouseCursor(0);
 
 	if (dragItem) {
-		engine->getScene()->mouseLUp(pt);
-		// this will clear the drag item.
+		engine->getScene()->onDragFinish(pt);
 		return;
 	}
 
 	int itemsPerPage = (_itemArea->_width / _itemArea->_xStep) * (_itemArea->_height / _itemArea->_yStep);
 	if (_exitButton->containsPoint(pt)) {
 		close();
-		return;
 	} else if (_nextPageBtn->containsPoint(pt) && !(_nextPageBtn->_flags3 & 0x40)) {
 		int numInvItems = 0;
 		Common::Array<struct GameItem> &items = engine->getGDSScene()->getGameItems();
@@ -306,9 +310,13 @@ void Inventory::mouseLUp(const Common::Point &pt) {
 
 void Inventory::mouseRUp(const Common::Point &pt) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	GameItem *underMouse = itemUnderMouse(pt);
-	if (underMouse) {
-		engine->getScene()->runOps(underMouse->onRClickOps);
+	if (_itemBox->containsPoint(pt)) {
+		GameItem *underMouse = itemUnderMouse(pt);
+		if (underMouse) {
+			engine->getScene()->runOps(underMouse->onRClickOps);
+		}
+	} else {
+		engine->getScene()->mouseRUp(pt);
 	}
 }
 

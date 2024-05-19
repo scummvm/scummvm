@@ -113,7 +113,7 @@ struct SceneOp {
 };
 
 struct GameItem : public HotArea {
-	Common::Array<struct SceneOp> opList4;
+	Common::Array<struct SceneOp> onDragFinishedOps;
 	Common::Array<struct SceneOp> opList5;
 	uint16 _altCursor;
 	uint16 _iconNum;
@@ -306,14 +306,18 @@ public:
 	const Common::Array<struct ObjectInteraction> &getObjInteractions2() { return _objInteractions2; }
 
 	bool hasVisibleDialog();
+
 	Common::Error syncState(Common::Serializer &s) override;
 
-private:
+	void onDragFinish(const Common::Point &pt);
+
+protected:
 	HotArea *findAreaUnderMouse(const Common::Point &pt);
+
+private:
 	void enableTrigger(uint16 num) override;
 	void showDialog(uint16 num) override;
 	Dialog *getVisibleDialog();
-	void onDragFinish(const Common::Point &pt);
 
 	int _num;
 	Common::Array<struct SceneOp> _enterSceneOps;
