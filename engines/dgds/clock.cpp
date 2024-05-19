@@ -118,8 +118,7 @@ Common::String Clock::getTimeStr() const {
 }
 
 void Clock::draw(Graphics::ManagedSurface &surf) {
-	// FIXME: Temporarily ignore script visibility flag for testing.
-	if (!_visibleUser /*|| !_visibleScript*/)
+	if (!_visibleUser || !_visibleScript)
 		return;
 
 	const Common::String clockStr = getTimeStr();

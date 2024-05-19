@@ -265,7 +265,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 	case 0x0070: // FREE PALETTE
 		if (seq._executed) // this is a one-shot op
 			break;
-		error("TODO: Implement me: free palette (current pal)");
+		warning("TODO: Implement me: free palette (current pal)");
+		seq._currentPalId = 0;
 		break;
 	case 0x0080: // FREE SHAPE
 		env._scriptShapes[seq._currentBmpId].reset();
@@ -1034,7 +1035,7 @@ bool ADSInterpreter::logicOpResult(uint16 code, const TTMSeq *seq) {
 	case 0x1380: // IF_???????, 0 params
 	case 0x1390: // IF_???????, 0 params
 		warning("Unimplemented IF operation 0x%x", code);
-		return false;
+		return true;
 	default:
 		error("Not an ADS logic op: %04x, how did we get here?", code);
 	}

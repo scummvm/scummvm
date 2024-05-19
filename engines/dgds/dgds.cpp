@@ -291,7 +291,8 @@ void DgdsEngine::loadGameFiles() {
 		reqParser.parse(&invRequestData, "DINV.REQ");
 		reqParser.parse(&vcrRequestData, "DVCR.REQ");
 	} else if (getGameId() == GID_CHINA) {
-		_gameGlobals = new Globals();
+		// TODO: Create a better type for this..
+		_gameGlobals = new DragonGlobals(_clock);
 		_gamePals->loadPalette("HOC.PAL");
 		_gdsScene->load("HOC.GDS", _resource, _decompressor);
 
@@ -301,7 +302,8 @@ void DgdsEngine::loadGameFiles() {
 		reqParser.parse(&invRequestData, "HINV.REQ");
 		reqParser.parse(&vcrRequestData, "HVCR.REQ");
 	} else if (getGameId() == GID_BEAMISH) {
-		_gameGlobals = new Globals();
+		// TODO: Create a better type for this..
+		_gameGlobals = new DragonGlobals(_clock);
 		_gamePals->loadPalette("WILLY.PAL");
 		// TODO: This doesn't parse correctly yet.
 		//_gdsScene->load("WILLY.GDS", _resource, _decompressor);
