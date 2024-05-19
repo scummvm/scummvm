@@ -62,17 +62,12 @@ ErrorCode CBagSoundObject::attach(CBofWindow *pWnd) {
 	return CBagObject::attach();
 }
 
-ErrorCode CBagSoundObject::newSound(CBofWindow *pWin) {
-	// assume no error
-	ErrorCode errorCode = ERR_NONE;
-
+void CBagSoundObject::newSound(CBofWindow *pWin) {
 	killSound();
 
 	_pSound = new CBofSound(pWin, getFileName(), _wFlags, _nLoops);
 	_pSound->setVolume(_nVol);
 	_pSound->setQSlot(getState());
-
-	return errorCode;
 }
 
 void CBagSoundObject::killSound() {
