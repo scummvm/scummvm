@@ -39,6 +39,7 @@
 
 #include "dgds/resource.h"
 #include "dgds/clock.h"
+#include "dgds/menu.h"
 
 namespace Dgds {
 
@@ -113,6 +114,8 @@ private:
 
 	Clock _clock;
 
+	MenuId _menuToTrigger;
+
 public:
 	DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	virtual ~DgdsEngine();
@@ -171,6 +174,7 @@ public:
     };
 
     void setBackgroundFile(const Common::String &name) { _backgroundFile = name; }
+    void setMenuToTrigger(MenuId menu) { _menuToTrigger = menu; }
 
 private:
 	Common::Error syncGame(Common::Serializer &s);

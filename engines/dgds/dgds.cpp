@@ -72,7 +72,7 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_soundPlayer(nullptr), _decompressor(nullptr), _scene(nullptr),
 	_gdsScene(nullptr), _resource(nullptr), _gamePals(nullptr), _gameGlobals(nullptr),
 	_detailLevel(kDgdsDetailHigh), _textSpeed(1), _justChangedScene1(false), _justChangedScene2(false),
-	_random("dgds"), _currentCursor(-1) {
+	_random("dgds"), _currentCursor(-1), _menuToTrigger(kMenuNone) {
 	syncSoundSettings();
 
 	_platform = gameDesc->platform;
@@ -172,7 +172,6 @@ bool DgdsEngine::changeScene(int sceneNum) {
 	_scene->load(sceneFile, _resource, _decompressor);
 	// These are done inside the load function in the original.. cleaner here..
 	_scene->addInvButtonToHotAreaList();
-	setShowClock(true);
 
 	if (_scene->getMagic() != _gdsScene->getMagic())
 		error("Scene %s magic does (0x%08x) not match GDS magic (0x%08x)", sceneFile.c_str(), _scene->getMagic(), _gdsScene->getMagic());
@@ -291,12 +290,6 @@ void DgdsEngine::loadGameFiles() {
 		loadCorners("DCORNERS.BMP");
 		reqParser.parse(&invRequestData, "DINV.REQ");
 		reqParser.parse(&vcrRequestData, "DVCR.REQ");
-
-		_gdsScene->runStartGameOps();
-
-		// To skip credits for testing
-		changeScene(5);
-
 	} else if (getGameId() == GID_CHINA) {
 		_gameGlobals = new Globals();
 		_gamePals->loadPalette("HOC.PAL");
@@ -304,28 +297,24 @@ void DgdsEngine::loadGameFiles() {
 
 		//debug("%s", _gdsScene->dump("").c_str());
 
+		loadCorners("HCORNERS.BMP");
 		reqParser.parse(&invRequestData, "HINV.REQ");
 		reqParser.parse(&vcrRequestData, "HVCR.REQ");
-
-		//_scene->load("S101.SDS", _resource, _decompressor);
-		//_adsInterp->load("TITLE.ADS");
-		_gdsScene->runStartGameOps();
-
-		loadCorners("HCORNERS.BMP");
 	} else if (getGameId() == GID_BEAMISH) {
 		_gameGlobals = new Globals();
 		_gamePals->loadPalette("WILLY.PAL");
 		// TODO: This doesn't parse correctly yet.
 		//_gdsScene->load("WILLY.GDS", _resource, _decompressor);
 
+		loadCorners("WCORNERS.BMP");
 		reqParser.parse(&invRequestData, "WINV.REQ");
 		reqParser.parse(&vcrRequestData, "WVCR.REQ");
 
 		//_scene->load("S34.SDS", _resource, _decompressor);
 		_adsInterp->load("TITLE.ADS");
-		loadCorners("WCORNERS.BMP");
 	}
 
+	_gdsScene->runStartGameOps();
 	loadIcons();
 	setMouseCursor(0);
 
@@ -350,18 +339,16 @@ Common::Error DgdsEngine::run() {
 	Common::EventManager *eventMan = g_system->getEventManager();
 	Common::Event ev;
 
-	bool triggerMenu = false;
-
 	while (!shouldQuit()) {
 		Common::EventType mouseEvent = Common::EVENT_INVALID;
 		while (eventMan->pollEvent(ev)) {
 			if (ev.type == Common::EVENT_KEYDOWN) {
 				switch (ev.kbd.keycode) {
 				case Common::KEYCODE_ESCAPE:
-					triggerMenu = true;
+					_menuToTrigger = kMenuMain;
 					break;
 				case Common::KEYCODE_F5:
-					triggerMenu = true;
+					_menuToTrigger = kMenuMain;
 					break;
 				case Common::KEYCODE_s:
 					if (ev.kbd.hasFlags(Common::KBD_CTRL))
@@ -384,20 +371,20 @@ Common::Error DgdsEngine::run() {
 			}
 		}
 
-		if (triggerMenu) {
+		if (_menuToTrigger != kMenuNone) {
 			if (_inventory->isOpen()) {
 				_inventory->close();
-			} else	if (!_menu->menuShown()) {
+			} else if (!_menu->menuShown()) {
 				_menu->setScreenBuffer();
 				// force mouse on
 				CursorMan.showMouse(true);
 				setMouseCursor(0);
-				_menu->drawMenu();
+				_menu->drawMenu(_menuToTrigger);
 			} else {
 				_menu->hideMenu();
 			}
 
-			triggerMenu = false;
+			_menuToTrigger = kMenuNone;
 		}
 
 		if (_menu->menuShown()) {
@@ -608,6 +595,5 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 
 	return Common::kNoError;
 }
-
 
 } // End of namespace Dgds

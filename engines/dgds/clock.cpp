@@ -44,7 +44,7 @@ private:
 	Clock &_clock;
 };
 
-Clock::Clock() : _visibleUser(true), _visibleScript(true), _days(0), _days2(0),
+Clock::Clock() : _visibleUser(true), _visibleScript(false), _days(0), _days2(0),
 	_hours(0), _mins(0), _gameMinsAdded(0), _gameTicksUp(0), _gameTicksDown(0),
 	_lastPlayTime(0), _millis(0)
 {
