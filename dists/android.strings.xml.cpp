@@ -54,6 +54,7 @@ static Common::U32String saf_request_prompt = _("Please select the *root* of you
 static Common::U32String saf_revoke_done = _("Storage Access Framework Permissions for ScummVM were revoked!");
 static Common::U32String ini_parsing_error = _("Configuration file could not be parsed");
 static Common::U32String shortcut_creator_title = _("Run a game");
+static Common::U32String shortcut_creator_search_game = _("Search a game");
 static Common::U32String shortcut_creator_no_games = _("No games (yet)\nOpen ScummVM and add your games here.");
 static Common::U32String shortcut_creator_game_item_icon = _("Game icon");
 static Common::U32String shortcut_creator_customize_game_name_hint = _("Shortcut label");

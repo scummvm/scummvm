@@ -15,6 +15,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.ParcelFileDescriptor;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -110,6 +112,27 @@ public class ShortcutCreatorActivity extends Activity {
 		listView.setOnItemClickListener(_gameClicked);
 
 		_progressBar = findViewById(R.id.shortcut_creator_progress_bar);
+
+		EditText searchEdit = findViewById(R.id.shortcut_creator_search_edit);
+		searchEdit.addTextChangedListener(new TextWatcher() {
+
+			@Override
+			public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+				_listAdapter.getFilter().filter(cs.toString());
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+										  int arg3) {
+			}
+
+			@Override
+			public void afterTextChanged(Editable arg0) {
+			}
+		});
+		if (games.isEmpty()) {
+			searchEdit.setVisibility(View.GONE);
+		}
 
 		setResult(RESULT_CANCELED);
 	}

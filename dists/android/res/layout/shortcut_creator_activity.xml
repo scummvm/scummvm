@@ -9,6 +9,20 @@
 	android:paddingRight="5dp"
 	android:paddingBottom="10dp">
 
+	<EditText
+		android:id="@+id/shortcut_creator_search_edit"
+		android:layout_width="match_parent"
+		android:layout_height="48dp"
+		android:drawableLeft="@android:drawable/ic_menu_search"
+		android:drawableStart="@android:drawable/ic_menu_search"
+		android:ems="10"
+		android:hint="@string/shortcut_creator_search_game"
+		android:imeOptions="actionDone"
+		android:importantForAutofill="no"
+		android:inputType="text"
+		android:singleLine="true"
+		tools:ignore="VisualLintTextFieldSize" />
+
 	<FrameLayout
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
@@ -33,7 +47,6 @@
 
 	</FrameLayout>
 
-
 	<ProgressBar
 		android:id="@+id/shortcut_creator_progress_bar"
 		style="?android:attr/progressBarStyleHorizontal"
@@ -41,6 +54,5 @@
 		android:layout_height="wrap_content"
 		android:max="100"
 		tools:progress="50" />
-
 
 </LinearLayout>
