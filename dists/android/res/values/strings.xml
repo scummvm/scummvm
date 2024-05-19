@@ -63,6 +63,7 @@
 
 	<string name="ini_parsing_error">Configuration file could not be parsed</string>
 	<string name="shortcut_creator_title">Run a game</string>
+	<string name="shortcut_creator_search_game">Search a game</string>
 	<string name="shortcut_creator_no_games">No games (yet)\nOpen ScummVM and add your games here.</string>
 	<string name="shortcut_creator_game_item_icon">Game icon</string>
 	<string name="shortcut_creator_customize_game_name_hint">Shortcut label</string>
