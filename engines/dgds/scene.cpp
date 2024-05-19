@@ -37,6 +37,7 @@
 #include "dgds/request.h"
 #include "dgds/scene.h"
 #include "dgds/scripts.h"
+#include "dgds/menu.h"
 #include "dgds/font.h"
 #include "dgds/globals.h"
 #include "dgds/image.h"
@@ -563,7 +564,7 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops) {
 			static_cast<DgdsEngine *>(g_engine)->getScene()->removeInvButtonFromHotAreaList();
 			break;
 		case kSceneOpOpenPlaySkipIntroMenu:
-			warning("TODO: Implement scene op 107 (inject key code 0xfc, open menu to play intro or not)");
+			static_cast<DgdsEngine *>(g_engine)->setMenuToTrigger(kMenuSkipPlayIntro);
 			break;
 		default:
 			warning("TODO: Implement scene op %d", op._opCode);

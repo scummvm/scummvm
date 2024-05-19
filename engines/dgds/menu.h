@@ -42,20 +42,45 @@ namespace Dgds {
 
 class REQFileData;
 
+enum MenuId {
+	kMenuNone = -1,
+	kMenuMain = 0,
+	kMenuControls = 1,
+	kMenuOptions = 2,
+	kMenuCalibrate = 3,
+	kMenuRestart = 4,
+	// 5: you cannot save your game right now
+	// 6: game over
+	kMenuFiles = 7,
+	// 8: save game not saved because disk is full
+	// 9: all game entries are full
+	kMenuSave = 10,
+	// 11: change directory - create directory
+	// 12: change directory - invalid directory specified
+	kMenuChangeDirectory = 13,
+	kMenuJoystick = 14,
+	kMenuMouse = 15,
+	kMenuQuit = 16,
+	// 17: I'm frustrated - keep trying / win arcade
+	kMenuSkipPlayIntro = 18,
+	// 19: save game before arcade
+	// 20: replay arcade
+};
+
 class Menu {
 private:
 	Graphics::Surface _screenBuffer;
-	int16 _curMenu = -1;
+	MenuId _curMenu = kMenuMain;
 
 public:
 	Menu();
 	virtual ~Menu();
 
 	void setScreenBuffer();
-	void drawMenu(int16 menu = 0);
+	void drawMenu(MenuId menu = kMenuMain);
 	void handleMenu(Common::Point &mouse);
-	bool menuShown() const { return _curMenu >= 0; }
-	void hideMenu() { _curMenu = -1; }
+	bool menuShown() const { return _curMenu != kMenuNone; }
+	void hideMenu() { _curMenu = kMenuNone; }
 
 	void setRequestData(const REQFileData &data) {
 		_reqData = data;

@@ -378,6 +378,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 			}
 		}
 		_vm->getBackgroundBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		// reset to previous palette.
+		_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2], 0);
 		break;
 	case 0x4120: { // FADE IN:	colorno,ncolors,targetcol,speed:byte
 		if (seq._executed) // this is a one-shot op.
