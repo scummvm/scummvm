@@ -563,64 +563,61 @@ ErrorCode CBagMasterWin::loadGlobalVars(const CBofString &wldName) {
 	delete _variableList;
 	_variableList = new CBagVarManager();
 
-	if (_variableList != nullptr) {
+	fixPathName(wldFileName);
 
-		fixPathName(wldFileName);
+	if (fileExists(wldFileName) && (fileLength(wldFileName) > 0)) {
+		// Force buffer to be big enough so that the entire script
+		// is pre-loaded
+		int length = fileLength(wldFileName);
+		char *buffer = (char *)bofAlloc(length);
+		if (buffer != nullptr) {
+			CBagIfstream fpInput(buffer, length);
 
-		if (fileExists(wldFileName) && (fileLength(wldFileName) > 0)) {
-			// Force buffer to be big enough so that the entire script
-			// is pre-loaded
-			int length = fileLength(wldFileName);
-			char *buffer = (char *)bofAlloc(length);
-			if (buffer != nullptr) {
-				CBagIfstream fpInput(buffer, length);
+			CBofFile file;
+			file.open(wldFileName);
+			file.read(buffer, length);
+			file.close();
 
-				CBofFile file;
-				file.open(wldFileName);
-				file.read(buffer, length);
-				file.close();
+			while (!fpInput.eof()) {
+				fpInput.eatWhite();
 
-				while (!fpInput.eof()) {
-					fpInput.eatWhite();
-
-					if (!fpInput.eatWhite()) {
-						break;
-					}
-
-					KEYWORDS keyword;
-					getKeywordFromStream(fpInput, keyword);
-
-					switch (keyword) {
-					case VARIABLE: {
-						CBagVar *var = new CBagVar;
-						fpInput.eatWhite();
-						var->setInfo(fpInput);
-						var->setGlobal();
-						break;
-					}
-
-					case REMARK: {
-						char dummyStr[256];
-						fpInput.getCh(dummyStr, 255);
-						break;
-					}
-
-					case STORAGEDEV:
-					case START_WLD:
-					case SYSSCREEN:
-					case DISKID:
-					case DISKAUDIO:
-					case SHAREDPAL:
-					case PDASTATE:
-					default: {
-						parseAlertBox(fpInput, "Syntax Error:  Unexpected Type in Global Var Wld:", __FILE__, __LINE__);
-						break;
-					}
-					}
+				if (!fpInput.eatWhite()) {
+					break;
 				}
 
-				bofFree(buffer);
+				KEYWORDS keyword;
+				getKeywordFromStream(fpInput, keyword);
+
+				switch (keyword) {
+				case VARIABLE: {
+					CBagVar *var = new CBagVar;
+					fpInput.eatWhite();
+					var->setInfo(fpInput);
+					var->setGlobal();
+					break;
+				}
+
+				case REMARK: {
+					char dummyStr[256];
+					fpInput.getCh(dummyStr, 255);
+					break;
+				}
+
+				case STORAGEDEV:
+				case START_WLD:
+				case SYSSCREEN:
+				case DISKID:
+				case DISKAUDIO:
+				case SHAREDPAL:
+				case PDASTATE:
+				default: {
+					parseAlertBox(fpInput, "Syntax Error:  Unexpected Type in Global Var Wld:", __FILE__, __LINE__);
+					break;
+				}
+				}
 			}
+
+			bofFree(buffer);
 		}
 	}
 
@@ -791,9 +788,6 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				}
 
 				CBagCursor *cursor = new CBagCursor(str, bUseShared);
-				if (cursor == nullptr)
-					fatalError(ERR_MEMORY, "Could not allocate a CBagCursor");
-
 				cursor->setHotspot(x, y);
 
 				assert(id >= 0 && id < MAX_CURSORS);
@@ -909,7 +903,6 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 
 		case VARIABLE: {
 			CBagVar *var = new CBagVar;
-			// logInfo("New global variable");
 			input.eatWhite();
 			var->setInfo(input);
 			break;

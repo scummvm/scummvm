@@ -187,8 +187,6 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 			parseCode = UPDATED_OBJECT;
 			if (!_pMenu) {
 				_pMenu = new CBagMenu;
-				if (_pMenu == nullptr)
-					fatalError(ERR_MEMORY, "Unable to allocate a new CBagMenu");
 
 				// Try to cut down the number of Storage Devices by
 				// removing these unused ones from the list.

@@ -76,7 +76,7 @@ bool CBagMovieObject::runObject() {
 	CBofWindow *pNewWin = nullptr;
 	SBZoomPda *pPDAz = (SBZoomPda *)g_SDevManager->getStorageDevice("BPDAZ_WLD");
 	bool bZoomed = (pPDAz == nullptr ? false : pPDAz->getZoomed());
-
+	
 	// Get a pointer to the current game window
 	CBagStorageDevWnd *pMainWin = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev();
 
@@ -176,27 +176,25 @@ bool CBagMovieObject::runObject() {
 				// on the mac (prevents a palette shift).
 				CBagExam *pMovie = new CBagExam(CBagel::getBagApp()->getMasterWnd()->getCurrentGameWindow(), sFileName, &r);
 
-				if (pMovie) {
-					// If there is an associated sound file, then start it up here.
-					CBagSoundObject *pSObj = getAssociatedSound();
-					if (pSObj) {
-						if (pSObj->isAttached() == false) {
-							pSObj->attach();
-						}
-						pSObj->runObject();
+				// If there is an associated sound file, then start it up here.
+				CBagSoundObject *pSObj = getAssociatedSound();
+				if (pSObj) {
+					if (pSObj->isAttached() == false) {
+						pSObj->attach();
 					}
+					pSObj->runObject();
+				}
 
-					CBofWindow *wnd = CBagel::getBagApp()->getMasterWnd();
-					pMovie->show();
-					CBofApp::getApp()->getMainWindow()->flushAllMessages();
-					wnd->flushAllMessages();
-					pMovie->initExam();
-					delete pMovie;
+				CBofWindow *wnd = CBagel::getBagApp()->getMasterWnd();
+				pMovie->show();
+				CBofApp::getApp()->getMainWindow()->flushAllMessages();
+				wnd->flushAllMessages();
+				pMovie->initExam();
+				delete pMovie;
 
-					// As soon as we're done, detach (this will also stop the sound).
-					if (pSObj) {
-						pSObj->detach();
-					}
+				// As soon as we're done, detach (this will also stop the sound).
+				if (pSObj) {
+					pSObj->detach();
 				}
 			} else {
 				bool bActivated = false;
@@ -247,15 +245,13 @@ bool CBagMovieObject::runObject() {
 				if (isFiltered) {
 					if (bZoomed) {
 						pNewWin = new CBofWindow();
-						if (pNewWin) {
-							pNewWin->create("BLACK", 0, 0, 640, 480, CBofApp::getApp()->getMainWindow(), 0);
-							pNewWin->fillWindow(COLOR_BLACK);
-						}
+						pNewWin->create("BLACK", 0, 0, 640, 480, CBofApp::getApp()->getMainWindow(), 0);
+						pNewWin->fillWindow(COLOR_BLACK);
 					}
 
 					CBagFMovie *pMovie = new CBagFMovie(CBofApp::getApp()->getMainWindow(), sFileName, &r);
 
-					if (pMovie != nullptr && pMovie->errorOccurred() == false) {
+					if (pMovie->errorOccurred() == false) {
 						pMovie->show();
 						CBofApp::getApp()->getMainWindow()->flushAllMessages();
 						pWnd->flushAllMessages();
@@ -265,10 +261,8 @@ bool CBagMovieObject::runObject() {
 						logError(buildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.getBuffer()));
 					}
 
-					if (pNewWin) {
-						delete pNewWin;
-						pNewWin = nullptr;
-					}
+					delete pNewWin;
+					pNewWin = nullptr;
 				} else {
 					// Hack.. allow script to override some other movies.
 					if ((_xDisplayType == dispType::PDA_MSG) && pMainWin->isCIC() && isDontOverride() == false) {
@@ -297,11 +291,9 @@ bool CBagMovieObject::runObject() {
 
 						if (bZoomed && _xDisplayType != dispType::ASYNCH_PDA_MSG && _xDisplayType != dispType::PDA_MSG) {
 							pNewWin = new CBofWindow();
-							if (pNewWin) {
-								pNewWin->create("BLACK", 0, 0, 640, 480, CBofApp::getApp()->getMainWindow(), 0);
-								pNewWin->show();
-								pNewWin->fillWindow(COLOR_BLACK);
-							}
+							pNewWin->create("BLACK", 0, 0, 640, 480, CBofApp::getApp()->getMainWindow(), 0);
+							pNewWin->show();
+							pNewWin->fillWindow(COLOR_BLACK);
 						}
 
 						// If playing a PDA message while the PDA is zoomed
@@ -356,12 +348,8 @@ bool CBagMovieObject::runObject() {
 
 		} else if (nMovFileType == MovieFileType::SOUND) {
 			CBofSound *pSound = new CBofSound(CBofApp::getApp()->getMainWindow(), sFileName, SOUND_WAVE);
-			if (pSound) {
-				pSound->play();
-				delete pSound;
-			} else {
-				logError(buildString("Movie SOUND file could not be read: %s.  Where? Not in Kansas ...", sFileName.getBuffer()));
-			}
+			pSound->play();
+			delete pSound;
 		} else if (nMovFileType == MovieFileType::TEXT) {
 			Common::File f;
 			if (f.open(sFileName.getBuffer())) {
@@ -480,7 +468,7 @@ ParseCodes CBagMovieObject::setInfo(CBagIfstream &istr) {
 				nObjectUpdated = true;
 
 				_pSndObj = new CBagSoundObject();
-				if (_pSndObj && _pSndObj->setInfo(istr) == PARSING_DONE) {
+				if (_pSndObj->setInfo(istr) == PARSING_DONE) {
 					return PARSING_DONE;
 				}
 			} else {

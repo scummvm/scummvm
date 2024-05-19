@@ -69,17 +69,14 @@ ErrorCode CBagMoo::setPDAMovie(CBofString &s) {
 
 	// Get a new movie object
 	_pMovie = new CBagCharacterObject();
-	assert(_pMovie != nullptr);
 
-	if (_pMovie) {
-		_pMovie->setFileName(s);
+	_pMovie->setFileName(s);
 
-		// Attach this bad baby...
-		errorCode = _pMovie->attach();
-		if (errorCode == ERR_NONE) {
-			_pMovie->setModal(false);
-			_pMovie->setNumOfLoops(1);
-		}
+	// Attach this bad baby...
+	errorCode = _pMovie->attach();
+	if (errorCode == ERR_NONE) {
+		_pMovie->setModal(false);
+		_pMovie->setNumOfLoops(1);
 	}
 
 	return errorCode;
