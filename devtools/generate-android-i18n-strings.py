@@ -15,6 +15,7 @@ import os
 import re
 import xml.etree.ElementTree as ET
 
+BASE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 def generate_fake_cpp():
     cpp_text = '''/* ScummVM - Graphic Adventure Engine
@@ -46,18 +47,18 @@ def generate_fake_cpp():
  
 #include "common/translation.h" // For catching the file during POTFILES reviews\n
 '''
-    with open('../dists/android.strings.xml.cpp', 'w') as file:
+    with open(os.path.join(BASE_PATH, 'dists/android.strings.xml.cpp'), 'w') as file:
         file.write(cpp_text)
-        tree = ET.parse('../dists/android/res/values/strings.xml')
+        tree = ET.parse(os.path.join(BASE_PATH, 'dists/android/res/values/strings.xml'))
         root = tree.getroot()
         for string in root.findall('string'):
-            if (string.attrib.get("translatable") != "false"):
+            if string.attrib.get('translatable') != 'false':
                 file.write(
                     f'static Common::U32String {string.attrib.get("name")} = _("{string.text}");\n')
 
 
 def extract_translations(file):
-    po_file = polib.pofile('../po/' + file + '.po')
+    po_file = polib.pofile(os.path.join(BASE_PATH, 'po', file + '.po'))
     translations = {}
     for entry in po_file:
         if entry.msgid and entry.msgstr:
@@ -79,30 +80,33 @@ def escape_special_characters(translated_string):
     return escaped
 
 
+def is_regional_language_code(language_code):
+    pattern = r'^[a-zA-Z]{2}([-_][a-zA-Z0-9]{2})?$'
+    return re.match(pattern, language_code)
+
+
 def is_bcp47_language_code(language_code):
-    pattern = r'^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$'
-    if re.match(pattern, language_code):
-        return True
-    else:
-        return False
+    pattern = r'^[a-zA-Z]{1,8}([-_][a-zA-Z0-9]{1,8})*$'
+    return re.match(pattern, language_code)
 
 
 def get_lang_qualifier(file):
     '''Generates <qualifier> for res/values-<qualifier> directory as per the specs given here:
     https://developer.android.com/guide/topics/resources/providing-resources#AlternativeResources
     '''
-    lang_qualifier = file[0] + file[1]
-    if (is_bcp47_language_code(file)):
-        subtags = file.split("-")
-        lang_qualifier = "+".join(subtags)
-        lang_qualifier = "b+" + lang_qualifier
-    else:
+    if is_regional_language_code(file):
         lang_qualifier = file.replace('_', '-r')
+    elif is_bcp47_language_code(file):
+        subtags = re.split('[-_]', file)
+        lang_qualifier = '+'.join(subtags)
+        lang_qualifier = 'b+' + lang_qualifier
+    else:
+        raise Exception(f"Invalid language code: {file}")
     return lang_qualifier
 
 
 def generate_translated_xml(file):
-    tree = ET.parse('../dists/android/res/values/strings.xml')
+    tree = ET.parse(os.path.join(BASE_PATH, 'dists/android/res/values/strings.xml'))
     root = tree.getroot()
 
     translations = extract_translations(file)
@@ -115,23 +119,27 @@ def generate_translated_xml(file):
 
     ET.indent(tree, '  ')
 
-    dir = '../dists/android/res/values-' + get_lang_qualifier(file)
+    dir = os.path.join(BASE_PATH, 'dists/android/res/values-' + get_lang_qualifier(file))
 
     if not os.path.exists(dir):
         os.makedirs(dir)
 
-    tree.write(dir + '/strings.xml', encoding='utf-8', xml_declaration=True)
+    tree.write(os.path.join(dir, 'strings.xml'), encoding='utf-8', xml_declaration=True)
 
 
 def get_po_files():
     po_file_names = []
-    for filename in os.listdir("../po/"):
-        if filename.endswith(".po"):
-            if (filename != "be-tarask.po"):
-                # This skips be-tarask file because there is a bug with be-tarask that gives this compile error:
-                # AAPT: error: failed to deserialize resource table: configuration has invalid locale 'be-'.
-                # See the open issue here: https://issuetracker.google.com/issues/234820481
-                po_file_names.append(os.path.splitext(filename)[0])
+    for filename in os.listdir(os.path.join(BASE_PATH, 'po')):
+        if not filename.endswith('.po'):
+            continue
+
+        # This skips be-tarask file because there is a bug with be-tarask that gives this compile error:
+        # AAPT: error: failed to deserialize resource table: configuration has invalid locale 'be-'.
+        # See the open issue here: https://issuetracker.google.com/issues/234820481
+        if (filename == 'be-tarask.po'):
+            continue
+
+        po_file_names.append(os.path.splitext(filename)[0])
 
     return po_file_names
 
