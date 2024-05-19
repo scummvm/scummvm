@@ -117,24 +117,18 @@ CBagStorageDev *CSBarMasterWin::onNewStorageDev(const CBofString &typestr) {
 		// delineate cic's
 	} else if (!typestr.find("CIC")) {
 		pSDev = new GAMEWINDOW();
-		if (pSDev != nullptr) {
-			pSDev->setCloseup(true);
-			pSDev->setCIC(true);
-			pSDev->setExitOnEdge(80);
-		}
+		pSDev->setCloseup(true);
+		pSDev->setCIC(true);
+		pSDev->setExitOnEdge(80);
 
 	} else if (!typestr.find("CLOSEUP")) {
 		pSDev = new GAMEWINDOW();
-		if (pSDev != nullptr) {
-			pSDev->setCloseup(true);
-			pSDev->setExitOnEdge(80);
-		}
+		pSDev->setCloseup(true);
+		pSDev->setExitOnEdge(80);
 
 	} else if (!typestr.find("CHAT")) {
 		pSDev = new CBagChatWnd();
-		if (pSDev != nullptr) {
-			pSDev->setCloseup(true);
-		}
+		pSDev->setCloseup(true);
 
 	} else if (!typestr.find("EVENT")) {        // EVT STUFF
 		pSDev = new CBagEventSDev();

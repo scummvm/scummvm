@@ -298,8 +298,6 @@ ErrorCode CBibbleWindow::attach() {
 
 	// Setup the text fields
 	_pCreditsText = new CBofText;
-	if (_pCreditsText == nullptr)
-		fatalError(ERR_MEMORY, "Unable to allocate a CBofText");
 
 	CBofRect cRect(CREDITS_AREA_X1, CREDITS_AREA_Y1, CREDITS_AREA_X2, CREDITS_AREA_Y2);
 
@@ -312,14 +310,10 @@ ErrorCode CBibbleWindow::attach() {
 	// Pre-load the "One", "Two", "Three", and "Four" shouts
 	for (int i = 0; i < BIBBLE_NUM_SHOUTS; i++) {
 		_pShouts[i] = new CBofSound(this, BuildDir(pszShouts[i]), SOUND_MIX);
-		if (_pShouts[i] == nullptr)
-			fatalError(ERR_MEMORY, "Unable to allocate a CBofSound");
 	}
 
 	// Pre-load the ball
 	_pBall = new CBofSprite;
-	if (_pBall == nullptr)
-		fatalError(ERR_MEMORY, "Unable to allocate a CBofSprite");
 
 	_pBall->loadSprite(BuildDir(BALL_BMP), BALL_CELS);
 	_pBall->setMaskColor(MASK_COLOR);
@@ -329,9 +323,6 @@ ErrorCode CBibbleWindow::attach() {
 
 	// Pre-load the bibbles
 	_pMasterBibble = new CBofSprite;
-	if (_pMasterBibble == nullptr)
-		fatalError(ERR_MEMORY, "Unable to allocate a CBofSprite");
-
 	_pMasterBibble->loadSprite(BuildDir(BIBBLE_BMP), BIBBLE_CELS);
 	_pMasterBibble->setMaskColor(MASK_COLOR);
 	_pMasterBibble->setZOrder(SPRITE_TOPMOST);
@@ -349,38 +340,26 @@ ErrorCode CBibbleWindow::attach() {
 
 	// Load the arch bitmaps that the ball needs to go behind
 	_pArch1 = new CBofSprite;
-	if (_pArch1 == nullptr)
-		fatalError(ERR_MEMORY, "Unable to allocate a CBofSprite");
-
 	_pArch1->loadSprite(BuildDir(ARCH1_BMP));
 	_pArch1->setMaskColor(MASK_COLOR);
 	_pArch1->setZOrder(SPRITE_MIDDLE);
 	_pArch1->linkSprite();
 
 	_pArch2 = new CBofSprite;
-	if (_pArch2 == nullptr)
-		fatalError(ERR_MEMORY, "Unable to allocate a CBofSprite");
-
 	_pArch2->loadSprite(BuildDir(ARCH2_BMP));
 	_pArch2->setMaskColor(MASK_COLOR);
 	_pArch2->setZOrder(SPRITE_MIDDLE);
 	_pArch2->linkSprite();
 
 	_pArch3 = new CBofSprite;
-	if (_pArch3 == nullptr)
-		fatalError(ERR_MEMORY, "Unable to allocate a CBofSprite");
-
 	_pArch3->loadSprite(BuildDir(ARCH3_BMP));
 	_pArch3->setMaskColor(MASK_COLOR);
 	_pArch3->setZOrder(SPRITE_MIDDLE);
 	_pArch3->linkSprite();
 
-
 	// Build all our buttons
 	for (int i = 0; i < BIBBLE_NUM_BUTTONS; i++) {
 		_pButtons[i] = new CBofBmpButton;
-		if (_pButtons[i] == nullptr)
-			fatalError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
 
 		CBofBitmap *pUp = loadBitmap(BuildDir(g_stButtons[i]._pszUp), pPal);
 		CBofBitmap *pDown = loadBitmap(BuildDir(g_stButtons[i]._pszDown), pPal);
@@ -393,9 +372,6 @@ ErrorCode CBibbleWindow::attach() {
 	}
 
 	_pBkgSnd = new CBofSound(this, BuildDir(CASINO_AUDIO), SOUND_MIX, 99999);
-	if (_pBkgSnd == nullptr)
-		fatalError(ERR_MEMORY, "Unable to allocate a CBofSound");
-
 	_pBkgSnd->play();
 
 	// No bet area currently selected

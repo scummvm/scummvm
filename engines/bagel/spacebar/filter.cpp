@@ -638,33 +638,31 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 			CBofBitmap *pMiniBitmap = new CBofBitmap(dx, dy, pPal);
 
-			if (pMiniBitmap != nullptr) {
-				CBofRect dstRect(g_engine->viewRect);
-				CBofRect srcRect = pMiniBitmap->getRect();
-				pBmp->paint(pMiniBitmap, &srcRect, &dstRect);
+			CBofRect dstRect(g_engine->viewRect);
+			CBofRect srcRect = pMiniBitmap->getRect();
+			pBmp->paint(pMiniBitmap, &srcRect, &dstRect);
 
-				CBofRect &filterRect = CMainWindow::getFilterRect();
-				filterRect.setRect(g_engine->viewRect.left, g_engine->viewRect.top, g_engine->viewRect.left + dx, g_engine->viewRect.top + dy);
+			CBofRect &filterRect = CMainWindow::getFilterRect();
+			filterRect.setRect(g_engine->viewRect.left, g_engine->viewRect.top, g_engine->viewRect.left + dx, g_engine->viewRect.top + dy);
 
-				int j, x;
-				int y = g_engine->viewRect.top;
-				for (int i = 0; i < 3; ++i) {
-					if (i == 1) {
-						j = 0;
-						x = g_engine->viewRect.left;
-					} else {
-						j = 1;
-						x = g_engine->viewRect.left + (dx >> 1);
-					}
-					for (; j < 3; ++j) {
-						pMiniBitmap->paint(pBmp, x, y);
-						x += dx;
-					}
-					y += dy;
+			int j, x;
+			int y = g_engine->viewRect.top;
+			for (int i = 0; i < 3; ++i) {
+				if (i == 1) {
+					j = 0;
+					x = g_engine->viewRect.left;
+				} else {
+					j = 1;
+					x = g_engine->viewRect.left + (dx >> 1);
 				}
-
-				delete pMiniBitmap;
+				for (; j < 3; ++j) {
+					pMiniBitmap->paint(pBmp, x, y);
+					x += dx;
+				}
+				y += dy;
 			}
+
+			delete pMiniBitmap;
 		}
 	}
 

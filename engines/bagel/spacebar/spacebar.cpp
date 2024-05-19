@@ -90,9 +90,6 @@ ErrorCode SpaceBarEngine::initialize() {
 
 		_masterWin = new CSBarMasterWin();
 		
-		if (_masterWin == nullptr)
-			fatalError(ERR_MEMORY, "Unable to allocate the main SpaceBar Window");
-
 		// This is the primary game window
 		setMainWindow(_masterWin);
 
@@ -100,9 +97,6 @@ ErrorCode SpaceBarEngine::initialize() {
 		InitializeSoundSystem(1, 22050, 8);
 
 		pBmp = new CBofBitmap(_masterWin->width(), _masterWin->height(), _pPalette);
-		if (pBmp == nullptr)
-			fatalError(ERR_MEMORY, "Unable to allocate a CBofBitmap");
-
 		pBmp->fillRect(nullptr, COLOR_BLACK);
 
 		_masterWin->show();
