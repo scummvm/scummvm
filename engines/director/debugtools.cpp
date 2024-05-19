@@ -72,38 +72,70 @@ typedef struct ImGuiScript {
 	Common::String handlerId;
 	Common::String handlerName;
 	Common::String moviePath;
-	Common::Array<ImGuiScriptCodeLine> lingoCode;
-	Common::Array<ImGuiScriptCodeLine> byteCode;
 
 	bool operator==(const ImGuiScript &c) const {
-		return moviePath == c.moviePath && score == c.score && id == c.id && type == c.type && handlerId == c.handlerId;
+		return moviePath == c.moviePath && score == c.score && id == c.id && handlerId == c.handlerId;
 	}
 	bool operator!=(const ImGuiScript &c) const {
 		return !(*this == c);
 	}
 } ImGuiScript;
 
-class ImGuiNodeVisitor : public LingoDec::NodeVisitor {
-public:
-	explicit ImGuiNodeVisitor(ImGuiScript &script) : _script(script) {}
+typedef struct ImGuiState {
+	struct {
+		Common::HashMap<Graphics::Surface *, ImGuiImage> _textures;
+		bool _listView = true;
+		int _thumbnailSize = 64;
+		ImGuiTextFilter _nameFilter;
+		int _typeFilter = 0x7FFF;
+	} _cast;
+	struct {
+		ImGuiScript _script;
+		ImGuiTextFilter _nameFilter;
+		bool _showScript = false;
+		bool _showByteCode = false;
+	} _functions;
+	bool _showControlPanel = true;
+	bool _showCallStack = false;
+	bool _showVars = false;
+	bool _showChannels = false;
+	bool _showCast = false;
+	bool _showFuncList = false;
+	bool _showScore = false;
+	Common::List<CastMemberID> _scriptCasts;
+	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _breakpoints;
+	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
+	int _prevFrame = -1;
+	struct {
+		int frame = -1;
+		int channel = -1;
+	} _selectedScoreCast;
+} ImGuiState;
 
-	virtual void visit(const LingoDec::BlockNode &node) override {
-		_indent++;
-		for (const auto &child : node.children) {
-			child->accept(*this);
-		}
-		_indent--;
-	}
+ImGuiState *_state = nullptr;
+
+static void setScriptToDisplay(const ImGuiScript &script);
+
+class RenderScriptVisitor : public LingoDec::NodeVisitor {
+public:
+	explicit RenderScriptVisitor(ImGuiScript &script, bool showByteCode) : _script(script), _showByteCode(showByteCode) {}
 
 	virtual void visit(const LingoDec::HandlerNode &node) override {
-		byteCode(node);
+		_handler = node.handler;
+		LingoDec::Script *script = node.handler->script;
+		if (!script)
+			return;
+
+		if (_showByteCode) {
+			byteCode(node);
+			return;
+		}
 
 		if (node.handler->isGenericEvent) {
 			node.block->accept(*this);
 			return;
 		}
 
-		LingoDec::Script *script = node.handler->script;
 		bool isMethod = script->isFactory();
 		{
 			Common::String code;
@@ -125,41 +157,116 @@ public:
 			write(node._startOffset, code);
 		}
 
-		{
-			Common::String code;
-			if (isMethod && node.handler->script->propertyNames.size() > 0 && node.handler == &node.handler->script->handlers[0]) {
-				code += "instance ";
-				for (size_t i = 0; i < node.handler->script->propertyNames.size(); i++) {
-					if (i > 0)
-						code += ", ";
-					code += node.handler->script->propertyNames[i];
-				}
-				write(node._startOffset, code);
+		if (isMethod && node.handler->script->propertyNames.size() > 0 && node.handler == &node.handler->script->handlers[0]) {
+			write(node._startOffset, "instance");
+			ImGui::SameLine();
+			for (size_t i = 0; i < node.handler->script->propertyNames.size(); i++) {
+				if (i > 0)
+					ImGui::Text(", ");
+				ImGui::SameLine();
+				ImGui::TextColored((ImVec4)ImColor(var_color), "%s", node.handler->script->propertyNames[i].c_str());
+				ImGui::SameLine();
 			}
+			ImGui::NewLine();
 		}
 
-		{
-			if (node.handler->globalNames.size() > 0) {
-				Common::String code;
-				code += "global ";
-				for (size_t i = 0; i < node.handler->globalNames.size(); i++) {
-					if (i > 0)
-						code += ", ";
-					code += node.handler->globalNames[i];
-				}
-				write(node._startOffset, code);
+		if (node.handler->globalNames.size() > 0) {
+			write(node._startOffset, "global ");
+			ImGui::SameLine();
+			for (size_t i = 0; i < node.handler->globalNames.size(); i++) {
+				if (i > 0)
+					ImGui::Text(", ");
+				ImGui::SameLine();
+				ImGui::TextColored((ImVec4)ImColor(var_color), "%s", node.handler->globalNames[i].c_str());
+				ImGui::SameLine();
 			}
+			ImGui::NewLine();
 		}
 
 		node.block->accept(*this);
 
-		{
-			Common::String code;
-			if (!isMethod) {
-				code += "end";
-			}
-			write(node.block->_endOffset, code);
+		if (!isMethod) {
+			write(node.block->_endOffset, "end");
 		}
+	}
+
+	virtual void visit(const LingoDec::LiteralNode &node) override {
+		LingoDec::CodeWriterVisitor code(_dot, false);
+		node.accept(code);
+		ImGui::TextColored(literal_color, "%s", code._str.c_str());
+		ImGui::SameLine();
+	}
+
+	virtual void visit(const LingoDec::ObjCallV4Node &node) override {
+		if (node.isStatement) {
+			renderLine(node._startOffset);
+			renderIndentation();
+		}
+
+		node.obj->accept(*this);
+		ImGui::SameLine();
+		ImGui::Text("(");
+		ImGui::SameLine();
+		node.argList->accept(*this);
+		ImGui::SameLine();
+		ImGui::Text(")");
+		if (!node.isStatement) {
+			ImGui::SameLine();
+		}
+	}
+
+	virtual void visit(const LingoDec::CallNode &node) override {
+		int32 obj = 0;
+		for (int i = 0; i < _handler->bytecodeArray.size(); i++) {
+			if (node._startOffset == _handler->bytecodeArray[i].pos) {
+				obj = _handler->bytecodeArray[i].obj;
+				break;
+			}
+		}
+
+		// new line only if it's a statement
+		if (node.isStatement) {
+			renderLine(node._startOffset);
+			renderIndentation();
+		}
+
+		const ImVec4 color = (ImVec4)ImColor(g_lingo->_builtinCmds.contains(node.name) ? builtin_color : call_color);
+		ImGui::TextColored(color, "%s", node.name.c_str());
+		if (!g_lingo->_builtinCmds.contains(node.name) && ImGui::IsItemHovered() && ImGui::BeginTooltip()) {
+			ImGui::Text("Go to definition");
+			ImGui::EndTooltip();
+		}
+		if (!g_lingo->_builtinCmds.contains(node.name) && ImGui::IsItemClicked()) {
+			ImGuiScript script;
+			script.moviePath = _script.moviePath;
+			script.handlerId = node.name;
+			script.id = CastMemberID(obj, _script.id.castLib);
+			script.handlerName = node.name;
+			setScriptToDisplay(script);
+		}
+		ImGui::SameLine();
+
+		LingoDec::CodeWriterVisitor code(_dot, false);
+		if (node.noParens()) {
+			node.argList->accept(code);
+		} else {
+			code.write("(");
+			node.argList->accept(code);
+			code.write(")");
+		}
+
+		ImGui::Text("%s", code._str.c_str());
+		if (!node.isStatement) {
+			ImGui::SameLine();
+		}
+	}
+
+	virtual void visit(const LingoDec::BlockNode &node) override {
+		_indent++;
+		for (const auto &child : node.children) {
+			child->accept(*this);
+		}
+		_indent--;
 	}
 
 	virtual void visit(const LingoDec::RepeatWhileStmtNode &node) override {
@@ -203,11 +310,13 @@ public:
 
 	virtual void visit(const LingoDec::IfStmtNode &node) override {
 		{
-			LingoDec::CodeWriterVisitor code(_dot, false);
-			code.write("if ");
-			node.condition->accept(code);
-			code.write(" then");
-			write(node._startOffset, code._str);
+			renderLine(node._startOffset);
+			renderIndentation();
+			ImGui::Text("if ");
+			ImGui::SameLine();
+			node.condition->accept(*this);
+			ImGui::SameLine();
+			ImGui::Text(" then");
 		}
 		node.block1->accept(*this);
 		if (node.hasElse) {
@@ -229,11 +338,15 @@ public:
 	virtual void defaultVisit(const LingoDec::Node &node) override {
 		LingoDec::CodeWriterVisitor code(_dot, false);
 		node.accept(code);
-		write(node._startOffset, code._str);
+		if (node.isStatement) {
+			renderLine(node._startOffset);
+			renderIndentation();
+		}
+		ImGui::Text("%s", code._str.c_str());
 	}
 
 private:
-	void byteCode(const LingoDec::HandlerNode &node) {
+	void byteCode(const LingoDec::HandlerNode &node) const {
 		LingoDec::Handler *handler = node.handler;
 		bool isMethod = handler->script->isFactory();
 
@@ -304,65 +417,88 @@ private:
 		}
 	}
 
-	void write(uint32 offset, const Common::String &code) {
+	void write(uint32 offset, const Common::String &code) const {
+		renderLine(offset);
+		renderIndentation();
+		ImGui::Text("%s", code.c_str());
+	}
+
+	void writeByteCode(uint32 offset, const Common::String &code) const {
+		renderLine(offset);
 		Common::String s;
 		for (int i = 0; i < _indent; i++) {
 			s += "  ";
 		}
-		_script.lingoCode.push_back({offset, s + code});
+		ImGui::Text("%s", (s + code).c_str());
 	}
 
-	void writeByteCode(uint32 offset, const Common::String &code) {
-		Common::String s;
-		for (int i = 0; i < _indent; i++) {
-			s += "  ";
+	void renderLine(uint pc) const {
+		ImDrawList *dl = ImGui::GetWindowDrawList();
+		ImVec2 pos = ImGui::GetCursorScreenPos();
+		const ImVec2 mid(pos.x + 7, pos.y + 7);
+		Common::String bpName = Common::String::format("%s-%d", _script.handlerId.c_str(), pc);
+
+		ImU32 color = bp_color_disabled;
+
+		if (_state->_breakpoints.contains(bpName))
+			color = bp_color_enabled;
+
+		ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
+		if (ImGui::IsItemClicked(0)) {
+			if (color == bp_color_enabled) {
+				_state->_breakpoints.erase(bpName);
+				color = bp_color_disabled;
+			} else {
+				_state->_breakpoints[bpName] = true;
+				color = bp_color_enabled;
+			}
 		}
-		_script.byteCode.push_back({offset, s + code});
+
+		if (color == bp_color_disabled && ImGui::IsItemHovered()) {
+			color = bp_color_hover;
+		}
+
+		dl->AddCircleFilled(mid, 4.0f, color);
+		dl->AddLine(ImVec2(pos.x + 16.0f, pos.y), ImVec2(pos.x + 16.0f, pos.y + 17), line_color);
+
+		ImGui::SetItemTooltip("Click to add a breakpoint");
+
+		ImGui::SameLine();
+		ImGui::Text("[%5d] ", pc);
+		ImGui::SameLine();
 	}
 
-	Common::String posToString(int32 pos) {
+	void renderIndentation(int indent) const {
+		for (int i = 0; i < indent; i++) {
+			ImGui::Text("  ");
+			ImGui::SameLine();
+		}
+	}
+
+	void renderIndentation() const {
+		renderIndentation(_indent);
+	}
+
+	Common::String posToString(int32 pos) const {
 		return Common::String::format("[%3d]", pos);
 	}
 
 private:
 	ImGuiScript &_script;
+	bool _showByteCode = false;
 	bool _dot = false;
 	int _indent = 0;
+	LingoDec::Handler *_handler = nullptr;
+
+	const ImU32 bp_color_disabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 0.0f));
+	const ImU32 bp_color_enabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 1.0f));
+	const ImU32 bp_color_hover = ImGui::GetColorU32(ImVec4(0.42f, 0.17f, 0.13f, 1.0f));
+	const ImU32 line_color = ImGui::GetColorU32(ImVec4(0.44f, 0.44f, 0.44f, 1.0f));
+	const ImVec4 call_color = ImVec4(0.44f, 0.44f, 0.88f, 1.0f);
+	const ImVec4 builtin_color = ImColor(IM_COL32_WHITE);
+	const ImVec4 var_color = ImColor(IM_COL32_WHITE);
+	const ImVec4 literal_color = ImColor(IM_COL32_WHITE);
 };
-
-typedef struct ImGuiState {
-	struct {
-		Common::HashMap<Graphics::Surface *, ImGuiImage> _textures;
-		bool _listView = true;
-		int _thumbnailSize = 64;
-		ImGuiTextFilter _nameFilter;
-		int _typeFilter = 0x7FFF;
-	} _cast;
-	struct {
-		ImGuiScript _script;
-		ImGuiTextFilter _nameFilter;
-		bool _showScript = false;
-		bool _showByteCode = false;
-	} _functions;
-	bool _showControlPanel = true;
-	bool _showCallStack = false;
-	bool _showVars = false;
-	bool _showChannels = false;
-	bool _showCast = false;
-	bool _showFuncList = false;
-	bool _showScore = false;
-	Common::List<CastMemberID> _scriptCasts;
-	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _breakpoints;
-	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
-	int _prevFrame = -1;
-
-	struct {
-		int frame = -1;
-		int channel = -1;
-	} _selectedScoreCast;
-} ImGuiState;
-
-ImGuiState *_state = nullptr;
 
 static void showControlPanel() {
 	if (!_state->_showControlPanel)
@@ -1183,47 +1319,27 @@ static void renderCastScript(Symbol &sym) {
 }
 
 static void renderScript(ImGuiScript &script, bool showByteCode) {
-	ImDrawList *dl = ImGui::GetWindowDrawList();
+	Director::Movie *movie = g_director->getCurrentMovie();
+	const Common::String &moviePath = movie->getArchive()->getPathName().toString();
+	if (moviePath != script.moviePath)
+		return;
 
-	const ImU32 bp_color_disabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 0.0f));
-	const ImU32 bp_color_enabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 1.0f));
-	const ImU32 bp_color_hover = ImGui::GetColorU32(ImVec4(0.42f, 0.17f, 0.13f, 1.0f));
-	const ImU32 line_color = ImGui::GetColorU32(ImVec4(0.44f, 0.44f, 0.44f, 1.0f));
-	ImU32 color;
+	const Director::Cast *cast = movie->getCast(script.id);
+	if (!cast->_lingodec)
+		return;
 
-	const Common::Array<ImGuiScriptCodeLine> &code = showByteCode ? script.byteCode : script.lingoCode;
-	for (const auto& line : code) {
-		ImVec2 pos = ImGui::GetCursorScreenPos();
-		const ImVec2 mid(pos.x + 7, pos.y + 7);
-		Common::String bpName = Common::String::format("%s-%d", script.handlerId.c_str(), line.pc);
-
-		color = bp_color_disabled;
-
-		if (_state->_breakpoints.contains(bpName))
-			color = bp_color_enabled;
-
-		ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
-		if (ImGui::IsItemClicked(0)) {
-			if (color == bp_color_enabled) {
-				_state->_breakpoints.erase(bpName);
-				color = bp_color_disabled;
-			} else {
-				_state->_breakpoints[bpName] = true;
-				color = bp_color_enabled;
-			}
+	Common::SharedPtr<LingoDec::Node> node;
+	for (auto it : cast->_lingodec->scripts) {
+		for (const LingoDec::Handler &h : it.second->handlers) {
+			if (h.name != script.handlerId)
+				continue;
+			node = h.ast.root;
 		}
+	}
 
-		if (color == bp_color_disabled && ImGui::IsItemHovered()) {
-			color = bp_color_hover;
-		}
-
-		dl->AddCircleFilled(mid, 4.0f, color);
-		dl->AddLine(ImVec2(pos.x + 16.0f, pos.y), ImVec2(pos.x + 16.0f, pos.y + 17), line_color);
-
-		ImGui::SetItemTooltip("Click to add a breakpoint");
-
-		ImGui::SameLine();
-		ImGui::Text("[%5d] %s", line.pc, line.codeLine.c_str());
+	if (node) {
+		RenderScriptVisitor visitor(script, showByteCode);
+		node->accept(visitor);
 	}
 }
 
@@ -1344,17 +1460,8 @@ static void showFuncList() {
 						ImGuiScript script;
 						script.moviePath = movie->getArchive()->getPathName().toString();
 						script.score = true;
-						script.type = csc->_scriptType;
 						script.handlerId = functionHandler._key;
 						script.handlerName = getHandlerName(functionHandler._value);
-						uint32 scriptId = movie->getCast()->getCastMemberInfo(csc->_id)->scriptId;
-						const LingoDec::Script *s = movie->getCast()->_lingodec->scripts[scriptId];
-						ImGuiNodeVisitor visitor(script);
-						for (auto &h : s->handlers) {
-							if (h.name != functionHandler._key)
-								continue;
-							h.ast.root->accept(visitor);
-						}
 						setScriptToDisplay(script);
 					}
 					ImGui::TableNextColumn();
@@ -1389,17 +1496,8 @@ static void showFuncList() {
 								ImGuiScript script;
 								script.moviePath = movie->getArchive()->getPathName().toString();
 								script.id = memberID;
-								script.type = (ScriptType)i;
 								script.handlerId = functionHandler._key;
 								script.handlerName = getHandlerName(functionHandler._value);
-								uint32 scriptId = movie->getCastMemberInfo(memberID)->scriptId;
-								const LingoDec::Script *s = cast._value->_lingodec->scripts[scriptId];
-								ImGuiNodeVisitor visitor(script);
-								for (auto &h : s->handlers) {
-									if (h.name != functionHandler._key)
-										continue;
-									h.ast.root->accept(visitor);
-								}
 								setScriptToDisplay(script);
 							}
 							ImGui::TableNextColumn();
@@ -1437,17 +1535,8 @@ static void showFuncList() {
 								ImGuiScript script;
 								script.moviePath = movie->getArchive()->getPathName().toString();
 								script.id = memberID;
-								script.type = (ScriptType)i;
 								script.handlerId = functionHandler._key;
 								script.handlerName = getHandlerName(functionHandler._value);
-								uint32 scriptId = sharedCast->getCastMemberInfo(scriptContext._key)->scriptId;
-								const LingoDec::Script *s = sharedCast->_lingodec->scripts[scriptId];
-								ImGuiNodeVisitor visitor(script);
-								for (auto &h : s->handlers) {
-									if (h.name != functionHandler._key)
-										continue;
-									h.ast.root->accept(visitor);
-								}
 								setScriptToDisplay(script);
 							}
 							ImGui::TableNextColumn();
