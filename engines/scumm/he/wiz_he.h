@@ -292,14 +292,14 @@ public:
 	}
 	static Common::Array<DbgEntry> *_allocLocs;
 #endif
-	WizPxShrdBuffer() : _buff(nullptr), _lifes(nullptr) {}
+	WizPxShrdBuffer() : _buff(nullptr), _lifes(nullptr), _xstart(0) {}
 #ifdef WIZ_DEBUG_BUFFERS
 	WizPxShrdBuffer(void *buff, bool hasOwnerShip) : WizPxShrdBuffer(buff, hasOwnerShip, 0, 0) {}
 	WizPxShrdBuffer(void *buff, bool hasOwnerShip, const char *func, int line)
 #else
 	WizPxShrdBuffer(void *buff, bool hasOwnerShip)
 #endif
-		: _buff(reinterpret_cast<WizRawPixel *>(buff)), _lifes(nullptr) {
+		: _buff(reinterpret_cast<WizRawPixel *>(buff)), _lifes(nullptr), _xstart(0) {
 		if (hasOwnerShip) {
 #ifdef WIZ_DEBUG_BUFFERS
 			if (!_allocLocs)
@@ -309,30 +309,39 @@ public:
 			*(_lifes = new int) = 1;
 		}
 	}
-	WizPxShrdBuffer(const WizPxShrdBuffer &other) : _buff(other._buff), _lifes(other._lifes) {
+	WizPxShrdBuffer(const WizPxShrdBuffer &other) : _buff(other._buff), _lifes(other._lifes), _xstart(other._xstart) {
 		if (_lifes)
 			++*_lifes;
 	}
-	WizPxShrdBuffer(WizPxShrdBuffer &&other) noexcept : _buff(other._buff), _lifes(other._lifes) {
+	WizPxShrdBuffer(WizPxShrdBuffer &&other) noexcept : _buff(other._buff), _lifes(other._lifes), _xstart(other._xstart) {
 		other._lifes = nullptr;
 	}
 	~WizPxShrdBuffer() {
 		dcrlifes();
 	}
-	WizRawPixel *operator()() const { return _buff; }
+	WizRawPixel *operator()() const { return (WizRawPixel*)((byte*)_buff + _xstart); }
 	WizPxShrdBuffer &operator=(const WizPxShrdBuffer &other) {
-		dcrlifes();
-		if ((_lifes = other._lifes) != nullptr) ++*_lifes;
-		_buff = other._buff;
+		if (this != &other) {
+			dcrlifes();
+			if ((_lifes = other._lifes) != nullptr) ++*_lifes;
+			_buff = other._buff;
+			_xstart = other._xstart;
+		}
 		return *this;
 	}
 	WizPxShrdBuffer &&operator=(WizPxShrdBuffer &&other) {
 		dcrlifes();
 		_lifes = other._lifes;
 		_buff = other._buff;
+		_xstart = other._xstart;
 		other._lifes = nullptr;
 		return Common::move(*this);
 	}
+	WizPxShrdBuffer &operator+(int bytes) {
+		_xstart += bytes;
+		return *this;
+	}
+	WizPxShrdBuffer &operator+=(int bytes) { return operator+(bytes); }
 	bool operator==(WizRawPixel *ptr) const { return _buff == ptr; }
 private:
 	void dcrlifes() {
@@ -349,6 +358,7 @@ private:
 	}
 	WizRawPixel *_buff;
 	int *_lifes;
+	int _xstart;
 };
 
 struct WizSimpleBitmap {
