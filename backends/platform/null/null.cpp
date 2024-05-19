@@ -225,9 +225,11 @@ void OSystem_NULL::getTimeAndDate(TimeDate &td, bool skipRecord) const {
 	td.tm_wday = t.tm_wday;
 }
 
+#ifndef NULL_DRIVER_USE_FOR_TEST
 void OSystem_NULL::quit() {
 	exit(0);
 }
+#endif
 
 void OSystem_NULL::logMessage(LogMessageType::Type type, const char *message) {
 	if (_silenceLogs)
