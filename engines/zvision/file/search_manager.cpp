@@ -176,8 +176,7 @@ bool SearchManager::loadZix(const Common::Path &name) {
 			Common::Path path_(path);
 			if (!path_.empty()) {
 				for (Common::List<Common::Path>::iterator it = _dirList.begin(); it != _dirList.end(); ++it) {
-					// FIXME: ignoreCase
-					if (path_ == *it) {
+					if (path_.equalsIgnoreCase(*it)) {
 						path_ = *it;
 						break;
 					}
@@ -215,8 +214,7 @@ bool SearchManager::loadZix(const Common::Path &name) {
 void SearchManager::addDir(const Common::Path &name) {
 	Common::Path path;
 	for (Common::List<Common::Path>::iterator it = _dirList.begin(); it != _dirList.end(); ++it)
-		// FIXME: ignore case
-		if (name == *it) {
+		if (name.normalize().equalsIgnoreCase((*it).normalize())) {
 			path = *it;
 			break;
 		}
