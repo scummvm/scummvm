@@ -388,28 +388,20 @@ void View1::draw() {
 	g_system->getPaletteManager()->setPalette(g_engine->_pal, 0, 256);
 
 	handleFading();
-	// Draw a bunch of squares on screen
+	
 	Graphics::ManagedSurface s = getSurface();
 
-	/* for (int i = 0; i < 100; i++) {
-		s.setPixel(i, i, i);
-	} */
-	
-	// s.blitFrom(g_engine->_bgImageShip);
-	
-	
-	// s.blitFrom(_backgroundSurface);
 	s.blitFrom(_backgroundSurface);
 
 	// Draw the character
 
-	uint16 charX = 50;
-	uint16 charY = 100;
+	// uint16 charX = 50;
+	// uint16 charY = 100;
 	// TODO: I don't have the right offset yet plus there must be some trick to reading sequential frames, probl. need
 	// to seek in between frames
-	AnimFrame &f = g_engine->_animFrames[_guyFrameIndex];
+	// AnimFrame &f = g_engine->_animFrames[_guyFrameIndex];
 	// DrawSprite(charX, charY, f.Width, f.Height, f.Data, s);
-	DrawSpriteAdvanced(charX, charY, f.Width, f.Height, 26, f.Data, s);
+	// DrawSpriteAdvanced(charX, charY, f.Width, f.Height, 26, f.Data, s);
 	/* for (int x = 0; x < g_engine->_charWidth; x++) {
 		for (int y = 0; y < g_engine->_charHeight; y++) {
 			uint8 val = g_engine->_charData[y * g_engine->_charWidth + x];
@@ -452,7 +444,7 @@ void View1::draw() {
 	// DrawSprite(100, 100, g_engine->_cursorWidth, g_engine->_cursorHeight, g_engine->_cursorData, s);
 
 	// Draw the animation frame
-	DrawSprite(180, 80, g_engine->_guyWidth, g_engine->_guyHeight, g_engine->_guyData, s);
+	// DrawSprite(180, 80, g_engine->_guyWidth, g_engine->_guyHeight, g_engine->_guyData, s);
 	
 	
 	//for (int i = 0; i < 100; ++i)
@@ -472,13 +464,13 @@ void View1::draw() {
 	}
 
 	// Draw all glyphs
-	drawGlyphs(g_engine->_glyphs, g_engine->numGlyphs, 10, 10, s);
+	// drawGlyphs(g_engine->_glyphs, g_engine->numGlyphs, 10, 10, s);
 
-	DrawSprite(108, 14, g_engine->_flagWidths[_flagFrameIndex], g_engine->_flagHeights[_flagFrameIndex], g_engine->_flagData[_flagFrameIndex], s);
+	// DrawSprite(108, 14, g_engine->_flagWidths[_flagFrameIndex], g_engine->_flagHeights[_flagFrameIndex], g_engine->_flagData[_flagFrameIndex], s);
 	drawBackgroundAnimations(s);
 	// renderString(200, 100, "Hello, world!");
 
-	DrawSprite(100, 100, g_engine->_stick.Width, g_engine->_stick.Height, g_engine->_stick.Data, s);
+	// DrawSprite(100, 100, g_engine->_stick.Width, g_engine->_stick.Height, g_engine->_stick.Data, s);
 
 	if (_isShowingInventory) {
 		drawInventory(s);
@@ -489,9 +481,9 @@ void View1::draw() {
 		DrawSprite(0x00, 0x00, icon->Width, icon->Height, icon->Data, s);
 	}
 
-	drawPathfindingPoints(s);
-	drawPath(s);
-	drawBackgroundAnimationNumbers(s);
+	// drawPathfindingPoints(s);
+	// drawPath(s);
+	// drawBackgroundAnimationNumbers(s);
 	DrawCharacters(s);
 }
 
