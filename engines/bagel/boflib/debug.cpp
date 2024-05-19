@@ -21,7 +21,6 @@
 
 #include "common/config-manager.h"
 #include "common/debug.h"
-#include "common/textconsole.h"
 #include "bagel/boflib/debug.h"
 #include "bagel/bagel.h"
 

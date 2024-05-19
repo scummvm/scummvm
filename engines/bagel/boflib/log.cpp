@@ -23,7 +23,6 @@
 #include "common/savefile.h"
 #include "common/debug.h"
 #include "bagel/boflib/log.h"
-#include "bagel/boflib/stdinc.h"
 
 namespace Bagel {
 
