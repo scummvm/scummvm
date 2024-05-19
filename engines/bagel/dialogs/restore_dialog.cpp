@@ -118,8 +118,6 @@ ErrorCode CBagRestoreDialog::attach() {
 		assert(_pButtons[i] == nullptr);
 
 		_pButtons[i] = new CBofBmpButton;
-		if (_pButtons[i] == nullptr)
-			fatalError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
 
 		CBofBitmap *pUp = loadBitmap(buildSysDir(g_stButtons[i]._pszUp), pPal);
 		CBofBitmap *pDown = loadBitmap(buildSysDir(g_stButtons[i]._pszDown), pPal);
@@ -155,9 +153,6 @@ ErrorCode CBagRestoreDialog::attach() {
 	CBofRect cRect(LIST_X, LIST_Y, LIST_X + LIST_DX - 1, LIST_Y + LIST_DY - 1);
 
 	_pListBox = new CBofListBox();
-	if (_pListBox == nullptr)
-		fatalError(ERR_MEMORY, "Unable to allocate a CBofListBox");
-
 	_pListBox->create("SaveGameList", &cRect, this);
 	_pListBox->setPointSize(LIST_FONT_SIZE);
 	_pListBox->setItemHeight(LIST_TEXT_DY);
@@ -197,8 +192,6 @@ ErrorCode CBagRestoreDialog::attach() {
 		assert(_pText == nullptr);
 
 		_pText = new CBofText;
-		if (_pText == nullptr)
-			fatalError(ERR_MEMORY, "Could not allocate a CBofText for the Restore Dialog");
 
 		cRect.setRect(170, 405, 470, 435);
 		_pText->setupText(&cRect, JUSTIFY_LEFT, FORMAT_CENTER_LEFT);

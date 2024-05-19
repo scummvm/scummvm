@@ -121,19 +121,14 @@ ErrorCode CBagCreditsDialog::loadNextTextFile() {
 
 	// Create a new work area
 	_pCreditsBmp = new CBofBitmap(cRect.width(), cRect.height() + LINE_HEIGHT + 2, _pBackdrop->getPalette());
-	if (_pCreditsBmp != nullptr)
-	{
-		_pCreditsBmp->fillRect(nullptr, MY_MASK_COLOR);
+	_pCreditsBmp->fillRect(nullptr, MY_MASK_COLOR);
 
-		// Kill any previous work area
-		delete _pSaveBmp;
-		_pSaveBmp = new CBofBitmap(_pCreditsBmp->width(), _pCreditsBmp->height(), _pBackdrop->getPalette());
-		if (_pSaveBmp == nullptr)
-			fatalError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
+	// Kill any previous work area
+	delete _pSaveBmp;
+	_pSaveBmp = new CBofBitmap(_pCreditsBmp->width(), _pCreditsBmp->height(), _pBackdrop->getPalette());
 
-		CBofRect tmpRect = _pSaveBmp->getRect();
-		_pBackdrop->paint(_pSaveBmp, &tmpRect, &cRect);
-	}
+	CBofRect tmpRect = _pSaveBmp->getRect();
+	_pBackdrop->paint(_pSaveBmp, &tmpRect, &cRect);
 
 	// Get rid of any previous credits screen
 	if (_pszText != nullptr) {

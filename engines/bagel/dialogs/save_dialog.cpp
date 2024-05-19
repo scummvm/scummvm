@@ -124,8 +124,6 @@ ErrorCode CBagSaveDialog::attach() {
 		assert(_pButtons[i] == nullptr);
 
 		_pButtons[i] = new CBofBmpButton;
-		if (_pButtons[i] == nullptr)
-			fatalError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
 
 		CBofBitmap *pUp = loadBitmap(buildSysDir(g_stButtons[i]._up), pPal);
 		CBofBitmap *pDown = loadBitmap(buildSysDir(g_stButtons[i]._down), pPal);
@@ -141,10 +139,8 @@ ErrorCode CBagSaveDialog::attach() {
 	assert(_pEditText == nullptr);
 
 	_pEditText = new CBofEditText("", EDIT_X, EDIT_Y, EDIT_DX, EDIT_DY, this);
-	if (_pEditText != nullptr) {
-		_pEditText->setText("");
-		_pEditText->show();
-	}
+	_pEditText->setText("");
+	_pEditText->show();
 
 	// Get a list of saves, and filter out the autosave entry if present
 	// (we don't show the autosave slot in the original UI)
@@ -161,8 +157,6 @@ ErrorCode CBagSaveDialog::attach() {
 
 	// Create a list box for the user to choose the slot to save into
 	_pListBox = new CBofListBox();
-	if (_pListBox == nullptr)
-		fatalError(ERR_MEMORY, "Unable to allocate a CBofListBox");
 
 	CBofRect cRect(LIST_X, LIST_Y, LIST_X + LIST_DX - 1, LIST_Y + LIST_DY - 1);
 

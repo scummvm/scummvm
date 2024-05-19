@@ -49,8 +49,6 @@ void CBagNextCDDialog::onInitDialog() {
 
 	// Build all our buttons
 	_pButton = new CBofBmpButton;
-	if (_pButton == nullptr)
-		fatalError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
 
 	CBofBitmap *pUp = loadBitmap(buildSysDir("CDOKUP.BMP"), pPal);
 	CBofBitmap *pDown = loadBitmap(buildSysDir("CDOKDN.BMP"), pPal);

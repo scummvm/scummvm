@@ -227,8 +227,6 @@ ErrorCode CBagOptWindow::attach() {
 		assert(_pButtons[i] == nullptr);
 
 		_pButtons[i] = new CBofBmpButton;
-		if (_pButtons[i] == nullptr)
-			fatalError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
 
 		CBofBitmap *pUp = loadBitmap(buildSysDir(g_stButtons[i]._pszUp), pPal);
 		CBofBitmap *pDown = loadBitmap(buildSysDir(g_stButtons[i]._pszDown), pPal);
@@ -258,9 +256,6 @@ ErrorCode CBagOptWindow::attach() {
 	CBofRect cRect;
 	cRect.setRect(73, 48, 73 + 120 - 1, 48 + 20 - 1);
 	_pMidiVolumeScroll = new CBofScrollBar;
-	if (_pMidiVolumeScroll == nullptr)
-		fatalError(ERR_MEMORY, "Could not allocate the Midi Volume Scroll Bar");
-
 	_pMidiVolumeScroll->create("", &cRect, this, MIDI_VOL_ID);
 	_pMidiVolumeScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
 	_pMidiVolumeScroll->setScrollRange(VOLUME_MIN, VOLUME_MAX, true);
@@ -269,9 +264,6 @@ ErrorCode CBagOptWindow::attach() {
 	// Digital Audio volume control
 	cRect.setRect(73, 98, 73 + 120 - 1, 98 + 20 - 1);
 	_pWaveVolumeScroll = new CBofScrollBar;
-	if (_pWaveVolumeScroll == nullptr)
-		fatalError(ERR_MEMORY, "Could not allocate the Wave Volume Scroll Bar");
-
 	_pWaveVolumeScroll->create("", &cRect, this, WAVE_VOL_ID);
 	_pWaveVolumeScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
 	_pWaveVolumeScroll->setScrollRange(VOLUME_MIN, VOLUME_MAX, true);
@@ -280,9 +272,6 @@ ErrorCode CBagOptWindow::attach() {
 	// Pan Correction control
 	cRect.setRect(73, 268, 73 + 120 - 1, 268 + 20 - 1);
 	_pCorrectionScroll = new CBofScrollBar;
-	if (_pCorrectionScroll == nullptr)
-		fatalError(ERR_MEMORY, "Could not allocate the Pan Correction Scroll Bar");
-
 	_pCorrectionScroll->create("", &cRect, this, CORRECTION_ID);
 	_pCorrectionScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
 	_pCorrectionScroll->setScrollRange(0, 6, true);
@@ -291,9 +280,6 @@ ErrorCode CBagOptWindow::attach() {
 	// Pan Speed control
 	cRect.setRect(73, 318, 73 + 120 - 1, 318 + 20 - 1);
 	_pPanSpeedScroll = new CBofScrollBar;
-	if (_pPanSpeedScroll == nullptr)
-		fatalError(ERR_MEMORY, "Could not allocate the Pan Speed Scroll Bar");
-
 	_pPanSpeedScroll->create("", &cRect, this, PANSPEED_ID);
 	_pPanSpeedScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
 	_pPanSpeedScroll->setScrollRange(0, 5, true);
@@ -301,18 +287,12 @@ ErrorCode CBagOptWindow::attach() {
 
 	cRect.setRect(FLYTHROUGHS_LEFT, FLYTHROUGHS_TOP, FLYTHROUGHS_LEFT + CHECKBOX_WIDTH, FLYTHROUGHS_TOP + CHECKBOX_HEIGHT);
 	_pFlythroughs = new CBofCheckButton();
-	if (_pFlythroughs == nullptr)
-		fatalError(ERR_MEMORY, "Unable to allocate a CBofCheckButton");
-
 	_pFlythroughs->loadColorScheme(&_cColorScheme);
 	_errCode = _pFlythroughs->create("", &cRect, this, FLYTHROUGHS_ID);
 	_pFlythroughs->show();
 
 	cRect.setRect(PANIMATIONS_LEFT, PANIMATIONS_TOP, PANIMATIONS_LEFT + CHECKBOX_WIDTH, PANIMATIONS_TOP + CHECKBOX_HEIGHT);
 	_pPanimations = new CBofCheckButton();
-	if (_pPanimations == nullptr)
-		fatalError(ERR_MEMORY, "Unable to allocate a CBofCheckButton");
-
 	_pPanimations->loadColorScheme(&_cColorScheme);
 	_errCode = _pPanimations->create("", &cRect, this, PAN_CHECK_ID);
 	_pPanimations->show();

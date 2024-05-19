@@ -77,8 +77,6 @@ void CBagStartDialog::onInitDialog() {
 		assert(_buttons[i] == nullptr);
 
 		_buttons[i] = new CBofBmpButton;
-		if (_buttons[i] == nullptr)
-			fatalError(ERR_MEMORY, "Unable to allocate a CBofBmpButton");
 
 		CBofBitmap *pUp = loadBitmap(buildSysDir(g_stStartButtons[i]._pszUp), pPal);
 		CBofBitmap *pDown = loadBitmap(buildSysDir(g_stStartButtons[i]._pszDown), pPal);
