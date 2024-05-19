@@ -317,9 +317,6 @@ void CBofWindow::setTimer(uint32 nID, uint32 nInterval, BofCallback pCallBack) {
 	}
 
 	pPacket = new CBofTimerPacket;
-	if (pPacket == nullptr)
-		fatalError(ERR_MEMORY, "Unable to allocate a CBofTimerPacket");
-
 	pPacket->_nID = nID;
 	pPacket->_nInterval = nInterval;
 	pPacket->_pCallBack = pCallBack;
@@ -489,8 +486,6 @@ ErrorCode CBofWindow::setBackdrop(const char *pszFileName, bool bRefresh) {
 	// Use Application's palette if none supplied
 	CBofPalette *pPalette = CBofApp::getApp()->getPalette();
 	CBofBitmap *pBmp = new CBofBitmap(pszFileName, pPalette);
-	if (pBmp == nullptr)
-		fatalError(ERR_MEMORY, "Could not allocate a new CBofBitmap");
 
 	return setBackdrop(pBmp, bRefresh);
 }

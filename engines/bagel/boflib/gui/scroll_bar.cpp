@@ -111,9 +111,6 @@ ErrorCode CBofScrollBar::setText(const char *pszText, int nJustify) {
 			cTempRect.right += 20;
 
 			_pScrollText = new CBofText(&cTempRect, nJustify);
-			if (_pScrollText == nullptr) {
-				fatalError(ERR_MEMORY, "Could not allocate a new CBofText");
-			}
 		}
 
 		if (_pScrollText != nullptr) {
@@ -217,8 +214,6 @@ ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, 
 	_nScrollWidth = _cBkSize.cx;
 
 	_pThumb = new CBofSprite;
-	if (_pThumb == nullptr)
-		fatalError(ERR_MEMORY, "Could not allocate a new CBofSprite");
 
 	if (_pThumb->loadSprite(pszThumb) != false) {
 		_pThumb->setMaskColor(COLOR_WHITE);
@@ -231,8 +226,6 @@ ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, 
 	CBofPoint cPoint;
 	if (pszLeftBtnUp != nullptr) {
 		_pLeftBtnUp = new CBofBitmap(pszLeftBtnUp, pPalette);
-		if (_pLeftBtnUp == nullptr)
-			fatalError(ERR_MEMORY, "Could not allocate a new CBofBitmap(%s)", pszLeftBtnUp);
 
 		cPoint.x = 0;
 		cPoint.y = (_pBackdrop->height() / 2) - (_pLeftBtnUp->height() / 2);
@@ -248,8 +241,6 @@ ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, 
 
 	if (pszRightBtnUp != nullptr) {
 		_pRightBtnUp = new CBofBitmap(pszRightBtnUp, pPalette);
-		if (_pRightBtnUp == nullptr)
-			fatalError(ERR_MEMORY, "Could not allocate a new CBofBitmap(%s)", pszRightBtnUp);
 
 		cPoint.x = _pBackdrop->width() - _pRightBtnUp->width();
 		cPoint.y = (_pBackdrop->height() / 2) - (_pRightBtnUp->height() / 2);
@@ -263,9 +254,6 @@ ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, 
 
 	if (pszLeftBtnDn != nullptr) {
 		_pLeftBtnDn = new CBofBitmap(pszLeftBtnDn, pPalette);
-		if (_pLeftBtnDn == nullptr) {
-			fatalError(ERR_MEMORY, "Could not allocate a new CBofBitmap(%s)", pszLeftBtnDn);
-		}
 	}
 
 	delete _pRightBtnDn;
@@ -273,9 +261,6 @@ ErrorCode CBofScrollBar::loadBitmaps(const char *pszBack, const char *pszThumb, 
 
 	if (pszRightBtnDn != nullptr) {
 		_pRightBtnDn = new CBofBitmap(pszRightBtnDn, pPalette);
-		if (_pRightBtnDn == nullptr) {
-			fatalError(ERR_MEMORY, "Could not allocate a new CBofBitmap(%s)", pszRightBtnDn);
-		}
 	}
 
 	return _errCode;
@@ -303,9 +288,6 @@ ErrorCode CBofScrollBar::paint(CBofRect *pDirtyRect) {
 		if ((_pBackdrop != nullptr) && (_pThumb != nullptr)) {
 			// Do all painting offscreen
 			CBofBitmap *pBmp = new CBofBitmap(_cBkSize.cx, _cBkSize.cy, pPalette);
-			if (pBmp == nullptr)
-				fatalError(ERR_MEMORY, "Could not allocate a new CBofBitmap(%d x %d))", _cBkSize.cx, _cBkSize.cy);
-
 			_pBackdrop->paint(pBmp, 0, 0, nullptr, COLOR_WHITE);
 
 			if ((_nScrollState == 1) && (_pLeftBtnDn != nullptr)) {

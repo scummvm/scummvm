@@ -126,14 +126,9 @@ ErrorCode CBofText::setupText(const CBofRect *pRect, int nJustify, uint32 nForma
 
 	// Create a bitmap to serve as our work area as we output text
 	_pWork = new CBofBitmap(_cSize.cx, _cSize.cy, pPalette);
-	if (_pWork == nullptr)
-		fatalError(ERR_MEMORY, "Could not allocate a (%d x %d) CBofBitmap", _cSize.cx, _cSize.cy);
 
 	// Create a bitmap to hold the background we overwrite
 	_pBackground = new CBofBitmap(_cSize.cx, _cSize.cy, pPalette);
-	if (_pBackground == nullptr) {
-		fatalError(ERR_MEMORY, "Could not allocate a (%d x %d) CBofBitmap", _cSize.cx, _cSize.cy);
-	}
 
 	return _errCode;
 }

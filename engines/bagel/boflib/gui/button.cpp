@@ -480,10 +480,6 @@ ErrorCode CBofBmpButton::paint(CBofRect *) {
 
 		if (_pBackground == nullptr) {
 			_pBackground = new CBofBitmap(nWidth, nHeight, pPalette);
-			if (_pBackground == nullptr) {
-				fatalError(ERR_MEMORY, "Could not allocate a CBofBitmap(%d x %d)", nWidth, nHeight);
-			}
-
 		} else {
 			_pBackground->paint(&cOffScreen, 0, 0);
 		}
@@ -544,24 +540,16 @@ ErrorCode CBofBmpButton::loadBitmaps(CBofPalette *pPalette, const char *pszUp, c
 
 	// Load each of the bitmaps that represent the button state
 	_pButtonUp = new CBofBitmap(pszUp, pPalette);
-	if (_pButtonUp != nullptr) {
-		_pButtonUp->setReadOnly(true);
-	}
+	_pButtonUp->setReadOnly(true);
 
 	_pButtonDown = new CBofBitmap(pszDown, pPalette);
-	if (_pButtonDown != nullptr) {
-		_pButtonDown->setReadOnly(true);
-	}
+	_pButtonDown->setReadOnly(true);
 	
 	_pButtonFocus = new CBofBitmap(pszFocus, pPalette);
-	if (_pButtonFocus != nullptr) {
-		_pButtonFocus->setReadOnly(true);
-	}
+	_pButtonFocus->setReadOnly(true);
 
 	_pButtonDisabled = new CBofBitmap(pszDisabled, pPalette);
-	if (_pButtonDisabled != nullptr) {
-		_pButtonDisabled->setReadOnly(true);
-	}
+	_pButtonDisabled->setReadOnly(true);
 
 	return _errCode;
 }
