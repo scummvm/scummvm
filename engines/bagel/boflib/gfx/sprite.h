@@ -50,7 +50,7 @@ public:
 
 	// Implementation
 	CBofSprite *duplicateSprite();
-	bool duplicateSprite(CBofSprite *pSprite);
+	void duplicateSprite(CBofSprite *pSprite);
 
 	bool loadSprite(const char *pszPathName, int nCels = 1);
 	bool loadSprite(CBofBitmap *pBitmap, int nCels = 1);
@@ -185,7 +185,7 @@ public:
 
 	static void flushSpriteChain();
 
-	static bool setupWorkArea(int dx, int dy);
+	static void setupWorkArea(int dx, int dy);
 	static void tearDownWorkArea();
 
 	// Add a method for allowing callers of this object to block

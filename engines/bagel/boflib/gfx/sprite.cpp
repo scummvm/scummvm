@@ -164,10 +164,7 @@ void CBofSprite::flushSpriteChain() {
 }
 
 
-bool CBofSprite::setupWorkArea(int dx, int dy) {
-	// Assume failure
-	bool bSuccess = false;
-
+void CBofSprite::setupWorkArea(int dx, int dy) {
 	// Do we already have a work area?
 	if (_pWorkBmp != nullptr) {
 		// Yes, so lets tear it down before we start a new one
@@ -176,13 +173,8 @@ bool CBofSprite::setupWorkArea(int dx, int dy) {
 
 	// Create an offscreen bitmap where we do all the work;
 	_pWorkBmp = new CBofBitmap(dx, dy, _pSharedPalette);
-	if (_pWorkBmp != nullptr) {
-		_nWorkDX = dx;
-		_nWorkDY = dy;
-		bSuccess = true;
-	}
-
-	return bSuccess;
+	_nWorkDX = dx;
+	_nWorkDY = dy;
 }
 
 
@@ -197,40 +189,28 @@ CBofSprite *CBofSprite::duplicateSprite() {
 
 	// Create an object for the sprite
 	CBofSprite *pSprite = new CBofSprite;
-
-	if (pSprite != nullptr) {
-		duplicateSprite(pSprite);
-	}
+	duplicateSprite(pSprite);
 
 	return pSprite;
 }
 
 
-bool CBofSprite::duplicateSprite(CBofSprite *pSprite) {
-	assert(isValidObject(this));
+void CBofSprite::duplicateSprite(CBofSprite *pSprite) {
+	if (!isValidObject(this) || (pSprite == nullptr))
+		error("duplicateSprite - Invalid source or destination sprite");
 
-	// We require a valid sprite to copy
-	assert(pSprite != nullptr);
+	pSprite->_pImage = _pImage;
+	pSprite->_cRect = _cRect;
+	pSprite->_cImageRect = _cImageRect;
+	pSprite->_cSize = _cSize;
+	pSprite->_cPosition = _cPosition;
+	pSprite->_nZOrder = _nZOrder;
+	pSprite->_nCelID = _nCelID;
+	pSprite->_nCelCount = _nCelCount;
+	pSprite->_bAnimated = _bAnimated;
+	pSprite->_nMaskColor = _nMaskColor;
 
-	if (pSprite != nullptr) {
-		pSprite->_pImage = _pImage;
-
-		pSprite->_cRect = _cRect;
-		pSprite->_cImageRect = _cImageRect;
-		pSprite->_cSize = _cSize;
-		pSprite->_cPosition = _cPosition;
-		pSprite->_nZOrder = _nZOrder;
-		pSprite->_nCelID = _nCelID;
-		pSprite->_nCelCount = _nCelCount;
-		pSprite->_bAnimated = _bAnimated;
-		pSprite->_nMaskColor = _nMaskColor;
-
-		pSprite->_bDuplicated = true;		// Mark it as a sprite with shared resources
-
-		return true;
-	}
-
-	return false;
+	pSprite->_bDuplicated = true;		// Mark it as a sprite with shared resources
 }
 
 
@@ -241,11 +221,7 @@ bool CBofSprite::loadSprite(const char *pszPathName, int nCels) {
 
 	// Create an object for the sprite's image
 	CBofBitmap *pBitmap = new CBofBitmap(pszPathName, _pSharedPalette);
-	if (pBitmap != nullptr) {
-		return loadSprite(pBitmap, nCels);
-	}
-
-	return false;	// Return failure
+	return loadSprite(pBitmap, nCels);
 }
 
 
@@ -331,7 +307,7 @@ void CBofSprite::prevCel() {
 bool CBofSprite::paintSprite(CBofWindow *pWnd, const int x, const int y) {
 	assert(isValidObject(this));
 
-	// Can't paint to a non-existant window
+	// Can't paint to a non-existent window
 	assert(pWnd != nullptr);
 
 	// The window MUST have a backdrop

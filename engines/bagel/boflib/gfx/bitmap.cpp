@@ -87,9 +87,7 @@ CBofBitmap::CBofBitmap(const char *pszFileName, CBofPalette *pPalette, bool bOwn
 
 	if (pPalette == nullptr) {
 		pPalette = new CBofPalette(pszFileName);
-		if (pPalette != nullptr) {
-			_bOwnPalette = true;
-		}
+		_bOwnPalette = true;
 	}
 
 	// Init the info needed to load a bitmap from disk
@@ -166,35 +164,31 @@ ErrorCode CBofBitmap::loadBitmap(const char *pszFileName, CBofPalette *pPalette)
 		CBofFile *pFile = new CBofFile(pszFileName, CBOFFILE_READONLY);
 
 		// Open bitmap
-		if (pFile == nullptr)
-			reportError(ERR_MEMORY, "Could not allocate a CBofFile for %s", pszFileName);
-		else {
-			// filename must fit into our buffer
-			assert(strlen(pszFileName) < MAX_FNAME);
+		// filename must fit into our buffer
+		assert(strlen(pszFileName) < MAX_FNAME);
 
-			// Keep track of this filename
-			Common::strcpy_s(_szFileName, pszFileName);
+		// Keep track of this filename
+		Common::strcpy_s(_szFileName, pszFileName);
 
-			// Decode the bitmap
-			Image::BitmapDecoder decoder;
-			Common::SeekableReadStream *rs = *pFile;
-			if (!rs || !decoder.loadStream(*rs))
-				error("Could not load bitmap");
+		// Decode the bitmap
+		Image::BitmapDecoder decoder;
+		Common::SeekableReadStream *rs = *pFile;
+		if (!rs || !decoder.loadStream(*rs))
+			error("Could not load bitmap");
 
-			// Load up the decoded bitmap
-			_bitmap.copyFrom(*decoder.getSurface());
+		// Load up the decoded bitmap
+		_bitmap.copyFrom(*decoder.getSurface());
 
-			// Load the bitmap palette
-			_bitmap.setPalette(decoder.getPalette(), 0, PALETTE_COUNT);
+		// Load the bitmap palette
+		_bitmap.setPalette(decoder.getPalette(), 0, PALETTE_COUNT);
 
-			_nDX = _bitmap.w;
-			_nDY = _bitmap.h;
-			_nScanDX = _bitmap.pitch;
-			_pBits = (byte*)_bitmap.getBasePtr(0, 0);
+		_nDX = _bitmap.w;
+		_nDY = _bitmap.h;
+		_nScanDX = _bitmap.pitch;
+		_pBits = (byte*)_bitmap.getBasePtr(0, 0);
 
-			// Close bitmap file
-			delete pFile;
-		}
+		// Close bitmap file
+		delete pFile;
 	}
 
 	return _errCode;
@@ -1120,22 +1114,17 @@ ErrorCode paintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofRect *pD
 	ErrorCode errorCode;
 	CBofBitmap *pBmp = new CBofBitmap(pszFileName, pPalette);
 
-	if (pBmp != nullptr) {
-		CBofRect cRect = pBmp->getRect();
+	CBofRect cRect = pBmp->getRect();
 
-		if (pSrcRect == nullptr)
-			pSrcRect = &cRect;
+	if (pSrcRect == nullptr)
+		pSrcRect = &cRect;
 
-		if (pDstRect == nullptr)
-			pDstRect = &cRect;
+	if (pDstRect == nullptr)
+		pDstRect = &cRect;
 
-		errorCode = pBmp->paint(pWindow, pDstRect, pSrcRect, nMaskColor);
+	errorCode = pBmp->paint(pWindow, pDstRect, pSrcRect, nMaskColor);
 
-		delete pBmp;
-
-	} else {
-		errorCode = ERR_MEMORY;
-	}
+	delete pBmp;
 
 	return errorCode;
 }
