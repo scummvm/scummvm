@@ -450,6 +450,7 @@ typedef Common::Array<PCell> PropertyArray;
 const char *scriptType2str(ScriptType scr);
 const char *castType2str(CastType type);
 const char *spriteType2str(SpriteType type);
+const char *inkType2str(InkType type);
 
 } // End of namespace Director
 

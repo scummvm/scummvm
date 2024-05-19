@@ -1489,15 +1489,20 @@ static void showScore() {
 			return;
 		}
 
-		{
+		{ // Render sprite details
 			Sprite *sprite = nullptr;
+			CastMember *castMember = nullptr;
 
 			if (_state->_selectedScoreCast.frame != -1)
 				sprite = score->_scoreCache[_state->_selectedScoreCast.frame]->_sprites[_state->_selectedScoreCast.channel];
 
-			if (sprite) {
-				CastMember *castMember = cast->getCastMember(sprite->_castId.member, true);
+			if (sprite)
+				castMember = cast->getCastMember(sprite->_castId.member, true);
 
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+			ImGui::BeginChild("Image", ImVec2(200.0f, 70.0f));
+
+			if (castMember) {
 				ImGuiImage imgID = getImageID(castMember);
 				if (imgID.id) {
 					Common::String name(getDisplayName(castMember));
@@ -1505,7 +1510,131 @@ static void showScore() {
 				} else {
 					ImGui::InvisibleButton("##canvas", ImVec2(32.f, 32.f));
 				}
+				ImGui::SameLine();
+				ImGui::Text("%s", sprite->_castId.asString().c_str());
+				ImGui::Text("%s", spriteType2str(sprite->_spriteType));
 			}
+
+			ImGui::PopStyleColor();
+			ImGui::EndChild();
+
+			ImGui::SameLine();
+			ImGui::BeginChild("Details", ImVec2(500.0f, 70.0f));
+
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+			ImGui::BeginChild("Ink", ImVec2(150.0f, 20.0f));
+
+			if (castMember) {
+				ImGui::Text("%s", inkType2str(sprite->_ink)); ImGui::SameLine();
+				ImGui::SetItemTooltip("Ink");
+				ImGui::Text("0x%x", sprite->_blendAmount);  ImGui::SameLine();
+				ImGui::SetItemTooltip("Blend");
+			}
+			ImGui::PopStyleColor();
+			ImGui::EndChild();
+
+			ImGui::SameLine();
+
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+			ImGui::BeginChild("Range", ImVec2(100.0f, 20.0f));
+
+			if (castMember) {
+				ImGui::Text("\ue033"); ImGui::SameLine();
+				ImGui::Text("?"); ImGui::SameLine();
+				ImGui::SetItemTooltip("Start Frame");
+				ImGui::Text("\ue034"); ImGui::SameLine();
+				ImGui::Text("?"); ImGui::SameLine();
+				ImGui::SetItemTooltip("End Frame");
+			}
+
+			ImGui::PopStyleColor();
+			ImGui::EndChild();
+
+			ImGui::SameLine();
+
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+			ImGui::BeginChild("Flags", ImVec2(200.0f, 20.0f));
+
+			if (castMember) {
+				ImGui::Checkbox("\ue0e4", &sprite->_enabled); ImGui::SameLine();
+				ImGui::SetItemTooltip("enabled");
+				ImGui::Checkbox("\ue057", &sprite->_editable); ImGui::SameLine();
+				ImGui::SetItemTooltip("editable");
+				ImGui::Checkbox("\ue096", &sprite->_moveable); ImGui::SameLine();
+				ImGui::SetItemTooltip("moveable");
+				ImGui::Checkbox("\ue0dd", &sprite->_trails);
+				ImGui::SetItemTooltip("trails");
+			}
+			ImGui::PopStyleColor();
+			ImGui::EndChild();
+
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+			ImGui::BeginChild("Colors", ImVec2(150.0f, 40.0f));
+
+			if (castMember) {
+				ImVec4 fg = convertColor(sprite->_foreColor);
+
+				ImGui::ColorButton("foreColor", fg); ImGui::SameLine();
+				ImGui::Text("#%02x%02x%02x", (int)(fg.x * 255), (int)(fg.y * 255), (int)(fg.z * 255));
+				ImGui::SetItemTooltip("Foreground Color");
+				ImVec4 bg = convertColor(sprite->_backColor);
+				ImGui::ColorButton("backColor", bg); ImGui::SameLine();
+				ImGui::Text("#%02x%02x%02x", (int)(bg.x * 255), (int)(bg.y * 255), (int)(bg.z * 255)); ImGui::SameLine();
+				ImGui::SetItemTooltip("Background Color");
+			}
+
+			ImGui::PopStyleColor();
+			ImGui::EndChild();
+
+			ImGui::SameLine();
+
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+			ImGui::BeginChild("Coordinates", ImVec2(150.0f, 40.0f));
+
+			if (castMember) {
+				ImGui::Text("X:"); ImGui::SameLine();
+				ImGui::Text("%d", sprite->_startPoint.x); ImGui::SameLine();
+				ImGui::SetItemTooltip("Reg Point Horizontal");
+				ImGui::Text("W:"); ImGui::SameLine();
+				ImGui::Text("%d", sprite->getWidth());
+				ImGui::SetItemTooltip("Width");
+
+				ImGui::Text("Y:"); ImGui::SameLine();
+				ImGui::Text("%d", sprite->_startPoint.y); ImGui::SameLine();
+				ImGui::SetItemTooltip("Reg Point Vertical");
+				ImGui::Text("H:"); ImGui::SameLine();
+				ImGui::Text("%d", sprite->getHeight()); ImGui::SameLine();
+				ImGui::SetItemTooltip("Height");
+			}
+			ImGui::PopStyleColor();
+			ImGui::EndChild();
+
+			ImGui::SameLine();
+
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+			ImGui::BeginChild("Bbox", ImVec2(150.0f, 40.0f));
+
+			if (castMember) {
+				const Common::Rect &box = sprite->getBbox(true);
+
+				ImGui::Text("l:"); ImGui::SameLine();
+				ImGui::Text("%d", box.left); ImGui::SameLine();
+				ImGui::SetItemTooltip("Left");
+				ImGui::Text("r:"); ImGui::SameLine();
+				ImGui::Text("%d", box.right);
+				ImGui::SetItemTooltip("Right");
+
+				ImGui::Text("t:"); ImGui::SameLine();
+				ImGui::Text("%d", box.top); ImGui::SameLine();
+				ImGui::SetItemTooltip("Top");
+				ImGui::Text("b:"); ImGui::SameLine();
+				ImGui::Text("%d", box.bottom);
+				ImGui::SetItemTooltip("Bottom");
+			}
+			ImGui::PopStyleColor();
+			ImGui::EndChild();
+
+			ImGui::EndChild();
 		}
 
 		uint numChannels = score->_scoreCache[0]->_sprites.size();
@@ -1537,6 +1666,9 @@ static void showScore() {
 						ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
 
 					ImGui::TableNextColumn();
+
+					if (f == _state->_selectedScoreCast.frame && ch == _state->_selectedScoreCast.channel - 1)
+						ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(0.7f, 0.7f, 0.7f, 0.3f)));
 
 					if (sprite._castId.member) {
 						ImGui::Text("%d", sprite._castId.member);
