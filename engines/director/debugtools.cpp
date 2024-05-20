@@ -45,6 +45,7 @@
 #include "director/castmember/script.h"
 #include "director/channel.h"
 #include "director/debugtools.h"
+#include "director/debugger.h"
 #include "director/frame.h"
 #include "director/movie.h"
 #include "director/picture.h"
@@ -102,8 +103,8 @@ typedef struct ImGuiState {
 	bool _showCast = false;
 	bool _showFuncList = false;
 	bool _showScore = false;
+	bool _showBpList = false;
 	Common::List<CastMemberID> _scriptCasts;
-	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _breakpoints;
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
 	int _prevFrame = -1;
 	struct {
@@ -115,6 +116,16 @@ typedef struct ImGuiState {
 ImGuiState *_state = nullptr;
 
 static void setScriptToDisplay(const ImGuiScript &script);
+
+static Director::Breakpoint *getBreakpoint(const Common::String &handlerName, int pc) {
+	auto &bps = g_lingo->getBreakpoints();
+	for (uint i = 0; i < bps.size(); i++) {
+		if (bps[i].type == kBreakpointFunction && bps[i].funcName == handlerName && bps[i].funcOffset == pc) {
+			return &bps[i];
+		}
+	}
+	return nullptr;
+}
 
 class RenderScriptVisitor : public LingoDec::NodeVisitor {
 public:
@@ -436,20 +447,24 @@ private:
 		ImDrawList *dl = ImGui::GetWindowDrawList();
 		ImVec2 pos = ImGui::GetCursorScreenPos();
 		const ImVec2 mid(pos.x + 7, pos.y + 7);
-		Common::String bpName = Common::String::format("%s-%d", _script.handlerId.c_str(), pc);
 
 		ImU32 color = bp_color_disabled;
 
-		if (_state->_breakpoints.contains(bpName))
+		Director::Breakpoint *bp = getBreakpoint(_script.handlerName, pc);
+		if (bp)
 			color = bp_color_enabled;
 
 		ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
 		if (ImGui::IsItemClicked(0)) {
 			if (color == bp_color_enabled) {
-				_state->_breakpoints.erase(bpName);
+				g_lingo->delBreakpoint(bp->id);
 				color = bp_color_disabled;
 			} else {
-				_state->_breakpoints[bpName] = true;
+				Director::Breakpoint newBp;
+				newBp.type = kBreakpointFunction;
+				newBp.funcName = _script.handlerName;
+				newBp.funcOffset = pc;
+				g_lingo->addBreakpoint(newBp);
 				color = bp_color_enabled;
 			}
 		}
@@ -458,7 +473,10 @@ private:
 			color = bp_color_hover;
 		}
 
-		dl->AddCircleFilled(mid, 4.0f, color);
+		if(!bp || bp->enabled)
+			dl->AddCircleFilled(mid, 4.0f, color);
+		else
+			dl->AddCircle(mid, 4.0f, line_color);
 		dl->AddLine(ImVec2(pos.x + 16.0f, pos.y), ImVec2(pos.x + 16.0f, pos.y + 17), line_color);
 
 		ImGui::SetItemTooltip("Click to add a breakpoint");
@@ -1288,16 +1306,21 @@ static void renderCastScript(Symbol &sym) {
 
 		color = bp_color_disabled;
 
-		if (_state->_breakpoints.contains(bpName))
+		Director::Breakpoint *bp = getBreakpoint(handlerName, pc);
+		if (bp)
 			color = bp_color_enabled;
 
 		ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
 		if (ImGui::IsItemClicked(0)) {
-			if (color == bp_color_enabled) {
-				_state->_breakpoints.erase(bpName);
+			if (bp) {
+				g_lingo->delBreakpoint(bp->id);
 				color = bp_color_disabled;
 			} else {
-				_state->_breakpoints[bpName] = true;
+				Director::Breakpoint newBp;
+				newBp.type = kBreakpointFunction;
+				newBp.funcName = handlerName;
+				newBp.funcOffset = pc;
+				g_lingo->addBreakpoint(newBp);
 				color = bp_color_enabled;
 			}
 		}
@@ -1552,6 +1575,112 @@ static void showFuncList() {
 			ImGui::EndTable();
 		}
 		ImGui::EndChild();
+	}
+	ImGui::End();
+}
+
+// Make the UI compact because there are so many fields
+static void PushStyleCompact()
+{
+    ImGuiStyle& style = ImGui::GetStyle();
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(style.FramePadding.x, (float)(int)(style.FramePadding.y * 0.60f)));
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(style.ItemSpacing.x, (float)(int)(style.ItemSpacing.y * 0.60f)));
+}
+
+static void PopStyleCompact()
+{
+    ImGui::PopStyleVar(2);
+}
+
+static void showBreakpointList() {
+	if (!_state->_showBpList)
+		return;
+
+	const ImU32 bp_color_disabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 0.0f));
+	const ImU32 bp_color_enabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 1.0f));
+	const ImU32 bp_color_hover = ImGui::GetColorU32(ImVec4(0.42f, 0.17f, 0.13f, 1.0f));
+	const ImU32 line_color = ImGui::GetColorU32(ImVec4(0.44f, 0.44f, 0.44f, 1.0f));
+
+	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(480, 240), ImGuiCond_FirstUseEver);
+	if (ImGui::Begin("Breakpoints", &_state->_showBpList)) {
+		auto &bps = g_lingo->getBreakpoints();
+		if (ImGui::BeginTable("BreakpointsTable", 5, ImGuiTableFlags_SizingFixedFit)) {
+			for (uint i = 0; i < bps.size(); i++) {
+				ImGui::TableNextRow();
+				ImGui::TableNextColumn();
+
+				ImDrawList *dl = ImGui::GetWindowDrawList();
+				ImVec2 pos = ImGui::GetCursorScreenPos();
+				const ImVec2 mid(pos.x + 7, pos.y + 7);
+
+				ImU32 color = bp_color_disabled;
+
+				if (bps[i].enabled)
+					color = bp_color_enabled;
+
+				ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
+				if (ImGui::IsItemClicked(0)) {
+					if (bps[i].enabled) {
+						bps[i].enabled = false;
+						color = bp_color_disabled;
+					} else {
+						bps[i].enabled = true;
+						color = bp_color_enabled;
+					}
+				}
+
+				if (color == bp_color_disabled && ImGui::IsItemHovered()) {
+					color = bp_color_hover;
+				}
+
+				if (bps[i].enabled)
+					dl->AddCircleFilled(mid, 4.0f, color);
+				else
+					dl->AddCircle(mid, 4.0f, line_color);
+
+				// enabled column
+				ImGui::TableNextColumn();
+				PushStyleCompact();
+				ImGui::PushID(i);
+				ImGui::Checkbox("", &bps[i].enabled);
+				PopStyleCompact();
+
+				// description
+				ImGui::TableNextColumn();
+				Common::String desc;
+				if (bps[i].scriptId)
+					desc = Common::String::format("%d: %s", bps[i].scriptId, bps[i].funcName.c_str());
+				else
+					desc = bps[i].funcName;
+				ImGui::Text("%s", desc.c_str());
+
+				// remove bp
+				ImGui::TableNextColumn();
+				pos = ImGui::GetCursorScreenPos();
+				const bool del = ImGui::InvisibleButton("DelBp", ImVec2(16, ImGui::GetFontSize()));
+				const bool hovered = ImGui::IsItemHovered();
+				const float fontSize = ImGui::GetFontSize();
+				const float cross_extent = ImGui::GetFontSize() * 0.5f * 0.7071f - 1.0f;
+				const ImU32 cross_col = ImGui::GetColorU32(ImGuiCol_Text);
+				const ImVec2 center = pos + ImVec2(0.5f + fontSize * 0.5f, 1.0f + fontSize * 0.5f);
+				if (hovered)
+        			dl->AddCircleFilled(center, MAX(2.0f, fontSize * 0.5f + 1.0f), ImGui::GetColorU32(ImGuiCol_ButtonActive));
+				dl->AddLine(center + ImVec2(+cross_extent, +cross_extent), center + ImVec2(-cross_extent, -cross_extent), cross_col, 1.0f);
+				dl->AddLine(center + ImVec2(+cross_extent, -cross_extent), center + ImVec2(-cross_extent, +cross_extent), cross_col, 1.0f);
+
+				// offset
+				ImGui::TableNextColumn();
+				ImGui::Text("%5d", bps[i].funcOffset);
+				ImGui::PopID();
+
+				if(del) {
+					g_lingo->delBreakpoint(bps[i].id);
+					break;
+				}
+			}
+			ImGui::EndTable();
+		}
 	}
 	ImGui::End();
 }
@@ -1812,6 +1941,7 @@ void onImGuiRender() {
 			ImGui::MenuItem("Channels", NULL, &_state->_showChannels);
 			ImGui::MenuItem("Cast", NULL, &_state->_showCast);
 			ImGui::MenuItem("Functions", NULL, &_state->_showFuncList);
+			ImGui::MenuItem("Breakpoints", NULL, &_state->_showBpList);
 			ImGui::MenuItem("Score", NULL, &_state->_showScore);
 			ImGui::EndMenu();
 		}
@@ -1828,6 +1958,7 @@ void onImGuiRender() {
 	showCast();
 	showFuncList();
 	showScore();
+	showBreakpointList();
 }
 
 void onImGuiCleanup() {

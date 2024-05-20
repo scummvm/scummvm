@@ -47,6 +47,7 @@ class ScriptContext;
 class DirectorEngine;
 class Frame;
 class LingoCompiler;
+struct Breakpoint;
 
 typedef void (*inst)(void);
 #define	STOP (inst)0
@@ -561,6 +562,18 @@ private:
 
 public:
 	Common::String normalizeString(const Common::String &str);
+
+public:
+	void addBreakpoint(Breakpoint &bp);
+	bool delBreakpoint(int id);
+	Breakpoint *getBreakpoint(int id);
+
+	const Common::Array<Breakpoint> &getBreakpoints() const { return _breakpoints; }
+	Common::Array<Breakpoint> &getBreakpoints() { return _breakpoints; }
+
+private:
+	int _bpNextId = 1;
+	Common::Array<Breakpoint> _breakpoints;
 };
 
 extern Lingo *g_lingo;
