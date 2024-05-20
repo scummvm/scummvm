@@ -487,23 +487,23 @@ char *XFindFirst(char *mask);
 #if 0
 inline int round(double x) {
 	int a;
-	#if 0
+#if 0
 	_asm {
 		fld x
 		fistp dword ptr a
 	}
-	#endif
+#endif
 	return a;
 }
 
 inline int round(float x) {
 	int a;
-	#if 0
+#if 0
 	_asm {
 		fld x
 		fistp dword ptr a
 	}
-	#endif
+#endif
 	return a;
 }
 #endif

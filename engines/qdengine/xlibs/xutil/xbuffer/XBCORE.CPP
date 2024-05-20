@@ -1,7 +1,6 @@
 #include "qdengine/xlibs/xutil/xglobal.h"
 
-XBuffer::XBuffer()
-{
+XBuffer::XBuffer() {
 	makeFree_=0;
 	buffer_=NULL;
 	alloc(XB_DEFSIZE);
@@ -10,8 +9,7 @@ XBuffer::XBuffer()
 	automaticRealloc_ = true;
 }
 
-XBuffer::XBuffer(unsigned int sz, bool automatic_realloc_)
-{
+XBuffer::XBuffer(unsigned int sz, bool automatic_realloc_) {
 	makeFree_=0;
 	buffer_=NULL;
 	alloc(sz);
@@ -20,8 +18,7 @@ XBuffer::XBuffer(unsigned int sz, bool automatic_realloc_)
 	automaticRealloc_ = automatic_realloc_;
 }
 
-void XBuffer::alloc(unsigned int sz)
-{
+void XBuffer::alloc(unsigned int sz) {
 	free();
 	buffer_ = (char*)malloc(size_ = sz);
 	offset_ = 0L;
@@ -32,8 +29,7 @@ void XBuffer::alloc(unsigned int sz)
 		*buffer_ = 0;
 }
 
-XBuffer::XBuffer(void* p,int sz)
-{
+XBuffer::XBuffer(void* p,int sz) {
 	buffer_ = (char*)p;
 	size_ = sz;
 	offset_ = 0;
@@ -43,19 +39,16 @@ XBuffer::XBuffer(void* p,int sz)
 	automaticRealloc_ = 0;
 }
 
-void XBuffer::free()
-{
+void XBuffer::free() {
 	if(makeFree_ && buffer_){
 		::free(buffer_);
 		buffer_ = NULL;
 		}
 }
 
-void XBuffer::fill(char fc)
-{ memset(buffer_,fc,size_); }
+void XBuffer::fill(char fc) { memset(buffer_,fc,size_); }
 
-void XBuffer::set(int off,int mode)
-{
+void XBuffer::set(int off,int mode) {
 	switch(mode){
 		case XB_BEG:
 			offset_ = off;
@@ -69,37 +62,32 @@ void XBuffer::set(int off,int mode)
 		}
 }
 
-void XBuffer::init()
-{
+void XBuffer::init() {
 	offset_ = 0;
 	if(size())
 		*buffer_ = 0;
 }
 
-unsigned int XBuffer::read(void* s, unsigned int len)
-{
+unsigned int XBuffer::read(void* s, unsigned int len) {
 	memcpy(s, buffer_ + offset_, len);
 	offset_ += len;
 	return len;
 }
 
-void XBuffer::handleOutOfSize()
-{
+void XBuffer::handleOutOfSize() {
 	if(automaticRealloc_){
 		buffer_ = (char*)realloc(buffer_, size_ *= 2);
 		if(!buffer_){
 			xassert(0 && "Out of XBuffer (low of system memory)");
 			ErrH.Abort("Out of XBuffer (low of system memory)");
 		}
-	}
-	else {
+	} else {
 		xassert(0 && "Out of XBuffer");
 		ErrH.Abort("Out of XBuffer");
 	}
 }
 
-unsigned int XBuffer::write(const void* s, unsigned int len, bool bin_flag)
-{
+unsigned int XBuffer::write(const void* s, unsigned int len, bool bin_flag) {
 	if(bin_flag)
 		while(offset_ + len > size_)
 			handleOutOfSize();

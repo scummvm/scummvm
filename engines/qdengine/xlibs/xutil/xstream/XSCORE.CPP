@@ -1,7 +1,6 @@
 #include "qdengine/xlibs/xutil/xglobal.h"
 
-XStream::XStream(bool handleErrors)
-{
+XStream::XStream(bool handleErrors) {
 	handleErrors_ = handleErrors;
 	handler  = INVALID_HANDLE_VALUE;
 	eofFlag  = 1;

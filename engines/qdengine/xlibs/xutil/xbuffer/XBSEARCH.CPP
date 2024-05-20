@@ -1,7 +1,6 @@
 #include "qdengine/xlibs/xutil/xglobal.h"
 
-bool XBuffer::search(char* what, int mode, int cs)
-{
+bool XBuffer::search(char* what, int mode, int cs) {
 	register int i,j;
 	unsigned int wlen = strlen(what) - 1;
 	if(mode == XB_GLOBAL) { i = 0; mode = XB_FORWARD; } else i = offset_;
@@ -15,8 +14,7 @@ bool XBuffer::search(char* what, int mode, int cs)
 					}
 				i++;
 				}
-			}
-		else {
+			} else {
 			while(buffer_[i]){
 				if(toupper(buffer_[i]) == toupper(*what)){
 					j = wlen;
@@ -26,8 +24,7 @@ bool XBuffer::search(char* what, int mode, int cs)
 				i++;
 				}
 			}
-		}
-	else {
+		} else {
 		i-=wlen + 1;
 		if(cs == XB_CASEON){
 			while(i >= 0){
@@ -38,9 +35,8 @@ bool XBuffer::search(char* what, int mode, int cs)
 					}
 				i--;
 				}
-			}
-		else {
-			while(i >= 0){
+			} else {
+			while(i >= 0) {
 				if(toupper(buffer_[i]) == toupper(*what)){
 					j = wlen;
 					while(toupper(buffer_[i + j]) == toupper(what[j]) && j) j--;

@@ -1,8 +1,8 @@
+#include "qdengine/core/qd_precomp.h"
 
 const int XMSG_BUFFER_SIZE		= 2048;
 
-struct XMessageBuffer
-{
+struct XMessageBuffer {
 	MSG** table;
 
 	int Size;
