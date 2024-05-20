@@ -73,6 +73,8 @@ enum class Direction {
 };
 
 constexpr const int32 kDirectionCount = 4;
+constexpr const int8 kOrderCount = 70;
+constexpr const int8 kForegroundOrderCount = 10;
 
 struct Color {
 	uint8 b, g, r, a;
@@ -214,8 +216,10 @@ public:
 	Graphic();
 	Graphic(Common::ReadStream &stream);
 
+	inline Common::Point &center() { return _center; }
 	inline int8 &order() { return _order; }
 	inline int16 &scale() { return _scale; }
+	inline Color &color() { return _color; }
 	inline Animation &animation() {
 		assert(_animation != nullptr && _animation->isLoaded());
 		return *_animation;
@@ -230,21 +234,113 @@ public:
 	void setAnimation(const Common::String &fileName, AnimationFolder folder);
 	void serializeSave(Common::Serializer &serializer);
 
-	inline void testDraw() {
-		animation().draw2D(_frameI, Math::Vector2d(100, 100), 1.0f, Math::Angle(), BlendMode::Alpha, { 255, 255, 255, 255 });
-	}
-
 private:
+	friend class AnimationDrawRequest;
 	Common::SharedPtr<Animation> _animation;
 	Common::Point _center;
 	int16 _scale = kBaseScale;
 	int8 _order = 0;
+	Color _color = kWhite;
 
 	bool _isPaused = true,
 		_isLooping = true;
 	uint32 _lastTime = 0; ///< either start time or played duration at pause
 	int32 _frameI = -1;
-	float _camAcceleration = 1.0f;
+	float _depthScale = 1.0f;
+};
+
+enum class DrawRequestType {
+	Animation2D,
+	Animation3D,
+	AnimationTiled,
+	Rectangle,
+	FadeToBlack,
+	FadeToWhite,
+	CrossFade,
+	Text
+};
+
+class IDrawRequest {
+public:
+	IDrawRequest(int8 order);
+	virtual ~IDrawRequest() = default;
+
+	inline int8 order() const { return _order; }
+	virtual void draw() = 0;
+
+private:
+	const int8 _order;
+};
+
+class AnimationDrawRequest : public IDrawRequest {
+public:
+	AnimationDrawRequest(
+		Graphic &graphic,
+		bool is3D,
+		BlendMode blendMode,
+		float lodBias = 0.0f);
+	AnimationDrawRequest(
+		Animation *animation,
+		int32 frameI,
+		Math::Vector2d center,
+		int8 order
+	);
+
+	virtual void draw() override;
+
+private:
+	bool _is3D;
+	Animation *_animation;
+	int32 _frameI;
+	Math::Vector2d _center;
+	float _scale;
+	Color _color;
+	BlendMode _blendMode;
+	float _lodBias;
+};
+
+class BumpAllocator {
+public:
+	BumpAllocator(size_t pageSize);
+	~BumpAllocator();
+
+	template<typename T, typename... Args>
+	inline T *allocate(Args&&... args) {
+		return new(allocateRaw(sizeof(T), alignof(T))) T(Common::forward<Args>(args)...);
+	}
+	void *allocateRaw(size_t size, size_t align);
+	void deallocateAll();
+
+private:
+	void allocatePage();
+
+	const size_t _pageSize;
+	size_t _pageI = 0, _used = 0;
+	Common::Array<void *> _pages;
+};
+
+class DrawQueue {
+public:
+	DrawQueue(IRenderer *renderer);
+
+	template<typename T, typename... Args>
+	inline void add(Args&&... args) {
+		addRequest(_allocator.allocate<T>(Common::forward<Args>(args)...));
+	}
+
+	void clear();
+	void setLodBias(int8 orderFrom, int8 orderTo, float newLodBias);
+	void draw();
+
+private:
+	void addRequest(IDrawRequest *drawRequest);
+
+	static constexpr const uint kMaxDrawRequestsPerOrder = 50;
+	IRenderer *const _renderer;
+	BumpAllocator _allocator;
+	IDrawRequest *_requestsPerOrder[kOrderCount][kMaxDrawRequestsPerOrder] = { 0 };
+	uint8 _requestsPerOrderCount[kOrderCount] = { 0 };
+	float _lodBiasPerOrder[kOrderCount] = { 0 };
 };
 
 }
