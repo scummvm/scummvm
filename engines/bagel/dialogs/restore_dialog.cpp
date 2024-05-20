@@ -199,7 +199,7 @@ ErrorCode CBagRestoreDialog::attach() {
 		_pText->setWeight(TEXT_BOLD);
 
 		// Set initial selected item
-		if (_pListBox != nullptr && _nSelectedItem != -1) {
+		if (_nSelectedItem != -1) {
 			_pText->setText(_pListBox->getText(_nSelectedItem));
 		} else {
 			_pText->setText("");

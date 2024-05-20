@@ -201,13 +201,10 @@ ErrorCode CBagSaveDialog::attach() {
 			_pEditText->setFocus();
 		}
 
-		if (_pListBox != nullptr) {
-			_pListBox->setSelectedItem(_nSelectedItem, false);
+		_pListBox->setSelectedItem(_nSelectedItem, false);
 
-			if (_nSelectedItem >= 9) {
-
-				_pListBox->scrollTo(_nSelectedItem - 8);
-			}
+		if (_nSelectedItem >= 9) {
+			_pListBox->scrollTo(_nSelectedItem - 8);
 		}
 	} else if (_pButtons[0] != nullptr) {
 		_pButtons[0]->setState(BUTTON_DISABLED);
