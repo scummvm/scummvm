@@ -159,9 +159,9 @@ void MainCharacter::serializeSave(Serializer &serializer) {
 
 Background::Background(Room *room, const String &animationFileName, int16 scale)
 	: GraphicObject(room, "BACKGROUND") {
-	_graphic._animation.reset(new Animation(animationFileName, AnimationFolder::Backgrounds));
-	_graphic._scale = scale;
-	_graphic._order = 59;
+	_graphic.setAnimation(animationFileName, AnimationFolder::Backgrounds);
+	_graphic.scale() = scale;
+	_graphic.order() = 59;
 }
 
 FloorColor::FloorColor(Room *room, ReadStream &stream)
