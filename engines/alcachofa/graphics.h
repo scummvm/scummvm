@@ -177,11 +177,12 @@ public:
 	using AnimationBase::freeImages;
 
 	inline bool isLoaded() const { return _isLoaded; }
-	inline uint frameCount() const { return _frames.size(); }
 	inline uint spriteCount() const { return _spriteBases.size(); }
+	inline uint frameCount() const { return _frames.size(); }
 	inline uint32 frameDuration(int32 frameI) const { return _frames[frameI]._duration; }
 	inline uint32 totalDuration() const { return _totalDuration; }
 	int32 frameAtTime(uint32 time) const;
+	Common::Point imageSize(int32 imageI) const;
 
 	void draw2D(
 		int32 frameI,
@@ -195,6 +196,12 @@ public:
 		float scale,
 		BlendMode blendMode,
 		Color color);
+	void drawEffect(
+		int32 frameI,
+		Math::Vector3d center,
+		Math::Vector2d tiling,
+		Math::Vector2d texOffset,
+		BlendMode blendMode);
 
 private:
 	int32 imageIndex(int32 frameI, int32 spriteI) const;
@@ -240,6 +247,7 @@ public:
 
 private:
 	friend class AnimationDrawRequest;
+	friend class SpecialEffectDrawRequest;
 	Common::SharedPtr<Animation> _animation;
 	Common::Point _center;
 	int16 _scale = kBaseScale;
@@ -301,6 +309,27 @@ private:
 	Color _color;
 	BlendMode _blendMode;
 	float _lodBias;
+};
+
+class SpecialEffectDrawRequest : public IDrawRequest {
+public:
+	SpecialEffectDrawRequest(
+		Graphic &graphic,
+		Common::Point topLeft,
+		Common::Point bottomRight,
+		Math::Vector2d texOffset,
+		BlendMode blendMode);
+
+	virtual void draw() override;
+
+private:
+	Animation *_animation;
+	int32 _frameI;
+	Math::Vector3d _topLeft;
+	Math::Vector2d
+		_tiling,
+		_texOffset;
+	BlendMode _blendMode;
 };
 
 class BumpAllocator {

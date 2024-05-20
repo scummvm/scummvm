@@ -93,24 +93,24 @@ Vector3d Camera::setAppliedCenter(Vector3d center) {
 	return _appliedCenter = center;
 }
 
-Vector3d Camera::transform2Dto3D(Vector3d v3d) const {
+Vector3d Camera::transform2Dto3D(Vector3d v2d) const {
 	// if this looks like normal 3D math to *someone* please contact.
 	Vector4d vh;
 	vh.w() = 1.0f;
-	vh.z() = v3d.z() - _usedCenter.z();
-	vh.y() = (v3d.y() - g_system->getHeight() * 0.5f) * vh.z() * kInvBaseScale;
-	vh.x() = (v3d.x() - g_system->getWidth() * 0.5f) * vh.z() * kInvBaseScale;
+	vh.z() = v2d.z() - _usedCenter.z();
+	vh.y() = (v2d.y() - g_system->getHeight() * 0.5f) * vh.z() * kInvBaseScale;
+	vh.x() = (v2d.x() - g_system->getWidth() * 0.5f) * vh.z() * kInvBaseScale;
 	vh = _mat2Dto3D * vh;
 	return Vector3d(vh.x(), vh.y(), 0.0f);
 }
 
-Vector3d Camera::transform3Dto2D(Vector3d v2d) const {
+Vector3d Camera::transform3Dto2D(Vector3d v3d) const {
 	// I swear there is a better way than this. This is stupid. But it is original.
-	float depthScale = v2d.z() * kInvBaseScale;
+	float depthScale = v3d.z() * kInvBaseScale;
 	Vector4d vh;
-	vh.x() = v2d.x() * depthScale + (1 - depthScale) * g_system->getWidth() * 0.5f;
-	vh.y() = v2d.y() * depthScale + (1 - depthScale) * g_system->getHeight() * 0.5f;
-	vh.z() = v2d.z();
+	vh.x() = v3d.x() * depthScale + (1 - depthScale) * g_system->getWidth() * 0.5f;
+	vh.y() = v3d.y() * depthScale + (1 - depthScale) * g_system->getHeight() * 0.5f;
+	vh.z() = v3d.z();
 	vh.w() = 1.0f;
 	vh = _mat3Dto2D * vh;
 	return Vector3d(
