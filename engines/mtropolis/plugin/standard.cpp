@@ -250,6 +250,9 @@ MediaCueMessengerModifier::~MediaCueMessengerModifier() {
 	case kCueSourceLabel:
 		_cueSource.destruct<Label, &CueSourceUnion::asLabel>();
 		break;
+	case kCueSourceString:
+		// No destruct necessary, string is not in union
+		break;
 	default:
 		_cueSource.destruct<uint64, &CueSourceUnion::asUnset>();
 		break;
@@ -304,6 +307,10 @@ bool MediaCueMessengerModifier::load(const PlugInModifierLoaderContext &context,
 		_cueSourceType = kCueSourceLabel;
 		if (!_cueSource.asLabel.load(data.executeAt.value.asLabel))
 			return false;
+		break;
+	case Data::PlugInTypeTaggedValue::kString:
+		_cueSourceType = kCueSourceString;
+		_cueSource.asString = data.executeAt.value.asString;
 		break;
 	default:
 		return false;
