@@ -22,6 +22,7 @@
 #include "objects.h"
 #include "rooms.h"
 #include "stream-helper.h"
+#include "alcachofa.h"
 
 #include "common/system.h"
 
@@ -47,7 +48,7 @@ void ObjectBase::toggle(bool isEnabled) {
 	_isEnabled = isEnabled;
 }
 
-void ObjectBase::render() {
+void ObjectBase::draw() {
 }
 
 void ObjectBase::update() {
@@ -86,8 +87,27 @@ GraphicObject::GraphicObject(Room *room, ReadStream &stream)
 
 GraphicObject::GraphicObject(Room *room, const char *name)
 	: ObjectBase(room, name)
-	, _type(GraphicObjectType::Type0)
+	, _type(GraphicObjectType::Normal)
 	, _posterizeAlpha(0) {
+}
+
+void GraphicObject::draw() {
+	if (!isEnabled())
+		return;
+	const BlendMode blendMode = _type == GraphicObjectType::Alpha
+		? BlendMode::Alpha
+		: BlendMode::AdditiveAlpha;
+	const bool is3D = room() == &g_engine->world().inventory();
+	_graphic.update();
+	g_engine->drawQueue().add<AnimationDrawRequest>(_graphic, is3D, blendMode);
+}
+
+void GraphicObject::loadResources() {
+	_graphic.loadResources();
+}
+
+void GraphicObject::freeResources() {
+	_graphic.freeResources();
 }
 
 void GraphicObject::serializeSave(Serializer &serializer) {
@@ -106,6 +126,9 @@ ShiftingGraphicObject::ShiftingGraphicObject(Room *room, ReadStream &stream)
 	_texShift.setX(stream.readSint32LE() / 256.0f);
 	_texShift.setY(stream.readSint32LE() / 256.0f);
 	_startTime = g_system->getMillis();
+}
+
+void ShiftingGraphicObject::draw() {
 }
 
 ShapeObject::ShapeObject(Room *room, ReadStream &stream)
