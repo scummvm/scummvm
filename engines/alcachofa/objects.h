@@ -44,7 +44,7 @@ public:
 	inline bool isEnabled() const { return _isEnabled; }
 
 	virtual void toggle(bool isEnabled);
-	virtual void render();
+	virtual void draw();
 	virtual void update();
 	virtual void loadResources();
 	virtual void freeResources();
@@ -72,9 +72,9 @@ private:
 
 enum class GraphicObjectType : byte
 {
-	Type0,
-	Type1,
-	Type2
+	Normal,
+	NormalPosterize, // the posterization is not actually applied in the original engine
+	Alpha
 };
 
 class GraphicObject : public ObjectBase {
@@ -83,6 +83,9 @@ public:
 	GraphicObject(Room *room, Common::ReadStream &stream);
 	virtual ~GraphicObject() override = default;
 
+	virtual void draw() override;
+	virtual void loadResources() override;
+	virtual void freeResources() override;
 	virtual void serializeSave(Common::Serializer &serializer) override;
 	virtual Graphic *graphic() override;
 
@@ -98,6 +101,8 @@ class ShiftingGraphicObject final : public GraphicObject {
 public:
 	static constexpr const char *kClassName = "CObjetoGraficoMuare";
 	ShiftingGraphicObject(Room *room, Common::ReadStream &stream);
+
+	virtual void draw() override;
 
 private:
 	Common::Point _pos, _size;

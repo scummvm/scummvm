@@ -61,10 +61,12 @@ Common::Error AlcachofaEngine::run() {
 	_drawQueue.reset(new DrawQueue(_renderer.get()));
 	_world.reset(new World());
 
-	Graphic graphic;
-	graphic.setAnimation("MORTADELO_ACOSTANDOSE", AnimationFolder::Animations);
-	graphic.loadResources();
-	graphic.start(true);
+	world().globalRoom().loadResources();
+
+	auto room = world().getRoomByName("CASA_FREDDY_ARRIBA");
+	assert(room != nullptr);
+	world().currentRoom() = room;
+	room->loadResources();
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
@@ -84,11 +86,8 @@ Common::Error AlcachofaEngine::run() {
 		_drawQueue->clear();
 		_camera.shake() = Vector2d();
 
-		graphic.update();
-		drawQueue().add<AnimationDrawRequest>(graphic, false, BlendMode::AdditiveAlpha);
+		world().currentRoom()->update();
 
-		_camera.update();
-		_drawQueue->draw();
 		_renderer->end();
 
 		// Delay for a bit. All events loops should have a delay

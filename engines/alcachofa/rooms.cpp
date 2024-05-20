@@ -19,6 +19,7 @@
  *
  */
 
+#include "alcachofa.h"
 #include "rooms.h"
 #include "stream-helper.h"
 
@@ -103,7 +104,8 @@ Room::Room(World *world, ReadStream &stream, bool hasUselessByte)
 		_objects.push_back(readRoomObject(this, stream));
 		objectSize = stream.readUint32LE();
 	}
-	_objects.push_back(new Background(this, _name, backgroundScale));
+	if (!_name.equalsIgnoreCase("Global"))
+		_objects.push_back(new Background(this, _name, backgroundScale));
 
 	if (!_floors[0].empty())
 		_activeFloorI = 0;
@@ -120,6 +122,31 @@ ObjectBase *Room::getObjectByName(const Common::String &name) const {
 			return object;
 	}
 	return nullptr;
+}
+
+void Room::update() {
+	if (world().currentRoom() == this)
+		updateObjects();
+	if (world().currentRoom() == this) {
+		g_engine->camera().update();
+		drawObjects();
+		world().globalRoom().drawObjects();
+		// TODO: Draw black borders
+		g_engine->drawQueue().draw();
+	}
+}
+
+void Room::updateObjects() {
+	for (auto *object : _objects) {
+		object->update();
+		if (world().currentRoom() != this)
+			return;
+	}
+}
+
+void Room::drawObjects() {
+	for (auto *object : _objects)
+		object->draw();
 }
 
 void Room::loadResources() {
