@@ -342,9 +342,7 @@ bool CBagMovieObject::runObject() {
 			// Movies usually mark the transition from one view to another
 			// but not necessarily a change of sdev's, so make sure we repaint the
 			// backdrop
-			if (pMainWin) {
-				pMainWin->setPreFilterPan(true);
-			}
+			pMainWin->setPreFilterPan(true);
 
 		} else if (nMovFileType == MovieFileType::SOUND) {
 			CBofSound *pSound = new CBofSound(CBofApp::getApp()->getMainWindow(), sFileName, SOUND_WAVE);

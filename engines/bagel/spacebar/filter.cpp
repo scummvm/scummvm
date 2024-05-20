@@ -638,9 +638,9 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 			CBofBitmap *pMiniBitmap = new CBofBitmap(dx, dy, pPal);
 
-			CBofRect dstRect(g_engine->viewRect);
-			CBofRect srcRect = pMiniBitmap->getRect();
-			pBmp->paint(pMiniBitmap, &srcRect, &dstRect);
+			CBofRect srcRect(g_engine->viewRect);
+			CBofRect dstRect = pMiniBitmap->getRect();
+			pBmp->paint(pMiniBitmap, &dstRect, &srcRect);
 
 			CBofRect &filterRect = CMainWindow::getFilterRect();
 			filterRect.setRect(g_engine->viewRect.left, g_engine->viewRect.top, g_engine->viewRect.left + dx, g_engine->viewRect.top + dy);
