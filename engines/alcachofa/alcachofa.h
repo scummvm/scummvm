@@ -98,8 +98,8 @@ public:
 	}
 
 private:
-	Graphics::Screen *_screen = nullptr;
 	Common::ScopedPtr<IRenderer> _renderer;
+	Common::ScopedPtr<DrawQueue> _drawQueue;
 };
 
 extern AlcachofaEngine *g_engine;
