@@ -3800,6 +3800,8 @@ Mat3f &Mat3f::set(float angle, eAxis axis) {
 		zy   =  0;
 		zz   = calpha;
 		break;
+	default:
+		break;
 	}
 	return *this;
 }
