@@ -74,7 +74,7 @@ enum class GraphicObjectType : byte
 {
 	Normal,
 	NormalPosterize, // the posterization is not actually applied in the original engine
-	Alpha
+	Effect
 };
 
 class GraphicObject : public ObjectBase {
@@ -97,17 +97,17 @@ protected:
 	int32 _posterizeAlpha;
 };
 
-class ShiftingGraphicObject final : public GraphicObject {
+class SpecialEffectObject final : public GraphicObject {
 public:
 	static constexpr const char *kClassName = "CObjetoGraficoMuare";
-	ShiftingGraphicObject(Room *room, Common::ReadStream &stream);
+	SpecialEffectObject(Room *room, Common::ReadStream &stream);
 
 	virtual void draw() override;
 
 private:
-	Common::Point _pos, _size;
+	static constexpr const float kShiftSpeed = 1 / 256.0f;
+	Common::Point _topLeft, _bottomRight;
 	Math::Vector2d _texShift;
-	uint32 _startTime = 0;
 };
 
 class ShapeObject : public ObjectBase {

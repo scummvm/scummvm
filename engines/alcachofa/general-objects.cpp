@@ -94,10 +94,10 @@ GraphicObject::GraphicObject(Room *room, const char *name)
 void GraphicObject::draw() {
 	if (!isEnabled())
 		return;
-	const BlendMode blendMode = _type == GraphicObjectType::Alpha
+	const BlendMode blendMode = _type == GraphicObjectType::Effect
 		? BlendMode::Alpha
 		: BlendMode::AdditiveAlpha;
-	const bool is3D = room() == &g_engine->world().inventory();
+	const bool is3D = room() != &g_engine->world().inventory();
 	_graphic.update();
 	g_engine->drawQueue().add<AnimationDrawRequest>(_graphic, is3D, blendMode);
 }
@@ -119,16 +119,30 @@ Graphic *GraphicObject::graphic() {
 	return &_graphic;
 }
 
-ShiftingGraphicObject::ShiftingGraphicObject(Room *room, ReadStream &stream)
+SpecialEffectObject::SpecialEffectObject(Room *room, ReadStream &stream)
 	: GraphicObject(room, stream) {
-	_pos = Shape(stream).firstPoint();
-	_size = Shape(stream).firstPoint();
-	_texShift.setX(stream.readSint32LE() / 256.0f);
-	_texShift.setY(stream.readSint32LE() / 256.0f);
-	_startTime = g_system->getMillis();
+	_topLeft = Shape(stream).firstPoint();
+	_bottomRight = Shape(stream).firstPoint();
+	_texShift.setX(stream.readSint32LE());
+	_texShift.setY(stream.readSint32LE());
+	_texShift *= kShiftSpeed;
 }
 
-void ShiftingGraphicObject::draw() {
+void SpecialEffectObject::draw() {
+	if (!isEnabled()) // TODO: Add high quality check
+		return;
+	const auto texOffset = g_system->getMillis() * 0.001f * _texShift;
+	const BlendMode blendMode = _type == GraphicObjectType::Effect
+		? BlendMode::Additive
+		: BlendMode::AdditiveAlpha;
+	Point topLeft = _topLeft, bottomRight = _bottomRight;
+	if (topLeft.x == bottomRight.x || topLeft.y == bottomRight.y) {
+		topLeft = _graphic.center();
+		bottomRight = topLeft + _graphic.animation().imageSize(0);
+	}
+
+	_graphic.update();
+	g_engine->drawQueue().add<SpecialEffectDrawRequest>(_graphic, topLeft, bottomRight, texOffset, blendMode);
 }
 
 ShapeObject::ShapeObject(Room *room, ReadStream &stream)

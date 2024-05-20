@@ -222,6 +222,11 @@ int32 Animation::frameAtTime(uint32 time) const {
 	return -1;
 }
 
+Point Animation::imageSize(int32 imageI) const {
+	auto image = _images[imageI];
+	return image == nullptr ? Point() : Point(image->w, image->h);
+}
+
 void Animation::prerenderFrame(int32 frameI) {
 	assert(frameI >= 0 && (uint)frameI < frameCount());
 	if (frameI == _renderedFrameI)
@@ -289,6 +294,27 @@ void Animation::draw3D(int32 frameI, Vector3d center, float scale, BlendMode ble
 	renderer.setTexture(_renderedTexture.get());
 	renderer.setBlendMode(blendMode);
 	renderer.quad(as2D(center), size, color, rotation, texMin, texMax);
+}
+
+void Animation::drawEffect(int32 frameI, Vector3d topLeft, Vector2d tiling, Vector2d texOffset, BlendMode blendMode) {
+	prerenderFrame(frameI);
+	auto bounds = frameBounds(frameI);
+	Vector2d texMin(0, 0);
+	Vector2d texMax(tiling.getX() / _renderedSurface.w, tiling.getY() / _renderedSurface.h);
+
+	topLeft += as3D(totalFrameOffset(frameI));
+	topLeft = g_engine->camera().transform3Dto2D(topLeft);
+	const auto rotation = -g_engine->camera().rotation();
+	Vector2d size(bounds.width(), bounds.height());
+	size *= topLeft.z();
+
+	if (abs(tiling.getX()) > epsilon)
+		size = size * texMax;
+
+	auto &renderer = g_engine->renderer();
+	renderer.setTexture(_renderedTexture.get());
+	renderer.setBlendMode(blendMode);
+	renderer.quad(as2D(topLeft), size, kWhite, rotation, texMin + texOffset, texMax + texOffset);
 }
 
 Graphic::Graphic() {
@@ -403,6 +429,21 @@ void AnimationDrawRequest::draw() {
 		_animation->draw3D(_frameI, _center, _scale * kInvBaseScale, _blendMode, _color);
 	else
 		_animation->draw2D(_frameI, as2D(_center), _scale * kInvBaseScale, _blendMode, _color);
+}
+
+SpecialEffectDrawRequest::SpecialEffectDrawRequest(Graphic &graphic, Point topLeft, Point bottomRight, Vector2d texOffset, BlendMode blendMode)
+	: IDrawRequest(graphic._order)
+	, _animation(&graphic.animation())
+	, _frameI(graphic._frameI)
+	, _topLeft(topLeft.x, topLeft.y, graphic._scale)
+	, _tiling(bottomRight.x - topLeft.x, bottomRight.y - topLeft.y)
+	, _texOffset(texOffset)
+	, _blendMode(blendMode) {
+	assert(_frameI >= 0 && (uint)_frameI < _animation->frameCount());
+}
+
+void SpecialEffectDrawRequest::draw() {
+	_animation->drawEffect(_frameI, _topLeft, _tiling, _texOffset, _blendMode);
 }
 
 DrawQueue::DrawQueue(IRenderer *renderer)
