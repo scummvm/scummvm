@@ -613,7 +613,7 @@ void MetalGraphicsManager::renderCursor() {
 }
 
 void MetalGraphicsManager::updateScreen() {
-	if (!_gameScreen || !_pipeline) {
+	if (!_gameScreen || !_pipeline || !_targetBuffer->getTargetTexture()) {
 		return;
 	}
 
@@ -678,6 +678,7 @@ void MetalGraphicsManager::updateScreen() {
 
 	_cursorNeedsRedraw = false;
 	_forceRedraw = false;
+	refreshScreen();
 }
 
 void MetalGraphicsManager::setFocusRectangle(const Common::Rect& rect) {
