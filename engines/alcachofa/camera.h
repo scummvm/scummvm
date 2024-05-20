@@ -62,7 +62,7 @@ private:
 		_roomMax = Math::Vector2d(10000, 10000),
 		_shake;
 	Math::Vector3d
-		_usedCenter,
+		_usedCenter = Math::Vector3d(512, 384, 0),
 		_appliedCenter;
 	Math::Matrix4
 		_mat3Dto2D,

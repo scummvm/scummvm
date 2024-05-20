@@ -40,8 +40,8 @@ static ObjectBase *readRoomObject(Room *room, ReadStream &stream) {
 		return new PointObject(room, stream);
 	else if (type == GraphicObject::kClassName)
 		return new GraphicObject(room, stream);
-	else if (type == ShiftingGraphicObject::kClassName)
-		return new ShiftingGraphicObject(room, stream);
+	else if (type == SpecialEffectObject::kClassName)
+		return new SpecialEffectObject(room, stream);
 	else if (type == Item::kClassName)
 		return new Item(room, stream);
 	else if (type == PhysicalObject::kClassName)
