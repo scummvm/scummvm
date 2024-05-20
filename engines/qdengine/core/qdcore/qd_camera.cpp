@@ -69,7 +69,7 @@ struct sPlane4f {
 
 const DWORD IMPASSIBLE_CELL_CLR     = 0x00FF0000;
 const DWORD SELECTED_CELL_CLR       = 0x000000FF;
-const DWORD NORMAL_CELL_CLR     	= 0x00FFFFFF;
+const DWORD NORMAL_CELL_CLR         = 0x00FFFFFF;
 
 const int DASH_LEN = 2;
 

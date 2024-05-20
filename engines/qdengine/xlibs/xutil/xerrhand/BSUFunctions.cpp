@@ -51,7 +51,7 @@ Win95GetModuleBaseName(HANDLE  /*hProcess*/,
 	}
 
 	// This could blow the stack...
-	char szBuff[ MAX_PATH + 1 ] ;
+	char szBuff[MAX_PATH + 1] ;
 	DWORD dwRet = GetModuleFileName(hModule, szBuff, MAX_PATH) ;
 	ASSERT(0 != dwRet) ;
 	if (0 == dwRet) {
@@ -76,6 +76,6 @@ Win95GetModuleBaseName(HANDLE  /*hProcess*/,
 		lstrcpyn(lpBaseName, szBuff, iMin) ;
 	}
 	// Always NULL terminate.
-	lpBaseName[ iMin ] = '\0' ;
+	lpBaseName[iMin] = '\0' ;
 	return ((DWORD)(iMin - 1)) ;
 }

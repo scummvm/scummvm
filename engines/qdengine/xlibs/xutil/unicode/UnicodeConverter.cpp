@@ -28,7 +28,7 @@ bool t_ansi_to_unicode<unicode_string>::convert(string_type &result, LPCSTR str,
 
 	::MultiByteToWideChar(codepage, 0, str, str_len, const_cast<LPWSTR>(result.c_str()), wlen);
 
- 	//óäàëÿåì òåðìèíàëüíûé UNICODE-ñèìâîë
+	//óäàëÿåì òåðìèíàëüíûé UNICODE-ñèìâîë
 	result.erase(result.size() - 1, 1);
 
 	return true;
@@ -43,7 +43,7 @@ bool t_unicode_to_ansi<ansi_string>::convert(string_type &result, LPCWSTR wstr, 
 		return true;
 	}
 
- 	//åñëè wstr_len == -1, òî WCTMB ó÷èòûâàåò çàâåðøàþùèé íóëåâîé ñèìâîë
+	//åñëè wstr_len == -1, òî WCTMB ó÷èòûâàåò çàâåðøàþùèé íóëåâîé ñèìâîë
 	int alen = ::WideCharToMultiByte(codepage, 0, wstr, wstr_len, NULL, 0, NULL, NULL);
 
 	xassert(alen >= 0);
@@ -53,7 +53,7 @@ bool t_unicode_to_ansi<ansi_string>::convert(string_type &result, LPCWSTR wstr, 
 	}
 
 	//HINT: Çäåñü ïðåäïîëàãàåòñÿ, ÷òî äëÿ âñåõ ANSI êîäèðîâîê òåðìèíàëüíûé ñèìâîë
- 	//      çàíèìàåò 1 áàéò
+	//      çàíèìàåò 1 áàéò
 	if (wstr_len != -1)
 		alen += 1; //ó÷èòûâàåì çàâåðøàþùèé ñèìâîë
 
@@ -64,8 +64,8 @@ bool t_unicode_to_ansi<ansi_string>::convert(string_type &result, LPCWSTR wstr, 
 
 	::WideCharToMultiByte(codepage, 0, wstr, wstr_len, const_cast<LPSTR>(result.c_str()), alen, NULL, NULL);
 
- 	//èñêëþ÷àåì òåðìèíàëüíûé ñèìâîë
- 	//HINT: Óâåðåííîñòü îòíîñèòåëüíî îäíîãî áàéòà?
+	//èñêëþ÷àåì òåðìèíàëüíûé ñèìâîë
+	//HINT: Óâåðåííîñòü îòíîñèòåëüíî îäíîãî áàéòà?
 	result.erase(result.size() - 1, 1);
 
 	return true;

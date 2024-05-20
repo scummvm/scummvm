@@ -7,7 +7,7 @@
 #define FOR_EACH(list, iterator) \
     for(iterator = (list).begin(); iterator != (list).end(); ++iterator)
 
- // STUB: XZipStream
+// STUB: XZipStream
 #define _NO_ZIP_
 
 // STUB FIXME
@@ -77,96 +77,96 @@
 #define SEM_FAILCRITICALERRORS 1
 
 typedef struct MSG {
-  HWND   hwnd;
-  UINT   message;
-  int wParam;
-  int lParam;
-  DWORD  time;
-  DWORD  lPrivate;
+	HWND   hwnd;
+	UINT   message;
+	int wParam;
+	int lParam;
+	DWORD  time;
+	DWORD  lPrivate;
 };
 
 void* INVALID_HANDLE_VALUE = reinterpret_cast<void*>(-1);
 
 void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext) {
-    warning("STUB: _splitpath");
+	warning("STUB: _splitpath");
 }
 
 int MessageBox(HWND hWnd, const char *lpText, const char *lpCaption, UINT uType) {
-    warning("STUB: MessageBox");
-    return 0;
+	warning("STUB: MessageBox");
+	return 0;
 }
 
 void ShellExecute(HWND hwnd, const char *lpOperation, const char *lpFile, const char *lpParameters, const char *lpDirectory, int nShowCmd) {
-    warning("STUB: ShellExecute");
+	warning("STUB: ShellExecute");
 }
 
 void Sleep(int dwMilliseconds) {
-    warning("STUB: Sleep");
+	warning("STUB: Sleep");
 }
 
 int GetLogicalDrives() {
-    warning("STUB: GetLogicalDrives");
-    return 0;
+	warning("STUB: GetLogicalDrives");
+	return 0;
 }
 
 uint GetDriveType(LPCSTR lpRootPathName) {
-    warning("STUB: GetDriveTypeA");
-    return 0;
+	warning("STUB: GetDriveTypeA");
+	return 0;
 }
 
 FARPROC GetProcAddress(HMODULE hModule, LPCSTR lpProcName) {
-    warning("STUB: GetProcAddress");
-    return 0;
+	warning("STUB: GetProcAddress");
+	return 0;
 }
 
 bool FreeLibrary(void *hModule) {
-    warning("STUB: FreeLibrary");
-    return false;
+	warning("STUB: FreeLibrary");
+	return false;
 }
 
 HMODULE LoadLibrary(const char *lpLibFileName) {
-    warning("STUB: LoadLibrary");
-    return 0;
+	warning("STUB: LoadLibrary");
+	return 0;
 }
 
 bool ShowWindow(HWND hWnd, int nCmdShow) {
-    warning("STUB: ShowWindow");
-    return false;
+	warning("STUB: ShowWindow");
+	return false;
 }
 
 bool CloseWindow(HWND hWnd) {
-    warning("STUB: CloseWindow");
-    return false;
+	warning("STUB: CloseWindow");
+	return false;
 }
 
 bool DestroyWindow(HWND hWnd) {
-    warning("STUB: DestroyWindow");
-    return false;
+	warning("STUB: DestroyWindow");
+	return false;
 }
 
 bool UpdateWindow(HWND hWnd) {
-    warning("STUB: UpdateWindow");
-    return false;
+	warning("STUB: UpdateWindow");
+	return false;
 }
 
 bool PeekMessage(MSG *msg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilterMax, UINT wRemoveMsg) {
-    warning("STUB: PeakMessage");
-    return false;
+	warning("STUB: PeakMessage");
+	return false;
 }
 
 bool SendMessage(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) {
-    warning("STUB: SendMessage");
-    return false;
+	warning("STUB: SendMessage");
+	return false;
 }
 
 bool SetErrorMode(UINT uMode) {
-    warning("STUB: SetErrorMode");
-    return false;
+	warning("STUB: SetErrorMode");
+	return false;
 }
 
 DWORD WINAPI GetLastError() {
-    warning("STUB: GetLastError");
-    return 0;
+	warning("STUB: GetLastError");
+	return 0;
 }
 
 #ifndef _QUEST_EDITOR

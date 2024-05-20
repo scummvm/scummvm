@@ -198,7 +198,7 @@ BOOL TLHELPGetLoadedModules(DWORD     dwPID,
 					break ;
 				} else {
 					// Copy this value in.
-					paModArray[ *puiRealCount ] =
+					paModArray[*puiRealCount] =
 					    (HINSTANCE)stME32.modBaseAddr ;
 				}
 			}

@@ -140,7 +140,7 @@ bool GDI_grDispatcher::Flush(int x, int y, int sx, int sy) {
 		int x_src = wndPosX + x;
 		int y_src = wndPosY + y;
 
-	warning("STUB: GDI_grDispatcher::Flush");
+		warning("STUB: GDI_grDispatcher::Flush");
 #if 0
 		HDC hdc = GetDC((HWND)hWnd);
 

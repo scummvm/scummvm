@@ -1,6 +1,6 @@
 #include "qdengine/core/qd_precomp.h"
 
-const int XMSG_BUFFER_SIZE		= 2048;
+const int XMSG_BUFFER_SIZE      = 2048;
 
 struct XMessageBuffer {
 	MSG** table;
@@ -11,7 +11,7 @@ struct XMessageBuffer {
 
 	void clear();
 	void put(MSG* p);
-	void put(void* hWnd,int msg,int wParam,int lParam);
+	void put(void* hWnd, int msg, int wParam, int lParam);
 	int get(MSG* p);
 
 	XMessageBuffer();

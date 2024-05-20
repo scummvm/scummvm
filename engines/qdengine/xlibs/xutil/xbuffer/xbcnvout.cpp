@@ -1,134 +1,122 @@
 #include "qdengine/xlibs/xutil/xglobal.h"
 #include "math.h"
 
-double strtod_(char* str, char** strOut)
-{
-    while(isspace(*str))
+double strtod_(char* str, char** strOut) {
+	while (isspace(*str))
 		++str;
 
 	bool positive = true;
-    if(*str == '-'){
+	if (*str == '-') {
 		positive = false;
-        ++str;
-    }
-
-    double val = 0;
-    while(isdigit(*str)){
-        val *= 10;
-        val += (double)(*str++ - '0');
-    }
-
-	if(*str == '.'){
 		++str;
-        double dig = 1;
-        while(isdigit(*str)){
-			dig  /= 10;
-            val += ((double)(*str++ - '0'))*dig;
-        }
-    }
+	}
 
-	if(*str == 'e' || *str == 'E' || *str == 'd' || *str == 'D'){
+	double val = 0;
+	while (isdigit(*str)) {
+		val *= 10;
+		val += (double)(*str++ - '0');
+	}
+
+	if (*str == '.') {
+		++str;
+		double dig = 1;
+		while (isdigit(*str)) {
+			dig  /= 10;
+			val += ((double)(*str++ - '0')) * dig;
+		}
+	}
+
+	if (*str == 'e' || *str == 'E' || *str == 'd' || *str == 'D') {
 		bool positivePower = true;
-		if(*++str == '+')
+		if (*++str == '+')
 			++str;
-		else if(*str == '-'){
+		else if (*str == '-') {
 			positivePower = false;
 			++str;
 		}
 		int power = strtol(str, &str, 10);
-		if(!positivePower)
+		if (!positivePower)
 			power = -power;
 		val *= pow(10., power);
 	}
 
 	*strOut = str;
-    return positive ? val : -val;
+	return positive ? val : -val;
 }
 
-XBuffer& XBuffer::operator>= (char& var)
-{
+XBuffer& XBuffer::operator>= (char& var) {
 	char* p = buffer_ + offset_;
-	var = (char)strtol(p,&p,0);
+	var = (char)strtol(p, &p, 0);
 	offset_ += p - (buffer_ + offset_);
 	return *this;
 }
 
-XBuffer& XBuffer::operator>= (unsigned char& var)
-{
+XBuffer& XBuffer::operator>= (unsigned char& var) {
 	char* p = buffer_ + offset_;
-	var = (unsigned char)strtoul(p,&p,0);
+	var = (unsigned char)strtoul(p, &p, 0);
 	offset_ += p - (buffer_ + offset_);
 	return *this;
 }
 
-XBuffer& XBuffer::operator>= (short& var)
-{
+XBuffer& XBuffer::operator>= (short& var) {
 	char* p = buffer_ + offset_;
-	var = (short)strtol(p,&p,0);
+	var = (short)strtol(p, &p, 0);
 	offset_ += p - (buffer_ + offset_);
 	return *this;
 }
 
-XBuffer& XBuffer::operator>= (unsigned short& var)
-{
+XBuffer& XBuffer::operator>= (unsigned short& var) {
 	char* p = buffer_ + offset_;
-	var = (unsigned short)strtoul(p,&p,0);
+	var = (unsigned short)strtoul(p, &p, 0);
 	offset_ += p - (buffer_ + offset_);
 	return *this;
 }
 
-XBuffer& XBuffer::operator>= (int& var)
-{
+XBuffer& XBuffer::operator>= (int& var) {
 	char* p = buffer_ + offset_;
-	var = strtol(p,&p,0);
+	var = strtol(p, &p, 0);
 	offset_ += p - (buffer_ + offset_);
 	return *this;
 }
 
-XBuffer& XBuffer::operator>= (unsigned& var)
-{
+XBuffer& XBuffer::operator>= (unsigned& var) {
 	char* p = buffer_ + offset_;
-	var = strtoul(p,&p,0);
+	var = strtoul(p, &p, 0);
 	offset_ += p - (buffer_ + offset_);
 	return *this;
 }
 
-XBuffer& XBuffer::operator>= (long& var)
-{
+XBuffer& XBuffer::operator>= (long& var) {
 	char* p = buffer_ + offset_;
-	var = strtol(p,&p,0);
+	var = strtol(p, &p, 0);
 	offset_ += p - (buffer_ + offset_);
 	return *this;
 }
 
-XBuffer& XBuffer::operator>= (unsigned long& var)
-{
+XBuffer& XBuffer::operator>= (unsigned long& var) {
 	char* p = buffer_ + offset_;
-	var = strtoul(p,&p,0);
+	var = strtoul(p, &p, 0);
 	offset_ += p - (buffer_ + offset_);
 	return *this;
 }
 
-XBuffer& XBuffer::operator>= (double& var)
-{
+XBuffer& XBuffer::operator>= (double& var) {
 	char* p = buffer_ + offset_;
-	var = strtod_(p,&p);
+	var = strtod_(p, &p);
 	offset_ += p - (buffer_ + offset_);
 	return *this;
 }
 
-XBuffer& XBuffer::operator>= (long double& var)
-{
+XBuffer& XBuffer::operator>= (long double& var) {
 	char* p = buffer_ + offset_;
-	var = strtod_(p,&p);
+	var = strtod_(p, &p);
 	offset_ += p - (buffer_ + offset_);
 	return *this;
 }
 
-XBuffer& XBuffer::operator>= (float& var)
-{
+XBuffer& XBuffer::operator>= (float& var) {
 	char* p = buffer_ + offset_;
-	var = (float)strtod_(p,&p);
+	var = (float)strtod_(p, &p);
 	offset_ += p - (buffer_ + offset_);
 	return *this;
 }

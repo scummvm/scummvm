@@ -1,18 +1,17 @@
 /*
-		   XConsole (Windows 32 API version)
-	 By K-D Lab::KranK, Dr.Tronick, K-D Lab::Steeler (C) 1993-97 V3.0nt
+           XConsole (Windows 32 API version)
+     By K-D Lab::KranK, Dr.Tronick, K-D Lab::Steeler (C) 1993-97 V3.0nt
 */
 
 #ifndef __XCONSOLE_H
 #define __XCONSOLE_H
 
-#undef	NULL
+#undef  NULL
 #ifndef NULL
-#define NULL	0L
+#define NULL    0L
 #endif
 
-struct XConsole
-{
+struct XConsole {
 	int radix;
 	int digits;
 
@@ -37,13 +36,19 @@ struct XConsole
 	XConsole& operator<= (double);
 	XConsole& operator<= (long double);
 
-	void SetRadix(int _radix){ radix = _radix; }
-	void SetDigits(int _digits){ digits = _digits; }
-	void SetTab(int size){ tab = size; }
+	void SetRadix(int _radix) {
+		radix = _radix;
+	}
+	void SetDigits(int _digits) {
+		digits = _digits;
+	}
+	void SetTab(int size) {
+		tab = size;
+	}
 	void clear();
 
-	void setpos(int _x,int _y);
-	void getpos(int &x,int &y);
+	void setpos(int _x, int _y);
+	void getpos(int &x, int &y);
 	void initialize(int mode);
 };
 

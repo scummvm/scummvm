@@ -12,21 +12,18 @@ XKeyStruct XKey;
 typedef void (*PFN)(int);
 typedef void (*PFK)();
 
-void XKeyStruct::clear(void)
-{
-	memset(keyStates,0,XKEY_MAXCODE);
+void XKeyStruct::clear(void) {
+	memset(keyStates, 0, XKEY_MAXCODE);
 }
 
-void XKeyStruct::init(void* pH,void* upH)
-{
+void XKeyStruct::init(void* pH, void* upH) {
 	pressHandler = pH;
 	unpressHandler = upH;
 }
 
-void XKeyStruct::finit()
-{
+void XKeyStruct::finit() {
 	int i;
-	for(i = 0; i < XKEY_MAXCODE; i ++){
+	for (i = 0; i < XKEY_MAXCODE; i ++) {
 		keyPressFnc[i] = NULL;
 		keyUnpressFnc[i] = NULL;
 	}
@@ -34,56 +31,49 @@ void XKeyStruct::finit()
 	unpressHandler = NULL;
 }
 
-void XKeyStruct::setPress(int key,void (*keyFunction)(void),int repeat)
-{
+void XKeyStruct::setPress(int key, void (*keyFunction)(void), int repeat) {
 	keyPressFnc[key] = keyFunction;
-	if(repeat) keyStates[key] |= XKEY_REPEAT;
+	if (repeat) keyStates[key] |= XKEY_REPEAT;
 }
 
-void XKeyStruct::setUnpress(int key,void (*keyFunction)(void))
-{
+void XKeyStruct::setUnpress(int key, void (*keyFunction)(void)) {
 	keyUnpressFnc[key] = keyFunction;
 }
 
-int XKeyStruct::Pressed(int key)
-{
+int XKeyStruct::Pressed(int key) {
 	return (keyStates[key] & XKEY_PRESSED);
 }
 
-int XKeyStruct::wasPressed(int key)
-{
-	if(keyStates[key] & XKEY_WASPRESSED){
-		if(!(keyStates[key] & XKEY_PRESSED)) keyStates[key] &= ~XKEY_WASPRESSED;
+int XKeyStruct::wasPressed(int key) {
+	if (keyStates[key] & XKEY_WASPRESSED) {
+		if (!(keyStates[key] & XKEY_PRESSED)) keyStates[key] &= ~XKEY_WASPRESSED;
 		return 1;
 	}
 	return 0;
 }
 
-void XKeyStruct::PressFnc(int vkey,int key)
-{
+void XKeyStruct::PressFnc(int vkey, int key) {
 	int i;
 	int rptCount = key & 0xFFFF;
 
 	LastScanCode = key;
 
 	keyStates[vkey] |= (XKEY_PRESSED | XKEY_WASPRESSED);
-	if(keyPressFnc[vkey]){
-		if(!(keyStates[vkey] & XKEY_REPEAT)) rptCount = 1;
-		for(int i = 0; i < rptCount; i ++){
+	if (keyPressFnc[vkey]) {
+		if (!(keyStates[vkey] & XKEY_REPEAT)) rptCount = 1;
+		for (int i = 0; i < rptCount; i ++) {
 			(*(PFK)(keyPressFnc[vkey]))();
 		}
-	}
-	else {
-		if(pressHandler){
-			for(i = 0; i < rptCount; i ++){
+	} else {
+		if (pressHandler) {
+			for (i = 0; i < rptCount; i ++) {
 				(*(PFN)(pressHandler))(vkey);
 			}
 		}
 	}
 }
 
-void XKeyStruct::UnPressFnc(int vkey,int key)
-{
+void XKeyStruct::UnPressFnc(int vkey, int key) {
 	int i;
 	int rptCount = key & 0xFFFF;
 
@@ -91,23 +81,21 @@ void XKeyStruct::UnPressFnc(int vkey,int key)
 
 	keyStates[vkey] &= ~XKEY_PRESSED;
 
-	if(keyUnpressFnc[vkey]){
+	if (keyUnpressFnc[vkey]) {
 		(*(PFK)(keyUnpressFnc[vkey]))();
-	}
-	else {
-		if(unpressHandler){
-			for(i = 0; i < rptCount; i ++){
+	} else {
+		if (unpressHandler) {
+			for (i = 0; i < rptCount; i ++) {
 				(*(PFN)(unpressHandler))(vkey);
 			}
 		}
 	}
 }
 
-XKeyStruct::XKeyStruct(void)
-{
+XKeyStruct::XKeyStruct(void) {
 	int i;
-	memset(keyStates,0,XKEY_MAXCODE);
-	for(i = 0; i < XKEY_MAXCODE; i ++){
+	memset(keyStates, 0, XKEY_MAXCODE);
+	for (i = 0; i < XKEY_MAXCODE; i ++) {
 		keyPressFnc[i] = NULL;
 		keyUnpressFnc[i] = NULL;
 	}
@@ -115,15 +103,13 @@ XKeyStruct::XKeyStruct(void)
 	unpressHandler = NULL;
 }
 
-XKeyStruct::~XKeyStruct(void)
-{
+XKeyStruct::~XKeyStruct(void) {
 	int i;
-	for(i = 0; i < XKEY_MAXCODE; i ++)
+	for (i = 0; i < XKEY_MAXCODE; i ++)
 		GetAsyncKeyState(i);
 }
 
-static unsigned char XKeyConvTable[1024] =
-{
+static unsigned char XKeyConvTable[1024] = {
 	0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x08, 0x09, 0x00, 0x00, 0x00, 0x0d, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -190,17 +176,15 @@ static unsigned char XKeyConvTable[1024] =
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-int xtGetKeyName(int vkey,int shift,int russian)
-{
+int xtGetKeyName(int vkey, int shift, int russian) {
 	int offs = 0;
 
-	if(shift) offs += 256;
-	if(russian) offs += 512;
+	if (shift) offs += 256;
+	if (russian) offs += 512;
 
 	return XKeyConvTable[offs + vkey];
 }
 
-int xtGetKeyState(int vk)
-{
+int xtGetKeyState(int vk) {
 	return (GetKeyState(vk) & 0x01);
 }

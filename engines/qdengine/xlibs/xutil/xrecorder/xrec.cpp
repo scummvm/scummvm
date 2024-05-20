@@ -14,12 +14,11 @@ void xtSysQuant(void);
 
 //#define _XRECORDER_LOG_
 
-#define XREC_MAX_CMESSAGE	7
-#define XREC_MAX_IMESSAGE	7
+#define XREC_MAX_CMESSAGE   7
+#define XREC_MAX_IMESSAGE   7
 
 // Captured events...
-static int XREC_CMESSAGES[XREC_MAX_CMESSAGE] =
-{
+static int XREC_CMESSAGES[XREC_MAX_CMESSAGE] = {
 	WM_KEYDOWN,
 	WM_LBUTTONDOWN,
 	WM_RBUTTONDOWN,
@@ -30,8 +29,7 @@ static int XREC_CMESSAGES[XREC_MAX_CMESSAGE] =
 };
 
 // Ignored events...
-static int XREC_IMESSAGES[XREC_MAX_IMESSAGE] =
-{
+static int XREC_IMESSAGES[XREC_MAX_IMESSAGE] = {
 	WM_MOUSEMOVE,
 	WM_KEYUP,
 	WM_SYSKEYUP,
@@ -43,12 +41,11 @@ static int XREC_IMESSAGES[XREC_MAX_IMESSAGE] =
 
 XRecorder XRec;
 
-#ifdef	_XRECORDER_LOG_
+#ifdef  _XRECORDER_LOG_
 XStream XRecLog;
 #endif
 
-XRecorder::XRecorder(void)
-{
+XRecorder::XRecorder(void) {
 	flags = 0;
 	frameCount = controlCount = 0;
 
@@ -57,104 +54,98 @@ XRecorder::XRecorder(void)
 	hWnd = NULL;
 }
 
-void XRecorder::Open(char* fname,int mode)
-{
+void XRecorder::Open(char* fname, int mode) {
 	int fmode;
-	if(flags & (XRC_RECORD_MODE | XRC_PLAY_MODE))
+	if (flags & (XRC_RECORD_MODE | XRC_PLAY_MODE))
 		Close();
 
-	if(!nextMsg){
+	if (!nextMsg) {
 		nextMsg = new XRecorderMessage;
 		nextMsg -> data = new int[XRC_BUFFER_SIZE];
 		nextMsgDataSize = XRC_BUFFER_SIZE;
 	}
-	if(!hFile)
+	if (!hFile)
 		hFile = new XStream;
 
 	fmode = (mode == XRC_RECORD_MODE) ? XS_OUT : XS_IN;
-	hFile -> open(fname,fmode);
-#ifdef	_XRECORDER_LOG_
-	if(mode == XRC_RECORD_MODE)
-		XRecLog.open("xrec_wr.log",XS_OUT);
+	hFile -> open(fname, fmode);
+#ifdef  _XRECORDER_LOG_
+	if (mode == XRC_RECORD_MODE)
+		XRecLog.open("xrec_wr.log", XS_OUT);
 	else
-		XRecLog.open("xrec_pl.log",XS_OUT);
+		XRecLog.open("xrec_pl.log", XS_OUT);
 #endif
 	frameCount = 0;
 	flags |= mode;
 }
 
-void XRecorder::Close(void)
-{
-	if(flags & (XRC_RECORD_MODE | XRC_PLAY_MODE)){
+void XRecorder::Close(void) {
+	if (flags & (XRC_RECORD_MODE | XRC_PLAY_MODE)) {
 		hFile -> close();
 		flags &= ~(XRC_RECORD_MODE | XRC_PLAY_MODE | XRC_MESSAGE_READ);
-#ifdef	_XRECORDER_LOG_
+#ifdef  _XRECORDER_LOG_
 		XRecLog.close();
 #endif
 	}
 }
 
-void XRecorder::GetMessage(void)
-{
-	if(flags & XRC_PLAY_MODE){
-		if(hFile -> eof()){
+void XRecorder::GetMessage(void) {
+	if (flags & XRC_PLAY_MODE) {
+		if (hFile -> eof()) {
 			Close();
 			return;
 		}
 		*hFile > nextMsg -> Type > nextMsg -> Frame > nextMsg -> DataSize;
-		if(nextMsg -> DataSize){
-			if(nextMsg -> DataSize > nextMsgDataSize){
+		if (nextMsg -> DataSize) {
+			if (nextMsg -> DataSize > nextMsgDataSize) {
 				delete nextMsg -> data;
 				nextMsg -> data = new int[nextMsg -> DataSize];
 				nextMsgDataSize = nextMsg -> DataSize;
 			}
-			hFile -> read((char*)nextMsg -> data,nextMsg -> DataSize * sizeof(int));
+			hFile -> read((char*)nextMsg -> data, nextMsg -> DataSize * sizeof(int));
 		}
 		flags |= XRC_MESSAGE_READ;
 	}
 }
 
-void XRecorder::DispatchMessage(void)
-{
+void XRecorder::DispatchMessage(void) {
 	MSG msg;
-	if((flags & XRC_MESSAGE_READ) && frameCount == nextMsg -> Frame){
-		switch(nextMsg -> Type){
-			case XRC_USER_MESSAGE:
-				break;
-			case XRC_XMOUSE_MESSAGE:
-			case XRC_SYSTEM_MESSAGE:
-				msg.message = nextMsg -> data[0];
-				msg.wParam = nextMsg -> data[1];
-				msg.lParam = nextMsg -> data[2];
-				xtDispatchMessage(&msg);
-				break;
+	if ((flags & XRC_MESSAGE_READ) && frameCount == nextMsg -> Frame) {
+		switch (nextMsg -> Type) {
+		case XRC_USER_MESSAGE:
+			break;
+		case XRC_XMOUSE_MESSAGE:
+		case XRC_SYSTEM_MESSAGE:
+			msg.message = nextMsg -> data[0];
+			msg.wParam = nextMsg -> data[1];
+			msg.lParam = nextMsg -> data[2];
+			xtDispatchMessage(&msg);
+			break;
 		}
-#ifdef	_XRECORDER_LOG_
+#ifdef  _XRECORDER_LOG_
 		XRecLog < "\r\nEvent -> " <= nextMsg -> Type < "(" <= nextMsg -> data[0] < "), frame = " <= frameCount;
 #endif
 	}
 }
 
-void XRecorder::Flush(void)
-{
-#ifdef	_XRECORDER_LOG_
-		XRecLog < "\r\nEvent -> " <= nextMsg -> Type < "(" <= nextMsg -> data[0] < "), frame = " <= frameCount;
+void XRecorder::Flush(void) {
+#ifdef  _XRECORDER_LOG_
+	XRecLog < "\r\nEvent -> " <= nextMsg -> Type < "(" <= nextMsg -> data[0] < "), frame = " <= frameCount;
 #endif
 	*hFile < nextMsg -> Type < nextMsg -> Frame < nextMsg -> DataSize;
-	if(nextMsg -> DataSize){
-		hFile -> write((char*)nextMsg -> data,nextMsg -> DataSize * sizeof(int));
+	if (nextMsg -> DataSize) {
+		hFile -> write((char*)nextMsg -> data, nextMsg -> DataSize * sizeof(int));
 	}
 }
 
-void XRecorder::Quant(void)
-{
+void XRecorder::Quant(void) {
 	frameCount ++;
 
-	if(flags & XRC_PLAY_MODE){
-		if(!(flags & XRC_MESSAGE_READ))
+	if (flags & XRC_PLAY_MODE) {
+		if (!(flags & XRC_MESSAGE_READ))
 			GetMessage();
 
-		while(flags & XRC_MESSAGE_READ && frameCount == nextMsg -> Frame){
+		while (flags & XRC_MESSAGE_READ && frameCount == nextMsg -> Frame) {
 			DispatchMessage();
 			GetMessage();
 		}
@@ -166,8 +157,7 @@ void XRecorder::Quant(void)
 	xtProcessMessageBuffer();
 }
 
-void XRecorder::PutSysMessage(int id,int msg,int wp,int lp)
-{
+void XRecorder::PutSysMessage(int id, int msg, int wp, int lp) {
 	nextMsg -> Type = id;
 	nextMsg -> Frame = frameCount;
 	nextMsg -> DataSize = 3;
@@ -179,8 +169,7 @@ void XRecorder::PutSysMessage(int id,int msg,int wp,int lp)
 	Flush();
 }
 
-void XRecorder::PutMessage(int msg,int sz,void* p)
-{
+void XRecorder::PutMessage(int msg, int sz, void* p) {
 	int i;
 	int* ptr = (int*)p;
 
@@ -188,30 +177,29 @@ void XRecorder::PutMessage(int msg,int sz,void* p)
 	nextMsg -> Frame = frameCount;
 	nextMsg -> DataSize = sz;
 
-	if(nextMsgDataSize < nextMsg -> DataSize){
+	if (nextMsgDataSize < nextMsg -> DataSize) {
 		delete nextMsg -> data;
 		nextMsg -> data = new int[nextMsg -> DataSize];
 		nextMsgDataSize = nextMsg -> DataSize;
 	}
 
-	for(i = 0; i < sz; i ++)
+	for (i = 0; i < sz; i ++)
 		nextMsg -> data[i] = ptr[i];
 
 	Flush();
 }
 
-int XRecorder::CheckMessage(int code)
-{
+int XRecorder::CheckMessage(int code) {
 	int i;
-	for(i = 0; i < XREC_MAX_CMESSAGE; i ++){
-		if(XREC_CMESSAGES[i] == code){
-			if(flags & XRC_PLAY_MODE)
+	for (i = 0; i < XREC_MAX_CMESSAGE; i ++) {
+		if (XREC_CMESSAGES[i] == code) {
+			if (flags & XRC_PLAY_MODE)
 				Close();
 			return 0;
 		}
 	}
-	for(i = 0; i < XREC_MAX_IMESSAGE; i ++){
-		if(XREC_IMESSAGES[i] == code) return 0;
+	for (i = 0; i < XREC_MAX_IMESSAGE; i ++) {
+		if (XREC_IMESSAGES[i] == code) return 0;
 	}
 	return 1;
 }

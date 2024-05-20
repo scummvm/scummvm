@@ -72,7 +72,7 @@ void rc4code(char *data, const char *key, int count = -1) {
 	}
 }
 
- // âûâîä Unicode òåêñòà â êîíñîëü
+// âûâîä Unicode òåêñòà â êîíñîëü
 void dcprintfW(wchar_t *format, ...) {
 	static bool inited = false;
 	if (!inited) {
