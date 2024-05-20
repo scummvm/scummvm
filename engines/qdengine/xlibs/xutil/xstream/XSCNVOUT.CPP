@@ -1,4 +1,4 @@
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 
 XStream& XStream::operator>= (char& var)
 {

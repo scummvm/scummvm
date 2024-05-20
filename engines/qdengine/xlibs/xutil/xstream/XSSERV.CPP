@@ -1,4 +1,4 @@
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 
 static char *seekMSG	= "BAD SEEK";
 static char *flushMSG	= "FLUSH FILE BUFFERS ERROR";
@@ -40,7 +40,7 @@ void XStream::flush()
 long XStream::size() const
 {
 	long tmp = extSize;
-	
+
 	if(tmp == -1){
 		tmp=GetFileSize(handler,0);
 		if (tmp == -1L)
@@ -49,4 +49,3 @@ long XStream::size() const
 	}
 	return tmp;
 }
-

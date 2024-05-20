@@ -4,7 +4,7 @@
 The functions that handle wrapping differences between NT and 95/98.
 ----------------------------------------------------------------------*/
 
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 #include "PCH.h"
 #include "BugslayerUtil.h"
 #include "Internal.h"
@@ -79,5 +79,3 @@ Win95GetModuleBaseName(HANDLE  /*hProcess*/,
 	lpBaseName[ iMin ] = '\0' ;
 	return ((DWORD)(iMin - 1)) ;
 }
-
-

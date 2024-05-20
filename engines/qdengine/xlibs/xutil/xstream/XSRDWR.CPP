@@ -1,4 +1,4 @@
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 
 static char* readMSG	= "WRONG READING";
 static char* writeMSG	= "WRONG WRITING";
@@ -31,17 +31,17 @@ unsigned long XStream::read(void* buf, unsigned long len)
 {
 	unsigned long ret;
 	if(!ReadFile(handler,buf,len,&ret,0))
-		if(handleErrors_) 
+		if(handleErrors_)
 			ErrH.Abort(readMSG,XERR_USER,GetLastError(),fname);
 		else{
 			ioError_ = true;
 			return 0U;
 		}
 
-	if(ret < len) 
+	if(ret < len)
 		eofFlag = 1;
 	pos += ret;
-	if(extSize != -1 && pos >= extSize) 
+	if(extSize != -1 && pos >= extSize)
 		eofFlag = 1;
 
 	if(xsReadHandler){
@@ -59,7 +59,7 @@ unsigned long XStream::write(const void* buf, unsigned long len)
 {
 	unsigned long ret;
 	if(!WriteFile(handler,buf,len,&ret,0))
-		if(handleErrors_) 
+		if(handleErrors_)
 			ErrH.Abort(writeMSG,XERR_USER,GetLastError(),fname);
 		else{
 			ioError_ = true;
@@ -77,4 +77,3 @@ unsigned long XStream::write(const void* buf, unsigned long len)
 	}
 	return ret;
 }
-

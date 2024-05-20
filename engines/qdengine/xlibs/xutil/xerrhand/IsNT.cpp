@@ -4,7 +4,7 @@
 A simpler way to figure out the OS.
 ----------------------------------------------------------------------*/
 
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 #include "PCH.h"
 #include "BugslayerUtil.h"
 #include "Internal.h"
@@ -43,5 +43,3 @@ BOOL __stdcall IsNT(void) {
 	g_bHasVersion = TRUE ;
 	return (TRUE == g_bIsNT) ;
 }
-
-

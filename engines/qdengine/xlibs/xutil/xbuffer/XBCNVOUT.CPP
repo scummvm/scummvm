@@ -1,4 +1,4 @@
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 #include "math.h"
 
 double strtod_(char* str, char** strOut)
@@ -17,7 +17,7 @@ double strtod_(char* str, char** strOut)
         val *= 10;
         val += (double)(*str++ - '0');
     }
-    
+
 	if(*str == '.'){
 		++str;
         double dig = 1;
@@ -26,7 +26,7 @@ double strtod_(char* str, char** strOut)
             val += ((double)(*str++ - '0'))*dig;
         }
     }
-    
+
 	if(*str == 'e' || *str == 'E' || *str == 'd' || *str == 'D'){
 		bool positivePower = true;
 		if(*++str == '+')
@@ -132,6 +132,3 @@ XBuffer& XBuffer::operator>= (float& var)
 	offset_ += p - (buffer_ + offset_);
 	return *this;
 }
-
-
-

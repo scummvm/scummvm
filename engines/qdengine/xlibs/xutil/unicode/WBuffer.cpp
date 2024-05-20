@@ -1,4 +1,4 @@
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 #include "WBuffer.h"
 #include <string>
 #include "UnicodeConverter.h"

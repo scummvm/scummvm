@@ -1,4 +1,4 @@
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 
 static char *timeMSG="FILE GET TIME ERROR";
 
@@ -22,4 +22,3 @@ void XStream::gettime(unsigned& fdate,unsigned& ftime)
 	ftime = tm;
 
 }
-

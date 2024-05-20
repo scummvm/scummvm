@@ -10,7 +10,7 @@ CONDITIONAL COMPILATION :
                               lookups fail after the first lookup.
 ----------------------------------------------------------------------*/
 
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 #include "pch.h"
 #include "BugslayerUtil.h"
 #include "CrashHandler.h"
@@ -1074,5 +1074,3 @@ void CleanupSymEng(void) {
 	}
 	g_bSymEngInit = FALSE ;
 }
-
-

@@ -1,4 +1,4 @@
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 #pragma hdrstop
 
 typedef unsigned char uchar;
@@ -696,4 +696,3 @@ int ReadByte(ushort* x)
 {
 	return ReadMemoryByte(x);
 }
-

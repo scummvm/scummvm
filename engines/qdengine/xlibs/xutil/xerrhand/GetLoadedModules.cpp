@@ -2,7 +2,7 @@
        John Robbins - Microsoft Systems Journal Bugslayer Column
 ----------------------------------------------------------------------*/
 
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 #include "pch.h"
 #include "BugslayerUtil.h"
 
@@ -68,4 +68,3 @@ GetLoadedModules(DWORD     dwPID,
 		                               puiRealCount)) ;
 	}
 }
-

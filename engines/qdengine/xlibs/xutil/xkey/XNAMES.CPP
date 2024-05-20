@@ -1,6 +1,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -271,5 +271,3 @@ char* xtGetKeyNameText(int key)
 {
 	return xtKeyNamesText[key];
 }
-
-

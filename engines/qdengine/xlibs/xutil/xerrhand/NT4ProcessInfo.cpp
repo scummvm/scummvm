@@ -5,7 +5,7 @@ Windows NT 4.0 access functions for getting to process information.
 Windows95 and NT5 can use TOOLHELP32.DLL.
 ----------------------------------------------------------------------*/
 
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 #include "PCH.h"
 #include "BugslayerUtil.h"
 
@@ -198,4 +198,3 @@ DWORD __stdcall NTGetModuleBaseName(HANDLE  hProcess,
 	                             lpBaseName,
 	                             nSize)) ;
 }
-
