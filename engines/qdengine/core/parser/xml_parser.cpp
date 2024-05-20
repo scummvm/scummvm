@@ -41,7 +41,7 @@ static const char *UTF8_convert(const char *input_string, int input_string_lengt
 #if 0
 	unsigned int length = MultiByteToWideChar(CP_UTF8, 0, input_string, input_string_length, NULL, 0);
 #endif
-	unsigned int length;
+	unsigned int length = 0;
 	if (wstr.length() < length)
 		wstr.resize(length, 0);
 
@@ -68,7 +68,7 @@ static int unknown_encoding_handler(void *encodingHandlerData, const XML_Char *n
 
 		for (int i = 0; i < 256; i ++) {
 			char c = i;
-			unsigned short cc;
+			unsigned short cc = 0;
 #if 0
 			MultiByteToWideChar(1251, 0, &c, 1, &cc, 1);
 #endif
