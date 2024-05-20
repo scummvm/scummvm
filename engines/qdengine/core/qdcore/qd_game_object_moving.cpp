@@ -1917,7 +1917,7 @@ bool qdGameObjectMoving::keyboard_move() {
 	if (!is_control_disabled() && has_control_type(CONTROL_KEYBOARD)) {
 		bool keypress = false;
 		warning("STUB: qdGameObjectMoving::keyboard_move()");
-		
+
 		static int vkeys[6] = { VK_DOWN, VK_RIGHT, VK_UP, VK_LEFT, VK_DOWN, VK_RIGHT };
 
 		bool key_state[6];

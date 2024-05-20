@@ -21,8 +21,8 @@ __int64 getRDTSC() {
 		push ecx
 		push edx
 		RDTSC
-		mov dword ptr [timeRDTS], eax
-		mov dword ptr [timeRDTS+4], edx
+		mov dword ptr[timeRDTS], eax
+		mov dword ptr[timeRDTS+4], edx
 		pop edx
 		pop ecx
 		pop ebx

@@ -70,12 +70,12 @@ public:
 private:
 	bool fullscreen_;
 
-	#if 0
+#if 0
 	LPDIRECTDRAW ddobj_;
 	LPDIRECTDRAWSURFACE prim_surface_;
 	LPDIRECTDRAWSURFACE back_surface_;
 	DDSURFACEDESC back_surface_obj_;
-	#endif
+#endif
 
 	DDraw_VideoModeVector video_modes_;
 };

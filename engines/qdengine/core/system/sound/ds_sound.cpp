@@ -78,7 +78,7 @@ bool dsSound::release_sound_buffer() {
 		if (!is_stopped())
 			stop();
 
-	warning("STUB: dsSound::release_sound_buffer()");
+		warning("STUB: dsSound::release_sound_buffer()");
 #if 0
 		sound_buffer_ -> Release();
 		sound_buffer_ = NULL;

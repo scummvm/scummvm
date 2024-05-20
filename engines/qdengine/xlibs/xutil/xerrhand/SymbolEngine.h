@@ -303,7 +303,7 @@ public      :
 		HMODULE hInstIH = GetModuleHandle(szFile) ;
 
 		// Get the full filename of the loaded version.
-		TCHAR szImageHlp[ MAX_PATH ] ;
+		TCHAR szImageHlp[MAX_PATH] ;
 		GetModuleFileName(hInstIH, szImageHlp, MAX_PATH) ;
 
 		dwMS = 0 ;
@@ -320,7 +320,7 @@ public      :
 		}
 
 		// Got the version size, now get the version info.
-		LPVOID lpData = (LPVOID)new TCHAR [ dwVerSize ] ;
+		LPVOID lpData = (LPVOID)new TCHAR[dwVerSize] ;
 		if (FALSE == GetFileVersionInfo(szImageHlp,
 		                                dwVerInfoHandle,
 		                                dwVerSize,

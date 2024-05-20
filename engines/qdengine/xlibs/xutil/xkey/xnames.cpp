@@ -7,8 +7,7 @@
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
-static char* xtKeyNamesText[256] =
-{
+static char* xtKeyNamesText[256] = {
 	NULL,
 	NULL,
 	NULL,
@@ -267,7 +266,6 @@ static char* xtKeyNamesText[256] =
 	NULL
 };
 
-char* xtGetKeyNameText(int key)
-{
+char* xtGetKeyNameText(int key) {
 	return xtKeyNamesText[key];
 }

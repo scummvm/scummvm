@@ -37,7 +37,7 @@ options_container_t options_;
 void set_icon(void *hwnd) {
 #ifndef _DEBUG
 
-warning("STUB: qdlg::set_icon()");
+	warning("STUB: qdlg::set_icon()");
 #if 0
 	HICON ic = (HICON)LoadImage(NULL, "qd_game.ico", IMAGE_ICON, 0, 0, LR_DEFAULTCOLOR | LR_LOADFROMFILE);
 

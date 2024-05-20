@@ -59,7 +59,7 @@ public:
 					comboListAlt_ += "|";
 				comboListAlt_ += nameAlt;
 				comboStringsAlt_.push_back(nameAlt);
-				nameToNameAltMap_ [name] = nameAlt;
+				nameToNameAltMap_[name] = nameAlt;
 			}
 		} else {
 			XBuffer msg;
@@ -75,12 +75,12 @@ public:
 	}
 
 	ClassCreatorBase &find(const char *name) {
-		return static_cast <ClassCreatorBase &>(*creators_ [name]);
+		return static_cast <ClassCreatorBase &>(*creators_[name]);
 	}
 
 	ClassCreatorBase &find(const BaseType *ptr) {
 		const char *name = typeid(*ptr).name();
-		return static_cast <ClassCreatorBase &>(*creators_ [name]);
+		return static_cast <ClassCreatorBase &>(*creators_[name]);
 	}
 
 	const char *nameByNameAlt(const char *nameAlt) const {

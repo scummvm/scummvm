@@ -38,11 +38,11 @@ static UINT g_uiModCount = 0 ;
 // The static buffer returned by various functions.  This avoids putting
 //  things on the stack.
 #define BUFF_SIZE 1024
-static TCHAR g_szBuff [ BUFF_SIZE ] ;
+static TCHAR g_szBuff[BUFF_SIZE] ;
 
 // The static symbol lookup buffer.  This gets casted to make it work.
 #define SYM_BUFF_SIZE 512
-static BYTE g_stSymbol [ SYM_BUFF_SIZE ] ;
+static BYTE g_stSymbol[SYM_BUFF_SIZE] ;
 
 // The static source and line structure.
 static IMAGEHLP_LINE g_stLine ;
@@ -182,7 +182,7 @@ BOOL __stdcall AddCrashHandlerLimitModule(HMODULE hMod) {
 
 	if (NULL == g_ahMod) {
 		g_ahMod = phTemp ;
-		g_ahMod[ 0 ] = hMod ;
+		g_ahMod[0] = hMod ;
 		g_uiModCount++ ;
 	} else {
 		// Copy the old values.
@@ -190,7 +190,7 @@ BOOL __stdcall AddCrashHandlerLimitModule(HMODULE hMod) {
 		           g_ahMod,
 		           sizeof(HMODULE) * g_uiModCount) ;
 		g_ahMod = phTemp ;
-		g_ahMod[ g_uiModCount ] = hMod ;
+		g_ahMod[g_uiModCount] = hMod ;
 		g_uiModCount++ ;
 	}
 	return (TRUE) ;
@@ -253,7 +253,7 @@ LONG __stdcall CrashHandlerExceptionFilter(EXCEPTION_POINTERS *pExPtrs) {
 				                                       ExceptionAddress);
 				if (NULL != hBaseAddr) {
 					for (UINT i = 0 ; i < g_uiModCount ; i ++) {
-						if (hBaseAddr == g_ahMod[ i ]) {
+						if (hBaseAddr == g_ahMod[i]) {
 							bCallIt = TRUE ;
 							break ;
 						}
@@ -610,10 +610,10 @@ InternalGetStackTraceString(DWORD                dwOpts,
 			iCurr += wsprintf(g_szBuff + iCurr,
 			                  _T(" (0x%08X 0x%08X "\
 			                     "0x%08X 0x%08X)"),
-			                  g_stFrame.Params[ 0 ],
-			                  g_stFrame.Params[ 1 ],
-			                  g_stFrame.Params[ 2 ],
-			                  g_stFrame.Params[ 3 ]) ;
+			                  g_stFrame.Params[0],
+			                  g_stFrame.Params[1],
+			                  g_stFrame.Params[2],
+			                  g_stFrame.Params[3]) ;
 		}
 
 		if (GSTSO_MODULE == (dwOpts & GSTSO_MODULE)) {
@@ -1021,7 +1021,7 @@ void InitSymEng(void) {
 		                        NULL,
 		                        &uiCount)) ;
 		// Allocate something big enough to hold the list.
-		HMODULE *paMods = new HMODULE[ uiCount ] ;
+		HMODULE *paMods = new HMODULE[uiCount] ;
 
 		// Get the list for real.
 		if (FALSE == GetLoadedModules(GetCurrentProcessId(),
@@ -1036,10 +1036,10 @@ void InitSymEng(void) {
 			return ;
 		}
 		// The module filename.
-		TCHAR szModName [ MAX_PATH ] ;
+		TCHAR szModName[MAX_PATH] ;
 		for (UINT uiCurr = 0 ; uiCurr < uiCount ; uiCurr++) {
 			// Get the module's filename.
-			VERIFY(GetModuleFileName(paMods[ uiCurr ],
+			VERIFY(GetModuleFileName(paMods[uiCurr],
 			                         szModName,
 			                         sizeof(szModName))) ;
 
@@ -1059,7 +1059,7 @@ void InitSymEng(void) {
 			                     hFile,
 			                     szModName,
 			                     NULL,
-			                     (DWORD)paMods[ uiCurr ],
+			                     (DWORD)paMods[uiCurr],
 			                     0));
 		}
 		delete [] paMods ;

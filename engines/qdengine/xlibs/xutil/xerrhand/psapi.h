@@ -31,7 +31,7 @@ EnumProcesses(
     DWORD * lpidProcess,
     DWORD   cb,
     DWORD * cbNeeded
-    );
+);
 
 BOOL
 WINAPI
@@ -40,7 +40,7 @@ EnumProcessModules(
     HMODULE *lphModule,
     DWORD cb,
     LPDWORD lpcbNeeded
-    );
+);
 
 DWORD
 WINAPI
@@ -49,7 +49,7 @@ GetModuleBaseNameA(
     HMODULE hModule,
     LPSTR lpBaseName,
     DWORD nSize
-    );
+);
 
 DWORD
 WINAPI
@@ -58,7 +58,7 @@ GetModuleBaseNameW(
     HMODULE hModule,
     LPWSTR lpBaseName,
     DWORD nSize
-    );
+);
 
 #ifdef UNICODE
 #define GetModuleBaseName  GetModuleBaseNameW
@@ -74,7 +74,7 @@ GetModuleFileNameExA(
     HMODULE hModule,
     LPSTR lpFilename,
     DWORD nSize
-    );
+);
 
 DWORD
 WINAPI
@@ -83,7 +83,7 @@ GetModuleFileNameExW(
     HMODULE hModule,
     LPWSTR lpFilename,
     DWORD nSize
-    );
+);
 
 #ifdef UNICODE
 #define GetModuleFileNameEx  GetModuleFileNameExW
@@ -93,9 +93,9 @@ GetModuleFileNameExW(
 
 
 typedef struct _MODULEINFO {
-    LPVOID lpBaseOfDll;
-    DWORD SizeOfImage;
-    LPVOID EntryPoint;
+	LPVOID lpBaseOfDll;
+	DWORD SizeOfImage;
+	LPVOID EntryPoint;
 } MODULEINFO, *LPMODULEINFO;
 
 
@@ -106,14 +106,14 @@ GetModuleInformation(
     HMODULE hModule,
     LPMODULEINFO lpmodinfo,
     DWORD cb
-    );
+);
 
 
 BOOL
 WINAPI
 EmptyWorkingSet(
     HANDLE hProcess
-    );
+);
 
 
 BOOL
@@ -122,18 +122,18 @@ QueryWorkingSet(
     HANDLE hProcess,
     PVOID pv,
     DWORD cb
-    );
+);
 
 BOOL
 WINAPI
 InitializeProcessForWsWatch(
     HANDLE hProcess
-    );
+);
 
 
 typedef struct _PSAPI_WS_WATCH_INFORMATION {
-    LPVOID FaultingPc;
-    LPVOID FaultingVa;
+	LPVOID FaultingPc;
+	LPVOID FaultingVa;
 } PSAPI_WS_WATCH_INFORMATION, *PPSAPI_WS_WATCH_INFORMATION;
 
 BOOL
@@ -142,7 +142,7 @@ GetWsChanges(
     HANDLE hProcess,
     PPSAPI_WS_WATCH_INFORMATION lpWatchInfo,
     DWORD cb
-    );
+);
 
 DWORD
 WINAPI
@@ -151,7 +151,7 @@ GetMappedFileNameW(
     LPVOID lpv,
     LPWSTR lpFilename,
     DWORD nSize
-    );
+);
 
 DWORD
 WINAPI
@@ -160,7 +160,7 @@ GetMappedFileNameA(
     LPVOID lpv,
     LPSTR lpFilename,
     DWORD nSize
-    );
+);
 
 #ifdef UNICODE
 #define GetMappedFilenameEx  GetMappedFilenameExW
@@ -174,7 +174,7 @@ EnumDeviceDrivers(
     LPVOID *lpImageBase,
     DWORD cb,
     LPDWORD lpcbNeeded
-    );
+);
 
 
 DWORD
@@ -183,7 +183,7 @@ GetDeviceDriverBaseNameA(
     LPVOID ImageBase,
     LPSTR lpBaseName,
     DWORD nSize
-    );
+);
 
 DWORD
 WINAPI
@@ -191,7 +191,7 @@ GetDeviceDriverBaseNameW(
     LPVOID ImageBase,
     LPWSTR lpBaseName,
     DWORD nSize
-    );
+);
 
 #ifdef UNICODE
 #define GetDeviceDriverBaseName  GetDeviceDriverBaseNameW
@@ -206,7 +206,7 @@ GetDeviceDriverFileNameA(
     LPVOID ImageBase,
     LPSTR lpFilename,
     DWORD nSize
-    );
+);
 
 DWORD
 WINAPI
@@ -214,7 +214,7 @@ GetDeviceDriverFileNameW(
     LPVOID ImageBase,
     LPWSTR lpFilename,
     DWORD nSize
-    );
+);
 
 #ifdef UNICODE
 #define GetDeviceDriverFileName  GetDeviceDriverFileNameW
@@ -225,16 +225,16 @@ GetDeviceDriverFileNameW(
 // Structure for GetProcessMemoryInfo()
 
 typedef struct _PROCESS_MEMORY_COUNTERS {
-    DWORD cb;
-    DWORD PageFaultCount;
-    DWORD PeakWorkingSetSize;
-    DWORD WorkingSetSize;
-    DWORD QuotaPeakPagedPoolUsage;
-    DWORD QuotaPagedPoolUsage;
-    DWORD QuotaPeakNonPagedPoolUsage;
-    DWORD QuotaNonPagedPoolUsage;
-    DWORD PagefileUsage;
-    DWORD PeakPagefileUsage;
+	DWORD cb;
+	DWORD PageFaultCount;
+	DWORD PeakWorkingSetSize;
+	DWORD WorkingSetSize;
+	DWORD QuotaPeakPagedPoolUsage;
+	DWORD QuotaPagedPoolUsage;
+	DWORD QuotaPeakNonPagedPoolUsage;
+	DWORD QuotaNonPagedPoolUsage;
+	DWORD PagefileUsage;
+	DWORD PeakPagefileUsage;
 } PROCESS_MEMORY_COUNTERS;
 typedef PROCESS_MEMORY_COUNTERS *PPROCESS_MEMORY_COUNTERS;
 
@@ -244,7 +244,7 @@ GetProcessMemoryInfo(
     HANDLE Process,
     PPROCESS_MEMORY_COUNTERS ppsmemCounters,
     DWORD cb
-    );
+);
 
 #ifdef __cplusplus
 }

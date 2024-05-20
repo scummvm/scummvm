@@ -91,11 +91,11 @@ int DiagAssert(unsigned long dwOverrideOpts, const char *szMsg, const char *szFi
 	flag_recursion = 1;
 	ErrH.flag_errorOrAssertHandling = true;
 	// The buffer used for the final message text.
-	static TCHAR  szBuff [ DIAGASSERT_BUFFSIZE ] ;
+	static TCHAR  szBuff[DIAGASSERT_BUFFSIZE] ;
 	// The current position in szBuff ;
 	LPTSTR pCurrPos = szBuff ;
 	// The module name.
-	TCHAR  szModName[ MAX_PATH + 1 ] ;
+	TCHAR  szModName[MAX_PATH + 1] ;
 	// The decoded message from FormatMessage
 	LPTSTR szFmtMsg = NULL ;
 	// The options.
@@ -230,7 +230,7 @@ DiagOutput(LPCTSTR szFmt, ...) {
 	// Never corrupt the last error value.
 	DWORD dwLastError = GetLastError() ;
 
-	static TCHAR szOutBuff [ 1024 ] ;
+	static TCHAR szOutBuff[1024] ;
 
 	va_list  args ;
 
@@ -262,7 +262,7 @@ static DWORD __stdcall GetModBase(HANDLE hProcess, DWORD dwAddr) {
 		                        sizeof(stMBI))) {
 			// Try and load it.
 			DWORD dwNameLen = 0 ;
-			TCHAR szFile[ MAX_PATH ] ;
+			TCHAR szFile[MAX_PATH] ;
 
 			dwNameLen = GetModuleFileName((HINSTANCE)
 			                              stMBI.AllocationBase,
@@ -301,7 +301,7 @@ static DWORD __stdcall GetModBase(HANDLE hProcess, DWORD dwAddr) {
 }
 
 static DWORD ConvertAddress(DWORD dwAddr, LPTSTR szOutBuff) {
-	char szTemp [ MAX_PATH + sizeof(IMAGEHLP_SYMBOL) ] ;
+	char szTemp[MAX_PATH + sizeof(IMAGEHLP_SYMBOL)] ;
 
 	PIMAGEHLP_SYMBOL pIHS = (PIMAGEHLP_SYMBOL)&szTemp ;
 
@@ -465,7 +465,7 @@ static void DoStackTrace(LPTSTR szString,
 		DWORD dwSizeLeft = dwSize ;
 		DWORD dwSymSize ;
 
-		TCHAR szSym [ MAX_PATH * 2 ] ;
+		TCHAR szSym[MAX_PATH * 2] ;
 		LPTSTR szCurrPos = szString ;
 
 		for (unsigned long * loop = vAddrs; loop != vAddrs + vAddrsSize; loop++) {
