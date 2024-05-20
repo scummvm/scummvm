@@ -407,7 +407,7 @@ void ScummEngine_v2::decodeParseString() {
 	//
 	// (Not using `_enableEnhancements` because some users could be really confused
 	// by the game hanging and they may not know about the Esc key.)
-	if (_game.id == GID_MANIAC && _game.platform != Common::kPlatformNES && _language == Common::FR_FRA && vm.slot[_currentScript].number == 155 && _roomResource == 31 && _actorToPrintStrFor == 9) {
+	if (_game.id == GID_MANIAC && _game.platform != Common::kPlatformNES && _language == Common::FR_FRA && _currentScript != 0xFF && vm.slot [_currentScript].number == 155 && _roomResource == 31 && _actorToPrintStrFor == 9) {
 		while (ptr - buffer < 100) {
 			*ptr++ = ' ';
 		}
@@ -419,7 +419,7 @@ void ScummEngine_v2::decodeParseString() {
 	// as I know, this is the only version with the typo.
 	else if (_game.id == GID_MANIAC && _game.version == 1
 		&& _game.platform == Common::kPlatformDOS
-		&& !(_game.features & GF_DEMO) && _language == Common::EN_ANY
+		&& !(_game.features & GF_DEMO) && _language == Common::EN_ANY && _currentScript != 0xFF
 		&& vm.slot[_currentScript].number == 260 && enhancementEnabled(kEnhTextLocFixes)
 		&& strncmp((char *)buffer + 26, " tring ", 7) == 0) {
 		for (byte *p = ptr; p >= buffer + 29; p--)
@@ -812,7 +812,7 @@ void ScummEngine_v2::o2_resourceRoutines() {
 		return;
 
 	// HACK V2 Maniac Mansion tries to load an invalid sound resource in demo script.
-	if (_game.id == GID_MANIAC && _game.version == 2 && vm.slot[_currentScript].number == 9 && type == rtSound && resid == 1)
+	if (_game.id == GID_MANIAC && _game.version == 2 && _currentScript != 0xFF && vm.slot [_currentScript].number == 9 && type == rtSound && resid == 1)
 		return;
 
 	if ((opcode & 0x0f) == 1) {
@@ -1472,6 +1472,7 @@ void ScummEngine_v2::o2_delay() {
 	delay |= fetchScriptByte() << 16;
 	delay = 0xFFFFFF - delay;
 
+	assert(_currentScript != 0xFF);
 	vm.slot[_currentScript].delay = delay;
 	vm.slot[_currentScript].status = ssPaused;
 	o5_breakHere();

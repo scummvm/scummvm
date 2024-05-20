@@ -3110,7 +3110,7 @@ void ScummEngine_v3::terminateSaveMenuScript() {
 
 		// If local variable 0 and the override flag are set, chain script 119
 		if (readVar(0x4000)) {
-			if (VAR(VAR_OVERRIDE)) {
+			if (VAR(VAR_OVERRIDE) && _currentScript != 0xFF) {
 				int cur = _currentScript;
 
 				vm.slot[cur].number = 0;
