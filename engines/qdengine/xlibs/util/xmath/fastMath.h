@@ -20,7 +20,7 @@ inline float invSqrtFast(float x) {
 // В 3 раза быстрее за счет проверки аргументов, точная.
 inline float fmodFast(float a, float b) {
 	float result;
-	#if 0
+#if 0
 	_asm {
 		fld b
 		fld a
@@ -32,7 +32,7 @@ inline float fmodFast(float a, float b) {
 		fstp st(1)
 		fstp result
 	}
-	#endif
+#endif
 	return result;
 }
 

@@ -55,12 +55,11 @@ unsigned long XStream::read(void* buf, unsigned long len)
 	return ret;
 }
 
-unsigned long XStream::write(const void* buf, unsigned long len)
-{
+unsigned long XStream::write(const void* buf, unsigned long len) {
 	unsigned long ret;
 	if(!WriteFile(handler,buf,len,&ret,0))
 		if(handleErrors_)
-			ErrH.Abort(writeMSG,XERR_USER,GetLastError(),fname);
+			ErrH.Abort(writeMSG,XERR_USER, GetLastError(),fname);
 		else{
 			ioError_ = true;
 			return 0U;

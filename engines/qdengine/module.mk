@@ -106,6 +106,14 @@ MODULE_OBJS = \
 	core/qdcore/qd_trigger_element.o \
 	core/qdcore/qd_trigger_profiler.o \
 	core/qdcore/qd_video.o \
+	xlibs/xutil/xbuffer/xbsearch.o \
+	xlibs/xutil/xbuffer/xbcore.o \
+	xlibs/xutil/xbuffer/xbcnvout.o \
+	xlibs/xutil/xstream/xscnvout.o \
+	xlibs/xutil/xstream/xscore.o \
+	xlibs/xutil/xstream/xsgetlin.o \
+	xlibs/xutil/xstream/xsinput.o \
+	xlibs/xutil/xstream/xsoutput.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_QDENGINE), DYNAMIC_PLUGIN)

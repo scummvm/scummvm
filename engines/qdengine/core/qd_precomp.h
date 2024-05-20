@@ -85,6 +85,8 @@ typedef struct MSG {
   DWORD  lPrivate;
 };
 
+void* INVALID_HANDLE_VALUE = reinterpret_cast<void*>(-1);
+
 void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext) {
     warning("STUB: _splitpath");
 }
@@ -160,6 +162,11 @@ bool SendMessage(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) {
 bool SetErrorMode(UINT uMode) {
     warning("STUB: SetErrorMode");
     return false;
+}
+
+DWORD WINAPI GetLastError() {
+    warning("STUB: GetLastError");
+    return 0;
 }
 
 #ifndef _QUEST_EDITOR
