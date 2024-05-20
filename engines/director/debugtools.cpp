@@ -1606,7 +1606,12 @@ static void showBreakpointList() {
 	if (ImGui::Begin("Breakpoints", &_state->_showBpList)) {
 		auto &bps = g_lingo->getBreakpoints();
 		if (ImGui::BeginTable("BreakpointsTable", 5, ImGuiTableFlags_SizingFixedFit)) {
+			for (uint i = 0; i < 5; i++)
+				ImGui::TableSetupColumn(NULL, i == 2 ? ImGuiTableColumnFlags_WidthStretch : ImGuiTableFlags_SizingFixedFit);
+
 			for (uint i = 0; i < bps.size(); i++) {
+				if(bps[i].type != kBreakpointFunction) continue;
+
 				ImGui::TableNextRow();
 				ImGui::TableNextColumn();
 
@@ -1614,11 +1619,7 @@ static void showBreakpointList() {
 				ImVec2 pos = ImGui::GetCursorScreenPos();
 				const ImVec2 mid(pos.x + 7, pos.y + 7);
 
-				ImU32 color = bp_color_disabled;
-
-				if (bps[i].enabled)
-					color = bp_color_enabled;
-
+				ImU32 color = bps[i].enabled ? bp_color_enabled : bp_color_disabled;
 				ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
 				if (ImGui::IsItemClicked(0)) {
 					if (bps[i].enabled) {
@@ -1630,7 +1631,7 @@ static void showBreakpointList() {
 					}
 				}
 
-				if (color == bp_color_disabled && ImGui::IsItemHovered()) {
+				if (!bps[i].enabled && ImGui::IsItemHovered()) {
 					color = bp_color_hover;
 				}
 
@@ -1671,7 +1672,7 @@ static void showBreakpointList() {
 
 				// offset
 				ImGui::TableNextColumn();
-				ImGui::Text("%5d", bps[i].funcOffset);
+				ImGui::Text("%d", bps[i].funcOffset);
 				ImGui::PopID();
 
 				if(del) {
