@@ -110,6 +110,7 @@ void AnimationBase::load() {
 		frame._offset = readPoint(file);
 		frame._duration = file.readUint32LE();
 		_frames.push_back(frame);
+		_totalDuration += frame._duration;
 	}
 
 	_isLoaded = true;
@@ -251,6 +252,15 @@ void Animation::draw2D(int32 frameI, Vector2d center, float scale, Angle rotatio
 	renderer.quad(center, size, color, rotation, texMin, texMax);
 }
 
+int32 Animation::frameAtTime(uint32 time) const {
+	for (int32 i = 0; (uint)i < _frames.size(); i++) {
+		if (time < _frames[i]._duration)
+			return i;
+		time -= _frames[i]._duration;
+	}
+	return -1;
+}
+
 Graphic::Graphic() {
 }
 
@@ -263,16 +273,55 @@ Graphic::Graphic(ReadStream &stream) {
 	_animation.reset(new Animation(std::move(animationName)));
 }
 
+void Graphic::loadResources() {
+	assert(_animation != nullptr);
+	_animation->load();
+}
+
+void Graphic::freeResources() {
+	_animation.reset();
+}
+
+void Graphic::update() {
+	if (_animation == nullptr || _animation->frameCount() == 0)
+		return;
+
+	const uint32 totalDuration = _animation->totalDuration();
+	uint32 curTime = _lastTime;
+	if (!_isPaused)
+		curTime = g_system->getMillis() - curTime;
+	if (curTime > totalDuration) {
+		if (_isLooping && totalDuration > 0)
+			curTime %= totalDuration;
+		else {
+			pause();
+			_lastTime = totalDuration - 1;
+		}
+	}
+
+	_frameI = _animation->frameAtTime(curTime);
+	assert(_frameI >= 0);
+}
+
 void Graphic::start(bool isLooping) {
 	_isPaused = false;
 	_isLooping = isLooping;
 	_lastTime = g_system->getMillis();
 }
 
-void Graphic::stop() {
+void Graphic::pause() {
 	_isPaused = true;
 	_isLooping = false;
 	_lastTime = g_system->getMillis() - _lastTime;
+}
+
+void Graphic::reset() {
+	_frameI = 0;
+	_lastTime = _isPaused ? 0 : g_system->getMillis();
+}
+
+void Graphic::setAnimation(const Common::String &fileName, AnimationFolder folder) {
+	_animation.reset(new Animation(fileName, folder));
 }
 
 void Graphic::serializeSave(Serializer &serializer) {

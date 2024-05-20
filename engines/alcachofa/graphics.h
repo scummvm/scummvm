@@ -31,6 +31,9 @@
 
 namespace Alcachofa {
 
+static constexpr const int16_t kBaseScale = 300; ///< this number pops up everywhere in the engine
+static constexpr const float kInvBaseScale = 1.0f / kBaseScale;
+
 /**
  * Because this gets confusing fast, here in tabular form
  *
@@ -74,6 +77,9 @@ constexpr const int32 kDirectionCount = 4;
 struct Color {
 	uint8 b, g, r, a;
 };
+static constexpr const Color kWhite = { 255, 255, 255, 255 };
+static constexpr const Color kBlack = { 0, 0, 0, 255 };
+static constexpr const Color kClear = { 0, 0, 0, 0 };
 
 class ITexture {
 public:
@@ -101,7 +107,7 @@ public:
 	virtual void quad(
 		Math::Vector2d center,
 		Math::Vector2d size,
-		Color color = { 255, 255, 255, 255 },
+		Color color = kWhite,
 		Math::Angle rotation = Math::Angle(),
 		Math::Vector2d texMin = Math::Vector2d(0, 0),
 		Math::Vector2d texMax = Math::Vector2d(1, 1)) = 0;
@@ -147,6 +153,7 @@ protected:
 	Common::String _fileName;
 	AnimationFolder _folder;
 	bool _isLoaded = false;
+	uint32 _totalDuration = 0;
 
 	int32 _spriteIndexMapping[kMaxSpriteIDs] = { -1 };
 	Common::Array<uint32>
@@ -172,6 +179,8 @@ public:
 	inline uint frameCount() const { return _frames.size(); }
 	inline uint spriteCount() const { return _spriteBases.size(); }
 	inline uint32 frameDuration(int32 frameI) const { return _frames[frameI]._duration; }
+	inline uint32 totalDuration() const { return _totalDuration; }
+	int32 frameAtTime(uint32 time) const;
 
 	void draw2D(
 		int32 frameI,
@@ -205,22 +214,36 @@ public:
 	Graphic();
 	Graphic(Common::ReadStream &stream);
 
-	inline int8 order() const { return _order; }
+	inline int8 &order() { return _order; }
+	inline int16 &scale() { return _scale; }
+	inline Animation &animation() {
+		assert(_animation != nullptr && _animation->isLoaded());
+		return *_animation;
+	}
 
+	void loadResources();
+	void freeResources();
+	void update();
 	void start(bool looping);
-	void stop();
+	void pause();
+	void reset();
+	void setAnimation(const Common::String &fileName, AnimationFolder folder);
 	void serializeSave(Common::Serializer &serializer);
 
-public:
-	Common::SharedPtr<Animation> _animation;
-	Common::Point _center;
-	int16 _scale = 300;
-	int8 _order = 0;
+	inline void testDraw() {
+		animation().draw2D(_frameI, Math::Vector2d(100, 100), 1.0f, Math::Angle(), BlendMode::Alpha, { 255, 255, 255, 255 });
+	}
 
 private:
+	Common::SharedPtr<Animation> _animation;
+	Common::Point _center;
+	int16 _scale = kBaseScale;
+	int8 _order = 0;
+
 	bool _isPaused = true,
 		_isLooping = true;
-	uint32 _lastTime = 0;
+	uint32 _lastTime = 0; ///< either start time or played duration at pause
+	int32 _frameI = -1;
 	float _camAcceleration = 1.0f;
 };
 

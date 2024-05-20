@@ -60,9 +60,10 @@ Common::Error AlcachofaEngine::run() {
 
 	auto world = new World();
 	delete world;
-	auto animation = new Animation("MORTADELO_ACOSTANDOSE");
-	animation->load();
-	animation->draw2D(0, Math::Vector2d(512, 300), 1.0f, Math::Angle(), BlendMode::Alpha, { 255, 255, 255, 255 });
+	Graphic graphic;
+	graphic.setAnimation("MORTADELO_ACOSTANDOSE", AnimationFolder::Animations);
+	graphic.loadResources();
+	graphic.start(true);
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
@@ -78,20 +79,15 @@ Common::Error AlcachofaEngine::run() {
 	int offset = 0;
 
 	Graphics::FrameLimiter limiter(g_system, 60);
-	int32 frame = 0;
-	uint32 nextSecond = g_system->getMillis();
 	while (!shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
 		}
 
 		_renderer->begin();
 
-		if (g_system->getMillis() >= nextSecond) {
-			frame = (frame + 1) % animation->frameCount();
-			nextSecond = g_system->getMillis() + animation->frameDuration(frame);
-		}
+		graphic.update();
 
-		animation->draw2D(frame, Math::Vector2d(100, 100), 1.0f, Math::Angle(), BlendMode::Alpha, { 255, 255, 255, 255 });
+		graphic.testDraw();
 
 		// Cycle through a simple palette
 		++offset;
@@ -104,8 +100,6 @@ Common::Error AlcachofaEngine::run() {
 		_renderer->end();
 		limiter.startFrame();
 	}
-
-	delete animation;
 
 	return Common::kNoError;
 }
