@@ -69,6 +69,7 @@ public:
 		case TAG_DATA_VOID:
 			return 0;
 		case TAG_DATA_SHORT:
+		case TAG_DATA_UNSIGNED_SHORT:
 			return sizeof(short);
 		case TAG_DATA_INT:
 			return sizeof(int);
