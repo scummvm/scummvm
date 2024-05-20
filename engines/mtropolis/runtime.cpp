@@ -7704,9 +7704,9 @@ Common::SharedPtr<Modifier> Project::loadModifierObject(ModifierLoaderContext &l
 
 		modifier = factory->createModifier(loaderContext, dataObject);
 	}
-	assert(modifier->getModifierFlags().flagsWereLoaded);
 	if (!modifier)
 		error("Modifier object failed to load");
+	assert(modifier->getModifierFlags().flagsWereLoaded);
 
 	uint32 guid = modifier->getStaticGUID();
 	const Common::HashMap<uint32, Common::SharedPtr<ModifierHooks> > &hooksMap = getRuntime()->getHacks().modifierHooks;
