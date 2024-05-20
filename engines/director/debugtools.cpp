@@ -1433,10 +1433,12 @@ static void displayScripts() {
 		if (ImGui::Button("\ue025")) { // Lingo
 			_state->_functions._showByteCode = false;
 		}
+		ImGui::SetItemTooltip("Lingo");
 		ImGui::SameLine();
 		if (ImGui::Button("\ue079")) { // Bytecode
 			_state->_functions._showByteCode = true;
 		}
+		ImGui::SetItemTooltip("Bytecode");
 		ImGui::Separator();
 
 		ImGui::Text("%s", _state->_functions._script.handlerName.c_str());
@@ -1962,13 +1964,13 @@ void onImGuiRender() {
 			}
 
 			ImGui::MenuItem("Control Panel", NULL, &_state->_w.controlPanel);
-			ImGui::MenuItem("CallStack", NULL, &_state->_w.callStack);
-			ImGui::MenuItem("Vars", NULL, &_state->_w.vars);
-			ImGui::MenuItem("Channels", NULL, &_state->_w.channels);
-			ImGui::MenuItem("Cast", NULL, &_state->_w.cast);
-			ImGui::MenuItem("Functions", NULL, &_state->_w.funcList);
-			ImGui::MenuItem("Breakpoints", NULL, &_state->_w.bpList);
 			ImGui::MenuItem("Score", NULL, &_state->_w.score);
+			ImGui::MenuItem("Functions", NULL, &_state->_w.funcList);
+			ImGui::MenuItem("Cast", NULL, &_state->_w.cast);
+			ImGui::MenuItem("Channels", NULL, &_state->_w.channels);
+			ImGui::MenuItem("CallStack", NULL, &_state->_w.callStack);
+			ImGui::MenuItem("Breakpoints", NULL, &_state->_w.bpList);
+			ImGui::MenuItem("Vars", NULL, &_state->_w.vars);
 
 			ImGui::SeparatorText("Misc");
 			if (ImGui::MenuItem("Save state")) {
