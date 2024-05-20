@@ -82,6 +82,17 @@ typedef struct ImGuiScript {
 	}
 } ImGuiScript;
 
+typedef struct ImGuiWindows {
+	bool controlPanel = true;
+	bool callStack = false;
+	bool vars = false;
+	bool channels = false;
+	bool cast = false;
+	bool funcList = false;
+	bool score = false;
+	bool bpList = false;
+} ImGuiWindows;
+
 typedef struct ImGuiState {
 	struct {
 		Common::HashMap<Graphics::Surface *, ImGuiImage> _textures;
@@ -96,14 +107,11 @@ typedef struct ImGuiState {
 		bool _showScript = false;
 		bool _showByteCode = false;
 	} _functions;
-	bool _showControlPanel = true;
-	bool _showCallStack = false;
-	bool _showVars = false;
-	bool _showChannels = false;
-	bool _showCast = false;
-	bool _showFuncList = false;
-	bool _showScore = false;
-	bool _showBpList = false;
+
+	ImGuiWindows _w;
+	ImGuiWindows _savedW;
+	bool _wasHidden = false;
+
 	Common::List<CastMemberID> _scriptCasts;
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
 	int _prevFrame = -1;
@@ -519,14 +527,14 @@ private:
 };
 
 static void showControlPanel() {
-	if (!_state->_showControlPanel)
+	if (!_state->_w.controlPanel)
 		return;
 
 	ImVec2 vp(ImGui::GetMainViewport()->Size);
 	ImGui::SetNextWindowPos(ImVec2(vp.x - 220.0f, 20.0f), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(200, 80), ImGuiCond_FirstUseEver);
 
-	if (ImGui::Begin("Control Panel", &_state->_showControlPanel)) {
+	if (ImGui::Begin("Control Panel", &_state->_w.controlPanel)) {
 		Score *score = g_director->getCurrentMovie()->getScore();
 		ImDrawList *dl = ImGui::GetWindowDrawList();
 
@@ -712,13 +720,13 @@ static void showControlPanel() {
 }
 
 static void showCallStack() {
-	if (!_state->_showCallStack)
+	if (!_state->_w.callStack)
 		return;
 
 	Director::Lingo *lingo = g_director->getLingo();
 	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(120, 120), ImGuiCond_FirstUseEver);
-	if (ImGui::Begin("CallStack", &_state->_showCallStack)) {
+	if (ImGui::Begin("CallStack", &_state->_w.callStack)) {
 		ImGui::Text("%s", lingo->formatCallStack(lingo->_state->pc).c_str());
 	}
 	ImGui::End();
@@ -868,13 +876,13 @@ static Common::String getDisplayName(CastMember *castMember) {
 }
 
 static void showCast() {
-	if (!_state->_showCast)
+	if (!_state->_w.cast)
 		return;
 
 	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(520, 240), ImGuiCond_FirstUseEver);
 
-	if (ImGui::Begin("Cast", &_state->_showCast)) {
+	if (ImGui::Begin("Cast", &_state->_w.cast)) {
 		// display a toolbar with: grid/list/filters buttons + name filter
 		if (ImGui::Button("\ue07e")) {
 			_state->_cast._listView = true;
@@ -1064,13 +1072,13 @@ static void displayVariable(Common::String &name) {
 }
 
 static void showVars() {
-	if (!_state->_showVars)
+	if (!_state->_w.vars)
 		return;
 
 	Director::Lingo *lingo = g_director->getLingo();
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(300, 250), ImGuiCond_FirstUseEver);
-	if (ImGui::Begin("Vars", &_state->_showVars)) {
+	if (ImGui::Begin("Vars", &_state->_w.vars)) {
 		Common::Array<Common::String> keyBuffer;
 		const ImVec4 head_color = ImVec4(0.9f, 0.08f, 0.0f, 1.0f);
 
@@ -1147,7 +1155,7 @@ static void setScriptToDisplay(const ImGuiScript &script) {
 }
 
 static void showChannels() {
-	if (!_state->_showChannels)
+	if (!_state->_w.channels)
 		return;
 
 	ImVec2 pos(40, 40);
@@ -1156,7 +1164,7 @@ static void showChannels() {
 	ImVec2 windowSize = ImGui::GetMainViewport()->Size - pos - pos;
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
 
-	if (ImGui::Begin("Channels", &_state->_showChannels)) {
+	if (ImGui::Begin("Channels", &_state->_w.channels)) {
 		Score *score = g_director->getCurrentMovie()->getScore();
 		Frame &frame = *score->_currentFrame;
 
@@ -1448,12 +1456,12 @@ static Common::String getHandlerName(Symbol &sym) {
 }
 
 static void showFuncList() {
-	if (!_state->_showFuncList)
+	if (!_state->_w.funcList)
 		return;
 
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(480, 240), ImGuiCond_FirstUseEver);
-	if (ImGui::Begin("Functions", &_state->_showFuncList)) {
+	if (ImGui::Begin("Functions", &_state->_w.funcList)) {
 		Lingo *lingo = g_director->getLingo();
 		Movie *movie = g_director->getCurrentMovie();
 		ScriptContext *csc = lingo->_state->context;
@@ -1580,20 +1588,18 @@ static void showFuncList() {
 }
 
 // Make the UI compact because there are so many fields
-static void PushStyleCompact()
-{
+static void PushStyleCompact() {
     ImGuiStyle& style = ImGui::GetStyle();
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(style.FramePadding.x, (float)(int)(style.FramePadding.y * 0.60f)));
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(style.ItemSpacing.x, (float)(int)(style.ItemSpacing.y * 0.60f)));
 }
 
-static void PopStyleCompact()
-{
+static void PopStyleCompact() {
     ImGui::PopStyleVar(2);
 }
 
 static void showBreakpointList() {
-	if (!_state->_showBpList)
+	if (!_state->_w.bpList)
 		return;
 
 	const ImU32 bp_color_disabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 0.0f));
@@ -1603,7 +1609,7 @@ static void showBreakpointList() {
 
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(480, 240), ImGuiCond_FirstUseEver);
-	if (ImGui::Begin("Breakpoints", &_state->_showBpList)) {
+	if (ImGui::Begin("Breakpoints", &_state->_w.bpList)) {
 		auto &bps = g_lingo->getBreakpoints();
 		if (ImGui::BeginTable("BreakpointsTable", 5, ImGuiTableFlags_SizingFixedFit)) {
 			for (uint i = 0; i < 5; i++)
@@ -1687,7 +1693,7 @@ static void showBreakpointList() {
 }
 
 static void showScore() {
-	if (!_state->_showScore)
+	if (!_state->_w.score)
 		return;
 
 	ImVec2 pos(40, 40);
@@ -1696,7 +1702,7 @@ static void showScore() {
 	ImVec2 windowSize = ImGui::GetMainViewport()->Size - pos - pos;
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
 
-	if (ImGui::Begin("Score", &_state->_showScore)) {
+	if (ImGui::Begin("Score", &_state->_w.score)) {
 		Score *score = g_director->getCurrentMovie()->getScore();
 		uint numFrames = score->_scoreCache.size();
 		Cast *cast = g_director->getCurrentMovie()->getCast();
@@ -1936,14 +1942,40 @@ void onImGuiRender() {
 
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("View")) {
-			ImGui::MenuItem("Control Panel", NULL, &_state->_showControlPanel);
-			ImGui::MenuItem("CallStack", NULL, &_state->_showCallStack);
-			ImGui::MenuItem("Vars", NULL, &_state->_showVars);
-			ImGui::MenuItem("Channels", NULL, &_state->_showChannels);
-			ImGui::MenuItem("Cast", NULL, &_state->_showCast);
-			ImGui::MenuItem("Functions", NULL, &_state->_showFuncList);
-			ImGui::MenuItem("Breakpoints", NULL, &_state->_showBpList);
-			ImGui::MenuItem("Score", NULL, &_state->_showScore);
+			ImGui::SeparatorText("Windows");
+
+			if (ImGui::MenuItem("View All")) {
+				if (_state->_wasHidden)
+					_state->_w = _state->_savedW;
+
+				_state->_wasHidden = false;
+			}
+
+			if (ImGui::MenuItem("Hide All")) {
+				if (!_state->_wasHidden) {
+					_state->_savedW = _state->_w;
+
+					memset(&_state->_w, 0, sizeof(_state->_w));
+				}
+
+				_state->_wasHidden = true;
+			}
+
+			ImGui::MenuItem("Control Panel", NULL, &_state->_w.controlPanel);
+			ImGui::MenuItem("CallStack", NULL, &_state->_w.callStack);
+			ImGui::MenuItem("Vars", NULL, &_state->_w.vars);
+			ImGui::MenuItem("Channels", NULL, &_state->_w.channels);
+			ImGui::MenuItem("Cast", NULL, &_state->_w.cast);
+			ImGui::MenuItem("Functions", NULL, &_state->_w.funcList);
+			ImGui::MenuItem("Breakpoints", NULL, &_state->_w.bpList);
+			ImGui::MenuItem("Score", NULL, &_state->_w.score);
+
+			ImGui::SeparatorText("Misc");
+			if (ImGui::MenuItem("Save state")) {
+			}
+			if (ImGui::MenuItem("Load state")) {
+			}
+
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
