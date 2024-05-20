@@ -133,16 +133,13 @@ ErrorCode SpaceBarEngine::initialize() {
 				bRestart = true;
 
 				// Hide that dialog
-				if (pBmp != nullptr) {
-					pBmp->paint(_masterWin, 0, 0);
-				}
+				pBmp->paint(_masterWin, 0, 0);
 				break;
 
 			case QUIT_BTN:
 				// Hide that dialog
-				if (pBmp != nullptr) {
-					pBmp->paint(_masterWin, 0, 0);
-				}
+				pBmp->paint(_masterWin, 0, 0);
+
 				_masterWin->close();
 				_masterWin = nullptr;
 				break;
@@ -161,9 +158,7 @@ ErrorCode SpaceBarEngine::initialize() {
 				// Play the movie only if it exists
 				if (fileExists(cString.getBuffer())) {
 					bofPlayMovie(_masterWin, cString.getBuffer());
-					if (pBmp != nullptr) {
-						pBmp->paint(_masterWin, 0, 0);
-					}
+					pBmp->paint(_masterWin, 0, 0);
 				}
 				if (shouldQuit())
 					goto exit;
@@ -172,9 +167,7 @@ ErrorCode SpaceBarEngine::initialize() {
 				fixPathName(cString);
 				if (fileExists(cString.getBuffer())) {
 					bofPlayMovie(_masterWin, cString.getBuffer());
-					if (pBmp != nullptr) {
-						pBmp->paint(_masterWin, 0, 0);
-					}
+					pBmp->paint(_masterWin, 0, 0);
 				}
 				if (shouldQuit())
 					goto exit;
@@ -185,9 +178,7 @@ ErrorCode SpaceBarEngine::initialize() {
 
 				if (fileExists(cString.getBuffer())) {
 					bofPlayMovie(_masterWin, cString.getBuffer());
-					if (pBmp != nullptr) {
-						pBmp->paint(_masterWin, 0, 0);
-					}
+					pBmp->paint(_masterWin, 0, 0);
 				}
 			}
 			if (shouldQuit())
