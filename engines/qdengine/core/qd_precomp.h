@@ -223,7 +223,7 @@ DWORD WINAPI GetLastError() {
 #endif
 #else
 class XZipStream : public XStream {
-int dummy_;
+
 };
 #endif
 

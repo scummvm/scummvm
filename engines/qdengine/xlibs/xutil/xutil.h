@@ -15,6 +15,9 @@
 #include <memory.h>
 #include <cstdlib>
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/textconsole.h"
+
 ///////////////////////////////////
 //		XBuffer
 ///////////////////////////////////
@@ -521,17 +524,20 @@ inline int SIGN(const T &x) {
 #endif __ROUND__
 
 inline int BitSR(int x) {
-	int return_var;
-	#if 0
+	int return_var = 0;
+
+	warning("STUB: BitSR()");
+
+#if 0
 	_asm {
 		mov eax, x
 		cdq
 		xor eax, edx
 		sub     eax, edx
 		bsr     eax, eax
-		mov [return_var], eax
+		mov[return_var], eax
 	}
-	#endif
+#endif
 	return return_var;
 }
 
