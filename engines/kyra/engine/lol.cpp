@@ -1049,7 +1049,7 @@ void LoLEngine::update() {
 			"Lora a quitte le groupe. Ses objets sont par terre.",
 			"Lora hat die Gruppe verlassen. Ihre Sachen sind auf dem Boden.",
 			"Lora has left the party. Her items are on the floor.", // TODO: Translate to Japanese
-			"Lora ha abandonado el grupo. Sus artículos estan en el suelo.",	
+			"Lora ha abandonado el grupo. Sus articulos estan en el suelo.",	
 			"Lora has left the party. Her items are on the floor."	// TODO: Translate to Traditional Chinese
 		};
 
@@ -1966,7 +1966,7 @@ int LoLEngine::playCharacterScriptChat(int charId, int mode, int restorePortrait
 		}
 	}
 
-	if (!skipAnim) {
+	if (!skipAnim && charId < 3) {
 		_updateCharNum = charId;
 		_portraitSpeechAnimMode = mode;
 		_updatePortraitSpeechAnimDuration = strlen(str) >> 1;
@@ -1997,7 +1997,7 @@ int LoLEngine::playCharacterScriptChat(int charId, int mode, int restorePortrait
 	}
 
 	_fadeText = false;
-	if (!skipAnim)
+	if (!skipAnim && charId < 3)
 		updatePortraitSpeechAnim();
 
 	return 1;
