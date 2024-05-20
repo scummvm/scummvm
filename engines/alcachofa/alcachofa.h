@@ -35,10 +35,13 @@
 #include "graphics/screen.h"
 
 #include "alcachofa/detection.h"
-#include "alcachofa/graphics.h"
+#include "alcachofa/camera.h"
 
 namespace Alcachofa {
 
+class IRenderer;
+class DrawQueue;
+class World;
 struct AlcachofaGameDescription;
 
 class AlcachofaEngine : public Engine {
@@ -52,7 +55,10 @@ public:
 	AlcachofaEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~AlcachofaEngine() override;
 
-	inline IRenderer &renderer() const { return *_renderer; }
+	inline IRenderer &renderer() { return *_renderer; }
+	inline DrawQueue &drawQueue() { return *_drawQueue; }
+	inline Camera &camera() { return _camera; }
+	inline World &world() { return *_world; }
 
 	uint32 getFeatures() const;
 
@@ -100,6 +106,8 @@ public:
 private:
 	Common::ScopedPtr<IRenderer> _renderer;
 	Common::ScopedPtr<DrawQueue> _drawQueue;
+	Common::ScopedPtr<World> _world;
+	Camera _camera;
 };
 
 extern AlcachofaEngine *g_engine;
