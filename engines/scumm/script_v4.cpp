@@ -178,7 +178,9 @@ void ScummEngine_v4::saveVars() {
 
 			if (a == STRINGID_IQ_EPISODE && b == STRINGID_IQ_EPISODE) {
 				if (_game.id == GID_INDY3) {
-					saveIQPoints();
+					// TODO: check what's supposed to happen here. Writing the episode IQ points
+					// into the series iq file is probably not correct.
+					saveIQPoints(0, 0);
 				}
 				break;
 			}
@@ -290,7 +292,6 @@ void ScummEngine_v4::loadVars() {
  * directly is not possible. The other scripts depend on script-9.
  */
 void ScummEngine_v4::updateIQPoints() {
-	int seriesIQ;
 	// IQString[0..72] corresponds to each puzzle's IQ.
 	// IQString[73] indicates that the IQ-file was loaded successfully and is always 0 when
 	// the IQ is calculated, hence it will be ignored here.
@@ -314,20 +315,23 @@ void ScummEngine_v4::updateIQPoints() {
 		return;
 
 	// merge episode and series IQ strings and calculate series IQ
-	seriesIQ = 0;
+	int seriesIQ = 0;
+	int episodeIQ = 0;
 	// iterate over puzzles
 	for (int i = 0; i < NUM_PUZZLES; ++i) {
-		byte puzzleIQ = seriesIQString[i];
-		// if puzzle is solved copy points to episode string
-		if (puzzleIQ > 0)
-			episodeIQString[i] = puzzleIQ;
-		// add puzzle's IQ-points to series IQ
-		seriesIQ += episodeIQString[i];
+		if (episodeIQString[i] != 0 && episodeIQString[i] != 0x40) {
+			seriesIQString[i] = episodeIQString[i];
+			episodeIQ += episodeIQString[i];
+		}
+		if (seriesIQString[i] != 0 && seriesIQString[i] != 0x40)
+			seriesIQ += seriesIQString[i];
 	}
+
+	_scummVars[244] = episodeIQ;
 	_scummVars[245] = seriesIQ;
 
 	// save series IQ string
-	saveIQPoints();
+	saveIQPoints(seriesIQString, sizeof(seriesIQString));
 }
 
 void ScummEngine_v4::clearSeriesIQPoints() {
@@ -347,18 +351,21 @@ void ScummEngine_v4::clearSeriesIQPoints() {
 	}
 }
 
-void ScummEngine_v4::saveIQPoints() {
+void ScummEngine_v4::saveIQPoints(const byte *ptr, int size) {
 	// save Indy3 IQ-points
 	Common::OutSaveFile *file;
 	Common::String filename = _targetName + ".iq";
 
 	file = _saveFileMan->openForSaving(filename);
 	if (file != nullptr) {
-		byte *ptr = getResourceAddress(rtString, STRINGID_IQ_EPISODE);
-		if (ptr) {
-			int size = getResourceSize(rtString, STRINGID_IQ_EPISODE);
-			file->write(ptr, size);
+		if (!ptr || !size) {
+			// I don't see how this could ever be correct, but I leave it as  I found it for now...
+			ptr = getResourceAddress(rtString, STRINGID_IQ_EPISODE);
+			if (ptr)
+				size = getResourceSize(rtString, STRINGID_IQ_EPISODE);
 		}
+		if (ptr && size)
+			file->write(ptr, size);
 		delete file;
 	}
 }
