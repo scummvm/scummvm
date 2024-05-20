@@ -254,7 +254,7 @@ void Animation::draw2D(int32 frameI, Vector2d center, float scale, Angle rotatio
 
 int32 Animation::frameAtTime(uint32 time) const {
 	for (int32 i = 0; (uint)i < _frames.size(); i++) {
-		if (time < _frames[i]._duration)
+		if (time <= _frames[i]._duration)
 			return i;
 		time -= _frames[i]._duration;
 	}
@@ -295,7 +295,7 @@ void Graphic::update() {
 			curTime %= totalDuration;
 		else {
 			pause();
-			_lastTime = totalDuration - 1;
+			curTime = _lastTime = totalDuration - 1;
 		}
 	}
 
@@ -330,7 +330,123 @@ void Graphic::serializeSave(Serializer &serializer) {
 	serializer.syncAsUint32LE(_lastTime);
 	serializer.syncAsByte(_isPaused);
 	serializer.syncAsByte(_isLooping);
-	serializer.syncAsFloatLE(_camAcceleration);
+	serializer.syncAsFloatLE(_depthScale);
+}
+
+static int8 shiftAndClampOrder(int8 order) {
+	return MAX<int8>(0, MIN<int8>(kOrderCount - 1, order + kForegroundOrderCount));
+}
+
+IDrawRequest::IDrawRequest(int8 order)
+	: _order(shiftAndClampOrder(order)) {
+}
+
+AnimationDrawRequest::AnimationDrawRequest(Graphic &graphic, bool is3D, BlendMode blendMode, float lodBias)
+	: IDrawRequest(graphic._order)
+	, _is3D(is3D)
+	, _animation(&graphic.animation())
+	, _frameI(graphic._frameI)
+	, _center(graphic._center.x, graphic._center.y)
+	, _scale(graphic._scale * graphic._depthScale)
+	, _color(graphic.color())
+	, _blendMode(blendMode)
+	, _lodBias(lodBias) {
+	assert(_frameI >= 0 && (uint)_frameI < _animation->frameCount());
+}
+
+AnimationDrawRequest::AnimationDrawRequest(Animation *animation, int32 frameI, Vector2d center, int8 order)
+	: IDrawRequest(order)
+	, _is3D(false)
+	, _animation(animation)
+	, _frameI(frameI)
+	, _center(center)
+	, _scale(1.0f)
+	, _color(kWhite)
+	, _blendMode(BlendMode::AdditiveAlpha)
+	, _lodBias(0.0f) {
+	assert(animation != nullptr && animation->isLoaded());
+	assert(_frameI >= 0 && (uint)_frameI < _animation->frameCount());
+}
+
+void AnimationDrawRequest::draw() {
+	_animation->draw2D(_frameI, _center, _scale * kInvBaseScale, Angle(), _blendMode, _color);
+}
+
+DrawQueue::DrawQueue(IRenderer *renderer)
+	: _renderer(renderer)
+	, _allocator(1024) {
+	assert(renderer != nullptr);
+}
+
+void DrawQueue::clear() {
+	memset(_requestsPerOrderCount, 0, sizeof(_requestsPerOrderCount));
+	memset(_lodBiasPerOrder, 0, sizeof(_lodBiasPerOrder));
+}
+
+void DrawQueue::addRequest(IDrawRequest *drawRequest) {
+	assert(drawRequest != nullptr && drawRequest->order() >= 0 && drawRequest->order() < kOrderCount);
+	auto order = drawRequest->order();
+	if (_requestsPerOrderCount[order] < kMaxDrawRequestsPerOrder)
+		_requestsPerOrder[order][_requestsPerOrderCount[order]++] = drawRequest;
+	else
+		error("Too many draw requests in order %d", order);
+}
+
+void DrawQueue::setLodBias(int8 orderFrom, int8 orderTo, float newLodBias) {
+	orderFrom = shiftAndClampOrder(orderFrom);
+	orderTo = shiftAndClampOrder(orderTo);
+	if (orderFrom <= orderTo) {
+		Common::fill(_lodBiasPerOrder + orderFrom, _lodBiasPerOrder + orderTo + 1, newLodBias);
+	}
+}
+
+void DrawQueue::draw() {
+	for (int8 order = kOrderCount - 1; order >= 0; order--) {
+		_renderer->setLodBias(_lodBiasPerOrder[order]);
+		for (uint8 requestI = 0; requestI < _requestsPerOrderCount[order]; requestI++) {
+			_requestsPerOrder[order][requestI]->draw();
+			_requestsPerOrder[order][requestI]->~IDrawRequest();
+		}
+	}
+	_allocator.deallocateAll();
+}
+
+BumpAllocator::BumpAllocator(size_t pageSize) : _pageSize(pageSize) {
+	allocatePage();
+}
+
+BumpAllocator::~BumpAllocator() {
+	for (auto page : _pages)
+		free(page);
+}
+
+void *BumpAllocator::allocateRaw(size_t size, size_t align) {
+	assert(size <= _pageSize);
+	uintptr_t page = (uintptr_t)_pages[_pageI];
+	uintptr_t top = page + _used;
+	top = top + align - 1;
+	top = top - (top % align);
+	if (page + _pageSize - top >= size) {
+		_used = top + size - page;
+		return (void *)top;
+	}
+
+	_pageI++;
+	if (_pageI >= _pages.size())
+		allocatePage();
+	return allocateRaw(size, align);
+}
+
+void BumpAllocator::allocatePage() {
+	auto page = malloc(_pageSize);
+	if (page == nullptr)
+		error("Out of memory in BumpAllocator");
+	_pages.push_back(page);
+}
+
+void BumpAllocator::deallocateAll() {
+	_pageI = 0;
+	_used = 0;
 }
 
 }
