@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-05-04 22:58+0000\n"
-"PO-Revision-Date: 2024-05-18 09:42+0000\n"
+"PO-Revision-Date: 2024-05-20 20:42+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/zh_Hans/>\n"
@@ -4929,6 +4929,24 @@ msgid ""
 "| `CMD + RIGHT`     | END               \n"
 "\n"
 msgstr ""
+"## 使用键盘\n"
+"ScummVM 支持外接键盘，从 iOS 13.4 起，我们已经支持大多数特殊按键，例如功能键、Home、End 键。 \n"
+"对于缺少特殊按键的外接键盘（如 iPad 使用的 Apple Magic 键盘），可以使用以下按键组合触发： \n"
+"\n"
+"\n"
+"| 按键组合   | 操作            \n"
+"| ------------------|-------------------\n"
+"| `CMD + 1`         | F1                \n"
+"| `CMD + 2`         | F2                \n"
+"| `...`             | ...               \n"
+"| `CMD + 0`         | F10               \n"
+"| `CMD + SHIFT + 1` | F11               \n"
+"| `CMD + SHIFT + 2` | F12               \n"
+"| `CMD + UP`        | 上一页           \n"
+"| `CMD + DOWN`      | 下一页         \n"
+"| `CMD + LEFT`      | HOME              \n"
+"| `CMD + RIGHT`     | END               \n"
+"\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:339
 msgid ""
@@ -4972,6 +4990,23 @@ msgid ""
 "the virtual keyboard, press the Back/Menu button.\n"
 "\n"
 msgstr ""
+"## 触摸操作 \n"
+"\n"
+"### 点按触摸区域 \n"
+"\n"
+"点按触摸区域可模拟鼠标左键点击\n"
+"### 开始/暂停\n"
+"\n"
+"点按开始/暂停按钮可模拟鼠标右键点击\n"
+"\n"
+"### 全局主菜单\n"
+"\n"
+"点按返回/菜单按钮可打开全局主菜单。\n"
+"\n"
+"## 虚拟键盘\n"
+"\n"
+"按住开始/暂停按钮可打开虚拟键盘，点按返回/菜单按钮可将其隐藏。\n"
+"\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:383
 msgid ""
@@ -5022,19 +5057,19 @@ msgstr ""
 
 #: backends/platform/sdl/sdl.cpp:1027
 msgid "| `Cmd+q`    | Quit (macOS)\n"
-msgstr ""
+msgstr "| `Cmd+q`    | 退出 (macOS)\n"
 
 #: backends/platform/sdl/sdl.cpp:1029
 msgid "| `Alt+F4`  | Quit (Windows)\n"
-msgstr ""
+msgstr "| `Alt+F4`  | 退出 (Windows)\n"
 
 #: backends/platform/sdl/sdl.cpp:1031
 msgid "| `Ctrl+q`  | Quit (Linux/Unix)\n"
-msgstr ""
+msgstr "| `Ctrl+q`  | 退出 (Linux/Unix)\n"
 
 #: backends/platform/sdl/sdl.cpp:1032
 msgid "| `Ctrl+z`  | Quit (other platforms)\n"
-msgstr ""
+msgstr "| `Ctrl+z`  | 退出（其他平台）\n"
 
 #: backends/platform/sdl/sdl.cpp:1035
 msgid ""
@@ -5053,6 +5088,17 @@ msgid ""
 "opened with a long press of the middle mouse button or wheel.\n"
 "| `Ctrl+Alt+d` | Opens the ScummVM debugger\n"
 msgstr ""
+"| `Ctrl+u`  | 全部静音\n"
+"| `Ctrl+m`  | 开关鼠标捕捉\n"
+"| `Ctrl+Alt` 与 `9` 或 `0` | 切换到前一个/后一个图形过滤器\n"
+"| `Ctrl+Alt` 与 `+` 或 `-` | 增大/减小缩放系数\n"
+"| `Ctrl+Alt+a` | 开关宽高比矫正\n"
+"| `Ctrl+Alt+f` | 切换近邻插值与双线性插值（图形过滤器开关）\n"
+"| `Ctrl+Alt+s` | 循环切换拉伸模式\n"
+"| `Alt+Enter`   | 切换全屏/窗口模式Toggles\n"
+"| `Alt+s`          | 屏幕截图\n"
+"| `Ctrl+F7`       | 打开虚拟键盘（若启用）。也可通过长按鼠标中键或滚轮打开。\n"
+"| `Ctrl+Alt+d` | 打开 ScummVM 调试器\n"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:248
 msgid "Hide ScummVM"
@@ -5517,7 +5563,7 @@ msgstr "恢复"
 
 #: engines/agos/saveload.cpp:139
 msgid "Quick load or save game isn't supported in this location"
-msgstr ""
+msgstr "此位置不支持快速存档或读档"
 
 #: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2905
 #, c-format
@@ -5526,6 +5572,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"无法从文件载入存档：\n"
+"\n"
+"%s"
 
 #: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2892
 #, c-format
@@ -5534,6 +5583,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"无法将游戏保存到文件：\n"
+"\n"
+"%s"
 
 #: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2925
 #, c-format
@@ -5542,15 +5594,18 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"成功将游戏保存到文件：\n"
+"\n"
+"%s"
 
 #: engines/agos/animation.cpp:576
 #, c-format
 msgid "Cutscene file '%s' not found!"
-msgstr ""
+msgstr "找不到转场文件“%s”！"
 
 #: engines/agos/metaengine.cpp:42
 msgid "AdLib OPL3 mode"
-msgstr ""
+msgstr "AdLib OPL3 模式"
 
 #: engines/agos/metaengine.cpp:43
 msgid ""
@@ -5584,11 +5639,11 @@ msgstr "禁用淡出效果"
 
 #: engines/agos/metaengine.cpp:87
 msgid "Don't fade every screen to black when leaving a room."
-msgstr ""
+msgstr "离开房间时不要将屏幕渐变为黑色。"
 
 #: engines/agos/metaengine.cpp:170
 msgid "AGOS 2 support is not compiled in"
-msgstr ""
+msgstr "未编译入 AGOS 2 支持"
 
 #: engines/agos/midi.cpp:187 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -5633,7 +5688,7 @@ msgstr "多语言游戏使用的语言"
 
 #: engines/ags/dialogs.cpp:83
 msgid "Enable ScummVM save management"
-msgstr ""
+msgstr "启用 ScummVM 存档管理"
 
 #: engines/ags/dialogs.cpp:83
 msgid ""
@@ -5643,11 +5698,11 @@ msgstr ""
 
 #: engines/ags/dialogs.cpp:88
 msgid "Force antialiased text"
-msgstr ""
+msgstr "强制使用抗锯齿文本"
 
 #: engines/ags/dialogs.cpp:88
 msgid "Use antialiasing to draw text even if the game does not ask for it"
-msgstr ""
+msgstr "即使游戏不要求，也使用抗锯齿功能绘制文本"
 
 #: engines/ags/dialogs.cpp:91 engines/grim/metaengine.cpp:48
 #: engines/zvision/metaengine.cpp:221
@@ -5656,7 +5711,7 @@ msgstr "显示帧率"
 
 #: engines/ags/dialogs.cpp:91 engines/grim/metaengine.cpp:49
 msgid "Show the current FPS-rate, while you play."
-msgstr ""
+msgstr "游玩时显示当前帧率。"
 
 #: engines/ags/ags.cpp:135
 msgid ""
@@ -5710,11 +5765,11 @@ msgstr "切换到 Olmec"
 
 #: engines/asylum/metaengine.cpp:145
 msgid "Bring up the In-Game Menu"
-msgstr ""
+msgstr "唤出游戏内菜单"
 
 #: engines/asylum/metaengine.cpp:152
 msgid "Open character inventory"
-msgstr ""
+msgstr "打开人物物品栏"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:200
@@ -5730,11 +5785,11 @@ msgstr "仍然载入"
 
 #: engines/bladerunner/bladerunner.cpp:404
 msgid "Failed to initialize resources"
-msgstr ""
+msgstr "资源初始化失败"
 
 #: engines/bladerunner/bladerunner.cpp:1168
 msgid "A required game resource was not found"
-msgstr ""
+msgstr "找不到必需的游戏资源"
 
 #: engines/bladerunner/bladerunner.cpp:2755
 msgid ""
@@ -10218,11 +10273,11 @@ msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:181
 msgid "Ultima VIII Cheats"
-msgstr ""
+msgstr "Ultima VIII 作弊"
 
 #: engines/ultima/ultima8/metaengine.cpp:196
 msgid "Ultima VIII Debug"
-msgstr ""
+msgstr "Ultima VIII 调试"
 
 #: engines/ultima/ultima8/games/cru_game.cpp:164
 msgid ""
@@ -10268,11 +10323,11 @@ msgstr "使用 16 色图形。"
 
 #: engines/vcruise/metaengine.cpp:135
 msgid "Display help screen"
-msgstr ""
+msgstr "显示帮助屏幕"
 
 #: engines/vcruise/metaengine.cpp:140 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
-msgstr ""
+msgstr "保存游戏"
 
 #: engines/vcruise/metaengine.cpp:150
 msgid "Open sound settings"
@@ -10284,7 +10339,7 @@ msgstr "退出游戏"
 
 #: engines/vcruise/metaengine.cpp:166
 msgid "Toggle music on/off"
-msgstr ""
+msgstr "打开/关闭音乐"
 
 #: engines/vcruise/metaengine.cpp:171
 msgid "Toggle sound effects on/off"
@@ -10364,57 +10419,57 @@ msgstr ""
 
 #: engines/wintermute/metaengine.cpp:68
 msgid "This setting forces ScummVM to use 2D renderer while running 2D games"
-msgstr ""
+msgstr "此设置强制 ScummVM 在运行 2D 游戏时使用 2D 渲染器"
 
 #: engines/wintermute/metaengine.cpp:112
 msgid "FoxTail support is not compiled in"
-msgstr ""
+msgstr "未编译入 FoxTail 支持"
 
 #: engines/wintermute/metaengine.cpp:118
 msgid "Hero Craft support is not compiled in"
-msgstr ""
+msgstr "未编译入 Hero Craft 支持"
 
 #: engines/wintermute/metaengine.cpp:124
 msgid "Wintermute3D support is not compiled in"
-msgstr ""
+msgstr "未编译入 Wintermute3D 支持"
 
 #: engines/wintermute/wintermute.cpp:148
 msgid "This game requires PNG, JPEG and Vorbis support."
-msgstr ""
+msgstr "此游戏需要 PNG、JPEG 与 Vorbis 支持。"
 
 #: engines/wintermute/wintermute.cpp:159
 msgid "This game requires the FoxTail subengine, which is not compiled in."
-msgstr ""
+msgstr "此游戏需要 FoxTail 子引擎，但未被编译入游戏。"
 
 #: engines/wintermute/wintermute.cpp:170
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
-msgstr ""
+msgstr "此游戏需要 HeroCraft 子引擎，但未被编译入游戏。"
 
 #: engines/wintermute/wintermute.cpp:181
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
-msgstr ""
+msgstr "此游戏需要 3D 功能，但未被编译入游戏。因此游戏可能部分或完全不可玩。"
 
 #: engines/wintermute/keymapper_tables.h:149
 #: engines/wintermute/keymapper_tables.h:731
 #: engines/wintermute/keymapper_tables.h:2116
 #: engines/wintermute/keymapper_tables.h:2216
 msgid "Walk forward"
-msgstr ""
+msgstr "向前走"
 
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
 #: engines/wintermute/keymapper_tables.h:2238
 msgid "Walk backward"
-msgstr ""
+msgstr "向后走"
 
 #. I18N: Debug feature to draw lines of scene geometry: walls, walking areas, etc
 #: engines/wintermute/keymapper_tables.h:174
 #: engines/wintermute/keymapper_tables.h:685
 #: engines/wintermute/keymapper_tables.h:1855
 msgid "Show scene geometry"
-msgstr ""
+msgstr "显示场景几何参数"
 
 #: engines/wintermute/keymapper_tables.h:183
 #: engines/wintermute/keymapper_tables.h:199
@@ -10497,28 +10552,28 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1938
 #: engines/wintermute/keymapper_tables.h:1996
 msgid "GUI variant B"
-msgstr ""
+msgstr "GUI 变体 B"
 
 #: engines/wintermute/keymapper_tables.h:283
 #: engines/wintermute/keymapper_tables.h:414
 #: engines/wintermute/keymapper_tables.h:547
 #: engines/wintermute/keymapper_tables.h:1117
 msgid "Phone cancel button"
-msgstr ""
+msgstr "电话取消按钮"
 
 #: engines/wintermute/keymapper_tables.h:288
 #: engines/wintermute/keymapper_tables.h:419
 #: engines/wintermute/keymapper_tables.h:552
 #: engines/wintermute/keymapper_tables.h:1122
 msgid "Phone up button"
-msgstr ""
+msgstr "电话接听按钮"
 
 #: engines/wintermute/keymapper_tables.h:294
 #: engines/wintermute/keymapper_tables.h:425
 #: engines/wintermute/keymapper_tables.h:558
 #: engines/wintermute/keymapper_tables.h:1128
 msgid "Phone down button"
-msgstr ""
+msgstr "电话挂断按钮"
 
 #. I18N: Some items are scripted to have alternative "Use" action, when MiddleClick is used
 #. It may result in actor saying different text or item being decomposed to it's parts
@@ -10530,76 +10585,76 @@ msgstr "备用操作"
 #: engines/wintermute/keymapper_tables.h:564
 #: engines/wintermute/keymapper_tables.h:1134
 msgid "Phone 0 button"
-msgstr ""
+msgstr "电话 0 按钮"
 
 #: engines/wintermute/keymapper_tables.h:436
 #: engines/wintermute/keymapper_tables.h:569
 #: engines/wintermute/keymapper_tables.h:1139
 #: engines/wintermute/keymapper_tables.h:1817
 msgid "Phone 1 button"
-msgstr ""
+msgstr "电话 1 按钮"
 
 #: engines/wintermute/keymapper_tables.h:441
 #: engines/wintermute/keymapper_tables.h:574
 #: engines/wintermute/keymapper_tables.h:1144
 #: engines/wintermute/keymapper_tables.h:1822
 msgid "Phone 2 button"
-msgstr ""
+msgstr "电话 2 按钮"
 
 #: engines/wintermute/keymapper_tables.h:446
 #: engines/wintermute/keymapper_tables.h:579
 #: engines/wintermute/keymapper_tables.h:1149
 #: engines/wintermute/keymapper_tables.h:1827
 msgid "Phone 3 button"
-msgstr ""
+msgstr "电话 3 按钮"
 
 #: engines/wintermute/keymapper_tables.h:451
 #: engines/wintermute/keymapper_tables.h:584
 #: engines/wintermute/keymapper_tables.h:1154
 msgid "Phone 4 button"
-msgstr ""
+msgstr "电话 4 按钮"
 
 #: engines/wintermute/keymapper_tables.h:456
 #: engines/wintermute/keymapper_tables.h:589
 #: engines/wintermute/keymapper_tables.h:1159
 msgid "Phone 5 button"
-msgstr ""
+msgstr "电话 5 按钮"
 
 #: engines/wintermute/keymapper_tables.h:461
 #: engines/wintermute/keymapper_tables.h:594
 #: engines/wintermute/keymapper_tables.h:1164
 msgid "Phone 6 button"
-msgstr ""
+msgstr "电话 6 按钮"
 
 #: engines/wintermute/keymapper_tables.h:466
 #: engines/wintermute/keymapper_tables.h:599
 #: engines/wintermute/keymapper_tables.h:1169
 msgid "Phone 7 button"
-msgstr ""
+msgstr "电话 7 按钮"
 
 #: engines/wintermute/keymapper_tables.h:471
 #: engines/wintermute/keymapper_tables.h:604
 #: engines/wintermute/keymapper_tables.h:1174
 msgid "Phone 8 button"
-msgstr ""
+msgstr "电话 8 按钮"
 
 #: engines/wintermute/keymapper_tables.h:476
 #: engines/wintermute/keymapper_tables.h:609
 #: engines/wintermute/keymapper_tables.h:1179
 msgid "Phone 9 button"
-msgstr ""
+msgstr "电话 9 按钮"
 
 #: engines/wintermute/keymapper_tables.h:481
 #: engines/wintermute/keymapper_tables.h:614
 #: engines/wintermute/keymapper_tables.h:1184
 msgid "Phone * button"
-msgstr ""
+msgstr "电话 * 按钮"
 
 #: engines/wintermute/keymapper_tables.h:486
 #: engines/wintermute/keymapper_tables.h:619
 #: engines/wintermute/keymapper_tables.h:1189
 msgid "Phone # button"
-msgstr ""
+msgstr "电话 # 按钮"
 
 #: engines/wintermute/keymapper_tables.h:664
 #: engines/wintermute/keymapper_tables.h:1366
@@ -10642,12 +10697,12 @@ msgstr "更改阴影类型"
 #: engines/wintermute/keymapper_tables.h:700
 #: engines/wintermute/keymapper_tables.h:819
 msgid "Volume max"
-msgstr ""
+msgstr "音量最大"
 
 #. I18N: Displays a debug interface with a CLI for various features
 #: engines/wintermute/keymapper_tables.h:706
 msgid "Show debug parser"
-msgstr ""
+msgstr "显示调试解析器"
 
 #. I18N: Displays a debug text message
 #: engines/wintermute/keymapper_tables.h:714
@@ -10656,7 +10711,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1833
 #: engines/wintermute/keymapper_tables.h:1878
 msgid "Debug print"
-msgstr ""
+msgstr "调试输出"
 
 #. I18N: Exits the game
 #: engines/wintermute/keymapper_tables.h:720
@@ -10667,7 +10722,7 @@ msgstr "退出"
 #. I18N: Displays a debug interface that changes light settings
 #: engines/wintermute/keymapper_tables.h:726
 msgid "Light helper window"
-msgstr ""
+msgstr "光助手窗口"
 
 #: engines/wintermute/keymapper_tables.h:751
 msgid "Run forward"
@@ -10679,16 +10734,16 @@ msgstr "向后跑"
 
 #: engines/wintermute/keymapper_tables.h:761
 msgid "Turn left fast"
-msgstr ""
+msgstr "迅速左转"
 
 #: engines/wintermute/keymapper_tables.h:766
 msgid "Turn right fast"
-msgstr ""
+msgstr "迅速右转"
 
 #. I18N: Displays a blueprint with robot parts
 #: engines/wintermute/keymapper_tables.h:772
 msgid "Show blueprint"
-msgstr ""
+msgstr "显示蓝图"
 
 #: engines/wintermute/keymapper_tables.h:792
 #: engines/wintermute/keymapper_tables.h:1587
@@ -10708,7 +10763,7 @@ msgstr "上一个操作"
 
 #: engines/wintermute/keymapper_tables.h:826
 msgid "Volume off"
-msgstr ""
+msgstr "音量关闭"
 
 #: engines/wintermute/keymapper_tables.h:840
 msgid "Change font size"
@@ -10716,21 +10771,21 @@ msgstr "更改字体大小"
 
 #: engines/wintermute/keymapper_tables.h:935
 msgid "Walking speed: Low"
-msgstr ""
+msgstr "行走速度：低"
 
 #: engines/wintermute/keymapper_tables.h:940
 msgid "Walking speed: Medium"
-msgstr ""
+msgstr "行走速度：中"
 
 #: engines/wintermute/keymapper_tables.h:945
 msgid "Walking speed: High"
-msgstr ""
+msgstr "行走速度：高"
 
 #: engines/wintermute/keymapper_tables.h:955
 #: engines/wintermute/keymapper_tables.h:1314
 #: engines/wintermute/keymapper_tables.h:1872
 msgid "Cancel waiting"
-msgstr ""
+msgstr "取消等待"
 
 #: engines/wintermute/keymapper_tables.h:965
 msgid "First page"
@@ -10743,47 +10798,47 @@ msgstr "最后一页"
 #. I18N: ultra_super_mega_fast_walk is the name of the variable used at game script for this speed
 #: engines/wintermute/keymapper_tables.h:978
 msgid "Walking speed: Ultra Super Mega Fast"
-msgstr ""
+msgstr "行走速度：超高速"
 
 #: engines/wintermute/keymapper_tables.h:994
 msgid "Show game credits"
-msgstr ""
+msgstr "显示游戏致谢界面"
 
 #: engines/wintermute/keymapper_tables.h:999
 msgid "Play selected music record"
-msgstr ""
+msgstr "播放所选音乐记录"
 
 #: engines/wintermute/keymapper_tables.h:1004
 msgid "Select next music record"
-msgstr ""
+msgstr "选择下一个音乐记录"
 
 #: engines/wintermute/keymapper_tables.h:1009
 msgid "Play note 1: A"
-msgstr ""
+msgstr "播放音符 1: A"
 
 #: engines/wintermute/keymapper_tables.h:1014
 msgid "Play note 2: F#"
-msgstr ""
+msgstr "播放音符 2: A"
 
 #: engines/wintermute/keymapper_tables.h:1019
 msgid "Play note 3: D#"
-msgstr ""
+msgstr "播放音符 3: D#"
 
 #: engines/wintermute/keymapper_tables.h:1024
 msgid "Play note 4: C#"
-msgstr ""
+msgstr "播放音符 4: C#"
 
 #: engines/wintermute/keymapper_tables.h:1029
 msgid "Play note 5: E"
-msgstr ""
+msgstr "播放音符 5: E"
 
 #: engines/wintermute/keymapper_tables.h:1034
 msgid "Play note 6: G#"
-msgstr ""
+msgstr "播放音符 6: G#"
 
 #: engines/wintermute/keymapper_tables.h:1039
 msgid "Play note 7: B"
-msgstr ""
+msgstr "播放音符 7: B"
 
 #: engines/wintermute/keymapper_tables.h:1052
 msgid "Ability: Telekinesis"
@@ -10811,31 +10866,31 @@ msgstr "能力：声音"
 
 #: engines/wintermute/keymapper_tables.h:1082
 msgid "Ability: Esence"
-msgstr ""
+msgstr "能力：Esence"
 
 #: engines/wintermute/keymapper_tables.h:1087
 msgid "Ability: Exorcist"
-msgstr ""
+msgstr "能力：驱魔"
 
 #: engines/wintermute/keymapper_tables.h:1200
 msgid "Show hints / Dance move"
-msgstr ""
+msgstr "显示提示/舞动"
 
 #: engines/wintermute/keymapper_tables.h:1207
 msgid "Dance move up"
-msgstr ""
+msgstr "向上舞动"
 
 #: engines/wintermute/keymapper_tables.h:1213
 msgid "Dance move down"
-msgstr ""
+msgstr "向下舞动"
 
 #: engines/wintermute/keymapper_tables.h:1219
 msgid "Dance move left"
-msgstr ""
+msgstr "向左舞动"
 
 #: engines/wintermute/keymapper_tables.h:1225
 msgid "Dance move right"
-msgstr ""
+msgstr "向右舞动"
 
 #: engines/wintermute/keymapper_tables.h:1283
 msgid "Cancel input"
@@ -10908,7 +10963,7 @@ msgstr "显示日记"
 #. I18N: Displays a debug interface with Bezier curves
 #: engines/wintermute/keymapper_tables.h:1884
 msgid "Bezier window"
-msgstr ""
+msgstr "贝塞尔窗口"
 
 #. I18N: Use droid to perform an action
 #: engines/wintermute/keymapper_tables.h:1901
@@ -11009,7 +11064,7 @@ msgstr "使用高分辨率 MPEG"
 
 #: engines/zvision/metaengine.cpp:95
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
-msgstr ""
+msgstr "使用 DVD 版本的 MPEG 视频取代低分辨率的 AVI 视频"
 
 #: engines/zvision/metaengine.cpp:197
 msgid "Look Up"
