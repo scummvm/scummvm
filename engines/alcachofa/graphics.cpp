@@ -227,6 +227,32 @@ Point Animation::imageSize(int32 imageI) const {
 	return image == nullptr ? Point() : Point(image->w, image->h);
 }
 
+// unfortunately ScummVMs BLEND_NORMAL does not blend alpha
+// but this also bad, let's find/discuss a better solution later
+static void fullBlend(const ManagedSurface &source, ManagedSurface &destination, int offsetX, int offsetY) {
+	assert(source.format == BlendBlit::getSupportedPixelFormat());
+	assert(destination.format == BlendBlit::getSupportedPixelFormat());
+	assert(offsetX >= 0 && offsetX + source.w <= destination.w);
+	assert(offsetY >= 0 && offsetY + source.h <= destination.h);
+
+	const byte *sourceLine = (byte *)source.getPixels();
+	byte *destinationLine = (byte *)destination.getPixels() + offsetY * source.pitch + offsetX * 4;
+	for (int y = 0; y < source.h; y++) {
+		const byte *sourcePixel = sourceLine;
+		byte *destPixel = destinationLine;
+		for (int x = 0; x < source.w; x++) {
+			byte alpha = (*(const uint32 *)sourcePixel) & 0xff;
+			for (int i = 1; i < 4; i++)
+				destPixel[i] = ((byte)(alpha * sourcePixel[i] / 255)) + ((byte)((255 - alpha) * destPixel[i] / 255));
+			destPixel[0] = alpha + ((byte)((255 - alpha) * destPixel[0] / 255));
+			sourcePixel += 4;
+			destPixel += 4;
+		}
+		sourceLine += source.pitch;
+		destinationLine += destination.pitch;
+	}
+}
+
 void Animation::prerenderFrame(int32 frameI) {
 	assert(frameI >= 0 && (uint)frameI < frameCount());
 	if (frameI == _renderedFrameI)
@@ -240,7 +266,7 @@ void Animation::prerenderFrame(int32 frameI) {
 			continue;
 		int offsetX = _imageOffsets[imageI].x - bounds.left;
 		int offsetY = _imageOffsets[imageI].y - bounds.top;
-		image->blendBlitTo(_renderedSurface, offsetX, offsetY);
+		fullBlend(*image, _renderedSurface, offsetX, offsetY);
 	}
 
 	if (_premultiplyAlpha != 100) {
