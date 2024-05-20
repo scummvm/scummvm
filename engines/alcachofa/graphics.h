@@ -29,10 +29,9 @@
 #include "math/vector2d.h"
 #include "graphics/managed_surface.h"
 
-namespace Alcachofa {
+#include "camera.h"
 
-static constexpr const int16_t kBaseScale = 300; ///< this number pops up everywhere in the engine
-static constexpr const float kInvBaseScale = 1.0f / kBaseScale;
+namespace Alcachofa {
 
 /**
  * Because this gets confusing fast, here in tabular form
@@ -188,7 +187,12 @@ public:
 		int32 frameI,
 		Math::Vector2d center,
 		float scale,
-		Math::Angle rotation,
+		BlendMode blendMode,
+		Color color);
+	void draw3D(
+		int32 frameI,
+		Math::Vector3d center,
+		float scale,
 		BlendMode blendMode,
 		Color color);
 
@@ -197,6 +201,7 @@ private:
 	Common::Rect spriteBounds(int32 frameI, int32 spriteI) const;
 	Common::Rect frameBounds(int32 frameI) const;
 	Common::Rect maxFrameBounds() const;
+	Math::Vector2d totalFrameOffset(int32 frameI) const;
 	void prerenderFrame(int32 frameI);
 
 	int32_t _renderedFrameI = -1;
@@ -209,7 +214,6 @@ private:
 class Font : private AnimationBase {
 
 };
-
 
 class Graphic {
 public:
@@ -292,7 +296,7 @@ private:
 	bool _is3D;
 	Animation *_animation;
 	int32 _frameI;
-	Math::Vector2d _center;
+	Math::Vector3d _center;
 	float _scale;
 	Color _color;
 	BlendMode _blendMode;

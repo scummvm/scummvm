@@ -205,6 +205,23 @@ Rect Animation::maxFrameBounds() const {
 	return bounds;
 }
 
+Math::Vector2d Animation::totalFrameOffset(int32 frameI) const {
+	const auto &frame = _frames[frameI];
+	const auto bounds = frameBounds(frameI);
+	return Vector2d(
+		bounds.left - frame._center.x + frame._offset.x,
+		bounds.top - frame._center.y + frame._offset.y);
+}
+
+int32 Animation::frameAtTime(uint32 time) const {
+	for (int32 i = 0; (uint)i < _frames.size(); i++) {
+		if (time <= _frames[i]._duration)
+			return i;
+		time -= _frames[i]._duration;
+	}
+	return -1;
+}
+
 void Animation::prerenderFrame(int32 frameI) {
 	assert(frameI >= 0 && (uint)frameI < frameCount());
 	if (frameI == _renderedFrameI)
@@ -232,33 +249,46 @@ void Animation::prerenderFrame(int32 frameI) {
 	_renderedFrameI = frameI;
 }
 
-void Animation::draw2D(int32 frameI, Vector2d center, float scale, Angle rotation, BlendMode blendMode, Color color) {
+void Animation::draw2D(int32 frameI, Vector2d center, float scale, BlendMode blendMode, Color color) {
 	prerenderFrame(frameI);
 	auto bounds = frameBounds(frameI);
 	Vector2d texMin(0, 0);
 	Vector2d texMax((float)bounds.width() / _renderedSurface.w, (float)bounds.height() / _renderedSurface.h);
 
 	Vector2d size(bounds.width(), bounds.height());
-	Vector2d offset(
-		bounds.left - _frames[frameI]._center.x + _frames[frameI]._offset.x,
-		bounds.top - _frames[frameI]._center.y + _frames[frameI]._offset.y);
-	center += offset * scale;
+	center += totalFrameOffset(frameI) * scale;
 	size *= scale;
 
 	auto &renderer = g_engine->renderer();
 	renderer.setTexture(_renderedTexture.get());
-	//renderer.setTexture(nullptr);
 	renderer.setBlendMode(blendMode);
-	renderer.quad(center, size, color, rotation, texMin, texMax);
+	renderer.quad(center, size, color, Angle(), texMin, texMax);
 }
 
-int32 Animation::frameAtTime(uint32 time) const {
-	for (int32 i = 0; (uint)i < _frames.size(); i++) {
-		if (time <= _frames[i]._duration)
-			return i;
-		time -= _frames[i]._duration;
-	}
-	return -1;
+static Vector3d as3D(const Vector2d &v) {
+	return Vector3d(v.getX(), v.getY(), 0.0f);
+}
+
+static Vector2d as2D(const Vector3d &v) {
+	return Vector2d(v.x(), v.y());
+}
+
+void Animation::draw3D(int32 frameI, Vector3d center, float scale, BlendMode blendMode, Color color) {
+	prerenderFrame(frameI);
+	auto bounds = frameBounds(frameI);
+	Vector2d texMin(0, 0);
+	Vector2d texMax((float)bounds.width() / _renderedSurface.w, (float)bounds.height() / _renderedSurface.h);
+
+	center += as3D(totalFrameOffset(frameI)) * scale;
+	center = g_engine->camera().transform3Dto2D(center);
+	const auto rotation = -g_engine->camera().rotation();
+	Vector2d size(bounds.width(), bounds.height());
+	size *= scale * center.z();
+
+	auto &renderer = g_engine->renderer();
+	renderer.setTexture(_renderedTexture.get());
+	renderer.setBlendMode(blendMode);
+	renderer.quad(as2D(center), size, color, rotation, texMin, texMax);
 }
 
 Graphic::Graphic() {
@@ -346,7 +376,7 @@ AnimationDrawRequest::AnimationDrawRequest(Graphic &graphic, bool is3D, BlendMod
 	, _is3D(is3D)
 	, _animation(&graphic.animation())
 	, _frameI(graphic._frameI)
-	, _center(graphic._center.x, graphic._center.y)
+	, _center(graphic._center.x, graphic._center.y, graphic._scale)
 	, _scale(graphic._scale * graphic._depthScale)
 	, _color(graphic.color())
 	, _blendMode(blendMode)
@@ -359,7 +389,7 @@ AnimationDrawRequest::AnimationDrawRequest(Animation *animation, int32 frameI, V
 	, _is3D(false)
 	, _animation(animation)
 	, _frameI(frameI)
-	, _center(center)
+	, _center(as3D(center))
 	, _scale(1.0f)
 	, _color(kWhite)
 	, _blendMode(BlendMode::AdditiveAlpha)
@@ -369,7 +399,10 @@ AnimationDrawRequest::AnimationDrawRequest(Animation *animation, int32 frameI, V
 }
 
 void AnimationDrawRequest::draw() {
-	_animation->draw2D(_frameI, _center, _scale * kInvBaseScale, Angle(), _blendMode, _color);
+	if (_is3D)
+		_animation->draw3D(_frameI, _center, _scale * kInvBaseScale, _blendMode, _color);
+	else
+		_animation->draw2D(_frameI, as2D(_center), _scale * kInvBaseScale, _blendMode, _color);
 }
 
 DrawQueue::DrawQueue(IRenderer *renderer)
@@ -431,6 +464,7 @@ void *BumpAllocator::allocateRaw(size_t size, size_t align) {
 		return (void *)top;
 	}
 
+	_used = 0;
 	_pageI++;
 	if (_pageI >= _pages.size())
 		allocatePage();

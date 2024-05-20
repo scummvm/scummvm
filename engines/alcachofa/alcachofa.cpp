@@ -34,6 +34,8 @@
 
 #include "rooms.h"
 
+using namespace Math;
+
 namespace Alcachofa {
 
 AlcachofaEngine *g_engine;
@@ -55,12 +57,10 @@ Common::String AlcachofaEngine::getGameId() const {
 }
 
 Common::Error AlcachofaEngine::run() {
-	// Initialize 320x200 paletted graphics mode
 	_renderer.reset(IRenderer::createOpenGLRenderer(Common::Point(1024, 768)));
 	_drawQueue.reset(new DrawQueue(_renderer.get()));
+	_world.reset(new World());
 
-	auto world = new World();
-	delete world;
 	Graphic graphic;
 	graphic.setAnimation("MORTADELO_ACOSTANDOSE", AnimationFolder::Animations);
 	graphic.loadResources();
@@ -82,17 +82,12 @@ Common::Error AlcachofaEngine::run() {
 
 		_renderer->begin();
 		_drawQueue->clear();
+		_camera.shake() = Vector2d();
 
 		graphic.update();
-		graphic.center() = { 0, 0 };
-		_drawQueue->add<AnimationDrawRequest>(graphic, false, BlendMode::AdditiveAlpha);
-		graphic.center() = { 100, 0 };
-		_drawQueue->add<AnimationDrawRequest>(graphic, false, BlendMode::AdditiveAlpha);
-		graphic.center() = { 0, 100 };
-		_drawQueue->add<AnimationDrawRequest>(graphic, false, BlendMode::AdditiveAlpha);
-		graphic.center() = { 100, 100 };
-		_drawQueue->add<AnimationDrawRequest>(graphic, false, BlendMode::AdditiveAlpha);
+		drawQueue().add<AnimationDrawRequest>(graphic, false, BlendMode::AdditiveAlpha);
 
+		_camera.update();
 		_drawQueue->draw();
 		_renderer->end();
 
