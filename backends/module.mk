@@ -422,6 +422,7 @@ MODULE_OBJS += \
 
 ifdef USE_METAL_CPP
 MODULE_OBJS += \
+	graphics/ios/ios-metal-graphics.o \
 	graphics/ios/metal-renderbuffer.o
 endif
 endif
