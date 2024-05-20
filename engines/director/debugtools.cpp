@@ -74,6 +74,13 @@ typedef struct ImGuiScript {
 	Common::String handlerName;
 	Common::String moviePath;
 
+	bool isMethod = false;
+	bool isGenericEvent = false;
+	Common::StringArray argumentNames;
+	Common::StringArray propertyNames;
+	Common::StringArray globalNames;
+	Common::SharedPtr<LingoDec::HandlerNode> root;
+
 	bool operator==(const ImGuiScript &c) const {
 		return moviePath == c.moviePath && score == c.score && id == c.id && handlerId == c.handlerId;
 	}
@@ -127,6 +134,46 @@ typedef struct ImGuiState {
 
 ImGuiState *_state = nullptr;
 
+const LingoDec::Handler *getHandler(CastMemberID id, const Common::String &handlerId) {
+	Director::Movie *movie = g_director->getCurrentMovie();
+	const Director::Cast *cast = movie->getCast(id);
+	if (!cast->_lingodec)
+		return nullptr;
+
+	Common::SharedPtr<LingoDec::Node> node;
+	for (auto it : cast->_lingodec->scripts) {
+		for (const LingoDec::Handler &h : it.second->handlers) {
+			if (h.name != handlerId)
+				continue;
+			return &h;
+		}
+	}
+	return nullptr;
+}
+
+ImGuiScript toImGuiScript(CastMemberID id, const Common::String &handlerId) {
+	ImGuiScript result;
+	result.id = id;
+	result.handlerId = handlerId;
+
+	const LingoDec::Handler *handler = getHandler(id, handlerId);
+	if (!handler)
+		return result;
+
+	result.root = handler->ast.root;
+	result.isGenericEvent = handler->isGenericEvent;
+	result.argumentNames = handler->argumentNames;
+	result.propertyNames = handler->script->propertyNames;
+	result.globalNames = handler->globalNames;
+
+	LingoDec::Script *script = handler->script;
+	if (!script)
+		return result;
+
+	result.isMethod = script->isFactory();
+	return result;
+}
+
 static void setScriptToDisplay(const ImGuiScript &script);
 
 static Director::Breakpoint *getBreakpoint(const Common::String &handlerName, int pc) {
@@ -145,21 +192,18 @@ public:
 
 	virtual void visit(const LingoDec::HandlerNode &node) override {
 		_handler = node.handler;
-		LingoDec::Script *script = node.handler->script;
-		if (!script)
-			return;
 
 		if (_showByteCode) {
 			byteCode(node);
 			return;
 		}
 
-		if (node.handler->isGenericEvent) {
+		if (_script.isGenericEvent) {
 			node.block->accept(*this);
 			return;
 		}
 
-		bool isMethod = script->isFactory();
+		bool isMethod = _script.isMethod;
 		{
 			Common::String code;
 			if (isMethod) {
@@ -167,23 +211,23 @@ public:
 			} else {
 				code += "on ";
 			}
-			code += node.handler->name;
+			code += _script.handlerName;
 
-			if (node.handler->argumentNames.size() > 0) {
+			if (!_script.argumentNames.empty()) {
 				code += " ";
-				for (size_t i = 0; i < node.handler->argumentNames.size(); i++) {
+				for (size_t i = 0; i < _script.argumentNames.size(); i++) {
 					if (i > 0)
 						code += ", ";
-					code += node.handler->argumentNames[i];
+					code += _script.argumentNames[i];
 				}
 			}
 			write(node._startOffset, code);
 		}
 
-		if (isMethod && node.handler->script->propertyNames.size() > 0 && node.handler == &node.handler->script->handlers[0]) {
+		if (isMethod && _script.propertyNames.size() > 0 && node.handler == &node.handler->script->handlers[0]) {
 			write(node._startOffset, "instance");
 			ImGui::SameLine();
-			for (size_t i = 0; i < node.handler->script->propertyNames.size(); i++) {
+			for (size_t i = 0; i < _script.propertyNames.size(); i++) {
 				if (i > 0)
 					ImGui::Text(", ");
 				ImGui::SameLine();
@@ -193,10 +237,10 @@ public:
 			ImGui::NewLine();
 		}
 
-		if (node.handler->globalNames.size() > 0) {
+		if (!_script.globalNames.empty()) {
 			write(node._startOffset, "global ");
 			ImGui::SameLine();
-			for (size_t i = 0; i < node.handler->globalNames.size(); i++) {
+			for (size_t i = 0; i < _script.globalNames.size(); i++) {
 				if (i > 0)
 					ImGui::Text(", ");
 				ImGui::SameLine();
@@ -260,10 +304,8 @@ public:
 			ImGui::EndTooltip();
 		}
 		if (!g_lingo->_builtinCmds.contains(node.name) && ImGui::IsItemClicked()) {
-			ImGuiScript script;
+			ImGuiScript script = toImGuiScript(CastMemberID(obj, _script.id.castLib), node.name);
 			script.moviePath = _script.moviePath;
-			script.handlerId = node.name;
-			script.id = CastMemberID(obj, _script.id.castLib);
 			script.handlerName = node.name;
 			setScriptToDisplay(script);
 		}
@@ -485,7 +527,7 @@ private:
 			color = bp_color_hover;
 		}
 
-		if(!bp || bp->enabled)
+		if (!bp || bp->enabled)
 			dl->AddCircleFilled(mid, 4.0f, color);
 		else
 			dl->AddCircle(mid, 4.0f, line_color);
@@ -1354,28 +1396,10 @@ static void renderCastScript(Symbol &sym) {
 }
 
 static void renderScript(ImGuiScript &script, bool showByteCode) {
-	Director::Movie *movie = g_director->getCurrentMovie();
-	const Common::String &moviePath = movie->getArchive()->getPathName().toString();
-	if (moviePath != script.moviePath)
-		return;
+	if (!script.root) return;
 
-	const Director::Cast *cast = movie->getCast(script.id);
-	if (!cast->_lingodec)
-		return;
-
-	Common::SharedPtr<LingoDec::Node> node;
-	for (auto it : cast->_lingodec->scripts) {
-		for (const LingoDec::Handler &h : it.second->handlers) {
-			if (h.name != script.handlerId)
-				continue;
-			node = h.ast.root;
-		}
-	}
-
-	if (node) {
-		RenderScriptVisitor visitor(script, showByteCode);
-		node->accept(visitor);
-	}
+	RenderScriptVisitor visitor(script, showByteCode);
+	script.root->accept(visitor);
 }
 
 static bool showScriptCast(CastMemberID &id) {
@@ -1494,12 +1518,7 @@ static void showFuncList() {
 					ImGui::TableNextRow();
 					ImGui::TableNextColumn();
 					if (ImGui::Selectable(function.c_str())) {
-						ImGuiScript script;
-						script.moviePath = movie->getArchive()->getPathName().toString();
-						script.score = true;
-						script.handlerId = functionHandler._key;
-						script.handlerName = getHandlerName(functionHandler._value);
-						setScriptToDisplay(script);
+						// TODO:
 					}
 					ImGui::TableNextColumn();
 					ImGui::Text("%s", movie->getArchive()->getPathName().toString().c_str());
@@ -1530,10 +1549,8 @@ static void showFuncList() {
 							ImGui::TableNextColumn();
 							if (ImGui::Selectable(function.c_str())) {
 								CastMemberID memberID(scriptContext._key, cast._key);
-								ImGuiScript script;
+								ImGuiScript script = toImGuiScript(memberID, functionHandler._key);
 								script.moviePath = movie->getArchive()->getPathName().toString();
-								script.id = memberID;
-								script.handlerId = functionHandler._key;
 								script.handlerName = getHandlerName(functionHandler._value);
 								setScriptToDisplay(script);
 							}
@@ -1569,10 +1586,8 @@ static void showFuncList() {
 							ImGui::TableNextColumn();
 							if (ImGui::Selectable(function.c_str())) {
 								CastMemberID memberID(scriptContext._key, SHARED_CAST_LIB);
-								ImGuiScript script;
+								ImGuiScript script = toImGuiScript(memberID, functionHandler._key);
 								script.moviePath = movie->getArchive()->getPathName().toString();
-								script.id = memberID;
-								script.handlerId = functionHandler._key;
 								script.handlerName = getHandlerName(functionHandler._value);
 								setScriptToDisplay(script);
 							}
