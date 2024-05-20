@@ -1,4 +1,4 @@
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 
 XStream& XStream::operator> (char& v)
 {
@@ -65,7 +65,3 @@ XStream& XStream::operator> (long double& v)
 	read(&v,(unsigned)sizeof(long double));
 	return *this;
 }
-
-
-
-

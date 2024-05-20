@@ -1,7 +1,7 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 #include "zip_resource.h"
 #include "zip_headers.h"
 

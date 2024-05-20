@@ -1,4 +1,4 @@
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 
 static char* openMSG	 = "CREATE/OPEN FAILURE";
 static char* closeMSG	 = "CLOSE FAILURE";
@@ -16,25 +16,25 @@ bool XStream::open(const char* name, unsigned f)
 	if(f & XS_APPEND)
 		f |= XS_OUT;
 
-	if(f & XS_IN) 
+	if(f & XS_IN)
 		fa |= GENERIC_READ;
-	if(f & XS_OUT) 
+	if(f & XS_OUT)
 		fa |= GENERIC_WRITE;
 
-	if(!(f & XS_NOSHARING)) 
+	if(!(f & XS_NOSHARING))
 		fs |= FILE_SHARE_READ | FILE_SHARE_WRITE;
 
-	if((f & XS_IN) || (f & XS_NOREPLACE)) 
+	if((f & XS_IN) || (f & XS_NOREPLACE))
 		fc = OPEN_EXISTING;
-	else if(f & XS_OUT) 
+	else if(f & XS_OUT)
 		fc = f & XS_APPEND ? OPEN_ALWAYS : CREATE_ALWAYS;
 
-	if(f & XS_NOBUFFERING) 
+	if(f & XS_NOBUFFERING)
 		ff |= FILE_FLAG_NO_BUFFERING;
 
 	handler = CreateFile(name,fa,fs,0,fc,ff,0);
 	if(handler == INVALID_HANDLE_VALUE)
-		if(handleErrors_) 
+		if(handleErrors_)
 			ErrH.Abort(openMSG,XERR_USER,GetLastError(),name);
 		else{
 			ioError_ = true;
@@ -63,7 +63,7 @@ bool XStream::open(XStream* owner,long s,long ext_sz)
 
 void XStream::close()
 {
-	if(handler == INVALID_HANDLE_VALUE) 
+	if(handler == INVALID_HANDLE_VALUE)
 		return;
 
 	if(extSize == -1 && !CloseHandle(handler) && handleErrors_)
@@ -77,4 +77,3 @@ void XStream::close()
 	extPos = 0;
 	ioError_ = false;
 }
-

@@ -1,4 +1,4 @@
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 #include <float.h>
 #include "BugslayerUtil.h"
 
@@ -68,7 +68,7 @@ LONG APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
 	handled = true;
 
 	_clearfp();
-	//_controlfp( _controlfp(0,0) & ~(0),  MCW_EM ); 
+	//_controlfp( _controlfp(0,0) & ~(0),  MCW_EM );
 	SetUnhandledExceptionFilter(NULL);
 
 	static char msg[100000];
@@ -139,20 +139,20 @@ LONG APIENTRY exHandler(EXCEPTION_POINTERS *except_info)
 			strcat(msg,"  ES="); strcat(msg, wtoa(p -> SegEs));
 			strcat(msg,"  EDI="); strcat(msg, dwtoa(p -> Edi));
 			strcat(msg,"  GS="); strcat(msg, wtoa(p -> SegGs));
-			
+
 			strcat(msg,"\r\n\r\nBytes at CS::EIP:\r\n");
 			unsigned char* code = (unsigned char*)(p -> Eip);
 			int i;
 			for(i = 0;i < 16;i++){
 				strcat(msg, uctoa(code[i]));
-				strcat(msg," "); 
+				strcat(msg," ");
 				}
 
 			strcat(msg,"\r\n\r\nStack dump:\r\n");
 			unsigned int* stack = (unsigned int*)(p -> Esp);
 			for(i = 0;i < 32;i++){
 				strcat(msg, dwtoa(stack[i]));
-				strcat(msg, (i & 7) == 7 ? "\r\n" : " "); 
+				strcat(msg, (i & 7) == 7 ? "\r\n" : " ");
 				}
 
 			strcat(msg,"\r\nCall stack:\r\n");
@@ -304,4 +304,3 @@ void XErrorHandler::WriteLog(char* error, char* msg)
 		ErrHStream.close();
 	}
 }
-

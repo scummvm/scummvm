@@ -5,7 +5,7 @@ The TOOLHELP32.DLL access functions.  These are used by Windows95,
 Windows98, and NT5.  NT4.0 is covered in NT4ProcessInfo.cpp.
 ----------------------------------------------------------------------*/
 
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 #include "PCH.h"
 #include "BugslayerUtil.h"
 #include "TLHELP32.h"
@@ -226,4 +226,3 @@ BOOL TLHELPGetLoadedModules(DWORD     dwPID,
 	SetLastError(ERROR_SUCCESS) ;
 	return (bRet) ;
 }
-

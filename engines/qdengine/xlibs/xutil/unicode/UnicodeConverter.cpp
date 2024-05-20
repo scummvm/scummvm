@@ -1,4 +1,4 @@
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 #include "UnicodeConverter.h"
 
 namespace serialization_helpers {
@@ -9,26 +9,26 @@ bool t_ansi_to_unicode<unicode_string>::convert(string_type &result, LPCSTR str,
 		return true;
 	}
 
-	//если str_len == -1, то MBTWC учитывает завершающий нулевой символ
+	//ГҐГ±Г«ГЁ str_len == -1, ГІГ® MBTWC ГіГ·ГЁГІГ»ГўГ ГҐГІ Г§Г ГўГҐГ°ГёГ ГѕГ№ГЁГ© Г­ГіГ«ГҐГўГ®Г© Г±ГЁГ¬ГўГ®Г«
 	int wlen = ::MultiByteToWideChar(codepage, 0, str, str_len, NULL, 0);
 
 	xassert(wlen >= 0);
-	if (wlen == 0 || (wlen == 1 && str_len == -1)) { //error или str==""
+	if (wlen == 0 || (wlen == 1 && str_len == -1)) { //error ГЁГ«ГЁ str==""
 		result.erase();
 		return ::GetLastError();
 	}
 
 	if (str_len != -1)
-		wlen += 1;//учитываем завершающий UNICODE-символ
+		wlen += 1; //ГіГ·ГЁГІГ»ГўГ ГҐГ¬ Г§Г ГўГҐГ°ГёГ ГѕГ№ГЁГ© UNICODE-Г±ГЁГ¬ГўГ®Г«
 
-	xassert(wlen > 1);//вернем не только завершающий символ
+	xassert(wlen > 1); //ГўГҐГ°Г­ГҐГ¬ Г­ГҐ ГІГ®Г«ГјГЄГ® Г§Г ГўГҐГ°ГёГ ГѕГ№ГЁГ© Г±ГЁГ¬ГўГ®Г«
 
-	//резервируем место под все символы (включая и терминальный)
+	//Г°ГҐГ§ГҐГ°ГўГЁГ°ГіГҐГ¬ Г¬ГҐГ±ГІГ® ГЇГ®Г¤ ГўГ±ГҐ Г±ГЁГ¬ГўГ®Г«Г» (ГўГЄГ«ГѕГ·Г Гї ГЁ ГІГҐГ°Г¬ГЁГ­Г Г«ГјГ­Г»Г©)
 	result.resize(wlen);
 
 	::MultiByteToWideChar(codepage, 0, str, str_len, const_cast<LPWSTR>(result.c_str()), wlen);
 
-	//удаляем терминальный UNICODE-символ
+ 	//ГіГ¤Г Г«ГїГҐГ¬ ГІГҐГ°Г¬ГЁГ­Г Г«ГјГ­Г»Г© UNICODE-Г±ГЁГ¬ГўГ®Г«
 	result.erase(result.size() - 1, 1);
 
 	return true;
@@ -43,29 +43,29 @@ bool t_unicode_to_ansi<ansi_string>::convert(string_type &result, LPCWSTR wstr, 
 		return true;
 	}
 
-	//если wstr_len == -1, то WCTMB учитывает завершающий нулевой символ
+ 	//ГҐГ±Г«ГЁ wstr_len == -1, ГІГ® WCTMB ГіГ·ГЁГІГ»ГўГ ГҐГІ Г§Г ГўГҐГ°ГёГ ГѕГ№ГЁГ© Г­ГіГ«ГҐГўГ®Г© Г±ГЁГ¬ГўГ®Г«
 	int alen = ::WideCharToMultiByte(codepage, 0, wstr, wstr_len, NULL, 0, NULL, NULL);
 
 	xassert(alen >= 0);
-	if (alen == 0 || (alen == 1 && wstr_len == -1)) { //error или wstr==L""
+	if (alen == 0 || (alen == 1 && wstr_len == -1)) { //error пїЅпїЅпїЅ wstr==L""
 		result.erase();
 		return ::GetLastError();
 	}
 
-	//HINT: Здесь предполагается, что для всех ANSI кодировок терминальный символ
-	//      занимает 1 байт
+	//HINT: Г‡Г¤ГҐГ±Гј ГЇГ°ГҐГ¤ГЇГ®Г«Г ГЈГ ГҐГІГ±Гї, Г·ГІГ® Г¤Г«Гї ГўГ±ГҐГµ ANSI ГЄГ®Г¤ГЁГ°Г®ГўГ®ГЄ ГІГҐГ°Г¬ГЁГ­Г Г«ГјГ­Г»Г© Г±ГЁГ¬ГўГ®Г«
+ 	//      Г§Г Г­ГЁГ¬Г ГҐГІ 1 ГЎГ Г©ГІ
 	if (wstr_len != -1)
-		alen += 1;//учитываем завершающий символ
+		alen += 1; //ГіГ·ГЁГІГ»ГўГ ГҐГ¬ Г§Г ГўГҐГ°ГёГ ГѕГ№ГЁГ© Г±ГЁГ¬ГўГ®Г«
 
-	xassert(alen > 1);//вернем не только завершающий символ
+	xassert(alen > 1); //ГўГҐГ°Г­ГҐГ¬ Г­ГҐ ГІГ®Г«ГјГЄГ® Г§Г ГўГҐГ°ГёГ ГѕГ№ГЁГ© Г±ГЁГ¬ГўГ®Г«
 
-	//резервируем место под все символы (включая и терминальный)
+	//Г°ГҐГ§ГҐГ°ГўГЁГ°ГіГҐГ¬ Г¬ГҐГ±ГІГ® ГЇГ®Г¤ ГўГ±ГҐ Г±ГЁГ¬ГўГ®Г«Г» (ГўГЄГ«ГѕГ·Г Гї ГЁ ГІГҐГ°Г¬ГЁГ­Г Г«ГјГ­Г»Г©)
 	result.resize(alen);
 
 	::WideCharToMultiByte(codepage, 0, wstr, wstr_len, const_cast<LPSTR>(result.c_str()), alen, NULL, NULL);
 
-	//исключаем терминальный символ
-	//HINT: Уверенность относительно одного байта?
+ 	//ГЁГ±ГЄГ«ГѕГ·Г ГҐГ¬ ГІГҐГ°Г¬ГЁГ­Г Г«ГјГ­Г»Г© Г±ГЁГ¬ГўГ®Г«
+ 	//HINT: Г“ГўГҐГ°ГҐГ­Г­Г®Г±ГІГј Г®ГІГ­Г®Г±ГЁГІГҐГ«ГјГ­Г® Г®Г¤Г­Г®ГЈГ® ГЎГ Г©ГІГ ?
 	result.erase(result.size() - 1, 1);
 
 	return true;
@@ -136,4 +136,3 @@ std::string w2a(const std::wstring &src) {
 	utf16_to_ansi::convert(result, src.c_str(), src.size());
 	return result;
 }
-

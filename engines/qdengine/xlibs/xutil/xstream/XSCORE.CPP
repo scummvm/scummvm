@@ -1,4 +1,4 @@
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 
 XStream::XStream(bool handleErrors)
 {
@@ -29,5 +29,3 @@ XStream::XStream(const char* name, unsigned flags,bool handleErrors)
 	ioError_ = false;
 	open(name,flags);
 }
-
-

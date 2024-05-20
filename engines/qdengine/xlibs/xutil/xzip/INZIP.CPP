@@ -1,4 +1,4 @@
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 #pragma hdrstop
 
 typedef unsigned char uchar;
@@ -565,4 +565,3 @@ ulong deflate()
 	if(match_available) ct_tally(0, window[strstart-1]);
 	return FLUSH_BLOCK(1);
 }
-

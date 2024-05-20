@@ -1,6 +1,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 
@@ -133,7 +133,7 @@ int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw)
 					id = XObj -> Quant();
 				}
 			}
-			else 
+			else
 				id = XObj -> Quant();
 
 			if(!xtSysQuantDisabled)
@@ -556,4 +556,3 @@ void xtSysQuantDisable(int v)
 {
 	xtSysQuantDisabled = v;
 }
-

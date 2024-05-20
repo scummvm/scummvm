@@ -2,7 +2,7 @@
    John Robbins - Microsoft Systems Journal Bugslayer Column - Feb 99
 ----------------------------------------------------------------------*/
 
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 #include "pch.h"
 #include "BugslayerUtil.h"
 #include "DiagAssert.h"

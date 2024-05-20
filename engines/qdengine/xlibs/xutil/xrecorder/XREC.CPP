@@ -1,6 +1,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -151,7 +151,7 @@ void XRecorder::Quant(void)
 	frameCount ++;
 
 	if(flags & XRC_PLAY_MODE){
-		if(!(flags & XRC_MESSAGE_READ)) 
+		if(!(flags & XRC_MESSAGE_READ))
 			GetMessage();
 
 		while(flags & XRC_MESSAGE_READ && frameCount == nextMsg -> Frame){

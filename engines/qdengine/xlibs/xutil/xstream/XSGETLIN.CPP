@@ -1,4 +1,4 @@
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 
 char* XStream::getline(char* buf, unsigned len)
 {
@@ -13,4 +13,3 @@ char* XStream::getline(char* buf, unsigned len)
 		buf[i - 1] = '\0';
 	return buf;
 }
-

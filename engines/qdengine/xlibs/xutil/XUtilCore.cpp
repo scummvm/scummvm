@@ -1,4 +1,4 @@
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 //#include <ostream.h>
 
 void xtSysFinit() {}
@@ -39,7 +39,7 @@ inline void swap(unsigned char &c1, unsigned char &c2) {
 	c1 = tmp;
 }
 
-/// кодирование/раскодирование по алгоритму RC4
+/// ГЄГ®Г¤ГЁГ°Г®ГўГ Г­ГЁГҐ/Г°Г Г±ГЄГ®Г¤ГЁГ°Г®ГўГ Г­ГЁГҐ ГЇГ® Г Г«ГЈГ®Г°ГЁГІГ¬Гі RC4
 void rc4code(char *data, const char *key, int count = -1) {
 	size_t keylen;
 	if (FAILED(StringCchLength(key, 32, &keylen)))
@@ -72,7 +72,7 @@ void rc4code(char *data, const char *key, int count = -1) {
 	}
 }
 
-// вывод Unicode текста в консоль
+ // ГўГ»ГўГ®Г¤ Unicode ГІГҐГЄГ±ГІГ  Гў ГЄГ®Г­Г±Г®Г«Гј
 void dcprintfW(wchar_t *format, ...) {
 	static bool inited = false;
 	if (!inited) {
@@ -99,7 +99,7 @@ void dcprintfW(wchar_t *format, ...) {
 	}
 }
 
-// вывод Unicode текста в Debug Output
+// ГўГ»ГўГ®Г¤ Unicode ГІГҐГЄГ±ГІГ  Гў Debug Output
 void dprintfW(wchar_t *format, ...) {
 	wchar_t buffer[512];
 

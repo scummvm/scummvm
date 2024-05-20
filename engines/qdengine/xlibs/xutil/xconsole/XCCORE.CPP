@@ -1,6 +1,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -76,4 +76,3 @@ XConsole::XConsole(void)
 XConsole::~XConsole(void)
 {
 }
-

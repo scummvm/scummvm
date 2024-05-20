@@ -1,4 +1,4 @@
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 #include "WBuffer.h"
 #include <string>
 
@@ -81,8 +81,8 @@ void utf16_to_utf8(const wchar_t *utf16, int size16, char *utf8, int size8) {
 				} else
 					break;
 			} else if (cur >= 0xD800 && cur <= 0xDBFF && *utf16 >= 0xDC00 && *utf16 <= 0xDFFF && size16 > 0) {
-				//HI = (UTF32 – 0x10000) / 0x400 + 0xD800;
-				//LO = (UTF32 – 0x10000) % 0x400 + 0xDC00;
+				//HI = (UTF32 - 0x10000) / 0x400 + 0xD800;
+				//LO = (UTF32 - 0x10000) % 0x400 + 0xDC00;
 				unsigned int seq = (cur - 0xD800) << 10;
 				seq |= (*utf16 - 0xDC00) & ((1 << 10) - 1);
 				seq += 0x10000;
@@ -98,7 +98,7 @@ void utf16_to_utf8(const wchar_t *utf16, int size16, char *utf8, int size8) {
 				++utf16;
 				--size16;
 			} else {
-				// Ïî ñòàíäàðòó òóò îáÿçàòåëüíî íàäî ãåíåðèðîâàòü îøèáêó.
+				// ÃÃ® Ã±Ã²Ã Ã­Ã¤Ã Ã°Ã²Ã³ Ã²Ã³Ã² Ã®Ã¡Ã¿Ã§Ã Ã²Ã¥Ã«Ã¼Ã­Ã® Ã­Ã Ã¤Ã® Ã£Ã¥Ã­Ã¥Ã°Ã¨Ã°Ã®Ã¢Ã Ã²Ã¼ Ã®Ã¸Ã¨Ã¡ÃªÃ³.
 			}
 		}
 	}
@@ -190,7 +190,7 @@ void utf8_to_utf16(const char *utf8, int size8, wchar_t *utf16, int size16) {
 				size8 -= 4;
 			} else
 				break;
-			if (sc >= 0x10000) { // ñóððîãàòíàÿ ïàðà
+			if (sc >= 0x10000) { // Ã±Ã³Ã°Ã°Ã®Ã£Ã Ã²Ã­Ã Ã¿ Ã¯Ã Ã°Ã 
 				if (size16 > 1) {
 					utf16[0] = ((sc - 0x10000) >> 10) + 0xD800;
 					utf16[1] = ((sc - 0x10000) & ((1 << 10) - 1)) + 0xDC00;
@@ -200,7 +200,7 @@ void utf8_to_utf16(const char *utf8, int size8, wchar_t *utf16, int size16) {
 				} else
 					break;
 			} else {
-				// ïî ñòàíäàðòó 3.1 òàêîå ìîæíî èãíîðèðîâàòü
+				// Ã¯Ã® Ã±Ã²Ã Ã­Ã¤Ã Ã°Ã²Ã³ 3.1 Ã²Ã ÃªÃ®Ã¥ Ã¬Ã®Ã¦Ã­Ã® Ã¨Ã£Ã­Ã®Ã°Ã¨Ã°Ã®Ã¢Ã Ã²Ã¼
 			}
 		} else {
 			++utf8;
@@ -332,7 +332,7 @@ size_t getUTF16size(const char *utf8) {
 			SET_HI(sc, utf8[1]);
 			SET_HI(sc, utf8[2]);
 			SET_HI(sc, utf8[3]);
-			if (sc >= 0x10000) // ñóððîãàòíàÿ ïàðà
+			if (sc >= 0x10000) // Ã±Ã³Ã°Ã°Ã®Ã£Ã Ã²Ã­Ã Ã¿ Ã¯Ã Ã°Ã 
 				++size;
 		}
 	}

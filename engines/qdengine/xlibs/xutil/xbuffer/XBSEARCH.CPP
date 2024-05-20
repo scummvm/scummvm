@@ -1,4 +1,4 @@
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 
 bool XBuffer::search(char* what, int mode, int cs)
 {
@@ -52,4 +52,3 @@ bool XBuffer::search(char* what, int mode, int cs)
 		}
 	return 0;
 }
-

@@ -1,7 +1,7 @@
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 
 XBuffer::XBuffer()
-{ 
+{
 	makeFree_=0;
 	buffer_=NULL;
 	alloc(XB_DEFSIZE);
@@ -11,7 +11,7 @@ XBuffer::XBuffer()
 }
 
 XBuffer::XBuffer(unsigned int sz, bool automatic_realloc_)
-{ 
+{
 	makeFree_=0;
 	buffer_=NULL;
 	alloc(sz);
@@ -28,7 +28,7 @@ void XBuffer::alloc(unsigned int sz)
 	radix_ = XB_DEFRADIX;
 	digits_ = XB_DEFDIGITS;
 	makeFree_ = 1;
-	if(size_) 
+	if(size_)
 		*buffer_ = 0;
 }
 
@@ -70,17 +70,17 @@ void XBuffer::set(int off,int mode)
 }
 
 void XBuffer::init()
-{ 
-	offset_ = 0; 
+{
+	offset_ = 0;
 	if(size())
-		*buffer_ = 0; 
+		*buffer_ = 0;
 }
 
-unsigned int XBuffer::read(void* s, unsigned int len) 
-{	
-	memcpy(s, buffer_ + offset_, len); 
-	offset_ += len; 
-	return len; 
+unsigned int XBuffer::read(void* s, unsigned int len)
+{
+	memcpy(s, buffer_ + offset_, len);
+	offset_ += len;
+	return len;
 }
 
 void XBuffer::handleOutOfSize()
@@ -98,13 +98,13 @@ void XBuffer::handleOutOfSize()
 	}
 }
 
-unsigned int XBuffer::write(const void* s, unsigned int len, bool bin_flag) 
-{	
+unsigned int XBuffer::write(const void* s, unsigned int len, bool bin_flag)
+{
 	if(bin_flag)
-		while(offset_ + len > size_) 
+		while(offset_ + len > size_)
 			handleOutOfSize();
 	else
-		while(offset_ + len >= size_) 
+		while(offset_ + len >= size_)
 			handleOutOfSize();
 
 	memcpy(buffer_ + offset_, s, len);
@@ -116,17 +116,16 @@ unsigned int XBuffer::write(const void* s, unsigned int len, bool bin_flag)
 	return len;
 }
 
-XBuffer& XBuffer::operator< (const char* v) 
-{ 
-	if(v) 
-		write(v, strlen(v), 0); 
-	return *this; 
+XBuffer& XBuffer::operator< (const char* v)
+{
+	if(v)
+		write(v, strlen(v), 0);
+	return *this;
 }
 
-XBuffer& XBuffer::operator> (char* v) 
-{ 
-	if(v) 
-		read(v, strlen(buffer_ + offset_) + 1); 
-	return *this; 
+XBuffer& XBuffer::operator> (char* v)
+{
+	if(v)
+		read(v, strlen(buffer_ + offset_) + 1);
+	return *this;
 }
-

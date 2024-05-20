@@ -1,7 +1,7 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "xglobal.h"
+#include "qdengine/xlibs/xutil/xglobal.h"
 
 #pragma comment(lib, "winmm.lib")
 
