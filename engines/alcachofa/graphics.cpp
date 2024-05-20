@@ -320,8 +320,8 @@ void Graphic::update() {
 	uint32 curTime = _lastTime;
 	if (!_isPaused)
 		curTime = g_system->getMillis() - curTime;
-	if (curTime > totalDuration) {
-		if (_isLooping && totalDuration > 0)
+	if (curTime > totalDuration && totalDuration > 0) {
+		if (_isLooping)
 			curTime %= totalDuration;
 		else {
 			pause();
@@ -329,7 +329,7 @@ void Graphic::update() {
 		}
 	}
 
-	_frameI = _animation->frameAtTime(curTime);
+	_frameI = totalDuration == 0 ? 0 : _animation->frameAtTime(curTime);
 	assert(_frameI >= 0);
 }
 

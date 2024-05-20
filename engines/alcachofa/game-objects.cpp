@@ -82,7 +82,7 @@ void Character::syncObjectAsString(Serializer &serializer, ObjectBase *&object) 
 		else {
 			object = room()->getObjectByName(name);
 			if (object == nullptr)
-				object = room()->world()->getObjectByName(name);
+				object = room()->world().getObjectByName(name);
 			if (object == nullptr)
 				error("Invalid object name \"%s\" saved for \"%s\" in \"%s\"",
 					name.c_str(), this->name().c_str(), room()->name().c_str());
@@ -140,7 +140,7 @@ void MainCharacter::serializeSave(Serializer &serializer) {
 	String roomName = room()->name();
 	serializer.syncString(roomName);
 	if (serializer.isLoading()) {
-		room() = room()->world()->getRoomByName(roomName);
+		room() = room()->world().getRoomByName(roomName);
 		if (room() == nullptr)
 			error("Invalid room name \"%s\" saved for \"%s\"", roomName.c_str(), name().c_str());
 	}
@@ -159,6 +159,7 @@ void MainCharacter::serializeSave(Serializer &serializer) {
 
 Background::Background(Room *room, const String &animationFileName, int16 scale)
 	: GraphicObject(room, "BACKGROUND") {
+	toggle(true);
 	_graphic.setAnimation(animationFileName, AnimationFolder::Backgrounds);
 	_graphic.scale() = scale;
 	_graphic.order() = 59;

@@ -34,17 +34,19 @@ public:
 	Room(World *world, Common::ReadStream &stream);
 	virtual ~Room();
 
-	inline World *world() { return _world; }
+	inline World &world() { return *_world; }
 	inline const Common::String &name() const { return _name; }
 
-	ObjectBase *getObjectByName(const Common::String &name) const;
-
+	void update();
 	virtual void loadResources();
 	virtual void freeResources();
 	virtual void serializeSave(Common::Serializer &serializer);
+	ObjectBase *getObjectByName(const Common::String &name) const;
 
 protected:
 	Room(World *world, Common::ReadStream &stream, bool hasUselessByte);
+	void updateObjects();
+	void drawObjects();
 
 	World *_world;
 	Common::String _name;
