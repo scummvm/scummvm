@@ -412,6 +412,13 @@ void MetalGraphicsManager::updateScreen() {
 	// Clear the screen buffer.
 	_pipeline->setLoadAction(MTL::LoadActionClear);
 
+	if (!_overlayVisible) {
+		// The scissor test is enabled to:
+		// - Clip the cursor to the game screen
+		// - Clip the game screen when the shake offset is non-zero
+		_targetBuffer->enableScissorTest(true);
+	}
+
 	// Don't draw cursor if it's not visible or there is none
 	bool drawCursor = _cursorVisible && _cursor;
 
@@ -422,6 +429,10 @@ void MetalGraphicsManager::updateScreen() {
 	_pipeline->drawTexture(_gameScreen->getMetalTexture(), _gameDrawRect.left, _gameDrawRect.top, _gameDrawRect.width(), _gameDrawRect.height());
 
 	_pipeline->setLoadAction(MTL::LoadActionLoad);
+
+	if (!_overlayVisible) {
+		_targetBuffer->enableScissorTest(false);
+	}
 
 	// Third step: Draw the overlay if visible.
 	if (_overlayVisible) {
@@ -595,11 +606,10 @@ void MetalGraphicsManager::recalculateDisplayAreas() {
 	WindowedGraphicsManager::recalculateDisplayAreas();
 
 	// Setup drawing limitation for game graphics.
-	_targetBuffer->setScissorBox(
-		_gameDrawRect.left,
-		_gameDrawRect.top,
-		_gameDrawRect.width(),
-		_gameDrawRect.height());
+	_targetBuffer->setScissorBox(_gameDrawRect.left,
+							  _gameDrawRect.top,
+							  _gameDrawRect.width(),
+							  _gameDrawRect.height());
 
 	_shakeOffsetScaled = Common::Point(_gameScreenShakeXOffset * _gameDrawRect.width() / (int)_currentState.gameWidth,
 		_gameScreenShakeYOffset * _gameDrawRect.height() / (int)_currentState.gameHeight);
