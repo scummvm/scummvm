@@ -124,19 +124,23 @@ private:
 		kCueSourceIntegerRange,
 		kCueSourceVariableReference,
 		kCueSourceLabel,
+		kCueSourceString,
 
 		kCueSourceInvalid = -1,
 	};
 
-	union CueSourceUnion {
+	struct CueSourceUnion {
 		CueSourceUnion();
 		~CueSourceUnion();
 
-		int32 asInt;
-		IntRange asIntRange;
-		uint32 asVarRefGUID;
-		Label asLabel;
-		uint64 asUnset;
+		union {
+			int32 asInt;
+			IntRange asIntRange;
+			uint32 asVarRefGUID;
+			Label asLabel;
+			uint64 asUnset;
+		};
+		Common::String asString;	//String object in the union would prevent copyability
 
 		template<class T, T (CueSourceUnion::*TMember)>
 		void construct(const T &value);
