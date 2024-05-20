@@ -419,6 +419,11 @@ MODULE_OBJS += \
 	graphics3d/opengl/surfacerenderer.o \
 	graphics3d/opengl/texture.o \
 	graphics3d/opengl/tiledsurface.o
+
+ifdef USE_METAL_CPP
+MODULE_OBJS += \
+	graphics/ios/metal-renderbuffer.o
+endif
 endif
 
 ifeq ($(BACKEND),maemo)
