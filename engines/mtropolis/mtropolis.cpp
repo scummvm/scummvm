@@ -56,6 +56,7 @@ namespace MTropolis {
 MTropolisEngine::MTropolisEngine(OSystem *syst, const MTropolisGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc), _saveWriter(nullptr), _isTriggeredAutosave(false) {
 	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Resource");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Video");
 
 	bootAddSearchPaths(gameDataDir, *gameDesc);
 }
