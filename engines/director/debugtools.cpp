@@ -1871,6 +1871,12 @@ static void showScore() {
 			return;
 		}
 
+		if (_state->_selectedScoreCast.frame >= numFrames)
+			_state->_selectedScoreCast.frame = 0;
+
+		if (!numFrames || _state->_selectedScoreCast.channel >= score->_scoreCache[0]->_sprites.size())
+			_state->_selectedScoreCast.channel = 0;
+
 		{ // Render sprite details
 			Sprite *sprite = nullptr;
 			CastMember *castMember = nullptr;
