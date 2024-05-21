@@ -61,15 +61,16 @@ uint Shape::addPolygon(uint maxCount) {
 			if (_points[firstI + newCount] == _points[firstI])
 				break;
 		}
+		_points.resize(firstI + newCount);
 	}
 	_polygons.push_back({ firstI, newCount });
 	return newCount;
 }
 
-Polygon Shape::at(uint index) {
+Polygon Shape::at(uint index) const {
 	auto range = _polygons[index];
 	Polygon p;
-	p._points = Span<Point>(_points.data() + range.first, range.second);
+	p._points = Span<const Point>(_points.data() + range.first, range.second);
 	return p;
 }
 
@@ -95,11 +96,11 @@ PathFindingShape::PathFindingShape(ReadStream &stream) {
 	// TODO: Implement the path finding
 }
 
-PathFindingPolygon PathFindingShape::at(uint index) {
+PathFindingPolygon PathFindingShape::at(uint index) const {
 	auto range = _polygons[index];
 	PathFindingPolygon p;
-	p._points = Span<Point>(_points.data() + range.first, range.second);
-	p._pointValues = Span<int8>(_pointValues.data() + range.first, range.second);
+	p._points = Span<const Point>(_points.data() + range.first, range.second);
+	p._pointValues = Span<const int8>(_pointValues.data() + range.first, range.second);
 	p._polygonValue = _polygonValues[index];
 	return p;
 }
@@ -127,12 +128,12 @@ FloorColorShape::FloorColorShape(ReadStream &stream) {
 	}
 }
 
-FloorColorPolygon FloorColorShape::at(uint index) {
+FloorColorPolygon FloorColorShape::at(uint index) const {
 	auto range = _polygons[index];
 	FloorColorPolygon p;
-	p._points = Span<Point>(_points.data() + range.first, range.second);
-	p._pointWeights = Span<uint8>(_pointWeights.data() + range.first, range.second);
-	p._pointColors = Span<uint32>(_pointColors.data() + range.first, range.second);
+	p._points = Span<const Point>(_points.data() + range.first, range.second);
+	p._pointWeights = Span<const uint8>(_pointWeights.data() + range.first, range.second);
+	p._pointColors = Span<const uint32>(_pointColors.data() + range.first, range.second);
 	p._polygonValue = _polygonValues[index];
 	return p;
 }

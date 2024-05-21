@@ -133,6 +133,8 @@ void Room::update() {
 		world().globalRoom().drawObjects();
 		// TODO: Draw black borders
 		g_engine->drawQueue().draw();
+		drawDebug();
+		world().globalRoom().drawDebug();
 	}
 }
 
@@ -147,6 +149,17 @@ void Room::updateObjects() {
 void Room::drawObjects() {
 	for (auto *object : _objects)
 		object->draw();
+}
+
+void Room::drawDebug() {
+	auto renderer = dynamic_cast<IDebugRenderer *>(&g_engine->renderer());
+	if (renderer == nullptr || !g_engine->console().isAnyDebugDrawingOn())
+		return;
+	for (auto *object : _objects)
+		object->drawDebug();
+	if (_activeFloorI >= 0 && g_engine->console().showFloor())
+		renderer->debugShape(_floors[_activeFloorI], kDebugBlue);
+
 }
 
 void Room::loadResources() {

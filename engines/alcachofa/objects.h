@@ -45,6 +45,7 @@ public:
 
 	virtual void toggle(bool isEnabled);
 	virtual void draw();
+	virtual void drawDebug();
 	virtual void update();
 	virtual void loadResources();
 	virtual void freeResources();
@@ -276,6 +277,8 @@ public:
 	static constexpr const char *kClassName = "CObjetoTipico";
 	InteractableObject(Room *room, Common::ReadStream &stream);
 	virtual ~InteractableObject() override = default;
+
+	virtual void drawDebug() override;
 
 private:
 	Common::Point _interactionPoint;

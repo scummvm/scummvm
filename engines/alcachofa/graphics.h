@@ -26,6 +26,7 @@
 #include "common/stream.h"
 #include "common/serializer.h"
 #include "common/rect.h"
+#include "common/span.h"
 #include "math/vector2d.h"
 #include "graphics/managed_surface.h"
 
@@ -76,11 +77,15 @@ constexpr const int8 kOrderCount = 70;
 constexpr const int8 kForegroundOrderCount = 10;
 
 struct Color {
-	uint8 b, g, r, a;
+	uint8 r, g, b, a;
 };
 static constexpr const Color kWhite = { 255, 255, 255, 255 };
 static constexpr const Color kBlack = { 0, 0, 0, 255 };
 static constexpr const Color kClear = { 0, 0, 0, 0 };
+static constexpr const Color kDebugRed = { 250, 0, 0, 70 };
+static constexpr const Color kDebugBlue = { 0, 0, 255, 110 };
+
+class Shape;
 
 class ITexture {
 public:
@@ -115,6 +120,19 @@ public:
 	virtual void end() = 0;
 
 	static IRenderer *createOpenGLRenderer(Common::Point resolution);
+};
+
+class IDebugRenderer : public IRenderer {
+public:
+	virtual void debugPolygon(
+		Common::Span<Math::Vector2d> points,
+		Color color = kDebugRed
+	) = 0;
+
+	virtual void debugShape(
+		const Shape &shape,
+		Color color = kDebugRed
+	);
 };
 
 enum class AnimationFolder {

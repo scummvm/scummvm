@@ -57,6 +57,7 @@ Common::String AlcachofaEngine::getGameId() const {
 }
 
 Common::Error AlcachofaEngine::run() {
+	setDebugger(&_console);
 	_renderer.reset(IRenderer::createOpenGLRenderer(Common::Point(1024, 768)));
 	_drawQueue.reset(new DrawQueue(_renderer.get()));
 	_world.reset(new World());
@@ -67,9 +68,6 @@ Common::Error AlcachofaEngine::run() {
 	assert(room != nullptr);
 	world().currentRoom() = room;
 	room->loadResources();
-
-	// Set the engine's debugger console
-	setDebugger(new Console());
 
 	// If a savegame was selected from the launcher, load it
 	int saveSlot = ConfMan.getInt("save_slot");

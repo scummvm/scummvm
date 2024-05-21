@@ -28,11 +28,22 @@
 namespace Alcachofa {
 
 class Console : public GUI::Debugger {
-private:
-	bool Cmd_test(int argc, const char **argv);
 public:
 	Console();
 	~Console() override;
+
+	inline bool showInteractables() const { return _showInteractables; }
+	inline bool showFloor() const { return _showFloor; }
+
+	inline bool isAnyDebugDrawingOn() const {
+		return
+			_showInteractables ||
+			_showFloor;
+	}
+
+private:
+	bool _showInteractables = true;
+	bool _showFloor = true;
 };
 
 } // End of namespace Alcachofa

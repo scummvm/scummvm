@@ -101,7 +101,7 @@ private:
 	bool _withMipmaps;
 };
 
-class OpenGLRenderer : public IRenderer {
+class OpenGLRenderer : public IDebugRenderer {
 public:
 	OpenGLRenderer(Point resolution)
 		: _resolution(resolution) {
@@ -110,6 +110,7 @@ public:
 		GL_CALL(glDisable(GL_DEPTH_TEST));
 		GL_CALL(glDisable(GL_SCISSOR_TEST));
 		GL_CALL(glDisable(GL_STENCIL_TEST));
+		GL_CALL(glDisable(GL_CULL_FACE));
 		GL_CALL(glEnable(GL_BLEND));
 		GL_CALL(glDepthMask(GL_FALSE));
 	}
@@ -250,7 +251,7 @@ public:
 
 		float colors[] = { color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f };
 
-		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		GL_CALL(glColor4f(1.0f, 1.0f, 1.0f, 1.0f));
 		GL_CALL(glVertexPointer(2, GL_FLOAT, 0, positions));
 		if (_currentTexture != nullptr)
 			GL_CALL(glTexCoordPointer(2, GL_FLOAT, 0, texCoords));
@@ -262,6 +263,31 @@ public:
 		GL_CALL(glVertexPointer(2, GL_FLOAT, sizeof(Vector2d), nullptr));
 		GL_CALL(glTexCoordPointer(2, GL_FLOAT, sizeof(Vector2d), nullptr));
 #endif
+	}
+
+	virtual void debugPolygon(
+		Span<Vector2d> points,
+		Color color
+	) override {
+		setTexture(nullptr);
+		setBlendMode(BlendMode::Alpha);
+		GL_CALL(glVertexPointer(2, GL_FLOAT, 0, points.data()));
+		GL_CALL(glLineWidth(4.0f));
+		GL_CALL(glPointSize(8.0f));
+
+		GL_CALL(glColor4ub(color.r, color.g, color.b, color.a));
+		if (points.size() > 2)
+			GL_CALL(glDrawArrays(GL_POLYGON, 0, points.size()));
+
+		color.a = (byte)(MIN(255.0f, color.a * 1.3f));
+		GL_CALL(glColor4ub(color.r, color.g, color.b, color.a));
+		if (points.size() > 1)
+			GL_CALL(glDrawArrays(GL_LINE_LOOP, 0, points.size()));
+
+		color.a = (byte)(MIN(255.0f, color.a * 1.3f));
+		GL_CALL(glColor4ub(color.r, color.g, color.b, color.a));
+		if (points.size() > 0)
+			GL_CALL(glDrawArrays(GL_POINTS, 0, points.size()));
 	}
 
 private:

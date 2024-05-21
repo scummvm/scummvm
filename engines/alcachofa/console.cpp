@@ -24,15 +24,11 @@
 namespace Alcachofa {
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("test",   WRAP_METHOD(Console, Cmd_test));
+	registerVar("showInteractables", &_showInteractables);
+	registerVar("showFloor", &_showFloor);
 }
 
 Console::~Console() {
-}
-
-bool Console::Cmd_test(int argc, const char **argv) {
-	debugPrintf("Test\n");
-	return true;
 }
 
 } // End of namespace Alcachofa

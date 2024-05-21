@@ -51,6 +51,9 @@ void ObjectBase::toggle(bool isEnabled) {
 void ObjectBase::draw() {
 }
 
+void ObjectBase::drawDebug() {
+}
+
 void ObjectBase::update() {
 }
 

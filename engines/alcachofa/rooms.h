@@ -47,6 +47,7 @@ protected:
 	Room(World *world, Common::ReadStream &stream, bool hasUselessByte);
 	void updateObjects();
 	void drawObjects();
+	void drawDebug();
 
 	World *_world;
 	Common::String _name;
