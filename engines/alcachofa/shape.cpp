@@ -22,9 +22,30 @@
 #include "shape.h"
 #include "stream-helper.h"
 
+#include "math/line2d.h"
+
 using namespace Common;
+using namespace Math;
 
 namespace Alcachofa {
+
+static int sideOfLine(const Point &a, const Point &b, const Point &q) {
+	return (b.x - a.x) * (q.y - a.y) - (b.y - a.y) * (q.x - a.x);
+}
+
+bool Polygon::contains(const Point &query) const {
+	switch (_points.size()) {
+	case 0: return false;
+	case 1: return query == _points[0];
+	default:
+		// we assume that the polygon is convex
+		for (uint i = 1; i < _points.size(); i++) {
+			if (sideOfLine(_points[i - 1], _points[i], query) < 0)
+				return false;
+		}
+		return sideOfLine(_points[_points.size() - 1], _points[0], query) >= 0;
+	}
+}
 
 Shape::Shape() {}
 
@@ -72,6 +93,14 @@ Polygon Shape::at(uint index) const {
 	Polygon p;
 	p._points = Span<const Point>(_points.data() + range.first, range.second);
 	return p;
+}
+
+bool Shape::contains(const Point &query) const {
+	for (auto polygon : *this) {
+		if (polygon.contains(query))
+			return true;
+	}
+	return false;
 }
 
 PathFindingShape::PathFindingShape() {}
