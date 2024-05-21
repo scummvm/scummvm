@@ -63,15 +63,15 @@ void CBagQuitDialog::onInitDialog() {
 	CBofDialog::onInitDialog();
 	setReturnValue(-1);
 
-	assert(_pBackdrop != nullptr);
+	if (_pBackdrop == nullptr)
+		fatalError(ERR_UNKNOWN, "Unexpected null value found in _paBackdrop");
+
 	CBofPalette *pPal = _pBackdrop->getPalette();
 	selectPalette(pPal);
 
 	// Paint the SaveList Box onto the background
-	if (_pBackdrop != nullptr) {
-		CBofBitmap cBmp(buildSysDir("QUITDBOX.BMP"), pPal);
-		cBmp.paint(_pBackdrop, 205, 150);
-	}
+	CBofBitmap cBmp(buildSysDir("QUITDBOX.BMP"), pPal);
+	cBmp.paint(_pBackdrop, 205, 150);
 
 	// Build all our buttons
 	for (int i = 0; i < NUM_QUIT_BUTTONS; i++) {

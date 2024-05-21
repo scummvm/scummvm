@@ -31,6 +31,7 @@
 #include "bagel/boflib/sound.h"
 #include "bagel/baglib/object.h"
 #include "bagel/dialogs/save_dialog.h"
+#include "bagel/baglib/save_game_file.h"
 #include "bagel/baglib/var.h"
 
 namespace Bagel {

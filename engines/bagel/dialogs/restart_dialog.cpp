@@ -67,8 +67,9 @@ void CBagRestartDialog::onInitDialog() {
 
 	CBofDialog::onInitDialog();
 
-	assert(_pBackdrop != nullptr);
-
+	if (_pBackdrop == nullptr)
+		fatalError(ERR_UNKNOWN, "Unexpected null value found in _paBackdrop");
+	
 	// Save off the current game's palette
 	_pSavePalette = CBofApp::getApp()->getPalette();
 
@@ -77,11 +78,9 @@ void CBagRestartDialog::onInitDialog() {
 	CBofApp::getApp()->setPalette(pPal);
 
 	// Paint the SaveList Box onto the background
-	if (_pBackdrop != nullptr) {
-		pPal = _pBackdrop->getPalette();
-		CBofBitmap cBmp(buildSysDir("RESTDBOX.BMP"), pPal);
-		cBmp.paint(_pBackdrop, 181, 182);
-	}
+	pPal = _pBackdrop->getPalette();
+	CBofBitmap cBmp(buildSysDir("RESTDBOX.BMP"), pPal);
+	cBmp.paint(_pBackdrop, 181, 182);
 
 	// Build all our buttons
 	for (int i = 0; i < NUM_RESTART_BTNS; i++) {
