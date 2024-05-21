@@ -32,17 +32,17 @@
 namespace Alcachofa {
 
 struct Polygon {
-	Common::Span<Common::Point> _points;
+	Common::Span<const Common::Point> _points;
 };
 
 struct PathFindingPolygon : Polygon {
-	Common::Span<int8> _pointValues;
+	Common::Span<const int8> _pointValues;
 	int8 _polygonValue;
 };
 
 struct FloorColorPolygon : Polygon {
-	Common::Span<uint32> _pointColors;
-	Common::Span<uint8> _pointWeights;
+	Common::Span<const uint32> _pointColors;
+	Common::Span<const uint8> _pointWeights;
 	int8 _polygonValue;
 };
 
@@ -50,6 +50,7 @@ template<class TShape, typename TPolygon>
 struct PolygonIterator {
 	using difference_type = uint;
 	using value_type = TPolygon;
+	using my_type = PolygonIterator<TShape, TPolygon>;
 
 	inline value_type operator*() const {
 		return _shape.at(_index);
@@ -68,14 +69,22 @@ struct PolygonIterator {
 		return tmp;
 	}
 
+	inline bool operator==(const my_type& it) const {
+		return &this->_shape == &it._shape && this->_index == it._index;
+	}
+
+	inline bool operator!=(const my_type& it) const {
+		return &this->_shape != &it._shape || this->_index != it._index;
+	}
+	
 private:
 	friend typename Common::remove_const_t<TShape>;
-	PolygonIterator(TShape &shape, uint index = 0)
+	PolygonIterator(const TShape &shape, uint index = 0)
 		: _shape(shape)
 		, _index(index) {
 	}
 
-	TShape &_shape;
+	const TShape &_shape;
 	uint _index;
 };
 
@@ -89,10 +98,10 @@ public:
 	inline Common::Point firstPoint() const { return _points.empty() ? Common::Point() : _points[0]; }
 	inline uint polygonCount() const { return _polygons.size(); }
 	inline bool empty() const { return polygonCount() == 0; }
-	inline iterator begin() { return { *this, 0 }; }
-	inline iterator end() { return { *this, polygonCount() }; }
+	inline iterator begin() const { return { *this, 0 }; }
+	inline iterator end() const { return { *this, polygonCount() }; }
 
-	Polygon at(uint index);
+	Polygon at(uint index) const;
 
 protected:
 	uint addPolygon(uint maxCount);
@@ -122,10 +131,10 @@ public:
 	PathFindingShape();
 	PathFindingShape(Common::ReadStream &stream);
 
-	inline iterator begin() { return { *this, 0 }; }
-	inline iterator end() { return { *this, polygonCount() }; }
+	inline iterator begin() const { return { *this, 0 }; }
+	inline iterator end() const { return { *this, polygonCount() }; }
 
-	PathFindingPolygon at(uint index);
+	PathFindingPolygon at(uint index) const;
 
 private:
 	Common::Array<int8> _pointValues;
@@ -140,10 +149,10 @@ public:
 	FloorColorShape();
 	FloorColorShape(Common::ReadStream &stream);
 
-	inline iterator begin() { return { *this, 0 }; }
-	inline iterator end() { return { *this, polygonCount() }; }
+	inline iterator begin() const { return { *this, 0 }; }
+	inline iterator end() const { return { *this, polygonCount() }; }
 
-	FloorColorPolygon at(uint index);
+	FloorColorPolygon at(uint index) const;
 
 private:
 	Common::Array<uint32> _pointColors;
