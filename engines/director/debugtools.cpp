@@ -778,20 +778,20 @@ static const char *toString(ScriptType scriptType) {
 static const char *toIcon(CastType castType) {
 	static const char *castTypes[] = {
 		"",       // Empty
-		"\ue075", // Bitmap
-		"\ue062", // FilmLoop
-		"\ue0e1", // Text
-		"\ue055", // Palette
-		"\ue075", // Picture
-		"\ue0f1", // Sound
-		"\ue0cb", // Button
-		"\ue058", // Shape
-		"\ue0ee", // Movie
-		"\ue062", // DigitalVideo
-		"\ue0bc", // Script
-		"",       // RTE
-		"",       // ???
-		""};      // Transition"
+		"\ue075", // Bitmap			// image
+		"\ue062", // FilmLoop		// film
+		"\ue0e1", // Text			// type
+		"\ue055", // Palette		// droplet
+		"\ue075", // Picture		// image
+		"\ue0f1", // Sound			// volume-2
+		"\ue0cb", // Button			// square
+		"\ue058", // Shape			// edit
+		"\ue062", // Movie			// film
+		"\ue0ee", // DigitalVideo	// video
+		"\ue05d", // Script			// feather
+		"\ue060", // RTE			// file-text
+		"?",      // ???
+		"\ue00a"};// Transition		// aperture
 	if (castType < 0 || castType > kCastTransition)
 		return "";
 	return castTypes[(int)castType];
@@ -888,16 +888,16 @@ static void showCast() {
 
 	if (ImGui::Begin("Cast", &_state->_w.cast)) {
 		// display a toolbar with: grid/list/filters buttons + name filter
-		if (ImGui::Button("\ue07e")) {
+		if (ImGui::Button("\ue07e")) {	// list
 			_state->_cast._listView = true;
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("\ue06e")) {
+		if (ImGui::Button("\ue06e")) {	// grid
 			_state->_cast._listView = false;
 		}
 		ImGui::SameLine();
 
-		if (ImGui::Button("\ue063")) {
+		if (ImGui::Button("\ue063")) {	// filter
 			ImGui::OpenPopup("filters_popup");
 		}
 		ImGui::SameLine();
@@ -1053,7 +1053,7 @@ static void displayVariable(Common::String &name) {
 
 	ImDrawList *dl = ImGui::GetWindowDrawList();
 	ImVec2 pos = ImGui::GetCursorScreenPos();
-	ImVec2 eyeSize = ImGui::CalcTextSize("\ue05b ");
+	ImVec2 eyeSize = ImGui::CalcTextSize("\ue05b ");	// eye
 	ImVec2 textSize = ImGui::CalcTextSize(name.c_str());
 
 	ImGui::InvisibleButton("Line", ImVec2(textSize.x + eyeSize.x, textSize.y));
@@ -1071,7 +1071,7 @@ static void displayVariable(Common::String &name) {
 		color = disp_color_hover;
 	}
 
-	dl->AddText(pos, color, "\ue05b ");
+	dl->AddText(pos, color, "\ue05b ");	// eye
 	dl->AddText(ImVec2(pos.x + eyeSize.x, pos.y), var_color, name.c_str());
 }
 
@@ -1434,12 +1434,12 @@ static void displayScripts() {
 	ImGui::SetNextWindowSize(ImVec2(240, 240), ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Script", &_state->_functions._showScript)) {
-		if (ImGui::Button("\ue025")) { // Lingo
+		if (ImGui::Button("\ue025")) { // Lingo		// box
 			_state->_functions._showByteCode = false;
 		}
 		ImGui::SetItemTooltip("Lingo");
 		ImGui::SameLine();
-		if (ImGui::Button("\ue079")) { // Bytecode
+		if (ImGui::Button("\ue079")) { // Bytecode	// layers
 			_state->_functions._showByteCode = true;
 		}
 		ImGui::SetItemTooltip("Bytecode");
@@ -1698,8 +1698,17 @@ static void showBreakpointList() {
 	ImGui::End();
 }
 
-enum { kModeMember, kModeBehavior, kModeLocation, kModeInk, kModeBlend, kModeExtended };
+enum { kModeMember, kModeBehavior, kModeLocation, kModeInk, kModeBlend, kModeExtended,
+		kChTempo, kChPalette, kChTransition, kChSound1, kChSound2, kChScript };
 const char *modes[] = { "Member", "Behavior", "Location", "Ink", "Blend", "Extended" };
+const char *modes2[] = {
+	"\ue038", "Tempo",		// clock
+	"\ue055", "Palette",	// droplet
+	"\ue00a", "Transition",	// aperture
+	"\ue0f01","Sound 1",	// volume-1
+	"\ue0f02","Sound 2",	// volume-1
+	"\ue05d", "Script",		// feather
+};
 
 static void displayScoreChannel(int ch, int mode, int modeSel) {
 	Score *score = g_director->getCurrentMovie()->getScore();
@@ -1719,17 +1728,26 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 		ImGui::TableNextColumn();
 		ImGui::Indent();
 
-		if (modeSel != kModeExtended || mode == kModeExtended)
+		if (mode >= kChTempo) {
+			ImGui::PushFont(ImGui::GetIO().FontDefault);
+
+			ImGui::Text(modes2[(mode - kChTempo) * 2]);
+			ImGui::SetItemTooltip(modes2[(mode - kChTempo) * 2 + 1]);
+
+			ImGui::PopFont();
+		} else if (modeSel != kModeExtended || mode == kModeExtended) {
 			ImGui::Text("%3d", ch);
-		else
+		} else {
 			ImGui::Text(modes[mode]);
+		}
 
 		ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImGuiCol_TableHeaderBg));
 		ImGui::Unindent();
 	}
 
 	for (uint f = 0; f < numFrames; f++) {
-		Sprite &sprite = *score->_scoreCache[f]->_sprites[ch];
+		Frame &frame = *score->_scoreCache[f];
+		Sprite &sprite = *frame._sprites[ch];
 
 		if (f == currentFrameNum)
 			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
@@ -1768,6 +1786,36 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 			} else {
 				ImGui::Selectable("  ");
 			}
+			break;
+
+		case kChTempo:
+			if (frame._mainChannels.tempo)
+				ImGui::Text(Common::String::format("%d", frame._mainChannels.tempo).c_str());
+			break;
+
+		case kChPalette:
+			if (frame._mainChannels.palette.paletteId.member)
+				ImGui::Text(frame._mainChannels.palette.paletteId.asString().c_str());
+			break;
+
+		case kChTransition:
+			if (frame._mainChannels.transType)
+				ImGui::Text(Common::String::format("%d", frame._mainChannels.transType).c_str());
+			break;
+
+		case kChSound1:
+			if (frame._mainChannels.sound1.member)
+				ImGui::Text(Common::String::format("%d", frame._mainChannels.sound1.member).c_str());
+			break;
+
+		case kChSound2:
+			if (frame._mainChannels.sound2.member)
+				ImGui::Text(Common::String::format("%d", frame._mainChannels.sound2.member).c_str());
+			break;
+
+		case kChScript:
+			if (frame._mainChannels.actionId.member)
+				ImGui::Text(Common::String::format("%d", frame._mainChannels.actionId.member).c_str());
 			break;
 
 		case kModeExtended: // Render empty row
@@ -1856,10 +1904,10 @@ static void showScore() {
 			ImGui::BeginChild("Range", ImVec2(100.0f, 20.0f));
 
 			if (castMember) {
-				ImGui::Text("\ue033"); ImGui::SameLine();
+				ImGui::Text("\ue033"); ImGui::SameLine();	// chevrons-left
 				ImGui::Text("?"); ImGui::SameLine();
 				ImGui::SetItemTooltip("Start Frame");
-				ImGui::Text("\ue034"); ImGui::SameLine();
+				ImGui::Text("\ue034"); ImGui::SameLine();	// chevrons-right
 				ImGui::Text("?"); ImGui::SameLine();
 				ImGui::SetItemTooltip("End Frame");
 			}
@@ -1873,13 +1921,13 @@ static void showScore() {
 			ImGui::BeginChild("Flags", ImVec2(200.0f, 20.0f));
 
 			if (castMember) {
-				ImGui::Checkbox("\ue0e4", &sprite->_enabled); ImGui::SameLine();
+				ImGui::Checkbox("\ue080", &sprite->_enabled); ImGui::SameLine();	// lock
 				ImGui::SetItemTooltip("enabled");
-				ImGui::Checkbox("\ue057", &sprite->_editable); ImGui::SameLine();
+				ImGui::Checkbox("\ue057", &sprite->_editable); ImGui::SameLine();	// edit-3
 				ImGui::SetItemTooltip("editable");
-				ImGui::Checkbox("\ue096", &sprite->_moveable); ImGui::SameLine();
+				ImGui::Checkbox("\ue096", &sprite->_moveable); ImGui::SameLine();	// move
 				ImGui::SetItemTooltip("moveable");
-				ImGui::Checkbox("\ue0dd", &sprite->_trails);
+				ImGui::Checkbox("\ue0dd", &sprite->_trails);						// trending-up
 				ImGui::SetItemTooltip("trails");
 			}
 			ImGui::PopStyleColor();
@@ -2007,6 +2055,14 @@ static void showScore() {
 
 			ImGui::PopFont();
 
+			{
+				displayScoreChannel(0, kChTempo, 0);
+				displayScoreChannel(0, kChPalette, 0);
+				displayScoreChannel(0, kChTransition, 0);
+				displayScoreChannel(0, kChSound1, 0);
+				displayScoreChannel(0, kChSound2, 0);
+				displayScoreChannel(0, kChScript, 0);
+			}
 
 			int mode = _state->_scoreMode;
 
