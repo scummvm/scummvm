@@ -57,7 +57,7 @@ Common::String AlcachofaEngine::getGameId() const {
 }
 
 Common::Error AlcachofaEngine::run() {
-	setDebugger(&_console);
+	setDebugger(_console);
 	_renderer.reset(IRenderer::createOpenGLRenderer(Common::Point(1024, 768)));
 	_drawQueue.reset(new DrawQueue(_renderer.get()));
 	_world.reset(new World());
@@ -74,10 +74,15 @@ Common::Error AlcachofaEngine::run() {
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
+	g_system->showMouse(true);
+
 	Common::Event e;
 	Graphics::FrameLimiter limiter(g_system, 60);
 	while (!shouldQuit()) {
+		_input.nextFrame();
 		while (g_system->getEventManager()->pollEvent(e)) {
+			if (_input.handleEvent(e))
+				continue;
 		}
 
 		_renderer->begin();
