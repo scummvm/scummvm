@@ -1769,13 +1769,15 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 
 		ImGui::TableNextColumn();
 
-		if (f == _state->_selectedScoreCast.frame && ch == _state->_selectedScoreCast.channel)
+		if (f == _state->_selectedScoreCast.frame && ch == _state->_selectedScoreCast.channel && mode <= kModeExtended)
 			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(0.7f, 0.7f, 0.7f, 0.3f)));
 
 		switch (mode) {
 		case kModeMember:
 			if (sprite._castId.member)
 				ImGui::Selectable(Common::String::format("%d", sprite._castId.member).c_str());
+			else if (sprite.isQDShape())
+				ImGui::Selectable("Q");
 			else
 				ImGui::Selectable("  ");
 			break;
@@ -1872,19 +1874,27 @@ static void showScore() {
 		{ // Render sprite details
 			Sprite *sprite = nullptr;
 			CastMember *castMember = nullptr;
+			bool shape = false;
 
 			if (_state->_selectedScoreCast.frame != -1)
 				sprite = score->_scoreCache[_state->_selectedScoreCast.frame]->_sprites[_state->_selectedScoreCast.channel];
 
-			if (sprite)
+			if (sprite) {
 				castMember = cast->getCastMember(sprite->_castId.member, true);
+
+				shape = sprite->isQDShape();
+			}
 
 			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 			ImGui::BeginChild("Image", ImVec2(200.0f, 70.0f));
 
-			if (castMember) {
-				ImGuiImage imgID = getImageID(castMember);
-				if (imgID.id) {
+			if (castMember || shape) {
+				ImGuiImage imgID;
+
+				if (castMember)
+					imgID = getImageID(castMember);
+
+				if (castMember && imgID.id) {
 					Common::String name(getDisplayName(castMember));
 					showImage(imgID, name.c_str(), 32.f);
 				} else {
@@ -1904,10 +1914,11 @@ static void showScore() {
 			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 			ImGui::BeginChild("Ink", ImVec2(150.0f, 20.0f));
 
-			if (castMember) {
-				ImGui::Text("%s", inkType2str(sprite->_ink)); ImGui::SameLine();
+			if (castMember || shape) {
+				ImGui::Text("%s", inkType2str(sprite->_ink)); ImGui::SameLine(70);
 				ImGui::SetItemTooltip("Ink");
-				ImGui::Text("%d", sprite->_blendAmount);  ImGui::SameLine();
+				ImGui::Text("|"); ImGui::SameLine();
+				ImGui::Text("%d", sprite->_blendAmount); ImGui::SameLine();
 				ImGui::SetItemTooltip("Blend");
 			}
 			ImGui::PopStyleColor();
@@ -1918,12 +1929,12 @@ static void showScore() {
 			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 			ImGui::BeginChild("Range", ImVec2(100.0f, 20.0f));
 
-			if (castMember) {
+			if (castMember || shape) {
 				ImGui::Text("\uf816"); ImGui::SameLine();	// line_start_circle
-				ImGui::Text("?"); ImGui::SameLine();
+				ImGui::Text("  ?"); ImGui::SameLine(50);
 				ImGui::SetItemTooltip("Start Frame");
 				ImGui::Text("\uf819"); ImGui::SameLine();	// line_end_square
-				ImGui::Text("?"); ImGui::SameLine();
+				ImGui::Text("  ?"); ImGui::SameLine();
 				ImGui::SetItemTooltip("End Frame");
 			}
 
@@ -1935,7 +1946,7 @@ static void showScore() {
 			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 			ImGui::BeginChild("Flags", ImVec2(200.0f, 20.0f));
 
-			if (castMember) {
+			if (castMember || shape) {
 				ImGui::Checkbox("\ue897", &sprite->_enabled); ImGui::SameLine();	// lock
 				ImGui::SetItemTooltip("enabled");
 				ImGui::Checkbox("\ue745", &sprite->_editable); ImGui::SameLine();	// edit_note
@@ -1949,9 +1960,9 @@ static void showScore() {
 			ImGui::EndChild();
 
 			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
-			ImGui::BeginChild("Colors", ImVec2(150.0f, 40.0f));
+			ImGui::BeginChild("Colors", ImVec2(150.0f, 50.0f));
 
-			if (castMember) {
+			if (castMember || shape) {
 				ImVec4 fg = convertColor(sprite->_foreColor);
 
 				ImGui::ColorButton("foreColor", fg); ImGui::SameLine();
@@ -1969,18 +1980,18 @@ static void showScore() {
 			ImGui::SameLine();
 
 			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
-			ImGui::BeginChild("Coordinates", ImVec2(150.0f, 40.0f));
+			ImGui::BeginChild("Coordinates", ImVec2(150.0f, 50.0f));
 
-			if (castMember) {
+			if (castMember || shape) {
 				ImGui::Text("X:"); ImGui::SameLine();
-				ImGui::Text("%d", sprite->_startPoint.x); ImGui::SameLine();
+				ImGui::Text("%d", sprite->_startPoint.x); ImGui::SameLine(75);
 				ImGui::SetItemTooltip("Reg Point Horizontal");
 				ImGui::Text("W:"); ImGui::SameLine();
 				ImGui::Text("%d", sprite->getWidth());
 				ImGui::SetItemTooltip("Width");
 
 				ImGui::Text("Y:"); ImGui::SameLine();
-				ImGui::Text("%d", sprite->_startPoint.y); ImGui::SameLine();
+				ImGui::Text("%d", sprite->_startPoint.y); ImGui::SameLine(75);
 				ImGui::SetItemTooltip("Reg Point Vertical");
 				ImGui::Text("H:"); ImGui::SameLine();
 				ImGui::Text("%d", sprite->getHeight()); ImGui::SameLine();
@@ -1992,20 +2003,20 @@ static void showScore() {
 			ImGui::SameLine();
 
 			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
-			ImGui::BeginChild("Bbox", ImVec2(150.0f, 40.0f));
+			ImGui::BeginChild("Bbox", ImVec2(150.0f, 50.0f));
 
-			if (castMember) {
+			if (castMember || shape) {
 				const Common::Rect &box = sprite->getBbox(true);
 
 				ImGui::Text("l:"); ImGui::SameLine();
-				ImGui::Text("%d", box.left); ImGui::SameLine();
+				ImGui::Text("%d", box.left); ImGui::SameLine(75);
 				ImGui::SetItemTooltip("Left");
 				ImGui::Text("r:"); ImGui::SameLine();
 				ImGui::Text("%d", box.right);
 				ImGui::SetItemTooltip("Right");
 
 				ImGui::Text("t:"); ImGui::SameLine();
-				ImGui::Text("%d", box.top); ImGui::SameLine();
+				ImGui::Text("%d", box.top); ImGui::SameLine(75);
 				ImGui::SetItemTooltip("Top");
 				ImGui::Text("b:"); ImGui::SameLine();
 				ImGui::Text("%d", box.bottom);
@@ -2027,7 +2038,7 @@ static void showScore() {
 					ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY | addonFlags)) {
 			ImGuiTableFlags flags = ImGuiTableColumnFlags_WidthFixed;
 
-			ImGui::TableSetupScrollFreeze(1, 1);
+			ImGui::TableSetupScrollFreeze(1, 2);
 
 			ImGui::PushFont(_state->_tinyFont);
 
@@ -2078,6 +2089,7 @@ static void showScore() {
 				displayScoreChannel(0, kChSound2, 0);
 				displayScoreChannel(0, kChScript, 0);
 			}
+			ImGui::TableNextRow();
 
 			int mode = _state->_scoreMode;
 
