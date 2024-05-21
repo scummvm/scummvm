@@ -120,7 +120,7 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 	case kSceneOpEnableTrigger: return "enabletrigger";
 	case kSceneOpChangeSceneToStored: return "changeSceneToStored";
 	case kSceneOpMoveItemsBetweenScenes: return "moveItemsBetweenScenes";
-	case kSceneOpLeaveSceneAndOpenInventory:   return "leaveSceneOpenInventory";
+	case kSceneOpOpenInventoryZoom:   return "openInventoryZoom";
 	case kSceneOpShowClock:		return "sceneOpShowClock";
 	case kSceneOpHideClock:		return "sceneOpHideClock";
 	case kSceneOpShowMouse:		return "sceneOpShowMouse";
@@ -532,10 +532,9 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 *
 				return false;
 			break;
 		}
-		case kSceneOpLeaveSceneAndOpenInventory:
+		case kSceneOpOpenInventoryZoom:
+			engine->getInventory()->setShowZoomBox(true);
 			engine->getInventory()->open();
-			// This implicitly changes scene num
-			warning("TODO: Check leave scene and open inventory scene op");
 			return false;
 		case kSceneOpMoveItemsBetweenScenes: {
 			int16 fromScene = engine->getGameGlobals()->getGlobal(0x55);
@@ -1021,7 +1020,7 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 
 	if (area && area->_num == 0) {
 		debug("Mouseup on inventory.");
-		static_cast<DgdsEngine *>(g_engine)->getInventory()->open();
+		engine->getInventory()->open();
 	} else {
 		debug(" --> exec %d click ops for area %d", area->onLClickOps.size(), area->_num);
 		int16 addmins = static_cast<DragonGlobals *>(engine->getGameGlobals())->getGameMinsToAddOnLClick();
@@ -1102,6 +1101,14 @@ void SDSScene::mouseRUp(const Common::Point &pt) {
 		return;
 
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+
+	if (area->_num == 0) {
+		debug("Right mouseup on inventory.");
+		engine->getInventory()->setShowZoomBox(true);
+		engine->getInventory()->open();
+		return;
+	}
+
 	int16 addmins = static_cast<DragonGlobals *>(engine->getGameGlobals())->getGameMinsToAddOnLClick();
 	runOps(area->onRClickOps, addmins);
 }

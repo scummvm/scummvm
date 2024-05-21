@@ -40,7 +40,7 @@ public:
 	bool isOpen() const { return _isOpen; }
 	void open();
 	void close();
-	void draw(Graphics::ManagedSurface &surf, int itemCount, bool isRestarting = false);
+	void draw(Graphics::ManagedSurface &surf, int itemCount);
 	void drawItems(Graphics::ManagedSurface &surf);
 	void drawTime(Graphics::ManagedSurface &surf);
 	void drawHeader(Graphics::ManagedSurface &surf);
@@ -51,6 +51,7 @@ public:
 	void mouseRUp(const Common::Point &pt);
 
 	void setRequestData(const REQFileData &data);
+	void setShowZoomBox(bool val) { _showZoomBox = val; }
 
 	Common::Error syncState(Common::Serializer &s);
 
@@ -59,6 +60,7 @@ private:
 
 	uint16 _openedFromSceneNum;
 
+	bool _showZoomBox;
 	bool _isOpen;
 	ButtonGadget *_prevPageBtn;
 	ButtonGadget *_nextPageBtn;
@@ -74,6 +76,7 @@ private:
 	REQFileData _reqData;
 	int _highlightItemNo;	// -1 means no item highlighted.
 	int _itemOffset;  		// for scrolling through the item list
+	int _fullWidth;  		// width of the box including zoom
 };
 
 } // end namespace Dgds

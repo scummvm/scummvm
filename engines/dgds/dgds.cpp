@@ -168,6 +168,7 @@ bool DgdsEngine::changeScene(int sceneNum) {
 		setMouseCursor(0);
 
 	_foregroundBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+	_storedAreaBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 
 	_scene->load(sceneFile, _resource, _decompressor);
 	// These are done inside the load function in the original.. cleaner here..
@@ -456,14 +457,15 @@ Common::Error DgdsEngine::run() {
 
 			// Now we start to assemble the rendered scene.
 			_compositionBuffer.blitFrom(_backgroundBuffer);
-			_compositionBuffer.transBlitFrom(_storedAreaBuffer);
 
 			if (_inventory->isOpen()) {
 				int invCount = _gdsScene->countItemsInScene2();
 				_inventory->draw(_compositionBuffer, invCount);
 			}
 
+			_compositionBuffer.transBlitFrom(_storedAreaBuffer);
 			_compositionBuffer.transBlitFrom(_foregroundBuffer);
+
 			/* For debugging, dump the frame contents..
 			{
 				Common::DumpFile outf;

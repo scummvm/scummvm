@@ -259,13 +259,16 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 	case 0x0020: // SAVE (free?) BACKGROUND
 		if (seq._executed) // this is a one-shot op
 			break;
-		_vm->getStoredAreaBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		warning("TODO: Implement me: op 0x0020 save/free background?");
+		//_vm->getStoredAreaBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		//_vm->getBackgroundBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		_vm->getBackgroundBuffer().transBlitFrom(_vm->getStoredAreaBuffer());
+		_vm->getBackgroundBuffer().transBlitFrom(_vm->getForegroundBuffer());
 		break;
 	case 0x0070: // FREE PALETTE
 		if (seq._executed) // this is a one-shot op
 			break;
-		warning("TODO: Implement me: free palette (current pal)");
+		warning("TODO: Implement me: op 0x0070 free palette (current pal)");
 		seq._currentPalId = 0;
 		break;
 	case 0x0080: // FREE SHAPE

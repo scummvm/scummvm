@@ -33,7 +33,7 @@ namespace Dgds {
 Inventory::Inventory() : _isOpen(false), _prevPageBtn(nullptr), _nextPageBtn(nullptr),
 	_invClock(nullptr), _itemZoomBox(nullptr), _exitButton(nullptr), _clockSkipMinBtn(nullptr),
 	_itemArea(nullptr), _clockSkipHrBtn(nullptr), _dropBtn(nullptr), _highlightItemNo(-1),
-	_itemOffset(0), _openedFromSceneNum(-1)
+	_itemOffset(0), _openedFromSceneNum(-1), _showZoomBox(false), _fullWidth(-1)
 {
 }
 
@@ -46,8 +46,9 @@ void Inventory::open() {
 	if (curScene != 2) {
 		_openedFromSceneNum = curScene;
 		engine->changeScene(2);
+	} else {
+		engine->getScene()->runEnterSceneOps();
 	}
-	engine->getScene()->runEnterSceneOps();
 }
 
 void Inventory::close() {
@@ -56,24 +57,27 @@ void Inventory::close() {
 	_isOpen = false;
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	engine->changeScene(_openedFromSceneNum);
+	_showZoomBox = false;
 	_openedFromSceneNum = -1;
 }
 
 void Inventory::setRequestData(const REQFileData &data) {
 	_reqData = data;
 	assert(_reqData._requests.size() > 0);
-	RequestData *req = _reqData._requests.data();
-	_prevPageBtn = dynamic_cast<ButtonGadget *>(req->findGadgetByNumWithFlags3Not0x40(14));
-	_nextPageBtn = dynamic_cast<ButtonGadget *>(req->findGadgetByNumWithFlags3Not0x40(15));
-	_invClock = dynamic_cast<TextAreaGadget *>(req->findGadgetByNumWithFlags3Not0x40(23));
-	_itemBox = req->findGadgetByNumWithFlags3Not0x40(8);
-	_itemZoomBox = req->findGadgetByNumWithFlags3Not0x40(9);
-	_exitButton = dynamic_cast<ButtonGadget *>(req->findGadgetByNumWithFlags3Not0x40(17));
+	RequestData &req = _reqData._requests[0];
+	_prevPageBtn = dynamic_cast<ButtonGadget *>(req.findGadgetByNumWithFlags3Not0x40(14));
+	_nextPageBtn = dynamic_cast<ButtonGadget *>(req.findGadgetByNumWithFlags3Not0x40(15));
+	_invClock = dynamic_cast<TextAreaGadget *>(req.findGadgetByNumWithFlags3Not0x40(23));
+	_itemBox = req.findGadgetByNumWithFlags3Not0x40(8);
+	_itemZoomBox = req.findGadgetByNumWithFlags3Not0x40(9);
+	_exitButton = dynamic_cast<ButtonGadget *>(req.findGadgetByNumWithFlags3Not0x40(17));
 
-	_clockSkipMinBtn = dynamic_cast<ButtonGadget *>(req->findGadgetByNumWithFlags3Not0x40(24));
-	_clockSkipHrBtn = dynamic_cast<ButtonGadget *>(req->findGadgetByNumWithFlags3Not0x40(25));
-	_dropBtn = dynamic_cast<ButtonGadget *>(req->findGadgetByNumWithFlags3Not0x40(16));
-	_itemArea = dynamic_cast<ImageGadget *>(_reqData._requests[0].findGadgetByNumWithFlags3Not0x40(8));
+	_clockSkipMinBtn = dynamic_cast<ButtonGadget *>(req.findGadgetByNumWithFlags3Not0x40(24));
+	_clockSkipHrBtn = dynamic_cast<ButtonGadget *>(req.findGadgetByNumWithFlags3Not0x40(25));
+	_dropBtn = dynamic_cast<ButtonGadget *>(req.findGadgetByNumWithFlags3Not0x40(16));
+	_itemArea = dynamic_cast<ImageGadget *>(req.findGadgetByNumWithFlags3Not0x40(8));
+
+	_fullWidth = req._width;
 
 	if (!_prevPageBtn || !_nextPageBtn || !_invClock || !_itemZoomBox || !_exitButton || !_itemArea)
 		error("Didn't get all expected inventory gadgets");
@@ -98,15 +102,17 @@ void Inventory::drawHeader(Graphics::ManagedSurface &surf) {
 	surf.drawLine(x1 + 1, y2, x1 + titleWidth + 5, y2, 0xff);
 }
 
-void Inventory::draw(Graphics::ManagedSurface &surf, int itemCount, bool isRestarting) {
+void Inventory::draw(Graphics::ManagedSurface &surf, int itemCount) {
 	//DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	//_if (engine->getScene()->getNum() == 2)
-	//	return;
 
-	if (isRestarting) {
-		warning("TODO: Handle inventory redraw on restart");
+	RequestData &boxreq = _reqData._requests[0];
+
+	if (_showZoomBox) {
+		_itemZoomBox->_flags3 &= ~0x40;
+		boxreq._width = _fullWidth;
 	} else {
-		_itemZoomBox->_flags3 &= 0x40;
+		_itemZoomBox->_flags3 |= 0x40;
+		boxreq._width = _itemBox->_width + _itemBox->_x * 2;
 	}
 
 	//
@@ -122,7 +128,8 @@ void Inventory::draw(Graphics::ManagedSurface &surf, int itemCount, bool isResta
 		_prevPageBtn->_flags3 &= ~0x40;
 		_nextPageBtn->_flags3 &= ~0x40;
 	}
-	_reqData._requests[0].drawInvType(&surf);
+
+	boxreq.drawInvType(&surf);
 
 	drawHeader(surf);
 	drawTime(surf);
@@ -251,7 +258,9 @@ GameItem *Inventory::itemUnderMouse(const Common::Point &pt) {
 
 void Inventory::mouseLDown(const Common::Point &pt) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	if (_itemBox->containsPoint(pt)) {
+	if (engine->getScene()->hasVisibleDialog() || !_itemBox->containsPoint(pt)) {
+		return engine->getScene()->mouseLDown(pt);
+	} else {
 		GameItem *underMouse = itemUnderMouse(pt);
 		if (underMouse) {
 			_highlightItemNo = underMouse->_num;
@@ -260,8 +269,6 @@ void Inventory::mouseLDown(const Common::Point &pt) {
 			if (underMouse->_iconNum)
 				engine->setMouseCursor(underMouse->_iconNum);
 		}
-	} else {
-		return engine->getScene()->mouseLDown(pt);
 	}
 }
 
