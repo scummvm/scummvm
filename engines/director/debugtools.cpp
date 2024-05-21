@@ -820,20 +820,20 @@ static const char *toString(ScriptType scriptType) {
 static const char *toIcon(CastType castType) {
 	static const char *castTypes[] = {
 		"",       // Empty
-		"\ue075", // Bitmap			// image
-		"\ue062", // FilmLoop		// film
-		"\ue0e1", // Text			// type
-		"\ue055", // Palette		// droplet
-		"\ue075", // Picture		// image
-		"\ue0f1", // Sound			// volume-2
-		"\ue0cb", // Button			// square
-		"\ue058", // Shape			// edit
-		"\ue062", // Movie			// film
-		"\ue0ee", // DigitalVideo	// video
-		"\ue05d", // Script			// feather
-		"\ue060", // RTE			// file-text
+		"\uf79e", // Bitmap			// backround_dot_large
+		"\ue8da", // FilmLoop		// theaters
+		"\uf6f1", // Text			// match_case
+		"\ue40a", // Palette		// palette
+		"\uefa2", // Picture		// imagesmode
+		"\ue050", // Sound			// volume_up
+		"\uf4ab", // Button			// slab_serif
+		"\ue602", // Shape			// shapes
+		"\ue02c", // Movie			// movie
+		"\uf49a", // DigitalVideo	// animated_images
+		"\uf0c8", // Script			// forms_apps_script
+		"\uf4f1", // RTE			// brand_family
 		"?",      // ???
-		"\ue00a"};// Transition		// aperture
+		"\uf50c"};// Transition		// transition_fade
 	if (castType < 0 || castType > kCastTransition)
 		return "";
 	return castTypes[(int)castType];
@@ -930,16 +930,16 @@ static void showCast() {
 
 	if (ImGui::Begin("Cast", &_state->_w.cast)) {
 		// display a toolbar with: grid/list/filters buttons + name filter
-		if (ImGui::Button("\ue07e")) {	// list
+		if (ImGui::Button("\ue896")) {	// list
 			_state->_cast._listView = true;
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("\ue06e")) {	// grid
+		if (ImGui::Button("\ue9b0")) {	// grid_view
 			_state->_cast._listView = false;
 		}
 		ImGui::SameLine();
 
-		if (ImGui::Button("\ue063")) {	// filter
+		if (ImGui::Button("\uef4f")) {	// filter_alt
 			ImGui::OpenPopup("filters_popup");
 		}
 		ImGui::SameLine();
@@ -1095,7 +1095,7 @@ static void displayVariable(Common::String &name) {
 
 	ImDrawList *dl = ImGui::GetWindowDrawList();
 	ImVec2 pos = ImGui::GetCursorScreenPos();
-	ImVec2 eyeSize = ImGui::CalcTextSize("\ue05b ");	// eye
+	ImVec2 eyeSize = ImGui::CalcTextSize("\ue8f4 ");	// visibility
 	ImVec2 textSize = ImGui::CalcTextSize(name.c_str());
 
 	ImGui::InvisibleButton("Line", ImVec2(textSize.x + eyeSize.x, textSize.y));
@@ -1113,7 +1113,7 @@ static void displayVariable(Common::String &name) {
 		color = disp_color_hover;
 	}
 
-	dl->AddText(pos, color, "\ue05b ");	// eye
+	dl->AddText(pos, color, "\ue8f4 ");	// visibility
 	dl->AddText(ImVec2(pos.x + eyeSize.x, pos.y), var_color, name.c_str());
 }
 
@@ -1458,12 +1458,12 @@ static void displayScripts() {
 	ImGui::SetNextWindowSize(ImVec2(240, 240), ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Script", &_state->_functions._showScript)) {
-		if (ImGui::Button("\ue025")) { // Lingo		// box
+		if (ImGui::Button("\uf569")) { // Lingo		// package_2
 			_state->_functions._showByteCode = false;
 		}
 		ImGui::SetItemTooltip("Lingo");
 		ImGui::SameLine();
-		if (ImGui::Button("\ue079")) { // Bytecode	// layers
+		if (ImGui::Button("\uf500")) { // Bytecode	// stacks
 			_state->_functions._showByteCode = true;
 		}
 		ImGui::SetItemTooltip("Bytecode");
@@ -1717,12 +1717,12 @@ enum { kModeMember, kModeBehavior, kModeLocation, kModeInk, kModeBlend, kModeExt
 		kChTempo, kChPalette, kChTransition, kChSound1, kChSound2, kChScript };
 const char *modes[] = { "Member", "Behavior", "Location", "Ink", "Blend", "Extended" };
 const char *modes2[] = {
-	"\ue038", "Tempo",		// clock
-	"\ue055", "Palette",	// droplet
-	"\ue00a", "Transition",	// aperture
-	"\ue0f01","Sound 1",	// volume-1
-	"\ue0f02","Sound 2",	// volume-1
-	"\ue05d", "Script",		// feather
+	"\ue425", "Tempo",		// timer
+	"\ue40a", "Palette",	// palette
+	"\uf50c", "Transition",	// transition_fade
+	"\ue0501","Sound 1",	// volume_up
+	"\ue0502","Sound 2",	// volume_up
+	"\uf0c8", "Script",		// forms_apps_script
 };
 
 static void displayScoreChannel(int ch, int mode, int modeSel) {
@@ -1919,10 +1919,10 @@ static void showScore() {
 			ImGui::BeginChild("Range", ImVec2(100.0f, 20.0f));
 
 			if (castMember) {
-				ImGui::Text("\ue033"); ImGui::SameLine();	// chevrons-left
+				ImGui::Text("\uf816"); ImGui::SameLine();	// line_start_circle
 				ImGui::Text("?"); ImGui::SameLine();
 				ImGui::SetItemTooltip("Start Frame");
-				ImGui::Text("\ue034"); ImGui::SameLine();	// chevrons-right
+				ImGui::Text("\uf819"); ImGui::SameLine();	// line_end_square
 				ImGui::Text("?"); ImGui::SameLine();
 				ImGui::SetItemTooltip("End Frame");
 			}
@@ -1936,13 +1936,13 @@ static void showScore() {
 			ImGui::BeginChild("Flags", ImVec2(200.0f, 20.0f));
 
 			if (castMember) {
-				ImGui::Checkbox("\ue080", &sprite->_enabled); ImGui::SameLine();	// lock
+				ImGui::Checkbox("\ue897", &sprite->_enabled); ImGui::SameLine();	// lock
 				ImGui::SetItemTooltip("enabled");
-				ImGui::Checkbox("\ue057", &sprite->_editable); ImGui::SameLine();	// edit-3
+				ImGui::Checkbox("\ue745", &sprite->_editable); ImGui::SameLine();	// edit_note
 				ImGui::SetItemTooltip("editable");
-				ImGui::Checkbox("\ue096", &sprite->_moveable); ImGui::SameLine();	// move
+				ImGui::Checkbox("\uf712", &sprite->_moveable); ImGui::SameLine();	// move_selection_right
 				ImGui::SetItemTooltip("moveable");
-				ImGui::Checkbox("\ue0dd", &sprite->_trails);						// trending-up
+				ImGui::Checkbox("\uea14", &sprite->_trails);						// dynamic_feed
 				ImGui::SetItemTooltip("trails");
 			}
 			ImGui::PopStyleColor();
@@ -2115,10 +2115,10 @@ void onImGuiInit() {
 	icons_config.PixelSnapH = false;
 	icons_config.OversampleH = 3;
 	icons_config.OversampleV = 3;
-	icons_config.GlyphOffset = {0, 3};
+	icons_config.GlyphOffset = {0, 5};
 
 	static const ImWchar icons_ranges[] = {0xE000, 0xF8FF, 0};
-	ImGui::addTTFFontFromArchive("OpenFontIcons.ttf", 13.f, &icons_config, icons_ranges);
+	ImGui::addTTFFontFromArchive("MaterialIcons-Regular.ttf", 16.f, &icons_config, icons_ranges);
 
 	_state = new ImGuiState();
 
