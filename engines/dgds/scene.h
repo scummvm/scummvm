@@ -85,7 +85,7 @@ enum SceneOpCode {
 	kSceneOpEnableTrigger = 11,	// args: trigger num
 	kSceneOpChangeSceneToStored = 12,	// args: none. Change scene to stored number
 	kSceneOp13 = 13,			// args: none.
-	kSceneOpLeaveSceneAndOpenInventory = 14,	// args: none.
+	kSceneOpOpenInventoryZoom = 14,	// args: none.
 	kSceneOpMoveItemsBetweenScenes = 15,	// args: none.
 	kSceneOpShowClock = 16,		// args: none.  set some clock-related globals
 	kSceneOpHideClock = 17,		// args: none.  set some clock-related values.
