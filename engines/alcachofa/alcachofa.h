@@ -36,6 +36,7 @@
 
 #include "alcachofa/detection.h"
 #include "alcachofa/camera.h"
+#include "alcachofa/console.h"
 
 namespace Alcachofa {
 
@@ -59,6 +60,7 @@ public:
 	inline DrawQueue &drawQueue() { return *_drawQueue; }
 	inline Camera &camera() { return _camera; }
 	inline World &world() { return *_world; }
+	inline Console &console() { return _console; }
 
 	uint32 getFeatures() const;
 
@@ -108,6 +110,7 @@ private:
 	Common::ScopedPtr<DrawQueue> _drawQueue;
 	Common::ScopedPtr<World> _world;
 	Camera _camera;
+	Console _console;
 };
 
 extern AlcachofaEngine *g_engine;

@@ -22,6 +22,7 @@
 #include "graphics.h"
 #include "stream-helper.h"
 #include "alcachofa.h"
+#include "shape.h"
 
 #include "common/system.h"
 #include "common/file.h"
@@ -36,6 +37,22 @@ using namespace Graphics;
 namespace Alcachofa {
 
 ITexture::ITexture(Point size) : _size(size) {}
+
+void IDebugRenderer::debugShape(const Shape &shape, Color color) {
+	constexpr uint kMaxPoints = 16;
+	Vector2d points2d[kMaxPoints];
+	for (auto polygon : shape) {
+		// I don't think this will happen but let's be sure
+		assert(polygon._points.size() <= kMaxPoints);
+		for (uint i = 0; i < polygon._points.size(); i++) {
+			const auto p3d = polygon._points[i];
+			const auto p2d = g_engine->camera().transform3Dto2D(Vector3d(p3d.x, p3d.y, kBaseScale));
+			points2d[i] = Vector2d(p2d.x(), p2d.y());
+		}
+
+		debugPolygon({ points2d, polygon._points.size() }, color);
+	}
+}
 
 AnimationBase::AnimationBase(String fileName, AnimationFolder folder)
 	: _fileName(move(fileName))

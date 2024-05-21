@@ -22,8 +22,10 @@
 #include "objects.h"
 #include "rooms.h"
 #include "stream-helper.h"
+#include "alcachofa.h"
 
 using namespace Common;
+using namespace Math;
 
 namespace Alcachofa {
 
@@ -38,6 +40,14 @@ InteractableObject::InteractableObject(Room *room, ReadStream &stream)
 	, _cursorType((CursorType)stream.readSint32LE())
 	, _relatedObject(readVarString(stream)) {
 	_relatedObject.toUppercase();
+}
+
+void InteractableObject::drawDebug() {
+	auto renderer = dynamic_cast<IDebugRenderer *>(&g_engine->renderer());
+	if (!g_engine->console().showInteractables() || renderer == nullptr || !isEnabled())
+		return;
+
+	renderer->debugShape(*shape());
 }
 
 Door::Door(Room *room, ReadStream &stream)
