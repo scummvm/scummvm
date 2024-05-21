@@ -121,6 +121,8 @@ typedef struct ImGuiState {
 	} _selectedScoreCast;
 
 	int _scoreMode = 0;
+
+	ImFont *_tinyFont = nullptr;
 } ImGuiState;
 
 ImGuiState *_state = nullptr;
@@ -1708,6 +1710,8 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 
 	ImGui::TableNextRow();
 
+	ImGui::PushFont(_state->_tinyFont);
+
 	if (modeSel == kModeExtended && mode == kModeExtended)
 		ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, ImGui::GetColorU32(ImGuiCol_TableRowBgAlt));
 
@@ -1776,6 +1780,8 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 			_state->_selectedScoreCast.channel = ch;
 		}
 	}
+
+	ImGui::PopFont();
 }
 
 static void showScore() {
@@ -1960,6 +1966,8 @@ static void showScore() {
 
 			ImGui::TableSetupScrollFreeze(1, 1);
 
+			ImGui::PushFont(_state->_tinyFont);
+
 			ImGui::TableSetupColumn("##", flags);
 			for (uint i = 0; i < tableColumns; i++)
 				ImGui::TableSetupColumn(((i + 1) % 5 ? " " : Common::String::format("%-2d", i + 1).c_str()), flags);
@@ -1992,12 +2000,13 @@ static void showScore() {
 			for (uint i = 0; i < tableColumns; i++) {
 				ImGui::TableSetColumnIndex(i + 1);
 				const char *column_name = ImGui::TableGetColumnName(i + 1);
-				ImGui::PushID(i + 1);
 
 				ImGui::SetNextItemWidth(20);
 				ImGui::TableHeader(column_name);
-				ImGui::PopID();
 			}
+
+			ImGui::PopFont();
+
 
 			int mode = _state->_scoreMode;
 
@@ -2041,6 +2050,8 @@ void onImGuiInit() {
 	ImGui::addTTFFontFromArchive("OpenFontIcons.ttf", 13.f, &icons_config, icons_ranges);
 
 	_state = new ImGuiState();
+
+	_state->_tinyFont = ImGui::addTTFFontFromArchive("FreeSans.ttf", 10.0f, nullptr, nullptr);
 }
 
 void onImGuiRender() {
@@ -2110,6 +2121,9 @@ void onImGuiRender() {
 }
 
 void onImGuiCleanup() {
+	if (_state)
+		delete _state->_tinyFont;
+
 	delete _state;
 	_state = nullptr;
 }
