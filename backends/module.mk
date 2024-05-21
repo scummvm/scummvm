@@ -494,7 +494,8 @@ MODULE_OBJS += \
 	imgui/imgui_draw.o \
 	imgui/imgui_fonts.o \
 	imgui/imgui_tables.o \
-	imgui/imgui_widgets.o
+	imgui/imgui_widgets.o \
+	imgui/misc/freetype/imgui_freetype.o
 endif
 
 ifdef USE_SDL2
