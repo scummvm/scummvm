@@ -1867,30 +1867,36 @@ static void showScore() {
 		}
 
 		uint numChannels = score->_scoreCache[0]->_sprites.size();
-		uint tableColumns = MAX(numFrames, 25U); // Set minimal table width to 25
+		uint tableColumns = MAX(numFrames + 5, 25U); // Set minimal table width to 25
 
 		uint currentFrameNum = score->getCurrentFrameNum();
 		ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.7f, 0.7f, 0.0f, 0.65f));
 
 		if (ImGui::BeginTable("Score", tableColumns + 1,
-					ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedSame |
+					ImGuiTableFlags_Borders | ImGuiTableFlags_HighlightHoveredColumn |
 					ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg)) {
 			ImGuiTableFlags flags = ImGuiTableColumnFlags_WidthFixed;
 
+			ImGui::TableSetupScrollFreeze(1, 1);
+
 			ImGui::TableSetupColumn("##", flags);
 			for (uint i = 0; i < tableColumns; i++)
-				ImGui::TableSetupColumn(Common::String::format("%-2d", i + 1).c_str(), flags);
+				ImGui::TableSetupColumn(((i + 1) % 5 ? " " : Common::String::format("%-2d", i + 1).c_str()), flags);
 
 			ImGui::TableNextRow(ImGuiTableRowFlags_Headers);
 			ImGui::TableNextRow(0);
+
+			ImGui::TableSetColumnIndex(0);
 			ImGui::PushID(0);
+
+			ImGui::SetNextItemWidth(50);
 
 			const char *modes[] = { "Member", "Behavior", "Location", "Ink", "Blend", "Extended" };
 			enum { kModeMember, kModeBehavior, kModeLocation, kModeInk, kModeBlend, kModeExtended };
 
 			const char *selMode = modes[_state->_scoreMode];
 
-			if (ImGui::BeginCombo("modeCombo", selMode)) {
+			if (ImGui::BeginCombo("##", selMode)) {
 				for (int n = 0; n < ARRAYSIZE(modes); n++) {
 					const bool selected = (_state->_scoreMode == n);
 					if (ImGui::Selectable(modes[n], selected))
@@ -1909,16 +1915,18 @@ static void showScore() {
 				ImGui::TableSetColumnIndex(i + 1);
 				const char *column_name = ImGui::TableGetColumnName(i + 1);
 				ImGui::PushID(i + 1);
+
+				ImGui::SetNextItemWidth(20);
 				ImGui::TableHeader(column_name);
 				ImGui::PopID();
 			}
 
-			//ImGui::TableHeadersRow();
 			for (int ch = 0; ch < (int)numChannels - 1; ch++) {
 				ImGui::TableNextRow();
 
 				ImGui::TableNextColumn();
 				ImGui::Text("%-3d", ch + 1);
+				ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImGuiCol_TableHeaderBg));
 
 				for (uint f = 0; f < numFrames; f++) {
 					Sprite &sprite = *score->_scoreCache[f]->_sprites[ch + 1];
@@ -1931,13 +1939,14 @@ static void showScore() {
 					if (f == _state->_selectedScoreCast.frame && ch == _state->_selectedScoreCast.channel - 1)
 						ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(0.7f, 0.7f, 0.7f, 0.3f)));
 
-					if (sprite._castId.member) {
+					if (sprite._castId.member)
 						ImGui::Text("%d", sprite._castId.member);
+					else
+						ImGui::Text("  ");
 
-						if (ImGui::IsItemClicked(0)) {
-							_state->_selectedScoreCast.frame = f;
-							_state->_selectedScoreCast.channel = ch + 1;
-						}
+					if (ImGui::IsItemClicked(0)) {
+						_state->_selectedScoreCast.frame = f;
+						_state->_selectedScoreCast.channel = ch + 1;
 					}
 				}
 			}
