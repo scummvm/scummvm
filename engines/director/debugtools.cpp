@@ -1708,6 +1708,9 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 
 	ImGui::TableNextRow();
 
+	if (modeSel == kModeExtended && mode == kModeExtended)
+		ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, ImGui::GetColorU32(ImGuiCol_TableRowBgAlt));
+
 	{
 		ImGui::TableNextColumn();
 		ImGui::Indent();
@@ -1729,7 +1732,7 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 
 		ImGui::TableNextColumn();
 
-		if (f == _state->_selectedScoreCast.frame && ch == _state->_selectedScoreCast.channel - 1)
+		if (f == _state->_selectedScoreCast.frame && ch == _state->_selectedScoreCast.channel)
 			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(0.7f, 0.7f, 0.7f, 0.3f)));
 
 		switch (mode) {
@@ -1740,11 +1743,25 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 				ImGui::Text("  ");
 			break;
 
+		case kModeInk:
+			ImGui::Text("%s", inkType2str(sprite._ink));
+			break;
+
 		case kModeLocation:
-			if (sprite._castId.member)
-				ImGui::Text("%d, %d", sprite._startPoint.x, sprite._startPoint.y);
-			else
-				ImGui::Text("  ");
+			ImGui::Text("%d, %d", sprite._startPoint.x, sprite._startPoint.y);
+			break;
+
+		case kModeBlend:
+			ImGui::Text("%d", sprite._blendAmount);
+			break;
+
+		case kModeBehavior:
+			if (sprite._scriptId.member) {
+				ImGui::TextColored(ImVec4(0.5f, 0.5f, 1.0f, 1.0f), "%s", sprite._scriptId.asString().c_str());
+
+				if (ImGui::IsItemClicked(0))
+					addScriptCastToDisplay(sprite._scriptId);
+			}
 			break;
 
 		case kModeExtended: // Render empty row
@@ -1819,7 +1836,7 @@ static void showScore() {
 			if (castMember) {
 				ImGui::Text("%s", inkType2str(sprite->_ink)); ImGui::SameLine();
 				ImGui::SetItemTooltip("Ink");
-				ImGui::Text("0x%x", sprite->_blendAmount);  ImGui::SameLine();
+				ImGui::Text("%d", sprite->_blendAmount);  ImGui::SameLine();
 				ImGui::SetItemTooltip("Blend");
 			}
 			ImGui::PopStyleColor();
@@ -1932,9 +1949,11 @@ static void showScore() {
 		uint numChannels = score->_scoreCache[0]->_sprites.size();
 		uint tableColumns = MAX(numFrames + 5, 25U); // Set minimal table width to 25
 
+		ImGuiTableFlags addonFlags = _state->_scoreMode == kModeExtended ? 0 : ImGuiTableFlags_RowBg;
+
 		if (ImGui::BeginTable("Score", tableColumns + 1,
 					ImGuiTableFlags_Borders | ImGuiTableFlags_HighlightHoveredColumn |
-					ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg)) {
+					ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY | addonFlags)) {
 			ImGuiTableFlags flags = ImGuiTableColumnFlags_WidthFixed;
 
 			ImGui::TableSetupScrollFreeze(1, 1);
