@@ -253,13 +253,7 @@ void CSBarMasterWin::onNewFilter(CBagStorageDev *pSDev, const int nType) {
 		break;
 
 	case SDEV_DLG:
-		pSDev->onSetFilter(filterFunction);
-		break;
-
 	case SDEV_CLOSEP:
-		pSDev->onSetFilter(filterFunction);
-		break;
-
 	case SDEV_WND:
 		pSDev->onSetFilter(filterFunction);
 		break;

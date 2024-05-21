@@ -240,11 +240,9 @@ ErrorCode CMainWindow::attach() {
 		// be interested in knowing since we already did one above...
 		//
 		// Only do it if we're coming from somewhere other than the zoom
-		if (bForegroundObj == true) {
-			if ((CBagObject *)nullptr == getFGObjects(CBofString(WIELD_WLD))) {
-				_pWieldBmp->setAssociateWnd(this);
-				insertFGObjects(_pWieldBmp);
-			}
+		if ((CBagObject *)nullptr == getFGObjects(CBofString(WIELD_WLD))) {
+			_pWieldBmp->setAssociateWnd(this);
+			insertFGObjects(_pWieldBmp);
 		}
 	}
 

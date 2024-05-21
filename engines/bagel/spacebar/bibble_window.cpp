@@ -1073,10 +1073,9 @@ void CBibbleWindow::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) 
 ErrorCode CBibbleWindow::highlight(CBetArea *pArea, byte nColor) {
 	assert(isValidObject(this));
 	assert(pArea != nullptr);
+	assert(_pBackdrop != nullptr);
 
 	CBofBitmap cBmp(pArea->_cRect.width(), pArea->_cRect.height(), _pBackdrop->getPalette());
-
-	assert(_pBackdrop != nullptr);
 	CBofRect r = cBmp.getRect();
 	_pBackdrop->paint(&cBmp, &r, &pArea->_cRect);
 
@@ -1110,10 +1109,9 @@ ErrorCode CBibbleWindow::highlight(CBetArea *pArea, byte nColor) {
 ErrorCode CBibbleWindow::unHighlight(CBetArea *pArea) {
 	assert(isValidObject(this));
 	assert(pArea != nullptr);
+	assert(_pBackdrop != nullptr);
 
 	CBofBitmap cBmp(pArea->_cRect.width(), pArea->_cRect.height(), _pBackdrop->getPalette());
-
-	assert(_pBackdrop != nullptr);
 
 	// Copy bet area
 	CBofRect r = cBmp.getRect();

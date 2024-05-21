@@ -95,6 +95,8 @@ SBarComputer::SBarComputer() : CBagStorageDevWnd(),
 	setCloseup(true);
 }
 SBarComputer::~SBarComputer() {
+	delete _pDrinkBox;
+	delete _pIngBox;
 }
 
 void SBarComputer::onMainLoop() {
@@ -371,21 +373,16 @@ void SBarComputer::createTextBox(CBofString &newText) {
 }
 
 void SBarComputer::deleteTextBox() {
-	if (_pTBox) {
-		delete _pTBox;
-		_pTBox = nullptr;
-	}
+	delete _pTBox;
+	_pTBox = nullptr;
 }
 
 void SBarComputer::deleteListBox() {
-	if (_pDrinkBox) {
-		delete _pDrinkBox;
-		_pDrinkBox = nullptr;
-	}
-	if (_pIngBox) {
-		delete _pIngBox;
-		_pIngBox = nullptr;
-	}
+	delete _pDrinkBox;
+	_pDrinkBox = nullptr;
+
+	delete _pIngBox;
+	_pIngBox = nullptr;
 }
 
 ErrorCode SBarComputer::createDrinksListBox() {
@@ -787,8 +784,6 @@ void SBarComputer::onBofButton(CBofObject *pObject, int nState) {
 		setIng();
 		break;
 	case LISTD:
-		setList();
-		break;
 	case LISTI:
 		setList();
 		break;
