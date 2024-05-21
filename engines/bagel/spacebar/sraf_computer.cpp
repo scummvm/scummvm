@@ -1463,7 +1463,7 @@ CBofString &SrafComputer::buildBidString(int index) {
 		alignAtColumn(gBidStr, szRightCol, kFirstMineralColumn + j * kMineralColWidth);
 	}
 
-	Common::strcpy_s(szRightCol, (g_stBuyerBids[index]._bAccept ? "[*]" : "[ ]"));
+	Common::strcpy_s(szRightCol, (g_stBuyerBids[index]._bAccept ? "[X]" : "[ ]"));
 
 	alignAtColumn(gBidStr, szRightCol, kFirstMineralColumn + NUM_MINERALS * kMineralColWidth + 2);
 
@@ -1797,7 +1797,7 @@ void SrafComputer::recalcDispatchList(int mExpansionFlag) {
 				Common::strcpy_s(szRightCol, (g_staffers[i - nSkipped]._bAvailable ? "YES" : "NO "));
 				alignAtColumn(sStr, szRightCol, kTeamAvailableColumn);
 
-				Common::strcpy_s(szRightCol, (g_staffers[i - nSkipped]._bOnCurrentTeam ? "[*]" : "[ ]"));
+				Common::strcpy_s(szRightCol, (g_staffers[i - nSkipped]._bOnCurrentTeam ? "[X]" : "[ ]"));
 
 				alignAtColumn(sStr, szRightCol, kTeamIncludeColumn - 1);
 			}
