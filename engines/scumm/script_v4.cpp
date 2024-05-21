@@ -178,13 +178,13 @@ void ScummEngine_v4::saveVars() {
 
 			if (a == STRINGID_IQ_EPISODE && b == STRINGID_IQ_EPISODE) {
 				if (_game.id == GID_INDY3) {
-					// TODO: check what's supposed to happen here. Writing the episode IQ points
-					// into the series iq file is probably not correct.
-					saveIQPoints(0, 0);
+					// This is not really necessary, as we always update the series IQ points
+					// together with the episode IQ points (see ScummEngine_v5::o5_startScript()).
+					// But let's do it anyway...
+					updateIQPoints();
 				}
 				break;
 			}
-			// FIXME: changing savegame-names not supported
 			break;
 		case 0x03: // open file
 			a = resStrLen(_scriptPointer);
@@ -300,13 +300,13 @@ void ScummEngine_v4::updateIQPoints() {
 	byte *episodeIQString;
 	int episodeIQStringSize;
 
-	// load string with IQ points given per puzzle in any savegame
+	// Load string with series IQ points.
 	// IMPORTANT: the resource string STRINGID_IQ_SERIES is only valid while
 	// the original save/load dialog is executed, so do not use it here.
 	memset(seriesIQString, 0, sizeof(seriesIQString));
 	loadIQPoints(seriesIQString, sizeof(seriesIQString));
 
-	// string with IQ points given per puzzle in current savegame
+	// Load string with IQ points given per puzzle from currently active game.
 	episodeIQString = getResourceAddress(rtString, STRINGID_IQ_EPISODE);
 	if (!episodeIQString)
 		return;
@@ -314,7 +314,7 @@ void ScummEngine_v4::updateIQPoints() {
 	if (episodeIQStringSize < NUM_PUZZLES)
 		return;
 
-	// merge episode and series IQ strings and calculate series IQ
+	// Merge episode and series IQ strings and calculate total series and episode IQ.
 	int seriesIQ = 0;
 	int episodeIQ = 0;
 	// iterate over puzzles
@@ -357,15 +357,8 @@ void ScummEngine_v4::saveIQPoints(const byte *ptr, int size) {
 	Common::String filename = _targetName + ".iq";
 
 	file = _saveFileMan->openForSaving(filename);
-	if (file != nullptr) {
-		if (!ptr || !size) {
-			// I don't see how this could ever be correct, but I leave it as  I found it for now...
-			ptr = getResourceAddress(rtString, STRINGID_IQ_EPISODE);
-			if (ptr)
-				size = getResourceSize(rtString, STRINGID_IQ_EPISODE);
-		}
-		if (ptr && size)
-			file->write(ptr, size);
+	if (file != nullptr && ptr != nullptr && size > 0) {
+		file->write(ptr, size);
 		delete file;
 	}
 }
@@ -377,12 +370,13 @@ void ScummEngine_v4::loadIQPoints(byte *ptr, int size) {
 
 	file = _saveFileMan->openForLoading(filename);
 	if (file != nullptr) {
-		byte *tmp = (byte *)malloc(size);
+		byte *tmp = new byte[size]();
 		int nread = file->read(tmp, size);
-		if (nread == size) {
-			memcpy(ptr, tmp, size);
-		}
-		free(tmp);
+		if (nread >= 73)
+			memcpy(ptr, tmp, nread);
+		else
+			warning("ScummEngine_v4::loadIQPoints(): read %d bytes, expected >= 73", nread);
+		delete[] tmp;
 		delete file;
 	}
 }
