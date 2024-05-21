@@ -52,6 +52,7 @@ public:
 
 	void setRequestData(const REQFileData &data);
 	void setShowZoomBox(bool val) { _showZoomBox = val; }
+	bool isZoomVisible() const { return _showZoomBox; }
 
 	Common::Error syncState(Common::Serializer &s);
 

@@ -408,7 +408,8 @@ Common::Error DgdsEngine::run() {
 
 			_scene->drawActiveDialogBgs(&_compositionBuffer);
 
-			_adsInterp->run();
+			if (!_inventory->isOpen() || _inventory->isZoomVisible())
+				_adsInterp->run();
 
 			if (mouseEvent != Common::EVENT_INVALID) {
 				if (_inventory->isOpen()) {
@@ -553,7 +554,7 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 	int sceneNum = _scene->getNum();
 	s.syncAsUint16LE(sceneNum);
 	if (s.isLoading()) {
-		// load scene data before syncing state
+		// load and prepare scene data before syncing the rest of the state
 		const Common::String sceneFile = Common::String::format("S%d.SDS", sceneNum);
 		if (!_resource->hasResource(sceneFile))
 			error("Game references non-existant scene %d", sceneNum);
@@ -561,6 +562,7 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 		_scene->unload();
 		_adsInterp->unload();
 		_scene->load(sceneFile, _resource, _decompressor);
+		_scene->addInvButtonToHotAreaList();
 	}
 
 	result = _scene->syncState(s);
