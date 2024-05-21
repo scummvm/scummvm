@@ -2115,7 +2115,7 @@ void onImGuiInit() {
 	icons_config.PixelSnapH = false;
 	icons_config.OversampleH = 3;
 	icons_config.OversampleV = 3;
-	icons_config.GlyphOffset = {0, 5};
+	icons_config.GlyphOffset = {0, 4};
 
 	static const ImWchar icons_ranges[] = {0xE000, 0xF8FF, 0};
 	ImGui::addTTFFontFromArchive("MaterialSymbolsSharp.ttf", 16.f, &icons_config, icons_ranges);
