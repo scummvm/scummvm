@@ -30,14 +30,14 @@ using namespace Math;
 
 namespace Alcachofa {
 
-void Camera::setRoomBounds(Rect bgBounds, float bgScale) {
+void Camera::setRoomBounds(Point bgSize, int16 bgScale) {
 	float scaleFactor = 1 - bgScale * kInvBaseScale;
 	_roomMin = Vector2d(
 		g_system->getWidth() / 2 * scaleFactor,
 		g_system->getHeight() / 2 * scaleFactor);
 	_roomMax = _roomMin + Vector2d(
-		bgBounds.width() * bgScale * kInvBaseScale,
-		bgBounds.height() * bgScale * kInvBaseScale);
+		bgSize.x * bgScale * kInvBaseScale,
+		bgSize.y * bgScale * kInvBaseScale);
 }
 
 static Matrix4 scaleMatrix(float scale) {

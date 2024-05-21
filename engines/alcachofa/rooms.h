@@ -38,6 +38,7 @@ public:
 	inline const Common::String &name() const { return _name; }
 
 	void update();
+	virtual void updateInput();
 	virtual void loadResources();
 	virtual void freeResources();
 	virtual void serializeSave(Common::Serializer &serializer);
@@ -45,6 +46,7 @@ public:
 
 protected:
 	Room(World *world, Common::ReadStream &stream, bool hasUselessByte);
+	void updateRoomBounds();
 	void updateObjects();
 	void drawObjects();
 	void drawDebug();

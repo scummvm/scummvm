@@ -33,6 +33,8 @@ namespace Alcachofa {
 
 struct Polygon {
 	Common::Span<const Common::Point> _points;
+
+	bool contains(const Common::Point &query) const;
 };
 
 struct PathFindingPolygon : Polygon {
@@ -102,6 +104,7 @@ public:
 	inline iterator end() const { return { *this, polygonCount() }; }
 
 	Polygon at(uint index) const;
+	bool contains(const Common::Point &query) const;
 
 protected:
 	uint addPolygon(uint maxCount);

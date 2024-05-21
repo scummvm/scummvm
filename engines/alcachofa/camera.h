@@ -43,7 +43,7 @@ public:
 	void update();
 	Math::Vector3d transform2Dto3D(Math::Vector3d v) const;
 	Math::Vector3d transform3Dto2D(Math::Vector3d v) const;
-	void setRoomBounds(Common::Rect bgBounds, float bgScale);
+	void setRoomBounds(Common::Point bgSize, int16 bgScale);
 
 private:
 	static constexpr const float kAccelerationThreshold = 2.89062f;

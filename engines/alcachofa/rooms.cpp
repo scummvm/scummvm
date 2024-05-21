@@ -125,6 +125,10 @@ ObjectBase *Room::getObjectByName(const Common::String &name) const {
 }
 
 void Room::update() {
+	if (world().currentRoom() == this) {
+		updateRoomBounds();
+		updateInput();
+	}
 	if (world().currentRoom() == this)
 		updateObjects();
 	if (world().currentRoom() == this) {
@@ -136,6 +140,22 @@ void Room::update() {
 		drawDebug();
 		world().globalRoom().drawDebug();
 	}
+}
+
+void Room::updateInput() {
+	if (g_engine->input().wasMouseLeftPressed()) {
+		Point p2d = g_engine->input().mousePos2D();
+		Point p3d = g_engine->input().mousePos3D();
+		bool contains = _floors[_activeFloorI].contains(p3d);
+		warning("Mouse 2D: %d, %d \t\t3D: %d, %d\t%s", p2d.x, p2d.y, p3d.x, p3d.y, contains ? "yes" : "no");
+	}
+}
+
+void Room::updateRoomBounds() {
+	auto background = getObjectByName("Background");
+	auto graphic = background == nullptr ? nullptr : background->graphic();
+	if (graphic != nullptr)
+		g_engine->camera().setRoomBounds(graphic->animation().imageSize(0), graphic->scale());
 }
 
 void Room::updateObjects() {
