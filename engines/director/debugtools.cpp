@@ -119,6 +119,8 @@ typedef struct ImGuiState {
 		int frame = -1;
 		int channel = -1;
 	} _selectedScoreCast;
+
+	int _scoreMode = 0;
 } ImGuiState;
 
 ImGuiState *_state = nullptr;
@@ -1879,7 +1881,39 @@ static void showScore() {
 			for (uint i = 0; i < tableColumns; i++)
 				ImGui::TableSetupColumn(Common::String::format("%-2d", i + 1).c_str(), flags);
 
-			ImGui::TableHeadersRow();
+			ImGui::TableNextRow(ImGuiTableRowFlags_Headers);
+			ImGui::TableNextRow(0);
+			ImGui::PushID(0);
+
+			const char *modes[] = { "Member", "Behavior", "Location", "Ink", "Blend", "Extended" };
+			enum { kModeMember, kModeBehavior, kModeLocation, kModeInk, kModeBlend, kModeExtended };
+
+			const char *selMode = modes[_state->_scoreMode];
+
+			if (ImGui::BeginCombo("modeCombo", selMode)) {
+				for (int n = 0; n < ARRAYSIZE(modes); n++) {
+					const bool selected = (_state->_scoreMode == n);
+					if (ImGui::Selectable(modes[n], selected))
+						_state->_scoreMode = n;
+
+					if (selected)
+						ImGui::SetItemDefaultFocus();
+				}
+				ImGui::EndCombo();
+
+				ImGui::TableHeader("##");
+			}
+			ImGui::PopID();
+
+			for (uint i = 0; i < tableColumns; i++) {
+				ImGui::TableSetColumnIndex(i + 1);
+				const char *column_name = ImGui::TableGetColumnName(i + 1);
+				ImGui::PushID(i + 1);
+				ImGui::TableHeader(column_name);
+				ImGui::PopID();
+			}
+
+			//ImGui::TableHeadersRow();
 			for (int ch = 0; ch < (int)numChannels - 1; ch++) {
 				ImGui::TableNextRow();
 
