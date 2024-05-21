@@ -1738,21 +1738,21 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 		switch (mode) {
 		case kModeMember:
 			if (sprite._castId.member)
-				ImGui::Text("%d", sprite._castId.member);
+				ImGui::Selectable(Common::String::format("%d", sprite._castId.member).c_str());
 			else
-				ImGui::Text("  ");
+				ImGui::Selectable("  ");
 			break;
 
 		case kModeInk:
-			ImGui::Text("%s", inkType2str(sprite._ink));
+			ImGui::Selectable(Common::String::format("%s", inkType2str(sprite._ink)).c_str());
 			break;
 
 		case kModeLocation:
-			ImGui::Text("%d, %d", sprite._startPoint.x, sprite._startPoint.y);
+			ImGui::Selectable(Common::String::format("%d, %d", sprite._startPoint.x, sprite._startPoint.y).c_str());
 			break;
 
 		case kModeBlend:
-			ImGui::Text("%d", sprite._blendAmount);
+			ImGui::Selectable(Common::String::format("%d", sprite._blendAmount).c_str());
 			break;
 
 		case kModeBehavior:
@@ -1761,12 +1761,14 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 
 				if (ImGui::IsItemClicked(0))
 					addScriptCastToDisplay(sprite._scriptId);
+			} else {
+				ImGui::Selectable("  ");
 			}
 			break;
 
 		case kModeExtended: // Render empty row
 		default:
-			ImGui::Text("  ");
+			ImGui::Selectable("  ");
 		}
 
 		if (ImGui::IsItemClicked(0)) {
