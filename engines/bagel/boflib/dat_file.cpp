@@ -56,7 +56,7 @@ CBofDataFile::CBofDataFile() {
 	_bHeaderDirty = false;
 }
 
-ErrorCode CBofDataFile::setFile(const char *pszFileName, uint32 lFlags, const char *pPassword) {
+ErrorCode CBofDataFile::setFile(const char *pszFileName, uint32 lFlags) {
 	assert(isValidObject(this));
 
 	// Validate input
@@ -68,17 +68,6 @@ ErrorCode CBofDataFile::setFile(const char *pszFileName, uint32 lFlags, const ch
 
 	// All data files are binary, so force it
 	lFlags |= CBF_BINARY;
-
-	// Store password locally
-	if (pPassword != nullptr) {
-		// Don't want to overwrite past our password buffer
-		assert(strlen(pPassword) < MAX_PW_LEN);
-
-		Common::strcpy_s(_szPassWord, pPassword);
-
-		// Force encryption on since they supplied a password
-		_lFlags |= CDF_ENCRYPT;
-	}
 
 	// Remember the flags
 	_lFlags = lFlags;

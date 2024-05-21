@@ -1194,7 +1194,7 @@ ErrorCode CBagMasterWin::gotoNewWindow(const CBofString *str) {
 		_gameWindow = (CBagStorageDevWnd *)sdev;
 		setCICStatus(sdev);
 
-		int fadeId = sdev->getFadeId();
+		uint16 oldFadeId = sdev->getFadeId();
 
 		if (_fadeIn != 0)
 			sdev->setFadeId((uint16)_fadeIn);
@@ -1204,7 +1204,7 @@ ErrorCode CBagMasterWin::gotoNewWindow(const CBofString *str) {
 
 		sdev->attach();
 
-		sdev->setFadeId((uint16)fadeId);
+		sdev->setFadeId(oldFadeId);
 		_fadeIn = 0;
 	}
 

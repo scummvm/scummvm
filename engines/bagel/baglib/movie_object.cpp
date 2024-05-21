@@ -146,9 +146,8 @@ bool CBagMovieObject::runObject() {
 			CBagStorageDevWnd *pSDevWnd = (pWnd ? pWnd->getCurrentStorageDev() : nullptr);
 
 			// Get the pda here, we need it so much anyway.
-			if (pPDA == nullptr) {
-				pPDA = (CBagPDA *)g_SDevManager->getStorageDevice("BPDA_WLD");
-			}
+			pPDA = (CBagPDA *)g_SDevManager->getStorageDevice("BPDA_WLD");
+
 			assert(pPDA != nullptr);
 
 			// If we have an asnych movie to play, make sure it is a good
@@ -307,7 +306,7 @@ bool CBagMovieObject::runObject() {
 							pMovie = new CBofMovie(CBofApp::getApp()->getMainWindow(), sFileName, &r);
 						}
 
-						if (pMovie && pMovie->errorOccurred() == false) {
+						if (pMovie->errorOccurred() == false) {
 							// Stop any asnych movies already playing
 							pPDA->stopMovie(true);
 							pMovie->show();

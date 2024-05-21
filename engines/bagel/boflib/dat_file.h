@@ -105,10 +105,9 @@ public:
 	 * Initializes a CBofDataFile with specified info
 	 * @param pszFileName       Name of .DAT file
 	 * @param lFlags            Flags for open, and encryption, etc.
-	 * @param pPassword         Password for encryption
 	 * @return                  Error return code
 	 */
-	ErrorCode setFile(const char *pszFileName, uint32 lFlags = CDF_DEFAULT, const char *pPassword = nullptr);
+	ErrorCode setFile(const char *pszFileName, uint32 lFlags);
 
 	/**
 	 * Free memory used by this object

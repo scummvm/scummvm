@@ -635,15 +635,11 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 
 		if (!sWorkStr.find("SET")) {
 			bRunActivation  = false;
-			bHoldActivation = false;
 			bOperSet        = true;
 		} else if (!sWorkStr.find("HOLD")) {
-			bRunActivation  = true;
 			bHoldActivation = true;
 			bOperSet        = true;
 		} else if (!sWorkStr.find("RUN")) {
-			bRunActivation  = true;
-			bHoldActivation = false;
 			bOperSet        = true;
 		}
 
