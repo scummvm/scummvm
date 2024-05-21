@@ -2118,7 +2118,7 @@ void onImGuiInit() {
 	icons_config.GlyphOffset = {0, 5};
 
 	static const ImWchar icons_ranges[] = {0xE000, 0xF8FF, 0};
-	ImGui::addTTFFontFromArchive("MaterialIcons-Regular.ttf", 16.f, &icons_config, icons_ranges);
+	ImGui::addTTFFontFromArchive("MaterialSymbolsSharp.ttf", 16.f, &icons_config, icons_ranges);
 
 	_state = new ImGuiState();
 
