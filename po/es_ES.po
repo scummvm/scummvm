@@ -9764,7 +9764,8 @@ msgstr "Generar mapas aleatorios"
 
 #: engines/scumm/dialogs.cpp:1696
 msgid "Allow random map generation (Based from Moonbase Console)."
-msgstr "Permite la generación de mapas aleatorios (basada en Moonbase Console)."
+msgstr ""
+"Permite la generación de mapas aleatorios (basada en Moonbase Console)."
 
 #: engines/scumm/dialogs.cpp:1698
 msgid ""
