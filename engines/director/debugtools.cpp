@@ -1741,7 +1741,16 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 
 	{
 		ImGui::TableNextColumn();
-		ImGui::Indent();
+
+		float indentSize = 17.0;
+
+		if (mode < kChTempo && modeSel == kModeExtended)
+			indentSize = 10.0;
+
+		if (modeSel == kModeExtended && mode == kModeExtended)
+			indentSize = 0.1;
+
+		ImGui::Indent(indentSize);
 
 		if (mode >= kChTempo) {
 			ImGui::PushFont(ImGui::GetIO().FontDefault);
@@ -1757,7 +1766,8 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 		}
 
 		ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImGuiCol_TableHeaderBg));
-		ImGui::Unindent();
+
+		ImGui::Unindent(indentSize);
 	}
 
 	for (int f = 0; f < (int)numFrames; f++) {
