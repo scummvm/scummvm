@@ -80,6 +80,7 @@ Score::Score(Movie *movie) {
 	_waitForClick = false;
 	_waitForClickCursor = false;
 	_activeFade = false;
+	_exitFrameCalled = false;
 	_playState = kPlayNotStarted;
 
 	_numChannelsDisplayed = 0;
@@ -536,9 +537,10 @@ void Score::update() {
 		// When Lingo::func_goto* is called, _nextFrame is set
 		// and _skipFrameAdvance is set to true.
 		// exitFrame is not called in this case.
-		if (!_vm->_skipFrameAdvance) {
+		if (!_vm->_skipFrameAdvance && !_exitFrameCalled) {
 			// Exit the current frame. This can include scopeless ScoreScripts.
 			_movie->processEvent(kEventExitFrame);
+			_exitFrameCalled = true;
 		}
 	}
 
@@ -629,8 +631,11 @@ void Score::update() {
 
 	// then call the enterFrame hook (if one exists)
 	count = _window->frozenLingoStateCount();
-	if (!_vm->_playbackPaused && _vm->getVersion() >= 400) {
-		_movie->processEvent(kEventEnterFrame);
+	if (!_vm->_playbackPaused) {
+		_exitFrameCalled = false;
+		if (_vm->getVersion() >= 400) {
+			_movie->processEvent(kEventEnterFrame);
+		}
 	}
 	if (_window->frozenLingoStateCount() > count)
 		return;
