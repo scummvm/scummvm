@@ -305,13 +305,13 @@ IFS="$OLDIFS"
 
 echo_n "Checking engine-data files..."
 
+cat dists/engine-data/engine_data.mk dists/engine-data/engine_data_big.mk dists/engine-data/engine_data_core.mk >dists/engine-data/engine_data_combined.mk
+
 # Use # as delimiter, %FILE% for the filename
 declare -a distfiles=(
-  "Makefile.common#DIST_FILES_ENGINEDATA\+=%FILE%"
-  "devtools/create_project/xcode.cpp#[	 ]+files.push_back\(\"dists/engine-data/%FILE%\"\);"
   "dists/engine-data/README#%FILE%:"
+  "dists/engine-data/engine_data_combined.mk#DIST_FILES_LIST \+= dists/engine-data/%FILE%"
   "dists/irix/scummvm.idb#f 0644 root sys usr/ScummVM/share/scummvm/%FILE% %FILE% scummvm.sw.eoe"
-  "dists/scummvm.rc#%FILE%[	 ]+FILE[	 ]+\"dists/engine-data/%FILE%\""
 )
 
 OLDIFS="$IFS"
@@ -329,7 +329,9 @@ do
     file=`basename $f`
 
     # Skip README file
-    if [ $file == "README" -o $file == "create-playground3d-data.sh"  -o $file == "create-testbed-data.sh" ]; then
+    if [ $file == "README" -o $file == "create-playground3d-data.sh"  -o $file == "create-testbed-data.sh" \
+            -o $file == "engine_data.mk" -o $file == "engine_data_big.mk" -o $file == "engine_data_core.mk" \
+            -o $file == "engine_data_combined.mk" ]; then
         continue
     fi
 
@@ -347,12 +349,13 @@ do
     done
 done
 
+rm dists/engine-data/engine_data_combined.mk
+
 declare -a themefiles=(
   "Makefile.common#DIST_FILES_THEMES.*%FILE%"
   "devtools/create_project/xcode.cpp#[	 ]+files.push_back\(\"gui/themes/%FILE%\"\);"
   "dists/irix/scummvm.idb#f 0644 root sys usr/ScummVM/share/scummvm/%FILE% %FILE% scummvm.sw.eoe"
   "dists/scummvm.rc#%FILE%[	 ]+FILE[	 ]+\"gui/themes/%FILE%\""
-  "dists/win32/migration.txt#%FILE%"
 )
 
 for f in gui/themes/*
