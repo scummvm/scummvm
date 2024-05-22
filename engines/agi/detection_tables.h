@@ -733,7 +733,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Police Quest 1 (PC) 2.0E 11/17/87 [AGI 2.915]
 	GAME("pq1", "2.0E 1987-11-17", "2fd992a92df6ab0461d5a2cd83c72139", 0x2917, GID_PQ1),
-	
+
 	// Police Quest 1 (PC 720k) 2.0E 11/17/87 [AGI 2.915]
 	GAME("pq1", "2.0E 1987-11-17", "e2f94216357d07ecd93d75f1ff4a3338", 0x2917, GID_PQ1),
 
@@ -990,6 +990,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Elfintard", "c3b847e9e9e978af9708df76a0751dc2"),
 	FANMADE("Enclosure (v1.01)", "f08e66fee9ecdde77db7ee9a10c96ba2"),
 	FANMADE("Enclosure (v1.03)", "e4a0613ed02401502e506ba3565a8c40"),
+	FANMADE("Enclosure (v1.5)", "3aca812211f32a802cb2d7b81d8cba65"),
 	FANMADE_SVP("Enclosure", "fe98e6126db74c6cc6fd8fe395cc6e8c", 345, 0x2440, Common::kPlatformCoCo3),
 	FANMADE("Epic Fighting (v0.1)", "aff24a1b3bdd676187685c4d95ba4294"),
 	FANMADE("Escape Quest (v0.0.3)", "2346b65619b1da0298b715b06d1a45a1"),
@@ -1184,6 +1185,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	FANMADE("Voodoo Girl - Queen of the Darned (v1.2 2002 Jan 1)", "ae95f0c77d9a97b61420fd192348b937"),
 	FANMADE("Voodoo Girl - Queen of the Darned (v1.2 2002 Mar 29)", "11d0417b7b886f963d0b36789dac4c8f"),
+	FANMADE("Voodoo Girl - Queen of the Darned (v1.2.2 2002 Dec 1)", "cf539f553d92600b24059b4b70b920c3"),
 	FANMADE("Wizaro (v0.1)", "abeec1eda6eaf8dbc52443ea97ff140c"),
 
 	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
