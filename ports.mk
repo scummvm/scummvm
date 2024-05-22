@@ -182,10 +182,21 @@ ifdef USE_PANDOC
 	@sed -i'.sed-orig' -e "s|href=\"AUTHORS\"|href=\"https://www.scummvm.org/credits/\"|g" $(bundle_name)/Contents/Resources/README$(PANDOCEXT)
 endif
 	@rm $(bundle_name)/Contents/Resources/*.sed-orig
-	cp $(bundle_name)/Contents/Resources/COPYING.LGPL $(bundle_name)/Contents/Resources/COPYING-LGPL
-	cp $(bundle_name)/Contents/Resources/COPYING.FREEFONT $(bundle_name)/Contents/Resources/COPYING-FREEFONT
-	cp $(bundle_name)/Contents/Resources/COPYING.OFL $(bundle_name)/Contents/Resources/COPYING-OFL
+	cp $(bundle_name)/Contents/Resources/COPYING.Apache $(bundle_name)/Contents/Resources/COPYING-Apache
 	cp $(bundle_name)/Contents/Resources/COPYING.BSD $(bundle_name)/Contents/Resources/COPYING-BSD
+	cp $(bundle_name)/Contents/Resources/COPYING.BSL $(bundle_name)/Contents/Resources/COPYING-BSL
+	cp $(bundle_name)/Contents/Resources/COPYING.FREEFONT $(bundle_name)/Contents/Resources/COPYING-FREEFONT
+	cp $(bundle_name)/Contents/Resources/COPYING.GLAD $(bundle_name)/Contents/Resources/COPYING-GLAD
+	cp $(bundle_name)/Contents/Resources/COPYING.ISC $(bundle_name)/Contents/Resources/COPYING-ISC
+	cp $(bundle_name)/Contents/Resources/COPYING.LGPL $(bundle_name)/Contents/Resources/COPYING-LGPL
+	cp $(bundle_name)/Contents/Resources/COPYING.LUA $(bundle_name)/Contents/Resources/COPYING-LUA
+	cp $(bundle_name)/Contents/Resources/COPYING.MIT $(bundle_name)/Contents/Resources/COPYING-MIT
+	cp $(bundle_name)/Contents/Resources/COPYING.MKV $(bundle_name)/Contents/Resources/COPYING-MKV
+	cp $(bundle_name)/Contents/Resources/COPYING.MPL $(bundle_name)/Contents/Resources/COPYING-MPL
+	cp $(bundle_name)/Contents/Resources/COPYING.OFL $(bundle_name)/Contents/Resources/COPYING-OFL
+	cp $(bundle_name)/Contents/Resources/COPYING.TINYGL $(bundle_name)/Contents/Resources/COPYING-TINYGL
+	cp $(bundle_name)/Contents/Resources/CatharonLicense.txt $(bundle_name)/Contents/Resources/CatharonLicense-txt
+
 ifdef DYNAMIC_MODULES
 	cp $(PLUGINS) $(bundle_name)/Contents/Resources/
 endif
@@ -577,16 +588,19 @@ osxsnap: bundle
 	mkdir ScummVM-snapshot
 	cp $(DIST_FILES_DOCS) ./ScummVM-snapshot/
 	mv ./ScummVM-snapshot/COPYING ./ScummVM-snapshot/License\ \(GPL\)
-	mv ./ScummVM-snapshot/COPYING.LGPL ./ScummVM-snapshot/License\ \(LGPL\)
-	mv ./ScummVM-snapshot/COPYING.FREEFONT ./ScummVM-snapshot/License\ \(FREEFONT\)
-	mv ./ScummVM-snapshot/COPYING.OFL ./ScummVM-snapshot/License\ \(OFL\)
+	mv ./ScummVM-snapshot/COPYING.Apache ./ScummVM-snapshot/License\ \(Apache\)
 	mv ./ScummVM-snapshot/COPYING.BSD ./ScummVM-snapshot/License\ \(BSD\)
+	mv ./ScummVM-snapshot/COPYING.BSL ./ScummVM-snapshot/License\ \(BSL\)
+	mv ./ScummVM-snapshot/COPYING.FREEFONT ./ScummVM-snapshot/License\ \(FREEFONT\)
+	mv ./ScummVM-snapshot/COPYING.GLAD ./ScummVM-snapshot/License\ \(Glad\)
 	mv ./ScummVM-snapshot/COPYING.ISC ./ScummVM-snapshot/License\ \(ISC\)
+	mv ./ScummVM-snapshot/COPYING.LGPL ./ScummVM-snapshot/License\ \(LGPL\)
 	mv ./ScummVM-snapshot/COPYING.LUA ./ScummVM-snapshot/License\ \(Lua\)
 	mv ./ScummVM-snapshot/COPYING.MIT ./ScummVM-snapshot/License\ \(MIT\)
 	mv ./ScummVM-snapshot/COPYING.MKV ./ScummVM-snapshot/License\ \(MKV\)
+	mv ./ScummVM-snapshot/COPYING.MPL ./ScummVM-snapshot/License\ \(MPL\)
+	mv ./ScummVM-snapshot/COPYING.OFL ./ScummVM-snapshot/License\ \(OFL\)
 	mv ./ScummVM-snapshot/COPYING.TINYGL ./ScummVM-snapshot/License\ \(TinyGL\)
-	mv ./ScummVM-snapshot/COPYING.GLAD ./ScummVM-snapshot/License\ \(Glad\)
 	mv ./ScummVM-snapshot/CatharonLicense.txt ./ScummVM-snapshot/CatharonLicense.txt
 	$(XCODETOOLSPATH)/SetFile -t ttro -c ttxt ./ScummVM-snapshot/*
 	mkdir ScummVM-snapshot/doc
