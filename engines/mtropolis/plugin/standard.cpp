@@ -1382,6 +1382,41 @@ const char *SysInfoModifier::getDefaultName() const {
 	return "SysInfo Modifier";
 }
 
+PrintModifier::PrintModifier() {
+}
+
+PrintModifier::~PrintModifier() {
+}
+
+bool PrintModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::PrintModifier &data) {
+	return true;
+}
+
+bool PrintModifier::respondsToEvent(const Event &evt) const {
+	return false;
+}
+
+VThreadState PrintModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	return kVThreadReturn;
+}
+
+void PrintModifier::disable(Runtime *runtime) {
+}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void PrintModifier::debugInspect(IDebugInspectionReport *report) const {
+	Modifier::debugInspect(report);
+}
+#endif
+
+Common::SharedPtr<Modifier> PrintModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new PrintModifier(*this));
+}
+
+const char *PrintModifier::getDefaultName() const {
+	return "Print Modifier";
+}
+
 PanningModifier::PanningModifier() {
 }
 
@@ -1417,6 +1452,111 @@ const char *PanningModifier::getDefaultName() const {
 	return "Panning Modifier"; // ???
 }
 
+FadeModifier::FadeModifier() {
+}
+
+FadeModifier::~FadeModifier() {
+}
+
+bool FadeModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::FadeModifier &data) {
+	return true;
+}
+
+bool FadeModifier::respondsToEvent(const Event &evt) const {
+	return false;
+}
+
+VThreadState FadeModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	return kVThreadReturn;
+}
+
+void FadeModifier::disable(Runtime *runtime) {
+}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void FadeModifier::debugInspect(IDebugInspectionReport *report) const {
+	Modifier::debugInspect(report);
+}
+#endif
+
+Common::SharedPtr<Modifier> FadeModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new FadeModifier(*this));
+}
+
+const char *FadeModifier::getDefaultName() const {
+	return "Fade Modifier";
+}
+
+OpenTitleModifier::OpenTitleModifier() {
+}
+
+OpenTitleModifier::~OpenTitleModifier() {
+}
+
+bool OpenTitleModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::OpenTitleModifier &data) {
+	return true;
+}
+
+bool OpenTitleModifier::respondsToEvent(const Event &evt) const {
+	return false;
+}
+
+VThreadState OpenTitleModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	return kVThreadReturn;
+}
+
+void OpenTitleModifier::disable(Runtime *runtime) {
+}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void OpenTitleModifier::debugInspect(IDebugInspectionReport *report) const {
+	Modifier::debugInspect(report);
+}
+#endif
+
+Common::SharedPtr<Modifier> OpenTitleModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new OpenTitleModifier(*this));
+}
+
+const char *OpenTitleModifier::getDefaultName() const {
+	return "Open Title Modifier";
+}
+
+NavigateModifier::NavigateModifier() {
+}
+
+NavigateModifier::~NavigateModifier() {
+}
+
+bool NavigateModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::NavigateModifier &data) {
+	return true;
+}
+
+bool NavigateModifier::respondsToEvent(const Event &evt) const {
+	return false;
+}
+
+VThreadState NavigateModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	return kVThreadReturn;
+}
+
+void NavigateModifier::disable(Runtime *runtime) {
+}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void NavigateModifier::debugInspect(IDebugInspectionReport *report) const {
+	Modifier::debugInspect(report);
+}
+#endif
+
+Common::SharedPtr<Modifier> NavigateModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new NavigateModifier(*this));
+}
+
+const char *NavigateModifier::getDefaultName() const {
+	return "Navigate Modifier";
+}
+
 StandardPlugInHacks::StandardPlugInHacks() : allowGarbledListModData(false) {
 }
 
@@ -1427,7 +1567,11 @@ StandardPlugIn::StandardPlugIn()
 	, _objRefVarModifierFactory(this)
 	, _listVarModifierFactory(this)
 	, _sysInfoModifierFactory(this)
-	, _panningModifierFactory(this) {
+	, _printModifierFactory(this)
+	, _fadeModifierFactory(this)
+	, _panningModifierFactory(this)
+	, _openTitleModifierFactory(this)
+	, _navigateModifierFactory(this) {
 }
 
 StandardPlugIn::~StandardPlugIn() {
@@ -1440,8 +1584,11 @@ void StandardPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) cons
 	registrar->registerPlugInModifier("ObjRefP", &_objRefVarModifierFactory);
 	registrar->registerPlugInModifier("ListMod", &_listVarModifierFactory);
 	registrar->registerPlugInModifier("SysInfo", &_sysInfoModifierFactory);
-
+	registrar->registerPlugInModifier("Print", &_printModifierFactory);
+	registrar->registerPlugInModifier("fade", &_fadeModifierFactory);
 	registrar->registerPlugInModifier("panning", &_panningModifierFactory);
+	registrar->registerPlugInModifier("OpenTitle", &_openTitleModifierFactory);
+	registrar->registerPlugInModifier("Navigate", &_navigateModifierFactory);
 }
 
 const StandardPlugInHacks &StandardPlugIn::getHacks() const {

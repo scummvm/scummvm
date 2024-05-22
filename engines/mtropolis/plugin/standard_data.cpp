@@ -188,6 +188,47 @@ DataReadErrorCode SysInfoModifier::load(PlugIn &plugIn, const PlugInModifier &pr
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode PrintModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 0)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!unknown1Event.load(reader) || !unknown2Bool.load(reader) || !unknown3Bool.load(reader))
+		return kDataReadErrorReadFailed;
+
+	if (!unknown4Bool.load(reader) || !unknown5String.load(reader) || !unknown6Bool.load(reader))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode FadeModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 1)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!unknown1Event.load(reader) || !unknown2Event.load(reader) || !unknown3Int.load(reader) || !unknown4Int.load(reader) || !unknown5Int.load(reader))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode OpenTitleModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 0)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!unknown1Event.load(reader) || !unknown2String.load(reader) || !unknown3Integer.load(reader))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode NavigateModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 0)
+		return kDataReadErrorUnsupportedRevision;
+
+	//TODO: determine structure and used data types
+	return kDataReadErrorUnrecognized;
+}
+
 } // End of namespace Standard
 
 } // End of namespace Data

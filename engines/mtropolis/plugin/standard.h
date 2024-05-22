@@ -312,6 +312,28 @@ private:
 	const char *getDefaultName() const override;
 };
 
+class PrintModifier : public Modifier {
+public:
+	PrintModifier();
+	~PrintModifier();
+
+	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::PrintModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+	void disable(Runtime *runtime) override;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Print Modifier"; }
+	void debugInspect(IDebugInspectionReport *report) const override;
+#endif
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
+};
+
 struct StandardPlugInHacks {
 	StandardPlugInHacks();
 
@@ -344,6 +366,72 @@ private:
 	const char *getDefaultName() const override;
 };
 
+class FadeModifier : public Modifier {
+public:
+	FadeModifier();
+	~FadeModifier();
+
+	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::FadeModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+	void disable(Runtime *runtime) override;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Fade Modifier"; }
+	void debugInspect(IDebugInspectionReport *report) const override;
+#endif
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
+};
+
+class OpenTitleModifier : public Modifier {
+public:
+	OpenTitleModifier();
+	~OpenTitleModifier();
+
+	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::OpenTitleModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+	void disable(Runtime *runtime) override;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Open Title Modifier"; }
+	void debugInspect(IDebugInspectionReport *report) const override;
+#endif
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
+};
+
+class NavigateModifier : public Modifier {
+public:
+	NavigateModifier();
+	~NavigateModifier();
+
+	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::NavigateModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+	void disable(Runtime *runtime) override;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Navigate Modifier"; }
+	void debugInspect(IDebugInspectionReport *report) const override;
+#endif
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
+};
+
 class StandardPlugIn : public MTropolis::PlugIn {
 public:
 	StandardPlugIn();
@@ -361,7 +449,11 @@ private:
 	PlugInModifierFactory<ObjectReferenceVariableModifier, Data::Standard::ObjectReferenceVariableModifier> _objRefVarModifierFactory;
 	PlugInModifierFactory<ListVariableModifier, Data::Standard::ListVariableModifier> _listVarModifierFactory;
 	PlugInModifierFactory<SysInfoModifier, Data::Standard::SysInfoModifier> _sysInfoModifierFactory;
+	PlugInModifierFactory<PrintModifier, Data::Standard::PrintModifier> _printModifierFactory;
+	PlugInModifierFactory<FadeModifier, Data::Standard::FadeModifier> _fadeModifierFactory;
 	PlugInModifierFactory<PanningModifier, Data::Standard::PanningModifier> _panningModifierFactory;
+	PlugInModifierFactory<OpenTitleModifier, Data::Standard::OpenTitleModifier> _openTitleModifierFactory;
+	PlugInModifierFactory<NavigateModifier, Data::Standard::NavigateModifier> _navigateModifierFactory;
 
 	StandardPlugInHacks _hacks;
 };

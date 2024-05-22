@@ -130,6 +130,18 @@ protected:
 	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
 };
 
+struct PrintModifier : public PlugInModifierData {
+	PlugInTypeTaggedValue unknown1Event;
+	PlugInTypeTaggedValue unknown2Bool;
+	PlugInTypeTaggedValue unknown3Bool;
+	PlugInTypeTaggedValue unknown4Bool;
+	PlugInTypeTaggedValue unknown5String;
+	PlugInTypeTaggedValue unknown6Bool;
+
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
+
 struct PanningModifier : public PlugInModifierData {
 	PlugInTypeTaggedValue unknown1Event; // Probably "Enable When"
 	PlugInTypeTaggedValue unknown2Event; // Probably "Disable When"
@@ -137,6 +149,31 @@ struct PanningModifier : public PlugInModifierData {
 	PlugInTypeTaggedValue unknown4Int;   // Int
 	PlugInTypeTaggedValue unknown5Int;   // Int
 
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
+
+struct FadeModifier : public PlugInModifierData {
+	PlugInTypeTaggedValue unknown1Event;
+	PlugInTypeTaggedValue unknown2Event;
+	PlugInTypeTaggedValue unknown3Int;
+	PlugInTypeTaggedValue unknown4Int;
+	PlugInTypeTaggedValue unknown5Int;
+
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
+
+struct OpenTitleModifier : public PlugInModifierData {
+	PlugInTypeTaggedValue unknown1Event;
+	PlugInTypeTaggedValue unknown2String;
+	PlugInTypeTaggedValue unknown3Integer;
+
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
+
+struct NavigateModifier : public PlugInModifierData {
 protected:
 	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
 };
