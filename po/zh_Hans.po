@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-05-04 22:58+0000\n"
-"PO-Revision-Date: 2024-05-21 10:42+0000\n"
+"PO-Revision-Date: 2024-05-22 11:42+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/zh_Hans/>\n"
@@ -9544,27 +9544,27 @@ msgstr ""
 
 #: engines/sherlock/metaengine.cpp:75
 msgid "Show character portraits"
-msgstr ""
+msgstr "显示人物肖像"
 
 #: engines/sherlock/metaengine.cpp:76
 msgid "Show portraits for the characters when conversing"
-msgstr ""
+msgstr "与人物交谈时显示肖像"
 
 #: engines/sherlock/metaengine.cpp:87
 msgid "Slide dialogs into view"
-msgstr ""
+msgstr "对话框滑入视图"
 
 #: engines/sherlock/metaengine.cpp:88
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
-msgstr ""
+msgstr "让界面对话框滑动进入，而非直接显示"
 
 #: engines/sherlock/metaengine.cpp:99
 msgid "Transparent windows"
-msgstr ""
+msgstr "透明窗口"
 
 #: engines/sherlock/metaengine.cpp:100
 msgid "Show windows with a partially transparent background"
-msgstr ""
+msgstr "使窗口部分背景透明"
 
 #: engines/sky/compact.cpp:140
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
@@ -9622,11 +9622,11 @@ msgstr ""
 
 #: engines/stark/metaengine.cpp:59 engines/ultima/metaengine.cpp:140
 msgid "Enable font anti-aliasing"
-msgstr ""
+msgstr "启用字体抗锯齿"
 
 #: engines/stark/metaengine.cpp:60 engines/ultima/metaengine.cpp:141
 msgid "When font anti-aliasing is enabled, the text is smoother."
-msgstr ""
+msgstr "启用时字体更平滑。"
 
 #: engines/stark/stark.cpp:106
 msgid "Software renderer does not support modded assets"
@@ -9676,36 +9676,36 @@ msgstr ""
 #: engines/supernova/supernova.cpp:528
 #, c-format
 msgid "Unable to find '%s' in game folder or the engine data file."
-msgstr ""
+msgstr "在游戏文件夹与引擎数据文件中找不到“%s”。"
 
 #: engines/supernova/supernova.cpp:832
 msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
-msgstr ""
+msgstr "无法保存临时游戏状态。请确保已在 ScummVM 中设置存档目录并拥有写入权限。"
 
 #: engines/supernova/supernova.cpp:833
 msgid "Failed to load temporary game state."
-msgstr ""
+msgstr "无法加载临时游戏状态。"
 
 #: engines/supernova/metaengine.cpp:37
 msgid "Improved mode"
-msgstr ""
+msgstr "改良模式"
 
 #: engines/supernova/metaengine.cpp:38
 msgid ""
 "Removes some repetitive actions, adds possibility to change verbs by keyboard"
-msgstr ""
+msgstr "移除重复操作，添加使用键盘更改动作的功能"
 
 #: engines/sword1/animation.cpp:532
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr ""
+msgstr "无法在调色模式中播放 PSX 流转场动画“%s”"
 
 #: engines/sword1/animation.cpp:563 engines/sword2/animation.cpp:456
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
-msgstr ""
+msgstr "已找到 MPEG-2 转场动画，但 ScummVM 构建时不支持 MPEG-2"
 
 #: engines/sword1/animation.cpp:570 engines/sword2/animation.cpp:465
 #, c-format
@@ -9729,6 +9729,8 @@ msgid ""
 "Target new saved game already exists!\n"
 "Would you like to keep the old saved game (%s) or the new one (%s)?\n"
 msgstr ""
+"目标新存档已存在！\n"
+"要保留旧存档（%s）还是新存档（%s）？\n"
 
 #: engines/sword1/control.cpp:2985
 msgid "Keep the old one"
@@ -9740,7 +9742,7 @@ msgstr "保留新存档"
 
 #: engines/sword1/logic.cpp:1732
 msgid "This is the end of the Broken Sword 1 Demo"
-msgstr ""
+msgstr "《断剑 1》演示到此结束"
 
 #: engines/sword2/animation.cpp:426
 msgid ""
@@ -9762,7 +9764,7 @@ msgstr "使用英语语音"
 #: engines/sword25/metaengine.cpp:36
 msgid ""
 "Use English speech instead of German for every language other than German"
-msgstr ""
+msgstr "为非德语语言使用英语语音（而不是德语）"
 
 #: engines/tetraedge/metaengine.cpp:32
 msgid "Correct movie aspect ratio"
@@ -9839,7 +9841,7 @@ msgstr "启用墙碰撞"
 
 #: engines/twine/metaengine.cpp:45
 msgid "Enable the original wall collision damage"
-msgstr ""
+msgstr "启用原有的撞墙伤害"
 
 #: engines/twine/metaengine.cpp:56
 msgid "Disable save menu"
@@ -9848,7 +9850,7 @@ msgstr "禁用保存菜单"
 #: engines/twine/metaengine.cpp:57
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
-msgstr ""
+msgstr "原作只支持自动存档。此设置让你任何时候都可存档。"
 
 #: engines/twine/metaengine.cpp:67
 msgid "Enable debug mode"
@@ -9900,11 +9902,11 @@ msgstr "启用界面鼠标"
 
 #: engines/twine/metaengine.cpp:133
 msgid "Use the USA version"
-msgstr ""
+msgstr "使用美版"
 
 #: engines/twine/metaengine.cpp:134
 msgid "Enable the USA specific version flags"
-msgstr ""
+msgstr "启用美版专有的版本标记"
 
 #: engines/twine/metaengine.cpp:144 engines/ultima/metaengine.cpp:96
 msgid "Enable high resolution"
@@ -9912,71 +9914,71 @@ msgstr "启用高分辨率"
 
 #: engines/twine/metaengine.cpp:145 engines/ultima/metaengine.cpp:97
 msgid "Enable a higher resolution for the game"
-msgstr ""
+msgstr "启用游戏更高分辨率"
 
 #: engines/twine/metaengine.cpp:236
 msgid "Debug Next Room"
-msgstr ""
+msgstr "调试下一个房间"
 
 #: engines/twine/metaengine.cpp:241
 msgid "Debug Previous Room"
-msgstr ""
+msgstr "调试上一个房间"
 
 #: engines/twine/metaengine.cpp:246
 msgid "Debug Apply Celling Grid"
-msgstr ""
+msgstr "调试应用网格"
 
 #: engines/twine/metaengine.cpp:251
 msgid "Debug Increase Celling Grid Index"
-msgstr ""
+msgstr "调试增加天花板网格索引"
 
 #: engines/twine/metaengine.cpp:256
 msgid "Debug Decrease Celling Grid Index"
-msgstr ""
+msgstr "调试减小天花板网格索引"
 
 #: engines/twine/metaengine.cpp:261
 msgid "Debug Grid Camera Up"
-msgstr ""
+msgstr "调试上移网格相机"
 
 #: engines/twine/metaengine.cpp:266
 msgid "Debug Grid Camera Down"
-msgstr ""
+msgstr "调试下移网格相机"
 
 #: engines/twine/metaengine.cpp:271
 msgid "Debug Grid Camera Left"
-msgstr ""
+msgstr "调试左移网格相机"
 
 #: engines/twine/metaengine.cpp:277
 msgid "Debug Grid Camera Right"
-msgstr ""
+msgstr "调试右移网格相机"
 
 #: engines/twine/metaengine.cpp:282
 msgid "Place actor at center of screen"
-msgstr ""
+msgstr "将演员置于屏幕中央"
 
 #: engines/twine/metaengine.cpp:287
 msgid "Debug Menu"
-msgstr ""
+msgstr "调试菜单"
 
 #: engines/twine/metaengine.cpp:292
 msgid "Debug Menu Execute"
-msgstr ""
+msgstr "调试菜单执行"
 
 #: engines/twine/metaengine.cpp:297 engines/twine/metaengine.cpp:317
 msgid "Normal Behaviour"
-msgstr ""
+msgstr "正常行为"
 
 #: engines/twine/metaengine.cpp:302 engines/twine/metaengine.cpp:322
 msgid "Athletic Behaviour"
-msgstr ""
+msgstr "好动行为"
 
 #: engines/twine/metaengine.cpp:307 engines/twine/metaengine.cpp:327
 msgid "Aggressive Behaviour"
-msgstr ""
+msgstr "冒犯行为"
 
 #: engines/twine/metaengine.cpp:312 engines/twine/metaengine.cpp:332
 msgid "Discreet Behaviour"
-msgstr ""
+msgstr "谨慎行为"
 
 #: engines/twine/metaengine.cpp:337
 msgid "Behaviour Action"
@@ -9996,19 +9998,19 @@ msgstr "使用选中物品"
 
 #: engines/twine/metaengine.cpp:373
 msgid "Throw Magic Ball"
-msgstr ""
+msgstr "扔出魔法球"
 
 #: engines/twine/metaengine.cpp:387
 msgid "Move Backward"
-msgstr ""
+msgstr "向后移动"
 
 #: engines/twine/metaengine.cpp:408
 msgid "Use Protopack"
-msgstr ""
+msgstr "使用 Protopack"
 
 #: engines/twine/metaengine.cpp:413
 msgid "Open Holomap"
-msgstr ""
+msgstr "打开 Holomap"
 
 #: engines/twine/metaengine.cpp:426
 msgid "Special Action"
@@ -10016,40 +10018,40 @@ msgstr "特殊操作"
 
 #: engines/twine/metaengine.cpp:432
 msgid "Scenery Zoom"
-msgstr ""
+msgstr "场景缩放"
 
 #: engines/twine/metaengine.cpp:457 engines/twine/metaengine.cpp:509
 #: engines/twine/metaengine.cpp:525
 msgid "Abort"
-msgstr ""
+msgstr "取消"
 
 #: engines/twine/metaengine.cpp:562
 msgid "Previous location"
-msgstr ""
+msgstr "上一个位置"
 
 #: engines/twine/metaengine.cpp:567
 msgid "Next location"
-msgstr ""
+msgstr "下一个位置"
 
 #: engines/twine/parser/text.cpp:34
 msgctxt "Options menu"
 msgid "High resolution on"
-msgstr ""
+msgstr "高分辨率开启"
 
 #: engines/twine/parser/text.cpp:35
 msgctxt "Options menu"
 msgid "High resolution off"
-msgstr ""
+msgstr "高分辨率关闭"
 
 #: engines/twine/parser/text.cpp:36
 msgctxt "Options menu"
 msgid "Wall collision on"
-msgstr ""
+msgstr "墙碰撞开启"
 
 #: engines/twine/parser/text.cpp:37
 msgctxt "Options menu"
 msgid "Wall collision off"
-msgstr ""
+msgstr "墙碰撞关闭"
 
 #: engines/twine/parser/text.cpp:38
 msgctxt "Options menu"
@@ -10059,42 +10061,44 @@ msgstr "语言选择"
 #: engines/twine/parser/text.cpp:39
 msgctxt "Options menu"
 msgid "Voices: None"
-msgstr ""
+msgstr "语音：无"
 
 #: engines/twine/parser/text.cpp:40
 msgctxt "Options menu"
 msgid "Voices: English"
-msgstr ""
+msgstr "语音：英语"
 
 #: engines/twine/parser/text.cpp:41
 msgctxt "Options menu"
 msgid "Voices: French"
-msgstr ""
+msgstr "语音：法语"
 
 #: engines/twine/parser/text.cpp:42
 msgctxt "Options menu"
 msgid "Voices: German"
-msgstr ""
+msgstr "语音：德语"
 
 #: engines/twp/dialogs.cpp:32
 msgid "Video:"
-msgstr ""
+msgstr "视频："
 
 #. I18N: Setting to switch toiled paper to be shown as "over".
 #: engines/twp/dialogs.cpp:37
 msgid "Toilet paper over"
-msgstr ""
+msgstr "厕纸“over”"
 
 #: engines/twp/dialogs.cpp:38
 msgid ""
 "The toilet paper in some toilets will be shown \"over\".\n"
 "It's a joke option that has no effects on the gameplay."
 msgstr ""
+"某些厕所的厕纸会显示“over”。\n"
+"这是玩笑设置，不会影响游玩。"
 
 #. I18N: Setting to enable or disable additional jokes in the game.
 #: engines/twp/dialogs.cpp:41
 msgid "Annoying in-jokes"
-msgstr ""
+msgstr "烦人的圈内梗"
 
 #: engines/twp/dialogs.cpp:42
 msgid ""
@@ -10103,6 +10107,8 @@ msgid ""
 "There is a game achievement that can be obtained only if the in-jokes option "
 "is switched on."
 msgstr ""
+"游戏中包含圈内梗与对过去冒险游戏的提及，以对话与物品的形式展示。\n"
+"有一个成就只可在此设置打开时获得。"
 
 #: engines/twp/dialogs.cpp:44
 msgid "Controls:"
@@ -10111,27 +10117,27 @@ msgstr "控制："
 #. I18N: Setting to invert verb colors or keep the original verb colors.
 #: engines/twp/dialogs.cpp:48
 msgid "Invert verb colors"
-msgstr ""
+msgstr "反转动作词颜色"
 
 #. I18N: Setting to use retro or modern fonts.
 #: engines/twp/dialogs.cpp:50
 msgid "Retro Fonts"
-msgstr ""
+msgstr "复古字体"
 
 #. I18N: Setting to use retro or modern verbs.
 #: engines/twp/dialogs.cpp:52
 msgid "Retro Verbs"
-msgstr ""
+msgstr "复古动作"
 
 #. I18N: Setting to use classic sentence or modern sentence.
 #: engines/twp/dialogs.cpp:54
 msgid "Classic Sentence"
-msgstr ""
+msgstr "经典名句"
 
 #. I18N: Settings to enable or disable Ransome unbeeped DLC.
 #: engines/twp/dialogs.cpp:57
 msgid "Ransome *unbeeped* (DLC)"
-msgstr ""
+msgstr "去除脏话*屏蔽* (DLC)"
 
 #: engines/twp/metaengine.cpp:151
 msgid "Select highlighted verb"
@@ -10203,7 +10209,7 @@ msgstr "启用跳帧"
 
 #: engines/ultima/metaengine.cpp:64
 msgid "Allow the game to skip animation frames when running too slow."
-msgstr ""
+msgstr "允许游戏运行太慢时跳过动画帧。"
 
 #: engines/ultima/metaengine.cpp:74
 msgid "Enable frame limiting"
@@ -10231,12 +10237,12 @@ msgstr "玩家移动时播放音效。"
 
 #: engines/ultima/metaengine.cpp:118
 msgid "Enable jump to mouse position"
-msgstr ""
+msgstr "启用跳跃到鼠标位置"
 
 #: engines/ultima/metaengine.cpp:119
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
-msgstr ""
+msgstr "精准跳跃到鼠标光标所在位置，而非所在方向。"
 
 #: engines/ultima/metaengine.cpp:129
 msgid "Enable font replacement"
@@ -10244,17 +10250,17 @@ msgstr "启用字体替换"
 
 #: engines/ultima/metaengine.cpp:130
 msgid "Replaces game fonts with rendered fonts"
-msgstr ""
+msgstr "用已渲染字体替换游戏字体"
 
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
 #: engines/ultima/metaengine.cpp:152
 msgid "Camera moves with Silencer"
-msgstr ""
+msgstr "相机随 Silencer 移动"
 
 #: engines/ultima/metaengine.cpp:153
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
-msgstr ""
+msgstr "相机跟踪玩家移动，而不固定在定义位置。"
 
 #: engines/ultima/metaengine.cpp:163
 msgid "Always enable Christmas easter-egg"
@@ -10266,7 +10272,7 @@ msgstr "在任意时间都启用圣诞节音乐。"
 
 #: engines/ultima/shared/early/ultima_early.cpp:70
 msgid "Could not find correct ultima.dat datafile"
-msgstr ""
+msgstr "找不到正确的 ultima.dat 数据文件"
 
 #: engines/ultima/nuvie/nuvie.cpp:375
 #, c-format
@@ -10288,11 +10294,11 @@ msgstr "Ultima VI"
 
 #: engines/ultima/nuvie/metaengine.cpp:208
 msgid "Martian Dreams"
-msgstr ""
+msgstr "火星人之梦"
 
 #: engines/ultima/nuvie/metaengine.cpp:210
 msgid "The Savage Empire"
-msgstr ""
+msgstr "洪荒帝国"
 
 #: engines/ultima/nuvie/save/save_game.cpp:207
 msgid "Transfer Character"
@@ -10304,7 +10310,7 @@ msgstr "Ultima VIII"
 
 #: engines/ultima/ultima8/metaengine.cpp:138
 msgid "Crusader"
-msgstr ""
+msgstr "十字军"
 
 #: engines/ultima/ultima8/metaengine.cpp:181
 msgid "Ultima VIII Cheats"
@@ -10320,6 +10326,8 @@ msgid ""
 "directories have been copied from the CD.  More instructions are on the "
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
+"缺失《十字军》入场影片文件 - 请检查是否已将 FLICS 与 SOUND 目录从 CD 光盘复制过来。  可在 Wiki "
+"上查看更多说明：https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse。"
 
 #: engines/vcruise/metaengine.cpp:42
 msgid "Improved click sensitivity"
@@ -10330,7 +10338,7 @@ msgid ""
 "Allows the mouse to be moved a short distance without cancelling click "
 "interactions.  If this is off, any mouse movement while the mouse button is "
 "held cancels a click interaction."
-msgstr ""
+msgstr "允许在不取消点击互动的情况下小幅移动鼠标。  如果此选项关闭，在鼠标按键按下时，任何鼠标移动都会取消点击互动。"
 
 #: engines/vcruise/metaengine.cpp:53
 msgid "Faster animations"
@@ -10402,7 +10410,7 @@ msgstr "跳过当前动画"
 
 #: engines/vcruise/metaengine.cpp:200
 msgid "Cycle item in scene (debug cheat)"
-msgstr ""
+msgstr "循环切换场景中物品（调试作弊）"
 
 #: engines/vcruise/vcruise.cpp:92
 msgid "This game requires JPEG support, which was not compiled in."
