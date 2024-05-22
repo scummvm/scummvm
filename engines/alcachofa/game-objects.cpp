@@ -179,4 +179,16 @@ FloorColor::FloorColor(Room *room, ReadStream &stream)
 	: ObjectBase(room, stream)
 	, _shape(stream) {}
 
+void FloorColor::drawDebug() {
+	auto renderer = dynamic_cast<IDebugRenderer *>(&g_engine->renderer());
+	if (!g_engine->console().showFloorColor() || renderer == nullptr || !isEnabled())
+		return;
+
+	renderer->debugShape(*shape(), kDebugGreen);
+}
+
+Shape *FloorColor::shape() {
+	return &_shape;
+}
+
 }

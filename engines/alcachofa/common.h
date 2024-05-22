@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -20,35 +19,43 @@
  *
  */
 
-#ifndef ALCACHOFA_CONSOLE_H
-#define ALCACHOFA_CONSOLE_H
-
-#include "gui/debugger.h"
+#ifndef COMMON_H
+#define COMMON_H
 
 namespace Alcachofa {
 
-class Console : public GUI::Debugger {
-public:
-	Console();
-	~Console() override;
-
-	inline bool showInteractables() const { return _showInteractables; }
-	inline bool showFloor() const { return _showFloor; }
-	inline bool showFloorColor() const { return _showFloorColor; }
-
-	inline bool isAnyDebugDrawingOn() const {
-		return
-			_showInteractables ||
-			_showFloor ||
-			_showFloorColor;
-	}
-
-private:
-	bool _showInteractables = true;
-	bool _showFloor = false;
-	bool _showFloorColor = true;
+enum class CursorType {
+	Normal,
+	LookAt,
+	Use,
+	GoTo,
+	LeaveUp,
+	LeaveRight,
+	LeaveDown,
+	LeaveLeft
 };
 
-} // End of namespace Alcachofa
+enum class Direction {
+	Up,
+	Down,
+	Left,
+	Right
+};
 
-#endif // ALCACHOFA_CONSOLE_H
+constexpr const int32 kDirectionCount = 4;
+constexpr const int8 kOrderCount = 70;
+constexpr const int8 kForegroundOrderCount = 10;
+
+struct Color {
+	uint8 r, g, b, a;
+};
+static constexpr const Color kWhite = { 255, 255, 255, 255 };
+static constexpr const Color kBlack = { 0, 0, 0, 255 };
+static constexpr const Color kClear = { 0, 0, 0, 0 };
+static constexpr const Color kDebugRed = { 250, 0, 0, 70 };
+static constexpr const Color kDebugGreen = { 0, 255, 0, 85 };
+static constexpr const Color kDebugBlue = { 0, 0, 255, 110 };
+
+}
+
+#endif // ALCACHOFA_COMMON_H
