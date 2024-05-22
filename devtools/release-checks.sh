@@ -260,7 +260,7 @@ fi
 
 echo_n "Checking POTFILES header includes..."
 
-headerlist=`grep \.h$ <<< "$list" | grep -v detection_ | grep -v keymapper_`
+headerlist=`grep \.h$ <<< "$list" | grep -v detection_ | grep -v keymapper_ | grep -v engines/gob/detection/tables`
 
 if [ ! -z "$headerlist" ]; then
   num_lines=`wc -l <<< "$headerlist"`
@@ -280,7 +280,7 @@ fi
 echo_n "Checking missing/extra POTFILES..."
 
 # Now get list of includes
-git grep -l "common/translation\.h" | grep -v devtools/create_engine | grep -v devtools/release-checks.sh | sort > $TMP
+git grep -l "common/translation\.h" | grep -v devtools/create_engine | grep -v devtools/release-checks.sh | grep -v devtools/generate-android-i18n-strings.py | grep -v engines/gob/detection/tables.h | sort > $TMP
 
 res=`diff -  $TMP <<< "$list"`
 
