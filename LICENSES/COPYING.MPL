@@ -1,4 +1,4 @@
-NOTE: This license file only applies to the fillowing files and
+NOTE: This license file only applies to the following files and
 directories:
 
  * engines/director/lingo/lingodec/
