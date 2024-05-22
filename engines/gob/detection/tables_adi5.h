@@ -31,6 +31,8 @@
 #ifndef GOB_DETECTION_TABLES_ADI5_H
 #define GOB_DETECTION_TABLES_ADI5_H
 
+//#include "common/translation.h"  // Make release checker happy
+
 // -- French: Adi 5 --
 
 {

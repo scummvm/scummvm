@@ -31,6 +31,8 @@
 #ifndef GOB_DETECTION_TABLES_ADIBOUDCHOU_H
 #define GOB_DETECTION_TABLES_ADIBOUDCHOU_H
 
+//#include "common/translation.h"  // Make release checker happy
+
 // -- French: Adiboud'chou series --
 
 // -- German: Addy Buschu series --
