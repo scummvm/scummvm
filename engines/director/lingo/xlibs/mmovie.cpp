@@ -586,7 +586,7 @@ void MMovieXObj::m_readFile(int nargs) {
 		}
 	} else {
 		path = lastPathComponent(origPath, g_director->_dirSeparator);
-		if (path.hasSuffixIgnoreCase(".txt"))
+		if (!path.hasSuffixIgnoreCase(".txt"))
 			path += ".txt";
 	}
 	if (!path.hasPrefixIgnoreCase(prefix)) {
@@ -647,7 +647,13 @@ void MMovieXObj::m_writeFile(int nargs) {
 		}
 	} else {
 		path = lastPathComponent(origPath, g_director->_dirSeparator);
-		if (path.hasSuffixIgnoreCase(".txt"))
+		// Virtual Nightclub makes autosaves at random intervals.
+		// Intercept and give them a sensible name.
+		if (path.hasSuffixIgnoreCase(".VNC") && path.hasPrefixIgnoreCase("VNC_")) {
+			path = Common::String::format("Autosave.txt");
+		}
+
+		if (!path.hasSuffixIgnoreCase(".txt"))
 			path += ".txt";
 	}
 	if (!path.hasPrefixIgnoreCase(prefix)) {
