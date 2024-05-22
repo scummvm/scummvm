@@ -250,15 +250,16 @@ bool CBagMovieObject::runObject() {
 
 					CBagFMovie *pMovie = new CBagFMovie(CBofApp::getApp()->getMainWindow(), sFileName, &r);
 
-					if (pMovie->errorOccurred() == false) {
+					if (pMovie->errorOccurred())
+						logError(buildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.getBuffer()));
+					else {
 						pMovie->show();
 						CBofApp::getApp()->getMainWindow()->flushAllMessages();
 						pWnd->flushAllMessages();
 						pMovie->play(false);
-						delete pMovie;
-					} else {
-						logError(buildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.getBuffer()));
 					}
+					delete pMovie;
+					pMovie = nullptr;
 
 					delete pNewWin;
 					pNewWin = nullptr;
@@ -278,17 +279,13 @@ bool CBagMovieObject::runObject() {
 
 					if (_xDisplayType == dispType::ASYNCH_PDA_MSG) {
 						// Tell our PDA to switch gears to do asynch movie time.
-						if (pPDA) {
-							if (pPDA->showMovie()) {       // Returns false if another movie playing
-								pPDA->setMovie(sFileName); // Set the movie to play
-							}
-						} else {
-							logError(buildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.getBuffer()));
+						if (pPDA->showMovie()) {       // Returns false if another movie playing
+							pPDA->setMovie(sFileName); // Set the movie to play
 						}
 					} else {
 						CBofMovie *pMovie;
 
-						if (bZoomed && _xDisplayType != dispType::ASYNCH_PDA_MSG && _xDisplayType != dispType::PDA_MSG) {
+						if (bZoomed && _xDisplayType != dispType::PDA_MSG) {
 							pNewWin = new CBofWindow();
 							pNewWin->create("BLACK", 0, 0, 640, 480, CBofApp::getApp()->getMainWindow(), 0);
 							pNewWin->show();
@@ -296,7 +293,7 @@ bool CBagMovieObject::runObject() {
 						}
 
 						// If playing a PDA message while the PDA is zoomed
-						if (_xDisplayType == dispType::PDA_MSG && bZoomed) {
+						if (bZoomed && _xDisplayType == dispType::PDA_MSG) {
 							// Then stretch it to fit into the PDA's viewscreen
 							r.setRect(24, 47, 28 + 600 - 1, 47 + 302 - 1);
 							pMovie = new CBofMovie(CBofApp::getApp()->getMainWindow(), sFileName, &r, true);
@@ -306,23 +303,23 @@ bool CBagMovieObject::runObject() {
 							pMovie = new CBofMovie(CBofApp::getApp()->getMainWindow(), sFileName, &r);
 						}
 
-						if (pMovie->errorOccurred() == false) {
+						if (pMovie->errorOccurred())
+							logError(buildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.getBuffer()));
+						else {
 							// Stop any asnych movies already playing
 							pPDA->stopMovie(true);
 							pMovie->show();
 							CBofApp::getApp()->getMainWindow()->flushAllMessages();
 							pWnd->flushAllMessages();
 							pMovie->play(false);
-							delete pMovie;
-						} else {
-							logError(buildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.getBuffer()));
 						}
-
+						
+						delete pMovie;
+						pMovie = nullptr;
+						
 						// If we put a black window up, then
-						if (pNewWin) {
-							delete pNewWin;
-							pNewWin = nullptr;
-						}
+						delete pNewWin;
+						pNewWin = nullptr;
 					}
 				}
 
