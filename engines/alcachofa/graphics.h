@@ -31,6 +31,7 @@
 #include "graphics/managed_surface.h"
 
 #include "camera.h"
+#include "common.h"
 
 namespace Alcachofa {
 
@@ -53,37 +54,6 @@ enum class BlendMode {
 	Alpha,
 	Tinted
 };
-
-enum class CursorType {
-	Normal,
-	LookAt,
-	Use,
-	GoTo,
-	LeaveUp,
-	LeaveRight,
-	LeaveDown,
-	LeaveLeft
-};
-
-enum class Direction {
-	Up,
-	Down,
-	Left,
-	Right
-};
-
-constexpr const int32 kDirectionCount = 4;
-constexpr const int8 kOrderCount = 70;
-constexpr const int8 kForegroundOrderCount = 10;
-
-struct Color {
-	uint8 r, g, b, a;
-};
-static constexpr const Color kWhite = { 255, 255, 255, 255 };
-static constexpr const Color kBlack = { 0, 0, 0, 255 };
-static constexpr const Color kClear = { 0, 0, 0, 0 };
-static constexpr const Color kDebugRed = { 250, 0, 0, 70 };
-static constexpr const Color kDebugBlue = { 0, 0, 255, 110 };
 
 class Shape;
 

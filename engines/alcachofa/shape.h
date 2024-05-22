@@ -29,23 +29,34 @@
 #include "common/util.h"
 #include "math/vector2d.h"
 
+#include "common.h"
+
 namespace Alcachofa {
+
+struct EdgeDistances {
+	float _edgeLength;
+	float _onEdge;
+	float _toEdge;
+};
 
 struct Polygon {
 	Common::Span<const Common::Point> _points;
 
 	bool contains(const Common::Point &query) const;
+	EdgeDistances edgeDistances(uint startPointI, const Common::Point &query) const;
 };
 
 struct PathFindingPolygon : Polygon {
-	Common::Span<const int8> _pointValues;
-	int8 _polygonValue;
+	Common::Span<const uint8> _pointDepths;
+	int8 _order;
+
+	float depthAt(const Common::Point &query) const;
 };
 
 struct FloorColorPolygon : Polygon {
-	Common::Span<const uint32> _pointColors;
-	Common::Span<const uint8> _pointWeights;
-	int8 _polygonValue;
+	Common::Span<const Color> _pointColors;
+
+	Color colorAt(const Common::Point &query) const;
 };
 
 template<class TShape, typename TPolygon>
@@ -58,13 +69,13 @@ struct PolygonIterator {
 		return _shape.at(_index);
 	}
 
-	inline PolygonIterator<TShape, TPolygon> &operator++() {
+	inline my_type &operator++() {
 		assert(_index < _shape.polygonCount());
 		_index++;
 		return *this;
 	}
 
-	inline PolygonIterator<TShape, TPolygon> &operator++(int) {
+	inline my_type &operator++(int) {
 		assert(_index < _shape.polygonCount());
 		auto tmp = *this;
 		++*this;
@@ -104,6 +115,7 @@ public:
 	inline iterator end() const { return { *this, polygonCount() }; }
 
 	Polygon at(uint index) const;
+	int32 polygonContaining(const Common::Point &query) const;
 	bool contains(const Common::Point &query) const;
 
 protected:
@@ -138,12 +150,15 @@ public:
 	inline iterator end() const { return { *this, polygonCount() }; }
 
 	PathFindingPolygon at(uint index) const;
+	int8 orderAt(const Common::Point &query) const;
+	float depthAt(const Common::Point &query) const;
 
 private:
-	Common::Array<int8> _pointValues;
-	Common::Array<int8> _polygonValues;
+	Common::Array<uint8> _pointDepths;
+	Common::Array<int8> _polygonOrders;
 };
 
+using OptionalColor = Common::Pair<bool, Color>;
 class FloorColorShape final : public Shape {
 public:
 	using iterator = PolygonIterator<FloorColorShape, FloorColorPolygon>;
@@ -156,11 +171,10 @@ public:
 	inline iterator end() const { return { *this, polygonCount() }; }
 
 	FloorColorPolygon at(uint index) const;
+	OptionalColor colorAt(const Common::Point &query) const;
 
 private:
-	Common::Array<uint32> _pointColors;
-	Common::Array<uint8> _pointWeights;
-	Common::Array<int8> _polygonValues;
+	Common::Array<Color> _pointColors;
 };
 
 }
