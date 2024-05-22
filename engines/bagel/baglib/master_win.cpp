@@ -1275,7 +1275,7 @@ void CBagMasterWin::onUserMessage(uint32 message, uint32 param) {
 
 		CBofBitmap bmp(width(), height(), CBagel::getApp()->getPalette());
 		bmp.fillRect(nullptr, COLOR_BLACK);
-		bmp.fadeLines(this, 0, 0);
+		bmp.fadeLines(this);
 
 		char buffer[MAX_FNAME];
 

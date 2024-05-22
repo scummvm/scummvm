@@ -834,7 +834,7 @@ ErrorCode CBofBitmap::scrollRight(int nPixels, CBofRect * /*pRect*/) {
 	return _errCode;
 }
 
-ErrorCode CBofBitmap::scrollUp(int nPixels, CBofRect *pRect) {
+ErrorCode CBofBitmap::scrollUp(int nPixels) {
 	assert(isValidObject(this));
 
 	if (_errCode == ERR_NONE) {
@@ -842,15 +842,10 @@ ErrorCode CBofBitmap::scrollUp(int nPixels, CBofRect *pRect) {
 
 		CBofRect cRect(0, 0, _nDX  - 1, _nDY  - 1);
 
-		// Flip entire bitmap ?
-		if (pRect == nullptr) {
-			pRect = &cRect;
-		}
-
-		int32 x = pRect->left;
-		int32 y = pRect->top;
-		int32 dx = pRect->width();
-		int32 dy = pRect->height();
+		int32 x = cRect.left;
+		int32 y = cRect.top;
+		int32 dx = cRect.width();
+		int32 dy = cRect.height();
 
 		// Height must be valid or we're hosed
 		assert(dy > 0);
@@ -1032,7 +1027,7 @@ ErrorCode CBofBitmap::curtain(CBofWindow *pWnd, int nSpeed, int nMaskColor) {
 	return _errCode;
 }
 
-ErrorCode CBofBitmap::fadeLines(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect *pSrcRect, int nSpeed, int nMaskColor) {
+ErrorCode CBofBitmap::fadeLines(CBofWindow *pWnd,int nSpeed, int nMaskColor) {
 	assert(isValidObject(this));
 	assert(pWnd != nullptr);
 	assert(nSpeed != 0);
@@ -1040,17 +1035,13 @@ ErrorCode CBofBitmap::fadeLines(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect *
 	if (_errCode == ERR_NONE) {
 
 		CBofRect cDstRect, cSrcRect, cWindowRect, cBmpRect;
-
 		// Entire window?
 		//
-		if (pDstRect == nullptr) {
-			cWindowRect = pWnd->getRect();
-			pDstRect = &cWindowRect;
-		}
-		if (pSrcRect == nullptr) {
-			cBmpRect = getRect();
-			pSrcRect = &cBmpRect;
-		}
+		cWindowRect = pWnd->getRect();
+		CBofRect *pDstRect = &cWindowRect;
+
+		cBmpRect = getRect();
+		CBofRect *pSrcRect = &cBmpRect;
 
 		int x1 = pDstRect->left;
 		int y1 = pDstRect->top;
