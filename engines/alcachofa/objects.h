@@ -387,6 +387,9 @@ public:
 	FloorColor(Room *room, Common::ReadStream &stream);
 	virtual ~FloorColor() override = default;
 
+	virtual void drawDebug() override;
+	virtual Shape *shape() override;
+
 private:
 	FloorColorShape _shape;
 };

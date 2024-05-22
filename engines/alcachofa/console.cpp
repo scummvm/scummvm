@@ -26,6 +26,7 @@ namespace Alcachofa {
 Console::Console() : GUI::Debugger() {
 	registerVar("showInteractables", &_showInteractables);
 	registerVar("showFloor", &_showFloor);
+	registerVar("showFloorColor", &_showFloorColor);
 }
 
 Console::~Console() {
