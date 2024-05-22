@@ -22,6 +22,7 @@
 #include "glk/magnetic/magnetic.h"
 #include "glk/magnetic/magnetic_defs.h"
 #include "common/config-manager.h"
+#include "common/translation.h"
 
 namespace Glk {
 namespace Magnetic {
@@ -176,6 +177,26 @@ type8 Magnetic::ms_save_file(const char *name, type8 *ptr, type16 size) {
 
 Common::Error Magnetic::writeGameData(Common::WriteStream *ws) {
 	return ws->write(_saveData, _saveSize) == _saveSize ? Common::kNoError : Common::kWritingFailed;
+}
+
+/**
+ * The Magnetic engine currently doesn't support loading savegames from the GMM
+ */
+bool Magnetic::canLoadGameStateCurrently(Common::U32String *msg) {
+	if (msg)
+		*msg = _("This game does not support loading from the menu. Use in-game interface");
+
+	return false;
+}
+
+/**
+ * The Magnetic engine currently doesn't support saving games from the GMM
+ */
+bool Magnetic::canSaveGameStateCurrently(Common::U32String *msg) {
+	if (msg)
+		*msg = _("This game does not support saving from the menu. Use in-game interface");
+
+	return false;
 }
 
 } // End of namespace Magnetic
