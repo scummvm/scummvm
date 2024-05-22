@@ -28,6 +28,7 @@
 #include "director/movie.h"
 #include "director/castmember/bitmap.h"
 #include "director/picture.h"
+#include "director/lingo/lingo-code.h"
 
 namespace Director {
 
@@ -62,7 +63,7 @@ void Cursor::readFromCast(Datum cursorCasts) {
 		warning("Cursor::readFromCast: Needs array of 2");
 		return;
 	}
-	if (_cursorResId == cursorCasts)
+	if (_cursorResId.type == ARRAY && LC::eqData(_cursorResId, cursorCasts).asInt())
 		return;
 
 	CastMemberID cursorId = cursorCasts.u.farr->arr[0].asMemberID();
