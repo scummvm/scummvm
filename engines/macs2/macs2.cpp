@@ -496,9 +496,9 @@ void Macs2Engine::readResourceFile() {
 	// _map = readRLEImage(0x0024BD9B, file);
 	// _map = readRLEImage(0x00248FCE, file);
 	// Next on is the actual map
-	// _map = readRLEImage(0x0024B0DF, file);
+	_map = readRLEImage(0x0024B0DF, _fileStream);
 	// TODO: This is the depth map - TBC that it's actually it
-	_map = readRLEImage(0x00248FCE, _fileStream);
+	// _map = readRLEImage(0x00248FCE, _fileStream);
 
 	// This is the walkability map - TBC if that's really it and how it works
 	_pathfindingMap = readRLEImage(0x00249CC1, _fileStream);
@@ -642,7 +642,30 @@ void Macs2Engine::changeScene(uint32 newSceneIndex) {
 		_pal[i] = (_pal[i] * 259 + 33) >> 6;
 	}
 
+	// Continuing with data, even if we don't know all uses yet
+	Common::Array<uint8> unknownData1;
+	unknownData1.reserve(0x100);
+	_fileStream->read(unknownData1.data(), 0x100);
+
+	uint8 unknownByte1 = _fileStream->readByte();
+	uint8 unknownByte2 = _fileStream->readByte();
+	uint8 unknownByte3 = _fileStream->readByte();
+
+	// Offset 1013h
+	Graphics::ManagedSurface unknownRLE1 = readRLEImage(_fileStream->pos(), _fileStream);
+
+	// Offset 2017h
+	Graphics::ManagedSurface unknownRLE2 = readRLEImage(_fileStream->pos(), _fileStream);
+
+	// Offset 301Bh
+	Graphics::ManagedSurface unknownRLE3 = readRLEImage(_fileStream->pos(), _fileStream);
 	
+	// Offset 401Fh
+	// This is the first map used in 0037:10C4 for the lookup of interacted hotspots
+	Graphics::ManagedSurface bgMap = readRLEImage(_fileStream->pos(), _fileStream);
+	_map = bgMap;
+
+	// TODO: There are some more data points missing from the function
 
 	// Refresh characters
 	View1 *currentView = (View1 *)findView("View1");

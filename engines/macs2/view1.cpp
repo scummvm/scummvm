@@ -320,7 +320,8 @@ View1::View1() : UIElement("View1") {
 
 
 
-			uint32 value = getSurface().getPixel(msg._pos.x, msg._pos.y);
+			// uint32 value = getSurface().getPixel(msg._pos.x, msg._pos.y);
+			uint32 value = g_engine->_map.getPixel(msg._pos.x, msg._pos.y);
 			g_system->setWindowCaption(Common::String::format("%u,%u: %u", msg._pos.x, msg._pos.y, value));
 			//g_engine->CalculatePath(Common::Point(154, 136), Common::Point(msg._pos.x, msg._pos.y));
 
@@ -364,6 +365,9 @@ View1::View1() : UIElement("View1") {
 bool View1::msgKeypress(const KeypressMessage &msg) {
 	// Any keypress to close the view
 	// close();
+	if (msg.ascii == (uint16)'c') {
+		g_engine->changeScene(0x6);
+	}
 	if (msg.ascii == (uint16)'m') {
 		// _backgroundSurface = g_engine->_map;
 		_backgroundSurface = g_engine->_pathfindingMap;
@@ -380,6 +384,10 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		characters[0]->StartLerpTo(Common::Point(200, 100), 5000);
 	} else if (msg.ascii == (uint16)'i') {
 		_isShowingInventory = !_isShowingInventory;
+	} else if (msg.ascii >= '1' && msg.ascii <= '9') {
+		// Register a dialogue choice and act upon it
+		uint8 numberPressed = msg.ascii - '1' + 1;
+		TriggerDialogueChoice(numberPressed);
 	}
 	return true;
 }
@@ -663,6 +671,20 @@ void View1::ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 }
 
 void View1::ShowDialogueChoice(const Common::Array<Common::StringArray> &choices, const Common::Point &position, bool onRightSide) {
+	Common::StringArray joinedLines;
+	for (auto &currentLines : choices) {
+		for (auto &currentLine : currentLines) {
+			joinedLines.push_back(currentLine);
+		}
+	}
+
+	ShowSpeechAct(1, joinedLines, position, onRightSide);
+}
+
+void View1::TriggerDialogueChoice(uint8 index) {
+	g_engine->_scriptExecutor->SetVariableValue(0x0d, index, 0);
+	// TODO: Not sure about the first run variable here
+	g_engine->RunScriptExecutor();
 }
 
 uint16 View1::GetHitObjectID(const Common::Point& pos) const {
@@ -712,7 +734,7 @@ Macs2::AnimFrame *Character::GetCurrentPortrait() {
 	AnimFrame *result = new AnimFrame();
 	Common::MemoryReadStream stream(this->GameObject->Blobs[17].data(), this->GameObject->Blobs[17].size());
 	// TODO: Need to check how the offset really is calculated by the game code, this will not hold
-	if (GameObject->Index == 2 || GameObject->Index == 6) {
+	if (GameObject->Index == 2 || GameObject->Index == 6 || GameObject->Index == 0xd) {
 		stream.seek(35, SEEK_SET);
 	} else {
 		stream.seek(36, SEEK_SET);
