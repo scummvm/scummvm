@@ -43,6 +43,15 @@ const char* kernelFunction = R"(
 		float4 flipColor = src.read(uint2(gid.x, src.get_height() - gid.y));
 		dst.write(flipColor, gid);
 	}
+
+	kernel void blit(
+	texture2d<float, access::write> dst [[texture(0)]],
+	texture2d<float, access::read> src [[texture(1)]],
+	uint2 gid [[thread_position_in_grid]])
+	{
+		float4 color = src.read(uint2(gid.x, gid.y));
+		dst.write(color, gid);
+	}
 )";
 
 @implementation iPhoneViewMetal
@@ -97,6 +106,7 @@ static inline void execute_on_main_thread(void (^block)(void)) {
 
 	_metalLibrary = [_metalDevice newLibraryWithSource:[NSString stringWithUTF8String:kernelFunction] options:nil error:nil];
 	_kernelFunctionFlipY = [_metalLibrary newFunctionWithName:@"flip_y"];
+	_kernelFunctionBlit = [_metalLibrary newFunctionWithName:@"blit"];
 }
 
 - (void)createOpenGLESContext {
@@ -234,7 +244,13 @@ static inline void execute_on_main_thread(void (^block)(void)) {
 		id<CAMetalDrawable> drawable = [_metalLayer nextDrawable];
 		id<MTLComputeCommandEncoder> encoder = [commandBuffer computeCommandEncoder];
 
-		[encoder setComputePipelineState:[_metalDevice newComputePipelineStateWithFunction:_kernelFunctionFlipY error:&error]];
+		if (isOpenGLES) {
+			// The coordinate system in OpenGL ES is flipped in Y axis
+			// compared to Metal. We need to flip it
+			[encoder setComputePipelineState:[_metalDevice newComputePipelineStateWithFunction:_kernelFunctionFlipY error:&error]];
+		} else {
+			[encoder setComputePipelineState:[_metalDevice newComputePipelineStateWithFunction:_kernelFunctionBlit error:&error]];
+		}
 		// dst
 		[encoder setTexture:[drawable texture] atIndex:0];
 		// src

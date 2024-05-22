@@ -57,6 +57,7 @@ API_AVAILABLE(ios(11.0))
 @property (readonly, nonnull, nonatomic) id<MTLTexture> metalTexture;
 @property (readonly, nonnull, nonatomic) id<MTLLibrary> metalLibrary;
 @property (readonly, nonnull, nonatomic) id<MTLFunction> kernelFunctionFlipY;
+@property (readonly, nonnull, nonatomic) id<MTLFunction> kernelFunctionBlit;
 
 - (id)initWithFrame:(struct CGRect)frame andMetalDevice:(id<MTLDevice>_Nonnull) device;
 
