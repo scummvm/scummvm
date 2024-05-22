@@ -499,25 +499,6 @@ IFS="$OLDIFS"
 #############################################################################
 
 ###########
-# MM engine
-###########
-
-echo_n "Checking mm.dat..."
-
-fileDate=`git log -1 dists/engine-data/mm.dat | grep Date | sed 's/Date: //'`
-
-num_lines=`git -P log --oneline "--since=$fileDate" devtools/create_mm/files | wc -l`
-
-if [ "$num_lines" -ne "0" ]; then
-  echo -e "$num_lines unprocessed commits. ${RED}Run 'cd devtools/create_mm/files; zip -r9 ../../../dists/engine-data/mm.dat .'${NC}"
-
-  failPlus
-else
-  echoOk
-fi
-
-
-###########
 # Bagel engine
 ###########
 
@@ -529,6 +510,25 @@ num_lines=`git -P log --oneline "--since=$fileDate" devtools/create_bagel/files 
 
 if [ "$num_lines" -ne "0" ]; then
   echo -e "$num_lines unprocessed commits. ${RED}Run 'cd devtools/create_bagel/files; zip -r9 ../../../dists/engine-data/bagel.dat .'${NC}"
+
+  failPlus
+else
+  echoOk
+fi
+
+
+###########
+# MM engine
+###########
+
+echo_n "Checking mm.dat..."
+
+fileDate=`git log -1 dists/engine-data/mm.dat | grep Date | sed 's/Date: //'`
+
+num_lines=`git -P log --oneline "--since=$fileDate" devtools/create_mm/files | wc -l`
+
+if [ "$num_lines" -ne "0" ]; then
+  echo -e "$num_lines unprocessed commits. ${RED}Run 'cd devtools/create_mm/files; zip -r9 ../../../dists/engine-data/mm.dat .'${NC}"
 
   failPlus
 else
