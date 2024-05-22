@@ -179,7 +179,7 @@ static void setScriptToDisplay(const ImGuiScript &script);
 static Director::Breakpoint *getBreakpoint(const Common::String &handlerName, int pc) {
 	auto &bps = g_lingo->getBreakpoints();
 	for (uint i = 0; i < bps.size(); i++) {
-		if (bps[i].type == kBreakpointFunction && bps[i].funcName == handlerName && bps[i].funcOffset == pc) {
+		if (bps[i].type == kBreakpointFunction && bps[i].funcName == handlerName && (int)bps[i].funcOffset == pc) {
 			return &bps[i];
 		}
 	}
@@ -284,7 +284,7 @@ public:
 
 	virtual void visit(const LingoDec::CallNode &node) override {
 		int32 obj = 0;
-		for (int i = 0; i < _handler->bytecodeArray.size(); i++) {
+		for (uint i = 0; i < _handler->bytecodeArray.size(); i++) {
 			if (node._startOffset == _handler->bytecodeArray[i].pos) {
 				obj = _handler->bytecodeArray[i].obj;
 				break;
@@ -1760,11 +1760,11 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 		ImGui::Unindent();
 	}
 
-	for (uint f = 0; f < numFrames; f++) {
+	for (int f = 0; f < (int)numFrames; f++) {
 		Frame &frame = *score->_scoreCache[f];
 		Sprite &sprite = *frame._sprites[ch];
 
-		if (f == currentFrameNum)
+		if (f == (int)currentFrameNum)
 			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
 
 		ImGui::TableNextColumn();
@@ -1871,10 +1871,10 @@ static void showScore() {
 			return;
 		}
 
-		if (_state->_selectedScoreCast.frame >= numFrames)
+		if (_state->_selectedScoreCast.frame >= (int)numFrames)
 			_state->_selectedScoreCast.frame = 0;
 
-		if (!numFrames || _state->_selectedScoreCast.channel >= score->_scoreCache[0]->_sprites.size())
+		if (!numFrames || _state->_selectedScoreCast.channel >= (int)score->_scoreCache[0]->_sprites.size())
 			_state->_selectedScoreCast.channel = 0;
 
 		{ // Render sprite details
