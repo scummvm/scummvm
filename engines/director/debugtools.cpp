@@ -1634,7 +1634,7 @@ static void showBreakpointList() {
 		auto &bps = g_lingo->getBreakpoints();
 		if (ImGui::BeginTable("BreakpointsTable", 5, ImGuiTableFlags_SizingFixedFit)) {
 			for (uint i = 0; i < 5; i++)
-				ImGui::TableSetupColumn(NULL, i == 2 ? ImGuiTableColumnFlags_WidthStretch : ImGuiTableFlags_SizingFixedFit);
+				ImGui::TableSetupColumn(NULL, i == 2 ? ImGuiTableColumnFlags_WidthStretch : ImGuiTableColumnFlags_NoHeaderWidth);
 
 			for (uint i = 0; i < bps.size(); i++) {
 				if(bps[i].type != kBreakpointFunction) continue;
