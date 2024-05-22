@@ -98,6 +98,7 @@ typedef struct ImGuiWindows {
 	bool funcList = false;
 	bool score = false;
 	bool bpList = false;
+	bool settings = false;
 } ImGuiWindows;
 
 typedef struct ImGuiState {
@@ -114,6 +115,20 @@ typedef struct ImGuiState {
 		bool _showScript = false;
 		bool _showByteCode = false;
 	} _functions;
+
+	struct {
+		ImVec4 _bp_color_disabled = ImVec4(0.9f, 0.08f, 0.0f, 0.0f);
+		ImVec4 _bp_color_enabled = ImVec4(0.9f, 0.08f, 0.0f, 1.0f);
+		ImVec4 _bp_color_hover = ImVec4(0.42f, 0.17f, 0.13f, 1.0f);
+		ImVec4 _line_color = ImVec4(0.44f, 0.44f, 0.44f, 1.0f);
+		ImVec4 _call_color = ImColor(IM_COL32(0xFF, 0xC5, 0x5C, 0xFF));
+		ImVec4 _builtin_color = ImColor(IM_COL32(0x60, 0x7C, 0xFF, 0xFF));
+		ImVec4 _var_color = ImColor(IM_COL32(0x4B, 0xCD, 0x5E, 0xFF));
+		ImVec4 _literal_color = ImColor(IM_COL32(0xFF, 0x9F, 0xDA, 0x9E));
+		ImVec4 _comment_color = ImColor(IM_COL32(0xFF, 0xA5, 0x9D, 0x95));
+		ImVec4 _type_color = ImColor(IM_COL32(0x13, 0xC5, 0xF9, 0xFF));
+		ImVec4 _keyword_color = ImColor(IM_COL32(0xC1, 0xC1, 0xC1, 0xFF));
+	} _colors;
 
 	ImGuiWindows _w;
 	ImGuiWindows _savedW;
@@ -224,27 +239,27 @@ public:
 			write(node._startOffset, code);
 		}
 
-		if (isMethod && _script.propertyNames.size() > 0 && node.handler == &node.handler->script->handlers[0]) {
+		if (isMethod && !_script.propertyNames.empty() && node.handler == &node.handler->script->handlers[0]) {
 			write(node._startOffset, "instance");
 			ImGui::SameLine();
 			for (size_t i = 0; i < _script.propertyNames.size(); i++) {
 				if (i > 0)
-					ImGui::Text(", ");
+					ImGui::Text(",");
 				ImGui::SameLine();
-				ImGui::TextColored((ImVec4)ImColor(var_color), "%s", node.handler->script->propertyNames[i].c_str());
+				ImGui::TextColored((ImVec4)ImColor(_state->_colors._var_color), "%s", _script.propertyNames[i].c_str());
 				ImGui::SameLine();
 			}
 			ImGui::NewLine();
 		}
 
 		if (!_script.globalNames.empty()) {
-			write(node._startOffset, "global ");
+			write(node._startOffset, "global");
 			ImGui::SameLine();
 			for (size_t i = 0; i < _script.globalNames.size(); i++) {
 				if (i > 0)
-					ImGui::Text(", ");
+					ImGui::Text(",");
 				ImGui::SameLine();
-				ImGui::TextColored((ImVec4)ImColor(var_color), "%s", node.handler->globalNames[i].c_str());
+				ImGui::TextColored((ImVec4)ImColor(_state->_colors._var_color), "%s", _script.globalNames[i].c_str());
 				ImGui::SameLine();
 			}
 			ImGui::NewLine();
@@ -253,14 +268,31 @@ public:
 		node.block->accept(*this);
 
 		if (!isMethod) {
-			write(node.block->_endOffset, "end");
+			write(node.block->_endOffset, "end", _state->_colors._keyword_color);
 		}
+	}
+
+	virtual void visit(const LingoDec::CommentNode &node) override {
+		ImGui::TextColored(ImColor(_state->_colors._comment_color), "-- %s", node.text.c_str());
+		ImGui::SameLine();
 	}
 
 	virtual void visit(const LingoDec::LiteralNode &node) override {
 		LingoDec::CodeWriterVisitor code(_dot, false);
 		node.accept(code);
-		ImGui::TextColored(literal_color, "%s", code._str.c_str());
+		ImGui::TextColored(ImColor(_state->_colors._literal_color), "%s", code._str.c_str());
+		ImGui::SameLine();
+	}
+
+	virtual void visit(const LingoDec::NewObjNode &node) override {
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "new");
+		ImGui::SameLine();
+		ImGui::TextColored(ImColor(_state->_colors._type_color), "%s", node.objType.c_str());
+		ImGui::SameLine();
+		ImGui::Text("(");
+		ImGui::SameLine();
+		node.objArgs->accept(*this);
+		ImGui::Text(")");
 		ImGui::SameLine();
 	}
 
@@ -297,7 +329,7 @@ public:
 			renderIndentation();
 		}
 
-		const ImVec4 color = (ImVec4)ImColor(g_lingo->_builtinCmds.contains(node.name) ? builtin_color : call_color);
+		const ImVec4 color = (ImVec4)ImColor(g_lingo->_builtinCmds.contains(node.name) ? _state->_colors._builtin_color : _state->_colors._call_color);
 		ImGui::TextColored(color, "%s", node.name.c_str());
 		if (!g_lingo->_builtinCmds.contains(node.name) && ImGui::IsItemHovered() && ImGui::BeginTooltip()) {
 			ImGui::Text("Go to definition");
@@ -311,93 +343,677 @@ public:
 		}
 		ImGui::SameLine();
 
-		LingoDec::CodeWriterVisitor code(_dot, false);
 		if (node.noParens()) {
-			node.argList->accept(code);
+			node.argList->accept(*this);
 		} else {
-			code.write("(");
-			node.argList->accept(code);
-			code.write(")");
+			ImGui::Text("(");
+			ImGui::SameLine();
+			node.argList->accept(*this);
+			ImGui::Text(")");
+			ImGui::SameLine();
 		}
 
-		ImGui::Text("%s", code._str.c_str());
-		if (!node.isStatement) {
-			ImGui::SameLine();
+		if (node.isStatement) {
+			ImGui::NewLine();
 		}
 	}
 
 	virtual void visit(const LingoDec::BlockNode &node) override {
-		_indent++;
+		indent();
 		for (const auto &child : node.children) {
 			child->accept(*this);
 		}
-		_indent--;
+		unindent();
+	}
+
+	virtual void visit(const LingoDec::PutStmtNode &node) override {
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "put");
+		ImGui::SameLine();
+		node.value->accept(*this);
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), LingoDec::StandardNames::putTypeNames[node.type]);
+		ImGui::SameLine();
+		node.variable->accept(*this); //
+	}
+
+	virtual void visit(const LingoDec::TheExprNode &node) override {
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "the");
+		ImGui::SameLine();
+		ImGui::TextColored(ImColor(_state->_colors._var_color), "%s", node.prop.c_str());
+		ImGui::SameLine();
+	}
+
+	virtual void visit(const LingoDec::ExitStmtNode &node) override {
+		write(node._startOffset, "exit", _state->_colors._keyword_color);
+	}
+
+	virtual void visit(const LingoDec::WhenStmtNode &node) override {
+		write(node._startOffset, "when", _state->_colors._keyword_color);
+		ImGui::SameLine();
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), LingoDec::StandardNames::whenEventNames[node.event]);
+		ImGui::SameLine();
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "then");
+		ImGui::SameLine();
+		ImGui::Text("%s", node.script.c_str());
 	}
 
 	virtual void visit(const LingoDec::RepeatWhileStmtNode &node) override {
-		LingoDec::CodeWriterVisitor code(_dot, false);
-		code.write("repeat while ");
-		node.condition->accept(code);
-		write(node._startOffset, code._str);
-
+		write(node._startOffset, "repeat while", _state->_colors._keyword_color);
+		ImGui::SameLine();
+		node.condition->accept(*this);
+		ImGui::NewLine();
 		node.block->accept(*this);
-
-		write(node._endOffset, "end repeat");
+		write(node._endOffset, "end repeat", _state->_colors._keyword_color);
 	}
 
 	virtual void visit(const LingoDec::RepeatWithInStmtNode &node) override {
-		LingoDec::CodeWriterVisitor code(_dot, false);
-		code.write("repeat with ");
-		code.write(node.varName);
-		code.write(" in ");
-		node.list->accept(code);
-		write(node._startOffset, code._str);
+		write(node._startOffset, "repeat with", _state->_colors._keyword_color);
+		ImGui::SameLine();
+		ImGui::TextColored(ImColor(_state->_colors._var_color), "%s", node.varName.c_str());
+		ImGui::SameLine();
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "in");
+		ImGui::SameLine();
+		node.list->accept(*this);
+		ImGui::NewLine();
 		node.block->accept(*this);
-		write(node._endOffset, "end repeat");
+		write(node._endOffset, "end repeat", _state->_colors._keyword_color);
 	}
 
 	virtual void visit(const LingoDec::RepeatWithToStmtNode &node) override {
-		LingoDec::CodeWriterVisitor code(_dot, false);
-		code.write("repeat with ");
-		code.write(node.varName);
-		code.write(" = ");
-		node.start->accept(code);
+		write(node._startOffset, "repeat with", _state->_colors._keyword_color);
+		ImGui::SameLine();
+		ImGui::TextColored(ImColor(_state->_colors._var_color), "%s", node.varName.c_str());
+		ImGui::SameLine();
+		ImGui::Text("=");
+		ImGui::SameLine();
+		node.start->accept(*this);
 		if (node.up) {
-			code.write(" to ");
+			ImGui::TextColored(ImColor(_state->_colors._keyword_color), "to");
+			ImGui::SameLine();
 		} else {
-			code.write(" down to ");
+			ImGui::TextColored(ImColor(_state->_colors._keyword_color), "down to");
+			ImGui::SameLine();
 		}
-		node.end->accept(code);
-		write(node._startOffset, code._str);
+		node.end->accept(*this);
+		ImGui::NewLine();
 		node.block->accept(*this);
-		write(node._endOffset, "end repeat");
+		write(node._endOffset, "end repeat", _state->_colors._keyword_color);
 	}
 
 	virtual void visit(const LingoDec::IfStmtNode &node) override {
 		{
-			renderLine(node._startOffset);
-			renderIndentation();
-			ImGui::Text("if ");
+			write(node._startOffset, "if", _state->_colors._keyword_color);
 			ImGui::SameLine();
 			node.condition->accept(*this);
-			ImGui::SameLine();
-			ImGui::Text(" then");
+			ImGui::TextColored(ImColor(_state->_colors._keyword_color), "then");
 		}
 		node.block1->accept(*this);
 		if (node.hasElse) {
-			write(node.block2->_startOffset, "else");
+			write(node.block2->_startOffset, "else", _state->_colors._keyword_color);
 			node.block2->accept(*this);
 		}
-		write(node._endOffset, "end if");
+		write(node._endOffset, "end if", _state->_colors._keyword_color);
 	}
 
 	virtual void visit(const LingoDec::TellStmtNode &node) override {
-		LingoDec::CodeWriterVisitor code(_dot, false);
-		code.write("tell ");
+		write(node._startOffset, "tell", _state->_colors._keyword_color);
+		ImGui::SameLine();
 		node.window->accept(*this);
-		write(node._startOffset, code._str);
 		node.block->accept(*this);
-		write(node._endOffset, "end tell");
+		write(node._endOffset, "end tell", _state->_colors._keyword_color);
+	}
+
+	virtual void visit(const LingoDec::EndCaseNode &node) override {
+		write(node._endOffset, "end case", _state->_colors._keyword_color);
+	}
+
+	virtual void visit(const LingoDec::CaseLabelNode &node) override {
+		bool parenValue = node.value->hasSpaces(_dot);
+		if (parenValue) {
+			ImGui::Text("(");
+			ImGui::SameLine();
+		}
+		node.value->accept(*this);
+		if (parenValue) {
+			ImGui::Text(")");
+			ImGui::SameLine();
+		}
+
+		if (node.nextOr) {
+			ImGui::Text(",");
+			ImGui::SameLine();
+			node.nextOr->accept(*this);
+		} else {
+			ImGui::Text(":");
+			node.block->accept(*this);
+		}
+		if (node.nextLabel) {
+			node.nextLabel->accept(*this);
+		}
+	}
+
+	virtual void visit(const LingoDec::ChunkExprNode &node) override {
+		ImGui::Text(LingoDec::StandardNames::chunkTypeNames[node.type]);
+		ImGui::SameLine();
+		node.first->accept(*this);
+		if (!(node.last->type == LingoDec::kLiteralNode && node.last->getValue()->type == LingoDec::kDatumInt && node.last->getValue()->i == 0)) {
+			ImGui::TextColored(ImColor(_state->_colors._keyword_color), "to");
+			ImGui::SameLine();
+			node.last->accept(*this);
+		}
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "of");
+		ImGui::SameLine();
+		node.string->accept(*this);
+	}
+
+	virtual void visit(const LingoDec::InverseOpNode &node) override {
+		ImGui::Text("-");
+		ImGui::SameLine();
+
+		bool parenOperand = node.operand->hasSpaces(_dot);
+		if (parenOperand) {
+			ImGui::Text("(");
+			ImGui::SameLine();
+		}
+		node.operand->accept(*this);
+		if (parenOperand) {
+			ImGui::Text(")");
+			ImGui::SameLine();
+		}
+	}
+
+	virtual void visit(const LingoDec::CaseStmtNode &node) override {
+		write(node._startOffset, "case", _state->_colors._keyword_color);
+		node.value->accept(*this);
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "of");
+		indent();
+		if (node.firstLabel) {
+			node.firstLabel->accept(*this);
+		}
+		if (node.otherwise) {
+			node.otherwise->accept(*this);
+		}
+		unindent();
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "end case");
+	}
+
+	virtual void visit(const LingoDec::ObjCallNode &node) override {
+		auto &rawArgs = node.argList->getValue()->l;
+
+		auto &obj = rawArgs[0];
+		bool parenObj = obj->hasSpaces(_dot);
+		if (parenObj) {
+			ImGui::Text("(");
+			ImGui::SameLine();
+		}
+		obj->accept(*this);
+		if (parenObj) {
+			ImGui::Text(")");
+			ImGui::SameLine();
+		}
+
+		ImGui::Text(".");
+		ImGui::SameLine();
+		ImGui::Text(node.name.c_str());
+		ImGui::SameLine();
+		ImGui::Text("(");
+		ImGui::SameLine();
+		for (size_t i = 1; i < rawArgs.size(); i++) {
+			if (i > 1) {
+				ImGui::Text(",");
+				ImGui::SameLine();
+			}
+			rawArgs[i]->accept(*this);
+		}
+		ImGui::Text(")");
+		ImGui::SameLine();
+	}
+
+	virtual void visit(const LingoDec::BinaryOpNode &node) override {
+		unsigned int precedence = node.getPrecedence();
+		bool parenLeft = false;
+		bool parenRight = false;
+		if (precedence) {
+			if (node.left->type == LingoDec::kBinaryOpNode) {
+				auto leftBinaryOpNode = static_cast<LingoDec::BinaryOpNode *>(node.left.get());
+				parenLeft = (leftBinaryOpNode->getPrecedence() != precedence);
+			}
+			parenRight = (node.right->type == LingoDec::kBinaryOpNode);
+		}
+
+		if (parenLeft) {
+			ImGui::Text("(");
+			ImGui::SameLine();
+		}
+		node.left->accept(*this);
+		if (parenLeft) {
+			ImGui::Text(")");
+			ImGui::SameLine();
+		}
+
+		ImGui::Text(LingoDec::StandardNames::binaryOpNames[node.opcode]);
+		ImGui::SameLine();
+
+		if (parenRight) {
+			ImGui::Text("(");
+			ImGui::SameLine();
+		}
+		node.right->accept(*this);
+		if (parenRight) {
+			ImGui::Text(")");
+			ImGui::SameLine();
+		}
+	}
+
+	virtual void visit(const LingoDec::OtherwiseNode &node) override {
+		write(node._startOffset, "otherwise:", _state->_colors._keyword_color);
+		node.block->accept(*this);
+	}
+
+	virtual void visit(const LingoDec::MemberExprNode &node) override {
+		bool hasCastID = node.castID && !(node.castID->type == LingoDec::kLiteralNode && node.castID->getValue()->type == LingoDec::kDatumInt && node.castID->getValue()->i == 0);
+		ImGui::Text(node.type.c_str());
+		ImGui::SameLine();
+		if (_dot) {
+			ImGui::Text("(");
+			ImGui::SameLine();
+			node.memberID->accept(*this);
+			if (hasCastID) {
+				ImGui::Text(",");
+				ImGui::SameLine();
+				node.castID->accept(*this);
+			}
+			ImGui::Text(")");
+			ImGui::SameLine();
+		} else {
+			bool parenMemberID = (node.memberID->type == LingoDec::kBinaryOpNode);
+			if (parenMemberID) {
+				ImGui::Text("(");
+				ImGui::SameLine();
+			}
+			node.memberID->accept(*this);
+			if (parenMemberID) {
+				ImGui::Text(")");
+				ImGui::SameLine();
+			}
+
+			if (hasCastID) {
+				ImGui::TextColored(ImColor(_state->_colors._keyword_color), "of castLib");
+				ImGui::SameLine();
+
+				bool parenCastID = (node.castID->type == LingoDec::kBinaryOpNode);
+				if (parenCastID) {
+					ImGui::Text("(");
+					ImGui::SameLine();
+				}
+				node.castID->accept(*this);
+				if (parenCastID) {
+					ImGui::Text(")");
+					ImGui::SameLine();
+				}
+			}
+		}
+	}
+
+	virtual void visit(const LingoDec::PlayCmdStmtNode &node) override {
+		auto &rawArgs = node.argList->getValue()->l;
+
+		write(node._startOffset, "play", _state->_colors._keyword_color);
+
+		if (rawArgs.size() == 0) {
+			ImGui::TextColored(ImColor(_state->_colors._keyword_color), "done");
+			ImGui::SameLine();
+			return;
+		}
+
+		auto &frame = rawArgs[0];
+		if (rawArgs.size() == 1) {
+			ImGui::TextColored(ImColor(_state->_colors._keyword_color), "frame");
+			ImGui::SameLine();
+			frame->accept(*this);
+			return;
+		}
+
+		auto &movie = rawArgs[1];
+		if (!(frame->type == LingoDec::kLiteralNode && frame->getValue()->type == LingoDec::kDatumInt && frame->getValue()->i == 1)) {
+			ImGui::TextColored(ImColor(_state->_colors._keyword_color), "frame");
+			ImGui::SameLine();
+			frame->accept(*this);
+			ImGui::TextColored(ImColor(_state->_colors._keyword_color), "of");
+			ImGui::SameLine();
+		}
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "movie");
+		ImGui::SameLine();
+		movie->accept(*this);
+	}
+
+	virtual void visit(const LingoDec::ThePropExprNode &node) override {
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "the");
+		ImGui::SameLine();
+		ImGui::Text(node.prop.c_str());
+		ImGui::SameLine();
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "of");
+		ImGui::SameLine();
+
+		bool parenObj = (node.obj->type == LingoDec::kBinaryOpNode);
+		if (parenObj) {
+			ImGui::Text("(");
+			ImGui::SameLine();
+		}
+		node.obj->accept(*this);
+		if (parenObj) {
+			ImGui::Text(")");
+			ImGui::SameLine();
+		}
+	}
+
+	virtual void visit(const LingoDec::MenuPropExprNode &node) override {
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "the");
+		ImGui::SameLine();
+		ImGui::TextColored(ImColor(_state->_colors._var_color), LingoDec::StandardNames::menuPropertyNames[node.prop]);
+		ImGui::SameLine();
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "of menu");
+		ImGui::SameLine();
+
+		bool parenMenuID = (node.menuID->type == LingoDec::kBinaryOpNode);
+		if (parenMenuID) {
+			ImGui::Text("(");
+			ImGui::SameLine();
+		}
+		node.menuID->accept(*this);
+		if (parenMenuID) {
+			ImGui::Text(")");
+			ImGui::SameLine();
+		}
+	}
+
+	virtual void visit(const LingoDec::SoundCmdStmtNode &node) override {
+		write(node._startOffset, "sound", _state->_colors._keyword_color);
+		ImGui::SameLine();
+		ImGui::Text(node.cmd.c_str());
+		ImGui::SameLine();
+		if (node.argList->getValue()->l.size() > 0) {
+			node.argList->accept(*this);
+		}
+		ImGui::NewLine();
+	}
+
+	virtual void visit(const LingoDec::SoundPropExprNode &node) override {
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "the");
+		ImGui::SameLine();
+		ImGui::Text(LingoDec::StandardNames::soundPropertyNames[node.prop]);
+		ImGui::SameLine();
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "of sound");
+		ImGui::SameLine();
+
+		bool parenSoundID = (node.soundID->type == LingoDec::kBinaryOpNode);
+		if (parenSoundID) {
+			ImGui::Text("(");
+			ImGui::SameLine();
+		}
+		node.soundID->accept(*this);
+		if (parenSoundID) {
+			ImGui::Text(")");
+			ImGui::SameLine();
+		}
+	}
+
+	virtual void visit(const LingoDec::AssignmentStmtNode &node) override {
+		if (!_dot) {
+			write(node._startOffset, "set", _state->_colors._keyword_color);
+			ImGui::SameLine();
+			node.variable->accept(*this);
+			ImGui::TextColored(ImColor(_state->_colors._keyword_color), "to");
+			ImGui::SameLine();
+			node.value->accept(*this);
+		} else {
+			node.variable->accept(*this);
+			ImGui::Text("=");
+			ImGui::SameLine();
+			node.value->accept(*this);
+		}
+		ImGui::NewLine();
+	}
+
+	virtual void visit(const LingoDec::ExitRepeatStmtNode &node) override {
+		write(node._startOffset, "exit repeat", _state->_colors._keyword_color);
+	}
+
+	virtual void visit(const LingoDec::NextRepeatStmtNode &node) override {
+		write(node._startOffset, "next repeat", _state->_colors._keyword_color);
+	}
+
+	virtual void visit(const LingoDec::ObjBracketExprNode &node) override {
+		bool parenObj = node.obj->hasSpaces(_dot);
+		if (parenObj) {
+			ImGui::Text("(");
+			ImGui::SameLine();
+		}
+		node.obj->accept(*this);
+		if (parenObj) {
+			ImGui::Text(")");
+			ImGui::SameLine();
+		}
+
+		ImGui::Text("[");
+		ImGui::SameLine();
+		node.prop->accept(*this);
+		ImGui::Text("]");
+		ImGui::SameLine();
+	}
+
+	virtual void visit(const LingoDec::SpritePropExprNode &node) override {
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "the");
+		ImGui::SameLine();
+		ImGui::Text(LingoDec::StandardNames::spritePropertyNames[node.prop]);
+		ImGui::SameLine();
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "of sprite");
+		ImGui::SameLine();
+
+		bool parenSpriteID = (node.spriteID->type == LingoDec::kBinaryOpNode);
+		if (parenSpriteID) {
+			ImGui::Text("(");
+			ImGui::SameLine();
+		}
+		node.spriteID->accept(*this);
+		if (parenSpriteID) {
+			ImGui::Text(")");
+			ImGui::SameLine();
+		}
+	}
+
+	virtual void visit(const LingoDec::ChunkDeleteStmtNode &node) override {
+		write(node._startOffset, "delete", _state->_colors._keyword_color);
+		ImGui::SameLine();
+		node.chunk->accept(*this);
+	}
+
+	virtual void visit(const LingoDec::ChunkHiliteStmtNode &node) override {
+		write(node._startOffset, "hilite", _state->_colors._keyword_color);
+		ImGui::SameLine();
+		node.chunk->accept(*this);
+	}
+
+	virtual void visit(const LingoDec::MenuItemPropExprNode &node) override {
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "the");
+		ImGui::SameLine();
+		ImGui::Text(LingoDec::StandardNames::menuItemPropertyNames[node.prop]);
+		ImGui::SameLine();
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "of menuItem");
+		ImGui::SameLine();
+
+		bool parenItemID = (node.itemID->type == LingoDec::kBinaryOpNode);
+		if (parenItemID) {
+			ImGui::Text("(");
+			ImGui::SameLine();
+		}
+		node.itemID->accept(*this);
+		if (parenItemID) {
+			ImGui::Text(")");
+			ImGui::SameLine();
+		}
+
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "of menu");
+		ImGui::SameLine();
+
+		bool parenMenuID = (node.menuID->type == LingoDec::kBinaryOpNode);
+		if (parenMenuID) {
+			ImGui::Text("(");
+			ImGui::SameLine();
+		}
+		node.menuID->accept(*this);
+		if (parenMenuID) {
+			ImGui::Text(")");
+			ImGui::SameLine();
+		}
+	}
+
+	virtual void visit(const LingoDec::ObjPropIndexExprNode &node) override {
+		bool parenObj = node.obj->hasSpaces(_dot);
+		if (parenObj) {
+			ImGui::Text("(");
+			ImGui::SameLine();
+		}
+		node.obj->accept(*this);
+		if (parenObj) {
+			ImGui::Text(")");
+			ImGui::SameLine();
+		}
+
+		ImGui::Text(".");
+		ImGui::SameLine();
+		ImGui::Text(node.prop.c_str());
+		ImGui::SameLine();
+		ImGui::Text("[");
+		ImGui::SameLine();
+		node.index->accept(*this);
+		if (node.index2) {
+			ImGui::Text("..");
+			ImGui::SameLine();
+			node.index2->accept(*this);
+		}
+		ImGui::Text("]");
+		ImGui::SameLine();
+	}
+
+	virtual void visit(const LingoDec::SpriteWithinExprNode &node) override {
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "sprite");
+		ImGui::SameLine();
+
+		bool parenFirstSprite = (node.firstSprite->type == LingoDec::kBinaryOpNode);
+		if (parenFirstSprite) {
+			ImGui::Text("(");
+			ImGui::SameLine();
+		}
+		node.firstSprite->accept(*this);
+		if (parenFirstSprite) {
+			ImGui::Text(")");
+			ImGui::SameLine();
+		}
+
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "within");
+		ImGui::SameLine();
+
+		bool parenSecondSprite = (node.secondSprite->type == LingoDec::kBinaryOpNode);
+		if (parenSecondSprite) {
+			ImGui::Text("(");
+			ImGui::SameLine();
+		}
+		node.secondSprite->accept(*this);
+		if (parenSecondSprite) {
+			ImGui::Text(")");
+			ImGui::SameLine();
+		}
+	}
+
+	virtual void visit(const LingoDec::LastStringChunkExprNode &node) override {
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "the last");
+		ImGui::SameLine();
+		ImGui::Text(LingoDec::StandardNames::chunkTypeNames[node.type]);
+		ImGui::SameLine();
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "in");
+		ImGui::SameLine();
+
+		bool parenObj = (node.obj->type == LingoDec::kBinaryOpNode);
+		if (parenObj) {
+			ImGui::Text("(");
+			ImGui::SameLine();
+		}
+		node.obj->accept(*this);
+		if (parenObj) {
+			ImGui::Text(")");
+			ImGui::SameLine();
+		}
+	}
+
+	virtual void visit(const LingoDec::SpriteIntersectsExprNode &node) override {
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "sprite");
+		ImGui::SameLine();
+
+		bool parenFirstSprite = (node.firstSprite->type == LingoDec::kBinaryOpNode);
+		if (parenFirstSprite) {
+			ImGui::Text("(");
+			ImGui::SameLine();
+		}
+		node.firstSprite->accept(*this);
+		if (parenFirstSprite) {
+			ImGui::Text(")");
+			ImGui::SameLine();
+		}
+
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "intersects");
+		ImGui::SameLine();
+
+		bool parenSecondSprite = (node.secondSprite->type == LingoDec::kBinaryOpNode);
+		if (parenSecondSprite) {
+			ImGui::Text("(");
+			ImGui::SameLine();
+		}
+		node.secondSprite->accept(*this);
+		if (parenSecondSprite) {
+			ImGui::Text(")");
+			ImGui::SameLine();
+		}
+	}
+
+	virtual void visit(const LingoDec::StringChunkCountExprNode &node) override {
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "the number of");
+		ImGui::SameLine();
+		ImGui::Text(LingoDec::StandardNames::chunkTypeNames[node.type]);
+		ImGui::SameLine();
+		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "s in");
+		ImGui::SameLine();
+
+		bool parenObj = (node.obj->type == LingoDec::kBinaryOpNode);
+		if (parenObj) {
+			ImGui::Text("(");
+			ImGui::SameLine();
+		}
+		node.obj->accept(*this);
+		if (parenObj) {
+			ImGui::Text(")");
+			ImGui::SameLine();
+		}
+	}
+
+	virtual void visit(const LingoDec::VarNode &node) override {
+		ImGui::TextColored((ImVec4)ImColor(_state->_colors._var_color), "%s", node.varName.c_str());
+		ImGui::SameLine();
+	}
+
+	virtual void visit(const LingoDec::NotOpNode &node) override {
+		ImGui::Text("not");
+		ImGui::SameLine();
+
+		bool parenOperand = node.operand->hasSpaces(_dot);
+		if (parenOperand) {
+			ImGui::Text("(");
+			ImGui::SameLine();
+		}
+		node.operand->accept(*this);
+		if (parenOperand) {
+			ImGui::Text(")");
+			ImGui::SameLine();
+		}
 	}
 
 	virtual void defaultVisit(const LingoDec::Node &node) override {
@@ -482,10 +1098,10 @@ private:
 		}
 	}
 
-	void write(uint32 offset, const Common::String &code) const {
+	void write(uint32 offset, const Common::String &code, ImVec4 color = ImVec4(1, 1, 1, 1)) const {
 		renderLine(offset);
 		renderIndentation();
-		ImGui::Text("%s", code.c_str());
+		ImGui::TextColored(color, "%s", code.c_str());
 	}
 
 	void writeByteCode(uint32 offset, const Common::String &code) const {
@@ -502,36 +1118,36 @@ private:
 		ImVec2 pos = ImGui::GetCursorScreenPos();
 		const ImVec2 mid(pos.x + 7, pos.y + 7);
 
-		ImU32 color = bp_color_disabled;
+		ImVec4 color = _state->_colors._bp_color_disabled;
 
 		Director::Breakpoint *bp = getBreakpoint(_script.handlerName, pc);
 		if (bp)
-			color = bp_color_enabled;
+			color = _state->_colors._bp_color_enabled;
 
 		ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
 		if (ImGui::IsItemClicked(0)) {
-			if (color == bp_color_enabled) {
+			if (color == _state->_colors._bp_color_enabled) {
 				g_lingo->delBreakpoint(bp->id);
-				color = bp_color_disabled;
+				color = _state->_colors._bp_color_disabled;
 			} else {
 				Director::Breakpoint newBp;
 				newBp.type = kBreakpointFunction;
 				newBp.funcName = _script.handlerName;
 				newBp.funcOffset = pc;
 				g_lingo->addBreakpoint(newBp);
-				color = bp_color_enabled;
+				color = _state->_colors._bp_color_enabled;
 			}
 		}
 
-		if (color == bp_color_disabled && ImGui::IsItemHovered()) {
-			color = bp_color_hover;
+		if (color == _state->_colors._bp_color_disabled && ImGui::IsItemHovered()) {
+			color = _state->_colors._bp_color_hover;
 		}
 
 		if (!bp || bp->enabled)
-			dl->AddCircleFilled(mid, 4.0f, color);
+			dl->AddCircleFilled(mid, 4.0f, ImColor(color));
 		else
-			dl->AddCircle(mid, 4.0f, line_color);
-		dl->AddLine(ImVec2(pos.x + 16.0f, pos.y), ImVec2(pos.x + 16.0f, pos.y + 17), line_color);
+			dl->AddCircle(mid, 4.0f, ImColor(_state->_colors._line_color));
+		dl->AddLine(ImVec2(pos.x + 16.0f, pos.y), ImVec2(pos.x + 16.0f, pos.y + 17), ImColor(_state->_colors._line_color));
 
 		ImGui::SetItemTooltip("Click to add a breakpoint");
 
@@ -551,7 +1167,16 @@ private:
 		renderIndentation(_indent);
 	}
 
-	Common::String posToString(int32 pos) const {
+	void indent() {
+		_indent++;
+	}
+
+	void unindent() {
+		if (_indent > 0)
+			_indent--;
+	}
+
+	static Common::String posToString(int32 pos) {
 		return Common::String::format("[%3d]", pos);
 	}
 
@@ -561,15 +1186,6 @@ private:
 	bool _dot = false;
 	int _indent = 0;
 	LingoDec::Handler *_handler = nullptr;
-
-	const ImU32 bp_color_disabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 0.0f));
-	const ImU32 bp_color_enabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 1.0f));
-	const ImU32 bp_color_hover = ImGui::GetColorU32(ImVec4(0.42f, 0.17f, 0.13f, 1.0f));
-	const ImU32 line_color = ImGui::GetColorU32(ImVec4(0.44f, 0.44f, 0.44f, 1.0f));
-	const ImVec4 call_color = ImVec4(0.44f, 0.44f, 0.88f, 1.0f);
-	const ImVec4 builtin_color = ImColor(IM_COL32_WHITE);
-	const ImVec4 var_color = ImColor(IM_COL32_WHITE);
-	const ImVec4 literal_color = ImColor(IM_COL32_WHITE);
 };
 
 static void showControlPanel() {
@@ -1346,11 +1962,7 @@ static void renderCastScript(Symbol &sym) {
 
 	ImDrawList *dl = ImGui::GetWindowDrawList();
 
-	const ImU32 bp_color_disabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 0.0f));
-	const ImU32 bp_color_enabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 1.0f));
-	const ImU32 bp_color_hover = ImGui::GetColorU32(ImVec4(0.42f, 0.17f, 0.13f, 1.0f));
-	const ImU32 line_color = ImGui::GetColorU32(ImVec4(0.44f, 0.44f, 0.44f, 1.0f));
-	ImU32 color;
+	ImVec4 color;
 
 	uint pc = 0;
 	while (pc < sym.u.defn->size()) {
@@ -1358,33 +1970,33 @@ static void renderCastScript(Symbol &sym) {
 		const ImVec2 mid(pos.x + 7, pos.y + 7);
 		Common::String bpName = Common::String::format("%s-%d", handlerName.c_str(), pc);
 
-		color = bp_color_disabled;
+		color = _state->_colors._bp_color_disabled;
 
 		Director::Breakpoint *bp = getBreakpoint(handlerName, pc);
 		if (bp)
-			color = bp_color_enabled;
+			color = _state->_colors._bp_color_enabled;
 
 		ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
 		if (ImGui::IsItemClicked(0)) {
 			if (bp) {
 				g_lingo->delBreakpoint(bp->id);
-				color = bp_color_disabled;
+				color = _state->_colors._bp_color_disabled;
 			} else {
 				Director::Breakpoint newBp;
 				newBp.type = kBreakpointFunction;
 				newBp.funcName = handlerName;
 				newBp.funcOffset = pc;
 				g_lingo->addBreakpoint(newBp);
-				color = bp_color_enabled;
+				color = _state->_colors._bp_color_enabled;
 			}
 		}
 
-		if (color == bp_color_disabled && ImGui::IsItemHovered()) {
-			color = bp_color_hover;
+		if (color == _state->_colors._bp_color_disabled && ImGui::IsItemHovered()) {
+			color = _state->_colors._bp_color_hover;
 		}
 
-		dl->AddCircleFilled(mid, 4.0f, color);
-		dl->AddLine(ImVec2(pos.x + 16.0f, pos.y), ImVec2(pos.x + 16.0f, pos.y + 17), line_color);
+		dl->AddCircleFilled(mid, 4.0f, ImColor(color));
+		dl->AddLine(ImVec2(pos.x + 16.0f, pos.y), ImVec2(pos.x + 16.0f, pos.y + 17), ImColor(_state->_colors._line_color));
 
 		ImGui::SetItemTooltip("Click to add a breakpoint");
 
@@ -1619,14 +2231,31 @@ static void PopStyleCompact() {
     ImGui::PopStyleVar(2);
 }
 
+static void showSettings() {
+	if (!_state->_w.settings)
+		return;
+
+	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(480, 240), ImGuiCond_FirstUseEver);
+	if (ImGui::Begin("Settings", &_state->_w.settings)) {
+		ImGui::ColorEdit4("bp_color_disabled", &_state->_colors._bp_color_disabled.x);
+		ImGui::ColorEdit4("bp_color_enabled", &_state->_colors._bp_color_enabled.x);
+		ImGui::ColorEdit4("bp_color_hover", &_state->_colors._bp_color_hover.x);
+		ImGui::ColorEdit4("line_color", &_state->_colors._line_color.x);
+		ImGui::ColorEdit4("call_color", &_state->_colors._call_color.x);
+		ImGui::ColorEdit4("builtin_color", &_state->_colors._builtin_color.x);
+		ImGui::ColorEdit4("var_color", &_state->_colors._var_color.x);
+		ImGui::ColorEdit4("literal_color", &_state->_colors._literal_color.x);
+		ImGui::ColorEdit4("comment_color", &_state->_colors._comment_color.x);
+		ImGui::ColorEdit4("type_color", &_state->_colors._type_color.x);
+		ImGui::ColorEdit4("keyword_color", &_state->_colors._keyword_color.x);
+	}
+	ImGui::End();
+}
+
 static void showBreakpointList() {
 	if (!_state->_w.bpList)
 		return;
-
-	const ImU32 bp_color_disabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 0.0f));
-	const ImU32 bp_color_enabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 1.0f));
-	const ImU32 bp_color_hover = ImGui::GetColorU32(ImVec4(0.42f, 0.17f, 0.13f, 1.0f));
-	const ImU32 line_color = ImGui::GetColorU32(ImVec4(0.44f, 0.44f, 0.44f, 1.0f));
 
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(480, 240), ImGuiCond_FirstUseEver);
@@ -1646,26 +2275,26 @@ static void showBreakpointList() {
 				ImVec2 pos = ImGui::GetCursorScreenPos();
 				const ImVec2 mid(pos.x + 7, pos.y + 7);
 
-				ImU32 color = bps[i].enabled ? bp_color_enabled : bp_color_disabled;
+				ImVec4 color = bps[i].enabled ? _state->_colors._bp_color_enabled : _state->_colors._bp_color_disabled;
 				ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
 				if (ImGui::IsItemClicked(0)) {
 					if (bps[i].enabled) {
 						bps[i].enabled = false;
-						color = bp_color_disabled;
+						color = _state->_colors._bp_color_disabled;
 					} else {
 						bps[i].enabled = true;
-						color = bp_color_enabled;
+						color = _state->_colors._bp_color_enabled;
 					}
 				}
 
 				if (!bps[i].enabled && ImGui::IsItemHovered()) {
-					color = bp_color_hover;
+					color = _state->_colors._bp_color_hover;
 				}
 
 				if (bps[i].enabled)
-					dl->AddCircleFilled(mid, 4.0f, color);
+					dl->AddCircleFilled(mid, 4.0f, ImColor(color));
 				else
-					dl->AddCircle(mid, 4.0f, line_color);
+					dl->AddCircle(mid, 4.0f, ImColor(_state->_colors._line_color));
 
 				// enabled column
 				ImGui::TableNextColumn();
@@ -2194,6 +2823,7 @@ void onImGuiRender() {
 			ImGui::MenuItem("CallStack", NULL, &_state->_w.callStack);
 			ImGui::MenuItem("Breakpoints", NULL, &_state->_w.bpList);
 			ImGui::MenuItem("Vars", NULL, &_state->_w.vars);
+			ImGui::MenuItem("Settings", NULL, &_state->_w.settings);
 
 			ImGui::SeparatorText("Misc");
 			if (ImGui::MenuItem("Save state")) {
@@ -2217,6 +2847,7 @@ void onImGuiRender() {
 	showFuncList();
 	showScore();
 	showBreakpointList();
+	showSettings();
 }
 
 void onImGuiCleanup() {
