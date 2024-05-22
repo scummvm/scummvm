@@ -2170,7 +2170,14 @@ void onImGuiRender() {
 				if (!_state->_wasHidden) {
 					_state->_savedW = _state->_w;
 
-					memset(&_state->_w, 0, sizeof(_state->_w));
+					_state->_w.controlPanel = false;
+					_state->_w.callStack = false;
+					_state->_w.vars = false;
+					_state->_w.channels = false;
+					_state->_w.cast = false;
+					_state->_w.funcList = false;
+					_state->_w.score = false;
+					_state->_w.bpList = false;
 				}
 
 				_state->_wasHidden = true;
