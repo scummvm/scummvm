@@ -518,6 +518,44 @@ fi
 
 
 ###########
+# Bagel engine
+###########
+
+echo_n "Checking bagel.dat..."
+
+fileDate=`git log -1 dists/engine-data/bagel.dat | grep Date | sed 's/Date: //'`
+
+num_lines=`git -P log --oneline "--since=$fileDate" devtools/create_bagel/files | wc -l`
+
+if [ "$num_lines" -ne "0" ]; then
+  echo -e "$num_lines unprocessed commits. ${RED}Run 'cd devtools/create_bagel/files; zip -r9 ../../../dists/engine-data/bagel.dat .'${NC}"
+
+  failPlus
+else
+  echoOk
+fi
+
+
+###########
+# Nancy engine
+###########
+
+echo_n "Checking nancy.dat..."
+
+fileDate=`git log -1 dists/engine-data/nancy.dat | grep Date | sed 's/Date: //'`
+
+num_lines=`git -P log --oneline "--since=$fileDate" devtools/create_nancy/files | wc -l`
+
+if [ "$num_lines" -ne "0" ]; then
+  echo -e "$num_lines unprocessed commits. ${RED}Run 'make devtools/create_nancy;cd devtools/create_nancy;./create_nancy;cp nancy.dat ../../dists/engine-data'${NC}"
+
+  failPlus
+else
+  echoOk
+fi
+
+
+###########
 # Ultima engine
 ###########
 
