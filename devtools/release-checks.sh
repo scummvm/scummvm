@@ -351,6 +351,22 @@ done
 
 rm dists/engine-data/engine_data_combined.mk
 
+if [ "$absentFiles" -ne "0" ]; then
+  echo -e "$absentFiles missing files ${RED}Fix them${NC}"
+
+  failPlus
+else
+  echoOk
+fi
+
+##########
+# GUI theme files
+##########
+
+echo_n "Checking GUI theme files..."
+
+absentFiles=0
+
 declare -a themefiles=(
   "Makefile.common#DIST_FILES_THEMES.*%FILE%"
   "devtools/create_project/xcode.cpp#[	 ]+files.push_back\(\"gui/themes/%FILE%\"\);"
