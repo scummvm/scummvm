@@ -60,8 +60,8 @@ public:
 
 	virtual ErrorCode paint(CBofRect *pRect = nullptr);
 
-	virtual void enable() override;
-	virtual void disable() override;
+	void enable() override;
+	void disable() override;
 
 	ErrorCode setState(int nNewState, bool bRepaintNow = true);
 	int getState() {
@@ -99,11 +99,11 @@ public:
 		return (_nState == BUTTON_CHECKED);
 	}
 
-	virtual ErrorCode paint(CBofRect *pRect = nullptr);
+	ErrorCode paint(CBofRect *pRect = nullptr) override;
 
 protected:
-	virtual void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
+	void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
 };
 
 class CBofBmpButton : public CBofWindow {
@@ -130,9 +130,9 @@ public:
 	}
 
 protected:
-	virtual void onPaint(CBofRect *pRect);
-	virtual void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	void onPaint(CBofRect *pRect) override;
+	void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
+	void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
 
 	CBofBitmap *_pButtonUp;
 	CBofBitmap *_pButtonDown;

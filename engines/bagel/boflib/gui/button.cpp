@@ -249,7 +249,7 @@ void CBofRadioButton::onLButtonDown(uint32, CBofPoint *pPoint, void *) {
 	assert(isValidObject(this));
 	assert(pPoint != nullptr);
 
-	if ((_nState != BUTTON_DISABLED) && (_nState == BUTTON_UP)) {
+	if (_nState == BUTTON_UP) {
 		setState(BUTTON_DOWN, true);
 	}
 }

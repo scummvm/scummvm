@@ -185,7 +185,7 @@ void CBofScrollBar::setScrollRange(int nMin, int nMax, bool bRepaint) {
 
 	// Should we repaint the scroll bar now?
 	if (bRepaint) {
-		paint(nullptr);
+		paint();
 	}
 }
 

@@ -341,8 +341,8 @@ ErrorCode CBofText::displayTextEx(CBofBitmap *pBmp, const char *pszText, CBofRec
 		break;
 
 	case JUSTIFY_LEFT:
+		// align left
 		_cPosition.x = 0;
-		align = Graphics::kTextAlignLeft;
 		break;
 
 	case JUSTIFY_RIGHT:
@@ -351,6 +351,7 @@ ErrorCode CBofText::displayTextEx(CBofBitmap *pBmp, const char *pszText, CBofRec
 		break;
 
 	case JUSTIFY_WRAP:
+		// Align left
 		_bMultiLine = true;
 		break;
 	}
