@@ -246,7 +246,7 @@ public:
 				if (i > 0)
 					ImGui::Text(",");
 				ImGui::SameLine();
-				ImGui::TextColored((ImVec4)ImColor(_state->_colors._var_color), "%s", _script.propertyNames[i].c_str());
+				ImGui::TextColored(_state->_colors._var_color, "%s", _script.propertyNames[i].c_str());
 				ImGui::SameLine();
 			}
 			ImGui::NewLine();
@@ -259,7 +259,7 @@ public:
 				if (i > 0)
 					ImGui::Text(",");
 				ImGui::SameLine();
-				ImGui::TextColored((ImVec4)ImColor(_state->_colors._var_color), "%s", _script.globalNames[i].c_str());
+				ImGui::TextColored(_state->_colors._var_color, "%s", _script.globalNames[i].c_str());
 				ImGui::SameLine();
 			}
 			ImGui::NewLine();
@@ -408,8 +408,7 @@ public:
 	virtual void visit(const LingoDec::RepeatWithInStmtNode &node) override {
 		write(node._startOffset, "repeat with", _state->_colors._keyword_color);
 		ImGui::SameLine();
-		ImGui::TextColored(ImColor(_state->_colors._var_color), "%s", node.varName.c_str());
-		ImGui::SameLine();
+		renderVar(node.varName);
 		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "in");
 		ImGui::SameLine();
 		node.list->accept(*this);
@@ -421,8 +420,7 @@ public:
 	virtual void visit(const LingoDec::RepeatWithToStmtNode &node) override {
 		write(node._startOffset, "repeat with", _state->_colors._keyword_color);
 		ImGui::SameLine();
-		ImGui::TextColored(ImColor(_state->_colors._var_color), "%s", node.varName.c_str());
-		ImGui::SameLine();
+		renderVar(node.varName);
 		ImGui::Text("=");
 		ImGui::SameLine();
 		node.start->accept(*this);
@@ -996,8 +994,7 @@ public:
 	}
 
 	virtual void visit(const LingoDec::VarNode &node) override {
-		ImGui::TextColored((ImVec4)ImColor(_state->_colors._var_color), "%s", node.varName.c_str());
-		ImGui::SameLine();
+		renderVar(node.varName);
 	}
 
 	virtual void visit(const LingoDec::NotOpNode &node) override {
@@ -1027,6 +1024,21 @@ public:
 	}
 
 private:
+	void renderVar(const Common::String &varName) {
+		ImGui::TextColored(_state->_colors._var_color, "%s", varName.c_str());
+		if (ImGui::IsItemHovered() && g_lingo->_globalvars.contains(varName)) {
+			const Datum &val = g_lingo->_globalvars.getVal(varName);
+			ImGui::BeginTooltip();
+			ImGui::Text("Click to add to watches.");
+			ImGui::Text("= %s", val.asString(true).c_str());
+			ImGui::EndTooltip();
+		}
+		if (ImGui::IsItemClicked()) {
+			_state->_variables[varName] = true;
+		}
+		ImGui::SameLine();
+	}
+
 	void byteCode(const LingoDec::HandlerNode &node) const {
 		LingoDec::Handler *handler = node.handler;
 		bool isMethod = handler->script->isFactory();
