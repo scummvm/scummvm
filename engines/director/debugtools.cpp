@@ -2096,6 +2096,19 @@ static void displayScripts() {
 	ImGui::SetNextWindowSize(ImVec2(240, 240), ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Script", &_state->_functions._showScript)) {
+		if (ImGui::Button("\ue5c4")) { // Backward	// arrow_back
+		}
+		ImGui::SetItemTooltip("Backward");
+		ImGui::SameLine();
+		if (ImGui::Button("\ue5c8")) { // Forward	// arrow_forward
+		}
+		ImGui::SetItemTooltip("Forward");
+		ImGui::SameLine(0, 20);
+		if (ImGui::Button("\ue889")) { // History	// history
+		}
+		ImGui::SetItemTooltip("History");
+		ImGui::SameLine(0, 40);
+
 		if (ImGui::Button("\uf569")) { // Lingo		// package_2
 			_state->_functions._showByteCode = false;
 		}
