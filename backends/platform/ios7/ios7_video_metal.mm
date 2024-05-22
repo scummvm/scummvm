@@ -35,13 +35,13 @@ const char* kernelFunction = R"(
 	#include <simd/simd.h>
 	using namespace metal;
 
-	kernel void flip_y(
+	kernel void blit_flip_y(
 	texture2d<float, access::write> dst [[texture(0)]],
 	texture2d<float, access::read> src [[texture(1)]],
 	uint2 gid [[thread_position_in_grid]])
 	{
-		float4 flipColor = src.read(uint2(gid.x, src.get_height() - gid.y));
-		dst.write(flipColor, gid);
+		float4 color = src.read(uint2(gid.x, src.get_height() - gid.y));
+		dst.write(color, gid);
 	}
 
 	kernel void blit(
@@ -105,7 +105,7 @@ static inline void execute_on_main_thread(void (^block)(void)) {
 	[_metalLayer setDrawableSize:CGSizeMake(self.frame.size.width * self.contentScaleFactor, self.frame.size.height * self.contentScaleFactor)];
 
 	_metalLibrary = [_metalDevice newLibraryWithSource:[NSString stringWithUTF8String:kernelFunction] options:nil error:nil];
-	_kernelFunctionFlipY = [_metalLibrary newFunctionWithName:@"flip_y"];
+	_kernelFunctionBlitFlipY = [_metalLibrary newFunctionWithName:@"blit_flip_y"];
 	_kernelFunctionBlit = [_metalLibrary newFunctionWithName:@"blit"];
 }
 
@@ -247,7 +247,7 @@ static inline void execute_on_main_thread(void (^block)(void)) {
 		if (isOpenGLES) {
 			// The coordinate system in OpenGL ES is flipped in Y axis
 			// compared to Metal. We need to flip it
-			[encoder setComputePipelineState:[_metalDevice newComputePipelineStateWithFunction:_kernelFunctionFlipY error:&error]];
+			[encoder setComputePipelineState:[_metalDevice newComputePipelineStateWithFunction:_kernelFunctionBlitFlipY error:&error]];
 		} else {
 			[encoder setComputePipelineState:[_metalDevice newComputePipelineStateWithFunction:_kernelFunctionBlit error:&error]];
 		}
