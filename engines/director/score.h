@@ -185,6 +185,7 @@ public:
 	bool _waitForClickCursor;
 	bool _cursorDirty;
 	bool _activeFade;
+	bool _exitFrameCalled;
 	Cursor _defaultCursor;
 	CursorRef _currentCursor;
 	bool _skipTransition;
