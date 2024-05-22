@@ -402,8 +402,63 @@ do
     done
 done
 
-IFS="$OLDIFS"
+if [ "$absentFiles" -ne "0" ]; then
+  echo -e "$absentFiles missing files ${RED}Fix them${NC}"
 
+  failPlus
+else
+  echoOk
+fi
+
+##########
+# LICENSE files
+##########
+
+OLDIFS="$IFS"
+IFS=$'\n'  # allow arguments with tabs and spaces
+
+echo_n "Checking LICENSE files..."
+
+absentFiles=0
+
+declare -a licensefiles=(
+  "Makefile.common#DIST_FILES_DOCS.*%FILE%"
+  "backends/platform/maemo/debian/rules#install -m0644.*%FILE%.*debian/scummvm/usr/share/doc/scummvm"
+  "backends/platform/sdl/macosx/appmenu_osx.mm#openFromBundle\(@\"%FILEUNDOTTED%\"\);"
+  "backends/platform/sdl/win32/win32.mk#cp \\$\(srcdir\)/%FILE% \\$\(WIN32PATH\)/%FILEBASE%\.txt"
+  "devtools/create_project/create_project.cpp#in\.push_back\(setup.srcDir \+ \"/%FILE%\"\)"
+  "devtools/create_project/xcode.cpp#[	 ]+files.push_back\(\"%FILE%\"\);"
+  "dists/irix/scummvm.idb#f 0644 root sys usr/ScummVM/%FILEBASE% %FILE% scummvm.man.readme"
+  "dists/redhat/scummvm.spec#%doc AUTHORS README.md.*%FILE%"
+  "dists/redhat/scummvm.spec.in#%doc AUTHORS README.md.*%FILE%"
+  "ports.mk#cp \\$\(bundle_name\)/Contents/Resources/%FILEBASE% \\$\(bundle_name\)/Contents/Resources/%FILEUNDOTTED%"
+  "ports.mk#mv \./ScummVM-snapshot/%FILEBASE% \./ScummVM-snapshot"
+)
+
+for f in LICENSES/*
+do
+    file=$f
+    filebase=`basename $f`
+    fileundotted=`sed "s|\.|-|g" <<< "$filebase"`
+
+    for d in "${licensefiles[@]}"
+    do
+        if [ $filebase == "CatharonLicense.txt" -o $d == "backends/platform/sdl/win32/win32.mk" ]; then
+            # the file is not renamed to .txt.txt
+            continue
+        fi
+
+        target=`cut -d '#' -f 1 <<< "$d"`
+        pattern=`cut -d '#' -f 2 <<< "$d"`
+
+        res=`sed "s|%FILE%|$file|g;s|%FILEBASE%|$filebase|g;s|%FILEUNDOTTED%|$fileundotted|g" <<< "$pattern"`
+
+        if [ -z $(grep -E "$res" "$target" | head -1) ]; then
+            echo "$file is absent in $target"
+            absentFiles=$((absentFiles+1))
+        fi
+    done
+done
 
 if [ "$absentFiles" -ne "0" ]; then
   echo -e "$absentFiles missing files ${RED}Fix them${NC}"
@@ -412,6 +467,29 @@ if [ "$absentFiles" -ne "0" ]; then
 else
   echoOk
 fi
+
+echo_n "Checking LICENSE files contents..."
+
+checkFailed=0
+
+for f in LICENSES/*
+do
+
+  if [ -z $(head -2 $f | grep NOTE: ) ]; then
+    echo "$f is missing NOTE"
+    checkFailed=$((checkFailed+1))
+  fi
+done
+
+if [ "$checkFailed" -ne "0" ]; then
+  echo -e "$checkFailed files malformed ${RED}Fix them${NC}"
+
+  failPlus
+else
+  echoOk
+fi
+
+IFS="$OLDIFS"
 
 
 #############################################################################
