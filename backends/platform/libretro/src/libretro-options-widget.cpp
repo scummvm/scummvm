@@ -22,6 +22,7 @@
 #include "backends/platform/libretro/include/libretro-os.h"
 #include "gui/launcher.h"
 
+#include "common/translation.h"
 
 enum {
 	kPlaylistPathCmd = 'pchp',
