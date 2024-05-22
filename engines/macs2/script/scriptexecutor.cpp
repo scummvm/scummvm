@@ -899,6 +899,11 @@ void ScriptExecutor::ScriptPrintString() {
 	currentView->setStringBox(strings);
 }
 
+void ScriptExecutor::SetVariableValue(uint16 index, uint16 a, uint16 b) {
+	_variables[index].a = a;
+	_variables[index].b = b;
+}
+
 byte Script::ScriptExecutor::ReadByte() {
 	const int64 pos = _stream->pos();
 	const byte result = _stream->readByte();
@@ -1295,11 +1300,18 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Need to handle negative numbers here
 
 			View1 *currentView = (View1 *)_engine->findView("View1");
-			if (currentView->GetCharacterByIndex(objectID) != nullptr) {
+			Character *c = currentView->GetCharacterByIndex(objectID);
+			if (c != nullptr) {
+				// TODO: Something seems to be wrong with the stick
+				// assert(sceneID != Scenes::instance().CurrentSceneIndex);
+				int index = currentView->GetCharacterArrayIndex(c);
+				currentView->characters.remove_at(index);
+				c->GameObject->SceneIndex = sceneID;
+				c->GameObject->Position = Common::Point(x, y);
 				continue;
 			}
 			// TODO: Figure out how to create the list properly
-			Character *c = new Character();
+			c = new Character();
 			c->GameObject = GameObjects::instance().Objects[objectID - 1];
 			// TODO: DRY principle
 			c->Position = c->GameObject->Position = Common::Point(x,y);
@@ -1367,8 +1379,8 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// We don't save the index, instead we make sure that we add them in the right
 			// order and use the array to keep track
 			assert(index - 1 == DialogueChoices.size());
-			uint16 offset = Func9F4D_16();
-			uint16 numLines = Func9F4D_16();
+			uint16 offset = ReadWord();
+			uint16 numLines = ReadWord();
 			Common::StringArray lines = _engine->DecodeStrings(_engine->_stringsStream, offset, numLines);
 			DialogueChoices.push_back(lines);
 		} else if (opcode1 == 0x17) {
@@ -1378,8 +1390,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 			uint32 x = Func9F4D_32();
 			uint32 y = Func9F4D_32();
 			uint16 side = Func9F4D_16();
-			currentView->ShowDialogueOption(DialogueChoices, Common::Point(x, y), side);
-
+			currentView->ShowDialogueChoice(DialogueChoices, Common::Point(x, y), side);
 			requestCallback = false;
 			return;
 		} else if (opcode1 == 0x18) {
