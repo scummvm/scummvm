@@ -9682,7 +9682,8 @@ msgstr "在游戏文件夹与引擎数据文件中找不到“%s”。"
 msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
-msgstr "无法保存临时游戏状态。请确保已在 ScummVM 中设置存档目录并拥有写入权限。"
+msgstr ""
+"无法保存临时游戏状态。请确保已在 ScummVM 中设置存档目录并拥有写入权限。"
 
 #: engines/supernova/supernova.cpp:833
 msgid "Failed to load temporary game state."
@@ -10326,8 +10327,9 @@ msgid ""
 "directories have been copied from the CD.  More instructions are on the "
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
-"缺失《十字军》入场影片文件 - 请检查是否已将 FLICS 与 SOUND 目录从 CD 光盘复制过来。  可在 Wiki "
-"上查看更多说明：https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse。"
+"缺失《十字军》入场影片文件 - 请检查是否已将 FLICS 与 SOUND 目录从 CD 光盘复制"
+"过来。  可在 Wiki 上查看更多说明：https://wiki.scummvm.org/index.php?"
+"title=Crusader:_No_Remorse。"
 
 #: engines/vcruise/metaengine.cpp:42
 msgid "Improved click sensitivity"
@@ -10338,7 +10340,9 @@ msgid ""
 "Allows the mouse to be moved a short distance without cancelling click "
 "interactions.  If this is off, any mouse movement while the mouse button is "
 "held cancels a click interaction."
-msgstr "允许在不取消点击互动的情况下小幅移动鼠标。  如果此选项关闭，在鼠标按键按下时，任何鼠标移动都会取消点击互动。"
+msgstr ""
+"允许在不取消点击互动的情况下小幅移动鼠标。  如果此选项关闭，在鼠标按键按下"
+"时，任何鼠标移动都会取消点击互动。"
 
 #: engines/vcruise/metaengine.cpp:53
 msgid "Faster animations"
