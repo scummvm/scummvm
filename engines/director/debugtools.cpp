@@ -55,6 +55,8 @@
 
 namespace Director {
 
+#define kMaxColumnsInTable 512
+
 typedef struct ImGuiImage {
 	ImTextureID id;
 	int16 width;
@@ -2380,7 +2382,7 @@ const char *modes2[] = {
 
 static void displayScoreChannel(int ch, int mode, int modeSel) {
 	Score *score = g_director->getCurrentMovie()->getScore();
-	const uint numFrames = score->_scoreCache.size();
+	const uint numFrames = MIN(score->_scoreCache.size(), (uint)(kMaxColumnsInTable - 2));
 
 	const uint currentFrameNum = score->getCurrentFrameNum();
 	const ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.7f, 0.7f, 0.0f, 0.65f));
@@ -2699,6 +2701,9 @@ static void showScore() {
 
 		uint numChannels = score->_scoreCache[0]->_sprites.size();
 		uint tableColumns = MAX(numFrames + 5, 25U); // Set minimal table width to 25
+
+		if (tableColumns > kMaxColumnsInTable - 2) // Current restriction of ImGui
+			tableColumns = numFrames = 510;
 
 		ImGuiTableFlags addonFlags = _state->_scoreMode == kModeExtended ? 0 : ImGuiTableFlags_RowBg;
 
