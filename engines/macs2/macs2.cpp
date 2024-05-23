@@ -629,7 +629,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex) {
 
 	// We load the palette right afterwards - 0x300 is exactly 3 * 256d
 	Common::Array<uint8> palette;
-	palette.reserve(0x300);
+	palette.resize(0x300);
 	_fileStream->read(palette.data(), 0x300);
 
 	// TODO: Copy-pasted code here
@@ -644,7 +644,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex) {
 
 	// Continuing with data, even if we don't know all uses yet
 	Common::Array<uint8> unknownData1;
-	unknownData1.reserve(0x100);
+	unknownData1.resize(0x100);
 	_fileStream->read(unknownData1.data(), 0x100);
 
 	uint8 unknownByte1 = _fileStream->readByte();
@@ -664,6 +664,16 @@ void Macs2Engine::changeScene(uint32 newSceneIndex) {
 	// This is the first map used in 0037:10C4 for the lookup of interacted hotspots
 	Graphics::ManagedSurface bgMap = readRLEImage(_fileStream->pos(), _fileStream);
 	_map = bgMap;
+
+	array5023.clear();
+	// We will address this array as words, so we are not using a byte array but a word array
+	array5023.resize(0xa / 2);
+	_fileStream->read(array5023.data(), 0xa);
+
+	word50D3 = _fileStream->readUint16LE();
+
+
+
 
 	// TODO: There are some more data points missing from the function
 
@@ -1015,6 +1025,44 @@ void Macs2Engine::NextCursorMode() {
 	} else {
 		_cursorMode = static_cast<CursorMode>(static_cast<int>(_cursorMode) + 1);
 	}
+}
+
+uint16 Macs2Engine::GetInteractedBackgroundHotspot(const Common::Point &p) {
+	uint16 result = 0;
+	// TODO: Abstract the screen sizes
+	if (p.x < 0 || p.x > 320 || p.y < 0 || p.y > 200) {
+		return result;
+	}
+
+	// [bp-8h]
+	uint8 firstLookup = _map.getPixel(p.x, p.y);
+	// [bp-10h] - Guess is that this is the number of hotspots
+	// TODO: Actually load from file
+	uint8 numHotspots = word50D3;
+
+	uint8 i = 1;
+	if (i > numHotspots) {
+		return result;
+	}
+
+	// TODO: need to load from the file, and need to change to words
+	Common::Array<uint16> a = array5023;
+
+	// TODO: Handle loop properly
+	do {
+		// TODO: Not sure if this should be a byte or a word
+		// TODO: To check if it's important that we clear the first half of the word
+		uint16 lookup = a[i];
+		if (lookup == firstLookup) {
+			// TODO: Add the 5BD1h lookup part
+			// This would check for a value other than FFh in that array
+			// If there is a different value, we use that, if not, we use the
+			// one we have here
+			return 0x800 + i;
+		}
+		i++;
+	} while (i < numHotspots);
+	return 0;
 }
 
 void Macs2Engine::ScheduleRun() {
