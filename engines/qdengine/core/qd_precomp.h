@@ -5,7 +5,7 @@
 #include "common/system.h"
 
 #define FOR_EACH(list, iterator) \
-    for(iterator = (list).begin(); iterator != (list).end(); ++iterator)
+	for(iterator = (list).begin(); iterator != (list).end(); ++iterator)
 
 // STUB: XZipStream
 #define _NO_ZIP_
@@ -23,6 +23,9 @@
 #define LPARAM        long int *
 #define LPSTR         char *
 #define LPCSTR        const char *
+#define LPWSTR        wchar_t *
+#define LPCWSTR       const wchar_t *
+#define LPBOOL        bool *
 #define LRESULT       long
 #define MMCKINFO      int
 #define PASCAL
@@ -67,8 +70,11 @@
 #define WM_KEYUP      0x0101
 #define WM_QUIT       0x0012
 #define WM_SETTEXT    0x000C
+#define WM_INITDIALOG 0x0110
+#define WM_COMMAND    0x0111
 #define SW_HIDE       0
 #define SW_SHOWNORMAL 1
+#define MB_OK         0x00000000L
 #define MB_YESNO      0x00000004L
 #define MB_TASKMODAL  0x00002000L
 #define MB_OKCANCEL   0x00000001L
@@ -76,16 +82,37 @@
 #define MB_ICONEXCLAMATION 0x00000030L
 #define SEM_FAILCRITICALERRORS 1
 
+#define BM_GETCHECK     0x00F0
+#define BST_CHECKED     1
+#define BM_SETCHECK     0x00F1
+#define TBM_GETPOS      0x0400
+#define TBM_GETRANGEMIN 0x0401
+#define TBM_GETRANGEMAX 0x0402
+#define TBM_SETPOS      0x0407
+#define TBM_SETRANGE    0x0406
+#define TBM_SETTICFREQ  0x0405
+#define MAKELONG(a, b)  ((a) | ((b) << 16))
+#define LOWORD(l)       (short)(l)
+#define HIWORD(l)       ((WORD)(((DWORD)(l) >> 16) & 0xFFFF))
+#define CB_RESETCONTENT 0x0145
+#define CB_ADDSTRING    0x0143
+#define CB_GETCURSEL    0x0147
+#define CB_SETCURSEL    0x014E
+#define CB_GETCOUNT     0x0146
+#define CB_ERR 			-1
+
 typedef struct MSG {
 	HWND   hwnd;
 	UINT   message;
-	int wParam;
-	int lParam;
+	int    wParam;
+	int    lParam;
 	DWORD  time;
 	DWORD  lPrivate;
 };
 
-void* INVALID_HANDLE_VALUE = reinterpret_cast<void*>(-1);
+void *INVALID_HANDLE_VALUE = reinterpret_cast<void*>(-1);
+const int CP_ACP = 0;
+const int CP_UTF8 = 65001;
 
 void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext) {
 	warning("STUB: _splitpath");
@@ -167,6 +194,26 @@ bool SetErrorMode(UINT uMode) {
 DWORD WINAPI GetLastError() {
 	warning("STUB: GetLastError");
 	return 0;
+}
+
+int MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr, int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar) {
+	warning("STUB: MultiByteToWideChar");
+	return 0;
+}
+
+int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr, int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCSTR lpDefaultChar, LPBOOL lpUsedDefaultChar) {
+	warning("STUB: WideCharToMultiByte");
+	return 0;
+}
+
+LRESULT SendDlgItemMessage(HWND hDlg, int nIDDlgItem, UINT Msg, WPARAM wParam, LPARAM lParam) {
+	warning("STUB: SendDlgItemMessage");
+	return 0;
+}
+
+bool EndDialog(HWND hDlg, int nResult) {
+	warning("STUB: EndDialog");
+	return false;
 }
 
 #ifndef _QUEST_EDITOR

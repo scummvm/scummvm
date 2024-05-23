@@ -44,11 +44,8 @@ bool qdlgOption::enable_control(bool status) const {
 int qdlgOptionCheckbox::value() const {
 	if (!has_control()) return 0;
 
-	warning("STUB: qdlgOptionCheckbox::value()");
-#if 0
 	int check_state = SendDlgItemMessage(control_parent(), control_ID(), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
 	if (check_state & BST_CHECKED) return 1;
-#endif
 
 	return 0;
 }
@@ -57,19 +54,14 @@ int qdlgOptionCheckbox::value() const {
 void qdlgOptionCheckbox::set_value(int val) const {
 	if (!has_control()) return;
 
-	warning("STUB: qdlOptionCheckbox::set_value()");
-#if 0
 	int check_state = (val) ? BST_CHECKED : 0;
 	SendDlgItemMessage(control_parent(), control_ID(), BM_SETCHECK, (WPARAM)check_state, (LPARAM)0);
-#endif
 }
 
 
 int qdlgOptionSlider::value() const {
 	if (!has_control()) return 0;
 
-	warning("STUB: qdlgOptionSlider::value()");
-#if 0
 	int val = SendDlgItemMessage(control_parent(), control_ID(), TBM_GETPOS, (WPARAM)0, (LPARAM)0);
 
 	if (invert_value_) {
@@ -80,14 +72,11 @@ int qdlgOptionSlider::value() const {
 	}
 
 	return val;
-#endif
 }
 
 void qdlgOptionSlider::set_value(int val) const {
 	if (!has_control()) return;
 
-	warning("STUB: qdlgOptionSlider::set_value()");
-#if 0
 	if (invert_value_) {
 		int val_min = SendDlgItemMessage(control_parent(), control_ID(), TBM_GETRANGEMIN, (WPARAM)0, (LPARAM)0);
 		int val_max = SendDlgItemMessage(control_parent(), control_ID(), TBM_GETRANGEMAX, (WPARAM)0, (LPARAM)0);
@@ -95,58 +84,45 @@ void qdlgOptionSlider::set_value(int val) const {
 		val = val_max - (val - val_min);
 	}
 
-	SendDlgItemMessage(control_parent(), control_ID(), TBM_SETPOS, (WPARAM)TRUE, (LPARAM)val);
-#endif
+	SendDlgItemMessage(control_parent(), control_ID(), TBM_SETPOS, (WPARAM)true, (LPARAM)val);
 }
 
 void qdlgOptionSlider::set_value_range(int min, int max, bool invert_value) {
 	invert_value_ = invert_value;
-
-	warning("STUB: qdlgOptionSlider::set_value_range()");
-#if 0
-	SendDlgItemMessage(control_parent(), control_ID(), TBM_SETRANGE, (WPARAM)TRUE, (LPARAM)MAKELONG(min, max));
-#endif
+	SendDlgItemMessage(control_parent(), control_ID(), TBM_SETRANGE, (WPARAM)true, (LPARAM)MAKELONG(min, max));
 }
 
 void qdlgOptionDroplist::init_control() const {
 	int val = value();
-
-	warning("STUB: qdlgOptionDropList::init_control()");
-#if 0
 	SendDlgItemMessage(control_parent(), control_ID(), CB_RESETCONTENT, (WPARAM)0, (LPARAM)0);
 
 	for (int i = 0; i < items_.size(); i++) {
 		if (items_[i].is_enabled())
 			SendDlgItemMessage(control_parent(), control_ID(), CB_ADDSTRING, (WPARAM)0, (LPARAM)items_[i].title());
 	}
-#endif
 
 	set_value(val);
 }
 
 int qdlgOptionDroplist::value() const {
-	if (!has_control()) return default_value();
+	if (!has_control())
+		return default_value();
 
-	warning("STUB: qdlgOptionDropList::value()");
-#if 0
 	int val = SendDlgItemMessage(control_parent(), control_ID(), CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
-	if (val == CB_ERR) return default_value();
+	if (val == CB_ERR)
+		return default_value();
+
 	return items_[val].value();
-#endif
-	return 0;
 }
 
 void qdlgOptionDroplist::set_value(int val) const {
-	if (!has_control()) return;
+	if (!has_control())
+		return;
 
 	int idx = 0;
 	for (item_container_t::const_iterator it = items_.begin(); it != items_.end(); ++it) {
 		if (it -> value() == val) {
-
-			warning("STUB qdlgOptionDroplist::set_value()");
-#if 0
 			SendDlgItemMessage(control_parent(), control_ID(), CB_SETCURSEL, (WPARAM)idx, (LPARAM)0);
-#endif
 			return;
 		}
 

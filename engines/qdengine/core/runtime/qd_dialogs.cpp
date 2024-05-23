@@ -66,9 +66,6 @@ void settings_dialog() {
 
 BOOL APIENTRY settings_dlgproc(HWND hdlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 	int ctl_id;
-
-	warning("STUB: settings_dlgproc()");
-#if 0
 	switch (msg) {
 	case WM_INITDIALOG:
 		settings_dialog_init(hdlg);
@@ -89,16 +86,11 @@ BOOL APIENTRY settings_dlgproc(HWND hdlg, UINT msg, WPARAM wParam, LPARAM lParam
 		}
 		return 0;
 	}
-#endif
 	return 0;
 }
 
 void settings_dialog_init(HWND hdlg) {
-
-	warning("STUB: set_icon() method. Argument requires different data-type");
-#if 0
 	set_icon(hdlg);
-#endif
 
 	qdlgOption *p = new qdlgOptionDroplist;
 	p -> set_control(hdlg, IDC_COLOR_DEPTH);
@@ -140,10 +132,8 @@ void settings_dialog_init(HWND hdlg) {
 	sp -> set_ini_key("qd_game.ini", "sound", "music_volume");
 	options_.push_back(sp);
 
-#if 0
 	SendDlgItemMessage(hdlg, IDC_SOUND_VOLUME, TBM_SETTICFREQ, (WPARAM)32, (LPARAM)0);
 	SendDlgItemMessage(hdlg, IDC_MUSIC_VOLUME, TBM_SETTICFREQ, (WPARAM)32, (LPARAM)0);
-#endif
 
 	for (options_container_t::const_iterator it = options_.begin(); it != options_.end(); ++it)
 		(*it) -> load_value();
