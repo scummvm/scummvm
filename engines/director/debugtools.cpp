@@ -290,10 +290,10 @@ public:
 			setScriptToDisplay(script);
 		}
 		ImGui::SameLine();
-		ImGui::Text(" ");
-		ImGui::SameLine();
 
 		if (node.noParens()) {
+			ImGui::Text(" ");
+			ImGui::SameLine();
 			node.argList->accept(*this);
 		} else {
 			ImGui::Text("(");
@@ -620,6 +620,7 @@ public:
 		auto &rawArgs = node.argList->getValue()->l;
 
 		write(node._startOffset, "play ", _state->_colors._keyword_color);
+		ImGui::SameLine();
 
 		if (rawArgs.size() == 0) {
 			ImGui::TextColored(ImColor(_state->_colors._keyword_color), " done");
