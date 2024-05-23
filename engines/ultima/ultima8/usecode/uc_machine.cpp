@@ -1235,7 +1235,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			if (GAME_IS_U8) {
 				assert(_globals->getEntries(ui16a, ui16b) == (ui32a & ((1 << ui16b) - 1)));
 			} else {
-				assert(_globals->getEntries(ui16a, ui16b) == ui32a);
+				assert(_globals->getEntries(ui16a, ui16b) == (ui32a & ((1 << (ui16b * 8)) - 1)));
 		    }
 
 			TRACE_OP("%s\tpop\t\tglobal [%04X %02X] = %02X", op_info, ui16a, ui16b, ui32a);
