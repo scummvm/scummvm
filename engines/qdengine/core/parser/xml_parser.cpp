@@ -37,41 +37,31 @@ static const char *UTF8_convert(const char *input_string, int input_string_lengt
 	static std::wstring wstr(1024, 0);
 	static std::string str(1024, 0);
 
-	warning("STUB: UTF8_convert()");
-#if 0
 	unsigned int length = MultiByteToWideChar(CP_UTF8, 0, input_string, input_string_length, NULL, 0);
-#endif
-	unsigned int length = 0;
 	if (wstr.length() < length)
 		wstr.resize(length, 0);
 
-#if 0
 	MultiByteToWideChar(CP_UTF8, 0, input_string, input_string_length, &*wstr.begin(), length);
-#endif
 
 	if (str.length() < length + 1)
 		str.resize(length + 1, 0);
 	str[length] = 0;
 
-#if 0
 	WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), length, &*str.begin(), length, NULL, NULL);
-#endif
 
 	return str.c_str();
 }
 
 static int unknown_encoding_handler(void *encodingHandlerData, const XML_Char *name, XML_Encoding *info) {
-	if (!strcmp(name, "WINDOWS-1251")) {
+	if (!scumm_stricmp(name, "WINDOWS-1251")) {
 		info -> data = NULL;
 		info -> convert = NULL;
 		info -> release = NULL;
 
 		for (int i = 0; i < 256; i ++) {
 			char c = i;
-			unsigned short cc = 0;
-#if 0
+			wchar_t cc = 0;
 			MultiByteToWideChar(1251, 0, &c, 1, &cc, 1);
-#endif
 			info -> map[i] = cc;
 		}
 
@@ -209,10 +199,7 @@ bool parser::parse_file(const char *fname) {
 	XBuffer err_buf;
 	err_buf < XML_ErrorString(err_code) < "\nLine: " <= XML_GetCurrentLineNumber(p);
 
-	warning("STUB: parser::parse_file()");
-#if 0
 	MessageBox(NULL, err_buf.c_str(), "XML Parser error", MB_OK);
-#endif
 	XML_ParserFree(p);
 #endif
 	return false;
@@ -231,9 +218,8 @@ bool parser::read_tag_data(tag &tg, const char *data_ptr, int data_length) {
 				data_pool_.resize(data_pool_position_ + sz);
 
 			char *p = &*(data_pool_.begin() + data_pool_position_);
-#if 0
-			strcpy(p, str);
-#endif
+			size_t len = data_pool_.size() - data_pool_position_;
+			Common::strlcpy(p, str, len);
 			data_pool_position_ += sz;
 
 			return true;
