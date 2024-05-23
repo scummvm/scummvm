@@ -43,6 +43,8 @@ void AST::exitBlock() {
 		return;
 	}
 
+	ancestorStatement->_endOffset = currentBlock->_endOffset;
+
 	auto block = ancestorStatement->parent;
 	if (!block || block->type != kBlockNode) {
 		currentBlock = nullptr;

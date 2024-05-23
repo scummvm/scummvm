@@ -547,10 +547,10 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 			ast.currentBlock->_endOffset = bytecode.pos;
 			return 1; // end of handler
 		}
-		translation = Common::SharedPtr<Node>(new ExitStmtNode(index));
+		translation = Common::SharedPtr<Node>(new ExitStmtNode(bytecode.pos));
 		break;
 	case kOpPushZero:
-		translation = Common::SharedPtr<Node>(new LiteralNode(index, Common::SharedPtr<Datum>(new Datum(0))));
+		translation = Common::SharedPtr<Node>(new LiteralNode(bytecode.pos, Common::SharedPtr<Datum>(new Datum(0))));
 		break;
 	case kOpMul:
 	case kOpAdd:
@@ -572,25 +572,25 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 		{
 			auto b = pop();
 			auto a = pop();
-			translation = Common::SharedPtr<Node>(new BinaryOpNode(index, bytecode.opcode, Common::move(a), Common::move(b)));
+			translation = Common::SharedPtr<Node>(new BinaryOpNode(bytecode.pos, bytecode.opcode, Common::move(a), Common::move(b)));
 		}
 		break;
 	case kOpInv:
 		{
 			auto x = pop();
-			translation = Common::SharedPtr<Node>(new InverseOpNode(index, Common::move(x)));
+			translation = Common::SharedPtr<Node>(new InverseOpNode(bytecode.pos, Common::move(x)));
 		}
 		break;
 	case kOpNot:
 		{
 			auto x = pop();
-			translation = Common::SharedPtr<Node>(new NotOpNode(index, Common::move(x)));
+			translation = Common::SharedPtr<Node>(new NotOpNode(bytecode.pos, Common::move(x)));
 		}
 		break;
 	case kOpGetChunk:
 		{
 			auto string = pop();
-			translation = readChunkRef(index, Common::move(string));
+			translation = readChunkRef(bytecode.pos, Common::move(string));
 		}
 		break;
 	case kOpHiliteChunk:
@@ -599,12 +599,12 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 			if (script->version >= 500)
 				castID = pop();
 			auto fieldID = pop();
-			auto field = Common::SharedPtr<Node>(new MemberExprNode(index, "field", Common::move(fieldID), Common::move(castID)));
-			auto chunk = readChunkRef(index, Common::move(field));
+			auto field = Common::SharedPtr<Node>(new MemberExprNode(bytecode.pos, "field", Common::move(fieldID), Common::move(castID)));
+			auto chunk = readChunkRef(bytecode.pos, Common::move(field));
 			if (chunk->type == kCommentNode) { // error comment
 				translation = chunk;
 			} else {
-				translation = Common::SharedPtr<Node>(new ChunkHiliteStmtNode(index, Common::move(chunk)));
+				translation = Common::SharedPtr<Node>(new ChunkHiliteStmtNode(bytecode.pos, Common::move(chunk)));
 			}
 		}
 		break;
@@ -612,14 +612,14 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 		{
 			auto secondSprite = pop();
 			auto firstSprite = pop();
-			translation = Common::SharedPtr<Node>(new SpriteIntersectsExprNode(index, Common::move(firstSprite), Common::move(secondSprite)));
+			translation = Common::SharedPtr<Node>(new SpriteIntersectsExprNode(bytecode.pos, Common::move(firstSprite), Common::move(secondSprite)));
 		}
 		break;
 	case kOpIntoSpr:
 		{
 			auto secondSprite = pop();
 			auto firstSprite = pop();
-			translation = Common::SharedPtr<Node>(new SpriteWithinExprNode(index, Common::move(firstSprite), Common::move(secondSprite)));
+			translation = Common::SharedPtr<Node>(new SpriteWithinExprNode(bytecode.pos, Common::move(firstSprite), Common::move(secondSprite)));
 		}
 		break;
 	case kOpGetField:
@@ -628,19 +628,20 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 			if (script->version >= 500)
 				castID = pop();
 			auto fieldID = pop();
-			translation = Common::SharedPtr<Node>(new MemberExprNode(index, "field", Common::move(fieldID), Common::move(castID)));
+			translation = Common::SharedPtr<Node>(new MemberExprNode(bytecode.pos, "field", Common::move(fieldID), Common::move(castID)));
 		}
 		break;
 	case kOpStartTell:
 		{
 			auto window = pop();
-			auto tellStmt = Common::SharedPtr<TellStmtNode>(new TellStmtNode(index, Common::move(window)));
+			auto tellStmt = Common::SharedPtr<TellStmtNode>(new TellStmtNode(bytecode.pos, Common::move(window)));
 			translation = tellStmt;
 			nextBlock = tellStmt->block.get();
 		}
 		break;
 	case kOpEndTell:
 		{
+			ast.currentBlock->_endOffset = bytecode.pos;
 			ast.exitBlock();
 			return 1;
 		}
@@ -671,13 +672,13 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 	case kOpPushInt32:
 		{
 			auto i = Common::SharedPtr<Datum>(new Datum((int)bytecode.obj));
-			translation = Common::SharedPtr<Node>(new LiteralNode(index, Common::move(i)));
+			translation = Common::SharedPtr<Node>(new LiteralNode(bytecode.pos, Common::move(i)));
 		}
 		break;
 	case kOpPushFloat32:
 		{
 			auto f = Common::SharedPtr<Datum>(new Datum(*(float *)(&bytecode.obj)));
-			translation = Common::SharedPtr<Node>(new LiteralNode(index, Common::move(f)));
+			translation = Common::SharedPtr<Node>(new LiteralNode(bytecode.pos, Common::move(f)));
 		}
 		break;
 	case kOpPushArgListNoRet:
@@ -838,7 +839,7 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 			case kTagRepeatWhile:
 				{
 					auto condition = pop();
-					auto loop = Common::SharedPtr<RepeatWhileStmtNode>(new RepeatWhileStmtNode(index, Common::move(condition), bytecode.pos));
+					auto loop = Common::SharedPtr<RepeatWhileStmtNode>(new RepeatWhileStmtNode(bytecode.pos, Common::move(condition), bytecode.pos));
 					loop->block->endPos = endPos;
 					loop->block->_endOffset = endPos;
 					loop->_endOffset = endPos;
@@ -850,7 +851,7 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 				{
 					auto list = pop();
 					Common::String varName = getVarNameFromSet(bytecodeArray[index + 5]);
-					auto loop = Common::SharedPtr<RepeatWithInStmtNode>(new RepeatWithInStmtNode(index, varName, Common::move(list), bytecode.pos));
+					auto loop = Common::SharedPtr<RepeatWithInStmtNode>(new RepeatWithInStmtNode(bytecode.pos, varName, Common::move(list), bytecode.pos));
 					loop->block->endPos = endPos;
 					loop->block->_endOffset = endPos;
 					loop->_endOffset = endPos;
@@ -867,7 +868,7 @@ uint32 Handler::translateBytecode(Bytecode &bytecode, uint32 index) {
 					auto endRepeat = bytecodeArray[endIndex - 1];
 					uint32 conditionStartIndex = bytecodePosMap[endRepeat.pos - endRepeat.obj];
 					Common::String varName = getVarNameFromSet(bytecodeArray[conditionStartIndex - 1]);
-					auto loop = Common::SharedPtr<RepeatWithToStmtNode>(new RepeatWithToStmtNode(index, varName, Common::move(start), up, Common::move(end), bytecode.pos));
+					auto loop = Common::SharedPtr<RepeatWithToStmtNode>(new RepeatWithToStmtNode(bytecode.pos, varName, Common::move(start), up, Common::move(end), bytecode.pos));
 					loop->block->endPos = endPos;
 					loop->block->_endOffset = endPos;
 					loop->_endOffset = endPos;
