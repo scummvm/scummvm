@@ -60,6 +60,7 @@ CBofTextBox::CBofTextBox(CBofWindow *pWindow, const CBofRect *pRect, const CBofS
 	_nCurrentLine = 0;
 	_nCurrentIndex = 0;
 	_nNumLines = 0;
+	_nTextFont = FONT_DEFAULT;
 
 	setText(cText);
 	setBox(pRect);
@@ -82,6 +83,7 @@ CBofTextBox::CBofTextBox(CBofBitmap *pBitmap, const CBofRect *pRect, const CBofS
 	_nCurrentLine = 0;
 	_nCurrentIndex = 0;
 	_nNumLines = 0;
+	_nTextFont = FONT_DEFAULT;
 
 	setText(cText);
 	setBox(pRect);
