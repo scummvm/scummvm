@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-05-23 01:46+0000\n"
-"PO-Revision-Date: 2024-05-22 11:42+0000\n"
+"PO-Revision-Date: 2024-05-23 04:44+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/zh_Hans/>\n"
@@ -2891,12 +2891,12 @@ msgstr "找不到可运行所选游戏的引擎"
 #: common/engine_data.cpp:279 engines/ultima/shared/engine/data_archive.cpp:88
 #, c-format
 msgid "Could not locate engine data %s"
-msgstr ""
+msgstr "无法定位引擎数据 %s"
 
 #: common/engine_data.cpp:297 engines/ultima/shared/engine/data_archive.cpp:106
 #, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
-msgstr ""
+msgstr "引擎数据版本过低。需要 %d.%d，但获得版本 %d.%d"
 
 #: common/error.cpp:37
 msgid "No error"
@@ -4543,6 +4543,18 @@ msgid ""
 "sometimes mind-bogglingly so. If you're stuck in a game, think about "
 "checking out a game walkthrough. Good luck!\n"
 msgstr ""
+"## 拜托，我不知道该怎么办！\n"
+"\n"
+"首先，确保你已准备好游戏和必要的游戏文件。查看**常规**标签页下的**从何处获取游戏**部分。获得游戏后，请按照**添加游戏**选项卡中的步骤完成在此设"
+"备上添加游戏。请花点时间仔细查看此过程，因为由于最近的 Android 更改，一些用户在此遇到了难题。\n"
+"\n"
+"需要更多帮助？请参阅我们的 [Android 在线文档](https://docs.scummvm.org/en/latest/"
+"other_platforms/android.html)。有问题？请访问我们的[支持论坛](https://forums.scummvm.org/"
+"viewforum.php?f=17)或 [Discord 服务器](https://discord.gg/4cDsMNtcpG)，其中包括 ["
+"Android 支持频道](https://discord.com/channels/581224060529148060/"
+"1135579923185139862)。\n"
+"\n"
+"哦，还有，请注意，许多我们支持的游戏都有故意设置的难题，有时甚至令人匪夷所思。如果你在游戏中卡住了，请考虑查看游戏攻略。祝你好运！\n"
 
 #: backends/platform/android/android.cpp:1060
 #: backends/platform/ios7/ios7_osys_misc.mm:261
@@ -4618,6 +4630,59 @@ msgid ""
 "  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
 "\n"
 msgstr ""
+"## 触摸控制模式\n"
+"点击或单击右上角的控制器图标，即可更改触摸控制模式\n"
+"### 直接鼠标 \n"
+"\n"
+"直接使用触摸屏控制光标位置。指针会跳转到手指触碰到屏幕的位置（默认用于菜单）。\n"
+"\n"
+"  ![直接鼠标模式](mouse.png \"直接鼠标模式\"){w=10em}。\n"
+"\n"
+"### 触摸板模拟 \n"
+"\n"
+"间接使用触摸控制光标，方法类似于使用笔记本电脑的触摸板。\n"
+"\n"
+"  ![触摸板模式](touchpad.png \"触摸板模式\"){w=10em}\n"
+"\n"
+"### 游戏手柄模拟 \n"
+"\n"
+"手指必须放在屏幕左下方和右下方，以模拟方向键和操作按钮。\n"
+"\n"
+"  ![游戏手柄模式](gamepad.png \"游戏手柄模式\"){w=10em}\n"
+"\n"
+"要为菜单、2D 游戏和 3D 游戏选择首选触控模式，请进入 **全局设置 > 后端 > 选择首选触控模式**。\n"
+"\n"
+"## 触摸操作 \n"
+"\n"
+"### 双指滚动 \n"
+"\n"
+"要滚动，请用两指在屏幕上向上或向下滑动\n"
+"### 双指轻点\n"
+"\n"
+"要进行双指轻点，请按住一个手指，然后用第二个手指轻点。\n"
+"\n"
+"### 三指轻点\n"
+"\n"
+"要进行三指轻点，首先按住一个手指，然后在按住前一个手指的同时，逐渐用另外两个手指一个一个地轻点屏幕。想象你正不耐烦地用手指敲击物体表面，然后放慢动作，使其"
+"有节奏，但不要太慢。\n"
+"\n"
+"### 沉浸式粘滞全屏模式\n"
+"\n"
+"从边缘轻扫即可显示系统栏，它会保持半透明状态几秒钟，如果不操作则会消失。\n"
+"\n"
+"### 全局主菜单\n"
+"\n"
+"点击屏幕右上方的菜单图标可打开主菜单。\n"
+"\n"
+"  ![菜单图标](menu.png \"菜单图标\"){w=10em}\n"
+"\n"
+"## 虚拟键盘\n"
+"\n"
+"要打开虚拟键盘，请长按屏幕右上方的控制器图标，或点击任何可编辑的文本字段。要隐藏虚拟键盘，请再次点击控制器图标，或在文本字段外点击。\n"
+"\n"
+"\n"
+"  ![键盘图标](keyboard.png \"键盘图标\"){w=10em}\n"
+"\n"
 
 #: backends/platform/android/android.cpp:1119
 #: backends/platform/ios7/ios7_osys_misc.mm:336
@@ -4817,6 +4882,17 @@ msgid ""
 "sometimes mind-bogglingly so. If you're stuck in a game, think about "
 "checking out a game walkthrough. Good luck!\n"
 msgstr ""
+"## 拜托，我不知道该怎么办！\n"
+"\n"
+"首先，确保你已准备好游戏和必要的游戏文件。查看**常规**标签页下的**从何处获取游戏**部分。获得游戏后，请按照**添加游戏**选项卡中的步骤完成在此设"
+"备上添加游戏。\n"
+"\n"
+"需要更多帮助？请参阅我们的 [iOS 在线文档](https://docs.scummvm.org/en/latest/other_platforms/"
+"ios.html)。有问题？请访问我们的[支持论坛](https://forums.scummvm.org/viewforum.php?f=15)或 ["
+"Discord 服务器](https://discord.gg/4cDsMNtcpG)，其中包括 [Android "
+"支持频道](https://discord.com/channels/581224060529148060/1149456560922316911)。\n"
+"\n"
+"哦，还有，请注意，许多我们支持的游戏都有故意设置的难题，有时甚至令人匪夷所思。如果你在游戏中卡住了，请考虑查看游戏攻略。祝你好运！\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:264
 msgid ""
@@ -5024,83 +5100,63 @@ msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:46
 msgid "LIBRETRO PLAYLIST GENERATOR"
-msgstr ""
+msgstr "Libretro 游戏列表生成器"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:47
 msgid "(check '? > Libretro playlist' for detailed info)"
-msgstr ""
+msgstr "（查看“? > Libretro 游戏列表”获取详情）"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:48
-#, fuzzy
-#| msgid "Plugins Path:"
 msgid "Playlists Path"
-msgstr "插件路径："
+msgstr "游戏列表路径"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:49
-#, fuzzy
-#| msgid "Specifies where your saved games are put"
 msgid "Specifies where your playlist will be saved."
-msgstr "指定游戏存档的位置"
+msgstr "指定游戏列表的保存位置。"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:52
-#, fuzzy
-#| msgid "Platform:"
 msgid "Playlist format:"
-msgstr "平台："
+msgstr "游戏列表格式："
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:57
-#, fuzzy
-#| msgid "Goto location"
 msgid "Hooks location:"
-msgstr "前往位置"
+msgstr "钩子位置："
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:59
-#, fuzzy
-#| msgid "Add a new folder"
 msgid "All in save folder"
-msgstr "新建文件夹"
+msgstr "全部位于存档文件夹"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:60
 msgid "One in each game folder"
-msgstr ""
+msgstr "每个游戏文件夹单独保存"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:62
 msgid "Clear existing hooks"
-msgstr ""
+msgstr "清理已有钩子"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:64
 msgid "Generate playlist"
-msgstr ""
+msgstr "生成游戏列表"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:66
-#, fuzzy
-#| msgid "Status:"
 msgid "Status: "
-msgstr "状态："
+msgstr "状态： "
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:148
-#, fuzzy
-#| msgid "Failed to save game to file."
 msgid "Failed, can't access playlist file"
-msgstr "无法将游戏保存到文件。"
+msgstr "失败，无法访问游戏列表文件"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:224
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "cleaning failed"
-msgstr "数据读取失败"
+msgstr "清理失败"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:226
-#, fuzzy
-#| msgid "Failed to read the file!"
 msgid "Failed, can't create hook files"
-msgstr "无法读取文件！"
+msgstr "失败，无法创建钩子文件"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:236
-#, fuzzy
-#| msgid "Select additional game directory"
 msgid "Select Playlist directory"
-msgstr "选择附加游戏目录"
+msgstr "选择游戏列表目录"
 
 #: backends/platform/maemo/maemo.cpp:157
 msgid "Click Mode"
@@ -5240,64 +5296,44 @@ msgid "BSD License"
 msgstr "BSD 许可证"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:329
-#, fuzzy
-#| msgid "GPL License"
 msgid "Apache License"
-msgstr "GPL 许可证"
+msgstr "Apache 许可证"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:330
-#, fuzzy
-#| msgid "BSD License"
 msgid "BSL License"
-msgstr "BSD 许可证"
+msgstr "BSL 许可证"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:331
-#, fuzzy
-#| msgid "GPL License"
 msgid "GLAD License"
-msgstr "GPL 许可证"
+msgstr "GLAD 许可证"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:332
-#, fuzzy
-#| msgid "BSD License"
 msgid "ISC License"
-msgstr "BSD 许可证"
+msgstr "ISC 许可证"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:333
-#, fuzzy
-#| msgid "GPL License"
 msgid "Lua License"
-msgstr "GPL 许可证"
+msgstr "Lua 许可证"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:334
-#, fuzzy
-#| msgid "GPL License"
 msgid "MIT License"
-msgstr "GPL 许可证"
+msgstr "MIT 许可证"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:335
-#, fuzzy
-#| msgid "GPL License"
 msgid "MKV License"
-msgstr "GPL 许可证"
+msgstr "MKV 许可证"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:336
-#, fuzzy
-#| msgid "GPL License"
 msgid "MPL License"
-msgstr "GPL 许可证"
+msgstr "MPL 许可证"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:337
-#, fuzzy
-#| msgid "GPL License"
 msgid "TinyGL License"
-msgstr "GPL 许可证"
+msgstr "TinyGL 许可证"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:338
-#, fuzzy
-#| msgid "Freefont License"
 msgid "Catharon License"
-msgstr "Freefont 许可证"
+msgstr "Catharon 许可证"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:79
@@ -5952,17 +5988,15 @@ msgstr "仍然载入"
 
 #: engines/bagel/metaengine.cpp:41
 msgid "Wait"
-msgstr ""
+msgstr "等待"
 
 #: engines/bagel/metaengine.cpp:42
 msgid "Soldier 714 Eye Cheat"
-msgstr ""
+msgstr "Soldier 714 Eye 作弊"
 
 #: engines/bagel/metaengine.cpp:83
-#, fuzzy
-#| msgid "General"
 msgid "General Keys"
-msgstr "通用"
+msgstr "通用密钥"
 
 #: engines/bladerunner/bladerunner.cpp:404
 msgid "Failed to initialize resources"
@@ -6698,17 +6732,15 @@ msgstr "信息菜单"
 
 #: engines/freescape/games/dark/dark.cpp:166
 msgid "Enable/Disable Jetpack"
-msgstr ""
+msgstr "启用/禁用喷气背包"
 
 #: engines/freescape/games/driller/driller.cpp:109
-#, fuzzy
-#| msgid "Debug Apply Celling Grid"
 msgid "Deploy drilling rig"
-msgstr "调试应用网格"
+msgstr "部署钻井平台"
 
 #: engines/freescape/games/driller/driller.cpp:115
 msgid "Collect drilling rig"
-msgstr ""
+msgstr "收集钻井平台"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -6986,7 +7018,7 @@ msgstr "新版致谢音乐"
 #: engines/groovie/metaengine.cpp:86
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
-msgstr ""
+msgstr "在致谢界面播放“The Final Hour”歌曲而不重用 MIDI 歌曲"
 
 #: engines/groovie/metaengine.cpp:97
 msgid "Slim Left/Right Hotspots"
@@ -7006,7 +7038,7 @@ msgstr ""
 
 #: engines/groovie/metaengine.cpp:144
 msgid "GroovieV2 support is not compiled in"
-msgstr ""
+msgstr "未编译入 GroovieV2 支持"
 
 #: engines/groovie/saveload.cpp:52
 msgid "Reserved"
@@ -7022,15 +7054,15 @@ msgstr "你要保存或恢复游戏吗？"
 
 #: engines/hadesch/rooms/daedalus.cpp:213
 msgid "The Minotaur minigame is not supported yet. Skipping"
-msgstr ""
+msgstr "尚未支持 Minotaur 小游戏。将跳过"
 
 #: engines/hadesch/rooms/medisle.cpp:647
 msgid "The Medusa minigame is not supported yet. Skipping"
-msgstr ""
+msgstr "尚未支持 Medusa 小游戏。将跳过"
 
 #: engines/hadesch/rooms/troy.cpp:505
 msgid "The Troy minigame is not supported yet. Skipping"
-msgstr ""
+msgstr "尚未支持 Troy 小游戏。将跳过"
 
 #: engines/hdb/metaengine.cpp:44
 msgid "Enable cheat mode"
@@ -7081,7 +7113,7 @@ msgstr "血腥模式"
 
 #: engines/hopkins/metaengine.cpp:44 engines/hopkins/metaengine.cpp:56
 msgid "Enable Gore Mode when available"
-msgstr ""
+msgstr "可用时启用血腥模式"
 
 #: engines/hpl1/metaengine.cpp:76
 msgid "Forward"
@@ -7139,43 +7171,43 @@ msgstr "荧光棒"
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
-msgstr ""
+msgstr "启用原作作弊"
 
 #: engines/hypno/metaengine.cpp:34
 msgid "Allow cheats using the C key."
-msgstr ""
+msgstr "允许使用 C 键作弊。"
 
 #: engines/hypno/metaengine.cpp:44
 msgid "Enable infinite health cheat"
-msgstr ""
+msgstr "启用无限血量作弊"
 
 #: engines/hypno/metaengine.cpp:45
 msgid "Player health will never decrease (except for game over scenes)."
-msgstr ""
+msgstr "玩家血量不会减少（游戏结束场景除外）。"
 
 #: engines/hypno/metaengine.cpp:55
 msgid "Enable infinite ammo cheat"
-msgstr ""
+msgstr "启用无限弹药作弊"
 
 #: engines/hypno/metaengine.cpp:56
 msgid "Player ammo will never decrease."
-msgstr ""
+msgstr "玩家弹药不会减少。"
 
 #: engines/hypno/metaengine.cpp:66
 msgid "Unlock all levels"
-msgstr ""
+msgstr "解锁所有关卡"
 
 #: engines/hypno/metaengine.cpp:67
 msgid "All levels will be available to play."
-msgstr ""
+msgstr "所有关卡均可供游玩。"
 
 #: engines/hypno/metaengine.cpp:77
 msgid "Enable restored content"
-msgstr ""
+msgstr "启用恢复内容"
 
 #: engines/hypno/metaengine.cpp:78
 msgid "Add additional content that is not enabled the original implementation."
-msgstr ""
+msgstr "添加原作中未启用的附加内容。"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:89
@@ -7195,7 +7227,7 @@ msgstr "Remora"
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:125 engines/icb/icb.cpp:191
 msgid "Side Step"
-msgstr ""
+msgstr "侧身避让"
 
 #: engines/kyra/detection_tables.h:75
 msgid "Missing language specific game code and/or resources."
@@ -7226,15 +7258,15 @@ msgstr ""
 #. Malcolm makes a joke.
 #: engines/kyra/metaengine.cpp:48
 msgid "Studio audience"
-msgstr ""
+msgstr "工作室听众"
 
 #: engines/kyra/metaengine.cpp:49
 msgid "Enable studio audience"
-msgstr ""
+msgstr "启用工作室听众"
 
 #: engines/kyra/metaengine.cpp:62
 msgid "Allow text and cutscenes to be skipped"
-msgstr ""
+msgstr "允许跳过文本与转场动画"
 
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
 #: engines/kyra/metaengine.cpp:74
@@ -7253,7 +7285,7 @@ msgstr "平滑滚动"
 
 #: engines/kyra/metaengine.cpp:91
 msgid "Enable smooth scrolling when walking"
-msgstr ""
+msgstr "行走时启用平滑滚动"
 
 #. I18N: When enabled, this option changes the cursor when it floats to the
 #. edge of the screen to a directional arrow. The player can then click to
@@ -7264,35 +7296,35 @@ msgstr "悬浮光标"
 
 #: engines/kyra/metaengine.cpp:106
 msgid "Enable floating cursors"
-msgstr ""
+msgstr "启用悬浮光标"
 
 #. I18N: When enabled, this option will fill in an autogenerated savegame
 #. description into the input prompt where.
 #: engines/kyra/metaengine.cpp:119
 msgid "Suggest save names"
-msgstr ""
+msgstr "建议存档名称"
 
 #: engines/kyra/metaengine.cpp:120
 msgid "Autogenerated naming suggestions for savegames"
-msgstr ""
+msgstr "自动生成存档建议名称"
 
 #. I18N: HP stands for Hit Points
 #: engines/kyra/metaengine.cpp:134
 msgid "HP bar graphs"
-msgstr ""
+msgstr "血条图"
 
 #: engines/kyra/metaengine.cpp:135
 msgid "Enable hit point bar graphs"
-msgstr ""
+msgstr "启用血条图像"
 
 #. I18N: L/R stands for Left/Right
 #: engines/kyra/metaengine.cpp:147
 msgid "Fight Button L/R Swap"
-msgstr ""
+msgstr "左右攻击按钮交换"
 
 #: engines/kyra/metaengine.cpp:148
 msgid "Left button to attack, right button to pick up items"
-msgstr ""
+msgstr "使用左按钮攻击，右按钮捡起物品"
 
 #: engines/kyra/metaengine.cpp:241
 msgid "Lands of Lore support is not compiled in"
@@ -7313,14 +7345,14 @@ msgstr ""
 #: engines/ultima/nuvie/metaengine.cpp:217
 #: engines/ultima/ultima8/metaengine.cpp:145
 msgid "Interact via Left Click"
-msgstr ""
+msgstr "使用左键点击互动"
 
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:503
 #: engines/ultima/ultima4/metaengine.cpp:230
 #: engines/ultima/nuvie/metaengine.cpp:223
 #: engines/ultima/ultima8/metaengine.cpp:151
 msgid "Interact via Right Click"
-msgstr ""
+msgstr "使用右键点击互动"
 
 #: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:510
 #: engines/twine/metaengine.cpp:380
@@ -7357,7 +7389,7 @@ msgstr "打开/关闭物品栏"
 
 #: engines/kyra/engine/eobcommon.cpp:377
 msgid "Switch Inventory/Character screen"
-msgstr ""
+msgstr "切换物品/人物界面"
 
 #: engines/kyra/engine/eobcommon.cpp:378
 msgid "Camp"
@@ -7365,35 +7397,35 @@ msgstr "扎营"
 
 #: engines/kyra/engine/eobcommon.cpp:379 engines/mm/mm1/metaengine.cpp:102
 msgid "Cast Spell"
-msgstr ""
+msgstr "投射咒语"
 
 #: engines/kyra/engine/eobcommon.cpp:382
 msgid "Spell Level 1"
-msgstr ""
+msgstr "咒语等级 1"
 
 #: engines/kyra/engine/eobcommon.cpp:383
 msgid "Spell Level 2"
-msgstr ""
+msgstr "咒语等级 2"
 
 #: engines/kyra/engine/eobcommon.cpp:384
 msgid "Spell Level 3"
-msgstr ""
+msgstr "咒语等级 3"
 
 #: engines/kyra/engine/eobcommon.cpp:385
 msgid "Spell Level 4"
-msgstr ""
+msgstr "咒语等级 4"
 
 #: engines/kyra/engine/eobcommon.cpp:386
 msgid "Spell Level 5"
-msgstr ""
+msgstr "咒语等级 5"
 
 #: engines/kyra/engine/eobcommon.cpp:388
 msgid "Spell Level 6"
-msgstr ""
+msgstr "咒语等级 6"
 
 #: engines/kyra/engine/lol.cpp:506
 msgid "Attack 1"
-msgstr ""
+msgstr "攻击 1"
 
 #: engines/kyra/engine/lol.cpp:507
 msgid "Attack 2"
@@ -7409,7 +7441,7 @@ msgstr "显示地图"
 
 #: engines/kyra/engine/lol.cpp:512
 msgid "Slide Left"
-msgstr ""
+msgstr "向左滑行"
 
 #: engines/kyra/engine/lol.cpp:513
 msgid "Slide Right"
@@ -7426,7 +7458,7 @@ msgstr "選項"
 
 #: engines/kyra/engine/lol.cpp:518
 msgid "Choose Spell"
-msgstr ""
+msgstr "选择咒语"
 
 #: engines/kyra/gui/saveload_eob.cpp:598
 #, c-format
@@ -9668,10 +9700,8 @@ msgstr "你想启动还是加入网络游玩会话？"
 
 #. I18N: Random map generator for Moonbase Commander
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:55
-#, fuzzy
-#| msgid "Game Options"
 msgid "Random Map Options"
-msgstr "游戏设置"
+msgstr "随机地图设置"
 
 #. I18N: Map generator algorthims
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:59
@@ -9700,10 +9730,8 @@ msgstr ""
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:112
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:124
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:136
-#, fuzzy
-#| msgid "Random seed:"
 msgid "Random"
-msgstr "随机种子："
+msgstr "随机"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:67
 msgid "Picks the map algorithm randomly."
@@ -9715,10 +9743,8 @@ msgid "Size"
 msgstr ""
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:74
-#, fuzzy
-#| msgid "75% - Small"
 msgid "Small"
-msgstr "75% - 小"
+msgstr "小"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:76
 msgid "Large"
@@ -9737,10 +9763,8 @@ msgid "Ridiculous"
 msgstr ""
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:80
-#, fuzzy
-#| msgid "Map"
 msgid "Max"
-msgstr "地图"
+msgstr "最大"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:82
 msgid "Picks the map size randomly."
@@ -9748,10 +9772,8 @@ msgstr ""
 
 #. I18N: Map tilesets
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:85
-#, fuzzy
-#| msgid "Reset"
 msgid "Tileset"
-msgstr "重置"
+msgstr "图块集"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:99
 msgid "Picks the map tileset randomly."
@@ -9801,10 +9823,8 @@ msgstr ""
 
 #. I18N: Generate new map
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:140
-#, fuzzy
-#| msgid "General"
 msgid "Generate"
-msgstr "通用"
+msgstr "生成"
 
 #: engines/scumm/he/sound_he.cpp:1555
 msgid ""
@@ -10451,10 +10471,8 @@ msgid "Select highlighted verb"
 msgstr "选择高亮动作"
 
 #: engines/twp/metaengine.cpp:156
-#, fuzzy
-#| msgid "Go to previous directory level"
 msgid "Go to previous object"
-msgstr "回到先前目录"
+msgstr "转到前一个物品"
 
 #: engines/twp/metaengine.cpp:157
 msgid "Go to next object"
@@ -10465,10 +10483,8 @@ msgid "Select verb/item Left"
 msgstr ""
 
 #: engines/twp/metaengine.cpp:159
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Select verb/item Right"
-msgstr "向右滑行"
+msgstr "向右选择动作/物品"
 
 #: engines/twp/metaengine.cpp:160
 msgid "Select verb/item Up"
