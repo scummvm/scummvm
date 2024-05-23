@@ -1253,10 +1253,11 @@ static void showControlPanel() {
 
 	ImVec2 vp(ImGui::GetMainViewport()->Size);
 	ImGui::SetNextWindowPos(ImVec2(vp.x - 220.0f, 20.0f), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(200, 80), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(200, 103), ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Control Panel", &_state->_w.controlPanel)) {
-		Score *score = g_director->getCurrentMovie()->getScore();
+		Movie *movie = g_director->getCurrentMovie();
+		Score *score = movie->getScore();
 		ImDrawList *dl = ImGui::GetWindowDrawList();
 
 		ImU32 color = ImGui::GetColorU32(ImVec4(0.8f, 0.8f, 0.8f, 1.0f));
@@ -1371,9 +1372,15 @@ static void showControlPanel() {
 
 		snprintf(buf, 6, "%d", score->getCurrentFrameNum());
 
-		ImGui::SetNextItemWidth(30);
+		ImGui::SetNextItemWidth(35);
 		ImGui::InputText("##frame", buf, 5, ImGuiInputTextFlags_CharsDecimal);
 		ImGui::SetItemTooltip("Frame");
+
+		{
+			ImGui::Separator();
+			ImGui::TextColored(ImVec4(0.9f, 0.8f, 0.5f, 1.0f), movie->getArchive()->getPathName().toString().c_str());
+			ImGui::SetItemTooltip(movie->getArchive()->getPathName().toString().c_str());
+		}
 
 		ImGui::Separator();
 		ImGui::Separator();
@@ -1434,7 +1441,6 @@ static void showControlPanel() {
 			dl->AddCircleFilled(ImVec2(p.x + 9, p.y + 15), 2.0f, color);
 
 			ImGui::SetItemTooltip("Step Out");
-			ImGui::SameLine();
 		}
 	}
 	ImGui::End();
