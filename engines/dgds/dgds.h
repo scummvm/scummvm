@@ -106,7 +106,6 @@ private:
 
 	bool _justChangedScene1;
 	bool _justChangedScene2;
-	bool _usedForegroundBuffer;
 
 	Common::RandomSource _random;
 	Common::Point _lastMouse; // originals start mouse at 0,0.
@@ -124,10 +123,11 @@ public:
 
 	DgdsGameId getGameId() { return _gameId; }
 
-	Graphics::ManagedSurface &getForegroundBuffer();
 	const Graphics::ManagedSurface &getForegroundBuffer() const { return _foregroundBuffer; }
+	Graphics::ManagedSurface &getForegroundBuffer() { return _foregroundBuffer; }
 	Graphics::ManagedSurface &getBackgroundBuffer() { return _backgroundBuffer; }
 	Graphics::ManagedSurface &getStoredAreaBuffer() { return _storedAreaBuffer; }
+
 	Common::SeekableReadStream *getResource(const Common::String &name, bool ignorePatches);
 	ResourceManager *getResourceManager() { return _resource; }
 	Decompressor *getDecompressor() { return _decompressor; }
