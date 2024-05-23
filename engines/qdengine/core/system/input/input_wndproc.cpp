@@ -35,8 +35,6 @@ bool keyboard_wndproc(const MSG &msg, keyboardDispatcher *dsp) {
 }
 
 bool mouse_wndproc(const MSG &msg, mouseDispatcher *dsp) {
-	warning("STUB: mouse_wndproc()");
-#if 0
 	int x, y;
 	switch (msg.message) {
 	case WM_MOUSEMOVE:
@@ -70,7 +68,6 @@ bool mouse_wndproc(const MSG &msg, mouseDispatcher *dsp) {
 		inputRecorder::instance().dispatch_message(msg);
 		return true;
 	}
-#endif
 
 	return false;
 }

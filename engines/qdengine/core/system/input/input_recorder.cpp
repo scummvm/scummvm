@@ -101,8 +101,6 @@ bool inputRecorder::dispatch_message(const MSG &msg) {
 	int cursor_x = 0;
 	int cursor_y = 0;
 	int flags = 0;
-	warning("STUB: dispatch_message()");
-#if 0
 
 	switch (msg.message) {
 	case WM_KEYDOWN:
@@ -141,13 +139,10 @@ bool inputRecorder::dispatch_message(const MSG &msg) {
 	}
 
 	return add_message(inputRecorderMessage(msg_id, time_, key_id, cursor_x, cursor_y, flags));
-#endif
 	return false;
 }
 
 bool inputRecorder::dispatch_message(const inputRecorderMessage &imsg) {
-	warning("STUB: dispatch_message()");
-#if 0
 	MSG msg;
 	ZeroMemory(&msg, sizeof(MSG));
 
@@ -186,7 +181,6 @@ bool inputRecorder::dispatch_message(const inputRecorderMessage &imsg) {
 		msg.lParam = (LPARAM)imsg.flags();
 		return input::keyboard_wndproc(msg, keyboardDispatcher::instance());
 	}
-#endif
 	return false;
 }
 
