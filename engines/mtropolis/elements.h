@@ -23,6 +23,7 @@
 #define MTROPOLIS_ELEMENTS_H
 
 #include "graphics/fontman.h"
+#include "graphics/palette.h"
 
 #include "mtropolis/data.h"
 #include "mtropolis/runtime.h"
@@ -120,6 +121,8 @@ private:
 
 	void stopSubtitles();
 
+	void initFallbackPalette();
+
 	MiniscriptInstructionOutcome scriptSetRange(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetRangeStart(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetRangeEnd(MiniscriptThread *thread, const DynamicValue &value);
@@ -173,6 +176,8 @@ private:
 	Common::SharedPtr<SubtitlePlayer> _subtitles;
 
 	Common::Array<int> _damagedFrames;
+
+	Graphics::Palette _fallbackPalette;
 };
 
 class ImageElement : public VisualElement {

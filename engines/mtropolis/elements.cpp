@@ -500,7 +500,8 @@ MovieElement::MovieElement()
 	: _cacheBitmap(false), _alternate(false), _playEveryFrame(false), _reversed(false), /* _haveFiredAtLastCel(false), */
 	  /* _haveFiredAtFirstCel(false), */_shouldPlayIfNotPaused(true), _needsReset(true), _currentPlayState(kMediaStateStopped),
 	  _assetID(0), _maxTimestamp(0), _timeScale(0), _currentTimestamp(0), _volume(100),
-	  _displayFrame(nullptr) {
+	  _displayFrame(nullptr), _fallbackPalette(0) {
+	initFallbackPalette();
 }
 
 MovieElement::~MovieElement() {
@@ -770,7 +771,7 @@ void MovieElement::render(Window *window) {
 		Graphics::ManagedSurface *target = window->getSurface().get();
 		Common::Rect srcRect(0, 0, displaySurface->w, displaySurface->h);
 		Common::Rect destRect(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y, _cachedAbsoluteOrigin.x + _rect.width(), _cachedAbsoluteOrigin.y + _rect.height());
-		target->blitFrom(*displaySurface, srcRect, destRect);
+		target->blitFrom(*displaySurface, srcRect, destRect, &_fallbackPalette);
 	}
 }
 
@@ -950,6 +951,12 @@ IntRange MovieElement::computeRealRange() const {
 void MovieElement::stopSubtitles() {
 	if (_subtitles)
 		_subtitles->stop();
+}
+
+void MovieElement::initFallbackPalette() {
+	// TODO: determine correct content of fallback movie palette
+	Palette palette;
+	_fallbackPalette = Graphics::Palette(palette.getPalette(), palette.kNumColors);
 }
 
 void MovieElement::onPauseStateChanged() {
