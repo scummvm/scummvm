@@ -20,7 +20,7 @@
 #define HMODULE       void *
 #define HRESULT       int
 #define FARPROC       int *
-#define LPARAM        long int *
+#define LPARAM        long int
 #define LPSTR         char *
 #define LPCSTR        const char *
 #define LPWSTR        wchar_t *
@@ -37,17 +37,19 @@
 #define COLORREF      unsigned
 #define BYTE          unsigned char
 #define DRIVE_CDROM   5
-#define _MAX_EXT      4
 #define _MAX_PATH     260
+#define _MAX_DRIVE    3
+#define _MAX_EXT      256
+#define _MAX_FNAME    256
+#define _MAX_DIR      256
+
 #define IDYES         6
 #define IDOK          1
 #define IDNO          7
+#define IDRETRY       4
+#define IDIGNORE      5
 #define IDCANCEL      2
-#define MAX_PATH      260
-#define _MAX_DRIVE    3
-#define _MAX_DIR      256
-#define _MAX_FNAME    256
-#define _MAX_EXT      256
+
 #define VK_ESCAPE     0x1B
 #define VK_RETURN     0x0D
 #define VK_SPACE      0x20
@@ -68,22 +70,37 @@
 #define VK_PRIOR      0x21
 #define PM_REMOVE     0x0001
 #define SC_MAXIMIZE   0xF030
+
+// STUB FIXME
 #define WM_SYSCOMMAND 0x0112
 #define WM_SYSKEYDOWN 0x0104
+#define WM_SYSKEYUP   0x0105
 #define WM_KEYDOWN    0x0100
 #define WM_KEYUP      0x0101
 #define WM_QUIT       0x0012
 #define WM_SETTEXT    0x000C
 #define WM_INITDIALOG 0x0110
 #define WM_COMMAND    0x0111
-#define SW_HIDE       0
-#define SW_SHOWNORMAL 1
+#define WM_LBUTTONDOWN 0x0201
+#define WM_RBUTTONDOWN 0x0204
+#define WM_LBUTTONUP  0x0202
+#define WM_RBUTTONUP  0x0205
+#define WM_MOUSEMOVE  0x0200
+
 #define MB_OK         0x00000000L
 #define MB_YESNO      0x00000004L
 #define MB_TASKMODAL  0x00002000L
 #define MB_OKCANCEL   0x00000001L
-#define SW_SHOWMAXIMIZED   3
+#define MB_ICONERROR  0x00000010L
+#define MK_LBUTTON    0x0001
+#define MK_RBUTTON    0x0002
+#define MK_MBUTTON    0x0010
 #define MB_ICONEXCLAMATION 0x00000030L
+#define MB_ABORTRETRYIGNORE 0x00000002L
+
+#define SW_HIDE       0
+#define SW_SHOWNORMAL 1
+#define SW_SHOWMAXIMIZED   3
 #define SEM_FAILCRITICALERRORS 1
 
 #define BM_GETCHECK     0x00F0
@@ -97,7 +114,7 @@
 #define TBM_SETTICFREQ  0x0405
 #define MAKELONG(a, b)  ((a) | ((b) << 16))
 #define LOWORD(l)       (short)(l)
-#define HIWORD(l)       ((WORD)(((DWORD)(l) >> 16) & 0xFFFF))
+#define HIWORD(l)       ((short)(((DWORD)(l) >> 16) & 0xFFFF))
 #define CB_RESETCONTENT 0x0145
 #define CB_ADDSTRING    0x0143
 #define CB_GETCURSEL    0x0147
@@ -109,7 +126,7 @@ typedef struct MSG {
 	HWND   hwnd;
 	UINT   message;
 	int    wParam;
-	int    lParam;
+	LPARAM    lParam;
 	DWORD  time;
 	DWORD  lPrivate;
 };
@@ -220,6 +237,34 @@ bool EndDialog(HWND hDlg, int nResult) {
 	return false;
 }
 
+LPARAM MAKELPARAM(short a, short b) {
+	warning("STUB: MAKELPARAM");
+	return 0;
+}
+
+void ZeroMemory(void *dest, size_t size) {
+	warning("STUB: ZeroMemory");
+}
+
+bool SetCurrentDirectory(const char *lpPathName) {
+	warning("STUB: SetCurrentDirectory");
+	return false;
+}
+
+DWORD GetCurrentDirectory(DWORD nBufferLength, char *lpBuffer) {
+	warning("STUB: GetCurrentDirectory");
+	return 0;
+}
+
+bool CreateDirectory(const char *lpPathName, void *lpSecurityAttributes) {
+	warning("STUB: CreateDirectory");
+	return false;
+}
+
+char *_fullpath(char *absPath, const char *relPath, size_t maxLength) {
+	warning("STUB: _fullpath");
+	return 0;
+}
 #ifndef _QUEST_EDITOR
 #else
 /*  #define   _STLP_NO_NEW_IOSTREAMS 1

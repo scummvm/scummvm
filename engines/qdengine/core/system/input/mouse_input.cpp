@@ -32,8 +32,6 @@ bool mouseDispatcher::handle_event(mouseEvent ev, int x, int y, int flags) {
 	if (event_handlers_[ev])
 		(*event_handlers_[ev])(x, y, flags);
 
-	warning("STUB: mouseDispatcher::handle_event()");
-#if 0
 	if (flags & MK_LBUTTON) button_status_ |= 1 << (ID_BUTTON_LEFT);
 	else button_status_ &= ~(1 << ID_BUTTON_LEFT);
 
@@ -48,5 +46,4 @@ bool mouseDispatcher::handle_event(mouseEvent ev, int x, int y, int flags) {
 	mouse_y_ = y;
 
 	return true;
-#endif
 }
