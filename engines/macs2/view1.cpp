@@ -334,18 +334,27 @@ View1::View1() : UIElement("View1") {
 
 			// Check if we hit something
 			uint16 index = GetHitObjectID(Common::Point(msg._pos.x, msg._pos.y));
+			if (index == 0) {
+				// TODO: Check which we should test first in practice, objects or background
+				index = g_engine->GetInteractedBackgroundHotspot(msg._pos);
+			}
 			if (index != 0) {
 				debug("*** New interaction started");
 				// TODO: Mode hardcoded
 				Script::MouseMode m = Script::MouseMode::Use;
 				if (activeInventoryItem != nullptr) {
 					m = Script::MouseMode::UseInventory;
+					
 				}
 				g_engine->_scriptExecutor->_mouseMode = m;
 				g_engine->_scriptExecutor->_charPosX = characters[0]->Position.x;
 				g_engine->_scriptExecutor->_charPosY = characters[0]->Position.y;
 				g_engine->_scriptExecutor->_interactedObjectID = index;
 				g_engine->_scriptExecutor->_interactedOtherObjectID = activeInventoryItem != nullptr ? activeInventoryItem->Index + 0x0400 : 0x0000;
+
+				// TODO: We need to keep better track of whether the inventory item
+				// is actually gone, resetting for now like this
+				activeInventoryItem = nullptr;
 
 				// Set the script
 				g_engine->_scriptExecutor->SetScript(Scenes::instance().CurrentSceneScript);

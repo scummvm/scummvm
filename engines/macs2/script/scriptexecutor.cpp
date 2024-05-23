@@ -1301,7 +1301,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 
 			View1 *currentView = (View1 *)_engine->findView("View1");
 			Character *c = currentView->GetCharacterByIndex(objectID);
-			if (c != nullptr) {
+			/*  if (c != nullptr) {
 				// TODO: Something seems to be wrong with the stick
 				// assert(sceneID != Scenes::instance().CurrentSceneIndex);
 				int index = currentView->GetCharacterArrayIndex(c);
@@ -1309,14 +1309,31 @@ void Script::ScriptExecutor::ExecuteScript() {
 				c->GameObject->SceneIndex = sceneID;
 				c->GameObject->Position = Common::Point(x, y);
 				continue;
+			} */
+			if (c == nullptr) {
+				c = new Character();
+				c->GameObject = GameObjects::instance().Objects[objectID - 1];
 			}
+			// This doubles as an indication if the character has been created previously
+			// and is already in the list
+			int index = currentView->GetCharacterArrayIndex(c);
+
 			// TODO: Figure out how to create the list properly
-			c = new Character();
-			c->GameObject = GameObjects::instance().Objects[objectID - 1];
 			// TODO: DRY principle
 			c->Position = c->GameObject->Position = Common::Point(x,y);
 			c->GameObject->SceneIndex = sceneID;
-			currentView->characters.push_back(c);
+			if (sceneID != Scenes::instance().CurrentSceneIndex) {
+				// We need to remove the character if it is in the list already
+				if (index > -1) {
+					currentView->characters.remove_at(index);
+				}
+			}
+			else {
+				// We need to add the character unless it's already there
+				if (index < 0) {
+					currentView->characters.push_back(c);
+				}
+			}
 		} else if (opcode1 == 0x0c) {
 			// This is a scene change
 			uint32 newSceneID = Func9F4D_32();
