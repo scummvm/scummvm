@@ -22,8 +22,6 @@
 #include "shape.h"
 #include "stream-helper.h"
 
-#include "math/line2d.h"
-
 using namespace Common;
 using namespace Math;
 
@@ -35,6 +33,31 @@ static Vector2d asVec(const Point &p) {
 
 static int sideOfLine(const Point &a, const Point &b, const Point &q) {
 	return (b.x - a.x) * (q.y - a.y) - (b.y - a.y) * (q.x - a.x);
+}
+
+static bool segmentsIntersect(const Point &a1, const Point &b1, const Point &a2, const Point &b2) {
+	// as there are a number of special cases to consider, this method is a direct translation
+	// of the original engine
+
+	const auto sideOfLine = [](const Point &a, const Point &b, const Point q) {
+		return Alcachofa::sideOfLine(a, b, q) > 0;
+	};
+	const auto lineIntersects = [&](const Point &a1, const Point &b1, const Point &a2, const Point &b2) {
+		return sideOfLine(a1, b1, a2) != sideOfLine(a1, b1, b2);
+	};
+
+	if (a2.x > b2.x) {
+		if (a1.x > b1.x)
+			return lineIntersects(b1, a1, b2, a2) && lineIntersects(b2, a2, b1, a1);
+		else
+			return lineIntersects(a1, b1, b2, a2) && lineIntersects(b2, a2, a1, b1);
+	}
+	else {
+		if (a1.x > b1.x)
+			return lineIntersects(b1, a1, a2, b2) && lineIntersects(a2, b2, b1, a1);
+		else
+			return lineIntersects(a1, b1, a2, b2) && lineIntersects(a2, b2, a1, b1);
+	}
 }
 
 bool Polygon::contains(const Point &query) const {
@@ -93,6 +116,21 @@ float PathFindingPolygon::depthAt(const Point &query) const {
 	case 2: return depthAtForLine(_points[0], _points[1], query, _pointDepths[0], _pointDepths[1]);
 	default: return depthAtForConvex(*this, query);
 	}
+}
+
+uint PathFindingPolygon::findSharedPoints(
+	const PathFindingPolygon &other,
+	Common::Span<SharedPoint> sharedPoints) const {
+	uint count = 0;
+	for (uint outerI = 0; outerI < _points.size(); outerI++) {
+		for (uint innerI = 0; innerI < other._points.size(); innerI++) {
+			if (_points[outerI] == other._points[innerI]) {
+				assert(count < sharedPoints.size());
+				sharedPoints[count++] = { outerI, innerI };
+			}
+		}
+	}
+	return count;
 }
 
 static Color colorAtForLine(const Point &a, const Point &b, const Point &q, Color colorA, Color colorB) {
@@ -199,6 +237,7 @@ uint Shape::addPolygon(uint maxCount) {
 Polygon Shape::at(uint index) const {
 	auto range = _polygons[index];
 	Polygon p;
+	p._index = index;
 	p._points = Span<const Point>(_points.data() + range.first, range.second);
 	return p;
 }
@@ -236,12 +275,15 @@ PathFindingShape::PathFindingShape(ReadStream &stream) {
 		_pointDepths.resize(_points.size());
 	}
 
-	// TODO: Implement the path finding
+	setupLinks();
+	initializeFloydWarshall();
+	calculateFloydWarshall();
 }
 
 PathFindingPolygon PathFindingShape::at(uint index) const {
 	auto range = _polygons[index];
 	PathFindingPolygon p;
+	p._index = index;
 	p._points = Span<const Point>(_points.data() + range.first, range.second);
 	p._pointDepths = Span<const uint8>(_pointDepths.data() + range.first, range.second);
 	p._order = _polygonOrders[index];
@@ -256,6 +298,238 @@ int8 PathFindingShape::orderAt(const Point &query) const {
 float PathFindingShape::depthAt(const Point &query) const {
 	int32 polygon = polygonContaining(query);
 	return polygon < 0 ? 1.0f : at(polygon).depthAt(query);
+}
+
+PathFindingShape::LinkPolygonIndices::LinkPolygonIndices() {
+	Common::fill(_points, _points + kPointsPerPolygon, LinkIndex( -1, -1 ));
+}
+
+static Pair<int32, int32> orderPoints(const Polygon &polygon, int32 point1, int32 point2) {
+	if ((point1 > point2 && point1 + 1 != (int32)polygon._points.size()) ||
+		point2 + 1 == (int32)polygon._points.size()) {
+		int32 tmp = point1;
+		point1 = point2;
+		point2 = tmp;
+	}
+	return { point1, point2 };
+}
+
+void PathFindingShape::setupLinks() {
+	// just a heuristic, each polygon will be attached to at least one other
+	_linkPoints.reserve(polygonCount() * 3);
+	_linkIndices.resize(polygonCount());
+	_targetQuads.resize(polygonCount() * kPointsPerPolygon);
+	Common::fill(_targetQuads.begin(), _targetQuads.end(), -1);
+	Pair<uint, uint> sharedPoints[2];
+	for (uint outerI = 0; outerI < polygonCount(); outerI++) {
+		const auto outer = at(outerI);
+		for (uint innerI = outerI + 1; innerI < polygonCount(); innerI++) {
+			const auto inner = at(innerI);
+			uint sharedPointCount = outer.findSharedPoints(inner, { sharedPoints, 2 });
+			if (sharedPointCount > 0)
+				setupLinkPoint(outer, inner, sharedPoints[0]);
+			if (sharedPointCount > 1) {
+				auto outerPoints = orderPoints(outer, sharedPoints[0].first, sharedPoints[1].first);
+				auto innerPoints = orderPoints(inner, sharedPoints[0].second, sharedPoints[1].second);
+				setupLinkEdge(outer, inner, outerPoints.first, outerPoints.second, innerPoints.first);
+				setupLinkPoint(outer, inner, sharedPoints[1]);
+			}
+		}
+	}
+}
+
+void PathFindingShape::setupLinkPoint(
+	const PathFindingPolygon &outer,
+	const PathFindingPolygon &inner,
+	PathFindingPolygon::SharedPoint pointI) {
+	auto &outerLink = _linkIndices[outer._index]._points[pointI.first];
+	auto &innerLink = _linkIndices[inner._index]._points[pointI.second];
+	if (outerLink.first < 0) {
+		outerLink.first = _linkPoints.size();
+		_linkPoints.push_back(outer._points[pointI.first]);
+	}
+	innerLink.first = outerLink.first;
+}
+
+void PathFindingShape::setupLinkEdge(
+	const PathFindingPolygon &outer,
+	const PathFindingPolygon &inner,
+	int32 outerP1, int32 outerP2, int32 innerP) {
+	_targetQuads[outer._index * kPointsPerPolygon + outerP1] = inner._index;
+	_targetQuads[inner._index * kPointsPerPolygon + innerP] = outer._index;
+	auto &outerLink = _linkIndices[outer._index]._points[outerP1];
+	auto &innerLink = _linkIndices[inner._index]._points[innerP];
+	if (outerLink.second < 0) {
+		outerLink.second = _linkPoints.size();
+		_linkPoints.push_back((outer._points[outerP1] + outer._points[outerP2]) / 2);
+	}
+	innerLink.second = outerLink.second;
+}
+
+void PathFindingShape::initializeFloydWarshall() {
+	_distanceMatrix.resize(_linkPoints.size() * _linkPoints.size());
+	_previousTarget.resize(_linkPoints.size() * _linkPoints.size());
+	Common::fill(_distanceMatrix.begin(), _distanceMatrix.end(), UINT_MAX);
+	Common::fill(_previousTarget.begin(), _previousTarget.end(), -1);
+
+	// every linkpoint is the shortest path to itself
+	for (uint i = 0; i < _linkPoints.size(); i++) {
+		_distanceMatrix[i * _linkPoints.size() + i] = 0;
+		_previousTarget[i * _linkPoints.size() + i] = i;
+	}
+
+	// every linkpoint to linkpoint within the same polygon *is* the shortest path
+	// between them. Therefore these are our initial paths for Floyd-Warshall
+	for (const auto &linkPolygon : _linkIndices) {
+		for (uint i = 0; i < 2 * kPointsPerPolygon; i++) {
+			LinkIndex linkFrom = linkPolygon._points[i / 2];
+			int32 linkFromI = i % 2 ? linkFrom.second : linkFrom.first;
+			if (linkFromI < 0)
+				continue;
+			for (uint j = i + 1; j < 2 * kPointsPerPolygon; j++) {
+				LinkIndex linkTo = linkPolygon._points[j / 2];
+				int32 linkToI = j % 2 ? linkTo.second : linkTo.first;
+				if (linkToI >= 0) {
+					const int32 linkFromFullI = linkFromI * _linkPoints.size() + linkToI;
+					const int32 linkToFullI = linkToI * _linkPoints.size() + linkFromI;
+					_distanceMatrix[linkFromFullI] = _distanceMatrix[linkToFullI] =
+						(uint)sqrtf(_linkPoints[linkFromI].sqrDist(_linkPoints[linkToI]) + 0.5f);
+					_previousTarget[linkFromFullI] = linkFromI;
+					_previousTarget[linkToFullI] = linkToI;
+				}
+			}
+		}
+	}
+}
+
+void PathFindingShape::calculateFloydWarshall() {
+	const auto distance = [&](uint a, uint b) -> uint& {
+		return _distanceMatrix[a * _linkPoints.size() + b];
+	};
+	const auto previousTarget = [&](uint a, uint b) -> int32& {
+		return _previousTarget[a * _linkPoints.size() + b];
+	};
+	for (uint over = 0; over < _linkPoints.size(); over++) {
+		for (uint from = 0; from < _linkPoints.size(); from++) {
+			for (uint to = 0; to < _linkPoints.size(); to++) {
+				if (distance(from, over) != UINT_MAX && distance(over, to) != UINT_MAX &&
+					distance(from, over) + distance(over, to) < distance(from, to)) {
+					distance(from, to) = distance(from, over) + distance(over, to);
+					previousTarget(from, to) = previousTarget(over, to);
+				}
+			}
+		}
+	}
+
+	// in the game all floors should be fully connected
+	assert(find(_previousTarget.begin(), _previousTarget.end(), -1) == _previousTarget.end());
+}
+
+bool PathFindingShape::findPath(const Point &from, const Point &to_, Stack<Point> &path) const {
+	Point to = to_; // we might want to correct it
+	path.clear();
+
+	int32 fromContaining = polygonContaining(from);
+	if (fromContaining < 0)
+		return false;
+	int32 toContaining = polygonContaining(to);
+	if (toContaining < 0) {
+		to = getClosestPoint(to);
+		toContaining = polygonContaining(to);
+		assert(toContaining >= 0);
+	}
+	//if (canGoStraightThrough(from, to, fromContaining, toContaining)) {
+	if (canGoStraightThrough(from, to, fromContaining, toContaining)) {
+		path.push(to);
+		return true;
+	}
+	floydWarshallPath(from, to, fromContaining, toContaining, path);
+	return true;
+}
+
+bool PathFindingShape::canGoStraightThrough(
+	const Point &from, const Point &to,
+	int32 fromContainingI, int32 toContainingI) const {
+	int32 lastContainingI = -1;
+	while (fromContainingI != toContainingI) {
+		auto toContaining = at(toContainingI);
+		bool foundPortal = false;
+		for (uint i = 0; i < toContaining._points.size(); i++) {
+			uint fullI = toContainingI * kPointsPerPolygon + i;
+			if (_targetQuads[fullI] < 0 || _targetQuads[fullI] == lastContainingI)
+				continue;
+
+			uint j = i + 1 == toContaining._points.size() ? 0 : i + 1;
+			if (segmentsIntersect(from, to, toContaining._points[i], toContaining._points[j])) {
+				foundPortal = true;
+				lastContainingI = toContainingI;
+				toContainingI = _targetQuads[fullI];
+				break;
+			}
+		}
+		if (!foundPortal)
+			return false;
+	}
+	return true;
+}
+
+void PathFindingShape::floydWarshallPath(
+	const Point &from, const Point &to,
+	int32 fromContaining, int32 toContaining,
+	Stack<Point> &path) const {
+	path.push(to);
+	// first find the tuple of link points to be used
+	uint fromLink = UINT_MAX, toLink = UINT_MAX, bestDistance = UINT_MAX;
+	const auto &fromIndices = _linkIndices[fromContaining];
+	const auto &toIndices = _linkIndices[toContaining];
+	for (uint i = 0; i < 2 * kPointsPerPolygon; i++) {
+		const auto &curFromPoint = fromIndices._points[i / 2];
+		int32 curFromLink = i % 2 ? curFromPoint.second : curFromPoint.first;
+		if (curFromLink < 0)
+			continue;
+		uint curFromDistance = (uint)sqrtf(from.sqrDist(_linkPoints[curFromLink]) + 0.5f);
+
+		for (uint j = 0; j < 2 * kPointsPerPolygon; j++) {
+			const auto &curToPoint = toIndices._points[j / 2];
+			int32 curToLink = j % 2 ? curToPoint.second : curToPoint.first;
+			if (curToLink < 0)
+				continue;
+			uint totalDistance =
+				curFromDistance +
+				_distanceMatrix[curFromLink * _linkPoints.size() + curToLink] +
+				(uint)sqrtf(to.sqrDist(_linkPoints[curToLink]) + 0.5f);
+			if (totalDistance < bestDistance) {
+				bestDistance = totalDistance;
+				fromLink = curFromLink;
+				toLink = curToLink;
+			}
+		}
+	}
+	assert(fromLink != UINT_MAX && toLink != UINT_MAX);
+
+	// then walk the matrix back to reconstruct the path
+	while (fromLink != toLink) {
+		path.push(_linkPoints[toLink]);
+		toLink = _previousTarget[fromLink * _linkPoints.size() + toLink];
+		assert(toLink < _linkPoints.size());
+	}
+	path.push(_linkPoints[fromLink]);
+}
+
+Point PathFindingShape::getClosestPoint(const Point &query) const {
+	assert(!_points.empty());
+	Point bestPoint;
+	uint bestDistance = UINT_MAX;
+	for (auto p : _points) {
+		uint curDistance = query.sqrDist(p);
+		if (curDistance < bestDistance) {
+			bestDistance = curDistance;
+			bestPoint = p;
+		}
+	}
+
+	assert(bestDistance < UINT_MAX);
+	return bestPoint;
 }
 
 FloorColorShape::FloorColorShape() {}
@@ -290,6 +564,7 @@ FloorColorShape::FloorColorShape(ReadStream &stream) {
 FloorColorPolygon FloorColorShape::at(uint index) const {
 	auto range = _polygons[index];
 	FloorColorPolygon p;
+	p._index = index;
 	p._points = Span<const Point>(_points.data() + range.first, range.second);
 	p._pointColors = Span<const Color>(_pointColors.data() + range.first, range.second);
 	return p;
