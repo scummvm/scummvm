@@ -239,9 +239,12 @@ bool GameMapGump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
 									int32 lerp_factor) {
 	Item *item = getItem(itemid);
 
-	if (!item) return false;
+	if (!item)
+		return false;
 
-	while (item->getParentAsContainer()) item = item->getParentAsContainer();
+	Container *root = item->getRootContainer();
+	if (root)
+		item = root;
 
 	int32 ix, iy, iz;
 

@@ -350,7 +350,8 @@ bool PaperdollGump::DraggingItem(Item *item, int mx, int my) {
 	_draggingArmourClass = 0;
 	_draggingWeight = 0;
 
-	if (item->getTopItem()->getObjId() != _owner)
+	Container *root = item->getRootContainer();
+	if (!root || root->getObjId() != _owner)
 		_draggingWeight = item->getWeight();
 
 	const ShapeInfo *si = item->getShapeInfo();

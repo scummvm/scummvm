@@ -130,16 +130,19 @@ Container *Item::getParentAsContainer() const {
 	return p;
 }
 
-const Item *Item::getTopItem() const {
-	const Container *parentItem = getParentAsContainer();
-
-	if (!parentItem) return this;
-
-	while (parentItem->getParentAsContainer()) {
-		parentItem = parentItem->getParentAsContainer();
+Container* Item::getRootContainer() const {
+	Container *root = nullptr;
+	Container *parent = getParentAsContainer();
+	while (parent) {
+		root = parent;
+		parent = parent->getParentAsContainer();
 	}
+	return root;
+}
 
-	return parentItem;
+const Item *Item::getTopItem() const {
+	Container *root = getRootContainer();
+	return root ? root : this;
 }
 
 void Item::setLocation(int32 X, int32 Y, int32 Z) {
@@ -324,11 +327,8 @@ bool Item::moveToContainer(Container *container, bool checkwghtvol) {
 	_flags |= FLG_CONTAINED;
 
 	// If moving to avatar, mark as OWNED
-	Item *p = this;
-	while (p->getParentAsContainer())
-		p = p->getParentAsContainer();
-	// In Avatar's inventory?
-	if (p->getObjId() == 1)
+	Container *root = getRootContainer();
+	if (root && root->getObjId() == 1)
 		setFlagRecursively(FLG_OWNED);
 
 	// No lerping when moving to a container
@@ -2888,20 +2888,17 @@ uint32 Item::I_getContainer(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_getRootContainer(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
-	Container *_parent = item->getParentAsContainer();
+	Container *root = item->getRootContainer();
 
 	//! What do we do if item has no _parent?
 	//! What do we do with equipped items?
+	if (!root)
+		return 0;
 
-	if (!_parent) return 0;
-
-	while (_parent->getParentAsContainer()) {
-		_parent = _parent->getParentAsContainer();
-	}
-
-	return _parent->getObjId();
+	return root->getObjId();
 }
 
 uint32 Item::I_getQ(const uint8 *args, unsigned int /*argsize*/) {

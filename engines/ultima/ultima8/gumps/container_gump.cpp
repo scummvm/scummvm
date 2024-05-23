@@ -273,16 +273,8 @@ void ContainerGump::GetItemLocation(int32 lerp_factor) {
 	}
 
 	int32 gx, gy;
-	Item *topitem = it;
-
-	Container *p = it->getParentAsContainer();
-	if (p) {
-		while (p->getParentAsContainer()) {
-			p = p->getParentAsContainer();
-		}
-
-		topitem = p;
-	}
+	Container *root = it->getRootContainer();
+	Item *topitem = root ? root : it;
 
 	Gump *gump = GetRootGump()->FindGump<GameMapGump>();
 	assert(gump);
