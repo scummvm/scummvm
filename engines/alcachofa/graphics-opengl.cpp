@@ -290,6 +290,26 @@ public:
 			GL_CALL(glDrawArrays(GL_POINTS, 0, points.size()));
 	}
 
+	virtual void debugPolyline(
+		Span<Vector2d> points,
+		Color color
+	) override {
+		setTexture(nullptr);
+		setBlendMode(BlendMode::Alpha);
+		GL_CALL(glVertexPointer(2, GL_FLOAT, 0, points.data()));
+		GL_CALL(glLineWidth(4.0f));
+		GL_CALL(glPointSize(8.0f));
+
+		GL_CALL(glColor4ub(color.r, color.g, color.b, color.a));
+		if (points.size() > 1)
+			GL_CALL(glDrawArrays(GL_LINE_STRIP, 0, points.size()));
+
+		color.a = (byte)(MIN(255.0f, color.a * 1.3f));
+		GL_CALL(glColor4ub(color.r, color.g, color.b, color.a));
+		if (points.size() > 0)
+			GL_CALL(glDrawArrays(GL_POINTS, 0, points.size()));
+	}
+
 private:
 	void initViewportAndMatrices() {
 		int32 screenWidth = g_system->getWidth();

@@ -45,8 +45,8 @@ public:
 
 private:
 	bool _showInteractables = true;
-	bool _showFloor = false;
-	bool _showFloorColor = true;
+	bool _showFloor = true;
+	bool _showFloorColor = false;
 };
 
 } // End of namespace Alcachofa
