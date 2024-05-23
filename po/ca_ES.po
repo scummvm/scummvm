@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-05-23 01:47+0000\n"
-"PO-Revision-Date: 2024-05-14 23:45+0000\n"
+"PO-Revision-Date: 2024-05-24 03:43+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -5015,34 +5015,24 @@ msgid "(check '? > Libretro playlist' for detailed info)"
 msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:48
-#, fuzzy
-#| msgid "Plugins Path:"
 msgid "Playlists Path"
-msgstr "Camí dels connectors:"
+msgstr "Camí de les llistes de reproducció"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:49
-#, fuzzy
-#| msgid "Specifies where your saved games are put"
 msgid "Specifies where your playlist will be saved."
-msgstr "Indica on es desaran les partides"
+msgstr "Especifica on es desarà la vostra llista de reproducció."
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:52
-#, fuzzy
-#| msgid "Platform:"
 msgid "Playlist format:"
-msgstr "Plataforma:"
+msgstr "Format de la llista de reproducció:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:57
-#, fuzzy
-#| msgid "Goto location"
 msgid "Hooks location:"
-msgstr "Ves a la ubicació"
+msgstr "Ubicació dels enllaços:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:59
-#, fuzzy
-#| msgid "Add a new folder"
 msgid "All in save folder"
-msgstr "Afegeix una carpeta nova"
+msgstr "Tot a la carpeta de desament"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:60
 msgid "One in each game folder"
@@ -5057,34 +5047,24 @@ msgid "Generate playlist"
 msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:66
-#, fuzzy
-#| msgid "Status:"
 msgid "Status: "
-msgstr "Estat:"
+msgstr "Estat: "
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:148
-#, fuzzy
-#| msgid "Failed to save game to file."
 msgid "Failed, can't access playlist file"
-msgstr "No s'ha pogut desar la partida al fitxer."
+msgstr "Ha fallat, no es pot accedir al fitxer de la llista de reproducció"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:224
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "cleaning failed"
-msgstr "Ha fallat la lectura de dades"
+msgstr "ha fallat la neteja"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:226
-#, fuzzy
-#| msgid "Failed to read the file!"
 msgid "Failed, can't create hook files"
-msgstr "No s'ha pogut llegir el fitxer!"
+msgstr "Ha fallat, no s'han pogut crear els fitxers d'enllaç"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:236
-#, fuzzy
-#| msgid "Select additional game directory"
 msgid "Select Playlist directory"
-msgstr "Seleccioneu el directori addicional del joc"
+msgstr "Seleccioneu el directori de la llista de reproducció"
 
 #: backends/platform/maemo/maemo.cpp:157
 msgid "Click Mode"
@@ -5212,64 +5192,44 @@ msgid "BSD License"
 msgstr "Llicència BSD"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:329
-#, fuzzy
-#| msgid "GPL License"
 msgid "Apache License"
-msgstr "Llicència GPL"
+msgstr "Llicència Apache"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:330
-#, fuzzy
-#| msgid "BSD License"
 msgid "BSL License"
-msgstr "Llicència BSD"
+msgstr "Llicència BSL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:331
-#, fuzzy
-#| msgid "GPL License"
 msgid "GLAD License"
-msgstr "Llicència GPL"
+msgstr "Llicència GLAD"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:332
-#, fuzzy
-#| msgid "BSD License"
 msgid "ISC License"
-msgstr "Llicència BSD"
+msgstr "Llicència ISC"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:333
-#, fuzzy
-#| msgid "GPL License"
 msgid "Lua License"
-msgstr "Llicència GPL"
+msgstr "Llicència Lua"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:334
-#, fuzzy
-#| msgid "GPL License"
 msgid "MIT License"
-msgstr "Llicència GPL"
+msgstr "Llicència MIT"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:335
-#, fuzzy
-#| msgid "GPL License"
 msgid "MKV License"
-msgstr "Llicència GPL"
+msgstr "Llicència MKV"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:336
-#, fuzzy
-#| msgid "GPL License"
 msgid "MPL License"
-msgstr "Llicència GPL"
+msgstr "Llicència MPL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:337
-#, fuzzy
-#| msgid "GPL License"
 msgid "TinyGL License"
-msgstr "Llicència GPL"
+msgstr "Llicència TinyGL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:338
-#, fuzzy
-#| msgid "Freefont License"
 msgid "Catharon License"
-msgstr "Llicència Freefont"
+msgstr "Llicència Catharon"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:79
@@ -5941,10 +5901,8 @@ msgid "Soldier 714 Eye Cheat"
 msgstr ""
 
 #: engines/bagel/metaengine.cpp:83
-#, fuzzy
-#| msgid "General"
 msgid "General Keys"
-msgstr "General"
+msgstr "Tecles generals"
 
 #: engines/bladerunner/bladerunner.cpp:404
 msgid "Failed to initialize resources"
@@ -9739,10 +9697,8 @@ msgstr "Voleu crear o unir-vos a una sessió de joc en xarxa?"
 
 #. I18N: Random map generator for Moonbase Commander
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:55
-#, fuzzy
-#| msgid "Game Options"
 msgid "Random Map Options"
-msgstr "Opcions del joc"
+msgstr "Opcions del mapa aleatori"
 
 #. I18N: Map generator algorthims
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:59
@@ -9771,10 +9727,8 @@ msgstr ""
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:112
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:124
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:136
-#, fuzzy
-#| msgid "Random seed:"
 msgid "Random"
-msgstr "Llavor aleatòria:"
+msgstr "Aleatori"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:67
 msgid "Picks the map algorithm randomly."
@@ -9786,10 +9740,8 @@ msgid "Size"
 msgstr ""
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:74
-#, fuzzy
-#| msgid "75% - Small"
 msgid "Small"
-msgstr "75% - Petita"
+msgstr "Petita"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:76
 msgid "Large"
@@ -9808,10 +9760,8 @@ msgid "Ridiculous"
 msgstr ""
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:80
-#, fuzzy
-#| msgid "Map"
 msgid "Max"
-msgstr "Assigna"
+msgstr "Màxim"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:82
 msgid "Picks the map size randomly."
@@ -9819,10 +9769,8 @@ msgstr ""
 
 #. I18N: Map tilesets
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:85
-#, fuzzy
-#| msgid "Reset"
 msgid "Tileset"
-msgstr "Reset"
+msgstr "Conjunt de mosaics"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:99
 msgid "Picks the map tileset randomly."
@@ -9872,10 +9820,8 @@ msgstr ""
 
 #. I18N: Generate new map
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:140
-#, fuzzy
-#| msgid "General"
 msgid "Generate"
-msgstr "General"
+msgstr "Genera"
 
 #: engines/scumm/he/sound_he.cpp:1555
 msgid ""
@@ -10524,26 +10470,20 @@ msgid "Select highlighted verb"
 msgstr "Selecciona el verb ressaltat"
 
 #: engines/twp/metaengine.cpp:156
-#, fuzzy
-#| msgid "Go to previous directory level"
 msgid "Go to previous object"
-msgstr "Torna al nivell de directoris anterior"
+msgstr "Ves a l'objecte anterior"
 
 #: engines/twp/metaengine.cpp:157
-#, fuzzy
-#| msgid "Go to setup menu"
 msgid "Go to next object"
-msgstr "Ves al menú de configuració"
+msgstr "Ves al següent objecte"
 
 #: engines/twp/metaengine.cpp:158
 msgid "Select verb/item Left"
 msgstr ""
 
 #: engines/twp/metaengine.cpp:159
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Select verb/item Right"
-msgstr "Mou a la dreta"
+msgstr "Selecciona verb/element a la dreta"
 
 #: engines/twp/metaengine.cpp:160
 msgid "Select verb/item Up"
