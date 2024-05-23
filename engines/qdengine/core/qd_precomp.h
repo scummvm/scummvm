@@ -44,6 +44,10 @@
 #define IDNO          7
 #define IDCANCEL      2
 #define MAX_PATH      260
+#define _MAX_DRIVE    3
+#define _MAX_DIR      256
+#define _MAX_FNAME    256
+#define _MAX_EXT      256
 #define VK_ESCAPE     0x1B
 #define VK_RETURN     0x0D
 #define VK_SPACE      0x20

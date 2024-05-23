@@ -63,7 +63,7 @@ public:
 
 	bool put_string(const char *str) {
 		if (alloc_data(strlen(str) + 1)) {
-			strcpy(&*data_.begin(), str);
+			Common::strlcpy(&*data_.begin(), str, data_.size());
 			return true;
 		}
 
@@ -82,4 +82,3 @@ private:
 };
 
 #endif /* __QD_CONDITION_DATA_H__ */
-
