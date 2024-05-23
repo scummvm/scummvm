@@ -132,6 +132,12 @@ typedef struct ImGuiState {
 		ImVec4 _keyword_color = ImColor(IM_COL32(0xC1, 0xC1, 0xC1, 0xFF));
 	} _colors;
 
+	struct {
+		DatumHash _locals;
+		DatumHash _globals;
+		uint32 _lastTimeRefreshed = 0;
+	} _vars;
+
 	ImGuiWindows _w;
 	ImGuiWindows _savedW;
 	bool _wasHidden = false;
@@ -1776,6 +1782,18 @@ static void showVars() {
 	if (!_state->_w.vars)
 		return;
 
+	// take a snapshot of the variables every 500 ms
+	if ((g_director->getTotalPlayTime() - _state->_vars._lastTimeRefreshed) > 500) {
+		if (g_lingo->_state->localVars) {
+			_state->_vars._locals = *g_lingo->_state->localVars;
+		} else {
+			_state->_vars._locals.clear();
+		}
+
+		_state->_vars._globals = g_lingo->_globalvars;
+		_state->_vars._lastTimeRefreshed = g_director->getTotalPlayTime();
+	}
+
 	Director::Lingo *lingo = g_director->getLingo();
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(300, 250), ImGuiCond_FirstUseEver);
@@ -1783,15 +1801,14 @@ static void showVars() {
 		Common::Array<Common::String> keyBuffer;
 		const ImVec4 head_color = ImVec4(0.9f, 0.08f, 0.0f, 1.0f);
 
-
 		ImGui::TextColored(head_color, "Local vars:");
-		if (lingo->_state->localVars) {
-			for (auto &it : *lingo->_state->localVars) {
+		if (!_state->_vars._locals.empty()) {
+			for (auto &it : _state->_vars._locals) {
 				keyBuffer.push_back(it._key);
 			}
 			Common::sort(keyBuffer.begin(), keyBuffer.end());
 			for (auto &i : keyBuffer) {
-				Datum &val = lingo->_state->localVars->getVal(i);
+				Datum &val = _state->_vars._locals.getVal(i);
 				displayVariable(i);
 				ImGui::SameLine();
 				ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
@@ -1818,12 +1835,12 @@ static void showVars() {
 		}
 
 		ImGui::TextColored(head_color, "Global vars:");
-		for (auto &it : lingo->_globalvars) {
+		for (auto &it : _state->_vars._globals) {
 			keyBuffer.push_back(it._key);
 		}
 		Common::sort(keyBuffer.begin(), keyBuffer.end());
 		for (auto &i : keyBuffer) {
-			Datum &val = lingo->_globalvars.getVal(i);
+			Datum &val = _state->_vars._globals.getVal(i);
 			displayVariable(i);
 			ImGui::SameLine();
 			ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
