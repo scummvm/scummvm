@@ -178,10 +178,18 @@ void ScummEngine_v4::saveVars() {
 
 			if (a == STRINGID_IQ_EPISODE && b == STRINGID_IQ_EPISODE) {
 				if (_game.id == GID_INDY3) {
-					// This is not really necessary, as we always update the series IQ points
-					// together with the episode IQ points (see ScummEngine_v5::o5_startScript()).
-					// But let's do it anyway...
-					updateIQPoints();
+					// This will not be invoked by the Mac version. The other versions
+					// have a much more script-driven handling of the IQ points and do
+					// not clearly distinguish the strings for the episode and series IQ.
+					// The STRINGID_IQ_EPISODE will often actually handle the series IQ.
+					byte *ptr = getResourceAddress(rtString, STRINGID_IQ_EPISODE);
+					if (ptr) {
+						int size = getResourceSize(rtString, STRINGID_IQ_EPISODE);
+						if (size < 73)
+							warning("ScummEngine_v4::saveVars(): error writing iq points file");
+						else
+							saveIQPoints(ptr, 73);
+					}
 				}
 				break;
 			}
@@ -228,9 +236,9 @@ void ScummEngine_v4::loadVars() {
 			if (a == STRINGID_IQ_SERIES && b == STRINGID_IQ_SERIES) {
 				// Zak256 loads the IQ script-slot but does not use it -> ignore it
 				if (_game.id == GID_INDY3) {
-					byte *ptr = getResourceAddress(rtString, STRINGID_IQ_SERIES);
+					byte *ptr = getResourceAddress(rtString, STRINGID_IQ_EPISODE);
 					if (ptr) {
-						int size = getResourceSize(rtString, STRINGID_IQ_SERIES);
+						int size = getResourceSize(rtString, STRINGID_IQ_EPISODE);
 						loadIQPoints(ptr, size);
 					}
 				}
@@ -323,12 +331,22 @@ void ScummEngine_v4::updateIQPoints() {
 			seriesIQString[i] = episodeIQString[i];
 			episodeIQ += episodeIQString[i];
 		}
-		if (seriesIQString[i] != 0 && seriesIQString[i] != 0x40)
+		if (seriesIQString[i] != 0 && seriesIQString[i] != 0x40) {
 			seriesIQ += seriesIQString[i];
+			if (_game.platform != Common::kPlatformMacintosh) {
+				// This might look very strange, but it is necessary to match the behavior
+				// of the non-Mac original interpreters that have a much more script-driven
+				// handling of the IQ points and do not clearly distinguish the strings for
+				// the episode and series IQ. The STRINGID_IQ_EPISODE string is supposed to
+				// contain series IQ data here.
+				episodeIQString[i] = seriesIQString[i];
+			}
+		}
 	}
 
-	_scummVars[244] = episodeIQ;
-	_scummVars[245] = seriesIQ;
+	if (_game.platform == Common::kPlatformMacintosh)
+		VAR(244) = episodeIQ;
+	VAR(245) = seriesIQ;
 
 	// save series IQ string
 	saveIQPoints(seriesIQString, sizeof(seriesIQString));
