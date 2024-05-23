@@ -76,6 +76,10 @@ Common::Error Window::loadInitialMovie() {
 	if (multiArchive->isLoaded()) {
 		// A valid projector archive, add to SearchMan
 		SearchMan.add(_vm->getRawEXEName(), multiArchive);
+
+		if (ConfMan.getBool("dump_scripts"))
+			multiArchive->dumpArchive(Common::Path("./dumps").join(encodePathForDump(movie)));
+
 	} else {
 		delete multiArchive;
 	}
