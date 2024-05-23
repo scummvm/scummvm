@@ -290,6 +290,8 @@ public:
 			setScriptToDisplay(script);
 		}
 		ImGui::SameLine();
+		ImGui::Text(" ");
+		ImGui::SameLine();
 
 		if (node.noParens()) {
 			node.argList->accept(*this);
@@ -315,12 +317,17 @@ public:
 	}
 
 	virtual void visit(const LingoDec::PutStmtNode &node) override {
-		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "put");
+		write(node._startOffset, "put ", _state->_colors._keyword_color);
 		ImGui::SameLine();
 		node.value->accept(*this);
+		ImGui::Text(" ");
+		ImGui::SameLine();
 		ImGui::TextColored(ImColor(_state->_colors._keyword_color), LingoDec::StandardNames::putTypeNames[node.type]);
 		ImGui::SameLine();
-		node.variable->accept(*this); //
+		ImGui::Text(" ");
+		ImGui::SameLine();
+		node.variable->accept(*this);
+		ImGui::NewLine();
 	}
 
 	virtual void visit(const LingoDec::TheExprNode &node) override {
@@ -404,6 +411,7 @@ public:
 		write(node._startOffset, "tell ", _state->_colors._keyword_color);
 		ImGui::SameLine();
 		node.window->accept(*this);
+		ImGui::NewLine();
 		node.block->accept(*this);
 		write(node._endOffset, "end tell", _state->_colors._keyword_color);
 	}
@@ -439,6 +447,8 @@ public:
 
 	virtual void visit(const LingoDec::ChunkExprNode &node) override {
 		ImGui::Text(LingoDec::StandardNames::chunkTypeNames[node.type]);
+		ImGui::SameLine();
+		ImGui::Text(" ");
 		ImGui::SameLine();
 		node.first->accept(*this);
 		if (!(node.last->type == LingoDec::kLiteralNode && node.last->getValue()->type == LingoDec::kDatumInt && node.last->getValue()->i == 0)) {
@@ -562,6 +572,8 @@ public:
 	virtual void visit(const LingoDec::MemberExprNode &node) override {
 		bool hasCastID = node.castID && !(node.castID->type == LingoDec::kLiteralNode && node.castID->getValue()->type == LingoDec::kDatumInt && node.castID->getValue()->i == 0);
 		ImGui::Text(node.type.c_str());
+		ImGui::SameLine();
+		ImGui::Text(" ");
 		ImGui::SameLine();
 		if (_dot) {
 			ImGui::Text("(");
