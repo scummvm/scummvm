@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-05-23 01:46+0000\n"
+"POT-Creation-Date: 2024-05-23 01:47+0000\n"
 "PO-Revision-Date: 2024-05-23 04:44+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translations.scummvm.org/"
@@ -82,9 +82,9 @@ msgstr "向上"
 #: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2352
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
 #: gui/recorderdialog.cpp:212 gui/remotebrowser.cpp:59
-#: gui/saveload-dialog.cpp:64 gui/saveload-dialog.cpp:455
-#: gui/saveload-dialog.cpp:526 gui/saveload-dialog.cpp:827
-#: gui/saveload-dialog.cpp:1223 gui/shaderbrowser-dialog.cpp:80
+#: gui/saveload-dialog.cpp:64 gui/saveload-dialog.cpp:456
+#: gui/saveload-dialog.cpp:540 gui/saveload-dialog.cpp:824
+#: gui/saveload-dialog.cpp:1220 gui/shaderbrowser-dialog.cpp:80
 #: gui/themebrowser.cpp:54 gui/unknown-game-dialog.cpp:53 base/main.cpp:604
 #: dists/android.strings.xml.cpp:43 engines/engine.cpp:764
 #: backends/dialogs/gtk/gtk-dialogs.cpp:65
@@ -283,7 +283,7 @@ msgid "Back"
 msgstr "返回"
 
 #: gui/cloudconnectionwizard.cpp:436 gui/imagealbum-dialog.cpp:104
-#: gui/saveload-dialog.cpp:828 engines/crab/input/input.cpp:181
+#: gui/saveload-dialog.cpp:825 engines/crab/input/input.cpp:181
 msgid "Next"
 msgstr "下一步"
 
@@ -331,7 +331,7 @@ msgstr "JSON 代码内容有误。"
 #: gui/editgamedialog.cpp:363 gui/editrecorddialog.cpp:67
 #: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:557 gui/launcher.cpp:561
 #: gui/massadd.cpp:90 gui/options.cpp:2354 gui/predictivedialog.cpp:69
-#: gui/saveload-dialog.cpp:1224 dists/android.strings.xml.cpp:32
+#: gui/saveload-dialog.cpp:1221 dists/android.strings.xml.cpp:32
 #: engines/engine.cpp:567 engines/engine.cpp:590
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
 #: engines/agos/midi.cpp:320 engines/agos/midi.cpp:378
@@ -1219,7 +1219,7 @@ msgstr ""
 "   要获取更多信息（包括手动连接向导的使用方法），请查看我们的[云服务文档]"
 "(https://docs.scummvm.org/en/latest/use_scummvm/connect_cloud.html) "
 
-#: gui/imagealbum-dialog.cpp:103 gui/saveload-dialog.cpp:831
+#: gui/imagealbum-dialog.cpp:103 gui/saveload-dialog.cpp:828
 msgid "Prev"
 msgstr "上一个"
 
@@ -2581,7 +2581,7 @@ msgid "Recorder or Playback Gameplay"
 msgstr "录制或回放游玩"
 
 #: gui/recorderdialog.cpp:72 gui/recorderdialog.cpp:212
-#: gui/saveload-dialog.cpp:459 gui/saveload-dialog.cpp:526
+#: gui/saveload-dialog.cpp:460 gui/saveload-dialog.cpp:540
 #: dists/android.strings.xml.cpp:44 engines/engine.cpp:613
 msgid "Delete"
 msgstr "删除"
@@ -2633,51 +2633,51 @@ msgstr "后台运行"
 msgid "%s (%s %S / %s %S, %s / %s files)"
 msgstr "%s（%s %S / %s %S，%s / %s 个文件）"
 
-#: gui/saveload-dialog.cpp:450 gui/saveload-dialog.cpp:630
+#: gui/saveload-dialog.cpp:451 gui/saveload-dialog.cpp:641
 msgid "No date saved"
 msgstr "未保存日期"
 
-#: gui/saveload-dialog.cpp:451 gui/saveload-dialog.cpp:631
+#: gui/saveload-dialog.cpp:452 gui/saveload-dialog.cpp:642
 msgid "No time saved"
 msgstr "未保存时间"
 
-#: gui/saveload-dialog.cpp:452 gui/saveload-dialog.cpp:632
+#: gui/saveload-dialog.cpp:453 gui/saveload-dialog.cpp:643
 msgid "No playtime saved"
 msgstr "未保存游玩时长"
 
-#: gui/saveload-dialog.cpp:525
-msgid "Do you really want to delete this saved game?"
-msgstr "你真的要删除此存档吗？"
-
-#: gui/saveload-dialog.cpp:657 gui/saveload-dialog.cpp:1172
-msgid "Date: "
-msgstr "日期: "
-
-#: gui/saveload-dialog.cpp:661 gui/saveload-dialog.cpp:1178
-msgid "Time: "
-msgstr "时间： "
-
-#: gui/saveload-dialog.cpp:667 gui/saveload-dialog.cpp:1186
-msgid "Playtime: "
-msgstr "游玩时长： "
-
-#: gui/saveload-dialog.cpp:680 gui/saveload-dialog.cpp:767
+#: gui/saveload-dialog.cpp:507 gui/saveload-dialog.cpp:764
 msgid "Untitled saved game"
 msgstr "未命名存档"
 
-#: gui/saveload-dialog.cpp:1032
+#: gui/saveload-dialog.cpp:539
+msgid "Do you really want to delete this saved game?"
+msgstr "你真的要删除此存档吗？"
+
+#: gui/saveload-dialog.cpp:664 gui/saveload-dialog.cpp:1169
+msgid "Date: "
+msgstr "日期: "
+
+#: gui/saveload-dialog.cpp:668 gui/saveload-dialog.cpp:1175
+msgid "Time: "
+msgstr "时间： "
+
+#: gui/saveload-dialog.cpp:674 gui/saveload-dialog.cpp:1183
+msgid "Playtime: "
+msgstr "游玩时长： "
+
+#: gui/saveload-dialog.cpp:1029
 msgid "New Save"
 msgstr "新建存档"
 
-#: gui/saveload-dialog.cpp:1032
+#: gui/saveload-dialog.cpp:1029
 msgid "Create a new saved game"
 msgstr "创建新存档"
 
-#: gui/saveload-dialog.cpp:1165
+#: gui/saveload-dialog.cpp:1162
 msgid "Name: "
 msgstr "名称： "
 
-#: gui/saveload-dialog.cpp:1243
+#: gui/saveload-dialog.cpp:1240
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr "输入位置 %d 的描述："
@@ -4545,16 +4545,19 @@ msgid ""
 msgstr ""
 "## 拜托，我不知道该怎么办！\n"
 "\n"
-"首先，确保你已准备好游戏和必要的游戏文件。查看**常规**标签页下的**从何处获取游戏**部分。获得游戏后，请按照**添加游戏**选项卡中的步骤完成在此设"
-"备上添加游戏。请花点时间仔细查看此过程，因为由于最近的 Android 更改，一些用户在此遇到了难题。\n"
+"首先，确保你已准备好游戏和必要的游戏文件。查看**常规**标签页下的**从何处获取"
+"游戏**部分。获得游戏后，请按照**添加游戏**选项卡中的步骤完成在此设备上添加游"
+"戏。请花点时间仔细查看此过程，因为由于最近的 Android 更改，一些用户在此遇到了"
+"难题。\n"
 "\n"
-"需要更多帮助？请参阅我们的 [Android 在线文档](https://docs.scummvm.org/en/latest/"
-"other_platforms/android.html)。有问题？请访问我们的[支持论坛](https://forums.scummvm.org/"
-"viewforum.php?f=17)或 [Discord 服务器](https://discord.gg/4cDsMNtcpG)，其中包括 ["
-"Android 支持频道](https://discord.com/channels/581224060529148060/"
-"1135579923185139862)。\n"
+"需要更多帮助？请参阅我们的 [Android 在线文档](https://docs.scummvm.org/en/"
+"latest/other_platforms/android.html)。有问题？请访问我们的[支持论坛](https://"
+"forums.scummvm.org/viewforum.php?f=17)或 [Discord 服务器](https://discord."
+"gg/4cDsMNtcpG)，其中包括 [Android 支持频道](https://discord.com/"
+"channels/581224060529148060/1135579923185139862)。\n"
 "\n"
-"哦，还有，请注意，许多我们支持的游戏都有故意设置的难题，有时甚至令人匪夷所思。如果你在游戏中卡住了，请考虑查看游戏攻略。祝你好运！\n"
+"哦，还有，请注意，许多我们支持的游戏都有故意设置的难题，有时甚至令人匪夷所"
+"思。如果你在游戏中卡住了，请考虑查看游戏攻略。祝你好运！\n"
 
 #: backends/platform/android/android.cpp:1060
 #: backends/platform/ios7/ios7_osys_misc.mm:261
@@ -4634,7 +4637,8 @@ msgstr ""
 "点击或单击右上角的控制器图标，即可更改触摸控制模式\n"
 "### 直接鼠标 \n"
 "\n"
-"直接使用触摸屏控制光标位置。指针会跳转到手指触碰到屏幕的位置（默认用于菜单）。\n"
+"直接使用触摸屏控制光标位置。指针会跳转到手指触碰到屏幕的位置（默认用于菜"
+"单）。\n"
 "\n"
 "  ![直接鼠标模式](mouse.png \"直接鼠标模式\"){w=10em}。\n"
 "\n"
@@ -4650,7 +4654,8 @@ msgstr ""
 "\n"
 "  ![游戏手柄模式](gamepad.png \"游戏手柄模式\"){w=10em}\n"
 "\n"
-"要为菜单、2D 游戏和 3D 游戏选择首选触控模式，请进入 **全局设置 > 后端 > 选择首选触控模式**。\n"
+"要为菜单、2D 游戏和 3D 游戏选择首选触控模式，请进入 **全局设置 > 后端 > 选择"
+"首选触控模式**。\n"
 "\n"
 "## 触摸操作 \n"
 "\n"
@@ -4663,8 +4668,9 @@ msgstr ""
 "\n"
 "### 三指轻点\n"
 "\n"
-"要进行三指轻点，首先按住一个手指，然后在按住前一个手指的同时，逐渐用另外两个手指一个一个地轻点屏幕。想象你正不耐烦地用手指敲击物体表面，然后放慢动作，使其"
-"有节奏，但不要太慢。\n"
+"要进行三指轻点，首先按住一个手指，然后在按住前一个手指的同时，逐渐用另外两个"
+"手指一个一个地轻点屏幕。想象你正不耐烦地用手指敲击物体表面，然后放慢动作，使"
+"其有节奏，但不要太慢。\n"
 "\n"
 "### 沉浸式粘滞全屏模式\n"
 "\n"
@@ -4678,7 +4684,8 @@ msgstr ""
 "\n"
 "## 虚拟键盘\n"
 "\n"
-"要打开虚拟键盘，请长按屏幕右上方的控制器图标，或点击任何可编辑的文本字段。要隐藏虚拟键盘，请再次点击控制器图标，或在文本字段外点击。\n"
+"要打开虚拟键盘，请长按屏幕右上方的控制器图标，或点击任何可编辑的文本字段。要"
+"隐藏虚拟键盘，请再次点击控制器图标，或在文本字段外点击。\n"
 "\n"
 "\n"
 "  ![键盘图标](keyboard.png \"键盘图标\"){w=10em}\n"
@@ -4884,15 +4891,18 @@ msgid ""
 msgstr ""
 "## 拜托，我不知道该怎么办！\n"
 "\n"
-"首先，确保你已准备好游戏和必要的游戏文件。查看**常规**标签页下的**从何处获取游戏**部分。获得游戏后，请按照**添加游戏**选项卡中的步骤完成在此设"
-"备上添加游戏。\n"
+"首先，确保你已准备好游戏和必要的游戏文件。查看**常规**标签页下的**从何处获取"
+"游戏**部分。获得游戏后，请按照**添加游戏**选项卡中的步骤完成在此设备上添加游"
+"戏。\n"
 "\n"
-"需要更多帮助？请参阅我们的 [iOS 在线文档](https://docs.scummvm.org/en/latest/other_platforms/"
-"ios.html)。有问题？请访问我们的[支持论坛](https://forums.scummvm.org/viewforum.php?f=15)或 ["
-"Discord 服务器](https://discord.gg/4cDsMNtcpG)，其中包括 [Android "
-"支持频道](https://discord.com/channels/581224060529148060/1149456560922316911)。\n"
+"需要更多帮助？请参阅我们的 [iOS 在线文档](https://docs.scummvm.org/en/latest/"
+"other_platforms/ios.html)。有问题？请访问我们的[支持论坛](https://forums."
+"scummvm.org/viewforum.php?f=15)或 [Discord 服务器](https://discord."
+"gg/4cDsMNtcpG)，其中包括 [Android 支持频道](https://discord.com/"
+"channels/581224060529148060/1149456560922316911)。\n"
 "\n"
-"哦，还有，请注意，许多我们支持的游戏都有故意设置的难题，有时甚至令人匪夷所思。如果你在游戏中卡住了，请考虑查看游戏攻略。祝你好运！\n"
+"哦，还有，请注意，许多我们支持的游戏都有故意设置的难题，有时甚至令人匪夷所"
+"思。如果你在游戏中卡住了，请考虑查看游戏攻略。祝你好运！\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:264
 msgid ""

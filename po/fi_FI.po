@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-05-23 01:46+0000\n"
+"POT-Creation-Date: 2024-05-23 01:47+0000\n"
 "PO-Revision-Date: 2024-04-30 18:40+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -83,9 +83,9 @@ msgstr "Siirry ylös"
 #: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2352
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
 #: gui/recorderdialog.cpp:212 gui/remotebrowser.cpp:59
-#: gui/saveload-dialog.cpp:64 gui/saveload-dialog.cpp:455
-#: gui/saveload-dialog.cpp:526 gui/saveload-dialog.cpp:827
-#: gui/saveload-dialog.cpp:1223 gui/shaderbrowser-dialog.cpp:80
+#: gui/saveload-dialog.cpp:64 gui/saveload-dialog.cpp:456
+#: gui/saveload-dialog.cpp:540 gui/saveload-dialog.cpp:824
+#: gui/saveload-dialog.cpp:1220 gui/shaderbrowser-dialog.cpp:80
 #: gui/themebrowser.cpp:54 gui/unknown-game-dialog.cpp:53 base/main.cpp:604
 #: dists/android.strings.xml.cpp:43 engines/engine.cpp:764
 #: backends/dialogs/gtk/gtk-dialogs.cpp:65
@@ -284,7 +284,7 @@ msgid "Back"
 msgstr "Takaisin"
 
 #: gui/cloudconnectionwizard.cpp:436 gui/imagealbum-dialog.cpp:104
-#: gui/saveload-dialog.cpp:828 engines/crab/input/input.cpp:181
+#: gui/saveload-dialog.cpp:825 engines/crab/input/input.cpp:181
 msgid "Next"
 msgstr "Seuraava"
 
@@ -332,7 +332,7 @@ msgstr "JSON-koodin sisältö on epämuodostunutta."
 #: gui/editgamedialog.cpp:363 gui/editrecorddialog.cpp:67
 #: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:557 gui/launcher.cpp:561
 #: gui/massadd.cpp:90 gui/options.cpp:2354 gui/predictivedialog.cpp:69
-#: gui/saveload-dialog.cpp:1224 dists/android.strings.xml.cpp:32
+#: gui/saveload-dialog.cpp:1221 dists/android.strings.xml.cpp:32
 #: engines/engine.cpp:567 engines/engine.cpp:590
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
 #: engines/agos/midi.cpp:320 engines/agos/midi.cpp:378
@@ -1244,7 +1244,7 @@ msgstr ""
 "pilvitallennusvelhoa, [pilvidokumentaatiostamme](https://docs.scummvm.org/en/"
 "latest/use_scummvm/connect_cloud.html) "
 
-#: gui/imagealbum-dialog.cpp:103 gui/saveload-dialog.cpp:831
+#: gui/imagealbum-dialog.cpp:103 gui/saveload-dialog.cpp:828
 msgid "Prev"
 msgstr "Edellinen"
 
@@ -2649,7 +2649,7 @@ msgid "Recorder or Playback Gameplay"
 msgstr "Nauhoitin tai Toista Tallennus"
 
 #: gui/recorderdialog.cpp:72 gui/recorderdialog.cpp:212
-#: gui/saveload-dialog.cpp:459 gui/saveload-dialog.cpp:526
+#: gui/saveload-dialog.cpp:460 gui/saveload-dialog.cpp:540
 #: dists/android.strings.xml.cpp:44 engines/engine.cpp:613
 msgid "Delete"
 msgstr "Poista"
@@ -2701,51 +2701,51 @@ msgstr "Aja taustalla"
 msgid "%s (%s %S / %s %S, %s / %s files)"
 msgstr "%s (%s %S / %s %S, %s / %s tiedostoa)"
 
-#: gui/saveload-dialog.cpp:450 gui/saveload-dialog.cpp:630
+#: gui/saveload-dialog.cpp:451 gui/saveload-dialog.cpp:641
 msgid "No date saved"
 msgstr "Päiväystä ei ole tallennettu"
 
-#: gui/saveload-dialog.cpp:451 gui/saveload-dialog.cpp:631
+#: gui/saveload-dialog.cpp:452 gui/saveload-dialog.cpp:642
 msgid "No time saved"
 msgstr "Aikaa ei ole tallennettu"
 
-#: gui/saveload-dialog.cpp:452 gui/saveload-dialog.cpp:632
+#: gui/saveload-dialog.cpp:453 gui/saveload-dialog.cpp:643
 msgid "No playtime saved"
 msgstr "Peliaikaa ei ole tallennettu"
 
-#: gui/saveload-dialog.cpp:525
-msgid "Do you really want to delete this saved game?"
-msgstr "Haluatko varmasti poistaa tämän pelitallennuksen?"
-
-#: gui/saveload-dialog.cpp:657 gui/saveload-dialog.cpp:1172
-msgid "Date: "
-msgstr "Päiväys: "
-
-#: gui/saveload-dialog.cpp:661 gui/saveload-dialog.cpp:1178
-msgid "Time: "
-msgstr "Aika: "
-
-#: gui/saveload-dialog.cpp:667 gui/saveload-dialog.cpp:1186
-msgid "Playtime: "
-msgstr "Peliaika: "
-
-#: gui/saveload-dialog.cpp:680 gui/saveload-dialog.cpp:767
+#: gui/saveload-dialog.cpp:507 gui/saveload-dialog.cpp:764
 msgid "Untitled saved game"
 msgstr "Nimetön pelitallennus"
 
-#: gui/saveload-dialog.cpp:1032
+#: gui/saveload-dialog.cpp:539
+msgid "Do you really want to delete this saved game?"
+msgstr "Haluatko varmasti poistaa tämän pelitallennuksen?"
+
+#: gui/saveload-dialog.cpp:664 gui/saveload-dialog.cpp:1169
+msgid "Date: "
+msgstr "Päiväys: "
+
+#: gui/saveload-dialog.cpp:668 gui/saveload-dialog.cpp:1175
+msgid "Time: "
+msgstr "Aika: "
+
+#: gui/saveload-dialog.cpp:674 gui/saveload-dialog.cpp:1183
+msgid "Playtime: "
+msgstr "Peliaika: "
+
+#: gui/saveload-dialog.cpp:1029
 msgid "New Save"
 msgstr "Uusi pelitallennus"
 
-#: gui/saveload-dialog.cpp:1032
+#: gui/saveload-dialog.cpp:1029
 msgid "Create a new saved game"
 msgstr "Luo uusi pelitallennus"
 
-#: gui/saveload-dialog.cpp:1165
+#: gui/saveload-dialog.cpp:1162
 msgid "Name: "
 msgstr "Nimi: "
 
-#: gui/saveload-dialog.cpp:1243
+#: gui/saveload-dialog.cpp:1240
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr "Anna kuvaus tallennukselle numero %d:"
