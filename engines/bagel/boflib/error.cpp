@@ -86,9 +86,6 @@ void CBofError::reportError(ErrorCode errCode, const char *format, ...) {
 }
 
 void CBofError::fatalError(ErrorCode errCode, const char *format, ...) {
-	if (errCode == ERR_NONE)
-		return;
-
 	Common::String buf;
 
 	// Don't parse the variable input if there isn't any
