@@ -103,6 +103,19 @@ typedef struct ImGuiWindows {
 	bool settings = false;
 } ImGuiWindows;
 
+static void toggleButton(const char *label, bool *p_value, bool inverse = false) {
+	int pop = 0;
+	if (*p_value != inverse) {
+		ImVec4 hovered = ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered];
+		ImGui::PushStyleColor(ImGuiCol_Button, hovered);
+		pop = 1;
+	}
+	if (ImGui::Button(label)) {
+		*p_value = !*p_value;
+	}
+	ImGui::PopStyleColor(pop);
+}
+
 typedef struct ImGuiState {
 	struct {
 		Common::HashMap<Graphics::Surface *, ImGuiImage> _textures;
@@ -112,10 +125,11 @@ typedef struct ImGuiState {
 		int _typeFilter = 0x7FFF;
 	} _cast;
 	struct {
-		ImGuiScript _script;
+		Common::Array<ImGuiScript> _scripts;
+		uint _current = 0;
 		ImGuiTextFilter _nameFilter;
-		bool _showScript = false;
 		bool _showByteCode = false;
+		bool _showScript = false;
 	} _functions;
 
 	struct {
@@ -1591,13 +1605,11 @@ static void showCast() {
 
 	if (ImGui::Begin("Cast", &_state->_w.cast)) {
 		// display a toolbar with: grid/list/filters buttons + name filter
-		if (ImGui::Button("\ue896")) {	// list
-			_state->_cast._listView = true;
-		}
+		toggleButton("\ue896", &_state->_cast._listView); // list
+		ImGui::SetItemTooltip("List");
 		ImGui::SameLine();
-		if (ImGui::Button("\ue9b0")) {	// grid_view
-			_state->_cast._listView = false;
-		}
+		toggleButton("\ue9b0", &_state->_cast._listView, true); // grid_view
+		ImGui::SetItemTooltip("Grid");
 		ImGui::SameLine();
 
 		if (ImGui::Button("\uef4f")) {	// filter_alt
@@ -1868,7 +1880,9 @@ static void addScriptCastToDisplay(CastMemberID &id) {
 }
 
 static void setScriptToDisplay(const ImGuiScript &script) {
-	_state->_functions._script = script;
+	uint index = _state->_functions._scripts.size();
+	_state->_functions._scripts.push_back(script);
+	_state->_functions._current = index;
 	_state->_functions._showScript = true;
 }
 
@@ -2126,32 +2140,50 @@ static void displayScripts() {
 	ImGui::SetNextWindowSize(ImVec2(240, 240), ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Script", &_state->_functions._showScript)) {
+		ImGui::BeginDisabled(_state->_functions._scripts.empty() || _state->_functions._current == 0);
 		if (ImGui::Button("\ue5c4")) { // Backward	// arrow_back
+			_state->_functions._current--;
 		}
+		ImGui::EndDisabled();
 		ImGui::SetItemTooltip("Backward");
 		ImGui::SameLine();
+
+		ImGui::BeginDisabled(_state->_functions._current >= _state->_functions._scripts.size() - 1);
 		if (ImGui::Button("\ue5c8")) { // Forward	// arrow_forward
+			_state->_functions._current++;
 		}
+		ImGui::EndDisabled();
 		ImGui::SetItemTooltip("Forward");
 		ImGui::SameLine(0, 20);
+
 		if (ImGui::Button("\ue889")) { // History	// history
+			ImGui::OpenPopup("HistoryPopup");
 		}
 		ImGui::SetItemTooltip("History");
 		ImGui::SameLine(0, 40);
 
-		if (ImGui::Button("\uf569")) { // Lingo		// package_2
-			_state->_functions._showByteCode = false;
+		if (ImGui::BeginPopup("HistoryPopup")) {
+			for (int i = 0; i < _state->_functions._scripts.size(); i++) {
+				auto &script = _state->_functions._scripts[i];
+				bool selected = i == _state->_functions._current;
+				if (ImGui::Selectable(script.handlerName.c_str(), &selected)) {
+					_state->_functions._current = i;
+				}
+			}
+			ImGui::EndPopup();
 		}
+
+		toggleButton("\uf569", &_state->_functions._showByteCode, true); // Lingo		// package_2
 		ImGui::SetItemTooltip("Lingo");
 		ImGui::SameLine();
-		if (ImGui::Button("\uf500")) { // Bytecode	// stacks
-			_state->_functions._showByteCode = true;
-		}
+
+		toggleButton("\uf500", &_state->_functions._showByteCode); // Bytecode	// stacks
 		ImGui::SetItemTooltip("Bytecode");
 		ImGui::Separator();
 
-		ImGui::Text("%s", _state->_functions._script.handlerName.c_str());
-		renderScript(_state->_functions._script, _state->_functions._showByteCode);
+		ImGuiScript &script = _state->_functions._scripts[_state->_functions._current];
+		ImGui::Text("%s", script.handlerName.c_str());
+		renderScript(script, _state->_functions._showByteCode);
 	}
 	ImGui::End();
 }
