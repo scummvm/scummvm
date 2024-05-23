@@ -24,6 +24,7 @@
 
 #include "common/stream.h"
 #include "common/array.h"
+#include "common/stack.h"
 #include "common/rect.h"
 #include "common/span.h"
 #include "common/util.h"
@@ -40,6 +41,7 @@ struct EdgeDistances {
 };
 
 struct Polygon {
+	uint _index;
 	Common::Span<const Common::Point> _points;
 
 	bool contains(const Common::Point &query) const;
@@ -50,7 +52,10 @@ struct PathFindingPolygon : Polygon {
 	Common::Span<const uint8> _pointDepths;
 	int8 _order;
 
+	using SharedPoint = Common::Pair<uint, uint>;
+
 	float depthAt(const Common::Point &query) const;
+	uint findSharedPoints(const PathFindingPolygon &other, Common::Span<SharedPoint> sharedPoints) const;
 };
 
 struct FloorColorPolygon : Polygon {
@@ -128,15 +133,13 @@ protected:
 
 /**
  * @brief Path finding is based on the Shape class with the invariant that
- * every polygon is a convex quad.
- * Equal points of different quads link them together, for edges we add an
- * additional link point in the center of the edge.
+ * every polygon is a convex polygon with at most four points.
+ * Equal points of different quads link them together, for shared edges we
+ * add an additional link point in the center of the edge.
  *
  * The resulting graph is processed using Floyd-Warshall to precalculate for
  * the actual path finding. Additionally we check whether a character can
  * walk straight through an edge instead of following the link points.
- *
- * None of this is implemented yet by the way ;)
  */
 class PathFindingShape final : public Shape {
 public:
@@ -152,10 +155,63 @@ public:
 	PathFindingPolygon at(uint index) const;
 	int8 orderAt(const Common::Point &query) const;
 	float depthAt(const Common::Point &query) const;
+	bool findPath(
+		const Common::Point &from,
+		const Common::Point &to,
+		Common::Stack<Common::Point> &path) const;
+	Common::Point getClosestPoint(const Common::Point &query) const;
 
-private:
+private: //ASDJALSKDJALKXDJALSKDJALSKDJALKjs
+public:
+	void setupLinks();
+	void setupLinkPoint(
+		const PathFindingPolygon &outer,
+		const PathFindingPolygon &inner,
+		PathFindingPolygon::SharedPoint pointI);
+	void setupLinkEdge(
+		const PathFindingPolygon &outer,
+		const PathFindingPolygon &inner,
+		int32 outerP1, int32 outerP2, int32 innerP);
+	void initializeFloydWarshall();
+	void calculateFloydWarshall();
+	bool canGoStraightThrough(
+		const Common::Point &from,
+		const Common::Point &to,
+		int32 fromContaining, int32 toContaining) const;
+	void floydWarshallPath(
+		const Common::Point &from,
+		const Common::Point &to,
+		int32 fromContaining, int32 toContaining,
+		Common::Stack<Common::Point> &path) const;
+
 	Common::Array<uint8> _pointDepths;
 	Common::Array<int8> _polygonOrders;
+
+	/**
+	 * These are the edges in the graph, they are either points
+	 * that are shared by two polygons or artificial points in
+	 * the center of a shared edge
+	 */
+	Common::Array<Common::Point> _linkPoints;
+	/**
+	 * For each point of each polygon the index (or -1) to 
+	 * the corresponding link point. The second point is the
+	 * index to the artifical center point
+	 */
+	using LinkIndex = Common::Pair<int32, int32>;
+	struct LinkPolygonIndices {
+		LinkPolygonIndices();
+		LinkIndex _points[kPointsPerPolygon];
+	};
+	Common::Array<LinkPolygonIndices> _linkIndices;
+	/**
+	 * For the going-straight-through-edges check we need 
+	 * to know for each shared edge (defined by the starting point)
+	 * into which quad we will walk.
+	 */
+	Common::Array<int32> _targetQuads;
+	Common::Array<uint> _distanceMatrix; ///< for Floyd-Warshall
+	Common::Array<int32> _previousTarget; ///< for Floyd-Warshall
 };
 
 using OptionalColor = Common::Pair<bool, Color>;

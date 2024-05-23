@@ -98,6 +98,10 @@ public:
 		Common::Span<Math::Vector2d> points,
 		Color color = kDebugRed
 	) = 0;
+	virtual void debugPolyline(
+		Common::Span<Math::Vector2d> points,
+		Color color = kDebugRed
+	) = 0;
 
 	virtual void debugShape(
 		const Shape &shape,
