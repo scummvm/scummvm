@@ -239,15 +239,6 @@ void DgdsEngine::checkDrawInventoryButton() {
 	_icons->drawBitmap(2, x, y, drawWin, _compositionBuffer);
 }
 
-Graphics::ManagedSurface &DgdsEngine::getForegroundBuffer() {
-	if (_usedForegroundBuffer) {
-		_foregroundBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
-		_usedForegroundBuffer = false;
-	}
-
-	return _foregroundBuffer;
-}
-
 void DgdsEngine::init() {
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -488,7 +479,7 @@ Common::Error DgdsEngine::run() {
 				outf.close();
 			}*/
 
-			_usedForegroundBuffer = true;
+			_foregroundBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 
 			if (!_inventory->isOpen()) {
 				_gdsScene->drawItems(_compositionBuffer);
