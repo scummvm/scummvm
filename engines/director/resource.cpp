@@ -656,7 +656,7 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 	stream->seek(rifxOffset);
 	tag = stream->readUint32BE();
 
-	debugC(1, kDebugLoading, "File: %s off: 0x%x, tag: %s rifx: 0x%x", _path.toString().c_str(), off, tag2str(tag), rifxOffset);
+	debugC(1, kDebugLoading, "File: %s off: 0x%x (%u), tag: %s rifx: 0x%x (%d)", _path.toString().c_str(), off, off, tag2str(tag), rifxOffset, rifxOffset);
 
 	// Try to locate the very next Dict tag(byte-by-byte)
 	tag = stream->readUint32BE();
@@ -744,7 +744,7 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 
 		Common::Path path = toSafePath(arr[i]);
 
-		debugC(1, kDebugLoading, "Entry: %s offset %lX tag %s size %d", path.toString().c_str(), long(stream->pos() - 8), tag2str(tag), size);
+		debugC(1, kDebugLoading, "Entry: %s offset %lX (%ld) tag %s size %d", path.toString().c_str(), long(stream->pos() - 8), long(stream->pos() - 8), tag2str(tag), size);
 
 		Entry entry;
 

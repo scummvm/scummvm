@@ -785,7 +785,7 @@ bool RIFXArchive::readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32
 			dumpStream->writeUint32LE(mmapOffset - movieStartOffset);
 	}
 	uint32 version = stream.readUint32(); // 0 for 4.0, 0x4c1 for 5.0, 0x4c7 for 6.0, 0x708 for 8.5, 0x742 for 10.0
-	warning("mmap: version: %x", version);
+	warning("mmap: version: %x offset: 0x%x (%d)", version, mmapOffset, mmapOffset);
 
 	stream.seek(mmapOffset);
 
