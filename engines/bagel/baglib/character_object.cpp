@@ -169,10 +169,8 @@ ErrorCode CBagCharacterObject::detach() {
 		_smacker = nullptr;
 	}
 
-	if (_bmpBuf != nullptr) {
-		delete _bmpBuf;
-		_bmpBuf = nullptr;
-	}
+	delete _bmpBuf;
+	_bmpBuf = nullptr;
 
 	if (_binBuf != nullptr) {
 		bofFree(_binBuf);

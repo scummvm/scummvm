@@ -439,10 +439,8 @@ ErrorCode CNavWindow::detach() {
 
 	// Destroy all buttons
 	for (int i = 0; i < 2; i++) {
-		if (_pButtons[i] != nullptr) {
-			delete _pButtons[i];
-			_pButtons[i] = nullptr;
-		}
+		delete _pButtons[i];
+		_pButtons[i] = nullptr;
 	}
 
 	// Close sprite lib

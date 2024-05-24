@@ -842,10 +842,8 @@ SrafComputer::~SrafComputer() {
 	// destruct them in the destructor.
 
 	for (int i = 0; i < (NUM_MUSICAL_SCORES - 1); i++) {
-		if (g_stAudioSetting[i]->_pMidiTrack != nullptr) {
-			delete g_stAudioSetting[i]->_pMidiTrack;
-			g_stAudioSetting[i]->_pMidiTrack = nullptr;
-		}
+		delete g_stAudioSetting[i]->_pMidiTrack;
+		g_stAudioSetting[i]->_pMidiTrack = nullptr;
 	}
 
 	_pTextOnlyScreen = nullptr;

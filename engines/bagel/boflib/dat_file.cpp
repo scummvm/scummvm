@@ -110,10 +110,8 @@ ErrorCode CBofDataFile::releaseFile() {
 	close();
 
 	// Free header buffer
-	if (_pHeader != nullptr) {
-		delete[] _pHeader;
-		_pHeader = nullptr;
-	}
+	delete[] _pHeader;
+	_pHeader = nullptr;
 
 	return _errCode;
 }
@@ -130,10 +128,8 @@ ErrorCode CBofDataFile::create() {
 		}
 
 		// Re-initialize
-		if (_pHeader != nullptr) {
-			delete[] _pHeader;
-			_pHeader = nullptr;
-		}
+		delete[] _pHeader;
+		_pHeader = nullptr;
 
 		_stream = nullptr;
 		_lHeaderLength = 0;
@@ -145,9 +141,7 @@ ErrorCode CBofDataFile::create() {
 		// Create the file
 		if (CBofFile::create(_szFileName, _lFlags) == ERR_NONE) {
 			// Write empty header info
-			if (write(stHeaderInfo) == ERR_NONE) {
-
-			} else {
+			if (write(stHeaderInfo) != ERR_NONE) {
 				_errCode = ERR_FWRITE;
 			}
 
