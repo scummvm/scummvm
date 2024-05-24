@@ -527,6 +527,7 @@ void ScummEngine_v6::o6_pushWordVar() {
 				}
 				writeVar(0x4000 + 4, sprintGain);
 			}
+		}
 
 		// This code will change the velocity of the hit based on the pitch thrown, and the location of the pitch itself.
 		if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && vm.slot[_currentScript].number == 2090 && readVar(399) == 1) {
