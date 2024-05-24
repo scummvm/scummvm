@@ -63,6 +63,8 @@ public:
 	Frame *getFrame() const { return _frame; }
 	Score *getScore() const { return _score; }
 
+	void reset();
+
 	void updateEditable();
 
 	bool respondsToMouse();

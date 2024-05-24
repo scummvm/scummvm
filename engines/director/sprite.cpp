@@ -36,6 +36,13 @@ Sprite::Sprite(Frame *frame) {
 	_score = _frame ? _frame->getScore() : nullptr;
 	_movie = _score ? _score->getMovie() : nullptr;
 
+	_matte = nullptr;
+	_puppet = false;
+	_autoPuppet = kAPNone; // Based on Director in a Nutshell, page 15
+	reset();
+}
+
+void Sprite::reset() {
 	_scriptId = CastMemberID(0, 0);
 	_colorcode = 0;
 	_blendAmount = 0;
@@ -50,6 +57,8 @@ Sprite::Sprite(Frame *frame) {
 	_ink = kInkTypeCopy;
 	_trails = false;
 
+	if (_matte)
+		delete _matte;
 	_matte = nullptr;
 	_cast = nullptr;
 
@@ -58,8 +67,6 @@ Sprite::Sprite(Frame *frame) {
 	_height = 0;
 	_moveable = false;
 	_editable = false;
-	_puppet = false;
-	_autoPuppet = kAPNone; // Based on Director in a Nutshell, page 15
 	_immediate = false;
 	_backColor = g_director->_wm->_colorWhite;
 	_foreColor = g_director->_wm->_colorWhite;
