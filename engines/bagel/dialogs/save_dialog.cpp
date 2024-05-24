@@ -197,10 +197,7 @@ ErrorCode CBagSaveDialog::attach() {
 	_pListBox->updateWindow();
 
 	if (_nSelectedItem != -1) {
-		if (_pEditText != nullptr) {
-			_pEditText->setFocus();
-		}
-
+		_pEditText->setFocus();
 		_pListBox->setSelectedItem(_nSelectedItem, false);
 
 		if (_nSelectedItem >= 9) {

@@ -137,18 +137,14 @@ void CBofString::copy(const char *pszBuf) {
 
 	_nLength = 0;
 	if (pszBuf != nullptr) {
-		int n;
-		n = strlen(pszBuf);
+		int n = strlen(pszBuf);
 
 		if (NORMALIZEBUFFERSIZE() <= n) {
 			allocBuffer(n + 1);
 		}
 
 		Common::strcpy_s(_pszData, n + 1, pszBuf);
-
-		if (_pszData != nullptr) {
-			_nLength = (uint16)strlen(_pszData);
-		}
+		_nLength = (uint16)strlen(_pszData);
 	}
 }
 
@@ -260,14 +256,11 @@ void CBofString::concatInPlace(int nSrcLen, const char *lpszSrcData) {
 			else
 				lpszOldData = new char[_nLength + nSrcLen + 1];
 
-			if (lpszOldData != nullptr) {
-				memcpy(lpszOldData, _pszData, (_nLength + 1) * sizeof(char));
+			memcpy(lpszOldData, _pszData, (_nLength + 1) * sizeof(char));
+			concatCopy(_nLength, lpszOldData, nSrcLen, lpszSrcData, _nLength + nAllocAmount);
 
-				concatCopy(_nLength, lpszOldData, nSrcLen, lpszSrcData, _nLength + nAllocAmount);
-
-				if (lpszOldData != szLocalBuff)
-					delete[] lpszOldData;
-			}
+			if (lpszOldData != szLocalBuff)
+				delete[] lpszOldData;
 		}
 	} else {
 

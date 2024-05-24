@@ -825,20 +825,17 @@ SrafComputer::~SrafComputer() {
 	// These lists are persistent across turning the computer on and off, so
 	// delete them only at the end of the game, not when you turn on/off the
 	// computer (attach/detach)
-	if (_pSellerSummaryList != nullptr) {
-		delete _pSellerSummaryList;
-		_pSellerSummaryList = nullptr;
-	}
+	delete _pSellerSummaryList;
+	_pSellerSummaryList = nullptr;
 
-	if (_pBuyerSummaryList != nullptr) {
-		delete _pBuyerSummaryList;
-		_pBuyerSummaryList = nullptr;
-	}
+	delete _pBuyerSummaryList;
+	_pBuyerSummaryList = nullptr;
 
-	if (_pTeamList != nullptr) {
-		delete _pTeamList;
-		_pTeamList = nullptr;
-	}
+	delete _pTeamList;
+	_pTeamList = nullptr;
+
+	delete _pLBox;
+	_pLBox = nullptr;
 
 	// We grab these bad babies in the attach sequence, but since
 	// we need them to live past having the computer on, we need to
@@ -2672,7 +2669,7 @@ void SrafComputer::onListBuyerBids() {
 		szLocalBuff[0] = '\0';
 		CBofString sStr2(szLocalBuff, 256);
 
-		if (index >= 0 && index < NUM_BUYERS) {
+		if (index >= 0) {
 			sStr2 = buildSrafDir(g_stBuyerBids[index]._pszBuyerBio);
 			displayTextScreen(sStr2);
 		}
@@ -2790,12 +2787,12 @@ void SrafComputer::onListDispatchTeam() {
 				} else if (cMeetMember.ptInRect(cPoint)) {         // if so, put a checkmark in that column.
 					// Uncheck any member we already have checked, this is a singular operation
 					nMeetMember = getMeetMember(nListToCheck);
-					if (nMeetMember != -1) {
+					if (nMeetMember != -1 && nMeetMember < NUM_OTHER_PARTYS) {
 						g_stOtherPartys[nMeetMember]._bMeetWith = false;
 					}
 
 					// Now put the check mark in the column for the new guy to meet
-					if (nMeetMember != nElementIndex) {
+					if (nMeetMember != nElementIndex && nMeetMember < NUM_OTHER_PARTYS) {
 						g_stOtherPartys[nElementIndex]._bMeetWith = true;
 						bInMeetMemberColumn = true;
 					}
@@ -2842,12 +2839,12 @@ void SrafComputer::onListDispatchTeam() {
 
 					// Uncheck any member we already have checked, this is a singular operation
 					nMeetMember = getMeetMember(nListToCheck);
-					if (nMeetMember != -1) {
+					if (nMeetMember != -1 && nMeetMember < NUM_SELLERS) {
 						g_stSellerNames[nMeetMember]._bMeetWith = false;
 					}
 
 					// Now put the check mark in the column for the new guy to meet
-					if (nMeetMember != nElementIndex) {
+					if (nMeetMember != nElementIndex && nMeetMember < NUM_SELLERS) {
 						g_stSellerNames[nElementIndex]._bMeetWith = true;
 						bInMeetMemberColumn = true;
 					}
@@ -3516,11 +3513,9 @@ bool SrafComputer::reportMeetingStatus(int nTeamNumber) {
 			_pTeamList->remove(nTeamNumber);
 			bNeedRedraw = true;
 		}
-	}
 
-	// Failure file, a text file for now.
-	// We'll want to play a sound file, for now, just put the text to the screen
-	if (pszFailureFile || pszSuccessFile) {
+		// Failure file, a text file for now.
+		// We'll want to play a sound file, for now, just put the text to the screen
 		notifyBoss(sResponse, nTeamCaptain);
 	}
 

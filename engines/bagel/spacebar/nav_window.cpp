@@ -1332,7 +1332,6 @@ void CNavWindow::calcFuel(double hf) {
 			pause();
 			CBofString sNebDir(NEBSIM3_BMP);
 			fixPathName(sNebDir);
-			assert(_pBackdrop != nullptr);
 			_bmptwo = new CBofBitmap(sNebDir.getBuffer(), _pPal);
 			setBackground(_bmptwo);
 			_cargo = 100 + 75 + 28 + 45 + 14;

@@ -818,7 +818,7 @@ void CBofSound::audioTask() {
 						pSound->stop();
 					}
 
-				} else if (pSound->_bInQueue && !pSound->_bStarted) {
+				} else if (pSound->_bInQueue) {
 					// If this is a Queued sound, and has not already started
 					// And it is time to play
 					if ((CBofSound *)_cQueue[pSound->_iQSlot]->getQItem() == pSound) {
