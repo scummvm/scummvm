@@ -1376,27 +1376,27 @@ private:
 		}
 
 		bool isMethod = _script.isMethod;
-		{
-			write(node._startOffset, isMethod ? "method " : "on ", _state->_colors._keyword_color);
-			ImGui::SameLine();
-			ImGui::TextColored(_state->_colors._call_color, "%s", _script.handlerId.c_str());
-			ImGui::SameLine();
+		write(node._startOffset, isMethod ? "method " : "on ", _state->_colors._keyword_color);
+		ImGui::SameLine();
+		ImGui::TextColored(_state->_colors._call_color, "%s", _script.handlerId.c_str());
+		ImGui::SameLine();
 
-			if (!_script.argumentNames.empty()) {
-				ImGui::Text(" ");
-				ImGui::SameLine();
-				for (size_t i = 0; i < _script.argumentNames.size(); i++) {
-					if (i > 0) {
-						ImGui::Text(", ");
-						ImGui::SameLine();
-					}
-					ImGui::TextColored(_state->_colors._var_color, "%s", _script.argumentNames[i].c_str());
+		if (!_script.argumentNames.empty()) {
+			ImGui::Text(" ");
+			ImGui::SameLine();
+			for (size_t i = 0; i < _script.argumentNames.size(); i++) {
+				if (i > 0) {
+					ImGui::Text(", ");
 					ImGui::SameLine();
 				}
+				ImGui::TextColored(_state->_colors._var_color, "%s", _script.argumentNames[i].c_str());
+				ImGui::SameLine();
 			}
 		}
+		indent();
 
 		if (isMethod && !_script.propertyNames.empty() && node.handler == &node.handler->script->handlers[0]) {
+			ImGui::NewLine();
 			write(node._startOffset, "instance ");
 			ImGui::SameLine();
 			for (size_t i = 0; i < _script.propertyNames.size(); i++) {
@@ -1409,6 +1409,7 @@ private:
 		}
 
 		if (!_script.globalNames.empty()) {
+			ImGui::NewLine();
 			write(node._startOffset, "global ");
 			ImGui::SameLine();
 			for (size_t i = 0; i < _script.globalNames.size(); i++) {
@@ -1420,8 +1421,9 @@ private:
 				ImGui::SameLine();
 			}
 		}
-		ImGui::NewLine();
 
+		ImGui::NewLine();
+		unindent();
 		node.block->accept(*this);
 
 		if (!isMethod) {
