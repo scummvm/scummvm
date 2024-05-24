@@ -24,6 +24,8 @@
 #include "backends/imgui/imgui.h"
 #include "backends/imgui/imgui_fonts.h"
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
+#include "common/system.h"
 #include "graphics/surface.h"
 #include "graphics/opengl/shader.h"
 #include "image/png.h"
@@ -101,20 +103,250 @@ typedef struct ImGuiWindows {
 	bool score = false;
 	bool bpList = false;
 	bool settings = false;
+	bool logger = false;
 } ImGuiWindows;
 
-static void toggleButton(const char *label, bool *p_value, bool inverse = false) {
+static bool toggleButton(const char *label, bool *p_value, bool inverse = false) {
 	int pop = 0;
 	if (*p_value != inverse) {
 		ImVec4 hovered = ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered];
 		ImGui::PushStyleColor(ImGuiCol_Button, hovered);
 		pop = 1;
 	}
-	if (ImGui::Button(label)) {
+	bool result = ImGui::Button(label);
+	if (result) {
 		*p_value = !*p_value;
 	}
 	ImGui::PopStyleColor(pop);
+	return result;
 }
+
+struct ImGuiLogger {
+	char _inputBuf[256];
+	ImVector<char *> _items;
+	ImVector<char *> _history;
+	int _historyPos; // -1: new line, 0.._history.Size-1 browsing history.
+	ImGuiTextFilter _filter;
+	bool _autoScroll;
+	bool _scrollToBottom;
+	bool _showError = true;
+	bool _showWarn = true;
+	bool _showInfo = true;
+	bool _showdebug = true;
+
+	ImGuiLogger() {
+		clear();
+		memset(_inputBuf, 0, sizeof(_inputBuf));
+		_historyPos = -1;
+		_autoScroll = true;
+		_scrollToBottom = false;
+	}
+
+	~ImGuiLogger() {
+		clear();
+		for (int i = 0; i < _history.Size; i++)
+			free(_history[i]);
+	}
+
+	void clear() {
+		for (int i = 0; i < _items.Size; i++)
+			free(_items[i]);
+		_items.clear();
+	}
+
+	void addLog(const char *fmt, ...) IM_FMTARGS(2) {
+		// FIXME-OPT
+		char buf[1024];
+		va_list args;
+		va_start(args, fmt);
+		vsnprintf(buf, IM_ARRAYSIZE(buf), fmt, args);
+		buf[IM_ARRAYSIZE(buf) - 1] = 0;
+		va_end(args);
+		_items.push_back(Strdup(buf));
+	}
+
+	void draw(const char *title, bool *p_open) {
+		if (!*p_open)
+			return;
+
+		ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
+		if (!ImGui::Begin(title, p_open)) {
+			ImGui::End();
+			return;
+		}
+
+		// As a specific feature guaranteed by the library, after calling Begin() the last Item represent the title bar. So e.g. IsItemHovered() will return true when hovering the title bar.
+		// Here we create a context menu only available from the title bar.
+		if (ImGui::BeginPopupContextItem()) {
+			if (ImGui::MenuItem("Close ImGuiLogger"))
+				*p_open = false;
+			ImGui::EndPopup();
+		}
+
+		// Clear
+		if (ImGui::Button("\ue0b8")) {
+			clear();
+		}
+		ImGui::SetItemTooltip("Clear");
+		ImGui::SameLine();
+
+		// Copy
+		bool copy_to_clipboard = ImGui::Button("\ue14d");
+		ImGui::SetItemTooltip("Copy to clipboard");
+		ImGui::SameLine();
+
+		// debug channels
+		int numChannels = 0;
+		auto channels = DebugMan.getDebugChannels();
+		for (auto &channel : channels) {
+			if (channel.name == "imgui")
+				continue;
+			bool enabled = DebugMan.isDebugChannelEnabled(channel.channel);
+			if (enabled)
+				numChannels++;
+		}
+
+		Common::String selChannels(Common::String::format("(%d channel%s)", numChannels, numChannels > 1 ? "s" : ""));
+		ImGui::PushItemWidth(120);
+		if (ImGui::BeginCombo("##Channels", selChannels.c_str())) {
+			for (auto &channel : channels) {
+				if (channel.name == "imgui")
+					continue;
+				bool enabled = DebugMan.isDebugChannelEnabled(channel.channel);
+				if (ImGui::Checkbox(channel.name.c_str(), &enabled)) {
+					if (enabled) {
+						DebugMan.enableDebugChannel(channel.channel);
+					} else {
+						DebugMan.disableDebugChannel(channel.channel);
+					}
+				}
+				ImGui::SetItemTooltip("%s", channel.description.c_str());
+			}
+			ImGui::EndCombo();
+		}
+		ImGui::SameLine();
+
+		// Options menu
+		if (ImGui::BeginPopup("Options")) {
+			if (ImGui::InputInt("Debug Level", &gDebugLevel)) {
+				if (gDebugLevel < 0)
+					gDebugLevel = 0;
+			}
+			ImGui::Separator();
+			ImGui::Checkbox("Auto-scroll", &_autoScroll);
+			ImGui::EndPopup();
+		}
+
+		// Options, Filter
+		if (ImGui::Button("\ue8b8"))
+			ImGui::OpenPopup("Options");
+		ImGui::SetItemTooltip("Options");
+		ImGui::SameLine();
+
+		ImGui::Spacing();
+		ImGui::SameLine();
+
+		// Error
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 0.f, 0.f, 1.f));
+		toggleButton("\ue160", &_showError);
+		ImGui::PopStyleColor();
+		ImGui::SameLine();
+
+		// Warning
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 1.f, 0.f, 1.f));
+		toggleButton("\ue002", &_showWarn);
+		ImGui::PopStyleColor();
+		ImGui::SameLine();
+
+		// Info
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 1.f, 1.f, 1.f));
+		toggleButton("\ue88e", &_showInfo);
+		ImGui::PopStyleColor();
+		ImGui::SameLine();
+
+		// Debug
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.8f, 0.8f, 0.8f, 1.f));
+		toggleButton("\ue868", &_showdebug);
+		ImGui::PopStyleColor();
+		ImGui::SameLine();
+
+		_filter.Draw("Filter (\"incl,-excl\") (\"warn\")", 180);
+		ImGui::Separator();
+
+		ImGui::BeginChild("ScrollingRegion", ImVec2(), false, ImGuiWindowFlags_HorizontalScrollbar);
+		if (ImGui::BeginPopupContextWindow()) {
+			if (ImGui::Selectable("\ue0b8 Clear"))
+				clear();
+			if (ImGui::Selectable("\ue14d Copy"))
+				copy_to_clipboard = true;
+			ImGui::EndPopup();
+		}
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten spacing
+		if (copy_to_clipboard)
+			ImGui::LogToClipboard();
+		for (int i = 0; i < _items.Size; i++) {
+			const char *item = _items[i];
+			bool isError = strstr(item, "[error]");
+			if (!_showError && isError)
+				continue;
+
+			bool isWarn = strstr(item, "[warn]");
+			if (!_showWarn && isWarn)
+				continue;
+
+			bool isDebug = strstr(item, "[debug]");
+			if (!_showdebug && isDebug)
+				continue;
+
+			if (!_showInfo && !isError && !isWarn && !isDebug)
+				continue;
+
+			if (!_filter.PassFilter(item))
+				continue;
+
+			// Normally you would store more information in your item (e.g. make _items[] an array of structure, store color/type etc.)
+			bool pop_color = false;
+			if (isError) {
+				item += 7;
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.4f, 0.4f, 1.0f));
+				pop_color = true;
+			} else if (isWarn) {
+				item += 6;
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 0.4f, 1.0f));
+				pop_color = true;
+			} else if (isDebug) {
+				item += 7;
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.8f, 0.8f, 0.8f, 1.0f));
+				pop_color = true;
+			} else if (strncmp(item, "> ", 2) == 0) {
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.8f, 0.6f, 1.0f));
+				pop_color = true;
+			}
+			ImGui::TextUnformatted(item);
+			if (pop_color)
+				ImGui::PopStyleColor();
+		}
+		if (copy_to_clipboard)
+			ImGui::LogFinish();
+
+		if (_scrollToBottom || (_autoScroll && ImGui::GetScrollY() >= ImGui::GetScrollMaxY()))
+			ImGui::SetScrollHereY(1.0f);
+		_scrollToBottom = false;
+
+		ImGui::PopStyleVar();
+		ImGui::EndChild();
+		ImGui::End();
+	}
+
+private:
+	static char *Strdup(const char *str) {
+		size_t len = strlen(str) + 1;
+		void *buf = malloc(len);
+		IM_ASSERT(buf);
+		return (char *)memcpy(buf, (const void *)str, len);
+	}
+};
 
 typedef struct ImGuiState {
 	struct {
@@ -168,6 +400,8 @@ typedef struct ImGuiState {
 	int _scoreMode = 0;
 
 	ImFont *_tinyFont = nullptr;
+
+	ImGuiLogger _logger;
 } ImGuiState;
 
 ImGuiState *_state = nullptr;
@@ -1527,7 +1761,7 @@ static void showControlPanel() {
 
 			dl->AddLine(ImVec2(p.x + 8.5f, p.y + 1), ImVec2(p.x + 8.5f, p.y + 10), color_red, 2);
 			dl->AddLine(ImVec2(p.x + 5.5f, p.y + 6), ImVec2(p.x + 8.5f, p.y + 9), color_red, 2);
-			dl->AddLine(ImVec2(p.x + 12, p.y + 6),   ImVec2(p.x + 8.5f, p.y + 9), color_red, 2);
+			dl->AddLine(ImVec2(p.x + 12, p.y + 6), ImVec2(p.x + 8.5f, p.y + 9), color_red, 2);
 			dl->AddCircleFilled(ImVec2(p.x + 9, p.y + 15), 2.0f, color);
 
 			ImGui::SetItemTooltip("Step Into");
@@ -1546,7 +1780,7 @@ static void showControlPanel() {
 
 			dl->AddLine(ImVec2(p.x + 8.5f, p.y + 1), ImVec2(p.x + 8.5f, p.y + 10), color_red, 2);
 			dl->AddLine(ImVec2(p.x + 5.5f, p.y + 5), ImVec2(p.x + 8.5f, p.y + 1), color_red, 2);
-			dl->AddLine(ImVec2(p.x + 12, p.y + 5),   ImVec2(p.x + 8.5f, p.y + 1), color_red, 2);
+			dl->AddLine(ImVec2(p.x + 12, p.y + 5), ImVec2(p.x + 8.5f, p.y + 1), color_red, 2);
 			dl->AddCircleFilled(ImVec2(p.x + 9, p.y + 15), 2.0f, color);
 
 			ImGui::SetItemTooltip("Step Out");
@@ -1609,21 +1843,21 @@ static const char *toString(ScriptType scriptType) {
 
 static const char *toIcon(CastType castType) {
 	static const char *castTypes[] = {
-		"",       // Empty
-		"\uf79e", // Bitmap			// backround_dot_large
-		"\ue8da", // FilmLoop		// theaters
-		"\uf6f1", // Text			// match_case
-		"\ue40a", // Palette		// palette
-		"\uefa2", // Picture		// imagesmode
-		"\ue050", // Sound			// volume_up
-		"\uf4ab", // Button			// slab_serif
-		"\ue602", // Shape			// shapes
-		"\ue02c", // Movie			// movie
-		"\uf49a", // DigitalVideo	// animated_images
-		"\uf0c8", // Script			// forms_apps_script
-		"\uf4f1", // RTE			// brand_family
-		"?",      // ???
-		"\uf50c"};// Transition		// transition_fade
+		"",        // Empty
+		"\uf79e",  // Bitmap			// backround_dot_large
+		"\ue8da",  // FilmLoop		// theaters
+		"\uf6f1",  // Text			// match_case
+		"\ue40a",  // Palette		// palette
+		"\uefa2",  // Picture		// imagesmode
+		"\ue050",  // Sound			// volume_up
+		"\uf4ab",  // Button			// slab_serif
+		"\ue602",  // Shape			// shapes
+		"\ue02c",  // Movie			// movie
+		"\uf49a",  // DigitalVideo	// animated_images
+		"\uf0c8",  // Script			// forms_apps_script
+		"\uf4f1",  // RTE			// brand_family
+		"?",       // ???
+		"\uf50c"}; // Transition		// transition_fade
 	if (castType < 0 || castType > kCastTransition)
 		return "";
 	return castTypes[(int)castType];
@@ -1727,7 +1961,7 @@ static void showCast() {
 		ImGui::SetItemTooltip("Grid");
 		ImGui::SameLine();
 
-		if (ImGui::Button("\uef4f")) {	// filter_alt
+		if (ImGui::Button("\uef4f")) { // filter_alt
 			ImGui::OpenPopup("filters_popup");
 		}
 		ImGui::SameLine();
@@ -2438,13 +2672,13 @@ static void showFuncList() {
 
 // Make the UI compact because there are so many fields
 static void PushStyleCompact() {
-    ImGuiStyle& style = ImGui::GetStyle();
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(style.FramePadding.x, (float)(int)(style.FramePadding.y * 0.60f)));
-    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(style.ItemSpacing.x, (float)(int)(style.ItemSpacing.y * 0.60f)));
+	ImGuiStyle &style = ImGui::GetStyle();
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(style.FramePadding.x, (float)(int)(style.FramePadding.y * 0.60f)));
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(style.ItemSpacing.x, (float)(int)(style.ItemSpacing.y * 0.60f)));
 }
 
 static void PopStyleCompact() {
-    ImGui::PopStyleVar(2);
+	ImGui::PopStyleVar(2);
 }
 
 static void showSettings() {
@@ -2484,7 +2718,8 @@ static void showBreakpointList() {
 				ImGui::TableSetupColumn(NULL, i == 2 ? ImGuiTableColumnFlags_WidthStretch : ImGuiTableColumnFlags_NoHeaderWidth);
 
 			for (uint i = 0; i < bps.size(); i++) {
-				if(bps[i].type != kBreakpointFunction) continue;
+				if (bps[i].type != kBreakpointFunction)
+					continue;
 
 				ImGui::TableNextRow();
 				ImGui::TableNextColumn();
@@ -2540,7 +2775,7 @@ static void showBreakpointList() {
 				const ImU32 cross_col = ImGui::GetColorU32(ImGuiCol_Text);
 				const ImVec2 center = pos + ImVec2(0.5f + fontSize * 0.5f, 1.0f + fontSize * 0.5f);
 				if (hovered)
-        			dl->AddCircleFilled(center, MAX(2.0f, fontSize * 0.5f + 1.0f), ImGui::GetColorU32(ImGuiCol_ButtonActive));
+					dl->AddCircleFilled(center, MAX(2.0f, fontSize * 0.5f + 1.0f), ImGui::GetColorU32(ImGuiCol_ButtonActive));
 				dl->AddLine(center + ImVec2(+cross_extent, +cross_extent), center + ImVec2(-cross_extent, -cross_extent), cross_col, 1.0f);
 				dl->AddLine(center + ImVec2(+cross_extent, -cross_extent), center + ImVec2(-cross_extent, +cross_extent), cross_col, 1.0f);
 
@@ -2549,7 +2784,7 @@ static void showBreakpointList() {
 				ImGui::Text("%d", bps[i].funcOffset);
 				ImGui::PopID();
 
-				if(del) {
+				if (del) {
 					g_lingo->delBreakpoint(bps[i].id);
 					break;
 				}
@@ -2778,10 +3013,13 @@ static void showScore() {
 			ImGui::BeginChild("Ink", ImVec2(150.0f, 20.0f));
 
 			if (castMember || shape) {
-				ImGui::Text("%s", inkType2str(sprite->_ink)); ImGui::SameLine(70);
+				ImGui::Text("%s", inkType2str(sprite->_ink));
+				ImGui::SameLine(70);
 				ImGui::SetItemTooltip("Ink");
-				ImGui::Text("|"); ImGui::SameLine();
-				ImGui::Text("%d", sprite->_blendAmount); ImGui::SameLine();
+				ImGui::Text("|");
+				ImGui::SameLine();
+				ImGui::Text("%d", sprite->_blendAmount);
+				ImGui::SameLine();
 				ImGui::SetItemTooltip("Blend");
 			}
 			ImGui::PopStyleColor();
@@ -2828,12 +3066,15 @@ static void showScore() {
 			if (castMember || shape) {
 				ImVec4 fg = convertColor(sprite->_foreColor);
 
-				ImGui::ColorButton("foreColor", fg); ImGui::SameLine();
+				ImGui::ColorButton("foreColor", fg);
+				ImGui::SameLine();
 				ImGui::Text("#%02x%02x%02x", (int)(fg.x * 255), (int)(fg.y * 255), (int)(fg.z * 255));
 				ImGui::SetItemTooltip("Foreground Color");
 				ImVec4 bg = convertColor(sprite->_backColor);
-				ImGui::ColorButton("backColor", bg); ImGui::SameLine();
-				ImGui::Text("#%02x%02x%02x", (int)(bg.x * 255), (int)(bg.y * 255), (int)(bg.z * 255)); ImGui::SameLine();
+				ImGui::ColorButton("backColor", bg);
+				ImGui::SameLine();
+				ImGui::Text("#%02x%02x%02x", (int)(bg.x * 255), (int)(bg.y * 255), (int)(bg.z * 255));
+				ImGui::SameLine();
 				ImGui::SetItemTooltip("Background Color");
 			}
 
@@ -2900,8 +3141,8 @@ static void showScore() {
 		ImGuiTableFlags addonFlags = _state->_scoreMode == kModeExtended ? 0 : ImGuiTableFlags_RowBg;
 
 		if (ImGui::BeginTable("Score", tableColumns + 1,
-					ImGuiTableFlags_Borders | ImGuiTableFlags_HighlightHoveredColumn |
-					ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY | addonFlags)) {
+							  ImGuiTableFlags_Borders | ImGuiTableFlags_HighlightHoveredColumn |
+								  ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY | addonFlags)) {
 			ImGuiTableFlags flags = ImGuiTableColumnFlags_WidthFixed;
 
 			ImGui::TableSetupScrollFreeze(1, 2);
@@ -2984,6 +3225,23 @@ static void showScore() {
 	ImGui::End();
 }
 
+void onLog(LogMessageType::Type type, int level, uint32 debugChannels, const char *message) {
+	switch (type) {
+	case LogMessageType::kError:
+		_state->_logger.addLog("[error]%s", message);
+		break;
+	case LogMessageType::kWarning:
+		_state->_logger.addLog("[warn]%s", message);
+		break;
+	case LogMessageType::kInfo:
+		_state->_logger.addLog("%s", message);
+		break;
+	case LogMessageType::kDebug:
+		_state->_logger.addLog("[debug]%s", message);
+		break;
+	}
+}
+
 void onImGuiInit() {
 	ImGuiIO &io = ImGui::GetIO();
 	io.Fonts->AddFontDefault();
@@ -3001,6 +3259,8 @@ void onImGuiInit() {
 	_state = new ImGuiState();
 
 	_state->_tinyFont = ImGui::addTTFFontFromArchive("FreeSans.ttf", 10.0f, nullptr, nullptr);
+
+	Common::setLogWatcher(onLog);
 }
 
 void onImGuiRender() {
@@ -3045,6 +3305,7 @@ void onImGuiRender() {
 			ImGui::MenuItem("Breakpoints", NULL, &_state->_w.bpList);
 			ImGui::MenuItem("Vars", NULL, &_state->_w.vars);
 			ImGui::MenuItem("Settings", NULL, &_state->_w.settings);
+			ImGui::MenuItem("Logger", NULL, &_state->_w.logger);
 
 			ImGui::SeparatorText("Misc");
 			if (ImGui::MenuItem("Save state")) {
@@ -3069,9 +3330,11 @@ void onImGuiRender() {
 	showScore();
 	showBreakpointList();
 	showSettings();
+	_state->_logger.draw("Logger", &_state->_w.logger);
 }
 
 void onImGuiCleanup() {
+	Common::setLogWatcher(nullptr);
 	if (_state)
 		delete _state->_tinyFont;
 
