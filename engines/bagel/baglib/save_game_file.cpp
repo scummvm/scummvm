@@ -190,7 +190,6 @@ ErrorCode CBagSaveGameFile::readSavedGame(int32 slotNum) {
 			_errCode = ERR_FREAD;
 		} else {
 			byte *pBuf = (byte *)bofAlloc(lSize);
-			assert(pBuf);
 			readRecord(lRecNum, pBuf);
 
 			// Load in the savegame
@@ -233,8 +232,6 @@ ErrorCode CBagSaveGameFile::readTitle(int32 lSlot, StSavegameHeader *pSavedGame)
 		int32 lSize = getRecSize(lRecNum);
 
 		byte *pBuf = (byte *)bofAlloc(lSize);
-		if (pBuf == nullptr)
-			fatalError(ERR_MEMORY, "Could not allocate %ld bytes to read a saved game title", lSize);
 
 		readRecord(lRecNum, pBuf);
 

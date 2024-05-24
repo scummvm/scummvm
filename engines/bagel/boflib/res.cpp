@@ -54,8 +54,6 @@ ErrorCode CBofStringTable::load(const char *pszFileName) {
 
 	// Allocate a buffer to hold entire file
 	_pBuf = (byte *)bofAlloc(_lBufSize + 1);
-	if (_pBuf == nullptr)
-		fatalError(ERR_MEMORY, "Unable to allocate %u bytes for String Table", _lBufSize + 1);
 
 	memset(_pBuf, 0, _lBufSize + 1);
 

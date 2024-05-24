@@ -796,38 +796,36 @@ ErrorCode CBofBitmap::scrollRight(int nPixels, CBofRect * /*pRect*/) {
 			assert(_pBits != nullptr);
 			byte *pTemp = (byte *)bofAlloc(abs(nPixels));
 
-			if (pTemp != nullptr) {
-				int nBytes = _nDX - nPixels;
-				if (nPixels < 0) {
-					nBytes = _nDX + nPixels;
-				}
-
-				byte *p = _pBits;
-
-				lock();
-
-				if (nPixels > 0) {
-					for (int i = 0; i < _nDY; i++) {
-						memcpy(pTemp, p + nBytes, nPixels);
-						memmove(p + nPixels, p, nBytes);
-						memcpy(p, pTemp, nPixels);
-						p += _nScanDX;
-					}
-				} else {
-					nPixels = -nPixels;
-
-					for (int i = 0; i < _nDY; i++) {
-						memcpy(pTemp, p, nPixels);
-						memmove(p, p + nPixels, nBytes);
-						memcpy(p + nBytes, pTemp, nPixels);
-						p += _nScanDX;
-					}
-				}
-
-				unlock();
-
-				bofFree(pTemp);
+			int nBytes = _nDX - nPixels;
+			if (nPixels < 0) {
+				nBytes = _nDX + nPixels;
 			}
+
+			byte *p = _pBits;
+
+			lock();
+
+			if (nPixels > 0) {
+				for (int i = 0; i < _nDY; i++) {
+					memcpy(pTemp, p + nBytes, nPixels);
+					memmove(p + nPixels, p, nBytes);
+					memcpy(p, pTemp, nPixels);
+					p += _nScanDX;
+				}
+			} else {
+				nPixels = -nPixels;
+
+				for (int i = 0; i < _nDY; i++) {
+					memcpy(pTemp, p, nPixels);
+					memmove(p, p + nPixels, nBytes);
+					memcpy(p + nBytes, pTemp, nPixels);
+					p += _nScanDX;
+				}
+			}
+
+			unlock();
+
+			bofFree(pTemp);
 		}
 	}
 
@@ -871,11 +869,8 @@ ErrorCode CBofBitmap::scrollUp(int nPixels) {
 
 		// Only scroll if we need to
 		if (nPixels != 0) {
-			byte *pRowBuf = (byte *)bofAlloc(dx);
-
 			// Allocate a buffer to hold one horizontal line
-			if (pRowBuf == nullptr)
-				fatalError(ERR_MEMORY, "Error: scrollUp - Could not allocate %ld bytes for row", dx);
+			byte *pRowBuf = (byte *)bofAlloc(dx);
 
 			byte *pStart = _pBits;
 			byte *pEnd = _pBits;

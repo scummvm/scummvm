@@ -573,18 +573,17 @@ ErrorCode CBagStorageDev::loadFile(const CBofString &sWldName) {
 		error("Unable to open or read %s", sWldFileName.getBuffer());
 
 	char *pBuf = (char *)bofAlloc(nLength);
-	if (pBuf != nullptr) {
-		CBagIfstream fpInput(pBuf, nLength);
+	CBagIfstream fpInput(pBuf, nLength);
 
-		CBofFile cFile;
-		cFile.open(sWldFileName);
-		cFile.read(pBuf, nLength);
-		cFile.close();
+	CBofFile cFile;
+	cFile.open(sWldFileName);
+	cFile.read(pBuf, nLength);
+	cFile.close();
 
-		CBagStorageDev::loadFileFromStream(fpInput, sWldFileName);
+	CBagStorageDev::loadFileFromStream(fpInput, sWldFileName);
 
-		bofFree(pBuf);
-	}
+	bofFree(pBuf);
+
 	// Add everything to the window
 	return ERR_NONE;
 }
@@ -1435,9 +1434,6 @@ ErrorCode CBagStorageDevWnd::loadFile(const CBofString &sFile) {
 		reportError(ERR_FOPEN, "Unable to open file %s", sWldFile.getBuffer());
 	else {
 		char *pBuf = (char *)bofAlloc(nLength);
-		if (pBuf == nullptr)
-			fatalError(ERR_MEMORY, "Unable to allocate a buffer of %d bytes", nLength);
-
 		CBagIfstream fpInput(pBuf, nLength);
 
 		CBofFile cFile;
@@ -1714,21 +1710,19 @@ ErrorCode CBagStorageDevDlg::loadFile(const CBofString &sFile) {
 		reportError(ERR_FOPEN, "Unable to open file %s", sWldFile.getBuffer());
 	else {
 		char *pBuf = (char *)bofAlloc(nLength);
-		if (pBuf != nullptr) {
-			CBagIfstream fpInput(pBuf, nLength);
+		CBagIfstream fpInput(pBuf, nLength);
 
-			CBofFile cFile;
-			cFile.open(sWldFile);
-			cFile.read(pBuf, nLength);
-			cFile.close();
+		CBofFile cFile;
+		cFile.open(sWldFile);
+		cFile.read(pBuf, nLength);
+		cFile.close();
 
-			CBagStorageDev::loadFileFromStream(fpInput, sWldFile);
+		CBagStorageDev::loadFileFromStream(fpInput, sWldFile);
 
-			bofFree(pBuf);
+		bofFree(pBuf);
 
-			if (isCreated())
-				invalidateRect(nullptr);
-		}
+		if (isCreated())
+			invalidateRect(nullptr);
 	}
 	// Add everything to the window
 	return _errCode;

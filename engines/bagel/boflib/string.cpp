@@ -104,10 +104,8 @@ void CBofString::allocBuffer(int nLen) {
 	// Don't do anything about zero length allocations
 	if (nLen > 0) {
 		_pszData = (char *)bofAlloc(nLen + 1);
-		if (_pszData != nullptr) {
-			// Set the entire buffer to nullptr
-			memset(_pszData, '\0', nLen + 1);
-		}
+		// Set the entire buffer to nullptr
+		memset(_pszData, '\0', nLen + 1);
 	}
 
 	_nLength = 0;
@@ -575,22 +573,21 @@ void CBofString::growTo(int nNewSize) {
 		// Otherwise, we must keep track of whats in the buffer
 		// Create a temp buffer to save string
 		char *p = (char *)bofAlloc(_nLength + 2);
-		if (p != nullptr) {
-			// Save copy of string
-			Common::strcpy_s(p, MAX_STRING, _pszData);
 
-			// Make the new buffer
-			allocBuffer(nNewSize);
+		// Save copy of string
+		Common::strcpy_s(p, MAX_STRING, _pszData);
 
-			// Copy saved string back
-			strncpy(_pszData, p, nNewSize - 1);
+		// Make the new buffer
+		allocBuffer(nNewSize);
 
-			// Get it's new length
-			_nLength = (uint16)strlen(_pszData);
+		// Copy saved string back
+		strncpy(_pszData, p, nNewSize - 1);
 
-			// Don't need temp buffer anymore
-			bofFree(p);
-		}
+		// Get it's new length
+		_nLength = (uint16)strlen(_pszData);
+
+		// Don't need temp buffer anymore
+		bofFree(p);
 	}
 }
 

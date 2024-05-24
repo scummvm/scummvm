@@ -241,8 +241,6 @@ ErrorCode SBarComputer::readDrnkFile() {
 
 	// Allocate the buffers
 	_pDrinkBuff = (char *)bofAlloc(fpDrinkFile.getLength() + 1);
-	if (_pDrinkBuff == nullptr)
-		return ERR_MEMORY;
 
 	// Read the text file into buffers
 	fpDrinkFile.read(_pDrinkBuff, fpDrinkFile.getLength());
@@ -310,8 +308,6 @@ ErrorCode SBarComputer::readIngFile() {
 
 	// Allocate the buffers
 	_pIngBuff = (char *)bofAlloc(fpIngFile.getLength() + 1);
-	if (_pIngBuff == nullptr)
-		fatalError(ERR_MEMORY, "Unable to allocate buffer of %u bytes", fpIngFile.getLength() + 1);
 
 	// Read the text file into buffers
 	fpIngFile.read(_pIngBuff, fpIngFile.getLength());

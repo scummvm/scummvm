@@ -4133,8 +4133,6 @@ void SrafComputer::notifyBoss(CBofString &sSoundFile, int nStafferID) {         
 			reportError(ERR_FREAD, "Unexpected empty file %s", sSoundFile.getBuffer());
 		} else {
 			char *pszBuf = (char *)bofAlloc(nLength + 1);
-			if (pszBuf == nullptr)
-				fatalError(ERR_MEMORY, "Could not allocate a buffer of %u bytes", nLength + 1);
 
 			memset(pszBuf, 0, nLength + 1);
 			fTxtFile.read(pszBuf, nLength);

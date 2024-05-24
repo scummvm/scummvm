@@ -373,8 +373,6 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 			// Only allocate the object list when we really need it...
 			if (_objList == nullptr) {
 				_objList = (StObj *)bofAlloc(MAX_OBJS * sizeof(StObj));
-				if (_objList == nullptr)
-					fatalError(ERR_MEMORY, "Could not allocate Object list");
 
 				// Init to zero (we might not use all slots)
 				memset(_objList, 0, MAX_OBJS * sizeof(StObj));
@@ -426,18 +424,16 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 		// is pre-loaded
 		int length = fileLength(wldFileName);
 		char *fileBuf = (char *)bofAlloc(length);
-		if (fileBuf != nullptr) {
-			CBagIfstream fpInput(fileBuf, length);
+		CBagIfstream fpInput(fileBuf, length);
 
-			CBofFile file;
-			file.open(wldFileName);
-			file.read(fileBuf, length);
-			file.close();
+		CBofFile file;
+		file.open(wldFileName);
+		file.read(fileBuf, length);
+		file.close();
 
-			loadFileFromStream(fpInput, startWldName);
+		loadFileFromStream(fpInput, startWldName);
 
-			bofFree(fileBuf);
-		}
+		bofFree(fileBuf);
 
 		// Possibly need to switch CDs
 		CBagel *bagApp = CBagel::getBagApp();
@@ -570,55 +566,53 @@ ErrorCode CBagMasterWin::loadGlobalVars(const CBofString &wldName) {
 		// is pre-loaded
 		int length = fileLength(wldFileName);
 		char *buffer = (char *)bofAlloc(length);
-		if (buffer != nullptr) {
-			CBagIfstream fpInput(buffer, length);
+		CBagIfstream fpInput(buffer, length);
 
-			CBofFile file;
-			file.open(wldFileName);
-			file.read(buffer, length);
-			file.close();
+		CBofFile file;
+		file.open(wldFileName);
+		file.read(buffer, length);
+		file.close();
 
-			while (!fpInput.eof()) {
-				fpInput.eatWhite();
+		while (!fpInput.eof()) {
+			fpInput.eatWhite();
 
-				if (!fpInput.eatWhite()) {
-					break;
-				}
-
-				KEYWORDS keyword;
-				getKeywordFromStream(fpInput, keyword);
-
-				switch (keyword) {
-				case VARIABLE: {
-					CBagVar *var = new CBagVar;
-					fpInput.eatWhite();
-					var->setInfo(fpInput);
-					var->setGlobal();
-					break;
-				}
-
-				case REMARK: {
-					char dummyStr[256];
-					fpInput.getCh(dummyStr, 255);
-					break;
-				}
-
-				case STORAGEDEV:
-				case START_WLD:
-				case SYSSCREEN:
-				case DISKID:
-				case DISKAUDIO:
-				case SHAREDPAL:
-				case PDASTATE:
-				default: {
-					parseAlertBox(fpInput, "Syntax Error:  Unexpected Type in Global Var Wld:", __FILE__, __LINE__);
-					break;
-				}
-				}
+			if (!fpInput.eatWhite()) {
+				break;
 			}
 
-			bofFree(buffer);
+			KEYWORDS keyword;
+			getKeywordFromStream(fpInput, keyword);
+
+			switch (keyword) {
+			case VARIABLE: {
+				CBagVar *var = new CBagVar;
+				fpInput.eatWhite();
+				var->setInfo(fpInput);
+				var->setGlobal();
+				break;
+			}
+
+			case REMARK: {
+				char dummyStr[256];
+				fpInput.getCh(dummyStr, 255);
+				break;
+			}
+
+			case STORAGEDEV:
+			case START_WLD:
+			case SYSSCREEN:
+			case DISKID:
+			case DISKAUDIO:
+			case SHAREDPAL:
+			case PDASTATE:
+			default: {
+				parseAlertBox(fpInput, "Syntax Error:  Unexpected Type in Global Var Wld:", __FILE__, __LINE__);
+				break;
+			}
+			}
 		}
+
+		bofFree(buffer);
 	}
 
 	return _errCode;
@@ -1517,9 +1511,6 @@ bool CBagMasterWin::showSaveDialog(CBofWindow *win, bool bSaveBkg) {
 		CBofSound::pauseSounds();
 		StBagelSave *saveBuf = (StBagelSave *)bofAlloc(sizeof(StBagelSave));
 
-		if (saveBuf == nullptr)
-			fatalError(ERR_MEMORY, "Unable to allocate the Save Game Buffer");
-
 		fillSaveBuffer(saveBuf);
 		CBagSaveDialog saveDialog;
 		saveDialog.setSaveGameBuffer((byte *)saveBuf, sizeof(StBagelSave));
@@ -1634,8 +1625,6 @@ void CBagMasterWin::doRestore(StBagelSave *saveBuf) {
 			// Restore any extra obj list info (for .WLD swapping)
 			if (_objList == nullptr) {
 				_objList = (StObj *)bofAlloc(MAX_OBJS * sizeof(StObj));
-				if (_objList == nullptr)
-					fatalError(ERR_MEMORY, "Unable to allocate a array of %d StObj", MAX_OBJS);
 
 				// Init to nullptr (might not use all slots)
 				memset(_objList, 0, MAX_OBJS * sizeof(StObj));

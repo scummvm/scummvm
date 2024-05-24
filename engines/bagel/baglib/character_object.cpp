@@ -104,11 +104,7 @@ ErrorCode CBagCharacterObject::attach() {
 
 		_binBufLen = cInputFile.getLength();
 		_binBuf = (char *)bofAlloc(_binBufLen + 1);
-		if (_binBuf != nullptr) {
-			cInputFile.read(_binBuf, _binBufLen);
-		} else {
-			reportError(ERR_MEMORY, "Unable to allocate a buffer of %d bytes", _binBufLen + 1);
-		}
+		cInputFile.read(_binBuf, _binBufLen);
 	}
 
 	// Set the start and stop frames if still default.
