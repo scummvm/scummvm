@@ -144,6 +144,7 @@ typedef struct ImGuiState {
 		ImVec4 _comment_color = ImColor(IM_COL32(0xFF, 0xA5, 0x9D, 0x95));
 		ImVec4 _type_color = ImColor(IM_COL32(0x13, 0xC5, 0xF9, 0xFF));
 		ImVec4 _keyword_color = ImColor(IM_COL32(0xC1, 0xC1, 0xC1, 0xFF));
+		ImVec4 _the_color = ImColor(IM_COL32(0xFF, 0x49, 0xEF, 0xFF));
 	} _colors;
 
 	struct {
@@ -246,10 +247,7 @@ public:
 	}
 
 	virtual void visit(const LingoDec::LiteralNode &node) override {
-		LingoDec::CodeWriterVisitor code(_dot, false);
-		node.accept(code);
-		ImGui::TextColored(ImColor(_state->_colors._literal_color), "%s", code._str.c_str());
-		ImGui::SameLine();
+		write(*node.value);
 	}
 
 	virtual void visit(const LingoDec::NewObjNode &node) override {
@@ -351,9 +349,7 @@ public:
 	}
 
 	virtual void visit(const LingoDec::TheExprNode &node) override {
-		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "the ");
-		ImGui::SameLine();
-		ImGui::TextColored(ImColor(_state->_colors._var_color), "%s", node.prop.c_str());
+		ImGui::TextColored(ImColor(_state->_colors._the_color), "the %s", node.prop.c_str());
 		ImGui::SameLine();
 	}
 
@@ -544,6 +540,42 @@ public:
 		ImGui::SameLine();
 	}
 
+	virtual void visit(const LingoDec::ObjPropExprNode &node) override {
+		if (_dot) {
+			bool parenObj = node.obj->hasSpaces(_dot);
+			if (parenObj) {
+				ImGui::Text("(");
+				ImGui::SameLine();
+			}
+			node.obj->accept(*this);
+			if (parenObj) {
+				ImGui::Text(")");
+				ImGui::SameLine();
+			}
+
+			ImGui::Text(".");
+			ImGui::SameLine();
+			ImGui::Text("%s", node.prop.c_str());
+			ImGui::SameLine();
+		} else {
+			ImGui::TextColored(_state->_colors._the_color, "the %s", node.prop.c_str());
+			ImGui::SameLine();
+			ImGui::TextColored(_state->_colors._keyword_color, " of ");
+			ImGui::SameLine();
+
+			bool parenObj = (node.obj->type == LingoDec::kBinaryOpNode);
+			if (parenObj) {
+				ImGui::Text("(");
+				ImGui::SameLine();
+			}
+			node.obj->accept(*this);
+			if (parenObj) {
+				ImGui::Text(")");
+				ImGui::SameLine();
+			}
+		}
+	}
+
 	virtual void visit(const LingoDec::BinaryOpNode &node) override {
 		unsigned int precedence = node.getPrecedence();
 		bool parenLeft = false;
@@ -690,11 +722,7 @@ public:
 	}
 
 	virtual void visit(const LingoDec::MenuPropExprNode &node) override {
-		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "the ");
-		ImGui::SameLine();
-		ImGui::TextColored(ImColor(_state->_colors._var_color), LingoDec::StandardNames::menuPropertyNames[node.prop]);
-		ImGui::SameLine();
-		ImGui::TextColored(ImColor(_state->_colors._keyword_color), " of menu ");
+		ImGui::TextColored(ImColor(_state->_colors._the_color), "the %s of menu ", LingoDec::StandardNames::menuPropertyNames[node.prop]);
 		ImGui::SameLine();
 
 		bool parenMenuID = (node.menuID->type == LingoDec::kBinaryOpNode);
@@ -723,11 +751,7 @@ public:
 	}
 
 	virtual void visit(const LingoDec::SoundPropExprNode &node) override {
-		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "the ");
-		ImGui::SameLine();
-		ImGui::Text(LingoDec::StandardNames::soundPropertyNames[node.prop]);
-		ImGui::SameLine();
-		ImGui::TextColored(ImColor(_state->_colors._keyword_color), " of sound ");
+		ImGui::TextColored(ImColor(_state->_colors._the_color), "the %s of sound ", LingoDec::StandardNames::soundPropertyNames[node.prop]);
 		ImGui::SameLine();
 
 		bool parenSoundID = (node.soundID->type == LingoDec::kBinaryOpNode);
@@ -787,11 +811,7 @@ public:
 	}
 
 	virtual void visit(const LingoDec::SpritePropExprNode &node) override {
-		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "the ");
-		ImGui::SameLine();
-		ImGui::Text(LingoDec::StandardNames::spritePropertyNames[node.prop]);
-		ImGui::SameLine();
-		ImGui::TextColored(ImColor(_state->_colors._keyword_color), " of sprite ");
+		ImGui::TextColored(ImColor(_state->_colors._the_color), "the %s of sprite ", LingoDec::StandardNames::spritePropertyNames[node.prop]);
 		ImGui::SameLine();
 
 		bool parenSpriteID = (node.spriteID->type == LingoDec::kBinaryOpNode);
@@ -819,11 +839,7 @@ public:
 	}
 
 	virtual void visit(const LingoDec::MenuItemPropExprNode &node) override {
-		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "the ");
-		ImGui::SameLine();
-		ImGui::Text(LingoDec::StandardNames::menuItemPropertyNames[node.prop]);
-		ImGui::SameLine();
-		ImGui::TextColored(ImColor(_state->_colors._keyword_color), " of menuItem ");
+		ImGui::TextColored(ImColor(_state->_colors._the_color), "the %s of menuItem ", LingoDec::StandardNames::menuItemPropertyNames[node.prop]);
 		ImGui::SameLine();
 
 		bool parenItemID = (node.itemID->type == LingoDec::kBinaryOpNode);
@@ -911,11 +927,7 @@ public:
 	}
 
 	virtual void visit(const LingoDec::LastStringChunkExprNode &node) override {
-		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "the last ");
-		ImGui::SameLine();
-		ImGui::Text(LingoDec::StandardNames::chunkTypeNames[node.type]);
-		ImGui::SameLine();
-		ImGui::TextColored(ImColor(_state->_colors._keyword_color), " in ");
+		ImGui::TextColored(ImColor(_state->_colors._the_color), "the last %s in ", LingoDec::StandardNames::chunkTypeNames[node.type]);
 		ImGui::SameLine();
 
 		bool parenObj = (node.obj->type == LingoDec::kBinaryOpNode);
@@ -961,11 +973,7 @@ public:
 	}
 
 	virtual void visit(const LingoDec::StringChunkCountExprNode &node) override {
-		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "the number of ");
-		ImGui::SameLine();
-		ImGui::Text(LingoDec::StandardNames::chunkTypeNames[node.type]);
-		ImGui::SameLine();
-		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "s in ");
+		ImGui::TextColored(ImColor(_state->_colors._the_color), "the number of %ss in ", LingoDec::StandardNames::chunkTypeNames[node.type]);
 		ImGui::SameLine();
 
 		bool parenObj = (node.obj->type == LingoDec::kBinaryOpNode);
@@ -1011,6 +1019,107 @@ public:
 	}
 
 private:
+	void write(LingoDec::Datum &datum) {
+		switch (datum.type) {
+		case LingoDec::kDatumVoid:
+			ImGui::TextColored(_state->_colors._keyword_color, "VOID");
+			ImGui::SameLine();
+			return;
+		case LingoDec::kDatumSymbol:
+			ImGui::Text("#%s", datum.s.c_str());
+			ImGui::SameLine();
+			return;
+		case LingoDec::kDatumVarRef:
+			ImGui::TextColored(_state->_colors._var_color, datum.s.c_str());
+			ImGui::SameLine();
+			return;
+		case LingoDec::kDatumString:
+			if (datum.s.empty()) {
+				ImGui::TextColored(_state->_colors._keyword_color, "EMPTY");
+				ImGui::SameLine();
+				return;
+			}
+			if (datum.s.size() == 1) {
+				switch (datum.s[0]) {
+				case '\x03':
+					ImGui::TextColored(_state->_colors._keyword_color, "ENTER");
+					ImGui::SameLine();
+					return;
+				case '\x08':
+					ImGui::TextColored(_state->_colors._keyword_color, "BACKSPACE");
+					ImGui::SameLine();
+					return;
+				case '\t':
+					ImGui::TextColored(_state->_colors._keyword_color, "TAB");
+					ImGui::SameLine();
+					return;
+				case '\r':
+					ImGui::TextColored(_state->_colors._keyword_color, "RETURN");
+					ImGui::SameLine();
+					return;
+				case '"':
+					ImGui::TextColored(_state->_colors._keyword_color, "QUOTE");
+					ImGui::SameLine();
+					return;
+				default:
+					break;
+				}
+			}
+			ImGui::Text("\"%s\"", datum.s.c_str());
+			ImGui::SameLine();
+			return;
+		case LingoDec::kDatumInt:
+			ImGui::TextColored(_state->_colors._literal_color, "%d", datum.i);
+			ImGui::SameLine();
+			return;
+		case LingoDec::kDatumFloat:
+			ImGui::TextColored(_state->_colors._literal_color, "%g", datum.f);
+			ImGui::SameLine();
+			return;
+		case LingoDec::kDatumList:
+		case LingoDec::kDatumArgList:
+		case LingoDec::kDatumArgListNoRet: {
+			if (datum.type == LingoDec::kDatumList) {
+				ImGui::Text("[");
+				ImGui::SameLine();
+			}
+			for (size_t ii = 0; ii < datum.l.size(); ii++) {
+				if (ii > 0) {
+					ImGui::Text(", ");
+					ImGui::SameLine();
+				}
+				datum.l[ii]->accept(*this);
+			}
+			if (datum.type == LingoDec::kDatumList) {
+				ImGui::Text("]");
+				ImGui::SameLine();
+			}
+		}
+			return;
+		case LingoDec::kDatumPropList: {
+			ImGui::Text("[");
+			if (datum.l.size() == 0) {
+				ImGui::Text(":");
+				ImGui::SameLine();
+			} else {
+				for (size_t ii = 0; ii < datum.l.size(); ii += 2) {
+					if (ii > 0) {
+						ImGui::Text(", ");
+						ImGui::SameLine();
+					}
+					datum.l[ii]->accept(*this);
+					ImGui::Text(": ");
+					ImGui::SameLine();
+					datum.l[ii + 1]->accept(*this);
+				}
+			}
+			ImGui::Text("]");
+			ImGui::SameLine();
+		}
+			return;
+		}
+	}
+
 	void renderVar(const Common::String &varName) {
 		ImGui::TextColored(_state->_colors._var_color, "%s", varName.c_str());
 		if (ImGui::IsItemHovered() && g_lingo->_globalvars.contains(varName)) {
@@ -1034,23 +1143,23 @@ private:
 
 		bool isMethod = _script.isMethod;
 		{
-			Common::String code;
-			if (isMethod) {
-				code += "method ";
-			} else {
-				code += "on ";
-			}
-			code += _script.handlerId;
+			write(node._startOffset, isMethod ? "method " : "on ", _state->_colors._keyword_color);
+			ImGui::SameLine();
+			ImGui::TextColored(_state->_colors._call_color, "%s", _script.handlerId.c_str());
+			ImGui::SameLine();
 
 			if (!_script.argumentNames.empty()) {
-				code += " ";
+				ImGui::Text(" ");
+				ImGui::SameLine();
 				for (size_t i = 0; i < _script.argumentNames.size(); i++) {
-					if (i > 0)
-						code += ", ";
-					code += _script.argumentNames[i];
+					if (i > 0) {
+						ImGui::Text(", ");
+						ImGui::SameLine();
+					}
+					ImGui::TextColored(_state->_colors._var_color, "%s", _script.argumentNames[i].c_str());
+					ImGui::SameLine();
 				}
 			}
-			write(node._startOffset, code);
 		}
 
 		if (isMethod && !_script.propertyNames.empty() && node.handler == &node.handler->script->handlers[0]) {
@@ -1063,21 +1172,21 @@ private:
 				ImGui::TextColored(_state->_colors._var_color, "%s", _script.propertyNames[i].c_str());
 				ImGui::SameLine();
 			}
-			ImGui::NewLine();
 		}
 
 		if (!_script.globalNames.empty()) {
 			write(node._startOffset, "global ");
 			ImGui::SameLine();
 			for (size_t i = 0; i < _script.globalNames.size(); i++) {
-				if (i > 0)
+				if (i > 0) {
 					ImGui::Text(",");
-				ImGui::SameLine();
+					ImGui::SameLine();
+				}
 				ImGui::TextColored(_state->_colors._var_color, "%s", _script.globalNames[i].c_str());
 				ImGui::SameLine();
 			}
-			ImGui::NewLine();
 		}
+		ImGui::NewLine();
 
 		node.block->accept(*this);
 
@@ -2345,17 +2454,19 @@ static void showSettings() {
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(480, 240), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Settings", &_state->_w.settings)) {
-		ImGui::ColorEdit4("bp_color_disabled", &_state->_colors._bp_color_disabled.x);
-		ImGui::ColorEdit4("bp_color_enabled", &_state->_colors._bp_color_enabled.x);
-		ImGui::ColorEdit4("bp_color_hover", &_state->_colors._bp_color_hover.x);
-		ImGui::ColorEdit4("line_color", &_state->_colors._line_color.x);
-		ImGui::ColorEdit4("call_color", &_state->_colors._call_color.x);
-		ImGui::ColorEdit4("builtin_color", &_state->_colors._builtin_color.x);
-		ImGui::ColorEdit4("var_color", &_state->_colors._var_color.x);
-		ImGui::ColorEdit4("literal_color", &_state->_colors._literal_color.x);
-		ImGui::ColorEdit4("comment_color", &_state->_colors._comment_color.x);
-		ImGui::ColorEdit4("type_color", &_state->_colors._type_color.x);
-		ImGui::ColorEdit4("keyword_color", &_state->_colors._keyword_color.x);
+		ImGui::ColorEdit4("Breakpoint disabled", &_state->_colors._bp_color_disabled.x);
+		ImGui::ColorEdit4("Breakpoint enabled", &_state->_colors._bp_color_enabled.x);
+		ImGui::ColorEdit4("Breakpoint hover", &_state->_colors._bp_color_hover.x);
+		ImGui::Separator();
+		ImGui::ColorEdit4("Line", &_state->_colors._line_color.x);
+		ImGui::ColorEdit4("Call", &_state->_colors._call_color.x);
+		ImGui::ColorEdit4("Builtin", &_state->_colors._builtin_color.x);
+		ImGui::ColorEdit4("Variable", &_state->_colors._var_color.x);
+		ImGui::ColorEdit4("Literal", &_state->_colors._literal_color.x);
+		ImGui::ColorEdit4("Comment", &_state->_colors._comment_color.x);
+		ImGui::ColorEdit4("Type", &_state->_colors._type_color.x);
+		ImGui::ColorEdit4("Keyword", &_state->_colors._keyword_color.x);
+		ImGui::ColorEdit4("The entity", &_state->_colors._the_color.x);
 	}
 	ImGui::End();
 }
