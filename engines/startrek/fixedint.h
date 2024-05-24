@@ -55,7 +55,7 @@ public:
 	 * Constructor from other fixed-point formats.
 	 */
 	template<typename T2, uint otherTB, uint otherDB>
-	explicit TFixedInt<T, totalBits, decimalBits>(const TFixedInt<T2, otherTB, otherDB> &fi) {
+	explicit TFixedInt(const TFixedInt<T2, otherTB, otherDB> &fi) {
 		int diff = otherDB - decimalBits;
 		if (otherDB >= decimalBits)
 			val = fi.raw() >> diff;

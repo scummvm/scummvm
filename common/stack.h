@@ -44,7 +44,7 @@ class FixedStack {
 public:
 	typedef uint size_type;
 
-	FixedStack<T, MAX_SIZE>() : _size(0) {}
+	FixedStack() : _size(0) {}
 
 	bool empty() const {
 		return _size <= 0;
@@ -106,8 +106,8 @@ private:
 public:
 	typedef typename Array<T>::size_type size_type;
 
-	Stack<T>() {}
-	Stack<T>(const Array<T> &stackContent) : _stack(stackContent) {}
+	Stack() {}
+	Stack(const Array<T> &stackContent) : _stack(stackContent) {}
 
 	bool empty() const {
 		return _stack.empty();
