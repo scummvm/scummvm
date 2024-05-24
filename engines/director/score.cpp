@@ -1632,6 +1632,10 @@ bool Score::loadFrame(int frameNum, bool loadCast) {
 
 		// Reset position to start
 		_framesStream->seek(_firstFramePosition);
+
+		// Reset sprite contents
+		for (auto &it : _currentFrame->_sprites)
+			it->reset();
 	}
 
 	debugC(7, kDebugLoading, "****** Source frame %d to Destination frame %d, current offset %ld", sourceFrame, targetFrame, _framesStream->pos());

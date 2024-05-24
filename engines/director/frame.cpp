@@ -267,7 +267,7 @@ void Frame::readSpriteD2(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 
 	uint16 fieldPosition = offset - spriteStart;
 
-	debugC(3, kDebugLoading, "Frame::readSpriteD2(): sprite: %d offset: %d size: %d, field: %d", spritePosition, offset, size, fieldPosition);
+	debugC(5, kDebugLoading, "Frame::readSpriteD2(): sprite: %d offset: %d size: %d, field: %d", spritePosition, offset, size, fieldPosition);
 	if (debugChannelSet(8, kDebugLoading)) {
 		stream.hexdump(size);
 	}
@@ -575,7 +575,7 @@ void Frame::readSpriteD4(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 
 	uint16 fieldPosition = offset - spriteStart;
 
-	debugC(3, kDebugLoading, "Frame::readSpriteD4(): sprite: %d offset: %d size: %d, field: %d", spritePosition, offset, size, fieldPosition);
+	debugC(5, kDebugLoading, "Frame::readSpriteD4(): sprite: %d offset: %d size: %d, field: %d", spritePosition, offset, size, fieldPosition);
 	if (debugChannelSet(8, kDebugLoading)) {
 		stream.hexdump(size);
 	}
@@ -877,7 +877,7 @@ void Frame::readSpriteD5(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 
 	uint16 fieldPosition = offset - spriteStart;
 
-	debugC(3, kDebugLoading, "Frame::readSpriteD5(): sprite: %d offset: %d size: %d, field: %d", spritePosition, offset, size, fieldPosition);
+	debugC(5, kDebugLoading, "Frame::readSpriteD5(): sprite: %d offset: %d size: %d, field: %d", spritePosition, offset, size, fieldPosition);
 	if (debugChannelSet(8, kDebugLoading)) {
 		stream.hexdump(size);
 	}
@@ -1075,7 +1075,7 @@ void Frame::readSpriteD6(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 
 	uint16 fieldPosition = offset - spriteStart;
 
-	debugC(3, kDebugLoading, "Frame::readSpriteD6(): sprite: %d offset: %d size: %d, field: %d", spritePosition, offset, size, fieldPosition);
+	debugC(5, kDebugLoading, "Frame::readSpriteD6(): sprite: %d offset: %d size: %d, field: %d", spritePosition, offset, size, fieldPosition);
 	if (debugChannelSet(8, kDebugLoading)) {
 		stream.hexdump(size);
 	}
