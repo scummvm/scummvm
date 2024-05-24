@@ -504,17 +504,18 @@ void ScummEngine_v6::o6_pushWordVar() {
 			int offset = _scriptPointer - _scriptOrgPointer;
 			int sprintCounter = readArray(344, vm.localvar[_currentScript][0], 1);
 			int sprintGain = vm.localvar[_currentScript][4];
+			int playerSpeed = vm.localvar[_currentScript][5];
 			if (offset == 42273) {
 				if (sprintCounter >= 11) {
-					if (vm.localvar[_currentScript][5] == 12 || vm.localvar[_currentScript][5] == 11 || vm.localvar[_currentScript][5] == 10) {
+					if (playerSpeed == 12 || playerSpeed == 11 || playerSpeed == 10) {
 						sprintGain = 2;
-					} else if (vm.localvar[_currentScript][5] == 9) {
+					} else if (playerSpeed == 9) {
 						sprintGain = 3;
 					} else {
 						sprintGain = 4;
 					}
 				} else if (sprintCounter >= 9) {
-					if (vm.localvar[_currentScript][5] == 12 || vm.localvar[_currentScript][5] == 11 || vm.localvar[_currentScript][5] == 10) {
+					if (playerSpeed == 12 || playerSpeed == 11 || playerSpeed == 10) {
 						sprintGain = 2;
 					} else {
 						sprintGain = 3;
@@ -526,20 +527,20 @@ void ScummEngine_v6::o6_pushWordVar() {
 				}
 				writeVar(0x4000 + 4, sprintGain);
 			}
-		}
 
 		// This code will change the velocity of the hit based on the pitch thrown, and the location of the pitch itself.
 		if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && vm.slot[_currentScript].number == 2090 && readVar(399) == 1) {
 			int offset = _scriptPointer - _scriptOrgPointer;
 			int powerAdjustment = vm.localvar[_currentScript][4];
-
+			int pitchSelected = readVar(0x8000 + 10);
+			
 			// Checks if the swing is either Power or Line Drive
 			if (offset == 102789 && (readVar(387) == 1||readVar(387) == 2)) {
 				// Checks if the current pitch type is the same as that of the "remembered" pitch type
 				if (readArray(346, 0, 0) == readArray(346, 1, 0)) {
 					// Checks if the current pitch is either a Heat or a Fireball. The reason it adds less than the other pitches
 					// is because in the actual calculation it adds 5 to these two anyway, so this should also balance them out.
-					if (readVar(0x8000 + 10) == 14 || readVar(0x8000 + 10) == 21) {
+					if (pitchSelected == 14 || pitchSelected == 21) {
 						powerAdjustment = powerAdjustment + 15;
 					} else {
 						powerAdjustment = powerAdjustment + 20;
@@ -631,6 +632,10 @@ void ScummEngine_v6::o6_eq() {
 // BACKYARD BASEBALL 2001 ONLINE CHANGES
 #if defined(USE_ENET) && defined(USE_LIBCURL)
 	if (ConfMan.getBool("enable_competitive_mods")) {
+		int pitchXValue = readVar(0x8000 + 11);
+		int pitchYValue = readVar(0x8000 + 12);
+		int strikeZoneTop = readVar(0x8000 + 29);
+		int strikeZoneBottom = readVar(0x8000 + 30);
 			// People have been complaining about strikes being visually unclear during online games. This is because the strike zone's visual is not
 			// equal length compared to the actual range in which a strike can be called. These changes should fix that, with some extra leniency in
 			// the corners in particular since they are especially difficult to see visually, due to having four large corner pieces blocking the view.
@@ -641,13 +646,13 @@ void ScummEngine_v6::o6_eq() {
 			// If either of these are true AND the x value is less than or equal to 279 OR greater than or equal to 354, make the game read as a ball.
 			// The strike zone should be much more lenient in the corners, as well as removing the small advantage of throwing to the farthest right side of the zone.
 			if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && (vm.slot[_currentScript].number == 2202 || vm.slot[_currentScript].number == 2192) && readVar(399) == 1) {
-				if (((readVar(0x8000 + 12) <= readVar(0x8000 + 29) + 2 || readVar(0x8000 + 12) >= readVar(0x8000 + 30) - 3) && readVar(0x8000 + 11) <= 279) ||
-					((readVar(0x8000 + 12) <= readVar(0x8000 + 29) + 2 || readVar(0x8000 + 12) >= readVar(0x8000 + 30) - 3) && readVar(0x8000 + 11) >= 354)) {
+				if (((pitchYValue <= strikeZoneTop + 2 || pitchYValue >= strikeZoneBottom - 3) && pitchXValue <= 279) ||
+					((pitchYValue <= strikeZoneTop + 2 || pitchYValue >= strikeZoneBottom - 3) && pitchXValue >= 354)) {
 					writeVar(0x8000 + 16, 2);
 				}
 				// if the ball's y location is 1 pixel higher than the bottom of the zone, then it will be a ball.
 				// This removes the small advantage of throwing at the very bottom of the zone.
-				if (readVar(0x8000 + 12) > readVar(0x8000 + 30) - 1) {
+				if (pitchYValue > strikeZoneBottom - 1) {
 					writeVar(0x8000 + 16, 2);
 				}
 			}
@@ -722,6 +727,7 @@ void ScummEngine_v6::o6_eq() {
 		// This code makes it so that generic players (and Mr. Clanky) play pro player music when hitting home runs.
 		// This is a purely aesthetic change, as they have no home run music by default.
 		if (_game.id == GID_BASEBALL2001 && _currentRoom == 3 && vm.slot[_currentScript].number == 11 && vm.localvar[_currentScript][0] > 61 && readVar(399) == 1) {
+			// this local variable checks for player ID
 			writeVar(0x4000 + 0, 60);
 		}
 	}
