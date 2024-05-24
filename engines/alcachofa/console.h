@@ -33,18 +33,21 @@ public:
 	~Console() override;
 
 	inline bool showInteractables() const { return _showInteractables; }
+	inline bool showCharacters() const { return _showCharacters; }
 	inline bool showFloor() const { return _showFloor; }
 	inline bool showFloorColor() const { return _showFloorColor; }
 
 	inline bool isAnyDebugDrawingOn() const {
 		return
 			_showInteractables ||
+			_showCharacters ||
 			_showFloor ||
 			_showFloorColor;
 	}
 
 private:
 	bool _showInteractables = true;
+	bool _showCharacters = true;
 	bool _showFloor = true;
 	bool _showFloorColor = false;
 };

@@ -62,9 +62,9 @@ Common::Error AlcachofaEngine::run() {
 	_drawQueue.reset(new DrawQueue(_renderer.get()));
 	_world.reset(new World());
 
-	world().globalRoom().loadResources();
+	//world().globalRoom().loadResources();
 
-	auto room = world().getRoomByName("CASA_FREDDY_ARRIBA");
+	auto room = world().getRoomByName("SALOON");
 	assert(room != nullptr);
 	world().currentRoom() = room;
 	room->loadResources();
