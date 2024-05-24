@@ -533,7 +533,7 @@ void ScummEngine_v6::o6_pushWordVar() {
 			int offset = _scriptPointer - _scriptOrgPointer;
 			int powerAdjustment = vm.localvar[_currentScript][4];
 			int pitchSelected = readVar(0x8000 + 10);
-			
+
 			// Checks if the swing is either Power or Line Drive
 			if (offset == 102789 && (readVar(387) == 1||readVar(387) == 2)) {
 				// Checks if the current pitch type is the same as that of the "remembered" pitch type
@@ -563,7 +563,7 @@ void ScummEngine_v6::o6_pushWordVar() {
 		}
 		// This sets the base cost of a slow ball to 2. Previously it costed the least of every pitch to throw, which resulted in people only using that pitch.
 		if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && vm.slot[_currentScript].number == 2057 && readVar(399) == 1) {
-		if (readVar(0x4000 + 1) == 15) {
+			if (readVar(0x4000 + 1) == 15) {
 				writeVar(0x4000 + 2, 2);
 			}
 		}
@@ -656,7 +656,7 @@ void ScummEngine_v6::o6_eq() {
 					writeVar(0x8000 + 16, 2);
 				}
 			}
-	
+
 		// This change affects the angle adjustment for each batting stance when timing your swing. There are complaints that
 		// the game does not give you enough control when batting, resulting in a lot of hits going to the same area. This should
 		// give players more agency on where they want to hit the ball, which will also increase the skill ceiling.
@@ -732,7 +732,7 @@ void ScummEngine_v6::o6_eq() {
 		}
 	}
 #endif
-	
+
 #if defined(USE_ENET) && defined(USE_LIBCURL)
 	int offset = _scriptPointer - _scriptOrgPointer;
 	// WORKAROUND: In Backyard Baseball 2001, The special rules of the Mountain Aire and Wilderness neighborhoods
