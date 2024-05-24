@@ -81,7 +81,7 @@ extern void *bofMemAlloc(uint32 nSize, const char *pFile, int nLine, bool bClear
 extern void bofMemFree(void *pBuf);
 
 #define bofAlloc(n) bofMemAlloc((n), __FILE__, __LINE__, false)
-#define bofCAlloc(n, m) bofMemAlloc((uint32)(n) * (m), __FILE__, __LINE__, true)
+#define bofCleanAlloc(n) bofMemAlloc((n), __FILE__, __LINE__, true)
 #define bofFree(p) bofMemFree((p))
 
 inline uint32 getFreePhysMem() {
