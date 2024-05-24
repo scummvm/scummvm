@@ -2169,7 +2169,7 @@ static void displayScripts() {
 		ImGui::SameLine(0, 40);
 
 		if (ImGui::BeginPopup("HistoryPopup")) {
-			for (int i = 0; i < _state->_functions._scripts.size(); i++) {
+			for (uint i = 0; i < _state->_functions._scripts.size(); i++) {
 				auto &script = _state->_functions._scripts[i];
 				bool selected = i == _state->_functions._current;
 				if (ImGui::Selectable(script.handlerName.c_str(), &selected)) {
