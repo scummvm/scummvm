@@ -81,9 +81,7 @@ void *bofMemAlloc(uint32 nSize, const char *pFile, int nLine, bool bClear) {
 	return pNewBlock;
 }
 
-void bofMemFree(void *pBuf, const char *pFile, int nLine) {
-	assert(pFile != nullptr);
-
+void bofMemFree(void *pBuf) {
 	free(pBuf);
 }
 
