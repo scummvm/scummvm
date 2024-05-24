@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-05-23 01:47+0000\n"
+"POT-Creation-Date: 2024-05-24 14:38+0000\n"
 "PO-Revision-Date: 2024-05-23 04:44+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translations.scummvm.org/"
@@ -3855,37 +3855,37 @@ msgstr "拉伸到窗口"
 msgid "Fit to window (4:3)"
 msgstr "适应窗口 (4:3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:799
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:811
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "分辨率：%dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:843
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:855
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2654
 msgid "Active graphics filter:"
 msgstr "活动图形过滤器："
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:864
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:876
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2688
 msgid "Enabled aspect ratio correction"
 msgstr "已启用宽高比矫正"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:866
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:878
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2694
 msgid "Disabled aspect ratio correction"
 msgstr "已禁用宽高比矫正"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:879
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:891
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2710
 msgid "Filtering enabled"
 msgstr "过滤已启用"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:881
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:893
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2712
 msgid "Filtering disabled"
 msgstr "过滤已禁用"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:907
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:919
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2739
 msgid "Stretch mode"
 msgstr "拉伸模式"
