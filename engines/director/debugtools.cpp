@@ -3275,6 +3275,8 @@ void onImGuiRender() {
 	ImGuiIO &io = ImGui::GetIO();
 	io.ConfigFlags &= ~(ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse);
 
+	ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
+
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("View")) {
 			ImGui::SeparatorText("Windows");
