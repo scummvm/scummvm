@@ -398,6 +398,7 @@ typedef struct ImGuiState {
 	} _selectedScoreCast;
 
 	int _scoreMode = 0;
+	int _scoreFrameOffset = 1;
 
 	ImFont *_tinyFont = nullptr;
 
@@ -2813,7 +2814,7 @@ const char *modes2[] = {
 
 static void displayScoreChannel(int ch, int mode, int modeSel) {
 	Score *score = g_director->getCurrentMovie()->getScore();
-	const uint numFrames = MIN(score->_scoreCache.size(), (uint)(kMaxColumnsInTable - 2));
+	uint numFrames = score->_scoreCache.size();
 
 	const uint currentFrameNum = score->getCurrentFrameNum();
 	const ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.7f, 0.7f, 0.0f, 0.65f));
@@ -2856,16 +2857,20 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 		ImGui::Unindent(indentSize);
 	}
 
+	numFrames -= _state->_scoreFrameOffset;
+	numFrames = MIN<uint>(numFrames, kMaxColumnsInTable - 2);
+
 	for (int f = 0; f < (int)numFrames; f++) {
-		Frame &frame = *score->_scoreCache[f];
+		Frame &frame = *score->_scoreCache[f + _state->_scoreFrameOffset];
 		Sprite &sprite = *frame._sprites[ch];
 
-		if (f == (int)currentFrameNum)
+		if (f + _state->_scoreFrameOffset == (int)currentFrameNum)
 			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
 
 		ImGui::TableNextColumn();
 
-		if (f == _state->_selectedScoreCast.frame && ch == _state->_selectedScoreCast.channel && mode <= kModeExtended)
+		if (f == _state->_selectedScoreCast.frame + _state->_scoreFrameOffset &&
+		  ch == _state->_selectedScoreCast.channel && mode <= kModeExtended)
 			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(0.7f, 0.7f, 0.7f, 0.3f)));
 
 		switch (mode) {
@@ -2937,7 +2942,7 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 		}
 
 		if (ImGui::IsItemClicked(0)) {
-			_state->_selectedScoreCast.frame = f;
+			_state->_selectedScoreCast.frame = f + _state->_scoreFrameOffset;
 			_state->_selectedScoreCast.channel = ch;
 		}
 	}
@@ -2972,6 +2977,9 @@ static void showScore() {
 
 		if (!numFrames || _state->_selectedScoreCast.channel >= (int)score->_scoreCache[0]->_sprites.size())
 			_state->_selectedScoreCast.channel = 0;
+
+		if (_state->_scoreFrameOffset >= numFrames)
+			_state->_scoreFrameOffset = 1;
 
 		{ // Render sprite details
 			Sprite *sprite = nullptr;
@@ -3139,8 +3147,30 @@ static void showScore() {
 		uint numChannels = score->_scoreCache[0]->_sprites.size();
 		uint tableColumns = MAX(numFrames + 5, 25U); // Set minimal table width to 25
 
+		{  // Render pagination
+			int frame = 1;
+
+			ImGui::Text("   Jump to frame: ");
+
+			ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
+
+			do {
+				ImGui::SameLine(0, 20);
+
+				if (ImGui::Selectable(Common::String::format("%d", frame).c_str(), frame == _state->_scoreFrameOffset, 0, ImVec2(30, 10)))
+					_state->_scoreFrameOffset = frame;
+
+				frame += 300;
+			} while (frame < numFrames);
+
+			ImGui::PopStyleVar();
+
+			ImGui::SameLine();
+			ImGui::Text(" of %d", numFrames);
+		}
+
 		if (tableColumns > kMaxColumnsInTable - 2) // Current restriction of ImGui
-			tableColumns = numFrames = 510;
+			tableColumns = kMaxColumnsInTable - 2;
 
 		ImGuiTableFlags addonFlags = _state->_scoreMode == kModeExtended ? 0 : ImGuiTableFlags_RowBg;
 
@@ -3155,7 +3185,7 @@ static void showScore() {
 
 			ImGui::TableSetupColumn("##", flags);
 			for (uint i = 0; i < tableColumns; i++)
-				ImGui::TableSetupColumn(((i + 1) % 5 ? " " : Common::String::format("%-2d", i + 1).c_str()), flags);
+				ImGui::TableSetupColumn(((i + _state->_scoreFrameOffset) % 5 ? " " : Common::String::format("%-2d", i + _state->_scoreFrameOffset).c_str()), flags);
 
 			ImGui::TableNextRow(ImGuiTableRowFlags_Headers);
 			ImGui::TableNextRow(0);
