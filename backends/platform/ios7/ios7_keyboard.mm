@@ -763,6 +763,11 @@
 	return YES;
 }
 
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+	[inputView returnKey];
+	return NO;
+}
+
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
 	if (ConfMan.getBool("keyboard_fn_bar"))
 		[inputView attachAccessoryView];
