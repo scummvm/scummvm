@@ -649,10 +649,14 @@ void MovieElement::activate() {
 			movieDataStream = new Common::SafeSeekableSubReadStream(stream, movieAsset->getMovieDataPos(), movieAsset->getMovieDataPos() + movieAsset->getMovieDataSize(), DisposeAfterUse::NO);
 		} else if (!movieAsset->getExtFileName().empty()) {
 			Common::File *file = new Common::File();
-			file->open(Common::Path(movieAsset->getExtFileName()));
-			assert(file->isOpen());
-			if (!file->isOpen())
-				warning("Unable to open external video file %s", movieAsset->getExtFileName().c_str());
+
+			if (!file->open(Common::Path(Common::String("VIDEO/") + movieAsset->getExtFileName()))) {
+				warning("Movie asset could not be opened: %s", movieAsset->getExtFileName().c_str());
+				delete file;
+				_videoDecoder.reset();
+				return;
+			}
+
 			movieDataStream = file;
 		} else {
 			// If no data size, the movie data is all over the file and the MOOV atom may be after it.
