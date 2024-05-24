@@ -345,6 +345,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "nikolaispace",		"Nikolai in Outer Space" },
 	{ "nikolaispaceedu",	"Nikolai Space Education" },
 	{ "nikolaitoys",		"NN'nN Toy Makers" },
+	{ "nikolaitrains",		"Nikolai's Trains" },
 	{ "nikolaitreats",		"Nikolai's Treats" },
 	{ "nile",				"Nile: Passage to Egypt" },
 	{ "nine",				"9: The Last Resort" },
@@ -5017,6 +5018,17 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINDEMO1("newslinks", "Demo", "NEWS.EXE", "22900fa6922d71b1f880aa3cc0bbad1a", 16526563, 404),
 
+	// Published by GTE Interactive
+	MACGAME1("nightlight", "",	   "Night Light",  "r:0c7bbb4b24823e5ab871cb4c1d6f3710", 484028, 404),
+	WINGAME1("nightlight", "",	   "NIGHTMPC.EXE", "t:b09110b0631277f73bca40c3fdeb752f", 8081957, 404),
+	WINGAME1("nightlight", "Test", "MPC_TEST.EXE", "t:3063f5c6c2fe13eb7d6aac42724e6150", 8087955, 404),
+
+	MACDEMO1("nightsky", "Sampler", "Night Sky Interactive Sampler", "cbce20666bfe47a9533331c6be1e6039", 285269, 400),
+	WINDEMO1("nightsky", "Sampler", "NIGHTSKY.EXE", "68f1fe67a5881fd47b08e905401d174c", 4300149, 404),
+
+	// Original filename is Visual日本地理DEMO
+	MACDEMO1_l("nihonchiri", "Demo", "Visual Nihon Chiri DEMO", "8b138db44d4421cc7294a9dc792ccf1b", 306940, Common::JA_JPN, 402),
+
 	// Published by Corel CD Home. Later released as Nikolai's Knights.
 	// Original Mac filename is In the Time of the Knights™
 	MACGAME2("nikolaiknights", "Corel", "xn--In the Time of the Knights-jf8p", "da0da5d543b237051975ad70bec129f4", 488222,
@@ -5029,16 +5041,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("nikolaitoys", "", "NNNN/xn--NNnN Toy Makers-5w9hs4m", "2c7d0c0d55cbe3f622c7d68cedb671e0", 486770, 404),
 	WINGAME1("nikolaitoys", "", "NNNN/NNN_TOYS.EXE", "22147e4c6311f670f72d43f8b793169e", 3206640, 404),
 
-	// Published by GTE Interactive
-	MACGAME1("nightlight", "",	   "Night Light",  "r:0c7bbb4b24823e5ab871cb4c1d6f3710", 484028, 404),
-	WINGAME1("nightlight", "",	   "NIGHTMPC.EXE", "t:b09110b0631277f73bca40c3fdeb752f", 8081957, 404),
-	WINGAME1("nightlight", "Test", "MPC_TEST.EXE", "t:3063f5c6c2fe13eb7d6aac42724e6150", 8087955, 404),
-
-	MACDEMO1("nightsky", "Sampler", "Night Sky Interactive Sampler", "cbce20666bfe47a9533331c6be1e6039", 285269, 400),
-	WINDEMO1("nightsky", "Sampler", "NIGHTSKY.EXE", "68f1fe67a5881fd47b08e905401d174c", 4300149, 404),
-
-	// Original filename is Visual日本地理DEMO
-	MACDEMO1_l("nihonchiri", "Demo", "Visual Nihon Chiri DEMO", "8b138db44d4421cc7294a9dc792ccf1b", 306940, Common::JA_JPN, 402),
+	MACGAME1("nikolaitrains", "", "N_TRAINS/xn--Nikolais Trains-bx9hn4m", "tr:fb7bd24f704008c1aabe178f12d6b82d", 295270, 403),
+	WINGAME1("nikolaitrains", "", "N_TRAINS/N_TRAINS.EXE", "t:dd5e437851b7527c0f45a8a21ccd741a", 4598516, 404),
 
 	MACGAME1("nile", "", "Nile Passage to Egypt", "9765ad17bce6a2b40dd7f48377e82436", 512734, 404),
 	WINGAME2("nile", "", "NILE.EXE",	 "9b00cbba14f0a2e0445784ebacf62c78", 2846777,
