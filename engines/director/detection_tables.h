@@ -2451,8 +2451,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("delphinokioku", "", "DELPHOI", "957b631d36a03be6c4671981a0b81681", 309951, Common::JA_JPN, 310),
 
-	MACGAME1("digby", "", "Start Digby's Adventures!", "7f443f2e63fd497a9ad85b10dc880a91", 383758, 313),
-	WINGAME1("digby", "", "DIGBY.EXE", "65d06b5fef155a2473434571aff5bc29", 370972, 310),
+	MACGAME1("digby", "", "Start Digby's Adventures!", "tr:394cff701f7eb8d7025c460d8750c2bc", 383502, 313),
+	WINGAME1("digby", "", "IADLDATA/DIGBY.EXE", "t:b62409eab5a466748e5817a22c030460", 370972, 310),
 
 	// Original filename is 恐竜サファリアドベンチャー デモ
 	// Full version isn't Director
