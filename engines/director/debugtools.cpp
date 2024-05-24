@@ -1427,7 +1427,7 @@ private:
 		node.block->accept(*this);
 
 		if (!isMethod) {
-			write(node.block->_endOffset, "end", _state->_colors._keyword_color);
+			write(node._endOffset, "end", _state->_colors._keyword_color);
 		}
 	}
 
