@@ -20,9 +20,9 @@ LRESULT CALLBACK GR_WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	grDispatcher *p = grDispatcher::instance(hwnd);
 	bool hittest = false;
 
+		warning("GR_WindowProc: %d", uMsg);
 #if 0
 	switch (uMsg) {
-		warning("GR_WindowProc: %d", uMsg);
 	case WM_SYSKEYDOWN:
 		if ((int)wParam != VK_F4)
 			return 0;

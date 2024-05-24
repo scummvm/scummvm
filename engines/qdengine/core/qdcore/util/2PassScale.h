@@ -67,7 +67,7 @@ private:
 	}
 
 	static inline int round(double x) {
-		int a;
+		int a = 0;
 		warning("STUB: C2PassScale::round(double)");
 #if 0
 		_asm {
@@ -78,7 +78,7 @@ private:
 		return a;
 	}
 	static inline int round(float x) {
-		int a;
+		int a = 0;
 		warning("STUB: C2PassScale::round(float)");
 #if 0
 		_asm {

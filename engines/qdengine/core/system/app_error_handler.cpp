@@ -44,8 +44,6 @@ void appErrorHandler::show_error(const char *subject, error_t err_code) {
 appErrorHandler::handler_result_t appErrorHandler::message_box(const char *subject, error_t err_code, int format) {
 	if (is_disabled_) return ERR_IGNORE;
 	xassert(err_code < ERR_MAX_TYPE);
-	warning("STUB: appErrorHandler::message_box()");
-#if 0
 	message_buf_ = error_messages_[err_code];
 	if (subject) {
 		message_buf_ += "\n";
@@ -67,6 +65,5 @@ appErrorHandler::handler_result_t appErrorHandler::message_box(const char *subje
 	default:
 		return ERR_ABORT;
 	}
-#endif
 	return ERR_ABORT;
 }

@@ -851,7 +851,7 @@ public:
 	}
 
 	// forward transform
-	xm_inline friend Vect2f &operator*= (Vect2f &v, const Mat2f &m) {
+	xm_inline friend Vect2f &operator*= (Vect2f v, const Mat2f &m) {
 		float x = v.x * m.xx + v.y * m.xy;
 		v.y = v.x * m.yx + v.y * m.yy;
 		v.x = x;
@@ -865,11 +865,9 @@ public:
 	static const Mat2f ID;
 };
 // forward transform
-#if 0
-xm_inline const Vect2f operator* (const Mat2f &m, const Vect2f &v) {
+xm_inline Vect2f operator* (const Mat2f &m, const Vect2f &v) {
 	return Vect2f(v) *= m;
 }
-#endif
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -896,7 +894,7 @@ public:
 	}
 
 	// forward transform
-	friend Vect2f &operator *=(Vect2f &v, const MatX2f &m) {
+	friend Vect2f &operator *=(Vect2f v, const MatX2f &m) {
 		v *= m.rot;
 		v += m.trans;
 		return v;
@@ -908,11 +906,10 @@ public:
 
 	static const MatX2f ID;
 };
-#if 0
+
 xm_inline const Vect2f operator* (const MatX2f &m, const Vect2f &v) {
 	return Vect2f(v) *= m;
 }
-#endif
 
 
 

@@ -68,8 +68,6 @@ bool is_file_exist(const char *file_name) {
 
 bool set_current_directory(const char *file_name) {
 
-	warning("STUB: set_current_directory()");
-#if 0
 	char fpath[_MAX_PATH];
 	_fullpath(fpath, file_name, _MAX_PATH);
 
@@ -82,15 +80,11 @@ bool set_current_directory(const char *file_name) {
 	buf.operator < (drive).operator < (dir);
 
 	SetCurrentDirectory(buf.c_str());
-#endif
-
 	return true;
 }
 
 const char *strip_path(const char *file_name) {
-	warning("STUB: strip_path()");
 	static XBuffer name_buf(_MAX_PATH);
-#if 0
 	char fname[_MAX_FNAME];
 	char ext[_MAX_EXT];
 
@@ -100,7 +94,7 @@ const char *strip_path(const char *file_name) {
 	name_buf.init();
 	name_buf.operator < (fname).operator < (ext);
 
-#endif
+
 	return name_buf.c_str();
 }
 
@@ -115,8 +109,6 @@ bool is_directory_exist(const char *dir_name) {
 }
 
 const char *strip_file_name(const char *path) {
-	warning("STUB: strip_file_name()");
-#if 0
 	char drive[_MAX_DRIVE];
 	char dir[_MAX_DIR];
 
@@ -128,12 +120,10 @@ const char *strip_file_name(const char *path) {
 	name_buf.operator < (drive).operator < (dir);
 
 	return name_buf.c_str();
-#endif
+
 }
 
 const char *get_ext(const char *file_name) {
-	warning("STUB: get_ext()");
-#if 0
 	char fname[_MAX_FNAME];
 	char ext[_MAX_EXT];
 
@@ -145,12 +135,9 @@ const char *get_ext(const char *file_name) {
 	name_buf.operator < (ext);
 
 	return name_buf.c_str();
-#endif
 }
 
 const char *change_ext(const char *file_name, const char *new_ext) {
-	warning("STUB: change_ext()");
-#if 0
 	char drive[_MAX_DRIVE];
 	char dir[_MAX_DIR];
 	char fname[_MAX_FNAME];
@@ -163,12 +150,9 @@ const char *change_ext(const char *file_name, const char *new_ext) {
 	name_buf.operator < (drive).operator < (dir).operator < (fname).operator < (new_ext);
 
 	return name_buf.c_str();
-#endif
 }
 
 bool create_directory(const char *path) {
-	warning("STUB: create_directory()");
-#if 0
 	static char cur_path[MAX_PATH];
 
 	GetCurrentDirectory(MAX_PATH, cur_path);
@@ -206,12 +190,13 @@ bool create_directory(const char *path) {
 
 	SetCurrentDirectory(cur_path);
 	return true;
-#endif
+
 }
 
 bool remove_directory(const char *path) {
-#if 0
 	char cur_path[MAX_PATH];
+	warning("STUB: remove_directory()");
+#if 0
 	GetCurrentDirectory(MAX_PATH, cur_path);
 
 	if (!SetCurrentDirectory(path)) return false;
@@ -235,13 +220,14 @@ bool remove_directory(const char *path) {
 	}
 
 	SetCurrentDirectory(cur_path);
-	return true;
 #endif
+	return true;
 }
 
 bool full_remove_directory(const char *path) {
-#if 0
 	char cur_path[MAX_PATH];
+	warning("STUB: full_remove_directory()");
+#if 0
 	GetCurrentDirectory(MAX_PATH, cur_path);
 
 	if (!SetCurrentDirectory(path)) return false;
@@ -283,7 +269,7 @@ unsigned file_size(const char *file_name) {
 // если файл уже существует убирает с него read-only/system/hidden аттрибуты)
 bool copy_file(const char *target, const char *source) {
 	app_io::create_directory(app_io::strip_file_name(target));
-
+	warning("STUB: copy_file()");
 #if 0
 	DWORD attr = GetFileAttributes(target);
 	if (attr != -1)
@@ -306,7 +292,6 @@ bool dupe_resolve_file_copy(std::string &target, const char *source) {
 		return copy_file(target.c_str(), source);
 
 	std::string correct_path = target;
-#if 0
 	char drive[_MAX_DRIVE];
 	char dir[_MAX_DIR];
 	char fname[_MAX_FNAME];
@@ -319,7 +304,6 @@ bool dupe_resolve_file_copy(std::string &target, const char *source) {
 		correct_path += '2'; // Добавляем двоечку перед именем файла
 		correct_path += ext;
 	}
-#endif
 
 	if (true == is_file_exist(correct_path.c_str()))
 		return false;

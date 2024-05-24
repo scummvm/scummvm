@@ -194,6 +194,7 @@ bool GDI_grDispatcher::StretchFlush(int x_dest, int y_dest, int sx_dest, int sy_
 bool GDI_grDispatcher::Finit() {
 	grDispatcher::Finit();
 
+	warning("STUB: GDI_grDispatcher::Finit");
 #if 0
 	if (dibHandle)
 		DeleteObject(dibHandle);
@@ -207,7 +208,6 @@ bool GDI_grDispatcher::Finit() {
 	dibPtr = NULL;
 	dibHandle = NULL;
 
-	warning("STUB: GDI_grDispatcher::Finit");
 	if (palette_mode_) {
 #if 0
 		HDC hdc = GetDC(NULL);
@@ -231,7 +231,7 @@ bool GDI_grDispatcher::Finit() {
 }
 
 bool GDI_grDispatcher::set_palette(const char *pal, int start_col, int pal_size) {
-	warning("STUB: GDI_grDispatcher::set_palette. Fix palette_ later.");
+	warning("STUB: GDI_grDispatcher::set_palette()");
 	if (!palette_mode_)
 		return false;
 

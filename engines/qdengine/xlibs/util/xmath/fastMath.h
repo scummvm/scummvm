@@ -19,7 +19,8 @@ inline float invSqrtFast(float x) {
 
 // В 3 раза быстрее за счет проверки аргументов, точная.
 inline float fmodFast(float a, float b) {
-	float result;
+	float result = 0.0f;
+	warning("STUB: fmodFast()");
 #if 0
 	_asm {
 		fld b
