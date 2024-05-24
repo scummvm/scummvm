@@ -264,9 +264,7 @@ ErrorCode CBofOptions::readSetting(const char *section, const char *option, int 
 
 	Common::sprintf_s(szDefault, "%d", defaultValue);
 	ErrorCode errorCode = readSetting(section, option, szBuf, szDefault, 20);
-
-	if (intValue != nullptr)
-		*intValue = atoi(szBuf);
+	*intValue = atoi(szBuf);
 
 	return errorCode;
 }

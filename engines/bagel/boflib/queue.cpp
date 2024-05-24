@@ -27,33 +27,6 @@ namespace Bagel {
 CQueue::CQueue() {
 }
 
-CQueue::CQueue(void *pObject) {
-	// Validate input
-	assert(pObject != nullptr);
-
-	// Start queue with this object
-	addItem(pObject);
-}
-
-CQueue::CQueue(CQueue *pQueue) {
-	// Validate input queue
-	assert(pQueue != nullptr);
-
-	CLList *pList = pQueue->_pQueueList;
-	while (pList != nullptr) {
-		addItem(pList->getData());
-		pList = pList->getNext();
-	}
-}
-
-CQueue::CQueue(const CQueue &cQueue) {
-	CLList *pList = cQueue._pQueueList;
-	while (pList != nullptr) {
-		addItem(pList->getData());
-		pList = pList->getNext();
-	}
-}
-
 CQueue::~CQueue() {
 	// Can't destruct if we don't exist
 	assert(isValidObject(this));

@@ -39,24 +39,6 @@ public:
 	CQueue();
 
 	/**
-	 * Constructor that adds a passed object onto the queue
-	 * @param pObject       First object
-	 */
-	CQueue(void *pObject);
-
-	/**
-	 * Constructor that copies an existing queue
-	 * @param pQueue        Source queue
-	 */
-	CQueue(CQueue *pQueue);
-
-	/**
-	 * Constructor that copies an existing queue
-	 * @param cQueue        Source queue
-	*/
-	CQueue(const CQueue &cQueue);
-
-	/**
 	 * Destructor
 	*/
 	virtual ~CQueue();
