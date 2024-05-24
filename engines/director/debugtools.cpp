@@ -2532,9 +2532,11 @@ static void displayScripts() {
 		ImGui::SetItemTooltip("Bytecode");
 		ImGui::Separator();
 
+		const ImVec2 childsize = ImGui::GetContentRegionAvail();
+		ImGui::BeginChild("##script", childsize);
 		ImGuiScript &script = _state->_functions._scripts[_state->_functions._current];
-		ImGui::Text("%s", script.handlerName.c_str());
 		renderScript(script, _state->_functions._showByteCode);
+		ImGui::EndChild();
 	}
 	ImGui::End();
 }
