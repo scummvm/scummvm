@@ -521,7 +521,7 @@ int32 ws_PreProcessPcode(uint32 **PC, Anim8 *myAnim8) {
 	// Check for arg2
 	myFormat = (opCode & OP_FORMAT2) >> 19;
 	if (myFormat) {
-		word2 = *myPC++;
+		word2 = FROM_LE_32(*myPC++);
 		myData = (word2 & OP_HIGH_DATA) >> 16;
 		if (!ExtractArg(myAnim8, myFormat, myData, &_GWS(myArg2), &_GWS(dataArg2))) {
 			return -1;
