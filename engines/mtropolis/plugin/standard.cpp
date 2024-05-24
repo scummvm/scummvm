@@ -236,6 +236,33 @@ MediaCueMessengerModifier::MediaCueMessengerModifier() : _isActive(false), _cueS
 	_mediaCue.sourceModifier = this;
 }
 
+MediaCueMessengerModifier::MediaCueMessengerModifier(const MediaCueMessengerModifier &other)
+	: _cueSourceType(other._cueSourceType), _cueSourceModifier(other._cueSourceModifier), _enableWhen(other._enableWhen), _disableWhen(other._disableWhen), _mediaCue(other._mediaCue), _isActive(other._isActive) {
+	_cueSource.destruct<uint64, &CueSourceUnion::asUnset>();
+
+	switch (_cueSourceType) {
+	case kCueSourceInteger:
+		_cueSource.construct<int32, &CueSourceUnion::asInt>(other._cueSource.asInt);
+		break;
+	case kCueSourceIntegerRange:
+		_cueSource.construct<IntRange, &CueSourceUnion::asIntRange>(other._cueSource.asIntRange);
+		break;
+	case kCueSourceVariableReference:
+		_cueSource.construct<uint32, &CueSourceUnion::asVarRefGUID>(other._cueSource.asVarRefGUID);
+		break;
+	case kCueSourceLabel:
+		_cueSource.construct<Label, &CueSourceUnion::asLabel>(other._cueSource.asLabel);
+		break;
+	case kCueSourceString:
+		_cueSource.construct<Common::String, &CueSourceUnion::asString>(other._cueSource.asString);
+		break;
+	default:
+		_cueSource.construct<uint64, &CueSourceUnion::asUnset>(0);
+		break;
+	}
+}
+
+
 MediaCueMessengerModifier::~MediaCueMessengerModifier() {
 	switch (_cueSourceType) {
 	case kCueSourceInteger:
@@ -251,7 +278,7 @@ MediaCueMessengerModifier::~MediaCueMessengerModifier() {
 		_cueSource.destruct<Label, &CueSourceUnion::asLabel>();
 		break;
 	case kCueSourceString:
-		// No destruct necessary, string is not in union
+		_cueSource.destruct<Common::String, &CueSourceUnion::asString>();
 		break;
 	default:
 		_cueSource.destruct<uint64, &CueSourceUnion::asUnset>();
