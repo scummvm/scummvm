@@ -472,8 +472,13 @@ void OpenGLSdlGraphicsManager::refreshScreen() {
 		ImGui::NewFrame();
 		_callbacks.render();
 		ImGui::Render();
-
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
+		SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+		SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
 	}
 #endif
 
@@ -616,11 +621,18 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	// Setup Dear ImGui
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+	ImGuiIO &io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+	ImGui::StyleColorsDark();
+	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+    ImGuiStyle& style = ImGui::GetStyle();
+	style.WindowRounding = 0.0f;
+	style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+	io.IniFilename = nullptr;
 	ImGui_ImplSDL2_InitForOpenGL(_window->getSDLWindow(), _glContext);
 	ImGui_ImplOpenGL3_Init("#version 110");
-	ImGui::StyleColorsDark();
-	ImGuiIO &io = ImGui::GetIO();
-	io.IniFilename = nullptr;
+
 	if (_callbacks.init) {
 		_callbacks.init();
 	}

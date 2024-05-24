@@ -10,7 +10,7 @@
 // THE REST OF YOUR APP SHOULD USE A DIFFERENT GL LOADER: ANY GL LOADER OF YOUR CHOICE.
 //
 // IF YOU GET BUILD ERRORS IN THIS FILE (commonly macro redefinitions or function redefinitions):
-// IT LIKELY MEANS THAT YOU ARE BUILDING 'imgui_impl_opengl3.cpp' OR INCUDING 'imgui_impl_opengl3_loader.h'
+// IT LIKELY MEANS THAT YOU ARE BUILDING 'imgui_impl_opengl3.cpp' OR INCLUDING 'imgui_impl_opengl3_loader.h'
 // IN THE SAME COMPILATION UNIT AS ONE OF YOUR FILE WHICH IS USING A THIRD-PARTY OPENGL LOADER.
 // (e.g. COULD HAPPEN IF YOU ARE DOING A UNITY/JUMBO BUILD, OR INCLUDING .CPP FILES FROM OTHERS)
 // YOU SHOULD NOT BUILD BOTH IN THE SAME COMPILATION UNIT.
@@ -123,7 +123,7 @@ extern "C" {
 ** included as <GL/glcorearb.h>.
 **
 ** glcorearb.h includes only APIs in the latest OpenGL core profile
-** implementation together with APIs in newer ARB extensions which
+** implementation together with APIs in newer ARB extensions which 
 ** can be supported by the core profile. It does not, and never will
 ** include functionality removed from the core profile, such as
 ** fixed-function vertex and fragment processing.
