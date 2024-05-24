@@ -122,8 +122,6 @@ ErrorCode CBagHelp::attach() {
 
 	uint32 size = file.getLength();
 	char *buffer = (char *)bofCAlloc(size + 1, 1);
-	if (buffer == nullptr)
-		fatalError(ERR_MEMORY, "Unable to allocate %d bytes to read %s.", size, _textFile.getBuffer());
 
 	file.read(buffer, size);
 

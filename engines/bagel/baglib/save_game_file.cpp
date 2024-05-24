@@ -232,7 +232,6 @@ ErrorCode CBagSaveGameFile::readTitle(int32 lSlot, StSavegameHeader *pSavedGame)
 		int32 lSize = getRecSize(lRecNum);
 
 		byte *pBuf = (byte *)bofAlloc(lSize);
-
 		readRecord(lRecNum, pBuf);
 
 		// Fill StSavegameHeader structure with this game's saved info

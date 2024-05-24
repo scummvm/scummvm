@@ -142,8 +142,6 @@ ErrorCode CBagTextObject::attach() {
 			// Allocate the buffers
 			uint32 nFileLen = fpTextFile.getLength();
 			char *pTextBuff = (char *)bofCAlloc(nFileLen + 1, 1);
-			if (pTextBuff == nullptr)
-				fatalError(ERR_MEMORY, "Unable to allocate a Text buffer of %u bytes", nFileLen + 1);
 
 			// Read the text file into buffers
 			fpTextFile.read(pTextBuff, nFileLen);

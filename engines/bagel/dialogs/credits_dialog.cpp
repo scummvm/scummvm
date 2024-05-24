@@ -142,8 +142,6 @@ ErrorCode CBagCreditsDialog::loadNextTextFile() {
 		// Read in text file
 		uint32 lSize = cFile.getLength();
 		_pszText = (char *)bofCAlloc(lSize + 1, 1);
-		if (_pszText == nullptr)
-			fatalError(ERR_MEMORY, "Unable to allocate %d bytes for Credits.", lSize);
 
 		cFile.read(_pszText, lSize);
 
