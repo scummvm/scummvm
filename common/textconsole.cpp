@@ -33,6 +33,16 @@ void setErrorOutputFormatter(OutputFormatter f) {
 	s_errorOutputFormatter = f;
 }
 
+static LogWatcher s_logWatcher = nullptr;
+
+void setLogWatcher(LogWatcher f) {
+	s_logWatcher = f;
+}
+
+LogWatcher getLogWatcher() {
+	return s_logWatcher;
+}
+
 static ErrorHandler s_errorHandler = nullptr;
 
 void setErrorHandler(ErrorHandler handler) {
@@ -52,6 +62,9 @@ void warning(const char *s, ...) {
 	va_start(va, s);
 	output = Common::String::vformat(s, va);
 	va_end(va);
+
+	if (Common::s_logWatcher)
+   		(*Common::s_logWatcher)(LogMessageType::kWarning, 0, 0, output.c_str());
 
 	output = "WARNING: " + output + "!\n";
 
@@ -88,6 +101,9 @@ void NORETURN_PRE error(const char *s, ...) {
 	buf_output[STRINGBUFLEN - 2] = '\0';
 	buf_output[STRINGBUFLEN - 1] = '\0';
 	Common::strcat_s(buf_output, "!\n");
+
+	if (Common::s_logWatcher)
+   		(*Common::s_logWatcher)(LogMessageType::kError, 0, 0, buf_output);
 
 	if (g_system)
 		g_system->logMessage(LogMessageType::kError, buf_output);

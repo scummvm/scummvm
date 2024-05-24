@@ -30,6 +30,7 @@
 #include "common/str-array.h" // For OSystem::updateStartSettings()
 #include "common/hash-str.h" // For OSystem::updateStartSettings()
 #include "common/path.h"
+#include "common/log.h"
 #include "graphics/pixelformat.h"
 #include "graphics/mode.h"
 #include "graphics/opengl/context.h"
@@ -111,21 +112,6 @@ struct TimeDate {
 	int tm_year;    /**< Year - 1900. */
 	int tm_wday;    /**< Days since Sunday (0 - 6). */
 };
-
-namespace LogMessageType {
-/**
- * Enumeration for log message types.
- * @ingroup common_system
- *
- */
-enum Type {
-	kInfo,    /**< Info logs. */
-	kError,   /**< Error logs. */
-	kWarning, /**< Warning logs. */
-	kDebug    /**< Debug logs. */
-};
-
-} // End of namespace LogMessageType
 
 /**
 * Pixel mask modes for cursor graphics.
