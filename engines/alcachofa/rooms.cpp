@@ -134,7 +134,7 @@ void Room::update() {
 	if (world().currentRoom() == this) {
 		g_engine->camera().update();
 		drawObjects();
-		world().globalRoom().drawObjects();
+		// TODO: world().globalRoom().drawObjects();
 		// TODO: Draw black borders
 		g_engine->drawQueue().draw();
 		drawDebug();

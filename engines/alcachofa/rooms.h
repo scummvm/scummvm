@@ -124,6 +124,11 @@ public:
 	inline Room *&currentRoom() { return _currentRoom; }
 	inline Room *currentRoom() const { return _currentRoom; }
 
+	inline bool somebodyUsing(ObjectBase *object) const {
+		return filemon().currentlyUsing() == object ||
+			mortadelo().currentlyUsing() == object;
+	}
+
 	MainCharacter &getMainCharacterByKind(MainCharacterKind kind) const;
 	Room *getRoomByName(const Common::String &name) const;
 	ObjectBase *getObjectByName(const Common::String &name) const;
