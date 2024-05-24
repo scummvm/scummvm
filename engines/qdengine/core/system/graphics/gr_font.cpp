@@ -25,8 +25,6 @@ grFont::~grFont() {
 }
 
 bool grFont::load(const char *fname) {
-	warning("STUB: grFont::load()");
-#if 0
 	XBuffer str(MAX_PATH);
 	str < fname < ".tga";
 	XStream fh;
@@ -40,7 +38,6 @@ bool grFont::load(const char *fname) {
 		if (load_index(fh))
 			return true;
 	}
-#endif
 	return false;
 }
 

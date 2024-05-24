@@ -46,7 +46,7 @@ ds_sndDispatcher::~ds_sndDispatcher() {
 	sounds_.clear();
 
 	mpegPlayer::deinit_library();
-
+	warning("STUB: ds_sndDispatcher::~ds_sndDispatcher()");
 #if 0
 	if (sound_device_)
 		sound_device_-> Release();

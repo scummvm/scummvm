@@ -101,9 +101,7 @@ bool grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *hwnd, 
 
 	changes_mask_.resize(changes_mask_size_x_ * changes_mask_size_y_);
 
-#if 0
-	SetWindowLong((HWND)Get_hWnd(), GWL_USERDATA, int(this));
-#endif
+	SetWindowLong((HWND)Get_hWnd(), GWL_USERDATA, (long)(this));
 
 	flags &= ~GR_REINIT;
 
@@ -723,11 +721,8 @@ bool grDispatcher::create_window(int sx, int sy) {
 
 bool grDispatcher::destroy_window() {
 	if (hWnd) {
-		warning("STUB: grDispatcher::destroy_window()");
-#if 0
 		ShowWindow((HWND)hWnd, SW_HIDE);
 		DestroyWindow((HWND)hWnd);
-#endif
 		hWnd = NULL;
 		return true;
 	}

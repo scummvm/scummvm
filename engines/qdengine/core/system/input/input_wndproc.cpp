@@ -15,8 +15,6 @@
 namespace input {
 
 bool keyboard_wndproc(const MSG &msg, keyboardDispatcher *dsp) {
-	warning("STUB: keyboard_wndproc()");
-#if 0
 	switch (msg.message) {
 	case WM_KEYDOWN:
 	case WM_SYSKEYDOWN:
@@ -29,8 +27,6 @@ bool keyboard_wndproc(const MSG &msg, keyboardDispatcher *dsp) {
 		inputRecorder::instance().dispatch_message(msg);
 		return true;
 	}
-#endif
-
 	return false;
 }
 

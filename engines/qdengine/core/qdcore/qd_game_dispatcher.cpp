@@ -3217,6 +3217,7 @@ const char *qdGameDispatcher::cd_request_string(int cd_id) const {
 
 void qdGameDispatcher::hide_game_window() const {
 	HWND hwnd = (HWND)appGetHandle();
+	warning("STUB: qdGameDispatcher::hide_game_window()");
 #if 0
 	ShowWindow(hwnd, SW_HIDE);
 	UpdateWindow(hwnd);
