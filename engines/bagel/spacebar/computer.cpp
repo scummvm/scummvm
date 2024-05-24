@@ -234,10 +234,8 @@ ErrorCode SBarComputer::readDrnkFile() {
 		return fpDrinkFile.getErrorCode();
 
 	// Check that buffers are null
-	if (_pDrinkBuff) {
-		delete _pDrinkBuff;
-		_pDrinkBuff = nullptr;
-	}
+	delete _pDrinkBuff;
+	_pDrinkBuff = nullptr;
 
 	// Allocate the buffers
 	_pDrinkBuff = (char *)bofAlloc(fpDrinkFile.getLength() + 1);
