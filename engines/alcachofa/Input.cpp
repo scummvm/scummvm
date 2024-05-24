@@ -29,6 +29,8 @@ namespace Alcachofa {
 void Input::nextFrame() {
 	_wasMouseLeftPressed = false;
 	_wasMouseRightPressed = false;
+	_wasMouseLeftReleased = false;
+	_wasMouseRightReleased = false;
 }
 
 bool Input::handleEvent(const Common::Event &event) {
@@ -38,6 +40,7 @@ bool Input::handleEvent(const Common::Event &event) {
 		_isMouseLeftDown = true;
 		return true;
 	case EVENT_LBUTTONUP:
+		_wasMouseLeftReleased = true;
 		_isMouseLeftDown = false;
 		return true;
 	case EVENT_RBUTTONDOWN:
@@ -45,6 +48,7 @@ bool Input::handleEvent(const Common::Event &event) {
 		_isMouseRightDown = true;
 		return true;
 	case EVENT_RBUTTONUP:
+		_wasMouseRightReleased = true;
 		_isMouseRightDown = false;
 		return true;
 	case EVENT_MOUSEMOVE: {

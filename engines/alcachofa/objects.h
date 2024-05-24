@@ -116,17 +116,26 @@ public:
 	ShapeObject(Room *room, Common::ReadStream &stream);
 	virtual ~ShapeObject() override = default;
 
+	virtual void update() override;
 	virtual void serializeSave(Common::Serializer &serializer) override;
 	virtual Shape *shape() override;
 	virtual CursorType cursorType() const;
+	virtual void onHoverStart();
+	virtual void onHoverEnd();
+	virtual void onHoverUpdate();
+	virtual void onClick();
+	void markSelected();
 
+protected:
+	void updateSelection();
+
+	// original inconsistency: base class has member that is read by the sub classes
+	int8 _order = 0;
 private:
 	Shape _shape;
 	CursorType _cursorType;
-
-protected:
-	// original inconsistency: base class has member that is read by the sub classes
-	int8 _order = 0;
+	bool _isSelected = false,
+		_wasSelected = false;
 };
 
 class PhysicalObject : public ShapeObject {
@@ -302,10 +311,17 @@ public:
 	Character(Room *room, Common::ReadStream &stream);
 	virtual ~Character() override = default;
 
+	virtual void update() override;
+	virtual void draw() override;
+	virtual void drawDebug() override;
+	virtual void loadResources() override;
+	virtual void freeResources() override;
 	virtual void serializeSave(Common::Serializer &serializer) override;
+	virtual Graphic *graphic() override;
 
 protected:
 	void syncObjectAsString(Common::Serializer &serializer, ObjectBase *&object);
+	void updateTalkingAnimation();
 
 private:
 	Common::Point _interactionPoint;
@@ -365,6 +381,7 @@ public:
 	virtual ~MainCharacter() override;
 
 	inline MainCharacterKind kind() const { return _kind; }
+	inline ObjectBase *currentlyUsing() const { return _currentlyUsingObject; }
 
 	virtual void serializeSave(Common::Serializer &serializer) override;
 

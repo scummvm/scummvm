@@ -68,6 +68,69 @@ Character::Character(Room *room, ReadStream &stream)
 	_order = _graphicNormal.order();
 }
 
+static Graphic *graphicOf(ObjectBase *object, Graphic *fallback = nullptr) {
+	auto objectGraphic = object == nullptr ? nullptr : object->graphic();
+	return objectGraphic == nullptr ? fallback : objectGraphic;
+}
+
+void Character::update() {
+	if (!isEnabled())
+		return;
+	updateSelection();
+
+	Graphic *animateGraphic = graphicOf(_curAnimateObject);
+	if (animateGraphic != nullptr) {
+		animateGraphic->center() = Point(0, 0);
+		animateGraphic->update();
+	}
+	else if (_isTalking)
+		updateTalkingAnimation();
+	else if (g_engine->world().somebodyUsing(this)) {
+		Graphic *talkGraphic = graphicOf(_curTalkingObject, &_graphicTalking);
+		talkGraphic->start(true);
+		talkGraphic->pause();
+		talkGraphic->update();
+	}
+	else
+		_graphicNormal.update();
+}
+
+void Character::updateTalkingAnimation() {
+	Graphic *talkGraphic = graphicOf(_curTalkingObject, &_graphicTalking);
+	if (!_isTalking) {
+		talkGraphic->reset();
+		return;
+	}
+	// TODO: Add lip-sync(?) animation behavior
+	talkGraphic->update();
+}
+
+void Character::draw() {
+	if (!isEnabled())
+		return;
+	Graphic *activeGraphic = graphic();
+	assert(activeGraphic != nullptr);
+	g_engine->drawQueue().add<AnimationDrawRequest>(*activeGraphic, true, BlendMode::AdditiveAlpha, _lodBias);
+}
+
+void Character::drawDebug() {
+	auto renderer = dynamic_cast<IDebugRenderer *>(&g_engine->renderer());
+	if (!g_engine->console().showCharacters() || renderer == nullptr || !isEnabled())
+		return;
+
+	renderer->debugShape(*shape());
+}
+
+void Character::loadResources() {
+	_graphicNormal.loadResources();
+	_graphicTalking.loadResources();
+}
+
+void Character::freeResources() {
+	_graphicNormal.freeResources();
+	_graphicTalking.freeResources();
+}
+
 void Character::serializeSave(Serializer &serializer) {
 	ShapeObject::serializeSave(serializer);
 	serializer.syncAsByte(_isTalking);
@@ -77,6 +140,15 @@ void Character::serializeSave(Serializer &serializer) {
 	syncObjectAsString(serializer, _curAnimateObject);
 	syncObjectAsString(serializer, _curTalkingObject);
 	serializer.syncAsFloatLE(_lodBias);
+}
+
+Graphic *Character::graphic() {
+	Graphic *activeGraphic = graphicOf(_curAnimateObject);
+	if (activeGraphic == nullptr && (_isTalking || g_engine->world().somebodyUsing(this)))
+		activeGraphic = graphicOf(_curTalkingObject, &_graphicTalking);
+	if (activeGraphic == nullptr)
+		activeGraphic = &_graphicNormal;
+	return activeGraphic;
 }
 
 void Character::syncObjectAsString(Serializer &serializer, ObjectBase *&object) {

@@ -30,6 +30,10 @@ class Input {
 public:
 	inline bool wasMouseLeftPressed() const { return _wasMouseLeftPressed; }
 	inline bool wasMouseRightPressed() const { return _wasMouseRightPressed; }
+	inline bool wasAnyMousePressed() const { return _wasMouseLeftPressed || _wasMouseRightPressed; }
+	inline bool wasMouseLeftReleased() const { return _wasMouseLeftReleased; }
+	inline bool wasMouseRightReleased() const { return _wasMouseRightReleased; }
+	inline bool wasAnyMouseReleased() const { return _wasMouseLeftReleased || _wasMouseRightReleased; }
 	inline bool isMouseLeftDown() const { return _isMouseLeftDown; }
 	inline bool isMouseRightDown() const { return _isMouseRightDown; }
 	inline const Common::Point &mousePos2D() const { return _mousePos2D; }
@@ -42,6 +46,8 @@ private:
 	bool
 		_wasMouseLeftPressed,
 		_wasMouseRightPressed,
+		_wasMouseLeftReleased,
+		_wasMouseRightReleased,
 		_isMouseLeftDown,
 		_isMouseRightDown;
 	Common::Point

@@ -19,18 +19,21 @@
  *
  */
 
-#include "alcachofa/console.h"
+#ifndef PLAYER_H
+#define PLAYER_H
 
 namespace Alcachofa {
 
-Console::Console() : GUI::Debugger() {
-	registerVar("showInteractables", &_showInteractables);
-	registerVar("showCharacters", &_showCharacters);
-	registerVar("showFloor", &_showFloor);
-	registerVar("showFloorColor", &_showFloorColor);
+class ShapeObject;
+
+class Player {
+public:
+    inline ShapeObject *selectedObject() { return _selectedObject; }
+
+private:
+    ShapeObject *_selectedObject = nullptr;
+};
+
 }
 
-Console::~Console() {
-}
-
-} // End of namespace Alcachofa
+#endif // PLAYER_H

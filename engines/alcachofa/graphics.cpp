@@ -253,7 +253,7 @@ static void fullBlend(const ManagedSurface &source, ManagedSurface &destination,
 	assert(offsetY >= 0 && offsetY + source.h <= destination.h);
 
 	const byte *sourceLine = (byte *)source.getPixels();
-	byte *destinationLine = (byte *)destination.getPixels() + offsetY * source.pitch + offsetX * 4;
+	byte *destinationLine = (byte *)destination.getPixels() + offsetY * destination.pitch + offsetX * 4;
 	for (int y = 0; y < source.h; y++) {
 		const byte *sourcePixel = sourceLine;
 		byte *destPixel = destinationLine;

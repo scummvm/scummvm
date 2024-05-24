@@ -154,6 +154,15 @@ ShapeObject::ShapeObject(Room *room, ReadStream &stream)
 	, _cursorType((CursorType)stream.readSint32LE()) {
 }
 
+void ShapeObject::update() {
+	if (isEnabled())
+		updateSelection();
+	else {
+		_isSelected = false;
+		_wasSelected = false;
+	}
+}
+
 void ShapeObject::serializeSave(Serializer &serializer) {
 	serializer.syncAsSByte(_order);
 }
@@ -164,6 +173,45 @@ Shape *ShapeObject::shape() {
 
 CursorType ShapeObject::cursorType() const {
 	return _cursorType;
+}
+
+void ShapeObject::onHoverStart() {
+	onHoverUpdate();
+}
+
+void ShapeObject::onHoverEnd() {
+}
+
+void ShapeObject::onHoverUpdate() {
+	// TODO: Add text request for name
+}
+
+void ShapeObject::onClick() {
+	onHoverUpdate();
+}
+
+void ShapeObject::markSelected() {
+	_isSelected = true;
+}
+
+void ShapeObject::updateSelection() {
+	if (_isSelected) {
+		_isSelected = false;
+		if (_wasSelected) {
+			if (g_engine->input().wasAnyMouseReleased() && g_engine->player().selectedObject() == this)
+				onClick();
+			else
+				onHoverUpdate();
+		}
+		else {
+			_wasSelected = true;
+			onHoverStart();
+		}
+	}
+	else if (_wasSelected) {
+		_wasSelected = false;
+		onHoverEnd();
+	}
 }
 
 PhysicalObject::PhysicalObject(Room *room, ReadStream &stream)
