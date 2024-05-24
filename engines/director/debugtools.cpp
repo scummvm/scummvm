@@ -2505,15 +2505,14 @@ static void displayScripts() {
 		}
 		ImGui::EndDisabled();
 		ImGui::SetItemTooltip("Forward");
-		ImGui::SameLine(0, 20);
+		ImGui::SameLine();
 
-		if (ImGui::Button("\ue889")) { // History	// history
-			ImGui::OpenPopup("HistoryPopup");
+		const char *currentScript = nullptr;
+		if (_state->_functions._current < _state->_functions._scripts.size()) {
+			currentScript = _state->_functions._scripts[_state->_functions._current].handlerName.c_str();
 		}
-		ImGui::SetItemTooltip("History");
-		ImGui::SameLine(0, 40);
 
-		if (ImGui::BeginPopup("HistoryPopup")) {
+		if (ImGui::BeginCombo("##handlers", currentScript)) {
 			for (uint i = 0; i < _state->_functions._scripts.size(); i++) {
 				auto &script = _state->_functions._scripts[i];
 				bool selected = i == _state->_functions._current;
@@ -2521,8 +2520,9 @@ static void displayScripts() {
 					_state->_functions._current = i;
 				}
 			}
-			ImGui::EndPopup();
+			ImGui::EndCombo();
 		}
+		ImGui::SameLine(0, 20);
 
 		toggleButton("\uf569", &_state->_functions._showByteCode, true); // Lingo		// package_2
 		ImGui::SetItemTooltip("Lingo");
