@@ -461,45 +461,58 @@ OSystem::TransactionError MetalGraphicsManager::endGFXTransaction() {
 #endif
 
 	do {
-		if (_transactionMode == kTransactionActive) {
-			// Try to setup the old state in case its valid and is
-			// actually different from the new one.
-			if (_oldState.valid && _oldState != _currentState) {
-				// Give some hints on what failed to set up.
-				if (   _oldState.gameWidth  != _currentState.gameWidth
-					|| _oldState.gameHeight != _currentState.gameHeight) {
-					transactionError |= OSystem::kTransactionSizeChangeFailed;
-				}
+		const uint desiredAspect = getDesiredGameAspectRatio();
+		const uint requestedWidth  = _currentState.gameWidth;
+		const uint requestedHeight = intToFrac(requestedWidth) / desiredAspect;
 
+		if (!loadVideoMode(requestedWidth, requestedHeight,
 #ifdef USE_RGB_COLOR
-				if (_oldState.gameFormat != _currentState.gameFormat) {
-					transactionError |= OSystem::kTransactionFormatNotSupported;
-				}
+						   _currentState.gameFormat
+#else
+						   Graphics::PixelFormat::createFormatCLUT8()
 #endif
-
-				if (_oldState.aspectRatioCorrection != _currentState.aspectRatioCorrection) {
-					transactionError |= OSystem::kTransactionAspectRatioFailed;
-				}
-
-				if (_oldState.graphicsMode != _currentState.graphicsMode) {
-					transactionError |= OSystem::kTransactionModeSwitchFailed;
-				}
-
-				if (_oldState.filtering != _currentState.filtering) {
-					transactionError |= OSystem::kTransactionFilteringFailed;
-				}
+						  )
+			) {
+			if (_transactionMode == kTransactionActive) {
+				// Try to setup the old state in case its valid and is
+				// actually different from the new one.
+				if (_oldState.valid && _oldState != _currentState) {
+					// Give some hints on what failed to set up.
+					if (   _oldState.gameWidth  != _currentState.gameWidth
+						|| _oldState.gameHeight != _currentState.gameHeight) {
+						transactionError |= OSystem::kTransactionSizeChangeFailed;
+					}
+					
+#ifdef USE_RGB_COLOR
+					if (_oldState.gameFormat != _currentState.gameFormat) {
+						transactionError |= OSystem::kTransactionFormatNotSupported;
+					}
+#endif
+					
+					if (_oldState.aspectRatioCorrection != _currentState.aspectRatioCorrection) {
+						transactionError |= OSystem::kTransactionAspectRatioFailed;
+					}
+					
+					if (_oldState.graphicsMode != _currentState.graphicsMode) {
+						transactionError |= OSystem::kTransactionModeSwitchFailed;
+					}
+					
+					if (_oldState.filtering != _currentState.filtering) {
+						transactionError |= OSystem::kTransactionFilteringFailed;
+					}
 #ifdef USE_SCALERS
-				if (_oldState.scalerIndex != _currentState.scalerIndex) {
-					transactionError |= OSystem::kTransactionModeSwitchFailed;
-				}
+					if (_oldState.scalerIndex != _currentState.scalerIndex) {
+						transactionError |= OSystem::kTransactionModeSwitchFailed;
+					}
 #endif
-
-				// Roll back to the old state.
-				_currentState = _oldState;
-				_transactionMode = kTransactionRollback;
-
-				// Try to set up the old state.
-				continue;
+					
+					// Roll back to the old state.
+					_currentState = _oldState;
+					_transactionMode = kTransactionRollback;
+					
+					// Try to set up the old state.
+					continue;
+				}
 			}
 
 			// DON'T use error(), as this tries to bring up the debug
@@ -660,10 +673,6 @@ void MetalGraphicsManager::updateScreen() {
 
 	_pipeline->setLoadAction(MTL::LoadActionLoad);
 
-	if (!_overlayVisible) {
-		_targetBuffer->enableScissorTest(false);
-	}
-
 	// Third step: Draw the overlay if visible.
 	if (_overlayVisible) {
 		int dstX = (_windowWidth - _overlayDrawRect.width()) / 2;
@@ -675,6 +684,10 @@ void MetalGraphicsManager::updateScreen() {
 	// Fourth step: Draw the cursor if we didn't before.
 	if (drawCursor)
 		renderCursor();
+
+	if (!_overlayVisible) {
+		_targetBuffer->enableScissorTest(false);
+	}
 
 	_cursorNeedsRedraw = false;
 	_forceRedraw = false;

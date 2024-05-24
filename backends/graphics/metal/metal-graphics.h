@@ -233,6 +233,21 @@ private:
 
 protected:
 	/**
+	 * Set up the requested video mode. This takes parameters which describe
+	 * what resolution the game screen requests (this is possibly aspect ratio
+	 * corrected!).
+	 *
+	 * A sub-class should take these parameters as hints. It might very well
+	 * set up a mode which it thinks suites the situation best.
+	 *
+	 * @parma requestedWidth  This is the requested actual game screen width.
+	 * @param requestedHeight This is the requested actual game screen height.
+	 * @param format          This is the requested pixel format of the virtual game screen.
+	 * @return true on success, false otherwise
+	 */
+	virtual bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) = 0;
+
+	/**
 	 * Refresh the screen contents.
 	 */
 	virtual void refreshScreen() = 0;

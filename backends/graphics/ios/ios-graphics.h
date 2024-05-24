@@ -52,6 +52,7 @@ public:
 		int screenWidth, screenHeight;
 		bool aspectRatio;
 		bool cursorPalette;
+		bool filteringMode;
 
 #ifdef USE_RGB_COLOR
 		Graphics::PixelFormat pixelFormat;

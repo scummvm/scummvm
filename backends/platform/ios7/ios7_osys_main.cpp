@@ -48,6 +48,7 @@
 #include "gui/gui-manager.h"
 
 #include "backends/graphics/ios/ios-graphics.h"
+#include "backends/graphics/ios/ios-metal-graphics.h"
 #include "backends/graphics3d/ios/ios-graphics3d.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
@@ -92,7 +93,7 @@ public:
 OSystem_iOS7::OSystem_iOS7() :
 	_mixer(NULL), _queuedEventTime(0),
 	_screenOrientation(kScreenOrientationAuto),
-	_runningTasks(0) {
+	_runningTasks(0), _currentGraphicMode(IOS7_GFX_OPENGLES) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
 	_currentTouchMode = kTouchModeTouchpad;
 
@@ -118,6 +119,20 @@ void *OSystem_iOS7::getOpenGLProcAddress(const char *name) const {
 }
 #endif
 
+const OSystem::GraphicsMode iOS7GraphicsModes[] = {
+#if defined(USE_OPENGL) && defined(USE_GLAD)
+	{ "opengl",  _s("OpenGLES"), IOS7_GFX_OPENGLES },
+#endif
+#if defined(USE_METAL_CPP)
+	{ "metal",  _s("Metal"), IOS7_GFX_METAL },
+#endif
+	{ nullptr, nullptr, 0 }
+};
+
+const OSystem::GraphicsMode *OSystem_iOS7::getSupportedGraphicsModes() const {
+	return iOS7GraphicsModes;
+}
+
 int OSystem_iOS7::timerHandler(int t) {
 	DefaultTimerManager *tm = (DefaultTimerManager *)g_system->getTimerManager();
 	tm->handler();
@@ -131,7 +146,14 @@ void OSystem_iOS7::initBackend() {
 
 	_startTime = CACurrentMediaTime();
 
-	_graphicsManager = new iOSGraphicsManager();
+	Common::String gfx_mode = Common::String(ConfMan.get("gfx_mode").c_str());
+	if (gfx_mode.compareTo(Common::String("metal"))) {
+		_graphicsManager = new iOSMetalGraphicsManager();
+		_currentGraphicMode = IOS7_GFX_METAL;
+	} else {
+		_graphicsManager = new iOSGraphicsManager();
+		_currentGraphicMode = IOS7_GFX_OPENGLES;
+	}
 
 	setupMixer();
 
@@ -208,11 +230,19 @@ bool OSystem_iOS7::setGraphicsMode(int mode, uint flags) {
 		_graphicsManager = manager;
 		commonGraphics = manager;
 		switchedManager = true;
-	} else if (!render3d && supports3D) {
+	} else if ((!render3d && supports3D) ||
+			   mode != _currentGraphicMode) {
 		delete _graphicsManager;
-		iOSGraphicsManager *manager = new iOSGraphicsManager();
-		_graphicsManager = manager;
-		commonGraphics = manager;
+		if (mode == IOS7_GFX_METAL) {
+			iOSMetalGraphicsManager *manager = new iOSMetalGraphicsManager();
+			_graphicsManager = manager;
+			commonGraphics = manager;
+		} else {
+			iOSGraphicsManager *manager = new iOSGraphicsManager();
+			_graphicsManager = manager;
+			commonGraphics = manager;
+		}
+		_currentGraphicMode = mode;
 		switchedManager = true;
 	}
 
@@ -221,8 +251,13 @@ bool OSystem_iOS7::setGraphicsMode(int mode, uint flags) {
 		// This is needed so that we can check the supported pixel formats when
 		// restoring the state.
 		_graphicsManager->beginGFXTransaction();
-		if (!_graphicsManager->setGraphicsMode(mode, flags))
+		if (!_graphicsManager->setGraphicsMode(0, flags))
 			return false;
+
+		if (gfxManagerState.screenWidth == 0 || gfxManagerState.screenHeight == 0) {
+			gfxManagerState.screenWidth = 320;
+			gfxManagerState.screenHeight = 200;
+		}
 		_graphicsManager->initSize(gfxManagerState.screenWidth, gfxManagerState.screenHeight);
 		_graphicsManager->endGFXTransaction();
 
@@ -244,7 +279,7 @@ bool OSystem_iOS7::setGraphicsMode(int mode, uint flags) {
 		_graphicsManager->beginGFXTransaction();
 		return true;
 	} else {
-		return _graphicsManager->setGraphicsMode(mode, flags);
+		return _graphicsManager->setGraphicsMode(0, flags);
 	}
  }
 

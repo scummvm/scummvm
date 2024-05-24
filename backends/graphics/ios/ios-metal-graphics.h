@@ -47,7 +47,8 @@ public:
 
 protected:
 	void setSystemMousePosition(const int x, const int y) override {}
-	
+	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) override;
+
 	void showOverlay(bool inGUI) override;
 	void hideOverlay() override;
 	void refreshScreen() override;

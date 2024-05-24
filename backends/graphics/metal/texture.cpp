@@ -462,7 +462,7 @@ void TextureRGB555::updateMetalTexture() {
 
 TextureRGBA8888Swap::TextureRGBA8888Swap(MTL::Device *device)
 #ifdef SCUMM_LITTLE_ENDIAN
-	: FakeTexture(device, MTL::PixelFormatBGRA8Unorm, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) // RGBA8888 -> ABGR8888
+	: FakeTexture(device, MTL::PixelFormatRGBA8Unorm, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) // RGBA8888 -> ABGR8888
 #else
 	: FakeTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) // ABGR8888 -> RGBA8888
 #endif

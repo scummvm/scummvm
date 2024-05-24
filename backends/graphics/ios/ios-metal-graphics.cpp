@@ -75,6 +75,8 @@ iOSCommonGraphics::State iOSMetalGraphicsManager::getState() const {
 	state.screenHeight  = getHeight();
 	state.aspectRatio   = getFeatureState(OSystem::kFeatureAspectRatioCorrection);
 	state.cursorPalette = getFeatureState(OSystem::kFeatureCursorPalette);
+	state.filteringMode = getFeatureState(OSystem::kFeatureFilteringMode);
+
 #ifdef USE_RGB_COLOR
 	state.pixelFormat   = getScreenFormat();
 #endif
@@ -90,6 +92,7 @@ bool iOSMetalGraphicsManager::setState(const iOSCommonGraphics::State &state) {
 #endif
 	setFeatureState(OSystem::kFeatureAspectRatioCorrection, state.aspectRatio);
 	setFeatureState(OSystem::kFeatureCursorPalette, state.cursorPalette);
+	setFeatureState(OSystem::kFeatureFilteringMode, state.filteringMode);
 
 	return endGFXTransaction() == OSystem::kTransactionSuccess;
 }
@@ -107,6 +110,11 @@ bool iOSMetalGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 
 float iOSMetalGraphicsManager::getHiDPIScreenFactor() const {
 	return dynamic_cast<OSystem_iOS7 *>(g_system)->getSystemHiDPIScreenFactor();
+}
+
+bool iOSMetalGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) {
+	/* The iOS and tvOS video modes are always full screen */
+	return true;
 }
 
 void iOSMetalGraphicsManager::showOverlay(bool inGUI) {

@@ -80,6 +80,7 @@ iOSCommonGraphics::State iOSGraphicsManager::getState() const {
 	state.screenHeight  = getHeight();
 	state.aspectRatio   = getFeatureState(OSystem::kFeatureAspectRatioCorrection);
 	state.cursorPalette = getFeatureState(OSystem::kFeatureCursorPalette);
+	state.filteringMode = getFeatureState(OSystem::kFeatureFilteringMode);
 #ifdef USE_RGB_COLOR
 	state.pixelFormat   = getScreenFormat();
 #endif
@@ -96,6 +97,7 @@ bool iOSGraphicsManager::setState(const iOSCommonGraphics::State &state) {
 #endif
 	setFeatureState(OSystem::kFeatureAspectRatioCorrection, state.aspectRatio);
 	setFeatureState(OSystem::kFeatureCursorPalette, state.cursorPalette);
+	setFeatureState(OSystem::kFeatureFilteringMode, state.filteringMode);
 
 	return endGFXTransaction() == OSystem::kTransactionSuccess;
 }

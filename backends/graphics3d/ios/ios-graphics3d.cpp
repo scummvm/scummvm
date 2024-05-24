@@ -159,6 +159,8 @@ iOSCommonGraphics::State iOSGraphics3dManager::getState() const {
 	state.screenHeight  = getHeight();
 	state.aspectRatio   = getFeatureState(OSystem::kFeatureAspectRatioCorrection);
 	state.cursorPalette = getFeatureState(OSystem::kFeatureCursorPalette);
+	state.filteringMode = getFeatureState(OSystem::kFeatureFilteringMode);
+	
 #ifdef USE_RGB_COLOR
 	state.pixelFormat   = getScreenFormat();
 #endif
@@ -169,6 +171,7 @@ bool iOSGraphics3dManager::setState(const iOSCommonGraphics::State &state) {
 	initSize(state.screenWidth, state.screenHeight, nullptr);
 	setFeatureState(OSystem::kFeatureAspectRatioCorrection, state.aspectRatio);
 	setFeatureState(OSystem::kFeatureCursorPalette, state.cursorPalette);
+	setFeatureState(OSystem::kFeatureFilteringMode, state.filteringMode);
 
 	return true;
 }

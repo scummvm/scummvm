@@ -41,6 +41,11 @@
 #define AUDIO_SAMPLE_RATE 44100
 #define MAX_IOS7_SCUMMVM_LOG_FILESIZE_IN_BYTES (100*1024)
 
+enum {
+	IOS7_GFX_OPENGLES = 0,
+	IOS7_GFX_METAL
+};
+
 typedef void (*SoundProc)(void *param, byte *buf, int len);
 typedef int (*TimerProc)(int interval);
 
@@ -75,6 +80,8 @@ protected:
 	Common::String _lastErrorMessage;
 
 	Common::String _chrootBasePath;
+
+	int _currentGraphicMode;
 
 public:
 
@@ -125,6 +132,7 @@ public:
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 	OpenGL::ContextType getOpenGLType() const override { return OpenGL::kContextGLES2; }
 #endif
+	const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
 
 public:
 	bool pollEvent(Common::Event &event) override;
