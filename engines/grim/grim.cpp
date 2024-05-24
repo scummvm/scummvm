@@ -1060,7 +1060,7 @@ void GrimEngine::mainLoop() {
 						continue;
 					}
 
-					if (_mode != DrawMode && _mode != SmushMode && (event.kbd.ascii == 'q')) {
+					if (_mode != DrawMode && _mode != SmushMode && ((event.kbd.ascii == 'q') || (event.kbd.ascii == 'x' && event.kbd.flags & Common::KBD_ALT))) {
 						handleExit();
 						break;
 					} else if (_mode != DrawMode && (event.kbd.keycode == Common::KEYCODE_PAUSE)) {
