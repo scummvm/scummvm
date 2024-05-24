@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-05-24 14:38+0000\n"
-"PO-Revision-Date: 2024-04-30 18:40+0000\n"
+"PO-Revision-Date: 2024-05-25 02:42+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -5377,83 +5377,63 @@ msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:46
 msgid "LIBRETRO PLAYLIST GENERATOR"
-msgstr ""
+msgstr "LIBRETRO SOITTOLISTAN LUOJA"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:47
 msgid "(check '? > Libretro playlist' for detailed info)"
-msgstr ""
+msgstr "(katso '? > Libretro soittolista' jos haluat tietää lisää)"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:48
-#, fuzzy
-#| msgid "Plugins Path:"
 msgid "Playlists Path"
-msgstr "Pluginien sijainti:"
+msgstr "Soittolistojen sijainti"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:49
-#, fuzzy
-#| msgid "Specifies where your saved games are put"
 msgid "Specifies where your playlist will be saved."
-msgstr "Määrittää polun pelitallennuksille"
+msgstr "Määrittää polun johon soittolista tallennetaan."
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:52
-#, fuzzy
-#| msgid "Platform:"
 msgid "Playlist format:"
-msgstr "Alusta:"
+msgstr "Soittolistan formaatti:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:57
-#, fuzzy
-#| msgid "Goto location"
 msgid "Hooks location:"
-msgstr "Mene sijaintiin"
+msgstr "Hook:ien sijainti:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:59
-#, fuzzy
-#| msgid "Add a new folder"
 msgid "All in save folder"
-msgstr "Luo kansio"
+msgstr "Kaikki tallennushakemistossa"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:60
 msgid "One in each game folder"
-msgstr ""
+msgstr "Erikseen pelihakemistoissa"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:62
 msgid "Clear existing hooks"
-msgstr ""
+msgstr "Poista olemassaolevat hook:it"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:64
 msgid "Generate playlist"
-msgstr ""
+msgstr "Luo soittolista"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:66
-#, fuzzy
-#| msgid "Status:"
 msgid "Status: "
-msgstr "Tila:"
+msgstr "Tila: "
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:148
-#, fuzzy
-#| msgid "Failed to save game to file."
 msgid "Failed, can't access playlist file"
-msgstr "Pelin tallentaminen tiedostoon epäonnistui."
+msgstr "Luonti epäonnistui, soittolistatiedostoon ei päästy käsiksi"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:224
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "cleaning failed"
-msgstr "Tiedon lukeminen epäonnistui"
+msgstr "Hook:ien poistaminen epäonnistui"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:226
-#, fuzzy
-#| msgid "Failed to read the file!"
 msgid "Failed, can't create hook files"
-msgstr "Tiedoston lukeminen ei onnistunut!"
+msgstr "Hook-tiedostojen luonti epäonnistui"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:236
-#, fuzzy
-#| msgid "Select additional game directory"
 msgid "Select Playlist directory"
-msgstr "Valitse lisähakemisto pelille"
+msgstr "Valitse hakemisto soittolistoille"
 
 #: backends/platform/maemo/maemo.cpp:157
 msgid "Click Mode"
@@ -5608,64 +5588,44 @@ msgid "BSD License"
 msgstr "BSD-lisenssi"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:329
-#, fuzzy
-#| msgid "GPL License"
 msgid "Apache License"
-msgstr "GPL-lisenssi"
+msgstr "Apache-lisenssi"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:330
-#, fuzzy
-#| msgid "BSD License"
 msgid "BSL License"
-msgstr "BSD-lisenssi"
+msgstr "BSL-lisenssi"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:331
-#, fuzzy
-#| msgid "GPL License"
 msgid "GLAD License"
-msgstr "GPL-lisenssi"
+msgstr "GLAD-lisenssi"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:332
-#, fuzzy
-#| msgid "BSD License"
 msgid "ISC License"
-msgstr "BSD-lisenssi"
+msgstr "ISC-lisenssi"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:333
-#, fuzzy
-#| msgid "GPL License"
 msgid "Lua License"
-msgstr "GPL-lisenssi"
+msgstr "Lua-lisenssi"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:334
-#, fuzzy
-#| msgid "GPL License"
 msgid "MIT License"
-msgstr "GPL-lisenssi"
+msgstr "MIT-lisenssi"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:335
-#, fuzzy
-#| msgid "GPL License"
 msgid "MKV License"
-msgstr "GPL-lisenssi"
+msgstr "MKV-lisenssi"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:336
-#, fuzzy
-#| msgid "GPL License"
 msgid "MPL License"
-msgstr "GPL-lisenssi"
+msgstr "MPL-lisenssi"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:337
-#, fuzzy
-#| msgid "GPL License"
 msgid "TinyGL License"
-msgstr "GPL-lisenssi"
+msgstr "TinyGL-lisenssi"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:338
-#, fuzzy
-#| msgid "Freefont License"
 msgid "Catharon License"
-msgstr "Freefont-lisenssi"
+msgstr "Catharon-lisenssi"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:79
@@ -6293,6 +6253,10 @@ msgid ""
 "or\n"
 "2. Any .sav file inside the QfG2 Remake game directory"
 msgstr ""
+"Peli listaa nyt Sierran peleistä viedyt hahmot jotka voidaan tuoda peliin:\n"
+"1. Pelitallenteet nimeltään qfg1*.sav tai qfg1vga*.sav ScummVM:n "
+"tallennushakemistossa, tai\n"
+"2. Mikä tahansa .sav-tiedosto QfG2 Remake:n pelihakemistossa"
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
@@ -6340,17 +6304,15 @@ msgstr "Lataa silti"
 
 #: engines/bagel/metaengine.cpp:41
 msgid "Wait"
-msgstr ""
+msgstr "Odota"
 
 #: engines/bagel/metaengine.cpp:42
 msgid "Soldier 714 Eye Cheat"
-msgstr ""
+msgstr "Sotilas 714:n silmähuijaus"
 
 #: engines/bagel/metaengine.cpp:83
-#, fuzzy
-#| msgid "General"
 msgid "General Keys"
-msgstr "Yleinen"
+msgstr "Yleiset näppäimet"
 
 #: engines/bladerunner/bladerunner.cpp:404
 msgid "Failed to initialize resources"
@@ -7135,17 +7097,15 @@ msgstr "Infovalikko"
 
 #: engines/freescape/games/dark/dark.cpp:166
 msgid "Enable/Disable Jetpack"
-msgstr ""
+msgstr "Rakettireppu päälle/pois"
 
 #: engines/freescape/games/driller/driller.cpp:109
-#, fuzzy
-#| msgid "Debug Apply Celling Grid"
 msgid "Deploy drilling rig"
-msgstr "Debug celling grid päälle/pois"
+msgstr "Sijoita porauslautta"
 
 #: engines/freescape/games/driller/driller.cpp:115
 msgid "Collect drilling rig"
-msgstr ""
+msgstr "Kerää porauslautta"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -9628,11 +9588,12 @@ msgstr "Sallii pelisessioiden löytämisen paikallisverkostasi."
 
 #: engines/scumm/dialogs.cpp:1696
 msgid "Generate random maps"
-msgstr ""
+msgstr "Generoi sattumanvaraisia karttoja"
 
 #: engines/scumm/dialogs.cpp:1696
 msgid "Allow random map generation (Based from Moonbase Console)."
 msgstr ""
+"Salli sattumanvaraisten karttojen generointi (perustuu Moonbase Console:en)."
 
 #: engines/scumm/dialogs.cpp:1698
 msgid ""
@@ -10217,13 +10178,15 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:660
 msgid "Run in original 640 x 480 resolution"
-msgstr ""
+msgstr "Käytä alkuperäistä 640 x 480 resoluutiota"
 
 #: engines/scumm/metaengine.cpp:661
 msgid ""
 "This allows more accurate pause/restart banners, but might impact "
 "performance or shader/scaler usage."
 msgstr ""
+"Tämä mahdollistaa tarkemmat pysäytä/uudelleenkäynnistä-bannerit, mutta "
+"saattaa vaikuttaa sävytinten/skaalaajien suorituskykyyn."
 
 #: engines/scumm/metaengine.cpp:668
 msgid "Play simplified music"
@@ -10402,25 +10365,23 @@ msgstr "Haluatko isännöidä vai liittyä verkkopeliin?"
 
 #. I18N: Random map generator for Moonbase Commander
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:55
-#, fuzzy
-#| msgid "Game Options"
 msgid "Random Map Options"
-msgstr "Pelin asetukset"
+msgstr "Sattumanvaraiset kartta-asetukset"
 
 #. I18N: Map generator algorthims
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:59
 msgid "Algorithm"
-msgstr ""
+msgstr "Algoritmi"
 
 #. I18N: Spiff algorthim
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:63
 msgid "Spiff"
-msgstr ""
+msgstr "Spiff"
 
 #. I18N: Katton algorthim
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:65
 msgid "Katton"
-msgstr ""
+msgstr "Katton"
 
 #. I18N: Random algorthim
 #. I18N: Random map size
@@ -10434,25 +10395,21 @@ msgstr ""
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:112
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:124
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:136
-#, fuzzy
-#| msgid "Random seed:"
 msgid "Random"
-msgstr "Satunnaisuuden alustusarvo:"
+msgstr "Sattumanvarainen"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:67
 msgid "Picks the map algorithm randomly."
-msgstr ""
+msgstr "Valitse kartta-algoritmi sattumanvaraisesti."
 
 #. I18N: Map sizes
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:70
 msgid "Size"
-msgstr ""
+msgstr "Koko"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:74
-#, fuzzy
-#| msgid "75% - Small"
 msgid "Small"
-msgstr "75% - Pieni"
+msgstr "Pieni"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:76
 msgid "Large"
@@ -10460,85 +10417,79 @@ msgstr "Suuri"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:77
 msgid "Huge"
-msgstr ""
+msgstr "Jättimäinen"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:78
 msgid "SAI"
-msgstr ""
+msgstr "SAI"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:79
 msgid "Ridiculous"
-msgstr ""
+msgstr "Naurettava"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:80
-#, fuzzy
-#| msgid "Map"
 msgid "Max"
-msgstr "Näppäinkartta"
+msgstr "Maksimi"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:82
 msgid "Picks the map size randomly."
-msgstr ""
+msgstr "Valitsee kartan koon sattumanvaraisesti."
 
 #. I18N: Map tilesets
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:85
-#, fuzzy
-#| msgid "Reset"
 msgid "Tileset"
-msgstr "Vakioasetukset"
+msgstr "Tiilisetti"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:99
 msgid "Picks the map tileset randomly."
-msgstr ""
+msgstr "Valitsee tiilisetin sattumanvaraisesti."
 
 #. I18N: Percentage of energy pools
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:102
 msgid "Energy"
-msgstr ""
+msgstr "Energia"
 
 #. I18N: Energy slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:107
 msgid "Scarce - Lots"
-msgstr ""
+msgstr "Vähän - Paljon"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:112
 msgid "Picks the random amount of energy pools."
-msgstr ""
+msgstr "Valitsee sattumanvaraisen määrän energia-altaita."
 
 #. I18N: Percentage of terrain
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:115
 msgid "Terrain"
-msgstr ""
+msgstr "Maasto"
 
 #. I18N: Terrain slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:120
 msgid "Barren - Rough"
-msgstr ""
+msgstr "Karu - Karkea"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:124
 msgid "Picks the random amount of terrain level."
-msgstr ""
+msgstr "Valitsee sattumanvaraisen maaston tason."
 
 #. I18N: Percentage of water
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:127
 msgid "Water"
-msgstr ""
+msgstr "Vesi"
 
 #. I18N: Water slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:132
 msgid "Driest - Wettest"
-msgstr ""
+msgstr "Kuivin - Märin"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:136
 msgid "Picks the random amount of water."
-msgstr ""
+msgstr "Valitsee sattumanvaraisen veden määrän."
 
 #. I18N: Generate new map
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:140
-#, fuzzy
-#| msgid "General"
 msgid "Generate"
-msgstr "Yleinen"
+msgstr "Generoi"
 
 #: engines/scumm/he/sound_he.cpp:1555
 msgid ""
@@ -11228,34 +11179,28 @@ msgid "Select highlighted verb"
 msgstr "Valitse korostettu verbi"
 
 #: engines/twp/metaengine.cpp:156
-#, fuzzy
-#| msgid "Go to previous directory level"
 msgid "Go to previous object"
-msgstr "Palaa edelliselle hakemistotasolle"
+msgstr "Mene edelliseen objektiin"
 
 #: engines/twp/metaengine.cpp:157
-#, fuzzy
-#| msgid "Go to setup menu"
 msgid "Go to next object"
-msgstr "Mene asetusvalikkoon"
+msgstr "Mene seuraavaan objektiin"
 
 #: engines/twp/metaengine.cpp:158
 msgid "Select verb/item Left"
-msgstr ""
+msgstr "Valitse vasen verbi/esine"
 
 #: engines/twp/metaengine.cpp:159
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Select verb/item Right"
-msgstr "Liu'u oikealle"
+msgstr "Valitse oikea verbi/esine"
 
 #: engines/twp/metaengine.cpp:160
 msgid "Select verb/item Up"
-msgstr ""
+msgstr "Valitse ylempi verbi/esine"
 
 #: engines/twp/metaengine.cpp:161
 msgid "Select verb/item Down"
-msgstr ""
+msgstr "Valitse alempi verbi/esine"
 
 #: engines/twp/metaengine.cpp:163
 msgid "Select Actor 1"
@@ -11320,7 +11265,7 @@ msgstr "Näytä kohdealueet"
 #: engines/twp/twp.cpp:829
 msgid ""
 "You selected Ransome *unbeeped* (DLC) but the DLC has not been detected!"
-msgstr ""
+msgstr "Valitsit Ransome *unbeeped* (DLC) mutta DLC:tä ei löydetty!"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
