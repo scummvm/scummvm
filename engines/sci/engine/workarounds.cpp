@@ -1275,6 +1275,8 @@ static const SciMessageWorkaroundEntry messageWorkarounds[] = {
 	// Clicking the drink-me potion on ego in the castle basement hallways while guards are around
 	{ GID_KQ6,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  840,   3,  14,   1,  1, { MSG_WORKAROUND_REMAP,    899,   0,   0, 198,  1, 99,   0,   0, nullptr } },
 	{ GID_KQ6,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  899,   1,  14,   1,  1, { MSG_WORKAROUND_REMAP,    899,   0,   0, 198,  1, 99,   0,   0, nullptr } },
+	// Clicking Do on the horse on the wall in room 870; the message resource has the wrong verb.
+	{ GID_KQ6,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  870,  12,   5,   0,  1, { MSG_WORKAROUND_REMAP,    870,  12,  75,   0,  1, 99,   0,   0, nullptr } },
 	// "Tips for playing King's Quest VI" displays a message that's too long to display on the screen
 	// with Macintosh fonts and causes the graphics code to crash. In the original this "worked" because
 	// of a script bug that truncated all CD and Mac messages to 400 characters, even though KQ6 has

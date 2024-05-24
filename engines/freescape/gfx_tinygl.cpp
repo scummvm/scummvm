@@ -41,6 +41,7 @@ Renderer *CreateGfxTinyGL(int screenW, int screenH, Common::RenderMode renderMod
 TinyGLRenderer::TinyGLRenderer(int screenW, int screenH, Common::RenderMode renderMode) : Renderer(screenW, screenH, renderMode) {
 	_verts = (Vertex *)malloc(sizeof(Vertex) * kVertexArraySize);
 	_texturePixelFormat = TinyGLTexture::getRGBAPixelFormat();
+	_variableStippleArray = nullptr;
 }
 
 TinyGLRenderer::~TinyGLRenderer() {
@@ -76,6 +77,7 @@ void TinyGLRenderer::init() {
 }
 
 void TinyGLRenderer::setViewport(const Common::Rect &rect) {
+	_viewport = rect;
 	tglViewport(rect.left, g_system->getHeight() - rect.bottom, rect.width(), rect.height());
 }
 
@@ -207,6 +209,35 @@ void TinyGLRenderer::renderCrossair(const Common::Point crossairPosition) {
 	tglDepthMask(TGL_TRUE);
 }
 
+void TinyGLRenderer::setStippleData(byte *data) {
+	if (!data)
+		return;
+
+	_variableStippleArray = data;
+	//for (int i = 0; i < 128; i++)
+	//	_variableStippleArray[i] = data[(i / 16) % 4];
+}
+
+void TinyGLRenderer::useStipple(bool enabled) {
+	if (enabled) {
+		TGLfloat factor = 0;
+		tglGetFloatv(TGL_POLYGON_OFFSET_FACTOR, &factor);
+		tglEnable(TGL_POLYGON_OFFSET_FILL);
+		tglPolygonOffset(factor - 5.0f, -1.0f);
+		tglEnable(TGL_POLYGON_STIPPLE);
+		if (_renderMode == Common::kRenderZX  ||
+			_renderMode == Common::kRenderCPC ||
+			_renderMode == Common::kRenderCGA)
+			;//tglPolygonStipple(_variableStippleArray);
+		/*else
+			tglPolygonStipple(_defaultStippleArray);*/
+	} else {
+		tglPolygonOffset(0, 0);
+		tglDisable(TGL_POLYGON_OFFSET_FILL);
+		tglDisable(TGL_POLYGON_STIPPLE);
+	}
+}
+
 void TinyGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 	assert(vertices.size() >= 2);
 	const Math::Vector3d &v0 = vertices[0];
@@ -263,8 +294,50 @@ void TinyGLRenderer::useColor(uint8 r, uint8 g, uint8 b) {
 }
 
 void TinyGLRenderer::clear(uint8 r, uint8 g, uint8 b, bool ignoreViewport) {
-	tglClearColor(r / 255., g / 255., b / 255., 1.0);
-	tglClear(TGL_COLOR_BUFFER_BIT | TGL_DEPTH_BUFFER_BIT);
+	tglClear(TGL_DEPTH_BUFFER_BIT);
+	if (ignoreViewport) {
+		tglClearColor(r / 255., g / 255., b / 255., 1.0);
+		tglClear(TGL_COLOR_BUFFER_BIT);
+	} else {
+		// Disable viewport
+		tglViewport(0, 0, g_system->getWidth(), g_system->getHeight());
+		useColor(r, g, b);
+
+		tglMatrixMode(TGL_PROJECTION);
+		tglPushMatrix();
+		tglLoadIdentity();
+
+		tglOrtho(0, _screenW, _screenH, 0, 0, 1);
+		tglMatrixMode(TGL_MODELVIEW);
+		tglPushMatrix();
+		tglLoadIdentity();
+
+		tglDisable(TGL_DEPTH_TEST);
+		tglDepthMask(TGL_FALSE);
+
+		tglEnableClientState(TGL_VERTEX_ARRAY);
+		copyToVertexArray(0, Math::Vector3d(_viewport.left, _viewport.top, 0));
+		copyToVertexArray(1, Math::Vector3d(_viewport.left, _viewport.bottom, 0));
+		copyToVertexArray(2, Math::Vector3d(_viewport.right, _viewport.bottom, 0));
+
+		copyToVertexArray(3, Math::Vector3d(_viewport.left, _viewport.top, 0));
+		copyToVertexArray(4, Math::Vector3d(_viewport.right, _viewport.top, 0));
+		copyToVertexArray(5, Math::Vector3d(_viewport.right, _viewport.bottom, 0));
+
+		tglVertexPointer(3, TGL_FLOAT, 0, _verts);
+		tglDrawArrays(TGL_TRIANGLES, 0, 6);
+		tglDisableClientState(TGL_VERTEX_ARRAY);
+
+		tglEnable(TGL_DEPTH_TEST);
+		tglDepthMask(TGL_TRUE);
+
+		tglPopMatrix();
+		tglMatrixMode(TGL_PROJECTION);
+		tglPopMatrix();
+
+		// Restore viewport
+		tglViewport(_viewport.left, g_system->getHeight() - _viewport.bottom, _viewport.width(), _viewport.height());
+	}
 }
 
 void TinyGLRenderer::drawFloor(uint8 color) {

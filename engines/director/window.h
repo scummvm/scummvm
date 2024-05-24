@@ -161,6 +161,7 @@ public:
 	uint32 frozenLingoStateCount() { return _frozenLingoStates.size(); };
 	void freezeLingoState();
 	void thawLingoState();
+	LingoState *getLastFrozenLingoState() { return _frozenLingoStates.empty() ? nullptr : _frozenLingoStates[_frozenLingoStates.size() - 1]; }
 	int recursiveEnterFrameCount();
 
 	// events.cpp
@@ -184,7 +185,7 @@ public:
 	Common::String asString() override;
 	bool hasProp(const Common::String &propName) override;
 	Datum getProp(const Common::String &propName) override;
-	bool setProp(const Common::String &propName, const Datum &value) override;
+	bool setProp(const Common::String &propName, const Datum &value, bool force = false) override;
 	bool hasField(int field) override;
 	Datum getField(int field) override;
 	bool setField(int field, const Datum &value) override;

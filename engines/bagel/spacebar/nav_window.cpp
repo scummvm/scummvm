@@ -146,7 +146,6 @@ CNavWindow::CNavWindow() {
 	_pOldPal = nullptr;
 	_pMap = nullptr;
 	_pCurLoc = nullptr;
-	//  _pLevelDone = nullptr;
 	_pNewMap = nullptr;
 	_pCurPos = nullptr;
 	_pPortName = nullptr;
@@ -178,6 +177,12 @@ CNavWindow::CNavWindow() {
 	_pBattlefish = nullptr;
 	_pNoVacancy = nullptr;
 	_bNavAttached = false;
+
+	_bmptwo = nullptr;
+	_fuel = 40;
+	_cargo = 0;
+	_ship = 120;
+	_pLevel = nullptr;
 }
 
 ErrorCode CNavWindow::attach() {
@@ -188,7 +193,8 @@ ErrorCode CNavWindow::attach() {
 
 	_level = 0;
 
-	_pPortName = new CBofString("Yzore");      // always starts at Yzore
+	// always starts at Yzore
+	_pPortName = new CBofString("Yzore");
 	_ship = 120;
 	_cargo = 86 + 72 + 56;
 	_fuel = 40;
@@ -257,36 +263,27 @@ ErrorCode CNavWindow::attach() {
 	_pOldPal = CBofApp::getApp()->getPalette();
 	_pPal = _pBackdrop->getPalette()->copyPalette();
 	CBofApp::getApp()->setPalette(_pPal);
-	_pCurLoc = new CBofSprite;
-	if (_pCurLoc != nullptr) {
-		_pCurLoc->loadSprite(makeDir(CUR_LOC), 2);
-		_pCurLoc->setMaskColor(MASK_COLOR);
-		_pCurLoc->setZOrder(SPRITE_TOPMOST);
-		_pCurLoc->setAnimated(true);
-		_pCurLoc->linkSprite();
-		_pCurLoc->setPosition(_pCurPos->left, _pCurPos->top);
 
-	} else {
-		reportError(ERR_MEMORY);
-	}
+	_pCurLoc = new CBofSprite;
+	_pCurLoc->loadSprite(makeDir(CUR_LOC), 2);
+	_pCurLoc->setMaskColor(MASK_COLOR);
+	_pCurLoc->setZOrder(SPRITE_TOPMOST);
+	_pCurLoc->setAnimated(true);
+	_pCurLoc->linkSprite();
+	_pCurLoc->setPosition(_pCurPos->left, _pCurPos->top);
 
 	// Build all our buttons
 	for (i = 0; i < 2; i++) {
 		_pButtons[i] = new CBofBmpButton;
-		if (_pButtons[i] != nullptr) {
 
-			CBofBitmap *pUp = loadBitmap(makeDir(g_navButtons[i]._pszUp), _pPal);
-			CBofBitmap *pDown = loadBitmap(makeDir(g_navButtons[i]._pszDown), _pPal);
-			CBofBitmap *pFocus = loadBitmap(makeDir(g_navButtons[i]._pszFocus), _pPal);
-			CBofBitmap *pDis = loadBitmap(makeDir(g_navButtons[i]._pszDisabled), _pPal);
+		CBofBitmap *pUp = loadBitmap(makeDir(g_navButtons[i]._pszUp), _pPal);
+		CBofBitmap *pDown = loadBitmap(makeDir(g_navButtons[i]._pszDown), _pPal);
+		CBofBitmap *pFocus = loadBitmap(makeDir(g_navButtons[i]._pszFocus), _pPal);
+		CBofBitmap *pDis = loadBitmap(makeDir(g_navButtons[i]._pszDisabled), _pPal);
 
-			_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
-			_pButtons[i]->create(g_navButtons[i]._pszName, g_navButtons[i]._nLeft, g_navButtons[i]._nTop, g_navButtons[i]._nWidth, g_navButtons[i]._nHeight, this, g_navButtons[i]._nID);
-			_pButtons[i]->show();
-		} else {
-			reportError(ERR_MEMORY);
-			break;
-		}
+		_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
+		_pButtons[i]->create(g_navButtons[i]._pszName, g_navButtons[i]._nLeft, g_navButtons[i]._nTop, g_navButtons[i]._nWidth, g_navButtons[i]._nHeight, this, g_navButtons[i]._nID);
+		_pButtons[i]->show();
 	}
 
 	show();
@@ -1304,6 +1301,7 @@ void CNavWindow::calcFuel(double hf) {
 
 		// WORKAROUND: _pBackdrop shares it's palette with _pCurLoc,
 		// so as the backdrop is changed, don't free the palette
+		assert(_pBackdrop != nullptr);
 		_pBackdrop->setIsOwnPalette(false);
 		bool isDone = (_level == 3);
 
@@ -1316,10 +1314,9 @@ void CNavWindow::calcFuel(double hf) {
 		if (_level == 2) {
 			pause();
 			CBofString sNebDir(NEBSIM4_BMP);
-			MACROREPLACE(sNebDir);
-			assert(_pBackdrop != nullptr);
-			bmptwo = new CBofBitmap(sNebDir.getBuffer(), _pPal);
-			setBackground(bmptwo);
+			fixPathName(sNebDir);
+			_bmptwo = new CBofBitmap(sNebDir.getBuffer(), _pPal);
+			setBackground(_bmptwo);
 			_cargo = 125 + 10 + 17 + 8 + 99 + 24;
 			_ship = 65;
 			_fuel = 45;
@@ -1334,10 +1331,10 @@ void CNavWindow::calcFuel(double hf) {
 		if (_level == 1) {
 			pause();
 			CBofString sNebDir(NEBSIM3_BMP);
-			MACROREPLACE(sNebDir);
+			fixPathName(sNebDir);
 			assert(_pBackdrop != nullptr);
-			bmptwo = new CBofBitmap(sNebDir.getBuffer(), _pPal);
-			setBackground(bmptwo);
+			_bmptwo = new CBofBitmap(sNebDir.getBuffer(), _pPal);
+			setBackground(_bmptwo);
 			_cargo = 100 + 75 + 28 + 45 + 14;
 			_ship = 99;
 			_fuel = 36;
@@ -1352,10 +1349,10 @@ void CNavWindow::calcFuel(double hf) {
 		if (_level == 0) {
 			pause();
 			CBofString sNebDir(NEBSIM2_BMP);
-			MACROREPLACE(sNebDir);
+			fixPathName(sNebDir);
 			assert(_pBackdrop != nullptr);
-			bmptwo = new CBofBitmap(sNebDir.getBuffer(), _pPal);
-			setBackground(bmptwo);
+			_bmptwo = new CBofBitmap(sNebDir.getBuffer(), _pPal);
+			setBackground(_bmptwo);
 			_cargo = 54 + 119 + 20 + 127;
 			_ship = 120;
 			_fuel = 75;

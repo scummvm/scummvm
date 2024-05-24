@@ -264,7 +264,7 @@ public:
 	}
 
 	/**
-	 * Checks if the object is the only object refering
+	 * Checks if the object is the only object referring
 	 * to the assigned pointer. This should just be used for
 	 * debugging purposes.
 	 */

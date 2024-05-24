@@ -121,7 +121,8 @@ ErrorCode SBarBibOddsWnd::attach() {
 
 	// If we have something wielded, put it on hold for now.
 	if (CBagPanWindow::_pWieldBmp != nullptr) {
-		if ((_wieldedObject = CBagPanWindow::_pWieldBmp->getCurrObj()) != nullptr) {
+		_wieldedObject = CBagPanWindow::_pWieldBmp->getCurrObj();
+		if (_wieldedObject != nullptr) {
 			g_SDevManager->removeObject(CBagPanWindow::_pWieldBmp->getName(), _wieldedObject->getRefName());
 		}
 	}

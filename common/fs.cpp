@@ -402,7 +402,7 @@ SeekableReadStream *FSDirectory::createReadStreamForMemberAltStream(const Path &
 
 	SeekableReadStream *stream = node->createReadStreamForAltStream(altStreamType);
 	if (!stream)
-		warning("FSDirectory::createReadStreamForMemberAltStream: Can't create stream for file '%s' alt stream type %i", Common::toPrintable(path.toString(Common::Path::kNativeSeparator)).c_str(), static_cast<int>(altStreamType));
+		debug(5, "FSDirectory::createReadStreamForMemberAltStream: Can't create stream for file '%s' alt stream type %i", Common::toPrintable(path.toString(Common::Path::kNativeSeparator)).c_str(), static_cast<int>(altStreamType));
 
 	return stream;
 }

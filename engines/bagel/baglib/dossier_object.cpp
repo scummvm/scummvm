@@ -199,12 +199,12 @@ ParseCodes CBagDossierObject::setInfo(CBagIfstream &istr) {
 		//  no match return from function
 		//
 		default:
-			ParseCodes rc = CBagObject::setInfo(istr);
-			if (rc == PARSING_DONE) {
+			ParseCodes parseCode = CBagObject::setInfo(istr);
+			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}
 
-			if (rc == UPDATED_OBJECT) {
+			if (parseCode == UPDATED_OBJECT) {
 				objectUpdatedFl = true;
 			} else { // rc==UNKNOWN_TOKEN
 				if (objectUpdatedFl)
@@ -222,7 +222,7 @@ ParseCodes CBagDossierObject::setInfo(CBagIfstream &istr) {
 // Implement attach and detach just so we can set our own attributes
 
 ErrorCode CBagDossierObject::attach() {
-	ErrorCode ec = CBagTextObject::attach();
+	ErrorCode errorCode = CBagTextObject::attach();
 
 	// Keep track of the original text rectangle (for the dossier).
 	if (_dosRectInitFl == false) {
@@ -232,14 +232,14 @@ ErrorCode CBagDossierObject::attach() {
 
 	setVisible(false); // Don't display until needed.
 	setActive(false);  // Not active until we need it.
-	return ec;
+	return errorCode;
 }
 
 ErrorCode CBagDossierObject::detach() {
-	ErrorCode ec = CBagTextObject::detach();
+	ErrorCode errorCode = CBagTextObject::detach();
 
 	setVisible(false); // Make this invisible, don't want it redrawn.
-	return ec;
+	return errorCode;
 }
 
 // Called to splash one of these guys to the screen

@@ -21,16 +21,21 @@
 
 #include "ultima/ultima.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
+#include "ultima/ultima8/gumps/gump_notify_process.h"
+#include "ultima/ultima8/gumps/slider_gump.h"
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/item_sorter.h"
 #include "ultima/ultima8/world/camera_process.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/actors/avatar_mover_process.h"
 #include "ultima/ultima8/world/missile_tracker.h"
+#include "ultima/ultima8/world/split_item_process.h"
 
 #include "ultima/ultima8/world/actors/pathfinder_process.h"
 
@@ -234,9 +239,12 @@ bool GameMapGump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
 									int32 lerp_factor) {
 	Item *item = getItem(itemid);
 
-	if (!item) return false;
+	if (!item)
+		return false;
 
-	while (item->getParentAsContainer()) item = item->getParentAsContainer();
+	Container *root = item->getRootContainer();
+	if (root)
+		item = root;
 
 	int32 ix, iy, iz;
 
@@ -430,7 +438,7 @@ bool GameMapGump::DraggingItem(Item *item, int mx, int my) {
 			if (speed < 1) speed = 1;
 			int32 ax, ay, az;
 			avatar->getLocation(ax, ay, az);
-			MissileTracker t(item, ax, ay, az,
+			MissileTracker t(item, 1, ax, ay, az,
 			                 _draggingPos[0], _draggingPos[1], _draggingPos[2],
 			                 speed, 4);
 			if (t.isPathClear())
@@ -473,6 +481,64 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 	Actor *avatar = getMainActor();
 
 	ObjId trace = TraceCoordinates(mx, my, _draggingPos, dox, doy, item);
+	Item *targetitem = getItem(trace);
+	bool canReach = avatar->canReach(item, 128, // CONSTANT!
+									_draggingPos[0], _draggingPos[1], _draggingPos[2]);
+
+	if (item->getShapeInfo()->hasQuantity()) {
+		if (item->getQuality() > 1) {
+			// more than one, so see if we should ask if we should split it up
+			Item *splittarget = nullptr;
+
+			// also try to combine
+			if (canReach && targetitem && item->canMergeWith(targetitem)) {
+				splittarget = targetitem;
+			}
+
+			if (!splittarget) {
+				// create new item
+				splittarget = ItemFactory::createItem(
+					item->getShape(), item->getFrame(), 0,
+					item->getFlags() & (Item::FLG_DISPOSABLE | Item::FLG_OWNED | Item::FLG_INVISIBLE | Item::FLG_FLIPPED | Item::FLG_FAST_ONLY | Item::FLG_LOW_FRICTION), item->getNpcNum(), item->getMapNum(),
+					item->getExtFlags() & (Item::EXT_SPRITE | Item::EXT_HIGHLIGHT | Item::EXT_TRANSPARENT), true);
+				if (!splittarget) {
+					warning("ContainerGump failed to create item (%u,%u) while splitting",
+							item->getShape(), item->getFrame());
+					return;
+				}
+			}
+
+			SliderGump *slidergump = new SliderGump(100, 100,
+													0, item->getQuality(),
+													item->getQuality());
+			slidergump->InitGump(0);
+			slidergump->CreateNotifier(); // manually create notifier
+			Process *notifier = slidergump->GetNotifyProcess();
+			SplitItemProcess *splitproc = new SplitItemProcess(item, splittarget);
+			Kernel::get_instance()->addProcess(splitproc);
+			splitproc->waitFor(notifier);
+			item = splittarget;
+		} else {
+			// try to combine items
+			if (canReach && targetitem && item->canMergeWith(targetitem)) {
+				uint16 newquant = targetitem->getQuality() + item->getQuality();
+				// easter egg as in original: items stack to max quantity of 666
+				if (newquant > 666) {
+					item->setQuality(newquant - 666);
+					targetitem->setQuality(666);
+					// maybe this isn't needed? original doesn't do it here..
+					targetitem->callUsecodeEvent_combine();
+				} else {
+					targetitem->setQuality(newquant);
+					targetitem->callUsecodeEvent_combine();
+					// combined, so delete other
+					item->destroy();
+				}
+				return;
+			}
+		}
+	}
+
 	if (trace == 1) { // dropping on self
 		ObjId bp = avatar->getEquip(ShapeInfo::SE_BACKPACK);
 		Container *backpack = getContainer(bp);
@@ -483,8 +549,7 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 		}
 	}
 
-	if (!avatar->canReach(item, 128, // CONSTANT!
-	                      _draggingPos[0], _draggingPos[1], _draggingPos[2])) {
+	if (!canReach) {
 		// can't reach, so throw
 		debugC(kDebugObject, "Throwing item to (%d, %d, %d)",
 			   _draggingPos[0], _draggingPos[1], _draggingPos[2]);
@@ -505,17 +570,14 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 		Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 		tx += rs.getRandomNumberRngSigned(-inaccuracy, inaccuracy);
 		ty += rs.getRandomNumberRngSigned(-inaccuracy, inaccuracy);
-		MissileTracker t(item, tx, ty, _draggingPos[2],
+		MissileTracker t(item, 1, tx, ty, _draggingPos[2],
 		                 speed, 4);
 		t.launchItem();
 
-		// FIXME: When doing this animation, sometimes items will
-		//        get stuck on the avatar. Why?
-#if 0
-		avatar->doAnim(Animation::stand,
-		               Get_WorldDirection(_draggingPos[1] - ay,
-		                                  _draggingPos[0] - ax));
-#endif
+		Direction dir = Direction_GetWorldDir(_draggingPos[1] - ay,
+											  _draggingPos[0] - ax,
+											   dirmode_8dirs);
+		avatar->doAnim(Animation::stand, dir);
 	} else {
 		debugC(kDebugObject, "Dropping item at (%d, %d, %d)",
 			   _draggingPos[0], _draggingPos[1], _draggingPos[2]);

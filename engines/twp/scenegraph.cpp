@@ -752,7 +752,7 @@ void Inventory::update(float elapsed, Common::SharedPtr<Object> actor, const Col
 			if (item.contains(scrPos.getX(), scrPos.getY())) {
 				size_t index = _actor->_inventoryOffset * NUMOBJECTSBYROW + i;
 				if (index < _actor->_inventory.size()) {
-					_obj = _actor->_inventory[i];
+					_obj = _actor->_inventory[index];
 
 					if (!_inventoryOver[i] && (_shakeTime[i] < 0.1f)) {
 						_shakeTime[i] = 0.25f;

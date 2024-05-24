@@ -87,9 +87,7 @@ CBofBitmap::CBofBitmap(const char *pszFileName, CBofPalette *pPalette, bool bOwn
 
 	if (pPalette == nullptr) {
 		pPalette = new CBofPalette(pszFileName);
-		if (pPalette != nullptr) {
-			_bOwnPalette = true;
-		}
+		_bOwnPalette = true;
 	}
 
 	// Init the info needed to load a bitmap from disk
@@ -166,36 +164,31 @@ ErrorCode CBofBitmap::loadBitmap(const char *pszFileName, CBofPalette *pPalette)
 		CBofFile *pFile = new CBofFile(pszFileName, CBOFFILE_READONLY);
 
 		// Open bitmap
-		if (pFile != nullptr) {
-			// filename must fit into our buffer
-			assert(strlen(pszFileName) < MAX_FNAME);
+		// filename must fit into our buffer
+		assert(strlen(pszFileName) < MAX_FNAME);
 
-			// Keep track of this filename
-			Common::strcpy_s(_szFileName, pszFileName);
+		// Keep track of this filename
+		Common::strcpy_s(_szFileName, pszFileName);
 
-			// Decode the bitmap
-			Image::BitmapDecoder decoder;
-			Common::SeekableReadStream *rs = *pFile;
-			if (!rs || !decoder.loadStream(*rs))
-				error("Could not load bitmap");
+		// Decode the bitmap
+		Image::BitmapDecoder decoder;
+		Common::SeekableReadStream *rs = *pFile;
+		if (!rs || !decoder.loadStream(*rs))
+			error("Could not load bitmap");
 
-			// Load up the decoded bitmap
-			_bitmap.copyFrom(*decoder.getSurface());
+		// Load up the decoded bitmap
+		_bitmap.copyFrom(*decoder.getSurface());
 
-			// Load the bitmap palette
-			_bitmap.setPalette(decoder.getPalette(), 0, PALETTE_COUNT);
+		// Load the bitmap palette
+		_bitmap.setPalette(decoder.getPalette(), 0, PALETTE_COUNT);
 
-			_nDX = _bitmap.w;
-			_nDY = _bitmap.h;
-			_nScanDX = _bitmap.pitch;
-			_pBits = (byte*)_bitmap.getBasePtr(0, 0);
+		_nDX = _bitmap.w;
+		_nDY = _bitmap.h;
+		_nScanDX = _bitmap.pitch;
+		_pBits = (byte*)_bitmap.getBasePtr(0, 0);
 
-			// Close bitmap file
-			delete pFile;
-
-		} else {
-			reportError(ERR_MEMORY, "Could not allocate a CBofFile for %s", pszFileName);
-		}
+		// Close bitmap file
+		delete pFile;
 	}
 
 	return _errCode;
@@ -803,45 +796,43 @@ ErrorCode CBofBitmap::scrollRight(int nPixels, CBofRect * /*pRect*/) {
 			assert(_pBits != nullptr);
 			byte *pTemp = (byte *)bofAlloc(abs(nPixels));
 
-			if (pTemp != nullptr) {
-				int nBytes = _nDX - nPixels;
-				if (nPixels < 0) {
-					nBytes = _nDX + nPixels;
-				}
-
-				byte *p = _pBits;
-
-				lock();
-
-				if (nPixels > 0) {
-					for (int i = 0; i < _nDY; i++) {
-						memcpy(pTemp, p + nBytes, nPixels);
-						memmove(p + nPixels, p, nBytes);
-						memcpy(p, pTemp, nPixels);
-						p += _nScanDX;
-					}
-				} else {
-					nPixels = -nPixels;
-
-					for (int i = 0; i < _nDY; i++) {
-						memcpy(pTemp, p, nPixels);
-						memmove(p, p + nPixels, nBytes);
-						memcpy(p + nBytes, pTemp, nPixels);
-						p += _nScanDX;
-					}
-				}
-
-				unlock();
-
-				bofFree(pTemp);
+			int nBytes = _nDX - nPixels;
+			if (nPixels < 0) {
+				nBytes = _nDX + nPixels;
 			}
+
+			byte *p = _pBits;
+
+			lock();
+
+			if (nPixels > 0) {
+				for (int i = 0; i < _nDY; i++) {
+					memcpy(pTemp, p + nBytes, nPixels);
+					memmove(p + nPixels, p, nBytes);
+					memcpy(p, pTemp, nPixels);
+					p += _nScanDX;
+				}
+			} else {
+				nPixels = -nPixels;
+
+				for (int i = 0; i < _nDY; i++) {
+					memcpy(pTemp, p, nPixels);
+					memmove(p, p + nPixels, nBytes);
+					memcpy(p + nBytes, pTemp, nPixels);
+					p += _nScanDX;
+				}
+			}
+
+			unlock();
+
+			bofFree(pTemp);
 		}
 	}
 
 	return _errCode;
 }
 
-ErrorCode CBofBitmap::scrollUp(int nPixels, CBofRect *pRect) {
+ErrorCode CBofBitmap::scrollUp(int nPixels) {
 	assert(isValidObject(this));
 
 	if (_errCode == ERR_NONE) {
@@ -849,15 +840,10 @@ ErrorCode CBofBitmap::scrollUp(int nPixels, CBofRect *pRect) {
 
 		CBofRect cRect(0, 0, _nDX  - 1, _nDY  - 1);
 
-		// Flip entire bitmap ?
-		if (pRect == nullptr) {
-			pRect = &cRect;
-		}
-
-		int32 x = pRect->left;
-		int32 y = pRect->top;
-		int32 dx = pRect->width();
-		int32 dy = pRect->height();
+		int32 x = cRect.left;
+		int32 y = cRect.top;
+		int32 dx = cRect.width();
+		int32 dy = cRect.height();
 
 		// Height must be valid or we're hosed
 		assert(dy > 0);
@@ -883,74 +869,67 @@ ErrorCode CBofBitmap::scrollUp(int nPixels, CBofRect *pRect) {
 
 		// Only scroll if we need to
 		if (nPixels != 0) {
+			// Allocate a buffer to hold one horizontal line
 			byte *pRowBuf = (byte *)bofAlloc(dx);
 
-			// Allocate a buffer to hold one horizontal line
-			if (pRowBuf != nullptr) {
+			byte *pStart = _pBits;
+			byte *pEnd = _pBits;
 
-				byte *pEnd;
-				byte *pStart = pEnd = _pBits;
+			int32 dx1 = _nScanDX;
+			int32 dy1 = _nDY;
 
-				int32 dx1 = _nScanDX;
-				int32 dy1 = _nDY;
+			// Is bitmap top-down or bottom up?
+			if (_bTopDown) {
+				pStart += y * dx1 + x;
+				pEnd += (y + dy - 1) * dx1 + x;
+			} else {
+				pStart += (dy1 - y - 1) * dx1 + x;
+				pEnd += (dy1 - (y + dy - 1) - 1) * dx1 + x;
+				dx1 = -dx1;
+			}
+			byte *pCurRow = pStart;
 
-				// Is bitmap top-down or bottom up?
-				if (_bTopDown) {
-					pStart += y * dx1 + x;
-					pEnd += (y + dy - 1) * dx1 + x;
-				} else {
-					pStart += (dy1 - y - 1) * dx1 + x;
-					pEnd += (dy1 - (y + dy - 1) - 1) * dx1 + x;
-					dx1 = -dx1;
-				}
-				byte *pCurRow = pStart;
+			// Copy 1st row into temp row buffer
+			memcpy(pRowBuf, pCurRow, dx);
 
-				// Copy 1st row into temp row buffer
-				memcpy(pRowBuf, pCurRow, dx);
+			int32 lJump = dx1 * nPixels;
 
-				int32 lJump = dx1 * nPixels;
+			byte *pLastRow = pCurRow;
+			pCurRow += lJump;
+			byte *p1stRow = pStart;
 
-				byte *pLastRow = pCurRow;
+			// Working row by row
+			for (int32 i = 1; i < dy; i++) {
+				// Copy this row to row above it
+				memcpy(pLastRow, pCurRow, dx);
+
+				pLastRow = pCurRow;
+
 				pCurRow += lJump;
-				byte *p1stRow = pStart;
+				if (pCurRow < pEnd && !_bTopDown) {
+					pCurRow = pStart - (pEnd - pCurRow) - dx1;
 
-				// Working row by row
-				for (int32 i = 1; i < dy; i++) {
-					// Copy this row to row above it
-					memcpy(pLastRow, pCurRow, dx);
+					if (pCurRow == p1stRow) {
+						i++;
 
-					pLastRow = pCurRow;
+						// Copy 1st row into this row
+						memcpy(pLastRow, pRowBuf, dx);
 
-					pCurRow += lJump;
-					if (pCurRow < pEnd && !_bTopDown) {
-						pCurRow = pStart - (pEnd - pCurRow) - dx1;
+						pCurRow += dx1;
+						p1stRow = pLastRow = pCurRow;
 
-						if (pCurRow == p1stRow) {
+						// Copy this next row into temp row buffer
+						memcpy(pRowBuf, p1stRow, dx);
 
-							i++;
-
-							// Copy 1st row into this row
-							memcpy(pLastRow, pRowBuf, dx);
-
-							pCurRow += dx1;
-							p1stRow = pLastRow = pCurRow;
-
-							// Copy this next row into temp row buffer
-							memcpy(pRowBuf, p1stRow, dx);
-
-							pCurRow += lJump;
-						}
+						pCurRow += lJump;
 					}
 				}
-
-				// Copy 1st row into last row
-				memcpy(pLastRow, pRowBuf, dx);
-
-				bofFree(pRowBuf);
-
-			} else {
-				reportError(ERR_MEMORY, "Error: scrollUp - Could not allocate %ld bytes for row", dx);
 			}
+
+			// Copy 1st row into last row
+			memcpy(pLastRow, pRowBuf, dx);
+
+			bofFree(pRowBuf);
 		}
 		unlock();
 	}
@@ -1043,7 +1022,7 @@ ErrorCode CBofBitmap::curtain(CBofWindow *pWnd, int nSpeed, int nMaskColor) {
 	return _errCode;
 }
 
-ErrorCode CBofBitmap::fadeLines(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect *pSrcRect, int nSpeed, int nMaskColor) {
+ErrorCode CBofBitmap::fadeLines(CBofWindow *pWnd,int nSpeed, int nMaskColor) {
 	assert(isValidObject(this));
 	assert(pWnd != nullptr);
 	assert(nSpeed != 0);
@@ -1051,17 +1030,13 @@ ErrorCode CBofBitmap::fadeLines(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect *
 	if (_errCode == ERR_NONE) {
 
 		CBofRect cDstRect, cSrcRect, cWindowRect, cBmpRect;
-
 		// Entire window?
 		//
-		if (pDstRect == nullptr) {
-			cWindowRect = pWnd->getRect();
-			pDstRect = &cWindowRect;
-		}
-		if (pSrcRect == nullptr) {
-			cBmpRect = getRect();
-			pSrcRect = &cBmpRect;
-		}
+		cWindowRect = pWnd->getRect();
+		CBofRect *pDstRect = &cWindowRect;
+
+		cBmpRect = getRect();
+		CBofRect *pSrcRect = &cBmpRect;
 
 		int x1 = pDstRect->left;
 		int y1 = pDstRect->top;
@@ -1122,28 +1097,22 @@ ErrorCode paintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofRect *pD
 	assert(pWindow != nullptr);
 	assert(pszFileName != nullptr);
 
-	// Assume no error
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode;
 	CBofBitmap *pBmp = new CBofBitmap(pszFileName, pPalette);
 
-	if (pBmp != nullptr) {
-		CBofRect cRect = pBmp->getRect();
+	CBofRect cRect = pBmp->getRect();
 
-		if (pSrcRect == nullptr)
-			pSrcRect = &cRect;
+	if (pSrcRect == nullptr)
+		pSrcRect = &cRect;
 
-		if (pDstRect == nullptr)
-			pDstRect = &cRect;
+	if (pDstRect == nullptr)
+		pDstRect = &cRect;
 
-		errCode = pBmp->paint(pWindow, pDstRect, pSrcRect, nMaskColor);
+	errorCode = pBmp->paint(pWindow, pDstRect, pSrcRect, nMaskColor);
 
-		delete pBmp;
+	delete pBmp;
 
-	} else {
-		errCode = ERR_MEMORY;
-	}
-
-	return errCode;
+	return errorCode;
 }
 
 Graphics::ManagedSurface CBofBitmap::getSurface() {

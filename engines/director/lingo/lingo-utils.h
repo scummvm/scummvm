@@ -55,7 +55,7 @@
 
 #define ARRBOUNDSCHECK(idx,array) \
 	if ((idx)-1 < 0 || (idx) > (int)(array).u.farr->arr.size()) { \
-		warning("BUILDBOT: %s: index out of bounds (%d of %d)", __FUNCTION__, (idx), (array).u.farr->arr.size()); \
+		g_lingo->lingoError("%s: index out of bounds (%d of %d)", __FUNCTION__, (idx), (array).u.farr->arr.size()); \
 		return; \
 	}
 

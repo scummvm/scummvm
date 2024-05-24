@@ -242,7 +242,7 @@ void SceneScriptKP07::PlayerWalkedIn() {
 		} else {
 			Actor_Face_Actor(kActorMcCoy, kActorClovis, true);
 			Actor_Says(kActorClovis, 160, 3);
-			Actor_Retired_Here(kActorClovis, 72, 60, 0, -1);
+			Actor_Retired_Here(kActorClovis, 72, 60, false, -1);
 		}
 		Game_Flag_Set(kFlagKP07Entered);
 	}

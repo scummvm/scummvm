@@ -222,13 +222,12 @@ ErrorCode CBofFile::setPosition(uint32 lPos) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_stream);
 	Common::SeekableWriteStream *ws = dynamic_cast<Common::SeekableWriteStream *>(_stream);
 
-	if (rs) {
-		if (!rs->seek(lPos))
-			reportError(ERR_FSEEK, "Unable to seek to %ld", lPos);
+	if (rs && !rs->seek(lPos)) {
+		reportError(ERR_FSEEK, "Unable to seek to %u in rs", lPos);
 	}
-	if (ws) {
-		if (!ws->seek(lPos))
-			reportError(ERR_FSEEK, "Unable to seek to %ld", lPos);
+
+	if (ws && !ws->seek(lPos)) {
+		reportError(ERR_FSEEK, "Unable to seek to %u in ws", lPos);
 	}
 
 	return _errCode;
@@ -242,6 +241,7 @@ uint32 CBofFile::getPosition() {
 
 	if (rs)
 		return rs->pos();
+	
 	if (ws)
 		return ws->pos();
 
@@ -260,14 +260,6 @@ ErrorCode CBofFile::seekToEnd() {
 		ws->seek(0, SEEK_END);
 	else
 		error("Seek in closed file");
-
-	return _errCode;
-}
-
-ErrorCode CBofFile::setLength(uint32 /*lNewLength*/) {
-	assert(isValidObject(this));
-
-	logWarning("CBofFile::setLength() is not yet supported");
 
 	return _errCode;
 }

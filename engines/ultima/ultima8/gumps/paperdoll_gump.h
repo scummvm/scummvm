@@ -81,6 +81,10 @@ protected:
 	int _cachedVal[7]; // constant!!
 
 	uint16 _statButtonId;
+
+	uint32 _draggingArmourClass;
+	uint32 _draggingWeight;
+
 private:
 	const Rect _backpackRect;
 };

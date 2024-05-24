@@ -377,10 +377,10 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		// read extra vertices if required...
 		int numberOfOrdinates = GeometricObject::numberOfOrdinatesForType(objectType);
 		debugC(1, kFreescapeDebugParser, "number of ordinates %d", numberOfOrdinates);
-		Common::Array<uint16> *ordinates = nullptr;
+		Common::Array<float> *ordinates = nullptr;
 
 		if (numberOfOrdinates) {
-			ordinates = new Common::Array<uint16>;
+			ordinates = new Common::Array<float>;
 			uint16 ord = 0;
 			if (byteSizeOfObject < numberOfOrdinates) {
 				error("Not enough bytes to read all the ordinates");
@@ -406,15 +406,12 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		}
 		debugC(1, kFreescapeDebugParser, "End of object at %lx", long(file->pos()));
 
-		if (!GeometricObject::isPolygon(objectType))
-			position = 32 * position;
-
 		// create an object
 		return new GeometricObject(
 			objectType,
 			objectID,
 			rawFlagsAndType, // flags
-			position,
+			32 * position,
 			32 * v, // size
 			colours,
 			ecolours,

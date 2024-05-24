@@ -35,6 +35,7 @@ public:
 
 	void drawDOSUI(Graphics::Surface *surface) override;
 	void pressedKey(const int keycode) override;
+	void checkSensors() override;
 
 	void executePrint(FCLInstruction &instruction) override;
 	void gotoArea(uint16 areaID, int entranceID) override;
@@ -47,6 +48,7 @@ private:
 	void loadRiddles(Common::SeekableReadStream *file, int offset, int number);
 	void drawFullscreenRiddleAndWait(uint16 riddle);
 	void drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics::Surface *surface);
+	void addGhosts();
 };
 
 extern byte kFreescapeCastleFont[];

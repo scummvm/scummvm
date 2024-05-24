@@ -43,29 +43,21 @@ void CBagNextCDDialog::onInitDialog() {
 
 	setReturnValue(-1);
 
-	CBofPalette *pPal;
-
 	assert(_pBackdrop != nullptr);
-	pPal = _pBackdrop->getPalette();
+	CBofPalette *pPal = _pBackdrop->getPalette();
 	selectPalette(pPal);
 
 	// Build all our buttons
-	if ((_pButton = new CBofBmpButton) != nullptr) {
-		CBofBitmap *pUp, *pDown, *pFocus, *pDis;
+	_pButton = new CBofBmpButton;
 
-		pUp = loadBitmap(buildSysDir("CDOKUP.BMP"), pPal);
-		pDown = loadBitmap(buildSysDir("CDOKDN.BMP"), pPal);
-		pFocus = loadBitmap(buildSysDir("CDOKUP.BMP"), pPal);
-		pDis = loadBitmap(buildSysDir("CDOKUP.BMP"), pPal);
+	CBofBitmap *pUp = loadBitmap(buildSysDir("CDOKUP.BMP"), pPal);
+	CBofBitmap *pDown = loadBitmap(buildSysDir("CDOKDN.BMP"), pPal);
+	CBofBitmap *pFocus = loadBitmap(buildSysDir("CDOKUP.BMP"), pPal);
+	CBofBitmap *pDis = loadBitmap(buildSysDir("CDOKUP.BMP"), pPal);
 
-		_pButton->loadBitmaps(pUp, pDown, pFocus, pDis);
-
-		_pButton->create("NextCD", 77, 127, 60, 30, this, OK_BTN);
-		_pButton->show();
-
-	} else {
-		reportError(ERR_MEMORY);
-	}
+	_pButton->loadBitmaps(pUp, pDown, pFocus, pDis);
+	_pButton->create("NextCD", 77, 127, 60, 30, this, OK_BTN);
+	_pButton->show();
 
 	// Show System cursor
 	CBagCursor::showSystemCursor();
@@ -77,10 +69,8 @@ void CBagNextCDDialog::onClose() {
 	CBagCursor::hideSystemCursor();
 
 	// Destroy my buttons
-	if (_pButton != nullptr) {
-		delete _pButton;
-		_pButton = nullptr;
-	}
+	delete _pButton;
+	_pButton = nullptr;
 
 	CBofDialog::onClose();
 }

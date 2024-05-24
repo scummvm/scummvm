@@ -194,6 +194,13 @@ void DarkEngine::initGameState() {
 void DarkEngine::loadAssets() {
 	FreescapeEngine::loadAssets();
 
+	for (auto &it : _areaMap) {
+		addWalls(it._value);
+		addECDs(it._value);
+		if (it._value->getAreaID() != 255)
+			addSkanner(it._value);
+	}
+
 	_timeoutMessage = _messagesList[14];
 	_noShieldMessage = _messagesList[15];
 	_noEnergyMessage = _messagesList[16];
@@ -338,36 +345,9 @@ bool DarkEngine::tryDestroyECD(int index) {
 }
 
 void DarkEngine::addSkanner(Area *area) {
-	GeometricObject *obj = nullptr;
-	int16 id;
-
-	id = 248;
-	// If first object is already added, do not re-add any
-	if (area->objectWithID(id) != nullptr)
-		return;
-
-	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
-	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
-	assert(obj);
-	obj = (GeometricObject *)obj->duplicate();
-	obj->makeInvisible();
-	area->addObject(obj);
-
-	id = 249;
-	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
-	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
-	assert(obj);
-	obj = (GeometricObject *)obj->duplicate();
-	obj->makeInvisible();
-	area->addObject(obj);
-
-	id = 250;
-	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
-	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
-	assert(obj);
-	obj = (GeometricObject *)obj->duplicate();
-	obj->makeInvisible();
-	area->addObject(obj);
+	int id = 251;
+	debugC(1, kFreescapeDebugParser, "Adding skanner (group %d) to room structure %d", id, area->getAreaID());
+	area->addGroupFromArea(id, _areaMap[255]);
 }
 
 bool DarkEngine::checkIfGameEnded() {
@@ -665,9 +645,16 @@ void DarkEngine::drawBinaryClock(Graphics::Surface *surface, int xPosition, int 
 		number = (1 << 15) - 1;
 
 	int bits = 0;
-	while (bits <= 15) {
-		int y = yPosition - (7 * bits);
-		surface->drawLine(xPosition, y, xPosition + 3, y, number & 1 ? front : back);
+	int maxBits = isAtariST() || isAmiga() ? 14 : 15;
+	while (bits <= maxBits) {
+		int y = 0;
+		if (isAmiga() || isAtariST()) {
+			y = yPosition - (3 * bits);
+			surface->fillRect(Common::Rect(xPosition, y - 2, xPosition + 4, y), number & 1 ? front : back);
+		} else {
+			y = yPosition - (7 * bits);
+			surface->drawLine(xPosition, y, xPosition + 3, y, number & 1 ? front : back);
+		}
 		number = number >> 1;
 		bits++;
 	}
@@ -767,7 +754,7 @@ void DarkEngine::drawInfoMenu() {
 					_gfx->setViewport(_viewArea);
 				} else if (isDOS() && event.kbd.keycode == Common::KEYCODE_t) {
 					playSound(6, true);
-				} else if ((isDOS() || isCPC()) && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				} else if (!isSpectrum() && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					_forceEndGame = true;
 					cont = false;
 				} else if (isSpectrum() && event.kbd.keycode == Common::KEYCODE_1) {

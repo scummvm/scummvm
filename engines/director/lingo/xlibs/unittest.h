@@ -24,7 +24,13 @@
 
 namespace Director {
 
-namespace UnitTest {
+class UnitTestXObject : public Object<UnitTestXObject> {
+public:
+	UnitTestXObject(ObjectType objType);
+	Common::Point _mousePos;
+};
+
+namespace UnitTestXObj {
 
 extern const char *xlibName;
 extern const char *fileNames[];
@@ -32,7 +38,13 @@ extern const char *fileNames[];
 void open(ObjectType type, const Common::Path &path);
 void close(ObjectType type);
 
-void m_UTScreenshot(int nargs);
+void m_new(int nargs);
+void m_dispose(int nargs);
+void m_isRealDirector(int nargs);
+void m_screenshot(int nargs);
+void m_moveMouse(int nargs);
+void m_leftMouseDown(int nargs);
+void m_leftMouseUp(int nargs);
 
 } // End of namespace UnitTest
 

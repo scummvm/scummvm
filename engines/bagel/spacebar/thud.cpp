@@ -41,18 +41,18 @@ SBarThud::~SBarThud() {
 }
 
 ErrorCode SBarThud::loadFile(const CBofString &sFile) {
-	ErrorCode error = CBagStorageDev::loadFile(sFile);
-	return error;
+	ErrorCode errorCode = CBagStorageDev::loadFile(sFile);
+	return errorCode;
 }
 
 ErrorCode SBarThud::attach() {
 	int        nActiveObj = 0;
-	ErrorCode rc = CBagStorageDevBmp::attach();
+	ErrorCode errorCode = CBagStorageDevBmp::attach();
 
 	// save a copy of the you icon
 	_xYouBmp = new CBofBitmap(getBackgroundName());
 
-	if ((_xYouBmp == nullptr) || (_xYouBmp->height() <= 0) || (_xYouBmp->width() <= 0)) {
+	if ((_xYouBmp->height() <= 0) || (_xYouBmp->width() <= 0)) {
 		bofMessageBox("You icon in Thud: Background Opened Failed", __FILE__);
 		return ERR_FOPEN;
 	}
@@ -75,7 +75,7 @@ ErrorCode SBarThud::attach() {
 	// The weild has been loaded with too many active objects
 	_nObjects = nActiveObj;
 
-	return rc;
+	return errorCode;
 }
 
 ErrorCode SBarThud::detach() {

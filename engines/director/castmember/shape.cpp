@@ -85,6 +85,10 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, ShapeCastMember &sou
 	_type = kCastShape;
 	_loaded = source._loaded;
 
+	_initialRect = source._initialRect;
+	_boundingRect = source._boundingRect;
+	_children = source._children;
+
 	_shapeType = source._shapeType;
 	_pattern = source._pattern;
 	_fillType = source._fillType;

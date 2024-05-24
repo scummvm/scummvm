@@ -44,8 +44,8 @@ CBofSound  *CBofSound::_pSoundChain = nullptr;  // Pointer to chain of linked So
 int     CBofSound::_nCount = 0;                 // Count of currently active Sounds
 int     CBofSound::_nWavCount = 0;              // Available wave sound devices
 int     CBofSound::_nMidiCount = 0;             // Available midi sound devices
-bool    CBofSound::_bsoundAvailable = false;    // Whether wave sound is available
-bool    CBofSound::_bmidiAvailable = false;     // Whether midi sound is available
+bool    CBofSound::_bSoundAvailable = false;    // Whether wave sound is available
+bool    CBofSound::_bMidiAvailable = false;     // Whether midi sound is available
 bool    CBofSound::_bWaveVolume = false;        // Whether wave volume can be set
 bool    CBofSound::_bMidiVolume = false;        // Whether midi volume can be set
 CBofWindow   *CBofSound::_pMainWnd = nullptr;   // Window for message processing
@@ -87,8 +87,7 @@ CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, c
 	_bInQueue = false;
 	_iQSlot = 0;
 
-	int i;
-	for (i = 0; i < NUM_QUEUES; i++) {
+	for (int i = 0; i < NUM_QUEUES; i++) {
 		_nSlotVol[i] = VOLUME_INDEX_DEFAULT;
 	}
 
@@ -122,19 +121,17 @@ CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, c
 				}
 			}
 
-		} else {
+		} else if (_wFlags & SOUND_MIDI) {
 			// Try both MIDI formats
-			if (_wFlags & SOUND_MIDI) {
-				strreplaceStr(szTempPath, ".MID", ".MOV");
-				if (fileExists(szTempPath)) {
-					fileGetFullPath(_szFileName, szTempPath);
-					_chType = SOUND_TYPE_QT;
-				} else {
-					reportError(ERR_FFIND, szTempPath);
-				}
+			strreplaceStr(szTempPath, ".MID", ".MOV");
+			if (fileExists(szTempPath)) {
+				fileGetFullPath(_szFileName, szTempPath);
+				_chType = SOUND_TYPE_QT;
 			} else {
 				reportError(ERR_FFIND, szTempPath);
 			}
+		} else {
+			reportError(ERR_FFIND, szTempPath);
 		}
 	}
 
@@ -164,9 +161,6 @@ CBofSound::~CBofSound() {
 
 
 void CBofSound::initialize() {
-	_bsoundAvailable = true;
-	_bmidiAvailable = false;
-
 	for (int i = 0; i < NUM_QUEUES; ++i)
 		_cQueue[i] = new CQueue();
 
@@ -190,20 +184,10 @@ void CBofSound::shutdown() {
 }
 
 
-
 void CBofSound::setVolume(int nVolume) {
 	assert(nVolume >= VOLUME_INDEX_MIN && nVolume <= VOLUME_INDEX_MAX);
-	int nLocalVolume = nVolume;
 
-	if (nLocalVolume < VOLUME_INDEX_MIN) {
-		nLocalVolume = VOLUME_INDEX_MIN;
-
-	} else if (nLocalVolume > VOLUME_INDEX_MAX) {
-		nLocalVolume = VOLUME_INDEX_MAX;
-	}
-
-	_nVol = nLocalVolume;
-
+	_nVol = CLIP(nVolume, VOLUME_INDEX_MIN, VOLUME_INDEX_MAX);
 	g_system->getMixer()->setChannelVolume(_handle, VOLUME_SVM(_nVol));
 
 	// TODO: MIDI volume
@@ -214,29 +198,14 @@ void CBofSound::setVolume(int nMidiVolume, int nWaveVolume) {
 	assert(nMidiVolume >= VOLUME_INDEX_MIN && nMidiVolume <= VOLUME_INDEX_MAX);
 	assert(nWaveVolume >= VOLUME_INDEX_MIN && nWaveVolume <= VOLUME_INDEX_MAX);
 
-    assert(nMidiVolume >= VOLUME_INDEX_MIN && nMidiVolume <= VOLUME_INDEX_MAX);
-	assert(nWaveVolume >= VOLUME_INDEX_MIN && nWaveVolume <= VOLUME_INDEX_MAX);
-
-	if (nWaveVolume < VOLUME_INDEX_MIN) {
-		nWaveVolume = VOLUME_INDEX_MIN;
-
-	} else if (nWaveVolume > VOLUME_INDEX_MAX) {
-		nWaveVolume = VOLUME_INDEX_MAX;
-	}
-
 	// Set master wave volume
-	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, VOLUME_SVM(nWaveVolume));
-
-	if (nMidiVolume < VOLUME_INDEX_MIN) {
-		nMidiVolume = VOLUME_INDEX_MIN;
-
-	} else if (nMidiVolume > VOLUME_INDEX_MAX) {
-		nMidiVolume = VOLUME_INDEX_MAX;
-	}
+	int clippedVol = CLIP(nWaveVolume, VOLUME_INDEX_MIN, VOLUME_INDEX_MAX);
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, VOLUME_SVM(clippedVol));
 
 	// Set master Midi volume
-	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, VOLUME_SVM(nMidiVolume));
-	g_engine->_midi->setVolume(VOLUME_SVM(nMidiVolume));
+	clippedVol = CLIP(nMidiVolume, VOLUME_INDEX_MIN, VOLUME_INDEX_MAX);
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, VOLUME_SVM(clippedVol));
+	g_engine->_midi->setVolume(VOLUME_SVM(clippedVol));
 }
 
 
@@ -545,16 +514,6 @@ void CBofSound::clearMidiSounds() {
 }
 
 
-bool CBofSound::soundAvailable() {
-	return _bsoundAvailable;                     // Return requested info
-}
-
-
-bool CBofSound::midiAvailable() {
-	return _bmidiAvailable;                      // Return requested info
-}
-
-
 void CBofSound::waitSounds() {
 	waitWaveSounds();
 	waitMidiSounds();
@@ -673,7 +632,7 @@ bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot) {
 		nFlags |= SOUND_AUTODELETE;
 
 		if (!fileExists(pszSoundFile)) {
-			logError(buildString("Warning: Sound File '%s' not found", pszSoundFile));
+			logWarning(buildString("Sound File '%s' not found", pszSoundFile));
 			return false;
 		}
 
@@ -684,14 +643,11 @@ bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot) {
 		CBofSound::stopWaveSounds();
 
 		CBofSound *pSound = new CBofSound(pWnd, pszSoundFile, (uint16)nFlags);
-		if (pSound != nullptr) {
-			if ((nFlags & SOUND_QUEUE) == SOUND_QUEUE) {
-				pSound->setQSlot(iQSlot);
-			}
-
-			bSuccess = pSound->play();
+		if ((nFlags & SOUND_QUEUE) == SOUND_QUEUE) {
+			pSound->setQSlot(iQSlot);
 		}
 
+		bSuccess = pSound->play();
 	} else {
 		bSuccess = true;
 		CBofSound::stopWaveSounds();
@@ -714,7 +670,7 @@ bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot, bool bW
 		}
 
 		if (!fileExists(pszSoundFile)) {
-			logError(buildString("Warning: Sound File '%s' not found", pszSoundFile));
+			logWarning(buildString("Sound File '%s' not found", pszSoundFile));
 			return false;
 		}
 
@@ -724,19 +680,17 @@ bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot, bool bW
 		CBofSound::audioTask();
 
 		CBofSound *pSound = new CBofSound(pWnd, pszSoundFile, (uint16)nFlags);
-		if (pSound != nullptr) {
-			if ((nFlags & SOUND_QUEUE) == SOUND_QUEUE) {
-				pSound->setQSlot(iQSlot);
-			}
+		if ((nFlags & SOUND_QUEUE) == SOUND_QUEUE) {
+			pSound->setQSlot(iQSlot);
+		}
 
-			bSuccess = pSound->play();
+		bSuccess = pSound->play();
 
-			if (bWait) {
-				while (pSound->isPlaying()) {
-					CBofSound::audioTask();
-				}
-				delete pSound;
+		if (bWait) {
+			while (pSound->isPlaying()) {
+				CBofSound::audioTask();
 			}
+			delete pSound;
 		}
 	}
 
@@ -864,24 +818,19 @@ void CBofSound::audioTask() {
 						pSound->stop();
 					}
 
-				} else {
-
+				} else if (pSound->_bInQueue && !pSound->_bStarted) {
 					// If this is a Queued sound, and has not already started
-					if (pSound->_bInQueue && !pSound->_bStarted) {
-						// And it is time to play
-						if ((CBofSound *)_cQueue[pSound->_iQSlot]->getQItem() == pSound) {
-							pSound->playWAV();
-						}
+					// And it is time to play
+					if ((CBofSound *)_cQueue[pSound->_iQSlot]->getQItem() == pSound) {
+						pSound->playWAV();
 					}
 				}
 
-			} else if (pSound->_wFlags & SOUND_MIDI) {
-				if (pSound->_bPlaying) {
-					// And, Is it done?
-					if (!g_engine->_midi->isPlaying()) {
-						// Kill it
-						pSound->stop();
-					}
+			} else if ((pSound->_wFlags & SOUND_MIDI) && pSound->_bPlaying) {
+				// And, Is it done?
+				if (!g_engine->_midi->isPlaying()) {
+					// Kill it
+					pSound->stop();
 				}
 			}
 		}
@@ -930,7 +879,7 @@ ErrorCode CBofSound::flushQueue(int nSlot) {
 	assert(nSlot >= 0 && nSlot < NUM_QUEUES);
 
 	// Assume no error
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	// Remove all queued sounds
 	_cQueue[nSlot]->flush();
@@ -951,7 +900,7 @@ ErrorCode CBofSound::flushQueue(int nSlot) {
 		pSound = pNextSound;
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 void CBofSound::setQVol(int nSlot, int nVol) {

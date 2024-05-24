@@ -31,6 +31,7 @@
 #include "bagel/boflib/sound.h"
 #include "bagel/baglib/object.h"
 #include "bagel/dialogs/save_dialog.h"
+#include "bagel/baglib/save_game_file.h"
 #include "bagel/baglib/var.h"
 
 namespace Bagel {
@@ -154,23 +155,23 @@ public:
 	ErrorCode setStorageDev(const CBofString &wldName, bool entry = true);
 	ErrorCode gotoNewWindow(const CBofString *str);
 
-	uint16 getDiskID() {
+	uint16 getDiskID() const {
 		return _diskId;
 	}
 	void setDiskID(uint16 id) {
 		_diskId = id;
 	}
 
-	CBofWindow *getCurrentGameWindow() {
+	CBofWindow *getCurrentGameWindow() const {
 		return (CBofWindow *)_gameWindow;
 	}
-	CBagStorageDevWnd *getCurrentStorageDev() {
+	CBagStorageDevWnd *getCurrentStorageDev() const {
 		return _gameWindow;
 	}
-	CBagStorageDevManager *getStorageDevManager() {
+	CBagStorageDevManager *getStorageDevManager() const {
 		return _storageDeviceList;
 	}
-	CBagVarManager *getVariableManager() {
+	CBagVarManager *getVariableManager() const {
 		return _variableList;
 	}
 

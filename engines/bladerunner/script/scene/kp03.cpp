@@ -94,7 +94,7 @@ bool SceneScriptKP03::ClickedOn3DObject(const char *objectName, bool combatMode)
 			Scene_Loop_Set_Default(kKP03MainLoopBombExploded);
 			Scene_Loop_Start_Special(kSceneLoopModeOnce, kKP03MainLoopBombExploding, true);
 			Actor_Change_Animation_Mode(kActorMcCoy, 39);
-			Actor_Retired_Here(kActorMcCoy, 72, 18, 1, -1);
+			Actor_Retired_Here(kActorMcCoy, 72, 18, true, -1);
 			Game_Flag_Set(kFlagKP03BombExploded);
 			Game_Flag_Reset(kFlagKP03BombActive);
 			return false;

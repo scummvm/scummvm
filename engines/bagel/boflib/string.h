@@ -101,7 +101,6 @@ public:
 
 	char getAt(int nIndex);      // 0 based
 	char operator[](int nIndex); // same as getAt
-	void setAt(int nIndex, char ch);
 
 	operator const char *() const {
 		return (const char *)_pszData;
@@ -139,7 +138,6 @@ public:
 	// String comparison
 	int compare(const char *lpsz) const;       // straight character
 	int compareNoCase(const char *lpsz) const; // ignore case
-	int collate(const char *lpsz) const;       // NLS aware
 
 	// Simple sub-string extraction
 	//
@@ -148,26 +146,12 @@ public:
 	CBofString left(int nCount) const;
 	CBofString right(int nCount) const;
 
-	void mid(int nFirst, int nCount, CBofString *) const;
-	void mid(int nFirst, CBofString *) const;
-	void left(int nCount, CBofString *) const;
-	void right(int nCount, CBofString *) const;
-
 	void deleteLastChar();
-
-	CBofString spanIncluding(const char *lpszCharSet) const;
-	CBofString spanExcluding(const char *lpszCharSet) const;
 
 	// Upper/lower/reverse conversion
 	void makeUpper();
-	void makeLower();
 
 	// Searching (return starting index, or -1 if not found)
-	// look for a single character match
-	int find(char ch) const; // like "C" strchr
-	int reverseFind(char ch) const;
-	int findOneOf(const char *lpszCharSet) const;
-
 	// Look for a specific sub-string
 	int find(const char *lpszSub) const; // like "C" strstr
 	int findNumOccurrences(const char *pszSub);
@@ -177,13 +161,8 @@ public:
 	void replaceChar(char chOld, char chNew);
 	void replaceStr(const char *pszOld, const char *pszNew);
 
-	// Simple formatting
-	void format(const char *lpszFormat, ...);
-
 	// Access to string implementation buffer as "C" character array
 	char *getBuffer();
-	void releaseBuffer(int nNewLength = 0);
-	void freeExtra();
 
 protected:
 	// implementation helpers
@@ -206,7 +185,6 @@ protected:
 
 	void concatCopy(int nSrc1Len, const char *lpszSrc1Data, int nSrc2Len, const char *lpszSrc2Data, int nAllocLen = 0);
 	void concatInPlace(int nSrcLen, const char *lpszSrcData);
-	static void safeDelete(char *lpsz);
 	static int safeStrlen(const char *lpsz);
 
 	// Lengths/sizes in characters

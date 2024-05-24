@@ -25,8 +25,8 @@
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/actors/animation_tracker.h"
 
-#ifdef DEBUG
-#include "ultima/ultima8/graphics/render_surface.h"
+#ifdef DEBUG_PATHFINDER
+#include "graphics/screen.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #endif
 
@@ -34,7 +34,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 
-#ifdef DEBUG
+#ifdef DEBUG_PATHFINDER
 ObjId Pathfinder::_visualDebugActor = 0xFFFF;
 #endif
 
@@ -152,9 +152,8 @@ void Pathfinder::setTarget(int32 x, int32 y, int32 z) {
 }
 
 void Pathfinder::setTarget(Item *item, bool hit) {
-	_targetItem = item;
-	while (_targetItem->getParentAsContainer())
-		_targetItem = _targetItem->getParentAsContainer();
+	Container *root = item->getRootContainer();
+	_targetItem = root ? root : item;
 
 	// set target to centre of item for the cost heuristic
 	item->getCentre(_targetX, _targetY, _targetZ);
@@ -244,17 +243,13 @@ unsigned int Pathfinder::costHeuristic(PathNode *node) const {
 	return node->heuristicTotalCost;
 }
 
+#ifdef DEBUG_PATHFINDER
 
-#ifdef DEBUG
-
-static void drawbox(const Item *item) {
-	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
+static void drawbox(Graphics::ManagedSurface *screen, const Item *item) {
 	int32 cx, cy, cz;
-
 	Ultima8Engine::get_instance()->getGameMapGump()->GetCameraLocation(cx, cy, cz);
 
-	Rect d;
-	screen->GetSurfaceDims(d);
+	Common::Rect d = screen->getBounds();
 
 	int32 ix, iy, iz;
 	item->getLocation(ix, iy, iz);
@@ -280,38 +275,36 @@ static void drawbox(const Item *item) {
 	x3 = (d.width() / 2) + (ix - iy + yd) / 4;
 	y3 = (d.height() / 2) + (ix + iy - yd) / 8 - iz;
 
-	screen->fill32(TEX32_PACK_RGB(0x00, 0x00, 0xFF), x0 - 1, y0 - 1, 3, 3);
+	uint32 color = screen->format.RGBToColor(0x00, 0x00, 0xFF);
+	screen->fillRect(Common::Rect(x0 - 1, y0 - 1, x0 + 2, y0 + 2), color);
 
-	screen->drawLine32(TEX32_PACK_RGB(0x00, 0xFF, 0x00), x0, y0, x1, y1);
-	screen->drawLine32(TEX32_PACK_RGB(0x00, 0xFF, 0x00), x0, y0, x2, y2);
-	screen->drawLine32(TEX32_PACK_RGB(0x00, 0xFF, 0x00), x0, y0, x3, y3);
+	color = screen->format.RGBToColor(0x00, 0xFF, 0x00);
+	screen->drawLine(x0, y0, x1, y1, color);
+	screen->drawLine(x0, y0, x2, y2, color);
+	screen->drawLine(x0, y0, x3, y3, color);
 }
 
-static void drawdot(int32 x, int32 y, int32 Z, int size, uint32 rgb) {
-	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
+static void drawdot(Graphics::ManagedSurface *screen, int32 x, int32 y, int32 Z, int size, uint32 rgb) {
 	int32 cx, cy, cz;
 
 	Ultima8Engine::get_instance()->getGameMapGump()->GetCameraLocation(cx, cy, cz);
 
-	Rect d;
-	screen->GetSurfaceDims(d);
+	Common::Rect d = screen->getBounds();
 	x -= cx;
 	y -= cy;
 	Z -= cz;
 	int32 x0, y0;
 	x0 = (d.width() / 2) + (x - y) / 4;
 	y0 = (d.height() / 2) + (x + y) / 8 - Z;
-	screen->Fill32(rgb, x0 - size, y0 - size, 2 * size + 1, 2 * size + 1);
+	screen->fillRect(Common::Rect(x0 - size, y0 - size, x0 + size + 1, y0 + size + 1), rgb);
 }
 
-static void drawedge(const PathNode *from, const PathNode *to, uint32 rgb) {
-	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
+static void drawedge(Graphics::ManagedSurface *screen, const PathNode *from, const PathNode *to, uint32 rgb) {
 	int32 cx, cy, cz;
 
 	Ultima8Engine::get_instance()->getGameMapGump()->GetCameraLocation(cx, cy, cz);
 
-	Rect d;
-	screen->GetSurfaceDims(d);
+	Common::Rect d = screen->getBounds();
 
 	int32 x0, y0, x1, y1;
 
@@ -331,23 +324,25 @@ static void drawedge(const PathNode *from, const PathNode *to, uint32 rgb) {
 	x1 = (d.width() / 2) + (cx - cy) / 4;
 	y1 = (d.height() / 2) + (cx + cy) / 8 - cz;
 
-	screen->drawLine32(rgb, x0, y0, x1, y1);
+	screen->drawLine(x0, y0, x1, y1, rgb);
 }
 
-static void drawpath(PathNode *to, uint32 rgb, bool done) {
+static void drawpath(Graphics::ManagedSurface *screen, PathNode *to, uint32 rgb, bool done) {
 	PathNode *n1 = to;
 	PathNode *n2 = to->parent;
+	uint32 color1 = screen->format.RGBToColor(0xFF, 0x00, 0x00);
+	uint32 color2 = screen->format.RGBToColor(0xFF, 0xFF, 0xFF);
 
 	while (n2) {
-		drawedge(n1, n2, rgb);
+		drawedge(screen, n1, n2, rgb);
 
 		if (done && n1 == to)
-			drawdot(n1->state._x, n1->state._y, n1->state._z, 2, TEX32_PACK_RGB(0xFF, 0x00, 0x00));
+			drawdot(screen, n1->state._x, n1->state._y, n1->state._z, 2, color1);
 		else
-			drawdot(n1->state._x, n1->state._y, n1->state._z, 1, TEX32_PACK_RGB(0xFF, 0xFF, 0xFF));
+			drawdot(screen, n1->state._x, n1->state._y, n1->state._z, 1, color2);
 
 
-		drawdot(n2->state._x, n2->state._y, n2->state._z, 2, TEX32_PACK_RGB(0xFF, 0xFF, 0xFF));
+		drawdot(screen, n2->state._x, n2->state._y, n2->state._z, 2, color2);
 
 		n1 = n2;
 		n2 = n1->parent;
@@ -397,17 +392,17 @@ void Pathfinder::newNode(PathNode *oldnode, PathfindingState &state,
 		   oldnode->state._x, oldnode->state._y, newnode->state._x, newnode->state._y,
 		   newnode->cost, newnode->heuristicTotalCost);
 
-#ifdef DEBUG
+#ifdef DEBUG_PATHFINDER
 	if (_actor->getObjId() == _visualDebugActor) {
-		RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
-		screen->BeginPainting();
-		drawpath(newnode, TEX32_PACK_RGB(0xFF, 0xFF, 0x00), done);
-		screen->EndPainting();
+		Graphics::Screen *screen = Ultima8Engine::get_instance()->getScreen();
+		uint32 color = screen->format.RGBToColor(0xFF, 0xFF, 0x00);
+		drawpath(screen, newnode, color, done);
+		screen->update();
 		g_system->delayMillis(50);
 		if (!done) {
-			screen->BeginPainting();
-			drawpath(newnode, TEX32_PACK_RGB(0xB0, 0xB0, 0x00), done);
-			screen->EndPainting();
+			color = screen->format.RGBToColor(0xB0, 0xB0, 0x00);
+			drawpath(screen, newnode, color, done);
+			screen->update();
 		}
 	}
 #endif
@@ -506,15 +501,16 @@ bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 		debugC(kDebugPath, "Actor %u pathfinding to (%d, %d, %d)", _actor->getObjId(), _targetX, _targetY, _targetZ);
 	}
 
-#ifdef DEBUG
+#ifdef DEBUG_PATHFINDER
 	if (_actor->getObjId() == _visualDebugActor) {
-		RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
-		screen->BeginPainting();
-		if (_targetItem)
-			drawbox(_targetItem);
-		else
-			drawdot(_targetX, _targetY, _targetZ, 2, TEX32_PACK_RGB(0x00, 0x00, 0xFF));
-		screen->EndPainting();
+		Graphics::Screen *screen = Ultima8Engine::get_instance()->getScreen();
+		if (_targetItem) {
+			drawbox(screen, _targetItem);
+		} else {
+			uint32 color = screen->format.RGBToColor(0x00, 0x00, 0xFF);
+			drawdot(screen, _targetX, _targetY, _targetZ, 2, color);
+		}
+		screen->update();
 	}
 #endif
 

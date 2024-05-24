@@ -58,7 +58,7 @@ protected:
 
 	void saveVars();
 	void loadVars();
-	void saveIQPoints();
+	void saveIQPoints(const byte *ptr, int size);
 	void loadIQPoints(byte *ptr, int size);
 
 	int getBannerColor(int bannerId) override;

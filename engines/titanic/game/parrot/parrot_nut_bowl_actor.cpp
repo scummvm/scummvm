@@ -36,7 +36,7 @@ BEGIN_MESSAGE_MAP(CParrotNutBowlActor, CGameObject)
 END_MESSAGE_MAP()
 
 CParrotNutBowlActor::CParrotNutBowlActor() : CGameObject(),
-		_puzzleDone(0), _state(0) {
+		_puzzleDone(false), _state(0) {
 }
 
 void CParrotNutBowlActor::save(SimpleFile *file, int indent) {

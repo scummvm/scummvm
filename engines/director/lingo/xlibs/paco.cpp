@@ -131,7 +131,7 @@ void callPacoPlay(const Common::String &cmd) {
 		video->start();
 		memcpy(videoPalette, video->getPalette(), 256 * 3);
 		while (!video->endOfVideo()) {
-			if (g_system->getEventManager()->pollEvent(event)) {
+			if (g_director->pollEvent(event)) {
 				switch (event.type) {
 					case Common::EVENT_QUIT:
 						g_director->processEventQUIT();

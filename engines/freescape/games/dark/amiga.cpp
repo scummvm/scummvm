@@ -118,15 +118,9 @@ void DarkEngine::loadAssetsAmigaFullGame() {
 
 	_border = loadAndConvertNeoImage(stream, 0x1b762);
 	load8bitBinary(stream, 0x2e96a, 16);
-	loadPalettes(stream, 0x2e638);
+	loadPalettes(stream, 0x2e528);
 	loadGlobalObjects(stream, 0x30f0 - 50, 24);
 	loadMessagesVariableSize(stream, 0x3d37, 66);
-
-	for (auto &it : _areaMap) {
-		addWalls(it._value);
-		addECDs(it._value);
-		addSkanner(it._value);
-	}
 }
 
 void DarkEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
@@ -134,6 +128,7 @@ void DarkEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xEE, 0xCC, 0x00);
 	uint32 red = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xEE, 0x00, 0x00);
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+	uint32 grey = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x60, 0x60, 0x60);
 
 	int score = _gameStateVars[k8bitVariableScore];
 	int ecds = _gameStateVars[kVariableActiveECDs];
@@ -155,6 +150,8 @@ void DarkEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else
 		drawStringInSurface(_currentArea->_name, 32, 150, white, black, surface);
+
+	drawBinaryClock(surface, 6, 110, white, grey);
 }
 
 void DarkEngine::initAmigaAtari() {

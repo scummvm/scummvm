@@ -78,9 +78,6 @@ private:
 	}
 
 	void recalcItemList() {
-		CBofListNode<T> *pNode;
-		int i;
-
 		// We only want to recalc if we're about to overflow what we have
 		if (_nNumItems >= _nItemsAllocated) {
 			if (_pItemList != nullptr) {
@@ -101,8 +98,8 @@ private:
 		if (_nNumItems != 0) {
 			assert(_pItemList != nullptr);
 
-			i = 0;
-			pNode = _pHead;
+			int i = 0;
+			CBofListNode<T> *pNode = _pHead;
 
 			while (pNode != nullptr) {
 				*(_pItemList + i++) = pNode;
@@ -243,7 +240,7 @@ public:
 	/**
 	 * Retrieves the node at the specified location
 	 * @returns     Returns the node located at the given index.
-	 * @param nIndex        Index of node to retrieve
+	 * @param nNodeIndex        Index of node to retrieve
 	 */
 	CBofListNode<T> *getNode(int nNodeIndex) {
 		assert(nNodeIndex >= 0 && nNodeIndex < getCount());
@@ -348,14 +345,12 @@ public:
 	}
 
 	/**
-	 * Removes specfied node from the list
+	 * Removes specified node from the list
 	 * @param pNode             Node to remove
 	 * @returns                 Item stored at specified location
 	 */
 	T remove(CBofListNode<T> *pNode) {
 		assert(pNode != nullptr);
-
-		T retVal;
 
 		// One less item in list
 		_nNumItems--;
@@ -364,7 +359,7 @@ public:
 
 		if (pNode != nullptr) {
 
-			retVal = pNode->getNodeItem();
+			T retVal = pNode->getNodeItem();
 
 			if (_pHead == pNode)
 				_pHead = _pHead->_pNext;
@@ -388,7 +383,7 @@ public:
 	}
 
 	/**
-	 * Removes specfied node (by index) from the list
+	 * Removes specified node (by index) from the list
 	 * @param nNodeIndex        Index of node to remove
 	 * @returns                 Item stored at specified location
 	 */
@@ -408,7 +403,7 @@ public:
 	}
 
 	/**
-	 * Removes specfied node (by index) from the list
+	 * Removes specified node (by index) from the list
 	 * @returns     Item stored at specified location
 	 */
 	inline T removeHead() {
@@ -418,7 +413,7 @@ public:
 	}
 
 	/**
-	 * Removes specfied node (by index) from the list
+	 * Removes specified node (by index) from the list
 	 * @returns     Item stored at specified location
 	 */
 	inline T removeTail() {
@@ -428,7 +423,7 @@ public:
 
 	/**
 	 * Adds specified node as the new head of this list
-	 * @param pNode     Pointer to node to add to the list
+	 * @param pNewNode     Pointer to node to add to the list
 	 */
 	inline void addToHead(CBofListNode<T> *pNewNode) {
 		assert(pNewNode != nullptr);
@@ -459,7 +454,7 @@ public:
 
 	/**
 	 * Adds specified node as the new tail of this list
-	 * @param pNode     Pointer to node to add to the list
+	 * @param pNewNode     Pointer to node to add to the list
 	 */
 	void addToTail(CBofListNode<T> *pNewNode) {
 		assert(pNewNode != nullptr);

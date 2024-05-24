@@ -1,2 +1,3 @@
 engines/twp/dialogs.cpp
 engines/twp/metaengine.cpp
+engines/twp/twp.cpp

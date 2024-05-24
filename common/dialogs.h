@@ -90,7 +90,7 @@ protected:
 	void endDialog() {
 		// While the native file browser is open, any input events (e.g. keypresses) are
 		// still received by the application. With SDL backend for example this results in the
-		// events beeing queued and processed after we return, thus dispatching events that were
+		// events being queued and processed after we return, thus dispatching events that were
 		// intended for the native file browser. For example: pressing Esc to cancel the native
 		// file browser would cause the application to quit in addition to closing the
 		// file browser. To avoid this happening clear all pending events.

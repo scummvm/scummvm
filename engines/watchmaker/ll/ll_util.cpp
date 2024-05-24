@@ -459,7 +459,7 @@ bool SetBndLevel(WGame &game, const char *roomname, int32 lev) {
 /* -----------------17/12/00 17.59-------------------
  *                  PrintLoading
  * --------------------------------------------------*/
-void PrintLoading(void) {
+void PrintLoading() {
 	warning("STUBBED: PrintLoading");
 #if 0
 //	Stampa la scritta loading

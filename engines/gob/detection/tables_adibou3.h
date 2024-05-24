@@ -31,6 +31,8 @@
 #ifndef GOB_DETECTION_TABLES_ADIBOU3_H
 #define GOB_DETECTION_TABLES_ADIBOU3_H
 
+//#include "common/translation.h"  // Make release checker happy
+
 // -- French: Adibou 3 --
 
 {

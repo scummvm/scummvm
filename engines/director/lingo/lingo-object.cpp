@@ -276,7 +276,7 @@ static struct XLibProto {
 	{ SoundJam::fileNames,				SoundJam::open,				SoundJam::close,			kXObj,					400 },	// D4
 	{ SpaceMgr::fileNames,				SpaceMgr::open,				SpaceMgr::close,			kXObj,					400 },	// D4
 	{ StageTCXObj::fileNames,			StageTCXObj::open,			StageTCXObj::close,			kXObj,					400 },	// D4
-	{ UnitTest::fileNames,				UnitTest::open,				UnitTest::close,			kXObj,					400 },	// D4
+	{ UnitTestXObj::fileNames,			UnitTestXObj::open,			UnitTestXObj::close,		kXObj,					400 },	// D4
 	{ VMisOnXFCN::fileNames,			VMisOnXFCN::open,			VMisOnXFCN::close,			kXObj,					400 },	// D4
 	{ ValkyrieXObj::fileNames,			ValkyrieXObj::open,			ValkyrieXObj::close,		kXObj,					400 },	// D4
 	{ VideodiscXObj::fileNames,			VideodiscXObj::open,		VideodiscXObj::close,		kXObj,					200 },	// D2
@@ -416,6 +416,7 @@ ScriptContext::ScriptContext(const ScriptContext &sc) : Object<ScriptContext>(sc
 	}
 	_constants = sc._constants;
 	_properties = sc._properties;
+	_propertyNames = sc._propertyNames;
 
 	_id = sc._id;
 }
@@ -505,10 +506,26 @@ Datum ScriptContext::getProp(const Common::String &propName) {
 			return _properties["ancestor"].u.obj->getProp(propName);
 		}
 	}
+	_propertyNames.push_back(propName);
 	return _properties[propName]; // return new property
 }
 
-bool ScriptContext::setProp(const Common::String &propName, const Datum &value) {
+Common::String ScriptContext::getPropAt(uint32 index) {
+	uint32 target = 1;
+	for (auto &it : _propertyNames) {
+		if (target == index) {
+			return it;
+		}
+		target += 1;
+	}
+	return Common::String();
+}
+
+uint32 ScriptContext::getPropCount() {
+	return _propertyNames.size();
+}
+
+bool ScriptContext::setProp(const Common::String &propName, const Datum &value, bool force) {
 	if (_disposed) {
 		error("Property '%s' accessed on disposed object <%s>", propName.c_str(), Datum(this).asString(true).c_str());
 	}
@@ -516,14 +533,20 @@ bool ScriptContext::setProp(const Common::String &propName, const Datum &value) 
 		_properties[propName] = value;
 		return true;
 	}
-	if (_objType == kScriptObj) {
+	if (force) {
+		// used by e.g. the script compiler to add properties
+		_propertyNames.push_back(propName);
+		_properties[propName] = value;
+		return true;
+	} else if (_objType == kScriptObj) {
 		if (_properties.contains("ancestor") && _properties["ancestor"].type == OBJECT
 				&& (_properties["ancestor"].u.obj->getObjType() & (kScriptObj | kXtraObj))) {
 			debugC(3, kDebugLingoExec, "Getting prop '%s' from ancestor: <%s>", propName.c_str(), _properties["ancestor"].asString(true).c_str());
-			return _properties["ancestor"].u.obj->setProp(propName, value);
+			return _properties["ancestor"].u.obj->setProp(propName, value, force);
 		}
 	} else if (_objType == kFactoryObj) {
 		// D3 style anonymous objects/factories, set whatever properties you like
+		_propertyNames.push_back(propName);
 		_properties[propName] = value;
 		return true;
 	}
@@ -643,7 +666,7 @@ Datum Window::getProp(const Common::String &propName) {
 	return Datum();
 }
 
-bool Window::setProp(const Common::String &propName, const Datum &value) {
+bool Window::setProp(const Common::String &propName, const Datum &value, bool force) {
 	Common::String fieldName = Common::String::format("%d%s", kTheWindow, propName.c_str());
 	if (g_lingo->_theEntityFields.contains(fieldName)) {
 		return setField(g_lingo->_theEntityFields[fieldName]->field, value);

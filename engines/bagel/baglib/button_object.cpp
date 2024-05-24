@@ -50,10 +50,11 @@ CBagButtonObject::~CBagButtonObject() {
 }
 
 ErrorCode CBagButtonObject::attach() {
-	ErrorCode rc = CBagSpriteObject::attach();
+	ErrorCode errorCode = CBagSpriteObject::attach();
 
-	if (getSprite()) {
-		getSprite()->setAnimated(false);
+	CBofSprite *curSprite = getSprite();
+	if (curSprite) {
+		curSprite->setAnimated(false);
 	}
 
 	if (_buttonType == BTN_VLEVER || _buttonType == BTN_HLEVER) {
@@ -61,7 +62,7 @@ ErrorCode CBagButtonObject::attach() {
 		_midPoint.y = getRect().topLeft().y + (getRect().height() / 2);
 	}
 
-	if (getSprite()->getCelCount() == 1 && _buttonType != BTN_SLIDER) {
+	if (curSprite && curSprite->getCelCount() == 1 && _buttonType != BTN_SLIDER) {
 		// Only given down state
 		setVisible(false);
 	}
@@ -74,7 +75,7 @@ ErrorCode CBagButtonObject::attach() {
 		setPosition(NewPoint);
 	}
 
-	return rc;
+	return errorCode;
 }
 
 ErrorCode CBagButtonObject::detach() {
@@ -328,9 +329,9 @@ ErrorCode CBagButtonObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcR
 	}
 
 	if (getSprite() && ((getSprite()->getCelCount() > 1) || isVisible())) {
-		ErrorCode err = CBagSpriteObject::update(bmp, pt, srcRect, maskColor);
+		ErrorCode errorCode = CBagSpriteObject::update(bmp, pt, srcRect, maskColor);
 		setDirty(bDirty);
-		return err;
+		return errorCode;
 	}
 
 	return _errCode;
@@ -433,12 +434,12 @@ ParseCodes CBagButtonObject::setInfo(CBagIfstream &istr) {
 		// No match return from function
 		//
 		default: {
-			ParseCodes rc = CBagObject::setInfo(istr);
-			if (rc == PARSING_DONE) {
+			ParseCodes parseCode = CBagObject::setInfo(istr);
+			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}
 
-			if (rc == UPDATED_OBJECT) {
+			if (parseCode == UPDATED_OBJECT) {
 				nObjectUpdated = true;
 			} else { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
@@ -464,7 +465,7 @@ void CBagButtonObject::setProperty(const CBofString &prop, int val) {
 				else
 					_activeDown = true;
 
-				if (getSprite() && (getSprite()->getCelCount() == 1)) { // Only given down state
+				if (getSprite()->getCelCount() == 1) { // Only given down state
 					setVisible(_activeDown);
 					_active = false;
 				}

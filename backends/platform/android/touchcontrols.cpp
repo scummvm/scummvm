@@ -273,7 +273,7 @@ void TouchControls::update(Action action, int ptrId, int x, int y) {
 		FunctionState &functionState = _functionStates[ptr->function];
 
 		if (!behavior.pressOnRelease) {
-			// We sent key down continously: buttonUp everything
+			// We sent key down continuously: buttonUp everything
 			buttonUp(functionState.main);
 			buttonUp(functionState.modifier);
 		} else {
@@ -304,7 +304,7 @@ void TouchControls::update(Action action, int ptrId, int x, int y) {
 			FunctionState &functionState = _functionStates[i];
 
 			if (!behavior.pressOnRelease) {
-				// We sent key down continously: buttonUp everything
+				// We sent key down continuously: buttonUp everything
 				buttonUp(functionState.main);
 				buttonUp(functionState.modifier);
 			}

@@ -62,7 +62,6 @@ public:
 
 	bool trackPopupMenu(uint32 nFlags, int x, int y, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *lpRect = 0);
 
-	// bool AddUniversalObject(CBagObject *pObj);
 	static bool removeUniversalObjectList();
 	static bool setUniversalObjectList(CBofList<CBagObject *> *pObjList);
 	static CBofList<CBagObject *> *getUniversalObjectList() {

@@ -99,6 +99,8 @@
 #include "scumm/he/net/net_lobby.h"
 #endif
 #endif
+
+#include "scumm/he/moonbase/dialog-mapgenerator.h"
 #endif
 
 #include "backends/audiocd/audiocd.h"
@@ -647,6 +649,10 @@ ScummEngine_v6::ScummEngine_v6(OSystem *syst, const DetectorResult &dr)
 
 ScummEngine_v60he::ScummEngine_v60he(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v6(syst, dr) {
+#ifdef ENABLE_HE
+	_moonbase = 0;
+#endif
+
 	memset(_hInFileTable, 0, sizeof(_hInFileTable));
 	memset(_hOutFileTable, 0, sizeof(_hOutFileTable));
 
@@ -798,8 +804,6 @@ ScummEngine_v90he::~ScummEngine_v90he() {
 
 ScummEngine_v100he::ScummEngine_v100he(OSystem *syst, const DetectorResult &dr) : ScummEngine_v99he(syst, dr) {
 	/* Moonbase stuff */
-	_moonbase = 0;
-
 	if (_game.id == GID_MOONBASE)
 		_moonbase = new Moonbase(this);
 
@@ -3106,7 +3110,7 @@ void ScummEngine_v3::terminateSaveMenuScript() {
 
 		// If local variable 0 and the override flag are set, chain script 119
 		if (readVar(0x4000)) {
-			if (VAR(VAR_OVERRIDE)) {
+			if (VAR(VAR_OVERRIDE) && _currentScript != 0xFF) {
 				int cur = _currentScript;
 
 				vm.slot[cur].number = 0;
@@ -3920,6 +3924,15 @@ int ScummEngine_v90he::networkSessionDialog() {
 	// Joining a session
 	SessionSelectorDialog sessionDialog(this);
 	return runDialog(sessionDialog);
+}
+#endif
+
+#ifdef ENABLE_HE
+bool ScummEngine_v100he::mapGeneratorDialog(bool demo) {
+	// Runs the map generator options dialog
+	// for Moonbase Commander.
+	MapGeneratorDialog dialog(demo);
+	return runDialog(dialog) == 1;
 }
 #endif
 

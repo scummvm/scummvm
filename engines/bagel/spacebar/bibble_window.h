@@ -45,11 +45,11 @@ struct ST_PAYOFFS {
 };
 
 struct CBetAreaDef {
-	int left;
-	int top;
-	int right;
-	int bottom;
 	int _nBet;
+	int _left;
+	int _top;
+	int _right;
+	int _bottom;
 	int _nPayOff1;
 	int _nPayOff2;
 	const char *_cAudioFile;

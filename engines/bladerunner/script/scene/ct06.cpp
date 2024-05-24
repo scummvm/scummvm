@@ -37,7 +37,7 @@ void SceneScriptCT06::InitializeScene() {
 	if (Game_Flag_Query(kFlagZubenRetired) && Actor_Query_In_Set(kActorZuben, kSetCT07)) {
 		Actor_Put_In_Set(kActorZuben, kSetCT06);
 		Actor_Set_At_XYZ(kActorZuben, 58.41f, -58.23f, -24.97f, 240);
-		Actor_Retired_Here(kActorZuben, 72, 36, 1, kActorMcCoy);
+		Actor_Retired_Here(kActorZuben, 72, 36, true, kActorMcCoy);
 	}
 	Ambient_Sounds_Add_Looping_Sound(kSfxRAIN10,   100, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTDRONE1,  20, 1, 1);

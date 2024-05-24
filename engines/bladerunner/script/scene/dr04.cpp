@@ -283,7 +283,7 @@ void SceneScriptDR04::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagDR05ViewExplosion)) {
 		Player_Loses_Control();
 		Delay(4000);
-		Actor_Retired_Here(kActorMcCoy, 6, 6, 1, -1);
+		Actor_Retired_Here(kActorMcCoy, 6, 6, true, -1);
 	} else {
 		if ( Game_Flag_Query(kFlagDR05BombActivated)
 		 && !Game_Flag_Query(kFlagDR05BombExploded)

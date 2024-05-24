@@ -57,7 +57,7 @@ public:
 
 	bool isInside(const CBofPoint &pt) override;
 
-	CBofBitmap *getBitmap() {
+	CBofBitmap *getBitmap() const {
 		return _bmp;
 	}
 	CBofRect getRect() override;

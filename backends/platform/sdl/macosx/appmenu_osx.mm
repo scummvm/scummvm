@@ -113,10 +113,20 @@ static void openFromBundle(NSString *file) {
 }
 - (void) openReadme;
 - (void) openLicenseGPL;
-- (void) openLicenseLGPL;
-- (void) openLicenseFreefont;
-- (void) openLicenseOFL;
+- (void) openLicenseApache;
 - (void) openLicenseBSD;
+- (void) openLicenseBSL;
+- (void) openLicenseFreefont;
+- (void) openLicenseGLAD;
+- (void) openLicenseISC;
+- (void) openLicenseLGPL;
+- (void) openLicenseLUA;
+- (void) openLicenseMIT;
+- (void) openLicenseMKV;
+- (void) openLicenseMPL;
+- (void) openLicenseOFL;
+- (void) openLicenseTinyGL;
+- (void) openLicenseCatharon;
 - (void) openNews;
 - (void) openUserManual;
 - (void) openCredits;
@@ -131,20 +141,60 @@ static void openFromBundle(NSString *file) {
 	openFromBundle(@"COPYING");
 }
 
-- (void)openLicenseLGPL {
-	openFromBundle(@"COPYING-LGPL");
+- (void)openLicenseApache {
+	openFromBundle(@"COPYING-Apache");
+}
+
+- (void)openLicenseBSD {
+	openFromBundle(@"COPYING-BSD");
+}
+
+- (void)openLicenseBSL {
+	openFromBundle(@"COPYING-BSL");
 }
 
 - (void)openLicenseFreefont {
 	openFromBundle(@"COPYING-FREEFONT");
 }
 
+- (void)openLicenseGLAD {
+	openFromBundle(@"COPYING-GLAD");
+}
+
+- (void)openLicenseISC {
+	openFromBundle(@"COPYING-ISC");
+}
+
+- (void)openLicenseLGPL {
+	openFromBundle(@"COPYING-LGPL");
+}
+
+- (void)openLicenseLUA {
+	openFromBundle(@"COPYING-LUA");
+}
+
+- (void)openLicenseMIT {
+	openFromBundle(@"COPYING-MIT");
+}
+
+- (void)openLicenseMKV {
+	openFromBundle(@"COPYING-MKV");
+}
+
+- (void)openLicenseMPL {
+	openFromBundle(@"COPYING-MPL");
+}
+
 - (void)openLicenseOFL {
 	openFromBundle(@"COPYING-OFL");
 }
 
-- (void)openLicenseBSD {
-	openFromBundle(@"COPYING-BSD");
+- (void)openLicenseTinyGL {
+	openFromBundle(@"COPYING-TINYGL");
+}
+
+- (void)openLicenseCatharon {
+	openFromBundle(@"CatharonLicense-txt");
 }
 
 - (void)openNews {
@@ -275,6 +325,17 @@ void replaceApplicationMenuItems() {
 		addMenuItem(_("Freefont License"), delegate, @selector(openLicenseFreefont), @"", helpMenu);
 		addMenuItem(_("OFL License"), delegate, @selector(openLicenseOFL), @"", helpMenu);
 		addMenuItem(_("BSD License"), delegate, @selector(openLicenseBSD), @"", helpMenu);
+
+		addMenuItem(_("Apache License"), delegate, @selector(openLicenseApache), @"", helpMenu);
+		addMenuItem(_("BSL License"), delegate, @selector(openLicenseBSL), @"", helpMenu);
+		addMenuItem(_("GLAD License"), delegate, @selector(openLicenseGLAD), @"", helpMenu);
+		addMenuItem(_("ISC License"), delegate, @selector(openLicenseISC), @"", helpMenu);
+		addMenuItem(_("Lua License"), delegate, @selector(openLicenseLUA), @"", helpMenu);
+		addMenuItem(_("MIT License"), delegate, @selector(openLicenseMIT), @"", helpMenu);
+		addMenuItem(_("MKV License"), delegate, @selector(openLicenseMKV), @"", helpMenu);
+		addMenuItem(_("MPL License"), delegate, @selector(openLicenseMPL), @"", helpMenu);
+		addMenuItem(_("TinyGL License"), delegate, @selector(openLicenseTinyGL), @"", helpMenu);
+		addMenuItem(_("Catharon License"), delegate, @selector(openLicenseCatharon), @"", helpMenu);
 	}
 
 	[appleMenu release];

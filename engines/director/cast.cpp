@@ -52,6 +52,11 @@
 #include "director/castmember/transition.h"
 #include "director/lingo/lingo-codegen.h"
 
+#include "director/lingo/lingodec/context.h"
+#include "director/lingo/lingodec/names.h"
+#include "director/lingo/lingodec/resolver.h"
+#include "director/lingo/lingodec/script.h"
+
 namespace Director {
 
 Cast::Cast(Movie *movie, uint16 castLibID, bool isShared, bool isExternal) {
@@ -115,6 +120,9 @@ Cast::~Cast() {
 
 	delete _loadedCast;
 	delete _lingoArchive;
+
+	delete _chunkResolver;
+	delete _lingodec;
 }
 
 CastMember *Cast::getCastMember(int castId, bool load) {
@@ -234,7 +242,7 @@ CastMember *Cast::setCastMember(int castId, CastMember *cast) {
 	return cast;
 }
 
-bool Cast::duplicateCastMember(CastMember *source, int targetId) {
+bool Cast::duplicateCastMember(CastMember *source, CastMemberInfo *info, int targetId) {
 	if (_loadedCast->contains(targetId)) {
 		eraseCastMember(targetId);
 	}
@@ -277,6 +285,10 @@ bool Cast::duplicateCastMember(CastMember *source, int targetId) {
 		break;
 	}
 
+	if (info) {
+		CastMemberInfo *newInfo = new CastMemberInfo(*info);
+		_castsInfo[targetId] = newInfo;
+	}
 	setCastMember(targetId, target);
 	return true;
 }
@@ -286,9 +298,14 @@ bool Cast::eraseCastMember(int castId) {
 		CastMember *member = _loadedCast->getVal(castId);
 		delete member;
 		_loadedCast->erase(castId);
+
+		if (_castsInfo.contains(castId)) {
+			CastMemberInfo *info = _castsInfo.getVal(castId);
+			delete info;
+			_castsInfo.erase(castId);
+		}
 		return true;
 	}
-
 	return false;
 }
 
@@ -636,25 +653,9 @@ void Cast::loadCast() {
 		}
 	}
 
-	// For D4+ we may request to force Lingo scripts and skip precompiled bytecode
-	if (_version >= kFileVer400 && !debugChannelSet(-1, kDebugNoBytecode)) {
-		// Try to load script context
-		if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('L', 'c', 't', 'x'))) != nullptr) {
-			loadLingoContext(*r);
-			delete r;
-		}
-	}
-
-	// PICT resources
-	if (_castArchive->hasResource(MKTAG('P', 'I', 'C', 'T'), -1)) {
-		debug("STUB: Unhandled 'PICT' resource");
-	}
-
-	// External Cast Reference resources
-	// Used only by authoring tools for referring to the external casts
-	if (_castArchive->hasResource(MKTAG('S', 'C', 'R', 'F'), -1)) {
-		debugC(4, kDebugLoading, "'SCRF' resource skipped");
-	}
+	// The CastMemberInfo data should be loaded by now,
+	// set up the cache used for cast member name lookups.
+	rebuildCastNameCache();
 
 	// Score Order List resources
 	if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('S', 'o', 'r', 'd'))) != nullptr) {
@@ -711,6 +712,39 @@ void Cast::loadCast() {
 		_loadedRTE2s.setVal(iterator, new RTE2(this, *r));
 		delete r;
 	}
+
+	// For D4+ we may request to force Lingo scripts and skip precompiled bytecode
+	if (_version >= kFileVer400 && !debugChannelSet(-1, kDebugNoBytecode)) {
+		// Try to load script context
+		if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('L', 'c', 't', 'x'))) != nullptr) {
+			loadLingoContext(*r);
+			delete r;
+		}
+	}
+
+	// PICT resources
+	if (_castArchive->hasResource(MKTAG('P', 'I', 'C', 'T'), -1)) {
+		debug("STUB: Unhandled 'PICT' resource");
+	}
+
+	// External Cast Reference resources
+	// Used only by authoring tools for referring to the external casts
+	if (_castArchive->hasResource(MKTAG('S', 'C', 'R', 'F'), -1)) {
+		debugC(4, kDebugLoading, "'SCRF' resource skipped");
+	}
+
+}
+
+Common::String Cast::getLinkedPath(int castId) {
+	if (!_castsInfo.contains(castId))
+		return Common::String();
+	Common::String filename = _castsInfo[castId]->fileName;
+	if (filename.empty())
+		return Common::String();
+	Common::String directory = _castsInfo[castId]->directory;
+	if (directory.lastChar() != g_director->_dirSeparator)
+		directory += g_director->_dirSeparator;
+	return directory + filename;
 }
 
 Common::String Cast::getVideoPath(int castId) {
@@ -747,12 +781,7 @@ Common::String Cast::getVideoPath(int castId) {
 
 	if (videoData == nullptr || videoData->size() == 0) {
 		// video file is linked, load from the filesystem
-
-		Common::String filename = _castsInfo[castId]->fileName;
-		Common::String directory = _castsInfo[castId]->directory;
-		if (directory.lastChar() != g_director->_dirSeparator)
-			directory += g_director->_dirSeparator;
-		res = directory + filename;
+		res = getLinkedPath(castId);
 	} else {
 		Video::QuickTimeDecoder qt;
 		qt.loadStream(videoData);
@@ -1100,6 +1129,51 @@ struct LingoContextEntry {
 LingoContextEntry::LingoContextEntry(int32 i, int16 n)
 	: index(i), nextUnused(n), unused(false) {}
 
+class ChunkResolver : public LingoDec::ChunkResolver {
+public:
+	ChunkResolver(Cast *cast) : _cast(cast) {}
+	~ChunkResolver() {
+		for (auto &it : _scripts)
+			delete it._value;
+
+		for (auto &it : _scriptnames)
+			delete it._value;
+	}
+
+	virtual LingoDec::Script *getScript(int32 id) {
+		if (_scripts.contains(id))
+			return _scripts[id];
+
+		Common::SeekableReadStreamEndian *r;
+
+		r = _cast->_castArchive->getResource(MKTAG('L', 's', 'c', 'r'), id);
+		_scripts[id] = new LingoDec::Script(g_director->getVersion());
+		_scripts[id]->read(*r);
+		delete r;
+
+		return _scripts[id];
+	}
+
+	virtual LingoDec::ScriptNames *getScriptNames(int32 id) {
+		if (_scriptnames.contains(id))
+			return _scriptnames[id];
+
+		Common::SeekableReadStreamEndian *r;
+
+		r = _cast->_castArchive->getResource(MKTAG('L', 'n', 'a', 'm'), id);
+		_scriptnames[id] = new LingoDec::ScriptNames(_cast->_version);
+		_scriptnames[id]->read(*r);
+		delete r;
+
+		return _scriptnames[id];
+	}
+
+private:
+	Cast *_cast;
+	Common::HashMap<int32, LingoDec::Script *> _scripts;
+	Common::HashMap<int32, LingoDec::ScriptNames *> _scriptnames;
+};
+
 void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 	if (_version >= kFileVer400) {
 		debugC(1, kDebugCompile, "Add D4 script context");
@@ -1189,6 +1263,18 @@ void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 		}
 	} else {
 		error("Cast::loadLingoContext: unsupported Director version (%d)", _version);
+	}
+
+	// Rewind stream
+	stream.seek(0);
+	_chunkResolver = new ChunkResolver(this);
+	_lingodec = new LingoDec::ScriptContext(_version, _chunkResolver);
+	_lingodec->read(stream);
+
+	_lingodec->parseScripts();
+
+	for (auto it = _lingodec->scripts.begin(); it != _lingodec->scripts.end(); ++it) {
+		debug(5, "[%d/%d] %s", it->second->castID, it->first, it->second->scriptText("\n", false).c_str());
 	}
 }
 
@@ -1301,21 +1387,6 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		// fallthrough
 	case 2:
 		ci->name = castInfo.strings[1].readString();
-
-		if (!ci->name.empty()) {
-			// Multiple casts can have the same name. In director only the first one is used.
-			if (!_castsNames.contains(ci->name)) {
-				_castsNames[ci->name] = id;
-			}
-
-			// Store name with type
-			Common::String cname = Common::String::format("%s:%d", ci->name.c_str(), member->_type);
-			if (!_castsNames.contains(cname)) {
-				_castsNames[cname] = id;
-			} else {
-				debugC(4, kDebugLoading, "Cast::loadCastInfo(): duplicate cast name: %s for castIDs: %s %s", cname.c_str(), numToCastNum(id), numToCastNum(_castsNames[ci->name]));
-			}
-		}
 		// fallthrough
 	case 1:
 		ci->script = castInfo.strings[0].readString(false);
@@ -1509,6 +1580,27 @@ Common::String Cast::formatCastSummary(int castId = -1) {
 		result += "\n";
 	}
 	return result;
+}
+
+void Cast::rebuildCastNameCache() {
+	_castsNames.clear();
+	for (auto &it : _castsInfo) {
+		if (!it._value->name.empty()) {
+			// Multiple casts can have the same name. In director only the earliest one is used for lookups.
+			if (!_castsNames.contains(it._value->name) || (_castsNames.getVal(it._value->name) > it._key)) {
+				_castsNames[it._value->name] = it._key;
+			}
+
+			// Store name with type
+			CastMember *member = _loadedCast->getVal(it._key);
+			Common::String cname = Common::String::format("%s:%d", it._value->name.c_str(), member->_type);
+			if (!_castsNames.contains(cname) || (_castsNames.getVal(cname) > it._key)) {
+				_castsNames[cname] = it._key;
+			} else {
+				debugC(4, kDebugLoading, "Cast::rebuildCastNameCache(): duplicate cast name: %s for castIDs: %s %s", cname.c_str(), numToCastNum(it._key), numToCastNum(_castsNames[it._value->name]));
+			}
+		}
+	}
 }
 
 } // End of namespace Director

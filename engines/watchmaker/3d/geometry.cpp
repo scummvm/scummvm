@@ -528,7 +528,7 @@ t3dF32 Cosine_Interpolate(t3dF32 a, t3dF32 b, t3dF32 x) {
 /* -----------------10/06/99 15.55-------------------
  *                  SelectRandomNumbers
  * --------------------------------------------------*/
-void SelectRandomNumbers(void) {
+void SelectRandomNumbers() {
 	error("TODO: SelectRandomNumbers");
 #if 0
 	while (!isprime(skyval1 = (uint32)rand() % 100));
@@ -624,7 +624,7 @@ t3dF32 PerlinNoise_2D(t3dF32 x, t3dF32 y, t3dF32 persistence, uint32 NumberOfOct
 /* -----------------10/06/99 15.57-------------------
  *              t3dCreateProceduralSky
  * --------------------------------------------------*/
-void t3dCreateProceduralSky(void) {
+void t3dCreateProceduralSky() {
 	unsigned short *p;
 	int32  i, j, pitch;
 	t3dF32  f, x, y, xstep, ystep;
@@ -1146,7 +1146,7 @@ void t3dResetPipeline() {
 /* -----------------10/06/99 15.58-------------------
  *              t3dReleaseParticles
  * --------------------------------------------------*/
-void t3dReleaseParticles(void) {
+void t3dReleaseParticles() {
 	for (int i = 0; i < MAX_PARTICLES; i++) {
 		t3dFree(Particles[i].ParticlePos);
 		Particles[i].Material.clear();
@@ -1199,7 +1199,7 @@ uint8 CheckAndClip(t3dV3F *start, t3dV3F *end, t3dNORMAL *n) {
 /* -----------------10/06/99 15.50-------------------
  *                  t3dCheckWithFloor
  * --------------------------------------------------*/
-t3dF32 t3dCheckWithFloor(void) {
+t3dF32 t3dCheckWithFloor() {
 	extern t3dF32 CurFloorY;
 	t3dVERTEX a, b, c;
 	t3dNORMAL bbn;
@@ -3045,7 +3045,7 @@ uint8 t3dPointInFrustum(t3dV3F pos) {
  * -----------------10/06/99 15.54-------------------
  *                  t3dTransformSky
  * --------------------------------------------------*/
-void t3dTransformSky(void) {
+void t3dTransformSky() {
 	gVertex *gv;
 	t3dBODY *sky = t3dSky;
 	t3dBODY *sun = nullptr; //s t3dSun;
@@ -3270,7 +3270,7 @@ void QueueMaterialList(MaterialTable &MatList, unsigned int NumMat, signed short
 /* -----------------08/03/2000 15.13-----------------
  *                  ProcessMaterialList
  * --------------------------------------------------*/
-void ProcessMaterialList(void) {
+void ProcessMaterialList() {
 	for (uint32 i = 0; i < t3dNumMaterialLists; i++) {
 		rBuildMaterialList(*t3dMaterialList[i].mat_list, t3dMaterialList[i].num_mat, t3dMaterialList[i].matrix);
 	}
@@ -3300,7 +3300,7 @@ static int SortMesh(const void *element1, const void *element2) {
 /* -----------------10/06/99 15.51-------------------
  *                  t3dSortMeshes
  * --------------------------------------------------*/
-void t3dSortMeshes(void) {
+void t3dSortMeshes() {
 	qsort((void *)&t3d_VisibleMeshes[0], (size_t)t3d_NumMeshesVisible, sizeof(t3dMESH *),
 	      SortMesh);
 }
@@ -3379,7 +3379,7 @@ void t3dProcessPortal(t3dMESH *mesh, t3dCAMERA *cam) {
 /* -----------------10/06/99 15.51-------------------
  *                  t3dProcessPortals
  * --------------------------------------------------*/
-void t3dProcessPortals(void) {
+void t3dProcessPortals() {
 	uint32 i;
 
 	if (t3dNumPortals > 5)

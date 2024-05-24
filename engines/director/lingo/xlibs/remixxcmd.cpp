@@ -292,7 +292,7 @@ void RemixXCMDState::interruptCheck() {
 }
 
 void RemixXCMD::m_Remix(int nargs) {
-	g_lingo->printSTUBWithArglist("RemixXCMD::m_Remix", nargs);
+	g_lingo->printArgs("RemixXCMD::m_Remix", nargs);
 	Datum result;
 	if (nargs != 1) {
 		result = Datum("Wrong number of params");

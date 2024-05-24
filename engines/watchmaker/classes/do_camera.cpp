@@ -523,7 +523,7 @@ void doCamera(WGame &game) {
 /* -----------------09/11/98 10.27-------------------
  *                  ResetCameraSource
  * --------------------------------------------------*/
-void ResetCameraSource(void) {
+void ResetCameraSource() {
 	t3dLastCameraIndex = 255;
 	t3dCurCameraIndex = 255;
 }
@@ -531,7 +531,7 @@ void ResetCameraSource(void) {
 /* -----------------09/11/98 10.27-------------------
  *                  ResetCameraTarget
  * --------------------------------------------------*/
-void ResetCameraTarget(void) {
+void ResetCameraTarget() {
 	t3dVectFill(&OldCameraTarget, 0.0f);
 }
 

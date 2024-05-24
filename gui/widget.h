@@ -530,7 +530,7 @@ public:
 	/**
 	 * @param widgetsBoss  parent widget for the container widget
 	 * @param name         name of the container widget in the layout system
-	 * @param dialogLayout name of the layout used by the contained widgets, empty string for manually layed out widgets
+	 * @param dialogLayout name of the layout used by the contained widgets, empty string for manually laid out widgets
 	 * @param scrollable   whether the container is made scrollable through a ScrollContainerWidget
 	 * @param domain       the configuration manager domain this widget is meant to edit
 	 */

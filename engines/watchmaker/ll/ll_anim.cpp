@@ -90,7 +90,7 @@ extern uint32 WideScreen_EndTime;
 /* -----------------01/06/98 11.57-------------------
  *                  PopATF
  * --------------------------------------------------*/
-uint16 PopATF(void) {
+uint16 PopATF() {
 	uint16 v, a;
 
 	if (CurATFStack[CurActiveAnim] > 0)

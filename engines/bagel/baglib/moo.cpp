@@ -36,20 +36,20 @@ void CBagMoo::initialize() {
 }
 
 ErrorCode CBagMoo::update(CBofBitmap *pBmp, CBofPoint /*pt*/, CBofRect *pSrcRect, int nMaskColor) {
-	ErrorCode    ec = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	if (_pMovie) {
 		// Update the movie, assume only unzoomed pda right now
 		CBofPoint cPos(116, 61);
-		ec = _pMovie->update(pBmp, cPos, pSrcRect, nMaskColor);
+		errorCode = _pMovie->update(pBmp, cPos, pSrcRect, nMaskColor);
 
 		// If we're done or we encountered an error, then roll over and die.
-		if (ec != ERR_NONE || _pMovie->isModalDone()) {
+		if (errorCode != ERR_NONE || _pMovie->isModalDone()) {
 			stopMovie(true);
 		}
 	}
 
-	return ec;
+	return errorCode;
 }
 
 CBagMoo::~CBagMoo() {
@@ -59,7 +59,7 @@ CBagMoo::~CBagMoo() {
 }
 
 ErrorCode CBagMoo::setPDAMovie(CBofString &s) {
-	ErrorCode ec = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	// Should never happen, but just make sure.
 	if (_pMovie) {
@@ -69,20 +69,17 @@ ErrorCode CBagMoo::setPDAMovie(CBofString &s) {
 
 	// Get a new movie object
 	_pMovie = new CBagCharacterObject();
-	assert(_pMovie != nullptr);
 
-	if (_pMovie) {
-		_pMovie->setFileName(s);
+	_pMovie->setFileName(s);
 
-		// Attach this bad baby...
-		ec = _pMovie->attach();
-		if (ec == ERR_NONE) {
-			_pMovie->setModal(false);
-			_pMovie->setNumOfLoops(1);
-		}
+	// Attach this bad baby...
+	errorCode = _pMovie->attach();
+	if (errorCode == ERR_NONE) {
+		_pMovie->setModal(false);
+		_pMovie->setNumOfLoops(1);
 	}
 
-	return ec;
+	return errorCode;
 }
 
 void CBagMoo::stopMovie(bool bResetPDA) {

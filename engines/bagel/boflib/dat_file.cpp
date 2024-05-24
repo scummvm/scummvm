@@ -32,14 +32,14 @@ namespace Bagel {
 // Local prototypes
 static uint32 CreateHashCode(const byte *);
 
-void HEADER_REC::synchronize(Common::Serializer &s) {
+void HeaderRec::synchronize(Common::Serializer &s) {
 	s.syncAsSint32LE(_lOffset);
 	s.syncAsSint32LE(_lLength);
 	s.syncAsUint32LE(_lCrc);
 	s.syncAsUint32LE(_lKey);
 }
 
-void HEAD_INFO::synchronize(Common::Serializer &s) {
+void HeadInfo::synchronize(Common::Serializer &s) {
 	s.syncAsSint32LE(_lNumRecs);
 	s.syncAsSint32LE(_lAddress);
 	s.syncAsUint32LE(_lFlags);
@@ -56,7 +56,7 @@ CBofDataFile::CBofDataFile() {
 	_bHeaderDirty = false;
 }
 
-ErrorCode CBofDataFile::setFile(const char *pszFileName, uint32 lFlags, const char *pPassword) {
+ErrorCode CBofDataFile::setFile(const char *pszFileName, uint32 lFlags) {
 	assert(isValidObject(this));
 
 	// Validate input
@@ -68,17 +68,6 @@ ErrorCode CBofDataFile::setFile(const char *pszFileName, uint32 lFlags, const ch
 
 	// All data files are binary, so force it
 	lFlags |= CBF_BINARY;
-
-	// Store password locally
-	if (pPassword != nullptr) {
-		// Don't want to overwrite past our password buffer
-		assert(strlen(pPassword) < MAX_PW_LEN);
-
-		Common::strcpy_s(_szPassWord, pPassword);
-
-		// Force encryption on since they supplied a password
-		_lFlags |= CDF_ENCRYPT;
-	}
 
 	// Remember the flags
 	_lFlags = lFlags;
@@ -93,7 +82,9 @@ ErrorCode CBofDataFile::setFile(const char *pszFileName, uint32 lFlags, const ch
 			if (!(_lFlags & CDF_KEEPOPEN)) {
 				close();
 			}
-		}
+		} else
+			reportError(ERR_FOPEN, "Could not open file %s", _szFileName);
+
 	} else {
 		reportError(ERR_FFIND, "Could not build full path to %s", pszFileName);
 	}
@@ -130,7 +121,7 @@ ErrorCode CBofDataFile::releaseFile() {
 ErrorCode CBofDataFile::create() {
 	assert(isValidObject(this));
 
-	HEAD_INFO stHeaderInfo;
+	HeadInfo stHeaderInfo;
 
 	// Only continue if there is no current error
 	if (_errCode == ERR_NONE) {
@@ -149,7 +140,7 @@ ErrorCode CBofDataFile::create() {
 		_bHeaderDirty = false;
 
 		stHeaderInfo._lNumRecs = _lNumRecs = 0;
-		stHeaderInfo._lAddress = HEAD_INFO::size();
+		stHeaderInfo._lAddress = HeadInfo::size();
 
 		// Create the file
 		if (CBofFile::create(_szFileName, _lFlags) == ERR_NONE) {
@@ -174,20 +165,18 @@ ErrorCode CBofDataFile::open() {
 	assert(isValidObject(this));
 
 	// Only continue if there is no current error
-	if (_errCode == ERR_NONE) {
-		if (_stream == nullptr) {
-			if (!(_lFlags & CDF_READONLY)) {
-				if (_lFlags & CDF_SAVEFILE) {
-					if (_lFlags & CDF_CREATE)
-						create();
-				} else if (!fileExists(_szFileName))
+	if (_errCode == ERR_NONE && _stream == nullptr) {
+		if (!(_lFlags & CDF_READONLY)) {
+			if (_lFlags & CDF_SAVEFILE) {
+				if (_lFlags & CDF_CREATE)
 					create();
-			}
+			} else if (!fileExists(_szFileName))
+				create();
+		}
 
-			if (_stream == nullptr) {
-				// Open data file
-				CBofFile::open(_szFileName, _lFlags);
-			}
+		if (_stream == nullptr) {
+			// Open data file
+			CBofFile::open(_szFileName, _lFlags);
 		}
 	}
 
@@ -219,20 +208,20 @@ ErrorCode CBofDataFile::readHeader() {
 
 		if (!errorOccurred()) {
 			// Determine number of records in file
-			HEAD_INFO stHeaderInfo;
+			HeadInfo stHeaderInfo;
 			if (read(stHeaderInfo) == ERR_NONE) {
 				_lNumRecs = stHeaderInfo._lNumRecs;
 				_lHeaderStart = stHeaderInfo._lAddress;
 
 				// Length of header is number of records * header-record size
-				_lHeaderLength = _lNumRecs * HEADER_REC::size();
+				_lHeaderLength = _lNumRecs * HeaderRec::size();
 
 				Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_stream);
 				assert(rs);
 				int32 lfileLength = rs->size();
 
 				// Make sure header contains valid info
-				if ((_lHeaderStart >= HEAD_INFO::size()) &&
+				if ((_lHeaderStart >= HeadInfo::size()) &&
 				        (_lHeaderStart <= lfileLength) && (_lHeaderLength >= 0) &&
 				        (_lHeaderLength < lfileLength)) {
 
@@ -242,32 +231,28 @@ ErrorCode CBofDataFile::readHeader() {
 
 					if (_lHeaderLength != 0) {
 						// Allocate buffer to hold header
-						if ((_pHeader = new HEADER_REC[(int)_lNumRecs]) != nullptr) {
-							// Seek to start of header
-							seek(_lHeaderStart);
+						_pHeader = new HeaderRec[(int)_lNumRecs];
 
-							// Read header
-							ErrorCode errCode = ERR_NONE;
-							for (int i = 0; i < _lNumRecs && errCode == ERR_NONE; ++i) {
-								errCode = read(_pHeader[i]);
-							}
+						// Seek to start of header
+						seek(_lHeaderStart);
 
-							if (errCode == ERR_NONE) {
-								uint32 lCrc = calculateCRC(&_pHeader->_lOffset, 4 * _lNumRecs);
+						// Read header
+						ErrorCode errorCode = ERR_NONE;
+						for (int i = 0; i < _lNumRecs && errorCode == ERR_NONE; ++i) {
+							errorCode = read(_pHeader[i]);
+						}
 
-								if (lCrc != stHeaderInfo._lFootCrc) {
-									logError(buildString("Error: '%s' has invalid footer", _szFileName));
-									_errCode = ERR_CRC;
-								}
+						if (errorCode == ERR_NONE) {
+							uint32 lCrc = calculateCRC(&_pHeader->_lOffset, 4 * _lNumRecs);
 
-							} else {
-								logError(buildString("Error: Could not read footer in file '%s'", _szFileName));
-								_errCode = ERR_FREAD;
+							if (lCrc != stHeaderInfo._lFootCrc) {
+								logError(buildString("Error: '%s' has invalid footer", _szFileName));
+								_errCode = ERR_CRC;
 							}
 
 						} else {
-							logError(buildString("Error: Could not allocate footer for file '%s'", _szFileName));
-							_errCode = ERR_MEMORY;
+							logError(buildString("Error: Could not read footer in file '%s'", _szFileName));
+							_errCode = ERR_FREAD;
 						}
 					}
 
@@ -298,10 +283,10 @@ ErrorCode CBofDataFile::writeHeader() {
 
 		if (_errCode == ERR_NONE) {
 			// Header starts at the end of the last record
-			HEADER_REC *pRec = &_pHeader[_lNumRecs - 1];
+			HeaderRec *pRec = &_pHeader[_lNumRecs - 1];
 			_lHeaderStart = pRec->_lOffset + pRec->_lLength;
 
-			HEAD_INFO stHeaderInfo;
+			HeadInfo stHeaderInfo;
 			stHeaderInfo._lNumRecs = _lNumRecs;
 			stHeaderInfo._lAddress = _lHeaderStart;
 			stHeaderInfo._lFlags = _lFlags;
@@ -315,12 +300,12 @@ ErrorCode CBofDataFile::writeHeader() {
 				seek(_lHeaderStart);
 
 				// Write header to data file
-				ErrorCode errCode = ERR_NONE;
-				for (int i = 0; i < _lNumRecs && errCode == ERR_NONE; ++i) {
-					errCode = write(_pHeader[i]);
+				ErrorCode errorCode = ERR_NONE;
+				for (int i = 0; i < _lNumRecs && errorCode == ERR_NONE; ++i) {
+					errorCode = write(_pHeader[i]);
 				}
 
-				if (errCode == ERR_NONE) {
+				if (errorCode == ERR_NONE) {
 					// Header is now clean
 					_bHeaderDirty = false;
 
@@ -354,7 +339,7 @@ ErrorCode CBofDataFile::readRecord(int32 lRecNum, void *pBuf) {
 		assert(_pHeader != nullptr);
 		// Get info about address of where record starts
 		// and how large the record is.
-		HEADER_REC *pRecInfo = &_pHeader[(int)lRecNum];
+		HeaderRec *pRecInfo = &_pHeader[(int)lRecNum];
 
 		// Open the data file if it's not already open
 		if (_stream == nullptr) {
@@ -405,7 +390,7 @@ ErrorCode CBofDataFile::readFromFile(int32 lRecNum, void *pBuf, int32 lBytes) {
 
 		// Get info about address of where record starts
 		// and how large the record is.
-		HEADER_REC *pRecInfo = &_pHeader[(int)lRecNum];
+		HeaderRec *pRecInfo = &_pHeader[(int)lRecNum];
 
 		// Open the data file if it's not already open
 		if (_stream == nullptr) {
@@ -452,7 +437,7 @@ ErrorCode CBofDataFile::writeRecord(int32 lRecNum, void *pBuf, int32 lSize, bool
 		if (lSize == -1)
 			lSize = _pHeader[(int)lRecNum]._lLength;
 
-		int32 lPrevOffset = HEAD_INFO::size();
+		int32 lPrevOffset = HeadInfo::size();
 		int32 lPrevLength = 0;
 
 		if (lRecNum != 0) {
@@ -460,7 +445,7 @@ ErrorCode CBofDataFile::writeRecord(int32 lRecNum, void *pBuf, int32 lSize, bool
 			lPrevLength = _pHeader[(int)lRecNum - 1]._lLength;
 		}
 
-		HEADER_REC *pRecInfo = &_pHeader[(int)lRecNum];
+		HeaderRec *pRecInfo = &_pHeader[(int)lRecNum];
 
 		// Header needs to updated
 		_bHeaderDirty = true;
@@ -505,34 +490,30 @@ ErrorCode CBofDataFile::writeRecord(int32 lRecNum, void *pBuf, int32 lSize, bool
 
 			// Allocate a buffer big enough for one chunk
 			byte *pTmpBuf = (byte *)bofAlloc(lChunkSize);
-			if (pTmpBuf != nullptr) {
-				// While there is data to move
-				while (lBufLength > 0) {
-					// Seek to beginning of the source for this chunk
-					setPosition(pRecInfo->_lOffset + pRecInfo->_lLength + lBufLength - lChunkSize);
 
-					// Read the chunk
-					read(pTmpBuf, lChunkSize);
+			// While there is data to move
+			while (lBufLength > 0) {
+				// Seek to beginning of the source for this chunk
+				setPosition(pRecInfo->_lOffset + pRecInfo->_lLength + lBufLength - lChunkSize);
 
-					// Seek to this chunks new positon (offset by 'lDiff' bytes)
-					setPosition(pRecInfo->_lOffset + pRecInfo->_lLength + lBufLength - lChunkSize + lDiff);
+				// Read the chunk
+				read(pTmpBuf, lChunkSize);
 
-					// Write chunk to new position
-					write(pTmpBuf, lChunkSize);
+				// Seek to this chunks new position (offset by 'lDiff' bytes)
+				setPosition(pRecInfo->_lOffset + pRecInfo->_lLength + lBufLength - lChunkSize + lDiff);
 
-					// That much less to do next time thru
-					lBufLength -= lChunkSize;
+				// Write chunk to new position
+				write(pTmpBuf, lChunkSize);
 
-					// Last chunk is lBufLength
-					lChunkSize = MIN(lBufLength, lChunkSize);
-				}
+				// That much less to do next time thru
+				lBufLength -= lChunkSize;
 
-				// Don't need that temp buffer anymore
-				bofFree(pTmpBuf);
-
-			} else {
-				reportError(ERR_MEMORY, "Unable to allocate %ld bytes to expand record size in writeRecord()", lBufLength);
+				// Last chunk is lBufLength
+				lChunkSize = MIN(lBufLength, lChunkSize);
 			}
+
+			// Don't need that temp buffer anymore
+			bofFree(pTmpBuf);
 
 			// Tell the rest of the records that they moved
 			for (int i = lRecNum + 1; i < getNumberOfRecs(); i++) {
@@ -561,24 +542,24 @@ ErrorCode CBofDataFile::writeRecord(int32 lRecNum, void *pBuf, int32 lSize, bool
 					// Remember it's length
 					pRecInfo->_lLength = lSize;
 
+					int bufferSize = getMaxRecSize();
+					if (bufferSize <= 0)
+						fatalError(ERR_FREAD, "Invalid size read in header data");
+
 					// Allocate a buffer that could hold the largest record
-					byte *pTmpBuf = (byte *)bofAlloc((int)getMaxRecSize());
-					if (pTmpBuf != nullptr) {
-						for (int i = (int)lRecNum + 1; i < (int)_lNumRecs - 1; i++) {
-							_errCode = readRecord(i, pTmpBuf);
-							if (_errCode != ERR_NONE)
-								break;
+					byte *pTmpBuf = (byte *)bofAlloc(bufferSize);
 
-							_errCode = writeRecord(i + 1, pTmpBuf);
-							if (_errCode != ERR_NONE)
-								break;
-						}
+					for (int i = (int)lRecNum + 1; i < (int)_lNumRecs - 1; i++) {
+						_errCode = readRecord(i, pTmpBuf);
+						if (_errCode != ERR_NONE)
+							break;
 
-						bofFree(pTmpBuf);
-
-					} else {
-						_errCode = ERR_MEMORY;
+						_errCode = writeRecord(i + 1, pTmpBuf);
+						if (_errCode != ERR_NONE)
+							break;
 					}
+
+					bofFree(pTmpBuf);
 				}
 
 				// If we are to update the header now
@@ -609,13 +590,9 @@ ErrorCode CBofDataFile::verifyRecord(int32 lRecNum) {
 
 		// Allocate space to hold this record
 		void *pBuf = bofAlloc((int)getRecSize(lRecNum));
-		if (pBuf != nullptr) {
-			_errCode = readRecord(lRecNum, pBuf);
-			bofFree(pBuf);
 
-		} else {
-			_errCode = ERR_MEMORY;
-		}
+		_errCode = readRecord(lRecNum, pBuf);
+		bofFree(pBuf);
 	}
 
 	return _errCode;
@@ -655,34 +632,34 @@ ErrorCode CBofDataFile::addRecord(void *pBuf, int32 lLength, bool bUpdateHeader,
 			if (_errCode == ERR_NONE) {
 				_lNumRecs++;
 
-				HEADER_REC *pTmpHeader = new HEADER_REC[(int)_lNumRecs];
-				if (pTmpHeader != nullptr) {
-					if (_pHeader != nullptr) {
-						memcpy(pTmpHeader, _pHeader, (size_t)(HEADER_REC::size() * (_lNumRecs - 1)));
+				HeaderRec *pTmpHeader = new HeaderRec[(int)_lNumRecs];
 
-						delete[] _pHeader;
-					}
-
-					_pHeader = pTmpHeader;
-
-					int32 lRecNum = _lNumRecs - 1;
-					HEADER_REC *pCurRec = &_pHeader[lRecNum];
-					int32 lPrevLength = HEAD_INFO::size();
-					int32 lPrevOffset = 0;
-
-					if (lRecNum != 0) {
-						lPrevLength = _pHeader[lRecNum - 1]._lLength;
-						lPrevOffset = _pHeader[lRecNum - 1]._lOffset;
-					}
-
-					pCurRec->_lLength = lLength;
-					pCurRec->_lOffset = lPrevOffset + lPrevLength;
-
-					writeRecord(lRecNum, pBuf, lLength, bUpdateHeader, lKey);
-
-				} else {
-					reportError(ERR_MEMORY, "Could not allocate a data file header");
+				for (int i = 0; i < _lNumRecs; ++i) {
+					pTmpHeader[i]._lOffset = pTmpHeader[i]._lLength = 0;
+					pTmpHeader[i]._lCrc = pTmpHeader[i]._lKey = 0;
 				}
+
+				if (_pHeader != nullptr) {
+					memcpy(pTmpHeader, _pHeader, (size_t)(HeaderRec::size() * (_lNumRecs - 1)));
+					delete[] _pHeader;
+				}
+
+				_pHeader = pTmpHeader;
+
+				int32 lRecNum = _lNumRecs - 1;
+				HeaderRec *pCurRec = &_pHeader[lRecNum];
+				int32 lPrevLength = HeadInfo::size();
+				int32 lPrevOffset = 0;
+
+				if (lRecNum != 0) {
+					lPrevLength = _pHeader[lRecNum - 1]._lLength;
+					lPrevOffset = _pHeader[lRecNum - 1]._lOffset;
+				}
+
+				pCurRec->_lLength = lLength;
+				pCurRec->_lOffset = lPrevOffset + lPrevLength;
+
+				writeRecord(lRecNum, pBuf, lLength, bUpdateHeader, lKey);
 			}
 		}
 	}
@@ -764,33 +741,33 @@ ErrorCode CBofDataFile::read(void *pDestBuf, int32 lBytes) {
 	return CBofFile::read(pDestBuf, lBytes);
 }
 
-ErrorCode CBofDataFile::read(HEAD_INFO &rec) {
+ErrorCode CBofDataFile::read(HeadInfo &rec) {
 	byte buf[16];
-	ErrorCode result = read(&buf[0], 16);
+	ErrorCode errorCode = read(&buf[0], 16);
 
 	Common::MemoryReadStream mem(buf, 16);
 	Common::Serializer s(&mem, nullptr);
 	rec.synchronize(s);
 
-	return result;
+	return errorCode;
 }
 
-ErrorCode CBofDataFile::read(HEADER_REC &rec) {
+ErrorCode CBofDataFile::read(HeaderRec &rec) {
 	byte buf[16];
-	ErrorCode result = read(&buf[0], 16);
+	ErrorCode errorCode = read(&buf[0], 16);
 
 	Common::MemoryReadStream mem(buf, 16);
 	Common::Serializer s(&mem, nullptr);
 	rec.synchronize(s);
 
-	return result;
+	return errorCode;
 }
 
 ErrorCode CBofDataFile::write(const void *pSrcBuf, int32 lBytes) {
 	return CBofFile::write(pSrcBuf, lBytes);
 }
 
-ErrorCode CBofDataFile::write(HEAD_INFO &rec) {
+ErrorCode CBofDataFile::write(HeadInfo &rec) {
 	byte buf[16];
 
 	Common::MemoryWriteStream mem(buf, 16);
@@ -800,7 +777,7 @@ ErrorCode CBofDataFile::write(HEAD_INFO &rec) {
 	return write(&buf[0], 16);
 }
 
-ErrorCode CBofDataFile::write(HEADER_REC &rec) {
+ErrorCode CBofDataFile::write(HeaderRec &rec) {
 	byte buf[16];
 
 	Common::MemoryWriteStream mem(buf, 16);
@@ -824,7 +801,7 @@ uint32 CreateHashCode(const byte *pKey) {
 	return lCode;
 }
 
-void SwapHeadInfo(HEAD_INFO *stHI) {
+void SwapHeadInfo(HeadInfo *stHI) {
 	// Macintosh is big endian, so we must swap our bytes
 	stHI->_lNumRecs = SWAPLONG(stHI->_lNumRecs);
 	stHI->_lAddress = SWAPLONG(stHI->_lAddress);
@@ -832,8 +809,8 @@ void SwapHeadInfo(HEAD_INFO *stHI) {
 	stHI->_lFootCrc = SWAPLONG(stHI->_lFootCrc);
 }
 
-void SwapHeaderRec(HEADER_REC *stHR, int nRecords) {
-	HEADER_REC *p = stHR;
+void SwapHeaderRec(HeaderRec *stHR, int nRecords) {
+	HeaderRec *p = stHR;
 	for (int i = 0; i < nRecords; i++) {
 		p->_lOffset = SWAPLONG(p->_lOffset);
 		p->_lLength = SWAPLONG(p->_lLength);

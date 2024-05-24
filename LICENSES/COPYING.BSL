@@ -1,3 +1,9 @@
+NOTE: This license file only applies to the following source files
+in ScummVM:
+
+ * engines/twp/clipper/clipper.cpp
+ * engines/twp/clipper/clipper.h
+
 Permission is hereby granted, free of charge, to any person or organization
 obtaining a copy of the software and accompanying documentation covered by
 this license (the "Software") to use, reproduce, display, distribute,

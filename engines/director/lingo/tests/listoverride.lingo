@@ -13,6 +13,12 @@ scummvmAssertEqual(result, 3)
 set result = count([1: 2, 3: 4, 5: 6])
 scummvmAssertEqual(result, 3)
 
+set result = count(rect(1, 2, 3, 4))
+scummvmAssertEqual(result, 4)
+
+set result = count(point(1, 2))
+scummvmAssertEqual(result, 2)
+
 set result = count("not an array")
 scummvmAssertEqual(result, "what is this")
 
@@ -22,7 +28,7 @@ scummvmAssertEqual(result, "this is the worst")
 set result = add("even less of an array", 8)
 scummvmAssertEqual(result, "this is the worst")
 
-set target = [1, 2, 3] 
+set target = [1, 2, 3]
 add(target, 4)
 scummvmAssertEqual(count(target), 4)
 

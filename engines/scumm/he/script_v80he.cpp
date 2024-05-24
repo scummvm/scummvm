@@ -36,6 +36,9 @@
 #include "scumm/scumm.h"
 #include "scumm/he/sound_he.h"
 
+#include "scumm/he/moonbase/moonbase.h"
+#include "scumm/he/moonbase/map_main.h"
+
 namespace Scumm {
 
 #define OPCODE(i, x)	_opcodes[i]._OPCODE(ScummEngine_v80he, x)
@@ -242,6 +245,12 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 			memcpy(section, "BluesTreasureHunt-Disc1\0", 24);
 		else if (!strcmp((char *)section, "Blue'sTreasureHunt-Disc2"))
 			memcpy(section, "BluesTreasureHunt-Disc2\0", 24);
+	} else if (_game.id == GID_MOONBASE && !strcmp((char *)option, "5-10") &&
+		!strcmp((char *)string, "1") && _moonbase->_map->mapGenerated()) {
+		// If we're playing on a generated map, make sure that the SETUP-MAP
+		// value gets stored to 66 (higher than 65), or else the replay will
+		// load the incorrect map.
+		memcpy(string, "66\0", 3);
 	}
 
 	Common::INIFile iniFile;

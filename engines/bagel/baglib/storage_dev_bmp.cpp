@@ -132,12 +132,11 @@ const CBofPoint CBagStorageDevBmp::devPtToViewPort(const CBofPoint &xPoint) {
 }
 
 ErrorCode CBagStorageDevBmp::update(CBofBitmap *pBmp, CBofPoint /*xPoint*/, CBofRect * /*pSrcRect*/, int /*nMaskColor*/) {
-	CBofBitmap *pSrcBmp = nullptr;
-
 	// if this object is visible
 	if (isVisible() && isAttached()) {
 		// Paint the storage device
-		if ((pSrcBmp = getBitmap()) != nullptr) {
+		CBofBitmap *pSrcBmp = getBitmap();
+		if (pSrcBmp != nullptr) {
 			assert(getWorkBmp() != nullptr);
 			// Erase everything from the background
 			getWorkBmp()->paint(pSrcBmp);

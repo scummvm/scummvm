@@ -90,7 +90,7 @@ public:
 	void stopPlay();
 	void setDelay(uint32 ticks);
 
-	void setCurrentFrame(uint16 frameId) { _nextFrame = frameId; }
+	void setCurrentFrame(uint16 frameId);
 	uint16 getCurrentFrameNum() { return _curFrameNumber; }
 	int getNextFrame() { return _nextFrame; }
 	uint16 getFramesNum() { return _numFrames; }
@@ -152,6 +152,8 @@ public:
 	Common::HashMap<uint16, Common::String> _actions;
 	Common::HashMap<uint16, bool> _immediateActions;
 
+	Common::Array<Frame *> _scoreCache;
+
 	// On demand frames loading
 	uint32 _version;
 	Frame *_currentFrame;
@@ -183,6 +185,7 @@ public:
 	bool _waitForClickCursor;
 	bool _cursorDirty;
 	bool _activeFade;
+	bool _exitFrameCalled;
 	Cursor _defaultCursor;
 	CursorRef _currentCursor;
 	bool _skipTransition;

@@ -38,10 +38,10 @@
 namespace Bagel {
 namespace SpaceBar {
 
-#define LOGOSMK1        "$SBARDIR\\INTRO\\LOGO1.SMK"
-#define LOGOSMK2        "$SBARDIR\\INTRO\\LOGO2.SMK"
-#define LOGOSMK3        "$SBARDIR\\INTRO\\LOGO3.SMK"
-#define LOGOSMK3EX      "$SBARDIR\\INTRO\\LOGO3EX.SMK"
+#define SMK_LOGO1        "$SBARDIR\\INTRO\\LOGO1.SMK"
+#define SMK_LOGO2        "$SBARDIR\\INTRO\\LOGO2.SMK"
+#define SMK_LOGO3        "$SBARDIR\\INTRO\\LOGO3.SMK"
+#define SMK_LOGO3EX      "$SBARDIR\\INTRO\\LOGO3EX.SMK"
 
 static const BagelReg SPACEBAR_REG = {
 	"The Space Bar",
@@ -88,121 +88,104 @@ ErrorCode SpaceBarEngine::initialize() {
 	if (!errorOccurred()) {
 		bool bShowLogo = true;
 
-		if ((_masterWin = new CSBarMasterWin()) != nullptr) {
-			// This is the primary game window
-			setMainWindow(_masterWin);
+		_masterWin = new CSBarMasterWin();
+		
+		// This is the primary game window
+		setMainWindow(_masterWin);
 
-			// Init sound system
-			InitializeSoundSystem(1, 22050, 8);
+		// Init sound system
+		InitializeSoundSystem(1, 22050, 8);
 
-			pBmp = new CBofBitmap(_masterWin->width(), _masterWin->height(), _pPalette);
-			if (pBmp != nullptr) {
-				pBmp->fillRect(nullptr, COLOR_BLACK);
-			} else {
-				reportError(ERR_MEMORY, "Unable to allocate a CBofBitmap");
-			}
+		pBmp = new CBofBitmap(_masterWin->width(), _masterWin->height(), _pPalette);
+		pBmp->fillRect(nullptr, COLOR_BLACK);
 
-			_masterWin->show();
-			_masterWin->validateRect(nullptr);
+		_masterWin->show();
+		_masterWin->validateRect(nullptr);
 
-			// Paint the screen black
-			if (pBmp != nullptr)
+		// Paint the screen black
+		pBmp->paint(_masterWin, 0, 0);
+
+		_useOriginalSaveLoad = ConfMan.getBool("original_menus");
+
+		bool bRestart = true;
+		int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+
+		if (saveSlot != -1) {
+			bRestart = loadGameState(saveSlot).getCode() != Common::kNoError;
+
+		} else if (savesExist()) {
+			bRestart = false;
+
+			CBagStartDialog cDlg(buildSysDir("START.BMP"), _masterWin);
+
+			CBofWindow *pLastWin = g_hackWindow;
+			g_hackWindow = &cDlg;
+
+			int nRetVal = cDlg.doModal();
+
+			g_hackWindow = pLastWin;
+
+			switch (nRetVal) {
+			case RESTORE_BTN:
+				break;
+
+			case RESTART_BTN:
+				bRestart = true;
+
+				// Hide that dialog
+				pBmp->paint(_masterWin, 0, 0);
+				break;
+
+			case QUIT_BTN:
+				// Hide that dialog
 				pBmp->paint(_masterWin, 0, 0);
 
-			_useOriginalSaveLoad = ConfMan.getBool("original_menus");
-
-			bool bRestart = true;
-			int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
-
-			if (saveSlot != -1) {
-				bRestart = loadGameState(saveSlot).getCode() != Common::kNoError;
-
-			} else if (savesExist()) {
-				bRestart = false;
-
-				CBagStartDialog cDlg(buildSysDir("START.BMP"), _masterWin);
-
-				CBofWindow *pLastWin = g_hackWindow;
-				g_hackWindow = &cDlg;
-
-				int nRetVal = cDlg.doModal();
-
-				g_hackWindow = pLastWin;
-
-				switch (nRetVal) {
-				case RESTORE_BTN:
-					break;
-
-				case RESTART_BTN:
-					bRestart = true;
-
-					// Hide that dialog
-					if (pBmp != nullptr) {
-						pBmp->paint(_masterWin, 0, 0);
-					}
-					break;
-
-				case QUIT_BTN:
-					// Hide that dialog
-					if (pBmp != nullptr) {
-						pBmp->paint(_masterWin, 0, 0);
-					}
-					_masterWin->close();
-					_masterWin = nullptr;
-					break;
-				}
+				_masterWin->close();
+				_masterWin = nullptr;
+				break;
 			}
+		}
 
-			if (bRestart) {
-				// Should we show the intro movies?
-				getOption("Startup", "ShowLogo", &bShowLogo, true);
+		if (bRestart) {
+			// Should we show the intro movies?
+			getOption("Startup", "ShowLogo", &bShowLogo, true);
 
-				// Play intro movies, logo screens, etc...
-				if (bShowLogo) {
-					CBofString cString(LOGOSMK1);
-					MACROREPLACE(cString);
+			// Play intro movies, logo screens, etc...
+			if (bShowLogo) {
+				CBofString cString(SMK_LOGO1);
+				fixPathName(cString);
 
-					// Play the movie only if it exists
-					if (fileExists(cString.getBuffer())) {
-						bofPlayMovie(_masterWin, cString.getBuffer());
-						if (pBmp != nullptr) {
-							pBmp->paint(_masterWin, 0, 0);
-						}
-					}
-					if (shouldQuit())
-						goto exit;
-
-					cString = LOGOSMK2;
-					MACROREPLACE(cString);
-					if (fileExists(cString.getBuffer())) {
-						bofPlayMovie(_masterWin, cString.getBuffer());
-						if (pBmp != nullptr) {
-							pBmp->paint(_masterWin, 0, 0);
-						}
-					}
-					if (shouldQuit())
-						goto exit;
-
-					// Use hi-res movie if user has a fast machine
-					cString = (getMachineSpeed() < 100) ? LOGOSMK3EX : LOGOSMK3;
-					MACROREPLACE(cString);
-
-					if (fileExists(cString.getBuffer())) {
-						bofPlayMovie(_masterWin, cString.getBuffer());
-						if (pBmp != nullptr) {
-							pBmp->paint(_masterWin, 0, 0);
-						}
-					}
+				// Play the movie only if it exists
+				if (fileExists(cString.getBuffer())) {
+					bofPlayMovie(_masterWin, cString.getBuffer());
+					pBmp->paint(_masterWin, 0, 0);
 				}
 				if (shouldQuit())
 					goto exit;
 
-				// Start a new game (In entry vestibule)
-				_masterWin->newGame();
-			}
+				cString = SMK_LOGO2;
+				fixPathName(cString);
+				if (fileExists(cString.getBuffer())) {
+					bofPlayMovie(_masterWin, cString.getBuffer());
+					pBmp->paint(_masterWin, 0, 0);
+				}
+				if (shouldQuit())
+					goto exit;
 
-		} else {
-			reportError(ERR_MEMORY, "Unable to allocate the main SpaceBar Window");
+				// Use hi-res movie if user has a fast machine
+				cString = (getMachineSpeed() < 100) ? SMK_LOGO3EX : SMK_LOGO3;
+				fixPathName(cString);
+
+				if (fileExists(cString.getBuffer())) {
+					bofPlayMovie(_masterWin, cString.getBuffer());
+					pBmp->paint(_masterWin, 0, 0);
+				}
+			}
+			if (shouldQuit())
+				goto exit;
+
+			// Start a new game (In entry vestibule)
+			_masterWin->newGame();
 		}
 	}
 
@@ -257,7 +240,6 @@ Common::Error SpaceBarEngine::run() {
 		runApp();
 
 	// shutdown
-	preShutDown();
 	shutdown();
 	postShutDown();
 

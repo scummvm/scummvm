@@ -23,7 +23,7 @@
 
 namespace Efh {
 
-int16 EfhEngine::displayBoxWithText(Common::String str, int16 menuType, int16 displayOption, bool displayTeamWindowFl) {
+int16 EfhEngine::displayBoxWithText(const Common::String &str, int16 menuType, int16 displayOption, bool displayTeamWindowFl) {
 	debugC(3, kDebugEngine, "displayBoxWithText %s %d %d %s", str.c_str(), menuType, displayOption, displayTeamWindowFl ? "True" : "False");
 
 	int16 retVal = 0xFF;
@@ -481,7 +481,7 @@ void EfhEngine::displayWindowAndStatusMenu(int16 charId, int16 windowId, int16 m
 	}
 }
 
-int16 EfhEngine::displayStringInSmallWindowWithBorder(Common::String str, bool delayFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine) {
+int16 EfhEngine::displayStringInSmallWindowWithBorder(const Common::String &str, bool delayFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine) {
 	debugC(3, kDebugEngine, "displayStringInSmallWindowWithBorder %s %s %d %d %d %d", str.c_str(), delayFl ? "True" : "False", charId, windowId, menuId, curMenuLine);
 
 	int16 retVal = 0;

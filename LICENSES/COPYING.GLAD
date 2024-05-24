@@ -1,3 +1,9 @@
+NOTE: This license file only applies to the following source files
+in ScummVM:
+
+ * graphics/opengl/glad.h
+
+
 The glad source code:
 
     The MIT License (MIT)

@@ -47,76 +47,58 @@ ErrorCode CBagTimeObject::attach() {
 	CBofPoint p = CBagObject::getPosition();
 
 	_xDig1 = new CBofSprite();
-	if (_xDig1 != nullptr) {
-		if (_xDig1->loadSprite(getFileName(), getCels()) != 0 && (_xDig1->width() != 0) && (_xDig1->height() != 0)) {
-			_xDig1->setAnimated(false);
-			_xDig1->setPosition(p.x, p.y);
 
-			p.offset(_xDig1->width(), 0);
+	if (_xDig1->loadSprite(getFileName(), getCels()) != 0 && (_xDig1->width() != 0) && (_xDig1->height() != 0)) {
+		_xDig1->setAnimated(false);
+		_xDig1->setPosition(p.x, p.y);
 
-		} else {
-			reportError(ERR_FOPEN, "Could Not Open Dig1 Sprite: %s", _xDig1->getFileName());
-		}
+		p.offset(_xDig1->width(), 0);
 
 	} else {
-		reportError(ERR_MEMORY, "Could not allocate  Dig1 sprite");
+		reportError(ERR_FOPEN, "Could Not Open Dig1 Sprite: %s", _xDig1->getFileName());
 	}
 
 	_xDig2 = new CBofSprite();
-	if (_xDig2 != nullptr) {
-		if (_xDig2->loadSprite(getFileName(), getCels()) != 0 && (_xDig2->width() != 0) && (_xDig2->height() != 0)) {
-			_xDig2->setAnimated(false);
-			_xDig2->setPosition(p.x, p.y);
-			p.offset(_xDig2->width(), 0);
-		} else {
-			reportError(ERR_FOPEN, "Could Not Open Dig2 Sprite: %s", _xDig2->getFileName());
-		}
+
+	if (_xDig2->loadSprite(getFileName(), getCels()) != 0 && (_xDig2->width() != 0) && (_xDig2->height() != 0)) {
+		_xDig2->setAnimated(false);
+		_xDig2->setPosition(p.x, p.y);
+		p.offset(_xDig2->width(), 0);
 	} else {
-		reportError(ERR_MEMORY, "Could not allocate  Dig2 sprite");
+		reportError(ERR_FOPEN, "Could Not Open Dig2 Sprite: %s", _xDig2->getFileName());
 	}
 
 	_xColon = new CBofSprite();
-	if (_xColon != nullptr) {
-		if (_xColon->loadSprite(getFileName(), getCels()) != 0 && (_xColon->width() != 0) && (_xColon->height() != 0)) {
 
-			_xColon->setAnimated(false);
-			// The time sprite should start with 0 and go to 9 followed by the :
-			_xColon->setCel(_nCels - 1);
-			_xColon->setPosition(p.x, p.y);
+	if (_xColon->loadSprite(getFileName(), getCels()) != 0 && (_xColon->width() != 0) && (_xColon->height() != 0)) {
+		_xColon->setAnimated(false);
+		// The time sprite should start with 0 and go to 9 followed by the :
+		_xColon->setCel(_nCels - 1);
+		_xColon->setPosition(p.x, p.y);
 
-			p.offset(_xColon->width(), 0);
-		} else {
-			reportError(ERR_FOPEN, "Could Not Open Colon Sprite: %s", _xColon->getFileName());
-		}
-
+		p.offset(_xColon->width(), 0);
 	} else {
-		reportError(ERR_MEMORY, "Could not allocate  Colon sprite");
+		reportError(ERR_FOPEN, "Could Not Open Colon Sprite: %s", _xColon->getFileName());
 	}
 
 	_xDig3 = new CBofSprite();
-	if (_xDig3 != nullptr) {
-		if (_xDig3->loadSprite(getFileName(), getCels()) != 0 && (_xDig3->width() != 0) && (_xDig3->height() != 0)) {
-			_xDig3->setAnimated(false);
-			_xDig3->setPosition(p.x, p.y);
-			p.offset(_xDig3->width(), 0);
-		} else {
-			reportError(ERR_FOPEN, "Could Not Open Dig3 Sprite: %s", _xDig3->getFileName());
-		}
+
+	if (_xDig3->loadSprite(getFileName(), getCels()) != 0 && (_xDig3->width() != 0) && (_xDig3->height() != 0)) {
+		_xDig3->setAnimated(false);
+		_xDig3->setPosition(p.x, p.y);
+		p.offset(_xDig3->width(), 0);
 	} else {
-		reportError(ERR_MEMORY, "Could not allocate  Dig3 sprite");
+		reportError(ERR_FOPEN, "Could Not Open Dig3 Sprite: %s", _xDig3->getFileName());
 	}
 
 	_xDig4 = new CBofSprite();
-	if (_xDig4 != nullptr) {
-		if (_xDig4->loadSprite(getFileName(), getCels()) != 0 && (_xDig4->width() != 0) && (_xDig4->height() != 0)) {
-			_xDig4->setAnimated(false);
-			_xDig4->setPosition(p.x, p.y);
-			p.offset(_xDig4->width(), 0);
-		} else {
-			reportError(ERR_FOPEN, "Could Not Open Dig4 Sprite: %s", _xDig4->getFileName());
-		}
+
+	if (_xDig4->loadSprite(getFileName(), getCels()) != 0 && (_xDig4->width() != 0) && (_xDig4->height() != 0)) {
+		_xDig4->setAnimated(false);
+		_xDig4->setPosition(p.x, p.y);
+		p.offset(_xDig4->width(), 0);
 	} else {
-		reportError(ERR_MEMORY, "Could not allocate  Dig4 sprite");
+		reportError(ERR_FOPEN, "Could Not Open Dig4 Sprite: %s", _xDig4->getFileName());
 	}
 
 	return CBagObject::attach();
@@ -216,14 +198,14 @@ ParseCodes CBagTimeObject::setInfo(CBagIfstream &istr) {
 			break;
 		}
 
-		// No match return from funtion
+		// No match return from function
 		default: {
-			ParseCodes rc = CBagObject::setInfo(istr);
-			if (rc == PARSING_DONE) {
+			ParseCodes parseCode = CBagObject::setInfo(istr);
+			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}
 
-			if (rc == UPDATED_OBJECT) {
+			if (parseCode == UPDATED_OBJECT) {
 				nObjectUpdated = true;
 			} else {
 				// rc==UNKNOWN_TOKEN
@@ -244,7 +226,7 @@ ErrorCode CBagTimeObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pS
 	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sTimeString(szLocalBuff, 256);
-	ErrorCode rc = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	CBagVar *xVar = g_VarManager->getVariable(_sVariable);
 
@@ -287,7 +269,7 @@ ErrorCode CBagTimeObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pS
 		}
 	}
 
-	return rc;
+	return errorCode;
 }
 
 } // namespace Bagel

@@ -2461,4 +2461,140 @@
 		</layout>
 	</dialog>
 
+	<dialog name = 'MapGenerator' overlays = 'screen_center' shading = 'dim'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' align = 'center'>
+			<widget name = 'Title'
+					width = '480'
+					height = 'Globals.Line.Height'
+					textalign = 'center'
+			/>
+			<layout type = 'horizontal' padding = '8, 8, 8, 8'>
+				<layout type = 'vertical' padding = '0, 0, 16, 16'>
+					<widget name = 'Algorithm'
+						type = 'OptionsLabel'
+					/>
+					<widget name = 'AlgorithmSpiff'
+						type = 'Radiobutton'
+					/>
+					<widget name = 'AlgorithmKatton'
+						type = 'Radiobutton'
+					/>
+					<widget name = 'AlgorithmRandom'
+						type = 'Checkbox'
+					/>
+				</layout>
+				<layout type = 'vertical' padding = '0, 0, 16, 16'>
+					<widget name = 'Size'
+						type = 'OptionsLabel'
+					/>
+					<widget name = 'SizeSmall'
+						type = 'Radiobutton'
+					/>
+					<widget name = 'SizeMedium'
+						type = 'Radiobutton'
+					/>
+					<widget name = 'SizeLarge'
+						type = 'Radiobutton'
+					/>
+					<widget name = 'SizeHuge'
+						type = 'Radiobutton'
+					/>
+					<widget name = 'SizeSAI'
+						type = 'Radiobutton'
+					/>
+					<widget name = 'SizeRidiculous'
+						type = 'Radiobutton'
+					/>
+					<widget name = 'SizeMax'
+						type = 'Radiobutton'
+					/>
+					<widget name = 'SizeRandom'
+						type = 'Checkbox'
+					/>
+				</layout>
+				<layout type = 'vertical' padding = '0, 0, 16, 16'>
+					<widget name = 'Tileset'
+						type = 'OptionsLabel'
+					/>
+					<widget name = 'TilesetTerrandra'
+						type = 'Radiobutton'
+					/>
+					<widget name = 'TilesetZanateros'
+						type = 'Radiobutton'
+					/>
+					<widget name = 'TilesetDaijim'
+						type = 'Radiobutton'
+					/>
+					<widget name = 'TilesetKyanite'
+						type = 'Radiobutton'
+					/>
+					<widget name = 'TilesetEmerau'
+						type = 'Radiobutton'
+					/>
+					<widget name = 'TilesetAblation'
+						type = 'Radiobutton'
+					/>
+					<widget name = 'TilesetRandom'
+						type = 'Checkbox'
+					/>
+				</layout>
+			</layout>
+			<layout type = 'horizontal' padding = '8, 8, 8, 8'>
+				<layout type = 'vertical' padding = '0, 0, 16, 16'>
+					<widget name = 'Energy'
+						type = 'OptionsLabel'
+					/>
+					<widget name = 'EnergySlider'
+						type = 'Slider'
+						rtl = 'no'
+					/>
+					<widget name = 'EnergySliderLabel'
+							type = 'OptionsLabel'
+					/>
+					<widget name = 'EnergyRandom'
+						type = 'Checkbox'
+					/>
+				</layout>
+				<layout type = 'vertical' padding = '0, 0, 16, 16'>
+					<widget name = 'Terrain'
+						type = 'OptionsLabel'
+					/>
+					<widget name = 'TerrainSlider'
+						type = 'Slider'
+						rtl = 'no'
+					/>
+					<widget name = 'TerrainSliderLabel'
+							type = 'OptionsLabel'
+					/>
+					<widget name = 'TerrainRandom'
+						type = 'Checkbox'
+					/>
+				</layout>
+				<layout type = 'vertical' padding = '0, 0, 16, 16'>
+					<widget name = 'Water'
+						type = 'OptionsLabel'
+					/>
+					<widget name = 'WaterSlider'
+						type = 'Slider'
+						rtl = 'no'
+					/>
+					<widget name = 'WaterSliderLabel'
+							type = 'OptionsLabel'
+					/>
+					<widget name = 'WaterRandom'
+						type = 'Checkbox'
+					/>
+				</layout>
+			</layout>
+			<layout type = 'horizontal' padding = '8, 8, 8, 8'>
+				<widget name = 'Cancel'
+						type = 'Button'
+				/>
+				<widget name = 'Generate'
+						type = 'Button'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
 </layout_info>

@@ -127,7 +127,7 @@ protected:
 	CBofSprite *_pMap;
 	CBofSprite *_pCurLoc;
 	CBofBitmap *_pNewMap;
-	CBofBitmap *bmptwo;
+	CBofBitmap *_bmptwo;
 	CBofRect *_pCurPos;
 	CBofString *_pPortName;
 	CBofRect *_pWilbur;

@@ -43,9 +43,9 @@ void scene20_setExits(Scene *sc) {
 		thingpar = 1;
 	else if (g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_NearPipe)
 			 || g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_NearPipeWithStool)) {
-		getSc2MctlCompoundBySceneId(sc->_sceneId)->enableLinks(sO_CloseThing, 1);
-		getSc2MctlCompoundBySceneId(sc->_sceneId)->enableLinks(sO_CloseThing2, 1);
-		getSc2MctlCompoundBySceneId(sc->_sceneId)->enableLinks(sO_CloseThing3, 0);
+		getSc2MctlCompoundBySceneId(sc->_sceneId)->enableLinks(sO_CloseThing, true);
+		getSc2MctlCompoundBySceneId(sc->_sceneId)->enableLinks(sO_CloseThing2, true);
+		getSc2MctlCompoundBySceneId(sc->_sceneId)->enableLinks(sO_CloseThing3, false);
 
 		return;
 	} else {
@@ -53,8 +53,8 @@ void scene20_setExits(Scene *sc) {
 	}
 
 	getSc2MctlCompoundBySceneId(sc->_sceneId)->enableLinks(sO_CloseThing, thingpar);
-	getSc2MctlCompoundBySceneId(sc->_sceneId)->enableLinks(sO_CloseThing2, 0);
-	getSc2MctlCompoundBySceneId(sc->_sceneId)->enableLinks(sO_CloseThing3, 1);
+	getSc2MctlCompoundBySceneId(sc->_sceneId)->enableLinks(sO_CloseThing2, false);
+	getSc2MctlCompoundBySceneId(sc->_sceneId)->enableLinks(sO_CloseThing3, true);
 }
 
 void scene20_initScene(Scene *sc) {

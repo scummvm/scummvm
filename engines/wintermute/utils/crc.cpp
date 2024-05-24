@@ -145,7 +145,7 @@ crc  crcTable[256];
  *
  *********************************************************************/
 void
-crcInit(void) {
+crcInit() {
 	crc            remainder;
 	int            dividend;
 	unsigned char  bit;
@@ -218,7 +218,7 @@ crcFast(unsigned char const message[], int nBytes) {
 
 
 
-crc crc_initialize(void) {
+crc crc_initialize() {
 	crcInit();
 	return INITIAL_REMAINDER;
 }

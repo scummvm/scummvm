@@ -106,5 +106,38 @@ const char *spriteType2str(SpriteType type) {
 	return "<unknown>";
 }
 
+const char *inkType[] = {
+	"Copy",
+	"Transparent",
+	"Reverse",
+	"Ghost",
+	"NotCopy",
+	"NotTrans",
+	"NotReverse",
+	"NotGhost",
+	"Matte",
+	"Mask",
+
+	"Blend", // 32
+	"AddPin",
+	"Add",
+	"SubPin",
+	"BackgndTrans",
+	"Light",
+	"Sub",
+	"Dark"
+};
+
+
+const char *inkType2str(InkType type) {
+	if (type <= kInkTypeMask)
+		return inkType[type];
+
+	if (type >= kInkTypeBlend && type <= kInkTypeDark)
+		return inkType[type - 32 + 10];
+
+	return "<unknown>";
+
+}
 
 } // End of namespace Director

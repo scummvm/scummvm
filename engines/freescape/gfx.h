@@ -91,8 +91,8 @@ public:
 
 	virtual void renderCube(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours, Common::Array<uint8> *ecolours, float offset = 0.0);
 	virtual void renderRectangle(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours, Common::Array<uint8> *ecolours, float offset = 0.0);
-	virtual void renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours, Common::Array<uint8> *ecolours, float offset = 0.0);
-	virtual void renderPyramid(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours, Common::Array<uint8> *ecolours, int type);
+	virtual void renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<float> *ordinates, Common::Array<uint8> *colours, Common::Array<uint8> *ecolours, float offset = 0.0);
+	virtual void renderPyramid(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<float> *ordinates, Common::Array<uint8> *colours, Common::Array<uint8> *ecolours, int type);
 	virtual void renderFace(const Common::Array<Math::Vector3d> &vertices) = 0;
 
 	void setColorRemaps(ColorReMap *colorRemaps);
@@ -101,6 +101,7 @@ public:
 	virtual void drawBackground(uint8 color);
 
 	void drawEclipse(uint8 color1, uint8 color2, float difference);
+	virtual void drawSkybox(Texture *texture, Math::Vector3d camera) {};
 	virtual void drawCelestialBody(Math::Vector3d position, float radius, uint8 color) {};
 
 	Common::Rect viewport() const;

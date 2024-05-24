@@ -641,7 +641,7 @@ int8 MaxTrax::pickvoice(uint pick, int16 pri) {
 			pick ^= 1;
 			continue;
 		}
-		// succeded
+		// succeeded
 		return (int8)pick;
 	}
 	// failed

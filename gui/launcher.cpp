@@ -1222,7 +1222,7 @@ void LauncherSimple::groupEntries(const Common::Array<LauncherEntry> &metadata) 
 			attrs.push_back(_metadataParser._gameInfo[buildQualifiedGameName(iter->engineid, iter->gameid)].company_id);
 		}
 		_list->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
-		// I18N: List grouping when no pubisher is specified
+		// I18N: List grouping when no publisher is specified
 		metadataNames[""] = _("Unknown Publisher");
 		Common::HashMap<Common::String, MetadataCompany, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._companyInfo.begin();
 		for (; i != _metadataParser._companyInfo.end(); ++i) {

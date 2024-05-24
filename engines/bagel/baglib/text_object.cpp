@@ -71,7 +71,7 @@ ErrorCode CBagTextObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 	assert(pSrcRect != nullptr);
 
 	// assume no error
-	 ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	if ((pBmp != nullptr) && isAttached() && !(getText().isEmpty())) {
 
@@ -115,14 +115,14 @@ ErrorCode CBagTextObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 				r.left += 1;
 			}
 
-			errCode = paintText(pBmp, &r, getText(), mapWindowsPointSize(nPointSize), TEXT_NORMAL, _nFGColor, JUSTIFY_WRAP, nFormat, _nTextFont);
+			errorCode = paintText(pBmp, &r, getText(), mapWindowsPointSize(nPointSize), TEXT_NORMAL, _nFGColor, JUSTIFY_WRAP, nFormat, _nTextFont);
 
 			// This object does not need to be updated now...
 			setDirty(false);
 		}
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 ErrorCode CBagTextObject::attach() {
@@ -135,38 +135,33 @@ ErrorCode CBagTextObject::attach() {
 
 		// Allocate a new string
 		_psText = new CBofString;
-		if (_psText != nullptr) {
-			CBofFile fpTextFile(getFileName());
 
-			if (!fpTextFile.errorOccurred()) {
-				// Allocate the buffers
-				uint32 nFileLen = fpTextFile.getLength();
-				char *pTextBuff = (char *)bofCAlloc(nFileLen + 1, 1);
-				if (pTextBuff != nullptr) {
-					// Read the text file into buffers
-					fpTextFile.read(pTextBuff, nFileLen);
-					fpTextFile.close();
+		CBofFile fpTextFile(getFileName());
 
-					*_psText += pTextBuff;
+		if (!fpTextFile.errorOccurred()) {
+			// Allocate the buffers
+			uint32 nFileLen = fpTextFile.getLength();
+			char *pTextBuff = (char *)bofCleanAlloc(nFileLen + 1);
 
-					if (_psInitInfo != nullptr) {
-						CBagVar *pVar = g_VarManager->getVariable(*_psInitInfo);
+			// Read the text file into buffers
+			fpTextFile.read(pTextBuff, nFileLen);
+			fpTextFile.close();
 
-						if (pVar != nullptr) {
-							_bReAttach = true;
-							_psText->replaceStr("%s", pVar->getValue());
-						}
-					}
+			*_psText += pTextBuff;
 
-					bofFree(pTextBuff);
+			if (_psInitInfo != nullptr) {
+				CBagVar *pVar = g_VarManager->getVariable(*_psInitInfo);
 
-				} else {
-					reportError(ERR_MEMORY);
+				if (pVar != nullptr) {
+					_bReAttach = true;
+					_psText->replaceStr("%s", pVar->getValue());
 				}
-
-			} else {
-				reportError(ERR_MEMORY);
 			}
+
+			bofFree(pTextBuff);
+
+		} else {
+			reportError(ERR_FOPEN, "Failed to create a CBofFile for %s", getFileName().getBuffer());
 		}
 
 		if (isCaption()) {
@@ -181,17 +176,12 @@ ErrorCode CBagTextObject::attach() {
 
 		// Allocate a new string
 		_psText = new CBofString;
-		if (_psText != nullptr) {
-			*_psText = getFileName();
+		*_psText = getFileName();
 
-			// Replace any underscores with spaces
-			_psText->replaceChar('_', ' ');
+		// Replace any underscores with spaces
+		_psText->replaceChar('_', ' ');
 
-			recalcTextRect(false);
-
-		} else {
-			reportError(ERR_MEMORY);
-		}
+		recalcTextRect(false);
 	}
 
 	// If this guy is linked to a residue printing object, make sure he knows
@@ -374,12 +364,12 @@ ParseCodes CBagTextObject::setInfo(CBagIfstream &istr) {
 		// No match return from function
 		//
 		default: {
-			ParseCodes rc;
-			if ((rc = CBagObject::setInfo(istr)) == PARSING_DONE) {
+			ParseCodes parseCode = CBagObject::setInfo(istr);
+			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}
 
-			if (rc == UPDATED_OBJECT) {
+			if (parseCode == UPDATED_OBJECT) {
 				nObjectUpdated = true;
 			} else { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)

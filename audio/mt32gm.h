@@ -352,7 +352,7 @@ protected:
 	 * Initializes the General MIDI device. The device will be reset.
 	 * If the initForMT32 parameter is specified, the device will be set up for
 	 * MT-32 MIDI data. If the device supports Roland GS, the enableGS
-	 * parameter can be specified for enhanced GS MT-32 compatiblity.
+	 * parameter can be specified for enhanced GS MT-32 compatibility.
 	 *
 	 * @param initForMT32 True if the device should be initialized for MT-32 mapping
 	 * @param enableGS True if the device should be initialized for GS MT-32 mapping

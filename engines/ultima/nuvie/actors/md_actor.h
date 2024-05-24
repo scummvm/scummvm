@@ -28,8 +28,6 @@ namespace Ultima {
 namespace Nuvie {
 
 class MDActor: public WOUActor {
-protected:
-
 public:
 
 	MDActor(Map *m, ObjManager *om, GameClock *c);

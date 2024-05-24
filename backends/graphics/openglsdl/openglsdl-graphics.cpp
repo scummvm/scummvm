@@ -35,8 +35,8 @@
 #endif
 
 #ifdef USE_IMGUI
-#include "backends/imgui/backends/imgui_impl_sdl2_scummvm.h"
-#include "backends/imgui/backends/imgui_impl_opengl3_scummvm.h"
+#include "backends/imgui/backends/imgui_impl_sdl2.h"
+#include "backends/imgui/backends/imgui_impl_opengl3.h"
 #endif
 
 OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, SdlWindow *window)
@@ -58,7 +58,7 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, 
 
 	// Set up proper SDL OpenGL context creation.
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	// Context version 1.4 is choosen arbitrarily based on what most shader
+	// Context version 1.4 is chosen arbitrarily based on what most shader
 	// extensions were written against.
 	enum {
 		DEFAULT_GL_MAJOR = 1,
@@ -467,13 +467,18 @@ void OpenGLSdlGraphicsManager::refreshScreen() {
 #if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
 	if (_callbacks.render) {
 		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplSDL2_NewFrame(_window->getSDLWindow());
+		ImGui_ImplSDL2_NewFrame();
 
 		ImGui::NewFrame();
 		_callbacks.render();
 		ImGui::Render();
-
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
+		SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+		SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
 	}
 #endif
 
@@ -616,11 +621,18 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	// Setup Dear ImGui
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+	ImGuiIO &io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+	ImGui::StyleColorsDark();
+	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+    ImGuiStyle& style = ImGui::GetStyle();
+	style.WindowRounding = 0.0f;
+	style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+	io.IniFilename = nullptr;
 	ImGui_ImplSDL2_InitForOpenGL(_window->getSDLWindow(), _glContext);
 	ImGui_ImplOpenGL3_Init("#version 110");
-	ImGui::StyleColorsDark();
-	ImGuiIO &io = ImGui::GetIO();
-	io.IniFilename = nullptr;
+
 	if (_callbacks.init) {
 		_callbacks.init();
 	}

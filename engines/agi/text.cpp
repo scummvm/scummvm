@@ -387,7 +387,9 @@ bool TextMgr::messageBox(const char *textPtr) {
 	uint32 windowTimer = _vm->getVar(VM_VAR_WINDOW_AUTO_CLOSE_TIMER);
 	debugC(3, kDebugLevelText, "blocking window v21=%d", windowTimer);
 
-	windowTimer = windowTimer * 10; // 1 = 0.5 seconds
+	// 1 = 0.5 seconds. NB: ScummVM runs at 40 fps, not 20, so we have
+	// to multiply by 20, not 10, to get the number of cycles.
+	windowTimer = windowTimer * 20;
 	_messageBoxCancelled = false;
 
 	_vm->inGameTimerResetPassedCycles();

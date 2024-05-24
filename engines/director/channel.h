@@ -23,6 +23,7 @@
 #define DIRECTOR_CHANNEL_H
 
 #include "director/cursor.h"
+#include "director/sprite.h"
 
 namespace Graphics {
 	struct Surface;
@@ -45,8 +46,12 @@ public:
 
 	DirectorPlotData getPlotData();
 	const Graphics::Surface *getMask(bool forceMatte = false);
+
+	inline int getWidth() { return _sprite->_width; };
+	inline int getHeight() { return _sprite->_height; };
+	inline Common::Point getPosition() { return _sprite->getPosition(); };
 	// Return the area of screen to be used for drawing content.
-	Common::Rect getBbox(bool unstretched = false);
+	inline Common::Rect getBbox(bool unstretched = false) { return _sprite->getBbox(unstretched); };
 
 	bool isStretched();
 	bool isDirty(Sprite *nextSprite = nullptr);
@@ -58,12 +63,13 @@ public:
 	bool isActiveVideo();
 	bool isVideoDirectToStage();
 
-	void setWidth(int w);
-	void setHeight(int h);
-	void setBbox(int l, int t, int r, int b);
+	inline void setWidth(int w) { _sprite->setWidth(w); replaceWidget(); _dirty = true; };
+	inline void setHeight(int h) { _sprite->setHeight(h); replaceWidget(); _dirty = true; };
+	inline void setBbox(int l, int t, int r, int b) { _sprite->setBbox(l, t, r, b); replaceWidget(); _dirty = true; };
 	void setPosition(int x, int y, bool force = false);
 	void setCast(CastMemberID memberID);
 	void setClean(Sprite *nextSprite, bool partial = false);
+	void setStretch(bool enabled);
 	bool getEditable();
 	void setEditable(bool editable);
 	void replaceSprite(Sprite *nextSprite);
@@ -100,17 +106,6 @@ public:
 	Graphics::ManagedSurface *_mask;
 
 	int _priority;
-
-	// These fields are used for tracking overrides for the position, width and height of
-	// the channel, as available in Lingo.
-	// Basically, if the sprite -isn't- in puppet mode, Lingo will allow you to set
-	// these values to whatever, but the sprite on the screen will still be the position and
-	// dimensions from the score frame.
-	// If you set puppet mode, the sprite on the screen will use these values instead.
-	// If you set puppet mode, change things, then disable puppet mode, it will revert to the score.
-	Common::Point _currentPoint;
-	int _width;
-	int _height;
 
 	// Used in digital movie sprites
 	double _movieRate;

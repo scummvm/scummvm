@@ -52,7 +52,7 @@ CBofRect CBagLinkObject::getRect() {
 ParseCodes CBagLinkObject::setInfo(CBagIfstream &istr) {
 	bool objectUpdatedFl = false;
 
-	ParseCodes parsingCode = PARSING_DONE;
+	ParseCodes returnCode = PARSING_DONE;
 	bool doneFl = false;
 
 	while (!doneFl && !istr.eof()) {
@@ -134,20 +134,20 @@ ParseCodes CBagLinkObject::setInfo(CBagIfstream &istr) {
 		//  No match return from function
 		//
 		default: {
-			ParseCodes rc = CBagObject::setInfo(istr);
+			ParseCodes parseCode = CBagObject::setInfo(istr);
 
-			if (rc == PARSING_DONE) {
-				parsingCode = PARSING_DONE;
+			if (parseCode == PARSING_DONE) {
+				returnCode = PARSING_DONE;
 				doneFl = true;
 
-			} else if (rc == UPDATED_OBJECT) {
+			} else if (parseCode == UPDATED_OBJECT) {
 				objectUpdatedFl = true;
 
 			} else { // rc==UNKNOWN_TOKEN
 				if (objectUpdatedFl)
-					parsingCode = UPDATED_OBJECT;
+					returnCode = UPDATED_OBJECT;
 				else
-					parsingCode = UNKNOWN_TOKEN;
+					returnCode = UNKNOWN_TOKEN;
 
 				doneFl = true;
 			}
@@ -156,7 +156,7 @@ ParseCodes CBagLinkObject::setInfo(CBagIfstream &istr) {
 		}
 	}
 
-	return parsingCode;
+	return returnCode;
 }
 
 

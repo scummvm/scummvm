@@ -100,7 +100,7 @@ Datum CastMember::getProp(const Common::String &propName) {
 	return Datum();
 }
 
-bool CastMember::setProp(const Common::String &propName, const Datum &value) {
+bool CastMember::setProp(const Common::String &propName, const Datum &value, bool force) {
 	Common::String fieldName = Common::String::format("%d%s", kTheCast, propName.c_str());
 	if (g_lingo->_theEntityFields.contains(fieldName)) {
 		return setField(g_lingo->_theEntityFields[fieldName]->field, value);
@@ -228,6 +228,7 @@ bool CastMember::setField(int field, const Datum &d) {
 			return false;
 		}
 		castInfo->name = d.asString();
+		_cast->rebuildCastNameCache();
 		return true;
 	case kTheRect:
 		warning("CastMember::setField(): Attempt to set read-only field \"%s\" of cast %d", g_lingo->field2str(field), _castId);

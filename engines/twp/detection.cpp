@@ -21,7 +21,6 @@
 
 #include "base/plugins.h"
 #include "common/file.h"
-#include "common/translation.h"
 #include "twp/detection.h"
 #include "twp/detection_tables.h"
 

@@ -46,7 +46,7 @@ namespace Bagel {
 
 #define MAX_PW_LEN 32 // Max Password length
 
-struct HEADER_REC {
+struct HeaderRec {
 public:
 	int32 _lOffset;
 	int32 _lLength;
@@ -57,7 +57,7 @@ public:
 	static int size() { return 16; }
 };
 
-struct HEAD_INFO {
+struct HeadInfo {
 	int32 _lNumRecs;  // Number of records in this file
 	int32 _lAddress;  // starting address of footer
 	uint32 _lFlags;   // contains flags for this file
@@ -73,7 +73,7 @@ private:
 	int32 _lHeaderLength = 0;
 	int32 _lHeaderStart = 0;
 	int32 _lNumRecs = 0;
-	HEADER_REC *_pHeader = nullptr;
+	HeaderRec *_pHeader = nullptr;
 
 	bool _bHeaderDirty;
 
@@ -105,10 +105,9 @@ public:
 	 * Initializes a CBofDataFile with specified info
 	 * @param pszFileName       Name of .DAT file
 	 * @param lFlags            Flags for open, and encryption, etc.
-	 * @param pPassword         Password for encryption
 	 * @return                  Error return code
 	 */
-	ErrorCode setFile(const char *pszFileName, uint32 lFlags = CDF_DEFAULT, const char *pPassword = nullptr);
+	ErrorCode setFile(const char *pszFileName, uint32 lFlags);
 
 	/**
 	 * Free memory used by this object
@@ -221,8 +220,8 @@ public:
 	 * @return              Error code
 	 */
 	ErrorCode read(void *pDestBuf, int32 lBytes);
-	ErrorCode read(HEADER_REC &rec);
-	ErrorCode read(HEAD_INFO &rec);
+	ErrorCode read(HeaderRec &rec);
+	ErrorCode read(HeadInfo &rec);
 
 	/**
 	 * Write to a currently open file
@@ -231,8 +230,8 @@ public:
 	 * @return              Error code
 	 */
 	ErrorCode write(const void *pSrcBuf, int32 lBytes);
-	ErrorCode write(HEADER_REC &rec);
-	ErrorCode write(HEAD_INFO &rec);
+	ErrorCode write(HeaderRec &rec);
+	ErrorCode write(HeadInfo &rec);
 };
 
 } // namespace Bagel

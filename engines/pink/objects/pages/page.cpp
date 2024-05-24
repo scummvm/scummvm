@@ -56,7 +56,7 @@ void Page::toConsole() const {
 void Page::init() {
 	initPalette();
 	for (uint i = 0; i < _actors.size(); ++i) {
-		_actors[i]->init(0);
+		_actors[i]->init(false);
 	}
 }
 

@@ -1,6 +1,6 @@
 These are fonts used in ScummVM. Most of them come from Xorg.
 
 The GNU FreeFont files are distributed under the license in COPYING.FREEFONT.
-The OpenFontIcons (https://github.com/traverseda/OpenFontIcons) files are distributed under the license in COPYING.MIT.
+The Material Design Icons (https://github.com/google/material-design-icons) files are distributed under Apache 2.0 license
 
 Also other potentially usable fonts are stored here as well.

@@ -149,24 +149,22 @@ ErrorCode CMainWindow::attach() {
 
 		if (!_pWieldBmp) {
 			pSDev = g_SDevManager->getStorageDevice(WIELD_WLD);
-			if (pSDev != nullptr) {
-				_pWieldBmp = (CBagWield *)pSDev;
-				_pWieldBmp->setAssociateWnd(this);
-				if (!_pWieldBmp->isAttached())
-					_pWieldBmp->attach();
+			if (pSDev == nullptr)
+				fatalError(ERR_UNKNOWN, "No Wield found");
 
-				if (_pWieldBmp->getRect().isRectEmpty()) {
-					CBofRect r(0, 380, 0 + 100 - 1, 380 + 100 - 1);
-					_pWieldBmp->setRect(r);
-					r = getClientRect();
-				}
+			_pWieldBmp = (CBagWield *)pSDev;
+			_pWieldBmp->setAssociateWnd(this);
+			if (!_pWieldBmp->isAttached())
+				_pWieldBmp->attach();
 
-				insertFGObjects(_pWieldBmp);
-				_pWieldBmp->setVisible(true);
-
-			} else {
-				reportError(ERR_UNKNOWN, "No Wield found");
+			if (_pWieldBmp->getRect().isRectEmpty()) {
+				CBofRect r(0, 380, 0 + 100 - 1, 380 + 100 - 1);
+				_pWieldBmp->setRect(r);
+				r = getClientRect();
 			}
+
+			insertFGObjects(_pWieldBmp);
+			_pWieldBmp->setVisible(true);
 		}
 
 		if ((CBagObject *)nullptr == getFGObjects(CBofString(WIELD_WLD))) {
@@ -177,31 +175,29 @@ ErrorCode CMainWindow::attach() {
 		// Create the PDA for the game
 		if (!_pPDABmp) {
 			pSDev = g_SDevManager->getStorageDevice(PDA_WLD);
-			if (pSDev != nullptr) {
-				_pPDABmp = (CBagPDA *)pSDev;
-				CBofRect r(0, 0, 300, 200);
-				_pPDABmp->setAssociateWnd(this);
-				_pPDABmp->setRect(r);
-				r = getClientRect();
-				if (!_pPDABmp->isAttached())
-					_pPDABmp->attach();
+			if (pSDev == nullptr)
+				fatalError(ERR_UNKNOWN, "No PDA found");
 
-				// Allow the script to specify the increment height.
-				CBagVar *pVar = g_VarManager->getVariable("PDAINCREMENT");
-				if (pVar) {
-					g_nPDAIncrement = pVar->getNumValue();
-					_pPDABmp->setPosInWindow(r.width(), r.height(), g_nPDAIncrement);
-				} else {
-					g_nPDAIncrement = PDA_INCREMENT;
-					_pPDABmp->setPosInWindow(r.width(), r.height(), g_nPDAIncrement);
-				}
-				insertFGObjects(_pPDABmp);
-				deactivatePDA();
-				_pPDABmp->setVisible(true);
+			_pPDABmp = (CBagPDA *)pSDev;
+			CBofRect r(0, 0, 300, 200);
+			_pPDABmp->setAssociateWnd(this);
+			_pPDABmp->setRect(r);
+			r = getClientRect();
+			if (!_pPDABmp->isAttached())
+				_pPDABmp->attach();
 
+			// Allow the script to specify the increment height.
+			CBagVar *pVar = g_VarManager->getVariable("PDAINCREMENT");
+			if (pVar) {
+				g_nPDAIncrement = pVar->getNumValue();
+				_pPDABmp->setPosInWindow(r.width(), r.height(), g_nPDAIncrement);
 			} else {
-				reportError(ERR_UNKNOWN, "No PDA found");
+				g_nPDAIncrement = PDA_INCREMENT;
+				_pPDABmp->setPosInWindow(r.width(), r.height(), g_nPDAIncrement);
 			}
+			insertFGObjects(_pPDABmp);
+			deactivatePDA();
+			_pPDABmp->setVisible(true);
 		}
 
 		if ((CBagObject *)nullptr == getFGObjects(CBofString(PDA_WLD))) {
@@ -244,11 +240,9 @@ ErrorCode CMainWindow::attach() {
 		// be interested in knowing since we already did one above...
 		//
 		// Only do it if we're coming from somewhere other than the zoom
-		if (bForegroundObj == true) {
-			if ((CBagObject *)nullptr == getFGObjects(CBofString(WIELD_WLD))) {
-				_pWieldBmp->setAssociateWnd(this);
-				insertFGObjects(_pWieldBmp);
-			}
+		if ((CBagObject *)nullptr == getFGObjects(CBofString(WIELD_WLD))) {
+			_pWieldBmp->setAssociateWnd(this);
+			insertFGObjects(_pWieldBmp);
 		}
 	}
 
@@ -281,10 +275,15 @@ ErrorCode CMainWindow::attach() {
 		case 3:
 			_pBackdrop->fadeLines(this);
 			break;
+
+		default:
+			break;
 		}
 	}
 
-	_pBackdrop->paint(this, 0, 0);
+	if (_pBackdrop != nullptr)
+		_pBackdrop->paint(this, 0, 0);
+
 
 	return _errCode;
 }

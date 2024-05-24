@@ -462,57 +462,58 @@ void ActorAnimProcess::doSpecial() {
 	// play PC/NPC footsteps
 	bool playavfootsteps = ConfMan.getBool("footsteps");
 	if (_itemNum != 1 || playavfootsteps) {
-		UCList itemlist(2);
-		LOOPSCRIPT(script, LS_TOKEN_TRUE);
+		int32 x, y, z;
+		int32 xd, yd, zd;
+		a->getLocation(x, y, z);
+		a->getFootpadWorld(xd, yd, zd);
+		Box start(x, y, z, xd, yd, zd);
+
+		_tracker->getPosition(x, y, z);
+		Box target(x, y, z, xd, yd, zd);
+
 		CurrentMap *cm = World::get_instance()->getCurrentMap();
+		PositionInfo info = cm->getPositionInfo(target, start, a->getShapeInfo()->_flags, _itemNum);
+		if (info.supported && info.land) {
+			uint32 floor = info.land->getShape();
+			bool running = (_action == Animation::run);
+			bool splash = false;
+			int sfx = 0;
+			switch (floor) { // lots of constants!!
+			case 0x03:
+			case 0x04:
+			case 0x09:
+			case 0x0B:
+			case 0x5C:
+			case 0x5E:
+				sfx = 0x2B;
+				break;
+			case 0x7E:
+			case 0x80:
+				sfx = 0xCD;
+				splash = true;
+				break;
+			case 0xA1:
+			case 0xA2:
+			case 0xA3:
+			case 0xA4:
+				sfx = (running ? 0x99 : 0x91);
+				break;
+			default:
+				sfx = (running ? 0x97 : 0x90);
+				break;
+			}
 
-		// find items directly below
-		cm->surfaceSearch(&itemlist, script, sizeof(script), a, false, true);
-		if (itemlist.getSize() == 0) return;
+			if (sfx) {
+				AudioProcess *audioproc = AudioProcess::get_instance();
+				if (audioproc)
+					audioproc->playSFX(sfx, 0x60, _itemNum, 0, false, 0x10000 + rs.getRandomNumber(0x1FFF) - 0x1000);
+			}
 
-		Item *f = getItem(itemlist.getuint16(0));
-		assert(f);
-
-		uint32 floor = f->getShape();
-		bool running = (_action == Animation::run);
-		bool splash = false;
-		int sfx = 0;
-		switch (floor) { // lots of constants!!
-		case 0x03:
-		case 0x04:
-		case 0x09:
-		case 0x0B:
-		case 0x5C:
-		case 0x5E:
-			sfx = 0x2B;
-			break;
-		case 0x7E:
-		case 0x80:
-			sfx = 0xCD;
-			splash = true;
-			break;
-		case 0xA1:
-		case 0xA2:
-		case 0xA3:
-		case 0xA4:
-			sfx = (running ? 0x99 : 0x91);
-			break;
-		default:
-			sfx = (running ? 0x97 : 0x90);
-			break;
-		}
-
-		if (sfx) {
-			AudioProcess *audioproc = AudioProcess::get_instance();
-			if (audioproc)
-				audioproc->playSFX(sfx, 0x60, _itemNum, 0, false, 0x10000 + rs.getRandomNumber(0x1FFF) - 0x1000);
-		}
-
-		if (splash) {
-			int32 x, y, z;
-			a->getLocation(x, y, z);
-			Process *sp = new SpriteProcess(475, 0, 7, 1, 1, x, y, z);
-			Kernel::get_instance()->addProcess(sp);
+			if (splash) {
+				a->getLocation(x, y, z);
+				Process *sp = new SpriteProcess(475, 0, 7, 1, 1, x, y, z);
+				Kernel::get_instance()->addProcess(sp);
+			}
 		}
 	}
 

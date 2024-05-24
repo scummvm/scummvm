@@ -26,6 +26,8 @@
 #include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/world/actors/animation.h"
 
+//#define DEBUG_PATHFINDER
+
 namespace Ultima {
 namespace Ultima8 {
 
@@ -77,7 +79,7 @@ public:
 	//! pathfind. If true, the found path is returned in path
 	bool pathfind(Std::vector<PathfindingAction> &path);
 
-#ifdef DEBUG
+#ifdef DEBUG_PATHFINDER
 	static ObjId _visualDebugActor;
 #endif
 

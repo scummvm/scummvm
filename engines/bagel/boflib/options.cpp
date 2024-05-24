@@ -28,7 +28,14 @@
 
 namespace Bagel {
 
-#define USE_REGISTRY 1
+COption::COption(const char *pszInit) {
+	_szBuf[0] = '\0';
+
+	if (pszInit != nullptr) {
+		assert(strlen(pszInit) < MAX_OPTION_LEN);
+		Common::strcpy_s(_szBuf, pszInit);
+	}
+}
 
 CBofOptions::CBofOptions(const char *pszOptionFile) {
 	_szFileName[0] = '\0';
@@ -50,7 +57,6 @@ CBofOptions::~CBofOptions() {
 
 ErrorCode CBofOptions::loadOptionFile(const char *pszOptionFile) {
 	assert(isValidObject(this));
-
 	assert(pszOptionFile != nullptr);
 	assert(*pszOptionFile != '\0');
 	assert(strlen(pszOptionFile) < MAX_FNAME);
@@ -66,7 +72,7 @@ ErrorCode CBofOptions::load() {
 	assert(isValidObject(this));
 
 	// Assume no error
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	// Free any previous option info
 	release();
@@ -79,16 +85,10 @@ ErrorCode CBofOptions::load() {
 
 		while (readLine(&f, szBuf)) {
 			COption *pNewOption = new COption(szBuf);
-			if (pNewOption != nullptr) {
-				if (_pOptionList != nullptr) {
-					_pOptionList->addToTail(pNewOption);
-				} else {
-					_pOptionList = pNewOption;
-				}
-
+			if (_pOptionList != nullptr) {
+				_pOptionList->addToTail(pNewOption);
 			} else {
-				errCode = ERR_MEMORY;
-				break;
+				_pOptionList = pNewOption;
 			}
 		}
 
@@ -100,10 +100,10 @@ ErrorCode CBofOptions::load() {
 		f.close();
 
 	} else {
-		errCode = ERR_FOPEN;
+		errorCode = ERR_FOPEN;
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 void CBofOptions::release() {
@@ -122,7 +122,7 @@ void CBofOptions::release() {
 
 ErrorCode CBofOptions::commit() {
 	assert(isValidObject(this));
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	if ((_pOptionList != nullptr) && _bDirty) {
 		// _pOptionList must always be the head of the list!
@@ -131,7 +131,7 @@ ErrorCode CBofOptions::commit() {
 		warning("TODO: Look into refactoring options to ConfMan if needed");
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 ErrorCode CBofOptions::writeSetting(const char *pszSection, const char *pszVar, const char *pszNewValue) {
@@ -143,7 +143,7 @@ ErrorCode CBofOptions::writeSetting(const char *pszSection, const char *pszVar, 
 	char szValueBuf[MAX_OPTION_LEN];
 
 	// Assume no error
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	// Indicate that the options file needs to be updated
 	_bDirty = true;
@@ -167,28 +167,20 @@ ErrorCode CBofOptions::writeSetting(const char *pszSection, const char *pszVar, 
 			Common::sprintf_s(szSectionBuf, "[%s]", pszSection);
 
 			pSection = new COption(szSectionBuf);
-			if (pSection != nullptr) {
-				if (_pOptionList != nullptr) {
-					_pOptionList->addToTail(pSection);
-				} else {
-					_pOptionList = pSection;
-				}
+
+			if (_pOptionList != nullptr) {
+				_pOptionList->addToTail(pSection);
 			} else {
-				errCode = ERR_MEMORY;
+				_pOptionList = pSection;
 			}
 		}
 
 		// Add this option to the specified section
 		pOption = new COption(szValueBuf);
-		if (pOption != nullptr) {
-			assert(pSection != nullptr);
-			pSection->Insert(pOption);
-		} else {
-			errCode = ERR_MEMORY;
-		}
+		pSection->Insert(pOption);
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 ErrorCode CBofOptions::writeSetting(const char *pszSection, const char *pszVar, int nNewValue) {
@@ -198,13 +190,10 @@ ErrorCode CBofOptions::writeSetting(const char *pszSection, const char *pszVar, 
 
 	char szBuf[20];
 
-	// Assume no error
-	ErrorCode errCode = ERR_NONE;
-
 	Common::sprintf_s(szBuf, "%d", nNewValue);
-	errCode = writeSetting(pszSection, pszVar, szBuf);
+	ErrorCode errorCode = writeSetting(pszSection, pszVar, szBuf);
 
-	return errCode;
+	return errorCode;
 }
 
 ErrorCode CBofOptions::readSetting(const char *section, const char *option, char *stringValue, const char *defaultValue, uint32 maxLen) {
@@ -225,7 +214,7 @@ ErrorCode CBofOptions::readSetting(const char *section, const char *option, char
 	char szBuf[MAX_OPTION_LEN];
 
 	// Assume no error
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	// Assume we will need to use the default setting
 	Common::strcpy_s(stringValue, maxLen, defaultValue);
@@ -252,11 +241,11 @@ ErrorCode CBofOptions::readSetting(const char *section, const char *option, char
 
 		} else {
 			logError(buildString("Error in %s, section: %s, entry: %s", _szFileName, section, option));
-			errCode = ERR_FTYPE;
+			errorCode = ERR_FTYPE;
 		}
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 ErrorCode CBofOptions::readSetting(const char *section, const char *option, int *intValue, int defaultValue) {
@@ -274,12 +263,12 @@ ErrorCode CBofOptions::readSetting(const char *section, const char *option, int 
 	char szDefault[20], szBuf[20];
 
 	Common::sprintf_s(szDefault, "%d", defaultValue);
-	ErrorCode errCode = readSetting(section, option, szBuf, szDefault, 20);
+	ErrorCode errorCode = readSetting(section, option, szBuf, szDefault, 20);
 
 	if (intValue != nullptr)
 		*intValue = atoi(szBuf);
 
-	return errCode;
+	return errorCode;
 }
 
 ErrorCode CBofOptions::readSetting(const char *section, const char *option, bool *boolValue, bool defaultValue) {
@@ -295,9 +284,9 @@ ErrorCode CBofOptions::readSetting(const char *section, const char *option, bool
 	}
 
 	int v;
-	ErrorCode errCode = readSetting(section, option, &v, defaultValue);
+	ErrorCode errorCode = readSetting(section, option, &v, defaultValue);
 	*boolValue = v != 0;
-	return errCode;
+	return errorCode;
 }
 
 COption *CBofOptions::findSection(const char *pszSection) {
@@ -333,9 +322,9 @@ COption *CBofOptions::findOption(const char *pszSection, const char *pszVar) {
 	COption *pFound = nullptr;
 
 	int nLength = strlen(pszVar);
-	COption *pStart;
+	COption *pStart = findSection(pszSection);
 
-	if ((pStart = findSection(pszSection)) != nullptr) {
+	if (pStart != nullptr) {
 		COption *pOption = (COption *)pStart->getNext();
 		while (pOption != nullptr) {
 			if (pOption->_szBuf[0] == '[') {

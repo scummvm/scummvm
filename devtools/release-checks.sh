@@ -260,7 +260,7 @@ fi
 
 echo_n "Checking POTFILES header includes..."
 
-headerlist=`grep \.h$ <<< "$list" | grep -v detection_ | grep -v keymapper_`
+headerlist=`grep \.h$ <<< "$list" | grep -v detection_ | grep -v keymapper_ | grep -v engines/gob/detection/tables`
 
 if [ ! -z "$headerlist" ]; then
   num_lines=`wc -l <<< "$headerlist"`
@@ -280,7 +280,7 @@ fi
 echo_n "Checking missing/extra POTFILES..."
 
 # Now get list of includes
-git grep -l "common/translation\.h" | grep -v devtools/create_engine | grep -v devtools/release-checks.sh | sort > $TMP
+git grep -l "common/translation\.h" | grep -v devtools/create_engine | grep -v devtools/release-checks.sh | grep -v devtools/generate-android-i18n-strings.py | grep -v engines/gob/detection/tables.h | sort > $TMP
 
 res=`diff -  $TMP <<< "$list"`
 
@@ -305,13 +305,13 @@ IFS="$OLDIFS"
 
 echo_n "Checking engine-data files..."
 
+cat dists/engine-data/engine_data.mk dists/engine-data/engine_data_big.mk dists/engine-data/engine_data_core.mk >dists/engine-data/engine_data_combined.mk
+
 # Use # as delimiter, %FILE% for the filename
 declare -a distfiles=(
-  "Makefile.common#DIST_FILES_ENGINEDATA\+=%FILE%"
-  "devtools/create_project/xcode.cpp#[	 ]+files.push_back\(\"dists/engine-data/%FILE%\"\);"
   "dists/engine-data/README#%FILE%:"
+  "dists/engine-data/engine_data_combined.mk#DIST_FILES_LIST \+= dists/engine-data/%FILE%"
   "dists/irix/scummvm.idb#f 0644 root sys usr/ScummVM/share/scummvm/%FILE% %FILE% scummvm.sw.eoe"
-  "dists/scummvm.rc#%FILE%[	 ]+FILE[	 ]+\"dists/engine-data/%FILE%\""
 )
 
 OLDIFS="$IFS"
@@ -329,7 +329,9 @@ do
     file=`basename $f`
 
     # Skip README file
-    if [ $file == "README" -o $file == "create-playground3d-data.sh"  -o $file == "create-testbed-data.sh" ]; then
+    if [ $file == "README" -o $file == "create-playground3d-data.sh"  -o $file == "create-testbed-data.sh" \
+            -o $file == "engine_data.mk" -o $file == "engine_data_big.mk" -o $file == "engine_data_core.mk" \
+            -o $file == "engine_data_combined.mk" ]; then
         continue
     fi
 
@@ -347,12 +349,29 @@ do
     done
 done
 
+rm dists/engine-data/engine_data_combined.mk
+
+if [ "$absentFiles" -ne "0" ]; then
+  echo -e "$absentFiles missing files ${RED}Fix them${NC}"
+
+  failPlus
+else
+  echoOk
+fi
+
+##########
+# GUI theme files
+##########
+
+echo_n "Checking GUI theme files..."
+
+absentFiles=0
+
 declare -a themefiles=(
   "Makefile.common#DIST_FILES_THEMES.*%FILE%"
   "devtools/create_project/xcode.cpp#[	 ]+files.push_back\(\"gui/themes/%FILE%\"\);"
   "dists/irix/scummvm.idb#f 0644 root sys usr/ScummVM/share/scummvm/%FILE% %FILE% scummvm.sw.eoe"
   "dists/scummvm.rc#%FILE%[	 ]+FILE[	 ]+\"gui/themes/%FILE%\""
-  "dists/win32/migration.txt#%FILE%"
 )
 
 for f in gui/themes/*
@@ -383,8 +402,63 @@ do
     done
 done
 
-IFS="$OLDIFS"
+if [ "$absentFiles" -ne "0" ]; then
+  echo -e "$absentFiles missing files ${RED}Fix them${NC}"
 
+  failPlus
+else
+  echoOk
+fi
+
+##########
+# LICENSE files
+##########
+
+OLDIFS="$IFS"
+IFS=$'\n'  # allow arguments with tabs and spaces
+
+echo_n "Checking LICENSE files..."
+
+absentFiles=0
+
+declare -a licensefiles=(
+  "Makefile.common#DIST_FILES_DOCS.*%FILE%"
+  "backends/platform/maemo/debian/rules#install -m0644.*%FILE%.*debian/scummvm/usr/share/doc/scummvm"
+  "backends/platform/sdl/macosx/appmenu_osx.mm#openFromBundle\(@\"%FILEUNDOTTED%\"\);"
+  "backends/platform/sdl/win32/win32.mk#cp \\$\(srcdir\)/%FILE% \\$\(WIN32PATH\)/%FILEBASE%\.txt"
+  "devtools/create_project/create_project.cpp#in\.push_back\(setup.srcDir \+ \"/%FILE%\"\)"
+  "devtools/create_project/xcode.cpp#[	 ]+files.push_back\(\"%FILE%\"\);"
+  "dists/irix/scummvm.idb#f 0644 root sys usr/ScummVM/%FILEBASE% %FILE% scummvm.man.readme"
+  "dists/redhat/scummvm.spec#%doc AUTHORS README.md.*%FILE%"
+  "dists/redhat/scummvm.spec.in#%doc AUTHORS README.md.*%FILE%"
+  "ports.mk#cp \\$\(bundle_name\)/Contents/Resources/%FILEBASE% \\$\(bundle_name\)/Contents/Resources/%FILEUNDOTTED%"
+  "ports.mk#mv \./ScummVM-snapshot/%FILEBASE% \./ScummVM-snapshot"
+)
+
+for f in LICENSES/*
+do
+    file=$f
+    filebase=`basename $f`
+    fileundotted=`sed "s|\.|-|g" <<< "$filebase"`
+
+    for d in "${licensefiles[@]}"
+    do
+        if [ $filebase == "CatharonLicense.txt" -o $d == "backends/platform/sdl/win32/win32.mk" ]; then
+            # the file is not renamed to .txt.txt
+            continue
+        fi
+
+        target=`cut -d '#' -f 1 <<< "$d"`
+        pattern=`cut -d '#' -f 2 <<< "$d"`
+
+        res=`sed "s|%FILE%|$file|g;s|%FILEBASE%|$filebase|g;s|%FILEUNDOTTED%|$fileundotted|g" <<< "$pattern"`
+
+        if [ -z $(grep -E "$res" "$target" | head -1) ]; then
+            echo "$file is absent in $target"
+            absentFiles=$((absentFiles+1))
+        fi
+    done
+done
 
 if [ "$absentFiles" -ne "0" ]; then
   echo -e "$absentFiles missing files ${RED}Fix them${NC}"
@@ -394,12 +468,54 @@ else
   echoOk
 fi
 
+echo_n "Checking LICENSE files contents..."
+
+checkFailed=0
+
+for f in LICENSES/*
+do
+
+  if [ -z $(head -2 $f | grep NOTE: ) ]; then
+    echo "$f is missing NOTE"
+    checkFailed=$((checkFailed+1))
+  fi
+done
+
+if [ "$checkFailed" -ne "0" ]; then
+  echo -e "$checkFailed files malformed ${RED}Fix them${NC}"
+
+  failPlus
+else
+  echoOk
+fi
+
+IFS="$OLDIFS"
+
 
 #############################################################################
 #
 # Engines go here
 #
 #############################################################################
+
+###########
+# Bagel engine
+###########
+
+echo_n "Checking bagel.dat..."
+
+fileDate=`git log -1 dists/engine-data/bagel.dat | grep Date | sed 's/Date: //'`
+
+num_lines=`git -P log --oneline "--since=$fileDate" devtools/create_bagel/files | wc -l`
+
+if [ "$num_lines" -ne "0" ]; then
+  echo -e "$num_lines unprocessed commits. ${RED}Run 'cd devtools/create_bagel/files; zip -r9 ../../../dists/engine-data/bagel.dat .'${NC}"
+
+  failPlus
+else
+  echoOk
+fi
+
 
 ###########
 # MM engine
@@ -413,6 +529,25 @@ num_lines=`git -P log --oneline "--since=$fileDate" devtools/create_mm/files | w
 
 if [ "$num_lines" -ne "0" ]; then
   echo -e "$num_lines unprocessed commits. ${RED}Run 'cd devtools/create_mm/files; zip -r9 ../../../dists/engine-data/mm.dat .'${NC}"
+
+  failPlus
+else
+  echoOk
+fi
+
+
+###########
+# Nancy engine
+###########
+
+echo_n "Checking nancy.dat..."
+
+fileDate=`git log -1 dists/engine-data/nancy.dat | grep Date | sed 's/Date: //'`
+
+num_lines=`git -P log --oneline "--since=$fileDate" devtools/create_nancy/files | wc -l`
+
+if [ "$num_lines" -ne "0" ]; then
+  echo -e "$num_lines unprocessed commits. ${RED}Run 'make devtools/create_nancy;cd devtools/create_nancy;./create_nancy;cp nancy.dat ../../dists/engine-data'${NC}"
 
   failPlus
 else

@@ -36,12 +36,10 @@ CQueue::CQueue(void *pObject) {
 }
 
 CQueue::CQueue(CQueue *pQueue) {
-	CLList *pList;
-
 	// Validate input queue
 	assert(pQueue != nullptr);
 
-	pList = pQueue->_pQueueList;
+	CLList *pList = pQueue->_pQueueList;
 	while (pList != nullptr) {
 		addItem(pList->getData());
 		pList = pList->getNext();
@@ -49,9 +47,7 @@ CQueue::CQueue(CQueue *pQueue) {
 }
 
 CQueue::CQueue(const CQueue &cQueue) {
-	CLList *pList;
-
-	pList = cQueue._pQueueList;
+	CLList *pList = cQueue._pQueueList;
 	while (pList != nullptr) {
 		addItem(pList->getData());
 		pList = pList->getNext();
@@ -73,31 +69,25 @@ void CQueue::addItem(void *pObject) {
 	// Make sure this object exists
 	assert(isValidObject(this));
 
-	CLList *pNewItem;
-
-	if ((pNewItem = new CLList(pObject)) != nullptr) {
-		if (_pQueueList != nullptr) {
-			_pQueueList->addToTail(pNewItem);
-		} else {
-			_pQueueList = pNewItem;
-		}
-
-		assert(pNewItem->getHead() == _pQueueList);
+	CLList *pNewItem = new CLList(pObject);
+	if (_pQueueList != nullptr) {
+		_pQueueList->addToTail(pNewItem);
+	} else {
+		_pQueueList = pNewItem;
 	}
+
+	assert(pNewItem->getHead() == _pQueueList);
 }
 
 void *CQueue::removeItem() {
 	// Make sure this object exists
 	assert(isValidObject(this));
 
-	CLList *pList;
-	void *pObject;
-
 	// Assume empty list
-	pObject = nullptr;
+	void *pObject = nullptr;
 
-	if ((pList = _pQueueList) != nullptr) {
-
+	CLList *pList = _pQueueList;
+	if (pList != nullptr) {
 		pObject = pList->getData();
 
 		_pQueueList = pList->getNext();
@@ -112,11 +102,9 @@ void CQueue::deleteItem(void *pItem) {
 	assert(isValidObject(this));
 	assert(pItem != nullptr);
 
-	CLList *pList, *pNext;
-
-	pList = _pQueueList;
+	CLList *pList = _pQueueList;
 	while (pList != nullptr) {
-		pNext = pList->getNext();
+		CLList *pNext = pList->getNext();
 
 		if (pItem == pList->getData()) {
 			// If this is the 1st item in the Queue, then move head
@@ -134,9 +122,7 @@ void CQueue::deleteItem(void *pItem) {
 void *CQueue::getQItem() {
 	assert(isValidObject(this));
 
-	void *pItem;
-
-	pItem = nullptr;
+	void *pItem = nullptr;
 	if (_pQueueList != nullptr) {
 		pItem = _pQueueList->getData();
 	}

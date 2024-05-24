@@ -530,7 +530,7 @@ bool Renderer::computeScreenViewport() {
 	return true;
 }
 
-void Renderer::renderPyramid(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours, Common::Array<uint8> *ecolours, int type) {
+void Renderer::renderPyramid(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<float> *ordinates, Common::Array<uint8> *colours, Common::Array<uint8> *ecolours, int type) {
 	Math::Vector3d vertices[8] = { origin, origin, origin, origin, origin, origin, origin, origin };
 	switch (type) {
 	default:
@@ -969,8 +969,8 @@ void Renderer::renderRectangle(const Math::Vector3d &originalOrigin, const Math:
 	polygonOffset(false);
 }
 
-void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *originalOrdinates, Common::Array<uint8> *colours, Common::Array<uint8> *ecolours, float offset) {
-	Common::Array<uint16> *ordinates = new Common::Array<uint16>(*originalOrdinates);
+void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<float> *originalOrdinates, Common::Array<uint8> *colours, Common::Array<uint8> *ecolours, float offset) {
+	Common::Array<float> *ordinates = new Common::Array<float>(*originalOrdinates);
 
 	uint8 r1, g1, b1, r2, g2, b2;
 	byte *stipple = nullptr;

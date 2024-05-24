@@ -322,7 +322,7 @@ public:
 	ErrorCode fadeIn(CBofWindow *pWnd, int x = 0, int y = 0, int nMaskColor = NOT_TRANSPARENT, int nBlockSize = CBMP_FADE_SIZE, int nSpeed = CBMP_FADE_SPEED);
 
 	ErrorCode curtain(CBofWindow *pWnd, int nSpeed = CBMP_CURT_SPEED, int nMaskColor = NOT_TRANSPARENT);
-	ErrorCode fadeLines(CBofWindow *pWnd, CBofRect *pDstRect = nullptr, CBofRect *pSrcRect = nullptr, int nSpeed = CBMP_LINE_SPEED, int nMaskColor = NOT_TRANSPARENT);
+	ErrorCode fadeLines(CBofWindow *pWnd, int nSpeed = CBMP_LINE_SPEED, int nMaskColor = NOT_TRANSPARENT);
 
 	/**
 	 * Returns the color at the (x, y) location in this bmp
@@ -397,15 +397,9 @@ public:
 	/**
 	 * Scrolls current bitmap vertically
 	 * @param nPixels       Number of pixels to scroll by
-	 * @param pRect         Section of bitmap to scroll
 	 * @return              Error return code
 	 */
-	ErrorCode scrollUp(int nPixels, CBofRect *pRect = nullptr);
-
-
-	ErrorCode scrollDown(int nPixels, CBofRect *pRect = nullptr) {
-		return scrollUp(-nPixels, pRect);
-	}
+	ErrorCode scrollUp(int nPixels);
 
 	static void setUseBackdrop(bool b) {
 		_bUseBackdrop = b;

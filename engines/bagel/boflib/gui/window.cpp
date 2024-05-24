@@ -78,7 +78,7 @@ CBofWindow::~CBofWindow() {
 
 	killBackdrop();
 
-	destroy();
+	CBofWindow::destroy();
 }
 
 ErrorCode CBofWindow::initialize() {
@@ -100,10 +100,8 @@ Common::Point CBofWindow::getMousePos() {
 void CBofWindow::destroy() {
 	releaseCapture();
 
-	if (_surface != nullptr) {
-		delete _surface;
-		_surface = nullptr;
-	}
+	delete _surface;
+	_surface = nullptr;
 
 	// When gui elements are destroyed, remove them
 	// from the _children array of their parent
@@ -113,10 +111,8 @@ void CBofWindow::destroy() {
 void CBofWindow::validateAnscestors(CBofRect *pRect) {
 	assert(isValidObject(this));
 
-	CBofWindow *pParent;
-
 	// Validate all anscestors
-	pParent = _parent;
+	CBofWindow *pParent = _parent;
 	while (pParent != nullptr) {
 		pParent->validateRect(pRect);
 		pParent = pParent->getParent();
@@ -150,8 +146,8 @@ ErrorCode CBofWindow::create(const char *pszName, int x, int y, int nWidth, int 
 	_surface = new Graphics::ManagedSurface(*g_engine->_screen, stRect);
 
 	if (!errorOccurred()) {
-		CBofPalette *pPalette;
-		if ((pPalette = CBofApp::getApp()->getPalette()) != nullptr) {
+		CBofPalette *pPalette = CBofApp::getApp()->getPalette();
+		if (pPalette != nullptr) {
 			selectPalette(pPalette);
 		}
 
@@ -186,10 +182,11 @@ ErrorCode CBofWindow::create(const char *pszName, const CBofRect *pRect, CBofWin
 	assert(isValidObject(this));
 	assert(pszName != nullptr);
 
-	int x, y, nWidth, nHeight;
+	int x = 0;
+	int y = 0;
 
-	x = y = 0;
-	nWidth = nHeight = USE_DEFAULT;
+	int nWidth = USE_DEFAULT;
+	int nHeight = USE_DEFAULT;
 
 	if (pRect != nullptr) {
 		x = pRect->left;
@@ -231,13 +228,11 @@ bool CBofWindow::hasFocus() const {
 void CBofWindow::center() {
 	assert(isValidObject(this));
 
-	CBofWindow *pParent;
+	CBofWindow *pParent = _parent;
 	int x, y;
 
-	if ((pParent = _parent) != nullptr) {
-		CBofRect cWindowRect;
-
-		cWindowRect = pParent->getWindowRect();
+	if (pParent != nullptr) {
+		CBofRect cWindowRect = pParent->getWindowRect();
 		x = cWindowRect.left + (pParent->width() - width()) / 2;
 		y = cWindowRect.top + (pParent->height() - height()) / 2;
 
@@ -321,19 +316,18 @@ void CBofWindow::setTimer(uint32 nID, uint32 nInterval, BofCallback pCallBack) {
 		pPacket = (CBofTimerPacket *)pPacket->getNext();
 	}
 
-	if ((pPacket = new CBofTimerPacket) != nullptr) {
-		pPacket->_nID = nID;
-		pPacket->_nInterval = nInterval;
-		pPacket->_pCallBack = pCallBack;
-		pPacket->_pOwnerWindow = this;
+	pPacket = new CBofTimerPacket;
+	pPacket->_nID = nID;
+	pPacket->_nInterval = nInterval;
+	pPacket->_pCallBack = pCallBack;
+	pPacket->_pOwnerWindow = this;
 
-		// Add this timer to the list of current timers
-		if (_pTimerList != nullptr) {
-			_pTimerList->addToHead(pPacket);
-		}
-
-		_pTimerList = pPacket;
+	// Add this timer to the list of current timers
+	if (_pTimerList != nullptr) {
+		_pTimerList->addToHead(pPacket);
 	}
+
+	_pTimerList = pPacket;
 
 	// Add the timer to the window
 	_timers.push_back(WindowTimer(nInterval, nID, pCallBack));
@@ -370,11 +364,9 @@ void CBofWindow::killTimer(uint32 nID) {
 void CBofWindow::killMyTimers() {
 	assert(isValidObject(this));
 
-	CBofTimerPacket *pTimer, *pNextTimer;
-
-	pTimer = _pTimerList;
+	CBofTimerPacket *pTimer = _pTimerList;
 	while (pTimer != nullptr) {
-		pNextTimer = (CBofTimerPacket *)pTimer->getNext();
+		CBofTimerPacket *pNextTimer = (CBofTimerPacket *)pTimer->getNext();
 
 		if (pTimer->_pOwnerWindow == this) {
 			killTimer(pTimer->_nID);
@@ -385,14 +377,12 @@ void CBofWindow::killMyTimers() {
 }
 
 void CBofWindow::checkTimers() {
-	uint32 currTime;
-
 	for (uint i = 0; i < _children.size(); ++i)
 		_children[i]->checkTimers();
 
 	for (bool timersChanged = true; timersChanged;) {
 		timersChanged = false;
-		currTime = g_system->getMillis();
+		uint32 currTime = g_system->getMillis();
 
 		// Iterate over the timers looking for any that have expired
 		for (Common::List<WindowTimer>::iterator it = _timers.begin(); it != _timers.end(); ++it) {
@@ -493,29 +483,18 @@ ErrorCode CBofWindow::setBackdrop(const char *pszFileName, bool bRefresh) {
 	assert(isValidObject(this));
 	assert(pszFileName != nullptr);
 
-	CBofBitmap *pBmp;
-	CBofPalette *pPalette;
-
 	// Use Application's palette if none supplied
-	pPalette = CBofApp::getApp()->getPalette();
+	CBofPalette *pPalette = CBofApp::getApp()->getPalette();
+	CBofBitmap *pBmp = new CBofBitmap(pszFileName, pPalette);
 
-	if ((pBmp = new CBofBitmap(pszFileName, pPalette)) != nullptr) {
-		return setBackdrop(pBmp, bRefresh);
-
-	} else {
-		reportError(ERR_MEMORY, "Could not allocate a new CBofBitmap");
-	}
-
-	return _errCode;
+	return setBackdrop(pBmp, bRefresh);
 }
 
 void CBofWindow::killBackdrop() {
 	assert(isValidObject(this));
 
-	if (_pBackdrop != nullptr) {
-		delete _pBackdrop;
-		_pBackdrop = nullptr;
-	}
+	delete _pBackdrop;
+	_pBackdrop = nullptr;
 }
 
 ErrorCode CBofWindow::paintBackdrop(CBofRect *pRect, int nTransparentColor) {
@@ -524,7 +503,6 @@ ErrorCode CBofWindow::paintBackdrop(CBofRect *pRect, int nTransparentColor) {
 	if (_pBackdrop != nullptr) {
 		if (pRect == nullptr) {
 			_errCode = _pBackdrop->paint(this, &_cRect, nullptr, nTransparentColor);
-
 		} else {
 			_errCode = _pBackdrop->paint(this, pRect, pRect, nTransparentColor);
 		}
@@ -583,9 +561,7 @@ void CBofWindow::handleEvents() {
 	Common::Event e;
 	CBofWindow *capture = CBofApp::getApp()->getCaptureControl();
 	CBofWindow *focus = CBofApp::getApp()->getFocusControl();
-
-	// Check for expired timers before handling events
-	checkTimers();
+	bool eventsPresent = false;
 
 	while (g_system->getEventManager()->pollEvent(e)) {
 		if (capture)
@@ -600,9 +576,20 @@ void CBofWindow::handleEvents() {
 			_mouseY = e.mouse.y;
 		}
 
-		if (e.type != Common::EVENT_MOUSEMOVE)
+		if (e.type != Common::EVENT_MOUSEMOVE) {
+			eventsPresent = true;
 			break;
+		}
 	}
+
+	// Only do timer checks when not processing other pending events.
+	// This simulates Windows behaviour, where the WM_TIMER events
+	// would be added at the end of the event queue
+	if (!eventsPresent)
+		// Check for expired timers
+		checkTimers();
+
+
 }
 
 void CBofWindow::handleEvent(const Common::Event &event) {

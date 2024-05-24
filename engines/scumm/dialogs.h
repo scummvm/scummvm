@@ -414,9 +414,13 @@ private:
 
 	GUI::CheckboxWidget *_enableLANBroadcast;
 
+	GUI::CheckboxWidget *_generateRandomMaps;
+
 	GUI::EditTextWidget *_lobbyServerAddr;
 
 	GUI::CheckboxWidget *_enableCompetitiveMods;
+
+	GUI::StaticTextWidget *_networkVersion;
 };
 #endif
 

@@ -62,21 +62,21 @@ CBofRect CBagVariableObject::getRect() {
 //   without the relevant info.
 ParseCodes CBagVariableObject::setInfo(CBagIfstream &istr) {
 	bool nObjectUpdated = false;
-	char ch;
 
 	while (!istr.eof()) {
 		int nChanged = 0;
 
 		istr.eatWhite();
 
-		switch (ch = (char)istr.peek()) {
+		char ch = (char)istr.peek();
+		switch (ch) {
 		//
 		// SIZE n - n point size of the txt
 		//
 		case 'S': {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256);		// jwl 08.28.96 performance improvement
+			CBofString sStr(szLocalStr, 256);
 
 			getAlphaNumFromStream(istr, sStr);
 
@@ -97,7 +97,7 @@ ParseCodes CBagVariableObject::setInfo(CBagIfstream &istr) {
 		case 'C': {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
-			CBofString sStr(szLocalStr, 256);		// jwl 08.28.96 performance improvement
+			CBofString sStr(szLocalStr, 256);
 
 			getAlphaNumFromStream(istr, sStr);
 
@@ -108,12 +108,12 @@ ParseCodes CBagVariableObject::setInfo(CBagIfstream &istr) {
 				switch (nColor) {
 				case 0:	_nFGColor = RGB(0, 0, 0); break;							// black
 				case 1:	_nFGColor = RGB(255, 0, 0); break;
-				case 2:	_nFGColor = CTEXT_YELLOW; break;						// yellow
+				case 2:	_nFGColor = CTEXT_YELLOW; break;
 				case 3:	_nFGColor = RGB(0, 255, 0); break;
 				case 4:	_nFGColor = RGB(0, 255, 255); break;
 				case 5:	_nFGColor = RGB(0, 0, 255); break;
 				case 6:	_nFGColor = RGB(255, 0, 255); break;
-				case 7:	_nFGColor = CTEXT_WHITE; break;						// white
+				case 7:	_nFGColor = CTEXT_WHITE; break;
 				default:
 					break;
 				}
@@ -126,19 +126,21 @@ ParseCodes CBagVariableObject::setInfo(CBagIfstream &istr) {
 		}
 
 		//
-		// No match return from funtion
+		// No match return from function
 		//
 		default:
-			ParseCodes rc;
-			if ((rc = CBagObject::setInfo(istr)) == PARSING_DONE) {
+			ParseCodes parseCode = CBagObject::setInfo(istr);
+			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
-			} else if (rc == UPDATED_OBJECT) {
+			}
+
+			if (parseCode == UPDATED_OBJECT) {
 				nObjectUpdated = true;
 			} else if (!nChanged) {
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
-				else
-					return UNKNOWN_TOKEN;
+
+				return UNKNOWN_TOKEN;
 			}
 			break;
 		}
@@ -148,7 +150,7 @@ ParseCodes CBagVariableObject::setInfo(CBagIfstream &istr) {
 }
 
 ErrorCode CBagVariableObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int) {
-	ErrorCode rc = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 	CBagVar *xVar = g_VarManager->getVariable(getFileName());
 
 	if (isAttached() && xVar && !(xVar->getValue().isEmpty())) {
@@ -165,28 +167,28 @@ ErrorCode CBagVariableObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *p
 			pt.x += 5;
 
 		CBofRect r(pt, pSrcRect->size());
-		rc = paintText(pBmp, &r, xVar->getValue(), mapFontPointSize(_nPointSize), TEXT_NORMAL, _nFGColor);
+		errorCode = paintText(pBmp, &r, xVar->getValue(), mapFontPointSize(_nPointSize), TEXT_NORMAL, _nFGColor);
 
 		// Don't need to redraw!
 		setDirty(false);
 	}
-	return rc;
+	return errorCode;
 }
 
 ErrorCode CBagVariableObject::update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int) {
-	ErrorCode rc = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 	CBagVar *xVar = g_VarManager->getVariable(getFileName());
 
 	if (isAttached() && xVar && !(xVar->getValue().isEmpty())) {
 		CBofRect r(pt, pSrcRect->size());
 
-		rc = paintText(pWnd, &r, xVar->getValue(), mapFontPointSize(_nPointSize), TEXT_NORMAL, _nFGColor);
+		errorCode = paintText(pWnd, &r, xVar->getValue(), mapFontPointSize(_nPointSize), TEXT_NORMAL, _nFGColor);
 
 		// Don't need to redraw!
 		setDirty(false);
 	}
 
-	return rc;
+	return errorCode;
 }
 
 } // namespace Bagel

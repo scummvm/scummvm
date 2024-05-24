@@ -48,7 +48,7 @@ void SceneScriptMA02::InitializeScene() {
 		Actor_Change_Animation_Mode(kActorMaggie, 88);
 		Actor_Put_In_Set(kActorMaggie, kSetMA02_MA04);
 		Actor_Set_At_XYZ(kActorMaggie, -35.51f, -144.12f, 428.0f, 0);
-		Actor_Retired_Here(kActorMaggie, 24, 24, 1, -1);
+		Actor_Retired_Here(kActorMaggie, 24, 24, true, -1);
 	}
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxAPRTAMB5, 12, 0, 1);

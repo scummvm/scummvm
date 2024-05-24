@@ -135,6 +135,8 @@ CBagOptWindow::CBagOptWindow() {
 	for (int i = 0; i < NUM_SYS_BUTTONS; i++) {
 		_pButtons[i] = nullptr;
 	}
+
+	_pSavePalette = nullptr;
 }
 
 ErrorCode CBagOptWindow::detach() {
@@ -147,40 +149,27 @@ ErrorCode CBagOptWindow::detach() {
 
 	// Destroy all buttons
 	for (int i = 0; i < NUM_SYS_BUTTONS; i++) {
-		if (_pButtons[i] != nullptr) {
-			delete _pButtons[i];
-			_pButtons[i] = nullptr;
-		}
+		delete _pButtons[i];
+		_pButtons[i] = nullptr;
 	}
 
-	if (_pFlythroughs != nullptr) {
-		delete _pFlythroughs;
-		_pFlythroughs = nullptr;
-	}
-	if (_pPanimations != nullptr) {
-		delete _pPanimations;
-		_pPanimations = nullptr;
-	}
+	delete _pFlythroughs;
+	_pFlythroughs = nullptr;
 
-	if (_pMidiVolumeScroll != nullptr) {
-		delete _pMidiVolumeScroll;
-		_pMidiVolumeScroll = nullptr;
-	}
+	delete _pPanimations;
+	_pPanimations = nullptr;
 
-	if (_pWaveVolumeScroll != nullptr) {
-		delete _pWaveVolumeScroll;
-		_pWaveVolumeScroll = nullptr;
-	}
+	delete _pMidiVolumeScroll;
+	_pMidiVolumeScroll = nullptr;
 
-	if (_pCorrectionScroll != nullptr) {
-		delete _pCorrectionScroll;
-		_pCorrectionScroll = nullptr;
-	}
+	delete _pWaveVolumeScroll;
+	_pWaveVolumeScroll = nullptr;
 
-	if (_pPanSpeedScroll != nullptr) {
-		delete _pPanSpeedScroll;
-		_pPanSpeedScroll = nullptr;
-	}
+	delete _pCorrectionScroll;
+	_pCorrectionScroll = nullptr;
+
+	delete _pPanSpeedScroll;
+	_pPanSpeedScroll = nullptr;
 
 	CBofApp::getApp()->setPalette(_pSavePalette);
 
@@ -199,10 +188,13 @@ void CBagOptWindow::onPaint(CBofRect *pRect) {
 ErrorCode CBagOptWindow::attach() {
 	// Save off the current game's palette
 	_pSavePalette = CBofApp::getApp()->getPalette();
+	CBofPalette *pPal = nullptr;
 
 	// Insert ours
-	CBofPalette *pPal = _pBackdrop->getPalette();
-	CBofApp::getApp()->setPalette(pPal);
+	if (_pBackdrop != nullptr) {
+		pPal = _pBackdrop->getPalette();
+		CBofApp::getApp()->setPalette(pPal);
+	}
 
 	// Paint stuff
 	if (_pBackdrop != nullptr) {
@@ -234,22 +226,16 @@ ErrorCode CBagOptWindow::attach() {
 	for (int i = 0; i < NUM_SYS_BUTTONS; i++) {
 		assert(_pButtons[i] == nullptr);
 
-		if ((_pButtons[i] = new CBofBmpButton) != nullptr) {
-			CBofBitmap *pUp, *pDown, *pFocus, *pDis;
+		_pButtons[i] = new CBofBmpButton;
 
-			pUp = loadBitmap(buildSysDir(g_stButtons[i]._pszUp), pPal);
-			pDown = loadBitmap(buildSysDir(g_stButtons[i]._pszDown), pPal);
-			pFocus = loadBitmap(buildSysDir(g_stButtons[i]._pszFocus), pPal);
-			pDis = loadBitmap(buildSysDir(g_stButtons[i]._pszDisabled), pPal);
+		CBofBitmap *pUp = loadBitmap(buildSysDir(g_stButtons[i]._pszUp), pPal);
+		CBofBitmap *pDown = loadBitmap(buildSysDir(g_stButtons[i]._pszDown), pPal);
+		CBofBitmap *pFocus = loadBitmap(buildSysDir(g_stButtons[i]._pszFocus), pPal);
+		CBofBitmap *pDis = loadBitmap(buildSysDir(g_stButtons[i]._pszDisabled), pPal);
 
-			_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
-
-			_pButtons[i]->create(g_stButtons[i]._pszName, g_stButtons[i]._nLeft, g_stButtons[i]._nTop, g_stButtons[i]._nWidth, g_stButtons[i]._nHeight, this, g_stButtons[i]._nID);
-			_pButtons[i]->show();
-		} else {
-			reportError(ERR_MEMORY);
-			break;
-		}
+		_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
+		_pButtons[i]->create(g_stButtons[i]._pszName, g_stButtons[i]._nLeft, g_stButtons[i]._nTop, g_stButtons[i]._nWidth, g_stButtons[i]._nHeight, this, g_stButtons[i]._nID);
+		_pButtons[i]->show();
 	}
 
 	char szBuf1[MAX_DIRPATH];
@@ -269,74 +255,50 @@ ErrorCode CBagOptWindow::attach() {
 	// Midi volume control
 	CBofRect cRect;
 	cRect.setRect(73, 48, 73 + 120 - 1, 48 + 20 - 1);
-	if ((_pMidiVolumeScroll = new CBofScrollBar) != nullptr) {
-		_pMidiVolumeScroll->create("", &cRect, this, MIDI_VOL_ID);
-
-		_pMidiVolumeScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
-		_pMidiVolumeScroll->setScrollRange(VOLUME_MIN, VOLUME_MAX, true);
-		_pMidiVolumeScroll->show();
-
-	} else {
-		reportError(ERR_MEMORY, "Could not allocate the Midi Volume Scroll Bar");
-	}
+	_pMidiVolumeScroll = new CBofScrollBar;
+	_pMidiVolumeScroll->create("", &cRect, this, MIDI_VOL_ID);
+	_pMidiVolumeScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
+	_pMidiVolumeScroll->setScrollRange(VOLUME_MIN, VOLUME_MAX, true);
+	_pMidiVolumeScroll->show();
 
 	// Digital Audio volume control
 	cRect.setRect(73, 98, 73 + 120 - 1, 98 + 20 - 1);
-	if ((_pWaveVolumeScroll = new CBofScrollBar) != nullptr) {
-		_pWaveVolumeScroll->create("", &cRect, this, WAVE_VOL_ID);
-
-		_pWaveVolumeScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
-		_pWaveVolumeScroll->setScrollRange(VOLUME_MIN, VOLUME_MAX, true);
-		_pWaveVolumeScroll->show();
-
-	} else {
-		reportError(ERR_MEMORY, "Could not allocate the Wave Volume Scroll Bar");
-	}
+	_pWaveVolumeScroll = new CBofScrollBar;
+	_pWaveVolumeScroll->create("", &cRect, this, WAVE_VOL_ID);
+	_pWaveVolumeScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
+	_pWaveVolumeScroll->setScrollRange(VOLUME_MIN, VOLUME_MAX, true);
+	_pWaveVolumeScroll->show();
 
 	// Pan Correction control
 	cRect.setRect(73, 268, 73 + 120 - 1, 268 + 20 - 1);
-	if ((_pCorrectionScroll = new CBofScrollBar) != nullptr) {
-		_pCorrectionScroll->create("", &cRect, this, CORRECTION_ID);
-
-		_pCorrectionScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
-		_pCorrectionScroll->setScrollRange(0, 6, true);
-		_pCorrectionScroll->show();
-
-	} else {
-		reportError(ERR_MEMORY, "Could not allocate the Pan Correction Scroll Bar");
-	}
+	_pCorrectionScroll = new CBofScrollBar;
+	_pCorrectionScroll->create("", &cRect, this, CORRECTION_ID);
+	_pCorrectionScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
+	_pCorrectionScroll->setScrollRange(0, 6, true);
+	_pCorrectionScroll->show();
 
 	// Pan Speed control
 	cRect.setRect(73, 318, 73 + 120 - 1, 318 + 20 - 1);
-	if ((_pPanSpeedScroll = new CBofScrollBar) != nullptr) {
-		_pPanSpeedScroll->create("", &cRect, this, PANSPEED_ID);
-
-		_pPanSpeedScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
-		_pPanSpeedScroll->setScrollRange(0, 5, true);
-		_pPanSpeedScroll->show();
-
-	} else {
-		reportError(ERR_MEMORY, "Could not allocate the Pan Speed Scroll Bar");
-	}
+	_pPanSpeedScroll = new CBofScrollBar;
+	_pPanSpeedScroll->create("", &cRect, this, PANSPEED_ID);
+	_pPanSpeedScroll->loadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
+	_pPanSpeedScroll->setScrollRange(0, 5, true);
+	_pPanSpeedScroll->show();
 
 	cRect.setRect(FLYTHROUGHS_LEFT, FLYTHROUGHS_TOP, FLYTHROUGHS_LEFT + CHECKBOX_WIDTH, FLYTHROUGHS_TOP + CHECKBOX_HEIGHT);
-	if ((_pFlythroughs = new CBofCheckButton()) != nullptr) {
-		_pFlythroughs->loadColorScheme(&_cColorScheme);
-		_errCode = _pFlythroughs->create("", &cRect, this, FLYTHROUGHS_ID);
-		_pFlythroughs->show();
-	}
+	_pFlythroughs = new CBofCheckButton();
+	_pFlythroughs->loadColorScheme(&_cColorScheme);
+	_errCode = _pFlythroughs->create("", &cRect, this, FLYTHROUGHS_ID);
+	_pFlythroughs->show();
 
 	cRect.setRect(PANIMATIONS_LEFT, PANIMATIONS_TOP, PANIMATIONS_LEFT + CHECKBOX_WIDTH, PANIMATIONS_TOP + CHECKBOX_HEIGHT);
-	if ((_pPanimations = new CBofCheckButton()) != nullptr) {
-		_pPanimations->loadColorScheme(&_cColorScheme);
-		_errCode = _pPanimations->create("", &cRect, this, PAN_CHECK_ID);
-		_pPanimations->show();
-	}
+	_pPanimations = new CBofCheckButton();
+	_pPanimations->loadColorScheme(&_cColorScheme);
+	_errCode = _pPanimations->create("", &cRect, this, PAN_CHECK_ID);
+	_pPanimations->show();
 
 	loadIniSettings();
-
 	putDialogData();
-
 	CBagCursor::showSystemCursor();
 
 	return _errCode;
@@ -727,7 +689,7 @@ const char *buildSysDir(const char *pszFile) {
 	Common::sprintf_s(szBuf, "$SBARDIR%sGENERAL%sSYSTEM%s%s", PATH_DELIMETER, PATH_DELIMETER, PATH_DELIMETER, pszFile);
 
 	CBofString cTemp(szBuf, MAX_DIRPATH);
-	MACROREPLACE(cTemp);
+	fixPathName(cTemp);
 
 	return &szBuf[0];
 }

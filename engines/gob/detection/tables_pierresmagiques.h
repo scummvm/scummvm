@@ -31,6 +31,8 @@
 #ifndef GOB_DETECTION_TABLES_PIERRESMAGIQUES_H
 #define GOB_DETECTION_TABLES_PIERRESMAGIQUES_H
 
+//#include "common/translation.h"  // Make release checker happy
+
 // -- French: Le pays des Pierres Magiques --
 
 {

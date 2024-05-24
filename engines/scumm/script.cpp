@@ -653,7 +653,7 @@ int ScummEngine::readVar(uint var) {
 					return powerStatModified;
 				case 1:  // Power swing
 					powerStat = vm.localvar[_currentScript][var];
-					powerStatModified = 20 + powerStat * 7 / 10;;
+					powerStatModified = 10 + powerStat * 17 / 20;;
 					return powerStatModified;
 				default:
 					break;
@@ -978,7 +978,7 @@ void ScummEngine::runExitScript() {
 	// The same sound effect is also used in the underwater cavern (room
 	// 33), so we do the same fade out as in that room's exit script.
 	if (_game.id == GID_DIG && _currentRoom == 44 && enhancementEnabled(kEnhAudioChanges)) {
-		int scriptCmds[] = { 14, 215, 0x600, 0, 30, 0, 0, 0 };
+		int scriptCmds[] = { 14, 215, 0x600, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		_sound->soundKludge(scriptCmds, ARRAYSIZE(scriptCmds));
 	}
 }

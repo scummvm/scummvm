@@ -104,10 +104,6 @@ public:
 		scroll_movement_event(SCROLL_UP);
 	}
 
-protected:
-
-
-
 
 private:
 	const Common::Rect arrow_up_rect;

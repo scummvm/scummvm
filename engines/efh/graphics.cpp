@@ -208,9 +208,9 @@ void EfhEngine::displayRawDataAtPos(uint8 *imagePtr, int16 posX, int16 posY) {
 	displayBufferBmAtPos(&_imageDataPtr, posX, posY);
 }
 
-void EfhEngine::drawString(const char *str, int16 startX, int16 startY, uint16 textColor) {
-	debugC(1, kDebugGraphics, "drawString %s %d %d %d", str, startX, startY, textColor);
-	const uint8 *curPtr = (const uint8 *)str;
+void EfhEngine::drawString(const Common::String &str, int16 startX, int16 startY, uint16 textColor) {
+	debugC(1, kDebugGraphics, "drawString %s %d %d %d", str.c_str(), startX, startY, textColor);
+	const uint8 *curPtr = (const uint8 *)str.c_str();
 	uint16 lineHeight = _fontDescr._charHeight + _fontDescr._extraVerticalSpace;
 	int16 minX = startX;
 
@@ -244,15 +244,15 @@ void EfhEngine::drawString(const char *str, int16 startX, int16 startY, uint16 t
 	}
 }
 
-void EfhEngine::displayCenteredString(Common::String str, int16 minX, int16 maxX, int16 posY) {
+void EfhEngine::displayCenteredString(const Common::String &str, int16 minX, int16 maxX, int16 posY) {
 	debugC(1, kDebugGraphics, "displayCenteredString %s %d-%d %d", str.c_str(), minX, maxX, posY);
-	uint16 length = getStringWidth(str.c_str());
+	uint16 length = getStringWidth(str);
 	int16 startCenteredDisplayX = minX + (maxX - minX - length) / 2;
-	drawString(str.c_str(), startCenteredDisplayX, posY, _textColor);
+	drawString(str, startCenteredDisplayX, posY, _textColor);
 }
 
-void EfhEngine::displayMenuAnswerString(const char *str, int16 minX, int16 maxX, int16 posY) {
-	debugC(1, kDebugGraphics, "displayMenuAnswerString %s %d-%d %d", str, minX, maxX, posY);
+void EfhEngine::displayMenuAnswerString(const Common::String &str, int16 minX, int16 maxX, int16 posY) {
+	debugC(1, kDebugGraphics, "displayMenuAnswerString %s %d-%d %d", str.c_str(), minX, maxX, posY);
 	displayCenteredString(str, minX, maxX, posY);
 	displayFctFullScreen();
 	displayCenteredString(str, minX, maxX, posY);
@@ -345,11 +345,11 @@ void EfhEngine::setTextColorGrey() {
 		_textColor = 0x8;
 }
 
-void EfhEngine::displayStringAtTextPos(Common::String message) {
+void EfhEngine::displayStringAtTextPos(const Common::String &message) {
 	debugC(1, kDebugGraphics, "displayStringAtTextPos %s", message.c_str());
 
-	drawString(message.c_str(), _textPosX, _textPosY, _textColor);
-	_textPosX += getStringWidth(message.c_str()) + 1;
+	drawString(message, _textPosX, _textPosY, _textColor);
+	_textPosX += getStringWidth(message) + 1;
 	setNextCharacterPos();
 }
 

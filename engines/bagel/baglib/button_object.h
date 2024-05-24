@@ -73,7 +73,7 @@ public:
 	ErrorCode attach() override;
 	ErrorCode detach() override;
 
-	BUTTON_TYPE getButtonType() {
+	BUTTON_TYPE getButtonType() const {
 		return _buttonType;
 	}
 
@@ -94,7 +94,7 @@ public:
 		return _callbackFct;
 	}
 
-	void *getCallBackInfo() {
+	void *getCallBackInfo() const {
 		return _callbackInfo;
 	}
 

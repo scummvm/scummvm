@@ -53,7 +53,7 @@ void Nim::resetVariables() {
 	for (int i = 0; i < 3; i++) {
 		_old[i] = 0;
 		_stones[i] = 0;
-		_inAp[i] = 0;
+		_inAp[i] = false;
 		_r[i] = 0;
 	}
 }

@@ -262,11 +262,15 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 		sendCommand(kListSelectionChangedCmd, _selectedItem);
 	}
 
+	// Notify clients if an item was clicked
+	if (newSelectedItem >= 0) {
+		sendCommand(kListItemSingleClickedCmd, _selectedItem);
+	}
+
 	// TODO: Determine where inside the string the user clicked and place the
 	// caret accordingly.
 	// See _editScrollOffset and EditTextWidget::handleMouseDown.
 	markAsDirty();
-
 }
 
 void ListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
@@ -406,11 +410,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 		case Common::KEYCODE_BACKSPACE:
 		case Common::KEYCODE_DELETE:
 			if (_selectedItem >= 0) {
-				if (_editable) {
-					// Ignore delete and backspace when the list item is editable
-				} else {
-					sendCommand(kListItemRemovalRequestCmd, _selectedItem);
-				}
+				sendCommand(kListItemRemovalRequestCmd, _selectedItem);
 			}
 			break;
 
@@ -611,7 +611,9 @@ void ListWidget::drawWidget() {
 		}
 	}
 
-	EditableWidget::drawWidget();
+	if (_editMode) {
+		EditableWidget::drawWidget();
+	}
 }
 
 Common::Rect ListWidget::getEditRect() const {
@@ -687,6 +689,7 @@ void ListWidget::startEditMode() {
 		_editColor = ThemeEngine::kFontColorNormal;
 		markAsDirty();
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+		sendCommand(kListItemEditModeStartedCmd, _selectedItem);
 	}
 }
 
@@ -704,8 +707,6 @@ void ListWidget::abortEditMode() {
 	// undo any changes made
 	assert(_selectedItem >= 0);
 	_editMode = false;
-	//drawCaret(true);
-	//markAsDirty();
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 

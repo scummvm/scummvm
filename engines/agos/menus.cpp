@@ -48,7 +48,7 @@ void AGOSEngine::loadMenuFile() {
 
 // Personal Nightmare specific
 void AGOSEngine::restoreMenu() {
-	_wiped = 0;
+	_wiped = false;
 
 	_videoLockOut |= 0x80;
 

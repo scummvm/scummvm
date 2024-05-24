@@ -189,31 +189,31 @@ bool CBagStorageDev::contains(CBagObject *pObj, bool bActive) {
 
 
 ErrorCode CBagStorageDev::addObject(CBagObject *pObj, int /*nPos*/) {
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	// can't use a null pointer
 	assert(pObj != nullptr);
 
 	_pObjectList->addToTail(pObj);
 
-	return errCode;
+	return errorCode;
 }
 
 
 ErrorCode CBagStorageDev::removeObject(CBagObject *pRObj) {
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	if (!_bForeignList) {
 		int nCount = getObjectCount();
 		for (int i = 0; i < nCount; ++i) {
 			if (pRObj == getObjectByPos(i)) {
 				_pObjectList->remove(i);
-				return errCode;
+				return errorCode;
 			}
 		}
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 
@@ -247,7 +247,7 @@ ErrorCode CBagStorageDev::activateLocalObject(const CBofString &sName) {
 }
 
 ErrorCode CBagStorageDev::deactivateLocalObject(CBagObject *pObj) {
-	ErrorCode  errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	if (pObj != nullptr) {
 		pObj->setLocal(false);
@@ -256,10 +256,10 @@ ErrorCode CBagStorageDev::deactivateLocalObject(CBagObject *pObj) {
 			pObj->detach();
 		}
 	} else  {
-		errCode = ERR_FFIND;
+		errorCode = ERR_FFIND;
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 
@@ -307,7 +307,7 @@ CBofPoint CBagStorageDev::arrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 
 
 ErrorCode CBagStorageDev::attachActiveObjects() {
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 	CBofPoint nArrangePos(0, 0);	// Removed 5,5 padding
 
 	CBagLog::initArrangePages();
@@ -350,17 +350,17 @@ ErrorCode CBagStorageDev::attachActiveObjects() {
 					}
 				}
 			} else
-				errCode = ERR_FFIND;
+				errorCode = ERR_FFIND;
 		}
 	}
 
 	CBagLog::arrangePages();
 
-	return errCode;
+	return errorCode;
 }
 
 ErrorCode CBagStorageDev::detachActiveObjects() {
-	ErrorCode  errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 	int nCount = getObjectCount();
 
 	if (nCount != 0) {
@@ -374,19 +374,19 @@ ErrorCode CBagStorageDev::detachActiveObjects() {
 					pObj->detach();
 				}
 			} else
-				errCode = ERR_FFIND;
+				errorCode = ERR_FFIND;
 		}
 	}
-	return errCode;
+	return errorCode;
 }
 
 ErrorCode CBagStorageDev::loadObjects() {
-	ErrorCode errCode = ERR_NONE;
-	return errCode;
+	ErrorCode errorCode = ERR_NONE;
+	return errorCode;
 }
 
 ErrorCode CBagStorageDev::releaseObjects() {
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 	int nCount = getObjectCount();
 
 	if (!_bForeignList) {
@@ -399,7 +399,7 @@ ErrorCode CBagStorageDev::releaseObjects() {
 
 		_pObjectList->removeAll();
 	}
-	return errCode;
+	return errorCode;
 }
 
 
@@ -564,7 +564,7 @@ ErrorCode CBagStorageDev::loadFile(const CBofString &sWldName) {
 
 	sWldFileName = sWldName;
 
-	MACROREPLACE(sWldFileName);
+	fixPathName(sWldFileName);
 
 	// Force buffer to be big enough so that the entire script
 	// is pre-loaded
@@ -573,18 +573,17 @@ ErrorCode CBagStorageDev::loadFile(const CBofString &sWldName) {
 		error("Unable to open or read %s", sWldFileName.getBuffer());
 
 	char *pBuf = (char *)bofAlloc(nLength);
-	if (pBuf != nullptr) {
-		CBagIfstream fpInput(pBuf, nLength);
+	CBagIfstream fpInput(pBuf, nLength);
 
-		CBofFile cFile;
-		cFile.open(sWldFileName);
-		cFile.read(pBuf, nLength);
-		cFile.close();
+	CBofFile cFile;
+	cFile.open(sWldFileName);
+	cFile.read(pBuf, nLength);
+	cFile.close();
 
-		CBagStorageDev::loadFileFromStream(fpInput, sWldFileName);
+	CBagStorageDev::loadFileFromStream(fpInput, sWldFileName);
 
-		bofFree(pBuf);
-	}
+	bofFree(pBuf);
+
 	// Add everything to the window
 	return ERR_NONE;
 }
@@ -635,15 +634,11 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 
 		if (!sWorkStr.find("SET")) {
 			bRunActivation  = false;
-			bHoldActivation = false;
 			bOperSet        = true;
 		} else if (!sWorkStr.find("HOLD")) {
-			bRunActivation  = true;
 			bHoldActivation = true;
 			bOperSet        = true;
 		} else if (!sWorkStr.find("RUN")) {
-			bRunActivation  = true;
-			bHoldActivation = false;
 			bOperSet        = true;
 		}
 
@@ -716,11 +711,10 @@ ErrorCode CBagStorageDev::loadFileFromStream(CBagIfstream &fpInput, const CBofSt
 			// Added a bPrevNeg to keep track of nested else-if's
 			CBagExpression *pExp = new CBagExpression(pActiveExpr, bPrevNeg);
 
-			assert(pExp != nullptr);
 			pExp->setInfo(fpInput);
 			if (!_pExpressionList)
 				_pExpressionList = new CBofList<CBagExpression * >;
-			assert(_pExpressionList != nullptr);
+
 			_pExpressionList->addToTail(pExp);
 			pActiveExpr = pExp;
 		} else if (!sWorkStr.find("ELSE")) {
@@ -949,7 +943,7 @@ ParseCodes CBagStorageDev::setInfo(CBagIfstream &fpInput) {
 		getAlphaNumFromStream(fpInput, str);
 		fpInput.eatWhite();
 
-		MACROREPLACE(str);
+		fixPathName(str);
 
 		_sBackgroundName = str;
 
@@ -964,22 +958,22 @@ ParseCodes CBagStorageDev::setInfo(CBagIfstream &fpInput) {
 
 ErrorCode CBagStorageDev::attach() {
 	// Assume no error
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	_bFirstPaint = true;
 
 	if (!_sBackgroundName.isEmpty()) {
 		CBofBitmap *pBmp = new CBofBitmap(_sBackgroundName);
 
-		if ((pBmp != nullptr) && !pBmp->errorOccurred()) {
+		if (!pBmp->errorOccurred()) {
 			setBackground(pBmp);
-			errCode = attachActiveObjects();
+			errorCode = attachActiveObjects();
 		} else {
-			errCode = ERR_FOPEN;
+			errorCode = ERR_FOPEN;
 		}
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 
@@ -1151,7 +1145,7 @@ CBagStorageDevWnd::CBagStorageDevWnd() : CBofWindow() {
 
 	// Set a default help file for when there is not one specified
 	_sHelpFileName = "$SBARDIR\\GENERAL\\RULES\\DEFAULT.TXT";
-	MACROREPLACE(_sHelpFileName);
+	fixPathName(_sHelpFileName);
 
 	_xSDevType = SDEV_WND;
 }
@@ -1160,7 +1154,7 @@ CBagStorageDevWnd::CBagStorageDevWnd() : CBofWindow() {
 CBagStorageDevWnd::~CBagStorageDevWnd() {
 	assert(isValidObject(this));
 
-	killWorkBmp();
+	CBagStorageDevWnd::killWorkBmp();
 }
 
 
@@ -1181,7 +1175,7 @@ ErrorCode CBagStorageDevWnd::attach() {
 
 		CBofBitmap *pBmp  = new CBofBitmap(getBackgroundName());
 
-		if ((pBmp == nullptr) || (pBmp->height() <= 0) || (pBmp->width() <= 0)) {
+		if ((pBmp->height() <= 0) || (pBmp->width() <= 0)) {
 			reportError(ERR_FOPEN, "BarComputer Background Opened Failed");
 		} else {
 
@@ -1431,35 +1425,30 @@ ErrorCode CBagStorageDevWnd::loadFile(const CBofString &sFile) {
 	else
 		sWldFile = sFile;
 
-	MACROREPLACE(sWldFile);
+	fixPathName(sWldFile);
 
 	// Force buffer to be big enough so that the entire script
 	// is pre-loaded
 	int nLength = fileLength(sWldFile);
 	if (nLength <= 0)
-		reportError(ERR_FOPEN);
+		reportError(ERR_FOPEN, "Unable to open file %s", sWldFile.getBuffer());
 	else {
 		char *pBuf = (char *)bofAlloc(nLength);
-		if (pBuf != nullptr) {
-			CBagIfstream fpInput(pBuf, nLength);
+		CBagIfstream fpInput(pBuf, nLength);
 
-			CBofFile cFile;
-			cFile.open(sWldFile);
-			cFile.read(pBuf, nLength);
-			cFile.close();
+		CBofFile cFile;
+		cFile.open(sWldFile);
+		cFile.read(pBuf, nLength);
+		cFile.close();
 
-			CBagStorageDev::loadFileFromStream(fpInput, sWldFile);
+		CBagStorageDev::loadFileFromStream(fpInput, sWldFile);
 
-			// If the window.isCreated()
-			//
-			if (isCreated())
-				invalidateRect(nullptr);
+		// If the window.isCreated()
+		//
+		if (isCreated())
+			invalidateRect(nullptr);
 
-			bofFree(pBuf);
-
-		} else {
-			reportError(ERR_MEMORY);
-		}
+		bofFree(pBuf);
 	}
 
 	// Add everything to the window
@@ -1569,7 +1558,7 @@ CBagStorageDevDlg::CBagStorageDevDlg() : CBofDialog() {
 	// Set a default help file for when there is not one specified
 	//
 	_sHelpFileName = "$SBARDIR\\GENERAL\\RULES\\DEFAULT.TXT";
-	MACROREPLACE(_sHelpFileName);
+	fixPathName(_sHelpFileName);
 }
 
 
@@ -1713,38 +1702,36 @@ ErrorCode CBagStorageDevDlg::loadFile(const CBofString &sFile) {
 	else
 		sWldFile = sFile;
 
-	MACROREPLACE(sWldFile);
+	fixPathName(sWldFile);
 
 	// Force buffer to be big enough so that the entire script is pre-loaded
 	int nLength = fileLength(sWldFile);
 	if (nLength <= 0)
-		reportError(ERR_FOPEN);
+		reportError(ERR_FOPEN, "Unable to open file %s", sWldFile.getBuffer());
 	else {
 		char *pBuf = (char *)bofAlloc(nLength);
-		if (pBuf != nullptr) {
-			CBagIfstream fpInput(pBuf, nLength);
+		CBagIfstream fpInput(pBuf, nLength);
 
-			CBofFile cFile;
-			cFile.open(sWldFile);
-			cFile.read(pBuf, nLength);
-			cFile.close();
+		CBofFile cFile;
+		cFile.open(sWldFile);
+		cFile.read(pBuf, nLength);
+		cFile.close();
 
-			CBagStorageDev::loadFileFromStream(fpInput, sWldFile);
+		CBagStorageDev::loadFileFromStream(fpInput, sWldFile);
 
-			bofFree(pBuf);
+		bofFree(pBuf);
 
-			if (isCreated())
-				invalidateRect(nullptr);
-		}
+		if (isCreated())
+			invalidateRect(nullptr);
 	}
 	// Add everything to the window
 	return _errCode;
 }
 
 ErrorCode CBagStorageDevDlg::create(const char *pszName, CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
-	ErrorCode rc = CBofDialog::create(pszName, pRect, pParent, nControlID);
+	ErrorCode errorCode = CBofDialog::create(pszName, pRect, pParent, nControlID);
 	setCapture();
-	return rc;
+	return errorCode;
 }
 
 

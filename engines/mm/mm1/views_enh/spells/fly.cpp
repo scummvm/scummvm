@@ -42,7 +42,7 @@ bool Fly::msgFocus(const FocusMessage &msg) {
 
 	_mode = SELECT_X;
 	_xIndex = _yIndex = 0;
-	return 0;
+	return false;
 }
 
 void Fly::draw() {

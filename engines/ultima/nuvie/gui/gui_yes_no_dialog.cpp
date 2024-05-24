@@ -39,11 +39,11 @@ GUI_YesNoDialog::GUI_YesNoDialog(GUI *gui, int x, int y, int w, int h, const cha
 	  yes_callback_object(yesCallback), no_callback_object(noCallback) {
 	GUI_Widget *widget;
 
-	yes_button = new GUI_Button(this, 100, 50, 40, 18, "Yes", gui->get_font(), BUTTON_TEXTALIGN_CENTER, 0, this, 0);
+	yes_button = new GUI_Button(this, 100, 50, 40, 18, "Yes", gui->get_font(), BUTTON_TEXTALIGN_CENTER, false, this, false);
 	AddWidget(yes_button);
 	button_index[0] = yes_button;
 
-	no_button = new GUI_Button(this, 30, 50, 40, 18, "No", gui->get_font(), BUTTON_TEXTALIGN_CENTER, 0, this, 0);
+	no_button = new GUI_Button(this, 30, 50, 40, 18, "No", gui->get_font(), BUTTON_TEXTALIGN_CENTER, false, this, false);
 	AddWidget(no_button);
 	button_index[1] = no_button;
 

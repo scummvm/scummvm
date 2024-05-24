@@ -31,7 +31,7 @@ class PEResources;
 namespace Scumm {
 
 class AI;
-class Net;
+class Map;
 
 class Moonbase {
 public:
@@ -71,9 +71,7 @@ public:
 	uint32 _fowSentinelConditionBits;
 
 	AI *_ai;
-#ifdef USE_LIBCURL
-	Net *_net;
-#endif
+	Map *_map;
 
 private:
 	ScummEngine_v100he *_vm;

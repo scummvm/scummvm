@@ -190,7 +190,6 @@ ErrorCode CBagSaveGameFile::readSavedGame(int32 slotNum) {
 			_errCode = ERR_FREAD;
 		} else {
 			byte *pBuf = (byte *)bofAlloc(lSize);
-			assert(pBuf);
 			readRecord(lRecNum, pBuf);
 
 			// Load in the savegame
@@ -205,7 +204,7 @@ ErrorCode CBagSaveGameFile::readSavedGame(int32 slotNum) {
 			bofFree(pBuf);
 
 			CBofString str(saveData._szScript);
-			MACROREPLACE(str);
+			fixPathName(str);
 			const char *path = str.getBuffer();
 			assert(!strncmp(path, "./", 2));
 			Common::strcpy_s(saveData._szScript, path + 2);
@@ -233,16 +232,11 @@ ErrorCode CBagSaveGameFile::readTitle(int32 lSlot, StSavegameHeader *pSavedGame)
 		int32 lSize = getRecSize(lRecNum);
 
 		byte *pBuf = (byte *)bofAlloc(lSize);
-		if (pBuf != nullptr) {
-			readRecord(lRecNum, pBuf);
+		readRecord(lRecNum, pBuf);
 
-			// Fill StSavegameHeader structure with this game's saved info
-			memcpy(pSavedGame, pBuf, sizeof(StSavegameHeader));
-			bofFree(pBuf);
-
-		} else {
-			reportError(ERR_MEMORY, "Could not allocate %ld bytes to read a saved game title", lSize);
-		}
+		// Fill StSavegameHeader structure with this game's saved info
+		memcpy(pSavedGame, pBuf, sizeof(StSavegameHeader));
+		bofFree(pBuf);
 
 	} else {
 		reportError(ERR_UNKNOWN, "Unable to find saved game #%ld in %s", lSlot, _szFileName);

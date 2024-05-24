@@ -340,7 +340,7 @@ void GravityProcess::actorFallStoppedU8(Actor *actor, int height) {
 		if (audioproc) audioproc->playSFX(51, 250, _itemNum, 0); // CONSTANT!
 	}
 
-	if (!actor->isDead() && actor->getLastAnim() != Animation::die) {
+	if (!actor->isDead() && actor->getLastAnim() != Animation::die && !actor->hasActorFlags(Actor::ACT_STUNNED)) {
 		Kernel *kernel = Kernel::get_instance();
 
 		// play land animation, overriding other animations

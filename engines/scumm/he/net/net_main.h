@@ -57,6 +57,18 @@ private:
 		Common::String name;
 		int players = 0;
 		uint32 timestamp = 0;
+
+		// For Moonbase map generation:
+		uint8 mapGenerator = 0;
+		int mapSeed = 0;
+		int mapSize = 0;
+		int mapTileset = 0;
+		int mapEnergy = 0;
+		int mapTerrain = 0;
+		int mapWater = 0;
+		Common::String encodedMap;
+		// Used to query map data over LAN.
+		bool getGeneratedMap = false;
 	};
 	/**
 	 * Converts a formatted string into an Address object.
@@ -359,13 +371,14 @@ private:
 	 *
 	 * @param address Address of a session to connect to.
 	 * @param port Port number of a session to connect to.
+	 * @param queryGeneratedMap Querys generated map data for Moonbase Commander (currently only used for LAN connections).
 	 * @retval true on success
 	 * @retval false on failure.
 	 *
 	 * @see joinGame
 	 * @see doJoinSession
 	 */
-	bool connectToSession(Common::String address, int port);
+	bool connectToSession(Common::String address, int port, bool queryGeneratedMap);
 
 	/**
 	 * Method that actually attemps to join a session.
@@ -378,6 +391,14 @@ private:
 	 * @see joinSessionById
 	 */
 	int doJoinSession(Session session);
+
+	/**
+	 * Generates a Moonbase Commander map based on the provided
+	 * Session's configurations.
+	 *
+	 * @param session Session structure containing map data.
+	 */
+	void generateMoonbaseMap(Session session);
 
 	/**
 	 * Sends remote data to peer(s).
@@ -533,6 +554,16 @@ private:
 
 	Common::String _sessionName;
 	Networking::Host *_sessionHost;
+
+	// For Moonbase map generation:
+	uint8 _mapGenerator;
+	int _mapSeed;
+	int _mapSize;
+	int _mapTileset;
+	int _mapEnergy;
+	int _mapTerrain;
+	int _mapWater;
+	Common::String _encodedMap;
 
 	bool _isShuttingDown;
 

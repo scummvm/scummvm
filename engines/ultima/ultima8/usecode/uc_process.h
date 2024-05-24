@@ -52,6 +52,10 @@ public:
 		_temp32 = retval;
 	}
 
+	uint16 getClassId() const {
+		return _classId;
+	}
+
 	Common::String dumpInfo() const override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);

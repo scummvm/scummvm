@@ -387,6 +387,70 @@ void CastleEngine::drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics
 	drawFullscreenSurface(surface);
 }
 
+void CastleEngine::addGhosts() {
+	for (auto &it : _areaMap) {
+		for (auto &sensor : it._value->getSensors()) {
+			if (sensor->getObjectID() == 125) {
+				_areaMap[it._key]->addGroupFromArea(195, _areaMap[255]);
+				_areaMap[it._key]->addGroupFromArea(212, _areaMap[255]);
+			} else if (sensor->getObjectID() == 126)
+				_areaMap[it._key]->addGroupFromArea(191, _areaMap[255]);
+			else if (sensor->getObjectID() == 127)
+				_areaMap[it._key]->addGroupFromArea(182, _areaMap[255]);
+			else
+				debugC(1, kFreescapeDebugParser, "Sensor %d in area %d", sensor->getObjectID(), it._key);
+		}
+	}
+}
+
+void CastleEngine::checkSensors() {
+	if (_disableSensors)
+		return;
+
+	if (_lastTick == _ticks)
+		return;
+
+	_lastTick = _ticks;
+
+	if (_sensors.empty())
+		return;
+
+	Sensor *sensor = (Sensor *)&_sensors[0];
+	if (sensor->getObjectID() == 125) {
+		Group *group = (Group *)_currentArea->objectWithID(195);
+		if (!group->isDestroyed() && !group->isInvisible()) {
+			group->_active = true;
+		} else
+			return;
+
+		group = (Group *)_currentArea->objectWithID(212);
+		if (!group->isDestroyed() && !group->isInvisible()) {
+			group->_active = true;
+		} else
+			return;
+
+	} else if (sensor->getObjectID() == 126) {
+		Group *group = (Group *)_currentArea->objectWithID(191);
+		if (!group->isDestroyed() && !group->isInvisible()) {
+			group->_active = true;
+		} else
+			return;
+	} else if (sensor->getObjectID() == 197) {
+		Group *group = (Group *)_currentArea->objectWithID(182);
+		if (!group->isDestroyed() && !group->isInvisible()) {
+			group->_active = true;
+		} else
+			return;
+	}
+
+	/*int firingInterval = 10; // This is fixed for all the ghosts?
+	if (_ticks % firingInterval == 0) {
+		if (_underFireFrames <= 0)
+			_underFireFrames = 4;
+		takeDamageFromSensor();
+	}*/
+}
+
 
 Common::Error CastleEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
 	return Common::kNoError;

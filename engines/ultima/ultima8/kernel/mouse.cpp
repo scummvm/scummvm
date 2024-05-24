@@ -212,6 +212,8 @@ int Mouse::getMouseFrame() {
 	// 38 = quill
 	// 39 = magnifying glass
 	// 40 = red cross
+	if (_cursors.empty())
+		return -1;
 
 	MouseCursor cursor = _cursors.top();
 

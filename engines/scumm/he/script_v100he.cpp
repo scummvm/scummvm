@@ -35,6 +35,9 @@
 #include "scumm/he/sprite_he.h"
 #include "scumm/util.h"
 
+#include "scumm/he/moonbase/moonbase.h"
+#include "scumm/he/moonbase/map_main.h"
+
 namespace Scumm {
 
 #define OPCODE(i, x2)	_opcodes[i]._OPCODE(ScummEngine_v100he, x2)
@@ -2160,6 +2163,34 @@ void ScummEngine_v100he::o100_startScript() {
 	getStackList(args, ARRAYSIZE(args));
 	script = pop();
 	flags = fetchScriptByte();
+
+	if (_game.id == GID_MOONBASE && _roomResource == 5 &&
+		((!strcmp(_game.variant, "1.1") && script == 2178) || script == 2177) &&
+		readVar(253) == 24) {
+		// Only run the generator if we're doing a single-player skirmesh.
+		_moonbase->_map->generateNewMap();
+	} else if (_game.id == GID_MOONBASE && _roomResource == 5 &&
+		((!strcmp(_game.variant, "1.1") && script == 2252) || script == 2251) &&
+		readArray(231, readVar(230) + 1, 10) == 1 && _moonbase->_map->mapGenerated()) {
+		// (setup-gameoversetup)
+		// If we are playing on a generated map, we have to indicate that we are
+		// playing on a temporary map (normally happens if a host choses their custom
+		// made map during multiplayer setup).  That way, the map properly gets saved
+		// alongside replays.  Bonus side-effect: The players can save the map itself
+		// if they'd like.
+
+		// gMapSaved = FALSE (This gets set to true if player is the host)
+		writeVar(272, 0);
+
+		// gSetupArray[(gMaxPlayers + 1)][SETUP-MAP] = 66
+		// (The game checks if it's greater than 65)
+		writeArray(231, readVar(230) + 1, 10, 66);
+	} else if (_game.id == GID_MOONBASE && _roomResource == 5 && script == 2048) {
+		// (setup-mainmenu)
+		// Delete generated map if there is any.
+		_moonbase->_map->deleteMap();
+	}
+
 	runScript(script, (flags == SO_BAK || flags == SO_BAKREC), (flags == SO_REC || flags == SO_BAKREC), args);
 }
 

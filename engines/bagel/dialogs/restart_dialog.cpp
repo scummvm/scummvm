@@ -29,7 +29,7 @@
 
 namespace Bagel {
 
-#define LOADINGBMP          "$SBARDIR\\GENERAL\\SYSTEM\\LOADING.BMP"
+#define LOADING_BMP          "$SBARDIR\\GENERAL\\SYSTEM\\LOADING.BMP"
 
 struct ST_BUTTONS {
 	const char *_pszName;
@@ -67,8 +67,9 @@ void CBagRestartDialog::onInitDialog() {
 
 	CBofDialog::onInitDialog();
 
-	assert(_pBackdrop != nullptr);
-
+	if (_pBackdrop == nullptr)
+		fatalError(ERR_UNKNOWN, "Unexpected null value found in _paBackdrop");
+	
 	// Save off the current game's palette
 	_pSavePalette = CBofApp::getApp()->getPalette();
 
@@ -77,31 +78,24 @@ void CBagRestartDialog::onInitDialog() {
 	CBofApp::getApp()->setPalette(pPal);
 
 	// Paint the SaveList Box onto the background
-	if (_pBackdrop != nullptr) {
-		pPal = _pBackdrop->getPalette();
-		CBofBitmap cBmp(buildSysDir("RESTDBOX.BMP"), pPal);
-		cBmp.paint(_pBackdrop, 181, 182);
-	}
+	pPal = _pBackdrop->getPalette();
+	CBofBitmap cBmp(buildSysDir("RESTDBOX.BMP"), pPal);
+	cBmp.paint(_pBackdrop, 181, 182);
 
 	// Build all our buttons
 	for (int i = 0; i < NUM_RESTART_BTNS; i++) {
 		assert(_pButtons[i] == nullptr);
 
-		if ((_pButtons[i] = new CBofBmpButton) != nullptr) {
+		_pButtons[i] = new CBofBmpButton;
 
-			CBofBitmap *pUp = loadBitmap(buildSysDir(g_stRestartButtons[i]._pszUp), pPal);
-			CBofBitmap *pDown = loadBitmap(buildSysDir(g_stRestartButtons[i]._pszDown), pPal);
-			CBofBitmap *pFocus = loadBitmap(buildSysDir(g_stRestartButtons[i]._pszFocus), pPal);
-			CBofBitmap *pDis = loadBitmap(buildSysDir(g_stRestartButtons[i]._pszDisabled), pPal);
+		CBofBitmap *pUp = loadBitmap(buildSysDir(g_stRestartButtons[i]._pszUp), pPal);
+		CBofBitmap *pDown = loadBitmap(buildSysDir(g_stRestartButtons[i]._pszDown), pPal);
+		CBofBitmap *pFocus = loadBitmap(buildSysDir(g_stRestartButtons[i]._pszFocus), pPal);
+		CBofBitmap *pDis = loadBitmap(buildSysDir(g_stRestartButtons[i]._pszDisabled), pPal);
 
-			_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
-
-			_pButtons[i]->create(g_stRestartButtons[i]._pszName, g_stRestartButtons[i]._nLeft, g_stRestartButtons[i]._nTop, g_stRestartButtons[i]._nWidth, g_stRestartButtons[i]._nHeight, this, g_stRestartButtons[i]._nID);
-			_pButtons[i]->show();
-		} else {
-			reportError(ERR_MEMORY);
-			break;
-		}
+		_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
+		_pButtons[i]->create(g_stRestartButtons[i]._pszName, g_stRestartButtons[i]._nLeft, g_stRestartButtons[i]._nTop, g_stRestartButtons[i]._nWidth, g_stRestartButtons[i]._nHeight, this, g_stRestartButtons[i]._nID);
+		_pButtons[i]->show();
 	}
 
 	// Show System cursor
@@ -116,10 +110,8 @@ void CBagRestartDialog::onClose() {
 
 	// Destroy all buttons
 	for (int i = 0; i < NUM_RESTART_BTNS; i++) {
-		if (_pButtons[i] != nullptr) {
-			delete _pButtons[i];
-			_pButtons[i] = nullptr;
-		}
+		delete _pButtons[i];
+		_pButtons[i] = nullptr;
 	}
 
 	CBofDialog::onClose();
@@ -136,7 +128,6 @@ void CBagRestartDialog::onPaint(CBofRect *pRect) {
 	assert(isValidObject(this));
 
 	paintBackdrop(pRect);
-
 	validateAnscestors();
 }
 
@@ -154,9 +145,9 @@ void CBagRestartDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 			if (pWin != nullptr) {
 
 				char szBuf[256];
-				Common::strcpy_s(szBuf, LOADINGBMP);
+				Common::strcpy_s(szBuf, LOADING_BMP);
 				CBofString cStr(szBuf, 256);
-				MACROREPLACE(cStr);
+				fixPathName(cStr);
 
 				CBofRect cRect;
 				cRect.left = (640 - 180) / 2;
@@ -215,9 +206,9 @@ void CBagRestartDialog::onBofButton(CBofObject *pObject, int nFlags) {
 			if (pWin != nullptr) {
 
 				char szBuf[256];
-				Common::strcpy_s(szBuf, LOADINGBMP);
+				Common::strcpy_s(szBuf, LOADING_BMP);
 				CBofString cStr(szBuf, 256);
-				MACROREPLACE(cStr);
+				fixPathName(cStr);
 
 				CBofRect cRect;
 				cRect.left = (640 - 180) / 2;

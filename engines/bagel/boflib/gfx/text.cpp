@@ -75,14 +75,11 @@ CBofText::CBofText(const CBofRect *pRect, int nJustify, uint32 nFormatFlags) {
 }
 
 CBofText::~CBofText() {
-	if (_pWork != nullptr) {
-		delete _pWork;
-		_pWork = nullptr;
-	}
-	if (_pBackground != nullptr) {
-		delete _pBackground;
-		_pBackground = nullptr;
-	}
+	delete _pWork;
+	_pWork = nullptr;
+
+	delete _pBackground;
+	_pBackground = nullptr;
 }
 
 void CBofText::initializeFields() {
@@ -119,29 +116,19 @@ ErrorCode CBofText::setupText(const CBofRect *pRect, int nJustify, uint32 nForma
 	_cSize.cx = _cRect.width();
 	_cSize.cy = _cRect.height();
 
-	if (_pWork != nullptr) {
-		delete _pWork;
-		_pWork = nullptr;
-	}
-	if (_pBackground != nullptr) {
-		delete _pBackground;
-		_pBackground = nullptr;
-	}
+	delete _pWork;
+	_pWork = nullptr;
 
-	CBofPalette *pPalette;
-	pPalette = CBofApp::getApp()->getPalette();
+	delete _pBackground;
+	_pBackground = nullptr;
+
+	CBofPalette *pPalette = CBofApp::getApp()->getPalette();
 
 	// Create a bitmap to serve as our work area as we output text
-	if ((_pWork = new CBofBitmap(_cSize.cx, _cSize.cy, pPalette)) != nullptr) {
-		// Create a bitmap to hold the background we overwrite
-		if ((_pBackground = new CBofBitmap(_cSize.cx, _cSize.cy, pPalette)) != nullptr) {
+	_pWork = new CBofBitmap(_cSize.cx, _cSize.cy, pPalette);
 
-		} else {
-			reportError(ERR_MEMORY, "Could not allocate a (%d x %d) CBofBitmap", _cSize.cx, _cSize.cy);
-		}
-	} else {
-		reportError(ERR_MEMORY, "Could not allocate a (%d x %d) CBofBitmap", _cSize.cx, _cSize.cy);
-	}
+	// Create a bitmap to hold the background we overwrite
+	_pBackground = new CBofBitmap(_cSize.cx, _cSize.cy, pPalette);
 
 	return _errCode;
 }
@@ -354,8 +341,8 @@ ErrorCode CBofText::displayTextEx(CBofBitmap *pBmp, const char *pszText, CBofRec
 		break;
 
 	case JUSTIFY_LEFT:
+		// align left
 		_cPosition.x = 0;
-		align = Graphics::kTextAlignLeft;
 		break;
 
 	case JUSTIFY_RIGHT:
@@ -364,6 +351,7 @@ ErrorCode CBofText::displayTextEx(CBofBitmap *pBmp, const char *pszText, CBofRec
 		break;
 
 	case JUSTIFY_WRAP:
+		// Align left
 		_bMultiLine = true;
 		break;
 	}
@@ -404,29 +392,29 @@ ErrorCode CBofText::displayTextEx(CBofBitmap *pBmp, const char *pszText, CBofRec
 }
 
 void CBofText::displayLine(Graphics::Font *font, Graphics::ManagedSurface &surface,
-		const Common::String &line, int left, int top, int width, int color, Graphics::TextAlign align) {
+		const Common::U32String &line, int left, int top, int width, int color, Graphics::TextAlign align) {
 	if (!line.contains('\t')) {
 		font->drawString(&surface, line, left, top, width, color, align);
 
 	} else {
 		// Special rendering of tabbed text
-		Common::String str = line;
+		Common::U32String str = line;
 
 		while (!str.empty()) {
-			if (str.hasPrefix("\t")) {
+			if (str[0] == '\t') {
 				// Move to next tab stop
 				left = (left + TAB_SIZE) / TAB_SIZE * TAB_SIZE;
 				str.deleteChar(0);
 
 			} else {
-				Common::String fragment;
+				Common::U32String fragment;
 				size_t tab = str.findFirstOf('\t');
-				if (tab == Common::String::npos) {
+				if (tab == Common::U32String::npos) {
 					fragment = str;
 					str.clear();
 				} else {
-					fragment = Common::String(str.c_str(), str.c_str() + tab);
-					str = Common::String(str.c_str() + tab);
+					fragment = Common::U32String(str.c_str(), str.c_str() + tab);
+					str = Common::U32String(str.c_str() + tab);
 				}
 
 				int fragmentWidth = font->getStringWidth(fragment);

@@ -35,7 +35,7 @@
 namespace Titanic {
 
 CStarView::CStarView() : _camera((const CNavigationInfo *)nullptr), _owner(nullptr),
-		_starField(nullptr), _videoSurface(nullptr), _lensValid(0),
+		_starField(nullptr), _videoSurface(nullptr), _lensValid(false),
 		_photoSurface(nullptr), _homePhotoMask(nullptr),
 		_stereoPair(false), _showingPhoto(false) {
 	CNavigationInfo data = { 0, 0, 100000.0, 0, 20.0, 1.0, 1.0, 1.0 };

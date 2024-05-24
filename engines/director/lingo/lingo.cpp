@@ -107,6 +107,10 @@ Symbol& Symbol::operator=(const Symbol &s) {
 	return *this;
 }
 
+bool Symbol::operator==(Symbol &s) const {
+	return ctx == s.ctx && (name->equalsIgnoreCase(*s.name));
+}
+
 void Symbol::reset() {
 	*refCount -= 1;
 	// Coverity thinks that we always free memory, as it assumes
@@ -606,7 +610,7 @@ Common::String Lingo::formatFunctionBody(Symbol &sym) {
 	return result;
 }
 
-void Lingo::execute() {
+bool Lingo::execute() {
 	uint localCounter = 0;
 
 	while (!_abort && !_freezeState && _state->script && (*_state->script)[_state->pc] != STOP) {
@@ -670,6 +674,7 @@ void Lingo::execute() {
 		}
 	}
 
+	bool result = !_freezeState;
 	if (_freezeState) {
 		debugC(5, kDebugLingoExec, "Lingo::execute(): Context is frozen, pausing execution");
 		freezeState();
@@ -683,6 +688,8 @@ void Lingo::execute() {
 	_freezeState = false;
 
 	g_debugger->stepHook();
+	// return true if execution finished, false if the context froze for later
+	return result;
 }
 
 void Lingo::executeScript(ScriptType type, CastMemberID id) {
@@ -826,6 +833,9 @@ int Lingo::getAlignedType(const Datum &d1, const Datum &d2, bool equality) {
 		opType = FLOAT;
 	} else if ((d1Type == STRING && d2Type == INT) || (d1Type == INT && d2Type == STRING)) {
 		opType = STRING;
+	} else if ((d1Type == SYMBOL && d2Type != SYMBOL) || (d2Type == SYMBOL && d1Type != SYMBOL)) {
+		// some fun undefined behaviour: adding anything to a symbol returns an int.
+		opType = INT;
 	} else if (d1Type == d2Type) {
 		opType = d1Type;
 	}
@@ -1033,6 +1043,11 @@ int Datum::asInt() const {
 		} else {
 			res = (int)u.f;
 		}
+		break;
+	case SYMBOL:
+		// Undefined behaviour, but relied on by bad game code that e.g. adds things to symbols.
+		// Return a 32-bit number that's sort of related.
+		res = (int)((uint64)u.s & 0xffffffffL);
 		break;
 	default:
 		warning("Incorrect operation asInt() for type: %s", type2str());
@@ -1341,6 +1356,7 @@ int Datum::equalTo(Datum &d, bool ignoreCase) const {
 	case PICTUREREF:
 		return 0; // Original always returns 0 on picture reference comparison
 	default:
+		debugC(1, kDebugLingoExec, "Datum::equalTo(): Invalid equality check between types %s and %s", type2str(), d.type2str());
 		break;
 	}
 	return 0;
@@ -1417,7 +1433,7 @@ uint32 Datum::compareTo(Datum &d) const {
 			return kCompareGreater;
 		}
 	} else {
-		warning("Invalid comparison between types %s and %s", type2str(), d.type2str());
+		warning("Datum::compareTo(): Invalid comparison between types %s and %s", type2str(), d.type2str());
 		return kCompareError;
 	}
 }
@@ -1549,12 +1565,12 @@ Common::String Lingo::formatAllVars() {
 	if (_state->me.type == OBJECT && _state->me.u.obj->getObjType() & (kFactoryObj | kScriptObj)) {
 		ScriptContext *script = static_cast<ScriptContext *>(_state->me.u.obj);
 		result += Common::String("  Instance/property vars: \n");
-		for (auto &it : script->_properties) {
-			keyBuffer.push_back(it._key);
+		for (uint32 i = 1; i <= script->getPropCount(); i++) {
+			keyBuffer.push_back(script->getPropAt(i));
 		}
 		Common::sort(keyBuffer.begin(), keyBuffer.end());
 		for (auto &i : keyBuffer) {
-			Datum &val = script->_properties.getVal(i);
+			Datum val = script->getProp(i);
 			result += Common::String::format("    %s - [%s] %s\n", i.c_str(), val.type2str(), formatStringForDump(val.asString(true)).c_str());
 		}
 		keyBuffer.clear();
@@ -1855,6 +1871,31 @@ CastMemberID Lingo::resolveCastMember(const Datum &memberID, const Datum &castLi
 void Lingo::exposeXObject(const char *name, Datum obj) {
 	_globalvars[name] = obj;
 	_globalvars[name].ignoreGlobal = true;
+}
+
+void Lingo::addBreakpoint(Breakpoint &bp) {
+	bp.id = _bpNextId;
+	_breakpoints.push_back(bp);
+	_bpNextId++;
+}
+
+bool Lingo::delBreakpoint(int id) {
+	for (auto it = _breakpoints.begin(); it != _breakpoints.end(); ++it) {
+		if (it->id == id) {
+			it = _breakpoints.erase(it);
+			return true;
+		}
+	}
+	return false;
+}
+
+Breakpoint *Lingo::getBreakpoint(int id) {
+	for (auto &it : _breakpoints) {
+		if (it.id == id) {
+			return &it;
+		}
+	}
+	return nullptr;
 }
 
 PictureReference::~PictureReference() {

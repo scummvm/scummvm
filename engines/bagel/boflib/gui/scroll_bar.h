@@ -146,7 +146,6 @@ protected:
 	CBofPoint _cThumbPos;
 	int _nScrollState;
 	uint32 _nTimerCount;
-	bool _bHavePainted;
 };
 
 } // namespace Bagel

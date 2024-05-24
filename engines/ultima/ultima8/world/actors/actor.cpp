@@ -26,6 +26,7 @@
 #include "ultima/ultima8/kernel/delay_process.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/usecode/uc_list.h"
+#include "ultima/ultima8/usecode/uc_process.h"
 #include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/world/fire_type.h"
@@ -1194,7 +1195,7 @@ void Actor::receiveHitU8(uint16 other, Direction dir, int damage, uint16 damage_
 	}
 
 	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
-	if (damage >= 4 && _objId == 1 && attacker) {
+	if (damage >= 4 && _objId == 1 && hitter) {
 		// play blood sprite
 		int start = 0, end = 12;
 		if (dir > dir_east) {
@@ -1235,8 +1236,7 @@ void Actor::receiveHitU8(uint16 other, Direction dir, int damage, uint16 damage_
 		if ((damage_type & WeaponInfo::DMG_FALLING) && damage >= 6) {
 			// high falling damage knocks you down
 			doAnim(Animation::fallBackwards, dir_current);
-
-			// TODO: shake head after getting back up when not in combat
+			setActorFlag(ACT_STUNNED);
 			return;
 		}
 
@@ -1283,7 +1283,9 @@ void Actor::receiveHitU8(uint16 other, Direction dir, int damage, uint16 damage_
 		}
 	}
 
-	if (damage && !fallingprocid) {
+	if (damage && !fallingprocid &&
+		getLastAnim() != Animation::die &&
+		getLastAnim() != Animation::fallBackwards) {
 		ProcId anim1pid = doAnim(Animation::stumbleBackwards, dir);
 		ProcId anim2pid;
 		if (isInCombat())
@@ -1319,8 +1321,28 @@ ProcId Actor::dieU8(uint16 damageType) {
 	Kernel::get_instance()->killProcesses(getObjId(), Kernel::PROC_TYPE_ALL, true);
 #endif
 
-	if (!animprocid)
+	if (!animprocid &&
+		getLastAnim() != Animation::die &&
+		getLastAnim() != Animation::fallBackwards) {
 		animprocid = doAnim(Animation::die, dir_current);
+	}
+
+	// Kill blue potion use process if running
+	if (_objId == 1) {
+		ProcessIter iter = Kernel::get_instance()->getProcessBeginIterator();
+		ProcessIter endproc = Kernel::get_instance()->getProcessEndIterator();
+		for (; iter != endproc; ++iter) {
+			UCProcess *p = dynamic_cast<UCProcess *>(*iter);
+			if (!p)
+				continue;
+			if (p->getClassId() != 766) // Potion
+				continue;
+			if (p->is_terminated())
+				continue;
+
+			p->fail();
+		}
+	}
 
 	MainActor *avatar = getMainActor();
 	// if hostile to avatar

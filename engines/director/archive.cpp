@@ -384,7 +384,7 @@ void MacArchive::readTags() {
 			res.tag = tagArray[i];
 			res.index = idArray[j];
 			res.accessed = false;
-			debug(3, "MacArchive::readTags(): Found MacArchive resource '%s' %d: %s", tag2str(tagArray[i]), idArray[j], res.name.c_str());
+			debugC(3, kDebugLoading, "MacArchive::readTags(): Found MacArchive resource '%s' %d: %s", tag2str(tagArray[i]), idArray[j], res.name.c_str());
 			if (ConfMan.getBool("dump_scripts"))
 				dumpChunk(res, out);
 
@@ -489,7 +489,7 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 			}
 		}
 
-		debug(3, "Found RIFF resource '%s' %d: %d @ 0x%08x (0x%08x)", tag2str(tag), id, size, offset, startOffset + offset);
+		debugC(3, kDebugLoading, "Found RIFF resource '%s' %d: %d @ 0x%08x (0x%08x)", tag2str(tag), id, size, offset, startOffset + offset);
 
 		Resource &res = _types[tag][id];
 		res.index = id;
@@ -785,7 +785,7 @@ bool RIFXArchive::readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32
 			dumpStream->writeUint32LE(mmapOffset - movieStartOffset);
 	}
 	uint32 version = stream.readUint32(); // 0 for 4.0, 0x4c1 for 5.0, 0x4c7 for 6.0, 0x708 for 8.5, 0x742 for 10.0
-	warning("mmap: version: %x", version);
+	warning("mmap: version: %x offset: 0x%x (%d)", version, mmapOffset, mmapOffset);
 
 	stream.seek(mmapOffset);
 
@@ -822,7 +822,7 @@ bool RIFXArchive::readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32
 		uint16 unk1 = stream.readUint16();
 		uint32 nextFreeResourceId = stream.readUint32(); // for free resources, the next id, flag like for imap and mmap resources
 
-		debug(3, "Found RIFX resource index %d: '%s', %d bytes @ 0x%08x (%d), flags: %x unk1: %x nextFreeResourceId: %d",
+		debugC(3, kDebugLoading, "Found RIFX resource index %d: '%s', %d bytes @ 0x%08x (%d), flags: %x unk1: %x nextFreeResourceId: %d",
 			i, tag2str(tag), size, offset, offset, flags, unk1, nextFreeResourceId);
 
 		Resource &res = _types[tag][i];
@@ -856,7 +856,7 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableReadStreamEndian &stream, u
 	uint32 fverLength = readVarInt(stream);
 	start = stream.pos();
 	uint32 version = readVarInt(stream);
-	debug(3, "Fver: version: %x", version);
+	debugC(3, kDebugLoading, "Fver: version: %x", version);
 	end = stream.pos();
 
 	if (end - start != fverLength) {
@@ -883,7 +883,7 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableReadStreamEndian &stream, u
 	uint32 abmpCompressionType = readVarInt(stream);
 	unsigned long abmpUncompLength = readVarInt(stream);
 	unsigned long abmpActualUncompLength = abmpUncompLength;
-	debug(3, "ABMP: length: %d compressionType: %d uncompressedLength: %lu",
+	debugC(3, kDebugLoading, "ABMP: length: %d compressionType: %d uncompressedLength: %lu",
 		abmpLength, abmpCompressionType, abmpUncompLength);
 
 	Common::SeekableReadStreamEndian *abmpStream = readZlibData(stream, abmpEnd - stream.pos(), &abmpActualUncompLength, _isBigEndian);
@@ -920,7 +920,7 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableReadStreamEndian &stream, u
 	uint32 abmpUnk1 = readVarInt(*abmpStream);
 	uint32 abmpUnk2 = readVarInt(*abmpStream);
 	uint32 resCount = readVarInt(*abmpStream);
-	debug(3, "ABMP: unk1: %d unk2: %d resCount: %d",
+	debugC(3, kDebugLoading, "ABMP: unk1: %d unk2: %d resCount: %d",
 		abmpUnk1, abmpUnk2, resCount);
 
 	Common::HashMap<uint32, Resource *> resourceMap;
@@ -934,7 +934,7 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableReadStreamEndian &stream, u
 		uint32 compressionType = readVarInt(*abmpStream);
 		uint32 tag = abmpStream->readUint32();
 
-		debug(3, "Found RIFX resource index %d: '%s', %d bytes (%d uncompressed) @ pos 0x%08x (%d), compressionType: %d",
+		debugC(3, kDebugLoading, "Found RIFX resource index %d: '%s', %d bytes (%d uncompressed) @ pos 0x%08x (%d), compressionType: %d",
 			resId, tag2str(tag), compSize, uncompSize, offset, offset, compressionType);
 
 		Resource &res = _types[tag][resId];
@@ -963,7 +963,7 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableReadStreamEndian &stream, u
 
 	Resource *ilsRes = resourceMap[2];
 	uint32 ilsUnk1 = readVarInt(stream);
-	debug(3, "ILS: length: %d unk1: %d", ilsRes->size, ilsUnk1);
+	debugC(3, kDebugLoading, "ILS: length: %d unk1: %d", ilsRes->size, ilsUnk1);
 	_ilsBodyOffset = stream.pos();
 	uint32 ilsLength = ilsRes->size;
 	unsigned long ilsActualUncompLength = ilsRes->uncompSize;
@@ -980,7 +980,7 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableReadStreamEndian &stream, u
 		uint32 resId = readVarInt(*ilsStream);
 		Resource *res = resourceMap[resId];
 
-		debug(3, "Loading ILS resource %d: '%s', %d bytes", resId, tag2str(res->tag), res->size);
+		debugC(3, kDebugLoading, "Loading ILS resource %d: '%s', %d bytes", resId, tag2str(res->tag), res->size);
 
 		byte *data = (byte *)malloc(res->size);
 		ilsStream->read(data, res->size);

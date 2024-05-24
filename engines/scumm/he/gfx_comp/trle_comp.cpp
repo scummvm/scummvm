@@ -420,7 +420,7 @@ void Wiz::trleFLIPDecompressPrim(
 
 	// Call the primitive image renderer...
 	trleFLIPDecompImageHull(
-		bitmapPtr->bufferPtr, bufferWidth, &destRect, imagePtr->data,
+		bitmapPtr->bufferPtr(), bufferWidth, &destRect, imagePtr->data,
 		&sourceRect, extraPtr, conversionTable, functionPtr);
 }
 
@@ -1303,8 +1303,8 @@ void Wiz::trleFLIP90DegreeRotateCore(WizSimpleBitmap *dstBitmap, int x, int y, c
 	}
 
 	// Finally get down to business and do the blit!
-	WizRawPixel8  *dst8  = ((WizRawPixel8  *)dstBitmap->bufferPtr) + dstX + (dstY * dstBitmap->bitmapWidth);
-	WizRawPixel16 *dst16 = ((WizRawPixel16 *)dstBitmap->bufferPtr) + dstX + (dstY * dstBitmap->bitmapWidth);
+	WizRawPixel8  *dst8  = ((WizRawPixel8  *)dstBitmap->bufferPtr()) + dstX + (dstY * dstBitmap->bitmapWidth);
+	WizRawPixel16 *dst16 = ((WizRawPixel16 *)dstBitmap->bufferPtr()) + dstX + (dstY * dstBitmap->bitmapWidth);
 
 	if (!_uses16BitColor) {
 		dstPtr = (WizRawPixel *)dst8;
@@ -1350,7 +1350,7 @@ void Wiz::trleFLIPDecompressImage(
 		trleFLIPCheckAlphaSetup();
 
 	// General setup for the primitives
-	fakeBitmap.bufferPtr = bufferPtr;
+	fakeBitmap.bufferPtr = WizPxShrdBuffer(bufferPtr, false);
 	fakeBitmap.bitmapWidth = bufferWidth;
 	fakeBitmap.bitmapHeight = bufferHeight;
 
@@ -1429,7 +1429,7 @@ void Wiz::trleFLIPRotate90DecompressImage(
 		trleFLIPCheckAlphaSetup();
 
 	// General setup for the primitives
-	fakeBitmap.bufferPtr = bufferPtr;
+	fakeBitmap.bufferPtr = WizPxShrdBuffer(bufferPtr, false);
 	fakeBitmap.bitmapWidth = bufferWidth;
 	fakeBitmap.bitmapHeight = bufferHeight;
 

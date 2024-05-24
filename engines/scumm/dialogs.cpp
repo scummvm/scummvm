@@ -46,6 +46,10 @@
 #include "scumm/help.h"
 #endif
 
+#ifdef USE_ENET
+#include "scumm/he/net/net_defines.h"
+#endif
+
 using Graphics::kTextAlignCenter;
 using Graphics::kTextAlignLeft;
 using GUI::WIDGET_ENABLED;
@@ -1688,10 +1692,16 @@ HENetworkGameOptionsWidget::HENetworkGameOptionsWidget(GuiObject *boss, const Co
 		_enableSessionServer = new GUI::CheckboxWidget(widgetsBoss(), "HENetworkGameOptionsDialog.EnableSessionServer", _("Enable connection to Multiplayer Server"), _("Toggles the connection to the server that allows hosting and joining online multiplayer games over the Internet."), kEnableSessionCmd);
 		_enableLANBroadcast = new GUI::CheckboxWidget(widgetsBoss(), "HENetworkGameOptionsDialog.EnableLANBroadcast", _("Host games over LAN"), _("Allows the game sessions to be discovered over your local area network."));
 
+		if (_gameid == "moonbase")
+			_generateRandomMaps = new GUI::CheckboxWidget(widgetsBoss(), "HENetworkGameOptionsDialog.GenerateRandomMaps", _("Generate random maps"), _("Allow random map generation (Based from Moonbase Console)."));
+
 		_sessionServerAddr = new GUI::EditTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.SessionServerAddress", Common::U32String(""), _("Address of the server to connect to for hosting and joining online game sessions."));
 
 		_serverResetButton = addClearButton(widgetsBoss(), "HENetworkGameOptionsDialog.ServerReset", kResetServersCmd);
 	}
+
+	// Display network version
+	_networkVersion = new GUI::StaticTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.NetworkVersion", Common::String::format("Multiplayer Version: %s", NETWORK_VERSION));
 }
 
 void HENetworkGameOptionsWidget::load() {
@@ -1716,6 +1726,7 @@ void HENetworkGameOptionsWidget::load() {
 	} else {
 		bool enableSessionServer = true;
 		bool enableLANBroadcast = true;
+		bool generateRandomMaps = false;
 		Common::String sessionServerAddr = "multiplayer.scummvm.org";
 
 		if (ConfMan.hasKey("enable_session_server", _domain))
@@ -1730,6 +1741,10 @@ void HENetworkGameOptionsWidget::load() {
 			sessionServerAddr = ConfMan.get("session_server", _domain);
 		_sessionServerAddr->setEditString(sessionServerAddr);
 		_sessionServerAddr->setEnabled(enableSessionServer);
+
+		if (ConfMan.hasKey("generate_random_maps", _domain))
+			generateRandomMaps = ConfMan.getBool("generate_random_maps", _domain);
+		_generateRandomMaps->setState(generateRandomMaps);
 	}
 }
 
@@ -1745,6 +1760,8 @@ bool HENetworkGameOptionsWidget::save() {
 		ConfMan.setBool("enable_session_server", _enableSessionServer->getState(), _domain);
 		ConfMan.setBool("enable_lan_broadcast", _enableLANBroadcast->getState(), _domain);
 		ConfMan.set("session_server", _sessionServerAddr->getEditString(), _domain);
+		if (_gameid == "moonbase")
+			ConfMan.setBool("generate_random_maps", _generateRandomMaps->getState(), _domain);
 	}
 	return true;
 }
@@ -1763,6 +1780,7 @@ void HENetworkGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Com
 					.addWidget("ServerReset", "", 15, 15)
 				.closeLayout()
 				.addWidget("EnableCompetitiveMods", "Checkbox")
+				.addWidget("NetworkVersion", "")
 			.closeLayout()
 		.closeDialog();
 #endif
@@ -1772,12 +1790,14 @@ void HENetworkGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Com
 				.addPadding(0, 0, 12, 0)
 				.addWidget("EnableSessionServer", "Checkbox")
 				.addWidget("EnableLANBroadcast", "Checkbox")
+				.addWidget("GenerateRandomMaps", "Checkbox")
 				.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
 					.addPadding(0, 0, 12, 0)
 					.addWidget("SessionServerLabel", "OptionsLabel")
 					.addWidget("SessionServerAddress", "EditTextWidget")
 					.addWidget("ServerReset", "", 15, 15)
 				.closeLayout()
+				.addWidget("NetworkVersion", "")
 			.closeLayout()
 		.closeDialog();
 	}

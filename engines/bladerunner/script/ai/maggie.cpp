@@ -623,7 +623,7 @@ bool AIScriptMaggie::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		if (Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorMaggie) < 144) {
 			Player_Loses_Control();
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
-			Actor_Retired_Here(kActorMcCoy, 6, 6, 1, -1);
+			Actor_Retired_Here(kActorMcCoy, 6, 6, true, -1);
 		} else {
 			Delay(3000);
 			Scene_Exits_Disable();

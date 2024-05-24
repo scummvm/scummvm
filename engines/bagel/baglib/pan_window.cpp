@@ -114,9 +114,9 @@ CBofPalette *CBagPanWindow::setSlideBitmap(const CBofString &xSlideBmp, const CB
 		_pSlideBitmap = new CBagPanBitmap(xSlideBmp, nullptr, viewRect);
 
 		// Make sure the file was found
-		if (_pSlideBitmap == nullptr || !_pSlideBitmap->isValid()) {
+		if (!_pSlideBitmap->isValid()) {
 			_pPalette = nullptr;
-			reportError(ERR_FOPEN);
+			reportError(ERR_FOPEN, "Unable to open file %s", xSlideBmp.getBuffer());
 		} else {
 			// Set the bagel crap
 			_pPalette = _pSlideBitmap->getPalette();
@@ -130,12 +130,12 @@ CBofPalette *CBagPanWindow::setSlideBitmap(const CBofString &xSlideBmp, const CB
 			_pSlideBitmap->setCorrWidth(_nCorrection);
 
 			CBofBitmap *pBackDropBitmap = new CBofBitmap(DEF_WIDTH + 1, DEF_HEIGHT + 1, _pPalette);
-			if (!pBackDropBitmap || pBackDropBitmap->height() <= 0 || pBackDropBitmap->width() <= 0) {
+			if (pBackDropBitmap->height() <= 0 || pBackDropBitmap->width() <= 0) {
 				reportError(ERR_FOPEN, "Error opening bitmap");
 			}
 			_pViewPortBitmap = new CBofBitmap(DEF_WIDTH + 1, _pSlideBitmap->height() + 1, _pPalette);
-			if (!_pViewPortBitmap || !_pViewPortBitmap->height() || !_pViewPortBitmap->width()) {
-				reportError(ERR_FOPEN);
+			if (!_pViewPortBitmap->height() || !_pViewPortBitmap->width()) {
+				reportError(ERR_FOPEN, "Error opening bitmap");
 			}
 			setBackdrop(pBackDropBitmap);
 
@@ -279,7 +279,7 @@ ErrorCode CBagPanWindow::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 }
 
 ErrorCode CBagPanWindow::paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CBofRect &viewRect, CBofList<CBofRect> *pUpdateArea, bool tempVar) {
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	// can't use a null pointer
 	assert(pBmp != nullptr);
@@ -362,7 +362,7 @@ ErrorCode CBagPanWindow::paintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 			noObjectsUnderMouse();
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 // Delete the foreground objects
@@ -416,10 +416,11 @@ void CBagPanWindow::disable() {
 
 ErrorCode CBagPanWindow::onCursorUpdate(int nCurrObj) {
 	assert(isValidObject(this));
-	CBagObject *pObj;
 
-	if ((nCurrObj >= 0) && ((pObj = getObjectByPos(nCurrObj)) != nullptr)) {
-		CBagMasterWin::setActiveCursor(pObj->getOverCursor());
+	if (nCurrObj >= 0) {
+		CBagObject *pObj = getObjectByPos(nCurrObj);
+		if (pObj != nullptr)
+			CBagMasterWin::setActiveCursor(pObj->getOverCursor());
 
 	} else if (CBagWield::getWieldCursor() >= 0) {
 		CBagMasterWin::setActiveCursor(CBagWield::getWieldCursor());

@@ -115,7 +115,7 @@ protected:
 	virtual bool isCharAllowed(Common::u32char_type_t c) const;
 	bool tryInsertChar(Common::u32char_type_t c, int pos);
 
-	int caretVisualPos(int logicalPos);
+	int caretVisualPos(int logicalPos) const;
 	int caretLogicalPos() const;
 
 	void clearSelection();

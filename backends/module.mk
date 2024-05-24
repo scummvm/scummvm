@@ -494,14 +494,15 @@ MODULE_OBJS += \
 	imgui/imgui_draw.o \
 	imgui/imgui_fonts.o \
 	imgui/imgui_tables.o \
-	imgui/imgui_widgets.o
+	imgui/imgui_widgets.o \
+	imgui/misc/freetype/imgui_freetype.o
 endif
 
 ifdef USE_SDL2
 ifdef USE_IMGUI
 MODULE_OBJS += \
-	imgui/backends/imgui_impl_opengl3_scummvm.o \
-	imgui/backends/imgui_impl_sdl2_scummvm.o
+	imgui/backends/imgui_impl_opengl3.o \
+	imgui/backends/imgui_impl_sdl2.o
 endif
 endif
 

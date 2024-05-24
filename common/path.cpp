@@ -396,6 +396,9 @@ String Path::baseName() const {
 
 	if (separatorPos != String::npos) {
 		begin += separatorPos + 1;
+	} else if (isEscaped()) {
+		// unescape uses the real start, not the escape marker
+		begin++;
 	}
 	end += last;
 

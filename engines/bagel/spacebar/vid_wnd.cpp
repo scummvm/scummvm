@@ -79,7 +79,7 @@ SBarVidWnd::SBarVidWnd() {
 SBarVidWnd::~SBarVidWnd() {
 	assert(isValidObject(this));
 
-	detach();
+	SBarVidWnd::detach();
 }
 
 ErrorCode SBarVidWnd::attach() {
@@ -107,14 +107,9 @@ ErrorCode SBarVidWnd::attach() {
 		}
 
 		_pMovie = new CBagCharacterObject;
-		if (_pMovie != nullptr) {
-			_pMovie->setFileName(BuildVidDir("BRNL.SMK"));
-			_pMovie->setPosition(CBofPoint(209, 10));
-			_pMovie->attach();
-
-		} else {
-			reportError(ERR_MEMORY);
-		}
+		_pMovie->setFileName(BuildVidDir("BRNL.SMK"));
+		_pMovie->setPosition(CBofPoint(209, 10));
+		_pMovie->attach();
 
 		_fTimerDiff = 0;
 
@@ -179,12 +174,10 @@ void SBarVidWnd::setPlayMode(int nMode) {
 
 	// If user is playing the disk with the death scene on it, then
 	// reflect that in the script.
-	if (nMode != 0 && _pDiscVar != nullptr) {
-		if (_pDiscVar->getNumValue() == 2) {
-			CBagVar *pVar = g_VarManager->getVariable("VIDDISC_SEEN");
-			if (pVar != nullptr) {
-				pVar->setValue(1);
-			}
+	if (nMode != 0 && _pDiscVar != nullptr && _pDiscVar->getNumValue() == 2) {
+		CBagVar *pVar = g_VarManager->getVariable("VIDDISC_SEEN");
+		if (pVar != nullptr) {
+			pVar->setValue(1);
 		}
 	}
 }
@@ -211,9 +204,7 @@ int SBarVidWnd::getFrame(double fTime, int nUseDisc) {
 		if (g_stFrames[i]._nUseDisc == nUseDisc || (g_stFrames[i]._nUseDisc == 0)) {
 
 			if ((fTime >= g_stFrames[i]._fStart) && (fTime < g_stFrames[i]._fEnd)) {
-
 				nFrame = g_stFrames[i]._nFrame;
-
 				if (nFrame == -1) {
 					nFrame = int(8 + (fTime - 180) * 10);
 				}

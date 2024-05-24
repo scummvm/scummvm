@@ -40,17 +40,12 @@ const char *const g_errList[] = {
 	"Invalid Path",
 	"Disk error",
 	"Unknown Error",
-	"CRC failure",
-	"Not enough disk space",
-	"Future Use #15", // for future use
-	"Future Use #16", // for future use
-	"Future Use #17"  // for future use
+	"CRC failure"
 };
 
 // Static members
 //
-int CBofError::_nErrorCount;
-ErrorCode CBofError::_errGlobal;
+int CBofError::_count;
 
 
 CBofError::CBofError() {
@@ -58,38 +53,51 @@ CBofError::CBofError() {
 }
 
 void CBofError::initialize() {
-	_nErrorCount = 0;
-	_errGlobal = ERR_NONE;
+	_count = 0;
 }
 
 void CBofError::reportError(ErrorCode errCode, const char *format, ...) {
 	_errCode = errCode;
-	if (_errCode != ERR_NONE) {
-		Common::String buf;
 
-		// Set global last error
-		setLastError(errCode);
+	if (_errCode == ERR_NONE)
+		return;
 
-		// One more error
-		_nErrorCount++;
+	Common::String buf;
 
-		// Don't parse the variable input if there isn't any
-		if (format != nullptr) {
-			// Parse the arguments
-			va_list argptr;
-			va_start(argptr, format);
-			buf = Common::String::vformat(format, argptr);
-			va_end(argptr);
-		}
+	// One more error
+	_count++;
 
-		// Tell user about error, unless there were too many errors
-		if (_nErrorCount < MAX_ERRORS)
-			bofMessageBox(buf, g_errList[errCode]);
-
-		GUI::Debugger *console = g_engine->getDebugger();
-		if (console->isActive())
-			console->debugPrintf("%s\n", buf.c_str());
+	// Don't parse the variable input if there isn't any
+	if (format != nullptr) {
+		// Parse the arguments
+		va_list argptr;
+		va_start(argptr, format);
+		buf = Common::String::vformat(format, argptr);
+		va_end(argptr);
 	}
+
+	// Tell user about error, unless there were too many errors
+	if (_count < MAX_ERRORS)
+		bofMessageBox(buf, g_errList[errCode]);
+
+	GUI::Debugger *console = g_engine->getDebugger();
+	if (console->isActive())
+		console->debugPrintf("%s\n", buf.c_str());
+}
+
+void CBofError::fatalError(ErrorCode errCode, const char *format, ...) {
+	Common::String buf;
+
+	// Don't parse the variable input if there isn't any
+	if (format != nullptr) {
+		// Parse the arguments
+		va_list argptr;
+		va_start(argptr, format);
+		buf = Common::String::vformat(format, argptr);
+		va_end(argptr);
+	}
+
+	error("%s - %s", g_errList[errCode] , buf.c_str());
 }
 
 } // namespace Bagel

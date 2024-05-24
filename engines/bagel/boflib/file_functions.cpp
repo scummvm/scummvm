@@ -48,7 +48,7 @@ const char *formPath(const char *dir, const char *pszFile) {
 	static char szBuf[MAX_DIRPATH];
 
 	CBofString cStr(dir);
-	MACROREPLACE(cStr);
+	fixPathName(cStr);
 	Common::Path path(cStr.getBuffer());
 	path = path.append(pszFile);
 

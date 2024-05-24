@@ -68,6 +68,7 @@ public:
 	void removeObject(int16 id);
 	void resetArea();
 	bool isOutside();
+	bool hasActiveGroups();
 
 	Common::Array<Common::String> _conditionSources;
 	Common::Array<FCLInstructionVector> _conditions;

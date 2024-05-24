@@ -66,9 +66,7 @@ void CBofApp::StartupCode() {
 
 	// Open the Boffo debug options file (BOFFO.INI)
 	g_pDebugOptions = new CBofDebugOptions(DEBUG_INI);
-	if (g_pDebugOptions != nullptr) {
-		g_pDebugOptions->readSetting("DebugOptions", "MainLoops", &_nIterations, DEFAULT_MAINLOOPS);
-	}
+	g_pDebugOptions->readSetting("DebugOptions", "MainLoops", &_nIterations, DEFAULT_MAINLOOPS);
 
 	//
 	// Initialize the boffo libraries
@@ -102,10 +100,8 @@ void CBofApp::ShutDownCode() {
 ErrorCode CBofApp::preInit() {
 	if ((_pPalette == nullptr) && (_pDefPalette == nullptr)) {
 		_pDefPalette = new CBofPalette();
-		if (_pDefPalette != nullptr) {
-			_pDefPalette->createDefault();
-			setPalette(_pDefPalette);
-		}
+		_pDefPalette->createDefault();
+		setPalette(_pDefPalette);
 	}
 
 	return _errCode;
@@ -137,10 +133,10 @@ ErrorCode CBofApp::runApp() {
 			limiter.startFrame();
 			continue;
 
-		} else if (_consoleVideo) {
-			delete _consoleVideo;
-			_consoleVideo = nullptr;
 		}
+
+		delete _consoleVideo;
+		_consoleVideo = nullptr;
 
 		// Handle sounds and timers
 		CBofSound::audioTask();
@@ -187,25 +183,15 @@ ErrorCode CBofApp::shutdown() {
 }
 
 
-ErrorCode CBofApp::preShutDown() {
-	return _errCode;
-}
-
-ErrorCode CBofApp::postShutDown() {
-	if (_pWindow != nullptr) {
-		delete _pWindow;
-		_pWindow = nullptr;
-	}
+void CBofApp::postShutDown() {
+	delete _pWindow;
+	_pWindow = nullptr;
 
 	// No more palettes
 	_pPalette = nullptr;
 
-	if (_pDefPalette != nullptr) {
-		delete _pDefPalette;
-		_pDefPalette = nullptr;
-	}
-
-	return _errCode;
+	delete _pDefPalette;
+	_pDefPalette = nullptr;
 }
 
 void CBofApp::setPalette(CBofPalette *pPalette) {

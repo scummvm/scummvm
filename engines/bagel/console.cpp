@@ -29,12 +29,14 @@
 namespace Bagel {
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("var",     WRAP_METHOD(Console, cmdVar));
-	registerCmd("vars",    WRAP_METHOD(Console, cmdVars));
-	registerCmd("fleebix", WRAP_METHOD(Console, cmdFleebix));
-	registerCmd("save",    WRAP_METHOD(Console, cmdSave));
-	registerCmd("load",    WRAP_METHOD(Console, cmdLoad));
-	registerCmd("video",   WRAP_METHOD(Console, cmdVideo));
+	registerCmd("var",       WRAP_METHOD(Console, cmdVar));
+	registerCmd("vars",      WRAP_METHOD(Console, cmdVars));
+	registerCmd("jammer",    WRAP_METHOD(Console, cmdJammer));
+	registerCmd("megawave",  WRAP_METHOD(Console, cmdMegawave));
+	registerCmd("microwave", WRAP_METHOD(Console, cmdMegawave));
+	registerCmd("save",      WRAP_METHOD(Console, cmdSave));
+	registerCmd("load",      WRAP_METHOD(Console, cmdLoad));
+	registerCmd("video",     WRAP_METHOD(Console, cmdVideo));
 }
 
 Console::~Console() {
@@ -46,10 +48,14 @@ bool Console::cmdVar(int argc, const char **argv) {
 		return true;
 	}
 
-	CBagVar *var = g_VarManager->getVariable(argv[1]);
-	assert(var);
+	Common::String varName = argv[1];
+	varName.toUppercase();
 
-	if (argc == 2) {
+	CBagVar *var = g_VarManager->getVariable(varName.c_str());
+
+	if (!var) {
+		debugPrintf("Unknown variable.\n");
+	} else if (argc == 2) {
 		debugPrintf("Current value = %s\n", var->getValue().getBuffer());
 	} else {
 		var->setValue(argv[2]);
@@ -71,11 +77,22 @@ bool Console::cmdVars(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdFleebix(int argc, const char **argv) {
+bool Console::cmdJammer(int argc, const char **argv) {
 	CBofString inner = g_VarManager->getVariable("NDJAM_INNERDIAL_DISPLAY")->getValue();
 	CBofString outer = g_VarManager->getVariable("NDJAM_OUTERDIAL_DISPLAY")->getValue();
+	bool isDone = g_VarManager->getVariable("HFJAM_DONE")->getNumValue() != 0;
+	
+	debugPrintf("Frequency is %s.%s, jammer is %s\n",
+		inner.getBuffer(), outer.getBuffer(),
+		isDone ? "correctly set" : "incorrectly set"
+	);
+	return true;
+}
 
-	debugPrintf("Frequency is %s.%s\n", inner.getBuffer(), outer.getBuffer());
+bool Console::cmdMegawave(int argc, const char **argv){
+	CBofString wavetime = g_VarManager->getVariable("VEDJWAVETICKS")->getValue();
+
+	debugPrintf("Megawave cooking time is %s\n", wavetime.getBuffer());
 	return true;
 }
 

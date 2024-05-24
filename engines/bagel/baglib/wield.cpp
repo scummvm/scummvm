@@ -41,9 +41,9 @@ CBagWield::~CBagWield() {
 }
 
 ErrorCode CBagWield::loadFile(const CBofString &sFile) {
-	ErrorCode error = CBagStorageDev::loadFile(sFile);
+	ErrorCode errorCode = CBagStorageDev::loadFile(sFile);
 
-	return error;
+	return errorCode;
 }
 
 ErrorCode CBagWield::attach() {
@@ -94,7 +94,7 @@ bool CBagWield::onObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
 }
 
 ErrorCode CBagWield::activateLocalObject(CBagObject *pObj) {
-	ErrorCode errCode = ERR_UNKNOWN;
+	ErrorCode errorCode = ERR_UNKNOWN;
 
 	if (pObj != nullptr) {
 		// Since we can only hold one object at a time, put the object that
@@ -134,10 +134,10 @@ ErrorCode CBagWield::activateLocalObject(CBagObject *pObj) {
 		pObj->setPosition(cPos);
 		pObj->setFloating(false);
 
-		errCode = CBagStorageDev::activateLocalObject(pObj);
+		errorCode = CBagStorageDev::activateLocalObject(pObj);
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 ErrorCode CBagWield::deactivateLocalObject(CBagObject *pObj) {

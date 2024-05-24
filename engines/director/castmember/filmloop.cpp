@@ -53,6 +53,11 @@ FilmLoopCastMember::FilmLoopCastMember(Cast *cast, uint16 castId, FilmLoopCastMe
 	// force a load so we can copy the cast resource information
 	source.load();
 	_loaded = true;
+
+	_initialRect = source._initialRect;
+	_boundingRect = source._boundingRect;
+	_children = source._children;
+
 	_enableSound = source._enableSound;
 	_crop = source._crop;
 	_center = source._center;
@@ -80,7 +85,7 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, C
 	_subchannels.clear();
 
 	if (channel->_filmLoopFrame >= _frames.size()) {
-		warning("Film loop frame %d requested, only %d available", channel->_filmLoopFrame, _frames.size());
+		warning("FilmLoopCastMember::getSubChannels(): Film loop frame %d requested, only %d available", channel->_filmLoopFrame, _frames.size());
 		return &_subchannels;
 	}
 
@@ -90,6 +95,15 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, C
 		spriteIds.push_back(iter._key);
 	}
 	Common::sort(spriteIds.begin(), spriteIds.end());
+
+	debugC(5, kDebugImages, "FilmLoopCastMember::getSubChannels(): castId: %d, frame: %d, count: %d, initRect: %d,%d %dx%d, bbox: %d,%d %dx%d",
+			_castId, channel->_filmLoopFrame, spriteIds.size(),
+			_initialRect.left + _initialRect.width()/2,
+			_initialRect.top + _initialRect.height()/2,
+			_initialRect.width(), _initialRect.height(),
+			bbox.left + bbox.width()/2,
+			bbox.top + bbox.height()/2,
+			bbox.width(), bbox.height());
 
 	// copy the sprites in order to the list
 	for (auto &iter : spriteIds) {
@@ -104,6 +118,11 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, C
 		int16 width = src._width * widgetRect.width() / _initialRect.width();
 		int16 height = src._height * widgetRect.height() / _initialRect.height();
 
+		debugC(5, kDebugImages, "FilmLoopCastMember::getSubChannels(): sprite: %d - cast: %s, orig: %d,%d %dx%d, trans: %d,%d %dx%d",
+				iter, src._castId.asString().c_str(),
+				src._startPoint.x, src._startPoint.y, src._width, src._height,
+				absX, absY, width, height);
+
 		// Re-inject the translated position into the Sprite.
 		// This saves the hassle of having to force the Channel to be in puppet mode.
 		src._width = width;
@@ -116,7 +135,6 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, C
 		// that's only for querying the constraint channel which is not used.
 		Channel chan(nullptr, &src);
 		_subchannels.push_back(chan);
-
 	}
 	// Initialise the widgets on all of the subchannels.
 	// This has to be done once the list has been constructed, otherwise

@@ -88,12 +88,11 @@ void SoundCastMember::load() {
 
 	if (sndData == nullptr || sndData->size() == 0) {
 		// audio file is linked, load from the filesystem
-		CastMemberInfo *ci = _cast->getCastMemberInfo(_castId);
-		if (ci) {
-			Common::String filename = ci->directory + g_director->_dirSeparator + ci->fileName;
+		Common::String res = _cast->getLinkedPath(_castId);
+		if (!res.empty()) {
 
-			debugC(2, kDebugLoading, "****** Loading file '%s', cast id: %d", filename.c_str(), sndId);
-			AudioFileDecoder *audio = new AudioFileDecoder(filename);
+			debugC(2, kDebugLoading, "****** Loading file '%s', cast id: %d", res.c_str(), sndId);
+			AudioFileDecoder *audio = new AudioFileDecoder(res);
 			_audio = audio;
 
 			// Linked sound files always have the loop flag disabled

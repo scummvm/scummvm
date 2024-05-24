@@ -63,34 +63,30 @@ void CBagQuitDialog::onInitDialog() {
 	CBofDialog::onInitDialog();
 	setReturnValue(-1);
 
-	assert(_pBackdrop != nullptr);
+	if (_pBackdrop == nullptr)
+		fatalError(ERR_UNKNOWN, "Unexpected null value found in _paBackdrop");
+
 	CBofPalette *pPal = _pBackdrop->getPalette();
 	selectPalette(pPal);
 
 	// Paint the SaveList Box onto the background
-	if (_pBackdrop != nullptr) {
-		CBofBitmap cBmp(buildSysDir("QUITDBOX.BMP"), pPal);
-		cBmp.paint(_pBackdrop, 205, 150);
-	}
+	CBofBitmap cBmp(buildSysDir("QUITDBOX.BMP"), pPal);
+	cBmp.paint(_pBackdrop, 205, 150);
 
 	// Build all our buttons
 	for (int i = 0; i < NUM_QUIT_BUTTONS; i++) {
 		assert(_pButtons[i] == nullptr);
 
-		if ((_pButtons[i] = new CBofBmpButton) != nullptr) {
-			CBofBitmap *pUp = loadBitmap(buildSysDir(g_stQuitButtons[i]._pszUp), pPal);
-			CBofBitmap *pDown = loadBitmap(buildSysDir(g_stQuitButtons[i]._pszDown), pPal);
-			CBofBitmap *pFocus = loadBitmap(buildSysDir(g_stQuitButtons[i]._pszFocus), pPal);
-			CBofBitmap *pDis = loadBitmap(buildSysDir(g_stQuitButtons[i]._pszDisabled), pPal);
+		_pButtons[i] = new CBofBmpButton;
 
-			_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
+		CBofBitmap *pUp = loadBitmap(buildSysDir(g_stQuitButtons[i]._pszUp), pPal);
+		CBofBitmap *pDown = loadBitmap(buildSysDir(g_stQuitButtons[i]._pszDown), pPal);
+		CBofBitmap *pFocus = loadBitmap(buildSysDir(g_stQuitButtons[i]._pszFocus), pPal);
+		CBofBitmap *pDis = loadBitmap(buildSysDir(g_stQuitButtons[i]._pszDisabled), pPal);
 
-			_pButtons[i]->create(g_stQuitButtons[i]._pszName, g_stQuitButtons[i]._nLeft, g_stQuitButtons[i]._nTop, g_stQuitButtons[i]._nWidth, g_stQuitButtons[i]._nHeight, this, g_stQuitButtons[i]._nID);
-			_pButtons[i]->show();
-		} else {
-			reportError(ERR_MEMORY);
-			break;
-		}
+		_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
+		_pButtons[i]->create(g_stQuitButtons[i]._pszName, g_stQuitButtons[i]._nLeft, g_stQuitButtons[i]._nTop, g_stQuitButtons[i]._nWidth, g_stQuitButtons[i]._nHeight, this, g_stQuitButtons[i]._nID);
+		_pButtons[i]->show();
 	}
 
 	// Show System cursor
@@ -105,10 +101,8 @@ void CBagQuitDialog::onClose() {
 
 	// Destroy all buttons
 	for (int i = 0; i < NUM_QUIT_BUTTONS; i++) {
-		if (_pButtons[i] != nullptr) {
-			delete _pButtons[i];
-			_pButtons[i] = nullptr;
-		}
+		delete _pButtons[i];
+		_pButtons[i] = nullptr;
 	}
 
 	if (_nReturnValue == QUIT_BTN || _nReturnValue == SAVE_BTN)
@@ -122,7 +116,6 @@ void CBagQuitDialog::onPaint(CBofRect *pRect) {
 	assert(isValidObject(this));
 
 	paintBackdrop(pRect);
-
 	validateAnscestors();
 }
 
@@ -158,7 +151,6 @@ void CBagQuitDialog::onBofButton(CBofObject *pObject, int nFlags) {
 			if (pApp != nullptr) {
 				CBagMasterWin *pWin = pApp->getMasterWnd();
 				if (pWin != nullptr) {
-
 					bQuit = pWin->showSaveDialog(this, false);
 				}
 			}

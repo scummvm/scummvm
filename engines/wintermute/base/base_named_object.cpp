@@ -46,7 +46,7 @@ BaseNamedObject::BaseNamedObject(TDynamicConstructor, TDynamicConstructor) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-BaseNamedObject::~BaseNamedObject(void) {
+BaseNamedObject::~BaseNamedObject() {
 	delete[] _name;
 	_name = nullptr;
 }

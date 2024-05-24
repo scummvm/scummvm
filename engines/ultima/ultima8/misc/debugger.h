@@ -185,10 +185,7 @@ private:
 	bool cmdPlayMovie(int argc, const char **argv);
 	bool cmdPlayMusic(int argc, const char **argv);
 	bool cmdBenchmarkRenderSurface(int argc, const char **argv);
-
-#ifdef DEBUG
 	bool cmdVisualDebugPathfinder(int argc, const char **argv);
-#endif
 
 	void dumpCurrentMap(); // helper function
 

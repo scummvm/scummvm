@@ -132,7 +132,7 @@ bool DInputNonExclusiveMouse() {
 /* -----------------25/08/98 10.42-------------------
  *                  HandleFirstPerson
  * --------------------------------------------------*/
-void HandleFirstPersonView(void) {
+void HandleFirstPersonView() {
 	t3dF32 dist;
 	t3dV3F d, n;
 

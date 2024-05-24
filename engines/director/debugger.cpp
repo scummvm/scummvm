@@ -121,18 +121,6 @@ Debugger::Debugger(): GUI::Debugger() {
 	_nextCounter = 0;
 	_lingoEval = false;
 	_lingoReplMode = false;
-	_bpNextId = 1;
-	_bpCheckFunc = false;
-	_bpCheckMoviePath = false;
-	_bpNextMovieMatch = false;
-	_bpMatchScriptId = 0;
-	_bpCheckPropRead = false;
-	_bpCheckPropWrite = false;
-	_bpCheckVarRead = false;
-	_bpCheckVarWrite = false;
-	_bpCheckEntityRead = false;
-	_bpCheckEntityWrite = false;
-	_bpCheckEvent = false;
 }
 
 Debugger::~Debugger() {
@@ -207,7 +195,7 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	return true;
 }
 
-Common::String Breakpoint::format() {
+Common::String Breakpoint::format() const {
 	Common::String result = Common::String::format("Breakpoint %d, ", id);
 	switch (type) {
 	case kBreakpointFunction:
@@ -660,7 +648,6 @@ bool Debugger::cmdFinish(int argc, const char **argv) {
 
 bool Debugger::cmdBpSet(int argc, const char **argv) {
 	Breakpoint bp;
-	bp.id = _bpNextId;
 	bp.type = kBreakpointFunction;
 	if (argc == 1) {
 		Common::Array<CFrame *> &callstack = g_lingo->_state->callstack;
@@ -720,21 +707,18 @@ bool Debugger::cmdBpSet(int argc, const char **argv) {
 		debugPrintf("Too many arguments.\n");
 		return true;
 	}
-	_breakpoints.push_back(bp);
+	g_lingo->addBreakpoint(bp);
 	bpUpdateState();
 	debugPrintf("Added %s\n", bp.format().c_str());
-	_bpNextId++;
 	return true;
 }
 
 bool Debugger::cmdBpMovie(int argc, const char **argv) {
 	if (argc == 2) {
 		Breakpoint bp;
-		bp.id = _bpNextId;
-		_bpNextId++;
 		bp.type = kBreakpointMovie;
 		bp.moviePath = argv[1];
-		_breakpoints.push_back(bp);
+		g_lingo->addBreakpoint(bp);
 		bpUpdateState();
 		debugPrintf("Added %s\n", bp.format().c_str());
 	} else {
@@ -780,9 +764,7 @@ bool Debugger::cmdBpEntity(int argc, const char **argv) {
 			bp.varRead = true;
 			bp.varWrite = true;
 		}
-		bp.id = _bpNextId;
-		_bpNextId++;
-		_breakpoints.push_back(bp);
+		g_lingo->addBreakpoint(bp);
 		bpUpdateState();
 		debugPrintf("Added %s\n", bp.format().c_str());
 	} else {
@@ -808,9 +790,7 @@ bool Debugger::cmdBpProp(int argc, const char **argv) {
 			bp.varRead = true;
 			bp.varWrite = true;
 		}
-		bp.id = _bpNextId;
-		_bpNextId++;
-		_breakpoints.push_back(bp);
+		g_lingo->addBreakpoint(bp);
 		bpUpdateState();
 		debugPrintf("Added %s\n", bp.format().c_str());
 	} else {
@@ -836,9 +816,7 @@ bool Debugger::cmdBpVar(int argc, const char **argv) {
 			bp.varRead = true;
 			bp.varWrite = true;
 		}
-		bp.id = _bpNextId;
-		_bpNextId++;
-		_breakpoints.push_back(bp);
+		g_lingo->addBreakpoint(bp);
 		bpUpdateState();
 		debugPrintf("Added %s\n", bp.format().c_str());
 	} else {
@@ -861,9 +839,7 @@ bool Debugger::cmdBpEvent(int argc, const char **argv) {
 			debugPrintf("Event %s not found.\n", argv[1]);
 			return true;
 		}
-		bp.id = _bpNextId;
-		_bpNextId++;
-		_breakpoints.push_back(bp);
+		g_lingo->addBreakpoint(bp);
 		bpUpdateState();
 		debugPrintf("Added %s\n", bp.format().c_str());
 	} else {
@@ -880,8 +856,6 @@ bool Debugger::cmdBpFrame(int argc, const char **argv) {
 	Movie *movie = g_director->getCurrentMovie();
 	if (argc == 2 || argc == 3) {
 		Breakpoint bp;
-		bp.id = _bpNextId;
-		_bpNextId++;
 		bp.type = kBreakpointMovieFrame;
 		Common::String target(argv[1]);
 		if (argc == 3) {
@@ -895,7 +869,7 @@ bool Debugger::cmdBpFrame(int argc, const char **argv) {
 			debugPrintf("Must specify a valid frame ID.\n");
 			return true;
 		}
-		_breakpoints.push_back(bp);
+		g_lingo->addBreakpoint(bp);
 		bpUpdateState();
 		debugPrintf("Added %s\n", bp.format().c_str());
 	} else {
@@ -906,18 +880,12 @@ bool Debugger::cmdBpFrame(int argc, const char **argv) {
 
 bool Debugger::cmdBpDel(int argc, const char **argv) {
 	if (argc == 2 && atoi(argv[1]) > 0) {
-		bool found = false;
-		for (auto it = _breakpoints.begin(); it != _breakpoints.end(); ++it) {
-			if (it->id == atoi(argv[1])) {
-				it = _breakpoints.erase(it);
-				found = true;
-				bpUpdateState();
-				debugPrintf("Deleted breakpoint %s.\n", argv[1]);
-				break;
-			}
-		}
-		if (!found)
+		if (g_lingo->delBreakpoint(atoi(argv[1]))) {
+			debugPrintf("Deleted breakpoint %s.\n", argv[1]);
+		} else {
 			debugPrintf("No breakpoint with ID %s.\n", argv[1]);
+		}
+		bpUpdateState();
 	} else {
 		debugPrintf("Must specify a breakpoint ID.\n");
 	}
@@ -926,17 +894,12 @@ bool Debugger::cmdBpDel(int argc, const char **argv) {
 
 bool Debugger::cmdBpEnable(int argc, const char **argv) {
 	if (argc == 2 && atoi(argv[1]) > 0) {
-		bool found = false;
-		for (auto &it : _breakpoints) {
-			if (it.id == atoi(argv[1])) {
-				it.enabled = true;
-				found = true;
-				bpUpdateState();
-				debugPrintf("Enabled breakpoint %s.\n", argv[1]);
-				break;
-			}
-		}
-		if (!found)
+		Breakpoint *bp = g_lingo->getBreakpoint(atoi(argv[1]));
+		if (bp) {
+			bp->enabled = true;
+			bpUpdateState();
+			debugPrintf("Enabled breakpoint %s.\n", argv[1]);
+		} else
 			debugPrintf("No breakpoint with ID %s.\n", argv[1]);
 	} else {
 		debugPrintf("Must specify a breakpoint ID.\n");
@@ -946,17 +909,12 @@ bool Debugger::cmdBpEnable(int argc, const char **argv) {
 
 bool Debugger::cmdBpDisable(int argc, const char **argv) {
 	if (argc == 2 && atoi(argv[1]) > 0) {
-		bool found = false;
-		for (auto &it : _breakpoints) {
-			if (it.id == atoi(argv[1])) {
-				it.enabled = false;
-				found = true;
-				bpUpdateState();
-				debugPrintf("Disabled breakpoint %s.\n", argv[1]);
-				break;
-			}
-		}
-		if (!found)
+		Breakpoint *bp = g_lingo->getBreakpoint(atoi(argv[1]));
+		if (bp) {
+			bp->enabled = false;
+			bpUpdateState();
+			debugPrintf("Disabled breakpoint %s.\n", argv[1]);
+		} else
 			debugPrintf("No breakpoint with ID %s.\n", argv[1]);
 	} else {
 		debugPrintf("Must specify a breakpoint ID.\n");
@@ -965,8 +923,9 @@ bool Debugger::cmdBpDisable(int argc, const char **argv) {
 }
 
 bool Debugger::cmdBpList(int argc, const char **argv) {
-	if (_breakpoints.size()) {
-		for (auto &it : _breakpoints) {
+	const Common::Array<Breakpoint> &bps = g_lingo->getBreakpoints();
+	if (bps.size()) {
+		for (auto &it : bps) {
 			debugPrintf("%s (%s)\n", it.format().c_str(), it.enabled ? "enabled" : "disabled");
 		}
 	} else {
@@ -1057,7 +1016,7 @@ void Debugger::bpUpdateState() {
 	_bpCheckEvent = false;
 	Movie *movie = g_director->getCurrentMovie();
 	Common::Array<CFrame *> &callstack = g_lingo->_state->callstack;
-	for (auto &it : _breakpoints) {
+	for (auto &it : g_lingo->getBreakpoints()) {
 		if (!it.enabled)
 			continue;
 		if (it.type == kBreakpointFunction) {
@@ -1129,7 +1088,7 @@ void Debugger::bpTest(bool forceCheck) {
 	// Print the breakpoints that matched
 	if (stop) {
 		debugPrintf("Hit a breakpoint:\n");
-		for (auto &it : _breakpoints) {
+		for (auto &it : g_lingo->getBreakpoints()) {
 			if (!it.enabled)
 				continue;
 			if (it.type == kBreakpointFunction) {
@@ -1237,7 +1196,7 @@ void Debugger::movieHook() {
 
 void Debugger::eventHook(LEvent eventId) {
 	if (_bpCheckEvent) {
-		for (auto &it : _breakpoints) {
+		for (auto &it : g_lingo->getBreakpoints()) {
 			if (it.type == kBreakpointEvent && eventId == it.eventId) {
 				debugPrintf("Hit a breakpoint:\n");
 				debugPrintf("%s\n", it.format().c_str());
@@ -1272,7 +1231,7 @@ void Debugger::builtinHook(const Symbol &funcSym) {
 	bpUpdateState();
 	bool builtinMatch = false;
 	if (_bpCheckFunc) {
-		for (auto &it : _breakpoints) {
+		for (auto &it : g_lingo->getBreakpoints()) {
 			if (it.type != kBreakpointFunction)
 				continue;
 			if (it.funcName.equalsIgnoreCase(*funcSym.name)) {
@@ -1288,7 +1247,7 @@ void Debugger::propReadHook(const Common::String &name) {
 	if (name.empty())
 		return;
 	if (_bpCheckPropRead) {
-		for (auto &it : _breakpoints) {
+		for (auto &it : g_lingo->getBreakpoints()) {
 			if (it.type == kBreakpointProperty && it.varRead && it.varName.equalsIgnoreCase(name)) {
 				debugPrintf("Hit a breakpoint:\n");
 				debugPrintf("%s\n", it.format().c_str());
@@ -1305,7 +1264,7 @@ void Debugger::propWriteHook(const Common::String &name) {
 	if (name.empty())
 		return;
 	if (_bpCheckPropWrite) {
-		for (auto &it : _breakpoints) {
+		for (auto &it : g_lingo->getBreakpoints()) {
 			if (it.type == kBreakpointProperty && it.varWrite && it.varName.equalsIgnoreCase(name)) {
 				debugPrintf("Hit a breakpoint:\n");
 				debugPrintf("%s\n", it.format().c_str());
@@ -1322,7 +1281,7 @@ void Debugger::varReadHook(const Common::String &name) {
 	if (name.empty())
 		return;
 	if (_bpCheckVarRead) {
-		for (auto &it : _breakpoints) {
+		for (auto &it : g_lingo->getBreakpoints()) {
 			if (it.type == kBreakpointVariable && it.varRead && it.varName.equalsIgnoreCase(name)) {
 				debugPrintf("Hit a breakpoint:\n");
 				debugPrintf("%s\n", it.format().c_str());
@@ -1339,7 +1298,7 @@ void Debugger::varWriteHook(const Common::String &name) {
 	if (name.empty())
 		return;
 	if (_bpCheckVarWrite) {
-		for (auto &it : _breakpoints) {
+		for (auto &it : g_lingo->getBreakpoints()) {
 			if (it.type == kBreakpointVariable && it.varWrite && it.varName.equalsIgnoreCase(name)) {
 				debugPrintf("Hit a breakpoint:\n");
 				debugPrintf("%s\n", it.format().c_str());
@@ -1354,7 +1313,7 @@ void Debugger::varWriteHook(const Common::String &name) {
 
 void Debugger::entityReadHook(int entity, int field) {
 	if (_bpCheckEntityRead) {
-		for (auto &it : _breakpoints) {
+		for (auto &it : g_lingo->getBreakpoints()) {
 			if (it.type == kBreakpointEntity && it.varRead && it.entity == entity && it.field == field) {
 				debugPrintf("Hit a breakpoint:\n");
 				debugPrintf("%s\n", it.format().c_str());
@@ -1369,7 +1328,7 @@ void Debugger::entityReadHook(int entity, int field) {
 
 void Debugger::entityWriteHook(int entity, int field) {
 	if (_bpCheckEntityWrite) {
-		for (auto &it : _breakpoints) {
+		for (auto &it : g_lingo->getBreakpoints()) {
 			if (it.type == kBreakpointEntity && it.varWrite && it.entity == entity && it.field == field) {
 				debugPrintf("Hit a breakpoint:\n");
 				debugPrintf("%s\n", it.format().c_str());

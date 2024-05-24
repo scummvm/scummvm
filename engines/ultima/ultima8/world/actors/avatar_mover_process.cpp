@@ -143,7 +143,14 @@ bool AvatarMoverProcess::standUpIfNeeded(Direction direction) {
 
 	if (lastanim == Animation::die || lastanim == Animation::fallBackwards) {
 		if (!stasis) {
-			waitFor(avatar->doAnim(Animation::standUp, direction));
+			ProcId pid = avatar->doAnim(Animation::standUp, direction);
+			if (avatar->hasActorFlags(Actor::ACT_STUNNED)) {
+				avatar->clearActorFlag(Actor::ACT_STUNNED);
+				// Shake head twice
+				pid = avatar->doAnimAfter(Animation::shakeHead, direction, pid);
+				pid = avatar->doAnimAfter(Animation::shakeHead, direction, pid);
+			}
+			waitFor(pid);
 		}
 		return true;
 	}

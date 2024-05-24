@@ -134,8 +134,8 @@ ErrorCode SBZoomPda::attach() {
 	// Other classes need to know if we're zoomed
 	setZoomed(true);
 
-	ErrorCode rc = CBagStorageDevWnd::attach();
-	if (rc == ERR_NONE) {
+	ErrorCode errorCode = CBagStorageDevWnd::attach();
+	if (errorCode == ERR_NONE) {
 		CBagStorageDev *pSDev;
 		if (!_mooWnd) {
 			pSDev = g_SDevManager->getStorageDevice(ZOOM_MOO_WLD);
@@ -145,7 +145,7 @@ ErrorCode SBZoomPda::attach() {
 				_mooWnd->setAssociateWnd(getAssociateWnd());
 				_mooWnd->setTransparent(false);
 				_mooWnd->setVisible(false);
-				rc = _mooWnd->attach();
+				errorCode = _mooWnd->attach();
 			}
 		} else {
 			// Already attached just update
@@ -160,10 +160,10 @@ ErrorCode SBZoomPda::attach() {
 
 				_invWnd->setTransparent(false);
 				_invWnd->setVisible(false);
-				rc = _invWnd->attach();
+				errorCode = _invWnd->attach();
 			} else {
 				bofMessageBox("No PDA INVENTORY found", __FILE__);
-				rc = ERR_UNKNOWN;
+				errorCode = ERR_UNKNOWN;
 			}
 		} else {
 			// Already attached just update
@@ -178,10 +178,10 @@ ErrorCode SBZoomPda::attach() {
 
 				_mapWnd->setTransparent(false);
 				_mapWnd->setVisible(false);
-				rc = _mapWnd->attach();
+				errorCode = _mapWnd->attach();
 			} else {
 				bofMessageBox("No PDA MAP found", __FILE__);
-				rc = ERR_UNKNOWN;
+				errorCode = ERR_UNKNOWN;
 			}
 		} else {
 			// Already attached just update
@@ -196,7 +196,7 @@ ErrorCode SBZoomPda::attach() {
 
 				_logWnd->setTransparent(false);
 				_logWnd->setVisible(false);
-				rc = _logWnd->attach();
+				errorCode = _logWnd->attach();
 			}
 		} else {
 			// Already attached just update
@@ -219,7 +219,7 @@ ErrorCode SBZoomPda::attach() {
 	// Keep track of updates...
 	g_lZoomPDALastUpdate = 0;
 
-	return rc;
+	return errorCode;
 }
 
 CBagObject *SBZoomPda::onNewButtonObject(const CBofString &) {

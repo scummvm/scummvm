@@ -59,7 +59,7 @@ struct Breakpoint {
 	bool varRead = false;
 	bool varWrite = false;
 
-	Common::String format();
+	Common::String format() const;
 };
 
 
@@ -144,23 +144,21 @@ private:
 	bool _lingoEval;
 	bool _lingoReplMode;
 
-	Common::Array<Breakpoint> _breakpoints;
-	int _bpNextId;
-	bool _bpCheckFunc;
-	bool _bpCheckMoviePath;
-	bool _bpNextMovieMatch;
+	bool _bpCheckFunc = false;
+	bool _bpCheckMoviePath = false;
+	bool _bpNextMovieMatch = false;
 	Common::String _bpMatchFuncName;
-	uint _bpMatchScriptId;
+	uint _bpMatchScriptId = 0;
 	Common::String _bpMatchMoviePath;
 	Common::HashMap<uint, void *> _bpMatchFuncOffsets;
 	Common::HashMap<uint, void *> _bpMatchFrameOffsets;
-	bool _bpCheckPropRead;
-	bool _bpCheckPropWrite;
-	bool _bpCheckVarRead;
-	bool _bpCheckVarWrite;
-	bool _bpCheckEntityRead;
-	bool _bpCheckEntityWrite;
-	bool _bpCheckEvent;
+	bool _bpCheckPropRead = false;
+	bool _bpCheckPropWrite = false;
+	bool _bpCheckVarRead = false;
+	bool _bpCheckVarWrite = false;
+	bool _bpCheckEntityRead = false;
+	bool _bpCheckEntityWrite = false;
+	bool _bpCheckEvent = false;
 };
 
 

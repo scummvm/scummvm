@@ -161,7 +161,6 @@ CBagRPObject::~CBagRPObject() {
 	_pSaveVar = nullptr;
 
 	// Clear our statics, yes, I mean to do that here.
-	_turnCount = nullptr;
 	_pLogStateVar = nullptr;
 	_pPrevLogStateVar = nullptr;
 	_pBarLogPages = nullptr;
@@ -219,9 +218,7 @@ ParseCodes CBagRPObject::setInfo(CBagIfstream &istr) {
 					istr.eatWhite();
 					if ((char)istr.peek() == '(') {
 						px = new CBagExpression();
-						if (px) {
-							px->setInfo(istr);
-						}
+						px->setInfo(istr);
 					}
 
 					// add this to the correct list.
@@ -333,7 +330,7 @@ ParseCodes CBagRPObject::setInfo(CBagIfstream &istr) {
 				nObjectUpdated = true;
 
 				_pDescObj = new CBagTextObject();
-				if (_pDescObj && _pDescObj->setInfo(istr) == PARSING_DONE) {
+				if (_pDescObj->setInfo(istr) == PARSING_DONE) {
 					return PARSING_DONE;
 				}
 			} else {
@@ -359,7 +356,7 @@ ParseCodes CBagRPObject::setInfo(CBagIfstream &istr) {
 				// complain violently.
 				if (_pVarObj == nullptr) {
 					reportError(ERR_UNKNOWN, "Invalid Residue Print Variable=%s",
-					            sStr.getBuffer());
+								sStr.getBuffer());
 					return UNKNOWN_TOKEN;
 				}
 			} else {
@@ -369,12 +366,12 @@ ParseCodes CBagRPObject::setInfo(CBagIfstream &istr) {
 		break;
 
 		default: {
-			ParseCodes rc;
-			if ((rc = CBagObject::setInfo(istr)) == PARSING_DONE) {
+			ParseCodes parseCode = CBagObject::setInfo(istr);
+			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}
 
-			if (rc == UPDATED_OBJECT) {
+			if (parseCode == UPDATED_OBJECT) {
 				nObjectUpdated = true;
 			} else { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
@@ -401,7 +398,7 @@ ErrorCode CBagRPObject::attach() {
 
 	_pRPList->addToTail(this);
 
-	ErrorCode ec = CBagObject::attach();
+	ErrorCode errorCode = CBagObject::attach();
 
 	// If we haven't initialized this guys original rectangle, then do it
 	// here.
@@ -439,7 +436,7 @@ ErrorCode CBagRPObject::attach() {
 		break;
 	}
 
-	return ec;
+	return errorCode;
 }
 
 ErrorCode CBagRPObject::detach() {
@@ -480,10 +477,7 @@ void CBagRPObject::setTouchedDos(CBofString &s, CBagExpression *x) {
 		_pTouchedList = new CBofList<DossierObj *>;
 	}
 
-	assert(_pTouchedList != nullptr);
-
 	DossierObj *pDosObj = new DossierObj();
-	assert(pDosObj != nullptr);
 
 	// Just store the name for now, we'll get the pointer to the dossier in
 	// the attach code.
@@ -500,10 +494,7 @@ void CBagRPObject::setUntouchedDos(CBofString &s, CBagExpression *x) {
 		_pUntouchedList = new CBofList<DossierObj *>;
 	}
 
-	assert(_pUntouchedList != nullptr);
-
 	DossierObj *pDosObj = new DossierObj();
-	assert(pDosObj != nullptr);
 
 	// Store the expression and the dossier string.
 	pDosObj->_sDossier = s;
@@ -1496,7 +1487,6 @@ bool CBagRPObject::initialize() {
 	// Cruise the dossier's for both lists and get pointers to the actual bagdoobj's.
 	// Search the current storage device for this object.
 	CBagStorageDev *pSDev;
-	DossierObj *pDosObj;
 
 	if (zoomed()) {
 		pSDev = g_SDevManager->getStorageDevice(LOGZ_WLD);
@@ -1508,6 +1498,7 @@ bool CBagRPObject::initialize() {
 	// Scoff the dossier out of the LOG_WLD SDEV.  If it's not there then hurl.
 	bool bDoUntouched = (_pTouchedList != _pUntouchedList);
 	int nCount = _pTouchedList->getCount();
+	DossierObj *pDosObj = nullptr;
 
 	for (int i = 0; i < nCount; i++) {
 		pDosObj = _pTouchedList->getNodeItem(i);
@@ -1555,17 +1546,16 @@ bool CBagRPObject::initialize() {
 		}
 	}
 
-	// If we have a object name, make sure it is not active.  Object name is the
+	// Make sure the object is not active. Object name is the
 	// line that shows up in the RP Review screen (such as "Voice Printer")
-	if (_pObjectName) {
-		// Give the dossier a back pointer so that it can respond to
-		// mouse down events
-		_pObjectName->setRPObject(this);
 
-		_pObjectName->setVisible(false);
-		_pObjectName->setActive(false);
-		_pObjectName->setFloating(false);
-	}
+	// Give the dossier a back pointer so that it can respond to
+	// mouse down events
+	_pObjectName->setRPObject(this);
+
+	_pObjectName->setVisible(false);
+	_pObjectName->setActive(false);
+	_pObjectName->setFloating(false);
 
 	return true;
 }

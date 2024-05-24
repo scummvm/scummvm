@@ -31,8 +31,6 @@
 
 namespace Bagel {
 
-#define USE_CBAGDIALOG 0
-
 #define DIALOG_WIDTH    640
 #define DIALOG_HEIGHT   480
 
@@ -97,10 +95,14 @@ ErrorCode CBagRestoreDialog::attach() {
 	// Save off the current game's palette
 	_pSavePalette = CBofApp::getApp()->getPalette();
 
-	// Insert ours
-	CBofPalette *pPal = _pBackdrop->getPalette();
-	CBofApp::getApp()->setPalette(pPal);
+	CBofPalette *pPal = nullptr;
 
+	// Insert ours
+	if (_pBackdrop != nullptr) {
+		pPal = _pBackdrop->getPalette();
+		CBofApp::getApp()->setPalette(pPal);
+	}
+	
 	// Paint the SaveList Box onto the background
 	if (_pBackdrop != nullptr) {
 		CBofBitmap cBmp(buildSysDir("SAVELIST.BMP"), pPal);
@@ -115,22 +117,16 @@ ErrorCode CBagRestoreDialog::attach() {
 	for (int i = 0; i < NUM_RESTORE_BTNS; i++) {
 		assert(_pButtons[i] == nullptr);
 
-		if ((_pButtons[i] = new CBofBmpButton) != nullptr) {
-			CBofBitmap *pUp, *pDown, *pFocus, *pDis;
+		_pButtons[i] = new CBofBmpButton;
 
-			pUp = loadBitmap(buildSysDir(g_stButtons[i]._pszUp), pPal);
-			pDown = loadBitmap(buildSysDir(g_stButtons[i]._pszDown), pPal);
-			pFocus = loadBitmap(buildSysDir(g_stButtons[i]._pszFocus), pPal);
-			pDis = loadBitmap(buildSysDir(g_stButtons[i]._pszDisabled), pPal);
+		CBofBitmap *pUp = loadBitmap(buildSysDir(g_stButtons[i]._pszUp), pPal);
+		CBofBitmap *pDown = loadBitmap(buildSysDir(g_stButtons[i]._pszDown), pPal);
+		CBofBitmap *pFocus = loadBitmap(buildSysDir(g_stButtons[i]._pszFocus), pPal);
+		CBofBitmap *pDis = loadBitmap(buildSysDir(g_stButtons[i]._pszDisabled), pPal);
 
-			_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
-
-			_pButtons[i]->create(g_stButtons[i]._pszName, g_stButtons[i]._nLeft, g_stButtons[i]._nTop, g_stButtons[i]._nWidth, g_stButtons[i]._nHeight, this, g_stButtons[i]._nID);
-			_pButtons[i]->show();
-		} else {
-			reportError(ERR_MEMORY);
-			break;
-		}
+		_pButtons[i]->loadBitmaps(pUp, pDown, pFocus, pDis);
+		_pButtons[i]->create(g_stButtons[i]._pszName, g_stButtons[i]._nLeft, g_stButtons[i]._nTop, g_stButtons[i]._nWidth, g_stButtons[i]._nHeight, this, g_stButtons[i]._nID);
+		_pButtons[i]->show();
 	}
 
 	if (_nSelectedItem == -1) {
@@ -151,73 +147,63 @@ ErrorCode CBagRestoreDialog::attach() {
 	}
 
 	// The list box must not be currently allocated
-	assert(_pListBox == nullptr);
+	if (_pListBox == nullptr)
+		fatalError(ERR_UNKNOWN, "Unexpected null value found in _pListBox");
 
 	// Create a list box for the user to choose the slot to save into
 	CBofRect cRect(LIST_X, LIST_Y, LIST_X + LIST_DX - 1, LIST_Y + LIST_DY - 1);
-	if ((_pListBox = new CBofListBox()) != nullptr) {
-		_pListBox->create("SaveGameList", &cRect, this);
 
-		_pListBox->setPointSize(LIST_FONT_SIZE);
-		_pListBox->setItemHeight(LIST_TEXT_DY);
+	_pListBox = new CBofListBox();
+	_pListBox->create("SaveGameList", &cRect, this);
+	_pListBox->setPointSize(LIST_FONT_SIZE);
+	_pListBox->setItemHeight(LIST_TEXT_DY);
 
-		// Set a color for selection highlighting
-		if (_pBackdrop != nullptr) {
-			CBofPalette *pPal2;
+	// Set a color for selection highlighting
+	if (_pBackdrop != nullptr) {
+		CBofPalette *pPal2 = _pBackdrop->getPalette();
+		byte iPalIdx = pPal2->getNearestIndex(RGB(255, 0, 0));
 
-			pPal2 = _pBackdrop->getPalette();
-
-			byte iPalIdx = pPal2->getNearestIndex(RGB(255, 0, 0));
-
-			_pListBox->setHighlightColor(pPal2->getColor(iPalIdx));
-		}
-
-		// Fill the list box with save game entries
-		for (int i = 0; i < nNumSavedGames; i++) {
-			Common::String desc = "Empty";
-
-			for (const auto &entry : _savesList) {
-				if (entry.getSaveSlot() == (i + 1)) {
-					desc = entry.getDescription();
-					break;
-				}
-			}
-
-			_pListBox->addToTail(desc.c_str(), false);
-		}
-
-		// Must be a valid item by now
-		if (_nSelectedItem != -1) {
-			_pListBox->setSelectedItem(_nSelectedItem, false);
-		}
-
-		_pListBox->show();
-		_pListBox->updateWindow();
-
-	} else {
-		reportError(ERR_MEMORY);
+		_pListBox->setHighlightColor(pPal2->getColor(iPalIdx));
 	}
+
+	// Fill the list box with save game entries
+	for (int i = 0; i < nNumSavedGames; i++) {
+		Common::String desc = "Empty";
+
+		for (const auto &entry : _savesList) {
+			if (entry.getSaveSlot() == (i + 1)) {
+				desc = entry.getDescription();
+				break;
+			}
+		}
+
+		_pListBox->addToTail(desc.c_str(), false);
+	}
+
+	// Must be a valid item by now
+	if (_nSelectedItem != -1) {
+		_pListBox->setSelectedItem(_nSelectedItem, false);
+	}
+
+	_pListBox->show();
+	_pListBox->updateWindow();
 
 	if (!errorOccurred()) {
 		// There could not already be a text field
 		assert(_pText == nullptr);
 
-		if ((_pText = new CBofText) != nullptr) {
-			cRect.setRect(170, 405, 470, 435);
-			_pText->setupText(&cRect, JUSTIFY_LEFT, FORMAT_CENTER_LEFT);
-			_pText->SetSize(16);
-			_pText->setWeight(TEXT_BOLD);
+		_pText = new CBofText;
 
-			// Set initial selected item
-			if (_pListBox != nullptr && _nSelectedItem != -1) {
-				_pText->setText(_pListBox->getText(_nSelectedItem));
+		cRect.setRect(170, 405, 470, 435);
+		_pText->setupText(&cRect, JUSTIFY_LEFT, FORMAT_CENTER_LEFT);
+		_pText->SetSize(16);
+		_pText->setWeight(TEXT_BOLD);
 
-			} else {
-				_pText->setText("");
-			}
-
+		// Set initial selected item
+		if (_nSelectedItem != -1) {
+			_pText->setText(_pListBox->getText(_nSelectedItem));
 		} else {
-			reportError(ERR_MEMORY, "Could not allocate a CBofText for the Restore Dialog");
+			_pText->setText("");
 		}
 	}
 
@@ -231,28 +217,19 @@ ErrorCode CBagRestoreDialog::detach() {
 
 	CBagCursor::hideSystemCursor();
 
-	if (_pText != nullptr) {
-		delete _pText;
-		_pText = nullptr;
-	}
+	delete _pText;
+	_pText = nullptr;
 
-	if (_pScrollBar != nullptr) {
-		delete _pScrollBar;
-		_pScrollBar = nullptr;
-	}
+	delete _pScrollBar;
+	_pScrollBar = nullptr;
 
-	if (_pListBox != nullptr) {
-		delete _pListBox;
-		_pListBox = nullptr;
-	}
+	delete _pListBox;
+	_pListBox = nullptr;
 
 	// Destroy all buttons
 	for (int i = 0; i < NUM_RESTORE_BTNS; i++) {
-
-		if (_pButtons[i] != nullptr) {
-			delete _pButtons[i];
-			_pButtons[i] = nullptr;
-		}
+		delete _pButtons[i];
+		_pButtons[i] = nullptr;
 	}
 
 	_nSelectedItem = -1;

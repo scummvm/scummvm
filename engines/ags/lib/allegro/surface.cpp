@@ -125,7 +125,7 @@ BITMAP::DrawInnerArgs::DrawInnerArgs(BITMAP *_dstBitmap, const BITMAP *srcBitmap
 	srcArea.clip(Common::Rect(0, 0, srcBitmap->w, srcBitmap->h));
 	if (srcArea.isEmpty())
 		return;
-	
+
 	if (!doScale) {
 		// Ensure the src rect is constrained to the source bitmap
 		dstRect.setWidth(srcArea.width());
@@ -171,6 +171,14 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
                   int dstX, int dstY, bool horizFlip, bool vertFlip,
                   bool skipTrans, int srcAlpha, int tintRed, int tintGreen,
                   int tintBlue) {
+
+	// A restricted number of 8bit games (e.g. Snow Problem) contain (leftover?) 32bit resources.
+	// We can ignore these to prevent conversion on load (and triggering the assertion)
+	if (format.bytesPerPixel == 1 && srcBitmap->format.bytesPerPixel != 1) {
+		warning("Attempt to draw >1BPP surface onto 1BPP surface, ignoring");
+		return;
+	}
+
 	assert(format.bytesPerPixel == 2 || format.bytesPerPixel == 4 ||
 	       (format.bytesPerPixel == 1 && srcBitmap->format.bytesPerPixel == 1));
 
@@ -242,7 +250,7 @@ void BITMAP::stretchDraw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	Graphics::ManagedSurface stretched(cropped.rawSurface().scale(dstRect.width(), dstRect.height()), DisposeAfterUse::YES);
 	BITMAP temp(&stretched);
 	auto optimizedArgs = DrawInnerArgs(this, &temp, stretched.getBounds(), dstRect, skipTrans, srcAlpha, false, false, -1, -1, -1, false);
-	
+
 #ifdef SCUMMVM_NEON
 	if (_G(simd_flags) & AGS3::Globals::SIMD_NEON) {
 		drawNEON<false>(optimizedArgs);

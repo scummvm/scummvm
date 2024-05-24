@@ -64,7 +64,7 @@ private:
 
 	void initPerilButtons();
 
-	void updateWheels(bool playSfx = 0);
+	void updateWheels(bool playSfx = false);
 	void updateLocator();
 
 	void calculateIndexes();

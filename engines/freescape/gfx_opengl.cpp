@@ -156,6 +156,41 @@ void OpenGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 	glFlush();
 }
 
+void OpenGLRenderer::drawSkybox(Texture *texture, Math::Vector3d camera) {
+	OpenGLTexture *glTexture = static_cast<OpenGLTexture *>(texture);
+
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+
+	glBindTexture(GL_TEXTURE_2D, glTexture->_id);
+	glVertexPointer(3, GL_FLOAT, 0, _skyVertices);
+	glNormalPointer(GL_FLOAT, 0, _skyNormals);
+	glTexCoordPointer(2, GL_FLOAT, 0, _skyUvs);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+
+	glPolygonMode(GL_BACK, GL_FILL);
+
+	glPushMatrix();
+	{
+		glTranslatef(camera.x(), camera.y(), camera.z());
+		glDrawArrays(GL_QUADS, 0, 16);
+	}
+	glPopMatrix();
+
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_DEPTH_TEST);
+	glFlush();
+}
+
 void OpenGLRenderer::updateProjectionMatrix(float fov, float nearClipPlane, float farClipPlane) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();

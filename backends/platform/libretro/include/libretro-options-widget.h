@@ -14,7 +14,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "common/translation.h"
 #include "gui/browser.h"
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"

@@ -54,17 +54,12 @@ ErrorCode CBofStringTable::load(const char *pszFileName) {
 
 	// Allocate a buffer to hold entire file
 	_pBuf = (byte *)bofAlloc(_lBufSize + 1);
-	if (_pBuf != nullptr) {
-		memset(_pBuf, 0, _lBufSize + 1);
 
-		// Read in entire file
-		read(_pBuf, _lBufSize);
+	memset(_pBuf, 0, _lBufSize + 1);
 
-		buildTable();
-
-	} else {
-		reportError(ERR_MEMORY, "Unable to allocate %ld bytes for String Table", _lBufSize);
-	}
+	// Read in entire file
+	read(_pBuf, _lBufSize);
+	buildTable();
 
 	// Don't need this file open anymore
 	close();
@@ -113,19 +108,19 @@ ErrorCode CBofStringTable::buildTable() {
 	while (pBuf < _pBuf + _lBufSize) {
 		int nId = atoi((const char *)pBuf);
 		pBuf = (const byte *)strchr((const char *)pBuf, '=');
+		if (pBuf == nullptr) {
+			reportError(ERR_NONE, "Parsing error in buildTable()");
+			break;
+		}
 		pBuf++;
 
 		CResString *pString = new CResString(nId, (const char *)pBuf);
-		if (pString != nullptr) {
-			// Add this string to the table
-			if (_pStringTable == nullptr) {
-				_pStringTable = pString;
-			} else {
-				_pStringTable->addToTail(pString);
-			}
+
+		// Add this string to the table
+		if (_pStringTable == nullptr) {
+			_pStringTable = pString;
 		} else {
-			reportError(ERR_MEMORY, "Unable to allocate a CResString");
-			break;
+			_pStringTable->addToTail(pString);
 		}
 
 		while (*pBuf++ != '\0') {

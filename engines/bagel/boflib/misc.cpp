@@ -21,7 +21,6 @@
 
 #include "common/file.h"
 #include "bagel/boflib/misc.h"
-#include "bagel/boflib/log.h"
 #include "bagel/boflib/cache.h"
 #include "bagel/bagel.h"
 #include "bagel/boflib/string_functions.h"
@@ -76,16 +75,13 @@ void *bofMemAlloc(uint32 nSize, const char *pFile, int nLine, bool bClear) {
 		CCache::optimize(nSize + 2 * sizeof(uint16) + sizeof(uint32));
 	}
 
-	if (pNewBlock == nullptr) {
-		logError(buildString("Could not allocate %u bytes, file %s, line %d", nSize, pFile, nLine));
-	}
+	if (pNewBlock == nullptr)
+		CBofError::fatalError(ERR_MEMORY, "Could not allocate %u bytes, file %s, line %d", nSize, pFile, nLine);
 
 	return pNewBlock;
 }
 
-void bofMemFree(void *pBuf, const char *pFile, int nLine) {
-	assert(pFile != nullptr);
-
+void bofMemFree(void *pBuf) {
 	free(pBuf);
 }
 

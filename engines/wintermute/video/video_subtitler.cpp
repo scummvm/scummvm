@@ -40,7 +40,7 @@ VideoSubtitler::VideoSubtitler(BaseGame *inGame): BaseClass(inGame) {
 	_showSubtitle = false;
 }
 
-VideoSubtitler::~VideoSubtitler(void) {
+VideoSubtitler::~VideoSubtitler() {
 	_subtitles.clear();
 }
 

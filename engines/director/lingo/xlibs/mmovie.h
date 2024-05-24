@@ -22,11 +22,73 @@
 #ifndef DIRECTOR_LINGO_XLIBS_MMOVIE_H
 #define DIRECTOR_LINGO_XLIBS_MMOVIE_H
 
+#include "common/hash-str.h"
+#include "video/qt_decoder.h"
 namespace Director {
+
+// taken from shared:1124:mHandleError
+enum MMovieError {
+	MMOVIE_NONE = 0,
+	MMOVIE_NO_STAGE = -1,
+	MMOVIE_TOO_MANY_OPEN_FILES = -2,
+	MMOVIE_MOVIE_ALREADY_OPEN = -3,
+	MMOVIE_INVALID_MOVIE_INDEX = -4,
+	MMOVIE_INVALID_OFFSETS_FILE = -5,
+	MMOVIE_INVALID_SEGMENT_OFFSET = -6,
+	MMOVIE_NO_MOVIES_OPEN = -7,
+	MMOVIE_INVALID_SEGMENT_NAME = -8,
+	MMOVIE_INDEX_OUT_OF_RANGE = -9,
+	MMOVIE_CONTINUE_WITHOUT_PLAYING = -10,
+	MMOVIE_ABORT_DOUBLE_CLICK = -11,
+	MMOVIE_PLAYBACK_FINISHED = -12,
+};
+
+struct MMovieSegment {
+	Common::String _name;
+	uint32 _start = 0;
+	uint32 _length = 0;
+	MMovieSegment() {}
+	MMovieSegment(Common::String name, uint32 start, uint32 length) : _name(name), _start(start), _length(length) {}
+};
+
+struct MMovieFile {
+	int _lastIndex = 0;
+	Common::Path _path;
+	Common::Array<MMovieSegment> segments;
+	Common::HashMap<Common::String, uint32, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> segLookup;
+	Video::QuickTimeDecoder *_video = nullptr;
+	MMovieFile() {}
+	MMovieFile(Common::Path path) : _path(path) {}
+};
 
 class MMovieXObject : public Object<MMovieXObject> {
 public:
 	MMovieXObject(ObjectType objType);
+	~MMovieXObject();
+
+	int _rate = 100;
+	Common::Rect _bounds;
+	int _lastIndex = 1;
+	int _currentMovieIndex = 0;
+	int _currentSegmentIndex = 0;
+	bool _looping = false;
+	bool _restore = false;
+	bool _shiftAbort = false;
+	bool _abortOnClick = false;
+	bool _purge = false;
+	bool _async = false;
+	int _lastTicks = -1;
+
+	Common::HashMap<int, MMovieFile> _movies;
+	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _moviePathMap;
+
+	Graphics::Surface _lastFrame;
+
+	int playSegment(int movieIndex, int segIndex, bool looping, bool restore, bool shiftAbort, bool abortOnClick, bool purge, bool async);
+	bool stopSegment();
+	int updateScreenBlocking();
+	int updateScreen();
+	int getTicks();
 };
 
 namespace MMovieXObj {

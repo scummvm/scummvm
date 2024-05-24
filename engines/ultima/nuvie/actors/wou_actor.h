@@ -28,8 +28,6 @@ namespace Ultima {
 namespace Nuvie {
 
 class WOUActor: public Actor {
-protected:
-
 public:
 
 	WOUActor(Map *m, ObjManager *om, GameClock *c) : Actor(m, om, c) { }

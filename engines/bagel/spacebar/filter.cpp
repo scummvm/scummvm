@@ -113,7 +113,7 @@ void vilInitFilters(CBofBitmap *pBmp) {
 		CBofString cString(szCString, 256);
 		cString = VILDROIDTIPFILE;
 
-		MACROREPLACE(cString);
+		fixPathName(cString);
 		CBofFile nfile(cString, CBF_READONLY);
 		buff = new char[nfile.getLength() + 1];
 		memset(buff, 0, nfile.getLength() + 1);
@@ -132,7 +132,7 @@ void vilInitFilters(CBofBitmap *pBmp) {
 		char szBString[256];
 		CBofString cBString(szBString, 256);
 		cBString = VILDROIDGRAFITTI;
-		MACROREPLACE(cBString);
+		fixPathName(cBString);
 		pGrafittiBmp = new CBofBitmap(cBString, pBmp->getPalette());
 
 		// No initialization of the pChipBmp is done here - it's
@@ -151,7 +151,7 @@ void triInitFilters(CBofBitmap *pBmp) {
 	char szTriStr[256];
 	CBofString cTriStr(szTriStr, 256);
 	cTriStr = TRIFILTERBMP;
-	MACROREPLACE(cTriStr);
+	fixPathName(cTriStr);
 	pTriBmp = new CBofBitmap(cTriStr, pBmp->getPalette());
 	triinitDone = true;
 }
@@ -161,40 +161,31 @@ void lightningInitFilters() {
 		char szThunderFileName[256];
 		CBofString cThunderFileName(szThunderFileName, 256);
 		cThunderFileName = THUNDERSOUND;
-		MACROREPLACE(cThunderFileName);
+		fixPathName(cThunderFileName);
 		pThunder = new CBofSound(CBofApp::getApp()->getMainWindow(), szThunderFileName, SOUND_MIX);
 		lightninginitDone = true;
 	}
 }
 
 void destroyFilters() {
-	if (pTipBmp) {
-		delete pTipBmp;
-		pTipBmp = nullptr;
-	}
-	if (pGrafittiBmp) {
-		delete pGrafittiBmp;
-		pGrafittiBmp = nullptr;
-	}
+	delete pTipBmp;
+	pTipBmp = nullptr;
+
+	delete pGrafittiBmp;
+	pGrafittiBmp = nullptr;
 
 	// clean up trisecks bmp
-	if (pTriBmp) {
-		delete pTriBmp;
-		pTriBmp = nullptr;
-	}
+	delete pTriBmp;
+	pTriBmp = nullptr;
 
 	// Chip bitmap is destroyed here is the cleanup function because
 	// presumably we're being called when the game is ending.
-	if (pChipBmp) {
-		delete pChipBmp;
-		pChipBmp = nullptr;
-	}
+	delete pChipBmp;
+	pChipBmp = nullptr;
 
 	// Clean up the lightning filter.
-	if (pThunder) {
-		delete pThunder;
-		pThunder = nullptr;
-	}
+	delete pThunder;
+	pThunder = nullptr;
 
 	// Record the fact that the filter bitmaps need to be instantiated
 	// before they can be used again.
@@ -365,7 +356,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				CBofString cString(szCString, 256);
 				cString = GREENCHIPFILE;
 
-				MACROREPLACE(cString);
+				fixPathName(cString);
 				CBofFile nfile(cString, CBF_READONLY);
 				buff = new char[nfile.getLength() + 1];
 				memset(buff, 0, nfile.getLength() + 1);
@@ -408,7 +399,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				CBofString cString(szCString, 256);
 				cString = BLUECHIPFILE;
 
-				MACROREPLACE(cString);
+				fixPathName(cString);
 				CBofFile nfile(cString, CBF_READONLY);
 				buff = new char[nfile.getLength() + 1];
 				memset(buff, 0, nfile.getLength() + 1);
@@ -555,7 +546,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			if (pChipBmp != nullptr) {
 				int rdef = g_engine->viewRect.width() - VILDROIDCHIPTEXTWIDTH;
 				int tdef = g_engine->viewRect.height() - 300;
-				CBofRect tmprct(0, 0, VILDROIDCHIPTEXTWIDTH, 300);                 // (tdef/2)
+				CBofRect tmprct(0, 0, VILDROIDCHIPTEXTWIDTH, 300);
 
 				pChipBmp->paint(pBmp, ((rdef / 2) + g_engine->viewRect.left), (tdef + g_engine->viewRect.top), &tmprct, 0);
 			}
@@ -571,10 +562,13 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				char szCString[256];
 				CBofString cString(szCString, 256);
 				cString = DISCEJECTSOUND;
-				MACROREPLACE(cString);
-				BofPlaySound(cString, SOUND_WAVE | SOUND_MIX);
+				fixPathName(cString);
+				BofPlaySound(cString, SOUND_WAVE | SOUND_ASYNCH);
 				CBagStorageDev *pWieldSDev = nullptr;
 				pWieldSDev = g_SDevManager->getStorageDevice("BWIELD_WLD");
+				if (pWieldSDev == nullptr)
+					CBofError::fatalError(ERR_UNKNOWN, "Unable to get storage device 'BWIELD_WLD'");
+
 				if (chipID == 1)
 					pWieldSDev->activateLocalObject("GREENCHIP");
 				else
@@ -644,33 +638,31 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 			CBofBitmap *pMiniBitmap = new CBofBitmap(dx, dy, pPal);
 
-			if (pMiniBitmap != nullptr) {
-				CBofRect dstRect(g_engine->viewRect);
-				CBofRect srcRect = pMiniBitmap->getRect();
-				pBmp->paint(pMiniBitmap, &srcRect, &dstRect);
+			CBofRect srcRect(g_engine->viewRect);
+			CBofRect dstRect = pMiniBitmap->getRect();
+			pBmp->paint(pMiniBitmap, &dstRect, &srcRect);
 
-				CBofRect &filterRect = CMainWindow::getFilterRect();
-				filterRect.setRect(g_engine->viewRect.left, g_engine->viewRect.top, g_engine->viewRect.left + dx, g_engine->viewRect.top + dy);
+			CBofRect &filterRect = CMainWindow::getFilterRect();
+			filterRect.setRect(g_engine->viewRect.left, g_engine->viewRect.top, g_engine->viewRect.left + dx, g_engine->viewRect.top + dy);
 
-				int j, x;
-				int y = g_engine->viewRect.top;
-				for (int i = 0; i < 3; ++i) {
-					if (i == 1) {
-						j = 0;
-						x = g_engine->viewRect.left;
-					} else {
-						j = 1;
-						x = g_engine->viewRect.left + (dx >> 1);
-					}
-					for (; j < 3; ++j) {
-						pMiniBitmap->paint(pBmp, x, y);
-						x += dx;
-					}
-					y += dy;
+			int j, x;
+			int y = g_engine->viewRect.top;
+			for (int i = 0; i < 3; ++i) {
+				if (i == 1) {
+					j = 0;
+					x = g_engine->viewRect.left;
+				} else {
+					j = 1;
+					x = g_engine->viewRect.left + (dx >> 1);
 				}
-
-				delete pMiniBitmap;
+				for (; j < 3; ++j) {
+					pMiniBitmap->paint(pBmp, x, y);
+					x += dx;
+				}
+				y += dy;
 			}
+
+			delete pMiniBitmap;
 		}
 	}
 

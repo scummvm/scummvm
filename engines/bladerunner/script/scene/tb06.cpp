@@ -32,7 +32,7 @@ void SceneScriptTB06::InitializeScene() {
 	if (!Game_Flag_Query(kFlagNotUsed103)) {
 		Actor_Put_In_Set(kActorMarcus, kSetTB06);
 		Actor_Set_At_XYZ(kActorMarcus, 135.0f, 151.0f, -671.0f, 800);
-		Actor_Retired_Here(kActorMarcus, 60, 32, 1, -1);
+		Actor_Retired_Here(kActorMarcus, 60, 32, true, -1);
 		//return true;
 		return;
 	}

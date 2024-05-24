@@ -89,6 +89,9 @@ class PathTestSuite : public CxxTest::TestSuite
 
 		Common::Path p4("parent/dir/file.txt/");
 		TS_ASSERT_EQUALS(p4.baseName(), "file.txt");
+
+		Common::Path p5("File I/O", ':');
+		TS_ASSERT_EQUALS(p5.baseName(), "File I/O");
 	}
 
 	void test_getParent() {

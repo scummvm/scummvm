@@ -28,7 +28,7 @@ namespace Bagel {
 bool CBagEventSDev::_evalTurnEventsFl;
 
 ErrorCode CBagEventSDev::attach() {
-	ErrorCode errCode = CBagStorageDev::attach();
+	ErrorCode errorCode = CBagStorageDev::attach();
 
 	// Set the firstpaint flag and attach objects to allow
 	// for immediate run objects to run
@@ -37,7 +37,7 @@ ErrorCode CBagEventSDev::attach() {
 		attachActiveObjects();
 	}
 
-	return errCode;
+	return errorCode;
 
 }
 
@@ -46,7 +46,7 @@ ErrorCode CBagEventSDev::evaluateExpressions() {
 	if (CBagPDA::isMoviePlaying())
 		return ERR_NONE;
 
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 	int count = getObjectCount();
 	for (int i = 0; i < count; ++i) {
 
@@ -67,10 +67,10 @@ ErrorCode CBagEventSDev::evaluateExpressions() {
 				posObj->detach();
 			}
 		} else
-			errCode = ERR_FFIND;
+			errorCode = ERR_FFIND;
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 ErrorCode CBagTurnEventSDev::evaluateExpressions() {
@@ -79,7 +79,7 @@ ErrorCode CBagTurnEventSDev::evaluateExpressions() {
 		return ERR_UNKNOWN;
 	}
 
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 	int count = getObjectCount();
 	for (int i = 0; i < count; ++i) {
 		CBagObject *posObj = getObjectByPos(i);
@@ -98,10 +98,10 @@ ErrorCode CBagTurnEventSDev::evaluateExpressions() {
 				posObj->detach();
 			}
 		} else
-			errCode = ERR_FFIND;
+			errorCode = ERR_FFIND;
 	}
 
-	return errCode;
+	return errorCode;
 }
 
 } // namespace Bagel

@@ -37,7 +37,7 @@ BEGIN_MESSAGE_MAP(CUpLighter, CDropTarget)
 END_MESSAGE_MAP()
 
 CUpLighter::CUpLighter() : CDropTarget(), _hosePumping(false),
-	_inRoom(0), _isSpring(false), _noseDispensed(false) {
+	_inRoom(false), _isSpring(false), _noseDispensed(false) {
 }
 
 void CUpLighter::save(SimpleFile *file, int indent) {

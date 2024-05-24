@@ -100,11 +100,11 @@ CBagMasterWin::CBagMasterWin() {
 
 	// Assume default system screen
 	_sysScreen = "$SBARDIR\\GENERAL\\SYSTEM\\GAMBHALL.BMP";
-	MACROREPLACE(_sysScreen);
+	fixPathName(_sysScreen);
 
 	// Load wait sound for when user hits the spacebar
 	CBofString waitName("$SBARDIR\\GENERAL\\WAIT.WAV");
-	MACROREPLACE(waitName);
+	fixPathName(waitName);
 
 	_waitSound = new CBofSound(this, waitName, SOUND_MIX);
 }
@@ -311,7 +311,7 @@ ErrorCode CBagMasterWin::newGame() {
 		app->getOption("Startup", "WLDFile", workStr, STARTWORLD, 255);
 
 		initWld = workStr;
-		MACROREPLACE(initWld);
+		fixPathName(initWld);
 	}
 
 	loadGlobalVars(GLOBALWORLD);
@@ -337,7 +337,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 
 	if (!paintedFl) {
 		paintedFl = true;
-		MACROREPLACE(wldFileName);
+		fixPathName(wldFileName);
 		CBofRect cRect;
 		cRect.left = (640 - 520) / 2;
 		cRect.top = (480 - 240) / 2;
@@ -373,13 +373,9 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 			// Only allocate the object list when we really need it...
 			if (_objList == nullptr) {
 				_objList = (StObj *)bofAlloc(MAX_OBJS * sizeof(StObj));
-				if (_objList != nullptr) {
-					// Init to zero (we might not use all slots)
-					memset(_objList, 0, MAX_OBJS * sizeof(StObj));
 
-				} else {
-					reportError(ERR_MEMORY, "Could not allocate Object list");
-				}
+				// Init to zero (we might not use all slots)
+				memset(_objList, 0, MAX_OBJS * sizeof(StObj));
 			}
 
 			_storageDeviceList->saveObjList(_objList, MAX_OBJS); // xxx
@@ -419,7 +415,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 	}
 	_gameSDevList = new CBofList<CBagStorageDev *>;
 
-	MACROREPLACE(wldFileName);
+	fixPathName(wldFileName);
 
 	timerStart();
 
@@ -428,18 +424,16 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 		// is pre-loaded
 		int length = fileLength(wldFileName);
 		char *fileBuf = (char *)bofAlloc(length);
-		if (fileBuf != nullptr) {
-			CBagIfstream fpInput(fileBuf, length);
+		CBagIfstream fpInput(fileBuf, length);
 
-			CBofFile file;
-			file.open(wldFileName);
-			file.read(fileBuf, length);
-			file.close();
+		CBofFile file;
+		file.open(wldFileName);
+		file.read(fileBuf, length);
+		file.close();
 
-			loadFileFromStream(fpInput, startWldName);
+		loadFileFromStream(fpInput, startWldName);
 
-			bofFree(fileBuf);
-		}
+		bofFree(fileBuf);
 
 		// Possibly need to switch CDs
 		CBagel *bagApp = CBagel::getBagApp();
@@ -565,65 +559,60 @@ ErrorCode CBagMasterWin::loadGlobalVars(const CBofString &wldName) {
 	delete _variableList;
 	_variableList = new CBagVarManager();
 
-	if (_variableList != nullptr) {
+	fixPathName(wldFileName);
 
-		MACROREPLACE(wldFileName);
+	if (fileExists(wldFileName) && (fileLength(wldFileName) > 0)) {
+		// Force buffer to be big enough so that the entire script
+		// is pre-loaded
+		int length = fileLength(wldFileName);
+		char *buffer = (char *)bofAlloc(length);
+		CBagIfstream fpInput(buffer, length);
 
-		if (fileExists(wldFileName) && (fileLength(wldFileName) > 0)) {
-			// Force buffer to be big enough so that the entire script
-			// is pre-loaded
-			int length = fileLength(wldFileName);
-			char *buffer = (char *)bofAlloc(length);
-			if (buffer != nullptr) {
-				CBagIfstream fpInput(buffer, length);
+		CBofFile file;
+		file.open(wldFileName);
+		file.read(buffer, length);
+		file.close();
 
-				CBofFile file;
-				file.open(wldFileName);
-				file.read(buffer, length);
-				file.close();
+		while (!fpInput.eof()) {
+			fpInput.eatWhite();
 
-				while (!fpInput.eof()) {
-					fpInput.eatWhite();
+			if (!fpInput.eatWhite()) {
+				break;
+			}
 
-					if (!fpInput.eatWhite()) {
-						break;
-					}
+			KEYWORDS keyword;
+			getKeywordFromStream(fpInput, keyword);
 
-					KEYWORDS keyword;
-					getKeywordFromStream(fpInput, keyword);
+			switch (keyword) {
+			case VARIABLE: {
+				CBagVar *var = new CBagVar;
+				fpInput.eatWhite();
+				var->setInfo(fpInput);
+				var->setGlobal();
+				break;
+			}
 
-					switch (keyword) {
-					case VARIABLE: {
-						CBagVar *var = new CBagVar;
-						fpInput.eatWhite();
-						var->setInfo(fpInput);
-						var->setGlobal();
-						break;
-					}
+			case REMARK: {
+				char dummyStr[256];
+				fpInput.getCh(dummyStr, 255);
+				break;
+			}
 
-					case REMARK: {
-						char dummyStr[256];
-						fpInput.getCh(dummyStr, 255);
-						break;
-					}
-
-					case STORAGEDEV:
-					case START_WLD:
-					case SYSSCREEN:
-					case DISKID:
-					case DISKAUDIO:
-					case SHAREDPAL:
-					case PDASTATE:
-					default: {
-						parseAlertBox(fpInput, "Syntax Error:  Unexpected Type in Global Var Wld:", __FILE__, __LINE__);
-						break;
-					}
-					}
-				}
-
-				bofFree(buffer);
+			case STORAGEDEV:
+			case START_WLD:
+			case SYSSCREEN:
+			case DISKID:
+			case DISKAUDIO:
+			case SHAREDPAL:
+			case PDASTATE:
+			default: {
+				parseAlertBox(fpInput, "Syntax Error:  Unexpected Type in Global Var Wld:", __FILE__, __LINE__);
+				break;
+			}
 			}
 		}
+
+		bofFree(buffer);
 	}
 
 	return _errCode;
@@ -770,7 +759,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				input.eatWhite();
 
 				getAlphaNumFromStream(input, str);
-				MACROREPLACE(str);
+				fixPathName(str);
 
 				// Specify if we have a shared palette or not, look for
 				// the USESHAREDPAL token after the full cursor specification
@@ -793,22 +782,17 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				}
 
 				CBagCursor *cursor = new CBagCursor(str, bUseShared);
-				if (cursor != nullptr) {
-					cursor->setHotspot(x, y);
+				cursor->setHotspot(x, y);
 
-					assert(id >= 0 && id < MAX_CURSORS);
+				assert(id >= 0 && id < MAX_CURSORS);
 
-					// Delete any previous cursor
-					delete _cursorList[id];
-					_cursorList[id] = cursor;
+				// Delete any previous cursor
+				delete _cursorList[id];
+				_cursorList[id] = cursor;
 
-					// Set the wielded cursor status (needed for
-					// a load time optimization)
-					cursor->setWieldCursor(isWieldCursorFl);
-
-				} else {
-					reportError(ERR_MEMORY, "Could not allocate a CBagCursor");
-				}
+				// Set the wielded cursor status (needed for
+				// a load time optimization)
+				cursor->setWieldCursor(isWieldCursorFl);
 
 			} else {
 				reportError(ERR_UNKNOWN, "Bad cursor syntax");
@@ -850,7 +834,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				input.eatWhite();
 
 				getAlphaNumFromStream(input, bmpFileName);
-				MACROREPLACE(bmpFileName);
+				fixPathName(bmpFileName);
 
 				// Read the palette in and keep it hanging around for later use
 				CBofPalette::setSharedPalette(bmpFileName);
@@ -868,7 +852,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				input.eatWhite();
 
 				getAlphaNumFromStream(input, _sysScreen);
-				MACROREPLACE(_sysScreen);
+				fixPathName(_sysScreen);
 
 				logInfo(buildString("SYSSCREEN = %s", _sysScreen.getBuffer()));
 			}
@@ -887,7 +871,7 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 				input.eatWhite();
 
 				getAlphaNumFromStream(input, _cdChangeAudio);
-				MACROREPLACE(_cdChangeAudio);
+				fixPathName(_cdChangeAudio);
 
 				logInfo(buildString("DISKAUDIO = %s", _cdChangeAudio.getBuffer()));
 			}
@@ -913,7 +897,6 @@ ErrorCode CBagMasterWin::loadFileFromStream(CBagIfstream &input, const CBofStrin
 
 		case VARIABLE: {
 			CBagVar *var = new CBagVar;
-			// logInfo("New global variable");
 			input.eatWhite();
 			var->setInfo(input);
 			break;
@@ -997,7 +980,7 @@ ErrorCode CBagMasterWin::onHelp(const CBofString &helpFile, bool /*bSaveBkg*/, C
 		CBofString fileName(localBuffer, 256);
 
 		fileName = helpFile;
-		MACROREPLACE(fileName);
+		fixPathName(fileName);
 
 		// use specified bitmap as this dialog's image
 		char backGroundBuffer[256];
@@ -1005,7 +988,7 @@ ErrorCode CBagMasterWin::onHelp(const CBofString &helpFile, bool /*bSaveBkg*/, C
 		CBofString backGround(backGroundBuffer, 256);
 
 		backGround = buildString("$SBARDIR%sGENERAL%sRULES%sHELPSCRN.BMP", PATH_DELIMETER, PATH_DELIMETER, PATH_DELIMETER);
-		MACROREPLACE(backGround);
+		fixPathName(backGround);
 
 		CBofBitmap *bmp = Bagel::loadBitmap(backGround);
 		CBagHelp help;
@@ -1205,7 +1188,7 @@ ErrorCode CBagMasterWin::gotoNewWindow(const CBofString *str) {
 		_gameWindow = (CBagStorageDevWnd *)sdev;
 		setCICStatus(sdev);
 
-		int fadeId = sdev->getFadeId();
+		uint16 oldFadeId = sdev->getFadeId();
 
 		if (_fadeIn != 0)
 			sdev->setFadeId((uint16)_fadeIn);
@@ -1215,7 +1198,7 @@ ErrorCode CBagMasterWin::gotoNewWindow(const CBofString *str) {
 
 		sdev->attach();
 
-		sdev->setFadeId((uint16)fadeId);
+		sdev->setFadeId(oldFadeId);
 		_fadeIn = 0;
 	}
 
@@ -1286,7 +1269,7 @@ void CBagMasterWin::onUserMessage(uint32 message, uint32 param) {
 
 		CBofBitmap bmp(width(), height(), CBagel::getApp()->getPalette());
 		bmp.fillRect(nullptr, COLOR_BLACK);
-		bmp.fadeLines(this, 0, 0);
+		bmp.fadeLines(this);
 
 		char buffer[MAX_FNAME];
 
@@ -1528,40 +1511,36 @@ bool CBagMasterWin::showSaveDialog(CBofWindow *win, bool bSaveBkg) {
 		CBofSound::pauseSounds();
 		StBagelSave *saveBuf = (StBagelSave *)bofAlloc(sizeof(StBagelSave));
 
-		if (saveBuf != nullptr) {
-			fillSaveBuffer(saveBuf);
-			CBagSaveDialog saveDialog;
-			saveDialog.setSaveGameBuffer((byte *)saveBuf, sizeof(StBagelSave));
+		fillSaveBuffer(saveBuf);
+		CBagSaveDialog saveDialog;
+		saveDialog.setSaveGameBuffer((byte *)saveBuf, sizeof(StBagelSave));
 
-			// Use specified bitmap as this dialog's image
-			CBofBitmap *bmp = Bagel::loadBitmap(_sysScreen.getBuffer());
+		// Use specified bitmap as this dialog's image
+		CBofBitmap *bmp = Bagel::loadBitmap(_sysScreen.getBuffer());
 
-			saveDialog.setBackdrop(bmp);
+		saveDialog.setBackdrop(bmp);
 
-			CBofRect backRect = saveDialog.getBackdrop()->getRect();
+		CBofRect backRect = saveDialog.getBackdrop()->getRect();
 
-			// Don't allow save of background
-			if (!bSaveBkg) {
-				int fllags = saveDialog.getFlags();
-				saveDialog.setFlags(fllags & ~BOFDLG_SAVEBACKGND);
-			}
-
-			// Create the dialog box
-			saveDialog.create("Save Dialog", backRect.left, backRect.top, backRect.width(), backRect.height(), win);
-
-			bool saveTimerFl = g_pauseTimerFl;
-			g_pauseTimerFl = true;
-			int btnId = saveDialog.doModal();
-			g_pauseTimerFl = saveTimerFl;
-
-			savedFl = (btnId == SAVE_BTN);
-
-			saveDialog.detach();
-
-			bofFree(saveBuf);
-		} else {
-			reportError(ERR_MEMORY, "Unable to allocate the Save Game Buffer");
+		// Don't allow save of background
+		if (!bSaveBkg) {
+			int fllags = saveDialog.getFlags();
+			saveDialog.setFlags(fllags & ~BOFDLG_SAVEBACKGND);
 		}
+
+		// Create the dialog box
+		saveDialog.create("Save Dialog", backRect.left, backRect.top, backRect.width(), backRect.height(), win);
+
+		bool saveTimerFl = g_pauseTimerFl;
+		g_pauseTimerFl = true;
+		int btnId = saveDialog.doModal();
+		g_pauseTimerFl = saveTimerFl;
+
+		savedFl = (btnId == SAVE_BTN);
+
+		saveDialog.detach();
+
+		bofFree(saveBuf);
 
 		CBofSound::resumeSounds();
 
@@ -1596,7 +1575,7 @@ void CBagMasterWin::doRestore(StBagelSave *saveBuf) {
 		}
 	}
 	int n = strlen(closeUpBuf);
-	if (closeUpBuf[n - 1] == '~') {
+	if (n > 2 && closeUpBuf[n - 1] == '~') {
 		closeUpBuf[n - 1] = '\0';
 		closeUpBuf[n - 2] = '\0';
 	}
@@ -1646,13 +1625,9 @@ void CBagMasterWin::doRestore(StBagelSave *saveBuf) {
 			// Restore any extra obj list info (for .WLD swapping)
 			if (_objList == nullptr) {
 				_objList = (StObj *)bofAlloc(MAX_OBJS * sizeof(StObj));
-				if (_objList != nullptr) {
-					// Init to nullptr (might not use all slots)
-					memset(_objList, 0, MAX_OBJS * sizeof(StObj));
 
-				} else {
-					reportError(ERR_MEMORY);
-				}
+				// Init to nullptr (might not use all slots)
+				memset(_objList, 0, MAX_OBJS * sizeof(StObj));
 			}
 
 			memcpy(getObjList(), &saveBuf->_stObjListEx[0], sizeof(StObj) * MAX_OBJS);
@@ -1828,7 +1803,7 @@ int CBagMasterWin::getCorrection() {
 void CBagMasterWin::setCorrection(int correction) {
 	assert(correction >= 0 && correction <= 32);
 
-	int actualCorr = 2;
+	int actualCorr;
 
 	switch (correction) {
 	case 0:
@@ -1857,6 +1832,10 @@ void CBagMasterWin::setCorrection(int correction) {
 
 	case 32:
 		actualCorr = 5;
+		break;
+
+	default:
+		actualCorr = DEFAULT_CORRECTION;
 		break;
 	}
 
@@ -1951,7 +1930,7 @@ ErrorCode paintBeveledText(CBofWindow *win, CBofRect *rect, const CBofString &cS
 	CBofBitmap bmp(rect->width(), rect->height(), nullptr, false);
 
 	// Assume no error
-	ErrorCode errCode = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	CBofRect r = bmp.getRect();
 	CBofPalette *palette = nullptr;
@@ -1996,7 +1975,7 @@ ErrorCode paintBeveledText(CBofWindow *win, CBofRect *rect, const CBofString &cS
 
 	bmp.paint(win, rect);
 
-	return errCode;
+	return errorCode;
 }
 
 ErrorCode waitForInput() {

@@ -50,7 +50,7 @@ public:
 	static void initialize();
 
 	void killSound();
-	ErrorCode newSound(CBofWindow *pWin);
+	void newSound(CBofWindow *pWin);
 
 	// Return true if the Object had members that are properly initialized/de-initialized
 	ErrorCode attach() override {

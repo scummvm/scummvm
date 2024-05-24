@@ -76,7 +76,7 @@ bool CBagMovieObject::runObject() {
 	CBofWindow *pNewWin = nullptr;
 	SBZoomPda *pPDAz = (SBZoomPda *)g_SDevManager->getStorageDevice("BPDAZ_WLD");
 	bool bZoomed = (pPDAz == nullptr ? false : pPDAz->getZoomed());
-
+	
 	// Get a pointer to the current game window
 	CBagStorageDevWnd *pMainWin = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev();
 
@@ -146,9 +146,8 @@ bool CBagMovieObject::runObject() {
 			CBagStorageDevWnd *pSDevWnd = (pWnd ? pWnd->getCurrentStorageDev() : nullptr);
 
 			// Get the pda here, we need it so much anyway.
-			if (pPDA == nullptr) {
-				pPDA = (CBagPDA *)g_SDevManager->getStorageDevice("BPDA_WLD");
-			}
+			pPDA = (CBagPDA *)g_SDevManager->getStorageDevice("BPDA_WLD");
+
 			assert(pPDA != nullptr);
 
 			// If we have an asnych movie to play, make sure it is a good
@@ -176,27 +175,25 @@ bool CBagMovieObject::runObject() {
 				// on the mac (prevents a palette shift).
 				CBagExam *pMovie = new CBagExam(CBagel::getBagApp()->getMasterWnd()->getCurrentGameWindow(), sFileName, &r);
 
-				if (pMovie) {
-					// If there is an associated sound file, then start it up here.
-					CBagSoundObject *pSObj = getAssociatedSound();
-					if (pSObj) {
-						if (pSObj->isAttached() == false) {
-							pSObj->attach();
-						}
-						pSObj->runObject();
+				// If there is an associated sound file, then start it up here.
+				CBagSoundObject *pSObj = getAssociatedSound();
+				if (pSObj) {
+					if (pSObj->isAttached() == false) {
+						pSObj->attach();
 					}
+					pSObj->runObject();
+				}
 
-					CBofWindow *wnd = CBagel::getBagApp()->getMasterWnd();
-					pMovie->show();
-					CBofApp::getApp()->getMainWindow()->flushAllMessages();
-					wnd->flushAllMessages();
-					pMovie->initExam();
-					delete pMovie;
+				CBofWindow *wnd = CBagel::getBagApp()->getMasterWnd();
+				pMovie->show();
+				CBofApp::getApp()->getMainWindow()->flushAllMessages();
+				wnd->flushAllMessages();
+				pMovie->initExam();
+				delete pMovie;
 
-					// As soon as we're done, detach (this will also stop the sound).
-					if (pSObj) {
-						pSObj->detach();
-					}
+				// As soon as we're done, detach (this will also stop the sound).
+				if (pSObj) {
+					pSObj->detach();
 				}
 			} else {
 				bool bActivated = false;
@@ -247,28 +244,25 @@ bool CBagMovieObject::runObject() {
 				if (isFiltered) {
 					if (bZoomed) {
 						pNewWin = new CBofWindow();
-						if (pNewWin) {
-							pNewWin->create("BLACK", 0, 0, 640, 480, CBofApp::getApp()->getMainWindow(), 0);
-							pNewWin->fillWindow(COLOR_BLACK);
-						}
+						pNewWin->create("BLACK", 0, 0, 640, 480, CBofApp::getApp()->getMainWindow(), 0);
+						pNewWin->fillWindow(COLOR_BLACK);
 					}
 
 					CBagFMovie *pMovie = new CBagFMovie(CBofApp::getApp()->getMainWindow(), sFileName, &r);
 
-					if (pMovie != nullptr && pMovie->errorOccurred() == false) {
+					if (pMovie->errorOccurred())
+						logError(buildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.getBuffer()));
+					else {
 						pMovie->show();
 						CBofApp::getApp()->getMainWindow()->flushAllMessages();
 						pWnd->flushAllMessages();
 						pMovie->play(false);
-						delete pMovie;
-					} else {
-						logError(buildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.getBuffer()));
 					}
+					delete pMovie;
+					pMovie = nullptr;
 
-					if (pNewWin) {
-						delete pNewWin;
-						pNewWin = nullptr;
-					}
+					delete pNewWin;
+					pNewWin = nullptr;
 				} else {
 					// Hack.. allow script to override some other movies.
 					if ((_xDisplayType == dispType::PDA_MSG) && pMainWin->isCIC() && isDontOverride() == false) {
@@ -278,34 +272,28 @@ bool CBagMovieObject::runObject() {
 
 						// Play the override message.
 						cStr = OVERRIDE_SMK;
-						MACROREPLACE(cStr);
+						fixPathName(cStr);
 
 						sFileName = cStr;
 					}
 
 					if (_xDisplayType == dispType::ASYNCH_PDA_MSG) {
 						// Tell our PDA to switch gears to do asynch movie time.
-						if (pPDA) {
-							if (pPDA->showMovie()) {       // Returns false if another movie playing
-								pPDA->setMovie(sFileName); // Set the movie to play
-							}
-						} else {
-							logError(buildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.getBuffer()));
+						if (pPDA->showMovie()) {       // Returns false if another movie playing
+							pPDA->setMovie(sFileName); // Set the movie to play
 						}
 					} else {
 						CBofMovie *pMovie;
 
-						if (bZoomed && _xDisplayType != dispType::ASYNCH_PDA_MSG && _xDisplayType != dispType::PDA_MSG) {
+						if (bZoomed && _xDisplayType != dispType::PDA_MSG) {
 							pNewWin = new CBofWindow();
-							if (pNewWin) {
-								pNewWin->create("BLACK", 0, 0, 640, 480, CBofApp::getApp()->getMainWindow(), 0);
-								pNewWin->show();
-								pNewWin->fillWindow(COLOR_BLACK);
-							}
+							pNewWin->create("BLACK", 0, 0, 640, 480, CBofApp::getApp()->getMainWindow(), 0);
+							pNewWin->show();
+							pNewWin->fillWindow(COLOR_BLACK);
 						}
 
 						// If playing a PDA message while the PDA is zoomed
-						if (_xDisplayType == dispType::PDA_MSG && bZoomed) {
+						if (bZoomed && _xDisplayType == dispType::PDA_MSG) {
 							// Then stretch it to fit into the PDA's viewscreen
 							r.setRect(24, 47, 28 + 600 - 1, 47 + 302 - 1);
 							pMovie = new CBofMovie(CBofApp::getApp()->getMainWindow(), sFileName, &r, true);
@@ -315,23 +303,23 @@ bool CBagMovieObject::runObject() {
 							pMovie = new CBofMovie(CBofApp::getApp()->getMainWindow(), sFileName, &r);
 						}
 
-						if (pMovie && pMovie->errorOccurred() == false) {
+						if (pMovie->errorOccurred())
+							logError(buildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.getBuffer()));
+						else {
 							// Stop any asnych movies already playing
 							pPDA->stopMovie(true);
 							pMovie->show();
 							CBofApp::getApp()->getMainWindow()->flushAllMessages();
 							pWnd->flushAllMessages();
 							pMovie->play(false);
-							delete pMovie;
-						} else {
-							logError(buildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.getBuffer()));
 						}
-
+						
+						delete pMovie;
+						pMovie = nullptr;
+						
 						// If we put a black window up, then
-						if (pNewWin) {
-							delete pNewWin;
-							pNewWin = nullptr;
-						}
+						delete pNewWin;
+						pNewWin = nullptr;
 					}
 				}
 
@@ -350,18 +338,12 @@ bool CBagMovieObject::runObject() {
 			// Movies usually mark the transition from one view to another
 			// but not necessarily a change of sdev's, so make sure we repaint the
 			// backdrop
-			if (pMainWin) {
-				pMainWin->setPreFilterPan(true);
-			}
+			pMainWin->setPreFilterPan(true);
 
 		} else if (nMovFileType == MovieFileType::SOUND) {
 			CBofSound *pSound = new CBofSound(CBofApp::getApp()->getMainWindow(), sFileName, SOUND_WAVE);
-			if (pSound) {
-				pSound->play();
-				delete pSound;
-			} else {
-				logError(buildString("Movie SOUND file could not be read: %s.  Where? Not in Kansas ...", sFileName.getBuffer()));
-			}
+			pSound->play();
+			delete pSound;
 		} else if (nMovFileType == MovieFileType::TEXT) {
 			Common::File f;
 			if (f.open(sFileName.getBuffer())) {
@@ -480,7 +462,7 @@ ParseCodes CBagMovieObject::setInfo(CBagIfstream &istr) {
 				nObjectUpdated = true;
 
 				_pSndObj = new CBagSoundObject();
-				if (_pSndObj && _pSndObj->setInfo(istr) == PARSING_DONE) {
+				if (_pSndObj->setInfo(istr) == PARSING_DONE) {
 					return PARSING_DONE;
 				}
 			} else {
@@ -493,12 +475,12 @@ ParseCodes CBagMovieObject::setInfo(CBagIfstream &istr) {
 		//  No match return from funtion
 		//
 		default: {
-			ParseCodes rc = CBagObject::setInfo(istr);
-			if (rc == PARSING_DONE) {
+			ParseCodes parseCode = CBagObject::setInfo(istr);
+			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}
 
-			if (rc == UPDATED_OBJECT) {
+			if (parseCode == UPDATED_OBJECT) {
 				nObjectUpdated = true;
 			} else { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)

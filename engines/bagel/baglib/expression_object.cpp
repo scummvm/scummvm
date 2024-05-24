@@ -35,10 +35,9 @@ CBagExpressionObject::CBagExpressionObject() : CBagObject() {
 }
 
 CBagExpressionObject::~CBagExpressionObject() {
-	if (_expression != nullptr) {
-		delete _expression;
-		_expression = nullptr;
-	}
+	delete _expression;
+	_expression = nullptr;
+
 	CBagObject::detach();
 }
 
@@ -79,25 +78,21 @@ ParseCodes CBagExpressionObject::setInfo(CBagIfstream &istr) {
 		//
 		//  AS  - n number of slides in sprite
 		//
-		case '(': {
+		case '(':
 			_expression = new CBagExpression();
-			if (_expression) {
-				_expression->setInfo(istr);
-				objectUpdatedFl = true;
-			} else {
-				// there was an error
-			}
-		} break;
+			_expression->setInfo(istr);
+			objectUpdatedFl = true;
+			break;
 		//
 		//  No match return from function
 		//
 		default: {
-			ParseCodes rc = CBagObject::setInfo(istr);
-			if (rc == PARSING_DONE) {
+			ParseCodes parseCode = CBagObject::setInfo(istr);
+			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}
 
-			if (rc == UPDATED_OBJECT) {
+			if (parseCode == UPDATED_OBJECT) {
 				objectUpdatedFl = true;
 			} else { // rc==UNKNOWN_TOKEN
 				if (objectUpdatedFl)

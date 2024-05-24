@@ -56,17 +56,21 @@ CBagPanBitmap::CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, con
 	int nW = width();
 	int nH = height();
 
+	_bPanorama = false;
+	_pCosineTable = nullptr;
+	_bActiveScrolling = false; // The scrolling is not active
+	_xDirection = kDirNONE;    // Direction is not moving
+	_xFOVAngle = 0;
+	_nCorrWidth = 0;
+	_nNumDegrees = 0;
+
+
 	if (nW && nH) {
 		CBofRect xMaxViewSize(0, 0, nW - 1, nH - 1);
 		if (nW > 1000) {
 			xMaxViewSize.left = (long)(nW / MAX_DIV_VIEW);
 			_bPanorama = true;
-		} else
-			_bPanorama = false;
-
-		_pCosineTable = nullptr;
-		_bActiveScrolling = false; // The scrolling is not active
-		_xDirection = kDirNONE;        // Direction is not moving
+		}
 
 		pPalette = getPalette();
 
@@ -98,6 +102,7 @@ CBagPanBitmap::CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, con
 
 		return;
 	}
+
 	_bIsValid = false;
 }
 
@@ -316,7 +321,7 @@ void CBagPanBitmap::setCorrWidth(int nWidth, bool bUpdate) {
 	while (nWidth >>= 1)
 		++i;
 
-	if (i >= 0 && i < 6) {
+	if (i < 6) {
 		_nCorrWidth = i;
 		if (bUpdate) {
 			generateCosineTable();

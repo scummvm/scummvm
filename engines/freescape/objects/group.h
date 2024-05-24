@@ -63,6 +63,7 @@ public:
 	bool isDrawable() override { return true; }
 	void draw(Renderer *gfx, float offset = 0.0) override;
 	void scale(int scale_) override { _scale = scale_; };
+	bool isActive() { return !isDestroyed() && !isInvisible() && _step > 0 && !_finished; };
 	Object *duplicate() override;
 };
 

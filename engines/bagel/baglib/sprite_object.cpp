@@ -53,38 +53,35 @@ ErrorCode CBagSpriteObject::attach() {
 		// Could not already have a sprite
 		assert(_xSprite == nullptr);
 
-		if ((_xSprite = new CBofSprite()) != nullptr) {
-			if (_xSprite->loadSprite(getFileName(), getCels()) != false && (_xSprite->width() != 0) && (_xSprite->height() != 0)) {
-				if (isTransparent()) {
-					int nMaskColor = CBagel::getBagApp()->getChromaColor();
+		_xSprite = new CBofSprite();
 
-					_xSprite->setMaskColor(nMaskColor);
-				}
+		if (_xSprite->loadSprite(getFileName(), getCels()) != false && (_xSprite->width() != 0) && (_xSprite->height() != 0)) {
+			if (isTransparent()) {
+				int nMaskColor = CBagel::getBagApp()->getChromaColor();
 
-				// Set animated of the sprite to be the same as it's parent
-				_xSprite->setAnimated(isAnimated());
-
-				CBofPoint p = CBagObject::getPosition();
-
-				if (p.x == -1 && p.y == -1) // Fixed to allow for [0,0] positioning
-					setFloating();
-				else
-					_xSprite->setPosition(p.x, p.y);
-
-				setProperty("CURR_CEL", getState());
-
-				// This might add something to the PDA, make sure it gets redrawn.
-				CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev());
-
-				if (pMainWin != nullptr) {
-					pMainWin->setPreFilterPan(true);
-				}
-			} else {
-				reportError(ERR_FOPEN, "Could Not Open Sprite: %s", _xSprite->getFileName());
+				_xSprite->setMaskColor(nMaskColor);
 			}
 
+			// Set animated of the sprite to be the same as it's parent
+			_xSprite->setAnimated(isAnimated());
+
+			CBofPoint p = CBagObject::getPosition();
+
+			if (p.x == -1 && p.y == -1) // Fixed to allow for [0,0] positioning
+				setFloating();
+			else
+				_xSprite->setPosition(p.x, p.y);
+
+			setProperty("CURR_CEL", getState());
+
+			// This might add something to the PDA, make sure it gets redrawn.
+			CBagStorageDevWnd *pMainWin = (CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev());
+
+			if (pMainWin != nullptr) {
+				pMainWin->setPreFilterPan(true);
+			}
 		} else {
-			reportError(ERR_MEMORY, "Could not allocate sprite");
+			reportError(ERR_FOPEN, "Could Not Open Sprite: %s", _xSprite->getFileName());
 		}
 	}
 
@@ -190,12 +187,12 @@ ParseCodes CBagSpriteObject::setInfo(CBagIfstream &istr) {
 		//  no match return from function
 		//
 		default: {
-			ParseCodes rc = CBagObject::setInfo(istr);
-			if (rc == PARSING_DONE) {
+			ParseCodes parseCode = CBagObject::setInfo(istr);
+			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}
 
-			if (rc == UPDATED_OBJECT) {
+			if (parseCode == UPDATED_OBJECT) {
 				nObjectUpdated = true;
 			} else { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)

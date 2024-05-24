@@ -26,6 +26,7 @@
  *
  *************************************/
 
+#include "common/events.h"
 #include "director/director.h"
 #include "director/archive.h"
 #include "director/lingo/lingo.h"
@@ -42,53 +43,91 @@
 
 namespace Director {
 
-const char *UnitTest::xlibName = "UnitTest";
-const char *UnitTest::fileNames[] = {
+const char *UnitTestXObj::xlibName = "UnitTest";
+const char *UnitTestXObj::fileNames[] = {
 	"UnitTest",
 	0
 };
+/*
+-- ScummVM UnitTest XObject.
+UnitTest
+I      mNew                     --Creates a new instance of the XObject
+X      mDispose                 --Disposes of XObject instance
+I      mIsRealDirector          --Returns 1 for real Director, 0 for ScummVM
+IS     mScreenshot, path        --Copy contents of stage window to file
+III    mMoveMouse, x, y         --Move the mouse pointer to window position (x, y)
+I      mLeftMouseDown           --Press the LMB
+I      mLeftMouseUp             --Release the LMB
+ */
 
-static BuiltinProto builtins[] = {
-	{ "UTScreenshot", UnitTest::m_UTScreenshot, 0, 1, 400, HBLTIN },
-	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
+static MethodProto xlibMethods[] = {
+	{ "new",				UnitTestXObj::m_new,				0, 0,	400 },	// D4
+	{ "dispose",			UnitTestXObj::m_dispose,			0, 0,	400 },	// D4
+	{ "isRealDirector",		UnitTestXObj::m_isRealDirector,		0, 0,	400 },	// D4
+	{ "screenshot",			UnitTestXObj::m_screenshot,			1, 1,	400 },	// D4
+	{ "moveMouse",			UnitTestXObj::m_moveMouse,			2, 2,	400 },	// D4
+	{ "leftMouseDown",		UnitTestXObj::m_leftMouseDown,		0, 0,	400 },	// D4
+	{ "leftMouseUp",		UnitTestXObj::m_leftMouseUp,		0, 0,	400 },	// D4
+	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void UnitTest::open(ObjectType type, const Common::Path &path) {
-	g_lingo->initBuiltIns(builtins);
+void UnitTestXObj::open(ObjectType type, const Common::Path &path) {
+	if (type == kXObj) {
+		UnitTestXObject::initMethods(xlibMethods);
+		UnitTestXObject *xobj = new UnitTestXObject(kXObj);
+		g_lingo->exposeXObject(xlibName, xobj);
+	}
 }
 
-void UnitTest::close(ObjectType type) {
-	g_lingo->cleanupBuiltIns(builtins);
+void UnitTestXObj::close(ObjectType type) {
+	if (type == kXObj) {
+		UnitTestXObject::cleanupMethods();
+		g_lingo->_globalvars[xlibName] = Datum();
+	}
 }
 
-void UnitTest::m_UTScreenshot(int nargs) {
-	Common::String filenameBase = g_director->getCurrentMovie()->getArchive()->getFileName();
-	if (filenameBase.hasSuffixIgnoreCase(".dir"))
-		filenameBase = filenameBase.substr(0, filenameBase.size() - 4);
+UnitTestXObject::UnitTestXObject(ObjectType ObjectType) :Object<UnitTestXObject>("UnitTest") {
+	_objType = ObjectType;
+}
 
+void UnitTestXObj::m_new(int nargs) {
+	g_lingo->push(g_lingo->_state->me);
+}
+
+void UnitTestXObj::m_dispose(int nargs) {
+}
+
+void UnitTestXObj::m_isRealDirector(int nargs) {
+	g_lingo->push(0);
+}
+
+void UnitTestXObj::m_screenshot(int nargs) {
+	if (nargs == 0) {
+		g_lingo->push(Datum(0));
+		warning("UnitTestXObj::m_screenshot(): expected filename argument");
+		return;
+	}
 	if (nargs > 1) {
 		g_lingo->dropStack(nargs - 1);
+		nargs = 1;
 	}
-	if (nargs == 1) {
-		Datum name = g_lingo->pop();
-		if (name.type == STRING) {
-			filenameBase = *name.u.s;
-		} else if (name.type != VOID) {
-			warning("UnitTest::b_UTScreenshot(): expected string for arg 1, ignoring");
-		}
+	Datum name = g_lingo->pop();
+	if (name.type != STRING) {
+		warning("UnitTestXObj::m_screenshot(): expected string for arg 1");
+		g_lingo->push(Datum(0));
+		return;
 	}
+	Common::String filenameBase = *name.u.s;
 
 	Common::FSNode gameDataDir = g_director->_gameDataDir;
-	Common::FSNode screenDir = gameDataDir.getChild("utscreen");
+	Common::FSNode screenDir = gameDataDir.getChild("scrtest");
 	if (!screenDir.exists()) {
 		screenDir.createDirectory();
 	}
 
-	// force a full screen redraw before taking the screenshot
-	Score *score = g_director->getCurrentMovie()->getScore();
-	score->renderSprites(kRenderForceUpdate);
+	// Fetch whatever is in the screen buffer.
+	// Don't force a redraw, we do that in the script with updateStage().
 	Window *window = g_director->getCurrentWindow();
-	window->render();
 	Graphics::ManagedSurface *windowSurface = window->getSurface();
 
 #ifdef USE_PNG
@@ -99,7 +138,7 @@ void UnitTest::m_UTScreenshot(int nargs) {
 
 	Common::SeekableWriteStream *stream = file.createWriteStream();
 	if (!stream) {
-		warning("UnitTest::b_UTScreenshot(): could not open file %s", file.getPath().toString(Common::Path::kNativeSeparator).c_str());
+		warning("UnitTestXObj::m_screenshot(): could not open file %s", file.getPath().toString(Common::Path::kNativeSeparator).c_str());
 		return;
 	}
 
@@ -114,10 +153,58 @@ void UnitTest::m_UTScreenshot(int nargs) {
 	success = Image::writeBMP(*stream, *windowSurface);
 #endif
 	if (!success) {
-		warning("UnitTest::b_UTScreenshot(): error writing screenshot data to file %s", file.getPath().toString(Common::Path::kNativeSeparator).c_str());
+		warning("UnitTestXObj::m_screenshot(): error writing screenshot data to file %s", file.getPath().toString(Common::Path::kNativeSeparator).c_str());
 	}
 	stream->finalize();
 	delete stream;
+}
+
+void UnitTestXObj::m_moveMouse(int nargs) {
+	if (nargs != 2) {
+		warning("UnitTestXObj::m_moveMouse: expected 2 arguments");
+		g_lingo->dropStack(nargs);
+		g_lingo->push(0);
+		return;
+	}
+	UnitTestXObject *me = static_cast<UnitTestXObject *>(g_lingo->_state->me.u.obj);
+	int16 y = (int16)g_lingo->pop().asInt();
+	int16 x = (int16)g_lingo->pop().asInt();
+	Common::Event ev;
+	ev.type = Common::EVENT_MOUSEMOVE;
+	ev.mouse = Common::Point(x, y);
+	me->_mousePos = ev.mouse;
+	g_director->_injectedEvents.push_back(ev);
+	g_lingo->push(0);
+}
+
+void UnitTestXObj::m_leftMouseDown(int nargs) {
+	if (nargs != 0) {
+		warning("UnitTestXObj::m_leftMouseDown: expected 0 arguments");
+		g_lingo->dropStack(nargs);
+		g_lingo->push(0);
+		return;
+	}
+	UnitTestXObject *me = static_cast<UnitTestXObject *>(g_lingo->_state->me.u.obj);
+	Common::Event ev;
+	ev.type = Common::EVENT_LBUTTONDOWN;
+	ev.mouse = me->_mousePos;
+	g_director->_injectedEvents.push_back(ev);
+	g_lingo->push(0);
+}
+
+void UnitTestXObj::m_leftMouseUp(int nargs) {
+	if (nargs != 0) {
+		warning("UnitTestXObj::m_leftMouseDown: expected 0 arguments");
+		g_lingo->dropStack(nargs);
+		g_lingo->push(0);
+		return;
+	}
+	UnitTestXObject *me = static_cast<UnitTestXObject *>(g_lingo->_state->me.u.obj);
+	Common::Event ev;
+	ev.type = Common::EVENT_LBUTTONUP;
+	ev.mouse = me->_mousePos;
+	g_director->_injectedEvents.push_back(ev);
+	g_lingo->push(0);
 }
 
 } // End of namespace Director

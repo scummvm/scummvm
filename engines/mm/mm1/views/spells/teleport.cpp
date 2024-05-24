@@ -35,7 +35,7 @@ bool Teleport::msgFocus(const FocusMessage &msg) {
 	SpellView::msgFocus(msg);
 
 	_mode = SELECT_DIRECTION;
-	return 0;
+	return false;
 }
 
 void Teleport::draw() {

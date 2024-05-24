@@ -122,7 +122,7 @@ GeometricObject::GeometricObject(
 	const Math::Vector3d &size_,
 	Common::Array<uint8> *colours_,
 	Common::Array<uint8> *ecolours_,
-	Common::Array<uint16> *ordinates_,
+	Common::Array<float> *ordinates_,
 	FCLInstructionVector conditionInstructions_,
 	Common::String conditionSource_) {
 	_type = type_;
@@ -157,7 +157,7 @@ GeometricObject::GeometricObject(
 
 	if (ordinates_) {
 		_ordinates = ordinates_;
-		_initialOrdinates = new Common::Array<uint16>(*_ordinates);
+		_initialOrdinates = new Common::Array<float>(*_ordinates);
 	}
 	_condition = conditionInstructions_;
 	_conditionSource = conditionSource_;
@@ -169,7 +169,7 @@ GeometricObject::GeometricObject(
 
 			_type = kLineType;
 			assert(!_ordinates);
-			_ordinates = new Common::Array<uint16>();
+			_ordinates = new Common::Array<float>();
 			_ordinates->push_back(_origin.x());
 			_ordinates->push_back(_origin.y());
 			_ordinates->push_back(_origin.z());
@@ -192,23 +192,22 @@ void GeometricObject::setOrigin(Math::Vector3d origin_) {
 void GeometricObject::offsetOrigin(Math::Vector3d origin_) {
 	if (isPolygon(_type)) {
 		Math::Vector3d offset = origin_ - _origin;
-		offset = 32 * offset;
 		for (int i = 0; i < int(_ordinates->size()); i = i + 3) {
-			int16 ordinate = 0;
+			float ordinate = 0;
 			ordinate = (*_ordinates)[i];
-			ordinate +=  int16(offset.x());
+			ordinate +=  offset.x();
 			assert(ordinate >= 0);
-			(*_ordinates)[i] = uint16(ordinate);
+			(*_ordinates)[i] = ordinate;
 
 			ordinate = (*_ordinates)[i + 1];
-			ordinate +=  int16(offset.y());
+			ordinate +=  offset.y();
 			assert(ordinate >= 0);
-			(*_ordinates)[i + 1] = uint16(ordinate);
+			(*_ordinates)[i + 1] = ordinate;
 
 			ordinate = (*_ordinates)[i + 2];
-			ordinate +=  int16(offset.z());
+			ordinate +=  offset.z();
 			assert(ordinate >= 0);
-			(*_ordinates)[i + 2] = uint16(ordinate);
+			(*_ordinates)[i + 2] = ordinate;
 		}
 	}
 	setOrigin(origin_);
@@ -219,7 +218,6 @@ void GeometricObject::scale(int factor) {
 	_size = _size / factor;
 	if (_ordinates) {
 		for (uint i = 0; i < _ordinates->size(); i++) {
-			// This division is always exact because each ordinate was multipled by 32
 			(*_ordinates)[i] = (*_ordinates)[i] / factor;
 			if (_initialOrdinates)
 				(*_initialOrdinates)[i] = (*_initialOrdinates)[i] / factor;
@@ -241,7 +239,7 @@ void GeometricObject::restoreOrdinates() {
 Object *GeometricObject::duplicate() {
 	Common::Array<uint8> *coloursCopy = nullptr;
 	Common::Array<uint8> *ecoloursCopy = nullptr;
-	Common::Array<uint16> *ordinatesCopy = nullptr;
+	Common::Array<float> *ordinatesCopy = nullptr;
 	FCLInstructionVector *conditionCopy = nullptr;
 
 	if (_colours)
@@ -251,7 +249,7 @@ Object *GeometricObject::duplicate() {
 		ecoloursCopy = new Common::Array<uint8>(*_ecolours);
 
 	if (_ordinates)
-		ordinatesCopy = new Common::Array<uint16>(*_ordinates);
+		ordinatesCopy = new Common::Array<float>(*_ordinates);
 
 	conditionCopy = duplicateCondition(&_condition);
 	assert(conditionCopy);

@@ -92,10 +92,10 @@ ErrorCode CBofDialog::create(const char *pszName, int x, int y, int nWidth, int 
 	// Calculate effective bounds
 	Common::Rect stRect(x, y, x + nWidth, y + nHeight);
 	if (pParent != nullptr)
-		stRect.translate(pParent->getWindowRect().left,
-						 pParent->getWindowRect().top);
+		stRect.translate(pParent->getWindowRect().left, pParent->getWindowRect().top);
 
 	_cRect = stRect;
+
 	delete _surface;
 	_surface = new Graphics::ManagedSurface(*g_engine->_screen, stRect);
 
@@ -204,13 +204,9 @@ ErrorCode CBofDialog::saveBackground() {
 		delete _pDlgBackground;
 		// Save a copy of the background
 		_pDlgBackground = new CBofBitmap(width(), height(), pPalette);
-		if (_pDlgBackground != nullptr) {
-			_pDlgBackground->captureScreen(this, &_cRect);
-			_pDlgBackground->setReadOnly(true);
 
-		} else {
-			reportError(ERR_MEMORY, "Unable to allocate a new CBofBitmap(%d x %d)", width(), height());
-		}
+		_pDlgBackground->captureScreen(this, &_cRect);
+		_pDlgBackground->setReadOnly(true);
 	}
 
 	_bFirstTime = false;

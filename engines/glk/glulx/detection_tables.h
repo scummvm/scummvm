@@ -78,8 +78,10 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "bluelacuna",         "Blue Lacuna" },
 	{ "bluelattuce",        "Blue Lattuce" },
 	{ "bootscraper",        "The Boot-Scraper" },
+	{ "bradisson",          "Bradisson Rayburn's Revenge!" },
 	{ "briar",              "Briar" },
 	{ "btyt",               "Bigger Than You Think" },
+	{ "bumpnight",          "Bump in the Night" },
 	{ "bureaucrocy_glulx",  "Bureaucrocy" },
 	{ "buygold",            "Buy Gold" },
 	{ "cafesim2k",          "Cafe Simulator 2000" },
@@ -176,6 +178,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "glkchess",           "Glk Chess" },
 	{ "glkebook",           "GlkeBook" },
 	{ "greenmountains",     "The Green Mountains" },
+	{ "grumpytck_glulx",    "The Grumpy Cricket (And Other Enormous Creatures)" },
 	{ "hadeanlands_glulx",  "Hadean Lands" },
 	{ "hardpuzzle1",        "Hard Puzzle" },
 	{ "hardpuzzle2",        "Hard Puzzle 2: The Cow" },
@@ -211,8 +214,11 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "lmg",                "The Little Match Girl" },
 	{ "lmg2",               "The Little Match Girl 2: Annus Evertens" },
 	{ "lmg3",               "The Little Match Girl 3: The Escalus Manifold" },
+	{ "lmgcrow",            "The Little Match Girl and Her Friend, the Crow" },
+	{ "lmggraypeaks",       "The Little Match Girl at the Battle of the Gray Peaks" },
 	{ "lmgrevolver",        "How the Little Match Girl Got Her Colt Paterson Revolver" },
 	{ "lmgqueenvampires",   "How the Little Match Girl Met the Queen of Vampires" },
+	{ "lmgusnlittlegirls",  "The Little Match Girl against the Universal Sisterhood of Naughty Little Girls" },
 	{ "lmstvg_glulx",       "LMS The Video Game" },
 	{ "lockeddoor10",       "Locked Door X: The Workprint" },
 	{ "lockeddoor11",       "Locked Door XI: The US Theatrical Cut" },
@@ -222,7 +228,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "lupercalia_glulx",   "Lupercalia" },
 	{ "lurkinghorror2",     "The Lurking Horror II: The Lurkening" },
 	{ "magicbullet",        "Magic BUllet" },
-	{ "makechange",         "Maybe make some change" },
+	{ "makechange",         "Maybe Make Some Change" },
 	{ "makingme",           "The Making of Me" },
 	{ "mariel",             "Mariel" },
 	{ "maryjaneoftomorrow", "The Mary Jane of Tomorrow" },
@@ -244,6 +250,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "nautilisia_glulx",   "Nautilisia" },
 	{ "necronskeep",        "Necron's Keep" },
 	{ "nest",               "Nest" },
+	{ "nevergivesup",       "Never Gives Up Her Dead" },
 	{ "neverplayed_glulx",  "So, You've Never Played a Text Adventure Before, Huh?" },
 	{ "newcat",             "New Cat" },
 	{ "nightmare",          "Nightmare" },
@@ -293,6 +300,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "shapes",             "Shapes" },
 	{ "sheephere",          "Sheep Here" },
 	{ "shufflearound",      "Shuffling Around" },
+	{ "sidewise",           "Sidewise" },
 	{ "signalerror",        "Signal Error" },
 	{ "six",                "Six" },
 	{ "skmmc",              "Someone Keeps Moving My Chair" },
@@ -300,6 +308,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "slouchbedlam",       "Slouching Towards Bedlam" },
 	{ "smittenkittens",     "Smitten Kittens" },
 	{ "sobrevive",          "Sobrevive" },
+	{ "solitarystars",      "Solitary Stars" },
 	{ "spaceship",          "Spaceship!" },
 	{ "speedracer",         "Speed Racer" },
 	{ "spelunking2",        "IFDB Spelunking 2" },
@@ -308,7 +317,9 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "station9",           "Station 9" },
 	{ "stew",               "Stew" },
 	{ "stormonboard",       "Storm Onboard the Bastille Cargo Vessel" },
+	{ "storyroom",          "The Story is a Room" },
 	{ "stretchlimo",        "Stratch Limo" },
+	{ "strangerooms",       "Strange Rooms" },
 	{ "sunlight",           "Sunlight" },
 	{ "superluminal",       "Superluminal Vagrant Twin" },
 	{ "survive_glulx",      "Survive" },
@@ -320,7 +331,6 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "terminatorchaser",   "Terminator Chaser" },
 	{ "terrorunder",        "Terror of the Underground" },
 	{ "theabbey",           "The Abbey" },
-	{ "theabsenceoflaw",    "The Absence of Law" },
 	{ "theargument",        "The Argument" },
 	{ "thebigfall",         "The Big Fall" },
 	{ "thebox",             "The Box" },
@@ -351,6 +361,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "tobysnose",          "Toby’s Nose" },
 	{ "todayisthesame",     "Today is the Same as Any Other" },
 	{ "tohellinahamper",    "To Hell in a Hamper" },
+	{ "treasurecolumbia",   "The Treasure of Columbia Lake" },
 	{ "trenton",            "Trenton" },
 	{ "trialofthetnuop",    "Trial of the Inuop" },
 	{ "trollslayer",        "Trollslayer" },
@@ -628,6 +639,27 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "if22_hiddentomb",    "The Hidden King's Tomb" },                                                 //   60th Place
 	{ "if22_towerplargh",   "Tower of Plargh" },                                                        //   68th Place
 
+	// IFComp 2023
+	{ "if23_drludwig",      "Dr Ludwig and the Devil" },                                               //     1st Place
+	{ "if23_lmg4",          "The Little Match Girl 4: Crown of Pearls" },                              //     3rd Place
+	{ "if23_honk",          "Honk!" },                                                                 //     4th Place
+	{ "if23_vambrace",      "The Vambrace of Destiny" },                                               //     5th Place
+	{ "if23_assembly",      "Assembly" },                                                              //     9th Place
+	{ "if23_seasieve",      "To Sea in a Sieve" },                                                     //    11th Place
+	{ "if23_citimakane",    "Citizen Makane" },                                                        //    15th Place
+	{ "if23_eateldritch",   "Eat the Eldritch" },                                                      //    18th Place
+	{ "if23_oneking",       "One King to Loot Them All" },                                             //    18th Place
+	{ "if23_gesture",       "Gestures Towards Divinity" },                                             //    22nd Place
+	{ "if23_ribald",        "Ribald Bat Lady Plunder Quest" },                                         //    22nd Place
+	{ "if23_dthstormrider", "Death on the Stormrider" },                                               //    27th Place
+	{ "if23_bbkk_glulx",    "Bright Brave Knight Knave" },                                             //    36th Place
+	{ "if23_beatwitch",     "Beat Witch" },                                                            //    37th Place
+	{ "if23_whoiced",       "Who Iced Mayor McFreeze?" },                                              //    40th Place
+	{ "if23_allhands",      "All Hands Abandon Ship" },                                                //    49th Place
+	{ "if23_wretchedness",  "A Thing of Wretchedness" },                                               //    53rd Place
+	{ "if23_barcarolle",    "Barcarolle in Yellow" },                                                  //    55th Place
+	{ "if23_lastvestiges",  "Last Vestiges" },                                                         //    59th Place
+
 	// The Mystery House Taken Over Project
 	{ "mhto",               "Mystery House Taken Over" },
 	{ "mhto3flippydisk",    "Mystery House Taken Over Ep. 3: Mystery House Kracked" },
@@ -704,6 +736,19 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "ec22_oldhhouse",     "This Old Haunted House" },                                                 //   12th Place
 	{ "ec22_nowheresville", "Nowheresville" },                                                          //   14th Place
 
+	// Ectocomp 2023 - La Petite Mort
+	{ "ec23_dyinglight",    "The Dying of the Ligh" },                                                  //    3rd Place
+	{ "ec23_lonelist",      "The Loneliest House" },                                                    //    9th Place
+	{ "ec23_vampiregold",   "Vampire Gold" },                                                           //   11th Place
+	{ "ec23_xleksixnrewix", "The Labyrinthine Library of Xleksixnrewix" },                              //   14th Place
+	{ "ec23_studyguman",    "A Study of Human Behavior" },                                              //   15th Place
+	{ "ec23_bonfire",       "Bonfire Night: The Black Dog" },                                           //   17th Place
+	{ "ec23_tmmech",        "Taller Tech Mauler Mech" },                                                //   19th Place
+
+	// Ectocomp 2023 - La Petite Mort
+	{ "ec23_putpeep",       "Put-Peep(tm)" },                                                           //    9th Place
+	{ "ec23_hauntcorbitt",  "The Haunting of Corbitt House" },                                          //   17th Place
+
 	// HighlandComp
 	{ "hc_catchhaggid",     "Catch That Haggis" },
 
@@ -778,6 +823,11 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "ic20_foreignsoil",   "Foreign Soil" },                                                          //  Hon. Mention
 	{ "ic20_foolrescue",    "Intro to a Fool’s Rescue" },                                              //  Hon. Mention
 	{ "ic20_theinterview",  "The Interview" },                                                         //  Hon. Mention
+
+	// IntroComp 2023
+	{ "ic23_lunagardens",   "Luna Gardens" },                                                           //    3rd Place
+	{ "ic23_theblossom",    "The Blossom" },                                                            // Hon. Mention
+	{ "ic23_jimmyarishush", "Jimin, Ari, and Shush" },                                                  // Hon. Mention
 
 	// IF Library Competition 2003
 	{ "lc_lazygods",        "Lazy Gods of Earth" },
@@ -946,6 +996,22 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	// Spring Thing 2023 - Back Garden
 	{ "stc23_stygiandream", "Stygian Dreams" },                                                         //      Entrant
 
+	// Spring Thing 2024 - Main Festival
+	{ "stc24_octopus",      "Octopus's Garden" },                                                       //      Entrant
+	{ "stc24_simplehappen", "A Simple Happening" },                                                     //      Entrant
+	{ "stc24_studio",       "Studio" },                                                                 //      Entrant
+
+	// Spring Thing 2024 - Back Garden
+	{ "stc24_lunagardens",  "Luna Gardens" },                                                           //      Entrant
+	{ "stc24_nonverbal",    "Nonverbal Communication" },                                                //      Entrant
+
+	// Spring Thing 2024 - New Game Plus
+	{ "stc24_timemachi24",  "The Time Machine (by Bill Maya)" },                                        //      Entrant
+
+	// Text Adventure Literacy Jam 2024
+	{ "luluasteroid",       "Lulu and the Asteroid of 100% Guaranteed Doom" },                          //      Entrant
+	{ "thewolf",            "The Wolf" },                                                               //      Entrant
+
 	// French games
 	{ "archcivesuliroya",   "Archives Culinaires Royales - Période d’Essai" },
 	{ "astressolitaires",   "Astres Solitaires" },
@@ -1012,8 +1078,8 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "tgp_dersigkeitenlad", "Der Süßigkeitenladen" },                                                  //    4th Place
 
 	// IF Grand Prix 2024 (German)
-	{ "tgp_staub",			"Staub" },
-	{ "tgp_zuschauer",		"Die Zuschauer" },
+	{ "tgp_staub",			"Staub" },                                                                  //    1st Place
+	{ "tgp_zuschauer",		"Die Zuschauer" },															//    2nd Place
 
 	// Italian games
 	{ "angolo",             "Dietro l'Angolo" },
@@ -1133,8 +1199,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "sgw_glulx",          "Test Para SGW" },
 	{ "sinsalida",          "Sin Salida" },
 	{ "subterranea",        "Subterranea" },
-	{ "tiros_xx",              "Un Día Duro en la Sala de Tiro" },
-	{ "ultimohogar_glulx",  "Misterio en el Ultimo Hogar" },
+	{ "tiros_xx",           "Un Día Duro en la Sala de Tiro" },
 	{ "umami",              "El Dia del Umami" },
 	{ "vainsville",         "Vainsville" },
 	{ "venenarius",         "Venenarius Verborum" },
@@ -1153,6 +1218,9 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	// Ectocomp 2022 - Le Grand Guignol (Spanish)
 	{ "ec22_estadop_glulx",  "Estado Profundo" },                                                       //    2nd Place
 
+	// Ectocomp 2023 - Le Grand Guignol (Spanish)
+	{ "ec23_esbozo",         "Esbozo de Feto Investigando Crimen" },                                    //    2nd Place
+
 	// Premios Hispanos 2002 (Spanish)
 	{ "ph02_demoespacio",   "La Gema Karssakis" },
 	{ "ph02_insomnio",      "Insomnio de una Noche de Verano" },
@@ -1160,6 +1228,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "ph02_oder",          "Obituario" },
 	{ "ph02_regente_glulx", "El Anillo Regente" },
 	{ "ph02_salondwight",   "El Salón de Randolph Dwighto" },
+	{ "ph02_uhogar_glulx",  "Misterio en el Ultimo Hogar" },
 
 	// Premios Hispanos 2003 (Spanish)
 	{ "ph03_dioszaglx",     "Dios en Zapatillas" },
@@ -1282,9 +1351,12 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "upspookyhouseq2e3",  "Upon the Spooky House" },                                                  //    3rd Place
 
 	// SeedComp! 2023
-	{ "aftertheaccident",   "After the Accident" },                                                     //    2nd Place
-	{ "hismajesty",         "His Majesty's Royal Space Navy Service Handbook" },                        //    2nd Place
-	{ "magicword",          "The Magic Word" },                                                         //      Entrant
+	{ "aftertheaccident",   "After the Accident" },
+	{ "hismajesty",         "His Majesty's Royal Space Navy Service Handbook" },
+	{ "magicword",          "The Magic Word" },
+
+	// SeedComp! 2024
+	{ "faeryswp",           "Faery: Swapped" },
 
 	// NarraScope 2020 Game Jam
 	{ "quicksketch",        "A Quick Sketch" },
@@ -1310,6 +1382,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("1kcupid", "181215", "2ec3dfeb872cc73606c00164b96cf9de", 835274),
 	DT_ENTRY1("4thidea", "180422", "cfdf614eac577dc282d202b1cb358dd1", 647592),
 	DT_ENTRY1("5secsimulation", "230817", "1291371feac011c32149a54bc21aaa9b", 2030354),
+	DT_ENTRY1("5secsimulation", "230836", "75a982f6da5731cc588f1a1547d9519c", 2030354),
 	DT_ENTRY1("acbs", "170705", "6b108c327301ccba5de41f3b98772b33", 1334066),
 	DT_ENTRY1("accfinsolutisle", "230228", "01e1b6a52aaf69f3ce4c0e8d7afb0553", 593148),
 	DT_ENTRY1("acg", "070501", "1a3eb782d28dd8ae8da40f21adb174f0", 817408),
@@ -1365,8 +1438,10 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("bluelacuna", "100717", "8a2cd2e898f7375d39393b56ed64c5dd", 5673294),
 	DT_ENTRY1("bluelattuce", "210404", "6d9f050be0d0323487ec1a2647e2896d", 744184),
 	DT_ENTRY1("bootscraper", "171007", "ca2713ae5e171db76618a96d8b3c7d3a", 1455682),
+	DT_ENTRY1("bradisson", "240318", "7bdc54b40ea96a62aa5d5239f961cf4c", 677496),
 	DT_ENTRY1("briar", "130707", "fb40823ab510ca052c8736163332ea6d", 766272),
 	DT_ENTRY1("btyt", "130101", "97c6c3622d0d5a2f7a5e4f9ca521c13d", 412214),
+	DT_ENTRY1("bumpnight", "231028", "3403b242c91a51524176918266e2c86d", 715728),
 	DT_ENTRY1("bureaucrocy_glulx", "140401", "530a9efefff27ce37d75e5dc8de8ad5d", 565522),
 	DT_ENTRY1("bureaucrocy_glulx", "140601", "823c8b5425fa537a84b52fb07c997d84", 3396486),
 	DT_ENTRY1("buygold", "160302", "7db70c24b2533800187a1884ca9eacf1", 897480),
@@ -1491,7 +1566,8 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("glkebook", "040506", "1dc4d02840ee7cbf61dc359bc6a69c22", 61162),
 	DT_ENTRY1("greenmountains", "110116", "4049179c3a28703705de72be734e05bc", 337868),
 	DT_ENTRY1("greenmountains", "110116", "4049179c3a28703705de72be734e05bc", 337868),
-	DT_ENTRY1("hadeanlands_glulx", "141017", "01fa9a91b0f72d411ae065971f2c681b", 2487728),
+	DT_ENTRY1("grumpytck_glulx", "141017", "01fa9a91b0f72d411ae065971f2c681b", 2487728),
+	DT_ENTRY1("hadeanlands_glulx", "231225/gblorb", "ae1e1f55f0a1c92fbb2fe216f911d1f0", 649974),
 	DT_ENTRY1("hardpuzzle1", "151117", "ee0a36c15599629bfc4fef9d3d83f70f", 601068),
 	DT_ENTRY1("hardpuzzle2", "151209", "db2880a4bf6539b30b922c83d1f35877", 626752),
 	DT_ENTRY1("hardpuzzle3", "160107", "9dffb3f6fc8daf2bf4a27b4b43745b93", 796682),
@@ -1543,9 +1619,13 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("lmg2", "22???\?/v1", "6aafe5f0c98aebcc810c25ac545894d8", 1199082),
 	DT_ENTRY1("lmg2", "22???\?/v2", "86bbab4c5b9eb203de069fdad7e302d4", 1190198),
 	DT_ENTRY1("lmg3", "22????", "182ad974ff1d772da612c36b8cd5a675", 2298392),
+	DT_ENTRY1("lmgcrow", "231021", "af608098cf304cd9a8a92422fceca257", 945914),
+	DT_ENTRY1("lmggraypeaks", "240430", "4f2463b75be794a391f850cf68dbe1d9", 1025616),
 	DT_ENTRY1("lmgqueenvampires", "230720", "2182c4795ecf3c386233f771dad2324d", 844836),
+	DT_ENTRY1("lmgqueenvampires", "231023", "689253abb8f35011205a918c27bc6adf", 844836),
 	DT_ENTRY1("lmgrevolver", "230316", "d8c187b572d0bbe8167034dc194ecb0a", 861784),
 	DT_ENTRY1("lmgrevolver", "230718", "cf22c81efcfb95a153416974dad6b2f3", 861784),
+	DT_ENTRY1("lmgusnlittlegirls", "231120", "b67dae1dadf48cf805494039c32c4460", 1165840),
 	DT_ENTRY1("lmstvg_glulx", "080404", "9dc7716acde7bc5bdc460f11f7ad51f9", 312920),
 	DT_ENTRY1("lockeddoor10", "220202", "10002a1896d514b08416cffbf673f8c1", 989882),
 	DT_ENTRY1("lockeddoor11", "220214", "d96f42aec8da45f0c194a28ce3c1892e", 1019760),
@@ -1583,6 +1663,8 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("necronskeep", "190112", "52c8ed8b2dfa6195fa61de66e2c1fe2d", 859904),
 	DT_ENTRY1("necronskeep", "190114", "2db002f0b695a4050249c0cd822d9c7b", 1027002),
 	DT_ENTRY1("nest", "230302", "a1ed568122bf10a52c8c2508e75e43c9", 711874),
+	DT_ENTRY1("nevergivesup", "23???\?/v1", "c6a27b1ecf7398721049a129025a2b5a", 10849094),
+	DT_ENTRY1("nevergivesup", "23???\?/v2", "bd6a05c04125a2099d72821425226cd3", 10850118),
 	DT_ENTRY1("neverplayed_glulx", "140327/gblorb", "0ff99e01fcfc9c64971151c0498e6d1e", 1161252),
 	DT_ENTRY1("newcat", "110929", "51d263a55473d4d1ce0bceebca93a878", 795092),
 	DT_ENTRY1("nightmare", "150927", "5a1800ab91062b1edf96671d4de15fb5", 646038),
@@ -1649,6 +1731,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("sheephere", "160416", "1de700b758ef6f975150a6bd8926880d", 621466),
 	DT_ENTRY1("shufflearound", "140914", "31ce78bff3833e5d2224abc4e63e6923", 3091868),
 	DT_ENTRY1("shufflearound", "150328", "00b2a517ec539936b96e84fabb91e5db", 3208092),
+	DT_ENTRY1("sidewise", "240218", "176cdfa0ac1ae66c2a69530b6535b2a6", 5374884),
 	DT_ENTRY1("signalerror", "111116", "739510541192f01467b319b70ed7bf1f", 2138394),
 	DT_ENTRY1("libreriasix", "000927/Demo", "79cc859f9d84e701715dead61f386318", 217250),
 	DT_ENTRY1("skmmc", "150116", "46aee190f69d75592d72b1e3c573b6a8", 831452),
@@ -1658,6 +1741,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("smittenkittens", "160816", "c3402d5d8b94675af5e3e0069366d4fd", 1240942),
 	DT_ENTRY1("sobrevive", "120116/v1", "9dbb27aa8e02dad0e3a7eeebfb6fa41f", 3591036),
 	DT_ENTRY1("sobrevive", "120116/v2", "81797e3609a2ac1d68ad6d18e3e40091", 3590012),
+	DT_ENTRY1("solitarystars", "240118", "a67340929712bc575a2334d8637283bb", 2214712),
 	DT_ENTRY1("spaceship", "090928", "e52390cba328a8c863150ce4651fa71f", 1429732),
 	DT_ENTRY1("speedracer", "190617", "10d61f0fa2c3cbe122112f32d05e03a0", 613834),
 	DT_ENTRY1("spelunking2", "160617", "cea78493dd4dc54a8b3e01f73cc85d76", 1528034),
@@ -1666,6 +1750,8 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("station9", "151020", "258ed781320fdc23f8d38491ea719736", 720278),
 	DT_ENTRY1("stew", "201110", "a76e3b32917f42796c0b0d2cb5e3644d", 783486),
 	DT_ENTRY1("stormonboard", "180315", "c250320bc1280d67551b3e3074e09de2", 656888),
+	DT_ENTRY1("storyroom", "200710", "c3e333f390aa66fdfac37f39ed686469", 626088),
+	DT_ENTRY1("strangerooms", "240110", "729ff8a0e29fa6391d2074dc299d28a3", 654286),
 	DT_ENTRY1("stretchlimo", "190530", "ed829978186c8fcc89d3636981d91bae", 810586),
 	DT_ENTRY1("sunlight", "150822", "e6e1ecccffec97b7ffe42a1463058bae", 699370),
 	DT_ENTRY1("superluminal", "160316", "7beb275a3e66b7b9840019caa3041723", 1162788),
@@ -1681,7 +1767,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("terminatorchaser", "150315", "ac10ba4e7d15ebe4262cb3b9d683ef12", 1698614),
 	DT_ENTRY1("terrorunder", "160214", "28ccee6d403e7c591b2774ab7dfc5cef", 646308),
 	DT_ENTRY1("theabbey", "080626", "3abcc1b85a36efb73815e1cd37143210", 645274),
-	DT_ENTRY1("theabsenceoflaw", "170102", "210e6dc1d5c0fc1f4340ae9ee5bdcf4e", 1332522),
 	DT_ENTRY1("theargument", "100930", "8e9ce765f4224ddede6a911e9b9cd213", 453980),
 	DT_ENTRY1("thebigfall", "210624", "4fcfb19c283e3860aa463dd9e3a77263", 1342530),
 	DT_ENTRY1("thebigfall", "210711", "dad981d1fde0f573fd7c4b4d2652ca69", 1389634),
@@ -1722,6 +1807,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("tohellinahamper", "170412", "f12baa1762e29c9528baec31347a18b0", 973550),
 	DT_ENTRY1("tohellinahamper", "191217", "40cccc5fcce65c03e41dfa664487de10", 1978492),
 	DT_ENTRY1("tohellinahamper", "220307", "a026cda26522215f00a21915cdd8be3f", 1980028),
+	DT_ENTRY1("treasurecolumbia", "231020", "e3a55356dc4c9b5c39cc653c1e20536d", 987398),
 	DT_ENTRY1("trenton", "191115", "d0a34ca27034f1cbc529b803c7af8c56", 1974446),
 	DT_ENTRY1("trialofthetnuop", "170813", "d8a34dc6c9b0e2d037d8cc3de006f42b", 616062),
 	DT_ENTRY1("trollslayer", "151112", "fa3dee31c195732ad6a13a6e0b54d625", 920230),
@@ -1976,8 +2062,8 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	// IFComp 2017
 	DT_ENTRY1("if17_eatme", "170928", "31fb77978d94cd6884bf9dc85177b5a0", 2569302),
 	DT_ENTRY1("if17_eatme", "171013", "5e9c50e06ae1f954b9dd41abcfc0f09b", 2570070),
-	DT_ENTRY1("if17_absenceoflaw", "170102", "3243039ad9fa3f51afc86bda643c7d8d", 1294084),
-	DT_ENTRY1("if17_absenceoflaw", "170102", "210e6dc1d5c0fc1f4340ae9ee5bdcf4e", 1332522),
+	DT_ENTRY1("if17_absenceoflaw", "170102/v1", "3243039ad9fa3f51afc86bda643c7d8d", 1294084),
+	DT_ENTRY1("if17_absenceoflaw", "170102/v2", "210e6dc1d5c0fc1f4340ae9ee5bdcf4e", 1332522),
 	DT_ENTRY1("if17_owlconsults", "170819", "91815dbf6dd2876e9b446c8ac640eab9", 286976),
 	DT_ENTRY1("if17_owlconsults", "171124", "d1d4bd725f5e64a80f97cfc6e687a8e8", 287488),
 	DT_ENTRY1("if17_beautyaustere", "170927", "3d599cee33d1f9123557b7b5a0d75769", 2073986),
@@ -2161,6 +2247,32 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if22_hiddentomb", "220917", "822c6b245c11a5c54aa11fb1b0f2f388", 710058),
 	DT_ENTRY1("if22_towerplargh", "220816", "95106d81bcf4e5ee15c2f9f5bfd4c1b4", 567358),
 
+	// IFComp 2023
+	DT_ENTRY1("if23_drludwig", "231010", "5816783a9300135bddfe292a2254ee56", 1340876),
+	DT_ENTRY1("if23_drludwig", "231202", "77e56b7d82301e114f5163a4eec391c9", 1342156),
+	DT_ENTRY1("if23_lmg4", "23????", "7c9e196d927e9157bb5f9ad7927fae77", 2003206),
+	DT_ENTRY1("if23_honk", "231024", "6d8d9a152dd6127fabe2b5b7a6dff2f7", 2279326),
+	DT_ENTRY1("if23_vambrace", "230922", "a62433710fb043fa5728cd535ced4ab0", 839424),
+	DT_ENTRY1("if23_vambrace", "231124", "e04276b4be41e9267545c31f966e21a1", 839680),
+	DT_ENTRY1("if23_assembly", "231022", "2e7612b73db35724aecab05fdaa8354b", 961690),
+	DT_ENTRY1("if23_seasieve", "231010", "2cfded6774246ec58552290eed968f64", 3606616),
+	DT_ENTRY1("if23_citimakane", "23????", "07152db6c2d5b508638e55d95f3cb8a8", 1624512),
+	DT_ENTRY1("if23_eateldritch", "231020", "dc4e9b2eb5da3841022e3d2cd3431042", 4090574),
+	DT_ENTRY1("if23_oneking", "231027", "7cb26e63f109bbecf353a2bbfd482131", 996352),
+	DT_ENTRY1("if23_gesture", "230930", "ab2b8220c0ce90096c0713b9a573cb1d", 2871814),
+	DT_ENTRY1("if23_ribald", "231002", "8982312266fc875dda47c67128f89d41", 1059740),
+	DT_ENTRY1("if23_dthstormrider", "231003", "17b78e0afbb5a074fd1e6597b249fc46", 2765116),
+	DT_ENTRY1("if23_bbkk_glulx", "230928", "89f93705c53044276ef0da46f72cef18", 505188),
+	DT_ENTRY1("if23_beatwitch", "230928", "e80f3356708b3ba229c662175e171c01", 13275928),
+	DT_ENTRY1("if23_beatwitch", "231031", "17e32775c9d5ddc73dfeb72f6c4085de", 13276544),
+	DT_ENTRY1("if23_whoiced", "230928", "c4a975ad6886e1d978fc9d5d3372f93a", 722652),
+	DT_ENTRY1("if23_allhands", "230907", "bc117eb0d547332e378d320aea43f799", 1295284),
+	DT_ENTRY1("if23_allhands", "230907", "bc117eb0d547332e378d320aea43f799", 1295284),
+	DT_ENTRY1("if23_wretchedness", "231007", "06f98add877f0c5a2b0cc68c50affe0f", 926554),
+	DT_ENTRY1("if23_wretchedness", "231206", "92de763371d8b9c66f3578d413085e64", 925786),
+	DT_ENTRY1("if23_barcarolle", "23????", "844abc693fb36c53ff0863dc703584b1", 2296700),
+	DT_ENTRY1("if23_lastvestiges", "230215", "de82776a3f034647508c4d85bcb86f91", 751650),
+
 	// The Mystery House Taken Over Project
 	DT_ENTRY1("mhto", "050316", "8eae736e39e9f816e0467c819a61f686", 281250),
 	DT_ENTRY1("mhto3flippydisk", "050315", "56ff5a9955bd1f2a351016a30cf9bc80", 3006656),
@@ -2242,6 +2354,25 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("ec22_oldhhouse", "221030", "bec430e7aad958baac37ba72b5a81c82", 849262),
 	DT_ENTRY1("ec22_nowheresville", "221030", "86ecbe2738622a5a162a68704a4a3977", 1471426),
 
+	// Ectocomp 2023 - La Petite Mort
+	DT_ENTRY1("ec23_dyinglight", "231228", "0c8ce754bc47ed1ca02362648d7b19e5", 687786),
+	DT_ENTRY1("ec23_lonelist", "231017", "ae46cc7fd920ad4df399a0d42018c99d", 2082946),
+	DT_ENTRY1("ec23_lonelist", "231028", "1d4cd218025fb18770310a6e18edd81f", 2101890),
+	DT_ENTRY1("ec23_lonelist", "231201", "89f373e4b3425c66e90aa288493495cf", 2101890),
+	DT_ENTRY1("ec23_vampiregold", "231106", "8c368264e04666efb884aceb356618d5", 833930),
+	DT_ENTRY1("ec23_vampiregold", "240105", "f8c408c920392857159bfb55efd1c50a", 843658),
+	DT_ENTRY1("ec23_vampiregold", "240106", "61a0651dac71056b18c566772462ec41", 848778),
+	DT_ENTRY1("ec23_xleksixnrewix", "231029", "1f9e0526a816d898625e8f860fdeb7da", 767900),
+	DT_ENTRY1("ec23_studyguman", "231031", "fca8f1f67c14a7b0149697c2d1195486", 645834),
+	DT_ENTRY1("ec23_bonfire", "231105", "e5090e2d2a712d31e9f608c1817058ec", 658908),
+	DT_ENTRY1("ec23_tmmech", "231031", "f8063c9804dca335ce5c9784f21d6f6c", 368666),
+
+	// Ectocomp 2023 - Le Grand Guignol
+	DT_ENTRY1("ec23_putpeep", "23???\?/v1", "07c4732e019b4a844b819a95f088797e", 1638746),
+	DT_ENTRY1("ec23_putpeep", "23???\?/v2", "a5647af63a765375a1ec46af931b762b", 1637466),
+	DT_ENTRY1("ec23_hauntcorbitt", "231027", "e0f653fdd72bee5d2cbba6f6b4e098f1", 1287716),
+	DT_ENTRY1("ec23_hauntcorbitt", "231101", "c9e79048ede4eb4e000f994911cde968", 1287716),
+
 	// HighlandComp
 	DT_ENTRY1("hc_catchhaggid", "010203", "f6bc94801f2a9c9c59644f21e33de610", 113664),
 
@@ -2317,6 +2448,11 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("ic20_foolrescue", "20????", "c520f331e64f7f2a5a666d7c33655aeb", 985114),
 	DT_ENTRY1("ic20_theinterview", "200706", "2888fdbce5dc116284fc9e93343eeebc", 933494),
 
+	// IntroComp 2023
+	DT_ENTRY1("ic23_lunagardens", "230731", "3a81264e16efa32c11830bd2391b1a95", 649362),
+	DT_ENTRY1("ic23_theblossom", "230731", "80ec68d0142312fd8a0d48aa57745263", 738538),
+	DT_ENTRY1("ic23_jimmyarishush", "230801", "538b463241f603ca1751741cb064537a", 979482),
+
 	// IF Library Competition 2003
 	DT_ENTRY1("lc_lazygods", "020312", "31df98f26852782d4a23d319bb0d6f44", 187136),
 
@@ -2363,6 +2499,8 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("sh14_sequitur", "140813", "c7e384b1938915f17cc0b7d50f41d235", 1642480),
 	DT_ENTRY1("sh14_sparkle", "140512", "106fdc837247efab6a5ab685bd1182c5", 915946),
 	DT_ENTRY1("sh14_sparkle", "140615", "15b34b23ac9e34f4bb9e3eee4a776249", 921440),
+
+	// ShuffleComp 2024
 
 	// ShuffleComp: Disc 2 Competition
 	DT_ENTRY1("shd_comrade", "150506", "9806e5d0e7bee858107cee249d5cce7c", 728512),
@@ -2497,6 +2635,8 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("stc23_repeatending", "23???\?/v2", "8136f79f609e33f15fad2407368553c2", 8694330),
 	DT_ENTRY1("stc23_repeatending", "23???\?/v3", "e6d915734fd353de72860d64c2650575", 8694330),
 	DT_ENTRY1("stc23_repeatending", "23???\?/v4", "41012d54347a18aa662279faec0f6d47", 8699086),
+	DT_ENTRY1("stc23_repeatending", "23???\?/v5", "62a3e2fcb0225e0a187b5fc713ccf610", 8753222),
+	DT_ENTRY1("stc23_repeatending", "23???\?/v6", "181f749064c8b0e2c5f569f27de07e6e", 8753990),
 	DT_ENTRY1("stc23_galaxyjones", "230401", "f11053fe8974eb69e9bcbcd4d69781f8", 1727796),
 	DT_ENTRY1("stc23_nothingfurth", "230327", "9c438278b9b7c3f0fbbce65e3727a76a", 2834794),
 	DT_ENTRY1("stc23_nothingfurth", "230511", "9089d1ce6ec1ee809f919d7ef4deba64", 2909444),
@@ -2507,6 +2647,24 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 
 	// Spring Thing 2023 - Back Garden
 	DT_ENTRY1("stc23_stygiandream", "230402", "1e4d4ee86084c116bb09732e6ab9d2fa", 1455946),
+
+	// Spring Thing 2024 - Main Festival
+	DT_ENTRY1("stc24_octopus", "240329", "9ee2933efd07876abea01b4e0857060d", 850706),
+	DT_ENTRY1("stc24_simplehappen", "240329", "c8eb62ee1dc53e4bd2ab6e6698509680", 2806058),
+	DT_ENTRY1("stc24_studio", "24????", "789d001389192df07423f870502314a6", 4764084),
+
+	// Spring Thing 2024 - Back Garden
+	DT_ENTRY1("stc24_lunagardens", "240330/Demo", "27b602211f44ebdc05ba4fb61636a81a", 618658),
+	DT_ENTRY1("stc24_lunagardens", "240409/Demo", "79343b48f6b99574f165f7ba7a26e732", 621730),
+	DT_ENTRY1("stc24_nonverbal", "240330", "ac96054825f4ffb6b0f981f11ff43939", 742910),
+	DT_ENTRY1("stc24_nonverbal", "240424", "e7032d27a2c6ab703fbfffcb5c387770", 666488),
+
+	// Spring Thing 2024 - New Game Plus
+	DT_ENTRY1("stc24_timemachi24", "240329", "d8442e3f28c2812f611ee91dc2434f27", 23123096),
+
+	// Text Adventure Literacy Jam 2024
+	DT_ENTRY1("luluasteroid", "240430", "2edb05f1d13150655941fb255f5921e0", 23246980),
+	DT_ENTRY1("thewolf", "240430", "30f2253cc9ccdb7d0ccff86a7f5e743b", 684594),
 
 	// French games
 	DT_ENTRYL1("archcivesuliroya", Common::FR_FRA, "230207", "20e4606d807b74fd18c134bdad79e808", 1907590),
@@ -2567,6 +2725,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRYL1("matthiasclaudius", Common::DE_DEU, "180730", "bc2d409cc3ab7c65f52332d64e792bae", 1016584),
 	DT_ENTRYL1("morgenwirdklausur", Common::DE_DEU, "170423", "b71391f995becb65992561d57ed80829", 724164),
 	DT_ENTRYL1("morgenwirdklausur", Common::DE_DEU, "170430", "85a966e56c4e0fc7d10df9bc3824da95", 727492),
+	DT_ENTRYL1("morgenwirdklausur", Common::DE_DEU, "170519", "a722441620b75b62995d82b2694fdc95", 986510),
 	DT_ENTRYL1("patanoirde", Common::DE_DEU, "131202", "9ed40b987510c7a8b7da4386ff8879b1", 969304),
 	DT_ENTRYL1("sonntagnachmittag", Common::DE_DEU, "141114", "762c003565858d952a21ac81904670e2", 712716),
 	DT_ENTRYL1("spaterbesuch", Common::DE_DEU, "191013", "24bd852ecb47a6f01cdaa9be80195f4a", 9608754),
@@ -2589,6 +2748,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	// IF Grand Prix 2024 (German)
 	DT_ENTRYL1("tgp_staub", Common::DE_DEU, "240329", "e2bfc2c311f85396fd76af2a10613fd1", 1506992),
 	DT_ENTRYL1("tgp_staub", Common::DE_DEU, "240415", "d0ca22538b7e06b7d100fdab0693124f", 1551536),
+	DT_ENTRYL1("tgp_staub", Common::DE_DEU, "240511", "0816b685a42260ead843db9933939ed9", 1572784),
 	DT_ENTRYL1("tgp_zuschauer", Common::DE_DEU, "240401", "f16bf2cf4ae27bf035cd221c0b3ec3fc", 1851170),
 
 	// Italian games
@@ -2690,7 +2850,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRYL1("dwight_glulx", Common::ES_ESP, "150211/blb", "3921f994e736f61d0b431d930e3d54f9", 301314),
 	DT_ENTRYL1("elcristalrojo", Common::ES_ESP, "100413", "2a89d8567019164d9fb8bd0f1233a6e3", 5207024),
 	DT_ENTRYL1("eldiadespues", Common::ES_ESP, "120115", "a6cd3450877db0ab30da0627066fc811", 1637516),
-	DT_ENTRYL1("elhobbit", Common::ES_ESP, "????", "bbc16dd8ea07363892a3709ded4e4658", 359328),
+	DT_ENTRYL1("elhobbit", Common::ES_ESP, "??????", "bbc16dd8ea07363892a3709ded4e4658", 359328),
 	DT_ENTRYL1("elultimojedi", Common::ES_ESP, "130728", "5f4ba8e224a52ee94e49842d577c2276", 74312818),
 	DT_ENTRYL1("ensaladasensorial", Common::ES_ESP, "000925", "a841d6881143763412425150073e1fa5", 225042),
 	DT_ENTRYL1("entrevista", Common::ES_ESP, "??????", "3addab0d41a396a874dc15661a8a858c", 3626570),
@@ -2753,8 +2913,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRYL1("subterranea", Common::ES_ESP, "160621", "9dec7e3ac1faa38b9589a19da8916428", 2677882),
 	DT_ENTRYL1("tiros_xx", Common::ES_ESP, "030111", "a1be4ffdbb0a088d0fa85788f3ec546a", 162816),
 	DT_ENTRYL1("tiros_xx", Common::ES_ESP, "030623", "70596067caeb3039ea34d3daeedadecc", 172032),
-	DT_ENTRYL1("ultimohogar_glulx", Common::ES_ESP, "021224", "28ca16f056e5ea7844012860016a1efa", 677912),
-	DT_ENTRYL1("ultimohogar_glulx", Common::ES_ESP, "021225", "08d4168a767dce4899640a000d2809d8", 663576),
 	DT_ENTRYL1("umami", Common::ES_ESP, "070807/blb", "e8cba9e025710bbbdd464b4b15c9baf4", 394562),
 	DT_ENTRYL1("umami", Common::ES_ESP, "070807/ulx", "6ac36d33f9bd4f31b54c8d01b3891957", 132096),
 	DT_ENTRYL1("vainsville", Common::ES_ESP, "160806", "392d69ae2125949e67416640274da60d", 1021280),
@@ -2775,6 +2933,9 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	// Ectocomp 2022 - Le Grand Guignol (Spanish)
 	DT_ENTRYL1("ec22_estadop_glulx", Common::ES_ESP, "221027", "8bbf39eed65125accc5703be50ebbea4", 697134),
 
+	// Ectocomp 2023 - Le Grand Guignol (Spanish)
+	DT_ENTRYL1("ec23_esbozo", Common::ES_ESP, "231031", "79ace90d5fee76e18a96933a4e71f15e", 932374),
+
 	// Premios Hispanos 2002 (Spanish)
 	DT_ENTRYL1("ph02_demoespacio", Common::ES_ESP, "020726", "6e915e11cf880dd56ac38f2cf3afa1af", 169472),
 	DT_ENTRYL1("ph02_insomnio", Common::ES_ESP, "020802", "2242057928285679d513ed01094c7503", 236372),
@@ -2784,6 +2945,8 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRYL1("ph02_oder", Common::ES_ESP, "Corrupt", "07e6993cb70fdf3d794fec0cc47e89fa", 1175810),
 	DT_ENTRYL1("ph02_regente_glulx", Common::ES_ESP, "021129", "7c8608e214821c55bc9224ccfd5beb44", 273092),
 	DT_ENTRYL1("ph02_salondwight", Common::ES_ESP, "021116", "04d1af01052792915ed8a420ffd61663", 171010),
+	DT_ENTRYL1("ph02_uhogar_glulx", Common::ES_ESP, "021224", "28ca16f056e5ea7844012860016a1efa", 677912),
+	DT_ENTRYL1("ph02_uhogar_glulx", Common::ES_ESP, "021225/blb", "08d4168a767dce4899640a000d2809d8", 663576),
 
 	// Premios Hispanos 2003 (Spanish)
 	DT_ENTRYL1("ph03_dioszaglx", Common::ES_ESP, "040107", "7a88c6cf9bfb9a7ffbcee11d1a8331c3", 270560),
@@ -2810,8 +2973,8 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRYL1("ph05_musa", Common::ES_ESP, "050605", "b872295179826ff8b2bf20be45007dc0", 519830),
 	DT_ENTRYL1("ph05_rur", Common::ES_ESP, "?????\?/blb/Corrupt", "4d7dab1227494292f37107da1729392e", 3432966),
 	DT_ENTRYL1("ph05_rur", Common::ES_ESP, "?????\?/ulx/Corrupt", "de15e8cdd8523c774b66950a0232a0f9", 413184),
-	DT_ENTRYL1("ph05_rur", Common::ES_ESP, "1106???\?/blb", "160413ab0c3b1fdd4346ee493c4b3e46", 3493080),
-	DT_ENTRYL1("ph05_rur", Common::ES_ESP, "1106???\?/ulx", "b5238a903be352f491c46ce58b80cefd", 433920),
+	DT_ENTRYL1("ph05_rur", Common::ES_ESP, "1106?\?/blb", "160413ab0c3b1fdd4346ee493c4b3e46", 3493080),
+	DT_ENTRYL1("ph05_rur", Common::ES_ESP, "1106?\?/ulx", "b5238a903be352f491c46ce58b80cefd", 433920),
 	DT_ENTRYL1("ph05_sarimek", Common::ES_ESP, "Corrupt", "a20f085b591590ee351bfc464c3c41f4", 2018160),
 
 	// Premios Hispanos 2006 (Spanish)
@@ -2947,6 +3110,9 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("hismajesty", "230223", "c761ba668ff6107311b5c4e93a352b59", 2701290),
 	DT_ENTRY1("hismajesty", "230305", "615014064a099b45861feac57868d91a", 2701802),
 	DT_ENTRY1("magicword", "230226", "d8a4512ef0d952eecc1dbfcf5feeb810", 935362),
+
+	// SeedComp! 2024
+	DT_ENTRY1("faeryswp", "240406", "19b3068973cd4015f8e480c3d2bd4829", 683994),
 
 	// NarraScope 2020 Game Jam
 	DT_ENTRY1("quicksketch", "200608", "51ddf89a462df94280c73b5914368fff", 1072392),

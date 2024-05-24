@@ -40,7 +40,7 @@ SaveThumbHelper::SaveThumbHelper(BaseGame *inGame) : _gameRef(inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-SaveThumbHelper::~SaveThumbHelper(void) {
+SaveThumbHelper::~SaveThumbHelper() {
 	delete _thumbnail;
 	_thumbnail = nullptr;
 	delete _scummVMThumb;

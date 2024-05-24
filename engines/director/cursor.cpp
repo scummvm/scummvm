@@ -28,6 +28,7 @@
 #include "director/movie.h"
 #include "director/castmember/bitmap.h"
 #include "director/picture.h"
+#include "director/lingo/lingo-code.h"
 
 namespace Director {
 
@@ -62,7 +63,7 @@ void Cursor::readFromCast(Datum cursorCasts) {
 		warning("Cursor::readFromCast: Needs array of 2");
 		return;
 	}
-	if (_cursorResId == cursorCasts)
+	if (_cursorResId.type == ARRAY && LC::eqData(_cursorResId, cursorCasts).asInt())
 		return;
 
 	CastMemberID cursorId = cursorCasts.u.farr->arr[0].asMemberID();
@@ -82,7 +83,13 @@ void Cursor::readFromCast(Datum cursorCasts) {
 	_usePalette = false;
 	_keyColor = 3;
 
-	resetCursor(Graphics::kMacCursorCustom, true, cursorCasts);
+	Datum cursorRes;
+	if (g_director->getVersion() < 500) {
+		cursorRes = Datum(cursorId.member);
+	} else {
+		cursorRes = Datum((cursorId.castLib << 16) + cursorId.member);
+	}
+	resetCursor(Graphics::kMacCursorCustom, true, cursorRes);
 
 	BitmapCastMember *cursorBitmap = (BitmapCastMember *)cursorCast;
 	BitmapCastMember *maskBitmap = (BitmapCastMember *)maskCast;

@@ -1574,9 +1574,11 @@ bool MacIndy3Gui::runIqPointsDialog() {
 			break;
 
 		if (clicked == 1) {
-			((ScummEngine_v4 *)_vm)->clearSeriesIQPoints();
-			window->replaceSubstitution(1, Common::String::format("%d", _vm->VAR(245)));
-			window->redrawWidget(4);
+			if (!_vm->enhancementEnabled(kEnhUIUX) || runOkCancelDialog("Are you sure you want to reset the series IQ score?")) {
+				((ScummEngine_v4 *)_vm)->clearSeriesIQPoints();
+				window->replaceSubstitution(1, Common::String::format("%d", _vm->VAR(245)));
+				window->redrawWidget(4);
+			}
 		}
 	}
 

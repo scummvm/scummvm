@@ -35,7 +35,7 @@ void CastleEngine::loadAssetsAmigaDemo() {
 		error("Failed to open 'x' file");
 
 	loadMessagesVariableSize(&file, 0x8bb2, 178);
-	loadRiddles(&file, 0x96c9, 20);
+	loadRiddles(&file, 0x96c8, 20);
 	load8bitBinary(&file, 0x162a6, 16);
 	loadPalettes(&file, 0x151a6);
 

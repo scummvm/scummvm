@@ -36,7 +36,7 @@
 #define SV_BLITTER_DST            ((volatile long*)0x80010060)
 // The amount of bytes that are to be copied in a horizontal line, minus 1
 #define SV_BLITTER_COUNT          ((volatile long*)0x80010064)
-// The amount of bytes that are to be added to the line start adress after a line has been copied, in order to reach the next one
+// The amount of bytes that are to be added to the line start address after a line has been copied, in order to reach the next one
 #define SV_BLITTER_SRC1_OFFSET    ((volatile long*)0x80010068)
 #define SV_BLITTER_SRC2_OFFSET    ((volatile long*)0x8001006C)
 #define SV_BLITTER_DST_OFFSET     ((volatile long*)0x80010070)

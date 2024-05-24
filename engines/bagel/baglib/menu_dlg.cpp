@@ -420,7 +420,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			char szBuf[256];
 			Common::strcpy_s(szBuf, EXAMINEBMP);
 			CBofString cString(szBuf, 256);
-			MACROREPLACE(cString);
+			fixPathName(cString);
 			CBofPalette      xPal;
 
 			xPal.loadPalette(cString);
@@ -591,13 +591,12 @@ ErrorCode CBagMenuDlg::create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRec
 	CBagStorageDevDlg::create("Menu", &r, pWnd, 0);
 
 	CBofBitmap *pBmp = new CBofBitmap(r.width(), r.height(), pPal);
-	if (pBmp != nullptr) {
-		r.offsetRect(-r.left, -r.top);
-		assert(pPal != nullptr);
-		pBmp->fillRect(&r, pPal->getNearestIndex(RGB(82, 82, 82)));
-		pBmp->drawRect(&r, pPal->getNearestIndex(RGB(0, 0, 0)));
-		setBackdrop(pBmp);
-	}
+
+	r.offsetRect(-r.left, -r.top);
+	assert(pPal != nullptr);
+	pBmp->fillRect(&r, pPal->getNearestIndex(RGB(82, 82, 82)));
+	pBmp->drawRect(&r, pPal->getNearestIndex(RGB(0, 0, 0)));
+	setBackdrop(pBmp);
 
 	return _errCode;
 }

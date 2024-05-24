@@ -85,7 +85,7 @@ ErrorCode CBagCharacterObject::attach() {
 
 	_bmpBuf = new CBofBitmap(_smacker->getWidth(), _smacker->getHeight(), smackPal);
 
-	if ((smackPal != nullptr) && (_bmpBuf != nullptr)) {
+	if (smackPal != nullptr) {
 		_bmpBuf->fillRect(nullptr, smackPal->getNearestIndex(RGB(255, 255, 255)));
 	}
 
@@ -103,13 +103,8 @@ ErrorCode CBagCharacterObject::attach() {
 		CBofFile cInputFile(filename.getBuffer());
 
 		_binBufLen = cInputFile.getLength();
-
-		if ((_binBuf = (char *)bofAlloc(_binBufLen + 1)) != nullptr) {
-			cInputFile.read(_binBuf, _binBufLen);
-
-		} else {
-			reportError(ERR_MEMORY);
-		}
+		_binBuf = (char *)bofAlloc(_binBufLen + 1);
+		cInputFile.read(_binBuf, _binBufLen);
 	}
 
 	// Set the start and stop frames if still default.
@@ -499,12 +494,12 @@ ParseCodes CBagCharacterObject::setInfo(CBagIfstream &istr) {
 
 		// No match return from function
 		default: {
-			ParseCodes rc = CBagObject::setInfo(istr);
-			if (rc == PARSING_DONE) {
+			ParseCodes parseCode = CBagObject::setInfo(istr);
+			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}
 
-			if (rc == UPDATED_OBJECT) {
+			if (parseCode == UPDATED_OBJECT) {
 				objectUpdatedFl = true;
 			} else { // rc==UNKNOWN_TOKEN
 				if (objectUpdatedFl)

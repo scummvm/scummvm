@@ -23,7 +23,6 @@
 #include "common/savefile.h"
 #include "common/debug.h"
 #include "bagel/boflib/log.h"
-#include "bagel/boflib/stdinc.h"
 
 namespace Bagel {
 
@@ -47,11 +46,6 @@ void logWarning(const char *msg) {
 void logError(const char *msg) {
 	if (gDebugLevel > 0)
 		debug("%s%s", g_pszLogTypes[1], msg);
-}
-
-void logFatal(const char *msg) {
-	if (gDebugLevel > 0)
-		debug("%s%s", g_pszLogTypes[0], msg);
 }
 
 const char *buildString(const char *pszFormat, ...) {

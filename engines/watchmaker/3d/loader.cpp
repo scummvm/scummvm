@@ -155,7 +155,7 @@ public:
 		}
 	}
 
-	_t3dLOADLIST* getFromLoadList(void) {
+	_t3dLOADLIST* getFromLoadList() {
 		for (int a = 0; a < MAX_T3D_LOADLIST_ITEMS; a++) {
 			if (!t3dLoadList[a].pname.empty())
 				return &t3dLoadList[a];

@@ -76,6 +76,10 @@ Common::Error Window::loadInitialMovie() {
 	if (multiArchive->isLoaded()) {
 		// A valid projector archive, add to SearchMan
 		SearchMan.add(_vm->getRawEXEName(), multiArchive);
+
+		if (ConfMan.getBool("dump_scripts"))
+			multiArchive->dumpArchive(Common::Path("./dumps").join(encodePathForDump(movie)));
+
 	} else {
 		delete multiArchive;
 	}
@@ -652,7 +656,7 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 	stream->seek(rifxOffset);
 	tag = stream->readUint32BE();
 
-	debugC(1, kDebugLoading, "File: %s off: 0x%x, tag: %s rifx: 0x%x", _path.toString().c_str(), off, tag2str(tag), rifxOffset);
+	debugC(1, kDebugLoading, "File: %s off: 0x%x (%u), tag: %s rifx: 0x%x (%d)", _path.toString().c_str(), off, off, tag2str(tag), rifxOffset, rifxOffset);
 
 	// Try to locate the very next Dict tag(byte-by-byte)
 	tag = stream->readUint32BE();
@@ -740,7 +744,7 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 
 		Common::Path path = toSafePath(arr[i]);
 
-		debugC(1, kDebugLoading, "Entry: %s offset %lX tag %s size %d", path.toString().c_str(), long(stream->pos() - 8), tag2str(tag), size);
+		debugC(1, kDebugLoading, "Entry: %s offset %lX (%ld) tag %s size %d", path.toString().c_str(), long(stream->pos() - 8), long(stream->pos() - 8), tag2str(tag), size);
 
 		Entry entry;
 
@@ -791,12 +795,115 @@ Common::SeekableReadStream *ProjectorArchive::createReadStreamForMember(const Co
 	if (fDesc == _files.end())
 		return nullptr;
 
+	debugC(3, kDebugLoading, "ProjectorArchive::createReadStreamForMember(): Opening built-in file '%s' @ 0x%08x, %d bytes",
+		path.toString().c_str(), fDesc->_value.offset, fDesc->_value.size);
+
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(_path);
 
 	stream->seek(fDesc->_value.offset, SEEK_SET);
 	byte *data = (byte *)malloc(fDesc->_value.size);
 	stream->read(data, fDesc->_value.size);
 	delete stream;
+
+	// Now we need to patch the mmap offset
+
+	// First, do sanity checking for the file
+	byte *ptr = data;
+	uint32 headerTag = READ_UINT32(ptr);
+	ptr += 4;
+	bool formatOK = true;
+	bool isBigEndian = false; // LE
+
+	if (headerTag == MKTAG('X', 'F', 'I', 'R')) {
+		isBigEndian = false;
+	} else if (headerTag == MKTAG('R', 'I', 'F', 'X')) {
+		isBigEndian = true;
+	} else {
+		formatOK = false;
+	}
+
+	// 4 bytes size
+	ptr += 4;
+
+	uint32 rifxType = isBigEndian ? READ_LE_UINT32(ptr) : READ_BE_UINT32(ptr);
+	ptr += 4;
+
+	uint32 mmapOffset;
+	uint32 resCount;
+
+	int patchedOffests = 0;
+
+	switch (rifxType) {
+	case MKTAG('M', 'V', '9', '3'):
+	case MKTAG('M', 'C', '9', '5'):
+	case MKTAG('A', 'P', 'P', 'L'):
+		if ((isBigEndian ? READ_LE_UINT32(ptr) : READ_BE_UINT32(ptr)) != MKTAG('i', 'm', 'a', 'p')) {
+			formatOK = false;
+			break;
+		}
+		ptr += 4;
+
+		// patch it
+		ptr += 4; // imap length
+		ptr += 4; // unknown
+		mmapOffset = isBigEndian ? READ_LE_UINT32(ptr) : READ_BE_UINT32(ptr);
+
+		debugC(8, kDebugLoading, "ProjectorArchive::createReadStreamForMember(): Patched offset at 0x%08x from %u to %u",
+			(uint32)(ptr - data), mmapOffset, mmapOffset - fDesc->_value.offset);
+
+		mmapOffset -= fDesc->_value.offset;
+
+		isBigEndian ? WRITE_LE_UINT32(ptr, mmapOffset) : WRITE_BE_UINT32(ptr, mmapOffset);
+		patchedOffests++;
+
+		ptr = data + mmapOffset;
+
+		if ((isBigEndian ? READ_LE_UINT32(ptr) : READ_BE_UINT32(ptr)) != MKTAG('m', 'm', 'a', 'p')) {
+			formatOK = false;
+			break;
+		}
+
+		ptr += 4; // mmap length
+		ptr += 4; // unknown
+		ptr += 4; // unknown
+		ptr += 4; // resCount + empty entries
+		resCount = isBigEndian ? READ_LE_UINT32(ptr) : READ_BE_UINT32(ptr);
+		ptr += 4;
+		ptr += 8; // all 0xFF
+		ptr += 4; // id of the first free resource, -1 if none.
+
+		for (uint32 i = 0; i < resCount; i++) {
+			ptr += 4; // tag
+			uint32 size = isBigEndian ? READ_LE_UINT32(ptr) : READ_BE_UINT32(ptr);
+			ptr += 4;
+			int32 offset = isBigEndian ? READ_LE_UINT32(ptr) : READ_BE_UINT32(ptr);
+
+			if (size > 0 || offset >= fDesc->_value.offset)  {
+				debugC(8, kDebugLoading, "ProjectorArchive::createReadStreamForMember(): Patched offset at 0x%08x from %u to %u",
+					(uint32)(ptr - data), offset, offset - fDesc->_value.offset);
+
+				offset -= fDesc->_value.offset;
+				patchedOffests++;
+
+				isBigEndian ? WRITE_LE_UINT32(ptr, offset) : WRITE_BE_UINT32(ptr, offset);
+			}
+			ptr += 4;
+
+			ptr += 2; // flags
+			ptr += 2; // unk1
+			ptr += 4; // nextFreeResourceId
+		}
+
+		break;
+
+	default:
+		formatOK = false;
+	}
+
+	if (!formatOK)
+		warning("ProjectorArchive::createReadStreamForMember(): File %s has unsupported format", path.toString().c_str());
+
+	debugC(3, kDebugLoading, "ProjectorArchive::createReadStreamForMember(): Patched %d offsets", patchedOffests);
 
 	return new Common::MemoryReadStream(data, fDesc->_value.size, DisposeAfterUse::YES);
 }

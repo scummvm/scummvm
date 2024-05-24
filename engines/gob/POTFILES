@@ -7,3 +7,4 @@ engines/gob/detection/tables_adi5.h
 engines/gob/detection/tables_adibou3.h
 engines/gob/detection/tables_adiboupresente.h
 engines/gob/detection/tables_adiboudchou.h
+engines/gob/detection/tables_pierresmagiques.h

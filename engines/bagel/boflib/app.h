@@ -70,8 +70,7 @@ public:
 	virtual ~CBofApp();
 
 	ErrorCode preInit();
-	ErrorCode preShutDown();
-	ErrorCode postShutDown();
+	void postShutDown();
 
 	// These functions can be overridden by the child class
 	virtual ErrorCode initialize();

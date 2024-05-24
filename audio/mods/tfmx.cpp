@@ -242,7 +242,7 @@ void Tfmx::macroRun(ChannelContext &channel) {
 				// in this state we then need to allow some commands that normally
 				// would halt the macroprogamm to continue instead.
 				// those commands are: Wait, WaitDMA, AddPrevNote, AddNote, SetNote, <unknown Cmd>
-				// DMA On is affected aswell
+				// DMA On is affected as well
 				// TODO remember time disabled, remember pending dmaoff?.
 			}
 
@@ -669,7 +669,7 @@ bool Tfmx::trackRun(const bool incStep) {
 				initFadeCommand(((const uint8 *)&trackData[2])[1], ((const int8 *)&trackData[3])[1]);
 				break;
 
-			case 3:	// Unknown, stops player aswell
+			case 3:	// Unknown, stops player as well
 			default:
 				debug(3, "Tfmx: Unknown Trackstep Command: %02X", READ_BE_UINT16(&trackData[1]));
 				// MI-Player handles this by stopping the player, we just continue

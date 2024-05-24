@@ -106,7 +106,7 @@ void Window::invertChannel(Channel *channel, const Common::Rect &destRect) {
 			const byte *msk = mask ? (const byte *)mask->getBasePtr(xoff, yoff + i) : nullptr;
 
 			for (int j = 0; j < srcRect.width(); j++, src++)
-				if (!mask || (msk && !(*msk++)))
+				if (!mask || (msk && (*msk++)))
 					*src = _wm->inverter(*src);
 		}
 	} else {
@@ -116,7 +116,7 @@ void Window::invertChannel(Channel *channel, const Common::Rect &destRect) {
 			const uint32 *msk = mask ? (const uint32 *)mask->getBasePtr(xoff, yoff + i) : nullptr;
 
 			for (int j = 0; j < srcRect.width(); j++, src++)
-				if (!mask || (msk && !(*msk++)))
+				if (!mask || (msk && (*msk++)))
 					*src = _wm->inverter(*src);
 		}
 	}
@@ -263,8 +263,6 @@ bool Window::setStageRect(Datum datum) {
 
 	// Unpack rect from datum
 	Common::Rect rect = Common::Rect(datum.u.farr->arr[0].asInt(), datum.u.farr->arr[1].asInt(), datum.u.farr->arr[2].asInt(), datum.u.farr->arr[3].asInt());
-
-	ensureMovieIsLoaded();
 
 	setInnerDimensions(rect);
 
@@ -413,6 +411,8 @@ void Window::loadNewSharedCast(Cast *previousSharedCast) {
 
 	// Clean up the previous sharedCast
 	if (previousSharedCast) {
+		debug(0, "@@   Clearing shared cast '%s'", previousSharedCastPath.toString().c_str());
+
 		g_director->_allSeenResFiles.erase(previousSharedCastPath);
 		g_director->_allOpenResFiles.remove(previousSharedCastPath);
 		delete previousSharedCast->_castArchive;

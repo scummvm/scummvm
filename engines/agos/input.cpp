@@ -58,7 +58,7 @@ uint AGOSEngine::setVerbText(HitArea *ha) {
 void AGOSEngine::setup_cond_c_helper() {
 	HitArea *last;
 
-	_noRightClick = 1;
+	_noRightClick = true;
 
 	if (getGameType() == GType_WW)
 		clearMenuStrip();

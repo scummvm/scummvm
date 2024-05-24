@@ -430,145 +430,38 @@ void addObsidianBugFixes(const MTropolisGameDescription &desc, Hacks &hacks) {
 }
 
 void addObsidianImprovedWidescreen(const MTropolisGameDescription &desc, Hacks &hacks) {
-	if ((desc.desc.flags & ADGF_DEMO) == 0 && desc.desc.language == Common::EN_ANY && desc.desc.platform == Common::kPlatformWindows) {
+	if ((desc.desc.flags & ADGF_DEMO) == 0) {
 		const uint32 inventoryItemGUIDs[] = {
-			// Bureau documents
-			// 100 area (booths)
-			0x4e2d9e,
-			0x4dfa22,
-
-			// 199 area (booths hint room)
-			0x4e2555,
-			0x4de654,
-
-			// 200 area (library)
-			0x4c83d2,
-			0x4c5802,
-
-			// 299 area (Cloud Ring)
-			0x178d5c,
-			0x177754,
-
-			// 300 area (light+phone)
-			0x4e0f86,
-			0x4e5107,
-
-			// 400 area (maze)
-			0x4e5528,
-			0x4e55cc,
-
-			// 500 area (Immediate Action)
-			0x4e2e7b,
-			0x4e0710,
-
-			// 800 area (bookshelves)
-			0x9914fb,
-			0x990f1f,
-
-			// 600 (sky face), 699 (mountain), and 700 (finale) have no document elements (player loses the documents)
-
-			// Bureau maze keycards
-			0x6035f,
-			0x62e24,
-			0x58d7f,
-			0x58212,
-
-			// Spider metal puzzle beaker
-			0x12fa7,
-
-			// Inspiration chip
-			// 100 area (Junkyard)
-			0x5f02e6,
-
-			// 200 area (Plane)
-			0x9bd5fc,
-
-			// 300 area (Piazza)
-			0x5ef979,
-			
-			// 400 area (Church)
-			0xed9a8f,
-
-			// 500 area (Statue)
-			0x5ecdee,
+			0x4dfa22, // Obsidian Data > Labyrinth1 > 100 > Untitled Shared Scene > L200.0L.63Fxx.mtn (Limitation Document, Atlas Face)
+			0x4e2d9e, // Obsidian Data > Labyrinth1 > 100 > Untitled Shared Scene > L200.0L.64Fxx.mtn (Tradesman Document, Atlas Face)
+			0x4e2555, // Obsidian Data > Labyrinth1 > 199 > > L200.0L.63Fxx.mtn (Limitation Document, Glyph Chamber)
+			0x4de654, // Obsidian Data > Labyrinth1 > 199 > > L200.0L.64Fxx.mtn (Tradesman Document, Glyph Chamber)
+			0x4c83d2, // Obsidian Data > Labyrinth1 > 200 > Untitled Shared Scene > L200.0L.63Fxx.mtn (Limitation Document, Records Face)
+			0x4c5802, // Obsidian Data > Labyrinth1 > 200 > Untitled Shared Scene > L200.0L.64Fxx.mtn (Tradesman Document, Records Face)
+			0x178d5c, // Obsidian Data > Labyrinth1 > 299 > Untitled Shared Scene > L200.0L.63Fxx.mtn (Limitation Document, Cloud Ring)
+			0x177754, // Obsidian Data > Labyrinth1 > 299 > Untitled Shared Scene > L200.0L.64Fxx.mtn (Tradesman Document, Cloud Ring)
+			0x9914fb, // Obsidian Data > Labyrinth1 > 800 > > L200.0L.63Fxx.mtn (Limitation Document, Sunken Library)
+			0x990f1f, // Obsidian Data > Labyrinth1 > 800 > > L200.0L.64Fxx.mtn (Tradesman Document, Sunken Library)
+			0x4e0f86, // Obsidian Data > Labyrinth2 > 300 > Untitled Shared Scene > L200.0L.63Fxx.mtn (Limitation Document, Nexus Face)
+			0x4e5107, // Obsidian Data > Labyrinth2 > 300 > Untitled Shared Scene > L200.0L.64Fxx.mtn (Tradesman Document, Nexus Face)
+			0x4e5528, // Obsidian Data > Labyrinth2 > 400 > Untitled Shared Scene > L200.0L.63Fxx.mtn (Limitation Document, Security Face)
+			0x4e55cc, // Obsidian Data > Labyrinth2 > 400 > Untitled Shared Scene > L200.0L.64Fxx.mtn (Tradesman Document, Security Face)
+			0x6035f, // Obsidian Data > Labyrinth2 > 400 > Untitled Shared Scene > Inventory Cards > L400.0L.04Fxx.mtn - Black (Cards, Security Face)
+			0x62e24, // Obsidian Data > Labyrinth2 > 400 > Untitled Shared Scene > Inventory Cards > L400.0L.04Fxx.mtn - Blue (Cards, Security Face)
+			0x58d7f, // Obsidian Data > Labyrinth2 > 400 > Untitled Shared Scene > Inventory Cards > L400.0L.04Fxx.mtn - Yellow (Cards, Security Face)
+			0x58212, // Obsidian Data > Labyrinth2 > 400 > Untitled Shared Scene > Inventory Cards > L400.0L.04Fxx.mtn - Red (Cards, Security Face)
+			0x4e2e7b, // Obsidian Data > Labyrinth2 > 500 > Untitled Shared Scene > L200.0L.63Fxx.mtn (Limitation Document, Time Face)
+			0x4e0710, // Obsidian Data > Labyrinth2 > 500 > Untitled Shared Scene > L200.0L.64Fxx.mtn (Tradesman Document, Time Face)
+			0x12fa7,  // Obsidian Data > Abraxas1 > 400 > Untitled Shared Scene > Inventory Beaker (Inventory Beaker, Metal Balcony)
+			0x5f02e6, // Obsidian Data > Bismuth1 > 100 > Untitled Shared Scene > B201.2L.02Fxx.spr (Inspiration Chip, Junkyard)
+			0x9bd5fc, // Obsidian Data > Bismuth1 > 200 > Untitled Shared Scene > B201.2L.02Fxx.spr (Inspiration Chip, Plane)
+			0x5ef979, // Obsidian Data > Bismuth1 > 300 > Untitled Shared Scene > B201.2L.02Fxx.spr (Inspiration Chip, Piazza)
+			0x5ecdee, // Obsidian Data > Bismuth1 > 500 > Untitled Shared Scene > B201.2L.02Fxx.spr (Inspiration Chip, Statue)
+			0xed9a8f, // Obsidian Data > Bismuth2 > 400 > Untitled Shared Scene > B201.2L.02Fxx.spr (Inspiration Chip, Church of the Machine)
 		};
 
-		const uint32 cubeMazeSecurityFormGUID = 0x9602ec;
-		const uint32 rsgIntroMovieGUID = 0x2fc101;
-
-		Common::SharedPtr<StructuralHooks> invItemHooks(new ObsidianInventoryWindscreenHooks());
-
-		for (uint32 guid : inventoryItemGUIDs)
-			hacks.addStructuralHooks(guid, invItemHooks);
-
-		hacks.addStructuralHooks(cubeMazeSecurityFormGUID, Common::SharedPtr<StructuralHooks>(new ObsidianSecurityFormWidescreenHooks()));
-		hacks.addStructuralHooks(rsgIntroMovieGUID, Common::SharedPtr<StructuralHooks>(new ObsidianRSGLogoWidescreenHooks()));
-	}
-	if ((desc.desc.flags & ADGF_DEMO) == 0 && desc.desc.language == Common::EN_ANY && desc.desc.platform == Common::kPlatformMacintosh) {
-		const uint32 inventoryItemGUIDs[] = {
-			// Bureau documents
-			// 100 area (booths)
-			0x4dfa22,
-			0x4e2d9e,
-
-			// 199 area (booths hint room)
-			0x4e2555,
-			0x4de654,
-
-			// 200 area (library)
-			0x4c83d2,
-			0x4c5802,
-
-			// 299 area (Cloud Ring)
-			0x178d5c,
-			0x177754,
-
-			// 300 area (light+phone)
-			0x4e0f86,
-			0x4e5107,
-
-			// 400 area (maze)
-			0x4e5528,
-			0x4e55cc,
-
-			// 500 area (Immediate Action)
-			0x4e2e7b,
-			0x4e0710,
-
-			// 800 area (bookshelves)
-			0x9914fb,
-			0x990f1f,
-
-			// 600 (sky face), 699 (mountain), and 700 (finale) have no document elements (player loses the documents)
-
-			// Bureau maze keycards
-			0x6035f,
-			0x62e24,
-			0x58d7f,
-			0x58212,
-
-			// Spider metal puzzle beaker
-			0x12fa7,
-
-			// Inspiration chip
-			// 100 area (Junkyard)
-			0x5f02e6,
-
-			// 200 area (Plane)
-			0x9bd5fc,
-
-			// 300 area (Piazza)
-			0x5ef979,
-
-			// 400 area (Church)
-			0xed9a8f,
-
-			// 500 area (Statue)
-			0x5ecdee,
-		};
-
-		const uint32 cubeMazeSecurityFormGUID = 0x9602ec;
-		const uint32 rsgIntroMovieGUID = 0x2fc101;
+		const uint32 cubeMazeSecurityFormGUID = 0x9602ec; // Obsidian Data > Labyrinth2 > 400 > L437.2L.02Fxx.spr (Security Form, Securty Booth)
+		const uint32 rsgIntroMovieGUID = 0x2fc101; // Obsidian Data > Start Obsidian > SplashScreen > RSG Splash > rssplash.F11.cut (Rocket Science Games Logo)
 
 		Common::SharedPtr<StructuralHooks> invItemHooks(new ObsidianInventoryWindscreenHooks());
 

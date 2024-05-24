@@ -51,9 +51,6 @@ public:
 
 	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
 	GUI_status KeyDown(const Common::KeyState &key) override;
-
-protected:
-
 };
 
 } // End of namespace Nuvie

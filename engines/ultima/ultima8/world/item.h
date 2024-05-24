@@ -61,6 +61,9 @@ public:
 	//! Get the Container this Item is in, if any. (NULL if not in a Container)
 	Container *getParentAsContainer() const;
 
+	//! Get the top-most Container this Item is in, if any. (NULL if not in a Container)
+	Container *getRootContainer() const;
+
 	//! Get the top-most Container this Item is in, or the Item itself if not
 	//! in a container
 	const Item *getTopItem() const;

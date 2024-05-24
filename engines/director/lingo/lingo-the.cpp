@@ -1331,7 +1331,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d = (int)g_director->transformColor(sprite->_foreColor);
 		break;
 	case kTheHeight:
-		d = channel->_height;
+		d = channel->getHeight();
 		break;
 	case kTheImmediate:
 		d = sprite->_immediate;
@@ -1346,16 +1346,19 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d = sprite->_thickness & 0x3;
 		break;
 	case kTheLoc:
-		d.type = POINT;
-		d.u.farr = new FArray;
-		d.u.farr->arr.push_back(channel->_currentPoint.x);
-		d.u.farr->arr.push_back(channel->_currentPoint.y);
+		{
+			Common::Point position = channel->getPosition();
+			d.type = POINT;
+			d.u.farr = new FArray;
+			d.u.farr->arr.push_back(position.x);
+			d.u.farr->arr.push_back(position.y);
+		}
 		break;
 	case kTheLocH:
-		d = channel->_currentPoint.x;
+		d = channel->getPosition().x;
 		break;
 	case kTheLocV:
-		d = channel->_currentPoint.y;
+		d = channel->getPosition().y;
 		break;
 	case kTheMoveableSprite:
 		d = sprite->_moveable;
@@ -1376,12 +1379,15 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		break;
 	case kTheRect:
 		// let compiler to optimize this
-		d.type = RECT;
-		d.u.farr = new FArray;
-		d.u.farr->arr.push_back(channel->getBbox().left);
-		d.u.farr->arr.push_back(channel->getBbox().top);
-		d.u.farr->arr.push_back(channel->getBbox().right);
-		d.u.farr->arr.push_back(channel->getBbox().bottom);
+		{
+			Common::Rect bbox = channel->getBbox();
+			d.type = RECT;
+			d.u.farr = new FArray;
+			d.u.farr->arr.push_back(bbox.left);
+			d.u.farr->arr.push_back(bbox.top);
+			d.u.farr->arr.push_back(bbox.right);
+			d.u.farr->arr.push_back(bbox.bottom);
+		}
 		break;
 	case kTheRight:
 		d = channel->getBbox().right;
@@ -1419,7 +1425,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d = sprite->_volume;
 		break;
 	case kTheWidth:
-		d = channel->_width;
+		d = channel->getWidth();
 		break;
 	default:
 		warning("Lingo::getTheSprite(): Unprocessed getting field \"%s\" of sprite", field2str(field));
@@ -1549,7 +1555,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheHeight:
-		if (d.asInt() != channel->_height) {
+		if (d.asInt() != channel->getHeight()) {
 			g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
 			channel->setHeight(d.asInt());
 			channel->_dirty = true;
@@ -1579,21 +1585,21 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheLoc:
-		if (channel->_currentPoint.x != d.asPoint().x || channel->_currentPoint.y != d.asPoint().y) {
+		if (channel->getPosition() != d.asPoint()) {
 			movie->getWindow()->addDirtyRect(channel->getBbox());
 			channel->_dirty = true;
 		}
 		channel->setPosition(d.asPoint().x, d.asPoint().y);
 		break;
 	case kTheLocH:
-		if (d.asInt() != channel->_currentPoint.x) {
+		if (d.asInt() != channel->getPosition().x) {
 			// adding the dirtyRect only when the trails is false. Other changes which will add dirtyRect may also apply this patch
 			// this is for fixing the bug in jman-win. Currently, i've only patched the LocH, LocV and castNum since those are the only ones used in jman
 			if (!channel->_sprite->_trails) {
 				movie->getWindow()->addDirtyRect(channel->getBbox());
 				channel->_dirty = true;
 			}
-			channel->setPosition(d.asInt(), channel->_currentPoint.y);
+			channel->setPosition(d.asInt(), channel->getPosition().y);
 		}
 
 		// Based on Director in a Nutshell, page 15
@@ -1601,12 +1607,12 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 
 		break;
 	case kTheLocV:
-		if (d.asInt() != channel->_currentPoint.y) {
+		if (d.asInt() != channel->getPosition().y) {
 			if (!channel->_sprite->_trails) {
 				movie->getWindow()->addDirtyRect(channel->getBbox());
 				channel->_dirty = true;
 			}
-			channel->setPosition(channel->_currentPoint.x, d.asInt());
+			channel->setPosition(channel->getPosition().x, d.asInt());
 		}
 
 		// Based on Director in a Nutshell, page 15
@@ -1676,15 +1682,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			warning("Setting stopTime for non-digital video");
 		break;
 	case kTheStretch:
-		if ((d.asInt() != 0) != sprite->_stretch) {
-			g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
-
-			sprite->_stretch = (d.asInt() != 0);
-			channel->_dirty = true;
-
-			channel->_width = sprite->_width;
-			channel->_height = sprite->_height;
-		}
+		channel->setStretch(d.asInt() != 0);
 		break;
 	case kTheTrails:
 		sprite->_trails = (d.asInt() ? true : false);
@@ -1707,7 +1705,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_volume = d.asInt();
 		break;
 	case kTheWidth:
-		if (d.asInt() != channel->_width) {
+		if (d.asInt() != channel->getWidth()) {
 			g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
 			channel->setWidth(d.asInt());
 			channel->_dirty = true;
@@ -1963,6 +1961,18 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 		g_debugger->propReadHook(propName);
 		return;
 	}
+	if (obj.type == POINT) {
+		if (propName.equalsIgnoreCase("locH")) {
+			d = obj.u.farr->arr[0];
+		} else if (propName.equalsIgnoreCase("locV")) {
+			d = obj.u.farr->arr[1];
+		} else {
+			g_lingo->lingoError("Lingo::getObjectProp: Point <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
+		}
+		g_lingo->push(d);
+		g_debugger->propReadHook(propName);
+		return;
+	}
 	if (obj.type == RECT) {
 		if (propName.equalsIgnoreCase("left")) {
 			d = obj.u.farr->arr[0];
@@ -2087,6 +2097,30 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 			obj.u.parr->arr.push_back(cell);
 		}
 		g_debugger->propWriteHook(propName);
+	} else if (obj.type == POINT) {
+		if (propName.equalsIgnoreCase("locH")) {
+			obj.u.farr->arr[0] = val.asInt();
+		} else if (propName.equalsIgnoreCase("locV")) {
+			obj.u.farr->arr[1] = val.asInt();
+		} else {
+			g_lingo->lingoError("Lingo::setObjectProp: Point <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
+		}
+		g_debugger->propWriteHook(propName);
+		return;
+	} else if (obj.type == RECT) {
+		if (propName.equalsIgnoreCase("left")) {
+			obj.u.farr->arr[0] = val.asInt();
+		} else if (propName.equalsIgnoreCase("top")) {
+			obj.u.farr->arr[1] = val.asInt();
+		} else if (propName.equalsIgnoreCase("right")) {
+			obj.u.farr->arr[2] = val.asInt();
+		} else if (propName.equalsIgnoreCase("bottom")) {
+			obj.u.farr->arr[3] = val.asInt();
+		} else {
+			g_lingo->lingoError("Lingo::setObjectProp: Rect <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
+		}
+		g_debugger->propWriteHook(propName);
+		return;
 	} else if (obj.type == CASTREF) {
 		Movie *movie = _vm->getCurrentMovie();
 		if (!movie) {

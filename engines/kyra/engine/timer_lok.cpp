@@ -29,41 +29,41 @@ namespace Kyra {
 
 void KyraEngine_LoK::setupTimers() {
 	for (int i = 0; i <= 4; ++i)
-		_timer->addTimer(i, nullptr, -1, 1);
+		_timer->addTimer(i, nullptr, -1, true);
 
-	_timer->addTimer(5, nullptr, 5, 1);
-	_timer->addTimer(6, nullptr, 7, 1);
-	_timer->addTimer(7, nullptr, 8, 1);
-	_timer->addTimer(8, nullptr, 9, 1);
-	_timer->addTimer(9, nullptr, 7, 1);
+	_timer->addTimer(5, nullptr, 5, true);
+	_timer->addTimer(6, nullptr, 7, true);
+	_timer->addTimer(7, nullptr, 8, true);
+	_timer->addTimer(8, nullptr, 9, true);
+	_timer->addTimer(9, nullptr, 7, true);
 
 	for (int i = 10; i <= 13; ++i)
-		_timer->addTimer(i, nullptr, 420, 1);
+		_timer->addTimer(i, nullptr, 420, true);
 
-	_timer->addTimer(14, TimerV1(timerAsWillowispTimeout), 600, 1);
-	_timer->addTimer(15, TimerV1(timerUpdateHeadAnims), 11, 1);
-	_timer->addTimer(16, TimerV1(timerTulipCreator), 7200, 1);
-	_timer->addTimer(17, TimerV1(timerRubyCreator), 7200, 1);
-	_timer->addTimer(18, TimerV1(timerAsInvisibleTimeout), 600, 1);
-	_timer->addTimer(19, TimerV1(timerRedrawAmulet), 600, 1);
+	_timer->addTimer(14, TimerV1(timerAsWillowispTimeout), 600, true);
+	_timer->addTimer(15, TimerV1(timerUpdateHeadAnims), 11, true);
+	_timer->addTimer(16, TimerV1(timerTulipCreator), 7200, true);
+	_timer->addTimer(17, TimerV1(timerRubyCreator), 7200, true);
+	_timer->addTimer(18, TimerV1(timerAsInvisibleTimeout), 600, true);
+	_timer->addTimer(19, TimerV1(timerRedrawAmulet), 600, true);
 
-	_timer->addTimer(20, nullptr, 7200, 1);
-	_timer->addTimer(21, TimerV1(timerLavenderRoseCreator), 18000, 1);
-	_timer->addTimer(22, nullptr, 7200, 1);
+	_timer->addTimer(20, nullptr, 7200, true);
+	_timer->addTimer(21, TimerV1(timerLavenderRoseCreator), 18000, true);
+	_timer->addTimer(22, nullptr, 7200, true);
 
-	_timer->addTimer(23, nullptr, 10800, 1);
-	_timer->addTimer(24, TimerV1(timerAcornCreator), 10800, 1);
-	_timer->addTimer(25, nullptr, 10800, 1);
-	_timer->addTimer(26, TimerV1(timerBlueberryCreator), 10800, 1);
-	_timer->addTimer(27, nullptr, 10800, 1);
+	_timer->addTimer(23, nullptr, 10800, true);
+	_timer->addTimer(24, TimerV1(timerAcornCreator), 10800, true);
+	_timer->addTimer(25, nullptr, 10800, true);
+	_timer->addTimer(26, TimerV1(timerBlueberryCreator), 10800, true);
+	_timer->addTimer(27, nullptr, 10800, true);
 
-	_timer->addTimer(28, nullptr, 21600, 1);
-	_timer->addTimer(29, nullptr, 7200, 1);
-	_timer->addTimer(30, nullptr, 10800, 1);
+	_timer->addTimer(28, nullptr, 21600, true);
+	_timer->addTimer(29, nullptr, 7200, true);
+	_timer->addTimer(30, nullptr, 10800, true);
 
-	_timer->addTimer(31, TimerV1(timerFadeText), -1, 1);
-	_timer->addTimer(32, TimerV1(timerWillowispFrameTimer), 9, 1);
-	_timer->addTimer(33, TimerV1(timerInvisibleFrameTimer), 3, 1);
+	_timer->addTimer(31, TimerV1(timerFadeText), -1, true);
+	_timer->addTimer(32, TimerV1(timerWillowispFrameTimer), 9, true);
+	_timer->addTimer(33, TimerV1(timerInvisibleFrameTimer), 3, true);
 }
 
 void KyraEngine_LoK::timerUpdateHeadAnims(int timerNum) {

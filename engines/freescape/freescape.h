@@ -154,9 +154,13 @@ public:
 	virtual void drawCrossair(Graphics::Surface *surface);
 	Graphics::ManagedSurface *_border;
 	Graphics::ManagedSurface *_title;
+	Graphics::Surface *_background;
+
 	Texture *_borderTexture;
 	Texture *_titleTexture;
 	Texture *_uiTexture;
+	Texture *_skyTexture;
+
 	Common::Array<Graphics::Surface *>_indicators;
 	Common::HashMap<uint16, Texture *> _borderCGAByArea;
 	Common::HashMap<uint16, byte *> _paletteCGAByArea;
@@ -454,7 +458,7 @@ public:
 	bool _forceEndGame;
 	bool _playerWasCrushed;
 	ObjectArray _sensors;
-	void checkSensors();
+	virtual void checkSensors();
 	virtual void drawSensorShoot(Sensor *sensor);
 	void takeDamageFromSensor();
 

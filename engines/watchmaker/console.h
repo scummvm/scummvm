@@ -29,7 +29,7 @@ namespace Watchmaker {
 class Console : public GUI::Debugger {
 public:
 	explicit Console();
-	~Console(void) override {}
+	~Console() override {}
 };
 
 } // End of namespace Watchmaker

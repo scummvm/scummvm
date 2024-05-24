@@ -14,6 +14,10 @@ For a more comprehensive changelog of the latest experimental code, see:
   - The "Aspect ratio correction" option within the Global Options section
     is now active by default.
 
+ AGI:
+  - Fixed duration of timed text boxes. They were shown only half as long as
+    they should be, making e.g. the King's Quest III intro hard to read.
+
  AGS:
   - Syncronized with upstream AGS 3.6.0.58
   - Fixed glitchy staircase in old Maniac Mansion Mania episodes, caused by
@@ -23,12 +27,22 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added MT32/LAPC-1 support for Xeen engine.
    - Fixed Xeen regression which caused some sound effects to stop abruptly.
 
+ SCUMM:
+   - Added map generator from Moonbase Console for Moonbase Commander.
+
  Tony:
    - Fix crash with rapid cursor switching.
 
  TsAGE:
    - Added support for Russian CD fan-translation for Ringworld.
 
+ Ultima:
+   - Alter Ultima VIII default gamepad bindings.
+   - Improved Ultima VIII keybind player movement.
+   - Alter Ultima VIII target gump to no longer pause game.
+   - Alter Ultima VIII minimap to use game palette.
+   - Fixed Ultima VIII item splitting & merging on game map.
+   - Fixed Ultima VIII animation, audio, and scene transition issues.
 
 #### 2.8.1 (2024-03-31)
 
@@ -503,7 +517,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed minor timing issues for the SMUSH video engine, mostly affecting
      Full Throttle.
    - Added a low latency audio mode to Full Throttle, The Dig and The Curse of
-     Monkey Island; this can improve audio performance expecially in non-desktop
+     Monkey Island; this can improve audio performance especially in non-desktop
      devices, but it is also a little less accurate than the original.
    - Implemented reloading CD audio for Monkey Island 1 and Loom (CD versions),
      when reloading a save state.
@@ -1682,7 +1696,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Pegasus:
    - Fixed loading a game from the launcher after returning to the launcher.
-   - Ignored events occuring while the GUI is visible. This for example fixed an
+   - Ignored events occurring while the GUI is visible. This for example fixed an
      issue where closing the GMM using Escape would also opens the game's own
      menu.
    - Fixed several crashes when toggling the shared screen space.
@@ -2242,7 +2256,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  iPhone port:
    - Changed "F5 (menu)" gesture to open up the global main menu instead.
-   - Added support for custom cursor palettes, this makes the moderm theme use
+   - Added support for custom cursor palettes, this makes the modern theme use
      the red pointer cursor for example.
    - Added aspect ratio correction feature.
    - Implemented 16 bits per pixel support for games.
@@ -3631,7 +3645,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - AdLib GM emulation table revamped, providing more accurate software MIDI.
    - Default Makefile now uses configure script.
    - Greatly improved the launcher and options dialogs (work-in-progress).
-   - Many other "under the hood" improvements, like a new config managment
+   - Many other "under the hood" improvements, like a new config management
      and plugin capabilities.
 
  Simon:

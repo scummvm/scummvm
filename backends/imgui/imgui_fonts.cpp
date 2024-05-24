@@ -89,6 +89,7 @@ ImFont *addTTFFontFromArchive(const char *filename, float size_pixels, const ImF
 	}
 
 	uint size = f.size();
+
 	uint8 *ttfFile = new uint8[size];
 	f.read(ttfFile, size);
 	ImGuiIO &io = ImGui::GetIO();

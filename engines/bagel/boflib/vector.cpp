@@ -23,8 +23,6 @@
 
 namespace Bagel {
 
-#define UNIT_Vector_LENGTH 1
-
 CVector::CVector() {
 	this->x = 0;
 	this->y = 0;

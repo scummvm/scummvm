@@ -60,8 +60,8 @@ CBofPalette::~CBofPalette() {
 	assert(isValidObject(this));
 
 	// If we trash the games palette, then reset it back to nullptr.
-	CBofApp *pApp;
-	if ((pApp = CBofApp::getApp()) != nullptr) {
+	CBofApp *pApp = CBofApp::getApp();
+	if (pApp != nullptr) {
 		if (this == pApp->getPalette()) {
 			pApp->setPalette(nullptr);
 		}
@@ -137,10 +137,8 @@ ErrorCode CBofPalette::createDefault(uint16 nFlags) {
 }
 
 ErrorCode CBofPalette::setSharedPalette(const char *pszFileName) {
-	if (_pSharedPalette != nullptr) {
-		delete _pSharedPalette;
-		_pSharedPalette = nullptr;
-	}
+	delete _pSharedPalette;
+	_pSharedPalette = nullptr;
 
 	// Save name of file used to get the shared palette
 	if (pszFileName != nullptr) {
@@ -152,11 +150,8 @@ ErrorCode CBofPalette::setSharedPalette(const char *pszFileName) {
 
 CBofPalette *CBofPalette::getSharedPalette() {
 	// Do we need to load the shared palette?
-	if (_pSharedPalette == nullptr) {
-		if (fileExists(_szSharedPalFile)) {
-			_pSharedPalette = new CBofPalette(_szSharedPalFile);
-		}
-	}
+	if (_pSharedPalette == nullptr && fileExists(_szSharedPalFile))
+		_pSharedPalette = new CBofPalette(_szSharedPalFile);
 
 	return _pSharedPalette;
 }

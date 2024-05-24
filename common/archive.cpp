@@ -132,7 +132,7 @@ Common::Error Archive::dumpArchive(const Path &destPath) {
 
 	for (auto &f : files) {
 		Common::Path filePath = f->getPathInArchive().punycodeEncode();
-		debug(1, "File: %s", filePath.toString().c_str());
+		debug(1, "dumpArchive(): File: %s", filePath.toString().c_str());
 
 		// skip if f represents a directory
 		if (filePath.isSeparatorTerminated()) continue;

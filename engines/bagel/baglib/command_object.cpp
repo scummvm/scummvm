@@ -261,7 +261,7 @@ bool CBagCommandObject::runObject() {
 		} else if (getFileName() == "ENTRYTHUD") { // Thud
 			CBofRect tmpRect(60, 50, 137, 70);
 			CBofString bmpName("$SBARDIR\\GENERAL\\POPUP\\THUDPOP.BMP");
-			MACROREPLACE(bmpName);
+			fixPathName(bmpName);
 			CDevDlg dlg;
 			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::getApp()->getPalette(), &tmpRect);
 			dlg.doModal();
@@ -270,7 +270,7 @@ bool CBagCommandObject::runObject() {
 		} else if (getFileName() == "ENTRYFLEE") { // Fleebix
 			CBofRect tmpRect(35, 48, 114, 69);
 			CBofString bmpName("$SBARDIR\\GENERAL\\POPUP\\FLEEDAT.BMP");
-			MACROREPLACE(bmpName);
+			fixPathName(bmpName);
 			CDevDlg dlg;
 			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::getApp()->getPalette(), &tmpRect);
 			dlg.doModal();
@@ -279,7 +279,7 @@ bool CBagCommandObject::runObject() {
 		} else if (getFileName() == "ENTRYCLICK") { // Click's locker combo
 			CBofRect tmpRect(60, 49, 138, 68);
 			CBofString bmpName("$SBARDIR\\GENERAL\\POPUP\\CLICKPOP.BMP");
-			MACROREPLACE(bmpName);
+			fixPathName(bmpName);
 			CDevDlg dlg;
 			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::getApp()->getPalette(), &tmpRect);
 			dlg.doModal();
@@ -288,7 +288,7 @@ bool CBagCommandObject::runObject() {
 		} else if (getFileName() == "ENTRYFRUIT") { // MegaWave the fruit
 			CBofRect tmpRect(35, 49, 114, 68);
 			CBofString bmpName("$SBARDIR\\GENERAL\\POPUP\\CLICKDAT.BMP");
-			MACROREPLACE(bmpName);
+			fixPathName(bmpName);
 			CDevDlg dlg;
 			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::getApp()->getPalette(), &tmpRect);
 			dlg.doModal();
@@ -297,7 +297,7 @@ bool CBagCommandObject::runObject() {
 		} else if (getFileName() == "D7CODE1DLG") { // Deven-7 code word
 			CBofRect tmpRect(10, 48, 189, 69);
 			CBofString bmpName("$SBARDIR\\GENERAL\\POPUP\\DEVENPOP.BMP");
-			MACROREPLACE(bmpName);
+			fixPathName(bmpName);
 			CDevDlg dlg;
 			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::getApp()->getPalette(), &tmpRect, true);
 			dlg.doModal();
@@ -364,7 +364,7 @@ bool CBagCommandObject::runObject() {
 				g_allowPaintFl = false;
 
 				CBofString smkName("$SBARDIR\\BAR\\EVGAMWIN.SMK");
-				MACROREPLACE(smkName);
+				fixPathName(smkName);
 
 				// Play the movie only if it exists
 				if (fileExists(smkName.getBuffer())) {
@@ -465,12 +465,12 @@ ParseCodes CBagCommandObject::setInfo(CBagIfstream &istr) {
 		//  No match return from function
 		//
 		default: {
-			ParseCodes rc = CBagObject::setInfo(istr);
-			if (rc == PARSING_DONE) {
+			ParseCodes parseCode = CBagObject::setInfo(istr);
+			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}
 
-			if (rc == UPDATED_OBJECT) {
+			if (parseCode == UPDATED_OBJECT) {
 				objectUpdatedFl = true;
 			} else { // rc==UNKNOWN_TOKEN
 				if (objectUpdatedFl)

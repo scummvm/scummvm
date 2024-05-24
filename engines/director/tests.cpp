@@ -132,7 +132,7 @@ void Window::testFontScaling() {
 	Common::Event event;
 
 	while (true) {
-		if (g_system->getEventManager()->pollEvent(event))
+		if (g_director->pollEvent(event))
 			if (event.type == Common::EVENT_QUIT)
 				break;
 

@@ -46,7 +46,7 @@ public:
 	};
 
 	PartParticle(BaseGame *inGame);
-	~PartParticle(void) override;
+	~PartParticle() override;
 
 	float _growthRate;
 	bool _exponentialGrowth;

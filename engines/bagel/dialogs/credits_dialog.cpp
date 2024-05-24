@@ -91,13 +91,11 @@ void CBagCreditsDialog::onInitDialog() {
 
 	setReturnValue(-1);
 
-	CBofPalette *pPal;
-
 	// Start at 1st credit screen
 	_iScreen = 0;
 
 	assert(_pBackdrop != nullptr);
-	pPal = _pBackdrop->getPalette();
+	CBofPalette *pPal = _pBackdrop->getPalette();
 	selectPalette(pPal);
 	g_b1 = true;
 
@@ -118,28 +116,19 @@ ErrorCode CBagCreditsDialog::loadNextTextFile() {
 	cRect.bottom = g_cScreen[_iScreen]._nBottom;
 
 	// Get rid of any previous work area
-	if (_pCreditsBmp != nullptr) {
-		delete _pCreditsBmp;
-		_pCreditsBmp = nullptr;
-	}
+	delete _pCreditsBmp;
+	_pCreditsBmp = nullptr;
 
 	// Create a new work area
-	if ((_pCreditsBmp = new CBofBitmap(cRect.width(), cRect.height() + LINE_HEIGHT + 2, _pBackdrop->getPalette())) != nullptr) {
-		_pCreditsBmp->fillRect(nullptr, MY_MASK_COLOR);
+	_pCreditsBmp = new CBofBitmap(cRect.width(), cRect.height() + LINE_HEIGHT + 2, _pBackdrop->getPalette());
+	_pCreditsBmp->fillRect(nullptr, MY_MASK_COLOR);
 
-		// Kill any previous work area
-		if (_pSaveBmp != nullptr) {
-			delete _pSaveBmp;
-		}
+	// Kill any previous work area
+	delete _pSaveBmp;
+	_pSaveBmp = new CBofBitmap(_pCreditsBmp->width(), _pCreditsBmp->height(), _pBackdrop->getPalette());
 
-		if ((_pSaveBmp = new CBofBitmap(_pCreditsBmp->width(), _pCreditsBmp->height(), _pBackdrop->getPalette())) != nullptr) {
-			CBofRect tmpRect = _pSaveBmp->getRect();
-			_pBackdrop->paint(_pSaveBmp, &tmpRect, &cRect);
-
-		} else {
-			reportError(ERR_MEMORY);
-		}
-	}
+	CBofRect tmpRect = _pSaveBmp->getRect();
+	_pBackdrop->paint(_pSaveBmp, &tmpRect, &cRect);
 
 	// Get rid of any previous credits screen
 	if (_pszText != nullptr) {
@@ -150,34 +139,27 @@ ErrorCode CBagCreditsDialog::loadNextTextFile() {
 	CBofFile cFile(buildSysDir(g_cScreen[_iScreen]._pszTextFile), CBF_BINARY | CBF_READONLY);
 
 	if (!cFile.errorOccurred()) {
-		uint32 lSize;
-
 		// Read in text file
-		lSize = cFile.getLength();
-		_pszText = (char *)bofCAlloc(lSize + 1, 1);
-		if (_pszText != nullptr) {
+		uint32 lSize = cFile.getLength();
+		_pszText = (char *)bofCleanAlloc(lSize + 1);
 
-			cFile.read(_pszText, lSize);
+		cFile.read(_pszText, lSize);
 
-			_pszNextLine = _pszText;
-			_pszEnd = _pszText + lSize;
-			_nNumPixels = 0;
+		_pszNextLine = _pszText;
+		_pszEnd = _pszText + lSize;
+		_nNumPixels = 0;
 
-			// Determine the number of lines of text in credits
-			_nLines = strCharCount(_pszText, '\n');
-			strreplaceChar(_pszText, '\r', ' ');
-			strreplaceChar(_pszText, '\n', '\0');
+		// Determine the number of lines of text in credits
+		_nLines = strCharCount(_pszText, '\n');
+		strreplaceChar(_pszText, '\r', ' ');
+		strreplaceChar(_pszText, '\n', '\0');
 
-			paintLine(linesPerPage() - 1, _pszNextLine);
-			nextLine();
-			paintLine(linesPerPage(), _pszNextLine);
-			nextLine();
+		paintLine(linesPerPage() - 1, _pszNextLine);
+		nextLine();
+		paintLine(linesPerPage(), _pszNextLine);
+		nextLine();
 
-			_bDisplay = true;
-
-		} else {
-			reportError(ERR_MEMORY, "Unable to allocate %d bytes for Credits.", lSize);
-		}
+		_bDisplay = true;
 	}
 
 	return _errCode;
@@ -186,23 +168,19 @@ ErrorCode CBagCreditsDialog::loadNextTextFile() {
 int CBagCreditsDialog::linesPerPage() {
 	assert(isValidObject(this));
 
-	int n;
-	n = (g_cScreen[_iScreen]._nBottom - g_cScreen[_iScreen]._nTop) / (LINE_HEIGHT + 2) + 1;
+	int retVal = (g_cScreen[_iScreen]._nBottom - g_cScreen[_iScreen]._nTop) / (LINE_HEIGHT + 2) + 1;
 
-	return n;
+	return retVal;
 }
 
 void CBagCreditsDialog::onClose() {
 	assert(isValidObject(this));
 
-	if (_pCreditsBmp != nullptr) {
-		delete _pCreditsBmp;
-		_pCreditsBmp = nullptr;
-	}
-	if (_pSaveBmp != nullptr) {
-		delete _pSaveBmp;
-		_pSaveBmp = nullptr;
-	}
+	delete _pCreditsBmp;
+	_pCreditsBmp = nullptr;
+
+	delete _pSaveBmp;
+	_pSaveBmp = nullptr;
 
 	if (_pszText != nullptr) {
 		bofFree(_pszText);
@@ -288,8 +266,7 @@ ErrorCode CBagCreditsDialog::displayCredits() {
 
 
 			// Strip off top layer so it won't wrap around
-			int i;
-			for (i = 0; i < PIX_SCROLL_DY; i++) {
+			for (int i = 0; i < PIX_SCROLL_DY; i++) {
 				_pCreditsBmp->line(0, i, _pCreditsBmp->width() - 1, i, MY_MASK_COLOR);
 			}
 
@@ -314,10 +291,9 @@ ErrorCode CBagCreditsDialog::nextScreen() {
 	assert(isValidObject(this));
 
 	if (++_iScreen < NUM_SCREENS) {
-		CBofBitmap *pBmp;
-
 		// Load next screen (flushes previous backdrop)
-		if ((pBmp = Bagel::loadBitmap(buildSysDir(g_cScreen[_iScreen]._pszBackground))) != nullptr) {
+		CBofBitmap *pBmp = Bagel::loadBitmap(buildSysDir(g_cScreen[_iScreen]._pszBackground));
+		if (pBmp != nullptr) {
 			setBackdrop(pBmp);
 			g_b1 = true;
 		}
@@ -341,7 +317,6 @@ ErrorCode CBagCreditsDialog::paintLine(int nLine, char *pszText) {
 	assert(_pCreditsBmp != nullptr);
 
 	CBofRect cRect;
-
 	cRect.setRect(0, nLine * LINE_HEIGHT, _pCreditsBmp->width() - 1, (nLine + 1) * LINE_HEIGHT - 1);
 
 	_pCreditsBmp->fillRect(&cRect, MY_MASK_COLOR);
@@ -355,7 +330,6 @@ ErrorCode CBagCreditsDialog::paintLine(int nLine, char *pszText) {
 
 void CBagCreditsDialog::nextLine() {
 	assert(isValidObject(this));
-
 	assert(_pszNextLine != nullptr);
 
 	if ((_pszNextLine != nullptr) && (_pszNextLine < _pszEnd)) {

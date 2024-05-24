@@ -43,9 +43,6 @@ public:
 	~Console() override;
 
 	void AddLine(const Std::string &line) override;
-
-protected:
-
 };
 
 void ConsoleInit(const Configuration *c, Screen *s, GUI *gui, uint16 w, uint16 h);

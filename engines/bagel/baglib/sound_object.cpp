@@ -40,7 +40,7 @@ CBagSoundObject::CBagSoundObject() {
 	_pSound = nullptr;
 
 	// Assume MIX if not specified
-	_wFlags = SOUND_MIX; //(SOUND_WAVE | SOUND_ASYNCH);
+	_wFlags = SOUND_MIX;
 
 	_nVol = VOLUME_INDEX_DEFAULT;
 	CBagObject::setState(0);
@@ -62,28 +62,17 @@ ErrorCode CBagSoundObject::attach(CBofWindow *pWnd) {
 	return CBagObject::attach();
 }
 
-ErrorCode CBagSoundObject::newSound(CBofWindow *pWin) {
-	// assume no error
-	ErrorCode errCode = ERR_NONE;
-
+void CBagSoundObject::newSound(CBofWindow *pWin) {
 	killSound();
 
-	if ((_pSound = new CBofSound(pWin, getFileName(), _wFlags, _nLoops)) != nullptr) {
-		_pSound->setVolume(_nVol);
-		_pSound->setQSlot(getState());
-
-	} else {
-		errCode = ERR_MEMORY;
-	}
-
-	return errCode;
+	_pSound = new CBofSound(pWin, getFileName(), _wFlags, _nLoops);
+	_pSound->setVolume(_nVol);
+	_pSound->setQSlot(getState());
 }
 
 void CBagSoundObject::killSound() {
-	if (_pSound != nullptr) {
-		delete _pSound;
-		_pSound = nullptr;
-	}
+	delete _pSound;
+	_pSound = nullptr;
 }
 
 ErrorCode CBagSoundObject::detach() {
@@ -95,7 +84,6 @@ bool CBagSoundObject::runObject() {
 	if (((_wFlags & SOUND_MIDI) && CBagMasterWin::getMidi()) || (((_wFlags & SOUND_WAVE) || (_wFlags & SOUND_MIX)) && CBagMasterWin::getDigitalAudio())) {
 
 		if (_pSound && _pMidiSound != _pSound) {
-
 			_pSound->setQSlot(getState());
 			_pSound->play();
 
@@ -117,30 +105,28 @@ bool CBagSoundObject::runObject() {
 
 			if (_wFlags & SOUND_MIDI)
 				_pMidiSound = _pSound;
-		} else { /* if no sound */
-			if (!(_wFlags & SOUND_MIDI)) {
+		} else if (!(_wFlags & SOUND_MIDI)) {
+			/* if no sound */
+			int nExt = getFileName().getLength() - 4; // ".EXT"
 
-				int nExt = getFileName().getLength() - 4; // ".EXT"
-
-				if (nExt <= 0) {
-					logError("Sound does not have a file name or proper extension.  Please write better scripts.");
-					return false;
-				}
-
-				CBofString sBaseStr = getFileName().left(nExt) + ".TXT";
-
-				Common::File f;
-				if (fileExists(sBaseStr) && f.open(sBaseStr.getBuffer())) {
-					Common::String line = f.readLine();
-
-					bofMessageBox(line.c_str(), "Using .TXT for missing .WAV!");
-					f.close();
-					return true;
-				} else {
-					logError(buildString("Sound TEXT file could not be read: %s.  Why? because we like you ...", getFileName().getBuffer()));
-					return false;
-				}
+			if (nExt <= 0) {
+				logError("Sound does not have a file name or proper extension.  Please write better scripts.");
+				return false;
 			}
+
+			CBofString sBaseStr = getFileName().left(nExt) + ".TXT";
+
+			Common::File f;
+			if (fileExists(sBaseStr) && f.open(sBaseStr.getBuffer())) {
+				Common::String line = f.readLine();
+
+				bofMessageBox(line.c_str(), "Using .TXT for missing .WAV!");
+				f.close();
+				return true;
+			}
+
+			logError(buildString("Sound TEXT file could not be read: %s.  Why? because we like you ...", getFileName().getBuffer()));
+			return false;
 		}
 	}
 
@@ -191,12 +177,10 @@ ParseCodes CBagSoundObject::setInfo(CBagIfstream &istr) {
 				getAlphaNumFromStream(istr, sStr);
 
 				if (!sStr.find("WAVE")) {
-					// _xSndType  = WAVE;
 					setWave();
 					nObjectUpdated = true;
 
 				} else if (!sStr.find("MIDI")) {
-					// _xSndType  = MIDI;
 					setMidi();
 					nObjectUpdated = true;
 
@@ -283,12 +267,12 @@ ParseCodes CBagSoundObject::setInfo(CBagIfstream &istr) {
 		//  No match return from function
 		//
 		default: {
-			ParseCodes rc = CBagObject::setInfo(istr);
-			if (rc == PARSING_DONE) {
+			ParseCodes parseCode = CBagObject::setInfo(istr);
+			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}
 
-			if (rc == UPDATED_OBJECT) {
+			if (parseCode == UPDATED_OBJECT) {
 				nObjectUpdated = true;
 			} else { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
@@ -350,7 +334,6 @@ void CBagSoundObject::setPlaying(bool bVal) {
 	if (((_wFlags & SOUND_MIDI) && CBagMasterWin::getMidi()) || (((_wFlags & SOUND_WAVE) || (_wFlags & SOUND_MIX)) && CBagMasterWin::getDigitalAudio())) {
 
 		if (bVal) {
-
 			if (_pSound && _pMidiSound != _pSound) {
 
 				_pSound->setQSlot(getState());
@@ -375,13 +358,10 @@ void CBagSoundObject::setPlaying(bool bVal) {
 				if (_wFlags & SOUND_MIDI)
 					_pMidiSound = _pSound;
 			}
-		} else {
-
-			if (_pSound) {
-				_pSound->stop();
-				if (_wFlags & SOUND_MIDI)
-					_pMidiSound = nullptr;
-			}
+		} else if (_pSound) {
+			_pSound->stop();
+			if (_wFlags & SOUND_MIDI)
+				_pMidiSound = nullptr;
 		}
 	}
 }

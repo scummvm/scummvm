@@ -43,19 +43,15 @@ enum ErrorCode {
 	ERR_CRC     = 13,   /* file or data failed CRC check */
 };
 
-#define NUM_ERR_CODES 18
 #define MAX_ERRORS 3
 
 extern const char *const g_errList[];
 
 class CBofError {
 protected:
-	static ErrorCode _errGlobal;
-	static int _nErrorCount;
-
+	static int _count;
 	ErrorCode _errCode;
 
-protected:
 	virtual void bofMessageBox(const Common::String &content, const Common::String &title) {}
 
 public:
@@ -69,12 +65,19 @@ public:
 	 * @param errCode       Error to report
 	 * @param format        printf style format string
 	 */
-	void reportError(ErrorCode errCode, const char *format = nullptr, ...);
+	void reportError(ErrorCode errCode, const char *format, ...);
 
-	bool errorOccurred() {
+	/**
+	 * Logs specified fatal error to log file and exit the game.
+	 * @param errCode       Error to report
+	 * @param format        printf style format string
+	 */
+	static void fatalError(ErrorCode errCode, const char *format, ...);
+
+	bool errorOccurred() const {
 		return _errCode != ERR_NONE;
 	}
-	ErrorCode getErrorCode() {
+	ErrorCode getErrorCode() const {
 		return _errCode;
 	}
 	void clearError() {
@@ -82,21 +85,9 @@ public:
 	}
 
 	static void initialize();
-	static ErrorCode getLastError() {
-		return _errGlobal;
-	}
-	static void setLastError(ErrorCode errCode) {
-		_errGlobal = errCode;
-	}
 
 	static int getErrorCount() {
-		return _nErrorCount;
-	}
-	static void setErrorCount(int nCount) {
-		_nErrorCount = nCount;
-	}
-	static void clearErrorCount() {
-		setErrorCount(0);
+		return _count;
 	}
 
 };

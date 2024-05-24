@@ -32,18 +32,20 @@
 namespace Ultima {
 namespace Ultima8 {
 
-MissileTracker::MissileTracker(const Item *item, int32 sx, int32 sy, int32 sz,
+MissileTracker::MissileTracker(const Item *item, ObjId owner,
+							   int32 sx, int32 sy, int32 sz,
 							   int32 tx, int32 ty, int32 tz,
 							   int32 speed, int32 gravity) :
-		_destX(tx), _destY(ty), _destZ(tz), _gravity(gravity) {
+		_owner(owner), _destX(tx), _destY(ty), _destZ(tz), _gravity(gravity) {
 	_objId = item->getObjId();
 
 	init(sx, sy, sz, speed);
 }
 
-MissileTracker::MissileTracker(const Item *item, int32 tx, int32 ty, int32 tz,
+MissileTracker::MissileTracker(const Item *item, ObjId owner,
+							   int32 tx, int32 ty, int32 tz,
 							   int32 speed, int32 gravity) :
-		  _destX(tx), _destY(ty), _destZ(tz), _gravity(gravity)  {
+		_owner(owner), _destX(tx), _destY(ty), _destZ(tz), _gravity(gravity)  {
 	assert(item->getParent() == 0);
 
 	_objId = item->getObjId();
@@ -153,7 +155,7 @@ bool MissileTracker::isPathClear() const {
 
 		int32 hit = 0x4000;
 		for (it = collisions.begin(); it != collisions.end(); it++) {
-			if (it->_blocking && !it->_touching) {
+			if (it->_blocking && !it->_touching && it->_item != _owner) {
 				hit = it->_hitTime;
 				break;
 			}

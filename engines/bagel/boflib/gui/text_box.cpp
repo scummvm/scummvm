@@ -60,6 +60,7 @@ CBofTextBox::CBofTextBox(CBofWindow *pWindow, const CBofRect *pRect, const CBofS
 	_nCurrentLine = 0;
 	_nCurrentIndex = 0;
 	_nNumLines = 0;
+	_nTextFont = FONT_DEFAULT;
 
 	setText(cText);
 	setBox(pRect);
@@ -82,6 +83,7 @@ CBofTextBox::CBofTextBox(CBofBitmap *pBitmap, const CBofRect *pRect, const CBofS
 	_nCurrentLine = 0;
 	_nCurrentIndex = 0;
 	_nNumLines = 0;
+	_nTextFont = FONT_DEFAULT;
 
 	setText(cText);
 	setBox(pRect);
@@ -106,17 +108,11 @@ ErrorCode CBofTextBox::setBox(const CBofRect *pRect) {
 	assert(pRect != nullptr);
 
 	// Remove previous text field (if any)
-	if (_pTextField != nullptr) {
-		delete _pTextField;
-		_pTextField = nullptr;
-	}
+	delete _pTextField;
+	_pTextField = nullptr;
 
 	// Create a new text field the size of the box we want
-	if ((_pTextField = new CBofText(pRect, JUSTIFY_WRAP)) != nullptr) {
-
-	} else {
-		reportError(ERR_MEMORY, "Could not allocate a CBofText");
-	}
+	_pTextField = new CBofText(pRect, JUSTIFY_WRAP);
 
 	return _errCode;
 }

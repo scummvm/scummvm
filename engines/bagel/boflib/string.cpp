@@ -104,10 +104,8 @@ void CBofString::allocBuffer(int nLen) {
 	// Don't do anything about zero length allocations
 	if (nLen > 0) {
 		_pszData = (char *)bofAlloc(nLen + 1);
-		if (_pszData != nullptr) {
-			// Set the entire buffer to nullptr
-			memset(_pszData, '\0', nLen + 1);
-		}
+		// Set the entire buffer to nullptr
+		memset(_pszData, '\0', nLen + 1);
 	}
 
 	_nLength = 0;
@@ -130,12 +128,6 @@ void CBofString::free() {
 	}
 	_nLength = 0;
 	SETBUFFERSIZE(0, bStackMem);
-}
-
-void CBofString::safeDelete(char *pszBuf) {
-	if (pszBuf != nullptr) {
-		bofFree(pszBuf);
-	}
 }
 
 void CBofString::copy(const char *pszBuf) {
@@ -270,7 +262,7 @@ void CBofString::concatInPlace(int nSrcLen, const char *lpszSrcData) {
 				lpszOldData = new char[_nLength + nSrcLen + 1];
 
 			if (lpszOldData != nullptr) {
-				memcpy(lpszOldData, _pszData, (_nLength /*+ nSrcLen*/ + 1) * sizeof(char));
+				memcpy(lpszOldData, _pszData, (_nLength + 1) * sizeof(char));
 
 				concatCopy(_nLength, lpszOldData, nSrcLen, lpszSrcData, _nLength + nAllocAmount);
 
@@ -326,74 +318,17 @@ char *CBofString::getBuffer() {
 	return _pszData;
 }
 
-void CBofString::releaseBuffer(int nNewLength) {
-	assert(isValidObject(this));
-	assert(nNewLength >= 0);
-
-	if (_pszData != nullptr) {
-
-		_nLength = MIN<uint16>(nNewLength, _nLength);
-
-		_pszData[_nLength] = '\0';
-	}
-}
-
-void CBofString::freeExtra() {
-	assert(isValidObject(this));
-	assert(_nLength <= NORMALIZEBUFFERSIZE());
-
-	if (_nLength != NORMALIZEBUFFERSIZE()) {
-		char *pszOldData;
-
-		if ((pszOldData = new char[_nLength + 1]) != nullptr) {
-			Common::strlcpy(pszOldData, _pszData, 9999);
-
-			allocBuffer(_nLength);
-			Common::strlcpy(_pszData, pszOldData, 9999);
-			assert(_pszData[_nLength] == '\0');
-
-			delete[] pszOldData;
-		}
-	}
-	assert(_pszData != nullptr);
-}
-
-int CBofString::find(char ch) const {
-	assert(isValidObject(this));
-
-	// Find first single character
-	char *lpsz = nullptr;
-
-	if (_pszData != nullptr)
-		lpsz = strchr(_pszData, ch);
-
-	// Return -1 if not found and index otherwise
-	return (lpsz == nullptr) ? -1 : (int)(lpsz - _pszData);
-}
-
-int CBofString::findOneOf(const char *lpszCharSet) const {
-	assert(isValidObject(this));
-
-	char *lpsz = nullptr;
-	if (_pszData != nullptr)
-		lpsz = strpbrk(_pszData, lpszCharSet);
-
-	return (lpsz == nullptr) ? -1 : (int)(lpsz - _pszData);
-}
-
 int CBofString::findNumOccurrences(const char *pszSub) {
 	assert(isValidObject(this));
 	assert(pszSub != nullptr);
 	assert(*pszSub != '\0');
 
-	char *pszCur;
-	int nHits;
-
-	nHits = 0;
+	int nHits = 0;
 	if (_pszData != nullptr) {
-		pszCur = _pszData;
+		char *pszCur = _pszData;
 		while (pszCur != nullptr) {
-			if ((pszCur = strstr(pszCur, pszSub)) != nullptr) {
+			pszCur = strstr(pszCur, pszSub);
+			if (pszCur != nullptr) {
 				nHits++;
 				pszCur++;
 			}
@@ -449,29 +384,6 @@ CBofString CBofString::mid(int nFirst, int nCount) const {
 	return dest;
 }
 
-void CBofString::mid(int nFirst, CBofString *mStr) const {
-	assert(isValidObject(this));
-	mid(nFirst, _nLength - nFirst, mStr);
-}
-
-void CBofString::mid(int nFirst, int nCount, CBofString *mStr) const {
-	assert(isValidObject(this));
-	assert(mStr != nullptr);
-
-	assert(nFirst >= 0);
-	assert(nCount >= 0);
-
-	// Out-of-bounds requests return sensible things
-	if (nFirst + nCount > _nLength)
-		nCount = _nLength - nFirst;
-	if (nFirst > _nLength)
-		nCount = 0;
-
-	*mStr = *this;
-	memcpy(mStr->_pszData, &_pszData[nFirst], nCount);
-	mStr->_nLength = (uint16)nCount;
-}
-
 CBofString CBofString::right(int nCount) const {
 	assert(isValidObject(this));
 
@@ -483,19 +395,6 @@ CBofString CBofString::right(int nCount) const {
 	CBofString dest;
 	allocCopy(dest, nCount, _nLength - nCount, 0);
 	return dest;
-}
-
-void CBofString::right(int nCount, CBofString *rStr) const {
-	assert(isValidObject(this));
-
-	assert(nCount >= 0);
-
-	if (nCount > _nLength)
-		nCount = _nLength;
-
-	*rStr = *this;
-	memcpy(rStr->_pszData, &_pszData[_nLength - nCount], nCount);
-	rStr->_nLength = (uint16)nCount;
 }
 
 CBofString CBofString::left(int nCount) const {
@@ -511,60 +410,11 @@ CBofString CBofString::left(int nCount) const {
 	return dest;
 }
 
-void CBofString::left(int nCount, CBofString *lStr) const {
-	assert(isValidObject(this));
-
-	assert(nCount >= 0);
-
-	if (nCount > _nLength)
-		nCount = _nLength;
-
-	*lStr = *this;
-	lStr->_nLength = (uint16)nCount;
-}
-
 void CBofString::deleteLastChar() {
 	if (!isEmpty()) {
 		*(_pszData + _nLength - 1) = '\0';
 		--_nLength;
 	}
-}
-
-// strspn equivalent
-CBofString CBofString::spanIncluding(const char *lpszCharSet) const {
-	assert(isValidObject(this));
-
-	int n = 0;
-
-	if (_pszData != nullptr)
-		n = strspn(_pszData, lpszCharSet);
-
-	return left(n);
-}
-
-// strcspn equivalent
-CBofString CBofString::spanExcluding(const char *lpszCharSet) const {
-	assert(isValidObject(this));
-
-	int n = 0;
-
-	if (_pszData != nullptr)
-		n = strcspn(_pszData, lpszCharSet);
-
-	return left(n);
-}
-
-int CBofString::reverseFind(char ch) const {
-	assert(isValidObject(this));
-
-	// Find last single character
-	char *lpsz = nullptr;
-
-	if (_pszData != nullptr)
-		lpsz = strrchr(_pszData, ch);
-
-	// Return -1 if not found, distance from beginning otherwise
-	return (lpsz == nullptr) ? -1 : (int)(lpsz - _pszData);
 }
 
 // Find a sub-string (like strstr)
@@ -585,34 +435,6 @@ int CBofString::find(const char *lpszSub) const {
 
 #define FORCE_ANSI 0x10000
 #define FORCE_UNICODE 0x20000
-
-// Formatting (using wsprintf style formatting)
-void CBofString::format(const char *lpszFormat, ...) {
-	assert(isValidObject(this));
-
-	va_list argptr;
-
-	assert(lpszFormat != nullptr);
-
-	//
-	// Don't parse the variable input if there aren't any
-	//
-	if (lpszFormat != nullptr) {
-		//
-		// Parse the variable argument list
-		//
-		char szBuf[MAX_STRING];
-		va_start(argptr, lpszFormat);
-		Common::vsprintf_s(szBuf, lpszFormat, argptr);
-		va_end(argptr);
-
-		/* Make sure we didn't blow the stack */
-		assert(strlen(szBuf) < MAX_STRING);
-
-		allocBuffer(strlen(szBuf));
-		Common::strcpy_s(_pszData, MAX_STRING, szBuf);
-	}
-}
 
 int CBofString::safeStrlen(const char *psz) {
 	return (psz == nullptr) ? 0 : strlen(psz);
@@ -643,12 +465,6 @@ int CBofString::compareNoCase(const char *psz) const {
 	return n;
 }
 
-int CBofString::collate(const char *psz) const {
-	assert(isValidObject(this));
-
-	return strcoll(_pszData, psz);
-}
-
 char CBofString::getAt(int nIndex) {
 	assert(isValidObject(this));
 
@@ -662,18 +478,6 @@ char CBofString::operator[](int nIndex) {
 	assert(isValidObject(this));
 
 	return getAt(nIndex);
-}
-
-void CBofString::setAt(int nIndex, char ch) {
-	assert(isValidObject(this));
-
-	assert(nIndex >= 0);
-	assert(nIndex < _nLength);
-	assert(ch != 0);
-
-	if (_pszData != nullptr) {
-		_pszData[nIndex] = ch;
-	}
 }
 
 void CBofString::replaceCharAt(int nIndex, char chNew) {
@@ -726,10 +530,12 @@ void CBofString::replaceStr(const char *pszOld, const char *pszNew) {
 			int nDiff = nNewLen - nOldLen;
 			int nNeedLength = _nLength + 1;
 			p = _pszData;
-			while ((pszSearch = strstr(p, pszOld)) != nullptr) {
+			pszSearch = strstr(p, pszOld);
+			while (pszSearch != nullptr) {
 				p = pszSearch + nOldLen;
 
 				nNeedLength += nDiff;
+				pszSearch = strstr(p, pszOld);
 			}
 
 			// If we need more storage space for the buffer, then get some
@@ -743,9 +549,11 @@ void CBofString::replaceStr(const char *pszOld, const char *pszNew) {
 		// of the token that we are searching for.
 
 		p = _pszData;
-		while ((pszSearch = strstr(p, pszOld)) != nullptr) {
+		pszSearch = strstr(p, pszOld);
+		while (pszSearch != nullptr) {
 			strreplaceStr(p, pszOld, pszNew);
 			p = pszSearch + nNewLen;
+			pszSearch = strstr(p, pszOld);
 		}
 
 		// Get new length
@@ -765,22 +573,21 @@ void CBofString::growTo(int nNewSize) {
 		// Otherwise, we must keep track of whats in the buffer
 		// Create a temp buffer to save string
 		char *p = (char *)bofAlloc(_nLength + 2);
-		if (p != nullptr) {
-			// Save copy of string
-			Common::strcpy_s(p, MAX_STRING, _pszData);
 
-			// Make the new buffer
-			allocBuffer(nNewSize);
+		// Save copy of string
+		Common::strcpy_s(p, MAX_STRING, _pszData);
 
-			// Copy saved string back
-			strncpy(_pszData, p, nNewSize - 1);
+		// Make the new buffer
+		allocBuffer(nNewSize);
 
-			// Get it's new length
-			_nLength = (uint16)strlen(_pszData);
+		// Copy saved string back
+		strncpy(_pszData, p, nNewSize - 1);
 
-			// Don't need temp buffer anymore
-			bofFree(p);
-		}
+		// Get it's new length
+		_nLength = (uint16)strlen(_pszData);
+
+		// Don't need temp buffer anymore
+		bofFree(p);
 	}
 }
 
@@ -798,13 +605,6 @@ int CBofString::hash() const {
 void CBofString::makeUpper() {
 	Common::String s(_pszData);
 	s.toUppercase();
-
-	strncpy(_pszData, s.c_str(), _nLength);
-}
-
-void CBofString::makeLower() {
-	Common::String s(_pszData);
-	s.toLowercase();
 
 	strncpy(_pszData, s.c_str(), _nLength);
 }

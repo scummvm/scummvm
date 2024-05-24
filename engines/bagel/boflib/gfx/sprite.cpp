@@ -51,7 +51,6 @@ void CBofSprite::openLibrary(CBofPalette *pPal) {
 	assert(pPal != nullptr);
 
 	clearDirtyRect();
-
 	setSharedPalette(pPal);
 
 	// Set up a default work area
@@ -61,7 +60,6 @@ void CBofSprite::openLibrary(CBofPalette *pPal) {
 
 void CBofSprite::closeLibrary() {
 	flushSpriteChain();
-
 	tearDownWorkArea();
 
 	_pSharedPalette = nullptr;
@@ -71,23 +69,23 @@ void CBofSprite::closeLibrary() {
 CBofSprite::CBofSprite() {
 	_pImage = nullptr;                                 // No initial bitmap image for the sprite
 
-	_cSize = CBofSize(0, 0);                           // There is no size to the sprite image
+	_cSize = CBofSize(0, 0);                // There is no size to the sprite image
 	_cRect.setRectEmpty();                             // Rectangular bounds not yet defined
 
-	_cImageRect = _cRect;                             // Image rectangle starts same as display bounds
-	_cPosition = CBofPoint(0, 0);                      // Default position to upper left corner of display
+	_cImageRect = _cRect;                              // Image rectangle starts same as display bounds
+	_cPosition = CBofPoint(0, 0);             // Default position to upper left corner of display
 	_bPositioned = false;                              // Not yet positioned
 	_bDuplicated = false;                              // Not sharing resources with other sprites
 	_nZOrder = SPRITE_TOPMOST;                         // Default to top most in fore/back ground order
 	_nCelCount = 1;                                    // Number of frames in animated cel strip
-	_nCelID = _nCelCount - 1;                         // Cel identifier not pointing at a cel
+	_nCelID = _nCelCount - 1;                          // Cel identifier not pointing at a cel
 	_bAnimated = false;                                // Not initially animated
 	_bLinked = false;                                  // Not initially linked into the sprite chain
 
 	_nMaskColor = NOT_TRANSPARENT;                     // Default to NO transparency
 	_bReadOnly = true;
 
-	setBlockAdvance(false);                             // Default always advance next sprite
+	setBlockAdvance(false);                          // Default always advance next sprite
 }
 
 
@@ -95,7 +93,6 @@ CBofSprite::~CBofSprite() {
 	assert(isValidObject(this));
 
 	unlinkSprite();
-
 	clearImage();   // Clear the sprite image bitmap and context
 }
 
@@ -156,20 +153,18 @@ void CBofSprite::unlinkSprite() {
 
 
 void CBofSprite::flushSpriteChain() {
-	CBofSprite *pSprite = nullptr;
+	CBofSprite *pSprite = getSpriteChain();
 
 	// Cycle getting head of chain, un-linking it and then deleting it
-	while ((pSprite = CBofSprite::getSpriteChain()) != nullptr) {
+	while (pSprite != nullptr) {
 		pSprite->unlinkSprite();
 		delete pSprite;
+		pSprite = getSpriteChain();
 	}
 }
 
 
-bool CBofSprite::setupWorkArea(int dx, int dy) {
-	// Assume failure
-	bool bSuccess = false;
-
+void CBofSprite::setupWorkArea(int dx, int dy) {
 	// Do we already have a work area?
 	if (_pWorkBmp != nullptr) {
 		// Yes, so lets tear it down before we start a new one
@@ -177,21 +172,15 @@ bool CBofSprite::setupWorkArea(int dx, int dy) {
 	}
 
 	// Create an offscreen bitmap where we do all the work;
-	if ((_pWorkBmp = new CBofBitmap(dx, dy, _pSharedPalette)) != nullptr) {
-		_nWorkDX = dx;
-		_nWorkDY = dy;
-		bSuccess = true;
-	}
-
-	return bSuccess;
+	_pWorkBmp = new CBofBitmap(dx, dy, _pSharedPalette);
+	_nWorkDX = dx;
+	_nWorkDY = dy;
 }
 
 
 void CBofSprite::tearDownWorkArea() {
-	if (_pWorkBmp != nullptr) {
-		delete _pWorkBmp;
-		_pWorkBmp = nullptr;
-	}
+	delete _pWorkBmp;
+	_pWorkBmp = nullptr;
 }
 
 
@@ -200,40 +189,28 @@ CBofSprite *CBofSprite::duplicateSprite() {
 
 	// Create an object for the sprite
 	CBofSprite *pSprite = new CBofSprite;
-
-	if (pSprite != nullptr) {
-		duplicateSprite(pSprite);
-	}
+	duplicateSprite(pSprite);
 
 	return pSprite;
 }
 
 
-bool CBofSprite::duplicateSprite(CBofSprite *pSprite) {
-	assert(isValidObject(this));
+void CBofSprite::duplicateSprite(CBofSprite *pSprite) {
+	if (!isValidObject(this) || (pSprite == nullptr))
+		error("duplicateSprite - Invalid source or destination sprite");
 
-	// We require a valid sprite to copy
-	assert(pSprite != nullptr);
+	pSprite->_pImage = _pImage;
+	pSprite->_cRect = _cRect;
+	pSprite->_cImageRect = _cImageRect;
+	pSprite->_cSize = _cSize;
+	pSprite->_cPosition = _cPosition;
+	pSprite->_nZOrder = _nZOrder;
+	pSprite->_nCelID = _nCelID;
+	pSprite->_nCelCount = _nCelCount;
+	pSprite->_bAnimated = _bAnimated;
+	pSprite->_nMaskColor = _nMaskColor;
 
-	if (pSprite != nullptr) {
-		pSprite->_pImage = _pImage;
-
-		pSprite->_cRect = _cRect;
-		pSprite->_cImageRect = _cImageRect;
-		pSprite->_cSize = _cSize;
-		pSprite->_cPosition = _cPosition;
-		pSprite->_nZOrder = _nZOrder;
-		pSprite->_nCelID = _nCelID;
-		pSprite->_nCelCount = _nCelCount;
-		pSprite->_bAnimated = _bAnimated;
-		pSprite->_nMaskColor = _nMaskColor;
-
-		pSprite->_bDuplicated = true;		// Mark it as a sprite with shared resources
-
-		return true;
-	}
-
-	return false;
+	pSprite->_bDuplicated = true;		// Mark it as a sprite with shared resources
 }
 
 
@@ -244,11 +221,7 @@ bool CBofSprite::loadSprite(const char *pszPathName, int nCels) {
 
 	// Create an object for the sprite's image
 	CBofBitmap *pBitmap = new CBofBitmap(pszPathName, _pSharedPalette);
-	if (pBitmap != nullptr) {
-		return loadSprite(pBitmap, nCels);
-	}
-
-	return false;	// Return failure
+	return loadSprite(pBitmap, nCels);
 }
 
 
@@ -334,7 +307,7 @@ void CBofSprite::prevCel() {
 bool CBofSprite::paintSprite(CBofWindow *pWnd, const int x, const int y) {
 	assert(isValidObject(this));
 
-	// Can't paint to a non-existant window
+	// Can't paint to a non-existent window
 	assert(pWnd != nullptr);
 
 	// The window MUST have a backdrop
@@ -717,33 +690,6 @@ void CBofSprite::setPosition(int x, int y) {
 	_cPosition.x = x;
 	_cPosition.y = y;
 	_cRect.setRect(_cPosition.x, _cPosition.y, _cPosition.x + _cSize.cx - 1, _cPosition.y + _cSize.cy - 1);
-}
-
-
-bool CBofSprite::cropImage(CBofWindow *pWnd, CBofRect *pRect, bool bUpdateNow) {
-	assert(isValidObject(this));
-	assert(pWnd != nullptr);
-	assert(pRect != nullptr);
-	assert(_pImage != nullptr);
-
-	if (_nMaskColor != NOT_TRANSPARENT) {
-
-		CBofRect myRect = *pRect; // Offset crop area by image rect
-		myRect.left += _cImageRect.left;
-		myRect.right += _cImageRect.left;
-		CBofRect cDestRect = myRect + _cPosition;
-
-		_pImage->fillRect(&myRect, (byte)_nMaskColor);
-
-		if (bUpdateNow) {
-			CBofBitmap *pBackdrop = pWnd->getBackdrop();
-			if (pBackdrop != nullptr) {
-				pBackdrop->paint(pWnd, &cDestRect, &myRect);
-			}
-		}
-	}
-
-	return true;
 }
 
 

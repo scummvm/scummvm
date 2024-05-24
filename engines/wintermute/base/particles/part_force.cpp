@@ -40,7 +40,7 @@ PartForce::PartForce(BaseGame *inGame) : BaseNamedObject(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-PartForce::~PartForce(void) {
+PartForce::~PartForce() {
 }
 
 

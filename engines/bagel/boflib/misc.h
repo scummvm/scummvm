@@ -77,14 +77,12 @@ extern void *bofMemAlloc(uint32 nSize, const char *pFile, int nLine, bool bClear
 /**
  * Frees specified memory block
  * @param pBuf          Buffer to de-allocate
- * @param pFile         Source file name
- * @param nLine         Source file line number
  **/
-extern void bofMemFree(void *pBuf, const char *pFile, int nLine);
+extern void bofMemFree(void *pBuf);
 
 #define bofAlloc(n) bofMemAlloc((n), __FILE__, __LINE__, false)
-#define bofCAlloc(n, m) bofMemAlloc((uint32)(n) * (m), __FILE__, __LINE__, true)
-#define bofFree(p) bofMemFree((p), __FILE__, __LINE__)
+#define bofCleanAlloc(n) bofMemAlloc((n), __FILE__, __LINE__, true)
+#define bofFree(p) bofMemFree((p))
 
 inline uint32 getFreePhysMem() {
 	return 999999;
@@ -96,7 +94,7 @@ inline uint32 getFreePhysMem() {
  * @param lSize         Number of bytes in buffer
  * @param pszPassword   Optional password to encrypt with
  */
-void encrypt(void *, int32, const char *pPassword = nullptr);
+void encrypt(void *pBuf, int32 lSize, const char *pszPassword = nullptr);
 #define decrypt encrypt
 
 extern void encryptPartial(void *, int32, int32, const char *pPassword = nullptr);

@@ -568,10 +568,10 @@ ParseCodes CBagExpression::setInfo(CBagIfstream &istr) {
 	// CHECKME: Should we put this string in a debugC at the end of the function? (Currently unused)
 	CBofString errStr(errBuffer, 256);
 
-	ParseCodes rc = PARSING_DONE;
+	ParseCodes parseCode = PARSING_DONE;
 	bool doneFl = false;
 
-	while (!doneFl && rc == PARSING_DONE) {
+	while (!doneFl && parseCode == PARSING_DONE) {
 		istr.eatWhite();
 		int ch = istr.peek();
 		switch (ch) {
@@ -599,11 +599,11 @@ ParseCodes CBagExpression::setInfo(CBagIfstream &istr) {
 
 			istr.eatWhite();
 			ch = istr.peek();
-			while ((ch != ')') && rc == PARSING_DONE) {
+			while ((ch != ')') && parseCode == PARSING_DONE) {
 				OPERATION curOper;
 				getOperatorFromStream(istr, curOper);
 				if (curOper == OP_NONE) {
-					rc = UNKNOWN_TOKEN;
+					parseCode = UNKNOWN_TOKEN;
 					errStr = "Bad operator:";
 					break;
 				}
@@ -649,23 +649,23 @@ ParseCodes CBagExpression::setInfo(CBagIfstream &istr) {
 			// FIXME: Is this intentional?
 			// fallthrough
 		default:
-			rc = UNKNOWN_TOKEN;
+			parseCode = UNKNOWN_TOKEN;
 			break;
 		}
 	}
 
-	if (rc != PARSING_DONE) {
+	if (parseCode != PARSING_DONE) {
 		parseAlertBox(istr, "Error in expression:", __FILE__, __LINE__);
 	}
 
 	istr.eatWhite();
 
-	return rc;
+	return parseCode;
 }
 
 
 ErrorCode CBagExpression::getOperatorFromStream(CBagIfstream &istr, OPERATION &oper) {
-	ErrorCode rc = ERR_NONE;
+	ErrorCode errorCode = ERR_NONE;
 
 	char localBuff[256];
 	localBuff[0] = 0;
@@ -743,9 +743,9 @@ ErrorCode CBagExpression::getOperatorFromStream(CBagIfstream &istr, OPERATION &o
 	}
 
 	if (oper == OP_NONE)
-		rc = ERR_UNKNOWN;
+		errorCode = ERR_UNKNOWN;
 
-	return rc;
+	return errorCode;
 }
 
 } // namespace Bagel

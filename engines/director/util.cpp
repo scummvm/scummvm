@@ -26,10 +26,12 @@
 #include "common/punycode.h"
 #include "common/str-array.h"
 #include "common/tokenizer.h"
+#include "common/xpfloat.h"
 #include "common/compression/deflate.h"
 
 #include "director/types.h"
 #include "graphics/macgui/macwindowmanager.h"
+#include "gui/filebrowser-dialog.h"
 
 #include "director/director.h"
 #include "director/movie.h"
@@ -972,6 +974,28 @@ Common::Path findAudioPath(const Common::String &path, bool currentFolder, bool 
 	return result;
 }
 
+Common::String getFileNameFromModal(bool save, const Common::String &suggested, const char *ext) {
+	Common::String prefix = savePrefix();
+	Common::String mask = prefix + "*";
+	if (ext) {
+		mask += ".";
+		mask += ext;
+	}
+	GUI::FileBrowserDialog browser(nullptr, "txt", save ? GUI::kFBModeSave : GUI::kFBModeLoad, mask.c_str(), suggested.c_str());
+	if (browser.runModal() <= 0) {
+		return Common::String();
+	}
+	Common::String result = browser.getResult();
+	if (!result.empty() && !result.hasPrefixIgnoreCase(prefix))
+		result = prefix + result;
+	return result;
+}
+
+Common::String savePrefix() {
+	return g_director->getTargetName() + '-';
+}
+
+
 bool hasExtension(Common::String filename) {
 	uint len = filename.size();
 	return len >= 4 && filename[len - 4] == '.'
@@ -1628,3 +1652,15 @@ void DirectorEngine::delayMillis(uint32 delay) {
 }
 
 } // End of namespace Director
+
+double readAppleFloat80(void *ptr_) {
+	// Floats in an "80 bit IEEE Standard 754 floating
+	// point number (Standard Apple Numeric Environment [SANE] data type
+	// Extended).
+	byte *ptr = (byte *)ptr_;
+
+	uint16 signAndExponent = READ_BE_UINT16(&ptr[0]);
+	uint64 mantissa = READ_BE_UINT64(&ptr[2]);
+
+	return Common::XPFloat(signAndExponent, mantissa).toDouble(Common::XPFloat::kSemanticsSANE);
+}

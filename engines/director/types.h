@@ -71,6 +71,15 @@ enum ScriptType {
 	kMaxScriptType = 7	// Sync with types.cpp:28, array scriptTypes[]
 };
 
+enum EventHandlerSourceType {
+	kNoneHandler = 0,
+	kPrimaryHandler = 1,
+	kSpriteHandler = 2,
+	kCastHandler = 3,
+	kFrameHandler = 4,
+	kMovieHandler = 5
+};
+
 enum ScriptFlag {
 	kScriptFlagUnused		= (1 << 0x0),
 	kScriptFlagFuncsGlobal	= (1 << 0x1),
@@ -441,6 +450,7 @@ typedef Common::Array<PCell> PropertyArray;
 const char *scriptType2str(ScriptType scr);
 const char *castType2str(CastType type);
 const char *spriteType2str(SpriteType type);
+const char *inkType2str(InkType type);
 
 } // End of namespace Director
 
