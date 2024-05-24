@@ -637,26 +637,27 @@ void ScummEngine_v6::o6_eq() {
 		int pitchYValue = readVar(0x8000 + 12);
 		int strikeZoneTop = readVar(0x8000 + 29);
 		int strikeZoneBottom = readVar(0x8000 + 30);
-			// People have been complaining about strikes being visually unclear during online games. This is because the strike zone's visual is not
-			// equal length compared to the actual range in which a strike can be called. These changes should fix that, with some extra leniency in
-			// the corners in particular since they are especially difficult to see visually, due to having four large corner pieces blocking the view.
 
-			// This checks if the pitch's y location is either:
-			// a. at least 2 pixels lower than the top of the zone/at least 3 pixels above the bottom of the zone
-			// b. at least 2 pixels lower than the top of the zone/at least 3 pixels above the bottom of the zone
-			// If either of these are true AND the x value is less than or equal to 279 OR greater than or equal to 354, make the game read as a ball.
-			// The strike zone should be much more lenient in the corners, as well as removing the small advantage of throwing to the farthest right side of the zone.
-			if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && (vm.slot[_currentScript].number == 2202 || vm.slot[_currentScript].number == 2192) && readVar(399) == 1) {
-				if (((pitchYValue <= strikeZoneTop + 2 || pitchYValue >= strikeZoneBottom - 3) && pitchXValue <= 279) ||
-					((pitchYValue <= strikeZoneTop + 2 || pitchYValue >= strikeZoneBottom - 3) && pitchXValue >= 354)) {
-					writeVar(0x8000 + 16, 2);
-				}
-				// if the ball's y location is 1 pixel higher than the bottom of the zone, then it will be a ball.
-				// This removes the small advantage of throwing at the very bottom of the zone.
-				if (pitchYValue > strikeZoneBottom - 1) {
-					writeVar(0x8000 + 16, 2);
-				}
+		// People have been complaining about strikes being visually unclear during online games. This is because the strike zone's visual is not
+		// equal length compared to the actual range in which a strike can be called. These changes should fix that, with some extra leniency in
+		// the corners in particular since they are especially difficult to see visually, due to having four large corner pieces blocking the view.
+
+		// This checks if the pitch's y location is either:
+		// a. at least 2 pixels lower than the top of the zone/at least 3 pixels above the bottom of the zone
+		// b. at least 2 pixels lower than the top of the zone/at least 3 pixels above the bottom of the zone
+		// If either of these are true AND the x value is less than or equal to 279 OR greater than or equal to 354, make the game read as a ball.
+		// The strike zone should be much more lenient in the corners, as well as removing the small advantage of throwing to the farthest right side of the zone.
+		if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && (vm.slot[_currentScript].number == 2202 || vm.slot[_currentScript].number == 2192) && readVar(399) == 1) {
+			if (((pitchYValue <= strikeZoneTop + 2 || pitchYValue >= strikeZoneBottom - 3) && pitchXValue <= 279) ||
+				((pitchYValue <= strikeZoneTop + 2 || pitchYValue >= strikeZoneBottom - 3) && pitchXValue >= 354)) {
+				writeVar(0x8000 + 16, 2);
 			}
+			// if the ball's y location is 1 pixel higher than the bottom of the zone, then it will be a ball.
+			// This removes the small advantage of throwing at the very bottom of the zone.
+			if (pitchYValue > strikeZoneBottom - 1) {
+				writeVar(0x8000 + 16, 2);
+			}
+		}
 
 		// This change affects the angle adjustment for each batting stance when timing your swing. There are complaints that
 		// the game does not give you enough control when batting, resulting in a lot of hits going to the same area. This should
