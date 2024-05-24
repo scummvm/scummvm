@@ -52,10 +52,8 @@ ErrorCode CBofStringTable::load(const char *pszFileName) {
 
 	assert(_lBufSize > 0);
 
-	// Allocate a buffer to hold entire file
-	_pBuf = (byte *)bofAlloc(_lBufSize + 1);
-
-	memset(_pBuf, 0, _lBufSize + 1);
+	// Allocate a buffer to hold entire file and fill it with 0s
+	_pBuf = (byte *)bofCleanAlloc(_lBufSize + 1);
 
 	// Read in entire file
 	read(_pBuf, _lBufSize);

@@ -372,10 +372,8 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 
 			// Only allocate the object list when we really need it...
 			if (_objList == nullptr) {
-				_objList = (StObj *)bofAlloc(MAX_OBJS * sizeof(StObj));
-
-				// Init to zero (we might not use all slots)
-				memset(_objList, 0, MAX_OBJS * sizeof(StObj));
+				// Allocate a buffer filled with 0s
+				_objList = (StObj *)bofCleanAlloc(MAX_OBJS * sizeof(StObj));
 			}
 
 			_storageDeviceList->saveObjList(_objList, MAX_OBJS); // xxx
@@ -1624,10 +1622,8 @@ void CBagMasterWin::doRestore(StBagelSave *saveBuf) {
 		if (sdevManager != nullptr) {
 			// Restore any extra obj list info (for .WLD swapping)
 			if (_objList == nullptr) {
-				_objList = (StObj *)bofAlloc(MAX_OBJS * sizeof(StObj));
-
-				// Init to nullptr (might not use all slots)
-				memset(_objList, 0, MAX_OBJS * sizeof(StObj));
+				// Allocate a buffer filled with 0s
+				_objList = (StObj *)bofCleanAlloc(MAX_OBJS * sizeof(StObj));
 			}
 
 			memcpy(getObjList(), &saveBuf->_stObjListEx[0], sizeof(StObj) * MAX_OBJS);

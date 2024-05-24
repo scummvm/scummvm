@@ -4132,9 +4132,7 @@ void SrafComputer::notifyBoss(CBofString &sSoundFile, int nStafferID) {         
 		if (nLength == 0) {
 			reportError(ERR_FREAD, "Unexpected empty file %s", sSoundFile.getBuffer());
 		} else {
-			char *pszBuf = (char *)bofAlloc(nLength + 1);
-
-			memset(pszBuf, 0, nLength + 1);
+			char *pszBuf = (char *)bofCleanAlloc(nLength + 1);
 			fTxtFile.read(pszBuf, nLength);
 
 			// Put it up on the screen

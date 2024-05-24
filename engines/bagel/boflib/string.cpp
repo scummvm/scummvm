@@ -103,9 +103,8 @@ void CBofString::allocBuffer(int nLen) {
 
 	// Don't do anything about zero length allocations
 	if (nLen > 0) {
-		_pszData = (char *)bofAlloc(nLen + 1);
-		// Set the entire buffer to nullptr
-		memset(_pszData, '\0', nLen + 1);
+		// Allocate a buffer filled with 0s
+		_pszData = (char *)bofCleanAlloc(nLen + 1);
 	}
 
 	_nLength = 0;
