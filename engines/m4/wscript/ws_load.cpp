@@ -533,7 +533,7 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 
 	// Set the stream boolean
 	if (streamSeries) {
-		if (myCelSource[CELS_STREAM])
+		if (FROM_LE_32(myCelSource[CELS_STREAM]))
 			*streamSeries = true;
 		else
 			*streamSeries = false;
@@ -546,7 +546,7 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 	mySprite->yOffset = FROM_LE_32(myCelSource[CELS_Y]);
 	mySprite->w = FROM_LE_32(myCelSource[CELS_W]);
 	mySprite->h = FROM_LE_32(myCelSource[CELS_H]);
-	mySprite->encoding = (uint8)myCelSource[CELS_COMP];
+	mySprite->encoding = (uint8)FROM_LE_32(myCelSource[CELS_COMP]);
 	mySprite->data = (uint8 *)&myCelSource[CELS_DATA];
 
 	if ((mySprite->w > 0) && (mySprite->h > 0)) {
