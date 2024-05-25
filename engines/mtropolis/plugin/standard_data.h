@@ -154,11 +154,11 @@ protected:
 };
 
 struct FadeModifier : public PlugInModifierData {
-	PlugInTypeTaggedValue unknown1Event;
-	PlugInTypeTaggedValue unknown2Event;
-	PlugInTypeTaggedValue unknown3Int;
-	PlugInTypeTaggedValue unknown4Int;
-	PlugInTypeTaggedValue unknown5Int;
+	PlugInTypeTaggedValue unknown1Event; // Probably "Enable When"
+	PlugInTypeTaggedValue unknown2Event; // Probably "Disable When"
+	PlugInTypeTaggedValue unknown3Int;   // Int
+	PlugInTypeTaggedValue unknown4Int;   // Int
+	PlugInTypeTaggedValue unknown5Int;   // Int
 
 protected:
 	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
