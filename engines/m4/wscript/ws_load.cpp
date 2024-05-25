@@ -1721,7 +1721,7 @@ bool ws_OpenSSstream(SysFile *sysFile, Anim8 *anim8) {
 	numSprites = FROM_LE_32(celsPtr[CELS_COUNT]);
 	myRegs[IDX_CELS_INDEX] = -(1 << 16);	// First frame inc will make it 0
 	myRegs[IDX_CELS_COUNT] = numSprites << 16;
-	myRegs[IDX_CELS_FRAME_RATE] = celsPtr[CELS_FRAME_RATE] << 16;
+	myRegs[IDX_CELS_FRAME_RATE] = FROM_LE_32(celsPtr[CELS_FRAME_RATE]) << 16;
 
 	// Here we convert the offset table to become the actual size of the data for each sprite
 	// This is so the stream can be optimized to always read in on sprite boundaries
@@ -1731,17 +1731,22 @@ bool ws_OpenSSstream(SysFile *sysFile, Anim8 *anim8) {
 	maxFrameSize = 0;
 	// For all but the last frame, the frame size is the difference in offset values
 	for (i = 0; i < numSprites - 1; i++) {
-		offsets[i] = offsets[i + 1] - offsets[i];
-		if (offsets[i] > maxFrameSize) {
+		uint32 diff = FROM_LE_32(offsets[i + 1]) - FROM_LE_32(offsets[i]);
+		WRITE_LE_UINT32(&offsets[i], diff);
+
+		if (FROM_LE_32(offsets[i]) > maxFrameSize) {
 			maxFrameSize = offsets[i];
 			obesest_frame = i;
 		}
 	}
 
 	// For the last sprite we take the entire chunk size - the chunk header - the offset for that sprite
-	offsets[numSprites - 1] = celsPtr[CELS_SRC_SIZE] - ((SS_HEAD_SIZE + celsPtr[CELS_COUNT]) << 2) - offsets[numSprites - 1];
-	if (offsets[numSprites - 1] > maxFrameSize) {
-		maxFrameSize = offsets[numSprites - 1];
+	WRITE_LE_UINT32(&offsets[numSprites - 1], FROM_LE_32(celsPtr[CELS_SRC_SIZE]) -
+		((SS_HEAD_SIZE + FROM_LE_32(celsPtr[CELS_COUNT])) << 2) -
+		FROM_LE_32(offsets[numSprites - 1]));
+
+	if (FROM_LE_32(offsets[numSprites - 1]) > maxFrameSize) {
+		maxFrameSize = FROM_LE_32(offsets[numSprites - 1]);
 		obesest_frame = numSprites - 1;
 	}
 
