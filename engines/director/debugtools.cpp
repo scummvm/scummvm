@@ -250,24 +250,28 @@ struct ImGuiLogger {
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 0.f, 0.f, 1.f));
 		toggleButton("\ue160", &_showError);
 		ImGui::PopStyleColor();
+		ImGui::SetItemTooltip("Show Errors");
 		ImGui::SameLine();
 
 		// Warning
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 1.f, 0.f, 1.f));
 		toggleButton("\ue002", &_showWarn);
 		ImGui::PopStyleColor();
+		ImGui::SetItemTooltip("Show Warnings");
 		ImGui::SameLine();
 
 		// Info
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 1.f, 1.f, 1.f));
 		toggleButton("\ue88e", &_showInfo);
 		ImGui::PopStyleColor();
+		ImGui::SetItemTooltip("Show Info");
 		ImGui::SameLine();
 
 		// Debug
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.8f, 0.8f, 0.8f, 1.f));
 		toggleButton("\ue868", &_showdebug);
 		ImGui::PopStyleColor();
+		ImGui::SetItemTooltip("Show Debug");
 		ImGui::SameLine();
 
 		_filter.Draw("Filter (\"incl,-excl\") (\"warn\")", 180);
