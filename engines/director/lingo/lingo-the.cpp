@@ -1160,7 +1160,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		g_director->getCurrentWindow()->setStageColor(g_director->transformColor(d.asInt()));
 
 		// Redraw the stage
-		score->renderSprites(kRenderForceUpdate);
+		score->updateSprites(kRenderForceUpdate);
 		g_director->getCurrentWindow()->render();
 		break;
 	case kTheSwitchColorDepth:
@@ -1493,8 +1493,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 					((DigitalVideoCastMember *)castMember)->setChannel(channel);
 					((DigitalVideoCastMember *)castMember)->startVideo();
 					// b_updateStage needs to have _videoPlayback set to render video
-					// in the regular case Score::renderSprites sets it.
-					// However Score::renderSprites is not in the current code path.
+					// in the regular case Score::updateSprites sets it.
+					// However Score::updateSprites is not in the current code path.
 					movie->_videoPlayback = true;
 				}
 			}
@@ -1655,7 +1655,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheRect:
 		if (d.type == RECT || (d.type == ARRAY && d.u.farr->arr.size() >= 4)) {
-			score->renderSprites(kRenderForceUpdate);
+			score->updateSprites(kRenderForceUpdate);
 			channel->setBbox(
 				d.u.farr->arr[0].u.i, d.u.farr->arr[1].u.i,
 				d.u.farr->arr[2].u.i, d.u.farr->arr[3].u.i

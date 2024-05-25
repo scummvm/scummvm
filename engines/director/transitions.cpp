@@ -196,7 +196,7 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 	Score *score = g_director->getCurrentMovie()->getScore();
 	if (t.area) {
 		// Changed area transition
-		score->renderSprites(mode);
+		score->updateSprites(mode);
 
 		if (_dirtyRects.size() == 0)
 			return;
@@ -222,7 +222,7 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 		render(false, &nextFrame);
 	} else {
 		// Full stage transition
-		score->renderSprites(mode);
+		score->updateSprites(mode);
 		render(true, &nextFrame);
 
 		clipRect = _innerDims;

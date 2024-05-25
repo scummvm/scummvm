@@ -444,6 +444,9 @@ void Score::updateCurrentFrame() {
 
 		// this copies in the frame data and updates _curFrameNumber
 		loadFrame(nextFrameNumberToLoad, true);
+
+		// finally, update the channels and buffer any dirty rectangles
+		updateSprites();
 	}
 	return;
 }
@@ -677,12 +680,12 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 		_window->render();
 		_skipTransition = false;
 	} else if (g_director->_playbackPaused) {
-		renderSprites(mode);
+		updateSprites(mode);
 		_window->render();
 	} else if (!renderTransition(frameId, mode)) {
 		bool skip = renderPrePaletteCycle(mode);
 		setLastPalette();
-		renderSprites(mode);
+		updateSprites(mode);
 		_window->render();
 		if (!skip)
 			renderPaletteCycle(mode);
@@ -726,11 +729,11 @@ bool Score::renderTransition(uint16 frameId, RenderMode mode) {
 	return false;
 }
 
-void Score::renderSprites(RenderMode mode) {
+void Score::updateSprites(RenderMode mode) {
 	if (_window->_newMovieStarted)
 		mode = kRenderForceUpdate;
 
-	debugC(5, kDebugImages, "Score::renderSprites(): starting render cycle, mode %d", mode);
+	debugC(5, kDebugImages, "Score::updateSprites(): starting render cycle, mode %d", mode);
 
 	_movie->_videoPlayback = false;
 
@@ -773,14 +776,14 @@ void Score::renderSprites(RenderMode mode) {
 			if (currentSprite) {
 				Common::Rect bbox = channel->getBbox();
 				debugC(5, kDebugImages,
-					"Score::renderSprites(): CH: %-3d castId: %s invalid: %d [ink: %d, puppet: %d, moveable: %d, trails: %d, visible: %d] [bbox: %d,%d,%d,%d] [type: %d fg: %d bg: %d] [script: %s]",
+					"Score::updateSprites(): CH: %-3d castId: %s invalid: %d [ink: %d, puppet: %d, moveable: %d, trails: %d, visible: %d] [bbox: %d,%d,%d,%d] [type: %d fg: %d bg: %d] [script: %s]",
 					i, currentSprite->_castId.asString().c_str(), invalidCastMember,
 					currentSprite->_ink, currentSprite->_puppet, currentSprite->_moveable,
 					currentSprite->_trails, channel->_visible,
 					PRINT_RECT(bbox), currentSprite->_spriteType, currentSprite->_foreColor, currentSprite->_backColor,
 					currentSprite->_scriptId.asString().c_str());
 			} else {
-				debugC(5, kDebugImages, "Score::renderSprites(): CH: %-3d: No sprite", i);
+				debugC(5, kDebugImages, "Score::updateSprites(): CH: %-3d: No sprite", i);
 			}
 		} else {
 			channel->setClean(nextSprite, true);
