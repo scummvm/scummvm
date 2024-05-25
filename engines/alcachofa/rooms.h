@@ -36,6 +36,15 @@ public:
 
 	inline World &world() { return *_world; }
 	inline const Common::String &name() const { return _name; }
+	inline const PathFindingShape *activeFloor() const {
+		return _activeFloorI < 0 ? nullptr : &_floors[_activeFloorI];
+	}
+	inline int8 orderAt(const Common::Point &query) const {
+		return _activeFloorI < 0 ? 49 : activeFloor()->orderAt(query);
+	}
+	inline float depthAt(const Common::Point &query) const {
+		return _activeFloorI < 0 ? 1 : activeFloor()->depthAt(query);
+	}
 
 	void update();
 	virtual void updateInput();
@@ -118,6 +127,7 @@ public:
 	inline Inventory &inventory() const { return *_inventory; }
 	inline MainCharacter &filemon() const { return *_filemon; }
 	inline MainCharacter &mortadelo() const { return *_mortadelo; }
+	inline MainCharacter *activeCharacter() const { return _activeCharacter; }
 	inline const Common::String &initScriptName() const { return _initScriptName; }
 	inline uint8 loadedMapCount() const { return _loadedMapCount; }
 
@@ -142,7 +152,7 @@ private:
 	Common::String _initScriptName;
 	Room *_globalRoom, *_currentRoom = nullptr;
 	Inventory *_inventory;
-	MainCharacter *_filemon, *_mortadelo;
+	MainCharacter *_filemon, *_mortadelo, *_activeCharacter = nullptr;
 	uint8 _loadedMapCount = 0;
 };
 

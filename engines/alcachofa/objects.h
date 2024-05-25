@@ -22,8 +22,8 @@
 #ifndef OBJECTS_H
 #define OBJECTS_H
 
-#include "Shape.h"
-#include "Graphics.h"
+#include "shape.h"
+#include "graphics.h"
 
 #include "common/serializer.h"
 
@@ -323,7 +323,6 @@ protected:
 	void syncObjectAsString(Common::Serializer &serializer, ObjectBase *&object);
 	void updateTalkingAnimation();
 
-private:
 	Common::Point _interactionPoint;
 	Direction _direction;
 	Graphic _graphicNormal, _graphicTalking;
@@ -342,24 +341,58 @@ public:
 	WalkingCharacter(Room *room, Common::ReadStream &stream);
 	virtual ~WalkingCharacter() override = default;
 
+	virtual void update() override;
+	virtual void draw() override;
+	virtual void drawDebug() override;
+	virtual void loadResources() override;
+	virtual void freeResources() override;
 	virtual void serializeSave(Common::Serializer &serializer) override;
+	virtual void walkTo(
+		const Common::Point &target,
+		Direction endDirection = Direction::Invalid,
+		ShapeObject *activateObject = nullptr,
+		const char *activateAction = nullptr,
+		bool useAlternateObjectDirection = false
+	);
+	void stopWalkingAndTurn(Direction direction);
+	void setPosition(const Common::Point &target);
+
+protected:
+	virtual void onArrived();
 
 private:
-	Graphic _graphicWalking;
-	Common::SharedPtr<Animation>
+	void updateWalking();
+	void updateWalkingAnimation();
+
+	inline Animation *currentAnimationOf(Common::ScopedPtr<Animation> *const animations) {
+		Animation *animation = animations[(int)_direction].get();
+		if (animation == nullptr)
+			animation = animations[0].get();
+		assert(animation != nullptr);
+		return animation;
+	}
+	inline Animation *walkingAnimation() { return currentAnimationOf(_walkingAnimations); }
+	inline Animation *talkingAnimation() { return currentAnimationOf(_talkingAnimations); }
+
+	Common::ScopedPtr<Animation>
 		_walkingAnimations[kDirectionCount],
-		_standingAnimations[kDirectionCount];
+		_talkingAnimations[kDirectionCount];
 
 	int32
 		_lastWalkAnimFrame = -1,
-		_walkSpeed = 0,
+		_walkedDistance = 0,
 		_curPathPointI = -1;
+	float _stepSizeFactor = 0.0f;
 	Common::Point
 		_sourcePos,
-		_targetPos;
+		_currentPos;
 	bool _isWalking = false;
-	Direction _direction = Direction::Up;
-	Common::Array<Common::Point> _pathPoints;
+	Direction
+		_direction = Direction::Right,
+		_interactionDirection1 = Direction::Right,
+		_interactionDirection2 = Direction::Right,
+		_endWalkingDirection = Direction::Invalid;
+	Common::Stack<Common::Point> _pathPoints;
 };
 
 enum class MainCharacterKind {

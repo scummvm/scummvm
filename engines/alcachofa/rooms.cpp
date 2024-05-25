@@ -129,25 +129,20 @@ void Room::update() {
 		updateRoomBounds();
 		updateInput();
 	}
+	// TODO: Add condition for global room update
+	world().globalRoom().updateObjects();
 	if (world().currentRoom() == this)
 		updateObjects();
 	if (world().currentRoom() == this) {
 		g_engine->camera().update();
 		drawObjects();
-		// TODO: world().globalRoom().drawObjects();
+		world().globalRoom().drawObjects();
 		// TODO: Draw black borders
 		g_engine->drawQueue().draw();
 		drawDebug();
 		world().globalRoom().drawDebug();
 	}
 }
-using namespace Math;
-static Array<Vector2d> path;
-
-static Vector2d asVec(const Point &p) {
-	return Vector2d((float)p.x, (float)p.y);
-}
-
 
 void Room::updateInput() {
 	static bool hasLastP3D = false;
@@ -157,18 +152,16 @@ void Room::updateInput() {
 	if (g_engine->input().wasMouseLeftPressed()) {
 		Point p2d = g_engine->input().mousePos2D();
 		Point p3d = g_engine->input().mousePos3D();
+		auto m = &g_engine->world().filemon();
 
-		if (hasLastP3D) {
-			Stack<Point> pathi;
-			bool result = _floors[0].findPath(lastP3D, p3d, pathi);
-			path.clear();
-			path.push_back(asVec(lastP3D));
-			while (!pathi.empty())
-				path.push_back(asVec(pathi.pop()));
-			warning("Did %sfind a path in %d steps", result ? "" : "not ", path.size());
+		if (!hasLastP3D) {
+			m->setPosition(p3d);
+		}
+		else {
+			m->room() = this;
+			m->walkTo(p3d);
 		}
 		hasLastP3D = true;
-		lastP3D = p3d;
 	}
 }
 
@@ -180,9 +173,10 @@ void Room::updateRoomBounds() {
 }
 
 void Room::updateObjects() {
+	const auto *previousRoom = world().currentRoom();
 	for (auto *object : _objects) {
 		object->update();
-		if (world().currentRoom() != this)
+		if (world().currentRoom() != previousRoom)
 			return;
 	}
 }
@@ -202,15 +196,6 @@ void Room::drawDebug() {
 		return;
 	if (_activeFloorI >= 0 && g_engine->console().showFloor())
 		renderer->debugShape(_floors[_activeFloorI], kDebugBlue);
-
-	renderer->debugPolyline({ path.begin(), path.size()}, kWhite);
-
-	Common::Array<Vector2d> asd;
-	for (auto p : _floors[0]._linkPoints)
-	{
-		auto v = asVec(p);
-		renderer->debugPolyline({ &v, 1 }, { 255, 0, 255, 255 });
-	}
 }
 
 void Room::loadResources() {
