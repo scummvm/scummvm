@@ -619,7 +619,7 @@ public:
 		_polygonStippleEnabled = enable;
 	}
 
-	void setPolygonStipplePattern(void *stipple) {
+	void setPolygonStipplePattern(byte *stipple) {
 		_polygonStipplePattern = stipple;
 	}
 
@@ -791,7 +791,7 @@ private:
 	int _stencilDppass;
 
 	bool _polygonStippleEnabled;
-	void *_polygonStipplePattern;
+	byte *_polygonStipplePattern;
 	int _depthFunc;
 	int _offsetStates;
 	float _offsetFactor;

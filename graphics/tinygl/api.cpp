@@ -285,10 +285,11 @@ void tglStencilOp(TGLenum sfail, TGLenum dpfail, TGLenum dppass) {
 
 void tglPolygonStipple(const TGLubyte *mask) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	TinyGL::GLParam p[2];
+	TinyGL::GLParam p[129];
 
 	p[0].op = TinyGL::OP_PolygonStipple;
-	c->polygon_stipple_pattern = (void *)mask;
+	for (int i = 0; i < 128; i++)
+		p[i + 1].ui = mask[i];
 
 	c->gl_add_op(p);
 }

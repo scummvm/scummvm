@@ -205,7 +205,9 @@ void GLContext::glopHint(GLParam *) {
 }
 
 void GLContext::glopPolygonStipple(GLParam *p) {
-	// do nothing?
+	for (int i = 0; i < 128; i++) {
+		polygon_stipple_pattern[i] = p[i + 1].ui;
+	}
 }
 
 void GLContext::glopPolygonOffset(GLParam *p) {
