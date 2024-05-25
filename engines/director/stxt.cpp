@@ -68,8 +68,6 @@ Stxt::Stxt(Cast *cast, Common::SeekableReadStreamEndian &textStream) : _cast(cas
 
 	debugC(3, kDebugText, "Stxt init: formattingCount: %u", formattingCount);
 
-	uint16 totalFormatting = formattingCount;
-
 	Common::U32String logText;
 
 	while (formattingCount) {
@@ -95,14 +93,6 @@ Stxt::Stxt(Cast *cast, Common::SeekableReadStreamEndian &textStream) : _cast(cas
 		_ptext += u32TextPart;
 		_ftext += u32TextPart;
 		logText += Common::toPrintable(u32TextPart);
-
-		// Reset formatting if the text is completely empty
-		if (totalFormatting == 1 && textPart.empty()) {
-			_style.fontId = 0;
-			_style.textSlant = 0;
-			_style.fontSize = 12;
-			debugC(4, kDebugText, "Stxt init: the font formatting was reset due to empty string");
-		}
 
 		Common::String format = Common::String::format("\001\016%04x%02x%04x%04x%04x%04x", _style.fontId, _style.textSlant, _style.fontSize, _style.r, _style.g, _style.b);
 		_ftext += format;
