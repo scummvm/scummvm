@@ -282,7 +282,7 @@ void TinyGLRenderer::depthTesting(bool enabled) {
 void TinyGLRenderer::polygonOffset(bool enabled) {
 	if (enabled) {
 		tglEnable(TGL_POLYGON_OFFSET_FILL);
-		tglPolygonOffset(-2.0f, 1.0f);
+		tglPolygonOffset(-10.0f, 1.0f);
 	} else {
 		tglPolygonOffset(0, 0);
 		tglDisable(TGL_POLYGON_OFFSET_FILL);
