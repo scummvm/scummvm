@@ -124,6 +124,14 @@ public:
 	int32 read(MemHandle bufferHandle, int32 n);
 
 	/**
+	 * Read in a 32-bit value
+	 */
+	uint32 readUint32LE();
+	int32 readSint32LE() {
+		return (int32)readUint32LE();
+	}
+
+	/**
 	 * Close the file
 	 */
 	void close();

@@ -631,6 +631,14 @@ int32 SysFile::read(MemHandle bufferHandle, int32 n) {
 	}
 }
 
+uint32 SysFile::readUint32LE() {
+	byte buf[4];
+	void *ptr = (void *)buf;
+	read(&ptr, 4);
+
+	return READ_LE_UINT32(buf);
+}
+
 Common::SeekableReadStream *SysFile::rs() const {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_fp);
 	assert(rs);

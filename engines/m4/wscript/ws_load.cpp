@@ -1514,16 +1514,8 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 	}
 
 	// Read in the series header and the format number
-	handlebuffer = &header;
-	if (!(*sysFile).read(&handlebuffer, 4)) {
-		ws_LogErrorMsg(FL, "Unable to read series header.");
-		return -1;
-	}
-	handlebuffer = &format;
-	if (!(*sysFile).read(&handlebuffer, 4)) {
-		ws_LogErrorMsg(FL, "Unable to read series format.");
-		return -1;
-	}
+	header = sysFile->readUint32LE();
+	format = sysFile->readUint32LE();
 
 	// Make sure the header is "M4SS", and that the format is not antique
 	if (header == HEAD_SS4M) {
@@ -1538,26 +1530,14 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 	}
 
 	// Read in the SS chunk type - either PAL or SS info
-	handlebuffer = &celsType;
-	if (!(*sysFile).read(&handlebuffer, 4)) {
-		ws_LogErrorMsg(FL, "Unable to read series chunk type.");
-		return -1;
-	}
+	celsType = sysFile->readUint32LE();
 
 	if ((celsType == CELS__PAL) || (celsType == CELS_LAP_)) {
 		// PAL info, read in the size of the PAL chunk
-		handlebuffer = &celsSize;
-		if (!(*sysFile).read(&handlebuffer, 4)) {
-			ws_LogErrorMsg(FL, "Unable to read series chunk size.");
-			return -1;
-		}
+		celsSize = sysFile->readUint32LE();
 
 		// Now read in the number of colors to be inserted into the PAL
-		handlebuffer = &numColors;
-		if (!(*sysFile).read(&handlebuffer, 4)) {
-			ws_LogErrorMsg(FL, "Unable to read number of colors in PAL chunk.");
-			return -1;
-		}
+		numColors = sysFile->readUint32LE();
 
 		// Make sure the info is in the correct format (swap between Motorola and Intel formats)
 		if (celsType == CELS_LAP_) {
@@ -1611,11 +1591,7 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 		}
 
 		// Read in the next chunk type
-		handlebuffer = &celsType;
-		if (!(*sysFile).read(&handlebuffer, 4)) {
-			ws_LogErrorMsg(FL, "Failed to read in series chunk type.");
-			return -1;
-		}
+		celsType = sysFile->readUint32LE();
 	}
 
 	// Make sure the chunk type is Sprite Series info
@@ -1625,11 +1601,7 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 	}
 
 	// Read in the size of the entire chunk
-	handlebuffer = &celsSize;
-	if (!(*sysFile).read(&handlebuffer, 4)) {
-		ws_LogErrorMsg(FL, "Failed to read in series chunk size.");
-		return -1;
-	}
+	celsSize = sysFile->readUint32LE();
 
 	// If the chunk is the wrong format, byte-swap (between motorola and intel formats)
 	if (celsType == CELS_SS__) {
@@ -1644,11 +1616,7 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 	}
 
 	// Read how many sprites are in the series
-	handlebuffer = &numCels;
-	if (!(*sysFile).read(&handlebuffer, 4)) {
-		ws_LogErrorMsg(FL, "Failed to read the number of sprites in the series.");
-		return -1;
-	}
+	numCels = sysFile->readUint32LE();
 
 	// Again, byte-swap if the chunk is in the wrong format
 	if (celsType == CELS_SS__) {
@@ -1669,11 +1637,8 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 
 	// Read in the series header and the sprite offset table
 	// Since we already read in celsType and celsSize, SS_HEAD_SIZE-2
-	handlebuffer = &((*data)[2]);
-	if (!(*sysFile).read(&handlebuffer, (SS_HEAD_SIZE + numCels - 2) << 2)) {
-		ws_LogErrorMsg(FL, "Failed to read the series header and the sprite offset table.");
-		return -1;
-	}
+	for (i = 0; i < SS_HEAD_SIZE + (uint)numCels - 2; ++i)
+		(*data)[2 + i] = sysFile->readUint32LE();
 
 	// Set the celsType and the celsSize
 	(*data)[0] = celsType;
@@ -1718,10 +1683,10 @@ bool ws_OpenSSstream(SysFile *sysFile, Anim8 *anim8) {
 
 	// Automatically set some of the sequence registers
 	celsPtr = myCCB->streamSSHeader;
-	numSprites = FROM_LE_32(celsPtr[CELS_COUNT]);
+	numSprites = celsPtr[CELS_COUNT];
 	myRegs[IDX_CELS_INDEX] = -(1 << 16);	// First frame inc will make it 0
 	myRegs[IDX_CELS_COUNT] = numSprites << 16;
-	myRegs[IDX_CELS_FRAME_RATE] = FROM_LE_32(celsPtr[CELS_FRAME_RATE]) << 16;
+	myRegs[IDX_CELS_FRAME_RATE] = celsPtr[CELS_FRAME_RATE] << 16;
 
 	// Here we convert the offset table to become the actual size of the data for each sprite
 	// This is so the stream can be optimized to always read in on sprite boundaries
@@ -1731,22 +1696,21 @@ bool ws_OpenSSstream(SysFile *sysFile, Anim8 *anim8) {
 	maxFrameSize = 0;
 	// For all but the last frame, the frame size is the difference in offset values
 	for (i = 0; i < numSprites - 1; i++) {
-		uint32 diff = FROM_LE_32(offsets[i + 1]) - FROM_LE_32(offsets[i]);
-		WRITE_LE_UINT32(&offsets[i], diff);
+		offsets[i] = offsets[i + 1] - offsets[i];
 
-		if (FROM_LE_32(offsets[i]) > maxFrameSize) {
+		if (offsets[i] > maxFrameSize) {
 			maxFrameSize = offsets[i];
 			obesest_frame = i;
 		}
 	}
 
 	// For the last sprite we take the entire chunk size - the chunk header - the offset for that sprite
-	WRITE_LE_UINT32(&offsets[numSprites - 1], FROM_LE_32(celsPtr[CELS_SRC_SIZE]) -
-		((SS_HEAD_SIZE + FROM_LE_32(celsPtr[CELS_COUNT])) << 2) -
-		FROM_LE_32(offsets[numSprites - 1]));
+	offsets[numSprites - 1] = celsPtr[CELS_SRC_SIZE] -
+		((SS_HEAD_SIZE + celsPtr[CELS_COUNT]) << 2) -
+		offsets[numSprites - 1];
 
-	if (FROM_LE_32(offsets[numSprites - 1]) > maxFrameSize) {
-		maxFrameSize = FROM_LE_32(offsets[numSprites - 1]);
+	if (offsets[numSprites - 1] > maxFrameSize) {
+		maxFrameSize = offsets[numSprites - 1];
 		obesest_frame = numSprites - 1;
 	}
 
@@ -1813,14 +1777,14 @@ bool ws_GetNextSSstreamCel(Anim8 *anim8) {
 
 	// Check whether the end of the SS has been streamed
 	frameNum = anim8->myRegs[IDX_CELS_INDEX] >> 16;
-	if (frameNum >= FROM_LE_32(celsPtr[CELS_COUNT])) {
+	if (frameNum >= celsPtr[CELS_COUNT]) {
 		ws_LogErrorMsg(FL, "No more frames available to stream");
 		return false;
 	}
 
 	// Read the next sprite from the stream.  Note the offset table was converted to absolute size when the stream was opened.
-	if (f_stream_Read((strmRequest *)myCCB->myStream, (uint8 **)(&myCCB->streamSpriteSource), FROM_LE_32(offsets[frameNum]))
-			< (int32)FROM_LE_32(offsets[frameNum])) {
+	if (f_stream_Read((strmRequest *)myCCB->myStream, (uint8 **)(&myCCB->streamSpriteSource), offsets[frameNum])
+			< (int32)offsets[frameNum]) {
 		ws_LogErrorMsg(FL, "Unable to read the next stream frame");
 		return false;
 	}
