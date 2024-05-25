@@ -62,7 +62,7 @@ Common::Error AlcachofaEngine::run() {
 	_drawQueue.reset(new DrawQueue(_renderer.get()));
 	_world.reset(new World());
 
-	//world().globalRoom().loadResources();
+	world().globalRoom().loadResources();
 
 	auto room = world().getRoomByName("SALOON");
 	assert(room != nullptr);
@@ -74,11 +74,11 @@ Common::Error AlcachofaEngine::run() {
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
-	g_system->showMouse(true);
 
 	Common::Event e;
 	Graphics::FrameLimiter limiter(g_system, 60);
 	while (!shouldQuit()) {
+		g_system->showMouse(true);
 		_input.nextFrame();
 		while (g_system->getEventManager()->pollEvent(e)) {
 			if (_input.handleEvent(e))

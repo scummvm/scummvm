@@ -38,6 +38,8 @@ static int sideOfLine(const Point &a, const Point &b, const Point &q) {
 static bool segmentsIntersect(const Point &a1, const Point &b1, const Point &a2, const Point &b2) {
 	// as there are a number of special cases to consider, this method is a direct translation
 	// of the original engine
+	// TODO: It is still bad and does sometimes not work correctly. Check this. keep in mind
+	// it *could* also be a case of incorrect floor segments being passed into in the first place.
 
 	const auto sideOfLine = [](const Point &a, const Point &b, const Point q) {
 		return Alcachofa::sideOfLine(a, b, q) > 0;
@@ -102,7 +104,7 @@ static float depthAtForConvex(const PathFindingPolygon &p, const Point &q) {
 		auto distances = p.edgeDistances(i, q);
 		float depthOnEdge = p._pointDepths[i] + distances._onEdge * (p._pointDepths[j] - p._pointDepths[i]) / distances._edgeLength;
 		if (distances._toEdge < epsilon) // q is directly on the edge
-			return depthOnEdge;
+			return depthOnEdge * 0.01f;
 		sumDepths += 1 / distances._toEdge * depthOnEdge;
 		sumDistances += 1 / distances._toEdge;
 	}
@@ -517,6 +519,8 @@ void PathFindingShape::floydWarshallPath(
 }
 
 Point PathFindingShape::getClosestPoint(const Point &query) const {
+	// TODO: Improve this function, it does not seem correct
+
 	assert(!_points.empty());
 	Point bestPoint;
 	uint bestDistance = UINT_MAX;

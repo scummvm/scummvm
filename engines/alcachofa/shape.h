@@ -161,8 +161,7 @@ public:
 		Common::Stack<Common::Point> &path) const;
 	Common::Point getClosestPoint(const Common::Point &query) const;
 
-private: //ASDJALSKDJALKXDJALSKDJALSKDJALKjs
-public:
+private:
 	void setupLinks();
 	void setupLinkPoint(
 		const PathFindingPolygon &outer,

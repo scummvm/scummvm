@@ -369,16 +369,18 @@ Graphic::Graphic(ReadStream &stream) {
 	_scale = stream.readSint16LE();
 	_order = stream.readSByte();
 	auto animationName = readVarString(stream);
-	_animation.reset(new Animation(std::move(animationName)));
+	if (!animationName.empty())
+		setAnimation(animationName, AnimationFolder::Animations);
 }
 
 void Graphic::loadResources() {
-	assert(_animation != nullptr);
-	_animation->load();
+	if (_animation != nullptr)
+		_animation->load();
 }
 
 void Graphic::freeResources() {
-	_animation.reset();
+	_ownedAnimation.reset();
+	_animation = nullptr;
 }
 
 void Graphic::update() {
@@ -420,7 +422,12 @@ void Graphic::reset() {
 }
 
 void Graphic::setAnimation(const Common::String &fileName, AnimationFolder folder) {
-	_animation.reset(new Animation(fileName, folder));
+	_ownedAnimation.reset(new Animation(fileName, folder));
+	_animation = _ownedAnimation.get();
+}
+
+void Graphic::setAnimation(Animation *animation) {
+	_animation = animation;
 }
 
 void Graphic::serializeSave(Serializer &serializer) {

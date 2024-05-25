@@ -37,9 +37,11 @@ enum class CursorType {
 
 enum class Direction {
 	Up,
+	Right,
 	Down,
 	Left,
-	Right
+
+	Invalid = -1
 };
 
 constexpr const int32 kDirectionCount = 4;

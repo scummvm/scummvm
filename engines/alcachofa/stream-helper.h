@@ -25,6 +25,7 @@
 #include "common/stream.h"
 #include "common/serializer.h"
 #include "common/rect.h"
+#include "common/stack.h"
 
 namespace Alcachofa {
 
@@ -41,6 +42,23 @@ inline void syncArray(Common::Serializer &serializer, Common::Array<T> &array, v
 	serializer.syncAsUint32LE(size);
 	array.resize(size);
 	serializer.syncArray(array.data(), size, serializeFunction);
+}
+
+template<typename T>
+inline void syncStack(Common::Serializer &serializer, Common::Stack<T> &stack, void (*serializeFunction)(Common::Serializer &, T &)) {
+	auto size = stack.size();
+	serializer.syncAsUint32LE(size);
+	if (serializer.isLoading()) {
+		for (uint i = 0; i < size; i++) {
+			T value;
+			serializeFunction(serializer, value);
+			stack.push(value);
+		}
+	}
+	else {
+		for (uint i = 0; i < size; i++)
+			serializeFunction(serializer, stack[i]);
+	}
 }
 
 template<typename T>

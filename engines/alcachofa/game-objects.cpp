@@ -65,6 +65,7 @@ Character::Character(Room *room, ReadStream &stream)
 	, _graphicNormal(stream)
 	, _graphicTalking(stream) {
 	_graphicNormal.start(true);
+	_graphicNormal.frameI() = _graphicTalking.frameI() = 0;
 	_order = _graphicNormal.order();
 }
 
@@ -180,20 +181,266 @@ WalkingCharacter::WalkingCharacter(Room *room, ReadStream &stream)
 	}
 	for (int32 i = 0; i < kDirectionCount; i++) {
 		auto fileName = readVarString(stream);
-		_standingAnimations[i].reset(new Animation(Common::move(fileName)));
+		_talkingAnimations[i].reset(new Animation(Common::move(fileName)));
+	}
+}
+
+void WalkingCharacter::update() {
+	Character::update();
+	if (!isEnabled())
+		return;
+	updateWalking();
+
+	auto activeFloor = room()->activeFloor();
+	if (activeFloor != nullptr) {
+		if (activeFloor->polygonContaining(_sourcePos) < 0)
+			_sourcePos = _currentPos = activeFloor->getClosestPoint(_sourcePos);
+		if (activeFloor->polygonContaining(_currentPos) < 0)
+			_currentPos = activeFloor->getClosestPoint(_currentPos);
+	}
+
+	if (!_isWalking) {
+		_graphicTalking.setAnimation(talkingAnimation());
+		updateTalkingAnimation();
+		_currentPos = _sourcePos;
+	}
+
+	_graphicNormal.center() = _graphicTalking.center() = _currentPos;
+	auto animateGraphic = graphicOf(_curAnimateObject);
+	auto talkingGraphic = graphicOf(_curTalkingObject);
+	if (animateGraphic != nullptr)
+		animateGraphic->center() = _currentPos;
+	if (talkingGraphic != nullptr)
+		talkingGraphic->center() = _currentPos;
+	if (room() != &g_engine->world().globalRoom()) {
+		float depth = room()->depthAt(_currentPos);
+		int8 order = room()->orderAt(_currentPos);
+		_graphicNormal.order() = _graphicTalking.order() = order;
+		_graphicNormal.depthScale() = _graphicTalking.depthScale() = depth;
+		if (animateGraphic != nullptr) {
+			animateGraphic->order() = order;
+			animateGraphic->depthScale() = depth;
+		}
+		if (talkingGraphic != nullptr) {
+			talkingGraphic->order() = order;
+			talkingGraphic->depthScale() = depth;
+		}
+	}
+
+	_interactionPoint = _currentPos;
+	_interactionDirection1 = Direction::Right;
+	if (this != g_engine->world().activeCharacter()) {
+		int16 interactionOffset = (int16)(150 * _graphicNormal.depthScale());
+		_interactionPoint.x -= interactionOffset;
+		if (activeFloor != nullptr && activeFloor->polygonContaining(_interactionPoint) < 0) {
+			_interactionPoint.x = _currentPos.x + interactionOffset;
+			_interactionDirection1 = Direction::Left;
+		}
+	}
+}
+
+static Direction getDirection(const Point &from, const Point &to) {
+	Point delta = from - to;
+	if (from.x == to.x)
+		return from.y < to.y ? Direction::Up : Direction::Down;
+	else if (from.x < to.x) {
+		int slope = 1000 * delta.y / -delta.x;
+		return slope > 1000 ? Direction::Up
+			: slope < -1000 ? Direction::Down
+			: Direction::Right;
+	}
+	else { // from.x > to.x
+		int slope = 1000 * delta.y / delta.x;
+		return slope > 1000 ? Direction::Up
+			: slope < -1000 ? Direction::Down
+			: Direction::Left;
+	}
+}
+
+void WalkingCharacter::updateWalking() {
+	if (!_isWalking)
+		return;
+	static constexpr float kHigherStepSizeThreshold = 0x4CCC / 65535.0f;
+	static constexpr float kMinStepSizeFactor = 0x3333 / 65535.0f;
+	_stepSizeFactor = _graphicNormal.depthScale();
+	if (_stepSizeFactor < kHigherStepSizeThreshold)
+		_stepSizeFactor = _stepSizeFactor / 3.0f + kMinStepSizeFactor;
+
+	Point targetPos = _pathPoints.top();
+	if (_sourcePos == targetPos) {
+		_currentPos = targetPos;
+		_pathPoints.pop();
+	}
+	else {
+		updateWalkingAnimation();
+		const int32 distanceToTarget = (int32)(sqrtf(_sourcePos.sqrDist(targetPos)));
+		if (_walkedDistance < distanceToTarget) {
+			// separated because having only 16 bits and multiplications seems dangerous
+			_currentPos.x = _sourcePos.x + _walkedDistance * (targetPos.x - _sourcePos.x) / distanceToTarget;
+			_currentPos.y = _sourcePos.y + _walkedDistance * (targetPos.y - _sourcePos.y) / distanceToTarget;
+		}
+		else {
+			_sourcePos = _currentPos = targetPos;
+			_pathPoints.pop();
+			_walkedDistance = 1;
+			_lastWalkAnimFrame = 0;
+		}
+	}
+	
+	if (_pathPoints.empty()) {
+		_isWalking = false;
+		_currentPos = _sourcePos = targetPos;
+		if (_endWalkingDirection != Direction::Invalid)
+			_direction = _endWalkingDirection;
+		onArrived();
+	}
+	_graphicNormal.center() = _currentPos;
+}
+
+void WalkingCharacter::updateWalkingAnimation()
+{
+	_direction = getDirection(_sourcePos, _pathPoints.top());
+	auto animation = walkingAnimation();
+	_graphicNormal.setAnimation(animation);
+
+	// this is very confusing. Let's see what it does
+	const int32 halfFrameCount = (int32)animation->frameCount() / 2;
+	int32 expectedFrame = (int32)(g_system->getMillis() - _graphicNormal.lastTime()) * 12 / 1000;
+	const bool isUnexpectedFrame = expectedFrame != _lastWalkAnimFrame;
+	int32 stepFrameFrom, stepFrameTo;
+	if (expectedFrame < halfFrameCount - 1) {
+		_lastWalkAnimFrame = expectedFrame;
+		stepFrameFrom = 2 * expectedFrame - 2;
+		stepFrameTo = 2 * expectedFrame;
+	}
+	else {
+		const int32 frameThreshold = _lastWalkAnimFrame <= halfFrameCount - 1
+			? _lastWalkAnimFrame
+			: (_lastWalkAnimFrame - halfFrameCount + 1) % (halfFrameCount - 2) + 1;
+		_lastWalkAnimFrame = expectedFrame;
+		expectedFrame = (expectedFrame - halfFrameCount + 1) % (halfFrameCount - 2) + 1;
+		if (expectedFrame >= frameThreshold) {
+			stepFrameFrom = 2 * expectedFrame - 2;
+			stepFrameTo = 2 * expectedFrame;
+		}
+		else {
+			stepFrameFrom = 2 * halfFrameCount - 4;
+			stepFrameTo = 2 * halfFrameCount - 2;
+		}
+	}
+	if (isUnexpectedFrame) {
+		const uint stepSize = (uint)sqrtf(animation->frameCenter(stepFrameFrom).sqrDist(animation->frameCenter(stepFrameTo)));
+		_walkedDistance += (int32)(stepSize * _stepSizeFactor);
+	}
+	_graphicNormal.frameI() = 2 * expectedFrame; // especially this: wtf?
+}
+
+void WalkingCharacter::onArrived() {
+}
+
+void WalkingCharacter::stopWalkingAndTurn(Direction direction) {
+	_isWalking = false;
+	_direction = direction;
+}
+
+void WalkingCharacter::walkTo(
+	const Point &target, Direction endDirection,
+	ShapeObject *activateObject, const char *activateAction,
+	bool useAlternateObjectDirection) {
+	// all the activation parameters are only relevant for MainCharacter
+
+	if (_isWalking)
+		_sourcePos = _currentPos;
+	else {
+		_lastWalkAnimFrame = 0;
+		int32 prevWalkFrame = _graphicNormal.frameI();
+		_graphicNormal.reset();
+		_graphicNormal.frameI() = prevWalkFrame;
+	}
+
+	_pathPoints.clear();
+	auto floor = room()->activeFloor();
+	if (floor != nullptr)
+		floor->findPath(_sourcePos, target, _pathPoints);
+	if (_pathPoints.empty()) {
+		_isWalking = false;
+		onArrived();
+		return;
+	}
+
+	_isWalking = true;
+	_endWalkingDirection = endDirection;
+	_walkedDistance = 0;
+	updateWalking();
+}
+
+void WalkingCharacter::setPosition(const Point &target) {
+	_isWalking = false;
+	_sourcePos = _currentPos = target;
+}
+
+void WalkingCharacter::draw() {
+	if (!isEnabled())
+		return;
+
+	Graphic *currentGraphic = graphicOf(_curAnimateObject);
+	if (currentGraphic == nullptr && _isWalking)
+		currentGraphic = &_graphicNormal;
+	if (currentGraphic == nullptr && g_engine->world().somebodyUsing(this)) {
+		currentGraphic = graphicOf(_curTalkingObject, &_graphicTalking);
+		currentGraphic->start(true);
+		currentGraphic->pause();
+	}
+	if (currentGraphic == nullptr) {
+		// TODO: draw dialog line
+		currentGraphic = graphicOf(_curTalkingObject, &_graphicTalking);
+	}
+
+	assert(currentGraphic != nullptr);
+	g_engine->drawQueue().add<AnimationDrawRequest>(*currentGraphic, true, BlendMode::AdditiveAlpha);
+}
+
+void WalkingCharacter::drawDebug() {
+	Character::drawDebug();
+	auto renderer = dynamic_cast<IDebugRenderer *>(&g_engine->renderer());
+	if (!g_engine->console().showCharacters() || renderer == nullptr || !isEnabled() || _pathPoints.empty())
+		return;
+
+	Array<Vector2d> points2D(_pathPoints.size() + 1);
+	_pathPoints.push(_sourcePos);
+	for (uint i = 0; i < _pathPoints.size(); i++) {
+		auto v = g_engine->camera().transform3Dto2D({ (float)_pathPoints[i].x, (float)_pathPoints[i].y, kBaseScale });
+		points2D[i] = { v.x(), v.y() };
+	}
+	_pathPoints.pop();
+	renderer->debugPolyline({ points2D.data(), points2D.size() }, kWhite);
+}
+
+void WalkingCharacter::loadResources() {
+	Character::loadResources();
+	for (int i = 0; i < kDirectionCount; i++) {
+		_walkingAnimations[i]->load();
+		_talkingAnimations[i]->load();
+	}
+}
+
+void WalkingCharacter::freeResources() {
+	Character::freeResources();
+	for (int i = 0; i < kDirectionCount; i++) {
+		_walkingAnimations[i]->freeImages();
+		_talkingAnimations[i]->freeImages();
 	}
 }
 
 void WalkingCharacter::serializeSave(Serializer &serializer) {
 	Character::serializeSave(serializer);
 	serializer.syncAsSint32LE(_lastWalkAnimFrame);
-	serializer.syncAsSint32LE(_walkSpeed);
+	serializer.syncAsSint32LE(_walkedDistance);
 	syncPoint(serializer, _sourcePos);
-	syncPoint(serializer, _targetPos);
+	syncPoint(serializer, _currentPos);
 	serializer.syncAsByte(_isWalking);
-	syncArray(serializer, _pathPoints, syncPoint);
+	syncStack(serializer, _pathPoints, syncPoint);
 	syncEnum(serializer, _direction);
-	_graphicWalking.serializeSave(serializer);
 }
 
 MainCharacter::MainCharacter(Room *room, ReadStream &stream)
