@@ -37,7 +37,7 @@ protected:
 	Common::Array<T> _data;
 	size_type _topIndex;
 public:
-	FixedQueue<T, MAX_SIZE>() : _topIndex(0) {
+	FixedQueue() : _topIndex(0) {
 		_data.reserve(MAX_SIZE);
 	}
 
