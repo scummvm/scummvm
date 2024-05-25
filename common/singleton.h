@@ -41,8 +41,8 @@ namespace Common {
 template<class T>
 class Singleton : NonCopyable {
 private:
-	Singleton<T>(const Singleton<T> &);
-	Singleton<T> &operator=(const Singleton<T> &);
+	Singleton(const Singleton&);
+	Singleton &operator=(const Singleton &);
 
 	/**
 	 * The default object factory used by the template class Singleton.
@@ -88,8 +88,8 @@ public:
 		T::destroyInstance();
 	}
 protected:
-	Singleton<T>()		{ }
-	virtual ~Singleton<T>()	{ }
+	Singleton()		{ }
+	virtual ~Singleton()	{ }
 
 	typedef T	SingletonBaseType;
 
