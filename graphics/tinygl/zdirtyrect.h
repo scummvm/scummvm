@@ -139,7 +139,7 @@ private:
 		int stencilDpfail;
 		int stencilDppass;
 		bool polygonStippleEnabled;
-		byte *polygonStipplePattern;
+		byte polygonStipplePattern[128];
 		GLTexture *texture;
 		uint wrapS, wrapT;
 		bool fogEnabled;
