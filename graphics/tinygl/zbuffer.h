@@ -361,7 +361,7 @@ private:
 	                       int &dzdx, int &drdx, int &dgdx, int &dbdx, uint dadx,
 	                       uint &fog, int fog_r, int fog_g, int fog_b, int &dfdx);
 
-	template <bool kDepthWrite, bool kLightsMode, bool kSmoothMode, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kStippleEnabled, bool kDepthTestEnabled>
+	template <bool kDepthWrite, bool kLightsMode, bool kSmoothMode, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kDepthTestEnabled>
 	void putPixelTexture(int fbOffset, const TexelBuffer *texture,
 	                     uint wrap_s, uint wrap_t, uint *pz, byte *ps, int _a,
 	                     int x, int y, uint &z, int &t, int &s,
