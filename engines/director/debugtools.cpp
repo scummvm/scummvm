@@ -2163,53 +2163,55 @@ static void showVars() {
 	ImGui::SetNextWindowSize(ImVec2(300, 250), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Vars", &_state->_w.vars)) {
 		Common::Array<Common::String> keyBuffer;
-		const ImVec4 head_color = ImVec4(0.9f, 0.08f, 0.0f, 1.0f);
 
-		ImGui::TextColored(head_color, "Local vars:");
-		if (!_state->_vars._locals.empty()) {
-			for (auto &it : _state->_vars._locals) {
+		if (ImGui::CollapsingHeader("Global vars:", ImGuiTreeNodeFlags_DefaultOpen)) {
+			for (auto &it : _state->_vars._globals) {
 				keyBuffer.push_back(it._key);
 			}
 			Common::sort(keyBuffer.begin(), keyBuffer.end());
 			for (auto &i : keyBuffer) {
-				Datum &val = _state->_vars._locals.getVal(i);
-				displayVariable(i);
-				ImGui::SameLine();
-				ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
-			}
-			keyBuffer.clear();
-		} else {
-			ImGui::Text("  (no local vars)");
-		}
-
-		if (lingo->_state->me.type == OBJECT && lingo->_state->me.u.obj->getObjType() & (kFactoryObj | kScriptObj)) {
-			ScriptContext *script = static_cast<ScriptContext *>(lingo->_state->me.u.obj);
-			ImGui::TextColored(head_color, "Instance/property vars:");
-			for (uint32 i = 1; i <= script->getPropCount(); i++) {
-				keyBuffer.push_back(script->getPropAt(i));
-			}
-			Common::sort(keyBuffer.begin(), keyBuffer.end());
-			for (auto &i : keyBuffer) {
-				Datum val = script->getProp(i);
+				Datum &val = _state->_vars._globals.getVal(i);
 				displayVariable(i);
 				ImGui::SameLine();
 				ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
 			}
 			keyBuffer.clear();
 		}
-
-		ImGui::TextColored(head_color, "Global vars:");
-		for (auto &it : _state->_vars._globals) {
-			keyBuffer.push_back(it._key);
+		if (ImGui::CollapsingHeader("Local vars:", ImGuiTreeNodeFlags_None)) {
+			if (!_state->_vars._locals.empty()) {
+				for (auto &it : _state->_vars._locals) {
+					keyBuffer.push_back(it._key);
+				}
+				Common::sort(keyBuffer.begin(), keyBuffer.end());
+				for (auto &i : keyBuffer) {
+					Datum &val = _state->_vars._locals.getVal(i);
+					displayVariable(i);
+					ImGui::SameLine();
+					ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
+				}
+				keyBuffer.clear();
+			} else {
+				ImGui::Text("  (no local vars)");
+			}
 		}
-		Common::sort(keyBuffer.begin(), keyBuffer.end());
-		for (auto &i : keyBuffer) {
-			Datum &val = _state->_vars._globals.getVal(i);
-			displayVariable(i);
-			ImGui::SameLine();
-			ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
+		if (ImGui::CollapsingHeader("Instance/property vars:", ImGuiTreeNodeFlags_None)) {
+			if (lingo->_state->me.type == OBJECT && lingo->_state->me.u.obj->getObjType() & (kFactoryObj | kScriptObj)) {
+				ScriptContext *script = static_cast<ScriptContext *>(lingo->_state->me.u.obj);
+				for (uint32 i = 1; i <= script->getPropCount(); i++) {
+					keyBuffer.push_back(script->getPropAt(i));
+				}
+				Common::sort(keyBuffer.begin(), keyBuffer.end());
+				for (auto &i : keyBuffer) {
+					Datum val = script->getProp(i);
+					displayVariable(i);
+					ImGui::SameLine();
+					ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
+				}
+				keyBuffer.clear();
+			} else {
+				ImGui::Text("  (no instance or property)");
+			}
 		}
-		keyBuffer.clear();
 	}
 	ImGui::End();
 }
