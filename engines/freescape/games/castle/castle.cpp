@@ -216,7 +216,7 @@ void CastleEngine::executePrint(FCLInstruction &instruction) {
 	_currentAreaMessages.clear();
 	if (index > 129) {
 		index = index - 129;
-		if (index < _riddleList.size())
+		if (index < _riddleList.size() / 6)
 			drawFullscreenRiddleAndWait(index);
 		else
 			debugC(1, kFreescapeDebugCode, "Riddle index %d out of bounds", index);
@@ -359,21 +359,23 @@ void CastleEngine::drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics
 
 	uint32 noColor = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+	uint32 grey = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x60, 0x60, 0x60);
 	uint32 frame = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xA7, 0xA7, 0xA7);
 
 	surface->fillRect(_fullscreenViewArea, noColor);
 	surface->fillRect(_viewArea, black);
 
+	surface->fillRect(Common::Rect(47, 47, 271, 147), grey);
 	surface->frameRect(Common::Rect(47, 47, 271, 147), frame);
 	surface->frameRect(Common::Rect(53, 53, 266, 141), frame);
 
-	surface->fillRect(Common::Rect(54, 54, 266, 139), back);
+	surface->fillRect(Common::Rect(54, 54, 265, 140), back);
 	int x = 0;
 	int y = 0;
 	int numberOfLines = 6;
 
 	if (isDOS()) {
-		x = 58;
+		x = 60;
 		y = 66;
 	} else if (isSpectrum() || isCPC()) {
 		x = 60;
