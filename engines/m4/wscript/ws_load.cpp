@@ -1506,7 +1506,6 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 	uint32 *tempPtr, i, j, header, format;
 	int32 numCels, dataOffset;
 	bool byteSwap;
-	void *handlebuffer;
 
 	if (!sysFile) {
 		ws_LogErrorMsg(FL, "nullptr FILE POINTER given.");
@@ -1556,11 +1555,9 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 			}
 
 			// Read in the color info into a temp buffer
-			handlebuffer = myColors;
-			if (!(*sysFile).read(&handlebuffer, numColors << 2)) {
-				ws_LogErrorMsg(FL, "Failed to read in the PAL color info.");
-				return -1;
-			}
+			for (i = 0; i < numColors; ++i)
+				myColors[i] = sysFile->readUint32LE();
+
 
 			// If the chunk is in the wrong format, byte-swap the entire chunk
 			// note: we do this because we want the data stored in nrgb format
