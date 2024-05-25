@@ -453,7 +453,6 @@ RasterizationDrawCall::RasterizationState RasterizationDrawCall::captureState() 
 	state.stencilSfail = c->stencil_sfail;
 	state.stencilDpfail = c->stencil_dpfail;
 	state.stencilDppass = c->stencil_dppass;
-	state.polygonStipplePattern = c->polygon_stipple_pattern;
 	state.polygonStippleEnabled = c->polygon_stipple_enabled;
 	state.offsetStates = c->offset_states;
 	state.offsetFactor = c->offset_factor;
@@ -482,6 +481,7 @@ RasterizationDrawCall::RasterizationState RasterizationDrawCall::captureState() 
 
 	memcpy(state.viewportScaling, c->viewport.scale._v, sizeof(c->viewport.scale._v));
 	memcpy(state.viewportTranslation, c->viewport.trans._v, sizeof(c->viewport.trans._v));
+	memcpy(state.polygonStipplePattern, c->polygon_stipple_pattern, sizeof(c->polygon_stipple_pattern));
 
 	return state;
 }

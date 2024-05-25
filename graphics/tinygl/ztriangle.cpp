@@ -34,7 +34,7 @@ namespace TinyGL {
 
 static const int NB_INTERP = 8;
 
-static bool applyStipplePattern(int x, int y, byte *stipple) {
+static bool applyStipplePattern(int x, int y, const byte *stipple) {
 
 	int stippleX = x % 32;
 	int stippleY = y % 32;
