@@ -595,6 +595,34 @@ struct DialogAction *Dialog::pickAction(bool isClosing, bool isForceClose) {
 }
 
 
+void Dialog::fixupStringAndActions() {
+	//
+	// This is a slight HACK.  The original seems to have accepted any number
+	// of trailing spaces before a CR when doing wrapping, but our wrapper
+	// will wrap the spaces.  This creates too many blank lines.
+	// To correct this, remove sequences of blank before CRs -
+	// but we then have to fix up offsets of actions.
+	//
+	// This code is not efficient, but it only runs once on load and
+	// only on fairly short strings, so it's ok.
+	//
+	for (uint i = 0; i < _str.size(); i++) {
+		if (_str[i] == '\r') {
+			while (i > 0 && _str[i - 1] == ' ') {
+				_str.deleteChar(i - 1);
+				for (auto &action : _action) {
+					if (action.strStart > i)
+						action.strStart--;
+					if (action.strEnd > i)
+						action.strEnd--;
+				}
+				i--;
+			}
+		}
+	}
+}
+
+
 Common::String Dialog::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format(
 			"%sDialog<num %d %s bgcol %d fcol %d selbgcol %d selfontcol %d fntsz %d flags 0x%02x frame %d delay %d next %d unk18 %d",
