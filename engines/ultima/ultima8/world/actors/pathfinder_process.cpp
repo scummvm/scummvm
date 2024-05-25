@@ -45,7 +45,7 @@ PathfinderProcess::PathfinderProcess(Actor *actor, ObjId itemid, bool hit) :
 		_targetX(0), _targetY(0), _targetZ(0) {
 	assert(actor);
 	_itemNum = actor->getObjId();
-	_type = PATHFINDER_PROC_TYPE; // CONSTANT !
+	_type = PATHFINDER_PROC_TYPE;
 
 	Item *item = getItem(itemid);
 	if (!item) {
@@ -83,6 +83,7 @@ PathfinderProcess::PathfinderProcess(Actor *actor, int32 x, int32 y, int32 z) :
 		_hitMode(false) {
 	assert(actor);
 	_itemNum = actor->getObjId();
+	_type = PATHFINDER_PROC_TYPE;
 
 	Pathfinder pf;
 	pf.init(actor);
@@ -243,6 +244,11 @@ void PathfinderProcess::saveData(Common::WriteStream *ws) {
 
 bool PathfinderProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	if (!Process::loadData(rs, version)) return false;
+
+	// Type previously missing from constructor
+	if (_type == 0) {
+		_type = PATHFINDER_PROC_TYPE;
+	}
 
 	_targetItem = rs->readUint16LE();
 	_targetX = rs->readUint16LE();
