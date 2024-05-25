@@ -63,7 +63,12 @@
 #include "dgds/sound.h"
 
 // for frame contents debugging
-//#include "image/png.h"
+//#define DUMP_FRAME_DATA 1
+
+#ifdef DUMP_FRAME_DATA
+#include "graphics/paletteman.h"
+#include "image/png.h"
+#endif
 
 namespace Dgds {
 
@@ -160,6 +165,7 @@ bool DgdsEngine::changeScene(int sceneNum) {
 	_gameGlobals->setGlobal(0x61, _scene->getNum());
 
 	_scene->unload();
+	_backgroundFile.clear();
 	_soundPlayer->unloadMusic();
 
 	_gdsScene->runChangeSceneOps();
@@ -325,6 +331,8 @@ Common::Error DgdsEngine::run() {
 	init();
 	loadGameFiles();
 
+	// changeScene(55); // to test DRAGON intro sequence (after credits)
+
 	// If a savegame was selected from the launcher, load it now.
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot != -1)
@@ -458,7 +466,8 @@ Common::Error DgdsEngine::run() {
 			_compositionBuffer.transBlitFrom(_storedAreaBuffer);
 			_compositionBuffer.transBlitFrom(_foregroundBuffer);
 
-			/* For debugging, dump the frame contents..
+#ifdef DUMP_FRAME_DATA
+			/* For debugging, dump the frame contents.. */
 			{
 				Common::DumpFile outf;
 				uint32 now = g_engine->getTotalPlayTime();
@@ -466,18 +475,23 @@ Common::Error DgdsEngine::run() {
 				byte palbuf[768];
 				g_system->getPaletteManager()->grabPalette(palbuf, 0, 256);
 
-				outf.open(Common::Path(Common::String::format("/tmp/%07d-bottom.png", now)));
-				::Image::writePNG(outf, *_bottomBuffer.surfacePtr(), palbuf);
+				outf.open(Common::Path(Common::String::format("/tmp/%07d-back.png", now)));
+				::Image::writePNG(outf, *_backgroundBuffer.surfacePtr(), palbuf);
 				outf.close();
 
-				outf.open(Common::Path(Common::String::format("/tmp/%07d-top.png", now)));
-				::Image::writePNG(outf, *_topBuffer.surfacePtr(), palbuf);
+				outf.open(Common::Path(Common::String::format("/tmp/%07d-fore.png", now)));
+				::Image::writePNG(outf, *_foregroundBuffer.surfacePtr(), palbuf);
 				outf.close();
 
-				outf.open(Common::Path(Common::String::format("/tmp/%07d-res.png", now)));
-				::Image::writePNG(outf, *_resData.surfacePtr(), palbuf);
+				outf.open(Common::Path(Common::String::format("/tmp/%07d-stor.png", now)));
+				::Image::writePNG(outf, *_storedAreaBuffer.surfacePtr(), palbuf);
 				outf.close();
-			}*/
+
+				outf.open(Common::Path(Common::String::format("/tmp/%07d-comp.png", now)));
+				::Image::writePNG(outf, *_compositionBuffer.surfacePtr(), palbuf);
+				outf.close();
+			}
+#endif
 
 			_foregroundBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 

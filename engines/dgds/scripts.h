@@ -43,6 +43,15 @@ public:
 	Common::HashMap<uint16, Common::String> _tags;
 };
 
+class GetPutRegion {
+public:
+	Common::Rect _area;
+	Common::SharedPtr<Graphics::ManagedSurface> _fgSurf;
+	Common::SharedPtr<Graphics::ManagedSurface> _storedSurf;
+
+	void reset();
+};
+
 class TTMEnviro : public ScriptParserData {
 public:
 	TTMEnviro() : _totalFrames(330), _enviro(0), ScriptParserData() {
@@ -55,8 +64,7 @@ public:
 	uint16 _totalFrames;
 	Common::Array<int> _frameOffsets;
 	Common::SharedPtr<Image> _scriptShapes[6];
-	Common::Array<Common::Rect> _getPutAreas;
-	Common::Array<Common::SharedPtr<Graphics::ManagedSurface>> _getPutSurfaces;
+	Common::Array<GetPutRegion> _getPuts;
 	int _scriptPals[6];
 	Common::String _strings[10];
 };
