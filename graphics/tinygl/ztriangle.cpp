@@ -91,7 +91,7 @@ void FrameBuffer::putPixelNoTexture(int fbOffset, uint *pz, byte *ps, int _a,
 	}
 }
 
-template <bool kDepthWrite, bool kLightsMode, bool kSmoothMode, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kStippleEnabled, bool kDepthTestEnabled>
+template <bool kDepthWrite, bool kLightsMode, bool kSmoothMode, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kDepthTestEnabled>
 void FrameBuffer::putPixelTexture(int fbOffset, const TexelBuffer *texture,
                                   uint wrap_s, uint wrap_t, uint *pz, byte *ps, int _a,
                                   int x, int y, uint &z, int &t, int &s,
@@ -99,9 +99,6 @@ void FrameBuffer::putPixelTexture(int fbOffset, const TexelBuffer *texture,
                                   int &dzdx, int &dsdx, int &dtdx, int &drdx, int &dgdx, int &dbdx, uint dadx,
                                   uint &fog, int fog_r, int fog_g, int fog_b, int &dfdx) {
 	if (kEnableScissor && scissorPixel(x + _a, y)) {
-		return;
-	}
-	if (kStippleEnabled && !applyStipplePattern(x + _a, y, _polygonStipplePattern)) {
 		return;
 	}
 
@@ -583,7 +580,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 						zinv = (float)(1.0 / fz);
 					}
 					for (int _a = 0; _a < NB_INTERP; _a++) {
-						putPixelTexture<kDepthWrite, kInterpRGB, kSmoothMode, kFogMode, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled, kStencilEnabled, kStippleEnabled, kDepthTestEnabled>
+						putPixelTexture<kDepthWrite, kInterpRGB, kSmoothMode, kFogMode, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled, kStencilEnabled, kDepthTestEnabled>
 						               (pp, texture, _wrapS, _wrapT, pz, ps, _a, x, y, z, t, s, r, g, b, a, dzdx, dsdx, dtdx, drdx, dgdx, dbdx, dadx, fog, fog_r, fog_g, fog_b, dfdx);
 					}
 					pp += NB_INTERP;
@@ -610,7 +607,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 				}
 
 				while (n >= 0) {
-					putPixelTexture<kDepthWrite, kInterpRGB, kSmoothMode, kFogMode, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled, kStencilEnabled, kStippleEnabled, kDepthTestEnabled>
+					putPixelTexture<kDepthWrite, kInterpRGB, kSmoothMode, kFogMode, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled, kStencilEnabled, kDepthTestEnabled>
 					               (pp, texture, _wrapS, _wrapT, pz, ps, 0, x, y, z, t, s, r, g, b, a, dzdx, dsdx, dtdx, drdx, dgdx, dbdx, dadx, fog, fog_r, fog_g, fog_b, dfdx);
 					pp += 1;
 					if (kInterpZ) {
