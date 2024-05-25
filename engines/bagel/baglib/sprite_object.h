@@ -52,35 +52,35 @@ public:
 
 	bool isInside(const CBofPoint &xPoint) override;
 
-	int getWieldCursor() {
+	int getWieldCursor() const {
 		return _nWieldCursor;
 	}
 	void setWieldCursor(int n) {
 		_nWieldCursor = n;
 	}
 
-	CBofSprite *getSprite() {
+	CBofSprite *getSprite() const {
 		return _xSprite;
 	}
 	CBofRect getRect() override;
-	int getCels() {
+	int getCels() const {
 		return _nCels;
 	}
 
-	bool isAnimated() {
+	bool isAnimated() const {
 		return _bAnimated;
 	}
 
 	void setAnimated(bool b = true);
 	void setCels(int nCels);
-	virtual void setPosition(const CBofPoint &pos) override;
+	void setPosition(const CBofPoint &pos) override;
 
 	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1) override;
 
 	void setProperty(const CBofString &sProp, int nVal) override;
 	int getProperty(const CBofString &sProp) override;
 
-	int getFrameRate() {
+	int getFrameRate() const {
 		return _nMaxFrameRate;
 	}
 	void setFrameRate(int nFR) {

@@ -61,7 +61,7 @@ public:
 		_x = x;
 		_y = y;
 	}
-	void setHotspot(CBofPoint point) {
+	void setHotspot(const CBofPoint point) {
 		setHotspot(point.x, point.y);
 	}
 	CBofPoint getHotspot() const {

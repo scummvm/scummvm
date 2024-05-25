@@ -348,7 +348,7 @@ public:
 	virtual CBofPoint arrangeFloater(CBofPoint nPos, CBagObject *pObj);
 
 	// Set and Get the number of pages required to display all floating objects
-	int getNumFloatPages() {
+	int getNumFloatPages() const {
 		return _nFloatPages;
 	}
 	void setNumFloatPages(int nFloatPages) {
@@ -357,7 +357,7 @@ public:
 
 	// Correctly set the filter function for the storage device.
 	//
-	void onSetFilter(bool (*FilterFxn)(const uint16 nFilterId, CBofBitmap *, CBofRect *));
+	void onSetFilter(bool (*FilterFxn)(uint16 nFilterId, CBofBitmap *, CBofRect *));
 
 	// Get a pointer to the filter function
 	//
@@ -365,7 +365,7 @@ public:
 
 	// Predicate to test if this storage device is filtered.
 	//
-	bool isFiltered() {
+	bool isFiltered() const {
 		return _nFilterId != 0;
 	}
 
@@ -428,14 +428,13 @@ public:
 	void setOnUpdate(bool bVal = true) {
 		_bOnUpdate = bVal;
 	}
-	bool getOnUpdate() {
+	bool getOnUpdate() const {
 		return _bOnUpdate;
 	}
 
 	virtual ErrorCode paintScreen(CBofRect *pRect = nullptr);
-	ErrorCode paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
-	                        CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = true);
-	ErrorCode paintWithCursor(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
+	virtual ErrorCode paintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
+	                               CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = true);
 
 	virtual CBofRect getLocation() {
 		return getWindowRect();
@@ -450,7 +449,7 @@ public:
 		return _pWorkBmp;
 	}
 
-	ErrorCode loadFile(const CBofString &sWldFile) override;
+	ErrorCode loadFile(const CBofString &sFile) override;
 
 	virtual const CBofString &getHelpFilename() {
 		return _sHelpFileName;
@@ -499,20 +498,21 @@ public:
 		return getWindowRect();
 	}
 
-	virtual ErrorCode setBackground(CBofBitmap *pBmp) override {
+	ErrorCode setBackground(CBofBitmap *pBmp) override {
 		if (pBmp)
 			return setBackdrop(pBmp);
 
 		killBackdrop();
 		return ERR_NONE;
 	}
-	virtual CBofBitmap *getBackground() override {
+
+	CBofBitmap *getBackground() override {
 		return getBackdrop();
 	}
 
-	virtual ErrorCode loadFile(const CBofString &sWldFile) override;
+	ErrorCode loadFile(const CBofString &sWldFile) override;
 
-	ErrorCode create(const char *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
+	ErrorCode create(const char *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0) override;
 
 	ErrorCode attach() override; // This function attaches the background and necessary bitmaps
 
@@ -555,7 +555,7 @@ public:
 	int getObjectValue(const CBofString &sObject, const CBofString &sProperty);
 	void setObjectValue(const CBofString &sObject, const CBofString &sProperty, int nValue);
 
-	int getNumStorageDevices() {
+	int getNumStorageDevices() const {
 		return _xStorageDeviceList.getCount();
 	}
 

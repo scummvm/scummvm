@@ -435,14 +435,11 @@ void CBofWindow::postUserMessage(uint32 lMessage, uint32 lExtraInfo) {
 CBofWindow *CBofWindow::getAnscestor() {
 	assert(isValidObject(this));
 
-	CBofWindow *pCurWnd, *pLastWnd;
-
-	pLastWnd = this;
-	pCurWnd = _parent;
+	CBofWindow *pLastWnd = this;
+	CBofWindow *pCurWnd = _parent;
 
 	while (pCurWnd != nullptr) {
 		pLastWnd = pCurWnd;
-
 		pCurWnd = pCurWnd->_parent;
 	}
 

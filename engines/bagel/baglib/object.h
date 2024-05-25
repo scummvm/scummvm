@@ -150,8 +150,8 @@ public:
 	}
 
 	// Return true if the Object had members that are properly initialized/de-initialized
-	virtual ErrorCode attach() override;
-	virtual ErrorCode detach() override;
+	ErrorCode attach() override;
+	ErrorCode detach() override;
 
 	BagObjectType getType() {
 		return (BagObjectType)_xObjType;
@@ -160,26 +160,26 @@ public:
 		_xObjType = (uint16)nType;
 	}
 
-	// Object can be moved within a sceene
+	// Object can be moved within a screen
 	virtual bool isInside(const CBofPoint &xPoint) {
 		return getRect().ptInRect(xPoint);
 	}
 
-	// Object can be moved within a sceene
+	// Object can be moved within a screen
 	bool isMovable() {
 		return isProperty(MOVABLE);
 	}
 	void setMovable(bool b = true) {
 		setProperty(MOVABLE, b);
 	}
-	// Object can be stretched within a sceene
+	// Object can be stretched within a screen
 	bool isStretchable() {
 		return isProperty(STRETCH);
 	}
 	void setStretchable(bool b = true) {
 		setProperty(STRETCH, b);
 	}
-	// Object has exclusive updates to a sceene
+	// Object has exclusive updates to a screen
 	bool isModal() {
 		return isProperty(MODAL);
 	}
@@ -214,7 +214,8 @@ public:
 	bool isTransparent() {
 		return isProperty(TRANSPAR);
 	}
-	void setTransparent(bool b = true) {
+
+	virtual void setTransparent(bool b = true) {
 		setProperty(TRANSPAR, b);
 	}
 	// Should the object be hidden when clicked on

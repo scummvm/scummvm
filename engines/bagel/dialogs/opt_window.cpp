@@ -538,7 +538,6 @@ void CBagOptWindow::saveOutNewSettings() {
 
 void CBagOptWindow::loadIniSettings() {
 	assert(isValidObject(this));
-	int nTemp;
 
 	ConfMan.registerDefault("Panimations", true);
 	ConfMan.registerDefault("FlyThroughs", true);
@@ -549,7 +548,7 @@ void CBagOptWindow::loadIniSettings() {
 	_cSystemData._bPanimations = ConfMan.getBool("Panimations");
 	_cSystemData._bFlythroughs = ConfMan.getBool("FlyThroughs");
 
-	nTemp = ConfMan.getInt("Correction");
+	int nTemp = ConfMan.getInt("Correction");
 	if (nTemp < 0 || nTemp > 6)
 		nTemp = 2;
 	_cSystemData._nCorrection = 6 - nTemp;

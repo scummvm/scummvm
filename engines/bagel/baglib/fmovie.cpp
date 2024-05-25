@@ -107,7 +107,6 @@ bool CBagFMovie::openMovie(const char *sFilename) {
 	// Opened failed ?
 	if (!_smk->loadFile(sFilename)) {
 		error("Movie not found=%s", sFilename);
-		return false;
 	}
 
 

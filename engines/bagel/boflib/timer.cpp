@@ -91,13 +91,10 @@ CBofTimer::~CBofTimer() {
 
 
 void CBofTimer::handleTimers() {
-	CBofTimer *pTimer;
-	uint32 lCurrentTime;
-
-	pTimer = _pTimerList;
+	CBofTimer *pTimer = _pTimerList;
 	while (pTimer != nullptr) {
 		if (pTimer->isActive()) {
-			lCurrentTime = g_system->getMillis();
+			uint32 lCurrentTime = g_system->getMillis();
 
 			if ((uint32)(lCurrentTime - pTimer->_lLastTime) >= pTimer->_nInterval) {
 				// Remember for next time

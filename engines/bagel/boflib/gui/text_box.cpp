@@ -163,8 +163,8 @@ int CBofTextBox::getIndex(const int nLine) {
 
 	// Find the index into our buffer that represents the top left of the
 	// buffer that is nLine from current the beginning of the buffer.
-	const char *pszCur, *pszBuffer, *pszLast;
-	pszLast = pszCur = pszBuffer = _cBuffer;
+	const char *pszCur, *pszBuffer;
+	const char *pszLast = pszCur = pszBuffer = _cBuffer;
 	for (int i = 0; i < nLine; i++) {
 		pszLast = pszCur;
 		pszCur = strstr(pszCur, "\n");

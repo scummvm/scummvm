@@ -1097,9 +1097,7 @@ ErrorCode paintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofRect *pD
 	assert(pWindow != nullptr);
 	assert(pszFileName != nullptr);
 
-	ErrorCode errorCode;
 	CBofBitmap *pBmp = new CBofBitmap(pszFileName, pPalette);
-
 	CBofRect cRect = pBmp->getRect();
 
 	if (pSrcRect == nullptr)
@@ -1108,7 +1106,7 @@ ErrorCode paintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofRect *pD
 	if (pDstRect == nullptr)
 		pDstRect = &cRect;
 
-	errorCode = pBmp->paint(pWindow, pDstRect, pSrcRect, nMaskColor);
+	ErrorCode errorCode = pBmp->paint(pWindow, pDstRect, pSrcRect, nMaskColor);
 
 	delete pBmp;
 

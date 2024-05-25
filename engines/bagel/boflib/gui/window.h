@@ -274,11 +274,11 @@ public:
 		_pBackdrop = nullptr;
 	}
 
-	CBofBitmap *getBackdrop() {
+	CBofBitmap *getBackdrop() const {
 		return _pBackdrop;
 	}
 
-	bool hasBackdrop() {
+	bool hasBackdrop() const {
 		return _pBackdrop != nullptr;
 	}
 
@@ -289,29 +289,30 @@ public:
 
 	/**
 	 * Updates the specified section of the background bitmap
-	 * @param pRect     Area of bitmap to update on screen
-	 * @return          Error return code
+	 * @param pRect               Area of bitmap to update on screen
+	 * @param nTransparentColor   Color index used for transparency (-1 = none)
+	 * @return                    Error return code
 	 */
 	ErrorCode paintBackdrop(CBofRect *pRect = nullptr, int nTransparentColor = -1);
 
 	void setControlID(uint32 nID) {
 		_nID = nID;
 	}
-	uint32 getControlID() {
+	uint32 getControlID() const {
 		return _nID;
 	}
 
 	void setBkColor(RGBCOLOR cColor) {
 		_cBkColor = cColor;
 	}
-	RGBCOLOR getBkColor() {
+	RGBCOLOR getBkColor() const {
 		return _cBkColor;
 	}
 
 	void setFgColor(RGBCOLOR cColor) {
 		_cFgColor = cColor;
 	}
-	RGBCOLOR getFgColor() {
+	RGBCOLOR getFgColor() const {
 		return _cFgColor;
 	}
 

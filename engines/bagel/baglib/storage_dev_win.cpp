@@ -1080,7 +1080,7 @@ CBagObject *CBagStorageDev::onNewUserObject(const CBofString &str) {
 	return nullptr;
 }
 
-void CBagStorageDev::onSetFilter(bool (*filterFunction)(const uint16 nFilterid, CBofBitmap *, CBofRect *)) {
+void CBagStorageDev::onSetFilter(bool (*filterFunction)(uint16 nFilterid, CBofBitmap *, CBofRect *)) {
 	_pBitmapFilter = filterFunction;
 }
 
