@@ -210,6 +210,7 @@ public:
 	ScriptType _scriptType;
 	int _id;
 	Common::Array<Common::String> _functionNames; // used by cb_localcall
+	Common::HashMap<Common::String, Common::Array<uint32>> _functionByteOffsets;
 	SymbolHash _functionHandlers;
 	Common::HashMap<uint32, Symbol> _eventHandlers;
 	Common::Array<Datum> _constants;

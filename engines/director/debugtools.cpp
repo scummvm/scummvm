@@ -80,6 +80,7 @@ typedef struct ImGuiScript {
 	Common::String handlerId;
 	Common::String handlerName;
 	Common::String moviePath;
+	Common::Array<uint32> byteOffsets;
 
 	bool isMethod = false;
 	bool isGenericEvent = false;
@@ -468,10 +469,10 @@ ImGuiScript toImGuiScript(CastMemberID id, const Common::String &handlerId) {
 
 static void setScriptToDisplay(const ImGuiScript &script);
 
-static Director::Breakpoint *getBreakpoint(const Common::String &handlerName, int pc) {
+static Director::Breakpoint *getBreakpoint(const Common::String &handlerName, uint16 scriptId, uint pc) {
 	auto &bps = g_lingo->getBreakpoints();
 	for (uint i = 0; i < bps.size(); i++) {
-		if (bps[i].type == kBreakpointFunction && bps[i].funcName == handlerName && (int)bps[i].funcOffset == pc) {
+		if (bps[i].type == kBreakpointFunction && bps[i].scriptId == scriptId && bps[i].funcName == handlerName && bps[i].funcOffset == pc) {
 			return &bps[i];
 		}
 	}
@@ -1537,14 +1538,15 @@ private:
 		ImGui::Text("%s", (s + code).c_str());
 	}
 
-	void renderLine(uint pc) const {
+	void renderLine(uint p) const {
+		uint pc = _script.byteOffsets[p];
 		ImDrawList *dl = ImGui::GetWindowDrawList();
 		ImVec2 pos = ImGui::GetCursorScreenPos();
 		const ImVec2 mid(pos.x + 7, pos.y + 7);
 
 		ImVec4 color = _state->_colors._bp_color_disabled;
 
-		Director::Breakpoint *bp = getBreakpoint(_script.handlerName, pc);
+		Director::Breakpoint *bp = getBreakpoint(_script.handlerId, _script.id.member, pc);
 		if (bp)
 			color = _state->_colors._bp_color_enabled;
 
@@ -1556,7 +1558,8 @@ private:
 			} else {
 				Director::Breakpoint newBp;
 				newBp.type = kBreakpointFunction;
-				newBp.funcName = _script.handlerName;
+				newBp.scriptId = _script.id.member;
+				newBp.funcName = _script.handlerId;
 				newBp.funcOffset = pc;
 				g_lingo->addBreakpoint(newBp);
 				color = _state->_colors._bp_color_enabled;
@@ -2423,7 +2426,7 @@ static void renderCastScript(Symbol &sym) {
 
 		color = _state->_colors._bp_color_disabled;
 
-		Director::Breakpoint *bp = getBreakpoint(handlerName, pc);
+		Director::Breakpoint *bp = getBreakpoint(handlerName, sym.ctx->_id, pc);
 		if (bp)
 			color = _state->_colors._bp_color_enabled;
 
@@ -2646,6 +2649,7 @@ static void showFuncList() {
 							if (ImGui::Selectable(function.c_str())) {
 								CastMemberID memberID(scriptContext._key, cast._key);
 								ImGuiScript script = toImGuiScript(memberID, functionHandler._key);
+								script.byteOffsets = scriptContext._value->_functionByteOffsets[script.handlerId];
 								script.moviePath = movie->getArchive()->getPathName().toString();
 								script.handlerName = getHandlerName(functionHandler._value);
 								setScriptToDisplay(script);
@@ -2683,6 +2687,7 @@ static void showFuncList() {
 							if (ImGui::Selectable(function.c_str())) {
 								CastMemberID memberID(scriptContext._key, SHARED_CAST_LIB);
 								ImGuiScript script = toImGuiScript(memberID, functionHandler._key);
+								script.byteOffsets = scriptContext._value->_functionByteOffsets[script.handlerId];
 								script.moviePath = movie->getArchive()->getPathName().toString();
 								script.handlerName = getHandlerName(functionHandler._value);
 								setScriptToDisplay(script);
