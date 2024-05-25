@@ -335,6 +335,7 @@ void GameMapGump::onMouseClick(int button, int32 mx, int32 my) {
 			} else {
 				Actor *avatarControlled = getControlledActor();
 				PathfinderProcess *pfp = new PathfinderProcess(avatarControlled, coords[0], coords[1], coords[2]);
+				Kernel::get_instance()->killProcesses(avatarControlled->getObjId(), PathfinderProcess::PATHFINDER_PROC_TYPE, true);
 				Kernel::get_instance()->addProcess(pfp);
 			}
 		}
