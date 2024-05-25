@@ -454,7 +454,7 @@ struct GLContext {
 
 	// stipple
 	bool polygon_stipple_enabled;
-	void *polygon_stipple_pattern;
+	byte polygon_stipple_pattern[128];
 
 	// blit test
 	Common::List<BlitImage *> _blitImages;

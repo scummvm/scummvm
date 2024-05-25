@@ -298,6 +298,10 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 	depth_func = TGL_LESS;
 	depth_write_mask = true;
 
+	// stipple
+	polygon_stipple_enabled = false;
+	memset(polygon_stipple_pattern, 0, sizeof(polygon_stipple_pattern));
+
 	// stencil
 	stencil_test_enabled = false;
 	stencil_test_func = TGL_ALWAYS;
