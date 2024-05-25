@@ -172,6 +172,7 @@ public:
 	inline uint spriteCount() const { return _spriteBases.size(); }
 	inline uint frameCount() const { return _frames.size(); }
 	inline uint32 frameDuration(int32 frameI) const { return _frames[frameI]._duration; }
+	inline const Common::Point &frameCenter(int32 frameI) const { return _frames[frameI]._center; }
 	inline uint32 totalDuration() const { return _totalDuration; }
 	int32 frameAtTime(uint32 time) const;
 	Common::Point imageSize(int32 imageI) const;
@@ -222,7 +223,10 @@ public:
 	inline Common::Point &center() { return _center; }
 	inline int8 &order() { return _order; }
 	inline int16 &scale() { return _scale; }
+	inline float &depthScale() { return _depthScale; }
 	inline Color &color() { return _color; }
+	inline int32 &frameI() { return _frameI; }
+	inline uint32 lastTime() const { return _lastTime; }
 	inline Animation &animation() {
 		assert(_animation != nullptr && _animation->isLoaded());
 		return *_animation;
@@ -235,12 +239,14 @@ public:
 	void pause();
 	void reset();
 	void setAnimation(const Common::String &fileName, AnimationFolder folder);
+	void setAnimation(Animation *animation); ///< no memory ownership is given, but for prerendering it has to be mutable
 	void serializeSave(Common::Serializer &serializer);
 
 private:
 	friend class AnimationDrawRequest;
 	friend class SpecialEffectDrawRequest;
-	Common::SharedPtr<Animation> _animation;
+	Common::ScopedPtr<Animation> _ownedAnimation;
+	Animation *_animation = nullptr;
 	Common::Point _center;
 	int16 _scale = kBaseScale;
 	int8 _order = 0;
@@ -251,17 +257,6 @@ private:
 	uint32 _lastTime = 0; ///< either start time or played duration at pause
 	int32 _frameI = -1;
 	float _depthScale = 1.0f;
-};
-
-enum class DrawRequestType {
-	Animation2D,
-	Animation3D,
-	AnimationTiled,
-	Rectangle,
-	FadeToBlack,
-	FadeToWhite,
-	CrossFade,
-	Text
 };
 
 class IDrawRequest {
