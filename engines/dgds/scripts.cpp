@@ -45,8 +45,7 @@ namespace Dgds {
 
 void GetPutRegion::reset() {
 	_area = Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT);
-	_fgSurf.reset();
-	_storedSurf.reset();
+	_surf.reset();
 }
 
 Common::Error TTMEnviro::syncState(Common::Serializer &s) {
@@ -76,8 +75,7 @@ Common::Error TTMEnviro::syncState(Common::Serializer &s) {
 		s.syncAsUint16LE(_getPuts[i]._area.right);
 		s.syncAsUint16LE(_getPuts[i]._area.bottom);
 		if (s.isLoading()) {
-			_getPuts[i]._fgSurf.reset(new Graphics::ManagedSurface());
-			_getPuts[i]._storedSurf.reset(new Graphics::ManagedSurface());
+			_getPuts[i]._surf.reset(new Graphics::ManagedSurface());
 		} else {
 			// TODO: Save the getput buffer contents here?
 		}
@@ -275,15 +273,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		//			   on "aaaaah" scene, called after only drawing the AAAH and calling store area
 		// Meanwhile - (scr loaded) Save the foreground people onto the background before walk animation
 		//
-		//warning("TODO: Implement me: op 0x0020 save/free background?");
-		if (_vm->getBackgroundFile().empty()) {
-			_vm->getBackgroundBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
-		} else {
-			Image tmp = Image(_vm->getResourceManager(), _vm->getDecompressor());
-			tmp.drawScreen(_vm->getBackgroundFile(), _vm->getBackgroundBuffer());
-		}
 		_vm->getStoredAreaBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
-		_vm->getBackgroundBuffer().transBlitFrom(_vm->getForegroundBuffer());
+		_vm->getBackgroundBuffer().blitFrom(_vm->_compositionBuffer);
 		break;
 	case 0x0070: // FREE PALETTE
 		if (seq._executed) // this is a one-shot op
@@ -399,8 +390,10 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 				g_system->delayMillis(5);
 			}
 		}
+		// Clear all the buffers
 		_vm->getBackgroundBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		_vm->getStoredAreaBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		_vm->_compositionBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		// reset to previous palette.
 		_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2], 0);
 		break;
@@ -415,10 +408,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 				int fade = MAX(0, MIN(i / 5, 63));
 				_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2], fade * 4);
 				if (i == 320) {
-					// blt first to make the initial fade-in work
-					_vm->_compositionBuffer.blitFrom(_vm->getBackgroundBuffer());
-					_vm->_compositionBuffer.transBlitFrom(_vm->getStoredAreaBuffer());
-					_vm->_compositionBuffer.transBlitFrom(_vm->getForegroundBuffer());
+					// update screen first to make the initial fade-in work
 					g_system->copyRectToScreen(_vm->_compositionBuffer.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 				}
 				g_system->updateScreen();
@@ -431,7 +421,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		if (seq._executed) // this is a one-shot op
 			break;
 		const Common::Rect rect(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
-		_vm->getStoredAreaBuffer().transBlitFrom(_vm->getForegroundBuffer(), rect, rect);
+		_vm->getStoredAreaBuffer().blitFrom(_vm->_compositionBuffer, rect, rect);
 		break;
 	}
 	case 0x4210: { // SAVE GETPUT REGION (getput area) x,y,w,h:int
@@ -444,27 +434,26 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		env._getPuts[seq._currentGetPutId]._area = rect;
 
 		// Getput reads an area from the front buffer.
-		Graphics::ManagedSurface *surf = new Graphics::ManagedSurface(rect.width(), rect.height(), _vm->getForegroundBuffer().format);
-		surf->blitFrom(_vm->getForegroundBuffer(), rect, Common::Point(0, 0));
-		env._getPuts[seq._currentGetPutId]._fgSurf.reset(surf);
-		Graphics::ManagedSurface *surf2 = new Graphics::ManagedSurface(rect.width(), rect.height(), _vm->getForegroundBuffer().format);
-		surf->blitFrom(_vm->getStoredAreaBuffer(), rect, Common::Point(0, 0));
-		env._getPuts[seq._currentGetPutId]._storedSurf.reset(surf2);
+		Graphics::ManagedSurface *surf = new Graphics::ManagedSurface(rect.width(), rect.height(), _vm->_compositionBuffer.format);
+		surf->blitFrom(_vm->_compositionBuffer, rect, Common::Point(0, 0));
+		env._getPuts[seq._currentGetPutId]._surf.reset(surf);
 		break;
 	}
 	case 0xa000: // DRAW PIXEL x,y:int
-		_vm->getForegroundBuffer().setPixel(ivals[0], ivals[1], seq._drawColFG);
+		_vm->_compositionBuffer.setPixel(ivals[0], ivals[1], seq._drawColFG);
 		break;
-	case 0xa050: {// SAVE REGION    x,y,w,h:int	(not used in DRAGON?)
+	case 0xa050: {// SAVE REGION    x,y,w,h:int
+		// This is used in DRAGON intro sequence to draw the AAAAH
 		// it works like a bitblit, but it doesn't write if there's something already at the destination?
 		// TODO: This is part of a whole set of operations - 0xa0n4.
 		// They do various flips etc.
-		//warning("TODO: Fix implementation of SAVE REGION (0xa050)");
+		warning("TODO: Fix implementation of SAVE REGION (0xa050) (%d, %d, %d, %d)",
+				ivals[0], ivals[1], ivals[2], ivals[3]);
 		const Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
-		_vm->_compositionBuffer.blitFrom(_vm->getBackgroundBuffer());
-		_vm->_compositionBuffer.transBlitFrom(_vm->getStoredAreaBuffer());
-		_vm->_compositionBuffer.transBlitFrom(_vm->getForegroundBuffer());
-		_vm->getForegroundBuffer().blitFrom(_vm->_compositionBuffer, r, r);
+		//_vm->_compositionBuffer.blitFrom(_vm->getBackgroundBuffer());
+		//_vm->_compositionBuffer.transBlitFrom(_vm->getStoredAreaBuffer());
+		//_vm->_compositionBuffer.transBlitFrom(_vm->_compositionBuffer);
+		//_vm->_compositionBuffer.blitFrom(_vm->_compositionBuffer, r, r);
 		break;
 	}
 	case 0xa060: { // RESTORE REGION
@@ -473,19 +462,19 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		break;
 	}
 	case 0xa0a0: // DRAW LINE  x1,y1,x2,y2:int
-		_vm->getForegroundBuffer().drawLine(ivals[0], ivals[1], ivals[2], ivals[3], seq._drawColFG);
+		_vm->_compositionBuffer.drawLine(ivals[0], ivals[1], ivals[2], ivals[3], seq._drawColFG);
 		break;
 	case 0xa100: { // DRAW FILLED RECT x,y,w,h:int	[0..320,0..200]
 		const Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
-		_vm->getForegroundBuffer().fillRect(r, seq._drawColFG);
+		_vm->_compositionBuffer.fillRect(r, seq._drawColFG);
 		break;
 	}
 	case 0xa110: { // DRAW EMPTY RECT  x1,y1,x2,y2:int
 		const Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
-		_vm->getForegroundBuffer().drawLine(r.left, r.top, r.right, r.top, seq._drawColFG);
-		_vm->getForegroundBuffer().drawLine(r.left, r.bottom, r.right, r.bottom, seq._drawColFG);
-		_vm->getForegroundBuffer().drawLine(r.left, r.top, r.left, r.bottom, seq._drawColFG);
-		_vm->getForegroundBuffer().drawLine(r.right, r.top, r.right, r.bottom, seq._drawColFG);
+		_vm->_compositionBuffer.drawLine(r.left, r.top, r.right, r.top, seq._drawColFG);
+		_vm->_compositionBuffer.drawLine(r.left, r.bottom, r.right, r.bottom, seq._drawColFG);
+		_vm->_compositionBuffer.drawLine(r.left, r.top, r.left, r.bottom, seq._drawColFG);
+		_vm->_compositionBuffer.drawLine(r.right, r.top, r.right, r.bottom, seq._drawColFG);
 		break;
 	}
 	case 0xa200: // 0xa2n0 DRAW STRING n: x,y,w,h:int - draw the nth string from the string table
@@ -504,7 +493,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		// TODO: Probably not this font?
 		const Font *font = mgr->getFont(FontManager::kDefaultFont);
 		// Note: ignore the y-height argument (ivals[3]) for now.
-		font->drawString(&(_vm->getForegroundBuffer()), str, ivals[0], ivals[1], ivals[2], seq._drawColFG);
+		font->drawString(&(_vm->_compositionBuffer), str, ivals[0], ivals[1], ivals[2], seq._drawColFG);
 		break;
 	}
 	case 0xa510:
@@ -533,7 +522,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		// DRAW BMP: x,y:int [-n,+n] (RISE)
 		Common::SharedPtr<Image> img = env._scriptShapes[seq._currentBmpId];
 		if (img)
-			img->drawBitmap(frameno, ivals[0], ivals[1], seq._drawWin, _vm->getForegroundBuffer(), op == 0xa520);
+			img->drawBitmap(frameno, ivals[0], ivals[1], seq._drawWin, _vm->_compositionBuffer, op == 0xa520);
 		else
 			warning("Trying to draw image %d in env %d which is not loaded", seq._currentBmpId, env._enviro);
 		break;
@@ -542,15 +531,13 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		if (seq._executed) // this is a one-shot op.
 			break;
 		int16 i = ivals[0];
-		if (i >= (int16)env._getPuts.size()) {
+		if (i >= (int16)env._getPuts.size() || !env._getPuts[i]._surf.get()) {
 			warning("Trying to put getput region %d we never got", i);
 			break;
 		}
 		const Common::Rect &r = env._getPuts[i]._area;
 		// Getput should overwrite the contents
-		_vm->getForegroundBuffer().blitFrom(*(env._getPuts[i]._fgSurf.get()),
-						Common::Point(r.left, r.top));
-		_vm->getStoredAreaBuffer().blitFrom(*(env._getPuts[i]._storedSurf.get()),
+		_vm->_compositionBuffer.blitFrom(*(env._getPuts[i]._surf.get()),
 						Common::Point(r.left, r.top));
 		break;
 	}
@@ -559,6 +546,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 			break;
 		Image tmp = Image(_vm->getResourceManager(), _vm->getDecompressor());
 		tmp.drawScreen(sval, _vm->getBackgroundBuffer());
+		_vm->_compositionBuffer.blitFrom(_vm->getBackgroundBuffer());
 		_vm->getStoredAreaBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		_vm->setBackgroundFile(sval);
 		break;
