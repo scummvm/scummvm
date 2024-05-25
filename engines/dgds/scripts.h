@@ -46,8 +46,7 @@ public:
 class GetPutRegion {
 public:
 	Common::Rect _area;
-	Common::SharedPtr<Graphics::ManagedSurface> _fgSurf;
-	Common::SharedPtr<Graphics::ManagedSurface> _storedSurf;
+	Common::SharedPtr<Graphics::ManagedSurface> _surf;
 
 	void reset();
 };

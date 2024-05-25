@@ -103,8 +103,6 @@ void Inventory::drawHeader(Graphics::ManagedSurface &surf) {
 }
 
 void Inventory::draw(Graphics::ManagedSurface &surf, int itemCount) {
-	//DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-
 	RequestData &boxreq = _reqData._requests[0];
 
 	if (_showZoomBox) {

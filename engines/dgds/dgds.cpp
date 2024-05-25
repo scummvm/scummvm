@@ -112,7 +112,6 @@ DgdsEngine::~DgdsEngine() {
 	_corners.reset();
 
 	_compositionBuffer.free();
-	_foregroundBuffer.free();
 	_storedAreaBuffer.free();
 	_backgroundBuffer.free();
 }
@@ -173,7 +172,6 @@ bool DgdsEngine::changeScene(int sceneNum) {
 	if (!_scene->getDragItem())
 		setMouseCursor(0);
 
-	_foregroundBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 	_storedAreaBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 
 	_scene->load(sceneFile, _resource, _decompressor);
@@ -264,7 +262,6 @@ void DgdsEngine::init() {
 
 	_backgroundBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 	_storedAreaBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
-	_foregroundBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 	_compositionBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 
 	g_system->fillScreen(0);
@@ -405,6 +402,15 @@ Common::Error DgdsEngine::run() {
 			_gdsScene->runPreTickOps();
 			_scene->runPreTickOps();
 
+			_compositionBuffer.blitFrom(_backgroundBuffer);
+
+			if (_inventory->isOpen()) {
+				int invCount = _gdsScene->countItemsInScene2();
+				_inventory->draw(_compositionBuffer, invCount);
+			}
+
+			_compositionBuffer.transBlitFrom(_storedAreaBuffer);
+
 			_scene->drawActiveDialogBgs(&_compositionBuffer);
 
 			if (!_inventory->isOpen() || _inventory->isZoomVisible())
@@ -455,17 +461,6 @@ Common::Error DgdsEngine::run() {
 			_scene->runPostTickOps();
 			_scene->checkTriggers();
 
-			// Now we start to assemble the rendered scene.
-			_compositionBuffer.blitFrom(_backgroundBuffer);
-
-			if (_inventory->isOpen()) {
-				int invCount = _gdsScene->countItemsInScene2();
-				_inventory->draw(_compositionBuffer, invCount);
-			}
-
-			_compositionBuffer.transBlitFrom(_storedAreaBuffer);
-			_compositionBuffer.transBlitFrom(_foregroundBuffer);
-
 #ifdef DUMP_FRAME_DATA
 			/* For debugging, dump the frame contents.. */
 			{
@@ -479,10 +474,6 @@ Common::Error DgdsEngine::run() {
 				::Image::writePNG(outf, *_backgroundBuffer.surfacePtr(), palbuf);
 				outf.close();
 
-				outf.open(Common::Path(Common::String::format("/tmp/%07d-fore.png", now)));
-				::Image::writePNG(outf, *_foregroundBuffer.surfacePtr(), palbuf);
-				outf.close();
-
 				outf.open(Common::Path(Common::String::format("/tmp/%07d-stor.png", now)));
 				::Image::writePNG(outf, *_storedAreaBuffer.surfacePtr(), palbuf);
 				outf.close();
@@ -493,12 +484,11 @@ Common::Error DgdsEngine::run() {
 			}
 #endif
 
-			_foregroundBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
-
 			if (!_inventory->isOpen()) {
 				_gdsScene->drawItems(_compositionBuffer);
 				checkDrawInventoryButton();
 			}
+
 			_clock.draw(_compositionBuffer);
 			bool haveActiveDialog = _scene->checkDialogActive();
 
@@ -600,7 +590,6 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 	s.syncString(_backgroundFile);
 	if (s.isLoading()) {
 		Image(_resource, _decompressor).drawScreen(_backgroundFile, _backgroundBuffer);
-		_foregroundBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		_storedAreaBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 	}
 

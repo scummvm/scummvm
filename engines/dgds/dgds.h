@@ -86,7 +86,6 @@ private:
 	Graphics::ManagedSurface _backgroundBuffer;
 	Common::String _backgroundFile;		// Record the background file name for save games.
 	Graphics::ManagedSurface _storedAreaBuffer;
-	Graphics::ManagedSurface _foregroundBuffer;
 	SDSScene *_scene;
 	GDSScene *_gdsScene;
 	Menu *_menu;
@@ -123,8 +122,6 @@ public:
 
 	DgdsGameId getGameId() { return _gameId; }
 
-	const Graphics::ManagedSurface &getForegroundBuffer() const { return _foregroundBuffer; }
-	Graphics::ManagedSurface &getForegroundBuffer() { return _foregroundBuffer; }
 	Graphics::ManagedSurface &getBackgroundBuffer() { return _backgroundBuffer; }
 	Graphics::ManagedSurface &getStoredAreaBuffer() { return _storedAreaBuffer; }
 
