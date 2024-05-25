@@ -192,10 +192,8 @@ DataReadErrorCode PrintModifier::load(PlugIn &plugIn, const PlugInModifier &pref
 	if (prefix.plugInRevision != 0)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!unknown1Event.load(reader) || !unknown2Bool.load(reader) || !unknown3Bool.load(reader))
-		return kDataReadErrorReadFailed;
-
-	if (!unknown4Bool.load(reader) || !unknown5String.load(reader) || !unknown6Bool.load(reader))
+	if (!executeWhen.load(reader) || !unknown1Bool.load(reader) || !unknown2Bool.load(reader) ||
+		!unknown3Bool.load(reader) || !filePath.load(reader) || !unknown4Bool.load(reader))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;

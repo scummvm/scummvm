@@ -131,12 +131,12 @@ protected:
 };
 
 struct PrintModifier : public PlugInModifierData {
-	PlugInTypeTaggedValue unknown1Event;
+	PlugInTypeTaggedValue executeWhen;
+	PlugInTypeTaggedValue unknown1Bool;
 	PlugInTypeTaggedValue unknown2Bool;
 	PlugInTypeTaggedValue unknown3Bool;
+	PlugInTypeTaggedValue filePath;
 	PlugInTypeTaggedValue unknown4Bool;
-	PlugInTypeTaggedValue unknown5String;
-	PlugInTypeTaggedValue unknown6Bool;
 
 protected:
 	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;

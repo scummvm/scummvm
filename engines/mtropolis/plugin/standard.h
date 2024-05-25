@@ -317,12 +317,13 @@ public:
 	PrintModifier();
 	~PrintModifier();
 
-	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::PrintModifier &data);
-
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
-
 	void disable(Runtime *runtime) override;
+
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) override;
+
+	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::PrintModifier &data);
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Print Modifier"; }
@@ -332,6 +333,9 @@ public:
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 	const char *getDefaultName() const override;
+
+	Event _executeWhen;
+	Common::String _filePath;
 };
 
 struct StandardPlugInHacks {
