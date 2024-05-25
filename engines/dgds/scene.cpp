@@ -366,6 +366,8 @@ bool Scene::readDialogList(Common::SeekableReadStream *s, Common::Array<Dialog> 
 			else
 				dst._fontColor = dst._fontColor ^ 8;
 		}
+
+		dst.fixupStringAndActions();
 	}
 
 	return !s->err();

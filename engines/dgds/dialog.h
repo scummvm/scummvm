@@ -129,6 +129,8 @@ public:
 
 	Common::Error syncState(Common::Serializer &s);
 
+	void fixupStringAndActions();
+
 private:
 	void drawType1(Graphics::ManagedSurface *dst, DialogDrawStage stage);
 	void drawType2(Graphics::ManagedSurface *dst, DialogDrawStage stage);
