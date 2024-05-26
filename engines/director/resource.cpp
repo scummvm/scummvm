@@ -876,7 +876,7 @@ Common::SeekableReadStream *ProjectorArchive::createReadStreamForMember(const Co
 			ptr += 4; // tag
 			uint32 size = isBigEndian ? READ_LE_UINT32(ptr) : READ_BE_UINT32(ptr);
 			ptr += 4;
-			int32 offset = isBigEndian ? READ_LE_UINT32(ptr) : READ_BE_UINT32(ptr);
+			uint32 offset = isBigEndian ? READ_LE_UINT32(ptr) : READ_BE_UINT32(ptr);
 
 			if (size > 0 || offset >= fDesc->_value.offset)  {
 				debugC(8, kDebugLoading, "ProjectorArchive::createReadStreamForMember(): Patched offset at 0x%08x from %u to %u",

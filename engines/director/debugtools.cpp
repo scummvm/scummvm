@@ -2986,7 +2986,7 @@ static void showScore() {
 		if (!numFrames || _state->_selectedScoreCast.channel >= (int)score->_scoreCache[0]->_sprites.size())
 			_state->_selectedScoreCast.channel = 0;
 
-		if (_state->_scoreFrameOffset >= numFrames)
+		if (_state->_scoreFrameOffset >= (int) numFrames)
 			_state->_scoreFrameOffset = 1;
 
 		{ // Render sprite details
@@ -3156,7 +3156,7 @@ static void showScore() {
 		uint tableColumns = MAX(numFrames + 5, 25U); // Set minimal table width to 25
 
 		{  // Render pagination
-			int frame = 1;
+			uint frame = 1;
 
 			ImGui::Text("   Jump to frame: ");
 
@@ -3165,7 +3165,7 @@ static void showScore() {
 			do {
 				ImGui::SameLine(0, 20);
 
-				if (ImGui::Selectable(Common::String::format("%d", frame).c_str(), frame == _state->_scoreFrameOffset, 0, ImVec2(30, 10)))
+				if (ImGui::Selectable(Common::String::format("%d", frame).c_str(), (int) frame == _state->_scoreFrameOffset, 0, ImVec2(30, 10)))
 					_state->_scoreFrameOffset = frame;
 
 				frame += 300;
