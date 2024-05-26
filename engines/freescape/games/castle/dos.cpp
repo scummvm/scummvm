@@ -212,6 +212,8 @@ void CastleEngine::drawDOSUI(Graphics::Surface *surface) {
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else
 		drawStringInSurface(_currentArea->_name, 97, 182, front, back, surface);
+
+	drawEnergyMeter(surface);
 }
 
 } // End of namespace Freescape

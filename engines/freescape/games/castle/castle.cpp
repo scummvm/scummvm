@@ -44,6 +44,7 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_playerDepth = 8;
 	_stepUpDistance = 32;
 	_maxFallingDistance = 8192;
+	_maxShield = 24;
 	_option = nullptr;
 }
 
@@ -164,7 +165,7 @@ void CastleEngine::initGameState() {
 	_playerHeightNumber = 1;
 	_playerHeight = _playerHeights[_playerHeightNumber];
 
-	_gameStateVars[k8bitVariableShield] = 1;
+	_gameStateVars[k8bitVariableShield] = 16;
 	_gameStateVars[k8bitVariableEnergy] = 1;
 	_countdown = INT_MAX;
 }
@@ -387,6 +388,37 @@ void CastleEngine::drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics
 		y = y + 12;
 	}
 	drawFullscreenSurface(surface);
+}
+
+void CastleEngine::drawEnergyMeter(Graphics::Surface *surface) {
+	uint32 back = 0;
+	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+	Common::Rect weightRect;
+	Common::Rect barRect;
+	Common::Rect backRect;
+
+	if (isDOS()) {
+		back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xA7, 0x00, 0x00);
+		barRect = Common::Rect(45, 164, 110, 166);
+		weightRect = Common::Rect(57, 158, 59, 172);
+		backRect = Common::Rect(45, 157, 112, 173);
+		if (_gameStateVars[k8bitVariableShield] > 16)
+			weightRect.translate(3, 0);
+	}
+	surface->fillRect(backRect, black);
+	surface->fillRect(barRect, back);
+
+	for (int i = 0; i < _gameStateVars[k8bitVariableShield] / 4; i++) {
+		surface->fillRect(weightRect, back);
+		weightRect.translate(-3, 0);
+	}
+
+	uint8 remainder = 3 - _gameStateVars[k8bitVariableShield] % 4;
+	if (remainder < 3) {
+		weightRect.translate(0, remainder / 2);
+		weightRect.setHeight(weightRect.height() - remainder);
+		surface->fillRect(weightRect, back);
+	}
 }
 
 void CastleEngine::addGhosts() {

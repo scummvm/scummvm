@@ -34,6 +34,7 @@ public:
 	void loadAssetsAmigaDemo() override;
 
 	void drawDOSUI(Graphics::Surface *surface) override;
+	void drawEnergyMeter(Graphics::Surface *surface);
 	void pressedKey(const int keycode) override;
 	void checkSensors() override;
 
