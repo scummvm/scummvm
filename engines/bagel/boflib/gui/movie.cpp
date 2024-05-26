@@ -100,7 +100,6 @@ bool CBofMovie::openMovie(const char *sFilename) {
 	if (!_pSmk->loadFile(sFilename)) {
 		// Opened failed
 		error("Movie not found=%s", sFilename);
-		return false;
 	}
 
 	// If supposed to stretch into specified window
