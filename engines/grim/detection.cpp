@@ -694,9 +694,9 @@ static const GrimGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, GType_GRIM }
 };
 
-class GrimMetaEngineDetection : public AdvancedMetaEngineDetection {
+class GrimMetaEngineDetection : public AdvancedMetaEngineDetection<Grim::GrimGameDescription> {
 public:
-	GrimMetaEngineDetection() : AdvancedMetaEngineDetection(Grim::gameDescriptions, sizeof(Grim::GrimGameDescription), grimGames) {
+	GrimMetaEngineDetection() : AdvancedMetaEngineDetection(Grim::gameDescriptions, grimGames) {
 		_guiOptions = GUIO_NOMIDI;
 	}
 

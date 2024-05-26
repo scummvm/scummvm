@@ -48,9 +48,9 @@ static const ADGameDescription testbedDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-class TestbedMetaEngineDetection : public AdvancedMetaEngineDetection {
+class TestbedMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	TestbedMetaEngineDetection() : AdvancedMetaEngineDetection(testbedDescriptions, sizeof(ADGameDescription), testbed_setting) {
+	TestbedMetaEngineDetection() : AdvancedMetaEngineDetection(testbedDescriptions, testbed_setting) {
 		_md5Bytes = 512;
 	}
 

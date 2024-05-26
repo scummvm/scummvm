@@ -185,9 +185,9 @@ static const NGIGameDescription gameDescriptions[] = {
 
 } // End of namespace NGI
 
-class NGIMetaEngineDetection : public AdvancedMetaEngineDetection {
+class NGIMetaEngineDetection : public AdvancedMetaEngineDetection<NGI::NGIGameDescription> {
 public:
-	NGIMetaEngineDetection() : AdvancedMetaEngineDetection(NGI::gameDescriptions, sizeof(NGI::NGIGameDescription), ngiGames) {
+	NGIMetaEngineDetection() : AdvancedMetaEngineDetection(NGI::gameDescriptions, ngiGames) {
 	}
 
 	const char *getName() const override {

@@ -226,9 +226,9 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 
 }
 
-class ParallactionMetaEngineDetection : public AdvancedMetaEngineDetection {
+class ParallactionMetaEngineDetection : public AdvancedMetaEngineDetection<Parallaction::PARALLACTIONGameDescription> {
 public:
-	ParallactionMetaEngineDetection() : AdvancedMetaEngineDetection(Parallaction::gameDescriptions, sizeof(Parallaction::PARALLACTIONGameDescription), parallactionGames) {
+	ParallactionMetaEngineDetection() : AdvancedMetaEngineDetection(Parallaction::gameDescriptions, parallactionGames) {
 		_guiOptions = GUIO1(GUIO_NOLAUNCHLOAD);
 	}
 

@@ -53,9 +53,9 @@ static const char *const directoryGlobs[] = {
 	nullptr
 };
 
-class MTropolisMetaEngineDetection : public AdvancedMetaEngineDetection {
+class MTropolisMetaEngineDetection : public AdvancedMetaEngineDetection<MTropolis::MTropolisGameDescription> {
 public:
-	MTropolisMetaEngineDetection() : AdvancedMetaEngineDetection(MTropolis::gameDescriptions, sizeof(MTropolis::MTropolisGameDescription), mTropolisGames) {
+	MTropolisMetaEngineDetection() : AdvancedMetaEngineDetection(MTropolis::gameDescriptions, mTropolisGames) {
 		_guiOptions = GUIO3(GAMEOPTION_DYNAMIC_MIDI, GAMEOPTION_LAUNCH_DEBUG, GAMEOPTION_ENABLE_SHORT_TRANSITIONS);
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;

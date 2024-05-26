@@ -92,9 +92,9 @@ static const char * const directoryGlobs[] = {
 	nullptr
 };
 
-class BbvsMetaEngineDetection : public AdvancedMetaEngineDetection {
+class BbvsMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	BbvsMetaEngineDetection() : AdvancedMetaEngineDetection(Bbvs::gameDescriptions, sizeof(ADGameDescription), bbvsGames) {
+	BbvsMetaEngineDetection() : AdvancedMetaEngineDetection(Bbvs::gameDescriptions, bbvsGames) {
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}

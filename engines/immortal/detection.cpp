@@ -26,7 +26,7 @@
 #include "immortal/detection_tables.h"
 
 ImmortalMetaEngineDetection::ImmortalMetaEngineDetection() : AdvancedMetaEngineDetection(Immortal::gameDescriptions,
-	sizeof(ADGameDescription), Immortal::immortalGames) {
+	Immortal::immortalGames) {
 }
 
 REGISTER_PLUGIN_STATIC(IMMORTAL_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, ImmortalMetaEngineDetection);

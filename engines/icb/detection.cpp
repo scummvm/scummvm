@@ -305,9 +305,9 @@ static const IcbGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, GType_ICB }
 };
 
-class IcbMetaEngineDetection : public AdvancedMetaEngineDetection {
+class IcbMetaEngineDetection : public AdvancedMetaEngineDetection<IcbGameDescription> {
 public:
-	IcbMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(IcbGameDescription), icbGames) {
+	IcbMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, icbGames) {
 		_guiOptions = GUIO_NOMIDI;
 		_flags = kADFlagMatchFullPaths;
 	}

@@ -127,9 +127,9 @@ static const HugoGameDescription gameDescriptions[] = {
 	{AD_TABLE_END_MARKER, kGameTypeNone}
 };
 
-class HugoMetaEngineDetection : public AdvancedMetaEngineDetection {
+class HugoMetaEngineDetection : public AdvancedMetaEngineDetection<HugoGameDescription> {
 public:
-	HugoMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(HugoGameDescription), hugoGames) {
+	HugoMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, hugoGames) {
 	}
 
 	const char *getName() const override {

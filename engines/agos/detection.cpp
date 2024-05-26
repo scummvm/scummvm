@@ -73,9 +73,9 @@ static const char *const directoryGlobs[] = {
 
 using namespace AGOS;
 
-class AgosMetaEngineDetection : public AdvancedMetaEngineDetection {
+class AgosMetaEngineDetection : public AdvancedMetaEngineDetection<AGOS::AGOSGameDescription> {
 public:
-	AgosMetaEngineDetection() : AdvancedMetaEngineDetection(AGOS::gameDescriptions, sizeof(AGOS::AGOSGameDescription), agosGames) {
+	AgosMetaEngineDetection() : AdvancedMetaEngineDetection(AGOS::gameDescriptions, agosGames) {
 		_guiOptions = GUIO1(GUIO_NOLAUNCHLOAD);
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;

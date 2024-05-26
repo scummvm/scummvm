@@ -52,9 +52,9 @@ const char *const directoryGlobs[] = {
 
 } // End of anonymous namespace
 
-class KyraMetaEngineDetection : public AdvancedMetaEngineDetection {
+class KyraMetaEngineDetection : public AdvancedMetaEngineDetection<KYRAGameDescription> {
 public:
-	KyraMetaEngineDetection() : AdvancedMetaEngineDetection(adGameDescs, sizeof(KYRAGameDescription), gameList) {
+	KyraMetaEngineDetection() : AdvancedMetaEngineDetection(adGameDescs, gameList) {
 		_md5Bytes = 1024 * 1024;
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;

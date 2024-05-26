@@ -35,7 +35,7 @@ extern const ADGameDescription gameDescriptions[];
 
 } // namespace Immortal
 
-class ImmortalMetaEngineDetection : public AdvancedMetaEngineDetection {
+class ImmortalMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 	static const DebugChannelDef debugFlagList[];
 
 public:

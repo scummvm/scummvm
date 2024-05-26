@@ -42,9 +42,9 @@ static const DebugChannelDef debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
-class CineMetaEngineDetection : public AdvancedMetaEngineDetection {
+class CineMetaEngineDetection : public AdvancedMetaEngineDetection<Cine::CINEGameDescription> {
 public:
-	CineMetaEngineDetection() : AdvancedMetaEngineDetection(Cine::gameDescriptions, sizeof(Cine::CINEGameDescription), cineGames) {
+	CineMetaEngineDetection() : AdvancedMetaEngineDetection(Cine::gameDescriptions, cineGames) {
 		_guiOptions = GUIO3(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TRANSPARENT_DIALOG_BOXES);
 	}
 

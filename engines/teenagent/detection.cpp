@@ -202,9 +202,9 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 
 
 
-class TeenAgentMetaEngineDetection : public AdvancedMetaEngineDetection {
+class TeenAgentMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	TeenAgentMetaEngineDetection() : AdvancedMetaEngineDetection(teenAgentGameDescriptions, sizeof(ADGameDescription), teenAgentGames) {
+	TeenAgentMetaEngineDetection() : AdvancedMetaEngineDetection(teenAgentGameDescriptions, teenAgentGames) {
 	}
 
 	const char *getName() const override {

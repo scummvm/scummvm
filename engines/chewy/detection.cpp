@@ -104,9 +104,9 @@ static const ChewyGameDescription gameDescriptions[] = {
 
 } // namespace Chewy
 
-class ChewyMetaEngineDetection : public AdvancedMetaEngineDetection {
+class ChewyMetaEngineDetection : public AdvancedMetaEngineDetection<Chewy::ChewyGameDescription> {
 public:
-	ChewyMetaEngineDetection() : AdvancedMetaEngineDetection(Chewy::gameDescriptions, sizeof(Chewy::ChewyGameDescription), chewyGames) {
+	ChewyMetaEngineDetection() : AdvancedMetaEngineDetection(Chewy::gameDescriptions, chewyGames) {
 		_maxScanDepth = 2;
 		_flags = kADFlagMatchFullPaths;
 	}

@@ -275,9 +275,9 @@ static const char *const directoryGlobs[] = {
 	nullptr
 };
 
-class GroovieMetaEngineDetection : public AdvancedMetaEngineDetection {
+class GroovieMetaEngineDetection : public AdvancedMetaEngineDetection<GroovieGameDescription> {
 public:
-	GroovieMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(GroovieGameDescription), groovieGames) {
+	GroovieMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, groovieGames) {
 		// Use kADFlagUseExtraAsHint in order to distinguish the 11th hour from
 		// its "Making of" as well as the Clandestiny Trailer; they all share
 		// the same MD5.

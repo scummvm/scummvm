@@ -51,9 +51,9 @@ static const char *const directoryGlobs[] = {
 	0
 };
 
-class WintermuteMetaEngineDetection : public AdvancedMetaEngineDetection {
+class WintermuteMetaEngineDetection : public AdvancedMetaEngineDetection<WMEGameDescription> {
 public:
-	WintermuteMetaEngineDetection() : AdvancedMetaEngineDetection(Wintermute::gameDescriptions, sizeof(WMEGameDescription), Wintermute::wintermuteGames) {
+	WintermuteMetaEngineDetection() : AdvancedMetaEngineDetection(Wintermute::gameDescriptions, Wintermute::wintermuteGames) {
 		// Use kADFlagUseExtraAsHint to distinguish between SD and HD versions
 		// of J.U.L.I.A. when their datafiles sit in the same directory (e.g. in Steam distribution).
 		_flags = kADFlagUseExtraAsHint;

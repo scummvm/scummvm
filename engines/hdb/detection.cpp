@@ -113,9 +113,9 @@ static const ADGameDescription gameDescriptions[] = {
 
 } // End of namespace HDB
 
-class HDBMetaEngineDetection : public AdvancedMetaEngineDetection {
+class HDBMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	HDBMetaEngineDetection() : AdvancedMetaEngineDetection(HDB::gameDescriptions, sizeof(ADGameDescription), hdbGames) {
+	HDBMetaEngineDetection() : AdvancedMetaEngineDetection(HDB::gameDescriptions, hdbGames) {
 	}
 
 	const char *getName() const override {

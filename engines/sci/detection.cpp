@@ -179,9 +179,9 @@ static const char *const directoryGlobs[] = {
 	nullptr
 };
 
-class SciMetaEngineDetection : public AdvancedMetaEngineDetection {
+class SciMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	SciMetaEngineDetection() : AdvancedMetaEngineDetection(Sci::SciGameDescriptions, sizeof(ADGameDescription), s_sciGameTitles) {
+	SciMetaEngineDetection() : AdvancedMetaEngineDetection(Sci::SciGameDescriptions, s_sciGameTitles) {
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 		// Use SCI fallback detection results instead of the partial matches found by

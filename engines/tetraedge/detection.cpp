@@ -33,7 +33,7 @@ const DebugChannelDef TetraedgeMetaEngineDetection::debugFlagList[] = {
 };
 
 TetraedgeMetaEngineDetection::TetraedgeMetaEngineDetection() : AdvancedMetaEngineDetection(Tetraedge::GAME_DESCRIPTIONS,
-	sizeof(ADGameDescription), Tetraedge::GAME_NAMES) {
+	Tetraedge::GAME_NAMES) {
 	_flags = kADFlagMatchFullPaths;
 }
 

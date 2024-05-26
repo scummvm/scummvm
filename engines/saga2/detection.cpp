@@ -127,9 +127,9 @@ static const char *const directoryGlobs[] = {
 	nullptr
 };
 
-class Saga2MetaEngineDetection : public AdvancedMetaEngineDetection {
+class Saga2MetaEngineDetection : public AdvancedMetaEngineDetection<Saga2::SAGA2GameDescription> {
 public:
-	Saga2MetaEngineDetection() : AdvancedMetaEngineDetection(Saga2::gameDescriptions, sizeof(Saga2::SAGA2GameDescription), Saga2::saga2Games) {
+	Saga2MetaEngineDetection() : AdvancedMetaEngineDetection(Saga2::gameDescriptions, Saga2::saga2Games) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}

@@ -44,7 +44,7 @@ static const char *const DIRECTORY_GLOBS[] = {
 };
 
 M4MetaEngineDetection::M4MetaEngineDetection() : AdvancedMetaEngineDetection(M4::gameDescriptions,
-		sizeof(M4::M4GameDescription), M4::m4Games) {
+		M4::m4Games) {
 	_guiOptions = GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD);
 	_maxScanDepth = 2;
 	_directoryGlobs = DIRECTORY_GLOBS;

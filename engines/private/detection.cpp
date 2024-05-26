@@ -245,9 +245,9 @@ static const char *const directoryGlobs[] = {
 	nullptr
 };
 
-class PrivateMetaEngineDetection : public AdvancedMetaEngineDetection {
+class PrivateMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	PrivateMetaEngineDetection() : AdvancedMetaEngineDetection(Private::gameDescriptions, sizeof(ADGameDescription), Private::privateGames) {
+	PrivateMetaEngineDetection() : AdvancedMetaEngineDetection(Private::gameDescriptions, Private::privateGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}

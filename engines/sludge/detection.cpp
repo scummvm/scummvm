@@ -75,9 +75,9 @@ static Sludge::SludgeGameDescription s_fallbackDesc =
 
 static char s_fallbackFileNameBuffer[51];
 
-class SludgeMetaEngineDetection : public AdvancedMetaEngineDetection {
+class SludgeMetaEngineDetection : public AdvancedMetaEngineDetection<Sludge::SludgeGameDescription> {
 public:
-	SludgeMetaEngineDetection() : AdvancedMetaEngineDetection(Sludge::gameDescriptions, sizeof(Sludge::SludgeGameDescription), sludgeGames) {
+	SludgeMetaEngineDetection() : AdvancedMetaEngineDetection(Sludge::gameDescriptions, sludgeGames) {
 		_maxScanDepth = 1;
 	}
 

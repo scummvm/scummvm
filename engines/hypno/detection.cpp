@@ -281,9 +281,9 @@ static const char *const directoryGlobs[] = {
 	nullptr
 };
 
-class HypnoMetaEngineDetection : public AdvancedMetaEngineDetection {
+class HypnoMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	HypnoMetaEngineDetection() : AdvancedMetaEngineDetection(Hypno::gameDescriptions, sizeof(ADGameDescription), Hypno::hypnoGames) {
+	HypnoMetaEngineDetection() : AdvancedMetaEngineDetection(Hypno::gameDescriptions, Hypno::hypnoGames) {
 		_guiOptions = GUIO6(GUIO_NOMIDI, GAMEOPTION_ORIGINAL_CHEATS, GAMEOPTION_INFINITE_HEALTH, GAMEOPTION_INFINITE_AMMO, GAMEOPTION_UNLOCK_ALL_LEVELS, GAMEOPTION_RESTORED_CONTENT);
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;

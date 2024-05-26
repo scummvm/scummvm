@@ -40,7 +40,7 @@ extern const ADGameDescription GAME_DESCRIPTIONS[];
 
 } // namespace Tetraedge
 
-class TetraedgeMetaEngineDetection : public AdvancedMetaEngineDetection {
+class TetraedgeMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 	static const DebugChannelDef debugFlagList[];
 
 public:

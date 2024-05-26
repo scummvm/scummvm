@@ -165,9 +165,9 @@ static const char * const directoryGlobs[] = {
 	0
 };
 
-class ToonMetaEngineDetection : public AdvancedMetaEngineDetection {
+class ToonMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	ToonMetaEngineDetection() : AdvancedMetaEngineDetection(Toon::gameDescriptions, sizeof(ADGameDescription), toonGames) {
+	ToonMetaEngineDetection() : AdvancedMetaEngineDetection(Toon::gameDescriptions, toonGames) {
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}

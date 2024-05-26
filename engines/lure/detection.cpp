@@ -242,9 +242,9 @@ static const LureGameDescription gameDescriptions[] = {
 
 } // End of namespace Lure
 
-class LureMetaEngineDetection : public AdvancedMetaEngineDetection {
+class LureMetaEngineDetection : public AdvancedMetaEngineDetection<Lure::LureGameDescription> {
 public:
-	LureMetaEngineDetection() : AdvancedMetaEngineDetection(Lure::gameDescriptions, sizeof(Lure::LureGameDescription), lureGames) {
+	LureMetaEngineDetection() : AdvancedMetaEngineDetection(Lure::gameDescriptions, lureGames) {
 		_md5Bytes = 1024;
 
 		// Use kADFlagUseExtraAsHint to distinguish between EGA and VGA versions

@@ -401,9 +401,9 @@ static const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-class StarkMetaEngineDetection : public AdvancedMetaEngineDetection {
+class StarkMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	StarkMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(ADGameDescription), starkGames) {
+	StarkMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, starkGames) {
 		_guiOptions = GUIO4(GUIO_NOMIDI, GAMEOPTION_ASSETS_MOD, GAMEOPTION_LINEAR_FILTERING, GAMEOPTION_FONT_ANTIALIASING);
 	}
 

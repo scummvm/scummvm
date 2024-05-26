@@ -65,7 +65,7 @@ extern const TwpGameDescription gameDescriptions[];
 
 } // End of namespace Twp
 
-class TwpMetaEngineDetection : public AdvancedMetaEngineDetection {
+class TwpMetaEngineDetection : public AdvancedMetaEngineDetection<Twp::TwpGameDescription> {
 	static const DebugChannelDef debugFlagList[];
 
 public:

@@ -71,8 +71,7 @@ const DebugChannelDef AGSMetaEngineDetection::debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
-AGSMetaEngineDetection::AGSMetaEngineDetection() : AdvancedMetaEngineDetection(AGS::GAME_DESCRIPTIONS,
-	        sizeof(AGS::AGSGameDescription), AGS::GAME_NAMES) {
+AGSMetaEngineDetection::AGSMetaEngineDetection() : AdvancedMetaEngineDetection(AGS::GAME_DESCRIPTIONS, AGS::GAME_NAMES) {
 	_flags = kADFlagCanPlayUnknownVariants;
 }
 

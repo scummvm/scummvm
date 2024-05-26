@@ -114,9 +114,9 @@ static const LilliputGameDescription gameDescriptions[] = {
 	{AD_TABLE_END_MARKER, kGameTypeNone}
 };
 
-class LilliputMetaEngineDetection : public AdvancedMetaEngineDetection {
+class LilliputMetaEngineDetection : public AdvancedMetaEngineDetection<LilliputGameDescription> {
 public:
-	LilliputMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(LilliputGameDescription), lilliputGames) {
+	LilliputMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, lilliputGames) {
 	}
 
 	const char *getName() const override {

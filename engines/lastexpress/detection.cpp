@@ -221,9 +221,9 @@ static const char *const directoryGlobs[] = {
 		nullptr
 };
 
-class LastExpressMetaEngineDetection : public AdvancedMetaEngineDetection {
+class LastExpressMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	LastExpressMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(ADGameDescription), lastExpressGames) {
+	LastExpressMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, lastExpressGames) {
 		_guiOptions = GUIO2(GUIO_NOSUBTITLES, GUIO_NOSFX);
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;

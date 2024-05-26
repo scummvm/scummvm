@@ -130,9 +130,9 @@ static const ADGameDescription gameDescriptions[] = {
 } // End of namespace Neverhood
 
 
-class NeverhoodMetaEngineDetection : public AdvancedMetaEngineDetection {
+class NeverhoodMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	NeverhoodMetaEngineDetection() : AdvancedMetaEngineDetection(Neverhood::gameDescriptions, sizeof(ADGameDescription), neverhoodGames) {
+	NeverhoodMetaEngineDetection() : AdvancedMetaEngineDetection(Neverhood::gameDescriptions, neverhoodGames) {
 		_guiOptions = GUIO5(GUIO_NOMIDI, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_SKIP_HALL_OF_RECORDS,
 				    GAMEOPTION_SCALE_MAKING_OF_VIDEOS, GAMEOPTION_REPEAT_WILLIE_HINT);
 	}

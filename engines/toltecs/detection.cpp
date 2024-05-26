@@ -221,9 +221,9 @@ static const ToltecsGameDescription gameDescriptions[] = {
 
 } // End of namespace Toltecs
 
-class ToltecsMetaEngineDetection : public AdvancedMetaEngineDetection {
+class ToltecsMetaEngineDetection : public AdvancedMetaEngineDetection<Toltecs::ToltecsGameDescription> {
 public:
-	ToltecsMetaEngineDetection() : AdvancedMetaEngineDetection(Toltecs::gameDescriptions, sizeof(Toltecs::ToltecsGameDescription), toltecsGames) {
+	ToltecsMetaEngineDetection() : AdvancedMetaEngineDetection(Toltecs::gameDescriptions, toltecsGames) {
 	}
 
 	const char *getName() const override {

@@ -43,9 +43,9 @@ static const char *const directoryGlobs[] = {
 	nullptr
 };
 
-class Sword2MetaEngineDetection : public AdvancedMetaEngineDetection {
+class Sword2MetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	Sword2MetaEngineDetection() : AdvancedMetaEngineDetection(Sword2::gameDescriptions, sizeof(ADGameDescription), sword2Games) {
+	Sword2MetaEngineDetection() : AdvancedMetaEngineDetection(Sword2::gameDescriptions, sword2Games) {
 		_guiOptions = GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_OBJECT_LABELS);
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;

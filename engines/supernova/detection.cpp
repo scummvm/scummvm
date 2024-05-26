@@ -89,9 +89,9 @@ static const ADGameDescription gameDescriptions[] = {
 };
 }
 
-class SupernovaMetaEngineDetection: public AdvancedMetaEngineDetection {
+class SupernovaMetaEngineDetection: public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	SupernovaMetaEngineDetection() : AdvancedMetaEngineDetection(Supernova::gameDescriptions, sizeof(ADGameDescription), supernovaGames) {
+	SupernovaMetaEngineDetection() : AdvancedMetaEngineDetection(Supernova::gameDescriptions, supernovaGames) {
 	}
 
 	const char *getName() const override {

@@ -51,7 +51,7 @@ static const DebugChannelDef debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
-class GobMetaEngineDetection : public AdvancedMetaEngineDetection {
+class GobMetaEngineDetection : public AdvancedMetaEngineDetection<Gob::GOBGameDescription> {
 public:
 	GobMetaEngineDetection();
 
@@ -85,7 +85,7 @@ private:
 };
 
 GobMetaEngineDetection::GobMetaEngineDetection() :
-	AdvancedMetaEngineDetection(Gob::gameDescriptions, sizeof(Gob::GOBGameDescription), gobGames) {
+	AdvancedMetaEngineDetection(Gob::gameDescriptions, gobGames) {
 
 	_guiOptions = GUIO1(GUIO_NOLAUNCHLOAD);
 }

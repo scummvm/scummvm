@@ -45,9 +45,9 @@ static const DebugChannelDef debugFlagList[] = {
 
 #include "tinsel/detection_tables.h"
 
-class TinselMetaEngineDetection : public AdvancedMetaEngineDetection {
+class TinselMetaEngineDetection : public AdvancedMetaEngineDetection<Tinsel::TinselGameDescription> {
 public:
-	TinselMetaEngineDetection() : AdvancedMetaEngineDetection(Tinsel::gameDescriptions, sizeof(Tinsel::TinselGameDescription), tinselGames) {
+	TinselMetaEngineDetection() : AdvancedMetaEngineDetection(Tinsel::gameDescriptions, tinselGames) {
 	}
 
 	const char *getName() const  override{

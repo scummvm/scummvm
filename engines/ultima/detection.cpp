@@ -61,7 +61,7 @@ const DebugChannelDef UltimaMetaEngineDetection::debugFlagList[] = {
 };
 
 UltimaMetaEngineDetection::UltimaMetaEngineDetection() : AdvancedMetaEngineDetection(Ultima::GAME_DESCRIPTIONS,
-	        sizeof(Ultima::UltimaGameDescription), Ultima::ULTIMA_GAMES) {
+	        Ultima::ULTIMA_GAMES) {
 	static const char *const DIRECTORY_GLOBS[2] = { "usecode", 0 };
 	_maxScanDepth = 2;
 	_directoryGlobs = DIRECTORY_GLOBS;

@@ -42,7 +42,7 @@ extern const ADGameDescription gameDescriptions[];
 
 } // End of namespace Xyzzy
 
-class XyzzyMetaEngineDetection : public AdvancedMetaEngineDetection {
+class XyzzyMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 	static const DebugChannelDef debugFlagList[];
 
 public:

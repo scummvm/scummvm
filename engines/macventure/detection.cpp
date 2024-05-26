@@ -82,9 +82,9 @@ namespace MacVenture {
 
 SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot, bool skipThumbnail = true);
 
-class MacVentureMetaEngineDetection : public AdvancedMetaEngineDetection {
+class MacVentureMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	MacVentureMetaEngineDetection() : AdvancedMetaEngineDetection(MacVenture::gameDescriptions, sizeof(ADGameDescription), macventureGames) {
+	MacVentureMetaEngineDetection() : AdvancedMetaEngineDetection(MacVenture::gameDescriptions, macventureGames) {
 		_guiOptions = GUIO1(GUIO_NOMIDI);
 	}
 

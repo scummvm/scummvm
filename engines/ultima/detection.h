@@ -82,7 +82,7 @@ struct UltimaGameDescription {
 
 } // End of namespace Ultima
 
-class UltimaMetaEngineDetection : public AdvancedMetaEngineDetection {
+class UltimaMetaEngineDetection : public AdvancedMetaEngineDetection<Ultima::UltimaGameDescription> {
 	static const DebugChannelDef debugFlagList[];
 
 public:

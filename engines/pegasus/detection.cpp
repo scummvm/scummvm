@@ -144,9 +144,9 @@ static const PegasusGameDescription gameDescriptions[] = {
 } // End of namespace Pegasus
 
 
-class PegasusMetaEngineDetection : public AdvancedMetaEngineDetection {
+class PegasusMetaEngineDetection : public AdvancedMetaEngineDetection<Pegasus::PegasusGameDescription> {
 public:
-	PegasusMetaEngineDetection() : AdvancedMetaEngineDetection(Pegasus::gameDescriptions, sizeof(Pegasus::PegasusGameDescription), pegasusGames) {
+	PegasusMetaEngineDetection() : AdvancedMetaEngineDetection(Pegasus::gameDescriptions, pegasusGames) {
 	}
 
 	const char *getName() const override {

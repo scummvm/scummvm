@@ -89,9 +89,9 @@ static const DMADGameDescription gameDescriptions[] = {
 	}
 };
 
-class DMMetaEngineDetection : public AdvancedMetaEngineDetection {
+class DMMetaEngineDetection : public AdvancedMetaEngineDetection<DMADGameDescription> {
 public:
-	DMMetaEngineDetection() : AdvancedMetaEngineDetection(DM::gameDescriptions, sizeof(DMADGameDescription), DMGames) {
+	DMMetaEngineDetection() : AdvancedMetaEngineDetection(DM::gameDescriptions, DMGames) {
 	}
 
 	const char *getName() const override {

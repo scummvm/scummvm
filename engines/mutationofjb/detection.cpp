@@ -96,9 +96,9 @@ static const char *const mutationofjbDirectoryGlobs[] = {
 	nullptr
 };
 
-class MutationOfJBMetaEngineDetection : public AdvancedMetaEngineDetection {
+class MutationOfJBMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	MutationOfJBMetaEngineDetection() : AdvancedMetaEngineDetection(mutationofjbDescriptions, sizeof(ADGameDescription), mutationofjbGames) {
+	MutationOfJBMetaEngineDetection() : AdvancedMetaEngineDetection(mutationofjbDescriptions, mutationofjbGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = mutationofjbDirectoryGlobs;
 	}
