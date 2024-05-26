@@ -55,9 +55,9 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 #ifdef USE_TTS
-			GUIO1(GAMEOPTION_TTS_NARRATOR)
+			GUIO2(GAMEOPTION_TTS_NARRATOR, GAMEOPTION_COPY_PROTECTION)
 #else
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 #endif
 		},
 		GF_FLOPPY
@@ -73,9 +73,9 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 #ifdef USE_TTS
-			GUIO1(GAMEOPTION_TTS_NARRATOR)
+			GUIO2(GAMEOPTION_TTS_NARRATOR, GAMEOPTION_COPY_PROTECTION)
 #else
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 #endif
 		},
 		GF_FLOPPY | GF_KONAMI
@@ -90,9 +90,9 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 #ifdef USE_TTS
-			GUIO1(GAMEOPTION_TTS_NARRATOR)
+			GUIO2(GAMEOPTION_TTS_NARRATOR, GAMEOPTION_COPY_PROTECTION)
 #else
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 #endif
 		},
 		GF_FLOPPY | GF_KONAMI
@@ -107,9 +107,9 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 #ifdef USE_TTS
-			GUIO1(GAMEOPTION_TTS_NARRATOR)
+			GUIO2(GAMEOPTION_TTS_NARRATOR, GAMEOPTION_COPY_PROTECTION)
 #else
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 #endif
 		},
 		GF_FLOPPY | GF_EGA
@@ -123,7 +123,7 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GF_FLOPPY
 	},
@@ -136,7 +136,7 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GF_FLOPPY | GF_EGA
 	},
@@ -149,7 +149,7 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GF_FLOPPY
 	},
@@ -162,7 +162,7 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GF_FLOPPY
 	},
@@ -175,7 +175,7 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GF_FLOPPY
 	},
@@ -188,7 +188,7 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GF_FLOPPY
 	},
@@ -202,7 +202,7 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::RU_RUS,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GF_FLOPPY
 	},
@@ -216,7 +216,7 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::RU_RUS,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GF_FLOPPY
 	},

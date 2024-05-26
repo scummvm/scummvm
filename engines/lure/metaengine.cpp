@@ -30,9 +30,19 @@
 
 namespace Lure {
 
-#ifdef USE_TTS
-
 static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_COPY_PROTECTION,
+		{
+			_s("Enable copy protection"),
+			_s("Enable any copy protection that would otherwise be bypassed by default."),
+			"copy_protection",
+			false,
+			0,
+			0
+		},
+	},
+#ifdef USE_TTS
 	{
 		GAMEOPTION_TTS_NARRATOR,
 		{
@@ -44,11 +54,10 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+#endif
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
-
-#endif
 
 uint32 LureEngine::getFeatures() const { return _gameDescription->features; }
 Common::Language LureEngine::getLanguage() const { return _gameDescription->desc.language; }
@@ -77,11 +86,9 @@ public:
 		return "lure";
 	}
 
-#ifdef USE_TTS
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
 		return Lure::optionsList;
 	}
-#endif
 
 	bool hasFeature(MetaEngineFeature f) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
