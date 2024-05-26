@@ -729,4 +729,58 @@ void CBofWindow::fillRect(CBofRect *pRect, byte iColor) {
 	cBmp.paint(this, 0, 0);
 }
 
+ErrorCode CBofWindow::paintBeveledText(CBofRect *rect, const CBofString &cString, const int size, const int weight, const RGBCOLOR color, int justify, uint32 format) {
+	assert(rect != nullptr);
+
+	CBofBitmap bmp(rect->width(), rect->height(), nullptr, false);
+
+	// Assume no error
+	ErrorCode errorCode = ERR_NONE;
+
+	CBofRect r = bmp.getRect();
+	CBofPalette *palette = nullptr;
+	CBofApp *app = CBofApp::getApp();
+	if (app != nullptr) {
+		palette = app->getPalette();
+	}
+
+	if (palette != nullptr) {
+		bmp.fillRect(nullptr, palette->getNearestIndex(RGB(92, 92, 92)));
+
+		bmp.drawRect(&r, palette->getNearestIndex(RGB(0, 0, 0)));
+	} else {
+		bmp.fillRect(nullptr, COLOR_BLACK);
+	}
+
+	byte c1 = 3;
+	byte c2 = 9;
+	CBofRect cBevel = r;
+
+	int left = cBevel.left;
+	int top = cBevel.top;
+	int right = cBevel.right;
+	int bottom = cBevel.bottom;
+
+	r.left += 6;
+	r.top += 3;
+	r.right -= 5;
+	r.bottom -= 5;
+
+	for (int i = 1; i <= 3; i++) {
+		bmp.line(left + i, bottom - i, right - i, bottom - i, c1);
+		bmp.line(right - i, bottom - i, right - i, top + i - 1, c1);
+	}
+
+	for (int i = 1; i <= 3; i++) {
+		bmp.line(left + i, bottom - i, left + i, top + i - 1, c2);
+		bmp.line(left + i, top + i - 1, right - i, top + i - 1, c2);
+	}
+
+	paintText(&bmp, &r, cString, size, weight, color, justify, format, FONT_DEFAULT);
+
+	bmp.paint(this, rect);
+
+	return errorCode;
+}
+
 } // namespace Bagel

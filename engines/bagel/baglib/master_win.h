@@ -92,7 +92,7 @@ public:
 	virtual ~CBagMasterWin();
 	virtual ErrorCode Run();
 
-	void close();
+	ErrorCode close() override;
 
 	CBofString &getWldScript() {
 		return _wldScript;
@@ -204,7 +204,6 @@ public:
 	void restoreActiveMessages(CBagStorageDevManager *sdevManager);
 };
 
-ErrorCode paintBeveledText(CBofWindow *win, CBofRect *rect, const CBofString &string, const int size, const int weight, const RGBCOLOR color = CTEXT_COLOR, int justify = JUSTIFY_CENTER, uint32 format = FORMAT_DEFAULT, int font = FONT_DEFAULT);
 ErrorCode waitForInput();
 
 extern bool g_waitOKFl;

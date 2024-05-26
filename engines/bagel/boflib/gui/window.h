@@ -36,8 +36,10 @@
 #include "bagel/boflib/llist.h"
 #include "bagel/boflib/gfx/bitmap.h"
 #include "bagel/boflib/gfx/palette.h"
+#include "bagel/boflib/gfx/text.h"
 
 namespace Bagel {
+class CBofString;
 
 #define MAX_TITLE 64
 #define USE_DEFAULT -1
@@ -153,8 +155,10 @@ public:
 	 */
 	void reSize(CBofRect *pRect, bool bRepaint = false);
 
-	void close() {
+	virtual ErrorCode close() {
 		onClose();
+
+		return ERR_NONE;
 	}
 
 	/**
@@ -402,6 +406,9 @@ public:
 	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
 	void fillWindow(byte iColor);
 	void fillRect(CBofRect *pRect, byte iColor);
+
+	ErrorCode paintBeveledText(CBofRect *rect, const CBofString &string, int size, int weight, RGBCOLOR color, int justify, uint32 format);
+
 
 protected:
 	CBofWindow *_parent = nullptr;	// Pointer to parent window

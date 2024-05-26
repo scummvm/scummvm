@@ -636,7 +636,7 @@ void CBibbleWindow::onBofButton(CBofObject *pObject, int nState) {
 			CBofBitmap cBmp(cRect.width(), cRect.height(), (CBofPalette *)nullptr, false);
 			cBmp.captureScreen(this, &cRect);
 
-			paintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, CTEXT_WHITE, JUSTIFY_WRAP, FORMAT_TOP_LEFT);
+			paintBeveledText(&cRect, cString, FONT_15POINT, TEXT_NORMAL, CTEXT_WHITE, JUSTIFY_WRAP, FORMAT_TOP_LEFT);
 			waitForInput();
 
 			cBmp.paint(this, &cRect);
