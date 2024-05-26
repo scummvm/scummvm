@@ -35,9 +35,9 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_playerHeight = _playerHeights[_playerHeightNumber];
 
 	_playerSteps.clear();
-	_playerSteps.push_back(1);
-	_playerSteps.push_back(10);
-	_playerSteps.push_back(25);
+	_playerSteps.push_back(15);
+	_playerSteps.push_back(30);
+	_playerSteps.push_back(120);
 	_playerStepIndex = 2;
 
 	_playerWidth = 8;
@@ -193,7 +193,7 @@ void CastleEngine::pressedKey(const int keycode) {
 		if (_playerHeightNumber == 0)
 			rise();
 		// TODO: raising can fail if there is no room, so the action should fail
-		_playerStepIndex = 1;
+		_playerStepIndex = 2;
 		insertTemporaryMessage(_messagesList[15], _countdown - 2);
 	} else if (keycode == Common::KEYCODE_w) {
 		if (_playerHeightNumber == 0)
