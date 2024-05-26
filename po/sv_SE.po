@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-05-24 14:38+0000\n"
+"POT-Creation-Date: 2024-05-26 17:10+0000\n"
 "PO-Revision-Date: 2023-12-09 22:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -304,7 +304,7 @@ msgstr "En annan lagring är aktiv just nu. Vill du avbryta den?"
 #: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:420 gui/launcher.cpp:449
 #: gui/launcher.cpp:501 gui/options.cpp:3440 gui/options.cpp:3821
 #: base/main.cpp:604 backends/events/default/default-events.cpp:193
-#: engines/buried/buried.cpp:590 engines/director/events.cpp:98
+#: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:145
@@ -317,7 +317,7 @@ msgstr "Ja"
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:420 gui/launcher.cpp:449
 #: gui/launcher.cpp:501 gui/options.cpp:3440 gui/options.cpp:3821
-#: engines/buried/buried.cpp:590 engines/director/events.cpp:98
+#: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:151
@@ -6631,7 +6631,7 @@ msgstr "Klickläge"
 msgid "Versailles 1685 support is not compiled in"
 msgstr "Funktioner kompilerade i:"
 
-#: engines/director/events.cpp:97
+#: engines/director/events.cpp:99
 msgid ""
 "The game prevents quitting at this moment. Are you sure you want to quit "
 "anyway?"
