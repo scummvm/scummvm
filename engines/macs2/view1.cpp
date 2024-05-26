@@ -743,7 +743,7 @@ Macs2::AnimFrame *Character::GetCurrentPortrait() {
 	AnimFrame *result = new AnimFrame();
 	Common::MemoryReadStream stream(this->GameObject->Blobs[17].data(), this->GameObject->Blobs[17].size());
 	// TODO: Need to check how the offset really is calculated by the game code, this will not hold
-	if (GameObject->Index == 2 || GameObject->Index == 6 || GameObject->Index == 0xd) {
+	if (GameObject->Index == 2 || GameObject->Index == 6 || GameObject->Index == 0xd || GameObject ->Index == 0xf) {
 		stream.seek(35, SEEK_SET);
 	} else {
 		stream.seek(36, SEEK_SET);
