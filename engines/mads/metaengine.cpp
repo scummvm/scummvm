@@ -42,6 +42,18 @@ namespace MADS {
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
+		GAMEOPTION_COPY_PROTECTION,
+		{
+			_s("Enable copy protection"),
+			_s("Enable any copy protection that would otherwise be bypassed by default."),
+			"copy_protection",
+			false,
+			0,
+			0
+		},
+	},
+
+	{
 		GAMEOPTION_EASY_MOUSE,
 		{
 			_s("Easy mouse interface"),
