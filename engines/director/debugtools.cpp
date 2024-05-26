@@ -56,6 +56,8 @@
 #include "director/types.h"
 #include "director/window.h"
 
+#include "director/debugger/imgui_memory_editor.h"
+
 namespace Director {
 
 #define kMaxColumnsInTable 512
@@ -407,6 +409,17 @@ typedef struct ImGuiState {
 	int _scoreFrameOffset = 1;
 
 	ImFont *_tinyFont = nullptr;
+
+	struct {
+		Common::Path path;
+		uint32 resType = 0;
+		uint32 resId = 0;
+
+		byte *data = nullptr;
+		uint32 dataSize = 0;
+
+		MemoryEditor memEdit;
+	} _archive;
 
 	ImGuiLogger _logger;
 } ImGuiState;
@@ -3278,28 +3291,57 @@ static void showArchive() {
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Archive", &_state->_w.archive)) {
-		for (auto &it : g_director->_allSeenResFiles) {
-			Archive *archive = it._value;
+		{ // Left pane
+			ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_None);
 
-			if (ImGui::TreeNode(archive->getPathName().toString().c_str())) {
-				const Common::Array<uint32> &typeList = archive->getResourceTypeList();
+			for (auto &it : g_director->_allSeenResFiles) {
+				Archive *archive = it._value;
 
-				for (auto type : typeList) {
-					ImGui::SetNextItemOpen(true);
-					if (ImGui::TreeNode("%s", tag2str(type))) {
-						const Common::Array<uint16> &resList = archive->getResourceIDList(type);
+				if (ImGui::TreeNode(archive->getPathName().toString().c_str())) {
+					const Common::Array<uint32> &typeList = archive->getResourceTypeList();
 
-						for (auto res : resList) {
-							ImGui::Selectable(Common::String::format("%d", res).c_str());
+					for (auto tag : typeList) {
+						ImGui::SetNextItemOpen(true);
+						if (ImGui::TreeNode("%s", tag2str(tag))) {
+							const Common::Array<uint16> &resList = archive->getResourceIDList(tag);
+
+							for (auto id : resList) {
+								if (ImGui::Selectable(Common::String::format("%d", id).c_str())) {
+									_state->_archive.path = it._key;
+									_state->_archive.resType = tag;
+									_state->_archive.resId = id;
+
+									free(_state->_archive.data);
+
+									Common::SeekableReadStreamEndian *res = archive->getResource(tag, id);
+									_state->_archive.data = (byte *)malloc(res->size());
+									res->read(_state->_archive.data, res->size());
+									_state->_archive.dataSize = res->size();
+
+									delete res;
+								}
+							}
+
+							ImGui::TreePop();
 						}
-
-						ImGui::TreePop();
 					}
-				}
 
-				ImGui::TreePop();
+					ImGui::TreePop();
+				}
 			}
+
+			ImGui::EndChild();
 		}
+
+		{ // Right pane
+			ImGui::BeginChild("ChildR", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Border);
+
+			if (!_state->_archive.path.empty())
+				_state->_archive.memEdit.DrawWindow("Browser", _state->_archive.data, _state->_archive.dataSize);
+
+			ImGui::EndChild();
+		}
+
 	}
 	ImGui::End();
 }
@@ -3338,6 +3380,8 @@ void onImGuiInit() {
 	_state = new ImGuiState();
 
 	_state->_tinyFont = ImGui::addTTFFontFromArchive("FreeSans.ttf", 10.0f, nullptr, nullptr);
+
+	_state->_archive.memEdit.ReadOnly = true;
 
 	Common::setLogWatcher(onLog);
 }
@@ -3418,8 +3462,10 @@ void onImGuiRender() {
 
 void onImGuiCleanup() {
 	Common::setLogWatcher(nullptr);
-	if (_state)
+	if (_state) {
 		delete _state->_tinyFont;
+		free(_state->_archive.data);
+	}
 
 	delete _state;
 	_state = nullptr;
