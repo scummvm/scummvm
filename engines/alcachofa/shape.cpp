@@ -256,6 +256,16 @@ bool Shape::contains(const Point &query) const {
 	return polygonContaining(query) >= 0;
 }
 
+void Shape::setAsRectangle(const Rect &rect) {
+	_polygons.resize(1);
+	_polygons[0] = { 0, 4 };
+	_points.resize(4);
+	_points[0] = { rect.left, rect.top };
+	_points[1] = { rect.right, rect.top };
+	_points[2] = { rect.right, rect.bottom };
+	_points[3] = { rect.left, rect.bottom };
+}
+
 PathFindingShape::PathFindingShape() {}
 
 PathFindingShape::PathFindingShape(ReadStream &stream) {

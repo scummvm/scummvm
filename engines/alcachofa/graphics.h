@@ -174,6 +174,7 @@ public:
 	inline uint32 frameDuration(int32 frameI) const { return _frames[frameI]._duration; }
 	inline const Common::Point &frameCenter(int32 frameI) const { return _frames[frameI]._center; }
 	inline uint32 totalDuration() const { return _totalDuration; }
+	inline uint8 &premultiplyAlpha() { return _premultiplyAlpha; }
 	int32 frameAtTime(uint32 time) const;
 	Common::Point imageSize(int32 imageI) const;
 
@@ -230,6 +231,10 @@ public:
 	inline Animation &animation() {
 		assert(_animation != nullptr && _animation->isLoaded());
 		return *_animation;
+	}
+	inline uint8 &premultiplyAlpha() {
+		assert(_animation != nullptr);
+		return _animation->premultiplyAlpha();
 	}
 
 	void loadResources();

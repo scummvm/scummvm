@@ -34,10 +34,13 @@ Item::Item(Room *room, ReadStream &stream)
 	stream.readByte(); // unused and ignored byte
 }
 
+ITriggerableObject::ITriggerableObject(ReadStream &stream)
+	: _interactionPoint(Shape(stream).firstPoint())
+	, _interactionDirection((Direction)stream.readSint32LE()) {}
+
 InteractableObject::InteractableObject(Room *room, ReadStream &stream)
 	: PhysicalObject(room, stream)
-	, _interactionPoint(Shape(stream).firstPoint())
-	, _cursorType((CursorType)stream.readSint32LE())
+	, ITriggerableObject(stream)
 	, _relatedObject(readVarString(stream)) {
 	_relatedObject.toUppercase();
 }
@@ -50,6 +53,10 @@ void InteractableObject::drawDebug() {
 	renderer->debugShape(*shape());
 }
 
+void InteractableObject::trigger(const char *action) {
+	warning("stub: Trigger object %s with %s", name().c_str(), action == nullptr ? "<null>" : action);
+}
+
 Door::Door(Room *room, ReadStream &stream)
 	: InteractableObject(room, stream)
 	, _targetRoom(readVarString(stream))
@@ -60,8 +67,7 @@ Door::Door(Room *room, ReadStream &stream)
 
 Character::Character(Room *room, ReadStream &stream)
 	: ShapeObject(room, stream)
-	, _interactionPoint(Shape(stream).firstPoint())
-	, _direction((Direction)stream.readSint32LE())
+	, ITriggerableObject(stream)
 	, _graphicNormal(stream)
 	, _graphicTalking(stream) {
 	_graphicNormal.start(true);
@@ -173,6 +179,10 @@ void Character::syncObjectAsString(Serializer &serializer, ObjectBase *&object) 
 	}
 }
 
+void Character::trigger(const char *action) {
+	warning("stub: Trigger character %s with %s", name().c_str(), action == nullptr ? "<null>" : action);
+}
+
 WalkingCharacter::WalkingCharacter(Room *room, ReadStream &stream)
 	: Character(room, stream) {
 	for (int32 i = 0; i < kDirectionCount; i++) {
@@ -228,13 +238,13 @@ void WalkingCharacter::update() {
 	}
 
 	_interactionPoint = _currentPos;
-	_interactionDirection1 = Direction::Right;
+	_interactionDirection = Direction::Right;
 	if (this != g_engine->world().activeCharacter()) {
 		int16 interactionOffset = (int16)(150 * _graphicNormal.depthScale());
 		_interactionPoint.x -= interactionOffset;
 		if (activeFloor != nullptr && activeFloor->polygonContaining(_interactionPoint) < 0) {
 			_interactionPoint.x = _currentPos.x + interactionOffset;
-			_interactionDirection1 = Direction::Left;
+			_interactionDirection = Direction::Left;
 		}
 	}
 }
@@ -345,8 +355,7 @@ void WalkingCharacter::stopWalkingAndTurn(Direction direction) {
 
 void WalkingCharacter::walkTo(
 	const Point &target, Direction endDirection,
-	ShapeObject *activateObject, const char *activateAction,
-	bool useAlternateObjectDirection) {
+	ITriggerableObject *activateObject, const char *activateAction) {
 	// all the activation parameters are only relevant for MainCharacter
 
 	if (_isWalking)
@@ -457,6 +466,80 @@ MainCharacter::MainCharacter(Room *room, ReadStream &stream)
 MainCharacter::~MainCharacter() {
 	for (auto *item : _items)
 		delete item;
+}
+
+void MainCharacter::update() {
+	if (_relatedProcessCounter == 0)
+		_currentlyUsingObject = nullptr;
+	WalkingCharacter::update();
+
+	const int16 halfWidth = (int16)(60 * _graphicNormal.depthScale());
+	const int16 height = (int16)(310 * _graphicNormal.depthScale());
+	shape()->setAsRectangle(Rect(
+		_currentPos.x - halfWidth, _currentPos.y - height,
+		_currentPos.x + halfWidth, _currentPos.y));
+
+	// TODO: Update character alpha tint
+}
+
+void MainCharacter::onArrived() {
+	if (_activateObject == nullptr)
+		return;
+
+	ITriggerableObject *activateObject = _activateObject;
+	const char *activateAction = _activateAction;
+	_activateObject = nullptr;
+	_activateAction = nullptr;
+
+	stopWalkingAndTurn(activateObject->interactionDirection());
+	if (g_engine->world().activeCharacter() == this)
+		activateObject->trigger(activateAction);
+}
+
+void MainCharacter::walkTo(
+	const Point &target, Direction endDirection,
+	ITriggerableObject *activateObject, const char *activateAction) {
+	_activateObject = activateObject;
+	_activateAction = activateAction;
+
+	// TODO: Add collision avoidance
+
+	WalkingCharacter::walkTo(target, endDirection, activateObject, activateAction);
+	if (this == g_engine->world().activeCharacter()) {
+		// TODO: Add camera following character
+	}
+}
+
+void MainCharacter::draw() {
+	if (this == &g_engine->world().mortadelo()) {
+		if (_currentPos.y <= g_engine->world().filemon()._currentPos.y) {
+			g_engine->world().mortadelo().drawInner();
+			g_engine->world().filemon().drawInner();
+		}
+		else {
+			g_engine->world().filemon().drawInner();
+			g_engine->world().mortadelo().drawInner();
+		}
+	}
+}
+
+void MainCharacter::drawInner() {
+	if (room() != g_engine->world().currentRoom() || !isEnabled())
+		return;
+	Graphic *activeGraphic = graphicOf(_curAnimateObject);
+	if (activeGraphic == nullptr && _isWalking) {
+		activeGraphic = &_graphicNormal;
+		_graphicNormal.premultiplyAlpha() = room()->characterAlphaPremultiplier();
+	}
+	if (activeGraphic == nullptr) {
+		activeGraphic = graphicOf(_curTalkingObject, &_graphicTalking);
+		_graphicTalking.premultiplyAlpha() = room()->characterAlphaPremultiplier();
+	}
+
+	assert(activeGraphic != nullptr);
+	activeGraphic->color() = kWhite; // TODO: Add and use character color
+	g_engine->drawQueue().add<AnimationDrawRequest>(*activeGraphic, true, BlendMode::AdditiveAlpha, _lodBias);
+
 }
 
 void syncDialogMenuLine(Serializer &serializer, DialogMenuLine &line) {

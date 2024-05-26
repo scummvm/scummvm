@@ -45,6 +45,8 @@ public:
 	inline float depthAt(const Common::Point &query) const {
 		return _activeFloorI < 0 ? 1 : activeFloor()->depthAt(query);
 	}
+	inline uint8 characterAlphaTint() const { return _characterAlphaTint; }
+	inline uint8 characterAlphaPremultiplier() const { return _characterAlphaPremultiplier; }
 
 	void update();
 	virtual void updateInput();
@@ -68,8 +70,8 @@ protected:
 		_musicId,
 		_activeFloorI = -1;
 	uint8
-		_characterAlpha,
-		_characterAlphaPercent;
+		_characterAlphaTint,
+		_characterAlphaPremultiplier; ///< for some reason in percent instead of 0-255
 
 	Common::Array<ObjectBase *> _objects;
 };
