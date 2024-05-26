@@ -4437,7 +4437,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("goldenwake", "a-golden-wake.exe", "e80586fdc2db32f65658b235d8cbc159", 129814642),
 	GAME_ENTRY_EN("goldenwake", "ac2game.dat", "bb3b4630c44a51e3a23892563121c2c8", 128018480), // Linux Humble Bundle
 	GAME_ENTRY_EN("goldenwake", "ac2game.dat", "d27edc5b7eee382501dfcfea044dfc90", 128018546),
-	GAME_ENTRY_EN_STEAM("graceward", "Graceward.exe", "0564de07d3fd5c16e6947a647061913c", 292555926),
+	GAME_ENTRY_EN_STEAM("graceward", "Graceward.exe", "0564de07d3fd5c16e6947a647061913c", 292555926), // v1.3
+	GAME_ENTRY_EN_STEAM("graceward", "Graceward.exe", "0564de07d3fd5c16e6947a647061913c", 292551446),
 	GAME_ENTRY_STEAM("grandmabadass", "GrandmaBadass-bundle1.exe", "a66d7de0e58d3f3a09522745c4d523d9", 739736114),  // En-Fr-De-Es-It
 	GAME_ENTRY_STEAM("grandmabadass", "Grandma Badass.exe", "a678098aa762ed53476e245d5e4ad7b4", 2125449858),  // En-Fr-De-Es-It
 	GAME_ENTRY_STEAM("guardduty", "guardduty.exe", "98d09f79129a5f96b6622661e2a7bc64", 706020335),  // En-Fr-De-Es
@@ -4768,6 +4769,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100036465, nullptr),  // Win Eng-Pol
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100040004, nullptr),
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("zniwadventure", "ctgame.ags", "8f52737244a78a7d1e6acace8ced67a5", 97017764, nullptr),  // Linux
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("zniwadventure", "ctgame.ags", "8a2d48ee8d92bad3c5cacd8b883c5871", 100065720, nullptr),  // Win Eng-Pol
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100046802, nullptr),
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("zniwadventure", "ac2game.dat", "8a2d48ee8d92bad3c5cacd8b883c5871", 100067853, nullptr), // macOS
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100067853, nullptr), // 1.3.4 Win
@@ -7053,6 +7055,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_LANG("lastnovax", "THE LAST NO VAX.exe", "63f8a60cc094996bd070e68cb3c4722c", 26323807, Common::IT_ITA),
 	GAME_ENTRY("lastone", "The Last One.exe", "7f057a2af1080632b4946d67382fe349", 17872546),  // Eng-Esp
 	GAME_ENTRY_EN("lastorder", "BlueAngel_8.exe", "a524cbb1c51589903c4043b98917f1d9", 38770175),
+	GAME_ENTRY_EN("lastpirateadventure", "AGSGames.exe", "7971a7c02d414dc8cb33b6ec36080b91", 687320039),
 	GAME_ENTRY_LANG("latarta1", "BAGADV.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 10344924, Common::ES_ESP),
 	GAME_ENTRY_LANG("latarta2", "BAGADV2.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 311509933, Common::ES_ESP),
 	GAME_ENTRY_LANG("latarta3", "BAGADVIII.exe", "615e73fc1874e92d60a1996c2330ea36", 103114105, Common::ES_ESP),
