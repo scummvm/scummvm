@@ -667,10 +667,15 @@ void Macs2Engine::changeScene(uint32 newSceneIndex) {
 
 	array5023.clear();
 	// We will address this array as words, so we are not using a byte array but a word array
-	array5023.resize(0xa / 2);
-	_fileStream->read(array5023.data(), 0xa);
+	array5023.resize(0xa0);
+	_fileStream->read(array5023.data(), 0xa0);
 
 	word50D3 = _fileStream->readUint16LE();
+
+
+	array50D5.clear();
+	array50D5.resize(0x20 / 2);
+	_fileStream->read(array50D5.data(), 0x20);
 
 
 
@@ -1038,7 +1043,7 @@ uint16 Macs2Engine::GetInteractedBackgroundHotspot(const Common::Point &p) {
 	uint8 firstLookup = _map.getPixel(p.x, p.y);
 	// [bp-10h] - Guess is that this is the number of hotspots
 	// TODO: Actually load from file
-	uint8 numHotspots = word50D3;
+	uint16 numHotspots = word50D3;
 
 	uint8 i = 1;
 	if (i > numHotspots) {
@@ -1046,13 +1051,13 @@ uint16 Macs2Engine::GetInteractedBackgroundHotspot(const Common::Point &p) {
 	}
 
 	// TODO: need to load from the file, and need to change to words
-	Common::Array<uint16> a = array5023;
+	Common::Array<uint16> a = array50D5;
 
 	// TODO: Handle loop properly
 	do {
 		// TODO: Not sure if this should be a byte or a word
 		// TODO: To check if it's important that we clear the first half of the word
-		uint16 lookup = a[i];
+		uint16 lookup = a[i-1];
 		if (lookup == firstLookup) {
 			// TODO: Add the 5BD1h lookup part
 			// This would check for a value other than FFh in that array
@@ -1061,6 +1066,7 @@ uint16 Macs2Engine::GetInteractedBackgroundHotspot(const Common::Point &p) {
 			return 0x800 + i;
 		}
 		i++;
+		// TODO: Should it be <= ?
 	} while (i < numHotspots);
 	return 0;
 }
