@@ -31,7 +31,7 @@ static const VoyeurGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			GUIO2(GUIO_NOMIDI, GAMEOPTION_COPY_PROTECTION)
 		}
 	},
 
@@ -44,7 +44,7 @@ static const VoyeurGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO,
-			GUIO1(GUIO_NOMIDI)
+			GUIO2(GUIO_NOMIDI, GAMEOPTION_COPY_PROTECTION)
 		}
 	},
 
@@ -56,7 +56,7 @@ static const VoyeurGameDescription gameDescriptions[] = {
 		 Common::DE_DEU,
 		 Common::kPlatformDOS,
 		 ADGF_NO_FLAGS,
-		 GUIO1(GUIO_NOMIDI)}
+		 GUIO2(GUIO_NOMIDI, GAMEOPTION_COPY_PROTECTION)}
 	},
 
 	{AD_TABLE_END_MARKER}};
