@@ -300,7 +300,7 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 
 	// stipple
 	polygon_stipple_enabled = false;
-	memset(polygon_stipple_pattern, 0, sizeof(polygon_stipple_pattern));
+	memset(polygon_stipple_pattern, 0xff, sizeof(polygon_stipple_pattern));
 
 	// stencil
 	stencil_test_enabled = false;
