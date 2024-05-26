@@ -334,9 +334,7 @@ const ExtraGuiOptions AdvancedMetaEngine::getExtraGuiOptions(const Common::Strin
 	return options;
 }
 
-Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine **engine) {
-	assert(engine);
-
+Common::Error AdvancedMetaEngineDetection::identifyGame(DetectedGame &game, const void **descriptor) {
 	Common::Language language = Common::UNK_LANG;
 	Common::Platform platform = Common::kPlatformUnknown;
 	Common::String extra;
@@ -406,73 +404,25 @@ Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine 
 		}
 	}
 
-	if (!agdDesc.desc)
-		return Common::kNoGameDataFoundError;
-
-	DetectedGame gameDescriptor = toDetectedGame(agdDesc);
-
 	// Detection is done, no need to keep archives in memory anymore
 	ADCacheMan.clearArchives();
 
-	// If the GUI options were updated, we catch this here and update them in the users config
-	// file transparently.
-	ConfMan.setAndFlush("guioptions", gameDescriptor.getGUIOptions());
+	if (!agdDesc.desc)
+		return Common::kNoGameDataFoundError;
 
-	bool showTestingWarning = false;
+	// We can't add search directories from AdvancedMetaEngine
+	if (_flags & kADFlagMatchFullPaths) {
+		Common::StringArray dirs = getPathsFromEntry(agdDesc.desc);
+		Common::FSNode gameDataDir = Common::FSNode(ConfMan.getPath("path"));
 
-#ifdef RELEASE_BUILD
-	showTestingWarning = true;
-#endif
-
-	if (((gameDescriptor.gameSupportLevel == kUnstableGame
-			|| (gameDescriptor.gameSupportLevel == kTestingGame
-					&& showTestingWarning)))
-			&& !Engine::warnUserAboutUnsupportedGame())
-		return Common::kUserCanceled;
-
-	if (gameDescriptor.gameSupportLevel == kWarningGame
-			&& !Engine::warnUserAboutUnsupportedGame(gameDescriptor.extra))
-		return Common::kUserCanceled;
-
-	if (gameDescriptor.gameSupportLevel == kUnsupportedGame) {
-		Engine::errorUnsupportedGame(gameDescriptor.extra);
-		return Common::kUserCanceled;
+		for (auto d = dirs.begin(); d != dirs.end(); ++d)
+			SearchMan.addSubDirectoryMatching(gameDataDir, *d, 0, _fullPathGlobsDepth);
 	}
 
-	debug("Running %s", gameDescriptor.description.c_str());
-	Common::Array<Common::Path> filenames;
-	for (FilePropertiesMap::const_iterator i = gameDescriptor.matchedFiles.begin(); i != gameDescriptor.matchedFiles.end(); ++i) {
-		filenames.push_back(i->_key);
-	}
-	Common::sort(filenames.begin(), filenames.end());
-	for (uint i = 0; i < filenames.size(); ++i) {
-		const FileProperties &file = gameDescriptor.matchedFiles[filenames[i]];
-		debug("%s: %s, %llu bytes.", filenames[i].toString().c_str(), file.md5.c_str(), (unsigned long long)file.size);
-	}
-	initSubSystems(agdDesc.desc);
+	game = toDetectedGame(agdDesc);
+	*descriptor = agdDesc.desc;
 
-	PluginList pl = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
-	Plugin *plugin = nullptr;
-
-	// By this point of time, we should have only one plugin in memory.
-	if (pl.size() == 1) {
-		plugin = pl[0];
-	}
-
-	if (plugin) {
-		if (_flags & kADFlagMatchFullPaths) {
-			Common::StringArray dirs = getPathsFromEntry(agdDesc.desc);
-			Common::FSNode gameDataDir = Common::FSNode(ConfMan.getPath("path"));
-
-			for (auto d = dirs.begin(); d != dirs.end(); ++d)
-				SearchMan.addSubDirectoryMatching(gameDataDir, *d, 0, _fullPathGlobsDepth);
-		}
-
-		// Call child class's createInstanceMethod.
-		return plugin->get<AdvancedMetaEngine>().createInstance(syst, engine, agdDesc.desc);
-	}
-
-	return Common::Error(Common::kEnginePluginNotFound);
+	return Common::kNoError;
 }
 
 void AdvancedMetaEngineDetection::composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::Path &parentName) const {
@@ -1027,14 +977,6 @@ AdvancedMetaEngineDetection::AdvancedMetaEngineDetection(const void *descs, uint
 		_grayListMap.setVal(*f, true);
 }
 
-void AdvancedMetaEngineDetection::initSubSystems(const ADGameDescription *gameDesc) const {
-#ifdef ENABLE_EVENTRECORDER
-	if (gameDesc) {
-		g_eventRec.processGameDescription(gameDesc);
-	}
-#endif
-}
-
 void AdvancedMetaEngineDetection::preprocessDescriptions() {
 	if (_hashMapsInited)
 		return;
@@ -1133,18 +1075,6 @@ bool AdvancedMetaEngineDetection::isEntryGrayListed(const ADGameDescription *g) 
 	return (grayIsPresent && !nonGrayIsPresent);
 }
 
-Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) {
-	PluginList pl = PluginMan.getPlugins(PLUGIN_TYPE_ENGINE);
-	if (pl.size() == 1) {
-		const Plugin *metaEnginePlugin = PluginMan.getMetaEngineFromEngine(pl[0]);
-		if (metaEnginePlugin) {
-			return metaEnginePlugin->get<AdvancedMetaEngineDetection>().createInstance(syst, engine);
-		}
-	}
-
-	return Common::Error();
-}
-
 void AdvancedMetaEngineDetection::detectClashes() const {
 	// First, check that we do not have duplicated entries in _gameIds
 	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> idsMap;
@@ -1195,6 +1125,59 @@ void AdvancedMetaEngineDetection::detectClashes() const {
 		if (k._value == 0 && k._key != getName())
 			debug(0, "WARNING: Detection gameId for '%s:%s' has no games in the detection table", getName(), k._key.c_str());
 	}
+}
+
+Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine, const DetectedGame &gameDescriptor, const void *meDescriptor) {
+	assert(engine);
+
+	const ADGameDescription *adgDesc = (const ADGameDescription *)meDescriptor;
+
+	// If the GUI options were updated, we catch this here and update them in the users config
+	// file transparently.
+	ConfMan.setAndFlush("guioptions", gameDescriptor.getGUIOptions());
+
+	bool showTestingWarning = false;
+
+#ifdef RELEASE_BUILD
+	showTestingWarning = true;
+#endif
+
+	if (((gameDescriptor.gameSupportLevel == kUnstableGame
+			|| (gameDescriptor.gameSupportLevel == kTestingGame
+					&& showTestingWarning)))
+			&& !Engine::warnUserAboutUnsupportedGame())
+		return Common::kUserCanceled;
+
+	if (gameDescriptor.gameSupportLevel == kWarningGame
+			&& !Engine::warnUserAboutUnsupportedGame(gameDescriptor.extra))
+		return Common::kUserCanceled;
+
+	if (gameDescriptor.gameSupportLevel == kUnsupportedGame) {
+		Engine::errorUnsupportedGame(gameDescriptor.extra);
+		return Common::kUserCanceled;
+	}
+
+	debug("Running %s", gameDescriptor.description.c_str());
+	Common::Array<Common::Path> filenames;
+	for (FilePropertiesMap::const_iterator i = gameDescriptor.matchedFiles.begin(); i != gameDescriptor.matchedFiles.end(); ++i) {
+		filenames.push_back(i->_key);
+	}
+	Common::sort(filenames.begin(), filenames.end());
+	for (uint i = 0; i < filenames.size(); ++i) {
+		const FileProperties &file = gameDescriptor.matchedFiles[filenames[i]];
+		debug("%s: %s, %llu bytes.", filenames[i].toString().c_str(), file.md5.c_str(), (unsigned long long)file.size);
+	}
+	initSubSystems(adgDesc);
+
+	return createInstance(syst, engine, adgDesc);
+}
+
+void AdvancedMetaEngine::initSubSystems(const ADGameDescription *gameDesc) const {
+#ifdef ENABLE_EVENTRECORDER
+	if (gameDesc) {
+		g_eventRec.processGameDescription(gameDesc);
+	}
+#endif
 }
 
 bool AdvancedMetaEngine::checkExtendedSaves(MetaEngineFeature f) const {

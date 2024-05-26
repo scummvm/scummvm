@@ -22,7 +22,6 @@
  */
 
 #include "engines/advancedDetector.h"
-#include "engines/obsolete.h"
 
 #include "common/config-manager.h"
 #include "common/events.h"
@@ -34,7 +33,6 @@
 
 #include "sword2/sword2.h"
 #include "sword2/saveload.h"
-#include "sword2/obsolete.h"
 
 namespace Sword2 {
 
@@ -71,10 +69,6 @@ public:
 	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
 
-	Common::Error createInstance(OSystem *syst, Engine **engine) override {
-		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
-		return AdvancedMetaEngine::createInstance(syst, engine);
-	}
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 

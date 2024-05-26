@@ -81,7 +81,8 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine) override;
+	Common::Error createInstance(OSystem *syst, Engine **engine,
+	                             const DetectedGame &gameDescriptor, const void *metaEngineDescriptor) override;
 
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 
@@ -164,7 +165,8 @@ Common::String GlkMetaEngine::findFileByGameId(const Common::String &gameId) con
 	return Common::String();
 }
 
-Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) {
+Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine,
+		const DetectedGame &gameDescriptor, const void *metaEngineDescriptor) {
 #ifndef RELEASE_BUILD
 	Glk::GameDescriptor td = Glk::GameDescriptor::empty();
 #endif

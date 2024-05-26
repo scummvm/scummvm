@@ -30,12 +30,10 @@
 #include "backends/keymapper/standard-actions.h"
 
 #include "engines/advancedDetector.h"
-#include "engines/obsolete.h"
 
 #include "agos/intern.h"
 #include "agos/agos.h"
 #include "agos/detection.h"
-#include "agos/obsolete.h"
 
 namespace AGOS {
 
@@ -123,10 +121,6 @@ public:
 
 	bool hasFeature(MetaEngineFeature f) const override;
 
-	Common::Error createInstance(OSystem *syst, Engine **engine) override {
-		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
-		return AdvancedMetaEngine::createInstance(syst, engine);
-	}
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;

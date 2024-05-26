@@ -67,6 +67,7 @@ public:
 
 	PlainGameList getSupportedGames() const override;
 	PlainGameDescriptor findGame(const char *gameid) const override;
+	Common::Error identifyGame(DetectedGame &game, const void **descriptor) override;
 	DetectedGames detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/, bool /*skipIncomplete*/) override;
 
 	uint getMD5Bytes() const override {
@@ -101,6 +102,12 @@ PlainGameDescriptor SkyMetaEngineDetection::findGame(const char *gameid) const {
 	if (0 == scumm_stricmp(gameid, skySetting.gameId))
 		return skySetting;
 	return PlainGameDescriptor::empty();
+}
+
+Common::Error SkyMetaEngineDetection::identifyGame(DetectedGame &game, const void **descriptor) {
+	*descriptor = nullptr;
+	game = DetectedGame(getName(), findGame(ConfMan.get("gameid").c_str()));
+	return game.gameId.empty() ? Common::kUnknownError : Common::kNoError;
 }
 
 DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/, bool /*skipIncomplete*/) {

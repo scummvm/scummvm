@@ -63,6 +63,8 @@ public:
 	 */
 	PlainGameDescriptor findGame(const char *gameId) const override;
 
+	Common::Error identifyGame(DetectedGame &game, const void **descriptor) override;
+
 	/**
 	 * Calls each sub-engine in turn to ensure no game Id accidentally shares the same Id
 	 */

@@ -377,22 +377,15 @@ public:
 	/** Query the engine for a @ref PlainGameDescriptor for the specified gameid, if any. */
 	PlainGameDescriptor findGame(const char *gameId) const override;
 
+	/** Identify the active game and check its data files. */
+	Common::Error identifyGame(DetectedGame &game, const void **descriptor) override;
+
 	/**
 	 * Run the engine's game detector on the given list of files, and return a
 	 * (possibly empty) list of games supported by the engine that were
 	 * found among the given files.
 	 */
 	DetectedGames detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) override;
-
-	/**
-	 * A generic createInstance.
-	 *
-	 * For instantiating engine objects, this method is called first,
-	 * and then the subclass implemented createInstance is called from within.
-	 */
-	Common::Error createInstance(OSystem *syst, Engine **engine);
-
-	static Common::StringArray getPathsFromEntry(const ADGameDescription *g);
 
 	uint getMD5Bytes() const override final { return _md5Bytes; }
 
@@ -420,8 +413,8 @@ protected:
 	}
 
 private:
-	void initSubSystems(const ADGameDescription *gameDesc) const;
 	void preprocessDescriptions();
+	static Common::StringArray getPathsFromEntry(const ADGameDescription *g);
 	bool isEntryGrayListed(const ADGameDescription *g) const;
 	void detectClashes() const;
 
@@ -494,7 +487,7 @@ public:
 	 * By the time this is called, it is assumed that there is only one
 	 * plugin engine loaded in memory.
 	 */
-	Common::Error createInstance(OSystem *syst, Engine **engine) override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const DetectedGame &gameDescriptor, const void *metaEngineDescriptor) override;
 
 	/**
 	 * A createInstance implementation for subclasses. To be called after the base
@@ -568,6 +561,9 @@ protected:
 	 * extended save format to work
 	 */
 	bool checkExtendedSaves(MetaEngineFeature f) const;
+
+private:
+	void initSubSystems(const ADGameDescription *gameDesc) const;
 };
 
 /**
