@@ -704,6 +704,11 @@ public:
 		return Engines::findGameID(gameid, _gameIds, obsoleteGameIDsTable);
 	}
 
+	Common::Error identifyGame(DetectedGame &game, const void **descriptor) override {
+		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
+		return AdvancedMetaEngineDetection::identifyGame(game, descriptor);
+	}
+
 	const char *getEngineName() const override {
 		return "Grim";
 	}

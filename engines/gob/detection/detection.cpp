@@ -59,6 +59,11 @@ public:
 		return Engines::findGameID(gameId, _gameIds, obsoleteGameIDsTable);
 	}
 
+	Common::Error identifyGame(DetectedGame &game, const void **descriptor) override {
+		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
+		return AdvancedMetaEngineDetection::identifyGame(game, descriptor);
+	}
+
 	const char *getName() const override {
 		return "gob";
 	}

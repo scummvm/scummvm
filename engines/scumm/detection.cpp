@@ -83,6 +83,7 @@ public:
 
 	PlainGameList getSupportedGames() const override;
 	PlainGameDescriptor findGame(const char *gameid) const override;
+	Common::Error identifyGame(DetectedGame &game, const void **descriptor) override;
 	DetectedGames detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/, bool /*skipIncomplete*/) override;
 
 	uint getMD5Bytes() const override {
@@ -104,6 +105,12 @@ PlainGameList ScummMetaEngineDetection::getSupportedGames() const {
 
 PlainGameDescriptor ScummMetaEngineDetection::findGame(const char *gameid) const {
 	return Engines::findGameID(gameid, gameDescriptions, obsoleteGameIDsTable);
+}
+
+Common::Error ScummMetaEngineDetection::identifyGame(DetectedGame &game, const void **descriptor) {
+	*descriptor = nullptr;
+	game = DetectedGame(getName(), findGame(ConfMan.get("gameid").c_str()));
+	return game.gameId.empty() ? Common::kUnknownError : Common::kNoError;
 }
 
 static Common::String generatePreferredTarget(const DetectorResult &x) {

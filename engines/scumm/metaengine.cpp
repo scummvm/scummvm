@@ -259,7 +259,8 @@ bool Scumm::ScummEngine::enhancementEnabled(int32 cls) {
  *
  * This is heavily based on our MD5 detection scheme.
  */
-Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) {
+Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine,
+	const DetectedGame &gameDescriptor, const void *metaEngineDescriptor) {
 	assert(syst);
 	assert(engine);
 	const char *gameid = ConfMan.get("gameid").c_str();

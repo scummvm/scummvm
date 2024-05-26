@@ -67,11 +67,6 @@ public:
 		return gameGuiOptions;
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine) override {
-		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
-		return AdvancedMetaEngine::createInstance(syst, engine);
-	}
-
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	bool hasFeature(MetaEngineFeature f) const override;

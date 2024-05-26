@@ -178,6 +178,12 @@ PlainGameDescriptor GlkMetaEngineDetection::findGame(const char *gameId) const {
 
 #undef FIND_GAME
 
+Common::Error GlkMetaEngineDetection::identifyGame(DetectedGame &game, const void **descriptor) {
+	*descriptor = nullptr;
+	game = DetectedGame(getName(), findGame(ConfMan.get("gameid").c_str()));
+	return game.gameId.empty() ? Common::kUnknownError : Common::kNoError;
+}
+
 DetectedGames GlkMetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/, bool /*skipIncomplete*/) {
 #ifndef RELEASE_BUILD
 	// This is as good a place as any to detect multiple sub-engines using the same Ids

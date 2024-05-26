@@ -142,6 +142,9 @@ public:
 	/** Query the engine for a PlainGameDescriptor for the specified gameid, if any. */
 	virtual PlainGameDescriptor findGame(const char *gameId) const = 0;
 
+	/** Identify the active game and check its data files. */
+	virtual Common::Error identifyGame(DetectedGame &game, const void **descriptor) = 0;
+
 	/**
 	 * Run the engine's game detector on the given list of files, and return a
 	 * (possibly empty) list of games supported by the engine that were
@@ -241,13 +244,16 @@ public:
 	 * The MetaEngine queries the ConfMan singleton for data like the target,
 	 * gameid, path etc.
 	 *
-	 * @param syst    Pointer to the global OSystem object.
-	 * @param engine  Pointer to a pointer that the MetaEngine sets to
-	 *                the newly created Engine, or 0 in case of an error.
+	 * @param syst            Pointer to the global OSystem object.
+	 * @param engine          Pointer to a pointer that the MetaEngine sets to
+	 *                        the newly created Engine, or 0 in case of an error.
+	 * @param gameDescriptor  Detected game as returned by MetaEngineDetection::identifyGame
+	 * @param meDescriptor    Pointer to a meta engine specific descriptor as returned by
+	 *                        MetaEngineDetection::identifyGame
 	 *
 	 * @return A Common::Error describing the error that occurred, or kNoError.
 	 */
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) = 0;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const DetectedGame &gameDescriptor, const void *meDescriptor) = 0;
 
 	/**
 	 * Return a list of all save states associated with the given target.
