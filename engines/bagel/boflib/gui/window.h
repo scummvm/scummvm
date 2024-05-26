@@ -144,12 +144,12 @@ public:
 	 * @param y         New upper left corner Y position
 	 * @param bRepaint  true if should update the window
 	 */
-	void move(const int x, const int y, bool bRepaint = false);
+	void move(int x, int y, bool bRepaint = false);
 
 	/**
 	 * Resizes current window to specified area
-	 * @param pRect     New area for window
-	 * @parambRepaint   Optional repaint after resize
+	 * @param pRect      New area for window
+	 * @param bRepaint   Optional repaint after resize
 	 */
 	void reSize(CBofRect *pRect, bool bRepaint = false);
 
@@ -190,26 +190,11 @@ public:
 	void killMyTimers();
 
 	/**
-	 * Determines if specified window is a child to current window
-	 * @param pWin      Window to check
-	 * @return          true if pWnd is a child of current window, false if not
-	 */
-	bool isChildOf(CBofWindow *pWin);
-
-	/**
-	 * Determines if specified window is a parent to current window
-	 * @param pWin      Window to check
-	 * @return          true if pWnd is a parent of current window, false if not
-	 */
-	bool isParentOf(CBofWindow *pWin);
-
-	/**
 	 * Returns the parent window element, if any
 	*/
 	CBofWindow *getParent() const {
 		return _parent;
 	}
-	CBofWindow *getAnscestor();
 
 	/**
 	 * Causes all parent windows to have valid paint regions
@@ -246,7 +231,6 @@ public:
 	}
 
 	void screenToClient(CBofPoint *pPoint);
-	void clientToScreen(CBofPoint *pPoint);
 
 	/**
 	 * Selects and Realizes specified palette into current DC
@@ -319,7 +303,7 @@ public:
 	void setPrevMouseDown(CBofPoint p) {
 		_cPrevMouseDown = p;
 	}
-	CBofPoint getPrevMouseDown() {
+	CBofPoint getPrevMouseDown() const {
 		return _cPrevMouseDown;
 	}
 

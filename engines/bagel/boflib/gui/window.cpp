@@ -412,10 +412,6 @@ void CBofWindow::screenToClient(CBofPoint *pPoint) {
 	// Not needed in ScummVM
 }
 
-void CBofWindow::clientToScreen(CBofPoint *pPoint) {
-	// Not needed in ScummVM
-}
-
 CBofRect CBofWindow::getClientRect() {
 	assert(isValidObject(this));
 
@@ -430,20 +426,6 @@ void CBofWindow::postUserMessage(uint32 lMessage, uint32 lExtraInfo) {
 	e.mouse.y = lExtraInfo;
 
 	g_system->getEventManager()->pushEvent(e);
-}
-
-CBofWindow *CBofWindow::getAnscestor() {
-	assert(isValidObject(this));
-
-	CBofWindow *pLastWnd = this;
-	CBofWindow *pCurWnd = _parent;
-
-	while (pCurWnd != nullptr) {
-		pLastWnd = pCurWnd;
-		pCurWnd = pCurWnd->_parent;
-	}
-
-	return pLastWnd;
 }
 
 void CBofWindow::flushAllMessages() {
