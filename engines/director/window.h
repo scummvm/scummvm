@@ -116,7 +116,7 @@ public:
 	void reset();
 
 	// transitions.cpp
-	void exitTransition(TransParams &t, int step, Graphics::ManagedSurface *nextFrame, Common::Rect clipRect);
+	void exitTransition(TransParams &t, Graphics::ManagedSurface *nextFrame, Common::Rect clipRect);
 	void stepTransition(TransParams &t, int step);
 	void playTransition(uint frame, RenderMode mode, uint16 transDuration, uint8 transArea, uint8 transChunkSize, TransitionType transType, CastMemberID paletteId);
 	void initTransParams(TransParams &t, Common::Rect &clipRect);

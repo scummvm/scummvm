@@ -80,7 +80,9 @@ bool DirectorEngine::processEvents(bool captureClick, bool skipWindowManager) {
 			if (captureClick)
 				return true;
 			break;
-		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
+		case Common::EVENT_KEYDOWN:
 			if (captureClick)
 				return true;
 			break;
