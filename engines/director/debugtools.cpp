@@ -54,6 +54,7 @@
 #include "director/score.h"
 #include "director/sprite.h"
 #include "director/types.h"
+#include "director/window.h"
 
 namespace Director {
 
@@ -104,6 +105,7 @@ typedef struct ImGuiWindows {
 	bool bpList = false;
 	bool settings = false;
 	bool logger = false;
+	bool archive = false;
 } ImGuiWindows;
 
 static bool toggleButton(const char *label, bool *p_value, bool inverse = false) {
@@ -3265,6 +3267,43 @@ static void showScore() {
 	ImGui::End();
 }
 
+static void showArchive() {
+	if (!_state->_w.archive)
+		return;
+
+	ImVec2 pos(40, 40);
+	ImGui::SetNextWindowPos(pos, ImGuiCond_FirstUseEver);
+
+	ImVec2 windowSize = ImGui::GetMainViewport()->Size / 2;
+	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
+
+	if (ImGui::Begin("Archive", &_state->_w.archive)) {
+		for (auto &it : g_director->_allSeenResFiles) {
+			Archive *archive = it._value;
+
+			if (ImGui::TreeNode(archive->getPathName().toString().c_str())) {
+				const Common::Array<uint32> &typeList = archive->getResourceTypeList();
+
+				for (auto type : typeList) {
+					ImGui::SetNextItemOpen(true);
+					if (ImGui::TreeNode("%s", tag2str(type))) {
+						const Common::Array<uint16> &resList = archive->getResourceIDList(type);
+
+						for (auto res : resList) {
+							ImGui::Selectable(Common::String::format("%d", res).c_str());
+						}
+
+						ImGui::TreePop();
+					}
+				}
+
+				ImGui::TreePop();
+			}
+		}
+	}
+	ImGui::End();
+}
+
 void onLog(LogMessageType::Type type, int level, uint32 debugChannels, const char *message) {
 	switch (type) {
 	case LogMessageType::kError:
@@ -3348,6 +3387,7 @@ void onImGuiRender() {
 			ImGui::MenuItem("Vars", NULL, &_state->_w.vars);
 			ImGui::MenuItem("Settings", NULL, &_state->_w.settings);
 			ImGui::MenuItem("Logger", NULL, &_state->_w.logger);
+			ImGui::MenuItem("Archive", NULL, &_state->_w.archive);
 
 			ImGui::SeparatorText("Misc");
 			if (ImGui::MenuItem("Save state")) {
@@ -3372,6 +3412,7 @@ void onImGuiRender() {
 	showScore();
 	showBreakpointList();
 	showSettings();
+	showArchive();
 	_state->_logger.draw("Logger", &_state->_w.logger);
 }
 
