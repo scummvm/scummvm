@@ -35,6 +35,7 @@ namespace Scumm {
 #define GUIO_ORIGINALGUI                               GUIO_GAMEOPTIONS4
 #define GUIO_LOWLATENCYAUDIO                           GUIO_GAMEOPTIONS5
 #define GUIO_NETWORK                                   GUIO_GAMEOPTIONS6
+#define GUIO_COPY_PROTECTION                           GUIO_GAMEOPTIONS7
 
 /* Game enhancements */
 
