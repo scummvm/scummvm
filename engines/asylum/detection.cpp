@@ -43,9 +43,9 @@ static const DebugChannelDef debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
-class AsylumMetaEngineDetection : public AdvancedMetaEngineDetection {
+class AsylumMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	AsylumMetaEngineDetection() : AdvancedMetaEngineDetection(Asylum::gameDescriptions, sizeof(ADGameDescription), asylumGames) {
+	AsylumMetaEngineDetection() : AdvancedMetaEngineDetection(Asylum::gameDescriptions, asylumGames) {
 		_md5Bytes = 0;
 		_maxScanDepth = 4;
 		_directoryGlobs = Asylum::directoryGlobs;

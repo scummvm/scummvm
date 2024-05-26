@@ -43,7 +43,7 @@ const DebugChannelDef Hpl1MetaEngineDetection::debugFlagList[] = {
 	DEBUG_CHANNEL_END};
 
 Hpl1MetaEngineDetection::Hpl1MetaEngineDetection() : AdvancedMetaEngineDetection(Hpl1::GAME_DESCRIPTIONS,
-																				 sizeof(ADGameDescription), Hpl1::GAME_NAMES) {
+																				 Hpl1::GAME_NAMES) {
 }
 
 REGISTER_PLUGIN_STATIC(HPL1_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Hpl1MetaEngineDetection);

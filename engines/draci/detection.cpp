@@ -90,9 +90,9 @@ const ADGameDescription gameDescriptions[] = {
 
 } // End of namespace Draci
 
-class DraciMetaEngineDetection : public AdvancedMetaEngineDetection {
+class DraciMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	DraciMetaEngineDetection() : AdvancedMetaEngineDetection(Draci::gameDescriptions, sizeof(ADGameDescription), draciGames) {
+	DraciMetaEngineDetection() : AdvancedMetaEngineDetection(Draci::gameDescriptions, draciGames) {
 	}
 
 	const char *getName() const override {

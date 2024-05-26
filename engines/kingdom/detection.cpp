@@ -88,9 +88,9 @@ static const ADGameDescription gameDescriptions[] = {
 
 } // End of namespace Kingdom
 
-class KingdomMetaEngineDetection : public AdvancedMetaEngineDetection {
+class KingdomMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	KingdomMetaEngineDetection() : AdvancedMetaEngineDetection(Kingdom::gameDescriptions, sizeof(ADGameDescription), kingdomGames) {
+	KingdomMetaEngineDetection() : AdvancedMetaEngineDetection(Kingdom::gameDescriptions, kingdomGames) {
 	}
 
 	const char *getName() const override {

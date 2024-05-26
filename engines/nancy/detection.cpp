@@ -756,9 +756,9 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, Nancy::kGameTypeNone }
 };
 
-class NancyMetaEngineDetection : public AdvancedMetaEngineDetection {
+class NancyMetaEngineDetection : public AdvancedMetaEngineDetection<Nancy::NancyGameDescription> {
 public:
-	NancyMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(Nancy::NancyGameDescription), nancyGames) {
+	NancyMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, nancyGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 		_guiOptions = GUIO2(GUIO_NOMIDI, GUIO_NOASPECT);

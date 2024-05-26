@@ -220,9 +220,9 @@ static const CRUISEGameDescription gameDescriptions[] = {
 
 }
 
-class CruiseMetaEngineDetection : public AdvancedMetaEngineDetection {
+class CruiseMetaEngineDetection : public AdvancedMetaEngineDetection<Cruise::CRUISEGameDescription> {
 public:
-	CruiseMetaEngineDetection() : AdvancedMetaEngineDetection(Cruise::gameDescriptions, sizeof(Cruise::CRUISEGameDescription), cruiseGames) {
+	CruiseMetaEngineDetection() : AdvancedMetaEngineDetection(Cruise::gameDescriptions, cruiseGames) {
 		_guiOptions = GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI);
 	}
 

@@ -59,9 +59,9 @@ static const DebugChannelDef debugFlagList[] = {
 	{Efh::kDebugGraphics, "graphics", "Graphics debug level"},
 	DEBUG_CHANNEL_END};
 
-class EfhMetaEngineDetection : public AdvancedMetaEngineDetection {
+class EfhMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	EfhMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(ADGameDescription), efhGames) {
+	EfhMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, efhGames) {
 	}
 
 	const char *getEngineName() const override {

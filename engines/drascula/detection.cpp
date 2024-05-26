@@ -293,9 +293,9 @@ static const DrasculaGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER }
 };
 
-class DrasculaMetaEngineDetection : public AdvancedMetaEngineDetection {
+class DrasculaMetaEngineDetection : public AdvancedMetaEngineDetection<Drascula::DrasculaGameDescription> {
 public:
-	DrasculaMetaEngineDetection() : AdvancedMetaEngineDetection(Drascula::gameDescriptions, sizeof(Drascula::DrasculaGameDescription), drasculaGames) {
+	DrasculaMetaEngineDetection() : AdvancedMetaEngineDetection(Drascula::gameDescriptions, drasculaGames) {
 		_guiOptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_ORIGINAL_SAVELOAD);
 	}
 

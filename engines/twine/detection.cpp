@@ -413,9 +413,9 @@ static const ADGameDescription twineGameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-class TwinEMetaEngineDetection : public AdvancedMetaEngineDetection {
+class TwinEMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	TwinEMetaEngineDetection() : AdvancedMetaEngineDetection(twineGameDescriptions, sizeof(ADGameDescription), twineGames) {
+	TwinEMetaEngineDetection() : AdvancedMetaEngineDetection(twineGameDescriptions, twineGames) {
 		_guiOptions = GUIO12(GAMEOPTION_WALL_COLLISION, GAMEOPTION_DISABLE_SAVE_MENU,  GAMEOPTION_DEBUG, GAMEOPTION_AUDIO_CD, GAMEOPTION_SOUND, GAMEOPTION_VOICES, GAMEOPTION_TEXT, GAMEOPTION_MOVIES, GAMEOPTION_MOUSE, GAMEOPTION_USA_VERSION, GAMEOPTION_HIGH_RESOLUTION, GAMEOPTION_TEXT_TO_SPEECH);
 	}
 

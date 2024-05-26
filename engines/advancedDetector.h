@@ -279,7 +279,7 @@ struct ADExtraGuiOptionsMap {
 /**
  * A @ref MetaEngineDetection implementation based on the Advanced Detector code.
  */
-class AdvancedMetaEngineDetection : public MetaEngineDetection {
+class AdvancedMetaEngineDetectionBase : public MetaEngineDetection {
 protected:
 	/**
 	 * Pointer to an array of objects which are either ADGameDescription
@@ -361,12 +361,12 @@ protected:
 	 */
 	 int _fullPathGlobsDepth;
 
-public:
 	/**
 	 * Initialize game detection using AdvancedMetaEngineDetection.
 	 */
-	AdvancedMetaEngineDetection(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds);
+	AdvancedMetaEngineDetectionBase(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds);
 
+public:
 	/**
 	 * Return a list of targets supported by the engine.
 	 *
@@ -472,6 +472,12 @@ protected:
 	bool cleanupPirated(ADDetectedGames &matched) const;
 
 	friend class FileMapArchive;
+};
+
+template<class Descriptor>
+class AdvancedMetaEngineDetection : public AdvancedMetaEngineDetectionBase {
+protected:
+	AdvancedMetaEngineDetection(const Descriptor *descs, const PlainGameDescriptor *gameIds) : AdvancedMetaEngineDetectionBase(descs, sizeof(Descriptor), gameIds) {}
 };
 
 /**

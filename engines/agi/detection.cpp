@@ -82,12 +82,12 @@ static const PlainGameDescriptor agiGames[] = {
 
 using namespace Agi;
 
-class AgiMetaEngineDetection : public AdvancedMetaEngineDetection {
+class AgiMetaEngineDetection : public AdvancedMetaEngineDetection<AGIGameDescription> {
 	mutable Common::String _gameid;
 	mutable Common::String _extra;
 
 public:
-	AgiMetaEngineDetection() : AdvancedMetaEngineDetection(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames) {
+	AgiMetaEngineDetection() : AdvancedMetaEngineDetection(Agi::gameDescriptions, agiGames) {
 		_guiOptions = GUIO_NOSPEECH GUIO_RENDEREGA GUIO_RENDERCGA GUIO_RENDERHERCAMBER GUIO_RENDERHERCGREEN
 			GUIO_RENDERAMIGA GUIO_RENDERAPPLE2GS GUIO_RENDERATARIST GUIO_RENDERMACINTOSH;
 

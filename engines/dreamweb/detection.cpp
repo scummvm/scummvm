@@ -43,11 +43,11 @@ static const DebugChannelDef debugFlagList[] = {
 
 #include "dreamweb/detection_tables.h"
 
-class DreamWebMetaEngineDetection : public AdvancedMetaEngineDetection {
+class DreamWebMetaEngineDetection : public AdvancedMetaEngineDetection<DreamWeb::DreamWebGameDescription> {
 public:
 	DreamWebMetaEngineDetection():
 	AdvancedMetaEngineDetection(DreamWeb::gameDescriptions,
-	sizeof(DreamWeb::DreamWebGameDescription), dreamWebGames) {
+	dreamWebGames) {
 		_guiOptions = GUIO5(GUIO_NOMIDI, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE, GAMEOPTION_TTS_THINGS, GAMEOPTION_TTS_SPEECH);
 	}
 

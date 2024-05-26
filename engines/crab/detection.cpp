@@ -64,7 +64,7 @@ static const ADGameDescription gameDescriptions[] = {
 }
 
 CrabMetaEngineDetection::CrabMetaEngineDetection() : AdvancedMetaEngineDetection(Crab::gameDescriptions,
-																				 sizeof(ADGameDescription), crabGames) {
+																				 crabGames) {
 	_flags = kADFlagMatchFullPaths;
 }
 

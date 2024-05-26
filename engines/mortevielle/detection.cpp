@@ -38,10 +38,9 @@ static const DebugChannelDef debugFlagList[] = {
 
 #include "mortevielle/detection_tables.h"
 
-class MortevielleMetaEngineDetection : public AdvancedMetaEngineDetection {
+class MortevielleMetaEngineDetection : public AdvancedMetaEngineDetection<Mortevielle::MortevielleGameDescription> {
 public:
-	MortevielleMetaEngineDetection() : AdvancedMetaEngineDetection(Mortevielle::MortevielleGameDescriptions, sizeof(Mortevielle::MortevielleGameDescription),
-		MortevielleGame) {
+	MortevielleMetaEngineDetection() : AdvancedMetaEngineDetection(Mortevielle::MortevielleGameDescriptions, MortevielleGame) {
 		_md5Bytes = 512;
 		// Use kADFlagUseExtraAsHint to distinguish between original and improved versions
 		// (i.e. use or not of the game data file).

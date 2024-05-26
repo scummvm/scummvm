@@ -54,9 +54,9 @@ static const ADGameDescription gameDescriptions[] = {
 };
 } // End of namespace Chamber
 
-class ChamberMetaEngineDetection : public AdvancedMetaEngineDetection {
+class ChamberMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	ChamberMetaEngineDetection() : AdvancedMetaEngineDetection(Chamber::gameDescriptions, sizeof(ADGameDescription), Chamber::ChamberGames) {
+	ChamberMetaEngineDetection() : AdvancedMetaEngineDetection(Chamber::gameDescriptions, Chamber::ChamberGames) {
 	}
 
 	const char *getName() const override {

@@ -65,7 +65,7 @@ struct M4GameDescription {
 
 } // End of namespace M4
 
-class M4MetaEngineDetection : public AdvancedMetaEngineDetection {
+class M4MetaEngineDetection : public AdvancedMetaEngineDetection<M4::M4GameDescription> {
 	static const DebugChannelDef debugFlagList[];
 
 public:

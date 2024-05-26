@@ -42,9 +42,9 @@ static const DebugChannelDef debugFlagList[] = {
 
 #include "tsage/detection_tables.h"
 
-class TSageMetaEngineDetection : public AdvancedMetaEngineDetection {
+class TSageMetaEngineDetection : public AdvancedMetaEngineDetection<TsAGE::tSageGameDescription> {
 public:
-	TSageMetaEngineDetection() : AdvancedMetaEngineDetection(TsAGE::gameDescriptions, sizeof(TsAGE::tSageGameDescription), tSageGameTitles) {
+	TSageMetaEngineDetection() : AdvancedMetaEngineDetection(TsAGE::gameDescriptions, tSageGameTitles) {
 	}
 
 	const char *getName() const override {

@@ -82,12 +82,12 @@ static const DebugChannelDef debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
-class DirectorMetaEngineDetection : public AdvancedMetaEngineDetection {
+class DirectorMetaEngineDetection : public AdvancedMetaEngineDetection<Director::DirectorGameDescription> {
 private:
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _customTarget;
 
 public:
-	DirectorMetaEngineDetection() : AdvancedMetaEngineDetection(Director::gameDescriptions, sizeof(Director::DirectorGameDescription), directorGames) {
+	DirectorMetaEngineDetection() : AdvancedMetaEngineDetection(Director::gameDescriptions, directorGames) {
 		_maxScanDepth = 5;
 		_directoryGlobs = Director::directoryGlobs;
 		_flags = kADFlagMatchFullPaths | kADFlagCanPlayUnknownVariants;

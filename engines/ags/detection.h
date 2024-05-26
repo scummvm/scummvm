@@ -64,7 +64,7 @@ enum AGSSpriteFontVersion { kAGSSpriteFont = 0, kClifftopGames = 1 };
 } // namespace AGS
 
 
-class AGSMetaEngineDetection : public AdvancedMetaEngineDetection {
+class AGSMetaEngineDetection : public AdvancedMetaEngineDetection<AGS::AGSGameDescription> {
 	mutable Common::String _gameid;
 	mutable Common::String _extra;
 	mutable Common::Path _filename;

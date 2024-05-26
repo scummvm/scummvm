@@ -219,9 +219,9 @@ static const char *const directoryGlobs[] = {
 	0
 };
 
-class TrecisionMetaEngineDetection : public AdvancedMetaEngineDetection {
+class TrecisionMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	TrecisionMetaEngineDetection() : AdvancedMetaEngineDetection(Trecision::gameDescriptions, sizeof(ADGameDescription), trecisionGames) {
+	TrecisionMetaEngineDetection() : AdvancedMetaEngineDetection(Trecision::gameDescriptions, trecisionGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 		_guiOptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_ORIGINAL_SAVELOAD);

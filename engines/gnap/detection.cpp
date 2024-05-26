@@ -77,9 +77,9 @@ static const ADGameDescription gameDescriptions[] = {
 
 } // End of namespace Gnap
 
-class GnapMetaEngineDetection : public AdvancedMetaEngineDetection {
+class GnapMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	GnapMetaEngineDetection() : AdvancedMetaEngineDetection(Gnap::gameDescriptions, sizeof(ADGameDescription), gnapGames) {
+	GnapMetaEngineDetection() : AdvancedMetaEngineDetection(Gnap::gameDescriptions, gnapGames) {
 		_maxScanDepth = 3;
 	}
 

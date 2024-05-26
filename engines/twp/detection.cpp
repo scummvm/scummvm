@@ -42,7 +42,7 @@ const DebugChannelDef TwpMetaEngineDetection::debugFlagList[] = {
 
 TwpMetaEngineDetection::TwpMetaEngineDetection()
 	: AdvancedMetaEngineDetection(Twp::gameDescriptions,
-								  sizeof(Twp::TwpGameDescription), Twp::twpGames) {
+								  Twp::twpGames) {
 }
 
 DetectedGame TwpMetaEngineDetection::toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo) const {

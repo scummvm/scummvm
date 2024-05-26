@@ -42,9 +42,9 @@ static const char *const directoryGlobs[] = {
 	nullptr
 };
 
-class SwordMetaEngineDetection : public AdvancedMetaEngineDetection {
+class SwordMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	SwordMetaEngineDetection() : AdvancedMetaEngineDetection(Sword1::gameDescriptions, sizeof(ADGameDescription), swordGames) {
+	SwordMetaEngineDetection() : AdvancedMetaEngineDetection(Sword1::gameDescriptions, swordGames) {
 		_guiOptions = GUIO2(GUIO_NOMIDI, GUIO_NOASPECT);
 		_flags = kADFlagMatchFullPaths;
 		_directoryGlobs = directoryGlobs;

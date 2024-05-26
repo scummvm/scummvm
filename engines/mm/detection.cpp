@@ -49,10 +49,10 @@ static const DebugChannelDef DEBUG_FLAT_LIST[] = {
 
 #include "mm/detection_tables.h"
 
-class MMMetaEngineDetection : public AdvancedMetaEngineDetection {
+class MMMetaEngineDetection : public AdvancedMetaEngineDetection<MM::MightAndMagicGameDescription> {
 public:
 	MMMetaEngineDetection() : AdvancedMetaEngineDetection(MM::GAME_DESCRIPTIONS,
-		sizeof(MM::MightAndMagicGameDescription), MIGHT_AND_MAGIC_GAMES) {
+		MIGHT_AND_MAGIC_GAMES) {
 		_maxScanDepth = 3;
 	}
 

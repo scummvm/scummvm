@@ -138,9 +138,9 @@ static const char *const directoryGlobs[] = {
 	0
 };
 
-class ToucheMetaEngineDetection : public AdvancedMetaEngineDetection {
+class ToucheMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	ToucheMetaEngineDetection() : AdvancedMetaEngineDetection(Touche::gameDescriptions, sizeof(ADGameDescription), toucheGames) {
+	ToucheMetaEngineDetection() : AdvancedMetaEngineDetection(Touche::gameDescriptions, toucheGames) {
 		_md5Bytes = 4096;
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;

@@ -38,7 +38,7 @@ extern const ADGameDescription gameDescriptions[];
 
 } // End of namespace Bagel
 
-class BagelMetaEngineDetection : public AdvancedMetaEngineDetection {
+class BagelMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 	static const DebugChannelDef debugFlagList[];
 
 public:

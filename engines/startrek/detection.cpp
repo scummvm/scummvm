@@ -352,9 +352,9 @@ static const StarTrekGameDescription gameDescriptions[] = {
 
 } // End of namespace StarTrek
 
-class StarTrekMetaEngineDetection : public AdvancedMetaEngineDetection {
+class StarTrekMetaEngineDetection : public AdvancedMetaEngineDetection<StarTrek::StarTrekGameDescription> {
 public:
-	StarTrekMetaEngineDetection() : AdvancedMetaEngineDetection(StarTrek::gameDescriptions, sizeof(StarTrek::StarTrekGameDescription), starTrekGames) {
+	StarTrekMetaEngineDetection() : AdvancedMetaEngineDetection(StarTrek::gameDescriptions, starTrekGames) {
 	}
 
 	const DebugChannelDef *getDebugChannels() const override {

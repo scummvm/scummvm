@@ -118,9 +118,9 @@ static const ADGameDescription gameDescriptions[] = {
 
 } // End of namespace Cryo
 
-class CryoMetaEngineDetection : public AdvancedMetaEngineDetection {
+class CryoMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	CryoMetaEngineDetection() : AdvancedMetaEngineDetection(Cryo::gameDescriptions, sizeof(ADGameDescription), cryoGames) {
+	CryoMetaEngineDetection() : AdvancedMetaEngineDetection(Cryo::gameDescriptions, cryoGames) {
 	}
 
 	const char *getName() const override {

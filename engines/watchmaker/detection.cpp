@@ -66,9 +66,9 @@ static const ADGameDescription gameDescriptions[] = {
 
 } // End of namespace Watchmaker
 
-class WatchmakerMetaEngineDetection : public AdvancedMetaEngineDetection {
+class WatchmakerMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	WatchmakerMetaEngineDetection() : AdvancedMetaEngineDetection(Watchmaker::gameDescriptions, sizeof(ADGameDescription), watchmakerGames) {
+	WatchmakerMetaEngineDetection() : AdvancedMetaEngineDetection(Watchmaker::gameDescriptions, watchmakerGames) {
 	}
 
 	const char *getName() const override {

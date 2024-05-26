@@ -26,7 +26,7 @@ const DebugChannelDef BagelMetaEngineDetection::debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
-BagelMetaEngineDetection::BagelMetaEngineDetection() : AdvancedMetaEngineDetection(Bagel::gameDescriptions, sizeof(ADGameDescription), Bagel::bagelGames) {
+BagelMetaEngineDetection::BagelMetaEngineDetection() : AdvancedMetaEngineDetection(Bagel::gameDescriptions, Bagel::bagelGames) {
 	_guiOptions = GUIO2(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVELOAD);
 	_flags = kADFlagMatchFullPaths;
 }

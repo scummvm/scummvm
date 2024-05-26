@@ -66,9 +66,9 @@ static const ADGameDescription gameDescriptions[] = {
 
 } // End of namespace Plumbers
 
-class PlumbersMetaEngineDetection : public AdvancedMetaEngineDetection {
+class PlumbersMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	PlumbersMetaEngineDetection() : AdvancedMetaEngineDetection(Plumbers::gameDescriptions, sizeof(ADGameDescription), plumbersGames) {
+	PlumbersMetaEngineDetection() : AdvancedMetaEngineDetection(Plumbers::gameDescriptions, plumbersGames) {
 	}
 
 	const char *getName() const override {

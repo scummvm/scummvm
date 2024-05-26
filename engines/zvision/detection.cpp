@@ -30,9 +30,9 @@
 #include "zvision/detection.h"
 #include "zvision/detection_tables.h"
 
-class ZVisionMetaEngineDetection : public AdvancedMetaEngineDetection {
+class ZVisionMetaEngineDetection : public AdvancedMetaEngineDetection<ZVision::ZVisionGameDescription> {
 public:
-	ZVisionMetaEngineDetection() : AdvancedMetaEngineDetection(ZVision::gameDescriptions, sizeof(ZVision::ZVisionGameDescription), ZVision::zVisionGames) {
+	ZVisionMetaEngineDetection() : AdvancedMetaEngineDetection(ZVision::gameDescriptions, ZVision::zVisionGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = ZVision::directoryGlobs;
 	}

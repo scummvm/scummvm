@@ -161,9 +161,9 @@ const static char *const directoryGlobs[] = {
 	nullptr
 };
 
-class PrinceMetaEngineDetection : public AdvancedMetaEngineDetection {
+class PrinceMetaEngineDetection : public AdvancedMetaEngineDetection<Prince::PrinceGameDescription> {
 public:
-	PrinceMetaEngineDetection() : AdvancedMetaEngineDetection(Prince::gameDescriptions, sizeof(Prince::PrinceGameDescription), princeGames) {
+	PrinceMetaEngineDetection() : AdvancedMetaEngineDetection(Prince::gameDescriptions, princeGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}

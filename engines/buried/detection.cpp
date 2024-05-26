@@ -48,11 +48,10 @@ static const char *const directoryGlobs[] = {
 } // End of namespace Buried
 
 
-class BuriedMetaEngineDetection : public AdvancedMetaEngineDetection {
+class BuriedMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
 	BuriedMetaEngineDetection() : AdvancedMetaEngineDetection(
 		Buried::gameDescriptions,
-		sizeof(ADGameDescription),
 		buriedGames) {
 		_guiOptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_ALLOW_SKIP);
 		_flags = kADFlagUseExtraAsHint;

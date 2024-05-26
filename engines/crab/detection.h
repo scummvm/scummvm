@@ -38,7 +38,7 @@ enum CrabDebugChannels {
 
 } // End of namespace Crab
 
-class CrabMetaEngineDetection : public AdvancedMetaEngineDetection {
+class CrabMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 	static const DebugChannelDef debugFlagList[];
 
 public:

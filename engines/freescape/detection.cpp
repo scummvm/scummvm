@@ -928,9 +928,9 @@ static const DebugChannelDef debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
-class FreescapeMetaEngineDetection : public AdvancedMetaEngineDetection {
+class FreescapeMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	FreescapeMetaEngineDetection() : AdvancedMetaEngineDetection(Freescape::gameDescriptions, sizeof(ADGameDescription), Freescape::freescapeGames) {
+	FreescapeMetaEngineDetection() : AdvancedMetaEngineDetection(Freescape::gameDescriptions, Freescape::freescapeGames) {
 		_guiOptions = GUIO7(GUIO_NOMIDI, GAMEOPTION_EXTENDED_TIMER, GAMEOPTION_DISABLE_DEMO_MODE, GAMEOPTION_DISABLE_SENSORS, GAMEOPTION_DISABLE_FALLING, GAMEOPTION_INVERT_Y, GAMEOPTION_AUTHENTIC_GRAPHICS);
 	}
 

@@ -44,9 +44,9 @@ const static char *const directoryGlobs[] = {
 	nullptr
 };
 
-class HopkinsMetaEngineDetection : public AdvancedMetaEngineDetection {
+class HopkinsMetaEngineDetection : public AdvancedMetaEngineDetection<Hopkins::HopkinsGameDescription> {
 public:
-	HopkinsMetaEngineDetection() : AdvancedMetaEngineDetection(Hopkins::gameDescriptions, sizeof(Hopkins::HopkinsGameDescription), hopkinsGames) {
+	HopkinsMetaEngineDetection() : AdvancedMetaEngineDetection(Hopkins::gameDescriptions, hopkinsGames) {
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}

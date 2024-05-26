@@ -45,9 +45,9 @@ static const DebugChannelDef debugFlagList[] = {
 
 #include "mads/detection_tables.h"
 
-class MADSMetaEngineDetection : public AdvancedMetaEngineDetection {
+class MADSMetaEngineDetection : public AdvancedMetaEngineDetection<MADS::MADSGameDescription> {
 public:
-	MADSMetaEngineDetection() : AdvancedMetaEngineDetection(MADS::gameDescriptions, sizeof(MADS::MADSGameDescription), MADSGames) {
+	MADSMetaEngineDetection() : AdvancedMetaEngineDetection(MADS::gameDescriptions, MADSGames) {
 		_maxScanDepth = 3;
 	}
 
