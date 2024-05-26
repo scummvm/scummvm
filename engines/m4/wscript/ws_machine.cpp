@@ -960,7 +960,7 @@ void IntoTheState(machine *m) {
 	}
 
 	stateTable = (uint32 *)((intptr)(*(m->machHandle)) + (intptr)m->stateTableOffset);
-	pcOffset = stateTable[m->curState];
+	pcOffset = FROM_LE_32(stateTable[m->curState]);
 
 	// Increment and remember the recurseLevel and the machine ID
 	m->recurseLevel++;

@@ -1506,6 +1506,7 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 	uint32 *tempPtr, i, j, header, format;
 	int32 numCels, dataOffset;
 	bool byteSwap;
+	void *handlebuffer;
 
 	if (!sysFile) {
 		ws_LogErrorMsg(FL, "nullptr FILE POINTER given.");
