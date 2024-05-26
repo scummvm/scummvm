@@ -51,8 +51,8 @@ public:
 
 	ErrorCode loadBitmaps(const char *pszBack, const char *pszThumb, const char *pszLeftUp = nullptr, const char *pszRightUp = nullptr, const char *pszLeftDown = nullptr, const char *pszRightDown = nullptr);
 
-	ErrorCode setPos(const int nPos, bool bRepaint = true, bool isInitial = false);
-	int getPos() {
+	ErrorCode setPos(int nPos, bool bRepaint = true, bool isInitial = false);
+	int getPos() const {
 		return _nPos;
 	}
 
@@ -76,24 +76,24 @@ public:
 		return setPos(_nMax);
 	}
 
-	int getScrollMin() {
+	int getScrollMin() const {
 		return _nMin;
 	}
-	int getScrollMax() {
+	int getScrollMax() const {
 		return _nMax;
 	}
 
 	void setLineDelta(const int nDelta) {
 		_nLineDelta = nDelta;
 	}
-	int getLineDelta() {
+	int getLineDelta() const {
 		return _nLineDelta;
 	}
 
 	void setPageDelta(const int nDelta) {
 		_nPageDelta = nDelta;
 	}
-	int getPageDelta() {
+	int getPageDelta() const {
 		return _nPageDelta;
 	}
 
@@ -108,11 +108,11 @@ public:
 protected:
 	int pointToPos(CBofPoint *pPoint);
 
-	virtual void onPaint(CBofRect *pDirtyRect);
-	virtual void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual void onMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual void onTimer(uint32);
+	void onPaint(CBofRect *pDirtyRect) override;
+	void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
+	void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
+	void onMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
+	void onTimer(uint32) override;
 
 	//
 	// Data members

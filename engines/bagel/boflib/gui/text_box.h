@@ -43,40 +43,40 @@ public:
 	void setDisplay(CBofWindow *pWindow);
 	void setDisplay(CBofBitmap *pBitmap);
 
-	void setTextAttribs(const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, const int nFont = FONT_DEFAULT);
+	void setTextAttribs(int nSize, int nWeight, RGBCOLOR cColor = CTEXT_COLOR, int nFont = FONT_DEFAULT);
 
 	void setPointSize(const int nSize) {
 		_nPointSize = nSize;
 	}
-	int getPointSize() {
+	int getPointSize() const {
 		return _nPointSize;
 	}
 
 	void setWeight(const int nWeight) {
 		_nWeight = nWeight;
 	}
-	int getWeight() {
+	int getWeight() const {
 		return _nWeight;
 	}
 
 	void setPageLength(const int nSize) {
 		_nPageSize = nSize;
 	}
-	int getPageLength() {
+	int getPageLength() const {
 		return _nPageSize;
 	}
 
 	void setColor(const RGBCOLOR cColor) {
 		_cTextColor = cColor;
 	}
-	RGBCOLOR getColor() {
+	RGBCOLOR getColor() const {
 		return _cTextColor;
 	}
 
 	void setFont(int nFont) {
 		_nTextFont = nFont;
 	}
-	int getFont() {
+	int getFont() const {
 		return _nTextFont;
 	}
 
@@ -114,7 +114,7 @@ public:
 	}
 
 protected:
-	int getIndex(const int nLines);
+	int getIndex(int nLines);
 
 	// Data
 	CBofString _cBuffer;

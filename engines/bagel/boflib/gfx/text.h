@@ -210,7 +210,7 @@ public:
 	 * @param cColor		Color that the text will be
 	 * @return				Error return Code
 	 */
-	ErrorCode display(CBofWindow *pWnd, const char *pszText, const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, int nFont = FONT_DEFAULT);
+	ErrorCode display(CBofWindow *pWnd, const char *pszText, int nSize, int nWeight, RGBCOLOR cColor = CTEXT_COLOR, int nFont = FONT_DEFAULT);
 
 	/**
 	 * Display a text string, formatted in the current text area
@@ -221,7 +221,7 @@ public:
 	 * @param cColor		Color that the text will be
 	 * @return				Error return Code
 	 */
-	ErrorCode display(CBofBitmap *pBmp, const char *pszText, const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, int nFont = FONT_DEFAULT);
+	ErrorCode display(CBofBitmap *pBmp, const char *pszText, int nSize, int nWeight, RGBCOLOR cColor = CTEXT_COLOR, int nFont = FONT_DEFAULT);
 
 	/**
 	 * Display a shadowed text string into the current text area

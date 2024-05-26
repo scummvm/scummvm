@@ -66,7 +66,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	CBofDialog(const char *pszFileName, CBofWindow *pParent, const uint32 nID = 0, const uint32 lFlags = BOFDLG_DEFAULT);
+	CBofDialog(const char *pszFileName, CBofWindow *pParent, uint32 nID = 0, uint32 lFlags = BOFDLG_DEFAULT);
 
 	/**
 	 * Destructor
