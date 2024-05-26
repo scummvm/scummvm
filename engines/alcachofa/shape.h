@@ -122,6 +122,7 @@ public:
 	Polygon at(uint index) const;
 	int32 polygonContaining(const Common::Point &query) const;
 	bool contains(const Common::Point &query) const;
+	void setAsRectangle(const Common::Rect &rect);
 
 protected:
 	uint addPolygon(uint maxCount);
