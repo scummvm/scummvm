@@ -163,7 +163,7 @@ extern bool gDebugChannelsOnly;
 enum GlobalDebugLevels {
 	kDebugGlobalDetection = 100000,
 	kDebugLevelEventRec,
-	kDebugLevelGUI,
+	kDebugLevelMainGUI,
 	kDebugLevelMacGUI,
 };
 
