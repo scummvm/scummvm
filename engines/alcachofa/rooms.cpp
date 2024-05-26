@@ -88,13 +88,13 @@ Room::Room(World *world, ReadStream &stream, bool hasUselessByte)
 	: _world(world) {
 	_name = readVarString(stream);
 	_musicId = stream.readSByte();
-	_characterAlpha = stream.readByte();
+	_characterAlphaTint = stream.readByte();
 	auto backgroundScale = stream.readSint16LE();
 	_floors[0] = PathFindingShape(stream);
 	_floors[1] = PathFindingShape(stream);
 	_cameraFollowsUponLeaving = readBool(stream);
 	PathFindingShape _(stream); // unused path finding area
-	_characterAlphaPercent = stream.readByte();
+	_characterAlphaPremultiplier = stream.readByte();
 	if (hasUselessByte)
 		stream.readByte();
 

@@ -281,17 +281,30 @@ public:
 	Item(Room *room, Common::ReadStream &stream);
 };
 
-class InteractableObject : public PhysicalObject {
+class ITriggerableObject {
+public:
+	ITriggerableObject(Common::ReadStream &stream);
+
+	inline Direction interactionDirection() const { return _interactionDirection; }
+	inline const Common::Point &interactionPoint() const { return _interactionPoint; }
+
+	virtual void trigger(const char *action) = 0;
+
+protected:
+	Common::Point _interactionPoint;
+	Direction _interactionDirection = Direction::Right;
+};
+
+class InteractableObject : public PhysicalObject, public ITriggerableObject {
 public:
 	static constexpr const char *kClassName = "CObjetoTipico";
 	InteractableObject(Room *room, Common::ReadStream &stream);
 	virtual ~InteractableObject() override = default;
 
 	virtual void drawDebug() override;
+	virtual void trigger(const char *action) override;
 
 private:
-	Common::Point _interactionPoint;
-	CursorType _cursorType;
 	Common::String _relatedObject;
 };
 
@@ -305,7 +318,7 @@ private:
 	Direction _characterDirection;
 };
 
-class Character : public ShapeObject {
+class Character : public ShapeObject, public ITriggerableObject {
 public:
 	static constexpr const char *kClassName = "CPersonaje";
 	Character(Room *room, Common::ReadStream &stream);
@@ -318,12 +331,12 @@ public:
 	virtual void freeResources() override;
 	virtual void serializeSave(Common::Serializer &serializer) override;
 	virtual Graphic *graphic() override;
+	virtual void trigger(const char *action) override;
 
 protected:
 	void syncObjectAsString(Common::Serializer &serializer, ObjectBase *&object);
 	void updateTalkingAnimation();
 
-	Common::Point _interactionPoint;
 	Direction _direction;
 	Graphic _graphicNormal, _graphicTalking;
 
@@ -350,17 +363,13 @@ public:
 	virtual void walkTo(
 		const Common::Point &target,
 		Direction endDirection = Direction::Invalid,
-		ShapeObject *activateObject = nullptr,
-		const char *activateAction = nullptr,
-		bool useAlternateObjectDirection = false
-	);
+		ITriggerableObject *activateObject = nullptr,
+		const char *activateAction = nullptr);
 	void stopWalkingAndTurn(Direction direction);
 	void setPosition(const Common::Point &target);
 
 protected:
 	virtual void onArrived();
-
-private:
 	void updateWalking();
 	void updateWalkingAnimation();
 
@@ -389,8 +398,6 @@ private:
 	bool _isWalking = false;
 	Direction
 		_direction = Direction::Right,
-		_interactionDirection1 = Direction::Right,
-		_interactionDirection2 = Direction::Right,
 		_endWalkingDirection = Direction::Invalid;
 	Common::Stack<Common::Point> _pathPoints;
 };
@@ -416,14 +423,28 @@ public:
 	inline MainCharacterKind kind() const { return _kind; }
 	inline ObjectBase *currentlyUsing() const { return _currentlyUsingObject; }
 
+	virtual void update() override;
+	virtual void draw() override;
 	virtual void serializeSave(Common::Serializer &serializer) override;
+	virtual void walkTo(
+		const Common::Point &target,
+		Direction endDirection = Direction::Invalid,
+		ITriggerableObject *activateObject = nullptr,
+		const char *activateAction = nullptr) override;
+
+protected:
+	virtual void onArrived() override;
 
 private:
+	void drawInner();
+
 	Common::Array<Item *> _items;
 	Common::Array<DialogMenuLine> _dialogMenuLines;
 	ObjectBase *_currentlyUsingObject = nullptr;
 	MainCharacterKind _kind;
 	int32_t _relatedProcessCounter = 0;
+	ITriggerableObject *_activateObject = nullptr;
+	const char *_activateAction = nullptr;
 };
 
 class Background final : public GraphicObject {
