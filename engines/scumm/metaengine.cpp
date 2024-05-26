@@ -739,6 +739,15 @@ static const ExtraGuiOption enableCOMISong = {
 	0
 };
 
+static const ExtraGuiOption enableCopyProtection = {
+	_s("Enable copy protection"),
+	_s("Enable any copy protection that would otherwise be bypassed by default."),
+	"copy_protection",
+	false,
+	0,
+	0
+};
+
 const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	// Query the GUI options
@@ -751,6 +760,9 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 
 	if (target.empty() || guiOptions.contains(GUIO_ORIGINALGUI)) {
 		options.push_back(enableOriginalGUI);
+	}
+	if (target.empty() || guiOptions.contains(GUIO_COPY_PROTECTION)) {
+		options.push_back(enableCopyProtection);
 	}
 	if (target.empty() || guiOptions.contains(GUIO_ENHANCEMENTS)) {
 		options.push_back(enableEnhancements);

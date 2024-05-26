@@ -239,6 +239,7 @@ protected:
 	void createEnhancementsWidget(GuiObject *boss, const Common::String &name);
 	GUI::ThemeEval &addEnhancementsLayout(GUI::ThemeEval &layouts) const;
 	GUI::CheckboxWidget *createOriginalGUICheckbox(GuiObject *boss, const Common::String &name);
+	GUI::CheckboxWidget *createCopyProtectionCheckbox(GuiObject *boss, const Common::String &name);
 	void updateAdjustmentSlider(GUI::SliderWidget *slider, GUI::StaticTextWidget *value);
 
 	Common::Array<GUI::CheckboxWidget *> _enhancementsCheckboxes;
@@ -291,6 +292,7 @@ private:
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
 	GUI::CheckboxWidget *_enableOriginalGUICheckbox;
+	GUI::CheckboxWidget *_enableCopyProtectionCheckbox;
 
 	GUI::SliderWidget *_overtureTicksSlider;
 	GUI::StaticTextWidget *_overtureTicksValue;
@@ -317,6 +319,7 @@ private:
 	void updateQualitySlider();
 
 	GUI::CheckboxWidget *_enableOriginalGUICheckbox;
+	GUI::CheckboxWidget *_enableCopyProtectionCheckbox;
 	GUI::SliderWidget *_sndQualitySlider;
 	GUI::StaticTextWidget *_sndQualityValue;
 	int _quality;
