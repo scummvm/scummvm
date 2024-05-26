@@ -28,6 +28,8 @@ struct VoyeurGameDescription {
 	ADGameDescription desc;
 };
 
+#define GAMEOPTION_COPY_PROTECTION	GUIO_GAMEOPTIONS1
+
 } // End of namespace Voyeur
 
 #endif // VOYEUR_DETECTION_H

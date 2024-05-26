@@ -25,6 +25,7 @@
 
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "graphics/surface.h"
 
@@ -33,6 +34,22 @@
 #define MAX_SAVES 99
 
 namespace Voyeur {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_COPY_PROTECTION,
+		{
+			_s("Enable lockout system"),
+			_s("Require a lockout code to start the game."),
+			"copy_protection",
+			false,
+			0,
+			0
+		},
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 uint32 VoyeurEngine::getFeatures() const {
 	return _gameDescription->desc.flags;
@@ -56,6 +73,10 @@ class VoyeurMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "voyeur";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return Voyeur::optionsList;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
