@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-05-26 17:10+0000\n"
-"PO-Revision-Date: 2024-03-19 18:42+0000\n"
+"PO-Revision-Date: 2024-05-27 09:43+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -1279,7 +1279,7 @@ msgstr "エントリーのグループ化基準を選択"
 
 #: gui/launcher.cpp:262
 msgid "Click here to see Help"
-msgstr ""
+msgstr "ヘルプを見る"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
 #: gui/launcher.cpp:266 engines/dialogs.cpp:91
@@ -5217,83 +5217,63 @@ msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:46
 msgid "LIBRETRO PLAYLIST GENERATOR"
-msgstr ""
+msgstr "LIBRETROプレイリストを生成"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:47
 msgid "(check '? > Libretro playlist' for detailed info)"
-msgstr ""
+msgstr "(詳細は「?」→「Libretroプレイリスト」参照)"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:48
-#, fuzzy
-#| msgid "Plugins Path:"
 msgid "Playlists Path"
-msgstr "拡張のフォルダー："
+msgstr "プレイリスト"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:49
-#, fuzzy
-#| msgid "Specifies where your saved games are put"
 msgid "Specifies where your playlist will be saved."
-msgstr "指定されたフォルダーにセーブデータが保存されます"
+msgstr "プレイリストの保存場所を指定します。"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:52
-#, fuzzy
-#| msgid "Platform:"
 msgid "Playlist format:"
-msgstr "プラットフォーム："
+msgstr "フォーマット:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:57
-#, fuzzy
-#| msgid "Goto location"
 msgid "Hooks location:"
-msgstr "そこへ移動"
+msgstr "フックの位置:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:59
-#, fuzzy
-#| msgid "Add a new folder"
 msgid "All in save folder"
-msgstr "新規フォルダー作成"
+msgstr "すべての保存先"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:60
 msgid "One in each game folder"
-msgstr ""
+msgstr "ゲームフォルダーごと"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:62
 msgid "Clear existing hooks"
-msgstr ""
+msgstr "既存のフックを解除"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:64
 msgid "Generate playlist"
-msgstr ""
+msgstr "プレイリスト生成"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:66
-#, fuzzy
-#| msgid "Status:"
 msgid "Status: "
-msgstr "ステータス："
+msgstr "ステータス: "
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:148
-#, fuzzy
-#| msgid "Failed to save game to file."
 msgid "Failed, can't access playlist file"
-msgstr "セーブファイルの出力に失敗しました。"
+msgstr "プレイリストにアクセス不可"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:224
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "cleaning failed"
-msgstr "データの読み取りを失敗しました"
+msgstr "クリーニング失敗"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:226
-#, fuzzy
-#| msgid "Failed to read the file!"
 msgid "Failed, can't create hook files"
-msgstr "ファイルを読み込めません!"
+msgstr "フックファイル生成に失敗"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:236
-#, fuzzy
-#| msgid "Select additional game directory"
 msgid "Select Playlist directory"
-msgstr "ゲームの追加データのフォルダーを選択してください"
+msgstr "プレイリストフォルダーを選択"
 
 #: backends/platform/maemo/maemo.cpp:157
 msgid "Click Mode"
@@ -5447,64 +5427,44 @@ msgid "BSD License"
 msgstr "BSDライセンス"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:329
-#, fuzzy
-#| msgid "GPL License"
 msgid "Apache License"
-msgstr "GPLライセンス"
+msgstr "Apacheライセンス"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:330
-#, fuzzy
-#| msgid "BSD License"
 msgid "BSL License"
-msgstr "BSDライセンス"
+msgstr "BSLライセンス"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:331
-#, fuzzy
-#| msgid "GPL License"
 msgid "GLAD License"
-msgstr "GPLライセンス"
+msgstr "GLADライセンス"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:332
-#, fuzzy
-#| msgid "BSD License"
 msgid "ISC License"
-msgstr "BSDライセンス"
+msgstr "ISCライセンス"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:333
-#, fuzzy
-#| msgid "GPL License"
 msgid "Lua License"
-msgstr "GPLライセンス"
+msgstr "Luaライセンス"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:334
-#, fuzzy
-#| msgid "GPL License"
 msgid "MIT License"
-msgstr "GPLライセンス"
+msgstr "MITライセンス"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:335
-#, fuzzy
-#| msgid "GPL License"
 msgid "MKV License"
-msgstr "GPLライセンス"
+msgstr "MKVライセンス"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:336
-#, fuzzy
-#| msgid "GPL License"
 msgid "MPL License"
-msgstr "GPLライセンス"
+msgstr "MPLライセンス"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:337
-#, fuzzy
-#| msgid "GPL License"
 msgid "TinyGL License"
-msgstr "GPLライセンス"
+msgstr "TinyGLライセンス"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:338
-#, fuzzy
-#| msgid "Freefont License"
 msgid "Catharon License"
-msgstr "Freefontライセンス"
+msgstr "Catharonライセンス"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:79
@@ -6173,17 +6133,15 @@ msgstr "とにかくロードする"
 
 #: engines/bagel/metaengine.cpp:41
 msgid "Wait"
-msgstr ""
+msgstr "待機"
 
 #: engines/bagel/metaengine.cpp:42
 msgid "Soldier 714 Eye Cheat"
-msgstr ""
+msgstr "戦士714の目チート"
 
 #: engines/bagel/metaengine.cpp:83
-#, fuzzy
-#| msgid "General"
 msgid "General Keys"
-msgstr "全般"
+msgstr "キー全般"
 
 #: engines/bladerunner/bladerunner.cpp:404
 msgid "Failed to initialize resources"
@@ -6557,56 +6515,52 @@ msgstr "キーマッピング"
 
 #. I18N: 3-4 dialogs of game version info, (translation) credits, etc.
 #: engines/cge/metaengine.cpp:204 engines/cge2/metaengine.cpp:216
-#, fuzzy
-#| msgid "Game menu"
 msgid "Game Info"
-msgstr "ゲームメニュー"
+msgstr "ゲーム情報"
 
 #. I18N: This opens a Quit Prompt where you have to choose
 #. [Confirm] or [Continue Playing] lines with Left Click.
 #: engines/cge/metaengine.cpp:211 engines/cge2/metaengine.cpp:233
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit Prompt"
-msgstr "ゲームを終了する"
+msgstr "プロンプト終了"
 
 #. I18N: Here ALTered Item refers to the dice that has been altered/changed.
 #. In order to escape the dice game loop press Right/Left Alt
 #: engines/cge/metaengine.cpp:218
 msgid "ALTered Item"
-msgstr ""
+msgstr "変更されたダイス"
 
 #: engines/cge/metaengine.cpp:224
 msgid "Inventory Item 1 (Select/Deselect)"
-msgstr ""
+msgstr "在庫アイテム1(選択/解除)"
 
 #: engines/cge/metaengine.cpp:229
 msgid "Inventory Item 2 (Select/Deselect)"
-msgstr ""
+msgstr "在庫アイテム2(選択/解除)"
 
 #: engines/cge/metaengine.cpp:234
 msgid "Inventory Item 3 (Select/Deselect)"
-msgstr ""
+msgstr "在庫アイテム3(選択/解除)"
 
 #: engines/cge/metaengine.cpp:239
 msgid "Inventory Item 4 (Select/Deselect)"
-msgstr ""
+msgstr "在庫アイテム4(選択/解除)"
 
 #: engines/cge/metaengine.cpp:244
 msgid "Inventory Item 5 (Select/Deselect)"
-msgstr ""
+msgstr "在庫アイテム5(選択/解除)"
 
 #: engines/cge/metaengine.cpp:249
 msgid "Inventory Item 6 (Select/Deselect)"
-msgstr ""
+msgstr "在庫アイテム6(選択/解除)"
 
 #: engines/cge/metaengine.cpp:254
 msgid "Inventory Item 7 (Select/Deselect)"
-msgstr ""
+msgstr "在庫アイテム7(選択/解除)"
 
 #: engines/cge/metaengine.cpp:259
 msgid "Inventory Item 8 (Select/Deselect)"
-msgstr ""
+msgstr "在庫アイテム8(選択/解除)"
 
 #. I18N: There are 24 single-room/screen locations in the game.
 #. You switch between them from numbered buttons on interface.
@@ -11265,16 +11219,12 @@ msgid "Starts a new game upon launching instead of going to the main menu."
 msgstr "起動時にメインメニューを開かず、新しいゲームを開始します。"
 
 #: engines/vcruise/metaengine.cpp:86
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Use 16-color graphics"
-msgstr "カラーグラフィック"
+msgstr "16色モードを使用"
 
 #: engines/vcruise/metaengine.cpp:87
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Uses 16-color graphics."
-msgstr "カラーグラフィック"
+msgstr "16色モードを使用。"
 
 #: engines/vcruise/metaengine.cpp:135
 msgid "Display help screen"
@@ -11322,7 +11272,7 @@ msgstr "アニメをスキップ"
 
 #: engines/vcruise/metaengine.cpp:200
 msgid "Cycle item in scene (debug cheat)"
-msgstr ""
+msgstr "アイテム無限(デバッグチート)"
 
 #: engines/vcruise/vcruise.cpp:92
 msgid "This game requires JPEG support, which was not compiled in."
