@@ -84,7 +84,7 @@ enum SceneOpCode {
 	kSceneOpHideInvButton = 10,	// args: none.
 	kSceneOpEnableTrigger = 11,	// args: trigger num
 	kSceneOpChangeSceneToStored = 12,	// args: none. Change scene to stored number
-	kSceneOp13 = 13,			// args: none.
+	kSceneOpAddFlagToDragItem = 13,			// args: none.
 	kSceneOpOpenInventoryZoom = 14,	// args: none.
 	kSceneOpMoveItemsBetweenScenes = 15,	// args: none.
 	kSceneOpShowClock = 16,		// args: none.  set some clock-related globals
@@ -95,7 +95,7 @@ enum SceneOpCode {
 	// From here on might be game-specific?
 	kSceneOp100 = 100,			// args: none.
 	kSceneOpMeanwhile = 101,	// args: none. Clears screen and displays "meanwhile".
-	kSceneOp102 = 102,			// args: none.
+	kSceneOpOpenGameOverMenu = 102,	// args: none.
 	kSceneOp103 = 103,			// args: none. Something about "boy am I tired"?
 	kSceneOp104 = 104,			// args: none.
 	kSceneOp105 = 105,			// args: none. Draw some number at 141, 56

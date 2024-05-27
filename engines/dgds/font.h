@@ -114,10 +114,11 @@ public:
 	~FontManager();
 
 	const Font *getFont(FontType) const;
+	FontType fontTypeByName(const Common::String &filename) const;
 	void loadFonts(DgdsGameId gameId, ResourceManager *resourceManager, Decompressor *decompressor);
-private:
 
-	void tryLoadFont(FontType type, const char *filename, ResourceManager *resourceManager, Decompressor *decompressor);
+private:
+	void tryLoadFont(const char *filename, ResourceManager *resourceManager, Decompressor *decompressor);
 
 	struct FontTypeHash {
 		Common::Hash<const char *> hash;
