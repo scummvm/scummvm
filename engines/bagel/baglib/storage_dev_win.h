@@ -283,8 +283,6 @@ public:
 
 	ErrorCode paintStorageDevice(CBofWindow *pWnd, CBofBitmap *pBmp = nullptr, CBofRect * = nullptr);
 
-	virtual void handleError(ErrorCode errCode);
-
 	// The associated window describes which window to get screen information from and
 	// where to paint objects and most importantly what info to send to the callbacks
 	virtual void setAssociateWnd(CBofWindow *pWnd) {

@@ -383,11 +383,6 @@ public:
 	 */
 	ParseCodes setInfo(CBagIfstream &istr) override;
 
-	virtual int handleError(int nErrID) {
-		assert(!nErrID);
-		return nErrID;
-	}
-
 	virtual ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
 
 	virtual bool onObjInteraction(CBagObject * /*pObj*/, CBagStorageDev * /*pSDev*/) {

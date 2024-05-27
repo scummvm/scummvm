@@ -927,10 +927,6 @@ CBagObject *CBagStorageDev::getObject(const CBofPoint &xPoint, bool bActiveOnly)
 }
 
 
-void CBagStorageDev::handleError(ErrorCode errCode) {
-}
-
-
 ParseCodes CBagStorageDev::setInfo(CBagIfstream &fpInput) {
 	char szStr[256];
 	szStr[0] = 0;
