@@ -31,6 +31,18 @@
 
 static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 	{
+		GAMEOPTION_COPY_PROTECTION,
+		{
+			_s("Enable copy protection"),
+			_s("Enable any copy protection that would otherwise be bypassed by default."),
+			"copy_protection",
+			false,
+			0,
+			0
+		},
+	},
+
+	{
 		GAMEOPTION_ORIGINAL_SAVELOAD,
 		{
 			_s("Use original save/load screens"),
