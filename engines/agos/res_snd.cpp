@@ -251,6 +251,18 @@ void AGOSEngine_Simon2::playMusic(uint16 music, uint16 track) {
 		loadMusic(10, !track10Fix && track > 0, track10Fix || track > 0);
 	}
 
+#ifdef USE_VORBIS
+		Common::String trackName = Common::String::format("OGG/track%02d", _lastMusicPlayed);
+
+		_digitalMusicStream = Audio::SeekableAudioStream::openStreamFile(trackName.c_str());
+		if (_digitalMusicStream) {
+			_mixer->playStream(Audio::Mixer::kMusicSoundType, &_digitalMusicHandle, _digitalMusicStream);
+
+			debug(1, "AGOSEngine_Simon2::playMusic(): Playing %s", trackName.c_str());
+
+			return;
+		}
+#endif
 	_midi->play(track);
 }
 
@@ -313,7 +325,7 @@ void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {
 		_midi->play();
 	} else if (getPlatform() == Common::kPlatformAcorn) {
 		// Acorn floppy version.
-		
+
 		// TODO: Add support for Desktop Tracker format in Acorn disk version
 	}
 }
@@ -393,6 +405,7 @@ void AGOSEngine::stopMusic() {
 		_midi->stop();
 	}
 	_mixer->stopHandle(_modHandle);
+	_mixer->stopHandle(_digitalMusicHandle);
 }
 
 static const byte elvira1_soundTable[100] = {

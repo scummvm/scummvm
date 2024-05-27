@@ -60,6 +60,10 @@ struct Surface;
 class FontSJIS;
 }
 
+namespace Audio {
+class SeekableAudioStream;
+}
+
 namespace AGOS {
 
 enum {
@@ -586,6 +590,8 @@ protected:
 	int _vgaTickCounter;
 
 	Audio::SoundHandle _modHandle;
+	Audio::SoundHandle _digitalMusicHandle;
+	Audio::SeekableAudioStream *_digitalMusicStream = nullptr;
 
 	Sound *_sound;
 
