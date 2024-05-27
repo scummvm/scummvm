@@ -2259,6 +2259,19 @@ static void setScriptToDisplay(const ImGuiScript &script) {
 	_state->_functions._showScript = true;
 }
 
+static void displayScriptRef(CastMemberID &scriptId) {
+	if (scriptId.member) {
+		ImGui::TextColored(ImVec4(0.5f, 0.5f, 1.0f, 1.0f), "%d", scriptId.member);
+
+		ImGui::SetItemTooltip(scriptId.asString().c_str());
+
+		if (ImGui::IsItemClicked(0))
+			addScriptCastToDisplay(scriptId);
+	} else {
+		ImGui::Selectable("  ");
+	}
+}
+
 static void showChannels() {
 	if (!_state->_w.channels)
 		return;
@@ -2351,12 +2364,7 @@ static void showChannels() {
 					ImGui::Text("%3d", sprite._backColor); ImGui::SameLine();
 					ImGui::ColorButton("backColor", convertColor(sprite._backColor));
 					ImGui::TableNextColumn();
-					if (sprite._scriptId.member) {
-						ImGui::TextColored(ImVec4(0.5f, 0.5f, 1.0f, 1.0f), "%s", sprite._scriptId.asString().c_str());
-
-						if (ImGui::IsItemClicked(0))
-							addScriptCastToDisplay(sprite._scriptId);
-					}
+					displayScriptRef(sprite._scriptId);
 					ImGui::TableNextColumn();
 					ImGui::Text("0x%x", sprite._colorcode);
 					ImGui::TableNextColumn();
@@ -2917,14 +2925,7 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 			break;
 
 		case kModeBehavior:
-			if (sprite._scriptId.member) {
-				ImGui::TextColored(ImVec4(0.5f, 0.5f, 1.0f, 1.0f), "%s", sprite._scriptId.asString().c_str());
-
-				if (ImGui::IsItemClicked(0))
-					addScriptCastToDisplay(sprite._scriptId);
-			} else {
-				ImGui::Selectable("  ");
-			}
+			displayScriptRef(sprite._scriptId);
 			break;
 
 		case kChTempo:
@@ -2953,8 +2954,7 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 			break;
 
 		case kChScript:
-			if (frame._mainChannels.actionId.member)
-				ImGui::Text(Common::String::format("%d", frame._mainChannels.actionId.member).c_str());
+			displayScriptRef(frame._mainChannels.actionId);
 			break;
 
 		case kModeExtended: // Render empty row
