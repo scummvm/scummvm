@@ -94,7 +94,7 @@ public:
 	 * @param nControlID	Control Id
 	 * @return				Error return code
 	 */
-	virtual ErrorCode create(const char *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
+	ErrorCode create(const char *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
 	/**
 	 * Set the dialog flags

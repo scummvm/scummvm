@@ -512,7 +512,7 @@ public:
 
 	ErrorCode loadFile(const CBofString &sWldFile) override;
 
-	ErrorCode create(const char *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0) override;
+	ErrorCode create(const char *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
 	ErrorCode attach() override; // This function attaches the background and necessary bitmaps
 
