@@ -505,6 +505,12 @@ void View1::draw() {
 }
 
 bool View1::tick() {
+	// TODO: Check if this pattern works or it would be better different
+	// TODO: Check if loading also works with this pattern
+	if (!started) {
+		g_engine->changeScene(Scenes::instance().CurrentSceneIndex);
+		started = true;
+	}
 	// Cycle the palette
 	++_offset;
 	//for (int i = 0; i < 256; ++i)

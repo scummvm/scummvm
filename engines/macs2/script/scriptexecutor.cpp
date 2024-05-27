@@ -1550,7 +1550,13 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// c->GameObject->SceneIndex = sceneID;
 			currentView->characters.push_back(c);
 			continue;
-			
+		} else if (opcode1 == 0x2D) {
+			// TODO: This one seems to adjust something about pathfinding, but not sure what exactly
+			// It impacts the field di+22Fh of the object data, which is a bool
+			// This is an object ID
+			Func9F4D_Placeholder();
+			// This must return a bool
+			Func9F4D_Placeholder();
 		} else if (opcode1 == 0x3E) {
 			// TODO: Seems to have no visual difference
 			// TODO: No idea what the byte does
