@@ -173,6 +173,20 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// SQ5 demo
+	{
+		"sq5",
+		0,
+		{
+			{"cesdemo.ads", 0, "8b5d56353aae62c69fe81a3ef80c3789", 2394},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_DEMO,
+		GUIO1(GUIO_NONE)
+	},
+
 	AD_TABLE_END_MARKER
 };
 

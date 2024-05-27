@@ -48,6 +48,11 @@ ResourceManager::ResourceManager() {
 		}
 	}
 
+	if (!indexFile.isOpen()) {
+		warning("No DGDS volume index file found to open.");
+		return;
+	}
+
 	indexFile.skip(4); // salt for file hash, TODO
 	int volumes = indexFile.readUint16LE();
 

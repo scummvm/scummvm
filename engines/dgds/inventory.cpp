@@ -63,7 +63,10 @@ void Inventory::close() {
 
 void Inventory::setRequestData(const REQFileData &data) {
 	_reqData = data;
-	assert(_reqData._requests.size() > 0);
+	if (_reqData._requests.empty()) {
+		warning("No inventory request data to load");
+		return;
+	}
 	RequestData &req = _reqData._requests[0];
 	_prevPageBtn = dynamic_cast<ButtonGadget *>(req.findGadgetByNumWithFlags3Not0x40(14));
 	_nextPageBtn = dynamic_cast<ButtonGadget *>(req.findGadgetByNumWithFlags3Not0x40(15));

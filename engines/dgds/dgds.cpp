@@ -88,6 +88,8 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 		_gameId = GID_CHINA;
 	else if (!strcmp(gameDesc->gameId, "beamish"))
 		_gameId = GID_BEAMISH;
+	else if (!strcmp(gameDesc->gameId, "sq5"))
+		_gameId = GID_SQ5DEMO;
 	else
 		error("Unknown game ID");
 
@@ -309,6 +311,11 @@ void DgdsEngine::loadGameFiles() {
 
 		//_scene->load("S34.SDS", _resource, _decompressor);
 		_adsInterp->load("TITLE.ADS");
+	} else if (getGameId() == GID_SQ5DEMO) {
+		// TODO: Create a better type for this..
+		_gameGlobals = new DragonGlobals(_clock);
+		_gamePals->loadPalette("NORMAL.PAL");
+		_adsInterp->load("CESDEMO.ADS");
 	}
 
 	_gdsScene->runStartGameOps();
@@ -538,6 +545,8 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 
 	assert(_scene && _gdsScene);
 
+	_menu->hideMenu();
+
 	if (!s.syncVersion(1))
 		error("Save game version too new: %d", s.getVersion());
 
@@ -554,6 +563,8 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 		if (!_resource->hasResource(sceneFile))
 			error("Game references non-existant scene %d", sceneNum);
 
+		_soundPlayer->unloadMusic();
+		_soundPlayer->stopAllSfx();
 		_scene->unload();
 		_adsInterp->unload();
 		_scene->load(sceneFile, _resource, _decompressor);

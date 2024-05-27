@@ -56,6 +56,7 @@ public:
 	void playSFX(uint num);
 
 	void stopSfx(byte channel);
+	void stopAllSfx();
 
 	bool playPCM(const byte *data, uint32 size);
 

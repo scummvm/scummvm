@@ -78,6 +78,11 @@ void Sound::playAmigaSfx(const Common::String &filename, byte channel, byte volu
 	}
 }
 
+void Sound::stopAllSfx() {
+	for (uint i = 0; i < ARRAYSIZE(_channels); i++)
+		stopSfx(i);
+}
+
 void Sound::stopSfx(byte channel) {
 	if (_mixer->isSoundHandleActive(_channels[channel].handle)) {
 		_mixer->stopHandle(_channels[channel].handle);
