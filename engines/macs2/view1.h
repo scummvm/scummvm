@@ -131,7 +131,7 @@ class View1 : public UIElement {
 	int currentFadeValue = -1;
 	int fadeDelta = 4;
 
-
+	bool started = false;
 
 public:
 
