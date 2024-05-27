@@ -89,7 +89,11 @@ enum MenuButtonIds {
 	kMenuIntroPlay = 144,
 
 	kMenuRestartYes = 163,
-	kMenuRestartNo = 164
+	kMenuRestartNo = 164,
+
+	kMenuGameOverQuit = 169,
+	kMenuGameOverRestart = 168,
+	kMenuGameOverRestore = 170,
 };
 
 Menu::Menu() : _curMenu(kMenuNone) {
@@ -216,7 +220,7 @@ void Menu::handleMenu(Common::Point &mouse) {
 	case kMenuMainQuit:
 		drawMenu(kMenuQuit);
 		break;
-	case kMenuCalibrateVCR:  // NOTE: same as kMenuIntroPlay
+	case kMenuCalibrateVCR:  // NOTE: same ID as kMenuIntroPlay
 		if (_curMenu == kMenuSkipPlayIntro) {
 			hideMenu();
 		} else {
@@ -244,22 +248,27 @@ void Menu::handleMenu(Common::Point &mouse) {
 	case kMenuCalibrateMouse:
 		drawMenu(kMenuMouse);
 		break;
-	case kMenuFilesSave:
 	case kMenuChangeDirectoryCancel:
 		drawMenu(kMenuSave);
 		break;
 	case kMenuFilesRestore:
-		// TODO
-		debug("Clicked Files - Restore %d", clickedMenuItem);
+	case kMenuGameOverRestore:
+		if (g_engine->loadGameDialog())
+			hideMenu();
+		else
+			drawMenu(_curMenu);
 		break;
 	case kMenuFilesRestart:
 		drawMenu(kMenuRestart);
 		break;
+	case kMenuFilesSave:  	// TODO: Add an option to support original save/load dialogs?
 	case kMenuSavePrevious:
 	case kMenuSaveNext:
 	case kMenuSaveSave:
-		// TODO
-		debug("Clicked Save - %d", clickedMenuItem);
+		if (g_engine->saveGameDialog())
+			hideMenu();
+		else
+			drawMenu(_curMenu);
 		break;
 	case kMenuSaveChangeDirectory:
 		drawMenu(kMenuChangeDirectory);
@@ -278,6 +287,12 @@ void Menu::handleMenu(Common::Point &mouse) {
 	case kMenuRestartYes:
 		// TODO
 		debug("Clicked Restart - Yes %d", clickedMenuItem);
+		break;
+	case kMenuGameOverQuit:
+		drawMenu(kMenuQuit);
+		break;
+	case kMenuGameOverRestart:
+		drawMenu(kMenuRestart);
 		break;
 	default:
 		debug("Clicked ID %d", clickedMenuItem);

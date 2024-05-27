@@ -50,8 +50,8 @@ enum MenuId {
 	kMenuCalibrate = 3,
 	kMenuRestart = 4,
 	// 5: you cannot save your game right now
-	// 6: game over
-	kMenuFiles = 7,
+	kMenuGameOver = 6,	// num 41
+	kMenuFiles = 7,  	// num 21
 	// 8: save game not saved because disk is full
 	// 9: all game entries are full
 	kMenuSave = 10,
