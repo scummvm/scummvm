@@ -120,6 +120,8 @@ struct SAGAGameDescription {
 	ADGameFileDescription filesInArchive[5];
 };
 
+#define GAMEOPTION_COPY_PROTECTION	GUIO_GAMEOPTIONS1
+
 } // End of namespace Saga
 
 #endif // SAGA_DETECTION_H
