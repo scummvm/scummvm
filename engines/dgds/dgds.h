@@ -62,7 +62,8 @@ class Globals;
 enum DgdsGameId {
 	GID_DRAGON,
 	GID_CHINA,
-	GID_BEAMISH
+	GID_BEAMISH,
+	GID_SQ5DEMO,
 };
 
 enum DgdsDetailLevel {
