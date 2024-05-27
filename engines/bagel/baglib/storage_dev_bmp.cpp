@@ -98,19 +98,6 @@ ErrorCode CBagStorageDevBmp::loadFileFromStream(CBagIfstream &fpInput, const CBo
 	return CBagStorageDev::loadFileFromStream(fpInput, sWldName, bAttach);
 }
 
-CBofPoint CBagStorageDevBmp::getScaledPt(CBofPoint xPoint) {
-	CBofRect rDestRect = getRect();
-
-	CBofPoint pt;
-	pt.x = _cSrcRect.width() * xPoint.x / rDestRect.width();
-	pt.y = _cSrcRect.height() * xPoint.y / rDestRect.height();
-
-	pt.x += _cSrcRect.left;
-	pt.y += _cSrcRect.top;
-
-	return pt;
-}
-
 void CBagStorageDevBmp::onLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *info) {
 	CBagStorageDev::onLButtonDown(nFlags, xPoint, info);
 }

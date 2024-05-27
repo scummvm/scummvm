@@ -66,11 +66,6 @@ public:
 		_bTrans = bTrans;
 	}
 
-	/**
-	 * Return a scaled point from the screen to the bitmap
-	 */
-	CBofPoint getScaledPt(CBofPoint xPoint);
-
 	ErrorCode setBackground(CBofBitmap *pBmp) override;
 	CBofBitmap *getBackground() override {
 		return getBitmap();
