@@ -660,7 +660,7 @@ void MMovieXObj::m_writeFile(int nargs) {
 		path = prefix + path;
 	}
 
-	Common::SeekableWriteStream *stream = saves->openForSaving(path);
+	Common::SeekableWriteStream *stream = saves->openForSaving(path, false);
 
 	if (stream) {
 		debugC(5, kDebugXObj, "MMovieXObj::m_writeFile(): opening file %s as %s from the saves dir", origPath.c_str(), path.c_str());
