@@ -38,6 +38,7 @@
 #include "alcachofa/camera.h"
 #include "alcachofa/input.h"
 #include "alcachofa/player.h"
+#include "alcachofa/scheduler.h"
 #include "alcachofa/console.h"
 
 namespace Alcachofa {
@@ -45,6 +46,7 @@ namespace Alcachofa {
 class IRenderer;
 class DrawQueue;
 class World;
+class Script;
 struct AlcachofaGameDescription;
 
 class AlcachofaEngine : public Engine {
@@ -64,6 +66,8 @@ public:
 	inline Input &input() { return _input; }
 	inline Player &player() { return _player; }
 	inline World &world() { return *_world; }
+	inline Script &script() { return *_script; }
+	inline Scheduler &scheduler() { return _scheduler; }
 	inline Console &console() { return *_console; }
 
 	uint32 getFeatures() const;
@@ -114,9 +118,11 @@ private:
 	Common::ScopedPtr<IRenderer> _renderer;
 	Common::ScopedPtr<DrawQueue> _drawQueue;
 	Common::ScopedPtr<World> _world;
+	Common::ScopedPtr<Script> _script;
 	Camera _camera;
 	Input _input;
 	Player _player;
+	Scheduler _scheduler;
 };
 
 extern AlcachofaEngine *g_engine;
