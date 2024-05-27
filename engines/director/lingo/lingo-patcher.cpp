@@ -321,6 +321,20 @@ end \r\
 ";
 
 /*
+ * Virtual Nightclub will try and list all the files from all 26 drive letters
+ * to determine which has the CD. This works, but takes forever.
+ */
+
+const char *vncSkipDetection = " \
+global cdDriveLetter, gMultiDisk \r\
+on findVNCVolume \r\
+  set cdDriveLetter to \"D\" \r\
+  set gMultiDisk to 1 \r\
+  return 1 \r\
+end \r\
+";
+
+/*
  * Virtual Nightclub has a number of cheat codes for debugging.
  * These are normally enabled by pressing Option + 0, however the
  * released game has this code stubbed out with a return.
@@ -378,6 +392,7 @@ struct ScriptHandlerPatch {
 	{"kyoto", nullptr, kPlatformWindows, "ck_data\\opening\\shared.dxr", kMovieScript, 802, DEFAULT_CAST_LIB, &kyotoTextEntryFix},
 	{"kyoto", nullptr, kPlatformWindows, "ck_data\\rajoumon\\shared.dxr", kMovieScript, 840, DEFAULT_CAST_LIB, &kyotoTextEntryFix},
 	{"kyoto", nullptr, kPlatformWindows, "ck_data\\rokudou\\shared.dxr", kMovieScript, 846, DEFAULT_CAST_LIB, &kyotoTextEntryFix},
+	{"vnc", nullptr, kPlatformWindows, "VNC\\VNC.EXE", kMovieScript, 57, DEFAULT_CAST_LIB, &vncSkipDetection},
 	{"vnc", nullptr, kPlatformWindows, "VNC2\\SHARED.DXR", kMovieScript, 1248, DEFAULT_CAST_LIB, &vncEnableCheats},
 	{"amber", nullptr, kPlatformWindows, "AMBER_F\\AMBER_JB.EXE", kMovieScript, 7, DEFAULT_CAST_LIB, &amberDriveDetectionFix},
 	{nullptr, nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, nullptr},
