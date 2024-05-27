@@ -534,6 +534,14 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 *
 				return false;
 			break;
 		}
+		case kSceneOpAddFlagToDragItem: {
+			GameItem *item = engine->getScene()->getDragItem();
+			if (item) {
+				item->_flags |= 1;
+				// TODO: Also update position?
+			}
+			break;
+		}
 		case kSceneOpOpenInventoryZoom:
 			engine->getInventory()->setShowZoomBox(true);
 			engine->getInventory()->open();
@@ -567,6 +575,9 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 *
 			break;
 		case kSceneOpHideInvButton:
 			static_cast<DgdsEngine *>(g_engine)->getScene()->removeInvButtonFromHotAreaList();
+			break;
+		case kSceneOpOpenGameOverMenu:
+			static_cast<DgdsEngine *>(g_engine)->setMenuToTrigger(kMenuGameOver);
 			break;
 		case kSceneOpOpenPlaySkipIntroMenu:
 			static_cast<DgdsEngine *>(g_engine)->setMenuToTrigger(kMenuSkipPlayIntro);

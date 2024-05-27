@@ -611,9 +611,9 @@ void Dialog::fixupStringAndActions() {
 			while (i > 0 && _str[i - 1] == ' ') {
 				_str.deleteChar(i - 1);
 				for (auto &action : _action) {
-					if (action.strStart > i)
+					if (action.strStart >= i)
 						action.strStart--;
-					if (action.strEnd > i)
+					if (action.strEnd >= i)
 						action.strEnd--;
 				}
 				i--;

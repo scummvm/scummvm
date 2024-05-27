@@ -28,6 +28,7 @@
 
 #include "dgds/parser.h"
 #include "dgds/scene.h"
+#include "dgds/font.h"
 
 namespace Dgds {
 
@@ -55,6 +56,7 @@ class TTMEnviro : public ScriptParserData {
 public:
 	TTMEnviro() : _totalFrames(330), _enviro(0), ScriptParserData() {
 		ARRAYCLEAR(_scriptPals);
+		_fonts.push_back(FontManager::kDefaultFont); // is this right?
 	}
 
 	Common::Error syncState(Common::Serializer &s);
@@ -66,6 +68,7 @@ public:
 	Common::Array<GetPutRegion> _getPuts;
 	int _scriptPals[6];
 	Common::String _strings[10];
+	Common::Array<FontManager::FontType> _fonts;
 };
 
 enum TTMRunType {

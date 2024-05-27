@@ -202,7 +202,8 @@ const Font *FontManager::getFont(FontType type) const {
 	return _fonts.getVal(type);
 }
 
-void FontManager::tryLoadFont(FontType ftype, const char *fname, ResourceManager *resMgr, Decompressor *decomp) {
+void FontManager::tryLoadFont(const char *fname, ResourceManager *resMgr, Decompressor *decomp) {
+	FontType ftype = fontTypeByName(fname);
 	Font *font = Font::load(fname, resMgr, decomp);
 	if (font)
 		_fonts.setVal(ftype, font);
@@ -210,23 +211,47 @@ void FontManager::tryLoadFont(FontType ftype, const char *fname, ResourceManager
 		error("Failed to load font %s", fname);
 }
 
+FontManager::FontType FontManager::fontTypeByName(const Common::String &filename) const {
+	if (filename == "8X8.FNT") return k8x8Font;
+	if (filename == "6X6.FNT") return k6x6Font;
+	if (filename == "4x5.FNT") return k4x5Font;
+	if (filename == "DRAGON.FNT") return kGameFont;
+	if (filename == "7X8.FNT") return k7x8Font;
+	if (filename == "P6X6.FNT") return kGameDlgFont;
+	if (filename == "HOC.FNT") return kGameFont;
+	if (filename == "CHINA.FNT") return kChinaFont;
+	if (filename == "CHINESE.FNT") return kGameDlgFont;
+	if (filename == "WILLY.FNT") return kGameFont;
+	if (filename == "WVCR.FNT") return kWVCRFont;
+	if (filename == "COMIX_16.FNT") return kGameDlgFont;
+	return FontManager::kDefaultFont;
+}
+
 
 void FontManager::loadFonts(DgdsGameId gameId, ResourceManager *resMgr, Decompressor *decomp) {
-	tryLoadFont(k8x8Font, "8X8.FNT", resMgr, decomp);
-	tryLoadFont(k6x6Font, "6X6.FNT", resMgr, decomp);
-	tryLoadFont(k4x5Font, "4x5.FNT", resMgr, decomp);
+	if (gameId == GID_SQ5DEMO) {
+		tryLoadFont("EXIT.FNT", resMgr, decomp);
+		//tryLoadFont("SSM1_12.FNT", resMgr, decomp);
+		//tryLoadFont("SSM1_15.FNT", resMgr, decomp);
+		//tryLoadFont("SSM1_30.FNT", resMgr, decomp);
+		return;
+	}
+
+	tryLoadFont("8X8.FNT", resMgr, decomp);
+	tryLoadFont("6X6.FNT", resMgr, decomp);
+	tryLoadFont("4x5.FNT", resMgr, decomp);
 	if (gameId == GID_DRAGON) {
-		tryLoadFont(kGameFont, "DRAGON.FNT", resMgr, decomp);
-		tryLoadFont(k7x8Font, "7X8.FNT", resMgr, decomp);
-		tryLoadFont(kGameDlgFont, "P6X6.FNT", resMgr, decomp);
+		tryLoadFont("DRAGON.FNT", resMgr, decomp);
+		tryLoadFont("7X8.FNT", resMgr, decomp);
+		tryLoadFont("P6X6.FNT", resMgr, decomp);
 	} else if (gameId == GID_CHINA) {
-		tryLoadFont(kGameFont, "HOC.FNT", resMgr, decomp);
-		tryLoadFont(kChinaFont, "CHINA.FNT", resMgr, decomp);
-		tryLoadFont(kGameDlgFont, "CHINESE.FNT", resMgr, decomp);
+		tryLoadFont("HOC.FNT", resMgr, decomp);
+		tryLoadFont("CHINA.FNT", resMgr, decomp);
+		tryLoadFont("CHINESE.FNT", resMgr, decomp);
 	} else if (gameId == GID_BEAMISH) {
-		tryLoadFont(kGameFont, "WILLY.FNT", resMgr, decomp);
-		tryLoadFont(kWVCRFont, "WVCR.FNT", resMgr, decomp);
-		tryLoadFont(kGameDlgFont, "COMIX_16.FNT", resMgr, decomp);
+		tryLoadFont("WILLY.FNT", resMgr, decomp);
+		tryLoadFont("WVCR.FNT", resMgr, decomp);
+		tryLoadFont("COMIX_16.FNT", resMgr, decomp);
 	}
 
 	_fonts.setVal(kDefaultFont, _fonts.getVal(kGameFont));
