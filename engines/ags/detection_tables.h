@@ -898,7 +898,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "caseofthemuffindiver", "The case of The Muffin Diver" },
 	{ "cassandra", "Cassandra" },
 	{ "castleescapech1", "Castle Escape - Chapter 1" },
-	{ "castleescapech2", "Castle Escape - Chapter 2" },
 	{ "castleoffire", "Castle of Fire" },
 	{ "catacombic", "Catacombic" },
 	{ "catapault", "CATapault" },
@@ -1245,7 +1244,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "electrokit", "Maaikes Elektrokit" },
 	{ "elegantmurdermystery", "The Elegant Murder Mystery" },
 	{ "elevation", "Elevation" },
-	{ "elevator", "The Elevator" },
 	{ "elevatorriseabyss", "The Elevator - Rise from the Abyss!" },
 	{ "elfer", "Elfer" },
 	{ "elfmotorsinc", "Elf Motors Inc." },
@@ -1269,6 +1267,8 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "enterthestory", "Enter The Story" },
 	{ "entrapment", "Entrapment" },
 	{ "entrapped", "Entrapped" },
+	{ "epsteinislandp1", "The Mystery of Epstein Island - Part 1: Day" },
+	{ "epsteinislandp2", "The Mystery of Epstein Island - Part 2: Sunset" },
 	{ "equilibrium", "Equilibrium - Out of Time" },
 	{ "erictheanteater", "Eric the Anteater" },
 	{ "ericmegalith", "Eric And The Apostolic Megalith" },
@@ -1583,6 +1583,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "hubris", "Hubris - A Popular Pub Pastime" },
 	{ "hueshaunt", "Hues of the Haunt" },
 	{ "hugglestrip", "Huggles Goes On A Trip!" },
+	{ "humbleescape", "The Improbable Humble Escape" },
 	{ "hungry", "Hungry" },
 	{ "hungryworm", "Hungry Worm" },
 	{ "huongjiaoping", "Huong Jiao Ping" },
@@ -2979,6 +2980,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "startrekgalactique", "Star Trek - Aventure Galactique" },
 	{ "startrekgloriousep1", "Star Trek: Glorious Wolf - Episode 1" },
 	{ "startrekgloriousep2", "Star Trek: Glorious Wolf - Episode 2" },
+	{ "startrekgloriousremake", "Star Trek: Glorious Wolf Remake" },
 	{ "startrekmansion", "Star Trek - Back To The Mansion" },
 	{ "startrekmission", "Star Trek Mission" },
 	{ "startreknewton", "Star Trek Newton - Part One: Anomaly" },
@@ -3563,11 +3565,13 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "breakfastrequiem", "Breakfast Requiem" },
 	{ "brianeggswoods", "Brian Eggs Is Lost In The Woods" },
 	{ "bubbygod", "Bubby Kills God" },
+	{ "castleescapech2", "Castle Escape - Chapter 2" },
 	{ "dreadmacfarlaneisep1", "Dread Mac Farlane Interactive Story - Episode 1" },
 	{ "dreadmacfarlaneisep2", "Dread Mac Farlane Interactive Story - Episode 2" },
 	{ "flowproblem", "Flow Problem" },
 	{ "gloriouswolfcomicsep1", "Glorious Wolf - Interactive Musical Comics Ep. 1" },
 	{ "gloriouswolfcomicsep2", "Glorious Wolf - Interactive Musical Comics Ep. 2" },
+	{ "hydrahead", "Hydra's Head" },
 	{ "jakoquest", "JaKo Quest" },
 	{ "jaro", "Jaro" },
 	{ "lonelyspaces", "Lonely Spaces" },
@@ -4056,6 +4060,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY("brianeggswoods", "Brian Eggs Woods.ags", "8b23975e2fdf0a5f1124230ca3219016", 11428377),
 	UNSUPPORTED_GAME_ENTRY("bubbygod", "Bubby's adventure.ags", "4466d8b8cbc0f20904f4d7989c2ed5d7", 69402382),
 	UNSUPPORTED_GAME_ENTRY("flowproblem", "Flow Problem.ags", "4e82d48102ea7ca1d72d675db69ddec3", 177517),  // v1.01
+	UNSUPPORTED_GAME_ENTRY("hydrahead", "Hydra.ags", "6283040a165e21b0c2dc4faa020a1861", 185123953),
 	UNSUPPORTED_GAME_ENTRY("jaro", "Jaro.ags", "73ea767bec41a9e0bb7dc16ce74b35e4", 20333293),  // Polish
 	UNSUPPORTED_GAME_ENTRY("jakoquest", "JakoQuest.exe", "0b66b6f4745d0d997d2d07402d2fa7af", 9243132),
 	UNSUPPORTED_GAME_ENTRY("jakoquest", "JakoQuest.ags", "30e193ae11033abafd33825595e449a5", 6103016),
@@ -4071,6 +4076,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 
 	// AGS 4 games
 	UNSUPPORTED_GAME_ENTRY("achristmasnightmare", "xmasnightmare.exe", "53db6ba4864b17a28b8176d92459c7bc", 49689828),  // v1.3 Windows En-Es-It
+	UNSUPPORTED_GAME_ENTRY("castleescapech2", "CastleEscapeChapter2.exe", "124753417c6ccda01c93f9935eb5a87d", 4527841),  // Windows
+	UNSUPPORTED_GAME_ENTRY("castleescapech2", "CastleEscapeChapter2.ags", "3a1136db0175eb81b499bc4c755ecbee", 1549005),  // Linux
 	UNSUPPORTED_GAME_ENTRY("dreadmacfarlaneisep1", "Dread Mac Farlane 1.ags", "f9d45767a3cf610b6fe777da54c5234d", 468102549),
 	UNSUPPORTED_GAME_ENTRY("dreadmacfarlaneisep1", "Dread Mac Farlane 1_English.ags", "68999f3a425f0da1d558a72a8bff7f26", 468102549),
 	UNSUPPORTED_GAME_ENTRY("dreadmacfarlaneisep2", "Dread Mac Farlane 2.ags", "df836f1cd98fdbf959d49701e47e2207", 296604541),
@@ -4933,6 +4940,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("cybermemory", "CybermemoryNotFound.exe", "7971a7c02d414dc8cb33b6ec36080b91", 3851249),  // Windows
 	DEMO_ENTRY_EN("cybermemory", "CybermemoryNotFound.ags", "49416a0d45607a9a352fec6788ed712f", 1354209),  // Linux
 	DEMO_ENTRY_EN("cyberpunk97ep1", "zone - Copy.exe", "78dd4ca028ee0156b6a093d6d780aa65", 717217747),
+	DEMO_ENTRY_EN("cyberpunk97ep1", "zone - Copy.exe", "78dd4ca028ee0156b6a093d6d780aa65", 1014330648),
 	DEMO_ENTRY_EN("danewguys2", "dng2 demo.exe", "0d2e8dc76f9ac381d204a3ac763b0bac", 5235302),
 	DEMO_ENTRY_EN("dangermouse", "Danger Mouse.exe", "eed666c68be394737de478a52210dde4", 247422806),
 	DEMO_ENTRY_EN("dawnswonderedatagesend", "myGame.exe", "75f4c7f66b1be60af5b2d65f617b91a7", 243406385),
@@ -5938,8 +5946,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("cassandra", "GPCv16.exe", "615e73fc1874e92d60a1996c2330ea36", 46787711),
 	GAME_ENTRY_EN("castleescapech1", "CastleEscapeAdventure.exe", "3ab9922a2ab7c5875af4c9794b33e012", 4611747),  // Windows
 	GAME_ENTRY_EN("castleescapech1", "CastleEscapeAdventure.ags", "32201bc4a4bb0e678837e8b798094cb5", 1507983),  // Linux
-	GAME_ENTRY_EN("castleescapech2", "CastleEscapeChapter2.exe", "124753417c6ccda01c93f9935eb5a87d", 4527841),  // Windows
-	GAME_ENTRY_EN("castleescapech2", "CastleEscapeChapter2.ags", "3a1136db0175eb81b499bc4c755ecbee", 1549005),  // Linux
 	GAME_ENTRY_EN("castleoffire", "castle of fire.exe", "b6f0726bd5776abee0d452b8f1073850", 14800915),
 	GAME_ENTRY_EN("catacombic", "catacombic.exe", "057d1aa29f6fadd83209268efcfb35a3", 7317791),
 	GAME_ENTRY_EN("catapault", "catapault.exe", "290afe0bac54418822f15175e474731d", 8286661),
@@ -6249,6 +6255,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("distancenoobject", "Distance no object.ags", "60b1978b591c4ffcb63e81e69d425343", 94977705),  // Linux
 	GAME_ENTRY_EN("djdeceased", "RON.exe", "0710e2ec71042617f565c01824f0cf3c", 1175250),
 	GAME_ENTRY_EN("dlistdiva", "D-List Diva.exe", "aed48ef1dd9615ab3df8504b277e8d45", 8330523),
+	GAME_ENTRY_EN("dlistdiva", "D-List Diva.exe", "aed48ef1dd9615ab3df8504b277e8d45", 8338409),
 	GAME_ENTRY_EN("dobutsu", "Dobutsu no Costco.exe", "b781cc4ab0fbe647615fafa4830ec308", 29725433),
 	GAME_ENTRY_EN("doctormaze", "Maze.exe", "825ccacaabe2a3b0cd48d6f8deb42d72", 43934617),
 	GAME_ENTRY_EN("doctormuttonchop", "muttonchop.exe", "57e261dd3bb45761af4a002775e45710", 5781714),
@@ -6372,7 +6379,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_PLATFORM("elevation", "Elevation.exe", "2f2bc0b9c539d20529c0e343315d5f65", 7471160, "Beta"),  // Windows
 	GAME_ENTRY_EN_PLATFORM("elevation", "Elevation.exe", "2f2bc0b9c539d20529c0e343315d5f65", 7472883, "Beta"),
 	GAME_ENTRY_EN("elevation", "Elevation.exe", "82e7377dcb9236fc9b622e12baa64a49", 7605580),
-	GAME_ENTRY_EN("elevator", "Elevator.exe", "f10516e88ec858700804ee69d041aead", 29506915),
+	GAME_ENTRY_EN_PLATFORM("elevatorriseabyss", "Elevator.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 6563864, "OROW"),
 	GAME_ENTRY_EN("elevatorriseabyss", "T_E_R.exe", "f120690b506dd63cd7d1112ea6af2f77", 13366126),
 	GAME_ENTRY_LANG("elfer", "socer.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 1911767, Common::DE_DEU),
 	GAME_ENTRY_EN("elfmotorsinc", "ElfMtrs.exe", "3421b46ff95c5885603086c39a038a20", 8036769),
@@ -6392,6 +6399,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_LANG("enqueteolonnes", "Enquete au pays des olonnes.exe", "eee23783ae8f3d6c6d3a488c7b37c30d", 623504563, Common::FR_FRA),
 	GAME_ENTRY_EN("entrapment", "Entrapment.exe", "fa876182475fd84bc104e3458b7ba362", 24899784),
 	GAME_ENTRY_EN("entrapped", "Cellar.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 4644055),
+	GAME_ENTRY_EN("epsteinislandp1", "The Mystery of Epstein Island Day.exe", "7971a7c02d414dc8cb33b6ec36080b91", 121973362),
+	GAME_ENTRY_EN("epsteinislandp2", "The Mystery of Epstein Island Sunset.exe", "7633f0919378749cebf6dacba61ca0e1", 368117943),
 	GAME_ENTRY_EN("equilibrium", "EQ.exe", "0500aacb6c176d47ac0f8158f055db83", 8398394),
 	GAME_ENTRY_EN("erictheanteater", "eric.exe", "e750ecac380dca709028fc0744b9f7f6", 3865602),
 	GAME_ENTRY_EN("erkrealestate", "AISRE.exe", "41e8fa920589300ed8b4aec09a658c90", 5958575),
@@ -6788,6 +6797,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("hueshaunt", "hothsv122023.ags", "84b788c6c0cb73070a819f453a7674d3", 32610593),  // Linux
 	GAME_ENTRY_EN("hugglestrip", "HugglesGoesOnATrip.exe", "506a1ba4dbcf04ca9fd8b62e4fea0e05", 4287650),  // Windows
 	GAME_ENTRY_EN("hugglestrip", "HugglesGoesOnATrip.ags", "112e1e4e8ea08e4fb60199cfbd307b89", 1095822),  // Linux
+	GAME_ENTRY_LANG("humbleescape", "the improbable humble escape.exe", "615e73fc1874e92d60a1996c2330ea36", 4905648, Common::IT_ITA),
 	GAME_ENTRY_EN("hungry", "Hungry!.exe", "0710e2ec71042617f565c01824f0cf3c", 15619749),
 	GAME_ENTRY_LANG("hungryworm", "boom.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 934966, Common::NL_NLD),
 	GAME_ENTRY_EN("huongjiaoping", "hotpot.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 47237302),
@@ -8453,6 +8463,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("startrekmission", "Startrek Missions.exe", "c5169c7e073c9149ff8ca756489c9298", 300402830),  // En-Fr
 	GAME_ENTRY("startrekgloriousep1", "Star Trek - Glorious Wolf (episode 1).ags", "6b4e80a9ba2361789865042a0886ac09", 156744056),  // En-Fr
 	GAME_ENTRY("startrekgloriousep2", "Star Trek - Glorious Wolf (episode 1).ags", "4464e26de4596da161eb61429c830bf7", 206850101),  // En-Fr (misnamed)
+	GAME_ENTRY("startrekgloriousremake", "Star Trek - Glorious Wolf.ags", "57aa944ea0430031110a55f988bcdda5", 696865216),  // En-Fr
 	GAME_ENTRY_EN("startreknewton", "Anomaly.exe", "721e8a1dce90fc3ee31cade9a50d9e75", 8750111),
 	GAME_ENTRY_EN("stateofmind", "State of Mind.exe", "be13cb758d3568b0532695081ab64683", 15933385),
 	GAME_ENTRY_EN("stateofmind", "State of Mind.exe", "dbe9bab672130b9a84925cb6da64a3db", 15934766),
@@ -8670,7 +8681,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("thedusseldorfconspiracy", "dusseldorf.exe", "465f972675db2da6040518221af5b0ba", 60878686),
 	GAME_ENTRY_EN("thedwarvendaggerofblitz", "teste2.exe", "06a03fe35791b0578068ab1873455463", 9874658),
 	GAME_ENTRY_EN("thedwarvendaggerofblitzch2", "TDDOB.exe", "82da2565c456dcfb265ded6fe3189c0b", 69210852),
-	GAME_ENTRY_EN("theelevator", "Elevator.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 6563864),  // Windows
+	GAME_ENTRY_EN("theelevator", "Elevator.exe", "f10516e88ec858700804ee69d041aead", 29506915),  // Windows
 	GAME_ENTRY_EN("theelevator", "Elevator.ags", "7b10f25449c5feef532155c7fbe99192", 27064147),  // Linux
 	GAME_ENTRY_EN("theendlessnight", "An Endless Night.exe", "ae8d17427ae4a33be146967054f0fcf1", 7052775),
 	GAME_ENTRY_EN("theenergizer", "TheEnergizer.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 54539625),
