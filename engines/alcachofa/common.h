@@ -22,6 +22,8 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include "common/scummsys.h"
+
 namespace Alcachofa {
 
 enum class CursorType {
@@ -42,6 +44,12 @@ enum class Direction {
 	Left,
 
 	Invalid = -1
+};
+
+enum class MainCharacterKind {
+	None,
+	Mortadelo,
+	Filemon
 };
 
 constexpr const int32 kDirectionCount = 4;
