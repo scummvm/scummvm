@@ -49,7 +49,6 @@
 	kFeatures800x600,
 	0,0,0
 },
-
 {
 	{
 
@@ -81,7 +80,20 @@
 	kFeatures800x600,
 	0,0,0
 },
+{
+	{
 
+		"adi5",
+		_s("Missing game code"), // Addy 5 5.03 (Engine: DEV7 version 1.1.0.0)
+		AD_ENTRY1s("adi5.stk", "b45a85ac21fccbb890edcbba36d11f42", 885616),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	0,0,0
+},
 {
 	{
 
