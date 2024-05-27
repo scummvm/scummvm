@@ -346,7 +346,7 @@ void Score::setDelay(uint32 ticks) {
 	// will be acknowledged.
 	if (!_nextFrameDelay) {
 		_nextFrameDelay = g_system->getMillis() + (ticks * 1000 / 60);
-		debugC(5, kDebugLoading, "Score::setDelay(): delaying %d ticks, next frame time at %d", ticks, _nextFrameDelay);
+		debugC(5, kDebugEvents, "Score::setDelay(): delaying %d ticks, next frame time at %d", ticks, _nextFrameDelay);
 	}
 }
 
@@ -356,7 +356,7 @@ void Score::setCurrentFrame(uint16 frameId) {
 
 bool Score::isWaitingForNextFrame() {
 	bool keepWaiting = false;
-	debugC(8, kDebugLoading, "Score::isWaitingForNextFrame(): nextFrameTime: %d, time: %d, sound: %d, click: %d, video: %d", _nextFrameTime, g_system->getMillis(false), _waitForChannel, _waitForClick, _waitForVideoChannel);
+	debugC(8, kDebugEvents, "Score::isWaitingForNextFrame(): nextFrameTime: %d, time: %d, sound: %d, click: %d, video: %d", _nextFrameTime, g_system->getMillis(false), _waitForChannel, _waitForClick, _waitForVideoChannel);
 
 	if (_waitForChannel) {
 		if (_soundManager->isChannelActive(_waitForChannel)) {
@@ -383,7 +383,7 @@ bool Score::isWaitingForNextFrame() {
 	}
 
 	if (!keepWaiting) {
-		debugC(8, kDebugLoading, "Score::isWaitingForNextFrame(): end of wait cycle");
+		debugC(8, kDebugEvents, "Score::isWaitingForNextFrame(): end of wait cycle");
 	}
 	return keepWaiting;
 }
@@ -473,32 +473,32 @@ void Score::updateNextFrameTime() {
 		if (tempo >= 256 - maxDelay) {
 			// Delay
 			_nextFrameTime = g_system->getMillis() + (256 - tempo) * 1000;
-			debugC(5, kDebugLoading, "Score::updateNextFrameTime(): setting _nextFrameTime to %d based on a delay of %d", _nextFrameTime, 256 - tempo);
+			debugC(5, kDebugEvents, "Score::updateNextFrameTime(): setting _nextFrameTime to %d based on a delay of %d", _nextFrameTime, 256 - tempo);
 		} else if (tempo <= 120) {
 			// FPS
 			_currentFrameRate = tempo;
 			if (g_director->_fpsLimit)
 				_currentFrameRate = MIN(g_director->_fpsLimit, _currentFrameRate);
 			_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
-			debugC(5, kDebugLoading, "Score::updateNextFrameTime(): setting _nextFrameTime to %d based on a framerate of %d", _nextFrameTime, _currentFrameRate);
+			debugC(5, kDebugEvents, "Score::updateNextFrameTime(): setting _nextFrameTime to %d based on a framerate of %d", _nextFrameTime, _currentFrameRate);
 		} else {
 			if (tempo == 128) {
 				_waitForClick = true;
 				_waitForClickCursor = false;
 				renderCursor(_movie->getWindow()->getMousePos());
-				debugC(5, kDebugLoading, "Score::updateNextFrameTime(): waiting for mouse click before next frame");
+				debugC(5, kDebugEvents, "Score::updateNextFrameTime(): waiting for mouse click before next frame");
 			} else if (!waitForClickOnly && tempo == 135) {
 				// Wait for sound channel 1
 				_waitForChannel = 1;
-				debugC(5, kDebugLoading, "Score::updateNextFrameTime(): waiting for sound channel 1 before next frame");
+				debugC(5, kDebugEvents, "Score::updateNextFrameTime(): waiting for sound channel 1 before next frame");
 			} else if (!waitForClickOnly && tempo == 134) {
 				// Wait for sound channel 2
 				_waitForChannel = 2;
-				debugC(5, kDebugLoading, "Score::updateNextFrameTime(): waiting for sound channel 2 before next frame");
+				debugC(5, kDebugEvents, "Score::updateNextFrameTime(): waiting for sound channel 2 before next frame");
 			} else if (!waitForClickOnly && tempo >= 136 && tempo <= 135 + _numChannelsDisplayed) {
 				// Wait for a digital video in a channel to finish playing
 				_waitForVideoChannel = tempo - 135;
-				debugC(5, kDebugLoading, "Score::updateNextFrameTime(): waiting for video in channel %d before next frame", _waitForVideoChannel);
+				debugC(5, kDebugEvents, "Score::updateNextFrameTime(): waiting for video in channel %d before next frame", _waitForVideoChannel);
 			} else {
 				warning("Score::updateNextFrameTime(): Unhandled tempo instruction: %d", tempo);
 			}
@@ -578,7 +578,7 @@ void Score::update() {
 	// set the delay time/condition until the next frame
 	updateNextFrameTime();
 
-	debugC(1, kDebugLoading, "******************************  Current frame: %d, time: %d", _curFrameNumber, g_system->getMillis(false));
+	debugC(1, kDebugEvents, "******************************  Current frame: %d, time: %d", _curFrameNumber, g_system->getMillis(false));
 	g_debugger->frameHook();
 
 	// movie could have been stopped by a window switch or a debug flag
@@ -603,7 +603,7 @@ void Score::update() {
 
 	// check to see if we've hit the recursion limit
 	if (_vm->getVersion() >= 400 && _window->frozenLingoStateCount() >= 2) {
-		debugC(1, kDebugLoading, "Score::update(): hitting depth limit for D4 scripts, defrosting");
+		debugC(1, kDebugEvents, "Score::update(): hitting depth limit for D4 scripts, defrosting");
 		processFrozenScripts();
 		return;
 	} else if (_window->frozenLingoStateCount() >= 64) {
@@ -700,7 +700,7 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 		_cursorDirty = false;
 	}
 	uint32 end = g_system->getMillis(false);
-	debugC(5, kDebugLoading, "Score::renderFrame() finished in %d millis", end - start);
+	debugC(5, kDebugEvents, "Score::renderFrame() finished in %d millis", end - start);
 }
 
 bool Score::renderTransition(uint16 frameId, RenderMode mode) {
