@@ -402,12 +402,6 @@ protected:
 	Common::Stack<Common::Point> _pathPoints;
 };
 
-enum class MainCharacterKind {
-	None,
-	Mortadelo,
-	Filemon
-};
-
 struct DialogMenuLine {
 	int32 _dialogId;
 	int32 _yPosition;

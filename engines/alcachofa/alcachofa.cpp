@@ -33,6 +33,7 @@
 #include "graphics/framelimiter.h"
 
 #include "rooms.h"
+#include "script.h"
 
 using namespace Math;
 
@@ -61,6 +62,7 @@ Common::Error AlcachofaEngine::run() {
 	_renderer.reset(IRenderer::createOpenGLRenderer(Common::Point(1024, 768)));
 	_drawQueue.reset(new DrawQueue(_renderer.get()));
 	_world.reset(new World());
+	_script.reset(new Script());
 
 	world().globalRoom().loadResources();
 
