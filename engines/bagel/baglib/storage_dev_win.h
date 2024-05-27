@@ -294,7 +294,7 @@ public:
 		return _pAssociateWnd;
 	}
 
-	virtual ParseCodes setInfo(CBagIfstream &fpInput); // This function call the pure virt set background
+	ParseCodes setInfo(CBagIfstream &fpInput) override; // This function call the pure virt set background
 
 	virtual ErrorCode setBackground(CBofBitmap *pBmp) = 0; // This could be eliminated but is kept in to insure good class usage
 	virtual CBofBitmap *getBackground() = 0;                // Think about it, you can figure this out
@@ -309,7 +309,6 @@ public:
 
 	virtual ErrorCode loadObjects();
 	virtual ErrorCode releaseObjects();
-	// virtual ErrorCode   InsertObjects(CBagObject *);
 	virtual ErrorCode noObjectsUnderMouse();
 
 	virtual const CBofPoint devPtToViewPort(const CBofPoint &xPoint) {
