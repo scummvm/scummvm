@@ -41,6 +41,20 @@
 
 namespace Saga {
 
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_COPY_PROTECTION,
+		{
+			_s("Enable copy protection"),
+			_s("Enable any copy protection that would otherwise be bypassed by default."),
+			"copy_protection",
+			false,
+			0,
+			0
+		},
+	}
+};
+
 bool SagaEngine::isBigEndian() const { return (isMacResources() || (getPlatform() == Common::kPlatformAmiga)) && getGameId() == GID_ITE; }
 bool SagaEngine::isMacResources() const { return (getPlatform() == Common::kPlatformMacintosh); }
 
@@ -75,6 +89,10 @@ class SagaMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "saga";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return Saga::optionsList;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;

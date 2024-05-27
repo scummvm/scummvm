@@ -372,7 +372,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		GF_8BIT_UNSIGNED_PCM,
@@ -400,7 +400,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		GF_8BIT_UNSIGNED_PCM,
@@ -425,7 +425,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		0,
@@ -450,7 +450,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformUnknown,	// Most of the resources are Little Endian
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		GF_SOME_MAC_RESOURCES,
@@ -483,7 +483,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformUnknown,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		0,
@@ -511,7 +511,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformUnknown,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		0,
@@ -543,7 +543,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformUnknown,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		0,
@@ -570,7 +570,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		GF_EXTRA_ITE_CREDITS,
@@ -597,7 +597,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformLinux,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		GF_EXTRA_ITE_CREDITS,
@@ -623,7 +623,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		GF_EXTRA_ITE_CREDITS,
@@ -649,7 +649,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformWindows,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		0,
@@ -675,7 +675,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformLinux,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		0,
@@ -700,7 +700,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		0,
@@ -726,7 +726,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		0,
@@ -752,7 +752,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformLinux,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		0,
@@ -777,7 +777,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		0,
@@ -802,7 +802,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		0,
@@ -827,7 +827,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::HE_ISR,
 			Common::kPlatformUnknown,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		0,
@@ -853,7 +853,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		0,
@@ -960,7 +960,7 @@ static const SAGAGameDescription gameDescriptions[] = {
  			Common::JA_JPN,
  			Common::kPlatformPC98,
  			ADGF_CD,
- 			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
  		},
  		GID_ITE,
 		GF_ITE_FLOPPY,	// Even it that game version comes on a CD it behaves like a DOS floppy version
@@ -985,7 +985,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::RU_RUS,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		0,
@@ -1012,7 +1012,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
+			GUIO2(GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		GF_ITE_FLOPPY,
@@ -1037,7 +1037,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
+			GUIO2(GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		GF_ITE_FLOPPY,
@@ -1066,7 +1066,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
+			GUIO2(GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		GF_ITE_FLOPPY | GF_INSTALLER,
@@ -1096,7 +1096,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
+			GUIO2(GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		GF_ITE_FLOPPY,
@@ -1121,7 +1121,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::ZH_TWN,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
+			GUIO2(GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		GF_ITE_FLOPPY,
@@ -1146,7 +1146,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::RU_RUS,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
+			GUIO2(GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		GF_ITE_FLOPPY,
@@ -1175,7 +1175,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformAmiga,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		GF_EXTRA_ITE_CREDITS | GF_AGA_GRAPHICS,
@@ -1202,7 +1202,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformAmiga,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		GF_EXTRA_ITE_CREDITS | GF_ECS_GRAPHICS,
@@ -1228,7 +1228,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		GF_EXTRA_ITE_CREDITS | GF_AGA_GRAPHICS,
@@ -1254,7 +1254,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		GF_EXTRA_ITE_CREDITS | GF_ECS_GRAPHICS,
@@ -1280,7 +1280,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
+			GUIO2(GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		GF_ITE_FLOPPY | GF_AGA_GRAPHICS | GF_EMBED_FONT | GF_POWERPACK_GFX,
@@ -1304,7 +1304,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
+			GUIO2(GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		GF_ITE_FLOPPY | GF_ECS_GRAPHICS | GF_EMBED_FONT | GF_POWERPACK_GFX,
@@ -1328,7 +1328,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
+			GUIO2(GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
 		},
 		GID_ITE,
 		GF_ITE_FLOPPY | GF_ECS_GRAPHICS | GF_EMBED_FONT | GF_POWERPACK_GFX,
