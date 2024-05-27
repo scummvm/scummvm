@@ -60,10 +60,10 @@ public:
 	void setResource(uint32 nResId) {
 		_nResId = nResId;
 	}
-	const char *getResourceName() {
+	const char *getResourceName() const {
 		return _lpszResourceName;
 	}
-	uint32 getResourceId() {
+	uint32 getResourceId() const {
 		return _nResId;
 	}
 };
@@ -141,7 +141,7 @@ public:
 	void setDiskID(uint16 nDiskID) {
 		_nDiskID = nDiskID;
 	}
-	uint16 getDiskID() {
+	uint16 getDiskID() const {
 		return _nDiskID;
 	}
 
@@ -149,7 +149,7 @@ public:
 		return ERR_NONE;
 	}
 
-	bool isCloseup() {
+	bool isCloseup() const {
 		return _bCloseup;
 	}
 	void setCloseup(bool b = true) {
@@ -163,14 +163,14 @@ public:
 	}
 
 	// Set to true if this is a hand coded closeup
-	bool isCustom() {
+	bool isCustom() const {
 		return _bCustom;
 	}
 	void setCustom(bool b = true) {
 		_bCustom = b;
 	}
 
-	int getDeviceType() {
+	int getDeviceType() const {
 		return _xSDevType;
 	}
 
@@ -180,10 +180,11 @@ public:
 	CBagObject *getObject(const CBofPoint &xPoint, bool bActiveOnly = false);
 	CBagObject *getObject(const CBofString &sName, bool bActiveOnly = false);
 	CBagObject *getObjectByType(const CBofString &sName, bool bActiveOnly = false);
-	CBofPoint &getLastCursorLocation() {
+
+	static CBofPoint &getLastCursorLocation() {
 		return *_xCursorLocation;
 	}
-	CBofList<CBagObject *> *getObjectList() {
+	CBofList<CBagObject *> *getObjectList() const {
 		return _pObjectList;
 	}
 	void setObjectList(CBofList<CBagObject *> *pList, CBofList<CBagExpression *> *pEList = nullptr);
@@ -191,16 +192,19 @@ public:
 	bool contains(CBagObject *pObj, bool bActive = true);
 
 	// virtual CBofRect getLocation()                       { return CBofRect(); }
-	CBofRect getRect() {
+	virtual CBofRect getRect() {
 		return _cDestRect;
 	}
-	void setRect(const CBofRect &xRect) {
+
+	virtual void setRect(const CBofRect &xRect) {
 		_cDestRect = xRect;
 	}
-	CBofPoint getPosition() {
+
+	virtual CBofPoint getPosition() {
 		return _cDestRect.topLeft();
 	}
-	void setPosition(const CBofPoint &pos);
+
+	virtual void setPosition(const CBofPoint &pos);
 
 	virtual ErrorCode addObject(CBagObject *pObj, int nPos = 0); // Add a new object
 	virtual ErrorCode activateLocalObject(CBagObject *pObj);
@@ -214,7 +218,7 @@ public:
 
 	virtual void setHelpFilename(const CBofString &) {}
 
-	const CBofString &getName() {
+	const CBofString &getName() const {
 		return _sName;
 	}
 	void setName(const CBofString &str) {
@@ -224,42 +228,42 @@ public:
 	void setFilterId(uint16 nId) {
 		_nFilterId = nId;
 	}
-	uint16 getFilterId() {
+	uint16 getFilterId() const {
 		return _nFilterId;
 	}
 
 	void setFadeId(uint16 nId) {
 		_nFadeId = nId;
 	}
-	uint16 getFadeId() {
+	uint16 getFadeId() const {
 		return _nFadeId;
 	}
 
-	const CBofString &getPrevSDev() {
+	const CBofString &getPrevSDev() const {
 		return _sPrevSDev;
 	}
-	const CBofPoint getPrevLoc() {
+	const CBofPoint getPrevLoc() const {
 		return _xPrevLocation;
 	}
 	void setPrevSDev(const CBofString &str) {
 		_sPrevSDev = str;
 	}
 
-	bool getCloseOnOpen() {
+	bool getCloseOnOpen() const {
 		return _bCloseOnOpen;
 	}
 	void setCloseOnOpen(bool bVal) {
 		_bCloseOnOpen = bVal;
 	}
 
-	uint16 getExitOnEdge() {
+	uint16 getExitOnEdge() const {
 		return _nExitOnEdge;
 	}
 	void setExitOnEdge(uint16 nVal) {
 		_nExitOnEdge = nVal;
 	}
 
-	CBagObject *getLActiveObject() {
+	CBagObject *getLActiveObject() const {
 		return _pLActiveObject;
 	}
 	// CBagObject*      GetRActiveObject()                  { return _pRActiveObject; }
@@ -270,7 +274,7 @@ public:
 
 	virtual ErrorCode onLActiveObject(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 
-	MouseActivity getLActivity() {
+	MouseActivity getLActivity() const {
 		return _nCurrMouseActivity;
 	}
 	void setLActivity(MouseActivity ma) {
@@ -294,12 +298,12 @@ public:
 
 	virtual ErrorCode setBackground(CBofBitmap *pBmp) = 0; // This could be eliminated but is kept in to insure good class usage
 	virtual CBofBitmap *getBackground() = 0;                // Think about it, you can figure this out
-	const CBofString &getBackgroundName() {
+	const CBofString &getBackgroundName() const {
 		return _sBackgroundName;
 	}
 
-	virtual ErrorCode attach(); // This function attaches the background and necessary bitmaps
-	virtual ErrorCode detach(); // This function attaches the background and necessary bitmaps
+	ErrorCode attach() override; // This function attaches the background and necessary bitmaps
+	ErrorCode detach() override; // This function attaches the background and necessary bitmaps
 
 	virtual ErrorCode close();
 
