@@ -617,6 +617,24 @@ bool Lingo::execute() {
 	uint localCounter = 0;
 
 	while (!_abort && !_freezeState && _state->script && (*_state->script)[_state->pc] != STOP) {
+		if(_exec._next._enabled && _state->callstack.size() == _exec._next._stackSize) {
+			// we reach the next statement -> pause the execution
+			_exec._state = kPause;
+			_exec._next._enabled = false;
+		}
+		if(!_exec._step || _exec._state == kPause) {
+			// if execution is in pause -> poll event + update screen
+			_exec._state = kPause;
+			Common::EventManager *eventMan = g_system->getEventManager();
+			while (_exec._state == kPause && !eventMan->shouldQuit() && (!g_engine || !eventMan->shouldReturnToLauncher())) {
+				Common::Event event;
+				while (eventMan->pollEvent(event)) {
+				}
+				g_system->delayMillis(10);
+				g_system->updateScreen();
+			}
+		}
+
 		if (_globalCounter > 1000 && debugChannelSet(-1, kDebugFewFramesOnly)) {
 			warning("Lingo::execute(): Stopping due to debug few frames only");
 			_vm->getCurrentMovie()->getScore()->_playState = kPlayStopped;
@@ -656,6 +674,7 @@ bool Lingo::execute() {
 		}
 
 		g_debugger->stepHook();
+		if (_exec._step > 0) _exec._step--;
 
 		_state->pc++;
 		(*((*_state->script)[_state->pc - 1]))();

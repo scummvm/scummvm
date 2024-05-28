@@ -337,6 +337,11 @@ struct LingoState {
 	~LingoState();
 };
 
+enum LingoExecState {
+	kRunning,
+	kPause,
+};
+
 class Lingo {
 
 public:
@@ -550,6 +555,15 @@ public:
 
 	Datum _windowList;
 	Symbol _currentInputEvent;
+
+	struct {
+		LingoExecState _state = kRunning;
+		int _step = -1;
+		struct {
+			uint _stackSize = 0;
+			bool _enabled = false;
+		} _next;
+	} _exec;
 
 public:
 	void executeImmediateScripts(Frame *frame);

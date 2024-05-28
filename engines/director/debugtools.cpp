@@ -88,6 +88,7 @@ typedef struct ImGuiScript {
 	Common::StringArray propertyNames;
 	Common::StringArray globalNames;
 	Common::SharedPtr<LingoDec::HandlerNode> root;
+	Common::Array<LingoDec::Bytecode> bytecodeArray;
 
 	bool operator==(const ImGuiScript &c) const {
 		return moviePath == c.moviePath && score == c.score && id == c.id && handlerId == c.handlerId;
@@ -377,6 +378,7 @@ typedef struct ImGuiState {
 		ImVec4 _bp_color_disabled = ImVec4(0.9f, 0.08f, 0.0f, 0.0f);
 		ImVec4 _bp_color_enabled = ImVec4(0.9f, 0.08f, 0.0f, 1.0f);
 		ImVec4 _bp_color_hover = ImVec4(0.42f, 0.17f, 0.13f, 1.0f);
+		ImVec4 _current_statement = ImColor(IM_COL32(0xFF, 0xFF, 0x00, 0xFF));
 		ImVec4 _line_color = ImVec4(0.44f, 0.44f, 0.44f, 1.0f);
 		ImVec4 _call_color = ImColor(IM_COL32(0xFF, 0xC5, 0x5C, 0xFF));
 		ImVec4 _builtin_color = ImColor(IM_COL32(0x60, 0x7C, 0xFF, 0xFF));
@@ -428,17 +430,23 @@ typedef struct ImGuiState {
 ImGuiState *_state = nullptr;
 
 const LingoDec::Handler *getHandler(CastMemberID id, const Common::String &handlerId) {
-	Director::Movie *movie = g_director->getCurrentMovie();
-	const Director::Cast *cast = movie->getCast(id);
-	if (!cast->_lingodec)
-		return nullptr;
-
-	Common::SharedPtr<LingoDec::Node> node;
-	for (auto it : cast->_lingodec->scripts) {
-		for (const LingoDec::Handler &h : it.second->handlers) {
-			if (h.name != handlerId)
+	const Director::Movie *movie = g_director->getCurrentMovie();
+	const Cast *targets[2] = {movie->getCast(), movie->getSharedCast()};
+	for (int i = 0; i < 2; i++) {
+		const Cast *cast = targets[i];
+		if (!cast)
+			continue;
+		const ScriptContext *ctx = cast->_lingoArchive->findScriptContext(id.member);
+		if (!ctx || !ctx->_functionHandlers.contains(handlerId))
+			continue;
+		for (auto p : cast->_lingodec->scripts) {
+			if (p.second->castID != id.member)
 				continue;
-			return &h;
+			for (const LingoDec::Handler &handler : p.second->handlers) {
+				if (handler.name == handlerId) {
+					return &handler;
+				}
+			}
 		}
 	}
 	return nullptr;
@@ -453,6 +461,7 @@ ImGuiScript toImGuiScript(CastMemberID id, const Common::String &handlerId) {
 	if (!handler)
 		return result;
 
+	result.bytecodeArray = handler->bytecodeArray;
 	result.root = handler->ast.root;
 	result.isGenericEvent = handler->isGenericEvent;
 	result.argumentNames = handler->argumentNames;
@@ -481,11 +490,15 @@ static Director::Breakpoint *getBreakpoint(const Common::String &handlerName, ui
 
 class RenderScriptVisitor : public LingoDec::NodeVisitor {
 public:
-	explicit RenderScriptVisitor(ImGuiScript &script, bool showByteCode) : _script(script), _showByteCode(showByteCode) {}
+	explicit RenderScriptVisitor(ImGuiScript &script, bool showByteCode) : _script(script), _showByteCode(showByteCode) {
+		Common::Array<CFrame *> &callstack = g_lingo->_state->callstack;
+		if (!callstack.empty()) {
+			CFrame *head = callstack[callstack.size() - 1];
+			_isScriptInDebug = (head->sp.ctx->_id == script.id.member) && (*head->sp.name == script.handlerId);
+		}
+	}
 
 	virtual void visit(const LingoDec::HandlerNode &node) override {
-		_handler = node.handler;
-
 		if (_showByteCode) {
 			byteCode(node);
 			return;
@@ -537,9 +550,9 @@ public:
 
 	virtual void visit(const LingoDec::CallNode &node) override {
 		int32 obj = 0;
-		for (uint i = 0; i < _handler->bytecodeArray.size(); i++) {
-			if (node._startOffset == _handler->bytecodeArray[i].pos) {
-				obj = _handler->bytecodeArray[i].obj;
+		for (uint i = 0; i < _script.bytecodeArray.size(); i++) {
+			if (node._startOffset == _script.bytecodeArray[i].pos) {
+				obj = _script.bytecodeArray[i].obj;
 				break;
 			}
 		}
@@ -1452,7 +1465,7 @@ private:
 		}
 	}
 
-	void byteCode(const LingoDec::HandlerNode &node) const {
+	void byteCode(const LingoDec::HandlerNode &node) {
 		LingoDec::Handler *handler = node.handler;
 		bool isMethod = handler->script->isFactory();
 
@@ -1523,13 +1536,13 @@ private:
 		}
 	}
 
-	void write(uint32 offset, const Common::String &code, ImVec4 color = ImVec4(1, 1, 1, 1)) const {
+	void write(uint32 offset, const Common::String &code, ImVec4 color = ImVec4(1, 1, 1, 1)) {
 		renderLine(offset);
 		renderIndentation();
 		ImGui::TextColored(color, "%s", code.c_str());
 	}
 
-	void writeByteCode(uint32 offset, const Common::String &code) const {
+	void writeByteCode(uint32 offset, const Common::String &code) {
 		renderLine(offset);
 		Common::String s;
 		for (int i = 0; i < _indent; i++) {
@@ -1538,19 +1551,34 @@ private:
 		ImGui::Text("%s", (s + code).c_str());
 	}
 
-	void renderLine(uint p) const {
+	void renderLine(uint p) {
+		bool showCurrentStatement = false;
+		p = MIN(p, _script.byteOffsets.size() - 1);
 		uint pc = _script.byteOffsets[p];
+
+		if (_isScriptInDebug && g_lingo->_exec._state == kPause) {
+			// check current statement
+			if (!_currentStatementDisplayed) {
+				if (g_lingo->_state->pc <= pc) {
+					showCurrentStatement = true;
+					_currentStatementDisplayed = true;
+				}
+			}
+		}
+
 		ImDrawList *dl = ImGui::GetWindowDrawList();
-		ImVec2 pos = ImGui::GetCursorScreenPos();
+		const ImVec2 pos = ImGui::GetCursorScreenPos();
+		const float width = ImGui::GetContentRegionAvail().x;
 		const ImVec2 mid(pos.x + 7, pos.y + 7);
 
 		ImVec4 color = _state->_colors._bp_color_disabled;
-
-		Director::Breakpoint *bp = getBreakpoint(_script.handlerId, _script.id.member, pc);
+		const Director::Breakpoint *bp = getBreakpoint(_script.handlerId, _script.id.member, pc);
 		if (bp)
 			color = _state->_colors._bp_color_enabled;
 
 		ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
+
+		// click on breakpoint column?
 		if (ImGui::IsItemClicked(0)) {
 			if (color == _state->_colors._bp_color_enabled) {
 				g_lingo->delBreakpoint(bp->id);
@@ -1570,15 +1598,28 @@ private:
 			color = _state->_colors._bp_color_hover;
 		}
 
+		// draw breakpoint
 		if (!bp || bp->enabled)
 			dl->AddCircleFilled(mid, 4.0f, ImColor(color));
 		else
 			dl->AddCircle(mid, 4.0f, ImColor(_state->_colors._line_color));
+
+		// draw current statement
+		if (showCurrentStatement) {
+			dl->AddQuadFilled(ImVec2(pos.x, pos.y + 4.f), ImVec2(pos.x + 9.f, pos.y + 4.f), ImVec2(pos.x + 9.f, pos.y + 10.f), ImVec2(pos.x, pos.y + 10.f), ImColor(_state->_colors._current_statement));
+			dl->AddTriangleFilled(ImVec2(pos.x + 8.f, pos.y), ImVec2(pos.x + 14.f, pos.y + 7.f), ImVec2(pos.x + 8.f, pos.y + 14.f), ImColor(_state->_colors._current_statement));
+			if (!ImGui::IsItemVisible()) {
+				ImGui::SetScrollHereY(0.5f);
+			}
+			dl->AddRectFilled(ImVec2(pos.x + 16.f, pos.y), ImVec2(pos.x + width, pos.y + 16.f), ImColor(IM_COL32(0xFF, 0xFF, 0x00, 0x20)), 0.4f);
+		}
+		// draw separator
 		dl->AddLine(ImVec2(pos.x + 16.0f, pos.y), ImVec2(pos.x + 16.0f, pos.y + 17), ImColor(_state->_colors._line_color));
 
 		ImGui::SetItemTooltip("Click to add a breakpoint");
-
 		ImGui::SameLine();
+
+		// draw offset
 		ImGui::Text("[%5d] ", pc);
 		ImGui::SameLine();
 	}
@@ -1612,7 +1653,8 @@ private:
 	bool _showByteCode = false;
 	bool _dot = false;
 	int _indent = 0;
-	LingoDec::Handler *_handler = nullptr;
+	bool _currentStatementDisplayed = false;
+	bool _isScriptInDebug = false;
 };
 
 static void showControlPanel() {
@@ -1686,8 +1728,10 @@ static void showControlPanel() {
 			p = ImGui::GetCursorScreenPos();
 			ImGui::InvisibleButton("Stop", buttonSize);
 
-			if (ImGui::IsItemClicked(0))
+			if (ImGui::IsItemClicked(0)) {
 				score->_playState = kPlayPaused;
+				g_lingo->_exec._state = kPause;
+			}
 
 			if (ImGui::IsItemHovered())
 				dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
@@ -1724,8 +1768,11 @@ static void showControlPanel() {
 			p = ImGui::GetCursorScreenPos();
 			ImGui::InvisibleButton("Play", buttonSize);
 
-			if (ImGui::IsItemClicked(0))
+			if (ImGui::IsItemClicked(0)) {
 				score->_playState = kPlayStarted;
+				g_lingo->_exec._step = -1;
+				g_lingo->_exec._state = kRunning;
+			}
 
 			if (ImGui::IsItemHovered())
 				dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
@@ -1758,8 +1805,13 @@ static void showControlPanel() {
 			p = ImGui::GetCursorScreenPos();
 			ImGui::InvisibleButton("Step Over", buttonSize);
 
-			if (ImGui::IsItemClicked(0))
+			if (ImGui::IsItemClicked(0)) {
 				score->_playState = kPlayStarted;
+				g_lingo->_exec._state = kRunning;
+				g_lingo->_exec._step = -1;
+				g_lingo->_exec._next._enabled = true;
+				g_lingo->_exec._next._stackSize = g_lingo->_state->callstack.size();
+			}
 
 			if (ImGui::IsItemHovered())
 				dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
@@ -1778,8 +1830,11 @@ static void showControlPanel() {
 			p = ImGui::GetCursorScreenPos();
 			ImGui::InvisibleButton("Step Into", buttonSize);
 
-			if (ImGui::IsItemClicked(0))
+			if (ImGui::IsItemClicked(0)) {
 				score->_playState = kPlayStarted;
+				g_lingo->_exec._step = 1;
+				g_lingo->_exec._state = kRunning;
+			}
 
 			if (ImGui::IsItemHovered())
 				dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
@@ -1797,8 +1852,13 @@ static void showControlPanel() {
 			p = ImGui::GetCursorScreenPos();
 			ImGui::InvisibleButton("Step Out", buttonSize);
 
-			if (ImGui::IsItemClicked(0))
+			if (ImGui::IsItemClicked(0)) {
 				score->_playState = kPlayStarted;
+				g_lingo->_exec._state = kRunning;
+				g_lingo->_exec._step = -1;
+				g_lingo->_exec._next._enabled = true;
+				g_lingo->_exec._next._stackSize = g_lingo->_state->callstack.size() - 1;
+			}
 
 			if (ImGui::IsItemHovered())
 				dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
@@ -2257,6 +2317,10 @@ static void addScriptCastToDisplay(CastMemberID &id) {
 
 static void setScriptToDisplay(const ImGuiScript &script) {
 	uint index = _state->_functions._scripts.size();
+	if (index && _state->_functions._scripts[index - 1] == script) {
+		_state->_functions._showScript = true;
+		return;
+	}
 	_state->_functions._scripts.push_back(script);
 	_state->_functions._current = index;
 	_state->_functions._showScript = true;
@@ -2516,7 +2580,29 @@ static void displayScriptCasts() {
 	}
 }
 
+static void updateCurrentScript() {
+	if (g_lingo->_exec._state != kPause)
+		return;
+
+	Common::Array<CFrame *> &callstack = g_lingo->_state->callstack;
+	if (callstack.empty())
+		return;
+
+	// show current script of the current stack frame
+	CFrame *head = callstack[callstack.size() - 1];
+	Director::Movie *movie = g_director->getCurrentMovie();
+	ScriptContext *scriptContext = head->sp.ctx;
+	int castLibID = movie->getCast()->_castLibID;
+	ImGuiScript script = toImGuiScript(CastMemberID(head->sp.ctx->_id, castLibID), *head->sp.name);
+	script.byteOffsets = scriptContext->_functionByteOffsets[script.handlerId];
+	script.moviePath = movie->getArchive()->getPathName().toString();
+	script.handlerName = head->sp.ctx->_id ? Common::String::format("%d:%s", head->sp.ctx->_id, script.handlerId.c_str()) : script.handlerId;
+	setScriptToDisplay(script);
+}
+
 static void displayScripts() {
+	updateCurrentScript();
+
 	if (!_state->_functions._showScript)
 		return;
 
