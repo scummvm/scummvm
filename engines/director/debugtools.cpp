@@ -1466,31 +1466,29 @@ private:
 	}
 
 	void byteCode(const LingoDec::HandlerNode &node) {
-		LingoDec::Handler *handler = node.handler;
-		bool isMethod = handler->script->isFactory();
-
-		if (!handler->isGenericEvent) {
+		bool isMethod = _script.isMethod;
+		if (!_script.isGenericEvent) {
 			Common::String code;
 			if (isMethod) {
 				code += "method ";
 			} else {
 				code += "on ";
 			}
-			code += handler->name;
-			if (handler->argumentNames.size() > 0) {
+			code += _script.handlerId;
+			if (_script.argumentNames.size() > 0) {
 				code += " ";
-				for (size_t i = 0; i < handler->argumentNames.size(); i++) {
+				for (size_t i = 0; i < _script.argumentNames.size(); i++) {
 					if (i > 0)
 						code += ", ";
-					code += handler->argumentNames[i];
+					code += _script.argumentNames[i];
 				}
 			}
 			writeByteCode(0, code);
 		}
-		for (uint i = 0; i < handler->bytecodeArray.size(); i++) {
+		for (uint i = 0; i < _script.bytecodeArray.size(); i++) {
 			LingoDec::CodeWriterVisitor code(_dot, true);
 			code.indent();
-			auto &bytecode = handler->bytecodeArray[i];
+			auto &bytecode = _script.bytecodeArray[i];
 			code.write(LingoDec::StandardNames::getOpcodeName(bytecode.opID));
 			switch (bytecode.opcode) {
 			case LingoDec::kOpJmp:
@@ -1529,7 +1527,7 @@ private:
 			}
 			writeByteCode(bytecode.pos, code._str);
 		}
-		if (!handler->isGenericEvent) {
+		if (!_script.isGenericEvent) {
 			if (!isMethod) {
 				writeByteCode(node._endOffset, "end");
 			}
