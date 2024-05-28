@@ -3387,12 +3387,12 @@ static void showArchive() {
 	ImVec2 pos(40, 40);
 	ImGui::SetNextWindowPos(pos, ImGuiCond_FirstUseEver);
 
-	ImVec2 windowSize = ImGui::GetMainViewport()->Size / 2;
+	ImVec2 windowSize = ImGui::GetMainViewport()->Size * 0.8;
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Archive", &_state->_w.archive)) {
 		{ // Left pane
-			ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_None);
+			ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail().x * 0.3f, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_None);
 
 			for (auto &it : g_director->_allSeenResFiles) {
 				Archive *archive = it._value;
@@ -3434,11 +3434,17 @@ static void showArchive() {
 			ImGui::EndChild();
 		}
 
+		ImGui::SameLine();
+
 		{ // Right pane
-			ImGui::BeginChild("ChildR", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Border);
+			ImGui::BeginChild("ChildR", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Border);
+
+			ImGui::Text("Resource %s %d (%d bytes)", tag2str(_state->_archive.resType), _state->_archive.resId, _state->_archive.dataSize);
+
+			ImGui::Separator();
 
 			if (!_state->_archive.path.empty())
-				_state->_archive.memEdit.DrawWindow("Browser", _state->_archive.data, _state->_archive.dataSize);
+				_state->_archive.memEdit.DrawContents(_state->_archive.data, _state->_archive.dataSize);
 
 			ImGui::EndChild();
 		}
