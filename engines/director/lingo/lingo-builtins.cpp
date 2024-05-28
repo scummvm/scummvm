@@ -3495,7 +3495,7 @@ void LB::b_scummvmNoFatalError(int nargs) {
 
 	g_director->_noFatalLingoError = (flag.asInt() != 0);
 
-	warning("scummvmNoFatalEror is set to %d", g_director->_noFatalLingoError);
+	debug("> scummvmNoFatalEror is set to %d", g_director->_noFatalLingoError);
 }
 
 void LB::b_getVolumes(int nargs) {
