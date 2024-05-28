@@ -6369,6 +6369,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	FANMADE("Betrayed Alliance 1.2", "ade9f8124dae2e6aced8b5bfc0f54411", 4200, "4599d184348e8dfa99a1804f41966177", 2498493), // original version
 	FANMADE("Betrayed Alliance 1.2", "30431334d821d23e584d6f4c0a3d5b61", 4206, "42e3a857f589eef8a8567b86b71f7fb9", 2503541), // "stealth updated" version
 	FANMADE("Betrayed Alliance 1.3.1", "c6e60d28086cfa5655af3701c8e2d181", 4878, "c9329736f06cc9ab17f370c93d1fd2fd", 3326253),
+	FANMADE("Betrayed Alliance 1.3.2", "6f5d48443ad7f8f67190cc59a6c27af4", 4896, "e160dce04115c5f6bfd68870b8adbf8f", 3355630),
 	FANMADE("Betrayed Alliance Book 2 Demo 1.0", "b5b21ca4d1ad3c576e9776bf96845656", 4524, "57150380af9bf05b07851177e01c5066", 3309884),
 	FANMADE("Bluntman and Chronic (Politically Correct Version)", "c3ef9fa6c7c5fb840078bf28d87c7f8b", 1362, "441636a9f6f86710844868fded868ee7", 596688),
 	FANMADE("Cascade Quest", "c94efc10d18c040b6e22a1dc6d3adfe1", 3468, "8ada33dfa945f81531e5508240b573de", 1432195),
