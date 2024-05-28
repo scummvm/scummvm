@@ -39,6 +39,10 @@ MODULE_OBJS = \
 	core/system/input/keyboard_input.o \
 	core/system/input/input_wndproc.o \
 	core/system/input/input_recorder.o \
+	core/qdcore/util/AIAStar_API.o \
+	core/qdcore/util/fps_counter.o \
+	core/qdcore/util/LZ77.o \
+	core/qdcore/util/ResourceDispatcher.o \
 	core/qdcore/qd_animation_frame.o \
 	core/qdcore/qd_animation_info.o \
 	core/qdcore/qd_animation_maker.o \
@@ -60,11 +64,14 @@ MODULE_OBJS = \
 	core/qdcore/qd_d3dutils.o \
 	core/qdcore/qd_file_owner.o \
 	core/qdcore/qd_file_manager.o \
+	core/qdcore/qd_font_info.o \
 	core/qdcore/qd_game_dispatcher_base.o \
 	core/qdcore/qd_game_dispatcher.o \
 	core/qdcore/qd_game_end.o \
 	core/qdcore/qd_game_object_animated.o \
 	core/qdcore/qd_game_object_mouse.o \
+	core/qdcore/qd_game_object_state.o \
+	core/qdcore/qd_game_object_moving.o \
 	core/qdcore/qd_game_object_static.o \
 	core/qdcore/qd_game_object.o \
 	core/qdcore/qd_game_scene.o \
@@ -87,6 +94,7 @@ MODULE_OBJS = \
 	core/qdcore/qd_inventory.o \
 	core/qdcore/qd_minigame_config.o \
 	core/qdcore/qd_minigame_interface.o \
+	core/qdcore/qd_minigame.o \
 	core/qdcore/qd_music_track.o \
 	core/qdcore/qd_named_object_base.o \
 	core/qdcore/qd_named_object_indexer.o \
@@ -102,6 +110,7 @@ MODULE_OBJS = \
 	core/qdcore/qd_sprite.o \
 	core/qdcore/qd_screen_text_dispatcher.o \
 	core/qdcore/qd_sound_info.o \
+	core/qdcore/qd_textdb.o \
 	core/qdcore/qd_trigger_chain.o \
 	core/qdcore/qd_trigger_element.o \
 	core/qdcore/qd_trigger_profiler.o \

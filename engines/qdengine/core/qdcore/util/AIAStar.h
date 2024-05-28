@@ -5,6 +5,7 @@
 #include <vector>
 #include <algorithm>
 #include "qdengine/xlibs/util/xmath/xmath.h"
+#include "qdengine/core/qd_precomp.h"
 
 ///////////////////////////AIAStar/////////////////////
 //AIAStar::FindPath поиск пути из точки from
@@ -45,7 +46,7 @@ public:
 
 #if FAST_ERASE
 		Vect2i pt;
-		type_point_map::iterator self_it;
+		typename type_point_map::iterator self_it;
 #endif
 
 		inline TypeH f() {
@@ -156,7 +157,7 @@ bool AIAStar<Heuristic, TypeH>::FindPath(Vect2i from, Heuristic *hr, std::vector
 	const int size_child = directions_count;
 
 	while (!open_map.empty()) {
-		type_point_map::iterator low = open_map.begin();
+		typename type_point_map::iterator low = open_map.begin();
 #if FAST_ERASE
 		OnePoint *parent = low->second;
 		Vect2i pt = parent->pt;
@@ -211,7 +212,7 @@ bool AIAStar<Heuristic, TypeH>::FindPath(Vect2i from, Heuristic *hr, std::vector
 #else
 				//Удаляем элемент из open_map
 				TypeH f = p->f();
-				type_point_map::iterator cur = open_map.find(p->f());
+				typename type_point_map::iterator cur = open_map.find(p->f());
 				bool erase = false;
 				while (cur != open_map.end()) {
 					if ((*cur).first != f)break;
@@ -360,7 +361,7 @@ void AIAStarGraph<Heuristic, Node, TypeH>::Init(std::vector<Node> &all_node) {
 template<class Heuristic, class Node, class TypeH>
 void AIAStarGraph<Heuristic, Node, TypeH>::clear() {
 	is_used_num = 0;
-	vector<OnePoint>::iterator it;
+	typename std::vector<OnePoint>::iterator it;
 	FOR_EACH(chart, it)
 	it->used = 0;
 }
@@ -392,7 +393,7 @@ bool AIAStarGraph<Heuristic, Node, TypeH>::FindPath(Node *from, Heuristic *hr, s
 	p->self_it = open_map.insert(type_point_map::value_type(p->f(), p));
 
 	while (!open_map.empty()) {
-		type_point_map::iterator low = open_map.begin();
+		typename type_point_map::iterator low = open_map.begin();
 
 		OnePoint *parent = low->second;
 		Node *node = parent->node;
@@ -416,7 +417,7 @@ bool AIAStarGraph<Heuristic, Node, TypeH>::FindPath(Node *from, Heuristic *hr, s
 		}
 
 		//для каждого наследника child узла parent
-		Node::iterator it;
+		typename Node::iterator it;
 		FOR_EACH(*node, it) {
 			Node *cur_node = *it;
 			OnePoint *p = (OnePoint *)cur_node->AIAStarPointer;
@@ -474,7 +475,7 @@ template<class Maps>
 Vect2i AIFindMinium(int x, int y,
                     Maps &maps,
                     int dx, int dy) {
-	Maps::TypeH optium = maps.Get(x, y);
+	typename Maps::TypeH optium = maps.Get(x, y);
 	int optiumx = x, optiumy = y;
 
 	int maxi = max(max(x, dx - x), max(y, dy - y));
@@ -486,7 +487,7 @@ Vect2i AIFindMinium(int x, int y,
 		cury = y - i;
 		if (cury >= 0)
 			for (curx = xmin; curx <= xmax; curx++) {
-				Maps::TypeH o = maps.Get(curx, cury);
+				typename Maps::TypeH o = maps.Get(curx, cury);
 				if (o < optium) {
 					optium = o;
 					optiumx = curx;
@@ -498,7 +499,7 @@ Vect2i AIFindMinium(int x, int y,
 		cury = y + i;
 		if (cury < dy)
 			for (curx = xmin; curx <= xmax; curx++) {
-				Maps::TypeH o = maps.Get(curx, cury);
+				typename Maps::TypeH o = maps.Get(curx, cury);
 				if (o < optium) {
 					optium = o;
 					optiumx = curx;
@@ -510,7 +511,7 @@ Vect2i AIFindMinium(int x, int y,
 		curx = x - i;
 		if (curx >= 0)
 			for (cury = ymin; cury <= ymax; cury++) {
-				Maps::TypeH o = maps.Get(curx, cury);
+				typename Maps::TypeH o = maps.Get(curx, cury);
 				if (o < optium) {
 					optium = o;
 					optiumx = curx;
@@ -522,7 +523,7 @@ Vect2i AIFindMinium(int x, int y,
 		curx = x + i;
 		if (curx < dx)
 			for (cury = ymin; cury <= ymax; cury++) {
-				Maps::TypeH o = maps.Get(curx, cury);
+				typename Maps::TypeH o = maps.Get(curx, cury);
 				if (o < optium) {
 					optium = o;
 					optiumx = curx;

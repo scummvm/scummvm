@@ -19,6 +19,7 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "qdengine/qdengine.h"
 #include "qdengine/detection.h"
 #include "qdengine/console.h"
@@ -29,6 +30,7 @@
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/paletteman.h"
+#include "qdengine/core/qd_precomp.h"
 
 namespace QDEngine {
 
@@ -84,6 +86,8 @@ Common::Error QDEngineEngine::run() {
 			pal[i * 3 + 1] = (i + offset) % 256;
 		g_system->getPaletteManager()->setPalette(pal, 0, 256);
 		_screen->update();
+
+		// engineMain(NULL, NULL, "", SW_SHOWNORMAL);
 
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
