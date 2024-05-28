@@ -57,7 +57,7 @@ Common::Platform EfhEngine::getPlatform() const {
 
 namespace Efh {
 
-class EfhMetaEngine : public AdvancedMetaEngine {
+class EfhMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "efh";

@@ -115,7 +115,7 @@ uint32 ZVision::getFeatures() const {
 
 } // End of namespace ZVision
 
-class ZVisionMetaEngine : public AdvancedMetaEngine {
+class ZVisionMetaEngine : public AdvancedMetaEngine<ZVision::ZVisionGameDescription> {
 public:
 	const char *getName() const override {
 		return "zvision";
@@ -127,7 +127,7 @@ public:
 
 	bool hasFeature(MetaEngineFeature f) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ZVision::ZVisionGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -300,8 +300,8 @@ Common::KeymapArray ZVisionMetaEngine::initKeymaps(const char *target) const {
 	return keymaps;
 }
 
-Common::Error ZVisionMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new ZVision::ZVision(syst, (const ZVision::ZVisionGameDescription *)desc);
+Common::Error ZVisionMetaEngine::createInstance(OSystem *syst, Engine **engine, const ZVision::ZVisionGameDescription *desc) const {
+	*engine = new ZVision::ZVision(syst,desc);
 	return Common::kNoError;
 }
 

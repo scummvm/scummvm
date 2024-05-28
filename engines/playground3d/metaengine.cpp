@@ -27,7 +27,7 @@
 
 #include "playground3d/playground3d.h"
 
-class Playground3dMetaEngine : public AdvancedMetaEngine {
+class Playground3dMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "playground3d";

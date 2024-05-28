@@ -121,7 +121,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 
 } // End of namespace BladeRunner
 
-class BladeRunnerMetaEngine : public AdvancedMetaEngine {
+class BladeRunnerMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override;
 

@@ -70,13 +70,13 @@ bool ComposerEngine::loadDetectedConfigFile(Common::INIFile &configFile) const {
 
 } // End of namespace Composer
 
-class ComposerMetaEngine : public AdvancedMetaEngine {
+class ComposerMetaEngine : public AdvancedMetaEngine<Composer::ComposerGameDescription> {
 public:
 	const char *getName() const override {
 		return "composer";
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Composer::ComposerGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
@@ -93,8 +93,8 @@ public:
 	}
 };
 
-Common::Error ComposerMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Composer::ComposerEngine(syst, (const Composer::ComposerGameDescription *)desc);
+Common::Error ComposerMetaEngine::createInstance(OSystem *syst, Engine **engine, const Composer::ComposerGameDescription *desc) const {
+	*engine = new Composer::ComposerEngine(syst,desc);
 	return Common::kNoError;
 }
 

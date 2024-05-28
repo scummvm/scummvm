@@ -78,7 +78,7 @@ bool HDBGame::isHandango() const {
 
 } // End of namespace HDB
 
-class HDBMetaEngine : public AdvancedMetaEngine {
+class HDBMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "hdb";

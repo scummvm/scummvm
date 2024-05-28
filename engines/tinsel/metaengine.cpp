@@ -79,13 +79,13 @@ bool TinselEngine::isV1CD() const {
 
 } // End of namespace Tinsel
 
-class TinselMetaEngine : public AdvancedMetaEngine {
+class TinselMetaEngine : public AdvancedMetaEngine<Tinsel::TinselGameDescription> {
 public:
 	const char *getName() const  override{
 		return "tinsel";
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Tinsel::TinselGameDescription *desc) const override;
 
 	bool hasFeature(MetaEngineFeature f) const override;
 	SaveStateList listSaves(const char *target) const override;
@@ -190,8 +190,8 @@ SaveStateList TinselMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-Common::Error TinselMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Tinsel::TinselEngine(syst, (const Tinsel::TinselGameDescription *)desc);
+Common::Error TinselMetaEngine::createInstance(OSystem *syst, Engine **engine, const Tinsel::TinselGameDescription *desc) const {
+	*engine = new Tinsel::TinselEngine(syst,desc);
 	return Common::kNoError;
 }
 

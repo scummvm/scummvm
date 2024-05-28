@@ -50,7 +50,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 
 #endif
 
-class GriffonMetaEngine: public AdvancedMetaEngine {
+class GriffonMetaEngine: public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "griffon";

@@ -64,17 +64,17 @@ bool DirectorEngine::hasFeature(EngineFeature f) const {
 
 } // End of Namespace Director
 
-class DirectorMetaEngine : public AdvancedMetaEngine {
+class DirectorMetaEngine : public AdvancedMetaEngine<Director::DirectorGameDescription> {
 public:
 	const char *getName() const override {
 		return "director";
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Director::DirectorGameDescription *desc) const override;
 };
 
-Common::Error DirectorMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Director::DirectorEngine(syst, (const Director::DirectorGameDescription *)desc);
+Common::Error DirectorMetaEngine::createInstance(OSystem *syst, Engine **engine, const Director::DirectorGameDescription *desc) const {
+	*engine = new Director::DirectorEngine(syst,desc);
 	return Common::kNoError;
 }
 

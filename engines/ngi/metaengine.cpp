@@ -54,7 +54,7 @@ int NGIEngine::getGameGID() const {
 
 } // End of namspace Fullpipe
 
-class NGIMetaEngine : public AdvancedMetaEngine {
+class NGIMetaEngine : public AdvancedMetaEngine<NGI::NGIGameDescription> {
 public:
 	const char *getName() const override {
 		return "ngi";
@@ -64,7 +64,7 @@ public:
 
 	int getMaximumSaveSlot() const override { return 99; }
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const NGI::NGIGameDescription *desc) const override;
 };
 
 bool NGIMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -79,8 +79,8 @@ bool NGI::NGIEngine::hasFeature(EngineFeature f) const {
 }
 
 
-Common::Error NGIMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new NGI::NGIEngine(syst, (const NGI::NGIGameDescription *)desc);
+Common::Error NGIMetaEngine::createInstance(OSystem *syst, Engine **engine, const NGI::NGIGameDescription *desc) const {
+	*engine = new NGI::NGIEngine(syst,desc);
 	return Common::kNoError;
 }
 

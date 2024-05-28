@@ -125,7 +125,7 @@ Common::Platform MTropolisEngine::getPlatform() const {
 
 } // End of namespace MTropolis
 
-class MTropolisMetaEngine : public AdvancedMetaEngine {
+class MTropolisMetaEngine : public AdvancedMetaEngine<MTropolis::MTropolisGameDescription> {
 public:
 	const char *getName() const override {
 		return "mtropolis";
@@ -136,7 +136,7 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const MTropolis::MTropolisGameDescription *desc) const override;
 
 	Common::Array<Common::Keymap *> initKeymaps(const char *target) const override;
 
@@ -147,7 +147,7 @@ bool MTropolisMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return checkExtendedSaves(f);
 }
 
-Common::Error MTropolisMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Common::Error MTropolisMetaEngine::createInstance(OSystem *syst, Engine **engine, const MTropolis::MTropolisGameDescription *desc) const {
 	*engine = new MTropolis::MTropolisEngine(syst, reinterpret_cast<const MTropolis::MTropolisGameDescription *>(desc));
 	return Common::kNoError;
 }

@@ -34,7 +34,7 @@ Common::Platform CryoEngine::getPlatform() const { return _gameDescription->plat
 
 } // End of namespace Cryo
 
-class CryoMetaEngine : public AdvancedMetaEngine {
+class CryoMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "cryo";

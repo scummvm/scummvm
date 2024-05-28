@@ -40,7 +40,7 @@
 #include "asylum/asylum.h"
 #include "asylum/shared.h"
 
-class AsylumMetaEngine : public AdvancedMetaEngine {
+class AsylumMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "asylum";

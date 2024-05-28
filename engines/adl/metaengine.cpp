@@ -139,7 +139,7 @@ Common::Platform getPlatform(const AdlGameDescription &adlDesc) {
 	return adlDesc.desc.platform;
 }
 
-class AdlMetaEngine : public AdvancedMetaEngine {
+class AdlMetaEngine : public AdvancedMetaEngine<AdlGameDescription> {
 public:
 	const char *getName() const override {
 		return "adl";
@@ -156,7 +156,7 @@ public:
 	SaveStateList listSaves(const char *target) const override;
 	void removeSaveState(const char *target, int slot) const override;
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const AdlGameDescription *adlGd) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
@@ -286,9 +286,7 @@ Engine *HiRes4Engine_create(OSystem *syst, const AdlGameDescription *gd);
 Engine *HiRes5Engine_create(OSystem *syst, const AdlGameDescription *gd);
 Engine *HiRes6Engine_create(OSystem *syst, const AdlGameDescription *gd);
 
-Common::Error AdlMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	const AdlGameDescription *adlGd = (const AdlGameDescription *)gd;
-
+Common::Error AdlMetaEngine::createInstance(OSystem *syst, Engine **engine, const AdlGameDescription *adlGd) const {
 	switch (adlGd->gameType) {
 	case GAME_TYPE_HIRES1:
 		*engine = HiRes1Engine_create(syst, adlGd);

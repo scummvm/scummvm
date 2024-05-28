@@ -94,7 +94,7 @@ static ADGameDescription s_fallbackDesc = {
 
 static char s_fallbackExtraBuf[256];
 
-class WintermuteMetaEngine : public AdvancedMetaEngine {
+class WintermuteMetaEngine : public AdvancedMetaEngine<WMEGameDescription> {
 public:
 	const char *getName() const override {
 		return "wintermute";
@@ -104,9 +104,7 @@ public:
 		return gameGuiOptions;
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
-		const WMEGameDescription *gd = (const WMEGameDescription *)desc;
-
+	Common::Error createInstance(OSystem *syst, Engine **engine, const WMEGameDescription *gd) const override {
 #ifndef ENABLE_FOXTAIL
 		if (gd->targetExecutable >= FOXTAIL_OLDEST_VERSION && gd->targetExecutable <= FOXTAIL_LATEST_VERSION) {
 			return Common::Error(Common::kUnsupportedGameidError, _s("FoxTail support is not compiled in"));

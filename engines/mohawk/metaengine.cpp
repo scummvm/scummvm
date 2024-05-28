@@ -121,14 +121,14 @@ bool MohawkEngine_Riven::hasFeature(EngineFeature f) const {
 
 } // End of Namespace Mohawk
 
-class MohawkMetaEngine : public AdvancedMetaEngine {
+class MohawkMetaEngine : public AdvancedMetaEngine<Mohawk::MohawkGameDescription> {
 public:
 	const char *getName() const override {
 		return "mohawk";
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Mohawk::MohawkGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateList listSavesForPrefix(const char *prefix, const char *extension) const;
@@ -280,9 +280,7 @@ Common::KeymapArray MohawkMetaEngine::initKeymaps(const char *target) const {
 	return AdvancedMetaEngine::initKeymaps(target);
 }
 
-Common::Error MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Mohawk::MohawkGameDescription *gd = (const Mohawk::MohawkGameDescription *)desc;
-
+Common::Error MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const Mohawk::MohawkGameDescription *gd) const {
 	switch (gd->gameType) {
 	case Mohawk::GType_MYST:
 	case Mohawk::GType_MAKINGOF:

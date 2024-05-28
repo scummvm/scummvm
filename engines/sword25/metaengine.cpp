@@ -47,7 +47,7 @@ uint32 Sword25Engine::getGameFlags() const { return _gameDescription->flags; }
 
 } // End of namespace Sword25
 
-class Sword25MetaEngine : public AdvancedMetaEngine {
+class Sword25MetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "sword25";

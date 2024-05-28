@@ -179,8 +179,7 @@ const ADExtraGuiOptionsMap *UltimaMetaEngine::getAdvancedExtraGuiOptions() const
 	return optionsList;
 }
 
-Common::Error UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Ultima::UltimaGameDescription *gd = (const Ultima::UltimaGameDescription *)desc;
+Common::Error UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Ultima::UltimaGameDescription *gd) const {
 	switch (gd->gameId) {
 #ifdef ENABLE_ULTIMA1
 	case Ultima::GAME_ULTIMA1:

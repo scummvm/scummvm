@@ -266,7 +266,7 @@ ADDetectedGame SciMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 		return ADDetectedGame();
 	}
 
-	ADDetectedGame game = enginePlugin->get<AdvancedMetaEngine>().fallbackDetectExtern(_md5Bytes, allFiles, fslist);
+	ADDetectedGame game = enginePlugin->get<AdvancedMetaEngineBase>().fallbackDetectExtern(_md5Bytes, allFiles, fslist);
 	if (!game.desc) {
 		return game;
 	}

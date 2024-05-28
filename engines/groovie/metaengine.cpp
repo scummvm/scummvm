@@ -118,7 +118,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class GroovieMetaEngine : public AdvancedMetaEngine {
+class GroovieMetaEngine : public AdvancedMetaEngine<GroovieGameDescription> {
 public:
 	const char *getName() const override {
 		return "groovie";
@@ -128,7 +128,7 @@ public:
 		return optionsList;
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const GroovieGameDescription *gd) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	SaveStateList listSaves(const char *target) const override;
@@ -138,13 +138,13 @@ public:
 	int getAutosaveSlot() const override;
 };
 
-Common::Error GroovieMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
+Common::Error GroovieMetaEngine::createInstance(OSystem *syst, Engine **engine, const GroovieGameDescription *gd) const {
 #ifndef ENABLE_GROOVIE2
-	if (((const GroovieGameDescription *)gd)->version != kGroovieT7G)
+	if (gd->version != kGroovieT7G)
 		return Common::Error(Common::kUnsupportedGameidError, _s("GroovieV2 support is not compiled in"));
 #endif
 
-	*engine = new GroovieEngine(syst, (const GroovieGameDescription *)gd);
+	*engine = new GroovieEngine(syst,gd);
 	return Common::kNoError;
 }
 

@@ -30,14 +30,14 @@
 #include "base/plugins.h"
 #include "graphics/thumbnail.h"
 
-class DragonsMetaEngine : public AdvancedMetaEngine {
+class DragonsMetaEngine : public AdvancedMetaEngine<Dragons::DragonsGameDescription> {
 public:
 	const char *getName() const override {
 		return "dragons";
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Dragons::DragonsGameDescription *desc) const override;
 	int getMaximumSaveSlot() const override;
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
@@ -110,13 +110,12 @@ SaveStateDescriptor DragonsMetaEngine::querySaveMetaInfos(const char *target, in
 	return SaveStateDescriptor();
 }
 
-Common::Error DragonsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Dragons::DragonsGameDescription *gd = (const Dragons::DragonsGameDescription *)desc;
+Common::Error DragonsMetaEngine::createInstance(OSystem *syst, Engine **engine, const Dragons::DragonsGameDescription *gd) const {
 	const char* urlForRequiredDataFiles = "https://wiki.scummvm.org/index.php?title=Blazing_Dragons#Required_data_files";
 
 	switch (gd->gameId) {
 	case Dragons::kGameIdDragons:
-		*engine = new Dragons::DragonsEngine(syst, desc);
+		*engine = new Dragons::DragonsEngine(syst, gd);
 		break;
 	case Dragons::kGameIdDragonsBadExtraction:
 		GUIErrorMessageWithURL(Common::U32String::format(_("Error: It appears that the game data files were extracted incorrectly.\n\nYou should only extract STR and XA files using the special method. The rest should be copied normally from your game CD.\n\n See %s"), urlForRequiredDataFiles), urlForRequiredDataFiles);

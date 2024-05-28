@@ -156,7 +156,7 @@ Common::Platform MADSEngine::getPlatform() const {
 
 } // End of namespace MADS
 
-class MADSMetaEngine : public AdvancedMetaEngine {
+class MADSMetaEngine : public AdvancedMetaEngine<MADS::MADSGameDescription> {
 public:
 	const char *getName() const override {
 		return "mads";
@@ -167,7 +167,7 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const MADS::MADSGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -192,8 +192,8 @@ bool MADS::MADSEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-Common::Error MADSMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new MADS::MADSEngine(syst, (const MADS::MADSGameDescription *)desc);
+Common::Error MADSMetaEngine::createInstance(OSystem *syst, Engine **engine, const MADS::MADSGameDescription *desc) const {
+	*engine = new MADS::MADSEngine(syst,desc);
 	return Common::kNoError;
 }
 

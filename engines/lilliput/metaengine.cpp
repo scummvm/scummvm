@@ -43,13 +43,13 @@ const char *LilliputEngine::getGameId() const {
 
 namespace Lilliput {
 
-class LilliputMetaEngine : public AdvancedMetaEngine {
+class LilliputMetaEngine : public AdvancedMetaEngine<LilliputGameDescription> {
 public:
 	const char *getName() const override {
 		return "lilliput";
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const LilliputGameDescription *gd) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	int getMaximumSaveSlot() const override;
@@ -66,9 +66,9 @@ public:
 	}
 };
 
-Common::Error LilliputMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	*engine = new LilliputEngine(syst, (const LilliputGameDescription *)gd);
-	((LilliputEngine *)*engine)->initGame((const LilliputGameDescription *)gd);
+Common::Error LilliputMetaEngine::createInstance(OSystem *syst, Engine **engine, const LilliputGameDescription *gd) const {
+	*engine = new LilliputEngine(syst,gd);
+	((LilliputEngine *)*engine)->initGame(gd);
 	return Common::kNoError;
 }
 

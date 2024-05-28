@@ -81,7 +81,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class CGE2MetaEngine : public AdvancedMetaEngine {
+class CGE2MetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "cge2";

@@ -43,13 +43,13 @@ Common::Language PrinceEngine::getLanguage() const {
 
 } // End of namespace Prince
 
-class PrinceMetaEngine : public AdvancedMetaEngine {
+class PrinceMetaEngine : public AdvancedMetaEngine<Prince::PrinceGameDescription> {
 public:
 	const char *getName() const override {
 		return "prince";
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Prince::PrinceGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	int getMaximumSaveSlot() const override { return 99; }
@@ -158,8 +158,8 @@ void PrinceMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-Common::Error PrinceMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Prince::PrinceEngine(syst, (const Prince::PrinceGameDescription *)desc);
+Common::Error PrinceMetaEngine::createInstance(OSystem *syst, Engine **engine, const Prince::PrinceGameDescription *desc) const {
+	*engine = new Prince::PrinceEngine(syst,desc);
 	return Common::kNoError;
 }
 

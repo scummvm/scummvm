@@ -27,20 +27,19 @@
 
 namespace ICB {
 
-class IcbMetaEngine : public AdvancedMetaEngine {
+class IcbMetaEngine : public AdvancedMetaEngine<IcbGameDescription> {
 public:
 	const char *getName() const override {
 		return "icb";
 	}
 	bool hasFeature(MetaEngineFeature f) const override { return false; }
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const IcbGameDescription *desc) const override;
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
-Common::Error IcbMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const IcbGameDescription *gd = (const IcbGameDescription *)desc;
+Common::Error IcbMetaEngine::createInstance(OSystem *syst, Engine **engine, const IcbGameDescription *gd) const {
 	*engine = new IcbEngine(syst, gd);
 	return Common::kNoError;
 }

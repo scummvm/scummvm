@@ -95,7 +95,7 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class DreamWebMetaEngine : public AdvancedMetaEngine {
+class DreamWebMetaEngine : public AdvancedMetaEngine<DreamWeb::DreamWebGameDescription> {
 public:
 	const char *getName() const override {
 		return "dreamweb";
@@ -105,7 +105,7 @@ public:
 		return gameGuiOptions;
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const DreamWeb::DreamWebGameDescription *desc) const override;
 
 	bool hasFeature(MetaEngineFeature f) const override;
 
@@ -147,8 +147,8 @@ bool DreamWeb::DreamWebEngine::hasFeature(EngineFeature f) const {
 	}
 }
 
-Common::Error DreamWebMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new DreamWeb::DreamWebEngine(syst, (const DreamWeb::DreamWebGameDescription *)desc);
+Common::Error DreamWebMetaEngine::createInstance(OSystem *syst, Engine **engine, const DreamWeb::DreamWebGameDescription *desc) const {
+	*engine = new DreamWeb::DreamWebEngine(syst,desc);
 	return Common::kNoError;
 }
 

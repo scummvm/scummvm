@@ -27,7 +27,7 @@
 #include "engines/advancedDetector.h"
 #include "engines/metaengine.h"
 
-class DraciMetaEngine : public AdvancedMetaEngine {
+class DraciMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "draci";

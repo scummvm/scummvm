@@ -179,7 +179,7 @@ static Common::String convertSierraGameId(Common::String sierraId, SciVersion sc
 
 namespace Sci {
 
-class SciMetaEngine : public AdvancedMetaEngine {
+class SciMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "sci";
@@ -441,7 +441,7 @@ static ADGameDescription s_fallbackDesc = {
 	GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE)
 };
 
-Common::Platform getSciFallbackDetectionPlatform(const AdvancedMetaEngine::FileMap &allFiles) {
+Common::Platform getSciFallbackDetectionPlatform(const AdvancedMetaEngineBase::FileMap &allFiles) {
 	// Data1 contains both map and volume for SCI1.1+ Mac games
 	if (allFiles.contains("Data1"))
 		return Common::kPlatformMacintosh;
@@ -461,7 +461,7 @@ Common::Platform getSciFallbackDetectionPlatform(const AdvancedMetaEngine::FileM
 	return Common::kPlatformDOS;
 }
 
-bool necessarySciResourceFilesFound(const AdvancedMetaEngine::FileMap &allFiles) {
+bool necessarySciResourceFilesFound(const AdvancedMetaEngineBase::FileMap &allFiles) {
 	bool foundResMap = false;
 	bool foundRes000 = false;
 
@@ -487,7 +487,7 @@ bool necessarySciResourceFilesFound(const AdvancedMetaEngine::FileMap &allFiles)
 	return foundResMap && foundRes000;
 }
 
-bool isSciCDVersion(const AdvancedMetaEngine::FileMap &allFiles) {
+bool isSciCDVersion(const AdvancedMetaEngineBase::FileMap &allFiles) {
 	// Determine if we got a CD version and set the CD flag accordingly, by checking for
 	// resource.aud for SCI1.1 CD games, or audio001.002 for SCI1 CD games. We assume that
 	// the file should be over 10MB, as it contains all the game speech and is usually

@@ -156,7 +156,7 @@ const ADExtraGuiOptionsMap gameGuiOptions[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class KyraMetaEngine : public AdvancedMetaEngine {
+class KyraMetaEngine : public AdvancedMetaEngine<KYRAGameDescription> {
 public:
 	const char *getName() const override {
 		return "kyra";
@@ -167,7 +167,7 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const KYRAGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -198,9 +198,7 @@ bool Kyra::KyraEngine_v1::hasFeature(EngineFeature f) const {
 	    (f == kSupportsSubtitleOptions);
 }
 
-Common::Error KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const KYRAGameDescription *gd = (const KYRAGameDescription *)desc;
-
+Common::Error KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const KYRAGameDescription *gd) const {
 	Kyra::GameFlags flags = gd->flags;
 
 	flags.lang = gd->desc.language;

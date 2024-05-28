@@ -26,7 +26,7 @@
 
 #include "petka/petka.h"
 
-class PetkaMetaEngine : public AdvancedMetaEngine {
+class PetkaMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "petka";

@@ -109,7 +109,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 
 } // End of namespace AGOS
 
-class AgosMetaEngine : public AdvancedMetaEngine {
+class AgosMetaEngine : public AdvancedMetaEngine<AGOS::AGOSGameDescription> {
 public:
 	const char *getName() const override {
 		return "agos";
@@ -121,7 +121,7 @@ public:
 
 	bool hasFeature(MetaEngineFeature f) const override;
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const AGOS::AGOSGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -140,9 +140,7 @@ bool AGOS::AGOSEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsReturnToLauncher);
 }
 
-Common::Error AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const AGOS::AGOSGameDescription *gd = (const AGOS::AGOSGameDescription *)desc;
-
+Common::Error AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const AGOS::AGOSGameDescription *gd) const {
 	switch (gd->gameType) {
 	case AGOS::GType_PN:
 		*engine = new AGOS::AGOSEngine_PN(syst, gd);

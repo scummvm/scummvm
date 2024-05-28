@@ -30,7 +30,7 @@ Common::Language ChamberEngine::getLanguage() const {
 
 } // end of namespace Chamber
 
-class ChamberMetaEngine : public AdvancedMetaEngine {
+class ChamberMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "chamber";

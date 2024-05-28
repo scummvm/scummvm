@@ -31,7 +31,7 @@ namespace Bagel {
 	};
 }
 
-class BagelMetaEngine : public AdvancedMetaEngine {
+class BagelMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override;
 

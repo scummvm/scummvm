@@ -64,7 +64,7 @@ uint16 MadeEngine::getVersion() const {
 
 } // End of namespace Made
 
-class MadeMetaEngine : public AdvancedMetaEngine {
+class MadeMetaEngine : public AdvancedMetaEngine<Made::MadeGameDescription> {
 public:
 	const char *getName() const override {
 		return "made";
@@ -75,7 +75,7 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Made::MadeGameDescription *desc) const override;
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
@@ -90,8 +90,8 @@ bool Made::MadeEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsReturnToLauncher);
 }
 
-Common::Error MadeMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Made::MadeEngine(syst, (const Made::MadeGameDescription *)desc);
+Common::Error MadeMetaEngine::createInstance(OSystem *syst, Engine **engine, const Made::MadeGameDescription *desc) const {
+	*engine = new Made::MadeEngine(syst,desc);
 	return Common::kNoError;
 }
 

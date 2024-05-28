@@ -58,7 +58,7 @@ Common::Language ToltecsEngine::getLanguage() const {
 
 } // End of namespace Toltecs
 
-class ToltecsMetaEngine : public AdvancedMetaEngine {
+class ToltecsMetaEngine : public AdvancedMetaEngine<Toltecs::ToltecsGameDescription> {
 public:
 	const char *getName() const override {
 		return "toltecs";
@@ -69,7 +69,7 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Toltecs::ToltecsGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -96,8 +96,8 @@ bool Toltecs::ToltecsEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-Common::Error ToltecsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Toltecs::ToltecsEngine(syst, (const Toltecs::ToltecsGameDescription *)desc);
+Common::Error ToltecsMetaEngine::createInstance(OSystem *syst, Engine **engine, const Toltecs::ToltecsGameDescription *desc) const {
+	*engine = new Toltecs::ToltecsEngine(syst,desc);
 	return Common::kNoError;
 }
 

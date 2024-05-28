@@ -53,14 +53,14 @@ Common::Language StarTrekEngine::getLanguage() const {
 
 } // End of Namespace StarTrek
 
-class StarTrekMetaEngine : public AdvancedMetaEngine {
+class StarTrekMetaEngine : public AdvancedMetaEngine<StarTrek::StarTrekGameDescription> {
 public:
 	const char *getName() const override {
 		return "startrek";
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const StarTrek::StarTrekGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -80,8 +80,8 @@ bool StarTrekMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSimpleSavesNames);
 }
 
-Common::Error StarTrekMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new StarTrek::StarTrekEngine(syst, (const StarTrek::StarTrekGameDescription *)desc);
+Common::Error StarTrekMetaEngine::createInstance(OSystem *syst, Engine **engine, const StarTrek::StarTrekGameDescription *desc) const {
+	*engine = new StarTrek::StarTrekEngine(syst,desc);
 	return Common::kNoError;
 }
 

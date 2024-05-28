@@ -74,7 +74,7 @@ namespace Drascula {
 
 SaveStateDescriptor loadMetaData(Common::ReadStream *s, int slot, bool setPlayTime);
 
-class DrasculaMetaEngine : public AdvancedMetaEngine {
+class DrasculaMetaEngine : public AdvancedMetaEngine<Drascula::DrasculaGameDescription> {
 public:
 	const char *getName() const override {
 		return "drascula";
@@ -84,7 +84,7 @@ public:
 		return Drascula::optionsList;
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Drascula::DrasculaGameDescription *gd) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	SaveStateList listSaves(const char *target) const override;
@@ -172,8 +172,8 @@ void DrasculaMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-Common::Error DrasculaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Drascula::DrasculaEngine(syst, (const Drascula::DrasculaGameDescription *)desc);
+Common::Error DrasculaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Drascula::DrasculaGameDescription *desc) const {
+	*engine = new Drascula::DrasculaEngine(syst,desc);
 	return Common::kNoError;
 }
 

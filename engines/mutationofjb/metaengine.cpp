@@ -28,7 +28,7 @@
 
 #include "engines/advancedDetector.h"
 
-class MutationOfJBMetaEngine : public AdvancedMetaEngine {
+class MutationOfJBMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "mutationofjb";

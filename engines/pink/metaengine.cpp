@@ -33,7 +33,7 @@ Common::Language PinkEngine::getLanguage() const {
 
 } // End of Namespace Pink
 
-class PinkMetaEngine : public AdvancedMetaEngine {
+class PinkMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "pink";

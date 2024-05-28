@@ -28,7 +28,7 @@
 
 #include "tucker/tucker.h"
 
-class TuckerMetaEngine : public AdvancedMetaEngine {
+class TuckerMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "tucker";

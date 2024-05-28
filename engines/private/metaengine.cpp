@@ -24,7 +24,7 @@
 
 #include "private/private.h"
 
-class PrivateMetaEngine : public AdvancedMetaEngine {
+class PrivateMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "private";

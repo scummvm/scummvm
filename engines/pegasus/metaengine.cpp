@@ -64,14 +64,14 @@ bool PegasusEngine::isLinux() const {
 
 } // End of namespace Pegasus
 
-class PegasusMetaEngine : public AdvancedMetaEngine {
+class PegasusMetaEngine : public AdvancedMetaEngine<Pegasus::PegasusGameDescription> {
 public:
 	const char *getName() const override {
 		return "pegasus";
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Pegasus::PegasusGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override { return 999; }
@@ -127,8 +127,8 @@ Common::KeymapArray PegasusMetaEngine::initKeymaps(const char *target) const {
 	return Pegasus::PegasusEngine::initKeymaps();
 }
 
-Common::Error PegasusMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Pegasus::PegasusEngine(syst, (const Pegasus::PegasusGameDescription *)desc);
+Common::Error PegasusMetaEngine::createInstance(OSystem *syst, Engine **engine, const Pegasus::PegasusGameDescription *desc) const {
+	*engine = new Pegasus::PegasusEngine(syst,desc);
 	return Common::kNoError;
 }
 

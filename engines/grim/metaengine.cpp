@@ -57,7 +57,7 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class GrimMetaEngine : public AdvancedMetaEngine {
+class GrimMetaEngine : public AdvancedMetaEngine<Grim::GrimGameDescription> {
 public:
 	const char *getName() const override {
 		return "grim";
@@ -67,7 +67,7 @@ public:
 		return gameGuiOptions;
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Grim::GrimGameDescription *desc) const override;
 
 	bool hasFeature(MetaEngineFeature f) const override;
 
@@ -77,7 +77,7 @@ public:
 
 };
 
-Common::Error GrimMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Common::Error GrimMetaEngine::createInstance(OSystem *syst, Engine **engine, const Grim::GrimGameDescription *desc) const {
 	const GrimGameDescription *gd = (const GrimGameDescription *)desc;
 
 	if (gd->gameType == GType_MONKEY4) {

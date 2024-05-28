@@ -54,7 +54,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 
 } // End of namespace Sword1
 
-class SwordMetaEngine : public AdvancedMetaEngine {
+class SwordMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "sword1";

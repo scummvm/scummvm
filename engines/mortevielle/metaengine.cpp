@@ -38,13 +38,13 @@ bool MortevielleEngine::useOriginalData() const { return _gameDescription->dataF
 
 } // End of namespace Mortevielle
 
-class MortevielleMetaEngine : public AdvancedMetaEngine {
+class MortevielleMetaEngine : public AdvancedMetaEngine<Mortevielle::MortevielleGameDescription> {
 public:
 	const char *getName() const override {
 		return "mortevielle";
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Mortevielle::MortevielleGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	int getMaximumSaveSlot() const override;
@@ -60,8 +60,8 @@ public:
 	}
 };
 
-Common::Error MortevielleMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Mortevielle::MortevielleEngine(syst, (const Mortevielle::MortevielleGameDescription *)desc);
+Common::Error MortevielleMetaEngine::createInstance(OSystem *syst, Engine **engine, const Mortevielle::MortevielleGameDescription *desc) const {
+	*engine = new Mortevielle::MortevielleEngine(syst,desc);
 	return Common::kNoError;
 }
 

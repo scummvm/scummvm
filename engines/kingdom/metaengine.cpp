@@ -37,7 +37,7 @@ Common::Platform KingdomGame::getPlatform() const { return _gameDescription->pla
 } // End of namespace Kingdom
 
 
-class KingdomMetaEngine : public AdvancedMetaEngine {
+class KingdomMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "kingdom";

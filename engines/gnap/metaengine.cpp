@@ -28,7 +28,7 @@
 #include "base/plugins.h"
 #include "graphics/thumbnail.h"
 
-class GnapMetaEngine : public AdvancedMetaEngine {
+class GnapMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "gnap";

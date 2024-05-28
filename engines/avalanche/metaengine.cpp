@@ -53,13 +53,13 @@ Common::Platform AvalancheEngine::getPlatform() const {
 
 namespace Avalanche {
 
-class AvalancheMetaEngine : public AdvancedMetaEngine {
+class AvalancheMetaEngine : public AdvancedMetaEngine<AvalancheGameDescription> {
 public:
 	const char *getName() const override {
 		return "avalanche";
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const AvalancheGameDescription *gd) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	int getMaximumSaveSlot() const override { return 99; }
@@ -68,8 +68,8 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-Common::Error AvalancheMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	*engine = new AvalancheEngine(syst, (const AvalancheGameDescription *)gd);
+Common::Error AvalancheMetaEngine::createInstance(OSystem *syst, Engine **engine, const AvalancheGameDescription *gd) const {
+	*engine = new AvalancheEngine(syst,gd);
 	return Common::kNoError;
 }
 
