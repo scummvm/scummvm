@@ -134,6 +134,8 @@ void AGOSEngine::skipSpeech() {
 void AGOSEngine::loadMusic(uint16 music, bool forceSimon2GmData, bool useSimon2Remapping) {
 	stopMusic();
 
+	debug(1, "AGOSEngine::loadMusic(music=%d, forceSimon2GmData=%d, useSimon2Remapping=%d)", music, forceSimon2GmData, useSimon2Remapping);
+
 	uint16 indexBase = forceSimon2GmData ? MUSIC_INDEX_BASE_SIMON2_GM : _musicIndexBase;
 
 	_gameFile->seek(_gameOffsetsPtr[indexBase + music - 1], SEEK_SET);
@@ -233,6 +235,8 @@ void AGOSEngine::playModule(uint16 music) {
 }
 
 void AGOSEngine_Simon2::playMusic(uint16 music, uint16 track) {
+	debug(1, "AGOSEngine_Simon2::loadMusic(music=%d, track=%d)", music, track);
+
 	if (_lastMusicPlayed == 10 && getPlatform() == Common::kPlatformDOS && _midi->usesMT32Data()) {
 		// WORKAROUND Simon 2 track 10 (played during the first intro scene)
 		// consist of 3 subtracks. Subtracks 2 and 3 are missing from the MT-32
@@ -406,6 +410,8 @@ void AGOSEngine::stopMusic() {
 	}
 	_mixer->stopHandle(_modHandle);
 	_mixer->stopHandle(_digitalMusicHandle);
+
+	debug(1, "AGOSEngine::stopMusic()");
 }
 
 static const byte elvira1_soundTable[100] = {

@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/debug.h"
 #include "agos/midiparser_simonwin.h"
 
 #include "audio/mididrv.h"
@@ -109,7 +110,9 @@ bool MidiParser_SimonWin::loadMusic(byte *data, uint32 size) {
 		warning("MidiParser_SimonWin::loadMusic - Can only handle %d tracks but was handed %d", MAXIMUM_TRACKS, _numTracks);
 		return false;
 	}
-	
+
+	debug(2, "MidiParser_SimonWin::loadMusic: %d", _numTracks);
+
 	// Read the tracks.
 	byte *trackDataStart;
 	for (int i = 0; i < _numTracks; ++i) {
