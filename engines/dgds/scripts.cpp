@@ -43,7 +43,7 @@
 
 namespace Dgds {
 
-static const float MS_PER_FRAME = 16.667;
+static const float MS_PER_FRAME = 16.6667f;
 
 void GetPutRegion::reset() {
 	_area = Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT);
