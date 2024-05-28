@@ -54,15 +54,18 @@ bool Debugger::Cmd_PlayMusic(int argc, const char **argv) {
 			if (_vm->getGameType() == GType_PP) {
 				// TODO
 			} else if (_vm->getGameType() == GType_SIMON2) {
+				uint track = 0;
+				if (argc > 2)
+					track = atoi(argv[2]);
 				_vm->loadMusic(music);
-				_vm->_midi->play();
+				_vm->_midi->play(track);
 			} else {
 				_vm->playMusic(music, 0);
 			}
 		} else
 			debugPrintf("Music out of range (0 - %d)\n", _vm->_numMusic);
 	} else
-		debugPrintf("Syntax: music <musicnum>\n");
+		debugPrintf("Syntax: music <musicnum> [<tracknum>]\n");
 
 	return true;
 }
