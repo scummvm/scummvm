@@ -3398,12 +3398,13 @@ static void showArchive() {
 				Archive *archive = it._value;
 
 				if (ImGui::TreeNode(archive->getPathName().toString().c_str())) {
-					const Common::Array<uint32> &typeList = archive->getResourceTypeList();
+					Common::Array<uint32> typeList = archive->getResourceTypeList();
+					Common::sort(typeList.begin(), typeList.end());
 
 					for (auto tag : typeList) {
-						ImGui::SetNextItemOpen(true);
-						if (ImGui::TreeNode("%s", tag2str(tag))) {
-							const Common::Array<uint16> &resList = archive->getResourceIDList(tag);
+						if (ImGui::TreeNode((void*)(intptr_t)tag, "%s", tag2str(tag))) {
+							Common::Array<uint16> resList = archive->getResourceIDList(tag);
+							Common::sort(resList.begin(), resList.end());
 
 							for (auto id : resList) {
 								if (ImGui::Selectable(Common::String::format("%d", id).c_str())) {
