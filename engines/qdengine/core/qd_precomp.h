@@ -126,6 +126,19 @@
 #define CB_ERR 			-1
 #define GWL_USERDATA    -21
 
+#define GENERIC_READ            0x80000000
+#define GENERIC_WRITE           0x40000000
+#define FILE_SHARE_READ         0x00000001
+#define FILE_SHARE_WRITE        0x00000002
+#define OPEN_EXISTING           3
+#define CREATE_ALWAYS           2
+#define OPEN_ALWAYS             4
+#define FILE_ATTRIBUTE_NORMAL   0x00000080
+#define FILE_FLAG_RANDOM_ACCESS 0x10000000
+#define FILE_FLAG_NO_BUFFERING  0x20000000
+#define FILE_END                2
+#define FILE_CURRENT            1
+
 typedef struct MSG {
 	HWND   hwnd;
 	UINT   message;
@@ -286,6 +299,42 @@ HANDLE LoadImage(HINSTANCE hinst, LPCSTR name, UINT type, int cxDesired, int cyD
 HMODULE GetModuleHandle(LPCSTR lpModuleName) {
 	warning("STUB: GetModuleHandle");
 	return 0;
+}
+
+DWORD SetFilePointer(HANDLE hfile, long lDistanceToMove, long * lpDistanceToMoveHigh, DWORD  dwMoveMethod) {
+	warning("STUB: SetFilePointer");
+	return 0;
+}
+
+bool CloseHandle(HANDLE hObject) {
+	warning("STUB: CloseHandle");
+	return false;
+}
+
+HANDLE CreateFile( LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode,void *lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile
+) {
+	warning("STUB: CreateFile()");
+	return 0;
+}
+
+bool ReadFile(HANDLE hFile, void *lpBuffer, DWORD nNumberOfBytesToRead, unsigned long *lpNumberOfBytesRead, void *lpOverlapped) {
+	warning("STUB: ReadFile()");
+	return false;
+}
+
+bool WriteFile(HANDLE hFile, const void *lpBuffer, DWORD nNumberOfBytesToWrite, unsigned long *lpNumberOfBytesWritten, void *lpOverlapped) {
+	warning("STUB: WriteFile()");
+	return false;
+}
+
+DWORD GetFileSize(HANDLE hFile, void *lpFileSizeHigh) {
+	warning("STUB: GetFileSize()");
+	return 0;
+}
+
+bool FlushFileBuffers(HANDLE hFile) {
+	warning("STUB: FlushFileBuffers()");
+	return false;
 }
 
 int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow);
