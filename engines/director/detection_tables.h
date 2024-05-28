@@ -907,6 +907,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "braingames",			"Brain Games" },
 	{ "chemicus2",			"Chemicus 2: Die versunkene Stadt" },
 	{ "cklasse",			"Mercedes-Benz C-Class Information Booth" },
+	{ "diehexenakademie",	"Die Hexenakademie" },
 	{ "dieveteranen",		"Die Veteranen: So nutzlos wie eine Fuge von Bach" },
 	{ "dudenmeyer",			"Duden/Meyer Multimedia sampler" },
 	{ "flaschenfahrrad",	"Das Verkehrs-Lernspiel: Fred und das Flaschenfahrrad" },
@@ -3877,6 +3878,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("digby", "", "Start Digby's Adventures", "a8e65a2268226bd59f12ebdc58a221f3", 481482, Common::ZH_CHN, 404),
 	WINGAME1_l("digby", "", "DIGBY.EXE", "adc126fbc4387e5d8e84dcd5abd33653", 684269, Common::ZH_CHN, 400),
+
+	MACGAME1_l("diehexenakademie", "", "Hexen", "tr:5c56c32ab21e85b20845584c4a2c0965", 482610, Common::DE_DEU, 404),
+	WINGAME1_l("diehexenakademie", "", "HEXEN.EXE", "t:5f44d2c1e58d0044081134c0dd045139", 741106, Common::DE_DEU, 404),
 
 	MACGAME1_l("dieveteranen", "", "Die Veteranen", "a33b948ad52edc74a4439e176a3ba8bf", 1929826, Common::DE_DEU, 403),
 	WINGAME1_l("dieveteranen", "", "VETERANS.EXE", "t:a00b43e9262390ecf5028e057e6e0633", 692689, Common::DE_DEU, 400),
