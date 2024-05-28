@@ -72,7 +72,7 @@ static const CGAPaletteEntry rawCGAPaletteByArea[] {
 };
 
 void EclipseEngine::initDOS() {
-	_viewArea = Common::Rect(40, 32, 280, 132);
+	_viewArea = Common::Rect(40, 33, 280, 133);
 	_rawCGAPaletteByArea = (const CGAPaletteEntry *)&rawCGAPaletteByArea;
 }
 
@@ -145,7 +145,7 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 	uint32 white = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
 	uint32 red = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0x00, 0x00);
-	uint32 blue = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0xFF);
+	uint32 blue = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x55, 0x55, 0xFF);
 	uint32 green = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x55, 0xFF, 0x55);
 	uint32 redish = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0x55, 0x55);
 

@@ -131,9 +131,6 @@ void FreescapeEngine::traverseEntrance(uint16 entranceID) {
 	}
 
 	_pitch = rotation.x();
-	// This is a workaround to avoid the camera looking at direct angles,
-	// polygons tends to disappear where the colinear
-	_pitch++;
 	if (rotation.y() > 0 && rotation.y() <= 45)
 		_yaw = rotation.y();
 	else if (rotation.y() <= 0 || (rotation.y() >= 180 && rotation.y() < 270))
@@ -228,7 +225,7 @@ void FreescapeEngine::changePlayerHeight(int index) {
 	int delta = 0;
 	if (scale == 2)
 		delta = 8;
-	else if (scale == 4)
+	else if (scale == 4 || scale == 5)
 		delta = 12;
 
 	_position.setValue(1, _position.y() - _playerHeight);
