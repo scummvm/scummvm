@@ -510,6 +510,7 @@ bool Window::step() {
 			return (_vm->getGameGID() == GID_TESTALL);
 
 		g_lingo->resetLingo();
+		g_director->_lastPalette = CastMemberID();
 	}
 
 	// play current movie

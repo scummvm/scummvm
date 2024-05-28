@@ -41,6 +41,13 @@ PaletteCastMember::PaletteCastMember(Cast *cast, uint16 castId, PaletteCastMembe
 	_palette = source._palette ? new PaletteV4(*source._palette) : nullptr;
 }
 
+PaletteCastMember::~PaletteCastMember() {
+	if (_palette) {
+		delete[] _palette->palette;
+		delete _palette;
+	}
+}
+
 Common::String PaletteCastMember::formatInfo() {
 	Common::String result;
 	if (_palette) {
@@ -84,7 +91,7 @@ void PaletteCastMember::load() {
 			PaletteV4 palData = _cast->loadPalette(*pal, paletteId);
 			CastMemberID cid(_castId, _cast->_castLibID);
 			g_director->addPalette(cid, palData.palette, palData.length);
-			_palette = g_director->getPalette(cid);
+			_palette = new PaletteV4(palData);
 			delete pal;
 		} else {
 			warning("PaletteCastMember::load(): no CLUT palette %d for cast index %d found", paletteId, _castId);

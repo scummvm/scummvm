@@ -150,8 +150,10 @@ void DirectorEngine::addPalette(CastMemberID &id, byte *palette, int length) {
 	}
 
 	debugC(3, kDebugLoading, "DirectorEngine::addPalette(): Registered palette %s of size %d, hash: %x", id.asString().c_str(), length, id.hash());
+	byte *palCopy = new byte[length * 3]; // freed by clearPalettes()
+	memcpy(palCopy, palette, length * 3);
 
-	_loadedPalettes[id] = PaletteV4(id, palette, length);
+	_loadedPalettes[id] = PaletteV4(id, palCopy, length);
 }
 
 bool DirectorEngine::setPalette(const CastMemberID &id) {
@@ -163,6 +165,7 @@ bool DirectorEngine::setPalette(const CastMemberID &id) {
 	PaletteV4 *pal = getPalette(id);
 	if (!pal)
 		return false;
+	debugC(5, kDebugImages, "DirectorEngine::setPalettes(): setting palette %d, %d", id.member, id.castLib);
 	setPalette(pal->palette, pal->length);
 	return true;
 }
@@ -172,6 +175,13 @@ void DirectorEngine::setPalette(byte *palette, uint16 count) {
 	memset(_currentPalette, 0, 768);
 	memmove(_currentPalette, palette, count * 3);
 	_currentPaletteLength = count;
+	if (debugChannelSet(8, kDebugImages)) {
+		Common::String palData;
+		for (size_t i = 0; i < (size_t)_currentPaletteLength; i++) {
+			palData += Common::String::format("%02X%02X%02X", _currentPalette[3 * i], _currentPalette[3 * i + 1], _currentPalette[3 * i + 2]);
+		}
+		debugC(8, kDebugImages, "DirectorEngine::setPalette(): Setting current palette: %s", palData.c_str());
+	}
 
 	// Pass the palette to OSystem only for 8bpp mode
 	if (_pixelformat.bytesPerPixel == 1)
@@ -203,6 +213,14 @@ void DirectorEngine::shiftPalette(int startIndex, int endIndex, bool reverse) {
 		memcpy(_currentPalette + 3 * startIndex, temp, 3);
 	}
 
+	if (debugChannelSet(8, kDebugImages)) {
+		Common::String palData;
+		for (size_t i = 0; i < (size_t)_currentPaletteLength; i++) {
+			palData += Common::String::format("%02X%02X%02X", _currentPalette[3 * i], _currentPalette[3 * i + 1], _currentPalette[3 * i + 2]);
+		}
+		debugC(8, kDebugImages, "DirectorEngine::shiftPalette(): Rotating current palette (start: %d, end: %d, reverse: %d): %s", startIndex, endIndex, reverse, palData.c_str());
+	}
+
 	// Pass the palette to OSystem only for 8bpp mode
 	if (_pixelformat.bytesPerPixel == 1)
 		_system->getPaletteManager()->setPalette(_currentPalette, 0, _currentPaletteLength);
@@ -211,10 +229,16 @@ void DirectorEngine::shiftPalette(int startIndex, int endIndex, bool reverse) {
 }
 
 void DirectorEngine::clearPalettes() {
+	// FIXME: Ideally we would run this every time we switch movie; but that would need to take
+	// into account e.g. shared casts that haven't changed, multiple windows...
 	for (auto it = _loadedPalettes.begin(); it != _loadedPalettes.end(); ++it) {
-		if (it->_value.id.castLib > 0)
+		if (it->_value.id.castLib > 0) {
+			debugC(5, kDebugImages, "DirectorEngine::clearPalettes(): erasing palette %d, %d", it->_value.id.member, it->_value.id.castLib);
 			delete[] it->_value.palette;
+			_loadedPalettes.erase(it);
+		}
 	}
+	_lastPalette = CastMemberID();
 }
 
 void DirectorEngine::setCursor(DirectorCursor type) {
