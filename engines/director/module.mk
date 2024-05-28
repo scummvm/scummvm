@@ -163,7 +163,7 @@ MODULE_OBJS += \
 endif
 
 # HACK: Skip this when including the file for detection objects.
-ifeq "$(USE_RULES)" "1"
+ifeq "$(LOAD_RULES_MK)" "1"
 director-grammar:
 	`brew --prefix flex`/bin/flex engines/director/lingo/lingo-lex.l
 	`brew --prefix bison`/bin/bison -dv engines/director/lingo/lingo-gr.y

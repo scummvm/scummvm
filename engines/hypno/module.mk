@@ -30,7 +30,7 @@ MODULE_DIRS += \
 	engines/hypno
 
 # HACK: Skip this when including the file for detection objects.
-ifeq "$(USE_RULES)" "1"
+ifeq "$(LOAD_RULES_MK)" "1"
 hypno-grammar:
 	flex engines/hypno/lexer_arc.l
 	bison engines/hypno/grammar_arc.y

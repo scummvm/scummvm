@@ -15,7 +15,7 @@ MODULE_DIRS += \
 	engines/private
 
 # HACK: Skip this when including the file for detection objects.
-ifeq "$(USE_RULES)" "1"
+ifeq "$(LOAD_RULES_MK)" "1"
 private-grammar:
 	flex engines/private/lexer.l
 	bison engines/private/grammar.y
