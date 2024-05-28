@@ -21,6 +21,7 @@
 
 #include "script.h"
 #include "stream-helper.h"
+#include "rooms.h"
 #include "alcachofa.h"
 
 #include "common/file.h"
@@ -539,6 +540,22 @@ Process *Script::createProcess(MainCharacterKind character, const String &proced
 	Process *process = g_engine->scheduler().createProcess<ScriptTask>(character, procedure, offset);
 	process->name() = procedure;
 	return process;
+}
+
+void Script::updateCommonVariables() {
+	if (g_engine->input().wasAnyMousePressed()) // yes, this variable is never reset by the engine
+		variable("SeHaPulsadoRaton") = 1;
+
+	if (variable("CalcularTiempoSinPulsarRaton")) {
+		if (_scriptTimer == 0)
+			_scriptTimer = g_system->getMillis();
+	}
+	else
+		_scriptTimer = 0;
+
+	variable("EstanAmbos") = g_engine->world().mortadelo().room() == g_engine->world().filemon().room();
+	variable("textoson") = 1; // TODO: Add subtitle option
+	variable("modored") = 1; // this is signalling whether a network connection is established
 }
 
 }

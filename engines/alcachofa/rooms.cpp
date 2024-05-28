@@ -148,7 +148,7 @@ void Room::update() {
 }
 
 void Room::updateScripts() {
-	g_engine->updateScriptVariables();
+	g_engine->script().updateCommonVariables();
 	if (!g_engine->scheduler().hasProcessWithName("ACTUALIZAR_" + _name))
 		g_engine->script().createProcess(MainCharacterKind::None, "ACTUALIZAR_" + _name, true);
 	g_engine->scheduler().run();
