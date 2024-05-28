@@ -44,14 +44,14 @@ Common::Language IllusionsEngine::getGameLanguage() const {
 
 } // End of namespace Illusions
 
-class IllusionsMetaEngine : public AdvancedMetaEngine {
+class IllusionsMetaEngine : public AdvancedMetaEngine<Illusions::IllusionsGameDescription> {
 public:
 	const char *getName() const override {
 		return "illusions";
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Illusions::IllusionsGameDescription *desc) const override;
 
 	int getMaximumSaveSlot() const override;
 	SaveStateList listSaves(const char *target) const override;
@@ -124,8 +124,7 @@ SaveStateDescriptor IllusionsMetaEngine::querySaveMetaInfos(const char *target, 
 	return SaveStateDescriptor();
 }
 
-Common::Error IllusionsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Illusions::IllusionsGameDescription *gd = (const Illusions::IllusionsGameDescription *)desc;
+Common::Error IllusionsMetaEngine::createInstance(OSystem *syst, Engine **engine, const Illusions::IllusionsGameDescription *gd) const {
 	switch (gd->gameId) {
 	case Illusions::kGameIdBBDOU:
 		*engine = new Illusions::IllusionsEngine_BBDOU(syst, gd);

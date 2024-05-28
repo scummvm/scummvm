@@ -483,7 +483,7 @@ protected:
 /**
  * A MetaEngine implementation of AdvancedMetaEngine.
  */
-class AdvancedMetaEngine : public MetaEngine {
+class AdvancedMetaEngineBase : public MetaEngine {
 public:
 	/**
 	 * Base createInstance for AdvancedMetaEngine.
@@ -499,7 +499,7 @@ public:
 	 * A createInstance implementation for subclasses. To be called after the base
 	 * createInstance function above is called.
 	 */
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const = 0;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const void *desc) const = 0;
 
 	/**
 	 * Return the name of the engine plugin based on the engineID.
@@ -570,6 +570,19 @@ protected:
 
 private:
 	void initSubSystems(const ADGameDescription *gameDesc) const;
+};
+
+template<class Descriptor>
+class AdvancedMetaEngine : public AdvancedMetaEngineBase {
+protected:
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const Descriptor *desc) const = 0;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const void *desc) const override final {
+		return createInstance(syst, engine, static_cast<const Descriptor *>(desc));
+	}
+
+private:
+	// Silence overloaded-virtual warning from clang
+	using AdvancedMetaEngineBase::createInstance;
 };
 
 /**

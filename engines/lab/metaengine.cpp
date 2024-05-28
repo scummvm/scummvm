@@ -42,7 +42,7 @@ uint32 LabEngine::getFeatures() const {
 
 } // End of namespace Lab
 
-class LabMetaEngine : public AdvancedMetaEngine {
+class LabMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "lab";

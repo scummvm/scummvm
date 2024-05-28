@@ -90,7 +90,7 @@ Common::Language BuriedEngine::getLanguage() const {
 
 } // End of namespace Buried
 
-class BuriedMetaEngine : public AdvancedMetaEngine {
+class BuriedMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "buried";

@@ -40,7 +40,7 @@ const char *WageEngine::getGameFile() const {
 
 } // End of namespace Wage
 
-class WageMetaEngine : public AdvancedMetaEngine {
+class WageMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "wage";

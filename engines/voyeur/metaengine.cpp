@@ -69,7 +69,7 @@ bool VoyeurEngine::getIsDemo() const {
 
 } // End of namespace Voyeur
 
-class VoyeurMetaEngine : public AdvancedMetaEngine {
+class VoyeurMetaEngine : public AdvancedMetaEngine<Voyeur::VoyeurGameDescription> {
 public:
 	const char *getName() const override {
 		return "voyeur";
@@ -80,7 +80,7 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Voyeur::VoyeurGameDescription *desc) const override;
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
@@ -104,8 +104,8 @@ bool Voyeur::VoyeurEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-Common::Error VoyeurMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Voyeur::VoyeurEngine(syst, (const Voyeur::VoyeurGameDescription *)desc);
+Common::Error VoyeurMetaEngine::createInstance(OSystem *syst, Engine **engine, const Voyeur::VoyeurGameDescription *desc) const {
+	*engine = new Voyeur::VoyeurEngine(syst,desc);
 	return Common::kNoError;
 }
 

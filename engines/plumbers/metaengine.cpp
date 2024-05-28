@@ -33,7 +33,7 @@ const char *PlumbersGame::getGameId() const { return _gameDescription->gameId; }
 Common::Platform PlumbersGame::getPlatform() const { return _gameDescription->platform; }
 } // End of namespace Plumbers
 
-class PlumbersMetaEngine : public AdvancedMetaEngine {
+class PlumbersMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 	const char *getName() const override {
 		return "plumbers";
 	}

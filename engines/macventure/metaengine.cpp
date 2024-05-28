@@ -39,7 +39,7 @@ namespace MacVenture {
 
 SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot, bool skipThumbnail = true);
 
-class MacVentureMetaEngine : public AdvancedMetaEngine {
+class MacVentureMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "macventure";

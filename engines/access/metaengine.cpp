@@ -67,7 +67,7 @@ Common::Platform AccessEngine::getPlatform() const {
 
 } // End of namespace Access
 
-class AccessMetaEngine : public AdvancedMetaEngine {
+class AccessMetaEngine : public AdvancedMetaEngine<Access::AccessGameDescription> {
 public:
 	const char *getName() const override {
 		return "access";
@@ -75,7 +75,7 @@ public:
 
 	bool hasFeature(MetaEngineFeature f) const override;
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Access::AccessGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -100,8 +100,7 @@ bool Access::AccessEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-Common::Error AccessMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Access::AccessGameDescription *gd = (const Access::AccessGameDescription *)desc;
+Common::Error AccessMetaEngine::createInstance(OSystem *syst, Engine **engine, const Access::AccessGameDescription *gd) const {
 	switch (gd->gameID) {
 	case Access::GType_Amazon:
 		*engine = new Access::Amazon::AmazonEngine(syst, gd);

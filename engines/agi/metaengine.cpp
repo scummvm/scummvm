@@ -182,7 +182,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 
 using namespace Agi;
 
-class AgiMetaEngine : public AdvancedMetaEngine {
+class AgiMetaEngine : public AdvancedMetaEngine<Agi::AGIGameDescription> {
 public:
 	const char *getName() const override {
 		return "agi";
@@ -192,7 +192,7 @@ public:
 		return optionsList;
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Agi::AGIGameDescription *gd) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -214,9 +214,7 @@ bool AgiMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSimpleSavesNames);
 }
 
-Common::Error AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Agi::AGIGameDescription *gd = (const Agi::AGIGameDescription *)desc;
-
+Common::Error AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const Agi::AGIGameDescription *gd) const {
 	switch (gd->gameType) {
 	case Agi::GType_PreAGI:
 		switch (gd->gameID) {

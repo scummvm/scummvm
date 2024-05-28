@@ -35,7 +35,7 @@ Common::Platform WatchmakerGame::getPlatform() const {
 }
 } // End of namespace Watchmaker
 
-class WatchmakerMetaEngine : public AdvancedMetaEngine {
+class WatchmakerMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 	const char *getName() const override {
 		return "watchmaker";
 	}

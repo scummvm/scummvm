@@ -305,7 +305,7 @@ DetectedGames AdvancedMetaEngineDetectionBase::detectGames(const Common::FSList 
 	return detectedGames;
 }
 
-const ExtraGuiOptions AdvancedMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+const ExtraGuiOptions AdvancedMetaEngineBase::getExtraGuiOptions(const Common::String &target) const {
 	const ADExtraGuiOptionsMap *extraGuiOptions = getAdvancedExtraGuiOptions();
 	if (!extraGuiOptions)
 		return ExtraGuiOptions();
@@ -529,7 +529,7 @@ Common::String md5PropToGameFile(MD5Properties flags) {
 	return res;
 }
 
-static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::FileMap &allFiles, MD5Properties md5prop, const Common::Path &fname, FileProperties &fileProps);
+static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngineBase::FileMap &allFiles, MD5Properties md5prop, const Common::Path &fname, FileProperties &fileProps);
 
 bool AdvancedMetaEngineDetectionBase::getFileProperties(const FileMap &allFiles, MD5Properties md5prop, const Common::Path &fname, FileProperties &fileProps) const {
 	Common::String hashname = md5PropToCachePrefix(md5prop);
@@ -554,11 +554,11 @@ bool AdvancedMetaEngineDetectionBase::getFileProperties(const FileMap &allFiles,
 	return res;
 }
 
-bool AdvancedMetaEngine::getFilePropertiesExtern(uint md5Bytes, const FileMap &allFiles, MD5Properties md5prop, const Common::Path &fname, FileProperties &fileProps) const {
+bool AdvancedMetaEngineBase::getFilePropertiesExtern(uint md5Bytes, const FileMap &allFiles, MD5Properties md5prop, const Common::Path &fname, FileProperties &fileProps) const {
 	return getFilePropertiesIntern(md5Bytes, allFiles, md5prop, fname, fileProps);
 }
 
-static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::FileMap &allFiles, MD5Properties md5prop, const Common::Path &fname, FileProperties &fileProps) {
+static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngineBase::FileMap &allFiles, MD5Properties md5prop, const Common::Path &fname, FileProperties &fileProps) {
 	if (md5prop & (kMD5MacResFork | kMD5MacDataFork)) {
 		FileMapArchive fileMapArchive(allFiles);
 		bool is_legacy = ((md5prop & kMD5MacMask) == kMD5MacResOrDataFork);
@@ -1127,7 +1127,7 @@ void AdvancedMetaEngineDetectionBase::detectClashes() const {
 	}
 }
 
-Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine, const DetectedGame &gameDescriptor, const void *meDescriptor) {
+Common::Error AdvancedMetaEngineBase::createInstance(OSystem *syst, Engine **engine, const DetectedGame &gameDescriptor, const void *meDescriptor) {
 	assert(engine);
 
 	const ADGameDescription *adgDesc = (const ADGameDescription *)meDescriptor;
@@ -1169,10 +1169,10 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine,
 	}
 	initSubSystems(adgDesc);
 
-	return createInstance(syst, engine, adgDesc);
+	return createInstance(syst, engine, meDescriptor);
 }
 
-void AdvancedMetaEngine::initSubSystems(const ADGameDescription *gameDesc) const {
+void AdvancedMetaEngineBase::initSubSystems(const ADGameDescription *gameDesc) const {
 #ifdef ENABLE_EVENTRECORDER
 	if (gameDesc) {
 		g_eventRec.processGameDescription(gameDesc);
@@ -1180,7 +1180,7 @@ void AdvancedMetaEngine::initSubSystems(const ADGameDescription *gameDesc) const
 #endif
 }
 
-bool AdvancedMetaEngine::checkExtendedSaves(MetaEngineFeature f) const {
+bool AdvancedMetaEngineBase::checkExtendedSaves(MetaEngineFeature f) const {
 	return (f == kSavesUseExtendedFormat) ||
 		(f == kSimpleSavesNames) ||
 		(f == kSupportsListSaves) ||

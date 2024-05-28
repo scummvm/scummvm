@@ -56,7 +56,7 @@ bool NeverhoodEngine::applyResourceFixes() const {
 
 } // End of namespace Neverhood
 
-class NeverhoodMetaEngine : public AdvancedMetaEngine {
+class NeverhoodMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "neverhood";

@@ -49,7 +49,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class Myst3MetaEngine : public AdvancedMetaEngine {
+class Myst3MetaEngine : public AdvancedMetaEngine<Myst3GameDescription> {
 public:
 	const char *getName() const override {
 		return "myst3";
@@ -150,13 +150,13 @@ public:
 		return 999;
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Myst3GameDescription *desc) const override;
 
 	// TODO: Add getSavegameFile()
 };
 
-Common::Error Myst3MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Myst3Engine(syst, (const Myst3GameDescription *)desc);
+Common::Error Myst3MetaEngine::createInstance(OSystem *syst, Engine **engine, const Myst3GameDescription *desc) const {
+	*engine = new Myst3Engine(syst,desc);
 	return Common::kNoError;
 }
 

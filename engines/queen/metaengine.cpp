@@ -56,7 +56,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class QueenMetaEngine : public AdvancedMetaEngine {
+class QueenMetaEngine : public AdvancedMetaEngine<Queen::QueenGameDescription> {
 public:
 	const char *getName() const override {
 		return "queen";
@@ -67,7 +67,7 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Queen::QueenGameDescription *desc) const override;
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override { return 99; }
 	void removeSaveState(const char *target, int slot) const override;
@@ -117,8 +117,8 @@ void QueenMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-Common::Error QueenMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Queen::QueenEngine(syst); //FIXME , (const Queen::QueenGameDescription *)desc);
+Common::Error QueenMetaEngine::createInstance(OSystem *syst, Engine **engine, const Queen::QueenGameDescription *desc) const {
+	*engine = new Queen::QueenEngine(syst); //FIXME ,desc);
 	return Common::kNoError;
 }
 

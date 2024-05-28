@@ -45,7 +45,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class TrecisionMetaEngine : public AdvancedMetaEngine {
+class TrecisionMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 	const char *getName() const override {
 		return "trecision";
 	}

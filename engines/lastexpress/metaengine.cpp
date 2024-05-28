@@ -25,7 +25,7 @@
 
 namespace LastExpress {
 
-class LastExpressMetaEngine : public AdvancedMetaEngine {
+class LastExpressMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "lastexpress";
@@ -42,7 +42,7 @@ protected:
 };
 
 Common::Error LastExpressMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	*engine = new LastExpressEngine(syst, (const ADGameDescription *)gd);
+	*engine = new LastExpressEngine(syst, gd);
 	return Common::kNoError;
 }
 

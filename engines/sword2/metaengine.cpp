@@ -53,7 +53,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 
 } // End of namespace Sword2
 
-class Sword2MetaEngine : public AdvancedMetaEngine {
+class Sword2MetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "sword2";

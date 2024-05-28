@@ -27,7 +27,7 @@
 
 #include "testbed/testbed.h"
 
-class TestbedMetaEngine : public AdvancedMetaEngine {
+class TestbedMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "testbed";

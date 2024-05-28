@@ -43,7 +43,7 @@ Common::Platform CruiseEngine::getPlatform() const {
 
 } // End of namespace Cruise
 
-class CruiseMetaEngine : public AdvancedMetaEngine {
+class CruiseMetaEngine : public AdvancedMetaEngine<Cruise::CRUISEGameDescription> {
 public:
 	const char *getName() const override {
 		return "cruise";
@@ -55,7 +55,7 @@ public:
 	SaveStateList listSaves(const char *target) const override;
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Cruise::CRUISEGameDescription *desc) const override;
 };
 
 bool CruiseMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -122,8 +122,8 @@ SaveStateDescriptor CruiseMetaEngine::querySaveMetaInfos(const char *target, int
 	return SaveStateDescriptor();
 }
 
-Common::Error CruiseMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Cruise::CruiseEngine(syst, (const Cruise::CRUISEGameDescription *)desc);
+Common::Error CruiseMetaEngine::createInstance(OSystem *syst, Engine **engine, const Cruise::CRUISEGameDescription *desc) const {
+	*engine = new Cruise::CruiseEngine(syst,desc);
 	return Common::kNoError;
 }
 

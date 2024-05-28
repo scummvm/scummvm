@@ -60,8 +60,8 @@ DragonsEngine *getEngine() {
 	return _engine;
 }
 
-DragonsEngine::DragonsEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst) {
-	_language = desc->language;
+DragonsEngine::DragonsEngine(OSystem *syst, const DragonsGameDescription *gd) : Engine(syst) {
+	_language = gd->desc.language;
 	_bigfileArchive = nullptr;
 	_dragonRMS = nullptr;
 	_backgroundResourceLoader = nullptr;

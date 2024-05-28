@@ -38,9 +38,7 @@ const char *AGSMetaEngine::getName() const {
 	return "ags";
 }
 
-Common::Error AGSMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const AGS::AGSGameDescription *gd = (const AGS::AGSGameDescription *)desc;
-
+Common::Error AGSMetaEngine::createInstance(OSystem *syst, Engine **engine, const AGS::AGSGameDescription *gd) const {
 	*engine = new AGS::AGSEngine(syst, gd);
 	return Common::kNoError;
 }

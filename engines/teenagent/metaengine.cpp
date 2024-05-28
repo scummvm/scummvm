@@ -34,7 +34,7 @@ enum {
 	MAX_SAVES = 20
 };
 
-class TeenAgentMetaEngine : public AdvancedMetaEngine {
+class TeenAgentMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "teenagent";

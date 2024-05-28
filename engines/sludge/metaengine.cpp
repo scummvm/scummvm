@@ -36,14 +36,14 @@ const char *SludgeEngine::getGameFile() const {
 
 } // End of namespace Sludge
 
-class SludgeMetaEngine : public AdvancedMetaEngine {
+class SludgeMetaEngine : public AdvancedMetaEngine<Sludge::SludgeGameDescription> {
 public:
 	const char *getName() const override {
 		return "sludge";
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
-		*engine = new Sludge::SludgeEngine(syst, (const Sludge::SludgeGameDescription *)desc);
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Sludge::SludgeGameDescription *desc) const override {
+		*engine = new Sludge::SludgeEngine(syst, desc);
 		return Common::kNoError;
 	}
 };

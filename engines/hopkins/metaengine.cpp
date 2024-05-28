@@ -86,7 +86,7 @@ const Common::String &HopkinsEngine::getTargetName() const {
 
 } // End of namespace Hopkins
 
-class HopkinsMetaEngine : public AdvancedMetaEngine {
+class HopkinsMetaEngine : public AdvancedMetaEngine<Hopkins::HopkinsGameDescription> {
 public:
 	const char *getName() const override {
 		return "hopkins";
@@ -97,7 +97,7 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Hopkins::HopkinsGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -122,8 +122,8 @@ bool Hopkins::HopkinsEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-Common::Error HopkinsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Hopkins::HopkinsEngine(syst, (const Hopkins::HopkinsGameDescription *)desc);
+Common::Error HopkinsMetaEngine::createInstance(OSystem *syst, Engine **engine, const Hopkins::HopkinsGameDescription *desc) const {
+	*engine = new Hopkins::HopkinsEngine(syst,desc);
 	return Common::kNoError;
 }
 

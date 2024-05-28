@@ -35,13 +35,13 @@
 
 namespace DM {
 
-class DMMetaEngine : public AdvancedMetaEngine {
+class DMMetaEngine : public AdvancedMetaEngine<DMADGameDescription> {
 public:
 	const char *getName() const override {
 		return "dm";
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
+	Common::Error createInstance(OSystem *syst, Engine **engine, const DMADGameDescription *desc) const override {
 		*engine = new DM::DMEngine(syst, (const DMADGameDescription*)desc);
 		return Common::kNoError;
 	}

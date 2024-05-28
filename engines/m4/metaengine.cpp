@@ -55,9 +55,7 @@ const ADExtraGuiOptionsMap *M4MetaEngine::getAdvancedExtraGuiOptions() const {
 	return M4::optionsList;
 }
 
-Common::Error M4MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const M4::M4GameDescription *gd = (const M4::M4GameDescription *)desc;
-
+Common::Error M4MetaEngine::createInstance(OSystem *syst, Engine **engine, const M4::M4GameDescription *gd) const {
 	switch (gd->gameType) {
 	case M4::GType_Burger:
 		*engine = new M4::Burger::BurgerEngine(syst, gd);

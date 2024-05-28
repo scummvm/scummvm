@@ -136,7 +136,7 @@ Common::Language SherlockEngine::getLanguage() const {
 } // End of namespace Sherlock
 
 
-class SherlockMetaEngine : public AdvancedMetaEngine {
+class SherlockMetaEngine : public AdvancedMetaEngine<Sherlock::SherlockGameDescription> {
 public:
 	const char *getName() const override {
 		return "sherlock";
@@ -149,7 +149,7 @@ public:
 	/**
 	 * Creates an instance of the game engine
 	 */
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Sherlock::SherlockGameDescription *desc) const override;
 
 	/**
 	 * Returns a list of features the game's MetaEngine support
@@ -177,8 +177,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-Common::Error SherlockMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Sherlock::SherlockGameDescription *gd = (const Sherlock::SherlockGameDescription *)desc;
+Common::Error SherlockMetaEngine::createInstance(OSystem *syst, Engine **engine, const Sherlock::SherlockGameDescription *gd) const {
 	switch (gd->gameID) {
 	case Sherlock::GType_SerratedScalpel:
 		*engine = new Sherlock::Scalpel::ScalpelEngine(syst, gd);

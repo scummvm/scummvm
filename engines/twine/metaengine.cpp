@@ -165,7 +165,7 @@ static const ADExtraGuiOptionsMap twineOptionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class TwinEMetaEngine : public AdvancedMetaEngine {
+class TwinEMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "twine";

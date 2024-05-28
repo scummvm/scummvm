@@ -101,14 +101,14 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class NancyMetaEngine : public AdvancedMetaEngine {
+class NancyMetaEngine : public AdvancedMetaEngine<Nancy::NancyGameDescription> {
 public:
 	const char *getName() const override {
 		return "nancy";
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Nancy::NancyGameDescription *gd) const override;
 
 	int getMaximumSaveSlot() const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
@@ -134,9 +134,9 @@ bool NancyMetaEngine::hasFeature(MetaEngineFeature f) const {
 		checkExtendedSaves(f);
 }
 
-Common::Error NancyMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
+Common::Error NancyMetaEngine::createInstance(OSystem *syst, Engine **engine, const Nancy::NancyGameDescription *gd) const {
 	if (gd) {
-		*engine = Nancy::NancyEngine::create(((const Nancy::NancyGameDescription *)gd)->gameType, syst, (const Nancy::NancyGameDescription *)gd);
+		*engine = Nancy::NancyEngine::create(gd->gameType, syst, gd);
 	}
 
 	if (gd) {

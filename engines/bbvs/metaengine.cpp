@@ -44,7 +44,7 @@ bool BbvsEngine::isLoogieAltDemo() const {
 
 } // End of namespace Bbvs
 
-class BbvsMetaEngine : public AdvancedMetaEngine {
+class BbvsMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "bbvs";

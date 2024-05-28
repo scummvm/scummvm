@@ -44,14 +44,14 @@ Common::Language TitanicEngine::getLanguage() const {
 
 } // End of namespace Titanic
 
-class TitanicMetaEngine : public AdvancedMetaEngine {
+class TitanicMetaEngine : public AdvancedMetaEngine<Titanic::TitanicGameDescription> {
 public:
 	const char *getName() const override {
 		return "titanic";
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Titanic::TitanicGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -78,8 +78,8 @@ bool Titanic::TitanicEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-Common::Error TitanicMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Titanic::TitanicEngine(syst, (const Titanic::TitanicGameDescription *)desc);
+Common::Error TitanicMetaEngine::createInstance(OSystem *syst, Engine **engine, const Titanic::TitanicGameDescription *desc) const {
+	*engine = new Titanic::TitanicEngine(syst,desc);
 	return Common::kNoError;
 }
 

@@ -34,7 +34,7 @@
 #include "graphics/thumbnail.h"
 #include "toon/toon.h"
 
-class ToonMetaEngine : public AdvancedMetaEngine {
+class ToonMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "toon";

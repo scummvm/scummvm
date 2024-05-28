@@ -43,14 +43,14 @@ Common::Platform Parallaction::getPlatform() const { return _gameDescription->de
 
 } // End of namespace Parallaction
 
-class ParallactionMetaEngine : public AdvancedMetaEngine {
+class ParallactionMetaEngine : public AdvancedMetaEngine<Parallaction::PARALLACTIONGameDescription> {
 public:
 	const char *getName() const override {
 		return "parallaction";
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Parallaction::PARALLACTIONGameDescription *desc) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
 
 	SaveStateList listSaves(const char *target) const override;
@@ -79,9 +79,7 @@ bool Parallaction::Parallaction::hasFeature(EngineFeature f) const {
 		(f == kSupportsReturnToLauncher);
 }
 
-Common::Error ParallactionMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Parallaction::PARALLACTIONGameDescription *gd = (const Parallaction::PARALLACTIONGameDescription *)desc;
-
+Common::Error ParallactionMetaEngine::createInstance(OSystem *syst, Engine **engine, const Parallaction::PARALLACTIONGameDescription *gd) const {
 	switch (gd->gameType) {
 	case Parallaction::GType_Nippon:
 		*engine = new Parallaction::Parallaction_ns(syst, gd);

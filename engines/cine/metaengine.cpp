@@ -74,7 +74,7 @@ Common::Platform CineEngine::getPlatform() const { return _gameDescription->desc
 
 } // End of namespace Cine
 
-class CineMetaEngine : public AdvancedMetaEngine {
+class CineMetaEngine : public AdvancedMetaEngine<Cine::CINEGameDescription> {
 public:
 	const char *getName() const override {
 		return "cine";
@@ -84,7 +84,7 @@ public:
 		return Cine::optionsList;
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Cine::CINEGameDescription *desc) const override;
 
 	bool hasFeature(MetaEngineFeature f) const override;
 	SaveStateList listSaves(const char *target) const override;
@@ -107,8 +107,8 @@ bool Cine::CineEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-Common::Error CineMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Cine::CineEngine(syst, (const Cine::CINEGameDescription *)desc);
+Common::Error CineMetaEngine::createInstance(OSystem *syst, Engine **engine, const Cine::CINEGameDescription *desc) const {
+	*engine = new Cine::CineEngine(syst,desc);
 	return Common::kNoError;
 }
 

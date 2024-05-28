@@ -100,7 +100,7 @@ public:
 		if (metaEnginePlugin) {
 			const Plugin *enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);
 			if (enginePlugin) {
-				return enginePlugin->get<AdvancedMetaEngine>().fallbackDetectExtern(_md5Bytes, allFiles, fslist);
+				return enginePlugin->get<AdvancedMetaEngineBase>().fallbackDetectExtern(_md5Bytes, allFiles, fslist);
 			} else {
 				static bool warn = true;
 				if (warn) {

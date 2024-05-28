@@ -50,14 +50,14 @@ bool TonyEngine::isCompressed() const {
 
 } // End of namespace Tony
 
-class TonyMetaEngine : public AdvancedMetaEngine {
+class TonyMetaEngine : public AdvancedMetaEngine<Tony::TonyGameDescription> {
 public:
 	const char *getName() const override {
 		return "tony";
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Tony::TonyGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -82,8 +82,8 @@ bool Tony::TonyEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-Common::Error TonyMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Tony::TonyEngine(syst, (const Tony::TonyGameDescription *)desc);
+Common::Error TonyMetaEngine::createInstance(OSystem *syst, Engine **engine, const Tony::TonyGameDescription *desc) const {
+	*engine = new Tony::TonyEngine(syst,desc);
 	return Common::kNoError;
 }
 

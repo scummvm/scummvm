@@ -28,7 +28,7 @@
 
 #include "touche/touche.h"
 
-class ToucheMetaEngine : public AdvancedMetaEngine {
+class ToucheMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "touche";

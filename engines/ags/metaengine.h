@@ -25,11 +25,13 @@
 #include "engines/achievements.h"
 #include "engines/advancedDetector.h"
 
-class AGSMetaEngine : public AdvancedMetaEngine {
+#include "engines/ags/detection.h"
+
+class AGSMetaEngine : public AdvancedMetaEngine<AGS::AGSGameDescription> {
 public:
 	const char *getName() const override;
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const AGS::AGSGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 

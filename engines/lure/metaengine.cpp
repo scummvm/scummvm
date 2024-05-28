@@ -80,7 +80,7 @@ LureLanguage LureEngine::getLureLanguage() const {
 
 } // End of namespace Lure
 
-class LureMetaEngine : public AdvancedMetaEngine {
+class LureMetaEngine : public AdvancedMetaEngine<Lure::LureGameDescription> {
 public:
 	const char *getName() const override {
 		return "lure";
@@ -91,7 +91,7 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Lure::LureGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -113,8 +113,8 @@ bool Lure::LureEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-Common::Error LureMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Lure::LureEngine(syst, (const Lure::LureGameDescription *)desc);
+Common::Error LureMetaEngine::createInstance(OSystem *syst, Engine **engine, const Lure::LureGameDescription *desc) const {
+	*engine = new Lure::LureEngine(syst,desc);
 	return Common::kNoError;
 }
 
