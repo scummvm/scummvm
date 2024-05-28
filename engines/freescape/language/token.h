@@ -66,6 +66,7 @@ public:
 		SCREEN,
 		SOUND,
 		SETVAR,
+		SETFLAGS,
 		START,
 		STARTANIM,
 		STOPANIM,

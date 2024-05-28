@@ -308,9 +308,9 @@ Common::String detokenise8bitCondition(Common::Array<uint16> &tokenisedCondition
 			currentInstruction = FCLInstruction(Token::SCREEN);
 			break;
 
-		case 36: // Not sure about this one
+		case 36: // Only used in Dark Side to keep track of cristals and letters collected
 			detokenisedStream += "SETFLAGS (";
-			currentInstruction = FCLInstruction(Token::MODE);
+			currentInstruction = FCLInstruction(Token::SETFLAGS);
 			break;
 
 		case 37:
