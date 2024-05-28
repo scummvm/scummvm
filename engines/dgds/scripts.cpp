@@ -521,7 +521,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 	case 0xa530:
 		// CHINA
 		// DRAW BMP4:	x,y,tile-id,bmp-id:int	[-n,+n] (CHINA)
-		// arguments similar to DRAW BMP but it draws the same BMP multiple times with radial simmetry? you can see this in the Dynamix logo star.
+		// arguments similar to DRAW BMP but it draws the same BMP multiple times with radial symmetry?
+		// you can see this in the Dynamix logo star.
 		// FALL THROUGH
 	case 0xa500: {
 		// DRAW BMP: x,y,tile-id,bmp-id:int [-n,+n] (CHINA)
@@ -647,7 +648,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 
 	default:
 		if (count < 15)
-			warning("Unimplemented TTM opcode: 0x%04X (%d args) (ivals: %d %d %d %d)", op, count, ivals[0], ivals[1], ivals[2], ivals[3]);
+			warning("Unimplemented TTM opcode: 0x%04X (%d args) (ivals: %d %d %d %d)",
+					op, count, ivals[0], ivals[1], ivals[2], ivals[3]);
 		else
 			warning("Unimplemented TTM opcode: 0x%04X (sval: %s)", op, sval.c_str());
 		break;
@@ -661,8 +663,9 @@ bool TTMInterpreter::run(TTMEnviro &env, struct TTMSeq &seq) {
 	if (scr->pos() >= scr->size())
 		return false;
 
-	debug(10, "TTM: Run env %d seq %d frame %d (scr offset %d)", seq._enviro, seq._seqNum,
-			seq._currentFrame, (int)scr->pos());
+	debug(10, "TTM: Run env %d seq %d (%s) frame %d (scr offset %d, %s)", seq._enviro, seq._seqNum,
+			env._tags[seq._seqNum].c_str(), seq._currentFrame, (int)scr->pos(),
+			seq._executed ? "already executed" : "first execution");
 	uint16 code = 0;
 	while (code != 0x0ff0 && scr->pos() < scr->size()) {
 		code = scr->readUint16LE();
@@ -833,6 +836,7 @@ bool ADSInterpreter::load(const Common::String &filename) {
 
 	for (const auto &file : _adsData->_scriptNames) {
 		_adsData->_scriptEnvs.resize(_adsData->_scriptEnvs.size() + 1);
+		debug("   load TTM %s to env %d", file.c_str(), _adsData->_scriptEnvs.size());
 		TTMEnviro &data = _adsData->_scriptEnvs.back();
 		data._enviro = _adsData->_scriptEnvs.size();
 		_ttmInterpreter->load(file, data);
@@ -876,12 +880,12 @@ static const uint16 ADS_SEQ_OPCODES[] = {
 	0x1340, 0x1360, 0x1370, 0x1320, 0x1310, 0x1350
 };
 
-bool ADSInterpreter::updateSeqTimeAndFrame(TTMSeq &seq) {
+bool ADSInterpreter::updateSeqTimeAndFrame(const TTMEnviro *env, TTMSeq &seq) {
 	if (seq._timeInterval != 0) {
 		uint32 now = g_engine->getTotalPlayTime();
 		if (now < seq._timeNext) {
-			debug(10, "env %d seq %d not advancing from frame %d (now %d timeNext %d interval %d)", seq._enviro,
-					seq._seqNum, seq._currentFrame, now, seq._timeNext, seq._timeInterval);
+			debug(10, "env %d seq %d (%s) not advancing from frame %d (now %d timeNext %d interval %d)", seq._enviro,
+					seq._seqNum, env->_tags[seq._seqNum].c_str(), seq._currentFrame, now, seq._timeNext, seq._timeInterval);
 			return false;
 		}
 		seq._timeNext = now + seq._timeInterval;
@@ -889,12 +893,12 @@ bool ADSInterpreter::updateSeqTimeAndFrame(TTMSeq &seq) {
 
 	seq._executed = false;
 	if (seq._gotoFrame == -1) {
-		debug(10, "env %d seq %d advance to frame %d->%d (start %d last %d)", seq._enviro,
-				seq._seqNum, seq._currentFrame, seq._currentFrame + 1, seq._startFrame, seq._lastFrame);
+		debug(10, "env %d seq %d (%s) advance to frame %d->%d (start %d last %d)", seq._enviro, seq._seqNum,
+				env->_tags[seq._seqNum].c_str(), seq._currentFrame, seq._currentFrame + 1, seq._startFrame, seq._lastFrame);
 		seq._currentFrame++;
 	} else {
-		debug(10, "env %d seq %d goto to frame %d->%d (start %d last %d)", seq._enviro,
-				seq._seqNum, seq._currentFrame, seq._gotoFrame, seq._startFrame, seq._lastFrame);
+		debug(10, "env %d seq %d (%s) goto to frame %d->%d (start %d last %d)", seq._enviro, seq._seqNum,
+				env->_tags[seq._seqNum].c_str(), seq._currentFrame, seq._gotoFrame, seq._startFrame, seq._lastFrame);
 		seq._currentFrame = seq._gotoFrame;
 		seq._gotoFrame = -1;
 	}
@@ -984,12 +988,26 @@ bool ADSInterpreter::skipToEndIf() {
 	bool result = skipSceneLogicBranch();
 	if (result) {
 		uint16 op = scr->readUint16LE();
-		if (op == 0x1500) {
+		if (op == 0x1500)
 			result = runUntilBranchOpOrEnd();
-		}
 		// don't rewind - the calls to this should always return ptr+2
 	}
 	return result;
+}
+
+bool ADSInterpreter::skipToEndWhile() {
+	Common::SeekableReadStream *scr = _adsData->scr;
+	while (scr->pos() < scr->size()) {
+		uint16 op = scr->readUint16LE();
+		// don't rewind - the calls to this should always return after the last op.
+		if (op == 0x1520)
+			return true;
+		else if (op == 0 || op == 0xffff)
+			return false;
+
+		scr->skip(numArgs(op) * 2);
+	}
+	return false;
 }
 
 TTMEnviro *ADSInterpreter::findTTMEnviro(int16 enviro) {
@@ -1044,69 +1062,76 @@ void ADSInterpreter::findEndOrInitOp() {
 	}
 }
 
-bool ADSInterpreter::logicOpResult(uint16 code, const TTMSeq *seq) {
+bool ADSInterpreter::logicOpResult(uint16 code, const TTMEnviro *env, const TTMSeq *seq) {
+	const char *tag = env->_tags[seq->_seqNum].c_str();
+	int16 envNum = env->_enviro;
+	int16 seqNum = seq->_seqNum;
+	const char *optype = (code < 0x1300 ? "while" : "if");
 	switch (code) {
-	case 0x1010:
+	case 0x1010: // WHILE runtype 5
 	case 0x1310: // IF runtype 5, 2 params
-		debugN(10, "ADS 0x%04x: if runtype 5 env %d seq %d", code, seq->_enviro, seq->_seqNum);
+		debugN(10, "ADS 0x%04x: %s runtype 5 env %d seq %d (%s)", code, optype, envNum, seqNum, tag);
 		return seq->_runFlag == kRunType5;
-	case 0x1020:
+	case 0x1020: // WHILE not runtype 5
 	case 0x1320: // IF not runtype 5, 2 params
-		debugN(10, "ADS 0x%04x: if not runtype 5 env %d seq %d", code, seq->_enviro, seq->_seqNum);
+		debugN(10, "ADS 0x%04x: %s not runtype 5 env %d seq %d (%s)", code, optype, envNum, seqNum, tag);
 		return seq->_runFlag != kRunType5;
-	case 0x1030:
+	case 0x1030: // WHILE NOT PLAYED
 	case 0x1330: // IF_NOT_PLAYED, 2 params
-		debugN(10, "ADS 0x%04x: if not played env %d seq %d", code, seq->_enviro, seq->_seqNum);
+		debugN(10, "ADS 0x%04x: %s not played env %d seq %d (%s)", code, optype, envNum, seqNum, tag);
 		return !seq->_runPlayed;
-	case 0x1040:
+	case 0x1040: // WHILE PLAYED
 	case 0x1340: // IF_PLAYED, 2 params
-		debugN(10, "ADS 0x%04x: if played env %d seq %d", code, seq->_enviro, seq->_seqNum);
+		debugN(10, "ADS 0x%04x: %s played env %d seq %d (%s)", code, optype, envNum, seqNum, tag);
 		return seq->_runPlayed;
-	case 0x1050:
+	case 0x1050: // WHILE FINISHED
 	case 0x1350: // IF_FINISHED, 2 params
-		debugN(10, "ADS 0x%04x: if finished env %d seq %d", code, seq->_enviro, seq->_seqNum);
+		debugN(10, "ADS 0x%04x: %s finished env %d seq %d (%s)", code, optype, envNum, seqNum, tag);
 		return seq->_runFlag == kRunTypeFinished;
-	case 0x1060:
+	case 0x1060: // WHILE NOT RUNNING
 	case 0x1360: // IF_NOT_RUNNING, 2 params
-		debugN(10, "ADS 0x%04x: if not running env %d seq %d", code, seq->_enviro, seq->_seqNum);
+		debugN(10, "ADS 0x%04x: %s not running env %d seq %d (%s)", code, optype, envNum, seqNum, tag);
 		return seq->_runFlag == kRunTypeStopped;
-	case 0x1070:
+	case 0x1070: // WHILE RUNNING
 	case 0x1370: // IF_RUNNING, 2 params
-		debugN(10, "ADS 0x%04x: if running env %d seq %d", code, seq->_enviro, seq->_seqNum);
+		debugN(10, "ADS 0x%04x: %s running env %d seq %d (%s)", code, optype, envNum, seqNum, tag);
 		return seq->_runFlag == kRunType1 || seq->_runFlag == kRunTypeMulti || seq->_runFlag == kRunTypeTimeLimited;
 	case 0x1080:
 	case 0x1090:
 	case 0x1380: // IF_???????, 0 params
 	case 0x1390: // IF_???????, 0 params
-		warning("Unimplemented IF operation 0x%x", code);
+		warning("Unimplemented IF/WHILE operation 0x%x", code);
 		return true;
 	default:
 		error("Not an ADS logic op: %04x, how did we get here?", code);
 	}
 }
 
-bool ADSInterpreter::handleLogicOp(uint16 code,  Common::SeekableReadStream *scr) {
+bool ADSInterpreter::handleLogicOp(uint16 code, Common::SeekableReadStream *scr) {
 	bool testval = true;
 	uint16 andor = 0x1420; // start with "true" AND..
+	int32 startPos = scr->pos() - 2;
 	while (scr->pos() < scr->size()) {
 		uint16 enviro;
 		uint16 seqnum;
 		TTMSeq *seq = nullptr;
+		TTMEnviro *env = nullptr;
 
 		if (code != 0x1380 && code != 0x1390) {
 			enviro = scr->readUint16LE();
 			seqnum = scr->readUint16LE();
 			seq = findTTMSeq(enviro, seqnum);
+			env = findTTMEnviro(enviro);
 			if (!seq) {
 				warning("ADS if op referenced non-existant env %d seq %d", enviro, seqnum);
 				return false;
 			}
 		} else {
-			// not actually enviro I think? for now just read it.
+			// TODO: not actually enviro I think? for now just read it.
 			enviro = scr->readUint16LE();
 		}
 
-		bool logicResult = logicOpResult(code, seq);
+		bool logicResult = logicOpResult(code, env, seq);
 
 		if (andor == 0x1420) // AND
 			testval &= logicResult;
@@ -1114,6 +1139,7 @@ bool ADSInterpreter::handleLogicOp(uint16 code,  Common::SeekableReadStream *scr
 			testval |= logicResult;
 
 		debug(10, "  -> %s (overall %s)", logicResult ? "true" : "false", testval ? "true" : "false");
+		bool isWhile = code < 0x1300;
 
 		code = scr->readUint16LE();
 
@@ -1125,10 +1151,23 @@ bool ADSInterpreter::handleLogicOp(uint16 code,  Common::SeekableReadStream *scr
 		} else {
 			// No AND or OR, next op is just what to do.
 			scr->seek(-2, SEEK_CUR);
-			if (testval)
-				return runUntilBranchOpOrEnd();
-			else
-				return skipToEndIf();
+			if (testval) {
+				if (isWhile) {
+					_adsData->_countdown[_adsData->_runningSegmentIdx]++;
+					_adsData->_charWhile[_adsData->_runningSegmentIdx] = startPos;
+				}
+				bool runResult = runUntilBranchOpOrEnd();
+				// WHILE (10x0) series always return false
+				return (!isWhile) && runResult;
+			} else {
+				if (isWhile) {
+					_adsData->_countdown[_adsData->_runningSegmentIdx] = 0;
+					_adsData->_charWhile[_adsData->_runningSegmentIdx] = 0;
+					return skipToEndWhile();
+				} else {
+					return skipToEndIf();
+				}
+			}
 		}
 	}
 	error("didn't return from ADS logic test");
@@ -1183,7 +1222,7 @@ void ADSInterpreter::handleRandomOp(uint16 code, Common::SeekableReadStream *scr
 			break;
 		code = scr->readUint16LE();
 	} while (code != 0 && scr->pos() < scr->size());
-	if (code)
+	if (code && code != 0x3020)
 		handleOperation(code, scr);
 
 	scr->seek(endpos, SEEK_SET);
@@ -1198,13 +1237,13 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		debug(10, "ADS 0x%04x: init", code);
 		// "init".  0x0005 can be used for searching for next thing.
 		break;
-	case 0x1010: // unknown, 2 params
-	case 0x1020: // unknown, 2 params
-	case 0x1030: // unknown, 2 params
-	case 0x1040: // unknown, 2 params
-	case 0x1050: // unknown, 2 params
-	case 0x1060: // unknown, 2 params
-	case 0x1070: // unknown, 2 params
+	case 0x1010: // if unknown, 2 params
+	case 0x1020: // if unknown, 2 params
+	case 0x1030: // if unknown, 2 params
+	case 0x1040: // if unknown, 2 params
+	case 0x1050: // if unknown, 2 params
+	case 0x1060: // if unknown, 2 params
+	case 0x1070: // if unknown, 2 params
 	case 0x1080: // if current seq countdown??, 1 param
 	case 0x1090: // if ??? ???
 	case 0x1310: // IF runtype 5, 2 params
@@ -1223,12 +1262,12 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		skipToEndIf();
 		_adsData->_hitBranchOp = true;
 		return true;
-	case 0x1510: // PLAY_SCENE? 0 params
-		debug(10, "ADS 0x%04x: hit branch op true", code);
+	case 0x1510: // PLAY_SCENEENDIF? 0 params
+		debug(10, "ADS 0x%04x: hit branch op endif", code);
 		_adsData->_hitBranchOp = true;
 		return true;
-	case 0x1520: // PLAY_SCENE_ENDIF?, 0 params
-		debug(10, "ADS 0x%04x: hit branch op", code);
+	case 0x1520: // PLAY_SCENE_ENDWHILE?, 0 params
+		debug(10, "ADS 0x%04x: hit branch op endwhile", code);
 		_adsData->_hitBranchOp = true;
 		return false;
 
@@ -1238,11 +1277,14 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		seqnum = scr->readUint16LE();
 		int16 runCount = scr->readSint16LE();
 		uint16 unk = scr->readUint16LE(); // proportion
-		debug(10, "ADS 0x%04x: add scene - env %d seq %d runCount %d prop %d", code, enviro, seqnum, runCount, unk);
 
 		TTMSeq *seq = findTTMSeq(enviro, seqnum);
-		if (!seq)
+		TTMEnviro *env = findTTMEnviro(enviro);
+		if (!seq || !env)
 			error("ADS invalid seq requested %d %d", enviro, seqnum);
+
+		debug(10, "ADS 0x%04x: add scene - env %d seq %d (%s) runCount %d prop %d", code,
+					enviro, seqnum, env->_tags[seqnum].c_str(), runCount, unk);
 
 		if (code == 0x2000)
 			seq->_currentFrame = seq->_startFrame;
@@ -1265,8 +1307,10 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		enviro = scr->readUint16LE();
 		seqnum = scr->readUint16LE();
 		uint16 unk = scr->readUint16LE();
-		debug(10, "ADS 0x2010: stop seq env %d seq %d prop %d", enviro, seqnum, unk);
 		_currentTTMSeq = findTTMSeq(enviro, seqnum);
+		const TTMEnviro *env = findTTMEnviro(enviro);
+		debug(10, "ADS 0x2010: stop seq env %d seq %d (%s) prop %d", enviro, seqnum,
+				env->_tags[seqnum].c_str(), unk);
 		if (_currentTTMSeq)
 			_currentTTMSeq->_runFlag = kRunTypeStopped;
 		break;
@@ -1275,8 +1319,10 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		enviro = scr->readUint16LE();
 		seqnum = scr->readUint16LE();
 		uint16 unk = scr->readUint16LE();
-		debug(10, "ADS 0x2015: set runflag5 env %d seq %d prop %d", enviro, seqnum, unk);
 		_currentTTMSeq = findTTMSeq(enviro, seqnum);
+		const TTMEnviro *env = findTTMEnviro(enviro);
+		debug(10, "ADS 0x2015: set runflag5 env %d seq %d (%s) prop %d", enviro, seqnum,
+				env->_tags[seqnum].c_str(), unk);
 		if (_currentTTMSeq)
 			_currentTTMSeq->_runFlag = kRunType5;
 		break;
@@ -1285,8 +1331,10 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		enviro = scr->readUint16LE();
 		seqnum = scr->readUint16LE();
 		uint16 unk = scr->readUint16LE();
-		debug(10, "ADS 0x2020: reset scene env %d seq %d prop %d", enviro, seqnum, unk);
 		_currentTTMSeq = findTTMSeq(enviro, seqnum);
+		const TTMEnviro *env = findTTMEnviro(enviro);
+		debug(10, "ADS 0x2020: reset scene env %d seq %d (%s) prop %d", enviro, seqnum,
+				env->_tags[seqnum].c_str(), unk);
 		if (_currentTTMSeq)
 			_currentTTMSeq->reset();
 		break;
@@ -1534,18 +1582,18 @@ bool ADSInterpreter::run() {
 							seq._selfLoop = true;
 					}
 					if (seq._runFlag != kRunType5)
-						updateSeqTimeAndFrame(seq);
+						updateSeqTimeAndFrame(env, seq);
 				} else {
 					seq._gotoFrame = seq._startFrame;
 					if (seq._runFlag == kRunTypeMulti && seq._runCount != 0) {
-						bool updated = updateSeqTimeAndFrame(seq);
+						bool updated = updateSeqTimeAndFrame(env, seq);
 						if (updated) {
 							seq._runCount--;
 						}
 					} else if (seq._runFlag == kRunTypeTimeLimited && seq._timeCut != 0) {
-						updateSeqTimeAndFrame(seq);
+						updateSeqTimeAndFrame(env, seq);
 					} else {
-						bool updated = updateSeqTimeAndFrame(seq);
+						bool updated = updateSeqTimeAndFrame(env, seq);
 						if (updated) {
 							seq._runFlag = kRunTypeFinished;
 							seq._timeInterval = 0;

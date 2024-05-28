@@ -190,17 +190,18 @@ protected:
 	bool handleOperation(uint16 code, Common::SeekableReadStream *scr);
 	void handleRandomOp(uint16 code, Common::SeekableReadStream *scr);
 	bool handleLogicOp(uint16 code,  Common::SeekableReadStream *scr);
-	bool logicOpResult(uint16 code, const TTMSeq *seq);
+	bool logicOpResult(uint16 code, const TTMEnviro *env, const TTMSeq *seq);
 	int16 randomOpGetProportion(uint16 code, Common::SeekableReadStream *scr);
 	bool playScene();
 	bool skipToEndIf();
+	bool skipToEndWhile();
 	bool skipSceneLogicBranch();
 	TTMSeq *findTTMSeq(int16 enviro, int16 seq);
 	TTMEnviro *findTTMEnviro(int16 enviro);
 	bool runUntilBranchOpOrEnd();
 	void findUsedSequencesForSegment(int segno);
 	void findEndOrInitOp();
-	bool updateSeqTimeAndFrame(TTMSeq &seq);
+	bool updateSeqTimeAndFrame(const TTMEnviro *env, TTMSeq &seq);
 	int getArrIndexOfSegNum(uint16 segnum);
 
 	DgdsEngine *_vm;
