@@ -429,27 +429,34 @@ typedef struct ImGuiState {
 
 ImGuiState *_state = nullptr;
 
-const LingoDec::Handler *getHandler(CastMemberID id, const Common::String &handlerId) {
-	const Director::Movie *movie = g_director->getCurrentMovie();
-	const Cast *targets[2] = {movie->getCast(), movie->getSharedCast()};
-	for (int i = 0; i < 2; i++) {
-		const Cast *cast = targets[i];
-		if (!cast)
+const LingoDec::Handler *getHandler(const Cast *cast, CastMemberID id, const Common::String &handlerId) {
+	if (!cast)
+		return nullptr;
+	const ScriptContext *ctx = cast->_lingoArchive->findScriptContext(id.member);
+	if (!ctx || !ctx->_functionHandlers.contains(handlerId))
+		return nullptr;
+	for (auto p : cast->_lingodec->scripts) {
+		if ((p.second->castID & 0xFFFF) != id.member)
 			continue;
-		const ScriptContext *ctx = cast->_lingoArchive->findScriptContext(id.member);
-		if (!ctx || !ctx->_functionHandlers.contains(handlerId))
-			continue;
-		for (auto p : cast->_lingodec->scripts) {
-			if (p.second->castID != id.member)
-				continue;
-			for (const LingoDec::Handler &handler : p.second->handlers) {
-				if (handler.name == handlerId) {
-					return &handler;
-				}
+		;
+		for (const LingoDec::Handler &handler : p.second->handlers) {
+			if (handler.name == handlerId) {
+				return &handler;
 			}
 		}
 	}
 	return nullptr;
+}
+
+const LingoDec::Handler *getHandler(CastMemberID id, const Common::String &handlerId) {
+	const Director::Movie *movie = g_director->getCurrentMovie();
+	for (const auto it : *movie->getCasts()) {
+		const Cast *cast = it._value;
+		const LingoDec::Handler *handler = getHandler(cast, id, handlerId);
+		if (handler)
+			return handler;
+	}
+	return getHandler(movie->getSharedCast(), id, handlerId);
 }
 
 ImGuiScript toImGuiScript(CastMemberID id, const Common::String &handlerId) {
