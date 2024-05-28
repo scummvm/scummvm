@@ -199,6 +199,7 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 // %nonassoc tVARID
 
 %destructor { delete $$; } <s>
+%destructor { delete $$; } <node>
 
 %%
 
