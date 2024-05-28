@@ -111,7 +111,7 @@ bool MidiParser_SimonWin::loadMusic(byte *data, uint32 size) {
 		return false;
 	}
 
-	debug(2, "MidiParser_SimonWin::loadMusic: %d", _numTracks);
+	debug(2, "MidiParser_SimonWin::loadMusic: %d tracks", _numTracks);
 
 	// Read the tracks.
 	byte *trackDataStart;
