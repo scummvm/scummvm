@@ -565,6 +565,7 @@ public:
 
 		const ImVec4 color = (ImVec4)ImColor(g_lingo->_builtinCmds.contains(node.name) ? _state->_colors._builtin_color : _state->_colors._call_color);
 		ImGui::TextColored(color, "%s", node.name.c_str());
+		// TODO: we should test Director::builtins too (but inaccessible)
 		if (!g_lingo->_builtinCmds.contains(node.name) && ImGui::IsItemHovered() && ImGui::BeginTooltip()) {
 			ImGui::Text("Go to definition");
 			ImGui::EndTooltip();
@@ -705,6 +706,8 @@ public:
 	}
 
 	virtual void visit(const LingoDec::CaseLabelNode &node) override {
+		renderLine(node._startOffset);
+		renderIndentation();
 		bool parenValue = node.value->hasSpaces(_dot);
 		if (parenValue) {
 			ImGui::Text("(");
@@ -763,6 +766,7 @@ public:
 
 	virtual void visit(const LingoDec::CaseStmtNode &node) override {
 		write(node._startOffset, "case ", _state->_colors._keyword_color);
+		ImGui::SameLine();
 		node.value->accept(*this);
 		ImGui::TextColored(ImColor(_state->_colors._keyword_color), " of ");
 		indent();
@@ -773,7 +777,7 @@ public:
 			node.otherwise->accept(*this);
 		}
 		unindent();
-		ImGui::TextColored(ImColor(_state->_colors._keyword_color), "end case");
+		write(node._endOffset, "end case", _state->_colors._keyword_color);
 	}
 
 	virtual void visit(const LingoDec::ObjCallNode &node) override {
