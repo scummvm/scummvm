@@ -144,6 +144,7 @@ class Script {
 public:
 	Script();
 
+	void updateCommonVariables();
 	int32 variable(const char *name) const;
 	int32 &variable(const char *name);
 	Process *createProcess(
@@ -163,6 +164,7 @@ private:
 	Common::Array<ScriptInstruction> _instructions;
 	Common::Array<int32> _variables;
 	Common::SpanOwner<Common::Span<char>> _strings;
+	uint32 _scriptTimer = 0;
 };
 
 }
