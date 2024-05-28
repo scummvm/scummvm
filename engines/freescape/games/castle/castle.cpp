@@ -485,6 +485,16 @@ void CastleEngine::checkSensors() {
 	}*/
 }
 
+void CastleEngine::updateTimeVariables() {
+	if (_gameStateControl != kFreescapeGameStatePlaying)
+		return;
+	// This function only executes "on collision" room/global conditions
+
+	if (_gameStateVars[32] > 0) { // Key collected!
+		setGameBit(_gameStateVars[32]);
+		_gameStateVars[32] = 0;
+	}
+}
 
 Common::Error CastleEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
 	return Common::kNoError;

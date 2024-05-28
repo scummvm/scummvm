@@ -37,6 +37,7 @@ public:
 	void drawEnergyMeter(Graphics::Surface *surface);
 	void pressedKey(const int keycode) override;
 	void checkSensors() override;
+	void updateTimeVariables() override;
 
 	void executePrint(FCLInstruction &instruction) override;
 	void gotoArea(uint16 areaID, int entranceID) override;

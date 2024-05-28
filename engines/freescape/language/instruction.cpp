@@ -237,17 +237,24 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			executeStartAnim(instruction);
 			break;
 		case Token::BITNOTEQ:
-			if (executeEndIfBitNotEqual(instruction))
-				ip = codeSize;
+			if (executeEndIfBitNotEqual(instruction)) {
+				if (isCastle())
+					skip = true;
+				else
+					ip = codeSize;
+			}
 			break;
 		case Token::INVISQ:
-			if (executeEndIfVisibilityIsEqual(instruction))
-				ip = codeSize;
+			if (executeEndIfVisibilityIsEqual(instruction)) {
+				if (isCastle())
+					skip = true;
+				else
+					ip = codeSize;
+			}
 			break;
 		}
 		ip++;
 	}
-	return;
 }
 
 void FreescapeEngine::executeRedraw(FCLInstruction &instruction) {
