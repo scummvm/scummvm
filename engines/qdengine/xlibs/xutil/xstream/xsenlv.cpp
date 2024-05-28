@@ -1,3 +1,4 @@
+#include "qdengine/core/qd_precomp.h"
 #include "qdengine/xlibs/xutil/xglobal.h"
 
 static char* openMSG     = "CREATE/OPEN FAILURE";
@@ -39,7 +40,6 @@ bool XStream::open(const char* name, unsigned f) {
 			ioError_ = true;
 			return false;
 		}
-
 	fname = name;
 	pos = SetFilePointer(handler, 0, 0, f & XS_APPEND ? FILE_END : FILE_CURRENT);
 	eofFlag = 0;
@@ -65,7 +65,6 @@ void XStream::close() {
 
 	if (extSize == -1 && !CloseHandle(handler) && handleErrors_)
 		ErrH.Abort(closeMSG, XERR_USER, GetLastError(), fname);
-
 	handler = INVALID_HANDLE_VALUE;
 	fname = NULL;
 	pos = 0L;

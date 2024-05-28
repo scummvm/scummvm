@@ -34,7 +34,6 @@ unsigned long XStream::read(void* buf, unsigned long len) {
 			ioError_ = true;
 			return 0U;
 		}
-
 	if (ret < len)
 		eofFlag = 1;
 	pos += ret;
@@ -62,7 +61,6 @@ unsigned long XStream::write(const void* buf, unsigned long len) {
 			return 0U;
 		}
 	pos += ret;
-
 	if (xsWriteHandler) {
 		xsWriteBytesDelta += ret;
 		if (xsWriteBytesDelta >= xsRdWrResolution) {

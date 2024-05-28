@@ -118,11 +118,15 @@ MODULE_OBJS = \
 	xlibs/xutil/xbuffer/xbsearch.o \
 	xlibs/xutil/xbuffer/xbcore.o \
 	xlibs/xutil/xbuffer/xbcnvout.o \
+	xlibs/xutil/xstream/xscnvin.o \
 	xlibs/xutil/xstream/xscnvout.o \
 	xlibs/xutil/xstream/xscore.o \
 	xlibs/xutil/xstream/xsgetlin.o \
 	xlibs/xutil/xstream/xsinput.o \
 	xlibs/xutil/xstream/xsoutput.o \
+	xlibs/xutil/xstream/xsenlv.o \
+	xlibs/xutil/xstream/xsrdwr.o \
+	xlibs/xutil/xstream/xsserv.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_QDENGINE), DYNAMIC_PLUGIN)

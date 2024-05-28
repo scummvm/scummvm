@@ -6,7 +6,6 @@ static char *sizeMSG    = "FILE SIZE CALCULATION ERROR";
 
 long XStream::seek(long offset, int dir) {
 	long ret;
-
 	if (extSize != -1) {
 		switch (dir) {
 		case XS_BEG:
@@ -21,7 +20,6 @@ long XStream::seek(long offset, int dir) {
 		}
 	} else
 		ret = SetFilePointer(handler, offset, 0, dir);
-
 	if (ret == -1L)
 		if (handleErrors_) ErrH.Abort(seekMSG, XERR_USER, GetLastError(), fname);
 		else return -1L;
@@ -37,7 +35,6 @@ void XStream::flush() {
 
 long XStream::size() const {
 	long tmp = extSize;
-
 	if (tmp == -1) {
 		tmp = GetFileSize(handler, 0);
 		if (tmp == -1L)
