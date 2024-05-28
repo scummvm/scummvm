@@ -231,6 +231,7 @@ static BuiltinProto builtins[] = {
 	// ScummVM Asserts: Used for testing ScummVM's Lingo implementation
 	{ "scummvmAssert",	LB::b_scummvmassert,1, 2, 200, HBLTIN },
 	{ "scummvmAssertEqual",	LB::b_scummvmassertequal,2,3,200,HBLTIN },
+	{ "scummvmNoFatalError", LB::b_scummvmNoFatalError,1,1,200,HBLTIN },
 
 	// XCMD/XFCN (HyperCard), normally exposed
 	{ "GetVolumes", LB::b_getVolumes, 0, 0, 400, FBLTIN },
@@ -3487,6 +3488,14 @@ void LB::b_scummvmassertequal(int nargs) {
 	if (debugChannelSet(-1, kDebugLingoStrict)) {
 		assert(result == 1);
 	}
+}
+
+void LB::b_scummvmNoFatalError(int nargs) {
+	Datum flag = g_lingo->pop();
+
+	g_director->_noFatalLingoError = (flag.asInt() != 0);
+
+	warning("scummvmNoFatalEror is set to %d", g_director->_noFatalLingoError);
 }
 
 void LB::b_getVolumes(int nargs) {

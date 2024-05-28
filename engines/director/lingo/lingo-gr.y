@@ -81,8 +81,8 @@ using namespace Director;
 static void yyerror(const char *s) {
 	LingoCompiler *compiler = g_lingo->_compiler;
 	compiler->_hadError = true;
-	warning("######################  LINGO: %s at line %d col %d in %s id: %d",
-		s, compiler->_linenumber, compiler->_colnumber, scriptType2str(compiler->_assemblyContext->_scriptType),
+	warning("%s  LINGO: %s at line %d col %d in %s id: %d",
+		(g_director->_noFatalLingoError ? "####" : "######################"), s, compiler->_linenumber, compiler->_colnumber, scriptType2str(compiler->_assemblyContext->_scriptType),
 		compiler->_assemblyContext->_id);
 	if (compiler->_lines[2] != compiler->_lines[1])
 		warning("# %3d: %s", compiler->_linenumber - 2, Common::String(compiler->_lines[2], compiler->_lines[1] - 1).c_str());
