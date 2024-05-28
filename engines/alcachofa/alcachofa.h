@@ -69,6 +69,8 @@ public:
 	inline Script &script() { return *_script; }
 	inline Scheduler &scheduler() { return _scheduler; }
 	inline Console &console() { return *_console; }
+	inline uint32 scriptTimer() const { return _scriptTimer; }
+	void updateScriptVariables();
 
 	uint32 getFeatures() const;
 
@@ -123,6 +125,8 @@ private:
 	Input _input;
 	Player _player;
 	Scheduler _scheduler;
+
+	uint32 _scriptTimer = 0;
 };
 
 extern AlcachofaEngine *g_engine;

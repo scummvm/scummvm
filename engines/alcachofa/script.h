@@ -75,7 +75,7 @@ enum class ScriptOp {
 };
 
 enum class ScriptKernelTask {
-	PlayVideo,
+	PlayVideo = 1,
 	PlaySound,
 	PlayMusic,
 	StopMusic,
@@ -90,7 +90,7 @@ enum class ScriptKernelTask {
 	Put,
 	ChangeCharacterRoom,
 	KillProcesses,
-	Timer,
+	LerpLodBias,
 	On,
 	Off,
 	Pickup,

@@ -66,7 +66,7 @@ Common::Error AlcachofaEngine::run() {
 
 	world().globalRoom().loadResources();
 
-	auto room = world().getRoomByName("SALOON");
+	auto room = world().getRoomByName("MAPA_TERROR");
 	assert(room != nullptr);
 	world().currentRoom() = room;
 	room->loadResources();
@@ -113,6 +113,22 @@ Common::Error AlcachofaEngine::syncGame(Common::Serializer &s) {
 	s.syncAsUint32LE(dummy);
 
 	return Common::kNoError;
+}
+
+void AlcachofaEngine::updateScriptVariables() {
+	if (_input.wasAnyMousePressed()) // yes, this variable is never reset by the engine
+		_script->variable("SeHaPulsadoRaton") = 1;
+
+	if (_script->variable("CalcularTiempoSinPulsarRaton")) {
+		if (_scriptTimer == 0)
+			_scriptTimer = g_system->getMillis();
+	}
+	else
+		_scriptTimer = 0;
+
+	_script->variable("EstanAmbos") = _world->mortadelo().room() == _world->filemon().room();
+	_script->variable("textoson") = 1; // TODO: Add subtitle option
+	_script->variable("modored") = 1; // this is signalling whether a network connection is established
 }
 
 } // End of namespace Alcachofa

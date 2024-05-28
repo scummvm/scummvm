@@ -21,6 +21,7 @@
 
 #include "alcachofa.h"
 #include "rooms.h"
+#include "script.h"
 #include "stream-helper.h"
 
 #include "common/file.h"
@@ -125,6 +126,8 @@ ObjectBase *Room::getObjectByName(const Common::String &name) const {
 }
 
 void Room::update() {
+	updateScripts();
+
 	if (world().currentRoom() == this) {
 		updateRoomBounds();
 		updateInput();
@@ -142,6 +145,13 @@ void Room::update() {
 		drawDebug();
 		world().globalRoom().drawDebug();
 	}
+}
+
+void Room::updateScripts() {
+	g_engine->updateScriptVariables();
+	if (!g_engine->scheduler().hasProcessWithName("ACTUALIZAR_" + _name))
+		g_engine->script().createProcess(MainCharacterKind::None, "ACTUALIZAR_" + _name, true);
+	g_engine->scheduler().run();
 }
 
 void Room::updateInput() {

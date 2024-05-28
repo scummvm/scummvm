@@ -57,6 +57,7 @@ public:
 
 protected:
 	Room(World *world, Common::ReadStream &stream, bool hasUselessByte);
+	void updateScripts();
 	void updateRoomBounds();
 	void updateObjects();
 	void drawObjects();
