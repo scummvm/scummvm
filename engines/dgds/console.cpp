@@ -44,6 +44,7 @@ Console::Console(DgdsEngine *vm) : _vm(vm) {
 	registerCmd("filesearch", WRAP_METHOD(Console, cmdFileSearch));
 	registerCmd("filedump", WRAP_METHOD(Console, cmdFileDump));
 	registerCmd("imagedump", WRAP_METHOD(Console, cmdImageDump));
+	registerCmd("imagedumpall", WRAP_METHOD(Console, cmdImageDumpAll));
 }
 
 bool Console::cmdFileInfo(int argc, const char **argv) {
@@ -78,6 +79,7 @@ bool Console::cmdFileSearch(int argc, const char **argv) {
 bool Console::cmdFileDump(int argc, const char **argv) {
 	if (argc < 2) {
 		debugPrintf("Usage: %s <file> [ignore patches] [unpack] [outputpath] [chunktype]\n", argv[0]);
+		debugPrintf("   eg: %s CLLIVING.ADH 0 1 clliving_unpack.adscript SCR:\n", argv[0]);
 		return true;
 	}
 
@@ -145,10 +147,81 @@ bool Console::cmdFileDump(int argc, const char **argv) {
     return true;
 }
 
+bool Console::dumpImageFrame(const char *fname, int frameno, const char *outpath) {
+	Image img(_vm->getResourceManager(), _vm->getDecompressor());
+	int maxframe = img.frameCount(fname);
+	if (frameno > maxframe) {
+		debugPrintf("Image only has %d frames\n", maxframe);
+		return false;
+	}
+	GamePalettes pal(_vm->getResourceManager(), _vm->getDecompressor());
+	img.loadBitmap(fname);
+	int width = img.width(frameno);
+	int height = img.height(frameno);
+	if (!width || !height) {
+		debugPrintf("Image %s:%d not valid\n", fname, frameno);
+		return false;
+	}
+
+	Common::DumpFile outf;
+	Common::String outfname = Common::String::format("%s-%d.png", fname, frameno);
+
+	if (outpath) {
+		Common::Path path(outpath);
+		path.joinInPlace(outfname);
+		outf.open(path);
+	} else {
+		outf.open(Common::Path(outfname));
+	}
+	if (!outf.isOpen()) {
+		debugPrintf("Couldn't open %s\n", outfname.c_str());
+		return false;
+	}
+
+	byte palbuf[768];
+	g_system->getPaletteManager()->grabPalette(palbuf, 0, 256);
+	::Image::writePNG(outf, *(img.getSurface(frameno)->surfacePtr()), palbuf);
+	outf.close();
+	debugPrintf("wrote %dx%d png to %s\n", width, height, outfname.c_str());
+	return true;
+}
+
+bool Console::cmdImageDumpAll(int argc, const char **argv) {
+#ifdef USE_PNG
+	if (argc < 2) {
+		debugPrintf("Usage: %s <imagefilename> [outputdir]\n", argv[0]);
+		debugPrintf("  eg: %s CLGAME2.BMP /tmp\n", argv[0]);
+		return true;
+	}
+
+	const char *fname = argv[1];
+	if (!_vm->getResourceManager()->hasResource(fname))  {
+		debugPrintf("Resource %s not found\n", fname);
+		return true;
+	}
+
+	Image img(_vm->getResourceManager(), _vm->getDecompressor());
+	int maxframe = img.frameCount(fname);
+
+	const char *outpath = (argc > 2 ? argv[2] : nullptr);
+
+	for (int i = 0; i < maxframe; i++) {
+		if (!dumpImageFrame(fname, i, outpath))
+			break;
+	}
+	return true;
+#else
+	warning("dumpimage needs png support");
+	return true;
+#endif // USE_PNG
+
+}
+
 bool Console::cmdImageDump(int argc, const char **argv) {
 #ifdef USE_PNG
 	if (argc < 3) {
-		debugPrintf("Usage: %s <imagefilename> <frameno> [outputpath]\n", argv[0]);
+		debugPrintf("Usage: %s <imagefilename> <frameno> [outputdir]\n", argv[0]);
+		debugPrintf("  eg: %s CLGAME2.BMP 2 /tmp\n", argv[0]);
 		return true;
 	}
 
@@ -160,49 +233,14 @@ bool Console::cmdImageDump(int argc, const char **argv) {
 		return true;
 	}
 
-	Image img(_vm->getResourceManager(), _vm->getDecompressor());
+	const char *outpath = (argc > 3 ? argv[3] : nullptr);
 
-	int maxframe = img.frameCount(fname);
-	if (frameno > maxframe) {
-		debugPrintf("Image only has %d frames\n", maxframe);
-		return true;
-	}
-	GamePalettes pal(_vm->getResourceManager(), _vm->getDecompressor());
-	pal.loadPalette("DYNAMIX.PAL");
-	pal.setPalette();
-	img.loadBitmap(fname);
-	int width = img.width(frameno);
-	int height = img.height(frameno);
-	if (!width || !height) {
-		debugPrintf("Image %s:%d not valid\n", fname, frameno);
-		return true;
-	}
-
-	Common::DumpFile outf;
-	Common::String outfname = Common::String::format("%s-%d.png", fname, frameno);
-
-	if (argc == 4) {
-		Common::Path path(argv[3]);
-		path.joinInPlace(outfname);
-		outf.open(path);
-	} else {
-		outf.open(Common::Path(outfname));
-	}
-	if (!outf.isOpen()) {
-		debugPrintf("Couldn't open %s\n", outfname.c_str());
-		return true;
-	}
-
-	byte palbuf[768];
-	g_system->getPaletteManager()->grabPalette(palbuf, 0, 256);
-	::Image::writePNG(outf, *(img.getSurface(frameno)->surfacePtr()), palbuf);
-	outf.close();
-	debugPrintf("wrote %dx%d png to %s\n", width, height, outfname.c_str());
-
+	dumpImageFrame(fname, frameno, outpath);
+	return true;
 #else
 	warning("dumpimage needs png support");
-#endif // USE_PNG
 	return true;
+#endif // USE_PNG
 }
 
 } // End of namespace Dgds
