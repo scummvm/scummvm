@@ -102,7 +102,7 @@ private:
 		return TaskReturn::yield(); \
 		TASK_BREAK_FALLTHROUGH \
 		case __LINE__:; \
-	} while(0);
+	} while(0)
 
 #define TASK_WAIT(task) \
 	do { \
@@ -110,7 +110,7 @@ private:
 		return TaskReturn::waitFor(task); \
 		TASK_BREAK_FALLTHROUGH \
 		case __LINE__:; \
-	} while(0);
+	} while(0)
 
 #define TASK_RETURN(value) \
 	do { \
