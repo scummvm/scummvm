@@ -62,6 +62,7 @@ MODULE_OBJS = \
 	lingo/xlibs/aiff.o \
 	lingo/xlibs/applecdxobj.o \
 	lingo/xlibs/askuser.o \
+	lingo/xlibs/backdrop.o \
 	lingo/xlibs/barakeobj.o \
 	lingo/xlibs/batqt.o \
 	lingo/xlibs/blitpict.o \

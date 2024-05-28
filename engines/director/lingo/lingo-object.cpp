@@ -32,6 +32,7 @@
 #include "director/lingo/xlibs/aiff.h"
 #include "director/lingo/xlibs/applecdxobj.h"
 #include "director/lingo/xlibs/askuser.h"
+#include "director/lingo/xlibs/backdrop.h"
 #include "director/lingo/xlibs/barakeobj.h"
 #include "director/lingo/xlibs/batqt.h"
 #include "director/lingo/xlibs/blitpict.h"
@@ -197,6 +198,7 @@ static struct XLibProto {
 	{ AiffXObj::fileNames,				AiffXObj::open,				AiffXObj::close,			kXObj,					400 },	// D4
 	{ AppleCDXObj::fileNames,			AppleCDXObj::open,			AppleCDXObj::close,			kXObj,					300 },	// D3
 	{ AskUser::fileNames,				AskUser::open,				AskUser::close,				kXObj,					400 },	// D4
+	{ BackdropXObj::fileNames,			BackdropXObj::open,			BackdropXObj::close,		kXObj,					400 },	// D4
 	{ BarakeObj::fileNames,				BarakeObj::open,			BarakeObj::close,			kXObj,					400 },	// D4
 	{ BatQT::fileNames,					BatQT::open,				BatQT::close,				kXObj,					400 },	// D4
 	{ BlitPictXObj::fileNames,			BlitPictXObj::open,			BlitPictXObj::close,		kXObj,					400 },	// D4
