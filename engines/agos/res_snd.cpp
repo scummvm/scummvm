@@ -256,7 +256,12 @@ void AGOSEngine_Simon2::playMusic(uint16 music, uint16 track) {
 	}
 
 #ifdef USE_VORBIS
-		Common::String trackName = Common::String::format("OGG/track%02d", _lastMusicPlayed);
+		Common::String trackName;
+
+		if (track)
+			Common::String::format("OGG/track%02d-%d", _lastMusicPlayed, track);
+		else
+			Common::String::format("OGG/track%02d", _lastMusicPlayed);
 
 		_digitalMusicStream = Audio::SeekableAudioStream::openStreamFile(trackName.c_str());
 		if (_digitalMusicStream) {
