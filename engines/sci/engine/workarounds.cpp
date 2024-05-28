@@ -338,6 +338,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_FANMADE,       528,   990,  0,            "GDialog", "doit",                         nullptr,     4,     4, { WORKAROUND_FAKE,   0 } }, // Happens in Cascade Quest when closing the glossary - bug #5116
 	{ GID_FANMADE,       488,     1,  0,         "RoomScript", "doit",        sig_uninitread_fanmade_1,     1,     1, { WORKAROUND_FAKE,   0 } }, // Happens in Ocean Battle while playing - bug #5335
 	{ GID_FANMADE,        -1,     0,  0,             "Tetris", "init",                         nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // SCI Tetris 1.1: at start of game, broken high score script passes uninit temp variable instead of reference to temp variable
+	{ GID_FANMADE,        -1,   997,  0,         "TheMenuBar", "handleEvent",                  nullptr,   507,   507, { WORKAROUND_FAKE,   1 } }, // Betrayed Alliance 1.3 when selecting Notes from menu. Uninitialized variable must be > 0
 	{ GID_FREDDYPHARKAS,  -1,    24,  0,              "gcWin", "open",                         nullptr,     5,     5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
 	{ GID_FREDDYPHARKAS,  -1,    31,  0,            "quitWin", "open",                         nullptr,     5,     5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
 	{ GID_FREDDYPHARKAS, 540,   540,  0,          "WaverCode", "init",                         nullptr,     0,     1, { WORKAROUND_FAKE,   0 } }, // Gun pratice mini-game, all temps - 0+1 - bug #5232
