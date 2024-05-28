@@ -78,9 +78,7 @@ qdGameDispatcher *qd_gameD = NULL;
 
 using namespace qdrt;
 
-#define WINAPI
-
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow) {
+int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow) {
 	const char *const event_name = "QD Engine Game";
 	warning("STUB: qdrt::WinMain");
 #if 0

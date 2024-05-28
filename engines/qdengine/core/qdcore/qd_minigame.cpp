@@ -265,7 +265,7 @@ bool qdMiniGame::load_interface() {
 			return false;
 		}
 
-		qdMiniGameInterface::interface_open_proc ip = (qdMiniGameInterface::interface_open_proc)(GetProcAddress(HINSTANCE(dll_handle_), "open_game_interface"));
+		qdMiniGameInterface::interface_open_proc ip = (qdMiniGameInterface::interface_open_proc)(GetProcAddress(dll_handle_, "open_game_interface"));
 		if (!ip) {
 			app_errH.message_box(dll_name_.c_str(), appErrorHandler::ERR_BAD_FILE_FORMAT);
 			FreeLibrary(static_cast<HMODULE>(dll_handle_));

@@ -19,6 +19,7 @@
 #define HMMIO         void *
 #define HWND          void *
 #define HINSTANCE     void *
+#define HANDLE        void *
 #define HMODULE       void *
 #define HRESULT       int
 #define FARPROC       int *
@@ -133,6 +134,9 @@ typedef struct MSG {
 	DWORD  time;
 	DWORD  lPrivate;
 };
+
+#define IMAGE_BITMAP 0
+
 
 void *INVALID_HANDLE_VALUE = reinterpret_cast<void*>(-1);
 const int CP_ACP = 0;
@@ -273,6 +277,18 @@ long SetWindowLong(HWND hWnd, int nIndex, long dwNewLong) {
 	warning("STUB: SetWindowLong");
 	return 0;
 }
+
+HANDLE LoadImage(HINSTANCE hinst, LPCSTR name, UINT type, int cxDesired, int cyDesired, UINT fuLoad) {
+	warning("STUB: LoadImage");
+	return 0;
+}
+
+HMODULE GetModuleHandle(LPCSTR lpModuleName) {
+	warning("STUB: GetModuleHandle");
+	return 0;
+}
+
+int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow);
 
 #ifndef _QUEST_EDITOR
 #else

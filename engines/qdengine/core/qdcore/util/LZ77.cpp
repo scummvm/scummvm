@@ -21,8 +21,8 @@ long CLZ77::LZComp(unsigned char *s1, unsigned char *s2, long maxlen) {
 	return maxlen;
 }
 unsigned char *CLZ77::FindLZ(unsigned char *source, unsigned char *s, long slen, long border, long mlen, long &len) {
-	register long maxlen = 0;
-	register long limit = slen - (s - source);
+	long maxlen = 0;
+	long limit = slen - (s - source);
 	unsigned char *maxp = s - 1;
 	unsigned char *p;
 	len = 0;
@@ -35,7 +35,7 @@ unsigned char *CLZ77::FindLZ(unsigned char *source, unsigned char *s, long slen,
 		if (s - p >= border - 1) break;
 		if (len >= mlen - 1) break;
 	}
-	len = min(maxlen, mlen - 1);
+	len = MIN(maxlen, mlen - 1);
 	return maxp;
 }
 
