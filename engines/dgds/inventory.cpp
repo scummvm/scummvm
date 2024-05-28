@@ -33,7 +33,7 @@ namespace Dgds {
 Inventory::Inventory() : _isOpen(false), _prevPageBtn(nullptr), _nextPageBtn(nullptr),
 	_invClock(nullptr), _itemZoomBox(nullptr), _exitButton(nullptr), _clockSkipMinBtn(nullptr),
 	_itemArea(nullptr), _clockSkipHrBtn(nullptr), _dropBtn(nullptr), _highlightItemNo(-1),
-	_itemOffset(0), _openedFromSceneNum(-1), _showZoomBox(false), _fullWidth(-1)
+	_itemOffset(0), _openedFromSceneNum(0), _showZoomBox(false), _fullWidth(-1)
 {
 }
 
@@ -54,11 +54,12 @@ void Inventory::open() {
 void Inventory::close() {
 	if (!_isOpen)
 		return;
+	assert(_openedFromSceneNum != 0);
 	_isOpen = false;
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	engine->changeScene(_openedFromSceneNum);
 	_showZoomBox = false;
-	_openedFromSceneNum = -1;
+	_openedFromSceneNum = 0;
 }
 
 void Inventory::setRequestData(const REQFileData &data) {
