@@ -76,7 +76,7 @@ bool DgdsParser::parse(ParserData *data, const Common::String &filename) {
 Common::HashMap<uint16, Common::String> DgdsParser::readTags(Common::SeekableReadStream *stream) {
 	Common::HashMap<uint16, Common::String> tags;
 	uint16 count = stream->readUint16LE();
-	debug("        %u:", count);
+	debug("        %u tags:", count);
 
 	for (uint16 i = 0; i < count; i++) {
 		uint16 idx = stream->readUint16LE();
