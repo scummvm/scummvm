@@ -452,6 +452,28 @@ void WalkingCharacter::serializeSave(Serializer &serializer) {
 	syncEnum(serializer, _direction);
 }
 
+struct ArriveTask : public Task {
+	ArriveTask(Process &process, const WalkingCharacter &character)
+		: Task(process)
+		, _character(character) {}
+
+	virtual TaskReturn run() override {
+		return _character._isWalking
+			? TaskReturn::yield()
+			: TaskReturn::finish(1);
+	}
+
+	virtual void debugPrint() override {
+		g_engine->getDebugger()->debugPrintf("Wait for %s to arrive", _character.name().c_str());
+	}
+private:
+	const WalkingCharacter &_character;
+};
+
+Task *WalkingCharacter::waitForArrival(Process &process) {
+	return new ArriveTask(process, *this);
+}
+
 MainCharacter::MainCharacter(Room *room, ReadStream &stream)
 	: WalkingCharacter(room, stream) {
 	stream.readByte(); // unused byte
@@ -566,6 +588,48 @@ void MainCharacter::serializeSave(Serializer &serializer) {
 		bool isEnabled = item->isEnabled();
 		serializer.syncAsByte(isEnabled);
 		item->toggle(isEnabled);
+	}
+}
+
+void MainCharacter::clearInventory() {
+	for (auto *item : _items)
+		item->toggle(false);
+	// TODO: Clear held item on clearInventory
+	g_engine->world().inventory().updateItemsByActiveCharacter();
+}
+
+Item *MainCharacter::getItemByName(const String &name) const {
+	for (auto *item : _items) {
+		if (item->name() == name)
+			return item;
+	}
+	return nullptr;
+}
+
+bool MainCharacter::hasItem(const String &name) const {
+	auto item = getItemByName(name);
+	return item == nullptr || item->isEnabled();
+}
+
+void MainCharacter::pickup(const String &name, bool putInHand) {
+	auto item = getItemByName(name);
+	if (item == nullptr)
+		error("Tried to pickup unknown item: %s", name.c_str());
+	item->toggle(true);
+	if (g_engine->world().activeCharacter() == this) {
+		// TODO: Put item in hand for pickup
+		g_engine->world().inventory().updateItemsByActiveCharacter();
+	}
+}
+
+void MainCharacter::drop(const Common::String &name) {
+	auto item = getItemByName(name);
+	if (item == nullptr)
+		error("Tried to drop unknown item: %s", name.c_str());
+	item->toggle(false);
+	if (g_engine->world().activeCharacter() == this) {
+		// TODO: Clear held item for drop
+		g_engine->world().inventory().updateItemsByActiveCharacter();
 	}
 }
 

@@ -31,6 +31,8 @@
 namespace Alcachofa {
 
 class Personaje;
+class Process;
+struct Task;
 
 static constexpr const int16_t kBaseScale = 300; ///< this number pops up everywhere in the engine
 static constexpr const float kInvBaseScale = 1.0f / kBaseScale;

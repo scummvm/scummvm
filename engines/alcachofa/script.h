@@ -90,7 +90,7 @@ enum class ScriptKernelTask {
 	Put,
 	ChangeCharacterRoom,
 	KillProcesses,
-	LerpLodBias,
+	LerpCharacterLodBias,
 	On,
 	Off,
 	Pickup,
@@ -112,7 +112,7 @@ enum class ScriptKernelTask {
 	Nop34,
 	FadeType0,
 	FadeType1,
-	SetLodBias,
+	LerpWorldLodBias,
 	FadeType2,
 	SetActiveTextureSet,
 	SetMaxCamSpeedFactor,
@@ -159,6 +159,7 @@ public:
 
 private:
 	friend struct ScriptTask;
+	friend struct ScriptTimerTask;
 	Common::HashMap<Common::String, uint32> _variableNames;
 	Common::HashMap<Common::String, uint32> _procedures;
 	Common::Array<ScriptInstruction> _instructions;

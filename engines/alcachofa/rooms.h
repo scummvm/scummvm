@@ -54,6 +54,7 @@ public:
 	virtual void freeResources();
 	virtual void serializeSave(Common::Serializer &serializer);
 	ObjectBase *getObjectByName(const Common::String &name) const;
+	void toggleActiveFloor();
 
 protected:
 	Room(World *world, Common::ReadStream &stream, bool hasUselessByte);
@@ -101,6 +102,8 @@ public:
 	Inventory(World *world, Common::ReadStream &stream);
 	virtual ~Inventory() override;
 
+	void updateItemsByActiveCharacter();
+
 private:
 	Common::Array<Item *> _items;
 };
@@ -141,11 +144,18 @@ public:
 		return filemon().currentlyUsing() == object ||
 			mortadelo().currentlyUsing() == object;
 	}
+	inline MainCharacterKind activeCharacterKind() const {
+		return _activeCharacter == nullptr ? MainCharacterKind::None : _activeCharacter->kind();
+	}
 
 	MainCharacter &getMainCharacterByKind(MainCharacterKind kind) const;
 	Room *getRoomByName(const Common::String &name) const;
 	ObjectBase *getObjectByName(const Common::String &name) const;
+	ObjectBase *getObjectByName(MainCharacterKind character, const Common::String &name) const;
+	ObjectBase *getObjectByNameFromAnyRoom(const Common::String &name) const;
 	const Common::String &getGlobalAnimationName(GlobalAnimationKind kind) const;
+
+	void toggleObject(MainCharacterKind character, const Common::String &objName, bool isEnabled);
 
 private:
 	bool loadWorldFile(const char *path);
