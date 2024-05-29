@@ -115,6 +115,7 @@ MODULE_OBJS = \
 	core/qdcore/qd_trigger_element.o \
 	core/qdcore/qd_trigger_profiler.o \
 	core/qdcore/qd_video.o \
+	xlibs/util/SplashScreen.o \
 	xlibs/xutil/xbuffer/xbsearch.o \
 	xlibs/xutil/xbuffer/xbcore.o \
 	xlibs/xutil/xbuffer/xbcnvout.o \

@@ -1,8 +1,7 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "StdAfx.h"
-
-#include "SplashScreen.h"
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/xlibs/util/SplashScreen.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -14,14 +13,12 @@ bool SplashScreen::create(int bitmap_resid) {
 
 	bitmap_handle_ = LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(bitmap_resid), IMAGE_BITMAP, 0, 0, LR_DEFAULTCOLOR);
 	if (!bitmap_handle_) return false;
-
 	SendMessage((HWND)splash_hwnd_, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)bitmap_handle_);
 	return true;
 }
 
 bool SplashScreen::create(const char *bitmap_file) {
 	if (!create_window()) return false;
-
 	bitmap_handle_ = LoadImage(GetModuleHandle(NULL), bitmap_file, IMAGE_BITMAP, 0, 0, LR_DEFAULTCOLOR | LR_LOADFROMFILE);
 	if (!bitmap_handle_) return false;
 
@@ -60,7 +57,6 @@ bool SplashScreen::destroy() {
 		DeleteObject(bitmap_handle_);
 		bitmap_handle_ = NULL;
 	}
-
 	return true;
 }
 
@@ -70,9 +66,7 @@ void SplashScreen::show() {
 
 	int x = (GetSystemMetrics(SM_CXSCREEN) - (rect.right - rect.left)) / 2;
 	int y = (GetSystemMetrics(SM_CYSCREEN) - (rect.bottom - rect.top)) / 2;
-
 	SetWindowPos((HWND)splash_hwnd_, HWND_NOTOPMOST, x, y, 0, 0, SWP_NOSIZE | SWP_SHOWWINDOW | SWP_NOZORDER);
-
 	ShowWindow((HWND)splash_hwnd_, SW_SHOWNORMAL);
 	UpdateWindow((HWND)splash_hwnd_);
 
@@ -90,8 +84,8 @@ void SplashScreen::hide() {
 
 bool SplashScreen::create_window() {
 	destroy();
-
-	splash_hwnd_ = CreateWindowEx(WS_EX_TOOLWINDOW, "STATIC", "", WS_POPUP | SS_BITMAP, 300, 300, 300, 300, NULL, NULL, GetModuleHandle(NULL), NULL);
+	splash_hwnd_ = CreateWindowEx(WS_EX_TOOLWINDOW, "STATIC", "", WS_POPUP | SS_BITMAP, 300, 300, 300, 300, NULL, NULL, GetModuleHandle
+	(NULL), NULL);
 	if (!splash_hwnd_) return false;
 
 	return true;
@@ -102,7 +96,6 @@ void SplashScreen::apply_mask(void *mask_handle) {
 	GetObject((HGDIOBJ)mask_handle, sizeof(bmp), &bmp);
 
 	HRGN rgn = CreateRectRgn(0, 0, 0, 0);
-
 	int sx = bmp.bmWidth;
 	int sy = abs(bmp.bmHeight);
 
@@ -141,5 +134,5 @@ void SplashScreen::apply_mask(void *mask_handle) {
 		}
 	}
 
-	SetWindowRgn((HWND)splash_hwnd_, rgn, TRUE);
+	SetWindowRgn((HWND)splash_hwnd_, rgn, true);
 }
