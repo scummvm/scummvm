@@ -860,7 +860,19 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 }
 
 static Common::String customizeGuiOptions(const DetectorResult &res) {
-	Common::String guiOptions = res.game.guioptions + MidiDriver::musicType2GUIO(res.game.midi);
+	Common::String guiOptions = res.game.guioptions;
+
+	static const uint mtypes[] = { MT_PCSPK, MT_CMS, MT_PCJR, MT_ADLIB, MT_C64, MT_AMIGA, MT_APPLEIIGS, MT_TOWNS, MT_PC98, MT_SEGACD };
+
+	for (int i = 0; i < ARRAYSIZE(mtypes); ++i) {
+		if (res.game.midi & (1 << i))
+			guiOptions += MidiDriver::musicType2GUIO(mtypes[i]);
+	}
+	if (res.game.midi & MDT_MIDI) {
+		guiOptions += MidiDriver::musicType2GUIO(MT_GM);
+		guiOptions += MidiDriver::musicType2GUIO(MT_MT32);
+	}
+	
 	Common::String defaultRenderOption = "";
 
 	// Add default rendermode option for target. We don't put the default mode into the
