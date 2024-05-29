@@ -90,6 +90,14 @@ namespace Director {
 			return false; \
 	}
 
+void  Node::storeStart() {
+	startOffset = g_lingo->_compiler->_currentAssembly->size() - 1;
+}
+
+void Node::storeEnd() {
+	endOffset = g_lingo->_compiler->_currentAssembly->size() - 1;
+}
+
 LingoCompiler::LingoCompiler() {
 	_assemblyAST = nullptr;
 	_assemblyArchive = nullptr;
@@ -248,7 +256,12 @@ ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoA
 	delete _methodVars;
 	_methodVars = nullptr;
 	_currentAssembly = nullptr;
-	delete _assemblyAST;
+
+	if (debugChannelSet(-1, kDebugImGui)) {
+		_assemblyContext->_assemblyAST = _assemblyAST;
+	} else {
+		delete _assemblyAST;
+	}
 	_assemblyAST = nullptr;
 	_assemblyContext = nullptr;
 	_assemblyArchive = nullptr;

@@ -26,6 +26,7 @@
 #include "director/director.h"
 #include "director/movie.h"
 #include "director/window.h"
+#include "director/lingo/lingo-ast.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-the.h"
 
@@ -423,7 +424,9 @@ ScriptContext::ScriptContext(const ScriptContext &sc) : Object<ScriptContext>(sc
 	_id = sc._id;
 }
 
-ScriptContext::~ScriptContext() {}
+ScriptContext::~ScriptContext() {
+	delete _assemblyAST;
+}
 
 Common::String ScriptContext::asString() {
 	return Common::String::format("script: %d \"%s\" %d %p", _id, _name.c_str(), _inheritanceLevel, (void *)this);
