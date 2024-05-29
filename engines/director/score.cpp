@@ -131,15 +131,17 @@ bool Score::processImmediateFrameScript(Common::String s, int id) {
 	return false;
 }
 
-bool Score::processFrozenScripts() {
+bool Score::processFrozenScripts(int count) {
 	// Unfreeze any in-progress scripts and attempt to run them
 	// to completion.
-	while (uint32 count = _window->frozenLingoStateCount()) {
+	bool limit = count != 0;
+	uint32 remainCount = _window->frozenLingoStateCount();
+	while (remainCount && (limit ? count > 0 : true)) {
 		_window->thawLingoState();
 		Symbol currentScript = _window->getLingoState()->callstack.front()->sp;
 		g_lingo->switchStateFromWindow();
 		bool completed = g_lingo->execute();
-		if (!completed || _window->frozenLingoStateCount() >= count) {
+		if (!completed || _window->frozenLingoStateCount() >= remainCount) {
 			debugC(3, kDebugLingoExec, "Score::processFrozenScripts(): State froze again mid-thaw, interrupting");
 			return false;
 		} else if (currentScript == g_lingo->_currentInputEvent) {
@@ -147,6 +149,8 @@ bool Score::processFrozenScripts() {
 			debugC(3, kDebugEvents, "Score::processFrozenScripts(): Input event completed");
 			g_lingo->_currentInputEvent = Symbol();
 		}
+		remainCount = _window->frozenLingoStateCount();
+		count -= 1;
 	}
 	return true;
 }
@@ -568,7 +572,6 @@ void Score::update() {
 
 	// the exitFrame event handler may have stopped this movie
 	if (_playState == kPlayStopped) {
-		processFrozenScripts();
 		return;
 	}
 
@@ -618,6 +621,7 @@ void Score::update() {
 	if (!_window->_newMovieStarted && !_vm->_playbackPaused) {
 		_movie->processEvent(kEventStepMovie);
 	}
+	// If this stepMovie call is frozen, drop the next enterFrame event
 	if (_window->frozenLingoStateCount() > count)
 		return;
 
