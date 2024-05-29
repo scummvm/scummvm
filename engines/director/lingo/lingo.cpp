@@ -645,10 +645,6 @@ bool Lingo::execute() {
 			score->updateWidgets(true);
 
 			g_system->updateScreen();
-			if (_vm->getCurrentMovie()->getScore()->_playState == kPlayStopped) {
-				_freezeState = true;
-				break;
-			}
 		}
 
 		uint current = _state->pc;

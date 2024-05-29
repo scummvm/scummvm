@@ -144,7 +144,7 @@ private:
 	bool checkShotSimilarity(const Graphics::Surface *surface1, const Graphics::Surface *surface2);
 
 	bool processImmediateFrameScript(Common::String s, int id);
-	bool processFrozenScripts();
+	bool processFrozenScripts(int count = 0);
 
 public:
 	Common::Array<Channel *> _channels;
