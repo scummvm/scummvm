@@ -639,6 +639,30 @@
 #define strupr(a)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
+// This is a C++11 extension not present on all platforms
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_strncpy_s
+#undef strncpy_s
+#define strncpy_s(a)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+#endif
+
+// This is a C++11 extension not present on all platforms
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_sscanf_s
+#undef sscanf_s
+#define sscanf_s(a)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+#endif
+
+// This is a C++11 extension not present on all platforms
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_fscanf_s
+#undef fscanf_s
+#define fscanf_s(a)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+#endif
+
+// This is a C++11 extension not present on all platforms
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_scanf_s
+#undef scanf_s
+#define scanf_s(a)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+#endif
+
 /*
  * We also would like to disable the following symbols;
  * however, these are also frequently used in regular code,
