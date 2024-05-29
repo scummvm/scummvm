@@ -3,6 +3,9 @@
 #pragma once
 //Balmer
 
+#define LPVOID void*
+#define LPDIRECTSOUNDBUFFER void*
+
 #define MPP_STAT
 #ifdef MPP_STAT
 double MpegCPUUsing();//Возвращает используемое на проигрывание Mpeg время (1 - всё время загрузки)

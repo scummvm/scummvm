@@ -26,7 +26,7 @@ mpegPlayer::~mpegPlayer() {
 bool mpegPlayer::play(const char *file, bool loop, int vol) {
 	bool last_ogg_state = isOGG_;
 
-	isOGG_ = !stricmp(app_io::get_ext(file), ".ogg");
+	isOGG_ = !scumm_stricmp(app_io::get_ext(file), ".ogg");
 
 	if (isOGG_) {
 		if (!last_ogg_state)
