@@ -563,11 +563,6 @@ ParseCodes CBagExpression::setInfo(CBagIfstream &istr) {
 	buffer[0] = 0;
 	CBofString tmpStr(buffer, 256);
 
-	char errBuffer[256];
-	Common::strcpy_s(errBuffer, "Error in expression ");
-	// CHECKME: Should we put this string in a debugC at the end of the function? (Currently unused)
-	CBofString errStr(errBuffer, 256);
-
 	ParseCodes parseCode = PARSING_DONE;
 	bool doneFl = false;
 
@@ -604,7 +599,6 @@ ParseCodes CBagExpression::setInfo(CBagIfstream &istr) {
 				getOperatorFromStream(istr, curOper);
 				if (curOper == OP_NONE) {
 					parseCode = UNKNOWN_TOKEN;
-					errStr = "Bad operator:";
 					break;
 				}
 				_operList.addToTail(curOper);
