@@ -6,8 +6,7 @@
 #include <typeinfo>
 using namespace std;
 
-#include "my_stl.h"
-#include "xutil.h"
+#include "qdengine/xlibs/xutil/xutil.h"
 
 #include "SerializationTypes.h"
 #include "Serialization/ComboStrings.h"

@@ -47,10 +47,12 @@ void xfree(void* p) {
 	GlobalFree(p);
 }
 
-static WIN32_FIND_DATA FFdata;
+static struct WIN32_FIND_DATA FFdata;
 static HANDLE FFh;
 
 char* XFindNext() {
+	warning("STUB: XFindNext().");
+#if 0
 	if (FindNextFile(FFh, &FFdata) == TRUE) {
 		if (FFdata.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) return XFindNext();
 		return FFdata.cFileName;
@@ -58,16 +60,27 @@ char* XFindNext() {
 		FindClose(FFh);
 		return NULL;
 	}
+#endif
+	return NULL;
 }
 
 char* XFindFirst(char* mask) {
+	warning("STUB: XFindFirst().");
+#if 0
 	FFh = FindFirstFile(mask, &FFdata);
-	if (FFh == INVALID_HANDLE_VALUE) return NULL;
-	if (FFdata.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) return XFindNext();
+	if (FFh == INVALID_HANDLE_VALUE)
+		return NULL;
+	if (FFdata.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+		return XFindNext();
 	return FFdata.cFileName;
+#endif
+	return NULL;
 }
 
 void xtDeleteFile(char* fname) {
+	warning("STUB: xtDeleteFile().");
+#if 0
 	OFSTRUCT p;
 	OpenFile(fname, &p, OF_DELETE);
+#endif
 }

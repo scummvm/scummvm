@@ -8,9 +8,9 @@
 //
 //
 ////////////////////////////////////////////////////////////////////////////////
-#include "stdafx.h"
-#include "XMath\xmath.h"
-#include "XUtil.h"
+#include "qdengine/xlibs/util/serialization/Serialization.h"
+#include "qdengine/xlibs/util/xmath/xmath.h"
+#include "qdengine/xlibs/xutil/xutil.h"
 
 #pragma warning(disable : 4073 )
 #pragma init_seg(lib)
@@ -1696,4 +1696,3 @@ void Mat3f::makeRotationZ() {
 	zy = 0.0f;
 	zz = 1.0f;
 }
-

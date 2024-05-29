@@ -138,6 +138,7 @@
 #define FILE_FLAG_NO_BUFFERING  0x20000000
 #define FILE_END                2
 #define FILE_CURRENT            1
+#define GMEM_FIXED              0x0000
 
 typedef struct MSG {
 	HWND   hwnd;
@@ -335,6 +336,29 @@ DWORD GetFileSize(HANDLE hFile, void *lpFileSizeHigh) {
 bool FlushFileBuffers(HANDLE hFile) {
 	warning("STUB: FlushFileBuffers()");
 	return false;
+}
+
+HRESULT CoInitialize(void *pvReserved) {
+	warning("STUB: CoInitialize()");
+	return 0;
+}
+
+void CoUninitialize() {
+	warning("STUB: CoUninitialize()");
+}
+
+HANDLE GlobalAlloc(UINT uFlags, size_t dwBytes) {
+	warning("STUB: GlobalAlloc()");
+	return 0;
+}
+
+HANDLE GlobalReAlloc(HANDLE hMem, size_t dwBytes, UINT uFlags) {
+	warning("STUB: GlobalReAlloc()");
+	return 0;
+}
+
+void GlobalFree(HANDLE hMem) {
+	warning("STUB: GlobalFree()");
 }
 
 int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow);
