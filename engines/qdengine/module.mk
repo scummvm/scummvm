@@ -131,6 +131,7 @@ MODULE_OBJS = \
 	xlibs/xutil/xstream/xsrdwr.o \
 	xlibs/xutil/xstream/xsserv.o \
 	xlibs/xutil/xutil/xutil.o \
+	xlibs/xutil/xutil/XClock.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_QDENGINE), DYNAMIC_PLUGIN)

@@ -1,6 +1,7 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
+#include "qdengine/core/qd_precomp.h"
 #include "qdengine/xlibs/xutil/xglobal.h"
 
 #pragma comment(lib, "winmm.lib")
@@ -12,10 +13,11 @@ static const int FIXED_POINT = 12;
 static const int ADJUST_PERIOD = 1000;
 static const int PROCESSORS_MAX = 8;
 
-__declspec(noinline)
-__int64 getRDTSC() {
+int64 getRDTSC() {
 #define RDTSC __asm _emit 0xf __asm _emit 0x31
-	__int64 timeRDTS;
+	int64 timeRDTS = 0;
+	warning("STUB: getRDTSC().");
+#if 0
 	__asm {
 		push ebx
 		push ecx
@@ -27,11 +29,14 @@ __int64 getRDTSC() {
 		pop ecx
 		pop ebx
 	}
+#endif
 	return timeRDTS;
 }
 
 int getCPUID() {
-	unsigned int id;
+	unsigned int id = 0;
+	warning("STUB: getCPUID().");
+#if 0
 	__asm {
 		push ebx
 		push ecx
@@ -44,6 +49,7 @@ int getCPUID() {
 		pop ecx
 		pop ebx
 	}
+#endif
 	return id;
 }
 
@@ -53,24 +59,31 @@ public:
 		cpuID_ = cpuID;
 		time_ = 0;
 		counterPrev_ = 0;
+#if 0
 		QueryPerformanceFrequency((LARGE_INTEGER *)&frequency_);
+#endif
 		frequency_ /= 1000;
 		counterToAdjust_ = 0;
 		clockToAdjust_ = 0;
+		TimeDate globalTime;
+		g_system->getTimeAndDate(globalTime);
+		clockGlobalPrev_ = globalTime.tm_sec * 1000;
 	}
 
 	int time() {
-		__int64 counter = getRDTSC();
-		unsigned int clock = timeGetTime();
+		int64 counter = getRDTSC();
+		TimeDate curTime;
+		g_system->getTimeAndDate(curTime);
+		unsigned int clock = curTime.tm_sec * 1000;
 
 		if (!counterPrev_) {
 			counterPrev_ = counterToAdjust_ = counter;
 			clockToAdjust_ = clock + ADJUST_PERIOD;
 		}
 
-		__int64 timeRough = __int64(clock - clockGlobalPrev_) << FIXED_POINT;
-		__int64 dt = ((counter - counterPrev_) << FIXED_POINT) / frequency_;
-		__int64 dtMax = timeRough - timeGlobal_ + (__int64(1000) << FIXED_POINT);
+		int64 timeRough = int64(clock - clockGlobalPrev_) << FIXED_POINT;
+		int64 dt = ((counter - counterPrev_) << FIXED_POINT) / frequency_;
+		int64 dtMax = timeRough - timeGlobal_ + (int64(1000) << FIXED_POINT);
 
 		if (dt < 0)
 			dt = 0;
@@ -99,21 +112,20 @@ public:
 
 private:
 	int cpuID_;
-	__int64 time_;
-	__int64 counterPrev_;
-	__int64 frequency_;
-	__int64 counterToAdjust_;
+	int64 time_;
+	int64 counterPrev_;
+	int64 frequency_;
+	int64 counterToAdjust_;
 	unsigned int clockToAdjust_;
 
-	static __int64 timeGlobal_;
+	static int64 timeGlobal_;
 	static unsigned int clockGlobalPrev_;
 	static XClock clocks_[PROCESSORS_MAX];
 
 	friend int xclock();
 };
 
-__int64 XClock::timeGlobal_ = 0;
-unsigned int XClock::clockGlobalPrev_ = timeGetTime();
+int64 XClock::timeGlobal_ = 0;
 
 XClock XClock::clocks_[PROCESSORS_MAX] = { XClock(0), XClock(1), XClock(2), XClock(3), XClock(4), XClock(5), XClock(6), XClock(7) };
 
