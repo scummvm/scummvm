@@ -2687,10 +2687,6 @@ static void showFuncList() {
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(480, 240), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Functions", &_state->_w.funcList)) {
-		Lingo *lingo = g_director->getLingo();
-		Movie *movie = g_director->getCurrentMovie();
-		ScriptContext *csc = lingo->_state->context;
-
 		_state->_functions._nameFilter.Draw();
 		ImGui::Separator();
 		const ImVec2 childSize = ImGui::GetContentRegionAvail();
@@ -2703,27 +2699,7 @@ static void showFuncList() {
 			ImGui::TableSetupColumn("Type", 0, 80.f);
 			ImGui::TableHeadersRow();
 
-			if (csc) {
-				Common::String scriptType(scriptType2str(csc->_scriptType));
-				for (auto &functionHandler : csc->_functionHandlers) {
-					Common::String function(g_lingo->formatFunctionName(functionHandler._value));
-					if (!_state->_functions._nameFilter.PassFilter(function.c_str()))
-						continue;
-
-					ImGui::TableNextRow();
-					ImGui::TableNextColumn();
-					if (ImGui::Selectable(function.c_str())) {
-						// TODO:
-					}
-					ImGui::TableNextColumn();
-					ImGui::Text("%s", movie->getArchive()->getPathName().toString().c_str());
-					ImGui::TableNextColumn();
-					ImGui::Text("-");
-					ImGui::TableNextColumn();
-					ImGui::Text("%s", scriptType.c_str());
-				}
-			}
-
+			Movie *movie = g_director->getCurrentMovie();
 			for (auto &cast : *movie->getCasts()) {
 				for (int i = 0; i <= kMaxScriptType; i++) {
 					if (cast._value->_lingoArchive->scriptContexts[i].empty())
