@@ -110,7 +110,7 @@ public:
 	Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc);
 	~Macs2Engine() override;
 
-	void changeScene(uint32 newSceneIndex);
+	void changeScene(uint32 newSceneIndex, bool executeScript = true);
 
 	Script::ScriptExecutor *_scriptExecutor;
 	struct Graphics::ManagedSurface _bgImageShip;
@@ -177,7 +177,7 @@ public:
 
 	Common::MemoryReadStream *_fileStream;
 
-	Common::MemoryReadStream* _stringsStream;
+	// Common::MemoryReadStream* _stringsStream;
 	uint16 numBytesStrings;
 	byte *stringsData;
 

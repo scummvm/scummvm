@@ -660,7 +660,9 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		int index = current->GameObject->Index;
 		// TODO: Object 50h is a special one, it is the invisible object that moves along the
 		// ground during the stick throw. Need to check how this is handled it the game
-		if (index == 0x50) {
+		// TODO: I'm kind of guessing that nr. 10 also is not visible, it does not appear
+		// to have a lot of data to it. Random guess maybe this is the cup which is static?
+		if (index == 0x50 || index == 0x10) {
 			continue;
 		}
 		AnimFrame* frame = current->GetCurrentAnimationFrame();
@@ -730,6 +732,8 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	} else if (GameObject->Index == 0x0a) {
 		// TODO: Figure out how we find these
 		blobIndex = 6;
+	} else if (GameObject->Index == 0x21) {
+		blobIndex = 0x11;
 	}
 	Common::MemoryReadStream stream(this->GameObject->Blobs[blobIndex].data(), this->GameObject->Blobs[blobIndex].size());
 	stream.seek(0xA, SEEK_SET);

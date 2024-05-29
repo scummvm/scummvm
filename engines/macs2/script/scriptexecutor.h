@@ -157,7 +157,13 @@ class Macs2Engine;
 
 			void StartTimer(uint32 duration);
 
-			
+			bool isRunningScript = false;
+			bool isAwaitingCallback = false;
+
+			// TODO: Impplement mutexes correctly
+			bool IsExecuting() const {
+				return isRunningScript || isAwaitingCallback;
+			}
 
 	};
 }	// namespace Script
