@@ -153,22 +153,19 @@ void CBagButtonObject::onLButtonUp(uint32 flags, CBofPoint *point, void *extraIn
 		CBagPanWindow *pWnd = (CBagPanWindow *)extraInfo;
 		CBofRect r = pWnd->getSlideBitmap()->getCurrView();
 
-		CBofPoint mLoc;
-		mLoc.x = point->x + r.left - pWnd->getViewPortPos().x;
-		mLoc.y = point->y + r.top - pWnd->getViewPortPos().y;
-
+		int mLocX = point->x + r.left - pWnd->getViewPortPos().x;
 		int xIncrement = _slideRect.width() / (_numPos - 1);
 
 		int slidePos = _slideRect.left;
 		int i;
-		for (i = 0; (i < _numPos) && (slidePos < mLoc.x); i++)
+		for (i = 0; (i < _numPos) && (slidePos < mLocX); i++)
 			slidePos = _slideRect.left + (i * xIncrement);
 
 		// We Went too far
 		i--;
 
 		// Find the previous position was closer to the mouse
-		if ((i > 0) && (slidePos - mLoc.x > mLoc.x - (slidePos - xIncrement)))
+		if ((i > 0) && (slidePos - mLocX > mLocX - (slidePos - xIncrement)))
 			i--; // Go back one
 
 		NewPoint.x = _slideRect.left + (i * xIncrement);
@@ -222,15 +219,13 @@ bool CBagButtonObject::onMouseMove(uint32 /*nFlags*/, CBofPoint point, void *ext
 			}
 			setDirty();
 
-			CBofPoint mLoc;
 			CBofPoint NewPoint = getPosition();
 			CBagPanWindow *pWnd = (CBagPanWindow *)extraInfo;
 			CBofRect r = pWnd->getSlideBitmap()->getCurrView();
 
-			mLoc.x = point.x + r.left - pWnd->getViewPortPos().x;
-			mLoc.y = point.y + r.top - pWnd->getViewPortPos().y;
+			int mLocX = point.x + r.left - pWnd->getViewPortPos().x;
 
-			int NewXPos = mLoc.x;
+			int NewXPos = mLocX;
 
 			// Constrict Dragging to width of slidebar
 			if (NewXPos > _slideRect.right)

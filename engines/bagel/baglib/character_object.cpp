@@ -237,9 +237,7 @@ void CBagCharacterObject::updatePosition() {
 		if (lSeekPos + (int32)(2 * sizeof(int32)) <= _binBufLen) {
 			int xPos = READ_LE_INT32(&_binBuf[lSeekPos]);
 			lSeekPos += sizeof(int32);
-
 			int yPos = READ_LE_INT32(&_binBuf[lSeekPos]);
-			lSeekPos += sizeof(int32);
 
 			// A valid number was read
 			if ((xPos > -1) && (yPos > -1)) {
