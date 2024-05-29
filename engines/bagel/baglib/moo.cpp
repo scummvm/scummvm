@@ -59,13 +59,9 @@ CBagMoo::~CBagMoo() {
 }
 
 ErrorCode CBagMoo::setPDAMovie(CBofString &s) {
-	ErrorCode errorCode = ERR_NONE;
-
 	// Should never happen, but just make sure.
-	if (_pMovie) {
-		delete _pMovie;
-		_pMovie = nullptr;
-	}
+	delete _pMovie;
+	_pMovie = nullptr;
 
 	// Get a new movie object
 	_pMovie = new CBagCharacterObject();
@@ -73,7 +69,7 @@ ErrorCode CBagMoo::setPDAMovie(CBofString &s) {
 	_pMovie->setFileName(s);
 
 	// Attach this bad baby...
-	errorCode = _pMovie->attach();
+	ErrorCode errorCode = _pMovie->attach();
 	if (errorCode == ERR_NONE) {
 		_pMovie->setModal(false);
 		_pMovie->setNumOfLoops(1);

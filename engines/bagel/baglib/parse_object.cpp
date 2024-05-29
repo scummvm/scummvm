@@ -32,7 +32,7 @@ CBagParseObject::CBagParseObject() {
 }
 
 int CBagParseObject::getIntFromStream(CBagIfstream &istr, int &nNum) {
-	char ch = 0;
+	char ch;
 	char szLocalStr[256];
 	int i = 0;
 
