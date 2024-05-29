@@ -52,20 +52,10 @@ ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CB
 	assert(rect != nullptr);
 
 	_useExtraFl = useExtraFl;
-
-	CBofRect r;
-	if (!rect) {
-		r = wnd->getWindowRect();
-		r.offsetRect(-r.left, -r.top);
-		r.bottom = r.top + MENU_DFLT_HEIGHT;
-	} else {
-		r = *rect;
-	}
-
 	_guessText = new CBofText();
 	_guessText->setupText(rect, JUSTIFY_LEFT);
-
 	_guessCount = 0;
+
 	Common::fill(_achGuess, _achGuess + ACH_GUESS_MAX_CHARS, 0);
 
 	CBofBitmap *bitmap = nullptr;
