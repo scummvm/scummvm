@@ -636,19 +636,28 @@ void Window::thawLingoState() {
 	_frozenLingoStates.pop_back();
 }
 
-// Check how many times previous enterFrame is called recursively, D4 will only process recursive enterFrame handlers to a depth of 2.
-// Therefore look into frozen lingo states and count previous pending enterFrame calls
-// eg. in a movie, frame 1 has an enterFrame handler that calls go(2), frame 2 has an enterFrame handler that calls go(3), now after
-// each frame is processed and it encounters a frame jump instruction (like go, open), it freezes the lingo state and then processes
-// the next frame. How do we know number of times enterFrame is called? Simple look into frozen lingo states for enterFrame calls.
-int Window::recursiveEnterFrameCount() {
-	int count = 0;
+// Check how many times enterFrame/stepMovie have been called recursively.
+// When Lingo encounters a go() call, it freezes the execution state and starts
+// processing the next frame. In the case of enterFrame/stepMovie, it is possible
+// to keep recursing without reaching a point where the frozen contexts are finished.
+// D4 and higher will only process recursive handlers to a depth of 2.
+// e.g. in a movie:
+// - frame 1 has an enterFrame handler that calls go(2)
+// - frame 2 has an enterFrame handler that calls go(3)
+// - frame 3 has an enterFrame handler that calls go(4)
+// The third enterFrame handler will be eaten and not called.
+// We can count the number of frozen states which started from enterFrame/stepMovie.
+uint32 Window::frozenLingoRecursionCount() {
+	uint32 count = 0;
 
-	for (int i = _frozenLingoStates.size() - 1; i >= 0; i--) {
+	for (int i = (int)_frozenLingoStates.size() - 1; i >= 0; i--) {
 		LingoState *state = _frozenLingoStates[i];
-		CFrame *frame = state->callstack.back();
-		if (frame->sp.name->equalsIgnoreCase("enterFrame")) {
+		CFrame *frame = state->callstack.front();
+		if (frame->sp.name->equalsIgnoreCase("enterFrame") ||
+				frame->sp.name->equalsIgnoreCase("stepMovie")) {
 			count++;
+		} else {
+			break;
 		}
 	}
 

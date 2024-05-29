@@ -159,10 +159,10 @@ public:
 
 	LingoState *getLingoState() { return _lingoState; };
 	uint32 frozenLingoStateCount() { return _frozenLingoStates.size(); };
+	uint32 frozenLingoRecursionCount();
 	void freezeLingoState();
 	void thawLingoState();
 	LingoState *getLastFrozenLingoState() { return _frozenLingoStates.empty() ? nullptr : _frozenLingoStates[_frozenLingoStates.size() - 1]; }
-	int recursiveEnterFrameCount();
 
 	// events.cpp
 	bool processEvent(Common::Event &event) override;
