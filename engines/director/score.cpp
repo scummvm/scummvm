@@ -131,17 +131,17 @@ bool Score::processImmediateFrameScript(Common::String s, int id) {
 	return false;
 }
 
-bool Score::processFrozenScripts(int count) {
+bool Score::processFrozenScripts(bool recursion, int count) {
 	// Unfreeze any in-progress scripts and attempt to run them
 	// to completion.
 	bool limit = count != 0;
-	uint32 remainCount = _window->frozenLingoStateCount();
+	uint32 remainCount = recursion ? _window->frozenLingoRecursionCount() : _window->frozenLingoStateCount();
 	while (remainCount && (limit ? count > 0 : true)) {
 		_window->thawLingoState();
 		Symbol currentScript = _window->getLingoState()->callstack.front()->sp;
 		g_lingo->switchStateFromWindow();
 		bool completed = g_lingo->execute();
-		if (!completed || _window->frozenLingoStateCount() >= remainCount) {
+		if (!completed || (recursion ? _window->frozenLingoRecursionCount() : _window->frozenLingoStateCount()) >= remainCount) {
 			debugC(3, kDebugLingoExec, "Score::processFrozenScripts(): State froze again mid-thaw, interrupting");
 			return false;
 		} else if (currentScript == g_lingo->_currentInputEvent) {
@@ -149,7 +149,7 @@ bool Score::processFrozenScripts(int count) {
 			debugC(3, kDebugEvents, "Score::processFrozenScripts(): Input event completed");
 			g_lingo->_currentInputEvent = Symbol();
 		}
-		remainCount = _window->frozenLingoStateCount();
+		remainCount = recursion ? _window->frozenLingoRecursionCount() : _window->frozenLingoStateCount();
 		count -= 1;
 	}
 	return true;
@@ -314,7 +314,7 @@ void Score::step() {
 	if (_playState == kPlayStopped)
 		return;
 
-	if (!_movie->_inputEventQueue.empty()) {
+	if (!_movie->_inputEventQueue.empty() && !_window->frozenLingoStateCount()) {
 		_lingo->processEvents(_movie->_inputEventQueue, true);
 	}
 	if (_vm->getVersion() >= 300 && !_window->_newMovieStarted && _playState != kPlayStopped) {
@@ -605,12 +605,10 @@ void Score::update() {
 		return;
 
 	// Check to see if we've hit the recursion limit
-	// In practice, it seems like it checks for more than 2 stepMovie/enterFrame handlers in a row, as they are
-	// the only ones capable of cascading.
-	if (_vm->getVersion() >= 400 && _window->frozenLingoStateCount() >= 2) {
-		debugC(1, kDebugEvents, "Score::update(): hitting depth limit for D4 scripts, defrosting");
-		processFrozenScripts();
-		return;
+	if (_vm->getVersion() >= 400 && _window->frozenLingoRecursionCount() >= 2) {
+		debugC(1, kDebugEvents, "Score::update(): hitting D4 recursion depth limit, defrosting");
+		processFrozenScripts(true);
+		// keep plowing on
 	} else if (_window->frozenLingoStateCount() >= 64) {
 		warning("Score::update(): Stopping runaway script recursion. By this point D3 will have run out of stack space");
 		processFrozenScripts();
