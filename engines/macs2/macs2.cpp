@@ -490,7 +490,7 @@ void Macs2Engine::readResourceFile() {
 	numBytesStrings = _fileStream->readUint16LE();
 	stringsData = new byte[numBytesStrings];
 	_fileStream->read(stringsData, numBytesStrings);
-	_stringsStream = new Common::MemoryReadStream(stringsData, numBytesStrings);
+	// _stringsStream = new Common::MemoryReadStream(stringsData, numBytesStrings);
 
 	// Load the background map
 	// _map = readRLEImage(0x0024BD9B, file);
@@ -578,7 +578,7 @@ Macs2Engine::~Macs2Engine() {
 
 }
 
-void Macs2Engine::changeScene(uint32 newSceneIndex) {
+void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// TODO: Release old resources
 
 	// Background image
@@ -705,8 +705,11 @@ void Macs2Engine::changeScene(uint32 newSceneIndex) {
 	Scenes::instance().CurrentSceneStrings = Scenes::instance().ReadSceneStrings(newSceneIndex, _fileStream);
 	_scriptExecutor->SetScript(Scenes::instance().CurrentSceneScript);
 
-	// Start the execution
-	_scriptExecutor->Run(true);
+	if (executeScript) {
+		// Start the execution
+		_scriptExecutor->Run(true);
+	}
+
 
 	// TODO: Other important areas
 }
@@ -1163,6 +1166,14 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	// We assume that the objects data array has been loaded completely before we ever load or save
 	// If we make changes to any game object data we have to save it
 
+	s.syncAsSint32LE(Scenes::instance().CurrentSceneIndex);
+	View1 *currentView = (View1 *)findView("View1");
+	if (s.isLoading()) {
+		currentView->started = true;
+		changeScene(Scenes::instance().CurrentSceneIndex, false);
+	}
+
+
 	// Sync script variables
 	int32 numVariables = _scriptExecutor->_variables.size();
 	// TODO: Assuming that this array will always be the same size
@@ -1173,18 +1184,22 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	
 	// Iterate over objects
 	// Iterate over characters?
+	// TODO: Why save the indices? Would only make sense if we saved other data as well
+	uint32 numObjects = GameObjects::instance().Objects.size();
 	for (auto currentObject : GameObjects::instance().Objects) {
 		s.syncAsUint16LE(currentObject->Index);
 	}
 
 	// Handle the view
-	View1 *currentView = (View1 *)findView("View1");
-	uint32 numCharacters;
+	uint32 numCharacters = 0;
 	if (s.isSaving()) {
 		numCharacters = currentView->characters.size();
 	} else {
 		currentView->characters.clear();
 	}
+	uint32 bytesSynced = s.bytesSynced();
+	s.syncAsUint32LE(bytesSynced);
+	assert(bytesSynced + 4 == s.bytesSynced());
 	s.syncAsUint32LE(numCharacters);
 	for (int i = 0; i < numCharacters; i++) {
 		uint32 characterIndex;
