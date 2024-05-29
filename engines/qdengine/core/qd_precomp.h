@@ -140,6 +140,24 @@
 #define FILE_CURRENT            1
 #define GMEM_FIXED              0x0000
 
+#define STM_SETIMAGE 0x0172
+#define IMAGE_BITMAP 0
+#define LR_DEFAULTCOLOR 0x00000000
+#define LR_LOADFROMFILE 0x00000010
+#define LR_CREATEDIBSECTION 0x00002000
+#define WS_EX_TOOLWINDOW 0x00000080L
+#define WS_POPUP 0x80000000L
+#define SS_BITMAP 0x0000000EL
+#define HWND_NOTOPMOST ((HWND)-2)
+#define SWP_NOSIZE 0x0001
+#define SWP_SHOWWINDOW 0x0040
+#define SWP_NOZORDER 0x0004
+#define SW_SHOWNORMAL 1
+#define SW_HIDE 0
+#define SM_CXSCREEN 0
+#define SM_CYSCREEN 1
+#define RGN_OR 0
+
 typedef struct MSG {
 	HWND   hwnd;
 	UINT   message;
@@ -359,6 +377,77 @@ HANDLE GlobalReAlloc(HANDLE hMem, size_t dwBytes, UINT uFlags) {
 
 void GlobalFree(HANDLE hMem) {
 	warning("STUB: GlobalFree()");
+}
+
+const char *MAKEINTRESOURCE(int i) {
+	warning("STUB: MAKEINTRESOURCE()");
+}
+
+bool DeleteObject(HANDLE hObject) {
+	warning("STUB: DeleteObject()");
+	return false;
+}
+
+HWND CreateWindowEx(DWORD dwExStyle, const char *lpClassName, const char *lpWindowName, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hWndParent, int hMenu, HINSTANCE hInstance, void *lpParam) {
+	warning("STUB: CreteWindowEx()");
+	return 0;
+}
+
+struct BITMAP {
+	int bmType;
+	int bmWidth;
+	int bmHeight;
+	int bmWidthBytes;
+	short bmPlanes;
+	short bmBitsPixel;
+	void *bmBits;
+};
+
+struct RECT {
+	int left;
+	int top;
+	int right;
+	int bottom;
+};
+
+struct HRGN {
+	int i;
+};
+
+HRGN CreateRectRgn(int x1, int y1, int x2, int y2) {
+	warning("STUB: CreateRectRgn()");
+	return HRGN{0};
+}
+
+int CombineRgn(HRGN hrgnDest, HRGN hrgnSrc1, HRGN hrgnSrc2, int iMode) {
+	warning("STUB: CombineRgn()");
+	return 0;
+}
+
+int SetWindowRgn(HWND hWnd, HRGN hRgn, bool bRedraw) {
+	warning("STUB: SetWindowRgn()");
+	return 0;
+}
+
+#define HGDIOBJ void *
+int GetObject(HGDIOBJ hgdiobj, int cbBuffer, void *lpvObject) {
+	warning("STUB: GetObject()");
+	return 0;
+}
+
+bool GetClientRect(HWND hWnd, RECT *lpRect) {
+	warning("STUB: GetClientRect()");
+	return false;
+}
+
+bool SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int X, int Y, int cx, int cy, UINT uFlags) {
+	warning("STUB: SetWindowPos()");
+	return false;
+}
+
+int GetSystemMetrics(int nIndex) {
+	warning("STUB: GetSystemMetrics()");
+	return 0;
 }
 
 namespace mpp {

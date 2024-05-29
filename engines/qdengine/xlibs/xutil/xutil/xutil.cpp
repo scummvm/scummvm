@@ -46,8 +46,9 @@ void* xrealloc(void* p0, unsigned sz) {
 void xfree(void* p) {
 	GlobalFree(p);
 }
-
+#if 0
 static struct WIN32_FIND_DATA FFdata;
+#endif
 static HANDLE FFh;
 
 char* XFindNext() {
