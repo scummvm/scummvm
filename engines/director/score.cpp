@@ -604,7 +604,9 @@ void Score::update() {
 	if (_window->frozenLingoStateCount() > count)
 		return;
 
-	// check to see if we've hit the recursion limit
+	// Check to see if we've hit the recursion limit
+	// In practice, it seems like it checks for more than 2 stepMovie/enterFrame handlers in a row, as they are
+	// the only ones capable of cascading.
 	if (_vm->getVersion() >= 400 && _window->frozenLingoStateCount() >= 2) {
 		debugC(1, kDebugEvents, "Score::update(): hitting depth limit for D4 scripts, defrosting");
 		processFrozenScripts();
@@ -614,16 +616,6 @@ void Score::update() {
 		processFrozenScripts();
 		return;
 	}
-
-	// then call the stepMovie hook (if one exists)
-	// skip the first frame
-	count = _window->frozenLingoStateCount();
-	if (!_window->_newMovieStarted && !_vm->_playbackPaused) {
-		_movie->processEvent(kEventStepMovie);
-	}
-	// If this stepMovie call is frozen, drop the next enterFrame event
-	if (_window->frozenLingoStateCount() > count)
-		return;
 
 	if (_vm->getVersion() >= 600) {
 		// _movie->processEvent(kEventBeginSprite);
@@ -635,6 +627,17 @@ void Score::update() {
 	// Window is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell, p.100)
 	renderFrame(_curFrameNumber);
 	_window->_newMovieStarted = false;
+
+	// then call the stepMovie hook (if one exists)
+	// D4 and above only call it if _allowOutdatedLingo is enabled.
+	count = _window->frozenLingoStateCount();
+	if (!_vm->_playbackPaused && (_vm->getVersion() < 400 || _movie->_allowOutdatedLingo)) {
+		_movie->processEvent(kEventStepMovie);
+	}
+	// If this stepMovie call is frozen, drop the next enterFrame event
+	if (_window->frozenLingoStateCount() > count)
+		return;
+
 
 	// then call the enterFrame hook (if one exists)
 	count = _window->frozenLingoStateCount();
