@@ -30,6 +30,8 @@
 namespace Alcachofa {
 
 class Room;
+class Process;
+struct Task;
 
 class ObjectBase {
 public:
@@ -89,6 +91,8 @@ public:
 	virtual void freeResources() override;
 	virtual void serializeSave(Common::Serializer &serializer) override;
 	virtual Graphic *graphic() override;
+
+	Task *animate(Process &process);
 
 protected:
 	GraphicObject(Room *room, const char *name);
@@ -368,7 +372,10 @@ public:
 	void stopWalkingAndTurn(Direction direction);
 	void setPosition(const Common::Point &target);
 
+	Task *waitForArrival(Process &process);
+
 protected:
+	friend struct ArriveTask;
 	virtual void onArrived();
 	void updateWalking();
 	void updateWalkingAnimation();
@@ -425,11 +432,16 @@ public:
 		Direction endDirection = Direction::Invalid,
 		ITriggerableObject *activateObject = nullptr,
 		const char *activateAction = nullptr) override;
+	void clearInventory();
+	bool hasItem(const Common::String &name) const;
+	void pickup(const Common::String &name, bool putInHand);
+	void drop(const Common::String &name);
 
 protected:
 	virtual void onArrived() override;
 
 private:
+	Item *getItemByName(const Common::String &name) const;
 	void drawInner();
 
 	Common::Array<Item *> _items;

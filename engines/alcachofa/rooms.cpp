@@ -225,6 +225,10 @@ void Room::serializeSave(Serializer &serializer) {
 		object->serializeSave(serializer);
 }
 
+void Room::toggleActiveFloor() {
+	_activeFloorI ^= 1;
+}
+
 OptionsMenu::OptionsMenu(World *world, ReadStream &stream)
 	: Room(world, stream, true) {
 }
@@ -244,6 +248,13 @@ Inventory::Inventory(World *world, ReadStream &stream)
 Inventory::~Inventory() {
 	for (auto *item : _items)
 		delete item;
+}
+
+void Inventory::updateItemsByActiveCharacter() {
+	auto *character = world().activeCharacter();
+	assert(character != nullptr);
+	for (auto *item : _items)
+		item->toggle(character->hasItem(item->name()));
 }
 
 static constexpr const char *kMapFiles[] = {
@@ -307,6 +318,40 @@ ObjectBase *World::getObjectByName(const Common::String &name) const {
 	if (result == nullptr)
 		result = inventory().getObjectByName(name);
 	return result;
+}
+
+ObjectBase *World::getObjectByName(MainCharacterKind character, const Common::String &name) const {
+	if (character == MainCharacterKind::None)
+		return getObjectByName(name);
+	ObjectBase *result = nullptr;
+	if (activeCharacterKind() == character && currentRoom() == activeCharacter()->room())
+		result = currentRoom()->getObjectByName(name);
+	if (result == nullptr)
+		result = activeCharacter()->room()->getObjectByName(name);
+	if (result == nullptr)
+		result = globalRoom().getObjectByName(name);
+	if (result == nullptr)
+		result = inventory().getObjectByName(name);
+	return result;
+}
+
+ObjectBase *World::getObjectByNameFromAnyRoom(const Common::String &name) const {
+	for (auto *room : _rooms) {
+		ObjectBase *result = room->getObjectByName(name);
+		if (result != nullptr)
+			return result;
+	}
+	return nullptr;
+}
+
+void World::toggleObject(MainCharacterKind character, const Common::String &objName, bool isEnabled) {
+	ObjectBase *object = getObjectByName(character, objName);
+	if (object == nullptr)
+		object = getObjectByNameFromAnyRoom(objName);
+	if (object == nullptr)
+		error("Tried to toggle unknown object: %s", objName.c_str());
+	else
+		object->toggle(isEnabled);
 }
 
 const Common::String &World::getGlobalAnimationName(GlobalAnimationKind kind) const {
