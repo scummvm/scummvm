@@ -72,6 +72,7 @@ CBagMovieObject::~CBagMovieObject() {
 }
 
 bool CBagMovieObject::runObject() {
+	CBagPDA *pPDA = nullptr;
 	CBofWindow *pNewWin = nullptr;
 	SBZoomPda *pPDAz = (SBZoomPda *)g_SDevManager->getStorageDevice("BPDAZ_WLD");
 	bool bZoomed = (pPDAz == nullptr ? false : pPDAz->getZoomed());
@@ -145,7 +146,7 @@ bool CBagMovieObject::runObject() {
 			CBagStorageDevWnd *pSDevWnd = (pWnd ? pWnd->getCurrentStorageDev() : nullptr);
 
 			// Get the pda here, we need it so much anyway.
-			CBagPDA *pPDA = (CBagPDA *)g_SDevManager->getStorageDevice("BPDA_WLD");
+			pPDA = (CBagPDA *)g_SDevManager->getStorageDevice("BPDA_WLD");
 
 			assert(pPDA != nullptr);
 

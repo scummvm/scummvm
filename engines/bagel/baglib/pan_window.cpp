@@ -45,6 +45,8 @@ void CBagPanWindow::initialize() {
 }
 
 CBagPanWindow::CBagPanWindow() : CBagStorageDevWnd() {
+	CBofRect tmpRect;
+
 	_xViewPortPos = CBofPoint(0, 20);
 	_xMovementRect.setRectEmpty();
 
@@ -256,7 +258,8 @@ ErrorCode CBagPanWindow::onRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 			if (isFiltered()) {
 				uint16 nFilterId = getFilterId();
-				bool bFiltered = (*_pBitmapFilter)(nFilterId, pBmp, pRect);
+				bool bFiltered = false;
+				bFiltered = (*_pBitmapFilter)(nFilterId, pBmp, pRect);
 
 				if (bFiltered) {
 					setPreFilterPan(true);
@@ -557,8 +560,10 @@ void CBagPanWindow::onMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 		}
 	}
 
+	CBagObject *pObj = getLActiveObject();
+
 	if (_bDraggingObject) {
-		CBagObject *pObj = _pFGObjectList->getNodeItem(_pFGObjectList->getCount() - 1);
+		pObj = _pFGObjectList->getNodeItem(_pFGObjectList->getCount() - 1);
 		pObj->setPosition(xPoint);
 	}
 

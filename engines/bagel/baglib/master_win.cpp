@@ -936,7 +936,7 @@ ErrorCode CBagMasterWin::setStorageDev(const CBofString &wldName, bool entry) {
 		assert(g_string >= 0 && g_string < NUM_MSG_STRINGS);
 		assert(wldName.getLength() < 512);
 
-		strncpy_s(g_stringArray[g_string], wldName, 511);
+		strncpy(g_stringArray[g_string], wldName, 511);
 
 		postUserMessage(WM_ENTER_NEW_WLD, (uint32)g_string);
 
@@ -1443,7 +1443,7 @@ void CBagMasterWin::fillSaveBuffer(StBagelSave *saveBuf) {
 			}
 
 			// Remember current script file
-			strncpy_s(saveBuf->_szScript, getWldScript().getBuffer(), MAX_FNAME - 1);
+			strncpy(saveBuf->_szScript, getWldScript().getBuffer(), MAX_FNAME - 1);
 
 			CBagStorageDevWnd *sdevWin = getCurrentStorageDev();
 			if (sdevWin != nullptr) {
