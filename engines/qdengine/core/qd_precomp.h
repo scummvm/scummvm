@@ -37,6 +37,8 @@
 #define DWORD         int
 #define COLORREF      unsigned
 #define BYTE          unsigned char
+#define REFCLSID	  const void *
+#define REFIID 		  const void *
 #define DRIVE_CDROM   5
 
 #define MAX_PATH      260
@@ -158,6 +160,9 @@
 #define SM_CYSCREEN 1
 #define RGN_OR 0
 
+#define CLSID_FilterGraph	0
+#define IID_IGraphBuilder	0
+#define CLSCTX_INPROC		0
 typedef struct MSG {
 	HWND   hwnd;
 	UINT   message;
@@ -447,6 +452,11 @@ bool SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int X, int Y, int cx, int cy,
 
 int GetSystemMetrics(int nIndex) {
 	warning("STUB: GetSystemMetrics()");
+	return 0;
+}
+
+HRESULT CoCreateInstance(REFCLSID rclsid, void *pUnkOuter, DWORD dwClsContext, REFIID riid, void **ppv) {
+	warning("STUB: CoCreateInstance()");
 	return 0;
 }
 

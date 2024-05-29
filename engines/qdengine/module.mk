@@ -42,7 +42,9 @@ MODULE_OBJS = \
 	core/qdcore/util/AIAStar_API.o \
 	core/qdcore/util/fps_counter.o \
 	core/qdcore/util/LZ77.o \
+	core/qdcore/util/plaympp_api.o \
 	core/qdcore/util/ResourceDispatcher.o \
+	core/qdcore/util/WinVideo.o \
 	core/qdcore/qd_animation_frame.o \
 	core/qdcore/qd_animation_info.o \
 	core/qdcore/qd_animation_maker.o \
