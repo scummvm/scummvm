@@ -25,6 +25,7 @@
 #include "macs2/macs2.h"
 #include "macs2/gameobjects.h"
 #include <macs2/view1.h>
+#include "macs2/SIS_OpcodeID/sis_opcode.h"
 
 namespace Macs2 {
 namespace Script {
@@ -106,9 +107,14 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 	// fn0037_9F4D proc
 
 	byte opcode1 = ReadByte(); // [bp-5h]
-	debug("- 9F4D opcode: %.2x", opcode1);
+	
 	// TODO: Consider writing this one also 
 	uint16 value = ReadWord(); // [bp-7h]
+
+	Common::String opcodeInfo = SIS_OpcodeID::IdentifyHelperOpcode(opcode1, value).c_str();
+
+	debug("- 9F4D opcode: %.2x %.4x %s", opcode1, value, opcodeInfo.c_str());
+
 
 	if (opcode1 == 0x0) {
 		// l0037_9F67:
@@ -395,8 +401,16 @@ l0037_A0B5:
 l0037_A0C0:
 	cmp	ax,0Ah
 	jnz	0A0D2h
+	*/
+	else if (value == 0xa) {
 
-l0037_A0C5:
+		out1 = 1;
+		out2 = 0;
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		return;
+	}
+		/*
+	l0037_A0C5:
 	mov	word ptr [bp-4h],1h
 	mov	word ptr [bp-2h],0h
 	jmp	0A32Ch
@@ -893,7 +907,7 @@ void ScriptExecutor::ScriptPrintString() {
 
 	// TODO: Implement naive string printing here, refine later
 	
-	Common::StringArray strings = _engine->DecodeStrings(_engine->_stringsStream, bp2, bp4);
+	Common::StringArray strings = _engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, bp2, bp4);
 	// TODO: Look for good pattern for the view, this feels like it is not intended this way
 	View1 *currentView = (View1 *)_engine->findView("View1");
 	currentView->setStringBox(strings);
@@ -1088,11 +1102,13 @@ void Script::ScriptExecutor::ExecuteScript() {
 
 		// Read an opcode and length
 		byte opcode1 = ReadByte(); // [bp - 1h]
-		debug("- First block opcode: %.2x", opcode1);
+		Common::String opcodeInfo;
+		if (opcode1 != 0x5) {
+			opcodeInfo = SIS_OpcodeID::IdentifyScriptOpcode(opcode1, 0).c_str();
+		}	
+		debug("- First block opcode: %.2x %s", opcode1, opcodeInfo.c_str());
 		byte length = ReadByte();  // [bp-2h]
 		expectedEndLocation += length + 2;
-
-		
 
 		// TODO: Check if a switch would do it
 		if (opcode1 == 0x01) {
@@ -1194,7 +1210,8 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// l0037_DC66:
 			// [bp-3h]
 			uint8 opcode2 = ReadByte();
-			debug("- Second block opcode: %.2x", opcode2);
+			opcodeInfo = SIS_OpcodeID::IdentifyScriptOpcode(opcode1, opcode2).c_str();
+			debug("- Second block opcode: %.2x %s", opcode2, opcodeInfo.c_str());
 			// [bp-7h]
 			uint16 v1;
 			// [bp-5h]
@@ -1334,6 +1351,11 @@ void Script::ScriptExecutor::ExecuteScript() {
 					currentView->characters.push_back(c);
 				}
 			}
+			// TODO: Not sure if we should handle this earlier
+			if (sceneID == 0x401) {
+				// This is the character, so put it into his inventory
+				currentView->inventoryItems.push_back(GameObjects::instance().Objects[objectID - 1]);
+			}
 		} else if (opcode1 == 0x0c) {
 			// This is a scene change
 			uint32 newSceneID = Func9F4D_32();
@@ -1401,7 +1423,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 			assert(index - 1 == DialogueChoices.size());
 			uint16 offset = ReadWord();
 			uint16 numLines = ReadWord();
-			Common::StringArray lines = _engine->DecodeStrings(_engine->_stringsStream, offset, numLines);
+			Common::StringArray lines = _engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, offset, numLines);
 			DialogueChoices.push_back(lines);
 		} else if (opcode1 == 0x17) {
 			// Finish the dialogue choice
@@ -1556,6 +1578,11 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// This is an object ID
 			Func9F4D_Placeholder();
 			// This must return a bool
+			Func9F4D_Placeholder();
+		} else if (opcode1 == 0x34) {
+			// TODO: Unknown opcode so far
+			// TODO: What do 8XXh objects signify? Both return values are those
+			Func9F4D_Placeholder();
 			Func9F4D_Placeholder();
 		} else if (opcode1 == 0x3E) {
 			// TODO: Seems to have no visual difference

@@ -131,9 +131,8 @@ class View1 : public UIElement {
 	int currentFadeValue = -1;
 	int fadeDelta = 4;
 
-	bool started = false;
-
 public:
+	bool started = false;
 
 	// As long as this debug bool is active, apply any click possible whenever it makes sense
 	bool autoclickActive = false;
