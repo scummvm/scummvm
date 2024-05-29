@@ -124,7 +124,7 @@ public:
 	 */
 	void pauseEngineIntern(bool pause) override;
 
-	void errorDialog(const char *msg);
+	void errorDialog(const char *msg) const;
 
 	void enableKeymapper(bool enabled);
 };

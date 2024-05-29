@@ -128,12 +128,12 @@ public:
 	 * @param movieName   Movie filename
 	 * @return            Success/failure
 	 */
-	bool setMovie(CBofString &movieName);
+	bool setMovie(CBofString &movieName) const;
 
 	/**
 	 * Stops any playing movie
 	 */
-	void stopMovie(bool bResetPDA);
+	void stopMovie(bool bResetPDA) const;
 
 	void setDeactivate(bool b) {
 		_deactivateFl = b;
@@ -188,12 +188,12 @@ public:
 		return _zoomedFl;
 	}
 
-	int getProperCursor(const CBofPoint &pos, CBofRect &pdaRect);
+	int getProperCursor(const CBofPoint &pos, CBofRect &pdaRect) const;
 
 	/**
 	 * Returns the background rect
 	 */
-	CBofRect getViewRect();
+	CBofRect getViewRect() const;
 };
 
 } // namespace Bagel

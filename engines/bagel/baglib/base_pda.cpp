@@ -156,13 +156,13 @@ bool SBBasePda::showMovie() {
 	return false;
 }
 
-void SBBasePda::stopMovie(bool bResetPDA) {
+void SBBasePda::stopMovie(bool bResetPDA) const {
 	if (_mooWnd && _mooWnd == _curDisplay) {
 		((CBagMoo *)_mooWnd)->stopMovie(bResetPDA);
 	}
 }
 
-bool SBBasePda::setMovie(CBofString &movieName) {
+bool SBBasePda::setMovie(CBofString &movieName) const {
 	if (_mooWnd) {
 		((CBagMoo *)_mooWnd)->setPDAMovie(movieName);
 		return true;
@@ -472,14 +472,14 @@ void SBBasePda::getPdaState() {
 	}
 }
 
-#define NULLCURSOR 0
-#define HANDCURSOR 1
+#define NULL_CURSOR 0
+#define HAND_CURSOR 1
 
-int SBBasePda::getProperCursor(const CBofPoint &pos, CBofRect &pdaRect) {
+int SBBasePda::getProperCursor(const CBofPoint &pos, CBofRect &pdaRect) const {
 	int wieldCursor = CBagWield::getWieldCursor();
 
 	// Assume can't click
-	int cursorID = NULLCURSOR;
+	int cursorID = NULL_CURSOR;
 
 	// If we're in the map, return the nullptr cursor, if on the pda but not in the
 	// map window, return the hand.  Same rules for nomode.
@@ -493,9 +493,9 @@ int SBBasePda::getProperCursor(const CBofPoint &pos, CBofRect &pdaRect) {
 				if (wieldCursor >= 0) {
 					return wieldCursor;
 				}
-				return NULLCURSOR;
+				return NULL_CURSOR;
 			}
-			return HANDCURSOR;
+			return HAND_CURSOR;
 		}
 		break;
 
@@ -548,17 +548,17 @@ int SBBasePda::getProperCursor(const CBofPoint &pos, CBofRect &pdaRect) {
 					}
 				}
 
-				return NULLCURSOR;
+				return NULL_CURSOR;
 			}
 
-			return HANDCURSOR;
+			return HAND_CURSOR;
 		}
 	}
 
 	return cursorID;
 }
 
-CBofRect SBBasePda::getViewRect() {
+CBofRect SBBasePda::getViewRect() const {
 	return (_curDisplay == nullptr ? CBofRect() : _curDisplay->getRect());
 }
 

@@ -39,11 +39,11 @@ public:
 	CBagAreaObject();
 	~CBagAreaObject();
 
-	ErrorCode attach();
-	ErrorCode detach();
+	ErrorCode attach() override;
+	ErrorCode detach() override;
 
-	CBofRect getRect();
-	void setSize(const CBofSize &xSize);
+	CBofRect getRect() override;
+	void setSize(const CBofSize &xSize) override;
 };
 
 } // namespace Bagel

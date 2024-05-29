@@ -154,7 +154,7 @@ public:
 		Common::strcpy_s(_szAppName, newAppName);
 	}
 
-	CBagMasterWin *getMasterWnd() {
+	CBagMasterWin *getMasterWnd() const {
 		return (CBagMasterWin *)_pMainWnd;
 	}
 

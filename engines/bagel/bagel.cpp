@@ -212,7 +212,7 @@ void BagelEngine::pauseEngineIntern(bool pause) {
 	}
 }
 
-void BagelEngine::errorDialog(const char *msg) {
+void BagelEngine::errorDialog(const char *msg) const {
 	GUIErrorMessage(msg);
 }
 
