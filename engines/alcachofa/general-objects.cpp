@@ -21,6 +21,7 @@
 
 #include "objects.h"
 #include "rooms.h"
+#include "scheduler.h"
 #include "stream-helper.h"
 #include "alcachofa.h"
 
@@ -120,6 +121,39 @@ void GraphicObject::serializeSave(Serializer &serializer) {
 
 Graphic *GraphicObject::graphic() {
 	return &_graphic;
+}
+
+struct AnimateTask : public Task {
+	AnimateTask(Process &process, GraphicObject *object)
+		: Task(process)
+		, _object(object) {
+		assert(_object != nullptr);
+		_graphic = object->graphic();
+		assert(_graphic != nullptr);
+		_duration = _graphic->animation().totalDuration();
+	}
+
+	virtual TaskReturn run() override {
+		TASK_BEGIN;
+		_object->toggle(true);
+		_graphic->start(false);
+		TASK_WAIT(delay(_duration));
+		_object->toggle(false);
+		TASK_END;
+	}
+
+	virtual void debugPrint() override {
+		g_engine->getDebugger()->debugPrintf("Animate \"%s\" for %ums", _object->name().c_str(), _duration);
+	}
+
+private:
+	GraphicObject *_object;
+	Graphic *_graphic;
+	uint32 _duration;
+};
+
+Task *GraphicObject::animate(Process &process) {
+	return new AnimateTask(process, this);
 }
 
 SpecialEffectObject::SpecialEffectObject(Room *room, ReadStream &stream)
