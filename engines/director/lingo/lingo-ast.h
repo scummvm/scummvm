@@ -215,6 +215,12 @@ public:
 	virtual bool visitChunkExprNode(ChunkExprNode *node) = 0;
 };
 
+#define VISITNODE(nodeName) \
+		storeStart(); \
+		bool res = visitor->visit ## nodeName(this); \
+		storeEnd(); \
+		return res
+
 /* Node */
 
 struct Node {
@@ -273,10 +279,7 @@ struct ScriptNode : Node {
 		deleteList(children);
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitScriptNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(ScriptNode);
 	}
 };
 
@@ -293,10 +296,7 @@ struct FactoryNode : Node {
 		deleteList(methods);
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitFactoryNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(FactoryNode);
 	}
 };
 
@@ -315,10 +315,7 @@ struct HandlerNode : Node {
 		deleteList(stmts);
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitHandlerNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(HandlerNode);
 	}
 };
 
@@ -336,10 +333,7 @@ struct CmdNode : StmtNode {
 		deleteList(args);
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitCmdNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(CmdNode);
 	}
 };
 
@@ -356,10 +350,7 @@ struct PutIntoNode : StmtNode {
 		delete var;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitPutIntoNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(PutIntoNode);
 	}
 };
 
@@ -376,10 +367,7 @@ struct PutAfterNode : StmtNode {
 		delete var;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitPutAfterNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(PutAfterNode);
 	}
 };
 
@@ -396,10 +384,7 @@ struct PutBeforeNode : StmtNode {
 		delete var;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitPutBeforeNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(PutBeforeNode);
 	}
 };
 
@@ -416,10 +401,7 @@ struct SetNode : StmtNode {
 		delete val;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitSetNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(SetNode);
 	}
 };
 
@@ -433,10 +415,7 @@ struct GlobalNode : StmtNode {
 		deleteList(names);
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitGlobalNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(GlobalNode);
 	}
 };
 
@@ -450,10 +429,7 @@ struct PropertyNode : StmtNode {
 		deleteList(names);
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitPropertyNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(PropertyNode);
 	}
 };
 
@@ -467,10 +443,7 @@ struct InstanceNode : StmtNode {
 		deleteList(names);
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitInstanceNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(InstanceNode);
 	}
 };
 
@@ -487,10 +460,7 @@ struct IfStmtNode : StmtNode {
 		deleteList(stmts);
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitIfStmtNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(IfStmtNode);
 	}
 };
 
@@ -509,10 +479,7 @@ struct IfElseStmtNode : StmtNode {
 		deleteList(stmts2);
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitIfElseStmtNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(IfElseStmtNode);
 	}
 };
 
@@ -529,10 +496,7 @@ struct RepeatWhileNode : LoopNode {
 		deleteList(stmts);
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitRepeatWhileNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(RepeatWhileNode);
 	}
 };
 
@@ -554,10 +518,7 @@ struct RepeatWithToNode : LoopNode {
 		deleteList(stmts);
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitRepeatWithToNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(RepeatWithToNode);
 	}
 };
 
@@ -576,10 +537,7 @@ struct RepeatWithInNode : LoopNode {
 		deleteList(stmts);
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitRepeatWithInNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(RepeatWithInNode);
 	}
 };
 
@@ -589,10 +547,7 @@ struct NextRepeatNode : StmtNode {
 	NextRepeatNode() : StmtNode(kNextRepeatNode) {}
 	virtual ~NextRepeatNode() {}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitNextRepeatNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(NextRepeatNode);
 	}
 };
 
@@ -602,10 +557,7 @@ struct ExitRepeatNode : StmtNode {
 	ExitRepeatNode() : StmtNode(kExitRepeatNode) {}
 	virtual ~ExitRepeatNode() {}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitExitRepeatNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(ExitRepeatNode);
 	}
 };
 
@@ -615,10 +567,7 @@ struct ExitNode : StmtNode {
 	ExitNode() : StmtNode(kExitNode) {}
 	virtual ~ExitNode() {}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitExitNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(ExitNode);
 	}
 };
 
@@ -632,10 +581,7 @@ struct ReturnNode : StmtNode {
 			delete expr;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitReturnNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(ReturnNode);
 	}
 };
 
@@ -653,10 +599,7 @@ struct TellNode : StmtNode {
 		deleteList(stmts);
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitTellNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(TellNode);
 	}
 };
 
@@ -673,10 +616,7 @@ struct WhenNode : StmtNode {
 		delete code;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitWhenNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(WhenNode);
 	}
 };
 
@@ -690,10 +630,7 @@ struct DeleteNode : StmtNode {
 		delete chunk;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitDeleteNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(DeleteNode);
 	}
 };
 
@@ -707,10 +644,7 @@ struct HiliteNode : StmtNode {
 		delete chunk;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitHiliteNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(HiliteNode);
 	}
 };
 
@@ -724,10 +658,7 @@ struct AssertErrorNode : StmtNode {
 		delete stmt;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitAssertErrorNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(AssertErrorNode);
 	}
 };
 
@@ -739,10 +670,7 @@ struct IntNode : ExprNode {
 	IntNode(int valIn) : ExprNode(kIntNode), val(valIn) {}
 	virtual ~IntNode() {}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitIntNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(IntNode);
 	}
 };
 
@@ -754,10 +682,7 @@ struct FloatNode : ExprNode {
 	FloatNode(double valIn) : ExprNode(kFloatNode), val(valIn) {}
 	virtual ~FloatNode() {}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitFloatNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(FloatNode);
 	}
 };
 
@@ -771,10 +696,7 @@ struct SymbolNode : ExprNode {
 		delete val;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitSymbolNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(SymbolNode);
 	}
 };
 
@@ -788,10 +710,7 @@ struct StringNode : ExprNode {
 		delete val;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitStringNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(StringNode);
 	}
 };
 
@@ -805,10 +724,7 @@ struct ListNode : ExprNode {
 		deleteList(items);
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitListNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(ListNode);
 	}
 };
 
@@ -822,10 +738,7 @@ struct PropListNode : ExprNode {
 		deleteList(items);
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitPropListNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(PropListNode);
 	}
 };
 
@@ -842,10 +755,7 @@ struct PropPairNode : ExprNode {
 		delete val;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitPropPairNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(PropPairNode);
 	}
 };
 
@@ -862,10 +772,7 @@ struct FuncNode : ExprNode {
 		deleteList(args);
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitFuncNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(FuncNode);
 	}
 };
 
@@ -879,10 +786,7 @@ struct VarNode : ExprNode {
 		delete name;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitVarNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(VarNode);
 	}
 };
 
@@ -896,10 +800,7 @@ struct ParensNode : ExprNode {
 		delete expr;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitParensNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(ParensNode);
 	}
 };
 
@@ -914,10 +815,7 @@ struct UnaryOpNode : ExprNode {
 		delete arg;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitUnaryOpNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(UnaryOpNode);
 	}
 };
 
@@ -934,10 +832,7 @@ struct BinaryOpNode : ExprNode {
 		delete b;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitBinaryOpNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(BinaryOpNode);
 	}
 };
 
@@ -951,10 +846,7 @@ struct FrameNode : ExprNode {
 		delete arg;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitFrameNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(FrameNode);
 	}
 };
 
@@ -968,10 +860,7 @@ struct MovieNode : ExprNode {
 		delete arg;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitMovieNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(MovieNode);
 	}
 };
 
@@ -988,10 +877,7 @@ struct IntersectsNode : ExprNode {
 		delete sprite2;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitIntersectsNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(IntersectsNode);
 	}
 };
 
@@ -1008,10 +894,7 @@ struct WithinNode : ExprNode {
 		delete sprite2;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitWithinNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(WithinNode);
 	}
 };
 
@@ -1025,10 +908,7 @@ struct TheNode : ExprNode {
 		delete prop;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitTheNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(TheNode);
 	}
 };
 
@@ -1045,10 +925,7 @@ struct TheOfNode : ExprNode {
 		delete obj;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitTheOfNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(TheOfNode);
 	}
 };
 
@@ -1064,10 +941,7 @@ struct TheNumberOfNode : ExprNode {
 		delete arg;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitTheNumberOfNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(TheNumberOfNode);
 	}
 };
 
@@ -1083,10 +957,7 @@ struct TheLastNode : ExprNode {
 		delete arg;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitTheLastNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(TheLastNode);
 	}
 };
 
@@ -1100,10 +971,7 @@ struct TheDateTimeNode : ExprNode {
 		: ExprNode(kTheDateTimeNode), field(fieldIn), entity(entityIn) {}
 	virtual ~TheDateTimeNode() {}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitTheDateTimeNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(TheDateTimeNode);
 	}
 };
 
@@ -1117,10 +985,7 @@ struct MenuNode : ExprNode {
 		delete arg;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitMenuNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(MenuNode);
 	}
 };
 
@@ -1137,10 +1002,7 @@ struct MenuItemNode : ExprNode {
 		delete arg2;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitMenuItemNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(MenuItemNode);
 	}
 };
 
@@ -1154,10 +1016,7 @@ struct SoundNode : ExprNode {
 		delete arg;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitSoundNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(SoundNode);
 	}
 };
 
@@ -1171,10 +1030,7 @@ struct SpriteNode : ExprNode {
 		delete arg;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitSpriteNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(SpriteNode);
 	}
 };
 
@@ -1194,10 +1050,7 @@ struct ChunkExprNode : ExprNode {
 		delete src;
 	}
 	virtual bool accept(NodeVisitor *visitor) {
-		storeStart();
-		bool res = visitor->visitChunkExprNode(this);
-		storeEnd();
-		return res;
+		VISITNODE(ChunkExprNode);
 	}
 };
 
