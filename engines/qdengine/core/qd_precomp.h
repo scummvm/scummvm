@@ -361,6 +361,40 @@ void GlobalFree(HANDLE hMem) {
 	warning("STUB: GlobalFree()");
 }
 
+namespace mpp {
+enum MpegState {
+	MPEG_STOP=0,
+	MPEG_PLAY=1,
+	MPEG_PAUSE=2,
+};
+void MpegInitLibrary(void *dsound_device) {
+	warning("STUB: MpegInitLibrary()");
+}
+void MpegDeinitLibrary() {
+	warning("STUB: MpegDeinitLibrary()");
+};
+void MpegOpenToPlay(const char *fname, bool cycled = true) {
+	warning("STUB: MpegOpenToPlay(%s, %d)", fname, cycled);
+
+}
+void MpegStop() {
+	warning("STUB: MpegStop()");
+}
+void MpegPause() {
+	warning("STUB: MpegPause()");
+}
+void MpegResume() {
+	warning("STUB: MpegResume()");
+}
+void MpegSetVolume(int volume) {
+	warning("STUB: MpegSetVolume(%d)", volume);
+}
+int MpegIsPlay() {
+	warning("STUB: MpegIsPlay()");
+	return 0;
+}
+}
+
 int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow);
 
 #ifndef _QUEST_EDITOR
