@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-05-28 19:09+0000\n"
+"POT-Creation-Date: 2024-05-30 18:11+0000\n"
 "PO-Revision-Date: 2024-05-23 04:44+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translations.scummvm.org/"
@@ -3605,40 +3605,40 @@ msgstr "OPL3LPT"
 msgid "RetroWave OPL3"
 msgstr "RetroWave OPL3"
 
-#: audio/mididrv.cpp:219
+#: audio/mididrv.cpp:225
 #, c-format
 msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr "找不到所选音频设备“%s”（可能被关闭或已断开连接）。"
 
-#: audio/mididrv.cpp:220 audio/mididrv.cpp:234 audio/mididrv.cpp:271
-#: audio/mididrv.cpp:288
+#: audio/mididrv.cpp:226 audio/mididrv.cpp:240 audio/mididrv.cpp:277
+#: audio/mididrv.cpp:294
 msgid "Attempting to fall back to the next available device..."
 msgstr "正尝试回退到下一个可用设备..."
 
-#: audio/mididrv.cpp:233
+#: audio/mididrv.cpp:239
 #, c-format
 msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr "无法使用所选音频设备“%s”。查看日志文件以获取更多信息。"
 
-#: audio/mididrv.cpp:270
+#: audio/mididrv.cpp:276
 #, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr "找不到偏好音频设备“%s”（可能被关闭或已断开连接）。"
 
-#: audio/mididrv.cpp:287
+#: audio/mididrv.cpp:293
 #, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr "无法使用偏好音频设备“%s”。查看日志文件以获取更多信息。"
 
-#: audio/mididrv.cpp:452
+#: audio/mididrv.cpp:461
 msgid "Starting MIDI dump"
 msgstr "正在启动 MIDI 转储"
 

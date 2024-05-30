@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-05-28 19:09+0000\n"
+"POT-Creation-Date: 2024-05-30 18:11+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -3655,7 +3655,7 @@ msgstr "OPL3LPT"
 msgid "RetroWave OPL3"
 msgstr "RetroWave OPL3"
 
-#: audio/mididrv.cpp:219
+#: audio/mididrv.cpp:225
 #, c-format
 msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
@@ -3664,12 +3664,12 @@ msgstr ""
 "선택한 오디오 장치 (%s)를 찾을 수 없습니다. 장치가 꺼져 있거나 연결이 끊어졌"
 "을 수 있습니다."
 
-#: audio/mididrv.cpp:220 audio/mididrv.cpp:234 audio/mididrv.cpp:271
-#: audio/mididrv.cpp:288
+#: audio/mididrv.cpp:226 audio/mididrv.cpp:240 audio/mididrv.cpp:277
+#: audio/mididrv.cpp:294
 msgid "Attempting to fall back to the next available device..."
 msgstr "다음 사용 가능한 장치로 폴백을 시도합니다."
 
-#: audio/mididrv.cpp:233
+#: audio/mididrv.cpp:239
 #, c-format
 msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
@@ -3678,7 +3678,7 @@ msgstr ""
 "선택한 오디오 장치 (%s)를 사용할 수 없습니다. 추가 정보는 로그 파일을 참조해 "
 "주세요."
 
-#: audio/mididrv.cpp:270
+#: audio/mididrv.cpp:276
 #, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
@@ -3687,7 +3687,7 @@ msgstr ""
 "선호하는 오디오 장치 (%s)를 찾을 수 없습니다. 장치가 꺼져 있거나 연결이 끊어"
 "졌을 수 있습니다."
 
-#: audio/mididrv.cpp:287
+#: audio/mididrv.cpp:293
 #, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
@@ -3696,7 +3696,7 @@ msgstr ""
 "선호하는 오디오 장치 (%s)를 사용할 수 없습니다. 추가 정보는 로그 파일을 참조"
 "해 주세요."
 
-#: audio/mididrv.cpp:452
+#: audio/mididrv.cpp:461
 msgid "Starting MIDI dump"
 msgstr "MIDI 덤프를 시작합니다"
 

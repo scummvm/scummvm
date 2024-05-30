@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-05-28 19:09+0000\n"
+"POT-Creation-Date: 2024-05-30 18:11+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -3695,7 +3695,7 @@ msgstr ""
 msgid "RetroWave OPL3"
 msgstr ""
 
-#: audio/mididrv.cpp:219
+#: audio/mididrv.cpp:225
 #, c-format
 msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
@@ -3704,12 +3704,12 @@ msgstr ""
 "Aukeraturiko '%s' soinu gailua ez da aurkitu (baliteke itzalita edo "
 "konektatu gabe egotea)."
 
-#: audio/mididrv.cpp:220 audio/mididrv.cpp:234 audio/mididrv.cpp:271
-#: audio/mididrv.cpp:288
+#: audio/mididrv.cpp:226 audio/mididrv.cpp:240 audio/mididrv.cpp:277
+#: audio/mididrv.cpp:294
 msgid "Attempting to fall back to the next available device..."
 msgstr "Eskuragarri dagoen hurrengo soinu gailura joaten..."
 
-#: audio/mididrv.cpp:233
+#: audio/mididrv.cpp:239
 #, c-format
 msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
@@ -3718,7 +3718,7 @@ msgstr ""
 "Aukeraturiko '%s' soinu gailua ezin da erabili. Ikusi log fitxategia "
 "informazio gehiagorako."
 
-#: audio/mididrv.cpp:270
+#: audio/mididrv.cpp:276
 #, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
@@ -3727,7 +3727,7 @@ msgstr ""
 "'%s' gogoko soinu gailua ez da aurkitu (baliteke itzalita edo konektatu gabe "
 "egotea)."
 
-#: audio/mididrv.cpp:287
+#: audio/mididrv.cpp:293
 #, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
@@ -3736,7 +3736,7 @@ msgstr ""
 "'%s' gogoko soinu gailua ezin da erabili. Ikusi log fitxategia informazio "
 "gehiagorako."
 
-#: audio/mididrv.cpp:452
+#: audio/mididrv.cpp:461
 msgid "Starting MIDI dump"
 msgstr ""
 

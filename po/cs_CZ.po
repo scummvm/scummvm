@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-05-28 19:09+0000\n"
+"POT-Creation-Date: 2024-05-30 18:11+0000\n"
 "PO-Revision-Date: 2023-12-14 14:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -3656,7 +3656,7 @@ msgstr "OPL3LPT"
 msgid "RetroWave OPL3"
 msgstr ""
 
-#: audio/mididrv.cpp:219
+#: audio/mididrv.cpp:225
 #, c-format
 msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
@@ -3665,12 +3665,12 @@ msgstr ""
 "Zvolené zvukové zařízení '%s' nebylo nalezeno (např. může být vypnuto nebo "
 "odpojeno)."
 
-#: audio/mididrv.cpp:220 audio/mididrv.cpp:234 audio/mididrv.cpp:271
-#: audio/mididrv.cpp:288
+#: audio/mididrv.cpp:226 audio/mididrv.cpp:240 audio/mididrv.cpp:277
+#: audio/mididrv.cpp:294
 msgid "Attempting to fall back to the next available device..."
 msgstr "Pokus o navrácení na nejbližší dostupné zařízení..."
 
-#: audio/mididrv.cpp:233
+#: audio/mididrv.cpp:239
 #, c-format
 msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
@@ -3679,7 +3679,7 @@ msgstr ""
 "Zvolené zvukové zařízení '%s' nelze použít. Podívejte se na záznam pro více "
 "informací."
 
-#: audio/mididrv.cpp:270
+#: audio/mididrv.cpp:276
 #, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
@@ -3688,7 +3688,7 @@ msgstr ""
 "Upřednostňované zvukové zařízení '%s' nebylo nalezeno (např. může být "
 "vypnuto nebo odpojeno)."
 
-#: audio/mididrv.cpp:287
+#: audio/mididrv.cpp:293
 #, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
@@ -3697,7 +3697,7 @@ msgstr ""
 "Upřednostňované zvukové zařízení '%s' nelze použít. Podívejte se na záznam "
 "pro více informací."
 
-#: audio/mididrv.cpp:452
+#: audio/mididrv.cpp:461
 msgid "Starting MIDI dump"
 msgstr ""
 

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-05-28 19:09+0000\n"
+"POT-Creation-Date: 2024-05-30 18:11+0000\n"
 "PO-Revision-Date: 2024-05-02 04:42+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -3734,7 +3734,7 @@ msgstr "OPL3LPT"
 msgid "RetroWave OPL3"
 msgstr "RetroWave OPL3"
 
-#: audio/mididrv.cpp:219
+#: audio/mididrv.cpp:225
 #, c-format
 msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
@@ -3743,12 +3743,12 @@ msgstr ""
 "O dispositivo de áudio selecionado '%s' não foi encontrado (ex: pode estar "
 "desligado ou desconectado)."
 
-#: audio/mididrv.cpp:220 audio/mididrv.cpp:234 audio/mididrv.cpp:271
-#: audio/mididrv.cpp:288
+#: audio/mididrv.cpp:226 audio/mididrv.cpp:240 audio/mididrv.cpp:277
+#: audio/mididrv.cpp:294
 msgid "Attempting to fall back to the next available device..."
 msgstr "Tentando retornar para o próximo dispositivo disponível..."
 
-#: audio/mididrv.cpp:233
+#: audio/mididrv.cpp:239
 #, c-format
 msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
@@ -3757,7 +3757,7 @@ msgstr ""
 "O dispositivo de áudio selecionado '%s' não pode ser usado. Veja o arquivo "
 "de log para mais informações."
 
-#: audio/mididrv.cpp:270
+#: audio/mididrv.cpp:276
 #, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
@@ -3766,7 +3766,7 @@ msgstr ""
 "O dispositivo de áudio preferido '%s' não foi encontrado (ex: pode estar "
 "desligado ou desconectado)."
 
-#: audio/mididrv.cpp:287
+#: audio/mididrv.cpp:293
 #, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
@@ -3775,7 +3775,7 @@ msgstr ""
 "O dispositivo de áudio preferido '%s' não pode ser usado. Veja o arquivo de "
 "log para mais informações."
 
-#: audio/mididrv.cpp:452
+#: audio/mididrv.cpp:461
 msgid "Starting MIDI dump"
 msgstr "Iniciando despejo de MIDI"
 

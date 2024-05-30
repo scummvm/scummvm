@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-05-28 19:09+0000\n"
+"POT-Creation-Date: 2024-05-30 18:11+0000\n"
 "PO-Revision-Date: 2024-05-25 16:51+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -3743,7 +3743,7 @@ msgstr "OPL3LPT"
 msgid "RetroWave OPL3"
 msgstr "RetroWave OPL3"
 
-#: audio/mididrv.cpp:219
+#: audio/mididrv.cpp:225
 #, c-format
 msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
@@ -3752,12 +3752,12 @@ msgstr ""
 "Das ausgewählte Audiogerät \"%s\" wurde nicht gefunden (könnte "
 "beispielsweise ausgeschaltet oder nicht angeschlossen sein)."
 
-#: audio/mididrv.cpp:220 audio/mididrv.cpp:234 audio/mididrv.cpp:271
-#: audio/mididrv.cpp:288
+#: audio/mididrv.cpp:226 audio/mididrv.cpp:240 audio/mididrv.cpp:277
+#: audio/mididrv.cpp:294
 msgid "Attempting to fall back to the next available device..."
 msgstr "Es wird versucht, auf das nächste verfügbare Gerät zurückzugreifen."
 
-#: audio/mididrv.cpp:233
+#: audio/mididrv.cpp:239
 #, c-format
 msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
@@ -3766,7 +3766,7 @@ msgstr ""
 "Das ausgewählte Audiogerät \"%s\" kann nicht verwendet werden. Schauen Sie "
 "für weitere Informationen in der Log-Datei nach."
 
-#: audio/mididrv.cpp:270
+#: audio/mididrv.cpp:276
 #, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
@@ -3775,7 +3775,7 @@ msgstr ""
 "Das bevorzugte Audiogerät \"%s\" wurde nicht gefunden (könnte beispielsweise "
 "ausgeschaltet oder nicht angeschlossen sein)."
 
-#: audio/mididrv.cpp:287
+#: audio/mididrv.cpp:293
 #, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
@@ -3784,7 +3784,7 @@ msgstr ""
 "Das bevorzugte Audiogerät \"%s\" kann nicht verwendet werden. Schauen Sie "
 "für weitere Informationen in der Log-Datei nach."
 
-#: audio/mididrv.cpp:452
+#: audio/mididrv.cpp:461
 msgid "Starting MIDI dump"
 msgstr "MIDI-Dump starten"
 
