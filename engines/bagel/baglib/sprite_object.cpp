@@ -210,7 +210,6 @@ ParseCodes CBagSpriteObject::setInfo(CBagIfstream &istr) {
 
 ErrorCode CBagSpriteObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, int) {
 	if (_xSprite) {
-		bool b = true;
 		int nFrameInterval = getFrameRate();
 
 		if (nFrameInterval != 0) {
@@ -223,12 +222,12 @@ ErrorCode CBagSpriteObject::update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*
 			}
 		}
 
-		b = _xSprite->paintSprite(pBmp, pt.x, pt.y);
+		bool bPaintResult = _xSprite->paintSprite(pBmp, pt.x, pt.y);
 
 		// Don't have to redraw this item...
 		// setDirty (false);
 
-		if (!b)
+		if (!bPaintResult)
 			return ERR_UNKNOWN;
 	}
 	return ERR_NONE;

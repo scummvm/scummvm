@@ -532,9 +532,8 @@ int CBagRPObject::runResiduePrintedQueue() {
 			return 0;
 		}
 
-		CBagRPObject *pRPObj = _pRPList->getNodeItem(0);
 		for (int i = 0; i < nCount; i++) {
-			pRPObj = _pRPList->getNodeItem(i);
+			CBagRPObject *pRPObj = _pRPList->getNodeItem(i);
 
 			// This could fail if we are not initialized properly
 			if (pRPObj->_bInitialized == false) {
@@ -1498,10 +1497,9 @@ bool CBagRPObject::initialize() {
 	// Scoff the dossier out of the LOG_WLD SDEV.  If it's not there then hurl.
 	bool bDoUntouched = (_pTouchedList != _pUntouchedList);
 	int nCount = _pTouchedList->getCount();
-	DossierObj *pDosObj = nullptr;
 
 	for (int i = 0; i < nCount; i++) {
-		pDosObj = _pTouchedList->getNodeItem(i);
+		DossierObj *pDosObj = _pTouchedList->getNodeItem(i);
 		pDosObj->_pDossier = (CBagDossierObject *)pSDev->getObject(pDosObj->_sDossier);
 		if (pDosObj->_pDossier == nullptr) {
 			return false;
@@ -1516,7 +1514,7 @@ bool CBagRPObject::initialize() {
 	if (bDoUntouched) {
 		nCount = _pUntouchedList->getCount();
 		for (int i = 0; i < nCount; i++) {
-			pDosObj = _pUntouchedList->getNodeItem(i);
+			DossierObj *pDosObj = _pUntouchedList->getNodeItem(i);
 			pDosObj->_pDossier = (CBagDossierObject *)pSDev->getObject(pDosObj->_sDossier);
 			if (pDosObj->_pDossier == nullptr) {
 				return false;
@@ -1624,12 +1622,10 @@ CBagDossierObject *CBagRPObject::getActiveDossier() {
 // Used to set the currently active dossier when one is displayed to the user.
 void CBagRPObject::setActiveDossier(CBagDossierObject *pDosObj) {
 	CBofList<DossierObj *> *pDosList = (_bTouched ? _pTouchedList : _pUntouchedList);
-	DossierObj *p = nullptr;
 
 	int nCount = pDosList->getCount();
-
 	for (int i = 0; i < nCount; i++) {
-		p = pDosList->getNodeItem(i);
+		DossierObj *p = pDosList->getNodeItem(i);
 		if (p->_pDossier == pDosObj) {
 			_nCurDossier = i;
 			saveResiduePrintedVars();
@@ -1652,10 +1648,8 @@ DossierObj::~DossierObj() {
 	_pDossier = nullptr;
 
 	// Expressions, however, we do own
-	if (_xDosExp) {
-		delete _xDosExp;
-		_xDosExp = nullptr;
-	}
+	delete _xDosExp;
+	_xDosExp = nullptr;
 }
 
 } // namespace Bagel

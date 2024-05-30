@@ -27,7 +27,6 @@
 #include "bagel/boflib/error.h"
 #include "bagel/boflib/rect.h"
 #include "bagel/boflib/string.h"
-#include "bagel/boflib/vector.h"
 
 namespace Bagel {
 
