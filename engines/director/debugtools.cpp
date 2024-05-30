@@ -3498,6 +3498,9 @@ static void showWatchedVars() {
 			ImGui::SameLine();
 			ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
 		}
+
+		if (_state->_variables.empty())
+			ImGui::Text("(no watched variables)");
 	}
 	ImGui::End();
 }
