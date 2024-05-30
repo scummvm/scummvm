@@ -1,51 +1,51 @@
 #include "qdengine/xlibs/xutil/xglobal.h"
 
 
-XBuffer& XBuffer::operator<= (char var) {
-	char* s = itoa(var, ConvertBuffer_, radix_);
-	write(s, strlen(s), 0);
+XBuffer& XBuffer::operator<= (const char var) {
+	Common::String s = Common::String::format("%d", var);
+	write(s.c_str(), s.size(), 0);
 	return *this;
 }
 
 XBuffer& XBuffer::operator<= (unsigned char var) {
-	char* s = itoa(var, ConvertBuffer_, radix_);
-	write(s, strlen(s), 0);
+	Common::String s = Common::String::format("%d", var);
+	write(s.c_str(), s.size(), 0);
 	return *this;
 }
 
 XBuffer& XBuffer::operator<= (short var) {
-	char* s = itoa(var, ConvertBuffer_, radix_);
-	write(s, strlen(s), 0);
+	Common::String s = Common::String::format("%d", var);
+	write(s.c_str(), s.size(), 0);
 	return *this;
 }
 
 XBuffer& XBuffer::operator<= (unsigned short var) {
-	char* s = ltoa(var, ConvertBuffer_, radix_);
-	write(s, strlen(s), 0);
+	Common::String s = Common::String::format("%d", var);
+	write(s.c_str(), s.size(), 0);
 	return *this;
 }
 
 XBuffer& XBuffer::operator<= (int var) {
-	char* s = itoa(var, ConvertBuffer_, radix_);
-	write(s, strlen(s), 0);
+	Common::String s = Common::String::format("%d", var);
+	write(s.c_str(), s.size(), 0);
 	return *this;
 }
 
 XBuffer& XBuffer::operator<= (unsigned var) {
-	char* s = ultoa(var, ConvertBuffer_, radix_);
-	write(s, strlen(s), 0);
+	Common::String s = Common::String::format("%d", var);
+	write(s.c_str(), s.size(), 0);
 	return *this;
 }
 
 XBuffer& XBuffer::operator<= (long var) {
-	char* s = ltoa(var, ConvertBuffer_, radix_);
-	write(s, strlen(s), 0);
+	Common::String s = Common::String::format("%d", var);
+	write(s.c_str(), s.size(), 0);
 	return *this;
 }
 
 XBuffer& XBuffer::operator<= (unsigned long var) {
-	char* s = ultoa(var, ConvertBuffer_, radix_);
-	write(s, strlen(s), 0);
+	Common::String s = Common::String::format("%d", var);
+	write(s.c_str(), s.size(), 0);
 	return *this;
 }
 
