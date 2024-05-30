@@ -372,6 +372,15 @@ private:
 		return _script._strings->data() + entry._index;
 	}
 
+	int32 getNumberOrStringArg(uint argI) {
+		// Original inconsistency: sometimes a string is passed instead of a number
+		// as it will be interpreted as a boolean we only care about == 0 / != 0
+		auto entry = getArg(argI);
+		if (entry._type != StackEntryType::Number && entry._type != StackEntryType::String)
+			error("Expected number of string in argument %u for kernel call", argI);
+		return entry._number;
+	}
+
 	MainCharacter &relatedCharacter() {
 		if (process().character() == MainCharacterKind::None)
 			error("Script tried to use character from non-character-related process");
@@ -496,7 +505,7 @@ private:
 			auto graphicObject = dynamic_cast<GraphicObject *>(object);
 			if (graphicObject == nullptr)
 				error("Script tried to animate invalid graphic object %s", getStringArg(0));
-			if (getNumberArg(1)) {
+			if (getNumberOrStringArg(1)) {
 				graphicObject->toggle(true);
 				graphicObject->graphic()->start(false);
 				return TaskReturn::finish(1);
