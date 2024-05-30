@@ -2542,7 +2542,7 @@ void LB::b_pasteClipBoardInto(int nargs) {
 
 	Score *score = movie->getScore();
 	castMember->setModified(true);
-	movie->createOrReplaceCastMember(*to.u.cast, castMember);
+	movie->duplicateCastMember(*g_director->_clipBoard, *to.u.cast);
 	score->refreshPointersForCastMemberID(to.asMemberID());
 }
 
