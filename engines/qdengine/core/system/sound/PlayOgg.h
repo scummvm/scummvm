@@ -1,7 +1,19 @@
 #ifndef _PLAYMPP_H_
 #define _PLAYMPP_H_
 #pragma once
+
+#include "qdengine/core/qd_precomp.h"
+#define WORD unsigned short
 //Balmer
+typedef struct {
+    WORD  wFormatTag;         // Format type
+    WORD  nChannels;          // Number of channels (mono, stereo, etc.)
+    DWORD nSamplesPerSec;     // Sample rate
+    DWORD nAvgBytesPerSec;    // For buffer estimation
+    WORD  nBlockAlign;        // Block size of data
+    WORD  wBitsPerSample;     // Bits per sample
+    WORD  cbSize;             // Size of extra format information
+} WAVEFORMATEX;
 
 #define LPVOID void*
 #define LPDIRECTSOUNDBUFFER void*
