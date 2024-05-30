@@ -2918,6 +2918,13 @@ void LB::b_zoomBox(int nargs) {
 		return;
 	}
 
+	if (Director::g_director->desktopEnabled()) {
+		Director::Datum stageRect = Director::g_director->getStage()->getStageRect();
+		Common::Point stageOffset(stageRect.u.farr->arr[0].asInt(), stageRect.u.farr->arr[1].asInt());
+		startRect.translate(stageOffset.x, stageOffset.y);
+		endRect.translate(stageOffset.x, stageOffset.y);
+	}
+
 	Graphics::ZoomBox *box = new Graphics::ZoomBox;
 	box->start = startRect;
 	box->end = endRect;
