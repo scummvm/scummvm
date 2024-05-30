@@ -1012,6 +1012,7 @@ AGOSEngine::~AGOSEngine() {
 void AGOSEngine::pauseEngineIntern(bool pauseIt) {
 	if (pauseIt) {
 		_keyPressed.reset();
+		_action = kActionNone;
 		_pause = true;
 
 		_midi->pause(true);
@@ -1029,9 +1030,10 @@ void AGOSEngine::pause() {
 
 	while (_pause && !shouldQuit()) {
 		delay(1);
-		if (_keyPressed.keycode == Common::KEYCODE_PAUSE) {
+		if (_action == kActionPause) {
 			pt.clear();
 			_keyPressed.reset();
+			_action = kActionNone;
 		}
 	}
 }

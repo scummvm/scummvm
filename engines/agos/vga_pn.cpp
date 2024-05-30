@@ -115,12 +115,13 @@ void AGOSEngine::vc36_pause() {
 		windowPutChar(_windowArray[2], *message1);
 
 	while (!shouldQuit()) {
-		if (_keyPressed.ascii != 0)
+		if (_keyPressed.ascii != 0 || _joyaction.button != Common::JoystickButton::JOYSTICK_BUTTON_INVALID || _action != kActionNone)
 			break;
 		delay(1);
 	}
 
 	_keyPressed.reset();
+	_action = kActionNone;
 
 	windowPutChar(_windowArray[2], 13);
 	_wiped = oldWiped;

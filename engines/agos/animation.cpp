@@ -102,11 +102,11 @@ void MoviePlayer::handleNextFrame() {
 	Common::EventManager *eventMan = _vm->_system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+		case Common::EVENT_CUSTOM_BACKEND_ACTION_START:
+			if (event.customType == kActionExitCutscene) {
 				_leftButtonDown = true;
 				_rightButtonDown = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_PAUSE) {
+			} else if (event.customType == kActionPause) {
 				_vm->pause();
 			}
 			break;

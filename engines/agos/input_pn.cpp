@@ -34,6 +34,12 @@ void AGOSEngine_PN::handleKeyboard() {
 	if (!_inputReady)
 		return;
 
+	if (_keymapEnabled) {
+		Common::Keymapper *keymapper = AGOSEngine::getEventManager()->getKeymapper();
+		keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+		_keymapEnabled = false;
+	}
+
 	if (_hitCalled != 0) {
 		mouseHit();
 	}
@@ -77,6 +83,11 @@ void AGOSEngine_PN::handleKeyboard() {
 		_mouseString1 = nullptr;
 		_mousePrintFG = 0;
 		_inputReady = false;
+		if (!_keymapEnabled) {
+			Common::Keymapper *keymapper = AGOSEngine::getEventManager()->getKeymapper();
+			keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+			_keymapEnabled = true;
+		}
 	}
 
 	_keyPressed.reset();
@@ -145,11 +156,11 @@ bool AGOSEngine_PN::processSpecialKeys() {
 	if (shouldQuit())
 		_exitCutscene = true;
 
-	switch (_keyPressed.keycode) {
-	case Common::KEYCODE_ESCAPE:
+	switch (_action) {
+	case kActionExitCutscene:
 		_exitCutscene = true;
 		break;
-	case Common::KEYCODE_PAUSE:
+	case kActionPause:
 		pause();
 		break;
 	default:

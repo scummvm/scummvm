@@ -33,6 +33,9 @@
 #include "common/util.h"
 #include "audio/mixer.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+
 #include "agos/vga.h"
 #include "agos/detection.h"
 
@@ -72,6 +75,33 @@ enum {
 	kDebugSubroutine = 1 << 2,
 	kDebugVGAScript = 1 << 3,
 	kDebugImageDump = 1 << 4
+};
+
+enum AGOSAction {
+	kActionNone,
+	kActionWalkForward,
+	kActionTurnBack,
+	kActionTurnLeft,
+	kActionTurnRight,
+	kActionMusicDown,
+	kActionMusicUp,
+	kActionExitCutscene,
+	kActionToggleMusic,
+	kActionToggleFastMode,
+	kActionToggleSwitchCharacter,
+	kActionToggleSubtitle,
+	kActionToggleSpeech,
+	kActionToggleHitboxName,
+	kActionToggleSoundEffects,
+	kActionToggleBackgroundSound,
+	kActionShowObjects,
+	kActionTextSpeedFast,
+	kActionTextSpeedMedium,
+	kActionTextSpeedSlow,
+	kActionSpeed_GTYPEPP,
+	kActionKeyYes,
+	kActionKeyNo,
+	kActionPause
 };
 
 uint fileReadItemID(Common::SeekableReadStream *in);
@@ -283,6 +313,8 @@ protected:
 
 	const GameSpecificSettings *gss;
 
+	AGOSAction _action;
+	Common::JoystickState _joyaction;
 	Common::KeyState _keyPressed;
 
 	Common::File *_gameFile;
@@ -1486,6 +1518,8 @@ protected:
 	int _linembr;
 	uint8 *_linebase;
 	uint8 *_workptr;
+
+	bool _keymapEnabled;
 
 	uint16 getptr(uint32 pos);
 	uint32 getlong(uint32 pos);

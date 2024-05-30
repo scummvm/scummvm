@@ -82,6 +82,8 @@ AGOSEngine_PN::AGOSEngine_PN(OSystem *system, const AGOSGameDescription *gd)
 
 	_linebase = nullptr;
 	_workptr = nullptr;
+
+	_keymapEnabled = true;
 }
 
 AGOSEngine_PN::~AGOSEngine_PN() {
