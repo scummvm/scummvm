@@ -880,6 +880,17 @@ static Common::String customizeGuiOptions(const DetectorResult &res) {
 		guiOptions += MidiDriver::musicType2GUIO(MT_GM);
 		guiOptions += MidiDriver::musicType2GUIO(MT_MT32);
 	}
+
+	// Amiga versions often have no detection entries of their own and therefore come with all the DOS render modes.
+	// We remove them if we find any.
+	static const char *const rmodes[] = { GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGABW, GUIO_RENDERCGACOMP, GUIO_RENDERCGA };
+	if (res.game.platform == Common::kPlatformAmiga) {
+		for (int i = 0; i < ARRAYSIZE(rmodes); ++i) {
+			uint pos = guiOptions.findFirstOf(rmodes[i][0]);
+			if (pos != Common::String::npos)
+				guiOptions.erase(pos, 1);
+		}
+	}
 	
 	Common::String defaultRenderOption = "";
 	Common::String defaultSoundOption = "";
