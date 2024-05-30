@@ -57,7 +57,12 @@ View1::View1() : UIElement("View1") {
 
 	AnimFrame *View1::GetInventoryIcon(GameObject *gameObject) {
 		AnimFrame *result = new AnimFrame();
-		Common::MemoryReadStream stream(gameObject->Blobs[5-1].data(), gameObject->Blobs[5-1].size());
+		int index = 5 - 1;
+		if (gameObject->Index == 0x23) {
+			// TODO Figure out these - the mug has a different blob it uses than the cup
+			index = 0x13;
+		}
+		Common::MemoryReadStream stream(gameObject->Blobs[index].data(), gameObject->Blobs[index].size());
 		// TODO: Need to check how the offset really is calculated by the game code, this will not hold
 		stream.seek(23, SEEK_SET);
 		result->ReadFromStream(&stream);
@@ -312,9 +317,8 @@ View1::View1() : UIElement("View1") {
 			if (_isShowingInventory) {
 				// Check if we hit an item
 				// TODO: Skipping this for now while we only have one item
-				if (inventoryItems.size() == 1) {
-					activeInventoryItem = inventoryItems[0];
-				}
+				GameObject *clickedObject = getClickedInventoryItem(msg._pos);
+				activeInventoryItem = clickedObject;
 				return true;
 			}
 
@@ -342,6 +346,9 @@ View1::View1() : UIElement("View1") {
 				debug("*** New interaction started");
 				// TODO: Mode hardcoded
 				Script::MouseMode m = Script::MouseMode::Use;
+				if (g_engine->_cursorMode == CursorMode::Talk) {
+					m = Script::MouseMode::Talk;
+				}
 				if (activeInventoryItem != nullptr) {
 					m = Script::MouseMode::UseInventory;
 					
@@ -567,11 +574,29 @@ bool View1::tick() {
 
 void View1::drawInventory(Graphics::ManagedSurface &s) {
 	drawDarkRectangle(0x36, 0x2c, 0x10A - 0x36, 0x82 - 0x2c);
+	// TODO: Add proper grid, add y as well
+	int x = 0;
+	int y = 0;
 	for (GameObject *currentItem : inventoryItems) {
 		AnimFrame *icon = GetInventoryIcon(currentItem);
-		DrawSprite(0x36, 0x2c, icon->Width, icon->Height, icon->Data, s);
-
+		DrawSprite(0x36 + x, 0x2c + y, icon->Width, icon->Height, icon->Data, s);
+		x += icon->Width;
 	}
+}
+
+GameObject *View1::getClickedInventoryItem(const Common::Point &p) {
+	// TODO: Add proper grid, add y as well
+	int x = 0;
+	int y = 0;
+	for (GameObject *currentItem : inventoryItems) {
+		AnimFrame *icon = GetInventoryIcon(currentItem);
+		Common::Rect currentRect(Common::Point(0x36 + x, 0x2c + y), icon->Width, icon->Height);
+		if (currentRect.contains(p)) {
+			return currentItem;
+		}
+		x += icon->Width;
+	}
+	return nullptr;
 }
 
 void View1::DrawSprite(int16 x, int16 y, uint16 width, uint16 height, byte* data, Graphics::ManagedSurface& s)
@@ -662,7 +687,7 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		// ground during the stick throw. Need to check how this is handled it the game
 		// TODO: I'm kind of guessing that nr. 10 also is not visible, it does not appear
 		// to have a lot of data to it. Random guess maybe this is the cup which is static?
-		if (index == 0x50 || index == 0x10) {
+		if (index == 0x50) { // || index == 0x10) {
 			continue;
 		}
 		AnimFrame* frame = current->GetCurrentAnimationFrame();
@@ -734,6 +759,8 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 		blobIndex = 6;
 	} else if (GameObject->Index == 0x21) {
 		blobIndex = 0x11;
+	} else if (GameObject->Index == 0x10) {
+		blobIndex = 0x0c;
 	}
 	Common::MemoryReadStream stream(this->GameObject->Blobs[blobIndex].data(), this->GameObject->Blobs[blobIndex].size());
 	stream.seek(0xA, SEEK_SET);

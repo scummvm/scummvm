@@ -44,7 +44,9 @@ class Macs2Engine;
 		enum class MouseMode {
 			Use = 0x15,
 			// TODO: Check if correct
-			UseInventory = 0x17
+			UseInventory = 0x17,
+			// TODO: Check if correct
+			Talk = 0x18
 		};
 
 		class ScriptExecutor {
