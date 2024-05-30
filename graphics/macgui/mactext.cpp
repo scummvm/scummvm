@@ -1135,7 +1135,9 @@ void MacText::setSelection(int pos, bool start) {
 			colX = _canvas._textMaxWidth;
 	}
 
-	int rowY = _canvas._text[row].y;
+	int rowY = 0;
+	if (!_canvas._text.empty())
+		rowY = _canvas._text[row].y;
 
 	if (start) {
 		_selectedText.startX = colX;
