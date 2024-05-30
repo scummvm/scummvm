@@ -640,22 +640,4 @@ Common::SharedPtr<Graphics::ManagedSurface> Image::getSurface(uint frameno) {
 	return _frames[frameno];
 }
 
-	// grayscale palette.
-/*
-	for (uint i=0; i<256; i++) {
-	    palette[i*3+0] = 255-i;
-	    palette[i*3+1] = 255-i;
-	    palette[i*3+2] = 255-i;
-	}
-	*/
-/*
-	// Amiga grayscale palette.
-	for (uint i=0; i<32; i++) {
-	    palette[i*3+0] = 255-i*8;
-	    palette[i*3+1] = 255-i*8;
-	    palette[i*3+2] = 255-i*8;
-	}
-	g_system->getPaletteManager()->setPalette(palette, 0, 256);
-	*/
-
 } // End of namespace Dgds

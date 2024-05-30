@@ -119,6 +119,7 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 	case kSceneOpShowDlg:		return "showdlg";
 	case kSceneOpEnableTrigger: return "enabletrigger";
 	case kSceneOpChangeSceneToStored: return "changeSceneToStored";
+	case kSceneOpAddFlagToDragItem:	return "addFlagToDragItem";
 	case kSceneOpMoveItemsBetweenScenes: return "moveItemsBetweenScenes";
 	case kSceneOpOpenInventoryZoom:   return "openInventoryZoom";
 	case kSceneOpShowClock:		return "sceneOpShowClock";
@@ -439,7 +440,6 @@ void Scene::setDragItemOp(const Common::Array<uint16> &args) {
 		Common::Point lastMouse = engine->getLastMouse();
 		item.rect.x = lastMouse.x;
 		item.rect.y = lastMouse.y;
-		// TODO: Update hot x/y here ?
 		engine->setMouseCursor(item._iconNum);
 	}
 }
@@ -538,7 +538,10 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 *
 			GameItem *item = engine->getScene()->getDragItem();
 			if (item) {
 				item->_flags |= 1;
-				// TODO: Also update position?
+				// TODO: Use hot x/y or just position?
+				Common::Point lastMouse = engine->getLastMouseMinusHot();
+				item->rect.x = lastMouse.x;
+				item->rect.y = lastMouse.y;
 			}
 			break;
 		}
@@ -1053,23 +1056,20 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 	// and items, ignoring enable condition.
 
 	GameItem *dragItem = _dragItem;
-	_dragItem = nullptr;
 
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	const DragonGlobals *globals = static_cast<DragonGlobals *>(engine->getGameGlobals());
 
 	runOps(dragItem->onDragFinishedOps, globals->getGameMinsToAddOnDragFinished());
 
-	engine->setMouseCursor(0);
-
 	// TODO: Both these loops are very similar.. there should be a cleaner way.
 
 	for (const auto &item : engine->getGDSScene()->getGameItems()) {
 		if (item._inSceneNum == _num && _isInRect(pt, item.rect)) {
-			debug("Dragged item %d onto item %d", dragItem->_num, item._num);
+			debug("Dragged item %d onto item %d @ (%d, %d)", dragItem->_num, item._num, pt.x, pt.y);
 			for (const auto &i : engine->getGDSScene()->getObjInteractions2()) {
 				if (i._droppedItemNum == dragItem->_num && i._targetItemNum == item._num) {
-					debug(" --> exec item %d drag ops", i.opList.size());
+					debug(" --> exec %d drag ops for item %d", i.opList.size(), item._num);
 					if (!runOps(i.opList, globals->getGameMinsToAddOnObjInteraction()))
 						return;
 					break;
@@ -1086,10 +1086,10 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 			debug("Item %d dropped on inventory.", dragItem->_num);
 			dragItem->_inSceneNum = 2;
 		} else {
-			debug("Dragged item %d onto area %d", dragItem->_num, area._num);
+			debug("Dragged item %d onto area %d @ (%d, %d)", dragItem->_num, area._num, pt.x, pt.y);
 			for (const auto &i : engine->getScene()->getObjInteractions1()) {
 				if (i._droppedItemNum == dragItem->_num && i._targetItemNum == area._num) {
-					debug(" --> exec area %d drag ops", i.opList.size());
+					debug(" --> exec %d drag ops for area %d", i.opList.size(), area._num);
 					if (!runOps(i.opList, globals->getGameMinsToAddOnObjInteraction()))
 						return;
 					break;
@@ -1097,6 +1097,9 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 			}
 		}
 	}
+
+	engine->setMouseCursor(0);
+	_dragItem = nullptr;
 }
 
 

@@ -110,6 +110,7 @@ private:
 	Common::RandomSource _random;
 	Common::Point _lastMouse; // originals start mouse at 0,0.
 	int _currentCursor;
+	Common::Point _currentCursorHot;
 
 	Clock _clock;
 
@@ -149,6 +150,7 @@ public:
 	bool justChangedScene2() const { return _justChangedScene2; }
 	Common::RandomSource &getRandom() { return _random; }
 	Common::Point getLastMouse() const { return _lastMouse; }
+	Common::Point getLastMouseMinusHot() const;
 
 	Clock &getClock() { return _clock; }
 
