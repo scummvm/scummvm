@@ -7750,11 +7750,11 @@ GLAD_API_CALL int gladLoadGLES2( GLADloadfunc load);
 #ifndef GLAD_IMPL_UTIL_C_
 #define GLAD_IMPL_UTIL_C_
 
-#ifdef _MSC_VER
-#define GLAD_IMPL_UTIL_SSCANF sscanf_s
-#else
+//#ifdef _MSC_VER
+//#define GLAD_IMPL_UTIL_SSCANF sscanf_s
+//#else
 #define GLAD_IMPL_UTIL_SSCANF sscanf
-#endif
+//#endif
 
 #endif /* GLAD_IMPL_UTIL_C_ */
 
@@ -13173,7 +13173,7 @@ int gladLoadGLES2( GLADloadfunc load) {
 
 
 
- 
+
 
 
 #ifdef __cplusplus
@@ -13181,4 +13181,3 @@ int gladLoadGLES2( GLADloadfunc load) {
 #endif
 
 #endif /* GLAD_GL_IMPLEMENTATION */
-
