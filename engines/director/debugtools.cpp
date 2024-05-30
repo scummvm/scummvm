@@ -1939,20 +1939,20 @@ static const char *toString(ScriptType scriptType) {
 static const char *toIcon(CastType castType) {
 	static const char *castTypes[] = {
 		"",        // Empty
-		"\uf79e",  // Bitmap			// backround_dot_large
+		"\uf79e",  // Bitmap		// backround_dot_large
 		"\ue8da",  // FilmLoop		// theaters
 		"\uf6f1",  // Text			// match_case
 		"\ue40a",  // Palette		// palette
 		"\uefa2",  // Picture		// imagesmode
 		"\ue050",  // Sound			// volume_up
-		"\uf4ab",  // Button			// slab_serif
+		"\uf4ab",  // Button		// slab_serif
 		"\ue602",  // Shape			// shapes
 		"\ue02c",  // Movie			// movie
 		"\uf49a",  // DigitalVideo	// animated_images
-		"\uf0c8",  // Script			// forms_apps_script
+		"\uf0c8",  // Script		// forms_apps_script
 		"\uf4f1",  // RTE			// brand_family
 		"?",       // ???
-		"\uf50c"}; // Transition		// transition_fade
+		"\uf50c"}; // Transition	// transition_fade
 	if (castType < 0 || castType > kCastTransition)
 		return "";
 	return castTypes[(int)castType];
