@@ -133,19 +133,12 @@ public:
 	inline Inventory &inventory() const { return *_inventory; }
 	inline MainCharacter &filemon() const { return *_filemon; }
 	inline MainCharacter &mortadelo() const { return *_mortadelo; }
-	inline MainCharacter *activeCharacter() const { return _activeCharacter; }
 	inline const Common::String &initScriptName() const { return _initScriptName; }
 	inline uint8 loadedMapCount() const { return _loadedMapCount; }
-
-	inline Room *&currentRoom() { return _currentRoom; }
-	inline Room *currentRoom() const { return _currentRoom; }
 
 	inline bool somebodyUsing(ObjectBase *object) const {
 		return filemon().currentlyUsing() == object ||
 			mortadelo().currentlyUsing() == object;
-	}
-	inline MainCharacterKind activeCharacterKind() const {
-		return _activeCharacter == nullptr ? MainCharacterKind::None : _activeCharacter->kind();
 	}
 
 	MainCharacter &getMainCharacterByKind(MainCharacterKind kind) const;
@@ -163,9 +156,9 @@ private:
 	Common::Array<Room *> _rooms;
 	Common::String _globalAnimationNames[(int)GlobalAnimationKind::Count];
 	Common::String _initScriptName;
-	Room *_globalRoom, *_currentRoom = nullptr;
+	Room *_globalRoom;
 	Inventory *_inventory;
-	MainCharacter *_filemon, *_mortadelo, *_activeCharacter = nullptr;
+	MainCharacter *_filemon, *_mortadelo;
 	uint8 _loadedMapCount = 0;
 };
 

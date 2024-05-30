@@ -22,16 +22,27 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-namespace Alcachofa {
+#include "rooms.h"
 
-class ShapeObject;
+namespace Alcachofa {
 
 class Player {
 public:
-    inline ShapeObject *selectedObject() { return _selectedObject; }
+	inline Room *currentRoom() const { return _currentRoom; }
+	inline Room *&currentRoom() { return _currentRoom; }
+	inline MainCharacter *activeCharacter() const { return _activeCharacter; }
+    inline ShapeObject *selectedObject() const { return _selectedObject; }
+	inline Item *heldItem() const { return _heldItem; }
+
+	inline MainCharacterKind activeCharacterKind() const {
+		return _activeCharacter == nullptr ? MainCharacterKind::None : _activeCharacter->kind();
+	}
 
 private:
+	Room *_currentRoom = nullptr;
+	MainCharacter *_activeCharacter;
     ShapeObject *_selectedObject = nullptr;
+	Item *_heldItem = nullptr;
 };
 
 }
