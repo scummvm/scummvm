@@ -862,38 +862,55 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 static Common::String customizeGuiOptions(const DetectorResult &res) {
 	Common::String guiOptions = res.game.guioptions;
 
-	static const uint mtypes[] = { MT_PCSPK, MT_CMS, MT_PCJR, MT_ADLIB, MT_C64, MT_AMIGA, MT_APPLEIIGS, MT_TOWNS, MT_PC98, MT_SEGACD };
+	int midiflags = res.game.midi;
+	// These games often have no detection entries of their own and therefore come with all the DOS audio options.
+	// We clear them here to avoid confusion and add the appropriate default sound option below. The games from
+	// version 5 onwards seem to have correct sound options in the detection tables.
+	if (res.game.version < 5 && (res.game.platform == Common::kPlatformAmiga || res.game.platform == Common::kPlatformMacintosh || res.game.platform == Common::kPlatformC64))
+		midiflags = MDT_NONE;
+
+	static const uint mtypes[] = {MT_PCSPK, MT_CMS, MT_PCJR, MT_ADLIB, MT_C64, MT_AMIGA, MT_APPLEIIGS, MT_TOWNS, MT_PC98, MT_SEGACD, 0, 0, 0, 0, MT_MACINTOSH};
 
 	for (int i = 0; i < ARRAYSIZE(mtypes); ++i) {
-		if (res.game.midi & (1 << i))
+		if (mtypes[i] && (midiflags & (1 << i)))
 			guiOptions += MidiDriver::musicType2GUIO(mtypes[i]);
 	}
 
-	if (res.game.midi & MDT_MIDI) {
+	if (midiflags & MDT_MIDI) {
 		guiOptions += MidiDriver::musicType2GUIO(MT_GM);
 		guiOptions += MidiDriver::musicType2GUIO(MT_MT32);
 	}
 	
 	Common::String defaultRenderOption = "";
+	Common::String defaultSoundOption = "";
 
-	// Add default rendermode option for target. We don't put the default mode into the
-	// detection tables, due to the amount of targets we have. It it more convenient to
+	// Add default rendermode and sound option for target. We don't always put the default modes
+	// into the detection tables, due to the amount of targets we have. It it more convenient to
 	// add the option here.
 	switch (res.game.platform) {
+	case Common::kPlatformC64:
+		defaultRenderOption = GUIO_RENDERC64;
+		defaultSoundOption = GUIO_MIDIC64;
+		break;
 	case Common::kPlatformAmiga:
 		defaultRenderOption = GUIO_RENDERAMIGA;
+		defaultSoundOption = GUIO_MIDIAMIGA;
 		break;
 	case Common::kPlatformApple2GS:
 		defaultRenderOption = GUIO_RENDERAPPLE2GS;
+		// No default sound here, since we don't support it.
 		break;
 	case Common::kPlatformMacintosh:
 		defaultRenderOption = GUIO_RENDERMACINTOSH;
+		defaultSoundOption = GUIO_MIDIMAC;
 		break;
 	case Common::kPlatformFMTowns:
 		defaultRenderOption = GUIO_RENDERFMTOWNS;
+		// No default sound here, it is all in the detection tables.
 		break;
 	case Common::kPlatformAtariST:
 		defaultRenderOption = GUIO_RENDERATARIST;
+		// No default sound here, since we don't support it.
 		break;
 	case Common::kPlatformDOS:
 		defaultRenderOption = (!strcmp(res.extra, "EGA") || !strcmp(res.extra, "V1") || !strcmp(res.extra, "V2")) ? GUIO_RENDEREGA : GUIO_RENDERVGA;
@@ -912,6 +929,9 @@ static Common::String customizeGuiOptions(const DetectorResult &res) {
 	// detection tables) we don't add it again.
 	if (!guiOptions.contains(defaultRenderOption))
 		guiOptions += defaultRenderOption;
+	// Same for sound...
+	if (!defaultSoundOption.empty() && !guiOptions.contains(defaultSoundOption))
+		guiOptions += defaultSoundOption;
 
 	return guiOptions;
 }
