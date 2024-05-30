@@ -117,7 +117,8 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 		error("cursor resource %d has invalid size", resourceId);
 
 	Common::Point hotspot;
-	if (getSciVersion() <= SCI_VERSION_01) {
+	bool isSci0Cursor = (getSciVersion() <= SCI_VERSION_01);
+	if (isSci0Cursor) {
 		// SCI0 cursors contain hotspot flags, not actual hotspot coordinates.
 		// If bit 0 of resourceData[3] is set, the hotspot should be centered,
 		// otherwise it's in the top left of the mouse cursor.
@@ -128,19 +129,18 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 		hotspot.y = resource->getUint16LEAt(2);
 	}
 
-	// Now find out what colors we are supposed to use
+	// SCI0 cursors are black and white and transparent.
+	// SCI1 cursors introduce gray when both masks are set.
+	// These colors are hard-coded in the video driver.
 	byte colorMapping[4];
-	colorMapping[0] = 0; // Black is hardcoded
-	colorMapping[1] = _screen->getColorWhite(); // White is also hardcoded
+	colorMapping[0] = 0; // black
+	colorMapping[1] = _screen->getColorWhite();
 	colorMapping[2] = SCI_CURSOR_SCI0_TRANSPARENCYCOLOR;
-	colorMapping[3] = _palette->matchColor(170, 170, 170) & SCI_PALETTE_MATCH_COLORMASK; // Grey
-	// TODO: Figure out if the grey color is hardcoded
-	// HACK for the magnifier cursor in LB1, fixes its color (bug #5971)
-	if (g_sci->getGameId() == GID_LAURABOW && resourceId == 1)
+	if (isSci0Cursor) {
 		colorMapping[3] = _screen->getColorWhite();
-	// HACK for Longbow cursors, fixes the shade of grey they're using (bug #5983)
-	if (g_sci->getGameId() == GID_LONGBOW)
-		colorMapping[3] = _palette->matchColor(223, 223, 223) & SCI_PALETTE_MATCH_COLORMASK; // Light Grey
+	} else {
+		colorMapping[3] = SCI_CURSOR_SCI1_GRAY;
+	}
 
 	Common::SpanOwner<SciSpan<byte> > rawBitmap;
 	rawBitmap->allocate(SCI_CURSOR_SCI0_HEIGHTWIDTH * SCI_CURSOR_SCI0_HEIGHTWIDTH, resource->name() + " copy");
