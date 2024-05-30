@@ -72,6 +72,7 @@ static const struct {
 	{ MT_SEGACD,	GUIO_MIDISEGACD },
 	{ MT_GM,		GUIO_MIDIGM },
 	{ MT_MT32,		GUIO_MIDIMT32 },
+	{ MT_MACINTOSH,	GUIO_MIDIMAC},
 	{ 0,			nullptr },
 };
 
@@ -187,6 +188,11 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 
 	case MT_PC98:
 		if (flags & MDT_PC98)
+			reslt = hdl;
+		break;
+
+	case MT_MACINTOSH:
+		if (flags & MDT_MACINTOSH)
 			reslt = hdl;
 		break;
 
@@ -357,6 +363,9 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		} else if (flags & MDT_APPLEIIGS) {
 			tp = MT_APPLEIIGS;
 			flags &= ~MDT_APPLEIIGS;
+		} else if (flags & MDT_MACINTOSH) {
+			tp = MT_MACINTOSH;
+			flags &= ~MDT_MACINTOSH;
 		} else if (flags & MDT_MIDI) {
 			// If we haven't tried to find a MIDI device yet we do this now.
 			skipMidi = false;

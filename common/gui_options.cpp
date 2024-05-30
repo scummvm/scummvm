@@ -57,6 +57,7 @@ const struct GameOpt {
 	{ GUIO_MIDISEGACD,   "midiSegaCD" },
 	{ GUIO_MIDIMT32,     "midiMt32" },
 	{ GUIO_MIDIGM,       "midiGM" },
+	{ GUIO_MIDIMAC,      "midiMac" },
 
 	{ GUIO_NOASPECT,     "noAspect" },
 

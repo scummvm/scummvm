@@ -868,6 +868,7 @@ static Common::String customizeGuiOptions(const DetectorResult &res) {
 		if (res.game.midi & (1 << i))
 			guiOptions += MidiDriver::musicType2GUIO(mtypes[i]);
 	}
+
 	if (res.game.midi & MDT_MIDI) {
 		guiOptions += MidiDriver::musicType2GUIO(MT_GM);
 		guiOptions += MidiDriver::musicType2GUIO(MT_MT32);

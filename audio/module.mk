@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	casio.o \
 	cms.o \
 	fmopl.o \
+	mac_plugin.o \
 	mididrv.o \
 	mididrv_ms.o \
 	midiparser_qt.o \

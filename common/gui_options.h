@@ -48,6 +48,7 @@
 #define GUIO_MIDISEGACD      "\x10"
 #define GUIO_MIDIMT32        "\x11"
 #define GUIO_MIDIGM          "\x12"
+#define GUIO_MIDIMAC		 "\x17"
 
 #define GUIO_NOASPECT        "\x13"
 
