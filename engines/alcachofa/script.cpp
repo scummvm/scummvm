@@ -389,7 +389,7 @@ private:
 
 	bool shouldSkipCutscene() {
 		return process().character() != MainCharacterKind::None &&
-			g_engine->world().activeCharacterKind() != process().character();
+			g_engine->player().activeCharacterKind() != process().character();
 	}
 
 	TaskReturn kernelCall(ScriptKernelTask task) {
@@ -524,8 +524,8 @@ private:
 			return TaskReturn::finish(0);
 		case ScriptKernelTask::ToggleRoomFloor:
 			if (process().character() == MainCharacterKind::None) {
-				if (g_engine->world().currentRoom() != nullptr)
-					g_engine->world().currentRoom()->toggleActiveFloor();
+				if (g_engine->player().currentRoom() != nullptr)
+					g_engine->player().currentRoom()->toggleActiveFloor();
 			}
 			else
 				g_engine->world().getMainCharacterByKind(process().character()).room()->toggleActiveFloor();
@@ -538,9 +538,9 @@ private:
 			return TaskReturn::finish(0);
 		case ScriptKernelTask::ClearInventory:
 			switch((MainCharacterKind)getNumberArg(0)) {
-			case MainCharacterKind::Mortadelo: g_engine->world().mortadelo().clearInventory();
-			case MainCharacterKind::Filemon: g_engine->world().filemon().clearInventory();
-			default: error("Script attempted to clear inventory with invalid character kind");
+			case MainCharacterKind::Mortadelo: g_engine->world().mortadelo().clearInventory(); break;
+			case MainCharacterKind::Filemon: g_engine->world().filemon().clearInventory(); break;
+			default: error("Script attempted to clear inventory with invalid character kind"); break;
 			}
 			return TaskReturn::finish(1);
 		case ScriptKernelTask::FadeType0:

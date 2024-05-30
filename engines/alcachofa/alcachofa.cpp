@@ -68,7 +68,7 @@ Common::Error AlcachofaEngine::run() {
 
 	auto room = world().getRoomByName("MAPA_TERROR");
 	assert(room != nullptr);
-	world().currentRoom() = room;
+	player().currentRoom() = room;
 	room->loadResources();
 
 	// If a savegame was selected from the launcher, load it
@@ -91,7 +91,7 @@ Common::Error AlcachofaEngine::run() {
 		_drawQueue->clear();
 		_camera.shake() = Vector2d();
 
-		world().currentRoom()->update();
+		player().currentRoom()->update();
 
 		_renderer->end();
 
