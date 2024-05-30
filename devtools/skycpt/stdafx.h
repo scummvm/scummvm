@@ -19,9 +19,9 @@
  *
  */
 
-// stdafx.h : Includedatei f�r Standardsystem-Includedateien,
-// oder projektspezifische Includedateien, die h�ufig benutzt, aber
-// in unregelm��igen Abst�nden ge�ndert werden.
+// stdafx.h : Includedatei für Standardsystem-Includedateien,
+// oder projektspezifische Includedateien, die häufig benutzt, aber
+// in unregelmäßigen Abständen geändert werden.
 //
 #ifndef SKYCPT_STDAFX_H
 #define SKYCPT_STDAFX_H
