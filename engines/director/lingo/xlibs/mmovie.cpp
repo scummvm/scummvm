@@ -186,6 +186,13 @@ int MMovieXObject::updateScreenBlocking() {
 				if (_abortOnClick) {
 					result = MMovieError::MMOVIE_ABORT_DOUBLE_CLICK;
 					keepPlaying = false;
+				} else if (_shiftAbort) {
+					if (event.type == Common::EVENT_RBUTTONDOWN ||
+						(event.type == Common::EVENT_LBUTTONDOWN &&
+						(g_system->getEventManager()->getModifierState() & Common::KBD_SHIFT))) {
+						result = MMovieError::MMOVIE_ABORT_DOUBLE_CLICK;
+						keepPlaying = false;
+					}
 				}
 				break;
 			default:
