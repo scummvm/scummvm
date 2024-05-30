@@ -128,15 +128,15 @@ ObjectBase *Room::getObjectByName(const Common::String &name) const {
 void Room::update() {
 	updateScripts();
 
-	if (world().currentRoom() == this) {
+	if (g_engine->player().currentRoom() == this) {
 		updateRoomBounds();
 		updateInput();
 	}
 	// TODO: Add condition for global room update
 	world().globalRoom().updateObjects();
-	if (world().currentRoom() == this)
+	if (g_engine->player().currentRoom() == this)
 		updateObjects();
-	if (world().currentRoom() == this) {
+	if (g_engine->player().currentRoom() == this) {
 		g_engine->camera().update();
 		drawObjects();
 		world().globalRoom().drawObjects();
@@ -183,10 +183,10 @@ void Room::updateRoomBounds() {
 }
 
 void Room::updateObjects() {
-	const auto *previousRoom = world().currentRoom();
+	const auto *previousRoom = g_engine->player().currentRoom();
 	for (auto *object : _objects) {
 		object->update();
-		if (world().currentRoom() != previousRoom)
+		if (g_engine->player().currentRoom() != previousRoom)
 			return;
 	}
 }
@@ -251,7 +251,7 @@ Inventory::~Inventory() {
 }
 
 void Inventory::updateItemsByActiveCharacter() {
-	auto *character = world().activeCharacter();
+	auto *character = g_engine->player().activeCharacter();
 	assert(character != nullptr);
 	for (auto *item : _items)
 		item->toggle(character->hasItem(item->name()));
@@ -311,8 +311,8 @@ Room *World::getRoomByName(const Common::String &name) const {
 
 ObjectBase *World::getObjectByName(const Common::String &name) const {
 	ObjectBase *result = nullptr;
-	if (result == nullptr && _currentRoom != nullptr)
-		result = _currentRoom->getObjectByName(name);
+	if (result == nullptr && g_engine->player().currentRoom() != nullptr)
+		result = g_engine->player().currentRoom()->getObjectByName(name);
 	if (result == nullptr)
 		result = globalRoom().getObjectByName(name);
 	if (result == nullptr)
@@ -323,11 +323,12 @@ ObjectBase *World::getObjectByName(const Common::String &name) const {
 ObjectBase *World::getObjectByName(MainCharacterKind character, const Common::String &name) const {
 	if (character == MainCharacterKind::None)
 		return getObjectByName(name);
+	const auto &player = g_engine->player();
 	ObjectBase *result = nullptr;
-	if (activeCharacterKind() == character && currentRoom() == activeCharacter()->room())
-		result = currentRoom()->getObjectByName(name);
+	if (player.activeCharacterKind() == character && player.currentRoom() == player.activeCharacter()->room())
+		result = player.currentRoom()->getObjectByName(name);
 	if (result == nullptr)
-		result = activeCharacter()->room()->getObjectByName(name);
+		result = player.activeCharacter()->room()->getObjectByName(name);
 	if (result == nullptr)
 		result = globalRoom().getObjectByName(name);
 	if (result == nullptr)

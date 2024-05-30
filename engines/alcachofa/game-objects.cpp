@@ -239,7 +239,7 @@ void WalkingCharacter::update() {
 
 	_interactionPoint = _currentPos;
 	_interactionDirection = Direction::Right;
-	if (this != g_engine->world().activeCharacter()) {
+	if (this != g_engine->player().activeCharacter()) {
 		int16 interactionOffset = (int16)(150 * _graphicNormal.depthScale());
 		_interactionPoint.x -= interactionOffset;
 		if (activeFloor != nullptr && activeFloor->polygonContaining(_interactionPoint) < 0) {
@@ -514,7 +514,7 @@ void MainCharacter::onArrived() {
 	_activateAction = nullptr;
 
 	stopWalkingAndTurn(activateObject->interactionDirection());
-	if (g_engine->world().activeCharacter() == this)
+	if (g_engine->player().activeCharacter() == this)
 		activateObject->trigger(activateAction);
 }
 
@@ -527,7 +527,7 @@ void MainCharacter::walkTo(
 	// TODO: Add collision avoidance
 
 	WalkingCharacter::walkTo(target, endDirection, activateObject, activateAction);
-	if (this == g_engine->world().activeCharacter()) {
+	if (this == g_engine->player().activeCharacter()) {
 		// TODO: Add camera following character
 	}
 }
@@ -546,7 +546,7 @@ void MainCharacter::draw() {
 }
 
 void MainCharacter::drawInner() {
-	if (room() != g_engine->world().currentRoom() || !isEnabled())
+	if (room() != g_engine->player().currentRoom() || !isEnabled())
 		return;
 	Graphic *activeGraphic = graphicOf(_curAnimateObject);
 	if (activeGraphic == nullptr && _isWalking) {
@@ -616,7 +616,7 @@ void MainCharacter::pickup(const String &name, bool putInHand) {
 	if (item == nullptr)
 		error("Tried to pickup unknown item: %s", name.c_str());
 	item->toggle(true);
-	if (g_engine->world().activeCharacter() == this) {
+	if (g_engine->player().activeCharacter() == this) {
 		// TODO: Put item in hand for pickup
 		g_engine->world().inventory().updateItemsByActiveCharacter();
 	}
@@ -627,7 +627,7 @@ void MainCharacter::drop(const Common::String &name) {
 	if (item == nullptr)
 		error("Tried to drop unknown item: %s", name.c_str());
 	item->toggle(false);
-	if (g_engine->world().activeCharacter() == this) {
+	if (g_engine->player().activeCharacter() == this) {
 		// TODO: Clear held item for drop
 		g_engine->world().inventory().updateItemsByActiveCharacter();
 	}
