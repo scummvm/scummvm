@@ -309,6 +309,7 @@ public:
 	virtual ~InteractableObject() override = default;
 
 	virtual void drawDebug() override;
+	virtual void onClick() override;
 	virtual void trigger(const char *action) override;
 
 private:
@@ -320,9 +321,13 @@ public:
 	static constexpr const char *kClassName = "CPuerta";
 	Door(Room *room, Common::ReadStream &stream);
 
+	virtual void onClick() override;
+	virtual void trigger(const char *action) override;
+
 private:
 	Common::String _targetRoom, _targetObject;
 	Direction _characterDirection;
+	uint32 _lastClickTime = 0;
 };
 
 class Character : public ShapeObject, public ITriggerableObject {
@@ -438,6 +443,7 @@ public:
 		ITriggerableObject *activateObject = nullptr,
 		const char *activateAction = nullptr) override;
 	void walkToMouse();
+	bool clearTargetIf(const ITriggerableObject *target);
 	void clearInventory();
 	bool hasItem(const Common::String &name) const;
 	void pickup(const Common::String &name, bool putInHand);
