@@ -61,6 +61,17 @@ void InteractableObject::drawDebug() {
 	renderer->debugShape(*shape());
 }
 
+void InteractableObject::onClick() {
+	auto heldItem = g_engine->player().heldItem();
+	const char *action;
+	if (heldItem == nullptr)
+		action = g_engine->input().wasMouseLeftReleased() ? "MIRAR" : "PULSAR";
+	else
+		action = heldItem->name().c_str();
+	g_engine->player().activeCharacter()->walkTo(_interactionPoint, Direction::Invalid, this, action);
+	onHoverUpdate();
+}
+
 void InteractableObject::trigger(const char *action) {
 	warning("stub: Trigger object %s with %s", name().c_str(), action == nullptr ? "<null>" : action);
 }
@@ -71,6 +82,19 @@ Door::Door(Room *room, ReadStream &stream)
 	, _targetObject(readVarString(stream))
 	, _characterDirection((Direction)stream.readSint32LE()) {
 	_targetRoom.replace(' ', '_');
+}
+
+void Door::onClick() {
+	if (g_system->getMillis() - _lastClickTime < 500 && g_engine->player().activeCharacter()->clearTargetIf(this))
+		trigger(nullptr);
+	else {
+		InteractableObject::onClick();
+		_lastClickTime = g_system->getMillis();
+	}
+}
+
+void Door::trigger(const char *_) {
+	warning("STUB: Triggering door to %s", _targetRoom.c_str());
 }
 
 Character::Character(Room *room, ReadStream &stream)
@@ -660,6 +684,15 @@ void MainCharacter::walkToMouse() {
 	if (_sourcePos.sqrDist(targetPos) > minDistance * minDistance)
 		walkTo(targetPos);
 }
+
+bool MainCharacter::clearTargetIf(const ITriggerableObject *target) {
+	if (_activateObject == target) {
+		_activateObject = nullptr;
+		return true;
+	}
+	return false;
+}
+
 
 Background::Background(Room *room, const String &animationFileName, int16 scale)
 	: GraphicObject(room, "BACKGROUND") {
