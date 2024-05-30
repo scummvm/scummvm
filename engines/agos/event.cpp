@@ -459,6 +459,23 @@ void AGOSEngine::delay(uint amount) {
 
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
+			case Common::EVENT_JOYBUTTON_DOWN:
+				_joyaction = event.joystick;
+				break;
+			case Common::EVENT_JOYBUTTON_UP:
+				_joyaction.axis = 0;
+				_joyaction.button = 0;
+				_joyaction.position = 0;
+				break;
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				_action = (AGOSAction)event.customType;
+				if (event.customType == kActionToggleFastMode) {
+					_fastMode = !_fastMode;
+				}
+				break;
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+				_action = kActionNone;
+				break;
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode >= Common::KEYCODE_0 && event.kbd.keycode <= Common::KEYCODE_9
 					&& (event.kbd.hasFlags(Common::KBD_ALT) ||
@@ -485,8 +502,6 @@ void AGOSEngine::delay(uint amount) {
 					if (event.kbd.keycode == Common::KEYCODE_a) {
 						GUI::AboutDialog aboutDialog;
 						aboutDialog.runModal();
-					} else if (event.kbd.keycode == Common::KEYCODE_f) {
-						_fastMode = !_fastMode;
 					}
 				}
 

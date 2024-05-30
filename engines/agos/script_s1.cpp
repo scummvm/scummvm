@@ -309,13 +309,19 @@ void AGOSEngine_Simon1::os1_pauseGame() {
 
 	Common::getLanguageYesNo(_language, keyYes, keyNo);
 
+	Common::Keymapper *keymapper = AGOSEngine::getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-Yes/No")->setEnabled(true);
+
 	while (!shouldQuit()) {
 		delay(1);
-		if (_keyPressed.keycode == keyYes)
+		if (_keyPressed.keycode == keyYes || _action == kActionKeyYes)
 			quitGame();
-		else if (_keyPressed.keycode == keyNo)
+		else if (_keyPressed.keycode == keyNo || _action == kActionKeyNo)
 			break;
 	}
+
+	_action = kActionNone;
+	keymapper->getKeymap("game-Yes/No")->setEnabled(false);
 
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }

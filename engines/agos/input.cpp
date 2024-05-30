@@ -193,7 +193,7 @@ void AGOSEngine::waitForInput() {
 
 		while (!shouldQuit()) {
 			if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
-					_keyPressed.keycode == Common::KEYCODE_F10)
+				_action == kActionShowObjects)
 				displayBoxStars();
 			if (processSpecialKeys()) {
 				if (getGameId() != GID_DIMP)
@@ -573,8 +573,8 @@ bool AGOSEngine::processSpecialKeys() {
 	if (shouldQuit())
 		_exitCutscene = true;
 
-	switch (_keyPressed.keycode) {
-	case Common::KEYCODE_UP:
+	switch (_action) {
+	case kActionWalkForward:
 		if (getGameType() == GType_PP)
 			_verbHitArea = 302;
 		else if (getGameType() == GType_WW)
@@ -585,7 +585,7 @@ bool AGOSEngine::processSpecialKeys() {
 			_verbHitArea = 214;
 		verbCode = true;
 		break;
-	case Common::KEYCODE_DOWN:
+	case kActionTurnBack:
 		if (getGameType() == GType_PP)
 			_verbHitArea = 304;
 		else if (getGameType() == GType_WW)
@@ -596,7 +596,7 @@ bool AGOSEngine::processSpecialKeys() {
 			_verbHitArea = 215;
 		verbCode = true;
 		break;
-	case Common::KEYCODE_RIGHT:
+	case kActionTurnRight:
 		if (getGameType() == GType_PP)
 			_verbHitArea = 303;
 		else if (getGameType() == GType_WW)
@@ -607,7 +607,7 @@ bool AGOSEngine::processSpecialKeys() {
 			_verbHitArea = 216;
 		verbCode = true;
 		break;
-	case Common::KEYCODE_LEFT:
+	case kActionTurnLeft:
 		if (getGameType() == GType_PP)
 			_verbHitArea = 301;
 		else if (getGameType() == GType_WW)
@@ -618,10 +618,10 @@ bool AGOSEngine::processSpecialKeys() {
 			_verbHitArea = 217;
 		verbCode = true;
 		break;
-	case Common::KEYCODE_ESCAPE:
+	case kActionExitCutscene:
 		_exitCutscene = true;
 		break;
-	case Common::KEYCODE_F1:
+	case kActionTextSpeedFast:
 		if (getGameType() == GType_SIMON2) {
 			vcWriteVar(5, 50);
 			vcWriteVar(86, 0);
@@ -630,7 +630,7 @@ bool AGOSEngine::processSpecialKeys() {
 			vcWriteVar(86, 0);
 		}
 		break;
-	case Common::KEYCODE_F2:
+	case kActionTextSpeedMedium:
 		if (getGameType() == GType_SIMON2) {
 			vcWriteVar(5, 75);
 			vcWriteVar(86, 1);
@@ -639,7 +639,7 @@ bool AGOSEngine::processSpecialKeys() {
 			vcWriteVar(86, 1);
 		}
 		break;
-	case Common::KEYCODE_F3:
+	case kActionTextSpeedSlow:
 		if (getGameType() == GType_SIMON2) {
 			vcWriteVar(5, 125);
 			vcWriteVar(86, 2);
@@ -648,19 +648,15 @@ bool AGOSEngine::processSpecialKeys() {
 			vcWriteVar(86, 2);
 		}
 		break;
-	case Common::KEYCODE_F5:
-		if (getGameType() == GType_SIMON2 || getGameType() == GType_FF)
-			_exitCutscene = true;
-		break;
-	case Common::KEYCODE_F7:
+	case kActionToggleSwitchCharacter:
 		if (getGameType() == GType_FF && getBitFlag(76))
 			_variableArray[254] = 70;
 		break;
-	case Common::KEYCODE_F9:
+	case kActionToggleHitboxName:
 		if (getGameType() == GType_FF)
 			setBitFlag(73, !getBitFlag(73));
 		break;
-	case Common::KEYCODE_F12:
+	case kActionSpeed_GTYPEPP:
 		if (getGameType() == GType_PP && getGameId() != GID_DIMP) {
 			if (!getBitFlag(110)) {
 				setBitFlag(107, !getBitFlag(107));
@@ -668,22 +664,17 @@ bool AGOSEngine::processSpecialKeys() {
 			}
 		}
 		break;
-	case Common::KEYCODE_PAUSE:
+	case kActionPause:
 		pause();
 		break;
-	default:
-		break;
-	}
-
-	switch (_keyPressed.ascii) {
-	case 't':
+	case kActionToggleSubtitle:
 		if (getGameType() == GType_FF || (getGameType() == GType_SIMON2 && (getFeatures() & GF_TALKIE)) ||
 			((getFeatures() & GF_TALKIE) && _language != Common::EN_ANY && _language != Common::DE_DEU)) {
 			if (_speech)
 				_subtitles = !_subtitles;
 		}
 		break;
-	case 'v':
+	case kActionToggleSpeech:
 		if (getGameType() == GType_FF || (getGameType() == GType_SIMON2 && (getFeatures() & GF_TALKIE))) {
 			if (_subtitles) {
 				_speech = !_speech;
@@ -691,7 +682,7 @@ bool AGOSEngine::processSpecialKeys() {
 			}
 		}
 		break;
-	case '+':
+	case kActionMusicUp:
 		if (_musicMuted) {
 			_musicMuted = false;
 			_musicVolume = 16;
@@ -700,7 +691,7 @@ bool AGOSEngine::processSpecialKeys() {
 		}
 		syncSoundSettingsIntern();
 		break;
-	case '-':
+	case kActionMusicDown:
 		if (!_musicMuted) {
 			_musicVolume = CLIP(_musicVolume - 16, 0, 256);
 			if (_musicVolume == 0) {
@@ -709,7 +700,7 @@ bool AGOSEngine::processSpecialKeys() {
 			syncSoundSettingsIntern();
 		}
 		break;
-	case 'm':
+	case kActionToggleMusic:
 		_musicMuted = !_musicMuted;
 		if (!_musicMuted && _musicVolume == 0)
 			// If last used music volume is 0 when unmuting, use ScummVM
@@ -717,7 +708,7 @@ bool AGOSEngine::processSpecialKeys() {
 			_musicVolume = 192;
 		syncSoundSettingsIntern();
 		break;
-	case 's':
+	case kActionToggleSoundEffects:
 		_effectsMuted = !_effectsMuted;
 		if (!_effectsMuted && _effectsVolume == 0)
 			// If last used SFX volume is 0 when unmuting, use ScummVM
@@ -725,7 +716,7 @@ bool AGOSEngine::processSpecialKeys() {
 			_effectsVolume = 192;
 		syncSoundSettingsIntern();
 		break;
-	case 'b':
+	case kActionToggleBackgroundSound:
 		if (getGameType() == GType_SIMON2) {
 			_ambientMuted = !_ambientMuted;
 			if (!_ambientMuted && _effectsVolume == 0)
