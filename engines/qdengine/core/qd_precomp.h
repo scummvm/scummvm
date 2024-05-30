@@ -33,7 +33,6 @@
 #define MMCKINFO      int
 #define UINT          unsigned int
 #define WPARAM        int
-#define WAVEFORMATEX  int
 #define DWORD         int
 #define COLORREF      unsigned
 #define BYTE          unsigned char
@@ -458,6 +457,49 @@ int GetSystemMetrics(int nIndex) {
 HRESULT CoCreateInstance(REFCLSID rclsid, void *pUnkOuter, DWORD dwClsContext, REFIID riid, void **ppv) {
 	warning("STUB: CoCreateInstance()");
 	return 0;
+}
+
+int ov_open(void *datasource, void *vf, const char *initial, long ibytes) {
+	warning("STUB: ov_open_callbacks()");
+	return 0;
+}
+int ov_read(void *vf, char *buffer, int length, int bigendianp, int word, int sgned, int *bitstream) {
+	warning("STUB: ov_read()");
+	return 0;
+}
+
+int ov_time_total(void *vf, int i) {
+	warning("STUB: ov_time_total()");
+	return 0;
+}
+
+#define THREAD_PRIORITY_TIME_CRITICAL 0
+int ov_clear(void *vf) {
+	warning("STUB: ov_clear()");
+	return 0;
+}
+
+int ov_time_tell(void *vf) {
+	warning("STUB: ov_time_total()");
+	return 0;
+}
+
+DWORD WaitForSingleObject(HANDLE hHandle, DWORD dwMilliseconds) {
+	warning("STUB: WaitForSingleObject()");
+	return 0;
+}
+
+#define INFINITE 0xFFFFFFFF
+#define WAVE_FORMAT_PCM 0x0001
+
+bool SetEvent(HANDLE hEvent) {
+	warning("STUB: SetEvent()");
+	return false;
+}
+
+bool SetThreadPriority(HANDLE hThread, int nPriority) {
+	warning("STUB: SetThreadPriority()");
+	return false;
 }
 
 namespace mpp {

@@ -1,24 +1,21 @@
 //Balmer
 #include "qdengine/core/qd_precomp.h"
-#include <windows.h>
-#include <dsound.h>
-#include "PlayOgg.h"
-#include <vorbis/vorbisfile.h>
+#include "qdengine/core/system/sound/PlayOgg.h"
 
 #ifdef MPP_STAT
-#include <xutil.h>
 #endif MPP_STAT
 
 #include <stdio.h>
 #include <math.h>
 
-#include <aclapi.h>
-
 #define BLK_SIZE         (36 * 32)
 void MpegCreateWindowTable();
 
+#define OggVorbis_File void *
+#define LPDIRECTSOUND  void *
+
 static LPDIRECTSOUND g_pDS = NULL;
-const maximal_len = BLK_SIZE * 2;
+const int maximal_len = BLK_SIZE * 2;
 
 static HANDLE hWaitEvent = INVALID_HANDLE_VALUE;
 static HANDLE hThread = INVALID_HANDLE_VALUE;
@@ -47,7 +44,7 @@ static double all_time = 0, mpeg_time = 0;
 static int time_index = 0;
 static double prev_time = 0, sum_mpeg_time = 0;
 
-const MPP_BUF_SIZE = 8192;
+const int MPP_BUF_SIZE = 8192;
 class MppLoad {
 	char buffer[MPP_BUF_SIZE];
 	OggVorbis_File vf;
@@ -84,9 +81,11 @@ public:
 			file = NULL;
 			return false;
 		}
-
+	warning("STUB: MppLoad::Open");
+#if 0
 		vorbis_info *info = ov_info(&vf, -1);
 		channels = info->channels;
+#endif
 		time_len = (float)ov_time_total(&vf, bitstream);
 		return true;
 	}
@@ -147,17 +146,11 @@ public:
 
 static int FromDirectVolume(long vol) {
 	double v = exp((exp(((vol - DB_MIN) / (double)DB_SIZE) * log(10.0f)) - 1.0) * log(2.0) * 8 / 9.0) - 1;
-
 	return (int)(v + 0.5);
 }
 
 static long ToDirectVolume(int vol) {
-
-	int v = DB_MIN + (int)(0.5 +
-	                       log10(
-	                           9.0 * log(double(vol + 1)) / (log(2.0) * 8) + 1.0
-	                       ) * DB_SIZE
-	                      );
+	int v = DB_MIN + (int)(0.5 + log10(9.0 * log(double(vol + 1)) / (log(2.0) * 8) + 1.0) * DB_SIZE);
 	return v;
 }
 
@@ -165,13 +158,14 @@ void MpegSetPauseIfNullVolume(bool set) {
 	b_pause_if_null_volume = set;
 }
 
-__int64 tick_per_sec2 = 0;
-__int64 beg_tick2 = 0;
+int64 tick_per_sec2 = 0;
+int64 beg_tick2 = 0;
 
-__declspec(noinline)
-__int64 getRDTSC2() {
+int64 getRDTSC2() {
 #define RDTSC __asm _emit 0xf __asm _emit 0x31
-	__int64 timeRDTS;
+	int64 timeRDTS = 0;
+	warning("STUB: getRDTSC2");
+#if 0
 	__asm {
 		push ebx
 		push ecx
@@ -183,6 +177,7 @@ __int64 getRDTSC2() {
 		pop ecx
 		pop ebx
 	}
+#endif
 	return timeRDTS;
 }
 
@@ -252,7 +247,11 @@ void MpegDeinitLibrary() {
 		EWait w;
 		for (MpegSound * cur = pFirstSound; cur; cur = cur->next) {
 			cur->InternalMpegStop();
-			if (cur->pDSBuffer)cur->pDSBuffer->Release();
+	warning("STUB: MpegDeinitLibrary");
+#if 0
+			if (cur->pDSBuffer)
+				cur->pDSBuffer->Release();
+#endif
 			cur->pDSBuffer = NULL;
 		}
 	}
@@ -314,8 +313,11 @@ MpegSound::~MpegSound() {
 	if (prev)prev->next = next;
 	else    pFirstSound = next;
 	if (next)next->prev = prev;
-	//
-	if (pDSBuffer)pDSBuffer->Release();
+	warning("STUB: MpegSound::~MpegSound");
+#if 0
+	if (pDSBuffer)
+		pDSBuffer->Release();
+#endif
 	delete pMppLoad;
 }
 
@@ -324,6 +326,8 @@ void MpegSound::InternalMpegSetVolume(int _volume) {
 	if (pDSBuffer) {
 		HRESULT hr;
 		long ddvol = ToDirectVolume(_volume);
+		warning("STUB: InternalMpegSetVolume");
+#if 0
 		hr = pDSBuffer->SetVolume(ddvol);
 
 		if (b_pause_if_null_volume && mpeg_state == MPEG_PLAY) {
@@ -338,6 +342,7 @@ void MpegSound::InternalMpegSetVolume(int _volume) {
 				}
 			}
 		}
+#endif
 	}
 }
 
@@ -345,15 +350,16 @@ bool MpegSound::DebugRealPlay() {
 	if (pDSBuffer == NULL)return false;
 	EWait w;
 	DWORD status;
+	warning("STUB: DebugRealPlay");
+#if 0
 	if (pDSBuffer->GetStatus(&status) == DS_OK) {
 		return (status & DSBSTATUS_PLAYING) ? true : false;
 	}
-
+#endif
 	return false;
 }
 
 bool MpegSound::InitSoundBuffer() {
-
 	if (pDSBuffer) {
 		if (wave_format.nChannels == pMppLoad->GetChannels()) {
 			return true;
@@ -374,7 +380,10 @@ bool MpegSound::InitSoundBuffer() {
 	wfx.wBitsPerSample = 16;
 	wfx.cbSize = 0;
 
+	warning("STUB: InitSoundBuffer");
+#if 0
 	DSBUFFERDESC dsbd;
+
 	ZeroMemory(&dsbd, sizeof(DSBUFFERDESC));
 	dsbd.dwSize        = sizeof(DSBUFFERDESC);
 	dsbd.dwFlags       = //DSBCAPS_CTRLPAN | DSBCAPS_CTRLFREQUENCY |
@@ -387,7 +396,7 @@ bool MpegSound::InitSoundBuffer() {
 		pDSBuffer = NULL;
 		return false;
 	}
-
+#endif
 	InternalMpegSetVolume(volume);
 
 	return true;
@@ -395,9 +404,13 @@ bool MpegSound::InitSoundBuffer() {
 
 void MpegSound::InternalMpegStop() {
 	mpeg_state = MPEG_STOP;
-	if (g_pDS == NULL)return;
+	if (g_pDS == NULL)
+		return;
+	warning("STUB: InternalMpegStop");
+#if 0
 	if (pDSBuffer)
 		pDSBuffer->Stop();
+#endif
 }
 
 bool MpegSound::InternalMpegOpenToPlay(const char *_fname, bool cycled) {
@@ -427,7 +440,11 @@ bool MpegSound::InternalMpegOpenToPlay(const char *_fname, bool cycled) {
 	last_signal_is_full = false;
 	last_signal_offset = 0;
 
+	int n = sizeDSBuffer;
+	warning("STUB: InternalMpegOpenToPlay");
+#if 0
 	int n = sizeDSBuffer / 2 / (wave_format.nChannels * maximal_len);
+#endif
 	for (int i = 0; i < n; i++) {
 		short *pData;
 		int len;
@@ -436,7 +453,7 @@ bool MpegSound::InternalMpegOpenToPlay(const char *_fname, bool cycled) {
 
 		BYTE *AudioPtr1, *AudioPtr2;
 		DWORD AudioBytes1, AudioBytes2;
-
+#if 0
 		if (FAILED(pDSBuffer->Lock(
 		               dwWriteOffset,
 		               len,
@@ -447,23 +464,24 @@ bool MpegSound::InternalMpegOpenToPlay(const char *_fname, bool cycled) {
 		               0
 		           )))
 			return false;
-
+#endif
 		if (AudioBytes1 + AudioBytes2 == (DWORD)len) {
 			memcpy(AudioPtr1, pData, AudioBytes1);
 			memcpy(AudioPtr2, pData + AudioBytes1, AudioBytes2);
 		}
 
-
+#if 0
 		pDSBuffer->Unlock(
 		    (LPVOID)AudioPtr1,
 		    AudioBytes1,
 		    (LPVOID)AudioPtr2,
 		    AudioBytes2);
-
+#endif
 		dwWriteOffset = (dwWriteOffset + len) % sizeDSBuffer;
 	}
 
 	ClearFade();
+#if 0
 	if (pDSBuffer && i > 0) {
 		pDSBuffer->SetCurrentPosition(0);
 		InternalMpegSetVolume(volume);
@@ -473,6 +491,7 @@ bool MpegSound::InternalMpegOpenToPlay(const char *_fname, bool cycled) {
 		else
 			pDSBuffer->Play(0, 0, DSBPLAY_LOOPING);
 	}
+#endif
 
 	if (is_initialize)
 		mpeg_state = MPEG_PLAY;
@@ -500,13 +519,14 @@ void MpegSound::TimeCallbackTrue() {
 
 	int num_get_bytes = 0;
 Retry:
-
+	warning("STUB: TimeCallbackTrue");
+#if 0
 	if (FAILED(pDSBuffer->GetCurrentPosition(
 	               &dwPlayCursor,
 	               &dwWriteCursor
 	           )))
 		return;
-
+#endif
 	if (dwPlayCursor <= dwWriteOffset)
 		dwPlayCursor += sizeDSBuffer;
 
@@ -531,29 +551,21 @@ Retry:
 		BYTE *AudioPtr1, *AudioPtr2;
 		DWORD AudioBytes1, AudioBytes2;
 
-		if (FAILED(pDSBuffer->Lock(
-		               dwWriteOffset,
-		               cur_write_byte,
-		               (LPVOID *)&AudioPtr1,
-		               &AudioBytes1,
-		               (LPVOID *)&AudioPtr2,
-		               &AudioBytes2,
-		               0
-		           ))) {
+#if 0
+		if (FAILED(pDSBuffer->Lock(dwWriteOffset, cur_write_byte, (LPVOID *)&AudioPtr1,
+								&AudioBytes1, (LPVOID *)&AudioPtr2, &AudioBytes2, 0))) {
 //			OutputDebugString("Failed\n");
 			SeekSkipByte = 0;
 			return;
 		}
-
+#endif
 		if (AudioBytes1 + AudioBytes2 == cur_write_byte) {
-			if (AudioPtr1)memcpy(AudioPtr1,
-				                     SeekSkipByte + (BYTE *)pData, AudioBytes1);
-			if (AudioPtr2)memcpy(AudioPtr2,
-				                     AudioBytes1 + SeekSkipByte + (BYTE *)pData, AudioBytes2);
+			if (AudioPtr1)memcpy(AudioPtr1, SeekSkipByte + (BYTE *)pData, AudioBytes1);
+			if (AudioPtr2)memcpy(AudioPtr2, AudioBytes1 + SeekSkipByte + (BYTE *)pData, AudioBytes2);
 		}
-
+#if 0
 		pDSBuffer->Unlock((LPVOID)AudioPtr1, AudioBytes1, (LPVOID)AudioPtr2, AudioBytes2);
-
+#endif
 		SeekSkipByte = 0;
 
 		AddWriteOffset(cur_write_byte);
@@ -573,6 +585,7 @@ Retry:
 		BYTE *AudioPtr1, *AudioPtr2;
 		DWORD AudioBytes1, AudioBytes2;
 
+#if 0
 		if (FAILED(pDSBuffer->Lock(
 		               dwWriteOffset,
 		               maximal_len * wave_format.nChannels,
@@ -591,12 +604,13 @@ Retry:
 			if (AudioPtr2)memset(AudioPtr2, 0, AudioBytes2);
 		}
 
-		pDSBuffer->Unlock((LPVOID)AudioPtr1, AudioBytes1, (LPVOID)AudioPtr2, AudioBytes2);
+		pDSBuffer->Unlock((LPVOID)AudioPtr1,AudioBytes1, (LPVOID)AudioPtr2, AudioBytes2);
+#endif
 	}
-
+#if 0
 	if (FAILED(pDSBuffer->GetCurrentPosition(&dwPlayCursor, &dwWriteCursor)))
 		return;
-
+#endif
 	pMppLoad->Close();
 	if (b_cycled) {
 		if (pMppLoad->Open(fname)) {
@@ -636,15 +650,11 @@ bool MpegSound::OpenToPlay(const char *_fname, bool cycled) {
 		if (hThread == INVALID_HANDLE_VALUE) {
 			b_thread_must_stop = 0;
 			DWORD ThreadId;
-			hThread = CreateThread(
-			              NULL,
-			              0,
-			              MpegThreadProc,
-			              NULL,
-			              0,
-			              &ThreadId);
-
+			warning("STUB: MpegThreadProc");
+#if 0
+			hThread = CreateThread(NULL, 0, MpegThreadProc, NULL, 0, &ThreadId);
 			hWaitEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
+#endif
 		}
 	}
 
@@ -669,8 +679,12 @@ int MpegSound::GetVolume() {
 
 void MpegSound::Pause() {
 	EWait w;
-	if (pDSBuffer == NULL)return;
+	if (pDSBuffer == NULL)
+		return;
+	warning("STUB: Pause");
+#if 0
 	pDSBuffer->Stop();
+#endif
 	mpeg_state = MPEG_PAUSE;
 }
 
@@ -678,12 +692,13 @@ void MpegSound::Resume() {
 	EWait w;
 	if (pDSBuffer == NULL)return;
 	if (mpeg_state == MPEG_STOP)return;
-
+	warning("STUB: Resume");
+#if 0
 	if (b_pause_if_null_volume && volume == 0)
 		pDSBuffer->Stop();
 	else if (SUCCEEDED(pDSBuffer->Play(0, 0, DSBPLAY_LOOPING))) {
 	}
-
+#endif
 	mpeg_state = MPEG_PLAY;
 }
 
@@ -718,7 +733,7 @@ double MpegGetLen(const char *fname) {
 
 
 int window_hamming[BLK_SIZE];//Окно Хэмминга
-const h_shift = 14;
+const int h_shift = 14;
 
 void MpegCreateWindowTable() {
 	const int mul = 1 << h_shift;
