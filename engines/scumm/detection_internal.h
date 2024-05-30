@@ -866,7 +866,7 @@ static Common::String customizeGuiOptions(const DetectorResult &res) {
 	// These games often have no detection entries of their own and therefore come with all the DOS audio options.
 	// We clear them here to avoid confusion and add the appropriate default sound option below. The games from
 	// version 5 onwards seem to have correct sound options in the detection tables.
-	if (res.game.version < 5 && (res.game.platform == Common::kPlatformAmiga || res.game.platform == Common::kPlatformMacintosh || res.game.platform == Common::kPlatformC64))
+	if (res.game.version < 5 && (res.game.platform == Common::kPlatformAmiga || (res.game.platform == Common::kPlatformMacintosh && strncmp(res.extra, "Steam", 6)) || res.game.platform == Common::kPlatformC64))
 		midiflags = MDT_NONE;
 
 	static const uint mtypes[] = {MT_PCSPK, MT_CMS, MT_PCJR, MT_ADLIB, MT_C64, MT_AMIGA, MT_APPLEIIGS, MT_TOWNS, MT_PC98, MT_SEGACD, 0, 0, 0, 0, MT_MACINTOSH};
@@ -901,8 +901,12 @@ static Common::String customizeGuiOptions(const DetectorResult &res) {
 		// No default sound here, since we don't support it.
 		break;
 	case Common::kPlatformMacintosh:
-		defaultRenderOption = GUIO_RENDERMACINTOSH;
-		defaultSoundOption = GUIO_MIDIMAC;
+		if (!strncmp(res.extra, "Steam", 6)) {
+			defaultRenderOption = GUIO_RENDERVGA;
+		} else {
+			defaultRenderOption = GUIO_RENDERMACINTOSH;
+			defaultSoundOption = GUIO_MIDIMAC;
+		}
 		break;
 	case Common::kPlatformFMTowns:
 		defaultRenderOption = GUIO_RENDERFMTOWNS;
@@ -913,7 +917,7 @@ static Common::String customizeGuiOptions(const DetectorResult &res) {
 		// No default sound here, since we don't support it.
 		break;
 	case Common::kPlatformDOS:
-		defaultRenderOption = (!strcmp(res.extra, "EGA") || !strcmp(res.extra, "V1") || !strcmp(res.extra, "V2")) ? GUIO_RENDEREGA : GUIO_RENDERVGA;
+		defaultRenderOption = (!strncmp(res.extra, "EGA", 4) || !strncmp(res.extra, "V1", 3) || !strncmp(res.extra, "V2", 3)) ? GUIO_RENDEREGA : GUIO_RENDERVGA;
 		break;
 	case Common::kPlatformUnknown:
 		// For targets that don't specify the platform (often happens with SCUMM6+ games) we stick with default VGA.
