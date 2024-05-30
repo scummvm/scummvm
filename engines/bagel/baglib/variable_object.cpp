@@ -64,8 +64,6 @@ ParseCodes CBagVariableObject::setInfo(CBagIfstream &istr) {
 	bool nObjectUpdated = false;
 
 	while (!istr.eof()) {
-		int nChanged = 0;
-
 		istr.eatWhite();
 
 		char ch = (char)istr.peek();
@@ -84,7 +82,6 @@ ParseCodes CBagVariableObject::setInfo(CBagIfstream &istr) {
 				istr.eatWhite();
 				getIntFromStream(istr, _nPointSize);
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				putbackStringOnStream(istr, sStr);
 			}
@@ -118,7 +115,6 @@ ParseCodes CBagVariableObject::setInfo(CBagIfstream &istr) {
 					break;
 				}
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				putbackStringOnStream(istr, sStr);
 			}
@@ -136,7 +132,7 @@ ParseCodes CBagVariableObject::setInfo(CBagIfstream &istr) {
 
 			if (parseCode == UPDATED_OBJECT) {
 				nObjectUpdated = true;
-			} else if (!nChanged) {
+			} else {
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
 

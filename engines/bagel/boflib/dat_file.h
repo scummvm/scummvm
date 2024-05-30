@@ -169,7 +169,8 @@ public:
 	 * @param lRecNum           Record number to read
 	 * @param pBuf              Buffer to write data from
 	 * @param lRecSize          Size of buffer
-	 * @param bUpdateHeader     true if header is to be committed to disk
+	 * @param bUpdateHeader     True if header is to be committed to disk
+	 * @param lKey              Hash key
 	 * @return                  Error return code
 	 */
 	ErrorCode writeRecord(int32 lRecNum, void *pBuf, int32 lRecSize = -1, bool bUpdateHeader = false, uint32 lKey = 0xFFFFFFFF);
@@ -192,7 +193,7 @@ public:
 	 * @param pBuf              Buffer to write data from
 	 * @param lRecSize          Size of buffer
 	 * @param bUpdateHeader     true if header is to be committed to disk
-	 * @param key               Key
+	 * @param lKey              hash Key
 	 * @return                  Error return code
 	 */
 	ErrorCode addRecord(void *pBuf, int32 lRecSize, bool bUpdateHeader = false, uint32 lKey = 0xFFFFFFFF);

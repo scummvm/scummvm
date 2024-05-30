@@ -220,7 +220,7 @@ public:
 	 * Paints some or all of the bitmap directly to the screen
 	 * @param pWnd          Destination device for painting
 	 * @param x             Destination column
-	 * @param y             Destimation row
+	 * @param y             Destination row
 	 * @param pSrcRect      Source rectangle from bitmap
 	 * @param nMaskColor    Transparency color
 	 * @return              error return code
@@ -251,7 +251,7 @@ public:
 	 * Paints some or all of the bitmap directly to the screen
 	 * @param pBmp          Destination bitmap to paint to
 	 * @param x             Destination column
-	 * @param y             Destimation row
+	 * @param y             Destination row
 	 * @param pSrcRect      Source rectangle from bitmap
 	 * @param nMaskColor    Transparency color
 	 * @return              Error return code
@@ -290,6 +290,7 @@ public:
 	 * @param pBmp          Destination bitmap to paint to
 	 * @param pDstRect      Destination rectangle (for stretching)
 	 * @param pSrcRect      Source rectangle from bitmap
+	 * @param nOptSize
 	 * @return              Error return code
 	 */
 	ErrorCode paintStretchOpt(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSrcRect, int nOptSize);

@@ -318,7 +318,6 @@ ErrorCode CBofText::displayTextEx(CBofBitmap *pBmp, const char *pszText, CBofRec
 
 	Graphics::ManagedSurface surface = pBmp->getSurface();
 	Graphics::Font *font = getFont(nFont, nSize, nWeight);
-	CBofRect cRect;
 	int color;
 
 	// Split lines

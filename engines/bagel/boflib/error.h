@@ -63,14 +63,16 @@ public:
 	 * @remarks     Sets _errCode to specified error condition, and logs the
 	 *                   error.
 	 * @param errCode       Error to report
-	 * @param format        printf style format string
+	 * @param format        A printf style format string
+	 * @param ...           Additional parameters to be formatted and inserted into the string
 	 */
 	void reportError(ErrorCode errCode, const char *format, ...);
 
 	/**
 	 * Logs specified fatal error to log file and exit the game.
 	 * @param errCode       Error to report
-	 * @param format        printf style format string
+	 * @param format        A printf style format string
+	 * @param ...           Additional parameters to be formatted and inserted into the string
 	 */
 	static void fatalError(ErrorCode errCode, const char *format, ...);
 
