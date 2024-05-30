@@ -102,6 +102,7 @@ public:
 	Inventory(World *world, Common::ReadStream &stream);
 	virtual ~Inventory() override;
 
+	void initItems();
 	void updateItemsByActiveCharacter();
 
 private:

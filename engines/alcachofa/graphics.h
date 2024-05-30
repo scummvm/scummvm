@@ -220,6 +220,7 @@ class Graphic {
 public:
 	Graphic();
 	Graphic(Common::ReadStream &stream);
+	Graphic(const Graphic &other); // animation reference is taken, so keep other alive
 
 	inline Common::Point &center() { return _center; }
 	inline int8 &order() { return _order; }

@@ -373,6 +373,18 @@ Graphic::Graphic(ReadStream &stream) {
 		setAnimation(animationName, AnimationFolder::Animations);
 }
 
+Graphic::Graphic(const Graphic &other)
+	: _animation(other._animation)
+	, _center(other._center)
+	, _scale(other._scale)
+	, _order(other._order)
+	, _color(other._color)
+	, _isPaused(other._isPaused)
+	, _isLooping(other._isLooping)
+	, _lastTime(other._lastTime)
+	, _frameI(other._frameI)
+	, _depthScale(other._depthScale) {}
+
 void Graphic::loadResources() {
 	if (_animation != nullptr)
 		_animation->load();

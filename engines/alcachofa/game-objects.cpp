@@ -34,6 +34,14 @@ Item::Item(Room *room, ReadStream &stream)
 	stream.readByte(); // unused and ignored byte
 }
 
+Item::Item(const Item &other)
+	: GraphicObject(other.room(), other.name().c_str()) {
+	_type = other._type;
+	_posterizeAlpha = other._posterizeAlpha;
+	_graphic.~Graphic();
+	new (&_graphic) Graphic(other._graphic);
+}
+
 ITriggerableObject::ITriggerableObject(ReadStream &stream)
 	: _interactionPoint(Shape(stream).firstPoint())
 	, _interactionDirection((Direction)stream.readSint32LE()) {}

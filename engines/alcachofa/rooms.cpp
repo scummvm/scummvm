@@ -250,6 +250,19 @@ Inventory::~Inventory() {
 		delete item;
 }
 
+void Inventory::initItems() {
+	auto &mortadelo = world().mortadelo();
+	auto &filemon = world().filemon();
+	for (auto object : _objects) {
+		auto item = dynamic_cast<Item *>(object);
+		if (item == nullptr)
+			continue;
+		_items.push_back(item);
+		mortadelo._items.push_back(new Item(*item));
+		filemon._items.push_back(new Item(*item));
+	}
+}
+
 void Inventory::updateItemsByActiveCharacter() {
 	auto *character = g_engine->player().activeCharacter();
 	assert(character != nullptr);
@@ -285,6 +298,8 @@ World::World() {
 	_mortadelo = dynamic_cast<MainCharacter *>(_globalRoom->getObjectByName("MORTADELO"));
 	if (_mortadelo == nullptr)
 		error("Could not find MORTADELO");
+
+	_inventory->initItems();
 }
 
 World::~World() {
