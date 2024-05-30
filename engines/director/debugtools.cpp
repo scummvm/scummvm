@@ -110,6 +110,7 @@ typedef struct ImGuiWindows {
 	bool settings = false;
 	bool logger = false;
 	bool archive = false;
+	bool watchedVars = false;
 } ImGuiWindows;
 
 static bool toggleButton(const char *label, bool *p_value, bool inverse = false) {
@@ -2196,7 +2197,7 @@ static void showCast() {
 	ImGui::End();
 }
 
-static void displayVariable(Common::String &name) {
+static void displayVariable(const Common::String &name) {
 	const ImU32 var_color = ImGui::GetColorU32(ImVec4(0.9f, 0.9f, 0.0f, 1.0f));
 
 	const ImU32 disp_color_disabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 0.0f));
@@ -3470,6 +3471,37 @@ void onLog(LogMessageType::Type type, int level, uint32 debugChannels, const cha
 	}
 }
 
+static void showWatchedVars() {
+	if (!_state->_w.watchedVars)
+		return;
+
+	if ((g_director->getTotalPlayTime() - _state->_vars._lastTimeRefreshed) > 500) {
+		if (g_lingo->_state->localVars) {
+			_state->_vars._locals = *g_lingo->_state->localVars;
+		} else {
+			_state->_vars._locals.clear();
+		}
+
+		_state->_vars._globals = g_lingo->_globalvars;
+		_state->_vars._lastTimeRefreshed = g_director->getTotalPlayTime();
+	}
+
+	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(300, 250), ImGuiCond_FirstUseEver);
+	if (ImGui::Begin("Watched Vars", &_state->_w.watchedVars)) {
+		for (auto &v : _state->_variables) {
+			Datum name(v._key);
+			name.type = VARREF;
+			Datum val = g_lingo->varFetch(name, true);
+
+			displayVariable(v._key);
+			ImGui::SameLine();
+			ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
+		}
+	}
+	ImGui::End();
+}
+
 void onImGuiInit() {
 	ImGuiIO &io = ImGui::GetIO();
 	io.Fonts->AddFontDefault();
@@ -3536,6 +3568,7 @@ void onImGuiRender() {
 			ImGui::MenuItem("CallStack", NULL, &_state->_w.callStack);
 			ImGui::MenuItem("Breakpoints", NULL, &_state->_w.bpList);
 			ImGui::MenuItem("Vars", NULL, &_state->_w.vars);
+			ImGui::MenuItem("Watched Vars", NULL, &_state->_w.watchedVars);
 			ImGui::MenuItem("Logger", NULL, &_state->_w.logger);
 			ImGui::MenuItem("Archive", NULL, &_state->_w.archive);
 
@@ -3565,6 +3598,7 @@ void onImGuiRender() {
 	showBreakpointList();
 	showSettings();
 	showArchive();
+	showWatchedVars();
 	_state->_logger.draw("Logger", &_state->_w.logger);
 }
 
