@@ -3536,7 +3536,6 @@ void onImGuiRender() {
 			ImGui::MenuItem("CallStack", NULL, &_state->_w.callStack);
 			ImGui::MenuItem("Breakpoints", NULL, &_state->_w.bpList);
 			ImGui::MenuItem("Vars", NULL, &_state->_w.vars);
-			ImGui::MenuItem("Settings", NULL, &_state->_w.settings);
 			ImGui::MenuItem("Logger", NULL, &_state->_w.logger);
 			ImGui::MenuItem("Archive", NULL, &_state->_w.archive);
 
@@ -3545,6 +3544,8 @@ void onImGuiRender() {
 			}
 			if (ImGui::MenuItem("Load state")) {
 			}
+			ImGui::Separator();
+			ImGui::MenuItem("Settings", NULL, &_state->_w.settings);
 
 			ImGui::EndMenu();
 		}
