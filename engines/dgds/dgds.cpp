@@ -204,7 +204,6 @@ void DgdsEngine::setMouseCursor(uint num) {
 	if ((int)num == _currentCursor)
 		return;
 
-	// TODO: Get mouse cursors from _gdsScene for hotspot info??
 	const Common::Array<MouseCursor> &cursors = _gdsScene->getCursorList();
 
 	if (num >= cursors.size())
@@ -212,6 +211,7 @@ void DgdsEngine::setMouseCursor(uint num) {
 
 	uint16 hotX = cursors[num]._hotX;
 	uint16 hotY = cursors[num]._hotY;
+	_currentCursorHot = Common::Point(hotX, hotY);
 
 	/*
 	// Adjust mouse location so hot pixel is in the same place as before?
@@ -228,6 +228,10 @@ void DgdsEngine::setMouseCursor(uint num) {
 	CursorMan.showMouse(true);
 
 	_currentCursor = num;
+}
+
+Common::Point DgdsEngine::getLastMouseMinusHot() const {
+	return _lastMouse - _currentCursorHot;
 }
 
 void DgdsEngine::setShowClock(bool val) {

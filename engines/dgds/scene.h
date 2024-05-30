@@ -127,9 +127,6 @@ struct GameItem : public HotArea {
 struct MouseCursor {
 	uint16 _hotX;
 	uint16 _hotY;
-	uint16 _iconNum;
-	// pointer to cursor image
-	//Common::SharedPtr<Image> _img;
 
 	Common::String dump(const Common::String &indent) const;
 };
