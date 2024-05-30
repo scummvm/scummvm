@@ -222,10 +222,10 @@ Rect Animation::maxFrameBounds() const {
 	return bounds;
 }
 
-Math::Vector2d Animation::totalFrameOffset(int32 frameI) const {
+Point Animation::totalFrameOffset(int32 frameI) const {
 	const auto &frame = _frames[frameI];
 	const auto bounds = frameBounds(frameI);
-	return Vector2d(
+	return Point(
 		bounds.left - frame._center.x + frame._offset.x,
 		bounds.top - frame._center.y + frame._offset.y);
 }
@@ -297,6 +297,8 @@ void Animation::prerenderFrame(int32 frameI) {
 	_renderedFrameI = frameI;
 }
 
+
+
 void Animation::draw2D(int32 frameI, Vector2d center, float scale, BlendMode blendMode, Color color) {
 	prerenderFrame(frameI);
 	auto bounds = frameBounds(frameI);
@@ -304,21 +306,13 @@ void Animation::draw2D(int32 frameI, Vector2d center, float scale, BlendMode ble
 	Vector2d texMax((float)bounds.width() / _renderedSurface.w, (float)bounds.height() / _renderedSurface.h);
 
 	Vector2d size(bounds.width(), bounds.height());
-	center += totalFrameOffset(frameI) * scale;
+	center += as2D(totalFrameOffset(frameI)) * scale;
 	size *= scale;
 
 	auto &renderer = g_engine->renderer();
 	renderer.setTexture(_renderedTexture.get());
 	renderer.setBlendMode(blendMode);
 	renderer.quad(center, size, color, Angle(), texMin, texMax);
-}
-
-static Vector3d as3D(const Vector2d &v) {
-	return Vector3d(v.getX(), v.getY(), 0.0f);
-}
-
-static Vector2d as2D(const Vector3d &v) {
-	return Vector2d(v.x(), v.y());
 }
 
 void Animation::draw3D(int32 frameI, Vector3d center, float scale, BlendMode blendMode, Color color) {
@@ -478,7 +472,7 @@ AnimationDrawRequest::AnimationDrawRequest(Animation *animation, int32 frameI, V
 	, _animation(animation)
 	, _frameI(frameI)
 	, _center(as3D(center))
-	, _scale(1.0f)
+	, _scale(kBaseScale)
 	, _color(kWhite)
 	, _blendMode(BlendMode::AdditiveAlpha)
 	, _lodBias(0.0f) {

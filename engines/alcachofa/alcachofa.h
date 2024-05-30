@@ -64,7 +64,7 @@ public:
 	inline DrawQueue &drawQueue() { return *_drawQueue; }
 	inline Camera &camera() { return _camera; }
 	inline Input &input() { return _input; }
-	inline Player &player() { return _player; }
+	inline Player &player() { return *_player; }
 	inline World &world() { return *_world; }
 	inline Script &script() { return *_script; }
 	inline Scheduler &scheduler() { return _scheduler; }
@@ -119,9 +119,9 @@ private:
 	Common::ScopedPtr<DrawQueue> _drawQueue;
 	Common::ScopedPtr<World> _world;
 	Common::ScopedPtr<Script> _script;
+	Common::ScopedPtr<Player> _player;
 	Camera _camera;
 	Input _input;
-	Player _player;
 	Scheduler _scheduler;
 };
 

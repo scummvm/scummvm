@@ -131,10 +131,7 @@ public:
 		_currentTexture = nullptr;
 		_currentBlendMode = (BlendMode)-1;
 
-#ifdef _DEBUG
-		glClearColor(0.5f, 0.0f, 0.5f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-#endif
+		// Do not clear the screen as the engine sometimes relies on the old frame to be reused
 	}
 
 	virtual void end() override {

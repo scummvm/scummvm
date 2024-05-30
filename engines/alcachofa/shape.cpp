@@ -27,10 +27,6 @@ using namespace Math;
 
 namespace Alcachofa {
 
-static Vector2d asVec(const Point &p) {
-	return Vector2d((float)p.x, (float)p.y);
-}
-
 static int sideOfLine(const Point &a, const Point &b, const Point &q) {
 	return (b.x - a.x) * (q.y - a.y) - (b.y - a.y) * (q.x - a.x);
 }
@@ -80,9 +76,9 @@ EdgeDistances Polygon::edgeDistances(uint startPointI, const Point &query) const
 	assert(startPointI < _points.size());
 	uint endPointI = startPointI + 1 == _points.size() ? 0 : startPointI + 1;
 	Vector2d
-		a = asVec(_points[startPointI]),
-		b = asVec(_points[endPointI]),
-		q = asVec(query);
+		a = as2D(_points[startPointI]),
+		b = as2D(_points[endPointI]),
+		q = as2D(query);
 	float edgeLength = a.getDistanceTo(b);
 	Vector2d edgeDir = (b - a) / edgeLength;
 	Vector2d edgeNormal(-edgeDir.getY(), edgeDir.getX());

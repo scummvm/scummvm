@@ -498,8 +498,12 @@ MainCharacter::~MainCharacter() {
 		delete item;
 }
 
+bool MainCharacter::isBusy() const {
+	return !_semaphore.isReleased() || !g_engine->player().semaphore().isReleased();
+}
+
 void MainCharacter::update() {
-	if (_relatedProcessCounter == 0)
+	if (_semaphore.isReleased())
 		_currentlyUsingObject = nullptr;
 	WalkingCharacter::update();
 
@@ -588,7 +592,9 @@ void MainCharacter::serializeSave(Serializer &serializer) {
 	}
 
 	Character::serializeSave(serializer);
-	serializer.syncAsSint32LE(_relatedProcessCounter);
+	uint semaphoreCounter = _semaphore.counter();
+	serializer.syncAsSint32LE(semaphoreCounter);
+	_semaphore = FakeSemaphore(semaphoreCounter);
 	syncArray(serializer, _dialogMenuLines, syncDialogMenuLine);
 	syncObjectAsString(serializer, _currentlyUsingObject);
 
@@ -639,6 +645,20 @@ void MainCharacter::drop(const Common::String &name) {
 		// TODO: Clear held item for drop
 		g_engine->world().inventory().updateItemsByActiveCharacter();
 	}
+}
+
+void MainCharacter::walkToMouse() {
+	Point targetPos = g_engine->input().mousePos3D();
+	if (room()->activeFloor() != nullptr) {
+		_pathPoints.clear();
+		room()->activeFloor()->findPath(_sourcePos, targetPos, _pathPoints);
+		if (!_pathPoints.empty())
+			targetPos = _pathPoints[0];
+	}
+
+	const uint minDistance = (uint)(50 * _graphicNormal.depthScale());
+	if (_sourcePos.sqrDist(targetPos) > minDistance * minDistance)
+		walkTo(targetPos);
 }
 
 Background::Background(Room *room, const String &animationFileName, int16 scale)

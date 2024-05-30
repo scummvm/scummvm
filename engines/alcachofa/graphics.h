@@ -175,7 +175,9 @@ public:
 	inline const Common::Point &frameCenter(int32 frameI) const { return _frames[frameI]._center; }
 	inline uint32 totalDuration() const { return _totalDuration; }
 	inline uint8 &premultiplyAlpha() { return _premultiplyAlpha; }
+	Common::Point totalFrameOffset(int32 frameI) const;
 	int32 frameAtTime(uint32 time) const;
+	int32 imageIndex(int32 frameI, int32 spriteI) const;
 	Common::Point imageSize(int32 imageI) const;
 
 	void draw2D(
@@ -198,11 +200,9 @@ public:
 		BlendMode blendMode);
 
 private:
-	int32 imageIndex(int32 frameI, int32 spriteI) const;
 	Common::Rect spriteBounds(int32 frameI, int32 spriteI) const;
 	Common::Rect frameBounds(int32 frameI) const;
 	Common::Rect maxFrameBounds() const;
-	Math::Vector2d totalFrameOffset(int32 frameI) const;
 	void prerenderFrame(int32 frameI);
 
 	int32_t _renderedFrameI = -1;

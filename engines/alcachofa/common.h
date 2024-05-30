@@ -23,18 +23,19 @@
 #define COMMON_H
 
 #include "common/scummsys.h"
+#include "common/rect.h"
+#include "math/vector2d.h"
+#include "math/vector3d.h"
 
 namespace Alcachofa {
 
 enum class CursorType {
-	Normal,
-	LookAt,
-	Use,
-	GoTo,
+	Point,
 	LeaveUp,
 	LeaveRight,
 	LeaveDown,
-	LeaveLeft
+	LeaveLeft,
+	WalkTo
 };
 
 enum class Direction {
@@ -65,6 +66,52 @@ static constexpr const Color kClear = { 0, 0, 0, 0 };
 static constexpr const Color kDebugRed = { 250, 0, 0, 70 };
 static constexpr const Color kDebugGreen = { 0, 255, 0, 85 };
 static constexpr const Color kDebugBlue = { 0, 0, 255, 110 };
+
+/**
+ * @brief This *fake* semaphore does not work in multi-threaded scenarios
+ * It is used as a safer option for a simple "isBusy" counter
+ */
+struct FakeSemaphore {
+	FakeSemaphore(uint initialCount = 0) : _counter(initialCount) {}
+	~FakeSemaphore() {
+		assert(_counter == 0);
+	}
+
+	inline bool isReleased() const { return _counter == 0; }
+	inline uint counter() const { return _counter; }
+private:
+	friend struct FakeLock;
+	uint _counter = 0;
+};
+
+struct FakeLock {
+	FakeLock(FakeSemaphore &semaphore) : _semaphore(semaphore) {
+		semaphore._counter++;
+	}
+
+	~FakeLock() {
+		assert(_semaphore._counter > 0);
+		_semaphore._counter--;
+	}
+private:
+	FakeSemaphore &_semaphore;
+};
+
+inline Math::Vector3d as3D(const Math::Vector2d &v) {
+	return Math::Vector3d(v.getX(), v.getY(), 0.0f);
+}
+
+inline Math::Vector3d as3D(const Common::Point &p) {
+	return Math::Vector3d((float)p.x, (float)p.y, 0.0f);
+}
+
+inline Math::Vector2d as2D(const Math::Vector3d &v) {
+	return Math::Vector2d(v.x(), v.y());
+}
+
+inline Math::Vector2d as2D(const Common::Point &p) {
+	return Math::Vector2d((float)p.x, (float)p.y);
+}
 
 }
 

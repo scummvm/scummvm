@@ -130,7 +130,8 @@ void Room::update() {
 
 	if (g_engine->player().currentRoom() == this) {
 		updateRoomBounds();
-		updateInput();
+		if (!updateInput())
+			return;
 	}
 	// TODO: Add condition for global room update
 	world().globalRoom().updateObjects();
@@ -154,25 +155,49 @@ void Room::updateScripts() {
 	g_engine->scheduler().run();
 }
 
-void Room::updateInput() {
-	static bool hasLastP3D = false;
-	static Point lastP3D;
-
-
-	if (g_engine->input().wasMouseLeftPressed()) {
-		Point p2d = g_engine->input().mousePos2D();
-		Point p3d = g_engine->input().mousePos3D();
-		auto m = &g_engine->world().filemon();
-
-		if (!hasLastP3D) {
-			m->setPosition(p3d);
-		}
-		else {
-			m->room() = this;
-			m->walkTo(p3d);
-		}
-		hasLastP3D = true;
+bool Room::updateInput() {
+	auto &player = g_engine->player();
+	auto &input = g_engine->input();
+	if (player.heldItem() != nullptr && !player.activeCharacter()->isBusy() && input.wasMouseRightPressed()) {
+		player.heldItem() = nullptr;
+		return false;
 	}
+
+	bool canInteract = !player.activeCharacter()->isBusy();
+	// A complicated network condition can prevent interaction at this point
+	if (player.isOptionsMenuOpen() || !player.isGameLoaded())
+		canInteract = true;
+	if (canInteract)
+		updateInteraction();
+
+	// TODO: Add main menu and opening inventory handling
+	return player.currentRoom() == this;
+}
+
+void Room::updateInteraction() {
+	auto &player = g_engine->player();
+	auto &input = g_engine->input();
+	// TODO: Add interaction with change character button / opening inventory
+
+	if (player.activeCharacter()->room() != this) {
+		player.activeCharacter()->room() = this;
+	}
+
+	player.selectedObject() = world().globalRoom().getSelectedObject(getSelectedObject());
+	if (player.selectedObject() == nullptr) {
+		if (input.wasMouseLeftPressed() && _activeFloorI >= 0 &&
+			player.activeCharacter()->room() == this &&
+			player.pressedObject() == nullptr) {
+			player.activeCharacter()->walkToMouse();
+			// TODO: Activate camera following character
+		}
+	}
+	else {
+		player.selectedObject()->markSelected();
+		if (input.wasAnyMousePressed())
+			player.pressedObject() = player.selectedObject();
+	}
+	player.updateCursor();
 }
 
 void Room::updateRoomBounds() {
@@ -227,6 +252,20 @@ void Room::serializeSave(Serializer &serializer) {
 
 void Room::toggleActiveFloor() {
 	_activeFloorI ^= 1;
+}
+
+ShapeObject *Room::getSelectedObject(ShapeObject *best) const {
+	for (auto object : _objects) {
+		auto shape = object->shape();
+		auto shapeObject = dynamic_cast<ShapeObject *>(object);
+		if (!object->isEnabled() || shape == nullptr || shapeObject == nullptr ||
+			object->room() != this || // e.g. a main character that is in another room
+			!shape->contains(g_engine->input().mousePos3D()))
+			continue;
+		if (best == nullptr || shapeObject->order() < best->order())
+			best = shapeObject;
+	}
+	return best;
 }
 
 OptionsMenu::OptionsMenu(World *world, ReadStream &stream)

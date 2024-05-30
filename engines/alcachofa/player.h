@@ -28,21 +28,40 @@ namespace Alcachofa {
 
 class Player {
 public:
+	Player();
+
 	inline Room *currentRoom() const { return _currentRoom; }
 	inline Room *&currentRoom() { return _currentRoom; }
 	inline MainCharacter *activeCharacter() const { return _activeCharacter; }
-    inline ShapeObject *selectedObject() const { return _selectedObject; }
-	inline Item *heldItem() const { return _heldItem; }
+    inline ShapeObject *&selectedObject() { return _selectedObject; }
+	inline ShapeObject *&pressedObject() { return _pressedObject; }
+	inline Item *&heldItem() { return _heldItem; }
+	inline FakeSemaphore &semaphore() { return _semaphore; }
+
+	inline bool &isOptionsMenuOpen() { return _isOptionsMenuOpen; }
+	inline bool &isGameLoaded() { return _isGameLoaded; }
 
 	inline MainCharacterKind activeCharacterKind() const {
 		return _activeCharacter == nullptr ? MainCharacterKind::None : _activeCharacter->kind();
 	}
 
+	void preUpdate();
+	void postUpdate();
+	void updateCursor();
+
+
 private:
+	Common::ScopedPtr<Animation> _cursorAnimation;
+	FakeSemaphore _semaphore;
 	Room *_currentRoom = nullptr;
 	MainCharacter *_activeCharacter;
     ShapeObject *_selectedObject = nullptr;
+    ShapeObject *_pressedObject = nullptr;
 	Item *_heldItem = nullptr;
+	int32 _cursorFrameI = 0;
+	bool
+		_isOptionsMenuOpen = false,
+		_isGameLoaded = true;
 };
 
 }
