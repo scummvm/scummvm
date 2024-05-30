@@ -283,6 +283,7 @@ class Item : public GraphicObject {
 public:
 	static constexpr const char *kClassName = "CObjetoInventario";
 	Item(Room *room, Common::ReadStream &stream);
+	Item(const Item &other);
 };
 
 class ITriggerableObject {
@@ -341,7 +342,7 @@ protected:
 	void syncObjectAsString(Common::Serializer &serializer, ObjectBase *&object);
 	void updateTalkingAnimation();
 
-	Direction _direction;
+	Direction _direction = Direction::Right;
 	Graphic _graphicNormal, _graphicTalking;
 
 	bool _isTalking = false;
@@ -441,6 +442,7 @@ protected:
 	virtual void onArrived() override;
 
 private:
+	friend class Inventory;
 	Item *getItemByName(const Common::String &name) const;
 	void drawInner();
 
