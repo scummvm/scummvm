@@ -58,11 +58,13 @@ Common::String AlcachofaEngine::getGameId() const {
 }
 
 Common::Error AlcachofaEngine::run() {
+	g_system->showMouse(false);
 	setDebugger(_console);
 	_renderer.reset(IRenderer::createOpenGLRenderer(Common::Point(1024, 768)));
 	_drawQueue.reset(new DrawQueue(_renderer.get()));
 	_world.reset(new World());
 	_script.reset(new Script());
+	_player.reset(new Player());
 
 	world().globalRoom().loadResources();
 
@@ -78,9 +80,8 @@ Common::Error AlcachofaEngine::run() {
 
 
 	Common::Event e;
-	Graphics::FrameLimiter limiter(g_system, 60);
+	Graphics::FrameLimiter limiter(g_system, 120);
 	while (!shouldQuit()) {
-		g_system->showMouse(true);
 		_input.nextFrame();
 		while (g_system->getEventManager()->pollEvent(e)) {
 			if (_input.handleEvent(e))
@@ -90,8 +91,9 @@ Common::Error AlcachofaEngine::run() {
 		_renderer->begin();
 		_drawQueue->clear();
 		_camera.shake() = Vector2d();
-
-		player().currentRoom()->update();
+		_player->preUpdate();
+		_player->currentRoom()->update();
+		_player->postUpdate();
 
 		_renderer->end();
 

@@ -120,6 +120,8 @@ public:
 	ShapeObject(Room *room, Common::ReadStream &stream);
 	virtual ~ShapeObject() override = default;
 
+	inline int8 order() const { return _order; }
+
 	virtual void update() override;
 	virtual void serializeSave(Common::Serializer &serializer) override;
 	virtual Shape *shape() override;
@@ -424,6 +426,8 @@ public:
 
 	inline MainCharacterKind kind() const { return _kind; }
 	inline ObjectBase *currentlyUsing() const { return _currentlyUsingObject; }
+	inline FakeSemaphore &semaphore() { return _semaphore; }
+	bool isBusy() const;
 
 	virtual void update() override;
 	virtual void draw() override;
@@ -433,6 +437,7 @@ public:
 		Direction endDirection = Direction::Invalid,
 		ITriggerableObject *activateObject = nullptr,
 		const char *activateAction = nullptr) override;
+	void walkToMouse();
 	void clearInventory();
 	bool hasItem(const Common::String &name) const;
 	void pickup(const Common::String &name, bool putInHand);
@@ -450,7 +455,7 @@ private:
 	Common::Array<DialogMenuLine> _dialogMenuLines;
 	ObjectBase *_currentlyUsingObject = nullptr;
 	MainCharacterKind _kind;
-	int32_t _relatedProcessCounter = 0;
+	FakeSemaphore _semaphore;
 	ITriggerableObject *_activateObject = nullptr;
 	const char *_activateAction = nullptr;
 };

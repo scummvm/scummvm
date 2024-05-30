@@ -49,7 +49,7 @@ public:
 	inline uint8 characterAlphaPremultiplier() const { return _characterAlphaPremultiplier; }
 
 	void update();
-	virtual void updateInput();
+	virtual bool updateInput();
 	virtual void loadResources();
 	virtual void freeResources();
 	virtual void serializeSave(Common::Serializer &serializer);
@@ -60,9 +60,11 @@ protected:
 	Room(World *world, Common::ReadStream &stream, bool hasUselessByte);
 	void updateScripts();
 	void updateRoomBounds();
+	void updateInteraction();
 	void updateObjects();
 	void drawObjects();
 	void drawDebug();
+	ShapeObject *getSelectedObject(ShapeObject *best = nullptr) const;
 
 	World *_world;
 	Common::String _name;
