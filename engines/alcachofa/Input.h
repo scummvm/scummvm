@@ -36,6 +36,7 @@ public:
 	inline bool wasAnyMouseReleased() const { return _wasMouseLeftReleased || _wasMouseRightReleased; }
 	inline bool isMouseLeftDown() const { return _isMouseLeftDown; }
 	inline bool isMouseRightDown() const { return _isMouseRightDown; }
+	inline bool isAnyMouseDown() const { return _isMouseLeftDown || _isMouseRightDown; }
 	inline const Common::Point &mousePos2D() const { return _mousePos2D; }
 	inline const Common::Point &mousePos3D() const { return _mousePos3D; }
 
@@ -44,12 +45,12 @@ public:
 
 private:
 	bool
-		_wasMouseLeftPressed,
-		_wasMouseRightPressed,
-		_wasMouseLeftReleased,
-		_wasMouseRightReleased,
-		_isMouseLeftDown,
-		_isMouseRightDown;
+		_wasMouseLeftPressed = false,
+		_wasMouseRightPressed = false,
+		_wasMouseLeftReleased = false,
+		_wasMouseRightReleased = false,
+		_isMouseLeftDown = false,
+		_isMouseRightDown = false;
 	Common::Point
 		_mousePos2D,
 		_mousePos3D;
