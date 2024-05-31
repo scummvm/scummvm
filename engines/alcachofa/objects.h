@@ -54,6 +54,7 @@ public:
 	virtual void serializeSave(Common::Serializer &serializer);
 	virtual Graphic *graphic();
 	virtual Shape *shape();
+	virtual const char *typeName() const;
 
 private:
 	Common::String _name;
@@ -68,6 +69,7 @@ public:
 
 	inline Common::Point &position() { return _pos; }
 	inline Common::Point position() const { return _pos; }
+	virtual const char *typeName() const;
 
 private:
 	Common::Point _pos;
@@ -91,6 +93,7 @@ public:
 	virtual void freeResources() override;
 	virtual void serializeSave(Common::Serializer &serializer) override;
 	virtual Graphic *graphic() override;
+	virtual const char *typeName() const;
 
 	Task *animate(Process &process);
 
@@ -108,6 +111,7 @@ public:
 	SpecialEffectObject(Room *room, Common::ReadStream &stream);
 
 	virtual void draw() override;
+	virtual const char *typeName() const;
 
 private:
 	static constexpr const float kShiftSpeed = 1 / 256.0f;
@@ -130,6 +134,7 @@ public:
 	virtual void onHoverEnd();
 	virtual void onHoverUpdate();
 	virtual void onClick();
+	virtual const char *typeName() const;
 	void markSelected();
 
 protected:
@@ -147,6 +152,7 @@ private:
 class PhysicalObject : public ShapeObject {
 public:
 	PhysicalObject(Room *room, Common::ReadStream &stream);
+	virtual const char *typeName() const;
 };
 
 class MenuButton : public PhysicalObject {
@@ -156,6 +162,7 @@ public:
 	virtual ~MenuButton() override = default;
 
 	inline int32 actionId() const { return _actionId; }
+	virtual const char *typeName() const;
 
 private:
 	int32 _actionId;
@@ -170,24 +177,32 @@ class InternetMenuButton final : public MenuButton {
 public:
 	static constexpr const char *kClassName = "CBotonMenuInternet";
 	InternetMenuButton(Room *room, Common::ReadStream &stream);
+
+	virtual const char *typeName() const;
 };
 
 class OptionsMenuButton final : public MenuButton {
 public:
 	static constexpr const char *kClassName = "CBotonMenuOpciones";
 	OptionsMenuButton(Room *room, Common::ReadStream &stream);
+
+	virtual const char *typeName() const;
 };
 
 class MainMenuButton final : public MenuButton {
 public:
 	static constexpr const char *kClassName = "CBotonMenuPrincipal";
 	MainMenuButton(Room *room, Common::ReadStream &stream);
+
+	virtual const char *typeName() const;
 };
 
 class PushButton final : public PhysicalObject {
 public:
 	static constexpr const char *kClassName = "CPushButton";
 	PushButton(Room *room, Common::ReadStream &stream);
+
+	virtual const char *typeName() const;
 
 private:
 	// TODO: Reverse engineer PushButton
@@ -200,6 +215,8 @@ class EditBox final : public PhysicalObject {
 public:
 	static constexpr const char *kClassName = "CEditBox";
 	EditBox(Room *room, Common::ReadStream &stream);
+
+	virtual const char *typeName() const;
 
 private:
 	// TODO: Reverse engineer EditBox
@@ -217,6 +234,8 @@ public:
 	CheckBox(Room *room, Common::ReadStream &stream);
 	virtual ~CheckBox() override = default;
 
+	virtual const char *typeName() const;
+
 private:
 	// TODO: Reverse engineer CheckBox
 	bool b1;
@@ -232,6 +251,8 @@ class CheckBoxAutoAdjustNoise final : public CheckBox {
 public:
 	static constexpr const char *kClassName = "CCheckBoxAutoAjustarRuido";
 	CheckBoxAutoAdjustNoise(Room *room, Common::ReadStream &stream);
+
+	virtual const char *typeName() const;
 };
 
 class SlideButton final : public ObjectBase {
@@ -239,6 +260,8 @@ public:
 	static constexpr const char *kClassName = "CSlideButton";
 	SlideButton(Room *room, Common::ReadStream &stream);
 	virtual ~SlideButton() override = default;
+
+	virtual const char *typeName() const;
 
 private:
 	// TODO: Reverse engineer SlideButton
@@ -255,6 +278,8 @@ public:
 	static constexpr const char *kClassName = "CVentanaIRC";
 	IRCWindow(Room *room, Common::ReadStream &stream);
 
+	virtual const char *typeName() const;
+
 private:
 	Common::Point _p1, _p2;
 };
@@ -264,6 +289,8 @@ public:
 	static constexpr const char *kClassName = "CMessageBox";
 	MessageBox(Room *room, Common::ReadStream &stream);
 	virtual ~MessageBox() override = default;
+
+	virtual const char *typeName() const;
 
 private:
 	// TODO: Reverse engineer MessageBox
@@ -279,6 +306,8 @@ class VoiceMeter final : public GraphicObject {
 public:
 	static constexpr const char *kClassName = "CVuMeter";
 	VoiceMeter(Room *room, Common::ReadStream &stream);
+
+	virtual const char *typeName() const;
 };
 
 class Item : public GraphicObject {
@@ -286,6 +315,8 @@ public:
 	static constexpr const char *kClassName = "CObjetoInventario";
 	Item(Room *room, Common::ReadStream &stream);
 	Item(const Item &other);
+
+	virtual const char *typeName() const;
 };
 
 class ITriggerableObject {
@@ -311,6 +342,7 @@ public:
 	virtual void drawDebug() override;
 	virtual void onClick() override;
 	virtual void trigger(const char *action) override;
+	virtual const char *typeName() const;
 
 private:
 	Common::String _relatedObject;
@@ -323,6 +355,7 @@ public:
 
 	virtual void onClick() override;
 	virtual void trigger(const char *action) override;
+	virtual const char *typeName() const;
 
 private:
 	Common::String _targetRoom, _targetObject;
@@ -344,6 +377,7 @@ public:
 	virtual void serializeSave(Common::Serializer &serializer) override;
 	virtual Graphic *graphic() override;
 	virtual void trigger(const char *action) override;
+	virtual const char *typeName() const;
 
 protected:
 	void syncObjectAsString(Common::Serializer &serializer, ObjectBase *&object);
@@ -383,6 +417,7 @@ public:
 		const char *activateAction = nullptr);
 	void stopWalkingAndTurn(Direction direction);
 	void setPosition(const Common::Point &target);
+	virtual const char *typeName() const;
 
 	Task *waitForArrival(Process &process);
 
@@ -451,6 +486,7 @@ public:
 	bool hasItem(const Common::String &name) const;
 	void pickup(const Common::String &name, bool putInHand);
 	void drop(const Common::String &name);
+	virtual const char *typeName() const;
 
 protected:
 	virtual void onArrived() override;
@@ -472,6 +508,7 @@ private:
 class Background final : public GraphicObject {
 public:
 	Background(Room *room, const Common::String &animationFileName, int16 scale);
+	virtual const char *typeName() const;
 };
 
 class FloorColor final : public ObjectBase {
@@ -482,6 +519,7 @@ public:
 
 	virtual void drawDebug() override;
 	virtual Shape *shape() override;
+	virtual const char *typeName() const;
 
 private:
 	FloorColorShape _shape;

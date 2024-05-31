@@ -27,6 +27,8 @@ using namespace Common;
 
 namespace Alcachofa {
 
+const char *MenuButton::typeName() const { return "MenuButton"; }
+
 MenuButton::MenuButton(Room *room, ReadStream &stream)
 	: PhysicalObject(room, stream)
 	, _actionId(stream.readSint32LE())
@@ -36,17 +38,25 @@ MenuButton::MenuButton(Room *room, ReadStream &stream)
 	, _graphicDisabled(stream) {
 }
 
+const char *InternetMenuButton::typeName() const { return "InternetMenuButton"; }
+
 InternetMenuButton::InternetMenuButton(Room *room, ReadStream &stream)
 	: MenuButton(room, stream) {
 }
+
+const char *OptionsMenuButton::typeName() const { return "OptionsMenuButton"; }
 
 OptionsMenuButton::OptionsMenuButton(Room *room, ReadStream &stream)
 	: MenuButton(room, stream) {
 }
 
+const char *MainMenuButton::typeName() const { return "MainMenuButton"; }
+
 MainMenuButton::MainMenuButton(Room *room, ReadStream &stream)
 	: MenuButton(room, stream) {
 }
+
+const char *PushButton::typeName() const { return "PushButton"; }
 
 PushButton::PushButton(Room *room, ReadStream &stream)
 	: PhysicalObject(room, stream)
@@ -55,6 +65,8 @@ PushButton::PushButton(Room *room, ReadStream &stream)
 	, _graphic2(stream)
 	, _actionId(stream.readSint32LE()) {
 }
+
+const char *EditBox::typeName() const { return "EditBox"; }
 
 EditBox::EditBox(Room *room, ReadStream &stream)
 	: PhysicalObject(room, stream)
@@ -68,6 +80,8 @@ EditBox::EditBox(Room *room, ReadStream &stream)
 	, _fontId(stream.readSint32LE()) {
 }
 
+const char *CheckBox::typeName() const { return "CheckBox"; }
+
 CheckBox::CheckBox(Room *room, ReadStream &stream)
 	: PhysicalObject(room, stream)
 	, b1(readBool(stream))
@@ -78,10 +92,14 @@ CheckBox::CheckBox(Room *room, ReadStream &stream)
 	, _valueId(stream.readSint32LE()) {
 }
 
+const char *CheckBoxAutoAdjustNoise::typeName() const { return "CheckBoxAutoAdjustNoise"; }
+
 CheckBoxAutoAdjustNoise::CheckBoxAutoAdjustNoise(Room *room, ReadStream &stream)
 	: CheckBox(room, stream) {
 	stream.readByte(); // unused and ignored byte
 }
+
+const char *SlideButton::typeName() const { return "SlideButton"; }
 
 SlideButton::SlideButton(Room *room, ReadStream &stream)
 	: ObjectBase(room, stream)
@@ -93,11 +111,15 @@ SlideButton::SlideButton(Room *room, ReadStream &stream)
 	, _graph3(stream) {
 }
 
+const char *IRCWindow::typeName() const { return "IRCWindow"; }
+
 IRCWindow::IRCWindow(Room *room, ReadStream &stream)
 	: ObjectBase(room, stream)
 	, _p1(Shape(stream).firstPoint())
 	, _p2(Shape(stream).firstPoint()) {
 }
+
+const char *MessageBox::typeName() const { return "MessageBox"; }
 
 MessageBox::MessageBox(Room *room, ReadStream &stream)
 	: ObjectBase(room, stream)
@@ -112,6 +134,8 @@ MessageBox::MessageBox(Room *room, ReadStream &stream)
 	_graph4.start(true);
 	_graph5.start(true);
 }
+
+const char *VoiceMeter::typeName() const { return "VoiceMeter"; }
 
 VoiceMeter::VoiceMeter(Room *room, ReadStream &stream)
 	: GraphicObject(room, stream) {
