@@ -48,6 +48,16 @@ ITriggerableObject::ITriggerableObject(ReadStream &stream)
 	: _interactionPoint(Shape(stream).firstPoint())
 	, _interactionDirection((Direction)stream.readSint32LE()) {}
 
+void ITriggerableObject::onClick() {
+	auto heldItem = g_engine->player().heldItem();
+	const char *action;
+	if (heldItem == nullptr)
+		action = g_engine->input().wasMouseLeftReleased() ? "MIRAR" : "PULSAR";
+	else
+		action = heldItem->name().c_str();
+	g_engine->player().activeCharacter()->walkTo(_interactionPoint, Direction::Invalid, this, action);
+}
+
 const char *InteractableObject::typeName() const { return "InteractableObject"; }
 
 InteractableObject::InteractableObject(Room *room, ReadStream &stream)
@@ -66,13 +76,7 @@ void InteractableObject::drawDebug() {
 }
 
 void InteractableObject::onClick() {
-	auto heldItem = g_engine->player().heldItem();
-	const char *action;
-	if (heldItem == nullptr)
-		action = g_engine->input().wasMouseLeftReleased() ? "MIRAR" : "PULSAR";
-	else
-		action = heldItem->name().c_str();
-	g_engine->player().activeCharacter()->walkTo(_interactionPoint, Direction::Invalid, this, action);
+	ITriggerableObject::onClick();
 	onHoverUpdate();
 }
 
@@ -230,6 +234,11 @@ void Character::syncObjectAsString(Serializer &serializer, ObjectBase *&object) 
 					name.c_str(), this->name().c_str(), room()->name().c_str());
 		}
 	}
+}
+
+void Character::onClick() {
+	ITriggerableObject::onClick();
+	onHoverUpdate();
 }
 
 void Character::trigger(const char *action) {
