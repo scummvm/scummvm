@@ -151,7 +151,7 @@ void Room::update() {
 void Room::updateScripts() {
 	g_engine->script().updateCommonVariables();
 	if (!g_engine->scheduler().hasProcessWithName("ACTUALIZAR_" + _name))
-		g_engine->script().createProcess(MainCharacterKind::None, "ACTUALIZAR_" + _name, true, true);
+		g_engine->script().createProcess(MainCharacterKind::None, "ACTUALIZAR_" + _name, ScriptFlags::AllowMissing | ScriptFlags::IsBackground);
 	g_engine->scheduler().run();
 }
 
@@ -365,6 +365,15 @@ MainCharacter &World::getMainCharacterByKind(MainCharacterKind kind) const {
 	case MainCharacterKind::Filemon: return *_filemon;
 	default:
 		error("Invalid character kind given to getMainCharacterByKind");
+	}
+}
+
+MainCharacter &World::getOtherMainCharacterByKind(MainCharacterKind kind) const {
+	switch (kind) {
+	case MainCharacterKind::Mortadelo: return *_filemon;
+	case MainCharacterKind::Filemon: return *_mortadelo;
+	default:
+		error("Invalid character kind given to getOtherMainCharacterByKind");
 	}
 }
 

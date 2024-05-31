@@ -419,7 +419,7 @@ public:
 		Direction endDirection = Direction::Invalid,
 		ITriggerableObject *activateObject = nullptr,
 		const char *activateAction = nullptr);
-	void stopWalkingAndTurn(Direction direction);
+	void stopWalking(Direction direction = Direction::Invalid);
 	void setPosition(const Common::Point &target);
 	virtual const char *typeName() const;
 
@@ -472,6 +472,7 @@ public:
 	virtual ~MainCharacter() override;
 
 	inline MainCharacterKind kind() const { return _kind; }
+	inline ObjectBase *&currentlyUsing() { return _currentlyUsingObject; }
 	inline ObjectBase *currentlyUsing() const { return _currentlyUsingObject; }
 	inline FakeSemaphore &semaphore() { return _semaphore; }
 	bool isBusy() const;

@@ -149,6 +149,7 @@ public:
 	}
 
 	MainCharacter &getMainCharacterByKind(MainCharacterKind kind) const;
+	MainCharacter &getOtherMainCharacterByKind(MainCharacterKind kind) const;
 	Room *getRoomByName(const Common::String &name) const;
 	ObjectBase *getObjectByName(const Common::String &name) const;
 	ObjectBase *getObjectByName(MainCharacterKind character, const Common::String &name) const;

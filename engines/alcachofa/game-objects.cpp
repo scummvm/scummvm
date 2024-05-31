@@ -81,7 +81,8 @@ void InteractableObject::onClick() {
 }
 
 void InteractableObject::trigger(const char *action) {
-	warning("stub: Trigger object %s with %s", name().c_str(), action == nullptr ? "<null>" : action);
+	g_engine->player().activeCharacter()->stopWalking();
+	g_engine->player().triggerObject(this, action);
 }
 
 const char *Door::typeName() const { return "Door"; }
@@ -242,7 +243,12 @@ void Character::onClick() {
 }
 
 void Character::trigger(const char *action) {
-	warning("stub: Trigger character %s with %s", name().c_str(), action == nullptr ? "<null>" : action);
+	g_engine->player().activeCharacter()->stopWalking(_interactionDirection);
+	if (scumm_stricmp(action, "iSABANA") == 0 && // Original hack probably to fix some bug :)
+		dynamic_cast<MainCharacter *>(this) != nullptr &&
+		room()->name().equalsIgnoreCase("CASA_FREDDY_ARRIBA"))
+		error("Not sure what *should* happen. How do we get here?");
+	g_engine->player().triggerObject(this, action);
 }
 
 const char *WalkingCharacter::typeName() const { return "WalkingCharacter"; }
@@ -412,9 +418,13 @@ void WalkingCharacter::updateWalkingAnimation()
 void WalkingCharacter::onArrived() {
 }
 
-void WalkingCharacter::stopWalkingAndTurn(Direction direction) {
+void WalkingCharacter::stopWalking(Direction direction) {
+	// be careful, the original engine had two versions of this method
+	// one without resetting _sourcePos
 	_isWalking = false;
-	_direction = direction;
+	_sourcePos = _currentPos;
+	if (direction != Direction::Invalid)
+		_direction = direction;
 }
 
 void WalkingCharacter::walkTo(
@@ -583,7 +593,7 @@ void MainCharacter::onArrived() {
 	_activateObject = nullptr;
 	_activateAction = nullptr;
 
-	stopWalkingAndTurn(activateObject->interactionDirection());
+	stopWalking(activateObject->interactionDirection());
 	if (g_engine->player().activeCharacter() == this)
 		activateObject->trigger(activateAction);
 }

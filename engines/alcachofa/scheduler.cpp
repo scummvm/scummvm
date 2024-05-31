@@ -98,7 +98,7 @@ TaskReturnType Process::run() {
 			break;
 		case TaskReturnType::Finished:
 			_lastReturnValue = ret.returnValue();
-			_tasks.pop();
+			delete _tasks.pop();
 			break;
 		default:
 			assert(false && "Invalid task return type");

@@ -20,6 +20,7 @@
  */
 
 #include "player.h"
+#include "script.h"
 #include "alcachofa.h"
 
 using namespace Common;
@@ -117,6 +118,12 @@ void Player::changeRoom(const Common::String &targetRoomName, bool resetCamera) 
 	_pressedObject = _selectedObject = nullptr;
 }
 
+MainCharacter *Player::inactiveCharacter() const {
+	if (_activeCharacter == nullptr)
+		return nullptr;
+	return &g_engine->world().getOtherMainCharacterByKind(activeCharacterKind());
+}
+
 FakeSemaphore &Player::semaphoreFor(MainCharacterKind kind) {
 	static FakeSemaphore dummySemaphore;
 	switch (kind) {
@@ -125,6 +132,31 @@ FakeSemaphore &Player::semaphoreFor(MainCharacterKind kind) {
 	case MainCharacterKind::Filemon: return g_engine->world().filemon().semaphore();
 	default: assert(false && "Invalid main character kind"); return dummySemaphore;
 	}
+}
+
+void Player::triggerObject(ObjectBase *object, const char *action) {
+	assert(object != nullptr && action != nullptr);
+	if (_activeCharacter->isBusy() || _activeCharacter->currentlyUsing() != nullptr)
+		return;
+	debug("Trigger object %s %s with %s", object->typeName(), object->name().c_str(), action);
+
+	if (inactiveCharacter()->currentlyUsing() == object) {
+		action = "MIRAR";
+		_activeCharacter->currentlyUsing() = nullptr;
+	}
+	else
+		_activeCharacter->currentlyUsing() = object;
+
+	auto &script = g_engine->script();
+	if (script.createProcess(activeCharacterKind(), object->name(), action, ScriptFlags::AllowMissing) != nullptr)
+		return;
+	else if (scumm_stricmp(action, "MIRAR") == 0)
+		script.createProcess(activeCharacterKind(), "DefectoMirar");
+	else if (action[0] == 'i' && object->name()[0] == 'i')
+		// TODO: Check if and how this can happen. I guess it crashes now but might be ignored by the original engine
+		script.createProcess(activeCharacterKind(), "DefectoObjeto");
+	else
+		script.createProcess(activeCharacterKind(), "DefectoUsar");
 }
 
 }

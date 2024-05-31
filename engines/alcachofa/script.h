@@ -133,6 +133,18 @@ enum class ScriptKernelTask {
 	LerpCamToObjectKeepingZ
 };
 
+enum class ScriptFlags {
+	None = 0,
+	AllowMissing = (1 << 0),
+	IsBackground = (1 << 1)
+};
+inline ScriptFlags operator | (ScriptFlags a, ScriptFlags b) {
+	return (ScriptFlags)(((uint)a) | ((uint)b));
+}
+inline bool operator & (ScriptFlags a, ScriptFlags b) {
+	return ((uint)a) & ((uint)b);
+}
+
 struct ScriptInstruction {
 	ScriptInstruction(Common::ReadStream &stream);
 
@@ -150,14 +162,12 @@ public:
 	Process *createProcess(
 		MainCharacterKind character,
 		const Common::String &procedure,
-		bool allowMissing = false,
-		bool isBackground = false);
+		ScriptFlags flags = ScriptFlags::None);
 	Process *createProcess(
 		MainCharacterKind character,
 		const Common::String &behavior,
 		const Common::String &action,
-		bool allowMissing = false,
-		bool isBackground = false);
+		ScriptFlags flags = ScriptFlags::None);
 
 	using VariableNameIterator = Common::HashMap<Common::String, uint32>::const_iterator;
 	inline VariableNameIterator beginVariables() const { return _variableNames.begin(); }
