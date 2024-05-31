@@ -285,8 +285,7 @@ Inventory::Inventory(World *world, ReadStream &stream)
 }
 
 Inventory::~Inventory() {
-	for (auto *item : _items)
-		delete item;
+	// No need to delete items, they are room objects and thus deleted in Room::~Room
 }
 
 void Inventory::initItems() {

@@ -329,6 +329,8 @@ public:
 	virtual void trigger(const char *action) = 0;
 
 protected:
+	void onClick();
+
 	Common::Point _interactionPoint;
 	Direction _interactionDirection = Direction::Right;
 };
@@ -377,6 +379,7 @@ public:
 	virtual void freeResources() override;
 	virtual void serializeSave(Common::Serializer &serializer) override;
 	virtual Graphic *graphic() override;
+	virtual void onClick() override;
 	virtual void trigger(const char *action) override;
 	virtual const char *typeName() const;
 
