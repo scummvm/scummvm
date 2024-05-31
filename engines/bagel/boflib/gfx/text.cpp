@@ -218,18 +218,6 @@ ErrorCode CBofText::displayShadowed(CBofWindow *pWnd, const char *pszText, const
 	return displayText(pWnd, pszText, &_cRect, nSize, nWeight, true, nFont);
 }
 
-ErrorCode CBofText::displayShadowed(CBofBitmap *pBmp, const char *pszText, const int nSize, const int nWeight, const RGBCOLOR cColor, const RGBCOLOR cShadow, const int nDX, const int nDY, int nFont) {
-	// Can't access null pointers
-	assert(pBmp != nullptr);
-
-	_cTextColor = cColor;
-	_cShadowColor = cShadow;
-	_nShadow_DX = nDX;
-	_nShadow_DY = nDY;
-
-	return displayText(pBmp, pszText, &_cRect, nSize, nWeight, true, nFont);
-}
-
 ErrorCode CBofText::displayText(CBofWindow *pWnd, const char *pszText, CBofRect *pRect, const int nSize, const int nWeight, const bool bShadowed, int nFont) {
 	assert(isValidObject(this));
 	assert(pWnd != nullptr);
@@ -444,14 +432,6 @@ ErrorCode paintText(CBofBitmap *pBmp, CBofRect *pRect, const char *pszString, co
 	cText.setColor(cColor);
 
 	return cText.displayTextEx(pBmp, pszString, pRect, nSize, nWeight, false, nFont);
-}
-
-ErrorCode paintShadowedText(CBofWindow *pWnd, CBofRect *pRect, const char *pszString, const int nSize, const int nWeight, const RGBCOLOR cColor, int nJustify, uint32 nFormatFlags, int /*nFont*/) {
-	assert(pWnd != nullptr);
-	assert(pRect != nullptr);
-
-	CBofText cText(pRect, nJustify, nFormatFlags);
-	return cText.displayShadowed(pWnd, pszString, nSize, nWeight, cColor);
 }
 
 ErrorCode paintShadowedText(CBofBitmap *pBmp, CBofRect *pRect, const char *pszString, const int nSize, const int nWeight, const RGBCOLOR cColor, int nJustify, uint32 nFormatFlags, int nFont) {
