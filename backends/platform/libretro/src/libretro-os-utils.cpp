@@ -20,6 +20,7 @@
 
 #include "common/tokenizer.h"
 #include "common/config-manager.h"
+#include "common/translation.h"
 #include "base/commandLine.h"
 
 #include "backends/platform/libretro/include/libretro-defs.h"

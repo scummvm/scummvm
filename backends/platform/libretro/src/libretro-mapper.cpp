@@ -17,6 +17,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcat
 
+#include "common/translation.h"
 #include "backends/platform/libretro/include/libretro-mapper.h"
 
 struct retro_keymap mapper_keys[RETRO_DEVICE_ID_JOYPAD_LAST] = {0};
