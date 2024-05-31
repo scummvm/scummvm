@@ -85,6 +85,13 @@ void InteractableObject::trigger(const char *action) {
 	g_engine->player().triggerObject(this, action);
 }
 
+void InteractableObject::toggle(bool isEnabled) {
+	ObjectBase::toggle(isEnabled);
+	ObjectBase *related = room()->getObjectByName(_relatedObject);
+	if (related != nullptr)
+		related->toggle(isEnabled);
+}
+
 const char *Door::typeName() const { return "Door"; }
 
 Door::Door(Room *room, ReadStream &stream)
