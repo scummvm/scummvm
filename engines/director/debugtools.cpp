@@ -3381,7 +3381,36 @@ static void showScore() {
 				ImGui::TableHeader(column_name);
 			}
 
+			ImGui::TableNextRow();
+
+			ImGui::TableNextColumn();
+
+			float indentSize = 10.0;
+			ImGui::Indent(indentSize);
+			ImGui::Text("Labels");
+			ImGui::Unindent(indentSize);
+
 			ImGui::PopFont();
+
+			if (score->_labels && score->_labels->size()) {
+				auto labels = *score->_labels;
+				auto it = labels.begin();
+
+				for (uint f = 0; f < tableColumns; f++) {
+					ImGui::TableNextColumn();
+
+					while (it != labels.end() && (*it)->number < f + _state->_scoreFrameOffset)
+						it++;
+
+					if (it == labels.end())
+						continue;
+
+					if ((*it)->number == f + _state->_scoreFrameOffset) {
+						ImGui::Text("\ue52d"); // beenhere
+						ImGui::SetItemTooltip((*it)->name.c_str());
+					}
+				}
+			}
 
 			{
 				displayScoreChannel(0, kChTempo, 0);
