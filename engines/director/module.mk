@@ -96,6 +96,7 @@ MODULE_OBJS = \
 	lingo/xlibs/findwin.o \
 	lingo/xlibs/flushxobj.o \
 	lingo/xlibs/fplayxobj.o \
+	lingo/xlibs/genutils.o \
 	lingo/xlibs/getscreenrectsxfcn.o \
 	lingo/xlibs/getscreensizexfcn.o \
 	lingo/xlibs/gpid.o \
