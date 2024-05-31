@@ -284,7 +284,7 @@ void WalkingCharacter::update() {
 static Direction getDirection(const Point &from, const Point &to) {
 	Point delta = from - to;
 	if (from.x == to.x)
-		return from.y < to.y ? Direction::Up : Direction::Down;
+		return from.y < to.y ? Direction::Down : Direction::Up;
 	else if (from.x < to.x) {
 		int slope = 1000 * delta.y / -delta.x;
 		return slope > 1000 ? Direction::Up
@@ -490,7 +490,7 @@ struct ArriveTask : public Task {
 		, _character(character) {}
 
 	virtual TaskReturn run() override {
-		return _character._isWalking
+		return _character.isWalking()
 			? TaskReturn::yield()
 			: TaskReturn::finish(1);
 	}
@@ -564,7 +564,7 @@ void MainCharacter::walkTo(
 
 	WalkingCharacter::walkTo(target, endDirection, activateObject, activateAction);
 	if (this == g_engine->player().activeCharacter()) {
-		// TODO: Add camera following character
+		g_engine->camera().setFollow(this);
 	}
 }
 
@@ -674,10 +674,16 @@ void MainCharacter::drop(const Common::String &name) {
 void MainCharacter::walkToMouse() {
 	Point targetPos = g_engine->input().mousePos3D();
 	if (room()->activeFloor() != nullptr) {
+		/* this would be original, but it can cause the character teleporting to the target
 		_pathPoints.clear();
 		room()->activeFloor()->findPath(_sourcePos, targetPos, _pathPoints);
 		if (!_pathPoints.empty())
-			targetPos = _pathPoints[0];
+			targetPos = _pathPoints[0]; */
+
+		Stack<Point> tmpPath;
+		room()->activeFloor()->findPath(_sourcePos, targetPos, tmpPath);
+		if (!tmpPath.empty())
+			targetPos = tmpPath[0];
 	}
 
 	const uint minDistance = (uint)(50 * _graphicNormal.depthScale());

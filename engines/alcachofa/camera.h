@@ -30,7 +30,7 @@
 
 namespace Alcachofa {
 
-class Personaje;
+class WalkingCharacter;
 class Process;
 struct Task;
 
@@ -46,18 +46,21 @@ public:
 	Math::Vector3d transform2Dto3D(Math::Vector3d v) const;
 	Math::Vector3d transform3Dto2D(Math::Vector3d v) const;
 	void setRoomBounds(Common::Point bgSize, int16 bgScale);
+	void setFollow(WalkingCharacter *target);
 
 private:
-	static constexpr const float kAccelerationThreshold = 2.89062f;
-	static constexpr const float kAcceleration = 3.94922f;
-
 	Math::Vector3d setAppliedCenter(Math::Vector3d center);
 	void setupMatricesAround(Math::Vector3d center);
+	void updateFollowing(float deltaTime);
 
 	uint32 _lastUpdateTime = 0;
+	bool _isChanging = false,
+		_isBraking = false;
 	float
 		_scale = 1.0f,
-		_roomScale = 1.0f;
+		_roomScale = 1.0f,
+		_maxSpeedFactor = 230.0f,
+		_speed = 0.0f;
 	Math::Angle _rotation;
 	Math::Vector2d
 		_roomMin = Math::Vector2d(-10000, -10000),
@@ -69,6 +72,7 @@ private:
 	Math::Matrix4
 		_mat3Dto2D,
 		_mat2Dto3D;
+	WalkingCharacter *_followTarget = nullptr;
 };
 
 }
