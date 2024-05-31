@@ -34,6 +34,9 @@ USE_LIBCO        ?= 1
 USE_MT32EMU      ?= 1
 USE_CLOUD        ?= 0
 DEBUG            ?= 0
+FORCE_OPENGL     ?= 0
+FORCE_OPENGLES2  ?= 0
+FORCE_OPENGLNONE ?= 0
 
 DEBUG_ALLOW_DIRTY_SUBMODULES ?= 0
 
@@ -112,21 +115,36 @@ else
    DEFINES += -DDISABLE_TEXT_CONSOLE -DRELEASE_BUILD
 endif
 
+ifeq ($(FORCE_OPENGL), 1)
+   HAVE_OPENGL := 1
+   HAVE_OPENGLES2 :=
+endif
+
+ifeq ($(FORCE_OPENGLES2), 1)
+   HAVE_OPENGL :=
+   HAVE_OPENGLES2 := 1
+endif
+
+ifeq ($(FORCE_OPENGLNONE), 1)
+   HAVE_OPENGL :=
+   HAVE_OPENGLES2 :=
+endif
+
 ifeq ($(or $(HAVE_OPENGL), $(HAVE_OPENGLES2)), 1)
-	USE_OPENGL := 1
-	USE_OPENGL_GAME := 1
-	USE_OPENGL_SHADERS := 1
-	DEFINES += -DUSE_OPENGL -DUSE_GLAD -DUSE_OPENGL_GAME -DUSE_OPENGL_SHADERS
+   USE_OPENGL := 1
+   USE_OPENGL_GAME := 1
+   USE_OPENGL_SHADERS := 1
+   DEFINES += -DUSE_OPENGL -DUSE_GLAD -DUSE_OPENGL_GAME -DUSE_OPENGL_SHADERS
 ifeq ($(HAVE_OPENGL), 1)
-	DEFINES += -DHAVE_OPENGL
-        $(info Support for OpenGL requested)
+   DEFINES += -DHAVE_OPENGL
+   $(info Support for OpenGL requested)
 else
-	DEFINES += -DHAVE_OPENGLES2
-        $(info Support for OpenGLES2 requested)
+   DEFINES += -DHAVE_OPENGLES2
+   $(info Support for OpenGLES2 requested)
 endif
 else
-	UNAVAILABLE_DEPS += opengl_game_shaders
-        $(info No support for OpenGL/OpenGLES2 requested)
+   UNAVAILABLE_DEPS += opengl_game_shaders
+   $(info No support for OpenGL/OpenGLES2 requested)
 endif
 
 ######################################################################
