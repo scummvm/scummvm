@@ -37,6 +37,7 @@ public:
 	inline ShapeObject *&pressedObject() { return _pressedObject; }
 	inline Item *&heldItem() { return _heldItem; }
 	inline FakeSemaphore &semaphore() { return _semaphore; }
+	MainCharacter *inactiveCharacter() const;
 	FakeSemaphore &semaphoreFor(MainCharacterKind kind);
 
 	inline bool &isOptionsMenuOpen() { return _isOptionsMenuOpen; }
@@ -50,7 +51,7 @@ public:
 	void postUpdate();
 	void updateCursor();
 	void changeRoom(const Common::String &targetRoomName, bool resetCamera);
-
+	void triggerObject(ObjectBase *object, const char *action);
 
 private:
 	Common::ScopedPtr<Animation> _cursorAnimation;
