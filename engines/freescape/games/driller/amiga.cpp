@@ -147,6 +147,8 @@ void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0x55);
 	uint32 brownish = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x9E, 0x80, 0x20);
 	uint32 brown = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x7E, 0x60, 0x19);
+	uint32 primaryFontColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xA0, 0x80, 0x00);
+	uint32 secondaryFontColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x60, 0x40, 0x00);
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 	uint32 transparent = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
 
@@ -155,36 +157,36 @@ void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 
 	// It seems that some demos will not include the complete font
 	if (!isDemo() || (_variant & GF_AMIGA_MAGAZINE_DEMO) || (_variant & GF_ATARI_MAGAZINE_DEMO)) {
-		drawStringInSurface("x", 37, 18, white, transparent, surface, 82);
+		drawStringInSurface("x", 37, 18, white, transparent, transparent, surface, 82);
 		coords = Common::String::format("%04d", 2 * int(_position.x()));
 		for (int i = 0; i < 4; i++)
-			drawStringInSurface(Common::String(coords[i]), 47 + 6*i, 18, white, transparent, surface, 112);
+			drawStringInSurface(Common::String(coords[i]), 47 + 6*i, 18, white, transparent, transparent, surface, 112);
 
-		drawStringInSurface("y", 37, 26, white, transparent, surface, 82);
+		drawStringInSurface("y", 37, 26, white, transparent, transparent, surface, 82);
 		coords = Common::String::format("%04d", 2 * int(_position.z())); // Coords y and z are swapped!
 		for (int i = 0; i < 4; i++)
-			drawStringInSurface(Common::String(coords[i]), 47 + 6*i, 26, white, transparent, surface, 112);
+			drawStringInSurface(Common::String(coords[i]), 47 + 6*i, 26, white, transparent, transparent, surface, 112);
 
-		drawStringInSurface("z", 37, 34, white, transparent, surface, 82);
+		drawStringInSurface("z", 37, 34, white, transparent, transparent, surface, 82);
 		coords = Common::String::format("%04d", 2 * int(_position.y())); // Coords y and z are swapped!
 		for (int i = 0; i < 4; i++)
-			drawStringInSurface(Common::String(coords[i]), 47 + 6*i, 34, white, transparent, surface, 112);
+			drawStringInSurface(Common::String(coords[i]), 47 + 6*i, 34, white, transparent, transparent, surface, 112);
 	}
 
-	drawStringInSurface(_currentArea->_name, 188, 185, yellow, black, surface);
-	drawStringInSurface(Common::String::format("%07d", score), 240, 129, yellow, black, surface);
+	drawStringInSurface(_currentArea->_name, 188, 185, primaryFontColor, secondaryFontColor, black, surface);
+	drawStringInSurface(Common::String::format("%07d", score), 240, 129, primaryFontColor, secondaryFontColor, black, surface);
 
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);
-	drawStringInSurface(Common::String::format("%02d:", hours), 208, 7, yellow, black, surface);
-	drawStringInSurface(Common::String::format("%02d:", minutes), 230, 7, yellow, black, surface);
-	drawStringInSurface(Common::String::format("%02d", seconds), 254, 7, yellow, black, surface);
+	drawStringInSurface(Common::String::format("%02d:", hours), 208, 7, primaryFontColor, secondaryFontColor, black, surface);
+	drawStringInSurface(Common::String::format("%02d:", minutes), 230, 7, primaryFontColor, secondaryFontColor, black, surface);
+	drawStringInSurface(Common::String::format("%02d", seconds), 254, 7, primaryFontColor, secondaryFontColor, black, surface);
 
 	Common::String message;
 	int deadline;
 	getLatestMessages(message, deadline);
 	if (deadline <= _countdown) {
-		drawStringInSurface(message, 188, 177, black, yellow, surface);
+		drawStringInSurface(message, 188, 177, yellow, secondaryFontColor, black, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else {
@@ -195,7 +197,7 @@ void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 		else
 			message = _messagesList[1];
 
-		drawStringInSurface(message, 188, 177, yellow, black, surface);
+		drawStringInSurface(message, 188, 177, primaryFontColor, secondaryFontColor, black, surface);
 	}
 
 	int energy = _gameStateVars[k8bitVariableEnergy];
