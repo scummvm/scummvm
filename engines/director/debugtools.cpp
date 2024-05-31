@@ -379,6 +379,7 @@ typedef struct ImGuiState {
 	struct {
 		uint _lastLinePC = 0;
 		uint _callstackSize = 0;
+		bool _isScriptDirty = false; // indicates whether or not we have to display the script corresponding to the current stackframe
 	} _dbg;
 
 	struct {
@@ -1626,7 +1627,7 @@ private:
 		if (showCurrentStatement) {
 			dl->AddQuadFilled(ImVec2(pos.x, pos.y + 4.f), ImVec2(pos.x + 9.f, pos.y + 4.f), ImVec2(pos.x + 9.f, pos.y + 10.f), ImVec2(pos.x, pos.y + 10.f), ImColor(_state->_colors._current_statement));
 			dl->AddTriangleFilled(ImVec2(pos.x + 8.f, pos.y), ImVec2(pos.x + 14.f, pos.y + 7.f), ImVec2(pos.x + 8.f, pos.y + 14.f), ImColor(_state->_colors._current_statement));
-			if (!ImGui::IsItemVisible()) {
+			if (_state->_dbg._isScriptDirty && !ImGui::IsItemVisible()) {
 				ImGui::SetScrollHereY(0.5f);
 			}
 			dl->AddRectFilled(ImVec2(pos.x + 16.f, pos.y), ImVec2(pos.x + width, pos.y + 16.f), ImColor(IM_COL32(0xFF, 0xFF, 0x00, 0x20)), 0.4f);
@@ -1727,6 +1728,36 @@ static bool stepOutShouldPause() {
 	return false;
 }
 
+static void dgbStop() {
+	g_lingo->_exec._state = kPause;
+	g_lingo->_exec._shouldPause = nullptr;
+	_state->_dbg._isScriptDirty = true;
+}
+
+static void dbgStepOver() {
+	g_lingo->_exec._state = kRunning;
+	_state->_dbg._lastLinePC = getLineFromPC();
+	_state->_dbg._callstackSize = g_lingo->_state->callstack.size();
+	g_lingo->_exec._shouldPause = stepOverShouldPauseDebugger;
+	_state->_dbg._isScriptDirty = true;
+}
+
+static void dbgStepInto() {
+	g_lingo->_exec._state = kRunning;
+	_state->_dbg._lastLinePC = getLineFromPC();
+	_state->_dbg._callstackSize = g_lingo->_state->callstack.size();
+	g_lingo->_exec._shouldPause = stepInShouldPauseDebugger;
+	_state->_dbg._isScriptDirty = true;
+}
+
+static void dbgStepOut() {
+	g_lingo->_exec._state = kRunning;
+	_state->_dbg._lastLinePC = getLineFromPC();
+	_state->_dbg._callstackSize = g_lingo->_state->callstack.size();
+	g_lingo->_exec._shouldPause = stepOutShouldPause;
+	_state->_dbg._isScriptDirty = true;
+}
+
 static void showControlPanel() {
 	if (!_state->_w.controlPanel)
 		return;
@@ -1802,6 +1833,7 @@ static void showControlPanel() {
 				score->_playState = kPlayPaused;
 				g_lingo->_exec._state = kPause;
 				g_lingo->_exec._shouldPause = nullptr;
+				_state->_dbg._isScriptDirty = true;
 			}
 
 			if (ImGui::IsItemHovered())
@@ -1878,10 +1910,11 @@ static void showControlPanel() {
 
 			if (ImGui::IsItemClicked(0)) {
 				score->_playState = kPlayStarted;
-				g_lingo->_exec._state = kRunning;
-				_state->_dbg._lastLinePC = getLineFromPC();
-				_state->_dbg._callstackSize = g_lingo->_state->callstack.size();
-				g_lingo->_exec._shouldPause = stepOverShouldPauseDebugger;
+				if (g_lingo->_exec._state == kRunning) {
+					dgbStop();
+				} else {
+					dbgStepOver();
+				}
 			}
 
 			if (ImGui::IsItemHovered())
@@ -1903,10 +1936,11 @@ static void showControlPanel() {
 
 			if (ImGui::IsItemClicked(0)) {
 				score->_playState = kPlayStarted;
-				g_lingo->_exec._state = kRunning;
-				_state->_dbg._lastLinePC = getLineFromPC();
-				_state->_dbg._callstackSize = g_lingo->_state->callstack.size();
-				g_lingo->_exec._shouldPause = stepInShouldPauseDebugger;
+				if (g_lingo->_exec._state == kRunning) {
+					dgbStop();
+				} else {
+					dbgStepInto();
+				}
 			}
 
 			if (ImGui::IsItemHovered())
@@ -1927,10 +1961,11 @@ static void showControlPanel() {
 
 			if (ImGui::IsItemClicked(0)) {
 				score->_playState = kPlayStarted;
-				g_lingo->_exec._state = kRunning;
-				_state->_dbg._lastLinePC = getLineFromPC();
-				_state->_dbg._callstackSize = g_lingo->_state->callstack.size();
-				g_lingo->_exec._shouldPause = stepOutShouldPause;
+				if (g_lingo->_exec._state == kRunning) {
+					dgbStop();
+				} else {
+					dbgStepOut();
+				}
 			}
 
 			if (ImGui::IsItemHovered())
@@ -2603,6 +2638,7 @@ static void renderScript(ImGuiScript &script, bool showByteCode) {
 
 	RenderScriptVisitor visitor(script, showByteCode);
 	script.root->accept(visitor);
+	_state->_dbg._isScriptDirty = false;
 }
 
 static bool showScriptCast(CastMemberID &id) {
@@ -2654,7 +2690,7 @@ static void displayScriptCasts() {
 }
 
 static void updateCurrentScript() {
-	if (g_lingo->_exec._state != kPause)
+	if ((g_lingo->_exec._state != kPause) || !_state->_dbg._isScriptDirty)
 		return;
 
 	Common::Array<CFrame *> &callstack = g_lingo->_state->callstack;
