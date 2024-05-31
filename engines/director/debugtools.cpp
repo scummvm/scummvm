@@ -3026,21 +3026,21 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 		ImGui::Unindent(indentSize);
 	}
 
-	numFrames -= _state->_scoreFrameOffset;
+	numFrames -= _state->_scoreFrameOffset - 1;
 	numFrames = MIN<uint>(numFrames, kMaxColumnsInTable - 2);
 
 	for (int f = 0; f < (int)numFrames; f++) {
-		Frame &frame = *score->_scoreCache[f + _state->_scoreFrameOffset];
+		Frame &frame = *score->_scoreCache[f + _state->_scoreFrameOffset - 1];
 		Sprite &sprite = *frame._sprites[ch];
+
+		ImGui::TableNextColumn();
 
 		if (f + _state->_scoreFrameOffset == (int)currentFrameNum)
 			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
 
-		ImGui::TableNextColumn();
-
-		if (f == _state->_selectedScoreCast.frame + _state->_scoreFrameOffset &&
+		if (f == _state->_selectedScoreCast.frame + _state->_scoreFrameOffset - 1 &&
 		  ch == _state->_selectedScoreCast.channel && mode <= kModeExtended)
-			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(0.7f, 0.7f, 0.7f, 0.3f)));
+			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(1.0f, 0.3f, 0.3f, 0.6f)));
 
 		switch (mode) {
 		case kModeMember:
@@ -3103,7 +3103,7 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 		}
 
 		if (ImGui::IsItemClicked(0)) {
-			_state->_selectedScoreCast.frame = f + _state->_scoreFrameOffset;
+			_state->_selectedScoreCast.frame = f + _state->_scoreFrameOffset - 1;
 			_state->_selectedScoreCast.channel = ch;
 		}
 	}
