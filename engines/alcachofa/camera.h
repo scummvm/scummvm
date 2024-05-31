@@ -48,6 +48,7 @@ public:
 	void resetRotationAndScale();
 	void setRoomBounds(Common::Point bgSize, int16 bgScale);
 	void setFollow(WalkingCharacter *target);
+	void setPosition(Math::Vector2d v);
 
 private:
 	Math::Vector3d setAppliedCenter(Math::Vector3d center);

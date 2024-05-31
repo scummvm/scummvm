@@ -47,6 +47,7 @@ public:
 	}
 	inline uint8 characterAlphaTint() const { return _characterAlphaTint; }
 	inline uint8 characterAlphaPremultiplier() const { return _characterAlphaPremultiplier; }
+	inline bool fixedCameraOnEntering() const { return _fixedCameraOnEntering; }
 
 	void update();
 	virtual bool updateInput();
@@ -70,7 +71,7 @@ protected:
 	World *_world;
 	Common::String _name;
 	PathFindingShape _floors[2];
-	bool _cameraFollowsUponLeaving;
+	bool _fixedCameraOnEntering;
 	int8
 		_musicId,
 		_activeFloorI = -1;

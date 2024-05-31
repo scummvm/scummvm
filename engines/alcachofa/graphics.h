@@ -167,7 +167,7 @@ public:
 	Animation(Common::String fileName, AnimationFolder folder = AnimationFolder::Animations);
 
 	void load();
-	using AnimationBase::freeImages;
+	void freeImages();
 
 	inline bool isLoaded() const { return _isLoaded; }
 	inline uint spriteCount() const { return _spriteBases.size(); }

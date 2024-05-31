@@ -355,6 +355,10 @@ public:
 	static constexpr const char *kClassName = "CPuerta";
 	Door(Room *room, Common::ReadStream &stream);
 
+	inline const Common::String &targetRoom() const { return _targetRoom; }
+	inline const Common::String &targetObject() const { return _targetObject; }
+	inline Direction characterDirection() const { return _characterDirection; }
+
 	virtual CursorType cursorType() const override;
 	virtual void onClick() override;
 	virtual void trigger(const char *action) override;

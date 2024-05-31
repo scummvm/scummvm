@@ -196,7 +196,6 @@ static Process **getProcessByName(Array<Process *> &_processes, const String &na
 }
 
 void Scheduler::killProcessByName(const String &name) {
-	assert(processesToRun().empty());
 	Process **process = getProcessByName(processesToRunNext(), name);
 	if (process != nullptr) {
 		delete *process;
