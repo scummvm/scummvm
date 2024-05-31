@@ -20,6 +20,7 @@
  */
 
 #include "camera.h"
+#include "script.h"
 #include "alcachofa.h"
 
 #include "common/system.h"
@@ -38,6 +39,14 @@ void Camera::setRoomBounds(Point bgSize, int16 bgScale) {
 	_roomMax = _roomMin + Vector2d(
 		bgSize.x * bgScale * kInvBaseScale,
 		bgSize.y * bgScale * kInvBaseScale);
+	_roomScale = bgScale;
+}
+
+void Camera::setFollow(WalkingCharacter *target) {
+	_followTarget = target;
+	_lastUpdateTime = g_system->getMillis();
+	if (target == nullptr)
+		_isChanging = false;
 }
 
 static Matrix4 scaleMatrix(float scale) {
@@ -77,7 +86,7 @@ void minmax(Vector3d &min, Vector3d &max, Vector3d val)
 
 Vector3d Camera::setAppliedCenter(Vector3d center) {
 	setupMatricesAround(center);
-	if (true) { // g_engine->script().getVariable("EncuadrarCamara")
+	if (g_engine->script().variable("EncuadrarCamara") || true) {
 		const float screenW = g_system->getWidth(), screenH = g_system->getHeight();
 		Vector3d min, max;
 		min = max = transform2Dto3D(Vector3d(0, 0, _roomScale));
@@ -122,11 +131,67 @@ Vector3d Camera::transform3Dto2D(Vector3d v3d) const {
 void Camera::update() {
 	// original would be some smoothing of delta times, let's not.
 	uint32 now = g_system->getMillis();
-	float deltaTime = now - _lastUpdateTime;
+	float deltaTime = (now - _lastUpdateTime) / 1000.0f;
 	deltaTime = MAX(0.001f, MIN(0.5f, deltaTime));
 	_lastUpdateTime = now;
 
+	updateFollowing(deltaTime);
 	setAppliedCenter(_usedCenter + Vector3d(_shake.getX(), _shake.getY(), 0.0f));
+}
+
+void Camera::updateFollowing(float deltaTime) {
+	if (_followTarget == nullptr)
+		return;
+	const float resolutionFactor = g_system->getWidth() * 0.00125f;
+	const float acceleration = 460 * resolutionFactor;
+	const float baseDeadZoneSize = 25 * resolutionFactor;
+	const float minSpeed = 20 * resolutionFactor;
+	const float maxSpeed = this->_maxSpeedFactor * resolutionFactor;
+	const float depthScale = _followTarget->graphic()->depthScale();
+	const auto characterPolygon = _followTarget->shape()->at(0);
+	const float halfHeight = ABS(characterPolygon._points[0].y - characterPolygon._points[2].y) / 2.0f;
+
+	Vector3d targetCenter = setAppliedCenter({
+		_shake.getX() + _followTarget->position().x,
+		_shake.getY() + _followTarget->position().y - depthScale * 85,
+		_usedCenter.z()});
+	targetCenter.y() -= halfHeight;
+	float distanceToTarget = as2D(_usedCenter - targetCenter).getMagnitude();
+	float moveDistance = _followTarget->stepSizeFactor() * _speed * deltaTime;
+
+	float deadZoneSize = baseDeadZoneSize / _scale;
+	if (_followTarget->isWalking() && depthScale > 0.8f)
+		deadZoneSize = (baseDeadZoneSize + (depthScale - 0.8f) * 200) / _scale;
+	bool isFarAway = false;
+	if (ABS(targetCenter.x() - _usedCenter.x()) > deadZoneSize ||
+		ABS(targetCenter.y() - _usedCenter.y()) > deadZoneSize) {
+		isFarAway = true;
+		_isBraking = false;
+		_isChanging = true;
+	}
+
+	if (_isBraking) {
+		_speed -= acceleration * 0.9f * deltaTime;
+		_speed = MAX(_speed, minSpeed);
+	}
+	if (_isChanging && !_isBraking) {
+		_speed += acceleration * deltaTime;
+		_speed = MIN(_speed, maxSpeed);
+		if (!isFarAway)
+			_isBraking = true;
+	}
+	if (_isChanging) {
+		if (distanceToTarget <= moveDistance) {
+			_usedCenter = targetCenter;
+			_isChanging = false;
+			_isBraking = false;
+		}
+		else {
+			Vector3d deltaCenter = targetCenter - _usedCenter;
+			deltaCenter.z() = 0.0f;
+			_usedCenter += deltaCenter * moveDistance / distanceToTarget;
+		}
+	}
 }
 
 }

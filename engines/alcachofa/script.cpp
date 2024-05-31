@@ -442,7 +442,8 @@ private:
 				error("Script tried to make character go to invalid object %s", getStringArg(1));
 			character->walkTo(target->position());
 
-			// TODO: if (flags & 2) g_engine->camera().setFollow(nullptr);
+			if (getNumberArg(2) & 2)
+				g_engine->camera().setFollow(nullptr);
 
 			return (getNumberArg(2) & 1)
 				? TaskReturn::finish(1)

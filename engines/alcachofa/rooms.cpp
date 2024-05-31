@@ -189,7 +189,7 @@ void Room::updateInteraction() {
 			player.activeCharacter()->room() == this &&
 			player.pressedObject() == nullptr) {
 			player.activeCharacter()->walkToMouse();
-			// TODO: Activate camera following character
+			g_engine->camera().setFollow(player.activeCharacter());
 		}
 	}
 	else {

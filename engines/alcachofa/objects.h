@@ -366,6 +366,10 @@ public:
 	WalkingCharacter(Room *room, Common::ReadStream &stream);
 	virtual ~WalkingCharacter() override = default;
 
+	inline bool isWalking() const { return _isWalking; }
+	inline const Common::Point &position() const { return _currentPos; }
+	inline float stepSizeFactor() const { return _stepSizeFactor; }
+
 	virtual void update() override;
 	virtual void draw() override;
 	virtual void drawDebug() override;
@@ -383,7 +387,6 @@ public:
 	Task *waitForArrival(Process &process);
 
 protected:
-	friend struct ArriveTask;
 	virtual void onArrived();
 	void updateWalking();
 	void updateWalkingAnimation();
