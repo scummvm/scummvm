@@ -34,12 +34,9 @@
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/actors/avatar_mover_process.h"
+#include "ultima/ultima8/world/actors/pathfinder_process.h"
 #include "ultima/ultima8/world/missile_tracker.h"
 #include "ultima/ultima8/world/split_item_process.h"
-
-#include "ultima/ultima8/world/actors/pathfinder_process.h"
-
-// map dumping
 
 namespace Ultima {
 namespace Ultima8 {
@@ -524,10 +521,9 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 			// try to combine items
 			if (canReach && targetitem && item->canMergeWith(targetitem)) {
 				uint16 newquant = targetitem->getQuality() + item->getQuality();
-				// easter egg as in original: items stack to max quantity of 666
-				if (newquant > 666) {
-					item->setQuality(newquant - 666);
-					targetitem->setQuality(666);
+				if (newquant > Item::MAX_QUANTITY) {
+					item->setQuality(newquant - Item::MAX_QUANTITY);
+					targetitem->setQuality(Item::MAX_QUANTITY);
 					// maybe this isn't needed? original doesn't do it here..
 					targetitem->callUsecodeEvent_combine();
 				} else {

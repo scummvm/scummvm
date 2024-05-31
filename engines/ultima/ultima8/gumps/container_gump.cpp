@@ -541,10 +541,9 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 		// try to combine items
 		if (item->canMergeWith(targetitem)) {
 			uint16 newquant = targetitem->getQuality() + item->getQuality();
-			// easter egg as in original: items stack to max quantity of 666
-			if (newquant > 666) {
-				item->setQuality(newquant - 666);
-				targetitem->setQuality(666);
+			if (newquant > Item::MAX_QUANTITY) {
+				item->setQuality(newquant - Item::MAX_QUANTITY);
+				targetitem->setQuality(Item::MAX_QUANTITY);
 				// maybe this isn't needed? original doesn't do it here..
 				targetitem->callUsecodeEvent_combine();
 			} else {

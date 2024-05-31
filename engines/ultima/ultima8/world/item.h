@@ -705,6 +705,9 @@ public:
 		EXT_TARGET 		 = 0x0200,  //!< Item is the current reticle target in Crusader
 		EXT_FEMALE       = 0x8000	//!< Item is Crusader Female NPC (controls sfx)
 	};
+
+	// easter egg as in original: items stack to max quantity of 666
+	static const int MAX_QUANTITY = 666;
 };
 
 inline const ShapeInfo *Item::getShapeInfo() const {
