@@ -24,7 +24,6 @@
 #define BAGEL_DIALOGS_OPT_WINDOW_H
 
 #include "bagel/boflib/gui/dialog.h"
-#include "bagel/boflib/string.h"
 #include "bagel/boflib/gui/button.h"
 #include "bagel/boflib/gui/scroll_bar.h"
 #include "bagel/boflib/gui/text_box.h"
@@ -76,12 +75,12 @@ public:
 	void getDialogData();
 
 protected:
-	virtual void onPaint(CBofRect *pRect);
-	virtual void onInitDialog();
+	void onPaint(CBofRect *pRect) override;
+	void onInitDialog() override;
 
-	virtual void onBofScrollBar(CBofObject *pObject, int nPos);
-	virtual void onBofButton(CBofObject *pObject, int nState);
-	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
+	void onBofScrollBar(CBofObject *pObject, int nPos) override;
+	void onBofButton(CBofObject *pObject, int nState) override;
+	void onKeyHit(uint32 lKey, uint32 lRepCount) override;
 
 	// Data members
 	//

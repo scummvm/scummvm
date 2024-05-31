@@ -21,7 +21,6 @@
 
 #include "bagel/spacebar/filter.h"
 #include "bagel/spacebar/main_window.h"
-#include "bagel/spacebar/master_win.h"
 #include "bagel/spacebar/spacebar.h"
 #include "bagel/boflib/gfx/palette.h"
 #include "bagel/boflib/string.h"

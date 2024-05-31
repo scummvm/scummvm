@@ -25,7 +25,6 @@
 
 #include "bagel/boflib/gui/dialog.h"
 #include "bagel/boflib/gui/button.h"
-#include "bagel/boflib/gfx/text.h"
 
 namespace Bagel {
 
@@ -35,14 +34,14 @@ class CBagQuitDialog : public CBofDialog {
 public:
 	CBagQuitDialog();
 
-	virtual void onInitDialog();
+	void onInitDialog() override;
 
 protected:
-	virtual void onPaint(CBofRect *pRect);
-	virtual void onClose();
-	virtual void onBofButton(CBofObject *pObject, int nState);
+	void onPaint(CBofRect *pRect) override;
+	void onClose() override;
+	void onBofButton(CBofObject *pObject, int nState) override;
 
-	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
+	void onKeyHit(uint32 lKey, uint32 lRepCount) override;
 
 	// Data
 	//
@@ -53,14 +52,14 @@ class CBagNextCDDialog : public CBofDialog {
 public:
 	CBagNextCDDialog();
 
-	virtual void onInitDialog();
+	void onInitDialog() override;
 
 protected:
-	virtual void onPaint(CBofRect *pRect);
-	virtual void onClose();
-	virtual void onBofButton(CBofObject *pObject, int nState);
+	void onPaint(CBofRect *pRect) override;
+	void onClose() override;
+	void onBofButton(CBofObject *pObject, int nState) override;
 
-	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
+	void onKeyHit(uint32 lKey, uint32 lRepCount) override;
 
 	// Data
 	CBofBmpButton *_pButton;
@@ -70,16 +69,16 @@ class CBagCreditsDialog : public CBofDialog {
 public:
 	CBagCreditsDialog();
 
-	virtual void onInitDialog();
+	void onInitDialog() override;
 
 protected:
-	virtual void onPaint(CBofRect *pRect);
-	virtual void onClose();
+	void onPaint(CBofRect *pRect) override;
+	void onClose() override;
 
-	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
-	virtual void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	void onKeyHit(uint32 lKey, uint32 lRepCount) override;
+	void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
 
-	virtual void onMainLoop();
+	void onMainLoop() override;
 
 	ErrorCode nextScreen();
 	ErrorCode displayCredits();

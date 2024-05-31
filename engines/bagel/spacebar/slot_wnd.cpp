@@ -214,9 +214,7 @@ ErrorCode  SBarSlotWnd::attach() {
 		}
 
 		// Read in their total nuggets from game
-		CBagVar *pVar = nullptr;
-
-		pVar = g_VarManager->getVariable("NUGGETS");
+		CBagVar *pVar = g_VarManager->getVariable("NUGGETS");
 
 		if (pVar)
 			_nCredit = pVar->getNumValue();
