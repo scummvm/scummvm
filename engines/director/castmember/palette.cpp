@@ -48,6 +48,17 @@ PaletteCastMember::~PaletteCastMember() {
 	}
 }
 
+CastMemberID PaletteCastMember::getPaletteId() {
+	load();
+	return _palette ? _palette->id : CastMemberID();
+}
+
+void PaletteCastMember::activatePalette() {
+	load();
+	if (_palette)
+		g_director->setPalette(_palette->id);
+}
+
 Common::String PaletteCastMember::formatInfo() {
 	Common::String result;
 	if (_palette) {
@@ -89,8 +100,8 @@ void PaletteCastMember::load() {
 			Common::SeekableReadStreamEndian *pal = arch->getResource(MKTAG('C', 'L', 'U', 'T'), paletteId);
 			debugC(2, kDebugImages, "PaletteCastMember::load(): linking palette id %d to cast index %d", paletteId, _castId);
 			PaletteV4 palData = _cast->loadPalette(*pal, paletteId);
-			CastMemberID cid(_castId, _cast->_castLibID);
-			g_director->addPalette(cid, palData.palette, palData.length);
+			palData.id = CastMemberID(_castId, _cast->_castLibID);
+			g_director->addPalette(palData.id, palData.palette, palData.length);
 			_palette = new PaletteV4(palData);
 			delete pal;
 		} else {
