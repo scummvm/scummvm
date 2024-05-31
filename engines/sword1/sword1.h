@@ -89,6 +89,7 @@ struct SystemVars {
 	bool             displayDebugGrid;
 	uint32           framesPerSecondCounter;
 	uint32           gameCycle;
+	bool             useWindowsAudioMode; // DOS and Windows use different implementations of the audio driver, each with their own behavior
 };
 
 class SwordEngine : public Engine {

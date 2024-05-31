@@ -71,6 +71,125 @@ Sound::~Sound() {
 	closeCowSystem();
 }
 
+/*  Original volume tables from the Windows drivers:
+ *  
+ *  static const int32 speechVolTable[17] = {
+ *      -10000,
+ *      -5000, -3000, -2500, -2250,
+ *      -2000, -1750, -1500, -1250,
+ *      -1000, -750,  -500,  -350,
+ *      -200,  -100,  -50,   0
+ *  };
+ *  
+ *  static const int32 musicVolTable[17] = {
+ *      -5000,
+ *      -4000, -3500, -3000, -2750,
+ *      -2500, -2250, -2000, -1800,
+ *      -1550, -1300, -1100, -900, 
+ *      -700,  -500,  -400,  -200  
+ *  };
+ *  
+ *  static const int32 fxVolTable[17] = {
+ *      -10000,
+ *      -5000, -3000, -2500, -2250,
+ *      -2000, -1750, -1500, -1250,
+ *      -1000, -750,  -500,  -350,
+ *      -200,  -100,  -50,   0
+ *  };
+ *  
+ *  These values are expressed in hundredths of a decibel, therefore we pre-processed them in the following way:
+ *  
+ *  * Convert each dB value to a linear scale (from 0.0 to 1.0):
+ *        pow(10, dB / 2000.0);
+ *  * Normalize the obtained value to the 0-255 range, keeping in mind that DirectSound allowable
+ *    values are between DSBVOLUME_MAX (no attenuation, 0) and DSBVOLUME_MIN (silence, -10000):
+ *        normalizedValue = int(round((linearValue - DSBVOLUME_MIN) / (DSBVOLUME_MAX - DSBVOLUME_MIN) * 255.0))
+ */
+
+static const int32 speechVolTable[17] = {
+	0,    // -100.00 dB
+	1,    // -50.00 dB
+	8,    // -30.00 dB
+	14,   // -25.00 dB
+	19,   // -22.50 dB
+	25,   // -20.00 dB
+	34,   // -17.50 dB
+	45,   // -15.00 dB
+	60,   // -12.50 dB
+	81,   // -10.00 dB
+	108,  // -7.50 dB
+	143,  // -5.00 dB
+	170,  // -3.50 dB
+	203,  // -2.00 dB
+	227,  // -1.00 dB
+	241,  // -0.50 dB
+	255   // 0 dB
+};
+
+static const int32 musicVolTable[17] = {
+	1,    // -50.00 dB
+	3,    // -40.00 dB
+	5,    // -35.00 dB
+	8,    // -30.00 dB
+	11,   // -27.50 dB
+	14,   // -25.00 dB
+	19,   // -22.50 dB
+	25,   // -20.00 dB
+	32,   // -18.00 dB
+	43,   // -15.50 dB
+	57,   // -13.00 dB
+	72,   // -11.00 dB
+	90,   // -9.00 dB
+	114,  // -7.00 dB
+	143,  // -5.00 dB
+	161,  // -4.00 dB
+	203   // -2.00 dB
+};
+
+static const int32 fxVolTable[17] = {
+	0,    // -100.00 dB
+	1,    // -50.00 dB
+	8,    // -30.00 dB
+	14,   // -25.00 dB
+	19,   // -22.50 dB
+	25,   // -20.00 dB
+	34,   // -17.50 dB
+	45,   // -15.00 dB
+	60,   // -12.50 dB
+	81,   // -10.00 dB
+	108,  // -7.50 dB
+	143,  // -5.00 dB
+	170,  // -3.50 dB
+	203,  // -2.00 dB
+	227,  // -1.00 dB
+	241,  // -0.50 dB
+	255   // 0 dB
+};
+
+static int32 getWindowsPanValue(int32 vol) {
+	// DirectSound handles pan values in decibel, just like volume and accepts
+	// values between -10000 (-100 dB, all to the left) and 10000 (100 dB, all to the right);
+	// more specifically, a negative value lowers the current volume of the right
+	// channel by that amount of decibels and viceversa for positive values.
+	//
+	// As we already know that any input value for this function is going to come
+	// exclusively from any of the volume tables (therefore the conversion from log
+	// to linear volumes is already performed), we can think of the range of possible
+	// target pan values in two parts:
+	// - The positive part (originally 0 to 10000 hundredths of dB) is the complementary part of the
+	//   input volume divided by 2 and multiplied by -1, so it fits the (0,127) part of the pan range;
+	// - The negative part (-10000 to 0 hundredths of dB) is the complementary part of the input volume 
+	//   multiplied by -1 and divided by 2, so it fits the (-127,0) part of the pan range.
+
+	if (vol > 0) {
+		return -((vol - 255) / 2);
+	} else if (vol < 0) {
+		return ((vol - 255) / 2);
+	}
+
+	return 0;
+}
+
 uint32 Sound::getSampleId(int32 fxNo) {
 	byte cluster = _fxList[fxNo].sampleId.cluster;
 	byte id;
@@ -730,13 +849,32 @@ void Sound::playSpeech() {
 		(byte *)_speechSample, _speechSize, 11025, SPEECH_FLAGS, DisposeAfterUse::NO);
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_hSampleSpeech, stream);
 
-	byte speechVolume = clampVolume(2 * (4 * (_volSpeech[0] + _volSpeech[1])));
-	_mixer->setChannelVolume(_hSampleSpeech, speechVolume);
+	if (SwordEngine::_systemVars.useWindowsAudioMode) {
+		int32 vol = 0;
+		int32 pan = 0;
 
-	int pan = 64 + (4 * ((int32)_volSpeech[1] - (int32)_volSpeech[0]));
-	_mixer->setChannelBalance(_hSampleSpeech, scalePan(pan));
+		if (_volSpeech[0] < _volSpeech[1]) {		
+			vol = speechVolTable[_volSpeech[1]];
+			pan = getWindowsPanValue(-speechVolTable[(16 * _volSpeech[0]) / _volSpeech[1]]);
+		} else if (_volSpeech[0] > _volSpeech[1]) {
+			vol = speechVolTable[_volSpeech[0]];
+			pan = getWindowsPanValue(speechVolTable[(16 * _volSpeech[1]) / _volSpeech[0]]);
+		} else {
+			vol = speechVolTable[_volSpeech[1]];
+			pan = 0;
+		}
 
-	reduceMusicVolume();
+		_mixer->setChannelVolume(_hSampleSpeech, vol);
+		_mixer->setChannelBalance(_hSampleSpeech, pan);
+	} else {
+		byte speechVolume = clampVolume(2 * (4 * (_volSpeech[0] + _volSpeech[1])));
+		_mixer->setChannelVolume(_hSampleSpeech, speechVolume);
+
+		int pan = 64 + (4 * ((int32)_volSpeech[1] - (int32)_volSpeech[0]));
+		_mixer->setChannelBalance(_hSampleSpeech, scalePan(pan));
+
+		reduceMusicVolume();
+	}
 }
 
 void Sound::stopSpeech() {
@@ -745,7 +883,9 @@ void Sound::stopSpeech() {
 	if (_mixer->isSoundHandleActive(_hSampleSpeech)) {
 		_mixer->stopHandle(_hSampleSpeech);
 		_speechSampleBusy = false;
-		restoreMusicVolume();
+
+		if (!SwordEngine::_systemVars.useWindowsAudioMode)
+			restoreMusicVolume();
 	}
 }
 
@@ -786,11 +926,13 @@ static void soundCallback(void *refCon) {
 }
 
 void Sound::installFadeTimer() {
-	_vm->getTimerManager()->installTimerProc(&soundCallback, 1000000 / TIMER_RATE, this, "AILFadeTimer");
+	if (!SwordEngine::_systemVars.useWindowsAudioMode)
+		_vm->getTimerManager()->installTimerProc(&soundCallback, 1000000 / TIMER_RATE, this, "AILFadeTimer");
 }
 
 void Sound::uninstallFadeTimer() {
-	_vm->getTimerManager()->removeTimerProc(&soundCallback);
+	if (!SwordEngine::_systemVars.useWindowsAudioMode)
+		_vm->getTimerManager()->removeTimerProc(&soundCallback);
 }
 
 void Sound::setFXVolume(byte targetVolume, int handleIdx) {
@@ -958,18 +1100,31 @@ void Sound::streamMusicFile(int32 tuneId, int32 looped) {
 
 		_streamLoopingFlag[newHandleId] = looped;
 
-		_musicStreamFading[oldHandleId] = -12;
-		_musicStreamFading[newHandleId] = 1;
+		_musicStreamFading[oldHandleId] = SwordEngine::_systemVars.useWindowsAudioMode ? -16 : -12;
+		_musicStreamFading[newHandleId] = SwordEngine::_systemVars.useWindowsAudioMode ? 0 : 1;
 
 		if (_musicStreamPlaying[newHandleId]) {
 			// Whoops, they are BOTH busy! Let's kill the older one...
 			_mixer->stopHandle(_hSampleMusic[newHandleId]);
 			_musicFile[newHandleId].close();
 
-			bool success = prepareMusicStreaming(Common::Path(filename), newHandleId, tuneId,
-												 2 * (2 * (_volMusic[0] + _volMusic[1])),
-												 scalePan(64 + (4 * (_volMusic[1] - _volMusic[0]))),
-												 assignedMode);
+			int32 vol = 2 * (2 * (_volMusic[0] + _volMusic[1]));
+			int32 pan = scalePan(64 + (4 * (_volMusic[1] - _volMusic[0])));
+
+			if (SwordEngine::_systemVars.useWindowsAudioMode) {
+				if (_volMusic[0] < _volMusic[1]) {
+					vol = musicVolTable[_volMusic[1]];
+					pan = getWindowsPanValue(-musicVolTable[16 * _volMusic[0] / _volMusic[1]]);
+				} else if (_volMusic[0] > _volMusic[1]) {
+					vol = musicVolTable[_volMusic[0]];
+					pan = getWindowsPanValue(musicVolTable[16 * _volMusic[1] / _volMusic[0]]);
+				} else {
+					vol = musicVolTable[_volMusic[1]];
+					pan = 0;
+				} 
+			}
+
+			bool success = prepareMusicStreaming(Common::Path(filename), newHandleId, tuneId, vol, pan, assignedMode);
 
 			if (success)
 				debug(5, "Sound::streamMusicFile(): interrupting sound in handle %d to play %s", newHandleId, filename.c_str());
@@ -977,20 +1132,46 @@ void Sound::streamMusicFile(int32 tuneId, int32 looped) {
 			return;
 		} else {
 			// All good! We got the non-busy one :-)
-			bool success = prepareMusicStreaming(Common::Path(filename), newHandleId, tuneId,
-												 0,
-												 scalePan(64 + (4 * (_volMusic[1] - _volMusic[0]))),
-												 assignedMode);
+			int32 vol = 0;
+			int32 pan = scalePan(64 + (4 * (_volMusic[1] - _volMusic[0])));
+
+			if (SwordEngine::_systemVars.useWindowsAudioMode) {
+				if (_volMusic[0] < _volMusic[1]) {
+					vol = musicVolTable[_volMusic[1]];
+				pan = getWindowsPanValue(-musicVolTable[16 * _volMusic[0] / _volMusic[1]]);
+				} else if (_volMusic[0] > _volMusic[1]) {
+					vol = musicVolTable[_volMusic[0]];
+					pan = getWindowsPanValue(musicVolTable[16 * _volMusic[1] / _volMusic[0]]);
+				} else {
+					vol = musicVolTable[_volMusic[1]];
+					pan = 0;
+				} 
+			}
+
+			bool success = prepareMusicStreaming(Common::Path(filename), newHandleId, tuneId, vol, pan, assignedMode);
 
 			if (success)
 				debug(5, "Sound::streamMusicFile(): playing sound %s in handle %d with other handle busy", filename.c_str(), newHandleId);
 		}
 	} else {
 		// No streams are busy, let's go!
-		bool success = prepareMusicStreaming(Common::Path(filename), newHandleId, tuneId,
-											 2 * (3 * (_volMusic[0] + _volMusic[1])),
-											 scalePan(64 + (4 * (_volMusic[1] - _volMusic[0]))),
-											 assignedMode);
+		int32 vol = 2 * (3 * (_volMusic[0] + _volMusic[1]));
+		int32 pan = scalePan(64 + (4 * (_volMusic[1] - _volMusic[0])));
+
+		if (SwordEngine::_systemVars.useWindowsAudioMode) {
+			if (_volMusic[0] < _volMusic[1]) {
+				vol = musicVolTable[_volMusic[1]];
+				pan = getWindowsPanValue(-musicVolTable[16 * _volMusic[0] / _volMusic[1]]);
+			} else if (_volMusic[0] > _volMusic[1]) {
+				vol = musicVolTable[_volMusic[0]];
+				pan = getWindowsPanValue(musicVolTable[16 * _volMusic[1] / _volMusic[0]]);
+			} else {
+				vol = musicVolTable[_volMusic[1]];
+				pan = 0;
+			} 
+		}
+
+		bool success = prepareMusicStreaming(Common::Path(filename), newHandleId, tuneId, vol, pan, assignedMode);
 
 		if (success)
 			debug(5, "Sound::streamMusicFile(): playing sound %s in handle %d", filename.c_str(), newHandleId);
@@ -1011,12 +1192,36 @@ void Sound::updateMusicStreaming() {
 					_crossFadeIncrement = false;
 
 					if (_musicStreamFading[i] < 0) {
-						debug("Sound::updateMusicStreaming(): Fading %s to %d", _musicFile[i].getName(),
-							2 * (((0 - _musicStreamFading[i]) * 3 * (_volMusic[0] + _volMusic[1])) / 16));
-						_mixer->setChannelVolume(_hSampleMusic[i],
-							clampVolume(2 * (((0 - _musicStreamFading[i]) * 3 * (_volMusic[0] + _volMusic[1])) / 16)));
+						if (!SwordEngine::_systemVars.useWindowsAudioMode) {
+							debug("Sound::updateMusicStreaming(): Fading %s to %d", _musicFile[i].getName(),
+								2 * (((0 - _musicStreamFading[i]) * 3 * (_volMusic[0] + _volMusic[1])) / 16));
+							_mixer->setChannelVolume(_hSampleMusic[i],
+								clampVolume(2 * (((0 - _musicStreamFading[i]) * 3 * (_volMusic[0] + _volMusic[1])) / 16)));
 
-						_musicStreamFading[i] += 1;
+							_musicStreamFading[i] += 1;
+						} else {
+							_musicStreamFading[i] += 1;
+
+							int32 vol, pan;
+							int32 volL = ((-_musicStreamFading[i]) * _volMusic[0]) >> 4;
+							int32 volR = ((-_musicStreamFading[i]) * _volMusic[1]) >> 4;
+
+							if (volL > volR) {
+								vol = musicVolTable[volL];
+								pan = musicVolTable[16 * volR / volL];
+							} else if (volR > volL) {
+								vol = musicVolTable[volR];
+								pan = -musicVolTable[16 * volL / volR];
+							} else {
+								vol = musicVolTable[volR];
+								pan = 0;
+							}
+
+							debug("Sound::updateMusicStreaming(): Fading %s to %d (pan %d)", _musicFile[i].getName(), vol, getWindowsPanValue(pan));
+							_mixer->setChannelVolume(_hSampleMusic[i], vol);
+							_mixer->setChannelBalance(_hSampleMusic[i], getWindowsPanValue(pan));
+						}
+						
 						if (_musicStreamFading[i] == 0) {
 							_mixer->setChannelVolume(_hSampleMusic[i], 0);
 							_musicOutputStream[i]->finish();
@@ -1027,7 +1232,7 @@ void Sound::updateMusicStreaming() {
 
 							_musicStreamPlaying[i] = false;
 						}
-					} else {
+					} else if (!SwordEngine::_systemVars.useWindowsAudioMode) { // The Windows driver doesn't fade-in
 						debug("Sound::updateMusicStreaming(): Fading %s to %d", _musicFile[i].getName(),
 							2 * ((_musicStreamFading[i] * 3 * (_volMusic[0] + _volMusic[1])) / 16));
 						_mixer->setChannelVolume(_hSampleMusic[i],
@@ -1147,12 +1352,34 @@ void Sound::playFX(int32 fxID, int32 type, uint8 *wavData, uint32 vol[2]) {
 			}
 
 			if (stream) {
-				v0 = _volFX[0] * vol[0];
-				v1 = _volFX[1] * vol[1];
-
 				_mixer->playStream(Audio::Mixer::kSFXSoundType, &_hSampleFX[i], stream, -1, 0);
-				_mixer->setChannelVolume(_hSampleFX[i], clampVolume(2 * ((v0 + v1) / 8)));
-				_mixer->setChannelBalance(_hSampleFX[i], scalePan(64 + ((v1 - v0) / 4)));
+
+				if (SwordEngine::_systemVars.useWindowsAudioMode) {
+					int32 leftVol  = (vol[0] * _volFX[0]) >> 4;
+					int32 rightVol = (vol[1] * _volFX[1]) >> 4;
+					int32 volume = 0;
+					int32 pan = 0;
+
+					if (leftVol > rightVol) {
+						volume = fxVolTable[leftVol];
+						pan = -fxVolTable[16 * rightVol / leftVol];
+					} else if (leftVol < rightVol) {
+						volume = fxVolTable[rightVol];
+						pan = fxVolTable[16 * leftVol / rightVol];
+					} else {
+						volume = fxVolTable[leftVol];
+						pan = 0;
+					}
+
+					_mixer->setChannelVolume(_hSampleFX[i], volume);
+					_mixer->setChannelBalance(_hSampleFX[i], getWindowsPanValue(pan));
+				} else {
+					v0 = _volFX[0] * vol[0];
+					v1 = _volFX[1] * vol[1];
+		
+					_mixer->setChannelVolume(_hSampleFX[i], clampVolume(2 * ((v0 + v1) / 8)));
+					_mixer->setChannelBalance(_hSampleFX[i], scalePan(64 + ((v1 - v0) / 4)));
+				}
 			}
 
 			return;
@@ -1188,7 +1415,7 @@ void Sound::clearAllFx() {
 
 void Sound::fadeMusicDown(int32 rate) {
 	Common::StackLock lock(_soundMutex);
-	_musicStreamFading[1 - _musicStreamPlaying[0]] = -12;
+	_musicStreamFading[1 - _musicStreamPlaying[0]] = SwordEngine::_systemVars.useWindowsAudioMode ? -16 : -12;
 }
 
 void Sound::fadeFxDown(int32 rate) {

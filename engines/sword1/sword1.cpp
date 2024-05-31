@@ -165,6 +165,27 @@ Common::Error SwordEngine::init() {
 	_systemVars.framesPerSecondCounter = 0;
 	_systemVars.gameCycle = 0;
 
+	// Differences between the DOS and Windows audio drivers:
+	// * DOS:
+	//    - Apparently uses linear volume curves, as per the AIL/Miles drivers;
+	//    - Music can fade in and out;
+	//    - Fades sound effects in and out at each scene change;
+	//    - Lowers the volume of the music each time a speech line is playing;
+	// 
+	// * Windows:
+	//    - Uses DirectSound with volume tables for game volume -> decibel 
+	//      volume conversion; the resulting logarithmic curve and slightly
+	//      different volume scaling for sound effects ensures audibly
+	//      different intensities for some sounds;
+	//    - Music can only fade out, not in;
+	//    - Does NOT sound effects in and out at each scene change;
+	//    - Does NOT lower the volume of the music each time a speech line is playing;
+
+	ConfMan.registerDefault("windows_audio_mode", false);
+	if (ConfMan.hasKey("windows_audio_mode", _targetName)) {
+		_systemVars.useWindowsAudioMode = !(SwordEngine::isPsx() || SwordEngine::isMac()) && ConfMan.getBool("windows_audio_mode");
+	}
+
 	// Some Mac versions use big endian for the speech files but not all of them.
 	if (_systemVars.platform == Common::kPlatformMacintosh)
 		_sound->checkSpeechFileEndianness();
