@@ -23,7 +23,6 @@
 #ifndef BAGEL_BOFLIB_VHASH_TABLE_H
 #define BAGEL_BOFLIB_VHASH_TABLE_H
 
-#include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/list.h"
 
 namespace Bagel {

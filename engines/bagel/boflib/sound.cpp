@@ -626,7 +626,7 @@ bool CBofSound::bofSleep(uint32 wait) {
 
 bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot) {
 	// Assume failure
-	bool bSuccess = false;
+	bool bSuccess;
 
 	if (pszSoundFile != nullptr) {
 		nFlags |= SOUND_AUTODELETE;
@@ -702,10 +702,7 @@ bool CBofSound::loadSound() {
 	assert(isValidObject(this));
 	assert(_szFileName[0] != '\0');
 
-	// Assume failure
-	bool bSuccess = false;
-
-	bSuccess = true;
+	bool bSuccess = true;
 	if (_pFileBuf == nullptr) {
 		bSuccess = false;
 
@@ -728,10 +725,8 @@ bool CBofSound::loadSound() {
 bool CBofSound::releaseSound() {
 	assert(isValidObject(this));
 
-	if (_pFileBuf != nullptr) {
-		free(_pFileBuf);
-		_pFileBuf = nullptr;
-	}
+	free(_pFileBuf);
+	_pFileBuf = nullptr;
 
 	return true;
 }

@@ -78,7 +78,7 @@ public:
 	 * @param x         X position
 	 * @param y         Y position
 	 * @param nWidth    Width of window to create (optional)
-	 * @paramnHeight    Height of window to create (optional)
+	 * @param nHeight   Height of window to create (optional)
 	 * @param pParent   Parent of this window (optional)
 	 */
 	CBofWindow(const char *pszName, int x = 0, int y = 0, int nWidth = USE_DEFAULT, int nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr);
@@ -103,14 +103,14 @@ public:
 	 * @param nControlID    User defined ID of this window
 	 * @return              Error return code
 	 */
-	ErrorCode create(const char *pszName, int x = 0, int y = 0, int nWidth = USE_DEFAULT, int nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
+	virtual ErrorCode create(const char *pszName, int x = 0, int y = 0, int nWidth = USE_DEFAULT, int nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
 	/**
 	 * Creates a window
 	 * @param pszName       Name of window
 	 * @param pRect         Rectangle for window placement
 	 * @param pParent       Parent of this window (optional)
-	 * @paramnControlID     User defined ID of this window
+	 * @param nControlID    User defined ID of this window
 	 * @return              Error return code
 	 */
 	ErrorCode create(const char *pszName, const CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);

@@ -244,12 +244,10 @@ bool CBofMovie::play() {
 }
 
 bool CBofMovie::reverse(bool bLoop,  bool bEscCanStop) {
-	bool bSuccess = true;
-
 	_bEscCanStop   = bEscCanStop;
 	_bLoop = bLoop;
 
-	bSuccess = reverse();
+	bool bSuccess = reverse();
 
 	getParent()->disable();
 	getParent()->flushAllMessages();

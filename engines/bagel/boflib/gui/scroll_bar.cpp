@@ -273,11 +273,6 @@ ErrorCode CBofScrollBar::paint(CBofRect *pDirtyRect) {
 	if (!errorOccurred()) {
 		CBofRect cRect(0, 0, _cRect.width() - 1, _cRect.height() - 1);
 		CBofPoint cPoint(0, 0);
-
-		if (pDirtyRect == nullptr) {
-			pDirtyRect = &cRect;
-		}
-
 		CBofPalette *pPalette = CBofApp::getApp()->getPalette();
 
 		//
