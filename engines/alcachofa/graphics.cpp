@@ -121,6 +121,7 @@ void AnimationBase::load() {
 	uint frameCount = file.readUint32LE();
 	_frames.reserve(frameCount);
 	_spriteOffsets.reserve(frameCount * spriteCount);
+	_totalDuration = 0;
 	for (uint i = 0; i < frameCount; i++) {
 		for (uint j = 0; j < spriteCount; j++)
 			_spriteOffsets.push_back(file.readUint32LE());
@@ -142,6 +143,11 @@ void AnimationBase::freeImages() {
 		if (image != nullptr)
 			delete image;
 	}
+	_images.clear();
+	_spriteOffsets.clear();
+	_spriteBases.clear();
+	_frames.clear();
+	_imageOffsets.clear();
 	_isLoaded = false;
 }
 
@@ -204,6 +210,16 @@ void Animation::load() {
 	Rect maxBounds = maxFrameBounds();
 	_renderedSurface.create(maxBounds.width(), maxBounds.height(), BlendBlit::getSupportedPixelFormat());
 	_renderedTexture = g_engine->renderer().createTexture(maxBounds.width(), maxBounds.height(), withMipmaps);
+}
+
+void Animation::freeImages() {
+	if (!_isLoaded)
+		return;
+	AnimationBase::freeImages();
+	_renderedSurface.free();
+	_renderedTexture.reset(nullptr);
+	_renderedFrameI = -1;
+	_premultiplyAlpha = 100;
 }
 
 int32 Animation::imageIndex(int32 frameI, int32 spriteId) const {
@@ -404,8 +420,12 @@ void Graphic::loadResources() {
 }
 
 void Graphic::freeResources() {
-	_ownedAnimation.reset();
-	_animation = nullptr;
+	if (_ownedAnimation == nullptr)
+		_animation = nullptr;
+	else {
+		_ownedAnimation->freeImages();
+		_animation = _ownedAnimation.get();
+	}
 }
 
 void Graphic::update() {

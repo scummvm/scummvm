@@ -159,4 +159,65 @@ void Player::triggerObject(ObjectBase *object, const char *action) {
 		script.createProcess(activeCharacterKind(), "DefectoUsar");
 }
 
+struct DoorTask : public Task {
+	DoorTask(Process &process, const Door *door, FakeLock &&lock)
+		: Task(process)
+		, _lock(move(lock))
+		, _sourceDoor(door)
+		, _character(g_engine->player().activeCharacter())
+		, _player(g_engine->player()) {
+		_targetRoom = g_engine->world().getRoomByName(door->targetRoom());
+		if (_targetRoom == nullptr)
+			error("Invalid door target room: %s", door->targetRoom().c_str());
+
+		_targetDoor = dynamic_cast<Door *>(_targetRoom->getObjectByName(door->targetObject()));
+		if (_targetDoor == nullptr)
+			error("Invalid door target door: %s", door->targetObject().c_str());
+
+		process.name() = String::format("Door to %s %s", _targetRoom->name().c_str(), _targetDoor->name().c_str());
+	}
+
+	virtual TaskReturn run() {
+		TASK_BEGIN;
+		// TODO: Fade out music on room change
+		// TODO: Fade out/in on room change instead of delay
+		TASK_WAIT(delay(500));
+		_player.changeRoom(_targetRoom->name(), true);
+
+		if (_targetRoom->fixedCameraOnEntering())
+			g_engine->camera().setPosition(as2D(_targetDoor->interactionPoint()));
+		else {
+			_character->room() = _targetRoom;
+			_character->setPosition(_targetDoor->interactionPoint());
+			_character->stopWalking(_targetDoor->characterDirection());
+			g_engine->camera().setFollow(_character);
+		}
+
+		// TODO: Start music on room change
+		if (g_engine->script().createProcess(_character->kind(), "ENTRAR_" + _targetRoom->name(), ScriptFlags::AllowMissing))
+			TASK_WAIT(delay(0));
+		else
+			TASK_WAIT(delay(500));
+		TASK_END;
+	}
+
+	virtual void debugPrint() {
+		g_engine->console().debugPrintf("%s\n", process().name().c_str());
+	}
+
+private:
+	FakeLock _lock;
+	const Door *_sourceDoor, *_targetDoor;
+	Room *_targetRoom;
+	MainCharacter *_character;
+	Player &_player;
+};
+
+void Player::triggerDoor(const Door *door) {
+	_heldItem = nullptr;
+	
+	FakeLock lock(_activeCharacter->semaphore());
+	g_engine->scheduler().createProcess<DoorTask>(activeCharacterKind(), door, move(lock));
+}
+
 }
