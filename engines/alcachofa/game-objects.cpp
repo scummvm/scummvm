@@ -674,11 +674,8 @@ void MainCharacter::drop(const Common::String &name) {
 void MainCharacter::walkToMouse() {
 	Point targetPos = g_engine->input().mousePos3D();
 	if (room()->activeFloor() != nullptr) {
-		/* this would be original, but it can cause the character teleporting to the target
-		_pathPoints.clear();
-		room()->activeFloor()->findPath(_sourcePos, targetPos, _pathPoints);
-		if (!_pathPoints.empty())
-			targetPos = _pathPoints[0]; */
+		// original would be overwriting the current path but this
+		// can cause the character teleporting to the new target
 
 		Stack<Point> tmpPath;
 		room()->activeFloor()->findPath(_sourcePos, targetPos, tmpPath);

@@ -81,8 +81,10 @@ void AnimationBase::load() {
 	if (!file.open(fullPath.c_str())) {
 		// original fallback
 		fullPath = "Mascaras/" + _fileName;
-		if (!file.open(fullPath.c_str()))
-			error("Could not open animation %s", _fileName.c_str());
+		if (!file.open(fullPath.c_str())) {
+			loadMissingAnimation();
+			return;
+		}
 	}
 
 	uint spriteCount = file.readUint32LE();
@@ -174,6 +176,22 @@ ManagedSurface *AnimationBase::readImage(SeekableReadStream &stream) const {
 	return new ManagedSurface(target);
 }
 
+void AnimationBase::loadMissingAnimation() {
+	// only allow missing animations we know are faulty in the original game
+	if (!_fileName.equalsIgnoreCase("ANIMACION.AN0"))
+		error("Could not open animation %s", _fileName.c_str());
+
+	// otherwise setup a functioning but empty animation
+	_isLoaded = true;
+	_totalDuration = 1;
+	_spriteIndexMapping[0] = 0;
+	_spriteOffsets.push_back(1);
+	_spriteBases.push_back(0);
+	_images.push_back(nullptr);
+	_imageOffsets.push_back(Point());
+	_frames.push_back({ Point(), Point(), 1 });
+}
+
 Animation::Animation(String fileName, AnimationFolder folder)
 	: AnimationBase(fileName, folder) {
 }
@@ -200,7 +218,8 @@ int32 Animation::imageIndex(int32 frameI, int32 spriteId) const {
 Rect Animation::spriteBounds(int32 frameI, int32 spriteId) const {
 	int32 imageI = imageIndex(frameI, spriteId);
 	auto image = imageI < 0 ? nullptr : _images[imageI];
-	return image == nullptr ? Rect()
+	return image == nullptr
+		? Rect(imageI < 0 ? Point() : _imageOffsets[imageI], 2, 1)
 		: Rect(_imageOffsets[imageI], image->w, image->h);
 }
 

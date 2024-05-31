@@ -31,6 +31,12 @@ using namespace Math;
 
 namespace Alcachofa {
 
+void Camera::resetRotationAndScale() {
+	_scale = 1;
+	_rotation = 0;
+	_usedCenter.z() = 0;
+}
+
 void Camera::setRoomBounds(Point bgSize, int16 bgScale) {
 	float scaleFactor = 1 - bgScale * kInvBaseScale;
 	_roomMin = Vector2d(
