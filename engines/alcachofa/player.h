@@ -48,12 +48,14 @@ public:
 	void preUpdate();
 	void postUpdate();
 	void updateCursor();
+	void changeRoom(const Common::String &targetRoomName, bool resetCamera);
 
 
 private:
 	Common::ScopedPtr<Animation> _cursorAnimation;
 	FakeSemaphore _semaphore;
-	Room *_currentRoom = nullptr;
+	Room *_currentRoom = nullptr,
+		*_roomBeforeInventory = nullptr;
 	MainCharacter *_activeCharacter;
     ShapeObject *_selectedObject = nullptr;
     ShapeObject *_pressedObject = nullptr;
@@ -61,7 +63,8 @@ private:
 	int32 _cursorFrameI = 0;
 	bool
 		_isOptionsMenuOpen = false,
-		_isGameLoaded = true;
+		_isGameLoaded = true,
+		_didLoadGlobalRooms = false;
 };
 
 }

@@ -84,4 +84,37 @@ void Player::updateCursor() {
 	}
 }
 
+void Player::changeRoom(const Common::String &targetRoomName, bool resetCamera) {
+	// original would be to always free all resources from globalRoom, inventory, GlobalUI
+
+	Room &inventory = g_engine->world().inventory();
+	bool keepResources;
+	if (_currentRoom == &inventory)
+		keepResources = _roomBeforeInventory != nullptr && _roomBeforeInventory->name().equalsIgnoreCase(targetRoomName);
+	else {
+		keepResources = targetRoomName.equalsIgnoreCase("inventario") ||
+			(_currentRoom != nullptr && _currentRoom->name().equalsIgnoreCase(targetRoomName));
+	}
+
+	if (!keepResources && _currentRoom != nullptr) {
+		g_engine->scheduler().killProcessByName("ACTUALIZAR_" + _currentRoom->name());
+		_currentRoom->freeResources();
+	}
+	_currentRoom = g_engine->world().getRoomByName(targetRoomName);
+	if (_currentRoom == nullptr)
+		error("Invalid room name: %s", targetRoomName.c_str());
+
+	if (!_didLoadGlobalRooms) {
+		_didLoadGlobalRooms = true;
+		inventory.loadResources();
+		g_engine->world().globalRoom().loadResources();
+	}
+	if (!keepResources)
+		_currentRoom->loadResources();
+
+	if (resetCamera)
+		g_engine->camera().resetRotationAndScale();
+	_pressedObject = _selectedObject = nullptr;
+}
+
 }

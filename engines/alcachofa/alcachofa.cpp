@@ -66,18 +66,7 @@ Common::Error AlcachofaEngine::run() {
 	_script.reset(new Script());
 	_player.reset(new Player());
 
-	world().globalRoom().loadResources();
-
-	auto room = world().getRoomByName("SALOON");
-	assert(room != nullptr);
-	player().currentRoom() = room;
-	room->loadResources();
-
-	// If a savegame was selected from the launcher, load it
-	int saveSlot = ConfMan.getInt("save_slot");
-	if (saveSlot != -1)
-		(void)loadGameState(saveSlot);
-
+	_player->changeRoom("MINA", true);
 
 	Common::Event e;
 	Graphics::FrameLimiter limiter(g_system, 120);
