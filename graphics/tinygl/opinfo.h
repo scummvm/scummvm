@@ -101,6 +101,6 @@ ADD_OP(DrawArrays, 3, "%C %d %d")
 ADD_OP(DrawElements, 4, "%C %d %C %p")
 
 // opengl 1.1 polygon offset
-ADD_OP(PolygonOffset, 2, "%f %f")
+ADD_OP(PolygonOffset, 128, "%f %f")
 
 #undef ADD_OP
