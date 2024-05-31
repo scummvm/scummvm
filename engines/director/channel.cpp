@@ -474,9 +474,11 @@ void Channel::setStretch(bool enabled) {
 		g_director->getCurrentWindow()->addDirtyRect(getBbox());
 		_dirty = true;
 
-		Common::Rect bbox = _sprite->_cast->getBbox();
-		_sprite->setWidth(bbox.width());
-		_sprite->setHeight(bbox.height());
+		if (_sprite->_cast) {
+			Common::Rect bbox = _sprite->_cast->getBbox();
+			_sprite->setWidth(bbox.width());
+			_sprite->setHeight(bbox.height());
+		}
 	}
 	_sprite->_stretch = enabled;
 }
