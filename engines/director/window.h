@@ -158,10 +158,13 @@ public:
 	Common::Path getSharedCastPath();
 
 	LingoState *getLingoState() { return _lingoState; };
+	LingoState *getLingoPlayState() { return _lingoPlayState; };
 	uint32 frozenLingoStateCount() { return _frozenLingoStates.size(); };
 	uint32 frozenLingoRecursionCount();
 	void freezeLingoState();
 	void thawLingoState();
+	void freezeLingoPlayState();
+	void thawLingoPlayState();
 	LingoState *getLastFrozenLingoState() { return _frozenLingoStates.empty() ? nullptr : _frozenLingoStates[_frozenLingoStates.size() - 1]; }
 
 	// events.cpp
@@ -207,6 +210,7 @@ private:
 	DirectorSound *_soundManager;
 	LingoState *_lingoState;
 	Common::Array<LingoState *> _frozenLingoStates;
+	LingoState *_lingoPlayState;
 	bool _isStage;
 	Archive *_mainArchive;
 	Movie *_currentMovie;

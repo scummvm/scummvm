@@ -132,17 +132,41 @@ bool Score::processImmediateFrameScript(Common::String s, int id) {
 }
 
 bool Score::processFrozenScripts(bool recursion, int count) {
+	// Unfreeze the play script if the special flag is set
+	if (g_lingo->_playDone) {
+		g_lingo->_playDone = false;
+		_window->thawLingoPlayState();
+		Symbol currentScript = _window->getLingoState()->callstack.front()->sp;
+		g_lingo->switchStateFromWindow();
+		bool completed = g_lingo->execute();
+		if (!completed) {
+			debugC(3, kDebugLingoExec, "Score::processFrozenScripts(): State froze again mid-thaw, interrupting");
+			return false;
+		} else if (currentScript == g_lingo->_currentInputEvent) {
+			// script that just completed was the current input event, clear the flag
+			debugC(3, kDebugEvents, "Score::processFrozenScripts(): Input event completed");
+			g_lingo->_currentInputEvent = Symbol();
+		}
+	}
+
 	// Unfreeze any in-progress scripts and attempt to run them
 	// to completion.
 	bool limit = count != 0;
 	uint32 remainCount = recursion ? _window->frozenLingoRecursionCount() : _window->frozenLingoStateCount();
 	while (remainCount && (limit ? count > 0 : true)) {
 		_window->thawLingoState();
-		Symbol currentScript = _window->getLingoState()->callstack.front()->sp;
+		LingoState *state = _window->getLingoState();
+		Symbol currentScript = state->callstack.front()->sp;
 		g_lingo->switchStateFromWindow();
 		bool completed = g_lingo->execute();
 		if (!completed || (recursion ? _window->frozenLingoRecursionCount() : _window->frozenLingoStateCount()) >= remainCount) {
 			debugC(3, kDebugLingoExec, "Score::processFrozenScripts(): State froze again mid-thaw, interrupting");
+			// Workaround for if a state gets moved to to the play state
+			if (currentScript == g_lingo->_currentInputEvent && state == _window->getLingoPlayState()) {
+				debugC(3, kDebugEvents, "Score::processFrozenScripts(): Input event got moved to the play state, clearing block");
+				g_lingo->_currentInputEvent = Symbol();
+			}
+
 			return false;
 		} else if (currentScript == g_lingo->_currentInputEvent) {
 			// script that just completed was the current input event, clear the flag
@@ -657,7 +681,7 @@ void Score::update() {
 	// Attempt to thaw and continue any frozen execution after startMovie and enterFrame.
 	// If they don't complete (i.e. another freezing event like a "go to frame"),
 	// force another cycle of Score::update().
-	if (!processFrozenScripts())
+	if (!_nextFrame && !processFrozenScripts())
 		return;
 
 	if (!_vm->_playbackPaused) {
@@ -1613,9 +1637,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	// Calculate number of frames and their positions
 	// numOfFrames in the header is often incorrect
 	for (_numFrames = 1; loadFrame(_numFrames, false); _numFrames++) {
-		if (debugChannelSet(-1, kDebugImGui)) {
-			_scoreCache.push_back(new Frame(*_currentFrame));
-		}
+		_scoreCache.push_back(new Frame(*_currentFrame));
 	}
 
 	debugC(1, kDebugLoading, "Score::loadFrames(): Calculated, total number of frames %d!", _numFrames);

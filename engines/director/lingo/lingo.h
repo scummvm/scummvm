@@ -407,6 +407,7 @@ public:
 	bool execute();
 	void switchStateFromWindow();
 	void freezeState();
+	void freezePlayState();
 	void pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal, int paramCount);
 	void popContext(bool aborting = false);
 	void cleanLocalVars();
@@ -500,6 +501,8 @@ public:
 	int _currentChannelId;
 
 	bool _freezeState;
+	bool _freezePlay;
+	bool _playDone;
 	bool _abort;
 	bool _expectError;
 	bool _caughtError;
