@@ -41,13 +41,14 @@ class Camera {
 public:
 	inline Math::Angle rotation() const { return _rotation; }
 	inline Math::Vector2d &shake() { return _shake; }
+	inline WalkingCharacter *followTarget() { return _followTarget; }
 
 	void update();
 	Math::Vector3d transform2Dto3D(Math::Vector3d v) const;
 	Math::Vector3d transform3Dto2D(Math::Vector3d v) const;
 	void resetRotationAndScale();
 	void setRoomBounds(Common::Point bgSize, int16 bgScale);
-	void setFollow(WalkingCharacter *target);
+	void setFollow(WalkingCharacter *target, bool catchUp = false);
 	void setPosition(Math::Vector2d v);
 
 private:
@@ -57,7 +58,8 @@ private:
 
 	uint32 _lastUpdateTime = 0;
 	bool _isChanging = false,
-		_isBraking = false;
+		_isBraking = false,
+		_catchUp = false;
 	float
 		_scale = 1.0f,
 		_roomScale = 1.0f,
