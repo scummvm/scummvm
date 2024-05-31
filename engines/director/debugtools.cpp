@@ -2486,7 +2486,7 @@ static void showChannels() {
 					ImGui::TableNextColumn();
 					ImGui::Text("0x%02x", sprite._inkData);
 					ImGui::TableNextColumn();
-					ImGui::Text("%d", sprite._ink);
+					ImGui::Text("%d (%s)", sprite._ink, inkType2str(sprite._ink));
 					ImGui::TableNextColumn();
 					ImGui::Checkbox("", &sprite._trails);
 					ImGui::TableNextColumn();
