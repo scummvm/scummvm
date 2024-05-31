@@ -127,8 +127,10 @@ bool Console::cmdChangeRoom(int argc, const char **args) {
 	}
 	else if (g_engine->world().getRoomByName(args[1]) == nullptr)
 		debugPrintf("Invalid room name: %s\n", args[1]);
-	else
+	else {
 		g_engine->player().changeRoom(args[1], true);
+		return false;
+	}
 	return true;
 }
 

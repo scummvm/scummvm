@@ -117,4 +117,14 @@ void Player::changeRoom(const Common::String &targetRoomName, bool resetCamera) 
 	_pressedObject = _selectedObject = nullptr;
 }
 
+FakeSemaphore &Player::semaphoreFor(MainCharacterKind kind) {
+	static FakeSemaphore dummySemaphore;
+	switch (kind) {
+	case MainCharacterKind::None: return _semaphore;
+	case MainCharacterKind::Mortadelo: return g_engine->world().mortadelo().semaphore();
+	case MainCharacterKind::Filemon: return g_engine->world().filemon().semaphore();
+	default: assert(false && "Invalid main character kind"); return dummySemaphore;
+	}
+}
+
 }

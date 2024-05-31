@@ -37,6 +37,7 @@ public:
 	inline ShapeObject *&pressedObject() { return _pressedObject; }
 	inline Item *&heldItem() { return _heldItem; }
 	inline FakeSemaphore &semaphore() { return _semaphore; }
+	FakeSemaphore &semaphoreFor(MainCharacterKind kind);
 
 	inline bool &isOptionsMenuOpen() { return _isOptionsMenuOpen; }
 	inline bool &isGameLoaded() { return _isGameLoaded; }

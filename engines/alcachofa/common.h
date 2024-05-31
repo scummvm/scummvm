@@ -85,16 +85,29 @@ private:
 };
 
 struct FakeLock {
-	FakeLock(FakeSemaphore &semaphore) : _semaphore(semaphore) {
-		semaphore._counter++;
+	FakeLock() : _semaphore(nullptr) {}
+
+	FakeLock(FakeSemaphore &semaphore) : _semaphore(&semaphore) {
+		_semaphore->_counter++;
+	}
+
+	FakeLock(const FakeLock &other) : _semaphore(other._semaphore) {
+		assert(_semaphore != nullptr);
+		_semaphore->_counter++;
+	}
+
+	FakeLock(FakeLock &&other) noexcept : _semaphore(other._semaphore) {
+		other._semaphore = nullptr;
 	}
 
 	~FakeLock() {
-		assert(_semaphore._counter > 0);
-		_semaphore._counter--;
+		if (_semaphore == nullptr)
+			return;
+		assert(_semaphore->_counter > 0);
+		_semaphore->_counter--;
 	}
 private:
-	FakeSemaphore &_semaphore;
+	FakeSemaphore *_semaphore;
 };
 
 inline Math::Vector3d as3D(const Math::Vector2d &v) {

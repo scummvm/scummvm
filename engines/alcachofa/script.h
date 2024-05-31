@@ -150,12 +150,14 @@ public:
 	Process *createProcess(
 		MainCharacterKind character,
 		const Common::String &procedure,
-		bool allowMissing = false);
+		bool allowMissing = false,
+		bool isBackground = false);
 	Process *createProcess(
 		MainCharacterKind character,
 		const Common::String &behavior,
 		const Common::String &action,
-		bool allowMissing = false);
+		bool allowMissing = false,
+		bool isBackground = false);
 
 	using VariableNameIterator = Common::HashMap<Common::String, uint32>::const_iterator;
 	inline VariableNameIterator beginVariables() const { return _variableNames.begin(); }
