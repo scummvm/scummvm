@@ -126,8 +126,8 @@ void Process::debugPrint() {
 }
 
 static void killProcessesForIn(MainCharacterKind characterKind, Array<Process *> &processes, uint firstIndex) {
-	assert(firstIndex < processes.size());
-	uint count = processes.size() - 1 - firstIndex;
+	assert(firstIndex <= processes.size());
+	uint count = processes.size() - firstIndex;
 	for (uint i = 0; i < count; i++) {
 		Process **process = &processes[processes.size() - 1 - i];
 		if ((*process)->character() == characterKind || characterKind == MainCharacterKind::None) {
@@ -207,6 +207,50 @@ void Scheduler::killProcessByName(const String &name) {
 bool Scheduler::hasProcessWithName(const String &name) {
 	assert(processesToRun().empty());
 	return getProcessByName(processesToRunNext(), name) != nullptr;
+}
+
+void Scheduler::debugPrint() {
+	auto &console = g_engine->console();
+	bool didPrintSomething = false;
+
+	if (!processesToRun().empty()) {
+		console.debugPrintf("Currently running processes:\n");
+		for (uint32 i = 0; i < processesToRun().size(); i++) {
+			if (_currentProcessI == UINT_MAX || i > _currentProcessI)
+				console.debugPrintf("  ");
+			else if (i < _currentProcessI)
+				console.debugPrintf("# ");
+			else
+				console.debugPrintf("> ");
+			processesToRun()[i]->debugPrint();
+		}
+		didPrintSomething = true;
+	}
+
+	if (!processesToRunNext().empty()) {
+		if (didPrintSomething)
+			console.debugPrintf("\n");
+		console.debugPrintf("Scheduled processes:\n");
+		for (auto *process : processesToRunNext()) {
+			console.debugPrintf("  ");
+			process->debugPrint();
+		}
+		didPrintSomething = true;
+	}
+
+	if (!_backupProcesses.empty()) {
+		if (didPrintSomething)
+			console.debugPrintf("\n");
+		console.debugPrintf("Backed up processes:\n");
+		for (auto *process : _backupProcesses) {
+			console.debugPrintf("  ");
+			process->debugPrint();
+		}
+		didPrintSomething = true;
+	}
+
+	if (!didPrintSomething)
+		console.debugPrintf("No processes running or backed up\n");
 }
 
 }

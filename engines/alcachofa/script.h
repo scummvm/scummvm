@@ -157,6 +157,11 @@ public:
 		const Common::String &action,
 		bool allowMissing = false);
 
+	using VariableNameIterator = Common::HashMap<Common::String, uint32>::const_iterator;
+	inline VariableNameIterator beginVariables() const { return _variableNames.begin(); }
+	inline VariableNameIterator endVariables() const { return _variableNames.end(); }
+	inline bool hasVariable(const char *name) const { return _variableNames.contains(name); }
+
 private:
 	friend struct ScriptTask;
 	friend struct ScriptTimerTask;

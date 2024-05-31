@@ -46,6 +46,13 @@ public:
 	}
 
 private:
+	bool cmdVar(int argc, const char **args);
+	bool cmdProcesses(int argc, const char **args);
+	bool cmdRoom(int argc, const char **args);
+	bool cmdRooms(int argc, const char **args);
+	bool cmdChangeRoom(int argc, const char **args);
+	bool cmdDisableDebugDraw(int argc, const char **args);
+
 	bool _showInteractables = true;
 	bool _showCharacters = true;
 	bool _showFloor = true;

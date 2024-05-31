@@ -309,6 +309,20 @@ void Inventory::updateItemsByActiveCharacter() {
 		item->toggle(character->hasItem(item->name()));
 }
 
+void Room::debugPrint(bool withObjects) const {
+	auto &console = g_engine->console();
+	console.debugPrintf("  %s\n", _name.c_str());
+	if (!withObjects)
+		return;
+
+	for (auto *object : _objects) {
+		console.debugPrintf("\t%20s %-32s %s\n",
+			object->typeName(),
+			object->name().c_str(),
+			object->isEnabled() ? "" : "disabled");
+	}
+}
+
 static constexpr const char *kMapFiles[] = {
 	"MAPAS/MAPA5.EMC",
 	"MAPAS/MAPA4.EMC",

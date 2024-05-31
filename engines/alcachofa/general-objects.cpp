@@ -31,6 +31,8 @@ using namespace Common;
 
 namespace Alcachofa {
 
+const char *ObjectBase::typeName() const { return "ObjectBase"; }
+
 ObjectBase::ObjectBase(Room *room, const char *name)
 	: _room(room)
 	, _name(name)
@@ -76,10 +78,14 @@ Shape *ObjectBase::shape() {
 	return nullptr;
 }
 
+const char *PointObject::typeName() const { return "PointObject"; }
+
 PointObject::PointObject(Room *room, ReadStream &stream)
 	: ObjectBase(room, stream) {
 	_pos = Shape(stream).firstPoint();
 }
+
+const char *GraphicObject::typeName() const { return "GraphicObject"; }
 
 GraphicObject::GraphicObject(Room *room, ReadStream &stream)
 	: ObjectBase(room, stream)
@@ -156,6 +162,8 @@ Task *GraphicObject::animate(Process &process) {
 	return new AnimateTask(process, this);
 }
 
+const char *SpecialEffectObject::typeName() const { return "SpecialEffectObject"; }
+
 SpecialEffectObject::SpecialEffectObject(Room *room, ReadStream &stream)
 	: GraphicObject(room, stream) {
 	_topLeft = Shape(stream).firstPoint();
@@ -181,6 +189,8 @@ void SpecialEffectObject::draw() {
 	_graphic.update();
 	g_engine->drawQueue().add<SpecialEffectDrawRequest>(_graphic, topLeft, bottomRight, texOffset, blendMode);
 }
+
+const char *ShapeObject::typeName() const { return "ShapeObject"; }
 
 ShapeObject::ShapeObject(Room *room, ReadStream &stream)
 	: ObjectBase(room, stream)
@@ -247,6 +257,8 @@ void ShapeObject::updateSelection() {
 		onHoverEnd();
 	}
 }
+
+const char *PhysicalObject::typeName() const { return "PhysicalObject"; }
 
 PhysicalObject::PhysicalObject(Room *room, ReadStream &stream)
 	: ShapeObject(room, stream) {
