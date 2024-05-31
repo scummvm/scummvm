@@ -146,11 +146,12 @@ struct StackEntry {
 };
 
 struct ScriptTask : public Task {
-	ScriptTask(Process &process, const String &name, uint32 pc)
+	ScriptTask(Process &process, const String &name, uint32 pc, FakeLock &&lock)
 		: Task(process)
 		, _script(g_engine->script())
 		, _name(name)
-		, _pc(pc) {
+		, _pc(pc)
+		, _lock(Common::move(lock)) {
 		pushInstruction(UINT_MAX);
 	}
 
@@ -158,7 +159,8 @@ struct ScriptTask : public Task {
 		: Task(process)
 		, _script(g_engine->script())
 		, _name(forkParent._name + " FORKED")
-		, _pc(forkParent._pc) {
+		, _pc(forkParent._pc)
+		, _lock(forkParent._lock) {
 		for (uint i = 0; i < forkParent._stack.size(); i++)
 			_stack.push(forkParent._stack[i]);
 		pushNumber(1); // this task is the forked one
@@ -623,20 +625,24 @@ private:
 	String _name;
 	uint32 _pc;
 	bool _returnsFromKernelCall = false;
+	FakeLock _lock;
 };
 
-Process *Script::createProcess(MainCharacterKind character, const String &behavior, const String &action, bool allowMissing) {
-	return createProcess(character, behavior + '/' + action, allowMissing);
+Process *Script::createProcess(MainCharacterKind character, const String &behavior, const String &action, bool allowMissing, bool isBackground) {
+	return createProcess(character, behavior + '/' + action, allowMissing, isBackground);
 }
 
-Process *Script::createProcess(MainCharacterKind character, const String &procedure, bool allowMissing) {
+Process *Script::createProcess(MainCharacterKind character, const String &procedure, bool allowMissing, bool isBackground) {
 	uint32 offset;
 	if (!_procedures.tryGetVal(procedure, offset)) {
 		if (allowMissing)
 			return nullptr;
 		error("Unknown required procedure: %s", procedure.c_str());
 	}
-	Process *process = g_engine->scheduler().createProcess<ScriptTask>(character, procedure, offset);
+	FakeLock lock;
+	if (!isBackground)
+		new (&lock) FakeLock(g_engine->player().semaphoreFor(character));
+	Process *process = g_engine->scheduler().createProcess<ScriptTask>(character, procedure, offset, Common::move(lock));
 	process->name() = procedure;
 	return process;
 }
