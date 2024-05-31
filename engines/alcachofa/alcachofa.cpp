@@ -68,7 +68,7 @@ Common::Error AlcachofaEngine::run() {
 
 	world().globalRoom().loadResources();
 
-	auto room = world().getRoomByName("MAPA_TERROR");
+	auto room = world().getRoomByName("SALOON");
 	assert(room != nullptr);
 	player().currentRoom() = room;
 	room->loadResources();
