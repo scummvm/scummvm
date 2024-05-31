@@ -851,7 +851,7 @@ void AttackProcess::checkRandomAttackSoundRegret(const Actor *actor) {
 
 /* static */
 int16 AttackProcess::getRandomAttackSoundRegret(const Actor *actor) {
-	if (World::get_instance()->getControlledNPCNum() != 1)
+	if (World::get_instance()->getControlledNPCNum() != kMainActorId)
 		return -1;
 
 	if (actor->isDead())

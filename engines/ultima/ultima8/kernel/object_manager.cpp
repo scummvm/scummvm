@@ -110,7 +110,7 @@ void ObjectManager::reset() {
 	_objects.clear();
 	_objects.resize(65536);
 	_objIDs->clearAll(32766);
-	_objIDs->reserveID(666);     // 666 is reserved for the Guardian Bark hack
+	_objIDs->reserveID(kGuardianId);     // Reserved for the Guardian Bark hack
 	_actorIDs->clearAll();
 }
 

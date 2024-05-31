@@ -124,7 +124,7 @@ bool Container::CanAddItem(Item *item, bool checkwghtvol) {
 		const Item *current = item->getTopItem();
 
 		// From outside to inside Avatar's inventory?
-		if (p->getObjId() == 1 && current->getObjId() != 1) {
+		if (p->getObjId() == kMainActorId && current->getObjId() != kMainActorId) {
 			MainActor *av = getMainActor();
 			unsigned int str = av->getStr();
 			// FIXME: this check isn't entirely correct. (combining items,...?)

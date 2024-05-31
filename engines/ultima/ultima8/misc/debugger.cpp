@@ -1698,8 +1698,8 @@ bool Debugger::cmdU8ShapeViewer(int argc, const char **argv) {
 bool Debugger::cmdShowMenu(int argc, const char **argv) {
 	World *world = World::get_instance();
 	// In Crusader escape is also used to stop controlling another NPC
-	if (world && world->getControlledNPCNum() != 1) {
-		world->setControlledNPCNum(1);
+	if (world && world->getControlledNPCNum() != kMainActorId) {
+		world->setControlledNPCNum(kMainActorId);
 		return false;
 	}
 	if (Ultima8Engine::get_instance()->isCruStasis()) {

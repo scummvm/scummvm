@@ -160,8 +160,8 @@ void Item::move(int32 X, int32 Y, int32 Z) {
 	CurrentMap *map = World::get_instance()->getCurrentMap();
 	int mapChunkSize = map->getChunkSize();
 
-	if (getObjId() == 1 && Z < 0) {
-		warning("Moving avatar below Z=0. (%d,%d,%d)", X, Y, Z);
+	if (getObjId() == kMainActorId && Z < 0) {
+		warning("Moving main actor below Z=0. (%d,%d,%d)", X, Y, Z);
 	}
 
 	// TODO: In Crusader, if we are moving the avatar the game also checks whether
@@ -328,7 +328,7 @@ bool Item::moveToContainer(Container *container, bool checkwghtvol) {
 
 	// If moving to avatar, mark as OWNED
 	Container *root = getRootContainer();
-	if (root && root->getObjId() == 1)
+	if (root && root->getObjId() == kMainActorId)
 		setFlagRecursively(FLG_OWNED);
 
 	// No lerping when moving to a container
@@ -1102,7 +1102,7 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 			}
 			// Hitting us at the end (call hit on us, got hit on them)
 			else if (it->_endTime == 0x4000) {
-				if (_objId == 1 && guiapp->isShowTouchingItems())
+				if (_objId == kMainActorId && guiapp->isShowTouchingItems())
 					item->setExtFlag(Item::EXT_HIGHLIGHT);
 
 				item->callUsecodeEvent_gotHit(_objId, hitforce);
@@ -1110,7 +1110,8 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 			}
 			// Hitting us at the start (call release on us and them)
 			else if (!_parent && it->_hitTime == 0x0000) {
-				if (_objId == 1) item->clearExtFlag(Item::EXT_HIGHLIGHT);
+				if (_objId == kMainActorId)
+					item->clearExtFlag(Item::EXT_HIGHLIGHT);
 				we_were_released = true;
 				item->callUsecodeEvent_release();
 			}
@@ -1168,7 +1169,7 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 			// and teleporters work.
 			bool call_hit = it->_hitTime >= 0 || GAME_IS_CRUSADER;
 			if ((!it->_touching || it->_touchingFloor) && call_hit) {
-				if (_objId == 1 && guiapp->isShowTouchingItems())
+				if (_objId == kMainActorId && guiapp->isShowTouchingItems())
 					item->setExtFlag(Item::EXT_HIGHLIGHT);
 
 				proc_gothit = item->callUsecodeEvent_gotHit(_objId, hitforce);
@@ -1177,7 +1178,8 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 
 			// If not hitting at end, we will need to call release
 			if (it->_endTime < hit) {
-				if (_objId == 1) item->clearExtFlag(Item::EXT_HIGHLIGHT);
+				if (_objId == kMainActorId)
+					item->clearExtFlag(Item::EXT_HIGHLIGHT);
 				we_were_released = true;
 				proc_rel = item->callUsecodeEvent_release();
 			}
@@ -1874,7 +1876,7 @@ uint32 Item::enterFastArea() {
 		if (actor && actor->isDead() && !call_even_if_dead) {
 			// dead actor, don't call the usecode
 		} else {
-			if (actor && _objId != 1) {
+			if (actor && _objId != kMainActorId) {
 				if (GAME_IS_CRUSADER) {
 					uint16 lastactivity = actor->getLastActivityNo();
 					actor->clearLastActivityNo();
@@ -1938,7 +1940,7 @@ uint32 Item::enterFastArea() {
 
 // Called when an item is leaving the fast area
 void Item::leaveFastArea() {
-	if (_objId == 1) {
+	if (_objId == kMainActorId) {
 		debugC(kDebugActor, "Main actor leaving fast area");
 	}
 
@@ -1996,7 +1998,7 @@ uint16 Item::openGump(uint32 gumpshape) {
 
 	ContainerGump *cgump;
 
-	if (getObjId() != 1) { //!! constant
+	if (getObjId() != kMainActorId) {
 		cgump = new ContainerGump(shapeP, 0, _objId, Gump::FLAG_ITEM_DEPENDENT |
 		                          Gump::FLAG_DRAGGABLE);
 	} else {
@@ -2037,8 +2039,8 @@ ProcId Item::bark(const Std::string &msg, ObjId id) {
 	closeBark();
 
 	uint32 shapenum = getShape();
-	if (id == 666)
-		shapenum = 666; // Hack for guardian barks
+	if (id == kGuardianId)
+		shapenum = kGuardianId; // Hack for guardian barks
 
 	Gump *gump = new BarkGump(getObjId(), msg, shapenum);
 	_bark = gump->getObjId();
@@ -3068,8 +3070,8 @@ uint32 Item::I_getWeightIncludingContents(const uint8 *args,
 uint32 Item::I_bark(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_STRING(str);
-	if (id_item == 666)
-		item = getItem(1);
+	if (id_item == kGuardianId)
+		item = getItem(kMainActorId);
 
 	if (!item) {
 		// Hack! Items should always be valid?
@@ -3290,7 +3292,8 @@ uint32 Item::I_legalCreateInCont(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_destroy(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item || item->getObjId() == 1) return 0;
+	if (!item || item->getObjId() == kMainActorId)
+		return 0;
 
 	item->destroy();
 

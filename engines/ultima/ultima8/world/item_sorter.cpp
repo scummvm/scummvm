@@ -467,7 +467,7 @@ bool ItemSorter::PaintSortItem(RenderSurface *surf, SortItem *si, bool showFootp
 
 		// weapon overlay
 		// FIXME: use highlight/invisibility, also add to Trace() ?
-		if (si->_shapeNum == 1 && si->_itemNum == 1) {
+		if (si->_shapeNum == 1 && si->_itemNum == kMainActorId) {
 			MainActor *av = getMainActor();
 			const WeaponOverlayFrame *wo_frame = nullptr;
 			uint32 wo_shapenum;

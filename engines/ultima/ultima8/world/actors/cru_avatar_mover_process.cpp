@@ -597,7 +597,7 @@ void CruAvatarMoverProcess::tryAttack() {
 	AudioProcess *audio = AudioProcess::get_instance();
 	const WeaponInfo *wpninfo = wpn->getShapeInfo()->_weaponInfo;
 
-	if (avatar->getObjId() != 1) {
+	if (avatar->getObjId() != kMainActorId) {
 		// Non-avatar NPCs never need to reload or run out of energy.
 		Animation::Sequence fireanim = (avatar->isKneeling() ?
 										Animation::kneelAndFire : Animation::attack);
@@ -630,7 +630,7 @@ void CruAvatarMoverProcess::tryAttack() {
 			if (wpninfo->_reloadSound) {
 				audio->playSFX(0x2a, 0x80, avatar->getObjId(), 1);
 			}
-			if (avatar->getObjId() == 1 && !avatar->isKneeling()) {
+			if (avatar->getObjId() == kMainActorId && !avatar->isKneeling()) {
 				avatar->doAnim(Animation::reloadSmallWeapon, dir_current);
 			}
 
@@ -646,7 +646,7 @@ void CruAvatarMoverProcess::tryAttack() {
 			if (wpninfo->_reloadSound) {
 				audio->playSFX(0x2a, 0x80, avatar->getObjId(), 1);
 			}
-			if (avatar->getObjId() == 1) {
+			if (avatar->getObjId() == kMainActorId) {
 				avatar->doAnim(Animation::reloadSmallWeapon, dir_current);
 			}
 			_SGA1Loaded = true;

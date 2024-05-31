@@ -73,7 +73,7 @@ void GrantPeaceProcess::run() {
 	ObjId targetid = static_cast<ObjId>(_result);
 	Actor *target = getActor(targetid);
 
-	if (targetid == 1 || !target) {
+	if (targetid == kMainActorId || !target) {
 		// targeting the avatar, no target or not an Actor
 		terminate();
 		return;

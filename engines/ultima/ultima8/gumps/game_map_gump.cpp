@@ -146,7 +146,7 @@ void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 					// HACK: unless EXT_TRANSPARENT is also set.
 					// (Used for hiding the avatar when drawing a full area map)
 
-					if (item->getObjId() == 1) {
+					if (item->getObjId() == kMainActorId) {
 						if (item->hasExtFlags(Item::EXT_TRANSPARENT))
 							continue;
 
@@ -423,7 +423,7 @@ bool GameMapGump::DraggingItem(Item *item, int mx, int my) {
 		return false;
 
 	MainActor *avatar = getMainActor();
-	if (trace == 1) { // dropping on self
+	if (trace == kMainActorId) { // dropping on self
 		ObjId bp = avatar->getEquip(ShapeInfo::SE_BACKPACK);
 		Container *backpack = getContainer(bp);
 		return  backpack->CanAddItem(item, true);
@@ -541,7 +541,7 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 		}
 	}
 
-	if (trace == 1) { // dropping on self
+	if (trace == kMainActorId) { // dropping on self
 		ObjId bp = avatar->getEquip(ShapeInfo::SE_BACKPACK);
 		Container *backpack = getContainer(bp);
 		if (backpack && item->moveToContainer(backpack)) {

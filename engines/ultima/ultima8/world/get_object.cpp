@@ -48,7 +48,7 @@ Actor *getActor(ObjId id) {
 }
 
 MainActor *getMainActor() {
-	return dynamic_cast<MainActor *>(ObjectManager::get_instance()->getObject(1));
+	return dynamic_cast<MainActor *>(ObjectManager::get_instance()->getObject(kMainActorId));
 }
 
 Actor *getControlledActor() {

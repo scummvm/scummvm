@@ -390,9 +390,9 @@ void ActorAnimProcess::doSpecial() {
 
 	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 	// play SFX when Avatar draws/sheathes weapon
-	if (_itemNum == 1 && (_action == Animation::readyWeapon ||
-	                      _action == Animation::unreadyWeapon) &&
-	        a->getEquip(ShapeInfo::SE_WEAPON) != 0) {
+	if (_itemNum == kMainActorId &&
+			(_action == Animation::readyWeapon || _action == Animation::unreadyWeapon) &&
+			a->getEquip(ShapeInfo::SE_WEAPON) != 0) {
 		int sfx = rs.getRandomBit() ? 0x51 : 0x52; // constants!
 		AudioProcess *audioproc = AudioProcess::get_instance();
 		if (audioproc) audioproc->playSFX(sfx, 0x60, 1, 0);
@@ -461,7 +461,7 @@ void ActorAnimProcess::doSpecial() {
 
 	// play PC/NPC footsteps
 	bool playavfootsteps = ConfMan.getBool("footsteps");
-	if (_itemNum != 1 || playavfootsteps) {
+	if (_itemNum != kMainActorId || playavfootsteps) {
 		int32 x, y, z;
 		int32 xd, yd, zd;
 		a->getLocation(x, y, z);
@@ -532,7 +532,7 @@ void ActorAnimProcess::doFireWeaponCru(Actor *a, const AnimFrame *f) {
 	if (!wpninfo || !wpninfo->_weaponInfo)
 		return;
 
-	if (a->getObjId() == 1 && wpninfo->_weaponInfo->_damageType == 6) {
+	if (a->getObjId() == kMainActorId && wpninfo->_weaponInfo->_damageType == 6) {
 		Process *auto_firer = new AutoFirerProcess();
 		Kernel::get_instance()->addProcess(auto_firer);
 	}

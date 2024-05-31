@@ -181,7 +181,7 @@ void U8AvatarMoverProcess::handleCombatMode() {
 		Gump *desktopgump = Ultima8Engine::get_instance()->getDesktopGump();
 		int32 mx, my;
 		mouse->getMouseCoords(mx, my);
-		if (desktopgump->TraceObjId(mx, my) == 1) {
+		if (desktopgump->TraceObjId(mx, my) == kMainActorId) {
 			// double right click on avatar = toggle combat mode
 			avatar->toggleInCombat();
 			waitFor(avatar->doAnim(Animation::unreadyWeapon, direction));
@@ -449,7 +449,7 @@ void U8AvatarMoverProcess::handleNormalMode() {
 		Gump *desktopgump = Ultima8Engine::get_instance()->getDesktopGump();
 		int32 mx, my;
 		mouse->getMouseCoords(mx, my);
-		if (desktopgump->TraceObjId(mx, my) == 1) {
+		if (desktopgump->TraceObjId(mx, my) == kMainActorId) {
 			// double right click on avatar = toggle combat mode
 			_mouseButton[1].setState(MBS_HANDLED);
 			_mouseButton[1]._lastDown = 0;

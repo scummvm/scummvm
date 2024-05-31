@@ -28,6 +28,12 @@
 namespace Ultima {
 namespace Ultima8 {
 
+enum ReservedObjId {
+	kUndefinedId = 0,
+	kMainActorId = 1,
+	kGuardianId  = 666
+};
+
 class Usecode;
 
 class Object {

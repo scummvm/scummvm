@@ -1101,7 +1101,7 @@ bool Ultima8Engine::newGame(int saveSlot) {
 	_game->startGame();
 
 	debugN(MM_INFO, "Create Camera...\n");
-	CameraProcess::SetCameraProcess(new CameraProcess(1)); // Follow Avatar
+	CameraProcess::SetCameraProcess(new CameraProcess(kMainActorId));
 
 	debugN(MM_INFO, "Create persistent Processes...\n");
 	if (GAME_IS_U8)

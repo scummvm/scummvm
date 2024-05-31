@@ -96,8 +96,8 @@ bool U8Game::startGame() {
 	for (uint16 i = 384; i < 512; ++i)
 		objman->reserveObjId(i);
 
-	// reserve ObjId 666 for the Guardian Bark hack
-	objman->reserveObjId(666);
+	// Reserved for the Guardian Bark hack
+	objman->reserveObjId(kGuardianId);
 
 	auto *savers = new Common::File();
 	if (!savers->open("savegame/u8save.000")) {

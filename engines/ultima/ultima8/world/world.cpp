@@ -193,14 +193,14 @@ bool World::switchMap(uint32 newmap) {
 		// TODO: This may not even be needed for U8, but reset in case camera
 		// was looking at something other than the avatar during teleport.
 		CameraProcess *camera = CameraProcess::GetCameraProcess();
-		if (camera && camera->getItemNum() != 1) {
-			CameraProcess::SetCameraProcess(new CameraProcess(1));
+		if (camera && camera->getItemNum() != kMainActorId) {
+			CameraProcess::SetCameraProcess(new CameraProcess(kMainActorId));
 		}
 		CameraProcess::SetEarthquake(0);
 	} else {
 		// In Crusader, snap the camera to the avatar.  The snap process will
 		// then find the right snap egg in the next frame.
-		CameraProcess::SetCameraProcess(new CameraProcess(1));
+		CameraProcess::SetCameraProcess(new CameraProcess(kMainActorId));
 	}
 
 	return true;
