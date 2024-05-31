@@ -118,7 +118,7 @@ void Door::onClick() {
 }
 
 void Door::trigger(const char *_) {
-	warning("STUB: Triggering door to %s", _targetRoom.c_str());
+	g_engine->player().triggerDoor(this);
 }
 
 const char *Character::typeName() const { return "Character"; }

@@ -52,6 +52,7 @@ public:
 	void updateCursor();
 	void changeRoom(const Common::String &targetRoomName, bool resetCamera);
 	void triggerObject(ObjectBase *object, const char *action);
+	void triggerDoor(const Door *door);
 
 private:
 	Common::ScopedPtr<Animation> _cursorAnimation;

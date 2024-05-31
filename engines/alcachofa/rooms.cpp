@@ -93,7 +93,7 @@ Room::Room(World *world, ReadStream &stream, bool hasUselessByte)
 	auto backgroundScale = stream.readSint16LE();
 	_floors[0] = PathFindingShape(stream);
 	_floors[1] = PathFindingShape(stream);
-	_cameraFollowsUponLeaving = readBool(stream);
+	_fixedCameraOnEntering = readBool(stream);
 	PathFindingShape _(stream); // unused path finding area
 	_characterAlphaPremultiplier = stream.readByte();
 	if (hasUselessByte)

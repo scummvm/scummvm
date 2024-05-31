@@ -55,6 +55,12 @@ void Camera::setFollow(WalkingCharacter *target) {
 		_isChanging = false;
 }
 
+void Camera::setPosition(Vector2d v) {
+	_usedCenter.x() = v.getX();
+	_usedCenter.y() = v.getY();
+	setFollow(nullptr);
+}
+
 static Matrix4 scaleMatrix(float scale) {
 	Matrix4 m;
 	m(0, 0) = scale;
