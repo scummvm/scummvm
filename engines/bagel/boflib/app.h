@@ -77,7 +77,7 @@ public:
 	virtual ErrorCode runApp();
 	virtual ErrorCode shutdown();
 
-	void setAppName(const char *pszNewAppName) {
+	virtual void setAppName(const char *pszNewAppName) {
 		Common::strcpy_s(_szAppName, pszNewAppName);
 	}
 

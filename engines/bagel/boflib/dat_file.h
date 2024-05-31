@@ -141,7 +141,7 @@ public:
 	 * Closes current data-file, if it's not already closed
 	 * @return          Error return code
 	 */
-	ErrorCode close();
+	ErrorCode close() override;
 
 	/**
 	 * Destroys current data-file, if any, and starts a new empty one
@@ -220,7 +220,7 @@ public:
 	 * @param lBytes        Number of bytes
 	 * @return              Error code
 	 */
-	ErrorCode read(void *pDestBuf, int32 lBytes);
+	ErrorCode read(void *pDestBuf, int32 lBytes) override;
 	ErrorCode read(HeaderRec &rec);
 	ErrorCode read(HeadInfo &rec);
 
@@ -230,7 +230,7 @@ public:
 	 * @param lBytes        Number of bytes
 	 * @return              Error code
 	 */
-	ErrorCode write(const void *pSrcBuf, int32 lBytes);
+	ErrorCode write(const void *pSrcBuf, int32 lBytes) override;
 	ErrorCode write(HeaderRec &rec);
 	ErrorCode write(HeadInfo &rec);
 };

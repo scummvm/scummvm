@@ -136,7 +136,7 @@ public:
 	/**
 	 * Close a currently open file
 	 */
-	void close();
+	virtual ErrorCode close();
 
 	/**
 	 * Read from a currently open file
@@ -144,7 +144,7 @@ public:
 	 * @param lBytes        Number of bytes
 	 * @return              Error code
 	 */
-	ErrorCode read(void *pDestBuf, int32 lBytes);
+	virtual ErrorCode read(void *pDestBuf, int32 lBytes);
 
 	/**
 	 * Write to a currently open file
@@ -152,14 +152,12 @@ public:
 	 * @param lBytes        Number of bytes
 	 * @return              Error code
 	 */
-	ErrorCode write(const void *pSrcBuf, int32 lBytes);
+	virtual ErrorCode write(const void *pSrcBuf, int32 lBytes);
 
 	/**
 	 * Flushes I/O stream
 	 */
 	void commit();
-
-	//static void commitAll() { _flushall(); }
 
 	/**
 	 * Seek to a specified location in the file

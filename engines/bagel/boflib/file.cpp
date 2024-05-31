@@ -134,7 +134,7 @@ ErrorCode CBofFile::open(const char *pszFileName, uint32 lFlags) {
 	return _errCode;
 }
 
-void CBofFile::close() {
+ErrorCode CBofFile::close() {
 	assert(isValidObject(this));
 
 	if (_stream != nullptr) {
@@ -145,6 +145,8 @@ void CBofFile::close() {
 		delete _stream;
 		_stream = nullptr;
 	}
+
+	return ERR_NONE;
 }
 
 ErrorCode CBofFile::read(void *pDestBuf, int32 lBytes) {
