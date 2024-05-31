@@ -91,6 +91,8 @@ struct GOBGameDescription {
 	uint32 demoIndex;
 };
 
+#define GAMEOPTION_COPY_PROTECTION	GUIO_GAMEOPTIONS1
+
 } // End of namespace Gob
 
 #endif // GOB_DETECTION_H
