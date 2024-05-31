@@ -55,7 +55,7 @@ public:
 	 * @remarks         This will link a new list into the current right after the current node
 	 * @param pNewList  Pointer to list to be inserted
 	 */
-	void Insert(CLList *);
+	void Insert(CLList *pNewList);
 
 	/**
 	 * Deletes current node
@@ -68,7 +68,7 @@ public:
 	 *                  tail of one list to the head of another
 	 * @param pNewList  New list to link to head of current list
 	 */
-	void addToHead(CLList *);
+	void addToHead(CLList *pNewList);
 
 	/**
 	 * Links specified node to tail of current list
@@ -76,7 +76,7 @@ public:
 	 *                  head of one list to the tail of another
 	 * @param pNewList  Pointer to new list
 	 */
-	void addToTail(CLList *);
+	void addToTail(CLList *pNewList);
 
 	/**
 	 * Moves this item to the head of the linked list
@@ -112,6 +112,7 @@ public:
 	CLList *getPrev() const {
 		return _pPrev;
 	}
+	
 	CLList *getNext() const {
 		return _pNext;
 	}
@@ -119,6 +120,7 @@ public:
 	void *getData() const {
 		return _pData;
 	}
+	
 	void PutData(void *pObj) {
 		_pData = pObj;
 	}

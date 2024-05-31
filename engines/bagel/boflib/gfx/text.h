@@ -234,11 +234,14 @@ public:
 	 * @param nWeight		Weighting of the font (FW_ identifier)
 	 * @param cColor		Color that the text will be
 	 * @param cShadow		Color that the text's shadow will be
+	 * @param nDX           Shadow DX
+	 * @param nDY           Shadow DY
+	 * @param nFont         Font used (default or mono)
 	 * @return				Error return Code
 	 */
 	ErrorCode displayShadowed(CBofWindow *pWnd, const char *pszText, int nSize,
-		int nWeight, RGBCOLOR cColor, RGBCOLOR cShadow = CTEXT_SHADOW_COLOR,
-		int nDX = CTEXT_SHADOW_DX, int nDY = CTEXT_SHADOW_DY, int n = FONT_DEFAULT);
+							  int nWeight, RGBCOLOR cColor, RGBCOLOR cShadow = CTEXT_SHADOW_COLOR,
+							  int nDX = CTEXT_SHADOW_DX, int nDY = CTEXT_SHADOW_DY, int nFont = FONT_DEFAULT);
 
 	
 	void flushBackground()       {

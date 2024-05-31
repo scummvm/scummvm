@@ -114,7 +114,7 @@ public:
 	 * Adds or modifies 1 option in list
 	 * @param pszSection        Section in .INI file
 	 * @param pszOption         Option to update
-	 * @param pszValue          New value
+	 * @param nValue            New value
 	 * @return                  Error return code
 	 */
 	ErrorCode writeSetting(const char *pszSection, const char *pszOption, int nValue);
@@ -123,10 +123,10 @@ public:
 	 * Reads value for the specified option
 	 * @param section        Section in .INI file
 	 * @param option         Option to update
-	 * @param stringValue          destination buffer for read value
-	 * @param defaultValue        Default value if not exists
-	 * @param nSize             Max length of stringValue buffer
-	 * @return                  Error return code
+	 * @param stringValue    Destination buffer for read value
+	 * @param defaultValue   Default value if not exists
+	 * @param nSize          Max length of stringValue buffer
+	 * @return               Error return code
 	 */
 	ErrorCode readSetting(const char *section, const char *option, char *stringValue, const char *defaultValue, uint32 nSize);
 
