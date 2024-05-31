@@ -167,9 +167,11 @@ struct ScriptTask : public Task {
 	}
 
 	virtual TaskReturn run() override {
+		if (_isFirstExecution || _returnsFromKernelCall)
+			setCharacterVariables();
 		if (_returnsFromKernelCall)
 			pushNumber(process().returnValue());
-		_returnsFromKernelCall = false;
+		_isFirstExecution = _returnsFromKernelCall = false;
 
 		while (true) {
 			if (_pc >= _script._instructions.size())
@@ -299,6 +301,11 @@ struct ScriptTask : public Task {
 	}
 
 private:
+	void setCharacterVariables() {
+		_script.variable("m_o_f") = (int32)process().character();
+		_script.variable("m_o_f_real") = (int32)g_engine->player().activeCharacterKind();
+	}
+
 	void pushNumber(int32 value) {
 		_stack.push({ StackEntryType::Number, value });
 	}
@@ -420,11 +427,11 @@ private:
 			if (character == nullptr)
 				error("Script tried to stop-and-turn unknown character");
 			else
-				character->stopWalkingAndTurn((Direction)getNumberArg(1));
+				character->stopWalking((Direction)getNumberArg(1));
 			return TaskReturn::finish(1);
 		}
 		case ScriptKernelTask::StopAndTurnMe: {
-			relatedCharacter().stopWalkingAndTurn((Direction)getNumberArg(0));
+			relatedCharacter().stopWalking((Direction)getNumberArg(0));
 			return TaskReturn::finish(1);
 		}
 		case ScriptKernelTask::ChangeCharacter:
@@ -625,22 +632,23 @@ private:
 	String _name;
 	uint32 _pc;
 	bool _returnsFromKernelCall = false;
+	bool _isFirstExecution = false;
 	FakeLock _lock;
 };
 
-Process *Script::createProcess(MainCharacterKind character, const String &behavior, const String &action, bool allowMissing, bool isBackground) {
-	return createProcess(character, behavior + '/' + action, allowMissing, isBackground);
+Process *Script::createProcess(MainCharacterKind character, const String &behavior, const String &action, ScriptFlags flags) {
+	return createProcess(character, behavior + '/' + action, flags);
 }
 
-Process *Script::createProcess(MainCharacterKind character, const String &procedure, bool allowMissing, bool isBackground) {
+Process *Script::createProcess(MainCharacterKind character, const String &procedure, ScriptFlags flags) {
 	uint32 offset;
 	if (!_procedures.tryGetVal(procedure, offset)) {
-		if (allowMissing)
+		if (flags & ScriptFlags::AllowMissing)
 			return nullptr;
 		error("Unknown required procedure: %s", procedure.c_str());
 	}
 	FakeLock lock;
-	if (!isBackground)
+	if (!(flags & ScriptFlags::IsBackground))
 		new (&lock) FakeLock(g_engine->player().semaphoreFor(character));
 	Process *process = g_engine->scheduler().createProcess<ScriptTask>(character, procedure, offset, Common::move(lock));
 	process->name() = procedure;
