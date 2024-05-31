@@ -90,6 +90,19 @@ Door::Door(Room *room, ReadStream &stream)
 	_targetRoom.replace(' ', '_');
 }
 
+CursorType Door::cursorType() const {
+	CursorType fromObject = ShapeObject::cursorType();
+	if (fromObject != CursorType::Point)
+		return fromObject;
+	switch (_characterDirection) {
+	case Direction::Up: return CursorType::LeaveUp;
+	case Direction::Right: return CursorType::LeaveRight;
+	case Direction::Down: return CursorType::LeaveDown;
+	case Direction::Left: return CursorType::LeaveLeft;
+	default: assert(false && "Invalid door character direction"); return fromObject;
+	}
+}
+
 void Door::onClick() {
 	if (g_system->getMillis() - _lastClickTime < 500 && g_engine->player().activeCharacter()->clearTargetIf(this))
 		trigger(nullptr);

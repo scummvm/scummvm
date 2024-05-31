@@ -120,7 +120,7 @@ void Process::debugPrint() {
 	debugger->debugPrintf("pid: %3u char: %s ret: %2d \"%s\"\n", _pid, characterName, _lastReturnValue, _name.c_str());
 
 	for (uint i = 0; i < _tasks.size(); i++) {
-		debugger->debugPrintf("\t%u: ", i);
+		debugger->debugPrintf("    %u: ", i);
 		_tasks[i]->debugPrint();
 	}
 }
