@@ -338,7 +338,7 @@ bool Debugger::cmdChannels(int argc, const char **argv) {
 
 	if (frameId >= 1 && frameId <= maxSize) {
 		debugPrintf("Channel info for frame %d of %d\n", frameId, maxSize);
-		Frame *frame = score->getFrameData(frameId);
+		Frame *frame = score->_scoreCache[frameId - 1];
 		if (frame) {
 			debugPrintf("%s\n", frame->formatChannelInfo().c_str());
 			delete frame;
@@ -468,6 +468,27 @@ bool Debugger::cmdFuncs(int argc, const char **argv) {
 		debugPrintf("  [empty]\n");
 	}
 	debugPrintf("\n");
+	debugPrintf("Frame script mappings:\n");
+	for (int i = 0; i < (int)score->_scoreCache.size(); i++) {
+		Frame *frame = score->_scoreCache[i];
+		if (frame && frame->_mainChannels.actionId.member) {
+			debugPrintf("  %d: %s\n", i + 1, frame->_mainChannels.actionId.asString().c_str());
+		}
+	}
+	debugPrintf("Sprite script mappings:\n");
+	for (int i = 0; i < (int)score->_scoreCache.size(); i++) {
+		Frame *frame = score->_scoreCache[i];
+		if (frame) {
+			for (int j = 0; j < (int)frame->_sprites.size(); j++) {
+				Sprite *sprite = frame->_sprites[j];
+				if (sprite->_scriptId.member) {
+					debugPrintf("  %d, sprite %d: %s\n", i + 1, j, sprite->_scriptId.asString().c_str());
+				}
+			}
+		}
+	}
+
+
 	return true;
 }
 
