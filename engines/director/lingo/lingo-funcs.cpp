@@ -148,7 +148,9 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 			warning("Lingo::func_play: unknown symbol: #%s", frame.u.s->c_str());
 			return;
 		}
+		_playDone = true;
 		if (stage->_movieStack.empty()) {	// No op if no nested movies
+
 			return;
 		}
 		ref = stage->_movieStack.back();
@@ -189,6 +191,7 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 	stage->_movieStack.push_back(ref);
 
 	func_goto(frame, movie);
+	_freezePlay = true;
 }
 
 void Lingo::func_cursor(Datum cursorDatum) {

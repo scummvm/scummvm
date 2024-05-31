@@ -49,6 +49,7 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	_puppetTransition = nullptr;
 	_soundManager = new DirectorSound(this);
 	_lingoState = new LingoState;
+	_lingoPlayState = nullptr;
 
 	_currentMovie = nullptr;
 	_mainArchive = nullptr;
@@ -68,6 +69,8 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 
 Window::~Window() {
 	delete _lingoState;
+	if (_lingoPlayState)
+		delete _lingoPlayState;
 	delete _soundManager;
 	delete _currentMovie;
 	for (uint i = 0; i < _frozenLingoStates.size(); i++)
@@ -635,6 +638,32 @@ void Window::thawLingoState() {
 	_lingoState = _frozenLingoStates.back();
 	_frozenLingoStates.pop_back();
 }
+
+void Window::freezeLingoPlayState() {
+	if (_lingoPlayState) {
+		warning("FIXME: Just clobbered the play state");
+		delete _lingoPlayState;
+	}
+	_lingoPlayState = _lingoState;
+	_lingoState = new LingoState;
+	debugC(kDebugLingoExec, 3, "Freezing Lingo play state");
+}
+
+void Window::thawLingoPlayState() {
+	if (!_lingoPlayState) {
+		warning("Tried to thaw when there's no frozen play state, ignoring");
+		return;
+	}
+	if (!_lingoState->callstack.empty()) {
+		warning("Can't thaw a Lingo state in mid-execution, ignoring");
+		return;
+	}
+	delete _lingoState;
+	debugC(kDebugLingoExec, 3, "Thawing Lingo play state");
+	_lingoState = _lingoPlayState;
+	_lingoPlayState = nullptr;
+}
+
 
 // Check how many times enterFrame/stepMovie have been called recursively.
 // When Lingo encounters a go() call, it freezes the execution state and starts
