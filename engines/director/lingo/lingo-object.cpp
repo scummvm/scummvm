@@ -425,7 +425,6 @@ ScriptContext::ScriptContext(const ScriptContext &sc) : Object<ScriptContext>(sc
 }
 
 ScriptContext::~ScriptContext() {
-	delete _assemblyAST;
 }
 
 Common::String ScriptContext::asString() {

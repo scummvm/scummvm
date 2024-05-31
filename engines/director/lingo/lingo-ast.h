@@ -216,9 +216,7 @@ public:
 };
 
 #define VISITNODE(nodeName) \
-		storeStart(); \
 		bool res = visitor->visit ## nodeName(this); \
-		storeEnd(); \
 		return res
 
 /* Node */

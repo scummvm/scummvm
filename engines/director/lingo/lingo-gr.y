@@ -205,7 +205,7 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 
 // TOP-LEVEL STUFF
 
-script: scriptpartlist					{ g_lingo->_compiler->_assemblyAST = new ScriptNode($scriptpartlist); $$ = nullptr; } ;
+script: scriptpartlist					{ g_lingo->_compiler->_assemblyAST = Common::SharedPtr<Node>(new ScriptNode($scriptpartlist)); $$ = nullptr; } ;
 
 scriptpartlist: scriptpart[item]				{
 		NodeList *list = new NodeList;

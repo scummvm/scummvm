@@ -2865,7 +2865,7 @@ yyreduce:
     {
   case 2: /* script: scriptpartlist  */
 #line 208 "engines/director/lingo/lingo-gr.y"
-                                                        { g_lingo->_compiler->_assemblyAST = new ScriptNode((yyvsp[0].nodelist)); (yyval.node) = nullptr; }
+                                                        { g_lingo->_compiler->_assemblyAST = Common::SharedPtr<Node>(new ScriptNode((yyvsp[0].nodelist))); (yyval.node) = nullptr; }
 #line 2870 "engines/director/lingo/lingo-gr.cpp"
     break;
 

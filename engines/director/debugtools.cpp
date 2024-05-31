@@ -32,7 +32,10 @@
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-ast.h"
+#include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-object.h"
+#include "director/lingo/lingo-the.h"
 #include "director/lingo/lingodec/ast.h"
 #include "director/lingo/lingodec/codewritervisitor.h"
 #include "director/lingo/lingodec/context.h"
@@ -90,7 +93,7 @@ typedef struct ImGuiScript {
 	Common::SharedPtr<LingoDec::HandlerNode> root;
 	Common::Array<LingoDec::Bytecode> bytecodeArray;
 	Common::Array<uint> startOffsets;
-
+	Common::SharedPtr<Node> oldAst;
 
 	bool operator==(const ImGuiScript &c) const {
 		return moviePath == c.moviePath && score == c.score && id == c.id && handlerId == c.handlerId;
@@ -443,6 +446,9 @@ const LingoDec::Handler *getHandler(const Cast *cast, CastMemberID id, const Com
 	const ScriptContext *ctx = cast->_lingoArchive->findScriptContext(id.member);
 	if (!ctx || !ctx->_functionHandlers.contains(handlerId))
 		return nullptr;
+	// for the moment it's happening with Director version < 4
+	if (!cast->_lingodec)
+		return nullptr;
 	for (auto p : cast->_lingodec->scripts) {
 		if ((p.second->castID & 0xFFFF) != id.member)
 			continue;
@@ -467,14 +473,24 @@ const LingoDec::Handler *getHandler(CastMemberID id, const Common::String &handl
 	return getHandler(movie->getSharedCast(), id, handlerId);
 }
 
-ImGuiScript toImGuiScript(CastMemberID id, const Common::String &handlerId) {
+ImGuiScript toImGuiScript(ScriptType scriptType, CastMemberID id, const Common::String &handlerId) {
 	ImGuiScript result;
 	result.id = id;
 	result.handlerId = handlerId;
+	result.type = scriptType;
 
 	const LingoDec::Handler *handler = getHandler(id, handlerId);
-	if (!handler)
+	if (!handler) {
+		const ScriptContext *ctx;
+		if (id.castLib == SHARED_CAST_LIB) {
+			ctx = g_director->getCurrentMovie()->getSharedCast()->_lingoArchive->getScriptContext(scriptType, id.member);
+		} else {
+			ctx = g_director->getCurrentMovie()->getScriptContext(scriptType, id);
+		}
+		if (!ctx) return result;
+		result.oldAst = ctx->_assemblyAST;
 		return result;
+	}
 
 	result.bytecodeArray = handler->bytecodeArray;
 	result.root = handler->ast.root;
@@ -503,9 +519,583 @@ static Director::Breakpoint *getBreakpoint(const Common::String &handlerName, ui
 	return nullptr;
 }
 
+class RenderOldScriptVisitor : public NodeVisitor {
+private:
+	ImGuiScript &_script;
+
+public:
+	explicit RenderOldScriptVisitor(ImGuiScript &script) : _script(script) {}
+
+	virtual bool visitHandlerNode(HandlerNode *node) {
+		ImGui::Text("on %s", node->name->c_str());
+		if(!node->args->empty()) {
+			ImGui::SameLine();
+			ImGui::Text(" ");
+			ImGui::SameLine();
+			for (uint i = 0; i < node->args->size(); i++) {
+				Common::String *arg = (*node->args)[i];
+				ImGui::Text("%s", arg->c_str());
+				ImGui::SameLine();
+				if (i != (node->args->size() - 1)) {
+					ImGui::Text(", ");
+					ImGui::SameLine();
+				}
+			}
+			ImGui::NewLine();
+		}
+		for (uint i = 0; i < node->stmts->size(); i++) {
+			Node *stmt = (*node->stmts)[i];
+			stmt->accept(this);
+			ImGui::NewLine();
+		}
+		ImGui::Text("end");
+		return true;
+	}
+
+	virtual bool visitScriptNode(ScriptNode *node){
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2());
+		for(Node* child : *node->children) {
+			if(child->type == kHandlerNode && *((HandlerNode*)child)->name != _script.handlerId) continue;
+			child->accept(this);
+		}
+		ImGui::PopStyleVar();
+		return true;
+	}
+	virtual bool visitFactoryNode(FactoryNode *node){
+		ImGui::Text("factory %s", node->name->c_str());
+		ImGui::SameLine();
+		for (uint i = 0; i < node->methods->size(); i++) {
+			Node *method = (*node->methods)[i];
+			method->accept(this);
+			ImGui::NewLine();
+		}
+		return true;
+	}
+	virtual bool visitCmdNode(CmdNode *node) {
+		ImGui::Text("%s ", node->name->c_str());
+		ImGui::SameLine();
+		if(*node->name == "go") {
+			ImGui::Text("to ");
+			ImGui::SameLine();
+		}
+		for (uint i = 0; i < node->args->size(); i++) {
+			Node *arg = (*node->args)[i];
+			if ((i != 0) || (node->args->size() < 2) || ((*node->args)[1]->type != kMovieNode)) {
+				arg->accept(this);
+				ImGui::SameLine();
+				if (i != (node->args->size() - 1)) {
+					ImGui::Text(", ");
+					ImGui::SameLine();
+				}
+			}
+		}
+		return true;
+	}
+	virtual bool visitPutIntoNode(PutIntoNode *node){
+		ImGui::Text("put ");
+		ImGui::SameLine();
+		node->val->accept(this);
+		ImGui::Text(" into ");
+		ImGui::SameLine();
+		node->var->accept(this);
+		return true;
+	}
+	virtual bool visitPutAfterNode(PutAfterNode *node) {
+		ImGui::Text("put ");
+		ImGui::SameLine();
+		node->val->accept(this);
+		ImGui::Text(" after ");
+		ImGui::SameLine();
+		node->var->accept(this);
+		return true;
+	}
+	virtual bool visitPutBeforeNode(PutBeforeNode *node){
+		ImGui::Text("put ");
+		ImGui::SameLine();
+		node->val->accept(this);
+		ImGui::Text(" before ");
+		ImGui::SameLine();
+		node->var->accept(this);
+		return true;
+	}
+	virtual bool visitSetNode(SetNode *node){
+		ImGui::Text("set ");
+		ImGui::SameLine();
+		node->val->accept(this);
+		ImGui::Text(" to ");
+		ImGui::SameLine();
+		node->var->accept(this);
+		return true;
+	}
+
+	void displayDefineVar(const char *name, IDList *names) {
+		ImGui::Text("%s ", name);
+		ImGui::SameLine();
+		for (uint i = 0; i < names->size(); i++) {
+			Common::String *arg = (*names)[i];
+			ImGui::Text("%s", arg->c_str());
+			ImGui::SameLine();
+			if (i != (names->size() - 1)) {
+				ImGui::Text(" ");
+				ImGui::SameLine();
+			}
+		}
+	}
+
+	virtual bool visitGlobalNode(GlobalNode *node){
+		displayDefineVar("global ", node->names);
+		return true;
+	}
+	virtual bool visitPropertyNode(PropertyNode *node){
+		displayDefineVar("property ", node->names);
+		return true;
+	}
+	virtual bool visitInstanceNode(InstanceNode *node){
+		displayDefineVar("instance ", node->names);
+		return true;
+	}
+	virtual bool visitIfStmtNode(IfStmtNode *node){
+		ImGui::Text("if ");
+		ImGui::SameLine();
+		node->cond->accept(this);
+		ImGui::Text(" then ");
+		if(node->stmts->size() == 1) {
+			ImGui::SameLine();
+			(*node->stmts)[0]->accept(this);
+		} else {
+			for (uint i = 0; i < node->stmts->size(); i++) {
+				Node *stmt = (*node->stmts)[i];
+				stmt->accept(this);
+				ImGui::NewLine();
+			}
+			ImGui::Text("endif");
+			ImGui::SameLine();
+		}
+		return true;
+	}
+	virtual bool visitIfElseStmtNode(IfElseStmtNode *node){
+		ImGui::Text("if ");
+		ImGui::SameLine();
+		node->cond->accept(this);
+		ImGui::Text(" then ");
+		if(node->stmts1->size() == 1) {
+			ImGui::SameLine();
+			(*node->stmts1)[0]->accept(this);
+			ImGui::Text(" ");
+			ImGui::SameLine();
+		} else {
+			for (uint i = 0; i < node->stmts1->size(); i++) {
+				Node *stmt = (*node->stmts1)[i];
+				stmt->accept(this);
+				ImGui::NewLine();
+			}
+		}
+		ImGui::Text("else ");
+		if(node->stmts2->size() == 1) {
+			ImGui::SameLine();
+			(*node->stmts2)[0]->accept(this);
+		} else {
+			for (uint i = 0; i < node->stmts2->size(); i++) {
+				Node *stmt = (*node->stmts2)[i];
+				stmt->accept(this);
+				ImGui::NewLine();
+			}
+			ImGui::Text("endif");
+			ImGui::SameLine();
+		}
+		return true;
+	}
+	virtual bool visitRepeatWhileNode(RepeatWhileNode *node){
+		ImGui::Text("repeat while ");
+		ImGui::SameLine();
+		node->cond->accept(this);
+		ImGui::NewLine();
+		for (uint i = 0; i < node->stmts->size(); i++) {
+			Node *stmt = (*node->stmts)[i];
+			stmt->accept(this);
+			ImGui::NewLine();
+		}
+		ImGui::Text("endrepeat");
+		return true;
+	}
+	virtual bool visitRepeatWithToNode(RepeatWithToNode *node){
+		ImGui::Text("repeat with ");
+		ImGui::SameLine();
+		ImGui::Text("%s = ", node->var->c_str());
+		ImGui::SameLine();
+		node->start->accept(this);
+		ImGui::Text(" %s ", node->down ? "down to" : "to");
+		node->end->accept(this);
+		ImGui::NewLine();
+		for (uint i = 0; i < node->stmts->size(); i++) {
+			Node *stmt = (*node->stmts)[i];
+			stmt->accept(this);
+			ImGui::NewLine();
+		}
+		ImGui::Text("endrepeat");
+		return true;
+	}
+	virtual bool visitRepeatWithInNode(RepeatWithInNode *node){
+		ImGui::Text("repeat with ");
+		ImGui::SameLine();
+		ImGui::Text("%s in ", node->var->c_str());
+		ImGui::SameLine();
+		node->list->accept(this);
+		ImGui::NewLine();
+		for (uint i = 0; i < node->stmts->size(); i++) {
+			Node *stmt = (*node->stmts)[i];
+			stmt->accept(this);
+			ImGui::NewLine();
+		}
+		ImGui::Text("endrepeat");
+		return true;
+	}
+	virtual bool visitNextRepeatNode(NextRepeatNode *node){
+		ImGui::Text("next repeat");
+		return true;
+	}
+	virtual bool visitExitRepeatNode(ExitRepeatNode *node){
+		ImGui::Text("exit repeat");
+		return true;
+	}
+	virtual bool visitExitNode(ExitNode *node){
+		ImGui::Text("exit");
+		return true;
+	}
+	virtual bool visitReturnNode(ReturnNode *node){
+		ImGui::Text("return");
+		if(node->expr) {
+			ImGui::Text(" ");
+			ImGui::SameLine();
+			node->expr->accept(this);
+			ImGui::NewLine();
+		}
+		return true;
+	}
+	virtual bool visitTellNode(TellNode *node){
+		ImGui::Text("tell ");
+		node->target->accept(this);
+		if(node->stmts->size() == 1) {
+			ImGui::SameLine();
+			ImGui::Text(" to ");
+			ImGui::SameLine();
+			(*node->stmts)[0]->accept(this);
+		} else {
+			for (uint i = 0; i < node->stmts->size(); i++) {
+				Node *stmt = (*node->stmts)[i];
+				stmt->accept(this);
+				ImGui::NewLine();
+			}
+			ImGui::Text("endtell");
+		}
+		return true;
+	}
+	virtual bool visitWhenNode(WhenNode *node){
+		ImGui::Text("when %s then %s", node->event->c_str(), node->code->c_str());
+		ImGui::SameLine();
+		return true;
+	}
+	virtual bool visitDeleteNode(DeleteNode *node){
+		ImGui::Text("delete ");
+		ImGui::SameLine();
+		node->chunk->accept(this);
+		return true;
+	}
+	virtual bool visitHiliteNode(HiliteNode *node){
+		ImGui::Text("hilite ");
+		ImGui::SameLine();
+		node->chunk->accept(this);
+		return true;
+	}
+	virtual bool visitAssertErrorNode(AssertErrorNode *node){
+		ImGui::Text("scummvmAssertError ");
+		ImGui::SameLine();
+		node->stmt->accept(this);
+		return true;
+	}
+	virtual bool visitIntNode(IntNode *node){
+		ImGui::Text("%d", node->val);
+		ImGui::SameLine();
+		return true;
+	}
+	virtual bool visitFloatNode(FloatNode *node){
+		ImGui::Text("%g", node->val);
+		ImGui::SameLine();
+		return true;
+	}
+	virtual bool visitSymbolNode(SymbolNode *node){
+		ImGui::Text("%s", node->val->c_str());
+		ImGui::SameLine();
+		return true;
+	}
+	virtual bool visitStringNode(StringNode *node){
+		ImGui::Text("\"%s\"", node->val->c_str());
+		ImGui::SameLine();
+		return true;
+	}
+	virtual bool visitListNode(ListNode *node){
+		ImGui::Text("[");
+		ImGui::SameLine();
+		for (uint i = 0; i < node->items->size(); i++) {
+			Node *prop = (*node->items)[i];
+			prop->accept(this);
+			if (i != (node->items->size() - 1)) {
+				ImGui::Text(",");
+				ImGui::SameLine();
+			}
+		}
+		ImGui::Text("]");
+		ImGui::SameLine();
+		return true;
+	}
+	virtual bool visitPropListNode(PropListNode *node){
+		ImGui::Text("[");
+		ImGui::SameLine();
+		if(node->items->empty()) {
+			ImGui::Text(":");
+			ImGui::SameLine();
+		} else {
+			for (uint i = 0; i < node->items->size(); i++) {
+				Node *prop = (*node->items)[i];
+				prop->accept(this);
+				if (i != (node->items->size() - 1)) {
+					ImGui::Text(",");
+					ImGui::SameLine();
+				}
+			}
+		}
+		ImGui::Text("]");
+		ImGui::SameLine();
+		return true;
+	}
+	virtual bool visitPropPairNode(PropPairNode *node){
+		node->key->accept(this);
+		ImGui::Text(":");
+		ImGui::SameLine();
+		node->val->accept(this);
+		return true;
+	}
+	virtual bool visitFuncNode(FuncNode *node){
+		ImGui::Text("%s(", node->name->c_str());
+		ImGui::SameLine();
+		for (uint i = 0; i < node->args->size(); i++) {
+			Node *arg = (*node->args)[i];
+			arg->accept(this);
+			if (i != (node->args->size() - 1)) {
+				ImGui::Text(",");
+				ImGui::SameLine();
+			}
+		}
+		ImGui::Text(")");
+		ImGui::SameLine();
+		return true;
+	}
+	virtual bool visitVarNode(VarNode *node){
+		ImGui::Text("%s", node->name->c_str());
+		ImGui::SameLine();
+		return true;
+	}
+	virtual bool visitParensNode(ParensNode *node){
+		ImGui::Text("(");
+		ImGui::SameLine();
+		node->expr->accept(this);
+		ImGui::Text(")");
+		ImGui::SameLine();
+		return true;
+	}
+	virtual bool visitUnaryOpNode(UnaryOpNode *node){
+		char op = '?';
+		if(node->op == LC::c_negate) {
+			op = '-';
+		} else if(node->op == LC::c_not) {
+			op = '!';
+		}
+		ImGui::Text("%c", op);
+		ImGui::SameLine();
+		node->arg->accept(this);
+		return true;
+	}
+	virtual bool visitBinaryOpNode(BinaryOpNode *node){
+		node->a->accept(this);
+		static struct {
+			inst op;
+			const char *name;
+		} ops[] = {
+			{LC::c_add, "+"},
+			{LC::c_sub, "-"},
+			{LC::c_mul, "*"},
+			{LC::c_div, "/"},
+			{LC::c_mod, "mod"},
+			{LC::c_gt, ">"},
+			{LC::c_lt, "<"},
+			{LC::c_eq, "="},
+			{LC::c_neq, "<>"},
+			{LC::c_ge, ">="},
+			{LC::c_le, "<="},
+			{LC::c_and, "and"},
+			{LC::c_or, "or"},
+			{LC::c_ampersand, "&"},
+			{LC::c_concat, "&&"},
+			{LC::c_contains, "contains"},
+			{LC::c_starts, "starts"},
+		};
+		for (auto &op : ops) {
+			if (op.op == node->op) {
+				ImGui::Text(" %s ", op.name);
+				ImGui::SameLine();
+				break;
+			}
+		}
+		node->b->accept(this);
+		return true;
+	 }
+	virtual bool visitFrameNode(FrameNode *node){
+		ImGui::Text("frame ");
+		ImGui::SameLine();
+		node->arg->accept(this);
+		return true;
+	}
+	virtual bool visitMovieNode(MovieNode *node){
+		ImGui::Text("movie ");
+		ImGui::SameLine();
+		node->arg->accept(this);
+		return true;
+	}
+	virtual bool visitIntersectsNode(IntersectsNode *node){
+		ImGui::Text("sprite ");
+		ImGui::SameLine();
+		node->sprite1->accept(this);
+		ImGui::Text("intersects ");
+		node->sprite2->accept(this);
+		return true;
+	}
+	virtual bool visitWithinNode(WithinNode *node){
+		ImGui::Text("sprite ");
+		ImGui::SameLine();
+		node->sprite1->accept(this);
+		ImGui::Text("within ");
+		node->sprite2->accept(this);
+		return true;
+	}
+	virtual bool visitTheNode(TheNode *node){
+		ImGui::Text("the %s", node->prop->c_str());
+		ImGui::SameLine();
+		return true;
+	}
+	virtual bool visitTheOfNode(TheOfNode *node){
+		ImGui::Text("the %s of ", node->prop->c_str());
+		ImGui::SameLine();
+		node->obj->accept(this);
+		return true;
+	}
+	virtual bool visitTheNumberOfNode(TheNumberOfNode *node){
+		ImGui::Text("the number of ");
+		ImGui::SameLine();
+		node->arg->accept(this);
+		return true;
+	}
+	virtual bool visitTheLastNode(TheLastNode *node){
+		// TODO: change the node to know if it's 'in' or 'of'
+		ImGui::Text("the last %s in/of ", toString(node->type).c_str());
+		ImGui::SameLine();
+		node->arg->accept(this);
+		return true;
+	}
+	virtual bool visitTheDateTimeNode(TheDateTimeNode *node){
+		const char* key1 = "";
+		switch(node->field) {
+			case kTheAbbr:
+			key1 = "abbreviated";
+			break;
+			case kTheLong:
+			key1 = "long";
+			break;
+			case kTheShort:
+			key1 = "short";
+			break;
+		}
+		const char *key2 = node->entity == kTheDate ? "date" : "time";
+		ImGui::Text("the %s %s", key1, key2);
+		ImGui::SameLine();
+		return true;
+	}
+	virtual bool visitMenuNode(MenuNode *node){
+		ImGui::Text("menu ");
+		ImGui::SameLine();
+		node->arg->accept(this);
+		return true;
+	}
+	virtual bool visitMenuItemNode(MenuItemNode *node){
+		ImGui::Text("menuitem ");
+		ImGui::SameLine();
+		node->arg1->accept(this);
+		ImGui::Text("of menu ");
+		ImGui::SameLine();
+		node->arg2->accept(this);
+		return true;
+	}
+	virtual bool visitSoundNode(SoundNode *node){
+		ImGui::Text("sound ");
+		ImGui::SameLine();
+		node->arg->accept(this);
+		return true;
+	}
+	virtual bool visitSpriteNode(SpriteNode *node){
+		ImGui::Text("sprite ");
+		ImGui::SameLine();
+		node->arg->accept(this);
+		return true;
+	}
+	virtual bool visitChunkExprNode(ChunkExprNode *node){
+		const char* key1 = "";
+		switch(node->type) {
+			case kChunkChar:
+			key1 = "char";
+			break;
+			case kChunkWord:
+			key1 = "word";
+			break;
+			case kChunkItem:
+			key1 = "item";
+			break;
+			case kChunkLine:
+			key1 = "line";
+			break;
+		}
+		ImGui::Text("%s", key1);
+		ImGui::SameLine();
+		node->start->accept(this);
+		if(node->end) {
+			ImGui::Text(" to ");
+			ImGui::SameLine();
+			node->end->accept(this);
+		}
+		ImGui::Text(" of ");
+		ImGui::SameLine();
+		node->src->accept(this);
+		return true;
+	}
+
+private:
+	static Common::String toString(ChunkType chunkType) {
+		// TODO: this method could be used in ChunkExprNode
+		switch(chunkType) {
+			case kChunkChar:
+			return "char";
+			case kChunkWord:
+			return "word";
+			case kChunkItem:
+			return "item";
+			case kChunkLine:
+			return "line";
+		}
+		return "<unknown>";
+	}
+};
+
 class RenderScriptVisitor : public LingoDec::NodeVisitor {
 public:
-	explicit RenderScriptVisitor(ImGuiScript &script, bool showByteCode) : _script(script), _showByteCode(showByteCode) {
+	RenderScriptVisitor(ImGuiScript &script, bool showByteCode) : _script(script), _showByteCode(showByteCode) {
 		Common::Array<CFrame *> &callstack = g_lingo->_state->callstack;
 		if (!callstack.empty()) {
 			CFrame *head = callstack[callstack.size() - 1];
@@ -587,7 +1177,7 @@ public:
 			ImGui::EndTooltip();
 		}
 		if (!g_lingo->_builtinCmds.contains(node.name) && ImGui::IsItemClicked()) {
-			ImGuiScript script = toImGuiScript(CastMemberID(obj, _script.id.castLib), node.name);
+			ImGuiScript script = toImGuiScript(_script.type, CastMemberID(obj, _script.id.castLib), node.name);
 			script.moviePath = _script.moviePath;
 			script.handlerName = node.name;
 			setScriptToDisplay(script);
@@ -2634,7 +3224,14 @@ static void renderCastScript(Symbol &sym) {
 }
 
 static void renderScript(ImGuiScript &script, bool showByteCode) {
-	if (!script.root) return;
+	if (script.oldAst) {
+		RenderOldScriptVisitor oldVisitor(script);
+		script.oldAst->accept(&oldVisitor);
+		_state->_dbg._isScriptDirty = false;
+		return;
+	}
+
+	if(!script.root) return;
 
 	RenderScriptVisitor visitor(script, showByteCode);
 	script.root->accept(visitor);
@@ -2702,7 +3299,7 @@ static void updateCurrentScript() {
 	Director::Movie *movie = g_director->getCurrentMovie();
 	ScriptContext *scriptContext = head->sp.ctx;
 	int castLibID = movie->getCast()->_castLibID;
-	ImGuiScript script = toImGuiScript(CastMemberID(head->sp.ctx->_id, castLibID), *head->sp.name);
+	ImGuiScript script = toImGuiScript(scriptContext->_scriptType, CastMemberID(head->sp.ctx->_id, castLibID), *head->sp.name);
 	script.byteOffsets = scriptContext->_functionByteOffsets[script.handlerId];
 	script.moviePath = movie->getArchive()->getPathName().toString();
 	script.handlerName = head->sp.ctx->_id ? Common::String::format("%d:%s", head->sp.ctx->_id, script.handlerId.c_str()) : script.handlerId;
@@ -2819,7 +3416,7 @@ static void showFuncList() {
 							ImGui::TableNextColumn();
 							if (ImGui::Selectable(function.c_str())) {
 								CastMemberID memberID(scriptContext._key, cast._key);
-								ImGuiScript script = toImGuiScript(memberID, functionHandler._key);
+								ImGuiScript script = toImGuiScript(scriptContext._value->_scriptType, memberID, functionHandler._key);
 								script.byteOffsets = scriptContext._value->_functionByteOffsets[script.handlerId];
 								script.moviePath = movie->getArchive()->getPathName().toString();
 								script.handlerName = getHandlerName(functionHandler._value);
@@ -2857,7 +3454,7 @@ static void showFuncList() {
 							ImGui::TableNextColumn();
 							if (ImGui::Selectable(function.c_str())) {
 								CastMemberID memberID(scriptContext._key, SHARED_CAST_LIB);
-								ImGuiScript script = toImGuiScript(memberID, functionHandler._key);
+								ImGuiScript script = toImGuiScript(scriptContext._value->_scriptType, memberID, functionHandler._key);
 								script.byteOffsets = scriptContext._value->_functionByteOffsets[script.handlerId];
 								script.moviePath = movie->getArchive()->getPathName().toString();
 								script.handlerName = getHandlerName(functionHandler._value);

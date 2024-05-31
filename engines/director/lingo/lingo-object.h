@@ -216,7 +216,7 @@ public:
 	Common::Array<Datum> _constants;
 	Common::HashMap<uint32, Datum> _objArray;
 	MethodHash _methodNames;
-	Node *_assemblyAST = nullptr;	// Optionally contains AST when we compile Lingo
+	Common::SharedPtr<Node> _assemblyAST;	// Optionally contains AST when we compile Lingo
 
 private:
 	DatumHash _properties;
