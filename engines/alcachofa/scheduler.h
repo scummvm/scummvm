@@ -152,6 +152,7 @@ public:
 	void killAllProcessesFor(MainCharacterKind characterKind);
 	void killProcessByName(const Common::String &name);
 	bool hasProcessWithName(const Common::String &name);
+	void debugPrint();
 
 	template<typename TTask, typename... TaskArgs>
 	Process *createProcess(MainCharacterKind character, TaskArgs&&... args) {

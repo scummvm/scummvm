@@ -55,6 +55,7 @@ public:
 	virtual void serializeSave(Common::Serializer &serializer);
 	ObjectBase *getObjectByName(const Common::String &name) const;
 	void toggleActiveFloor();
+	void debugPrint(bool withObjects) const;
 
 protected:
 	Room(World *world, Common::ReadStream &stream, bool hasUselessByte);
@@ -132,6 +133,9 @@ public:
 
 	// reference-returning queries will error if the object does not exist
 
+	using RoomIterator = Common::Array<const Room *>::const_iterator;
+	inline RoomIterator beginRooms() const { return _rooms.begin(); }
+	inline RoomIterator endRooms() const { return _rooms.end(); }
 	inline Room &globalRoom() const { return *_globalRoom; }
 	inline Inventory &inventory() const { return *_inventory; }
 	inline MainCharacter &filemon() const { return *_filemon; }

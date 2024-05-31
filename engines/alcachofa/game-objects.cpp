@@ -29,6 +29,8 @@ using namespace Math;
 
 namespace Alcachofa {
 
+const char *Item::typeName() const { return "Item"; }
+
 Item::Item(Room *room, ReadStream &stream)
 	: GraphicObject(room, stream) {
 	stream.readByte(); // unused and ignored byte
@@ -45,6 +47,8 @@ Item::Item(const Item &other)
 ITriggerableObject::ITriggerableObject(ReadStream &stream)
 	: _interactionPoint(Shape(stream).firstPoint())
 	, _interactionDirection((Direction)stream.readSint32LE()) {}
+
+const char *InteractableObject::typeName() const { return "InteractableObject"; }
 
 InteractableObject::InteractableObject(Room *room, ReadStream &stream)
 	: PhysicalObject(room, stream)
@@ -76,6 +80,8 @@ void InteractableObject::trigger(const char *action) {
 	warning("stub: Trigger object %s with %s", name().c_str(), action == nullptr ? "<null>" : action);
 }
 
+const char *Door::typeName() const { return "Door"; }
+
 Door::Door(Room *room, ReadStream &stream)
 	: InteractableObject(room, stream)
 	, _targetRoom(readVarString(stream))
@@ -96,6 +102,8 @@ void Door::onClick() {
 void Door::trigger(const char *_) {
 	warning("STUB: Triggering door to %s", _targetRoom.c_str());
 }
+
+const char *Character::typeName() const { return "Character"; }
 
 Character::Character(Room *room, ReadStream &stream)
 	: ShapeObject(room, stream)
@@ -214,6 +222,8 @@ void Character::syncObjectAsString(Serializer &serializer, ObjectBase *&object) 
 void Character::trigger(const char *action) {
 	warning("stub: Trigger character %s with %s", name().c_str(), action == nullptr ? "<null>" : action);
 }
+
+const char *WalkingCharacter::typeName() const { return "WalkingCharacter"; }
 
 WalkingCharacter::WalkingCharacter(Room *room, ReadStream &stream)
 	: Character(room, stream) {
@@ -506,6 +516,8 @@ Task *WalkingCharacter::waitForArrival(Process &process) {
 	return new ArriveTask(process, *this);
 }
 
+const char *MainCharacter::typeName() const { return "MainCharacter"; }
+
 MainCharacter::MainCharacter(Room *room, ReadStream &stream)
 	: WalkingCharacter(room, stream) {
 	stream.readByte(); // unused byte
@@ -696,6 +708,7 @@ bool MainCharacter::clearTargetIf(const ITriggerableObject *target) {
 	return false;
 }
 
+const char *Background::typeName() const { return "Background"; }
 
 Background::Background(Room *room, const String &animationFileName, int16 scale)
 	: GraphicObject(room, "BACKGROUND") {
@@ -704,6 +717,8 @@ Background::Background(Room *room, const String &animationFileName, int16 scale)
 	_graphic.scale() = scale;
 	_graphic.order() = 59;
 }
+
+const char *FloorColor::typeName() const { return "FloorColor"; }
 
 FloorColor::FloorColor(Room *room, ReadStream &stream)
 	: ObjectBase(room, stream)
