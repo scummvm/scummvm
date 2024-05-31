@@ -48,9 +48,10 @@ void Camera::setRoomBounds(Point bgSize, int16 bgScale) {
 	_roomScale = bgScale;
 }
 
-void Camera::setFollow(WalkingCharacter *target) {
+void Camera::setFollow(WalkingCharacter *target, bool catchUp) {
 	_followTarget = target;
 	_lastUpdateTime = g_system->getMillis();
+	_catchUp = catchUp;
 	if (target == nullptr)
 		_isChanging = false;
 }
@@ -147,7 +148,12 @@ void Camera::update() {
 	deltaTime = MAX(0.001f, MIN(0.5f, deltaTime));
 	_lastUpdateTime = now;
 
-	updateFollowing(deltaTime);
+	if (_catchUp && _followTarget != nullptr) {
+		for (int i = 0; i < 4; i++)
+			updateFollowing(50.0f);
+	}
+	else
+		updateFollowing(deltaTime);
 	setAppliedCenter(_usedCenter + Vector3d(_shake.getX(), _shake.getY(), 0.0f));
 }
 

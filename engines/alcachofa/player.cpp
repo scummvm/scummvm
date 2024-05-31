@@ -115,6 +115,9 @@ void Player::changeRoom(const Common::String &targetRoomName, bool resetCamera) 
 
 	if (resetCamera)
 		g_engine->camera().resetRotationAndScale();
+	WalkingCharacter *followTarget = g_engine->camera().followTarget();
+	if (followTarget != nullptr)
+		g_engine->camera().setFollow(followTarget, true);
 	_pressedObject = _selectedObject = nullptr;
 }
 
@@ -190,7 +193,7 @@ struct DoorTask : public Task {
 			_character->room() = _targetRoom;
 			_character->setPosition(_targetDoor->interactionPoint());
 			_character->stopWalking(_targetDoor->characterDirection());
-			g_engine->camera().setFollow(_character);
+			g_engine->camera().setFollow(_character, true);
 		}
 
 		// TODO: Start music on room change
