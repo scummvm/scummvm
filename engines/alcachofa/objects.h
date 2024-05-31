@@ -344,6 +344,7 @@ public:
 	virtual void drawDebug() override;
 	virtual void onClick() override;
 	virtual void trigger(const char *action) override;
+	virtual void toggle(bool isEnabled) override;
 	virtual const char *typeName() const;
 
 private:
