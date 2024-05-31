@@ -67,6 +67,7 @@
 #include "director/lingo/xlibs/findwin.h"
 #include "director/lingo/xlibs/flushxobj.h"
 #include "director/lingo/xlibs/fplayxobj.h"
+#include "director/lingo/xlibs/genutils.h"
 #include "director/lingo/xlibs/getscreenrectsxfcn.h"
 #include "director/lingo/xlibs/getscreensizexfcn.h"
 #include "director/lingo/xlibs/gpid.h"
@@ -233,6 +234,7 @@ static struct XLibProto {
 	{ FinderEventsXCMD::fileNames,		FinderEventsXCMD::open,		FinderEventsXCMD::close,	kXObj,					400 },	// D4
 	{ FlushXObj::fileNames,				FlushXObj::open,			FlushXObj::close,			kXObj,					300 },	// D3
 	{ FPlayXObj::fileNames,				FPlayXObj::open,			FPlayXObj::close,			kXObj,					200 },	// D2
+	{ GenUtilsXObj::fileNames,			GenUtilsXObj::open,			GenUtilsXObj::close,		kXObj,					400 },	// D4
 	{ GetScreenRectsXFCN::fileNames,	GetScreenRectsXFCN::open,	GetScreenRectsXFCN::close,	kXObj,					300 },	// D3
 	{ GetScreenSizeXFCN::fileNames,		GetScreenSizeXFCN::open,	GetScreenSizeXFCN::close,	kXObj,					300 },	// D3
 	{ GpidXObj::fileNames,				GpidXObj::open,				GpidXObj::close,			kXObj,					400 },	// D4
