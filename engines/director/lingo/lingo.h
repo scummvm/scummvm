@@ -558,11 +558,7 @@ public:
 
 	struct {
 		LingoExecState _state = kRunning;
-		int _step = -1;
-		struct {
-			uint _stackSize = 0;
-			bool _enabled = false;
-		} _next;
+		bool (*_shouldPause)() = nullptr;
 	} _exec;
 
 public:

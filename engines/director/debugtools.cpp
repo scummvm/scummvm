@@ -89,6 +89,8 @@ typedef struct ImGuiScript {
 	Common::StringArray globalNames;
 	Common::SharedPtr<LingoDec::HandlerNode> root;
 	Common::Array<LingoDec::Bytecode> bytecodeArray;
+	Common::Array<uint> startOffsets;
+
 
 	bool operator==(const ImGuiScript &c) const {
 		return moviePath == c.moviePath && score == c.score && id == c.id && handlerId == c.handlerId;
@@ -374,6 +376,10 @@ typedef struct ImGuiState {
 		bool _showByteCode = false;
 		bool _showScript = false;
 	} _functions;
+	struct {
+		uint _lastLinePC = 0;
+		uint _callstackSize = 0;
+	} _dbg;
 
 	struct {
 		ImVec4 _bp_color_disabled = ImVec4(0.9f, 0.08f, 0.0f, 0.0f);
@@ -504,6 +510,7 @@ public:
 			CFrame *head = callstack[callstack.size() - 1];
 			_isScriptInDebug = (head->sp.ctx->_id == script.id.member) && (*head->sp.name == script.handlerId);
 		}
+		_script.startOffsets.clear();
 	}
 
 	virtual void visit(const LingoDec::HandlerNode &node) override {
@@ -1565,6 +1572,7 @@ private:
 		bool showCurrentStatement = false;
 		p = MIN(p, _script.byteOffsets.size() - 1);
 		uint pc = _script.byteOffsets[p];
+		_script.startOffsets.push_back(pc);
 
 		if (_isScriptInDebug && g_lingo->_exec._state == kPause) {
 			// check current statement
@@ -1667,6 +1675,58 @@ private:
 	bool _isScriptInDebug = false;
 };
 
+static uint32 getLineFromPC() {
+	const uint pc = g_lingo->_state->pc;
+	const Common::Array<uint> &offsets = _state->_functions._scripts[_state->_functions._current].startOffsets;
+	for (uint i = 0; i < offsets.size(); i++) {
+		if (pc <= offsets[i])
+			return i;
+	}
+	return 0;
+}
+
+static bool stepOverShouldPauseDebugger() {
+	const uint32 line = getLineFromPC();
+
+	// we stop when we are :
+	// - in the same callstack level and the statement line is different
+	// - OR we go up in the callstack
+	if (((g_lingo->_state->callstack.size() == _state->_dbg._callstackSize) && (line != _state->_dbg._lastLinePC)) ||
+		 (g_lingo->_state->callstack.size() < _state->_dbg._callstackSize)) {
+		_state->_dbg._lastLinePC = line;
+		return true;
+	}
+
+	return false;
+}
+
+static bool stepInShouldPauseDebugger() {
+	const uint32 line = getLineFromPC();
+
+	// we stop when:
+	// - the statement line is different
+	// - OR when the callstack level change
+	if ((g_lingo->_state->callstack.size() != _state->_dbg._callstackSize) || (_state->_dbg._lastLinePC != line)) {
+		_state->_dbg._lastLinePC = line;
+		return true;
+	}
+	return false;
+}
+
+static bool stepOutShouldPause() {
+	const uint32 line = getLineFromPC();
+
+	// we stop when:
+	// - the statement line is different
+	// - OR we go up in the callstack
+	if (g_lingo->_state->callstack.size() < _state->_dbg._callstackSize) {
+		_state->_dbg._lastLinePC = line;
+		return true;
+	}
+
+	return false;
+}
+
 static void showControlPanel() {
 	if (!_state->_w.controlPanel)
 		return;
@@ -1741,6 +1801,7 @@ static void showControlPanel() {
 			if (ImGui::IsItemClicked(0)) {
 				score->_playState = kPlayPaused;
 				g_lingo->_exec._state = kPause;
+				g_lingo->_exec._shouldPause = nullptr;
 			}
 
 			if (ImGui::IsItemHovered())
@@ -1780,8 +1841,8 @@ static void showControlPanel() {
 
 			if (ImGui::IsItemClicked(0)) {
 				score->_playState = kPlayStarted;
-				g_lingo->_exec._step = -1;
 				g_lingo->_exec._state = kRunning;
+				g_lingo->_exec._shouldPause = nullptr;
 			}
 
 			if (ImGui::IsItemHovered())
@@ -1818,9 +1879,9 @@ static void showControlPanel() {
 			if (ImGui::IsItemClicked(0)) {
 				score->_playState = kPlayStarted;
 				g_lingo->_exec._state = kRunning;
-				g_lingo->_exec._step = -1;
-				g_lingo->_exec._next._enabled = true;
-				g_lingo->_exec._next._stackSize = g_lingo->_state->callstack.size();
+				_state->_dbg._lastLinePC = getLineFromPC();
+				_state->_dbg._callstackSize = g_lingo->_state->callstack.size();
+				g_lingo->_exec._shouldPause = stepOverShouldPauseDebugger;
 			}
 
 			if (ImGui::IsItemHovered())
@@ -1842,8 +1903,10 @@ static void showControlPanel() {
 
 			if (ImGui::IsItemClicked(0)) {
 				score->_playState = kPlayStarted;
-				g_lingo->_exec._step = 1;
 				g_lingo->_exec._state = kRunning;
+				_state->_dbg._lastLinePC = getLineFromPC();
+				_state->_dbg._callstackSize = g_lingo->_state->callstack.size();
+				g_lingo->_exec._shouldPause = stepInShouldPauseDebugger;
 			}
 
 			if (ImGui::IsItemHovered())
@@ -1865,9 +1928,9 @@ static void showControlPanel() {
 			if (ImGui::IsItemClicked(0)) {
 				score->_playState = kPlayStarted;
 				g_lingo->_exec._state = kRunning;
-				g_lingo->_exec._step = -1;
-				g_lingo->_exec._next._enabled = true;
-				g_lingo->_exec._next._stackSize = g_lingo->_state->callstack.size() - 1;
+				_state->_dbg._lastLinePC = getLineFromPC();
+				_state->_dbg._callstackSize = g_lingo->_state->callstack.size();
+				g_lingo->_exec._shouldPause = stepOutShouldPause;
 			}
 
 			if (ImGui::IsItemHovered())

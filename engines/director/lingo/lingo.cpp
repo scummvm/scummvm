@@ -617,12 +617,7 @@ bool Lingo::execute() {
 	uint localCounter = 0;
 
 	while (!_abort && !_freezeState && _state->script && (*_state->script)[_state->pc] != STOP) {
-		if (_exec._next._enabled && _state->callstack.size() == _exec._next._stackSize) {
-			// we reach the next statement -> pause the execution
-			_exec._state = kPause;
-			_exec._next._enabled = false;
-		}
-		if (!_exec._step || _exec._state == kPause) {
+		if ((_exec._state == kPause) || (_exec._shouldPause && _exec._shouldPause())) {
 			// if execution is in pause -> poll event + update screen
 			_exec._state = kPause;
 			Common::EventManager *eventMan = g_system->getEventManager();
@@ -674,8 +669,6 @@ bool Lingo::execute() {
 		}
 
 		g_debugger->stepHook();
-		if (_exec._step > 0)
-			_exec._step--;
 
 		_state->pc++;
 		(*((*_state->script)[_state->pc - 1]))();
