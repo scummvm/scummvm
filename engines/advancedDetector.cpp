@@ -1003,6 +1003,10 @@ static const char *const grayList[] = {
 	"item.dat",
 	"abc.exe",
 	"ppc",
+	"www.exe",
+	"shared.dir",
+	"shared.dxr",
+	"SHARDCST.MMM",
 	0
 };
 
