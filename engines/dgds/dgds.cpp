@@ -79,7 +79,7 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_soundPlayer(nullptr), _decompressor(nullptr), _scene(nullptr),
 	_gdsScene(nullptr), _resource(nullptr), _gamePals(nullptr), _gameGlobals(nullptr),
 	_detailLevel(kDgdsDetailHigh), _textSpeed(1), _justChangedScene1(false), _justChangedScene2(false),
-	_random("dgds"), _currentCursor(-1), _menuToTrigger(kMenuNone) {
+	_random("dgds"), _currentCursor(-1), _menuToTrigger(kMenuNone), _isLoading(true) {
 	syncSoundSettings();
 
 	_platform = gameDesc->platform;
@@ -181,6 +181,7 @@ bool DgdsEngine::changeScene(int sceneNum) {
 	_scene->load(sceneFile, _resource, _decompressor);
 	// These are done inside the load function in the original.. cleaner here..
 	_scene->addInvButtonToHotAreaList();
+	_clock.setVisibleScript(true);
 
 	if (_scene->getMagic() != _gdsScene->getMagic())
 		error("Scene %s magic does (0x%08x) not match GDS magic (0x%08x)", sceneFile.c_str(), _scene->getMagic(), _gdsScene->getMagic());
@@ -336,6 +337,7 @@ void DgdsEngine::loadGameFiles() {
 }
 
 Common::Error DgdsEngine::run() {
+	_isLoading = true;
 	init();
 	loadGameFiles();
 
@@ -348,6 +350,8 @@ Common::Error DgdsEngine::run() {
 
 	Common::EventManager *eventMan = g_system->getEventManager();
 	Common::Event ev;
+
+	_isLoading = false;
 
 	while (!shouldQuit()) {
 		Common::EventType mouseEvent = Common::EVENT_INVALID;
@@ -536,7 +540,7 @@ bool DgdsEngine::canLoadGameStateCurrently(Common::U32String *msg /*= nullptr*/)
 bool DgdsEngine::canSaveGameStateCurrently(Common::U32String *msg /*= nullptr*/) {
 	return _gdsScene && _scene && _scene->getNum() != 2
 			&& !_scene->hasVisibleDialog() && !_menu->menuShown()
-			&& _scene->getDragItem() == nullptr;
+			&& _scene->getDragItem() == nullptr && !_isLoading;
 }
 
 
@@ -545,13 +549,14 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 	// Version history:
 	//
 	// 1: First version
+	// 2: Added GameItem.flags
 	//
 
 	assert(_scene && _gdsScene);
 
 	_menu->hideMenu();
 
-	if (!s.syncVersion(1))
+	if (!s.syncVersion(2))
 		error("Save game version too new: %d", s.getVersion());
 
 	Common::Error result;

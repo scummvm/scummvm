@@ -95,8 +95,8 @@ enum SceneOpCode {
 	kSceneOpAddFlagToDragItem = 13,			// args: none.
 	kSceneOpOpenInventoryZoom = 14,	// args: none.
 	kSceneOpMoveItemsBetweenScenes = 15,	// args: none.
-	kSceneOpShowClock = 16,		// args: none.  set some clock-related globals
-	kSceneOpHideClock = 17,		// args: none.  set some clock-related values.
+	kSceneOpShowClock = 16,		// args: none.  set clock script-visible.
+	kSceneOpHideClock = 17,		// args: none.  set clock script-hidden.
 	kSceneOpShowMouse = 18,		// args: none.
 	kSceneOpHideMouse = 19,		// args: none.
 
@@ -105,7 +105,7 @@ enum SceneOpCode {
 	kSceneOpMeanwhile = 101,	// args: none. Clears screen and displays "meanwhile".
 	kSceneOpOpenGameOverMenu = 102,	// args: none.
 	kSceneOp103 = 103,			// args: none. Something about "boy am I tired"?
-	kSceneOp104 = 104,			// args: none.
+	kSceneOp104 = 104,			// args: none. Called in arcade post-tick.
 	kSceneOp105 = 105,			// args: none. Draw some number at 141, 56
 	kSceneOp106 = 106,			// args: none. Draw some number at 42, 250
 	kSceneOpOpenPlaySkipIntroMenu = 107, // args: none.  DRAGON: Show menu 50, the "Play Introduction" / "Skip Introduction" menu.

@@ -118,7 +118,7 @@ private:
 	int16 _gameMinsToAddOnRClick;
 	int16 _gameMinsToAddOnDragFinished;
 	int16 _gameMinsToAddOnObjInteraction;
-	int16 _gameGlobal0x57;
+	int16 _gameIsInteractiveGlobal;
 	int16 _sceneOpcode15FromScene;
 	int16 _sceneOpcode15ToScene;
 	int16 _sceneOpcode100Var;

@@ -119,6 +119,8 @@ private:
 
 	MenuId _menuToTrigger;
 
+	bool _isLoading;
+
 public:
 	DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	virtual ~DgdsEngine();

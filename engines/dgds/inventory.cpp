@@ -60,6 +60,7 @@ void Inventory::close() {
 	engine->changeScene(_openedFromSceneNum);
 	_showZoomBox = false;
 	_openedFromSceneNum = 0;
+	_highlightItemNo = -1;
 }
 
 void Inventory::setRequestData(const REQFileData &data) {
@@ -81,7 +82,7 @@ void Inventory::setRequestData(const REQFileData &data) {
 	_dropBtn = dynamic_cast<ButtonGadget *>(req.findGadgetByNumWithFlags3Not0x40(16));
 	_itemArea = dynamic_cast<ImageGadget *>(req.findGadgetByNumWithFlags3Not0x40(8));
 
-	_fullWidth = req._width;
+	_fullWidth = req._rect.width;
 
 	if (!_prevPageBtn || !_nextPageBtn || !_invClock || !_itemZoomBox || !_exitButton || !_itemArea)
 		error("Didn't get all expected inventory gadgets");
@@ -94,8 +95,8 @@ void Inventory::drawHeader(Graphics::ManagedSurface &surf) {
 
 	static const char *title = "INVENTORY";
 	int titleWidth = font->getStringWidth(title);
-	int y1 = r._y + 7;
-	int x1 = r._x + 112;
+	int y1 = r._rect.y + 7;
+	int x1 = r._rect.x + 112;
 	font->drawString(&surf, title, x1 + 4, y1 + 2, titleWidth, 0);
 
 	int x2 = x1 + titleWidth + 6;
@@ -111,10 +112,10 @@ void Inventory::draw(Graphics::ManagedSurface &surf, int itemCount) {
 
 	if (_showZoomBox) {
 		_itemZoomBox->_flags3 &= ~0x40;
-		boxreq._width = _fullWidth;
+		boxreq._rect.width = _fullWidth;
 	} else {
 		_itemZoomBox->_flags3 |= 0x40;
-		boxreq._width = _itemBox->_width + _itemBox->_x * 2;
+		boxreq._rect.width = _itemBox->_width + _itemBox->_x * 2;
 	}
 
 	//
@@ -161,7 +162,6 @@ void Inventory::drawItems(Graphics::ManagedSurface &surf) {
 	const int imgAreaY = _itemArea->_parentY + _itemArea->_y;
 
 	Common::Rect itemRect(Common::Point(imgAreaX, imgAreaY), _itemArea->_width, _itemArea->_height);
-	//surf.fillRect(itemRect, (byte)imgArea->_col1);
 
 	if (!icons)
 		return;
@@ -219,8 +219,7 @@ void Inventory::mouseMoved(const Common::Point &pt) {
 	if (dragItem) {
 		engine->setMouseCursor(dragItem->_iconNum);
 		const RequestData &req = _reqData._requests[0];
-		const Common::Rect bgsize(Common::Point(req._x, req._y), req._width, req._height);
-		if (!bgsize.contains(pt)) {
+		if (!req._rect.contains(pt)) {
 			// dragged an item outside the inventory
 			dragItem->_inSceneNum = _openedFromSceneNum;
 			close();
@@ -260,6 +259,12 @@ GameItem *Inventory::itemUnderMouse(const Common::Point &pt) {
 
 void Inventory::mouseLDown(const Common::Point &pt) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	RequestData &boxreq = _reqData._requests[0];
+
+	// Ignore this, and close on mouseup.
+	if (!boxreq._rect.contains(pt))
+		return;
+
 	if (engine->getScene()->hasVisibleDialog() || !_itemBox->containsPoint(pt)) {
 		return engine->getScene()->mouseLDown(pt);
 	} else {
@@ -277,12 +282,13 @@ void Inventory::mouseLDown(const Common::Point &pt) {
 void Inventory::mouseLUp(const Common::Point &pt) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	GameItem *dragItem = engine->getScene()->getDragItem();
-	engine->setMouseCursor(0);
 
 	if (dragItem) {
 		engine->getScene()->onDragFinish(pt);
 		return;
 	}
+
+	engine->setMouseCursor(0);
 
 	int itemsPerPage = (_itemArea->_width / _itemArea->_xStep) * (_itemArea->_height / _itemArea->_yStep);
 	if (_exitButton->containsPoint(pt)) {
@@ -303,16 +309,13 @@ void Inventory::mouseLUp(const Common::Point &pt) {
 		engine->getClock().addGameTime(1);
 	} else if (_clockSkipHrBtn && _clockSkipHrBtn->containsPoint(pt)) {
 		engine->getClock().addGameTime(60);
-	} else if (_dropBtn && _dropBtn->containsPoint(pt)) {
-		if (_highlightItemNo >= 0) {
-			Common::Array<struct GameItem> &items = engine->getGDSScene()->getGameItems();
-			for (auto &item: items) {
-				if (item._num == _highlightItemNo) {
-					item._inSceneNum = _openedFromSceneNum;
-					break;
-				}
+	} else if (_dropBtn && _dropBtn->containsPoint(pt) && _highlightItemNo >= 0) {
+		Common::Array<struct GameItem> &items = engine->getGDSScene()->getGameItems();
+		for (auto &item: items) {
+			if (item._num == _highlightItemNo) {
+				item._inSceneNum = _openedFromSceneNum;
+				break;
 			}
-			_highlightItemNo = -1;
 		}
 	}
 }
