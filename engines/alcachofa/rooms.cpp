@@ -217,16 +217,20 @@ void Room::updateObjects() {
 }
 
 void Room::drawObjects() {
-	for (auto *object : _objects)
-		object->draw();
+	for (auto *object : _objects) {
+		if (object->room() == g_engine->player().currentRoom())
+			object->draw();
+	}
 }
 
 void Room::drawDebug() {
 	auto renderer = dynamic_cast<IDebugRenderer *>(&g_engine->renderer());
 	if (renderer == nullptr || !g_engine->console().isAnyDebugDrawingOn())
 		return;
-	for (auto *object : _objects)
-		object->drawDebug();
+	for (auto *object : _objects) {
+		if (object->room() == g_engine->player().currentRoom())
+			object->drawDebug();
+	}
 	if (_activeFloorI < 0)
 		return;
 	if (_activeFloorI >= 0 && g_engine->console().showFloor())
@@ -258,8 +262,9 @@ ShapeObject *Room::getSelectedObject(ShapeObject *best) const {
 	for (auto object : _objects) {
 		auto shape = object->shape();
 		auto shapeObject = dynamic_cast<ShapeObject *>(object);
-		if (!object->isEnabled() || shape == nullptr || shapeObject == nullptr ||
-			object->room() != this || // e.g. a main character that is in another room
+		if (!object->isEnabled() ||
+			shape == nullptr || shapeObject == nullptr ||
+			object->room() != g_engine->player().currentRoom() || // e.g. a main character that is in another room
 			!shape->contains(g_engine->input().mousePos3D()))
 			continue;
 		if (best == nullptr || shapeObject->order() < best->order())
@@ -350,6 +355,11 @@ World::World() {
 	_mortadelo = dynamic_cast<MainCharacter *>(_globalRoom->getObjectByName("MORTADELO"));
 	if (_mortadelo == nullptr)
 		error("Could not find MORTADELO");
+
+	_generalFont.reset(new Font(getGlobalAnimationName(GlobalAnimationKind::GeneralFont)));
+	_generalFont->load();
+	_dialogFont.reset(new Font(getGlobalAnimationName(GlobalAnimationKind::DialogFont)));
+	_dialogFont->load();
 
 	_inventory->initItems();
 }
