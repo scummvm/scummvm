@@ -1,6 +1,7 @@
 MODULE := engines/dgds
 
 MODULE_OBJS := \
+	ads.o \
 	clock.o \
 	console.o \
 	decompress.o \
@@ -8,6 +9,7 @@ MODULE_OBJS := \
 	dgds_rect.o \
 	dialog.o \
 	font.o \
+	game_palettes.o \
 	globals.o \
 	image.o \
 	inventory.o \
@@ -18,6 +20,7 @@ MODULE_OBJS := \
 	request.o \
 	resource.o \
 	scripts.o \
+	ttm.o \
 	scene.o \
 	sound.o
 

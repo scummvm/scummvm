@@ -41,6 +41,7 @@
 #include "dgds/clock.h"
 #include "dgds/menu.h"
 
+
 namespace Dgds {
 
 class Console;
@@ -58,6 +59,8 @@ class Menu;
 struct DgdsADS;
 class ADSInterpreter;
 class Globals;
+
+const float MS_PER_FRAME = 16.6667f;
 
 enum DgdsGameId {
 	GID_DRAGON,

@@ -279,6 +279,7 @@ void Menu::handleMenu(Common::Point &mouse) {
 		break;
 	case kMenuIntroSkip:
 		hideMenu();
+		static_cast<DgdsEngine *>(g_engine)->setShowClock(true);
 		static_cast<DgdsEngine *>(g_engine)->changeScene(5);
 		break;
 	case kMenuQuitYes:

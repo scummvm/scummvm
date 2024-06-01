@@ -63,7 +63,7 @@ enum MenuId {
 	kMenuQuit = 16,
 	// 17: I'm frustrated - keep trying / win arcade
 	kMenuSkipPlayIntro = 18,
-	// 19: save game before arcade
+	kMenuBetterSaveGame = 19, // save game before arcade
 	// 20: replay arcade
 };
 

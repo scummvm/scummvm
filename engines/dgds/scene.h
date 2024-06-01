@@ -48,22 +48,30 @@ enum SceneCondition {
 	kSceneCondSceneState = 0x80
 };
 
-struct SceneConditions {
+class SceneConditions {
+public:
+	SceneConditions(uint16 num, SceneCondition cond, uint16 val) : _num(num), _flags(cond), _val(val) {}
+	Common::String dump(const Common::String &indent) const;
+
+	uint16 getNum() const { return _num; }
+	SceneCondition getCond() const { return _flags; }
+	uint16 getVal() const { return _val; }
+
+private:
 	uint16 _num;
 	SceneCondition _flags; /* eg, see usage in FUN_1f1a_2106 */
 	uint16 _val;
-
-	Common::String dump(const Common::String &indent) const;
 };
 
-struct HotArea {
-	DgdsRect rect;
+class HotArea {
+public:
+	DgdsRect _rect;
 	uint16 _num; //
 	uint16 _cursorNum;
-	Common::Array<struct SceneConditions> enableConditions;
-	Common::Array<struct SceneOp> onRClickOps;
-	Common::Array<struct SceneOp> onLDownOps;
-	Common::Array<struct SceneOp> onLClickOps;
+	Common::Array<SceneConditions> enableConditions;
+	Common::Array<SceneOp> onRClickOps;
+	Common::Array<SceneOp> onLDownOps;
+	Common::Array<SceneOp> onLClickOps;
 
 	virtual ~HotArea() {}
 
@@ -101,22 +109,26 @@ enum SceneOpCode {
 	kSceneOp105 = 105,			// args: none. Draw some number at 141, 56
 	kSceneOp106 = 106,			// args: none. Draw some number at 42, 250
 	kSceneOpOpenPlaySkipIntroMenu = 107, // args: none.  DRAGON: Show menu 50, the "Play Introduction" / "Skip Introduction" menu.
-	kSceneOp108 = 108,			// args: none. DRAGON: Show menu 46, the "Before arcade maybe you better save your game" menu.
+	kSceneOpOpenBetterSaveGameMenu = 108,			// args: none. DRAGON: Show menu 46, the "Before arcade maybe you better save your game" menu.
 };
 
-struct SceneOp {
-	Common::Array<struct SceneConditions> _conditionList;
+class SceneOp {
+public:
+	Common::Array<SceneConditions> _conditionList;
 	Common::Array<uint16> _args;
 	SceneOpCode _opCode;
 
 	Common::String dump(const Common::String &indent) const;
 };
 
-struct GameItem : public HotArea {
-	Common::Array<struct SceneOp> onDragFinishedOps;
-	Common::Array<struct SceneOp> opList5;
+class GameItem : public HotArea {
+public:
+	Common::Array<SceneOp> onDragFinishedOps;
+	Common::Array<SceneOp> opList5;
 	uint16 _altCursor;
 	uint16 _iconNum;
+	
+	// mutable values
 	uint16 _inSceneNum;
 	uint16 _flags;
 	uint16 _quality;
@@ -124,40 +136,67 @@ struct GameItem : public HotArea {
 	Common::String dump(const Common::String &indent) const override;
 };
 
-struct MouseCursor {
-	uint16 _hotX;
-	uint16 _hotY;
+class MouseCursor {
+public:
+	MouseCursor(uint16 hotX, uint16 hotY) : _hot(hotX, hotY) {}
 
 	Common::String dump(const Common::String &indent) const;
+
+	const Common::Point getHot() const { return _hot; }
+
+private:
+	Common::Point _hot;
 };
 
 // Interactions between two objects when one is dropped on the other
-struct ObjectInteraction {
+class ObjectInteraction {
+public:
+	ObjectInteraction(uint16 dropped, uint16 target) : _droppedItemNum(dropped), _targetItemNum(target) {}
+
+	Common::Array<SceneOp> opList;
+	
+	bool matches(uint16 droppedItemNum, uint16 targetItemNum) const {
+		return _droppedItemNum == droppedItemNum && _targetItemNum == targetItemNum;
+	}
+
+	Common::String dump(const Common::String &indent) const;
+	
+private:
 	uint16 _droppedItemNum;
 	uint16 _targetItemNum;
-	Common::Array<struct SceneOp> opList;
 
-	Common::String dump(const Common::String &indent) const;
 };
 
-struct SceneTrigger {
-	uint16 _num;
-	bool _enabled;
-	Common::Array<struct SceneConditions> conditionList;
-	Common::Array<struct SceneOp> sceneOpList;
-
+class SceneTrigger {
+public:
+	SceneTrigger(uint16 num) : _num(num), _enabled(false) {}
 	Common::String dump(const Common::String &indent) const;
+
+	Common::Array<SceneConditions> conditionList;
+	Common::Array<SceneOp> sceneOpList;
+	bool _enabled;
+	uint16 getNum() const { return _num; }
+
+private:
+	uint16 _num;
 };
 
 /* A global value that only applies on a per-SDS-scene,
    but stays with the GDS data as it sticks around during
    the game */
-struct PerSceneGlobal {
-	uint16 _num;
-	uint16 _sceneNo;
-	int16 _val;
+class PerSceneGlobal {
+public:
+	PerSceneGlobal(uint16 num, uint16 scene) : _num(num), _sceneNo(scene) {}
 
 	Common::String dump(const Common::String &indent) const;
+	bool matches(uint16 num, uint16 scene) const { return num == _num && (_sceneNo == 0 || _sceneNo == scene); }
+
+	int16 _val;
+
+private:
+	// Immutable, read from the data file
+	uint16 _num;
+	uint16 _sceneNo;
 };
 
 
@@ -198,16 +237,12 @@ protected:
 	bool readTriggerList(Common::SeekableReadStream *s, Common::Array<SceneTrigger> &list) const;
 	bool readDialogActionList(Common::SeekableReadStream *s, Common::Array<DialogAction> &list) const;
 
-	bool checkConditions(const Common::Array<struct SceneConditions> &cond);
+	bool checkConditions(const Common::Array<SceneConditions> &cond) const;
 
 	virtual void enableTrigger(uint16 num) {}
 	virtual void showDialog(uint16 num) {}
 	virtual void globalOps(const Common::Array<uint16> &args) {}
 	virtual void segmentStateOps(const Common::Array<uint16> &args);
-	void segmentStateOp9(uint16 arg);
-	void segmentStateOp10(uint16 arg);
-	void segmentStateOp11(uint16 arg);
-	void segmentStateOp12(uint16 arg);
 
 	void setItemAttrOp(const Common::Array<uint16> &args);
 	void setDragItemOp(const Common::Array<uint16> &args);
@@ -215,8 +250,8 @@ protected:
 	uint32 _magic;
 	Common::String _version;
 
-	Common::Array<struct SceneOp> _preTickOps;
-	Common::Array<struct SceneOp> _postTickOps;
+	Common::Array<SceneOp> _preTickOps;
+	Common::Array<SceneOp> _postTickOps;
 };
 
 
@@ -239,27 +274,26 @@ public:
 	int16 getGlobal(uint16 num);
 	int16 setGlobal(uint16 num, int16 val);
 
-	const Common::Array<struct MouseCursor> &getCursorList() const { return _cursorList; }
+	const Common::Array<MouseCursor> &getCursorList() const { return _cursorList; }
 	void drawItems(Graphics::ManagedSurface &surf);
-	Common::Array<struct GameItem> &getGameItems() { return _gameItems; }
+	Common::Array<GameItem> &getGameItems() { return _gameItems; }
 	int countItemsInScene2() const;
 
-	const Common::Array<struct ObjectInteraction> &getObjInteractions1() { return _objInteractions1; }
-	const Common::Array<struct ObjectInteraction> &getObjInteractions2() { return _objInteractions2; }
+	const Common::Array<ObjectInteraction> &getObjInteractions1() { return _objInteractions1; }
+	const Common::Array<ObjectInteraction> &getObjInteractions2() { return _objInteractions2; }
 
 	Common::Error syncState(Common::Serializer &s) override;
 
 private:
-	//byte _unk[32];
 	Common::String _iconFile;
-	Common::Array<struct GameItem> _gameItems;
-	Common::Array<struct SceneOp> _startGameOps;
-	Common::Array<struct SceneOp> _quitGameOps;
-	Common::Array<struct SceneOp> _onChangeSceneOps;
-	Common::Array<struct MouseCursor> _cursorList;
-	Common::Array<struct PerSceneGlobal> _perSceneGlobals;
-	Common::Array<struct ObjectInteraction> _objInteractions1;
-	Common::Array<struct ObjectInteraction> _objInteractions2;
+	Common::Array<GameItem> _gameItems;
+	Common::Array<SceneOp> _startGameOps;
+	Common::Array<SceneOp> _quitGameOps;
+	Common::Array<SceneOp> _onChangeSceneOps;
+	Common::Array<MouseCursor> _cursorList;
+	Common::Array<PerSceneGlobal> _perSceneGlobals;
+	Common::Array<ObjectInteraction> _objInteractions1;
+	Common::Array<ObjectInteraction> _objInteractions2;
 };
 
 class SDSScene : public Scene {
@@ -293,14 +327,14 @@ public:
 	void addInvButtonToHotAreaList();
 	void removeInvButtonFromHotAreaList();
 
-	const Common::Array<struct HotArea> &getHotAreas() const { return _hotAreaList; }
+	const Common::Array<HotArea> &getHotAreas() const { return _hotAreaList; }
 
 	const GameItem *getDragItem() const { return _dragItem; }
 	GameItem *getDragItem() { return _dragItem; }
 	void setDragItem(GameItem *item) { _dragItem = item; }
 
-	const Common::Array<struct ObjectInteraction> &getObjInteractions1() { return _objInteractions1; }
-	const Common::Array<struct ObjectInteraction> &getObjInteractions2() { return _objInteractions2; }
+	const Common::Array<ObjectInteraction> &getObjInteractions1() { return _objInteractions1; }
+	const Common::Array<ObjectInteraction> &getObjInteractions2() { return _objInteractions2; }
 
 	bool hasVisibleDialog();
 
@@ -317,19 +351,21 @@ private:
 	Dialog *getVisibleDialog();
 
 	int _num;
-	Common::Array<struct SceneOp> _enterSceneOps;
-	Common::Array<struct SceneOp> _leaveSceneOps;
+	Common::Array<SceneOp> _enterSceneOps;
+	Common::Array<SceneOp> _leaveSceneOps;
 	//uint _field5_0x12;
 	uint _field6_0x14;
 	Common::String _adsFile;
 	//uint _field8_0x23;
-	Common::Array<struct HotArea> _hotAreaList;
-	Common::Array<struct ObjectInteraction> _objInteractions1;
-	Common::Array<struct ObjectInteraction> _objInteractions2;
+	Common::Array<HotArea> _hotAreaList;
+	Common::Array<ObjectInteraction> _objInteractions1;
+	Common::Array<ObjectInteraction> _objInteractions2;
 	//uint _field12_0x2b;
-	Common::Array<class Dialog> _dialogs;
-	Common::Array<struct SceneTrigger> _triggers;
 	//uint _field15_0x33;
+
+	// From here on is mutable stuff that might need saving
+	Common::Array<Dialog> _dialogs;
+	Common::Array<SceneTrigger> _triggers;
 
 	GameItem *_dragItem;
 	bool _shouldClearDlg;

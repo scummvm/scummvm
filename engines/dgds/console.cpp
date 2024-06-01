@@ -35,6 +35,7 @@
 #include "dgds/image.h"
 #include "dgds/parser.h"
 #include "dgds/resource.h"
+#include "dgds/game_palettes.h"
 #include "gui/debugger.h"
 
 namespace Dgds {
