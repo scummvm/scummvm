@@ -948,6 +948,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "technicus",			"Technicus: Ten Hours Left" },
 	{ "tiefsee",			"S.O.S. Tiefsee" },
 	{ "tkkgkit",			"TKKG: Identikit" },
+	{ "www",				"Wellen, Wracks und Wassermänner" },
 	{ "wdw",				"Welt der Wunder: Eine Insel in Gefahr" },
 	{ "wdw2",				"Welt der Wunder 2: Eine Stadt spielt verrückt" },
 	{ "wettlauf",			"Wettlauf Ins All" },
@@ -5860,6 +5861,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("wwaldogeo", "Demo", "WALDOPC.EXE", "t:019433037fe5b5d166536d0f28819519", 2094361, 404),
 
 	WINDEMO1("wwanimals", "Demo", "ANIMALS.EXE", "25fee176193d52cf7cbc2b604bfcbf8c", 6961631, 404),
+
+	// Original filename is "Wellen, Wracks und Wassermänner"
+	MACGAME1_l("www", "", "xn--Wellen, Wracks und Wassermnner-ltc", "tr:6e0e5a0a2f9aa278fb36a12b4aad1c7a", 483058, Common::DE_DEU, 404),
+	WINGAME2_l("www", "", "WWW.EXE",			"t:ae93455c01b997db10ed6cab146eda0d", 702365,
+							"71HAFEN.DXR",		"52002fe0598521a9672a4ab84503e494", 2444290, Common::DE_DEU, 404),
 
 	MACGAME1_l("xaxa", "", "XAXA MACHINE", "ff0b7a4b925c7345785c372d618d0967", 342977, Common::JA_JPN, 400),
 
