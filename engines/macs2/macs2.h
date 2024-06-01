@@ -44,7 +44,7 @@ namespace Macs2 {
 
 struct Macs2GameDescription;
 
-enum class CursorMode { Talk = 0, Look = 1, Touch = 2, Walk = 3};
+// enum class CursorMode { Talk = 0, Look = 1, Touch = 2, Walk = 3};
 class Adlib;
 
 
@@ -181,7 +181,7 @@ public:
 	uint16 numBytesStrings;
 	byte *stringsData;
 
-	CursorMode _cursorMode = CursorMode::Touch;
+	// CursorMode _cursorMode = CursorMode::Touch;
 
 	void NextCursorMode();
 

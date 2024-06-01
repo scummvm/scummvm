@@ -186,9 +186,12 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	} else if (value == 0x3) {
-		// TODO: We should actually look up the cursor mode and the interacted object
-		// Hardcoding for now
-		out1 = out2 = 0x0000;
+		if (_mouseMode == MouseMode::Talk) {
+			out1 = _interactedObjectID;
+			out2 = 0;
+		} else {
+			out1 = out2 = 0x0000;
+		}	
 		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	// l0037_A050:
@@ -1055,6 +1058,10 @@ uint16 Script::ScriptExecutor::ReadWord() {
 
 void Script::ScriptExecutor::ExecuteScript() {
 	debug("----- Scripting function entered");
+	isRunningScript = true;
+	// TODO: Check if we can somehow interrupt something that we are waiting on,
+	// thereby ending the scripte early
+	isAwaitingCallback = false;
 
 	// TODO: Hardcoded to test the box closing
 	_engine->_backgroundAnimations[1].FrameIndex = 1;
@@ -1294,12 +1301,14 @@ void Script::ScriptExecutor::ExecuteScript() {
 			Character *c = currentView->GetCharacterByIndex(objectID);
 			c->RegisterWaitForMovementFinishedEvent();
 			requestCallback = false;
+			isAwaitingCallback = true;
 			return;
 		}
 
 		else if (opcode1 == 0x0a) {
 			ScriptPrintString();
 			// TODO: Proper end handling
+			isAwaitingCallback = true;
 			break;
 		} else if (opcode1 == 0x0b) {
 			// Load and move an object
@@ -1368,6 +1377,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// in the game code
 			requestCallback = false;
 			g_engine->ScheduleRun();
+			isAwaitingCallback = true;
 			return;
 		} else if (opcode1 == 0x0d) {
 			// Show a dialogue option
@@ -1382,7 +1392,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 
 			Common::Array<Common::String> strings = g_engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, offset, numLines);
 			currentView->ShowSpeechAct(objectID, strings, Common::Point(x, y), side);
-
+			isAwaitingCallback = true;
 			return;
 		}
 		else
@@ -1398,6 +1408,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Need to figure out the units/duration of the timer
 			constexpr uint32 durationMultiplier = 5;
 			StartTimer(duration * durationMultiplier);
+			isAwaitingCallback = true;
 			break;
 		}
 		else if (opcode1 == 0x12) {
@@ -1452,6 +1463,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 			Character *object = currentView->GetCharacterByIndex(objectIndex);
 			actor->StartPickup(object);
 			requestCallback = false;
+			isAwaitingCallback = true;
 			return;
 		} else if (opcode1 == 0x1b) {
 			// TODO: No idea yet what this does, it seems to be around move commands in some cases,
@@ -1523,6 +1535,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// on the fact that they were added in a specific order
 			Character *c = currentView->GetCharacterByIndex(objectID);
 			c->StartLerpTo(Common::Point(x, y), 2 * 1000);
+			isAwaitingCallback = true;
 		} else if (opcode1 == 0x25) {
 			// TODO: No visual difference, so only implementing mocked reads here
 			// TODO: There is the weird "rewind" in the log here, to be investigated separately
@@ -2823,6 +2836,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 */
 		
 	}
+		isRunningScript = false;
 		debug("----- Scripting function left");
 	}
 	

@@ -1028,10 +1028,12 @@ void Macs2Engine::OnTimer() {
 
 
 void Macs2Engine::NextCursorMode() {
-	if (_cursorMode == CursorMode::Walk) {
-		_cursorMode = CursorMode::Talk;
+	// TODO: Adjust for final min and max
+	// TODO: Properly handle
+	if (_scriptExecutor->_mouseMode == Script::MouseMode::UseInventory || _scriptExecutor->_mouseMode == Script::MouseMode::Walk) {
+		_scriptExecutor->_mouseMode = Script::MouseMode::Talk;
 	} else {
-		_cursorMode = static_cast<CursorMode>(static_cast<int>(_cursorMode) + 1);
+		_scriptExecutor->_mouseMode = static_cast<Script::MouseMode>(static_cast<int>(_scriptExecutor->_mouseMode) + 1);
 	}
 }
 
