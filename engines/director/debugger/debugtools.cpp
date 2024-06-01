@@ -174,7 +174,7 @@ struct ImGuiLogger {
 		vsnprintf(buf, IM_ARRAYSIZE(buf), fmt, args);
 		buf[IM_ARRAYSIZE(buf) - 1] = 0;
 		va_end(args);
-		_items.push_back(Strdup(buf));
+		_items.push_back(scumm_strdup(buf));
 	}
 
 	void draw(const char *title, bool *p_open) {
@@ -353,14 +353,6 @@ struct ImGuiLogger {
 		ImGui::PopStyleVar();
 		ImGui::EndChild();
 		ImGui::End();
-	}
-
-private:
-	static char *Strdup(const char *str) {
-		size_t len = strlen(str) + 1;
-		void *buf = malloc(len);
-		IM_ASSERT(buf);
-		return (char *)memcpy(buf, (const void *)str, len);
 	}
 };
 
