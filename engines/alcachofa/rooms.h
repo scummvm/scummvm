@@ -115,7 +115,7 @@ private:
 
 enum class GlobalAnimationKind {
 	GeneralFont = 0,
-	TextFont,
+	DialogFont,
 	Cursor,
 	MortadeloIcon,
 	FilemonIcon,
@@ -137,10 +137,12 @@ public:
 	using RoomIterator = Common::Array<const Room *>::const_iterator;
 	inline RoomIterator beginRooms() const { return _rooms.begin(); }
 	inline RoomIterator endRooms() const { return _rooms.end(); }
-	inline Room &globalRoom() const { return *_globalRoom; }
-	inline Inventory &inventory() const { return *_inventory; }
-	inline MainCharacter &filemon() const { return *_filemon; }
-	inline MainCharacter &mortadelo() const { return *_mortadelo; }
+	inline Room &globalRoom() const { assert(_globalRoom != nullptr); return *_globalRoom; }
+	inline Inventory &inventory() const { assert(_inventory != nullptr); return *_inventory; }
+	inline MainCharacter &filemon() const { assert(_filemon != nullptr); return *_filemon; }
+	inline MainCharacter &mortadelo() const { assert(_mortadelo != nullptr);  return *_mortadelo; }
+	inline Font &generalFont() const { assert(_generalFont != nullptr); return *_generalFont; }
+	inline Font &dialogFont() const { assert(_dialogFont != nullptr); return *_dialogFont; }
 	inline const Common::String &initScriptName() const { return _initScriptName; }
 	inline uint8 loadedMapCount() const { return _loadedMapCount; }
 
@@ -168,6 +170,7 @@ private:
 	Room *_globalRoom;
 	Inventory *_inventory;
 	MainCharacter *_filemon, *_mortadelo;
+	Common::ScopedPtr<Font> _generalFont, _dialogFont;
 	uint8 _loadedMapCount = 0;
 };
 

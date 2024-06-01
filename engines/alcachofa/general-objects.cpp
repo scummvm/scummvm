@@ -227,7 +227,11 @@ void ShapeObject::onHoverEnd() {
 }
 
 void ShapeObject::onHoverUpdate() {
-	// TODO: Add text request for name
+	g_engine->drawQueue().add<TextDrawRequest>(
+		g_engine->world().generalFont(),
+		name().c_str(),
+		g_engine->input().mousePos2D() - Point(0, 35),
+		-1, true, kWhite, 0);
 }
 
 void ShapeObject::onClick() {

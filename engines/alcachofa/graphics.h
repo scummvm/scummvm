@@ -142,6 +142,14 @@ protected:
 	void loadMissingAnimation();
 	void freeImages();
 	Graphics::ManagedSurface *readImage(Common::SeekableReadStream &stream) const;
+	Common::Point imageSize(int32 imageI) const;
+	inline bool isLoaded() const { return _isLoaded; }
+
+	static void fullBlend(
+		const Graphics::ManagedSurface &source,
+		Graphics::ManagedSurface &destination,
+		int offsetX,
+		int offsetY);
 
 	static constexpr const uint kMaxSpriteIDs = 256;
 	Common::String _fileName;
@@ -169,7 +177,7 @@ public:
 	void load();
 	void freeImages();
 
-	inline bool isLoaded() const { return _isLoaded; }
+	using AnimationBase::isLoaded;
 	inline uint spriteCount() const { return _spriteBases.size(); }
 	inline uint frameCount() const { return _frames.size(); }
 	inline uint32 frameDuration(int32 frameI) const { return _frames[frameI]._duration; }
@@ -179,7 +187,7 @@ public:
 	Common::Point totalFrameOffset(int32 frameI) const;
 	int32 frameAtTime(uint32 time) const;
 	int32 imageIndex(int32 frameI, int32 spriteI) const;
-	Common::Point imageSize(int32 imageI) const;
+	using AnimationBase::imageSize;
 
 	void draw2D(
 		int32 frameI,
@@ -214,7 +222,20 @@ private:
 };
 
 class Font : private AnimationBase {
+public:
+	Font(Common::String fileName);
 
+	void load();
+	void freeImages();
+	void drawCharacter(int32 imageI, Common::Point center, Color color);
+
+	using AnimationBase::isLoaded;
+	using AnimationBase::imageSize;
+	inline uint imageCount() const { return _images.size(); }
+
+private:
+	Common::Array<Math::Vector2d> _texMins, _texMaxs;
+	Common::ScopedPtr<ITexture> _texture;
 };
 
 class Graphic {
@@ -326,6 +347,33 @@ private:
 	BlendMode _blendMode;
 };
 
+class TextDrawRequest : public IDrawRequest {
+public:
+	TextDrawRequest(
+		Font &font,
+		const char *text,
+		Common::Point pos,
+		int maxWidth,
+		bool centered,
+		Color color,
+		int8 order);
+
+	inline Common::Point size() const { return { (int16)_width, (int16)_height }; }
+	virtual void draw() override;
+
+private:
+	static constexpr uint kMaxLines = 8;
+	using TextLine = Common::Span<const byte>; ///< byte to convert 128+ characters to image indices
+
+	Font &_font;
+	int _posY, _height, _width;
+	Color _color;
+	Common::Span<TextLine> _lines;
+	Common::Span<int> _posX;
+	TextLine _allLines[kMaxLines];
+	int _allPosX[kMaxLines];
+};
+
 class BumpAllocator {
 public:
 	BumpAllocator(size_t pageSize);
@@ -354,6 +402,7 @@ public:
 	inline void add(Args&&... args) {
 		addRequest(_allocator.allocate<T>(Common::forward<Args>(args)...));
 	}
+	inline BumpAllocator &allocator() { return _allocator; }
 
 	void clear();
 	void setLodBias(int8 orderFrom, int8 orderTo, float newLodBias);
