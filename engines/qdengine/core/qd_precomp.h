@@ -34,6 +34,7 @@
 #define UINT          unsigned int
 #define WPARAM        int
 #define DWORD         int
+#define WORD          short
 #define COLORREF      unsigned
 #define BYTE          unsigned char
 #define REFCLSID	  const void *
