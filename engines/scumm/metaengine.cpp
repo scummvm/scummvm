@@ -243,8 +243,8 @@ bool ScummEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsHelp) ||
 		(
 			f == kSupportsChangingOptionsDuringRuntime &&
-			(Common::String(_game.guioptions).contains(GUIO_AUDIO_OVERRIDE) ||
-			 Common::String(_game.guioptions).contains(GUIO_NETWORK))
+			(Common::String(_game.guioptions).contains(GAMEOPTION_AUDIO_OVERRIDE) ||
+			 Common::String(_game.guioptions).contains(GAMEOPTION_NETWORK))
 		) ||
 		(f == kSupportsQuitDialogOverride && (_useOriginalGUI || !ChainedGamesMan.empty()));
 }
@@ -760,19 +760,19 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
 	const Common::String language = ConfMan.get("language", target);
 
-	if (target.empty() || guiOptions.contains(GUIO_ORIGINALGUI)) {
+	if (target.empty() || guiOptions.contains(GAMEOPTION_ORIGINALGUI)) {
 		options.push_back(enableOriginalGUI);
 	}
-	if (target.empty() || guiOptions.contains(GUIO_COPY_PROTECTION)) {
+	if (target.empty() || guiOptions.contains(GAMEOPTION_COPY_PROTECTION)) {
 		options.push_back(enableCopyProtection);
 	}
-	if (target.empty() || guiOptions.contains(GUIO_ENHANCEMENTS)) {
+	if (target.empty() || guiOptions.contains(GAMEOPTION_ENHANCEMENTS)) {
 		options.push_back(enableEnhancements);
 	}
-	if (target.empty() || guiOptions.contains(GUIO_LOWLATENCYAUDIO)) {
+	if (target.empty() || guiOptions.contains(GAMEOPTION_LOWLATENCYAUDIO)) {
 		options.push_back(enableLowLatencyAudio);
 	}
-	if (target.empty() || guiOptions.contains(GUIO_AUDIO_OVERRIDE)) {
+	if (target.empty() || guiOptions.contains(GAMEOPTION_AUDIO_OVERRIDE)) {
 		options.push_back(audioOverride);
 	}
 	if (target.empty() || gameid == "comi") {
@@ -789,7 +789,7 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 		options.push_back(smoothScrolling);
 		if (target.empty() || gameid == "loom")
 			options.push_back(semiSmoothScrolling);
-		if (guiOptions.contains(GUIO_TRIM_FMTOWNS_TO_200_PIXELS))
+		if (guiOptions.contains(GAMEOPTION_TRIM_FMTOWNS_TO_200_PIXELS))
 			options.push_back(fmtownsTrimTo200);
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		if (platform == Common::kPlatformFMTowns && Common::parseLanguage(language) != Common::JA_JPN)
