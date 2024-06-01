@@ -85,7 +85,7 @@ public:
 	CBagMenuDlg();
 	virtual ~CBagMenuDlg();
 
-	ErrorCode create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRect *cRect = nullptr, uint32 nStyle = 0);
+	ErrorCode create(CBofWindow *pWnd, CBofPalette *pPal, CBofRect *cRect, uint32 nStyle = 0);
 
 	virtual void onMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);

@@ -62,7 +62,7 @@ struct BOFRGBQUAD {
 	byte rgbReserved;
 };
 
-#define GetRed(rgb) ((byte)((rgb)&0x000000FF))
+#define GetRed(rgb) ((byte)((rgb) & 0x000000FF))
 #define GetGreen(rgb) ((byte)(((rgb) >> 8) & 0x000000FF))
 #define GetBlue(rgb) ((byte)(((rgb) >> 16) & 0x000000FF))
 

@@ -45,7 +45,7 @@ public:
 	CDevDlg(int buttonX = -1, int buttonY = -1);
 	~CDevDlg();
 
-	ErrorCode create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CBofRect *rect, bool useExtraFl = false);
+	ErrorCode create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CBofRect *rect, bool useExtraFl);
 	void paintText();
 	void setText(CBofString &, CBofRect *);
 	void onKeyHit(uint32 keyCode, uint32 repCount) override;

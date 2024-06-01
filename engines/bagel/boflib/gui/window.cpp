@@ -178,7 +178,7 @@ void CBofWindow::setParent(CBofWindow *parent) {
 }
 
 
-ErrorCode CBofWindow::create(const char *pszName, const CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
+ErrorCode CBofWindow::create(const char *pszName, CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
 	assert(isValidObject(this));
 	assert(pszName != nullptr);
 
