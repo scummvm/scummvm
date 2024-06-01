@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-01 10:44+0000\n"
-"PO-Revision-Date: 2024-05-25 02:42+0000\n"
+"PO-Revision-Date: 2024-06-01 18:43+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -3146,10 +3146,8 @@ msgid "ScummVM"
 msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
-#, fuzzy
-#| msgid "ScummVM"
 msgid "ScummVM (debug)"
-msgstr "ScummVM"
+msgstr "ScummVM (debug)"
 
 #: dists/android.strings.xml.cpp:32
 msgid "Graphic adventure game engine"
@@ -3168,16 +3166,12 @@ msgid "Quit"
 msgstr "Lopeta"
 
 #: dists/android.strings.xml.cpp:35
-#, fuzzy
-#| msgid "Config File Error"
 msgid "Log File Error"
-msgstr "Asetustiedostovirhe"
+msgstr "Lokitiedostovirhe"
 
 #: dists/android.strings.xml.cpp:36
-#, fuzzy
-#| msgid "Unable to read ScummVM config file or create a new one!"
 msgid "Unable to read ScummVM log file or create a new one!"
-msgstr "ScummVM:n asetustiedoston lukeminen tai uuden luominen ei onnistu!"
+msgstr "ScummVM:n lokitiedoston lukeminen tai uuden luominen ei onnistu!"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Config File Error"
@@ -3257,44 +3251,36 @@ msgid "Storage Access Framework Permissions for ScummVM were revoked!"
 msgstr "ScummVM:n Storage Access Framework-luvat poistettu!"
 
 #: dists/android.strings.xml.cpp:55
-#, fuzzy
-#| msgid "the video mode could not be changed"
 msgid "Configuration file could not be parsed"
-msgstr "videotilaa ei voitu vaihtaa"
+msgstr "Asetustiedostoa ei kyetty lukemaan"
 
 #: dists/android.strings.xml.cpp:56
-#, fuzzy
-#| msgid "In 2D games"
 msgid "Run a game"
-msgstr "2D-peleissä"
+msgstr "Käynnistä peli"
 
 #: dists/android.strings.xml.cpp:57
-#, fuzzy
-#| msgid "Search in game list"
 msgid "Search a game"
-msgstr "Etsi peliä listasta"
+msgstr "Etsi peliä"
 
 #: dists/android.strings.xml.cpp:58
 msgid ""
 "No games (yet)\n"
 "Open ScummVM and add your games here."
 msgstr ""
+"Ei pelejä (vielä)\n"
+"Avaa ScummVM ja lisää pelisi tänne."
 
 #: dists/android.strings.xml.cpp:59
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game icon"
-msgstr "Pelin asetukset"
+msgstr "Pelin ikoni"
 
 #: dists/android.strings.xml.cpp:60
-#, fuzzy
-#| msgid "Show object labels"
 msgid "Shortcut label"
-msgstr "Näytä esineiden tiedot"
+msgstr "Pikakuvakkeen teksti"
 
 #: dists/android.strings.xml.cpp:61
 msgid "Shortcut icon"
-msgstr ""
+msgstr "Pikakuvakkeen ikoni"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:32
@@ -5494,10 +5480,8 @@ msgid "Select Playlist directory"
 msgstr "Valitse hakemisto soittolistoille"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:172
-#, fuzzy
-#| msgid "Generate playlist"
 msgid "Libretro playlist"
-msgstr "Luo soittolista"
+msgstr "Libretro soittolista"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:175
 msgid ""
@@ -5514,6 +5498,17 @@ msgid ""
 "\n"
 "The core also supports dedicated per game **hook** plain text files with **."
 msgstr ""
+"## Libretro-soittolistat ScummVM-ytimelle\n"
+"Libretro:n käyttöliittymissä (esim. Retroarch) käytetyt soittolistat ovat "
+"tekstilistoja joiden avulla voidaan suoraan käynnistää peli tietyllä "
+"ytimellä käyttöliittymästä. Listat sisältävät polkuja tiettyihin "
+"pelitiedostoihin (esim. ROM) jotka passataan ytimelle.\n"
+"\n"
+"ScummVM-ydin hyväksyy sisällöksi polun mihin tahansa tiedostoon validissa "
+"pelihakemistossa, tunnistusjärjestelmä yrittää tunnistaa pelin tiedoston "
+"hakemiston perusteella ja käynnistää sen ScummVM:n vakioasetuksilla.\n"
+"\n"
+"Ydin tukee myös pelikohtaisia **hook**-tekstitiedostoja **:lla."
 
 #: backends/platform/maemo/maemo.cpp:157
 msgid "Click Mode"
