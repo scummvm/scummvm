@@ -205,10 +205,13 @@ void showImage(const ImGuiImage &image, const char *name, float thumbnailSize);
 ImVec4 convertColor(uint32 color);
 
 void showControlPanel(); // dt-controlpanel.cpp
-void renderOldScriptAST(ImGuiScript &script, bool showByteCode);    // dt-script-d2.cpp
-void renderScriptAST(ImGuiScript &script, bool showByteCode);       // dt-script-d4.cpp
 void showScore();       // dt-score.cpp
 void showChannels();    // dt-score.cpp
+void renderOldScriptAST(ImGuiScript &script, bool showByteCode);    // dt-script-d2.cpp
+void renderScriptAST(ImGuiScript &script, bool showByteCode);       // dt-script-d4.cpp
+void showFuncList();    // dt-scripts.cpp
+void showScriptCasts(); // dt-scripts.cpp
+void showScripts();     // dt-scripts.cpp
 
 extern ImGuiState *_state;
 
