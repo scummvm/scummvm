@@ -39,6 +39,7 @@
 #define BYTE          unsigned char
 #define REFCLSID	  const void *
 #define REFIID 		  const void *
+#define XML_Char 	  char
 #define DRIVE_CDROM   5
 
 #define MAX_PATH      260
@@ -201,6 +202,13 @@
 #define WM_CHAR 0x0102
 #define WM_SYSCHAR 0x0106
 #define WAIT_OBJECT_0 0
+
+typedef struct {
+  int map[256];
+  void *data;
+  int (*convert)(void *data, const char *s);
+  void (*release)(void *data);
+} XML_Encoding;
 
 typedef struct PCONTEXT {
 	unsigned int ContextFlags;

@@ -27,38 +27,38 @@ XConsole& XConsole::operator< (unsigned char v) {
 }
 
 XConsole& XConsole::operator<= (short var) {
-	char* s = itoa(var, _ConvertBuffer, radix);
-	UpdateBuffer(s);
+	Common::String s = Common::String::format("%hd", var);
+	UpdateBuffer(s.c_str());
 	return *this;
 }
 
 XConsole& XConsole::operator<= (unsigned short var) {
-	char* s = ltoa(var, _ConvertBuffer, radix);
-	UpdateBuffer(s);
+	Common::String s = Common::String::format("%u", var);
+	UpdateBuffer(s.c_str());
 	return *this;
 }
 
 XConsole& XConsole::operator<= (int var) {
-	char* s = itoa(var, _ConvertBuffer, radix);
-	UpdateBuffer(s);
+	Common::String s = Common::String::format("%d", var);
+	UpdateBuffer(s.c_str());
 	return *this;
 }
 
 XConsole& XConsole::operator<= (unsigned var) {
-	char* s = ltoa(var, _ConvertBuffer, radix);
-	UpdateBuffer(s);
+	Common::String s = Common::String::format("%u", var);
+	UpdateBuffer(s.c_str());
 	return *this;
 }
 
 XConsole& XConsole::operator<= (long var) {
-	char* s = ltoa(var, _ConvertBuffer, radix);
-	UpdateBuffer(s);
+	Common::String s = Common::String::format("%ld", var);
+	UpdateBuffer(s.c_str());
 	return *this;
 }
 
 XConsole& XConsole::operator<= (unsigned long var) {
-	char* s = ltoa(var, _ConvertBuffer, radix);
-	UpdateBuffer(s);
+	Common::String s = Common::String::format("%lu", var);
+	UpdateBuffer(s.c_str());
 	return *this;
 }
 
