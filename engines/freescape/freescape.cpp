@@ -924,12 +924,13 @@ void FreescapeEngine::drawStringInSurface(const Common::String &str, int x, int 
 		int position = 8 * (multiplier1*(offset + ustr[c] - 32) + 1);
 		for (int j = 0; j < 8; j++) {
 			for (int i = 0; i < 8; i++) {
-				if (_font.get(position + j * multiplier2 + i)) {
-					surface->setPixel(x + 8 - i + 8 * c, y + j, primaryColor);
-				} else if (_font.get(position + j * (multiplier2 / 2) + i)) {
+				if (_font.get(position + j * multiplier2 + i + 8)) {
 					surface->setPixel(x + 8 - i + 8 * c, y + j, secondaryColor);
-				} else
+				} else if (_font.get(position + j * multiplier2 + i)) {
+					surface->setPixel(x + 8 - i + 8 * c, y + j, primaryColor);
+				} else {
 					surface->setPixel(x + 8 - i + 8 * c, y + j, backColor);
+				}
 			}
 		}
 	}

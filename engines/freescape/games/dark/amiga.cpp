@@ -126,6 +126,7 @@ void DarkEngine::loadAssetsAmigaFullGame() {
 void DarkEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 	uint32 white = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
 	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xEE, 0xCC, 0x00);
+	uint32 orange = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xEE, 0x88, 0x00);
 	uint32 red = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xEE, 0x00, 0x00);
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 	uint32 grey = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x60, 0x60, 0x60);
@@ -138,8 +139,8 @@ void DarkEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 
 	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 73, 178, red, black, surface);
 	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 73, 186, red, black, surface);
-	drawStringInSurface(Common::String::format("%07d", score), 93, 16, yellow, black, surface);
-	drawStringInSurface(Common::String::format("%3d%%", ecds), 181, 16, yellow, black, surface);
+	drawStringInSurface(Common::String::format("%07d", score), 93, 16, yellow, orange, black, surface);
+	drawStringInSurface(Common::String::format("%3d%%", ecds), 181, 16, yellow, orange, black, surface);
 
 	Common::String message;
 	int deadline;
