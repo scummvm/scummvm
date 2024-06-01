@@ -847,7 +847,7 @@ void Sound::playSpeech() {
 
 	Audio::SeekableAudioStream *stream = Audio::makeRawStream(
 		(byte *)_speechSample, _speechSize, 11025, SPEECH_FLAGS, DisposeAfterUse::NO);
-	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_hSampleSpeech, stream);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_hSampleSpeech, stream);
 
 	if (SwordEngine::_systemVars.useWindowsAudioMode) {
 		int32 vol = 0;
@@ -1045,7 +1045,7 @@ bool Sound::prepareMusicStreaming(const Common::Path &filename, int newHandleId,
 	}
 
 	_musicOutputStream[newHandleId] = Audio::makeQueuingAudioStream(sampleRate, isStereo);
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_hSampleMusic[newHandleId], _musicOutputStream[newHandleId]);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_hSampleMusic[newHandleId], _musicOutputStream[newHandleId]);
 
 	_mixer->setChannelRate(_hSampleMusic[newHandleId], sampleRate);
 	_mixer->setChannelVolume(_hSampleMusic[newHandleId], clampVolume((int32)volume));
@@ -1352,7 +1352,7 @@ void Sound::playFX(int32 fxID, int32 type, uint8 *wavData, uint32 vol[2]) {
 			}
 
 			if (stream) {
-				_mixer->playStream(Audio::Mixer::kSFXSoundType, &_hSampleFX[i], stream, -1, 0);
+				_mixer->playStream(Audio::Mixer::kPlainSoundType, &_hSampleFX[i], stream, -1, 0);
 
 				if (SwordEngine::_systemVars.useWindowsAudioMode) {
 					int32 leftVol  = (vol[0] * _volFX[0]) >> 4;
