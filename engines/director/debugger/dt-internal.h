@@ -19,15 +19,43 @@
  *
  */
 
-#ifndef DIRECTOR_DEBUGTOOLS_H
-#define DIRECTOR_DEBUGTOOLS_H
+#ifndef DIRECTOR_DEBUGER_DT_INTERNAL_H
+#define DIRECTOR_DEBUGER_DT_INTERNAL_H
+
+#define IMGUI_DEFINE_MATH_OPERATORS
+
+#include "backends/imgui/imgui.h"
+#include "backends/imgui/imgui_fonts.h"
 
 namespace Director {
+
 namespace DT {
-void onImGuiInit();
-void onImGuiRender();
-void onImGuiCleanup();
-} // namespace DT
-} // namespace Director
+
+class ImGuiLogger {
+	char _inputBuf[256];
+	ImVector<char *> _items;
+	ImVector<char *> _history;
+	int _historyPos; // -1: new line, 0.._history.Size-1 browsing history.
+	ImGuiTextFilter _filter;
+	bool _autoScroll;
+	bool _scrollToBottom;
+	bool _showError = true;
+	bool _showWarn = true;
+	bool _showInfo = true;
+	bool _showdebug = true;
+
+public:
+	ImGuiLogger();
+	~ImGuiLogger();
+	void clear();
+	void addLog(const char *fmt, ...) IM_FMTARGS(2);
+	void draw(const char *title, bool *p_open);
+};
+
+bool toggleButton(const char *label, bool *p_value, bool inverse = false);
+
+}
+
+};
 
 #endif

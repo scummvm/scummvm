@@ -291,9 +291,9 @@ Common::Error DirectorEngine::run() {
 
 #ifdef USE_IMGUI
 	ImGuiCallbacks callbacks;
-	callbacks.init = onImGuiInit;
-	callbacks.render = onImGuiRender;
-	callbacks.cleanup = onImGuiCleanup;
+	callbacks.init = DT::onImGuiInit;
+	callbacks.render = DT::onImGuiRender;
+	callbacks.cleanup = DT::onImGuiCleanup;
 	_system->setImGuiCallbacks(callbacks);
 #endif
 

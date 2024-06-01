@@ -159,6 +159,7 @@ MODULE_OBJS = \
 ifdef USE_IMGUI
 MODULE_OBJS += \
 	debugger/debugtools.o \
+	debugger/dt-logger.o \
 
 endif
 
