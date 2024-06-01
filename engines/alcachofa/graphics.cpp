@@ -198,6 +198,37 @@ void AnimationBase::loadMissingAnimation() {
 	_frames.push_back({ Point(), Point(), 1 });
 }
 
+// unfortunately ScummVMs BLEND_NORMAL does not blend alpha
+// but this also bad, let's find/discuss a better solution later
+void AnimationBase::fullBlend(const ManagedSurface &source, ManagedSurface &destination, int offsetX, int offsetY) {
+	assert(source.format == BlendBlit::getSupportedPixelFormat());
+	assert(destination.format == BlendBlit::getSupportedPixelFormat());
+	assert(offsetX >= 0 && offsetX + source.w <= destination.w);
+	assert(offsetY >= 0 && offsetY + source.h <= destination.h);
+
+	const byte *sourceLine = (byte *)source.getPixels();
+	byte *destinationLine = (byte *)destination.getPixels() + offsetY * destination.pitch + offsetX * 4;
+	for (int y = 0; y < source.h; y++) {
+		const byte *sourcePixel = sourceLine;
+		byte *destPixel = destinationLine;
+		for (int x = 0; x < source.w; x++) {
+			byte alpha = (*(const uint32 *)sourcePixel) & 0xff;
+			for (int i = 1; i < 4; i++)
+				destPixel[i] = ((byte)(alpha * sourcePixel[i] / 255)) + ((byte)((255 - alpha) * destPixel[i] / 255));
+			destPixel[0] = alpha + ((byte)((255 - alpha) * destPixel[0] / 255));
+			sourcePixel += 4;
+			destPixel += 4;
+		}
+		sourceLine += source.pitch;
+		destinationLine += destination.pitch;
+	}
+}
+
+Point AnimationBase::imageSize(int32 imageI) const {
+	auto image = _images[imageI];
+	return image == nullptr ? Point() : Point(image->w, image->h);
+}
+
 Animation::Animation(String fileName, AnimationFolder folder)
 	: AnimationBase(fileName, folder) {
 }
@@ -274,37 +305,6 @@ int32 Animation::frameAtTime(uint32 time) const {
 	return -1;
 }
 
-Point Animation::imageSize(int32 imageI) const {
-	auto image = _images[imageI];
-	return image == nullptr ? Point() : Point(image->w, image->h);
-}
-
-// unfortunately ScummVMs BLEND_NORMAL does not blend alpha
-// but this also bad, let's find/discuss a better solution later
-static void fullBlend(const ManagedSurface &source, ManagedSurface &destination, int offsetX, int offsetY) {
-	assert(source.format == BlendBlit::getSupportedPixelFormat());
-	assert(destination.format == BlendBlit::getSupportedPixelFormat());
-	assert(offsetX >= 0 && offsetX + source.w <= destination.w);
-	assert(offsetY >= 0 && offsetY + source.h <= destination.h);
-
-	const byte *sourceLine = (byte *)source.getPixels();
-	byte *destinationLine = (byte *)destination.getPixels() + offsetY * destination.pitch + offsetX * 4;
-	for (int y = 0; y < source.h; y++) {
-		const byte *sourcePixel = sourceLine;
-		byte *destPixel = destinationLine;
-		for (int x = 0; x < source.w; x++) {
-			byte alpha = (*(const uint32 *)sourcePixel) & 0xff;
-			for (int i = 1; i < 4; i++)
-				destPixel[i] = ((byte)(alpha * sourcePixel[i] / 255)) + ((byte)((255 - alpha) * destPixel[i] / 255));
-			destPixel[0] = alpha + ((byte)((255 - alpha) * destPixel[0] / 255));
-			sourcePixel += 4;
-			destPixel += 4;
-		}
-		sourceLine += source.pitch;
-		destinationLine += destination.pitch;
-	}
-}
-
 void Animation::prerenderFrame(int32 frameI) {
 	assert(frameI >= 0 && (uint)frameI < frameCount());
 	if (frameI == _renderedFrameI)
@@ -331,8 +331,6 @@ void Animation::prerenderFrame(int32 frameI) {
 	_renderedTexture->update(_renderedSurface);
 	_renderedFrameI = frameI;
 }
-
-
 
 void Animation::draw2D(int32 frameI, Vector2d center, float scale, BlendMode blendMode, Color color) {
 	prerenderFrame(frameI);
@@ -387,6 +385,73 @@ void Animation::drawEffect(int32 frameI, Vector3d topLeft, Vector2d tiling, Vect
 	renderer.setTexture(_renderedTexture.get());
 	renderer.setBlendMode(blendMode);
 	renderer.quad(as2D(topLeft), size, kWhite, rotation, texMin + texOffset, texMax + texOffset);
+}
+
+Font::Font(String fileName) : AnimationBase(fileName) {}
+
+static int16 nextPowerOfTwo(int16 v) {
+	// adapted from https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
+	assert(v > 0);
+	v--;
+	v |= v >> 1;
+	v |= v >> 2;
+	v |= v >> 4;
+	v |= v >> 8;
+	return v + 1;
+}
+
+void Font::load() {
+	if (_isLoaded)
+		return;
+	AnimationBase::load();
+	// We now render all frames into a 16x16 atlas and fill up to power of two size just because it is easy here
+	Point cellSize;
+	for (auto image : _images) {
+		assert(image != nullptr); // no fake pictures in fonts please
+		cellSize.x = MAX(cellSize.x, image->w);
+		cellSize.y = MAX(cellSize.y, image->h);
+	}
+
+	_texMins.resize(_images.size());
+	_texMaxs.resize(_images.size());
+	ManagedSurface atlasSurface(nextPowerOfTwo(cellSize.x * 16), nextPowerOfTwo(cellSize.y * 16), BlendBlit::getSupportedPixelFormat());
+	cellSize.x = atlasSurface.w / 16;
+	cellSize.y = atlasSurface.h / 16;
+	const float invWidth = 1.0f / atlasSurface.w;
+	const float invHeight = 1.0f / atlasSurface.h;
+	for (uint i = 0; i < _images.size(); i++) {
+		int offsetX = (i % 16) * cellSize.x + (cellSize.x - _images[i]->w) / 2;
+		int offsetY = (i / 16) * cellSize.y + (cellSize.y - _images[i]->h) / 2;
+		fullBlend(*_images[i], atlasSurface, offsetX, offsetY);
+
+		_texMins[i].setX(offsetX * invWidth);
+		_texMins[i].setY(offsetY * invHeight);
+		_texMaxs[i].setX((offsetX + _images[i]->w) * invWidth);
+		_texMaxs[i].setY((offsetY + _images[i]->h) * invHeight);
+	}
+	_texture = g_engine->renderer().createTexture(atlasSurface.w, atlasSurface.h, false);
+	_texture->update(atlasSurface);
+	debug("Rendered font atlas %s at %dx%d", _fileName.c_str(), atlasSurface.w, atlasSurface.h);
+}
+
+void Font::freeImages() {
+	if (!_isLoaded)
+		return;
+	AnimationBase::freeImages();
+	_texture.reset();
+	_texMins.clear();
+	_texMaxs.clear();
+}
+
+void Font::drawCharacter(int32 imageI, Point centerPoint, Color color) {
+	assert(imageI >= 0 && (uint)imageI < _images.size());
+	Vector2d center = as2D(centerPoint + _imageOffsets[imageI]);
+	Vector2d size(_images[imageI]->w, _images[imageI]->h);
+
+	auto &renderer = g_engine->renderer();
+	renderer.setTexture(_texture.get());
+	renderer.setBlendMode(BlendMode::Tinted);
+	renderer.quad(center, size, color, Angle(), _texMins[imageI], _texMaxs[imageI]);
 }
 
 Graphic::Graphic() {
@@ -541,6 +606,124 @@ void SpecialEffectDrawRequest::draw() {
 	_animation->drawEffect(_frameI, _topLeft, _tiling, _texOffset, _blendMode);
 }
 
+static const byte *trimLeading(const byte *text) {
+	while (*text && *text <= ' ')
+		text++;
+	return text;
+}
+
+static const byte *trimTrailing(const byte *text, const byte *begin) {
+	while (text != begin && *text <= ' ')
+		text--;
+	return text;
+}
+
+static Point characterSize(const Font &font, byte ch) {
+	if (ch <= ' ' || ch >= font.imageCount())
+		ch = 0;
+	else
+		ch -= ' ';
+	return font.imageSize(ch);
+}
+
+TextDrawRequest::TextDrawRequest(Font &font, const char *originalText, Point pos, int maxWidth, bool centered, Color color, int8 order)
+	: IDrawRequest(order)
+	, _font(font)
+	, _color(color) {
+	const int screenW = g_system->getWidth();
+	const int screenH = g_system->getHeight();
+	if (maxWidth < 0)
+		maxWidth = screenW;
+
+	// allocate on drawQueue to prevent having destruct it
+	assert(originalText != nullptr);
+	auto textLen = strlen(originalText);
+	char *text = (char*)g_engine->drawQueue().allocator().allocateRaw(textLen + 1, 1);
+	memcpy(text, originalText, textLen + 1);
+
+	// split into trimmed lines
+	uint lineCount = 0;
+	const byte *itChar = (byte*)text, *itLine = (byte*)text;
+	int lineWidth = 0;
+	while (true) {
+		if (lineCount >= kMaxLines)
+			error("Text to be rendered has too many lines, check text validity and max line count");
+
+		if (*itChar != '\r' && *itChar)
+			lineWidth += characterSize(font, *itChar).x;
+		if (lineWidth <= maxWidth && *itChar != '\r' && *itChar) {
+			itChar++;
+			continue;
+		}
+		// now we are in new-line territory
+
+		if (centered) {
+			auto itLineEnd = trimTrailing(itChar, itLine);
+			itLine = trimLeading(itLine);
+			_allLines[lineCount] = TextLine(itLine, itLineEnd - itLine + 1);
+			itChar = trimLeading(itChar);
+		}
+		else
+			_allLines[lineCount] = TextLine(itLine, itChar - itLine);
+		lineCount++;
+		itLine = itChar;
+
+		if (!*itChar)
+			break;
+	}
+	_lines = Span<TextLine>(_allLines, lineCount);
+	_posX = Span<int>(_allPosX, lineCount);
+
+	// calc line widths and max line width
+	_width = 0;
+	for (uint i = 0; i < lineCount; i++) {
+		lineWidth = 0;
+		for (auto ch : _lines[i]) {
+			if (ch != '\r' && ch)
+				lineWidth += characterSize(font, ch).x;
+		}
+		_posX[i] = lineWidth;
+		_width = MAX(_width, lineWidth);
+	}
+
+	// setup line positions
+	if (centered) {
+		if (pos.x - _width / 2 < 0)
+			pos.x = _width / 2 + 1;
+		if (pos.x + _width / 2 >= screenW)
+			pos.x = screenW - _width / 2 - 1;
+		for (auto &linePosX : _posX)
+			linePosX = pos.x - linePosX / 2;
+	}
+	else
+		fill(_posX.begin(), _posX.end(), pos.x);
+
+	// setup height and y position
+	_height = (int)lineCount * (font.imageSize(0).y * 4 / 3);
+	_posY = pos.y;
+	if (centered)
+		_posY -= _height / 2;
+	if (_posY < 0)
+		_posY = 0;
+	if (_posY + _height >= screenH)
+		_posY = screenH - _height;
+}
+
+void TextDrawRequest::draw() {
+	const Point spaceSize = _font.imageSize(0);
+	Point cursor(0, _posY);
+	for (uint i = 0; i < _lines.size(); i++) {
+		cursor.x = _posX[i];
+		for (auto ch : _lines[i]) {
+			const Point charSize = characterSize(_font, ch);
+			if (ch > ' ' && ch < _font.imageCount())
+				_font.drawCharacter(ch - ' ', Point(cursor.x, cursor.y), _color);
+			cursor.x += charSize.x;
+		}
+		cursor.y += spaceSize.y * 4 / 3;
+	}
+}
+
 DrawQueue::DrawQueue(IRenderer *renderer)
 	: _renderer(renderer)
 	, _allocator(1024) {
@@ -593,8 +776,8 @@ void *BumpAllocator::allocateRaw(size_t size, size_t align) {
 	assert(size <= _pageSize);
 	uintptr_t page = (uintptr_t)_pages[_pageI];
 	uintptr_t top = page + _used;
-	top = top + align - 1;
-	top = top - (top % align);
+	top += align - 1;
+	top -= top % align;
 	if (page + _pageSize - top >= size) {
 		_used = top + size - page;
 		return (void *)top;
