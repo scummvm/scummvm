@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-01 00:54+0000\n"
+"POT-Creation-Date: 2024-06-01 10:44+0000\n"
 "PO-Revision-Date: 2024-05-18 10:44+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -89,7 +89,7 @@ msgstr "Вгору"
 #: gui/saveload-dialog.cpp:540 gui/saveload-dialog.cpp:824
 #: gui/saveload-dialog.cpp:1220 gui/shaderbrowser-dialog.cpp:80
 #: gui/themebrowser.cpp:54 gui/unknown-game-dialog.cpp:53 base/main.cpp:604
-#: dists/android.strings.xml.cpp:43 engines/engine.cpp:764
+#: dists/android.strings.xml.cpp:46 engines/engine.cpp:764
 #: backends/dialogs/gtk/gtk-dialogs.cpp:65
 #: backends/events/default/default-events.cpp:193
 #: backends/events/default/default-events.cpp:217
@@ -334,7 +334,7 @@ msgstr "Невірний формат JSON-коду."
 #: gui/editgamedialog.cpp:363 gui/editrecorddialog.cpp:67
 #: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:557 gui/launcher.cpp:561
 #: gui/massadd.cpp:90 gui/options.cpp:2354 gui/predictivedialog.cpp:69
-#: gui/saveload-dialog.cpp:1221 dists/android.strings.xml.cpp:32
+#: gui/saveload-dialog.cpp:1221 dists/android.strings.xml.cpp:33
 #: engines/engine.cpp:567 engines/engine.cpp:590
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
 #: engines/agos/midi.cpp:320 engines/agos/midi.cpp:378
@@ -2662,7 +2662,7 @@ msgstr "Записувати або відтворювати процес гри
 
 #: gui/recorderdialog.cpp:72 gui/recorderdialog.cpp:212
 #: gui/saveload-dialog.cpp:460 gui/saveload-dialog.cpp:540
-#: dists/android.strings.xml.cpp:44 engines/engine.cpp:613
+#: dists/android.strings.xml.cpp:47 engines/engine.cpp:613
 msgid "Delete"
 msgstr "Видалити"
 
@@ -3158,11 +3158,17 @@ msgid "ScummVM"
 msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
+#, fuzzy
+#| msgid "ScummVM"
+msgid "ScummVM (debug)"
+msgstr "ScummVM"
+
+#: dists/android.strings.xml.cpp:32
 msgid "Graphic adventure game engine"
 msgstr "Движок графічних квестів"
 
 #. I18N: This directly quits the game.
-#: dists/android.strings.xml.cpp:33
+#: dists/android.strings.xml.cpp:34
 #: backends/events/default/default-events.cpp:217
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:328 engines/cge2/metaengine.cpp:239
@@ -3173,31 +3179,43 @@ msgstr "Движок графічних квестів"
 msgid "Quit"
 msgstr "Вихід"
 
-#: dists/android.strings.xml.cpp:34
+#: dists/android.strings.xml.cpp:35
+#, fuzzy
+#| msgid "Config File Error"
+msgid "Log File Error"
+msgstr "Помилка файла конфігурації"
+
+#: dists/android.strings.xml.cpp:36
+#, fuzzy
+#| msgid "Unable to read ScummVM config file or create a new one!"
+msgid "Unable to read ScummVM log file or create a new one!"
+msgstr "Не вдалося прочитати файл конфігурації ScummVM або створити новий!"
+
+#: dists/android.strings.xml.cpp:37
 msgid "Config File Error"
 msgstr "Помилка файла конфігурації"
 
-#: dists/android.strings.xml.cpp:35
+#: dists/android.strings.xml.cpp:38
 msgid "Unable to read ScummVM config file or create a new one!"
 msgstr "Не вдалося прочитати файл конфігурації ScummVM або створити новий!"
 
-#: dists/android.strings.xml.cpp:36
+#: dists/android.strings.xml.cpp:39
 msgid "Save Path Error"
 msgstr "Помилка шляху зберігання"
 
-#: dists/android.strings.xml.cpp:37
+#: dists/android.strings.xml.cpp:40
 msgid "Unable to create or access default save path!"
 msgstr "Не вдалося створити або дістатися до шляху збереження ігор!"
 
-#: dists/android.strings.xml.cpp:38
+#: dists/android.strings.xml.cpp:41
 msgid "Icons Path Error"
 msgstr "Помилка шляху іконок"
 
-#: dists/android.strings.xml.cpp:39
+#: dists/android.strings.xml.cpp:42
 msgid "Unable to create or access default icons and shaders path!"
 msgstr "Не вдалося створити або дістатися до шляху іконок та шейдерів!"
 
-#: dists/android.strings.xml.cpp:40
+#: dists/android.strings.xml.cpp:43
 msgid ""
 "Unable to access the globally set save path! Please revert to default from "
 "ScummVM Options"
@@ -3205,40 +3223,40 @@ msgstr ""
 "Не вдалося дістатися до глобального шляху збереження ігор! Будь-ласка, "
 "поверніться до значень за замовченням в Налаштуваннях ScummVM"
 
-#: dists/android.strings.xml.cpp:41
+#: dists/android.strings.xml.cpp:44
 msgid "Toggle virtual keyboard"
 msgstr "Перемикнути віртуальну клавіатуру"
 
-#: dists/android.strings.xml.cpp:42 engines/scumm/help.cpp:82
+#: dists/android.strings.xml.cpp:45 engines/scumm/help.cpp:82
 #: engines/scumm/help.cpp:86 engines/scumm/help.cpp:88
 #: engines/scumm/help.cpp:102 engines/scumm/help.cpp:103
 #: engines/scumm/help.cpp:104
 msgid "Alt"
 msgstr "Alt"
 
-#: dists/android.strings.xml.cpp:45
+#: dists/android.strings.xml.cpp:48
 #: backends/platform/libretro/src/libretro-options-widget.cpp:222
 msgid "Done"
 msgstr "Готове"
 
-#: dists/android.strings.xml.cpp:46
+#: dists/android.strings.xml.cpp:49
 msgid "Mode change"
 msgstr "Змінити режим"
 
-#: dists/android.strings.xml.cpp:47
+#: dists/android.strings.xml.cpp:50
 msgid "Shift"
 msgstr "Shift"
 
-#: dists/android.strings.xml.cpp:48 engines/dragons/metaengine.cpp:154
+#: dists/android.strings.xml.cpp:51 engines/dragons/metaengine.cpp:154
 #: engines/scumm/help.cpp:88 engines/scumm/help.cpp:91
 msgid "Enter"
 msgstr "Enter"
 
-#: dists/android.strings.xml.cpp:49
+#: dists/android.strings.xml.cpp:52
 msgid "Close popup"
 msgstr "Закрити вискакуючий список"
 
-#: dists/android.strings.xml.cpp:50
+#: dists/android.strings.xml.cpp:53
 msgid ""
 "Please select the *root* of your external (physical) SD card. This is "
 "required for ScummVM to access this path: "
@@ -3246,9 +3264,49 @@ msgstr ""
 "Будь-ласка, оберіть папку *root* (корень) у вашій зовнішній (фізичній) SD-"
 "картці. Це необхідно, щоб ScummVM міг дістатися цієї папки: "
 
-#: dists/android.strings.xml.cpp:51
+#: dists/android.strings.xml.cpp:54
 msgid "Storage Access Framework Permissions for ScummVM were revoked!"
 msgstr "Дозвіл доступу ScummVM до Storage Access Framework було вилучено!"
+
+#: dists/android.strings.xml.cpp:55
+#, fuzzy
+#| msgid "the video mode could not be changed"
+msgid "Configuration file could not be parsed"
+msgstr "відеорежим не може бути змінено"
+
+#: dists/android.strings.xml.cpp:56
+#, fuzzy
+#| msgid "In 2D games"
+msgid "Run a game"
+msgstr "У 2D іграх"
+
+#: dists/android.strings.xml.cpp:57
+#, fuzzy
+#| msgid "Search in game list"
+msgid "Search a game"
+msgstr "Пошук у списку ігор"
+
+#: dists/android.strings.xml.cpp:58
+msgid ""
+"No games (yet)\n"
+"Open ScummVM and add your games here."
+msgstr ""
+
+#: dists/android.strings.xml.cpp:59
+#, fuzzy
+#| msgid "Game Options"
+msgid "Game icon"
+msgstr "Налашт. гри"
+
+#: dists/android.strings.xml.cpp:60
+#, fuzzy
+#| msgid "Show object labels"
+msgid "Shortcut label"
+msgstr "Показувати назви об'єктів"
+
+#: dists/android.strings.xml.cpp:61
+msgid "Shortcut icon"
+msgstr ""
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:32
@@ -4636,12 +4694,12 @@ msgstr "Режим збільшення вимкнено. Вмикаю режи�
 msgid "Magnify Mode Off"
 msgstr "Режим збільшення вимкнено"
 
-#: backends/platform/android/android.cpp:1048
+#: backends/platform/android/android.cpp:1050
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 msgid "Getting help"
 msgstr "Допомога"
 
-#: backends/platform/android/android.cpp:1051
+#: backends/platform/android/android.cpp:1053
 msgid ""
 "## Help, I'm lost!\n"
 "\n"
@@ -4681,13 +4739,13 @@ msgstr ""
 "навіть карколомні. Якщо ви застрягли в грі, можливо вам потрібно звернутися "
 "до її покрокового проходження. Успіхів!\n"
 
-#: backends/platform/android/android.cpp:1060
+#: backends/platform/android/android.cpp:1062
 #: backends/platform/ios7/ios7_osys_misc.mm:261
 #: backends/platform/ios7/ios7_osys_misc.mm:357
 msgid "Touch Controls"
 msgstr "Керування дотиком"
 
-#: backends/platform/android/android.cpp:1063
+#: backends/platform/android/android.cpp:1065
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -4823,13 +4881,13 @@ msgstr ""
 "   ![Піктограма Клавіатури](keyboard.png \"Піктограма клавіатури\"){w=10em}\n"
 "\n"
 
-#: backends/platform/android/android.cpp:1119
+#: backends/platform/android/android.cpp:1121
 #: backends/platform/ios7/ios7_osys_misc.mm:336
 #: backends/platform/ios7/ios7_osys_misc.mm:380
 msgid "Adding Games"
 msgstr "Додавання ігор"
 
-#: backends/platform/android/android.cpp:1122
+#: backends/platform/android/android.cpp:1124
 msgid ""
 "## Adding Games \n"
 "\n"
