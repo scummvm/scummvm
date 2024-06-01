@@ -48,6 +48,8 @@ private:
 
 	Cheater *_cheater;
 
+	bool cmd_Help(int argc, const char **argv);
+
 	bool cmd_varSize(int argc, const char **argv);
 	bool cmd_dumpVars(int argc, const char **argv);
 	bool cmd_var8(int argc, const char **argv);
