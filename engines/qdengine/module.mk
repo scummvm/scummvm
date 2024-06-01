@@ -138,6 +138,8 @@ MODULE_OBJS = \
 	xlibs/xutil/xtcore.o \
 	xlibs/xutil/xkey/xkey.o \
 	xlibs/xutil/xrecorder/xrec.o \
+	xlibs/xutil/xmsgbuffer/xmsgbuf.o \
+	xlibs/xutil/xutil/cpuid.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_QDENGINE), DYNAMIC_PLUGIN)

@@ -31,12 +31,12 @@ unsigned int xt_get_cpuid() {
 		*/
 		return 0;
 	}
-	typedef WORD(FAR *WORDvoid)();
-	typedef DWORD (FAR *DWORDvoid)();
+	typedef WORD(*WORDvoid)();
+	typedef DWORD(*DWORDvoid)();
 
-	WORD(FAR *lpfnwincpuidsupport)();
-	WORD(FAR *lpfnwincpuidext)();
-	DWORD (FAR *lpfnwincpufeatures)();
+	WORD(*lpfnwincpuidsupport)();
+	WORD(*lpfnwincpuidext)();
+	DWORD(*lpfnwincpufeatures)();
 
 	lpfnwincpuidsupport = (WORDvoid)GetProcAddress(hLibrary, "wincpuidsupport");
 	lpfnwincpuidext = (WORDvoid)GetProcAddress(hLibrary, "wincpuidext");
