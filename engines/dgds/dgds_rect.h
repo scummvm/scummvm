@@ -39,7 +39,7 @@ public:
 	int height;
 
 	Common::Rect toCommonRect() const { return Common::Rect(x, y, x + width, y + height); }
-
+	bool contains(const Common::Point &pt) const { return pt.x >= x && pt.x < (x + width) && pt.y >= y && pt.y < (y + height); }
 	Common::String dump(const Common::String &indent) const;
 };
 

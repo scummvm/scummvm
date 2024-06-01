@@ -52,9 +52,9 @@ public:
 	int frameCount(const Common::String &filename);
 	void drawBitmap(uint frameno, int x, int y, const Common::Rect &drawWin, Graphics::ManagedSurface &dst, bool flip = false) const;
 
-	Common::SharedPtr<Graphics::ManagedSurface> getSurface(uint frameno);
+	Common::SharedPtr<Graphics::ManagedSurface> getSurface(uint frameno) const;
 
-	const Common::Array<Common::SharedPtr<Graphics::ManagedSurface>> &getFrames() { return _frames; }
+	const Common::Array<Common::SharedPtr<Graphics::ManagedSurface>> &getFrames() const { return _frames; }
 
 	int16 width(uint frameno) const;
 	int16 height(uint frameno) const;

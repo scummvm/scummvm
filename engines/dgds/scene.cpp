@@ -1431,9 +1431,12 @@ Common::Error GDSScene::syncState(Common::Serializer &s) {
 		error("Item count in save doesn't match count in game (%d vs %d)",
 				nitems, _gameItems.size());
 	}
-	for (auto &item : _gameItems) {
+	for (GameItem &item : _gameItems) {
 		s.syncAsUint16LE(item._inSceneNum);
+		if (s.getVersion() > 1)
+			s.syncAsUint16LE(item._flags);
 		s.syncAsUint16LE(item._quality);
+		//debug("loaded item: %d %d %d %d", item._num, item._inSceneNum, item._flags, item._quality);
 	}
 
 	uint16 nglobals = _perSceneGlobals.size();
@@ -1442,7 +1445,7 @@ Common::Error GDSScene::syncState(Common::Serializer &s) {
 		error("Scene global count in save doesn't match count in game (%d vs %d)",
 				nglobals, _perSceneGlobals.size());
 	}
-	for (auto &glob : _perSceneGlobals) {
+	for (PerSceneGlobal &glob : _perSceneGlobals) {
 		s.syncAsUint16LE(glob._val);
 	}
 

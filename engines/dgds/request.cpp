@@ -119,8 +119,8 @@ bool RequestParser::parseGADChunk(RequestData &data, DgdsChunkReader &chunk, int
 			gptr->_col1 = vals[9];
 			gptr->_col2 = vals[10];
 			gptr->_col3 = vals[11];
-			gptr->_parentX = data._x;
-			gptr->_parentY = data._y;
+			gptr->_parentX = data._rect.x;
+			gptr->_parentY = data._rect.y;
 		}
 
 		uint16 type1 = str->readUint16LE();
@@ -218,10 +218,10 @@ bool RequestParser::parseREQChunk(RequestData &data, DgdsChunkReader &chunk, int
 		error("Request::parseGADChunk: Implement handling of num other than -1");
 
 	data._fileNum = chunkNum;
-	data._x = str->readUint16LE();
-	data._y = str->readUint16LE();
-	data._width = str->readUint16LE();
-	data._height = str->readUint16LE();
+	data._rect.x = str->readUint16LE();
+	data._rect.y = str->readUint16LE();
+	data._rect.width = str->readUint16LE();
+	data._rect.height = str->readUint16LE();
 	data._col1 = str->readUint16LE();
 	data._col2 = str->readUint16LE();
 	data._flags = str->readUint16LE();
@@ -517,8 +517,8 @@ void ImageGadget::draw(Graphics::ManagedSurface *dst) const {
 }
 
 Common::String RequestData::dump() const {
-	Common::String ret = Common::String::format("RequestData<file %d pos (%d,%d) size (%d, %d) c1 %d c2 %d flg %d\n",
-								_fileNum, _x, _y, _width, _height, _col1, _col2, _flags);
+	Common::String ret = Common::String::format("RequestData<file %d %s c1 %d c2 %d flg %d\n",
+								_fileNum, _rect.dump("").c_str(), _col1, _col2, _flags);
 	for (const auto &t : _textItemList)
 		ret += Common::String::format("    TextItem<'%s' pos (%d,%d) %d %d>\n", t._txt.c_str(),
 								t._x, t._y, t._vals[0], t._vals[1]);
@@ -557,7 +557,7 @@ void RequestData::drawInvType(Graphics::ManagedSurface *dst) {
 
 	drawBackgroundNoSliders(dst, "");
 	for (const auto &fillArea : _fillAreaList) {
-		Common::Rect r(Common::Point(_x + fillArea._x, _y + fillArea._y), fillArea._width, fillArea._height);
+		Common::Rect r(Common::Point(_rect.x + fillArea._x, _rect.y + fillArea._y), fillArea._width, fillArea._height);
 		dst->fillRect(r, fillArea._col1);
 	}
 
@@ -638,50 +638,54 @@ void RequestData::drawHeader(Graphics::ManagedSurface *dst, int16 x, int16 y, in
 }
 
 void RequestData::drawBackgroundWithSliderArea(Graphics::ManagedSurface *dst, int16 sliderHeight, const Common::String &header) const {
+	int16 x = _rect.x;
+	int16 y = _rect.y;
+	int16 width = _rect.width;
+	int16 height = _rect.height;
 	uint16 sliderBgHeight = sliderHeight + 18;
-	fillBackground(dst, _x, _y, _width, sliderBgHeight, 0);
-	fillBackground(dst, _x + 8, _y + sliderBgHeight, _width - 16, _height - sliderBgHeight, 8 - sliderBgHeight);
-	fillBackground(dst, _x + 9, _y + 8, _width - 18, sliderHeight + 2, 8);
-	fillBackground(dst, _x + 17, _y + 8 + sliderHeight + 2, _width - 34, _height - sliderBgHeight, 32 - sliderBgHeight);
+	fillBackground(dst, x, y, width, sliderBgHeight, 0);
+	fillBackground(dst, x + 8, y + sliderBgHeight, width - 16, height - sliderBgHeight, 8 - sliderBgHeight);
+	fillBackground(dst, x + 9, y + 8, width - 18, sliderHeight + 2, 8);
+	fillBackground(dst, x + 17, y + 8 + sliderHeight + 2, width - 34, height - sliderBgHeight, 32 - sliderBgHeight);
 
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	const Common::SharedPtr<Image> uiCorners = engine->getUICorners();
 	assert(uiCorners->loadedFrameCount() >= 11);
 	const Common::Array<Common::SharedPtr<Graphics::ManagedSurface>> &corners = uiCorners->getFrames();
 
-	for (int xoff = _x + corners[0]->w; xoff < (_x + _width) - corners[3]->w; xoff += corners[2]->w) {
-		dst->transBlitFrom(*corners[2], Common::Point(xoff, _y));
+	for (int xoff = x + corners[0]->w; xoff < (x + width) - corners[3]->w; xoff += corners[2]->w) {
+		dst->transBlitFrom(*corners[2], Common::Point(xoff, y));
 	}
-	for (int xoff = _x + 8 + corners[6]->w; xoff < (_x + 8 + _width - 16) - corners[8]->w; xoff += corners[7]->w) {
-		dst->transBlitFrom(*corners[7], Common::Point(xoff, (_y + _height) - corners[7]->h));
+	for (int xoff = x + 8 + corners[6]->w; xoff < (x + 8 + width - 16) - corners[8]->w; xoff += corners[7]->w) {
+		dst->transBlitFrom(*corners[7], Common::Point(xoff, (y + height) - corners[7]->h));
 	}
-	for (int yoff = _y + corners[3]->h; yoff < (_y + sliderBgHeight) - corners[10]->h; yoff += corners[5]->h) {
-		dst->transBlitFrom(*corners[5], Common::Point((_x + _width) - corners[5]->w, yoff));
+	for (int yoff = y + corners[3]->h; yoff < (y + sliderBgHeight) - corners[10]->h; yoff += corners[5]->h) {
+		dst->transBlitFrom(*corners[5], Common::Point((x + width) - corners[5]->w, yoff));
 	}
-	for (int yoff = _y + corners[1]->h; yoff < (_y + sliderBgHeight) - corners[9]->h; yoff += corners[4]->h) {
-		dst->transBlitFrom(*corners[4], Common::Point(_x, yoff));
+	for (int yoff = y + corners[1]->h; yoff < (y + sliderBgHeight) - corners[9]->h; yoff += corners[4]->h) {
+		dst->transBlitFrom(*corners[4], Common::Point(x, yoff));
 	}
-	for (int yoff = _y + sliderBgHeight; yoff < (_y + _height) - corners[6]->h; yoff += corners[4]->h) {
-		dst->transBlitFrom(*corners[4], Common::Point(_x + 8, yoff));
+	for (int yoff = y + sliderBgHeight; yoff < (y + height) - corners[6]->h; yoff += corners[4]->h) {
+		dst->transBlitFrom(*corners[4], Common::Point(x + 8, yoff));
 	}
-	for (int yoff = _y + sliderBgHeight; yoff < (_y + _height) - corners[8]->h; yoff += corners[5]->h) {
-		dst->transBlitFrom(*corners[5], Common::Point((_x + 8 + _width - 16) - corners[5]->w, yoff));
+	for (int yoff = y + sliderBgHeight; yoff < (y + height) - corners[8]->h; yoff += corners[5]->h) {
+		dst->transBlitFrom(*corners[5], Common::Point((x + 8 + width - 16) - corners[5]->w, yoff));
 	}
-	dst->transBlitFrom(*corners[1], Common::Point(_x, _y));
-	dst->transBlitFrom(*corners[3], Common::Point((_x + _width) - corners[3]->w, _y));
-	dst->transBlitFrom(*corners[6], Common::Point(_x + 8, (_y + _height) - corners[6]->h));
-	dst->transBlitFrom(*corners[8], Common::Point((_x + _width - 8) - corners[8]->w, (_y + _height) - corners[8]->h));
-	dst->transBlitFrom(*corners[9], Common::Point(_x, (_y + sliderBgHeight) - corners[9]->h));
-	dst->transBlitFrom(*corners[10], Common::Point((_x + _width) - corners[10]->w, (_y + sliderBgHeight) - corners[10]->h));
+	dst->transBlitFrom(*corners[1], Common::Point(x, y));
+	dst->transBlitFrom(*corners[3], Common::Point((x + width) - corners[3]->w, y));
+	dst->transBlitFrom(*corners[6], Common::Point(x + 8, (y + height) - corners[6]->h));
+	dst->transBlitFrom(*corners[8], Common::Point((x + width - 8) - corners[8]->w, (y + height) - corners[8]->h));
+	dst->transBlitFrom(*corners[9], Common::Point(x, (y + sliderBgHeight) - corners[9]->h));
+	dst->transBlitFrom(*corners[10], Common::Point((x + width) - corners[10]->w, (y + sliderBgHeight) - corners[10]->h));
 
-	drawHeader(dst, _x, _y, _width, 9, header);
+	drawHeader(dst, x, y, width, 9, header);
 }
 
 
 void RequestData::drawBackgroundNoSliders(Graphics::ManagedSurface *dst, const Common::String &header) const {
-	fillBackground(dst, _x, _y, _width, _height, 0);
-	drawCorners(dst, 11, _x, _y, _width, _height);
-	drawHeader(dst, _x, _y, _width, 4, header);
+	fillBackground(dst, _rect.x, _rect.y, _rect.width, _rect.height, 0);
+	drawCorners(dst, 11, _rect.x, _rect.y, _rect.width, _rect.height);
+	drawHeader(dst, _rect.x, _rect.y, _rect.width, 4, header);
 }
 
 /*static*/

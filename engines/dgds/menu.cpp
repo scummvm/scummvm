@@ -85,6 +85,9 @@ enum MenuButtonIds {
 	kMenuQuitYes = 134,
 	kMenuQuitNo = 133,
 
+	kMenuMaybeBetterSaveYes = 137,
+	kMenuMaybeBetterSaveNo = 138,
+
 	kMenuIntroSkip = 143,
 	kMenuIntroPlay = 144,
 
@@ -199,6 +202,7 @@ void Menu::handleMenu(Common::Point &mouse) {
 	case kMenuCalibratePlayHoC:
 	case kMenuFilesPlay:
 	case kMenuMouseCalibrationPlay:
+	case kMenuMaybeBetterSaveNo:
 		_curMenu = kMenuNone;
 		CursorMan.showMouse(false);
 		break;
@@ -236,8 +240,8 @@ void Menu::handleMenu(Common::Point &mouse) {
 		drawMenu(kMenuMain);
 		break;
 	case kMenuOptionsJoystickOnOff:
-	case kMenuOptionsMouseOnOff:
-	case kMenuOptionsSoundsOnOff:
+	//case kMenuOptionsMouseOnOff: // same id as kMenuMaybeBetterSaveNo
+	//case kMenuOptionsSoundsOnOff: // same id as kMenuMaybeBetterSaveYes
 	case kMenuOptionsMusicOnOff:
 		// TODO
 		debug("Clicked option with ID %d", clickedMenuItem);
@@ -265,6 +269,7 @@ void Menu::handleMenu(Common::Point &mouse) {
 	case kMenuSavePrevious:
 	case kMenuSaveNext:
 	case kMenuSaveSave:
+	case kMenuMaybeBetterSaveYes:
 		if (g_engine->saveGameDialog())
 			hideMenu();
 		else

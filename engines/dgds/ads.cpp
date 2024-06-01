@@ -755,7 +755,7 @@ int ADSInterpreter::getArrIndexOfSegNum(uint16 segnum) {
 
 
 bool ADSInterpreter::run() {
-	if (_adsData->_ttmSeqs.empty())
+	if (!_adsData || _adsData->_ttmSeqs.empty())
 		return false;
 
 	for (int i = 0; i < _adsData->_maxSegments; i++) {

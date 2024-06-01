@@ -21,6 +21,7 @@
 
 #include "dgds/globals.h"
 #include "dgds/dgds.h"
+#include "dgds/scene.h"
 
 namespace Dgds {
 
@@ -111,12 +112,34 @@ private:
 	DragonDataTable &_table;
 };
 
+// TODO: Move this to Scene??
+class GameIsInteractiveGlobal : public Global {
+public:
+	GameIsInteractiveGlobal(uint16 num, int16 *ptr) : Global(num), _ptr(ptr), _isSetOff(false) {}
+
+	int16 get() override {
+		SDSScene *scene = static_cast<DgdsEngine *>(g_engine)->getScene();
+		bool nonInteractive = _isSetOff || scene->getDragItem() || scene->hasVisibleDialog();
+		*_ptr = !nonInteractive;
+		return *_ptr;
+	}
+
+	int16 set(int16 val) override {
+		_isSetOff = (val == 0);
+		return get();
+	}
+
+private:
+	int16 *_ptr;
+	bool _isSetOff;
+};
+
 ////////////////////////////////
 
 DragonGlobals::DragonGlobals(Clock &_clock) : Globals(),
 _lastOpcode1SceneChageNum(0), _sceneOp12SceneNum(0), _currentSelectedItem(0),
 _gameMinsToAddOnLClick(0), _gameMinsToAddOnStartDrag(0), _gameMinsToAddOnRClick(0), _gameMinsToAddOnDragFinished(0),
-_gameMinsToAddOnObjInteraction(0), _gameGlobal0x57(0), _sceneOpcode15FromScene(0),
+_gameMinsToAddOnObjInteraction(0), _gameIsInteractiveGlobal(0), _sceneOpcode15FromScene(0),
 _sceneOpcode15ToScene(0), _sceneOpcode100Var(0), _arcadeModeFlag_3cdc(0),
 _opcode106EndMinutes(0) {
 	_globals.push_back(_clock.getGameMinsAddedGlobal(1));
@@ -133,7 +156,7 @@ _opcode106EndMinutes(0) {
 	_globals.push_back(new RWI16Global(0x5A, &_gameMinsToAddOnRClick));
 	_globals.push_back(new RWI16Global(0x59, &_gameMinsToAddOnDragFinished));
 	_globals.push_back(new RWI16Global(0x58, &_gameMinsToAddOnObjInteraction));
-	_globals.push_back(new RWI16Global(0x57, &_gameGlobal0x57)); // TODO: Function to get/set 1f1a:4ec1
+	_globals.push_back(new GameIsInteractiveGlobal(0x57, &_gameIsInteractiveGlobal));
 	_globals.push_back(_clock.getDays2Global(0x56));
 	_globals.push_back(new RWI16Global(0x55, &_sceneOpcode15FromScene));
 	_globals.push_back(new RWI16Global(0x54, &_sceneOpcode15ToScene));
@@ -156,7 +179,7 @@ Common::Error DragonGlobals::syncState(Common::Serializer &s) {
 	s.syncAsSint16LE(_gameMinsToAddOnRClick);
 	s.syncAsSint16LE(_gameMinsToAddOnDragFinished);
 	s.syncAsSint16LE(_gameMinsToAddOnObjInteraction);
-	s.syncAsSint16LE(_gameGlobal0x57);
+	s.syncAsSint16LE(_gameIsInteractiveGlobal);
 	s.syncAsSint16LE(_sceneOpcode15FromScene);
 	s.syncAsSint16LE(_sceneOpcode15ToScene);
 	s.syncAsSint16LE(_sceneOpcode100Var);

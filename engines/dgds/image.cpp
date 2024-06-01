@@ -381,7 +381,7 @@ static void _doVqtDecode2(struct VQTDecodeState *state, const uint16 x, const ui
         return;
     }
 
-    byte tmpbuf [262];
+    byte tmpbuf[262];
     byte *ptmpbuf = tmpbuf;
     for (; bval != 0; bval--) {
         *ptmpbuf = _getVqtBits(state, 8);
@@ -524,7 +524,7 @@ int16 Image::height(uint frameno) const {
 	return _frames[frameno]->h;
 }
 
-Common::SharedPtr<Graphics::ManagedSurface> Image::getSurface(uint frameno) {
+Common::SharedPtr<Graphics::ManagedSurface> Image::getSurface(uint frameno) const {
 	if (frameno >= _frames.size())
 		error("Invalid frameno %d", frameno);
 	return _frames[frameno];

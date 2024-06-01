@@ -27,6 +27,7 @@
 #include "common/array.h"
 
 #include "dgds/parser.h"
+#include "dgds/dgds_rect.h"
 
 namespace Dgds {
 
@@ -145,10 +146,7 @@ public:
 class RequestData {
 public:
 	uint16 _fileNum;
-	uint16 _x;
-	uint16 _y;
-	uint16 _width;
-	uint16 _height;
+	DgdsRect _rect;
 	uint16 _col1;
 	uint16 _col2;
 	uint16 _flags;
