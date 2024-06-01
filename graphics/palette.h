@@ -62,6 +62,11 @@ public:
 
 	~Palette();
 
+	/**
+	 * Constructs a new palette containing the standarad EGA palette
+	 */
+	static Palette createEGAPalette();
+
 	Palette &operator=(const Palette &rhs);
 	bool operator==(const Palette &rhs) const { return equals(rhs); }
 	bool operator!=(const Palette &rhs) const { return !equals(rhs); }
