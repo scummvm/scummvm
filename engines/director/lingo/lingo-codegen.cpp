@@ -132,7 +132,6 @@ ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoA
 	_assemblyArchive = archive;
 	_assemblyAST = nullptr;
 	_assemblyId = id.member;
-	warning("%s: %s", scriptName.c_str(), code.encode().c_str());
 	ScriptContext *mainContext = _assemblyContext = new ScriptContext(scriptName, type, _assemblyId);
 	_currentAssembly = new ScriptData;
 
