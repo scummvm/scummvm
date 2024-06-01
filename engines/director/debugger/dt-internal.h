@@ -203,16 +203,29 @@ ImGuiImage getImageID(CastMember *castMember);
 Common::String getDisplayName(CastMember *castMember);
 void showImage(const ImGuiImage &image, const char *name, float thumbnailSize);
 ImVec4 convertColor(uint32 color);
+void displayVariable(const Common::String &name);
 
 void showCast();        // dt-cast.cpp
 void showControlPanel(); // dt-controlpanel.cpp
-void showScore();       // dt-score.cpp
-void showChannels();    // dt-score.cpp
+
+// dt-lists.cpp
+void showCallStack();
+void showVars();
+void showWatchedVars();
+void showBreakpointList();
+void showArchive();
+
+// dt-score.cpp
+void showScore();
+void showChannels();
+
 void renderOldScriptAST(ImGuiScript &script, bool showByteCode);    // dt-script-d2.cpp
 void renderScriptAST(ImGuiScript &script, bool showByteCode);       // dt-script-d4.cpp
-void showFuncList();    // dt-scripts.cpp
-void showScriptCasts(); // dt-scripts.cpp
-void showScripts();     // dt-scripts.cpp
+
+// dt-scripts.cpp
+void showFuncList();
+void showScriptCasts();
+void showScripts();
 
 extern ImGuiState *_state;
 
