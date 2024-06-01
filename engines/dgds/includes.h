@@ -86,8 +86,6 @@ namespace Dgds {
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 200
 
-#define FILENAME_LENGTH 12
-
 } // End of namespace Dgds
 
 #endif // DGDS_INCLUDES_H

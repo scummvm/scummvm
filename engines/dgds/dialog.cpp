@@ -33,6 +33,7 @@
 #include "dgds/includes.h"
 #include "dgds/request.h"
 #include "dgds/scripts.h"
+#include "dgds/scene.h"
 #include "dgds/font.h"
 
 namespace Dgds {

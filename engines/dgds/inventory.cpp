@@ -189,18 +189,18 @@ void Inventory::drawItems(Graphics::ManagedSurface &surf) {
 		// the Napent in Dragon is weirdly offset in y because its rect has a large height?
 		Common::SharedPtr<Graphics::ManagedSurface> icon = icons->getSurface(item._iconNum);
 		if (icon) {
-			item.rect.width = MIN((int)icon->w, item.rect.width);
-			item.rect.height = MIN((int)icon->h, item.rect.height);
+			item._rect.width = MIN((int)icon->w, item._rect.width);
+			item._rect.height = MIN((int)icon->h, item._rect.height);
 		}
 
 		// calculate draw offset for the image
-		int drawX = imgAreaX + x + (xstep - item.rect.width) / 2;
-		int drawY = imgAreaY + y +  (ystep - item.rect.height) / 2;
+		int drawX = imgAreaX + x + (xstep - item._rect.width) / 2;
+		int drawY = imgAreaY + y +  (ystep - item._rect.height) / 2;
 
 		icons->drawBitmap(item._iconNum, drawX, drawY, drawMask, surf);
 
-		item.rect.x = drawX;
-		item.rect.y = drawY;
+		item._rect.x = drawX;
+		item._rect.y = drawY;
 
 		x += xstep;
 		if (x >= _itemArea->_width) {

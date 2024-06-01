@@ -29,6 +29,8 @@
 #include "dgds/resource.h"
 #include "dgds/parser.h"
 #include "dgds/scripts.h"
+#include "dgds/ttm.h"
+#include "dgds/ads.h"
 
 namespace Dgds {
 

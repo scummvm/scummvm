@@ -41,39 +41,6 @@ class Decompressor;
 class DgdsChunkReader;
 class ResourceManager;
 
-class DgdsPal : public Graphics::Palette {
-public:
-	DgdsPal();
-	virtual ~DgdsPal() {}
-	const Common::String &getName() { return _name; }
-	void setName(const Common::String &name) { _name = name; }
-private:
-	Common::String _name;
-};
-
-class GamePalettes {
-public:
-	GamePalettes(ResourceManager *resourceMan, Decompressor *decompressor);
-	int loadPalette(const Common::String &filename);
-	void selectPalNum(int num);
-	void setPalette();
-	void clearPalette();
-
-	// Fade the colors in the current palette toward black. Start at col, and fade ncols of the palette.
-	// Add coloff to the result to move toward white.
-	void setFade(int col, int ncols, int coloff, int fade);
-
-	Common::Error syncState(Common::Serializer &s);
-
-private:
-	ResourceManager *_resourceMan;
-	Decompressor *_decompressor;
-
-	DgdsPal _curPal;
-	uint _curPalNum;
-	Common::Array<DgdsPal> _palettes;
-};
-
 class Image {
 public:
 	Image(ResourceManager *resourceMan, Decompressor *decompressor);

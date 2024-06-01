@@ -23,6 +23,11 @@
 #ifndef DGDS_PARSER_H
 #define DGDS_PARSER_H
 
+#include "common/types.h"
+#include "common/hashmap.h"
+#include "common/str.h"
+#include "common/stream.h"
+
 namespace Dgds {
 
 class DgdsChunkReader;

@@ -46,6 +46,7 @@
 #include "engines/util.h"
 
 #include "dgds/console.h"
+#include "dgds/ads.h"
 #include "dgds/decompress.h"
 #include "dgds/scene.h"
 #include "dgds/detection_tables.h"
@@ -61,6 +62,7 @@
 #include "dgds/resource.h"
 #include "dgds/scripts.h"
 #include "dgds/sound.h"
+#include "dgds/game_palettes.h"
 
 // for frame contents debugging
 //#define DUMP_FRAME_DATA 1
@@ -209,9 +211,7 @@ void DgdsEngine::setMouseCursor(uint num) {
 	if (num >= cursors.size())
 		error("Not enough cursor info, need %d have %d", num, cursors.size());
 
-	uint16 hotX = cursors[num]._hotX;
-	uint16 hotY = cursors[num]._hotY;
-	_currentCursorHot = Common::Point(hotX, hotY);
+	_currentCursorHot = cursors[num].getHot();
 
 	/*
 	// Adjust mouse location so hot pixel is in the same place as before?
@@ -224,7 +224,7 @@ void DgdsEngine::setMouseCursor(uint num) {
 	g_system->warpMouse(newMouseX, newMouseY);
 	*/
 
-	CursorMan.replaceCursor(*(_icons->getSurface(num)->surfacePtr()), hotX, hotY, 0, 0);
+	CursorMan.replaceCursor(*(_icons->getSurface(num)->surfacePtr()), _currentCursorHot.x, _currentCursorHot.y, 0, 0);
 	CursorMan.showMouse(true);
 
 	_currentCursor = num;

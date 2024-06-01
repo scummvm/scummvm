@@ -33,6 +33,8 @@
 
 namespace Dgds {
 
+static const int FILENAME_LENGTH = 12;
+
 ResourceManager::ResourceManager() {
 	const char *indexFiles[] = {
 	    "volume.vga", // early Dragon versions
