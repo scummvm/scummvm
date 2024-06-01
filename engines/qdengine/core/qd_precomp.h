@@ -162,6 +162,76 @@
 #define CLSID_FilterGraph	0
 #define IID_IGraphBuilder	0
 #define CLSCTX_INPROC		0
+#define IMAGE_BITMAP 0
+
+#define EXCEPTION_CONTINUE_EXECUTION    -1
+#define EXCEPTION_CONTINUE_SEARCH        0
+#define EXCEPTION_EXECUTE_HANDLER        1
+#define CONTEXT_INTEGER            0x00000002
+#define CONTEXT_CONTROL            0x00000001
+#define EXCEPTION_INT_DIVIDE_BY_ZERO       0xC0000094
+#define EXCEPTION_INT_OVERFLOW             0xC0000095
+#define EXCEPTION_ACCESS_VIOLATION         0xC0000005
+#define EXCEPTION_BREAKPOINT               0x80000003
+#define EXCEPTION_DATATYPE_MISALIGNMENT    0x80000002
+#define EXCEPTION_SINGLE_STEP              0x80000004
+#define EXCEPTION_ARRAY_BOUNDS_EXCEEDED    0xC000008C
+#define EXCEPTION_FLT_DENORMAL_OPERAND     0xC000008D
+#define EXCEPTION_FLT_DIVIDE_BY_ZERO       0xC000008E
+#define EXCEPTION_FLT_INEXACT_RESULT       0xC000008F
+#define EXCEPTION_FLT_INVALID_OPERATION    0xC0000090
+#define EXCEPTION_FLT_OVERFLOW             0xC0000091
+#define EXCEPTION_FLT_STACK_CHECK          0xC0000092
+#define EXCEPTION_FLT_UNDERFLOW            0xC0000093
+#define EXCEPTION_PRIV_INSTRUCTION         0xC0000096
+
+#define GSTSO_PARAMS    0x01
+#define GSTSO_MODULE    0x02
+#define GSTSO_SYMBOL    0x04
+#define GSTSO_SRCLINE   0x08
+
+#define KEY_EVENT 1
+#define WM_ACTIVATEAPP 0x001C
+#define WM_CHAR 0x0102
+#define WM_SYSCHAR 0x0106
+#define WAIT_OBJECT_0 0
+
+typedef struct PCONTEXT {
+	unsigned int ContextFlags;
+	unsigned int Dr0;
+	unsigned int Dr1;
+	unsigned int Dr2;
+	unsigned int Dr3;
+	unsigned int Dr6;
+	unsigned int Dr7;
+	unsigned int FloatSave;
+	unsigned int SegGs;
+	unsigned int SegFs;
+	unsigned int SegEs;
+	unsigned int SegDs;
+	unsigned int Edi;
+	unsigned int Esi;
+	unsigned int Ebx;
+	unsigned int Edx;
+	unsigned int Ecx;
+	unsigned int Eax;
+	unsigned int Ebp;
+	unsigned int Eip;
+	unsigned int SegCs;
+	unsigned int EFlags;
+	unsigned int Esp;
+	unsigned int SegSs;
+}PCONTEXT;
+
+typedef struct PEXCEPTION_RECORD {
+	unsigned int ExceptionCode;
+	void *ExceptionAddress;
+}PEXCEPTION_RECORD;
+typedef struct _EXCEPTION_POINTERS {
+	PEXCEPTION_RECORD *ExceptionRecord;
+	PCONTEXT *ContextRecord;
+}EXCEPTION_POINTERS;
+
 typedef struct MSG {
 	HWND   hwnd;
 	UINT   message;
@@ -170,9 +240,6 @@ typedef struct MSG {
 	DWORD  time;
 	DWORD  lPrivate;
 };
-
-#define IMAGE_BITMAP 0
-
 
 void *INVALID_HANDLE_VALUE = reinterpret_cast<void*>(-1);
 const int CP_ACP = 0;
@@ -397,6 +464,21 @@ HWND CreateWindowEx(DWORD dwExStyle, const char *lpClassName, const char *lpWind
 	return 0;
 }
 
+struct KEY_EVENT_RECORD {
+	unsigned wVirtualScanCode;
+	unsigned wVirtualKeyCode;
+	unsigned wRepeatCount;
+	unsigned bKeyDown;
+};
+
+struct INPUT_RECORD {
+	unsigned EventType;
+	union {
+		KEY_EVENT_RECORD          KeyEvent;
+  } Event;
+};
+
+
 struct BITMAP {
 	int bmType;
 	int bmWidth;
@@ -502,6 +584,50 @@ bool SetThreadPriority(HANDLE hThread, int nPriority) {
 	return false;
 }
 
+HANDLE CreateEvent(void *lpEventAttributes, bool bManualReset, bool bInitialState, const char *lpName) {
+	warning("STUB: CreateEvent()");
+	return 0;
+}
+
+bool ResetEvent(HANDLE hEvent) {
+	warning("STUB: ResetEvent()");
+	return false;
+}
+
+void initclock() {
+	warning("STUB: initClock()");
+	return;
+}
+
+bool WINAPI GetNumberOfConsoleInputEvents(HANDLE hConsoleInput, unsigned long *lpcNumberOfEvents) {
+	warning("STUB: GetNumberOfConsoleInputEvents()");
+	return false;
+}
+
+bool WINAPI ReadConsoleInput(HANDLE hConsoleInput, void *lpBuffer, unsigned long nLength, unsigned long *lpNumberOfEventsRead) {
+	warning("STUB: ReadConsoleInput()");
+	return false;
+}
+
+bool TranslateMessage(const MSG *lpMsg) {
+	warning("STUB: TranslateMessage()");
+	return false;
+}
+
+bool DispatchMessage(const MSG *lpMsg) {
+	warning("STUB: DispatchMessage()");
+	return false;
+}
+
+int GetAsyncKeyState(int vKey) {
+	warning("STUB: GetAsyncKeyState()");
+	return 0;
+}
+
+int GetKeyState(int nVirtKey) {
+	warning("STUB: GetKeyState()");
+	return 0;
+}
 namespace mpp {
 enum MpegState {
 	MPEG_STOP=0,

@@ -1,6 +1,5 @@
 #include "qdengine/xlibs/xutil/xglobal.h"
 #include <float.h>
-#include "BugslayerUtil.h"
 
 XBuffer& assertsBuffer();
 
@@ -9,22 +8,21 @@ int xtDispatchMessage(MSG* msg);
 
 //#define _EXCEPTION_CATCH
 
-char *defprefix     = "XHANDLER  INFORM";
-
-char *ctrlMSG       = "CTRL-BREAK TERMINATION";
-char *exceptMSG     = "EXCEPTION OCCURED";
-char *debugMSG      = "DEBUG PROHIBITION";
-char *winopenMSG    = "WINDOW NOT OPEN";
+char *defprefix     	= "XHANDLER  INFORM";
+char *ctrlMSG       	= "CTRL-BREAK TERMINATION";
+char *exceptMSG     	= "EXCEPTION OCCURED";
+char *debugMSG      	= "DEBUG PROHIBITION";
+char *winopenMSG    	= "WINDOW NOT OPEN";
 char *winclassregMSG    = "WINDOW CLASS REGISTRATION ERROR";
 char *threadcreatMSG    = "THREAD CREATION ERROR";
 char *semaphcreatMSG    = "SEMAPHORE CREATION ERROR";
-char *rterrorMSG    = "RUN-TIME ERROR";
+char *rterrorMSG    	= "RUN-TIME ERROR";
 
 #pragma warning (disable : 4073)
 #pragma init_seg(lib)
 XErrorHandler ErrH;
 
-static char _ConvertBuffer[CONV_BUFFER_LEN + 1];
+char _ConvertBuffer[CONV_BUFFER_LEN + 1];
 
 void win32_break(char* error, char* msg);
 
@@ -36,39 +34,41 @@ void win32_break(char* error, char* msg);
       break; }
 
 char* dwtoa(unsigned int a) {
-	int len = 8 - strlen(ultoa(a, _ConvertBuffer, 16));
-	for (int i = 0; i < len; i++)
-		_ConvertBuffer[i] = '0';
-	strlen(ultoa(a, _ConvertBuffer + len, 16));
-	return _ConvertBuffer;
-}
-char* wtoa(unsigned int a) {
-	int len = 4 - strlen(ultoa(a, _ConvertBuffer, 16));
-	for (int i = 0; i < len; i++)
-		_ConvertBuffer[i] = '0';
-	strlen(ultoa(a, _ConvertBuffer + len, 16));
-	return _ConvertBuffer;
-}
-char* uctoa(unsigned char a) {
-	int len = 2 - strlen(ultoa(a, _ConvertBuffer, 16));
-	if (len == 1)
-		_ConvertBuffer[0] = '0';
-	strlen(ultoa(a, _ConvertBuffer + len, 16));
-	return _ConvertBuffer;
+    int len = 8 - Common::String::format("%d", a, 16).size();
+    for (int i = 0; i < len; i++)
+        _ConvertBuffer[i] = '0';
+    Common::String::format(_ConvertBuffer, a, 16).size();
+    return _ConvertBuffer;
 }
 
-LONG APIENTRY exHandler(EXCEPTION_POINTERS *except_info) {
+char* wtoa(unsigned int a) {
+    int len = 4 - Common::String::format(_ConvertBuffer, a, 16).size();
+    for (int i = 0; i < len; i++)
+        _ConvertBuffer[i] = '0';
+    Common::String::format(_ConvertBuffer + len, a, 16).size();
+    return _ConvertBuffer;
+}
+
+char* uctoa(unsigned char a) {
+    int len = 2 - Common::String::format(_ConvertBuffer + len, a, 16).size();
+    if (len == 1)
+        _ConvertBuffer[0] = '0';
+    Common::String::format(_ConvertBuffer + len, a, 16).size();
+    return _ConvertBuffer;
+}
+
+long exHandler(EXCEPTION_POINTERS *except_info) {
 	static bool handled = false;
 	if (handled)
 		return EXCEPTION_CONTINUE_EXECUTION;
 	handled = true;
-
+	warning("STUB: exHandler");
+#if 0
 	_clearfp();
 	//_controlfp( _controlfp(0,0) & ~(0),  MCW_EM );
 	SetUnhandledExceptionFilter(NULL);
-
+#endif
 	static char msg[100000];
-
 	strcpy(msg, "");
 
 	switch (except_info->ExceptionRecord->ExceptionCode) {
@@ -106,53 +106,55 @@ LONG APIENTRY exHandler(EXCEPTION_POINTERS *except_info) {
 		HANDLE_EXEPT("UNKNOWN ERROR TYPE", XERR_UNKNOWN)
 	}
 	strcat(msg, " AT LOCATION 0x");
-	strcat(msg, strupr(itoa((int)except_info->ExceptionRecord->ExceptionAddress, _ConvertBuffer, 16)));
+	Common::String s = Common::String::format(_ConvertBuffer, except_info->ExceptionRecord->ExceptionAddress, 16);
+	s.toUppercase();
+	strcat(msg, s.c_str());
 
 	static int attempt_to_show_context = 0;
 	if (!attempt_to_show_context) {
-		PCONTEXT p = except_info -> ContextRecord;
-		if ((p -> ContextFlags & CONTEXT_INTEGER) && (p -> ContextFlags & CONTEXT_CONTROL) &&
-		        (p -> ContextFlags & CONTEXT_CONTROL)) {
+		PCONTEXT *p = except_info->ContextRecord;
+		if ((p->ContextFlags & CONTEXT_INTEGER) && (p->ContextFlags & CONTEXT_CONTROL) &&
+		        (p->ContextFlags & CONTEXT_CONTROL)) {
 			attempt_to_show_context = 1;
 			strcat(msg, "\r\n\r\nRegisters:\r\n");
 			strcat(msg, "EAX=");
-			strcat(msg, dwtoa(p -> Eax));
+			strcat(msg, dwtoa(p->Eax));
 			strcat(msg, "  CS=");
-			strcat(msg, wtoa(p -> SegCs));
+			strcat(msg, wtoa(p->SegCs));
 			strcat(msg, "  EIP=");
-			strcat(msg, dwtoa(p -> Eip));
+			strcat(msg, dwtoa(p->Eip));
 			strcat(msg, "  EFLAGS=");
-			strcat(msg, dwtoa(p -> EFlags));
+			strcat(msg, dwtoa(p->EFlags));
 
 			strcat(msg, "\r\nEBX=");
-			strcat(msg, dwtoa(p -> Ebx));
+			strcat(msg, dwtoa(p->Ebx));
 			strcat(msg, "  SS=");
-			strcat(msg, wtoa(p -> SegSs));
+			strcat(msg, wtoa(p->SegSs));
 			strcat(msg, "  ESP=");
-			strcat(msg, dwtoa(p -> Esp));
+			strcat(msg, dwtoa(p->Esp));
 			strcat(msg, "  EBP=");
-			strcat(msg, dwtoa(p -> Ebp));
+			strcat(msg, dwtoa(p->Ebp));
 
 			strcat(msg, "\r\nECX=");
-			strcat(msg, dwtoa(p -> Ecx));
+			strcat(msg, dwtoa(p->Ecx));
 			strcat(msg, "  DS=");
-			strcat(msg, wtoa(p -> SegDs));
+			strcat(msg, wtoa(p->SegDs));
 			strcat(msg, "  ESI=");
-			strcat(msg, dwtoa(p -> Esi));
+			strcat(msg, dwtoa(p->Esi));
 			strcat(msg, "  FS=");
-			strcat(msg, wtoa(p -> SegFs));
+			strcat(msg, wtoa(p->SegFs));
 
 			strcat(msg, "\r\nEDX=");
-			strcat(msg, dwtoa(p -> Edx));
+			strcat(msg, dwtoa(p->Edx));
 			strcat(msg, "  ES=");
-			strcat(msg, wtoa(p -> SegEs));
+			strcat(msg, wtoa(p->SegEs));
 			strcat(msg, "  EDI=");
-			strcat(msg, dwtoa(p -> Edi));
+			strcat(msg, dwtoa(p->Edi));
 			strcat(msg, "  GS=");
-			strcat(msg, wtoa(p -> SegGs));
+			strcat(msg, wtoa(p->SegGs));
 
 			strcat(msg, "\r\n\r\nBytes at CS::EIP:\r\n");
-			unsigned char* code = (unsigned char*)(p -> Eip);
+			unsigned char* code = (unsigned char*)(p->Eip);
 			int i;
 			for (i = 0; i < 16; i++) {
 				strcat(msg, uctoa(code[i]));
@@ -160,7 +162,7 @@ LONG APIENTRY exHandler(EXCEPTION_POINTERS *except_info) {
 			}
 
 			strcat(msg, "\r\n\r\nStack dump:\r\n");
-			unsigned int* stack = (unsigned int*)(p -> Esp);
+			unsigned int* stack = (unsigned int*)(p->Esp);
 			for (i = 0; i < 32; i++) {
 				strcat(msg, dwtoa(stack[i]));
 				strcat(msg, (i & 7) == 7 ? "\r\n" : " ");
@@ -168,6 +170,8 @@ LONG APIENTRY exHandler(EXCEPTION_POINTERS *except_info) {
 
 			strcat(msg, "\r\nCall stack:\r\n");
 			int dwOpts = GSTSO_PARAMS | GSTSO_MODULE | GSTSO_SYMBOL | GSTSO_SRCLINE;
+			warning("STUB: GetFirstStackTraceString");
+#if 0
 			const char * szBuff = GetFirstStackTraceString(dwOpts, except_info) ;
 			int iterations = 100;
 			while (szBuff && --iterations) {
@@ -175,6 +179,7 @@ LONG APIENTRY exHandler(EXCEPTION_POINTERS *except_info) {
 				strcat(msg, "\r\n");
 				szBuff = GetNextStackTraceString(dwOpts, except_info) ;
 			}
+#endif
 		}
 	}
 
@@ -201,8 +206,10 @@ XErrorHandler::XErrorHandler() {
 	flags       = XERR_ALL;
 
 	flag_errorOrAssertHandling = false;
-
+	warning("STUB: XErrorHandler");
+#if 0
 	SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)&exHandler);
+#endif
 }
 
 XErrorHandler::~XErrorHandler() {
@@ -217,6 +224,11 @@ void XErrorHandler::SetFlags(unsigned f) {
 void XErrorHandler::ClearFlags(unsigned f) {
 	flags ^= f;
 }
+
+#define MB_ICONSTOP 0x00000010
+#define MB_TOPMOST 0x00040000
+#define MB_SYSTEMMODAL 0x00001000
+
 
 void XErrorHandler::Abort(const char* message, int code, int val, const char* subj) {
 	flag_errorOrAssertHandling = true;
@@ -241,7 +253,7 @@ void XErrorHandler::Abort(const char* message, int code, int val, const char* su
 		if (val != -1) {
 			strcat(outmsg, "\r");
 			strcat(outmsg, "CODE: 0x");
-			strcat(outmsg, ultoa(val, _ConvertBuffer, 16));
+			strcat(outmsg, Common::String::format(_ConvertBuffer, val, 16).c_str());
 		}
 	}
 
@@ -282,7 +294,7 @@ void XErrorHandler::RTC(const char *file, unsigned int line, const char *expr) {
 	char msg[256];
 	strcpy(msg, file);
 	strcat(msg, ", LINE: ");
-	strcat(msg, itoa(line, _ConvertBuffer, 10));
+	strcat(msg, Common::String::format(_ConvertBuffer, line, 10).c_str());
 	strcat(msg, "\r\n");
 	strcat(msg, expr);
 	Abort(rterrorMSG, XERR_USER, -1, msg);

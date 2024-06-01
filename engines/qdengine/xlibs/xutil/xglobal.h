@@ -8,6 +8,7 @@
 #include <time.h>
 
 #define _XUTIL_NO_AUTOMATIC_LIB
+#include "qdengine/core/qd_precomp.h"
 #include "qdengine/xlibs/xutil/_xtool.h"
 #include "qdengine/xlibs/xutil/xmsgbuf.h"
 
