@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-01 00:54+0000\n"
+"POT-Creation-Date: 2024-06-01 10:44+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -84,7 +84,7 @@ msgstr ""
 #: gui/saveload-dialog.cpp:540 gui/saveload-dialog.cpp:824
 #: gui/saveload-dialog.cpp:1220 gui/shaderbrowser-dialog.cpp:80
 #: gui/themebrowser.cpp:54 gui/unknown-game-dialog.cpp:53 base/main.cpp:604
-#: dists/android.strings.xml.cpp:43 engines/engine.cpp:764
+#: dists/android.strings.xml.cpp:46 engines/engine.cpp:764
 #: backends/dialogs/gtk/gtk-dialogs.cpp:65
 #: backends/events/default/default-events.cpp:193
 #: backends/events/default/default-events.cpp:217
@@ -322,7 +322,7 @@ msgstr ""
 #: gui/editgamedialog.cpp:363 gui/editrecorddialog.cpp:67
 #: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:557 gui/launcher.cpp:561
 #: gui/massadd.cpp:90 gui/options.cpp:2354 gui/predictivedialog.cpp:69
-#: gui/saveload-dialog.cpp:1221 dists/android.strings.xml.cpp:32
+#: gui/saveload-dialog.cpp:1221 dists/android.strings.xml.cpp:33
 #: engines/engine.cpp:567 engines/engine.cpp:590
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
 #: engines/agos/midi.cpp:320 engines/agos/midi.cpp:378
@@ -2481,7 +2481,7 @@ msgstr ""
 
 #: gui/recorderdialog.cpp:72 gui/recorderdialog.cpp:212
 #: gui/saveload-dialog.cpp:460 gui/saveload-dialog.cpp:540
-#: dists/android.strings.xml.cpp:44 engines/engine.cpp:613
+#: dists/android.strings.xml.cpp:47 engines/engine.cpp:613
 msgid "Delete"
 msgstr ""
 
@@ -2936,11 +2936,15 @@ msgid "ScummVM"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:31
+msgid "ScummVM (debug)"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:32
 msgid "Graphic adventure game engine"
 msgstr ""
 
 #. I18N: This directly quits the game.
-#: dists/android.strings.xml.cpp:33
+#: dists/android.strings.xml.cpp:34
 #: backends/events/default/default-events.cpp:217
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:328 engines/cge2/metaengine.cpp:239
@@ -2951,77 +2955,115 @@ msgstr ""
 msgid "Quit"
 msgstr ""
 
-#: dists/android.strings.xml.cpp:34
-msgid "Config File Error"
-msgstr ""
-
 #: dists/android.strings.xml.cpp:35
-msgid "Unable to read ScummVM config file or create a new one!"
+msgid "Log File Error"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:36
-msgid "Save Path Error"
+msgid "Unable to read ScummVM log file or create a new one!"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:37
-msgid "Unable to create or access default save path!"
+msgid "Config File Error"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:38
-msgid "Icons Path Error"
+msgid "Unable to read ScummVM config file or create a new one!"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:39
-msgid "Unable to create or access default icons and shaders path!"
+msgid "Save Path Error"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:40
+msgid "Unable to create or access default save path!"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:41
+msgid "Icons Path Error"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:42
+msgid "Unable to create or access default icons and shaders path!"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:43
 msgid ""
 "Unable to access the globally set save path! Please revert to default from "
 "ScummVM Options"
 msgstr ""
 
-#: dists/android.strings.xml.cpp:41
+#: dists/android.strings.xml.cpp:44
 msgid "Toggle virtual keyboard"
 msgstr ""
 
-#: dists/android.strings.xml.cpp:42 engines/scumm/help.cpp:82
+#: dists/android.strings.xml.cpp:45 engines/scumm/help.cpp:82
 #: engines/scumm/help.cpp:86 engines/scumm/help.cpp:88
 #: engines/scumm/help.cpp:102 engines/scumm/help.cpp:103
 #: engines/scumm/help.cpp:104
 msgid "Alt"
 msgstr ""
 
-#: dists/android.strings.xml.cpp:45
+#: dists/android.strings.xml.cpp:48
 #: backends/platform/libretro/src/libretro-options-widget.cpp:222
 msgid "Done"
 msgstr ""
 
-#: dists/android.strings.xml.cpp:46
+#: dists/android.strings.xml.cpp:49
 msgid "Mode change"
 msgstr ""
 
-#: dists/android.strings.xml.cpp:47
+#: dists/android.strings.xml.cpp:50
 msgid "Shift"
 msgstr ""
 
-#: dists/android.strings.xml.cpp:48 engines/dragons/metaengine.cpp:154
+#: dists/android.strings.xml.cpp:51 engines/dragons/metaengine.cpp:154
 #: engines/scumm/help.cpp:88 engines/scumm/help.cpp:91
 msgid "Enter"
 msgstr ""
 
-#: dists/android.strings.xml.cpp:49
+#: dists/android.strings.xml.cpp:52
 msgid "Close popup"
 msgstr ""
 
-#: dists/android.strings.xml.cpp:50
+#: dists/android.strings.xml.cpp:53
 msgid ""
 "Please select the *root* of your external (physical) SD card. This is "
 "required for ScummVM to access this path: "
 msgstr ""
 
-#: dists/android.strings.xml.cpp:51
+#: dists/android.strings.xml.cpp:54
 msgid "Storage Access Framework Permissions for ScummVM were revoked!"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:55
+msgid "Configuration file could not be parsed"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:56
+msgid "Run a game"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:57
+msgid "Search a game"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:58
+msgid ""
+"No games (yet)\n"
+"Open ScummVM and add your games here."
+msgstr ""
+
+#: dists/android.strings.xml.cpp:59
+msgid "Game icon"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:60
+msgid "Shortcut label"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:61
+msgid "Shortcut icon"
 msgstr ""
 
 #. I18N: One line summary as shown in *nix distributions
@@ -4332,12 +4374,12 @@ msgstr ""
 msgid "Magnify Mode Off"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1048
+#: backends/platform/android/android.cpp:1050
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 msgid "Getting help"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1051
+#: backends/platform/android/android.cpp:1053
 msgid ""
 "## Help, I'm lost!\n"
 "\n"
@@ -4359,13 +4401,13 @@ msgid ""
 "checking out a game walkthrough. Good luck!\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1060
+#: backends/platform/android/android.cpp:1062
 #: backends/platform/ios7/ios7_osys_misc.mm:261
 #: backends/platform/ios7/ios7_osys_misc.mm:357
 msgid "Touch Controls"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1063
+#: backends/platform/android/android.cpp:1065
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -4434,13 +4476,13 @@ msgid ""
 "\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1119
+#: backends/platform/android/android.cpp:1121
 #: backends/platform/ios7/ios7_osys_misc.mm:336
 #: backends/platform/ios7/ios7_osys_misc.mm:380
 msgid "Adding Games"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1122
+#: backends/platform/android/android.cpp:1124
 msgid ""
 "## Adding Games \n"
 "\n"
