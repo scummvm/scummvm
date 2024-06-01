@@ -48,7 +48,7 @@ void ImGuiLogger::clear() {
     _items.clear();
 }
 
-void ImGuiLogger::addLog(const char *fmt, ...) IM_FMTARGS(2) {
+void ImGuiLogger::addLog(const char *fmt, ...) {
     // FIXME-OPT
     char buf[1024];
     va_list args;
