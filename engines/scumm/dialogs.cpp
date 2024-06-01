@@ -1698,7 +1698,7 @@ HENetworkGameOptionsWidget::HENetworkGameOptionsWidget(GuiObject *boss, const Co
 	_audioOverride = nullptr;
 	const Common::String guiOptionsString = ConfMan.get("guioptions", domain);
 	const Common::String guiOptions = parseGameGUIOptions(guiOptionsString);
-	if (guiOptions.contains(GUIO_AUDIO_OVERRIDE))
+	if (guiOptions.contains(GAMEOPTION_AUDIO_OVERRIDE))
 		_audioOverride = new GUI::CheckboxWidget(widgetsBoss(), "HENetworkGameOptionsDialog.AudioOverride", _("Load modded audio"), _("Replace music, sound effects, and speech clips with modded audio files, if available."));
 
 	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.SessionServerLabel", _("Multiplayer Server:"));
