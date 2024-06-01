@@ -20,6 +20,12 @@
  */
 
 #define GLAD_GL_IMPLEMENTATION
+// sscanf_s is used by glad on MSVC only
+// we can't know before c=config.h is loaded that GLAD will be used
+// but at this time it will be too late to allow sscanf_s
+#ifdef _MSC_VER
+#define FORBIDDEN_SYMBOL_EXCEPTION_sscanf_s
+#endif
 
 #include "graphics/opengl/context.h"
 
