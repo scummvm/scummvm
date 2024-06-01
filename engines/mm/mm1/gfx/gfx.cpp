@@ -34,7 +34,7 @@ byte EGA_INDEXES[EGA_PALETTE_COUNT];
 
 void GFX::setEgaPalette() {
 	Graphics::Palette ega = Graphics::Palette::createEGAPalette();
-	g_system->getPaletteManager()->setPalette(ega.data(), 0, 16);
+	g_system->getPaletteManager()->setPalette(ega);
 
 	uint32 c = 0xffffffff;
 	g_system->getPaletteManager()->setPalette((const byte *)&c, 255, 1);

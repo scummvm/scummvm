@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "common/noncopyable.h"
+#include "graphics/palette.h"
 
 /**
  * @defgroup graphics_palette PaletteManager
@@ -73,6 +74,10 @@ public:
 	 */
 	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
 
+	void setPalette(const Graphics::Palette &pal, uint start = 0) {
+		setPalette(pal.data(), start, pal.size());
+	}
+
 	/**
 	 * Grabs a specified part of the currently active palette.
 	 * The format is the same as for setPalette.
@@ -105,6 +110,12 @@ public:
 	 * @see getScreenFormat
 	 */
 	virtual void grabPalette(byte *colors, uint start, uint num) const = 0;
+
+	Graphics::Palette grabPalette(uint start, uint num) {
+		byte tmp[256 * 3];
+		grabPalette(tmp, start, num);
+		return Graphics::Palette(tmp, num);
+	}
 };
  /** @} */
 
