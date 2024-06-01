@@ -49,7 +49,6 @@
 #include "director/castmember/text.h"
 #include "director/castmember/script.h"
 #include "director/channel.h"
-#include "director/debugtools.h"
 #include "director/debugger.h"
 #include "director/frame.h"
 #include "director/movie.h"
@@ -59,6 +58,7 @@
 #include "director/types.h"
 #include "director/window.h"
 
+#include "director/debugger/debugtools.h"
 #include "director/debugger/imgui_memory_editor.h"
 
 namespace Director {
