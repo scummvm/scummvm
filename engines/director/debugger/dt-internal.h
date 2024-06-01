@@ -171,7 +171,7 @@ typedef struct ImGuiState {
 	ImGuiLogger *_logger = nullptr;
 } ImGuiState;
 
-
+// dt-logger.cpp
 class ImGuiLogger {
 	char _inputBuf[256];
 	ImVector<char *> _items;
@@ -193,6 +193,7 @@ public:
 	void draw(const char *title, bool *p_open);
 };
 
+// debugtools.cpp
 bool toggleButton(const char *label, bool *p_value, bool inverse = false);
 ImGuiScript toImGuiScript(ScriptType scriptType, CastMemberID id, const Common::String &handlerId);
 void setScriptToDisplay(const ImGuiScript &script);
@@ -203,6 +204,7 @@ Common::String getDisplayName(CastMember *castMember);
 void showImage(const ImGuiImage &image, const char *name, float thumbnailSize);
 ImVec4 convertColor(uint32 color);
 
+void showControlPanel(); // dt-controlpanel.cpp
 void renderOldScriptAST(ImGuiScript &script, bool showByteCode);    // dt-script-d2.cpp
 void renderScriptAST(ImGuiScript &script, bool showByteCode);       // dt-script-d4.cpp
 void showScore();       // dt-score.cpp
