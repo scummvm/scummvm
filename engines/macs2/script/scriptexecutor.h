@@ -40,13 +40,17 @@ class Macs2Engine;
 			uint16 a;
 			uint16 b;
 		};
-
+		// Order of cursors when loading from the file is
+		//  { Talk = 0, Look = 1, Touch = 2, Walk = 3};
 		enum class MouseMode {
+			Talk = 0x13,
+			// TODO: Confirm
+			Look = 0x14,
 			Use = 0x15,
 			// TODO: Check if correct
-			UseInventory = 0x17,
+			Walk = 0x16,
 			// TODO: Check if correct
-			Talk = 0x18
+			UseInventory = 0x17
 		};
 
 		class ScriptExecutor {

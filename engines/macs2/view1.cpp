@@ -38,7 +38,8 @@ Character *View1::GetCharacterByIndex(uint16 index) {
 }
 View1::View1() : UIElement("View1") {
 		_backgroundSurface = g_engine->_bgImageShip;
-		int mode = (int)g_engine->_cursorMode;
+		// TODO: Adjust for final min value
+		int mode = (int)g_engine->_scriptExecutor->_mouseMode - (int)Script::MouseMode::Talk;
 		g_engine->_cursorData[mode][(g_engine->_cursorWidths[mode] >> 1) + (g_engine->_cursorHeights[0] >> 1) * g_engine->_cursorWidths[mode]] = 0xFF;
 		CursorMan.replaceCursor(g_engine->_cursorData[mode], g_engine->_cursorWidths[mode], g_engine->_cursorHeights[mode], g_engine->_cursorWidths[mode] >> 1, g_engine->_cursorHeights[0] >> 1, 0);
 		CursorMan.showMouse(true);
@@ -58,8 +59,8 @@ View1::View1() : UIElement("View1") {
 	AnimFrame *View1::GetInventoryIcon(GameObject *gameObject) {
 		AnimFrame *result = new AnimFrame();
 		int index = 5 - 1;
-		if (gameObject->Index == 0x23) {
-			// TODO Figure out these - the mug has a different blob it uses than the cup
+		if (gameObject->Index == 0x23 || gameObject->Index == 0x22) {
+			// TODO Figure out these - the mug has a different blob
 			index = 0x13;
 		}
 		Common::MemoryReadStream stream(gameObject->Blobs[index].data(), gameObject->Blobs[index].size());
@@ -322,6 +323,10 @@ View1::View1() : UIElement("View1") {
 				return true;
 			}
 
+			// Handle no other interactions during a script
+			if (g_engine->_scriptExecutor->IsExecuting()) {
+				return true;
+			}
 
 
 			// uint32 value = getSurface().getPixel(msg._pos.x, msg._pos.y);
@@ -329,7 +334,7 @@ View1::View1() : UIElement("View1") {
 			g_system->setWindowCaption(Common::String::format("%u,%u: %u", msg._pos.x, msg._pos.y, value));
 			//g_engine->CalculatePath(Common::Point(154, 136), Common::Point(msg._pos.x, msg._pos.y));
 
-			if (g_engine->_cursorMode == CursorMode::Walk) {
+			if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Walk) {
 				// TODO: Should address the protagonist differently
 				// TODO: Sort out the different modes and only define them once
 				characters[0]->StartLerpTo(msg._pos, 1000);
@@ -345,14 +350,16 @@ View1::View1() : UIElement("View1") {
 			if (index != 0) {
 				debug("*** New interaction started");
 				// TODO: Mode hardcoded
+				// TODO: Probably superfluous now
 				Script::MouseMode m = Script::MouseMode::Use;
-				if (g_engine->_cursorMode == CursorMode::Talk) {
+				if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Talk) {
 					m = Script::MouseMode::Talk;
 				}
 				if (activeInventoryItem != nullptr) {
 					m = Script::MouseMode::UseInventory;
 					
 				}
+				// We need this to override to use inventory - probably handled better otherwise
 				g_engine->_scriptExecutor->_mouseMode = m;
 				g_engine->_scriptExecutor->_charPosX = characters[0]->Position.x;
 				g_engine->_scriptExecutor->_charPosY = characters[0]->Position.y;
@@ -371,8 +378,14 @@ View1::View1() : UIElement("View1") {
 			}
 			return true;
 		} else if (msg._button == MouseMessage::MB_RIGHT) {
+			// Handle no other interactions during a script
+			if (g_engine->_scriptExecutor->IsExecuting()) {
+				return true;
+			}
+
 			g_engine->NextCursorMode();
-			int mode = (int)g_engine->_cursorMode;
+			// TODO: Adjust for actual min value
+			int mode = (int)g_engine->_scriptExecutor->_mouseMode - (int)Script::MouseMode::Talk;
 			CursorMan.replaceCursor(g_engine->_cursorData[mode], g_engine->_cursorWidths[mode], g_engine->_cursorHeights[mode], g_engine->_cursorWidths[mode] >> 1, g_engine->_cursorHeights[0] >> 1, 0);
 			return true;
 		}
@@ -780,7 +793,7 @@ Macs2::AnimFrame *Character::GetCurrentPortrait() {
 	AnimFrame *result = new AnimFrame();
 	Common::MemoryReadStream stream(this->GameObject->Blobs[17].data(), this->GameObject->Blobs[17].size());
 	// TODO: Need to check how the offset really is calculated by the game code, this will not hold
-	if (GameObject->Index == 2 || GameObject->Index == 6 || GameObject->Index == 0xd || GameObject ->Index == 0xf) {
+	if (GameObject->Index == 2 || GameObject->Index == 4 || GameObject->Index == 6 || GameObject->Index == 0xd || GameObject ->Index == 0xf) {
 		stream.seek(35, SEEK_SET);
 	} else {
 		stream.seek(36, SEEK_SET);
