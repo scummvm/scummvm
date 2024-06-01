@@ -35,6 +35,7 @@ namespace Gob {
 
 GobConsole::GobConsole(GobEngine *vm) : GUI::Debugger(), _vm(vm), _cheater(nullptr) {
 	registerCmd("continue",     WRAP_METHOD(GobConsole, cmdExit));
+	registerCmd("help",      	WRAP_METHOD(GobConsole, cmd_Help));
 	registerCmd("varSize",      WRAP_METHOD(GobConsole, cmd_varSize));
 	registerCmd("dumpVars",     WRAP_METHOD(GobConsole, cmd_dumpVars));
 	registerCmd("var8",         WRAP_METHOD(GobConsole, cmd_var8));
@@ -56,6 +57,27 @@ void GobConsole::unregisterCheater() {
 	_cheater = nullptr;
 }
 
+bool GobConsole::cmd_Help(int, const char **) {
+	debugPrintf("Debug flags\n");
+	debugPrintf("-----------\n");
+	debugPrintf(" debugflag_list - Lists the available debug flags and their status\n");
+	debugPrintf(" debugflag_enable - Enables a debug flag\n");
+	debugPrintf(" debugflag_disable - Disables a debug flag\n");
+	debugPrintf("\n");
+	debugPrintf("Commands\n");
+	debugPrintf("--------\n");
+	debugPrintf(" continue - returns back to the game\n");
+	debugPrintf(" listArchives - shows which Archives are currently being used\n");
+	debugPrintf(" cheat - enables Cheats for Geisha\n");
+	debugPrintf(" varSize - shows the size of a variable in bytes\n");
+	debugPrintf(" dumpVars - dumps the variables to variables.dmp\n");
+	debugPrintf(" var8 - manipulates 8-bit variables; usage: var8 <var offset> (<value>)\n");
+	debugPrintf(" var16 - manipulates 16-bit variables; usage: var16 <var offset> (<value>)\n");
+	debugPrintf(" var32 - manipulates 32-bit variables; usage: var32 <var offset> (<value>)\n");
+	debugPrintf("\n");
+	return true;
+}
+
 bool GobConsole::cmd_varSize(int argc, const char **argv) {
 	debugPrintf("Size of the variable space: %d bytes\n", _vm->_inter->_variables->getSize());
 	return true;
@@ -67,14 +89,17 @@ bool GobConsole::cmd_dumpVars(int argc, const char **argv) {
 
 	Common::DumpFile file;
 
-	if (!file.open("variables.dmp"))
-		return true;
+	const char *variablesdmp = "variables.dmp";
+    if (!file.open("variables.dmp")) {
+        return true;
+    }
 
 	file.write(_vm->_inter->_variables->getAddressOff8(0), _vm->_inter->_variables->getSize());
 
 	file.flush();
 	file.close();
 
+	debugPrintf("Dumped %s successfully to ScummVM directory\n", variablesdmp);
 	return true;
 }
 
