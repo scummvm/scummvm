@@ -228,7 +228,7 @@ void TinyGLRenderer::useStipple(bool enabled) {
 		if (_renderMode == Common::kRenderZX  ||
 			_renderMode == Common::kRenderCPC ||
 			_renderMode == Common::kRenderCGA)
-			;//tglPolygonStipple(_variableStippleArray);
+			tglPolygonStipple(_variableStippleArray);
 		/*else
 			tglPolygonStipple(_defaultStippleArray);*/
 	} else {
