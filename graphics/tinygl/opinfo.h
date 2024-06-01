@@ -84,7 +84,7 @@ ADD_OP(DepthFunc, 1, "%d")
 ADD_OP(StencilFunc, 3, "%C %d %d")
 ADD_OP(StencilOp, 3, "%C %C %C")
 
-ADD_OP(PolygonStipple, 1, "%d")
+ADD_OP(PolygonStipple, 128, "%d")
 
 ADD_OP(Fog, 5, "%d %f %f %f %f")
 
@@ -101,6 +101,6 @@ ADD_OP(DrawArrays, 3, "%C %d %d")
 ADD_OP(DrawElements, 4, "%C %d %C %p")
 
 // opengl 1.1 polygon offset
-ADD_OP(PolygonOffset, 128, "%f %f")
+ADD_OP(PolygonOffset, 2, "%f %f")
 
 #undef ADD_OP
