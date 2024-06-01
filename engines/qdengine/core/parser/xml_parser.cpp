@@ -1,7 +1,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #ifndef _XML_ONLY_BINARY_SCRIPT_
-#include <expat.h>
 #endif
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/textconsole.h"
@@ -163,7 +162,8 @@ bool parser::parse_file(const char *fname) {
 
 #ifndef _XML_ONLY_BINARY_SCRIPT_
 	binary_script_ = false;
-
+	warning("STUB: parser::parse_file()");
+#if 0
 	XML_Parser p = XML_ParserCreate(NULL);
 
 	XML_SetUserData(p, this);
@@ -171,24 +171,26 @@ bool parser::parse_file(const char *fname) {
 	XML_SetCharacterDataHandler(p, xml::character_data_handler);
 
 	XML_SetUnknownEncodingHandler(p, unknown_encoding_handler, NULL);
-
 	if (!p) return false;
+#endif
 
 	XStream ff(fname, XS_IN);
 
 	unsigned int fsize = ff.size();
 
+#if 0
 	void *buf = XML_GetBuffer(p, fsize);
 	if (!buf) return false;
 
 	ff.read(static_cast<char *>(buf), fsize);
 	ff.close();
-
+#endif
 	if (data_pool_.size() < fsize / 2)
 		data_pool_.resize(fsize / 2);
 
 	tag_stack_.push(&root_tag_);
 
+#if 0
 	if (XML_ParseBuffer(p, fsize, 1) == XML_STATUS_OK) {
 		XML_ParserFree(p);
 		return true;
@@ -201,6 +203,7 @@ bool parser::parse_file(const char *fname) {
 
 	MessageBox(NULL, err_buf.c_str(), "XML Parser error", MB_OK);
 	XML_ParserFree(p);
+#endif
 #endif
 	return false;
 }
