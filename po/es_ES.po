@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-01 10:44+0000\n"
-"PO-Revision-Date: 2024-05-22 21:59+0000\n"
+"PO-Revision-Date: 2024-06-01 21:31+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -3190,10 +3190,8 @@ msgid "ScummVM"
 msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
-#, fuzzy
-#| msgid "ScummVM"
 msgid "ScummVM (debug)"
-msgstr "ScummVM"
+msgstr "ScummVM (depuración)"
 
 #: dists/android.strings.xml.cpp:32
 msgid "Graphic adventure game engine"
@@ -3212,16 +3210,12 @@ msgid "Quit"
 msgstr "Salir"
 
 #: dists/android.strings.xml.cpp:35
-#, fuzzy
-#| msgid "Config File Error"
 msgid "Log File Error"
-msgstr "Error en el archivo de configuración"
+msgstr "Error en el archivo de registro"
 
 #: dists/android.strings.xml.cpp:36
-#, fuzzy
-#| msgid "Unable to read ScummVM config file or create a new one!"
 msgid "Unable to read ScummVM log file or create a new one!"
-msgstr "¡No se ha podido leer o crear el archivo de configuración de ScummVM!"
+msgstr "¡No se ha podido leer o crear el archivo de registro de ScummVM!"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Config File Error"
@@ -3307,44 +3301,36 @@ msgstr ""
 "ScummVM!"
 
 #: dists/android.strings.xml.cpp:55
-#, fuzzy
-#| msgid "the video mode could not be changed"
 msgid "Configuration file could not be parsed"
-msgstr "no se ha podido cambiar el modo de vídeo"
+msgstr "No se ha podido analizar el archivo de configuración"
 
 #: dists/android.strings.xml.cpp:56
-#, fuzzy
-#| msgid "In 2D games"
 msgid "Run a game"
-msgstr "En juegos 2D"
+msgstr "Ejecutar un juego"
 
 #: dists/android.strings.xml.cpp:57
-#, fuzzy
-#| msgid "Search in game list"
 msgid "Search a game"
-msgstr "Buscar en la lista de juegos"
+msgstr "Buscar un juego"
 
 #: dists/android.strings.xml.cpp:58
 msgid ""
 "No games (yet)\n"
 "Open ScummVM and add your games here."
 msgstr ""
+"No hay juegos (todavía).\n"
+"Abre ScummVM y añade tus juegos desde aquí."
 
 #: dists/android.strings.xml.cpp:59
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game icon"
-msgstr "Opciones del juego"
+msgstr "Icono del juego"
 
 #: dists/android.strings.xml.cpp:60
-#, fuzzy
-#| msgid "Show object labels"
 msgid "Shortcut label"
-msgstr "Mostrar etiquetas de objetos"
+msgstr "Etiqueta del acceso directo"
 
 #: dists/android.strings.xml.cpp:61
 msgid "Shortcut icon"
-msgstr ""
+msgstr "Icono del acceso directo"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:32
@@ -5574,10 +5560,8 @@ msgid "Select Playlist directory"
 msgstr "Selecciona el directorio de listas de reproducción"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:172
-#, fuzzy
-#| msgid "Generate playlist"
 msgid "Libretro playlist"
-msgstr "Generar lista de reproducción"
+msgstr "Lista de reproducción de libRetro"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:175
 msgid ""
@@ -5594,6 +5578,21 @@ msgid ""
 "\n"
 "The core also supports dedicated per game **hook** plain text files with **."
 msgstr ""
+"## Listas de reproducción de libRetro para el núcleo de ScummVM\n"
+"Las listas de reproducción que utilizan los «front-ends» de libRetro (por "
+"ejemplo: Retroarch) son listas en texto sin formato que se utilizan para "
+"ejecutar desde la interfaz de usuario un juego directamente con un núcleo "
+"específico. Dichas listas están estructuradas para indicar al núcleo la ruta "
+"de un archivo de contenido a cargar concreto (por ejemplo: una ROM).\n"
+"\n"
+"El núcleo de ScummVM puede aceptar como contenido la ruta de cualquiera de "
+"los archivos que haya dentro de una carpeta de juego válida: el sistema de "
+"detección intentará detectar automáticamente el juego a partir de la carpeta "
+"raíz del archivo y luego ejecutar el juego con las opciones predeterminadas "
+"de ScummVM.\n"
+"\n"
+"El núcleo también admite archivos de texto sin formato con "
+"**«hooks»/enlaces** dedicados para cada juego utilizando **."
 
 #: backends/platform/maemo/maemo.cpp:157
 msgid "Click Mode"
