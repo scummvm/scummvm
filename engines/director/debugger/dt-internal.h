@@ -24,12 +24,153 @@
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 
+#include "graphics/surface.h"
+
 #include "backends/imgui/imgui.h"
 #include "backends/imgui/imgui_fonts.h"
+
+#include "director/debugger/imgui_memory_editor.h"
+
+#include "director/types.h"
+#include "director/lingo/lingo.h"
+#include "director/lingo/lingodec/ast.h"
+#include "director/lingo/lingodec/handler.h"
 
 namespace Director {
 
 namespace DT {
+
+class ImGuiLogger;
+
+#define kMaxColumnsInTable 512
+
+typedef struct ImGuiImage {
+	ImTextureID id;
+	int16 width;
+	int16 height;
+} ImGuiImage;
+
+typedef struct ImGuiScriptCodeLine {
+	uint32 pc;
+	Common::String codeLine;
+} ImGuiScriptCodeLine;
+
+typedef struct ImGuiScript {
+	bool score = false;
+	CastMemberID id;
+	ScriptType type;
+	Common::String handlerId;
+	Common::String handlerName;
+	Common::String moviePath;
+	Common::Array<uint32> byteOffsets;
+
+	bool isMethod = false;
+	bool isGenericEvent = false;
+	Common::StringArray argumentNames;
+	Common::StringArray propertyNames;
+	Common::StringArray globalNames;
+	Common::SharedPtr<LingoDec::HandlerNode> root;
+	Common::Array<LingoDec::Bytecode> bytecodeArray;
+	Common::Array<uint> startOffsets;
+	Common::SharedPtr<Node> oldAst;
+
+	bool operator==(const ImGuiScript &c) const {
+		return moviePath == c.moviePath && score == c.score && id == c.id && handlerId == c.handlerId;
+	}
+	bool operator!=(const ImGuiScript &c) const {
+		return !(*this == c);
+	}
+} ImGuiScript;
+
+typedef struct ImGuiWindows {
+	bool controlPanel = true;
+	bool callStack = false;
+	bool vars = false;
+	bool channels = false;
+	bool cast = false;
+	bool funcList = false;
+	bool score = false;
+	bool bpList = false;
+	bool settings = false;
+	bool logger = false;
+	bool archive = false;
+	bool watchedVars = false;
+} ImGuiWindows;
+
+typedef struct ImGuiState {
+	struct {
+		Common::HashMap<Graphics::Surface *, ImGuiImage> _textures;
+		bool _listView = true;
+		int _thumbnailSize = 64;
+		ImGuiTextFilter _nameFilter;
+		int _typeFilter = 0x7FFF;
+	} _cast;
+	struct {
+		Common::Array<ImGuiScript> _scripts;
+		uint _current = 0;
+		ImGuiTextFilter _nameFilter;
+		bool _showByteCode = false;
+		bool _showScript = false;
+	} _functions;
+	struct {
+		uint _lastLinePC = 0;
+		uint _callstackSize = 0;
+		bool _isScriptDirty = false; // indicates whether or not we have to display the script corresponding to the current stackframe
+	} _dbg;
+
+	struct {
+		ImVec4 _bp_color_disabled = ImVec4(0.9f, 0.08f, 0.0f, 0.0f);
+		ImVec4 _bp_color_enabled = ImVec4(0.9f, 0.08f, 0.0f, 1.0f);
+		ImVec4 _bp_color_hover = ImVec4(0.42f, 0.17f, 0.13f, 1.0f);
+		ImVec4 _current_statement = ImColor(IM_COL32(0xFF, 0xFF, 0x00, 0xFF));
+		ImVec4 _line_color = ImVec4(0.44f, 0.44f, 0.44f, 1.0f);
+		ImVec4 _call_color = ImColor(IM_COL32(0xFF, 0xC5, 0x5C, 0xFF));
+		ImVec4 _builtin_color = ImColor(IM_COL32(0x60, 0x7C, 0xFF, 0xFF));
+		ImVec4 _var_color = ImColor(IM_COL32(0x4B, 0xCD, 0x5E, 0xFF));
+		ImVec4 _literal_color = ImColor(IM_COL32(0xFF, 0x9F, 0xDA, 0x9E));
+		ImVec4 _comment_color = ImColor(IM_COL32(0xFF, 0xA5, 0x9D, 0x95));
+		ImVec4 _type_color = ImColor(IM_COL32(0x13, 0xC5, 0xF9, 0xFF));
+		ImVec4 _keyword_color = ImColor(IM_COL32(0xC1, 0xC1, 0xC1, 0xFF));
+		ImVec4 _the_color = ImColor(IM_COL32(0xFF, 0x49, 0xEF, 0xFF));
+	} _colors;
+
+	struct {
+		DatumHash _locals;
+		DatumHash _globals;
+		uint32 _lastTimeRefreshed = 0;
+	} _vars;
+
+	ImGuiWindows _w;
+	ImGuiWindows _savedW;
+	bool _wasHidden = false;
+
+	Common::List<CastMemberID> _scriptCasts;
+	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
+	int _prevFrame = -1;
+	struct {
+		int frame = -1;
+		int channel = -1;
+	} _selectedScoreCast;
+
+	int _scoreMode = 0;
+	int _scoreFrameOffset = 1;
+
+	ImFont *_tinyFont = nullptr;
+
+	struct {
+		Common::Path path;
+		uint32 resType = 0;
+		uint32 resId = 0;
+
+		byte *data = nullptr;
+		uint32 dataSize = 0;
+
+		MemoryEditor memEdit;
+	} _archive;
+
+	ImGuiLogger *_logger = nullptr;
+} ImGuiState;
+
 
 class ImGuiLogger {
 	char _inputBuf[256];

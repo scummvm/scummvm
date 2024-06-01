@@ -22,6 +22,7 @@
 #include "common/debug.h"
 #include "common/debug-channels.h"
 
+#include "director/director.h"
 #include "director/debugger/dt-internal.h"
 
 namespace Director {
