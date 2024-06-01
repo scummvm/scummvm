@@ -194,6 +194,14 @@ public:
 };
 
 bool toggleButton(const char *label, bool *p_value, bool inverse = false);
+ImGuiScript toImGuiScript(ScriptType scriptType, CastMemberID id, const Common::String &handlerId);
+void setScriptToDisplay(const ImGuiScript &script);
+Director::Breakpoint *getBreakpoint(const Common::String &handlerName, uint16 scriptId, uint pc);
+
+void renderOldScriptAST(ImGuiScript &script, bool showByteCode);    // dt-script-d2.cpp
+void renderScriptAST(ImGuiScript &script, bool showByteCode);       // dt-script-d4.cpp
+
+extern ImGuiState *_state;
 
 }
 

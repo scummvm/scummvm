@@ -160,6 +160,8 @@ ifdef USE_IMGUI
 MODULE_OBJS += \
 	debugger/debugtools.o \
 	debugger/dt-logger.o \
+	debugger/dt-script-d2.o \
+	debugger/dt-script-d4.o
 
 endif
 

@@ -238,5 +238,4 @@ void ImGuiLogger::draw(const char *title, bool *p_open) {
 }
 
 } // namespace DT
-
 } // namespace Director
