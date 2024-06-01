@@ -137,6 +137,7 @@ MODULE_OBJS = \
 	xlibs/xutil/xerrhand/xerrhand.o \
 	xlibs/xutil/xtcore.o \
 	xlibs/xutil/xkey/xkey.o \
+	xlibs/xutil/xrecorder/xrec.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_QDENGINE), DYNAMIC_PLUGIN)
