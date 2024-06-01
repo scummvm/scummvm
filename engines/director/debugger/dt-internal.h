@@ -197,9 +197,16 @@ bool toggleButton(const char *label, bool *p_value, bool inverse = false);
 ImGuiScript toImGuiScript(ScriptType scriptType, CastMemberID id, const Common::String &handlerId);
 void setScriptToDisplay(const ImGuiScript &script);
 Director::Breakpoint *getBreakpoint(const Common::String &handlerName, uint16 scriptId, uint pc);
+void displayScriptRef(CastMemberID &scriptId);
+ImGuiImage getImageID(CastMember *castMember);
+Common::String getDisplayName(CastMember *castMember);
+void showImage(const ImGuiImage &image, const char *name, float thumbnailSize);
+ImVec4 convertColor(uint32 color);
 
 void renderOldScriptAST(ImGuiScript &script, bool showByteCode);    // dt-script-d2.cpp
 void renderScriptAST(ImGuiScript &script, bool showByteCode);       // dt-script-d4.cpp
+void showScore();       // dt-score.cpp
+void showChannels();    // dt-score.cpp
 
 extern ImGuiState *_state;
 
