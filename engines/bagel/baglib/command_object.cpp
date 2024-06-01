@@ -263,7 +263,7 @@ bool CBagCommandObject::runObject() {
 			CBofString bmpName("$SBARDIR\\GENERAL\\POPUP\\THUDPOP.BMP");
 			fixPathName(bmpName);
 			CDevDlg dlg;
-			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::getApp()->getPalette(), &tmpRect);
+			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::getApp()->getPalette(), &tmpRect, false);
 			dlg.doModal();
 			dlg.destroy();
 
@@ -272,7 +272,7 @@ bool CBagCommandObject::runObject() {
 			CBofString bmpName("$SBARDIR\\GENERAL\\POPUP\\FLEEDAT.BMP");
 			fixPathName(bmpName);
 			CDevDlg dlg;
-			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::getApp()->getPalette(), &tmpRect);
+			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::getApp()->getPalette(), &tmpRect, false);
 			dlg.doModal();
 			dlg.destroy();
 
@@ -281,7 +281,7 @@ bool CBagCommandObject::runObject() {
 			CBofString bmpName("$SBARDIR\\GENERAL\\POPUP\\CLICKPOP.BMP");
 			fixPathName(bmpName);
 			CDevDlg dlg;
-			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::getApp()->getPalette(), &tmpRect);
+			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::getApp()->getPalette(), &tmpRect, false);
 			dlg.doModal();
 			dlg.destroy();
 
@@ -290,7 +290,7 @@ bool CBagCommandObject::runObject() {
 			CBofString bmpName("$SBARDIR\\GENERAL\\POPUP\\CLICKDAT.BMP");
 			fixPathName(bmpName);
 			CDevDlg dlg;
-			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::getApp()->getPalette(), &tmpRect);
+			dlg.create(bmpName, CBagel::getBagApp()->getMasterWnd(), CBofApp::getApp()->getPalette(), &tmpRect, false);
 			dlg.doModal();
 			dlg.destroy();
 

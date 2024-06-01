@@ -24,7 +24,6 @@
 
 #include "bagel/boflib/gui/window.h"
 #include "bagel/boflib/gfx/bitmap.h"
-#include "bagel/boflib/gfx/palette.h"
 
 namespace Bagel {
 
@@ -53,8 +52,8 @@ protected:
 	virtual ErrorCode saveBackground();
 	virtual ErrorCode killBackground();
 
-	virtual void onPaint(CBofRect *pRect);
-	virtual void onClose();
+	void onPaint(CBofRect *pRect) override;
+	void onClose() override;
 	virtual void onInitDialog();
 
 public:
@@ -84,7 +83,7 @@ public:
 	 * @param nControlID	Control Id
 	 * @return				Error return code
 	 */
-	ErrorCode create(const char *pszName, int x = 0, int y = 0, int nWidth = USE_DEFAULT, int nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
+	ErrorCode create(const char *pszName, int x, int y, int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID = 0) override;
 
 	/**
 	 * Creates the dialog
@@ -94,7 +93,7 @@ public:
 	 * @param nControlID	Control Id
 	 * @return				Error return code
 	 */
-	ErrorCode create(const char *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
+	ErrorCode create(const char *pszName, CBofRect *pRect, CBofWindow *pParent, uint32 nControlID = 0) override;
 
 	/**
 	 * Set the dialog flags

@@ -96,7 +96,7 @@ CBagMasterWin::CBagMasterWin() {
 	_variableList = nullptr;
 	_diskId = 1;
 
-	create(appName, &screenRect);
+	create(appName, &screenRect, nullptr);
 
 	// Assume default system screen
 	_sysScreen = "$SBARDIR\\GENERAL\\SYSTEM\\GAMBHALL.BMP";
