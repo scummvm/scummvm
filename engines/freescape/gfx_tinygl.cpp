@@ -146,6 +146,14 @@ void TinyGLRenderer::renderPlayerShootRay(byte color, const Common::Point positi
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
 
+	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderZX) {
+		r = g = b = 255;
+	} else {
+		r = g = b = 255;
+		tglEnable(TGL_BLEND);
+		tglBlendFunc(TGL_ONE_MINUS_DST_COLOR, TGL_ZERO);
+	}
+
 	tglDisable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_FALSE);
 
@@ -169,6 +177,7 @@ void TinyGLRenderer::renderPlayerShootRay(byte color, const Common::Point positi
 	tglDrawArrays(TGL_LINES, 0, 8);
 	tglDisableClientState(TGL_VERTEX_ARRAY);
 
+	tglDisable(TGL_BLEND);
 	tglEnable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_TRUE);
 }
