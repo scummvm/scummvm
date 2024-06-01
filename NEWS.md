@@ -30,6 +30,16 @@ For a more comprehensive changelog of the latest experimental code, see:
  SCUMM:
    - Added map generator from Moonbase Console for Moonbase Commander.
 
+ Sword1:
+   - Added a "Windows audio engine" mode available within the ScummVM game 
+     options, in which we simulate the DirectSound audio drivers powering the 
+     Windows 95 executable.
+     This makes the game use softer (logarithmic) audio curves, but removes 
+     fade-in and fade-out for sound effects, fade-in for music, and automatic 
+     music volume attenuation for when speech is playing. By default the setting
+     is off, since the game was developed with DOS and AIL sound drivers in mind,
+     and it is also not available for Macintosh and PSX versions.
+
  Tony:
    - Fix crash with rapid cursor switching.
 
