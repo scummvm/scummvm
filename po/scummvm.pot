@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-05-30 18:11+0000\n"
+"POT-Creation-Date: 2024-06-01 00:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4858,6 +4858,26 @@ msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:236
 msgid "Select Playlist directory"
+msgstr ""
+
+#: backends/platform/libretro/src/libretro-os-utils.cpp:172
+msgid "Libretro playlist"
+msgstr ""
+
+#: backends/platform/libretro/src/libretro-os-utils.cpp:175
+msgid ""
+"## Libretro playlists for ScummVM core\n"
+"Playlists used in Libretro frontends (e.g. Retroarch) are plain text lists "
+"used to directly launch a game with a specific core from the user interface. "
+"Those lists are structured to pass to the core the path of a specific "
+"content file to be loaded (e.g. ROM).\n"
+"\n"
+"ScummVM core can accept as content the path to any of the files inside a "
+"valid game folder, the detection system will try to autodetect the game from "
+"the content file parent folder and run the game with default ScummVM "
+"options.\n"
+"\n"
+"The core also supports dedicated per game **hook** plain text files with **."
 msgstr ""
 
 #: backends/platform/maemo/maemo.cpp:157
