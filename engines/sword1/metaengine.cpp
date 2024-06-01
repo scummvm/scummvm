@@ -29,9 +29,32 @@
 
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
+
+namespace Sword1 {
+		
+#define GAMEOPTION_WINDOWS_AUDIO_MODE GUIO_GAMEOPTIONS1
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_WINDOWS_AUDIO_MODE,
+		{
+			_s("Simulate the audio engine from the Windows executable"),
+			_s("Makes the game use softer (logarithmic) audio curves, but removes fade-in and fade-out for "
+			   "sound effects, fade-in for music, and automatic music volume attenuation for when speech is playing"),
+			"windows_audio_mode",
+			false,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
+} // End of namespace Sword1
 
 class SwordMetaEngine : public AdvancedMetaEngine {
 public:
@@ -45,6 +68,9 @@ public:
 	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return Sword1::optionsList;
+	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine) override {
 		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);

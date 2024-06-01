@@ -26,6 +26,7 @@
 #include "engines/advancedDetector.h"
 #include "engines/obsolete.h"
 
+#include "sword1/detection.h"
 #include "sword1/obsolete.h" // Obsolete ID table.
 
 static const PlainGameDescriptor swordGames[] = {

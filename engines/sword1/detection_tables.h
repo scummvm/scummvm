@@ -33,7 +33,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_DEMO,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -46,7 +46,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_DEMO,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -59,7 +59,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::PT_BRA,
 		Common::kPlatformWindows,
 		ADGF_DEMO,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -109,7 +109,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_USA,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -122,7 +122,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_GRB,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{ // 25th Anniversary rerelease / Steam DLC for Director's Cut
@@ -135,7 +135,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_GRB,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -148,7 +148,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_GRB,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -161,7 +161,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{ // Bundled with ScummVM 0.8
@@ -175,7 +175,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -188,7 +188,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::FR_FRA,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -201,7 +201,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::FR_FRA,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -214,7 +214,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::FR_FRA,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -227,7 +227,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::FR_FRA,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -240,7 +240,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -253,7 +253,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{ // German DVD Trilogy collection
@@ -266,7 +266,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{ // GOG.com version + german translation
@@ -279,7 +279,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{ // German version of "Revolution Classic Adventures"
@@ -292,7 +292,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -305,7 +305,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{ // Alternate version
@@ -318,7 +318,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -331,7 +331,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -344,7 +344,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::IT_ITA,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -357,7 +357,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::IT_ITA,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -370,7 +370,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::IT_ITA,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -383,7 +383,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::PT_PRT,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -396,7 +396,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::PT_BRA,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -409,7 +409,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::HE_ISR,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -422,7 +422,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::PL_POL,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -435,7 +435,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::PL_POL,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -448,7 +448,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::PL_POL,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -461,7 +461,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::PL_POL,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -474,7 +474,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::PL_POL,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -487,7 +487,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::HU_HUN,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -500,7 +500,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::CS_CZE,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -513,7 +513,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::CS_CZE,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -526,7 +526,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -539,7 +539,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{ // Alternate version, from a DVD collection containing both BS1 and BS2
@@ -552,7 +552,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
@@ -565,7 +565,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{ // Korean fan translation
@@ -580,7 +580,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::KO_KOR,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_WINDOWS_AUDIO_MODE)
 	},
 
 	{
