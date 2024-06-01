@@ -1110,7 +1110,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		// Make sure the thread is actively polling for events
 		_scummvm.setPause(false);
 		try {
-			// 1s timeout
+			// 2s timeout
 			_scummvm_thread.join(2000);
 		} catch (InterruptedException e) {
 			Log.i(ScummVM.LOG_TAG, "Error while joining ScummVM thread", e);
@@ -1189,7 +1189,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			// Make sure the thread is actively polling for events
 			_scummvm.setPause(false);
 			try {
-				// 1s timeout
+				// 2s timeout
 				_scummvm_thread.join(2000);
 			} catch (InterruptedException e) {
 				Log.i(ScummVM.LOG_TAG, "Error while joining ScummVM thread", e);
