@@ -32,12 +32,12 @@ void XKeyStruct::finit() {
 }
 
 void XKeyStruct::setPress(int key, void (*keyFunction)(void), int repeat) {
-	keyPressFnc[key] = keyFunction;
+	keyPressFnc[key] = (void *)keyFunction;
 	if (repeat) keyStates[key] |= XKEY_REPEAT;
 }
 
 void XKeyStruct::setUnpress(int key, void (*keyFunction)(void)) {
-	keyUnpressFnc[key] = keyFunction;
+	keyUnpressFnc[key] = (void *)keyFunction;
 }
 
 int XKeyStruct::Pressed(int key) {

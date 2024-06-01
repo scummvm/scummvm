@@ -1,9 +1,10 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/xlibs/xutil/_xtool.h"
 #include "qdengine/xlibs/xutil/xglobal.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
-
 struct xtMsgHandlerObject {
 	int ID;
 
@@ -94,8 +95,8 @@ int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw) {
 	*/
 	XMsgBuf = new XMessageBuffer;
 
-	hXActiveWndEvent = CreateEvent(0, TRUE, TRUE, 0);
-	hXNeedExitEvent = CreateEvent(0, TRUE, FALSE, 0);
+	hXActiveWndEvent = CreateEvent(0, true, true, 0);
+	hXNeedExitEvent = CreateEvent(0, true, false, 0);
 	if (!hXActiveWndEvent || !hXNeedExitEvent) {
 		ErrH.Abort("Can't create control events...");
 	}
@@ -121,10 +122,10 @@ int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw) {
 
 		id = 0;
 
-		clockCnt = clocki();
+		clockCnt = clock();
 		while (!id) {
 			if (XObj -> Timer) {
-				clockNow = clocki();
+				clockNow = clock();
 				clockDelta =  clockNow - clockCnt;
 				if (clockDelta >= XObj -> Timer) {
 					clockCnt = clockNow - (clockDelta - XObj -> Timer) % XObj -> Timer;
@@ -309,7 +310,6 @@ void xtAddSysObj(XList* lstPtr, void (*fPtr)(void), int id) {
 
 	p = new XSysObject;
 	p -> ID = id;
-	p -> QuantPtr = fPtr;
 
 	lstPtr -> AddElement((XListElement*)p);
 }
@@ -358,7 +358,7 @@ int xtDispatchMessage(MSG* msg) {
 	ret += xtCallXKey(msg);
 	switch (msg -> message) {
 	case WM_ACTIVATEAPP:
-		if (FALSE == BOOL(msg -> wParam)) {
+		if (false == BOOL(msg -> wParam)) {
 			ResetEvent(hXActiveWndEvent);
 		} else {
 			XKey.clear();
@@ -410,7 +410,7 @@ void xtReadConsoleInput(void) {
 			key_rec -> wVirtualScanCode &= ~0xFFFF;
 			key_rec -> wVirtualScanCode |= (key_rec -> wRepeatCount & 0xFFFF);
 
-			if (key_rec -> bKeyDown == TRUE)
+			if (key_rec -> bKeyDown == true)
 				xtPostMessage(NULL, WM_KEYDOWN, key_rec -> wVirtualKeyCode, key_rec -> wVirtualScanCode);
 			else
 				xtPostMessage(NULL, WM_KEYUP, key_rec -> wVirtualKeyCode, key_rec -> wVirtualScanCode);
@@ -441,7 +441,7 @@ void win32_break(char* error, char* msg) {
 	XCon < error < "\n";
 	XCon < msg < "\n";
 	XCon < "--------------------------------\n";
-	_ASSERT(FALSE) ;
+	xassert(false) ;
 }
 
 void* xtGet_hInstance(void) {
@@ -459,6 +459,8 @@ void xtSet_hWnd(void* hWnd) {
 HWND XDummy_hWnd = NULL;
 
 void xtCreateDummyWindow(int x, int y, int sx, int sy) {
+	warning("STUB: xtCreateDummyWindow");
+#if 0
 	WNDCLASS wc;
 
 	if (XDummy_hWnd) ErrH.Abort("Dummy window already opened...");
@@ -498,6 +500,7 @@ void xtCreateDummyWindow(int x, int y, int sx, int sy) {
 
 	ShowWindow(XDummy_hWnd, XAppMode);
 	UpdateWindow(XDummy_hWnd);
+#endif
 }
 
 void xtCloseDummyWindow(void) {
@@ -506,8 +509,10 @@ void xtCloseDummyWindow(void) {
 		DestroyWindow(XDummy_hWnd);
 
 		XDummy_hWnd = NULL;
-
+		warning("STUB: xtCloseDummyWindow");
+#if 0
 		UnregisterClass("XDummyClass", (HINSTANCE)XAppHinst);
+#endif
 	}
 }
 
