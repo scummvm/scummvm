@@ -101,16 +101,17 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 
 	// Retrieve the plugin, since we need to access the engine's MetaEngine
 	// implementation.
-	const Plugin *detectionPlugin = nullptr;
 	const Plugin *enginePlugin = nullptr;
-	QualifiedGameDescriptor qgd = EngineMan.findTarget(domain, &detectionPlugin);
-	if (!detectionPlugin) {
-		warning("MetaEnginePlugin for target \"%s\" not found!", domain.c_str());
-	} else {
-		enginePlugin = PluginMan.getEngineFromDetectionPlugin(detectionPlugin);
-		if (!enginePlugin) {
-			warning("Engine Plugin for target \"%s\" not found! Game specific settings might be missing.", domain.c_str());
-		}
+	QualifiedGameDescriptor qgd = EngineMan.findTarget(domain);
+
+#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES) && !defined(DETECTION_STATIC)
+	// Unload all MetaEnginesDetection if we're using uncached plugins to save extra memory.
+	PluginMan.unloadDetectionPlugin();
+#endif
+
+	enginePlugin = PluginMan.findEnginePlugin(qgd.engineId);
+	if (!enginePlugin) {
+		warning("Engine Plugin for target \"%s\" not found! Game specific settings might be missing.", domain.c_str());
 	}
 
 	// GAME: Path to game data (r/o), extra data (r/o), and save data (r/w)
@@ -468,6 +469,20 @@ void EditGameDialog::open() {
 			sel = i + 2;
 	}
 	_platformPopUp->setSelected(sel);
+}
+
+void EditGameDialog::close() {
+	OptionsDialog::close();
+
+	// Cleanup engine widgets before unloading its plugin
+	if (_engineOptions) {
+		// Switch back to Game tab before deleting the widget
+		_tabWidget->setActiveTab(0);
+		_tabWidget->removeWidget(_engineOptions);
+		delete _engineOptions;
+	}
+
+	PluginMan.loadDetectionPlugin(); // only for uncached manager
 }
 
 void EditGameDialog::apply() {
