@@ -101,13 +101,13 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 
 	// Retrieve the plugin, since we need to access the engine's MetaEngine
 	// implementation.
-	const Plugin *metaEnginePlugin = nullptr;
+	const Plugin *detectionPlugin = nullptr;
 	const Plugin *enginePlugin = nullptr;
-	QualifiedGameDescriptor qgd = EngineMan.findTarget(domain, &metaEnginePlugin);
-	if (!metaEnginePlugin) {
+	QualifiedGameDescriptor qgd = EngineMan.findTarget(domain, &detectionPlugin);
+	if (!detectionPlugin) {
 		warning("MetaEnginePlugin for target \"%s\" not found!", domain.c_str());
 	} else {
-		enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);
+		enginePlugin = PluginMan.getEngineFromDetectionPlugin(detectionPlugin);
 		if (!enginePlugin) {
 			warning("Engine Plugin for target \"%s\" not found! Game specific settings might be missing.", domain.c_str());
 		}

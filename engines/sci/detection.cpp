@@ -251,12 +251,12 @@ ADDetectedGame SciMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 		}
 	}
 
-	const Plugin *metaEnginePlugin = EngineMan.findDetectionPlugin(getName());
-	if (!metaEnginePlugin) {
+	const Plugin *detectionPlugin = EngineMan.findDetectionPlugin(getName());
+	if (!detectionPlugin) {
 		return ADDetectedGame();
 	}
 
-	const Plugin *enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);
+	const Plugin *enginePlugin = PluginMan.getEngineFromDetectionPlugin(detectionPlugin);
 	if (!enginePlugin) {
 		static bool warn = true;
 		if (warn) {
