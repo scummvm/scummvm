@@ -73,8 +73,6 @@
 #define MAX_SAVES 99
 
 class GlkMetaEngine : public MetaEngine {
-private:
-	Common::String findFileByGameId(const Common::String &gameId) const;
 public:
 	const char* getName() const override {
 		return "glk";
@@ -140,31 +138,6 @@ template<class META, class ENG>bool create(OSystem *syst,
 	}
 }
 
-Common::String GlkMetaEngine::findFileByGameId(const Common::String &gameId) const {
-	// Get the list of files in the folder and return detection against them
-	Common::FSNode folder = Common::FSNode(ConfMan.getPath("path"));
-	Common::FSList fslist;
-	folder.getChildren(fslist, Common::FSNode::kListFilesOnly);
-
-	// Get the matching MetaEngine for this Engine.
-	MetaEngineDetection &metaEngine = g_engine->getMetaEngineDetection();
-
-	// Iterate over the files
-	for (Common::FSList::iterator i = fslist.begin(); i != fslist.end(); ++i) {
-		// Run a detection on each file in the folder individually
-		Common::FSList singleList;
-		singleList.push_back(*i);
-		DetectedGames games = metaEngine.detectGames(singleList);
-
-		// If a detection was found with the correct game Id, we have a winner
-		if (!games.empty() && games.front().gameId == gameId)
-			return (*i).getName();
-	}
-
-	// No match found
-	return Common::String();
-}
-
 Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine,
 		const DetectedGame &gameDescriptor, const void *metaEngineDescriptor) {
 #ifndef RELEASE_BUILD
@@ -172,69 +145,44 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine,
 #endif
 	assert(engine);
 
-	// Populate the game description
-	Glk::GlkGameDescription gameDesc;
-	gameDesc._gameId = ConfMan.get("gameid");
-	gameDesc._filename = ConfMan.get("filename");
-
-	gameDesc._language = Common::UNK_LANG;
-	gameDesc._platform = Common::kPlatformUnknown;
-	if (ConfMan.hasKey("language"))
-		gameDesc._language = Common::parseLanguage(ConfMan.get("language"));
-	if (ConfMan.hasKey("platform"))
-		gameDesc._platform = Common::parsePlatform(ConfMan.get("platform"));
-
-	// If the game description has no filename, the engine has been launched directly from
-	// the command line. Do a scan for supported games for that Id in the game folder
-	if (gameDesc._filename.empty()) {
-		gameDesc._filename = findFileByGameId(gameDesc._gameId);
-		if (gameDesc._filename.empty())
-			return Common::kNoGameDataFoundError;
-	}
-
-	// Get the MD5
-	Common::File f;
-	if (!f.open(Common::FSNode(ConfMan.getPath("path")).getChild(gameDesc._filename)))
-		return Common::kNoGameDataFoundError;
-
-	Common::String fileName = f.getName();
-	if (fileName.hasSuffixIgnoreCase(".D64"))
-		gameDesc._md5 = Common::computeStreamMD5AsString(f);
-	else
-		gameDesc._md5 = Common::computeStreamMD5AsString(f, 5000);
-	f.close();
+	Glk::GlkGameDescription *gameDesc = static_cast<Glk::GlkGameDescription *>(
+			const_cast<void *>(metaEngineDescriptor));
+	assert(gameDesc);
 
 	// Create the correct engine
 	*engine = nullptr;
-	if ((create<Glk::Adrift::AdriftMetaEngine, Glk::Adrift::Adrift>(syst, gameDesc, *engine))) {}
-	else if ((create<Glk::AdvSys::AdvSysMetaEngine, Glk::AdvSys::AdvSys>(syst, gameDesc, *engine))) {}
-	else if ((create<Glk::AGT::AGTMetaEngine, Glk::AGT::AGT>(syst, gameDesc, *engine))) {}
-	else if ((create<Glk::Alan2::Alan2MetaEngine, Glk::Alan2::Alan2>(syst, gameDesc, *engine))) {}
-	else if ((create<Glk::Alan3::Alan3MetaEngine, Glk::Alan3::Alan3>(syst, gameDesc, *engine))) {}
-	else if ((create<Glk::Archetype::ArchetypeMetaEngine, Glk::Archetype::Archetype>(syst, gameDesc, *engine))) {}
-	else if ((create<Glk::Comprehend::ComprehendMetaEngine, Glk::Comprehend::Comprehend>(syst, gameDesc, *engine))) {}
-	else if ((create<Glk::Glulx::GlulxMetaEngine, Glk::Glulx::Glulx>(syst, gameDesc, *engine))) {}
-	else if ((create<Glk::Hugo::HugoMetaEngine, Glk::Hugo::Hugo>(syst, gameDesc, *engine))) {}
-	else if ((create<Glk::JACL::JACLMetaEngine, Glk::JACL::JACL>(syst, gameDesc, *engine))) {}
-	else if ((create<Glk::Level9::Level9MetaEngine, Glk::Level9::Level9>(syst, gameDesc, *engine))) {}
-	else if ((create<Glk::Magnetic::MagneticMetaEngine, Glk::Magnetic::Magnetic>(syst, gameDesc, *engine))) {}
-	else if ((create<Glk::Quest::QuestMetaEngine, Glk::Quest::Quest>(syst, gameDesc, *engine))) {}
-	else if ((create<Glk::Scott::ScottMetaEngine, Glk::Scott::Scott>(syst, gameDesc, *engine))) {}
-	else if ((create<Glk::ZCode::ZCodeMetaEngine, Glk::ZCode::ZCode>(syst, gameDesc, *engine))) {}
+	if ((create<Glk::Adrift::AdriftMetaEngine, Glk::Adrift::Adrift>(syst, *gameDesc, *engine))) {}
+	else if ((create<Glk::AdvSys::AdvSysMetaEngine, Glk::AdvSys::AdvSys>(syst, *gameDesc, *engine))) {}
+	else if ((create<Glk::AGT::AGTMetaEngine, Glk::AGT::AGT>(syst, *gameDesc, *engine))) {}
+	else if ((create<Glk::Alan2::Alan2MetaEngine, Glk::Alan2::Alan2>(syst, *gameDesc, *engine))) {}
+	else if ((create<Glk::Alan3::Alan3MetaEngine, Glk::Alan3::Alan3>(syst, *gameDesc, *engine))) {}
+	else if ((create<Glk::Archetype::ArchetypeMetaEngine, Glk::Archetype::Archetype>(syst, *gameDesc, *engine))) {}
+	else if ((create<Glk::Comprehend::ComprehendMetaEngine, Glk::Comprehend::Comprehend>(syst, *gameDesc, *engine))) {}
+	else if ((create<Glk::Glulx::GlulxMetaEngine, Glk::Glulx::Glulx>(syst, *gameDesc, *engine))) {}
+	else if ((create<Glk::Hugo::HugoMetaEngine, Glk::Hugo::Hugo>(syst, *gameDesc, *engine))) {}
+	else if ((create<Glk::JACL::JACLMetaEngine, Glk::JACL::JACL>(syst, *gameDesc, *engine))) {}
+	else if ((create<Glk::Level9::Level9MetaEngine, Glk::Level9::Level9>(syst, *gameDesc, *engine))) {}
+	else if ((create<Glk::Magnetic::MagneticMetaEngine, Glk::Magnetic::Magnetic>(syst, *gameDesc, *engine))) {}
+	else if ((create<Glk::Quest::QuestMetaEngine, Glk::Quest::Quest>(syst, *gameDesc, *engine))) {}
+	else if ((create<Glk::Scott::ScottMetaEngine, Glk::Scott::Scott>(syst, *gameDesc, *engine))) {}
+	else if ((create<Glk::ZCode::ZCodeMetaEngine, Glk::ZCode::ZCode>(syst, *gameDesc, *engine))) {}
 #ifndef RELEASE_BUILD
-	else if ((td = Glk::TADS::TADSMetaEngine::findGame(gameDesc._gameId.c_str()))._description) {
+	else if ((td = Glk::TADS::TADSMetaEngine::findGame(gameDesc->_gameId.c_str()))._description) {
 		if (!isGameAllowed(td._supportLevel))
 			return Common::kUserCanceled;
 		else if (td._options & Glk::TADS::OPTION_TADS3)
-			new Glk::TADS::TADS3::TADS3(syst, gameDesc);
+			new Glk::TADS::TADS3::TADS3(syst, *gameDesc);
 		else
-			new Glk::TADS::TADS2::TADS2(syst, gameDesc);
+			new Glk::TADS::TADS2::TADS2(syst, *gameDesc);
 	}
 #endif
 	else {
+		delete gameDesc;
 		return Common::kNoGameDataFoundError;
 	}
 
+	// gameDesc is copied in Glk
+	delete gameDesc;
 	return *engine ? Common::kNoError : Common::kUserCanceled;
 }
 

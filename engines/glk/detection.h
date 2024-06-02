@@ -29,6 +29,8 @@
  * ScummVM Meta Engine interface
  */
 class GlkMetaEngineDetection : public MetaEngineDetection {
+private:
+	Common::String findFileByGameId(const Common::String &gameId);
 public:
 	GlkMetaEngineDetection() : MetaEngineDetection() {}
 
@@ -56,7 +58,7 @@ public:
 	 * (possibly empty) list of games supported by the engine which it was able
 	 * to detect amongst the given files.
 	 */
-	DetectedGames detectGames(const Common::FSList &fslist, uint32 /*skipUnsupported*/, bool /*skipIncomplete*/) override;
+	DetectedGames detectGames(const Common::FSList &fslist, uint32 skipADFlags = 0, bool skipIncomplete = false) override;
 
 	/**
 	 * Query the engine for a PlainGameDescriptor for the specified gameid, if any.
