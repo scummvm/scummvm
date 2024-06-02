@@ -604,7 +604,7 @@ public:
 	const PluginList &getPlugins(const PluginType fetchPluginType) const;
 
 	/** Find a target. */
-	QualifiedGameDescriptor findTarget(const Common::String &target, const Plugin **plugin = NULL) const;
+	QualifiedGameDescriptor findTarget(const Common::String &target) const;
 
 	/**
 	 * List games matching the specified criteria.

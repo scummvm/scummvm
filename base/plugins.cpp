@@ -867,7 +867,7 @@ const Plugin *PluginManager::findEnginePlugin(const Common::String &engineId) {
 	return nullptr;
 }
 
-QualifiedGameDescriptor EngineManager::findTarget(const Common::String &target, const Plugin **plugin) const {
+QualifiedGameDescriptor EngineManager::findTarget(const Common::String &target) const {
 	// Ignore empty targets
 	if (target.empty())
 		return QualifiedGameDescriptor();
@@ -890,9 +890,6 @@ QualifiedGameDescriptor EngineManager::findTarget(const Common::String &target, 
 	if (!desc.gameId) {
 		return QualifiedGameDescriptor();
 	}
-
-	if (plugin)
-		*plugin = foundPlugin;
 
 	return QualifiedGameDescriptor(engine.getName(), desc);
 }
