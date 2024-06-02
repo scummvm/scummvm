@@ -42,21 +42,27 @@ void showCallStack() {
 	ImGui::End();
 }
 
-void showVars() {
-	if (!_state->_w.vars)
-		return;
-
+static void cacheVars() {
 	// take a snapshot of the variables every 500 ms
 	if ((g_director->getTotalPlayTime() - _state->_vars._lastTimeRefreshed) > 500) {
+		_state->_vars._prevLocals = _state->_vars._locals;
 		if (g_lingo->_state->localVars) {
 			_state->_vars._locals = *g_lingo->_state->localVars;
 		} else {
 			_state->_vars._locals.clear();
 		}
 
+		_state->_vars._prevGlobals = _state->_vars._globals;
 		_state->_vars._globals = g_lingo->_globalvars;
 		_state->_vars._lastTimeRefreshed = g_director->getTotalPlayTime();
 	}
+}
+
+void showVars() {
+	if (!_state->_w.vars)
+		return;
+
+	cacheVars();
 
 	Director::Lingo *lingo = g_director->getLingo();
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
@@ -71,7 +77,8 @@ void showVars() {
 			Common::sort(keyBuffer.begin(), keyBuffer.end());
 			for (auto &i : keyBuffer) {
 				Datum &val = _state->_vars._globals.getVal(i);
-				displayVariable(i);
+				bool changed = !_state->_vars._prevGlobals.contains(i) || !(_state->_vars._globals.getVal(i) == _state->_vars._prevGlobals.getVal(i));
+				displayVariable(i, changed);
 				ImGui::SameLine();
 				ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
 			}
@@ -85,7 +92,8 @@ void showVars() {
 				Common::sort(keyBuffer.begin(), keyBuffer.end());
 				for (auto &i : keyBuffer) {
 					Datum &val = _state->_vars._locals.getVal(i);
-					displayVariable(i);
+					bool changed = !_state->_vars._prevLocals.contains(i) || !(_state->_vars._locals.getVal(i) == _state->_vars._prevLocals.getVal(i));
+					displayVariable(i, changed);
 					ImGui::SameLine();
 					ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
 				}
@@ -103,7 +111,7 @@ void showVars() {
 				Common::sort(keyBuffer.begin(), keyBuffer.end());
 				for (auto &i : keyBuffer) {
 					Datum val = script->getProp(i);
-					displayVariable(i);
+					displayVariable(i, false);
 					ImGui::SameLine();
 					ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
 				}
@@ -120,16 +128,7 @@ void showWatchedVars() {
 	if (!_state->_w.watchedVars)
 		return;
 
-	if ((g_director->getTotalPlayTime() - _state->_vars._lastTimeRefreshed) > 500) {
-		if (g_lingo->_state->localVars) {
-			_state->_vars._locals = *g_lingo->_state->localVars;
-		} else {
-			_state->_vars._locals.clear();
-		}
-
-		_state->_vars._globals = g_lingo->_globalvars;
-		_state->_vars._lastTimeRefreshed = g_director->getTotalPlayTime();
-	}
+	cacheVars();
 
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(300, 250), ImGuiCond_FirstUseEver);
@@ -139,7 +138,7 @@ void showWatchedVars() {
 			name.type = VARREF;
 			Datum val = g_lingo->varFetch(name, true);
 
-			displayVariable(v._key);
+			displayVariable(v._key, false);
 			ImGui::SameLine();
 			ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
 		}

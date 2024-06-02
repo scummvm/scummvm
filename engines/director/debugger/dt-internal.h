@@ -122,6 +122,7 @@ typedef struct ImGuiState {
 		ImVec4 _bp_color_disabled = ImVec4(0.9f, 0.08f, 0.0f, 0.0f);
 		ImVec4 _bp_color_enabled = ImVec4(0.9f, 0.08f, 0.0f, 1.0f);
 		ImVec4 _bp_color_hover = ImVec4(0.42f, 0.17f, 0.13f, 1.0f);
+
 		ImVec4 _current_statement = ImColor(IM_COL32(0xFF, 0xFF, 0x00, 0xFF));
 		ImVec4 _line_color = ImVec4(0.44f, 0.44f, 0.44f, 1.0f);
 		ImVec4 _call_color = ImColor(IM_COL32(0xFF, 0xC5, 0x5C, 0xFF));
@@ -132,11 +133,17 @@ typedef struct ImGuiState {
 		ImVec4 _type_color = ImColor(IM_COL32(0x13, 0xC5, 0xF9, 0xFF));
 		ImVec4 _keyword_color = ImColor(IM_COL32(0xC1, 0xC1, 0xC1, 0xFF));
 		ImVec4 _the_color = ImColor(IM_COL32(0xFF, 0x49, 0xEF, 0xFF));
+
+		ImVec4 _changed_var_color = ImColor(IM_COL32(0xFF, 0x00, 0x00, 0xFF));
 	} _colors;
 
 	struct {
 		DatumHash _locals;
 		DatumHash _globals;
+
+		DatumHash _prevLocals;
+		DatumHash _prevGlobals;
+
 		uint32 _lastTimeRefreshed = 0;
 	} _vars;
 
@@ -203,7 +210,7 @@ ImGuiImage getImageID(CastMember *castMember);
 Common::String getDisplayName(CastMember *castMember);
 void showImage(const ImGuiImage &image, const char *name, float thumbnailSize);
 ImVec4 convertColor(uint32 color);
-void displayVariable(const Common::String &name);
+void displayVariable(const Common::String &name, bool changed);
 
 void showCast();        // dt-cast.cpp
 void showControlPanel(); // dt-controlpanel.cpp
