@@ -20,6 +20,7 @@
  */
 
 #include "saga2/saga2.h"
+#include "saga2/detection.h"
 #include "engines/advancedDetector.h"
 
 class Saga2MetaEngine : public AdvancedMetaEngine<Saga2::SAGA2GameDescription> {
