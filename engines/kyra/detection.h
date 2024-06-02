@@ -65,6 +65,8 @@ struct GameFlags {
 namespace {
 
 struct KYRAGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 
 	Kyra::GameFlags flags;

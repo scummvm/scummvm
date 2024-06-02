@@ -41,6 +41,8 @@ enum GameFeature {
 };
 
 struct MightAndMagicGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 
 	int gameID;

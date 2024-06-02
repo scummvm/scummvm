@@ -33,6 +33,8 @@ enum GameType {
 };
 
 struct LilliputGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 	GameType gameType;
 };

@@ -32,6 +32,8 @@ enum IcbGameType {
 };
 
 struct IcbGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 	IcbGameType gameType;
 };

@@ -35,6 +35,8 @@ enum EngineVersion {
 };
 
 struct GroovieGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 
 	EngineVersion version; // Version of the engine

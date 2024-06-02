@@ -69,6 +69,8 @@ enum GameVersion {
 };
 
 struct AdlGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 	GameType gameType;
 	GameVersion version;

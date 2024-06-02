@@ -129,6 +129,8 @@ enum WintermuteGameFeatures {
 };
 
 struct WMEGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(adDesc);
+
 	ADGameDescription adDesc;
 	WMETargetExecutable targetExecutable;
 };

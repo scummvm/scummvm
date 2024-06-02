@@ -32,6 +32,8 @@ enum {
 };
 
 struct MortevielleGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 	Common::Language originalLanguage;
 	uint8 dataFeature;

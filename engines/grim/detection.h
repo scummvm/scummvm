@@ -38,6 +38,8 @@ enum GrimGameType {
 };
 
 struct GrimGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 	GrimGameType gameType;
 };

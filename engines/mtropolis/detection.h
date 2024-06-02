@@ -99,6 +99,8 @@ enum MTGameFlag {
 };
 
 struct MTropolisGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 
 	int gameID;
