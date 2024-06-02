@@ -865,29 +865,28 @@ void FreescapeEngine::loadFonts(byte *font, int charNumber) {
 	_fontLoaded = true;
 }
 
-
-void FreescapeEngine::loadFonts(Common::SeekableReadStream *file, int offset) {
+void FreescapeEngine::loadFonts(Common::SeekableReadStream *file, int offset, Common::BitArray &font) {
 	file->seek(offset);
 	int charNumber = 85;
-	byte *font = nullptr;
+	byte *fontBuffer = nullptr;
 	if (isDOS() || isSpectrum() || isCPC() || isC64()) {
-		font = (byte *)malloc(6 * charNumber);
-		file->read(font, 6 * charNumber);
+		fontBuffer = (byte *)malloc(6 * charNumber);
+		file->read(fontBuffer, 6 * charNumber);
 
-		_font.set_size(48 * charNumber);
-		_font.set_bits((byte *)font);
+		font.set_size(48 * charNumber);
+		font.set_bits(fontBuffer);
 	} else if (isAmiga() || isAtariST()) {
 		int fontSize = 4654; // Driller
-		font = (byte *)malloc(fontSize);
-		file->read(font, fontSize);
+		fontBuffer = (byte *)malloc(fontSize);
+		file->read(fontBuffer, fontSize);
 
-		_font.set_size(fontSize * 8);
-		_font.set_bits((byte *)font);
+		font.set_size(fontSize * 8);
+		font.set_bits(fontBuffer);
 	} else {
 		_fontLoaded = false;
 	}
 	_fontLoaded = true;
-	free(font);
+	free(fontBuffer);
 }
 
 void FreescapeEngine::loadMessagesFixedSize(Common::SeekableReadStream *file, int offset, int size, int number) {

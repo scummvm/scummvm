@@ -87,7 +87,6 @@ public:
 	void drawCPCUI(Graphics::Surface *surface) override;
 	void drawAmigaAtariSTUI(Graphics::Surface *surface) override;
 
-	void loadFontsCustom(Common::SeekableReadStream *file, int offset, Common::BitArray &font);
 	Common::BitArray _fontBig;
 	Common::BitArray _fontMedium;
 	Common::BitArray _fontSmall;

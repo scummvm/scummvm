@@ -123,12 +123,35 @@ void DarkEngine::loadAssetsAmigaFullGame() {
 	loadMessagesVariableSize(stream, 0x3d37, 66);
 }
 
+Common::String centerAndPadString(const Common::String &str, int size) {
+	Common::String result;
+
+	if (int(str.size()) >= size)
+		return str;
+
+	int padding = (size - str.size()) / 2;
+	for (int i = 0; i < padding; i++)
+		result += " ";
+
+	result += str;
+
+	if (int(result.size()) >= size)
+		return result;
+
+	padding = size - result.size();
+
+	for (int i = 0; i < padding; i++)
+		result += " ";
+	return result;
+}
+
 void DarkEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 	uint32 white = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
 	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xEE, 0xCC, 0x00);
 	uint32 orange = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xEE, 0x88, 0x00);
 	uint32 red = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xEE, 0x00, 0x00);
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+	uint32 transparent = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
 	uint32 grey = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x60, 0x60, 0x60);
 
 	int score = _gameStateVars[k8bitVariableScore];
@@ -146,41 +169,17 @@ void DarkEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 	int deadline;
 	getLatestMessages(message, deadline);
 	if (deadline <= _countdown) {
-		drawStringSmallInSurface(message, 32, 150, white, white, black, surface);
+		drawStringSmallInSurface(message, 32, 156, white, white, transparent, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
-	} else
-		drawStringSmallInSurface(_currentArea->_name, 32, 150, white, white, black, surface);
+	}
 
+	drawStringSmallInSurface(centerAndPadString(_currentArea->_name, 26), 32, 150, white, white, transparent, surface);
 	drawBinaryClock(surface, 6, 110, white, grey);
 }
 
 void DarkEngine::initAmigaAtari() {
 	_viewArea = Common::Rect(32, 33, 287, 130);
-}
-
-void DarkEngine::loadFontsCustom(Common::SeekableReadStream *file, int offset, Common::BitArray &font) {
-	file->seek(offset);
-	int charNumber = 85;
-	byte *fontBuffer = nullptr;
-	if (isDOS() || isSpectrum() || isCPC() || isC64()) {
-		fontBuffer = (byte *)malloc(6 * charNumber);
-		file->read(fontBuffer, 6 * charNumber);
-
-		font.set_size(48 * charNumber);
-		font.set_bits(fontBuffer);
-	} else if (isAmiga() || isAtariST()) {
-		int fontSize = 4654; // Driller
-		fontBuffer = (byte *)malloc(fontSize);
-		file->read(fontBuffer, fontSize);
-
-		font.set_size(fontSize * 8);
-		font.set_bits(fontBuffer);
-	} else {
-		_fontLoaded = false;
-	}
-	_fontLoaded = true;
-	free(fontBuffer);
 }
 
 void DarkEngine::drawStringMediumInSurface(const Common::String &str, int x, int y, uint32 primaryColor, uint32 secondaryColor, uint32 backColor, Graphics::Surface *surface, int offset) {

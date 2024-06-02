@@ -434,7 +434,7 @@ public:
 	void drawFullscreenMessage(Common::String message, uint32 front, Graphics::Surface *surface);
 
 	// Font loading and rendering
-	void loadFonts(Common::SeekableReadStream *file, int offset);
+	void loadFonts(Common::SeekableReadStream *file, int offset, Common::BitArray &font);
 	void loadFonts(byte *font, int charNumber);
 	Common::StringArray _currentAreaMessages;
 	Common::StringArray _currentEphymeralMessages;

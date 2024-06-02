@@ -150,7 +150,7 @@ void DrillerEngine::loadAssetsCPCFullGame() {
 		error("Failed to open DRILL.BIN");
 
 	loadMessagesFixedSize(&file, 0x214c, 14, 20);
-	loadFonts(&file, 0x5b69);
+	loadFonts(&file, 0x5b69, _font);
 	loadGlobalObjects(&file, 0x1d07, 8);
 	load8bitBinary(&file, 0x5ccb, 16);
 }

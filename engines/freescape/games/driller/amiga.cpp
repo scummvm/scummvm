@@ -43,7 +43,7 @@ void DrillerEngine::loadAssetsAmigaFullGame() {
 		}
 		_title = loadAndConvertNeoImage(&file, 0x10, palette);
 
-		loadFonts(&file, 0x8940);
+		loadFonts(&file, 0x8940, _font);
 		loadMessagesFixedSize(&file, 0xc66e, 14, 20);
 		loadGlobalObjects(&file, 0xbd62, 8);
 		load8bitBinary(&file, 0x29c16, 16);
@@ -68,7 +68,7 @@ void DrillerEngine::loadAssetsAmigaFullGame() {
 		if (!file.isOpen())
 			error("Failed to open 'driller' executable for Amiga");
 
-		loadFonts(&file, 0xa62);
+		loadFonts(&file, 0xa62, _font);
 		loadMessagesFixedSize(&file, 0x499a, 14, 20);
 		loadGlobalObjects(&file, 0x4098, 8);
 		load8bitBinary(&file, 0x21a3e, 16);
@@ -120,12 +120,12 @@ void DrillerEngine::loadAssetsAmigaDemo() {
 		error("Failed to open 'driller' file");
 
 	if (_variant & GF_AMIGA_MAGAZINE_DEMO) {
-		loadFonts(&file, 0xa62);
+		loadFonts(&file, 0xa62, _font);
 		loadMessagesFixedSize(&file, 0x3df0, 14, 20);
 		loadGlobalObjects(&file, 0x3ba6, 8);
 		_demoMode = false;
 	} else {
-		loadFonts(&file, 0xa30);
+		loadFonts(&file, 0xa30, _font);
 		loadMessagesFixedSize(&file, 0x3960, 14, 20);
 		loadGlobalObjects(&file, 0x3716, 8);
 	}

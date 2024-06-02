@@ -73,11 +73,11 @@ void EclipseEngine::loadAssetsCPCFullGame() {
 		error("Failed to open TECODE.BIN/TE2.BI2");
 
 	if (isEclipse2()) {
-		loadFonts(&file, 0x60bc);
+		loadFonts(&file, 0x60bc, _font);
 		loadMessagesFixedSize(&file, 0x326, 16, 30);
 		load8bitBinary(&file, 0x62b4, 16);
 	} else {
-		loadFonts(&file, 0x6076);
+		loadFonts(&file, 0x6076, _font);
 		loadMessagesFixedSize(&file, 0x326, 16, 30);
 		load8bitBinary(&file, 0x626e, 16);
 	}
@@ -119,7 +119,7 @@ void EclipseEngine::loadAssetsCPCDemo() {
 	if (!file.isOpen())
 		error("Failed to open TEPROG.BIN");
 
-	loadFonts(&file, 0x63ce);
+	loadFonts(&file, 0x63ce, _font);
 	loadMessagesFixedSize(&file, 0x362, 16, 23);
 	loadMessagesFixedSize(&file, 0x570b, 264, 5);
 	load8bitBinary(&file, 0x65c6, 16);

@@ -62,7 +62,7 @@ void DarkEngine::loadAssetsCPCFullGame() {
 		error("Failed to open DARKCODE.BIN");
 
 	loadMessagesFixedSize(&file, 0x5d9, 16, 27);
-	loadFonts(&file, 0x60f3);
+	loadFonts(&file, 0x60f3, _font);
 	loadGlobalObjects(&file, 0x9a, 23);
 	load8bitBinary(&file, 0x6255, 16);
 	_indicators.push_back(loadBundledImage("dark_fallen_indicator"));

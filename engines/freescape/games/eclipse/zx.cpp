@@ -57,12 +57,12 @@ void EclipseEngine::loadAssetsZXFullGame() {
 
 	if (isTotalEclipse2) {
 		loadMessagesFixedSize(&file, 0x2ac, 16, 30);
-		loadFonts(&file, 0x61c3);
+		loadFonts(&file, 0x61c3, _font);
 		loadSpeakerFxZX(&file, 0x8c6, 0x91a);
 		load8bitBinary(&file, 0x63bb, 4);
 	} else {
 		loadMessagesFixedSize(&file, 0x2ac, 16, 23);
-		loadFonts(&file, 0x6163);
+		loadFonts(&file, 0x6163, _font);
 		loadSpeakerFxZX(&file, 0x816, 0x86a);
 		load8bitBinary(&file, 0x635b, 4);
 	}
@@ -110,13 +110,13 @@ void EclipseEngine::loadAssetsZXDemo() {
 	if (_variant & GF_ZX_DEMO_MICROHOBBY) {
 		loadMessagesFixedSize(&file, 0x2ac, 16, 23);
 		loadMessagesFixedSize(&file, 0x56e6, 264, 1);
-		loadFonts(&file, 0x5f7b);
+		loadFonts(&file, 0x5f7b, _font);
 		load8bitBinary(&file, 0x6173, 4);
 	} else if (_variant & GF_ZX_DEMO_CRASH) {
 		loadSpeakerFxZX(&file, 0x65c, 0x6b0);
 		loadMessagesFixedSize(&file, 0x364, 16, 9);
 		loadMessagesFixedSize(&file, 0x5901, 264, 5);
-		loadFonts(&file, 0x6589);
+		loadFonts(&file, 0x6589, _font);
 		load8bitBinary(&file, 0x6781, 4);
 	} else
 		error("Unknown ZX Spectrum demo variant");

@@ -318,7 +318,7 @@ void DrillerEngine::loadAssetsDOSFullGame() {
 
 		loadSpeakerFxDOS(&file, 0x4397 + 0x200, 0x4324 + 0x200);
 		loadMessagesFixedSize(&file, 0x4135, 14, 20);
-		loadFonts(&file, 0x99dd);
+		loadFonts(&file, 0x99dd, _font);
 		loadGlobalObjects(&file, 0x3b42, 8);
 		load8bitBinary(&file, 0x9b40, 16);
 		_border = load8bitBinImage(&file, 0x210);
@@ -343,7 +343,7 @@ void DrillerEngine::loadAssetsDOSFullGame() {
 
 		loadSpeakerFxDOS(&file, 0x27e7 + 0x200, 0x2774 + 0x200);
 
-		loadFonts(&file, 0x07a4a);
+		loadFonts(&file, 0x07a4a, _font);
 		loadMessagesFixedSize(&file, 0x2585, 14, 20);
 		load8bitBinary(&file, 0x7bb0, 4);
 		loadGlobalObjects(&file, 0x1fa2, 8);
@@ -377,7 +377,7 @@ void DrillerEngine::loadAssetsDOSDemo() {
 	if (!file.isOpen())
 		error("Failed to open 'd2' file");
 
-	loadFonts(&file, 0x4eb0);
+	loadFonts(&file, 0x4eb0, _font);
 	loadMessagesFixedSize(&file, 0x636, 14, 20);
 	load8bitBinary(&file, 0x55b0, 4);
 	loadGlobalObjects(&file, 0x8c, 5);
