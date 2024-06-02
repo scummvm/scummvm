@@ -619,7 +619,7 @@ static const byte *trimTrailing(const byte *text, const byte *begin) {
 }
 
 static Point characterSize(const Font &font, byte ch) {
-	if (ch <= ' ' || ch >= font.imageCount())
+	if (ch <= ' ' || ch - ' ' >= font.imageCount())
 		ch = 0;
 	else
 		ch -= ' ';
@@ -716,7 +716,7 @@ void TextDrawRequest::draw() {
 		cursor.x = _posX[i];
 		for (auto ch : _lines[i]) {
 			const Point charSize = characterSize(_font, ch);
-			if (ch > ' ' && ch < _font.imageCount())
+			if (ch > ' ' && ch - ' ' < _font.imageCount())
 				_font.drawCharacter(ch - ' ', Point(cursor.x, cursor.y), _color);
 			cursor.x += charSize.x;
 		}
