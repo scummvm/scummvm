@@ -38,6 +38,9 @@ static const struct CustomTarget {
 	const char *platform;
 	const char *version;
 } customTargetList[] = {
+	{"vw-mac", "mac", "000" },
+	{"vw2-mac", "mac", "050" },
+	{"d1-mac", "mac", "100" },
 	{"d2-mac", "mac", "200" },
 	{"d3-mac", "mac", "300" },
 	{"d4-mac", "mac", "400" },
