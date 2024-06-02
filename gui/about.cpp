@@ -155,15 +155,28 @@ AboutDialog::AboutDialog()
 	engines += _("Available engines:");
 	addLine(engines);
 
-	const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
-	PluginList::const_iterator iter = plugins.begin();
-	for (; iter != plugins.end(); ++iter) {
+	Common::StringArray enginesDetected;
+#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES) && !defined(DETECTION_STATIC)
+	// Unload all MetaEnginesDetection if we're using uncached plugins to save extra memory.
+	PluginMan.unloadDetectionPlugin();
+#endif
+	PluginMan.loadFirstPlugin();
+	do {
+		const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
+		for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
+			enginesDetected.push_back((*iter)->getName());
+		}
+	} while (PluginMan.loadNextPlugin());
+
+	PluginMan.loadDetectionPlugin();
+
+	for (Common::StringArray::iterator iter = enginesDetected.begin(); iter != enginesDetected.end(); iter++) {
 		Common::String str;
 
-		const Plugin *p = EngineMan.findDetectionPlugin((*iter)->getName());
+		const Plugin *p = EngineMan.findDetectionPlugin(*iter);
 
 		if (!p) {
-			warning("Cannot find plugin for %s", (*iter)->getName());
+			warning("Cannot find plugin for %s", iter->c_str());
 			continue;
 		}
 
