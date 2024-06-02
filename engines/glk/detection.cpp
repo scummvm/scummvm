@@ -178,8 +178,70 @@ PlainGameDescriptor GlkMetaEngineDetection::findGame(const char *gameId) const {
 
 #undef FIND_GAME
 
+Common::String GlkMetaEngineDetection::findFileByGameId(const Common::String &gameId) {
+	// Get the list of files in the folder and return detection against them
+	Common::FSNode folder = Common::FSNode(ConfMan.getPath("path"));
+	Common::FSList fslist;
+	folder.getChildren(fslist, Common::FSNode::kListFilesOnly);
+
+	// Iterate over the files
+	for (Common::FSList::iterator i = fslist.begin(); i != fslist.end(); ++i) {
+		// Run a detection on each file in the folder individually
+		Common::FSList singleList;
+		singleList.push_back(*i);
+		DetectedGames games = detectGames(singleList);
+
+		// If a detection was found with the correct game Id, we have a winner
+		if (!games.empty() && games.front().gameId == gameId)
+			return (*i).getName();
+	}
+
+	// No match found
+	return Common::String();
+}
+
 Common::Error GlkMetaEngineDetection::identifyGame(DetectedGame &game, const void **descriptor) {
 	*descriptor = nullptr;
+
+	// Populate the game description
+	Glk::GlkGameDescription *gameDesc = new Glk::GlkGameDescription;
+
+	gameDesc->_gameId = ConfMan.get("gameid");
+	gameDesc->_filename = ConfMan.get("filename");
+
+	gameDesc->_language = Common::UNK_LANG;
+	gameDesc->_platform = Common::kPlatformUnknown;
+	if (ConfMan.hasKey("language"))
+		gameDesc->_language = Common::parseLanguage(ConfMan.get("language"));
+	if (ConfMan.hasKey("platform"))
+		gameDesc->_platform = Common::parsePlatform(ConfMan.get("platform"));
+
+	// If the game description has no filename, the engine has been launched directly from
+	// the command line. Do a scan for supported games for that Id in the game folder
+	if (gameDesc->_filename.empty()) {
+		gameDesc->_filename = findFileByGameId(gameDesc->_gameId);
+		if (gameDesc->_filename.empty()) {
+			delete gameDesc;
+			return Common::kNoGameDataFoundError;
+		}
+	}
+
+	// Get the MD5
+	Common::File f;
+	if (!f.open(Common::FSNode(ConfMan.getPath("path")).getChild(gameDesc->_filename))) {
+		delete gameDesc;
+		return Common::kNoGameDataFoundError;
+	}
+
+	Common::String fileName = f.getName();
+	if (fileName.hasSuffixIgnoreCase(".D64"))
+		gameDesc->_md5 = Common::computeStreamMD5AsString(f);
+	else
+		gameDesc->_md5 = Common::computeStreamMD5AsString(f, 5000);
+	f.close();
+
+	*descriptor = gameDesc;
+
 	game = DetectedGame(getName(), findGame(ConfMan.get("gameid").c_str()));
 	return game.gameId.empty() ? Common::kUnknownError : Common::kNoError;
 }
