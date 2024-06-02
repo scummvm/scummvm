@@ -334,6 +334,19 @@ const Plugin *PluginManager::getMetaEngineFromEngine(const Plugin *plugin) {
 	return nullptr;
 }
 
+PluginManagerUncached::~PluginManagerUncached() {
+	// Unload from memory all engine plugins without deleting them
+	// They are also referenced from _allEnginePlugins which we clean up here
+	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, nullptr, false);
+
+	for (PluginList::iterator p = _allEnginePlugins.begin(); p != _allEnginePlugins.end(); ++p) {
+		delete *p;
+	}
+	_allEnginePlugins.clear();
+
+	delete _detectionPlugin;
+}
+
 /**
  * This should only be called once by main()
  **/

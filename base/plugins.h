@@ -366,6 +366,7 @@ protected:
 	bool loadPluginByFileName(const Common::Path &filename);
 
 public:
+	virtual ~PluginManagerUncached();
 	void init() override;
 	void loadFirstPlugin() override;
 	bool loadNextPlugin() override;
