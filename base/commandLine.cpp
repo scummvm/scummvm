@@ -1290,8 +1290,7 @@ static Common::Error listRecords(const Common::String &singleTarget) {
 			// The name is a known target
 			currentTarget = *i;
 			EngineMan.upgradeTargetIfNecessary(*i);
-			const Plugin *metaEnginePlugin = nullptr;
-			game = EngineMan.findTarget(*i, &metaEnginePlugin);
+			game = EngineMan.findTarget(*i);
 		} else if (game = findGameMatchingName(*i), !game.gameId.empty()) {
 			currentTarget = createTemporaryTarget(game.engineId, game.gameId);
 		} else {
