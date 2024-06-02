@@ -343,6 +343,7 @@ World::World() {
 			_loadedMapCount++;
 	}
 	loadLocalizedNames();
+	loadDialogLines();
 
 	_globalRoom = getRoomByName("GLOBAL");
 	if (_globalRoom == nullptr)
@@ -448,6 +449,19 @@ const Common::String &World::getGlobalAnimationName(GlobalAnimationKind kind) co
 	return _globalAnimationNames[kindI];
 }
 
+const char *World::getLocalizedName(const String &name) const {
+	const char *localizedName;
+	return _localizedNames.tryGetVal(name.c_str(), localizedName)
+		? localizedName
+		: name.c_str();
+}
+
+const char *World::getDialogLine(int32 dialogId) const {
+	if (dialogId < 0 || (uint)dialogId >= _dialogLines.size())
+		error("Invalid dialog line index %d", dialogId);
+	return _dialogLines[dialogId];
+}
+
 static Room *readRoom(World *world, ReadStream &stream) {
 	const auto type = readVarString(stream);
 	if (type == Room::kClassName)
@@ -544,16 +558,31 @@ void World::loadLocalizedNames() {
 		*keyEnd = 0;
 		*valueEnd = 0;
 		_localizedNames[lineStart] = keyEnd + 1;
-
 		lineStart = lineEnd + 1;
 	}
 }
 
-const char *World::getLocalizedName(const String &name) const {
-	const char *localizedName;
-	return _localizedNames.tryGetVal(name.c_str(), localizedName)
-		? localizedName
-		: name.c_str();
+void World::loadDialogLines() {
+	loadEncryptedFile("Textos/DIALOGOS.nkr", _dialogChunk);
+	char *lineStart = _dialogChunk.begin(), *fileEnd = _dialogChunk.end();
+	while (lineStart < fileEnd) {
+		char *lineEnd = find(lineStart, fileEnd, '\n');
+		char *firstQuote = find(lineStart, lineEnd, '\"');
+		if (firstQuote == lineEnd)
+			error("Invalid dialog line - first quote");
+		char *secondQuote = find(firstQuote + 1, lineEnd, '\"');
+		if (secondQuote == lineEnd) {
+			// unfortunately one invalid line in the game
+			if (_dialogLines.size() != 4542)
+				error("Invalid dialog line - second quote");
+			firstQuote = lineStart; // for the invalid one save an empty string
+			secondQuote = firstQuote + 1;
+		}
+
+		*secondQuote = 0;
+		_dialogLines.push_back(firstQuote + 1);
+		lineStart = lineEnd + 1;
+	}
 }
 
 }
