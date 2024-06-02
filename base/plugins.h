@@ -292,7 +292,6 @@ protected:
 
 	bool tryLoadPlugin(Plugin *plugin);
 	void addToPluginsInMemList(Plugin *plugin);
-	const Plugin *findEnginePlugin(const Common::String &engineId);
 	const Plugin *findLoadedPlugin(const Common::String &engineId);
 
 	static PluginManager *_instance;
@@ -306,6 +305,15 @@ public:
 	static PluginManager &instance();
 
 	void addPluginProvider(PluginProvider *pp);
+
+	/**
+	 * A method which finds the METAENGINE plugin for the provided engineId
+	 *
+	 * @param engineId The engine ID
+	 *
+	 * @return A plugin of type METAENGINE.
+	 */
+	const Plugin *findEnginePlugin(const Common::String &engineId);
 
 	/**
 	 * A method which takes in a plugin of type ENGINE,
