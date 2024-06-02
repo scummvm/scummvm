@@ -286,54 +286,6 @@ void PluginManager::addPluginProvider(PluginProvider *pp) {
 	_providers.push_back(pp);
 }
 
-const Plugin *PluginManager::getEngineFromDetectionPlugin(const Plugin *plugin) {
-	assert(plugin->getType() == PLUGIN_TYPE_ENGINE_DETECTION);
-
-	const Plugin *enginePlugin = nullptr;
-
-	// Use the engineID from MetaEngine for comparison.
-	Common::String metaEnginePluginName = plugin->getName();
-
-	enginePlugin = PluginMan.findEnginePlugin(metaEnginePluginName);
-
-	if (enginePlugin) {
-		debug(9, "MetaEngine: %s \t matched to \t Engine: %s", plugin->get<MetaEngineDetection>().getEngineName(), enginePlugin->getFileName().toString().c_str());
-		return enginePlugin;
-	}
-
-	debug(9, "MetaEngine: %s couldn't find a match for an engine plugin.", plugin->get<MetaEngineDetection>().getEngineName());
-	return nullptr;
-}
-
-const Plugin *PluginManager::getMetaEngineFromEngine(const Plugin *plugin) {
-	assert(plugin->getType() == PLUGIN_TYPE_ENGINE);
-
-	const Plugin *metaEngine = nullptr;
-
-	PluginList pl = PluginMan.getPlugins(PLUGIN_TYPE_ENGINE_DETECTION);
-
-	// This will return a name of the Engine plugin, which will be identical to
-	// a getEngineID from a relevant MetaEngine.
-	Common::String enginePluginName(plugin->getName());
-
-	for (PluginList::const_iterator itr = pl.begin(); itr != pl.end(); itr++) {
-		Common::String metaEngineName = (*itr)->getName();
-
-		if (metaEngineName.equalsIgnoreCase(enginePluginName)) {
-			metaEngine = (*itr);
-			break;
-		}
-	}
-
-	if (metaEngine) {
-		debug(9, "Engine: %s matched to MetaEngine: %s", plugin->getFileName().toString().c_str(), metaEngine->get<MetaEngineDetection>().getEngineName());
-		return metaEngine;
-	}
-
-	debug(9, "Engine: %s couldn't find a match for a MetaEngine plugin.", plugin->getFileName().toString().c_str());
-	return nullptr;
-}
-
 PluginManagerUncached::~PluginManagerUncached() {
 	// Unload from memory all engine plugins without deleting them
 	// They are also referenced from _allEnginePlugins which we clean up here
