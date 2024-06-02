@@ -150,8 +150,6 @@ int OSystem_libretro::testGame(const char *filedata, bool autodetect) {
 		}
 	}
 
-	PluginManager::instance().unloadDetectionPlugin();
-	PluginManager::instance().unloadAllPlugins();
 	PluginManager::destroy();
 	return res;
 }
