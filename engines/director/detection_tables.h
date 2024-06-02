@@ -419,7 +419,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "shrmess",			"Schoolhouse Rock!: 1st-4th Grade Math Essentials" },
 	{ "simpsonsplayer",		"The Simpsons Cartoon Player" },
 	{ "simpsonsstudio",		"The Simpsons Cartoon Studio" },
-	{ "singingbirdbook",		"Jan Lindblad presenterar den sjungande Fågelboken" },
 	{ "sinkha",				"Sinkha: The 3D Multimedia Novel" },
 	{ "sinkha1",			"Sinkha: Hyleyn" },
 	{ "sinkha2",			"Sinkha: Atmosphere / Planet of the Clouds" },
@@ -1423,6 +1422,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "polis3",				"Polis 3: Vargspår" },
 	{ "requiem",			"Requiem: en mordgåta på 1600-talet" },
 	{ "rymdjakten",			"Rymdjakten" },
+	{ "singingbirdbook",		"Jan Lindblad presenterar den sjungande Fågelboken" },
 	{ "sverigejakten",		"Sverigejakten"},
 	{ "speltajm",			"Trazan & Banarne presenterar Speltajm" },
 	{ "xtown1",				"CrossTown: Giftet" },
@@ -2261,13 +2261,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 							   "Shared.Dir", "89f558d6a6535c16ec440948d86988b8", 3570542, 404),
 	WINDEMO2t("wrath", "Demo", "WRATH.EXE",	 "5d0ee796571b99d402a06438ae2f3d56", 696815,
 							   "SHARED.DIR", "e709f7b88f6241e4f45632beb0533ac1", 3570542, 404),
-
-	// Jan Lindblad presenterar den sjungande Fågelboken
-	// There is also a Macintosh version which also appears to be using
-	// Macromedia 4.0.4. But dumping that version still gives you the
-	// lindblad.exe file, and I assume all the data files are functionally
-	// the same, even if they have resource and data forks.
-	WINGAME1t_l("singingbirdbook", "", "lindblad.exe", "713376834e4e94d87ad931a66c3575fc", 698995, Common::SE_SWE, 404),
 
 //////////////////////////////////////////////////
 //
@@ -5469,6 +5462,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Win version is D5
 	MACGAME1("simpsontrivia", "v3.1", "Simpsons Trivia 3.1", "db9b7f11aea52a294d2986a94a184000", 58354, 403),
+
+	// Jan Lindblad presenterar den sjungande Fågelboken
+	// There is also a Macintosh version which also appears to be using
+	// Macromedia 4.0.4. But dumping that version still gives you the
+	// lindblad.exe file, and I assume all the data files are functionally
+	// the same, even if they have resource and data forks.
+	WINGAME1t_l("singingbirdbook", "", "lindblad.exe", "713376834e4e94d87ad931a66c3575fc", 698995, Common::SE_SWE, 404),
 
 	// Published by Pearson in association with the Ski Club of Great Britain
 	WINDEMO1("skieurope96", "Demo", "SKI.EXE", "3643257d68fadce83611760435ca5cd4", 696861, 404),
