@@ -748,8 +748,14 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		Common::Error result = identifyGame(specialDebug, &plugin, game, &meDescriptor);
 
 		if (result.getCode() == Common::kNoError) {
+			Common::String engineId = plugin->getName();
+#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES) && !defined(DETECTION_STATIC)
+			// Unload all MetaEnginesDetection if we're using uncached plugins to save extra memory.
+			PluginManager::instance().unloadDetectionPlugin();
+#endif
+
 			// Then, get the relevant Engine plugin from MetaEngine.
-			enginePlugin = PluginMan.getEngineFromDetectionPlugin(plugin);
+			enginePlugin = PluginMan.findEnginePlugin(engineId);
 			if (enginePlugin == nullptr) {
 				result = Common::kEnginePluginNotFound;
 			}
@@ -761,12 +767,6 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 			// Pass in the pointer to enginePlugin, with the matching type, so our function behaves as-is.
 			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, enginePlugin);
-
-#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES) && !defined(DETECTION_STATIC)
-			// Unload all MetaEngines not needed for the current engine, if we're using uncached plugins
-			// to save extra memory.
-			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE_DETECTION, plugin);
-#endif
 
 #ifdef ENABLE_EVENTRECORDER
 			Common::String recordMode = ConfMan.get("record_mode");
