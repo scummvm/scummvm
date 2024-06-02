@@ -95,21 +95,16 @@ public:
 			}
 		}
 
-		const Plugin *detectionPlugin = EngineMan.findDetectionPlugin(getName());
-
-		if (detectionPlugin) {
-			const Plugin *enginePlugin = PluginMan.getEngineFromDetectionPlugin(detectionPlugin);
-			if (enginePlugin) {
-				return enginePlugin->get<AdvancedMetaEngineBase>().fallbackDetectExtern(_md5Bytes, allFiles, fslist);
-			} else {
-				static bool warn = true;
-				if (warn) {
-					warning("Engine plugin for Wintermute not present. Fallback detection is disabled.");
-					warn = false;
-				}
+		const Plugin *enginePlugin = PluginMan.findEnginePlugin(getName());
+		if (!enginePlugin) {
+			static bool warn = true;
+			if (warn) {
+				warning("Engine plugin for Wintermute not present. Fallback detection is disabled.");
+				warn = false;
 			}
+			return ADDetectedGame();
 		}
-		return ADDetectedGame();
+		return enginePlugin->get<AdvancedMetaEngineBase>().fallbackDetectExtern(_md5Bytes, allFiles, fslist);
 	}
 
 };
