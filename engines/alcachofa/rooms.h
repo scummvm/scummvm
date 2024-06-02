@@ -158,11 +158,20 @@ public:
 	ObjectBase *getObjectByName(MainCharacterKind character, const Common::String &name) const;
 	ObjectBase *getObjectByNameFromAnyRoom(const Common::String &name) const;
 	const Common::String &getGlobalAnimationName(GlobalAnimationKind kind) const;
+	const char *getLocalizedName(const Common::String &name) const;
+	const char *getDialogLine(int32 dialogId) const;
 
 	void toggleObject(MainCharacterKind character, const Common::String &objName, bool isEnabled);
 
 private:
 	bool loadWorldFile(const char *path);
+	void loadLocalizedNames();
+	void loadDialogLines();
+
+	// the default Hash<const char*> works on the characters, but the default EqualTo compares pointers...
+	struct StringEqualTo {
+		bool operator()(const char *a, const char *b) const { return strcmp(a, b) == 0; }
+	};
 
 	Common::Array<Room *> _rooms;
 	Common::String _globalAnimationNames[(int)GlobalAnimationKind::Count];
@@ -172,6 +181,11 @@ private:
 	MainCharacter *_filemon, *_mortadelo;
 	Common::ScopedPtr<Font> _generalFont, _dialogFont;
 	uint8 _loadedMapCount = 0;
+	Common::HashMap<const char *, const char *,
+		Common::Hash<const char*>,
+		StringEqualTo> _localizedNames;
+	Common::Array<const char *> _dialogLines;
+	Common::Array<char> _namesChunk, _dialogChunk; ///< holds the memory for localizedNames / dialogLines
 };
 
 }

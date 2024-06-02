@@ -229,7 +229,7 @@ void ShapeObject::onHoverEnd() {
 void ShapeObject::onHoverUpdate() {
 	g_engine->drawQueue().add<TextDrawRequest>(
 		g_engine->world().generalFont(),
-		name().c_str(),
+		g_engine->world().getLocalizedName(name()),
 		g_engine->input().mousePos2D() - Point(0, 35),
 		-1, true, kWhite, 0);
 }

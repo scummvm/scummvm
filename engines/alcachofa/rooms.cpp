@@ -342,6 +342,7 @@ World::World() {
 		if (loadWorldFile(*itMapFile))
 			_loadedMapCount++;
 	}
+	loadLocalizedNames();
 
 	_globalRoom = getRoomByName("GLOBAL");
 	if (_globalRoom == nullptr)
@@ -496,6 +497,63 @@ bool World::loadWorldFile(const char *path) {
 	}
 
 	return true;
+}
+
+/**
+ * @brief Behold the incredible encryption of text files:
+ *   - first 32 bytes are cipher
+ *   - next byte is the XOR key
+ *   - next 4 bytes are garbage
+ *   - rest of the file is cipher
+ */
+static void loadEncryptedFile(const char *path, Array<char> &output) {
+	constexpr uint kHeaderSize = 32;
+	File file;
+	if (!file.open(path))
+		error("Could not open text file %s", path);
+	output.resize(file.size() - 5 + 1);
+	if (file.read(output.data(), kHeaderSize) != kHeaderSize)
+		error("Could not read text file header");
+	char key = file.readSByte();
+	uint remainingSize = output.size() - kHeaderSize - 1;
+	if (!file.skip(4) || file.read(output.data() + kHeaderSize, remainingSize) != remainingSize)
+		error("Could not read text file body");
+	for (auto &ch : output)
+		ch ^= key;
+	output.back() = ' '; // one for good measure and a zero-terminator
+}
+
+static char *trimTrailing(char *start, char *end) {
+	while (start < end && isSpace(end[-1]))
+		end--;
+	return end;
+}
+
+void World::loadLocalizedNames() {
+	loadEncryptedFile("Textos/OBJETOS.nkr", _namesChunk);
+	char *lineStart = _namesChunk.begin(), *fileEnd = _namesChunk.end();
+	while (lineStart < fileEnd) {
+		char *lineEnd = find(lineStart, fileEnd, '\n');
+		char *keyEnd = find(lineStart, lineEnd, '#');
+		if (keyEnd == lineStart || keyEnd == lineEnd || keyEnd + 1 == lineEnd)
+			error("Invalid localized name line separator");
+		char *valueEnd = trimTrailing(keyEnd + 1, lineEnd);
+		if (valueEnd == keyEnd + 1)
+			error("Invalid localized name value");
+
+		*keyEnd = 0;
+		*valueEnd = 0;
+		_localizedNames[lineStart] = keyEnd + 1;
+
+		lineStart = lineEnd + 1;
+	}
+}
+
+const char *World::getLocalizedName(const String &name) const {
+	const char *localizedName;
+	return _localizedNames.tryGetVal(name.c_str(), localizedName)
+		? localizedName
+		: name.c_str();
 }
 
 }
