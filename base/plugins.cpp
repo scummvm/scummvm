@@ -436,6 +436,9 @@ void PluginManagerUncached::loadDetectionPlugin() {
 		return;
 	}
 
+	// Unload all leftover engines before reloading the detection plugin
+	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, nullptr, false);
+
 	if (!_detectionPlugin->loadPlugin()) {
 		debug(9, "Detection plugin was not loaded correctly.");
 		return;
