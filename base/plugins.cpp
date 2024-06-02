@@ -704,7 +704,7 @@ QualifiedGameList EngineManager::findGamesMatching(const Common::String &engineI
  **/
 QualifiedGameList EngineManager::findGameInLoadedPlugins(const Common::String &gameId) const {
 	// Find the GameDescriptor for this target
-	const PluginList &plugins = getPlugins();
+	const PluginList &plugins = getPlugins(PLUGIN_TYPE_ENGINE_DETECTION);
 
 	QualifiedGameList results;
 	PluginList::const_iterator iter;
@@ -819,7 +819,7 @@ Common::String EngineManager::createTargetForGame(const DetectedGame &game) {
 }
 
 const Plugin *EngineManager::findDetectionPlugin(const Common::String &engineId) const {
-	const PluginList &plugins = getPlugins();
+	const PluginList &plugins = getPlugins(PLUGIN_TYPE_ENGINE_DETECTION);
 
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); iter++)
 		if (engineId == (*iter)->get<MetaEngineDetection>().getName())

@@ -1053,7 +1053,7 @@ static void listAllGames(const Common::String &engineID) {
 	printf("Game ID                        Full Title                                                 \n"
 	       "------------------------------ -----------------------------------------------------------\n");
 
-	const PluginList &plugins = EngineMan.getPlugins();
+	const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE_DETECTION);
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
 
@@ -1088,7 +1088,7 @@ static void listAllEngines() {
 	printf("Engine ID       Engine Name                                           \n"
 	       "--------------- ------------------------------------------------------\n");
 
-	const PluginList &plugins = EngineMan.getPlugins();
+	const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE_DETECTION);
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
 		printf("%-15s %s\n", metaEngine.getName(), metaEngine.getEngineName());
@@ -1178,7 +1178,7 @@ static void printStatistics(const Common::String &engineID) {
 
 	bool approximation = false;
 	int engineCount = 0, gameCount = 0, variantCount = 0;
-	const PluginList &plugins = EngineMan.getPlugins();
+	const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE_DETECTION);
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
 		if (summary || all || Common::find(engines.begin(), engines.end(), metaEngine.getName()) != engines.end()) {
@@ -1226,7 +1226,7 @@ static void listDebugFlags(const Common::String &engineID) {
 	if (engineID == "global")
 		printDebugFlags(gDebugChannels);
 	else {
-		const PluginList &plugins = EngineMan.getPlugins();
+		const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE_DETECTION);
 		for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 			const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
 			if (metaEngine.getName() == engineID) {
@@ -1245,7 +1245,7 @@ static void listDebugFlags(const Common::String &engineID) {
 static void listAllEngineDebugFlags() {
 	printf("Flag name       Flag description                                           \n");
 
-	const PluginList &plugins = EngineMan.getPlugins();
+	const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE_DETECTION);
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
 		printf("--------------- ------------------------------------------------------\n");
@@ -1451,7 +1451,7 @@ static void listAudioDevices() {
 
 /** Dump MD5s from detection entries into STDOUT */
 static void dumpAllDetectionEntries() {
-	const PluginList &plugins = EngineMan.getPlugins();
+	const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE_DETECTION);
 
 	printf("scummvm (\n");
 	printf("\tauthor \"scummvm\"\n");
