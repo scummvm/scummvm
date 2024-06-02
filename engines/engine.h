@@ -519,11 +519,6 @@ public:
 	static bool shouldQuit();
 
 	/**
-	 * Return the MetaEngineDetection instance used by this engine.
-	 */
-	static MetaEngineDetection &getMetaEngineDetection();
-
-	/**
 	 * Return the MetaEngine instance used by this engine.
 	 */
 	inline MetaEngine *getMetaEngine() const { return _metaEngine; }
