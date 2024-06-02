@@ -298,6 +298,7 @@ protected:
 	static PluginManager *_instance;
 	PluginManager();
 
+	void unloadAllPlugins();
 public:
 	virtual ~PluginManager();
 
@@ -342,7 +343,6 @@ public:
 	// Functions used only by the cached PluginManager
 	virtual void loadAllPlugins();
 	virtual void loadAllPluginsOfType(PluginType type);
-	void unloadAllPlugins();
 
 	void unloadPluginsExcept(PluginType type, const Plugin *plugin, bool deletePlugin = true);
 
