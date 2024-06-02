@@ -484,8 +484,14 @@ endif
 
 ifdef ENABLE_EVENTRECORDER
 MODULE_OBJS += \
-	mixer/null/null-mixer.o \
 	saves/recorder/recorder-saves.o
+# SDL and null backend already add null-mixer
+ifndef SDL_BACKEND
+ifneq ($(BACKEND),null)
+MODULE_OBJS += \
+	mixer/null/null-mixer.o
+endif
+endif
 endif
 
 ifdef USE_IMGUI
