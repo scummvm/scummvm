@@ -2843,12 +2843,12 @@ void GlobalOptionsDialog::addAccessibilityControls(GuiObject *boss, const Common
 #endif // USE_TTS
 
 struct ExistingSave {
-	MetaEngine *metaEngine;
+	Common::String engine;
 	Common::String target;
 	SaveStateDescriptor desc;
 
-	ExistingSave(MetaEngine *_metaEngine, const Common::String &_target, const SaveStateDescriptor &_desc) :
-		metaEngine(_metaEngine),
+	ExistingSave(const Common::String &_engine, const Common::String &_target, const SaveStateDescriptor &_desc) :
+		engine(_engine),
 		target(_target),
 		desc(_desc)
 	{}
@@ -2864,26 +2864,33 @@ bool GlobalOptionsDialog::updateAutosavePeriod(int newValue) {
 	const int maxListSize = 10;
 	bool hasMore = false;
 	const ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
+
+#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES) && !defined(DETECTION_STATIC)
+	// Unload all MetaEnginesDetection if we're using uncached plugins to save extra memory.
+	PluginMan.unloadDetectionPlugin();
+#endif
+
 	for (ConfigManager::DomainMap::const_iterator it = domains.begin(), end = domains.end(); it != end; ++it) {
 		const Common::String target = it->_key;
 		const ConfigManager::Domain domain = it->_value;
 		// note that engineid isn't present on games that predate it
 		// and haven't been run since it was introduced.
 		const Common::String engine = domain.getValOrDefault("engineid");
-		if (const Plugin *detectionPlugin = EngineMan.findDetectionPlugin(engine)) {
-			if (const Plugin *plugin = PluginMan.getEngineFromDetectionPlugin(detectionPlugin)) {
-				MetaEngine &metaEngine = plugin->get<MetaEngine>();
-				const int autoSaveSlot = metaEngine.getAutosaveSlot();
-				if (autoSaveSlot < 0)
-					continue;
-				SaveStateDescriptor desc = metaEngine.querySaveMetaInfos(target.c_str(), autoSaveSlot);
-				if (desc.getSaveSlot() != -1 && !desc.getDescription().empty() && !desc.isAutosave()) {
-					if (saveList.size() >= maxListSize) {
-						hasMore = true;
-						break;
-					}
-					saveList.push_back(ExistingSave(&metaEngine, target, desc));
+		if (engine.empty()) {
+			continue;
+		}
+		if (const Plugin *plugin = PluginMan.findEnginePlugin(engine)) {
+			MetaEngine &metaEngine = plugin->get<MetaEngine>();
+			const int autoSaveSlot = metaEngine.getAutosaveSlot();
+			if (autoSaveSlot < 0)
+				continue;
+			SaveStateDescriptor desc = metaEngine.querySaveMetaInfos(target.c_str(), autoSaveSlot);
+			if (desc.getSaveSlot() != -1 && !desc.getDescription().empty() && !desc.isAutosave()) {
+				if (saveList.size() >= maxListSize) {
+					hasMore = true;
+					break;
 				}
+				saveList.push_back(ExistingSave(engine, target, desc));
 			}
 		}
 	}
@@ -2906,9 +2913,15 @@ bool GlobalOptionsDialog::updateAutosavePeriod(int newValue) {
 		case GUI::kMessageOK: {
 			ExistingSaveList failedSaves;
 			for (ExistingSaveList::const_iterator it = saveList.begin(), end = saveList.end(); it != end; ++it) {
-				if (it->metaEngine->copySaveFileToFreeSlot(it->target.c_str(), it->desc.getSaveSlot())) {
+				const Plugin *plugin = PluginMan.findEnginePlugin(it->engine);
+				if (!plugin) {
+					failedSaves.push_back(*it);
+					continue;
+				}
+				MetaEngine &metaEngine = plugin->get<MetaEngine>();
+				if (metaEngine.copySaveFileToFreeSlot(it->target.c_str(), it->desc.getSaveSlot())) {
 					g_system->getSavefileManager()->removeSavefile(
-							it->metaEngine->getSavegameFile(it->desc.getSaveSlot(), it->target.c_str()));
+							metaEngine.getSavegameFile(it->desc.getSaveSlot(), it->target.c_str()));
 				} else {
 					failedSaves.push_back(*it);
 				}
@@ -2925,9 +2938,11 @@ bool GlobalOptionsDialog::updateAutosavePeriod(int newValue) {
 		case GUI::kMessageAlt:
 			break;
 		case GUI::kMessageAlt + 1:
+			PluginMan.loadDetectionPlugin(); // only for uncached manager
 			return false;
 		}
 	}
+	PluginMan.loadDetectionPlugin(); // only for uncached manager
 	return true;
 }
 
