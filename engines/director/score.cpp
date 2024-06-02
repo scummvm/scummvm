@@ -1602,7 +1602,8 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	_firstFramePosition = _framesStream->pos();
 
 	// Pre-computing number of frames, as sometimes the frameNumber in stream mismatches
-	debugC(1, kDebugLoading, "Score::loadFrames(): Precomputing total number of frames!");
+	debugC(1, kDebugLoading, "Score::loadFrames(): Precomputing total number of frames! First frame pos: %d, framesstreamsizeL %d",
+			_firstFramePosition, _framesStreamSize);
 
 	// Calculate number of frames and their positions
 	// numOfFrames in the header is often incorrect
@@ -1671,6 +1672,7 @@ bool Score::readOneFrame() {
 		return false;
 
 	uint16 frameSize = _framesStream->readUint16();
+	debugC(4, kDebugLoading, "pos: %ld frameSize: %d (0x%x) streamSize: %d", _framesStream->pos() - 2, frameSize, frameSize, _framesStreamSize);
 	assert(frameSize < _framesStreamSize);
 
 	debugC(3, kDebugLoading, "++++++++++ score load frame %d (frameSize %d) saveOffset", _curFrameNumber, frameSize);
