@@ -5591,8 +5591,8 @@ msgstr ""
 "raíz del archivo y luego ejecutar el juego con las opciones predeterminadas "
 "de ScummVM.\n"
 "\n"
-"El núcleo también admite archivos de texto sin formato con "
-"**«hooks»/enlaces** dedicados para cada juego utilizando **."
+"El núcleo también admite archivos de texto sin formato con **«hooks»/"
+"enlaces** dedicados para cada juego utilizando **."
 
 #: backends/platform/maemo/maemo.cpp:157
 msgid "Click Mode"
