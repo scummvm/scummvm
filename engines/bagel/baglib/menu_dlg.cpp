@@ -424,7 +424,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			CBofPalette      xPal;
 
 			xPal.loadPalette(cString);
-			dlg.create(pParent, &xPal, &tmpRect);
+			dlg.createDlg(pParent, &xPal, &tmpRect);
 
 			if (bCaption) {
 				// We need to move this back to the correct position
@@ -573,7 +573,7 @@ CBagMenuDlg::~CBagMenuDlg() {
 	assert(isValidObject(this));
 }
 
-ErrorCode CBagMenuDlg::create(CBofWindow *pWnd, CBofPalette *pPal, CBofRect *pRect, uint32 /*nStyle*/) {
+ErrorCode CBagMenuDlg::createDlg(CBofWindow *pWnd, CBofPalette *pPal, CBofRect *pRect) {
 	CBofRect r;
 
 	_bMultipleDialogs = false;

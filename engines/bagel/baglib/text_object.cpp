@@ -468,7 +468,7 @@ bool CBagTextObject::runObject() {
 				cBmp.fillRect(nullptr, pPal->getNearestIndex(RGB(92, 92, 92)));
 
 				CBagMenuDlg cDlg;
-				cDlg.create(pParent, pPal, &cRect);
+				cDlg.createDlg(pParent, pPal, &cRect);
 
 				update(cDlg.getBackdrop(), cPoint, &cRect);
 
