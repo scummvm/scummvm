@@ -632,8 +632,9 @@ void PluginManager::addToPluginsInMemList(Plugin *plugin) {
 	// The plugin is valid, see if it provides the same module as an
 	// already loaded one and should replace it.
 
-	PluginList::iterator pl = _pluginsInMem[plugin->getType()].begin();
-	while (!found && pl != _pluginsInMem[plugin->getType()].end()) {
+	PluginList &list = _pluginsInMem[plugin->getType()];
+	PluginList::iterator pl = list.begin();
+	while (!found && pl != list.end()) {
 		if (!strcmp(plugin->getName(), (*pl)->getName())) {
 			// Found a duplicated module. Replace the old one.
 			found = true;
@@ -647,7 +648,7 @@ void PluginManager::addToPluginsInMemList(Plugin *plugin) {
 
 	if (!found) {
 		// If it provides a new module, just add it to the list of known plugins in memory.
-		_pluginsInMem[plugin->getType()].push_back(plugin);
+		list.push_back(plugin);
 	}
 }
 
