@@ -98,6 +98,7 @@ public:
 
 	virtual void unloadPlugin() {
 		delete _pluginObject;
+		_pluginObject = nullptr;
 	}
 
 	virtual Common::Path getFileName() const override {
