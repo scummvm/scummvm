@@ -20,6 +20,7 @@
  */
 
 #include "engines/metaengine.h"
+#include "engines/engine.h"
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
@@ -340,6 +341,10 @@ WARN_UNUSED_RESULT bool MetaEngine::readSavegameHeader(Common::InSaveFile *in, E
 //////////////////////////////////////////////
 // MetaEngine default implementations
 //////////////////////////////////////////////
+
+void MetaEngine::deleteInstance(Engine *engine, const DetectedGame &gameDescriptor, const void *meDescriptor) {
+	delete engine;
+}
 
 int MetaEngine::findEmptySaveSlot(const char *target) {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
