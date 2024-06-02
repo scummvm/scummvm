@@ -437,20 +437,25 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 	_stream = stream;
 
-	if (convertTagToUppercase(stream->readUint32BE()) != MKTAG('R', 'I', 'F', 'F')) {
-		debugC(5, kDebugLoading, "RIFFArchive::openStream(): RIFF expected but not found");
+	uint32 tag = stream->readUint32BE();
+
+	if (convertTagToUppercase(tag) != MKTAG('R', 'I', 'F', 'F')) {
+		debugC(5, kDebugLoading, "RIFFArchive::openStream(): RIFF expected but got '%s'", tag2str(tag));
 		return false;
 	}
 
 	stream->readUint32LE(); // size
 
-	if (convertTagToUppercase(stream->readUint32BE()) != MKTAG('R', 'M', 'M', 'P')) {
-		debugC(5, kDebugLoading, "RIFFArchive::openStream(): RMMP expected but not found");
+	tag = stream->readUint32BE();
+
+	if (convertTagToUppercase(tag) != MKTAG('R', 'M', 'M', 'P')) {
+		debugC(5, kDebugLoading, "RIFFArchive::openStream(): RMMP expected but  got '%s'", tag2str(tag));
 		return false;
 	}
 
-	if (convertTagToUppercase(stream->readUint32BE()) != MKTAG('C', 'F', 'T', 'C')) {
-		debugC(5, kDebugLoading, "RIFFArchive::openStream(): CFTC expected but not found");
+	tag = stream->readUint32BE();
+	if (convertTagToUppercase(tag) != MKTAG('C', 'F', 'T', 'C')) {
+		debugC(5, kDebugLoading, "RIFFArchive::openStream(): CFTC expected but  got '%s'", tag2str(tag));
 		return false;
 	}
 
@@ -461,7 +466,7 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	Common::DumpFile out;
 
 	while ((uint32)stream->pos() < startPos + cftcSize) {
-		uint32 tag = convertTagToUppercase(stream->readUint32BE());
+		tag = convertTagToUppercase(stream->readUint32BE());
 
 		uint32 size = stream->readUint32LE();
 		uint32 id = stream->readUint32LE();
