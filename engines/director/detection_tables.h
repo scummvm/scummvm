@@ -5467,7 +5467,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Macromedia 4.0.4. But dumping that version still gives you the
 	// lindblad.exe file, and I assume all the data files are functionally
 	// the same, even if they have resource and data forks.
-	WINGAME1t_l("singingbirdbook", "", "lindblad.exe", "713376834e4e94d87ad931a66c3575fc", 698995, Common::SE_SWE, 404),
+	WINGAME1_l("singingbirdbook", "", "lindblad.exe", "t:713376834e4e94d87ad931a66c3575fc", 698995, Common::SE_SWE, 404),
 
 	// Published by Pearson in association with the Ski Club of Great Britain
 	WINDEMO1("skieurope96", "Demo", "SKI.EXE", "3643257d68fadce83611760435ca5cd4", 696861, 404),
