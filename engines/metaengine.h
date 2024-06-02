@@ -256,6 +256,20 @@ public:
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const DetectedGame &gameDescriptor, const void *meDescriptor) = 0;
 
 	/**
+	 * Deinstantiate an engine instance.
+	 * The default implementation merely deletes the engine.
+	 *
+	 * The MetaEngine queries the ConfMan singleton for data like the target,
+	 * gameid, path etc.
+	 *
+	 * @param engine          Pointer to the Engine that MetaEngine created.
+	 * @param gameDescriptor  Detected game as returned by MetaEngineDetection::identifyGame
+	 * @param meDescriptor    Pointer to a meta engine specific descriptor as returned by
+	 *                        MetaEngineDetection::identifyGame
+	 */
+	virtual void deleteInstance(Engine *engine, const DetectedGame &gameDescriptor, const void *meDescriptor);
+
+	/**
 	 * Return a list of all save states associated with the given target.
 	 *
 	 * The returned list is guaranteed to be sorted by slot numbers. That

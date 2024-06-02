@@ -321,7 +321,7 @@ static Common::Error runGame(const Plugin *enginePlugin, OSystem &system, const 
 	keymapper->cleanupGameKeymaps();
 
 	// Free up memory
-	delete engine;
+	metaEngine.deleteInstance(engine, game, meDescriptor);
 
 	// Reset the file/directory mappings
 	SearchMan.clear();
