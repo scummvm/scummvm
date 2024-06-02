@@ -47,6 +47,8 @@ enum VCruiseGameFlag {
 };
 
 struct VCruiseGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 
 	VCruiseGameID gameID;

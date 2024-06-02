@@ -30,6 +30,8 @@
 namespace Avalanche {
 
 struct AvalancheGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 };
 

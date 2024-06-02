@@ -89,6 +89,34 @@ struct GOBGameDescription {
 	const char *startStkBase;
 	const char *startTotBase;
 	uint32 demoIndex;
+
+	uint32 sizeBuffer() const {
+		uint32 ret = desc.sizeBuffer();
+		if (startStkBase) {
+			ret += strlen(startStkBase) + 1;
+		}
+		if (startTotBase) {
+			ret += strlen(startTotBase) + 1;
+		}
+		return ret;
+	}
+
+	void *toBuffer(void *buffer) {
+		buffer = desc.toBuffer(buffer);
+		if (startStkBase) {
+			int len = strlen(startStkBase) + 1;
+			memcpy((char *)buffer, startStkBase, len);
+			startStkBase = (const char *)buffer;
+			buffer = (char *)buffer + len;
+		}
+		if (startTotBase) {
+			int len = strlen(startTotBase) + 1;
+			memcpy((char *)buffer, startTotBase, len);
+			startTotBase = (const char *)buffer;
+			buffer = (char *)buffer + len;
+		}
+		return buffer;
+	}
 };
 
 #define GAMEOPTION_COPY_PROTECTION	GUIO_GAMEOPTIONS1

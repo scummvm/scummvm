@@ -68,6 +68,25 @@ struct MohawkGameDescription {
 	uint8 gameType;
 	uint32 features;
 	const char *appName;
+
+	uint32 sizeBuffer() const {
+		uint32 ret = desc.sizeBuffer();
+		if (appName) {
+			ret += strlen(appName) + 1;
+		}
+		return ret;
+	}
+
+	void *toBuffer(void *buffer) {
+		buffer = desc.toBuffer(buffer);
+		if (appName) {
+			int len = strlen(appName) + 1;
+			memcpy((char *)buffer, appName, len);
+			appName = (const char *)buffer;
+			buffer = (char *)buffer + len;
+		}
+		return buffer;
+	}
 };
 
 } // End of namespace Mohawk

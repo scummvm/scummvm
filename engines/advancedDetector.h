@@ -52,6 +52,33 @@ struct ADGameFileDescription {
 	uint16 fileType;      ///< Optional. Not used during detection, only by engines.
 	const char *md5;      ///< MD5 of (the beginning of) the described file. Optional. Set to NULL to ignore.
 	int64 fileSize;       ///< Size of the described file. Set to -1 to ignore.
+
+	uint32 sizeBuffer() const {
+		uint32 ret = 0;
+		if (fileName) {
+			ret += strlen(fileName) + 1;
+		}
+		if (md5) {
+			ret += strlen(md5) + 1;
+		}
+		return ret;
+	}
+
+	void *toBuffer(void *buffer) {
+		if (fileName) {
+			int len = strlen(fileName) + 1;
+			memcpy((char *)buffer, fileName, len);
+			fileName = (const char *)buffer;
+			buffer = (char *)buffer + len;
+		}
+		if (md5) {
+			int len = strlen(md5) + 1;
+			memcpy((char *)buffer, md5, len);
+			md5 = (const char *)buffer;
+			buffer = (char *)buffer + len;
+		}
+		return buffer;
+	}
 };
 
 /**
@@ -170,6 +197,105 @@ struct ADGameDescription {
 	 * or have MIDI controls in a game that only supports digital music.
 	 */
 	const char *guiOptions;
+
+	/**
+	 * Calculates the size needed to store all pointed data
+	 */
+	uint32 sizeBuffer() const {
+		uint32 ret = 0;
+		if (gameId) {
+			ret += strlen(gameId) + 1;
+		}
+		if (extra) {
+			ret += strlen(extra) + 1;
+		}
+		for(int i = 0; i < ARRAYSIZE(filesDescriptions); i++) {
+			ret += filesDescriptions[i].sizeBuffer();
+		}
+		if (guiOptions) {
+			ret += strlen(guiOptions) + 1;
+		}
+		return ret;
+	}
+
+	/**
+	 * Fixup all pointers to lie inside buffer and stores the needed data in it
+	 *
+	 * @param buffer Where the original data is copied in and pointed at
+	 *
+	 * @return The new pointer on buffer after the stored data.
+	 */
+	void *toBuffer(void *buffer) {
+		if (gameId) {
+			int len = strlen(gameId) + 1;
+			memcpy((char *)buffer, gameId, len);
+			gameId = (const char *)buffer;
+			buffer = (char *)buffer + len;
+		}
+		if (extra) {
+			int len = strlen(extra) + 1;
+			memcpy((char *)buffer, extra, len);
+			extra = (const char *)buffer;
+			buffer = (char *)buffer + len;
+		}
+		for(int i = 0; i < ARRAYSIZE(filesDescriptions); i++) {
+			buffer = filesDescriptions[i].toBuffer(buffer);
+		}
+		if (guiOptions) {
+			int len = strlen(guiOptions) + 1;
+			memcpy((char *)buffer, guiOptions, len);
+			guiOptions = (const char *)buffer;
+			buffer = (char *)buffer + len;
+		}
+		return buffer;
+	}
+};
+
+/**
+ * This macro can be used in simple ADGameDescription containers
+ * to let them be used by ADDynamicGameDescription
+ *
+ * Simple containers are the one not making use of pointers.
+ */
+#define AD_GAME_DESCRIPTION_HELPERS(field) \
+	uint32 sizeBuffer() const { \
+		return field.sizeBuffer(); \
+	} \
+	void *toBuffer(void *buffer) { \
+		return field.toBuffer(buffer); \
+	}
+
+/**
+ * This class is a small helper to manage copies in heap
+ * of static ADGameDescription.
+ * To work, all ADGameDescription and derived classes that manipulate
+ * pointers must define the sizeBuffer and toBuffer functions like ADGameDescription.
+ */
+template<class T>
+class ADDynamicGameDescription : public T {
+public:
+	ADDynamicGameDescription(const T *other) : _buffer(nullptr) {
+		// First copy all fields
+		memcpy(static_cast<T*>(this), other, sizeof(T));
+
+		// Then calculate the size of the dynamic buffer
+		// we will need to store evrything pointed at by
+		// the structures
+		uint32 sz = other->sizeBuffer();
+		_buffer = new byte[sz];
+
+		// Finally copy every pointer in the buffer
+		// and make the structure point into it
+		void *end = this->toBuffer(_buffer);
+		assert(end <= _buffer + sz);
+	}
+
+	~ADDynamicGameDescription() {
+		delete[] _buffer;
+	}
+
+private:
+	byte *_buffer;
 };
 
 /**

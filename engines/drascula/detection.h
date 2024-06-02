@@ -31,6 +31,8 @@ enum DrasculaGameFeatures {
 };
 
 struct DrasculaGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 };
 

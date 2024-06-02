@@ -63,6 +63,8 @@ enum UltimaGameFlags {
 };
 
 struct UltimaGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 	GameId gameId;
 	uint32 features;

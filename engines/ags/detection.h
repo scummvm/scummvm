@@ -42,12 +42,77 @@ enum GameFlag {
 struct PluginVersion {
 	const char *_plugin;
 	int _version;
+
+	uint32 sizeBuffer() const {
+		uint32 ret = 0;
+		if (_plugin) {
+			ret += strlen(_plugin) + 1;
+		}
+		return ret;
+	}
+	void *toBuffer(void *buffer) {
+		if (_plugin) {
+			int len = strlen(_plugin) + 1;
+			memcpy((char *)buffer, _plugin, len);
+			_plugin = (const char *)buffer;
+			buffer = (char *)buffer + len;
+		}
+		return buffer;
+	}
 };
 
 struct AGSGameDescription {
 	ADGameDescription desc;
 	const PluginVersion *_plugins;
 	const char *_mainNameInsideInstaller;
+
+	uint32 sizeBuffer() const {
+		uint32 ret = desc.sizeBuffer();
+		if (_plugins) {
+			const PluginVersion *p;
+			for (p = _plugins; p->_plugin != nullptr; p++) {
+				ret += p->sizeBuffer();
+			}
+			// Make sure we have enough room for worst case alignment
+			// by adding the size of a pointer minus one
+			ret += sizeof(*p) * (p - _plugins + 1) + sizeof(void *) - 1;
+		}
+		if (_mainNameInsideInstaller) {
+			ret += strlen(_mainNameInsideInstaller) + 1;
+		}
+		return ret;
+	}
+
+	void *toBuffer(void *buffer) {
+		buffer = desc.toBuffer(buffer);
+		if (_plugins) {
+			const PluginVersion *p;
+			for (p = _plugins; p->_plugin != nullptr; p++)
+				;
+			uint count = (p - _plugins + 1);
+
+			buffer = (void *)(((uintptr)buffer + sizeof(void *) - 1) & -sizeof(void *));
+			memcpy(buffer, _plugins, sizeof(*p) * count);
+
+			_plugins = (PluginVersion *)buffer;
+
+			PluginVersion *dp = (PluginVersion *)buffer;
+			buffer = (PluginVersion *)buffer + count;
+
+			for (; dp->_plugin != nullptr; dp++) {
+				buffer = dp->toBuffer(buffer);
+			}
+		}
+
+		if (_mainNameInsideInstaller) {
+			int len = strlen(_mainNameInsideInstaller) + 1;
+			memcpy((char *)buffer, _mainNameInsideInstaller, len);
+			_mainNameInsideInstaller = (const char *)buffer;
+			buffer = (char *)buffer + len;
+		}
+
+		return buffer;
+	}
 };
 
 extern const PlainGameDescriptor GAME_NAMES[];

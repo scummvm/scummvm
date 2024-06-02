@@ -37,6 +37,8 @@ enum ZVisionFeatures {
 };
 
 struct ZVisionGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 	ZVisionGameId gameId;
 };

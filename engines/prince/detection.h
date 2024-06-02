@@ -40,6 +40,8 @@ enum {
 };
 
 struct PrinceGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 	PrinceGameType gameType;
 };

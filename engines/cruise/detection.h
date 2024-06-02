@@ -25,6 +25,8 @@
 namespace Cruise {
 
 struct CRUISEGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 };
 

@@ -29,6 +29,8 @@ enum {
 };
 
 struct TonyGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 };
 

@@ -33,6 +33,8 @@ enum GameLocalizationType {
 };
 
 struct Myst3GameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 	uint32 localizationType;
 };

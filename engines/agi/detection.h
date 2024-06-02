@@ -27,6 +27,8 @@
 namespace Agi {
 
 struct AGIGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 
 	int gameID;
