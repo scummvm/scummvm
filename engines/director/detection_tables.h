@@ -916,6 +916,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "girlspack",			"Girl's Pack!" },
 	{ "glitzerschuppen",	"Der Regenbogenfisch Die Suche Nach Den Glitzerschuppen" },
 	{ "globiabc",			"Globi's ABC" },
+	{ "hase",				"Mein Freund, der Hase" },
 	{ "ichsehewas",			"Ich sehe was..." },
 	{ "informaticus",		"Informaticus" },
 	{ "janoschpanama",		"JANOSCH: Oh, wie schön ist Panama" },
@@ -928,6 +929,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "loewe4",				"Löwenzahn 4" },
 	{ "loewe5",				"Löwenzahn 5" },
 	{ "loewe6",				"Löwenzahn 6" },
+	{ "lulu",				"Das Buch von Lulu" },
 	{ "mathica",			"Mathica ... und Mathematik wird zum Abenteuer" },
 	{ "mats3",				"Mats und das rätselhafte Tier" },
 	{ "maus2",				"Die CD-ROM mit der Maus 2" },
@@ -3639,6 +3641,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t_l("blinkybill1", "", "BLINKY95.EXE", "146512cdebe499a48872cc9e8710d738", 717025, Common::PT_BRA, 404),
 	MACGAME2_l(	"blinkybill1", "", "BB/16M", "17efee018a660458fae80de4364021ac", 481254,
 								   "A Caverna do Fantasma", "cbf7119d62a3528d490cd517b4451061", 5965, Common::IT_ITA, 404),
+	//Original filename is Das Geheimnis der Geisterhöhle
+	MACGAME2_l("blinkybill1", "", "BB/16M", 								"tr:5d2b19cb3951261ca08a95815c703e61", 481254,
+								  "xn--Das Geheimnis der Geisterhhle-55c",	"tr:e2eb9adade533ceb57418c4558323ade", 5960, Common::DE_DEU, 404),
+	WINGAME1_l("blinkybill1", "", "BLINKY95.EXE", "t:53dae92fa6a4f1ac8a95f5c1f5178d0f", 727923, Common::DE_DEU, 404),
 	MACDEMO2(	"blinkybill1", "Demo", "BB/16M", "17efee018a660458fae80de4364021ac", 481254,
 									   "Ghost Cave Demo 16Mb", "5b8b1a76b4724565b8b3f184a753b79a", 2502, 404),
 	WINDEMO1t(	"blinkybill1", "Demo", "BLINKY.EXE", "6641493b9033e5c39e0f0fa1870b1081", 712501, 404),
@@ -4299,6 +4305,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("hamsterland2", "", "HL2SP.EXE",					   "d:8dd22b8bde300c9fb5b66808905300f7", 875665, Common::ES_ESP, 404),
 	WINGAME1("hamsterland2", "",   "HL2EN.EXE",					   "d:4c812a63165c1f50242e879aae62718d", 859681, 404),
 
+	WINGAME2_l("hase", "", "HASE.EXE", "t:45047854f4e15a45a8627618df44e9c3", 696857,
+						   "HASE.LIB", "d:8d8f5a4bf0d27ec926022e90ac4aeefe", 4483876, Common::DE_DEU, 404),
+
 	// Sampler is found on AlphaBonk Farm and probably elsewhere
 	MACGAME1("headbone", "Sampler", "Headbone CD-ROM Sampler", "r:5bbb193a8785c70abe2a4d86b99e1536", 303870, 404),
 	WINGAME2("headbone", "Sampler", "SAMPLER.EXE",  "b083372f35bfaa97f68cfa7f9bb5222e", 2132572,
@@ -4721,6 +4730,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Win/Mac versions are D3
 	PIPGAME1_l("lzone", "", "L-ZONE", "07c3095bd36e5aed00ba12f17f761070", 60096, Common::JA_JPN, 400),
+
+	MACGAME1_l("lulu", "", "Das Buch von Lulu PowerMac", "tr:c49c2f262fa9eb574d06f6f46903330a", 78730, Common::DE_DEU, 404),
+	WINGAME2_l("lulu", "", "LULU.EXE", 					 "t:a89aa6079ba7745917c63b99e52ade66", 876993,
+						   "CHAP/1CHAP.DXR",  			 "d:f4f62669342b305b789479014969e782", 5011138, Common::DE_DEU, 404),
 
 	// Pre-rendered CG animated adventure based on the popular comedy manga
 	// Developed by Future Pirates, published by Toshiba EMI
