@@ -596,7 +596,7 @@ public:
 	DetectionResults detectGames(const Common::FSList &fslist, uint32 skipADFlags = 0, bool skipIncomplete = false);
 
 	/** Find a plugin by its engine ID. */
-	const Plugin *findPlugin(const Common::String &engineId) const;
+	const Plugin *findDetectionPlugin(const Common::String &engineId) const;
 
 	/**
 	 * Get the list of all plugins for the type specified.

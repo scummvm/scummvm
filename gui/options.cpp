@@ -2870,7 +2870,7 @@ bool GlobalOptionsDialog::updateAutosavePeriod(int newValue) {
 		// note that engineid isn't present on games that predate it
 		// and haven't been run since it was introduced.
 		const Common::String engine = domain.getValOrDefault("engineid");
-		if (const Plugin *detectionPlugin = EngineMan.findPlugin(engine)) {
+		if (const Plugin *detectionPlugin = EngineMan.findDetectionPlugin(engine)) {
 			if (const Plugin *plugin = PluginMan.getEngineFromMetaEngine(detectionPlugin)) {
 				MetaEngine &metaEngine = plugin->get<MetaEngine>();
 				const int autoSaveSlot = metaEngine.getAutosaveSlot();

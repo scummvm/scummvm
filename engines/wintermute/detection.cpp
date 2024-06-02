@@ -95,7 +95,7 @@ public:
 			}
 		}
 
-		const Plugin *metaEnginePlugin = EngineMan.findPlugin(getName());
+		const Plugin *metaEnginePlugin = EngineMan.findDetectionPlugin(getName());
 
 		if (metaEnginePlugin) {
 			const Plugin *enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);

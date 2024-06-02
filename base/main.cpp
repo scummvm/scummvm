@@ -141,7 +141,7 @@ static Common::Error identifyGame(const Common::String &debugLevels, const Plugi
 		return Common::kUnknownError;
 	}
 
-	*detectionPlugin = EngineMan.findPlugin(engineId);
+	*detectionPlugin = EngineMan.findDetectionPlugin(engineId);
 	if (!*detectionPlugin) {
 		warning("'%s' is an invalid engine ID. Use the --list-engines command to list supported engine IDs", engineId.c_str());
 		return Common::kMetaEnginePluginNotFound;
