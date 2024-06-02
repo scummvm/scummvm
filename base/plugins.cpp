@@ -338,8 +338,6 @@ const Plugin *PluginManager::getMetaEngineFromEngine(const Plugin *plugin) {
  * This should only be called once by main()
  **/
 void PluginManagerUncached::init() {
-	unloadAllPlugins();
-	_allEnginePlugins.clear();
 	ConfMan.setBool("always_run_fallback_detection_extern", false);
 
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, nullptr, false); // empty the engine plugins
@@ -463,45 +461,40 @@ void PluginManagerUncached::updateConfigWithFileName(const Common::String &engin
 
 #ifndef DETECTION_STATIC
 void PluginManagerUncached::loadDetectionPlugin() {
-	bool linkMetaEngines = false;
-
 	if (_isDetectionLoaded) {
 		debug(9, "Detection plugin is already loaded. Adding each available engines to the memory.");
-		linkMetaEngines = true;
-	} else {
-		if (_detectionPlugin) {
-			if (_detectionPlugin->loadPlugin()) {
-				assert((_detectionPlugin)->getType() == PLUGIN_TYPE_DETECTION);
-
-				linkMetaEngines = true;
-				_isDetectionLoaded = true;
-			} else {
-				debug(9, "Detection plugin was not loaded correctly.");
-				return;
-			}
-		} else {
-			debug(9, "Detection plugin not found.");
-			return;
-		}
+		return;
 	}
 
-	if (linkMetaEngines) {
-		_pluginsInMem[PLUGIN_TYPE_ENGINE_DETECTION].clear();
-		const Detection &detectionConnect = _detectionPlugin->get<Detection>();
-		const PluginList &pl = detectionConnect.getPlugins();
-		Common::for_each(pl.begin(), pl.end(), Common::bind1st(Common::mem_fun(&PluginManagerUncached::tryLoadPlugin), this));
+	if (!_detectionPlugin) {
+		debug(9, "Detection plugin not found.");
+		return;
 	}
 
+	if (!_detectionPlugin->loadPlugin()) {
+		debug(9, "Detection plugin was not loaded correctly.");
+		return;
+	}
+
+	assert((_detectionPlugin)->getType() == PLUGIN_TYPE_DETECTION);
+
+	_pluginsInMem[PLUGIN_TYPE_ENGINE_DETECTION].clear();
+	const Detection &detectionConnect = _detectionPlugin->get<Detection>();
+	const PluginList &pl = detectionConnect.getPlugins();
+	Common::for_each(pl.begin(), pl.end(), Common::bind1st(Common::mem_fun(&PluginManagerUncached::tryLoadPlugin), this));
+
+	_isDetectionLoaded = true;
 }
 
 void PluginManagerUncached::unloadDetectionPlugin() {
-	if (_isDetectionLoaded) {
-		_pluginsInMem[PLUGIN_TYPE_ENGINE_DETECTION].clear();
-		_detectionPlugin->unloadPlugin();
-		_isDetectionLoaded = false;
-	} else {
+	if (!_isDetectionLoaded) {
 		debug(9, "Detection plugin is already unloaded.");
+		return;
 	}
+
+	unloadPluginsExcept(PLUGIN_TYPE_ENGINE_DETECTION, nullptr, true);
+	_detectionPlugin->unloadPlugin();
+	_isDetectionLoaded = false;
 }
 #endif
 
