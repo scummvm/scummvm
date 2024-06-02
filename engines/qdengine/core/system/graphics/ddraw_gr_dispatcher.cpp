@@ -1,37 +1,46 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/rect.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/ddraw_gr_dispatcher.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
-
+#define LPVOID void*
 HRESULT CALLBACK ddEnumDisplayModesCallback(LPDDSURFACEDESC lpDDSurfaceDesc, LPVOID lpContext);
 
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
-DDraw_grDispatcher::DDraw_grDispatcher() : ddobj_(0),
+DDraw_grDispatcher::DDraw_grDispatcher() :
+#if 0
+	ddobj_(0),
 	prim_surface_(0),
 	back_surface_(0),
+#endif
 	fullscreen_(false) {
+	warning("STUB: DDraw_grDispatcher::DDraw_grDispatcher()");
+#if 0
 	DDSURFACEDESC ddSurf;
 	ZeroMemory(&ddSurf, sizeof(DDSURFACEDESC));
 	ddSurf.dwSize = sizeof(ddSurf);
 	ddSurf.dwFlags = 0;
 
 	if (FAILED(DirectDrawCreate(NULL, &ddobj_, NULL))) return;
-
+#endif
 	video_modes_.reserve(50);
 	enum_display_modes();
 }
 
 DDraw_grDispatcher::~DDraw_grDispatcher() {
+	warning("STUB: DDraw_grDispatcher::~DDraw_grDispatcher()");
+#if 0
 	if (ddobj_) {
 		ddobj_ -> Release();
 		ddobj_ = NULL;
 	}
-
+#endif
 	video_modes_.clear();
 }
 
@@ -47,9 +56,10 @@ bool DDraw_grDispatcher::Flush(int x, int y, int sx, int sy) {
 
 		RECT src_rect = { x, y, x1, y1 };
 		RECT dest_rect = src_rect;
-
+	warning("STUB: DDraw_grDispatcher::Flush()");
+#if 0
 		if (!fullscreen_) {
-			POINT pt = { 0, 0 };
+			Common::Point pt = { 0, 0 };
 			ClientToScreen((HWND)Get_hWnd(), &pt);
 			OffsetRect(&dest_rect, pt.x, pt.y);
 		}
@@ -57,7 +67,7 @@ bool DDraw_grDispatcher::Flush(int x, int y, int sx, int sy) {
 //		if(prim_surface_ -> IsLost() != DD_OK) prim_surface_ -> Restore();
 		back_surface_ -> Unlock(&back_surface_obj_);
 
-		while (TRUE) {
+		while (true) {
 			HRESULT hr = prim_surface_ -> Blt(&dest_rect, back_surface_, &src_rect, DDBLT_WAIT, NULL);
 			if (hr == DD_OK)
 				break;
@@ -74,7 +84,7 @@ bool DDraw_grDispatcher::Flush(int x, int y, int sx, int sy) {
 		screenBuf = static_cast<char *>(back_surface_obj_.lpSurface);
 		for (int i = 0; i < SizeY; i ++)
 			yTable[i] = i * back_surface_obj_.lPitch;
-
+#endif
 		return true;
 	}
 
@@ -85,7 +95,8 @@ bool DDraw_grDispatcher::StretchFlush(int x_dest, int y_dest, int sx_dest, int s
 	if (flags & GR_INITED && hWnd) {
 		RECT src = { x_src, y_src, x_src + sx_src, y_src + sy_src };
 		RECT dst = { x_dest, y_dest, x_dest + sx_dest, y_dest + sy_dest };
-
+	warning("STUB: DDraw_grDispatcher::StretchFlush()");
+#if 0
 		if (!fullscreen_) {
 			POINT pt = { 0, 0 };
 			ClientToScreen((HWND)Get_hWnd(), &pt);
@@ -102,7 +113,7 @@ bool DDraw_grDispatcher::StretchFlush(int x_dest, int y_dest, int sx_dest, int s
 		screenBuf = reinterpret_cast<char *>(back_surface_obj_.lpSurface);
 		for (int i = 0; i < SizeY; i ++)
 			yTable[i] = i * back_surface_obj_.lPitch;
-
+#endif
 		return true;
 	}
 
@@ -110,11 +121,15 @@ bool DDraw_grDispatcher::StretchFlush(int x_dest, int y_dest, int sx_dest, int s
 }
 
 bool DDraw_grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *hwnd, bool fullscreen) {
-	if (!ddobj_) return false;
-
+	warning("STUB: DDraw_grDispatcher::init()");
+#if 0
+	if (!ddobj_)
+		return false;
+#endif
 	fullscreen_ = fullscreen;
 	grDispatcher::init(sx, sy, pixel_format, hwnd, fullscreen);
 
+#if 0
 	if (fullscreen_) {
 		if (ddobj_ -> SetCooperativeLevel((HWND)Get_hWnd(), DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN) != DD_OK)
 			return false;
@@ -124,7 +139,7 @@ bool DDraw_grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *
 		if (ddobj_ -> SetCooperativeLevel((HWND)Get_hWnd(), DDSCL_NORMAL) != DD_OK)
 			return false;
 	}
-
+#endif
 	if (!hwnd && sx && sy) {
 		resize_window(sx, sy);
 		SizeX = sx;
@@ -136,7 +151,9 @@ bool DDraw_grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *
 	ddSurf.dwSize = sizeof(ddSurf);
 	ddSurf.dwFlags = DDSD_CAPS;
 	ddSurf.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
-	if (ddobj_ -> CreateSurface(&ddSurf, &prim_surface_, NULL) != DD_OK) return false;
+#if 0
+	if (ddobj_ -> CreateSurface(&ddSurf, &prim_surface_, NULL) != DD_OK)
+		return false;
 
 	if (!fullscreen_) {
 		LPDIRECTDRAWCLIPPER cp = NULL;
@@ -145,20 +162,21 @@ bool DDraw_grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *
 		prim_surface_ -> SetClipper(cp);
 		cp -> Release();
 	}
-
+#endif
 	ZeroMemory(&ddSurf, sizeof(DDSURFACEDESC));
 	ddSurf.dwSize = sizeof(ddSurf);
+#if 0
 	ddobj_ -> GetDisplayMode(&ddSurf);
-
+#endif
 	ddSurf.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH;
 	ddSurf.ddsCaps.dwCaps = DDSCAPS_BACKBUFFER | DDSCAPS_SYSTEMMEMORY;
 	ddSurf.dwWidth = SizeX;
 	ddSurf.dwHeight = SizeY;
 
 	ddSurf.dwFlags |= DDSD_PIXELFORMAT;
-
+#if 0
 	if (ddobj_ -> CreateSurface(&ddSurf, &back_surface_, NULL) != DD_OK) return false;
-
+#endif
 	switch (ddSurf.ddpfPixelFormat.dwRGBBitCount) {
 	case 16:
 		if (ddSurf.ddpfPixelFormat.dwGBitMask == grDispatcher::mask_565_g)
@@ -176,17 +194,20 @@ bool DDraw_grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *
 		return false;
 	}
 
+#if 0
 	ZeroMemory(&back_surface_obj_, sizeof(DDSURFACEDESC));
 	back_surface_obj_.dwSize = sizeof(DDSURFACEDESC);
 	back_surface_obj_.dwFlags = DDSD_PITCH;
 	if (back_surface_ -> Lock(NULL, &back_surface_obj_, DDLOCK_SURFACEMEMORYPTR, NULL) != DD_OK) return false;
 	screenBuf = reinterpret_cast<char *>(back_surface_obj_.lpSurface);
+#endif
 
 	delete yTable;
 	yTable = new int[SizeY + 1];
+#if 0
 	for (int i = 0; i < SizeY; i ++)
 		yTable[i] = i * back_surface_obj_.lPitch;
-
+#endif
 	SetClip();
 
 	flags |= GR_INITED;
@@ -196,7 +217,8 @@ bool DDraw_grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *
 
 bool DDraw_grDispatcher::Finit() {
 	grDispatcher::Finit();
-
+	warning("STUB: DDraw_grDispatcher::Finit()");
+#if 0
 	if (back_surface_) {
 		while (back_surface_ -> GetBltStatus(DDGBS_ISBLTDONE) == DDERR_WASSTILLDRAWING);
 		back_surface_ -> Unlock(&back_surface_obj_);
@@ -211,18 +233,21 @@ bool DDraw_grDispatcher::Finit() {
 		back_surface_ -> Release();
 		back_surface_ = NULL;
 	}
-
+#endif
 	return true;
 }
 
 bool DDraw_grDispatcher::enum_display_modes() {
-	if (!ddobj_) return false;
-
+	warning("STUB: DDraw_grDispatcher::enum_display_modes()");
+#if 0
+	if (!ddobj_)
+		return false;
+#endif
 	video_modes_.clear();
-
+#if 0
 	if (FAILED(ddobj_ -> EnumDisplayModes(DDEDM_STANDARDVGAMODES, NULL, (LPVOID)(&video_modes_), ddEnumDisplayModesCallback)))
 		return false;
-
+#endif
 	return true;
 }
 
@@ -276,10 +301,11 @@ bool DDraw_grDispatcher::get_current_mode(int &sx, int &sy, grPixelFormat &pixel
 	ZeroMemory(&ddsd, sizeof(ddsd));
 	ddsd.dwSize = sizeof(ddsd);
 
+#if 0
 	HRESULT hRet = ddobj_ -> GetDisplayMode(&ddsd);
 	if (hRet != DD_OK)
 		return false;
-
+#endif
 	sx = ddsd.dwWidth;
 	sy = abs(float(ddsd.dwHeight));
 

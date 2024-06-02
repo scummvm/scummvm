@@ -513,6 +513,62 @@ struct RECT {
 struct HRGN {
 	int i;
 };
+#define DDSD_PIXELFORMAT 0x00001000
+#define DDSD_WIDTH 0x00000004
+#define DDSD_PITCH 0x00000008
+#define DDSCAPS_BACKBUFFER 0x00000002
+#define DDSCAPS_SYSTEMMEMORY 0x00000008
+#define DDLOCK_SURFACEMEMORYPTR 0x00000040
+#define DDSD_CAPS 0x00000001
+#define DDSD_HEIGHT 0x00000002
+#define DDSCAPS_PRIMARYSURFACE 0x00000001
+#define DD_OK 0
+#define DDENUMRET_OK 0
+#define LPDDSURFACEDESC DDSURFACEDESC*
+typedef struct _DDSCAPS {
+    DWORD dwCaps;         // capabilities of surface wanted
+} DDSCAPS;
+typedef struct _DDPIXELFORMAT {
+    DWORD dwSize;
+    DWORD dwFlags;
+    DWORD dwFourCC;
+    union {
+        DWORD dwRGBBitCount;
+        DWORD dwYUVBitCount;
+        DWORD dwZBufferBitDepth;
+        DWORD dwAlphaBitDepth;
+        DWORD dwLuminanceBitCount;
+        DWORD dwBumpBitCount;
+        DWORD dwPrivateFormatBitCount;
+    };
+    union {
+        DWORD dwRBitMask;
+        DWORD dwYBitMask;
+        DWORD dwStencilBitDepth;
+        DWORD dwLuminanceBitMask;
+        DWORD dwBumpDuBitMask;
+        DWORD dwOperations;
+    };
+    union {
+        DWORD dwGBitMask;
+        DWORD dwUBitMask;
+        DWORD dwZBitMask;
+        DWORD dwBumpDvBitMask;
+        DWORD dwBumpLuminanceBitMask;
+        DWORD dwRGBAlphaBitMask;
+    };
+    DWORD dwBBitMask;
+    DWORD dwRGBZBitMask;
+} DDPIXELFORMAT;
+typedef struct _DDSURFACEDESC {
+    DWORD dwSize;
+    DWORD dwFlags;
+    DWORD dwHeight;
+    DWORD dwWidth;
+    DDPIXELFORMAT ddpfPixelFormat;
+	DDSCAPS ddsCaps;
+} DDSURFACEDESC;
+
 
 HRGN CreateRectRgn(int x1, int y1, int x2, int y2) {
 	warning("STUB: CreateRectRgn()");
