@@ -319,16 +319,16 @@ public:
 	const Plugin *getMetaEngineFromEngine(const Plugin *plugin);
 
 	/**
-	 * A method which takes in a plugin of type METAENGINE,
-	 * and returns the appropriate & matching ENGINE.
-	 * It uses the MetaEngine's getEngineID to reconstruct the name
+	 * A method which takes in a plugin of type ENGINE_DETECTION,
+	 * and returns the appropriate & matching ENGINE plugin.
+	 * It uses the MetaEngineDetection's getEngineID to reconstruct the name
 	 * of engine plugin, and then tries to matches it with each plugin in memory.
 	 *
-	 * @param A plugin of type METAENGINE.
+	 * @param A plugin of type ENGINE_DETECTION.
 	 *
 	 * @return A plugin of type ENGINE.
 	 */
-	const Plugin *getEngineFromMetaEngine(const Plugin *plugin);
+	const Plugin *getEngineFromDetectionPlugin(const Plugin *plugin);
 
 	// Functions used by the uncached PluginManager
 	virtual void init()	{}

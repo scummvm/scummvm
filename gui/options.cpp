@@ -2871,7 +2871,7 @@ bool GlobalOptionsDialog::updateAutosavePeriod(int newValue) {
 		// and haven't been run since it was introduced.
 		const Common::String engine = domain.getValOrDefault("engineid");
 		if (const Plugin *detectionPlugin = EngineMan.findDetectionPlugin(engine)) {
-			if (const Plugin *plugin = PluginMan.getEngineFromMetaEngine(detectionPlugin)) {
+			if (const Plugin *plugin = PluginMan.getEngineFromDetectionPlugin(detectionPlugin)) {
 				MetaEngine &metaEngine = plugin->get<MetaEngine>();
 				const int autoSaveSlot = metaEngine.getAutosaveSlot();
 				if (autoSaveSlot < 0)

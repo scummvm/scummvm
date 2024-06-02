@@ -95,10 +95,10 @@ public:
 			}
 		}
 
-		const Plugin *metaEnginePlugin = EngineMan.findDetectionPlugin(getName());
+		const Plugin *detectionPlugin = EngineMan.findDetectionPlugin(getName());
 
-		if (metaEnginePlugin) {
-			const Plugin *enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);
+		if (detectionPlugin) {
+			const Plugin *enginePlugin = PluginMan.getEngineFromDetectionPlugin(detectionPlugin);
 			if (enginePlugin) {
 				return enginePlugin->get<AdvancedMetaEngineBase>().fallbackDetectExtern(_md5Bytes, allFiles, fslist);
 			} else {

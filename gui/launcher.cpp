@@ -533,13 +533,13 @@ void LauncherDialog::loadGame(int item) {
 	EngineMan.upgradeTargetIfNecessary(target);
 
 	// Look for the plugin
-	const Plugin *metaEnginePlugin = nullptr;
+	const Plugin *detectionPlugin = nullptr;
 	const Plugin *enginePlugin = nullptr;
-	EngineMan.findTarget(target, &metaEnginePlugin);
+	EngineMan.findTarget(target, &detectionPlugin);
 
 	// If we found a relevant plugin, find the matching engine plugin.
-	if (metaEnginePlugin) {
-		enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);
+	if (detectionPlugin) {
+		enginePlugin = PluginMan.getEngineFromDetectionPlugin(detectionPlugin);
 	}
 
 	if (enginePlugin) {

@@ -751,7 +751,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 		if (result.getCode() == Common::kNoError) {
 			// Then, get the relevant Engine plugin from MetaEngine.
-			enginePlugin = PluginMan.getEngineFromMetaEngine(plugin);
+			enginePlugin = PluginMan.getEngineFromDetectionPlugin(plugin);
 			if (enginePlugin == nullptr) {
 				result = Common::kEnginePluginNotFound;
 			}

@@ -1337,17 +1337,17 @@ static Common::Error listSaves(const Common::String &singleTarget) {
 		Common::String currentTarget;
 		QualifiedGameDescriptor game;
 
-		const Plugin *metaEnginePlugin = nullptr;
+		const Plugin *detectionPlugin = nullptr;
 		const Plugin *enginePlugin = nullptr;
 
 		if (ConfMan.hasGameDomain(*i)) {
 			// The name is a known target
 			currentTarget = *i;
 			EngineMan.upgradeTargetIfNecessary(*i);
-			game = EngineMan.findTarget(*i, &metaEnginePlugin);
+			game = EngineMan.findTarget(*i, &detectionPlugin);
 		} else if (game = findGameMatchingName(*i), !game.gameId.empty()) {
 			// The name is a known game id
-			metaEnginePlugin = EngineMan.findDetectionPlugin(game.engineId);
+			detectionPlugin = EngineMan.findDetectionPlugin(game.engineId);
 			currentTarget = createTemporaryTarget(game.engineId, game.gameId);
 		} else {
 			return Common::Error(Common::kEnginePluginNotFound, Common::String::format("target '%s'", singleTarget.c_str()));
@@ -1356,7 +1356,7 @@ static Common::Error listSaves(const Common::String &singleTarget) {
 		// If we actually found a domain, we're going to change the domain
 		ConfMan.setActiveDomain(currentTarget);
 
-		if (!metaEnginePlugin) {
+		if (!detectionPlugin) {
 			// If the target was specified, treat this as an error, and otherwise skip it.
 			if (!singleTarget.empty())
 				return Common::Error(Common::kMetaEnginePluginNotFound,
@@ -1364,7 +1364,7 @@ static Common::Error listSaves(const Common::String &singleTarget) {
 			printf("MetaEnginePlugin could not be loaded for target '%s'\n", i->c_str());
 			continue;
 		} else {
-			enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);
+			enginePlugin = PluginMan.getEngineFromDetectionPlugin(detectionPlugin);
 
 			if (!enginePlugin) {
 				// If the target was specified, treat this as an error, and otherwise skip it.

@@ -286,7 +286,7 @@ void PluginManager::addPluginProvider(PluginProvider *pp) {
 	_providers.push_back(pp);
 }
 
-const Plugin *PluginManager::getEngineFromMetaEngine(const Plugin *plugin) {
+const Plugin *PluginManager::getEngineFromDetectionPlugin(const Plugin *plugin) {
 	assert(plugin->getType() == PLUGIN_TYPE_ENGINE_DETECTION);
 
 	const Plugin *enginePlugin = nullptr;
