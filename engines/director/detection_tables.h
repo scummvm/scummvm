@@ -419,6 +419,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "shrmess",			"Schoolhouse Rock!: 1st-4th Grade Math Essentials" },
 	{ "simpsonsplayer",		"The Simpsons Cartoon Player" },
 	{ "simpsonsstudio",		"The Simpsons Cartoon Studio" },
+	{ "singingbirdbook",		"Jan Lindblad presenterar den sjungande Fågelboken" },
 	{ "sinkha",				"Sinkha: The 3D Multimedia Novel" },
 	{ "sinkha1",			"Sinkha: Hyleyn" },
 	{ "sinkha2",			"Sinkha: Atmosphere / Planet of the Clouds" },
@@ -2259,6 +2260,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 							   "Shared.Dir", "89f558d6a6535c16ec440948d86988b8", 3570542, 404),
 	WINDEMO2t("wrath", "Demo", "WRATH.EXE",	 "5d0ee796571b99d402a06438ae2f3d56", 696815,
 							   "SHARED.DIR", "e709f7b88f6241e4f45632beb0533ac1", 3570542, 404),
+
+	// Jan Lindblad presenterar den sjungande Fågelboken
+	// There is also a Macintosh version which also appears to be using
+	// Macromedia 4.0.4. But dumping that version still gives you the
+	// lindblad.exe file, and I assume all the data files are functionally
+	// the same, even if they have resource and data forks.
+	WINGAME1t_l("singingbirdbook", "", "lindblad.exe", "713376834e4e94d87ad931a66c3575fc", 698995, Common::SE_SWE, 404),
 
 //////////////////////////////////////////////////
 //
