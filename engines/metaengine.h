@@ -128,7 +128,7 @@ public:
 	virtual ~MetaEngineDetection() {}
 
 	/** Get the engine ID. */
-	virtual const char *getName() const = 0;
+	virtual const char *getName() const override = 0;
 
 	/** Get the engine name. */
 	virtual const char *getEngineName() const = 0;
@@ -235,7 +235,7 @@ public:
 	 * engineID of "scumm". ScummMetaEngine inherits MetaEngine and provides the name
 	 * "Scumm". This way, an Engine can be easily matched with a MetaEngine.
 	 */
-	virtual const char *getName() const = 0;
+	virtual const char *getName() const override = 0;
 
 	/**
 	 * Instantiate an engine instance based on the settings of
