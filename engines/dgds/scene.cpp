@@ -45,7 +45,7 @@
 
 namespace Dgds {
 
-template<class S> static Common::String _dumpStructList(const Common::String &indent, const Common::String &name, const Common::Array<S> &list) {
+template<class C> static Common::String _dumpStructList(const Common::String &indent, const Common::String &name, const C &list) {
 	if (list.empty())
 		return "";
 
@@ -57,7 +57,6 @@ template<class S> static Common::String _dumpStructList(const Common::String &in
 	}
 	return str;
 }
-
 
 
 Common::String _sceneConditionStr(SceneCondition cflag) {
@@ -118,6 +117,8 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 	case kSceneOpSetDragItem:   return "setDragItem";
 	case kSceneOpOpenInventory: return "openInventory";
 	case kSceneOpShowDlg:		return "showdlg";
+	case kSceneOpShowInvButton:	return "showInvButton";
+	case kSceneOpHideInvButton:	return "hideInvButton";
 	case kSceneOpEnableTrigger: return "enabletrigger";
 	case kSceneOpChangeSceneToStored: return "changeSceneToStored";
 	case kSceneOpAddFlagToDragItem:	return "addFlagToDragItem";
@@ -127,10 +128,15 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 	case kSceneOpHideClock:		return "sceneOpHideClock";
 	case kSceneOpShowMouse:		return "sceneOpShowMouse";
 	case kSceneOpHideMouse:		return "sceneOpHideMouse";
+	case kSceneOpPasscode:		return "passcode";
 	case kSceneOpMeanwhile:   	return "meanwhile";
+	case kSceneOpOpenGameOverMenu: return "openGameOverMenu";
+	case kSceneOpTiredDialog:	return "openTiredDialog";
+	case kSceneOpArcadeTick: 	return "sceneOpArcadeTick";
+	case kSceneOp105: 			return "sceneOp105";
+	case kSceneOp106: 			return "sceneOp106";
 	case kSceneOpOpenPlaySkipIntroMenu: return "openPlaySkipIntroMovie";
-	case kSceneOpShowInvButton:	return "showInvButton";
-	case kSceneOpHideInvButton:	return "hideInvButton";
+	case kSceneOpOpenBetterSaveGameMenu: return "openBetterSaveGameMenu";
 	default:
 		return Common::String::format("sceneOp%d", (int)code);
 	}
@@ -242,10 +248,12 @@ bool Scene::readHotArea(Common::SeekableReadStream *s, HotArea &dst) const {
 }
 
 
-bool Scene::readHotAreaList(Common::SeekableReadStream *s, Common::Array<HotArea> &list) const {
-	list.resize(s->readUint16LE());
-	for (HotArea &dst : list) {
+bool Scene::readHotAreaList(Common::SeekableReadStream *s, Common::List<HotArea> &list) const {
+	uint16 num = s->readUint16LE();
+	for (uint16 i = 0; i < num; i++) {
+		HotArea dst;
 		readHotArea(s, dst);
+		list.push_back(dst);
 	}
 	return !s->err();
 }
@@ -573,7 +581,8 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 *
 			CursorMan.showMouse(false);
 			break;
 		case kSceneOpMeanwhile:
-			warning("TODO: Implement meanwhile screen");
+			// TODO: Should we draw "meanwhile" like the original? it just gets overwritten with the image anyway..
+			static_cast<DgdsEngine *>(g_engine)->_compositionBuffer.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 			break;
 		case kSceneOpShowInvButton:
 			static_cast<DgdsEngine *>(g_engine)->getScene()->addInvButtonToHotAreaList();
@@ -584,6 +593,16 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 *
 		case kSceneOpOpenGameOverMenu:
 			static_cast<DgdsEngine *>(g_engine)->setMenuToTrigger(kMenuGameOver);
 			break;
+		case kSceneOpTiredDialog:
+			engine->getInventory()->close();
+			engine->getScene()->addAndShowTiredDialog();
+			break;
+		case kSceneOpArcadeTick:
+			error("TODO: Implement sceneOpArcadeTick");
+		case kSceneOp105:
+			error("TODO: Implement sceneOp105");
+		case kSceneOp106:
+			error("TODO: Implement sceneOp106");
 		case kSceneOpOpenPlaySkipIntroMenu:
 			static_cast<DgdsEngine *>(g_engine)->setMenuToTrigger(kMenuSkipPlayIntro);
 			break;
@@ -787,6 +806,33 @@ void SDSScene::checkTriggers() {
 		if (_num != startSceneNum)
 			return;
 	}
+}
+
+static const uint16 TIRED_DLG_ID = 7777;
+
+void SDSScene::addAndShowTiredDialog() {
+	bool haveTiredDlg = false;
+	for (auto &d : _dialogs) {
+		if (d._num == TIRED_DLG_ID) {
+			haveTiredDlg = true;
+			break;
+		}
+	}
+	if (!haveTiredDlg) {
+		Dialog dlg;
+		dlg._num = TIRED_DLG_ID;
+		dlg._rect = DgdsRect(4, 18, 208, 91);
+		dlg._bgColor = 15;
+		dlg._fontColor = 0;
+		dlg._selectionBgCol = 15;
+		dlg._selectonFontCol = 0;
+		dlg._flags = static_cast<DialogFlags>(kDlgFlagLo8 | kDlgFlagLeftJust | kDlgFlagFlatBg);
+		dlg._frameType = kDlgFrameThought;
+		dlg._time = 420;
+		dlg._str = "Boy, am I tired.  Better get some sleep in about an hour.";
+		_dialogs.push_back(dlg);
+	}
+	showDialog(TIRED_DLG_ID);
 }
 
 void SDSScene::showDialog(uint16 num) {
@@ -1173,7 +1219,7 @@ void SDSScene::addInvButtonToHotAreaList() {
 	if (cursors.empty() || !icons || icons->loadedFrameCount() <= 2 || _num == 2)
 		return;
 
-	if (_hotAreaList.size() && _hotAreaList[0]._num == 0)
+	if (_hotAreaList.size() && _hotAreaList.front()._num == 0)
 		return;
 
 	HotArea area;
@@ -1184,12 +1230,12 @@ void SDSScene::addInvButtonToHotAreaList() {
 	area._rect.x = SCREEN_WIDTH - area._rect.width;
 	area._rect.y = SCREEN_HEIGHT - area._rect.height;
 
-	_hotAreaList.insert_at(0, area);
+	_hotAreaList.push_front(area);
 }
 
 void SDSScene::removeInvButtonFromHotAreaList() {
-	if (_hotAreaList.size() && _hotAreaList[0]._num == 0)
-		_hotAreaList.remove_at(0);
+	if (_hotAreaList.size() && _hotAreaList.front()._num == 0)
+		_hotAreaList.pop_front();
 }
 
 Common::Error SDSScene::syncState(Common::Serializer &s) {

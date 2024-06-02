@@ -101,13 +101,13 @@ enum SceneOpCode {
 	kSceneOpHideMouse = 19,		// args: none.
 
 	// From here on might be game-specific?
-	kSceneOp100 = 100,			// args: none.
+	kSceneOpPasscode = 100,			// args: none.
 	kSceneOpMeanwhile = 101,	// args: none. Clears screen and displays "meanwhile".
 	kSceneOpOpenGameOverMenu = 102,	// args: none.
-	kSceneOp103 = 103,			// args: none. Something about "boy am I tired"?
-	kSceneOp104 = 104,			// args: none. Called in arcade post-tick.
+	kSceneOpTiredDialog = 103,			// args: none. Something about "boy am I tired"?
+	kSceneOpArcadeTick = 104,			// args: none. Called in arcade post-tick.
 	kSceneOp105 = 105,			// args: none. Draw some number at 141, 56
-	kSceneOp106 = 106,			// args: none. Draw some number at 42, 250
+	kSceneOp106 = 106,			// args: none. Draw some number at 250, 42
 	kSceneOpOpenPlaySkipIntroMenu = 107, // args: none.  DRAGON: Show menu 50, the "Play Introduction" / "Skip Introduction" menu.
 	kSceneOpOpenBetterSaveGameMenu = 108,			// args: none. DRAGON: Show menu 46, the "Before arcade maybe you better save your game" menu.
 };
@@ -228,7 +228,7 @@ public:
 protected:
 	bool readConditionList(Common::SeekableReadStream *s, Common::Array<SceneConditions> &list) const;
 	bool readHotArea(Common::SeekableReadStream *s, HotArea &dst) const;
-	bool readHotAreaList(Common::SeekableReadStream *s, Common::Array<HotArea> &list) const;
+	bool readHotAreaList(Common::SeekableReadStream *s, Common::List<HotArea> &list) const;
 	bool readGameItemList(Common::SeekableReadStream *s, Common::Array<GameItem> &list) const;
 	bool readMouseHotspotList(Common::SeekableReadStream *s, Common::Array<MouseCursor> &list) const;
 	bool readObjInteractionList(Common::SeekableReadStream *s, Common::Array<ObjectInteraction> &list) const;
@@ -327,7 +327,7 @@ public:
 	void addInvButtonToHotAreaList();
 	void removeInvButtonFromHotAreaList();
 
-	const Common::Array<HotArea> &getHotAreas() const { return _hotAreaList; }
+	const Common::List<HotArea> &getHotAreas() const { return _hotAreaList; }
 
 	const GameItem *getDragItem() const { return _dragItem; }
 	GameItem *getDragItem() { return _dragItem; }
@@ -341,6 +341,7 @@ public:
 	Common::Error syncState(Common::Serializer &s) override;
 
 	void onDragFinish(const Common::Point &pt);
+	void addAndShowTiredDialog();
 
 protected:
 	HotArea *findAreaUnderMouse(const Common::Point &pt);
@@ -357,7 +358,7 @@ private:
 	uint _field6_0x14;
 	Common::String _adsFile;
 	//uint _field8_0x23;
-	Common::Array<HotArea> _hotAreaList;
+	Common::List<HotArea> _hotAreaList;
 	Common::Array<ObjectInteraction> _objInteractions1;
 	Common::Array<ObjectInteraction> _objInteractions2;
 	//uint _field12_0x2b;
