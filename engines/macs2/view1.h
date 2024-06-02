@@ -78,6 +78,19 @@ private:
 		void Update();
 	};
 
+	// cf https://stackoverflow.com/a/51497820
+	// TODO: Figure this one out
+	template<typename T, T... ts>
+	constexpr auto is_in_list(T const &t) {
+		using unused = bool[];
+
+		bool ret{false};
+
+		(void)unused{false, ret |= t == ts...};
+
+		return ret;
+	}
+
 class View1 : public UIElement {
 	// TODO: Clean up private and public
 		public:

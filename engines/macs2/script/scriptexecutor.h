@@ -36,6 +36,8 @@ class Macs2Engine;
 
 	namespace Script {
 
+		
+
 		struct ScriptVariable {
 			uint16 a;
 			uint16 b;
