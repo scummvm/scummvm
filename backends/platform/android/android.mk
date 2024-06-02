@@ -18,11 +18,12 @@ DIST_FILES_HELP = $(PATH_DIST)/android-help.zip
 $(PATH_BUILD):
 	$(MKDIR) $(PATH_BUILD)
 
-$(PATH_BUILD)/gradle/.timestamp: $(GRADLE_FILES)
+$(PATH_BUILD)/gradle/.timestamp: $(GRADLE_FILES) | $(PATH_BUILD)
+	$(MKDIR) $(PATH_BUILD)/gradle
 	$(CP) -r $(PATH_DIST)/gradle/. $(PATH_BUILD)/gradle/
 	touch "$@"
 
-$(PATH_BUILD)/gradlew: $(PATH_DIST)/gradlew
+$(PATH_BUILD)/gradlew: $(PATH_DIST)/gradlew | $(PATH_BUILD)
 	$(INSTALL) -c -m 755 $(PATH_DIST)/gradlew $(PATH_BUILD)
 
 $(PATH_BUILD)/build.gradle: $(PATH_DIST)/build.gradle | $(PATH_BUILD)
