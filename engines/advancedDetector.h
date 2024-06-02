@@ -604,6 +604,18 @@ template<class Descriptor>
 class AdvancedMetaEngineDetection : public AdvancedMetaEngineDetectionBase {
 protected:
 	AdvancedMetaEngineDetection(const Descriptor *descs, const PlainGameDescriptor *gameIds) : AdvancedMetaEngineDetectionBase(descs, sizeof(Descriptor), gameIds) {}
+
+	Common::Error identifyGame(DetectedGame &game, const void **descriptor) override {
+		assert(descriptor);
+		Common::Error err = AdvancedMetaEngineDetectionBase::identifyGame(game, descriptor);
+		if (err.getCode() != Common::kNoError) {
+			return err;
+		}
+		if (*descriptor) {
+			*descriptor = new ADDynamicGameDescription<Descriptor>(static_cast<const Descriptor *>(*descriptor));
+		}
+		return err;
+	}
 };
 
 /**
@@ -704,6 +716,12 @@ protected:
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const Descriptor *desc) const = 0;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const void *desc) const override final {
 		return createInstance(syst, engine, static_cast<const Descriptor *>(desc));
+	}
+
+	void deleteInstance(Engine *engine, const DetectedGame &gameDescriptor, const void *meDescriptor) override {
+		delete engine;
+		delete static_cast<ADDynamicGameDescription<Descriptor> *>(
+                                const_cast<void *>(meDescriptor));
 	}
 
 private:
