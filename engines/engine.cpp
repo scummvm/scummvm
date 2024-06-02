@@ -1009,13 +1009,13 @@ GUI::Debugger *Engine::getOrCreateDebugger() {
 
 /*
 EnginePlugin *Engine::getMetaEnginePlugin() const {
-	return EngineMan.findPlugin(ConfMan.get("engineid"));
+	return EngineMan.findDetectionPlugin(ConfMan.get("engineid"));
 }
 
 */
 
 MetaEngineDetection &Engine::getMetaEngineDetection() {
-	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
+	const Plugin *plugin = EngineMan.findDetectionPlugin(ConfMan.get("engineid"));
 	assert(plugin);
 	return plugin->get<MetaEngineDetection>();
 }

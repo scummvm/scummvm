@@ -671,7 +671,7 @@ QualifiedGameList EngineManager::findGamesMatching(const Common::String &engineI
 
 	if (!engineId.empty()) {
 		// If we got an engine name, look for THE game only in that engine
-		const Plugin *p = EngineMan.findPlugin(engineId);
+		const Plugin *p = EngineMan.findDetectionPlugin(engineId);
 		if (p) {
 			const MetaEngineDetection &engine = p->get<MetaEngineDetection>();
 			DebugMan.addAllDebugChannels(engine.getDebugChannels());
@@ -811,7 +811,7 @@ Common::String EngineManager::createTargetForGame(const DetectedGame &game) {
 	return domain;
 }
 
-const Plugin *EngineManager::findPlugin(const Common::String &engineId) const {
+const Plugin *EngineManager::findDetectionPlugin(const Common::String &engineId) const {
 	const PluginList &plugins = getPlugins();
 
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); iter++)
@@ -871,7 +871,7 @@ QualifiedGameDescriptor EngineManager::findTarget(const Common::String &target, 
 		return QualifiedGameDescriptor();
 
 	// Look for the engine ID
-	const Plugin *foundPlugin = findPlugin(domain->getVal("engineid"));
+	const Plugin *foundPlugin = findDetectionPlugin(domain->getVal("engineid"));
 	if (!foundPlugin) {
 		return QualifiedGameDescriptor();
 	}
@@ -939,7 +939,7 @@ void EngineManager::upgradeTargetForEngineId(const Common::String &target) const
 
 	// First, try to update entries for engines that previously used the "single id" system
 	// Search for an engine whose ID is the game ID
-	const Plugin *plugin = findPlugin(oldGameId);
+	const Plugin *plugin = findDetectionPlugin(oldGameId);
 	if (plugin) {
 		// Run detection on the game path
 		Common::FSNode dir(path);

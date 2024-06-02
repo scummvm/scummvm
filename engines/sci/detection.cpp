@@ -251,7 +251,7 @@ ADDetectedGame SciMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 		}
 	}
 
-	const Plugin *metaEnginePlugin = EngineMan.findPlugin(getName());
+	const Plugin *metaEnginePlugin = EngineMan.findDetectionPlugin(getName());
 	if (!metaEnginePlugin) {
 		return ADDetectedGame();
 	}

@@ -1026,8 +1026,8 @@ static void listGames(const Common::String &engineID) {
 
 	const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		const Plugin *p = EngineMan.findPlugin((*iter)->getName());
-		/* If for some reason, we can't find the MetaEngine for this Engine, just ignore it */
+		const Plugin *p = EngineMan.findDetectionPlugin((*iter)->getName());
+		/* If for some reason, we can't find the MetaEngineDetection for this Engine, just ignore it */
 		if (!p) {
 			continue;
 		}
@@ -1073,8 +1073,8 @@ static void listEngines() {
 
 	const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		const Plugin *p = EngineMan.findPlugin((*iter)->getName());
-		/* If for some reason, we can't find the MetaEngine for this Engine, just ignore it */
+		const Plugin *p = EngineMan.findDetectionPlugin((*iter)->getName());
+		/* If for some reason, we can't find the MetaEngineDetection for this Engine, just ignore it */
 		if (!p) {
 			continue;
 		}
@@ -1347,7 +1347,7 @@ static Common::Error listSaves(const Common::String &singleTarget) {
 			game = EngineMan.findTarget(*i, &metaEnginePlugin);
 		} else if (game = findGameMatchingName(*i), !game.gameId.empty()) {
 			// The name is a known game id
-			metaEnginePlugin = EngineMan.findPlugin(game.engineId);
+			metaEnginePlugin = EngineMan.findDetectionPlugin(game.engineId);
 			currentTarget = createTemporaryTarget(game.engineId, game.gameId);
 		} else {
 			return Common::Error(Common::kEnginePluginNotFound, Common::String::format("target '%s'", singleTarget.c_str()));
@@ -2019,7 +2019,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		if (command == "md5" && settings.contains("md5-engine")) {
 			Common::String engineID = settings["md5-engine"];
 
-			const Plugin *plugin = EngineMan.findPlugin(engineID);
+			const Plugin *plugin = EngineMan.findDetectionPlugin(engineID);
 			if (!plugin) {
 				warning("'%s' is an invalid engine ID. Use the --list-engines command to list supported engine IDs", engineID.c_str());
 				return true;

@@ -589,7 +589,7 @@ Common::Array<LauncherEntry> LauncherDialog::generateEntries(const Common::Confi
 
 		Common::StringMap &engineMap = _engines[engineid];
 		if (!engineMap.contains(gameid)) {
-			const Plugin *plugin = EngineMan.findPlugin(engineid);
+			const Plugin *plugin = EngineMan.findDetectionPlugin(engineid);
 			if (plugin) {
 				PlainGameDescriptor gd = plugin->get<MetaEngineDetection>().findGame(gameid.c_str());
 				if (gd.description)

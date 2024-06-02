@@ -160,7 +160,7 @@ AboutDialog::AboutDialog()
 	for (; iter != plugins.end(); ++iter) {
 		Common::String str;
 
-		const Plugin *p = EngineMan.findPlugin((*iter)->getName());
+		const Plugin *p = EngineMan.findDetectionPlugin((*iter)->getName());
 
 		if (!p) {
 			warning("Cannot find plugin for %s", (*iter)->getName());
