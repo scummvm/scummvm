@@ -164,8 +164,9 @@ bool DgdsEngine::changeScene(int sceneNum) {
 
 	_scene->runLeaveSceneOps();
 
-	// store the last scene num
-	_gameGlobals->setGlobal(0x61, _scene->getNum());
+	// store the last scene num if it's not 2
+	if (_scene->getNum() != 2)
+		_gameGlobals->setGlobal(0x61, _scene->getNum());
 
 	_scene->unload();
 	_backgroundFile.clear();
@@ -241,7 +242,7 @@ void DgdsEngine::setShowClock(bool val) {
 
 void DgdsEngine::checkDrawInventoryButton() {
 	if (_gdsScene->getCursorList().size() < 2 || _icons->loadedFrameCount() < 2 ||
-			_scene->getHotAreas().size() < 1 || _scene->getHotAreas()[0]._num != 0)
+			_scene->getHotAreas().size() < 1 || _scene->getHotAreas().front()._num != 0)
 		return;
 
 	int x = SCREEN_WIDTH - _icons->width(2) - 5;
@@ -419,7 +420,7 @@ Common::Error DgdsEngine::run() {
 
 			_compositionBuffer.blitFrom(_backgroundBuffer);
 
-			if (_inventory->isOpen()) {
+			if (_inventory->isOpen() && _scene->getNum() == 2) {
 				int invCount = _gdsScene->countItemsInScene2();
 				_inventory->draw(_compositionBuffer, invCount);
 			}
@@ -428,7 +429,7 @@ Common::Error DgdsEngine::run() {
 
 			_scene->drawActiveDialogBgs(&_compositionBuffer);
 
-			if (!_inventory->isOpen() || _inventory->isZoomVisible())
+			if (_scene->getNum() != 2 || _inventory->isZoomVisible())
 				_adsInterp->run();
 
 			if (mouseEvent != Common::EVENT_INVALID) {
