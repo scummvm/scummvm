@@ -78,6 +78,25 @@ private:
 		void Update();
 	};
 
+	// cf https://stackoverflow.com/a/51497820
+	template<typename T, T V>
+	struct is_in_list_value {};
+
+	template<typename T, T V>
+	constexpr bool is_in_list_helper(T const &t, is_in_list_value<T, V>) {
+		return t == V;
+	}
+
+	template<typename T, T V, T W, T... Rest>
+	constexpr bool is_in_list_helper(T const &t, is_in_list_value<T, V>, is_in_list_value<T, W>, is_in_list_value<T, Rest>...) {
+		return (t == V) || is_in_list_helper(t, is_in_list_value<T, W>(), is_in_list_value<T, Rest>()...);
+	}
+
+	template<typename T, T... ts>
+	constexpr bool is_in_list(T const &t) {
+		return is_in_list_helper(t, is_in_list_value<T, ts>()...);
+	}
+
 class View1 : public UIElement {
 	// TODO: Clean up private and public
 		public:

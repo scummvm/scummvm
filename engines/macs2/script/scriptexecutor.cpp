@@ -1364,6 +1364,20 @@ void Script::ScriptExecutor::ExecuteScript() {
 			if (sceneID == 0x401) {
 				// This is the character, so put it into his inventory
 				currentView->inventoryItems.push_back(GameObjects::instance().Objects[objectID - 1]);
+			} else if (sceneID == 0) {
+				// Check if it is in the inventory
+				int index = 0;
+				int foundIndex = -1;
+				for (auto currentItem : currentView->inventoryItems) {
+					if (currentItem->Index == objectID) {
+						foundIndex = index;
+						break;
+					}
+					index++;
+				}
+				if (foundIndex != 0) {
+					currentView->inventoryItems.remove_at(foundIndex);
+				}
 			}
 		} else if (opcode1 == 0x0c) {
 			// This is a scene change
