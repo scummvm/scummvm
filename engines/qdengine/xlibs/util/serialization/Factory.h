@@ -1,9 +1,9 @@
 #ifndef __FACTORY_H__
 #define __FACTORY_H__
 
-#include "XTL\StaticMap.h"
-#include "XTL\SafeCast.h"
-#include "XTL\StaticString.h"
+#include "qdengine/xlibs/util/xtl/StaticMap.h"
+#include "qdengine/xlibs/util/xtl/SafeCast.h"
+#include "qdengine/xlibs/util/xtl/StaticString.h"
 #include "Handle.h"
 #include <typeinfo>
 
@@ -29,7 +29,6 @@ public:
 
 	static void *getVTable(const char *typeName) {
 		VTableCreator *creator = map()[typeName];
-		xxassert(creator, XBuffer() < "Не зарегистрирован класс: " < typeName);
 		if (!creator)
 			return 0;
 		void *vtable = map()[typeName]->vtable();
@@ -139,7 +138,7 @@ public:
 			instance().add(id, *this);
 		}
 		BaseType *create() const {
-			return instance().createArg<Derived>();
+			return instance().template createArg<Derived>();
 		}
 		const char *typeName() const {
 			return typeid(Derived).name();
@@ -158,7 +157,7 @@ public:
 			XBuffer msg;
 			msg < "Попытка повторной регистрации класса в "
 			< typeid(this).name();
-			xxassert(0, msg);
+			xassert(msg);
 		} else {
 			creators_.insert(Creators::value_type(key, &creator_op));
 		}
@@ -171,7 +170,7 @@ public:
 	}
 
 	BaseType *create(const Key &key, bool silent = false) const {
-		Creators::const_iterator it = creators_.find(key);
+		typename Creators::const_iterator it = creators_.find(key);
 		if (it != creators_.end())
 			return it->second->create();
 
@@ -180,7 +179,7 @@ public:
 	}
 
 	const char *typeName(const Key &key, bool silent = false) const {
-		Creators::const_iterator it = creators_.find(key);
+		typename Creators::const_iterator it = creators_.find(key);
 		if (it != creators_.end())
 			return it->second->typeName();
 
@@ -189,7 +188,7 @@ public:
 	}
 
 	const CreatorBase *find(const Key &key) const {
-		Creators::const_iterator it = creators_.find(key);
+		typename Creators::const_iterator it = creators_.find(key);
 		if (it != creators_.end())
 			return it->second;
 

@@ -3,12 +3,7 @@
 ----------------------------------------------------------------------*/
 
 #include "WarningsOff.h"
-#include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <tchar.h>
-#include "PSAPI.h"
-
-#include "WarningsOn.h"
-
-
+#include "qdengine/xlibs/xutil/xerrhand/psapi.h"
+#include "qdengine/xlibs/xutil/xerrhand/WarningsOn.h"

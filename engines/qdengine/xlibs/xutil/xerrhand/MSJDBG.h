@@ -14,8 +14,5 @@ HISTORY     :
 // Force the include of the debug run-time header file and make sure the
 //  allocation mapping functions are in effect.
 #define _CRTDBG_MAP_ALLOC
-#include <crtdbg.h>
 
 #endif      // _MSJDBG_H
-
-

@@ -143,6 +143,7 @@ MODULE_OBJS = \
 	xlibs/xutil/xconsole/xcoutput.o \
 	xlibs/xutil/xconsole/xccore.o \
 	core/system/graphics/ddraw_gr_dispatcher.o \
+	xlibs/util/xmath/XMath.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_QDENGINE), DYNAMIC_PLUGIN)

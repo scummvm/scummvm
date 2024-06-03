@@ -6,10 +6,11 @@
 #include <typeinfo>
 using namespace std;
 
+#include "qdengine/core/qd_precomp.h"
 #include "qdengine/xlibs/xutil/xutil.h"
-
-#include "SerializationTypes.h"
-#include "Serialization/ComboStrings.h"
+#include "qdengine/xlibs/util/serialization/EnumDescriptor.h"
+#include "qdengine/xlibs/util/serialization/ComboStrings.h"
+#include "qdengine/xlibs/util/serialization/SerializationTypes.h"
 
 class MemoryBlock;
 
@@ -79,12 +80,6 @@ public:
 	enum { value = sizeof(T) == sizeof(D) };
 };
 };
-
-namespace std {
-template<class T, class A> class list;
-template<class T, class A> class vector;
-template<class T1, class T2> struct pair;
-}
 
 template<class Pair>
 struct PairSerializationTraits {
@@ -209,13 +204,13 @@ public:
 		makeDefaultArchive<T>();
 
 		if (isOutput() || inPlace_) {
-			std::vector<T, A>::const_iterator it;
+			typename std::vector<T, A>::const_iterator it;
 			FOR_EACH(cont, it) {
 				serialize(*it, "@", "@");
 			}
 		} else {
 			if (cont_size != -1) {
-				std::vector<T, A>::const_iterator it;
+				typename std::vector<T, A>::const_iterator it;
 				// XXX: HINT!
 				if (cont.size() != cont_size) {
 					cont.clear();
@@ -244,7 +239,7 @@ public:
 		makeDefaultArchive<T>();
 
 		if (isOutput()) {
-			std::list<T, A>::const_iterator it;
+			typename std::list<T, A>::const_iterator it;
 			FOR_EACH(cont, it) {
 				serialize(*it, "@", "@");
 			}
@@ -256,7 +251,7 @@ public:
 						cont.clear();
 					cont.resize(cont_size);
 				}
-				std::list<T, A>::const_iterator it;
+				typename std::list<T, A>::const_iterator it;
 				FOR_EACH(cont, it) {
 					serialize(*it, "@", "@");
 				}
@@ -335,14 +330,14 @@ public:
 		xassert(!inPlace_);
 		if (isInput()) {
 			if (!t)
-				const_cast<T * &>(t) = FactorySelector<T>::Factory::instance().createArg<T>(); // FIXME: Создается ненужная фабрика
+				const_cast<T * &>(t) = FactorySelector<T>::Factory::instance().template createArg<T>(); // FIXME: Создается ненужная фабрика
 			serialize(*t, name, nameAlt);
 			return true;
 		} else {
 			if (t)
 				serialize(*t, name, nameAlt);
 			else {
-				static T *defaultPointer = FactorySelector<T>::Factory::instance().createArg<T>();
+				static T *defaultPointer = FactorySelector<T>::Factory::instance().template createArg<T>();
 				serialize(*defaultPointer, name, nameAlt);
 				xassert("Attempt to save non-polymorphic zero pointer");
 			}
@@ -354,7 +349,7 @@ public:
 	bool serializePolymorphic(const T *&t, const char *name, const char *nameAlt) {
 		T *&ptr = const_cast<T *&>(t);
 
-		typedef FactorySelector<T>::Factory Factory;
+		typedef typename FactorySelector<T>::Factory Factory;
 		Factory &factory = Factory::instance();
 
 		const char *baseName = typeid(T).name();
@@ -599,7 +594,7 @@ private:
 
 	template<class Base>
 	void makeDefaultArchivePoly() {
-		typedef FactorySelector<Base>::Factory Factory;
+		typedef typename FactorySelector<Base>::Factory Factory;
 		int count = Factory::instance().size();
 
 		for (int i = 0; i < count; ++i) {
@@ -610,7 +605,7 @@ private:
 			const char *nameAlt = Factory::instance().nameAlt(name, true);
 
 			if (ShareHandle<Archive> archive = openDefaultArchive(baseTypeName, name, nameAlt)) {
-				archive->serialize(*t, "name", "nameAlt");
+			archive->serialize(*t, "name", "nameAlt");
 				closeDefaultArchive(archive, typeid(Base).name(), name, nameAlt);
 			}
 			delete t;
@@ -775,6 +770,6 @@ private:
 
 bool saveFileSmart(const char *fname, const char *buffer, int size);
 
-string transliterate(const char *name);
+std::string transliterate(const char *name);
 
 #endif //__SERIALIZATION_H_INCLUDED__

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "XTL\StaticMap.h"
-#include "XTL\StaticString.h"
+#include "qdengine/xlibs/util/xtl/StaticMap.h"
+#include "qdengine/xlibs/util/xtl/StaticString.h"
 #include "ComboStrings.h"
 
 
@@ -152,4 +152,3 @@ template<class Enum>
 const char *getEnumNameAlt(const Enum &key) {
 	return getEnumDescriptor(Enum()).nameAlt(key);
 }
-
