@@ -593,10 +593,8 @@ bool BaseFontTT::initFont() {
 	}
 
 	if (file) {
-		_deletableFont = Graphics::loadTTFFont(*file, _fontHeight, Graphics::kTTFSizeModeCharacter, 96); // Use the same dpi as WME (96 vs 72).
+		_deletableFont = Graphics::loadTTFFont(file, DisposeAfterUse::YES, _fontHeight, Graphics::kTTFSizeModeCharacter, 96); // Use the same dpi as WME (96 vs 72).
 		_font = _deletableFont;
-		BaseFileManager::getEngineInstance()->closeFile(file);
-		file = nullptr;
 	}
 
 	// Fallback2: Try load the font from the common fonts archive:
