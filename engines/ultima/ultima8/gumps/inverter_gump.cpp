@@ -21,7 +21,7 @@
 
 #include "ultima/ultima8/gumps/inverter_gump.h"
 
-#include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/gfx/render_surface.h"
 #include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {

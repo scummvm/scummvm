@@ -23,7 +23,7 @@
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/gumps/target_gump.h"
-#include "ultima/ultima8/graphics/palette_fader_process.h"
+#include "ultima/ultima8/gfx/palette_fader_process.h"
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/world/loop_script.h"
 #include "ultima/ultima8/kernel/kernel.h"

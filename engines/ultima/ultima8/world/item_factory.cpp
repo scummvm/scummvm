@@ -23,7 +23,7 @@
 
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/graphics/main_shape_archive.h"
+#include "ultima/ultima8/gfx/main_shape_archive.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/glob_egg.h"
 #include "ultima/ultima8/world/monster_egg.h"

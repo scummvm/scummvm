@@ -24,7 +24,7 @@
 
 #include "ultima/ultima8/kernel/object.h"
 #include "ultima/ultima8/misc/rect.h"
-#include "ultima/ultima8/graphics/frame_id.h"
+#include "ultima/ultima8/gfx/frame_id.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/misc/classtype.h"
 

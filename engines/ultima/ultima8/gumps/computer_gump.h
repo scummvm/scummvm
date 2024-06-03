@@ -23,7 +23,7 @@
 #define ULTIMA8_GUMPS_COMPUTERGUMP_H
 
 #include "ultima/ultima8/gumps/modal_gump.h"
-#include "ultima/ultima8/graphics/fonts/rendered_text.h"
+#include "ultima/ultima8/gfx/fonts/rendered_text.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/classtype.h"
 

@@ -31,7 +31,7 @@
 #include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/games/game_info.h"
-#include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/gfx/render_surface.h"
 #include "ultima/detection.h"
 
 namespace Ultima {

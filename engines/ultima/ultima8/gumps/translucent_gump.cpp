@@ -20,7 +20,7 @@
  */
 
 #include "ultima/ultima8/gumps/translucent_gump.h"
-#include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/gfx/render_surface.h"
 
 namespace Ultima {
 namespace Ultima8 {

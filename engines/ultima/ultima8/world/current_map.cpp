@@ -33,7 +33,7 @@
 #include "ultima/ultima8/world/egg_hatcher_process.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/graphics/main_shape_archive.h"
+#include "ultima/ultima8/gfx/main_shape_archive.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/misc/box.h"
 #include "ultima/ultima8/misc/direction_util.h"

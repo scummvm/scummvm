@@ -25,11 +25,11 @@
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/graphics/shape.h"
-#include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/graphics/palette.h"
-#include "ultima/ultima8/graphics/palette_manager.h"
+#include "ultima/ultima8/gfx/render_surface.h"
+#include "ultima/ultima8/gfx/shape.h"
+#include "ultima/ultima8/gfx/shape_frame.h"
+#include "ultima/ultima8/gfx/palette.h"
+#include "ultima/ultima8/gfx/palette_manager.h"
 
 namespace Ultima {
 namespace Ultima8 {

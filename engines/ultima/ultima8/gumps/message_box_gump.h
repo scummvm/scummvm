@@ -28,7 +28,7 @@
 #include "ultima/shared/std/string.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/misc/classtype.h"
-#include "ultima/ultima8/graphics/texture.h"
+#include "ultima/ultima8/gfx/texture.h"
 
 namespace Ultima {
 namespace Ultima8 {

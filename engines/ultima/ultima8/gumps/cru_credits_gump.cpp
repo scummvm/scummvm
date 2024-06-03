@@ -26,13 +26,13 @@
 
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/kernel/mouse.h"
-#include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/graphics/palette_manager.h"
-#include "ultima/ultima8/graphics/texture.h"
-#include "ultima/ultima8/graphics/fonts/rendered_text.h"
-#include "ultima/ultima8/graphics/fonts/font.h"
-#include "ultima/ultima8/graphics/fonts/font_manager.h"
-#include "ultima/ultima8/graphics/fonts/shape_font.h"
+#include "ultima/ultima8/gfx/render_surface.h"
+#include "ultima/ultima8/gfx/palette_manager.h"
+#include "ultima/ultima8/gfx/texture.h"
+#include "ultima/ultima8/gfx/fonts/rendered_text.h"
+#include "ultima/ultima8/gfx/fonts/font.h"
+#include "ultima/ultima8/gfx/fonts/font_manager.h"
+#include "ultima/ultima8/gfx/fonts/shape_font.h"
 #include "ultima/ultima8/audio/music_process.h"
 
 namespace Ultima {

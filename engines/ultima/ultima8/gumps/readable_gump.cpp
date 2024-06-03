@@ -22,7 +22,7 @@
 #include "ultima/ultima8/gumps/readable_gump.h"
 #include "ultima/ultima8/gumps/widgets/text_widget.h"
 #include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/graphics/gump_shape_archive.h"
+#include "ultima/ultima8/gfx/gump_shape_archive.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
 #include "ultima/ultima8/world/item.h"

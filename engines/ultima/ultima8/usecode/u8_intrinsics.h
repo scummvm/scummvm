@@ -35,7 +35,7 @@
 #include "ultima/ultima8/world/egg.h"
 #include "ultima/ultima8/world/monster_egg.h"
 #include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/graphics/palette_fader_process.h"
+#include "ultima/ultima8/gfx/palette_fader_process.h"
 #include "ultima/ultima8/world/sprite_process.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/gumps/scroll_gump.h"
@@ -45,7 +45,7 @@
 #include "ultima/ultima8/world/actors/grant_peace_process.h"
 #include "ultima/ultima8/world/fireball_process.h"
 #include "ultima/ultima8/world/actors/heal_process.h"
-#include "ultima/ultima8/graphics/inverter_process.h"
+#include "ultima/ultima8/gfx/inverter_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/games/game.h"
 

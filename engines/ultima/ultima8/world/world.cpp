@@ -40,7 +40,7 @@
 #include "ultima/ultima8/world/target_reticle_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/world/snap_process.h"
-#include "ultima/ultima8/graphics/main_shape_archive.h"
+#include "ultima/ultima8/gfx/main_shape_archive.h"
 
 namespace Ultima {
 namespace Ultima8 {

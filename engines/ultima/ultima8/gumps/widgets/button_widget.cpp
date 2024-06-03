@@ -22,8 +22,8 @@
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
 #include "ultima/ultima8/gumps/widgets/text_widget.h"
 #include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/graphics/shape_archive.h"
-#include "ultima/ultima8/graphics/shape.h"
+#include "ultima/ultima8/gfx/shape_archive.h"
+#include "ultima/ultima8/gfx/shape.h"
 #include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/world/get_object.h"
 

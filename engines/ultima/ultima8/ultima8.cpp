@@ -33,8 +33,8 @@
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/games/start_u8_process.h"
 #include "ultima/ultima8/games/start_crusader_process.h"
-#include "ultima/ultima8/graphics/fonts/font_manager.h"
-#include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/gfx/fonts/font_manager.h"
+#include "ultima/ultima8/gfx/render_surface.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/get_object.h"
@@ -58,7 +58,7 @@
 #include "ultima/ultima8/usecode/remorse_intrinsics.h"
 #include "ultima/ultima8/usecode/regret_intrinsics.h"
 
-#include "ultima/ultima8/graphics/cycle_process.h"
+#include "ultima/ultima8/gfx/cycle_process.h"
 #include "ultima/ultima8/world/actors/scheduler_process.h"
 #include "ultima/ultima8/world/egg_hatcher_process.h" // for a hack
 #include "ultima/ultima8/usecode/uc_process.h" // more hacking

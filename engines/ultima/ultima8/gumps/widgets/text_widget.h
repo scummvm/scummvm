@@ -27,7 +27,7 @@
 //
 
 #include "ultima/ultima8/gumps/gump.h"
-#include "ultima/ultima8/graphics/fonts/font.h"
+#include "ultima/ultima8/gfx/fonts/font.h"
 #include "ultima/ultima8/misc/classtype.h"
 
 namespace Ultima {

@@ -35,7 +35,7 @@
 #include "ultima/ultima8/world/actors/combat_process.h"
 #include "ultima/ultima8/world/actors/auto_firer_process.h"
 #include "ultima/ultima8/world/sprite_process.h"
-#include "ultima/ultima8/graphics/palette_fader_process.h"
+#include "ultima/ultima8/gfx/palette_fader_process.h"
 #include "ultima/ultima8/world/create_item_process.h"
 #include "ultima/ultima8/world/destroy_item_process.h"
 #include "ultima/ultima8/kernel/delay_process.h"

@@ -24,8 +24,8 @@
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/graphics/texture.h"
+#include "ultima/ultima8/gfx/render_surface.h"
+#include "ultima/ultima8/gfx/texture.h"
 
 namespace Ultima {
 namespace Ultima8 {

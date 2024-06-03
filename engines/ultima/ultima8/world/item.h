@@ -23,7 +23,7 @@
 #define ULTIMA8_WORLD_ITEM_H
 
 #include "ultima/ultima8/kernel/object.h"
-#include "ultima/ultima8/graphics/shape_info.h"
+#include "ultima/ultima8/gfx/shape_info.h"
 
 #include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/box.h"

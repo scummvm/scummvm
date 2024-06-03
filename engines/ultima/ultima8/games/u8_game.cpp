@@ -26,10 +26,10 @@
 
 #include "ultima/ultima8/games/u8_game.h"
 
-#include "ultima/ultima8/graphics/palette_manager.h"
-#include "ultima/ultima8/graphics/fade_to_modal_process.h"
+#include "ultima/ultima8/gfx/palette_manager.h"
+#include "ultima/ultima8/gfx/fade_to_modal_process.h"
 #include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/graphics/xform_blend.h"
+#include "ultima/ultima8/gfx/xform_blend.h"
 #include "ultima/ultima8/filesys/u8_save_file.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/actors/main_actor.h"

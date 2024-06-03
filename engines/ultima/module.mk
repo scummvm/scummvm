@@ -428,37 +428,37 @@ MODULE_OBJS += \
 	ultima8/games/start_u8_process.o \
 	ultima8/games/treasure_loader.o \
 	ultima8/games/u8_game.o \
-	ultima8/graphics/anim_dat.o \
-	ultima8/graphics/avi_player.o \
-	ultima8/graphics/cycle_process.o \
-	ultima8/graphics/frame_id.o \
-	ultima8/graphics/fade_to_modal_process.o \
-	ultima8/graphics/gump_shape_archive.o \
-	ultima8/graphics/inverter_process.o \
-	ultima8/graphics/main_shape_archive.o \
-	ultima8/graphics/palette.o \
-	ultima8/graphics/palette_fader_process.o \
-	ultima8/graphics/palette_manager.o \
-	ultima8/graphics/raw_shape_frame.o \
-	ultima8/graphics/render_surface.o \
-	ultima8/graphics/shape.o \
-	ultima8/graphics/shape_archive.o \
-	ultima8/graphics/shape_frame.o \
-	ultima8/graphics/shape_info.o \
-	ultima8/graphics/skf_player.o \
-	ultima8/graphics/type_flags.o \
-	ultima8/graphics/wpn_ovlay_dat.o \
-	ultima8/graphics/xform_blend.o \
-	ultima8/graphics/fonts/font.o \
-	ultima8/graphics/fonts/font_manager.o \
-	ultima8/graphics/fonts/font_shape_archive.o \
-	ultima8/graphics/fonts/jp_font.o \
-	ultima8/graphics/fonts/jp_rendered_text.o \
-	ultima8/graphics/fonts/rendered_text.o \
-	ultima8/graphics/fonts/shape_font.o \
-	ultima8/graphics/fonts/shape_rendered_text.o \
-	ultima8/graphics/fonts/ttf_rendered_text.o \
-	ultima8/graphics/fonts/tt_font.o \
+	ultima8/gfx/anim_dat.o \
+	ultima8/gfx/avi_player.o \
+	ultima8/gfx/cycle_process.o \
+	ultima8/gfx/frame_id.o \
+	ultima8/gfx/fade_to_modal_process.o \
+	ultima8/gfx/gump_shape_archive.o \
+	ultima8/gfx/inverter_process.o \
+	ultima8/gfx/main_shape_archive.o \
+	ultima8/gfx/palette.o \
+	ultima8/gfx/palette_fader_process.o \
+	ultima8/gfx/palette_manager.o \
+	ultima8/gfx/raw_shape_frame.o \
+	ultima8/gfx/render_surface.o \
+	ultima8/gfx/shape.o \
+	ultima8/gfx/shape_archive.o \
+	ultima8/gfx/shape_frame.o \
+	ultima8/gfx/shape_info.o \
+	ultima8/gfx/skf_player.o \
+	ultima8/gfx/type_flags.o \
+	ultima8/gfx/wpn_ovlay_dat.o \
+	ultima8/gfx/xform_blend.o \
+	ultima8/gfx/fonts/font.o \
+	ultima8/gfx/fonts/font_manager.o \
+	ultima8/gfx/fonts/font_shape_archive.o \
+	ultima8/gfx/fonts/jp_font.o \
+	ultima8/gfx/fonts/jp_rendered_text.o \
+	ultima8/gfx/fonts/rendered_text.o \
+	ultima8/gfx/fonts/shape_font.o \
+	ultima8/gfx/fonts/shape_rendered_text.o \
+	ultima8/gfx/fonts/ttf_rendered_text.o \
+	ultima8/gfx/fonts/tt_font.o \
 	ultima8/gumps/ask_gump.o \
 	ultima8/gumps/bark_gump.o \
 	ultima8/gumps/book_gump.o \

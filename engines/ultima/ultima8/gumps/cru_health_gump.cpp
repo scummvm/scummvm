@@ -22,10 +22,10 @@
 #include "ultima/ultima8/gumps/cru_health_gump.h"
 
 #include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/graphics/palette.h"
-#include "ultima/ultima8/graphics/palette_manager.h"
-#include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/graphics/texture.h"
+#include "ultima/ultima8/gfx/palette.h"
+#include "ultima/ultima8/gfx/palette_manager.h"
+#include "ultima/ultima8/gfx/render_surface.h"
+#include "ultima/ultima8/gfx/texture.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {

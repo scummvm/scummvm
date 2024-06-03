@@ -31,8 +31,8 @@
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/actors/teleport_to_egg_process.h"
-#include "ultima/ultima8/graphics/palette_fader_process.h"
-#include "ultima/ultima8/graphics/texture.h"
+#include "ultima/ultima8/gfx/palette_fader_process.h"
+#include "ultima/ultima8/gfx/texture.h"
 
 namespace Ultima {
 namespace Ultima8 {

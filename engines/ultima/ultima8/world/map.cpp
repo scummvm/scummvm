@@ -28,7 +28,7 @@
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/graphics/main_shape_archive.h"
+#include "ultima/ultima8/gfx/main_shape_archive.h"
 
 namespace Ultima {
 namespace Ultima8 {
