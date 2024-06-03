@@ -95,7 +95,6 @@ MODULE_OBJS = \
 	spacebar/computer.o \
 	spacebar/filter.o \
 	spacebar/full_wnd.o \
-	spacebar/inv.o \
 	spacebar/main_link_object.o \
 	spacebar/main_window.o \
 	spacebar/master_win.o \
