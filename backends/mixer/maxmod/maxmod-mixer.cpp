@@ -56,7 +56,7 @@ mm_word on_stream_request( mm_word length, mm_addr dest, mm_stream_formats forma
 }
 
 void MaxModMixerManager::init() {
-	_mixer = new Audio::MixerImpl(_freq);
+	_mixer = new Audio::MixerImpl(_freq, _bufSize / 4);
 	assert(_mixer);
 
 	mm_ds_system sys;
