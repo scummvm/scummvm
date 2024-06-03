@@ -233,6 +233,9 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 		case Token::SCREEN:
 			// TODO
 			break;
+		case Token::SETFLAGS:
+			// TODO
+			break;
 		case Token::STARTANIM:
 			executeStartAnim(instruction);
 			break;
