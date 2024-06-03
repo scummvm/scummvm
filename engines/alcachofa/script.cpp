@@ -244,20 +244,21 @@ struct ScriptTask : public Task {
 			case ScriptOp::Add:
 				pushNumber(popNumber() + popNumber());
 				break;
+			// flipped operators to not use a temporary
 			case ScriptOp::Sub:
-				pushNumber(popNumber() - popNumber());
+				pushNumber(-popNumber() + popNumber());
 				break;
 			case ScriptOp::Less:
-				pushNumber(popNumber() < popNumber());
+				pushNumber(popNumber() >= popNumber());
 				break;
 			case ScriptOp::Greater:
-				pushNumber(popNumber() > popNumber());
-				break;
-			case ScriptOp::LessEquals:
 				pushNumber(popNumber() <= popNumber());
 				break;
-			case ScriptOp::GreaterEquals:
+			case ScriptOp::LessEquals:
 				pushNumber(popNumber() >= popNumber());
+				break;
+			case ScriptOp::GreaterEquals:
+				pushNumber(popNumber() <= popNumber());
 				break;
 			case ScriptOp::Equals:
 				pushNumber(popNumber() == popNumber());
@@ -437,9 +438,20 @@ private:
 		case ScriptKernelTask::ChangeCharacter:
 			warning("STUB KERNEL CALL: ChangeCharacter");
 			return TaskReturn::finish(0);
-		case ScriptKernelTask::SayText:
-			warning("STUB KERNEL CALL: SayText");
-			return TaskReturn::finish(0);
+		case ScriptKernelTask::SayText: {
+			const char *characterName = getStringArg(0);
+			int32 dialogId = getNumberArg(1);
+			if (strncmp(characterName, "MENU_", 5) == 0) {
+				warning("STUB: adding dialog menu line %d", dialogId);
+				return TaskReturn::finish(1);
+			}
+			Character *_character = strcmp(characterName, "AMBOS") == 0
+				? &g_engine->world().getMainCharacterByKind(process().character())
+				: dynamic_cast<Character *>(g_engine->world().getObjectByName(characterName));
+			if (_character == nullptr)
+				error("Invalid character for sayText: %s", characterName);
+			return TaskReturn::waitFor(_character->sayText(process(), dialogId));
+		};
 		case ScriptKernelTask::Go: {
 			auto characterObject = g_engine->world().getObjectByName(process().character(), getStringArg(0));
 			auto character = dynamic_cast<WalkingCharacter *>(characterObject);
@@ -632,7 +644,7 @@ private:
 	String _name;
 	uint32 _pc;
 	bool _returnsFromKernelCall = false;
-	bool _isFirstExecution = false;
+	bool _isFirstExecution = true;
 	FakeLock _lock;
 };
 

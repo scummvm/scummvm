@@ -66,6 +66,8 @@ Common::Error AlcachofaEngine::run() {
 	_script.reset(new Script());
 	_player.reset(new Player());
 
+	_script->createProcess(MainCharacterKind::None, "Inicializar_Variables");
+
 	_player->changeRoom("MINA", true);
 
 	Common::Event e;
@@ -77,6 +79,7 @@ Common::Error AlcachofaEngine::run() {
 				continue;
 		}
 
+		_sounds.update();
 		_renderer->begin();
 		_drawQueue->clear();
 		_camera.shake() = Vector2d();
