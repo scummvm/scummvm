@@ -254,7 +254,7 @@ Object *GeometricObject::duplicate() {
 	conditionCopy = duplicateCondition(&_condition);
 	assert(conditionCopy);
 
-	return new GeometricObject(
+	GeometricObject *copy = new GeometricObject(
 		_type,
 		_objectID,
 		_flags,
@@ -264,7 +264,11 @@ Object *GeometricObject::duplicate() {
 		ecoloursCopy,
 		ordinatesCopy,
 		*conditionCopy,
-		_conditionSource);
+		_conditionSource
+	);
+
+	copy->_cyclingColors = _cyclingColors;
+	return copy;
 }
 
 void GeometricObject::computeBoundingBox() {

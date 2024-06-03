@@ -73,6 +73,17 @@ void DarkEngine::loadAssetsAtariFullGame() {
 	assert(obj);
 	obj->_cyclingColors = true;
 
+	for (int i = 0; i < 3; i++) {
+		int16 id = 227 + i * 6 - 2;
+		for (int j = 0; j < 2; j++) {
+			//debugC(1, kFreescapeDebugParser, "Restoring object %d to from ECD %d", id, index);
+			obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+			assert(obj);
+			obj->_cyclingColors = true;
+			id--;
+		}
+	}
+
 	for (auto &area : _areaMap) {
 		// Center and pad each area name so we do not have to do it at each frame
 		area._value->_name = centerAndPadString(area._value->_name, 26);
