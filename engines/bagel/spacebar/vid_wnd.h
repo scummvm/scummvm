@@ -69,12 +69,12 @@ public:
 	bool hasDisc();
 	int getFrame(double fTime, int nUseDisc);
 
-	virtual ErrorCode  attach();
-	virtual ErrorCode  detach();
+	ErrorCode attach() override;
+	ErrorCode detach() override;
 
-	ErrorCode onRender(CBofBitmap *pBmp, CBofRect *pRect);
+	ErrorCode onRender(CBofBitmap *pBmp, CBofRect *pRect) override;
 
-	CBagObject *onNewButtonObject(const CBofString &sInit);
+	CBagObject *onNewButtonObject(const CBofString &sInit) override;
 };
 
 } // namespace SpaceBar

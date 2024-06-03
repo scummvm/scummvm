@@ -112,9 +112,10 @@ ErrorCode CBagCharacterObject::attach() {
 		// Forward playback
 		if (_startFrame == -1)
 			_startFrame = 0;
-		if (_endFrame == -1)
-			_endFrame = _smacker->getFrameCount() - 1;
-
+		if (_endFrame == -1) {
+			_endFrame = _smacker->getFrameCount();
+			--_endFrame;
+		}
 	} else {
 		// Reverse playback
 		if (_endFrame == -1)
