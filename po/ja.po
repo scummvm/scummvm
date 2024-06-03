@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-01 10:44+0000\n"
-"PO-Revision-Date: 2024-05-27 09:43+0000\n"
+"PO-Revision-Date: 2024-06-03 07:43+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -3077,10 +3077,8 @@ msgid "ScummVM"
 msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
-#, fuzzy
-#| msgid "ScummVM"
 msgid "ScummVM (debug)"
-msgstr "ScummVM"
+msgstr "ScummVM(デバッグ)"
 
 #: dists/android.strings.xml.cpp:32
 msgid "Graphic adventure game engine"
@@ -3099,16 +3097,12 @@ msgid "Quit"
 msgstr "終了"
 
 #: dists/android.strings.xml.cpp:35
-#, fuzzy
-#| msgid "Config File Error"
 msgid "Log File Error"
-msgstr "設定ファイルエラー"
+msgstr "ログファイルエラー"
 
 #: dists/android.strings.xml.cpp:36
-#, fuzzy
-#| msgid "Unable to read ScummVM config file or create a new one!"
 msgid "Unable to read ScummVM log file or create a new one!"
-msgstr "ScummVM設定ファイルの読込/作成ができません!"
+msgstr "ScummVMログファイルの読込/作成ができません!"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Config File Error"
@@ -3194,16 +3188,12 @@ msgid "Configuration file could not be parsed"
 msgstr "画像モードを変更できませんでした"
 
 #: dists/android.strings.xml.cpp:56
-#, fuzzy
-#| msgid "In 2D games"
 msgid "Run a game"
-msgstr "2Dゲームで"
+msgstr "ゲーム開始"
 
 #: dists/android.strings.xml.cpp:57
-#, fuzzy
-#| msgid "Search in game list"
 msgid "Search a game"
-msgstr "ゲームリストを検索する"
+msgstr "ゲームを検索"
 
 #: dists/android.strings.xml.cpp:58
 msgid ""
