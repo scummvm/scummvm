@@ -31,7 +31,7 @@ class ManagedSurface;
 
 namespace Dgds {
 
-struct GameItem;
+class GameItem;
 
 class Inventory {
 public:

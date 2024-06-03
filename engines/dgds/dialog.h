@@ -36,6 +36,7 @@ class ManagedSurface;
 namespace Dgds {
 
 class Font;
+class SceneOp;
 
 enum DialogFlags {
 	kDlgFlagNone     =         0,
@@ -74,7 +75,7 @@ struct DialogAction {
 	uint16 strStart; /// The start of the clickable text for this action
 	uint16 strEnd;	 /// End of clickable text for this action
 	byte unk[8]; /* Not initialized in loader */
-	Common::Array<struct SceneOp> sceneOpList;  /// ops to run when this is selected
+	Common::Array<SceneOp> sceneOpList;  /// ops to run when this is selected
 	uint val; /* First entry initialized to 1 in loader */
 
 	Common::String dump(const Common::String &indent) const;
@@ -111,7 +112,7 @@ public:
 	DialogFrameType _frameType;
 	uint16 _time;
 	uint16 _nextDialogNum;
-	Common::Array<struct DialogAction> _action;
+	Common::Array<DialogAction> _action;
 	Common::String _str;
 	uint16 _field18_0x28;
 

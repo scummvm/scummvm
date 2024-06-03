@@ -169,7 +169,7 @@ void Inventory::drawItems(Graphics::ManagedSurface &surf) {
 	// TODO: does this need to be adjusted ever?
 	const Common::Rect drawMask(0, 0, 320, 200);
 	int offset = _itemOffset;
-	Common::Array<struct GameItem> &items = engine->getGDSScene()->getGameItems();
+	Common::Array<GameItem> &items = engine->getGDSScene()->getGameItems();
 	for (auto & item: items) {
 		if (item._inSceneNum != 2) //  || !(item._flags & 4))
 			continue;
@@ -234,7 +234,7 @@ GameItem *Inventory::itemUnderMouse(const Common::Point &pt) {
 	if (!_itemArea)
 		return nullptr;
 
-	Common::Array<struct GameItem> &items = engine->getGDSScene()->getGameItems();
+	Common::Array<GameItem> &items = engine->getGDSScene()->getGameItems();
 	if (_itemArea->containsPoint(pt)) {
 		const int imgAreaX = _itemArea->_parentX + _itemArea->_x;
 		const int imgAreaY = _itemArea->_parentY + _itemArea->_y;
@@ -295,7 +295,7 @@ void Inventory::mouseLUp(const Common::Point &pt) {
 		close();
 	} else if (_nextPageBtn->containsPoint(pt) && !(_nextPageBtn->_flags3 & 0x40)) {
 		int numInvItems = 0;
-		Common::Array<struct GameItem> &items = engine->getGDSScene()->getGameItems();
+		Common::Array<GameItem> &items = engine->getGDSScene()->getGameItems();
 		for (auto &item: items) {
 			if (item._inSceneNum == 2) // && item._flags & 4)
 				numInvItems++;
@@ -310,7 +310,7 @@ void Inventory::mouseLUp(const Common::Point &pt) {
 	} else if (_clockSkipHrBtn && _clockSkipHrBtn->containsPoint(pt)) {
 		engine->getClock().addGameTime(60);
 	} else if (_dropBtn && _dropBtn->containsPoint(pt) && _highlightItemNo >= 0) {
-		Common::Array<struct GameItem> &items = engine->getGDSScene()->getGameItems();
+		Common::Array<GameItem> &items = engine->getGDSScene()->getGameItems();
 		for (auto &item: items) {
 			if (item._num == _highlightItemNo) {
 				item._inSceneNum = _openedFromSceneNum;
