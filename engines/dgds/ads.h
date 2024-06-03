@@ -50,7 +50,7 @@ public:
 	// note: originals uses char * but we use offsets into script for less pointers. -1 is nullptr
 	int32 _segments[80];
 	int32 _charWhile[80];
-	Common::Array<struct TTMSeq *> _usedSeqs[80];
+	Common::Array<TTMSeq *> _usedSeqs[80];
 	int32 _scriptDelay;
 	int32 _gotoTarget;
 	bool _hitTTMOp0110;
