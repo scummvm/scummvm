@@ -117,3 +117,13 @@ XBuffer& XBuffer::operator> (char* v) {
 		read(v, strlen(buffer_ + offset_) + 1);
 	return *this;
 }
+
+const int size = 10000;
+static XBuffer buf4AssertsBuffer(size);
+XBuffer &assertsBuffer() {
+	if (buf4AssertsBuffer.tell() > size * 0.8) {
+		buf4AssertsBuffer.init();
+		buf4AssertsBuffer < "assertBuffer overflow\r\n";
+	}
+	return buf4AssertsBuffer;
+}
