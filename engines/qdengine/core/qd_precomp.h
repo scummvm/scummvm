@@ -15,6 +15,7 @@
 #define PASCAL
 #define WINAPI
 #define CALLBACK
+
 #define BOOL          bool
 #define HMMIO         void *
 #define HWND          void *
@@ -22,6 +23,7 @@
 #define HANDLE        void *
 #define HMODULE       void *
 #define HRESULT       int
+#define HGDIOBJ       void *
 #define FARPROC       int *
 #define LPARAM        long int
 #define LPSTR         char *
@@ -40,8 +42,8 @@
 #define REFCLSID	  const void *
 #define REFIID 		  const void *
 #define XML_Char 	  char
-#define DRIVE_CDROM   5
 
+#define DRIVE_CDROM   5
 #define MAX_PATH      260
 #define _MAX_PATH     256
 #define _MAX_DRIVE    3
@@ -77,7 +79,6 @@
 #define PM_REMOVE     0x0001
 #define SC_MAXIMIZE   0xF030
 
-// STUB FIXME
 #define WM_SYSCOMMAND  0x0112
 #define WM_SYSKEYDOWN  0x0104
 #define WM_SYSKEYUP    0x0105
@@ -123,15 +124,18 @@
 #define TBM_SETPOS      0x0407
 #define TBM_SETRANGE    0x0406
 #define TBM_SETTICFREQ  0x0405
+
 #define MAKELONG(a, b)  ((a) | ((b) << 16))
 #define LOWORD(l)       (short)(l)
 #define HIWORD(l)       ((short)(((DWORD)(l) >> 16) & 0xFFFF))
+
 #define CB_RESETCONTENT 0x0145
 #define CB_ADDSTRING    0x0143
 #define CB_GETCURSEL    0x0147
 #define CB_SETCURSEL    0x014E
 #define CB_GETCOUNT     0x0146
-#define CB_ERR 			-1
+#define CB_ERR          -1
+
 #define GWL_USERDATA    -21
 
 #define GENERIC_READ            0x80000000
@@ -148,60 +152,182 @@
 #define FILE_CURRENT            1
 #define GMEM_FIXED              0x0000
 
-#define STM_SETIMAGE 0x0172
-#define IMAGE_BITMAP 0
-#define LR_DEFAULTCOLOR 0x00000000
-#define LR_LOADFROMFILE 0x00000010
+#define STM_SETIMAGE        0x0172
+#define IMAGE_BITMAP        0
+#define LR_DEFAULTCOLOR     0x00000000
+#define LR_LOADFROMFILE     0x00000010
 #define LR_CREATEDIBSECTION 0x00002000
-#define WS_EX_TOOLWINDOW 0x00000080L
-#define WS_POPUP 0x80000000L
-#define SS_BITMAP 0x0000000EL
-#define HWND_NOTOPMOST ((HWND)-2)
-#define SWP_NOSIZE 0x0001
-#define SWP_SHOWWINDOW 0x0040
-#define SWP_NOZORDER 0x0004
-#define SW_SHOWNORMAL 1
-#define SW_HIDE 0
+
+#define WS_EX_TOOLWINDOW    0x00000080L
+#define WS_POPUP            0x80000000L
+#define SS_BITMAP           0x0000000EL
+#define HWND_NOTOPMOST      ((HWND)-2)
+
+#define SWP_NOSIZE      0x0001
+#define SWP_SHOWWINDOW  0x0040
+#define SWP_NOZORDER    0x0004
+#define SW_SHOWNORMAL   1
+#define SW_HIDE         0
+
 #define SM_CXSCREEN 0
 #define SM_CYSCREEN 1
-#define RGN_OR 0
+#define RGN_OR      0
 
-#define CLSID_FilterGraph	0
-#define IID_IGraphBuilder	0
-#define CLSCTX_INPROC		0
-#define IMAGE_BITMAP 0
+#define CLSID_FilterGraph 0
+#define IID_IGraphBuilder 0
+#define CLSCTX_INPROC     0
+#define IMAGE_BITMAP      0
 
-#define EXCEPTION_CONTINUE_EXECUTION    -1
-#define EXCEPTION_CONTINUE_SEARCH        0
-#define EXCEPTION_EXECUTE_HANDLER        1
-#define CONTEXT_INTEGER            0x00000002
-#define CONTEXT_CONTROL            0x00000001
-#define EXCEPTION_INT_DIVIDE_BY_ZERO       0xC0000094
-#define EXCEPTION_INT_OVERFLOW             0xC0000095
-#define EXCEPTION_ACCESS_VIOLATION         0xC0000005
-#define EXCEPTION_BREAKPOINT               0x80000003
-#define EXCEPTION_DATATYPE_MISALIGNMENT    0x80000002
-#define EXCEPTION_SINGLE_STEP              0x80000004
-#define EXCEPTION_ARRAY_BOUNDS_EXCEEDED    0xC000008C
-#define EXCEPTION_FLT_DENORMAL_OPERAND     0xC000008D
-#define EXCEPTION_FLT_DIVIDE_BY_ZERO       0xC000008E
-#define EXCEPTION_FLT_INEXACT_RESULT       0xC000008F
-#define EXCEPTION_FLT_INVALID_OPERATION    0xC0000090
-#define EXCEPTION_FLT_OVERFLOW             0xC0000091
-#define EXCEPTION_FLT_STACK_CHECK          0xC0000092
-#define EXCEPTION_FLT_UNDERFLOW            0xC0000093
-#define EXCEPTION_PRIV_INSTRUCTION         0xC0000096
+#define EXCEPTION_CONTINUE_EXECUTION        -1
+#define EXCEPTION_CONTINUE_SEARCH            0
+#define EXCEPTION_EXECUTE_HANDLER            1
+
+#define CONTEXT_INTEGER                     0x00000002
+#define CONTEXT_CONTROL                     0x00000001
+
+#define EXCEPTION_INT_DIVIDE_BY_ZERO        0xC0000094
+#define EXCEPTION_INT_OVERFLOW              0xC0000095
+#define EXCEPTION_ACCESS_VIOLATION          0xC0000005
+#define EXCEPTION_BREAKPOINT                0x80000003
+#define EXCEPTION_DATATYPE_MISALIGNMENT     0x80000002
+#define EXCEPTION_SINGLE_STEP               0x80000004
+#define EXCEPTION_ARRAY_BOUNDS_EXCEEDED     0xC000008C
+#define EXCEPTION_FLT_DENORMAL_OPERAND      0xC000008D
+#define EXCEPTION_FLT_DIVIDE_BY_ZERO        0xC000008E
+#define EXCEPTION_FLT_INEXACT_RESULT        0xC000008F
+#define EXCEPTION_FLT_INVALID_OPERATION     0xC0000090
+#define EXCEPTION_FLT_OVERFLOW              0xC0000091
+#define EXCEPTION_FLT_STACK_CHECK           0xC0000092
+#define EXCEPTION_FLT_UNDERFLOW             0xC0000093
+#define EXCEPTION_PRIV_INSTRUCTION          0xC0000096
 
 #define GSTSO_PARAMS    0x01
 #define GSTSO_MODULE    0x02
 #define GSTSO_SYMBOL    0x04
 #define GSTSO_SRCLINE   0x08
 
-#define KEY_EVENT 1
-#define WM_ACTIVATEAPP 0x001C
-#define WM_CHAR 0x0102
-#define WM_SYSCHAR 0x0106
-#define WAIT_OBJECT_0 0
+#define KEY_EVENT       1
+#define WM_ACTIVATEAPP  0x001C
+#define WM_CHAR         0x0102
+#define WM_SYSCHAR      0x0106
+#define WAIT_OBJECT_0   0
+
+#define DDSD_PIXELFORMAT          0x00001000
+#define DDSD_WIDTH                0x00000004
+#define DDSD_PITCH                0x00000008
+#define DDSCAPS_BACKBUFFER        0x00000002
+#define DDSCAPS_SYSTEMMEMORY      0x00000008
+#define DDLOCK_SURFACEMEMORYPTR   0x00000040
+#define DDSD_CAPS                 0x00000001
+#define DDSD_HEIGHT               0x00000002
+#define DDSCAPS_PRIMARYSURFACE    0x00000001
+#define DD_OK                     0
+#define DDENUMRET_OK              0
+#define LPDDSURFACEDESC           DDSURFACEDESC*
+
+#define THREAD_PRIORITY_TIME_CRITICAL 0
+#define INFINITE                      0xFFFFFFFF
+#define WAVE_FORMAT_PCM               0x0001
+
+namespace mpp {
+
+enum MpegState {
+    MPEG_STOP = 0,
+    MPEG_PLAY = 1,
+    MPEG_PAUSE = 2,
+};
+
+void MpegInitLibrary(void *dsound_device);
+void MpegDeinitLibrary();
+void MpegOpenToPlay(const char *fname, bool cycled = true);
+void MpegStop();
+void MpegPause();
+void MpegResume();
+void MpegSetVolume(int volume);
+int MpegIsPlay();
+
+}
+
+struct KEY_EVENT_RECORD {
+	unsigned wVirtualScanCode;
+	unsigned wVirtualKeyCode;
+	unsigned wRepeatCount;
+	unsigned bKeyDown;
+};
+
+struct INPUT_RECORD {
+	unsigned EventType;
+	union {
+		KEY_EVENT_RECORD          KeyEvent;
+  } Event;
+};
+
+struct BITMAP {
+	int bmType;
+	int bmWidth;
+	int bmHeight;
+	int bmWidthBytes;
+	short bmPlanes;
+	short bmBitsPixel;
+	void *bmBits;
+};
+
+struct RECT {
+	int left;
+	int top;
+	int right;
+	int bottom;
+};
+
+struct HRGN {
+	int i;
+};
+
+typedef struct _DDSCAPS {
+    DWORD dwCaps;         // capabilities of surface wanted
+} DDSCAPS;
+
+typedef struct _DDPIXELFORMAT {
+    DWORD dwSize;
+    DWORD dwFlags;
+    DWORD dwFourCC;
+    union {
+        DWORD dwRGBBitCount;
+        DWORD dwYUVBitCount;
+        DWORD dwZBufferBitDepth;
+        DWORD dwAlphaBitDepth;
+        DWORD dwLuminanceBitCount;
+        DWORD dwBumpBitCount;
+        DWORD dwPrivateFormatBitCount;
+    };
+    union {
+        DWORD dwRBitMask;
+        DWORD dwYBitMask;
+        DWORD dwStencilBitDepth;
+        DWORD dwLuminanceBitMask;
+        DWORD dwBumpDuBitMask;
+        DWORD dwOperations;
+    };
+    union {
+        DWORD dwGBitMask;
+        DWORD dwUBitMask;
+        DWORD dwZBitMask;
+        DWORD dwBumpDvBitMask;
+        DWORD dwBumpLuminanceBitMask;
+        DWORD dwRGBAlphaBitMask;
+    };
+    DWORD dwBBitMask;
+    DWORD dwRGBZBitMask;
+} DDPIXELFORMAT;
+
+typedef struct _DDSURFACEDESC {
+    DWORD dwSize;
+    DWORD dwFlags;
+    DWORD dwHeight;
+    DWORD dwWidth;
+    DDPIXELFORMAT ddpfPixelFormat;
+	DDSCAPS ddsCaps;
+} DDSURFACEDESC;
 
 typedef struct {
   int map[256];
@@ -241,6 +367,7 @@ typedef struct PEXCEPTION_RECORD {
 	unsigned int ExceptionCode;
 	void *ExceptionAddress;
 }PEXCEPTION_RECORD;
+
 typedef struct _EXCEPTION_POINTERS {
 	PEXCEPTION_RECORD *ExceptionRecord;
 	PCONTEXT *ContextRecord;
@@ -255,482 +382,84 @@ typedef struct MSG {
 	DWORD  lPrivate;
 };
 
-void *INVALID_HANDLE_VALUE = reinterpret_cast<void*>(-1);
+extern void *INVALID_HANDLE_VALUE;
 const int CP_ACP = 0;
 const int CP_UTF8 = 65001;
 
-void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext) {
-	warning("STUB: _splitpath");
-}
 
-int MessageBox(HWND hWnd, const char *lpText, const char *lpCaption, UINT uType) {
-	warning("STUB: MessageBox");
-	return 0;
-}
 
-void ShellExecute(HWND hwnd, const char *lpOperation, const char *lpFile, const char *lpParameters, const char *lpDirectory, int nShowCmd) {
-	warning("STUB: ShellExecute");
-}
+void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext);
+int MessageBox(HWND hWnd, const char *lpText, const char *lpCaption, UINT uType);
+void ShellExecute(HWND hwnd, const char *lpOperation, const char *lpFile, const char *lpParameters, const char *lpDirectory, int nShowCmd);
+void Sleep(int dwMilliseconds);
+int GetLogicalDrives();
+uint GetDriveType(LPCSTR lpRootPathName);
+FARPROC GetProcAddress(HMODULE hModule, LPCSTR lpProcName);
+bool FreeLibrary(void *hModule);
+HMODULE LoadLibrary(const char *lpLibFileName);
+bool ShowWindow(HWND hWnd, int nCmdShow);
+bool CloseWindow(HWND hWnd);
+bool DestroyWindow(HWND hWnd);
+bool UpdateWindow(HWND hWnd);
+bool PeekMessage(MSG *msg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilterMax, UINT wRemoveMsg);
+bool SendMessage(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
+bool SetErrorMode(UINT uMode);
+DWORD WINAPI GetLastError();
+int MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr, int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar);
+int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr, int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCSTR lpDefaultChar, LPBOOL lpUsedDefaultChar);
+LRESULT SendDlgItemMessage(HWND hDlg, int nIDDlgItem, UINT Msg, WPARAM wParam, LPARAM lParam);
+bool EndDialog(HWND hDlg, int nResult);
+LPARAM MAKELPARAM(short a, short b);
+void ZeroMemory(void *dest, size_t size);
+bool SetCurrentDirectory(const char *lpPathName);
+DWORD GetCurrentDirectory(DWORD nBufferLength, char *lpBuffer);
+bool CreateDirectory(const char *lpPathName, void *lpSecurityAttributes);
+char *_fullpath(char *absPath, const char *relPath, size_t maxLength);
+long SetWindowLong(HWND hWnd, int nIndex, long dwNewLong);
+HANDLE LoadImage(HINSTANCE hinst, LPCSTR name, UINT type, int cxDesired, int cyDesired, UINT fuLoad);
+HMODULE GetModuleHandle(LPCSTR lpModuleName);
+DWORD SetFilePointer(HANDLE hfile, long lDistanceToMove, long *lpDistanceToMoveHigh, DWORD dwMoveMethod);
+bool CloseHandle(HANDLE hObject);
+HANDLE CreateFile(LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, void *lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile);
+bool ReadFile(HANDLE hFile, void *lpBuffer, DWORD nNumberOfBytesToRead, unsigned long *lpNumberOfBytesRead, void *lpOverlapped);
+bool WriteFile(HANDLE hFile, const void *lpBuffer, DWORD nNumberOfBytesToWrite, unsigned long *lpNumberOfBytesWritten, void *lpOverlapped);
+DWORD GetFileSize(HANDLE hFile, void *lpFileSizeHigh);
+bool FlushFileBuffers(HANDLE hFile);
+HRESULT CoInitialize(void *pvReserved);
+void CoUninitialize();
+HANDLE GlobalAlloc(UINT uFlags, size_t dwBytes);
+HANDLE GlobalReAlloc(HANDLE hMem, size_t dwBytes, UINT uFlags);
+void GlobalFree(HANDLE hMem);
+const char *MAKEINTRESOURCE(int i);
+bool DeleteObject(HANDLE hObject);
+HWND CreateWindowEx(DWORD dwExStyle, const char *lpClassName, const char *lpWindowName, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hWndParent, int hMenu, HINSTANCE hInstance, void *lpParam);
+HRGN CreateRectRgn(int x1, int y1, int x2, int y2);
+int CombineRgn(HRGN hrgnDest, HRGN hrgnSrc1, HRGN hrgnSrc2, int iMode);
+int SetWindowRgn(HWND hWnd, HRGN hRgn, bool bRedraw);
+int GetObject(HGDIOBJ hgdiobj, int cbBuffer, void *lpvObject);
+bool GetClientRect(HWND hWnd, RECT *lpRect);
+bool SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int X, int Y, int cx, int cy, UINT uFlags);
+int GetSystemMetrics(int nIndex);
+HRESULT CoCreateInstance(REFCLSID rclsid, void *pUnkOuter, DWORD dwClsContext, REFIID riid, void **ppv);
+int ov_open(void *datasource, void *vf, const char *initial, long ibytes);
+int ov_read(void *vf, char *buffer, int length, int bigendianp, int word, int sgned, int *bitstream);
+int ov_time_total(void *vf, int i);
+int ov_clear(void *vf);
+int ov_time_tell(void *vf);
+DWORD WaitForSingleObject(HANDLE hHandle, DWORD dwMilliseconds);
+bool SetEvent(HANDLE hEvent);
+bool SetThreadPriority(HANDLE hThread, int nPriority);
+HANDLE CreateEvent(void *lpEventAttributes, bool bManualReset, bool bInitialState, const char *lpName);
+bool ResetEvent(HANDLE hEvent);
+void initclock();
+bool WINAPI GetNumberOfConsoleInputEvents(HANDLE hConsoleInput, unsigned long *lpcNumberOfEvents);
+bool WINAPI ReadConsoleInput(HANDLE hConsoleInput, void *lpBuffer, unsigned long nLength, unsigned long *lpNumberOfEventsRead);
+bool TranslateMessage(const MSG *lpMsg);
+bool DispatchMessage(const MSG *lpMsg);
+int GetAsyncKeyState(int vKey);
+int GetKeyState(int nVirtKey);
+DWORD timeGetTime();
 
-void Sleep(int dwMilliseconds) {
-	warning("STUB: Sleep");
-}
-
-int GetLogicalDrives() {
-	warning("STUB: GetLogicalDrives");
-	return 0;
-}
-
-uint GetDriveType(LPCSTR lpRootPathName) {
-	warning("STUB: GetDriveTypeA");
-	return 0;
-}
-
-FARPROC GetProcAddress(HMODULE hModule, LPCSTR lpProcName) {
-	warning("STUB: GetProcAddress");
-	return 0;
-}
-
-bool FreeLibrary(void *hModule) {
-	warning("STUB: FreeLibrary");
-	return false;
-}
-
-HMODULE LoadLibrary(const char *lpLibFileName) {
-	warning("STUB: LoadLibrary");
-	return 0;
-}
-
-bool ShowWindow(HWND hWnd, int nCmdShow) {
-	warning("STUB: ShowWindow");
-	return false;
-}
-
-bool CloseWindow(HWND hWnd) {
-	warning("STUB: CloseWindow");
-	return false;
-}
-
-bool DestroyWindow(HWND hWnd) {
-	warning("STUB: DestroyWindow");
-	return false;
-}
-
-bool UpdateWindow(HWND hWnd) {
-	warning("STUB: UpdateWindow");
-	return false;
-}
-
-bool PeekMessage(MSG *msg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilterMax, UINT wRemoveMsg) {
-	warning("STUB: PeakMessage");
-	return false;
-}
-
-bool SendMessage(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) {
-	warning("STUB: SendMessage");
-	return false;
-}
-
-bool SetErrorMode(UINT uMode) {
-	warning("STUB: SetErrorMode");
-	return false;
-}
-
-DWORD WINAPI GetLastError() {
-	warning("STUB: GetLastError");
-	return 0;
-}
-
-int MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr, int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar) {
-	warning("STUB: MultiByteToWideChar");
-	return 0;
-}
-
-int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr, int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCSTR lpDefaultChar, LPBOOL lpUsedDefaultChar) {
-	warning("STUB: WideCharToMultiByte");
-	return 0;
-}
-
-LRESULT SendDlgItemMessage(HWND hDlg, int nIDDlgItem, UINT Msg, WPARAM wParam, LPARAM lParam) {
-	warning("STUB: SendDlgItemMessage");
-	return 0;
-}
-
-bool EndDialog(HWND hDlg, int nResult) {
-	warning("STUB: EndDialog");
-	return false;
-}
-
-LPARAM MAKELPARAM(short a, short b) {
-	warning("STUB: MAKELPARAM");
-	return 0;
-}
-
-void ZeroMemory(void *dest, size_t size) {
-	warning("STUB: ZeroMemory");
-}
-
-bool SetCurrentDirectory(const char *lpPathName) {
-	warning("STUB: SetCurrentDirectory");
-	return false;
-}
-
-DWORD GetCurrentDirectory(DWORD nBufferLength, char *lpBuffer) {
-	warning("STUB: GetCurrentDirectory");
-	return 0;
-}
-
-bool CreateDirectory(const char *lpPathName, void *lpSecurityAttributes) {
-	warning("STUB: CreateDirectory");
-	return false;
-}
-
-char *_fullpath(char *absPath, const char *relPath, size_t maxLength) {
-	warning("STUB: _fullpath");
-	return 0;
-}
-
-long SetWindowLong(HWND hWnd, int nIndex, long dwNewLong) {
-	warning("STUB: SetWindowLong");
-	return 0;
-}
-
-HANDLE LoadImage(HINSTANCE hinst, LPCSTR name, UINT type, int cxDesired, int cyDesired, UINT fuLoad) {
-	warning("STUB: LoadImage");
-	return 0;
-}
-
-HMODULE GetModuleHandle(LPCSTR lpModuleName) {
-	warning("STUB: GetModuleHandle");
-	return 0;
-}
-
-DWORD SetFilePointer(HANDLE hfile, long lDistanceToMove, long * lpDistanceToMoveHigh, DWORD  dwMoveMethod) {
-	warning("STUB: SetFilePointer");
-	return 0;
-}
-
-bool CloseHandle(HANDLE hObject) {
-	warning("STUB: CloseHandle");
-	return false;
-}
-
-HANDLE CreateFile( LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode,void *lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile
-) {
-	warning("STUB: CreateFile()");
-	return 0;
-}
-
-bool ReadFile(HANDLE hFile, void *lpBuffer, DWORD nNumberOfBytesToRead, unsigned long *lpNumberOfBytesRead, void *lpOverlapped) {
-	warning("STUB: ReadFile()");
-	return false;
-}
-
-bool WriteFile(HANDLE hFile, const void *lpBuffer, DWORD nNumberOfBytesToWrite, unsigned long *lpNumberOfBytesWritten, void *lpOverlapped) {
-	warning("STUB: WriteFile()");
-	return false;
-}
-
-DWORD GetFileSize(HANDLE hFile, void *lpFileSizeHigh) {
-	warning("STUB: GetFileSize()");
-	return 0;
-}
-
-bool FlushFileBuffers(HANDLE hFile) {
-	warning("STUB: FlushFileBuffers()");
-	return false;
-}
-
-HRESULT CoInitialize(void *pvReserved) {
-	warning("STUB: CoInitialize()");
-	return 0;
-}
-
-void CoUninitialize() {
-	warning("STUB: CoUninitialize()");
-}
-
-HANDLE GlobalAlloc(UINT uFlags, size_t dwBytes) {
-	warning("STUB: GlobalAlloc()");
-	return 0;
-}
-
-HANDLE GlobalReAlloc(HANDLE hMem, size_t dwBytes, UINT uFlags) {
-	warning("STUB: GlobalReAlloc()");
-	return 0;
-}
-
-void GlobalFree(HANDLE hMem) {
-	warning("STUB: GlobalFree()");
-}
-
-const char *MAKEINTRESOURCE(int i) {
-	warning("STUB: MAKEINTRESOURCE()");
-}
-
-bool DeleteObject(HANDLE hObject) {
-	warning("STUB: DeleteObject()");
-	return false;
-}
-
-HWND CreateWindowEx(DWORD dwExStyle, const char *lpClassName, const char *lpWindowName, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hWndParent, int hMenu, HINSTANCE hInstance, void *lpParam) {
-	warning("STUB: CreteWindowEx()");
-	return 0;
-}
-
-struct KEY_EVENT_RECORD {
-	unsigned wVirtualScanCode;
-	unsigned wVirtualKeyCode;
-	unsigned wRepeatCount;
-	unsigned bKeyDown;
-};
-
-struct INPUT_RECORD {
-	unsigned EventType;
-	union {
-		KEY_EVENT_RECORD          KeyEvent;
-  } Event;
-};
-
-
-struct BITMAP {
-	int bmType;
-	int bmWidth;
-	int bmHeight;
-	int bmWidthBytes;
-	short bmPlanes;
-	short bmBitsPixel;
-	void *bmBits;
-};
-
-struct RECT {
-	int left;
-	int top;
-	int right;
-	int bottom;
-};
-
-struct HRGN {
-	int i;
-};
-#define DDSD_PIXELFORMAT 0x00001000
-#define DDSD_WIDTH 0x00000004
-#define DDSD_PITCH 0x00000008
-#define DDSCAPS_BACKBUFFER 0x00000002
-#define DDSCAPS_SYSTEMMEMORY 0x00000008
-#define DDLOCK_SURFACEMEMORYPTR 0x00000040
-#define DDSD_CAPS 0x00000001
-#define DDSD_HEIGHT 0x00000002
-#define DDSCAPS_PRIMARYSURFACE 0x00000001
-#define DD_OK 0
-#define DDENUMRET_OK 0
-#define LPDDSURFACEDESC DDSURFACEDESC*
-typedef struct _DDSCAPS {
-    DWORD dwCaps;         // capabilities of surface wanted
-} DDSCAPS;
-typedef struct _DDPIXELFORMAT {
-    DWORD dwSize;
-    DWORD dwFlags;
-    DWORD dwFourCC;
-    union {
-        DWORD dwRGBBitCount;
-        DWORD dwYUVBitCount;
-        DWORD dwZBufferBitDepth;
-        DWORD dwAlphaBitDepth;
-        DWORD dwLuminanceBitCount;
-        DWORD dwBumpBitCount;
-        DWORD dwPrivateFormatBitCount;
-    };
-    union {
-        DWORD dwRBitMask;
-        DWORD dwYBitMask;
-        DWORD dwStencilBitDepth;
-        DWORD dwLuminanceBitMask;
-        DWORD dwBumpDuBitMask;
-        DWORD dwOperations;
-    };
-    union {
-        DWORD dwGBitMask;
-        DWORD dwUBitMask;
-        DWORD dwZBitMask;
-        DWORD dwBumpDvBitMask;
-        DWORD dwBumpLuminanceBitMask;
-        DWORD dwRGBAlphaBitMask;
-    };
-    DWORD dwBBitMask;
-    DWORD dwRGBZBitMask;
-} DDPIXELFORMAT;
-typedef struct _DDSURFACEDESC {
-    DWORD dwSize;
-    DWORD dwFlags;
-    DWORD dwHeight;
-    DWORD dwWidth;
-    DDPIXELFORMAT ddpfPixelFormat;
-	DDSCAPS ddsCaps;
-} DDSURFACEDESC;
-
-
-HRGN CreateRectRgn(int x1, int y1, int x2, int y2) {
-	warning("STUB: CreateRectRgn()");
-	return HRGN{0};
-}
-
-int CombineRgn(HRGN hrgnDest, HRGN hrgnSrc1, HRGN hrgnSrc2, int iMode) {
-	warning("STUB: CombineRgn()");
-	return 0;
-}
-
-int SetWindowRgn(HWND hWnd, HRGN hRgn, bool bRedraw) {
-	warning("STUB: SetWindowRgn()");
-	return 0;
-}
-
-#define HGDIOBJ void *
-int GetObject(HGDIOBJ hgdiobj, int cbBuffer, void *lpvObject) {
-	warning("STUB: GetObject()");
-	return 0;
-}
-
-bool GetClientRect(HWND hWnd, RECT *lpRect) {
-	warning("STUB: GetClientRect()");
-	return false;
-}
-
-bool SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int X, int Y, int cx, int cy, UINT uFlags) {
-	warning("STUB: SetWindowPos()");
-	return false;
-}
-
-int GetSystemMetrics(int nIndex) {
-	warning("STUB: GetSystemMetrics()");
-	return 0;
-}
-
-HRESULT CoCreateInstance(REFCLSID rclsid, void *pUnkOuter, DWORD dwClsContext, REFIID riid, void **ppv) {
-	warning("STUB: CoCreateInstance()");
-	return 0;
-}
-
-int ov_open(void *datasource, void *vf, const char *initial, long ibytes) {
-	warning("STUB: ov_open_callbacks()");
-	return 0;
-}
-int ov_read(void *vf, char *buffer, int length, int bigendianp, int word, int sgned, int *bitstream) {
-	warning("STUB: ov_read()");
-	return 0;
-}
-
-int ov_time_total(void *vf, int i) {
-	warning("STUB: ov_time_total()");
-	return 0;
-}
-
-#define THREAD_PRIORITY_TIME_CRITICAL 0
-int ov_clear(void *vf) {
-	warning("STUB: ov_clear()");
-	return 0;
-}
-
-int ov_time_tell(void *vf) {
-	warning("STUB: ov_time_total()");
-	return 0;
-}
-
-DWORD WaitForSingleObject(HANDLE hHandle, DWORD dwMilliseconds) {
-	warning("STUB: WaitForSingleObject()");
-	return 0;
-}
-
-#define INFINITE 0xFFFFFFFF
-#define WAVE_FORMAT_PCM 0x0001
-
-bool SetEvent(HANDLE hEvent) {
-	warning("STUB: SetEvent()");
-	return false;
-}
-
-bool SetThreadPriority(HANDLE hThread, int nPriority) {
-	warning("STUB: SetThreadPriority()");
-	return false;
-}
-
-HANDLE CreateEvent(void *lpEventAttributes, bool bManualReset, bool bInitialState, const char *lpName) {
-	warning("STUB: CreateEvent()");
-	return 0;
-}
-
-bool ResetEvent(HANDLE hEvent) {
-	warning("STUB: ResetEvent()");
-	return false;
-}
-
-void initclock() {
-	warning("STUB: initClock()");
-	return;
-}
-
-bool WINAPI GetNumberOfConsoleInputEvents(HANDLE hConsoleInput, unsigned long *lpcNumberOfEvents) {
-	warning("STUB: GetNumberOfConsoleInputEvents()");
-	return false;
-}
-
-bool WINAPI ReadConsoleInput(HANDLE hConsoleInput, void *lpBuffer, unsigned long nLength, unsigned long *lpNumberOfEventsRead) {
-	warning("STUB: ReadConsoleInput()");
-	return false;
-}
-
-bool TranslateMessage(const MSG *lpMsg) {
-	warning("STUB: TranslateMessage()");
-	return false;
-}
-
-bool DispatchMessage(const MSG *lpMsg) {
-	warning("STUB: DispatchMessage()");
-	return false;
-}
-
-int GetAsyncKeyState(int vKey) {
-	warning("STUB: GetAsyncKeyState()");
-	return 0;
-}
-
-int GetKeyState(int nVirtKey) {
-	warning("STUB: GetKeyState()");
-	return 0;
-}
-namespace mpp {
-enum MpegState {
-	MPEG_STOP=0,
-	MPEG_PLAY=1,
-	MPEG_PAUSE=2,
-};
-void MpegInitLibrary(void *dsound_device) {
-	warning("STUB: MpegInitLibrary()");
-}
-void MpegDeinitLibrary() {
-	warning("STUB: MpegDeinitLibrary()");
-};
-void MpegOpenToPlay(const char *fname, bool cycled = true) {
-	warning("STUB: MpegOpenToPlay(%s, %d)", fname, cycled);
-
-}
-void MpegStop() {
-	warning("STUB: MpegStop()");
-}
-void MpegPause() {
-	warning("STUB: MpegPause()");
-}
-void MpegResume() {
-	warning("STUB: MpegResume()");
-}
-void MpegSetVolume(int volume) {
-	warning("STUB: MpegSetVolume(%d)", volume);
-}
-int MpegIsPlay() {
-	warning("STUB: MpegIsPlay()");
-	return 0;
-}
-}
 
 int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow);
 

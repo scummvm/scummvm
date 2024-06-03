@@ -65,9 +65,6 @@ public:
 		frequency_ /= 1000;
 		counterToAdjust_ = 0;
 		clockToAdjust_ = 0;
-		TimeDate globalTime;
-		g_system->getTimeAndDate(globalTime);
-		clockGlobalPrev_ = globalTime.tm_sec * 1000;
 	}
 
 	int time() {
@@ -126,6 +123,7 @@ private:
 };
 
 int64 XClock::timeGlobal_ = 0;
+unsigned int XClock::clockGlobalPrev_ = timeGetTime();
 
 XClock XClock::clocks_[PROCESSORS_MAX] = { XClock(0), XClock(1), XClock(2), XClock(3), XClock(4), XClock(5), XClock(6), XClock(7) };
 
