@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-01 10:44+0000\n"
-"PO-Revision-Date: 2024-04-30 18:40+0000\n"
+"PO-Revision-Date: 2024-06-03 19:43+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -2946,10 +2946,8 @@ msgid "ScummVM"
 msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
-#, fuzzy
-#| msgid "ScummVM"
 msgid "ScummVM (debug)"
-msgstr "ScummVM"
+msgstr "ScummVM (გამართვა)"
 
 #: dists/android.strings.xml.cpp:32
 msgid "Graphic adventure game engine"
@@ -2968,10 +2966,8 @@ msgid "Quit"
 msgstr "გასვლა"
 
 #: dists/android.strings.xml.cpp:35
-#, fuzzy
-#| msgid "Config File Error"
 msgid "Log File Error"
-msgstr "კონფიგურაციის ფაილის სეცდომა"
+msgstr "ჟურნალის ფაილის შეცდომა"
 
 #: dists/android.strings.xml.cpp:36
 msgid "Unable to read ScummVM log file or create a new one!"
@@ -3051,22 +3047,16 @@ msgid "Storage Access Framework Permissions for ScummVM were revoked!"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:55
-#, fuzzy
-#| msgid "the video mode could not be changed"
 msgid "Configuration file could not be parsed"
-msgstr "ვიდეორეჟიმი ვერ შევცვალე"
+msgstr "კონფიგურაციის ფაილის დამუშავება შეუძლებელია"
 
 #: dists/android.strings.xml.cpp:56
-#, fuzzy
-#| msgid "In 2D games"
 msgid "Run a game"
-msgstr "2D თამაშებში"
+msgstr "თამაშის გაშვება"
 
 #: dists/android.strings.xml.cpp:57
-#, fuzzy
-#| msgid "Search in game list"
 msgid "Search a game"
-msgstr "ძებნა თამაშების სიაში"
+msgstr "თამაშის ძებნა"
 
 #: dists/android.strings.xml.cpp:58
 msgid ""
@@ -3075,10 +3065,8 @@ msgid ""
 msgstr ""
 
 #: dists/android.strings.xml.cpp:59
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game icon"
-msgstr "თამაშის მორგება"
+msgstr "თამაშის ხატულა"
 
 #: dists/android.strings.xml.cpp:60
 msgid "Shortcut label"
@@ -4888,34 +4876,24 @@ msgid "(check '? > Libretro playlist' for detailed info)"
 msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:48
-#, fuzzy
-#| msgid "Plugins Path:"
 msgid "Playlists Path"
-msgstr "დამატებების ბილიკი:"
+msgstr "დასაკრავი სიების ბილიკი"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:49
-#, fuzzy
-#| msgid "Specifies where your saved games are put"
 msgid "Specifies where your playlist will be saved."
-msgstr "მიუთითებს, სად მოხდება თქვენი თამაშების შენახვა"
+msgstr "მიუთითებს, სად მოხდება თქვენი დასაკრავი სიების შენახვა."
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:52
-#, fuzzy
-#| msgid "Platform:"
 msgid "Playlist format:"
-msgstr "პლატფორმა:"
+msgstr "დასაკრავი სიის ფორმატი:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:57
-#, fuzzy
-#| msgid "Goto location"
 msgid "Hooks location:"
-msgstr "მდებარეობაზე გადასვლა"
+msgstr "ღუზის მდებარეობა:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:59
-#, fuzzy
-#| msgid "Add a new folder"
 msgid "All in save folder"
-msgstr "ახალი საქაღალდის დამატება"
+msgstr "ყველა შენახვის საქაღალდეში"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:60
 msgid "One in each game folder"
@@ -4930,34 +4908,24 @@ msgid "Generate playlist"
 msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:66
-#, fuzzy
-#| msgid "Status:"
 msgid "Status: "
-msgstr "მდგომარეობა:"
+msgstr "სტატუსი: "
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:148
-#, fuzzy
-#| msgid "Failed to save game to file."
 msgid "Failed, can't access playlist file"
-msgstr "თამაშის ფაილში შენახვა ჩავარდა."
+msgstr "ჩავარდა. დასაკრავ სიასთან წვდომის გარეშე"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:224
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "cleaning failed"
-msgstr "მონაცემების კითხვის შეცდომა"
+msgstr "გასუფთავება ჩავარდა"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:226
-#, fuzzy
-#| msgid "Failed to read the file!"
 msgid "Failed, can't create hook files"
-msgstr "ფაილის წაკითხვის შეცდომა!"
+msgstr "ჩავარდა. ღუზის ფაილები ვერ შევქმენი"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:236
-#, fuzzy
-#| msgid "Select additional game directory"
 msgid "Select Playlist directory"
-msgstr "აირჩიეთ დამატებითი თამაშის საქაღალდე"
+msgstr "აირჩიეთ დასაკრავი სიის საქაღალდე"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:172
 msgid "Libretro playlist"
@@ -5105,64 +5073,44 @@ msgid "BSD License"
 msgstr "BSD-ის ლიცენზია"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:329
-#, fuzzy
-#| msgid "GPL License"
 msgid "Apache License"
-msgstr "GPL ლიცენზია"
+msgstr "Apache ლიცენზია"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:330
-#, fuzzy
-#| msgid "BSD License"
 msgid "BSL License"
-msgstr "BSD-ის ლიცენზია"
+msgstr "BSL-ის ლიცენზია"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:331
-#, fuzzy
-#| msgid "GPL License"
 msgid "GLAD License"
-msgstr "GPL ლიცენზია"
+msgstr "GLAD ლიცენზია"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:332
-#, fuzzy
-#| msgid "BSD License"
 msgid "ISC License"
-msgstr "BSD-ის ლიცენზია"
+msgstr "ISC-ის ლიცენზია"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:333
-#, fuzzy
-#| msgid "GPL License"
 msgid "Lua License"
-msgstr "GPL ლიცენზია"
+msgstr "Lua ლიცენზია"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:334
-#, fuzzy
-#| msgid "GPL License"
 msgid "MIT License"
-msgstr "GPL ლიცენზია"
+msgstr "MIT ლიცენზია"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:335
-#, fuzzy
-#| msgid "GPL License"
 msgid "MKV License"
-msgstr "GPL ლიცენზია"
+msgstr "MKV ლიცენზია"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:336
-#, fuzzy
-#| msgid "GPL License"
 msgid "MPL License"
-msgstr "GPL ლიცენზია"
+msgstr "MPL ლიცენზია"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:337
-#, fuzzy
-#| msgid "GPL License"
 msgid "TinyGL License"
-msgstr "GPL ლიცენზია"
+msgstr "TinyGL ლიცენზია"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:338
-#, fuzzy
-#| msgid "Freefont License"
 msgid "Catharon License"
-msgstr "Freefont ლიცენზია"
+msgstr "Catharon ლიცენზია"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:79
@@ -5795,10 +5743,8 @@ msgid "Soldier 714 Eye Cheat"
 msgstr ""
 
 #: engines/bagel/metaengine.cpp:83
-#, fuzzy
-#| msgid "General"
 msgid "General Keys"
-msgstr "საერთო"
+msgstr "ზოგადი გასაღებები"
 
 #: engines/bladerunner/bladerunner.cpp:404
 msgid "Failed to initialize resources"
@@ -9500,10 +9446,8 @@ msgstr ""
 
 #. I18N: Random map generator for Moonbase Commander
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:55
-#, fuzzy
-#| msgid "Game Options"
 msgid "Random Map Options"
-msgstr "თამაშის მორგება"
+msgstr "შემთხვევითი რუკის პარამეტრები"
 
 #. I18N: Map generator algorthims
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:59
@@ -9532,10 +9476,8 @@ msgstr ""
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:112
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:124
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:136
-#, fuzzy
-#| msgid "Random seed:"
 msgid "Random"
-msgstr "შემთხვევითი მარცვალი:"
+msgstr "შემთხვევითი"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:67
 msgid "Picks the map algorithm randomly."
@@ -9547,10 +9489,8 @@ msgid "Size"
 msgstr ""
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:74
-#, fuzzy
-#| msgid "75% - Small"
 msgid "Small"
-msgstr "75% - პატარა"
+msgstr "პატარა"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:76
 msgid "Large"
@@ -9569,10 +9509,8 @@ msgid "Ridiculous"
 msgstr ""
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:80
-#, fuzzy
-#| msgid "Map"
 msgid "Max"
-msgstr "რუკა"
+msgstr "მაქს"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:82
 msgid "Picks the map size randomly."
@@ -9580,10 +9518,8 @@ msgstr ""
 
 #. I18N: Map tilesets
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:85
-#, fuzzy
-#| msgid "Reset"
 msgid "Tileset"
-msgstr "განულება"
+msgstr "ფილების ნაკრები"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:99
 msgid "Picks the map tileset randomly."
@@ -9633,10 +9569,8 @@ msgstr ""
 
 #. I18N: Generate new map
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:140
-#, fuzzy
-#| msgid "General"
 msgid "Generate"
-msgstr "საერთო"
+msgstr "გენერაცია"
 
 #: engines/scumm/he/sound_he.cpp:1555
 msgid ""
@@ -10271,10 +10205,8 @@ msgid "Select highlighted verb"
 msgstr "გამოკვეთილი ზმნის არჩევა"
 
 #: engines/twp/metaengine.cpp:156
-#, fuzzy
-#| msgid "Go to previous directory level"
 msgid "Go to previous object"
-msgstr "საქაღალდის წინა დონეზე გადასვლა"
+msgstr "გადასვლა წინა ობიექტზე"
 
 #: engines/twp/metaengine.cpp:157
 msgid "Go to next object"
@@ -10285,10 +10217,8 @@ msgid "Select verb/item Left"
 msgstr ""
 
 #: engines/twp/metaengine.cpp:159
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Select verb/item Right"
-msgstr "გასრიალება მარჯვნივ"
+msgstr "ზმნის/ელემენტის მონიშვნა მარჯვნივ"
 
 #: engines/twp/metaengine.cpp:160
 msgid "Select verb/item Up"
