@@ -48,7 +48,7 @@ protected:
 	EEHandler	*_eeHandler;
 
 public:
-	AboutDialog();
+	AboutDialog(bool inGame = false);
 
 	void open() override;
 	void close() override;

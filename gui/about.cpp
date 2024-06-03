@@ -84,7 +84,7 @@ static const char *const gpl_text[] = {
 
 #include "gui/credits.h"
 
-AboutDialog::AboutDialog()
+AboutDialog::AboutDialog(bool inGame)
 	: Dialog(10, 20, 300, 174),
 	  _scrollPos(0), _scrollTime(0), _willClose(false), _autoScroll(true) {
 
@@ -158,17 +158,17 @@ AboutDialog::AboutDialog()
 	Common::StringArray enginesDetected;
 #if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES) && !defined(DETECTION_STATIC)
 	// Unload all MetaEnginesDetection if we're using uncached plugins to save extra memory.
-	PluginMan.unloadDetectionPlugin();
+	if (!inGame) PluginMan.unloadDetectionPlugin();
 #endif
-	PluginMan.loadFirstPlugin();
+	if (!inGame) PluginMan.loadFirstPlugin();
 	do {
 		const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
 		for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 			enginesDetected.push_back((*iter)->getName());
 		}
-	} while (PluginMan.loadNextPlugin());
+	} while (!inGame && PluginMan.loadNextPlugin());
 
-	PluginMan.loadDetectionPlugin();
+	if (!inGame) PluginMan.loadDetectionPlugin();
 
 	for (Common::StringArray::iterator iter = enginesDetected.begin(); iter != enginesDetected.end(); iter++) {
 		Common::String str;
@@ -176,7 +176,7 @@ AboutDialog::AboutDialog()
 		const Plugin *p = EngineMan.findDetectionPlugin(*iter);
 
 		if (!p) {
-			warning("Cannot find plugin for %s", iter->c_str());
+			if (!inGame) warning("Cannot find plugin for %s", iter->c_str());
 			continue;
 		}
 
