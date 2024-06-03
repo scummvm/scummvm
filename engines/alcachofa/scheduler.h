@@ -128,6 +128,7 @@ public:
 	inline MainCharacterKind character() const { return _character; }
 	inline int32 returnValue() const { return _lastReturnValue; }
 	inline Common::String &name() { return _name; }
+	bool isActiveForPlayer() const; ///< and thus should e.g. draw subtitles or effects
 
 	TaskReturnType run();
 	void debugPrint();

@@ -258,6 +258,59 @@ void Character::trigger(const char *action) {
 	g_engine->player().triggerObject(this, action);
 }
 
+struct SayTextTask : public Task {
+	SayTextTask(Process &process, Character *character, int32 dialogId)
+		: Task(process)
+		, _character(character)
+		, _dialogId(dialogId) { }
+
+	virtual TaskReturn run() override {
+		TASK_BEGIN;
+		_character->_isTalking = true;
+		graphicOf(_character->_curTalkingObject, &_character->_graphicTalking)->start(true);
+		while (true) {
+			if (_soundId == kInvalidSoundID)
+				_soundId = g_engine->sounds().playVoice(
+					String::format(_character == &g_engine->world().mortadelo() ? "M%04d" : "%04d", _dialogId),
+					0);
+			g_engine->sounds().setAppropriateVolume(_soundId, process().character(), _character);
+			if (!g_engine->sounds().isAlive(_soundId) || g_engine->input().wasAnyMouseReleased())
+				_character->_isTalking = false;
+
+			if (true && // TODO: Add game option for subtitles
+				process().isActiveForPlayer()) {
+				g_engine->drawQueue().add<TextDrawRequest>(
+					g_engine->world().dialogFont(),
+					g_engine->world().getDialogLine(_dialogId),
+					Point(g_system->getWidth() / 2, g_system->getHeight() - 200),
+					-1, true, kWhite, 0);
+			}
+			// TODO: Add lip syng for sayText
+
+			if (!_character->_isTalking) {
+				g_engine->sounds().fadeOut(_soundId, 100);
+				TASK_WAIT(delay(200));
+				TASK_RETURN(0);
+			}
+			TASK_YIELD;
+		}
+		TASK_END;
+	}
+
+	virtual void debugPrint() override {
+		g_engine->console().debugPrintf("SayText %s, %d\n", _character->name().c_str(), _dialogId);
+	}
+
+private:
+	Character *_character;
+	int32 _dialogId;
+	SoundID _soundId = kInvalidSoundID;
+};
+
+Task *Character::sayText(Process &process, int32 dialogId) {
+	return new SayTextTask(process, this, dialogId);
+}
+
 const char *WalkingCharacter::typeName() const { return "WalkingCharacter"; }
 
 WalkingCharacter::WalkingCharacter(Room *room, ReadStream &stream)
