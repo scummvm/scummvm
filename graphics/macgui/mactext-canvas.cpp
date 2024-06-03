@@ -656,6 +656,8 @@ void MacTextCanvas::render(int from, int to, int shadow) {
 				int xOffset = (_text[i].width - _text[i].charwidth) / 2;
 				surface->blitFrom(image, Common::Point(xOffset, _text[i].y));
 
+				Common::Rect bbox(xOffset, _text[i].y, xOffset + image->w, _text[i].y + image->h);
+
 				D(9, "MacTextCanvas::render: Image %d x %d bbox: %d, %d, %d, %d", image->w, image->h, bbox.left, bbox.top,
 						bbox.right, bbox.bottom);
 			}
