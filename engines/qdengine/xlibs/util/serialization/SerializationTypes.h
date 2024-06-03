@@ -3,7 +3,7 @@
 
 #include <string>
 #include "Handle.h"
-using namespace std;
+#include "qdengine/xlibs/util/serialization/Factory.h"
 
 class Archive;
 
@@ -17,7 +17,7 @@ public:
 		value_ = value ? value : "";
 		return *this;
 	}
-	ComboListString &operator=(const string &value) {
+	ComboListString &operator=(const std::string &value) {
 		value_ = value;
 		return *this;
 	}
@@ -32,16 +32,16 @@ public:
 		comboList_ = comboList;
 	}
 
-	string &value() {
+	std::string &value() {
 		return value_;
 	}
-	const string &value() const {
+	const std::string &value() const {
 		return value_;
 	}
 
 protected:
-	string value_;
-	string comboList_;
+	std::string value_;
+	std::string comboList_;
 };
 
 /// Вектор энумерованных бит

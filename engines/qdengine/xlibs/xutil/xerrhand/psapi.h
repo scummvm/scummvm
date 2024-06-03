@@ -20,7 +20,6 @@ Revision History:
 
 #ifndef _PSAPI_H_
 #define _PSAPI_H_
-
 #ifdef __cplusplus
 extern "C" {
 #endif

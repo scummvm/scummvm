@@ -157,24 +157,7 @@ public:
 		return ShareHandle<U> (get());
 	}
 
-	bool serialize(class Archive &ar, const char *name, const char *nameAlt) {
-		if (ar.isInput() && ptr_) {
-			ptr_->decrRef();
-			xassert("БАГ: Возможно удаление с созданием висячей ссылки (после Ignore упадет непредсказуемо)!" && ptr_->numRef() == 0);
-		}
-
-		bool log;
-		if (!ar.inPlace()) {
-			Type *ptr = get();
-			log = ar.serializePolymorphic(ptr, name, nameAlt);
-			ptr_ = ptr;
-		} else
-			log = ar.serializePolymorphic(reinterpret_cast<Type *&>(ptr_), name, nameAlt);
-
-		if (ar.isInput() && ptr_)
-			ptr_->addRef();
-		return log;
-	}
+	bool serialize(class Archive &ar, const char *name, const char *nameAlt);
 
 private:
 	BaseType *ptr_;

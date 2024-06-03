@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------
  John Robbins - Microsoft Systems Journal Bugslayer Column - August '98
 ----------------------------------------------------------------------*/
-
+#include "qdengine/core/qd_precomp.h"
 #ifndef _CRASHHANDLER_H
 #define _CRASHHANDLER_H
 
@@ -234,5 +234,3 @@ extern "C" {
 #endif  //__cplusplus
 
 #endif  // _CRASHHANDLER_H
-
-

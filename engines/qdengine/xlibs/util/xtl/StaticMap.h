@@ -34,7 +34,6 @@
 #ifndef __STATIC_MAP_H_INCLUDED__
 #define __STATIC_MAP_H_INCLUDED__
 
-#include <stl/_construct.h>
 #include <vector>
 #include <algorithm>
 
@@ -77,12 +76,7 @@ public:
 		}
 	};
 
-	bool serialize(Archive &ar, const char *name, const char *nameAlt) {
-		bool nodeExists = ar.serialize(MapVector, name, nameAlt);
-		if (ar.isInput()) // &&(ar.isEdit()))
-			std::sort(MapVector.begin(), MapVector.end(), value_comp());
-		return nodeExists;
-	}
+	bool serialize(Archive &ar, const char *name, const char *nameAlt);
 
 private:
 
@@ -340,26 +334,26 @@ public:
 
 	iterator upper_bound(const key_type &key) {
 		iterator ve = MapVector.end();
-		iterator vs = binary_search(MapVector.begin(), vend, key);
-		if vs != vend {
+		iterator vs = binary_search(MapVector.begin(), ve, key);
+		if (vs != ve) {
 		while ((!key_comp()(vs->first, key)) && (!key_comp()(key, vs->first))) {
 				vs++;
 			}
 			return vs;
 		}
-		return vend;
+		return ve;
 	}
 
 	const_iterator upper_bound(const key_type &key) const {
 		const_iterator ve = MapVector.end();
-		const_iterator vs = binary_search(MapVector.begin(), vend, key);
-		if vs != vend {
+		const_iterator vs = binary_search(MapVector.begin(), ve, key);
+		if (vs != ve) {
 		while ((!key_comp()(vs->first, key)) && (!key_comp()(key, vs->first))) {
 				vs++;
 			}
 			return vs;
 		}
-		return vend;
+		return ve;
 	}
 
 	size_type max_size() const {
@@ -373,7 +367,7 @@ public:
 	mapped_type &operator[](const key_type &key) {
 		iterator vi = binary_search(MapVector.begin(), MapVector.end(), key);
 		if (vi == MapVector.end() || (key_comp()(key, vi->first)))
-			vi = MapVector.insert(vi, value_type(key, _STLP_DEFAULT_CONSTRUCTED(mapped_type)));
+			vi = MapVector.insert(vi, value_type(key, mapped_type()));
 		return (*vi).second;
 	}
 

@@ -42,9 +42,6 @@ DO_NOT_WORK_AROUND_SRCLINE_BUG - Define this to NOT work around the
 
 #define FLEXIBLE_SYMBOLENGINE
 
-#include "imagehlp.h"
-#include <tchar.h>
-
 // Include these in case the user forgets to link against them.
 #pragma comment (lib,"imagehlp.lib")
 #pragma comment (lib,"version.lib")
@@ -623,5 +620,3 @@ protected   :
 } ;
 
 #endif      // _SYMBOLENGINE_H
-
-

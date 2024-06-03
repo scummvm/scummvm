@@ -44,11 +44,9 @@ FEB '99 - Updated the CrashHandler code to work on Win9x.
 //////////////////////////////////////////////////////////////////////*/
 // If windows.h has not yet been included, include it now.
 #ifndef _INC_WINDOWS
-#include <windows.h>
 #endif
 
 // Force imagehlp in.
-#include <imagehlp.h>
 
 
 /*//////////////////////////////////////////////////////////////////////
@@ -72,13 +70,13 @@ FEB '99 - Updated the CrashHandler code to work on Win9x.
 //////////////////////////////////////////////////////////////////////*/
 // Include the headers that do the memory dumping and validation
 //  routines.
-#include "MemDumperValidator.h"
+#include "qdengine/xlibs/xutil/xerrhand/MemDumperValidator.h"
 
 // The CrashHandler routines.
-#include "CrashHandler.h"
+#include "qdengine/xlibs/xutil/xerrhand/CrashHandler.h"
 
 // The ASSERT routines.
-#include "DiagAssert.h"
+#include "qdengine/xlibs/xutil/xerrhand/DiagAssert.h"
 
 
 /*//////////////////////////////////////////////////////////////////////
@@ -261,7 +259,7 @@ BOOL BUGSUTIL_DLLINTERFACE __stdcall IsNT(void) ;
 //////////////////////////////////////////////////////////////////////*/
 #ifdef __cplusplus
 
-#include "SymbolEngine.h"
+#include "qdengine/xlibs/xutil/xerrhand/SymbolEngine.h"
 
 #endif  // __cplusplus
 /*//////////////////////////////////////////////////////////////////////
@@ -270,5 +268,3 @@ BOOL BUGSUTIL_DLLINTERFACE __stdcall IsNT(void) ;
 //////////////////////////////////////////////////////////////////////*/
 
 #endif  // _BUGSLAYERUTIL_H
-
-

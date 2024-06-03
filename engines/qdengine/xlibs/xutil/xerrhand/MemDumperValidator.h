@@ -13,7 +13,7 @@ Microsoft Systems Journal, October 1997 - BugSlayer Column!
 #endif  // _BUGSLAYERUTIL_H
 
 // Include the main header.
-#include "MSJDBG.h"
+#include "qdengine/xlibs/xutil/xerrhand/MSJDBG.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -214,7 +214,3 @@ public   :                                                          \
 #endif      // __cplusplus
 
 #endif      // _MEMDUMPERVALIDATOR_H
-
-
-
-
