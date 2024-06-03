@@ -123,28 +123,6 @@ void DarkEngine::loadAssetsAmigaFullGame() {
 	loadMessagesVariableSize(stream, 0x3d37, 66);
 }
 
-Common::String centerAndPadString(const Common::String &str, int size) {
-	Common::String result;
-
-	if (int(str.size()) >= size)
-		return str;
-
-	int padding = (size - str.size()) / 2;
-	for (int i = 0; i < padding; i++)
-		result += " ";
-
-	result += str;
-
-	if (int(result.size()) >= size)
-		return result;
-
-	padding = size - result.size();
-
-	for (int i = 0; i < padding; i++)
-		result += " ";
-	return result;
-}
-
 void DarkEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 	uint32 white = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
 	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xEE, 0xCC, 0x00);
@@ -174,8 +152,30 @@ void DarkEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 		_temporaryMessageDeadlines.push_back(deadline);
 	}
 
-	drawString(kDarkFontSmall, centerAndPadString(_currentArea->_name, 26), 32, 150, white, white, transparent, surface);
+	drawString(kDarkFontSmall, _currentArea->_name, 32, 150, white, white, transparent, surface);
 	drawBinaryClock(surface, 6, 110, white, grey);
+
+	int x = 229;
+	int y = 180;
+	for (int i = 0; i < _maxShield / 2; i++) {
+		if (i < _gameStateVars[k8bitVariableShield] / 2) {
+			surface->drawLine(x, y, x, y + 3, orange);
+			surface->drawLine(x, y + 1, x, y + 2, yellow);
+		} else
+			surface->drawLine(x, y, x, y + 3, red);
+		x += 2;
+	}
+
+	x = 229;
+	y = 188;
+	for (int i = 0; i < _maxEnergy / 2; i++) {
+		if (i < _gameStateVars[k8bitVariableEnergy] / 2) {
+			surface->drawLine(x, y, x, y + 3, orange);
+			surface->drawLine(x, y + 1, x, y + 2, yellow);
+		} else
+			surface->drawLine(x, y, x, y + 3, red);
+		x += 2;
+	}
 }
 
 void DarkEngine::initAmigaAtari() {

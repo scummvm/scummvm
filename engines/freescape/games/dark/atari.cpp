@@ -27,6 +27,28 @@
 
 namespace Freescape {
 
+Common::String centerAndPadString(const Common::String &str, int size) {
+	Common::String result;
+
+	if (int(str.size()) >= size)
+		return str;
+
+	int padding = (size - str.size()) / 2;
+	for (int i = 0; i < padding; i++)
+		result += " ";
+
+	result += str;
+
+	if (int(result.size()) >= size)
+		return result;
+
+	padding = size - result.size();
+
+	for (int i = 0; i < padding; i++)
+		result += " ";
+	return result;
+}
+
 void DarkEngine::loadAssetsAtariFullGame() {
 	Common::SeekableReadStream *stream = decryptFile("1.drk", "0.drk", 840);
 	parseAmigaAtariHeader(stream);
@@ -51,6 +73,10 @@ void DarkEngine::loadAssetsAtariFullGame() {
 	assert(obj);
 	obj->_cyclingColors = true;
 
+	for (auto &area : _areaMap) {
+		// Center and pad each area name so we do not have to do it at each frame
+		area._value->_name = centerAndPadString(area._value->_name, 26);
+	}
 }
 
 } // End of namespace Freescape
