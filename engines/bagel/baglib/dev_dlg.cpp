@@ -44,7 +44,7 @@ CDevDlg::~CDevDlg() {
 	_titleText = nullptr;
 }
 
-ErrorCode CDevDlg::create(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CBofRect *rect, bool useExtraFl) {
+ErrorCode CDevDlg::createWindow(const char *bmp, CBofWindow *wnd, CBofPalette *pal, CBofRect *rect, bool useExtraFl) {
 	assert(isValidObject(this));
 	assert(bmp != nullptr);
 	assert(wnd != nullptr);
