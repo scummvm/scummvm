@@ -338,6 +338,10 @@ public:
 	/**
 	 * Return the output sample buffer size of the system.
 	 *
+	 * The return value is measured in frame units instead of bytes. It can be converted
+	 * to bytes by multiplying it with the sample size and the number of channels. For
+	 * example, for 16-bit stereo output it should be multiplied by 4.
+	 *
 	 * @return The number of samples processed at each audio callback.
 	 */
 	virtual uint getOutputBufSize() const = 0;
