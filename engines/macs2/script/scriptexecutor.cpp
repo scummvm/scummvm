@@ -459,6 +459,15 @@ l0037_A10C:
 	mov	[bp-4h],ax
 	mov	[bp-2h],dx
 	jmp	0A32Ch
+	*/
+else if (value == 0x0d) {
+	// TODO: Confirm this one
+	out1 = chosenDialogueOption;
+	out2 = 0;
+	debug("- 9F4D results: %.4x %.4x", out1, out2);
+	return;
+}
+	/*
 
 l0037_A120:
 	cmp	ax,0Eh
@@ -1366,16 +1375,16 @@ void Script::ScriptExecutor::ExecuteScript() {
 				currentView->inventoryItems.push_back(GameObjects::instance().Objects[objectID - 1]);
 			} else if (sceneID == 0) {
 				// Check if it is in the inventory
-				int index = 0;
+				int currentIndex = 0;
 				int foundIndex = -1;
 				for (auto currentItem : currentView->inventoryItems) {
 					if (currentItem->Index == objectID) {
-						foundIndex = index;
+						foundIndex = currentIndex;
 						break;
 					}
-					index++;
+					currentIndex++;
 				}
-				if (foundIndex != 0) {
+				if (foundIndex > 0) {
 					currentView->inventoryItems.remove_at(foundIndex);
 				}
 			}

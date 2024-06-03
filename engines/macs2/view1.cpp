@@ -59,7 +59,8 @@ View1::View1() : UIElement("View1") {
 	AnimFrame *View1::GetInventoryIcon(GameObject *gameObject) {
 		AnimFrame *result = new AnimFrame();
 		int index = 5 - 1;
-		if (gameObject->Index == 0x23 || gameObject->Index == 0x22) {
+		if (is_in_list<uint16, 0x11, 0x22, 0x23>(gameObject->Index)) {
+			// gameObject->Index == 0x23 || gameObject->Index == 0x22) {
 			// TODO Figure out these - the mug has a different blob
 			index = 0x13;
 		}
@@ -737,7 +738,9 @@ void View1::ShowDialogueChoice(const Common::Array<Common::StringArray> &choices
 }
 
 void View1::TriggerDialogueChoice(uint8 index) {
+	// TODO: Confirm that these two are really set accordingly
 	g_engine->_scriptExecutor->SetVariableValue(0x0d, index, 0);
+	g_engine->_scriptExecutor->chosenDialogueOption = index;
 	// TODO: Not sure about the first run variable here
 	g_engine->RunScriptExecutor();
 }

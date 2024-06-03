@@ -59,6 +59,8 @@ class Macs2Engine;
 
 			private:
 
+			
+
 			bool isTimerActive = false;
 			uint32 timerEndMillis;
 
@@ -129,6 +131,9 @@ class Macs2Engine;
 			
 
 			public:
+
+			// Scene data [di+53B7h] - TODO: Confirm that we use a script variable as well as this thing
+			int chosenDialogueOption = 0;
 
 			// TODO: Identify number of variables and default values
 			Common::Array<ScriptVariable> _variables;
