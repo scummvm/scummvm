@@ -581,7 +581,7 @@ void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
 	case kInkTypeNotGhost:
 		return;
 	case kInkTypeReverse:
-		ms->foreColor = 0;
+		ms->foreColor = 255;
 		ms->backColor = 0;
 		break;
 	default:
