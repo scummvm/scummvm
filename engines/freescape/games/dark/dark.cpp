@@ -623,6 +623,17 @@ void DarkEngine::borderScreen() {
 void DarkEngine::executePrint(FCLInstruction &instruction) {
 	uint16 index = instruction._source - 1;
 	debugC(1, kFreescapeDebugCode, "Printing message %d", index);
+
+	if (index == 239 && (isAmiga() || isAtariST())) {
+		// Total Eclipse easter egg in Dark Side (Amiga/Atari)
+		Common::String message;
+		for (int i = 60; i < 66; i++)
+			message += _messagesList[i];
+
+		drawFullscreenMessageAndWait(message);
+		return;
+	}
+
 	if (index > 127) {
 		index = _messagesList.size() - (index - 254) - 2;
 		drawFullscreenMessageAndWait(_messagesList[index]);
