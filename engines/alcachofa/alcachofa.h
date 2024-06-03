@@ -37,6 +37,7 @@
 #include "alcachofa/detection.h"
 #include "alcachofa/camera.h"
 #include "alcachofa/input.h"
+#include "alcachofa/sounds.h"
 #include "alcachofa/player.h"
 #include "alcachofa/scheduler.h"
 #include "alcachofa/console.h"
@@ -64,6 +65,7 @@ public:
 	inline DrawQueue &drawQueue() { return *_drawQueue; }
 	inline Camera &camera() { return _camera; }
 	inline Input &input() { return _input; }
+	inline Sounds &sounds() { return _sounds; }
 	inline Player &player() { return *_player; }
 	inline World &world() { return *_world; }
 	inline Script &script() { return *_script; }
@@ -122,6 +124,7 @@ private:
 	Common::ScopedPtr<Player> _player;
 	Camera _camera;
 	Input _input;
+	Sounds _sounds;
 	Scheduler _scheduler;
 };
 

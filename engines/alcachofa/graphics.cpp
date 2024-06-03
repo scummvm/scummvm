@@ -606,14 +606,14 @@ void SpecialEffectDrawRequest::draw() {
 	_animation->drawEffect(_frameI, _topLeft, _tiling, _texOffset, _blendMode);
 }
 
-static const byte *trimLeading(const byte *text) {
-	while (*text && *text <= ' ')
+static const byte *trimLeading(const byte *text, const byte *end) {
+	while (*text && text < end && *text <= ' ')
 		text++;
 	return text;
 }
 
-static const byte *trimTrailing(const byte *text, const byte *begin) {
-	while (text != begin && *text <= ' ')
+static const byte *trimTrailing(const byte *text, const byte *begin, bool trimSpaces) {
+	while (text != begin && (*text <= ' ') == trimSpaces)
 		text--;
 	return text;
 }
@@ -643,7 +643,7 @@ TextDrawRequest::TextDrawRequest(Font &font, const char *originalText, Point pos
 
 	// split into trimmed lines
 	uint lineCount = 0;
-	const byte *itChar = (byte*)text, *itLine = (byte*)text;
+	const byte *itChar = (byte *)text, *itLine = (byte *)text, *textEnd = itChar + textLen + 1;
 	int lineWidth = 0;
 	while (true) {
 		if (lineCount >= kMaxLines)
@@ -658,14 +658,17 @@ TextDrawRequest::TextDrawRequest(Font &font, const char *originalText, Point pos
 		// now we are in new-line territory
 
 		if (centered) {
-			auto itLineEnd = trimTrailing(itChar, itLine);
-			itLine = trimLeading(itLine);
-			_allLines[lineCount] = TextLine(itLine, itLineEnd - itLine + 1);
-			itChar = trimLeading(itChar);
+			if (*itChar > ' ')
+				itChar = trimTrailing(itChar, itLine, false); // trim last word
+			itChar = trimTrailing(itChar, itLine, true) + 1;
+			itLine = trimLeading(itLine, itChar);
+			_allLines[lineCount] = TextLine(itLine, itChar - itLine);
+			itChar = trimLeading(itChar, textEnd);
 		}
 		else
 			_allLines[lineCount] = TextLine(itLine, itChar - itLine);
 		lineCount++;
+		lineWidth = 0;
 		itLine = itChar;
 
 		if (!*itChar)

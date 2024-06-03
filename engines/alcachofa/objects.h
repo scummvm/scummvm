@@ -388,7 +388,10 @@ public:
 	virtual void trigger(const char *action) override;
 	virtual const char *typeName() const;
 
+	Task *sayText(Process &process, int32 dialogId);
+
 protected:
+	friend struct SayTextTask;
 	void syncObjectAsString(Common::Serializer &serializer, ObjectBase *&object);
 	void updateTalkingAnimation();
 

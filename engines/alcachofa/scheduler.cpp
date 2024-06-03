@@ -88,6 +88,10 @@ Process::~Process() {
 		delete _tasks.pop();
 }
 
+bool Process::isActiveForPlayer() const {
+	return _character == MainCharacterKind::None || _character == g_engine->player().activeCharacterKind();
+}
+
 TaskReturnType Process::run() {
 	while (!_tasks.empty()) {
 		TaskReturn ret = _tasks.top()->run();
