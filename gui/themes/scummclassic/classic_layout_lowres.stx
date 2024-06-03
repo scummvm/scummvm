@@ -39,7 +39,7 @@
 		<def var = 'ShowChooserPics' value = '0'/>
 		<def var = 'ShowChooserPageDisplay' value = '0'/>
 
-		<def var = 'Launcher.HelpButton.Width' value = '48'  scalable = 'yes'/> <!-- Button.Width * 3 -->
+		<def var = 'Launcher.HelpButton.Width' value = '16'  scalable = 'yes'/> <!-- Button.Width -->
 
 		<def var = 'SaveLoadChooser.ExtInfo.Visible' value = '0'/>
 		<def var = 'RecorderDialog.ExtInfo.Visible' value = '0'/>
