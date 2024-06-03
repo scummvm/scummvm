@@ -37,6 +37,12 @@ struct ECD {
 	int _id;
 };
 
+enum DarkFontSize {
+	kDarkFontSmall,
+	kDarkFontMedium,
+	kDarkFontBig,
+};
+
 class DarkEngine : public FreescapeEngine {
 public:
 	DarkEngine(OSystem *syst, const ADGameDescription *gd);
@@ -91,10 +97,7 @@ public:
 	Common::BitArray _fontMedium;
 	Common::BitArray _fontSmall;
 
-	void drawStringMediumInSurface(const Common::String &str, int x, int y, uint32 primaryColor, uint32 secondaryColor, uint32 backColor, Graphics::Surface *surface, int offset = 0);
-	void drawStringSmallInSurface(const Common::String &str, int x, int y, uint32 primaryColor, uint32 secondaryColor, uint32 backColor, Graphics::Surface *surface, int offset = 0);
-	void drawStringBigInSurface(const Common::String &str, int x, int y, uint32 primaryColor, uint32 secondaryColor, uint32 backColor, Graphics::Surface *surface, int offset = 0);
-
+	void drawString(const DarkFontSize size, const Common::String &str, int x, int y, uint32 primaryColor, uint32 secondaryColor, uint32 backColor, Graphics::Surface *surface);
 	void drawInfoMenu() override;
 
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;

@@ -156,25 +156,25 @@ void DarkEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 
 	int score = _gameStateVars[k8bitVariableScore];
 	int ecds = _gameStateVars[kVariableActiveECDs];
-	drawStringSmallInSurface(Common::String::format("%04d", int(2 * _position.x())), 18, 178, red, red, black, surface);
-	drawStringSmallInSurface(Common::String::format("%04d", int(2 * _position.z())), 18, 184, red, red, black, surface);
-	drawStringSmallInSurface(Common::String::format("%04d", int(2 * _position.y())), 18, 190, red, red, black, surface);
+	drawString(kDarkFontSmall, Common::String::format("%04d", int(2 * _position.x())), 18, 178, red, red, black, surface);
+	drawString(kDarkFontSmall, Common::String::format("%04d", int(2 * _position.z())), 18, 184, red, red, black, surface);
+	drawString(kDarkFontSmall, Common::String::format("%04d", int(2 * _position.y())), 18, 190, red, red, black, surface);
 
-	drawStringBigInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 73, 178, red, red, black, surface);
-	drawStringBigInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 73, 186, red, red, black, surface);
-	drawStringBigInSurface(Common::String::format("%07d", score), 93, 16, yellow, orange, black, surface);
-	drawStringBigInSurface(Common::String::format("%3d%%", ecds), 181, 16, yellow, orange, black, surface);
+	drawString(kDarkFontBig, Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 73, 178, red, red, black, surface);
+	drawString(kDarkFontBig, Common::String::format("%3d", _playerSteps[_playerStepIndex]), 73, 186, red, red, black, surface);
+	drawString(kDarkFontBig, Common::String::format("%07d", score), 93, 16, yellow, orange, black, surface);
+	drawString(kDarkFontBig, Common::String::format("%3d%%", ecds), 181, 16, yellow, orange, black, surface);
 
 	Common::String message;
 	int deadline;
 	getLatestMessages(message, deadline);
 	if (deadline <= _countdown) {
-		drawStringSmallInSurface(message, 32, 156, white, white, transparent, surface);
+		drawString(kDarkFontSmall, message, 32, 156, white, white, transparent, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
 	}
 
-	drawStringSmallInSurface(centerAndPadString(_currentArea->_name, 26), 32, 150, white, white, transparent, surface);
+	drawString(kDarkFontSmall, centerAndPadString(_currentArea->_name, 26), 32, 150, white, white, transparent, surface);
 	drawBinaryClock(surface, 6, 110, white, grey);
 }
 
@@ -182,87 +182,63 @@ void DarkEngine::initAmigaAtari() {
 	_viewArea = Common::Rect(32, 33, 287, 130);
 }
 
-void DarkEngine::drawStringMediumInSurface(const Common::String &str, int x, int y, uint32 primaryColor, uint32 secondaryColor, uint32 backColor, Graphics::Surface *surface, int offset) {
+void DarkEngine::drawString(const DarkFontSize size, const Common::String &str, int x, int y, uint32 primaryColor, uint32 secondaryColor, uint32 backColor, Graphics::Surface *surface) {
 	if (!_fontLoaded)
 		return;
-
-	_font = _fontMedium;
-
 	Common::String ustr = str;
 	ustr.toUppercase();
 
-	int multiplier1 = 10;
+	int multiplier1 = 0;
+	int multiplier2 = 0;
+	int sizeX = 0;
+	int sizeY = 0;
+	int sep = 0;
 
-	for (uint32 c = 0; c < ustr.size(); c++) {
-		assert(ustr[c] >= 32);
-		int position = 8 * (multiplier1*(offset + ustr[c] - 32) + 1);
-		for (int j = 0; j < 8; j++) {
-			for (int i = 0; i < 8; i++) {
-				/*if (_font.get(position + j * multiplier2 + i + 8)) {
-					surface->setPixel(x + 8 - i + 8 * c, y + j, secondaryColor);
-				} else*/ if (_font.get(position + j * 8 + i + 8)) {
-					surface->setPixel(x + 8 - i + 8 * c, y + j, primaryColor);
-				} else {
-					surface->setPixel(x + 8 - i + 8 * c, y + j, backColor);
-				}
-			}
-		}
+	switch (size) {
+		case kDarkFontBig:
+			multiplier1 = 16;
+			multiplier2 = 16;
+			sizeY = 8;
+			sizeX = 8;
+			sep = 8;
+			_font = _fontBig;
+		break;
+		case kDarkFontMedium:
+			multiplier1 = 10;
+			multiplier2 = 8;
+			sizeY = 8;
+			sizeX = 8;
+			sep = 8;
+			_font = _fontMedium;
+		break;
+		case kDarkFontSmall:
+			multiplier1 = 10;
+			multiplier2 = 16;
+			sizeY = 5;
+			sizeX = 8;
+			sep = 4;
+			_font = _fontSmall;
+		break;
+		default:
+			error("Invalid font size %d", size);
+		break;
 	}
-}
-
-void DarkEngine::drawStringSmallInSurface(const Common::String &str, int x, int y, uint32 primaryColor, uint32 secondaryColor, uint32 backColor, Graphics::Surface *surface, int offset) {
-	if (!_fontLoaded)
-		return;
-
-	Common::String ustr = str;
-	ustr.toUppercase();
-
-	int multiplier1 = 10;
-	int multiplier2 = 16;
 
 	for (uint32 c = 0; c < ustr.size(); c++) {
 		assert(ustr[c] >= 32);
-		int position = 8 * (multiplier1*(offset + ustr[c] - 32));
-
-		for (int j = 0; j < 5; j++) {
-			for (int i = 0; i < 8; i++) {
-				if (_fontSmall.get(position + j * multiplier2 + i)) {
-					surface->setPixel(x + 8 - i + 4 * c, y + j, primaryColor);
+		int position = 8 * (multiplier1*(ustr[c] - 32));
+		for (int j = 0; j < sizeY; j++) {
+			for (int i = 0; i < sizeX; i++) {
+				if (_font.get(position + j * multiplier2 + i)) {
+					surface->setPixel(x + 8 - i + sep * c, y + j, primaryColor);
 				} /*else if (_font.get(position + j * multiplier2 + i)) {
 					surface->setPixel(x + 8 - i + 8 * c, y + j, primaryColor);
 				}*/ else {
-					surface->setPixel(x + 8 - i + 4 * c, y + j, backColor);
+					surface->setPixel(x + 8 - i + sep * c, y + j, backColor);
 				}
 			}
 		}
 	}
 }
-
-void DarkEngine::drawStringBigInSurface(const Common::String &str, int x, int y, uint32 primaryColor, uint32 secondaryColor, uint32 backColor, Graphics::Surface *surface, int offset) {
-	if (!_fontLoaded)
-		return;
-	Common::String ustr = str;
-	ustr.toUppercase();
-
-	int multiplier1 = 16;
-	int multiplier2 = 16;
-
-	for (uint32 c = 0; c < ustr.size(); c++) {
-		assert(ustr[c] >= 32);
-		int position = 8 * (multiplier1*(offset + ustr[c] - 32) + 1);
-		for (int j = 0; j < 8; j++) {
-			for (int i = 0; i < 8; i++) {
-				if (_fontBig.get(position + j * multiplier2 + i + 8)) {
-					surface->setPixel(x + 8 - i + 8 * c, y + j, secondaryColor);
-				} /*else if (_font.get(position + j * multiplier2 + i)) {
-					surface->setPixel(x + 8 - i + 8 * c, y + j, primaryColor);
-				}*/ else {
-					surface->setPixel(x + 8 - i + 8 * c, y + j, backColor);
-				}
-			}
-		}
-	}
-}
-
 
 } // End of namespace Freescape
