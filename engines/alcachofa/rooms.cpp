@@ -22,7 +22,6 @@
 #include "alcachofa.h"
 #include "rooms.h"
 #include "script.h"
-#include "stream-helper.h"
 
 #include "common/file.h"
 

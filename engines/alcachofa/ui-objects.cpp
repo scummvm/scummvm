@@ -21,7 +21,6 @@
 
 #include "objects.h"
 #include "rooms.h"
-#include "stream-helper.h"
 
 using namespace Common;
 
