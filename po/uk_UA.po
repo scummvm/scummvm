@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-01 10:44+0000\n"
-"PO-Revision-Date: 2024-05-18 10:44+0000\n"
+"PO-Revision-Date: 2024-06-04 21:17+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -5457,16 +5457,12 @@ msgid "(check '? > Libretro playlist' for detailed info)"
 msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:48
-#, fuzzy
-#| msgid "Plugins Path:"
 msgid "Playlists Path"
-msgstr "Шлях до втулків:"
+msgstr "Шлях до списків"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:49
-#, fuzzy
-#| msgid "Specifies where your saved games are put"
 msgid "Specifies where your playlist will be saved."
-msgstr "Вказує шлях до збережених ігор"
+msgstr "Вказує шлях де будуть збережені ваші списки до програвання."
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:52
 #, fuzzy
@@ -5475,10 +5471,8 @@ msgid "Playlist format:"
 msgstr "Платформа:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:57
-#, fuzzy
-#| msgid "Goto location"
 msgid "Hooks location:"
-msgstr "Перейти у локацію"
+msgstr "Локація для гуків:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:59
 #, fuzzy
@@ -5499,16 +5493,12 @@ msgid "Generate playlist"
 msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:66
-#, fuzzy
-#| msgid "Status:"
 msgid "Status: "
-msgstr "Стан:"
+msgstr "Стан: "
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:148
-#, fuzzy
-#| msgid "Failed to save game to file."
 msgid "Failed, can't access playlist file"
-msgstr "Не вдалося зберегти гру у файл."
+msgstr "Не вдалося отримати доступ до файлу списку"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:224
 #, fuzzy
@@ -5517,10 +5507,8 @@ msgid "cleaning failed"
 msgstr "Помилка читання"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:226
-#, fuzzy
-#| msgid "Failed to read the file!"
 msgid "Failed, can't create hook files"
-msgstr "Не вдалося прочитати файл!"
+msgstr "Не вдалося створити файли з гуками"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:236
 #, fuzzy
@@ -10531,10 +10519,8 @@ msgstr ""
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:112
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:124
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:136
-#, fuzzy
-#| msgid "Random seed:"
 msgid "Random"
-msgstr "Випадкове початкове значення:"
+msgstr "Випадковий"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:67
 msgid "Picks the map algorithm randomly."
