@@ -24,6 +24,9 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/serializer.h"
+#include "common/stream.h"
+#include "common/stack.h"
 #include "math/vector2d.h"
 #include "math/vector3d.h"
 
@@ -72,10 +75,8 @@ static constexpr const Color kDebugBlue = { 0, 0, 255, 110 };
  * It is used as a safer option for a simple "isBusy" counter
  */
 struct FakeSemaphore {
-	FakeSemaphore(uint initialCount = 0) : _counter(initialCount) {}
-	~FakeSemaphore() {
-		assert(_counter == 0);
-	}
+	FakeSemaphore(uint initialCount = 0);
+	~FakeSemaphore();
 
 	inline bool isReleased() const { return _counter == 0; }
 	inline uint counter() const { return _counter; }
@@ -85,45 +86,57 @@ private:
 };
 
 struct FakeLock {
-	FakeLock() : _semaphore(nullptr) {}
-
-	FakeLock(FakeSemaphore &semaphore) : _semaphore(&semaphore) {
-		_semaphore->_counter++;
-	}
-
-	FakeLock(const FakeLock &other) : _semaphore(other._semaphore) {
-		assert(_semaphore != nullptr);
-		_semaphore->_counter++;
-	}
-
-	FakeLock(FakeLock &&other) noexcept : _semaphore(other._semaphore) {
-		other._semaphore = nullptr;
-	}
-
-	~FakeLock() {
-		if (_semaphore == nullptr)
-			return;
-		assert(_semaphore->_counter > 0);
-		_semaphore->_counter--;
-	}
+	FakeLock();
+	FakeLock(FakeSemaphore &semaphore);
+	FakeLock(const FakeLock &other);
+	FakeLock(FakeLock &&other) noexcept;
+	~FakeLock();
 private:
 	FakeSemaphore *_semaphore;
 };
 
-inline Math::Vector3d as3D(const Math::Vector2d &v) {
-	return Math::Vector3d(v.getX(), v.getY(), 0.0f);
+Math::Vector3d as3D(const Math::Vector2d &v);
+Math::Vector3d as3D(const Common::Point &p);
+Math::Vector2d as2D(const Math::Vector3d &v);
+Math::Vector2d as2D(const Common::Point &p);
+
+bool readBool(Common::ReadStream &stream);
+Common::Point readPoint(Common::ReadStream &stream);
+Common::String readVarString(Common::ReadStream &stream);
+void skipVarString(Common::SeekableReadStream &stream);
+void syncPoint(Common::Serializer &serializer, Common::Point &point);
+
+template<typename T>
+inline void syncArray(Common::Serializer &serializer, Common::Array<T> &array, void (*serializeFunction)(Common::Serializer &, T &)) {
+	auto size = array.size();
+	serializer.syncAsUint32LE(size);
+	array.resize(size);
+	serializer.syncArray(array.data(), size, serializeFunction);
 }
 
-inline Math::Vector3d as3D(const Common::Point &p) {
-	return Math::Vector3d((float)p.x, (float)p.y, 0.0f);
+template<typename T>
+inline void syncStack(Common::Serializer &serializer, Common::Stack<T> &stack, void (*serializeFunction)(Common::Serializer &, T &)) {
+	auto size = stack.size();
+	serializer.syncAsUint32LE(size);
+	if (serializer.isLoading()) {
+		for (uint i = 0; i < size; i++) {
+			T value;
+			serializeFunction(serializer, value);
+			stack.push(value);
+		}
+	}
+	else {
+		for (uint i = 0; i < size; i++)
+			serializeFunction(serializer, stack[i]);
+	}
 }
 
-inline Math::Vector2d as2D(const Math::Vector3d &v) {
-	return Math::Vector2d(v.x(), v.y());
-}
-
-inline Math::Vector2d as2D(const Common::Point &p) {
-	return Math::Vector2d((float)p.x, (float)p.y);
+template<typename T>
+inline void syncEnum(Common::Serializer &serializer, T &enumValue) {
+	// syncAs does not have a cast for saving
+	int32 intValue = static_cast<int32>(enumValue);
+	serializer.syncAsSint32LE(intValue);
+	enumValue = static_cast<T>(intValue);
 }
 
 }

@@ -20,7 +20,6 @@
  */
 
 #include "shape.h"
-#include "stream-helper.h"
 
 using namespace Common;
 using namespace Math;

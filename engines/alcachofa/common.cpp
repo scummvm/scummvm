@@ -19,13 +19,56 @@
  *
  */
 
-#include "stream-helper.h"
-
-#include "common/textconsole.h"
+#include "common.h"
 
 using namespace Common;
+using namespace Math;
 
 namespace Alcachofa {
+
+FakeSemaphore::FakeSemaphore(uint initialCount) : _counter(initialCount) {}
+
+FakeSemaphore::~FakeSemaphore() {
+	assert(_counter == 0);
+}
+
+FakeLock::FakeLock() : _semaphore(nullptr) {}
+
+FakeLock::FakeLock(FakeSemaphore &semaphore) : _semaphore(&semaphore) {
+	_semaphore->_counter++;
+}
+
+FakeLock::FakeLock(const FakeLock &other) : _semaphore(other._semaphore) {
+	assert(_semaphore != nullptr);
+	_semaphore->_counter++;
+}
+
+FakeLock::FakeLock(FakeLock &&other) noexcept : _semaphore(other._semaphore) {
+	other._semaphore = nullptr;
+}
+
+FakeLock::~FakeLock() {
+	if (_semaphore == nullptr)
+		return;
+	assert(_semaphore->_counter > 0);
+	_semaphore->_counter--;
+}
+
+Vector3d as3D(const Vector2d &v) {
+	return Vector3d(v.getX(), v.getY(), 0.0f);
+}
+
+Vector3d as3D(const Common::Point &p) {
+	return Vector3d((float)p.x, (float)p.y, 0.0f);
+}
+
+Vector2d as2D(const Vector3d &v) {
+	return Vector2d(v.x(), v.y());
+}
+
+Vector2d as2D(const Point &p) {
+	return Vector2d((float)p.x, (float)p.y);
+}
 
 bool readBool(ReadStream &stream) {
 	return stream.readByte() != 0;
