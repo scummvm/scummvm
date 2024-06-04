@@ -132,8 +132,6 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 		if (script_name.empty()) return 0;
 	}
 
-	app_io::set_current_directory(script_name.c_str());
-
 	grDispatcher::sys_init();
 	gdi_grD = new GDI_grDispatcher;
 	dd_grD = new DDraw_grDispatcher;
