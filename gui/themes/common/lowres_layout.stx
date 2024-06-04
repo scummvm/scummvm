@@ -504,7 +504,7 @@
 	</dialog>
 
 	<dialog name = 'GlobalOptions_Control' overlays = 'Dialog.GlobalOptions.TabWidget'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '6'>
 			<widget name = 'grTouchpadCheckbox'
 					type = 'Checkbox'
 			/>
@@ -571,7 +571,7 @@
 		</layout>
 	</dialog>
 	<dialog name = 'GlobalOptions_Graphics_Container' overlays = 'GlobalOptions_Graphics.Container'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '6'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' align = 'center'>
 				<widget name = 'grModePopupDesc'
 						type = 'OptionsLabel'
@@ -654,7 +654,7 @@
 	</dialog>
 
 	<dialog name = 'GlobalOptions_Audio' overlays = 'Dialog.GlobalOptions.TabWidget'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '6'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' align = 'center'>
 				<widget name = 'auMidiPopupDesc'
 						type = 'OptionsLabel'
@@ -701,7 +701,7 @@
 	</dialog>
 
 	<dialog name = 'GlobalOptions_Volume' overlays = 'Dialog.GlobalOptions.TabWidget'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '6'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 				<widget name = 'vcMusicText'
 						type = 'OptionsLabel'
@@ -748,7 +748,7 @@
 	</dialog>
 
 	<dialog name = 'GlobalOptions_MIDI' overlays = 'Dialog.GlobalOptions.TabWidget'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '7'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '6'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' align = 'center'>
 				<widget name = 'auPrefGmPopupDesc'
 						type = 'OptionsLabel'
@@ -793,7 +793,7 @@
 	</dialog>
 
 	<dialog name = 'GlobalOptions_MT32' overlays = 'Dialog.GlobalOptions.TabWidget'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '6'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' align = 'center'>
 				<widget name = 'auPrefMt32PopupDesc'
 						type = 'OptionsLabel'
@@ -820,7 +820,7 @@
 	</dialog>
 
 	<dialog name = 'GlobalOptions_Paths_Container' overlays = 'GlobalOptions_Paths.Container'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '6'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16' align = 'center'>
 				<widget name = 'SaveButton'
 						type = 'Button'
@@ -921,7 +921,7 @@
 	</dialog>
 
 	<dialog name = 'GlobalOptions_GUI_Container' overlays = 'GlobalOptions_GUI.Container'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '6'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16' align = 'center'>
 				<widget name = 'ThemeButton'
 						type = 'Button'
@@ -998,7 +998,7 @@
 	</dialog>
 
 	<dialog name = 'GlobalOptions_Misc_Container' overlays = 'GlobalOptions_Misc.Container'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '6'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' align = 'center'>
 				<widget name = 'AutosavePeriodPopupDesc'
 						width = '80'
@@ -1062,7 +1062,7 @@
 	</dialog>
 
 	<dialog name = 'GlobalOptions_Cloud_Container' overlays = 'GlobalOptions_Cloud.Container'>
-		<layout type = 'vertical' padding = '10, 13, 10, 10' spacing = '8'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '6'>
 			<layout type = 'horizontal' padding = '-7, 1, 0, 0' spacing = '6'>
 				<layout type = 'vertical' padding = '0, 0, 1, 0' spacing = '1'>
 					<widget name = 'StoragePopupDesc'
@@ -1161,7 +1161,7 @@
 	</dialog>
 
 	<dialog name = 'GlobalOptions_Network' overlays = 'Dialog.GlobalOptions.TabWidget'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '6'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' align = 'center'>
 				<widget name = 'RunServerButton'
 						type = 'Button'
@@ -1209,7 +1209,7 @@
 	</dialog>
 
 	<dialog name = 'GlobalOptions_DownloadPacksDialog' overlays = 'Dialog.GlobalOptions' shading = 'dim'>
-		<layout type = 'vertical' padding = '8, 8, 8, 4' spacing = '8'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '6'>
 			<widget name = 'StatusText'
 					height = 'Globals.Line.Height'
 			/>
@@ -1247,7 +1247,7 @@
 	</dialog>
 
 	<dialog name = 'GlobalOptions_Cloud_DownloadDialog' overlays = 'Dialog.GlobalOptions' shading = 'dim'>
-		<layout type = 'vertical' padding = '8, 8, 8, 4' spacing = '8'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '8'>
 			<widget name = 'RemoteDirectory'
 					height = 'Globals.Line.Height'
 			/>
@@ -1282,7 +1282,7 @@
 	</dialog>
 
 	<dialog name = 'GlobalOptions_Cloud_ConnectionWizard' overlays = 'Dialog.GlobalOptions' shading = 'dim'>
-		<layout type = 'vertical' padding = '8, 8, 8, 4' spacing = '0'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '0'>
 			<widget name = 'Headline'
 					height = 'Globals.Line.Height'
 			/>
@@ -1460,7 +1460,7 @@
 	</dialog>
 
 	<dialog name='GlobalOptions_Accessibility' overlays='Dialog.GlobalOptions.TabWidget'>
-		<layout type='vertical' padding='16,16,16,16' spacing='16'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '6'>
 			<widget name='TTSCheckbox'
 				type='Checkbox'
 			/>
