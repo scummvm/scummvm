@@ -298,10 +298,14 @@ ConfigDialog::ConfigDialog() :
 	// The game specific options tab
 	//
 
-	int tabId = tab->addTab(_("Game"), "GlobalConfig_Engine");
+	int tabId = tab->addTab(_("Game"), "GlobalConfig_Engine", false);
 
 	if (g_engine->hasFeature(Engine::kSupportsChangingOptionsDuringRuntime)) {
-		_engineOptions = metaEngine->buildEngineOptionsWidget(tab, "GlobalConfig_Engine.Container", gameDomain);
+		ScrollContainerWidget *engineContainer = new ScrollContainerWidget(tab, "GlobalConfig_Engine.Container", "GlobalConfig_Engine_Container");
+		engineContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
+		engineContainer->setTarget(this);
+
+		_engineOptions = metaEngine->buildEngineOptionsWidget(engineContainer, "GlobalConfig_Engine_Container.Container", gameDomain);
 	}
 
 	if (_engineOptions) {

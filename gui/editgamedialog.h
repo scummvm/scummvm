@@ -67,6 +67,8 @@ public:
 protected:
 	void setupGraphicsTab() override;
 
+	void addGameControls(GuiObject *boss, const Common::String &prefix, const Common::String &description);
+
 	EditTextWidget *_descriptionWidget;
 	DomainEditTextWidget *_domainWidget;
 
@@ -88,6 +90,7 @@ protected:
 	CheckboxWidget *_globalMT32Override;
 	CheckboxWidget *_globalVolumeOverride;
 
+	ScrollContainerWidget *_gameContainer;
 	OptionsContainerWidget *_engineOptions;
 };
 
