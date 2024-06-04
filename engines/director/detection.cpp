@@ -77,6 +77,8 @@ static const DebugChannelDef debugFlagList[] = {
 	{Director::kDebugXObj, "xobj", "XObjects"},
 	{Director::kDebugLingoThe, "lingothe", "Lingo \"the\" entities"},
 	{Director::kDebugImGui, "imgui", "Show ImGui debug window (if available)"},
+	{Director::kDebugPaused, "paused", "Pause first movie right after start"},
+	{Director::kDebugPauseOnLoad, "pauseonload", "Pause every movie right after loading"},
 	DEBUG_CHANNEL_END
 };
 

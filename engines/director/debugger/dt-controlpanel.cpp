@@ -189,12 +189,14 @@ void showControlPanel() {
 				g_lingo->_exec._state = kPause;
 				g_lingo->_exec._shouldPause = nullptr;
 				_state->_dbg._isScriptDirty = true;
+
+				g_system->displayMessageOnOSD(Common::U32String("Paused"));
 			}
 
 			if (ImGui::IsItemHovered())
 				dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
 
-			ImU32 stopColor = (score->_playState == kPlayPaused) ? active_color : color;
+			ImU32 stopColor = (score->_playState == kPlayPaused || score->_playState == kPlayPausedAfterLoading) ? active_color : color;
 			dl->AddRectFilled(ImVec2(p.x, p.y), ImVec2(p.x + 16, p.y + 16), stopColor);
 
 			ImGui::SetItemTooltip("Stop");
@@ -227,7 +229,11 @@ void showControlPanel() {
 			ImGui::InvisibleButton("Play", buttonSize);
 
 			if (ImGui::IsItemClicked(0)) {
-				score->_playState = kPlayStarted;
+				if (score->_playState == kPlayPausedAfterLoading)
+					score->_playState = kPlayLoaded;
+				else
+					score->_playState = kPlayStarted;
+
 				g_lingo->_exec._state = kRunning;
 				g_lingo->_exec._shouldPause = nullptr;
 			}

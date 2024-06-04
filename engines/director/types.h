@@ -328,9 +328,11 @@ enum DirectorCursor {
 
 enum PlayState {
 	kPlayNotStarted,
+	kPlayLoaded,
 	kPlayStarted,
 	kPlayStopped,
 	kPlayPaused,
+	kPlayPausedAfterLoading,
 };
 
 enum SymbolType {
