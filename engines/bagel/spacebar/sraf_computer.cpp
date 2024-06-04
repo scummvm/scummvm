@@ -2803,13 +2803,10 @@ void SrafComputer::onListDispatchTeam() {
 			nListToCheck = kSellersList;            // List to check
 			nPreceedingHeaders = 0;                 // No headers above this guy
 
-			switch (nElementIndex) {
-			case -1:
+			if (nElementIndex == -1) {
 				bDeleteAll = true;
 				nrecalcVal = 0;         // Collapse list
-				break;
-
-			default:
+			} else {
 				nElementIndex -= nPreceedingHeaders;    // Account for headers
 
 				// Account for those guys out on meetings that we have not displayed
@@ -3381,7 +3378,6 @@ bool SrafComputer::reportMeetingStatus(int nTeamNumber) {
 				} else {
 					pszFailureFile = kGSM5SraFemStr;
 				}
-				break;
 			}
 
 			case RAWLEY23:
