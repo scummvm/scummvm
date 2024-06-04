@@ -124,7 +124,7 @@ enum {
 };
 
 AndroidOptionsWidget::AndroidOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
-		OptionsContainerWidget(boss, name, "AndroidOptionsDialog", false, domain), _enabled(true) {
+		OptionsContainerWidget(boss, name, "AndroidOptionsDialog", domain), _enabled(true) {
 
 	const bool inAppDomain = domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);;
 

@@ -222,7 +222,7 @@ private:
 class ScummOptionsContainerWidget : public GUI::OptionsContainerWidget {
 public:
 	ScummOptionsContainerWidget(GuiObject *boss, const Common::String &name, const Common::String &dialogLayout, const Common::String &domain) :
-		OptionsContainerWidget(boss, name, dialogLayout, false, domain) {
+		OptionsContainerWidget(boss, name, dialogLayout, domain) {
 	}
 
 	enum {

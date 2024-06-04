@@ -55,7 +55,7 @@ private:
 };
 
 AGSOptionsWidget::AGSOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
-	OptionsContainerWidget(boss, name, "AGSGameOptionsDialog", false, domain) {
+	OptionsContainerWidget(boss, name, "AGSGameOptionsDialog", domain) {
 
 	// Language
 	GUI::StaticTextWidget *textWidget = new GUI::StaticTextWidget(widgetsBoss(), _dialogLayout + ".translation_desc", _("Game language:"), _("Language to use for multilingual games"));

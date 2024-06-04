@@ -41,7 +41,7 @@ enum {
 };
 
 LibretroOptionsWidget::LibretroOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
-	OptionsContainerWidget(boss, name, "LibretroOptionsDialog", false, domain) {
+	OptionsContainerWidget(boss, name, "LibretroOptionsDialog", domain) {
 
 	new GUI::StaticTextWidget(widgetsBoss(), "LibretroOptionsDialog.PlaylistHeader", _("LIBRETRO PLAYLIST GENERATOR"));
 	new GUI::StaticTextWidget(widgetsBoss(), "LibretroOptionsDialog.PlaylistSubheader", _("(check '? > Libretro playlist' for detailed info)"));

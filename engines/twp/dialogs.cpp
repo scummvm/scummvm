@@ -28,7 +28,7 @@
 
 namespace Twp {
 
-TwpOptionsContainerWidget::TwpOptionsContainerWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) : OptionsContainerWidget(boss, name, "TwpGameOptionsDialog", false, domain) {
+TwpOptionsContainerWidget::TwpOptionsContainerWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) : OptionsContainerWidget(boss, name, "TwpGameOptionsDialog", domain) {
 	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "TwpGameOptionsDialog.VideoLabel", _("Video:"));
 	text->setAlign(Graphics::TextAlign::kTextAlignStart);
 

@@ -44,7 +44,7 @@ enum {
 };
 
 RemapWidget::RemapWidget(GuiObject *boss, const Common::String &name, const KeymapArray &keymaps) :
-		OptionsContainerWidget(boss, name, "", false, ""),
+		OptionsContainerWidget(boss, name, "", ""),
 		_keymapTable(keymaps),
 		_remapKeymap(nullptr),
 		_remapAction(nullptr),

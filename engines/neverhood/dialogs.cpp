@@ -35,7 +35,7 @@
 namespace Neverhood {
 
 NeverhoodOptionsWidget::NeverhoodOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
-		OptionsContainerWidget(boss, name, "NeverhoodGameOptionsDialog", false, domain),
+		OptionsContainerWidget(boss, name, "NeverhoodGameOptionsDialog", domain),
 		_originalSaveLoadCheckbox(nullptr),
 		_skipHallOfRecordsCheckbox(nullptr),
 		_scaleMakingOfVideosCheckbox(nullptr),
