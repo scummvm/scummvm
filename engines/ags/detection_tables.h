@@ -786,6 +786,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "bjcase8", "Ben Jordan P.I. Case 8: Relics of the Past" },
 	{ "bjcults", "Ben Jordan and the dark cults" },
 	{ "bjpww1", "Ben Jordan P.W.W. Case 1: Wrath of the Skunk Ape" },
+	{ "blackbirdpie", "Blackbird Pie" },
 	{ "blackbirdstrikesback", "The Blackbird Strikes Back" },
 	{ "blackfriday", "Black Friday" },
 	{ "blackhandgang", "The Adventures of the Black Hand Gang" },
@@ -1166,6 +1167,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "doomgraphicadventure", "Doom: A Very Graphic Adventure" },
 	{ "doors", "Doors" },
 	{ "doses", "Doses" },
+	{ "doth", "Day of the Hamster" },
 	{ "dots", "Day of the Sandwich" },
 	{ "dovadulasburn", "DoVaDuLa'S BuRn" },
 	{ "draconis", "Draconis" },
@@ -1640,6 +1642,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "infectionep1", "Infection - Episode I: The Ship" },
 	{ "infectionep2", "Infection - Episode II: The Station" },
 	{ "inferno", "Inferno: the demo of a rotten bastard" },
+	{ "infimum", "INFIMUM" },
 	{ "infinitemonkeys", "Infinite Monkeys" },
 	{ "infinitybit", "Infinity Bit" },
 	{ "inlimbo", "In Limbo" },
@@ -2469,6 +2472,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "peakvalley2", "Mysteries of Peak Valley 2 - The White Lady" },
 	{ "pendek", "Pendek" },
 	{ "pengaobcster", "Penga & Obcster's Christmish Adventure" },
+	{ "penguincy", "Penguincy" },
 	{ "pennispong", "Pennis: The Ultimate in Pong!" },
 	{ "pepeadventure", "Pepe's Little Adventure" },
 	{ "perceptions", "Perceptions" },
@@ -2617,6 +2621,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "rainblood", "Rain of Blood" },
 	{ "rainbowskunk", "Rainbow Skunk Prism and the Vermin-Truder" },
 	{ "rainbowtube", "Billy And Desmond's Fantastic Amazing Rainbow Tube" },
+	{ "rainerlesadv1", "Reinerles Abentuer - Episode 1: Das Renovierungs-Desaster" },
 	{ "rainsnow", "Rain & Snow - The Bouncer" },
 	{ "ralphtheraven", "Ralph the Raven" },
 	{ "ramghost", "RAM Ghost" },
@@ -3042,6 +3047,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "taleofalegacy", "A Tale of a Legacy / En busca de un legado" },
 	{ "talesfromtheroad", "Tales From the Road" },
 	{ "talesofchickenry", "Tales of Chickenry" },
+	{ "talesofinfimum", "Tales of INFIMUM" },
 	{ "talesofjayvin", "Tales of Jayvin" },
 	{ "talesofotubania", "Tales of Otubania" },
 	{ "taoch1ep1", "Tao - Chapter 1: Le Grand Tournoi (Ep. 1)" },
@@ -3437,6 +3443,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "warptile", "WarpTile" },
 	{ "warstars", "War Stars" },
 	{ "washedashore", "Washed Ashore" },
+	{ "waskocleaner", "Wasko the Cleaner" },
 	{ "wasted", "Wasted" },
 	{ "waterquest", "Water Quest" },
 	{ "wduprodigal", "World of Darkness Unbound - Prodigal" },
@@ -3568,6 +3575,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "castleescapech2", "Castle Escape - Chapter 2" },
 	{ "dreadmacfarlaneisep1", "Dread Mac Farlane Interactive Story - Episode 1" },
 	{ "dreadmacfarlaneisep2", "Dread Mac Farlane Interactive Story - Episode 2" },
+	{ "federicoreturns", "Federico Returns" },
 	{ "flowproblem", "Flow Problem" },
 	{ "gloriouswolfcomicsep1", "Glorious Wolf - Interactive Musical Comics Ep. 1" },
 	{ "gloriouswolfcomicsep2", "Glorious Wolf - Interactive Musical Comics Ep. 2" },
@@ -4059,6 +4067,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY("breakfastrequiem", "Breakfast Requiem.ags", "9a3d632075dd0f50b28d3a4e0321999a", 21634549),
 	UNSUPPORTED_GAME_ENTRY("brianeggswoods", "Brian Eggs Woods.ags", "8b23975e2fdf0a5f1124230ca3219016", 11428377),
 	UNSUPPORTED_GAME_ENTRY("bubbygod", "Bubby's adventure.ags", "4466d8b8cbc0f20904f4d7989c2ed5d7", 69402382),
+	UNSUPPORTED_GAME_ENTRY("federicoreturns", "Federico Returns.exe", "031470656455b56887aa57a3cff9e016", 35338182),
 	UNSUPPORTED_GAME_ENTRY("flowproblem", "Flow Problem.ags", "4e82d48102ea7ca1d72d675db69ddec3", 177517),  // v1.01
 	UNSUPPORTED_GAME_ENTRY("hydrahead", "Hydra.ags", "6283040a165e21b0c2dc4faa020a1861", 185123953),
 	UNSUPPORTED_GAME_ENTRY("jaro", "Jaro.ags", "73ea767bec41a9e0bb7dc16ce74b35e4", 20333293),  // Polish
@@ -4897,6 +4906,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("captaindisasterriskara", "Captain Disaster and The Two Worlds of Riskara.exe", "6689ccca6f9b2c8398352e9b772ff411", 157630000),
 	DEMO_ENTRY_EN("carnivalags", "Carnival.ags", "0a0ce51f708cd532d3f2f6fdfded8f32", 39307700),  // itch.io 1.0.0
 	DEMO_ENTRY_EN("carnivalags", "Carnival.ags", "f5518304ced1e9db254bc80cf6aa8fa7", 41023763),  // itch.io 1.1.0
+	DEMO_ENTRY_EN("carnivalags", "Carnival.ags", "9e0e6315c269b4452954dabd69def773", 80331480),  // itch.io 1.1.1
 	DEMO_ENTRY("captainhook", "CaptainHookAndTheLostGirl - DEMO.exe", "776a62db4387dc68be92ef9933399fd5", 8731139),  // Windows En-Fr
 	DEMO_ENTRY("captainhook", "CaptainHookAndTheLostGirl - DEMO.ags", "c0ce7476116c0a81e1d8f01ccf87d79a", 5624815),  // Linux En-Fr
 	DEMO_ENTRY_EN("castledornstein", "Castle Dornstein Demo.exe", "4141c41c06c91ec8ab9fffafbc26df67", 53098143),
@@ -5817,6 +5827,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("bjcults", "the darck colts.exe", "615e73fc1874e92d60a1996c2330ea36", 5977335),
 	GAME_ENTRY_EN("bjpww1", "BJWW.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 3538560),
 	GAME_ENTRY_EN("bjpww1", "BJWW.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 3538617),
+	GAME_ENTRY_EN("blackbirdpie", "Blackbird.ags", "a17b768f21841090ac4ff66e96744e3a", 3470140),
 	GAME_ENTRY_EN("blackbirdstrikesback", "MAGSSept2013.exe", "615e73fc1874e92d60a1996c2330ea36", 4349965),
 	GAME_ENTRY_EN("blackfriday", "Black Friday.exe", "6fbfa4a25c909d8c2c1ee06da6b828a3", 7282327),  // Windows v1.0.3
 	GAME_ENTRY_EN("blackfriday", "Black Friday.ags", "84ab43eb263d80f844fa5d5910a5512d", 4759175),  // Linux v1.0.3
@@ -6286,6 +6297,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("doomgraphicadventure", "DoomGraphic.exe", "0500aacb6c176d47ac0f8158f055db83", 2236047),
 	GAME_ENTRY_EN("doors", "Doors.exe", "3277e3b4ec9c224fb338460be298b77c", 95135227),
 	GAME_ENTRY_EN("doors", "Doors.exe", "3277e3b4ec9c224fb338460be298b77c", 95135228),  // itch.io
+	GAME_ENTRY_EN("doth", "Vault.ags", "e27f5627129fa7d97f54d4be7f70cd78", 24904251),  // v1.0
+	GAME_ENTRY_EN("doth", "Vault.ags", "c53486a3fc11e9fdf82d52e7bb4c7b8e", 24908946),  // v1.2
 	GAME_ENTRY_EN("dots", "Sammich.ags", "dd4c8776a0b5717b1310280cba8d38be", 8063745),  // v1.2
 	GAME_ENTRY("dovadulasburn", "FILES.exe", "9cb3c8dc7a8ab9c44815955696be2677", 26489645),  // En-It
 	GAME_ENTRY("dovadulasburn", "DoVaDuLa'S BuRn.exe", "06a03fe35791b0578068ab1873455463", 27108565),  // En-It
@@ -6856,13 +6869,16 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("ineedawee", "needawee.exe", "f120690b506dd63cd7d1112ea6af2f77", 1377697),
 	GAME_ENTRY_EN("infantrydivision", "Infantry.exe", "0710e2ec71042617f565c01824f0cf3c", 9144372),
 	GAME_ENTRY("infectionep1", "Infection I.exe", "7132ff7d6b0bc1e9f3e4bd4755390626", 25974295),  // En-De
+	GAME_ENTRY_LANG("infimum", "Infimum.exe", "4c5305d07e225f369530dc71b8460cf7", 395870024, Common::ES_ESP),
+	GAME_ENTRY_LANG("infimum", "Infimum.ags", "e9dfcd928d281f8577ba056bbc3c5676", 392757044, Common::ES_ESP),
 	GAME_ENTRY("infinitemonkeys", "InfiniteMonkeys.exe", "4d7d2addcde045dae6e0363a43f9acad", 4841557),
 	GAME_ENTRY_EN_PLATFORM("infinitemonkeys", "InfiniteMonkeys.exe", "21fd0f65dfa48de2b39cb8ec23b30889", 4531999, "MAGS"),
 	GAME_ENTRY("infinitemonkeys", "InfiniteMonkeys.exe", "60e8d15faf490b2d317e2036b4fb9a9c", 6126255), //v1.3 En-De-Es-Por
 	GAME_ENTRY_EN("infinitybit", "InfinityBit.exe", "27343924ddad3be0b97bdcaa71858b1b", 48338191),
 	GAME_ENTRY_EN("inlimbo", "inLIMBO.exe", "0710e2ec71042617f565c01824f0cf3c", 1883031),
 	GAME_ENTRY_EN("innersanctum", "Inner Sanctum.exe", "36f44e064eab15e502caeb60fd09f52d", 88875883),
-	GAME_ENTRY_EN("inourmidst", "In Our Midst.exe", "37a9920da93e4599c9deb4ccd10121c0", 14729571),
+	GAME_ENTRY_EN_PLATFORM("inourmidst", "In Our Midst.exe", "37a9920da93e4599c9deb4ccd10121c0", 14729571, "MAGS"),
+	GAME_ENTRY_EN("inourmidst", "In Our Midst.exe", "ca63bb4ee13afa4792b6a4ab35a9ff9c", 15297022),  // v1.0
 	GAME_ENTRY_EN("insanebert", "Insane Bert.exe", "18b284c22010850f79bc5c20054a70c4", 1675739),
 	GAME_ENTRY("insidemonkeyisland", "MIIM.exe", "06a03fe35791b0578068ab1873455463", 5186306),  // En-It
 	GAME_ENTRY_LANG("insidemonkeyisland", "MIIM.exe", "06a03fe35791b0578068ab1873455463", 5148690, Common::IT_ITA),
@@ -7850,6 +7866,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("peakvalley2", "MOPV 2 The White Lady.exe", "55c5470f14317d5e806cd4f4271a2118", 44869592),
 	GAME_ENTRY_EN("peakvalley2", "MOPV 2 The White Lady.exe", "55c5470f14317d5e806cd4f4271a2118", 45221210),  // v1.0.3
 	GAME_ENTRY_EN("pendek", "Pendek.exe", "6a2bd70d9b482cf8fcc9f9b99adf704c", 14652428),
+	GAME_ENTRY_EN("penguincy", "Penguincy.ags", "fba95583bc891449c5d4ce3d51e7ef5e", 14790192),
 	GAME_ENTRY_EN("pennispong", "Pennis.exe", "28f82e420b82d07651b68114f90223c8", 900335),
 	GAME_ENTRY_EN("pennispong", "Pennis.exe", "28f82e420b82d07651b68114f90223c8", 939611),
 	GAME_ENTRY_EN("pepeadventure", "pepe.exe", "0710e2ec71042617f565c01824f0cf3c", 2211759),
@@ -8020,6 +8037,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("rackham", "Rackham.exe", "36f44e064eab15e502caeb60fd09f52d", 3672597),
 	GAME_ENTRY_EN("rainbowskunk", "PrismMAGS.exe", "3c5bd1713959ff469cb46ebe5542cfcf", 10046750),
 	GAME_ENTRY_EN("rainbowtube", "Tube Rainbow.exe", "03c8c45bd00daca1a9d75d1133df5640", 5669127),
+	GAME_ENTRY_LANG("rainerlesadv1", "Das Renovierungs-Desaster.ags", "f94c4cf70b779a304c4909fdf5b6512a", 111423406, Common::DE_DEU),
 	GAME_ENTRY_EN("rainsnow", "Rain and Snow The Bouncer.exe", "0564de07d3fd5c16e6947a647061913c", 20576318),
 	GAME_ENTRY_EN("ralphtheraven", "RalphTheRaven.exe", "0500aacb6c176d47ac0f8158f055db83", 1655198),
 	GAME_ENTRY_EN("ramghost", "RAM_Ghost.exe", "f87f3e71d13b5fea0970ef95f1c87abe", 14830699),
@@ -8538,6 +8556,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("talesfromtheroad", "TFTR.exe", "7ddb9e776648faed5a51170d087074e9", 7004383),  // Windows
 	GAME_ENTRY_EN("talesfromtheroad", "TFTR.ags", "33cb992abc983bbdb22fe0ae2c8eb8b9", 4517071),  // Linux
 	GAME_ENTRY_EN("talesofchickenry", "Chickenry.exe", "aabdafae8b57dfc48fdf158a72326c23", 50338519),
+	GAME_ENTRY_LANG("talesofinfimum", "TalesOfInfimum.exe", "af1683f81365165be8ec727fe9e89300", 295583283, Common::ES_ESP),  // Windows
+	GAME_ENTRY_LANG("talesofinfimum", "TalesOfInfimum.ags", "7f614d6aad2bef2f85360ad3e4f1dc8c", 292408351, Common::ES_ESP),  // Linux
 	GAME_ENTRY_EN("talesofjayvin", "Tales of Jayvin.exe", "615e73fc1874e92d60a1996c2330ea36", 885298865),  // Windows
 	GAME_ENTRY_EN("talesofjayvin", "ac2game.dat", "615e73fc1874e92d60a1996c2330ea36", 885298865),  // Mac
 	GAME_ENTRY_EN("talesofotubania", "TalesOfOtubania.exe", "344bdaaf19f8ed676fa02e3ed7b4d52a", 2626344),
@@ -9036,6 +9056,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("warstars", "MAGS.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 2356146),
 	GAME_ENTRY_EN("washedashore", "Achtung!.exe", "06a03fe35791b0578068ab1873455463", 7926840),
 	GAME_ENTRY_EN_PLATFORM("washedashore", "Washed.exe", "06a03fe35791b0578068ab1873455463", 2771873, "Deluxe"),
+	GAME_ENTRY_LANG("waskocleaner", "WaskoTheCleaner.ags", "8e1480089e43b1e25137a495dcaa151c", 4975086, Common::ES_ESP),
 	GAME_ENTRY_EN("wasted", "Wasted.exe", "f120690b506dd63cd7d1112ea6af2f77", 27870661),
 	GAME_ENTRY_EN("waterquest", "KOSTAS.exe", "f120690b506dd63cd7d1112ea6af2f77", 12403015),
 	GAME_ENTRY_EN("wduprodigal", "vtprodigal.exe", "9d430fcdf4e2787ed39185924246da7c", 294267579),  // Windows
