@@ -340,7 +340,12 @@ ConfigDialog::ConfigDialog() :
 	Common::KeymapArray keymaps = metaEngine->initKeymaps(gameDomain.c_str());
 	if (!keymaps.empty()) {
 		tab->addTab(_("Keymaps"), "GlobalConfig_KeyMapper", false);
-		addKeyMapperControls(tab, "GlobalConfig_KeyMapper.", keymaps, gameDomain);
+
+		ScrollContainerWidget *keymapContainer = new ScrollContainerWidget(tab, "GlobalConfig_KeyMapper.Container", "GlobalConfig_KeyMapper_Container");
+		keymapContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
+		keymapContainer->setTarget(this);
+
+		addKeyMapperControls(keymapContainer, "GlobalConfig_KeyMapper_Container.", keymaps, gameDomain);
 	}
 
 	//

@@ -31,7 +31,6 @@ namespace GUI {
 class ButtonWidget;
 class DropdownButtonWidget;
 class PopUpWidget;
-class ScrollContainerWidget;
 class StaticTextWidget;
 }
 
@@ -54,6 +53,7 @@ public:
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleTickle() override;
+	void reflowLayout() override;
 
 protected:
 	struct ActionRow {
