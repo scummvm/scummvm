@@ -1,5 +1,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/archive.h"
 #include "qdengine/core/qd_precomp.h"
 
 #include "qdengine/core/qdcore/qd_animation.h"
@@ -69,12 +70,14 @@ bool qdAnimationMaker::insert_frames(class qdAnimation *p, const char *folder, i
 	GetCurrentDirectory(MAX_PATH, old_path);
 	SetCurrentDirectory(folder);
 #endif
+	warning("STUB:qdAnimationMaker::insert_frames. Check the implementation.");
 	qdFileNameList flist;
-
-	char *fname = XFindFirst("*.tga");
-	while (fname) {
-		flist.push_back(fname);
-		fname = XFindNext();
+	Common::ArchiveMemberList files;
+	SearchMan.listMatchingMembers(files, "*.tga");
+	for (int i = 0; i < files.size(); i++) {
+		Common::String fname = files.front()->getFileName();
+		files.pop_front();
+		flist.push_back(fname.c_str());
 	}
 
 	flist.sort();

@@ -1,5 +1,7 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/archive.h"
 #include "qdengine/core/qd_precomp.h"
 
 #include <locale.h>
@@ -119,8 +121,13 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 		script_name = comline_parser.argument_string(-1);
 
 	if (script_name.empty()) {
-		if (char * p = XFindFirst("*.qml"))
-			script_name = p;
+		Common::ArchiveMemberList files;
+		SearchMan.listMatchingMembers(files, "*.qml");
+		Common::ArchiveMemberPtr p = files.front();
+		Common::String firstFileName;
+		if (p)
+			firstFileName = p->getFileName();
+			script_name = firstFileName.c_str();
 
 		if (script_name.empty()) return 0;
 	}
@@ -128,7 +135,6 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 	app_io::set_current_directory(script_name.c_str());
 
 	grDispatcher::sys_init();
-
 	gdi_grD = new GDI_grDispatcher;
 	dd_grD = new DDraw_grDispatcher;
 
