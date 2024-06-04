@@ -21,7 +21,6 @@
 
 #include "objects.h"
 #include "rooms.h"
-#include "stream-helper.h"
 #include "alcachofa.h"
 
 using namespace Common;
@@ -285,7 +284,7 @@ struct SayTextTask : public Task {
 					Point(g_system->getWidth() / 2, g_system->getHeight() - 200),
 					-1, true, kWhite, 0);
 			}
-			// TODO: Add lip syng for sayText
+			// TODO: Add lip sync for sayText
 
 			if (!_character->_isTalking) {
 				g_engine->sounds().fadeOut(_soundId, 100);

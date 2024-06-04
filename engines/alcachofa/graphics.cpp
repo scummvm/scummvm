@@ -20,7 +20,6 @@
  */
 
 #include "graphics.h"
-#include "stream-helper.h"
 #include "alcachofa.h"
 #include "shape.h"
 

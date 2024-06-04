@@ -20,7 +20,6 @@
  */
 
 #include "script.h"
-#include "stream-helper.h"
 #include "rooms.h"
 #include "alcachofa.h"
 

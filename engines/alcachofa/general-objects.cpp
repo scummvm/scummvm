@@ -22,7 +22,6 @@
 #include "objects.h"
 #include "rooms.h"
 #include "scheduler.h"
-#include "stream-helper.h"
 #include "alcachofa.h"
 
 #include "common/system.h"
