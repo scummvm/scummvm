@@ -182,12 +182,12 @@ void IOS7OptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Stri
 #endif
 	            .addWidget("GamepadController", "Checkbox")
 			.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-				.addPadding(16, 16, 0, 0)
+				.addPadding(0, 0, 0, 0)
 				.addWidget("GamepadControllerLeftButton", "OptionsLabel")
 				.addWidget("GamepadControllerLeftButtonPopUp", "PopUp")
 			.closeLayout()
 	        .addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-	            .addPadding(16, 16, 0, 0)
+	            .addPadding(0, 0, 0, 0)
 	            .addWidget("GamepadControllerOpacity", "OptionsLabel")
 	            .addWidget("GamepadControllerOpacitySlider", "Slider")
 	            .addWidget("GamepadControllerOpacityLabel", "OptionsLabel")
@@ -201,19 +201,19 @@ void IOS7OptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Stri
 
 	if (inAppDomain) {
 		layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-			.addPadding(16, 16, 0, 0)
+			.addPadding(0, 0, 0, 0)
 			.addWidget("TouchModeMenusText", "OptionsLabel")
 			.addWidget("TouchModeMenus", "PopUp")
 			.closeLayout();
 	}
 	layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-		.addPadding(16, 16, 0, 0)
+		.addPadding(0, 0, 0, 0)
 		.addWidget("TouchMode2DGamesText", "OptionsLabel")
 		.addWidget("TouchMode2DGames", "PopUp")
 		.closeLayout();
 
 	layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-		.addPadding(16, 16, 0, 0)
+		.addPadding(0, 0, 0, 0)
 		.addWidget("TouchMode3DGamesText", "OptionsLabel")
 		.addWidget("TouchMode3DGames", "PopUp")
 		.closeLayout();
@@ -221,13 +221,13 @@ void IOS7OptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Stri
 	layouts.addWidget("OrientationText", "", -1, layouts.getVar("Globals.Line.Height"));
 	if (inAppDomain) {
 		layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-			.addPadding(16, 16, 0, 0)
+			.addPadding(0, 0, 0, 0)
 			.addWidget("OMenusText", "OptionsLabel")
 			.addWidget("OMenus", "PopUp")
 		.closeLayout();
 	}
 	layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-			.addPadding(16, 16, 0, 0)
+			.addPadding(0, 0, 0, 0)
 			.addWidget("OGamesText", "OptionsLabel")
 			.addWidget("OGames", "PopUp")
 		.closeLayout();

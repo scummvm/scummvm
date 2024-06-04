@@ -558,7 +558,7 @@
 	</dialog>
 
 	<dialog name = 'GlobalOptions_Backend_Container' overlays = 'GlobalOptions_Backend.Container'>
-		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8'>
 			<widget name = 'Container'/>
 		</layout>
 	</dialog>
@@ -1500,12 +1500,10 @@
 	</dialog>
 
 	<dialog name = 'GameOptions_Backend_Container' overlays = 'GameOptions_Backend.Container'>
-		<layout type = 'vertical' padding = '0, 0, 0, 0'>
-			<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
-				<widget name = 'EnableTabCheckbox'
-						type = 'Checkbox'
-				/>
-			</layout>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '6'>
+			<widget name = 'EnableTabCheckbox'
+					type = 'Checkbox'
+			/>
 			<import layout = 'Dialog.GlobalOptions_Backend_Container' />
 		</layout>
 	</dialog>
@@ -1621,6 +1619,7 @@
 						type = 'PopUp'
 				/>
 			</layout>
+			<space size = '2'/>
 			<widget name = 'Container'/>
 		</layout>
 	</dialog>
@@ -1844,7 +1843,7 @@
 	</dialog>
 
 	<dialog name = 'GlobalConfig_Backend_Container' overlays = 'GlobalConfig_Backend.Container'>
-		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8'>
 			<import layout = 'Dialog.GlobalOptions_Backend_Container' />
 		</layout>
 	</dialog>
