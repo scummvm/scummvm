@@ -110,7 +110,7 @@ void Map14::encounter() {
 	enc._levelIndex = 80;
 	enc._manual = true;
 	enc.execute();
-};
+}
 
 
 void Map14::special01() {
