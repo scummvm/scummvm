@@ -50,6 +50,7 @@ public:
 	void preUpdate();
 	void postUpdate();
 	void updateCursor();
+	void drawCursor();
 	void changeRoom(const Common::String &targetRoomName, bool resetCamera);
 	void triggerObject(ObjectBase *object, const char *action);
 	void triggerDoor(const Door *door);

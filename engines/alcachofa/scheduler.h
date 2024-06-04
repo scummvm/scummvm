@@ -87,6 +87,7 @@ private:
 #endif
 
 #define TASK_BEGIN \
+	enum { TASK_COUNTER_BASE = __COUNTER__ }; \
 	switch(_line) { \
 	case 0:; \
 
@@ -96,21 +97,17 @@ private:
 	default: assert(false && "Invalid line in task"); \
 	} return TaskReturn::finish(0)
 
-#define TASK_YIELD \
+#define TASK_INTERNAL_BREAK(ret) \
 	do { \
-		_line = __LINE__; \
-		return TaskReturn::yield(); \
+		enum { TASK_COUNTER = __COUNTER__ - TASK_COUNTER_BASE }; \
+		_line = TASK_COUNTER; \
+		return ret; \
 		TASK_BREAK_FALLTHROUGH \
-		case __LINE__:; \
+		case TASK_COUNTER:; \
 	} while(0)
 
-#define TASK_WAIT(task) \
-	do { \
-		_line = __LINE__; \
-		return TaskReturn::waitFor(task); \
-		TASK_BREAK_FALLTHROUGH \
-		case __LINE__:; \
-	} while(0)
+#define TASK_YIELD TASK_INTERNAL_BREAK(TaskReturn::yield())
+#define TASK_WAIT(task) TASK_INTERNAL_BREAK(TaskReturn::waitFor(task))
 
 #define TASK_RETURN(value) \
 	do { \
