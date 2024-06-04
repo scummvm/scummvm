@@ -535,7 +535,7 @@ public:
 	 * @param domain       the configuration manager domain this widget is meant to edit
 	 */
 	OptionsContainerWidget(GuiObject *boss, const Common::String &name, const Common::String &dialogLayout,
-	                       bool scrollable, const Common::String &domain);
+	                       const Common::String &domain);
 	~OptionsContainerWidget() override;
 
 	/** Implementing classes should (re)initialize their widgets with state from the configuration domain */
@@ -560,14 +560,7 @@ public:
 	void setParentDialog(Dialog *parentDialog) { _parentDialog = parentDialog; }
 	void setDomain(const Common::String &domain) { _domain = domain; }
 
-	uint16 getWidth() const override;
-
 protected:
-	enum {
-		/** The command that gets sent when the scroll container needs to reflow its contents */
-		kReflowCmd = 'REFL'
-	};
-
 	// Widget API
 	void reflowLayout() override;
 	void drawWidget() override {}
@@ -576,7 +569,7 @@ protected:
 	void removeWidget(Widget *widget) override;
 
 	/** The pareent object to use when creating child widgets */
-	GuiObject *widgetsBoss();
+	GuiObject *widgetsBoss() { return this; }
 
 	/**
 	 * Child classes can override this method to define the layout used by the contained widgets in the layout system
@@ -589,9 +582,6 @@ protected:
 	const Common::String _dialogLayout;
 
 	Dialog *_parentDialog;
-
-private:
-	ScrollContainerWidget *_scrollContainer;
 };
 
 ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32 cmd, int x=0, int y=0, int w=0, int h=0, bool scale = false);

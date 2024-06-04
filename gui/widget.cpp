@@ -1072,25 +1072,14 @@ void ContainerWidget::drawWidget() {
 #pragma mark -
 
 OptionsContainerWidget::OptionsContainerWidget(GuiObject *boss, const Common::String &name, const Common::String &dialogLayout,
-											   bool scrollable, const Common::String &domain) :
+											   const Common::String &domain) :
 		Widget(boss, name),
 		_domain(domain),
 		_dialogLayout(dialogLayout),
-		_parentDialog(nullptr),
-		_scrollContainer(nullptr) {
-
-	if (scrollable) {
-		_scrollContainer = new ScrollContainerWidget(this, name, _dialogLayout, kReflowCmd);
-		_scrollContainer->setTarget(this);
-		_scrollContainer->setBackgroundType(GUI::ThemeEngine::kWidgetBackgroundNo);
-	}
+		_parentDialog(nullptr) {
 }
 
 OptionsContainerWidget::~OptionsContainerWidget() {
-}
-
-uint16 OptionsContainerWidget::getWidth() const {
-	return _scrollContainer ? _scrollContainer->getWidth() : _w;
 }
 
 void OptionsContainerWidget::reflowLayout() {
@@ -1101,13 +1090,7 @@ void OptionsContainerWidget::reflowLayout() {
 		// we have to create it every time.
 		defineLayout(*g_gui.xmlEval(), _dialogLayout, _name);
 
-		if (!_scrollContainer) {
-			g_gui.xmlEval()->reflowDialogLayout(_dialogLayout, _firstWidget);
-		}
-	}
-
-	if (_scrollContainer) {
-		_scrollContainer->resize(_x, _y, _w, _h, false);
+		g_gui.xmlEval()->reflowDialogLayout(_dialogLayout, _firstWidget);
 	}
 
 	Widget *w = _firstWidget;
@@ -1134,14 +1117,6 @@ Widget *OptionsContainerWidget::findWidget(int x, int y) {
 void OptionsContainerWidget::removeWidget(Widget *widget) {
 	_boss->removeWidget(widget);
 	Widget::removeWidget(widget);
-}
-
-GuiObject *OptionsContainerWidget::widgetsBoss() {
-	if (_scrollContainer) {
-		return _scrollContainer;
-	}
-
-	return this;
 }
 
 } // End of namespace GUI

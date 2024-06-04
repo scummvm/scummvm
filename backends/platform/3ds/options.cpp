@@ -59,7 +59,7 @@ private:
 };
 
 N3DSOptionsWidget::N3DSOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
-		OptionsContainerWidget(boss, name, "N3DSOptionsDialog", false, domain), _enabled(true) {
+		OptionsContainerWidget(boss, name, "N3DSOptionsDialog", domain), _enabled(true) {
 
 	_showCursorCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "N3DSOptionsDialog.ShowCursor", _("Show mouse cursor"), Common::U32String(), 0, 'T');
 	_snapToBorderCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "N3DSOptionsDialog.SnapToBorder", _("Snap to edges"), Common::U32String(), 0, 'T');
