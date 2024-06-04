@@ -179,7 +179,7 @@ public:
 	CBagObject *getObject(int nRefId, bool bActiveOnly = false);
 	CBagObject *getObject(const CBofPoint &xPoint, bool bActiveOnly = false);
 	CBagObject *getObject(const CBofString &sName, bool bActiveOnly = false);
-	CBagObject *getObjectByType(const CBofString &sName, bool bActiveOnly = false);
+	CBagObject *getObjectByType(const CBofString &sType, bool bActiveOnly = false);
 
 	static CBofPoint &getLastCursorLocation() {
 		return *_xCursorLocation;
@@ -187,7 +187,7 @@ public:
 	CBofList<CBagObject *> *getObjectList() const {
 		return _pObjectList;
 	}
-	void setObjectList(CBofList<CBagObject *> *pList, CBofList<CBagExpression *> *pEList = nullptr);
+	void setObjectList(CBofList<CBagObject *> *pOList, CBofList<CBagExpression *> *pEList = nullptr);
 
 	bool contains(CBagObject *pObj, bool bActive = true);
 
@@ -211,7 +211,7 @@ public:
 	virtual ErrorCode activateLocalObject(const CBofString &sName);
 	virtual ErrorCode attachActiveObjects();
 
-	virtual ErrorCode removeObject(CBagObject *pObj);
+	virtual ErrorCode removeObject(CBagObject *pRObj);
 	virtual ErrorCode deactivateLocalObject(CBagObject *pObj);
 	virtual ErrorCode deactivateLocalObject(const CBofString &sName);
 	virtual ErrorCode detachActiveObjects();
@@ -316,7 +316,7 @@ public:
 		return xPoint;
 	}
 
-	virtual ErrorCode loadFile(const CBofString &sFile);
+	virtual ErrorCode loadFile(const CBofString &sWldName);
 	virtual ErrorCode loadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName, bool bAttach = true);
 
 	virtual void onMouseMove(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
@@ -358,7 +358,7 @@ public:
 
 	// Correctly set the filter function for the storage device.
 	//
-	void onSetFilter(bool (*FilterFxn)(uint16 nFilterId, CBofBitmap *, CBofRect *));
+	void onSetFilter(bool (*filterFunction)(uint16 nFilterId, CBofBitmap *, CBofRect *));
 
 	// Get a pointer to the filter function
 	//
@@ -424,7 +424,7 @@ public:
 
 	ErrorCode close() override;
 	virtual ErrorCode runModal(CBagObject *pObj);
-	void onTimer(uint32 nTimerId) override;
+	void onTimer(uint32 nEventID) override;
 
 	void setOnUpdate(bool bVal = true) {
 		_bOnUpdate = bVal;
@@ -511,7 +511,7 @@ public:
 		return getBackdrop();
 	}
 
-	ErrorCode loadFile(const CBofString &sWldFile) override;
+	ErrorCode loadFile(const CBofString &sFile) override;
 
 	ErrorCode create(const char *pszName, CBofRect *pRect, CBofWindow *pParent, uint32 nControlID = 0) override;
 

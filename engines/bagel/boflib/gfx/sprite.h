@@ -91,7 +91,7 @@ public:
 	// sprites no longer retain their background, so there would be no way
 	// to restore the background, and that's all eraseSprite does.
 
-	CBofSprite *interception(CBofRect *newRect, CBofSprite *pSprite);
+	CBofSprite *interception(CBofRect *newRect, CBofSprite *pTestSprite);
 	CBofSprite *interception(CBofSprite *pTestSprite);
 
 	CBofSprite *interception() {
@@ -102,7 +102,7 @@ public:
 		return interception(newRect, _pSpriteChain);
 	}
 
-	bool testInterception(CBofSprite *pSprite, CBofPoint *pPoint = nullptr);
+	bool testInterception(CBofSprite *pTestSprite, CBofPoint *pPoint = nullptr);
 
 	void setPosition(int x, int y);
 
@@ -170,8 +170,8 @@ public:
 		return _pSpriteChain;
 	}
 
-	static bool updateDirtyRect(CBofWindow *pWnd, CBofSprite *pSprite = nullptr);
-	static bool updateDirtyRect(CBofBitmap *pBmp, CBofSprite *pSprite = nullptr);
+	static bool updateDirtyRect(CBofWindow *pWnd, CBofSprite *pPrimarySprite = nullptr);
+	static bool updateDirtyRect(CBofBitmap *pBmp, CBofSprite *pPrimarySprite = nullptr);
 	static void addToDirtyRect(CBofRect *pRect);
 	static void clearDirtyRect() {
 		_cDirtyRect->setRectEmpty();

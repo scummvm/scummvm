@@ -38,7 +38,7 @@ public:
 	CBofPoint(int initX, int initY);
 	CBofPoint(StPoint stPoint);
 	CBofPoint(const CBofPoint &cPoint);
-	CBofPoint(const StSize &cSize);
+	CBofPoint(const StSize &stSize);
 
 	CBofPoint(const POINT &stPoint) {
 		setWinPoint(&stPoint);

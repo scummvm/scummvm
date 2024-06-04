@@ -126,15 +126,11 @@ void CBagStartDialog::onPaint(CBofRect *pRect) {
 void CBagStartDialog::onKeyHit(uint32 lKey, uint32 nRepCount) {
 	assert(isValidObject(this));
 
-	switch (lKey) {
-	case BKEY_ESC:
+	if (lKey == BKEY_ESC) {
 		setReturnValue(QUIT_BTN);
 		close();
-		break;
-
-	default:
+	} else {
 		CBofDialog::onKeyHit(lKey, nRepCount);
-		break;
 	}
 }
 

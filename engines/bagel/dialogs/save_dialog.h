@@ -54,9 +54,9 @@ public:
 
 protected:
 	void onPaint(CBofRect *pRect) override;
-	void onBofButton(CBofObject *pObject, int nState) override;
+	void onBofButton(CBofObject *pObject, int nFlags) override;
 	void onBofListBox(CBofObject *pObject, int nItemIndex) override;
-	void onKeyHit(uint32 lKey, uint32 lRepCount) override;
+	void onKeyHit(uint32 lKey, uint32 nRepCount) override;
 
 	void saveAndClose();
 

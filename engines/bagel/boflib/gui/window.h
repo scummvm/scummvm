@@ -172,7 +172,7 @@ public:
 	/**
 	 * Posts a user defined message
 	 */
-	void postUserMessage(uint32 nMessage, uint32 lExtraInfo);
+	void postUserMessage(uint32 lMessage, uint32 lExtraInfo);
 
 	/**
 	 * Sets a timer which calls specified callback (or onTimer)
@@ -184,9 +184,9 @@ public:
 
 	/**
 	 * Stops specified timer
-	 * @param nTimerID       ID of timer to stop
+	 * @param nID       ID of timer to stop
 	 */
-	void killTimer(uint32 nTimerID);
+	void killTimer(uint32 nID);
 
 	/**
 	 * Stops all timers associated with current window
@@ -244,19 +244,19 @@ public:
 
 	/**
 	 * Associates a new background bitmap to this window
-	 * @param pBitmap       New background bitmap
+	 * @param pNewBitmap       New background bitmap
 	 * @param bRefresh      true if should repaint now
 	 * @return              Error return code
 	 */
-	ErrorCode setBackdrop(CBofBitmap *pBitmap, bool bRefresh = false);
+	ErrorCode setBackdrop(CBofBitmap *pNewBitmap, bool bRefresh = false);
 
 	/**
 	 * Associates a new background bitmap to this window
-	 * @param pszBmpFile    new background bitmap from file
+	 * @param pszFileName   new background bitmap from file
 	 * @param bRefresh      true if should repaint now
 	 * @return              Error return code
 	 */
-	ErrorCode setBackdrop(const char *pszBmpFile, bool bRefresh = false);
+	ErrorCode setBackdrop(const char *pszFileName, bool bRefresh = false);
 
 	void clearBackdrop() {
 		_pBackdrop = nullptr;
@@ -363,7 +363,7 @@ public:
 	virtual void onSoundNotify(CBofObject *pObject, uint32 lParam2);
 	virtual void onMovieNotify(uint32 lParam1, uint32 lParam2);
 
-	virtual void onMCINotify(uint32 lParam1, uint32 lParam2);
+	virtual void onMCINotify(uint32 wParam, uint32 lParam);
 
 	virtual void onTimer(uint32 nTimerId);
 

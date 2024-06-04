@@ -29,8 +29,6 @@ namespace Bagel {
 
 #define TEXT_ITEM_HEIGHT 24
 
-#define COLOR_USE_DEFAULT 0xFFFFFFFF
-
 
 CBofListBox::CBofListBox() {
 	_cTextColor = CTEXT_COLOR;

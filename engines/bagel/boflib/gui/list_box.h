@@ -32,9 +32,16 @@ namespace Bagel {
 #define LISTBOX_NORMAL 0
 #define LISTBOX_SELECT 1
 #define LISTBOX_USENOW 2
+#define COLOR_USE_DEFAULT 0xFFFFFFFF
 
 class ListBoxItem {
 public:
+	ListBoxItem() {
+		_pTextStr = nullptr;
+		_nTextLineColor = COLOR_USE_DEFAULT;
+	}
+	
+	
 	CBofString *_pTextStr;
 	RGBCOLOR _nTextLineColor;
 };

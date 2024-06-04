@@ -1062,18 +1062,17 @@ CBagObject *CBagStorageDev::onNewVariableObject(const CBofString &) {
 }
 
 
-CBagObject *CBagStorageDev::onNewUserObject(const CBofString &str) {
+CBagObject *CBagStorageDev::onNewUserObject(const CBofString &sInit) {
 	char szLocalBuff[256];
 	CBofString s(szLocalBuff, 256);
 
-	s = str;
-
+	s = sInit;
 	bofMessageBox(s.getBuffer(), "Could not find object type");
 
 	return nullptr;
 }
 
-void CBagStorageDev::onSetFilter(bool (*filterFunction)(uint16 nFilterid, CBofBitmap *, CBofRect *)) {
+void CBagStorageDev::onSetFilter(bool (*filterFunction)(uint16 nFilterId, CBofBitmap *, CBofRect *)) {
 	_pBitmapFilter = filterFunction;
 }
 
