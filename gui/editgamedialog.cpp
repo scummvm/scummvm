@@ -134,49 +134,13 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	//
 	// 1) The game tab
 	//
-	tab->addTab(_("Game"), "GameOptions_Game");
+	tab->addTab(_("Game"), "GameOptions_Game", false);
 
-	// GUI:  Label & edit widget for the game ID
-	if (!g_gui.useLowResGUI())
-		new StaticTextWidget(tab, "GameOptions_Game.Id", _("ID:"), _("Short game identifier used for referring to saved games and running the game from the command line"));
-	else
-		new StaticTextWidget(tab, "GameOptions_Game.Id", _c("ID:", "lowres"), _("Short game identifier used for referring to saved games and running the game from the command line"));
-	_domainWidget = new DomainEditTextWidget(tab, "GameOptions_Game.Domain", _domain, _("Short game identifier used for referring to saved games and running the game from the command line"));
+	_gameContainer = new ScrollContainerWidget(tab, "GameOptions_Game.Container", "GameOptions_Game_Container");
+	_gameContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
+	_gameContainer->setTarget(this);
 
-	// GUI:  Label & edit widget for the description
-	if (!g_gui.useLowResGUI())
-		new StaticTextWidget(tab, "GameOptions_Game.Name", _("Name:"), _("Full title of the game"));
-	else
-		new StaticTextWidget(tab, "GameOptions_Game.Name", _c("Name:", "lowres"), _("Full title of the game"));
-	_descriptionWidget = new EditTextWidget(tab, "GameOptions_Game.Desc", description, _("Full title of the game"));
-
-	// Language popup
-	_langPopUpDesc = nullptr;
-	_langPopUp = nullptr;
-	if (!_guioptions.contains(GUIO_NOLANG)) {
-		_langPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.LangPopupDesc", _("Language:"), _("Language of the game. This will not turn your Spanish game version into English"));
-		_langPopUp = new PopUpWidget(tab, "GameOptions_Game.LangPopup", _("Language of the game. This will not turn your Spanish game version into English"));
-		_langPopUp->appendEntry(_("<default>"), (uint32)Common::UNK_LANG);
-		_langPopUp->appendEntry("", (uint32)Common::UNK_LANG);
-		const Common::LanguageDescription *l = Common::g_languages;
-		for (; l->code; ++l) {
-			if (checkGameGUIOptionLanguage(l->id, _guioptionsString))
-				_langPopUp->appendEntry(l->description, l->id);
-		}
-	}
-
-	// Platform popup
-	if (!g_gui.useLowResGUI())
-		_platformPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.PlatformPopupDesc", _("Platform:"), _("Platform the game was originally designed for"));
-	else
-		_platformPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.PlatformPopupDesc", _c("Platform:", "lowres"), _("Platform the game was originally designed for"));
-	_platformPopUp = new PopUpWidget(tab, "GameOptions_Game.PlatformPopup", _("Platform the game was originally designed for"));
-	_platformPopUp->appendEntry(_("<default>"));
-	_platformPopUp->appendEntry("");
-	const Common::PlatformDescription *p = Common::g_platforms;
-	for (; p->code; ++p) {
-		_platformPopUp->appendEntry(p->description, p->id);
-	}
+	addGameControls(_gameContainer, "GameOptions_Game_Container.", description);
 
 	//
 	// 2) The engine's game settings (shown only if the engine implements one or there are custom engine options)
@@ -184,7 +148,7 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 
 	if (enginePlugin) {
 		enginePlugin->get<MetaEngine>().registerDefaultSettings(_domain);
-		_engineOptions = enginePlugin->get<MetaEngine>().buildEngineOptionsWidget(tab, "GameOptions_Game.Container", _domain);
+		_engineOptions = enginePlugin->get<MetaEngine>().buildEngineOptionsWidget(_gameContainer, "GameOptions_Game_Container.Container", _domain);
 
 		if (_engineOptions) {
 			_engineOptions->setParentDialog(this);
@@ -366,6 +330,50 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	// Add OK & Cancel buttons
 	new ButtonWidget(this, "GameOptions.Cancel", _("Cancel"), Common::U32String(), kCloseCmd);
 	new ButtonWidget(this, "GameOptions.Ok", _("OK"), Common::U32String(), kOKCmd);
+}
+
+void EditGameDialog::addGameControls(GuiObject *boss, const Common::String &prefix, const Common::String &description) {
+	// GUI:  Label & edit widget for the game ID
+	if (!g_gui.useLowResGUI())
+		new StaticTextWidget(boss, prefix + "Id", _("ID:"), _("Short game identifier used for referring to saved games and running the game from the command line"));
+	else
+		new StaticTextWidget(boss, prefix + "Id", _c("ID:", "lowres"), _("Short game identifier used for referring to saved games and running the game from the command line"));
+	_domainWidget = new DomainEditTextWidget(boss, prefix + "Domain", _domain, _("Short game identifier used for referring to saved games and running the game from the command line"));
+
+	// GUI:  Label & edit widget for the description
+	if (!g_gui.useLowResGUI())
+		new StaticTextWidget(boss, prefix + "Name", _("Name:"), _("Full title of the game"));
+	else
+		new StaticTextWidget(boss, prefix + "Name", _c("Name:", "lowres"), _("Full title of the game"));
+	_descriptionWidget = new EditTextWidget(boss, prefix + "Desc", description, _("Full title of the game"));
+
+	// Language popup
+	_langPopUpDesc = nullptr;
+	_langPopUp = nullptr;
+	if (!_guioptions.contains(GUIO_NOLANG)) {
+		_langPopUpDesc = new StaticTextWidget(boss, prefix + "LangPopupDesc", _("Language:"), _("Language of the game. This will not turn your Spanish game version into English"));
+		_langPopUp = new PopUpWidget(boss, prefix + "LangPopup", _("Language of the game. This will not turn your Spanish game version into English"));
+		_langPopUp->appendEntry(_("<default>"), (uint32)Common::UNK_LANG);
+		_langPopUp->appendEntry("", (uint32)Common::UNK_LANG);
+		const Common::LanguageDescription *l = Common::g_languages;
+		for (; l->code; ++l) {
+			if (checkGameGUIOptionLanguage(l->id, _guioptionsString))
+				_langPopUp->appendEntry(l->description, l->id);
+		}
+	}
+
+	// Platform popup
+	if (!g_gui.useLowResGUI())
+		_platformPopUpDesc = new StaticTextWidget(boss, prefix + "PlatformPopupDesc", _("Platform:"), _("Platform the game was originally designed for"));
+	else
+		_platformPopUpDesc = new StaticTextWidget(boss, prefix + "PlatformPopupDesc", _c("Platform:", "lowres"), _("Platform the game was originally designed for"));
+	_platformPopUp = new PopUpWidget(boss, prefix + "PlatformPopup", _("Platform the game was originally designed for"));
+	_platformPopUp->appendEntry(_("<default>"));
+	_platformPopUp->appendEntry("");
+	const Common::PlatformDescription *p = Common::g_platforms;
+	for (; p->code; ++p) {
+		_platformPopUp->appendEntry(p->description, p->id);
+	}
 }
 
 void EditGameDialog::setupGraphicsTab() {

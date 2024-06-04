@@ -1387,7 +1387,15 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'GameOptions_Game' overlays = 'Dialog.GameOptions.TabWidget' shading = 'dim'>
+	<dialog name = 'GameOptions_Game' overlays = 'Dialog.GameOptions.TabWidget'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'Container'
+					type = 'ScrollContainerWidget'
+			/>
+		</layout>
+	</dialog>
+
+	<dialog name = 'GameOptions_Game_Container' overlays = 'GameOptions_Game.Container' shading = 'dim'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
 				<widget name = 'Id'
@@ -1527,6 +1535,14 @@
 	</dialog>
 
 	<dialog name = 'GlobalConfig_Engine' overlays = 'Dialog.GlobalConfig.TabWidget'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'Container'
+					type = 'ScrollContainerWidget'
+			/>
+		</layout>
+	</dialog>
+
+	<dialog name = 'GlobalConfig_Engine_Container' overlays = 'GlobalConfig_Engine.Container'>
 		<layout type = 'vertical' padding = '8, 8, 8, 8'>
 			<widget name = 'Container'/>
 		</layout>
