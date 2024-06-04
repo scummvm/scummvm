@@ -237,6 +237,20 @@
 	"adi2.stk", "ediintro.tot", 0
 },
 
+{
+	{
+		"adi2", // This version comes from the Sierra's Schoolhouse Math 
+		"Adi 2",
+		AD_ENTRY1s("adi2.stk", "da5c5b4a6b56ed34d10ae5e0acfb9f8d", 11690760),
+		EN_USA,
+		kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	kFeaturesNone, // When Assertion bug is fixed check if this version also needs kFeatures600x400
+	"adi2.stk", "ediintro.tot", 0
+},
+
 // -- Demos --
 
 {
