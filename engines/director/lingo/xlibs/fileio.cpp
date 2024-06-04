@@ -371,7 +371,7 @@ void FileIO::m_closeFile(int nargs) {
 }
 
 // FIXME: split out filename-to-savegame logic from open() so we can implement createFile
-XOBJSTUB(FileIO::m_createFile, 0);
+XOBJSTUB(FileIO::m_createFile, 0)
 
 void FileIO::m_displayOpen(int nargs) {
 	g_lingo->push(getFileNameFromModal(false, Common::String(), "txt"));
