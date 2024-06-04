@@ -66,7 +66,7 @@ char* XFindNext() {
 }
 
 char* XFindFirst(char* mask) {
-	warning("STUB: XFindFirst().");
+	warning("STUB: XFindFirst()");
 #if 0
 	FFh = FindFirstFile(mask, &FFdata);
 	if (FFh == INVALID_HANDLE_VALUE)
