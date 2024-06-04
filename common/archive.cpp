@@ -252,7 +252,7 @@ bool MemcachingCaseInsensitiveArchive::CacheKey_EqualTo::operator()(const CacheK
 
 uint MemcachingCaseInsensitiveArchive::CacheKey_Hash::operator()(const CacheKey &x) const {
 	return static_cast<uint>(x.path.hashIgnoreCase() * 1000003u) ^ static_cast<uint>(x.altStreamType);
-};
+}
 
 SearchSet::ArchiveNodeList::iterator SearchSet::find(const String &name) {
 	ArchiveNodeList::iterator it = _list.begin();
