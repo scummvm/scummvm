@@ -147,12 +147,12 @@ void DarkEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 	int deadline;
 	getLatestMessages(message, deadline);
 	if (deadline <= _countdown) {
-		drawString(kDarkFontSmall, message, 32, 156, white, white, transparent, surface);
+		drawString(kDarkFontSmall, message, 32, 157, white, white, transparent, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
 	}
 
-	drawString(kDarkFontSmall, _currentArea->_name, 32, 150, white, white, transparent, surface);
+	drawString(kDarkFontSmall, _currentArea->_name, 32, 151, white, white, transparent, surface);
 	drawBinaryClock(surface, 6, 110, white, grey);
 
 	int x = 229;

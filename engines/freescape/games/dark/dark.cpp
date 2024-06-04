@@ -757,29 +757,39 @@ void DarkEngine::drawInfoMenu() {
 		default:
 			color = 14;
 	}
-	uint8 r, g, b;
-	_gfx->readFromPalette(color, r, g, b);
-	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
-	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 
+	Texture *menuTexture = nullptr;
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
 
-	surface->fillRect(Common::Rect(88, 48, 231, 103), black);
-	surface->frameRect(Common::Rect(88, 48, 231, 103), front);
+	if (isAmiga() || isAtariST()) {
+		uint32 white = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
+		uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 
-	surface->frameRect(Common::Rect(90, 50, 229, 101), front);
+		drawString(kDarkFontSmall, "L-LOAD  S-SAVE ESC-ABORT", 32, 145, white, white, black, surface);
+		drawString(kDarkFontSmall, "OR USE THE ICONS.  OTHER", 32, 151, white, white, black, surface);
+		drawString(kDarkFontSmall, "KEYS WILL CONTINUE  GAME", 32, 157, white, white, black, surface);
+	} else {
+		uint8 r, g, b;
+		_gfx->readFromPalette(color, r, g, b);
+		uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+		uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 
-	drawStringInSurface("L-LOAD S-SAVE", 105, 56, front, black, surface);
-	if (isSpectrum())
-		drawStringInSurface("1-TERMINATE", 105, 64, front, black, surface);
-	else
-		drawStringInSurface("ESC-TERMINATE", 105, 64, front, black, surface);
+		surface->fillRect(Common::Rect(88, 48, 231, 103), black);
+		surface->frameRect(Common::Rect(88, 48, 231, 103), front);
 
-	drawStringInSurface("T-TOGGLE", 128, 81, front, black, surface);
-	drawStringInSurface("SOUND ON/OFF", 113, 88, front, black, surface);
+		surface->frameRect(Common::Rect(90, 50, 229, 101), front);
 
-	Texture *menuTexture = _gfx->createTexture(surface);
+		drawStringInSurface("L-LOAD S-SAVE", 105, 56, front, black, surface);
+		if (isSpectrum())
+			drawStringInSurface("1-TERMINATE", 105, 64, front, black, surface);
+		else
+			drawStringInSurface("ESC-TERMINATE", 105, 64, front, black, surface);
+
+		drawStringInSurface("T-TOGGLE", 128, 81, front, black, surface);
+		drawStringInSurface("SOUND ON/OFF", 113, 88, front, black, surface);
+	}
+	menuTexture = _gfx->createTexture(surface);
 
 	Common::Event event;
 	bool cont = true;
