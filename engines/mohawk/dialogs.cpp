@@ -175,7 +175,7 @@ MystOptionsWidget::~MystOptionsWidget() {
 void MystOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
 	layouts.addDialog(layoutName, overlayedLayout)
 	            .addLayout(GUI::ThemeLayout::kLayoutVertical)
-	                .addPadding(16, 16, 16, 16)
+	                .addPadding(0, 0, 0, 0)
 	                .addWidget("ZipMode", "Checkbox")
 	                .addWidget("Transistions", "Checkbox")
 	                .addWidget("PlayMystFlyBy", "Checkbox")
@@ -394,7 +394,7 @@ RivenOptionsWidget::~RivenOptionsWidget() {
 void RivenOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
 	layouts.addDialog(layoutName, overlayedLayout)
 	        .addLayout(GUI::ThemeLayout::kLayoutVertical)
-	            .addPadding(16, 16, 16, 16)
+	            .addPadding(0, 0, 0, 0)
 	            .addWidget("ZipMode", "Checkbox")
 	            .addWidget("WaterEffect", "Checkbox")
 	            .addLayout(GUI::ThemeLayout::kLayoutHorizontal)

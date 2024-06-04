@@ -496,7 +496,7 @@ bool ExtraGuiOptionsWidget::save() {
 
 void ExtraGuiOptionsWidget::defineLayout(ThemeEval& layouts, const Common::String& layoutName, const Common::String& overlayedLayout) const {
 	layouts.addDialog(layoutName, overlayedLayout);
-	layouts.addLayout(GUI::ThemeLayout::kLayoutVertical).addPadding(8, 8, 8, 8);
+	layouts.addLayout(GUI::ThemeLayout::kLayoutVertical).addPadding(0, 0, 0, 0);
 
 	for (uint i = 0; i < _options.size(); i++) {
 		Common::String id = Common::String::format("%d", i + 1);

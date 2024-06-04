@@ -93,7 +93,7 @@ AGSOptionsWidget::AGSOptionsWidget(GuiObject *boss, const Common::String &name, 
 
 void AGSOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
 	layouts.addDialog(layoutName, overlayedLayout);
-	layouts.addLayout(GUI::ThemeLayout::kLayoutVertical).addPadding(16, 16, 16, 16);
+	layouts.addLayout(GUI::ThemeLayout::kLayoutVertical).addPadding(0, 0, 0, 0);
 
 	layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal).addPadding(0, 0, 0, 0);
 	layouts.addWidget("translation_desc", "OptionsLabel");

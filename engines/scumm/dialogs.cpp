@@ -1254,7 +1254,7 @@ bool ScummGameOptionsWidget::save() {
 
 void ScummGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
 	layouts.addDialog(layoutName, overlayedLayout);
-	layouts.addLayout(GUI::ThemeLayout::kLayoutVertical).addPadding(0, 0, 8, 8);
+	layouts.addLayout(GUI::ThemeLayout::kLayoutVertical).addPadding(0, 0, 0, 0);
 
 	bool hasEnhancements = false;
 

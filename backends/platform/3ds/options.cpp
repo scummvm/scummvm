@@ -78,7 +78,7 @@ N3DSOptionsWidget::~N3DSOptionsWidget() {
 void N3DSOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
 	layouts.addDialog(layoutName, overlayedLayout)
 	    .addLayout(GUI::ThemeLayout::kLayoutVertical)
-	        .addPadding(8, 8, 8, 8)
+	        .addPadding(0, 0, 0, 0)
 	        .addWidget("ShowCursor", "Checkbox")
 	        .addWidget("SnapToBorder", "Checkbox")
 	        .addWidget("StretchToFit", "Checkbox")

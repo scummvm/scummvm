@@ -59,11 +59,9 @@ TwpOptionsContainerWidget::TwpOptionsContainerWidget(GuiObject *boss, const Comm
 
 void TwpOptionsContainerWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
 	layouts.addDialog(layoutName, overlayedLayout);
-	layouts.addLayout(GUI::ThemeLayout::kLayoutVertical).addPadding(0, 0, 8, 8);
+	layouts.addLayout(GUI::ThemeLayout::kLayoutVertical).addPadding(0, 0, 0, 0);
 
-	layouts.addPadding(0, 0, 8, 8)
-		.addSpace(10)
-		.addWidget("VideoLabel", "OptionsLabel")
+	layouts.addWidget("VideoLabel", "OptionsLabel")
 		.addWidget("VideoCheck1", "Checkbox")
 		.addWidget("VideoCheck2", "Checkbox")
 		.addWidget("ControlsLabel", "OptionsLabel")
