@@ -298,7 +298,7 @@ ConfigDialog::ConfigDialog() :
 	// The game specific options tab
 	//
 
-	int tabId = tab->addTab(_("Game"), "GlobalConfig_Engine", false);
+	int tabId = tab->addTab(_("Game"), "GlobalConfig_Engine");
 
 	if (g_engine->hasFeature(Engine::kSupportsChangingOptionsDuringRuntime)) {
 		ScrollContainerWidget *engineContainer = new ScrollContainerWidget(tab, "GlobalConfig_Engine.Container", "GlobalConfig_Engine_Container");
@@ -343,7 +343,7 @@ ConfigDialog::ConfigDialog() :
 
 	Common::KeymapArray keymaps = metaEngine->initKeymaps(gameDomain.c_str());
 	if (!keymaps.empty()) {
-		tab->addTab(_("Keymaps"), "GlobalConfig_KeyMapper", false);
+		tab->addTab(_("Keymaps"), "GlobalConfig_KeyMapper");
 
 		ScrollContainerWidget *keymapContainer = new ScrollContainerWidget(tab, "GlobalConfig_KeyMapper.Container", "GlobalConfig_KeyMapper_Container");
 		keymapContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
@@ -355,7 +355,7 @@ ConfigDialog::ConfigDialog() :
 	//
 	// The backend tab (shown only if the backend implements one)
 	//
-	int backendTabId = tab->addTab(_("Backend"), "GlobalConfig_Backend", false);
+	int backendTabId = tab->addTab(_("Backend"), "GlobalConfig_Backend");
 
 	ScrollContainerWidget *backendContainer = new ScrollContainerWidget(tab, "GlobalConfig_Backend.Container", "GlobalConfig_Backend_Container");
 	backendContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
@@ -374,11 +374,11 @@ ConfigDialog::ConfigDialog() :
 	//
 	AchMan.setActiveDomain(metaEngine->getAchievementsInfo(gameDomain));
 	if (AchMan.getAchievementCount()) {
-		tab->addTab(_("Achievements"), "GlobalConfig_Achievements", false);
+		tab->addTab(_("Achievements"), "GlobalConfig_Achievements");
 		addAchievementsControls(tab, "GlobalConfig_Achievements.");
 	}
 	if (AchMan.getStatCount()) {
-		tab->addTab(_("Statistics"), "GlobalConfig_Achievements", false);
+		tab->addTab(_("Statistics"), "GlobalConfig_Achievements");
 		addStatisticsControls(tab, "GlobalConfig_Achievements.");
 	}
 
