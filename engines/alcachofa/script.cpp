@@ -441,7 +441,7 @@ private:
 			const char *characterName = getStringArg(0);
 			int32 dialogId = getNumberArg(1);
 			if (strncmp(characterName, "MENU_", 5) == 0) {
-				warning("STUB: adding dialog menu line %d", dialogId);
+				g_engine->world().getMainCharacterByKind(process().character()).addDialogLine(dialogId);
 				return TaskReturn::finish(1);
 			}
 			Character *_character = strcmp(characterName, "AMBOS") == 0
@@ -552,11 +552,10 @@ private:
 				g_engine->world().getMainCharacterByKind(process().character()).room()->toggleActiveFloor();
 			return TaskReturn::finish(1);
 		case ScriptKernelTask::SetDialogLineReturn:
-			warning("STUB KERNEL CALL: SetDialogLineReturn");
+			g_engine->world().getMainCharacterByKind(process().character()).setLastDialogReturnValue(getNumberArg(0));
 			return TaskReturn::finish(0);
 		case ScriptKernelTask::DialogMenu:
-			warning("STUB KERNEL CALL: DialogMenu");
-			return TaskReturn::finish(0);
+			return TaskReturn::waitFor(g_engine->world().getMainCharacterByKind(process().character()).dialogMenu(process()));
 		case ScriptKernelTask::ClearInventory:
 			switch((MainCharacterKind)getNumberArg(0)) {
 			case MainCharacterKind::Mortadelo: g_engine->world().mortadelo().clearInventory(); break;

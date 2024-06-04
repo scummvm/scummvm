@@ -282,7 +282,7 @@ struct SayTextTask : public Task {
 					g_engine->world().dialogFont(),
 					g_engine->world().getDialogLine(_dialogId),
 					Point(g_system->getWidth() / 2, g_system->getHeight() - 200),
-					-1, true, kWhite, 0);
+					-1, true, kWhite, -kForegroundOrderCount);
 			}
 			// TODO: Add lip sync for sayText
 
@@ -706,7 +706,7 @@ void MainCharacter::drawInner() {
 void syncDialogMenuLine(Serializer &serializer, DialogMenuLine &line) {
 	serializer.syncAsSint32LE(line._dialogId);
 	serializer.syncAsSint32LE(line._yPosition);
-	serializer.syncAsSint32LE(line._returnId);
+	serializer.syncAsSint32LE(line._returnValue);
 }
 
 void MainCharacter::serializeSave(Serializer &serializer) {
@@ -722,7 +722,7 @@ void MainCharacter::serializeSave(Serializer &serializer) {
 	uint semaphoreCounter = _semaphore.counter();
 	serializer.syncAsSint32LE(semaphoreCounter);
 	_semaphore = FakeSemaphore(semaphoreCounter);
-	syncArray(serializer, _dialogMenuLines, syncDialogMenuLine);
+	syncArray(serializer, _dialogLines, syncDialogMenuLine);
 	syncObjectAsString(serializer, _currentlyUsingObject);
 
 	for (auto *item : _items) {
@@ -797,6 +797,103 @@ bool MainCharacter::clearTargetIf(const ITriggerableObject *target) {
 		return true;
 	}
 	return false;
+}
+
+struct DialogMenuTask : public Task {
+	DialogMenuTask(Process &process, MainCharacter *character)
+		: Task(process)
+		, _input(g_engine->input())
+		, _character(character) {}
+
+	virtual TaskReturn run() override {
+		TASK_BEGIN;
+		layoutLines();
+		while (true) {
+			TASK_YIELD;
+			if (g_engine->player().activeCharacter() != _character)
+				continue;
+			g_engine->player().heldItem() = nullptr;
+			g_engine->player().drawCursor();
+
+			_clickedLineI = updateLines();
+			if (_clickedLineI != UINT_MAX) {
+				TASK_YIELD;
+				TASK_WAIT(_character->sayText(process(), _character->_dialogLines[_clickedLineI]._dialogId));
+				int32 returnValue = _character->_dialogLines[_clickedLineI]._returnValue;
+				_character->_dialogLines.clear();
+				TASK_RETURN(returnValue);
+			}
+		}
+		TASK_END;
+	}
+
+	virtual void debugPrint() override {
+		g_engine->console().debugPrintf("DialogMenu for %s with %u lines\n",
+			_character->name().c_str(), _character->_dialogLines.size());
+	}
+
+private:
+	static constexpr int kTextXOffset = 5;
+	static constexpr int kTextYOffset = 10;
+	inline int maxTextWidth() const {
+		return g_system->getWidth() - 2 * kTextXOffset;
+	}
+
+	void layoutLines() {
+		auto &lines = _character->_dialogLines;
+		for (auto &itLine : lines) {
+			// we reuse the draw request to measure the actual height without using it to actually draw
+			TextDrawRequest request(
+				g_engine->world().dialogFont(),
+				g_engine->world().getDialogLine(itLine._dialogId),
+				Point(kTextXOffset, 0), maxTextWidth(), false, kWhite, 2);
+			itLine._yPosition = request.size().y; // briefly storing line height
+		}
+
+		lines.back()._yPosition = g_system->getHeight() - kTextYOffset - lines.back()._yPosition;
+		for (uint i = lines.size() - 1; i > 0; i--)
+			lines[i - 1]._yPosition = lines[i]._yPosition - kTextYOffset - lines[i - 1]._yPosition;
+	}
+
+	uint updateLines() {
+		bool isSomethingHovered = false;
+		for (uint i = _character->_dialogLines.size(); i > 0; i--) {
+			auto &itLine = _character->_dialogLines[i - 1];
+			bool isHovered = !isSomethingHovered && _input.mousePos2D().y >= itLine._yPosition - kTextYOffset;
+			g_engine->drawQueue().add<TextDrawRequest>(
+				g_engine->world().dialogFont(),
+				g_engine->world().getDialogLine(itLine._dialogId),
+				Point(kTextXOffset + (isHovered * 20), itLine._yPosition),
+				maxTextWidth(), false, isHovered ? Color{ 255, 0, 0, 255 } : kWhite, -kForegroundOrderCount + 2);
+			isSomethingHovered = isSomethingHovered || isHovered;
+			if (isHovered && _input.wasMouseLeftReleased())
+				return i - 1;
+		}
+		return UINT_MAX;
+	}
+
+	Input &_input;
+	MainCharacter *_character;
+	uint _clickedLineI = UINT_MAX;
+};
+
+void MainCharacter::addDialogLine(int32 dialogId) {
+	assert(dialogId >= 0);
+	DialogMenuLine line;
+	line._dialogId = dialogId;
+	_dialogLines.push_back(line);
+}
+
+void MainCharacter::setLastDialogReturnValue(int32 returnValue) {
+	if (_dialogLines.empty())
+		error("Tried to set return value of non-existent dialog line");
+	_dialogLines.back()._returnValue = returnValue;
+}
+
+Task *MainCharacter::dialogMenu(Process &process) {
+	if (_dialogLines.empty())
+		error("Tried to open dialog menu without any lines set");
+	return new DialogMenuTask(process, this);
 }
 
 const char *Background::typeName() const { return "Background"; }

@@ -469,8 +469,8 @@ protected:
 
 struct DialogMenuLine {
 	int32 _dialogId;
-	int32 _yPosition;
-	int32 _returnId;
+	int32 _yPosition = 0;
+	int32 _returnValue = 0;
 };
 
 class MainCharacter final : public WalkingCharacter {
@@ -488,6 +488,7 @@ public:
 	virtual void update() override;
 	virtual void draw() override;
 	virtual void serializeSave(Common::Serializer &serializer) override;
+	virtual const char *typeName() const;
 	virtual void walkTo(
 		const Common::Point &target,
 		Direction endDirection = Direction::Invalid,
@@ -499,18 +500,21 @@ public:
 	bool hasItem(const Common::String &name) const;
 	void pickup(const Common::String &name, bool putInHand);
 	void drop(const Common::String &name);
-	virtual const char *typeName() const;
+	void addDialogLine(int32 dialogId);
+	void setLastDialogReturnValue(int32 returnValue);
+	Task *dialogMenu(Process &process);
 
 protected:
 	virtual void onArrived() override;
 
 private:
 	friend class Inventory;
+	friend struct DialogMenuTask;
 	Item *getItemByName(const Common::String &name) const;
 	void drawInner();
 
 	Common::Array<Item *> _items;
-	Common::Array<DialogMenuLine> _dialogMenuLines;
+	Common::Array<DialogMenuLine> _dialogLines;
 	ObjectBase *_currentlyUsingObject = nullptr;
 	MainCharacterKind _kind;
 	FakeSemaphore _semaphore;

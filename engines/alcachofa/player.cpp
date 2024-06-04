@@ -71,6 +71,10 @@ void Player::updateCursor() {
 			_cursorFrameI = 4;
 	}
 
+	drawCursor();
+}
+
+void Player::drawCursor() {
 	Point cursorPos = g_engine->input().mousePos2D();
 	if (_heldItem == nullptr)
 		g_engine->drawQueue().add<AnimationDrawRequest>(_cursorAnimation.get(), _cursorFrameI, as2D(cursorPos), -10);
@@ -81,7 +85,7 @@ void Player::updateCursor() {
 		auto frameOffset = animation.totalFrameOffset(0);
 		auto imageSize = animation.imageSize(animation.imageIndex(0, 0));
 		cursorPos -= frameOffset + imageSize / 2;
-		g_engine->drawQueue().add<AnimationDrawRequest>(&animation, 0, as2D(cursorPos), -10);
+		g_engine->drawQueue().add<AnimationDrawRequest>(&animation, 0, as2D(cursorPos), -kForegroundOrderCount);
 	}
 }
 
