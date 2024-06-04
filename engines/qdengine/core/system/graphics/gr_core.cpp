@@ -97,29 +97,6 @@ grDispatcher *grDispatcher::instance(void *hwnd) {
 #endif
 }
 
-bool grDispatcher::sys_init() {
-	warning("STUB: grDispatcher::sys_init()");
-#if 0
-	WNDCLASS wc;
-
-	wc.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS | CS_OWNDC;
-	wc.lpfnWndProc = GR_WindowProc;
-	wc.cbClsExtra = 0;
-	wc.cbWndExtra = 0;
-	wc.hInstance = GetModuleHandle(0);
-	wc.hIcon = NULL;
-	wc.hCursor = NULL;
-	wc.hbrBackground = NULL;
-	wc.lpszMenuName = NULL;
-	wc.lpszClassName = grDispatcher::wnd_class_name();
-
-	if (!RegisterClass(&wc)) return false;
-
-	default_mouse_cursor_ = LoadCursor(NULL, IDC_ARROW);
-#endif
-	return true;
-}
-
 bool grDispatcher::sys_finit() {
 	warning("STUB: grDispatcher::sys_finit()");
 #if 0
