@@ -56,7 +56,7 @@ public:
 	ErrorCode attach() override;
 	ErrorCode detach() override;
 
-	void onBofButton(CBofObject *pButton, int nState) override;
+	void onBofButton(CBofObject *pObject, int nState) override;
 
 protected:
 	void pause();

@@ -42,7 +42,7 @@ void triInitFilters(CBofBitmap *pBmp);
 void lightningInitFilters();
 void destroyFilters();
 
-bool doFilters(const uint16 nFilterId, CBofBitmap *pBmp, CBofRect *viewRect);
+bool doFilters(const uint16 nFilterId, CBofBitmap *pBmp, CBofRect *pRect);
 
 } // namespace SpaceBar
 } // namespace Bagel
