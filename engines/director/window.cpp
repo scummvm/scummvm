@@ -357,6 +357,9 @@ void Window::ensureMovieIsLoaded() {
 	}
 
 	loadNextMovie();
+
+	if (_currentMovie->getScore()->_playState == kPlayNotStarted)
+		step(); // we will load it here and move to kPlayLoaded state
 }
 
 bool Window::setNextMovie(Common::String &movieFilenameRaw) {
