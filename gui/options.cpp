@@ -175,12 +175,12 @@ static const int guiBaseValues[] = { 200, 175, 150, 125, 100, 75, 50, 25, -1 };
 static const char *const kbdMouseSpeedLabels[] = { "3", "5", "8", "10", "13", "15", "18", "20", nullptr };
 
 OptionsDialog::OptionsDialog(const Common::String &domain, int x, int y, int w, int h)
-	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _midiTabId(-1), _pathsTabId(-1), _tabWidget(nullptr) {
+	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _midiTabId(-1), _pathsContainer(nullptr), _tabWidget(nullptr) {
 	init();
 }
 
 OptionsDialog::OptionsDialog(const Common::String &domain, const Common::String &name)
-	: Dialog(name), _domain(domain), _graphicsTabId(-1), _midiTabId(-1), _pathsTabId(-1), _tabWidget(nullptr) {
+	: Dialog(name), _domain(domain), _graphicsTabId(-1), _midiTabId(-1), _pathsContainer(nullptr), _tabWidget(nullptr) {
 	init();
 }
 
@@ -2286,10 +2286,13 @@ void GlobalOptionsDialog::build() {
 	// 5) The Paths tab
 	//
 	if (!g_gui.useLowResGUI())
-		_pathsTabId = tab->addTab(_("Paths"), "GlobalOptions_Paths");
+		tab->addTab(_("Paths"), "GlobalOptions_Paths", false);
 	else
-		_pathsTabId = tab->addTab(_c("Paths", "lowres"), "GlobalOptions_Paths");
-	addPathsControls(tab, "GlobalOptions_Paths.", g_gui.useLowResGUI());
+		tab->addTab(_c("Paths", "lowres"), "GlobalOptions_Paths", false);
+	_pathsContainer = new ScrollContainerWidget(tab, "GlobalOptions_Paths.Container", "GlobalOptions_Paths_Container");
+	_pathsContainer->setTarget(this);
+	_pathsContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
+	addPathsControls(_pathsContainer, "GlobalOptions_Paths_Container.", g_gui.useLowResGUI());
 
 	//
 	// 6) The GUI tab
@@ -2507,7 +2510,7 @@ void GlobalOptionsDialog::addPathsControls(GuiObject *boss, const Common::String
 		new ButtonWidget(boss, prefix + "PluginsButton", _c("Plugins Path:", "lowres"), Common::U32String(), kChoosePluginsDirCmd);
 	_pluginsPath = new PathWidget(boss, prefix + "PluginsPath", Common::Path(), _c("None", "path"));
 
-	_pluginsPathClearButton = addClearButton(boss, "GlobalOptions_Paths.PluginsPathClearButton", kPluginsPathClearCmd);
+	_pluginsPathClearButton = addClearButton(boss, prefix + "PluginsPathClearButton", kPluginsPathClearCmd);
 #endif // DYNAMIC_MODULES
 #endif // !defined(__DC__)
 
@@ -3548,40 +3551,38 @@ void GlobalOptionsDialog::reflowLayout() {
 		_soundFontClearButton->setEnabled(enabled);
 	}
 
-	if (_pathsTabId != -1) {
-		_tabWidget->setActiveTab(_pathsTabId);
-
-		_tabWidget->removeWidget(_savePathClearButton);
+	if (_pathsContainer) {
+		_pathsContainer->removeWidget(_savePathClearButton);
 		_savePathClearButton->setNext(nullptr);
 		delete _savePathClearButton;
-		_savePathClearButton = addClearButton(_tabWidget, "GlobalOptions_Paths.SavePathClearButton", kSavePathClearCmd);
+		_savePathClearButton = addClearButton(_pathsContainer, "GlobalOptions_Paths_Container.SavePathClearButton", kSavePathClearCmd);
 
-		_tabWidget->removeWidget(_themePathClearButton);
+		_pathsContainer->removeWidget(_themePathClearButton);
 		_themePathClearButton->setNext(nullptr);
 		delete _themePathClearButton;
-		_themePathClearButton = addClearButton(_tabWidget, "GlobalOptions_Paths.ThemePathClearButton", kThemePathClearCmd);
+		_themePathClearButton = addClearButton(_pathsContainer, "GlobalOptions_Paths_Container.ThemePathClearButton", kThemePathClearCmd);
 
-		_tabWidget->removeWidget(_iconPathClearButton);
+		_pathsContainer->removeWidget(_iconPathClearButton);
 		_iconPathClearButton->setNext(nullptr);
 		delete _iconPathClearButton;
-		_iconPathClearButton = addClearButton(_tabWidget, "GlobalOptions_Paths.IconPathClearButton", kIconPathClearCmd);
+		_iconPathClearButton = addClearButton(_pathsContainer, "GlobalOptions_Paths_Container.IconPathClearButton", kIconPathClearCmd);
 
 #ifdef USE_DLC
-		_tabWidget->removeWidget(_dlcPathClearButton);
+		_pathsContainer->removeWidget(_dlcPathClearButton);
 		_dlcPathClearButton->setNext(nullptr);
 		delete _dlcPathClearButton;
-		_dlcPathClearButton = addClearButton(_tabWidget, "GlobalOptions_Paths.DLCPathClearButton", kDLCPathClearCmd);
+		_dlcPathClearButton = addClearButton(_pathsContainer, "GlobalOptions_Paths_Container.DLCPathClearButton", kDLCPathClearCmd);
 #endif
 
-		_tabWidget->removeWidget(_extraPathClearButton);
+		_pathsContainer->removeWidget(_extraPathClearButton);
 		_extraPathClearButton->setNext(nullptr);
 		delete _extraPathClearButton;
-		_extraPathClearButton = addClearButton(_tabWidget, "GlobalOptions_Paths.ExtraPathClearButton", kExtraPathClearCmd);
+		_extraPathClearButton = addClearButton(_pathsContainer, "GlobalOptions_Paths_Container.ExtraPathClearButton", kExtraPathClearCmd);
 
-		_tabWidget->removeWidget(_browserPathClearButton);
+		_pathsContainer->removeWidget(_browserPathClearButton);
 		_browserPathClearButton->setNext(nullptr);
 		delete _browserPathClearButton;
-		_browserPathClearButton = addClearButton(_tabWidget, "GlobalOptions_Paths.BrowserPathClearButton", kBrowserPathClearCmd);
+		_browserPathClearButton = addClearButton(_pathsContainer, "GlobalOptions_Paths_Container.BrowserPathClearButton", kBrowserPathClearCmd);
 	}
 
 	_tabWidget->setActiveTab(activeTab);

@@ -55,6 +55,7 @@ class GuiObject;
 class RadiobuttonGroup;
 class RadiobuttonWidget;
 class PathWidget;
+class ScrollContainerWidget;
 class OptionsContainerWidget;
 
 class OptionsDialog : public Dialog {
@@ -120,7 +121,8 @@ protected:
 	TabWidget *_tabWidget;
 	int _graphicsTabId;
 	int _midiTabId;
-	int _pathsTabId;
+
+	ScrollContainerWidget *_pathsContainer;
 
 	PathWidget *_shader;
 	ButtonWidget *_shaderClearButton;
