@@ -66,23 +66,6 @@ bool is_file_exist(const char *file_name) {
 	return false;
 }
 
-bool set_current_directory(const char *file_name) {
-
-	char fpath[_MAX_PATH];
-	_fullpath(fpath, file_name, _MAX_PATH);
-
-	char drive[_MAX_DRIVE];
-	char dir[_MAX_DIR];
-
-	_splitpath(fpath, drive, dir, NULL, NULL);
-
-	XBuffer buf(fpath, _MAX_PATH);
-	buf.operator < (drive).operator < (dir);
-
-	SetCurrentDirectory(buf.c_str());
-	return true;
-}
-
 const char *strip_path(const char *file_name) {
 	static XBuffer name_buf(_MAX_PATH);
 	char fname[_MAX_FNAME];
