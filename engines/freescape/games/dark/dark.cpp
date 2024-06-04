@@ -345,9 +345,42 @@ bool DarkEngine::tryDestroyECD(int index) {
 }
 
 void DarkEngine::addSkanner(Area *area) {
-	int id = 251;
-	debugC(1, kFreescapeDebugParser, "Adding skanner (group %d) to room structure %d", id, area->getAreaID());
-	area->addGroupFromArea(id, _areaMap[255]);
+	debugC(1, kFreescapeDebugParser, "Adding skanner to room %d", area->getAreaID());
+	int16 id = 0;
+	if (isAmiga() || isAtariST()) {
+		id = 251;
+		debugC(1, kFreescapeDebugParser, "Adding group %d", id);
+		area->addGroupFromArea(id, _areaMap[255]);
+	} else {
+		GeometricObject *obj = nullptr;
+		id = 248;
+		// If first object is already added, do not re-add any
+		if (area->objectWithID(id) != nullptr)
+			return;
+
+		debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
+		obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+		assert(obj);
+		obj = (GeometricObject *)obj->duplicate();
+		obj->makeInvisible();
+		area->addObject(obj);
+
+		id = 249;
+		debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
+		obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+		assert(obj);
+		obj = (GeometricObject *)obj->duplicate();
+		obj->makeInvisible();
+		area->addObject(obj);
+
+		id = 250;
+		debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
+		obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+		assert(obj);
+		obj = (GeometricObject *)obj->duplicate();
+		obj->makeInvisible();
+		area->addObject(obj);
+	}
 }
 
 bool DarkEngine::checkIfGameEnded() {
@@ -647,16 +680,19 @@ void DarkEngine::drawBinaryClock(Graphics::Surface *surface, int xPosition, int 
 
 	if (_gameStateControl == kFreescapeGameStatePlaying)
 		number = _ticks / 2;
-	else if (_gameStateControl == kFreescapeGameStateEnd)
-		number = 1 << (_ticks - _ticksFromEnd) / 15;
-	else
+	else if (_gameStateControl == kFreescapeGameStateEnd) {
+		if (_gameStateVars[kVariableDarkEnding] == 0)
+			number = (1 << 15) - 1;
+		else
+			number = 1 << (_ticks - _ticksFromEnd) / 15;
+	} else
 		return;
 
-	if (number >= 1 << 15)
-		number = (1 << 15) - 1;
+	int maxBits = isAtariST() || isAmiga() ? 14 : 15;
+	/*if (number >= 1 << maxBits)
+		number = (1 << maxBits) - 1;*/
 
 	int bits = 0;
-	int maxBits = isAtariST() || isAmiga() ? 14 : 15;
 	while (bits <= maxBits) {
 		int y = 0;
 		if (isAmiga() || isAtariST()) {
