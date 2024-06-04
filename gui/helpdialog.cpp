@@ -140,7 +140,7 @@ void HelpDialog::addTabs(const char * const *tabData) {
 
 		Common::U32String tabText(*tabData++);
 
-		_tab->addTab(tabName, "HelpContentDialog", false);
+		_tab->addTab(tabName, "HelpContentDialog");
 
 		RichTextWidget *rt = new RichTextWidget(_tab, "HelpContentDialog.RichTextWidget", tabText);
 

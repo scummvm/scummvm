@@ -99,12 +99,7 @@ TabWidget::~TabWidget() {
 		_tabs[_activeTab].firstWidget = _firstWidget;
 	_firstWidget = nullptr;
 	for (uint i = 0; i < _tabs.size(); ++i) {
-		if (_tabs[i].scrollWidget) {
-			delete _tabs[i].scrollWidget;
-		} else {
-			delete _tabs[i].firstWidget;
-		}
-		_tabs[i].scrollWidget = nullptr;
+		delete _tabs[i].firstWidget;
 		_tabs[i].firstWidget = nullptr;
 	}
 	_tabs.clear();
@@ -125,13 +120,12 @@ uint16 TabWidget::getHeight() const {
 	return _h + _tabHeight;
 }
 
-int TabWidget::addTab(const Common::U32String &title, const Common::String &dialogName, bool withScroll) {
+int TabWidget::addTab(const Common::U32String &title, const Common::String &dialogName) {
 	// Add a new tab page
 	Tab newTab;
 	newTab.title = title;
 	newTab.dialogName = dialogName;
 	newTab.firstWidget = nullptr;
-	newTab.scrollWidget = nullptr;
 
 	// Determine the new tab width
 	int newWidth = g_gui.getStringWidth(title) + _titleSpacing;
@@ -146,30 +140,7 @@ int TabWidget::addTab(const Common::U32String &title, const Common::String &dial
 	// Activate the new tab, also writes back our _firstWidget
 	setActiveTab(numTabs - 1);
 
-	if (withScroll) {
-		_tabs.back().scrollWidget = new ScrollContainerWidget(this, "", dialogName, 'gtcr');
-		_tabs.back().scrollWidget->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
-		_tabs.back().scrollWidget->setTarget(this);
-		_firstWidget = _tabs.back().scrollWidget;
-	}
-
 	return _activeTab;
-}
-
-Widget *TabWidget::addChild(Widget *newChild) {
-	if (_activeTab == -1 || _tabs[_activeTab].scrollWidget == nullptr)
-		return Widget::addChild(newChild);
-
-	newChild->setBoss(_tabs[_activeTab].scrollWidget);
-	return _tabs[_activeTab].scrollWidget->addChild(newChild);
-}
-
-void TabWidget::removeWidget(Widget *del) {
-	if (_activeTab == -1 || _tabs[_activeTab].scrollWidget == nullptr){
-		Widget::removeWidget(del);
-		return;
-	}
-	_tabs[_activeTab].scrollWidget->removeWidget(del);
 }
 
 void TabWidget::removeTab(int tabID) {
@@ -183,11 +154,7 @@ void TabWidget::removeTab(int tabID) {
 	}
 
 	// Dispose the widgets in that tab and then the tab itself
-	if (_tabs[tabID].scrollWidget) {
-		delete _tabs[tabID].scrollWidget;
-	} else {
-		delete _tabs[tabID].firstWidget;
-	}
+	delete _tabs[tabID].firstWidget;
 	_tabs.remove_at(tabID);
 
 	// Adjust _firstVisibleTab if necessary
@@ -217,10 +184,7 @@ void TabWidget::setActiveTab(int tabID) {
 			releaseFocus();
 		}
 		_activeTab = tabID;
-		if (_tabs[tabID].scrollWidget)
-			_firstWidget = _tabs[_activeTab].scrollWidget;
-		else
-			_firstWidget = _tabs[tabID].firstWidget;
+		_firstWidget = _tabs[tabID].firstWidget;
 
 		// Also ensure the tab is visible in the tab bar
 		if (_firstVisibleTab > tabID)
@@ -385,17 +349,12 @@ void TabWidget::reflowLayout() {
 		_tabs[_activeTab].firstWidget = _firstWidget;
 
 	for (uint i = 0; i < _tabs.size(); ++i) {
-		if (_tabs[i].scrollWidget) {
-			_tabs[i].scrollWidget->resize(_x, _y, _w, _h, false);
-			_tabs[i].scrollWidget->reflowLayout();
-		} else {
-			g_gui.xmlEval()->reflowDialogLayout(_tabs[i].dialogName, _tabs[i].firstWidget);
+		g_gui.xmlEval()->reflowDialogLayout(_tabs[i].dialogName, _tabs[i].firstWidget);
 
-			Widget *w = _tabs[i].firstWidget;
-			while (w) {
-				w->reflowLayout();
-				w = w->next();
-			}
+		Widget *w = _tabs[i].firstWidget;
+		while (w) {
+			w->reflowLayout();
+			w = w->next();
 		}
 	}
 

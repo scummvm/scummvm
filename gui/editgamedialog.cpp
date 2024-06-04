@@ -134,7 +134,7 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	//
 	// 1) The game tab
 	//
-	tab->addTab(_("Game"), "GameOptions_Game", false);
+	tab->addTab(_("Game"), "GameOptions_Game");
 
 	_gameContainer = new ScrollContainerWidget(tab, "GameOptions_Game.Container", "GameOptions_Game_Container");
 	_gameContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
@@ -158,7 +158,7 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	//
 	// 3) The graphics tab
 	//
-	_graphicsTabId = tab->addTab(g_gui.useLowResGUI() ? _("GFX") : _("Graphics"), "GameOptions_Graphics", false);
+	_graphicsTabId = tab->addTab(g_gui.useLowResGUI() ? _("GFX") : _("Graphics"), "GameOptions_Graphics");
 	ScrollContainerWidget *graphicsContainer = new ScrollContainerWidget(tab, "GameOptions_Graphics.Container", "GameOptions_Graphics_Container", kGraphicsTabContainerReflowCmd);
 	graphicsContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
 	graphicsContainer->setTarget(this);
@@ -179,7 +179,7 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	}
 
 	if (!keymaps.empty()) {
-		tab->addTab(_("Keymaps"), "GameOptions_KeyMapper", false);
+		tab->addTab(_("Keymaps"), "GameOptions_KeyMapper");
 
 		ScrollContainerWidget *keymapContainer = new ScrollContainerWidget(tab, "GameOptions_KeyMapper.Container", "GameOptions_KeyMapper_Container");
 		keymapContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
@@ -191,7 +191,7 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	//
 	// The backend tab (shown only if the backend implements one)
 	//
-	int backendTabId = tab->addTab(_("Backend"), "GameOptions_Backend", false);
+	int backendTabId = tab->addTab(_("Backend"), "GameOptions_Backend");
 
 	ScrollContainerWidget *backendContainer = new ScrollContainerWidget(tab, "GameOptions_Backend.Container", "GameOptions_Backend_Container");
 	backendContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
@@ -314,11 +314,11 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 		const MetaEngine &metaEngine = enginePlugin->get<MetaEngine>();
 		AchMan.setActiveDomain(metaEngine.getAchievementsInfo(domain));
 		if (AchMan.getAchievementCount()) {
-			tab->addTab(_("Achievements"), "GameOptions_Achievements", false);
+			tab->addTab(_("Achievements"), "GameOptions_Achievements");
 			addAchievementsControls(tab, "GameOptions_Achievements.");
 		}
 		if (AchMan.getStatCount()) {
-			tab->addTab(_("Statistics"), "GameOptions_Achievements", false);
+			tab->addTab(_("Statistics"), "GameOptions_Achievements");
 			addStatisticsControls(tab, "GameOptions_Achievements.");
 		}
 	}

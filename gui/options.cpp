@@ -2194,7 +2194,7 @@ void GlobalOptionsDialog::build() {
 	//
 	// 1) The graphics tab
 	//
-	_graphicsTabId = tab->addTab(g_gui.useLowResGUI() ? _("GFX") : _("Graphics"), "GlobalOptions_Graphics", false);
+	_graphicsTabId = tab->addTab(g_gui.useLowResGUI() ? _("GFX") : _("Graphics"), "GlobalOptions_Graphics");
 	ScrollContainerWidget *graphicsContainer = new ScrollContainerWidget(tab, "GlobalOptions_Graphics.Container", "GlobalOptions_Graphics_Container", kGraphicsTabContainerReflowCmd);
 	graphicsContainer->setTarget(this);
 	graphicsContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
@@ -2228,7 +2228,7 @@ void GlobalOptionsDialog::build() {
 	}
 
 	if (!keymaps.empty()) {
-		tab->addTab(_("Keymaps"), "GlobalOptions_KeyMapper", false);
+		tab->addTab(_("Keymaps"), "GlobalOptions_KeyMapper");
 
 		ScrollContainerWidget *keymapContainer = new ScrollContainerWidget(tab, "GlobalOptions_KeyMapper.Container", "GlobalOptions_KeyMapper_Container");
 		keymapContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
@@ -2240,7 +2240,7 @@ void GlobalOptionsDialog::build() {
 	//
 	// The backend tab (shown only if the backend implements one)
 	//
-	int backendTabId = tab->addTab(_("Backend"), "GlobalOptions_Backend", false);
+	int backendTabId = tab->addTab(_("Backend"), "GlobalOptions_Backend");
 
 	ScrollContainerWidget *backendContainer = new ScrollContainerWidget(tab, "GlobalOptions_Backend.Container", "GlobalOptions_Backend_Container");
 	backendContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
@@ -2286,9 +2286,9 @@ void GlobalOptionsDialog::build() {
 	// 5) The Paths tab
 	//
 	if (!g_gui.useLowResGUI())
-		tab->addTab(_("Paths"), "GlobalOptions_Paths", false);
+		tab->addTab(_("Paths"), "GlobalOptions_Paths");
 	else
-		tab->addTab(_c("Paths", "lowres"), "GlobalOptions_Paths", false);
+		tab->addTab(_c("Paths", "lowres"), "GlobalOptions_Paths");
 	_pathsContainer = new ScrollContainerWidget(tab, "GlobalOptions_Paths.Container", "GlobalOptions_Paths_Container");
 	_pathsContainer->setTarget(this);
 	_pathsContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
@@ -2297,7 +2297,7 @@ void GlobalOptionsDialog::build() {
 	//
 	// 6) The GUI tab
 	//
-	tab->addTab(_("GUI"), "GlobalOptions_GUI", false);
+	tab->addTab(_("GUI"), "GlobalOptions_GUI");
 	ScrollContainerWidget *guiContainer = new ScrollContainerWidget(tab, "GlobalOptions_GUI.Container", "GlobalOptions_GUI_Container");
 	guiContainer->setTarget(this);
 	guiContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
@@ -2306,7 +2306,7 @@ void GlobalOptionsDialog::build() {
 	//
 	// 7) The miscellaneous tab
 	//
-	tab->addTab(_("Misc"), "GlobalOptions_Misc", false);
+	tab->addTab(_("Misc"), "GlobalOptions_Misc");
 	ScrollContainerWidget *miscContainer = new ScrollContainerWidget(tab, "GlobalOptions_Misc.Container", "GlobalOptions_Misc_Container");
 	miscContainer->setTarget(this);
 	miscContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
@@ -2318,9 +2318,9 @@ void GlobalOptionsDialog::build() {
 	// 8) The Cloud tab (remote storages)
 	//
 	if (!g_gui.useLowResGUI())
-		tab->addTab(_("Cloud"), "GlobalOptions_Cloud", false);
+		tab->addTab(_("Cloud"), "GlobalOptions_Cloud");
 	else
-		tab->addTab(_c("Cloud", "lowres"), "GlobalOptions_Cloud", false);
+		tab->addTab(_c("Cloud", "lowres"), "GlobalOptions_Cloud");
 
 	ScrollContainerWidget *container = new ScrollContainerWidget(tab, "GlobalOptions_Cloud.Container", "GlobalOptions_Cloud_Container", kCloudTabContainerReflowCmd);
 	container->setTarget(this);
