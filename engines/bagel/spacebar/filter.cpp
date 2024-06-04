@@ -348,8 +348,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				break;
 			}
 			case 1: {
-				if (pChipBmp != nullptr)
-					delete pChipBmp;
+				delete pChipBmp;
 
 				char szCString[256];
 				CBofString cString(szCString, 256);
@@ -391,8 +390,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				break;
 			}
 			case 2: {
-				if (pChipBmp != nullptr)
-					delete pChipBmp;
+				delete pChipBmp;
 
 				char szCString[256];
 				CBofString cString(szCString, 256);
