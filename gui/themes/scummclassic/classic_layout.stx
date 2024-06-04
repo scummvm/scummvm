@@ -381,6 +381,12 @@
 		</layout>
 	</dialog>
 
+	<dialog name = 'GlobalOptions_KeyMapper_Container' overlays = 'GlobalOptions_KeyMapper.Container'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'Container'/>
+		</layout>
+	</dialog>
+
 	<dialog name = 'GlobalOptions_Backend' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'Container'
@@ -1296,6 +1302,12 @@
 		</layout>
 	</dialog>
 
+	<dialog name = 'GameOptions_KeyMapper_Container' overlays = 'GameOptions_KeyMapper.Container'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<import layout = 'Dialog.GlobalOptions_KeyMapper_Container' />
+		</layout>
+	</dialog>
+
 	<dialog name = 'GameOptions_Backend' overlays = 'Dialog.GameOptions.TabWidget'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'Container'
@@ -1609,6 +1621,12 @@
 			<widget name = 'Container'
 					type = 'ScrollContainerWidget'
 			/>
+		</layout>
+	</dialog>
+
+	<dialog name = 'GlobalConfig_KeyMapper_Container' overlays = 'GlobalConfig_KeyMapper.Container'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<import layout = 'Dialog.GlobalOptions_KeyMapper_Container' />
 		</layout>
 	</dialog>
 

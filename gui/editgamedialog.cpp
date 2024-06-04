@@ -216,7 +216,12 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 
 	if (!keymaps.empty()) {
 		tab->addTab(_("Keymaps"), "GameOptions_KeyMapper", false);
-		addKeyMapperControls(tab, "GameOptions_KeyMapper.", keymaps, domain);
+
+		ScrollContainerWidget *keymapContainer = new ScrollContainerWidget(tab, "GameOptions_KeyMapper.Container", "GameOptions_KeyMapper_Container");
+		keymapContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
+		keymapContainer->setTarget(this);
+
+		addKeyMapperControls(keymapContainer, "GameOptions_KeyMapper_Container.", keymaps, domain);
 	}
 
 	//

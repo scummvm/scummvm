@@ -2229,7 +2229,12 @@ void GlobalOptionsDialog::build() {
 
 	if (!keymaps.empty()) {
 		tab->addTab(_("Keymaps"), "GlobalOptions_KeyMapper", false);
-		addKeyMapperControls(tab, "GlobalOptions_KeyMapper.", keymaps, Common::ConfigManager::kKeymapperDomain);
+
+		ScrollContainerWidget *keymapContainer = new ScrollContainerWidget(tab, "GlobalOptions_KeyMapper.Container", "GlobalOptions_KeyMapper_Container");
+		keymapContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
+		keymapContainer->setTarget(this);
+
+		addKeyMapperControls(keymapContainer, "GlobalOptions_KeyMapper_Container.", keymaps, Common::ConfigManager::kKeymapperDomain);
 	}
 
 	//
