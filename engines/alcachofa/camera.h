@@ -22,10 +22,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "common/serializer.h"
-#include "common/rect.h"
-#include "math/vector2d.h"
-#include "math/vector3d.h"
+#include "common.h"
 #include "math/matrix4.h"
 
 namespace Alcachofa {
@@ -34,7 +31,7 @@ class WalkingCharacter;
 class Process;
 struct Task;
 
-static constexpr const int16_t kBaseScale = 300; ///< this number pops up everywhere in the engine
+static constexpr const int16_t kBaseScale = 300;
 static constexpr const float kInvBaseScale = 1.0f / kBaseScale;
 
 class Camera {
@@ -50,8 +47,25 @@ public:
 	void setRoomBounds(Common::Point bgSize, int16 bgScale);
 	void setFollow(WalkingCharacter *target, bool catchUp = false);
 	void setPosition(Math::Vector2d v);
+	void setPosition(Math::Vector3d v);
+
+	Task *lerpPos(Process &process, Math::Vector2d targetPos, int32 duration, EasingType easingType);
+	Task *lerpPos(Process &process, Math::Vector3d targetPos, int32 duration, EasingType easingType);
+	Task *lerpPosZ(Process &process, float targetPosZ, int32 duration, EasingType easingType);
+	Task *lerpScale(Process &process, float targetScale, int32 duration, EasingType easingType);
+	Task *lerpRotation(Process &process, float targetRotation, int32 duration, EasingType easingType);
+	Task *lerpPosScale(Process &process, Math::Vector2d targetPos, float targetScale, int32 duration, EasingType easingType);
+	//Task *shake(Process &process, Math::Vector2d amplitude, Math::Vector2d frequency, int32 duration);
+	Task *waitToStop(Process &process);
 
 private:
+	friend struct CamLerpTask;
+	friend struct CamLerpPosTask;
+	friend struct CamLerpScaleTask;
+	friend struct CamLerpPosScaleTask;
+	friend struct CamLerpRotationTask;
+	//friend struct CamShakeTask;
+	friend struct CamWaitToStopTask;
 	Math::Vector3d setAppliedCenter(Math::Vector3d center);
 	void setupMatricesAround(Math::Vector3d center);
 	void updateFollowing(float deltaTime);
