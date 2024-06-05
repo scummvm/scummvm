@@ -45,18 +45,11 @@ struct PluginVersion {
 
 	uint32 sizeBuffer() const {
 		uint32 ret = 0;
-		if (_plugin) {
-			ret += strlen(_plugin) + 1;
-		}
+		ret += ADDynamicDescription::strSizeBuffer(_plugin);
 		return ret;
 	}
 	void *toBuffer(void *buffer) {
-		if (_plugin) {
-			int len = strlen(_plugin) + 1;
-			memcpy((char *)buffer, _plugin, len);
-			_plugin = (const char *)buffer;
-			buffer = (char *)buffer + len;
-		}
+		buffer = ADDynamicDescription::strToBuffer(buffer, _plugin);
 		return buffer;
 	}
 };
@@ -73,13 +66,12 @@ struct AGSGameDescription {
 			for (p = _plugins; p->_plugin != nullptr; p++) {
 				ret += p->sizeBuffer();
 			}
-			// Make sure we have enough room for worst case alignment
-			// by adding the size of a pointer minus one
-			ret += sizeof(*p) * (p - _plugins + 1) + sizeof(void *) - 1;
+			// Make space for alignment
+			ret += ADDynamicDescription::alignSizeBuffer();
+			// Add all plugins plus the final element
+			ret += sizeof(*p) * (p - _plugins + 1);
 		}
-		if (_mainNameInsideInstaller) {
-			ret += strlen(_mainNameInsideInstaller) + 1;
-		}
+		ret += ADDynamicDescription::strSizeBuffer(_mainNameInsideInstaller);
 		return ret;
 	}
 
@@ -91,7 +83,9 @@ struct AGSGameDescription {
 				;
 			uint count = (p - _plugins + 1);
 
-			buffer = (void *)(((uintptr)buffer + sizeof(void *) - 1) & -sizeof(void *));
+			// Align for pointers
+			buffer = ADDynamicDescription::alignToBuffer(buffer);
+
 			memcpy(buffer, _plugins, sizeof(*p) * count);
 
 			_plugins = (PluginVersion *)buffer;
@@ -103,14 +97,7 @@ struct AGSGameDescription {
 				buffer = dp->toBuffer(buffer);
 			}
 		}
-
-		if (_mainNameInsideInstaller) {
-			int len = strlen(_mainNameInsideInstaller) + 1;
-			memcpy((char *)buffer, _mainNameInsideInstaller, len);
-			_mainNameInsideInstaller = (const char *)buffer;
-			buffer = (char *)buffer + len;
-		}
-
+		buffer = ADDynamicDescription::strToBuffer(buffer, _mainNameInsideInstaller);
 		return buffer;
 	}
 };
