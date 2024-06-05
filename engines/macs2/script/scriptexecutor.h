@@ -178,6 +178,10 @@ class Macs2Engine;
 				return isRunningScript || isAwaitingCallback;
 			}
 
+
+			// Mutex indicating if the A3D2 function is active
+			bool isSkipping = false;
+
 	};
 }	// namespace Script
 

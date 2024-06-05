@@ -431,6 +431,9 @@ void View1::draw() {
 
 	s.blitFrom(_backgroundSurface);
 
+	drawBackgroundAnimations(s);
+	DrawCharacters(s)
+
 	// Draw the character
 
 	// uint16 charX = 50;
@@ -505,7 +508,7 @@ void View1::draw() {
 	// drawGlyphs(g_engine->_glyphs, g_engine->numGlyphs, 10, 10, s);
 
 	// DrawSprite(108, 14, g_engine->_flagWidths[_flagFrameIndex], g_engine->_flagHeights[_flagFrameIndex], g_engine->_flagData[_flagFrameIndex], s);
-	drawBackgroundAnimations(s);
+;
 	// renderString(200, 100, "Hello, world!");
 
 	// DrawSprite(100, 100, g_engine->_stick.Width, g_engine->_stick.Height, g_engine->_stick.Data, s);
@@ -522,7 +525,7 @@ void View1::draw() {
 	// drawPathfindingPoints(s);
 	// drawPath(s);
 	// drawBackgroundAnimationNumbers(s);
-	DrawCharacters(s);
+	
 }
 
 bool View1::tick() {
