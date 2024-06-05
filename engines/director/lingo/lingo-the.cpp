@@ -591,6 +591,11 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = 32 * 1024 * 1024;	// Let's have 32 Mbytes
 		break;
 	case kTheMenu:
+		if (!g_director->_wm->getMenu()) {
+			warning("Lingo::getTheEntity(): Menu does not exist!");
+			break;
+		}
+
 		d.type = STRING;
 		Graphics::MacMenuItem *menuRef;
 		menuRef = nullptr;
@@ -604,6 +609,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		*d.u.s = g_director->_wm->getMenu()->getName(menuRef);
 		break;
 	case kTheMenuItem:
+		if (!g_director->_wm->getMenu()) {
+			warning("Lingo::getTheEntity(): Menu does not exist!");
+			break;
+		}
 		Graphics::MacMenuItem *menu, *menuItem;
 		menu = nullptr, menuItem = nullptr;
 
@@ -1028,7 +1037,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		menu = nullptr, menuItem = nullptr;
 
 		if (!g_director->_wm->getMenu()) {
-			warning("Lingo::setTheEntity() : Menu does not exist!");
+			warning("Lingo::setTheEntity(): Menu does not exist!");
 			break;
 		}
 
@@ -1238,6 +1247,11 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 }
 
 int Lingo::getMenuNum() {
+	if (!g_director->_wm->getMenu()) {
+		warning("Lingo::getMenuNum(): Menu does not exist!");
+		return 0;
+	}
+
 	return g_director->_wm->getMenu()->numberOfMenus();
 }
 
@@ -1264,7 +1278,7 @@ int Lingo::getMenuItemsNum(Datum &d) {
 	Graphics::MacMenuItem *menu = nullptr;
 
 	if (!g_director->_wm->getMenu()) {
-		warning("Lingo::getMenuItemsNum() : Menu does not exist!");
+		warning("Lingo::getMenuItemsNum(): Menu does not exist!");
 		return 0;
 	}
 
