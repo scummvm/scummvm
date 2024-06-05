@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-01 10:44+0000\n"
-"PO-Revision-Date: 2024-06-05 08:33+0000\n"
+"PO-Revision-Date: 2024-06-05 08:44+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -7180,7 +7180,7 @@ msgstr "Запустити обладнання буріння"
 
 #: engines/freescape/games/driller/driller.cpp:115
 msgid "Collect drilling rig"
-msgstr "Під'єднати обладнання буріння"
+msgstr "Взяти обладнання буріння"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
