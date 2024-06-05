@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-01 10:44+0000\n"
-"PO-Revision-Date: 2024-06-04 21:17+0000\n"
+"PO-Revision-Date: 2024-06-05 08:33+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -3158,10 +3158,8 @@ msgid "ScummVM"
 msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
-#, fuzzy
-#| msgid "ScummVM"
 msgid "ScummVM (debug)"
-msgstr "ScummVM"
+msgstr "ScummVM (відладка)"
 
 #: dists/android.strings.xml.cpp:32
 msgid "Graphic adventure game engine"
@@ -3180,16 +3178,12 @@ msgid "Quit"
 msgstr "Вихід"
 
 #: dists/android.strings.xml.cpp:35
-#, fuzzy
-#| msgid "Config File Error"
 msgid "Log File Error"
-msgstr "Помилка файла конфігурації"
+msgstr "Помилка файла логу"
 
 #: dists/android.strings.xml.cpp:36
-#, fuzzy
-#| msgid "Unable to read ScummVM config file or create a new one!"
 msgid "Unable to read ScummVM log file or create a new one!"
-msgstr "Не вдалося прочитати файл конфігурації ScummVM або створити новий!"
+msgstr "Не вдалося прочитати лог-файл ScummVM або створити новий!"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Config File Error"
@@ -3269,44 +3263,36 @@ msgid "Storage Access Framework Permissions for ScummVM were revoked!"
 msgstr "Дозвіл доступу ScummVM до Storage Access Framework було вилучено!"
 
 #: dists/android.strings.xml.cpp:55
-#, fuzzy
-#| msgid "the video mode could not be changed"
 msgid "Configuration file could not be parsed"
-msgstr "відеорежим не може бути змінено"
+msgstr "Файл конфігурації має помилку у форматі"
 
 #: dists/android.strings.xml.cpp:56
-#, fuzzy
-#| msgid "In 2D games"
 msgid "Run a game"
-msgstr "У 2D іграх"
+msgstr "Запустити гру"
 
 #: dists/android.strings.xml.cpp:57
-#, fuzzy
-#| msgid "Search in game list"
 msgid "Search a game"
-msgstr "Пошук у списку ігор"
+msgstr "Шукати гру"
 
 #: dists/android.strings.xml.cpp:58
 msgid ""
 "No games (yet)\n"
 "Open ScummVM and add your games here."
 msgstr ""
+"Нема ігор (ще)\n"
+"Відкрийте ScummVM і додайте свої ігри."
 
 #: dists/android.strings.xml.cpp:59
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game icon"
-msgstr "Налашт. гри"
+msgstr "Іконки гри"
 
 #: dists/android.strings.xml.cpp:60
-#, fuzzy
-#| msgid "Show object labels"
 msgid "Shortcut label"
-msgstr "Показувати назви об'єктів"
+msgstr "Мітка скроту"
 
 #: dists/android.strings.xml.cpp:61
 msgid "Shortcut icon"
-msgstr ""
+msgstr "Іконка скроту"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:32
@@ -5450,11 +5436,11 @@ msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:46
 msgid "LIBRETRO PLAYLIST GENERATOR"
-msgstr ""
+msgstr "ГЕНЕРАТОР СПИСКІВ LIBRETRO"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:47
 msgid "(check '? > Libretro playlist' for detailed info)"
-msgstr ""
+msgstr "(виберіть '?> список Libretro' для подальшої інформації)"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:48
 msgid "Playlists Path"
@@ -5465,32 +5451,28 @@ msgid "Specifies where your playlist will be saved."
 msgstr "Вказує шлях де будуть збережені ваші списки до програвання."
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:52
-#, fuzzy
-#| msgid "Platform:"
 msgid "Playlist format:"
-msgstr "Платформа:"
+msgstr "Формат списку:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:57
 msgid "Hooks location:"
 msgstr "Локація для гуків:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:59
-#, fuzzy
-#| msgid "Add a new folder"
 msgid "All in save folder"
-msgstr "Додати нову папку"
+msgstr "Все до папки збереження"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:60
 msgid "One in each game folder"
-msgstr ""
+msgstr "Один у кожну папку гри"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:62
 msgid "Clear existing hooks"
-msgstr ""
+msgstr "Прибрати поточні гуки"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:64
 msgid "Generate playlist"
-msgstr ""
+msgstr "Згенерувати список"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:66
 msgid "Status: "
@@ -5501,24 +5483,20 @@ msgid "Failed, can't access playlist file"
 msgstr "Не вдалося отримати доступ до файлу списку"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:224
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "cleaning failed"
-msgstr "Помилка читання"
+msgstr "помилка очищення"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:226
 msgid "Failed, can't create hook files"
 msgstr "Не вдалося створити файли з гуками"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:236
-#, fuzzy
-#| msgid "Select additional game directory"
 msgid "Select Playlist directory"
-msgstr "Виберіть додаткову папку гри"
+msgstr "Виберіть папку для списку"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:172
 msgid "Libretro playlist"
-msgstr ""
+msgstr "Список Libretro"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:175
 msgid ""
@@ -5691,64 +5669,44 @@ msgid "BSD License"
 msgstr "Ліцензія BSD"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:329
-#, fuzzy
-#| msgid "GPL License"
 msgid "Apache License"
-msgstr "Ліцензія GPL"
+msgstr "Ліцензія Apache"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:330
-#, fuzzy
-#| msgid "BSD License"
 msgid "BSL License"
-msgstr "Ліцензія BSD"
+msgstr "Ліцензія BSL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:331
-#, fuzzy
-#| msgid "GPL License"
 msgid "GLAD License"
-msgstr "Ліцензія GPL"
+msgstr "Ліцензія GLAD"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:332
-#, fuzzy
-#| msgid "BSD License"
 msgid "ISC License"
-msgstr "Ліцензія BSD"
+msgstr "Ліцензія ISC"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:333
-#, fuzzy
-#| msgid "GPL License"
 msgid "Lua License"
-msgstr "Ліцензія GPL"
+msgstr "Ліцензія Lua"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:334
-#, fuzzy
-#| msgid "GPL License"
 msgid "MIT License"
-msgstr "Ліцензія GPL"
+msgstr "Ліцензія MIT"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:335
-#, fuzzy
-#| msgid "GPL License"
 msgid "MKV License"
-msgstr "Ліцензія GPL"
+msgstr "Ліцензія MKV"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:336
-#, fuzzy
-#| msgid "GPL License"
 msgid "MPL License"
-msgstr "Ліцензія GPL"
+msgstr "Ліцензія MPL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:337
-#, fuzzy
-#| msgid "GPL License"
 msgid "TinyGL License"
-msgstr "Ліцензія GPL"
+msgstr "Ліцензія TinyGL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:338
-#, fuzzy
-#| msgid "Freefont License"
 msgid "Catharon License"
-msgstr "Ліцензія на Freefont"
+msgstr "Ліцензія Catharon"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:79
@@ -6422,17 +6380,15 @@ msgstr "Все одно зчитати"
 
 #: engines/bagel/metaengine.cpp:41
 msgid "Wait"
-msgstr ""
+msgstr "Чекати"
 
 #: engines/bagel/metaengine.cpp:42
 msgid "Soldier 714 Eye Cheat"
-msgstr ""
+msgstr "Чіт для ока Soldier 714"
 
 #: engines/bagel/metaengine.cpp:83
-#, fuzzy
-#| msgid "General"
 msgid "General Keys"
-msgstr "Загальні"
+msgstr "Загальні клавіші"
 
 #: engines/bladerunner/bladerunner.cpp:404
 msgid "Failed to initialize resources"
@@ -7219,14 +7175,12 @@ msgid "Enable/Disable Jetpack"
 msgstr ""
 
 #: engines/freescape/games/driller/driller.cpp:109
-#, fuzzy
-#| msgid "Debug Apply Celling Grid"
 msgid "Deploy drilling rig"
-msgstr "Відладка: Накласти сітку стелі"
+msgstr "Запустити обладнання буріння"
 
 #: engines/freescape/games/driller/driller.cpp:115
 msgid "Collect drilling rig"
-msgstr ""
+msgstr "Під'єднати обладнання буріння"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -10487,25 +10441,23 @@ msgstr "Чи ви хочете розпочати або приєднатися 
 
 #. I18N: Random map generator for Moonbase Commander
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:55
-#, fuzzy
-#| msgid "Game Options"
 msgid "Random Map Options"
-msgstr "Налашт. гри"
+msgstr "Налашт. випадкової мапи"
 
 #. I18N: Map generator algorthims
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:59
 msgid "Algorithm"
-msgstr ""
+msgstr "Алгоритм"
 
 #. I18N: Spiff algorthim
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:63
 msgid "Spiff"
-msgstr ""
+msgstr "Spiff"
 
 #. I18N: Katton algorthim
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:65
 msgid "Katton"
-msgstr ""
+msgstr "Katton"
 
 #. I18N: Random algorthim
 #. I18N: Random map size
@@ -10524,40 +10476,36 @@ msgstr "Випадковий"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:67
 msgid "Picks the map algorithm randomly."
-msgstr ""
+msgstr "Вибирає алгоритм мапи випадковим чином."
 
 #. I18N: Map sizes
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:70
 msgid "Size"
-msgstr ""
+msgstr "Розмір"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:74
-#, fuzzy
-#| msgid "75% - Small"
 msgid "Small"
-msgstr "75% - Малий"
+msgstr "Малий"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:76
 msgid "Large"
-msgstr "Велике"
+msgstr "Великий"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:77
 msgid "Huge"
-msgstr ""
+msgstr "Надвеликий"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:78
 msgid "SAI"
-msgstr ""
+msgstr "SAI"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:79
 msgid "Ridiculous"
-msgstr ""
+msgstr "Обурливий"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:80
-#, fuzzy
-#| msgid "Map"
 msgid "Max"
-msgstr "Призначити"
+msgstr "Максимальний"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:82
 msgid "Picks the map size randomly."
@@ -10565,10 +10513,8 @@ msgstr ""
 
 #. I18N: Map tilesets
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:85
-#, fuzzy
-#| msgid "Reset"
 msgid "Tileset"
-msgstr "Скинути"
+msgstr "Плитки"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:99
 msgid "Picks the map tileset randomly."
@@ -10577,12 +10523,12 @@ msgstr ""
 #. I18N: Percentage of energy pools
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:102
 msgid "Energy"
-msgstr ""
+msgstr "Енергія"
 
 #. I18N: Energy slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:107
 msgid "Scarce - Lots"
-msgstr ""
+msgstr "Мало - Багато"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:112
 msgid "Picks the random amount of energy pools."
@@ -10591,12 +10537,12 @@ msgstr ""
 #. I18N: Percentage of terrain
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:115
 msgid "Terrain"
-msgstr ""
+msgstr "Рельєф"
 
 #. I18N: Terrain slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:120
 msgid "Barren - Rough"
-msgstr ""
+msgstr "Рівний - Грубий"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:124
 msgid "Picks the random amount of terrain level."
@@ -10605,12 +10551,12 @@ msgstr ""
 #. I18N: Percentage of water
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:127
 msgid "Water"
-msgstr ""
+msgstr "Вода"
 
 #. I18N: Water slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:132
 msgid "Driest - Wettest"
-msgstr ""
+msgstr "Сухо - Мокро"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:136
 msgid "Picks the random amount of water."
@@ -10618,10 +10564,8 @@ msgstr ""
 
 #. I18N: Generate new map
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:140
-#, fuzzy
-#| msgid "General"
 msgid "Generate"
-msgstr "Загальні"
+msgstr "Згенерувати"
 
 #: engines/scumm/he/sound_he.cpp:1555
 msgid ""
@@ -11304,34 +11248,28 @@ msgid "Select highlighted verb"
 msgstr "Виберіть виділене дієслово"
 
 #: engines/twp/metaengine.cpp:156
-#, fuzzy
-#| msgid "Go to previous directory level"
 msgid "Go to previous object"
-msgstr "Перейти на папку рівнем вище"
+msgstr "Перейти на попередній об'єкт"
 
 #: engines/twp/metaengine.cpp:157
-#, fuzzy
-#| msgid "Go to setup menu"
 msgid "Go to next object"
-msgstr "Перейти у меню налаштування"
+msgstr "Перейти на наступний об'єкт"
 
 #: engines/twp/metaengine.cpp:158
 msgid "Select verb/item Left"
-msgstr ""
+msgstr "Вибрати дію/предмет наліво"
 
 #: engines/twp/metaengine.cpp:159
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Select verb/item Right"
-msgstr "Ковзати направо"
+msgstr "Вибрати дію/предмет направо"
 
 #: engines/twp/metaengine.cpp:160
 msgid "Select verb/item Up"
-msgstr ""
+msgstr "Вибрати дію/предмет догори"
 
 #: engines/twp/metaengine.cpp:161
 msgid "Select verb/item Down"
-msgstr ""
+msgstr "Вибрати дію/предмет донизу"
 
 #: engines/twp/metaengine.cpp:163
 msgid "Select Actor 1"
