@@ -92,29 +92,15 @@ struct GOBGameDescription {
 
 	uint32 sizeBuffer() const {
 		uint32 ret = desc.sizeBuffer();
-		if (startStkBase) {
-			ret += strlen(startStkBase) + 1;
-		}
-		if (startTotBase) {
-			ret += strlen(startTotBase) + 1;
-		}
+		ret += ADDynamicDescription::strSizeBuffer(startStkBase);
+		ret += ADDynamicDescription::strSizeBuffer(startTotBase);
 		return ret;
 	}
 
 	void *toBuffer(void *buffer) {
 		buffer = desc.toBuffer(buffer);
-		if (startStkBase) {
-			int len = strlen(startStkBase) + 1;
-			memcpy((char *)buffer, startStkBase, len);
-			startStkBase = (const char *)buffer;
-			buffer = (char *)buffer + len;
-		}
-		if (startTotBase) {
-			int len = strlen(startTotBase) + 1;
-			memcpy((char *)buffer, startTotBase, len);
-			startTotBase = (const char *)buffer;
-			buffer = (char *)buffer + len;
-		}
+		buffer = ADDynamicDescription::strToBuffer(buffer, startStkBase);
+		buffer = ADDynamicDescription::strToBuffer(buffer, startTotBase);
 		return buffer;
 	}
 };

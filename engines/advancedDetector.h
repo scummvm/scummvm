@@ -42,6 +42,34 @@ class FSList;
  * @{
  */
 
+/* Some helpers functions to avoid code duplication */
+namespace ADDynamicDescription {
+
+static inline uint32 strSizeBuffer(const char * const &field) {
+	return field ? strlen(field) + 1 : 0;
+}
+static inline void *strToBuffer(void *buffer, const char *&field) {
+	if (field) {
+		int len = strlen(field) + 1;
+		memcpy((char *)buffer, field, len);
+		field = (const char *)buffer;
+		buffer = (char *)buffer + len;
+	}
+	return buffer;
+}
+
+static inline uint32 alignSizeBuffer() {
+	// We consider alignments up to pointer size
+	return sizeof(void *) - 1;
+}
+static inline void *alignToBuffer(void *buffer) {
+	// Round up
+	uintptr tmp = (uintptr)buffer + sizeof(void *) - 1;
+	return (void *)(tmp & -sizeof(void *));
+}
+
+} // End of namespace ADDynamicDescription
+
 /**
  * A record describing a file to be matched for detecting a specific game
  * variant. A list of such records is used inside every ADGameDescription to
@@ -55,28 +83,14 @@ struct ADGameFileDescription {
 
 	uint32 sizeBuffer() const {
 		uint32 ret = 0;
-		if (fileName) {
-			ret += strlen(fileName) + 1;
-		}
-		if (md5) {
-			ret += strlen(md5) + 1;
-		}
+		ret += ADDynamicDescription::strSizeBuffer(fileName);
+		ret += ADDynamicDescription::strSizeBuffer(md5);
 		return ret;
 	}
 
 	void *toBuffer(void *buffer) {
-		if (fileName) {
-			int len = strlen(fileName) + 1;
-			memcpy((char *)buffer, fileName, len);
-			fileName = (const char *)buffer;
-			buffer = (char *)buffer + len;
-		}
-		if (md5) {
-			int len = strlen(md5) + 1;
-			memcpy((char *)buffer, md5, len);
-			md5 = (const char *)buffer;
-			buffer = (char *)buffer + len;
-		}
+		buffer = ADDynamicDescription::strToBuffer(buffer, fileName);
+		buffer = ADDynamicDescription::strToBuffer(buffer, md5);
 		return buffer;
 	}
 };
@@ -203,18 +217,12 @@ struct ADGameDescription {
 	 */
 	uint32 sizeBuffer() const {
 		uint32 ret = 0;
-		if (gameId) {
-			ret += strlen(gameId) + 1;
-		}
-		if (extra) {
-			ret += strlen(extra) + 1;
-		}
+		ret += ADDynamicDescription::strSizeBuffer(gameId);
+		ret += ADDynamicDescription::strSizeBuffer(extra);
 		for(int i = 0; i < ARRAYSIZE(filesDescriptions); i++) {
 			ret += filesDescriptions[i].sizeBuffer();
 		}
-		if (guiOptions) {
-			ret += strlen(guiOptions) + 1;
-		}
+		ret += ADDynamicDescription::strSizeBuffer(guiOptions);
 		return ret;
 	}
 
@@ -226,27 +234,12 @@ struct ADGameDescription {
 	 * @return The new pointer on buffer after the stored data.
 	 */
 	void *toBuffer(void *buffer) {
-		if (gameId) {
-			int len = strlen(gameId) + 1;
-			memcpy((char *)buffer, gameId, len);
-			gameId = (const char *)buffer;
-			buffer = (char *)buffer + len;
-		}
-		if (extra) {
-			int len = strlen(extra) + 1;
-			memcpy((char *)buffer, extra, len);
-			extra = (const char *)buffer;
-			buffer = (char *)buffer + len;
-		}
+		buffer = ADDynamicDescription::strToBuffer(buffer, gameId);
+		buffer = ADDynamicDescription::strToBuffer(buffer, extra);
 		for(int i = 0; i < ARRAYSIZE(filesDescriptions); i++) {
 			buffer = filesDescriptions[i].toBuffer(buffer);
 		}
-		if (guiOptions) {
-			int len = strlen(guiOptions) + 1;
-			memcpy((char *)buffer, guiOptions, len);
-			guiOptions = (const char *)buffer;
-			buffer = (char *)buffer + len;
-		}
+		buffer = ADDynamicDescription::strToBuffer(buffer, guiOptions);
 		return buffer;
 	}
 };
