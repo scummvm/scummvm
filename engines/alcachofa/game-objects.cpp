@@ -863,8 +863,8 @@ private:
 			g_engine->drawQueue().add<TextDrawRequest>(
 				g_engine->world().dialogFont(),
 				g_engine->world().getDialogLine(itLine._dialogId),
-				Point(kTextXOffset + (isHovered * 20), itLine._yPosition),
-				maxTextWidth(), false, isHovered ? Color{ 255, 0, 0, 255 } : kWhite, -kForegroundOrderCount + 2);
+				Point(kTextXOffset, itLine._yPosition),
+				maxTextWidth(), false, isHovered ? Color{ 255, 255, 128, 255 } : kWhite, -kForegroundOrderCount + 2);
 			isSomethingHovered = isSomethingHovered || isHovered;
 			if (isHovered && _input.wasMouseLeftReleased())
 				return i - 1;
