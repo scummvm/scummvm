@@ -474,8 +474,9 @@ Symbol ScriptContext::getMethod(const Common::String &methodName) {
 		if (_properties.contains("ancestor") && _properties["ancestor"].type == OBJECT
 				&& (_properties["ancestor"].u.obj->getObjType() & (kScriptObj | kXtraObj))) {
 			// ancestor method
-			debugC(3, kDebugLingoExec, "Calling method '%s' on ancestor: <%s>", methodName.c_str(), _properties["ancestor"].asString(true).c_str());
-			return _properties["ancestor"].u.obj->getMethod(methodName);
+			sym = _properties["ancestor"].u.obj->getMethod(methodName);
+			if (sym.type != VOIDSYM)
+				debugC(3, kDebugLingoExec, "Calling method '%s' on ancestor: <%s>", methodName.c_str(), _properties["ancestor"].asString(true).c_str());
 		}
 	}
 
