@@ -79,7 +79,8 @@ struct BackgroundAnimation {
 };
 
 enum DebugFlag {
-	DEBUG_RLE = 1 << 10
+	DEBUG_RLE = 1 << 10,
+	DEBUG_SV = 1 << 11
 };
 
 class Macs2Engine : public Engine, public Events {

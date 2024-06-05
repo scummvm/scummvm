@@ -571,6 +571,7 @@ Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_adlib = new Adlib();
 
 	DebugMan.addDebugChannel(DEBUG_RLE, "rle", "Verbose RLE decoding log");
+	DebugMan.addDebugChannel(DEBUG_SV, "sv", "Verbose script debugging log");
 }
 
 Macs2Engine::~Macs2Engine() {
@@ -677,7 +678,8 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	array50D5.resize(0x20 / 2);
 	_fileStream->read(array50D5.data(), 0x20);
 
-
+	// Offset 50F5
+	// _numBackgroundAnimations = _fileStream->readUint16LE();
 
 
 	// TODO: There are some more data points missing from the function
