@@ -55,24 +55,24 @@ public:
 	bool loadSprite(const char *pszPathName, int nCels = 1);
 	bool loadSprite(CBofBitmap *pBitmap, int nCels = 1);
 
-	bool paintSprite(CBofBitmap *pBmp, const int x, const int y);
+	bool paintSprite(CBofBitmap *pBmp, int x, int y);
 	bool paintSprite(CBofBitmap *pBmp, CBofPoint point) {
 		return paintSprite(pBmp, point.x, point.y);
 	}
 
-	bool paintSprite(CBofWindow *pWnd, const int x, const int y);
+	bool paintSprite(CBofWindow *pWnd, int x, int y);
 	bool paintSprite(CBofWindow *pWnd, CBofPoint point) {
 		return paintSprite(pWnd, point.x, point.y);
 	}
 
-	bool paintCel(CBofWindow *pWnd, int nCelId, const int x, const int y);
-	bool paintCel(CBofBitmap *pBmp, int nCelId, const int x, const int y);
+	bool paintCel(CBofWindow *pWnd, int nCelId, int x, int y);
+	bool paintCel(CBofBitmap *pBmp, int nCelId, int x, int y);
 
-	void batchPaint(const int, const int y);
+	void batchPaint(int, int y);
 	void batchErase();
 
-	bool setupCels(const int nCels);
-	void setCel(const int nCelID);
+	bool setupCels(int nCels);
+	void setCel(int nCelID);
 
 	void nextCel();
 	void prevCel();

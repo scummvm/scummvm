@@ -69,7 +69,7 @@ public:
 };
 
 // Filter function function prototype.
-typedef bool (*FilterFunction)(const uint16 nFilterId, CBofBitmap *, CBofRect *);
+typedef bool (*FilterFunction)(uint16 nFilterId, CBofBitmap *, CBofRect *);
 
 /**
  * CBagPanWindow is a window that contains a slide bitmap object.  It has specialize

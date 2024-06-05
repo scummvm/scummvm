@@ -178,7 +178,7 @@ public:
 	virtual CBagStorageDev *onNewStorageDev(int type) = 0;
 
 	virtual void onNewFilter(CBagStorageDev *, const CBofString &typeStr) = 0;
-	virtual void onNewFilter(CBagStorageDev *sdev, const int type) = 0;
+	virtual void onNewFilter(CBagStorageDev *sdev, int type) = 0;
 
 	virtual ErrorCode onHelp(const CBofString &helpFile, bool saveBkgFl = true, CBofWindow *parent = nullptr);
 

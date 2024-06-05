@@ -42,7 +42,7 @@ public:
 	virtual void onKeyHit(uint32 lKey, uint32 lRepCount);
 
 	void onNewFilter(CBagStorageDev *pSDev, const CBofString &typestr);
-	void onNewFilter(CBagStorageDev *pSDev, const int nType);
+	void onNewFilter(CBagStorageDev *pSDev, int nType);
 };
 
 } // namespace SpaceBar

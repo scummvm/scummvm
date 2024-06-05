@@ -94,12 +94,12 @@ public:
 		return scrollDown(_nPageSize);
 	}
 
-	ErrorCode scrollUp(const int nLines);
+	ErrorCode scrollUp(int nLines);
 	ErrorCode scrollDown(const int nLines) {
 		return scrollUp(-nLines);
 	}
 
-	ErrorCode scrollTo(const int nLine);
+	ErrorCode scrollTo(int nLine);
 
 	ErrorCode display();
 	ErrorCode erase();

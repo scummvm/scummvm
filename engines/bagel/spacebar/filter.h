@@ -35,14 +35,14 @@ const uint16 kVildroidFilter = (uint16)4;
 const uint16 kZzazzlFilter = (uint16)8;
 const uint16 kLightningFilter = (uint16)16;
 
-typedef bool(*FilterFxn)(const uint16, CBofBitmap *, CBofRect *);
+typedef bool(*FilterFxn)(uint16, CBofBitmap *, CBofRect *);
 
 void vilInitFilters(CBofBitmap *pBmp);
 void triInitFilters(CBofBitmap *pBmp);
 void lightningInitFilters();
 void destroyFilters();
 
-bool doFilters(const uint16 nFilterId, CBofBitmap *pBmp, CBofRect *pRect);
+bool doFilters(uint16 nFilterId, CBofBitmap *pBmp, CBofRect *pRect);
 
 } // namespace SpaceBar
 } // namespace Bagel

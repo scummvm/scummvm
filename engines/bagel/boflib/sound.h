@@ -74,7 +74,7 @@ class CBofSound : public CBofError, public CBofObject, public CLList {
 public:
 	friend class MusicPlayer;
 
-	CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, const int nLoops = 1);
+	CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, int nLoops = 1);
 	virtual ~CBofSound();
 
 	bool midiLoopPlaySegment(uint32 LoopBegin, uint32 LoopEnd = 0L, uint32 FirstPassBegin = 0L, uint32 TimeFmt = FMT_MILLISEC);
