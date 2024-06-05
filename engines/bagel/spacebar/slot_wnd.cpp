@@ -91,7 +91,7 @@ SBarSlotWnd::SBarSlotWnd() : CBagStorageDevWnd() {
 		_pSlotButs[i] = nullptr;
 	}
 
-	// Init all our slotbmp
+	// Init all our slot bmp
 	for (int i = 0; i < SLOT_NUM; i++) {
 		_cSlots[i]._nIdx = g_engine->getRandomNumber() % SLOT_BMP_NUM;
 		for (int j = 0; j < SLOT_BMP_NUM; j++) {
@@ -147,7 +147,7 @@ void SBarSlotWnd::onPaint(CBofRect *pRect) {
 			paintStorageDevice(nullptr, pBackBmp, pRect);
 		}
 
-		// Paint all our slotbmp
+		// Paint all our slot bmp
 		for (int i = 0; i < SLOT_NUM; i++) {
 
 			if (_cSlots[i]._pSlotBmp[_cSlots[i]._nIdx] != nullptr) {
@@ -205,7 +205,7 @@ ErrorCode  SBarSlotWnd::attach() {
 		// Hide the GO, LOSE Button until a bet is made
 		_pSlotButs[GO]->hide();
 
-		// Build all our slotbmp
+		// Build all our slot bmp
 		for (int i = 0; i < SLOT_NUM; i++) {
 			_cSlots[i]._nIdx = g_engine->getRandomNumber() % SLOT_BMP_NUM;
 			for (int j = 0; j < SLOT_BMP_NUM; j++) {
@@ -301,7 +301,7 @@ ErrorCode SBarSlotWnd::detach() {
 		_pSlotButs[i] = nullptr;
 	}
 
-	// Destroy all our slotbmp
+	// Destroy all our slot bmp
 	for (int i = 0; i < SLOT_NUM; i++) {
 		_cSlots[i]._nIdx = 0;
 

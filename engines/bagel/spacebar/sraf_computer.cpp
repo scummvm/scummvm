@@ -54,7 +54,7 @@ namespace SpaceBar {
 #define kDrivingTime        5
 
 // Constants not linked to any one screen
-#define kCheckmark 'x'
+#define kCheckMark 'x'
 
 #define kStandardIndentation        4
 #define kStandardDoubleIndentation  8
@@ -71,9 +71,9 @@ namespace SpaceBar {
 
 // Add instructions to the main screen
 
-#define kactivateFooterStr1  "NOTE: On any subsequent screens where the information displayed does"
-#define kactivateFooterStr2  "not fit on the screen, scroll up or down one line using up-arrow and"
-#define kactivateFooterStr3  "down-arrow.  Scroll up or down a page using page-up or page-down."
+#define kActivateFooterStr1  "NOTE: On any subsequent screens where the information displayed does"
+#define kActivateFooterStr2  "not fit on the screen, scroll up or down one line using up-arrow and"
+#define kActivateFooterStr3  "down-arrow.  Scroll up or down a page using page-up or page-down."
 
 #define kBuyerBidsHeaderStr  "BUYER      Zn  Ba  Rg  Ut  Pn  Sz   0  H20 LH  CH  ME  TE  AS  PD   ACCEPT"
 #define kBuyerBidsMessage1   "Click on any buyer to see their biography.  Click in the 'ACCEPT' column "
@@ -1721,7 +1721,7 @@ void SrafComputer::recalcDispatchList(int mExpansionFlag) {
 						sStr += "[ ] ";
 						sStr += g_stSellerNames[i - 1]._pszName;
 						if (g_stSellerNames[i - 1]._bMeetWith) {
-							sStr.replaceCharAt(kStandardIndentation + 1, kCheckmark);
+							sStr.replaceCharAt(kStandardIndentation + 1, kCheckMark);
 						}
 					} else {
 						baddToTail = false;
@@ -1750,7 +1750,7 @@ void SrafComputer::recalcDispatchList(int mExpansionFlag) {
 						sStr += "[ ] ";
 						sStr += g_stBuyerBids[i - 2]._pszName;
 						if (g_stBuyerBids[i - 2]._bMeetWith) {
-							sStr.replaceCharAt(kStandardIndentation + 1, kCheckmark);
+							sStr.replaceCharAt(kStandardIndentation + 1, kCheckMark);
 						}
 					}
 				} else {
@@ -1773,7 +1773,7 @@ void SrafComputer::recalcDispatchList(int mExpansionFlag) {
 						sStr += "[ ] ";
 						sStr += g_stOtherPartys[i - 3]._pszName;
 						if (g_stOtherPartys[i - 3]._bMeetWith) {
-							sStr.replaceCharAt(kStandardIndentation + 1, kCheckmark);
+							sStr.replaceCharAt(kStandardIndentation + 1, kCheckMark);
 						}
 					} else {
 						baddToTail = false;
@@ -2912,7 +2912,7 @@ void SrafComputer::onListDispatchTeam() {
 		// If we have a new column to check, do that here.
 		if (bInMeetMemberColumn) {
 			sStr = _pLBox->getText(_nSelection);
-			sStr.replaceCharAt(kStandardIndentation + 1, kCheckmark);       // ??? works fine on mac, not sure what check mark is for pc
+			sStr.replaceCharAt(kStandardIndentation + 1, kCheckMark);       // ??? works fine on mac, not sure what check mark is for pc
 			_pLBox->setText(_nSelection, sStr);
 			_pLBox->repaintItem(_nSelection);
 		}
@@ -2950,7 +2950,7 @@ void SrafComputer::onListDispatchTeam() {
 					if (g_staffers[nElementIndex]._bAvailable) {
 						char cNewChar = ' ';
 						if (g_staffers[nElementIndex]._bOnCurrentTeam == false) {
-							cNewChar = kCheckmark;
+							cNewChar = kCheckMark;
 						}
 
 						// Negate
@@ -3657,13 +3657,13 @@ void SrafComputer::activateMainScreen() {
 	sStr = "";
 	_pLBox->addToTail(sStr, false);
 
-	sStr = kactivateFooterStr1;
+	sStr = kActivateFooterStr1;
 	_pLBox->addToTail(sStr, false);
 
-	sStr = kactivateFooterStr2;
+	sStr = kActivateFooterStr2;
 	_pLBox->addToTail(sStr, false);
 
-	sStr = kactivateFooterStr3;
+	sStr = kActivateFooterStr3;
 	_pLBox->addToTail(sStr, false);
 
 	// Display the current time...

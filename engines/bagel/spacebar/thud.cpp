@@ -34,7 +34,7 @@ SBarThud::SBarThud(CBofWindow *pParent, const CBofRect &xRect) :
 	_xSDevType = SDEV_WIELD;
 	_xYouBmp = nullptr;
 	_nObjects = 0;         // This should be changed on the attach
-	_currObj = nullptr;
+	_currentObj = nullptr;
 }
 
 SBarThud::~SBarThud() {

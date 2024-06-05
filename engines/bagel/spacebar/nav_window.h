@@ -68,7 +68,7 @@ protected:
 	void onPaint(CBofRect *pRect) override;
 	void onMainLoop() override;
 
-	// Split up the onmousedown method
+	// Split up the onMouseDown method
 	void refreshData();     // Added func to just paint text
 
 	void onPinna();
@@ -127,7 +127,7 @@ protected:
 	CBofSprite *_pMap;
 	CBofSprite *_pCurLoc;
 	CBofBitmap *_pNewMap;
-	CBofBitmap *_bmptwo;
+	CBofBitmap *_bmpTwo;
 	CBofRect *_pCurPos;
 	CBofString *_pPortName;
 	CBofRect *_pWilbur;
@@ -146,7 +146,7 @@ protected:
 	CBofRect *_pPustule;
 	CBofRect *_pSwamprock;
 	CBofRect *_pSlug;
-	CBofRect *_pMaggotsnest;
+	CBofRect *_pMaggotsNest;
 	CBofRect *_pPeggleboz;
 	CBofRect *_pArcheroids;
 	CBofRect *_pPackRat;
@@ -155,7 +155,7 @@ protected:
 	CBofRect *_pLife;
 	CBofRect *_pFuge;
 	CBofRect *_pGarfunkel;
-	CBofRect *_pBattlefish;
+	CBofRect *_pBattleFish;
 	CBofRect *_pNoVacancy;
 
 	NPLANET *_pLevel;

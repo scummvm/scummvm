@@ -30,7 +30,7 @@ namespace SpaceBar {
 
 class SBarThud : public CBagStorageDevBmp {
 private:
-	CBagObject *_currObj;
+	CBagObject *_currentObj;
 	int _nObjects;         // The number of currently active objects
 	CBofBitmap *_xYouBmp;
 	static int  _nThudCursor;
@@ -38,11 +38,11 @@ public:
 	SBarThud(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect());
 	virtual ~SBarThud();
 
-	CBagObject *getCurrObj() {
-		return _currObj;
+	CBagObject *getCurrentObj() {
+		return _currentObj;
 	}
-	CBagObject *setCurrObj(CBagObject *pObj) {
-		return _currObj = pObj;
+	CBagObject *setCurrentObj(CBagObject *pObj) {
+		return _currentObj = pObj;
 	}
 
 	static int      getThudCursor() {

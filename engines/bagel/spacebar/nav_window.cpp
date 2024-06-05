@@ -165,7 +165,7 @@ CNavWindow::CNavWindow() {
 	_pPustule = nullptr;
 	_pSwamprock = nullptr;
 	_pSlug = nullptr;
-	_pMaggotsnest = nullptr;
+	_pMaggotsNest = nullptr;
 	_pPeggleboz = nullptr;
 	_pArcheroids = nullptr;
 	_pPackRat = nullptr;
@@ -174,11 +174,11 @@ CNavWindow::CNavWindow() {
 	_pLife = nullptr;
 	_pFuge = nullptr;
 	_pGarfunkel = nullptr;
-	_pBattlefish = nullptr;
+	_pBattleFish = nullptr;
 	_pNoVacancy = nullptr;
 	_bNavAttached = false;
 
-	_bmptwo = nullptr;
+	_bmpTwo = nullptr;
 	_fuel = 40;
 	_cargo = 0;
 	_ship = 120;
@@ -228,7 +228,7 @@ ErrorCode CNavWindow::attach() {
 	_pPustule = new CBofRect(180, 269, 189, 278);
 	_pSwamprock = new CBofRect(340, 234, 349, 243);
 	_pSlug = new CBofRect(36, 341, 45, 350);
-	_pMaggotsnest = new CBofRect(251, 376, 260, 385);
+	_pMaggotsNest = new CBofRect(251, 376, 260, 385);
 
 	// navsim4
 	_pPeggleboz = new CBofRect(90, 20, 99, 29);
@@ -239,7 +239,7 @@ ErrorCode CNavWindow::attach() {
 	_pLife = new CBofRect(394, 234, 403, 243);
 	_pFuge = new CBofRect(270, 324, 279, 333);
 	_pGarfunkel = new CBofRect(90, 377, 99, 386);
-	_pBattlefish = new CBofRect(359, 359, 368, 368);
+	_pBattleFish = new CBofRect(359, 359, 368, 368);
 	_pNoVacancy = new CBofRect(18, 107, 117, 116);
 
 	// Reset all levels
@@ -401,8 +401,8 @@ ErrorCode CNavWindow::detach() {
 	delete _pSwamprock;
 	_pSwamprock = nullptr;
 
-	delete _pMaggotsnest;
-	_pMaggotsnest = nullptr;
+	delete _pMaggotsNest;
+	_pMaggotsNest = nullptr;
 
 	delete _pPeggleboz;
 	_pPeggleboz = nullptr;
@@ -428,8 +428,8 @@ ErrorCode CNavWindow::detach() {
 	delete _pGarfunkel;
 	_pGarfunkel = nullptr;
 
-	delete _pBattlefish;
-	_pBattlefish = nullptr;
+	delete _pBattleFish;
+	_pBattleFish = nullptr;
 
 	delete _pCurLoc;
 	_pCurLoc = nullptr;
@@ -713,7 +713,7 @@ void CNavWindow::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 		if (_pSlug->ptInRect(*pPoint))
 			onSlug();
 
-		if (_pMaggotsnest->ptInRect(*pPoint))
+		if (_pMaggotsNest->ptInRect(*pPoint))
 			onMaggotsnest();
 
 		break;
@@ -746,7 +746,7 @@ void CNavWindow::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 		if (_pGarfunkel->ptInRect(*pPoint))
 			onGarfunkel();
 
-		if (_pBattlefish->ptInRect(*pPoint))
+		if (_pBattleFish->ptInRect(*pPoint))
 			onBattlefish();
 
 		break;
@@ -1313,8 +1313,8 @@ void CNavWindow::calcFuel(double hf) {
 			pause();
 			CBofString sNebDir(NEBSIM4_BMP);
 			fixPathName(sNebDir);
-			_bmptwo = new CBofBitmap(sNebDir.getBuffer(), _pPal);
-			setBackground(_bmptwo);
+			_bmpTwo = new CBofBitmap(sNebDir.getBuffer(), _pPal);
+			setBackground(_bmpTwo);
 			_cargo = 125 + 10 + 17 + 8 + 99 + 24;
 			_ship = 65;
 			_fuel = 45;
@@ -1330,14 +1330,14 @@ void CNavWindow::calcFuel(double hf) {
 			pause();
 			CBofString sNebDir(NEBSIM3_BMP);
 			fixPathName(sNebDir);
-			_bmptwo = new CBofBitmap(sNebDir.getBuffer(), _pPal);
-			setBackground(_bmptwo);
+			_bmpTwo = new CBofBitmap(sNebDir.getBuffer(), _pPal);
+			setBackground(_bmpTwo);
 			_cargo = 100 + 75 + 28 + 45 + 14;
 			_ship = 99;
 			_fuel = 36;
 			delete _pCurPos;
 			_pCurPos = nullptr;
-			_pCurPos = new CBofRect(*_pMaggotsnest);
+			_pCurPos = new CBofRect(*_pMaggotsNest);
 			_level = 2;
 			_pLevel = g_levelTwo;
 			*_pPortName = "Maggot's Nest";
@@ -1348,8 +1348,8 @@ void CNavWindow::calcFuel(double hf) {
 			CBofString sNebDir(NEBSIM2_BMP);
 			fixPathName(sNebDir);
 			assert(_pBackdrop != nullptr);
-			_bmptwo = new CBofBitmap(sNebDir.getBuffer(), _pPal);
-			setBackground(_bmptwo);
+			_bmpTwo = new CBofBitmap(sNebDir.getBuffer(), _pPal);
+			setBackground(_bmpTwo);
 			_cargo = 54 + 119 + 20 + 127;
 			_ship = 120;
 			_fuel = 75;
@@ -1668,7 +1668,7 @@ void CNavWindow::onPustule() {
 		_pCurPos = new CBofRect(*_pPustule);
 		*_pPortName = "Pustule";
 		calcFuel(3.4);
-	} else if (*_pCurPos == *_pMaggotsnest) {
+	} else if (*_pCurPos == *_pMaggotsNest) {
 		delete _pCurPos;
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pPustule);
@@ -1698,7 +1698,7 @@ void CNavWindow::onSwamprock() {
 		*_pPortName = "Swamp Rock";
 		_pCurPos = new CBofRect(*_pSwamprock);
 		calcFuel(1.3);
-	} else if (*_pCurPos == *_pMaggotsnest) {
+	} else if (*_pCurPos == *_pMaggotsNest) {
 		delete _pCurPos;
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pSwamprock);
@@ -1731,7 +1731,7 @@ void CNavWindow::onSlug() {
 			_cargo -= 75;
 		}
 		calcFuel(3.4);
-	} else if (*_pCurPos == *_pMaggotsnest) {
+	} else if (*_pCurPos == *_pMaggotsNest) {
 		delete _pCurPos;
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pSlug);
@@ -1747,28 +1747,28 @@ void CNavWindow::onSlug() {
 }
 
 void CNavWindow::onMaggotsnest() {
-	if (*_pCurPos == *_pMaggotsnest) {
+	if (*_pCurPos == *_pMaggotsNest) {
 		delete _pCurPos;
 		_pCurPos = nullptr;
-		_pCurPos = new CBofRect(*_pMaggotsnest);
+		_pCurPos = new CBofRect(*_pMaggotsNest);
 		*_pPortName = "Maggot's Nest";
 		calcFuel(0);
 	} else if (*_pCurPos == *_pPustule) {
 		delete _pCurPos;
 		_pCurPos = nullptr;
-		_pCurPos = new CBofRect(*_pMaggotsnest);
+		_pCurPos = new CBofRect(*_pMaggotsNest);
 		*_pPortName = "Maggot's Nest";
 		calcFuel(2.3);
 	} else if (*_pCurPos == *_pSwamprock) {
 		delete _pCurPos;
 		_pCurPos = nullptr;
-		_pCurPos = new CBofRect(*_pMaggotsnest);
+		_pCurPos = new CBofRect(*_pMaggotsNest);
 		*_pPortName = "Maggot's Nest";
 		calcFuel(1.9);
 	} else if (*_pCurPos == *_pSlug) {
 		delete _pCurPos;
 		_pCurPos = nullptr;
-		_pCurPos = new CBofRect(*_pMaggotsnest);
+		_pCurPos = new CBofRect(*_pMaggotsNest);
 		*_pPortName = "Maggot's Nest";
 		calcFuel(1.7);
 
@@ -2026,7 +2026,7 @@ void CNavWindow::onLife() {
 		_pCurPos = new CBofRect(*_pLife);
 		*_pPortName = "Life";
 		calcFuel(3.1);
-	} else if (*_pCurPos == *_pBattlefish) {
+	} else if (*_pCurPos == *_pBattleFish) {
 		delete _pCurPos;
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pLife);
@@ -2078,7 +2078,7 @@ void CNavWindow::onFuge() {
 			_cargo -= 10;
 		}
 		calcFuel(2.9);
-	} else if (*_pCurPos == *_pBattlefish) {
+	} else if (*_pCurPos == *_pBattleFish) {
 		delete _pCurPos;
 		_pCurPos = nullptr;
 		_pCurPos = new CBofRect(*_pFuge);
@@ -2118,10 +2118,10 @@ void CNavWindow::onGarfunkel() {
 }
 
 void CNavWindow::onBattlefish() {
-	if (*_pCurPos == *_pBattlefish) {
+	if (*_pCurPos == *_pBattleFish) {
 		delete _pCurPos;
 		_pCurPos = nullptr;
-		_pCurPos = new CBofRect(*_pBattlefish);
+		_pCurPos = new CBofRect(*_pBattleFish);
 		*_pPortName = "Battlefish";
 		if (g_levelThree[8].cargo._pszCargo != nullptr && g_levelThree[8].cargo._bUsed) {
 			g_levelThree[8].cargo._bUsed = false;
@@ -2131,7 +2131,7 @@ void CNavWindow::onBattlefish() {
 	} else if (*_pCurPos == *_pFuge) {
 		delete _pCurPos;
 		_pCurPos = nullptr;
-		_pCurPos = new CBofRect(*_pBattlefish);
+		_pCurPos = new CBofRect(*_pBattleFish);
 		*_pPortName = "Battlefish";
 		if (g_levelThree[8].cargo._pszCargo != nullptr && g_levelThree[8].cargo._bUsed) {
 			g_levelThree[8].cargo._bUsed = false;
@@ -2143,7 +2143,7 @@ void CNavWindow::onBattlefish() {
 
 		delete _pCurPos;
 		_pCurPos = nullptr;
-		_pCurPos = new CBofRect(*_pBattlefish);
+		_pCurPos = new CBofRect(*_pBattleFish);
 		*_pPortName = "Battlefish";
 		if (g_levelThree[8].cargo._pszCargo != nullptr && g_levelThree[8].cargo._bUsed) {
 			g_levelThree[8].cargo._bUsed = false;
