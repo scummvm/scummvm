@@ -19,8 +19,6 @@
  *
  */
 
-#include "common/tokenizer.h"
-
 #include "ultima/ultima8/misc/debugger.h"
 
 #include "ultima/ultima8/games/game_info.h"
@@ -186,8 +184,6 @@ bool GameInfo::load(Common::SeekableReadStream *rs, uint32 ver) {
 	Std::vector<Std::string> parts;
 
 	s = rs->readLine();
-	Common::StringTokenizer tokenizer(s, ",");
-
 	SplitString(s, ',', parts);
 	if (parts.size() != 4) return false;
 
