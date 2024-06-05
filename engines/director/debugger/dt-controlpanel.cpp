@@ -241,6 +241,9 @@ void showControlPanel() {
 			if (ImGui::IsItemHovered())
 				dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
 
+			if (score->_playState == kPlayStarted)
+				color = ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 1.0f, 1.0f));
+
 			dl->AddTriangleFilled(ImVec2(p.x, p.y), ImVec2(p.x, p.y + 16), ImVec2(p.x + 14, p.y + 8), color);
 
 			ImGui::SetItemTooltip("Play");
