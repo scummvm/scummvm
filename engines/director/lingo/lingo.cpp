@@ -1256,11 +1256,11 @@ Common::String Datum::asString(bool printonly) const {
 	return s;
 }
 
-CastMemberID Datum::asMemberID(CastType castType) const {
+CastMemberID Datum::asMemberID(CastType castType, int castLib) const {
 	if (type == CASTREF || type == FIELDREF)
 		return *u.cast;
 
-	return g_lingo->resolveCastMember(*this, DEFAULT_CAST_LIB, castType);
+	return g_lingo->resolveCastMember(*this, castLib, castType);
 }
 
 Common::Point Datum::asPoint() const {
