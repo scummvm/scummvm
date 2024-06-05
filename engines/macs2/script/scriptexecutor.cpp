@@ -21,6 +21,7 @@
 #include "scriptexecutor.h"
 
 #include "common/debug.h"
+#include "common/debug-channels.h"
 #include "common/memstream.h"
 #include "macs2/macs2.h"
 #include "macs2/gameobjects.h"
@@ -57,7 +58,13 @@ ScriptExecutor::ScriptExecutor() {
 inline void ScriptExecutor::FuncA3D2() {
 	// TODO: Quality is not at the level of the rest - consider
 	// rewriting from the deassembly
-	debug("-- Entering A3D2");
+	if (DebugMan.isDebugChannelEnabled(DebugFlag::DEBUG_SV)) {
+		debug("-- Entering A3D2");
+	} else {
+		debug("-- Skipping using A3D2");
+	}
+	
+	isSkipping = true;
 	assert(expectedEndLocation == _stream->pos());
 	uint16 skipValue = 1; // [bp-4h] - TODO: Better name
 	// TODO: Figure out end condition
@@ -79,7 +86,7 @@ inline void ScriptExecutor::FuncA3D2() {
 		}
 		// Do the skipping
 		_stream->seek(length, SEEK_CUR);
-		debug("- A3D2 skipping %u bytes for opcode %.2x [%u]", length, opcode, skipValue);
+		debugC(DEBUG_SV, "- A3D2 skipping %u bytes for opcode %.2x [%u]", length, opcode, skipValue);
 
 		// TODO: Add a log here
 		if (skipValue != 0) {
@@ -97,7 +104,10 @@ inline void ScriptExecutor::FuncA3D2() {
 	}
 	// Fix up the expected location after skipping
 	expectedEndLocation = _stream->pos();
-	debug("-- Leaving A3D2");
+	if (DebugMan.isDebugChannelEnabled(DebugFlag::DEBUG_SV)) {
+		debug("-- Leaving A3D2");
+	}
+	isSkipping = false;
 }
 
 void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
@@ -933,7 +943,11 @@ void ScriptExecutor::SetVariableValue(uint16 index, uint16 a, uint16 b) {
 byte Script::ScriptExecutor::ReadByte() {
 	const int64 pos = _stream->pos();
 	const byte result = _stream->readByte();
-	debug("Script read (byte): %.2x at location %.4x", result, pos);
+	if (isSkipping) {
+		debugC(DEBUG_SV,"Script read (byte): %.2x at location %.4x", result, pos);
+	} else {
+		debug("Script read (byte): %.2x at location %.4x", result, pos);
+	}
 	return result;
 }
 
