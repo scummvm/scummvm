@@ -29,10 +29,6 @@ namespace Ultima8 {
 
 template<class T> void StringToArgv(const T &args, Common::Array<T> &argv);
 
-template<class T> void TrimSpaces(T &str);
-
-template<class T> void TabsToSpaces(T &str, unsigned int nspaces);
-
 template<class T> void SplitString(const T &args, char sep, Std::vector<T> &argv);
 
 template<class T> void SplitStringKV(const T &args, char sep,

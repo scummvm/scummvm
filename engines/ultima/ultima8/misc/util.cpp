@@ -88,30 +88,6 @@ template<class T> void StringToArgv(const T &args, Common::Array<T> &argv) {
 
 template void StringToArgv<Common::String>(const Common::String &args, Common::Array<Common::String> &argv);
 
-template<class T> void TrimSpaces(T &str) {
-	if (str.empty()) return;
-
-	typename T::size_type pos1 = str.findFirstNotOf(' ');
-	if (pos1 == T::npos) {
-		str = "";
-		return;
-	}
-
-	typename T::size_type pos2 = str.findLastNotOf(' ');
-	str = str.substr(pos1, pos2 - pos1 + 1);
-}
-
-template void TrimSpaces<Std::string>(Std::string &str);
-
-template<class T> void TabsToSpaces(T &str, unsigned int n) {
-	T repl(n, ' ');
-	typename T::size_type p;
-	while ((p = str.find('\t')) != T::npos)
-		str.replace(p, 1, repl);
-}
-
-template void TabsToSpaces<Std::string>(Std::string &str, unsigned int n);
-
 template<class T> void SplitString(const T &args, char sep,
 								   Std::vector<T> &argv) {
 	// Clear the vector
@@ -151,12 +127,12 @@ template<class T> void SplitStringKV(const T &args, char sep,
 		typename T::size_type pos;
 		pos = keyvals[i].find('=');
 		keyval.first = keyvals[i].substr(0, pos);
-		TrimSpaces(keyval.first);
+		keyval.first.trim();
 		if (pos == T::npos) {
 			keyval.second = "";
 		} else {
 			keyval.second = keyvals[i].substr(pos + 1);
-			TrimSpaces(keyval.second);
+			keyval.second.trim();
 		}
 		if (!(keyval.first.empty() && keyval.second.empty()))
 			argv.push_back(keyval);

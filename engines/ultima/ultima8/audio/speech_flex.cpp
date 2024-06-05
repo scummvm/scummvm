@@ -44,8 +44,8 @@ SpeechFlex::SpeechFlex(Common::SeekableReadStream *rs) : SoundFlex(rs) {
 		Std::string str(cbuf + off, slen);
 		off += slen + 1;
 
-		TabsToSpaces(str, 1);
-		TrimSpaces(str);
+		str.replace('\t', ' ');
+		str.trim();
 
 		debug(6, "Found string: \"%s\"", str.c_str());
 
@@ -65,7 +65,7 @@ int SpeechFlex::getIndexForPhrase(const Std::string &phrase,
 	int i = 1;
 
 	Std::string text = phrase.substr(start);
-	TabsToSpaces(text, 1);
+	text.replace('\t', ' ');
 
 	Std::string::size_type pos1 = text.findFirstNotOf(' ');
 	if (pos1 == Std::string::npos) return 0;
