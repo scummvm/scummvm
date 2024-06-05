@@ -142,6 +142,8 @@ void FreescapeEngine::loadPalettes(Common::SeekableReadStream *file, int offset)
 
 	for (uint i = 0; i < numberOfAreas; i++) {
 		int label = readField(file, 8);
+		if (label == 255)
+			break;
 		auto palette = new byte[16][3];
 		debugC(1, kFreescapeDebugParser, "Loading palette for area: %d at %lx", label, file->pos());
 		for (int c = 0; c < 16; c++) {

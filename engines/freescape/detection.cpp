@@ -597,6 +597,19 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSUPPORTED,
 		GUIO1(GUIO_NOMIDI)
 	},
+	{
+		"totaleclipse",
+		"",
+		{
+			{"0.TEC", 0, "01a2a7b2ce34b121e7ee4dab3bdac114", 45860},
+			{"1.TEC", 0, "fb65655f60b11040285aa947d4ed1193", 263453},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOMIDI)
+	},
 	{ // Stampede Atari, Issue 7
 		"totaleclipse",
 		"",

@@ -62,9 +62,11 @@ public:
 	void initDOS();
 	void initCPC();
 	void initZX();
+	void initAmigaAtari();
 
 	void loadAssetsZXFullGame() override;
 	void loadAssetsCPCFullGame() override;
+	void loadAssetsAtariFullGame() override;
 	void loadAssetsCPCDemo() override;
 	void loadAssetsZXDemo() override;
 

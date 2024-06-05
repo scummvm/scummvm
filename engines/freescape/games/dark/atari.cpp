@@ -19,7 +19,6 @@
  *
  */
 #include "common/file.h"
-#include "common/memstream.h"
 
 #include "freescape/freescape.h"
 #include "freescape/games/dark/dark.h"
@@ -50,7 +49,7 @@ Common::String centerAndPadString(const Common::String &str, int size) {
 }
 
 void DarkEngine::loadAssetsAtariFullGame() {
-	Common::SeekableReadStream *stream = decryptFile("1.drk", "0.drk", 840);
+	Common::SeekableReadStream *stream = decryptFileAmigaAtari("1.drk", "0.drk", 840);
 	parseAmigaAtariHeader(stream);
 
 	_border = loadAndConvertNeoImage(stream, 0xd710);
