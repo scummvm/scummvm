@@ -26,6 +26,7 @@
 #include "common/file.h"
 
 using namespace Common;
+using namespace Math;
 
 namespace Alcachofa {
 
@@ -563,24 +564,16 @@ private:
 			default: error("Script attempted to clear inventory with invalid character kind"); break;
 			}
 			return TaskReturn::finish(1);
-		case ScriptKernelTask::FadeType0:
-			warning("STUB KERNEL CALL: FadeType0");
-			return TaskReturn::finish(0);
-		case ScriptKernelTask::FadeType1:
-			warning("STUB KERNEL CALL: FadeType1");
-			return TaskReturn::finish(0);
 		case ScriptKernelTask::LerpWorldLodBias:
 			warning("STUB KERNEL CALL: LerpWorldLodBias");
 			return TaskReturn::finish(0);
-		case ScriptKernelTask::FadeType2:
-			warning("STUB KERNEL CALL: FadeType2");
-			return TaskReturn::finish(0);
+
+		// Camera tasks
 		case ScriptKernelTask::SetMaxCamSpeedFactor:
 			warning("STUB KERNEL CALL: SetMaxCamSpeedFactor");
 			return TaskReturn::finish(0);
 		case ScriptKernelTask::WaitCamStopping:
-			warning("STUB KERNEL CALL: WaitCamStopping");
-			return TaskReturn::finish(0);
+			return TaskReturn::waitFor(g_engine->camera().waitToStop(process()));
 		case ScriptKernelTask::CamFollow:
 			warning("STUB KERNEL CALL: CamFollow");
 			return TaskReturn::finish(0);
@@ -588,22 +581,44 @@ private:
 			warning("STUB KERNEL CALL: CamShake");
 			return TaskReturn::finish(0);
 		case ScriptKernelTask::LerpCamXY:
-			warning("STUB KERNEL CALL: LerpCamXY");
-			return TaskReturn::finish(0);
+			return TaskReturn::waitFor(g_engine->camera().lerpPos(process(),
+				Vector2d(getNumberArg(0), getNumberArg(1)),
+				getNumberArg(2), (EasingType)getNumberArg(3)));
+		case ScriptKernelTask::LerpCamXYZ:
+			return TaskReturn::waitFor(g_engine->camera().lerpPos(process(),
+				Vector3d(getNumberArg(0), getNumberArg(1), getNumberArg(2)),
+				getNumberArg(3), (EasingType)getNumberArg(4)));
 		case ScriptKernelTask::LerpCamZ:
-			warning("STUB KERNEL CALL: LerpCamZ");
-			return TaskReturn::finish(0);
+			return TaskReturn::waitFor(g_engine->camera().lerpPosZ(process(),
+				getNumberArg(0),
+				getNumberArg(1), (EasingType)getNumberArg(2)));
 		case ScriptKernelTask::LerpCamScale:
-			warning("STUB KERNEL CALL: LerpCamScale");
-			return TaskReturn::finish(0);
-		case ScriptKernelTask::LerpCamToObjectWithScale:
-			warning("STUB KERNEL CALL: LerpCamToObjectWithScale");
+			return TaskReturn::waitFor(g_engine->camera().lerpScale(process(),
+				getNumberArg(0) * 0.01f,
+				getNumberArg(1), (EasingType)getNumberArg(2)));
+		case ScriptKernelTask::LerpCamRotation:
+			return TaskReturn::waitFor(g_engine->camera().lerpRotation(process(),
+				getNumberArg(0),
+				getNumberArg(1), (EasingType)getNumberArg(2)));
+		case ScriptKernelTask::LerpCamToObjectKeepingZ:
+			warning("STUB KERNEL CALL: LerpCamToObjectKeepingZ");
 			return TaskReturn::finish(0);
 		case ScriptKernelTask::LerpCamToObjectResettingZ:
 			warning("STUB KERNEL CALL: LerpCamToObjectResettingZ");
 			return TaskReturn::finish(0);
-		case ScriptKernelTask::LerpCamRotation:
-			warning("STUB KERNEL CALL: LerpCamRotation");
+		case ScriptKernelTask::LerpCamToObjectWithScale:
+			warning("STUB KERNEL CALL: LerpCamToObjectWithScale");
+			return TaskReturn::finish(0);
+
+		// Fades
+		case ScriptKernelTask::FadeType0:
+			warning("STUB KERNEL CALL: FadeType0");
+			return TaskReturn::finish(0);
+		case ScriptKernelTask::FadeType1:
+			warning("STUB KERNEL CALL: FadeType1");
+			return TaskReturn::finish(0);
+		case ScriptKernelTask::FadeType2:
+			warning("STUB KERNEL CALL: FadeType2");
 			return TaskReturn::finish(0);
 		case ScriptKernelTask::FadeIn:
 			warning("STUB KERNEL CALL: FadeIn");
@@ -617,12 +632,7 @@ private:
 		case ScriptKernelTask::FadeOut2:
 			warning("STUB KERNEL CALL: FadeOut2");
 			return TaskReturn::finish(0);
-		case ScriptKernelTask::LerpCamXYZ:
-			warning("STUB KERNEL CALL: LerpCamXYZ");
-			return TaskReturn::finish(0);
-		case ScriptKernelTask::LerpCamToObjectKeepingZ:
-			warning("STUB KERNEL CALL: LerpCamToObjectKeepingZ");
-			return TaskReturn::finish(0);
+
 		case ScriptKernelTask::SetActiveTextureSet:
 			// Fortunately this seems to be unused.
 			warning("STUB KERNEL CALL: SetActiveTextureSet");
