@@ -27,15 +27,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-
-enum DebugLevel {
-	// General info debug information
-	MM_INFO = 1,
-
-	// Minor warnings not important enough to show to the user normally
-	MM_MINOR_WARN = 1
-};
-
 // ObjId and ProcId
 
 //! 16-Bit ID of an Object

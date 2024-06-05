@@ -69,7 +69,7 @@ U8Game::~U8Game() {
 
 bool U8Game::loadFiles() {
 	// Load palette
-	debug(MM_INFO, "Load Palette");
+	debug(1, "Load Palette");
 	Common::File pf;
 	if (!pf.open("static/u8pal.pal")) {
 		warning("Unable to load static/u8pal.pal.");
@@ -80,7 +80,7 @@ bool U8Game::loadFiles() {
 	Common::MemoryReadStream xfds(U8XFormPal, 1024);
 	PaletteManager::get_instance()->load(PaletteManager::Pal_Game, pf, xfds);
 
-	debug(MM_INFO, "Load GameData");
+	debug(1, "Load GameData");
 	GameData::get_instance()->loadU8Data();
 
 	return true;
@@ -88,7 +88,7 @@ bool U8Game::loadFiles() {
 
 bool U8Game::startGame() {
 	// NOTE: assumes the entire engine has been reset!
-	debug(MM_INFO, "Starting new Ultima 8 game.");
+	debug(1, "Starting new Ultima 8 game.");
 
 	ObjectManager *objman = ObjectManager::get_instance();
 
@@ -167,7 +167,7 @@ ProcId U8Game::playIntroMovie(bool fade) {
 
 	auto *skf = new Common::File();
 	if (!skf->open(filename.c_str())) {
-		debug(MM_INFO, "U8Game::playIntro: movie not found.");
+		debug(1, "U8Game::playIntro: movie not found.");
 		delete skf;
 		return 0;
 	}
@@ -179,7 +179,7 @@ ProcId U8Game::playEndgameMovie(bool fade) {
 	static const Common::Path filename = "static/endgame.skf";
 	auto *skf = new Common::File();
 	if (!skf->open(filename)) {
-		debug(MM_INFO, "U8Game::playEndgame: movie not found.");
+		debug(1, "U8Game::playEndgame: movie not found.");
 		delete skf;
 		return 0;
 	}

@@ -70,7 +70,7 @@ static bool loadPalette(const char *path, PaletteManager::PalIndex index) {
 
 bool CruGame::loadFiles() {
 	// Load palette
-	debug(MM_INFO, "Load Palettes");
+	debug(1, "Load Palettes");
 
 	if (!loadPalette("static/gamepal.pal", PaletteManager::Pal_Game))
 		return false;
@@ -86,7 +86,7 @@ bool CruGame::loadFiles() {
 	// We don't use his one at the moment, ok to fail.
 	loadPalette("static/star.pal", PaletteManager::Pal_Star);
 
-	debug(MM_INFO, "Load GameData");
+	debug(1, "Load GameData");
 	GameData::get_instance()->loadRemorseData();
 
 	return true;
@@ -94,7 +94,7 @@ bool CruGame::loadFiles() {
 
 bool CruGame::startGame() {
 	// NOTE: assumes the entire engine has been reset!
-	debug(MM_INFO, "Starting new Crusader: No Remorse game.");
+	debug(1, "Starting new Crusader: No Remorse game.");
 
 	ObjectManager *objman = ObjectManager::get_instance();
 
@@ -148,7 +148,7 @@ bool CruGame::startInitialUsecode(int saveSlot) {
 static ProcId playMovie(const char *movieID, bool fade, bool noScale) {
 	MovieGump *gump = MovieGump::CruMovieViewer(movieID, 640, 480, nullptr, nullptr, 0);
 	if (!gump) {
-		debug(MM_INFO, "RemorseGame::playIntro: movie %s not found.", movieID);
+		debug(1, "RemorseGame::playIntro: movie %s not found.", movieID);
 		return 0;
 	}
 	gump->CreateNotifier();

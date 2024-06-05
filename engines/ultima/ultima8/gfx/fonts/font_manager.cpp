@@ -43,7 +43,7 @@ namespace Ultima8 {
 FontManager *FontManager::_fontManager = nullptr;
 
 FontManager::FontManager() {
-	debugN(MM_INFO, "Creating Font Manager...\n");
+	debug(1, "Creating Font Manager...");
 
 	_fontManager = this;
 
@@ -51,7 +51,7 @@ FontManager::FontManager() {
 }
 
 FontManager::~FontManager() {
-	debugN(MM_INFO, "Destroying Font Manager...\n");
+	debug(1, "Destroying Font Manager...");
 
 	resetGameFonts();
 

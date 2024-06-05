@@ -31,20 +31,20 @@ namespace Ultima8 {
 PaletteManager *PaletteManager::_paletteManager = nullptr;
 
 PaletteManager::PaletteManager(const Graphics::PixelFormat &format) : _format(format) {
-	debugN(MM_INFO, "Creating PaletteManager...\n");
+	debug(1, "Creating PaletteManager...");
 
 	_paletteManager = this;
 }
 
 PaletteManager::~PaletteManager() {
 	reset();
-	debugN(MM_INFO, "Destroying PaletteManager...\n");
+	debug(1, "Destroying PaletteManager...");
 	_paletteManager = nullptr;
 }
 
 // Reset the Palette Manager
 void PaletteManager::reset() {
-	debugN(MM_INFO, "Resetting PaletteManager...\n");
+	debug(1, "Resetting PaletteManager...");
 
 	for (unsigned int i = 0; i < _palettes.size(); ++i)
 		delete _palettes[i];
@@ -59,7 +59,7 @@ void PaletteManager::updatedPalette(PalIndex index, int maxindex) {
 
 // Reset all the transforms back to default
 void PaletteManager::resetTransforms() {
-	debugN(MM_INFO, "Resetting Palette Transforms...\n");
+	debug(1, "Resetting Palette Transforms...");
 
 	int16 matrix[12];
 	getTransformMatrix(matrix, Transform_None);

@@ -53,14 +53,14 @@ GameData::GameData(GameInfo *gameInfo)
 	: _fixed(nullptr), _mainShapes(nullptr), _mainUsecode(nullptr), _globs(),
 	  _fonts(nullptr), _gumps(nullptr), _mouse(nullptr), _music(nullptr),
 	  _weaponOverlay(nullptr), _soundFlex(nullptr), _gameInfo(gameInfo) {
-	debugN(MM_INFO, "Creating GameData...\n");
+	debug(1, "Creating GameData...");
 
 	_gameData = this;
 	_speech.resize(1024);
 }
 
 GameData::~GameData() {
-	debugN(MM_INFO, "Destroying GameData...\n");
+	debug(1, "Destroying GameData...");
 
 	delete _fixed;
 	_fixed = nullptr;
@@ -171,7 +171,7 @@ void GameData::loadTranslation() {
 	}
 
 	if (!translationfile.empty()) {
-		debug(MM_INFO, "Loading translation: %s", translationfile.toString().c_str());
+		debug(1, "Loading translation: %s", translationfile.toString().c_str());
 
 		config->readConfigFile(translationfile, "language");
 	}
@@ -247,7 +247,7 @@ void GameData::loadU8Data() {
 	_mainUsecode = new UsecodeFlex(uds);
 
 	// Load main shapes
-	debug(MM_INFO, "Load Shapes");
+	debug(1, "Load Shapes");
 	auto *sf = new Common::File();
 	if (!(sf->open("static/u8shapes.flx") || sf->open("static/u8shapes.cmp")))
 		error("Unable to load static/u8shapes.flx or static/u8shapes.cmp");
@@ -514,7 +514,7 @@ void GameData::loadRemorseData() {
 	_mainUsecode = new UsecodeFlex(uds);
 
 	// Load main shapes
-	debug(MM_INFO, "Load Shapes");
+	debug(1, "Load Shapes");
 	auto *sf = new Common::File();
 	if (!sf->open("static/shapes.flx"))
 		error("Unable to load static/shapes.flx");

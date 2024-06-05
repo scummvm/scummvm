@@ -102,7 +102,7 @@ void idMan::expand() {
 	_ids.resize(_end + 1);
 
 #if 0
-	debug(MM_INFO, "Expanding idMan from (%u-%u) to (%u-%u)",
+	debug(1, "Expanding idMan from (%u-%u) to (%u-%u)",
 		_begin, old_end, _begin, _end);
 #endif
 

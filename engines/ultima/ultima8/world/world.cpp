@@ -51,14 +51,14 @@ World *World::_world = nullptr;
 
 World::World() : _currentMap(nullptr), _alertActive(false), _difficulty(3),
 				 _controlledNPCNum(1), _vargasShield(5000) {
-	debugN(MM_INFO, "Creating World...\n");
+	debug(1, "Creating World...");
 
 	_world = this;
 }
 
 
 World::~World() {
-	debugN(MM_INFO, "Destroying World...\n");
+	debug(1, "Destroying World...");
 	clear();
 
 	_world = nullptr;
@@ -85,7 +85,7 @@ void World::clear() {
 }
 
 void World::reset() {
-	debugN(MM_INFO, "Resetting World...\n");
+	debug(1, "Resetting World...");
 
 	clear();
 
@@ -157,13 +157,13 @@ bool World::switchMap(uint32 newmap) {
 
 	uint32 oldmap = _currentMap->getNum();
 	if (oldmap != 0) {
-		debug(MM_INFO, "Unloading map %u", oldmap);
+		debug(1, "Unloading map %u", oldmap);
 
 		assert(oldmap < _maps.size() && _maps[oldmap] != nullptr);
 
 		_currentMap->writeback();
 
-		debug(MM_INFO, "Unloading Fixed items from map %u", oldmap);
+		debug(1, "Unloading Fixed items from map %u", oldmap);
 
 		_maps[oldmap]->unloadFixed();
 	}
@@ -180,7 +180,7 @@ bool World::switchMap(uint32 newmap) {
 		Kernel::get_instance()->addProcess(new SchedulerProcess());
 	}
 
-	debug(MM_INFO, "Loading Fixed items in map %u", newmap);
+	debug(1, "Loading Fixed items in map %u", newmap);
 	Common::SeekableReadStream *items = GameData::get_instance()->getFixed()
 	                     ->get_datasource(newmap);
 	_maps[newmap]->loadFixed(items);
@@ -209,7 +209,7 @@ bool World::switchMap(uint32 newmap) {
 void World::loadNonFixed(Common::SeekableReadStream *rs) {
 	FlexFile *f = new FlexFile(rs);
 
-	debug(MM_INFO, "Loading NonFixed items");
+	debug(1, "Loading NonFixed items");
 
 	for (unsigned int i = 0; i < f->getCount(); ++i) {
 
@@ -240,7 +240,7 @@ void World::loadItemCachNPCData(Common::SeekableReadStream *itemcach, Common::Se
 	delete itemcachflex;
 	delete npcdataflex;
 
-	debug(MM_INFO, "Loading NPCs");
+	debug(1, "Loading NPCs");
 
 	for (uint32 i = 1; i < 256; ++i) { // Get rid of constants?
 		// These are ALL unsigned on disk

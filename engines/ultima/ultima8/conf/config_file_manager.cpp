@@ -32,13 +32,13 @@ using Std::string;
 ConfigFileManager *ConfigFileManager::_configFileManager = nullptr;
 
 ConfigFileManager::ConfigFileManager() {
-	debugN(MM_INFO, "Creating ConfigFileManager...\n");
+	debug(1, "Creating ConfigFileManager...");
 
 	_configFileManager = this;
 }
 
 ConfigFileManager::~ConfigFileManager() {
-	debugN(MM_INFO, "Destroying ConfigFileManager...\n");
+	debug(1, "Destroying ConfigFileManager...");
 
 	clear();
 	_configFileManager = nullptr;
