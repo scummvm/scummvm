@@ -125,8 +125,8 @@ public:
 		GL_CALL(glDisableClientState(GL_INDEX_ARRAY));
 		GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_REPLACE));
 		GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_TEXTURE));
-		GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_RGB, GL_CONSTANT));
-		GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_ALPHA, GL_CONSTANT));
+		GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_RGB, GL_PRIMARY_COLOR));
+		GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_ALPHA, GL_PRIMARY_COLOR));
 		_currentLodBias = -1000.0f;
 		_currentTexture = nullptr;
 		_currentBlendMode = (BlendMode)-1;
@@ -183,7 +183,7 @@ public:
 
 		/** now the texture stage, mind that this always applies:
 		 * SRC0_RGB is TEXTURE
-		 * SRC1_RGB/ALPHA is CONSTANT
+		 * SRC1_RGB/ALPHA is PRIMARY COLOR
 		 * COMBINE_ALPHA is REPLACE
 		 */ 
 		switch (blendMode) {
@@ -248,7 +248,8 @@ public:
 
 		float colors[] = { color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f };
 
-		GL_CALL(glColor4f(1.0f, 1.0f, 1.0f, 1.0f));
+		//GL_CALL(glColor4f(1.0f, 1.0f, 1.0f, 1.0f));
+		GL_CALL(glColor4f(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f));
 		GL_CALL(glVertexPointer(2, GL_FLOAT, 0, positions));
 		if (_currentTexture != nullptr)
 			GL_CALL(glTexCoordPointer(2, GL_FLOAT, 0, texCoords));
