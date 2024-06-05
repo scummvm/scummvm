@@ -315,6 +315,8 @@ Graphics::Surface *BitmapCastMember::getDitherImg() {
 	Movie *movie = g_director->getCurrentMovie();
 	Cast *cast = movie->getCast();
 	Score *score = movie->getScore();
+	int targetBpp = g_director->_wm->_pixelformat.bytesPerPixel;
+
 	// Get the current score palette. Note that this is the ID of the palette in the list, not the cast member!
 	CastMemberID currentPaletteId = score->getCurrentPalette();
 	if (currentPaletteId.isNull())
@@ -333,6 +335,9 @@ Graphics::Surface *BitmapCastMember::getDitherImg() {
 	// Check if the palette is in the middle of a color fade event
 	bool isColorCycling = score->isPaletteColorCycling();
 
+	byte *dstPalette = targetBpp == 1 ? currentPalette->palette : nullptr;
+	int dstPaletteCount = targetBpp == 1 ? currentPalette->length : 0;
+
 	// First, check if the palettes are different
 	switch (_bitsPerPixel) {
 	// 1bpp - this is preconverted to 0x00 and 0xff, change nothing.
@@ -342,7 +347,7 @@ Graphics::Surface *BitmapCastMember::getDitherImg() {
 	case 2:
 		{
 			const PaletteV4 &srcPal = g_director->getLoaded4Palette();
-			dither = _picture->_surface.convertTo(g_director->_wm->_pixelformat, srcPal.palette, srcPal.length, currentPalette->palette, currentPalette->length, Graphics::kDitherNaive);
+			dither = _picture->_surface.convertTo(g_director->_wm->_pixelformat, srcPal.palette, srcPal.length, dstPalette, dstPaletteCount, Graphics::kDitherNaive);
 		}
 		break;
 	// 4bpp - if using a builtin palette, use one of the corresponding 4-bit ones.
@@ -353,13 +358,19 @@ Graphics::Surface *BitmapCastMember::getDitherImg() {
 			// I guess default to the mac palette?
 			CastMemberID palIndex = pals.contains(castPaletteId) ? castPaletteId : CastMemberID(kClutSystemMac, -1);
 			const PaletteV4 &srcPal = pals.getVal(palIndex);
-			dither = _picture->_surface.convertTo(g_director->_wm->_pixelformat, srcPal.palette, srcPal.length, currentPalette->palette, currentPalette->length, Graphics::kDitherNaive);
+			dither = _picture->_surface.convertTo(g_director->_wm->_pixelformat, srcPal.palette, srcPal.length, dstPalette, dstPaletteCount, Graphics::kDitherNaive);
 		}
 		break;
 	// 8bpp - if using a different palette, and we're not doing a color cycling operation, convert using nearest colour matching
 	case 8:
-		// Only redither 8-bit images if we have the flag set, or it is external
-		if (!movie->_remapPalettesWhenNeeded && !_external)
+		// "break" means falling back to the default of rendering the image with
+		// the current 8-bit palette. The below is only about -redithering colours-;
+		// i.e. redrawing the picture to use the current palette.
+		// Only redither 8-bit images in 8-bit mode if we have the remap palette flag set, or it is external
+		if (targetBpp == 1 && !movie->_remapPalettesWhenNeeded && !_external)
+			break;
+		// If we're in 32-bit mode, and not in puppet palette mode, then "redither" as well.
+		if (targetBpp == 4 && score->_puppetPalette && !_external)
 			break;
 		if (_external || (castPaletteId != currentPaletteId && !isColorCycling)) {
 			const auto pals = g_director->getLoadedPalettes();
@@ -371,7 +382,7 @@ Graphics::Surface *BitmapCastMember::getDitherImg() {
 			// but in the wrong palette order.
 			const byte *palPtr = _external ? _picture->_palette : srcPal.palette;
 			int palLength = _external ? _picture->getPaletteSize() : srcPal.length;
-			dither = _picture->_surface.convertTo(g_director->_wm->_pixelformat, palPtr, palLength, currentPalette->palette, currentPalette->length, Graphics::kDitherNaive);
+			dither = _picture->_surface.convertTo(g_director->_wm->_pixelformat, palPtr, palLength, dstPalette, dstPaletteCount, Graphics::kDitherNaive);
 		}
 		break;
 	default:
@@ -382,7 +393,7 @@ Graphics::Surface *BitmapCastMember::getDitherImg() {
 		// Save the palette ID so we can check if a redraw is required
 		_ditheredTargetClut = currentPaletteId;
 
-		if (!_external) {
+		if (!_external && targetBpp == 1) {
 			// Finally, the first and last colours in the palette are special. No matter what the palette remap
 			// does, we need to scrub those to be the same.
 			const Graphics::Surface *src = &_picture->_surface;
