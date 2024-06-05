@@ -1899,8 +1899,11 @@ void LC::c_hilite() {
 }
 
 void LC::c_fieldref() {
-	Datum d = g_lingo->pop();
-	Datum res = d.asMemberID();
+	Datum castLib;
+	if (g_director->getVersion() >= 500)
+		castLib = g_lingo->pop();
+	Datum member = g_lingo->pop();
+	Datum res = member.asMemberID(kCastTypeAny, castLib.asInt());
 	res.type = FIELDREF;
 	g_lingo->push(res);
 }

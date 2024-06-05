@@ -167,7 +167,7 @@ struct Datum {	/* interpreter stack type */
 	double asFloat() const;
 	int asInt() const;
 	Common::String asString(bool printonly = false) const;
-	CastMemberID asMemberID(CastType castType = kCastTypeAny) const;
+	CastMemberID asMemberID(CastType castType = kCastTypeAny, int castLib = 0) const;
 	Common::Point asPoint() const;
 
 	bool isRef() const;
