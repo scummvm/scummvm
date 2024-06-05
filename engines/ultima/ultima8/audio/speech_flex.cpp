@@ -23,7 +23,6 @@
 #include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/audio/speech_flex.h"
 #include "ultima/ultima8/audio/audio_sample.h"
-#include "ultima/ultima8/misc/util.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -34,22 +33,27 @@ SpeechFlex::SpeechFlex(Common::SeekableReadStream *rs) : SoundFlex(rs) {
 
 	const char *cbuf = reinterpret_cast<const char *>(buf);
 
-	// Note: SplitString doesn't work here because Std::string can't
-	// hold multiple null-terminated strings.
+	// Note: stream holds multiple null-terminated strings.
 	unsigned int off = 0;
 	while (off < size) {
 		unsigned int slen = 0;
 		while (off + slen < size && cbuf[off + slen])
 			slen++;
-		Std::string str(cbuf + off, slen);
+		Std::string text(cbuf + off, slen);
+		text.replace('\t', ' ');
 		off += slen + 1;
 
-		str.replace('\t', ' ');
-		str.trim();
+		Std::string::size_type pos1 = text.findFirstNotOf(' ');
+		if (pos1 == Std::string::npos) {
+			text = "";
+		}
+		else {
+			Std::string::size_type pos2 = text.findLastNotOf(' ');
+			text = text.substr(pos1, pos2 - pos1 + 1);
+		}
 
-		debug(6, "Found string: \"%s\"", str.c_str());
-
-		_phrases.push_back(str);
+		debug(6, "Found string: \"%s\"", text.c_str());
+		_phrases.push_back(text);
 	}
 
 	delete [] buf;
@@ -68,7 +72,8 @@ int SpeechFlex::getIndexForPhrase(const Std::string &phrase,
 	text.replace('\t', ' ');
 
 	Std::string::size_type pos1 = text.findFirstNotOf(' ');
-	if (pos1 == Std::string::npos) return 0;
+	if (pos1 == Std::string::npos)
+		return 0;
 
 	Std::string::size_type pos2 = text.findLastNotOf(' ');
 	text = text.substr(pos1, pos2 - pos1 + 1);
@@ -76,7 +81,7 @@ int SpeechFlex::getIndexForPhrase(const Std::string &phrase,
 	debug(6, "Looking for string: \"%s\"", text.c_str());
 
 	for (it = _phrases.begin(); it != _phrases.end(); ++it) {
-		if (text.hasPrefixIgnoreCase(*it)) {
+		if (!it->empty() && text.hasPrefixIgnoreCase(*it)) {
 			debug(6, "Found: %d", i);
 			end = (*it).size() + start + pos1;
 			if (end >= start + pos2)
@@ -87,7 +92,6 @@ int SpeechFlex::getIndexForPhrase(const Std::string &phrase,
 	}
 
 	debug(6, "Not found");
-
 	return 0;
 }
 
