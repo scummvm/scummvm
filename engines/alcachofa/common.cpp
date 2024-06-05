@@ -26,6 +26,16 @@ using namespace Math;
 
 namespace Alcachofa {
 
+float ease(float t, EasingType type) {
+	switch (type) {
+	case EasingType::Linear: return t;
+	case EasingType::InOut: return (1 - cosf(t * M_PI)) * 0.5f;
+	case EasingType::In: return 1 - cosf(t * M_PI * 0.5f);
+	case EasingType::Out: return sinf(t * M_PI * 0.5f);
+	default: return 0.0f;
+	}
+}
+
 FakeSemaphore::FakeSemaphore(uint initialCount) : _counter(initialCount) {}
 
 FakeSemaphore::~FakeSemaphore() {

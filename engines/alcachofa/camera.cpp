@@ -57,8 +57,11 @@ void Camera::setFollow(WalkingCharacter *target, bool catchUp) {
 }
 
 void Camera::setPosition(Vector2d v) {
-	_usedCenter.x() = v.getX();
-	_usedCenter.y() = v.getY();
+	setPosition({ v.getX(), v.getY(), _usedCenter.z() });
+}
+
+void Camera::setPosition(Vector3d v) {
+	_usedCenter = v;
 	setFollow(nullptr);
 }
 
@@ -210,6 +213,175 @@ void Camera::updateFollowing(float deltaTime) {
 			_usedCenter += deltaCenter * moveDistance / distanceToTarget;
 		}
 	}
+}
+
+struct CamLerpTask : public Task {
+	CamLerpTask(Process &process, uint32 duration, EasingType easingType)
+		: Task(process)
+		, _camera(g_engine->camera())
+		, _duration(duration)
+		, _easingType(easingType) {}
+
+	virtual TaskReturn run() override {
+		TASK_BEGIN;
+		_startTime = g_system->getMillis();
+		while (g_system->getMillis() - _startTime < _duration) {
+			update(ease((g_system->getMillis() - _startTime) / (float)_duration, _easingType));
+			_camera._isChanging = true;
+			TASK_YIELD;
+		}
+		update(1.0f);
+		TASK_END;
+	}
+
+	virtual void debugPrint() override {
+		uint32 remaining = g_system->getMillis() - _startTime <= _duration
+			? _duration - (g_system->getMillis() - _startTime)
+			: 0;
+		g_engine->console().debugPrintf("Lerp camera with %ums remaining\n", remaining);
+	}
+
+protected:
+	virtual void update(float t) = 0;
+
+	Camera &_camera;
+	uint32 _startTime = 0, _duration;
+	EasingType _easingType;
+};
+
+struct CamLerpPosTask final : public CamLerpTask {
+	CamLerpPosTask(Process &process, Vector3d targetPos, int32 duration, EasingType easingType)
+		: CamLerpTask(process, duration, easingType)
+		, _fromPos(_camera._appliedCenter)
+		, _deltaPos(targetPos - _camera._appliedCenter) {}
+
+protected:
+	virtual void update(float t) override {
+		_camera.setPosition(_fromPos + _deltaPos * t);
+	}
+
+	Vector3d _fromPos, _deltaPos;
+};
+
+struct CamLerpScaleTask final : public CamLerpTask {
+	CamLerpScaleTask(Process &process, float targetScale, int32 duration, EasingType easingType)
+		: CamLerpTask(process, duration, easingType)
+		, _fromScale(_camera._scale)
+		, _deltaScale(targetScale - _camera._scale) {}
+
+protected:
+	virtual void update(float t) override {
+		_camera._scale = _fromScale + _deltaScale * t;
+	}
+
+	float _fromScale, _deltaScale;
+};
+
+struct CamLerpPosScaleTask final : public CamLerpTask {
+	CamLerpPosScaleTask(Process &process, Vector3d targetPos, float targetScale, int32 duration, EasingType easingType)
+		: CamLerpTask(process, duration, easingType)
+		, _fromPos(_camera._appliedCenter)
+		, _deltaPos(targetPos - _camera._appliedCenter)
+		, _fromScale(_camera._scale)
+		, _deltaScale(targetScale - _camera._scale) {}
+
+protected:
+	virtual void update(float t) override {
+		_camera.setPosition(_fromPos + _deltaPos * t);
+		_camera._scale = _fromScale + _deltaScale * t;
+	}
+
+	Vector3d _fromPos, _deltaPos;
+	float _fromScale, _deltaScale;
+};
+
+struct CamLerpRotationTask final : public CamLerpTask {
+	CamLerpRotationTask(Process &process, float targetRotation, int32 duration, EasingType easingType)
+		: CamLerpTask(process, duration, easingType)
+		, _fromRotation(_camera._rotation.getDegrees())
+		, _deltaRotation(targetRotation - _camera._rotation.getDegrees()) {}
+
+protected:
+	virtual void update(float t) override {
+		_camera._rotation = Angle(_fromRotation + _deltaRotation * t);
+	}
+
+	float _fromRotation, _deltaRotation;
+};
+
+struct CamWaitToStopTask final : public Task {
+	CamWaitToStopTask(Process &process)
+		: Task(process)
+		, _camera(g_engine->camera()) {}
+
+	virtual TaskReturn run() override {
+		return _camera._isChanging
+			? TaskReturn::yield()
+			: TaskReturn::finish(1);
+	}
+
+	virtual void debugPrint() override {
+		g_engine->console().debugPrintf("Wait for camera to stop moving\n");
+	}
+
+private:
+	Camera &_camera;
+};
+
+Task *Camera::lerpPos(Process &process, Vector2d targetPos, int32 duration, EasingType easingType) {
+	if (!process.isActiveForPlayer()) {
+		warning("stub: non-active camera lerp script invoked");
+		return new DelayTask(process, duration);
+	}
+	Vector3d targetPos3d(targetPos.getX(), targetPos.getY(), _appliedCenter.z());
+	return new CamLerpPosTask(process, targetPos3d, duration, easingType);
+}
+
+Task *Camera::lerpPos(Process &process, Vector3d targetPos, int32 duration, EasingType easingType) {
+	if (!process.isActiveForPlayer()) {
+		warning("stub: non-active camera lerp script invoked");
+		return new DelayTask(process, duration);
+	}
+	setFollow(nullptr); // 3D position lerping is the only task that resets following
+	return new CamLerpPosTask(process, targetPos, duration, easingType);
+}
+
+Task *Camera::lerpPosZ(Process &process, float targetPosZ, int32 duration, EasingType easingType) {
+	if (!process.isActiveForPlayer()) {
+		warning("stub: non-active camera lerp script invoked");
+		return new DelayTask(process, duration);
+	}
+	Vector3d targetPos(_appliedCenter.x(), _appliedCenter.y(), targetPosZ);
+	return new CamLerpPosTask(process, targetPos, duration, easingType);
+}
+
+Task *Camera::lerpScale(Process &process, float targetScale, int32 duration, EasingType easingType) {
+	if (!process.isActiveForPlayer()) {
+		warning("stub: non-active camera lerp script invoked");
+		return new DelayTask(process, duration);
+	}
+	return new CamLerpScaleTask(process, targetScale, duration, easingType);
+}
+
+Task *Camera::lerpRotation(Process &process, float targetRotation, int32 duration, EasingType easingType) {
+	if (!process.isActiveForPlayer()) {
+		warning("stub: non-active camera lerp script invoked");
+		return new DelayTask(process, duration);
+	}
+	return new CamLerpRotationTask(process, targetRotation, duration, easingType);
+}
+
+Task *Camera::lerpPosScale(Process &process, Vector2d targetPos, float targetScale, int32 duration, EasingType easingType) {
+	if (!process.isActiveForPlayer()) {
+		warning("stub: non-active camera lerp script invoked");
+		return new DelayTask(process, duration);
+	}
+	Vector3d targetPos3d(targetPos.getX(), targetPos.getY(), _appliedCenter.z());
+	return new CamLerpPosScaleTask(process, targetPos3d, targetScale, duration, easingType);
+}
+
+Task *Camera::waitToStop(Process &process) {
+	return new CamWaitToStopTask(process);
 }
 
 }

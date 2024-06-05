@@ -56,6 +56,13 @@ enum class MainCharacterKind {
 	Filemon
 };
 
+enum class EasingType {
+	Linear,
+	InOut,
+	In,
+	Out
+};
+
 constexpr const int32 kDirectionCount = 4;
 constexpr const int8 kOrderCount = 70;
 constexpr const int8 kForegroundOrderCount = 10;
@@ -94,6 +101,8 @@ struct FakeLock {
 private:
 	FakeSemaphore *_semaphore;
 };
+
+float ease(float t, EasingType type);
 
 Math::Vector3d as3D(const Math::Vector2d &v);
 Math::Vector3d as3D(const Common::Point &p);

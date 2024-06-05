@@ -28,28 +28,6 @@ using namespace Common;
 
 namespace Alcachofa {
 
-struct DelayTask : public Task {
-	DelayTask(Process &process, uint32 millis)
-		: Task(process)
-		, _endTime(millis) {}
-
-	virtual TaskReturn run() override {
-		TASK_BEGIN;
-		_endTime += g_system->getMillis();
-		while (g_system->getMillis() < _endTime)
-			TASK_YIELD;
-		TASK_END;
-	}
-
-	virtual void debugPrint() {
-		uint32 remaining = g_system->getMillis() <= _endTime ? _endTime - g_system->getMillis() : 0;
-		g_engine->getDebugger()->debugPrintf("Delay for further %ums\n", remaining);
-	}
-
-private:
-	uint32 _endTime;
-};
-
 TaskReturn::TaskReturn() {
 	_type = TaskReturnType::Yield;
 	_returnValue = 0;
@@ -75,6 +53,23 @@ Task::Task(Process &process) : _process(process) {}
 
 Task *Task::delay(uint32 millis) {
 	return new DelayTask(process(), millis);
+}
+
+DelayTask::DelayTask(Process &process, uint32 millis)
+	: Task(process)
+	, _endTime(millis) {}
+
+TaskReturn DelayTask::run(){
+	TASK_BEGIN;
+	_endTime += g_system->getMillis();
+	while (g_system->getMillis() < _endTime)
+		TASK_YIELD;
+	TASK_END;
+}
+
+void DelayTask::debugPrint() {
+	uint32 remaining = g_system->getMillis() <= _endTime ? _endTime - g_system->getMillis() : 0;
+	g_engine->getDebugger()->debugPrintf("Delay for further %ums\n", remaining);
 }
 
 Process::Process(ProcessId pid, MainCharacterKind characterKind)

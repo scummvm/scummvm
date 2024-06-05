@@ -79,6 +79,15 @@ private:
 	Process &_process;
 };
 
+struct DelayTask : public Task {
+	DelayTask(Process &process, uint32 millis);
+	virtual TaskReturn run() override; 
+	virtual void debugPrint() override;
+
+private:
+	uint32 _endTime;
+};
+
 // TODO: This probably should be scummvm common
 #if __cplusplus >= 201703L
 #define TASK_BREAK_FALLTHROUGH [[fallthrough]];
