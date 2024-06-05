@@ -11,30 +11,6 @@ class U8UtilTestSuite : public CxxTest::TestSuite {
 	U8UtilTestSuite() {
 	}
 
-	void test_trim_spaces() {
-		Ultima::Std::string s0 = "   ";
-		Ultima::Ultima8::TrimSpaces(s0);
-		TS_ASSERT_EQUALS(s0, Ultima::Std::string(""));
-
-		Ultima::Std::string s1 = " abc   ";
-		Ultima::Ultima8::TrimSpaces(s1);
-		TS_ASSERT_EQUALS(s1, Ultima::Std::string("abc"));
-
-		Ultima::Std::string s2 = "def";
-		Ultima::Ultima8::TrimSpaces(s2);
-		TS_ASSERT_EQUALS(s2, "def");
-	}
-
-	void test_tabs_to_spaces() {
-		Ultima::Std::string s1 = "\tabc \t ";
-		Ultima::Ultima8::TabsToSpaces(s1, 1);
-		TS_ASSERT_EQUALS(s1, " abc   ");
-
-		Ultima::Std::string s2 = "def";
-		Ultima::Ultima8::TabsToSpaces(s2, 1);
-		TS_ASSERT_EQUALS(s2, "def");
-	}
-
 	void test_split_string() {
 		Ultima::Std::string s1 = "abc,def";
 		Ultima::Std::vector<Ultima::Std::string> v1;
