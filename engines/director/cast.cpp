@@ -1274,7 +1274,7 @@ void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 	_lingodec->parseScripts();
 
 	for (auto it = _lingodec->scripts.begin(); it != _lingodec->scripts.end(); ++it) {
-		debug(5, "[%d/%d] %s", it->second->castID, it->first, it->second->scriptText("\n", false).c_str());
+		debugC(9, kDebugCompile, "[%d/%d] %s", it->second->castID, it->first, it->second->scriptText("\n", false).c_str());
 	}
 }
 
