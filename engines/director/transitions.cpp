@@ -744,10 +744,18 @@ void Window::dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::Man
 						x += clipRect.left;
 						y += clipRect.top;
 
-						byte *dst = (byte *)_composeSurface->getBasePtr(x, y);
-						byte *src = (byte *)nextFrame->getBasePtr(x, y);
+						if (g_director->_pixelformat.bytesPerPixel == 1) {
+							byte *dst = (byte *)_composeSurface->getBasePtr(x, y);
+							byte *src = (byte *)nextFrame->getBasePtr(x, y);
 
-						*dst = ((*dst & ~mask) | (*src & mask)) & 0xff;
+							*dst = ((*dst & ~mask) | (*src & mask)) & 0xff;
+						} else {
+							uint32 *dst = (uint32 *)_composeSurface->getBasePtr(x, y);
+							uint32 *src = (uint32 *)nextFrame->getBasePtr(x, y);
+
+							*dst = ((*dst & ~mask) | (*src & mask)) & 0xff;
+
+						}
 					}
 				}
 
@@ -850,18 +858,36 @@ void Window::dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graph
 		uint32 startTime = g_system->getMillis();
 		for (int y = clipRect.top; y < clipRect.bottom; y++) {
 			byte pat = dissolvePatterns[patternIndex][y % 8];
-			byte *dst = (byte *)_composeSurface->getBasePtr(clipRect.left, y);
-			byte *src = (byte *)nextFrame->getBasePtr(clipRect.left, y);
+			if (g_director->_pixelformat.bytesPerPixel == 1) {
 
-			for (int x = clipRect.left; x < clipRect.right;) {
-				byte mask = 0x80;
-				for (int b = 0; b < 8 && x < clipRect.right; b++, x++) {
-					if (pat & mask)
-						*dst = *src;
+				byte *dst = (byte *)_composeSurface->getBasePtr(clipRect.left, y);
+				byte *src = (byte *)nextFrame->getBasePtr(clipRect.left, y);
 
-					dst++;
-					src++;
-					mask >>= 1;
+				for (int x = clipRect.left; x < clipRect.right;) {
+					byte mask = 0x80;
+					for (int b = 0; b < 8 && x < clipRect.right; b++, x++) {
+						if (pat & mask)
+							*dst = *src;
+
+						dst++;
+						src++;
+						mask >>= 1;
+					}
+				}
+			} else {
+				uint32 *dst = (uint32 *)_composeSurface->getBasePtr(clipRect.left, y);
+				uint32 *src = (uint32 *)nextFrame->getBasePtr(clipRect.left, y);
+
+				for (int x = clipRect.left; x < clipRect.right;) {
+					byte mask = 0x80;
+					for (int b = 0; b < 8 && x < clipRect.right; b++, x++) {
+						if (pat & mask)
+							*dst = *src;
+
+						dst++;
+						src++;
+						mask >>= 1;
+					}
 				}
 			}
 		}
