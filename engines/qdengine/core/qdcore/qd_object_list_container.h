@@ -3,6 +3,9 @@
 
 #include "common/str.h"
 
+
+namespace QDEngine {
+
 template <class T>
 class qdObjectListContainer {
 public:
@@ -125,5 +128,7 @@ bool qdObjectListContainer<T>::clear() {
 
 	return true;
 }
+
+} // namespace QDEngine
 
 #endif /* __QD_OBJECT_LIST_CONTAINER_H__ */

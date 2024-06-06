@@ -6,6 +6,9 @@
 #include "qdengine/core/qdcore/qd_coords_animation_point.h"
 #include "qdengine/core/qdcore/qd_named_object_reference.h"
 
+
+namespace QDEngine {
+
 const int QD_COORDS_ANM_OBJECT_START_FLAG   = 0x01;
 const int QD_COORDS_ANM_LOOP_FLAG           = 0x02;
 const int QD_COORDS_ANM_RELATIVE_FLAG       = 0x04; // Флаг перемещения траектории в текущую точку нахождения объекта
@@ -149,5 +152,7 @@ private:
 };
 
 //typedef std::list<qdCoordsAnimation*> qdCoordsAnimationList;
+
+} // namespace QDEngine
 
 #endif /* __QD_COORDS_ANIMATION_H__ */

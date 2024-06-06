@@ -4,6 +4,9 @@
 #include "qdengine/core/system/input/mouse_input.h"
 #include "qdengine/core/system/input/keyboard_input.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -105,3 +108,4 @@ bool grDispatcher::sys_finit() {
 #endif
 	return true;
 }
+} // namespace QDEngine

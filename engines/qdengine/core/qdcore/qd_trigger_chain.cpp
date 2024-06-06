@@ -12,6 +12,9 @@
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
 #endif
 
+namespace QDEngine {
+
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -503,3 +506,4 @@ bool qdTriggerChain::deactivate_object_triggers(const qdNamedObject *p) {
 
 	return ret;
 }
+} // namespace QDEngine

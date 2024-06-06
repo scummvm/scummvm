@@ -1,6 +1,9 @@
 #ifndef __LZ77_H
 #define __LZ77_H
 
+
+namespace QDEngine {
+
 class CLZ77 {
 private:
 	long LZComp(unsigned char *s1, unsigned char *s2, long maxlen);
@@ -16,5 +19,7 @@ public:
 
 //	virtual void OnStep() = 0;
 };
+
+} // namespace QDEngine
 
 #endif

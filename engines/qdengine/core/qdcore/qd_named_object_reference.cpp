@@ -2,12 +2,14 @@
 
 #include <string>
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include "qdengine/core/parser/qdscr_parser.h"
-
 #include "qdengine/core/qdcore/qd_named_object_reference.h"
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
+
+
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -179,3 +181,4 @@ qdNamedObject *qdNamedObjectReference::object() const {
 
 	return NULL;
 }
+} // namespace QDEngine

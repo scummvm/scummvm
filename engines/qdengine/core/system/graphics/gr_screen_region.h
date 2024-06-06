@@ -2,6 +2,8 @@
 #ifndef __GR_SCREEN_REGION_H__
 #define __GR_SCREEN_REGION_H__
 
+namespace QDEngine {
+
 //! Прямоугольная область на экране.
 class grScreenRegion {
 public:
@@ -108,5 +110,7 @@ private:
 	int size_x_;
 	int size_y_;
 };
+
+} // namespace QDEngine
 
 #endif /* __GR_SCREEN_REGION_H__ */

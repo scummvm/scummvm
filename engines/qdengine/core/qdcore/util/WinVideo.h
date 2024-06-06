@@ -3,6 +3,10 @@
 
 //#define __WINVIDEO_LOG__
 
+
+
+namespace QDEngine {
+
 class winVideo {
 public:
 	enum PlaybackStatus {
@@ -54,5 +58,7 @@ private:
 
 	static bool is_initialized;
 };
+
+} // namespace QDEngine
 
 #endif /* __WINVIDEO_H__ */

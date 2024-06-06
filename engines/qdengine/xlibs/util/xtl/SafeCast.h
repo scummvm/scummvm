@@ -1,6 +1,8 @@
 #ifndef __SAFE_CAST_H__
 #define __SAFE_CAST_H__
 
+namespace QDEngine {
+
 #ifndef _FINAL_VERSION_
 
 template <class DestinationType, class SourceType>
@@ -21,5 +23,7 @@ inline DestinationType safe_cast_ref(SourceType &source) {
 #define safe_cast_ref static_cast
 
 #endif
+
+}
 
 #endif //__SAFE_CAST_H__

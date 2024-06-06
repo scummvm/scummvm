@@ -2,14 +2,16 @@
 #define __QD_SOUND_H__
 
 #include "qdengine/core/parser/xml_fwd.h"
-
 #include "qdengine/core/qdcore/qd_named_object.h"
 #include "qdengine/core/qdcore/qd_resource.h"
 #include "qdengine/core/qdcore/qd_sound_handle.h"
 
+
 #ifndef __QD_SYSLIB__
 #include "qdengine/core/system/sound/wav_sound.h"
 #endif
+
+namespace QDEngine {
 
 //! Звук.
 class qdSound : public qdNamedObject, public qdResource {
@@ -104,5 +106,7 @@ private:
 };
 
 typedef std::list<qdSound *> qdSoundList;
+
+} // namespace QDEngine
 
 #endif /* __QD_SOUND_H__ */

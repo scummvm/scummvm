@@ -3,6 +3,9 @@
 #include "common/rect.h"
 #include "qdengine/xlibs/xutil/xglobal.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 
@@ -85,3 +88,4 @@ XConsole::XConsole(void) {
 
 XConsole::~XConsole(void) {
 }
+} // namespace QDEngine

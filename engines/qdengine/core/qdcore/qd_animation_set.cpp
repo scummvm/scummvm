@@ -6,6 +6,9 @@
 #include "qdengine/core/qdcore/qd_animation_set.h"
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -424,3 +427,4 @@ void qdAnimationSet::set_walk_sound_frequency(int direction_index, float freq) {
 
 	walk_sound_frequency_[direction_index] = freq;
 }
+} // namespace QDEngine

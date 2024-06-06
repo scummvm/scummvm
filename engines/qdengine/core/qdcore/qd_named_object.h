@@ -3,6 +3,8 @@
 
 #include "qdengine/core/qdcore/qd_named_object_base.h"
 
+namespace QDEngine {
+
 //! Типы поименованных объектов.
 enum qdNamedObjectType {
 	QD_NAMED_OBJECT_GENERIC,
@@ -39,6 +41,7 @@ enum qdNamedObjectType {
 
 	QD_NAMED_OBJECT_MAX_TYPE
 };
+
 
 //! Поименованный объект.
 class qdNamedObject : public qdNamedObjectBase {
@@ -136,5 +139,7 @@ private:
 };
 
 appLog &operator << (appLog &log, const qdNamedObject *obj);
+
+} // namespace QDEngine
 
 #endif /* __QD_NAMED_OBJECT_H__ */

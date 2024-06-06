@@ -1,6 +1,7 @@
 #include "qdengine/xlibs/xutil/xglobal.h"
 
-
+namespace QDEngine {
+	
 XBuffer& XBuffer::operator<= (const char var) {
 	Common::String s = Common::String::format("%d", var);
 	write(s.c_str(), s.size(), 0);
@@ -66,3 +67,4 @@ XBuffer& XBuffer::operator<= (long double var) {
 	write(s, strlen(s), 0);
 	return *this;
 }
+} // namespace QDEngine

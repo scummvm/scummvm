@@ -1,7 +1,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/parser/qdscr_parser.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include "qdengine/core/system/sound/snd_dispatcher.h"
@@ -16,6 +15,10 @@
 #include "qdengine/core/qdcore/qd_interface_save.h"
 #include "qdengine/core/qdcore/qd_interface_slider.h"
 #include "qdengine/core/qdcore/qd_interface_text_window.h"
+
+
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -239,3 +242,4 @@ qdInterfaceElement::state_status_t qdInterfaceElement::state_status(const qdInte
 
 	return STATE_DONE;
 }
+} // namespace QDEngine

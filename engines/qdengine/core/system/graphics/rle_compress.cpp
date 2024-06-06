@@ -4,6 +4,9 @@
 #include "qdengine/core/system/graphics/rle_compress.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -328,3 +331,5 @@ bool rleBuffer::load(XZipStream &fh) {
 
 	return true;
 }
+
+} // namespace QDEngine

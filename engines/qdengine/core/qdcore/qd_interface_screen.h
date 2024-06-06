@@ -10,6 +10,9 @@
 #include "qdengine/core/system/graphics/gr_screen_region.h"
 #include "qdengine/core/system/input/mouse_input.h"
 
+
+namespace QDEngine {
+
 class qdInterfaceElement;
 class qdInterfaceElementState;
 
@@ -183,5 +186,7 @@ private:
 	//! Указатель на объект, который последним вызвал данный экран в качестве модального
 	qdInterfaceObjectBase *modal_caller_;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_INTERFACE_SCREEN_H__ */

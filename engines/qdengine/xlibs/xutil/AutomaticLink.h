@@ -24,4 +24,3 @@
 #undef _DEBUG_SUFFIX
 #undef _MT_DLL_SUFFIX
 #undef _LIB_NAME
-

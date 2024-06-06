@@ -6,6 +6,9 @@
 #include "qdengine/core/qdcore/qd_game_object.h"
 #include "qdengine/core/qdcore/qd_camera.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -163,3 +166,4 @@ bool qdGameObject::init() {
 
 	return true;
 }
+} // namespace QDEngine

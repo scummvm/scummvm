@@ -5,6 +5,9 @@
 #include "qdengine/core/system/graphics/gr_screen_region.h"
 #include "qdengine/core/system/graphics/gr_font.h"
 
+
+namespace QDEngine {
+
 class qdGameObjectState;
 
 const int QD_FONT_TYPE_NONE = -1; //! Обозначает отсутствие шрифта
@@ -246,5 +249,7 @@ private:
 	//! Владелец текста.
 	mutable qdGameObjectState *owner_;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_SCREEN_TEXT_H__ */

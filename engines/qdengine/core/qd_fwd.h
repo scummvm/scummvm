@@ -1,6 +1,13 @@
 #ifndef __QD_FWD_H__
 #define __QD_FWD_H__
 
+#include <list>
+#include <string>
+#include <vector>
+
+
+namespace QDEngine {
+
 class qdGameScene;
 typedef std::list<qdGameScene *> qdGameSceneList;
 
@@ -66,5 +73,7 @@ typedef std::list<std::string> qdFileNameList;
 
 class qdFontInfo;
 typedef std::list<qdFontInfo *> qdFontInfoList;
+
+} // namespace QDEngine
 
 #endif // __QD_FWD_H__

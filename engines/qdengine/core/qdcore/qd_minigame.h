@@ -4,6 +4,9 @@
 #include "qdengine/core/qdcore/qd_named_object.h"
 #include "qdengine/core/qdcore/qd_minigame_config.h"
 
+
+namespace QDEngine {
+
 class qdMiniGameInterface;
 
 //! Мини-игра.
@@ -112,5 +115,7 @@ private:
 	bool load_interface();
 	bool release_interface();
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_MINIGAME_H__ */

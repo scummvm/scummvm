@@ -4,6 +4,9 @@
 #include "qdengine/core/parser/xml_fwd.h"
 #include "qdengine/core/qdcore/qd_conditional_object.h"
 
+
+namespace QDEngine {
+
 //! Концовка игры.
 class qdGameEnd : public qdConditionalObject {
 public:
@@ -42,5 +45,7 @@ private:
 	*/
 	std::string interface_screen_;
 };
+
+} // namespace QDEngine
 
 #endif // __QD_GAME_END_H__

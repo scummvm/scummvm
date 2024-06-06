@@ -1,11 +1,14 @@
 #ifndef __APP_LOG_H__
 #define __APP_LOG_H__
 
+
 //! Отладочный лог - базовый класс.
 /**
 Включается только в игре (не в редакторе) ключем /log в командной строке.
 По умолчанию пишет в файл qd_engine.log, при перезапуске игры лог обнуляется.
 */
+namespace QDEngine {
+
 class appLog {
 public:
 	appLog();
@@ -52,5 +55,7 @@ private:
 	//! Текущее время.
 	unsigned time_;
 };
+
+} // namespace QDEngine
 
 #endif /* __APP_LOG_H__ */

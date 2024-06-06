@@ -1,14 +1,90 @@
 #ifndef __QD_PRECOMP_H__
 #define __QD_PRECOMP_H__
 
+#ifndef _QUEST_EDITOR
+#else
+/*  #define   _STLP_NO_NEW_IOSTREAMS 1
+
+    #ifdef _STLP_NO_NEW_IOSTREAMS
+        #define   _STLP_NO_OWN_NAMESPACE 1
+    #else
+        #define _STLP_USE_OWN_NAMESPACE 1
+        #define _STLP_REDEFINE_STD 1
+    #endif*/
+#endif // _QUEST_EDITOR
+
+#ifndef _FINAL_VERSION
+#ifndef __QD_SYSLIB__
+#define __QD_DEBUG_ENABLE__
+#endif
+#endif
+
+#ifdef __QD_DEBUG_ENABLE_
+#define __QDBG(a) a
+#else
+#define __QDBG(a)
+#endif
+
+#ifdef _DEBUG
+#define DBGCHECK _ASSERTE(_CrtCheckMemory())
+#else
+#define DBGCHECK
+#endif
+
+//#define _GR_ENABLE_ZBUFFER
+#if 0
+#include "qdengine/xlibs/Heap/Additional/addition.h"
+#endif
+
+
+#if _MSC_VER < 1300
+#define for if(false); else for
+#endif
+
+#pragma warning(disable : 4786)
+#pragma warning(disable : 4018)
+#pragma warning(disable : 4244)
+
+#include "qdengine/xlibs/xutil/xutil.h"
+#include "qdengine/xlibs/util/xmath/xmath.h"
+#include "qdengine/xlibs/util/xmath/XMathLib.h"
+
+#ifndef _NO_ZIP_
+#if 0
+#include "qdengine/xlibs/XZip/XZip.h"
+#endif
+#else
+
+#endif
+
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include <algorithm>
+#include <functional>
+#include <list>
+#include <stack>
+#include <string>
+#include <vector>
 #include "common/system.h"
+
+
+#include "engines/qdengine/core/qd_fwd.h"
+#include "qdengine/core/system/app_core.h"
+#include "qdengine/core/system/app_log.h"
+#include "qdengine/core/system/app_error_handler.h"
+#include "qdengine/core/system/input/mouse_input.h"
+#include "qdengine/core/system/input/keyboard_input.h"
+#include "qdengine/core/qdcore/util/qd_save_stream.h"
+#include "qdengine/xlibs/util/xmath/SafeMath.h"
+
+namespace QDEngine {
+
 
 #define FOR_EACH(list, iterator) \
 	for(iterator = (list).begin(); iterator != (list).end(); ++iterator)
 
 // STUB: XZipStream
 #define _NO_ZIP_
+class XZipStream : public XStream {};
 
 // STUB FIXME
 #define APIENTRY
@@ -42,6 +118,9 @@
 #define REFCLSID	  const void *
 #define REFIID 		  const void *
 #define XML_Char 	  char
+
+#define LPDIRECTSOUND       int
+#define LPDIRECTSOUNDBUFFER int
 
 #define DRIVE_CDROM   5
 #define MAX_PATH      260
@@ -386,8 +465,6 @@ extern void *INVALID_HANDLE_VALUE;
 const int CP_ACP = 0;
 const int CP_UTF8 = 65001;
 
-
-
 void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext);
 int MessageBox(HWND hWnd, const char *lpText, const char *lpCaption, UINT uType);
 void ShellExecute(HWND hwnd, const char *lpOperation, const char *lpFile, const char *lpParameters, const char *lpDirectory, int nShowCmd);
@@ -463,84 +540,6 @@ DWORD timeGetTime();
 
 int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow);
 
-#ifndef _QUEST_EDITOR
-#else
-/*  #define   _STLP_NO_NEW_IOSTREAMS 1
-
-    #ifdef _STLP_NO_NEW_IOSTREAMS
-        #define   _STLP_NO_OWN_NAMESPACE 1
-    #else
-        #define _STLP_USE_OWN_NAMESPACE 1
-        #define _STLP_REDEFINE_STD 1
-    #endif*/
-#endif // _QUEST_EDITOR
-
-#ifndef _FINAL_VERSION
-#ifndef __QD_SYSLIB__
-#define __QD_DEBUG_ENABLE__
-#endif
-#endif
-
-#ifdef __QD_DEBUG_ENABLE_
-#define __QDBG(a) a
-#else
-#define __QDBG(a)
-#endif
-
-#ifdef _DEBUG
-#define DBGCHECK _ASSERTE(_CrtCheckMemory())
-#else
-#define DBGCHECK
-#endif
-
-//#define _GR_ENABLE_ZBUFFER
-#if 0
-#include "qdengine/xlibs/Heap/Additional/addition.h"
-#endif
-
-
-#if _MSC_VER < 1300
-#define for if(false); else for
-#endif
-
-#pragma warning(disable : 4786)
-#pragma warning(disable : 4018)
-#pragma warning(disable : 4244)
-
-#include "qdengine/xlibs/xutil/xutil.h"
-#include "qdengine/xlibs/util/xmath/xmath.h"
-#include "qdengine/xlibs/util/xmath/XMathLib.h"
-
-#ifndef _NO_ZIP_
-#if 0
-#include "qdengine/xlibs/XZip/XZip.h"
-#endif
-#else
-class XZipStream : public XStream {
-
-};
-#endif
-
-#include <list>
-#include <stack>
-#include <vector>
-#include <string>
-#if 0
-#include "qdengine/xlibs/STLPort/stlport/hash_map"
-#endif
-#include <algorithm>
-#include <functional>
-
-#include "qdengine/xlibs/util/xmath/SafeMath.h"
-
-#include "qdengine/core/system/app_core.h"
-#include "qdengine/core/system/app_log.h"
-#include "qdengine/core/system/app_error_handler.h"
-
-#include "qdengine/core/system/input/mouse_input.h"
-#include "qdengine/core/system/input/keyboard_input.h"
-
-#include "qdengine/core/qdcore/util/qd_save_stream.h"
-#include "engines/qdengine/core/qd_fwd.h"
+} // namespace QDEngine
 
 #endif /* __QD_PRECOMP_H__ */

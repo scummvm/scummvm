@@ -1,7 +1,10 @@
 #include "qdengine/xlibs/xutil/xglobal.h"
 
+
+namespace QDEngine {
+
 bool XBuffer::search(char* what, int mode, int cs) {
-	register int i, j;
+	int i, j;
 	unsigned int wlen = strlen(what) - 1;
 	if (mode == XB_GLOBAL) {
 		i = 0;
@@ -63,3 +66,4 @@ bool XBuffer::search(char* what, int mode, int cs) {
 	}
 	return 0;
 }
+} // namespace QDEngine

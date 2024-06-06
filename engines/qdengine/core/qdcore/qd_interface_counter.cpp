@@ -6,6 +6,9 @@
 #include "qdengine/core/qdcore/qd_interface_counter.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 
+
+namespace QDEngine {
+
 qdInterfaceCounter::qdInterfaceCounter() : counter_(0) {
 	digits_ = 4;
 
@@ -177,3 +180,4 @@ const char *qdInterfaceCounter::counterName() const {
 void qdInterfaceCounter::setCounterName(const char *name) {
 	counterName_ = name;
 }
+} // namespace QDEngine

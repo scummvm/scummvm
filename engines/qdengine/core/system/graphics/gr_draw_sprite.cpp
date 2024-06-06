@@ -1,8 +1,11 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 #include <math.h>
-
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
+
+
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -2818,3 +2821,5 @@ void grDispatcher::PutSprMask_a(int x, int y, int sx, int sy, const unsigned cha
 		}
 	}
 }
+
+} // namespace QDEngine

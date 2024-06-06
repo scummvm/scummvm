@@ -2,10 +2,10 @@
 #define __DS_SOUND_H__
 
 #include "qdengine/core/system/sound/snd_sound.h"
+#include "qdengine/core/qd_precomp.h"
 
-// STUB FIXME
-#define LPDIRECTSOUND int
-#define LPDIRECTSOUNDBUFFER int
+
+namespace QDEngine {
 
 class wavSound;
 
@@ -76,5 +76,7 @@ private:
 	//! флаги
 	int flags_;
 };
+
+} // namespace QDEngine
 
 #endif /* __DS_SOUND_H__ */

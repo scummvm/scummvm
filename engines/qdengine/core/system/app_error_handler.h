@@ -1,6 +1,10 @@
 #ifndef __APP_ERROR_HANDLER_H__
 #define __APP_ERROR_HANDLER_H__
 
+
+
+namespace QDEngine {
+
 //! Обработчик ошибок.
 class appErrorHandler {
 public:
@@ -49,5 +53,6 @@ private:
 
 extern appErrorHandler app_errH;
 
-#endif /* __APP_ERROR_HANDLER_H__ */
+} // namespace QDEngine
 
+#endif /* __APP_ERROR_HANDLER_H__ */

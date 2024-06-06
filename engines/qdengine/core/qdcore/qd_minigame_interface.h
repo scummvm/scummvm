@@ -1,6 +1,9 @@
 #ifndef __QD_MINIGAME_INTERFACE_H__
 #define __QD_MINIGAME_INTERFACE_H__
 
+
+namespace QDEngine {
+
 class qdEngineInterface;
 
 //! Интерфейсный класс для подключения мини-игр через dll.
@@ -376,5 +379,6 @@ public:
 	virtual float fabs_rnd(float x) const = 0;
 };
 
-#endif /* __QD_MINIGAME_INTERFACE_H__ */
+} // namespace QDEngine
 
+#endif /* __QD_MINIGAME_INTERFACE_H__ */

@@ -2,6 +2,9 @@
 #include "qdengine/core/qdcore/qd_font_info.h"
 #include "qdengine/core/qdcore/qd_file_manager.h"
 
+
+namespace QDEngine {
+
 qdFontInfo::qdFontInfo(const qdFontInfo &fi) : qdNamedObject(fi),
 	type_(fi.type()), font_file_name_(fi.font_file_name()) {
 	if (NULL != fi.font()) {
@@ -106,3 +109,4 @@ bool qdFontInfo::load_font() {
 	font_ = buf_font;
 	return true;
 }
+} // namespace QDEngine

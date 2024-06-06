@@ -3,6 +3,8 @@
 
 typedef unsigned int time_type;
 
+namespace QDEngine {
+
 class SyncroTimer {
 public:
 	// Main property
@@ -74,5 +76,7 @@ private:
 	int syncro_by_clock;
 	float time_speed;
 };
+
+} // namespace QDEngine
 
 #endif // __SYNCRO_TIMER__

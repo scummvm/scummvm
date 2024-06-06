@@ -15,6 +15,9 @@
 #include "qdengine/core/qdcore/qd_animation.h"
 
 
+namespace QDEngine {
+
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -102,3 +105,5 @@ qdAnimation *qdAnimationInfo::animation() const {
 #endif
 	return NULL;
 }
+
+} // namespace QDEngine

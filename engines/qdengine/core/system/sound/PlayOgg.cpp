@@ -1,6 +1,6 @@
-//Balmer
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/sound/PlayOgg.h"
+//Balmer
 
 #ifdef MPP_STAT
 #endif MPP_STAT
@@ -9,10 +9,13 @@
 #include <math.h>
 
 #define BLK_SIZE         (36 * 32)
-void MpegCreateWindowTable();
 
 #define OggVorbis_File void *
 #define LPDIRECTSOUND  void *
+
+namespace QDEngine {
+	
+void MpegCreateWindowTable();
 
 static LPDIRECTSOUND g_pDS = NULL;
 const int maximal_len = BLK_SIZE * 2;
@@ -839,3 +842,5 @@ float MpegSound::GetLen() {
 float MpegSound::GetCurPos() {
 	return pMppLoad->GetCurPos();
 }
+
+} // namespace QDEngine

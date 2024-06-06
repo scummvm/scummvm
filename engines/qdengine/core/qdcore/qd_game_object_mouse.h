@@ -3,6 +3,9 @@
 
 #include "qdengine/core/qdcore/qd_game_object_animated.h"
 
+
+namespace QDEngine {
+
 //! Мышь.
 class qdGameObjectMouse : public qdGameObjectAnimated {
 public:
@@ -94,5 +97,7 @@ private:
 
 	void update_object_position() const;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_GAME_OBJECT_MOUSE_H__ */

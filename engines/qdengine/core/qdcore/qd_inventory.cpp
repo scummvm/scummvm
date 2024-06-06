@@ -1,9 +1,8 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qdengine/core/qd_precomp.h"
-
 #include <algorithm>
+#include "qdengine/core/qd_precomp.h"
 
 #ifdef _QUEST_EDITOR
 #include <functional>
@@ -16,6 +15,10 @@
 #include "qdengine/core/qdcore/qd_game_scene.h"
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
 #include "qdengine/core/qdcore/qd_game_object_mouse.h"
+
+
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -416,3 +419,4 @@ void qdInventory::debug_log() const {
 	appLog::default_log() << "--------------\r\n";
 #endif
 }
+} // namespace QDEngine

@@ -1,5 +1,8 @@
 #include "qdengine/xlibs/xutil/xglobal.h"
 
+
+namespace QDEngine {
+
 XStream& XStream::operator> (char& v) {
 	read(&v, (unsigned)sizeof(char));
 	return *this;
@@ -54,3 +57,4 @@ XStream& XStream::operator> (long double& v) {
 	read(&v, (unsigned)sizeof(long double));
 	return *this;
 }
+} // namespace QDEngine

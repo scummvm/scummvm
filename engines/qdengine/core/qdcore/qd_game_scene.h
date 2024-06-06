@@ -12,6 +12,9 @@
 #include "qdengine/core/system/input/mouse_input.h"
 #include "qdengine/core/system/graphics/gr_screen_region.h"
 
+
+namespace QDEngine {
+
 class qdMiniGame;
 
 //! Сцена.
@@ -319,5 +322,7 @@ private:
 	void create_minigame_objects();
 #endif // _QUEST_EDITOR
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_GAME_SCENE_H__ */

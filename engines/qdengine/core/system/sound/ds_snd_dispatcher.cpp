@@ -1,15 +1,18 @@
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/app_core.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/system/sound/ds_snd_dispatcher.h"
 #include "qdengine/core/qdcore/util/plaympp_api.h"
 
+/* ---------------------------- INCLUDE SECTION ----------------------------- */
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
+
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
+
+namespace QDEngine {
 
 static bool operator == (const dsSound &snd0, const sndSound &snd1) {
 	return snd0.sound() == snd1.sound();
@@ -187,3 +190,4 @@ void ds_sndDispatcher::resume_sounds() {
 			it -> resume();
 	}
 }
+} // namespace QDEngine

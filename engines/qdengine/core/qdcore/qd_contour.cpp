@@ -6,11 +6,14 @@
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include "qdengine/core/qdcore/qd_contour.h"
 
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
+namespace QDEngine {
+	
 qdContour::qdContour(qdContourType tp) : contour_type_(tp),
 	size_(0, 0),
 	mask_pos_(0, 0) {
@@ -273,4 +276,5 @@ bool qdContour::is_contour_empty() const {
 		return (contour_.size() < 3);
 
 	return false;
+}
 }

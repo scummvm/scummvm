@@ -1,6 +1,8 @@
 #ifndef __QDSCR_KEYWORDS_H__
 #define __QDSCR_KEYWORDS_H__
 
+namespace QDEngine {
+
 enum qdscrKeywordID {
 	QDSCR_BLOCK_BEG = 1,
 	QDSCR_BLOCK_END,
@@ -165,5 +167,7 @@ enum qdscrKeywordID {
 
 	QDSCR_MAX_KEYWORD_ID
 };
+
+} // namespace QDEngine
 
 #endif /* __QDSCR_KEYWORDS_H__ */

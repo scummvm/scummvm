@@ -2,6 +2,9 @@
 #define __QD_DIALOG_CONTROL_H__
 
 
+
+namespace QDEngine {
+
 class qdlgOption {
 public:
 	qdlgOption() : control_ID_(-1), control_parent_(NULL) { }
@@ -116,5 +119,7 @@ private:
 
 	int default_value() const;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_DIALOG_CONTROL_H__ */

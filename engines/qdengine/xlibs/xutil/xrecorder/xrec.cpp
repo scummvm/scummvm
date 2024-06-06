@@ -2,6 +2,9 @@
 
 #include "qdengine/xlibs/xutil/xglobal.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -203,3 +206,4 @@ int XRecorder::CheckMessage(int code) {
 	}
 	return 1;
 }
+} // namespace QDEngine

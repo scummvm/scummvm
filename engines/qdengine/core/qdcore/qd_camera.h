@@ -4,6 +4,9 @@
 #include "qdengine/core/qdcore/qd_d3dutils.h"
 #include "qdengine/core/qdcore/qd_camera_mode.h"
 
+
+namespace QDEngine {
+
 class sGridCell {
 public:
 	//! Атрибуты
@@ -478,5 +481,7 @@ private:
 inline Vect3f To3D(const Vect2f &v) {
 	return Vect3f(v.x, v.y, 0);
 }
+
+} // namespace QDEngine
 
 #endif /* __QD_CAMERA_H__ */

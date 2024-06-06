@@ -3,6 +3,9 @@
 
 #include "qdengine/core/qdcore/qd_resource.h"
 
+
+namespace QDEngine {
+
 //! Диспетчер ресурсов.
 template<class T>
 class qdResourceDispatcher {
@@ -162,5 +165,7 @@ protected:
 	//! Хэндлы ресурсов.
 	handle_container_t handles_;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_RESOURCE_DISPATCHER_H__ */

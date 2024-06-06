@@ -2,6 +2,9 @@
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/util/ResourceDispatcher.h"
 
+
+namespace QDEngine {
+
 int ResourceUser::IDs;
 
 void ResourceDispatcher::do_start() {
@@ -45,3 +48,4 @@ void ResourceDispatcher::quant() {
 			break;
 	}
 }
+} // namespace QDEngine

@@ -3,6 +3,8 @@
 
 #include "qdengine/xlibs/xutil/xglobal.h"
 
+namespace QDEngine {
+
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 
@@ -68,3 +70,5 @@ void XMessageBuffer::clear(void) {
 	Size = 0;
 	FirstIndex = LastIndex = 0;
 }
+
+} // namespace QDEngine

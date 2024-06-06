@@ -12,6 +12,8 @@ using namespace std;
 #include "qdengine/xlibs/util/serialization/ComboStrings.h"
 #include "qdengine/xlibs/util/serialization/SerializationTypes.h"
 
+namespace QDEngine {
+
 class MemoryBlock;
 
 
@@ -771,5 +773,7 @@ private:
 bool saveFileSmart(const char *fname, const char *buffer, int size);
 
 std::string transliterate(const char *name);
+
+} // namespace QDEngine
 
 #endif //__SERIALIZATION_H_INCLUDED__

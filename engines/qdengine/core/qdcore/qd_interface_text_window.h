@@ -5,6 +5,9 @@
 #include "qdengine/core/qdcore/qd_interface_element_state.h"
 #include "qdengine/core/system/graphics/UI_TextParser.h"
 
+
+namespace QDEngine {
+
 class qdScreenTextSet;
 class qdInterfaceSlider;
 
@@ -221,5 +224,7 @@ private:
 	void text_redraw() const;
 	bool edit_input(int vkey);
 };
+
+} // namespace QDEngine
 
 #endif // __QD_INTERFACE_TEXT_WINDOW_H__

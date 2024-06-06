@@ -1,7 +1,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/qdcore/qd_rnd.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
@@ -18,6 +17,10 @@
 
 #include "qdengine/core/qdcore/util/AIAStar_API.h"
 #include "qdengine/xlibs/util/xmath/SafeMath.h"
+
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -2711,3 +2714,4 @@ bool qdGameObjectMoving::get_debug_info(XBuffer &buf) const {
 #endif
 	return true;
 }
+} // namespace QDEngine

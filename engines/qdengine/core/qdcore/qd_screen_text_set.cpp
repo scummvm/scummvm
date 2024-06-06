@@ -8,6 +8,9 @@
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
 
 
+namespace QDEngine {
+
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -226,3 +229,4 @@ void qdScreenTextSet::format_texts() {
 	for (texts_container_t::iterator it = texts_.begin(); it != texts_.end(); ++it)
 		it -> format_text(max_text_width_);
 }
+} // namespace QDEngine

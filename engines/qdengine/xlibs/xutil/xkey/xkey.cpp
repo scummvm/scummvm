@@ -2,6 +2,9 @@
 
 #include "qdengine/xlibs/xutil/xglobal.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -188,3 +191,4 @@ int xtGetKeyName(int vkey, int shift, int russian) {
 int xtGetKeyState(int vk) {
 	return (GetKeyState(vk) & 0x01);
 }
+} // namespace QDEngine

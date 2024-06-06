@@ -5,6 +5,10 @@
 ////////////////////////////////////////////////////////////////////
 // Автоматически удаляемый указатель
 ////////////////////////////////////////////////////////////////////
+
+
+namespace QDEngine {
+
 template<class T>
 class PtrHandle {
 public:
@@ -203,5 +207,8 @@ public:
 		return instance();
 	}
 };
+
+
+} // namespace QDEngine
 
 #endif // __HANDLE_H__

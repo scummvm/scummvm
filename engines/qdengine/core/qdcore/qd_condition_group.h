@@ -4,6 +4,9 @@
 
 #include "qdengine/core/parser/xml_fwd.h"
 
+
+namespace QDEngine {
+
 //! Группа условий.
 class qdConditionGroup {
 public:
@@ -64,5 +67,6 @@ private:
 	conditions_container_t conditions_;
 };
 
-#endif /* __QD_CONDITION_GROUP_H__ */
+} // namespace QDEngine
 
+#endif /* __QD_CONDITION_GROUP_H__ */

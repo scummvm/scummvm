@@ -1,5 +1,8 @@
 #include "qdengine/xlibs/xutil/xglobal.h"
 
+
+namespace QDEngine {
+
 XBuffer::XBuffer() {
 	makeFree_ = 0;
 	buffer_ = NULL;
@@ -127,3 +130,4 @@ XBuffer &assertsBuffer() {
 	}
 	return buf4AssertsBuffer;
 }
+} // namespace QDEngine

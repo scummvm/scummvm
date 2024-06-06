@@ -3,6 +3,9 @@
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/util/fps_counter.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -62,3 +65,5 @@ void fpsCounter::reset() {
 	min_frame_time_ = 10000.0f;
 	max_frame_time_ = 0.0f;
 }
+
+} // namespace QDEngine

@@ -4,6 +4,9 @@
 
 #include "qdengine/core/qdcore/qd_named_object.h"
 
+
+namespace QDEngine {
+
 class qdAnimationSet;
 
 //! Информация о наборе анимаций.
@@ -18,5 +21,7 @@ public:
 
 	qdAnimationSet *animation_set() const;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_ANIMATION_SET_INFO_H__ */

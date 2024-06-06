@@ -1,5 +1,8 @@
 #include "qdengine/xlibs/xutil/xglobal.h"
 
+
+namespace QDEngine {
+
 XStream& XStream::operator< (const char* v) {
 	write(v, (unsigned)strlen(v));
 	return *this;
@@ -59,3 +62,4 @@ XStream& XStream::operator< (long double v) {
 	write(&v, (unsigned)sizeof(long double));
 	return *this;
 }
+} // namespace QDEngine

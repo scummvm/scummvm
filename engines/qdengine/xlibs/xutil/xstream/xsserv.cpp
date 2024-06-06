@@ -1,5 +1,8 @@
 #include "qdengine/xlibs/xutil/xglobal.h"
 
+
+namespace QDEngine {
+
 static char *seekMSG    = "BAD SEEK";
 static char *flushMSG   = "FLUSH FILE BUFFERS ERROR";
 static char *sizeMSG    = "FILE SIZE CALCULATION ERROR";
@@ -43,3 +46,4 @@ long XStream::size() const {
 	}
 	return tmp;
 }
+} // namespace QDEngine

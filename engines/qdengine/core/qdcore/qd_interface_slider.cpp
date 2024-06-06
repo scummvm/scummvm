@@ -5,6 +5,9 @@
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include "qdengine/core/qdcore/qd_interface_slider.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -306,3 +309,4 @@ bool qdInterfaceSlider::hit_test(int x, int y) const {
 
 	return false;
 }
+} // namespace QDEngine

@@ -1,7 +1,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/parser/qdscr_parser.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
 
@@ -13,6 +12,10 @@
 #include "qdengine/core/qdcore/qd_interface_screen.h"
 #include "qdengine/core/qdcore/qd_interface_text_window.h"
 #include "qdengine/core/qdcore/qd_interface_slider.h"
+
+
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -665,3 +668,4 @@ bool qdInterfaceTextWindow::edit_done(bool cancel) {
 
 	return false;
 }
+} // namespace QDEngine

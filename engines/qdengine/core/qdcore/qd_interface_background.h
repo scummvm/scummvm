@@ -5,6 +5,9 @@
 #include "qdengine/core/qdcore/qd_interface_element.h"
 #include "qdengine/core/qdcore/qd_interface_element_state.h"
 
+
+namespace QDEngine {
+
 //! Интерфейсный элемент - фон.
 class qdInterfaceBackground : public qdInterfaceElement {
 public:
@@ -76,5 +79,7 @@ private:
 	//! Состояние, в котором хранятся все необходимые настройки.
 	qdInterfaceElementState state_;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_INTERFACE_BACKGROUND_H__ */

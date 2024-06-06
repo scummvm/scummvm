@@ -10,6 +10,10 @@
 **-----------------------------------------------------------------------------
 */
 
+
+
+namespace QDEngine {
+
 typedef float VALUE3D;
 typedef struct _MATRIX3D {
 	union {
@@ -94,6 +98,7 @@ Vect3f TransformNormal(const Vect3f &v, const MATRIX3D &m);
 **  End of File
 **-----------------------------------------------------------------------------
 */
+
+} // namespace QDEngine
+
 #endif // D3DUTILS_H
-
-

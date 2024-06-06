@@ -1,7 +1,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include "qdengine/core/parser/qdscr_parser.h"
 
@@ -14,10 +13,13 @@
 #include "qdengine/core/qdcore/qd_game_object_moving.h"
 #include "qdengine/core/qdcore/qd_game_scene.h"
 #include "qdengine/core/qdcore/qd_setup.h"
-
 #include "qdengine/core/qdcore/qd_interface_text_window.h"
-
 #include "qdengine/core/qdcore/qd_resource.h"
+
+
+namespace QDEngine {
+
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -738,3 +740,4 @@ const char *qdInterfaceDispatcher::get_save_title() const {
 
 	return nullptr;
 }
+} // namespace QDEngine

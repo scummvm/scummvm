@@ -14,6 +14,9 @@
 #include "qdengine/core/qdcore/qd_animation_set.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 
+
+namespace QDEngine {
+
 #include <stdio.h>
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -1679,3 +1682,4 @@ bool qdGameObjectAnimated::get_debug_info(XBuffer &buf) const {
 #endif
 	return true;
 }
+} // namespace QDEngine

@@ -3,9 +3,12 @@
 #define __QD_INTERFACE_SAVE_H__
 
 #include "qdengine/core/parser/xml_fwd.h"
-
 #include "qdengine/core/qdcore/qd_interface_element.h"
 #include "qdengine/core/qdcore/qd_interface_element_state.h"
+
+
+namespace QDEngine {
+
 
 //! Интерфейсный элемент - сэйв.
 class qdInterfaceSave : public qdInterfaceElement {
@@ -197,5 +200,7 @@ private:
 	//! Текущий номер сэйва.
 	static int current_save_ID_;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_INTERFACE_SAVE_H__ */

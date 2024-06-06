@@ -2,10 +2,13 @@
 #define __QD_ANIMATION_SET_H__
 
 #include "qdengine/core/parser/xml_fwd.h"
-
 #include "qdengine/core/qdcore/qd_named_object.h"
 #include "qdengine/core/qdcore/qd_animation.h"
 #include "qdengine/core/qdcore/qd_animation_info.h"
+
+
+namespace QDEngine {
+
 
 class qdAnimationSet : public qdNamedObject {
 public:
@@ -98,5 +101,7 @@ private:
 	static int get_angle_index(float direction_angle, int dir_count);
 	static float get_index_angle(int index, int dir_count);
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_ANIMATION_SET_H__ */

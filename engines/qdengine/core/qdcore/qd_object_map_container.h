@@ -3,6 +3,9 @@
 
 #include <unordered_map>
 
+
+namespace QDEngine {
+
 template <class T>
 class qdObjectMapContainer {
 public:
@@ -134,5 +137,7 @@ bool qdObjectMapContainer<T>::clear() {
 
 	return true;
 }
+
+} // namespace QDEngine
 
 #endif /* __QD_OBJECT_MAP_CONTAINER_H__ */

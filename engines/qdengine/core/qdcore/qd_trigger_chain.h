@@ -4,6 +4,9 @@
 #include "qdengine/core/parser/xml_fwd.h"
 #include "qdengine/core/qdcore/qd_trigger_element.h"
 
+
+namespace QDEngine {
+
 class qdTriggerChain : public qdNamedObject {
 public:
 	qdTriggerChain();
@@ -128,5 +131,7 @@ private:
 	mutable SIZE m_szGenLayout;
 #endif
 };
+
+} // namespace QDEngine
 
 #endif __QD_TRIGGER_CHAIN_H__

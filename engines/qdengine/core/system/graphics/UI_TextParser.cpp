@@ -1,7 +1,9 @@
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/system/graphics/UI_TextParser.h"
+
+
+namespace QDEngine {
 
 UI_TextParser::UI_TextParser(const grFont *font) : font_(font) {
 	outNodes_.reserve(8);
@@ -266,3 +268,5 @@ void UI_TextParser::getColor(int defColor) {
 	OutNode node(color);
 	putNode(node);
 }
+
+} // namespace QDEngine

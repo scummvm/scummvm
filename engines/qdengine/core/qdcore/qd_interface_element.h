@@ -8,6 +8,9 @@
 #include "qdengine/core/qdcore/qd_interface_object_base.h"
 #include "qdengine/core/qdcore/qd_sound_handle.h"
 
+
+namespace QDEngine {
+
 //class qdInterfaceScreen;
 class qdInterfaceElementState;
 
@@ -241,5 +244,7 @@ private:
 
 	static Vect2i screen_offset_;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_INTERFACE_ELEMENT_H__ */

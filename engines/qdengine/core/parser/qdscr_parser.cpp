@@ -1,14 +1,10 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/qdscr_parser.h"
 #include "qdengine/core/parser/xml_parser.h"
 
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
+namespace QDEngine {
 
 xml::parser &qdscr_XML_Parser() {
 	static xml::parser p;
@@ -371,3 +367,5 @@ const char *qdscr_XML_string(const char *p) {
 
 	return conv_str.c_str();
 }
+
+} // namespace QDEngine

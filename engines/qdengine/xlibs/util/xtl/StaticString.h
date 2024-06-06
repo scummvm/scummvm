@@ -1,5 +1,7 @@
 #pragma once
 
+namespace QDEngine {
+
 class StaticString {
 public:
 	StaticString(const char *str = "") : str_(str) {}
@@ -25,3 +27,4 @@ private:
 	const char *str_;
 };
 
+} // namespace QDEngine

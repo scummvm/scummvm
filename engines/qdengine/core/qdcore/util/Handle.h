@@ -2,6 +2,9 @@
 #ifndef __HANDLE_H__
 #define __HANDLE_H__
 
+
+namespace QDEngine {
+
 ////////////////////////////////////////////////////////////////////
 // Автоматически удаляемый указатель
 ////////////////////////////////////////////////////////////////////
@@ -148,5 +151,7 @@ public:
 private:
 	mutable int handleCount;
 };
+
+} // namespace QDEngine
 
 #endif // __HANDLE_H__

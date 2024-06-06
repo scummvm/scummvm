@@ -2,8 +2,10 @@
 #define __QD_GRID_ZONE_STATE_H__
 
 #include "qdengine/core/parser/xml_fwd.h"
-
 #include "qdengine/core/qdcore/qd_conditional_object.h"
+
+
+namespace QDEngine {
 
 class XStream;
 
@@ -40,5 +42,7 @@ private:
 	//! Включить или выключить зону.
 	bool state_;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_GRID_ZONE_STATE_H__ */

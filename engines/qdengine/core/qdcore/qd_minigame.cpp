@@ -1,19 +1,20 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/parser/qdscr_parser.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/system/app_error_handler.h"
 #include "qdengine/core/system/input/mouse_input.h"
 #include "qdengine/core/system/input/keyboard_input.h"
-
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
 #include "qdengine/core/qdcore/qd_minigame.h"
 #include "qdengine/core/qdcore/qd_setup.h"
 #include "qdengine/core/qdcore/qd_minigame_interface.h"
 #include "qdengine/core/qdcore/qd_engine_interface.h"
+
+
+namespace QDEngine {
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -307,3 +308,4 @@ bool qdMiniGame::release_interface() {
 
 	return false;
 }
+} // namespace QDEngine

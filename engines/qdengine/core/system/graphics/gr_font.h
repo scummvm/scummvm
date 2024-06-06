@@ -1,7 +1,9 @@
 #ifndef __GR_FONT_H__
 #define __GR_FONT_H__
 
-#include "gr_screen_region.h"
+#include "qdengine/core/system/graphics/gr_screen_region.h"
+
+namespace QDEngine {
 
 class XZipStream;
 
@@ -71,4 +73,6 @@ private:
 	grFontCharVector chars_;
 };
 
-#endif /* __GR_FONT_H__ */
+} // namespace QDEngine
+
+#endif // __GR_FONT_H__

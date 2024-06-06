@@ -2,13 +2,16 @@
 #define __QD_ANIMATION_H__
 
 #include "qdengine/core/parser/xml_fwd.h"
-
 #include "qdengine/core/system/graphics/gr_screen_region.h"
 #include "qdengine/core/system/graphics/gr_tile_animation.h"
 
 #include "qdengine/core/qdcore/qd_resource.h"
 #include "qdengine/core/qdcore/qd_animation_frame.h"
 #include "qdengine/core/qdcore/qd_named_object.h"
+
+
+namespace QDEngine {
+
 
 class qdAnimationInfo;
 
@@ -290,5 +293,7 @@ private:
 			return tileAnimation_;
 	}
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_ANIMATION_H__ */

@@ -1,14 +1,16 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include "qdengine/core/parser/qdscr_parser.h"
 
 #include "qdengine/core/qdcore/qd_game_scene.h"
 #include "qdengine/core/qdcore/qd_game_object.h"
-
 #include "qdengine/core/qdcore/qd_grid_zone.h"
+
+namespace QDEngine {
+
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -309,3 +311,4 @@ bool qdGridZone::is_any_personage_in_zone() const {
 	const qdGameScene *p = static_cast<const qdGameScene *>(owner());
 	return p -> is_any_personage_in_zone(this);
 }
+} // namespace QDEngine

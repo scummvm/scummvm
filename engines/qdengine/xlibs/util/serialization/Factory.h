@@ -7,6 +7,9 @@
 #include "Handle.h"
 #include <typeinfo>
 
+
+namespace QDEngine {
+
 ////////////////////////////////////////////////////////////////////////
 //							VTableFactory
 ////////////////////////////////////////////////////////////////////////
@@ -218,5 +221,7 @@ protected:
 #define FORCE_SEGMENT(fileName) \
     extern int dataSegment##fileName; \
     int* dataSegmentPtr##fileName = &dataSegment##fileName;
+
+} // namespace QDEngine
 
 #endif /* __FACTORY_H__ */

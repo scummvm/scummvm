@@ -1,14 +1,13 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/qd_camera.h"
 #include "qdengine/core/qdcore/qd_game_object_moving.h"
 #include "qdengine/core/qdcore/util/AIAStar_API.h"
 
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
+
+namespace QDEngine {
 
 qdHeuristic::qdHeuristic() : camera_ptr_(NULL), object_ptr_(NULL) {
 }
@@ -48,3 +47,5 @@ void qdHeuristic::init(const Vect3f trg) {
 	target_f_ = trg;
 	target_ = camera_ptr_ -> get_cell_index(trg.x, trg.y);
 }
+
+} // namespace QDEngine

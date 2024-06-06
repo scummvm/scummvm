@@ -2,10 +2,13 @@
 #define __QD_CONDITION_H__
 
 #include "qdengine/core/parser/xml_fwd.h"
-
 #include "qdengine/core/qdcore/qd_named_object.h"
 #include "qdengine/core/qdcore/qd_condition_data.h"
 #include "qdengine/core/qdcore/qd_condition_object_reference.h"
+
+
+namespace QDEngine {
+
 
 //! Условие.
 /**
@@ -569,5 +572,7 @@ private:
 		return true;
 	}
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_CONDITION_H__ */

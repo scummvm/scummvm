@@ -4,6 +4,9 @@
 #include "qdengine/core/parser/xml_fwd.h"
 #include "qdengine/core/qdcore/qd_named_object.h"
 
+
+namespace QDEngine {
+
 class qdScaleInfo : public qdNamedObject {
 public:
 	qdScaleInfo() : scale_(1.0f) { }
@@ -30,5 +33,7 @@ private:
 };
 
 typedef std::list<qdScaleInfo *> qdScaleInfoList;
+
+} // namespace QDEngine
 
 #endif /* __QD_SCALE_INFO_H__ */

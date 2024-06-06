@@ -3,6 +3,9 @@
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/util/splash_screen.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -142,3 +145,5 @@ void SplashScreen::apply_mask(void *mask_handle) {
 
 	SetWindowRgn((HWND)splash_hwnd_, rgn, TRUE);
 }
+
+} // namespace QDEngine

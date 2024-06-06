@@ -11,6 +11,9 @@
 #include "qdengine/core/qdcore/util/plaympp_api.h"
 #endif
 
+namespace QDEngine {
+
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -266,3 +269,4 @@ bool qdGameConfig::update_music_settings() const {
 #endif
 	return true;
 }
+} // namespace QDEngine

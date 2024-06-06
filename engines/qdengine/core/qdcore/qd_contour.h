@@ -2,8 +2,11 @@
 #define __QD_CONTOUR_H__
 
 #include <vector>
-
 #include "qdengine/core/parser/xml_fwd.h"
+
+
+namespace QDEngine {
+
 
 class XStream;
 
@@ -144,5 +147,6 @@ private:
 #endif
 };
 
-#endif /* __QD_CONTOUR_H__ */
+} // namespace QDEngine
 
+#endif /* __QD_CONTOUR_H__ */

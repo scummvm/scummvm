@@ -8,6 +8,9 @@
 #include "qdengine/core/qdcore/qd_setup.h"
 #include "qdengine/core/qdcore/qd_minigame_config.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -100,3 +103,4 @@ bool qdMinigameConfigParameter::load_ini(const char *ini_file, const char *ini_s
 
 	return true;
 }
+} // namespace QDEngine

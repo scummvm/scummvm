@@ -2,15 +2,16 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include <algorithm>
 #include "common/textconsole.h"
-
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/qd_setup.h"
 #include "qdengine/core/runtime/qd_dialog_control.h"
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
+namespace QDEngine {
 
 bool qdlgOption::load_value() const {
 	char *str = getIniKey(ini_file_.c_str(), ini_section_.c_str(), ini_key_.c_str());
@@ -171,3 +172,5 @@ int qdlgOptionDroplist::default_value() const {
 
 	return 0;
 }
+
+} // namespace QDEngine

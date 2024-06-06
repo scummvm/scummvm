@@ -3,6 +3,9 @@
 
 #include "qdengine/core/qdcore/qd_rnd.h"
 
+
+namespace QDEngine {
+
 class qdGameScene;
 
 namespace qdmg {
@@ -57,5 +60,6 @@ public:
 
 }; // namespace qdmg
 
-#endif /* __QD_ENGINE_INTERFACE_H__ */
+} // namespace QDEngine
 
+#endif /* __QD_ENGINE_INTERFACE_H__ */

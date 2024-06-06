@@ -1,6 +1,8 @@
 #ifndef __QD_LIST_H__
 #define __QD_LIST_H__
 
+namespace QDEngine {
+
 template <class Type> class qdList {
 	int numElements;
 	Type *firstElement;
@@ -176,3 +178,4 @@ inline Type *qdList<Type>::search(int ID) {
 
 #endif  // __QD_LIST_H__
 
+} // namespace QDEngine

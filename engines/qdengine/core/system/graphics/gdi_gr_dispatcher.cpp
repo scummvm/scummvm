@@ -10,6 +10,8 @@
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
+namespace QDEngine {
+
 GDI_grDispatcher::GDI_grDispatcher() : dibPtr(0),
 	dibHandle(0) {
 	palette_mode_ = false;
@@ -251,3 +253,5 @@ bool GDI_grDispatcher::set_palette(const char *pal, int start_col, int pal_size)
 #endif
 	return true;
 }
+
+} // namespace QDEngine

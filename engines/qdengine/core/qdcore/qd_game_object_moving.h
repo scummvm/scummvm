@@ -4,6 +4,9 @@
 #include "qdengine/core/parser/xml_fwd.h"
 #include "qdengine/core/qdcore/qd_game_object_animated.h"
 
+
+namespace QDEngine {
+
 class qdInterfaceButton;
 
 const int QD_MOVING_OBJ_PATH_LENGTH = 200;
@@ -477,5 +480,7 @@ private:
 	/// Проверка, закончилось ли движение.
 	bool is_movement_finished() const;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_GAME_OBJECT_MOVING_H__ */

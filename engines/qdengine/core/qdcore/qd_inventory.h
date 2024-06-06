@@ -5,6 +5,9 @@
 #include "qdengine/core/qdcore/qd_named_object.h"
 #include "qdengine/core/qdcore/qd_inventory_cell.h"
 
+
+namespace QDEngine {
+
 //! Инвентори.
 class qdInventory : public qdNamedObject {
 public:
@@ -169,4 +172,5 @@ private:
 #endif
 };
 
+} // namespace QDEngine
 #endif /* __QD_INVENTORY_H__ */

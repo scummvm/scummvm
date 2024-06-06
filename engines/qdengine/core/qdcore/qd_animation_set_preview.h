@@ -3,6 +3,9 @@
 
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 
+
+namespace QDEngine {
+
 class qdCamera;
 
 class qdAnimation;
@@ -120,5 +123,7 @@ private:
 
 	void redraw_grid();
 };
+
+} // namespace QDEngine
 
 #endif /* __ANIMATION_SET_PREVIEW_H__ */

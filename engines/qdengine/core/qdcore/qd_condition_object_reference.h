@@ -5,6 +5,9 @@
 #include "qdengine/core/parser/xml_fwd.h"
 #include "qdengine/core/qdcore/qd_named_object_reference.h"
 
+
+namespace QDEngine {
+
 class qdNamedObject;
 
 class qdConditionObjectReference {
@@ -39,5 +42,7 @@ private:
 #endif
 	const qdNamedObject *object_;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_CONDITION_OBJECT_REFERENCE_H__ */

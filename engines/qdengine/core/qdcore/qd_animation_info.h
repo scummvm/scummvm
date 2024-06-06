@@ -4,6 +4,9 @@
 #include "qdengine/core/parser/xml_fwd.h"
 #include "qdengine/core/qdcore/qd_named_object.h"
 
+
+namespace QDEngine {
+
 class XStream;
 class qdAnimation;
 
@@ -56,5 +59,7 @@ private:
 };
 
 typedef std::vector<qdAnimationInfo> qdAnimationInfoVector;
+
+} // namespace QDEngine
 
 #endif /* __QD_ANIMATION_INFO_H__ */

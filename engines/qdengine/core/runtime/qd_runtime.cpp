@@ -2,12 +2,8 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/archive.h"
-#include "qdengine/core/qd_precomp.h"
-
 #include <locale.h>
-
 #include "qdengine/core/resource.h"
-
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
 #include "qdengine/core/qdcore/qd_game_scene.h"
 #include "qdengine/core/qdcore/qd_trigger_chain.h"
@@ -31,12 +27,14 @@
 
 #include "qdengine/core/runtime/comline_parser.h"
 #include "qdengine/core/runtime/qd_dialogs.h"
-
+#include "qdengine/core/qd_precomp.h"
 
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
+
+namespace QDEngine {
 
 namespace qdrt {
 
@@ -475,3 +473,4 @@ bool request_CD_handler(int cd_id) {
 }
 
 }; // namespace main
+} // namespace QDEngine

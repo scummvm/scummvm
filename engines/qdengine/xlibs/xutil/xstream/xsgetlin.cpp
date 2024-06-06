@@ -1,5 +1,8 @@
 #include "qdengine/xlibs/xutil/xglobal.h"
 
+
+namespace QDEngine {
+
 char* XStream::getline(char* buf, unsigned len) {
 	int i = -1;
 	do {
@@ -12,3 +15,4 @@ char* XStream::getline(char* buf, unsigned len) {
 		buf[i - 1] = '\0';
 	return buf;
 }
+} // namespace QDEngine

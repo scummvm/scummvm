@@ -1,8 +1,11 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/qdcore/qd_textdb.h"
+
+
+namespace QDEngine {
+
 //#include <tchar.h>
 
 char const DELIMETER = '.';
@@ -253,3 +256,4 @@ bool qdTextDB::getRootIdList(IdList &idList) const {
 	}
 	return true;
 }
+} // namespace QDEngine

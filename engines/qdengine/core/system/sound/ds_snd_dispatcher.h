@@ -2,9 +2,10 @@
 #define __DS_SND_DISPATCHER_H__
 
 #include "common/textconsole.h"
-
 #include "qdengine/core/system/sound/snd_dispatcher.h"
 #include "qdengine/core/system/sound/ds_sound.h"
+
+namespace QDEngine {
 
 //! Диспетчер звуков на DirectSound.
 class ds_sndDispatcher : public sndDispatcher {
@@ -52,5 +53,7 @@ private:
 	//! Указатель на DirectSound интерфейс.
 	LPDIRECTSOUND sound_device_;
 };
+
+} // namespace QDEngine
 
 #endif /* __DS_SND_DISPATCHER_H__ */

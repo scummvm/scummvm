@@ -1,6 +1,9 @@
 #include "qdengine/xlibs/xutil/xglobal.h"
 #include "math.h"
 
+
+namespace QDEngine {
+
 double strtod_(char* str, char** strOut) {
 	while (isspace(*str))
 		++str;
@@ -120,3 +123,4 @@ XBuffer& XBuffer::operator>= (float& var) {
 	offset_ += p - (buffer_ + offset_);
 	return *this;
 }
+} // namespace QDEngine

@@ -2,6 +2,9 @@
 
 #include "qdengine/xlibs/xutil/xglobal.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -79,3 +82,4 @@ XConsole& XConsole::operator<= (long double var) {
 	UpdateBuffer(s);
 	return *this;
 }
+} // namespace QDEngine

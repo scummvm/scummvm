@@ -2,6 +2,9 @@
 
 #include "qdengine/xlibs/xutil/xglobal.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -67,3 +70,5 @@ char* xt_getMMXstatus() {
 
 	return message;
 }
+
+} // namespace QDEngine

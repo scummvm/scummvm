@@ -3,6 +3,9 @@
 
 #include "qdengine/core/system/sound/snd_sound.h"
 
+
+namespace QDEngine {
+
 //! Класс для управления звуками.
 class qdSoundHandle : public sndHandle {
 public:
@@ -19,5 +22,7 @@ public:
 private:
 	qdNamedObject *owner_;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_SOUND_HANDLE_H__ */

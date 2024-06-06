@@ -13,6 +13,9 @@
 #include "qdengine/core/qdcore/qd_named_object_reference.h"
 #include "qdengine/core/qdcore/qd_game_object_animated.h"
 
+namespace QDEngine {
+
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -567,3 +570,4 @@ void qdInventoryCellSet::debug_log() const {
 	}
 #endif
 }
+} // namespace QDEngine

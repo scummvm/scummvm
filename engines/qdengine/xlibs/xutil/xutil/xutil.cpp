@@ -3,6 +3,9 @@
 
 #include "qdengine/xlibs/xutil/xglobal.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 
@@ -85,3 +88,5 @@ void xtDeleteFile(char* fname) {
 	OpenFile(fname, &p, OF_DELETE);
 #endif
 }
+
+} // namespace QDEngine

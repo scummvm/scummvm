@@ -7,6 +7,9 @@
 #include "qdengine/core/qdcore/qd_file_owner.h"
 #include "qdengine/core/qdcore/util/zip_container.h"
 
+
+namespace QDEngine {
+
 //! Контейнер с файлами.
 class qdFilePackage {
 public:
@@ -164,5 +167,7 @@ private:
 
 	char cd_key_[CDKEY_LENGTH + 1];
 };
+
+} // namespace QDEngine
 
 #endif // __QD_FILE_MANAGER_H__

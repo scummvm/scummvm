@@ -15,6 +15,9 @@
 #include "qdengine/core/qdcore/qd_grid_zone.h"
 #include "qdengine/core/system/sound/snd_sound.h"
 
+
+namespace QDEngine {
+
 class XStream;
 
 class qdScreenTransform {
@@ -940,5 +943,7 @@ inline bool qdbg_is_object_state(const qdNamedObject *obj, const char *scene_nam
 	return false;
 }
 #endif
+
+} // namespace QDEngine
 
 #endif /* __QD_GAME_OBJECT_STATE_H__ */

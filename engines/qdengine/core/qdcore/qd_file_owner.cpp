@@ -3,6 +3,9 @@
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/qd_file_owner.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -22,3 +25,4 @@ void qdFileOwner::calc_files_size() {
 	}
 }
 
+} // namespace QDEngine

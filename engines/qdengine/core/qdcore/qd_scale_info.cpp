@@ -6,6 +6,9 @@
 #include "qdengine/core/qdcore/qd_scale_info.h"
 
 
+namespace QDEngine {
+
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -39,3 +42,4 @@ bool qdScaleInfo::save_script(XStream &fh, int indent) const {
 
 	return true;
 }
+} // namespace QDEngine

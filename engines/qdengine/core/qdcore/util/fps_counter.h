@@ -1,6 +1,10 @@
 #ifndef __FPS_COUNTER_H__
 #define __FPS_COUNTER_H__
 
+
+
+namespace QDEngine {
+
 class fpsCounter {
 public:
 	fpsCounter(int period = 3000);
@@ -44,5 +48,7 @@ private:
 	float max_frame_time_;
 };
 
-#endif /* __FPS_COUNTER_H__ */
 
+} // namespace QDEngine
+
+#endif /* __FPS_COUNTER_H__ */

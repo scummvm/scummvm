@@ -2,9 +2,11 @@
 #define __QD_MUSIC_TRACK_H__
 
 #include "qdengine/core/parser/xml_fwd.h"
-
 #include "qdengine/core/qdcore/qd_named_object.h"
 #include "qdengine/core/qdcore/qd_conditional_object.h"
+
+
+namespace QDEngine {
 
 //! Музыкальная композиция.
 /**
@@ -71,5 +73,7 @@ private:
 	//! Громкость, [0, 256].
 	int volume_;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_MUSIC_H__ */

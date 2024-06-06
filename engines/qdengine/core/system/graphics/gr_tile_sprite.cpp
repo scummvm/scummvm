@@ -1,8 +1,11 @@
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/system/graphics/gr_tile_sprite.h"
-
 #include "qdengine/core/qdcore/util/LZ77.h"
+
+
+namespace QDEngine {
+
 
 unsigned grTileSprite::comprasionTolerance_ = 2;
 
@@ -276,3 +279,5 @@ bool grTileSprite::uncompress(const unsigned *in_data, unsigned in_data_length, 
 
 	return false;
 }
+
+} // namespace QDEngine

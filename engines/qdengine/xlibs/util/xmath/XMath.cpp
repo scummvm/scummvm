@@ -12,6 +12,9 @@
 #include "qdengine/xlibs/util/xmath/xmath.h"
 #include "qdengine/xlibs/xutil/xutil.h"
 
+
+namespace QDEngine {
+
 #pragma warning(disable : 4073 )
 #pragma init_seg(lib)
 
@@ -1696,3 +1699,4 @@ void Mat3f::makeRotationZ() {
 	zy = 0.0f;
 	zz = 1.0f;
 }
+} // namespace QDEngine

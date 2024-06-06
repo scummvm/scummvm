@@ -5,6 +5,10 @@
 #define __APP_LOG_ENABLE__
 #endif
 
+
+
+namespace QDEngine {
+
 class XStream;
 
 //! Отладочный лог-файл.
@@ -47,5 +51,7 @@ private:
 		return file_;
 	}
 };
+
+} // namespace QDEngine
 
 #endif /* __APP_LOG_FILE_H__ */

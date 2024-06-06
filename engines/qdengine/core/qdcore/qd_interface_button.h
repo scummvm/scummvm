@@ -5,6 +5,9 @@
 #include "qdengine/core/qdcore/qd_interface_element.h"
 #include "qdengine/core/qdcore/qd_interface_element_state.h"
 
+
+namespace QDEngine {
+
 #ifdef _QUEST_EDITOR
 #define _QD_INTERFACE_BUTTON_PTR_CONTAINER
 #endif
@@ -137,5 +140,7 @@ private:
 	int cur_state_;
 
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_INTERFACE_BUTTON_H__ */

@@ -1,7 +1,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/qdcore/qd_setup.h"
 #include "qdengine/core/qdcore/qd_screen_text.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
@@ -10,6 +9,9 @@
 #include "qdengine/core/qdcore/qd_game_object_state.h"
 
 #include "qdengine/core/qdcore/qd_game_dispatcher.h" // В qdGameDispather хранятся шрифты
+
+
+namespace QDEngine {
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -209,3 +211,5 @@ bool qdScreenText::format_text(int max_width) {
 
 	return correct;
 }
+
+} // namespace QDEngine

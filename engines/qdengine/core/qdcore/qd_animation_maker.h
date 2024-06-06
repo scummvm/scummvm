@@ -1,6 +1,9 @@
 #ifndef __QD_ANIMATION_MAKER_H__
 #define __QD_ANIMATION_MAKER_H__
 
+
+namespace QDEngine {
+
 typedef void (*maker_progress_fnc)(int percents_loaded, void *data);
 
 class qdAnimationMaker {
@@ -23,5 +26,7 @@ private:
 	void *callback_data_;
 	maker_progress_fnc progress_callback_;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_ANIMATION_MAKER_H__ */

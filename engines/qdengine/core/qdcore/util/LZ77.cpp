@@ -6,6 +6,8 @@
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/util/LZ77.h"
 
+namespace QDEngine {
+
 #define BITS_LEN    4
 
 CLZ77::CLZ77() {
@@ -143,3 +145,5 @@ long CLZ77::Decode(unsigned char *target, long &tlen, const unsigned char *sourc
 	}
 	return (s - source) + sizeof(unsigned long);
 }
+
+} // namespace QDEngine

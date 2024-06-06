@@ -1,10 +1,14 @@
 #ifndef __QD_RESOURCE_H__
 #define __QD_RESOURCE_H__
 
+
+
 //! Базовый класс для игровых ресурсов.
 /**
 Анимации, звуки и т.д.
 */
+namespace QDEngine {
+
 class qdResource {
 public:
 	//! Форматы файлов.
@@ -101,5 +105,6 @@ typedef std::vector<qdResourceInfo> qdResourceInfoContainer;
 
 #endif
 
-#endif /* __QD_RESOURCE_H__ */
+} // namespace QDEngine
 
+#endif /* __QD_RESOURCE_H__ */

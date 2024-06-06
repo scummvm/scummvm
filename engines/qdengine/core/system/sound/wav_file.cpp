@@ -1,10 +1,12 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/runtime/qd_dialogs.h"
 #include "qdengine/core/system/sound/wav_file.h"
 #include "qdengine/core/system/sound/wav_sound.h"
 #include "qdengine/core/qdcore/qd_file_manager.h"
+
+
+namespace QDEngine {
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -218,3 +220,4 @@ LRESULT PASCAL wav_IO_proc(LPSTR lpmmioinfo, UINT wMsg, LPARAM lParam1, LPARAM l
 #endif
 	return 0;
 }
+} // namespace QDEngine

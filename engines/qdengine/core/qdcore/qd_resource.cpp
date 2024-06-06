@@ -12,6 +12,9 @@
 #include "qdengine/core/qdcore/qd_named_object.h"
 #include "qdengine/core/parser/qdscr_parser.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -92,3 +95,4 @@ bool qdResourceInfo::write(XStream &fh, int line_class_id) const {
 	return true;
 }
 #endif
+} // namespace QDEngine

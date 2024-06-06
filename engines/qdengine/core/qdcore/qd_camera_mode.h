@@ -3,6 +3,9 @@
 #define __QD_CAMERA_MODE_H__
 
 #include "qdengine/core/parser/xml_fwd.h"
+#include "qdengine/core/qd_precomp.h"
+
+namespace QDEngine {
 
 class qdGameObjectState;
 class qdGameObjectAnimated;
@@ -119,5 +122,7 @@ private:
 	//! Плавное переключение в режим, если true.
 	bool smooth_switch_;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_CAMERA_MODE_H__ */

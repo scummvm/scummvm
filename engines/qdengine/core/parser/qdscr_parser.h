@@ -4,6 +4,8 @@
 
 #include "qdengine/core/parser/xml_fwd.h"
 
+namespace QDEngine {
+
 //! Идентификаторы тэгов скрипта.
 enum qdscrTagID {
 	QDSCR_ROOT = 1,
@@ -339,5 +341,7 @@ enum qdscrTagID {
 
 xml::parser &qdscr_XML_Parser();
 const char *qdscr_XML_string(const char *p);
+
+} // namespace QDEngine
 
 #endif /* __QDSCR_PARSER_H__ */

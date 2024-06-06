@@ -6,6 +6,7 @@
 #include <boost/iterator/iterator_traits.hpp>
 #include <additional/itr_traits_spec.hpp>
 
+
 BROKEN_COMPILER_ITER_TRAITS_PTR_SPECIALIZATION(qdTriggerLink)
 BOOST_BROKEN_COMPILER_TYPE_TRAITS_SPECIALIZATION(qdTriggerLink)
 BOOST_BROKEN_COMPILER_TYPE_TRAITS_SPECIALIZATION(qdTriggerElement)

@@ -2,10 +2,13 @@
 #define __QD_INTERFACE_ELEMENT_STATE_H__
 
 #include "qdengine/core/parser/xml_fwd.h"
-
 #include "qdengine/core/qdcore/qd_animation_info.h"
 #include "qdengine/core/qdcore/qd_interface_object_base.h"
 #include "qdengine/core/qdcore/qd_interface_element_state_mode.h"
+
+
+namespace QDEngine {
+
 
 //! Интерфейсное событие.
 class qdInterfaceEvent {
@@ -318,5 +321,7 @@ private:
 	*/
 	bool handle_events(qdInterfaceEvent::activation_t activation_type, bool before_animation);
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_INTERFACE_ELEMENT_STATE_H__ */

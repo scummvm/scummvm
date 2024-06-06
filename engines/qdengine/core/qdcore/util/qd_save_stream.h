@@ -2,10 +2,12 @@
 #define __QD_SAVE_STREAM_H__
 
 //#define __QD_SAVE_DEBUG__
+#include "qdengine/core/system/app_log_file.h"
+
+
+namespace QDEngine {
 
 #ifdef __QD_SAVE_DEBUG__
-
-#include "qdengine/core/system/app_log_file.h"
 
 class qdSaveStream {
 public:
@@ -45,5 +47,7 @@ private:
 class XStream;
 typedef XStream qdSaveStream;
 #endif // __QD_SAVE_DEBUG__
+
+} // namespace QDEngine
 
 #endif // __QD_SAVE_STREAM_H__

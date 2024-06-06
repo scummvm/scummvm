@@ -4,6 +4,9 @@
 #include "qdengine/core/qdcore/qd_screen_text_set.h"
 #include "qdengine/core/system/input/mouse_input.h"
 
+
+namespace QDEngine {
+
 //! Диспетчер экранных текстов.
 class qdScreenTextDispatcher {
 public:
@@ -40,5 +43,7 @@ private:
 	//! Наборы текстов.
 	text_sets_container_t text_sets_;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_SCREEN_TEXT_DISPATCHER__ */
