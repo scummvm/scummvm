@@ -370,7 +370,7 @@ bool DispatchMessage(const MSG *lpMsg) {
 }
 
 int GetAsyncKeyState(int vKey) {
-	warning("STUB: GetAsyncKeyState()");
+	printf("STUB: GetAsyncKeyState()\n");
 	return 0;
 }
 
