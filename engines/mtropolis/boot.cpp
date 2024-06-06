@@ -2046,7 +2046,7 @@ void findMacPlayer(Common::Archive &fs, Common::Path &resolvedPath, PlayerType &
 	resolvedPlayerType = bestPlayerType;
 }
 
-void findWindowsMainSegment(Common::Archive &fs, Common::Path &resolvedPath, bool &resolvedIsV2) {
+void findWindowsMainSegment(Common::Archive &fs, Common::Path &resolvedPath, const MTropolisGameDescription &gamedesc, bool &resolvedIsV2) {
 	Common::ArchiveMemberList allFiles;
 	Common::ArchiveMemberList filteredFiles;
 
@@ -2065,11 +2065,24 @@ void findWindowsMainSegment(Common::Archive &fs, Common::Path &resolvedPath, boo
 	if (filteredFiles.size() == 0)
 		error("Couldn't find any main segment files");
 
-	if (filteredFiles.size() != 1)
-		error("Found multiple main segment files");
+	auto &fileToUse = filteredFiles.front();
 
-	resolvedPath = filteredFiles.front()->getPathInArchive();
-	resolvedIsV2 = !filteredFiles.front()->getFileName().hasSuffixIgnoreCase(".mpl");
+	if (filteredFiles.size() != 1) {
+		if (gamedesc.mainFileWindows && *gamedesc.mainFileWindows) {
+			const auto predicate = [&gamedesc](const Common::ArchiveMemberPtr &x) { return x->getFileName().hasPrefixIgnoreCase(gamedesc.mainFileWindows); };
+			const auto match = Common::find_if(filteredFiles.begin(), filteredFiles.end(), predicate);
+			if (match == filteredFiles.end()) {
+				error("Designated main segment file not found. Expected file %s", gamedesc.mainFileWindows);
+			} else {
+				fileToUse = *match;
+			}
+		} else {
+			error("Found multiple main segment files");
+		}
+	}
+
+	resolvedPath = fileToUse->getPathInArchive();
+	resolvedIsV2 = !fileToUse->getFileName().hasSuffixIgnoreCase(".mpl");
 }
 
 bool getMacFileType(Common::Archive &fs, const Common::Path &path, uint32 &outTag) {
@@ -2463,7 +2476,7 @@ BootConfiguration bootProject(const MTropolisGameDescription &gameDesc) {
 		Boot::findMacMainSegment(*vfs, mainSegmentLocation, isV2Project);
 	} else if (gameDesc.desc.platform == Common::kPlatformWindows) {
 		Boot::findWindowsPlayer(*vfs, playerLocation, playerType);
-		Boot::findWindowsMainSegment(*vfs, mainSegmentLocation, isV2Project);
+		Boot::findWindowsMainSegment(*vfs, mainSegmentLocation, gameDesc, isV2Project);
 	}
 
 	{
