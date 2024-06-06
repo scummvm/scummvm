@@ -19,6 +19,7 @@
  *
  */
 
+
 #ifndef QDENGINE_DETECTION_H
 #define QDENGINE_DETECTION_H
 

@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 
 #ifndef QDENGINE_CONSOLE_H
 #define QDENGINE_CONSOLE_H
