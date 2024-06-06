@@ -4,6 +4,9 @@
 
 #include "qdengine/core/qdcore/qd_named_object_base.h"
 
+
+namespace QDEngine {
+
 //! Базовый класс для всех интерфейсных объектов.
 class qdInterfaceObjectBase : public qdNamedObjectBase {
 public:
@@ -29,5 +32,7 @@ private:
 	//! Владелец объекта.
 	mutable qdInterfaceObjectBase *owner_;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_INTERFACE_OBJECT_BASE_H__ */

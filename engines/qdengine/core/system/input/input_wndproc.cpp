@@ -1,4 +1,3 @@
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/textconsole.h"
 #include "qdengine/core/qd_precomp.h"
@@ -7,10 +6,8 @@
 #include "qdengine/core/system/input/keyboard_input.h"
 #include "qdengine/core/system/input/mouse_input.h"
 
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
+
+namespace QDEngine {
 
 namespace input {
 
@@ -69,3 +66,5 @@ bool mouse_wndproc(const MSG &msg, mouseDispatcher *dsp) {
 }
 
 }; /* namespace input */
+
+} // namespace QDEngine

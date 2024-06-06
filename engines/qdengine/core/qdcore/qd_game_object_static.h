@@ -4,6 +4,9 @@
 #include "qdengine/core/qdcore/qd_sprite.h"
 #include "qdengine/core/qdcore/qd_game_object.h"
 
+
+namespace QDEngine {
+
 class XStream;
 
 class qdGameObjectStatic : public qdGameObject {
@@ -54,5 +57,7 @@ protected:
 private:
 	qdSprite sprite_;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_GAME_OBJECT_STATIC_H__ */

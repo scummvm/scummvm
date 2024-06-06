@@ -7,8 +7,11 @@
 #include "qdengine/core/runtime/qd_dialogs.h"
 #include "qdengine/core/runtime/qd_dialog_control.h"
 #include "qdengine/core/system/graphics/ddraw_gr_dispatcher.h"
+
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
+namespace QDEngine {
 
 namespace qdrt {
 extern DDraw_grDispatcher *dd_grD;
@@ -182,3 +185,5 @@ qdlgOption *find_option(int ctl_id) {
 }
 
 }; // namespace qdlg
+
+} // namespace QDEngine

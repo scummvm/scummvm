@@ -2,9 +2,11 @@
 #define __QD_COUNTER_H__
 
 #include <vector>
-
 #include "qdengine/core/parser/xml_fwd.h"
 #include "qdengine/core/qdcore/qd_named_object_reference.h"
+
+
+namespace QDEngine {
 
 class qdGameObjectState;
 
@@ -113,5 +115,7 @@ private:
 	*/
 	int value_limit_;
 };
+
+} // namespace QDEngine
 
 #endif // __QD_COUNTER_H__

@@ -1,4 +1,4 @@
-#include "qdengine/core/qd_precomp.h"
+namespace QDEngine {
 
 const int XMSG_BUFFER_SIZE      = 2048;
 
@@ -18,3 +18,5 @@ struct XMessageBuffer {
 };
 
 extern XMessageBuffer* XMsgBuf;
+
+} // namespace QDEngine

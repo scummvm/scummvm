@@ -2,9 +2,12 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/archive.h"
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/qdcore/qd_animation.h"
 #include "qdengine/core/qdcore/qd_animation_maker.h"
+
+
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -101,3 +104,4 @@ bool qdAnimationMaker::insert_frames(class qdAnimation *p, const char *folder, i
 #endif
 	return result;
 }
+} // namespace QDEngine

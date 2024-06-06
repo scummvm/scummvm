@@ -16,6 +16,8 @@
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
+namespace QDEngine {
+
 qdVideo::qdVideo() : position_(0, 0) {
 }
 
@@ -165,3 +167,4 @@ bool qdVideo::get_files_list(qdFileNameList &files_to_copy, qdFileNameList &file
 
 	return true;
 }
+} // namespace QDEngine

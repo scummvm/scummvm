@@ -1,6 +1,9 @@
 #ifndef __WAV_SOUND_H__
 #define __WAV_SOUND_H__
 
+
+namespace QDEngine {
+
 //! Звук из WAV файла.
 class wavSound {
 public:
@@ -61,5 +64,6 @@ private:
 
 };
 
-#endif /* __WAV_SOUND_H__ */
+} // namespace QDEngine
 
+#endif /* __WAV_SOUND_H__ */

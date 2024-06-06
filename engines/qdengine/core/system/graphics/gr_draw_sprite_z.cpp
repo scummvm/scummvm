@@ -1,8 +1,11 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "gr_dispatcher.h"
+
+
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -545,3 +548,5 @@ void grDispatcher::PutSpr_z(int x, int y, int z, int sx, int sy, const unsigned 
 	}
 }
 #endif
+
+} // namespace QDEngine

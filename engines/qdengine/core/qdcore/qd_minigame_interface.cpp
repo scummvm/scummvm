@@ -1,15 +1,12 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/parser/xml_fwd.h"
-
 #include "qdengine/core/qdcore/qd_minigame.h"
 #include "qdengine/core/qdcore/qd_counter.h"
 #include "qdengine/core/qdcore/qd_minigame_interface.h"
 #include "qdengine/core/qdcore/qd_engine_interface.h"
 #include "qdengine/core/qdcore/qd_rnd.h"
-
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
@@ -21,6 +18,10 @@
 #include "qdengine/core/qdcore/qd_interface_dispatcher.h"
 #include "qdengine/core/qdcore/qd_interface_screen.h"
 #include "qdengine/core/qdcore/qd_interface_text_window.h"
+
+
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 
@@ -565,3 +566,4 @@ void qdMinigameCounterInterfaceImpl::add_value(int value_delta) {
 }
 
 }; // namespace qdmg
+} // namespace QDEngine

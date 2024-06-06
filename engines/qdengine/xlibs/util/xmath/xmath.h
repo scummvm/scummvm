@@ -13,6 +13,7 @@
 #include "qdengine/xlibs/util/xmath/fastMath.h"
 #include "qdengine/xlibs/xutil/xutil.h"
 
+
 #ifdef _XMATH_USE_IOSTREAM
 #include <iostream>
 using std::istream;
@@ -21,6 +22,8 @@ using std::ostream;
 //using std::endl;
 //#endif
 #endif
+
+namespace QDEngine {
 
 class Archive;
 
@@ -5784,5 +5787,7 @@ inline istream &operator>>(istream &is, Se3f &se3) {
 //#else
 //#pragma comment(lib,"XMath.lib")
 //#endif
+
+} // namespace QDEngine
 
 #endif // __XMATH_H__

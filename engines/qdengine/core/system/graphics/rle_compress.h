@@ -1,6 +1,8 @@
 #ifndef __RLE_COMPRESS_H__
 #define __RLE_COMPRESS_H__
 
+
+namespace QDEngine {
 //#include <vector>
 
 //! Массив, сжатый методом RLE.
@@ -71,5 +73,6 @@ private:
 	friend bool operator == (const rleBuffer &buf1, const rleBuffer &buf2);
 };
 
-#endif /* __RLE_COMPRESS_H__ */
+} // namespace QDEngine
 
+#endif /* __RLE_COMPRESS_H__ */

@@ -3,6 +3,9 @@
 
 #include "qdengine/core/qdcore/qd_named_object_reference.h"
 
+
+namespace QDEngine {
+
 class qdNamedObjectIndexer {
 public:
 	qdNamedObjectIndexer();
@@ -37,5 +40,7 @@ private:
 	typedef std::list<qdNamedObjectReferenceLink> link_container_t;
 	link_container_t links_;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_NAMED_OBJECT_INDEXER_H__ */

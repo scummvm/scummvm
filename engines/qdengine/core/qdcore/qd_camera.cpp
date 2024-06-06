@@ -1,5 +1,4 @@
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/parser/qdscr_parser.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
@@ -8,6 +7,10 @@
 #include "qdengine/core/qdcore/qd_camera.h"
 #include "qdengine/core/qdcore/qd_game_object_animated.h"
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
+
+
+namespace QDEngine {
+
 
 struct sPlane4f {
 	float A, B, C, D;
@@ -1523,3 +1526,4 @@ bool qdCamera::can_change_mode() const {
 
 	return true;
 }
+} // namespace QDEngine

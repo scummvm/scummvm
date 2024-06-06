@@ -1,16 +1,18 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/parser/qdscr_parser.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
-
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
 #include "qdengine/core/qdcore/qd_interface_save.h"
 #include "qdengine/core/qdcore/qd_interface_screen.h"
 #include "qdengine/core/qdcore/qd_interface_dispatcher.h"
 #include "qdengine/core/system/app_core.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
+
+
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -374,3 +376,4 @@ const char *qdInterfaceSave::thumbnail_file() const {
 const char *qdInterfaceSave::description_file() const {
 	return qdGameDispatcher::get_save_name(save_ID_, qdGameDispatcher::SAVE_DESCRIPTION);
 }
+} // namespace QDEngine

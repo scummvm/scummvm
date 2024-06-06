@@ -1,9 +1,12 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/qdcore/qd_grid_zone.h"
 #include "qdengine/core/qdcore/qd_grid_zone_state.h"
+
+
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -66,3 +69,4 @@ qdConditionalObject::trigger_start_mode qdGridZoneState::trigger_start() {
 
 	return qdConditionalObject::TRIGGER_START_ACTIVATE;
 }
+} // namespace QDEngine

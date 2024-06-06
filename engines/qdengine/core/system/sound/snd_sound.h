@@ -2,6 +2,9 @@
 #ifndef __SND_SOUND_H__
 #define __SND_SOUND_H__
 
+
+namespace QDEngine {
+
 class wavSound;
 class qdNamedObject;
 
@@ -58,5 +61,7 @@ private:
 	//! Указатель на хэндл звука.
 	const sndHandle *handle_;
 };
+
+} // namespace QDEngine
 
 #endif /* __SND_SOUND_H__ */

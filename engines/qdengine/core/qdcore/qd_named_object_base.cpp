@@ -1,13 +1,15 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/qdcore/qd_named_object_base.h"
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
+
+namespace QDEngine {
 
 qdNamedObjectBase::qdNamedObjectBase() {
 }
@@ -25,3 +27,4 @@ qdNamedObjectBase &qdNamedObjectBase::operator = (const qdNamedObjectBase &obj) 
 
 	return *this;
 }
+} // namespace QDEngine

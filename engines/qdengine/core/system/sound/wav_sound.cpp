@@ -1,6 +1,9 @@
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/sound/wav_sound.h"
+
+
+namespace QDEngine {
+/* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -42,3 +45,4 @@ void wavSound::free_data() {
 	channels_ = 0;
 	samples_per_sec_ = 0;
 }
+} // namespace QDEngine

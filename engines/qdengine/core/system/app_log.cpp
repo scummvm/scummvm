@@ -1,9 +1,11 @@
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/app_log_file.h"
-
 #include "qdengine/xlibs/xutil/xutil.h"
+
+
+namespace QDEngine {
+/* ---------------------------- INCLUDE SECTION ----------------------------- */
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -45,3 +47,4 @@ const char *appLog::time_string() const {
 
 	return text.c_str();
 }
+} // namespace QDEngine

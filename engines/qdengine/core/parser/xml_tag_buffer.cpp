@@ -1,12 +1,7 @@
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
 
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
+namespace QDEngine {
 
 namespace xml {
 
@@ -92,3 +87,5 @@ tag_buffer &tag_buffer::operator >= (float &var) {
 }
 
 }; /* namespace xml */
+
+} // namespace QDEngine

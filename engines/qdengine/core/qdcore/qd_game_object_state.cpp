@@ -22,6 +22,9 @@
 #ifdef _QUEST_EDITOR
 #include "qd_game_object_mouse.h"
 #endif // _QUEST_EDITOR
+
+
+namespace QDEngine {
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -1507,3 +1510,4 @@ bool qdGameObjectStateMask::load_resources() {
 	qdGameObjectState::load_resources();
 	return true;
 }
+} // namespace QDEngine

@@ -5,6 +5,9 @@
 #include "qdengine/core/qdcore/qd_contour.h"
 #include "qdengine/core/qdcore/qd_grid_zone_state.h"
 
+
+namespace QDEngine {
+
 class qdCamera;
 
 const int QD_NO_SHADOW_ALPHA        = -1;
@@ -127,5 +130,7 @@ private:
 
 	bool apply_zone() const;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_GRID_ZONE_H__ */

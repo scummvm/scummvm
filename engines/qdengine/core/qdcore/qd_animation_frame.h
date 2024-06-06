@@ -3,6 +3,9 @@
 
 #include "qdengine/core/qdcore/qd_sprite.h"
 
+
+namespace QDEngine {
+
 //! Кадр анимации.
 class qdAnimationFrame : public qdSprite {
 public:
@@ -44,5 +47,7 @@ private:
 };
 
 typedef std::list<qdAnimationFrame *> qdAnimationFrameList;
+
+} // namespace QDEngine
 
 #endif /* __QD_ANIMATION_FRAME_H__ */

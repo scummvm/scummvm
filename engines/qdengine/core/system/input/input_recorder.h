@@ -2,6 +2,8 @@
 #define __INPUT_RECORDER_H__
 
 
+namespace QDEngine {
+
 class inputRecorderMessage {
 public:
 	enum message_id_t {
@@ -156,5 +158,7 @@ private:
 	}
 	bool dispatch_message(const inputRecorderMessage &msg);
 };
+
+} // namespace QDEngine
 
 #endif /* __INPUT_RECORDER_H__ */

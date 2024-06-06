@@ -1,6 +1,10 @@
 #ifndef _FILTERS_H_
 #define _FILTERS_H_
 
+
+
+namespace QDEngine {
+
 namespace scl {
 
 class CGenericFilter {
@@ -90,5 +94,7 @@ public:
 };
 
 }; // namespace scl
+
+} // namespace QDEngine
 
 #endif  // _FILTERS_H_

@@ -1,6 +1,9 @@
 #ifndef __KEYBOARD_INPUT_H__
 #define __KEYBOARD_INPUT_H__
 
+
+namespace QDEngine {
+
 //! Обработчик ввода с клавиатуры.
 class keyboardDispatcher {
 public:
@@ -45,5 +48,6 @@ private:
 	bool key_states_[256];
 };
 
-#endif /* __KEYBOARD_INPUT_H__ */
+} // namespace QDEngine
 
+#endif /* __KEYBOARD_INPUT_H__ */

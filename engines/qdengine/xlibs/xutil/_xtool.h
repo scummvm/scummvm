@@ -14,6 +14,9 @@
 
 #include "xutil.h"
 
+
+namespace QDEngine {
+
 #ifndef __XTCORE_H
 #define __XTCORE_H
 
@@ -702,5 +705,7 @@ public:
 };
 
 #endif // __ZIP_RESOURCE_H__
+
+} // namespace QDEngine
 
 #endif // __XTOOL_H

@@ -11,6 +11,8 @@
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
+namespace QDEngine {
+
 const float qdCoordsAnimationPoint::NO_DIRECTION = -1.f;
 qdCoordsAnimationPoint::qdCoordsAnimationPoint() : pos_(0, 0, 0),
 	direction_angle_(NO_DIRECTION) {
@@ -70,3 +72,4 @@ bool qdCoordsAnimationPoint::save_data(qdSaveStream &fh) const {
 
 	return true;
 }
+} // namespace QDEngine

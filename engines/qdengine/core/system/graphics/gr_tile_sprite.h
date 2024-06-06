@@ -1,6 +1,9 @@
 #ifndef __GR_TILE_SPRITE_H__
 #define __GR_TILE_SPRITE_H__
 
+
+namespace QDEngine {
+
 const int GR_TILE_SPRITE_SIZE_SHIFT = 4;
 const int GR_TILE_SPRITE_SIZE_X     = 1 << GR_TILE_SPRITE_SIZE_SHIFT;
 const int GR_TILE_SPRITE_SIZE_Y     = 1 << GR_TILE_SPRITE_SIZE_SHIFT;
@@ -49,5 +52,7 @@ private:
 	/// толерантность побайтового сравнения данных, [0, 255]
 	static unsigned comprasionTolerance_;
 };
+
+} // namespace QDEngine
 
 #endif /*__GR_TILE_SPRITE_H__ */

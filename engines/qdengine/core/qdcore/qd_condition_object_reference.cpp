@@ -1,13 +1,15 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/parser/xml_tag.h"
 #include "qdengine/core/parser/qdscr_parser.h"
-
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
 #include "qdengine/core/qdcore/qd_named_object_indexer.h"
 #include "qdengine/core/qdcore/qd_condition_object_reference.h"
+
+
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -90,3 +92,4 @@ bool qdConditionObjectReference::save_script(XStream &fh, int indent, int id) co
 
 	return true;
 }
+} // namespace QDEngine

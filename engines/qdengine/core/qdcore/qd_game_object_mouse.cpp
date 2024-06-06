@@ -1,15 +1,16 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/qdcore/qd_rnd.h"
 #include "qdengine/core/parser/qdscr_parser.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
-
-
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/qdcore/qd_game_object_mouse.h"
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
+
+
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -263,3 +264,4 @@ bool qdGameObjectMouse::update_screen_pos() {
 
 	return false;
 }
+} // namespace QDEngine

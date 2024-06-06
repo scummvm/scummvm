@@ -2,10 +2,13 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/qdcore/qd_sound_info.h"
 #include "qdengine/core/qdcore/qd_game_scene.h"
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
+
+
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -25,3 +28,4 @@ qdSound *qdSoundInfo::sound() const {
 
 	return NULL;
 }
+} // namespace QDEngine

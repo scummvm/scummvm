@@ -4,6 +4,9 @@
 #include <vector>
 #include "qdengine/core/parser/xml_fwd.h"
 
+
+namespace QDEngine {
+
 class XStream;
 
 class qdCoordsAnimationPoint {
@@ -65,5 +68,6 @@ private:
 
 typedef std::vector<qdCoordsAnimationPoint> qdCoordsAnimationPointVector;
 
-#endif /* __QD_COORDS_ANIMATION_FRAME_H__ */
+} // namespace QDEngine
 
+#endif /* __QD_COORDS_ANIMATION_FRAME_H__ */

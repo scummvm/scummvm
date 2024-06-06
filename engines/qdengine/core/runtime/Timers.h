@@ -21,6 +21,9 @@
 
 #include "SynchroTimer.h"
 
+
+namespace QDEngine {
+
 extern SyncroTimer global_time;
 
 class BaseTimer {
@@ -202,3 +205,4 @@ inline float InterpolationTimer::operator()() const {
 
 
 #endif // __DURATION_TIMER_H__
+} // namespace QDEngine

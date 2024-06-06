@@ -18,12 +18,13 @@
 #include "qdengine/core/qdcore/qd_game_scene.h"
 #include "qdengine/core/qdcore/qd_named_object_reference.h"
 #include "qdengine/core/qdcore/qd_setup.h"
-
 #include "qdengine/core/qdcore/qd_interface_button.h"
 #include "qdengine/core/qdcore/qd_interface_screen.h"
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
-
 #include <stdio.h>
+
+
+namespace QDEngine {
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 
 struct qdGridZoneOrdering {
@@ -1867,3 +1868,4 @@ void qdGameScene::start_minigame() {
 		minigame_ -> start();
 }
 #endif
+} // namespace QDEngine

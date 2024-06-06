@@ -7,6 +7,8 @@
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
+namespace QDEngine {
+
 #ifdef __QD_SAVE_DEBUG__
 qdSaveStream::qdSaveStream(int err) : stream_(err),
 	log_record_index_(0) {
@@ -65,3 +67,5 @@ void qdSaveStream::open_log(const char *fname, int flags) {
 }
 
 #endif // __QD_SAVE_DEBUG__
+
+} // namespace QDEngine

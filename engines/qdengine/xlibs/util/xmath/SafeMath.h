@@ -3,6 +3,9 @@
 
 #include "qdengine/xlibs/util/xmath/fastMath.h"
 
+
+namespace QDEngine {
+
 inline float cycle(float f, float size) {
 	return fmodFast(fmodFast(f, size) + size, size);
 }
@@ -40,4 +43,6 @@ inline bool isGreater(float x, float y, float eps = FLT_EPS) {
 	return x > y - eps;
 }
 
-#endif
+} // namespace QDEngine
+
+#endif // _PERIMETER_SAFE_MATH_

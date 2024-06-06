@@ -10,6 +10,9 @@
 #include "qdengine/core/qdcore/qd_object_list_container.h"
 
 
+namespace QDEngine {
+
+
 //! Шрифт
 class qdFontInfo : public qdNamedObject {
 public:
@@ -68,5 +71,7 @@ private:
 
 typedef std::list<qdFontInfo *> qdFontInfoList;
 
+
+} // namespace QDEngine
 
 #endif // __QD_FONT_INFO_H__

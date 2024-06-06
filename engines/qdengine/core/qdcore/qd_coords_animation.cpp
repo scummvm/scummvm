@@ -7,10 +7,8 @@
 #include "qdengine/core/qdcore/qd_game_object_animated.h"
 #include "qdengine/core/qdcore/qd_game_object_moving.h"
 
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
+
+namespace QDEngine {
 
 qdCoordsAnimation::qdCoordsAnimation() : status_(false),
 	is_finished_(false),
@@ -480,3 +478,4 @@ bool qdCoordsAnimation::save_data(qdSaveStream &fh) const {
 
 	return true;
 }
+} // namespace QDEngine

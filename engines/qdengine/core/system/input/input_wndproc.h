@@ -1,6 +1,9 @@
 #ifndef __INPUT_WNDPROC_H__
 #define __INPUT_WNDPROC_H__
 
+
+namespace QDEngine {
+
 class mouseDispatcher;
 class keyboardDispatcher;
 namespace input {
@@ -29,5 +32,7 @@ WM_RBUTTONUP
 */
 bool mouse_wndproc(const MSG &msg, mouseDispatcher *dsp);
 };
+
+} // namespace QDEngine
 
 #endif /* __INPUT_WNDPROC_H__ */

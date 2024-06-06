@@ -4,6 +4,8 @@
 
 //#define _ZIP_CONTAINER_DEBUG_
 
+
+namespace QDEngine {
 //! Контейнер ресурсов на основе zip-архива без паковки.
 class zipContainer {
 public:
@@ -54,5 +56,7 @@ private:
 	void dump_info();
 #endif
 };
+
+} // namespace QDEngine
 
 #endif // __ZIP_CONTAINER_H__

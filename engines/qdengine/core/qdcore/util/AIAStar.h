@@ -7,6 +7,7 @@
 #include "qdengine/xlibs/util/xmath/xmath.h"
 #include "qdengine/core/qd_precomp.h"
 
+
 ///////////////////////////AIAStar/////////////////////
 //AIAStar::FindPath поиск пути из точки from
 //в точку IsEndPoint.
@@ -26,6 +27,8 @@ class Heuristic
 //FAST_ERASE==0 Меньше данных - больше действий
 //FAST_ERASE!=0 Больше данных - меньше действий
 //Но реально разницы почти нет
+
+namespace QDEngine {
 
 template<class Heuristic, class TypeH = float>
 class AIAStar {
@@ -538,3 +541,4 @@ Vect2i AIFindMinium(int x, int y,
 	Vect2i p = {optiumx, optiumy};
 	return p;
 }
+} // namespace QDEngine

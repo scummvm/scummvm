@@ -7,6 +7,9 @@
 #include "qdengine/core/system/graphics/gr_font.h"
 #include "qdengine/core/system/graphics/UI_TextParser.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -1383,3 +1386,5 @@ int grDispatcher::TextHeight(const char *str, int vspace, const grFont *font) co
 
 	return sy;
 }
+
+} // namespace QDEngine

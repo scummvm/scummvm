@@ -3,8 +3,10 @@
 
 #include "qdengine/core/system/sound/snd_sound.h"
 
-class wavSound;
 
+namespace QDEngine {
+
+class wavSound;
 //! Диспетчер звука.
 class sndDispatcher {
 public:
@@ -141,5 +143,7 @@ private:
 	//! Текущий диспетчер.
 	static sndDispatcher *dispatcher_ptr_;
 };
+
+} // namespace QDEngine
 
 #endif /* __SND_DISPATCHER_H__ */

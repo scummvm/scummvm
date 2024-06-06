@@ -1,11 +1,13 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/parser/qdscr_parser.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
-
 #include "qdengine/core/qdcore/qd_condition_group.h"
+
+
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -84,3 +86,4 @@ bool qdConditionGroup::save_script(XStream &fh, int indent) const {
 
 	return true;
 }
+} // namespace QDEngine

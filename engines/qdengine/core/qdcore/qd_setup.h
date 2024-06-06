@@ -1,6 +1,9 @@
 #ifndef __QD_SETUP_H__
 #define __QD_SETUP_H__
 
+
+namespace QDEngine {
+
 //! Настройки.
 class qdGameConfig {
 public:
@@ -203,5 +206,6 @@ void putIniKey(const char *fname, const char *section, const char *key, int val)
 void putIniKey(const char *fname, const char *section, const char *key, const char *val);
 bool enumerateIniSections(const char *fname, std::list<std::string> &section_list);
 
-#endif /* __QD_SETUP_H__ */
+} // namespace QDEngine
 
+#endif /* __QD_SETUP_H__ */

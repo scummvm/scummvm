@@ -1,14 +1,11 @@
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/textconsole.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/input/input_recorder.h"
 #include "qdengine/core/system/input/input_wndproc.h"
 
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
+
+namespace QDEngine {
 
 inputRecorder::inputRecorder() {
 	time_ = 0;
@@ -208,3 +205,5 @@ inputRecorder &inputRecorder::instance() {
 	static inputRecorder rec;
 	return rec;
 }
+
+} // namespace QDEngine

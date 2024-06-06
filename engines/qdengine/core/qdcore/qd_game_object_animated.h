@@ -2,13 +2,15 @@
 #define __QD_GAME_OBJECT_ANIMATED__
 
 #include <vector>
-
 #include "qdengine/core/parser/xml_fwd.h"
-
 #include "qdengine/core/qdcore/qd_animation.h"
 #include "qdengine/core/qdcore/qd_coords_animation.h"
 #include "qdengine/core/qdcore/qd_game_object.h"
 #include "qdengine/core/qdcore/qd_game_object_state.h"
+
+
+namespace QDEngine {
+
 
 //! Динамический объект.
 /**
@@ -385,5 +387,7 @@ private:
 
 	void clear_states();
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_GAME_OBJECT_ANIMATED__ */

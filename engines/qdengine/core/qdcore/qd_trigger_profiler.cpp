@@ -8,6 +8,9 @@
 #include "qdengine/core/qdcore/qd_trigger_chain.h"
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -322,3 +325,4 @@ void qdTriggerProfiler::set_work_file(const char *fname) {
 }
 
 #endif /* __QD_TRIGGER_PROFILER__ */
+} // namespace QDEngine

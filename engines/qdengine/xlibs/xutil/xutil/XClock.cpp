@@ -4,6 +4,9 @@
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/xlibs/xutil/xglobal.h"
 
+
+namespace QDEngine {
+
 #pragma comment(lib, "winmm.lib")
 
 #pragma warning(disable : 4073 )
@@ -147,3 +150,4 @@ Only call from a single thread and only a few times per frame
 Use QueryPerformanceFrequency every few frames to handle power management clock rate changes
 Be sure your delta computation checks for negative time and bounds the range
 */
+} // namespace QDEngine

@@ -1,13 +1,15 @@
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/sound/ds_sound.h"
 #include "qdengine/core/system/sound/wav_sound.h"
+
+/* ---------------------------- INCLUDE SECTION ----------------------------- */
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
+namespace QDEngine {
 
 dsSound::dsSound(const sndSound &snd, LPDIRECTSOUND sound_device) : sndSound(snd),
 	sound_device_(sound_device),
@@ -201,3 +203,4 @@ bool dsSound::set_position(float pos) {
 
 	return false;
 }
+} // namespace QDEngine

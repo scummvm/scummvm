@@ -1,6 +1,8 @@
 #ifndef __QD_MINIGAME_CONFIG_H__
 #define __QD_MINIGAME_CONFIG_H__
 
+
+namespace QDEngine {
 /// Конфигурационные данные для миниигры.
 /**
 В .ini файле:
@@ -132,3 +134,6 @@ private:
 
 #endif /* __QD_MINIGAME_CONFIG_H__ */
 
+
+
+} // namespace QDEngine

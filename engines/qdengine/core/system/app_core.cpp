@@ -1,18 +1,13 @@
 unsigned int _MAX_PATH = 260;
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/str.h"
 #include "common/textconsole.h"
-
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/app_core.h"
 
 #include "qdengine/xlibs/xutil/xutil.h"
 
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
+namespace QDEngine {
 
 void *app_hWnd = 0;
 
@@ -333,3 +328,5 @@ void adjust_dir_end_slash(std::string &str) {
 }
 
 }; /* namespace app_io */
+
+} // namespace QDEngine

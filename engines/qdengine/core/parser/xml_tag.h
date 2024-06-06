@@ -1,6 +1,8 @@
 #ifndef __XML_TAG_H__
 #define __XML_TAG_H__
 
+namespace QDEngine {
+
 //! Парсер XML на базе expat.
 namespace xml {
 
@@ -164,5 +166,7 @@ private:
 };
 
 }; /* namespace xml */
+
+} // namespace QDEngine
 
 #endif /* __XML_TAG_H__ */

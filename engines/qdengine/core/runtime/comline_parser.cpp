@@ -3,10 +3,12 @@
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/runtime/comline_parser.h"
 
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
+namespace QDEngine {
 
 comlineParser::comlineParser() {
 }
@@ -53,3 +55,5 @@ const char *comlineParser::argument_string(int id) const {
 
 	return NULL;
 }
+
+} // namespace QDEngine

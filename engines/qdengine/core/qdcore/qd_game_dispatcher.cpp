@@ -1,7 +1,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/parser/xml_parser.h"
 
 #include "qdengine/core/qdcore/util/plaympp_api.h"
@@ -40,6 +39,9 @@
 #include "qdengine/core/system/input/input_recorder.h"
 
 #include <stdio.h>
+
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -3772,3 +3774,4 @@ bool qdGameDispatcher::update_hall_of_fame_names() {
 
 	return true;
 }
+} // namespace QDEngine

@@ -4,10 +4,12 @@
 #include <math.h>
 #include <vector>
 
+#include "qdengine/core/qdcore/util/Filters.h"
+
 #define TRACE(a)
 #define ASSERT(a)
 
-#include "qdengine/core/qdcore/util/Filters.h"
+namespace QDEngine {
 
 namespace scl {
 
@@ -278,5 +280,7 @@ COLORREF *C2PassScale<FilterClass>::Scale(COLORREF *pOrigImage, UINT uOrigWidth,
 }
 
 }; // namespace scl
+
+} // namespace QDEngine
 
 #endif //   _2_PASS_SCALE_H_

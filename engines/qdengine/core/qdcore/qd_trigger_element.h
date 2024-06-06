@@ -6,23 +6,28 @@
 #include "qdengine/core/qdcore/qd_named_object_reference.h"
 #include "qdengine/core/qdcore/qd_trigger_profiler.h"
 
+
 #ifdef _QUEST_EDITOR
 #include "SharedCounter.hpp"
 #include <string>
 #include <map>
 #endif // _QUEST_EDITOR
 
-class qdTriggerElement;
-class qdTriggerLink;
-
 #ifdef _QUEST_EDITOR
 #include <boost/intrusive_ptr.hpp>
 typedef boost::intrusive_ptr<qdTriggerElement> qdTriggerElementPtr;
 typedef boost::intrusive_ptr<qdTriggerElement const> qdTriggerElementConstPtr;
 #else
+
+#endif // _QUEST_EDITOR
+
+namespace QDEngine {
+
+class qdTriggerElement;
+class qdTriggerLink;
+
 typedef qdTriggerElement *qdTriggerElementPtr;
 typedef qdTriggerElement const *qdTriggerElementConstPtr;
-#endif // _QUEST_EDITOR
 
 //! Связь между двумя элементами триггера.
 /**
@@ -399,5 +404,7 @@ private:
 
 
 typedef std::vector<qdTriggerElementPtr> qdTriggerElementList;
+
+} // namespace QDEngine
 
 #endif /* __QD_TRIGGER_ELEMENT_H__ */

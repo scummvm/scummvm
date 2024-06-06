@@ -1,14 +1,10 @@
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/app_log_file.h"
 
 #include "qdengine/xlibs/xutil/xutil.h"
 
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
+namespace QDEngine {
 
 appLogFile::appLogFile(const char *fname) : file_(NULL) {
 	if (fname)
@@ -65,3 +61,5 @@ appLog &appLogFile::operator << (float data) {
 #endif
 	return *this;
 }
+
+} // namespace QDEngine

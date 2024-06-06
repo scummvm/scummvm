@@ -37,6 +37,8 @@
 #include <vector>
 #include <algorithm>
 
+namespace QDEngine {
+
 class Archive;
 
 template <class K, class T, class Cmp = std::less<K>, class A = std::allocator< std::pair<K, T> > >
@@ -388,5 +390,7 @@ public:
 		std::sort(MapVector.begin(), MapVector.end(), value_comp());
 	}
 };
+
+} // namespace QDEngine
 
 #endif

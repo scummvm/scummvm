@@ -2,8 +2,11 @@
 #define __QD_CONDITION_DATA_H__
 
 #include <vector>
-
 #include "qdengine/core/parser/xml_fwd.h"
+
+
+namespace QDEngine {
+
 
 class XStream;
 
@@ -80,5 +83,7 @@ private:
 	data_t type_;
 	std::vector<char> data_;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_CONDITION_DATA_H__ */

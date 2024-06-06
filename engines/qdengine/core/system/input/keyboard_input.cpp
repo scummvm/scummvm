@@ -1,7 +1,9 @@
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/input/keyboard_input.h"
+
+namespace QDEngine {
+/* ---------------------------- INCLUDE SECTION ----------------------------- */
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -19,3 +21,5 @@ keyboardDispatcher *keyboardDispatcher::instance() {
 	static keyboardDispatcher dsp;
 	return &dsp;
 }
+
+} // namespace QDEngine

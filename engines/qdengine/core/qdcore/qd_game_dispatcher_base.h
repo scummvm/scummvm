@@ -3,7 +3,6 @@
 
 #include "qdengine/core/qdcore/qd_conditional_object.h"
 #include "qdengine/core/qdcore/qd_object_map_container.h"
-
 #include "qdengine/core/qdcore/qd_scale_info.h"
 
 #include "qdengine/core/parser/xml_fwd.h"
@@ -11,6 +10,10 @@
 #ifdef __QD_DEBUG_ENABLE__
 #include "qdengine/core/qdcore/qd_resource.h"
 #endif
+
+
+namespace QDEngine {
+
 
 typedef void (*qdLoadingProgressFnc)(int percents_loaded, void *data);
 
@@ -137,5 +140,7 @@ private:
 
 	qdLoadingProgressInfo loading_progress_;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_GAME_DISPATCHER_BASE__ */

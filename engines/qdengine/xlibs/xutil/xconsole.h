@@ -11,6 +11,10 @@
 #define NULL    0L
 #endif
 
+
+
+namespace QDEngine {
+
 struct XConsole {
 	int radix;
 	int digits;
@@ -54,5 +58,6 @@ struct XConsole {
 
 extern XConsole XCon;
 
-#endif /* __XCONSOLE_H */
+} // namespace QDEngine
 
+#endif /* __XCONSOLE_H */

@@ -6,6 +6,9 @@
 #include "qdengine/core/qdcore/qd_conditional_object.h"
 #include "qdengine/core/qdcore/qd_file_owner.h"
 
+
+namespace QDEngine {
+
 //! Видеовставка.
 class qdVideo : public qdConditionalObject, public qdFileOwner {
 public:
@@ -74,5 +77,7 @@ private:
 
 	qdSprite background_;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_VIDEO_H__ */

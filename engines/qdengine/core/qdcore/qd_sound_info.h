@@ -4,6 +4,9 @@
 
 #include "qdengine/core/qdcore/qd_named_object.h"
 
+
+namespace QDEngine {
+
 class qdSound;
 
 //! Информация о звуке.
@@ -24,5 +27,7 @@ public:
 
 	qdSound *sound() const;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_SOUND_INFO_H__ */

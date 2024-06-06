@@ -5,6 +5,9 @@
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
 #include "qdengine/core/qdcore/qd_screen_text_dispatcher.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -89,3 +92,4 @@ bool qdScreenTextDispatcher::save_script(XStream &fh, int indent) const {
 
 	return true;
 }
+} // namespace QDEngine

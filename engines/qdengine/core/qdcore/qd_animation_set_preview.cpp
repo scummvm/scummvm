@@ -1,10 +1,13 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
-#include "qdengine/core/qdcore/qd_camera.h"
 #include "qdengine/core/qdcore/qd_animation_set.h"
 #include "qdengine/core/qdcore/qd_animation_set_preview.h"
+#include "qdengine/core/qdcore/qd_camera.h"
+
+
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -222,3 +225,4 @@ bool qdAnimationSetPreview::set_phase(float phase) {
 
 	return false;
 }
+} // namespace QDEngine

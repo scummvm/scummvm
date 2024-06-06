@@ -2,6 +2,9 @@
 #include "qdengine/xlibs/util/serialization/Handle.h"
 
 
+namespace QDEngine {
+
+
 template<class Type, class BaseType>
 bool ShareHandle<Type, BaseType>::serialize(Archive &ar, const char *name, const char *nameAlt) {
 	if (ar.isInput() && ptr_) {
@@ -21,3 +24,4 @@ bool ShareHandle<Type, BaseType>::serialize(Archive &ar, const char *name, const
 		ptr_->addRef();
 	return log;
 }
+} // namespace QDEngine

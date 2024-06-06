@@ -4,6 +4,9 @@
 #include "qdengine/core/qdcore/util/Handle.h"
 #include "qdengine/core/qdcore/util/SynchroTimer.h"
 
+
+namespace QDEngine {
+
 /////////////////////////////////////////////////////////////////////////////////////////
 //	General Time Resourcing
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -118,5 +121,7 @@ private:
 
 	void do_start();
 };
+
+} // namespace QDEngine
 
 #endif // __RESOURCE_DISPATCHER_H__

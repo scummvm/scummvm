@@ -3,9 +3,12 @@
 #define __QD_INTERFACE_SLIDER_H__
 
 #include "qdengine/core/parser/xml_fwd.h"
-
 #include "qdengine/core/qdcore/qd_interface_element.h"
 #include "qdengine/core/qdcore/qd_interface_element_state.h"
+
+
+namespace QDEngine {
+
 
 //! Интерфейсный элемент - слайдер.
 /**
@@ -151,5 +154,7 @@ private:
 	float offset2phase(const Vect2i &offs) const;
 
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_INTERFACE_SLIDER_H__ */

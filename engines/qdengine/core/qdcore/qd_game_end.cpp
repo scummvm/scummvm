@@ -6,6 +6,9 @@
 #include "qdengine/core/qdcore/qd_game_end.h"
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -84,3 +87,4 @@ bool qdGameEnd::save_script(class XStream &fh, int indent) const {
 
 	return true;
 }
+} // namespace QDEngine

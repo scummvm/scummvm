@@ -1,10 +1,12 @@
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "common/textconsole.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/input/mouse_input.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
+
+
+namespace QDEngine {
+/* ---------------------------- INCLUDE SECTION ----------------------------- */
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -47,3 +49,5 @@ bool mouseDispatcher::handle_event(mouseEvent ev, int x, int y, int flags) {
 
 	return true;
 }
+
+} // namespace QDEngine

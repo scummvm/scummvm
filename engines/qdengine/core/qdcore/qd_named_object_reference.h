@@ -4,6 +4,9 @@
 #include "qdengine/core/parser/xml_fwd.h"
 #include "qdengine/core/qdcore/qd_named_object.h"
 
+
+namespace QDEngine {
+
 class qdNamedObjectReference {
 public:
 	qdNamedObjectReference();
@@ -48,8 +51,9 @@ private:
 
 	std::vector<int> object_types_;
 	std::vector<std::string> object_names_;
-
 	static int objects_counter_;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_NAMED_OBJECT_REFERENCE_H__ */

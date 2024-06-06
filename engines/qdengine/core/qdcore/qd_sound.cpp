@@ -11,6 +11,9 @@
 #include "qdengine/core/qdcore/qd_sound.h"
 #include "qdengine/core/system/sound/snd_dispatcher.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -165,3 +168,4 @@ bool qdSound::set_frequency(const qdSoundHandle *handle, float frequency_coeff) 
 #endif
 	return false;
 }
+} // namespace QDEngine

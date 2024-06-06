@@ -1,6 +1,10 @@
 #ifndef __QD_NAMED_OBJECT_BASE_H__
 #define __QD_NAMED_OBJECT_BASE_H__
 
+#include <string>
+
+namespace QDEngine {
+
 //! Базовый поименованный объект.
 class qdNamedObjectBase {
 public:
@@ -28,5 +32,6 @@ private:
 	std::string name_;
 };
 
-#endif /* __QD_NAMED_OBJECT_BASE_H__ */
+} // namespace QDEngine
 
+#endif /* __QD_NAMED_OBJECT_BASE_H__ */

@@ -5,6 +5,9 @@
 #include "qdengine/core/qdcore/qd_screen_text.h"
 #include "qdengine/core/qdcore/qd_interface_element.h"
 
+
+namespace QDEngine {
+
 //! Интерфейсный элемент для отображения значения счётчика.
 
 class qdInterfaceCounter : public qdInterfaceElement {
@@ -85,5 +88,7 @@ private:
 
 	int lastValue_;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_INTERFACE_COUNTER__ */

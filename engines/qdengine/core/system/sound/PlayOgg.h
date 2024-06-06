@@ -4,6 +4,9 @@
 
 #include "qdengine/core/qd_precomp.h"
 #define WORD unsigned short
+
+
+namespace QDEngine {
 //Balmer
 typedef struct {
     WORD  wFormatTag;         // Format type
@@ -138,5 +141,7 @@ protected:
 	void ClearFade();
 	void FadeQuant();
 };
+
+} // namespace QDEngine
 
 #endif // _PLAYMPP_H_

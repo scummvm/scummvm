@@ -2,6 +2,9 @@
 #ifndef __PLAYMPP_API_H__
 #define __PLAYMPP_API_H__
 
+
+namespace QDEngine {
+
 //! Проигрыватель mp+.
 class MpegSound;
 
@@ -86,5 +89,7 @@ private:
 	//! Если равен true, значит библиотеку уже инициализаровали.
 	static bool is_library_initialized_;
 };
+
+} // namespace QDEngine
 
 #endif /* __PLAYMPP_API_H__ */

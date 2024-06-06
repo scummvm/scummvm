@@ -1,14 +1,11 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/system/app_error_handler.h"
 #include "qdengine/core/qdcore/qd_resource_file.h"
 
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
+
+namespace QDEngine {
 
 bool qd_open_resource(const char *file_name, class XStream &fh, bool readonly, bool err_message) {
 	if (!readonly) {
@@ -34,7 +31,7 @@ bool qd_open_resource(const char *file_name, class XStream &fh, bool readonly, b
 #ifndef _QUEST_EDITOR
 					exit(1);
 #else
-//						fh.ErrHUsed = err;
+// 				  			fh.ErrHUsed = err;
 					return false;
 #endif
 				}
@@ -48,3 +45,5 @@ bool qd_open_resource(const char *file_name, class XStream &fh, bool readonly, b
 		return true;
 	}
 }
+
+} // namespace QDEngine

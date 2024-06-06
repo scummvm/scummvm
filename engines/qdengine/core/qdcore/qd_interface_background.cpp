@@ -4,8 +4,10 @@
 
 #include "qdengine/core/parser/qdscr_parser.h"
 #include "qdengine/core/parser/xml_tag.h"
+#include "qdengine/core/qdcore/qd_interface_background.h"
 
-#include "qd_interface_background.h"
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -64,3 +66,4 @@ bool qdInterfaceBackground::keyboard_handler(int vkey) {
 bool qdInterfaceBackground::init(bool is_game_active) {
 	return set_state(&state_);
 }
+} // namespace QDEngine

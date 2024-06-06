@@ -1,7 +1,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include <algorithm>
 
 #include "qdengine/core/parser/xml_tag_buffer.h"
@@ -15,6 +14,10 @@
 #include "qd_game_dispatcher.h"
 #include "qd_game_scene.h"
 #include "qd_game_object_moving.h"
+
+
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 
@@ -396,3 +399,4 @@ void qdInterfaceScreen::update_personage_buttons() {
 		}
 	}
 }
+} // namespace QDEngine

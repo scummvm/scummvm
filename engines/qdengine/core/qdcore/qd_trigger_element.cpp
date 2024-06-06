@@ -25,13 +25,14 @@
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 
+
+/* --------------------------- DEFINITION SECTION --------------------------- */
+namespace QDEngine {
+
 #ifdef __QD_DEBUG_ENABLE__
 static appLog &operator << (appLog &log, const qdTriggerLink *link);
 appLog &operator << (appLog &log, const qdNamedObjectReference &obj);
 #endif
-
-/* --------------------------- DEFINITION SECTION --------------------------- */
-
 qdTriggerLink::qdTriggerLink(qdTriggerElementPtr p, int tp)
 	: element_(p),
 	  element_ID_(qdTriggerElement::INVALID_ID),
@@ -1048,3 +1049,4 @@ bool qdTriggerElement::clear_object_trigger_references() {
 
 	return false;
 }
+} // namespace QDEngine

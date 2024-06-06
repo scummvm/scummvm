@@ -6,6 +6,9 @@
 #include "qdengine/core/qdcore/qd_condition_group.h"
 #include "qdengine/core/qdcore/qd_named_object.h"
 
+
+namespace QDEngine {
+
 //! Объект с условиями.
 class qdConditionalObject : public qdNamedObject {
 public:
@@ -162,5 +165,7 @@ private:
 
 	bool check_group_conditions(const qdConditionGroup &gr);
 };
+
+} // namespace QDEngine
 
 #endif /* __CONDITIONAL_OBJECT_H__ */

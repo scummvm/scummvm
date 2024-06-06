@@ -6,6 +6,9 @@
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
 #include "qdengine/core/qdcore/qd_music_track.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -101,3 +104,4 @@ qdConditionalObject::trigger_start_mode qdMusicTrack::trigger_start() {
 
 	return qdConditionalObject::TRIGGER_START_FAILED;
 }
+} // namespace QDEngine

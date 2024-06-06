@@ -1,6 +1,9 @@
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/xlibs/xutil/xglobal.h"
 
+
+namespace QDEngine {
+
 static char* openMSG     = "CREATE/OPEN FAILURE";
 static char* closeMSG    = "CLOSE FAILURE";
 static char* appendMSG   = "APPENDING FAILURE";
@@ -73,3 +76,4 @@ void XStream::close() {
 	extPos = 0;
 	ioError_ = false;
 }
+} // namespace QDEngine

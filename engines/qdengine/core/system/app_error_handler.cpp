@@ -1,18 +1,12 @@
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "common/textconsole.h"
-
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/app_core.h"
 #include "qdengine/core/system/app_error_handler.h"
-
 #include "qdengine/xlibs/xutil/xutil.h"
 
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
+
+namespace QDEngine {
 
 std::string appErrorHandler::message_buf_(1024, 0);
 
@@ -67,3 +61,5 @@ appErrorHandler::handler_result_t appErrorHandler::message_box(const char *subje
 	}
 	return ERR_ABORT;
 }
+
+} // namespace QDEngine

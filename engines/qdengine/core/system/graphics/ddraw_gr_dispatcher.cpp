@@ -5,6 +5,9 @@
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/ddraw_gr_dispatcher.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -328,3 +331,5 @@ bool DDraw_grDispatcher::get_current_mode(int &sx, int &sy, grPixelFormat &pixel
 
 	return true;
 }
+
+} // namespace QDEngine

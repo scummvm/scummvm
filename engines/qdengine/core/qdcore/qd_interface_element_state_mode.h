@@ -4,6 +4,9 @@
 
 #include "qdengine/core/qdcore/qd_contour.h"
 
+
+namespace QDEngine {
+
 //! Событие, привязанное к состоянию интерфейсного элемента.
 /**
 Включает анимацию и звук при выполнении некоторых условий (например при наведении
@@ -126,5 +129,7 @@ private:
 	//! Контур.
 	qdContour contour_;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_INTERFACE_ELEMENT_STATE_MODE_H__ */

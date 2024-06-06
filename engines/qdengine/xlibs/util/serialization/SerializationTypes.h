@@ -5,6 +5,8 @@
 #include "Handle.h"
 #include "qdengine/xlibs/util/serialization/Factory.h"
 
+namespace QDEngine {
+
 class Archive;
 
 /// —трока с редактируемыми значени€ми из списка
@@ -112,5 +114,7 @@ private:
 	ShareHandle<Type> type_;
 	friend class Archive;
 };
+
+} // namespace QDEngine
 
 #endif // __SERIALIZATION_TYPES_H_INCLUDED__

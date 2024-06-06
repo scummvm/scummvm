@@ -10,6 +10,9 @@
 
 #include <vector>
 
+
+namespace QDEngine {
+
 class XStream;
 
 class qdTriggerElement;
@@ -190,7 +193,8 @@ private:
 	static qdTriggerChain  *get_record_trigger(const qdTriggerProfilerRecord &rec);
 };
 
+} // namespace QDEngine
+
 #endif /* __QD_TRIGGER_PROFILER__ */
 
 #endif /* __QD_TRIGGER_PROFILER_H__ */
-

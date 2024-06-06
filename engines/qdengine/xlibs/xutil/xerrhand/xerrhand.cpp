@@ -1,6 +1,8 @@
 #include "qdengine/xlibs/xutil/xglobal.h"
 #include <float.h>
 
+namespace QDEngine {
+
 XBuffer& assertsBuffer();
 
 void xtSysFinit();
@@ -315,3 +317,4 @@ void XErrorHandler::WriteLog(char* error, char* msg) {
 		ErrHStream.close();
 	}
 }
+} // namespace QDEngine

@@ -3,10 +3,12 @@
 
 #include <vector>
 #include <algorithm>
-
 #include "qdengine/core/parser/xml_fwd.h"
-
 #include "qdengine/core/qdcore/qd_sprite.h"
+
+
+namespace QDEngine {
+
 
 class qdGameObjectAnimated;
 
@@ -283,5 +285,7 @@ private:
 };
 
 typedef std::vector<qdInventoryCellSet> qdInventoryCellSetVector;
+
+} // namespace QDEngine
 
 #endif /* __QD_INVENTORY_CELL_H__ */

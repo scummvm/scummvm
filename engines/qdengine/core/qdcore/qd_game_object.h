@@ -6,6 +6,9 @@
 #include "qdengine/core/system/graphics/gr_screen_region.h"
 #include "qdengine/core/qdcore/qd_named_object.h"
 
+
+namespace QDEngine {
+
 const int QD_OBJ_MOVING_FLAG            = 0x01;
 const int QD_OBJ_HIDDEN_FLAG            = 0x02;
 const int QD_OBJ_INVERSE_PERSPECTIVE_FLAG   = 0x04;
@@ -163,5 +166,7 @@ inline bool qdbg_is_object(const qdNamedObject *, const char *, const char *) {
 	return false;
 }
 #endif
+
+} // namespace QDEngine
 
 #endif /* __QD_GAME_OBJECT_H__ */

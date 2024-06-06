@@ -1,6 +1,9 @@
 #ifndef __COMLINE_PARSER_H__
 #define __COMLINE_PARSER_H__
 
+
+namespace QDEngine {
+
 class comlineParser {
 public:
 	comlineParser();
@@ -50,5 +53,7 @@ private:
 	typedef std::list<comlineOption> options_container_t;
 	options_container_t options_;
 };
+
+} // namespace QDEngine
 
 #endif /* __COMLINE_PARSER_H__ */

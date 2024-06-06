@@ -1,5 +1,8 @@
 #include "qdengine/xlibs/xutil/xglobal.h"
 
+
+namespace QDEngine {
+
 XStream& XStream::operator>= (char& var) {
 	int ret = read(ConvertBuffer_, 4);
 	if (!ret) return *this;
@@ -109,3 +112,4 @@ XStream& XStream::operator>= (long double& var) {
 	seek(p - ConvertBuffer_ + 1 - ret, XS_CUR);
 	return *this;
 }
+} // namespace QDEngine

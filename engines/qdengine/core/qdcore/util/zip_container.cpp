@@ -4,6 +4,9 @@
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/util/zip_container.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -248,3 +251,4 @@ void zipContainer::dump_info() {
 	fh.close();
 }
 #endif
+} // namespace QDEngine

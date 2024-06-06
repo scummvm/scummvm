@@ -6,11 +6,15 @@
 #include "qdengine/core/qdcore/qd_resource_dispatcher.h"
 #include "qdengine/core/qdcore/qd_sound.h"
 
+
 //! Контейнер для хранения игровых ресурсов.
 /**
 Параметр шаблона class T - тип владельца ресурса, достаточно его forward declaration.
 Спрайты хранятся как однокадровые анимации.
 */
+
+namespace QDEngine {
+
 template<class T>
 class qdResourceContainer {
 public:
@@ -162,5 +166,7 @@ bool qdResourceContainer<T>::get_file_list(qdFileNameList &list) const {
 	}
 	return true;
 }
+
+} // namespace QDEngine
 
 #endif /* __QD_RESOURCE_CONTAINER_H__ */

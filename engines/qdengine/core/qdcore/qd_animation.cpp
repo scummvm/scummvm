@@ -1,7 +1,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/system/graphics/gr_tile_animation.h"
 
@@ -16,6 +15,10 @@
 
 #include "qdengine/core/qdcore/qd_animation.h"
 #include "qdengine/core/qdcore/qd_file_manager.h"
+
+
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -1087,3 +1090,4 @@ unsigned qdAnimation::resource_data_size() const {
 	return size;
 }
 #endif
+} // namespace QDEngine

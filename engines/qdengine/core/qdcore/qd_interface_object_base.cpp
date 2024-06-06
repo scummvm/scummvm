@@ -1,8 +1,11 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/qdcore/qd_interface_object_base.h"
+
+
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -28,3 +31,4 @@ qdInterfaceObjectBase &qdInterfaceObjectBase::operator = (const qdInterfaceObjec
 
 	return *this;
 }
+} // namespace QDEngine

@@ -4,6 +4,9 @@
 
 #include "qdengine/core/system/graphics/gr_font.h"
 
+
+namespace QDEngine {
+
 struct OutNode {
 	enum {
 		NEW_LINE,
@@ -131,5 +134,7 @@ private:
 	const grFont *font_;
 
 };
+
+} // namespace QDEngine
 
 #endif //__UI_TEXT_PARSER_H__

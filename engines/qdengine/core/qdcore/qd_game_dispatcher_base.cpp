@@ -1,7 +1,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include <stdlib.h>
 
 #include "qdengine/core/parser/xml_tag.h"
@@ -10,6 +9,10 @@
 #include "qdengine/core/qdcore/qd_animation.h"
 #include "qdengine/core/qdcore/qd_animation_set.h"
 #include "qdengine/core/qdcore/qd_game_dispatcher_base.h"
+
+
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -242,3 +245,5 @@ bool qdGameDispatcherBase::get_resources_info(qdResourceInfoContainer &infos) co
 	return true;
 }
 #endif
+
+} // namespace QDEngine

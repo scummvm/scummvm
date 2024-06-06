@@ -1,6 +1,10 @@
 #ifndef __APP_CORE_H__
 #define __APP_CORE_H__
 
+
+
+namespace QDEngine {
+
 // Main window handle
 void *appGetHandle();
 void appSetHandle(void *hwnd);
@@ -64,5 +68,7 @@ std::string path_to_file_name(const std::string &str);
 bool relat_path(const char *path);
 void adjust_dir_end_slash(std::string &str);
 };
+
+} // namespace QDEngine
 
 #endif /* __APP_CORE_H__ */

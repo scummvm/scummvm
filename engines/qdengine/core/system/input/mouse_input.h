@@ -1,6 +1,9 @@
 #ifndef __MOUSE_INPUT_H__
 #define __MOUSE_INPUT_H__
 
+
+namespace QDEngine {
+
 //! Обработчик мыши.
 class mouseDispatcher {
 public:
@@ -122,5 +125,7 @@ private:
 	//! Обработчики событий.
 	event_handler_t event_handlers_[EV_MOUSE_MOVE + 1];
 };
+
+} // namespace QDEngine
 
 #endif /* __MOUSE_INPUT_H__ */

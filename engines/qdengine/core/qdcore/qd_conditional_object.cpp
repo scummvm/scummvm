@@ -7,6 +7,9 @@
 #include "qdengine/core/qdcore/qd_conditional_object.h"
 #include "qdengine/core/qdcore/qd_game_scene.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -347,3 +350,4 @@ bool qdConditionalObject::trigger_can_start() const {
 
 	return true;
 }
+} // namespace QDEngine

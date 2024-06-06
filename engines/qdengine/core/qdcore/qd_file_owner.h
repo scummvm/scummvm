@@ -1,6 +1,10 @@
 #ifndef __QD_FILE_OWNER__
 #define __QD_FILE_OWNER__
 
+
+
+namespace QDEngine {
+
 class qdFileOwner {
 public:
 	qdFileOwner() : files_size_(0), cd_info_(0) { }
@@ -38,5 +42,6 @@ private:
 	unsigned files_size_;
 };
 
-#endif // __QD_FILE_OWNER__
+} // namespace QDEngine
 
+#endif // __QD_FILE_OWNER__

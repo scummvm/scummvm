@@ -4,6 +4,9 @@
 #include "qdengine/core/system/graphics/gr_screen_region.h"
 #include "qdengine/xlibs/util/xmath/xmath.h"
 
+
+namespace QDEngine {
+
 // Directions for LineTo()
 enum GR_LINEDIR {
 	GR_LEFT,
@@ -600,5 +603,7 @@ private:
 
 	void PutSpr_rot90(const Vect2i &pos, const Vect2i &size, const unsigned char *data, bool has_alpha, int mode, float angle);
 };
+
+} // namespace QDEngine
 
 #endif /* __GR_DISPATCHER_H__ */

@@ -8,6 +8,8 @@
 #include "qdengine/core/parser/xml_parser.h"
 #include "qdengine/xlibs/xutil/xutil.h"
 
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -381,3 +383,5 @@ bool parser::is_script_binary(const char *fname) const {
 }
 
 }; /* namespace xml */
+
+} // namespace QDEngine

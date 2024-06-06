@@ -14,6 +14,8 @@
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/qd_d3dutils.h"
 
+
+
 /*
 **-----------------------------------------------------------------------------
 ** Functions
@@ -23,6 +25,8 @@
 //набор своих функций, потому что те, что представлены в xMath.h
 //не удовлетворяют потребностям
 //я порой такой требовательный, что самому страшно.
+namespace QDEngine {
+
 namespace vector_helpers {
 inline VALUE3D
 SquareMagnitude(const Vect3f &v) {
@@ -568,3 +572,4 @@ MatrixTranspose(const MATRIX3D &m) {
 */
 
 
+} // namespace QDEngine

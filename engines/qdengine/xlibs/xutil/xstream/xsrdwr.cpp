@@ -1,5 +1,8 @@
 #include "qdengine/xlibs/xutil/xglobal.h"
 
+
+namespace QDEngine {
+
 static char* readMSG    = "WRONG READING";
 static char* writeMSG   = "WRONG WRITING";
 
@@ -71,3 +74,4 @@ unsigned long XStream::write(const void* buf, unsigned long len) {
 	}
 	return ret;
 }
+} // namespace QDEngine

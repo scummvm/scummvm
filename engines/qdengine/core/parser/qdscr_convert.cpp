@@ -9,6 +9,8 @@
 #include "qdengine/core/system/app_error_handler.h"
 #include "qdengine/xlibs/xutil/xutil.h"
 
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 
 // Data types...
@@ -212,3 +214,5 @@ const char *qdscr_get_XML_file_name(const char *file_name) {
 
 	return xml_file_name.c_str();
 }
+
+} // namespace QDEngine

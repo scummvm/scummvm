@@ -6,6 +6,9 @@
 #include "qdengine/core/qdcore/qd_counter.h"
 #include "qdengine/core/qdcore/qd_game_object_state.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -270,3 +273,4 @@ void qdCounter::init() {
 	value_ = 0;
 }
 
+} // namespace QDEngine

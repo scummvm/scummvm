@@ -1,13 +1,14 @@
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #include <math.h>
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/sound/snd_dispatcher.h"
 
+/* ---------------------------- INCLUDE SECTION ----------------------------- */
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
+
+namespace QDEngine {
 
 sndDispatcher *sndDispatcher::dispatcher_ptr_;
 
@@ -57,3 +58,5 @@ int sndDispatcher::convert_volume_to_dB(int vol) {
 	} else
 		return 0;
 }
+
+} // namespace QDEngine

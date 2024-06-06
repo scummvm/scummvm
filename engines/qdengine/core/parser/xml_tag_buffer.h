@@ -1,6 +1,5 @@
 #ifndef __XML_TAG_BUFFER_H__
 #define __XML_TAG_BUFFER_H__
-
 #include "qdengine/core/parser/xml_tag.h"
 
 #ifdef _DEBUG
@@ -8,6 +7,8 @@
 #else
 #define XML_ASSERT(a)
 #endif
+
+namespace QDEngine {
 
 namespace xml {
 
@@ -112,5 +113,7 @@ private:
 };
 
 }; /* namespace xml */
+
+} // namespace QDEngine
 
 #endif /* __XML_TAG_BUFFER_H__ */

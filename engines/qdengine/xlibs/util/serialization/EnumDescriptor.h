@@ -5,6 +5,8 @@
 #include "ComboStrings.h"
 
 
+namespace QDEngine {
+using namespace std;
 /////////////////////////////////////////////////
 /// Map: enum <-> name, nameAlt
 class EnumDescriptor {
@@ -152,3 +154,5 @@ template<class Enum>
 const char *getEnumNameAlt(const Enum &key) {
 	return getEnumDescriptor(Enum()).nameAlt(key);
 }
+
+} // namespace QDEngine

@@ -12,11 +12,13 @@
 #ifndef __XUTIL_H
 #define __XUTIL_H
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include <memory.h>
 #include <cstdlib>
-
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/textconsole.h"
+
+
+
 
 ///////////////////////////////////
 //		XBuffer
@@ -38,6 +40,8 @@
 
 #define XB_DEFRADIX 10
 #define XB_DEFDIGITS    8
+
+namespace QDEngine {
 
 class XBuffer {
 public:
@@ -630,4 +634,6 @@ void ZIP_expand(char *trg, ulong trgsize, char *src, ulong srcsize);
 
 #endif // _XUTIL_NO_AUTOMATIC_LIB
 
-#endif // __XUTIL_H
+} // namespace QDEngine
+
+#endif //

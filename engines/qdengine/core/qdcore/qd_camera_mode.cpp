@@ -3,8 +3,11 @@
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include "qdengine/core/parser/qdscr_parser.h"
-
 #include "qdengine/core/qdcore/qd_camera_mode.h"
+
+
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -89,3 +92,4 @@ bool qdCameraMode::save_data(qdSaveStream &fh) const {
 
 	return true;
 }
+} // namespace QDEngine

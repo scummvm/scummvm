@@ -1,6 +1,9 @@
 #ifndef __QD_TEXTDB_H__
 #define __QD_TEXTDB_H__
 
+
+namespace QDEngine {
+
 /// База данных с текстами.
 class qdTextDB {
 public:
@@ -55,5 +58,7 @@ private:
 	typedef std::unordered_map<std::string, qdText> qdTextMap;
 	qdTextMap texts_;
 };
+
+} // namespace QDEngine
 
 #endif // __QD_TEXTDB_H__

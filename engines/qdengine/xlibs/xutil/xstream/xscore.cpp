@@ -1,5 +1,8 @@
 #include "qdengine/xlibs/xutil/xglobal.h"
 
+
+namespace QDEngine {
+
 XStream::XStream(bool handleErrors) {
 	handleErrors_ = handleErrors;
 	handler  = INVALID_HANDLE_VALUE;
@@ -26,3 +29,4 @@ XStream::XStream(const char* name, unsigned flags, bool handleErrors) {
 	ioError_ = false;
 	open(name, flags);
 }
+} // namespace QDEngine

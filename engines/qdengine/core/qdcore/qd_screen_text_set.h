@@ -4,6 +4,9 @@
 #include "qdengine/core/qdcore/qd_screen_text.h"
 #include "qdengine/core/parser/xml_fwd.h"
 
+
+namespace QDEngine {
+
 //! Набор экранных текстов.
 class qdScreenTextSet {
 public:
@@ -127,5 +130,7 @@ private:
 	//! Форматирует тексты по ширине, чтобы не вылезали за max_text_width_.
 	void format_texts();
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_SCREEN_TEXT_SET_H__ */

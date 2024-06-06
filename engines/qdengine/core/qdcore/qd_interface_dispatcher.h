@@ -6,6 +6,9 @@
 #include "qdengine/core/qdcore/qd_interface_object_base.h"
 #include "qdengine/core/qdcore/qd_object_list_container.h"
 
+
+namespace QDEngine {
+
 class qdInterfaceScreen;
 class qdInterfaceElementState;
 
@@ -317,5 +320,7 @@ private:
 	//! Текущий диспетчер интерфейса.
 	static qdInterfaceDispatcher *dispatcher_;
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_INTERFACE_DISPATCHER_H__ */

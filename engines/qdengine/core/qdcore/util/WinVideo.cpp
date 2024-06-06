@@ -3,6 +3,9 @@
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/util/WinVideo.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -323,3 +326,5 @@ void winVideo::close_file() {
 
 	hwnd_ = NULL;
 }
+
+} // namespace QDEngine

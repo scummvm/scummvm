@@ -1,5 +1,9 @@
 #pragma once
 
+namespace QDEngine {
+
+using namespace std;
+
 typedef vector<string> ComboStrings;
 typedef vector<wstring> ComboWStrings;
 
@@ -13,3 +17,5 @@ int indexInComboListString(const char *comboList, const char *value);
 void splitComboListW(ComboWStrings &combo_array, const wchar_t *ptr, wchar_t delimeter);
 wstring getStringTokenByIndexW(const wchar_t *worker, int number);
 int indexInComboListStringW(const wchar_t *comboList, const wchar_t *value);
+
+} // namespace QDEngine

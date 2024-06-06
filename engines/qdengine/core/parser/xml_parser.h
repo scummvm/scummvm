@@ -4,6 +4,8 @@
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include <unordered_map>
 
+namespace QDEngine {
+
 namespace xml {
 
 #ifdef _FINAL_VERSION_
@@ -84,5 +86,7 @@ private:
 };
 
 }; /* namespace xml */
+
+} // namespace QDEngine
 
 #endif /* __XML_PARSER_H__ */

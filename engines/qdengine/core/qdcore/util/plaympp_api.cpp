@@ -5,6 +5,8 @@
 #include "qdengine/core/qdcore/util/plaympp_api.h"
 #include "qdengine/core/system/sound/PlayOgg.h"
 
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -144,3 +146,5 @@ mpegPlayer &mpegPlayer::instance() {
 	static mpegPlayer player;
 	return player;
 }
+
+} // namespace QDEngine

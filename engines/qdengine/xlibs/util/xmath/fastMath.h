@@ -1,6 +1,9 @@
 #pragma once
 #include "common/textconsole.h"
 
+
+namespace QDEngine {
+
 //////////////////////////////////////////////////////////////////////////////
 // FAST INVERSE SQUARE ROOT
 // By Chris Lomont
@@ -45,3 +48,4 @@ inline unsigned int F2DW(float f) {
 inline float DW2F(unsigned int f) {
 	return *((float *)&f);
 }
+} // namespace QDEngine

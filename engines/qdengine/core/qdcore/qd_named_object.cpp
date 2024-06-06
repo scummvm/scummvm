@@ -2,8 +2,11 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/qdcore/qd_named_object.h"
+
+
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -89,3 +92,4 @@ appLog &operator << (appLog &log, const qdNamedObject *obj) {
 
 	return log;
 }
+} // namespace QDEngine

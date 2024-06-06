@@ -3,6 +3,9 @@
 
 #include "qdengine/core/system/graphics/gr_tile_sprite.h"
 
+
+namespace QDEngine {
+
 typedef void (*CompressionProgressHandler)(int percents_loaded, void *context);
 
 class grTileAnimation {
@@ -82,5 +85,7 @@ private:
 	static CompressionProgressHandler progressHandler_;
 	static void *progressHandlerContext_;
 };
+
+} // namespace QDEngine
 
 #endif /* __GR_TILE_ANIMATION_H__ */

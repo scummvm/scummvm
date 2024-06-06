@@ -4,6 +4,9 @@
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/system/graphics/rle_compress.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -1962,3 +1965,5 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const class rleB
 		}
 	}
 }
+
+} // namespace QDEngine

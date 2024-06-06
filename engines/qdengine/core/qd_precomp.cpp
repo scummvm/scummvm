@@ -1,6 +1,10 @@
 #include "qdengine/core/qd_precomp.h"
 
+
+namespace QDEngine {
+
 int dummy = 1;
+void *INVALID_HANDLE_VALUE = reinterpret_cast<void *>(-1);
 
 void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext) {
 	warning("STUB: _splitpath");
@@ -271,6 +275,7 @@ int ov_open(void *datasource, void *vf, const char *initial, long ibytes) {
 	warning("STUB: ov_open_callbacks()");
 	return 0;
 }
+
 int ov_read(void *vf, char *buffer, int length, int bigendianp, int word, int sgned, int *bitstream) {
 	warning("STUB: ov_read()");
 	return 0;
@@ -389,9 +394,11 @@ int MpegIsPlay() {
 int xtInitApplication() {
 	warning("STUB: xtInitApplication()");
 	return 0;
-};
+}
+
 void xtDoneApplication() {
 	warning("STUB: xtDoneApplication()");
 	return;
-};
-void *INVALID_HANDLE_VALUE = reinterpret_cast<void *>(-1);
+}
+
+} // namespace QDEngine

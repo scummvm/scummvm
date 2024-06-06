@@ -2,12 +2,13 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #define _NO_ZIP_
 #include "common/textconsole.h"
-
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/system/graphics/gr_font.h"
 #include "qdengine/core/qdcore/qd_file_manager.h"
 
+
+namespace QDEngine {
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -171,3 +172,5 @@ bool grFont::load_alpha(XZipStream &fh) {
 
 	return true;
 }
+
+} // namespace QDEngine

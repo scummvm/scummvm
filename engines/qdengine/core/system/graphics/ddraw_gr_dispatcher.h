@@ -1,11 +1,9 @@
 #ifndef __DDRAW_GR_DISPATCHER_H__
 #define __DDRAW_GR_DISPATCHER_H__
-
-#if 0
-#include <ddraw.h>
-#endif
-
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
+
+
+namespace QDEngine {
 
 class DDraw_VideoMode {
 public:
@@ -78,5 +76,7 @@ private:
 
 	DDraw_VideoModeVector video_modes_;
 };
+
+} // namespace QDEngine
 
 #endif /* __DDRAW_GR_DISPATCHER_H__ */

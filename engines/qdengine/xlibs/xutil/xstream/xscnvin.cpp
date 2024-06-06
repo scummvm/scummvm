@@ -1,5 +1,8 @@
 #include "qdengine/xlibs/xutil/xglobal.h"
 
+
+namespace QDEngine {
+
 XStream& XStream::operator<= (char var) {
 	Common::String s = Common::String::format("%c", var);
 	write(s.c_str(), s.size());
@@ -65,3 +68,4 @@ XStream& XStream::operator<= (long double var) {
 	write(s, strlen(s));
 	return *this;
 }
+} // namespace QDEngine

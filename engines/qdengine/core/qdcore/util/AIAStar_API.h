@@ -3,6 +3,9 @@
 
 #include "qdengine/core/qdcore/util/AIAStar.h"
 
+
+namespace QDEngine {
+
 class qdCamera;
 class qdGameObjectMoving;
 
@@ -36,5 +39,7 @@ private:
 };
 
 typedef AIAStar<qdHeuristic, int> qdAStar;
+
+} // namespace QDEngine
 
 #endif /* __AIASTAR_API_H__ */

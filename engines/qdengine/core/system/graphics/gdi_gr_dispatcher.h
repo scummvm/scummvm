@@ -5,6 +5,9 @@
 
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 
+
+namespace QDEngine {
+
 class GDI_grDispatcher : public grDispatcher {
 public:
 	GDI_grDispatcher();
@@ -44,5 +47,7 @@ private:
 	LOGPALETTE *palette_;
 	HPALETTE pal_handle_;
 };
+
+} // namespace QDEngine
 
 #endif /* __GDI_GR_DISPATCHER_H__ */

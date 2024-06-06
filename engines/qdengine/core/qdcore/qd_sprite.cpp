@@ -1,16 +1,18 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define MAX_PATH 100
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/system/app_error_handler.h"
 #include "qdengine/core/system/graphics/rle_compress.h"
-
 #include "qdengine/core/qdcore/qd_setup.h"
 #include "qdengine/core/qdcore/qd_sprite.h"
 #include "qdengine/core/qdcore/qd_file_manager.h"
 #include "qdengine/core/qdcore/util/2PassScale.h"
 #include "qdengine/core/qdcore/util/Filters.h"
+
+
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -1555,3 +1557,4 @@ grScreenRegion qdSprite::screen_region(int mode, float scale) const {
 
 	return grScreenRegion(x, y, sx, sy);
 }
+} // namespace QDEngine

@@ -4,6 +4,9 @@
 #include "qdengine/xlibs/xutil/_xtool.h"
 #include "qdengine/xlibs/xutil/xglobal.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 struct xtMsgHandlerObject {
 	int ID;
@@ -519,3 +522,5 @@ void xtCloseDummyWindow(void) {
 void xtSysQuantDisable(int v) {
 	xtSysQuantDisabled = v;
 }
+
+} // namespace QDEngine

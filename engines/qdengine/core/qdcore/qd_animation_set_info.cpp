@@ -6,6 +6,9 @@
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
 #include "qdengine/core/qdcore/qd_game_scene.h"
 
+
+namespace QDEngine {
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -24,3 +27,4 @@ qdAnimationSet *qdAnimationSetInfo::animation_set() const {
 
 	return NULL;
 }
+} // namespace QDEngine

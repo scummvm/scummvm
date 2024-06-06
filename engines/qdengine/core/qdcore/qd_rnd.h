@@ -1,6 +1,9 @@
 #ifndef __QD_RND_H__
 #define __QD_RND_H__
 
+
+namespace QDEngine {
+
 extern RandomGenerator qd_random_generator;
 
 /// Возвращает случайное значение в интервале [0, m-1].
@@ -18,5 +21,7 @@ inline float qd_fabs_rnd(float x) {
 
 bool qd_rnd_init(int seed = 83);
 
-#endif /* __QD_RND_H__ */
 
+} // namespace QDEngine
+
+#endif /* __QD_RND_H__ */

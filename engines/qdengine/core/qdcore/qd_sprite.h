@@ -4,6 +4,9 @@
 #include "qdengine/core/system/graphics/gr_screen_region.h"
 #include "qdengine/core/qdcore/qd_resource.h"
 
+
+namespace QDEngine {
+
 class XZipStream;
 
 //! Спрайт.
@@ -188,5 +191,7 @@ private:
 
 	friend bool operator == (const qdSprite &sp1, const qdSprite &sp2);
 };
+
+} // namespace QDEngine
 
 #endif /* __QD_SPRITE_H__ */

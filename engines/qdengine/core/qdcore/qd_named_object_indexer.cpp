@@ -1,9 +1,12 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/qdcore/qd_named_object_indexer.h"
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
+
+
+namespace QDEngine {
+
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -58,3 +61,4 @@ void qdNamedObjectIndexer::clear() {
 
 	links_.clear();
 }
+} // namespace QDEngine

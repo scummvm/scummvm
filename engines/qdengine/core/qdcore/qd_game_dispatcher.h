@@ -17,6 +17,9 @@
 #include "qdengine/core/qdcore/util/WinVideo.h"
 
 
+namespace QDEngine {
+
+
 class grFont;
 class qdGameDispatcher : public qdGameDispatcherBase, public qdResourceDispatcher<qdNamedObject>, public qdFileOwner {
 public:
@@ -680,5 +683,7 @@ private:
 };
 
 qdGameDispatcher *qd_get_game_dispatcher();
+
+} // namespace QDEngine
 
 #endif /* __QD_GAME_DISPATCHER_H__ */
