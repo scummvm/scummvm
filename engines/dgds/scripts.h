@@ -36,7 +36,6 @@ public:
 };
 
 
-
 } // End of namespace Dgds
 
 #endif // DGDS_SCRIPTS_H

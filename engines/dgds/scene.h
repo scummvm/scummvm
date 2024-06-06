@@ -224,6 +224,7 @@ public:
 
 	bool runOps(const Common::Array<SceneOp> &ops, int16 addMinutes = 0);
 	virtual Common::Error syncState(Common::Serializer &s) = 0;
+	virtual void enableTrigger(uint16 numm, bool enable = true) {}
 
 protected:
 	bool readConditionList(Common::SeekableReadStream *s, Common::Array<SceneConditions> &list) const;
@@ -239,7 +240,6 @@ protected:
 
 	bool checkConditions(const Common::Array<SceneConditions> &cond) const;
 
-	virtual void enableTrigger(uint16 num) {}
 	virtual void showDialog(uint16 num) {}
 	virtual void globalOps(const Common::Array<uint16> &args) {}
 	virtual void segmentStateOps(const Common::Array<uint16> &args);
@@ -260,6 +260,7 @@ public:
 	GDSScene();
 
 	bool load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor);
+	bool loadRestart(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor);
 	bool parse(Common::SeekableReadStream *s) override;
 	bool parseInf(Common::SeekableReadStream *s);
 	const Common::String &getIconFile() const { return _iconFile; }
@@ -283,6 +284,7 @@ public:
 	const Common::Array<ObjectInteraction> &getObjInteractions2() { return _objInteractions2; }
 
 	Common::Error syncState(Common::Serializer &s) override;
+	void initIconSizes();
 
 private:
 	Common::String _iconFile;
@@ -341,13 +343,16 @@ public:
 	Common::Error syncState(Common::Serializer &s) override;
 
 	void onDragFinish(const Common::Point &pt);
+	void enableTrigger(uint16 num, bool enable = true) override;
+
+	// dragon-specific scene ops
 	void addAndShowTiredDialog();
+	void sceneOpUpdatePasscodeGlobal();
 
 protected:
 	HotArea *findAreaUnderMouse(const Common::Point &pt);
 
 private:
-	void enableTrigger(uint16 num) override;
 	void showDialog(uint16 num) override;
 	Dialog *getVisibleDialog();
 

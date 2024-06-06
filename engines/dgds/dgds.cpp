@@ -79,7 +79,7 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_soundPlayer(nullptr), _decompressor(nullptr), _scene(nullptr),
 	_gdsScene(nullptr), _resource(nullptr), _gamePals(nullptr), _gameGlobals(nullptr),
 	_detailLevel(kDgdsDetailHigh), _textSpeed(1), _justChangedScene1(false), _justChangedScene2(false),
-	_random("dgds"), _currentCursor(-1), _menuToTrigger(kMenuNone), _isLoading(true) {
+	_random("dgds"), _currentCursor(-1), _menuToTrigger(kMenuNone), _isLoading(true), _rstFileName(nullptr) {
 	syncSoundSettings();
 
 	_platform = gameDesc->platform;
@@ -251,12 +251,28 @@ void DgdsEngine::checkDrawInventoryButton() {
 	_icons->drawBitmap(2, x, y, drawWin, _compositionBuffer);
 }
 
-void DgdsEngine::init() {
-	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
+void DgdsEngine::init(bool restarting) {
+	if (!restarting) {
+		// Init things with no state only once
+		initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	_console = new Console(this);
-	_resource = new ResourceManager();
-	_decompressor = new Decompressor();
+		_console = new Console(this);
+		_resource = new ResourceManager();
+		_decompressor = new Decompressor();
+
+		setDebugger(_console);
+	} else {
+		// Reset the stateful objects
+		delete _gamePals;
+		delete _soundPlayer;
+		delete _scene;
+		delete _gdsScene;
+		delete _fontManager;
+		delete _menu;
+		delete _adsInterp;
+		delete _inventory;
+	}
+
 	_gamePals = new GamePalettes(_resource, _decompressor);
 	_soundPlayer = new Sound(_mixer, _resource, _decompressor);
 	_scene = new SDSScene();
@@ -265,8 +281,6 @@ void DgdsEngine::init() {
 	_menu = new Menu();
 	_adsInterp = new ADSInterpreter(this);
 	_inventory = new Inventory();
-
-	setDebugger(_console);
 
 	_backgroundBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 	_storedAreaBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
@@ -282,34 +296,40 @@ void DgdsEngine::loadGameFiles() {
 
 	_fontManager->loadFonts(getGameId(), _resource, _decompressor);
 
-	if (getGameId() == GID_DRAGON) {
+	switch (getGameId()) {
+	case GID_DRAGON:
 		_soundPlayer->loadSFX("SOUNDS.SNG");
 		_gameGlobals = new DragonGlobals(_clock);
 		_gamePals->loadPalette("DRAGON.PAL");
 		_gdsScene->load("DRAGON.GDS", _resource, _decompressor);
+		_rstFileName = "DRAGON.RST";
 
 		debug("%s", _gdsScene->dump("").c_str());
 
 		loadCorners("DCORNERS.BMP");
 		reqParser.parse(&invRequestData, "DINV.REQ");
 		reqParser.parse(&vcrRequestData, "DVCR.REQ");
-	} else if (getGameId() == GID_CHINA) {
+		break;
+	case GID_CHINA:
 		// TODO: Create a better type for this..
 		_gameGlobals = new DragonGlobals(_clock);
 		_gamePals->loadPalette("HOC.PAL");
 		_gdsScene->load("HOC.GDS", _resource, _decompressor);
+		_rstFileName = "HOC.RST";
 
 		//debug("%s", _gdsScene->dump("").c_str());
 
 		loadCorners("HCORNERS.BMP");
 		reqParser.parse(&invRequestData, "HINV.REQ");
 		reqParser.parse(&vcrRequestData, "HVCR.REQ");
-	} else if (getGameId() == GID_BEAMISH) {
+		break;
+	case GID_BEAMISH:
 		// TODO: Create a better type for this..
 		_gameGlobals = new DragonGlobals(_clock);
 		_gamePals->loadPalette("WILLY.PAL");
 		// TODO: This doesn't parse correctly yet.
 		//_gdsScene->load("WILLY.GDS", _resource, _decompressor);
+		_rstFileName = "WILLY.RST";
 
 		loadCorners("WCORNERS.BMP");
 		reqParser.parse(&invRequestData, "WINV.REQ");
@@ -317,15 +337,20 @@ void DgdsEngine::loadGameFiles() {
 
 		//_scene->load("S34.SDS", _resource, _decompressor);
 		_adsInterp->load("TITLE.ADS");
-	} else if (getGameId() == GID_SQ5DEMO) {
+		break;
+	case GID_SQ5DEMO:
 		// TODO: Create a better type for this..
 		_gameGlobals = new DragonGlobals(_clock);
 		_gamePals->loadPalette("NORMAL.PAL");
 		_adsInterp->load("CESDEMO.ADS");
+		break;
+	default:
+		error("Unsupported game type in loadGameFiles");
 	}
 
 	_gdsScene->runStartGameOps();
 	loadIcons();
+	_gdsScene->initIconSizes();
 	setMouseCursor(0);
 
 	_inventory->setRequestData(invRequestData);
@@ -337,9 +362,16 @@ void DgdsEngine::loadGameFiles() {
 	debug("Parsed VCR Request:\n%s", vcrRequestData.dump().c_str());
 }
 
+void DgdsEngine::loadRestartFile() {
+	if (!_rstFileName)
+		error("Trying to restart game but no rst file name set!");
+
+	_gdsScene->loadRestart(_rstFileName, _resource, _decompressor);
+}
+
 Common::Error DgdsEngine::run() {
 	_isLoading = true;
-	init();
+	init(false);
 	loadGameFiles();
 
 	// changeScene(55); // to test DRAGON intro sequence (after credits)
@@ -526,6 +558,14 @@ Common::Error DgdsEngine::run() {
 		_justChangedScene2 = false;
 	}
 	return Common::kNoError;
+}
+
+void DgdsEngine::restartGame() {
+	_isLoading = true;
+	init(true);
+	loadGameFiles();
+	loadRestartFile();
+	_gameGlobals->setGlobal(0x57, 1);
 }
 
 Common::SeekableReadStream *DgdsEngine::getResource(const Common::String &name, bool ignorePatches) {

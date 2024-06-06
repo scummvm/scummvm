@@ -120,12 +120,15 @@ private:
 	MenuId _menuToTrigger;
 
 	bool _isLoading;
+	const char *_rstFileName;
 
 public:
 	DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	virtual ~DgdsEngine();
 
 	virtual Common::Error run() override;
+
+	void restartGame();
 
 	DgdsGameId getGameId() { return _gameId; }
 
@@ -189,8 +192,9 @@ private:
 	void loadIcons();
 	void checkDrawInventoryButton();
 
-	void init();
+	void init(bool restarting);
 	void loadGameFiles();
+	void loadRestartFile();
 };
 
 } // End of namespace Dgds

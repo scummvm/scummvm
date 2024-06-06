@@ -184,6 +184,7 @@ int16 Menu::getClickedMenuItem(Common::Point mouseClick) {
 
 void Menu::handleMenu(Common::Point &mouse) {
 	const int16 clickedMenuItem = getClickedMenuItem(mouse);
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 
 	// Click animation
 	// TODO: Handle on/off buttons
@@ -291,8 +292,7 @@ void Menu::handleMenu(Common::Point &mouse) {
 		g_engine->quitGame();
 		break;
 	case kMenuRestartYes:
-		// TODO
-		debug("Clicked Restart - Yes %d", clickedMenuItem);
+		engine->restartGame();
 		break;
 	case kMenuGameOverQuit:
 		drawMenu(kMenuQuit);

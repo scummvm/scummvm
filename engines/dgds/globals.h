@@ -49,15 +49,21 @@ public:
 	virtual int16 get() = 0;
 	virtual int16 set(int16 val) = 0;
 	virtual uint16 getNum() const { return _num; }
+	virtual void setRaw(int16 val) = 0; /// only for use in loading state.
 };
 
+/*
+ This is a bit of a misnomer - the global is readonly during play,
+ but it can be set by load/save or restart operations
+*/
 template<typename T> class ReadOnlyGlobal : public Global {
 public:
-	ReadOnlyGlobal(uint16 num, const T *val) : Global(num), _val(val) {}
+	ReadOnlyGlobal(uint16 num, T *val) : Global(num), _val(val) {}
 	int16 get() override { return *_val; }
 	int16 set(int16 val) override { return *_val; }
+	void setRaw(int16 val) override { *_val = val; }
 private:
-	const T *_val;
+	T *_val;
 };
 
 template<typename T> class ReadWriteGlobal : public Global {
@@ -65,6 +71,7 @@ public:
 	ReadWriteGlobal(uint16 num, T *val) : Global(num), _val(val) {}
 	int16 get() override { return *_val; }
 	int16 set(int16 val) override { *_val = val; return *_val; }
+	void setRaw(int16 val) override { *_val = val; }
 private:
 	T *_val;
 };
@@ -78,7 +85,9 @@ public:
 	int16 getGlobal(uint16 num);
 	int16 setGlobal(uint16 num, int16 val);
 
-	virtual Common::Error syncState(Common::Serializer &s) { return Common::kNoError; };
+	virtual Common::Error syncState(Common::Serializer &s) { return Common::kNoError; }
+	Common::Array<Global *> &getAllGlobals() { return _globals; }
+
 protected:
 	Common::Array<Global *> _globals;
 };

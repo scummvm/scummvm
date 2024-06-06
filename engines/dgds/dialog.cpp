@@ -58,8 +58,7 @@ Dialog *Dialog::_lastDialogSelectionChangedFor = nullptr;
 
 
 Dialog::Dialog() : _num(0), _bgColor(0), _fontColor(0), _selectionBgCol(0), _selectonFontCol(0),
-	_fontSize(0), _flags(kDlgFlagNone), _frameType(kDlgFramePlain), _time(0), _nextDialogNum(0),
-	_field18_0x28(0)
+	_fontSize(0), _flags(kDlgFlagNone), _frameType(kDlgFramePlain), _time(0), _nextDialogNum(0)
 {}
 
 
@@ -626,9 +625,9 @@ void Dialog::fixupStringAndActions() {
 
 Common::String Dialog::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format(
-			"%sDialog<num %d %s bgcol %d fcol %d selbgcol %d selfontcol %d fntsz %d flags 0x%02x frame %d delay %d next %d unk18 %d",
+			"%sDialog<num %d %s bgcol %d fcol %d selbgcol %d selfontcol %d fntsz %d flags 0x%02x frame %d delay %d next %d",
 			indent.c_str(), _num, _rect.dump("").c_str(), _bgColor, _fontColor, _selectionBgCol, _selectonFontCol, _fontSize,
-			_flags, _frameType, _time, _nextDialogNum, _field18_0x28);
+			_flags, _frameType, _time, _nextDialogNum);
 	str += indent + "state=" + (_state ? _state->dump("") : "null");
 	str += "\n";
 	str += _dumpStructList(indent, "actions", _action);
@@ -675,7 +674,7 @@ Common::Error DialogState::syncState(Common::Serializer &s) {
 
 
 Common::String DialogAction::dump(const Common::String &indent) const {
-	Common::String str = Common::String::format("%sDialogueAction<%d span: %d-%d", indent.c_str(), val, strStart, strEnd);
+	Common::String str = Common::String::format("%sDialogueAction<span: %d-%d", indent.c_str(), strStart, strEnd);
 	str += _dumpStructList(indent, "opList", sceneOpList);
 	if (!sceneOpList.empty()) {
 		str += "\n";
