@@ -81,7 +81,7 @@ public:
 	virtual void setBlendMode(BlendMode blendMode) = 0;
 	virtual void setLodBias(float lodBias) = 0;
 	virtual void quad(
-		Math::Vector2d center,
+		Math::Vector2d center, // TOOD: Use topLeft&size instead of center&size
 		Math::Vector2d size,
 		Color color = kWhite,
 		Math::Angle rotation = Math::Angle(),
@@ -373,6 +373,28 @@ private:
 	TextLine _allLines[kMaxLines];
 	int _allPosX[kMaxLines];
 };
+
+enum class FadeType {
+	ToBlack,
+	ToWhite
+	// TODO: Add CrossFade fade type
+};
+
+class FadeDrawRequest : public IDrawRequest {
+public:
+	FadeDrawRequest(FadeType type, float value, int8 order);
+
+	virtual void draw() override;
+
+private:
+	FadeType _type;
+	float _value;
+};
+
+Task *fade(Process &process, FadeType fadeType,
+	float from, float to,
+	int32 duration, EasingType easingType,
+	int8 order);
 
 class BumpAllocator {
 public:
