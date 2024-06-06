@@ -224,10 +224,10 @@ bool Scene::isVersionUnder(const char *version) const {
 bool Scene::readConditionList(Common::SeekableReadStream *s, Common::Array<SceneConditions> &list) const {
 	uint16 num = s->readUint16LE();
 	for (uint16 i = 0; i < num; i++) {
-		uint16 num = s->readUint16LE();
+		uint16 cnum = s->readUint16LE();
 		SceneCondition cond = static_cast<SceneCondition>(s->readUint16LE());
 		uint16 val = s->readUint16LE();
-		list.push_back(SceneConditions(num, cond, val));
+		list.push_back(SceneConditions(cnum, cond, val));
 	}
 	return !s->err();
 }
@@ -401,8 +401,10 @@ bool Scene::readTriggerList(Common::SeekableReadStream *s, Common::Array<SceneTr
 bool Scene::readDialogActionList(Common::SeekableReadStream *s, Common::Array<DialogAction> &list) const {
 	list.resize(s->readUint16LE());
 
-	if (!list.empty())
-		list[0].val = 1;
+	// The original initializes a field in the first entry to 1 here, but it seems
+	// only used for memory management so we don't need it?
+	// if (!list.empty())
+	//	list[0].val = 1;
 
 	for (DialogAction &dst : list) {
 		dst.strStart = s->readUint16LE();
@@ -580,9 +582,13 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 *
 		case kSceneOpHideMouse:
 			CursorMan.showMouse(false);
 			break;
+		case kSceneOpPasscode:
+			static_cast<DgdsEngine *>(g_engine)->getScene()->sceneOpUpdatePasscodeGlobal();
+			break;
 		case kSceneOpMeanwhile:
-			// TODO: Should we draw "meanwhile" like the original? it just gets overwritten with the image anyway..
-			static_cast<DgdsEngine *>(g_engine)->_compositionBuffer.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+			// TODO: Should we draw "meanwhile" like the original? it just gets overwritten with the image anyway.
+			// Probably need to do something here to avoid flashing..
+			//static_cast<DgdsEngine *>(g_engine)->_compositionBuffer.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 			break;
 		case kSceneOpShowInvButton:
 			static_cast<DgdsEngine *>(g_engine)->getScene()->addInvButtonToHotAreaList();
@@ -781,10 +787,12 @@ Common::String SDSScene::dump(const Common::String &indent) const {
 }
 
 
-void SDSScene::enableTrigger(uint16 num) {
+void SDSScene::enableTrigger(uint16 num, bool enable /* = true */) {
 	for (auto &trigger : _triggers) {
-		if (trigger.getNum() == num)
-			trigger._enabled = true;
+		if (trigger.getNum() == num) {
+			trigger._enabled = enable;
+			break;
+		}
 	}
 }
 
@@ -833,6 +841,71 @@ void SDSScene::addAndShowTiredDialog() {
 		_dialogs.push_back(dlg);
 	}
 	showDialog(TIRED_DLG_ID);
+}
+
+/*
+static const uint16 DRAGON_PASSCODE[] = {
+	1, 4, 3, 4, 0, 3, 4, 1, 3, 0, 1, 4, 3, 2, 0,
+	4, 4, 2, 3, 4, 0, 0, 4, 3, 2, 1, 1, 2, 4, 0,
+	4, 1, 3, 2, 0, 2, 1, 4, 3, 4, 1, 3, 2, 0, 1
+};
+
+static uint16 g_passcodeBtnVal = 0;
+static uint16 passcodeBlockNum = 0;
+static uint16 passcodeVal4 = 0;
+static uint16 passcodeVal1 = 0;
+static uint16 passcodeVal2 = 0;
+static uint16 passcodeVal3 = 0;
+*/
+
+void SDSScene::sceneOpUpdatePasscodeGlobal() {
+	warning("TODO: Finish implementing sceneOpUpdatePasscodeGlobal");
+/*
+	if (g_passcodeBtnVal > 33)
+		return;
+
+	if (g_passcodeBtnVal >= 30) {
+		if (DRAGON_PASSCODE[passcodeVal4 + passcodeBlockNum * 15] == g_passcodeBtnVal - 30) {
+			passcodeVal4++;
+			if (passcodeVal4 < passcodeVal3) {
+				g_passcodeBtnVal = 0;
+			} else if (passcodeVal3 < 15) {
+				g_passcodeBtnVal = 5;
+			} else {
+				g_passcodeBtnVal = 6;
+			}
+		} else {
+			g_passcodeBtnVal = 7;
+			passcodeVal2 = 0;
+			passcodeVal1 = 5;
+		}
+	} else {
+		if (g_passcodeBtnVal > 4)
+			return;
+
+		if (g_passcodeBtnVal < 4) {
+			passcodeBlockNum = g_passcodeBtnVal - 1;
+			passcodeVal2 = 0;
+			passcodeVal1 = 5;
+			passcodeVal4 = 0;
+			passcodeVal3 = 15;
+		} else if (passcodeVal1 > passcodeVal2) {
+			passcodeVal2++;
+			g_passcodeBtnVal = DRAGON_PASSCODE[passcodeVal2 + passcodeBlockNum * 15] + 20;
+        } else if (passcodeVal1 > 14) {
+			passcodeVal2 = 0;
+			passcodeVal4 = 0;
+			passcodeVal3 = passcodeVal1;
+			g_passcodeBtnVal = 8;
+        } else {
+			passcodeVal2 = 0;
+			passcodeVal3 = passcodeVal1;
+			passcodeVal1 += 5;
+			passcodeVal4 = 0;
+			g_passcodeBtnVal = 8;
+		}
+	}
+*/
 }
 
 void SDSScene::showDialog(uint16 num) {
@@ -900,7 +973,7 @@ bool SDSScene::checkDialogActive() {
 			if (action || dlg._action.empty()) {
 				dlg.setFlag(kDlgFlagHiFinished);
 				if (action) {
-					debug("Dialog closing: run action %d op list (%d ops)", action->val, action->sceneOpList.size());
+					debug("Dialog closing: run action (%d ops)", action->sceneOpList.size());
 					if (!runOps(action->sceneOpList)) {
 						_dlgWithFlagLo8IsClosing = false;
 						return true;
@@ -1296,9 +1369,114 @@ bool GDSScene::load(const Common::String &filename, ResourceManager *resourceMan
 		}
 	}
 
+	initIconSizes();
+
 	delete sceneFile;
 
 	return result;
+}
+
+bool GDSScene::loadRestart(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor) {
+	Common::SeekableReadStream *file = resourceManager->getResource(filename);
+	if (!file)
+		error("Restart data %s not found", filename.c_str());
+
+	uint32 magic = file->readUint32LE();
+	if (magic != _magic)
+		error("Restart file magic doesn't match (%04X vs %04X)", magic, _magic);
+
+	uint16 num = file->readUint16LE();
+	// Find matching game item and load its values
+	while (num) {
+		bool found = false;
+		for (GameItem &item : _gameItems) {
+			if (item._num == num) {
+				item._rect.x = file->readUint16LE();
+				item._rect.y = file->readUint16LE();
+				item._rect.width = file->readUint16LE();
+				item._rect.height = file->readUint16LE();
+				item._inSceneNum = file->readUint16LE();
+				item._flags = file->readUint16LE();
+				item._quality = file->readUint16LE();
+				found = true;
+				break;
+			}
+		}
+		if (!found)
+			error("Reset file references unknown item %d", num);
+		num = file->readUint16LE();
+	}
+	initIconSizes();
+
+	num = file->readUint16LE();
+	while (num) {
+		uint16 scene = file->readUint16LE();
+		int16 val = file->readSint16LE();
+		bool found = false;
+		for (PerSceneGlobal &glob : _perSceneGlobals) {
+			if (glob.matches(num, scene)) {
+				glob._val = val;
+				found = true;
+				break;
+			}
+		}
+		if (!found)
+			error("Reset file references unknown global %d", num);
+		num = file->readUint16LE();
+	}
+
+	/*uint32 unk = */ file->readUint32LE();
+
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	Common::Array<Global *> &globs = engine->getGameGlobals()->getAllGlobals();
+
+	if (globs.size() > 50)
+		error("Too many globals to load from RST file");
+
+	int g = 0;
+	for (Global *glob : globs) {
+		int16 val = file->readUint16LE();
+		glob->setRaw(val);
+		g++;
+	}
+
+	// Always 50 int16s worth of globals in the file, skip any unused.
+	if (g < 50)
+		file->skip(2 * (50 - g));
+
+	uint16 triggers[100];
+	for (int i = 0; i < ARRAYSIZE(triggers); i++) {
+		triggers[i] = file->readUint16LE();
+	}
+
+	engine->_compositionBuffer.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+	// TODO: FIXME: What should this scene num be? For now hacked to work with Dragon.
+	engine->changeScene(3);
+	SDSScene *scene = engine->getScene();
+	int t = 0;
+	num = triggers[t++];
+	while (num) {
+		uint16 val = triggers[t++];
+		scene->enableTrigger(num, (bool)val);
+		num = triggers[t++];
+	}
+
+	return true;
+}
+
+void GDSScene::initIconSizes() {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	const Common::SharedPtr<Image> icons = engine->getIcons();
+	uint16 nicons = icons ? icons->getFrames().size() : 0;
+	for (GameItem &item : _gameItems) {
+		if (item._iconNum < nicons) {
+			item._rect.width = icons->getFrames()[item._iconNum]->w;
+			item._rect.height = icons->getFrames()[item._iconNum]->w;
+		} else {
+			item._rect.width = 32;
+			item._rect.height = 32;
+		}
+	}
 }
 
 bool GDSScene::readPerSceneGlobals(Common::SeekableReadStream *s) {

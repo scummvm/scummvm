@@ -65,6 +65,7 @@ public:
 	DetailLevelROGlobal(uint16 num) : Global(num) {}
 	int16 get() override { return static_cast<DgdsEngine *>(g_engine)->getDetailLevel(); }
 	int16 set(int16 val) override { return static_cast<DgdsEngine *>(g_engine)->getDetailLevel(); }
+	void setRaw(int16 val) override { }
 };
 
 ////////////////////////////////
@@ -108,6 +109,7 @@ public:
 	DragonDataTableGlobal(uint16 num, DragonDataTable &table) : Global(num), _table(table) {}
 	int16 get() override { return _table.getValueFromTable(); }
 	int16 set(int16 val) override { return _table.getValueFromTable(); }
+	void setRaw(int16 val) override { }
 private:
 	DragonDataTable &_table;
 };
@@ -128,6 +130,8 @@ public:
 		_isSetOff = (val == 0);
 		return get();
 	}
+
+	void setRaw(int16 val) override { }
 
 private:
 	int16 *_ptr;
