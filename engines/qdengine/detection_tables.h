@@ -19,6 +19,7 @@
  *
  */
 
+
 namespace QDEngine {
 
 const PlainGameDescriptor GAME_NAMES[] = {
