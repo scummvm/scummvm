@@ -404,6 +404,7 @@ private:
 
 	TaskReturn kernelCall(ScriptKernelTask task) {
 		switch (task) {
+		// sound/video
 		case ScriptKernelTask::PlayVideo:
 			warning("STUB KERNEL CALL: PlayVideo");
 			return TaskReturn::finish(0);
@@ -419,9 +420,65 @@ private:
 		case ScriptKernelTask::WaitForMusicToEnd:
 			warning("STUB KERNEL CALL: WaitForMusicToEnd");
 			return TaskReturn::finish(0);
+
+		// Misc / control flow
 		case ScriptKernelTask::ShowCenterBottomText:
 			warning("STUB KERNEL CALL: ShowCenterBottomText");
 			return TaskReturn::finish(0);
+		case ScriptKernelTask::Delay:
+			return getNumberArg(0) <= 0
+				? TaskReturn::finish(0)
+				: TaskReturn::waitFor(delay((uint32)getNumberArg(0)));
+		case ScriptKernelTask::HadNoMousePressFor:
+			return TaskReturn::waitFor(new ScriptTimerTask(process(), getNumberArg(0)));
+		case ScriptKernelTask::Fork:
+			g_engine->scheduler().createProcess<ScriptTask>(process().character(), *this);
+			return TaskReturn::finish(0); // 0 means this is the forking process
+		case ScriptKernelTask::KillProcesses:
+			warning("STUB KERNEL CALL: KillProcesses");
+			return TaskReturn::finish(0);
+
+		// player/world state changes
+		case ScriptKernelTask::ChangeCharacter:
+			warning("STUB KERNEL CALL: ChangeCharacter");
+			return TaskReturn::finish(0);
+		case ScriptKernelTask::ChangeRoom:
+			warning("STUB KERNEL CALL: ChangeRoom");
+			return TaskReturn::finish(0);
+		case ScriptKernelTask::ToggleRoomFloor:
+			if (process().character() == MainCharacterKind::None) {
+				if (g_engine->player().currentRoom() != nullptr)
+					g_engine->player().currentRoom()->toggleActiveFloor();
+			}
+			else
+				g_engine->world().getMainCharacterByKind(process().character()).room()->toggleActiveFloor();
+			return TaskReturn::finish(1);
+		case ScriptKernelTask::LerpWorldLodBias:
+			warning("STUB KERNEL CALL: LerpWorldLodBias");
+			return TaskReturn::finish(0);
+		
+		// object control / animation
+		case ScriptKernelTask::On:
+			g_engine->world().toggleObject(process().character(), getStringArg(0), true);
+			return TaskReturn::finish(0);
+		case ScriptKernelTask::Off:
+			g_engine->world().toggleObject(process().character(), getStringArg(0), false);
+			return TaskReturn::finish(0);
+		case ScriptKernelTask::Animate: {
+			auto object = g_engine->world().getObjectByName(process().character(), getStringArg(0));
+			auto graphicObject = dynamic_cast<GraphicObject *>(object);
+			if (graphicObject == nullptr)
+				error("Script tried to animate invalid graphic object %s", getStringArg(0));
+			if (getNumberOrStringArg(1)) {
+				graphicObject->toggle(true);
+				graphicObject->graphic()->start(false);
+				return TaskReturn::finish(1);
+			}
+			else
+				return TaskReturn::waitFor(graphicObject->animate(process()));
+		}
+
+		// character control / animation
 		case ScriptKernelTask::StopAndTurn: {
 			auto object = g_engine->world().getObjectByName(process().character(), getStringArg(0));
 			auto character = dynamic_cast<WalkingCharacter *>(object);
@@ -435,23 +492,6 @@ private:
 			relatedCharacter().stopWalking((Direction)getNumberArg(0));
 			return TaskReturn::finish(1);
 		}
-		case ScriptKernelTask::ChangeCharacter:
-			warning("STUB KERNEL CALL: ChangeCharacter");
-			return TaskReturn::finish(0);
-		case ScriptKernelTask::SayText: {
-			const char *characterName = getStringArg(0);
-			int32 dialogId = getNumberArg(1);
-			if (strncmp(characterName, "MENU_", 5) == 0) {
-				g_engine->world().getMainCharacterByKind(process().character()).addDialogLine(dialogId);
-				return TaskReturn::finish(1);
-			}
-			Character *_character = strcmp(characterName, "AMBOS") == 0
-				? &g_engine->world().getMainCharacterByKind(process().character())
-				: dynamic_cast<Character *>(g_engine->world().getObjectByName(characterName));
-			if (_character == nullptr)
-				error("Invalid character for sayText: %s", characterName);
-			return TaskReturn::waitFor(_character->sayText(process(), dialogId));
-		};
 		case ScriptKernelTask::Go: {
 			auto characterObject = g_engine->world().getObjectByName(process().character(), getStringArg(0));
 			auto character = dynamic_cast<WalkingCharacter *>(characterObject);
@@ -485,18 +525,36 @@ private:
 		case ScriptKernelTask::ChangeCharacterRoom:
 			warning("STUB KERNEL CALL: ChangeCharacterRoom");
 			return TaskReturn::finish(0);
-		case ScriptKernelTask::KillProcesses:
-			warning("STUB KERNEL CALL: KillProcesses");
-			return TaskReturn::finish(0);
 		case ScriptKernelTask::LerpCharacterLodBias:
 			warning("STUB KERNEL CALL: LerpCharacterLodBias");
 			return TaskReturn::finish(0);
-		case ScriptKernelTask::On:
-			g_engine->world().toggleObject(process().character(), getStringArg(0), true);
+		case ScriptKernelTask::AnimateCharacter:
+			warning("STUB KERNEL CALL: AnimateCharacter");
 			return TaskReturn::finish(0);
-		case ScriptKernelTask::Off:
-			g_engine->world().toggleObject(process().character(), getStringArg(0), false);
+		case ScriptKernelTask::AnimateTalking:
+			warning("STUB KERNEL CALL: AnimateTalking");
 			return TaskReturn::finish(0);
+		case ScriptKernelTask::SayText: {
+			const char *characterName = getStringArg(0);
+			int32 dialogId = getNumberArg(1);
+			if (strncmp(characterName, "MENU_", 5) == 0) {
+				g_engine->world().getMainCharacterByKind(process().character()).addDialogLine(dialogId);
+				return TaskReturn::finish(1);
+			}
+			Character *_character = strcmp(characterName, "AMBOS") == 0
+				? &g_engine->world().getMainCharacterByKind(process().character())
+				: dynamic_cast<Character *>(g_engine->world().getObjectByName(characterName));
+			if (_character == nullptr)
+				error("Invalid character for sayText: %s", characterName);
+			return TaskReturn::waitFor(_character->sayText(process(), dialogId));
+		};
+		case ScriptKernelTask::SetDialogLineReturn:
+			g_engine->world().getMainCharacterByKind(process().character()).setLastDialogReturnValue(getNumberArg(0));
+			return TaskReturn::finish(0);
+		case ScriptKernelTask::DialogMenu:
+			return TaskReturn::waitFor(g_engine->world().getMainCharacterByKind(process().character()).dialogMenu(process()));
+
+		// Inventory control
 		case ScriptKernelTask::Pickup:
 			relatedCharacter().pickup(getStringArg(0), getNumberArg(1));
 			return TaskReturn::finish(1);
@@ -513,50 +571,6 @@ private:
 			character.drop(getStringArg(0));
 			return TaskReturn::finish(1);
 		}
-		case ScriptKernelTask::Delay:
-			return getNumberArg(0) <= 0
-				? TaskReturn::finish(0)
-				: TaskReturn::waitFor(delay((uint32)getNumberArg(0)));
-		case ScriptKernelTask::HadNoMousePressFor:
-			return TaskReturn::waitFor(new ScriptTimerTask(process(), getNumberArg(0)));
-		case ScriptKernelTask::Fork:
-			g_engine->scheduler().createProcess<ScriptTask>(process().character(), *this);
-			return TaskReturn::finish(0); // 0 means this is the forking process
-		case ScriptKernelTask::Animate: {
-			auto object = g_engine->world().getObjectByName(process().character(), getStringArg(0));
-			auto graphicObject = dynamic_cast<GraphicObject *>(object);
-			if (graphicObject == nullptr)
-				error("Script tried to animate invalid graphic object %s", getStringArg(0));
-			if (getNumberOrStringArg(1)) {
-				graphicObject->toggle(true);
-				graphicObject->graphic()->start(false);
-				return TaskReturn::finish(1);
-			}
-			else
-				return TaskReturn::waitFor(graphicObject->animate(process()));
-		}
-		case ScriptKernelTask::AnimateCharacter:
-			warning("STUB KERNEL CALL: AnimateCharacter");
-			return TaskReturn::finish(0);
-		case ScriptKernelTask::AnimateTalking:
-			warning("STUB KERNEL CALL: AnimateTalking");
-			return TaskReturn::finish(0);
-		case ScriptKernelTask::ChangeRoom:
-			warning("STUB KERNEL CALL: ChangeRoom");
-			return TaskReturn::finish(0);
-		case ScriptKernelTask::ToggleRoomFloor:
-			if (process().character() == MainCharacterKind::None) {
-				if (g_engine->player().currentRoom() != nullptr)
-					g_engine->player().currentRoom()->toggleActiveFloor();
-			}
-			else
-				g_engine->world().getMainCharacterByKind(process().character()).room()->toggleActiveFloor();
-			return TaskReturn::finish(1);
-		case ScriptKernelTask::SetDialogLineReturn:
-			g_engine->world().getMainCharacterByKind(process().character()).setLastDialogReturnValue(getNumberArg(0));
-			return TaskReturn::finish(0);
-		case ScriptKernelTask::DialogMenu:
-			return TaskReturn::waitFor(g_engine->world().getMainCharacterByKind(process().character()).dialogMenu(process()));
 		case ScriptKernelTask::ClearInventory:
 			switch((MainCharacterKind)getNumberArg(0)) {
 			case MainCharacterKind::Mortadelo: g_engine->world().mortadelo().clearInventory(); break;
@@ -564,9 +578,6 @@ private:
 			default: error("Script attempted to clear inventory with invalid character kind"); break;
 			}
 			return TaskReturn::finish(1);
-		case ScriptKernelTask::LerpWorldLodBias:
-			warning("STUB KERNEL CALL: LerpWorldLodBias");
-			return TaskReturn::finish(0);
 
 		// Camera tasks
 		case ScriptKernelTask::SetMaxCamSpeedFactor:
@@ -657,6 +668,7 @@ private:
 			warning("STUB KERNEL CALL: FadeOut2");
 			return TaskReturn::finish(0);
 
+		// Unused and useless
 		case ScriptKernelTask::SetActiveTextureSet:
 			// Fortunately this seems to be unused.
 			warning("STUB KERNEL CALL: SetActiveTextureSet");
