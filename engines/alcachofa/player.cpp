@@ -188,7 +188,7 @@ struct DoorTask : public Task {
 		TASK_BEGIN;
 		// TODO: Fade out music on room change
 		// TODO: Fade out/in on room change instead of delay
-		TASK_WAIT(delay(500));
+		TASK_WAIT(fade(process(), FadeType::ToBlack, 0, 1, 500, EasingType::Out, -5));
 		_player.changeRoom(_targetRoom->name(), true);
 
 		if (_targetRoom->fixedCameraOnEntering())
@@ -202,9 +202,9 @@ struct DoorTask : public Task {
 
 		// TODO: Start music on room change
 		if (g_engine->script().createProcess(_character->kind(), "ENTRAR_" + _targetRoom->name(), ScriptFlags::AllowMissing))
-			TASK_WAIT(delay(0));
+			TASK_YIELD;
 		else
-			TASK_WAIT(delay(500));
+			TASK_WAIT(fade(process(), FadeType::ToBlack, 1, 0, 500, EasingType::Out, -5));
 		TASK_END;
 	}
 

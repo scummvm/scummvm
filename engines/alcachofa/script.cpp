@@ -647,31 +647,33 @@ private:
 
 		// Fades
 		case ScriptKernelTask::FadeType0:
-			warning("STUB KERNEL CALL: FadeType0");
-			return TaskReturn::finish(0);
+			return TaskReturn::waitFor(fade(process(), FadeType::ToBlack,
+				getNumberArg(0) * 0.01f, getNumberArg(1) * 0.01f,
+				getNumberArg(2), (EasingType)getNumberArg(4), getNumberArg(3)));
 		case ScriptKernelTask::FadeType1:
-			warning("STUB KERNEL CALL: FadeType1");
-			return TaskReturn::finish(0);
-		case ScriptKernelTask::FadeType2:
-			warning("STUB KERNEL CALL: FadeType2");
-			return TaskReturn::finish(0);
+			return TaskReturn::waitFor(fade(process(), FadeType::ToWhite,
+				getNumberArg(0) * 0.01f, getNumberArg(1) * 0.01f,
+				getNumberArg(2), (EasingType)getNumberArg(4), getNumberArg(3)));
 		case ScriptKernelTask::FadeIn:
-			warning("STUB KERNEL CALL: FadeIn");
-			return TaskReturn::finish(0);
+			return TaskReturn::waitFor(fade(process(), FadeType::ToBlack,
+				1.0f, 0.0f, getNumberArg(0), EasingType::Out, -5));
 		case ScriptKernelTask::FadeOut:
-			warning("STUB KERNEL CALL: FadeOut");
-			return TaskReturn::finish(0);
+			return TaskReturn::waitFor(fade(process(), FadeType::ToBlack,
+				0.0f, 1.0f, getNumberArg(0), EasingType::Out, -5));
 		case ScriptKernelTask::FadeIn2:
-			warning("STUB KERNEL CALL: FadeIn2");
-			return TaskReturn::finish(0);
+			return TaskReturn::waitFor(fade(process(), FadeType::ToBlack,
+				0.0f, 1.0f, getNumberArg(0), (EasingType)getNumberArg(1), -5));
 		case ScriptKernelTask::FadeOut2:
-			warning("STUB KERNEL CALL: FadeOut2");
-			return TaskReturn::finish(0);
+			return TaskReturn::waitFor(fade(process(), FadeType::ToBlack,
+				1.0f, 0.0f, getNumberArg(0), (EasingType)getNumberArg(1), -5));
 
 		// Unused and useless
 		case ScriptKernelTask::SetActiveTextureSet:
 			// Fortunately this seems to be unused.
 			warning("STUB KERNEL CALL: SetActiveTextureSet");
+			return TaskReturn::finish(0);
+		case ScriptKernelTask::FadeType2:
+			warning("STUB KERNEL CALL: FadeType2"); // Crossfade, unused from script
 			return TaskReturn::finish(0);
 		case ScriptKernelTask::Nop10:
 		case ScriptKernelTask::Nop24:
