@@ -73,8 +73,6 @@ ManagedSurface::ManagedSurface(Surface *surf, DisposeAfterUse::Flag disposeAfter
 		return;
 	}
 
-	_disposeAfterUse = disposeAfterUse;
-
 	if (disposeAfterUse == DisposeAfterUse::YES) {
 		_innerSurface.w = surf->w;
 		_innerSurface.h = surf->h;
@@ -86,6 +84,8 @@ ManagedSurface::ManagedSurface(Surface *surf, DisposeAfterUse::Flag disposeAfter
 	} else {
 		copyFrom(*surf);
 	}
+
+	_disposeAfterUse = disposeAfterUse;
 }
 
 ManagedSurface::ManagedSurface(const Surface *surf) :
