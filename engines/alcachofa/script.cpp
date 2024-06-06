@@ -600,15 +600,39 @@ private:
 			return TaskReturn::waitFor(g_engine->camera().lerpRotation(process(),
 				getNumberArg(0),
 				getNumberArg(1), (EasingType)getNumberArg(2)));
-		case ScriptKernelTask::LerpCamToObjectKeepingZ:
-			warning("STUB KERNEL CALL: LerpCamToObjectKeepingZ");
-			return TaskReturn::finish(0);
-		case ScriptKernelTask::LerpCamToObjectResettingZ:
-			warning("STUB KERNEL CALL: LerpCamToObjectResettingZ");
-			return TaskReturn::finish(0);
-		case ScriptKernelTask::LerpCamToObjectWithScale:
-			warning("STUB KERNEL CALL: LerpCamToObjectWithScale");
-			return TaskReturn::finish(0);
+		case ScriptKernelTask::LerpCamToObjectKeepingZ: {
+			if (!process().isActiveForPlayer())
+				return TaskReturn::finish(0); // contrary to ...ResettingZ this one does not delay if not active
+			auto object = g_engine->world().getObjectByName(process().character(), getStringArg(0));
+			auto pointObject = dynamic_cast<PointObject *>(object);
+			if (pointObject == nullptr)
+				error("Invalid target object for LerpCamToObjectKeepingZ: %s", getStringArg(0));
+			return TaskReturn::waitFor(g_engine->camera().lerpPos(process(),
+				as2D(pointObject->position()),
+				getNumberArg(1), EasingType::Linear));
+		}
+		case ScriptKernelTask::LerpCamToObjectResettingZ: {
+			if (!process().isActiveForPlayer())
+				return TaskReturn::waitFor(delay(getNumberArg(1)));
+			auto object = g_engine->world().getObjectByName(process().character(), getStringArg(0));
+			auto pointObject = dynamic_cast<PointObject *>(object);
+			if (pointObject == nullptr)
+				error("Invalid target object for LerpCamToObjectResettingZ: %s", getStringArg(0));
+			return TaskReturn::waitFor(g_engine->camera().lerpPos(process(),
+				as3D(pointObject->position()),
+				getNumberArg(1), (EasingType)getNumberArg(2)));
+		}
+		case ScriptKernelTask::LerpCamToObjectWithScale: {
+			if (!process().isActiveForPlayer())
+				return TaskReturn::waitFor(delay(getNumberArg(2)));
+			auto object = g_engine->world().getObjectByName(process().character(), getStringArg(0));
+			auto pointObject = dynamic_cast<PointObject *>(object);
+			if (pointObject == nullptr)
+				error("Invalid target object for LerpCamToObjectWithScale: %s", getStringArg(0));
+			return TaskReturn::waitFor(g_engine->camera().lerpPosScale(process(),
+				as3D(pointObject->position()), getNumberArg(1) * 0.01f,
+				getNumberArg(2), (EasingType)getNumberArg(3), (EasingType)getNumberArg(4)));
+		}
 
 		// Fades
 		case ScriptKernelTask::FadeType0:

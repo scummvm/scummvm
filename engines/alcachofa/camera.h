@@ -49,12 +49,24 @@ public:
 	void setPosition(Math::Vector2d v);
 	void setPosition(Math::Vector3d v);
 
-	Task *lerpPos(Process &process, Math::Vector2d targetPos, int32 duration, EasingType easingType);
-	Task *lerpPos(Process &process, Math::Vector3d targetPos, int32 duration, EasingType easingType);
-	Task *lerpPosZ(Process &process, float targetPosZ, int32 duration, EasingType easingType);
-	Task *lerpScale(Process &process, float targetScale, int32 duration, EasingType easingType);
-	Task *lerpRotation(Process &process, float targetRotation, int32 duration, EasingType easingType);
-	Task *lerpPosScale(Process &process, Math::Vector2d targetPos, float targetScale, int32 duration, EasingType easingType);
+	Task *lerpPos(Process &process,
+		Math::Vector2d targetPos,
+		int32 duration, EasingType easingType);
+	Task *lerpPos(Process &process, 
+		Math::Vector3d targetPos,
+		int32 duration, EasingType easingType);
+	Task *lerpPosZ(Process &process,
+		float targetPosZ,
+		int32 duration, EasingType easingType);
+	Task *lerpScale(Process &process,
+		float targetScale,
+		int32 duration, EasingType easingType);
+	Task *lerpRotation(Process &process,
+		float targetRotation,
+		int32 duration, EasingType easingType);
+	Task *lerpPosScale(Process &process,
+		Math::Vector3d targetPos, float targetScale,
+		int32 duration, EasingType moveEasingType, EasingType scaleEasingType);
 	//Task *shake(Process &process, Math::Vector2d amplitude, Math::Vector2d frequency, int32 duration);
 	Task *waitToStop(Process &process);
 

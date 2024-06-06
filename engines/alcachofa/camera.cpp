@@ -278,21 +278,26 @@ protected:
 };
 
 struct CamLerpPosScaleTask final : public CamLerpTask {
-	CamLerpPosScaleTask(Process &process, Vector3d targetPos, float targetScale, int32 duration, EasingType easingType)
-		: CamLerpTask(process, duration, easingType)
+	CamLerpPosScaleTask(Process &process,
+		Vector3d targetPos, float targetScale,
+		int32 duration, EasingType moveEasingType, EasingType scaleEasingType)
+		: CamLerpTask(process, duration, EasingType::Linear) // linear as we need different ones per component
 		, _fromPos(_camera._appliedCenter)
 		, _deltaPos(targetPos - _camera._appliedCenter)
 		, _fromScale(_camera._scale)
-		, _deltaScale(targetScale - _camera._scale) {}
+		, _deltaScale(targetScale - _camera._scale)
+		, _moveEasingType(moveEasingType)
+		, _scaleEasingType(scaleEasingType) {}
 
 protected:
 	virtual void update(float t) override {
-		_camera.setPosition(_fromPos + _deltaPos * t);
-		_camera._scale = _fromScale + _deltaScale * t;
+		_camera.setPosition(_fromPos + _deltaPos * ease(t, _moveEasingType));
+		_camera._scale = _fromScale + _deltaScale * ease(t, _scaleEasingType);
 	}
 
 	Vector3d _fromPos, _deltaPos;
 	float _fromScale, _deltaScale;
+	EasingType _moveEasingType, _scaleEasingType;
 };
 
 struct CamLerpRotationTask final : public CamLerpTask {
@@ -328,7 +333,9 @@ private:
 	Camera &_camera;
 };
 
-Task *Camera::lerpPos(Process &process, Vector2d targetPos, int32 duration, EasingType easingType) {
+Task *Camera::lerpPos(Process &process,
+	Vector2d targetPos,
+	int32 duration, EasingType easingType) {
 	if (!process.isActiveForPlayer()) {
 		warning("stub: non-active camera lerp script invoked");
 		return new DelayTask(process, duration);
@@ -337,7 +344,9 @@ Task *Camera::lerpPos(Process &process, Vector2d targetPos, int32 duration, Easi
 	return new CamLerpPosTask(process, targetPos3d, duration, easingType);
 }
 
-Task *Camera::lerpPos(Process &process, Vector3d targetPos, int32 duration, EasingType easingType) {
+Task *Camera::lerpPos(Process &process,
+	Vector3d targetPos,
+	int32 duration, EasingType easingType) {
 	if (!process.isActiveForPlayer()) {
 		warning("stub: non-active camera lerp script invoked");
 		return new DelayTask(process, duration);
@@ -346,7 +355,9 @@ Task *Camera::lerpPos(Process &process, Vector3d targetPos, int32 duration, Easi
 	return new CamLerpPosTask(process, targetPos, duration, easingType);
 }
 
-Task *Camera::lerpPosZ(Process &process, float targetPosZ, int32 duration, EasingType easingType) {
+Task *Camera::lerpPosZ(Process &process,
+	float targetPosZ,
+	int32 duration, EasingType easingType) {
 	if (!process.isActiveForPlayer()) {
 		warning("stub: non-active camera lerp script invoked");
 		return new DelayTask(process, duration);
@@ -355,7 +366,9 @@ Task *Camera::lerpPosZ(Process &process, float targetPosZ, int32 duration, Easin
 	return new CamLerpPosTask(process, targetPos, duration, easingType);
 }
 
-Task *Camera::lerpScale(Process &process, float targetScale, int32 duration, EasingType easingType) {
+Task *Camera::lerpScale(Process &process,
+	float targetScale,
+	int32 duration, EasingType easingType) {
 	if (!process.isActiveForPlayer()) {
 		warning("stub: non-active camera lerp script invoked");
 		return new DelayTask(process, duration);
@@ -363,7 +376,9 @@ Task *Camera::lerpScale(Process &process, float targetScale, int32 duration, Eas
 	return new CamLerpScaleTask(process, targetScale, duration, easingType);
 }
 
-Task *Camera::lerpRotation(Process &process, float targetRotation, int32 duration, EasingType easingType) {
+Task *Camera::lerpRotation(Process &process,
+	float targetRotation,
+	int32 duration, EasingType easingType) {
 	if (!process.isActiveForPlayer()) {
 		warning("stub: non-active camera lerp script invoked");
 		return new DelayTask(process, duration);
@@ -371,13 +386,14 @@ Task *Camera::lerpRotation(Process &process, float targetRotation, int32 duratio
 	return new CamLerpRotationTask(process, targetRotation, duration, easingType);
 }
 
-Task *Camera::lerpPosScale(Process &process, Vector2d targetPos, float targetScale, int32 duration, EasingType easingType) {
+Task *Camera::lerpPosScale(Process &process,
+	Vector3d targetPos, float targetScale,
+	int32 duration, EasingType moveEasingType, EasingType scaleEasingType) {
 	if (!process.isActiveForPlayer()) {
 		warning("stub: non-active camera lerp script invoked");
 		return new DelayTask(process, duration);
 	}
-	Vector3d targetPos3d(targetPos.getX(), targetPos.getY(), _appliedCenter.z());
-	return new CamLerpPosScaleTask(process, targetPos3d, targetScale, duration, easingType);
+	return new CamLerpPosScaleTask(process, targetPos, targetScale, duration, moveEasingType, scaleEasingType);
 }
 
 Task *Camera::waitToStop(Process &process) {
