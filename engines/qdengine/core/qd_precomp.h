@@ -129,6 +129,7 @@ class XZipStream : public XStream {};
 #define LPCWSTR       const wchar_t *
 #define LPBOOL        bool *
 #define LRESULT       long
+#define LPVOID        void *
 #define MMCKINFO      int
 #define UINT          unsigned int
 #define WPARAM        int
@@ -137,11 +138,11 @@ class XZipStream : public XStream {};
 #define COLORREF      unsigned
 #define BYTE          unsigned char
 #define REFCLSID	  const void *
-#define REFIID 		  const void *
-#define XML_Char 	  char
+#define REFIID        const void *
+#define XML_Char      char
 
 #define LPDIRECTSOUND       int
-#define LPDIRECTSOUNDBUFFER int
+#define LPDIRECTSOUNDBUFFER void *
 
 #define DRIVE_CDROM   5
 #define MAX_PATH      260
@@ -382,6 +383,17 @@ struct RECT {
 struct HRGN {
 	int i;
 };
+
+//Balmer
+typedef struct {
+    WORD  wFormatTag;         // Format type
+    WORD  nChannels;          // Number of channels (mono, stereo, etc.)
+    DWORD nSamplesPerSec;     // Sample rate
+    DWORD nAvgBytesPerSec;    // For buffer estimation
+    WORD  nBlockAlign;        // Block size of data
+    WORD  wBitsPerSample;     // Bits per sample
+    WORD  cbSize;             // Size of extra format information
+} WAVEFORMATEX;
 
 typedef struct _DDSCAPS {
     DWORD dwCaps;         // capabilities of surface wanted

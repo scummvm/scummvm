@@ -30,7 +30,7 @@ namespace QDEngine {
 
 class Archive;
 
-/// Строка с редактируемыми значениями из списка
+/// РЎС‚СЂРѕРєР° СЃ СЂРµРґР°РєС‚РёСЂСѓРµРјС‹РјРё Р·РЅР°С‡РµРЅРёСЏРјРё РёР· СЃРїРёСЃРєР°
 class ComboListString {
 public:
 	ComboListString() {}
@@ -67,7 +67,7 @@ protected:
 	std::string comboList_;
 };
 
-/// Вектор энумерованных бит
+/// Р’РµРєС‚РѕСЂ СЌРЅСѓРјРµСЂРѕРІР°РЅРЅС‹С… Р±РёС‚
 template<class Enum>
 class BitVector {
 	typedef int Value;
@@ -95,7 +95,7 @@ private:
 	Value value_;
 };
 
-/// Обертка для сериализации полиморфных указателей по значению enum'а
+/// РћР±РµСЂС‚РєР° РґР»СЏ СЃРµСЂРёР°Р»РёР·Р°С†РёРё РїРѕР»РёРјРѕСЂС„РЅС‹С… СѓРєР°Р·Р°С‚РµР»РµР№ РїРѕ Р·РЅР°С‡РµРЅРёСЋ enum'Р°
 template<class Enum, class Type, Enum zeroValue, class TypeFactory = Factory<Enum, Type> >
 class EnumToClassSerializer {
 public:

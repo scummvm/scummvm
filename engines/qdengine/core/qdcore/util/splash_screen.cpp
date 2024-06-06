@@ -164,7 +164,7 @@ void SplashScreen::apply_mask(void *mask_handle) {
 		}
 	}
 
-	SetWindowRgn((HWND)splash_hwnd_, rgn, TRUE);
+	SetWindowRgn((HWND)splash_hwnd_, rgn, true);
 }
 
 } // namespace QDEngine

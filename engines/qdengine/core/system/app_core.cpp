@@ -19,7 +19,6 @@
  *
  */
 
-unsigned int _MAX_PATH = 260;
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/str.h"
 #include "common/textconsole.h"
