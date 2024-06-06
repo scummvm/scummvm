@@ -25,8 +25,6 @@
 #include <vector>
 #include <list>
 #include <typeinfo>
-using namespace std;
-
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/xlibs/xutil/xutil.h"
 #include "qdengine/xlibs/util/serialization/EnumDescriptor.h"
@@ -34,6 +32,8 @@ using namespace std;
 #include "qdengine/xlibs/util/serialization/SerializationTypes.h"
 
 namespace QDEngine {
+
+using namespace std;
 
 class MemoryBlock;
 
@@ -107,33 +107,33 @@ public:
 template<class Pair>
 struct PairSerializationTraits {
 	static const char *firstName() {
-		return "&Имя";
+		return "&РРјСЏ";
 	}
 	static const char *secondName() {
-		return "&Значение";
+		return "&Р—РЅР°С‡РµРЅРёРµ";
 	}
 };
 
 ////////////////////////////////////////////////////////////////////
 //
-// Базовый архив.
+// Р‘Р°Р·РѕРІС‹Р№ Р°СЂС…РёРІ.
 //
-// 1. Основная функция serialize принимает константную
-// ссылку на объект (которую меняет), чтобы нормально
-// работала перегрузка во всех случаях.
-// 2. nameAlt == 0 - не редактировать данное поле.
-// nameAlt начинается с '&' - добавлять значение этого поля к
-// родительскому.
-// 3. Запрет на открытие нового блока при сериализации пользовательских
-// типов производится определением функции serialize(Archive&, const char*, const char*),
-// вместо стандартной serialize(Archive&). По умолчанию UDT всегда сериализуются
-// с открытием блока.
-// 4. Для сериализации полиморфных указателей использовать serializePolymorphic,
-// ShareHandle или PolymorphicWrapper. Они записывают и воссоздают тип (требуется
-// регистрация классов (REGISTER_CLASS, когда линковщик отсекает - DECLARE_SEGMENT + FORCE_SEGMENT ).
-// 5. Для сериализации неполиморфных указателей (крайне редкая задача), использовать
-// serializePointer или PointerWrapper.
-// 6. Для массивов - serializeArray, wrapper'а пока нет, но при необходимости  возможен.
+// 1. РћСЃРЅРѕРІРЅР°СЏ С„СѓРЅРєС†РёСЏ serialize РїСЂРёРЅРёРјР°РµС‚ РєРѕРЅСЃС‚Р°РЅС‚РЅСѓСЋ
+// СЃСЃС‹Р»РєСѓ РЅР° РѕР±СЉРµРєС‚ (РєРѕС‚РѕСЂСѓСЋ РјРµРЅСЏРµС‚), С‡С‚РѕР±С‹ РЅРѕСЂРјР°Р»СЊРЅРѕ
+// СЂР°Р±РѕС‚Р°Р»Р° РїРµСЂРµРіСЂСѓР·РєР° РІРѕ РІСЃРµС… СЃР»СѓС‡Р°СЏС….
+// 2. nameAlt == 0 - РЅРµ СЂРµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РґР°РЅРЅРѕРµ РїРѕР»Рµ.
+// nameAlt РЅР°С‡РёРЅР°РµС‚СЃСЏ СЃ '&' - РґРѕР±Р°РІР»СЏС‚СЊ Р·РЅР°С‡РµРЅРёРµ СЌС‚РѕРіРѕ РїРѕР»СЏ Рє
+// СЂРѕРґРёС‚РµР»СЊСЃРєРѕРјСѓ.
+// 3. Р—Р°РїСЂРµС‚ РЅР° РѕС‚РєСЂС‹С‚РёРµ РЅРѕРІРѕРіРѕ Р±Р»РѕРєР° РїСЂРё СЃРµСЂРёР°Р»РёР·Р°С†РёРё РїРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРёС…
+// С‚РёРїРѕРІ РїСЂРѕРёР·РІРѕРґРёС‚СЃСЏ РѕРїСЂРµРґРµР»РµРЅРёРµРј С„СѓРЅРєС†РёРё serialize(Archive&, const char*, const char*),
+// РІРјРµСЃС‚Рѕ СЃС‚Р°РЅРґР°СЂС‚РЅРѕР№ serialize(Archive&). РџРѕ СѓРјРѕР»С‡Р°РЅРёСЋ UDT РІСЃРµРіРґР° СЃРµСЂРёР°Р»РёР·СѓСЋС‚СЃСЏ
+// СЃ РѕС‚РєСЂС‹С‚РёРµРј Р±Р»РѕРєР°.
+// 4. Р”Р»СЏ СЃРµСЂРёР°Р»РёР·Р°С†РёРё РїРѕР»РёРјРѕСЂС„РЅС‹С… СѓРєР°Р·Р°С‚РµР»РµР№ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ serializePolymorphic,
+// ShareHandle РёР»Рё PolymorphicWrapper. РћРЅРё Р·Р°РїРёСЃС‹РІР°СЋС‚ Рё РІРѕСЃСЃРѕР·РґР°СЋС‚ С‚РёРї (С‚СЂРµР±СѓРµС‚СЃСЏ
+// СЂРµРіРёСЃС‚СЂР°С†РёСЏ РєР»Р°СЃСЃРѕРІ (REGISTER_CLASS, РєРѕРіРґР° Р»РёРЅРєРѕРІС‰РёРє РѕС‚СЃРµРєР°РµС‚ - DECLARE_SEGMENT + FORCE_SEGMENT ).
+// 5. Р”Р»СЏ СЃРµСЂРёР°Р»РёР·Р°С†РёРё РЅРµРїРѕР»РёРјРѕСЂС„РЅС‹С… СѓРєР°Р·Р°С‚РµР»РµР№ (РєСЂР°Р№РЅРµ СЂРµРґРєР°СЏ Р·Р°РґР°С‡Р°), РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ
+// serializePointer РёР»Рё PointerWrapper.
+// 6. Р”Р»СЏ РјР°СЃСЃРёРІРѕРІ - serializeArray, wrapper'Р° РїРѕРєР° РЅРµС‚, РЅРѕ РїСЂРё РЅРµРѕР±С…РѕРґРёРјРѕСЃС‚Рё  РІРѕР·РјРѕР¶РµРЅ.
 //
 ////////////////////////////////////////////////////////////////////
 
@@ -179,7 +179,7 @@ public:
 		filter_ = filter;
 	}
 	bool filter(int filter) {
-		xassert("Фильтр не установлен" && filter_);
+		xassert("Р¤РёР»СЊС‚СЂ РЅРµ СѓСЃС‚Р°РЅРѕРІР»РµРЅ" && filter_);
 		return (filter_ & filter) != 0;
 	}
 
@@ -348,12 +348,12 @@ public:
 		}
 	}
 
-	template<class T> // Для неполиморфных указателей
+	template<class T> // Р”Р»СЏ РЅРµРїРѕР»РёРјРѕСЂС„РЅС‹С… СѓРєР°Р·Р°С‚РµР»РµР№
 	bool serializePointer(const T *&t, const char *name, const char *nameAlt) {
 		xassert(!inPlace_);
 		if (isInput()) {
 			if (!t)
-				const_cast<T * &>(t) = FactorySelector<T>::Factory::instance().template createArg<T>(); // FIXME: Создается ненужная фабрика
+				const_cast<T * &>(t) = FactorySelector<T>::Factory::instance().template createArg<T>(); // FIXME: РЎРѕР·РґР°РµС‚СЃСЏ РЅРµРЅСѓР¶РЅР°СЏ С„Р°Р±СЂРёРєР°
 			serialize(*t, name, nameAlt);
 			return true;
 		} else {
@@ -368,7 +368,7 @@ public:
 		}
 	}
 
-	template<class T> // Для полиморфных указателей
+	template<class T> // Р”Р»СЏ РїРѕР»РёРјРѕСЂС„РЅС‹С… СѓРєР°Р·Р°С‚РµР»РµР№
 	bool serializePolymorphic(const T *&t, const char *name, const char *nameAlt) {
 		T *&ptr = const_cast<T *&>(t);
 
@@ -698,7 +698,7 @@ private:
 	friend class MergeBlocksAuto;
 };
 
-/// Обертка для сериализации неполиморфных указателей
+/// РћР±РµСЂС‚РєР° РґР»СЏ СЃРµСЂРёР°Р»РёР·Р°С†РёРё РЅРµРїРѕР»РёРјРѕСЂС„РЅС‹С… СѓРєР°Р·Р°С‚РµР»РµР№
 template<class T>
 class PointerWrapper {
 public:
@@ -723,7 +723,7 @@ private:
 	T *t_;
 };
 
-/// Обертка для сериализации полиморфных указателей
+/// РћР±РµСЂС‚РєР° РґР»СЏ СЃРµСЂРёР°Р»РёР·Р°С†РёРё РїРѕР»РёРјРѕСЂС„РЅС‹С… СѓРєР°Р·Р°С‚РµР»РµР№
 template<class T>
 class PolymorphicWrapper {
 public:
@@ -748,14 +748,14 @@ private:
 	T *t_;
 };
 
-// Для чтения блоков памяти. Если для чтения передается не нулевой размер, то требуется совпадение.
+// Р”Р»СЏ С‡С‚РµРЅРёСЏ Р±Р»РѕРєРѕРІ РїР°РјСЏС‚Рё. Р•СЃР»Рё РґР»СЏ С‡С‚РµРЅРёСЏ РїРµСЂРµРґР°РµС‚СЃСЏ РЅРµ РЅСѓР»РµРІРѕР№ СЂР°Р·РјРµСЂ, С‚Рѕ С‚СЂРµР±СѓРµС‚СЃСЏ СЃРѕРІРїР°РґРµРЅРёРµ.
 class MemoryBlock {
 public:
 	MemoryBlock(int size = 0);
 	MemoryBlock(void *buffer, int size) : buffer_((char *)buffer), size_(size), makeFree_(false) {}
 	MemoryBlock(XBuffer &buffer) : buffer_(buffer.buffer()), size_(buffer.tell()), makeFree_(false) {}
 
-	MemoryBlock(const MemoryBlock &block); // Выделение и копирование памяти - затратно, но надежно
+	MemoryBlock(const MemoryBlock &block); // Р’С‹РґРµР»РµРЅРёРµ Рё РєРѕРїРёСЂРѕРІР°РЅРёРµ РїР°РјСЏС‚Рё - Р·Р°С‚СЂР°С‚РЅРѕ, РЅРѕ РЅР°РґРµР¶РЅРѕ
 	MemoryBlock &operator=(const MemoryBlock &block);
 
 	~MemoryBlock() {
@@ -773,7 +773,7 @@ public:
 	void free();
 
 private:
-	char *buffer_; // Должен быть первым элементом в классе
+	char *buffer_; // Р”РѕР»Р¶РµРЅ Р±С‹С‚СЊ РїРµСЂРІС‹Рј СЌР»РµРјРµРЅС‚РѕРј РІ РєР»Р°СЃСЃРµ
 	int size_;
 	bool makeFree_;
 };

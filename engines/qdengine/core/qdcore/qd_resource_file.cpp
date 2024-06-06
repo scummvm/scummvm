@@ -49,12 +49,7 @@ bool qd_open_resource(const char *file_name, class XStream &fh, bool readonly, b
 //						fh.ErrHUsed = err;
 					return false;
 				case appErrorHandler::ERR_ABORT:
-#ifndef _QUEST_EDITOR
 					exit(1);
-#else
-// 				  			fh.ErrHUsed = err;
-					return false;
-#endif
 				}
 			}
 		}

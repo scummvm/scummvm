@@ -32,7 +32,6 @@ namespace QDEngine {
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
-#define LPVOID void*
 HRESULT CALLBACK ddEnumDisplayModesCallback(LPDDSURFACEDESC lpDDSurfaceDesc, LPVOID lpContext);
 
 /* --------------------------- DEFINITION SECTION --------------------------- */
