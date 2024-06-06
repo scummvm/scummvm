@@ -126,6 +126,11 @@ void Lobby::processLine(Common::String line) {
 		Common::String command = root["cmd"]->asString();
 		if (command == "heartbeat") {
 			handleHeartbeat();
+		} else if (command == "disconnect") {
+			int type = root["type"]->asIntegerNumber();
+			Common::String message = root["message"]->asString();
+			systemAlert(type, message);
+			disconnect();
 		} else if (command == "login_resp") {
 			int errorCode = root["error_code"]->asIntegerNumber();
 			int userId = root["id"]->asIntegerNumber();
