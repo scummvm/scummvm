@@ -151,6 +151,10 @@ String punycode_encode(const U32String &src) {
 		// endings
 		if (src[h - 1] == ' ' || src[h - 1] == '.')
 			return dst + '-';
+		if (srclen > 4 && src[0] == 'x' && src[1] == 'n' &&
+			src[2] == '-' && src[3] == '-')
+			return dst + '-';
+
 
 		return src;
 	}
