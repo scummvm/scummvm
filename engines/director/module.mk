@@ -65,6 +65,7 @@ MODULE_OBJS = \
 	lingo/xlibs/backdrop.o \
 	lingo/xlibs/barakeobj.o \
 	lingo/xlibs/batqt.o \
+	lingo/xlibs/bimxobj.o \
 	lingo/xlibs/blitpict.o \
 	lingo/xlibs/cdromxobj.o \
 	lingo/xlibs/closebleedwindowxcmd.o \
