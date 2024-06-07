@@ -50,6 +50,7 @@ namespace Director {
 const char *BIMXObj::xlibName = "BIM";
 const char *BIMXObj::fileNames[] = {
 	"FLC",
+	"BIM",
 	nullptr
 };
 
