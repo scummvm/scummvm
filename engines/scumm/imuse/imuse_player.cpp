@@ -477,7 +477,7 @@ uint16 Player::sysExNoDelay(const byte *msg, uint16 length) {
 	// just type 0, since that one leads to hardware messages. This is not a perfect solution, but it seems to work
 	// as intended.
 
-	if (_isMT32 && ((msg[0] == IMUSE_SYSEX_ID && msg[1] == 0) || msg[0] == ROLAND_SYSEX_ID))
+	if (_isMT32 && (!_scanning && (msg[0] == IMUSE_SYSEX_ID && msg[1] == 0) || msg[0] == ROLAND_SYSEX_ID))
 		return length >= 25 ? 70 : 20;
 
 	return 0;

@@ -195,7 +195,7 @@ void Part::fix_after_load() {
 	set_pri(_pri);
 	set_pan(_pan);
 
-	if (!_se->_dynamicChanAllocation && !_mc) {
+	if (!_se->_dynamicChanAllocation && !_mc && !_percussion) {
 		_mc = _se->allocateChannel(_player->getMidiDriver(), _pri_eff);
 		if (!_mc)
 			_se->suspendPart(this);
@@ -341,6 +341,7 @@ void Part::uninit() {
 
 void Part::off() {
 	if (_mc) {
+		_mc->sustain(false);
 		_mc->allNotesOff();
 		if (!_se->reassignChannelAndResumePart(_mc))
 			_mc->release();
