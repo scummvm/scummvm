@@ -978,11 +978,10 @@ bool Debugger::cmdMark(int argc, const char **argv) {
 
 	MainActor *mainActor = getMainActor();
 	int curmap = mainActor->getMapNum();
-	int32 x, y, z;
-	mainActor->getLocation(x, y, z);
+	Point3 pt = mainActor->getLocation();
 
 	Common::String key = Common::String::format("mark_%s", argv[1]);
-	Common::String value = Common::String::format("%d %d %d %d", curmap, x, y, z);
+	Common::String value = Common::String::format("%d %d %d %d", curmap, pt.x, pt.y, pt.z);
 	ConfMan.set(key, value);
 
 	debugPrintf("Set mark \"%s\" to %s\n", argv[1], value.c_str());

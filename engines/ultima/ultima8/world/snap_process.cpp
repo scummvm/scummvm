@@ -92,10 +92,10 @@ void SnapProcess::updateCurrentEgg() {
 	if (!a)
 		return;
 
-	int32 ax, ay, az, axd, ayd, azd, x, y, z;
-	a->getLocation(ax, ay, az);
+	int32 axd, ayd, azd;
+	Point3 pta = a->getLocation();
 	a->getFootpadWorld(axd, ayd, azd);
-	Rect arect(ax, ay, ax + axd, ay + ayd);
+	Rect arect(pta.x, pta.y, pta.x + axd, pta.y + ayd);
 
 	for (Std::list<ObjId>::const_iterator iter = _snapEggs.begin();
 		 iter != _snapEggs.end(); iter++) {
@@ -103,9 +103,9 @@ void SnapProcess::updateCurrentEgg() {
 		if (!egg)
 			continue;
 		Rect r;
-		egg->getLocation(x, y, z);
+		Point3 pte = egg->getLocation();
 		getSnapEggRange(egg, r);
-		if (r.intersects(arect) && (az <= z + 0x30 && az >= z - 0x30)) {
+		if (r.intersects(arect) && (pta.z <= pte.z + 0x30 && pta.z >= pte.z - 0x30)) {
 			_currentSnapEgg = *iter;
 			_currentSnapEggRange = r;
 			CameraProcess::SetCameraProcess(new CameraProcess(_currentSnapEgg));
@@ -145,16 +145,16 @@ bool SnapProcess::isNpcInRangeOfCurrentEgg() const {
 	if (!a || !currentegg)
 		return false;
 
-	int32 ax, ay, az, axd, ayd, azd, x, y, z;
-	a->getLocation(ax, ay, az);
+	int32 axd, ayd, azd;
+	Point3 pta = a->getLocation();
 	a->getFootpadWorld(axd, ayd, azd);
-	currentegg->getLocation(x, y, z);
+	Point3 pte = currentegg->getLocation();
 
-	Rect arect(ax, ay, ax + axd, ay + ayd);
+	Rect arect(pta.x, pta.y, pta.x + axd, pta.y + ayd);
 
 	if (!_currentSnapEggRange.intersects(arect))
 		return false;
-	if (az > z + 0x30 || az < z - 0x30)
+	if (pta.z > pte.z + 0x30 || pta.z < pte.z - 0x30)
 		return false;
 
 	return true;
@@ -169,11 +169,10 @@ void SnapProcess::getSnapEggRange(const Item *item, Rect &rect) const {
 	int32 xrange = (qhi >> 4) * 0x20;
 	int32 yrange = (qhi & 0xf) * 0x20;
 
-	int32 x, y, z;
-	item->getLocation(x, y, z);
+	Point3 pt = item->getLocation();
 
-	rect.left = x - xrange + xoff;
-	rect.top = y - yrange + yoff;
+	rect.left = pt.x - xrange + xoff;
+	rect.top = pt.y - yrange + yoff;
 	rect.setWidth(xrange * 2);
 	rect.setHeight(yrange * 2);
 }

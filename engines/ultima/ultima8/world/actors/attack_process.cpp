@@ -281,23 +281,20 @@ void AttackProcess::run() {
 		case 0x8e:
 		{
 			// Pathfind to target
-			int32 x, y, z;
-			target->getLocation(x, y, z);
+			Point3 pt = target->getLocation();
 			ProcId pid = Kernel::get_instance()->addProcess(
-					   new CruPathfinderProcess(a, x, y, z, 12, 0x80, true));
+					   new CruPathfinderProcess(a, pt.x, pt.y, pt.z, 12, 0x80, true));
 			waitFor(pid);
 			return;
 		}
 		case 0x8f:
 		{
 			// Pathfind to a point between npc and the target
-			int32 tx, ty, tz;
-			target->getLocation(tx, ty, tz);
-			int32 ax, ay, az;
-			target->getLocation(ax, ay, az);
-			int32 x = (tx + ax) / 2;
-			int32 y = (ty + ay) / 2;
-			int32 z = (tz + az) / 2;
+			Point3 apt = a->getLocation();
+			Point3 tpt = target->getLocation();
+			int32 x = (tpt.x + apt.x) / 2;
+			int32 y = (tpt.y + apt.y) / 2;
+			int32 z = (tpt.z + apt.z) / 2;
 			ProcId pid = Kernel::get_instance()->addProcess(
 					   new CruPathfinderProcess(a, x, y, z, 12, 0x80, true));
 			waitFor(pid);
@@ -354,9 +351,8 @@ void AttackProcess::run() {
 		case 0x9a:
 		{
 			// get next word and jump to that offset if distance < 481
-			Point3 apt, tpt;
-			a->getLocation(apt);
-			target->getLocation(tpt);
+			Point3 apt = a->getLocation();
+			Point3 tpt = target->getLocation();
 			int maxdiff = apt.maxDistXYZ(tpt);
 			int16 data = readNextWordWithData();
 			if (maxdiff < 481) {
@@ -367,9 +363,8 @@ void AttackProcess::run() {
 		case 0x9b:
 		{
 			// get next word and jump to that offset if distance > 160
-			Point3 apt, tpt;
-			a->getLocation(apt);
-			target->getLocation(tpt);
+			Point3 apt = a->getLocation();
+			Point3 tpt = target->getLocation();
 			int maxdiff = apt.maxDistXYZ(tpt);
 			int16 data = readNextWordWithData();
 			if (maxdiff > 160) {
@@ -599,13 +594,12 @@ void AttackProcess::genericAttack() {
 			if (_itemNum == WATCHACTOR)
 				debug("Attack: genericAttack walking around looking for target %d", _target);
 #endif
-			int32 x, y, z;
-			a->getLocation(x, y, z);
-			x += rs.getRandomNumberRngSigned(-0x1ff, 0x1ff);
-			y += rs.getRandomNumberRngSigned(-0x1ff, 0x1ff);
+			Point3 pt = a->getLocation();
+			pt.x += rs.getRandomNumberRngSigned(-0x1ff, 0x1ff);
+			pt.y += rs.getRandomNumberRngSigned(-0x1ff, 0x1ff);
 			_field96 = true;
 			const ProcId pid = Kernel::get_instance()->addProcess(
-								new CruPathfinderProcess(a, x, y, z, 12, 0x80, true));
+								new CruPathfinderProcess(a, pt.x, pt.y, pt.z, 12, 0x80, true));
 			// add a tiny delay to avoid tight loops
 			Process *delayproc = new DelayProcess(2);
 			Kernel::get_instance()->addProcess(delayproc);
@@ -696,9 +690,8 @@ void AttackProcess::genericAttack() {
 			targetdir = a->getDirToItemCentre(*target);
 		}
 
-		Point3 apt, tpt;
-		a->getLocation(apt);
-		target->getLocation(tpt);
+		Point3 apt = a->getLocation();
+		Point3 tpt = target->getLocation();
 		const int32 dist = apt.maxDistXYZ(tpt);
 		const int32 zdiff = abs(a->getZ() - target->getZ());
 		const bool onscreen = a->isPartlyOnScreen(); // note: original uses "isMajorityOnScreen", this is close enough.

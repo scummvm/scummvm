@@ -348,9 +348,8 @@ void World::worldStats() const {
 	g_debugger->debugPrintf("Avatar pos.: ");
 	if (av) {
 		g_debugger->debugPrintf("map %d, (", av->getMapNum());
-		int32 x, y, z;
-		av->getLocation(x, y, z);
-		g_debugger->debugPrintf("%d,%d,%d)\n", x, y, z);
+		Point3 pt = av->getLocation();
+		g_debugger->debugPrintf("%d,%d,%d)\n", pt.x, pt.y, pt.z);
 	} else {
 		g_debugger->debugPrintf("missing (null)\n");
 	}

@@ -96,14 +96,13 @@ public:
 
 	//! Get the location of the top-most container this Item is in, or
 	//! this Item's location if not in a container.
-	void getLocationAbsolute(int32 &x, int32 &y, int32 &z) const;
+	Point3 getLocationAbsolute() const;
 
 	//! Get this Item's location. Note that this does not return
 	//! 'usable' coordinates if the Item is contained or equipped.
-	inline void getLocation(int32 &x, int32 &y, int32 &z) const;
-
-	//! Get the Item's location using a Point3 struct.
-	inline void getLocation(Point3 &pt) const;
+	inline Point3 getLocation() const {
+		return Point3(_x, _y, _z);
+	}
 
 	//! Get this Item's Z coordinate.
 	int32 getZ() const;
@@ -461,10 +460,8 @@ public:
 	uint32 use();
 
 	//! Get lerped location.
-	inline void getLerped(int32 &xp, int32 &yp, int32 &zp) const {
-		xp = _ix;
-		yp = _iy;
-		zp = _iz;
+	inline Point3 getLerped() const {
+		return Point3(_ix, _iy, _iz);
 	}
 
 	//! Do lerping for an in between frame (0-256)
@@ -733,18 +730,6 @@ inline void Item::getFootpadData(int32 &X, int32 &Y, int32 &Z) const {
 inline void Item::getFootpadWorld(int32 &X, int32 &Y, int32 &Z) const {
 	const ShapeInfo *si = getShapeInfo();
 	si->getFootpadWorld(X, Y, Z, _flags & Item::FLG_FLIPPED);
-}
-
-inline void Item::getLocation(int32 &X, int32 &Y, int32 &Z) const {
-	X = _x;
-	Y = _y;
-	Z = _z;
-}
-
-inline void Item::getLocation(Point3 &pt) const {
-	pt.x = _x;
-	pt.y = _y;
-	pt.z = _z;
 }
 
 } // End of namespace Ultima8

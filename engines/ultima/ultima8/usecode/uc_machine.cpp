@@ -1731,11 +1731,10 @@ void UCMachine::execProcess(UCProcess *p) {
 				const uint16 range = GAME_IS_CRUSADER ? ui16b * 2 : ui16b;
 
 				if (item) {
-					int32 ix, iy, iz;
-					item->getLocationAbsolute(ix, iy, iz);
+					Point3 pt = item->getLocationAbsolute();
 					world->getCurrentMap()->areaSearch(itemlist, script,
 					                                   scriptsize, nullptr,
-					                                   range, recurse, ix, iy);
+					                                   range, recurse, pt.x, pt.y);
 				} else {
 					// return error or return empty list?
 					warning("Invalid item %u passed to area search", ui16a);

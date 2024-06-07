@@ -42,7 +42,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(CruPathfinderProcess)
 
 CruPathfinderProcess::CruPathfinderProcess() : Process(),
 		_currentStep(0), _targetItem(0), _currentDistance(0),
-		_targetX(0), _targetY(0), _targetZ(0), _randomFlag(false),
+		_target(), _randomFlag(false),
 		_nextTurn(false), _turnAtEnd(false), _lastDir(dir_current),
 		_nextDir(dir_current), _nextDir2(dir_current),
 		_solidObject(true), _directPathBlocked(false), _noShotAvailable(true),
@@ -51,7 +51,7 @@ CruPathfinderProcess::CruPathfinderProcess() : Process(),
 }
 
 CruPathfinderProcess::CruPathfinderProcess(Actor *actor, Item *target, int maxsteps, int stopdistance, bool turnatend) :
-		_currentStep(0), _currentDistance(0), _targetX(0), _targetY(0), _targetZ(0),
+		_currentStep(0), _currentDistance(0), _target(),
 		_maxSteps(maxsteps), _stopDistance(stopdistance), _nextTurn(false), _turnAtEnd(turnatend),
 		_lastDir(dir_current), _nextDir(dir_current), _nextDir2(dir_current),
 		_directPathBlocked(false), _noShotAvailable(true), _dir16Flag(false) {
@@ -61,11 +61,10 @@ CruPathfinderProcess::CruPathfinderProcess(Actor *actor, Item *target, int maxst
 	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 	_randomFlag = rs.getRandomBit() != 0;
 	_targetItem = target->getObjId();
-	target->getLocation(_targetX, _targetY, _targetZ);
+	_target = target->getLocation();
 
-	int32 ax, ay, az;
-	actor->getLocation(ax, ay, az);
-	_currentDistance = MAX(abs(ax - _targetX), abs(ay - _targetY));
+	Point3 pt = actor->getLocation();
+	_currentDistance = MAX(abs(pt.x - _target.x), abs(pt.y - _target.y));
 
 	const ShapeInfo *si = actor->getShapeInfo();
 	_solidObject = (si->_flags & ShapeInfo::SI_SOLID) && si->_z > 0;
@@ -79,7 +78,7 @@ CruPathfinderProcess::CruPathfinderProcess(Actor *actor, Item *target, int maxst
 }
 
 CruPathfinderProcess::CruPathfinderProcess(Actor *actor, int32 x, int32 y, int32 z, int maxsteps, int stopdistance, bool turnatend) :
-		_targetX(x), _targetY(y), _targetZ(z), _targetItem(0), _currentStep(0),
+		_target(x, y, z), _targetItem(0), _currentStep(0),
 		_maxSteps(maxsteps), _stopDistance(stopdistance), _nextTurn(false), _turnAtEnd(turnatend),
 		_lastDir(dir_current), _nextDir(dir_current), _nextDir2(dir_current),
 		_directPathBlocked(false), _noShotAvailable(true), _dir16Flag(false) {
@@ -89,9 +88,8 @@ CruPathfinderProcess::CruPathfinderProcess(Actor *actor, int32 x, int32 y, int32
 	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 	_randomFlag = rs.getRandomBit() != 0;
 
-	int32 ax, ay, az;
-	actor->getLocation(ax, ay, az);
-	_currentDistance = MAX(abs(ax - _targetX), abs(ay - _targetY));
+	Point3 pt = actor->getLocation();
+	_currentDistance = MAX(abs(pt.x - _target.x), abs(pt.y - _target.y));
 
 	const ShapeInfo *si = actor->getShapeInfo();
 	_solidObject = (si->_flags & ShapeInfo::SI_SOLID) && si->_z > 0;
@@ -118,16 +116,14 @@ void CruPathfinderProcess::terminate() {
 		if (_turnAtEnd) {
 			Direction destdir = dir_current;
 			// TODO: this logic can be cleaned up a bit by just updating targetx/y?
-			int32 ix, iy, iz;
-			actor->getLocationAbsolute(ix, iy, iz);
+			Point3 i = actor->getLocationAbsolute();
 			if (_targetItem == 0) {
-				destdir = Direction_GetWorldDir(_targetY - iy, _targetX - ix, dirmode_8dirs);
+				destdir = Direction_GetWorldDir(_target.y - i.y, _target.x - i.x, dirmode_8dirs);
 			} else {
 				const Item *target = getItem(_targetItem);
 				if (target) {
-					int32 tx, ty, tz;
-					target->getLocationAbsolute(tx, ty, tz);
-					destdir = Direction_GetWorldDir(ty - iy, tx - ix, dirmode_8dirs);
+					Point3 t = target->getLocationAbsolute();
+					destdir = Direction_GetWorldDir(t.y - i.y, t.x - i.x, dirmode_8dirs);
 				}
 			}
 			if (destdir != dir_current)
@@ -143,19 +139,17 @@ void CruPathfinderProcess::terminate() {
 }
 
 Direction CruPathfinderProcess::nextDirFromPoint(struct Point3 &npcpt) {
-	const Direction dirtotarget = Direction_GetWorldDir(_targetY - npcpt.y, _targetX - npcpt.x, dirmode_8dirs);
+	const Direction dirtotarget = Direction_GetWorldDir(_target.y - npcpt.y, _target.x - npcpt.x, dirmode_8dirs);
 	Actor *npc = getActor(_itemNum);
 
 	//assert(npc);
 
-	const int maxdiffxy = MAX(abs(npcpt.x - _targetX), abs(npcpt.y - _targetY));
+	const int maxdiffxy = MAX(abs(npcpt.x - _target.x), abs(npcpt.y - _target.y));
 	if (maxdiffxy < _currentDistance) {
 		// each time we get closer, check again if we can walk toward the target.
 		_currentDistance = maxdiffxy;
 		PathfindingState state;
-		state._x = npcpt.x;
-		state._y = npcpt.y;
-		state._z = npcpt.z;
+		state._point = npcpt;
 		state._direction = dirtotarget;
 		state._combat = npc->isInCombat();
 		Animation::Sequence anim = npc->isInCombat() ? Animation::walk : Animation::advanceSmallWeapon;
@@ -216,9 +210,7 @@ Direction CruPathfinderProcess::nextDirFromPoint(struct Point3 &npcpt) {
 
 		// LAB_1110_0c26:
 		Animation::Sequence anim = npc->isInCombat() ? Animation::walk : Animation::advanceSmallWeapon;
-		state._x = npcpt.x;
-		state._y = npcpt.y;
-		state._z = npcpt.z;
+		state._point = npcpt;
 		state._direction = _nextDir2;
 		state._combat = npc->isInCombat();
 		animresult = npc->tryAnim(anim, _nextDir2, 0, &state);
@@ -228,7 +220,7 @@ Direction CruPathfinderProcess::nextDirFromPoint(struct Point3 &npcpt) {
 			return dir_invalid;
 		}
 
-		if (_stopDistance && (MAX(abs(_targetX - state._x), abs(_targetY - state._y)) <= _stopDistance)) {
+		if (_stopDistance && (MAX(abs(_target.x - state._point.x), abs(_target.y - state._point.y)) <= _stopDistance)) {
 			_turnAtEnd = true;
 			return dir_invalid;
 		}
@@ -246,9 +238,7 @@ Direction CruPathfinderProcess::nextDirFromPoint(struct Point3 &npcpt) {
 		_nextTurn = (i % 2);
 	}
 
-	npcpt.x = state._x;
-	npcpt.y = state._y;
-	npcpt.z = state._z;
+	npcpt = state._point;
 	bool is_controlled = World::get_instance()->getControlledNPCNum() == _itemNum;
 	if (npc->isInCombat() && !is_controlled) {
 		AttackProcess *attackproc = dynamic_cast<AttackProcess *>
@@ -287,13 +277,11 @@ void CruPathfinderProcess::run() {
 	if (_targetItem != 0 && _solidObject) {
 		Item *target = getItem(_targetItem);
 		if (target)
-			target->getLocation(_targetX, _targetY, _targetZ);
+			_target = target->getLocation();
 	}
 
-	Point3 npcpt;
-	npc->getLocation(npcpt);
-
-	if (_targetX == npcpt.x && _targetY == npcpt.y) {
+	Point3 npcpt = npc->getLocation();
+	if (_target.x == npcpt.x && _target.y == npcpt.y) {
 		terminate(); // _destpt.z != npcpt.z
 		return;
 	}
@@ -334,9 +322,9 @@ void CruPathfinderProcess::saveData(Common::WriteStream *ws) {
 	Process::saveData(ws);
 
 	ws->writeUint16LE(_targetItem);
-	ws->writeUint16LE(static_cast<uint16>(_targetX));
-	ws->writeUint16LE(static_cast<uint16>(_targetY));
-	ws->writeUint16LE(static_cast<uint16>(_targetZ));
+	ws->writeUint16LE(static_cast<uint16>(_target.x));
+	ws->writeUint16LE(static_cast<uint16>(_target.y));
+	ws->writeUint16LE(static_cast<uint16>(_target.z));
 	ws->writeUint16LE(static_cast<uint16>(_currentDistance));
 	ws->writeByte(_randomFlag ? 1 : 0);
 	ws->writeByte(_nextTurn ? 1 : 0);
@@ -357,9 +345,9 @@ bool CruPathfinderProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	if (!Process::loadData(rs, version)) return false;
 
 	_targetItem = rs->readUint16LE();
-	_targetX = rs->readUint16LE();
-	_targetY = rs->readUint16LE();
-	_targetZ = rs->readUint16LE();
+	_target.x = rs->readUint16LE();
+	_target.y = rs->readUint16LE();
+	_target.z = rs->readUint16LE();
 	_currentDistance = rs->readUint16LE();
 	_randomFlag = rs->readByte();
 	_nextTurn = rs->readByte();

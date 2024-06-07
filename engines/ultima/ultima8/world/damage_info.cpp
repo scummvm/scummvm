@@ -57,8 +57,7 @@ bool DamageInfo::applyToItem(Item *item, uint16 points) const {
 	// Get some data out of the item before we potentially delete
 	// it by explosion
 	uint16 q = item->getQuality();
-	int32 x, y, z;
-	item->getLocation(x, y, z);
+	Point3 pt = item->getLocation();
 	int32 mapnum = item->getMapNum();
 
 	if (explode()) {
@@ -77,7 +76,7 @@ bool DamageInfo::applyToItem(Item *item, uint16 points) const {
 		uint16 replacementShape = getReplacementShape();
 		uint8 replacementFrame = getReplacementFrame();
 		Item *newitem = ItemFactory::createItem(replacementShape, replacementFrame, q, 0, 0, mapnum, 0, true);
-		newitem->move(x, y, z);
+		newitem->move(pt.x, pt.y, pt.z);
 		if (item)
 			item->destroy();
 	} else if (!explodeDestroysItem()) {

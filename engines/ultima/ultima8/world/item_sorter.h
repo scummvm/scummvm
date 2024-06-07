@@ -31,6 +31,7 @@ class MainShapeArchive;
 class Item;
 class RenderSurface;
 struct SortItem;
+struct Point3;
 
 class ItemSorter {
 	MainShapeArchive    *_shapes;
@@ -54,9 +55,9 @@ public:
 	};
 
 	// Begin creating the display list
-	void BeginDisplayList(const Rect &clipWindow, int32 camx, int32 camy, int32 camz);
+	void BeginDisplayList(const Rect &clipWindow, const Point3 &cam);
 
-	void AddItem(int32 x, int32 y, int32 z, uint32 shape_num, uint32 frame_num, uint32 item_flags, uint32 ext_flags, uint16 item_num = 0);
+	void AddItem(const Point3 &pt, uint32 shape_num, uint32 frame_num, uint32 item_flags, uint32 ext_flags, uint16 item_num = 0);
 	void AddItem(const Item *);                   // Add an Item. SetupLerp() MUST have been called
 
 	// Finishes the display list and Paints

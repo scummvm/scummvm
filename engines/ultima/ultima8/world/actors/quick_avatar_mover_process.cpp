@@ -88,8 +88,7 @@ void QuickAvatarMoverProcess::run() {
 	}
 
 	MainActor *avatar = getMainActor();
-	int32 x, y, z;
-	avatar->getLocation(x, y, z);
+	Point3 pt = avatar->getLocation();
 	int32 ixd, iyd, izd;
 	avatar->getFootpadWorld(ixd, iyd, izd);
 
@@ -121,28 +120,28 @@ void QuickAvatarMoverProcess::run() {
 			while (dxv || dyv || dzv) {
 				uint32 shapeFlags = avatar->getShapeInfo()->_flags;
 
-				Box start(x, y, z, ixd, iyd, izd);
-				PositionInfo info = cm->getPositionInfo(Box(x + dxv, y + dyv, z + dzv, ixd, iyd, izd), start, shapeFlags, 1);
+				Box start(pt.x, pt.y, pt.z, ixd, iyd, izd);
+				PositionInfo info = cm->getPositionInfo(Box(pt.x + dxv, pt.y + dyv, pt.z + dzv, ixd, iyd, izd), start, shapeFlags, 1);
 				if (info.valid) {
 					if (!dzv && !info.supported) {
 						// Adjust to stay on ground
-						if (cm->getPositionInfo(Box(x + dxv, y + dyv, z - 8, ixd, iyd, izd), start, shapeFlags, 1).valid &&
-							!cm->getPositionInfo(Box(x, y, z - 8, ixd, iyd, izd), start, shapeFlags, 1).valid) {
+						if (cm->getPositionInfo(Box(pt.x + dxv, pt.y + dyv, pt.z - 8, ixd, iyd, izd), start, shapeFlags, 1).valid &&
+							!cm->getPositionInfo(Box(pt.x, pt.y, pt.z - 8, ixd, iyd, izd), start, shapeFlags, 1).valid) {
 							dzv = -8;
-						} else if (cm->getPositionInfo(Box(x + dxv, y + dyv, z - 16, ixd, iyd, izd), start, shapeFlags, 1).valid &&
-								   !cm->getPositionInfo(Box(x, y, z - 16, ixd, iyd, izd), start, shapeFlags, 1).valid) {
+						} else if (cm->getPositionInfo(Box(pt.x + dxv, pt.y + dyv, pt.z - 16, ixd, iyd, izd), start, shapeFlags, 1).valid &&
+								   !cm->getPositionInfo(Box(pt.x, pt.y, pt.z - 16, ixd, iyd, izd), start, shapeFlags, 1).valid) {
 							dzv = -16;
-						} else if (cm->getPositionInfo(Box(x + dxv, y + dyv, z - 24, ixd, iyd, izd), start, shapeFlags, 1).valid &&
-								   !cm->getPositionInfo(Box(x, y, z - 24, ixd, iyd, izd), start, shapeFlags, 1).valid) {
+						} else if (cm->getPositionInfo(Box(pt.x + dxv, pt.y + dyv, pt.z - 24, ixd, iyd, izd), start, shapeFlags, 1).valid &&
+								   !cm->getPositionInfo(Box(pt.x, pt.y, pt.z - 24, ixd, iyd, izd), start, shapeFlags, 1).valid) {
 							dzv = -24;
-						} else if (cm->getPositionInfo(Box(x + dxv, y + dyv, z - 32, ixd, iyd, izd), start, shapeFlags, 1).valid &&
-								   !cm->getPositionInfo(Box(x, y, z - 32, ixd, iyd, izd), start, shapeFlags, 1).valid) {
+						} else if (cm->getPositionInfo(Box(pt.x + dxv, pt.y + dyv, pt.z - 32, ixd, iyd, izd), start, shapeFlags, 1).valid &&
+								   !cm->getPositionInfo(Box(pt.x, pt.y, pt.z - 32, ixd, iyd, izd), start, shapeFlags, 1).valid) {
 							dzv = -32;
 						}
 					}
 					ok = true;
 					break;
-				} else if (cm->getPositionInfo(Box(x + dxv, y + dyv, z + dzv + 8, ixd, iyd, izd), start, shapeFlags, 1).valid) {
+				} else if (cm->getPositionInfo(Box(pt.x + dxv, pt.y + dyv, pt.z + dzv + 8, ixd, iyd, izd), start, shapeFlags, 1).valid) {
 					dzv += 8;
 					ok = true;
 					break;
@@ -158,11 +157,11 @@ void QuickAvatarMoverProcess::run() {
 	}
 
 	// Yes, i know, not entirely correct
-	avatar->collideMove(x + dxv, y + dyv, z + dzv, false, true);
+	avatar->collideMove(pt.x + dxv, pt.y + dyv, pt.z + dzv, false, true);
 
 	if (GAME_IS_CRUSADER) {
 		// Keep the camera on the avatar while we're quick-moving.
-		CameraProcess::SetCameraProcess(new CameraProcess(x + dxv, y + dyv, z + dzv));
+		CameraProcess::SetCameraProcess(new CameraProcess(pt.x + dxv, pt.y + dyv, pt.z + dzv));
 	}
 
 	// Prevent avatar from running an idle animation while moving around

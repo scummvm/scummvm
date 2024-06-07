@@ -144,12 +144,11 @@ void Map::loadFixed(Common::SeekableReadStream *rs) {
 
 		for (iter = _fixedItems.begin(); iter != _fixedItems.end(); ++iter) {
 			if ((*iter)->getShape() == 347 && (*iter)->getZ() == 96) {
-				int32 x, y, z;
-				(*iter)->getLocation(x, y, z);
-				if ((x == 23007 && y == 21343) || (x == 23135 && y == 21471) ||
-				        (x == 23135 && y == 21343)) {
-					shiftCoordsToZ(x, y, z, 40);
-					(*iter)->setLocation(x, y, z);
+				Point3 pt = (*iter)->getLocation();
+				if ((pt.x == 23007 && pt.y == 21343) || (pt.x == 23135 && pt.y == 21471) ||
+				        (pt.x == 23135 && pt.y == 21343)) {
+					shiftCoordsToZ(pt.x, pt.y, pt.z, 40);
+					(*iter)->setLocation(pt.x, pt.y, pt.z);
 				}
 			}
 		}
@@ -163,11 +162,10 @@ void Map::loadFixed(Common::SeekableReadStream *rs) {
 			int32 z = (*iter)->getZ();
 			uint32 sh = (*iter)->getShape();
 			if (z == 8 && (sh == 301 || sh == 31 || sh == 32)) {
-				int32 x, y;
-				(*iter)->getLocation(x, y, z);
-				if ((x == 6783 || x == 6655) && (y == 15743 || y == 15615)) {
-					shiftCoordsToZ(x, y, z, 16);
-					(*iter)->setLocation(x, y, z);
+				Point3 pt = (*iter)->getLocation();
+				if ((pt.x == 6783 || pt.x == 6655) && (pt.y == 15743 || pt.y == 15615)) {
+					shiftCoordsToZ(pt.x, pt.y, pt.z, 16);
+					(*iter)->setLocation(pt.x, pt.y, pt.z);
 				}
 			}
 		}
@@ -179,14 +177,13 @@ void Map::loadFixed(Common::SeekableReadStream *rs) {
 
 		for (iter = _fixedItems.begin(); iter != _fixedItems.end(); ++iter) {
 			if ((*iter)->getShape() == 71 && (*iter)->getFrame() == 8 && (*iter)->getZ() == 0) {
-				int32 x, y, z;
-				(*iter)->getLocation(x, y, z);
-				if ((x == 9151 && y == 24127) || (x == 9279 && y == 23999) ||
-				        (x == 9535 && y == 23615) || (x == 9151 && y == 23487) ||
-				        (x == 10303 && y == 23487) || (x == 9919 && y == 23487) ||
-				        (x == 10559 && y == 23487)) {
-					shiftCoordsToZ(x, y, z, 48);
-					(*iter)->setLocation(x, y, z);
+				Point3 pt = (*iter)->getLocation();
+				if ((pt.x == 9151 && pt.y == 24127) || (pt.x == 9279 && pt.y == 23999) ||
+				        (pt.x == 9535 && pt.y == 23615) || (pt.x == 9151 && pt.y == 23487) ||
+				        (pt.x == 10303 && pt.y == 23487) || (pt.x == 9919 && pt.y == 23487) ||
+				        (pt.x == 10559 && pt.y == 23487)) {
+					shiftCoordsToZ(pt.x, pt.y, pt.z, 48);
+					(*iter)->setLocation(pt.x, pt.y, pt.z);
 				}
 			}
 		}

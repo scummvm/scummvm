@@ -697,9 +697,8 @@ void U8AvatarMoverProcess::step(Animation::Sequence action, Direction direction,
 
 	if (action == Animation::step && res == Animation::END_OFF_LAND &&
 	        lastanim != Animation::keepBalance && !adjusted) {
-		int32 ax, ay, az;
-		avatar->getLocation(ax, ay, az);
-		if (az > 0) {
+		Point3 pt = avatar->getLocation();
+		if (pt.z > 0) {
 			if (checkTurn(stepdir, false))
 				return;
 			debug(6, "Step: end off land both altdirs failed, keep balance.");
@@ -749,7 +748,7 @@ void U8AvatarMoverProcess::jump(Animation::Sequence action, Direction direction)
 	bool targeting = ConfMan.getBool("targetedjump");
 	if (targeting) {
 		Mouse *mouse = Mouse::get_instance();
-		int32 coords[3];
+		Point3 coords;
 		int32 mx, my;
 		mouse->getMouseCoords(mx, my);
 		GameMapGump *gameMap = Ultima8Engine::get_instance()->getGameMapGump();
@@ -761,8 +760,8 @@ void U8AvatarMoverProcess::jump(Animation::Sequence action, Direction direction)
 		int32 ax, ay, az;
 		avatar->getCentre(ax, ay, az);
 
-		int32 xrange = abs(ax - coords[0]);
-		int32 yrange = abs(ay - coords[1]);
+		int32 xrange = abs(ax - coords.x);
+		int32 yrange = abs(ay - coords.y);
 		int maxrange = avatar->getStr() * 32;
 
 		if (target && target->getShapeInfo()->is_land() &&

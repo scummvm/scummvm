@@ -240,7 +240,6 @@ void U8Game::playQuotes() {
 
 void U8Game::writeSaveInfo(Common::WriteStream *ws) {
 	MainActor *av = getMainActor();
-	int32 x, y, z;
 
 	const Std::string &avname = av->getName();
 	const uint8 namelength = static_cast<uint8>(avname.size());
@@ -248,11 +247,11 @@ void U8Game::writeSaveInfo(Common::WriteStream *ws) {
 	for (unsigned int i = 0; i < namelength; ++i)
 		ws->writeByte(static_cast<uint8>(avname[i]));
 
-	av->getLocation(x, y, z);
+	Point3 pt = av->getLocation();
 	ws->writeUint16LE(av->getMapNum());
-	ws->writeUint32LE(static_cast<uint32>(x));
-	ws->writeUint32LE(static_cast<uint32>(y));
-	ws->writeUint32LE(static_cast<uint32>(z));
+	ws->writeUint32LE(static_cast<uint32>(pt.x));
+	ws->writeUint32LE(static_cast<uint32>(pt.y));
+	ws->writeUint32LE(static_cast<uint32>(pt.z));
 
 	ws->writeUint16LE(av->getStr());
 	ws->writeUint16LE(av->getInt());

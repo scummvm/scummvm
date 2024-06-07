@@ -135,8 +135,7 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 		return 0;
 
 	int shapeno = item->getShape();
-	int32 x, y, z;
-	getLocation(x, y, z);
+	Point3 pt = getLocation();
 
 	CruPickupAreaGump *pickupArea = CruPickupAreaGump::get_instance();
 	assert(pickupArea);
@@ -177,7 +176,7 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 			} else {
 				item->setQuality(winfo->_clipSize);
 			}
-			item->setLocation(x, y, z);
+			item->setLocation(pt.x, pt.y, pt.z);
 			item->moveToContainer(this);
 			if (!_activeWeapon)
 				_activeWeapon = item->getObjId();
@@ -391,8 +390,7 @@ void MainActor::teleport(int mapNum, int32 x, int32 y, int32 z) {
 // all running processes
 void MainActor::teleport(int mapNum, int teleport_id) {
 	int oldmap = getMapNum();
-	int32 oldx, oldy, oldz;
-	getLocation(oldx, oldy, oldz);
+	Point3 old = getLocation();
 
 	World *world = World::get_instance();
 	CurrentMap *currentmap = world->getCurrentMap();
@@ -412,23 +410,22 @@ void MainActor::teleport(int mapNum, int teleport_id) {
 	TeleportEgg *egg = currentmap->findDestination(teleport_id);
 	if (!egg) {
 		warning("MainActor::teleport(): destination egg not found");
-		teleport(oldmap, oldx, oldy, oldz);
+		teleport(oldmap, old.x, old.y, old.z);
 		return;
 	}
-	int32 xv, yv, zv;
-	egg->getLocation(xv, yv, zv);
+	Point3 pt = egg->getLocation();
 
-	debugC(kDebugActor, "Found destination: %d, %d, %d", xv, yv, zv);
+	debugC(kDebugActor, "Found destination: %d, %d, %d", pt.x, pt.y, pt.z);
 	debugC(kDebugActor, "%s", egg->dumpInfo().c_str());
 
 	if (GAME_IS_CRUSADER) {
 		// Keep the camera on the avatar (the snap process will update on next move)
 		// We don't add a new camera process here, as that would update the fast area
 		// before the cachein calls above have run.
-		CameraProcess::GetCameraProcess()->moveToLocation(xv, yv, zv);
+		CameraProcess::GetCameraProcess()->moveToLocation(pt.x, pt.y, pt.z);
 	}
 
-	Actor::teleport(mapNum, xv, yv, zv);
+	Actor::teleport(mapNum, pt.x, pt.y, pt.z);
 
 	_justTeleported = true;
 }
@@ -1025,7 +1022,7 @@ int MainActor::receiveShieldHit(int damage, uint16 damage_type) {
 			uint16 shieldstartframe;
 			uint16 shieldendframe;
 			bool remembersprite;
-			int32 x, y, z;
+			Point3 pt;
 
 			switch (shieldtype) {
 			case 1:
@@ -1035,27 +1032,27 @@ int MainActor::receiveShieldHit(int damage, uint16 damage_type) {
 				remembersprite = false;
 				// NOTE: In the game, this is put in the location of the
 				// hit.  For now just put in centre.
-				getCentre(x, y, z);
+				getCentre(pt.x, pt.y, pt.z);
 				break;
 			case 2:
 				shieldsprite = 0x5a9;
 				shieldstartframe = 0;
 				shieldendframe = 6;
 				remembersprite = false;
-				getCentre(x, y, z);
+				getCentre(pt.x, pt.y, pt.z);
 				break;
 			default:
 				shieldsprite = 0x52b;
 				shieldstartframe = 0;
 				shieldendframe = 8;
-				getLocation(x, y, z);
-				x += 0x10;
-				y += 0x18;
+				pt = getLocation();
+				pt.x += 0x10;
+				pt.y += 0x18;
 				remembersprite = true;
 				break;
 			}
 			Process *p = new SpriteProcess(shieldsprite, shieldstartframe,
-										   shieldendframe, 1, 4, x, y, z);
+										   shieldendframe, 1, 4, pt.x, pt.y, pt.z);
 			kernel->addProcess(p);
 			if (remembersprite) {
 				_shieldSpriteProc = p->getPid();

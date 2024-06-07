@@ -24,6 +24,7 @@
 
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/point3.h"
 #include "ultima/ultima8/world/actors/animation.h"
 
 //#define DEBUG_PATHFINDER
@@ -35,10 +36,10 @@ class Actor;
 class Item;
 
 struct PathfindingState {
-	PathfindingState() : _x(0), _y(0), _z(0),  _direction(dir_north),
+	PathfindingState() : _point(), _direction(dir_north),
 		_lastAnim(Animation::walk), _flipped(false),
 		_firstStep(true), _combat(false) {};
-	int32 _x, _y, _z;
+	Point3 _point;
 	Animation::Sequence _lastAnim;
 	Direction _direction;
 	bool _flipped;
@@ -87,7 +88,7 @@ public:
 protected:
 	PathfindingState _start;
 	Actor *_actor;
-	int32 _targetX, _targetY, _targetZ;
+	Point3 _target;
 	Item *_targetItem;
 	bool _hitMode;
 	int32 _expandTime;

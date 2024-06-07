@@ -55,13 +55,11 @@ bool AudioProcess::calculateSoundVolume(ObjId objId, int16 &volume, int8 &balanc
 	}
 
 	// Need to get items relative coords from avatar
-
-	int32 ax, ay, az, ix, iy, iz;
-	CameraProcess::GetCameraLocation(ax, ay, az);
-	item->getLocationAbsolute(ix, iy, iz);
-	ix -= ax;
-	iy -= ay;
-	iz -= az;
+	Point3 a = CameraProcess::GetCameraLocation();
+	Point3 i = item->getLocationAbsolute();
+	i.x -= a.x;
+	i.y -= a.y;
+	i.z -= a.z;
 
 	//
 	// Convert to screenspace
@@ -69,8 +67,8 @@ bool AudioProcess::calculateSoundVolume(ObjId objId, int16 &volume, int8 &balanc
 	// Note that this should also correct for Crusader too.
 	//
 
-	int x = (ix - iy) / 4;
-	int y = (ix + iy) / 8 - iz;
+	int x = (i.x - i.y) / 4;
+	int y = (i.x + i.y) / 8 - i.z;
 
 	// Fall off over 350 pixels
 	int limit = 350 * 350;

@@ -66,14 +66,12 @@ GameMapGump::~GameMapGump() {
 	delete _displayList;
 }
 
-void GameMapGump::GetCameraLocation(int32 &lx, int32 &ly, int32 &lz,
-									int lerp_factor) {
+Point3 GameMapGump::GetCameraLocation(int lerp_factor) {
 	CameraProcess *camera = CameraProcess::GetCameraProcess();
-	if (!camera) {
-		CameraProcess::GetCameraLocation(lx, ly, lz);
-	} else {
-		camera->GetLerped(lx, ly, lz, lerp_factor);
+	if (camera) {
+		return camera->GetLerped(lerp_factor);
 	}
+	return CameraProcess::GetCameraLocation();
 }
 
 void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
@@ -85,8 +83,7 @@ void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 
 
 	// Get the camera location
-	int32 lx, ly, lz;
-	GetCameraLocation(lx, ly, lz, lerp_factor);
+	Point3 loc = GetCameraLocation(lerp_factor);
 
 	CameraProcess *camera = CameraProcess::GetCameraProcess();
 
@@ -109,7 +106,7 @@ void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 
 	Rect clipWindow;
 	surf->GetClippingRect(clipWindow);
-	_displayList->BeginDisplayList(clipWindow, lx, ly, lz);
+	_displayList->BeginDisplayList(clipWindow, loc);
 
 	uint32 gametick = Kernel::get_instance()->getFrameNum();
 
@@ -147,9 +144,8 @@ void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 						if (item->hasExtFlags(Item::EXT_TRANSPARENT))
 							continue;
 
-						int32 x_, y_, z_;
-						item->getLerped(x_, y_, z_);
-						_displayList->AddItem(x_, y_, z_, item->getShape(), item->getFrame(), item->getFlags() & ~Item::FLG_INVISIBLE, item->getExtFlags() | Item::EXT_TRANSPARENT, 1);
+						_displayList->AddItem(item->getLerped(), item->getShape(), item->getFrame(),
+							item->getFlags() & ~Item::FLG_INVISIBLE, item->getExtFlags() | Item::EXT_TRANSPARENT, 1);
 					}
 
 					continue;
@@ -162,8 +158,7 @@ void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	// Dragging:
 
 	if (_displayDragging) {
-		_displayList->AddItem(_draggingPos[0], _draggingPos[1], _draggingPos[2],
-		                      _draggingShape, _draggingFrame,
+		_displayList->AddItem(_draggingPos, _draggingShape, _draggingFrame,
 		                      _draggingFlags, Item::EXT_TRANSPARENT);
 	}
 
@@ -180,14 +175,13 @@ uint16 GameMapGump::TraceObjId(int32 mx, int32 my) {
 	return _displayList->Trace(mx, my, 0, _highlightItems);
 }
 
-uint16 GameMapGump::TraceCoordinates(int mx, int my, int32 coords[3],
+uint16 GameMapGump::TraceCoordinates(int mx, int my, Point3 &coords,
 									 int offsetx, int offsety, Item *item) {
 	int32 dxd = 0, dyd = 0, dzd = 0;
 	if (item)
 		item->getFootpadWorld(dxd, dyd, dzd);
 
-	int32 cx, cy, cz;
-	GetCameraLocation(cx, cy, cz);
+	Point3 c = GetCameraLocation();
 
 	ItemSorter::HitFace face;
 	ObjId trace = _displayList->Trace(mx, my, &face);
@@ -196,36 +190,35 @@ uint16 GameMapGump::TraceCoordinates(int mx, int my, int32 coords[3],
 	if (!hit) // strange...
 		return 0;
 
-	int32 hx, hy, hz;
 	int32 hxd, hyd, hzd;
-	hit->getLocation(hx, hy, hz);
+	Point3 h = hit->getLocation();
 	hit->getFootpadWorld(hxd, hyd, hzd);
 
 	// adjust mx (if dragged item wasn't 'picked up' at its origin)
 	mx -= offsetx;
 	my -= offsety;
 
-	// mx = (coords[0]-cx-coords[1]+cy)/4
-	// my = (coords[0]-cx+coords[1]-cy)/8 - coords[2] + cz
+	// mx = (coords.x - c.x - coords.y + c.y) / 4
+	// my = (coords.x - c.x + coords.y - c.y) / 8 - coords.z + c.z
 
 	// the below expressions solve these two equations to two of the coords,
 	// while fixing the other coord
 
 	switch (face) {
 	case ItemSorter::Z_FACE:
-		coords[0] = 2 * mx + 4 * (my + hz + hzd) + cx - 4 * cz;
-		coords[1] = -2 * mx + 4 * (my + hz + hzd) + cy - 4 * cz;
-		coords[2] = hz + hzd;
+		coords.x = 2 * mx + 4 * (my + h.z + hzd) + c.x - 4 * c.z;
+		coords.y = -2 * mx + 4 * (my + h.z + hzd) + c.y - 4 * c.z;
+		coords.z = h.z + hzd;
 		break;
 	case ItemSorter::X_FACE:
-		coords[0] = hx + dxd;
-		coords[1] = -4 * mx + hx + dxd - cx + cy;
-		coords[2] = -my + (hx + dxd) / 4 - mx / 2 - cx / 4 + cz;
+		coords.x = h.x + dxd;
+		coords.y = -4 * mx + h.x + dxd - c.x + c.y;
+		coords.z = -my + (h.x + dxd) / 4 - mx / 2 - c.x / 4 + c.z;
 		break;
 	case ItemSorter::Y_FACE:
-		coords[0] = 4 * mx + hy + dyd + cx - cy;
-		coords[1] = hy + dyd;
-		coords[2] = -my + mx / 2 + (hy + dyd) / 4 - cy / 4 + cz;
+		coords.x = 4 * mx + h.y + dyd + c.x - c.y;
+		coords.y = h.y + dyd;
+		coords.z = -my + mx / 2 + (h.y + dyd) / 4 - c.y / 4 + c.z;
 		break;
 	}
 
@@ -243,28 +236,28 @@ bool GameMapGump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
 	if (root)
 		item = root;
 
-	int32 ix, iy, iz;
-
 	// Hacks be us. Force the item into the fast area
 	item->setupLerp(Kernel::get_instance()->getFrameNum());
 	item->doLerp(lerp_factor);
-	item->getLerped(ix, iy, iz);
+	Point3 i = item->getLerped();
 
 	// Get the camera's location
-	int32 cx, cy, cz;
+	Point3 c;
 	CameraProcess *cam = CameraProcess::GetCameraProcess();
-	if (!cam) CameraProcess::GetCameraLocation(cx, cy, cz);
-	else cam->GetLerped(cx, cy, cz, lerp_factor, true);
+	if (cam)
+		c = cam->GetLerped(lerp_factor, true);
+	else
+		c = CameraProcess::GetCameraLocation();
 
 	// Screenspace bounding box bottom x coord (RNB x coord)
-	gx = (ix - iy) / 4;
+	gx = (i.x - i.y) / 4;
 	// Screenspace bounding box bottom extent  (RNB y coord)
-	gy = (ix + iy) / 8 - iz;
+	gy = (i.x + i.y) / 8 - i.z;
 
 	// Screenspace bounding box bottom x coord (RNB x coord)
-	gx -= (cx - cy) / 4;
+	gx -= (c.x - c.y) / 4;
 	// Screenspace bounding box bottom extent  (RNB y coord)
-	gy -= (cx + cy) / 8 - cz;
+	gy -= (c.x + c.y) / 8 - c.z;
 
 	return true;
 }
@@ -306,8 +299,6 @@ void GameMapGump::onMouseClick(int button, int32 mx, int32 my) {
 		uint16 objID = TraceObjId(mx, my);
 		Item *item = getItem(objID);
 		if (item) {
-			int32 xv, yv, zv;
-			item->getLocation(xv, yv, zv);
 			debugC(kDebugObject, "%s", item->dumpInfo().c_str());
 
 			if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
@@ -321,7 +312,7 @@ void GameMapGump::onMouseClick(int button, int32 mx, int32 my) {
 	case Mouse::BUTTON_MIDDLE: {
 		ParentToGump(mx, my);
 
-		int32 coords[3];
+		Point3 coords;
 		uint16 objID = TraceCoordinates(mx, my, coords);
 		Item *item = getItem(objID);
 		if (item) {
@@ -331,7 +322,7 @@ void GameMapGump::onMouseClick(int button, int32 mx, int32 my) {
 				debugC(kDebugObject, "Can't move: avatarInStasis");
 			} else {
 				Actor *avatarControlled = getControlledActor();
-				PathfinderProcess *pfp = new PathfinderProcess(avatarControlled, coords[0], coords[1], coords[2]);
+				PathfinderProcess *pfp = new PathfinderProcess(avatarControlled, coords.x, coords.y, coords.z);
 				Kernel::get_instance()->killProcesses(avatarControlled->getObjId(), PathfinderProcess::PATHFINDER_PROC_TYPE, true);
 				Kernel::get_instance()->addProcess(pfp);
 			}
@@ -353,8 +344,6 @@ void GameMapGump::onMouseDouble(int button, int32 mx, int32 my) {
 		uint16 objID = TraceObjId(mx, my);
 		Item *item = getItem(objID);
 		if (item) {
-			int32 xv, yv, zv;
-			item->getLocation(xv, yv, zv);
 			debugC(kDebugObject, "%s", item->dumpInfo().c_str());
 
 			int range = 128; // CONSTANT!
@@ -428,17 +417,16 @@ bool GameMapGump::DraggingItem(Item *item, int mx, int my) {
 
 	bool throwing = false;
 	if (!avatar->canReach(item, 128, // CONSTANT!
-	                      _draggingPos[0], _draggingPos[1], _draggingPos[2])) {
+	                      _draggingPos.x, _draggingPos.y, _draggingPos.z)) {
 		// can't reach, so see if we can throw
 		int throwrange = item->getThrowRange();
-		if (throwrange && avatar->canReach(item, throwrange, _draggingPos[0],
-		                                   _draggingPos[1], _draggingPos[2])) {
+		if (throwrange && avatar->canReach(item, throwrange, _draggingPos.x,
+		                                   _draggingPos.y, _draggingPos.z)) {
 			int speed = 64 - item->getTotalWeight() + avatar->getStr();
 			if (speed < 1) speed = 1;
-			int32 ax, ay, az;
-			avatar->getLocation(ax, ay, az);
-			MissileTracker t(item, 1, ax, ay, az,
-			                 _draggingPos[0], _draggingPos[1], _draggingPos[2],
+			Point3 pt = avatar->getLocation();
+			MissileTracker t(item, 1, pt.x, pt.y, pt.z,
+			                 _draggingPos.x, _draggingPos.y, _draggingPos.z,
 			                 speed, 4);
 			if (t.isPathClear())
 				throwing = true;
@@ -449,7 +437,7 @@ bool GameMapGump::DraggingItem(Item *item, int mx, int my) {
 		}
 	}
 
-	if (!item->canExistAt(_draggingPos[0], _draggingPos[1], _draggingPos[2]))
+	if (!item->canExistAt(_draggingPos.x, _draggingPos.y, _draggingPos.z))
 		return false;
 
 	if (throwing)
@@ -482,7 +470,7 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 	ObjId trace = TraceCoordinates(mx, my, _draggingPos, dox, doy, item);
 	Item *targetitem = getItem(trace);
 	bool canReach = avatar->canReach(item, 128, // CONSTANT!
-									_draggingPos[0], _draggingPos[1], _draggingPos[2]);
+									_draggingPos.x, _draggingPos.y, _draggingPos.z);
 
 	if (item->getShapeInfo()->hasQuantity()) {
 		if (item->getQuality() > 1) {
@@ -550,17 +538,17 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 	if (!canReach) {
 		// can't reach, so throw
 		debugC(kDebugObject, "Throwing item to (%d, %d, %d)",
-			   _draggingPos[0], _draggingPos[1], _draggingPos[2]);
+			   _draggingPos.x, _draggingPos.y, _draggingPos.z);
 		int speed = 64 - item->getTotalWeight() + avatar->getStr();
-		if (speed < 1) speed = 1;
-		int32 ax, ay, az;
-		avatar->getLocation(ax, ay, az);
+		if (speed < 1)
+			speed = 1;
+		Point3 pt = avatar->getLocation();
 		// CHECKME: correct position to throw from?
 		// CHECKME: correct events triggered when doing this move?
-		item->move(ax, ay, az + 24);
+		item->move(pt.x, pt.y, pt.z + 24);
 		int32 tx, ty;
-		tx = _draggingPos[0];
-		ty = _draggingPos[1];
+		tx = _draggingPos.x;
+		ty = _draggingPos.y;
 		int inaccuracy = 4 * (30 - avatar->getDex());
 		if (inaccuracy < 20)
 			inaccuracy = 20; // just in case dex > 25
@@ -568,22 +556,22 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 		Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 		tx += rs.getRandomNumberRngSigned(-inaccuracy, inaccuracy);
 		ty += rs.getRandomNumberRngSigned(-inaccuracy, inaccuracy);
-		MissileTracker t(item, 1, tx, ty, _draggingPos[2],
+		MissileTracker t(item, 1, tx, ty, _draggingPos.z,
 		                 speed, 4);
 		t.launchItem();
 
-		Direction dir = Direction_GetWorldDir(_draggingPos[1] - ay,
-											  _draggingPos[0] - ax,
+		Direction dir = Direction_GetWorldDir(_draggingPos.y - pt.y,
+											  _draggingPos.x - pt.x,
 											   dirmode_8dirs);
 		avatar->doAnim(Animation::stand, dir);
 	} else {
 		debugC(kDebugObject, "Dropping item at (%d, %d, %d)",
-			   _draggingPos[0], _draggingPos[1], _draggingPos[2]);
+			   _draggingPos.x, _draggingPos.y, _draggingPos.z);
 
 		// CHECKME: collideMove and grab (in StopDraggingItem)
 		// both call release on supporting items.
 
-		item->collideMove(_draggingPos[0], _draggingPos[1], _draggingPos[2],
+		item->collideMove(_draggingPos.x, _draggingPos.y, _draggingPos.z,
 		                  true, true); // teleport item
 		item->fall();
 	}

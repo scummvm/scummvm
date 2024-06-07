@@ -75,12 +75,11 @@ void MiniMap::update(const CurrentMap &map) {
 }
 
 Common::Point MiniMap::getItemLocation(const Item &item, unsigned int chunkSize) {
-	int32 x, y, z;
-	item.getLocation(x, y, z);
+	Point3 pt = item.getLocation();
 
-	x = x / (chunkSize / MINMAPGUMP_SCALE);
-	y = y / (chunkSize / MINMAPGUMP_SCALE);
-	return Common::Point(x, y);
+	pt.x = pt.x / (chunkSize / MINMAPGUMP_SCALE);
+	pt.y = pt.y / (chunkSize / MINMAPGUMP_SCALE);
+	return Common::Point(pt.x, pt.y);
 }
 
 uint32 MiniMap::sampleAtPoint(const CurrentMap &map, int x, int y) {
@@ -110,12 +109,12 @@ uint32 MiniMap::sampleAtPoint(const CurrentMap &map, int x, int y) {
 }
 
 uint32 MiniMap::sampleAtPoint(const Item &item, int x, int y) {
-	int32 ix, iy, iz, idx, idy, idz;
-	item.getLocation(ix, iy, iz);
+	int32 idx, idy, idz;
+	Point3 pt = item.getLocation();
 	item.getFootpadWorld(idx, idy, idz);
 
-	ix -= x;
-	iy -= y;
+	pt.x -= x;
+	pt.y -= y;
 
 	const Shape *sh = item.getShapeObject();
 	if (!sh)
@@ -133,9 +132,9 @@ uint32 MiniMap::sampleAtPoint(const Item &item, int x, int y) {
 		return KEY_COLOR;
 
 	// Screenspace bounding box bottom x_ coord (RNB x_ coord)
-	int sx = (ix - iy) / 4;
+	int sx = (pt.x - pt.y) / 4;
 	// Screenspace bounding box bottom extent  (RNB y_ coord)
-	int sy = (ix + iy) / 8 + idz;
+	int sy = (pt.x + pt.y) / 8 + idz;
 
 	int w = 3;
 	int h = 3;
