@@ -530,7 +530,7 @@ void FreescapeEngine::loadSoundsFx(Common::SeekableReadStream *file, int offset,
 		assert(zero == 0);
 		int size = file->readUint16BE();
 		int sampleRate = file->readUint16BE();
-		debugC(1, kFreescapeDebugParser, "Loading sound: %d (size: %d, sample rate: %d)", i, size, sampleRate);
+		debugC(1, kFreescapeDebugParser, "Loading sound: %d (size: %d, sample rate: %d) at %lx", i, size, sampleRate, file->pos());
 		byte *data = (byte *)malloc(size * sizeof(byte));
 		file->read(data, size);
 		sound->sampleRate = sampleRate;

@@ -213,6 +213,11 @@ soundFx *EclipseEngine::load1bPCM(Common::SeekableReadStream *file, int offset) 
 }
 
 void EclipseEngine::loadSoundsFx(Common::SeekableReadStream *file, int offset, int number) {
+	if (isAmiga() || isAtariST()) {
+		FreescapeEngine::loadSoundsFx(file, offset, number);
+		return;
+	}
+
 	for (int i = 0; i < 5; i++) {
 		_soundsFx[i] = load1bPCM(file, offset);
 		offset += (_soundsFx[i]->size / 8) + 4;
@@ -221,6 +226,11 @@ void EclipseEngine::loadSoundsFx(Common::SeekableReadStream *file, int offset, i
 
 
 void EclipseEngine::playSoundFx(int index, bool sync) {
+	if (isAmiga() || isAtariST()) {
+		FreescapeEngine::playSoundFx(index, sync);
+		return;
+	}
+
 	if (_soundsFx.size() == 0) {
 		debugC(1, kFreescapeDebugMedia, "WARNING: Sounds are not loaded");
 		return;

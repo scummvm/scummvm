@@ -167,6 +167,7 @@ void EclipseEngine::loadAssetsAtariFullGame() {
 
 	_border = loadAndConvertNeoImage(stream, 0x139c8);
 	loadPalettes(stream, 0x2a0fa);
+	loadSoundsFx(stream, 0x3030c, 6);
 
 	for (auto &it : _areaMap) {
 		it._value->addStructure(_areaMap[255]);
