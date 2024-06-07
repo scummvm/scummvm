@@ -4644,6 +4644,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("karma", "", "KARMA.EXE", "e830af6b5dfca4964184e7d61039e120", 697047,
 						  "01_0Y.BIM", "246c2f5ab5499d46f395aa9d0da05c9a", 780158, 404),
 	WINGAME1_l("karma", "", "DH.EXE", "f917ac9c649bff9eaf538ae69432a145", 690991, Common::ZH_TWN, 400),
+	MACGAME1_l("karma", "", "Karma", "rt:a002b7710fd2a968ff1ddd5aa9819f8f", 485279, Common::DE_DEU, 404),
+	WINGAME2_l("karma", "", "KARMA.EXE", "t:abe9fe1d7ae185cacb6f9f3e5fa8fe77", 697079,
+							  "01_0Y.BIM", "d:5ec986161fb602b5b105ffd066a0c270", 5827468, Common::DE_DEU, 404),
 
 	// Original Mac filename is かるたでおじゃる
 	MACGAME1_l("karuta", "", "xn--t8jb4b0a4b1lzbf", "78138a77207907642744d0960c14d9e5", 486623, Common::JA_JPN, 404),
