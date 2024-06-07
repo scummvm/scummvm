@@ -23,6 +23,7 @@
 #include "common/serializer.h"
 
 #include "graphics/managed_surface.h"
+#include "graphics/primitives.h"
 
 #include "dgds/ttm.h"
 #include "dgds/ads.h"
@@ -221,6 +222,20 @@ static const char *ttmOpName(uint16 op) {
 	default: return "UNKNOWN!!";
 	}
 }
+
+struct ClipSurface {
+	Graphics::Surface *_surf;
+	Common::Rect _clipWin;
+};
+
+static void plotClippedPoint(int x, int y, int color, void *data) {
+	ClipSurface *cs = (ClipSurface *)data;
+	if (cs->_clipWin.contains(x, y)) {
+		byte *ptr = (byte *)cs->_surf->getBasePtr(x, y);
+		*ptr = (byte)color;
+	}
+}
+
 
 void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval) {
 	switch (op) {
@@ -432,9 +447,13 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		_vm->getStoredAreaBuffer().fillRect(r, 0);
 		break;
 	}
-	case 0xa0a0: // DRAW LINE  x1,y1,x2,y2:int
-		_vm->_compositionBuffer.drawLine(ivals[0], ivals[1], ivals[2], ivals[3], seq._drawColFG);
+	case 0xa0a0: { // DRAW LINE  x1,y1,x2,y2:int
+		ClipSurface clipSurf;
+		clipSurf._clipWin = seq._drawWin;
+		clipSurf._surf = _vm->_compositionBuffer.surfacePtr();
+		Graphics::drawLine(ivals[0], ivals[1], ivals[2], ivals[3], seq._drawColFG, plotClippedPoint, &clipSurf);
 		break;
+	}
 	case 0xa100: { // DRAW FILLED RECT x,y,w,h:int	[0..320,0..200]
 		const Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
 		_vm->_compositionBuffer.fillRect(r, seq._drawColFG);
