@@ -320,9 +320,9 @@ void ADSInterpreter::findEndOrInitOp() {
 }
 
 bool ADSInterpreter::logicOpResult(uint16 code, const TTMEnviro *env, const TTMSeq *seq) {
-	const char *tag = env->_tags[seq->_seqNum].c_str();
-	int16 envNum = env->_enviro;
-	int16 seqNum = seq->_seqNum;
+	const char *tag = seq ? env->_tags[seq->_seqNum].c_str() : "";
+	int16 envNum = env ? env->_enviro : 0;
+	int16 seqNum = seq ? seq->_seqNum : 0;
 	const char *optype = (code < 0x1300 ? "while" : "if");
 	switch (code) {
 	case 0x1010: // WHILE runtype 5
@@ -967,8 +967,14 @@ Common::Error ADSInterpreter::syncState(Common::Serializer &s) {
 	}
 
 	// Text order should be the same
+	if (s.getVersion() < 3) {
+		for (const Common::String &name : scriptNames) {
+			_adsTexts[name].syncState(s);
+		}
+	}
+
 	for (const Common::String &name : scriptNames) {
-		_adsTexts[name].syncState(s);
+		load(name);
 	}
 
 	s.syncString(activeScript);
