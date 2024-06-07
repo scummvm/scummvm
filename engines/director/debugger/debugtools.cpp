@@ -203,7 +203,7 @@ void showImage(const ImGuiImage &image, const char *name, float thumbnailSize) {
 }
 
 void displayVariable(const Common::String &name, bool changed) {
-	ImU32 var_color = ImGui::GetColorU32(ImVec4(0.9f, 0.9f, 0.0f, 1.0f));
+	ImU32 var_color = ImGui::GetColorU32(_state->_colors._var_ref);
 
 	const ImU32 disp_color_disabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 0.0f));
 	const ImU32 disp_color_enabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 1.0f));
@@ -232,7 +232,7 @@ void displayVariable(const Common::String &name, bool changed) {
 	}
 
 	if (changed)
-		var_color = ImGui::GetColorU32(_state->_colors._changed_var_color);
+		var_color = ImGui::GetColorU32(_state->_colors._var_ref_changed);
 
 	if (color == disp_color_disabled && ImGui::IsItemHovered()) {
 		color = disp_color_hover;
@@ -272,7 +272,7 @@ void setScriptToDisplay(const ImGuiScript &script) {
 
 void displayScriptRef(CastMemberID &scriptId) {
 	if (scriptId.member) {
-		ImGui::TextColored(ImVec4(0.5f, 0.5f, 1.0f, 1.0f), "%d", scriptId.member);
+		ImGui::TextColored(_state->_colors._script_ref, "%d", scriptId.member);
 
 		ImGui::SetItemTooltip(scriptId.asString().c_str());
 
@@ -293,7 +293,7 @@ static void showSettings() {
 		ImGui::ColorEdit4("Breakpoint disabled", &_state->_colors._bp_color_disabled.x);
 		ImGui::ColorEdit4("Breakpoint enabled", &_state->_colors._bp_color_enabled.x);
 		ImGui::ColorEdit4("Breakpoint hover", &_state->_colors._bp_color_hover.x);
-		ImGui::Separator();
+		ImGui::SeparatorText("Lingo highlighting");
 		ImGui::ColorEdit4("Line", &_state->_colors._line_color.x);
 		ImGui::ColorEdit4("Call", &_state->_colors._call_color.x);
 		ImGui::ColorEdit4("Builtin", &_state->_colors._builtin_color.x);
@@ -303,6 +303,10 @@ static void showSettings() {
 		ImGui::ColorEdit4("Type", &_state->_colors._type_color.x);
 		ImGui::ColorEdit4("Keyword", &_state->_colors._keyword_color.x);
 		ImGui::ColorEdit4("The entity", &_state->_colors._the_color.x);
+		ImGui::SeparatorText("References");
+		ImGui::ColorEdit4("Script", &_state->_colors._script_ref.x);
+		ImGui::ColorEdit4("Variable", &_state->_colors._var_ref.x);
+		ImGui::ColorEdit4("Variable changed", &_state->_colors._var_ref_changed.x);
 	}
 	ImGui::End();
 }
