@@ -3184,14 +3184,8 @@ uint32 Item::I_legalCreateAtPoint(const uint8 *args, unsigned int /*argsize*/) {
 
 	World_FromUsecodeXY(x, y);
 
-	const ShapeInfo *si = GameData::get_instance()->getMainShapes()->getShapeInfo(shape);
-	int32 xd, yd, zd;
-	si->getFootpadWorld(xd, yd, zd, 0);
-
-	CurrentMap *cm = World::get_instance()->getCurrentMap();
-	cm->updateFastArea(x, y, z, x - xd, y - yd, z + zd);
-
 	// check if item can exist
+	CurrentMap *cm = World::get_instance()->getCurrentMap();
 	PositionInfo info = cm->getPositionInfo(x, y, z, shape, 0);
 	if (!info.valid)
 		return 0;
@@ -3222,14 +3216,8 @@ uint32 Item::I_legalCreateAtCoords(const uint8 *args, unsigned int /*argsize*/) 
 
 	World_FromUsecodeXY(x, y);
 
-	const ShapeInfo *si = GameData::get_instance()->getMainShapes()->getShapeInfo(shape);
-	int32 xd, yd, zd;
-	si->getFootpadWorld(xd, yd, zd, 0);
-
-	CurrentMap *cm = World::get_instance()->getCurrentMap();
-	cm->updateFastArea(x, y, z, x - xd, y - yd, z + zd);
-
 	// check if item can exist
+	CurrentMap *cm = World::get_instance()->getCurrentMap();
 	PositionInfo info = cm->getPositionInfo(x, y, z, shape, 0);
 	if (!info.valid)
 		return 0;
