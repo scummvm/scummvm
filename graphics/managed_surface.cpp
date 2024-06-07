@@ -82,7 +82,12 @@ ManagedSurface::ManagedSurface(Surface *surf, DisposeAfterUse::Flag disposeAfter
 
 		delete surf;
 	} else {
-		copyFrom(*surf);
+		void *srcPixels = surf->getPixels();
+		_innerSurface.setPixels(srcPixels);
+		_innerSurface.w = surf->w;
+		_innerSurface.h = surf->h;
+		_innerSurface.pitch = surf->pitch;
+		this->format = surf->format;
 	}
 
 	_disposeAfterUse = disposeAfterUse;
