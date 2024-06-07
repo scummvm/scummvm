@@ -597,7 +597,7 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 
 	_menu->hideMenu();
 
-	if (!s.syncVersion(2))
+	if (!s.syncVersion(3))
 		error("Save game version too new: %d", s.getVersion());
 
 	Common::Error result;
@@ -653,6 +653,8 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 		Image(_resource, _decompressor).drawScreen(_backgroundFile, _backgroundBuffer);
 		_storedAreaBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 	}
+
+	_scene->runEnterSceneOps();
 
 	return Common::kNoError;
 }
