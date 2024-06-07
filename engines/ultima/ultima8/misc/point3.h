@@ -31,6 +31,13 @@ struct Point3 {
 	Point3() : x(0), y(0), z(0) {}
 	Point3(int32 nx, int32 ny, int32 nz) : x(nx), y(ny), z(nz) {}
 
+	bool operator==(const Point3 &rhs) const { return equals(rhs); }
+	bool operator!=(const Point3 &rhs) const { return !equals(rhs); }
+
+	bool equals(const Point3 &p) const {
+		return (x == p.x && y == p.y && z == p.z);
+	}
+
 	int maxDistXYZ(const Point3 &other) const {
 		int xdiff = abs(x - other.x);
 		int ydiff = abs(y - other.y);

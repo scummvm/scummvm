@@ -986,11 +986,9 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 		// If the attacker is the controlled npc and this actor is not pathfinding
 		if (attacker && attacker == getControlledActor() &&
 			kernel->findProcess(_objId, PathfinderProcess::PATHFINDER_PROC_TYPE) != nullptr) {
-			int32 x, y, z;
-			int32 ox, oy, oz;
-			getLocation(x, y, z);
-			attacker->getLocation(ox, oy, oz);
-			int32 maxdiff = MAX(MAX(abs(x - ox), abs(y - oy)), abs(z - oz));
+			Point3 pt1 = getLocation();
+			Point3 pt2 = attacker->getLocation();
+			int32 maxdiff = MAX(MAX(abs(pt1.x - pt2.x), abs(pt1.y - pt2.y)), abs(pt1.z - pt2.z));
 			if (maxdiff < 641 && isOnScreen()) {
 				// TODO: implement the equivalent of this function.  For now, we always
 				// cancel pathfinding for the NPC.
@@ -1203,10 +1201,9 @@ void Actor::receiveHitU8(uint16 other, Direction dir, int damage, uint16 damage_
 			end = 25;
 		}
 
-		int32 xv, yv, zv;
-		getLocation(xv, yv, zv);
-		zv += rs.getRandomNumber(23);
-		Process *sp = new SpriteProcess(620, start, end, 1, 1, xv, yv, zv);
+		Point3 pt = getLocation();
+		pt.z += rs.getRandomNumber(23);
+		Process *sp = new SpriteProcess(620, start, end, 1, 1, pt.x, pt.y, pt.z);
 		Kernel::get_instance()->addProcess(sp);
 	}
 
@@ -2648,9 +2645,8 @@ uint32 Actor::I_createActorCru(const uint8 *args, unsigned int /*argsize*/) {
 
 	newactor->setDir(static_cast<Direction>(dir * 2));
 
-	int32 x, y, z;
-	item->getLocation(x, y, z);
-	newactor->move(x, y, z);
+	Point3 pt = item->getLocation();
+	newactor->move(pt.x, pt.y, pt.z);
 
 	newactor->setDefaultActivity(0, other->getQuality() >> 8);
 	newactor->setDefaultActivity(1, item->getQuality() >> 8);
@@ -2686,7 +2682,7 @@ uint32 Actor::I_createActorCru(const uint8 *args, unsigned int /*argsize*/) {
 	}
 
 	newactor->setCombatTactic(0);
-	newactor->setHomePosition(x, y, z);
+	newactor->setHomePosition(pt.x, pt.y, pt.z);
 
 	/*
 	 TODO: once I know what this field is.. seems to never be used in game?

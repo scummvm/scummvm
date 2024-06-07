@@ -489,8 +489,7 @@ void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction
 
 		Direction dir_right = Direction_TurnByDelta(direction, 4, dirmode_16dirs);
 		Direction dir_left = Direction_TurnByDelta(direction, -4, dirmode_16dirs);
-		Point3 origpt;
-		avatar->getLocation(origpt);
+		Point3 origpt = avatar->getLocation();
 
 		int32 dims[3];
 		avatar->getFootpadWorld(dims[0], dims[1], dims[2]);

@@ -84,10 +84,9 @@ void StartU8Process::run() {
 
 		uint16 objid = uclist.getuint16(0);
 		Egg *egg = dynamic_cast<Egg *>(getObject(objid));
-		int32 ix, iy, iz;
-		egg->getLocation(ix, iy, iz);
+		Point3 pt = egg->getLocation();
 		// Center on egg
-		CameraProcess::SetCameraProcess(new CameraProcess(ix, iy, iz));
+		CameraProcess::SetCameraProcess(new CameraProcess(pt.x, pt.y, pt.z));
 		egg->hatch();
 	}
 

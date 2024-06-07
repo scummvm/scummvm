@@ -24,6 +24,7 @@
 
 #include "ultima/ultima8/world/actors/animation.h"
 #include "ultima/ultima8/world/actors/pathfinder.h"
+#include "ultima/ultima8/misc/point3.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -65,9 +66,9 @@ public:
 
 	//! get the current position
 	void getPosition(int32 &x, int32 &y, int32 &z) const {
-		x = _x;
-		y = _y;
-		z = _z;
+		x = _curr.x;
+		y = _curr.y;
+		z = _curr.z;
 	}
 
 	void getInterpolatedPosition(int32 &x, int32 &y, int32 &z, int fc)
@@ -126,9 +127,9 @@ private:
 	const AnimAction *_animAction;
 
 	// actor state
-	int32 _prevX, _prevY, _prevZ;
-	int32 _x, _y, _z;
-	int32 _startX, _startY, _startZ;
+	Point3 _prev;
+	Point3 _curr;
+	Point3 _start;
 	int32 _targetDx, _targetDy, _targetDz;
 	int32 _targetOffGroundLeft;
 	bool _firstStep, _flipped;

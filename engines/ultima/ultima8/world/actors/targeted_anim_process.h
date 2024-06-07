@@ -25,6 +25,7 @@
 #include "ultima/ultima8/world/actors/actor_anim_process.h"
 #include "ultima/ultima8/world/actors/animation.h"
 #include "ultima/ultima8/misc/classtype.h"
+#include "ultima/ultima8/misc/point3.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -34,7 +35,7 @@ public:
 	TargetedAnimProcess();
 	//! note: this probably needs some more parameters
 	TargetedAnimProcess(Actor *actor, Animation::Sequence action, Direction dir,
-	                    int32 coords[3]);
+	                    const Point3 &coords);
 
 	ENABLE_RUNTIME_CLASSTYPE()
 

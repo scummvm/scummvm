@@ -25,6 +25,7 @@
 #include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/classtype.h"
+#include "ultima/ultima8/misc/point3.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -51,7 +52,7 @@ public:
 	void run() override;
 
 	// You will notice that this isn't the same as how Item::GetLerped works
-	void GetLerped(int32 &x, int32 &y, int32 &z, int32 factor, bool noupdate = false);
+	Point3 GetLerped(int32 factor, bool noupdate = false);
 
 	//! Find the roof above the camera.
 	//! \param factor Interpolation factor for this frame
@@ -76,7 +77,7 @@ public:
 	INTRINSIC(I_getCameraY);
 	INTRINSIC(I_getCameraZ);
 
-	static void             GetCameraLocation(int32 &x, int32 &y, int32 &z);
+	static Point3           GetCameraLocation();
 	static CameraProcess   *GetCameraProcess() {
 		return _camera;
 	}
@@ -107,8 +108,8 @@ public:
 	}
 
 private:
-	int32 _sx, _sy, _sz;
-	int32 _ex, _ey, _ez;
+	Point3 _s;
+	Point3 _e;
 	int32 _time;
 	int32 _elapsed;
 	uint16 _itemNum;

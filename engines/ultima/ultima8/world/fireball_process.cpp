@@ -84,14 +84,12 @@ void FireballProcess::run() {
 	//   * deal damage if hit Actor
 	//   * turn around if hit non-Actor
 
-	int32 x, y, z;
-	int32 tx, ty, tz;
 	int32 dx, dy;
-	item->getLocation(x, y, z);
-	t->getLocationAbsolute(tx, ty, tz);
+	Point3 pt1 = item->getLocation();
+	Point3 pt2 = t->getLocationAbsolute();
 
-	dx = tx - x;
-	dy = ty - y;
+	dx = pt2.x - pt1.x;
+	dy = pt2.y - pt1.y;
 
 	Direction targetdir = item->getDirToItemCentre(*t);
 
@@ -111,7 +109,7 @@ void FireballProcess::run() {
 	}
 
 	ObjId hititem = 0;
-	item->collideMove(x + _xSpeed, y + _ySpeed, z, false, false, &hititem);
+	item->collideMove(pt1.x + _xSpeed, pt1.y + _ySpeed, pt1.z, false, false, &hititem);
 
 	// handle _tail
 	// _tail is shape 261, frame 0-7 (0 = to top-right, 7 = to top)
@@ -126,7 +124,7 @@ void FireballProcess::run() {
 	Item *tailitem = getItem(_tail[2]);
 	Direction movedir = Direction_GetWorldDir(_ySpeed, _xSpeed, dirmode_8dirs);
 	tailitem->setFrame(Direction_ToUsecodeDir(movedir));
-	tailitem->move(x, y, z);
+	tailitem->move(pt1.x, pt1.y, pt1.z);
 
 	_tail[2] = _tail[1];
 	_tail[1] = _tail[0];

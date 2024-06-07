@@ -32,9 +32,9 @@ TargetedAnimProcess::TargetedAnimProcess() : ActorAnimProcess(),
 		_x(0), _y(0), _z(0) {
 }
 
-TargetedAnimProcess::TargetedAnimProcess(Actor *actor, Animation::Sequence action, Direction dir, int32 coords[3]) :
+TargetedAnimProcess::TargetedAnimProcess(Actor *actor, Animation::Sequence action, Direction dir, const Point3 &coords) :
 	ActorAnimProcess(actor, action, dir),
-	_x(coords[0]), _y(coords[1]), _z(coords[2]) {
+	_x(coords.x), _y(coords.y), _z(coords.z) {
 }
 
 bool TargetedAnimProcess::init() {

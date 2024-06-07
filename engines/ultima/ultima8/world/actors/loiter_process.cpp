@@ -70,19 +70,18 @@ void LoiterProcess::run() {
 		return;
 	}
 
-	int32 x, y, z;
-	a->getLocation(x, y, z);
+	Point3 pt = a->getLocation();
 
 	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 
-	x += 32 * rs.getRandomNumberRngSigned(-10, 10);
-	y += 32 * rs.getRandomNumberRngSigned(-10, 10);
+	pt.x += 32 * rs.getRandomNumberRngSigned(-10, 10);
+	pt.y += 32 * rs.getRandomNumberRngSigned(-10, 10);
 
 	Process *pfp;
 	if (GAME_IS_U8)
-		pfp = new PathfinderProcess(a, x, y, z);
+		pfp = new PathfinderProcess(a, pt.x, pt.y, pt.z);
 	else
-		pfp = new CruPathfinderProcess(a, x, y, z, 0xc, 0x80, false);
+		pfp = new CruPathfinderProcess(a, pt.x, pt.y, pt.z, 0xc, 0x80, false);
 
 	Kernel::get_instance()->addProcess(pfp);
 

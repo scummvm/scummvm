@@ -39,7 +39,10 @@ _counter(0), _x(0), _y(0), _z(0)
 BoboBoomerProcess::BoboBoomerProcess(const Item *item) : Process(), _counter(0)
 {
 	assert(item);
-	item->getLocation(_x, _y, _z);
+	Point3 pt = item->getLocation();
+	_x = pt.x;
+	_y = pt.y;
+	_z = pt.z;
 	_type = 0x264;
 }
 

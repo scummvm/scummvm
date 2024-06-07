@@ -24,6 +24,7 @@
 
 #include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/point3.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -56,7 +57,7 @@ private:
 
 	Direction nextDirFromPoint(struct Point3 &npcpt);
 
-	int32 _targetX, _targetY, _targetZ;
+	Point3 _target;
 	ObjId _targetItem;
 	int _currentDistance;
 	bool _randomFlag;

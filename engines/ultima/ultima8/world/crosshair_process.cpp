@@ -59,9 +59,8 @@ void CrosshairProcess::run() {
 	if (actor->isInCombat()) {
 		Kernel *kernel = Kernel::get_instance();
 		assert(kernel);
-		int32 ax, ay, az;
-		actor->getLocation(ax, ay, az);
-		actor->addFireAnimOffsets(ax, ay, az);
+		Point3 pt = actor->getLocation();
+		actor->addFireAnimOffsets(pt.x, pt.y, pt.z);
 
 		const CruAvatarMoverProcess *mover = dynamic_cast<CruAvatarMoverProcess *>(Ultima8Engine::get_instance()->getAvatarMoverProcess());
 		if (!mover) {
@@ -77,8 +76,8 @@ void CrosshairProcess::run() {
 		double rads = Common::deg2rad(angle);
 		float xoff = CROSSHAIR_DIST * cos(rads);
 		float yoff = CROSSHAIR_DIST * sin(rads);
-		ax -= static_cast<int32>(xoff);
-		ay -= static_cast<int32>(yoff);
+		pt.x -= static_cast<int32>(xoff);
+		pt.y -= static_cast<int32>(yoff);
 
 		Item *item;
 		if (_itemNum) {
@@ -90,7 +89,7 @@ void CrosshairProcess::run() {
 			setItemNum(item->getObjId());
 		}
 		if (item)
-			item->move(ax, ay, az);
+			item->move(pt.x, pt.y, pt.z);
 		else
 			_itemNum = 0; // sprite gone? can happen during teleport.
 	} else {

@@ -98,20 +98,19 @@ void GravityProcess::run() {
 	//     - bounce off the item (need to consider FLG_LOW_FRICTION?)
 	//     - call the relevant events: hit/gothit ?
 
-	int32 ix, iy, iz;
-	item->getLocation(ix, iy, iz);
+	Point3 pt = item->getLocation();
 
 	// Shouldn't go negative as original did not allow it
-	if (iz <= 0 && _zSpeed < 0) {
+	if (pt.z <= 0 && _zSpeed < 0) {
 		terminateDeferred();
 		fallStopped();
 		return;
 	}
 
 	int32 tx, ty, tz;
-	tx = ix + _xSpeed;
-	ty = iy + _ySpeed;
-	tz = iz + _zSpeed;
+	tx = pt.x + _xSpeed;
+	ty = pt.y + _ySpeed;
+	tz = pt.z + _zSpeed;
 
 	if (tz < 0)
 		tz = 0;
@@ -161,19 +160,19 @@ void GravityProcess::run() {
 			termFlag = false;
 			_zSpeed = 0;
 
-			item->getCentre(ix, iy, iz);
+			item->getCentre(pt.x, pt.y, pt.z);
 			target = hititem->getWorldBox();
 			if (ABS(_xSpeed) < 16) {
-				if (ix + 16 > target._x)
+				if (pt.x + 16 > target._x)
 					_xSpeed = 16;
-				else if (ix - 16 < target._x - target._xd)
+				else if (pt.x - 16 < target._x - target._xd)
 					_xSpeed = -16;
 			}
 
 			if (ABS(_ySpeed) < 16) {
-				if (iy + 16 > target._y)
+				if (pt.y + 16 > target._y)
 					_ySpeed = 16;
-				else if (iy - 16 < target._y - target._yd)
+				else if (pt.y - 16 < target._y - target._yd)
 					_ySpeed = -16;
 			}
 		} else if (_zSpeed < -2 && !actor) {

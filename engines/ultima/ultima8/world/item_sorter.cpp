@@ -72,7 +72,7 @@ ItemSorter::~ItemSorter() {
 	}
 }
 
-void ItemSorter::BeginDisplayList(const Rect &clipWindow, int32 camx, int32 camy, int32 camz) {
+void ItemSorter::BeginDisplayList(const Rect &clipWindow, const Point3 &cam) {
 	// Get the _shapes, if required
 	if (!_shapes) _shapes = GameData::get_instance()->getMainShapes();
 
@@ -89,9 +89,9 @@ void ItemSorter::BeginDisplayList(const Rect &clipWindow, int32 camx, int32 camy
 	_painted = nullptr;
 
 	// Screenspace bounding box bottom x coord (RNB x coord)
-	int32 camSx = (camx - camy) / 4;
+	int32 camSx = (cam.x - cam.y) / 4;
 	// Screenspace bounding box bottom extent  (RNB y coord)
-	int32 camSy = (camx + camy) / 8 - camz;
+	int32 camSy = (cam.x + cam.y) / 8 - cam.z;
 
 	if (camSx != _camSx || camSy != _camSy) {
 		_camSx = camSx;
@@ -102,7 +102,7 @@ void ItemSorter::BeginDisplayList(const Rect &clipWindow, int32 camx, int32 camy
 	}
 }
 
-void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 frame_num, uint32 flags, uint32 ext_flags, uint16 itemNum) {
+void ItemSorter::AddItem(const Point3 &pt, uint32 shapeNum, uint32 frame_num, uint32 flags, uint32 ext_flags, uint16 itemNum) {
 
 	// First thing, get a SortItem to use (first of unused)
 	if (!_itemsUnused)
@@ -135,7 +135,7 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 	info->getFootpadWorld(xd, yd, zd, flags & Item::FLG_FLIPPED);
 
 	// Worldspace bounding box
-	Box box(x, y, z, xd, yd, zd);
+	Box box(pt.x, pt.y, pt.z, xd, yd, zd);
 	si->setBoxBounds(box, _camSx, _camSy);
 
 	// Real Screenspace from shape frame
@@ -270,9 +270,7 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 }
 
 void ItemSorter::AddItem(const Item *add) {
-	int32 x, y, z;
-	add->getLerped(x, y, z);
-	AddItem(x, y, z, add->getShape(), add->getFrame(),
+	AddItem(add->getLerped(), add->getShape(), add->getFrame(),
 			add->getFlags(), add->getExtFlags(), add->getObjId());
 }
 

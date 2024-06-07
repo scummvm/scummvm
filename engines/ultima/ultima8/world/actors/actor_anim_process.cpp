@@ -193,9 +193,8 @@ void ActorAnimProcess::run() {
 	bool resultVal = true;
 	if (_repeatCounter == 0) {
 		// next step:
-		int32 x, y, z;
-		a->getLocation(x, y, z);
-		resultVal = _tracker->stepFrom(x, y, z);
+		Point3 pt = a->getLocation();
+		resultVal = _tracker->stepFrom(pt.x, pt.y, pt.z);
 		_tracker->updateActorFlags();
 		_currentStep++;
 
@@ -211,7 +210,7 @@ void ActorAnimProcess::run() {
 #endif
 
 				// TODO: there are _three_ places where we can fall; clean up
-				if (_tracker->isUnsupported() && z > 0) {
+				if (_tracker->isUnsupported() && pt.z > 0) {
 #ifdef WATCHACTOR
 					if (_itemNum == watchactor) {
 						debugC(kDebugActor, "Animation [%u] ActorAnimProcess falling at end",
@@ -239,7 +238,7 @@ void ActorAnimProcess::run() {
 						  Kernel::get_instance()->getFrameNum());
 #endif
 
-				if (_tracker->isUnsupported() && z > 0) {
+				if (_tracker->isUnsupported() && pt.z > 0) {
 #ifdef WATCHACTOR
 					if (_itemNum == watchactor) {
 						debugC(kDebugActor, "Animation [%u] ActorAnimProcess falling from blocked",
@@ -289,15 +288,15 @@ void ActorAnimProcess::run() {
 		}
 	}
 
-	int32 x, y, z, x2, y2, z2;
-	a->getLocation(x, y, z);
+	int32 x2, y2, z2;
+	Point3 pt = a->getLocation();
 
 	if (_interpolate) {
 		// Apply interpolated position on repeated frames
 		_tracker->getInterpolatedPosition(x2, y2, z2, _repeatCounter);
-		if (x == x2 && y == y2 && z == z2) {
-			_tracker->getInterpolatedPosition(x, y, z, _repeatCounter + 1);
-			a->collideMove(x, y, z, false, true); // forced move
+		if (pt.x == x2 && pt.y == y2 && pt.z == z2) {
+			_tracker->getInterpolatedPosition(pt.x, pt.y, pt.z, _repeatCounter + 1);
+			a->collideMove(pt.x, pt.y, pt.z, false, true); // forced move
 			a->setFrame(_tracker->getFrame());
 #ifdef WATCHACTOR
 		} else {
@@ -314,9 +313,9 @@ void ActorAnimProcess::run() {
 			a->collideMove(x2, y2, z2, false, true); // forced move
 			a->setFrame(_tracker->getFrame());
 		} else {
-			x2 = x;
-			y2 = y;
-			z2 = z;
+			x2 = pt.x;
+			y2 = pt.y;
+			z2 = pt.z;
 		}
 	}
 
@@ -344,7 +343,7 @@ void ActorAnimProcess::run() {
 			info += "H";
 
 		debugC(kDebugActor, "Animation [%u] ActorAnimProcess showing frame (%d, %d, %d)-(%d, %d, %d) shp (%u, %u) sfx %d rep %d flg %04X %s",
-			  Kernel::get_instance()->getFrameNum(), x, y, z, x2, y2, z2,
+			  Kernel::get_instance()->getFrameNum(), pt.x, pt.y, pt.z, x2, y2, z2,
 			  a->getShape(), _tracker->getFrame(), _tracker->getAnimFrame()->_sfx,
 			  _repeatCounter, _tracker->getAnimFrame()->_flags, info.c_str());
 	}
@@ -352,7 +351,7 @@ void ActorAnimProcess::run() {
 
 
 	if (_repeatCounter == _tracker->getAnimAction()->getFrameRepeat()) {
-		if (_tracker->isUnsupported() && z > 0) {
+		if (_tracker->isUnsupported() && pt.z > 0) {
 			_animAborted = !_tracker->getAnimAction()->hasFlags(AnimAction::AAF_UNSTOPPABLE);
 
 #ifdef WATCHACTOR
@@ -410,29 +409,27 @@ void ActorAnimProcess::doSpecial() {
 			Actor *skull = Actor::createActor(0x19d, 0);
 			if (!skull) return;
 			skull->setFlag(Item::FLG_FAST_ONLY);
-			int32 x, y, z;
-			a->getLocation(x, y, z);
+			Point3 pt = a->getLocation();
 			Direction dirNum = a->getDir();
-			skull->move(x + 32 * Direction_XFactor(dirNum), y + 32 * Direction_XFactor(dirNum), z);
+			skull->move(pt.x + 32 * Direction_XFactor(dirNum), pt.y + 32 * Direction_XFactor(dirNum), pt.z);
 			hostile = skull;
 		} else if (a->getMapNum() != 54) { // Khumash-Gor doesn't summon ghouls
 			// otherwise, summon ghoul
 			unsigned int ghoulcount = a->countNearby(0x8e, 8 * 256);
 			if (ghoulcount > 2) return;
 
-			int32 x, y, z;
-			a->getLocation(x, y, z);
-			x += rs.getRandomNumberRngSigned(-3 * 256, 3 * 256);
-			y += rs.getRandomNumberRngSigned(-3 * 256, 3 * 256);
+			Point3 pt = a->getLocation();
+			pt.x += rs.getRandomNumberRngSigned(-3 * 256, 3 * 256);
+			pt.y += rs.getRandomNumberRngSigned(-3 * 256, 3 * 256);
 
 			Actor *ghoul = Actor::createActor(0x8e, 0);
 			if (!ghoul) return;
 			ghoul->setFlag(Item::FLG_FAST_ONLY);
-			if (!ghoul->canExistAt(x, y, z, true)) {
+			if (!ghoul->canExistAt(pt.x, pt.y, pt.z, true)) {
 				ghoul->destroy();
 				return;
 			}
-			ghoul->move(x, y, z);
+			ghoul->move(pt.x, pt.y, pt.z);
 			ghoul->doAnim(Animation::standUp, dir_north);
 			hostile = ghoul;
 		}
@@ -462,14 +459,13 @@ void ActorAnimProcess::doSpecial() {
 	// play PC/NPC footsteps
 	bool playavfootsteps = ConfMan.getBool("footsteps");
 	if (_itemNum != kMainActorId || playavfootsteps) {
-		int32 x, y, z;
 		int32 xd, yd, zd;
-		a->getLocation(x, y, z);
+		Point3 pt = a->getLocation();
 		a->getFootpadWorld(xd, yd, zd);
-		Box start(x, y, z, xd, yd, zd);
+		Box start(pt.x, pt.y, pt.z, xd, yd, zd);
 
-		_tracker->getPosition(x, y, z);
-		Box target(x, y, z, xd, yd, zd);
+		_tracker->getPosition(pt.x, pt.y, pt.z);
+		Box target(pt.x, pt.y, pt.z, xd, yd, zd);
 
 		CurrentMap *cm = World::get_instance()->getCurrentMap();
 		PositionInfo info = cm->getPositionInfo(target, start, a->getShapeInfo()->_flags, _itemNum);
@@ -510,8 +506,8 @@ void ActorAnimProcess::doSpecial() {
 			}
 
 			if (splash) {
-				a->getLocation(x, y, z);
-				Process *sp = new SpriteProcess(475, 0, 7, 1, 1, x, y, z);
+				pt = a->getLocation();
+				Process *sp = new SpriteProcess(475, 0, 7, 1, 1, pt.x, pt.y, pt.z);
 				Kernel::get_instance()->addProcess(sp);
 			}
 		}
@@ -600,8 +596,7 @@ void ActorAnimProcess::doHitSpecial(Item *hit) {
 			if (audioproc) audioproc->playSFX(sfx, 0x60, 1, 0, false,
 				                                  0x10000 + rs.getRandomNumber(0x1FFF) - 0x1000);
 
-			int32 x, y, z;
-			a->getLocation(x, y, z);
+			Point3 pt = a->getLocation();
 			// 1: create flame sprite
 			// 2: create flame object
 			// 3: wait
@@ -610,9 +605,9 @@ void ActorAnimProcess::doHitSpecial(Item *hit) {
 			Kernel *kernel = Kernel::get_instance();
 
 			int32 fx, fy, fz;
-			fx = x + 96 * Direction_XFactor(_dir);
-			fy = y + 96 * Direction_YFactor(_dir);
-			fz = z;
+			fx = pt.x + 96 * Direction_XFactor(_dir);
+			fy = pt.y + 96 * Direction_YFactor(_dir);
+			fz = pt.z;
 
 			// CONSTANTS!! (lots of them)
 

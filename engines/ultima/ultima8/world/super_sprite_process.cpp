@@ -184,12 +184,11 @@ void SuperSpriteProcess::run() {
 				} else {
 					const Item *target = getItem(_target);
 					if (target) {
-						int32 tx, ty, tz;
 						int32 cx, cy, cz;
-						target->getLocation(tx, ty, tz);
+						Point3 ptt = target->getLocation();
 						target->getCentre(cx, cy, cz);
 						targetz = cz + 8;
-						dir8 = Direction_GetWorldDir(ty - _nowpt.y, tx - _nowpt.x, dirmode_8dirs);
+						dir8 = Direction_GetWorldDir(ptt.y - _nowpt.y, ptt.x - _nowpt.x, dirmode_8dirs);
 					}
 				}
 
@@ -357,16 +356,15 @@ void SuperSpriteProcess::hitAndFinish() {
 	if (item) {
 		int32 ifx, ify, ifz;
 		item->getFootpadData(ifx, ify, ifz);
-		int32 ix, iy, iz;
-		item->getLocation(ix, iy, iz);
+		Point3 pti = item->getLocation();
 
 		if (ifx > 2 && ify > 2 && ifz > 2) {
 			int32 ixsize = (ifx - 2) * 16;
 			int32 iysize = (ify - 2) * 16;
-			if (pt.x < ix - ixsize)
-				pt.x = ix - ixsize;
-			if (pt.y < iy - iysize)
-				pt.y = iy - iysize;
+			if (pt.x < pti.x - ixsize)
+				pt.x = pti.x - ixsize;
+			if (pt.y < pti.y - iysize)
+				pt.y = pti.y - iysize;
 		}
 
 		//Actor *actor = dynamic_cast<Actor *>(item);
@@ -374,7 +372,7 @@ void SuperSpriteProcess::hitAndFinish() {
 		// it should work? See disasm 1138:1384, lines 142 ~ 172
 		// There is some random factor added for non-actor items
 		// which needs checking
-		Direction dir = Direction_GetWorldDir(iy - _nowpt.y, ix - _nowpt.x, dirmode_8dirs);
+		Direction dir = Direction_GetWorldDir(pti.y - _nowpt.y, pti.x - _nowpt.x, dirmode_8dirs);
 		item->receiveHit(_itemNum, dir, _damage, _fireType);
 	}
 	makeBulletSplash(pt);
@@ -449,8 +447,12 @@ bool SuperSpriteProcess::areaSearch() {
 	int32 dims[3] = {1, 1, 1};
 
 	Item *item = getItem(_itemNum);
-	if (item)
-		item->getLocation(start[0], start[1], start[2]);
+	if (item) {
+		Point3 pt = item->getLocation();
+		start[0] = pt.x;
+		start[1] = pt.y;
+		start[2] = pt.z;
+	}
 
 	Std::list<CurrentMap::SweepItem> hits;
 	map->sweepTest(start, end, dims, ShapeInfo::SI_SOLID,

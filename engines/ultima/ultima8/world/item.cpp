@@ -418,19 +418,16 @@ int32 Item::getZ() const {
 	return _z;
 }
 
-void Item::getLocationAbsolute(int32 &X, int32 &Y, int32 &Z) const {
+Point3 Item::getLocationAbsolute() const {
 	if (_parent) {
 		Item *p = getParentAsContainer();
 
 		if (p) {
-			p->getLocationAbsolute(X, Y, Z);
-			return;
+			return p->getLocationAbsolute();
 		}
 	}
 
-	X = _x;
-	Y = _y;
-	Z = _z;
+	return Point3(_x, _y, _z);
 }
 
 void Item::getGumpLocation(int32 &X, int32 &Y) const {
@@ -500,67 +497,75 @@ void Item::setShape(uint32 shape) {
 }
 
 bool Item::overlaps(const Item &item2) const {
-	int32 x1a, y1a, z1a, x1b, y1b, z1b;
-	int32 x2a, y2a, z2a, x2b, y2b, z2b;
-	getLocation(x1b, y1b, z1a);
-	item2.getLocation(x2b, y2b, z2a);
+	int32 x1a, y1a, z1b;
+	int32 x2a, y2a, z2b;
+	Point3 pt1 = getLocation();
+	Point3 pt2 = item2.getLocation();
 
 	int32 xd, yd, zd;
 	getFootpadWorld(xd, yd, zd);
-	x1a = x1b - xd;
-	y1a = y1b - yd;
-	z1b = z1a + zd;
+	x1a = pt1.x - xd;
+	y1a = pt1.y - yd;
+	z1b = pt1.z + zd;
 
 	item2.getFootpadWorld(xd, yd, zd);
-	x2a = x2b - xd;
-	y2a = y2b - yd;
-	z2b = z2a + zd;
+	x2a = pt2.x - xd;
+	y2a = pt2.y - yd;
+	z2b = pt2.z + zd;
 
-	if (x1b <= x2a || x2b <= x1a) return false;
-	if (y1b <= y2a || y2b <= y1a) return false;
-	if (z1b <= z2a || z2b <= z1a) return false;
+	if (pt1.x <= x2a || pt2.x <= x1a)
+		return false;
+	if (pt1.y <= y2a || pt2.y <= y1a)
+		return false;
+	if (z1b <= pt2.z || z2b <= pt1.z)
+		return false;
 	return true;
 }
 
 bool Item::overlapsxy(const Item &item2) const {
-	int32 x1a, y1a, z1a, x1b, y1b;
-	int32 x2a, y2a, z2a, x2b, y2b;
-	getLocation(x1b, y1b, z1a);
-	item2.getLocation(x2b, y2b, z2a);
+	int32 x1a, y1a;
+	int32 x2a, y2a;
+	Point3 pt1 = getLocation();
+	Point3 pt2 = item2.getLocation();
 
 	int32 xd, yd, zd;
 	getFootpadWorld(xd, yd, zd);
-	x1a = x1b - xd;
-	y1a = y1b - yd;
+	x1a = pt1.x - xd;
+	y1a = pt1.y - yd;
 
 	item2.getFootpadWorld(xd, yd, zd);
-	x2a = x2b - xd;
-	y2a = y2b - yd;
+	x2a = pt2.x - xd;
+	y2a = pt2.y - yd;
 
-	if (x1b <= x2a || x2b <= x1a) return false;
-	if (y1b <= y2a || y2b <= y1a) return false;
+	if (pt1.x <= x2a || pt2.x <= x1a)
+		return false;
+	if (pt1.y <= y2a || pt2.y <= y1a)
+		return false;
 	return true;
 }
 
 bool Item::isOn(const Item &item2) const {
-	int32 x1a, y1a, z1a, x1b, y1b;
-	int32 x2a, y2a, z2a, x2b, y2b, z2b;
-	getLocation(x1b, y1b, z1a);
-	item2.getLocation(x2b, y2b, z2a);
+	int32 x1a, y1a;
+	int32 x2a, y2a, z2b;
+	Point3 pt1 = getLocation();
+	Point3 pt2 = item2.getLocation();
 
 	int32 xd, yd, zd;
 	getFootpadWorld(xd, yd, zd);
-	x1a = x1b - xd;
-	y1a = y1b - yd;
+	x1a = pt1.x - xd;
+	y1a = pt1.y - yd;
 
 	item2.getFootpadWorld(xd, yd, zd);
-	x2a = x2b - xd;
-	y2a = y2b - yd;
-	z2b = z2a + zd;
+	x2a = pt2.x - xd;
+	y2a = pt2.y - yd;
+	z2b = pt2.z + zd;
 
-	if (x1b <= x2a || x2b <= x1a) return false;
-	if (y1b <= y2a || y2b <= y1a) return false;
-	if (z2b == z1a) return true;
+	if (pt1.x <= x2a || pt2.x <= x1a)
+		return false;
+	if (pt1.y <= y2a || pt2.y <= y1a)
+		return false;
+	if (z2b == pt1.z)
+		return true;
 	return false;
 }
 
@@ -568,42 +573,45 @@ bool Item::isCompletelyOn(const Item &item2) const {
 	if (hasFlags(FLG_CONTAINED) || item2.hasFlags(FLG_CONTAINED))
 		return false;
 
-	int32 x1a, y1a, z1a, x1b, y1b;
-	int32 x2a, y2a, z2a, x2b, y2b, z2b;
-	getLocation(x1b, y1b, z1a);
-	item2.getLocation(x2b, y2b, z2a);
+	int32 x1a, y1a;
+	int32 x2a, y2a, z2b;
+	Point3 pt1 = getLocation();
+	Point3 pt2 = item2.getLocation();
 
 	int32 xd, yd, zd;
 	getFootpadWorld(xd, yd, zd);
-	x1a = x1b - xd;
-	y1a = y1b - yd;
+	x1a = pt1.x - xd;
+	y1a = pt1.y - yd;
 
 	item2.getFootpadWorld(xd, yd, zd);
-	x2a = x2b - xd;
-	y2a = y2b - yd;
-	z2b = z2a + zd;
+	x2a = pt2.x - xd;
+	y2a = pt2.y - yd;
+	z2b = pt2.z + zd;
 
-	return ((x1b <= x2b && x2a <= x1a) &&
-			(y1b <= y2b && y2a <= y1a) &&
-			(z2b == z1a));
+	return ((pt1.x <= pt2.x && x2a <= x1a) &&
+			(pt1.y <= pt2.y && y2a <= y1a) &&
+			(z2b == pt1.z));
 }
 
 bool Item::isCentreOn(const Item &item2) const {
 	int32 x1c, y1c, z1c;
-	int32 x2a, y2a, z2a, x2b, y2b, z2b;
-	item2.getLocation(x2b, y2b, z2a);
+	int32 x2a, y2a, z2b;
+	Point3 pt2 = item2.getLocation();
 
 	getCentre(x1c, y1c, z1c);
 
 	int32 xd, yd, zd;
 	item2.getFootpadWorld(xd, yd, zd);
-	x2a = x2b - xd;
-	y2a = y2b - yd;
-	z2b = z2a + zd;
+	x2a = pt2.x - xd;
+	y2a = pt2.y - yd;
+	z2b = pt2.z + zd;
 
-	if (x1c <= x2a || x2b <= x1c) return false;
-	if (y1c <= y2a || y2b <= y1c) return false;
-	if (z2b == getZ()) return true;
+	if (x1c <= x2a || pt2.x <= x1c)
+		return false;
+	if (y1c <= y2a || pt2.y <= y1c)
+		return false;
+	if (z2b == getZ())
+		return true;
 	return false;
 }
 
@@ -689,40 +697,38 @@ Direction Item::getDirToItemCentre(const Point3 &pt) const {
 
 
 int Item::getRange(const Item &item2, bool checkz) const {
-	int32 thisX, thisY, thisZ;
-	int32 otherX, otherY, otherZ;
 	int32 thisXd, thisYd, thisZd;
 	int32 otherXd, otherYd, otherZd;
 	int32 thisXmin, thisYmin, thisZmax;
 	int32 otherXmin, otherYmin, otherZmax;
 
-	getLocationAbsolute(thisX, thisY, thisZ);
-	item2.getLocationAbsolute(otherX, otherY, otherZ);
+	Point3 pt1 = getLocationAbsolute();
+	Point3 pt2 = item2.getLocationAbsolute();
 	getFootpadWorld(thisXd, thisYd, thisZd);
 	item2.getFootpadWorld(otherXd, otherYd, otherZd);
 
-	thisXmin = thisX - thisXd;
-	thisYmin = thisY - thisYd;
-	thisZmax = thisZ + thisZd;
+	thisXmin = pt1.x - thisXd;
+	thisYmin = pt1.y - thisYd;
+	thisZmax = pt1.z + thisZd;
 
-	otherXmin = otherX - otherXd;
-	otherYmin = otherY - otherYd;
-	otherZmax = otherZ + otherZd;
+	otherXmin = pt2.x - otherXd;
+	otherYmin = pt2.y - otherYd;
+	otherZmax = pt2.z + otherZd;
 
 	int32 range = 0;
 
-	if (thisXmin - otherX > range)
-		range = thisYmin - otherY;
-	if (otherXmin - thisX > range)
-		range = thisXmin - otherX;
-	if (thisYmin - otherY > range)
-		range = otherXmin - thisX;
-	if (otherYmin - thisY > range)
-		range = otherYmin - thisY;
-	if (checkz && thisZ - otherZmax > range)
-		range = thisZ - otherZmax;
-	if (checkz && otherZ - thisZmax > range)
-		range = otherZ - thisZmax;
+	if (thisXmin - pt2.x > range)
+		range = thisYmin - pt2.y;
+	if (otherXmin - pt1.x > range)
+		range = thisXmin - pt2.x;
+	if (thisYmin - pt2.y > range)
+		range = otherXmin - pt1.x;
+	if (otherYmin - pt1.y > range)
+		range = otherYmin - pt1.y;
+	if (checkz && pt1.z - otherZmax > range)
+		range = pt1.z - otherZmax;
+	if (checkz && pt2.z - thisZmax > range)
+		range = pt2.z - thisZmax;
 
 	return range;
 }
@@ -1051,7 +1057,10 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 		start[2] = end[2];
 	} else {
 		// Otherwise check from where we are to where we want to go
-		getLocation(start[0], start[1], start[2]);
+		Point3 pt = getLocation();
+		start[0] = pt.x;
+		start[1] = pt.y;
+		start[2] = pt.z;
 	}
 
 	int32 dims[3];
@@ -1204,15 +1213,14 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 }
 
 uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, bool findtarget) {
-	int32 ix, iy, iz;
-	getLocation(ix, iy, iz);
+	Point3 pt = getLocation();
 
 	if (!GAME_IS_CRUSADER)
 		return 0;
 
-	ix += x;
-	iy += y;
-	iz += z;
+	pt.x += x;
+	pt.y += y;
+	pt.z += z;
 
 	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
 	const FireType *firetypedat = GameData::get_instance()->getFireType(firetype);
@@ -1225,20 +1233,19 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 
 	// CHECKME: the original doesn't exclude the source like this,
 	// but it seems obvious we have to or NPCs shoot themselves?
-	PositionInfo info = currentmap->getPositionInfo(ix, iy, iz, BULLET_SPLASH_SHAPE, _objId);
+	PositionInfo info = currentmap->getPositionInfo(pt.x, pt.y, pt.z, BULLET_SPLASH_SHAPE, _objId);
 
 	if (!info.valid && info.blocker) {
 		Item *block = getItem(info.blocker->getObjId());
-		Point3 blockpt;
-		block->getLocation(blockpt);
-		Direction damagedir = Direction_GetWorldDir(blockpt.y - iy, blockpt.x - ix, dirmode_8dirs);
+		Point3 blockpt = block->getLocation();
+		Direction damagedir = Direction_GetWorldDir(blockpt.y - pt.y, blockpt.x - pt.x, dirmode_8dirs);
 		block->receiveHit(getObjId(), damagedir, damage, firetype);
 		if (firetypedat->getRange() != 0) {
 			int splashdamage = firetypedat->getRandomDamage();
 			firetypedat->applySplashDamageAround(blockpt, splashdamage, 1, block, this);
 		}
 		if (firetypedat->getNearSprite())
-			firetypedat->makeBulletSplashShapeAndPlaySound(ix, iy, iz);
+			firetypedat->makeBulletSplashShapeAndPlaySound(pt.x, pt.y, pt.z);
 		return 0;
 	}
 
@@ -1315,7 +1322,7 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 				target = getControlledActor();
 			// else already set above to attackproc target
 		} else {
-			target = currentmap->findBestTargetItem(ix, iy, iz - z, dir, dirmode);
+			target = currentmap->findBestTargetItem(pt.x, pt.y, pt.z - z, dir, dirmode);
 		}
 	}
 
@@ -1338,27 +1345,27 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 		CrosshairProcess *chp = CrosshairProcess::get_instance();
 		assert(chp);
 		const Item *crosshair = getItem(chp->getItemNum());
-		int32 ssx, ssy, ssz;
+		Point3 ss;
 		if (tx != -1) {
 			// Shoot toward the target
-			ssx = tx;
-			ssy = ty;
-			ssz = tz;
+			ss.x = tx;
+			ss.y = ty;
+			ss.z = tz;
 			findtarget = true;
 		} else if (this == getControlledActor() && crosshair) {
 			// Shoot toward the crosshair
-			crosshair->getLocation(ssx, ssy, ssz);
-			ssz = iz;
+			ss = crosshair->getLocation();
+			ss.z = pt.z;
 		} else {
 			// Just send the projectile off into the distance
-			ssx = ix + Direction_XFactor(dir) * 0x500;
-			ssy = iy + Direction_YFactor(dir) * 0x500;
-			ssz = iz;
+			ss.x = pt.x + Direction_XFactor(dir) * 0x500;
+			ss.y = pt.y + Direction_YFactor(dir) * 0x500;
+			ss.z = pt.z;
 		}
 
 		uint16 targetid = (target ? target->getObjId() : 0);
 		ssp = new SuperSpriteProcess(BULLET_SPLASH_SHAPE, spriteframe,
-									 ix, iy, iz, ssx, ssy, ssz, firetype,
+									 pt.x, pt.y, pt.z, ss.x, ss.y, ss.z, firetype,
 									 damage, _objId, targetid, findtarget);
 		Kernel::get_instance()->addProcess(ssp);
 		spriteprocpid = ssp->getPid();
@@ -1429,11 +1436,8 @@ uint16 Item::fireDistance(const Item *other, Direction dir, int16 xoff, int16 yo
 		}
 	}
 
-	int32 x, y, z;
-	getLocation(x, y, z);
-
-	int32 ox, oy, oz;
-	other->getLocation(ox, oy, oz);
+	Point3 pt = getLocation();
+	Point3 pto = other->getLocation();
 
 	int32 dist = 0;
 
@@ -1442,13 +1446,13 @@ uint16 Item::fireDistance(const Item *other, Direction dir, int16 xoff, int16 yo
 		return 0;
 
 	for (int i = 0; i < (other_offsets ? 2 : 1) && dist == 0; i++) {
-		int32 cx = x + (i == 0 ? xoff : xoff2);
-		int32 cy = y + (i == 0 ? yoff : yoff2);
-		int32 cz = z + (i == 0 ? zoff : zoff2);
+		int32 cx = pt.x + (i == 0 ? xoff : xoff2);
+		int32 cy = pt.y + (i == 0 ? yoff : yoff2);
+		int32 cz = pt.z + (i == 0 ? zoff : zoff2);
 		PositionInfo info = cm->getPositionInfo(cx, cy, cz, BULLET_SPLASH_SHAPE, getObjId());
 		if (!info.valid && info.blocker) {
 			if (info.blocker->getObjId() == other->getObjId())
-				dist = MAX(abs(_x - ox), abs(_y - oy));
+				dist = MAX(abs(_x - pto.x), abs(_y - pto.y));
 		} else {
 			int32 ocx, ocy, ocz;
 			other->getCentre(ocx, ocy, ocz);
@@ -2096,9 +2100,8 @@ int32 Item::ascend(int delta) {
 	}
 
 	// move self
-	int32 xv, yv, zv;
-	getLocation(xv, yv, zv);
-	int dist = collideMove(xv, yv, zv + delta, false, false);
+	Point3 ptv = getLocation();
+	int dist = collideMove(ptv.x, ptv.y, ptv.z + delta, false, false);
 	delta = (delta * dist) / 0x4000;
 
 	debugC(kDebugObject, "Ascend: dist=%d", dist);
@@ -2109,7 +2112,10 @@ int32 Item::ascend(int delta) {
 		if (!item) continue;
 		if (item->getShapeInfo()->is_fixed()) continue;
 
-		item->getLocation(_ix, _iy, _iz);
+		Point3 pti = item->getLocation();
+		_ix = pti.x;
+		_iy = pti.y;
+		_iz = pti.z;
 
 		if (item->canExistAt(_ix, _iy, _iz + delta)) {
 			item->move(_ix, _iy, _iz + delta); // automatically un-etherealizes item
@@ -2255,8 +2261,7 @@ void Item::explode(int explosion_type, bool destroy_item, bool cause_damage) {
 		audioproc->playSFX(sfx, 0x60, 0, 0);
 	}
 
-	int32 xv, yv, zv;
-	getLocation(xv, yv, zv);
+	Point3 ptv = getLocation();
 
 	if (destroy_item) {
 		destroy(); // delete self
@@ -2271,21 +2276,20 @@ void Item::explode(int explosion_type, bool destroy_item, bool cause_damage) {
 		LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
 		CurrentMap *currentmap = World::get_instance()->getCurrentMap();
 		currentmap->areaSearch(&itemlist, script, sizeof(script), 0,
-							   160, false, xv, yv); //! CHECKME: 128?
+							   160, false, ptv.x, ptv.y); //! CHECKME: 128?
 
 		for (unsigned int i = 0; i < itemlist.getSize(); ++i) {
 			Item *item = getItem(itemlist.getuint16(i));
 			if (!item) continue;
 			if (getRange(*item, true) > 160) continue; // check vertical distance
 
-			item->getLocation(xv, yv, zv);
-			Direction dir = Direction_GetWorldDir(xv - xv, yv - yv, dirmode_8dirs); //!! CHECKME
+			Point3 pti = item->getLocation();
+			Direction dir = Direction_GetWorldDir(pti.x - ptv.x, pti.y - ptv.y, dirmode_8dirs); //!! CHECKME
 			item->receiveHit(0, dir, rs.getRandomNumberRng(6, 11),
 							 WeaponInfo::DMG_BLUNT | WeaponInfo::DMG_FIRE);
 		}
 	} else {
-		Point3 pt;
-		getLocation(pt);
+		Point3 pt = getLocation();
 		// Note: same FireType number used in both Remorse and Regret
 		const FireType *firetypedat = GameData::get_instance()->getFireType(4);
 		if (firetypedat) {
@@ -2445,7 +2449,6 @@ static bool checkLineOfSightCollisions(
 bool Item::canReach(const Item *other, int range,
 					int32 otherX, int32 otherY, int32 otherZ) const {
 	// get location and dimensions of self and other (or their root containers)
-	int32 thisX, thisY, thisZ;
 	int32 thisXd, thisYd, thisZd;
 	int32 otherXd, otherYd, otherZd;
 	int32 thisXmin, thisYmin;
@@ -2453,25 +2456,31 @@ bool Item::canReach(const Item *other, int range,
 
 	bool usingAlternatePos = (otherX != 0);
 
-	getLocationAbsolute(thisX, thisY, thisZ);
+	Point3 pt1 = getLocationAbsolute();
 	other = other->getTopItem();
-	if (otherX == 0)
-		other->getLocationAbsolute(otherX, otherY, otherZ);
+	if (otherX == 0) {
+		Point3 pt2 = other->getLocationAbsolute();
+		otherX = pt2.x;
+		otherY = pt2.y;
+		otherZ = pt2.z;
+	}
 
 	getFootpadWorld(thisXd, thisYd, thisZd);
 	other->getFootpadWorld(otherXd, otherYd, otherZd);
 
-	thisXmin = thisX - thisXd;
-	thisYmin = thisY - thisYd;
+	thisXmin = pt1.x - thisXd;
+	thisYmin = pt1.y - thisYd;
 
 	otherXmin = otherX - otherXd;
 	otherYmin = otherY - otherYd;
 
 	// if items are further away than range in any direction, return false
 	if (thisXmin - otherX > range) return false;
-	if (otherXmin - thisX > range) return false;
+	if (otherXmin - pt1.x > range)
+		return false;
 	if (thisYmin - otherY > range) return false;
-	if (otherYmin - thisY > range) return false;
+	if (otherYmin - pt1.y > range)
+		return false;
 
 
 	// if not, do line of sight between origins of items
@@ -2479,13 +2488,13 @@ bool Item::canReach(const Item *other, int range,
 	int32 end[3];
 	int32 dims[3] = { 2, 2, 2 };
 
-	start[0] = thisX;
-	start[1] = thisY;
-	start[2] = thisZ;
+	start[0] = pt1.x;
+	start[1] = pt1.y;
+	start[2] = pt1.z;
 	end[0] = otherX;
 	end[1] = otherY;
 	end[2] = otherZ;
-	if (otherZ > thisZ && otherZ < thisZ + thisZd)
+	if (otherZ > pt1.z && otherZ < pt1.z + thisZd)
 		start[2] = end[2]; // bottom of other between bottom and top of this
 
 	Std::list<CurrentMap::SweepItem> collisions;
@@ -2499,9 +2508,9 @@ bool Item::canReach(const Item *other, int range,
 		return true;
 
 	// if that fails, try line of sight between centers
-	start[0] = thisX - thisXd / 2; // xy center of this
-	start[1] = thisY - thisYd / 2;
-	start[2] = thisZ;
+	start[0] = pt1.x - thisXd / 2; // xy center of this
+	start[1] = pt1.y - thisYd / 2;
+	start[2] = pt1.z;
 	if (thisZd > 16)
 		start[2] += thisZd - 8; // eye height
 
@@ -2712,63 +2721,56 @@ uint32 Item::I_getX(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	if (!item) return 0;
 
-	int32 x, y, z;
-	item->getLocationAbsolute(x, y, z);
-	return World_ToUsecodeCoord(x);
+	Point3 pt = item->getLocationAbsolute();
+	return World_ToUsecodeCoord(pt.x);
 }
 
 uint32 Item::I_getY(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	if (!item) return 0;
 
-	int32 x, y, z;
-	item->getLocationAbsolute(x, y, z);
-	return World_ToUsecodeCoord(y);
+	Point3 pt = item->getLocationAbsolute();
+	return World_ToUsecodeCoord(pt.y);
 }
 
 uint32 Item::I_getZ(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	if (!item) return 0;
 
-	int32 x, y, z;
-	item->getLocationAbsolute(x, y, z);
-	return z;
+	Point3 pt = item->getLocationAbsolute();
+	return pt.z;
 }
 
 uint32 Item::I_getCX(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	if (!item) return 0;
 
-	int32 x, y, z;
-	item->getLocationAbsolute(x, y, z);
+	Point3 pt = item->getLocationAbsolute();
 
 	if (item->_flags & FLG_FLIPPED)
-		return World_ToUsecodeCoord(x - item->getShapeInfo()->_y * 16);
+		return World_ToUsecodeCoord(pt.x - item->getShapeInfo()->_y * 16);
 	else
-		return World_ToUsecodeCoord(x - item->getShapeInfo()->_x * 16);
+		return World_ToUsecodeCoord(pt.x - item->getShapeInfo()->_x * 16);
 }
 
 uint32 Item::I_getCY(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	if (!item) return 0;
 
-	int32 x, y, z;
-	item->getLocationAbsolute(x, y, z);
+	Point3 pt = item->getLocationAbsolute();
 
 	if (item->_flags & FLG_FLIPPED)
-		return World_ToUsecodeCoord(y - item->getShapeInfo()->_x * 16);
+		return World_ToUsecodeCoord(pt.y - item->getShapeInfo()->_x * 16);
 	else
-		return World_ToUsecodeCoord(y - item->getShapeInfo()->_y * 16);
+		return World_ToUsecodeCoord(pt.y - item->getShapeInfo()->_y * 16);
 }
 
 uint32 Item::I_getCZ(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	if (!item) return 0;
 
-	int32 x, y, z;
-	item->getLocationAbsolute(x, y, z);
-
-	return z + item->getShapeInfo()->_z * 4;
+	Point3 pt = item->getLocationAbsolute();
+	return pt.z + item->getShapeInfo()->_z * 4;
 }
 
 uint32 Item::I_getPoint(const uint8 *args, unsigned int /*argsize*/) {
@@ -2776,15 +2778,13 @@ uint32 Item::I_getPoint(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UC_PTR(ptr);
 	if (!item) return 0;
 
-	int32 x, y, z;
-	item->getLocationAbsolute(x, y, z);
-
-	World_ToUsecodeXY(x, y);
+	Point3 pt = item->getLocationAbsolute();
+	World_ToUsecodeXY(pt.x, pt.y);
 
 	WorldPoint point;
-	point.setX(x);
-	point.setY(y);
-	point.setZ(z);
+	point.setX(pt.x);
+	point.setY(pt.y);
+	point.setZ(pt.z);
 
 	UCMachine::get_instance()->assignPointer(ptr, point._buf, 5);
 
@@ -3523,8 +3523,7 @@ uint32 Item::I_popToContainer(const uint8 *args, unsigned int /*argsize*/) {
 	if (container) {
 		item->moveToContainer(container);
 	} else if (citem) {
-		Point3 pt;
-		citem->getLocation(pt);
+		Point3 pt = citem->getLocation();
 		item->move(pt);
 	} else {
 		warning("Trying to popToContainer to invalid container (%u)", id_citem);
@@ -3566,8 +3565,7 @@ uint32 Item::I_popToEnd(const uint8 *args, unsigned int /*argsize*/) {
 	if (container) {
 		item->moveToContainer(container);
 	} else if (citem) {
-		Point3 pt;
-		citem->getLocation(pt);
+		Point3 pt = citem->getLocation();
 		item->move(pt);
 	} else {
 		warning("Trying to popToEnd to invalid container (%u)", id_citem);
@@ -3636,7 +3634,10 @@ uint32 Item::I_legalMoveToPoint(const uint8 *args, unsigned int argsize) {
 	end[0] = x;
 	end[1] = y;
 	end[2] = z;
-	item->getLocation(start[0], start[1], start[2]);
+	Point3 pt = item->getLocation();
+	start[0] = pt.x;
+	start[1] = pt.y;
+	start[2] = pt.z;
 	item->getFootpadWorld(dims[0], dims[1], dims[2]);
 	CurrentMap *map = World::get_instance()->getCurrentMap();
 	map->sweepTest(start, end, dims, item->getShapeInfo()->_flags,
@@ -3714,10 +3715,9 @@ uint32 Item::I_getDirToCoords(const uint8 *args, unsigned int /*argsize*/) {
 
 	World_FromUsecodeXY(x, y);
 
-	int32 ix, iy, iz;
-	item->getLocationAbsolute(ix, iy, iz);
+	Point3 pt = item->getLocationAbsolute();
 
-	return Direction_ToUsecodeDir(Direction_GetWorldDir(y - iy, x - ix, dirmode_8dirs));
+	return Direction_ToUsecodeDir(Direction_GetWorldDir(y - pt.y, x - pt.x, dirmode_8dirs));
 }
 
 uint32 Item::I_getDirFromCoords(const uint8 *args, unsigned int /*argsize*/) {
@@ -3728,10 +3728,9 @@ uint32 Item::I_getDirFromCoords(const uint8 *args, unsigned int /*argsize*/) {
 
 	World_FromUsecodeXY(x, y);
 
-	int32 ix, iy, iz;
-	item->getLocationAbsolute(ix, iy, iz);
+	Point3 pt = item->getLocationAbsolute();
 
-	return Direction_ToUsecodeDir(Direction_GetWorldDir(iy - y, ix - x, dirmode_8dirs));
+	return Direction_ToUsecodeDir(Direction_GetWorldDir(pt.y - y, pt.x - x, dirmode_8dirs));
 }
 
 uint32 Item::I_getDirToItem(const uint8 *args, unsigned int /*argsize*/) {
@@ -3740,13 +3739,10 @@ uint32 Item::I_getDirToItem(const uint8 *args, unsigned int /*argsize*/) {
 	if (!item) return 0;
 	if (!item2) return 0;
 
-	int32 ix, iy, iz;
-	item->getLocationAbsolute(ix, iy, iz);
+	Point3 pt1 = item->getLocationAbsolute();
+	Point3 pt2 = item2->getLocationAbsolute();
 
-	int32 i2x, i2y, i2z;
-	item2->getLocationAbsolute(i2x, i2y, i2z);
-
-	return Direction_ToUsecodeDir(Direction_GetWorldDir(i2y - iy, i2x - ix, dirmode_8dirs));
+	return Direction_ToUsecodeDir(Direction_GetWorldDir(pt2.y - pt1.y, pt2.x - pt1.x, dirmode_8dirs));
 }
 
 uint32 Item::I_getDirFromItem(const uint8 *args, unsigned int /*argsize*/) {
@@ -3755,13 +3751,10 @@ uint32 Item::I_getDirFromItem(const uint8 *args, unsigned int /*argsize*/) {
 	if (!item) return 0;
 	if (!item2) return 0;
 
-	int32 ix, iy, iz;
-	item->getLocationAbsolute(ix, iy, iz);
+	Point3 pt1 = item->getLocationAbsolute();
+	Point3 pt2 = item2->getLocationAbsolute();
 
-	int32 i2x, i2y, i2z;
-	item2->getLocationAbsolute(i2x, i2y, i2z);
-
-	return Direction_ToUsecodeDir(Direction_Invert(Direction_GetWorldDir(i2y - iy, i2x - ix, dirmode_8dirs)));
+	return Direction_ToUsecodeDir(Direction_Invert(Direction_GetWorldDir(pt2.y - pt1.y, pt2.x - pt1.x, dirmode_8dirs)));
 }
 
 uint32 Item::I_getDirFromTo16(const uint8 *args, unsigned int /*argsize*/) {

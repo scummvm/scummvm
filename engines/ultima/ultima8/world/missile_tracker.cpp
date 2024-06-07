@@ -50,10 +50,8 @@ MissileTracker::MissileTracker(const Item *item, ObjId owner,
 
 	_objId = item->getObjId();
 
-	int32 x, y, z;
-	item->getLocation(x, y, z);
-
-	init(x, y, z, speed);
+	Point3 pt = item->getLocation();
+	init(pt.x, pt.y, pt.z, speed);
 }
 
 void MissileTracker::init(int32 x, int32 y, int32 z, int32 speed) {
@@ -140,7 +138,10 @@ bool MissileTracker::isPathClear() const {
 	}
 
 	item->getFootpadWorld(dims[0], dims[1], dims[2]);
-	item->getLocation(start[0], start[1], start[2]);
+	Point3 pt = item->getLocation();
+	start[0] = pt.x;
+	start[1] = pt.y;
+	start[2] = pt.z;
 
 	for (int f = 0; f < _frames; ++f) {
 		end[0] = start[0] + sx;

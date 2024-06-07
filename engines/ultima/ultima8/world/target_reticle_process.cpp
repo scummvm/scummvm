@@ -101,10 +101,9 @@ bool TargetReticleProcess::findTargetItem() {
 
 	Direction dir = mainactor->getDir();
 
-	int32 x, y, z;
-	mainactor->getLocation(x, y, z);
+	Point3 pt = mainactor->getLocation();
 
-	Item *item = currentmap->findBestTargetItem(x, y, z, dir, dirmode_16dirs);
+	Item *item = currentmap->findBestTargetItem(pt.x, pt.y, pt.z, dir, dirmode_16dirs);
 
 	if (item && item->getObjId() != _lastTargetItem) {
 		Item *lastItem = getItem(_lastTargetItem);
