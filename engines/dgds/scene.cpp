@@ -843,69 +843,69 @@ void SDSScene::addAndShowTiredDialog() {
 	showDialog(TIRED_DLG_ID);
 }
 
-/*
+
 static const uint16 DRAGON_PASSCODE[] = {
 	1, 4, 3, 4, 0, 3, 4, 1, 3, 0, 1, 4, 3, 2, 0,
 	4, 4, 2, 3, 4, 0, 0, 4, 3, 2, 1, 1, 2, 4, 0,
 	4, 1, 3, 2, 0, 2, 1, 4, 3, 4, 1, 3, 2, 0, 1
 };
 
-static uint16 g_passcodeBtnVal = 0;
 static uint16 passcodeBlockNum = 0;
-static uint16 passcodeVal4 = 0;
 static uint16 passcodeVal1 = 0;
 static uint16 passcodeVal2 = 0;
 static uint16 passcodeVal3 = 0;
-*/
+static uint16 passcodeVal4 = 0;
 
 void SDSScene::sceneOpUpdatePasscodeGlobal() {
-	warning("TODO: Finish implementing sceneOpUpdatePasscodeGlobal");
-/*
-	if (g_passcodeBtnVal > 33)
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	int16 globalval = engine->getGDSScene()->getGlobal(0x20);
+
+	if (globalval > 33)
 		return;
 
-	if (g_passcodeBtnVal >= 30) {
-		if (DRAGON_PASSCODE[passcodeVal4 + passcodeBlockNum * 15] == g_passcodeBtnVal - 30) {
+	if (globalval >= 30) {
+		if (DRAGON_PASSCODE[passcodeVal4 + passcodeBlockNum * 15] == globalval - 30) {
 			passcodeVal4++;
 			if (passcodeVal4 < passcodeVal3) {
-				g_passcodeBtnVal = 0;
+				globalval = 0;
 			} else if (passcodeVal3 < 15) {
-				g_passcodeBtnVal = 5;
+				globalval = 5;
 			} else {
-				g_passcodeBtnVal = 6;
+				globalval = 6;
 			}
 		} else {
-			g_passcodeBtnVal = 7;
-			passcodeVal2 = 0;
 			passcodeVal1 = 5;
+			passcodeVal2 = 0;
+			globalval = 7;
 		}
 	} else {
-		if (g_passcodeBtnVal > 4)
+		if (globalval > 4)
 			return;
 
-		if (g_passcodeBtnVal < 4) {
-			passcodeBlockNum = g_passcodeBtnVal - 1;
-			passcodeVal2 = 0;
+		if (globalval < 4) {
+			passcodeBlockNum = globalval - 1;
 			passcodeVal1 = 5;
-			passcodeVal4 = 0;
+			passcodeVal2 = 0;
 			passcodeVal3 = 15;
+			passcodeVal4 = 0;
 		} else if (passcodeVal1 > passcodeVal2) {
 			passcodeVal2++;
-			g_passcodeBtnVal = DRAGON_PASSCODE[passcodeVal2 + passcodeBlockNum * 15] + 20;
+			globalval = DRAGON_PASSCODE[passcodeVal2 + passcodeBlockNum * 15] + 20;
         } else if (passcodeVal1 > 14) {
 			passcodeVal2 = 0;
-			passcodeVal4 = 0;
 			passcodeVal3 = passcodeVal1;
-			g_passcodeBtnVal = 8;
+			passcodeVal4 = 0;
+			globalval = 8;
         } else {
+			passcodeVal1 += 5;
 			passcodeVal2 = 0;
 			passcodeVal3 = passcodeVal1;
-			passcodeVal1 += 5;
 			passcodeVal4 = 0;
-			g_passcodeBtnVal = 8;
+			globalval = 8;
 		}
 	}
-*/
+
+	engine->getGDSScene()->setGlobal(0x20, globalval);
 }
 
 void SDSScene::showDialog(uint16 num) {
@@ -1112,8 +1112,8 @@ void SDSScene::mouseMoved(const Common::Point &pt) {
 }
 
 void SDSScene::mouseLDown(const Common::Point &pt) {
-	Dialog *dlg = getVisibleDialog();
-	if (dlg) {
+	if (hasVisibleDialog()) {
+		debug(9, "Mouse LDown on at %d,%d clearing visible dialog", pt.x, pt.y);
 		_shouldClearDlg = true;
 		_ignoreMouseUp = true;
 		return;
@@ -1139,6 +1139,7 @@ void SDSScene::mouseLDown(const Common::Point &pt) {
 
 void SDSScene::mouseLUp(const Common::Point &pt) {
 	if (_ignoreMouseUp) {
+		debug(9, "Ignoring mouseup at %d,%d as it was used to clear a dialog", pt.x, pt.y);
 		_ignoreMouseUp = false;
 		return;
 	}
@@ -1176,6 +1177,7 @@ static bool _isInRect(const Common::Point &pt, const DgdsRect rect) {
 void SDSScene::onDragFinish(const Common::Point &pt) {
 	assert(_dragItem);
 
+	debug(9, "Drag finished at %d, %d", pt.x , pt.y);
 	// Unlike a click operation, this runs the drop event for *all* areas
 	// and items, ignoring enable condition.
 
@@ -1471,7 +1473,7 @@ void GDSScene::initIconSizes() {
 	for (GameItem &item : _gameItems) {
 		if (item._iconNum < nicons) {
 			item._rect.width = icons->getFrames()[item._iconNum]->w;
-			item._rect.height = icons->getFrames()[item._iconNum]->w;
+			item._rect.height = icons->getFrames()[item._iconNum]->h;
 		} else {
 			item._rect.width = 32;
 			item._rect.height = 32;
@@ -1609,11 +1611,11 @@ void GDSScene::drawItems(Graphics::ManagedSurface &surf) {
 				// Dropped item.
 				// Update the rect for the icon - Note: original doesn't do this,
 				// but then the napent icon is offset??
-				Common::SharedPtr<Graphics::ManagedSurface> icon = icons->getSurface(item._iconNum);
+				/*Common::SharedPtr<Graphics::ManagedSurface> icon = icons->getSurface(item._iconNum);
 				if (icon) {
 					item._rect.width = MIN((int)icon->w, item._rect.width);
 					item._rect.height = MIN((int)icon->h, item._rect.height);
-				}
+				}*/
 				if (xoff + item._rect.width > maxx)
 					xoff = 20;
 				int yoff = SCREEN_HEIGHT - (item._rect.height + 2);
