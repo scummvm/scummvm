@@ -420,6 +420,8 @@ void Window::loadNewSharedCast(Cast *previousSharedCast) {
 		g_director->_allOpenResFiles.remove(previousSharedCastPath);
 		delete previousSharedCast->_castArchive;
 		delete previousSharedCast;
+	} else {
+		debug(0, "@@   No previous shared cast");
 	}
 
 	// Load the new sharedCast
@@ -485,7 +487,9 @@ bool Window::loadNextMovie() {
 	debug(0, "@@@@   Switching to movie '%s' in '%s'", utf8ToPrintable(_currentMovie->getMacName()).c_str(), _currentPath.c_str());
 	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
+	g_director->setCurrentWindow(this);
 	loadNewSharedCast(previousSharedCast);
+
 	return true;
 }
 
