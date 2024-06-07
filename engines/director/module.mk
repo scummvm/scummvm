@@ -91,6 +91,7 @@ MODULE_OBJS = \
 	lingo/xlibs/feiprefs.o \
 	lingo/xlibs/fileexists.o \
 	lingo/xlibs/fileio.o \
+	lingo/xlibs/filexobj.o \
 	lingo/xlibs/findereventsxcmd.o \
 	lingo/xlibs/findfolder.o \
 	lingo/xlibs/findsys.o \
