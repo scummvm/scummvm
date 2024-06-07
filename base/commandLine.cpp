@@ -486,9 +486,7 @@ static Common::String createTemporaryTarget(const Common::String &engineId, cons
  * Note 2: The method will work with paths that are symbolic links to folders (isDirectory() returns true),
  * but for symbolic links to files it will not deduce a valid folder path and will just return false.
  *
- * @param settings A reference to the settings map used by parseCommandLine()
- * @param optionKeyStr The key string for updating the value for this path option on the settings map, if needed
- * @param path The path node that was created from the command line value for this path option
+ * @param node The filesystem node created from the command line value and modified if needed to get a folder from a file
  * @param ensureWriteable A boolean flag that is set true if the path should be writeable, false otherwise
  * @param ensureReadable A boolean flag that is set true if the path should be readable, false otherwise
  * @param acceptFile true if the command line option allows (tolerates) a file path to deduce the folder path from
@@ -496,22 +494,19 @@ static Common::String createTemporaryTarget(const Common::String &engineId, cons
  * was deduced from it, and the path (original or deduced respectively) meets the specified
  * readability / writeability requirements.
  */
-bool ensureAccessibleDirectoryForPathOption(Common::StringMap &settings,
-                                            const Common::String optionKeyStr,
-                                            const Common::FSNode &path,
+bool ensureAccessibleDirectoryForPathOption(Common::FSNode &node,
                                             bool ensureWriteable,
                                             bool ensureReadable,
                                             bool acceptFile) {
-	if (path.isDirectory()) {
-		if ((!ensureWriteable || path.isWritable())
-		    && (!ensureReadable || path.isReadable())
+	if (node.isDirectory()) {
+		if ((!ensureWriteable || node.isWritable())
+		    && (!ensureReadable || node.isReadable())
 		    && (ensureWriteable || ensureReadable)) {
 			return true;
 		}
-	} else if (acceptFile
-		    && ensureAccessibleDirectoryForPathOption(settings, optionKeyStr, path.getParent(), ensureWriteable, ensureReadable, false)) {
-			settings[optionKeyStr] = path.getParent().getPath().toString(Common::Path::kNativeSeparator);
-			return true;
+	} else if (acceptFile) {
+		node = node.getParent();
+		return ensureAccessibleDirectoryForPathOption(node, ensureWriteable, ensureReadable, false);
 	}
 	return false;
 }
@@ -564,6 +559,22 @@ bool ensureAccessibleDirectoryForPathOption(Common::StringMap &settings,
 		const char *option = boolValue ? "true" : "false"; \
 		settings[longCmd] = option;
 
+#define DO_OPTION_PATH(shortCmd, longCmd) \
+	DO_OPTION(shortCmd, longCmd) \
+	Common::FSNode node(Common::Path::fromCommandLine(option)); \
+	if (!node.exists()) { \
+		usage("Non-existent path '%s' for option %s%c%s", option, \
+				isLongCmd ? "--" : "-", \
+				isLongCmd ? longCmd[0] : shortCmd, \
+				isLongCmd ? longCmd + 1 : ""); \
+	} else if (!ensureAccessibleDirectoryForPathOption(node, false, true, true)) { \
+		usage("Non-readable path '%s' for option %s%c%s", option, \
+				isLongCmd ? "--" : "-", \
+				isLongCmd ? longCmd[0] : shortCmd, \
+				isLongCmd ? longCmd + 1 : ""); \
+	} \
+	settings[longCmd] = node.getPath().toConfig();
+
 // Use this for options which never have a value, i.e. for 'commands', like "--help".
 #define DO_COMMAND(shortCmd, longCmd) \
 	if (isLongCmd ? (!strcmp(s + 2, longCmd)) : (tolower(s[1]) == shortCmd)) { \
@@ -579,6 +590,7 @@ bool ensureAccessibleDirectoryForPathOption(Common::StringMap &settings,
 #define DO_LONG_OPTION(longCmd)         DO_OPTION(0, longCmd)
 #define DO_LONG_OPTION_INT(longCmd)     DO_OPTION_INT(0, longCmd)
 #define DO_LONG_OPTION_BOOL(longCmd)    DO_OPTION_BOOL(0, longCmd)
+#define DO_LONG_OPTION_PATH(longCmd)    DO_OPTION_PATH(0, longCmd)
 #define DO_LONG_COMMAND(longCmd)        DO_COMMAND(0, longCmd)
 
 // End an option handler
@@ -712,13 +724,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_OPTION('l', "logfile")
 			END_OPTION
 
-			DO_LONG_OPTION("screenshotpath")
-				Common::FSNode path(option);
-				if (!path.exists()) {
-					usage("Non-existent screenshot path '%s'", option);
-				} else if (!ensureAccessibleDirectoryForPathOption(settings, "screenshotpath", path, true, false, true)) {
-					usage("Non-writable screenshot path '%s'", option);
-				}
+			DO_LONG_OPTION_PATH("screenshotpath")
 			END_OPTION
 #endif
 
@@ -812,13 +818,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_OPTION_BOOL('n', "subtitles")
 			END_OPTION
 
-			DO_OPTION('p', "path")
-				Common::FSNode path(option);
-				if (!path.exists()) {
-					usage("Non-existent game path '%s'", option);
-				} else if (!ensureAccessibleDirectoryForPathOption(settings, "path", path, false, true, true)) {
-					usage("Non-readable game path '%s'", option);
-				}
+			DO_OPTION_PATH('p', "path")
 			END_OPTION
 
 			DO_OPTION('q', "language")
@@ -856,7 +856,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION("soundfont")
-				Common::FSNode path(option);
+				Common::FSNode path(Common::Path::fromConfig(option));
 				if (!path.exists()) {
 					usage("Non-existent soundfont path '%s'", option);
 				} else if (!path.isReadable()) {
@@ -908,31 +908,13 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION_BOOL("show-fps")
 			END_OPTION
 
-			DO_LONG_OPTION("savepath")
-				Common::FSNode path(option);
-				if (!path.exists()) {
-					usage("Non-existent saved games path '%s'", option);
-				} else if (!ensureAccessibleDirectoryForPathOption(settings, "savepath", path, true, true, true)) {
-					usage("Non-writable saved games path '%s'", option);
-				}
+			DO_LONG_OPTION_PATH("savepath")
 			END_OPTION
 
-			DO_LONG_OPTION("extrapath")
-				Common::FSNode path(option);
-				if (!path.exists()) {
-					usage("Non-existent extra path '%s'", option);
-				} else if (!ensureAccessibleDirectoryForPathOption(settings, "extrapath", path, false, true, true)) {
-					usage("Non-readable extra path '%s'", option);
-				}
+			DO_LONG_OPTION_PATH("extrapath")
 			END_OPTION
 
-			DO_LONG_OPTION("iconspath")
-				Common::FSNode path(option);
-				if (!path.exists()) {
-					usage("Non-existent icons path '%s'", option);
-				} else if (!ensureAccessibleDirectoryForPathOption(settings, "iconspath", path, true, true, true)) {
-					usage("Non-readable icons path '%s'", option);
-				}
+			DO_LONG_OPTION_PATH("iconspath")
 			END_OPTION
 
 			DO_LONG_OPTION("md5-path")
@@ -967,13 +949,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION_BOOL("exit")
 			END_OPTION
 
-			DO_LONG_OPTION("themepath")
-				Common::FSNode path(option);
-				if (!path.exists()) {
-					usage("Non-existent theme path '%s'", option);
-				} else if (!ensureAccessibleDirectoryForPathOption(settings, "themepath", path, false, true, true)) {
-					usage("Non-readable theme path '%s'", option);
-				}
+			DO_LONG_OPTION_PATH("themepath")
 			END_OPTION
 
 			DO_LONG_COMMAND("list-themes")
@@ -2011,7 +1987,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 			// From an UX point of view, however, it might get confusing.
 			// Consider removing this if consensus says otherwise.
 		} else {
-			Common::Path path(settings["path"], Common::Path::kNativeSeparator);
+			Common::Path path(Common::Path::fromConfig(settings["path"]));
 			command = detectGames(path, gameOption.engineId, gameOption.gameId, resursive);
 			if (command.empty()) {
 				err = Common::kNoGameDataFoundError;
@@ -2019,11 +1995,11 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 			}
 		}
 	} else if (command == "detect") {
-		Common::Path path(settings["path"], Common::Path::kNativeSeparator);
+		Common::Path path(Common::Path::fromConfig(settings["path"]));
 		detectGames(path, gameOption.engineId, gameOption.gameId, settings["recursive"] == "true");
 		return cmdDoExit;
 	} else if (command == "add") {
-		Common::Path path(settings["path"], Common::Path::kNativeSeparator);
+		Common::Path path(Common::Path::fromConfig(settings["path"]));
 		addGames(path, gameOption.engineId, gameOption.gameId, settings["recursive"] == "true");
 		return cmdDoExit;
 	} else if (command == "md5" || command == "md5mac") {
