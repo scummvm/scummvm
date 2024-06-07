@@ -62,6 +62,7 @@
 #include "director/lingo/xlibs/feiprefs.h"
 #include "director/lingo/xlibs/fileexists.h"
 #include "director/lingo/xlibs/fileio.h"
+#include "director/lingo/xlibs/filexobj.h"
 #include "director/lingo/xlibs/findereventsxcmd.h"
 #include "director/lingo/xlibs/findfolder.h"
 #include "director/lingo/xlibs/findsys.h"
@@ -230,6 +231,7 @@ static struct XLibProto {
 	{ FadeGammaXCMD::fileNames,			FadeGammaXCMD::open,		FadeGammaXCMD::close,		kXObj,					400 },	// D4
 	{ FileExists::fileNames,			FileExists::open,			FileExists::close,			kXObj,					300 },	// D3
 	{ FileIO::fileNames,				FileIO::open,				FileIO::close,				kXObj | kXtraObj,		200 },	// D2
+	{ FileXObj::fileNames,			FileXObj::open,			FileXObj::close,				kXObj,					400 },	// D4
 	{ FindFolder::fileNames,			FindFolder::open,			FindFolder::close,			kXObj,					300 },	// D3
 	{ FindSys::fileNames,				FindSys::open,				FindSys::close,				kXObj,					400 },	// D4
 	{ FindWin::fileNames,				FindWin::open,				FindWin::close,				kXObj,					400 },	// D4
