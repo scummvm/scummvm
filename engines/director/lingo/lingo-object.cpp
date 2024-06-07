@@ -36,6 +36,7 @@
 #include "director/lingo/xlibs/backdrop.h"
 #include "director/lingo/xlibs/barakeobj.h"
 #include "director/lingo/xlibs/batqt.h"
+#include "director/lingo/xlibs/bimxobj.h"
 #include "director/lingo/xlibs/blitpict.h"
 #include "director/lingo/xlibs/cdromxobj.h"
 #include "director/lingo/xlibs/closebleedwindowxcmd.h"
@@ -202,6 +203,7 @@ static struct XLibProto {
 	{ BackdropXObj::fileNames,			BackdropXObj::open,			BackdropXObj::close,		kXObj,					400 },	// D4
 	{ BarakeObj::fileNames,				BarakeObj::open,			BarakeObj::close,			kXObj,					400 },	// D4
 	{ BatQT::fileNames,					BatQT::open,				BatQT::close,				kXObj,					400 },	// D4
+	{ BIMXObj::fileNames,					BIMXObj::open,			BIMXObj::close,			kXObj,					400 },	// D4
 	{ BlitPictXObj::fileNames,			BlitPictXObj::open,			BlitPictXObj::close,		kXObj,					400 },	// D4
 	{ CDROMXObj::fileNames,				CDROMXObj::open,			CDROMXObj::close,			kXObj,					200 },	// D2
 	{ CloseBleedWindowXCMD::fileNames,	CloseBleedWindowXCMD::open,	CloseBleedWindowXCMD::close,kXObj,					300 },	// D3
