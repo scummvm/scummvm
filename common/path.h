@@ -557,9 +557,14 @@ public:
 	}
 
 	/**
-	 * Used by ConfigManager to parse a configuration value in a bacwards compatible way
+	 * Used by ConfigManager to parse a configuration value in a backwards compatible way
 	 */
 	static Path fromConfig(const String &value);
+
+	/**
+	 * Creates a path from a string given by the user
+	 */
+	static Path fromCommandLine(const String &value);
 };
 
 /** @} */
