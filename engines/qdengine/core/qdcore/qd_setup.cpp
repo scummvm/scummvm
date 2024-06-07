@@ -20,7 +20,9 @@
  */
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/archive.h"
+#include "common/formats/ini-file.h"
 #include "qdengine/core/qd_precomp.h"
 
 #include "qdengine/core/qdcore/qd_setup.h"
@@ -64,19 +66,17 @@ bool enumerateIniSections(const char *fname, std::list<std::string> &section_lis
 }
 
 char *getIniKey(const char *fname, const char *section, const char *key) {
-	static char buf[256];
-	static char path[_MAX_PATH];
+	Common::INIFile ini;
+	Common::String buf;
 
-	warning("STUB: getIniKey");
-#if 0
-	if (_fullpath(path, fname, _MAX_PATH) == NULL) {
-		*buf = 0;
-	} else {
-		if (!GetPrivateProfileString(section, key, NULL, buf, 256, path))
-			*buf = 0;
+	ini.loadFromFile(fname);
+	bool hasValue = ini.getKey(key, section, buf);
+
+	if (!hasValue) {
+		return "";
 	}
-#endif
-	return buf;
+
+	return (char *)buf.c_str();
 }
 
 void putIniKey(const char *fname, const char *section, const char *key, int val) {
