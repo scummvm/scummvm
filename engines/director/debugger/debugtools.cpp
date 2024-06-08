@@ -204,16 +204,12 @@ void showImage(const ImGuiImage &image, const char *name, float thumbnailSize) {
 
 void displayVariable(const Common::String &name, bool changed) {
 	ImU32 var_color = ImGui::GetColorU32(_state->_colors._var_ref);
-
-	const ImU32 disp_color_disabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 0.0f));
-	const ImU32 disp_color_enabled = ImGui::GetColorU32(ImVec4(0.9f, 0.08f, 0.0f, 1.0f));
-	const ImU32 disp_color_hover = ImGui::GetColorU32(ImVec4(0.42f, 0.17f, 0.13f, 1.0f));
 	ImU32 color;
 
-	color = disp_color_disabled;
+	color = ImGui::GetColorU32(_state->_colors._bp_color_disabled);
 
 	if (_state->_variables.contains(name))
-		color = disp_color_enabled;
+		color = ImGui::GetColorU32(_state->_colors._bp_color_enabled);
 
 	ImDrawList *dl = ImGui::GetWindowDrawList();
 	ImVec2 pos = ImGui::GetCursorScreenPos();
@@ -222,20 +218,20 @@ void displayVariable(const Common::String &name, bool changed) {
 
 	ImGui::InvisibleButton("Line", ImVec2(textSize.x + eyeSize.x, textSize.y));
 	if (ImGui::IsItemClicked(0)) {
-		if (color == disp_color_enabled) {
+		if (color == ImGui::GetColorU32(_state->_colors._bp_color_enabled)) {
 			_state->_variables.erase(name);
-			color = disp_color_disabled;
+			color = ImGui::GetColorU32(_state->_colors._bp_color_disabled);
 		} else {
 			_state->_variables[name] = true;
-			color = disp_color_enabled;
+			color = ImGui::GetColorU32(_state->_colors._bp_color_enabled);
 		}
 	}
 
 	if (changed)
 		var_color = ImGui::GetColorU32(_state->_colors._var_ref_changed);
 
-	if (color == disp_color_disabled && ImGui::IsItemHovered()) {
-		color = disp_color_hover;
+	if (color == ImGui::GetColorU32(_state->_colors._bp_color_disabled) && ImGui::IsItemHovered()) {
+		color = ImGui::GetColorU32(_state->_colors._bp_color_hover);
 	}
 
 	dl->AddText(pos, color, "\ue8f4 ");	// visibility
@@ -293,7 +289,8 @@ static void showSettings() {
 		ImGui::ColorEdit4("Breakpoint disabled", &_state->_colors._bp_color_disabled.x);
 		ImGui::ColorEdit4("Breakpoint enabled", &_state->_colors._bp_color_enabled.x);
 		ImGui::ColorEdit4("Breakpoint hover", &_state->_colors._bp_color_hover.x);
-		ImGui::SeparatorText("Lingo highlighting");
+
+		ImGui::SeparatorText("Lingo syntax");
 		ImGui::ColorEdit4("Line", &_state->_colors._line_color.x);
 		ImGui::ColorEdit4("Call", &_state->_colors._call_color.x);
 		ImGui::ColorEdit4("Builtin", &_state->_colors._builtin_color.x);
@@ -303,10 +300,21 @@ static void showSettings() {
 		ImGui::ColorEdit4("Type", &_state->_colors._type_color.x);
 		ImGui::ColorEdit4("Keyword", &_state->_colors._keyword_color.x);
 		ImGui::ColorEdit4("The entity", &_state->_colors._the_color.x);
+
 		ImGui::SeparatorText("References");
 		ImGui::ColorEdit4("Script", &_state->_colors._script_ref.x);
 		ImGui::ColorEdit4("Variable", &_state->_colors._var_ref.x);
 		ImGui::ColorEdit4("Variable changed", &_state->_colors._var_ref_changed.x);
+
+		ImGui::SeparatorText("Logger");
+		ImGui::ColorEdit4("Error", &_state->_colors._logger_error.x);
+		ImGui::ColorEdit4("Error Button", &_state->_colors._logger_error_b.x);
+		ImGui::ColorEdit4("Warning", &_state->_colors._logger_warning.x);
+		ImGui::ColorEdit4("Warning Button", &_state->_colors._logger_warning_b.x);
+		ImGui::ColorEdit4("Info", &_state->_colors._logger_info.x);
+		ImGui::ColorEdit4("Info Button", &_state->_colors._logger_info_b.x);
+		ImGui::ColorEdit4("Debug", &_state->_colors._logger_debug.x);
+		ImGui::ColorEdit4("Debug Button", &_state->_colors._logger_debug_b.x);
 	}
 	ImGui::End();
 }

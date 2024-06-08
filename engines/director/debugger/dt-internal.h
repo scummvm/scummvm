@@ -137,6 +137,16 @@ typedef struct ImGuiState {
 		ImVec4 _script_ref = ImColor(IM_COL32(0x7f, 0x7f, 0xff, 0xfff));
 		ImVec4 _var_ref = ImColor(IM_COL32(0xe6, 0xe6, 0x00, 0xff));
 		ImVec4 _var_ref_changed = ImColor(IM_COL32(0xFF, 0x00, 0x00, 0xFF));
+
+		ImVec4 _logger_error_b = ImVec4(1.f, 0.f, 0.f, 1.f);
+		ImVec4 _logger_warning_b = ImVec4(1.f, 1.f, 0.f, 1.f);
+		ImVec4 _logger_info_b = ImVec4(1.f, 1.f, 1.f, 1.f);
+		ImVec4 _logger_debug_b = ImVec4(0.8f, 0.8f, 0.8f, 1.f);
+
+		ImVec4 _logger_error = ImVec4(1.0f, 0.4f, 0.4f, 1.0f);
+		ImVec4 _logger_warning = ImVec4(1.0f, 1.0f, 0.4f, 1.0f);
+		ImVec4 _logger_info = ImVec4(1.0f, 0.8f, 0.6f, 1.0f);
+		ImVec4 _logger_debug = ImVec4(0.8f, 0.8f, 0.8f, 1.0f);
 	} _colors;
 
 	struct {

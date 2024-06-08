@@ -141,28 +141,28 @@ void ImGuiLogger::draw(const char *title, bool *p_open) {
     ImGui::SameLine();
 
     // Error
-    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 0.f, 0.f, 1.f));
+    ImGui::PushStyleColor(ImGuiCol_Text, _state->_colors._logger_error_b);
     toggleButton("\ue160", &_showError);
     ImGui::PopStyleColor();
     ImGui::SetItemTooltip("Show Errors");
     ImGui::SameLine();
 
     // Warning
-    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 1.f, 0.f, 1.f));
+    ImGui::PushStyleColor(ImGuiCol_Text, _state->_colors._logger_warning_b);
     toggleButton("\ue002", &_showWarn);
     ImGui::PopStyleColor();
     ImGui::SetItemTooltip("Show Warnings");
     ImGui::SameLine();
 
     // Info
-    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 1.f, 1.f, 1.f));
+    ImGui::PushStyleColor(ImGuiCol_Text, _state->_colors._logger_info_b);
     toggleButton("\ue88e", &_showInfo);
     ImGui::PopStyleColor();
     ImGui::SetItemTooltip("Show Info");
     ImGui::SameLine();
 
     // Debug
-    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.8f, 0.8f, 0.8f, 1.f));
+    ImGui::PushStyleColor(ImGuiCol_Text, _state->_colors._logger_debug_b);
     toggleButton("\ue868", &_showdebug);
     ImGui::PopStyleColor();
     ImGui::SetItemTooltip("Show Debug");
@@ -207,18 +207,18 @@ void ImGuiLogger::draw(const char *title, bool *p_open) {
         bool pop_color = false;
         if (isError) {
             item += 7;
-            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.4f, 0.4f, 1.0f));
+            ImGui::PushStyleColor(ImGuiCol_Text, _state->_colors._logger_error);
             pop_color = true;
         } else if (isWarn) {
             item += 6;
-            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 0.4f, 1.0f));
+            ImGui::PushStyleColor(ImGuiCol_Text, _state->_colors._logger_warning);
             pop_color = true;
         } else if (isDebug) {
             item += 7;
-            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.8f, 0.8f, 0.8f, 1.0f));
+            ImGui::PushStyleColor(ImGuiCol_Text, _state->_colors._logger_debug);
             pop_color = true;
         } else if (strncmp(item, "> ", 2) == 0) {
-            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.8f, 0.6f, 1.0f));
+            ImGui::PushStyleColor(ImGuiCol_Text, _state->_colors._logger_info);
             pop_color = true;
         }
         ImGui::TextUnformatted(item);
