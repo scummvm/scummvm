@@ -83,8 +83,8 @@ Common::Point MiniMap::getItemLocation(const Item &item, unsigned int chunkSize)
 }
 
 uint32 MiniMap::sampleAtPoint(const CurrentMap &map, int x, int y) {
-	int32 start[3] = {x, y, 1 << 15};
-	int32 end[3] = {x, y, -1};
+	Point3 start(x, y, 1 << 15);
+	Point3 end(x, y, -1);
 	int32 dims[3] = {0, 0, 0};
 	uint32 shflags = ShapeInfo::SI_ROOF | ShapeInfo::SI_OCCL | ShapeInfo::SI_LAND | ShapeInfo::SI_SEA;
 	Std::list<CurrentMap::SweepItem> collisions;

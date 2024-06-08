@@ -306,9 +306,9 @@ void SuperSpriteProcess::makeBulletSplash(const Point3 &pt) {
 	firetypedat->makeBulletSplashShapeAndPlaySound(pt.x, pt.y, pt.z);
 }
 
-static bool _pointOutOfMap(const int32 pt[3], int32 maxxy) {
-	return (pt[0] < 0     || pt[1] < 0     || pt[2] < 0 ||
-			pt[0] > maxxy || pt[1] > maxxy || pt[2] > 255);
+static bool _pointOutOfMap(const Point3 &pt, int32 maxxy) {
+	return (pt.x < 0     || pt.y < 0     || pt.z < 0 ||
+			pt.x > maxxy || pt.y > maxxy || pt.z > 255);
 }
 
 void SuperSpriteProcess::hitAndFinish() {
@@ -319,8 +319,8 @@ void SuperSpriteProcess::hitAndFinish() {
 	int ystep = _pt3.y - _nowpt.y;
 	int zstep = _pt3.z - _nowpt.z;
 	// We add a slight hack - our sweep test is off-by-one on Z??
-	int32 start[3] = {_nowpt.x, _nowpt.y, _nowpt.z + 1};
-	int32 end[3] = {_pt3.x, _pt3.y, _pt3.z + 1};
+	Point3 start(_nowpt.x, _nowpt.y, _nowpt.z + 1);
+	Point3 end(_pt3.x, _pt3.y, _pt3.z + 1);
 	int32 dims[3] = {1, 1, 1};
 	// will never get a collision if not stepping at all..
 	bool collision = !(xstep || ystep || zstep);
@@ -332,12 +332,12 @@ void SuperSpriteProcess::hitAndFinish() {
 								   _source, true, &hits);
 		if (collision)
 			break;
-		start[0] += xstep;
-		start[1] += ystep;
-		start[2] += zstep;
-		end[0] += xstep;
-		end[1] += ystep;
-		end[2] += zstep;
+		start.x += xstep;
+		start.y += ystep;
+		start.z += zstep;
+		end.x += xstep;
+		end.y += ystep;
+		end.z += zstep;
 		const int32 mapmax = map->getChunkSize() * MAP_NUM_CHUNKS;
 		if (_pointOutOfMap(start, mapmax) || _pointOutOfMap(end, mapmax))
 			break;
@@ -346,9 +346,7 @@ void SuperSpriteProcess::hitAndFinish() {
 	if (collision && hits.size()) {
 		const CurrentMap::SweepItem &firsthit = hits.front();
 		_item0x77 = firsthit._item;
-		int32 hitpt[3] = {pt.x, pt.y, pt.z};
-		firsthit.GetInterpolatedCoords(hitpt, start, end);
-		pt = Point3(hitpt[0], hitpt[1], hitpt[2]);
+		pt = firsthit.GetInterpolatedCoords(start, end);
 	}
 
 	Item *item = getItem(_item0x77);
@@ -441,16 +439,13 @@ void SuperSpriteProcess::advanceFrame() {
 bool SuperSpriteProcess::areaSearch() {
 	CurrentMap *map = World::get_instance()->getCurrentMap();
 
-	int32 start[3] = {_nowpt.x, _nowpt.y, _nowpt.z + 1};
-	int32 end[3] = {_pt3.x, _pt3.y, _pt3.z + 1};
+	Point3 start(_nowpt.x, _nowpt.y, _nowpt.z + 1);
+	Point3 end(_pt3.x, _pt3.y, _pt3.z + 1);
 	int32 dims[3] = {1, 1, 1};
 
 	Item *item = getItem(_itemNum);
 	if (item) {
-		Point3 pt = item->getLocation();
-		start[0] = pt.x;
-		start[1] = pt.y;
-		start[2] = pt.z;
+		start = item->getLocation();
 	}
 
 	Std::list<CurrentMap::SweepItem> hits;

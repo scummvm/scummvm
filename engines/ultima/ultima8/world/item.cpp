@@ -744,15 +744,13 @@ int Item::getRangeIfVisible(const Item &item2) const {
 	CurrentMap *map = world->getCurrentMap();
 	Std::list<CurrentMap::SweepItem> hitItems;
 
-	Point3 pt1 = getCentre();
-	Point3 pt2 = item2.getCentre();
-	int32 start[3] = {pt1.x, pt1.y, pt1.z};
-	int32 end[3] = {pt2.x, pt2.y, pt2.z};
+	Point3 start = getCentre();
+	Point3 end = item2.getCentre();
 	int32 dims[3] = {1, 1, 1};
 
-	int xdiff = abs(start[0] - end[0]);
-	int ydiff = abs(start[1] - end[1]);
-	int zdiff = abs(start[2] - end[2]);
+	int xdiff = abs(start.x - end.x);
+	int ydiff = abs(start.y - end.y);
+	int zdiff = abs(start.z - end.z);
 
 	map->sweepTest(start, end, dims, getShapeInfo()->_flags, _objId, true, &hitItems);
 
@@ -1054,20 +1052,13 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 	if (hititem) *hititem = 0;
 	if (dirs) *dirs = 0;
 
-	int32 end[3] = { dx, dy, dz };
+	Point3 start(dx, dy, dz);
+	Point3 end(dx, dy, dz);
 
-	int32 start[3];
-	if (_parent) {
-		// If we are moving from a container, only check the destination
-		start[0] = end[0];
-		start[1] = end[1];
-		start[2] = end[2];
-	} else {
-		// Otherwise check from where we are to where we want to go
-		Point3 pt = getLocation();
-		start[0] = pt.x;
-		start[1] = pt.y;
-		start[2] = pt.z;
+	// If we are moving from a container, only check the destination
+	// Otherwise check from where we are to where we want to go
+	if (!_parent) {
+		start = getLocation();
 	}
 
 	int32 dims[3];
@@ -1082,9 +1073,9 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 
 
 	// the force of the hit, used for the gotHit/hit usecode calls
-	int deltax = ABS(start[0] - end[0]) / 4;
-	int deltay = ABS(start[1] - end[1]) / 4;
-	int deltaz = ABS(start[2] - end[2]);
+	int deltax = ABS(start.x - end.x) / 4;
+	int deltay = ABS(start.y - end.y) / 4;
+	int deltaz = ABS(start.z - end.z);
 	int maxdirdelta = deltay;
 	if (deltay > maxdirdelta) maxdirdelta = deltay;
 	if (deltaz > maxdirdelta) maxdirdelta = deltaz;
@@ -1137,7 +1128,7 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 		if (we_were_released) callUsecodeEvent_release();
 
 		// Move US!
-		move(end[0], end[1], end[2]);
+		move(end);
 
 		// We reached the end
 		return 0x4000;
@@ -1160,11 +1151,11 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 
 			if (hit != 0x4000) {
 				debugC(kDebugCollision, "Hit time: %d; Start: %d, %d, %d; End: %d, %d, %d",
-					hit, start[0], start[1], start[2], end[0], end[1], end[2]);
+					hit, start.x, start.y, start.z, end.x, end.y, end.z);
 
-				it->GetInterpolatedCoords(end, start, end);
+				end = it->GetInterpolatedCoords(start, end);
 
-				debugC(kDebugCollision, "Collision: %d, %d, %d", end[0], end[1], end[2]);
+				debugC(kDebugCollision, "Collision: %d, %d, %d", end.x, end.y, end.z);
 			}
 		}
 
@@ -1211,7 +1202,7 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 		if (we_were_released) callUsecodeEvent_release();
 
 		// Move US!
-		move(end[0], end[1], end[2]);
+		move(end);
 
 		return hit;
 	}
@@ -1459,8 +1450,8 @@ uint16 Item::fireDistance(const Item *other, Direction dir, int16 xoff, int16 yo
 		} else {
 			Point3 oc = other->getCentre();
 			oc.z = other->getTargetZRelativeToAttackerZ(getZ());
-			const int32 start[3] = {cx, cy, cz};
-			const int32 end[3] = {oc.x, oc.y, oc.z};
+			const Point3 start(cx, cy, cz);
+			const Point3 end = oc;
 			const int32 dims[3] = {2, 2, 2};
 
 			Std::list<CurrentMap::SweepItem> collisions;
@@ -1474,9 +1465,8 @@ uint16 Item::fireDistance(const Item *other, Direction dir, int16 xoff, int16 yo
 					continue;
 				if (it->_item != other->getObjId())
 					break;
-				int32 out[3];
-				it->GetInterpolatedCoords(out, start, end);
-				dist = MAX(abs(_x - out[0]), abs(_y - out[1]));
+				Point3 out = it->GetInterpolatedCoords(start, end);
+				dist = MAX(abs(_x - out.x), abs(_y - out.y));
 				break;
 			}
 		}
@@ -2486,18 +2476,12 @@ bool Item::canReach(const Item *other, int range,
 
 
 	// if not, do line of sight between origins of items
-	int32 start[3];
-	int32 end[3];
+	Point3 start = pt1;
+	Point3 end(otherX, otherY, otherZ);
 	int32 dims[3] = { 2, 2, 2 };
 
-	start[0] = pt1.x;
-	start[1] = pt1.y;
-	start[2] = pt1.z;
-	end[0] = otherX;
-	end[1] = otherY;
-	end[2] = otherZ;
 	if (otherZ > pt1.z && otherZ < pt1.z + thisZd)
-		start[2] = end[2]; // bottom of other between bottom and top of this
+		start.z = end.z; // bottom of other between bottom and top of this
 
 	Std::list<CurrentMap::SweepItem> collisions;
 	Std::list<CurrentMap::SweepItem>::iterator it;
@@ -2510,15 +2494,15 @@ bool Item::canReach(const Item *other, int range,
 		return true;
 
 	// if that fails, try line of sight between centers
-	start[0] = pt1.x - thisXd / 2; // xy center of this
-	start[1] = pt1.y - thisYd / 2;
-	start[2] = pt1.z;
+	start.x = pt1.x - thisXd / 2; // xy center of this
+	start.y = pt1.y - thisYd / 2;
+	start.z = pt1.z;
 	if (thisZd > 16)
-		start[2] += thisZd - 8; // eye height
+		start.z += thisZd - 8; // eye height
 
-	end[0] = otherX - otherXd / 2; // xyz center of other
-	end[1] = otherY - otherYd / 2;
-	end[2] = otherZ + otherZd / 2;
+	end.x = otherX - otherXd / 2; // xyz center of other
+	end.y = otherY - otherYd / 2;
+	end.z = otherZ + otherZd / 2;
 
 	collisions.clear();
 	map->sweepTest(start, end, dims, ShapeInfo::SI_SOLID,
@@ -2528,7 +2512,7 @@ bool Item::canReach(const Item *other, int range,
 		return true;
 
 	// if that fails, try line of sight between eye level and top of 2nd
-	end[2] = otherZ + otherZd;
+	end.z = otherZ + otherZd;
 
 	collisions.clear();
 	map->sweepTest(start, end, dims, ShapeInfo::SI_SOLID,
@@ -3632,14 +3616,9 @@ uint32 Item::I_legalMoveToPoint(const uint8 *args, unsigned int argsize) {
 	//
 	int retval = 1;
 	Std::list<CurrentMap::SweepItem> collisions;
-	int32 start[3], end[3], dims[3];
-	end[0] = x;
-	end[1] = y;
-	end[2] = z;
-	Point3 pt = item->getLocation();
-	start[0] = pt.x;
-	start[1] = pt.y;
-	start[2] = pt.z;
+	Point3 start = item->getLocation();
+	Point3 end(x, y, z);
+	int32 dims[3];
 	item->getFootpadWorld(dims[0], dims[1], dims[2]);
 	CurrentMap *map = World::get_instance()->getCurrentMap();
 	map->sweepTest(start, end, dims, item->getShapeInfo()->_flags,

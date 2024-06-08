@@ -493,10 +493,6 @@ void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction
 
 		int32 dims[3];
 		avatar->getFootpadWorld(dims[0], dims[1], dims[2]);
-		int32 start[3];
-		start[0] = origpt.x;
-		start[1] = origpt.y;
-		start[2] = origpt.z;
 
 		// Double the values in original to match our coordinate space
 		static const int ADJUSTMENTS[] = {0x20, 0x20, 0x40, 0x40, 0x60, 0x60,
@@ -516,12 +512,9 @@ void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction
 			//
 			bool startvalid = true;
 			Std::list<CurrentMap::SweepItem> collisions;
-			int32 end[3];
-			end[0] = x;
-			end[1] = y;
-			end[2] = z;
+			Point3 end(x, y, z);
 			avatar->setLocation(origpt);
-			currentmap->sweepTest(start, end, dims, avatar->getShapeInfo()->_flags,
+			currentmap->sweepTest(origpt, end, dims, avatar->getShapeInfo()->_flags,
 								  avatar->getObjId(), true, &collisions);
 			for (Std::list<CurrentMap::SweepItem>::iterator it = collisions.begin();
 				 it != collisions.end(); it++) {

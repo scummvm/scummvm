@@ -980,22 +980,22 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, const Item *ite
 // blocking_only forces us to check against blocking items only.
 // Returns item hit or 0 if no hit.
 // end is set to the colision point
-bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
+bool CurrentMap::sweepTest(const Point3 &start, const Point3 &end,
 						   const int32 dims[3], uint32 shapeflags,
 						   ObjId item, bool blocking_only,
 						   Std::list<SweepItem> *hit) const {
 	const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING | ShapeInfo::SI_LAND);
 
-	int minx = ((start[0] - dims[0]) / _mapChunkSize) - 1;
-	int maxx = (start[0] / _mapChunkSize) + 1;
-	int miny = ((start[1] - dims[1]) / _mapChunkSize) - 1;
-	int maxy = (start[1] / _mapChunkSize) + 1;
+	int minx = ((start.x - dims[0]) / _mapChunkSize) - 1;
+	int maxx = (start.x / _mapChunkSize) + 1;
+	int miny = ((start.y - dims[1]) / _mapChunkSize) - 1;
+	int maxy = (start.y / _mapChunkSize) + 1;
 
 	{
-		int dminx = ((end[0] - dims[0]) / _mapChunkSize) - 1;
-		int dmaxx = (end[0] / _mapChunkSize) + 1;
-		int dminy = ((end[1] - dims[1]) / _mapChunkSize) - 1;
-		int dmaxy = (end[1] / _mapChunkSize) + 1;
+		int dminx = ((end.x - dims[0]) / _mapChunkSize) - 1;
+		int dmaxx = (end.x / _mapChunkSize) + 1;
+		int dminy = ((end.y - dims[1]) / _mapChunkSize) - 1;
+		int dmaxy = (end.y / _mapChunkSize) + 1;
 		if (dminx < minx)
 			minx = dminx;
 		if (dmaxx > maxx)
@@ -1011,14 +1011,19 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 	// Get velocity, extents, and centre of item
 	int32 vel[3];
 	int32 ext[3];
-	int32 centre[3];
-	for (int i = 0; i < 3; i++) {
-		vel[i] = end[i] - start[i];
-		ext[i] = dims[i] / 2;
-		centre[i] = start[i] - ext[i];
-	}
+	Point3 centre;
+	vel[0] = end.x - start.x;
+	vel[1] = end.y - start.y;
+	vel[2] = end.z - start.z;
+
+	ext[0] = dims[0] / 2;
+	ext[1] = dims[1] / 2;
+	ext[2] = dims[2] / 2;
+
+	centre.x = start.x - ext[0];
+	centre.y = start.y - ext[1];
 	// Z is opposite direction to x and y..
-	centre[2] = start[2] + ext[2];
+	centre.z = start.z + ext[2];
 
 	debugC(kDebugCollision, "Sweeping from (%d, %d, %d) - (%d, %d, %d) to (%d, %d, %d) - (%d, %d, %d)",
 		   -ext[0], -ext[1], -ext[2],
@@ -1063,12 +1068,12 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 				// off-by-one error (hypothetically, but they do happen so
 				// protect against it).
 				if ( /* not non-overlapping start position */
-				    !(start[0] <= other[0] - (oext[0] - 1) ||
-				      start[0] - dims[0] >= other[0] - 1 ||
-				      start[1] <= other[1] - (oext[1] - 1) ||
-				      start[1] - dims[1] >= other[1] - 1 ||
-				      start[2] + dims[2] <= other[2] + 1 ||
-				      start[2] >= other[2] + (oext[2] - 1))) {
+				    !(start.x <= other[0] - (oext[0] - 1) ||
+				      start.x - dims[0] >= other[0] - 1 ||
+				      start.y <= other[1] - (oext[1] - 1) ||
+				      start.y - dims[1] >= other[1] - 1 ||
+				      start.z + dims[2] <= other[2] + 1 ||
+				      start.z >= other[2] + (oext[2] - 1))) {
 					// Overlapped at the start, and not just touching so
 					// ignore collision
 					continue;
@@ -1080,9 +1085,9 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 				oext[2] /= 2;
 
 				// Put other into our coord frame
-				other[0] -= oext[0] + centre[0];
-				other[1] -= oext[1] + centre[1];
-				other[2] += oext[2] - centre[2];
+				other[0] -= oext[0] + centre.x;
+				other[1] -= oext[1] + centre.y;
+				other[2] += oext[2] - centre.z;
 
 				//first times of overlap along each axis
 				int32 u_1[3] = {0, 0, 0};

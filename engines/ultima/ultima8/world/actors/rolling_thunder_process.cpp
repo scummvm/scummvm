@@ -264,8 +264,8 @@ bool RollingThunderProcess::fireDistance(Direction dir, int32 x, int32 y, int32 
 		} else {
 			Point3 oc = target->getCentre();
 			oc.z = target->getTargetZRelativeToAttackerZ(z);
-			const int32 start[3] = {cx, cy, cz};
-			const int32 end[3] = {oc.x, oc.y, oc.z};
+			const Point3 start(cx, cy, cz);
+			const Point3 end = oc;
 			const int32 dims[3] = {2, 2, 2};
 
 			Std::list<CurrentMap::SweepItem> collisions;
@@ -277,9 +277,8 @@ bool RollingThunderProcess::fireDistance(Direction dir, int32 x, int32 y, int32 
 					continue;
 				if (it->_item != target->getObjId())
 					break;
-				int32 out[3];
-				it->GetInterpolatedCoords(out, start, end);
-				dist = MAX(abs(x - out[0]), abs(y - out[1]));
+				Point3 out = it->GetInterpolatedCoords(start, end);
+				dist = MAX(abs(x - out.x), abs(y - out.y));
 				break;
 			}
 		}

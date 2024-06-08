@@ -270,8 +270,8 @@ bool AnimationTracker::step() {
 	// Only for particularly large steps we do a full sweepTest
 	if (ABS(dx) >= xd - 8 || ABS(dy) >= yd - 8 || ABS(dz) >= zd - 8) {
 
-		int32 start[3] = { _curr.x, _curr.y, _curr.z };
-		int32 end[3] = { tx, ty, tz };
+		Point3 start = _curr;
+		Point3 end(tx, ty, tz);
 		int32 dims[3] = { xd, yd, zd };
 
 		// Do the sweep test
@@ -290,10 +290,7 @@ bool AnimationTracker::step() {
 				}
 #endif
 				_blocked = true;
-				it->GetInterpolatedCoords(end, start, end);
-				_curr.x = end[0];
-				_curr.y = end[1];
-				_curr.z = end[2];
+				_curr = it->GetInterpolatedCoords(end, start);
 				return false;
 			}
 		}
