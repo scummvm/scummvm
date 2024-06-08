@@ -224,7 +224,7 @@ public:
 	void changeScene();
 
 	/** For the buggy to get the 2D coordinates of an exterior cube in the map */
-	bool loadSceneCubeXY(int sceneNum, int *cubeX, int *cubeY);
+	bool loadSceneCubeXY(int sceneNum, int32 *cubeX, int32 *cubeY);
 
 	/** Process scene environment sound */
 	void processEnvironmentSound();

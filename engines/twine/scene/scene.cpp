@@ -148,7 +148,7 @@ void Scene::setBonusParameterFlags(ActorStruct *act, uint16 bonusFlags) {
 	}
 }
 
-bool Scene::loadSceneCubeXY(int numcube, int *cubex, int *cubey) {
+bool Scene::loadSceneCubeXY(int numcube, int32 *cubex, int32 *cubey) {
 	uint8 *scene = nullptr;
 	// numcube+1 because at 0 is SizeCube.MAX (size of the largest .SCC)
 	const int32 sceneSize = HQR::getAllocEntry(&scene, Resources::HQR_SCENE_FILE, numcube + 1);
