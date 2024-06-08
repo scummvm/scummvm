@@ -44,8 +44,8 @@
 namespace DLC {
 namespace ScummVMCloud {
 
-void ScummVMCloud::jsonCallbackGetAllDLCs(Networking::JsonResponse response) {
-	Common::JSONValue *json = (Common::JSONValue *)response.value;
+void ScummVMCloud::jsonCallbackGetAllDLCs(const Networking::JsonResponse &response) {
+	const Common::JSONValue *json = response.value;
 	if (json == nullptr || !json->isObject()) {
 		return;
 	}
@@ -81,21 +81,21 @@ void ScummVMCloud::jsonCallbackGetAllDLCs(Networking::JsonResponse response) {
 	DLCMan.refreshDLCList();
 }
 
-void ScummVMCloud::errorCallbackGetAllDLCs(Networking::ErrorResponse error) {
+void ScummVMCloud::errorCallbackGetAllDLCs(const Networking::ErrorResponse &error) {
 	warning("JsonRequest Error - getAllDLCs");
 }
 
 void ScummVMCloud::getAllDLCs() {
 	Common::String url("https://scummvm-dlcs-default-rtdb.firebaseio.com/dlcs.json"); // temporary mock api
+	Networking::JsonCallback callback = new Common::Callback<ScummVMCloud, const Networking::JsonResponse &>(this, &ScummVMCloud::jsonCallbackGetAllDLCs);
+	Networking::ErrorCallback failureCallback = new Common::Callback<ScummVMCloud, const Networking::ErrorResponse &>(this, &ScummVMCloud::errorCallbackGetAllDLCs);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(
-		new Common::Callback<ScummVMCloud, Networking::JsonResponse>(this, &ScummVMCloud::jsonCallbackGetAllDLCs), 
-		new Common::Callback<ScummVMCloud, Networking::ErrorResponse>(this, &ScummVMCloud::errorCallbackGetAllDLCs), 
-		url);
+		callback, failureCallback, url);
 
 	request->execute();
 }
 
-void ScummVMCloud::downloadFileCallback(Networking::DataResponse r) {
+void ScummVMCloud::downloadFileCallback(const Networking::DataResponse &r) {
 	Networking::SessionFileResponse *response = static_cast<Networking::SessionFileResponse *>(r.value);
 	DLCMan._currentDownloadedSize += response->len;
 	if (DLCMan._interruptCurrentDownload) {
@@ -149,7 +149,7 @@ void ScummVMCloud::downloadFileCallback(Networking::DataResponse r) {
 	}
 }
 
-void ScummVMCloud::errorCallback(Networking::ErrorResponse error) {
+void ScummVMCloud::errorCallback(const Networking::ErrorResponse &error) {
 	// error downloading - start next download in queue
 	DLCMan._queuedDownloadTasks.front()->state = DLCDesc::kErrorDownloading;
 	DLCMan._queuedDownloadTasks.pop();
@@ -160,9 +160,9 @@ void ScummVMCloud::errorCallback(Networking::ErrorResponse error) {
 void ScummVMCloud::startDownloadAsync(const Common::String &id, const Common::String &url) {
 	Common::String localFile = normalizePath(ConfMan.get("dlcspath") + "/" + id, '/');
 
-	_rq = new Networking::SessionRequest(url, localFile,
-		new Common::Callback<ScummVMCloud, Networking::DataResponse>(this, &ScummVMCloud::downloadFileCallback),
-		new Common::Callback<ScummVMCloud, Networking::ErrorResponse>(this, &ScummVMCloud::errorCallback));
+	Networking::DataCallback callback = new Common::Callback<ScummVMCloud, const Networking::DataResponse &>(this, &ScummVMCloud::downloadFileCallback);
+	Networking::ErrorCallback failureCallback = new Common::Callback<ScummVMCloud, const Networking::ErrorResponse &>(this, &ScummVMCloud::errorCallback);
+	_rq = new Networking::SessionRequest(url, localFile, callback, failureCallback);
 
 	_rq->start();
 }

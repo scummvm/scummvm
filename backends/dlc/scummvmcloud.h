@@ -55,13 +55,13 @@ public:
 	void addEntryToConfig(Common::Path gamePath);
 
 	// callback functions
-	void jsonCallbackGetAllDLCs(Networking::JsonResponse response);
+	void jsonCallbackGetAllDLCs(const Networking::JsonResponse &response);
 
-	void errorCallbackGetAllDLCs(Networking::ErrorResponse error);
+	void errorCallbackGetAllDLCs(const Networking::ErrorResponse &error);
 
-	void downloadFileCallback(Networking::DataResponse response);
+	void downloadFileCallback(const Networking::DataResponse &response);
 
-	void errorCallback(Networking::ErrorResponse error);
+	void errorCallback(const Networking::ErrorResponse &error);
 };
 
 } // End of namespace ScummVMCloud
