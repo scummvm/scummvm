@@ -425,11 +425,11 @@ void ActorAnimProcess::doSpecial() {
 			Actor *ghoul = Actor::createActor(0x8e, 0);
 			if (!ghoul) return;
 			ghoul->setFlag(Item::FLG_FAST_ONLY);
-			if (!ghoul->canExistAt(pt.x, pt.y, pt.z, true)) {
+			if (!ghoul->canExistAt(pt, true)) {
 				ghoul->destroy();
 				return;
 			}
-			ghoul->move(pt.x, pt.y, pt.z);
+			ghoul->move(pt);
 			ghoul->doAnim(Animation::standUp, dir_north);
 			hostile = ghoul;
 		}

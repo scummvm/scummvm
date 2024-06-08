@@ -322,7 +322,7 @@ void GameMapGump::onMouseClick(int button, int32 mx, int32 my) {
 				debugC(kDebugObject, "Can't move: avatarInStasis");
 			} else {
 				Actor *avatarControlled = getControlledActor();
-				PathfinderProcess *pfp = new PathfinderProcess(avatarControlled, coords.x, coords.y, coords.z);
+				PathfinderProcess *pfp = new PathfinderProcess(avatarControlled, coords);
 				Kernel::get_instance()->killProcesses(avatarControlled->getObjId(), PathfinderProcess::PATHFINDER_PROC_TYPE, true);
 				Kernel::get_instance()->addProcess(pfp);
 			}
@@ -437,7 +437,7 @@ bool GameMapGump::DraggingItem(Item *item, int mx, int my) {
 		}
 	}
 
-	if (!item->canExistAt(_draggingPos.x, _draggingPos.y, _draggingPos.z))
+	if (!item->canExistAt(_draggingPos))
 		return false;
 
 	if (throwing)

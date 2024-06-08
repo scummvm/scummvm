@@ -161,7 +161,8 @@ void QuickAvatarMoverProcess::run() {
 
 	if (GAME_IS_CRUSADER) {
 		// Keep the camera on the avatar while we're quick-moving.
-		CameraProcess::SetCameraProcess(new CameraProcess(pt.x + dxv, pt.y + dyv, pt.z + dzv));
+		Point3 cpt(pt.x + dxv, pt.y + dyv, pt.z + dzv);
+		CameraProcess::SetCameraProcess(new CameraProcess(cpt));
 	}
 
 	// Prevent avatar from running an idle animation while moving around

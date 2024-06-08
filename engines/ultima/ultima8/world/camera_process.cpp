@@ -64,6 +64,10 @@ void CameraProcess::ResetCameraProcess() {
 }
 
 void CameraProcess::moveToLocation(int32 x, int32 y, int32 z) {
+	moveToLocation(Point3(x, y, z));
+}
+
+void CameraProcess::moveToLocation(const Point3 &p) {
 	if (_itemNum) {
 		Item *item = getItem(_itemNum);
 		if (item)
@@ -73,9 +77,7 @@ void CameraProcess::moveToLocation(int32 x, int32 y, int32 z) {
 
 	_s.x = _s.y = _s.z = _time = _elapsed = _lastFrameNum = 0;
 	_eqX = _eqY = _earthquake = 0;
-	_e.x = x;
-	_e.y = y;
-	_e.z = z;
+	_e = p;
 	_s = GetCameraLocation();
 }
 
@@ -129,14 +131,14 @@ CameraProcess::CameraProcess(uint16 _itemnum) :
 }
 
 // Stay over point
-CameraProcess::CameraProcess(int32 x, int32 y, int32 z) :
-	_e(x, y, z), _time(0), _elapsed(0), _itemNum(0), _lastFrameNum(0) {
+CameraProcess::CameraProcess(const Point3 &p) :
+	_e(p), _time(0), _elapsed(0), _itemNum(0), _lastFrameNum(0) {
 	_s = GetCameraLocation();
 }
 
 // Scroll
-CameraProcess::CameraProcess(int32 x, int32 y, int32 z, int32 time) :
-	_e(x, y, z), _time(time), _elapsed(0), _itemNum(0), _lastFrameNum(0) {
+CameraProcess::CameraProcess(const Point3 &p, int32 time) :
+	_e(p), _time(time), _elapsed(0), _itemNum(0), _lastFrameNum(0) {
 	_s = GetCameraLocation();
 	debug(10, "Scrolling from (%d, %d,%d) to (%d, %d, %d) in %d frames",
 		_s.x, _s.y, _s.z, _e.x, _e.y, _e.z,  _time);
@@ -343,7 +345,8 @@ uint32 CameraProcess::I_moveTo(const uint8 *args, unsigned int argsize) {
 	}
 
 	World_FromUsecodeXY(x, y);
-	CameraProcess::SetCameraProcess(new CameraProcess(x, y, z));
+	Point3 pt(x, y, z);
+	CameraProcess::SetCameraProcess(new CameraProcess(pt));
 	return 0;
 }
 
@@ -362,7 +365,8 @@ uint32 CameraProcess::I_scrollTo(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_NULL16(); // some uint16?
 
 	World_FromUsecodeXY(x, y);
-	return CameraProcess::SetCameraProcess(new CameraProcess(x, y, z, 25));
+	Point3 pt(x, y, z);
+	return CameraProcess::SetCameraProcess(new CameraProcess(pt, 25));
 }
 
 //	Camera::startQuake(word)

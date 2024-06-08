@@ -160,7 +160,7 @@ void GravityProcess::run() {
 			termFlag = false;
 			_zSpeed = 0;
 
-			item->getCentre(pt.x, pt.y, pt.z);
+			pt = item->getCentre();
 			target = hititem->getWorldBox();
 			if (ABS(_xSpeed) < 16) {
 				if (pt.x + 16 > target._x)

@@ -131,26 +131,24 @@ void TargetReticleProcess::avatarMoved() {
 }
 
 void TargetReticleProcess::putTargetReticleOnItem(Item *item, bool only_last_frame) {
-	int32 x, y, z;
-
 	// TODO: the game does a bunch of other maths here to pick the right location.
 	// This is an over-simplification and is usually too high so it's
 	// hacked a little lower.
-	item->getCentre(x, y, z);
-	z -= 8;
+	Point3 pt = item->getCentre();
+	pt.z -= 8;
 
 	Process *p;
 	const int first_frame = _reticleStyle * 6;
 	const int last_frame = first_frame + 5;
 	if (!only_last_frame)
-		p = new SpriteProcess(0x59a, first_frame, last_frame, 1, 10, x, y, z, false);
+		p = new SpriteProcess(0x59a, first_frame, last_frame, 1, 10, pt.x, pt.y, pt.z, false);
 	else
-		p = new SpriteProcess(0x59a, last_frame, last_frame, 1, 1000, x, y, z, false);
+		p = new SpriteProcess(0x59a, last_frame, last_frame, 1, 1000, pt.x, pt.y, pt.z, false);
 
 	_reticleSpriteProcess = Kernel::get_instance()->addProcess(p);
 	_lastTargetItem = item->getObjId();
 	item->setExtFlag(Item::EXT_TARGET);
-	debug("New reticle target: %d (%d, %d, %d)", _lastTargetItem, x, y, z);
+	debug("New reticle target: %d (%d, %d, %d)", _lastTargetItem, pt.x, pt.y, pt.z);
 }
 
 void TargetReticleProcess::itemMoved(Item *item) {
@@ -160,8 +158,7 @@ void TargetReticleProcess::itemMoved(Item *item) {
 		return;
 	}
 
-	int32 x, y, z;
-	item->getCentre(x, y, z);
+	Point3 pt = item->getCentre();
 
 	Actor *mainactor = getControlledActor();
 	int actordir = -1;
@@ -179,7 +176,7 @@ void TargetReticleProcess::itemMoved(Item *item) {
 			_reticleSpriteProcess = 0;
 			clearSprite();
 		} else {
-			spriteproc->move(x, y, z);
+			spriteproc->move(pt.x, pt.y, pt.z);
 		}
 	}
 }

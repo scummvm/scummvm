@@ -71,6 +71,7 @@ public:
 	//! Set item location. This strictly sets the location, and does not
 	//! even update CurrentMap
 	void setLocation(int32 x, int32 y, int32 z); // this only sets the loc.
+	void setLocation(const Point3 &pt); // this only sets the loc.
 
 	//! Move an item. This moves an item to the new location, and updates
 	//! CurrentMap and fastArea if necessary.
@@ -127,7 +128,7 @@ public:
 
 	//! Get the world coordinates of the Item's centre. Undefined if the Item
 	//! is contained or equipped.
-	void getCentre(int32 &x, int32 &y, int32 &z) const;
+	Point3 getCentre() const;
 
 	//! Get the size of this item's 3D bounding box, in world coordinates.
 	inline void getFootpadWorld(int32 &x, int32 &y, int32 &z) const;
@@ -299,6 +300,7 @@ public:
 
 	//! Check if this item can exist at the given coordinates
 	bool canExistAt(int32 x, int32 y, int32 z, bool needsupport = false) const;
+	bool canExistAt(const Point3 &pt, bool needsupport = false) const;
 
 	//! Get direction from centre to another item's centre.
 	//! Undefined if either item is contained or equipped.

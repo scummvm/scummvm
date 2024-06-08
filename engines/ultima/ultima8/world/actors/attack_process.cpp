@@ -274,7 +274,7 @@ void AttackProcess::run() {
 			int32 x, y, z;
 			a->getHomePosition(x, y, z);
 			ProcId pid = Kernel::get_instance()->addProcess(
-					   new CruPathfinderProcess(a, x, y, z, 100, 0x80, true));
+					   new CruPathfinderProcess(a, Point3(x, y, z), 100, 0x80, true));
 			waitFor(pid);
 			return;
 		}
@@ -283,7 +283,7 @@ void AttackProcess::run() {
 			// Pathfind to target
 			Point3 pt = target->getLocation();
 			ProcId pid = Kernel::get_instance()->addProcess(
-					   new CruPathfinderProcess(a, pt.x, pt.y, pt.z, 12, 0x80, true));
+					   new CruPathfinderProcess(a, pt, 12, 0x80, true));
 			waitFor(pid);
 			return;
 		}
@@ -296,7 +296,7 @@ void AttackProcess::run() {
 			int32 y = (tpt.y + apt.y) / 2;
 			int32 z = (tpt.z + apt.z) / 2;
 			ProcId pid = Kernel::get_instance()->addProcess(
-					   new CruPathfinderProcess(a, x, y, z, 12, 0x80, true));
+					   new CruPathfinderProcess(a, Point3(x, y, z), 12, 0x80, true));
 			waitFor(pid);
 			return;
 		}
@@ -599,7 +599,7 @@ void AttackProcess::genericAttack() {
 			pt.y += rs.getRandomNumberRngSigned(-0x1ff, 0x1ff);
 			_field96 = true;
 			const ProcId pid = Kernel::get_instance()->addProcess(
-								new CruPathfinderProcess(a, pt.x, pt.y, pt.z, 12, 0x80, true));
+								new CruPathfinderProcess(a, pt, 12, 0x80, true));
 			// add a tiny delay to avoid tight loops
 			Process *delayproc = new DelayProcess(2);
 			Kernel::get_instance()->addProcess(delayproc);

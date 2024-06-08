@@ -86,7 +86,7 @@ void StartU8Process::run() {
 		Egg *egg = dynamic_cast<Egg *>(getObject(objid));
 		Point3 pt = egg->getLocation();
 		// Center on egg
-		CameraProcess::SetCameraProcess(new CameraProcess(pt.x, pt.y, pt.z));
+		CameraProcess::SetCameraProcess(new CameraProcess(pt));
 		egg->hatch();
 	}
 

@@ -36,7 +36,7 @@ class PathfinderProcess : public Process {
 public:
 	PathfinderProcess();
 	PathfinderProcess(Actor *actor, ObjId item, bool hit = false);
-	PathfinderProcess(Actor *actor, int32 x, int32 y, int32 z);
+	PathfinderProcess(Actor *actor, const Point3 &target);
 	~PathfinderProcess() override;
 
 	ENABLE_RUNTIME_CLASSTYPE()

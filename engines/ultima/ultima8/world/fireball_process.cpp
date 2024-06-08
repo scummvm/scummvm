@@ -124,7 +124,7 @@ void FireballProcess::run() {
 	Item *tailitem = getItem(_tail[2]);
 	Direction movedir = Direction_GetWorldDir(_ySpeed, _xSpeed, dirmode_8dirs);
 	tailitem->setFrame(Direction_ToUsecodeDir(movedir));
-	tailitem->move(pt1.x, pt1.y, pt1.z);
+	tailitem->move(pt1);
 
 	_tail[2] = _tail[1];
 	_tail[1] = _tail[0];
@@ -179,12 +179,14 @@ uint32 FireballProcess::I_TonysBalls(const uint8 *args,
 		warning("I_TonysBalls failed to create item (260, 4).");
 		return 0;
 	}
-	if (!ball->canExistAt(x, y, z)) {
+
+	Point3 pt(x, y, z);
+	if (!ball->canExistAt(pt)) {
 		warning("I_TonysBalls: failed to create fireball.");
 		ball->destroy();
 		return 0;
 	}
-	ball->move(x, y, z);
+	ball->move(pt);
 
 	MainActor *avatar = getMainActor();
 

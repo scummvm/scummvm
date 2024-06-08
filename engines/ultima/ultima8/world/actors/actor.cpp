@@ -2553,7 +2553,7 @@ uint32 Actor::I_pathfindToPoint(const uint8 *args, unsigned int /*argsize*/) {
 	World_FromUsecodeXY(x, y);
 
 	return Kernel::get_instance()->addProcess(
-	           new PathfinderProcess(actor, x, y, z));
+	           new PathfinderProcess(actor, Point3(x, y, z)));
 }
 
 uint32 Actor::I_areEnemiesNear(const uint8 *args, unsigned int /*argsize*/) {
@@ -2646,7 +2646,7 @@ uint32 Actor::I_createActorCru(const uint8 *args, unsigned int /*argsize*/) {
 	newactor->setDir(static_cast<Direction>(dir * 2));
 
 	Point3 pt = item->getLocation();
-	newactor->move(pt.x, pt.y, pt.z);
+	newactor->move(pt);
 
 	newactor->setDefaultActivity(0, other->getQuality() >> 8);
 	newactor->setDefaultActivity(1, item->getQuality() >> 8);

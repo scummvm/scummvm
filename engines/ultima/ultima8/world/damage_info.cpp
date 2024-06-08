@@ -76,7 +76,7 @@ bool DamageInfo::applyToItem(Item *item, uint16 points) const {
 		uint16 replacementShape = getReplacementShape();
 		uint8 replacementFrame = getReplacementFrame();
 		Item *newitem = ItemFactory::createItem(replacementShape, replacementFrame, q, 0, 0, mapnum, 0, true);
-		newitem->move(pt.x, pt.y, pt.z);
+		newitem->move(pt);
 		if (item)
 			item->destroy();
 	} else if (!explodeDestroysItem()) {

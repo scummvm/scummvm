@@ -79,9 +79,9 @@ void LoiterProcess::run() {
 
 	Process *pfp;
 	if (GAME_IS_U8)
-		pfp = new PathfinderProcess(a, pt.x, pt.y, pt.z);
+		pfp = new PathfinderProcess(a, pt);
 	else
-		pfp = new CruPathfinderProcess(a, pt.x, pt.y, pt.z, 0xc, 0x80, false);
+		pfp = new CruPathfinderProcess(a, pt, 0xc, 0x80, false);
 
 	Kernel::get_instance()->addProcess(pfp);
 

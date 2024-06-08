@@ -77,8 +77,8 @@ CruPathfinderProcess::CruPathfinderProcess(Actor *actor, Item *target, int maxst
 		actor->doAnim(Animation::unreadyWeapon, dir_current);
 }
 
-CruPathfinderProcess::CruPathfinderProcess(Actor *actor, int32 x, int32 y, int32 z, int maxsteps, int stopdistance, bool turnatend) :
-		_target(x, y, z), _targetItem(0), _currentStep(0),
+CruPathfinderProcess::CruPathfinderProcess(Actor *actor, const Point3 &target, int maxsteps, int stopdistance, bool turnatend) :
+		_target(target), _targetItem(0), _currentStep(0),
 		_maxSteps(maxsteps), _stopDistance(stopdistance), _nextTurn(false), _turnAtEnd(turnatend),
 		_lastDir(dir_current), _nextDir(dir_current), _nextDir2(dir_current),
 		_directPathBlocked(false), _noShotAvailable(true), _dir16Flag(false) {

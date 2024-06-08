@@ -520,7 +520,7 @@ void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction
 			end[0] = x;
 			end[1] = y;
 			end[2] = z;
-			avatar->setLocation(origpt.x, origpt.y, origpt.z);
+			avatar->setLocation(origpt);
 			currentmap->sweepTest(start, end, dims, avatar->getShapeInfo()->_flags,
 								  avatar->getObjId(), true, &collisions);
 			for (Std::list<CurrentMap::SweepItem>::iterator it = collisions.begin();
@@ -536,7 +536,7 @@ void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction
 				res = avatar->tryAnim(testaction, direction);
 				if (res == Animation::SUCCESS) {
 					// move to starting point for real (trigger fast area updates etc)
-					avatar->setLocation(origpt.x, origpt.y, origpt.z);
+					avatar->setLocation(origpt);
 					avatar->move(x, y, z);
 					break;
 				}
@@ -546,7 +546,7 @@ void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction
 		if (res != Animation::SUCCESS) {
 			// reset location and result (in case it's END_OFF_LAND now)
 			// couldn't find a better move.
-			avatar->setLocation(origpt.x, origpt.y, origpt.z);
+			avatar->setLocation(origpt);
 			res = initialres;
 		}
 	}

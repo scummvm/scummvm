@@ -184,10 +184,9 @@ void SuperSpriteProcess::run() {
 				} else {
 					const Item *target = getItem(_target);
 					if (target) {
-						int32 cx, cy, cz;
 						Point3 ptt = target->getLocation();
-						target->getCentre(cx, cy, cz);
-						targetz = cz + 8;
+						Point3 ptc = target->getCentre();
+						targetz = ptc.z + 8;
 						dir8 = Direction_GetWorldDir(ptt.y - _nowpt.y, ptt.x - _nowpt.x, dirmode_8dirs);
 					}
 				}

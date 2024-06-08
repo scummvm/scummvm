@@ -757,11 +757,10 @@ void U8AvatarMoverProcess::jump(Animation::Sequence action, Direction direction)
 		ObjId targetId = gameMap->TraceCoordinates(mx, my, coords);
 		Item *target = getItem(targetId);
 
-		int32 ax, ay, az;
-		avatar->getCentre(ax, ay, az);
+		Point3 a = avatar->getCentre();
 
-		int32 xrange = abs(ax - coords.x);
-		int32 yrange = abs(ay - coords.y);
+		int32 xrange = abs(a.x - coords.x);
+		int32 yrange = abs(a.y - coords.y);
 		int maxrange = avatar->getStr() * 32;
 
 		if (target && target->getShapeInfo()->is_land() &&

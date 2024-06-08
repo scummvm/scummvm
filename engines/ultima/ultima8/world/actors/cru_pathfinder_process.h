@@ -42,7 +42,7 @@ class CruPathfinderProcess : public Process {
 public:
 	CruPathfinderProcess();
 	CruPathfinderProcess(Actor *actor, Item *item, int maxsteps, int stopdistance, bool turnatend);
-	CruPathfinderProcess(Actor *actor, int32 x, int32 y, int32 z, int maxsteps, int stopdistance, bool turnatend);
+	CruPathfinderProcess(Actor *actor, const Point3 &target, int maxsteps, int stopdistance, bool turnatend);
 	~CruPathfinderProcess() override;
 
 	ENABLE_RUNTIME_CLASSTYPE()

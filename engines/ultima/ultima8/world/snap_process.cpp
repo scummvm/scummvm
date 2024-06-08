@@ -55,13 +55,12 @@ void SnapProcess::run() {
 	if (snap_to_player && !in_stasis) {
 		const Actor *controlled = getControlledActor();
 		if (controlled) {
-			int32 x, y, z;
-			controlled->getCentre(x, y, z);
-			if (x > 0 || y > 0) {
+			Point3 pt = controlled->getCentre();
+			if (pt.x > 0 || pt.y > 0) {
 				_currentSnapEgg = 0;
 				CameraProcess *camera = CameraProcess::GetCameraProcess();
 				if (camera->getItemNum() != controlled->getObjId())
-					CameraProcess::SetCameraProcess(new CameraProcess(x, y, z));
+					CameraProcess::SetCameraProcess(new CameraProcess(pt));
 			}
 		}
 	} else {

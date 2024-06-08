@@ -176,7 +176,7 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 			} else {
 				item->setQuality(winfo->_clipSize);
 			}
-			item->setLocation(pt.x, pt.y, pt.z);
+			item->setLocation(pt);
 			item->moveToContainer(this);
 			if (!_activeWeapon)
 				_activeWeapon = item->getObjId();
@@ -422,7 +422,7 @@ void MainActor::teleport(int mapNum, int teleport_id) {
 		// Keep the camera on the avatar (the snap process will update on next move)
 		// We don't add a new camera process here, as that would update the fast area
 		// before the cachein calls above have run.
-		CameraProcess::GetCameraProcess()->moveToLocation(pt.x, pt.y, pt.z);
+		CameraProcess::GetCameraProcess()->moveToLocation(pt);
 	}
 
 	Actor::teleport(mapNum, pt.x, pt.y, pt.z);
@@ -1032,14 +1032,14 @@ int MainActor::receiveShieldHit(int damage, uint16 damage_type) {
 				remembersprite = false;
 				// NOTE: In the game, this is put in the location of the
 				// hit.  For now just put in centre.
-				getCentre(pt.x, pt.y, pt.z);
+				pt = getCentre();
 				break;
 			case 2:
 				shieldsprite = 0x5a9;
 				shieldstartframe = 0;
 				shieldendframe = 6;
 				remembersprite = false;
-				getCentre(pt.x, pt.y, pt.z);
+				pt = getCentre();
 				break;
 			default:
 				shieldsprite = 0x52b;

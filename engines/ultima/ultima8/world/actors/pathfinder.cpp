@@ -155,7 +155,7 @@ void Pathfinder::setTarget(Item *item, bool hit) {
 	_targetItem = root ? root : item;
 
 	// set target to centre of item for the cost heuristic
-	item->getCentre(_target.x, _target.y, _target.z);
+	_target = item->getCentre();
 	_target.z = item->getZ();
 
 	if (hit) {

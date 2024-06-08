@@ -558,9 +558,8 @@ void World::setControlledNPCNum(uint16 num) {
 			if (controlled->isInCombat())
 				controlled->clearInCombat();
 		}
-		int32 x, y, z;
-		controlled->getCentre(x, y, z);
-		CameraProcess::SetCameraProcess(new CameraProcess(x, y, z));
+		Point3 pt = controlled->getCentre();
+		CameraProcess::SetCameraProcess(new CameraProcess(pt));
 	}
 
 	TargetReticleProcess *t = TargetReticleProcess::get_instance();

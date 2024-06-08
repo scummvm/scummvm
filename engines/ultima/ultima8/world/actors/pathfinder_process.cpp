@@ -78,8 +78,8 @@ PathfinderProcess::PathfinderProcess(Actor *actor, ObjId itemid, bool hit) :
 	actor->setActorFlag(Actor::ACT_PATHFINDING);
 }
 
-PathfinderProcess::PathfinderProcess(Actor *actor, int32 x, int32 y, int32 z) :
-		_target(x, y, z), _targetItem(0), _currentStep(0),
+PathfinderProcess::PathfinderProcess(Actor *actor, const Point3 &target) :
+		_target(target), _targetItem(0), _currentStep(0),
 		_hitMode(false) {
 	assert(actor);
 	_itemNum = actor->getObjId();

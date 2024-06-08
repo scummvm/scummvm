@@ -41,9 +41,9 @@ namespace Ultima8 {
 class CameraProcess : public Process {
 public:
 	CameraProcess();
-	CameraProcess(uint16 itemnum);                          // Follow item/Do nothing
-	CameraProcess(int32 x, int32 y, int32 z);               // Goto location
-	CameraProcess(int32 x, int32 y, int32 z, int32 time);   // Scroll to location
+	CameraProcess(uint16 itemnum);                // Follow item/Do nothing
+	CameraProcess(const Point3 &p);               // Goto location
+	CameraProcess(const Point3 &p, int32 time);   // Scroll to location
 
 	~CameraProcess() override;
 
@@ -67,6 +67,7 @@ public:
 	 * so other pending events will all happen before the fast area is updated
 	 */
 	void moveToLocation(int32 x, int32 y, int32 z);
+	void moveToLocation(const Point3 &p);
 
 	INTRINSIC(I_setCenterOn);
 	INTRINSIC(I_moveTo);

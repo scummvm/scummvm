@@ -151,6 +151,12 @@ void Item::setLocation(int32 X, int32 Y, int32 Z) {
 	_z = Z;
 }
 
+void Item::setLocation(const Point3 &pt) {
+	_x = pt.x;
+	_y = pt.y;
+	_z = pt.z;
+}
+
 void Item::move(const Point3 &pt) {
 	move(pt.x, pt.y, pt.z);
 }
@@ -451,18 +457,20 @@ void Item::randomGumpLocation() {
 	_y = 0xFFFF;
 }
 
-void Item::getCentre(int32 &X, int32 &Y, int32 &Z) const {
+Point3 Item::getCentre() const {
 	// constants!
+	Point3 pt(_x, _y, _z);
 	const ShapeInfo *shapeinfo = getShapeInfo();
 	if (_flags & FLG_FLIPPED) {
-		X = _x - shapeinfo->_y * 16;
-		Y = _y - shapeinfo->_x * 16;
+		pt.x -= shapeinfo->_y * 16;
+		pt.y -= shapeinfo->_x * 16;
 	} else {
-		X = _x - shapeinfo->_x * 16;
-		Y = _y - shapeinfo->_y * 16;
+		pt.x -= shapeinfo->_x * 16;
+		pt.y -= shapeinfo->_y * 16;
 	}
 
-	Z = _z + shapeinfo->_z * 4;
+	pt.y += shapeinfo->_z * 4;
+	return pt;
 }
 
 Box Item::getWorldBox() const {
@@ -594,11 +602,9 @@ bool Item::isCompletelyOn(const Item &item2) const {
 }
 
 bool Item::isCentreOn(const Item &item2) const {
-	int32 x1c, y1c, z1c;
 	int32 x2a, y2a, z2b;
+	Point3 pt1 = getCentre();
 	Point3 pt2 = item2.getLocation();
-
-	getCentre(x1c, y1c, z1c);
 
 	int32 xd, yd, zd;
 	item2.getFootpadWorld(xd, yd, zd);
@@ -606,9 +612,9 @@ bool Item::isCentreOn(const Item &item2) const {
 	y2a = pt2.y - yd;
 	z2b = pt2.z + zd;
 
-	if (x1c <= x2a || pt2.x <= x1c)
+	if (pt1.x <= x2a || pt2.x <= pt1.x)
 		return false;
-	if (y1c <= y2a || pt2.y <= y1c)
+	if (pt1.y <= y2a || pt2.y <= pt1.y)
 		return false;
 	if (z2b == getZ())
 		return true;
@@ -678,21 +684,21 @@ bool Item::canExistAt(int32 x, int32 y, int32 z, bool needsupport) const {
 	return info.valid && (!needsupport || info.supported);
 }
 
+bool Item::canExistAt(const Point3 &pt, bool needsupport) const {
+	return canExistAt(pt.x, pt.y, pt.z, needsupport);
+}
+
 Direction Item::getDirToItemCentre(const Item &item2) const {
-	int32 xv, yv, zv;
-	getCentre(xv, yv, zv);
+	Point3 i1 = getCentre();
+	Point3 i2 = item2.getCentre();
 
-	int32 i2x, i2y, i2z;
-	item2.getCentre(i2x, i2y, i2z);
-
-	return Direction_GetWorldDir(i2y - yv, i2x - xv, dirmode_8dirs);
+	return Direction_GetWorldDir(i2.y - i1.y, i2.x - i1.x, dirmode_8dirs);
 }
 
 Direction Item::getDirToItemCentre(const Point3 &pt) const {
-	int32 xv, yv, zv;
-	getCentre(xv, yv, zv);
+	Point3 i1 = getCentre();
 
-	return Direction_GetWorldDir(pt.y - yv, pt.x - xv, dirmode_8dirs);
+	return Direction_GetWorldDir(pt.y - i1.y, pt.x - i1.x, dirmode_8dirs);
 }
 
 
@@ -736,12 +742,13 @@ int Item::getRange(const Item &item2, bool checkz) const {
 int Item::getRangeIfVisible(const Item &item2) const {
 	World *world = World::get_instance();
 	CurrentMap *map = world->getCurrentMap();
-	int32 start[3];
-	int32 end[3];
-	int32 dims[3] = {1, 1, 1};
 	Std::list<CurrentMap::SweepItem> hitItems;
-	getCentre(start[0], start[1], start[2]);
-	item2.getCentre(end[0], end[1], end[2]);
+
+	Point3 pt1 = getCentre();
+	Point3 pt2 = item2.getCentre();
+	int32 start[3] = {pt1.x, pt1.y, pt1.z};
+	int32 end[3] = {pt2.x, pt2.y, pt2.z};
+	int32 dims[3] = {1, 1, 1};
 
 	int xdiff = abs(start[0] - end[0]);
 	int ydiff = abs(start[1] - end[1]);
@@ -1326,12 +1333,10 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 		}
 	}
 
-	int32 tx = -1;
-	int32 ty = 0;
-	int32 tz = 0;
+	Point3 t(-1, 0, 0);
 	if (target) {
-		target->getCentre(tx, ty, tz);
-		tz = target->getTargetZRelativeToAttackerZ(getZ());
+		t = target->getCentre();
+		t.z = target->getTargetZRelativeToAttackerZ(getZ());
 	}
 
 	// TODO: check if we need the equivalent of FUN_1130_0299 here..
@@ -1346,11 +1351,9 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 		assert(chp);
 		const Item *crosshair = getItem(chp->getItemNum());
 		Point3 ss;
-		if (tx != -1) {
+		if (t.x != -1) {
 			// Shoot toward the target
-			ss.x = tx;
-			ss.y = ty;
-			ss.z = tz;
+			ss = t;
 			findtarget = true;
 		} else if (this == getControlledActor() && crosshair) {
 			// Shoot toward the crosshair
@@ -1454,11 +1457,10 @@ uint16 Item::fireDistance(const Item *other, Direction dir, int16 xoff, int16 yo
 			if (info.blocker->getObjId() == other->getObjId())
 				dist = MAX(abs(_x - pto.x), abs(_y - pto.y));
 		} else {
-			int32 ocx, ocy, ocz;
-			other->getCentre(ocx, ocy, ocz);
-			ocz = other->getTargetZRelativeToAttackerZ(getZ());
+			Point3 oc = other->getCentre();
+			oc.z = other->getTargetZRelativeToAttackerZ(getZ());
 			const int32 start[3] = {cx, cy, cz};
-			const int32 end[3] = {ocx, ocy, ocz};
+			const int32 end[3] = {oc.x, oc.y, oc.z};
 			const int32 dims[3] = {2, 2, 2};
 
 			Std::list<CurrentMap::SweepItem> collisions;
@@ -2117,8 +2119,9 @@ int32 Item::ascend(int delta) {
 		_iy = pti.y;
 		_iz = pti.z;
 
-		if (item->canExistAt(_ix, _iy, _iz + delta)) {
-			item->move(_ix, _iy, _iz + delta); // automatically un-etherealizes item
+		pti.z += delta;
+		if (item->canExistAt(pti)) {
+			item->move(pti); // automatically un-etherealizes item
 		} else {
 			// uh oh...
 			// CHECKME: what do we do here?
@@ -2222,8 +2225,7 @@ void Item::explode(int explosion_type, bool destroy_item, bool cause_damage) {
 
 		setFlag(FLG_BROKEN);
 		// TODO: original game puts them at cx/cy/cz, but that looks wrong..
-		int32 cx, cy, cz;
-		getCentre(cx, cy, cz);
+		Point3 c = getCentre();
 		static const int expshapes[] = {0x31C, 0x31F, 0x326, 0x320, 0x321, 0x324, 0x323, 0x325};
 		uint rnd = rs.getRandomNumber(UINT_MAX);
 		int spriteno;
@@ -2242,7 +2244,7 @@ void Item::explode(int explosion_type, bool destroy_item, bool cause_damage) {
 			break;
 		}
 		p = new SpriteProcess(spriteno, 0, 39, 1, 1, //!! constants
-	                               _x, _y, cz);
+	                               _x, _y, c.z);
 	} else {
 		p = new SpriteProcess(578, 20, 34, 1, 1, //!! constants
 	                               _x, _y, _z);

@@ -21,6 +21,7 @@
 
 #include "ultima/ultima.h"
 #include "ultima/ultima8/misc/debugger.h"
+#include "ultima/ultima8/misc/point3.h"
 #include "ultima/ultima8/world/map.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/container.h"
@@ -148,7 +149,7 @@ void Map::loadFixed(Common::SeekableReadStream *rs) {
 				if ((pt.x == 23007 && pt.y == 21343) || (pt.x == 23135 && pt.y == 21471) ||
 				        (pt.x == 23135 && pt.y == 21343)) {
 					shiftCoordsToZ(pt.x, pt.y, pt.z, 40);
-					(*iter)->setLocation(pt.x, pt.y, pt.z);
+					(*iter)->setLocation(pt);
 				}
 			}
 		}
@@ -165,7 +166,7 @@ void Map::loadFixed(Common::SeekableReadStream *rs) {
 				Point3 pt = (*iter)->getLocation();
 				if ((pt.x == 6783 || pt.x == 6655) && (pt.y == 15743 || pt.y == 15615)) {
 					shiftCoordsToZ(pt.x, pt.y, pt.z, 16);
-					(*iter)->setLocation(pt.x, pt.y, pt.z);
+					(*iter)->setLocation(pt);
 				}
 			}
 		}
@@ -183,7 +184,7 @@ void Map::loadFixed(Common::SeekableReadStream *rs) {
 				        (pt.x == 10303 && pt.y == 23487) || (pt.x == 9919 && pt.y == 23487) ||
 				        (pt.x == 10559 && pt.y == 23487)) {
 					shiftCoordsToZ(pt.x, pt.y, pt.z, 48);
-					(*iter)->setLocation(pt.x, pt.y, pt.z);
+					(*iter)->setLocation(pt);
 				}
 			}
 		}
