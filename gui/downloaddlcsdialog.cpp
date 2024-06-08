@@ -113,7 +113,7 @@ void DownloadDLCsDialog::refreshWidgets() {
 }
 
 void DownloadDLCsDialog::handleTickle() {
-	uint32 progress = getDownloadingProgress();
+	int32 progress = getDownloadingProgress();
 
 	if (_progressBar->getValue() != progress) {
 		_selectedIdx = _pendingDownloadsList->getSelected();

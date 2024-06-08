@@ -80,8 +80,8 @@ void DLCsDialog::refreshDLCList() {
 	for (Common::ConfigManager::DomainMap::iterator domain = ConfMan.beginGameDomains(); domain != ConfMan.endGameDomains(); ++domain) {
 		if (domain->_value.contains("download")) {
 			Common::String id = domain->_value.getVal("download");
-			int idx = DLCMan.getDLCIdxFromId(id);
-			if (idx != -1 && idx < games.size()) {
+			uint idx = DLCMan.getDLCIdxFromId(id);
+			if (idx != -1u && idx < games.size()) {
 				games[idx] = "\001C{alternate}" + games[idx];
 			}
 		}

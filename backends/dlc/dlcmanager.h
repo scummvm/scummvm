@@ -82,7 +82,7 @@ public:
 
 	Common::String getCurrentDownloadingDLC() const;
 
-	int getDLCIdxFromId(const Common::String &id) const;
+	uint getDLCIdxFromId(const Common::String &id) const;
 
 	void startDownloadAsync(const Common::String &id, const Common::String &url);
 };
