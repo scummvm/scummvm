@@ -1861,19 +1861,27 @@ bool ThemeEngine::themeConfigParseHeader(Common::String header, Common::String &
 
 	header.trim();
 
-	if (header.empty())
+	if (header.empty()) {
+		warning("Theme format is bad: empty header");
 		return false;
+	}
 
-	if (header[0] != '[' || header.lastChar() != ']')
+	if (header[0] != '[' || header.lastChar() != ']') {
+		warning("Theme format is bad: missing square brackets");
 		return false;
+	}
 
 	header.deleteChar(0);
 	header.deleteLastChar();
 
 	Common::StringTokenizer tok(header, ":");
 
-	if (tok.nextToken() != SCUMMVM_THEME_VERSION_STR)
+	Common::String version = tok.nextToken();
+
+	if (version != SCUMMVM_THEME_VERSION_STR) {
+		warning("Theme version mismatch. Expecting '%s' but got '%s'", SCUMMVM_THEME_VERSION_STR, version.c_str());
 		return false;
+	}
 
 	themeName = tok.nextToken();
 	Common::String author = tok.nextToken();
