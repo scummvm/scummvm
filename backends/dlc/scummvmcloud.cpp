@@ -123,7 +123,7 @@ void ScummVMCloud::downloadFileCallback(const Networking::DataResponse &r) {
 
 		// extract the downloaded zip
 		Common::String gameDir = Common::punycode_encodefilename(dlc->name);
-		Common::Path destPath = Common::Path(ConfMan.get("dlcspath")).appendComponent(gameDir);
+		Common::Path destPath(ConfMan.getPath("dlcspath").appendComponent(gameDir));
 		Common::Error error = extractZip(relativeFilePath, destPath);
 
 		// remove cache (the downloaded .zip)
@@ -158,7 +158,7 @@ void ScummVMCloud::errorCallback(const Networking::ErrorResponse &error) {
 }
 
 void ScummVMCloud::startDownloadAsync(const Common::String &id, const Common::String &url) {
-	Common::String localFile = normalizePath(ConfMan.get("dlcspath") + "/" + id, '/');
+	Common::Path localFile(ConfMan.getPath("dlcspath").appendComponent(id));
 
 	Networking::DataCallback callback = new Common::Callback<ScummVMCloud, const Networking::DataResponse &>(this, &ScummVMCloud::downloadFileCallback);
 	Networking::ErrorCallback failureCallback = new Common::Callback<ScummVMCloud, const Networking::ErrorResponse &>(this, &ScummVMCloud::errorCallback);
@@ -169,14 +169,14 @@ void ScummVMCloud::startDownloadAsync(const Common::String &id, const Common::St
 
 Common::Error ScummVMCloud::extractZip(const Common::Path &file, const Common::Path &destPath) {
 	Common::Archive *dataArchive = nullptr;
-	Common::Path dlcPath = Common::Path(ConfMan.get("dlcspath"));
+	Common::Path dlcPath(ConfMan.getPath("dlcspath"));
 	Common::FSNode *fs = new Common::FSNode(dlcPath.join(file));
 	Common::Error error = Common::kNoError;
 	if (fs->exists()) {
 		dataArchive = Common::makeZipArchive(*fs);
 		// dataArchive is nullptr if zip file is incomplete
 		if (dataArchive != nullptr) {
-			error = dataArchive->dumpArchive(destPath.toString());
+			error = dataArchive->dumpArchive(destPath);
 		} else {
 			error = Common::Error(Common::kCreatingFileFailed, DLCMan._queuedDownloadTasks.front()->name + "Archive is broken, please re-download");
 		}
@@ -188,12 +188,12 @@ Common::Error ScummVMCloud::extractZip(const Common::Path &file, const Common::P
 }
 
 void ScummVMCloud::removeCacheFile(const Common::Path &file) {
-	Common::Path dlcPath = Common::Path(ConfMan.get("dlcspath"));
+	Common::Path dlcPath(ConfMan.getPath("dlcspath"));
 	Common::Path fileToDelete = dlcPath.join(file);
 #if defined(POSIX)
-	unlink(fileToDelete.toString().c_str());
+	unlink(fileToDelete.toString(Common::Path::kNativeSeparator).c_str());
 #elif defined(WIN32)
-	_unlink(fileToDelete.toString().c_str());
+	_unlink(fileToDelete.toString(Common::Path::kNativeSeparator).c_str());
 #else
 	warning("ScummVMCloud::removeCacheFile(): Removing is unimplemented");
 #endif
