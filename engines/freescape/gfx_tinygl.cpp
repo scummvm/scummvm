@@ -38,7 +38,7 @@ Renderer *CreateGfxTinyGL(int screenW, int screenH, Common::RenderMode renderMod
 	return new TinyGLRenderer(screenW, screenH, renderMode);
 }
 
-TinyGLRenderer::TinyGLRenderer(int screenW, int screenH, Common::RenderMode renderMode) : Renderer(screenW, screenH, renderMode) {
+TinyGLRenderer::TinyGLRenderer(int screenW, int screenH, Common::RenderMode renderMode) : Renderer(screenW, screenH, renderMode, true) {
 	_verts = (Vertex *)malloc(sizeof(Vertex) * kVertexArraySize);
 	_texturePixelFormat = TinyGLTexture::getRGBAPixelFormat();
 	_variableStippleArray = nullptr;

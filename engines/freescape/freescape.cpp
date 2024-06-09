@@ -619,7 +619,7 @@ Common::Error FreescapeEngine::run() {
 	// Initialize graphics
 	_screenW = g_system->getWidth();
 	_screenH = g_system->getHeight();
-	_gfx = createRenderer(_screenW, _screenH, _renderMode);
+	_gfx = createRenderer(_screenW, _screenH, _renderMode, ConfMan.getBool("authentic_graphics"));
 	_speaker = new SizedPCSpeaker();
 	_speaker->setVolume(50);
 	_crossairPosition.x = _screenW / 2;

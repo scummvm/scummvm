@@ -34,7 +34,7 @@
 
 namespace Freescape {
 
-Renderer::Renderer(int screenW, int screenH, Common::RenderMode renderMode) {
+Renderer::Renderer(int screenW, int screenH, Common::RenderMode renderMode, bool authenticGraphics) {
 	_screenW = screenW;
 	_screenH = screenH;
 	_currentPixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
@@ -48,6 +48,7 @@ Renderer::Renderer(int screenW, int screenH, Common::RenderMode renderMode) {
 	_colorRemaps = nullptr;
 	_renderMode = renderMode;
 	_isAccelerated = false;
+	_authenticGraphics = authenticGraphics;
 
 	for (int i = 0; i < 16; i++) {
 		for (int j = 0; j < 128; j++) {
@@ -169,6 +170,36 @@ void Renderer::fillColorPairArray() {
 	}
 }
 
+
+uint16 duplicate_bits(uint8 byte) {
+    uint16 result = 0;
+
+    for (int i = 0; i < 8; i++) {
+        // Extract the bit at position i
+        uint8 bit = (byte >> i) & 1;
+        // Duplicate the bit
+        uint16 duplicated_bits = (bit << 1) | bit;
+        // Position the duplicated bits in the appropriate place in the result
+        result |= (duplicated_bits << (2 * i));
+    }
+
+    return result;
+}
+
+
+void scaleStipplePattern(byte originalPattern[128], byte newPattern[128]) {
+    // Initialize the new pattern to all 0
+    memset(newPattern, 0, 128);
+
+    for (int i = 0; i < 64; i++) {
+		// Duplicate the bits of the original pattern
+		uint16 duplicated_bits = duplicate_bits(originalPattern[i]);
+		// Position the duplicated bits in the appropriate place in the new pattern
+		newPattern[2 * i] = (duplicated_bits >> 8) & 0xff;
+		newPattern[2 * i + 1] = duplicated_bits & 0xff;
+	}
+}
+
 void Renderer::setColorMap(ColorMap *colorMap_) {
 	_colorMap = colorMap_;
 	if (_renderMode == Common::kRenderZX) {
@@ -196,6 +227,15 @@ void Renderer::setColorMap(ColorMap *colorMap_) {
 			byte *entry = (*_colorMap)[i];
 			for (int j = 0; j < 128; j++)
 				_stipples[i][j] = getCGAStipple(entry[(j / 8) % 4], c1, c2) ;
+		}
+	}
+
+	if (_isAccelerated && _authenticGraphics) {
+		for (int i = 1; i < 14; i++) {
+			scaleStipplePattern(_stipples[i], _stipples[15]);
+			memcpy(_stipples[i], _stipples[15], 128);
+			scaleStipplePattern(_stipples[i], _stipples[15]);
+			memcpy(_stipples[i], _stipples[15], 128);
 		}
 	}
 }
@@ -1143,7 +1183,7 @@ Graphics::RendererType determinateRenderType() {
 	return Graphics::kRendererTypeDefault;
 }
 
-Renderer *createRenderer(int screenW, int screenH, Common::RenderMode renderMode) {
+Renderer *createRenderer(int screenW, int screenH, Common::RenderMode renderMode, bool authenticGraphics) {
 	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	Graphics::RendererType rendererType = determinateRenderType();
 
@@ -1157,18 +1197,19 @@ Renderer *createRenderer(int screenW, int screenH, Common::RenderMode renderMode
 
 	#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
 		if (rendererType == Graphics::kRendererTypeOpenGL) {
-			return CreateGfxOpenGL(screenW, screenH, renderMode);
+			return CreateGfxOpenGL(screenW, screenH, renderMode, authenticGraphics);
 		}
 	#endif
 
 	#if defined(USE_OPENGL_SHADERS)
 		if (rendererType == Graphics::kRendererTypeOpenGLShaders) {
-			return CreateGfxOpenGLShader(screenW, screenH, renderMode);
+			return CreateGfxOpenGLShader(screenW, screenH, renderMode, authenticGraphics);
 		}
 	#endif
 
 	#if defined(USE_TINYGL)
 	if (rendererType == Graphics::kRendererTypeTinyGL) {
+		// TinyGL graphics are always authentic
 		return CreateGfxTinyGL(screenW, screenH, renderMode);
 	}
 	#endif

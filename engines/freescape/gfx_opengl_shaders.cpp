@@ -41,11 +41,11 @@ static const GLfloat bitmapVertices[] = {
 	1.0, 1.0,
 };
 
-Renderer *CreateGfxOpenGLShader(int screenW, int screenH, Common::RenderMode renderMode) {
-	return new OpenGLShaderRenderer(screenW, screenH, renderMode);
+Renderer *CreateGfxOpenGLShader(int screenW, int screenH, Common::RenderMode renderMode, bool authenticGraphics) {
+	return new OpenGLShaderRenderer(screenW, screenH, renderMode, authenticGraphics);
 }
 
-OpenGLShaderRenderer::OpenGLShaderRenderer(int screenW, int screenH, Common::RenderMode renderMode) : Renderer(screenW, screenH, renderMode) {
+OpenGLShaderRenderer::OpenGLShaderRenderer(int screenW, int screenH, Common::RenderMode renderMode, bool authenticGraphics) : Renderer(screenW, screenH, renderMode, authenticGraphics) {
 	_verts = nullptr;
 	_triangleShader = nullptr;
 	_triangleVBO = 0;

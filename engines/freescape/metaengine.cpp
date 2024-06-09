@@ -111,6 +111,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_AUTHENTIC_GRAPHICS,
+		{
+			_s("Authentic graphics"),
+			_s("Keep graphics as close as possible to the original"),
+			"authentic_graphics",
+			false,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

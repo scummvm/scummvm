@@ -33,7 +33,7 @@ namespace Freescape {
 
 class OpenGLShaderRenderer : public Renderer {
 public:
-	OpenGLShaderRenderer(int screenW, int screenH, Common::RenderMode renderMode);
+	OpenGLShaderRenderer(int screenW, int screenH, Common::RenderMode renderMode, bool authenticGraphics);
 	virtual ~OpenGLShaderRenderer();
 
 	Math::Matrix4 _projectionMatrix;

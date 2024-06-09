@@ -58,13 +58,14 @@ public:
 
 class Renderer {
 public:
-	Renderer(int screenW, int screenH, Common::RenderMode renderMode);
+	Renderer(int screenW, int screenH, Common::RenderMode renderMode, bool authenticGraphics);
 	virtual ~Renderer();
 
 	Graphics::PixelFormat _currentPixelFormat;
 	Graphics::PixelFormat _palettePixelFormat;
 	Graphics::PixelFormat _texturePixelFormat;
 	bool _isAccelerated;
+	bool _authenticGraphics;
 
 	virtual void init() = 0;
 	virtual void setViewport(const Common::Rect &rect) = 0;
@@ -175,10 +176,10 @@ protected:
 };
 
 Graphics::RendererType determinateRenderType();
-Renderer *CreateGfxOpenGL(int screenW, int screenH, Common::RenderMode renderMode);
-Renderer *CreateGfxOpenGLShader(int screenW, int screenH, Common::RenderMode renderMode);
+Renderer *CreateGfxOpenGL(int screenW, int screenH, Common::RenderMode renderMode, bool authenticGraphics);
+Renderer *CreateGfxOpenGLShader(int screenW, int screenH, Common::RenderMode renderMode, bool authenticGraphics);
 Renderer *CreateGfxTinyGL(int screenW, int screenH, Common::RenderMode renderMode);
-Renderer *createRenderer(int screenW, int screenH, Common::RenderMode renderMode);
+Renderer *createRenderer(int screenW, int screenH, Common::RenderMode renderMode, bool authenticGraphics);
 
 } // End of namespace Freescape
 

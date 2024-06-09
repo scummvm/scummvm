@@ -34,7 +34,7 @@ namespace Freescape {
 
 class OpenGLRenderer : public Renderer {
 public:
-	OpenGLRenderer(int screenW, int screenH, Common::RenderMode renderMode);
+	OpenGLRenderer(int screenW, int screenH, Common::RenderMode renderMode, bool authenticGraphics);
 	virtual ~OpenGLRenderer();
 
 	struct Vertex {
