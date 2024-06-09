@@ -29,6 +29,7 @@ static const PlainGameDescriptor dgdsGames[] = {
 	{"china", "Heart of China"},
 	{"beamish", "The Adventures of Willy Beamish"},
 	{"sq5", "Space Quest V CES Demo"},
+	{"comingsoon", "Coming Soon from Sierra Demo"},
 
 	{0, 0}
 };

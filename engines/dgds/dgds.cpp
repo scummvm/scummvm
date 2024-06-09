@@ -92,6 +92,8 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 		_gameId = GID_BEAMISH;
 	else if (!strcmp(gameDesc->gameId, "sq5"))
 		_gameId = GID_SQ5DEMO;
+	else if (!strcmp(gameDesc->gameId, "comingsoon"))
+		_gameId = GID_COMINGSOON;
 	else
 		error("Unknown game ID");
 
@@ -186,7 +188,8 @@ bool DgdsEngine::changeScene(int sceneNum) {
 	_scene->load(sceneFile, _resource, _decompressor);
 	// These are done inside the load function in the original.. cleaner here..
 	_scene->addInvButtonToHotAreaList();
-	_clock.setVisibleScript(true);
+	if (_gameId == GID_DRAGON)
+		_clock.setVisibleScript(true);
 
 	if (_scene->getMagic() != _gdsScene->getMagic())
 		error("Scene %s magic does (0x%08x) not match GDS magic (0x%08x)", sceneFile.c_str(), _scene->getMagic(), _gdsScene->getMagic());
@@ -347,6 +350,12 @@ void DgdsEngine::loadGameFiles() {
 		_gameGlobals = new DragonGlobals(_clock);
 		_gamePals->loadPalette("NORMAL.PAL");
 		_adsInterp->load("CESDEMO.ADS");
+		break;
+	case GID_COMINGSOON:
+		// TODO: Create a better type for this..
+		_gameGlobals = new DragonGlobals(_clock);
+		_gamePals->loadPalette("DYNAMIX.PAL");
+		_adsInterp->load("DEMO.ADS");
 		break;
 	default:
 		error("Unsupported game type in loadGameFiles");
