@@ -101,11 +101,13 @@ protected:
 		return Engine::shouldQuit();
 	}
 
+	// TODO: Switch stream to an LE stream
 	Graphics::ManagedSurface readRLEImage(int64 offs, Common::MemoryReadStream *stream);
 
-	void readBackgroundAnimations(int64 offs, Common::MemoryReadStream *stream);
-
 	void readResourceFile();
+
+	// Assumes that the stream is at the location of the number of background animations
+	void ReadBackgroundAnimations(Common::MemoryReadStream *stream);
 
 public:
 	Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc);
