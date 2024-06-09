@@ -47,7 +47,7 @@ struct PathfindingState {
 	bool _combat;
 
 	void load(const Actor *actor);
-	bool checkPoint(int32 x, int32 y, int32 z, int range) const;
+	bool checkPoint(const Point3 &pt, int range) const;
 	bool checkItem(const Item *item, int xyRange, int zRange) const;
 	bool checkHit(const Actor *actor, const Item *target) const;
 };
@@ -71,7 +71,7 @@ public:
 	~Pathfinder();
 
 	void init(Actor *actor, PathfindingState *state = 0);
-	void setTarget(int32 x, int32 y, int32 z);
+	void setTarget(const Point3 &pt);
 	void setTarget(Item *item, bool hit = false);
 
 	//! try to reach the target by pathfinding
@@ -101,7 +101,7 @@ protected:
 	/** List of nodes for garbage collection later and order is not important */
 	Std::vector<PathNode *> _cleanupNodes;
 
-	bool alreadyVisited(int32 x, int32 y, int32 z) const;
+	bool alreadyVisited(const Point3 &pt) const;
 	void newNode(PathNode *oldnode, PathfindingState &state,
 				 unsigned int steps);
 	void expandNode(PathNode *node);

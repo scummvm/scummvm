@@ -59,9 +59,9 @@ void PathfindingState::load(const Actor *_actor) {
 	_combat = _actor->isInCombat();
 }
 
-bool PathfindingState::checkPoint(int32 x, int32 y, int32 z,
+bool PathfindingState::checkPoint(const Point3 &pt,
 								  int sqr_range) const {
-	int distance = (_point.x - x) * (_point.x - x) + (_point.y - y) * (_point.y - y) + (_point.z - z) * (_point.z - z);
+	int distance = (_point.x - pt.x) * (_point.x - pt.x) + (_point.y - pt.y) * (_point.y - pt.y) + (_point.z - pt.z) * (_point.z - pt.z);
 	return distance < sqr_range;
 }
 
@@ -142,10 +142,8 @@ void Pathfinder::init(Actor *actor, PathfindingState *state) {
 		_start.load(_actor);
 }
 
-void Pathfinder::setTarget(int32 x, int32 y, int32 z) {
-	_target.x = x;
-	_target.y = y;
-	_target.z = z;
+void Pathfinder::setTarget(const Point3 &pt) {
+	_target = pt;
 	_targetItem = 0;
 	_hitMode = false;
 }
@@ -172,7 +170,7 @@ bool Pathfinder::canReach() {
 	return pathfind(path);
 }
 
-bool Pathfinder::alreadyVisited(int32 x, int32 y, int32 z) const {
+bool Pathfinder::alreadyVisited(const Point3 &pt) const {
 	//
 	// There are more efficient search structures we could use for
 	// this, but for the number of points we end up having even on
@@ -183,7 +181,7 @@ bool Pathfinder::alreadyVisited(int32 x, int32 y, int32 z) const {
 	//
 	Common::Array<PathfindingState>::const_iterator iter;
 	for (iter = _visited.begin(); iter != _visited.end(); iter++) {
-		if (iter->checkPoint(x, y, z, 8*8))
+		if (iter->checkPoint(pt, 8*8))
 			return true;
 	}
 
@@ -200,7 +198,7 @@ bool Pathfinder::checkTarget(const PathNode *node) const {
 			return node->state.checkItem(_targetItem, 32, 8);
 		}
 	} else {
-		return node->state.checkPoint(_target.x, _target.y, _target.z, 48*48);
+		return node->state.checkPoint(_target, 48*48);
 	}
 }
 
@@ -430,20 +428,23 @@ void Pathfinder::expandNode(PathNode *node) {
 		if (!tracker.init(_actor, walkanim, dir, &state)) continue;
 
 		// determine how far the _actor will travel if the animation runs to completion
-		int32 max_endx, max_endy;
-		tracker.evaluateMaxAnimTravel(max_endx, max_endy, dir);
-		if (alreadyVisited(max_endx, max_endy, state._point.z)) continue;
+		Point3 max_end;
+		tracker.evaluateMaxAnimTravel(max_end.x, max_end.y, dir);
+		max_end.z = state._point.z;
+		if (alreadyVisited(max_end))
+			continue;
 
-		const int x_travel = ABS(max_endx - state._point.x);
-		const int y_travel = ABS(max_endy - state._point.y);
+		const int x_travel = ABS(max_end.x - state._point.x);
+		const int y_travel = ABS(max_end.y - state._point.y);
 		const int xy_maxtravel = MAX(x_travel, y_travel);
 
 		int sqrddist = x_travel * x_travel + y_travel * y_travel;
 		if (sqrddist > 400) {
 			// range is greater than 20; see if a node has been visited at range 10
-			if (alreadyVisited(state._point.x + x_travel * 10 / xy_maxtravel,
-			                   state._point.y + y_travel * 10 / xy_maxtravel,
-			                   state._point.z)) {
+			Point3 pt = state._point;
+			pt.x += x_travel * 10 / xy_maxtravel;
+			pt.y += y_travel * 10 / xy_maxtravel;
+			if (alreadyVisited(pt)) {
 				continue;
 			}
 		}
@@ -473,7 +474,7 @@ void Pathfinder::expandNode(PathNode *node) {
 
 		if (tracker.isDone()) {
 			tracker.updateState(state);
-			if (!alreadyVisited(state._point.x, state._point.y, state._point.z)) {
+			if (!alreadyVisited(state._point)) {
 				newNode(node, state, 0);
 				_visited.push_back(state);
 			}

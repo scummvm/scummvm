@@ -87,7 +87,7 @@ PathfinderProcess::PathfinderProcess(Actor *actor, const Point3 &target) :
 
 	Pathfinder pf;
 	pf.init(actor);
-	pf.setTarget(_target.x, _target.y, _target.z);
+	pf.setTarget(_target);
 
 	bool ok = pf.pathfind(_path);
 
@@ -189,7 +189,7 @@ void PathfinderProcess::run() {
 				_target = item->getLocation();
 			}
 		} else {
-			pf.setTarget(_target.x, _target.y, _target.z);
+			pf.setTarget(_target);
 		}
 		if (ok)
 			ok = pf.pathfind(_path);
