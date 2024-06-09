@@ -111,7 +111,7 @@ SuperSpriteProcess::SuperSpriteProcess(int shape, int frame, int sx, int sy, int
 			rng = 0x18;
 		int zoff = rs.getRandomNumberRngSigned(-rng, rng);
 
-		_destpt.move(xoff, yoff, zoff);
+		_destpt.translate(xoff, yoff, zoff);
 		if (_destpt.z > 0xfa)
 			_destpt.z = 0xfa;
 		else if (_destpt.z < 0)

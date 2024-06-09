@@ -61,7 +61,7 @@ void PathfindingState::load(const Actor *_actor) {
 
 bool PathfindingState::checkPoint(const Point3 &pt,
 								  int sqr_range) const {
-	int distance = (_point.x - pt.x) * (_point.x - pt.x) + (_point.y - pt.y) * (_point.y - pt.y) + (_point.z - pt.z) * (_point.z - pt.z);
+	int distance = _point.sqrDist(pt);
 	return distance < sqr_range;
 }
 
