@@ -39,6 +39,8 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("rooms", WRAP_METHOD(Console, cmdRooms));
 	registerCmd("changeRoom", WRAP_METHOD(Console, cmdChangeRoom));
 	registerCmd("disableDebugDraw", WRAP_METHOD(Console, cmdDisableDebugDraw));
+	registerCmd("pickup", WRAP_METHOD(Console, cmdItem));
+	registerCmd("drop", WRAP_METHOD(Console, cmdItem));
 }
 
 Console::~Console() {
@@ -136,6 +138,58 @@ bool Console::cmdChangeRoom(int argc, const char **args) {
 
 bool Console::cmdDisableDebugDraw(int argc, const char **args) {
 	_showInteractables = _showCharacters = _showFloor = _showFloorColor = false;
+	return true;
+}
+
+bool Console::cmdItem(int argc, const char **args) {
+	auto &inventory = g_engine->world().inventory();
+	auto &mortadelo = g_engine->world().mortadelo();
+	auto &filemon = g_engine->world().filemon();
+	auto *active = g_engine->player().activeCharacter();
+	if (argc < 2 || argc > 3) {
+		debugPrintf("usage: %s [Mortadelo/Filemon] [<item>]\n\n", args[0]);
+		debugPrintf("%20s%10s%10s\n", "Item", "Mortadelo", "Filemon");
+		for (auto itItem = inventory.beginObjects(); itItem != inventory.endObjects(); ++itItem) {
+			if (dynamic_cast<const Item *>(*itItem) == nullptr)
+				continue;
+			debugPrintf("%20s%10s%10s\n",
+				(*itItem)->name().c_str(),
+				mortadelo.hasItem((*itItem)->name()) ? "YES" : "no",
+				filemon.hasItem((*itItem)->name()) ? "YES" : "no");
+		}
+		return true;
+	}
+	if (argc == 2 && active == nullptr) {
+		debugPrintf("No character is active, name has to be specified\n");
+		return true;
+	}
+
+	const char *itemName = args[1];
+	if (argc == 3) {
+		itemName = args[2];
+		if (strcmpi(args[1], "mortadelo") == 0 || strcmpi(args[1], "m") == 0)
+			active = &mortadelo;
+		else if (strcmpi(args[1], "filemon") == 0 || strcmpi(args[1], "f") == 0)
+			active = &filemon;
+		else {
+			debugPrintf("Invalid character name \"%s\", has to be either \"mortadelo\" or \"filemon\"\n", args[1]);
+			return true;
+		}
+	}
+
+	bool hasMatchedSomething = false;
+	for (auto itItem = inventory.beginObjects(); itItem != inventory.endObjects(); ++itItem) {
+		if (dynamic_cast<const Item *>(*itItem) == nullptr ||
+			!(*itItem)->name().matchString(itemName, true))
+			continue;
+		hasMatchedSomething = true;
+		if (args[0][0] == 'p')
+			active->pickup((*itItem)->name(), false);
+		else
+			active->drop((*itItem)->name());
+	}
+	if (!hasMatchedSomething)
+		debugPrintf("Cannot find any item matching \"%s\"\n", itemName);
 	return true;
 }
 

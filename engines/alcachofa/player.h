@@ -31,7 +31,6 @@ public:
 	Player();
 
 	inline Room *currentRoom() const { return _currentRoom; }
-	inline Room *&currentRoom() { return _currentRoom; }
 	inline MainCharacter *activeCharacter() const { return _activeCharacter; }
     inline ShapeObject *&selectedObject() { return _selectedObject; }
 	inline ShapeObject *&pressedObject() { return _pressedObject; }
@@ -50,8 +49,9 @@ public:
 	void preUpdate();
 	void postUpdate();
 	void updateCursor();
-	void drawCursor();
+	void drawCursor(bool forceDefaultCursor = false);
 	void changeRoom(const Common::String &targetRoomName, bool resetCamera);
+	void changeRoomToBeforeInventory();
 	void triggerObject(ObjectBase *object, const char *action);
 	void triggerDoor(const Door *door);
 
