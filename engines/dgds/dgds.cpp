@@ -156,6 +156,10 @@ bool DgdsEngine::changeScene(int sceneNum) {
 		return false;
 	}
 
+	// TODO: For non-dragon games this will need tweaking.
+	DragonGlobals *globals = static_cast<DragonGlobals *>(_gameGlobals);
+	globals->setLastSceneNum(sceneNum);
+
 	// Save the current foreground if we are going to the inventory, clear it otherwise.
 	if (sceneNum == 2)
 		_backgroundBuffer.blitFrom(_compositionBuffer);
@@ -164,7 +168,7 @@ bool DgdsEngine::changeScene(int sceneNum) {
 
 	_scene->runLeaveSceneOps();
 
-	// store the last scene num if it's not 2
+	// store the last non-inventory scene num
 	if (_scene->getNum() != 2)
 		_gameGlobals->setGlobal(0x61, _scene->getNum());
 
