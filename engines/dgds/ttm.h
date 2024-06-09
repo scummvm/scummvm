@@ -113,6 +113,7 @@ public:
 protected:
 	void handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval);
 	int32 findGOTOTarget(TTMEnviro &env, TTMSeq &seq, int16 frame);
+	void doWipeOp(uint16 code, TTMEnviro &env, struct TTMSeq &seq, const Common::Rect &r);
 
 	DgdsEngine *_vm;
 };
