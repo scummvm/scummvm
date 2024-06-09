@@ -160,15 +160,15 @@ static const char *ttmOpName(uint16 op) {
 	case 0x4200: return "STORE AREA";
 	case 0x4210: return "SAVE GETPUT REGION";
 	case 0xa000: return "DRAW PIXEL";
-	case 0xa010: return "SAVE REGION 10?????";
-	case 0xa020: return "SAVE REGION 20?????";
-	case 0xa030: return "SAVE REGION 30?????";
-	case 0xa040: return "SAVE REGION 40?????";
-	case 0xa050: return "SAVE REGION";
-	case 0xa060: return "SAVE REGION FLIPPED??";
-	case 0xa070: return "SAVE REGION 70?????";
-	case 0xa080: return "SAVE REGION 80?????";
-	case 0xa090: return "SAVE REGION 90?????";
+	case 0xa010: return "WIPE 10?";
+	case 0xa020: return "WIPE 20?";
+	case 0xa030: return "WIPE OUT-TO-IN";
+	case 0xa040: return "WIPE INTERLACED";
+	case 0xa050: return "WIPE LEFT-TO-RIGHT";
+	case 0xa060: return "WIPE RIGHT-TO-LEFT";
+	case 0xa070: return "WIPE TOP-TO-BOTTOM";
+	case 0xa080: return "WIPE BOTTOM-TO-TOP";
+	case 0xa090: return "WIPE IN-TO-OUT";
 	case 0xa0a0: return "DRAW LINE";
 	case 0xa100: return "DRAW FILLED RECT";
 	case 0xa110: return "DRAW EMPTY RECT";
@@ -233,6 +233,131 @@ static void plotClippedPoint(int x, int y, int color, void *data) {
 	if (cs->_clipWin.contains(x, y)) {
 		byte *ptr = (byte *)cs->_surf->getBasePtr(x, y);
 		*ptr = (byte)color;
+	}
+}
+
+static void _copyRectToScreen(const Graphics::ManagedSurface &src, const Common::Rect &r) {
+	if (r.isEmpty())
+		return;
+	Graphics::Surface *surf = g_system->lockScreen();
+	surf->copyRectToSurface(src.rawSurface(), r.left, r.top, r);
+	g_system->unlockScreen();
+}
+
+
+void TTMInterpreter::doWipeOp(uint16 code, TTMEnviro &env, struct TTMSeq &seq, const Common::Rect &r) {
+	//
+	// In the original games, these operations copy certain parts of the buffer on to
+	// the screen, and rely on the system's speed to make it happen faster than a regular
+	// game frame.
+	//
+	// This gives a "wipe" effect.  In ScummVM we try to emulate the same final effect with
+	// some fudge-factors to update the screen roughly every 10 rows copied.  This gives
+	// a reasonably nice result.
+	//
+	// Example uses:
+	// Left-to-right wipe: the "AAAHHHHH" in Dragon intro
+	// outside-to-inside or in-to-out: Blood cell video from Karyn in Dragon (scene 94)
+	//
+	switch(code) {
+	case 0xa010:
+		// TODO: How is this different to a020?
+		_copyRectToScreen(_vm->_compositionBuffer, r);
+		g_system->updateScreen();
+		break;
+
+	case 0xa020:
+		_copyRectToScreen(_vm->_compositionBuffer, r);
+		g_system->updateScreen();
+		break;
+
+	case 0xa040:	// Interlaced effect
+		for (int i = 1; i < 11; i++) {
+			int yoffset = 0;
+			while (r.top + i + yoffset <= r.bottom) {
+				if (r.width()) {
+					_copyRectToScreen(_vm->_compositionBuffer, Common::Rect(Common::Point(r.left, r.top + i + yoffset), r.width(), 1));
+				}
+				yoffset += 10;
+			}
+			if (i % 3 == 0)
+				g_system->updateScreen();
+		}
+		break;
+
+	case 0xa050:	// Copy from left-to-right
+	case 0xa060:	// Copy from right-to-left
+		for (int i = 3; i <= r.width() - 3; i++) {
+			int x;
+			if (code == 0xa060) {
+				x = r.right - i;
+			} else { // a050
+				x = i - 3;
+			}
+			_copyRectToScreen(_vm->_compositionBuffer, Common::Rect(Common::Point(r.left + x, r.top), 3, r.height()));
+			if (i % 10 == 0)
+				g_system->updateScreen();
+		}
+		break;
+
+	case 0xa070:	// Copy from top to bottom
+	case 0xa080:	// Copy from bottom to top
+		for (int i = 3; i <= r.height() - 3; i++) {
+			int y;
+			if (code == 0xa080) {
+				y = r.bottom - i;
+			} else { // a070
+				y = i - 3;
+			}
+			_copyRectToScreen(_vm->_compositionBuffer, Common::Rect(Common::Point(r.left, r.top + y), r.width(), 3));
+			if (i % 10 == 0)
+				g_system->updateScreen();
+		}
+		break;
+
+	case 0xa030:	// Copy from outside to middle
+	case 0xa090:	// Copy from middle to outside
+	{
+		uint halfwidth = r.width() / 2;
+		uint halfheight = r.height() / 2;
+		uint maxside = MAX(halfheight, halfwidth);
+
+		long widthScale = 1000 * halfwidth / maxside;
+		long heightScale = 1000 * halfheight / maxside;
+		uint i = (code == 0xa030) ? maxside : 1;
+
+		do {
+			if (code == 0xa030) {
+				if (i < 1)
+					return;
+				i--;
+			} else {
+				if (i > maxside)
+					return;
+				i++;
+			}
+			uint xoff = widthScale * i / 1000;
+			uint yoff = heightScale * i / 1000;
+			uint16 xinside = (r.left + halfwidth) - xoff;
+			uint16 yinside = (r.top + halfheight) - yoff;
+			uint16 width = xoff * 2;
+			uint16 height = yoff * 2;
+			if (code == 0xa030) {
+				_copyRectToScreen(_vm->_compositionBuffer, Common::Rect(Common::Point(r.left, r.top), xinside - r.left, r.bottom - r.top));
+				_copyRectToScreen(_vm->_compositionBuffer, Common::Rect(Common::Point(xinside + width, r.top), (r.right - xinside) - xoff * 2, r.bottom - r.top));
+				_copyRectToScreen(_vm->_compositionBuffer, Common::Rect(Common::Point(xinside, r.top), width, yinside - r.top));
+				_copyRectToScreen(_vm->_compositionBuffer, Common::Rect(Common::Point(xinside, yinside + height), width, r.bottom - yinside - yoff * 2));
+			} else {
+				_copyRectToScreen(_vm->_compositionBuffer, Common::Rect(Common::Point(xinside, yinside), width, height));
+			}
+			if (i % 10 == 0)
+				g_system->updateScreen();
+		} while( true );
+
+		break;
+	}
+	default:
+		error("unsupported opcode for doSaveRegion 0x%04x", code);
 	}
 }
 
@@ -428,25 +553,17 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 	case 0xa000: // DRAW PIXEL x,y:int
 		_vm->_compositionBuffer.setPixel(ivals[0], ivals[1], seq._drawColFG);
 		break;
-	case 0xa050: {// SAVE REGION    x,y,w,h:int
-		// This is used in DRAGON intro sequence to draw the AAAAH
-		// it works like a bitblit, but it doesn't write if there's something already at the destination?
-		// TODO: This is part of a whole set of operations - 0xa0n4.
-		// They do various flips etc.
-		warning("TODO: Fix implementation of SAVE REGION (0xa050) (%d, %d, %d, %d)",
-				ivals[0], ivals[1], ivals[2], ivals[3]);
-		const Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
-		//_vm->_compositionBuffer.blitFrom(_vm->getBackgroundBuffer());
-		//_vm->_compositionBuffer.transBlitFrom(_vm->getStoredAreaBuffer());
-		//_vm->_compositionBuffer.transBlitFrom(_vm->_compositionBuffer);
-		//_vm->_compositionBuffer.blitFrom(_vm->_compositionBuffer, r, r);
+	case 0xa010:
+	case 0xa020:
+	case 0xa030:
+	case 0xa040:
+	case 0xa050:
+	case 0xa060:
+	case 0xa070:
+	case 0xa080:
+	case 0xa090:
+		doWipeOp(op, env, seq, Common::Rect(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]));
 		break;
-	}
-	case 0xa060: { // RESTORE REGION
-		const Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
-		_vm->getStoredAreaBuffer().fillRect(r, 0);
-		break;
-	}
 	case 0xa0a0: { // DRAW LINE  x1,y1,x2,y2:int
 		ClipSurface clipSurf;
 		clipSurf._clipWin = seq._drawWin;
@@ -606,13 +723,6 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 	case 0x1040: // Sets some global? i:int
 	case 0x10B0: // null op?
 	case 0x2010: // SET FRAME?? x,y
-	case 0xa010: // SAVE REGION ????
-	case 0xa020: // SAVE REGION ????
-	case 0xa030: // SAVE REGION ????
-	case 0xa040: // SAVE REGION ????
-	case 0xa070: // SAVE REGION ????
-	case 0xa080: // SAVE REGION ????
-	case 0xa090: // SAVE REGION ????
 	case 0xa300: // DRAW some string? x,y,?,?:int
 	case 0xa400: // DRAW FILLED CIRCLE
 	case 0xa420: // DRAW EMPTY CIRCLE
