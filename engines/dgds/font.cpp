@@ -33,8 +33,10 @@ namespace Dgds {
 
 Font *Font::load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor) {
 	Common::SeekableReadStream *fontFile = resourceManager->getResource(filename);
-	if (!fontFile)
-		error("Font file %s not found", filename.c_str());
+	if (!fontFile) {
+		warning("Font file %s not found", filename.c_str());
+		return nullptr;
+	}
 
 	DgdsChunkReader chunk(fontFile);
 
@@ -208,7 +210,7 @@ void FontManager::tryLoadFont(const char *fname, ResourceManager *resMgr, Decomp
 	if (font)
 		_fonts.setVal(ftype, font);
 	else
-		error("Failed to load font %s", fname);
+		warning("Failed to load font %s", fname);
 }
 
 FontManager::FontType FontManager::fontTypeByName(const Common::String &filename) const {
