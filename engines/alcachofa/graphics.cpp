@@ -779,6 +779,7 @@ struct FadeTask : public Task {
 		uint32 remaining = g_system->getMillis() - _startTime <= _duration
 			? _duration - (g_system->getMillis() - _startTime)
 			: 0;
+		g_engine->console().debugPrintf("Fade (%d) from %.2f to %.2f with %ums remaining\n", (int)_fadeType, _from, _to, remaining);
 	}
 
 private:

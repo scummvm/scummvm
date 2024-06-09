@@ -102,6 +102,14 @@ int32 &Script::variable(const char *name) {
 	return _variables[index];
 }
 
+bool Script::hasProcedure(const Common::String &behavior, const Common::String &action) const {
+	return hasProcedure(behavior + '/' + action);
+}
+
+bool Script::hasProcedure(const Common::String &procedure) const {
+	return _procedures.contains(procedure);
+}
+
 struct ScriptTimerTask : public Task {
 	ScriptTimerTask(Process &process, int32 durationSec)
 		: Task(process)

@@ -74,10 +74,13 @@ void Player::updateCursor() {
 	drawCursor();
 }
 
-void Player::drawCursor() {
+void Player::drawCursor(bool forceDefaultCursor) {
 	Point cursorPos = g_engine->input().mousePos2D();
-	if (_heldItem == nullptr)
+	if (_heldItem == nullptr || forceDefaultCursor) {
+		if (forceDefaultCursor)
+			_cursorFrameI = 0;
 		g_engine->drawQueue().add<AnimationDrawRequest>(_cursorAnimation.get(), _cursorFrameI, as2D(cursorPos), -10);
+	}
 	else {
 		auto itemGraphic = _heldItem->graphic();
 		assert(itemGraphic != nullptr);
@@ -97,8 +100,12 @@ void Player::changeRoom(const Common::String &targetRoomName, bool resetCamera) 
 	if (_currentRoom == &inventory)
 		keepResources = _roomBeforeInventory != nullptr && _roomBeforeInventory->name().equalsIgnoreCase(targetRoomName);
 	else {
-		keepResources = targetRoomName.equalsIgnoreCase("inventario") ||
-			(_currentRoom != nullptr && _currentRoom->name().equalsIgnoreCase(targetRoomName));
+		keepResources = _currentRoom != nullptr && _currentRoom->name().equalsIgnoreCase(targetRoomName);
+	}
+	_roomBeforeInventory = nullptr;
+	if (targetRoomName.equalsIgnoreCase("inventario")) {
+		keepResources = true;
+		_roomBeforeInventory = _currentRoom;
 	}
 
 	if (!keepResources && _currentRoom != nullptr) {
@@ -125,6 +132,11 @@ void Player::changeRoom(const Common::String &targetRoomName, bool resetCamera) 
 	_pressedObject = _selectedObject = nullptr;
 }
 
+void Player::changeRoomToBeforeInventory() {
+	assert(_roomBeforeInventory != nullptr);
+	changeRoom(_roomBeforeInventory->name(), true);
+}
+
 MainCharacter *Player::inactiveCharacter() const {
 	if (_activeCharacter == nullptr)
 		return nullptr;
@@ -147,7 +159,7 @@ void Player::triggerObject(ObjectBase *object, const char *action) {
 		return;
 	debug("Trigger object %s %s with %s", object->typeName(), object->name().c_str(), action);
 
-	if (inactiveCharacter()->currentlyUsing() == object) {
+	if (strcmp(action, "MIRAR") == 0 || inactiveCharacter()->currentlyUsing() == object) {
 		action = "MIRAR";
 		_activeCharacter->currentlyUsing() = nullptr;
 	}
@@ -160,8 +172,9 @@ void Player::triggerObject(ObjectBase *object, const char *action) {
 	else if (scumm_stricmp(action, "MIRAR") == 0)
 		script.createProcess(activeCharacterKind(), "DefectoMirar");
 	else if (action[0] == 'i' && object->name()[0] == 'i')
-		// TODO: Check if and how this can happen. I guess it crashes now but might be ignored by the original engine
-		script.createProcess(activeCharacterKind(), "DefectoObjeto");
+		// This case can happen if you combine two objects without procedure, the original engine
+		// would attempt to start the procedure "DefectoObjeto" which does not exist and ignore
+		;
 	else
 		script.createProcess(activeCharacterKind(), "DefectoUsar");
 }

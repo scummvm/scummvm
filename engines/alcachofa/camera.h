@@ -36,9 +36,9 @@ static constexpr const float kInvBaseScale = 1.0f / kBaseScale;
 
 class Camera {
 public:
-	inline Math::Angle rotation() const { return _rotation; }
+	inline Math::Angle rotation() const { return _cur._rotation; }
 	inline Math::Vector2d &shake() { return _shake; }
-	inline WalkingCharacter *followTarget() { return _followTarget; }
+	inline WalkingCharacter *followTarget() { return _cur._followTarget; }
 
 	void update();
 	Math::Vector3d transform2Dto3D(Math::Vector3d v) const;
@@ -48,6 +48,8 @@ public:
 	void setFollow(WalkingCharacter *target, bool catchUp = false);
 	void setPosition(Math::Vector2d v);
 	void setPosition(Math::Vector3d v);
+	void backup(uint slot);
+	void restore(uint slot);
 
 	Task *lerpPos(Process &process,
 		Math::Vector2d targetPos,
@@ -82,27 +84,31 @@ private:
 	void setupMatricesAround(Math::Vector3d center);
 	void updateFollowing(float deltaTime);
 
+	struct State {
+		Math::Vector3d _usedCenter = Math::Vector3d(512, 384, 0);
+		float
+			_scale = 1.0f,
+			_speed = 0.0f,
+			_maxSpeedFactor = 230.0f;
+		Math::Angle _rotation;
+		bool _isBraking = false;
+		WalkingCharacter *_followTarget = nullptr;
+	};
+
+	static constexpr uint kStateBackupCount = 2;
+	State _cur, _backups[kStateBackupCount];
 	uint32 _lastUpdateTime = 0;
 	bool _isChanging = false,
-		_isBraking = false,
 		_catchUp = false;
-	float
-		_scale = 1.0f,
-		_roomScale = 1.0f,
-		_maxSpeedFactor = 230.0f,
-		_speed = 0.0f;
-	Math::Angle _rotation;
+	float _roomScale = 1.0f;
 	Math::Vector2d
 		_roomMin = Math::Vector2d(-10000, -10000),
 		_roomMax = Math::Vector2d(10000, 10000),
 		_shake;
-	Math::Vector3d
-		_usedCenter = Math::Vector3d(512, 384, 0),
-		_appliedCenter;
+	Math::Vector3d _appliedCenter;
 	Math::Matrix4
 		_mat3Dto2D,
 		_mat2Dto3D;
-	WalkingCharacter *_followTarget = nullptr;
 };
 
 }

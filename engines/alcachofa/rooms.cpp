@@ -29,6 +29,21 @@ using namespace Common;
 
 namespace Alcachofa {
 
+// originally the inventory only reacts to exactly top-left/bottom-right which is fine in
+// fullscreen when you just slam the mouse cursor into the corner.
+// In any other scenario this is cumbersome so I expand this area.
+static constexpr int16 kInventoryTriggerSize = 10;
+
+Rect openInventoryTriggerBounds() {
+	int16 size = kInventoryTriggerSize * 1024 / g_system->getWidth();
+	return Rect(0, 0, size, size);
+}
+
+Rect closeInventoryTriggerBounds() {
+	int16 size = kInventoryTriggerSize * 1024 / g_system->getWidth();
+	return Rect(g_system->getWidth() - size, g_system->getHeight() - size, g_system->getWidth(), g_system->getHeight());
+}
+
 Room::Room(World *world, ReadStream &stream) : Room(world, stream, false) {
 }
 
@@ -129,11 +144,13 @@ void Room::update() {
 
 	if (g_engine->player().currentRoom() == this) {
 		updateRoomBounds();
+		updateClosingInventory();
 		if (!updateInput())
 			return;
 	}
-	// TODO: Add condition for global room update
-	world().globalRoom().updateObjects();
+	if (!g_engine->player().isOptionsMenuOpen() &&
+		g_engine->player().currentRoom() != &g_engine->world().inventory())
+		world().globalRoom().updateObjects();
 	if (g_engine->player().currentRoom() == this)
 		updateObjects();
 	if (g_engine->player().currentRoom() == this) {
@@ -166,8 +183,10 @@ bool Room::updateInput() {
 	// A complicated network condition can prevent interaction at this point
 	if (player.isOptionsMenuOpen() || !player.isGameLoaded())
 		canInteract = true;
-	if (canInteract)
+	if (canInteract) {
 		updateInteraction();
+		player.updateCursor();
+	}
 
 	// TODO: Add main menu and opening inventory handling
 	return player.currentRoom() == this;
@@ -176,9 +195,12 @@ bool Room::updateInput() {
 void Room::updateInteraction() {
 	auto &player = g_engine->player();
 	auto &input = g_engine->input();
-	// TODO: Add interaction with change character button / opening inventory
+	// TODO: Add interaction with change character button
 
-	if (player.activeCharacter()->room() != this) {
+	if (updateOpeningInventory())
+		return;
+
+	if (player.activeCharacter()->room() != this) { // TODO: Remove active character hack
 		player.activeCharacter()->room() = this;
 	}
 
@@ -196,7 +218,6 @@ void Room::updateInteraction() {
 		if (input.wasAnyMousePressed())
 			player.pressedObject() = player.selectedObject();
 	}
-	player.updateCursor();
 }
 
 void Room::updateRoomBounds() {
@@ -272,6 +293,51 @@ ShapeObject *Room::getSelectedObject(ShapeObject *best) const {
 	return best;
 }
 
+void Room::startClosingInventory() {
+	_isOpeningInventory = false;
+	_isClosingInventory = true;
+	_timeForInventory = g_system->getMillis();
+}
+
+void Room::updateClosingInventory() {
+	static constexpr uint32 kDuration = 300;
+	static constexpr float kSpeed = -10 / 3.0f / 1000.0f;
+
+	uint32 deltaTime = g_system->getMillis() - _timeForInventory;
+	if (!_isClosingInventory || deltaTime >= kDuration)
+		_isClosingInventory = false;
+	else
+		g_engine->world().inventory().drawAsOverlay((int32)(g_system->getHeight() * (deltaTime * kSpeed)));
+}
+
+bool Room::updateOpeningInventory() {
+	static constexpr float kSpeed = 10 / 3.0f / 1000.0f;
+	if (g_engine->player().isOptionsMenuOpen() || !g_engine->player().isGameLoaded())
+		return false;
+
+	if (_isOpeningInventory) {
+		uint32 deltaTime = g_system->getMillis() - _timeForInventory;
+		if (deltaTime >= 1000) {
+			_isOpeningInventory = false;
+			g_engine->world().inventory().open();
+		}
+		else {
+			deltaTime = MIN<uint32>(300, deltaTime);
+			g_engine->world().inventory().drawAsOverlay((int32)(g_system->getHeight() * (deltaTime * kSpeed - 1)));
+		}
+		return true;
+	}
+	else if (openInventoryTriggerBounds().contains(g_engine->input().mousePos2D())) {
+		_isClosingInventory = false;
+		_isOpeningInventory = true;
+		_timeForInventory = g_system->getMillis();
+		g_engine->player().activeCharacter()->stopWalking();
+		g_engine->world().inventory().updateItemsByActiveCharacter();
+		return true;
+	}
+	return false;
+}
+
 OptionsMenu::OptionsMenu(World *world, ReadStream &stream)
 	: Room(world, stream, true) {
 }
@@ -292,6 +358,63 @@ Inventory::~Inventory() {
 	// No need to delete items, they are room objects and thus deleted in Room::~Room
 }
 
+bool Inventory::updateInput() {
+	auto &player = g_engine->player();
+	auto &input = g_engine->input();
+	auto *hoveredItem = getHoveredItem();
+
+	if (!player.activeCharacter()->isBusy())
+		player.drawCursor(0);
+
+	if (hoveredItem != nullptr && !player.activeCharacter()->isBusy()) {
+		if (input.wasMouseLeftPressed() && player.heldItem() == nullptr ||
+			input.wasMouseLeftReleased() && player.heldItem() != nullptr ||
+			input.wasMouseRightReleased()) {
+			hoveredItem->trigger();
+			player.pressedObject() = nullptr;
+		}
+
+		g_engine->drawQueue().add<TextDrawRequest>(
+			g_engine->world().generalFont(),
+			g_engine->world().getLocalizedName(hoveredItem->name()),
+			input.mousePos2D() + Point(0, -50),
+			-1, true, kWhite, -kForegroundOrderCount + 1);
+	}
+
+	if (!player.activeCharacter()->isBusy() &&
+		closeInventoryTriggerBounds().contains(input.mousePos2D()))
+		close();
+
+	if (!player.activeCharacter()->isBusy() &&
+		hoveredItem == nullptr &&
+		input.wasMouseRightReleased()) {
+		player.heldItem() = nullptr;
+		return false;
+	}
+
+	return player.currentRoom() == this;
+}
+
+Item *Inventory::getHoveredItem() {
+	auto &mousePos = g_engine->input().mousePos2D();
+	for (auto item : _items) {
+		if (!item->isEnabled())
+			continue;
+		if (g_engine->player().heldItem() != nullptr &&
+			g_engine->player().heldItem()->name().equalsIgnoreCase(item->name()))
+			continue;
+
+		auto graphic = item->graphic();
+		assert(graphic != nullptr);
+		auto bounds = graphic->animation().frameBounds(0);
+		auto totalOffset = graphic->animation().totalFrameOffset(0);
+		auto delta = mousePos - graphic->center() - totalOffset;
+		if (delta.x >= 0 && delta.y >= 0 && delta.x <= bounds.width() && delta.y <= bounds.height())
+			return item;
+	}
+	return nullptr;
+}
+
 void Inventory::initItems() {
 	auto &mortadelo = world().mortadelo();
 	auto &filemon = world().filemon();
@@ -310,6 +433,36 @@ void Inventory::updateItemsByActiveCharacter() {
 	assert(character != nullptr);
 	for (auto *item : _items)
 		item->toggle(character->hasItem(item->name()));
+}
+
+void Inventory::drawAsOverlay(int32 scrollY) {
+	for (auto object : _objects) {
+		auto graphic = object->graphic();
+		if (graphic == nullptr)
+			continue;
+
+		int16 oldY = graphic->center().y;
+		int8 oldOrder = graphic->order();
+		graphic->center().y += scrollY;
+		graphic->order() = -kForegroundOrderCount;
+		if (object->name().equalsIgnoreCase("Background"))
+			graphic->order()++;
+		object->draw();
+		graphic->center().y = oldY;
+		graphic->order() = oldOrder;
+	}
+}
+
+void Inventory::open() {
+	g_engine->camera().backup(1);
+	g_engine->player().changeRoom(name(), true);
+	updateItemsByActiveCharacter();
+}
+
+void Inventory::close() {
+	g_engine->player().changeRoomToBeforeInventory();
+	g_engine->camera().restore(1);
+	g_engine->player().currentRoom()->startClosingInventory();
 }
 
 void Room::debugPrint(bool withObjects) const {

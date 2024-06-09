@@ -32,9 +32,9 @@ using namespace Math;
 namespace Alcachofa {
 
 void Camera::resetRotationAndScale() {
-	_scale = 1;
-	_rotation = 0;
-	_usedCenter.z() = 0;
+	_cur._scale = 1;
+	_cur._rotation = 0;
+	_cur._usedCenter.z() = 0;
 }
 
 void Camera::setRoomBounds(Point bgSize, int16 bgScale) {
@@ -49,7 +49,7 @@ void Camera::setRoomBounds(Point bgSize, int16 bgScale) {
 }
 
 void Camera::setFollow(WalkingCharacter *target, bool catchUp) {
-	_followTarget = target;
+	_cur._followTarget = target;
 	_lastUpdateTime = g_system->getMillis();
 	_catchUp = catchUp;
 	if (target == nullptr)
@@ -57,12 +57,24 @@ void Camera::setFollow(WalkingCharacter *target, bool catchUp) {
 }
 
 void Camera::setPosition(Vector2d v) {
-	setPosition({ v.getX(), v.getY(), _usedCenter.z() });
+	setPosition({ v.getX(), v.getY(), _cur._usedCenter.z() });
 }
 
 void Camera::setPosition(Vector3d v) {
-	_usedCenter = v;
+	_cur._usedCenter = v;
 	setFollow(nullptr);
+}
+
+void Camera::backup(uint slot) {
+	assert(slot < kStateBackupCount);
+	_backups[slot] = _cur;
+}
+
+void Camera::restore(uint slot) {
+	assert(slot < kStateBackupCount);
+	auto backupState = _backups[slot];
+	_backups[slot] = _cur;
+	_cur = backupState;
 }
 
 static Matrix4 scaleMatrix(float scale) {
@@ -75,16 +87,16 @@ static Matrix4 scaleMatrix(float scale) {
 
 void Camera::setupMatricesAround(Vector3d center) {
 	Matrix4 matTemp;
-	matTemp.buildAroundZ(_rotation);
+	matTemp.buildAroundZ(_cur._rotation);
 	_mat3Dto2D.setToIdentity();
 	_mat3Dto2D.translate(-center);
 	_mat3Dto2D = matTemp * _mat3Dto2D;
-	_mat3Dto2D = _mat3Dto2D * scaleMatrix(_scale);
+	_mat3Dto2D = _mat3Dto2D * scaleMatrix(_cur._scale);
 
 	_mat2Dto3D.setToIdentity();
 	_mat2Dto3D.translate(center);
-	matTemp.buildAroundZ(-_rotation);
-	matTemp = scaleMatrix(1 / _scale) * matTemp;
+	matTemp.buildAroundZ(-_cur._rotation);
+	matTemp = scaleMatrix(1 / _cur._scale) * matTemp;
 	_mat2Dto3D = matTemp * _mat2Dto3D;
 }
 
@@ -122,7 +134,7 @@ Vector3d Camera::transform2Dto3D(Vector3d v2d) const {
 	// if this looks like normal 3D math to *someone* please contact.
 	Vector4d vh;
 	vh.w() = 1.0f;
-	vh.z() = v2d.z() - _usedCenter.z();
+	vh.z() = v2d.z() - _cur._usedCenter.z();
 	vh.y() = (v2d.y() - g_system->getHeight() * 0.5f) * vh.z() * kInvBaseScale;
 	vh.x() = (v2d.x() - g_system->getWidth() * 0.5f) * vh.z() * kInvBaseScale;
 	vh = _mat2Dto3D * vh;
@@ -141,7 +153,7 @@ Vector3d Camera::transform3Dto2D(Vector3d v3d) const {
 	return Vector3d(
 		g_system->getWidth() * 0.5f + vh.x() * kBaseScale / vh.z(),
 		g_system->getHeight() * 0.5f + vh.y() * kBaseScale / vh.z(),
-		_scale * kBaseScale / vh.z());
+		_cur._scale * kBaseScale / vh.z());
 }
 
 void Camera::update() {
@@ -151,66 +163,66 @@ void Camera::update() {
 	deltaTime = MAX(0.001f, MIN(0.5f, deltaTime));
 	_lastUpdateTime = now;
 
-	if (_catchUp && _followTarget != nullptr) {
+	if (_catchUp && _cur._followTarget != nullptr) {
 		for (int i = 0; i < 4; i++)
 			updateFollowing(50.0f);
 	}
 	else
 		updateFollowing(deltaTime);
-	setAppliedCenter(_usedCenter + Vector3d(_shake.getX(), _shake.getY(), 0.0f));
+	setAppliedCenter(_cur._usedCenter + Vector3d(_shake.getX(), _shake.getY(), 0.0f));
 }
 
 void Camera::updateFollowing(float deltaTime) {
-	if (_followTarget == nullptr)
+	if (_cur._followTarget == nullptr)
 		return;
 	const float resolutionFactor = g_system->getWidth() * 0.00125f;
 	const float acceleration = 460 * resolutionFactor;
 	const float baseDeadZoneSize = 25 * resolutionFactor;
 	const float minSpeed = 20 * resolutionFactor;
-	const float maxSpeed = this->_maxSpeedFactor * resolutionFactor;
-	const float depthScale = _followTarget->graphic()->depthScale();
-	const auto characterPolygon = _followTarget->shape()->at(0);
+	const float maxSpeed = this->_cur._maxSpeedFactor * resolutionFactor;
+	const float depthScale = _cur._followTarget->graphic()->depthScale();
+	const auto characterPolygon = _cur._followTarget->shape()->at(0);
 	const float halfHeight = ABS(characterPolygon._points[0].y - characterPolygon._points[2].y) / 2.0f;
 
 	Vector3d targetCenter = setAppliedCenter({
-		_shake.getX() + _followTarget->position().x,
-		_shake.getY() + _followTarget->position().y - depthScale * 85,
-		_usedCenter.z()});
+		_shake.getX() + _cur._followTarget->position().x,
+		_shake.getY() + _cur._followTarget->position().y - depthScale * 85,
+		_cur._usedCenter.z()});
 	targetCenter.y() -= halfHeight;
-	float distanceToTarget = as2D(_usedCenter - targetCenter).getMagnitude();
-	float moveDistance = _followTarget->stepSizeFactor() * _speed * deltaTime;
+	float distanceToTarget = as2D(_cur._usedCenter - targetCenter).getMagnitude();
+	float moveDistance = _cur._followTarget->stepSizeFactor() * _cur._speed * deltaTime;
 
-	float deadZoneSize = baseDeadZoneSize / _scale;
-	if (_followTarget->isWalking() && depthScale > 0.8f)
-		deadZoneSize = (baseDeadZoneSize + (depthScale - 0.8f) * 200) / _scale;
+	float deadZoneSize = baseDeadZoneSize / _cur._scale;
+	if (_cur._followTarget->isWalking() && depthScale > 0.8f)
+		deadZoneSize = (baseDeadZoneSize + (depthScale - 0.8f) * 200) / _cur._scale;
 	bool isFarAway = false;
-	if (ABS(targetCenter.x() - _usedCenter.x()) > deadZoneSize ||
-		ABS(targetCenter.y() - _usedCenter.y()) > deadZoneSize) {
+	if (ABS(targetCenter.x() - _cur._usedCenter.x()) > deadZoneSize ||
+		ABS(targetCenter.y() - _cur._usedCenter.y()) > deadZoneSize) {
 		isFarAway = true;
-		_isBraking = false;
+		_cur._isBraking = false;
 		_isChanging = true;
 	}
 
-	if (_isBraking) {
-		_speed -= acceleration * 0.9f * deltaTime;
-		_speed = MAX(_speed, minSpeed);
+	if (_cur._isBraking) {
+		_cur._speed -= acceleration * 0.9f * deltaTime;
+		_cur._speed = MAX(_cur._speed, minSpeed);
 	}
-	if (_isChanging && !_isBraking) {
-		_speed += acceleration * deltaTime;
-		_speed = MIN(_speed, maxSpeed);
+	if (_isChanging && !_cur._isBraking) {
+		_cur._speed += acceleration * deltaTime;
+		_cur._speed = MIN(_cur._speed, maxSpeed);
 		if (!isFarAway)
-			_isBraking = true;
+			_cur._isBraking = true;
 	}
 	if (_isChanging) {
 		if (distanceToTarget <= moveDistance) {
-			_usedCenter = targetCenter;
+			_cur._usedCenter = targetCenter;
 			_isChanging = false;
-			_isBraking = false;
+			_cur._isBraking = false;
 		}
 		else {
-			Vector3d deltaCenter = targetCenter - _usedCenter;
+			Vector3d deltaCenter = targetCenter - _cur._usedCenter;
 			deltaCenter.z() = 0.0f;
-			_usedCenter += deltaCenter * moveDistance / distanceToTarget;
+			_cur._usedCenter += deltaCenter * moveDistance / distanceToTarget;
 		}
 	}
 }
@@ -266,12 +278,12 @@ protected:
 struct CamLerpScaleTask final : public CamLerpTask {
 	CamLerpScaleTask(Process &process, float targetScale, int32 duration, EasingType easingType)
 		: CamLerpTask(process, duration, easingType)
-		, _fromScale(_camera._scale)
-		, _deltaScale(targetScale - _camera._scale) {}
+		, _fromScale(_camera._cur._scale)
+		, _deltaScale(targetScale - _camera._cur._scale) {}
 
 protected:
 	virtual void update(float t) override {
-		_camera._scale = _fromScale + _deltaScale * t;
+		_camera._cur._scale = _fromScale + _deltaScale * t;
 	}
 
 	float _fromScale, _deltaScale;
@@ -284,15 +296,15 @@ struct CamLerpPosScaleTask final : public CamLerpTask {
 		: CamLerpTask(process, duration, EasingType::Linear) // linear as we need different ones per component
 		, _fromPos(_camera._appliedCenter)
 		, _deltaPos(targetPos - _camera._appliedCenter)
-		, _fromScale(_camera._scale)
-		, _deltaScale(targetScale - _camera._scale)
+		, _fromScale(_camera._cur._scale)
+		, _deltaScale(targetScale - _camera._cur._scale)
 		, _moveEasingType(moveEasingType)
 		, _scaleEasingType(scaleEasingType) {}
 
 protected:
 	virtual void update(float t) override {
 		_camera.setPosition(_fromPos + _deltaPos * ease(t, _moveEasingType));
-		_camera._scale = _fromScale + _deltaScale * ease(t, _scaleEasingType);
+		_camera._cur._scale = _fromScale + _deltaScale * ease(t, _scaleEasingType);
 	}
 
 	Vector3d _fromPos, _deltaPos;
@@ -303,12 +315,12 @@ protected:
 struct CamLerpRotationTask final : public CamLerpTask {
 	CamLerpRotationTask(Process &process, float targetRotation, int32 duration, EasingType easingType)
 		: CamLerpTask(process, duration, easingType)
-		, _fromRotation(_camera._rotation.getDegrees())
-		, _deltaRotation(targetRotation - _camera._rotation.getDegrees()) {}
+		, _fromRotation(_camera._cur._rotation.getDegrees())
+		, _deltaRotation(targetRotation - _camera._cur._rotation.getDegrees()) {}
 
 protected:
 	virtual void update(float t) override {
-		_camera._rotation = Angle(_fromRotation + _deltaRotation * t);
+		_camera._cur._rotation = Angle(_fromRotation + _deltaRotation * t);
 	}
 
 	float _fromRotation, _deltaRotation;

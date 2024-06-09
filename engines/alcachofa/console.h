@@ -52,6 +52,7 @@ private:
 	bool cmdRooms(int argc, const char **args);
 	bool cmdChangeRoom(int argc, const char **args);
 	bool cmdDisableDebugDraw(int argc, const char **args);
+	bool cmdItem(int argc, const char **args);
 
 	bool _showInteractables = true;
 	bool _showCharacters = true;
