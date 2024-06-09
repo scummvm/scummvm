@@ -110,6 +110,56 @@ inline void ScriptExecutor::FuncA3D2() {
 	isSkipping = false;
 }
 
+void ScriptExecutor::FuncA37A() {
+	// TODO: Quality is not at the level of the rest - consider
+	// rewriting from the deassembly
+	if (DebugMan.isDebugChannelEnabled(DebugFlag::DEBUG_SV)) {
+		debug("-- Entering A37A");
+	} else {
+		debug("-- Skipping using A37A");
+	}
+
+	isSkipping = true;
+	assert(expectedEndLocation == _stream->pos());
+	uint16 skipValue = 1; // [bp-4h] - TODO: Better name
+	// TODO: Figure out end condition
+	for (;;) {
+		const byte opcode = ReadByte();
+		const byte length = ReadByte();
+		if (opcode >= 3) {
+			if (opcode <= 6) {
+				skipValue++;
+			}
+		}
+		if (opcode == 7) {
+			skipValue--;
+		}
+		// Do the skipping
+		_stream->seek(length, SEEK_CUR);
+		debugC(DEBUG_SV, "- A37A skipping %u bytes for opcode %.2x [%u]", length, opcode, skipValue);
+
+		if (skipValue == 0) {
+			break;
+		}
+		if (_stream->eos()) {
+			break;
+		}
+	}
+
+	if (skipValue != 0) {
+		// TODO: Implement:
+		// mov	word ptr [1028h],1Dh
+		// TODO: Add an assert here to see if this ever happens in practice
+	}
+	
+	// Fix up the expected location after skipping
+	expectedEndLocation = _stream->pos();
+	if (DebugMan.isDebugChannelEnabled(DebugFlag::DEBUG_SV)) {
+		debug("-- Leaving A37A");
+	}
+	isSkipping = false;
+}
+
 void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 	// Results are [bp-4h] and [bp-2h]
 	// TODO: Implement the actual prelude here correctly, documenting which lables we pass as we go
@@ -208,7 +258,8 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 	} else if (value == 0x4) {
 		// TODO: What's the difference to 0x27?
 		// TODO: Expose the position of the character sprite (or his feet)
-		out1 = Func101D(_charPosX, _charPosY);
+		const Common::Point &charPos = GetCharPosition();
+		out1 = Func101D(charPos.x, charPos.y);
 		out2 = 0;
 		// TODO: In the logs there is also a value out2 (DX) returned - where
 		// does that come from?
@@ -578,7 +629,8 @@ l0037_A1B9:
 		*/
 
 		// TODO: Expose the position of the character sprite (or his feet)
-		out1 = Func101D(_charPosX, _charPosY);
+		const Common::Point &charPos = GetCharPosition();
+		out1 = Func101D(charPos.x, charPos.y);
 		// TODO: In the logs there is also a value out2 (DX) returned - where
 		// does that come from?
 		debug("- 9F4D results: %.4x %.4x", out1, out2);
@@ -908,6 +960,7 @@ uint16 ScriptExecutor::Func101D(uint16 x, uint16 y) {
 	uint16 result = _engine->_pathfindingMap.getPixel(x, y);
 	// TODO: There is another condition and some more code for a second lookup,
 	// TBC if I need that in practice
+	// Reminder that this data can be adjusted with a script opcode
 	return result;
 }
 
@@ -938,6 +991,11 @@ void ScriptExecutor::ScriptPrintString() {
 void ScriptExecutor::SetVariableValue(uint16 index, uint16 a, uint16 b) {
 	_variables[index].a = a;
 	_variables[index].b = b;
+}
+
+Common::Point ScriptExecutor::GetCharPosition() {
+	const GameObject* protagonist = GameObjects::GetProtagonistObject();
+	return protagonist->Position;
 }
 
 byte Script::ScriptExecutor::ReadByte() {
@@ -1297,6 +1355,9 @@ void Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x07) {
 			// TODO: Need to figure out what exactly this does
 			// It has no specific case handling code in the original
+		} else if (opcode1 == 0x08) {
+			// This is some kind of skipping as well
+			FuncA37A();
 		}
 		else if (opcode1 == 0x10) {
 			// Trigger a walk to action
@@ -1369,7 +1430,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 
 			// TODO: Figure out how to create the list properly
 			// TODO: DRY principle
-			c->Position = c->GameObject->Position = Common::Point(x,y);
+			c->SetPosition(Common::Point(x, y));
 			c->GameObject->SceneIndex = sceneID;
 			if (sceneID != Scenes::instance().CurrentSceneIndex) {
 				// We need to remove the character if it is in the list already
@@ -2950,6 +3011,10 @@ void Script::ScriptExecutor::ExecuteScript() {
 	void ScriptExecutor::StartTimer(uint32 duration) {
 		isTimerActive = true;
 		timerEndMillis = g_engine->currentMillis + duration;
+	}
+
+	void ScriptExecutor::Rewind() {
+		_stream->seek(0);
 	}
 
 } // namespace Script

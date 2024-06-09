@@ -49,8 +49,6 @@ View1::View1() : UIElement("View1") {
 		// TODO: Need to properly handle the offset
 		// TODO: Remember that the game starts enumerating objects at 1 and not at 0
 		protagonist->GameObject = GameObjects::instance().Objects[0x0];
-		// TODO: Need to consider the DRY principle for the properties
-		protagonist->Position = protagonist->GameObject->Position;
 		characters.push_back(protagonist);
 
 		// inventoryItems.push_back(GameObjects::instance().Objects[0x8 - 1]);
@@ -164,6 +162,7 @@ View1::View1() : UIElement("View1") {
 	}
 
 	void View1::drawBackgroundAnimations(Graphics::ManagedSurface &s) {
+		return;
 		for (int i = 0; i < g_engine->_numBackgroundAnimations; i++) {
 			BackgroundAnimation& current = g_engine->_backgroundAnimations[i];
 			AnimFrame &currentFrame = current.Frames[current.FrameIndex];
@@ -362,8 +361,6 @@ View1::View1() : UIElement("View1") {
 				}
 				// We need this to override to use inventory - probably handled better otherwise
 				g_engine->_scriptExecutor->_mouseMode = m;
-				g_engine->_scriptExecutor->_charPosX = characters[0]->Position.x;
-				g_engine->_scriptExecutor->_charPosY = characters[0]->Position.y;
 				g_engine->_scriptExecutor->_interactedObjectID = index;
 				g_engine->_scriptExecutor->_interactedOtherObjectID = activeInventoryItem != nullptr ? activeInventoryItem->Index + 0x0400 : 0x0000;
 
@@ -432,7 +429,7 @@ void View1::draw() {
 	s.blitFrom(_backgroundSurface);
 
 	drawBackgroundAnimations(s);
-	DrawCharacters(s)
+	DrawCharacters(s);
 
 	// Draw the character
 
@@ -711,7 +708,7 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		
 		
 		// AnimFrame *frame = current->GetCurrentPortrait();
-		DrawSprite(current->Position - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s);
+		DrawSprite(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s);
 		// DrawSprite(Common::Point(50, 50), frame->Width, frame->Height, frame->Data, s);
 	}
 }
@@ -755,7 +752,7 @@ uint16 View1::GetHitObjectID(const Common::Point& pos) const {
 
 		// Saved point of the object is at the bottom in the middle, frame local space starts
 		// at top left
-		Common::Point localPoint = pos - (currentCharacter->Position - animFrame->GetBottomMiddleOffset());
+		Common::Point localPoint = pos - (currentCharacter->GetPosition() - animFrame->GetBottomMiddleOffset());
 		bool isHit = animFrame->PixelHit(localPoint);
 		if (isHit) {
 			return 0x0400 + currentCharacter->GameObject->Index;
@@ -763,6 +760,14 @@ uint16 View1::GetHitObjectID(const Common::Point& pos) const {
 	}
 	// TODO: Ignore background image lookup for now
 	return 0x0000;
+}
+
+Common::Point Character::GetPosition() const {
+	return GameObject->Position;
+}
+
+void Character::SetPosition(const Common::Point &newPosition) {
+	GameObject->Position = newPosition;
 }
 
 Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
@@ -812,7 +817,7 @@ Macs2::AnimFrame *Character::GetCurrentPortrait() {
 }
 
 void Character::StartLerpTo(const Common::Point &target, uint32 duration) {
-	StartPosition = Position;
+	StartPosition = GetPosition();
 	EndPosition = target;
 	StartTime = g_events->currentMillis;
 	Duration = duration;
@@ -822,7 +827,7 @@ void Character::StartLerpTo(const Common::Point &target, uint32 duration) {
 void Character::StartPickup(Character *object) {
 	objectToPickUp = object;
 	ExecuteScriptOnFinishLerp = true;
-	StartLerpTo(objectToPickUp->Position, 1000);
+	StartLerpTo(objectToPickUp->GetPosition(), 1000);
 }
 
 void Character::RegisterWaitForMovementFinishedEvent() {
@@ -868,11 +873,22 @@ void Character::Update() {
 			ExecuteScriptOnFinishLerp = false;
 			g_engine->ScheduleRun();
 		}
+
+		// TODO: This muddles the logic a bit since I also have the executescriptonfinish,
+		// should be unified. The game code sets the flag [1020] to true when a move is finished,
+		// which in turn unlocks running the script function
+		// TODO: Should look at game code how exactly it is handled there
+		if (!g_engine->_scriptExecutor->IsExecuting()) {
+			g_engine->_scriptExecutor->Rewind();
+			// TODO: Get rid of the different copies of the position
+			View1 *currentView = (View1 *)g_engine->findView("View1");
+			g_engine->ScheduleRun();
+		}
 		return;
 	}
 
 	float progress = (float) (g_events->currentMillis - StartTime) / (float) Duration;
-	Position = StartPosition + (EndPosition - StartPosition) * progress;
+	SetPosition(StartPosition + (EndPosition - StartPosition) * progress);
 }
 
 bool Button::IsPointInside(const Common::Point &p) const {

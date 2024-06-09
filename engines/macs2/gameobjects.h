@@ -69,6 +69,8 @@ public:
 	//	shl di, 2h;
 	// les di, [di + 77Ch]
 	Common::Array<GameObject*> Objects;
+
+	static GameObject *GetProtagonistObject();
 };
 
 } // namespace Macs2
