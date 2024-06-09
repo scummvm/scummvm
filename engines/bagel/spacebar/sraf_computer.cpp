@@ -2800,14 +2800,16 @@ void SrafComputer::onListDispatchTeam() {
 			break;
 
 		case mSellersExpanded:
-			nListToCheck = kSellersList;            // List to check
-			nPreceedingHeaders = 0;                 // No headers above this guy
+			nListToCheck = kSellersList;
+			// No headers above this guy
+			nPreceedingHeaders = 0;
 
 			if (nElementIndex == -1) {
 				bDeleteAll = true;
-				nrecalcVal = 0;         // Collapse list
+				// Collapse list
+				nrecalcVal = 0;
 			} else {
-				nElementIndex -= nPreceedingHeaders;    // Account for headers
+				nElementIndex -= nPreceedingHeaders; // Account for headers
 
 				// Account for those guys out on meetings that we have not displayed
 				// recalc first...
@@ -2816,21 +2818,21 @@ void SrafComputer::onListDispatchTeam() {
 				if (nElementIndex >= NUM_SELLERS) {
 					if (nElementIndex == (NUM_SELLERS - nPreceedingHeaders)) {
 						bDeleteAll = true;
-						nrecalcVal = mBuyersExpanded;       // collapse list, expand buyers
+						// collapse list, expand buyers
+						nrecalcVal = mBuyersExpanded;
 					}
 
 					if (nElementIndex == (NUM_SELLERS + 1 - nPreceedingHeaders)) {
 						bDeleteAll = true;
-						nrecalcVal = mOthersExpanded;       // collapse list, expand others
+						// collapse list, expand others
+						nrecalcVal = mOthersExpanded;
 					}
-					break;
-				}
-
-				if (cMeetBio.ptInRect(cPoint)) {        // If so, bring up biography.
+				} else if (cMeetBio.ptInRect(cPoint)) {
+					// If so, bring up biography.
 					sStr = buildSrafDir(g_stSellerNames[nElementIndex]._pszSellerBio);
 					displayTextScreen(sStr);
 				} else if (cMeetMember.ptInRect(cPoint)) {
-					// If so, put a checkmark in that column.
+					// If so, put a check mark in that column.
 
 					// Uncheck any member we already have checked, this is a singular operation
 					nMeetMember = getMeetMember(nListToCheck);
