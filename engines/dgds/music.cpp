@@ -21,6 +21,7 @@
  */
 
 #include "common/debug.h"
+#include "common/config-manager.h"
 #include "audio/midiparser.h"
 
 #include "dgds/sound.h"
@@ -34,34 +35,30 @@ namespace Dgds {
 class MidiParser_DGDS : public MidiParser {
 protected:
 	byte *_init;
-	byte *_last;
+	const byte *_last;
 
 	byte _numParts;
 	const byte *_trackPtr[0xFF];
 	uint16 _trackSz[0xFF];
 
 protected:
-	void parseNextEvent(EventInfo &info);
+	void parseNextEvent(EventInfo &info) override;
 
 public:
 	MidiParser_DGDS();
 	~MidiParser_DGDS();
 
-	void sendInitCommands();
+	void sendInitCommands() {};
 
-	bool loadMusic(byte *data, uint32 size);
+	bool loadMusic(byte *data, uint32 size) override;
 
-	bool validateNextRead(uint i, uint16 *_curPos);
-	byte midiGetNextChannel(uint16 *_curPos, uint32 *_time, long ticker);
+	bool validateNextRead(uint i, const uint16 *trackPos) const;
+	byte midiGetNextChannel(const uint16 *trackPos, const uint32 *trackTimer, long ticker) const;
 	void mixChannels();
 };
 
-MidiParser_DGDS::MidiParser_DGDS() : _init(0), _last(0) {
-	_numParts = 0;
+MidiParser_DGDS::MidiParser_DGDS() : _init(nullptr), _last(nullptr), _numParts(0) {
 	memset(_trackSz, 0, sizeof(_trackSz));
-}
-
-void MidiParser_DGDS::sendInitCommands() {
 }
 
 MidiParser_DGDS::~MidiParser_DGDS() {
@@ -161,12 +158,12 @@ void MidiParser_DGDS::parseNextEvent(EventInfo &info) {
 	}
 }
 
-byte MidiParser_DGDS::midiGetNextChannel(uint16 *trackPos, uint32 *trackTimer, long ticker) {
+byte MidiParser_DGDS::midiGetNextChannel(const uint16 *trackPos, const uint32 *trackTimer, long ticker) const {
 	byte curr = 0xFF;
 	uint32 closest = ticker + 1000000, next = 0;
 
 	for (byte i = 0; i < _numParts; i++) {
-		if (trackTimer[i] ==  0xFFFFFFFF) // channel ended
+		if (trackTimer[i] == 0xFFFFFFFF) // channel ended
 			continue;
 		if (trackPos[i] >= _trackSz[i])
 			continue;
@@ -183,7 +180,7 @@ byte MidiParser_DGDS::midiGetNextChannel(uint16 *trackPos, uint32 *trackTimer, l
 	return curr;
 }
 
-inline bool MidiParser_DGDS::validateNextRead(uint i, uint16 *trackPos) {
+bool MidiParser_DGDS::validateNextRead(uint i, const uint16 *trackPos) const {
 	if (_trackSz[i] <= trackPos[i]) {
 		warning("Unexpected end. Music may sound wrong due to game resource corruption");
 		return false;
@@ -192,7 +189,7 @@ inline bool MidiParser_DGDS::validateNextRead(uint i, uint16 *trackPos) {
 	}
 }
 
-static const byte commandLengths[] = { 2, 2, 2, 2, 1, 1, 2, 0 };
+static const byte CMD_LENGTHS[] = { 2, 2, 2, 2, 1, 1, 2, 0 };
 
 void MidiParser_DGDS::mixChannels() {
 	int totalSize = 0;
@@ -267,7 +264,7 @@ void MidiParser_DGDS::mixChannels() {
 			if (midiCommand != globalPrev)
 				*output++ = midiCommand;
 			*output++ = midiParam;
-			if (commandLengths[(midiCommand >> 4) - 8] == 2) {
+			if (CMD_LENGTHS[(midiCommand >> 4) - 8] == 2) {
 				if (!validateNextRead(channel, trackPos))
 					goto end;
 				*output++ = _trackPtr[channel][trackPos[channel]++];
@@ -285,10 +282,12 @@ end:
 bool MidiParser_DGDS::loadMusic(byte *data, uint32 size) {
 	unloadMusic();
 
-	if (!data) return false;
+	if (!data)
+		return false;
 
 	_numParts = loadSndTrack(TRACK_MT32, _trackPtr, _trackSz, data, size);
-	if (_numParts == 0) return false;
+	if (_numParts == 0)
+		return false;
 
 	for (byte part = 0; part < _numParts; part++) {
 		const byte *ptr = _trackPtr[part];
@@ -315,13 +314,12 @@ bool MidiParser_DGDS::loadMusic(byte *data, uint32 size) {
 	// copy the data to our own buffer. Take warning....
 	resetTracking();
 	setTrack(0);
+
 	return true;
 }
 
-MidiParser_DGDS *createParser_DGDS() { return new MidiParser_DGDS; }
 
-
-DgdsMidiPlayer::DgdsMidiPlayer() {
+DgdsMidiPlayer::DgdsMidiPlayer(bool isSfx) : _isSfx(isSfx), Audio::MidiPlayer() {
 	MidiPlayer::createDriver();
 
 	int ret = _driver->open();
@@ -332,7 +330,14 @@ DgdsMidiPlayer::DgdsMidiPlayer() {
 			_driver->sendGMReset();
 		_driver->setTimerCallback(this, &timerCallback);
 	}
-	debug("MidiPlayer()");
+}
+
+void DgdsMidiPlayer::syncVolumeForChannel() {
+	int volume = ConfMan.getInt(_isSfx ? "sfx_volume": "music_volume");
+	if (ConfMan.getBool("mute")) {
+		volume = -1;
+	}
+	setVolume(volume);
 }
 
 void DgdsMidiPlayer::play(byte *data, uint32 size) {
@@ -341,19 +346,21 @@ void DgdsMidiPlayer::play(byte *data, uint32 size) {
 	stop();
 	if (!data) return;
 
-	MidiParser_DGDS *parser = createParser_DGDS();
+	MidiParser_DGDS *parser = new MidiParser_DGDS();
 	if (parser->loadMusic(data, size)) {
 		parser->setMidiDriver(this);
 		parser->sendInitCommands();
-		parser->setTimerRate(_driver->getBaseTempo());/*
+		parser->setTimerRate(_driver->getBaseTempo());
+		/*
 		parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
-                parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);*/
+		parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
+		*/
 		_parser = parser;
-		syncVolume();
+		syncVolumeForChannel();
 
 		_isLooping = false;
 		_isPlaying = true;
-		debug("Playing music track");
+		debug("Playing music track sz %d", size);
 	} else {
 		debug("Cannot play music track");
 		delete parser;
@@ -361,6 +368,9 @@ void DgdsMidiPlayer::play(byte *data, uint32 size) {
 }
 
 void DgdsMidiPlayer::stop() {
+	_driver->stopAllNotes();
+	_isPlaying = false;
+	_isLooping = false;
 	Audio::MidiPlayer::stop();
 	debug("Stopping track");
 }
