@@ -119,7 +119,8 @@ Room::Room(World *world, ReadStream &stream, bool hasUselessByte)
 		_objects.push_back(readRoomObject(this, stream));
 		objectSize = stream.readUint32LE();
 	}
-	if (!_name.equalsIgnoreCase("Global"))
+	if (!_name.equalsIgnoreCase("Global") &&
+		!_name.equalsIgnoreCase("HABITACION_NEGRA"))
 		_objects.push_back(new Background(this, _name, backgroundScale));
 
 	if (!_floors[0].empty())
@@ -200,7 +201,7 @@ void Room::updateInteraction() {
 	if (updateOpeningInventory())
 		return;
 
-	if (player.activeCharacter()->room() != this) { // TODO: Remove active character hack
+	if (false && player.activeCharacter()->room() != this) { // TODO: Remove active character hack
 		player.activeCharacter()->room() = this;
 	}
 

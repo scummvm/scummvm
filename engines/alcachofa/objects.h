@@ -390,6 +390,7 @@ public:
 	virtual const char *typeName() const;
 
 	Task *sayText(Process &process, int32 dialogId);
+	void resetTalking();
 
 protected:
 	friend struct SayTextTask;
