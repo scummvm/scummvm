@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/str-array.h"
+#include "common/rect.h"
 
 namespace Common {
 	class MemoryReadStream;
@@ -92,6 +93,7 @@ class Macs2Engine;
 			uint32 expectedEndLocation;
 
 			void FuncA3D2();
+			void FuncA37A();
 
 			// void Func101D(uint16 x, uint16 y);
 			
@@ -140,9 +142,8 @@ class Macs2Engine;
 
 			void SetVariableValue(uint16 index, uint16 a, uint16 b);
 
-			// TODO: Expose in a better place and keep in sync
-			uint16 _charPosX = 276;
-			uint16 _charPosY = 140;
+
+			Common::Point GetCharPosition();
 
 			MouseMode _mouseMode = MouseMode::Use;
 
@@ -181,6 +182,11 @@ class Macs2Engine;
 
 			// Mutex indicating if the A3D2 function is active
 			bool isSkipping = false;
+
+			// Resets the script to the beginning
+			// TODO: CHeck where this happens vs. leaving it at the place it is when leaving
+			// the function in the game code
+			void Rewind();
 
 	};
 }	// namespace Script

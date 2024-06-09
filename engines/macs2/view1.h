@@ -30,6 +30,12 @@ namespace Macs2 {
 
 	class GameObject;
 
+	// TODO: Implement the different view modes
+	enum class ViewMode {
+		VM_GAME,
+		VM_MAP
+	};
+
 	class Button {
 
 		public: 
@@ -59,7 +65,8 @@ private:
 
 
 	public:
-	Common::Point Position;
+	Common::Point GetPosition() const;
+		void SetPosition(const Common::Point &newPosition);
 		Macs2::GameObject *GameObject;
 
 	// Set by opcode 11h
@@ -95,7 +102,7 @@ class View1 : public UIElement {
 	// TODO: Clean up private and public
 		public:
 
-	
+	ViewMode currentMode = ViewMode::VM_GAME;
 
 	AnimFrame *GetInventoryIcon(GameObject *gameObject);
 	

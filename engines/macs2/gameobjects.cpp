@@ -59,3 +59,8 @@ Common::MemoryReadStream *Macs2::Scenes::ReadSceneStrings(uint16 sceneIndex, Com
 	return new Common::MemoryReadStream(stringData, size);
 	// Note: We save the current scene number to [0F86h] - maybe "scene we have strings loaded for"?
 }
+
+// TODO: Add all to namespace?
+Macs2::GameObject *Macs2::GameObjects::GetProtagonistObject() {
+	return instance().Objects[0];
+}
