@@ -118,6 +118,8 @@ public:
 	int16 getGameMinsToAddOnDragFinished() const { return _gameMinsToAddOnDragFinished; }
 	int16 getGameMinsToAddOnObjInteraction() const { return _gameMinsToAddOnObjInteraction; }
 
+	void setLastSceneNum(int16 num) { _lastOpcode1SceneChageNum = num; }
+
 private:
 	int16 _lastOpcode1SceneChageNum;
 	int16 _sceneOp12SceneNum;
