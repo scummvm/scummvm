@@ -325,6 +325,7 @@ void Inventory::mouseRUp(const Common::Point &pt) {
 	if (_itemBox->containsPoint(pt)) {
 		GameItem *underMouse = itemUnderMouse(pt);
 		if (underMouse) {
+			setShowZoomBox(true);
 			engine->getScene()->runOps(underMouse->onRClickOps);
 		}
 	} else {
