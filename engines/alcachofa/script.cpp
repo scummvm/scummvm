@@ -451,8 +451,29 @@ private:
 			warning("STUB KERNEL CALL: ChangeCharacter");
 			return TaskReturn::finish(0);
 		case ScriptKernelTask::ChangeRoom:
-			warning("STUB KERNEL CALL: ChangeRoom");
-			return TaskReturn::finish(0);
+			if (strcmpi(getStringArg(0), "SALIR") == 0) {
+				g_engine->quitGame();
+				g_engine->player().changeRoom("SALIR", true);
+			}
+			else if (strcmpi(getStringArg(0), "MENUPRINCIPALINICIO") == 0)
+				warning("STUB: change room to MenuPrincipalInicio special case");
+			else {
+				auto targetRoom = g_engine->world().getRoomByName(getStringArg(0));
+				if (targetRoom == nullptr)
+					error("Invalid room name: %s\n", getStringArg(0));
+				if (process().isActiveForPlayer()) {
+					g_engine->player().heldItem() = nullptr;
+					if (g_engine->player().currentRoom() == &g_engine->world().inventory())
+						g_engine->world().inventory().close();
+					if (targetRoom == &g_engine->world().inventory())
+						g_engine->world().inventory().open();
+					else
+						g_engine->player().changeRoom(targetRoom->name(), true);
+					// TODO: Change music on kernel change room
+				}
+				g_engine->script().createProcess(process().character(), "ENTRAR_" + targetRoom->name(), ScriptFlags::AllowMissing);
+			}
+			return TaskReturn::finish(1);
 		case ScriptKernelTask::ToggleRoomFloor:
 			if (process().character() == MainCharacterKind::None) {
 				if (g_engine->player().currentRoom() != nullptr)
@@ -530,9 +551,17 @@ private:
 			character->setPosition(target->position());
 			return TaskReturn::finish(1);
 		}
-		case ScriptKernelTask::ChangeCharacterRoom:
-			warning("STUB KERNEL CALL: ChangeCharacterRoom");
-			return TaskReturn::finish(0);
+		case ScriptKernelTask::ChangeCharacterRoom: {
+			auto *character = dynamic_cast<Character *>(g_engine->world().globalRoom().getObjectByName(getStringArg(0)));
+			if (character == nullptr)
+				error("Invalid character name: %s", getStringArg(0));
+			auto *targetRoom = g_engine->world().getRoomByName(getStringArg(1));
+			if (targetRoom == nullptr)
+				error("Invalid room name: %s", getStringArg(1));
+			character->resetTalking();
+			character->room() = targetRoom;
+			return TaskReturn::finish(1);
+		}
 		case ScriptKernelTask::LerpCharacterLodBias:
 			warning("STUB KERNEL CALL: LerpCharacterLodBias");
 			return TaskReturn::finish(0);
@@ -594,8 +623,10 @@ private:
 		case ScriptKernelTask::WaitCamStopping:
 			return TaskReturn::waitFor(g_engine->camera().waitToStop(process()));
 		case ScriptKernelTask::CamFollow:
-			warning("STUB KERNEL CALL: CamFollow");
-			return TaskReturn::finish(0);
+			g_engine->camera().setFollow(
+				&g_engine->world().getMainCharacterByKind((MainCharacterKind)getNumberArg(0)),
+				getNumberArg(1) != 0);
+			return TaskReturn::finish(1);
 		case ScriptKernelTask::CamShake:
 			warning("STUB KERNEL CALL: CamShake");
 			return TaskReturn::finish(0);
