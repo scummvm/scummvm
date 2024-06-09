@@ -21,6 +21,7 @@
 
 #include "objects.h"
 #include "rooms.h"
+#include "script.h"
 #include "alcachofa.h"
 
 using namespace Common;
@@ -41,6 +42,24 @@ Item::Item(const Item &other)
 	_posterizeAlpha = other._posterizeAlpha;
 	_graphic.~Graphic();
 	new (&_graphic) Graphic(other._graphic);
+}
+
+void Item::trigger() {
+	auto &player = g_engine->player();
+	auto &heldItem = player.heldItem();
+	if (g_engine->input().wasMouseRightReleased()) {
+		if (heldItem == nullptr)
+			player.triggerObject(this, "MIRAR");
+		else
+			heldItem = nullptr;
+	}
+	else if (heldItem == nullptr)
+		heldItem = this;
+	else if (g_engine->script().hasProcedure(name(), heldItem->name()) ||
+		!g_engine->script().hasProcedure(heldItem->name(), name()))
+		player.triggerObject(this, heldItem->name().c_str());
+	else
+		player.triggerObject(heldItem, name().c_str());
 }
 
 ITriggerableObject::ITriggerableObject(ReadStream &stream)

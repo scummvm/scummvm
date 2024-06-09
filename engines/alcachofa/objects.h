@@ -317,6 +317,7 @@ public:
 	Item(const Item &other);
 
 	virtual const char *typeName() const;
+	void trigger();
 };
 
 class ITriggerableObject {

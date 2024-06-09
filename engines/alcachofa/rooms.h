@@ -49,6 +49,10 @@ public:
 	inline uint8 characterAlphaPremultiplier() const { return _characterAlphaPremultiplier; }
 	inline bool fixedCameraOnEntering() const { return _fixedCameraOnEntering; }
 
+	using ObjectIterator = Common::Array<const ObjectBase *>::const_iterator;
+	inline ObjectIterator beginObjects() const { return _objects.begin(); }
+	inline ObjectIterator endObjects() const { return _objects.end(); }
+
 	void update();
 	virtual bool updateInput();
 	virtual void loadResources();
@@ -56,12 +60,15 @@ public:
 	virtual void serializeSave(Common::Serializer &serializer);
 	ObjectBase *getObjectByName(const Common::String &name) const;
 	void toggleActiveFloor();
+	void startClosingInventory();
 	void debugPrint(bool withObjects) const;
 
 protected:
 	Room(World *world, Common::ReadStream &stream, bool hasUselessByte);
 	void updateScripts();
 	void updateRoomBounds();
+	bool updateOpeningInventory();
+	void updateClosingInventory();
 	void updateInteraction();
 	void updateObjects();
 	void drawObjects();
@@ -71,13 +78,17 @@ protected:
 	World *_world;
 	Common::String _name;
 	PathFindingShape _floors[2];
-	bool _fixedCameraOnEntering;
+	bool
+		_fixedCameraOnEntering,
+		_isOpeningInventory = false,
+		_isClosingInventory = false;
 	int8
 		_musicId,
 		_activeFloorI = -1;
 	uint8
 		_characterAlphaTint,
 		_characterAlphaPremultiplier; ///< for some reason in percent instead of 0-255
+	uint32 _timeForInventory = 0;
 
 	Common::Array<ObjectBase *> _objects;
 };
@@ -106,10 +117,17 @@ public:
 	Inventory(World *world, Common::ReadStream &stream);
 	virtual ~Inventory() override;
 
+	virtual bool updateInput() override;
+
 	void initItems();
 	void updateItemsByActiveCharacter();
+	void drawAsOverlay(int32 scrollY);
+	void open();
+	void close();
 
 private:
+	Item *getHoveredItem();
+
 	Common::Array<Item *> _items;
 };
 
