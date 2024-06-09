@@ -29,10 +29,15 @@ namespace Dgds {
 
 class DgdsMidiPlayer : public Audio::MidiPlayer {
 public:
-	DgdsMidiPlayer();
+	DgdsMidiPlayer(bool isSfx);
 
 	void play(byte *data, uint32 size);
 	void stop();
+
+private:
+	/** like MidiPlyer::syncVolume, syncs sfx/music volume depending on isSfx */
+	void syncVolumeForChannel();
+	bool _isSfx;
 };
 
 } // End of namespace Dgds

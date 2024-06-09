@@ -62,7 +62,7 @@ public:
 
 private:
 	void loadPCSound(const Common::String &filename, Common::Array<uint32> &sizeArray, Common::Array<byte *> &dataArray);
-	void playPCSound(uint num, const Common::Array<uint32> &sizeArray, const Common::Array<byte *> &dataArray);
+	void playPCSound(uint num, const Common::Array<uint32> &sizeArray, const Common::Array<byte *> &dataArray, DgdsMidiPlayer *midiPlayer);
 
 	struct Channel _channels[2];
 	Common::SeekableReadStream *_soundData = nullptr;
@@ -74,7 +74,8 @@ private:
 	Common::Array<byte *> _sfxData;
 
 	Audio::Mixer *_mixer;
-	DgdsMidiPlayer *_midiPlayer;
+	DgdsMidiPlayer *_midiMusicPlayer;
+	DgdsMidiPlayer *_midiSoundPlayer;
 	ResourceManager *_resource;
 	Decompressor *_decompressor;
 };
@@ -86,7 +87,6 @@ enum {
   TRACK_MT32    = 1 << 3
 };
 
-uint32 availableSndTracks(const byte *data, uint32 size);
 byte loadSndTrack(uint32 track, const byte** trackPtr, uint16* trackSiz, const byte *data, uint32 size);
 
 } // End of namespace Dgds
