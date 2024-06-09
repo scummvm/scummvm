@@ -194,7 +194,7 @@ void ActorAnimProcess::run() {
 	if (_repeatCounter == 0) {
 		// next step:
 		Point3 pt = a->getLocation();
-		resultVal = _tracker->stepFrom(pt.x, pt.y, pt.z);
+		resultVal = _tracker->stepFrom(pt);
 		_tracker->updateActorFlags();
 		_currentStep++;
 
@@ -288,14 +288,14 @@ void ActorAnimProcess::run() {
 		}
 	}
 
-	int32 x2, y2, z2;
 	Point3 pt = a->getLocation();
+	Point3 pt2;
 
 	if (_interpolate) {
 		// Apply interpolated position on repeated frames
-		_tracker->getInterpolatedPosition(x2, y2, z2, _repeatCounter);
-		if (pt.x == x2 && pt.y == y2 && pt.z == z2) {
-			_tracker->getInterpolatedPosition(pt.x, pt.y, pt.z, _repeatCounter + 1);
+		pt2 = _tracker->getInterpolatedPosition(_repeatCounter);
+		if (pt == pt2) {
+			pt = _tracker->getInterpolatedPosition(_repeatCounter + 1);
 			a->collideMove(pt.x, pt.y, pt.z, false, true); // forced move
 			a->setFrame(_tracker->getFrame());
 #ifdef WATCHACTOR
@@ -309,13 +309,11 @@ void ActorAnimProcess::run() {
 	} else {
 		// Just move the whole distance on frame 0 of the repeat.
 		if (_repeatCounter == 0) {
-			_tracker->getPosition(x2, y2, z2);
-			a->collideMove(x2, y2, z2, false, true); // forced move
+			pt2 = _tracker->getPosition();
+			a->collideMove(pt2.x, pt2.y, pt2.z, false, true); // forced move
 			a->setFrame(_tracker->getFrame());
 		} else {
-			x2 = pt.x;
-			y2 = pt.y;
-			z2 = pt.z;
+			pt2 = pt;
 		}
 	}
 
@@ -343,7 +341,7 @@ void ActorAnimProcess::run() {
 			info += "H";
 
 		debugC(kDebugActor, "Animation [%u] ActorAnimProcess showing frame (%d, %d, %d)-(%d, %d, %d) shp (%u, %u) sfx %d rep %d flg %04X %s",
-			  Kernel::get_instance()->getFrameNum(), pt.x, pt.y, pt.z, x2, y2, z2,
+			  Kernel::get_instance()->getFrameNum(), pt.x, pt.y, pt.z, pt2.x, pt2.y, pt2.z,
 			  a->getShape(), _tracker->getFrame(), _tracker->getAnimFrame()->_sfx,
 			  _repeatCounter, _tracker->getAnimFrame()->_flags, info.c_str());
 	}
@@ -464,7 +462,7 @@ void ActorAnimProcess::doSpecial() {
 		a->getFootpadWorld(xd, yd, zd);
 		Box start(pt.x, pt.y, pt.z, xd, yd, zd);
 
-		_tracker->getPosition(pt.x, pt.y, pt.z);
+		pt = _tracker->getPosition();
 		Box target(pt.x, pt.y, pt.z, xd, yd, zd);
 
 		CurrentMap *cm = World::get_instance()->getCurrentMap();

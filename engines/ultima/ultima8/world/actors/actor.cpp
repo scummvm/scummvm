@@ -632,8 +632,8 @@ Animation::Result Actor::tryAnim(Animation::Sequence anim, Direction dir,
 
 	// isUnsupported only checks for AFF_ONGROUND, we need either
 	Box start = getWorldBox();
-	Box target = start;
-	tracker.getPosition(target._x, target._y, target._z);
+	Point3 pt = tracker.getPosition();
+	Box target(pt.x, pt.y, pt.z, start._xd, start._yd, start._zd);
 
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
 	PositionInfo info = cm->getPositionInfo(target, start, getShapeInfo()->_flags, _objId);

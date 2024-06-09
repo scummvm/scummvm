@@ -126,10 +126,8 @@ unsigned int AnimationTracker::getNextFrame(unsigned int frame) const {
 	return frame;
 }
 
-bool AnimationTracker::stepFrom(int32 x, int32 y, int32 z) {
-	_curr.x = x;
-	_curr.y = y;
-	_curr.z = z;
+bool AnimationTracker::stepFrom(const Point3 &pt) {
+	_curr = pt;
 
 	return step();
 }
@@ -402,7 +400,7 @@ const AnimFrame *AnimationTracker::getAnimFrame() const {
 	return &_animAction->getFrame(_dir, _currentFrame);
 }
 
-void AnimationTracker::setTargetedMode(int32 x, int32 y, int32 z) {
+void AnimationTracker::setTargetedMode(const Point3 &pt) {
 	unsigned int i;
 	int totaldir = 0;
 	int totalz = 0;
@@ -424,9 +422,9 @@ void AnimationTracker::setTargetedMode(int32 x, int32 y, int32 z) {
 	if (offGround) {
 		_mode = TargetMode;
 		_targetOffGroundLeft = offGround;
-		_targetDx = x - _curr.x - end_dx;
-		_targetDy = y - _curr.y - end_dy;
-		_targetDz = z - _curr.z - end_dz;
+		_targetDx = pt.x - _curr.x - end_dx;
+		_targetDy = pt.y - _curr.y - end_dy;
+		_targetDz = pt.z - _curr.z - end_dz;
 
 		// Don't allow large changes in Z
 		if (_targetDz > 16)
@@ -526,17 +524,16 @@ void AnimationTracker::updateActorFlags() {
 		a->_animFrame = _currentFrame;
 }
 
-void AnimationTracker::getInterpolatedPosition(int32 &x, int32 &y,
-											   int32 &z, int fc) const {
+Point3 AnimationTracker::getInterpolatedPosition(int fc) const {
 	int32 dx = _curr.x - _prev.x;
 	int32 dy = _curr.y - _prev.y;
 	int32 dz = _curr.z - _prev.z;
 
 	int repeat = _animAction->getFrameRepeat();
 
-	x = _prev.x + (dx * fc) / (repeat + 1);
-	y = _prev.y + (dy * fc) / (repeat + 1);
-	z = _prev.z + (dz * fc) / (repeat + 1);
+	return Point3(_prev.x + (dx * fc) / (repeat + 1),
+				  _prev.y + (dy * fc) / (repeat + 1),
+				  _prev.z + (dz * fc) / (repeat + 1));
 }
 
 void AnimationTracker::getSpeed(int32 &dx, int32 &dy, int32 &dz) const {

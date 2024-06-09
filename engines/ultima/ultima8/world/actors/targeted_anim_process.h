@@ -35,7 +35,7 @@ public:
 	TargetedAnimProcess();
 	//! note: this probably needs some more parameters
 	TargetedAnimProcess(Actor *actor, Animation::Sequence action, Direction dir,
-	                    const Point3 &coords);
+	                    const Point3 &pt);
 
 	ENABLE_RUNTIME_CLASSTYPE()
 
@@ -45,7 +45,7 @@ public:
 protected:
 	bool init() override;
 
-	int32 _x, _y, _z;
+	Point3 _pt;
 };
 
 } // End of namespace Ultima8

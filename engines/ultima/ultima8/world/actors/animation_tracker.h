@@ -53,10 +53,10 @@ public:
 	//! caller must decide if animation should continue after a 'false'
 	bool step();
 
-	//! do a single step of the animation, starting at (x,y,z)
+	//! do a single step of the animation, starting at the point
 	//! returns true if everything ok, false if not
 	//! caller must decide if animation should continue after a 'false'
-	bool stepFrom(int32 x, int32 y, int32 z);
+	bool stepFrom(const Point3 &pt);
 
 	//! update the PathfindingState with latest coordinates and flags
 	void updateState(PathfindingState &state);
@@ -65,14 +65,11 @@ public:
 	void updateActorFlags();
 
 	//! get the current position
-	void getPosition(int32 &x, int32 &y, int32 &z) const {
-		x = _curr.x;
-		y = _curr.y;
-		z = _curr.z;
+	Point3 getPosition() const {
+		return _curr;
 	}
 
-	void getInterpolatedPosition(int32 &x, int32 &y, int32 &z, int fc)
-			const;
+	Point3 getInterpolatedPosition(int fc) const;
 
 	//! get the difference between current position and previous position
 	void getSpeed(int32 &dx, int32 &dy, int32 &dz) const;
@@ -90,7 +87,7 @@ public:
 	//! get the current AnimFrame
 	const AnimFrame *getAnimFrame() const;
 
-	void setTargetedMode(int32 x, int32 y, int32 z);
+	void setTargetedMode(const Point3 &pt);
 
 	bool isDone() const {
 		return _done;

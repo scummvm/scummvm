@@ -29,19 +29,19 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(TargetedAnimProcess)
 
 TargetedAnimProcess::TargetedAnimProcess() : ActorAnimProcess(),
-		_x(0), _y(0), _z(0) {
+		_pt() {
 }
 
-TargetedAnimProcess::TargetedAnimProcess(Actor *actor, Animation::Sequence action, Direction dir, const Point3 &coords) :
+TargetedAnimProcess::TargetedAnimProcess(Actor *actor, Animation::Sequence action, Direction dir, const Point3 &pt) :
 	ActorAnimProcess(actor, action, dir),
-	_x(coords.x), _y(coords.y), _z(coords.z) {
+	_pt(pt) {
 }
 
 bool TargetedAnimProcess::init() {
 	if (!ActorAnimProcess::init())
 		return false;
 
-	_tracker->setTargetedMode(_x, _y, _z);
+	_tracker->setTargetedMode(_pt);
 	return true;
 }
 
@@ -49,18 +49,17 @@ bool TargetedAnimProcess::init() {
 void TargetedAnimProcess::saveData(Common::WriteStream *ws) {
 	ActorAnimProcess::saveData(ws);
 
-	ws->writeUint32LE(static_cast<uint32>(_x));
-	ws->writeUint32LE(static_cast<uint32>(_y));
-	ws->writeUint32LE(static_cast<uint32>(_z));
-
+	ws->writeUint32LE(static_cast<uint32>(_pt.x));
+	ws->writeUint32LE(static_cast<uint32>(_pt.y));
+	ws->writeUint32LE(static_cast<uint32>(_pt.z));
 }
 
 bool TargetedAnimProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	if (!ActorAnimProcess::loadData(rs, version)) return false;
 
-	_x = rs->readUint32LE();
-	_y = rs->readUint32LE();
-	_z = rs->readUint32LE();
+	_pt.x = rs->readUint32LE();
+	_pt.y = rs->readUint32LE();
+	_pt.z = rs->readUint32LE();
 
 	return true;
 }
