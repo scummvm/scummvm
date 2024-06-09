@@ -66,9 +66,10 @@ Common::Error AlcachofaEngine::run() {
 	_script.reset(new Script());
 	_player.reset(new Player());
 
-	_script->createProcess(MainCharacterKind::None, "Inicializar_Variables");
-
-	_player->changeRoom("MINA", true);
+	//_script->createProcess(MainCharacterKind::None, "Inicializar_Variables");
+	//_player->changeRoom("MINA", true);
+	_script->createProcess(MainCharacterKind::None, "CREDITOS_INICIALES");
+	_scheduler.run();
 
 	Common::Event e;
 	Graphics::FrameLimiter limiter(g_system, 120);

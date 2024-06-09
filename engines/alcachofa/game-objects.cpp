@@ -329,6 +329,12 @@ Task *Character::sayText(Process &process, int32 dialogId) {
 	return new SayTextTask(process, this, dialogId);
 }
 
+void Character::resetTalking() {
+	_isTalking = false;
+	_curDialogId = -1;
+	_curTalkingObject = nullptr;
+}
+
 const char *WalkingCharacter::typeName() const { return "WalkingCharacter"; }
 
 WalkingCharacter::WalkingCharacter(Room *room, ReadStream &stream)
