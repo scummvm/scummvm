@@ -22,8 +22,10 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "image/bmp.h"
+#include "common/events.h"
 #include "common/formats/winexe.h"
 #include "common/formats/winexe_pe.h"
+#include "graphics/paletteman.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/util/splash_screen.h"
 #include "qdengine/qdengine.h"
@@ -45,10 +47,26 @@ bool SplashScreen::create(int bitmapResID) {
     if (r.loadFromEXE("shveik.exe")) {
         Common::SeekableReadStream *stream = r.getResource(Common::kWinBitmap, resid);
         if (decoder.loadStream(*stream)) {
-            splash_hwnd_->copyRectToSurface(decoder.getSurface(), 24,  0, 0, decoder.getSurface()->w, decoder.getSurface()->h);
-            g_engine->_screen->updateScreen();
+			const Graphics::Surface *surf = decoder.getSurface();
+			g_system->fillScreen(0);
+			g_system->getPaletteManager()->setPalette(decoder.getPalette(), 0, decoder.getPaletteColorCount());
+
+			int x = (640 - surf->w) / 2;
+			int y = (480 - surf->h) / 2;
+            g_system->copyRectToScreen(surf->getPixels(), surf->pitch, x, y, surf->w, surf->h);
         }
     }
+
+#if 1
+	// Remove this code after further implementation
+	Common::Event event;
+	while (!g_engine->shouldQuit()) {
+		g_system->getEventManager()->pollEvent(event);
+
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
+#endif
 	return true;
 }
 
