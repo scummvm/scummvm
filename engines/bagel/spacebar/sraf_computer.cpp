@@ -667,15 +667,10 @@ bool SrafComputer::verifyDispatchTeam() {
 	}
 
 	// Make sure at least one staff member is sent on this mission
-	int nMaleMembers = 0, nFemaleMembers = 0;
 	if (bValidTeam) {
 		for (int i = 0; i < NUM_STAFFERS; i++) {
 			if (g_staffers[i]._bOnCurrentTeam) {
 				nTeam |= (1 << (i + 3));
-				if (g_staffers[i]._nFlags & mStafferMale)
-					nMaleMembers++;
-				else
-					nFemaleMembers++;
 			}
 		}
 
@@ -742,15 +737,6 @@ bool SrafComputer::verifyDispatchTeam() {
 
 		pTeamItem->_nDispatchTime = pVar->getNumValue();
 		pTeamItem->_nMeetingTime = calculateMeetingTime(pTeamItem->_nFlags);
-
-		// The spokesperson will be the majority of the sexes
-		// If same number of each, then randomize it.
-
-		if (nMaleMembers == nFemaleMembers) {
-			// Get a random number to decide the spokesperson of even team
-			int nRand = pTeamItem->_nDispatchTime;
-			nMaleMembers += (nRand & 1 ? 1 : -1);
-		}
 
 		// Pick a team captain, must be same sex as the announcer.
 		pTeamItem->_nTeamCaptain = getTeamCaptain(pTeamItem->_nFlags);
@@ -4273,7 +4259,7 @@ void SrafComputer::onButtonCodeWords(CBofButton *pButton, int nState) {
 }
 
 void SrafComputer::onButtonFinished(bool bVictorious) {
-	CBagVar *pVar = nullptr;
+	CBagVar *pVar;
 
 	// Make sure the user selected two code words.
 	if (bVictorious == true) {
