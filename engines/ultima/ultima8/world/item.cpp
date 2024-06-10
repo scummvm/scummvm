@@ -3170,8 +3170,11 @@ uint32 Item::I_legalCreateAtPoint(const uint8 *args, unsigned int /*argsize*/) {
 
 	World_FromUsecodeXY(x, y);
 
-	// check if item can exist
+	Point3 pt(x, y, z);
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
+	cm->setFastAtPoint(pt);
+
+	// check if item can exist
 	PositionInfo info = cm->getPositionInfo(x, y, z, shape, 0);
 	if (!info.valid)
 		return 0;
@@ -3202,8 +3205,11 @@ uint32 Item::I_legalCreateAtCoords(const uint8 *args, unsigned int /*argsize*/) 
 
 	World_FromUsecodeXY(x, y);
 
-	// check if item can exist
+	Point3 pt(x, y, z);
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
+	cm->setFastAtPoint(pt);
+
+	// check if item can exist
 	PositionInfo info = cm->getPositionInfo(x, y, z, shape, 0);
 	if (!info.valid)
 		return 0;

@@ -181,6 +181,8 @@ public:
 		return (_fast[cy][cx / 32] & (1 << (cx & 31))) != 0;
 	}
 
+	void setFastAtPoint(const Point3 &pt);
+
 	// Set the entire map as being 'fast'
 	void setWholeMapFast();
 

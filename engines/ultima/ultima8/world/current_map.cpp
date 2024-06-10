@@ -1215,6 +1215,14 @@ bool CurrentMap::sweepTest(const Point3 &start, const Point3 &end,
 	return hit && hit->size();
 }
 
+void CurrentMap::setFastAtPoint(const Point3 &pt) {
+	int32 cx = pt.x / _mapChunkSize;
+	int32 cy = pt.y / _mapChunkSize;
+
+	if (!isChunkFast(cx, cy))
+		setChunkFast(cx, cy);
+}
+
 void CurrentMap::setWholeMapFast() {
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; ++i) {
 		for (unsigned int j = 0; j < MAP_NUM_CHUNKS; ++j) {
