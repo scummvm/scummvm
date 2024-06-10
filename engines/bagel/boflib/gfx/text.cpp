@@ -341,6 +341,9 @@ ErrorCode CBofText::displayTextEx(CBofBitmap *pBmp, const char *pszText, CBofRec
 		// Align left
 		_bMultiLine = true;
 		break;
+
+	default:
+		break;
 	}
 
 	// text starts relative to area for painting

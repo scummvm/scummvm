@@ -271,8 +271,6 @@ ErrorCode CBofScrollBar::paint(CBofRect *pDirtyRect) {
 	assert(isValidObject(this));
 
 	if (!errorOccurred()) {
-		CBofRect cRect(0, 0, _cRect.width() - 1, _cRect.height() - 1);
-		CBofPoint cPoint(0, 0);
 		CBofPalette *pPalette = CBofApp::getApp()->getPalette();
 
 		//
@@ -286,20 +284,20 @@ ErrorCode CBofScrollBar::paint(CBofRect *pDirtyRect) {
 			_pBackdrop->paint(pBmp, 0, 0, nullptr, COLOR_WHITE);
 
 			if ((_nScrollState == 1) && (_pLeftBtnDn != nullptr)) {
-				cPoint = _cLeftBtnRect.topLeft();
+				CBofPoint cPoint = _cLeftBtnRect.topLeft();
 				_pLeftBtnDn->paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
 
 			} else if (_pLeftBtnUp != nullptr) {
-				cPoint = _cLeftBtnRect.topLeft();
+				CBofPoint cPoint = _cLeftBtnRect.topLeft();
 				_pLeftBtnUp->paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
 			}
 
 			if ((_nScrollState == 4) && (_pRightBtnDn != nullptr)) {
-				cPoint = _cRightBtnRect.topLeft();
+				CBofPoint cPoint = _cRightBtnRect.topLeft();
 				_pRightBtnDn->paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
 
 			} else if (_pRightBtnUp != nullptr) {
-				cPoint = _cRightBtnRect.topLeft();
+				CBofPoint cPoint = _cRightBtnRect.topLeft();
 				_pRightBtnUp->paint(pBmp, cPoint.x, cPoint.y, nullptr, COLOR_WHITE);
 			}
 
