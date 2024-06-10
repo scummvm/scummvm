@@ -81,7 +81,7 @@ public:
 	Item *findBestTargetItem(int32 x, int32 y, int32 z, Direction dir, DirectionMode dirmode);
 
 	//! Update the fast area for the cameras position
-	void updateFastArea(int32 from_x, int32 from_y, int32 from_z, int32 to_x, int32 to_y, int32 to_z);
+	void updateFastArea(const Point3 &from, const Point3 &to);
 
 	//! search an area for items matching a loopscript
 	//! \param itemlist the list to return objids in

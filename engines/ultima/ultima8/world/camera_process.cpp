@@ -194,7 +194,7 @@ void CameraProcess::itemMoved() {
 		_s.y = _e.y = pt.y;
 		_e.z = pt.z;
 		_s.z = _e.z += 20;
-		World::get_instance()->getCurrentMap()->updateFastArea(_s.x, _s.y, _s.z, _e.x, _e.y, _e.z);
+		World::get_instance()->getCurrentMap()->updateFastArea(_s, _e);
 	}
 }
 
@@ -226,7 +226,7 @@ Point3 CameraProcess::GetLerped(int32 factor, bool noupdate) {
 					}
 				}
 				// Update the fast area
-				World::get_instance()->getCurrentMap()->updateFastArea(_s.x, _s.y, _s.z, _e.x, _e.y, _e.z);
+				World::get_instance()->getCurrentMap()->updateFastArea(_s, _e);
 			}
 		}
 
@@ -248,21 +248,24 @@ Point3 CameraProcess::GetLerped(int32 factor, bool noupdate) {
 		if (sfactor > _time) sfactor = _time;
 		if (efactor > _time) efactor = _time;
 
-		int32 lsx = ((_s.x * (_time - sfactor) + _e.x * sfactor) / _time);
-		int32 lsy = ((_s.y * (_time - sfactor) + _e.y * sfactor) / _time);
-		int32 lsz = ((_s.z * (_time - sfactor) + _e.z * sfactor) / _time);
+		Point3 ls;
+		ls.x = ((_s.x * (_time - sfactor) + _e.x * sfactor) / _time);
+		ls.y = ((_s.y * (_time - sfactor) + _e.y * sfactor) / _time);
+		ls.z = ((_s.z * (_time - sfactor) + _e.z * sfactor) / _time);
 
-		int32 lex = ((_s.x * (_time - efactor) + _e.x * efactor) / _time);
-		int32 ley = ((_s.y * (_time - efactor) + _e.y * efactor) / _time);
-		int32 lez = ((_s.z * (_time - efactor) + _e.z * efactor) / _time);
+		Point3 le;
+		le.x = ((_s.x * (_time - efactor) + _e.x * efactor) / _time);
+		le.y = ((_s.y * (_time - efactor) + _e.y * efactor) / _time);
+		le.z = ((_s.z * (_time - efactor) + _e.z * efactor) / _time);
 
 		// Update the fast area
-		if (!noupdate) World::get_instance()->getCurrentMap()->updateFastArea(lsx, lsy, lsz, lex, ley, lez);
+		if (!noupdate)
+			World::get_instance()->getCurrentMap()->updateFastArea(ls, le);
 
 		// This way while possibly slower is more accurate
-		pt.x = ((lsx * (256 - factor) + lex * factor) >> 8);
-		pt.y = ((lsy * (256 - factor) + ley * factor) >> 8);
-		pt.z = ((lsz * (256 - factor) + lez * factor) >> 8);
+		pt.x = ((ls.x * (256 - factor) + le.x * factor) >> 8);
+		pt.y = ((ls.y * (256 - factor) + le.y * factor) >> 8);
+		pt.z = ((ls.z * (256 - factor) + le.z * factor) >> 8);
 	}
 
 	if (_earthquake) {

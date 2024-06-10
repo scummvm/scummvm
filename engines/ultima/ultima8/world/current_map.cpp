@@ -449,15 +449,15 @@ static inline void CalcFastAreaLimits(int32 &sx_limit,
 	xy_limit = (sy_limit + sx_limit) / 2;
 }
 
-void CurrentMap::updateFastArea(int32 from_x, int32 from_y, int32 from_z, int32 to_x, int32 to_y, int32 to_z) {
-	int x_min = MIN(from_x, to_x);
-	int x_max = MAX(from_x, to_x);
+void CurrentMap::updateFastArea(const Point3 &from, const Point3 &to) {
+	int x_min = MIN(from.x, to.x);
+	int x_max = MAX(from.x, to.x);
 
-	int y_min = MIN(from_y, to_y);
-	int y_max = MAX(from_y, to_y);
+	int y_min = MIN(from.y, to.y);
+	int y_max = MAX(from.y, to.y);
 
-	int z_min = MIN(from_z, to_z);
-	int z_max = MAX(from_z, to_z);
+	int z_min = MIN(from.z, to.z);
+	int z_max = MAX(from.z, to.z);
 
 	// Work out Fine (screenspace) Limits of chunks with half chunk border
 	Rect dims;
