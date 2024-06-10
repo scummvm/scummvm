@@ -22,13 +22,15 @@
 #ifndef __SPLASH_SCREEN_H__
 #define __SPLASH_SCREEN_H__
 
-#include "graphics/surface.h"
+namespace Graphics {
+struct Surface;
+}
 
 namespace QDEngine {
 
 class SplashScreen {
 public:
-	SplashScreen() : splash_hwnd_(NULL), bitmap_handle_(NULL), start_time_(0) { }
+	SplashScreen() : start_time_(0) { }
 	~SplashScreen() {
 		destroy();
 	}
@@ -48,13 +50,13 @@ public:
 
 private:
 
-	int start_time_;
+	int start_time_ = 0;
 
-	Graphics::Surface *splash_hwnd_;
-	void *bitmap_handle_;
+	Graphics::Surface *_splash = nullptr;
+	byte *_palette = nullptr;
+	int _paletteCount = 0;
 
 	bool create_window();
-	void apply_mask(void *mask_handle);
 };
 
 } // namespace QDEngine
