@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-01 10:44+0000\n"
-"PO-Revision-Date: 2024-05-02 04:42+0000\n"
+"PO-Revision-Date: 2024-06-10 22:43+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -3173,10 +3173,8 @@ msgid "ScummVM"
 msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
-#, fuzzy
-#| msgid "ScummVM"
 msgid "ScummVM (debug)"
-msgstr "ScummVM"
+msgstr "ScummVM (debug)"
 
 #: dists/android.strings.xml.cpp:32
 msgid "Graphic adventure game engine"
@@ -3195,17 +3193,12 @@ msgid "Quit"
 msgstr "Sair"
 
 #: dists/android.strings.xml.cpp:35
-#, fuzzy
-#| msgid "Config File Error"
 msgid "Log File Error"
-msgstr "Erro no Arquivo de Configuração"
+msgstr "Erro no Arquivo de Registro"
 
 #: dists/android.strings.xml.cpp:36
-#, fuzzy
-#| msgid "Unable to read ScummVM config file or create a new one!"
 msgid "Unable to read ScummVM log file or create a new one!"
-msgstr ""
-"Não foi possível ler o arquivo de configuração do ScummVM ou criar um novo!"
+msgstr "Não foi possível ler o arquivo de registro do ScummVM ou criar um novo!"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Config File Error"
@@ -3289,44 +3282,36 @@ msgstr ""
 "revogadas!"
 
 #: dists/android.strings.xml.cpp:55
-#, fuzzy
-#| msgid "the video mode could not be changed"
 msgid "Configuration file could not be parsed"
-msgstr "o modo de vídeo não pôde ser alterado"
+msgstr "O arquivo de configuração não pôde ser analisado"
 
 #: dists/android.strings.xml.cpp:56
-#, fuzzy
-#| msgid "In 2D games"
 msgid "Run a game"
-msgstr "Em jogos 2D"
+msgstr "Executar um jogo"
 
 #: dists/android.strings.xml.cpp:57
-#, fuzzy
-#| msgid "Search in game list"
 msgid "Search a game"
-msgstr "Pesquisar na lista de jogos"
+msgstr "Pesquisar por um jogo"
 
 #: dists/android.strings.xml.cpp:58
 msgid ""
 "No games (yet)\n"
 "Open ScummVM and add your games here."
 msgstr ""
+"Não há jogos (ainda)\n"
+"Abra o ScummVM e adicione seus jogos aqui."
 
 #: dists/android.strings.xml.cpp:59
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game icon"
-msgstr "Opções de Jogo"
+msgstr "Ícone do jogo"
 
 #: dists/android.strings.xml.cpp:60
-#, fuzzy
-#| msgid "Show object labels"
 msgid "Shortcut label"
-msgstr "Exibir etiquetas dos objetos"
+msgstr "Etiqueta de atalho"
 
 #: dists/android.strings.xml.cpp:61
 msgid "Shortcut icon"
-msgstr ""
+msgstr "Ícone do atalho"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:32
@@ -5479,87 +5464,67 @@ msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:46
 msgid "LIBRETRO PLAYLIST GENERATOR"
-msgstr ""
+msgstr "GERADOR DE PLAYLIST DO LIBRETRO"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:47
 msgid "(check '? > Libretro playlist' for detailed info)"
-msgstr ""
+msgstr "(verifique '? > Playlist do Libretro' para mais informações)"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:48
-#, fuzzy
-#| msgid "Plugins Path:"
 msgid "Playlists Path"
-msgstr "Caminho dos Plugins:"
+msgstr "Caminho das Playlists"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:49
-#, fuzzy
-#| msgid "Specifies where your saved games are put"
 msgid "Specifies where your playlist will be saved."
-msgstr "Especifica onde guardar seus jogos salvos"
+msgstr "Especifica onde sua playlist será salva."
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:52
-#, fuzzy
-#| msgid "Platform:"
 msgid "Playlist format:"
-msgstr "Plataforma:"
+msgstr "Formato da playlist:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:57
-#, fuzzy
-#| msgid "Goto location"
 msgid "Hooks location:"
-msgstr "Ir para local"
+msgstr "Local de links:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:59
-#, fuzzy
-#| msgid "Add a new folder"
 msgid "All in save folder"
-msgstr "Adicionar nova pasta"
+msgstr "Tudo na pasta de save"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:60
 msgid "One in each game folder"
-msgstr ""
+msgstr "Um em cada pasta de jogo"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:62
 msgid "Clear existing hooks"
-msgstr ""
+msgstr "Limpar links existentes"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:64
 msgid "Generate playlist"
-msgstr ""
+msgstr "Gerar playlist"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:66
-#, fuzzy
-#| msgid "Status:"
 msgid "Status: "
-msgstr "Status:"
+msgstr "Status: "
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:148
-#, fuzzy
-#| msgid "Failed to save game to file."
 msgid "Failed, can't access playlist file"
-msgstr "Falha ao salvar jogo em arquivo."
+msgstr "Falha ao acessar arquivo de playlist"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:224
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "cleaning failed"
-msgstr "Falha na leitura dos dados"
+msgstr "falha na limpeza"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:226
-#, fuzzy
-#| msgid "Failed to read the file!"
 msgid "Failed, can't create hook files"
-msgstr "Falha ao ler o arquivo!"
+msgstr "Falha ao criar arquivos de link"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:236
-#, fuzzy
-#| msgid "Select additional game directory"
 msgid "Select Playlist directory"
-msgstr "Selecione diretório adicional do jogo"
+msgstr "Selecionar diretório da Playlist"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:172
 msgid "Libretro playlist"
-msgstr ""
+msgstr "Playlist do Libretro"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:175
 msgid ""
@@ -5576,6 +5541,20 @@ msgid ""
 "\n"
 "The core also supports dedicated per game **hook** plain text files with **."
 msgstr ""
+"## Playlists do Libretro para o núcleo ScummVM\n"
+"As listas de reprodução usadas nos frontends do Libretro (por exemplo, "
+"Retroarch) são listas de texto simples usadas para iniciar diretamente um "
+"jogo com um núcleo específico a partir da interface do usuário. Essas listas "
+"são estruturadas para passar ao núcleo o caminho de um arquivo de conteúdo "
+"específico a ser carregado (por exemplo, ROM).\n"
+"\n"
+"O núcleo do ScummVM pode aceitar como conteúdo o caminho para qualquer um "
+"dos arquivos dentro de uma pasta de jogo válida, o sistema de detecção "
+"tentará detectar automaticamente o jogo a partir da pasta pai do arquivo de "
+"conteúdo e executar o jogo com as opções padrão do ScummVM.\n"
+"\n"
+"O núcleo também é compatível com arquivos de texto simples **hook** "
+"dedicados para jogo com **."
 
 #: backends/platform/maemo/maemo.cpp:157
 msgid "Click Mode"
@@ -5733,64 +5712,44 @@ msgid "BSD License"
 msgstr "Licença BSD"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:329
-#, fuzzy
-#| msgid "GPL License"
 msgid "Apache License"
-msgstr "Licença GPL"
+msgstr "Licença Apache"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:330
-#, fuzzy
-#| msgid "BSD License"
 msgid "BSL License"
-msgstr "Licença BSD"
+msgstr "Licença BSL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:331
-#, fuzzy
-#| msgid "GPL License"
 msgid "GLAD License"
-msgstr "Licença GPL"
+msgstr "Licença GLAD"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:332
-#, fuzzy
-#| msgid "BSD License"
 msgid "ISC License"
-msgstr "Licença BSD"
+msgstr "Licença ISC"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:333
-#, fuzzy
-#| msgid "GPL License"
 msgid "Lua License"
-msgstr "Licença GPL"
+msgstr "Licença Lua"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:334
-#, fuzzy
-#| msgid "GPL License"
 msgid "MIT License"
-msgstr "Licença GPL"
+msgstr "Licença MIT"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:335
-#, fuzzy
-#| msgid "GPL License"
 msgid "MKV License"
-msgstr "Licença GPL"
+msgstr "Licença MKV"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:336
-#, fuzzy
-#| msgid "GPL License"
 msgid "MPL License"
-msgstr "Licença GPL"
+msgstr "Licença MPL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:337
-#, fuzzy
-#| msgid "GPL License"
 msgid "TinyGL License"
-msgstr "Licença GPL"
+msgstr "Licença TinyGL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:338
-#, fuzzy
-#| msgid "Freefont License"
 msgid "Catharon License"
-msgstr "Licença Freefont"
+msgstr "Licença Catharon"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:79
@@ -6421,6 +6380,11 @@ msgid ""
 "or\n"
 "2. Any .sav file inside the QfG2 Remake game directory"
 msgstr ""
+"O jogo agora listará personagens exportados dos jogos Sierra que podem ser "
+"importados:\n"
+"1. Salve os arquivos chamados qfg1*.sav ou qfg1vga*.sav dentro do diretório "
+"de salvamento do ScummVM, ou\n"
+"2. Qualquer arquivo .sav dentro do diretório do jogo QfG2 Remake"
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
@@ -6470,17 +6434,15 @@ msgstr "Carregar mesmo assim"
 
 #: engines/bagel/metaengine.cpp:41
 msgid "Wait"
-msgstr ""
+msgstr "Aguarde"
 
 #: engines/bagel/metaengine.cpp:42
 msgid "Soldier 714 Eye Cheat"
-msgstr ""
+msgstr "Trapaça de Olho do Soldado 714"
 
 #: engines/bagel/metaengine.cpp:83
-#, fuzzy
-#| msgid "General"
 msgid "General Keys"
-msgstr "Geral"
+msgstr "Teclas Gerais"
 
 #: engines/bladerunner/bladerunner.cpp:404
 msgid "Failed to initialize resources"
@@ -7276,17 +7238,15 @@ msgstr "Menu de Informação"
 
 #: engines/freescape/games/dark/dark.cpp:166
 msgid "Enable/Disable Jetpack"
-msgstr ""
+msgstr "Habilitar/Desabilitar Jato Propulsor"
 
 #: engines/freescape/games/driller/driller.cpp:109
-#, fuzzy
-#| msgid "Debug Apply Celling Grid"
 msgid "Deploy drilling rig"
-msgstr "Aplicar Sobreposição de Grade para Depurar"
+msgstr "Enviar equipamento de perfuração"
 
 #: engines/freescape/games/driller/driller.cpp:115
 msgid "Collect drilling rig"
-msgstr ""
+msgstr "Colete equipamento de perfuração"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -9807,11 +9767,11 @@ msgstr "Permite que as sessões de jogo sejam descobertas em sua rede local."
 
 #: engines/scumm/dialogs.cpp:1696
 msgid "Generate random maps"
-msgstr ""
+msgstr "Gerar mapas aleatórios"
 
 #: engines/scumm/dialogs.cpp:1696
 msgid "Allow random map generation (Based from Moonbase Console)."
-msgstr ""
+msgstr "Permite a geração aleatória de mapas (baseado no Moonbase Console)."
 
 #: engines/scumm/dialogs.cpp:1698
 msgid ""
@@ -10591,25 +10551,23 @@ msgstr "Gostaria de hospedar ou participar de uma sessão de jogo em rede?"
 
 #. I18N: Random map generator for Moonbase Commander
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:55
-#, fuzzy
-#| msgid "Game Options"
 msgid "Random Map Options"
-msgstr "Opções de Jogo"
+msgstr "Opções de Mapa Aleatório"
 
 #. I18N: Map generator algorthims
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:59
 msgid "Algorithm"
-msgstr ""
+msgstr "Algorítmo"
 
 #. I18N: Spiff algorthim
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:63
 msgid "Spiff"
-msgstr ""
+msgstr "Spiff"
 
 #. I18N: Katton algorthim
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:65
 msgid "Katton"
-msgstr ""
+msgstr "Katton"
 
 #. I18N: Random algorthim
 #. I18N: Random map size
@@ -10623,25 +10581,21 @@ msgstr ""
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:112
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:124
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:136
-#, fuzzy
-#| msgid "Random seed:"
 msgid "Random"
-msgstr "Semente:"
+msgstr "Aleatório"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:67
 msgid "Picks the map algorithm randomly."
-msgstr ""
+msgstr "Seleciona aleatoriamente o algorítimo de mapa."
 
 #. I18N: Map sizes
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:70
 msgid "Size"
-msgstr ""
+msgstr "Tamanho"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:74
-#, fuzzy
-#| msgid "75% - Small"
 msgid "Small"
-msgstr "75% - Pequeno"
+msgstr "Pequeno"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:76
 msgid "Large"
@@ -10649,85 +10603,79 @@ msgstr "Grande"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:77
 msgid "Huge"
-msgstr ""
+msgstr "Enorme"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:78
 msgid "SAI"
-msgstr ""
+msgstr "SAI"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:79
 msgid "Ridiculous"
-msgstr ""
+msgstr "Absurdo"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:80
-#, fuzzy
-#| msgid "Map"
 msgid "Max"
-msgstr "Mapear"
+msgstr "Máximo"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:82
 msgid "Picks the map size randomly."
-msgstr ""
+msgstr "Seleciona aleatoriamente o tamanho do mapa."
 
 #. I18N: Map tilesets
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:85
-#, fuzzy
-#| msgid "Reset"
 msgid "Tileset"
-msgstr "Restaurar"
+msgstr "Conjunto de peças"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:99
 msgid "Picks the map tileset randomly."
-msgstr ""
+msgstr "Seleciona aleatoriamente o conjunto de peças do mapa."
 
 #. I18N: Percentage of energy pools
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:102
 msgid "Energy"
-msgstr ""
+msgstr "Energia"
 
 #. I18N: Energy slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:107
 msgid "Scarce - Lots"
-msgstr ""
+msgstr "Escassa - Abundante"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:112
 msgid "Picks the random amount of energy pools."
-msgstr ""
+msgstr "Seleciona aleatoriamente a quantidade de fontes de energia."
 
 #. I18N: Percentage of terrain
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:115
 msgid "Terrain"
-msgstr ""
+msgstr "Terreno"
 
 #. I18N: Terrain slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:120
 msgid "Barren - Rough"
-msgstr ""
+msgstr "Plano - Irregular"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:124
 msgid "Picks the random amount of terrain level."
-msgstr ""
+msgstr "Seleciona uma quantidade aleatório do nível do terreno."
 
 #. I18N: Percentage of water
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:127
 msgid "Water"
-msgstr ""
+msgstr "Água"
 
 #. I18N: Water slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:132
 msgid "Driest - Wettest"
-msgstr ""
+msgstr "Seco - Úmido"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:136
 msgid "Picks the random amount of water."
-msgstr ""
+msgstr "Seleciona uma quantidade aleatória de água."
 
 #. I18N: Generate new map
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:140
-#, fuzzy
-#| msgid "General"
 msgid "Generate"
-msgstr "Geral"
+msgstr "Gerar"
 
 #: engines/scumm/he/sound_he.cpp:1555
 msgid ""
@@ -11423,34 +11371,28 @@ msgid "Select highlighted verb"
 msgstr "Selecionar verbo em destaque"
 
 #: engines/twp/metaengine.cpp:156
-#, fuzzy
-#| msgid "Go to previous directory level"
 msgid "Go to previous object"
-msgstr "Voltar para o nível de diretório anterior"
+msgstr "Voltar para o objeto anterior"
 
 #: engines/twp/metaengine.cpp:157
-#, fuzzy
-#| msgid "Go to setup menu"
 msgid "Go to next object"
-msgstr "Ir para menu de configuração"
+msgstr "Ir para próximo objeto"
 
 #: engines/twp/metaengine.cpp:158
 msgid "Select verb/item Left"
-msgstr ""
+msgstr "Selecionar verbo/item a Esquerda"
 
 #: engines/twp/metaengine.cpp:159
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Select verb/item Right"
-msgstr "Deslizar para Direita"
+msgstr "Selecionar verbo/item a Direita"
 
 #: engines/twp/metaengine.cpp:160
 msgid "Select verb/item Up"
-msgstr ""
+msgstr "Selecionar verbo/item de Cima"
 
 #: engines/twp/metaengine.cpp:161
 msgid "Select verb/item Down"
-msgstr ""
+msgstr "Selecionar verbo/item de Baixo"
 
 #: engines/twp/metaengine.cpp:163
 msgid "Select Actor 1"
@@ -11515,7 +11457,7 @@ msgstr "Exibir pontos de acesso"
 #: engines/twp/twp.cpp:829
 msgid ""
 "You selected Ransome *unbeeped* (DLC) but the DLC has not been detected!"
-msgstr ""
+msgstr "Você selecionou Ransome *desbipado* (DLC), mas o DLC não foi detectado!"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
