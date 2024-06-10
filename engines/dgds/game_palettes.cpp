@@ -35,6 +35,11 @@ GamePalettes::GamePalettes(ResourceManager *resourceMan, Decompressor *decompres
 _resourceMan(resourceMan), _decompressor(decompressor) {
 }
 
+void GamePalettes::reset() {
+	_palettes.resize(1);
+	selectPalNum(0);
+}
+
 int GamePalettes::loadPalette(const Common::String &filename) {
 	Common::SeekableReadStream *fileStream = _resourceMan->getResource(filename);
 	if (!fileStream) {
@@ -116,6 +121,8 @@ Common::Error GamePalettes::syncState(Common::Serializer &s) {
 	s.syncAsUint16LE(npals);
 
 	if (s.isLoading()) {
+		if (npals > 100)
+			error("Too many palettes to load, save is probably corrupt");
 		for (uint i = 0; i < npals; i++) {
 			Common::String name;
 			s.syncString(name);
