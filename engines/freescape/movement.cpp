@@ -47,13 +47,13 @@ void FreescapeEngine::initKeymaps(Common::Keymap *engineKeyMap, const char *targ
 	act = new Common::Action(Common::kStandardActionMoveLeft, _("Strafe Left"));
 	act->setKeyEvent(Common::KEYCODE_LEFT);
 	act->addDefaultInputMapping("JOY_LEFT");
-	act->addDefaultInputMapping("q");
+	//act->addDefaultInputMapping("q");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action(Common::kStandardActionMoveRight, _("Strafe Right"));
 	act->setKeyEvent(Common::KEYCODE_RIGHT);
 	act->addDefaultInputMapping("JOY_RIGHT");
-	act->addDefaultInputMapping("w");
+	//act->addDefaultInputMapping("w");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action("SHOOT", _("Shoot"));
@@ -164,7 +164,7 @@ void FreescapeEngine::activate() {
 	xoffset = xoffset * 0.33;
 	yoffset = yoffset * 0.50;
 
-	Math::Vector3d direction = directionToVector(_pitch - yoffset, _yaw - xoffset);
+	Math::Vector3d direction = directionToVector(_pitch - yoffset, _yaw - xoffset, false);
 	Math::Ray ray(_position, direction);
 	Object *interacted = _currentArea->checkCollisionRay(ray, 8192);
 	if (interacted) {
@@ -205,7 +205,7 @@ void FreescapeEngine::shoot() {
 	xoffset = xoffset * 0.33;
 	yoffset = yoffset * 0.50;
 
-	Math::Vector3d direction = directionToVector(_pitch - yoffset, _yaw - xoffset);
+	Math::Vector3d direction = directionToVector(_pitch - yoffset, _yaw - xoffset, false);
 	Math::Ray ray(_position, direction);
 	Object *shot = _currentArea->checkCollisionRay(ray, 8192);
 	if (shot) {

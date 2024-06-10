@@ -272,6 +272,10 @@ void FreescapeEngine::drawBorderScreenAndWait(Graphics::Surface *surface) {
 				case Common::KEYCODE_SPACE:
 					i = maxWait;
 					break;
+				case Common::KEYCODE_d:
+					_demoMode = true;
+					i = maxWait;
+					break;
 				default:
 					break;
 				}

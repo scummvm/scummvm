@@ -24,6 +24,9 @@
 namespace Freescape {
 
 void FreescapeEngine::generateDemoInput() {
+	if (_shootingFrames > 0)
+		return;
+
 	Common::Event event;
 	if (isDOS()) {
 

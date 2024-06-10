@@ -259,18 +259,63 @@ void FreescapeEngine::drawTitle() {
 	_gfx->setViewport(_viewArea);
 }
 
+static uint8 kCosineSineTable [72][2] {
+    // Each "dw" contains (cos, sin) (one byte each):
+    // [-64, 64]
+    // 72 steps is a whole turn.
+      0x40, 0x00, 0x40, 0x06, 0x3f, 0x0b, 0x3e, 0x11
+    , 0x3c, 0x16, 0x3a, 0x1b, 0x37, 0x20, 0x34, 0x25
+    , 0x31, 0x29, 0x2d, 0x2d, 0x29, 0x31, 0x25, 0x34
+    , 0x20, 0x37, 0x1b, 0x3a, 0x16, 0x3c, 0x11, 0x3e
+    , 0x0b, 0x3f, 0x06, 0x40, 0x00, 0x40, 0xfa, 0x40
+    , 0xf5, 0x3f, 0xef, 0x3e, 0xea, 0x3c, 0xe5, 0x3a
+    , 0xe0, 0x37, 0xdb, 0x34, 0xd7, 0x31, 0xd3, 0x2d
+    , 0xcf, 0x29, 0xcc, 0x25, 0xc9, 0x20, 0xc6, 0x1b
+    , 0xc4, 0x16, 0xc2, 0x11, 0xc1, 0x0b, 0xc0, 0x06
+    , 0xc0, 0x00, 0xc0, 0xfa, 0xc1, 0xf5, 0xc2, 0xef
+    , 0xc4, 0xea, 0xc6, 0xe5, 0xc9, 0xe0, 0xcc, 0xdb
+    , 0xcf, 0xd7, 0xd3, 0xd3, 0xd7, 0xcf, 0xdb, 0xcc
+    , 0xe0, 0xc9, 0xe5, 0xc6, 0xea, 0xc4, 0xef, 0xc2
+    , 0xf5, 0xc1, 0xfa, 0xc0, 0x00, 0xc0, 0x06, 0xc0
+    , 0x0b, 0xc1, 0x11, 0xc2, 0x16, 0xc4, 0x1b, 0xc6
+    , 0x20, 0xc9, 0x25, 0xcc, 0x29, 0xcf, 0x2d, 0xd3
+    , 0x31, 0xd7, 0x34, 0xdb, 0x37, 0xe0, 0x3a, 0xe5
+    , 0x3c, 0xea, 0x3e, 0xef, 0x3f, 0xf5, 0x40, 0xfa
+};
+
 // Taken from the Myst 3 codebase, it should be abstracted
-Math::Vector3d FreescapeEngine::directionToVector(float pitch, float heading) {
+Math::Vector3d FreescapeEngine::directionToVector(float pitch, float heading, bool useTable) {
 	Math::Vector3d v;
 
-	float radHeading = Common::deg2rad(heading);
-	float radPitch = Common::deg2rad(pitch);
+	if (useTable) {
+		int pitchInt = (int)pitch;
+		int headingInt = (int)heading;
 
-	v.setValue(0, cos(radPitch) * cos(radHeading));
-	v.setValue(1, sin(radPitch));
-	v.setValue(2, cos(radPitch) * sin(radHeading));
+		if (pitchInt < 0)
+			pitchInt = 360 + pitchInt;
+		if (pitchInt == 360)
+			pitchInt = 0;
+
+		if (headingInt < 0)
+			headingInt = 360 + headingInt;
+		if (headingInt == 360)
+			headingInt = 0;
+
+		int headingIndex = headingInt / 5;
+		int pitchIndex = pitchInt / 5;
+
+		v.setValue(0, ((int8)kCosineSineTable[pitchIndex][0] / 64.0) * ((int8)kCosineSineTable[headingIndex][0] / 64.0));
+		v.setValue(1, (int8)kCosineSineTable[pitchIndex][1] / 64.0);
+		v.setValue(2, ((int8)kCosineSineTable[pitchIndex][0] / 64.0) * (int8)kCosineSineTable[headingIndex][1] / 64.0);
+	} else {
+		float radHeading = Common::deg2rad(heading);
+		float radPitch = Common::deg2rad(pitch);
+
+		v.setValue(0, cos(radPitch) * cos(radHeading));
+		v.setValue(1, sin(radPitch));
+		v.setValue(2, cos(radPitch) * sin(radHeading));
+	}
 	v.normalize();
-
 	return v;
 }
 
@@ -870,7 +915,8 @@ void FreescapeEngine::rotate(float xoffset, float yoffset) {
 }
 
 void FreescapeEngine::updateCamera() {
-	_cameraFront = directionToVector(_pitch, _yaw);
+	bool useTable = _demoMode;
+	_cameraFront = directionToVector(_pitch, _yaw, useTable);
 	// _right = _front x _up;
 	Math::Vector3d v = Math::Vector3d::crossProduct(_cameraFront, _upVector);
 	v.normalize();

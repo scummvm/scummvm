@@ -308,7 +308,7 @@ public:
 	int _angleRotationIndex;
 	Common::Array<float> _angleRotations;
 
-	Math::Vector3d directionToVector(float pitch, float heading);
+	Math::Vector3d directionToVector(float pitch, float heading, bool useTable);
 	void updateCamera();
 
 	// Camera options
