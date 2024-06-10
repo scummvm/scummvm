@@ -56,8 +56,7 @@ Common::String QDEngineEngine::getGameId() const {
 }
 
 Common::Error QDEngineEngine::run() {
-	// Initialize 320x200 paletted graphics mode
-	initGraphics(320, 200);
+	initGraphics(640, 480);
 	_screen = new Graphics::Screen();
 
 	// Set the engine's debugger console
