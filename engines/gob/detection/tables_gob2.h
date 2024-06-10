@@ -411,7 +411,7 @@
 { // Found in french ADI 2 Francais-Maths CM1
 	{
 		"gob2",
-		"",
+		"v1.03",
 		AD_ENTRY1s("intro.stk", "24489330a1d67ff978211f574822a5a6", 883756),
 		FR_FRA,
 		kPlatformWindows,
