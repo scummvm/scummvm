@@ -49,8 +49,8 @@ void MusicPlayer::play(CBofSound *sound) {
 		return;
 	}
 
-	MidiParser *parser = nullptr;
-	bool loaded = false;
+	MidiParser *parser;
+	bool loaded;
 	if (sound->_chType == SOUND_TYPE_XM) {
 		parser = MidiParser::createParser_XMIDI();
 		loaded = parser->loadMusic(sound->_pFileBuf, sound->_iFileSize);

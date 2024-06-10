@@ -727,6 +727,9 @@ ErrorCode CBibbleWindow::playGame() {
 					case 2:
 						BofPlaySoundEx(BuildDir(BIBBLE_AUDIO_PAYS4), SOUND_MIX | SOUND_QUEUE, 7, true);
 						break;
+
+					default:
+						break;
 					}
 				}
 
@@ -982,6 +985,9 @@ void CBibbleWindow::calcOutcome() {
 			if (_nNumShout4 >= ((i - 15) / 4) + 1) {
 				g_engine->g_cBetAreas[i]._bWon = true;
 			}
+			break;
+
+		default:
 			break;
 		}
 	}
