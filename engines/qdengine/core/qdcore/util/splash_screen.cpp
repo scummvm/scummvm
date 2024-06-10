@@ -41,21 +41,21 @@ bool SplashScreen::create(int bitmapResID) {
 	if (!create_window()) return false;
 
 	Common::PEResources r;
-    Common::WinResourceID resid(bitmapResID);
-    Image::BitmapDecoder decoder;
+	Common::WinResourceID resid(bitmapResID);
+	Image::BitmapDecoder decoder;
 
-    if (r.loadFromEXE("shveik.exe")) {
-        Common::SeekableReadStream *stream = r.getResource(Common::kWinBitmap, resid);
-        if (decoder.loadStream(*stream)) {
+	if (r.loadFromEXE("shveik.exe")) {
+		Common::SeekableReadStream *stream = r.getResource(Common::kWinBitmap, resid);
+		if (decoder.loadStream(*stream)) {
 			const Graphics::Surface *surf = decoder.getSurface();
 			g_system->fillScreen(0);
 			g_system->getPaletteManager()->setPalette(decoder.getPalette(), 0, decoder.getPaletteColorCount());
 
 			int x = (640 - surf->w) / 2;
 			int y = (480 - surf->h) / 2;
-            g_system->copyRectToScreen(surf->getPixels(), surf->pitch, x, y, surf->w, surf->h);
-        }
-    }
+			g_system->copyRectToScreen(surf->getPixels(), surf->pitch, x, y, surf->w, surf->h);
+		}
+	}
 
 #if 1
 	// Remove this code after further implementation
@@ -142,8 +142,8 @@ void SplashScreen::hide() {
 bool SplashScreen::create_window() {
 	destroy();
 
-    splash_hwnd_ = new Graphics::Surface();
-    splash_hwnd_->create(300, 300, g_engine->_pixelformat);
+	splash_hwnd_ = new Graphics::Surface();
+	splash_hwnd_->create(300, 300, g_engine->_pixelformat);
 	if (!splash_hwnd_)
 		return false;
 
