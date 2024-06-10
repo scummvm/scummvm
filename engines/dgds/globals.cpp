@@ -121,7 +121,7 @@ public:
 
 	int16 get() override {
 		SDSScene *scene = static_cast<DgdsEngine *>(g_engine)->getScene();
-		bool nonInteractive = _isSetOff || scene->getDragItem() || scene->hasVisibleDialog();
+		bool nonInteractive = _isSetOff || scene->getDragItem() || scene->hasVisibleOrOpeningDialog();
 		*_ptr = !nonInteractive;
 		return *_ptr;
 	}

@@ -339,6 +339,7 @@ public:
 	const Common::Array<ObjectInteraction> &getObjInteractions2() { return _objInteractions2; }
 
 	bool hasVisibleDialog();
+	bool hasVisibleOrOpeningDialog() const;
 
 	Common::Error syncState(Common::Serializer &s) override;
 

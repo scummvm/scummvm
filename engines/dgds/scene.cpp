@@ -1268,6 +1268,15 @@ bool SDSScene::hasVisibleDialog() {
 	return getVisibleDialog() != nullptr;
 }
 
+bool SDSScene::hasVisibleOrOpeningDialog() const {
+	for (const auto &dlg : _dialogs) {
+		if (dlg.hasFlag(kDlgFlagVisible) || dlg.hasFlag(kDlgFlagOpening)) {
+			return true;
+		}
+	}
+	return false;
+}
+
 HotArea *SDSScene::findAreaUnderMouse(const Common::Point &pt) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 
