@@ -50,6 +50,9 @@ public:
 	void setPalette();
 	void clearPalette();
 
+	// Reset the list to the post-game-load state (1 palette loaded)
+	void reset();
+
 	// Fade the colors in the current palette toward black. Start at col, and fade ncols of the palette.
 	// Add coloff to the result to move toward white.
 	void setFade(int col, int ncols, int coloff, int fade);

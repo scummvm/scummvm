@@ -177,6 +177,7 @@ bool DgdsEngine::changeScene(int sceneNum) {
 	_scene->unload();
 	_backgroundFile.clear();
 	_soundPlayer->unloadMusic();
+	_soundPlayer->stopAllSfx();
 
 	_gdsScene->runChangeSceneOps();
 
@@ -604,13 +605,15 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 	//
 	// 1: First version
 	// 2: Added GameItem.flags
+	// 3: Stopped saving ADS/TTM state
+	// 4: Stopped saving palette state
 	//
 
 	assert(_scene && _gdsScene);
 
 	_menu->hideMenu();
 
-	if (!s.syncVersion(3))
+	if (!s.syncVersion(4))
 		error("Save game version too new: %d", s.getVersion());
 
 	Common::Error result;
@@ -646,8 +649,12 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 	result = _inventory->syncState(s);
 	if (result.getCode() != Common::kNoError) return result;
 
-	result = _gamePals->syncState(s);
-	if (result.getCode() != Common::kNoError) return result;
+	if (s.getVersion() < 4) {
+		result = _gamePals->syncState(s);
+		if (result.getCode() != Common::kNoError) return result;
+	} else if (s.isLoading()) {
+		_gamePals->reset();
+	}
 
 	result = _adsInterp->syncState(s);
 	if (result.getCode() != Common::kNoError) return result;
