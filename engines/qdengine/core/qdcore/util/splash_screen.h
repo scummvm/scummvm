@@ -22,6 +22,7 @@
 #ifndef __SPLASH_SCREEN_H__
 #define __SPLASH_SCREEN_H__
 
+#include "graphics/surface.h"
 
 namespace QDEngine {
 
@@ -49,7 +50,7 @@ private:
 
 	int start_time_;
 
-	void *splash_hwnd_;
+	Graphics::Surface *splash_hwnd_;
 	void *bitmap_handle_;
 
 	bool create_window();

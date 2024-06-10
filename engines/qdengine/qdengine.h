@@ -33,8 +33,8 @@
 #include "common/util.h"
 #include "engines/engine.h"
 #include "engines/savestate.h"
+#include "graphics/pixelformat.h"
 #include "graphics/screen.h"
-
 #include "qdengine/detection.h"
 
 namespace QDEngine {
@@ -50,6 +50,7 @@ protected:
 	Common::Error run() override;
 public:
 	Graphics::Screen *_screen = nullptr;
+	Graphics::PixelFormat _pixelformat;
 public:
 	QDEngineEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~QDEngineEngine() override;
