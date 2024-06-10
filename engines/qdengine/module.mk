@@ -45,6 +45,7 @@ MODULE_OBJS = \
 	core/qdcore/util/LZ77.o \
 	core/qdcore/util/plaympp_api.o \
 	core/qdcore/util/ResourceDispatcher.o \
+	core/qdcore/util/splash_screen.o \
 	core/qdcore/util/WinVideo.o \
 	core/qdcore/qd_animation_frame.o \
 	core/qdcore/qd_animation_info.o \
