@@ -122,11 +122,11 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 
 	// Агентство "КотоПес": Остров доктора Крысарди
 	// 2008/09/19 KD Vision Games
-	GAME("dogncat", "???", 0),
+	GAME("dogncat", "db4e0081fdaf575e82910cf7399cef62", 17759363),
 
 	// Агентство "КотоПес": По следам невиданных зверей
 	// 2008/03/21 KD Vision Games
-	GAME("dogncat2", "???", 0),
+	GAME("dogncat2", "c250f79a8e404b13a588e6a03e3a6d20", 10483617),
 
 	AD_TABLE_END_MARKER
 };
