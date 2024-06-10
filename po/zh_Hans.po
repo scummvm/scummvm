@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-01 10:44+0000\n"
-"PO-Revision-Date: 2024-05-23 04:44+0000\n"
+"PO-Revision-Date: 2024-06-10 10:43+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/zh_Hans/>\n"
@@ -3071,10 +3071,8 @@ msgid "ScummVM"
 msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
-#, fuzzy
-#| msgid "ScummVM"
 msgid "ScummVM (debug)"
-msgstr "ScummVM"
+msgstr "ScummVM（调试）"
 
 #: dists/android.strings.xml.cpp:32
 msgid "Graphic adventure game engine"
@@ -3093,16 +3091,12 @@ msgid "Quit"
 msgstr "退出"
 
 #: dists/android.strings.xml.cpp:35
-#, fuzzy
-#| msgid "Config File Error"
 msgid "Log File Error"
-msgstr "配置文件错误"
+msgstr "日志文件错误"
 
 #: dists/android.strings.xml.cpp:36
-#, fuzzy
-#| msgid "Unable to read ScummVM config file or create a new one!"
 msgid "Unable to read ScummVM log file or create a new one!"
-msgstr "无法读取 ScummVM 配置文件，请考虑新建一个！"
+msgstr "无法读取 ScummVM 日志文件，请考虑新建一个！"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Config File Error"
@@ -3178,44 +3172,36 @@ msgid "Storage Access Framework Permissions for ScummVM were revoked!"
 msgstr "ScummVM 存储访问框架的权限被撤回了！"
 
 #: dists/android.strings.xml.cpp:55
-#, fuzzy
-#| msgid "the video mode could not be changed"
 msgid "Configuration file could not be parsed"
-msgstr "无法更改视频模式"
+msgstr "无法解析配置文件"
 
 #: dists/android.strings.xml.cpp:56
-#, fuzzy
-#| msgid "In 2D games"
 msgid "Run a game"
-msgstr "在 2D 游戏中"
+msgstr "运行游戏"
 
 #: dists/android.strings.xml.cpp:57
-#, fuzzy
-#| msgid "Search in game list"
 msgid "Search a game"
-msgstr "在游戏列表中搜索"
+msgstr "搜索游戏"
 
 #: dists/android.strings.xml.cpp:58
 msgid ""
 "No games (yet)\n"
 "Open ScummVM and add your games here."
 msgstr ""
+"（还）没有游戏\n"
+"打开 ScummVM，将你的游戏添加到这里。"
 
 #: dists/android.strings.xml.cpp:59
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game icon"
-msgstr "游戏设置"
+msgstr "游戏图标"
 
 #: dists/android.strings.xml.cpp:60
-#, fuzzy
-#| msgid "Show object labels"
 msgid "Shortcut label"
-msgstr "显示物品标签"
+msgstr "快捷方式标签"
 
 #: dists/android.strings.xml.cpp:61
 msgid "Shortcut icon"
-msgstr ""
+msgstr "快捷方式图标"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:32
@@ -4792,6 +4778,32 @@ msgid ""
 "See our [Android documentation](https://docs.scummvm.org/en/latest/"
 "other_platforms/android.html) for more information.\n"
 msgstr ""
+"## 添加游戏\n"
+"\n"
+"1. 点击启动器中的**添加游戏...**。 \n"
+"\n"
+"2. 在 ScummVM 文件浏览器中，点击**上一级**直到到达根目录，此处有**<添加新文件夹>** 选项。 \n"
+"\n"
+"  ![ScummVM 文件浏览器根目录](browser-root.png \"ScummVM 文件浏览器根目录\"){w=70%}\n"
+"\n"
+"3. 双击**<添加新文件夹>**。在设备自带文件浏览器中转到包含所有游戏文件的文件夹，例如**SD 卡 > ScummVMgames**。 \n"
+"\n"
+"4. 点击**使用此文件夹**。 \n"
+"\n"
+"  ![系统可选文件夹](fs-folder.png \"系统可选文件夹\"){w=70%}\n"
+"\n"
+"5. 点击**允许**给予 ScummVM 访问此文件夹的权限。 \n"
+"\n"
+"  ![系统访问权限对话框](fs-permission.png \"系统访问权限\"){w=70%}\n"
+"\n"
+"6. 在 ScummVM 文件浏览器中，双击浏览添加的文件夹。要添加游戏，请选择含有游戏文件的子文件夹，然后点击**选择**。 \n"
+"\n"
+"  ![添加的 SAF 文件夹](browser-folder-in-list.png \"添加的 SAF 文件夹\"){w=70%}\n"
+"\n"
+"第 2、3 步只需做一次。要添加更多游戏，重复第 1、6 步即可。 \n"
+"\n"
+"查看我们的 [Android 文档](https://docs.scummvm.org/en/latest/other_platforms/android"
+".html)获取更多信息。\n"
 
 #: backends/platform/android/options.cpp:131
 #: backends/platform/ios7/ios7_options.mm:165
@@ -5035,6 +5047,58 @@ msgid ""
 "  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
 "\n"
 msgstr ""
+"## 触摸控制模式\n"
+"通过轻点或点击右上角的控制器图标、用两根手指从左向右轻扫，或在启动器的全局设置中进入**全局设置 > 后端 > "
+"选择首选触摸模式**，即可更改触摸控制模式。可以在三种情况下（ScummVM 菜单、2D 游戏和 3D 游戏）配置触摸模式。\n"
+"\n"
+"### 直接鼠标\n"
+"\n"
+"触摸控制是直接的。光标会跳到手指触碰屏幕的地方（菜单默认使用）。 \n"
+"\n"
+"  ![直接鼠标模式](mouse.png \"直接鼠标模式\"){w=10em}\n"
+"\n"
+"### 触摸板模拟 \n"
+"\n"
+"触摸控制是间接的，类似于使用笔记本触摸板。 \n"
+"\n"
+"  ![触摸板模式](touchpad.png \"触摸板模式\"){w=10em}\n"
+"\n"
+"转到**全局设置 > 后端 > 选择偏好触摸模式**以选择菜单、2D 和 3D 游戏的偏好触摸模式。\n"
+"\n"
+"## 触摸操作 \n"
+"\n"
+"| 手势           | 操作            \n"
+"| ------------------|-------------------\n"
+"| `单指点击`  | 鼠标左键点击  \n"
+"| `双指点击` | 鼠标右键点击 \n"
+"| `双指双击` | ESC \n"
+"| `单指长按 >0.5s` | 鼠标左键拖放（如 Curse of Monkey Island 中从操作滚轮选择） \n"
+"| `双指长按 >0.5s` | 鼠标右键拖放（如 Tony Tough 中从操作滚轮选择） \n"
+"| `双指滑动（从左向右）` | 切换触摸模式 \n"
+"| `双指滑动（从右向左）` | 开关虚拟控制器 (>iOS 15) \n"
+"| `双指滑动（从上向下）` | 游戏内访问全局主菜单 \n"
+"| `缩放（缩小/放大）` | 启用/禁用键盘 \n"
+"\n"
+"### 虚拟手柄  \n"
+"\n"
+"运行 iOS 15 或更高版本的设备可通过两根手指从右向左滑动或通过**全局设置 > 后端**连接虚拟游戏手柄控制器。方向键可配置为拇指杆或手柄。\n"
+"**注意** 在连接虚拟控制器时，无法使用点击手势执行鼠标点击，因为只要虚拟控制器可见，点击手势就会被禁用。鼠标左键点击可通过按 A "
+"键来执行。断开虚拟控制器连接后，点击手势将重新启用。\n"
+"\n"
+"### 全局主菜单 \n"
+"\n"
+"点击屏幕右上角的菜单图标或用两根手指向下滑动可打开全局主菜单。\n"
+"\n"
+"  ![菜单图标](menu.png \"菜单图标\"){w=10em}\n"
+"\n"
+"## 虚拟键盘\n"
+"\n"
+"长按屏幕右上角的控制器图标、双指向外移动（放大手势）或点击可编辑的文本框可打开虚拟键盘。再次点击控制器图标、反向移动（缩小手势）或点击文本框外部以关闭键盘"
+"。\n"
+"\n"
+"\n"
+"  ![键盘图标](keyboard.png \"键盘图标\"){w=10em}\n"
+"\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:314
 msgid "External keyboard"
@@ -5227,10 +5291,8 @@ msgid "Select Playlist directory"
 msgstr "选择游戏列表目录"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:172
-#, fuzzy
-#| msgid "Generate playlist"
 msgid "Libretro playlist"
-msgstr "生成游戏列表"
+msgstr "Libretro 游戏列表"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:175
 msgid ""
@@ -5273,6 +5335,18 @@ msgid ""
 "| --------------|------------------\n"
 "| `Ctrl+F5` | Displays the Global Main Menu\n"
 msgstr ""
+"## 键盘快捷键\n"
+"\n"
+"ScummVM 支持多种游戏内键盘与鼠标快捷键，从 2.2.0 版本起，你可以在**按键绑定标签页**或**配置文件**中手动设置。\n"
+"\n"
+"对于游戏专用的控制方式，请查看游戏对应的 [Wiki 条目](https://wiki.scummvm.org/index."
+"php?title=Category:Supported_Games)。\n"
+"\n"
+"默认快捷键展示在下表中。\n"
+"\n"
+"| 快捷键      | 描述      \n"
+"| --------------|------------------\n"
+"| `Ctrl+F5` | 显示全局主菜单\n"
 
 #: backends/platform/sdl/sdl.cpp:1027
 msgid "| `Cmd+q`    | Quit (macOS)\n"
@@ -6031,6 +6105,9 @@ msgid ""
 "or\n"
 "2. Any .sav file inside the QfG2 Remake game directory"
 msgstr ""
+"游戏现在会列出从 Sierra 游戏导出并可导入的人物：\n"
+"1. ScummVM 存档目录下名为 qfg1*.sav 或 qfg1vga*.sav 的存档文件，\n"
+"2. QfG2 重制版游戏目录下的所有 .sav 文件"
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
@@ -6101,14 +6178,14 @@ msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
-msgstr ""
+msgstr "警告：此游戏以“恢复移除的内容”模式保存，但你正使用“原作内容”模式游玩。在完全退出游戏前，模式将更改为“恢复移除的内容”模式。"
 
 #: engines/bladerunner/bladerunner.cpp:2757
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
-msgstr ""
+msgstr "警告：此游戏以“原作内容”模式保存，但你正使用“恢复移除的内容”模式游玩。在完全退出游戏前，模式将更改为“原作内容”模式。"
 
 #: engines/bladerunner/bladerunner.cpp:2759
 msgid "Continue"
@@ -6416,6 +6493,10 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
+"ScummVM 发现你有原游戏格式的存档文件，应当将其转换。\n"
+"原游戏格式的存档不再被直接支持，因此如果不转换，则无法载入游戏。\n"
+"\n"
+"按下“OK”现在转换，否则在下次启动游戏时将再次询问你。\n"
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
 #: engines/vcruise/vcruise.cpp:363
@@ -6572,7 +6653,7 @@ msgid ""
 "WARNING: The savegame you are loading is using a temporary broken format. "
 "Things will be broken. Please consider starting Operation Stealth from "
 "beginning using new savegames."
-msgstr ""
+msgstr "警告：正加载的存档使用了临时的损坏格式。游戏内容会出现问题。请考虑使用新存档从头开始启动《隐秘行动》。"
 
 #: engines/crab/input/input.cpp:119
 msgid "Talk/Interact"
@@ -6663,13 +6744,13 @@ msgstr "快速读档"
 
 #: engines/cryomni3d/metaengine.cpp:145
 msgid "Versailles 1685 support is not compiled in"
-msgstr ""
+msgstr "未编译入 Versailles 1685 支持"
 
 #: engines/director/events.cpp:99
 msgid ""
 "The game prevents quitting at this moment. Are you sure you want to quit "
 "anyway?"
-msgstr ""
+msgstr "游戏阻止在此时退出。你确定依然要退出吗？"
 
 #: engines/dragons/dragons.cpp:1884
 #, c-format
@@ -6732,7 +6813,7 @@ msgstr "预录制声音"
 
 #: engines/freescape/metaengine.cpp:41
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
-msgstr ""
+msgstr "使用预录制的高质量声音，而不使用扬声器模拟"
 
 #: engines/freescape/metaengine.cpp:51
 msgid "Extended timer"
@@ -6884,11 +6965,11 @@ msgstr "我不明白。\n"
 
 #: engines/glk/alan2/alan2.cpp:75
 msgid "This is too short to be a valid Alan2 file."
-msgstr ""
+msgstr "文件长度过短，不是有效的 Alan2 文件。"
 
 #: engines/glk/alan2/alan2.cpp:81
 msgid "This is not a valid Alan2 file."
-msgstr ""
+msgstr "这不是有效的 Alan2 文件。"
 
 #: engines/glk/comprehend/game.cpp:321
 msgid "Savegame"
@@ -6896,11 +6977,11 @@ msgstr "存档"
 
 #: engines/glk/comprehend/game.cpp:860
 msgid "Picture window toggled\n"
-msgstr ""
+msgstr "已切换图片窗口开关\n"
 
 #: engines/glk/glulx/glulx.cpp:81
 msgid "This is too short to be a valid Glulx file."
-msgstr ""
+msgstr "文件长度过短，不是有效的 Glulx 文件。"
 
 #: engines/glk/glulx/glulx.cpp:86
 msgid "This is not a valid Glulx file."
@@ -6985,7 +7066,7 @@ msgstr "使用/交流"
 
 #: engines/grim/grim.cpp:508 engines/grim/grim.cpp:604
 msgid "Pick up/Put away"
-msgstr ""
+msgstr "捡起/收起"
 
 #: engines/grim/grim.cpp:518 engines/grim/grim.cpp:614
 msgid "Skip dialog lines"
@@ -6993,11 +7074,11 @@ msgstr "跳过对话台词"
 
 #: engines/grim/grim.cpp:574
 msgid "Cycle Objects Up"
-msgstr ""
+msgstr "向上循环物品"
 
 #: engines/grim/grim.cpp:579
 msgid "Cycle Objects Down"
-msgstr ""
+msgstr "向下循环物品"
 
 #: engines/grim/grim.cpp:589
 msgid "Quick Room Exit"
@@ -7024,6 +7105,9 @@ msgid ""
 "version (i.e. dvd-box or jewelcase):\n"
 "%s"
 msgstr ""
+"游戏数据文件 %s 可能已损坏。\n"
+"如果你确信没有，请将如下代码提供给 ScummVM 团队，并附上文件名、语言与游戏版本描述（即 DVD 盒或者塑料盒）：\n"
+"%s"
 
 #: engines/grim/md5check.cpp:613
 #, c-format
@@ -7032,6 +7116,9 @@ msgid ""
 "It may be missing or you may not have the rights to open it.\n"
 "Go to %s to see a list of the needed files."
 msgstr ""
+"无法打开文件 %s 用于检查。\n"
+"此文件可能丢失，或者你没有打开此文件的权限。\n"
+"转到 %s 查看需要的所有文件。"
 
 #: engines/grim/md5checkdialog.cpp:41
 msgid ""
@@ -7040,6 +7127,9 @@ msgid ""
 "This may take a while, please wait.\n"
 "Successive runs will not check them again."
 msgstr ""
+"ScummVM 现在将验证游戏数据文件，以确保你享受最佳的游戏体验。\n"
+"这可能需要一段时间，请稍候。\n"
+"游戏成功运行后将不再检查它们。"
 
 #: engines/grim/metaengine.cpp:37
 msgid "Load user patch (unsupported)"
@@ -7053,7 +7143,7 @@ msgstr "加载用户补丁。请注意，ScummVM 团队不会为这种补丁提�
 
 #: engines/grim/metaengine.cpp:92
 msgid "Escape from Monkey Island support is not compiled in"
-msgstr ""
+msgstr "未编译入《逃离猴岛》支持"
 
 #: engines/grim/resource.cpp:102
 #, c-format
@@ -7113,11 +7203,11 @@ msgstr "在致谢界面播放“The Final Hour”歌曲而不重用 MIDI 歌曲"
 
 #: engines/groovie/metaengine.cpp:97
 msgid "Slim Left/Right Hotspots"
-msgstr ""
+msgstr "缩小两侧热区"
 
 #: engines/groovie/metaengine.cpp:98
 msgid "Shrinks the hotspots on the left and right sides for exiting puzzles"
-msgstr ""
+msgstr "缩小两侧的热区，以便退出谜题"
 
 #: engines/groovie/metaengine.cpp:109
 msgid "Speedrun Mode"
@@ -7125,7 +7215,7 @@ msgstr "速通模式"
 
 #: engines/groovie/metaengine.cpp:110
 msgid "Affects the controls for fast forwarding the game"
-msgstr ""
+msgstr "快进游戏时也加速控制操作"
 
 #: engines/groovie/metaengine.cpp:144
 msgid "GroovieV2 support is not compiled in"
@@ -7242,7 +7332,7 @@ msgstr "观察模式"
 
 #: engines/hpl1/metaengine.cpp:89
 msgid "Holster"
-msgstr ""
+msgstr "手枪皮套"
 
 #: engines/hpl1/metaengine.cpp:95
 msgid "Notebook"
@@ -7322,13 +7412,13 @@ msgstr "侧身避让"
 
 #: engines/kyra/detection_tables.h:75
 msgid "Missing language specific game code and/or resources."
-msgstr ""
+msgstr "缺失特定语言的游戏代码和/或资源。"
 
 #: engines/kyra/detection_tables.h:76
 msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
-msgstr ""
+msgstr "缺失此粉丝翻译的特定语言游戏代码和/或资源。"
 
 #: engines/kyra/detection_tables.h:78
 msgid "Demo plays simple animations without using Westwood's Engine."
@@ -7629,7 +7719,7 @@ msgstr ""
 
 #: engines/lab/speciallocks.cpp:148
 msgid "This puzzle is not available in the trial version of the game"
-msgstr ""
+msgstr "此谜题在试玩版游戏不可用"
 
 #: engines/lure/metaengine.cpp:39 engines/mads/metaengine.cpp:108
 #: engines/sherlock/metaengine.cpp:112 engines/twine/metaengine.cpp:156
@@ -7638,7 +7728,7 @@ msgstr "TTS 讲述人"
 
 #: engines/made/detection_tables.h:445 engines/made/detection_tables.h:462
 msgid "The game is using unsupported engine"
-msgstr ""
+msgstr "游戏使用不支持的引擎"
 
 #: engines/made/metaengine.cpp:34
 msgid "Play a digital soundtrack during the opening movie"
@@ -7652,11 +7742,11 @@ msgstr ""
 
 #: engines/mads/metaengine.cpp:47
 msgid "Easy mouse interface"
-msgstr ""
+msgstr "易用鼠标界面"
 
 #: engines/mads/metaengine.cpp:48
 msgid "Shows object names when hovering the mouse over them"
-msgstr ""
+msgstr "鼠标悬停在物品上时显示名称"
 
 #: engines/mads/metaengine.cpp:59 engines/mads/metaengine.cpp:60
 msgid "Animated inventory items"
@@ -7700,7 +7790,7 @@ msgstr ""
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
 #: engines/twine/metaengine.cpp:436 engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
-msgstr ""
+msgstr "退出"
 
 #: engines/mm/mm1/metaengine.cpp:54
 msgid "View Party Member 1"
@@ -7840,7 +7930,7 @@ msgstr ""
 
 #: engines/mm/xeen/saves.cpp:294
 msgid "Failed to autosave"
-msgstr ""
+msgstr "自动保存失败"
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:112 engines/mohawk/dialogs.cpp:357
@@ -7964,24 +8054,24 @@ msgstr ""
 
 #: engines/mohawk/mohawk.cpp:51
 msgid "The game is paused. Press any key to continue."
-msgstr ""
+msgstr "游戏已暂停。按任意键以继续。"
 
 #: engines/mohawk/myst.cpp:554 engines/mohawk/riven.cpp:835
 #: engines/nancy/input.cpp:225
 msgid "Open main menu"
-msgstr ""
+msgstr "打开主菜单"
 
 #: engines/mohawk/myst.cpp:578 engines/mohawk/riven.cpp:859
 msgid "Load game state"
-msgstr ""
+msgstr "加载游戏状态"
 
 #: engines/mohawk/myst.cpp:583 engines/mohawk/riven.cpp:864
 msgid "Save game state"
-msgstr ""
+msgstr "保存游戏状态"
 
 #: engines/mohawk/myst.cpp:588 engines/mohawk/riven.cpp:869
 msgid "Show options menu"
-msgstr ""
+msgstr "显示设置菜单"
 
 #: engines/mohawk/myst.cpp:600
 msgid "Drop page"
@@ -8008,7 +8098,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
-msgstr ""
+msgstr "载入游戏"
 
 #: engines/mohawk/myst_stacks/menu.cpp:299
 #: engines/mohawk/riven_stacks/aspit.cpp:370
@@ -8028,7 +8118,7 @@ msgstr ""
 
 #: engines/mohawk/myst_stacks/preview.cpp:89
 msgid "You can't leave the library in the demo."
-msgstr ""
+msgstr "在演示版中，你无法离开图书馆。"
 
 #: engines/mohawk/riven.cpp:155
 msgid ""
@@ -8564,27 +8654,27 @@ msgstr ""
 
 #: engines/sci/detection_options.h:158
 msgid "Enable content censoring"
-msgstr ""
+msgstr "启用内容审查"
 
 #: engines/sci/detection_options.h:159
 msgid "Enable the game's built-in optional content censoring"
-msgstr ""
+msgstr "启用游戏内置的可选内容审查功能"
 
 #: engines/sci/detection_options.h:171
 msgid "Upscale videos"
-msgstr ""
+msgstr "放大视频"
 
 #: engines/sci/detection_options.h:172
 msgid "Upscale videos to double their size"
-msgstr ""
+msgstr "放大视频至两倍大小"
 
 #: engines/sci/detection_options.h:184
 msgid "Use RGB rendering"
-msgstr ""
+msgstr "使用 RGB 渲染"
 
 #: engines/sci/detection_options.h:185
 msgid "Use RGB rendering to improve screen transitions"
-msgstr ""
+msgstr "使用 RGB 渲染以改善转场"
 
 #: engines/sci/detection_options.h:197
 msgid "Use per-resource modified palettes"
@@ -8614,23 +8704,23 @@ msgstr ""
 
 #: engines/sci/detection_options.h:245
 msgid "Standard (GM / MT-32)"
-msgstr ""
+msgstr "标准 (GM / MT-32)\""
 
 #: engines/sci/detection_options.h:249
 msgid "Roland D-110 / D-10 / D-20"
-msgstr ""
+msgstr "Roland D-110 / D-10 / D-20"
 
 #: engines/sci/detection_options.h:253
 msgid "Yamaha FB-01"
-msgstr ""
+msgstr "Yamaha FB-01"
 
 #: engines/sci/detection_options.h:257
 msgid "Casio MT-540"
-msgstr ""
+msgstr "Casio MT-540"
 
 #: engines/sci/detection_options.h:261
 msgid "Casio CT-460 / CSM-1"
-msgstr ""
+msgstr "Casio CT-460 / CSM-1"
 
 #: engines/sci/detection_tables.h:4573
 msgid "This demo uses an unimplemented version of Robot videos"
@@ -8938,11 +9028,11 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1458 engines/scumm/dialogs.cpp:1459
 msgid "auto"
-msgstr ""
+msgstr "自动"
 
 #: engines/scumm/dialogs.cpp:1458
 msgid "Low"
-msgstr ""
+msgstr "低"
 
 #: engines/scumm/dialogs.cpp:1458
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:75
@@ -8951,35 +9041,35 @@ msgstr "中等"
 
 #: engines/scumm/dialogs.cpp:1458
 msgid "High"
-msgstr ""
+msgstr "高"
 
 #: engines/scumm/dialogs.cpp:1459
 msgid "Good"
-msgstr ""
+msgstr "好"
 
 #: engines/scumm/dialogs.cpp:1459
 msgid "Better"
-msgstr ""
+msgstr "更好"
 
 #: engines/scumm/dialogs.cpp:1460
 #, c-format
 msgid "Hardware Rating: %s   -   "
-msgstr ""
+msgstr "硬件评分：%s   -   "
 
 #: engines/scumm/dialogs.cpp:1460
 #, c-format
 msgid "Quality Selection: %s"
-msgstr ""
+msgstr "质量选择：%s"
 
 #: engines/scumm/dialogs.cpp:1474
 msgid "Playback Adjust:"
-msgstr ""
+msgstr "回放调整："
 
 #: engines/scumm/dialogs.cpp:1478
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
-msgstr ""
+msgstr "当从 CD 音频播放音效时，按如下程度调整音效的起始位置。如果你常听到一点错误音效则使用此设置。"
 
 #: engines/scumm/dialogs.cpp:1558
 msgid "Intro Adjust:"
@@ -9005,21 +9095,21 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1677 engines/scumm/metaengine.cpp:704
 msgid "Load modded audio"
-msgstr ""
+msgstr "加载更改音频"
 
 #: engines/scumm/dialogs.cpp:1677 engines/scumm/metaengine.cpp:705
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
-msgstr ""
+msgstr "若可用则将音乐、音效与语音片段替换为修改文件。"
 
 #: engines/scumm/dialogs.cpp:1679
 msgid "Multiplayer Server:"
-msgstr ""
+msgstr "多人游戏服务器："
 
 #: engines/scumm/dialogs.cpp:1685
 msgid "Online Server:"
-msgstr ""
+msgstr "在线服务器："
 
 #: engines/scumm/dialogs.cpp:1686
 msgid ""
@@ -9055,11 +9145,11 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1696
 msgid "Generate random maps"
-msgstr ""
+msgstr "生成随机地图"
 
 #: engines/scumm/dialogs.cpp:1696
 msgid "Allow random map generation (Based from Moonbase Console)."
-msgstr ""
+msgstr "允许随机生成地图（基于 Moonbase 主机）。"
 
 #: engines/scumm/dialogs.cpp:1698
 msgid ""
@@ -9093,7 +9183,7 @@ msgstr ""
 
 #: engines/scumm/help.cpp:80 engines/vcruise/metaengine.cpp:160
 msgid "Pause game"
-msgstr ""
+msgstr "暂停游戏"
 
 #. I18N: Drafts is set of notes in Loom to invoke spells
 #: engines/scumm/help.cpp:81 engines/scumm/help.cpp:86
@@ -9103,7 +9193,7 @@ msgstr ""
 #: engines/scumm/help.cpp:103 engines/scumm/help.cpp:104
 #: engines/scumm/help.cpp:190
 msgid "Ctrl"
-msgstr ""
+msgstr "Ctrl"
 
 #: engines/scumm/help.cpp:81
 msgid "Load saved game 1-10"
@@ -9123,19 +9213,19 @@ msgstr ""
 
 #: engines/scumm/help.cpp:91
 msgid "Simulate left mouse button"
-msgstr ""
+msgstr "模拟鼠标左键按钮"
 
 #: engines/scumm/help.cpp:92 engines/wintermute/keymapper_tables.h:2191
 msgid "Tab"
-msgstr ""
+msgstr "Tab"
 
 #: engines/scumm/help.cpp:92
 msgid "Simulate right mouse button"
-msgstr ""
+msgstr "模拟鼠标右键按钮"
 
 #: engines/scumm/help.cpp:95
 msgid "Special keyboard commands:"
-msgstr ""
+msgstr "特殊键盘指令："
 
 #: engines/scumm/help.cpp:96
 msgid "Show / Hide console"
@@ -9143,27 +9233,27 @@ msgstr "显示/隐藏控制台"
 
 #: engines/scumm/help.cpp:97
 msgid "Start the debugger"
-msgstr ""
+msgstr "启动调试器"
 
 #: engines/scumm/help.cpp:98
 msgid "Show memory consumption"
-msgstr ""
+msgstr "显示内存占用"
 
 #: engines/scumm/help.cpp:99
 msgid "Run in fast mode (*)"
-msgstr ""
+msgstr "快速模式 (*)"
 
 #: engines/scumm/help.cpp:100
 msgid "Run in really fast mode (*)"
-msgstr ""
+msgstr "极速模式 (*)"
 
 #: engines/scumm/help.cpp:102
 msgid "Switch between graphics filters"
-msgstr ""
+msgstr "切换图形过滤器"
 
 #: engines/scumm/help.cpp:103
 msgid "Increase / Decrease scale factor"
-msgstr ""
+msgstr "增加/减小缩放因数"
 
 #: engines/scumm/help.cpp:104
 msgid "Toggle aspect-ratio correction"
@@ -9191,60 +9281,60 @@ msgstr ""
 
 #: engines/scumm/help.cpp:118
 msgid "Main game controls:"
-msgstr ""
+msgstr "主要游戏控制："
 
 #: engines/scumm/help.cpp:123 engines/scumm/help.cpp:138
 #: engines/scumm/help.cpp:163 engines/twp/metaengine.cpp:184
 msgid "Push"
-msgstr ""
+msgstr "推"
 
 #: engines/scumm/help.cpp:124 engines/scumm/help.cpp:139
 #: engines/scumm/help.cpp:164 engines/twp/metaengine.cpp:185
 msgid "Pull"
-msgstr ""
+msgstr "拉"
 
 #: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
 #: engines/scumm/help.cpp:165 engines/scumm/help.cpp:201
 #: engines/scumm/help.cpp:211 engines/twp/metaengine.cpp:180
 msgid "Give"
-msgstr ""
+msgstr "给"
 
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
 #: engines/scumm/help.cpp:166 engines/scumm/help.cpp:194
 #: engines/scumm/help.cpp:212 engines/twp/metaengine.cpp:178
 msgid "Open"
-msgstr ""
+msgstr "打开"
 
 #: engines/scumm/help.cpp:128
 msgid "Go to"
-msgstr ""
+msgstr "走向"
 
 #: engines/scumm/help.cpp:129
 msgid "Get"
-msgstr ""
+msgstr "获取"
 
 #: engines/scumm/help.cpp:131 engines/scumm/help.cpp:143
 msgid "Read"
-msgstr ""
+msgstr "阅读"
 
 #: engines/scumm/help.cpp:132 engines/scumm/help.cpp:149
 msgid "New kid"
-msgstr ""
+msgstr "新儿童"
 
 #: engines/scumm/help.cpp:133 engines/scumm/help.cpp:155
 #: engines/scumm/help.cpp:173
 msgid "Turn on"
-msgstr ""
+msgstr "开启"
 
 #: engines/scumm/help.cpp:134 engines/scumm/help.cpp:156
 #: engines/scumm/help.cpp:174
 msgid "Turn off"
-msgstr ""
+msgstr "关闭"
 
 #: engines/scumm/help.cpp:144 engines/scumm/help.cpp:169
 #: engines/scumm/help.cpp:198 engines/wintermute/keymapper_tables.h:1540
 msgid "Walk to"
-msgstr ""
+msgstr "走向"
 
 #: engines/scumm/help.cpp:145 engines/scumm/help.cpp:170
 #: engines/scumm/help.cpp:199 engines/scumm/help.cpp:214
@@ -9252,11 +9342,11 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:134
 #: engines/wintermute/keymapper_tables.h:1546
 msgid "Pick up"
-msgstr ""
+msgstr "捡起"
 
 #: engines/scumm/help.cpp:146 engines/scumm/help.cpp:171
 msgid "What is"
-msgstr ""
+msgstr "信息"
 
 #: engines/scumm/help.cpp:151
 msgid "Put on"
@@ -9340,13 +9430,13 @@ msgstr "拉 (Yank)"
 #: engines/wintermute/keymapper_tables.h:128
 #: engines/wintermute/keymapper_tables.h:1558
 msgid "Talk to"
-msgstr ""
+msgstr "对话"
 
 #: engines/scumm/help.cpp:203 engines/scumm/help.cpp:215
 #: engines/twp/metaengine.cpp:182 engines/wintermute/keymapper_tables.h:122
 #: engines/wintermute/keymapper_tables.h:1534
 msgid "Look at"
-msgstr ""
+msgstr "观察"
 
 #: engines/scumm/help.cpp:204
 msgid "turn oN"
@@ -9459,31 +9549,31 @@ msgstr "切换人物："
 
 #: engines/scumm/help.cpp:287
 msgid "Second kid"
-msgstr ""
+msgstr "儿童 2"
 
 #: engines/scumm/help.cpp:288
 msgid "Third kid"
-msgstr ""
+msgstr "儿童 3"
 
 #: engines/scumm/help.cpp:297
 msgid "Toggle Inventory/IQ Points display"
-msgstr ""
+msgstr "开关物品栏/智商显示"
 
 #: engines/scumm/help.cpp:298
 msgid "Toggle Keyboard/Mouse Fighting (*)"
-msgstr ""
+msgstr "切换键盘/鼠标战斗 (*)"
 
 #: engines/scumm/help.cpp:300
 msgid "* Keyboard Fighting is always on,"
-msgstr ""
+msgstr "* 键盘战斗总会启用，"
 
 #: engines/scumm/help.cpp:301
 msgid "  so despite the in-game message this"
-msgstr ""
+msgstr "  因此尽管游戏内消息所述并非如此，"
 
 #: engines/scumm/help.cpp:302
 msgid "  actually toggles Mouse Fighting Off/On"
-msgstr ""
+msgstr "  此选项实际上改变了鼠标战斗的开关"
 
 #: engines/scumm/help.cpp:309
 msgid "Fighting controls (numpad):"
@@ -9536,7 +9626,7 @@ msgstr ""
 
 #: engines/scumm/help.cpp:326
 msgid "9, 6, and 3, respectively."
-msgstr ""
+msgstr "分别使用 9、6、3。"
 
 #: engines/scumm/help.cpp:335
 msgid "Biplane controls (numpad):"
@@ -9544,39 +9634,39 @@ msgstr ""
 
 #: engines/scumm/help.cpp:336
 msgid "Fly to upper left"
-msgstr ""
+msgstr "飞向左上角"
 
 #: engines/scumm/help.cpp:337
 msgid "Fly to left"
-msgstr ""
+msgstr "飞向左侧"
 
 #: engines/scumm/help.cpp:338
 msgid "Fly to lower left"
-msgstr ""
+msgstr "飞向左下角"
 
 #: engines/scumm/help.cpp:339
 msgid "Fly upwards"
-msgstr ""
+msgstr "向上飞行"
 
 #: engines/scumm/help.cpp:340
 msgid "Fly straight"
-msgstr ""
+msgstr "径直飞行"
 
 #: engines/scumm/help.cpp:341
 msgid "Fly down"
-msgstr ""
+msgstr "向下飞行"
 
 #: engines/scumm/help.cpp:342
 msgid "Fly to upper right"
-msgstr ""
+msgstr "飞向右上角"
 
 #: engines/scumm/help.cpp:343
 msgid "Fly to right"
-msgstr ""
+msgstr "飞向右侧"
 
 #: engines/scumm/help.cpp:344
 msgid "Fly to lower right"
-msgstr ""
+msgstr "飞向右下角"
 
 #: engines/scumm/input.cpp:1366
 msgid "Snap scroll on"
@@ -9637,13 +9727,13 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:660
 msgid "Run in original 640 x 480 resolution"
-msgstr ""
+msgstr "以原始 640 x 480 分辨率运行"
 
 #: engines/scumm/metaengine.cpp:661
 msgid ""
 "This allows more accurate pause/restart banners, but might impact "
 "performance or shader/scaler usage."
-msgstr ""
+msgstr "可使暂停/重试横幅更精确，但可能影响性能或着色器/缩放器占用。"
 
 #: engines/scumm/metaengine.cpp:668
 msgid "Play simplified music"
@@ -9651,7 +9741,7 @@ msgstr "播放简版音乐"
 
 #: engines/scumm/metaengine.cpp:669
 msgid "This music was intended for low-end Macs, and uses only one channel."
-msgstr ""
+msgstr "音乐有意为低端 Mac 设备设计，仅使用单声道。"
 
 #: engines/scumm/metaengine.cpp:677
 msgid "Enable smooth scrolling"
@@ -9659,7 +9749,7 @@ msgstr "启用平滑滚动"
 
 #: engines/scumm/metaengine.cpp:678
 msgid "(instead of the normal 8-pixels steps scrolling)"
-msgstr ""
+msgstr "（替代常规的一次 8 像素滚动）"
 
 #: engines/scumm/metaengine.cpp:686
 msgid "Allow semi-smooth scrolling"
@@ -9669,7 +9759,7 @@ msgstr "允许半平滑滚动"
 msgid ""
 "Allow scrolling to be less smooth during the fast camera movement in the "
 "intro."
-msgstr ""
+msgstr "在序章的快速相机移动期间，允许滚动粗糙一些。"
 
 #: engines/scumm/metaengine.cpp:714
 msgid ""
@@ -9797,17 +9887,17 @@ msgstr "随机地图设置"
 #. I18N: Map generator algorthims
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:59
 msgid "Algorithm"
-msgstr ""
+msgstr "算法"
 
 #. I18N: Spiff algorthim
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:63
 msgid "Spiff"
-msgstr ""
+msgstr "华丽"
 
 #. I18N: Katton algorthim
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:65
 msgid "Katton"
-msgstr ""
+msgstr "Katton"
 
 #. I18N: Random algorthim
 #. I18N: Random map size
@@ -9826,12 +9916,12 @@ msgstr "随机"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:67
 msgid "Picks the map algorithm randomly."
-msgstr ""
+msgstr "随机选择地图算法。"
 
 #. I18N: Map sizes
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:70
 msgid "Size"
-msgstr ""
+msgstr "大小"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:74
 msgid "Small"
@@ -9839,19 +9929,19 @@ msgstr "小"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:76
 msgid "Large"
-msgstr ""
+msgstr "大"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:77
 msgid "Huge"
-msgstr ""
+msgstr "巨大"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:78
 msgid "SAI"
-msgstr ""
+msgstr "SAI"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:79
 msgid "Ridiculous"
-msgstr ""
+msgstr "荒谬"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:80
 msgid "Max"
@@ -9859,7 +9949,7 @@ msgstr "最大"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:82
 msgid "Picks the map size randomly."
-msgstr ""
+msgstr "随机选择地图大小。"
 
 #. I18N: Map tilesets
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:85
@@ -9868,49 +9958,49 @@ msgstr "图块集"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:99
 msgid "Picks the map tileset randomly."
-msgstr ""
+msgstr "随机选择地图图块。"
 
 #. I18N: Percentage of energy pools
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:102
 msgid "Energy"
-msgstr ""
+msgstr "能量"
 
 #. I18N: Energy slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:107
 msgid "Scarce - Lots"
-msgstr ""
+msgstr "稀少 - 繁多"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:112
 msgid "Picks the random amount of energy pools."
-msgstr ""
+msgstr "选择的能源池数目随机。"
 
 #. I18N: Percentage of terrain
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:115
 msgid "Terrain"
-msgstr ""
+msgstr "地形"
 
 #. I18N: Terrain slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:120
 msgid "Barren - Rough"
-msgstr ""
+msgstr "贫瘠 - 困难"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:124
 msgid "Picks the random amount of terrain level."
-msgstr ""
+msgstr "选择的地形等级随机。"
 
 #. I18N: Percentage of water
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:127
 msgid "Water"
-msgstr ""
+msgstr "水分"
 
 #. I18N: Water slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:132
 msgid "Driest - Wettest"
-msgstr ""
+msgstr "干 - 湿"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:136
 msgid "Picks the random amount of water."
-msgstr ""
+msgstr "选择的水量随机。"
 
 #. I18N: Generate new map
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:140
@@ -9943,21 +10033,21 @@ msgstr ""
 
 #: engines/sherlock/metaengine.cpp:51
 msgid "Pixellated scene transitions"
-msgstr ""
+msgstr "像素化场景切换"
 
 #: engines/sherlock/metaengine.cpp:52
 msgid "When changing scenes, a randomized pixel transition is done"
-msgstr ""
+msgstr "切换场景时进行随机化像素转场"
 
 #: engines/sherlock/metaengine.cpp:63
 msgid "Don't show hotspots when moving mouse"
-msgstr ""
+msgstr "移动鼠标时不显示热点"
 
 #: engines/sherlock/metaengine.cpp:64
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
-msgstr ""
+msgstr "只在点击热点或操作按钮时显示热点名称"
 
 #: engines/sherlock/metaengine.cpp:75
 msgid "Show character portraits"
@@ -9989,53 +10079,53 @@ msgstr ""
 
 #: engines/sky/metaengine.cpp:88
 msgid "Walk / Look / Talk"
-msgstr ""
+msgstr "移动/观察/交流"
 
 #: engines/sky/metaengine.cpp:106
 msgid "Skip / Close"
-msgstr ""
+msgstr "跳过/关闭"
 
 #: engines/sky/metaengine.cpp:114
 msgid "Open control panel"
-msgstr ""
+msgstr "打开控制面板"
 
 #: engines/sky/metaengine.cpp:130
 msgid "Toggle fast mode"
-msgstr ""
+msgstr "开关快速模式"
 
 #: engines/sky/metaengine.cpp:135
 msgid "Toggle really fast mode"
-msgstr ""
+msgstr "开关高速模式"
 
 #: engines/sky/metaengine.cpp:154
 msgid "Floppy intro"
-msgstr ""
+msgstr "软盘版序章"
 
 #: engines/sky/metaengine.cpp:155
 msgid "Use the floppy version's intro (CD version only)"
-msgstr ""
+msgstr "使用软盘版本的序章（仅 CD 版本）"
 
 #: engines/sky/metaengine.cpp:233
 msgid "WARNING: Deleting the autosave slot is not supported by this engine"
-msgstr ""
+msgstr "警告：引擎不支持删除自动存档"
 
 #: engines/stark/metaengine.cpp:37
 msgid "Load modded assets"
-msgstr ""
+msgstr "加载模组更改的资源"
 
 #: engines/stark/metaengine.cpp:38
 msgid "Enable loading of external replacement assets."
-msgstr ""
+msgstr "启用加载外部替换资源。"
 
 #: engines/stark/metaengine.cpp:48
 msgid "Enable linear filtering of the backgrounds images"
-msgstr ""
+msgstr "启用背景图像的线性过滤"
 
 #: engines/stark/metaengine.cpp:49
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
-msgstr ""
+msgstr "启用线性过滤时，背景图像在全屏模式下会更平滑，但会损失一些细节。"
 
 #: engines/stark/metaengine.cpp:59 engines/ultima/metaengine.cpp:140
 msgid "Enable font anti-aliasing"
@@ -10047,18 +10137,18 @@ msgstr "启用时字体更平滑。"
 
 #: engines/stark/stark.cpp:106
 msgid "Software renderer does not support modded assets"
-msgstr ""
+msgstr "软件渲染器不支持模组修改的资源"
 
 #: engines/stark/stark.cpp:291
 msgid "You are missing recommended data files:"
-msgstr ""
+msgstr "缺少推荐的数据文件："
 
 #: engines/stark/stark.cpp:305
 msgid ""
 "The 'fonts' folder is required to experience the text style as it was "
 "designed. The Steam release is known to be missing it. You can get the fonts "
 "from the demo version of the game."
-msgstr ""
+msgstr "需要“fonts”文件夹以体验原有设计的文本风格。已知 Steam 版本缺少此文件夹。你可以从游戏演示版中获取字体。"
 
 #: engines/stark/stark.cpp:312
 msgid ""
@@ -10077,18 +10167,18 @@ msgstr ""
 #: engines/supernova/supernova.cpp:191
 #, c-format
 msgid "Unable to locate the text for %s language in engine data file."
-msgstr ""
+msgstr "无法在引擎数据文件中定位 %s 语言的文本。"
 
 #: engines/supernova/supernova.cpp:475
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
-msgstr ""
+msgstr "“%s”引擎数据文件版本不正确。需要 %d 但找到 %d。"
 
 #: engines/supernova/supernova.cpp:485
 #, c-format
 msgid "Unable to find block for part %d"
-msgstr ""
+msgstr "找不到 %d 部分的块"
 
 #: engines/supernova/supernova.cpp:528
 #, c-format
@@ -10190,7 +10280,7 @@ msgstr "矫正视频纵横比"
 
 #: engines/tetraedge/metaengine.cpp:33
 msgid "Play Syberia cutscenes in 16:9, rather than stretching to full screen"
-msgstr ""
+msgstr "以 16:9 比例播放 Syberia 转场动画，而不拉伸到全屏"
 
 #: engines/tetraedge/metaengine.cpp:43
 msgid "Restore missing scenes"
@@ -10202,11 +10292,11 @@ msgstr "恢复 Windows 版本中原来丢失的场景"
 
 #: engines/tinsel/detection_tables.h:481
 msgid "Saturn CD version is not yet supported"
-msgstr ""
+msgstr "尚未支持 Saturn CD 版本"
 
 #: engines/tinsel/metaengine.cpp:39
 msgid "Remove Black Bars"
-msgstr ""
+msgstr "移除黑边"
 
 #: engines/tinsel/metaengine.cpp:40
 msgid ""
@@ -10228,17 +10318,17 @@ msgstr "#%d 中的存档 "
 #: engines/toon/toon.cpp:272
 #, c-format
 msgid "Could not quick save into slot #%d"
-msgstr ""
+msgstr "无法快速保存至档位 #%d"
 
 #: engines/toon/toon.cpp:285
 #, c-format
 msgid "Saved game #%d quick loaded"
-msgstr ""
+msgstr "已快速载入存档 #%d"
 
 #: engines/toon/toon.cpp:289
 #, c-format
 msgid "Could not quick load the saved game #%d"
-msgstr ""
+msgstr "无法快速载入存档 #%d"
 
 #: engines/toon/toon.cpp:1538
 msgid "Are you sure you want to exit?"
@@ -10251,7 +10341,7 @@ msgstr "无法定位“%s”数据文件。"
 
 #: engines/twine/detection.cpp:175
 msgid "This version requires Giflib which was not compiled into ScummVM"
-msgstr ""
+msgstr "此版本需要 Giflib，但未被编译入 ScummVM"
 
 #: engines/twine/metaengine.cpp:44
 msgid "Enable wall collisions"
@@ -10567,11 +10657,11 @@ msgstr "转到前一个物品"
 
 #: engines/twp/metaengine.cpp:157
 msgid "Go to next object"
-msgstr ""
+msgstr "转到下一个物品"
 
 #: engines/twp/metaengine.cpp:158
 msgid "Select verb/item Left"
-msgstr ""
+msgstr "向左选择动作/物品"
 
 #: engines/twp/metaengine.cpp:159
 msgid "Select verb/item Right"
@@ -10579,11 +10669,11 @@ msgstr "向右选择动作/物品"
 
 #: engines/twp/metaengine.cpp:160
 msgid "Select verb/item Up"
-msgstr ""
+msgstr "向上选择动作/物品"
 
 #: engines/twp/metaengine.cpp:161
 msgid "Select verb/item Down"
-msgstr ""
+msgstr "向下选择动作/物品"
 
 #: engines/twp/metaengine.cpp:163
 msgid "Select Actor 1"
@@ -10648,7 +10738,7 @@ msgstr "显示热点"
 #: engines/twp/twp.cpp:829
 msgid ""
 "You selected Ransome *unbeeped* (DLC) but the DLC has not been detected!"
-msgstr ""
+msgstr "你选择了 Ransome *unbeeped* (DLC)，但未检测到此组件！"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
