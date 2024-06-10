@@ -142,7 +142,6 @@ ErrorCode CMainWindow::attach() {
 		}
 
 		if (_pThudBmp && (CBagObject *)nullptr == getFGObjects(CBofString(THUD_WLD))) {
-			CBofRect r(1, tmpRect.height() - 101, 101, tmpRect.height() - 1);
 			_pThudBmp->setAssociateWnd(this);
 			insertFGObjects(_pThudBmp);
 		}
@@ -201,7 +200,6 @@ ErrorCode CMainWindow::attach() {
 		}
 
 		if ((CBagObject *)nullptr == getFGObjects(CBofString(PDA_WLD))) {
-			CBofRect r(0, 0, 300, 200);
 			_pPDABmp->setAssociateWnd(this);
 
 			// To fix pda not updating problem

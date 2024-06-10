@@ -633,7 +633,7 @@ void CNavWindow::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	assert(pPoint != nullptr);
 
 	switch (_level) {
-	case 0: {
+	case 0:
 		if (_pPinna->ptInRect(*pPoint))
 			onPinna();
 
@@ -658,9 +658,8 @@ void CNavWindow::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 		if (_pFruufnia->ptInRect(*pPoint))
 			onFruufnia();
 		break;
-	}//close case
 
-	case 1: {
+	case 1:
 		if (_pWilbur->ptInRect(*pPoint))
 			onWilbur();
 
@@ -689,9 +688,8 @@ void CNavWindow::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 			onPizer();
 
 		break;
-	}//close case
 
-	case 2: {
+	case 2:
 		if (_pBackwater->ptInRect(*pPoint))
 			onBackwater();
 
@@ -717,8 +715,8 @@ void CNavWindow::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 			onMaggotsnest();
 
 		break;
-	}
-	case 3: {
+
+	case 3:
 		if (_pPeggleboz->ptInRect(*pPoint))
 			onPeggleboz();
 
@@ -750,7 +748,9 @@ void CNavWindow::onLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 			onBattlefish();
 
 		break;
-	} //close case
+
+	default:
+		break;
 	} //close switch
 
 	if (_cargo <= 0)
