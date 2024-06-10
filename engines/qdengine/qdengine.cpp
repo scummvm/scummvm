@@ -40,6 +40,7 @@ QDEngineEngine *g_engine;
 QDEngineEngine::QDEngineEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 	_gameDescription(gameDesc), _randomSource("QDEngine") {
 	g_engine = this;
+	_pixelformat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 }
 
 QDEngineEngine::~QDEngineEngine() {

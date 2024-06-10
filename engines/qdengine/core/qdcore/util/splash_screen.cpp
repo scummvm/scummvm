@@ -20,10 +20,13 @@
  */
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "image/bmp.h"
+#include "common/formats/winexe.h"
+#include "common/formats/winexe_pe.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/util/splash_screen.h"
-
+#include "qdengine/qdengine.h"
 
 namespace QDEngine {
 
@@ -32,13 +35,20 @@ namespace QDEngine {
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
-bool SplashScreen::create(int bitmap_resid) {
+bool SplashScreen::create(int bitmapResID) {
 	if (!create_window()) return false;
 
-	bitmap_handle_ = LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(bitmap_resid), IMAGE_BITMAP, 0, 0, LR_DEFAULTCOLOR);
-	if (!bitmap_handle_) return false;
+	Common::PEResources r;
+    Common::WinResourceID resid(bitmapResID);
+    Image::BitmapDecoder decoder;
 
-	SendMessage((HWND)splash_hwnd_, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)bitmap_handle_);
+    if (r.loadFromEXE("shveik.exe")) {
+        Common::SeekableReadStream *stream = r.getResource(Common::kWinBitmap, resid);
+        if (decoder.loadStream(*stream)) {
+            splash_hwnd_->copyRectToSurface(decoder.getSurface(), 24,  0, 0, decoder.getSurface()->w, decoder.getSurface()->h);
+            g_engine->_screen->updateScreen();
+        }
+    }
 	return true;
 }
 
@@ -114,8 +124,10 @@ void SplashScreen::hide() {
 bool SplashScreen::create_window() {
 	destroy();
 
-	splash_hwnd_ = CreateWindowEx(WS_EX_TOOLWINDOW, "STATIC", "", WS_POPUP | SS_BITMAP, 300, 300, 300, 300, NULL, NULL, GetModuleHandle(NULL), NULL);
-	if (!splash_hwnd_) return false;
+    splash_hwnd_ = new Graphics::Surface();
+    splash_hwnd_->create(300, 300, g_engine->_pixelformat);
+	if (!splash_hwnd_)
+		return false;
 
 	return true;
 }
