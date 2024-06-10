@@ -261,8 +261,8 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		case 'I': {
 			if (istr.peek() != 'S') {
 				istr.putBack();
+				
 				return parseCode;
-				break;
 			}
 			char szLocalBuff[256];
 			szLocalBuff[0] = 0;
@@ -312,8 +312,8 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 				if (!b)
 					putbackStringOnStream(istr, " NOT ");
 				putbackStringOnStream(istr, "IS ");
+
 				return parseCode;
-				break;
 			}
 			parseCode = UPDATED_OBJECT;
 			break;
@@ -323,7 +323,6 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		//
 		case ';':
 			return PARSING_DONE;
-			break;
 
 		//
 		//  no match return from function
