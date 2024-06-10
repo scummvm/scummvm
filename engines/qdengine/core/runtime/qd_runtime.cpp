@@ -211,6 +211,8 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 		sp.create(IDB_SPLASH);
 		sp.set_mask(IDB_SPLASH_MASK);
 		sp.show();
+
+		sp.wait(3000); // FIXME STUB
 	}
 
 	SetErrorMode(SEM_FAILCRITICALERRORS);
