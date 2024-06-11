@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-11 12:49+0000\n"
-"PO-Revision-Date: 2024-06-11 16:25+0000\n"
+"PO-Revision-Date: 2024-06-11 17:42+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -3301,6 +3301,8 @@ msgid ""
 "No games (yet)\n"
 "Open ScummVM and add your games here."
 msgstr ""
+"(Noch) keine Spiele\n"
+"Öffne ScummVM und füge deine Spiele hinzu."
 
 #: dists/android.strings.xml.cpp:59
 #, fuzzy
@@ -3316,7 +3318,7 @@ msgstr "Objektnamen zeigen"
 
 #: dists/android.strings.xml.cpp:61
 msgid "Shortcut icon"
-msgstr ""
+msgstr "Verknüpfungs-Icon"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:32
@@ -5552,6 +5554,17 @@ msgid ""
 "\n"
 "The core also supports dedicated per game **hook** plain text files with **."
 msgstr ""
+"## Libretro-Playlisten für den ScummVM-Core\n"
+"Pleylisten sind Textdateien, die Libretro-Frontends (wie RetroArch) "
+"verwendet werden, um ein Spiel mit einem bestimmten Core von der "
+"Benutzeroberfläche aus zu starten. Die Listen sind so strukturiert, dass der "
+"Pfad zu einem bestimmten Inhalt (z.B. ROM) einem Core übergeben wird.\n"
+"\n"
+"Der ScummVM-Core unterstützt Pfade zu Verzeichnissen mit gültigen "
+"Spieldaten. Das Erkennungs-System wird versuchen, das Spiel automatisch zu "
+"erkennen und mit den Standard-Einstellungen von ScummVM starten.\n"
+"\n"
+"Der Core unterstützt auch **Hook**-Dateien mit **."
 
 #: backends/platform/maemo/maemo.cpp:157
 msgid "Click Mode"
@@ -6380,6 +6393,11 @@ msgid ""
 "or\n"
 "2. Any .sav file inside the QfG2 Remake game directory"
 msgstr ""
+"Das Spiel wird nun die aus Sierra-Spielen exportieren Charakteren auflisten, "
+"die importiert werden können:\n"
+"1. Spielstand-Dateien mit dem Namen qfg1*.sav oder qfg1vga*.sav im ScummVM-"
+"Spielstandverzeichnis oder\n"
+"2. Jede .sav-Datei im QfG2 Remake-Verzeichnis"
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
@@ -6429,11 +6447,11 @@ msgstr "Trotzdem laden"
 
 #: engines/bagel/metaengine.cpp:41
 msgid "Wait"
-msgstr ""
+msgstr "Warten"
 
 #: engines/bagel/metaengine.cpp:42
 msgid "Soldier 714 Eye Cheat"
-msgstr ""
+msgstr "Soldier 714 Augen-Cheat"
 
 #: engines/bagel/metaengine.cpp:83
 #, fuzzy
@@ -6853,7 +6871,7 @@ msgstr "Spiel beenden"
 #. In order to escape the dice game loop press Right/Left Alt
 #: engines/cge/metaengine.cpp:218
 msgid "ALTered Item"
-msgstr ""
+msgstr "Verändertes Item"
 
 #: engines/cge/metaengine.cpp:224
 msgid "Inventory Item 1 (Select/Deselect)"
