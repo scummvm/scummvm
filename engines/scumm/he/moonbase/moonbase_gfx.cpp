@@ -1145,7 +1145,7 @@ static void distortionTransferOp(int transferOp, MoonbaseDistortionInfo *mdi, ui
 	switch (transferOp) {
 	case kMDTEdgeReflectionClipped:
 		// Get the 'coordinates' from the color channels...
-		distortionGetCoordinates(READ_BE_UINT16(s), xx, yy);
+		distortionGetCoordinates(READ_LE_UINT16(s), xx, yy);
 
 		// Find the read X location
 		sx = mdi->baseX + dx + xx;
