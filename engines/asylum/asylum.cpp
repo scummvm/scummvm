@@ -405,6 +405,7 @@ void AsylumEngine::handleEvents() {
 			break;
 
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
 			// Handle custom actions
 			if (_handler)
 				_handler->handleEvent(ev);
@@ -428,8 +429,6 @@ void AsylumEngine::handleEvents() {
 		case Common::EVENT_RBUTTONDOWN:
 		case Common::EVENT_RBUTTONUP:
 			// Handle mouse events
-			_cursor->setState(ev);
-
 			if (_handler)
 				_handler->handleEvent(ev);
 			break;

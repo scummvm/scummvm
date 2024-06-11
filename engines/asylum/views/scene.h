@@ -75,6 +75,13 @@ enum ActionAreaType {
 	kActionAreaType2 = 2
 };
 
+enum KeyDirection {
+	kWalkUp = 1,
+	kWalkDown = 2,
+	kWalkLeft = 4,
+	kWalkRight = 8
+};
+
 class Scene : public EventHandler {
 public:
 	Scene(AsylumEngine *engine);
@@ -224,12 +231,16 @@ private:
 
 	bool _debugShowVersion;
 
+	byte _keyState;
+	bool _rightButtonDown;
+
 	//////////////////////////////////////////////////////////////////////////
 	// Message handling
 	void activate();
 	bool init();
 	bool update();
-	bool action(AsylumAction a);
+	bool actionDown(AsylumAction a);
+	bool actionUp(AsylumAction a);
 	bool key(const AsylumEvent &evt);
 	bool clickDown(const AsylumEvent &evt);
 

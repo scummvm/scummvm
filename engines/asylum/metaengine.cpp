@@ -168,6 +168,30 @@ Common::KeymapArray AsylumMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);
 
+	act = new Action(kStandardActionMoveUp, _("Move up"));
+	act->setCustomEngineActionEvent(kAsylumActionMoveUp);
+	act->addDefaultInputMapping("UP");
+	act->addDefaultInputMapping("JOY_UP");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveDown, _("Move down"));
+	act->setCustomEngineActionEvent(kAsylumActionMoveDown);
+	act->addDefaultInputMapping("DOWN");
+	act->addDefaultInputMapping("JOY_DOWN");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveLeft, _("Move left"));
+	act->setCustomEngineActionEvent(kAsylumActionMoveLeft);
+	act->addDefaultInputMapping("LEFT");
+	act->addDefaultInputMapping("JOY_LEFT");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveRight, _("Move right"));
+	act->setCustomEngineActionEvent(kAsylumActionMoveRight);
+	act->addDefaultInputMapping("RIGHT");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	engineKeyMap->addAction(act);
+
 	return Keymap::arrayOf(engineKeyMap);
 }
 
