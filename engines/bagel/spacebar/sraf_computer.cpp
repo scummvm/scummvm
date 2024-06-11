@@ -60,14 +60,14 @@ namespace SpaceBar {
 #define kStandardDoubleIndentation  8
 
 // Buyer bids summary
-#define kFirstMineralColumn 12
+#define kFirstMineralColumn     12
 
 #define kBuyerBidsPointSize     14
 #define kOtherPointSize         13
 #define kMineralColWidth        4
 
-#define kBuyerBidsPointWidth                6
-#define kLineItemHeight kBuyerBidsPointSize + 4
+#define kBuyerBidsPointWidth    6
+#define kLineItemHeight         (kBuyerBidsPointSize + 4)
 
 // Add instructions to the main screen
 

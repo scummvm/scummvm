@@ -108,7 +108,7 @@ enum {
 #define FORMAT_MULTI_LINE       DT_WORDBREAK
 #define FORMAT_DEFAULT          ( FORMAT_TOP_LEFT | FORMAT_MULTI_LINE )
 
-#define FONT_DEFAULT_SIZE       -14
+#define FONT_DEFAULT_SIZE       (-14)
 #define FONT_8POINT             8
 #define FONT_10POINT            10
 #define FONT_12POINT            12

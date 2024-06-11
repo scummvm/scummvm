@@ -588,15 +588,13 @@ ErrorCode CBofBitmap::captureScreen(CBofWindow *pWnd, CBofRect *pSrcRect, CBofRe
 	assert(pWnd != nullptr);
 	assert(pSrcRect != nullptr);
 
-	CBofRect cDestRect(0, 0, _nDX - 1, _nDY - 1);
-	CBofRect cSrcRect(0, 0, _nDX - 1, _nDY - 1);
-
 	if (_errCode == ERR_NONE) {
+		CBofRect cDestRect(0, 0, _nDX - 1, _nDY - 1);
 		if (pDstRect != nullptr) {
 			cDestRect = *pDstRect;
 		}
 
-		cSrcRect = *pSrcRect;
+		CBofRect cSrcRect = *pSrcRect;
 		CBofBitmap *pBackdrop = pWnd->getBackdrop();
 
 		// If we're capturing the screen, we have to convert the format first.

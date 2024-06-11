@@ -23,7 +23,6 @@
 #ifndef BAGEL_BAGLIB_RP_OBJECT_H
 #define BAGEL_BAGLIB_RP_OBJECT_H
 
-#include "bagel/baglib/character_object.h"
 #include "bagel/baglib/dossier_object.h"
 #include "bagel/baglib/expression.h"
 #include "bagel/baglib/movie_object.h"

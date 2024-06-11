@@ -332,8 +332,6 @@ ErrorCode CBagVarManager::releaseVariables(bool bIncludeGlobals) {
 }
 
 CBagVar *CBagVarManager::getVariable(const CBofString &sName) {
-	CBagVar *pVar = nullptr;
-
 	// Use the hash table to find the variable.
 	char szLocalBuff[256];
 	CBofString varStr(szLocalBuff, 256);
@@ -343,7 +341,7 @@ CBagVar *CBagVarManager::getVariable(const CBofString &sName) {
 
 	CBofList<CBagVar *> *pVarList = &_xVarHashList[nHashVal];
 	for (int i = 0; i < pVarList->getCount(); ++i) {
-		pVar = pVarList->getNodeItem(i);
+		CBagVar *pVar = pVarList->getNodeItem(i);
 		if (pVar != nullptr && (pVar->getName().getLength() == sName.getLength()) && !pVar->getName().find(sName)) {
 			return pVar;
 		}

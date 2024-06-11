@@ -55,7 +55,7 @@ extern Fixed fixedDivide(Fixed Dividend, Fixed Divisor);
 extern Fixed fixedMultiply(Fixed Multiplicand, Fixed Multiplier);
 
 #define intToFixed(i) (Fixed)(((long)(i)) << 16)
-#define fixedToInt(f) (int)(((long)f) >> 16)
+#define fixedToInt(f) (int)(((long)(f)) >> 16)
 
 //////////////////////////////////////////////////////////////////////////////
 //

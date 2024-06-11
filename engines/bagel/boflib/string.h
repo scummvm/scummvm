@@ -32,7 +32,7 @@ namespace Bagel {
 // of the buffer size to tell us if it is stack memory being used.
 #define mUseStackMem 0x8000
 #define NORMALIZEBUFFERSIZE() (_nBufferSize & ~mUseStackMem)
-#define SETBUFFERSIZE(size, usestackmem) (_nBufferSize = (uint16)(size + (usestackmem ? mUseStackMem : 0)))
+#define SETBUFFERSIZE(size, usestackmem) (_nBufferSize = (uint16)((size) + ((usestackmem) ? mUseStackMem : 0)))
 #define USESSTACKMEM() (_nBufferSize & mUseStackMem)
 
 class CBofString : public CBofObject {

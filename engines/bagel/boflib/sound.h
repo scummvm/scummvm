@@ -42,8 +42,8 @@ namespace Bagel {
 #define VOLUME_INDEX_DEFAULT 10
 
 // Convert to ScummVM scale
-#define VOLUME_SVM(x) (x * Audio::Mixer::kMaxChannelVolume / VOLUME_INDEX_MAX)
-#define SVM_VOLUME(x) ((x >= 252) ? VOLUME_INDEX_MAX : x * VOLUME_INDEX_MAX / 252)
+#define VOLUME_SVM(x) ((x) * Audio::Mixer::kMaxChannelVolume / VOLUME_INDEX_MAX)
+#define SVM_VOLUME(x) (((x) >= 252) ? VOLUME_INDEX_MAX : (x) * VOLUME_INDEX_MAX / 252)
 
 #define SOUND_BUFFERED 0x0001
 #define SOUND_ASYNCH 0x0002

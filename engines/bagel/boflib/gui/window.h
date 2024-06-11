@@ -42,7 +42,7 @@ namespace Bagel {
 class CBofString;
 
 #define MAX_TITLE 64
-#define USE_DEFAULT -1
+#define USE_DEFAULT (-1)
 
 class CBofBitmap;
 class CBofTimerPacket;
