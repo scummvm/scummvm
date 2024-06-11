@@ -3099,8 +3099,11 @@ void ScummEngine_v95he::resetActorBgs() {
 			// apparently breaks a bunch of other stuff though,
 			// and doesn't help us in any way...
 			//
-			//if (!(testGfxOtherUsageBits(strip, j) && _actors[j]->_needBgReset))
+			//if (!(testGfxOtherUsageBits(strip, act))
 			//	continue;
+
+			if (!(_actors[act]->_needBgReset))
+				continue;
 
 			lastStrip = i;
 			actorMin = ((ActorHE *)_actors[act])->_screenUpdateTableMin[i];
