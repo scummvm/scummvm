@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-10 20:51+0000\n"
-"PO-Revision-Date: 2024-06-03 07:43+0000\n"
+"PO-Revision-Date: 2024-06-11 08:41+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -3202,20 +3202,16 @@ msgid ""
 msgstr ""
 
 #: dists/android.strings.xml.cpp:59
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game icon"
-msgstr "ゲーム設定"
+msgstr "ゲームアイコン"
 
 #: dists/android.strings.xml.cpp:60
-#, fuzzy
-#| msgid "Show object labels"
 msgid "Shortcut label"
-msgstr "オブジェクトのラベルを表示する"
+msgstr "ショートカットラベル"
 
 #: dists/android.strings.xml.cpp:61
 msgid "Shortcut icon"
-msgstr ""
+msgstr "ショートカットアイコン"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:32
@@ -5324,10 +5320,8 @@ msgid "Select Playlist directory"
 msgstr "プレイリストフォルダーを選択"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:172
-#, fuzzy
-#| msgid "Generate playlist"
 msgid "Libretro playlist"
-msgstr "プレイリスト生成"
+msgstr "Libretroプレイリスト"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:175
 msgid ""
@@ -6638,27 +6632,27 @@ msgstr "在庫アイテム8(選択/解除)"
 #. Sets the current access to only the first Location
 #: engines/cge/metaengine.cpp:267
 msgid "DEBUG: Access to Location 1"
-msgstr ""
+msgstr "デバッグ: Location 1にアクセス"
 
 #. I18N: Sets the current access to Locations 1 to 8.
 #: engines/cge/metaengine.cpp:273
 msgid "DEBUG: Access to Locations 1-8"
-msgstr ""
+msgstr "デバッグ: Location 1~8にアクセス"
 
 #. I18N: Sets the current access to Locations 1 to 16.
 #: engines/cge/metaengine.cpp:279
 msgid "DEBUG: Access to Locations 1-16"
-msgstr ""
+msgstr "デバッグ: Location 1~16にアクセス"
 
 #. I18N: Sets the current access to Locations 1 to 23.
 #: engines/cge/metaengine.cpp:285
 msgid "DEBUG: Access to Locations 1-23"
-msgstr ""
+msgstr "デバッグ: Location 1~23にアクセス"
 
 #. I18N: Sets the current access to Locations 1 to 24.
 #: engines/cge/metaengine.cpp:291
 msgid "DEBUG: Access to Locations 1-24"
-msgstr ""
+msgstr "デバッグ: Location 1~24にアクセス"
 
 #: engines/cge2/metaengine.cpp:59
 msgid "Enable Text to Speech for Objects and Options"
@@ -6682,10 +6676,8 @@ msgstr "音声合成で字幕を読み上げる(利用可能な場合のみ)"
 
 #. I18N: This closes the Dialogue/text box.
 #: engines/cge2/metaengine.cpp:245
-#, fuzzy
-#| msgid "Close Dialog"
 msgid "Close the Dialogue box"
-msgstr "閉じる"
+msgstr "ダイアログを閉じる"
 
 #: engines/cine/metaengine.cpp:53
 msgid "Use transparent dialog boxes in 16 color scenes"
