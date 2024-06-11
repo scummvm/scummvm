@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-10 20:51+0000\n"
-"PO-Revision-Date: 2024-06-01 21:31+0000\n"
+"PO-Revision-Date: 2024-06-11 08:41+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -7246,14 +7246,12 @@ msgid "Use alternative camera controls"
 msgstr "Usar controles alternativos de cámara"
 
 #: engines/freescape/metaengine.cpp:117
-#, fuzzy
-#| msgid "Filter graphics"
 msgid "Authentic graphics"
-msgstr "Filtrar gráficos"
+msgstr "Gráficos auténticos"
 
 #: engines/freescape/metaengine.cpp:118
 msgid "Keep graphics as close as possible to the original"
-msgstr ""
+msgstr "Muestra los gráficos lo más fieles posible a los originales"
 
 #: engines/freescape/movement.cpp:47 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99
