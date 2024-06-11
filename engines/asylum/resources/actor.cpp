@@ -2246,7 +2246,7 @@ void Actor::updateStatusEnabledProcessStatus(int16 testX, int16 testY, uint32 co
 void Actor::updateStatusBored() {
 	if (_index == getSharedData()->getPlayerIndex()
 	 && getWorld()->chapter != kChapter9
-	 && getWorld()->actorType == 0
+	 && getWorld()->actorType == kActorMax
 	 && _frameIndex == 0
 	 && checkBoredStatus()) {
 		if (!getSpeech()->getSoundResourceId() || !getSound()->isPlaying(getSpeech()->getSoundResourceId()))

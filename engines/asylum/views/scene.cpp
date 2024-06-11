@@ -1878,13 +1878,13 @@ bool Scene::speak(Common::KeyCode code) {
 		default:
 			break;
 
-		case 0:
+		case kActorMax:
 			index = GET_INDEX();
 			break;
 
-		case 1:
-		case 2:
-		case 3:
+		case kActorSarah:
+		case kActorCyclops:
+		case kActorAztec:
 			index = 1;
 			break;
 		}
@@ -1895,13 +1895,13 @@ bool Scene::speak(Common::KeyCode code) {
 		default:
 			break;
 
-		case 0:
+		case kActorMax:
 			index = 3 - GET_INDEX();
 			break;
 
-		case 1:
-		case 2:
-		case 3:
+		case kActorSarah:
+		case kActorCyclops:
+		case kActorAztec:
 			index = 2;
 			break;
 		}
@@ -1912,13 +1912,13 @@ bool Scene::speak(Common::KeyCode code) {
 		default:
 			break;
 
-		case 0:
+		case kActorMax:
 			index = 2;
 			break;
 
-		case 1:
-		case 2:
-		case 3:
+		case kActorSarah:
+		case kActorCyclops:
+		case kActorAztec:
 			index = 4;
 			break;
 		}
@@ -1929,13 +1929,13 @@ bool Scene::speak(Common::KeyCode code) {
 		default:
 			break;
 
-		case 0:
+		case kActorMax:
 			index = 5;
 			break;
 
-		case 1:
-		case 2:
-		case 3:
+		case kActorSarah:
+		case kActorCyclops:
+		case kActorAztec:
 			index = 3;
 			break;
 		}
@@ -1946,13 +1946,13 @@ bool Scene::speak(Common::KeyCode code) {
 		default:
 			break;
 
-		case 0:
+		case kActorMax:
 			index = 6;
 			break;
 
-		case 1:
-		case 2:
-		case 3:
+		case kActorSarah:
+		case kActorCyclops:
+		case kActorAztec:
 			index = 4;
 			break;
 		}
@@ -1963,12 +1963,12 @@ bool Scene::speak(Common::KeyCode code) {
 		default:
 			break;
 
-		case 0:
+		case kActorMax:
 			index = 7;
 			break;
 
-		case 1:
-		case 2:
+		case kActorSarah:
+		case kActorCyclops:
 			index = 5;
 			break;
 		}
@@ -1979,12 +1979,12 @@ bool Scene::speak(Common::KeyCode code) {
 		default:
 			break;
 
-		case 0:
+		case kActorMax:
 			index = 8;
 			break;
 
-		case 1:
-		case 2:
+		case kActorSarah:
+		case kActorCyclops:
 			index = 6;
 			break;
 		}
@@ -1995,12 +1995,12 @@ bool Scene::speak(Common::KeyCode code) {
 		default:
 			break;
 
-		case 0:
+		case kActorMax:
 			index = 9;
 			break;
 
-		case 1:
-		case 2:
+		case kActorSarah:
+		case kActorCyclops:
 			index = 7;
 			break;
 		}
@@ -2011,12 +2011,12 @@ bool Scene::speak(Common::KeyCode code) {
 		default:
 			break;
 
-		case 0:
+		case kActorMax:
 			index = 10;
 			break;
 
-		case 1:
-		case 2:
+		case kActorSarah:
+		case kActorCyclops:
 			index = 8;
 			break;
 		}
@@ -2027,12 +2027,12 @@ bool Scene::speak(Common::KeyCode code) {
 		default:
 			break;
 
-		case 0:
+		case kActorMax:
 			index = 11;
 			break;
 
-		case 1:
-		case 2:
+		case kActorSarah:
+		case kActorCyclops:
 			index = 9;
 			break;
 		}
@@ -2043,12 +2043,12 @@ bool Scene::speak(Common::KeyCode code) {
 		default:
 			break;
 
-		case 0:
+		case kActorMax:
 			index = 13 - GET_INDEX();
 			break;
 
-		case 1:
-		case 2:
+		case kActorSarah:
+		case kActorCyclops:
 			index = 10;
 			break;
 		}
@@ -2059,11 +2059,11 @@ bool Scene::speak(Common::KeyCode code) {
 		default:
 			break;
 
-		case 0:
+		case kActorMax:
 			index = 15 - GET_INDEX();
 			break;
 
-		case 2:
+		case kActorCyclops:
 			index = 12 - GET_INDEX();
 			break;
 		}
