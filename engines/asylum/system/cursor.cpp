@@ -111,20 +111,12 @@ void Cursor::setState(const Common::Event &evt) {
 		_state |= kCursorStateRight;
 		break;
 
-	case Common::EVENT_MBUTTONDOWN:
-		_state |= kCursorMiddle;
-		break;
-
 	case Common::EVENT_LBUTTONUP:
 		_state &= ~kCursorStateLeft;
 		break;
 
 	case Common::EVENT_RBUTTONUP:
 		_state &= ~kCursorStateRight;
-		break;
-
-	case Common::EVENT_MBUTTONUP:
-		_state &= ~kCursorMiddle;
 		break;
 	}
 }

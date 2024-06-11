@@ -152,6 +152,7 @@ Common::KeymapArray AsylumMetaEngine::initKeymaps(const char *target) const {
 	act = new Action("INVENTORY", _("Open character inventory"));
 	act->setCustomEngineActionEvent(kAsylumActionOpenInventory);
 	act->addDefaultInputMapping("i");
+	act->addDefaultInputMapping("MOUSE_MIDDLE");
 	act->addDefaultInputMapping("JOY_X");
 	engineKeyMap->addAction(act);
 
