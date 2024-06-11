@@ -63,7 +63,7 @@ WorldStats::WorldStats(AsylumEngine *engine) : _vm(engine) {
 	memset(&graphicResourceIds, kResourceNone, sizeof(graphicResourceIds));
 	sceneTitleGraphicResourceId = kResourceNone;
 	sceneTitlePaletteResourceId = kResourceNone;
-	actorType = 0;
+	actorType = kActorMax;
 	memset(&soundResourceIds, kResourceNone, sizeof(soundResourceIds));
 
 	numAmbientSounds = 0;
