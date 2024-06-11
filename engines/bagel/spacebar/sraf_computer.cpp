@@ -3366,6 +3366,7 @@ bool SrafComputer::reportMeetingStatus(int nTeamNumber) {
 				} else {
 					pszFailureFile = kGSM5SraFemStr;
 				}
+				break;
 			}
 
 			case RAWLEY23:
