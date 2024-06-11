@@ -98,7 +98,7 @@ uint32 MiniMap::sampleAtPoint(const CurrentMap &map, int x, int y) {
 					continue;
 
 				uint32 val = sampleAtPoint(*item, x, y);
-				if (val != KEY_COLOR)
+				if (val != KEY_COLOR && val != BLACK_COLOR)
 					return val;
 			}
 		}
