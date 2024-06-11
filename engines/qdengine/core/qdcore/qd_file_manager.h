@@ -20,14 +20,11 @@
  */
 
 
-#ifndef __QD_FILE_MANAGER_H__
-#define __QD_FILE_MANAGER_H__
-
-#define _NO_ZIP_
+#ifndef QD_FILE_MANAGER_H
+#define QD_FILE_MANAGER_H
 
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/qd_file_owner.h"
-#include "qdengine/core/qdcore/util/zip_container.h"
 
 namespace Common {
 	class Archive;
@@ -35,24 +32,17 @@ namespace Common {
 
 namespace QDEngine {
 
-//! Контейнер с файлами.
 class qdFilePackage {
 public:
 	qdFilePackage();
 	~qdFilePackage();
 
-	enum {
-		LOCAL_DRIVE_ID = -1
-	};
-
-	//! Возвращает имя файла контейнера.
 	const char *file_name() const;
 
 	void set_drive_ID(int drive_id) {
-		drive_ID_ = drive_id;
 	}
 	void set_container_index(int idx) {
-		container_index_ = idx;
+		_container_index = idx;
 	}
 
 	bool is_open() {
@@ -63,28 +53,12 @@ public:
 	bool open();
 	void close();
 
-	//! Проверяет наличие файла контейнера.
-	/**
-	Если файл отсутствует - закрывает контейнер и возвращает false.
-	*/
 	bool check_container();
 
 	Common::Archive *_container = nullptr;
 
 private:
-	//! Номер диска, на котором расположен контейнер.
-	/**
-	если равен LOCAL_DRIVE_ID - контейнер скопирован к игре в директорию Resources
-	иначе лежит на диске A + drive_ID_
-	*/
-	int drive_ID_;
-
-	//! Номер контейнера.
-	/**
-	имя файла контейнера - resourceX.pak
-	где X - container_index_
-	*/
-	int container_index_;
+	int _container_index;
 };
 
 //! Менеджер файлов.
@@ -94,9 +68,7 @@ public:
 
 	bool init(int cd_count);
 
-	void enable_packages() {
-		enable_packages_ = true;
-	}
+	void enable_packages() {}
 
 	bool open_file(XZipStream &fh, const char *file_name, bool err_message = true);
 	bool open_file(Common::SeekableReadStream **fh, const char *file_name, bool err_message = true);
@@ -140,7 +112,6 @@ private:
 
 	qdFileManager();
 
-	bool enable_packages_;
 	qdFilePackage _packages[3];
 
 	int _packageCount = 0;
@@ -148,4 +119,4 @@ private:
 
 } // namespace QDEngine
 
-#endif // __QD_FILE_MANAGER_H__
+#endif // QD_FILE_MANAGER_H

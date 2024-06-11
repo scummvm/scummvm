@@ -19,27 +19,20 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/compression/unzip.h"
 
-#include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/qd_file_manager.h"
-#include "qdengine/core/qdcore/qd_game_dispatcher.h"
-
 
 namespace QDEngine {
 
-qdFilePackage::qdFilePackage() : container_index_(0),
-#ifndef _NO_ZIP_
-	container_(0),
-#endif
-	drive_ID_(LOCAL_DRIVE_ID) {
+qdFilePackage::qdFilePackage() : _container_index(0) {
 }
 
 qdFilePackage::~qdFilePackage() {
+	close();
 }
 
 bool qdFilePackage::open() {
@@ -66,7 +59,7 @@ bool qdFilePackage::check_container() {
 const char *qdFilePackage::file_name() const {
 	static Common::String fname;
 
-	fname = Common::String::format("Resource/resource%d.pak", container_index_);
+	fname = Common::String::format("Resource/resource%d.pak", _container_index);
 
 	return fname.c_str();
 }
@@ -75,8 +68,6 @@ void qdFilePackage::init() {
 }
 
 qdFileManager::qdFileManager() {
-	enable_packages_ = false;
-
 	for (int i = 0; i < ARRAYSIZE(_packages); i++) {
 		_packages[i].init();
 		_packages[i].set_container_index(i);
@@ -84,14 +75,14 @@ qdFileManager::qdFileManager() {
 		if (!_packages[i].check_container())
 			_packageCount = i;
 	}
+
+	debug(0, "qdFileManager(): Package count: %d", _packageCount);
 }
 
 qdFileManager::~qdFileManager() {
 }
 
 bool qdFileManager::init(int cd_count) {
-	if (!enable_packages_) return false;
-
 	return true;
 }
 
