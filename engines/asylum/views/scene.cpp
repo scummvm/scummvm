@@ -508,6 +508,8 @@ bool Scene::actionDown(AsylumAction a) {
 		_keyState |= kWalkRight;
 		break;
 
+	default:
+		break;
 	}
 
 	return true;

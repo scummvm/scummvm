@@ -55,6 +55,9 @@
 
 namespace Asylum {
 
+const char *const engineKeyMapId = "asylum";
+const char *const resviewerKeyMapId = "asylum-resviewer";
+
 AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engine(system), _gameDescription(gd),
 	_cursor(nullptr), _encounter(nullptr), _menu(nullptr), _resource(nullptr), _savegame(nullptr),
 	_scene(nullptr), _screen(nullptr), _script(nullptr), _special(nullptr), _speech(nullptr), _sound(nullptr), _text(nullptr),

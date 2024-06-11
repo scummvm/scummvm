@@ -884,7 +884,12 @@ enum AsylumAction {
 	kAsylumActionMoveUp,
 	kAsylumActionMoveDown,
 	kAsylumActionMoveRight,
-	kAsylumActionMoveLeft
+	kAsylumActionMoveLeft,
+	kAsylumActionNextResource,
+	kAsylumActionPreviousResource,
+	kAsylumActionNextPalette,
+	kAsylumActionPreviousPalette,
+	kAsylumActionAnimate
 };
 
 //////////////////////////////////////////////////////////////////////////

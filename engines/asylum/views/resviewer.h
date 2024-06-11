@@ -27,6 +27,10 @@
 #include "asylum/eventhandler.h"
 #include "asylum/shared.h"
 
+namespace Common {
+class Keymap;
+}
+
 namespace Asylum {
 
 class AsylumEngine;
@@ -43,6 +47,7 @@ public:
 private:
 	AsylumEngine *_vm;
 	EventHandler *_handler;
+	Common::Keymap *_keymap;
 	ResourceId _resourceId;
 	GraphicResource _resource;
 	int  _frameIndex;
@@ -59,7 +64,7 @@ private:
 	void drawPalette();
 	void drawResource();
 
-	void key(const AsylumEvent &evt);
+	void action(const AsylumEvent &evt);
 	void update();
 };
 

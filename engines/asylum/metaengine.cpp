@@ -192,7 +192,82 @@ Common::KeymapArray AsylumMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_RIGHT");
 	engineKeyMap->addAction(act);
 
-	return Keymap::arrayOf(engineKeyMap);
+	Keymap *resviewerKeyMap = new Keymap(Keymap::kKeymapTypeGame, "asylum-resviewer", "Sanitarium - Resource viewer");
+	resviewerKeyMap->setEnabled(false);
+
+	act = new Action(kStandardActionMoveUp, _("Move up"));
+	act->setCustomEngineActionEvent(kAsylumActionMoveUp);
+	act->addDefaultInputMapping("UP");
+	act->addDefaultInputMapping("JOY_UP");
+	act->allowKbdRepeats();
+	resviewerKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveDown, _("Move down"));
+	act->setCustomEngineActionEvent(kAsylumActionMoveDown);
+	act->addDefaultInputMapping("DOWN");
+	act->addDefaultInputMapping("JOY_DOWN");
+	act->allowKbdRepeats();
+	resviewerKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveLeft, _("Move left"));
+	act->setCustomEngineActionEvent(kAsylumActionMoveLeft);
+	act->addDefaultInputMapping("LEFT");
+	act->addDefaultInputMapping("JOY_LEFT");
+	act->allowKbdRepeats();
+	resviewerKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveRight, _("Move right"));
+	act->setCustomEngineActionEvent(kAsylumActionMoveRight);
+	act->addDefaultInputMapping("RIGHT");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	act->allowKbdRepeats();
+	resviewerKeyMap->addAction(act);
+
+	act = new Action("ANIMATE", _("Toggle animation on/off"));
+	act->setCustomEngineActionEvent(kAsylumActionAnimate);
+	act->addDefaultInputMapping("RETURN");
+	act->addDefaultInputMapping("JOY_A");
+	resviewerKeyMap->addAction(act);
+
+	act = new Action("CANCEL", _("Return to gameplay"));
+	act->setCustomEngineActionEvent(kAsylumActionShowMenu);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_B");
+	resviewerKeyMap->addAction(act);
+
+	act = new Action("PREVRESOURCE", _("Previous resource"));
+	act->setCustomEngineActionEvent(kAsylumActionPreviousResource);
+	act->addDefaultInputMapping("BACKSPACE");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	act->allowKbdRepeats();
+	resviewerKeyMap->addAction(act);
+
+	act = new Action("NEXTRESOURCE", _("Next resource"));
+	act->setCustomEngineActionEvent(kAsylumActionNextResource);
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	act->allowKbdRepeats();
+	resviewerKeyMap->addAction(act);
+
+	act = new Action("PREVPALETTE", _("Previous palette"));
+	act->setCustomEngineActionEvent(kAsylumActionPreviousPalette);
+	act->addDefaultInputMapping("PAGEUP");
+	act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
+	act->allowKbdRepeats();
+	resviewerKeyMap->addAction(act);
+
+	act = new Action("NEXTPALETTE", _("Next palette"));
+	act->setCustomEngineActionEvent(kAsylumActionNextPalette);
+	act->addDefaultInputMapping("PAGEDOWN");
+	act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
+	act->allowKbdRepeats();
+	resviewerKeyMap->addAction(act);
+
+	KeymapArray keymaps(2);
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = resviewerKeyMap;
+
+	return keymaps;
 }
 
 const Common::AchievementDescriptionList *AsylumMetaEngine::getAchievementDescriptionList() const {
