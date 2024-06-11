@@ -41,6 +41,9 @@ public:
 	bool load_index(XZipStream &fh);
 	bool load_alpha(XZipStream &fh);
 
+	bool load_index(Common::SeekableReadStream *fh);
+	bool load_alpha(Common::SeekableReadStream *fh);
+
 	int size_x() const {
 		return size_x_;
 	}

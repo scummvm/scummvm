@@ -3303,24 +3303,22 @@ const char *qdGameDispatcher::find_file(const char *file_name, const qdFileOwner
 grFont *qdGameDispatcher::create_font(int font_idx) {
 	grFont *p = new grFont;
 
-	XBuffer fname(MAX_PATH);
-	fname < "Resource\\Fonts\\font";
-	if (font_idx < 10) fname < "0";
-	fname <= font_idx < ".tga";
+	Common::String fname;
 
-	XZipStream fh;
+	fname = Common::String::format("Resource/Fonts/font%02d.tga", font_idx);
 
-	if (qdFileManager::instance().open_file(fh, fname.c_str(), false)) {
-		if (p -> load_alpha(fh)) {
-			fh.close();
+	Common::SeekableReadStream *fh;
 
-			fname.init();
-			fname < "Resource\\Fonts\\font";
-			if (font_idx < 10) fname < "0";
-			fname <= font_idx < ".idx";
+	if (qdFileManager::instance().open_file(&fh, fname.c_str(), false)) {
+		if (p->load_alpha(fh)) {
+			delete fh;
 
-			if (qdFileManager::instance().open_file(fh, fname.c_str(), false))
-				p -> load_index(fh);
+			fname = Common::String::format("Resource/Fonts/font%02d.idx", font_idx);
+
+			if (qdFileManager::instance().open_file(&fh, fname.c_str(), false))
+				p->load_index(fh);
+
+			delete fh;
 		}
 	}
 
