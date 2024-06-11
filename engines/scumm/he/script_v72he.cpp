@@ -957,6 +957,8 @@ void ScummEngine_v72he::o72_actorOps() {
 	case SO_SHADOW:
 		a->_heShadow = pop();
 		a->_needRedraw = true;
+		a->_needBgReset = true;
+
 		break;
 	case SO_TEXT_OFFSET:
 		a->_talkPosY = pop();

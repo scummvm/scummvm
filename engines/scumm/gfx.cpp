@@ -2606,12 +2606,22 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 	int scrX = _vm->_screenStartStrip * 8 * _vm->_bytesPerPixel;
 	WizPxShrdBuffer dst(_vm->_virtscr[kMainVirtScreen].backBuf + scrX, false);
 
+	int scrWidth = _vm->_game.heversion > 98 ? _vm->_screenWidth : vs->w;
+	int scrHeight = _vm->_game.heversion > 98 ? _vm->_screenHeight : vs->h;
+
 	switch (code) {
 	case BMCOMP_RLE8BIT:
 	case BMCOMP_TRLE8BIT:
 	{
-		Common::Rect rScreen(0, 0, vs->w, vs->h);
-		((ScummEngine_v71he *)_vm)->_wiz->auxDecompTRLEImage(dst(), bmapPtr, vs->w, vs->h, x + scrX, y, w, h, &rScreen, nullptr);
+		Common::Rect rScreen(0, 0, scrWidth, scrHeight);
+		if (_vm->_game.heversion <= 98) {
+			rScreen.right -= 1;
+			rScreen.bottom -= 1;
+		}
+
+		int xCoord = x + (_vm->_game.heversion > 98 ? scrX : -scrX);
+
+		((ScummEngine_v71he *)_vm)->_wiz->auxDecompTRLEImage(dst(), bmapPtr, scrWidth, scrHeight, xCoord, y, w, h, &rScreen, nullptr);
 		break;
 	}
 	case BMCOMP_SOLID_COLOR_FILL:
@@ -2635,18 +2645,32 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 		error("Gdi::drawBMAPObject(): Unhandled code %d", code);
 	}
 
-	Common::Rect renderArea, clipArea;
+	Common::Rect renderArea, clipArea, backgroundCoords;
 
-	((ScummEngine_v71he *)_vm)->_wiz->makeSizedRectAt(&renderArea, x, y, w, h);
-	((ScummEngine_v71he *)_vm)->_wiz->makeSizedRect(&clipArea, vs->w, vs->h);
+	if (_vm->_game.heversion > 98) {
+		((ScummEngine_v71he *)_vm)->_wiz->makeSizedRectAt(&renderArea, x + scrX, y, w, h);			
 
-	((ScummEngine_v71he *)_vm)->_wiz->findRectOverlap(&renderArea, &clipArea);
+		((ScummEngine_v71he *)_vm)->_wiz->makeSizedRect(&clipArea, scrWidth, scrHeight);
+		((ScummEngine_v71he *)_vm)->_wiz->findRectOverlap(&renderArea, &clipArea);
 
-	// Unless the image was entirely clipped, copy newly decompressed
-	// pixels from the background buffer into the foreground buffer...
-	if (((ScummEngine_v71he *)_vm)->_wiz->isRectValid(renderArea)) {
-		((ScummEngine_v71he *)_vm)->backgroundToForegroundBlit(renderArea);
+		// Unless the image was entirely clipped, copy newly decompressed
+		// pixels from the background buffer into the foreground buffer...
+		if (((ScummEngine_v71he *)_vm)->_wiz->isRectValid(renderArea)) {
+			((ScummEngine_v71he *)_vm)->backgroundToForegroundBlit(renderArea);
+		}
+	} else {
+		((ScummEngine_v71he *)_vm)->_wiz->makeSizedRectAt(&renderArea, x, y, w, h);
+		((ScummEngine_v71he *)_vm)->_wiz->makeSizedRectAt(&backgroundCoords, scrX, 0, scrWidth, scrHeight);
+		((ScummEngine_v71he *)_vm)->_wiz->findRectOverlap(&renderArea, &backgroundCoords);
+
+		if (((ScummEngine_v71he *)_vm)->_wiz->isRectValid(renderArea)) {
+			// Convert the coords to buffer relative coords and then copy the
+			// background pixels to the foreground buffer as well...
+			((ScummEngine_v71he *)_vm)->_wiz->moveRect(&renderArea, -backgroundCoords.left, -backgroundCoords.top);
+			((ScummEngine_v71he *)_vm)->backgroundToForegroundBlit(renderArea);
+		}
 	}
+
 }
 
 void ScummEngine_v70he::backgroundToForegroundBlit(Common::Rect rect, int dirtybit) {

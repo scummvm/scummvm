@@ -56,7 +56,7 @@ struct HEAuxFileRelInfo {
 
 class ActorHE : public Actor {
 public:
-	ActorHE(ScummEngine *scumm, int id) : Actor(scumm, id) {}
+	ActorHE(ScummEngine *scumm, int id);
 
 	void initActor(int mode) override;
 
@@ -75,6 +75,9 @@ public:
 	void setTalkCondition(int slot);
 	bool isTalkConditionSet(int slot) const;
 
+	void clearActorUpdateInfo();
+	void setActorUpdateArea(int x1, int y1, int x2, int y2);
+
 public:
 	/** This rect is used to clip actor drawing. */
 	Common::Rect _clipOverride;
@@ -85,6 +88,10 @@ public:
 
 	int _auxActor;
 	int32 _auxEraseX1, _auxEraseY1, _auxEraseX2, _auxEraseY2;
+
+	// 80 is the maximum number of strips that any hi-res HE game is going to have
+	int _screenUpdateTableMin[80];
+	int _screenUpdateTableMax[80];
 
 	struct {
 		int16 posX;

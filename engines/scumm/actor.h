@@ -309,6 +309,11 @@ public:
 			_elevation = newElevation;
 			_needRedraw = true;
 		}
+
+		if (_vm->_game.heversion >= 70) {
+			_needRedraw = true;
+			_needBgReset = true;
+		}
 	}
 
 	void setPalette(int idx, int val) {
@@ -322,6 +327,10 @@ public:
 		if (sy != -1)
 			_scaley = sy;
 		_needRedraw = true;
+
+		if (_vm->_game.heversion >= 70) {
+			_needBgReset = true;
+		}
 	}
 
 	void classChanged(int cls, bool value);

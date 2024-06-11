@@ -112,6 +112,16 @@ Actor::Actor(ScummEngine *scumm, int id) :
 		assert(_vm != nullptr);
 }
 
+ActorHE::ActorHE(ScummEngine *scumm, int id) : Actor(scumm,id) {
+	for (int i = 0; i < ARRAYSIZE(_screenUpdateTableMin); i++) {
+		_screenUpdateTableMin[i] = 0;
+	}
+
+	for (int i = 0; i < ARRAYSIZE(_screenUpdateTableMin); i++) {
+		_screenUpdateTableMax[i] = 0;
+	}
+}
+
 void ActorHE::initActor(int mode) {
 	Actor::initActor(mode);
 
@@ -119,6 +129,10 @@ void ActorHE::initActor(int mode) {
 		_heOffsX = _heOffsY = 0;
 		_heSkipLimbs = false;
 		memset(_heTalkQueue, 0, sizeof(_heTalkQueue));
+	}
+
+	if (mode == 1) {
+		clearActorUpdateInfo();
 	}
 
 	if (mode == 1 || mode == -1) {
@@ -606,6 +620,10 @@ int Actor_v3::calcMovementFactor(const Common::Point& next) {
 
 int Actor::actorWalkStep() {
 	_needRedraw = true;
+
+	if (_vm->_game.heversion >= 70) {
+		_needBgReset = true;
+	}
 
 	if (_vm->_game.version < 7) {
 		int nextFacing = updateActorDirection(true);
@@ -1672,6 +1690,9 @@ void Actor::putActor(int dstX, int dstY, int newRoom) {
 	_room = newRoom;
 	_needRedraw = true;
 
+	if (_vm->_game.heversion >= 70)
+		_needBgReset = true;
+
 	if (_vm->VAR(_vm->VAR_EGO) == _number) {
 		_vm->_egoPositioned = true;
 	}
@@ -2221,6 +2242,9 @@ Actor *ScummEngine::derefActorSafe(int id, const char *errmsg) const {
 void ScummEngine::processActors() {
 	int numactors = 0;
 
+	if (_game.heversion >= 71 && ((ScummEngine_v71he *)this)->_disableActorDrawingFlag)
+		return;
+
 	// Make a list of all actors in this room
 	for (int i = 1; i < _numActors; i++) {
 		if (_game.version == 8 && _actors[i]->_layer < 0)
@@ -2304,13 +2328,13 @@ void ScummEngine::processActors() {
 	}
 
 	// Finally draw the now sorted actors
-	Actor** end = _sortedActors + numactors;
-	for (Actor** ac = _sortedActors; ac != end; ++ac) {
-		Actor* a = *ac;
+	Actor **end = _sortedActors + numactors;
+	for (Actor **ac = _sortedActors; ac != end; ++ac) {
+		Actor *a = *ac;
 
 		if (_game.version == 0) {
 			// 0x057B
-			Actor_v0 *a0 = (Actor_v0*) a;
+			Actor_v0 *a0 = (Actor_v0 *)a;
 			if (a0->_speaking & 1) {
 				a0->_speaking ^= 0xFE;
 				++_V0Delay._actorRedrawCount;
@@ -2440,6 +2464,10 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	// If the actor is partially hidden, redraw it next frame.
 	if (bcr->drawCostume(_vm->_virtscr[kMainVirtScreen], _vm->_gdi->_numStrips, this, _drawToBackBuf) & 1) {
 		_needRedraw = (_vm->_game.version <= 6);
+
+		// TODO: Eventually check if true for HE6*
+		if (_vm->_game.heversion >= 70)
+			_needBgReset = true;
 	}
 
 	if (!hitTestMode) {
@@ -2503,6 +2531,8 @@ void Actor::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
 void ActorHE::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
 	// HE palette number must be set, before setting the costume palette
 	bcr->_paletteNum = _hePaletteNum;
+
+	clearActorUpdateInfo();
 
 	Actor::prepareDrawActorCostume(bcr);
 
@@ -2629,6 +2659,9 @@ void Actor::startAnimActor(int f) {
 		_vm->_costumeLoader->costumeDecodeData(this, f, (uint) - 1);
 		_frame = f;
 	}
+
+	if (_vm->_game.heversion >= 70)
+		_needBgReset = true;
 }
 
 void Actor_v0::startAnimActor(int f) {
@@ -2758,6 +2791,9 @@ void Actor::animateCostume() {
 		_vm->_costumeLoader->loadCostume(_costume);
 		if (_vm->_costumeLoader->increaseAnims(this)) {
 			_needRedraw = true;
+			if (_vm->_game.heversion >= 70) {
+				_needBgReset = true;
+			}
 		}
 	}
 }
@@ -2846,35 +2882,24 @@ void Actor::animateLimb(int limb, int f) {
 #endif
 
 void ScummEngine::redrawAllActors() {
-	int i;
-
-	for (i = 1; i < _numActors; ++i) {
+	for (int i = 1; i < _numActors; ++i) {
 		_actors[i]->_needRedraw = true;
 		_actors[i]->_needBgReset = true;
 	}
 }
 
 void ScummEngine::setActorRedrawFlags() {
-	int i, j;
-
 	// Redraw all actors if a full redraw was requested.
 	// Also redraw all actors in COMI (see bug #1825 for details).
 	if (_fullRedraw || _game.version == 8 || (VAR_ALWAYS_REDRAW_ACTORS != 0xFF && VAR(VAR_ALWAYS_REDRAW_ACTORS) != 0)) {
-		for (j = 1; j < _numActors; j++) {
+		for (int j = 1; j < _numActors; j++) {
 			_actors[j]->_needRedraw = true;
 		}
 	} else {
-		if (_game.heversion >= 72) {
-			for (j = 1; j < _numActors; j++) {
-				if (_actors[j]->_costume && _actors[j]->_heShadow)
-					_actors[j]->_needRedraw = true;
-			}
-		}
-
-		for (i = 0; i < _gdi->_numStrips; i++) {
+		for (int i = 0; i < _gdi->_numStrips; i++) {
 			int strip = _screenStartStrip + i;
 			if (testGfxAnyUsageBits(strip)) {
-				for (j = 1; j < _numActors; j++) {
+				for (int j = 1; j < _numActors; j++) {
 					if (testGfxUsageBit(strip, j) && testGfxOtherUsageBits(strip, j)) {
 						_actors[j]->_needRedraw = true;
 					}
@@ -2884,17 +2909,87 @@ void ScummEngine::setActorRedrawFlags() {
 	}
 }
 
-void ScummEngine::resetActorBgs() {
-	int i, j;
+void ScummEngine_v70he::setActorRedrawFlags() {
+	if (_game.heversion >= 80 && (VAR_ALWAYS_REDRAW_ACTORS != 0xFF && VAR(VAR_ALWAYS_REDRAW_ACTORS) != 0)) {
+		for (int i = 1; i < _numActors; i++) {
+			if (_actors[i]->_costume) {
+				_actors[i]->_needRedraw = true;
+				_actors[i]->_needBgReset = true;
+			}
+		}
 
-	for (i = 0; i < _gdi->_numStrips; i++) {
+		return;
+	}
+
+	if (_game.heversion >= 95) {
+		for (int j = 1; j < _numActors; j++) {
+			if (_actors[j]->_costume && _actors[j]->_heShadow)
+				_actors[j]->_needRedraw = true;
+		}
+	}
+
+	bool repeatCheck = true;
+
+	while (repeatCheck) {
+		repeatCheck = false;
+
+		for (int i = 0; i < _gdi->_numStrips; i++) {
+			// Get actors on screen bits for this strip...
+			int strip = _screenStartStrip + i;
+
+			if (testGfxAnyUsageBits(strip)) {
+				for (int act = 1; act < _numActors; act++) {
+					if (!(_actors[act]->_needRedraw && _actors[act]->_needBgReset)) {
+						if (testGfxUsageBit(strip, act) && testGfxOtherUsageBits(strip, act)) {
+							if (testGfxObjectUsageBits(strip)) {
+								if (!_actors[act]->_needRedraw)
+									repeatCheck = true;
+
+								if (!_actors[act]->_needBgReset)
+									repeatCheck = true;
+
+								_actors[act]->_needRedraw = true;
+								_actors[act]->_needBgReset = true;
+							} else {
+								// Check for vertical overlap...
+								for (int iact = 1; iact < _numActors; iact++) {
+									if ((iact != act) && testGfxUsageBit(strip, iact)) {
+										if (actorsOverlapInStrip(act, iact, i)) {
+											// Check for animation as well as animating...
+											if (_actors[act]->_needBgReset || _actors[iact]->_needBgReset ||
+												_actors[act]->_needRedraw || _actors[iact]->_needRedraw) {
+
+												if (!_actors[act]->_needRedraw)
+													repeatCheck = true;
+
+												if (!_actors[act]->_needBgReset)
+													repeatCheck = true;
+
+												_actors[act]->_needRedraw = true;
+												_actors[act]->_needBgReset = true;
+
+												repeatCheck = true;
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void ScummEngine::resetActorBgs() {
+	for (int i = 0; i < _gdi->_numStrips; i++) {
 		int strip = _screenStartStrip + i;
 		clearGfxUsageBit(strip, USAGE_BIT_DIRTY);
 		clearGfxUsageBit(strip, USAGE_BIT_RESTORED);
-		for (j = 1; j < _numActors; j++) {
-			if (_game.heversion != 0 && (((ActorHE *)_actors[j])->_generalFlags & ACTOR_GENERAL_FLAG_IGNORE_ERASE) != 0)
-				continue;
 
+		for (int j = 1; j < _numActors; j++) {
 			if (testGfxUsageBit(strip, j) &&
 				((_actors[j]->_top != 0x7fffffff && _actors[j]->_needRedraw) || _actors[j]->_needBgReset)) {
 				clearGfxUsageBit(strip, j);
@@ -2904,15 +2999,149 @@ void ScummEngine::resetActorBgs() {
 		}
 	}
 
-	for (i = 1; i < _numActors; i++) {
+	for (int i = 1; i < _numActors; i++) {
 		_actors[i]->_needBgReset = false;
 	}
 }
+
+void ScummEngine_v70he::resetActorBgs() {
+	for (int i = 0; i < _gdi->_numStrips; i++) {
+		int strip = _screenStartStrip + i;
+		clearGfxUsageBit(strip, USAGE_BIT_DIRTY);
+		clearGfxUsageBit(strip, USAGE_BIT_RESTORED);
+
+		for (int j = 1; j < _numActors; j++) {
+			if (!testGfxAnyUsageBits(strip))
+				break;
+
+			// The original also does this test, which
+			// apparently breaks a bunch of other stuff though,
+			// and doesn't help us in any way...
+			// 
+			// if (!testGfxOtherUsageBits(strip, j))
+			//	continue;
+
+			int actorMin, actorMax;
+
+			if (_screenWidth == 640) { // Hi-res
+				if (((ActorHE *)_actors[j])->_screenUpdateTableMin[i] < ((ActorHE *)_actors[j])->_screenUpdateTableMax[i]) {
+					actorMin = ((ActorHE *)_actors[j])->_screenUpdateTableMin[i];
+					actorMax = ((ActorHE *)_actors[j])->_screenUpdateTableMax[i] + 1;
+				} else {
+					actorMin = 0x7fffffff;
+					actorMax = 0;
+				}
+			} else {
+				actorMin = _actors[j]->_top;
+				actorMax = _actors[j]->_bottom;
+			}
+
+			// Kill the actors bit in this strip if told to erase
+			if (_actors[j]->_needBgReset) {
+				clearGfxUsageBit(strip, j);
+			}
+
+			if (actorMin != 0x7fffffff && _actors[j]->_needBgReset) {
+				bool disableDrawing = _game.heversion >= 71 && (((ScummEngine_v71he *)this)->_disableActorDrawingFlag);
+				if ((actorMax - actorMin) > 0 && !disableDrawing)
+					_gdi->resetBackground(actorMin, actorMax, i);
+			}		
+		}
+	}
+
+	for (int i = 1; i < _numActors; i++) {
+		_actors[i]->_needBgReset = false;
+	}
+}
+
+bool ScummEngine_v95he::prepareForActorErase() {
+	for (int i = 1; i < _numActors; i++) {
+		if (((ActorHE *)_actors[i])->_generalFlags & ACTOR_GENERAL_FLAG_IGNORE_ERASE) {
+			_actors[i]->_needBgReset = false;
+		}
+	}
+
+	for (int i = 1; i < _numActors; i++) {
+		if (_actors[i]->_needBgReset) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+#define ACTOR_CONTIGUOUS_WITH_STRIP (!((jMax < actorMin) || (jMin > actorMax)))
+
+void ScummEngine_v95he::resetActorBgs() {
+	int jMin, jMax, lastStrip, actorMin, actorMax;
+
+	if (!prepareForActorErase()) {
+		return;
+	}
+
+	for (int i = 0; i < _gdi->_numStrips; i++) {
+		int strip = _screenStartStrip + i;
+		clearGfxUsageBit(strip, USAGE_BIT_DIRTY);
+		clearGfxUsageBit(strip, USAGE_BIT_RESTORED);
+
+		for (int act = 1; act < _numActors; act++) {
+			if (!testGfxAnyUsageBits(strip))
+				break;
+
+			// The original also does this test, which
+			// apparently breaks a bunch of other stuff though,
+			// and doesn't help us in any way...
+			//
+			//if (!(testGfxOtherUsageBits(strip, j) && _actors[j]->_needBgReset))
+			//	continue;
+
+			lastStrip = i;
+			actorMin = ((ActorHE *)_actors[act])->_screenUpdateTableMin[i];
+			actorMax = ((ActorHE *)_actors[act])->_screenUpdateTableMax[i] + 1;
+
+			for (int j = i; j < _gdi->_numStrips; j++) {
+				jMin = ((ActorHE *)_actors[act])->_screenUpdateTableMin[i];
+				jMax = ((ActorHE *)_actors[act])->_screenUpdateTableMax[i] + 1;
+
+				if (testGfxOtherUsageBits(strip, act) && ((jMin) < (jMax)) && ACTOR_CONTIGUOUS_WITH_STRIP) {
+					// Extend the restore area to include this strip
+					lastStrip = j;
+					actorMin = MIN<int>(actorMin, jMin);
+					actorMax = MAX<int>(actorMax, jMax);
+				} else {
+					break;
+				}
+			}
+
+			for (int j = i; j <= lastStrip; j++) {
+				clearGfxUsageBit(strip, act);
+			}
+
+			if (actorMin != 0x7fffffff && _actors[act]->_needBgReset) {
+				bool disableDrawing = (((ScummEngine_v71he *)this)->_disableActorDrawingFlag);
+				if ((actorMax - actorMin) > 0 && !disableDrawing)
+					_gdi->resetBackground(actorMin, actorMax, i);
+			}
+		}
+	}
+
+	for (int i = 1; i < _numActors; i++) {
+		_actors[i]->_needBgReset = false;
+	}
+}
+
+#undef ACTOR_CONTIGUOUS_WITH_STRIP
 
 // HE specific
 void ActorHE::drawActorToBackBuf(int x, int y) {
 	int curTop = _top;
 	int curBottom = _bottom;
+
+	int screenUpdateTableMin[80];
+	int screenUpdateTableMax[80];
+
+	memcpy(screenUpdateTableMin, _screenUpdateTableMin, sizeof(screenUpdateTableMin));
+	memcpy(screenUpdateTableMax, _screenUpdateTableMax, sizeof(screenUpdateTableMax));
 
 	_pos.x = x;
 	_pos.y = y;
@@ -2930,6 +3159,66 @@ void ActorHE::drawActorToBackBuf(int x, int y) {
 		_top = curTop;
 	if (_bottom < curBottom)
 		_bottom = curBottom;
+
+	for (int i = 0; i < 80; i++) {
+		if (screenUpdateTableMin[i] < _screenUpdateTableMin[i]) {
+			_screenUpdateTableMin[i] = screenUpdateTableMin[i];
+		}
+
+		if (screenUpdateTableMax[i] > _screenUpdateTableMax[i]) {
+			_screenUpdateTableMax[i] = screenUpdateTableMax[i];
+		}
+	}
+}
+
+void ActorHE::clearActorUpdateInfo() {
+	for (int i = 0; i < _vm->_gdi->_numStrips; i++) {
+		_screenUpdateTableMin[i] = _vm->_screenHeight;
+		_screenUpdateTableMax[i] = 0;
+	}
+}
+
+void ActorHE::setActorUpdateArea(int x1, int y1, int x2, int y2) {
+	int startStrip, endStrip;
+
+	if (y1 < 0) {
+		y1 = 0;
+	}
+
+	if (y2 >= _vm->_screenHeight) {
+		y2 = _vm->_screenHeight - 1;
+	}
+
+	startStrip = x1 / 8;
+	if (startStrip < 0) {
+		startStrip = 0;
+	}
+
+	if (startStrip >= _vm->_gdi->_numStrips) {
+		return;
+	}
+
+	endStrip = x2 / 8;
+	if (endStrip >= _vm->_gdi->_numStrips) {
+		endStrip = _vm->_gdi->_numStrips - 1;
+	}
+
+	for (int strip = startStrip; strip <= endStrip; strip++) {
+		if (y1 < _screenUpdateTableMin[strip]) {
+			_screenUpdateTableMin[strip] = y1;
+		}
+
+		if (y2 > _screenUpdateTableMax[strip]) {
+			_screenUpdateTableMax[strip] = y2;
+		}
+	}
+}
+
+bool ScummEngine_v60he::actorsOverlapInStrip(int actorA, int actorB, int stripNumber) {
+	ActorHE *actA = (ActorHE *)_actors[actorA];
+	ActorHE *actB = (ActorHE *)_actors[actorB];
+	return !((actB->_screenUpdateTableMax[stripNumber] < actA->_screenUpdateTableMin[stripNumber]) ||
+			 (actB->_screenUpdateTableMin[stripNumber] < actA->_screenUpdateTableMax[stripNumber]));
 }
 
 
@@ -3214,6 +3503,10 @@ void ActorHE::setActorCostume(int c) {
 	if (_vm->_game.heversion >= 61 && (c == -1  || c == -2)) {
 		_heSkipLimbs = (c == -1);
 		_needRedraw = true;
+		if (_vm->_game.heversion >= 70) {
+			_needBgReset = true;
+		}
+
 		return;
 	}
 
@@ -3687,8 +3980,7 @@ void ScummEngine_v71he::heFlushAuxQueues() {
 }
 
 void ScummEngine_v90he::heFlushAuxQueues() {
-	// TODO: VERIFY HE95
-	if (_game.heversion < 98) {
+	if (_game.heversion < 95) {
 		ScummEngine_v71he::heFlushAuxQueues();
 		return;
 	}
@@ -3781,7 +4073,6 @@ void ScummEngine_v90he::heFlushAuxQueues() {
 					(WizRawPixel *)foregroundBufferPtr, (WizRawPixel *)backgroundBufferPtr, auxFrameDataPtr,
 					pvs->w, pvs->h, x, y, w, h, nullptr, conversionTablePtr);
 			} else if (AKOS_AUXD_TYPE_WRLE_FRAME == type) {
-				// Where is the color table?
 				if ((x != 0) || (w != 640)) {
 					error("heFlushAuxQueue(): Actor %d invalid (%d,%d)[%d,%d]", whichActor, x, y, w, h);
 				}
@@ -3821,6 +4112,12 @@ void ScummEngine_v90he::heFlushAuxQueues() {
 				yOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 2),
 				yOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 6),
 				actorBits);
+
+			a->setActorUpdateArea(
+				xOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 0),
+				yOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 2),
+				xOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 4),
+				yOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 6));
 
 			auxUpdateRectPtr += 8;
 		}

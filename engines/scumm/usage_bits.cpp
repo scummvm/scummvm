@@ -67,6 +67,11 @@ bool ScummEngine::testGfxAnyUsageBits(int strip) {
 	return false;
 }
 
+bool ScummEngine::testGfxObjectUsageBits(int strip) {
+	// Test whether any of the DIRTY or RESTORED bits is set
+	return testGfxUsageBit(strip, USAGE_BIT_DIRTY) || testGfxUsageBit(strip, USAGE_BIT_RESTORED);
+}
+
 bool ScummEngine::testGfxOtherUsageBits(int strip, int bit) {
 	// Don't exclude the DIRTY and RESTORED bits from the test
 	uint32 bitmask[3] = { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF };

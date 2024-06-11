@@ -616,6 +616,9 @@ void ScummEngine_v60he::o60_actorOps() {
 	case SO_SHADOW:
 		a->_shadowMode = pop();
 		a->_needRedraw = true;
+		if (_game.heversion >= 70) {
+			a->_needBgReset = true;
+		}
 		break;
 	case SO_TEXT_OFFSET:
 		a->_talkPosY = pop();

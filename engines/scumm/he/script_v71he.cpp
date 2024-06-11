@@ -196,11 +196,14 @@ void ScummEngine_v71he::o71_kernelSetFunctions() {
 		_fullRedraw = true;
 		break;
 	case 24:
-		_disableActorDrawingFlag = 1;
-		redrawAllActors();
+		_disableActorDrawingFlag = true;
+		for (int i = 1; i < _numActors; ++i) {
+			_actors[i]->_needRedraw = false;
+			_actors[i]->_needBgReset = false;
+		}
 		break;
 	case 25:
-		_disableActorDrawingFlag = 0;
+		_disableActorDrawingFlag = false;
 		redrawAllActors();
 		break;
 	case 26:

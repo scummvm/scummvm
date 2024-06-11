@@ -855,8 +855,15 @@ byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 	if (_actorHitMode) {
 		if (_actorHitX < rect.left || _actorHitX >= rect.right || _actorHitY < rect.top || _actorHitY >= rect.bottom)
 			return 0;
-	} else
+	} else {
 		markRectAsDirty(rect);
+
+		if (_vm->_game.heversion >= 71) {
+			ActorHE *a = (ActorHE *)_vm->derefActor(_actorID, "paintCelByleRLE");
+			a->setActorUpdateArea(rect.left, rect.top, rect.right, rect.bottom + 1);
+		}
+	}
+
 
 	if (rect.top >= compData.boundsRect.bottom || rect.bottom <= compData.boundsRect.top)
 		return 0;
@@ -1079,6 +1086,11 @@ byte AkosRenderer::paintCelMajMin(int xMoveCur, int yMoveCur) {
 
 	markRectAsDirty(clip);
 
+	if (_vm->_game.heversion >= 71) {
+		ActorHE *a = (ActorHE *)_vm->derefActor(_actorID, "paintCelMajMin");
+		a->setActorUpdateArea(clip.left, clip.top, clip.right, clip.bottom);
+	}
+
 	skipX = 0;
 	skipY = 0;
 	curX = _width - 1;
@@ -1226,7 +1238,9 @@ byte AkosRenderer::hePaintCel(int actor, int drawToBack, int celX, int celY, int
 		_drawTop = a->_top;
 		_drawBottom = a->_bottom;
 
-		//SetActorUpdateArea(actor, destRect.x1, destRect.y1, destRect.x2, destRect.y2);
+		if (_vm->_game.heversion >= 71) {
+			((ActorHE *)a)->setActorUpdateArea(destRect.left, destRect.top, destRect.right, destRect.bottom);
+		}
 
 		// Get final plot point and flip source coords if necessary...
 		if (xFlipFlag) {

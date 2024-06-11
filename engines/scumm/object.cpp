@@ -691,7 +691,7 @@ void ScummEngine::drawObject(int obj, int arg) {
 			continue;
 		if (arg < 0 && tmp <= _screenEndStrip + arg)
 			continue;
-		setGfxUsageBit(tmp, USAGE_BIT_DIRTY);
+		setGfxUsageBit(tmp, USAGE_BIT_DIRTY); // FIXME: HE70 onwards seems to use USAGE_BIT_RESTORED instead?
 		if (tmp < x)
 			x = tmp;
 		numstrip++;
@@ -739,7 +739,7 @@ void ScummEngine::drawObject(int obj, int arg) {
 			flags |= Gdi::dbDrawMaskOnAll;
 
 #ifdef ENABLE_HE
-		if (_game.heversion >= 70 && findResource(MKTAG('S','M','A','P'), ptr) == NULL)
+		if (_game.heversion >= 70 && !findResource(MKTAG('S','M','A','P'), ptr))
 			_gdi->drawBMAPObject(ptr, &_virtscr[kMainVirtScreen], obj, od.x_pos, od.y_pos, od.width, od.height);
 		else
 #endif

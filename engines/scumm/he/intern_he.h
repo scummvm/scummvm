@@ -90,6 +90,7 @@ public:
 
 	Common::Path generateFilename(const int room) const override;
 	void setActorClippingRect(int actor, int x1, int y1, int x2, int y2);
+	bool actorsOverlapInStrip(int actorA, int actorB, int stripNumber);
 
 	void resetScumm() override;
 
@@ -221,6 +222,7 @@ public:
 	Common::Path generateFilename(const int room) const override;
 
 	void backgroundToForegroundBlit(Common::Rect rect, int dirtybit = 0);
+	void setActorRedrawFlags() override;
 
 protected:
 	void allocateArrays() override;
@@ -248,6 +250,8 @@ protected:
 
 	void setCursorFromImg(uint img, uint room, uint imgindex) override;
 	void setDefaultCursor() override;
+
+	void resetActorBgs() override;
 
 	/* HE version 70 script opcodes */
 	void o70_soundOps();
@@ -285,8 +289,6 @@ protected:
 		SO_SET_POLYGON_LOCAL = 248,
 	};
 
-	bool _disableActorDrawingFlag;
-
 public:
 	ScummEngine_v71he(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v71he() override;
@@ -296,6 +298,7 @@ public:
 	byte *findWrappedBlock(uint32 tag, byte *ptr, int state, bool flagError);
 
 	Wiz *_wiz;
+	bool _disableActorDrawingFlag = false;
 
 	virtual int setupStringArray(int size);
 
@@ -577,6 +580,7 @@ class ScummEngine_v90he : public ScummEngine_v80he {
 	friend class MoviePlayer;
 	friend class Sprite;
 	friend class Wiz;
+	friend class ScummEngine_v99he;
 
 protected:
 	enum SubOpType {
@@ -801,9 +805,18 @@ public:
 #endif
 };
 
-class ScummEngine_v99he : public ScummEngine_v90he {
+class ScummEngine_v95he : public ScummEngine_v90he {
 public:
-	ScummEngine_v99he(OSystem *syst, const DetectorResult &dr) : ScummEngine_v90he(syst, dr) {}
+	ScummEngine_v95he(OSystem *syst, const DetectorResult &dr) : ScummEngine_v90he(syst, dr) {}
+
+protected:
+	void resetActorBgs() override;
+	bool prepareForActorErase();
+};
+
+class ScummEngine_v99he : public ScummEngine_v95he {
+public:
+	ScummEngine_v99he(OSystem *syst, const DetectorResult &dr) : ScummEngine_v95he(syst, dr) {}
 
 	void resetScumm() override;
 

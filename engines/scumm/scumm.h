@@ -1238,11 +1238,11 @@ protected:
 	void walkActors();
 	void playActorSounds();
 	void redrawAllActors();
-	void setActorRedrawFlags();
+	virtual void setActorRedrawFlags();
 	void putActors();
 	void showActors();
 	void resetV1ActorTalkColor();
-	void resetActorBgs();
+	virtual void resetActorBgs();
 	virtual void processActors();
 	void processUpperActors();
 	virtual int getActorFromPos(int x, int y);
@@ -1486,6 +1486,7 @@ protected:
 	}
 
 	bool testGfxAnyUsageBits(int strip);
+	bool testGfxObjectUsageBits(int strip); // Used for HE actors overlap calculations
 	bool testGfxOtherUsageBits(int strip, int bit);
 
 public:
