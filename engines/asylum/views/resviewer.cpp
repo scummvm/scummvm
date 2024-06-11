@@ -28,6 +28,9 @@
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
 
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/keymapper.h"
+
 namespace Asylum {
 
 #define SCROLL_STEP 10
@@ -70,6 +73,9 @@ ResourceViewer::ResourceViewer(AsylumEngine *engine) : _vm(engine), _resource(_v
 	_resPack = -1;
 	_paletteIndex = 0;
 	_animate = true;
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	_keymap = keymapper->getKeymap(resviewerKeyMapId);
 }
 
 bool ResourceViewer::setResourceId(ResourceId resourceId) {
@@ -162,12 +168,16 @@ void ResourceViewer::update() {
 	getScreen()->copyBackBufferToScreen();
 }
 
-void ResourceViewer::key(const AsylumEvent &evt) {
-	switch (evt.kbd.keycode) {
+void ResourceViewer::action(const AsylumEvent &evt) {
+	switch ((AsylumAction)evt.customType) {
 	default:
 		break;
 
-	case Common::KEYCODE_SPACE:
+	case kAsylumActionShowMenu:
+		_vm->switchEventHandler(_handler);
+		break;
+
+	case kAsylumActionNextResource:
 		if (RESOURCE_INDEX(_resourceId) < resPackSizes[_resPack] - 1) {
 			int i = 1;
 			do {
@@ -178,7 +188,7 @@ void ResourceViewer::key(const AsylumEvent &evt) {
 		}
 		break;
 
-	case Common::KEYCODE_BACKSPACE:
+	case kAsylumActionPreviousResource:
 		if (RESOURCE_INDEX(_resourceId)) {
 			int i = 0;
 			do {
@@ -189,17 +199,17 @@ void ResourceViewer::key(const AsylumEvent &evt) {
 		}
 		break;
 
-	case Common::KEYCODE_RETURN:
+	case kAsylumActionAnimate:
 		_animate = !_animate;
 		break;
 
-	case Common::KEYCODE_UP:
-	case Common::KEYCODE_DOWN:
-	case Common::KEYCODE_RIGHT:
-	case Common::KEYCODE_LEFT:
+	case kAsylumActionMoveUp:
+	case kAsylumActionMoveDown:
+	case kAsylumActionMoveRight:
+	case kAsylumActionMoveLeft:
 		if (_scroll) {
 			int16 x = _x, y = _y;
-			int dir = (int)(evt.kbd.keycode - Common::KEYCODE_UP);
+			int dir = (int)(evt.customType - kAsylumActionMoveUp);
 
 			if (dir < 2)
 				y -= SCROLL_STEP * (2 * dir - 1);
@@ -213,12 +223,12 @@ void ResourceViewer::key(const AsylumEvent &evt) {
 		}
 		break;
 
-	case Common::KEYCODE_PAGEUP:
+	case kAsylumActionPreviousPalette:
 		if (_paletteIndex)
 			_paletteIndex = _paletteIndex - 1;
 		break;
 
-	case Common::KEYCODE_PAGEDOWN:
+	case kAsylumActionNextPalette:
 		if (_paletteIndex < 8 && paletteIds[_resPack][_paletteIndex + 1])
 			_paletteIndex = _paletteIndex + 1;
 		break;
@@ -230,17 +240,20 @@ bool ResourceViewer::handleEvent(const AsylumEvent &evt) {
 	default:
 		break;
 
+	case EVENT_ASYLUM_INIT:
+		_keymap->setEnabled(true);
+		return true;
+
+	case EVENT_ASYLUM_DEINIT:
+		_keymap->setEnabled(false);
+		return true;
+
 	case EVENT_ASYLUM_UPDATE:
 		update();
 		return true;
 
-	case Common::EVENT_KEYDOWN:
-		key(evt);
-		return true;
-
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-		if ((AsylumAction)evt.customType == kAsylumActionShowMenu)
-			_vm->switchEventHandler(_handler);
+		action(evt);
 		return true;
 	}
 

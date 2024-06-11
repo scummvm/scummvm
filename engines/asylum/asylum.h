@@ -67,6 +67,9 @@ class Sound;
 class Text;
 class VideoPlayer;
 
+extern const char *const engineKeyMapId;
+extern const char *const resviewerKeyMapId;
+
 class AsylumEngine: public Engine, public Common::Serializable {
 protected:
 	// Engine APIs
