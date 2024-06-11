@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-11 12:49+0000\n"
-"PO-Revision-Date: 2024-05-24 03:43+0000\n"
+"PO-Revision-Date: 2024-06-12 02:43+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -3049,10 +3049,8 @@ msgid "ScummVM"
 msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
-#, fuzzy
-#| msgid "ScummVM"
 msgid "ScummVM (debug)"
-msgstr "ScummVM"
+msgstr "ScummVM (depurar)"
 
 #: dists/android.strings.xml.cpp:32
 msgid "Graphic adventure game engine"
@@ -3071,18 +3069,13 @@ msgid "Quit"
 msgstr "Surt"
 
 #: dists/android.strings.xml.cpp:35
-#, fuzzy
-#| msgid "Config File Error"
 msgid "Log File Error"
-msgstr "Error en el fitxer de configuració"
+msgstr "Error en el fitxer de registre"
 
 #: dists/android.strings.xml.cpp:36
-#, fuzzy
-#| msgid "Unable to read ScummVM config file or create a new one!"
 msgid "Unable to read ScummVM log file or create a new one!"
 msgstr ""
-"No s'ha pogut llegir el fitxer de configuració de ScummVM o crear-ne un de "
-"nou!"
+"No s'ha pogut llegir el fitxer de registre de ScummVM o crear-ne un de nou!"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Config File Error"
@@ -3170,22 +3163,16 @@ msgstr ""
 "ScummVM!"
 
 #: dists/android.strings.xml.cpp:55
-#, fuzzy
-#| msgid "the video mode could not be changed"
 msgid "Configuration file could not be parsed"
-msgstr "no s'ha pogut canviar el mode de vídeo"
+msgstr "No s'ha pogut analitzar el fitxer de configuració"
 
 #: dists/android.strings.xml.cpp:56
-#, fuzzy
-#| msgid "In 2D games"
 msgid "Run a game"
-msgstr "En jocs 2D"
+msgstr "Executa una partida"
 
 #: dists/android.strings.xml.cpp:57
-#, fuzzy
-#| msgid "Search in game list"
 msgid "Search a game"
-msgstr "Cerca a la llista de jocs"
+msgstr "Cerca una partida"
 
 #: dists/android.strings.xml.cpp:58
 msgid ""
@@ -3194,16 +3181,12 @@ msgid ""
 msgstr ""
 
 #: dists/android.strings.xml.cpp:59
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game icon"
-msgstr "Opcions del joc"
+msgstr "Icona del joc"
 
 #: dists/android.strings.xml.cpp:60
-#, fuzzy
-#| msgid "Show object labels"
 msgid "Shortcut label"
-msgstr "Mostra les etiquetes dels objectes"
+msgstr "Etiqueta de la drecera"
 
 #: dists/android.strings.xml.cpp:61
 msgid "Shortcut icon"
@@ -6719,10 +6702,8 @@ msgid "Use alternative camera controls"
 msgstr "Utilitza controls alternatius de càmera"
 
 #: engines/freescape/metaengine.cpp:117
-#, fuzzy
-#| msgid "Filter graphics"
 msgid "Authentic graphics"
-msgstr "Filtres de gràfics"
+msgstr "Gràfics autèntics"
 
 #: engines/freescape/metaengine.cpp:118
 msgid "Keep graphics as close as possible to the original"
