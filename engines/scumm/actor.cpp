@@ -3965,7 +3965,7 @@ void ScummEngine_v71he::heFlushAuxQueues() {
 				xOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 0),
 				xOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 4),
 				yOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 2),
-				yOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 6));
+				yOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 6) + 1);
 
 			auxUpdateRectPtr += 8;
 		}
@@ -4118,7 +4118,7 @@ void ScummEngine_v90he::heFlushAuxQueues() {
 				xOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 0),
 				xOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 4),
 				yOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 2),
-				yOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 6),
+				yOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 6) + 1,
 				actorBits);
 
 			a->setActorUpdateArea(
