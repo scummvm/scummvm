@@ -22,8 +22,8 @@
 #include "engines/advancedDetector.h"
 #include "base/plugins.h"
 
+#include "asylum/detection.h"
 #include "asylum/detection_tables.h"
-#include "asylum/console.h"
 
 static const DebugChannelDef debugFlagList[] = {
 	{Asylum::kDebugLevelMain,      "Main",      "Generic debug level"},

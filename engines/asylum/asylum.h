@@ -35,7 +35,7 @@
 
 #include "asylum/resources/data.h"
 
-#include "asylum/console.h"
+#include "asylum/detection.h"
 #include "asylum/eventhandler.h"
 #include "asylum/shared.h"
 
@@ -209,7 +209,6 @@ private:
 	const ADGameDescription *_gameDescription;
 
 	// Misc
-	Console              *_console;
 	Common::RandomSource *_rnd;
 
 	// Game
