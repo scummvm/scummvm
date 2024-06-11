@@ -1,15 +1,32 @@
 OUTPUT
 
 uniform UBOOL useStipple;
-uniform int stipple[64];
+uniform int stipple[128];
 
 varying vec4 var_color;
 
 void main()
 {
 	if (UBOOL_TEST(useStipple)) {
-		ivec2 coord = ivec2(gl_FragCoord.xy - 0.5);
-		if (stipple[int(mod(float(coord.x), 8.) + mod(float(coord.y), 8.) * 8.)] == 0)
+		// Calculate the 32x32 pattern coordinates
+		ivec2 coord = ivec2(gl_FragCoord.xy);
+
+		// Calculate the byte position and bit position within that byte
+		int x = int(mod(float(coord.x), 32.));
+		int y = int(mod(float(coord.y), 32.));
+
+		// Each row in the 32x32 pattern is represented by 4 bytes (4 * 8 bits = 32 bits)
+		int byteIndex = y * 4 + (x / 8);
+		int bitIndex = int(mod(float(x), 8.));
+
+		// Get the stipple pattern byte
+		int patternByte = stipple[byteIndex];
+
+		for (int i = 0; i < 7 - bitIndex; i++) {
+			patternByte = patternByte / 2;
+		}
+
+		if (int(mod(float(patternByte), 2.)) == 1)
 			discard;
 	}
 

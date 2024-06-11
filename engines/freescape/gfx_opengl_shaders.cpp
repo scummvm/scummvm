@@ -457,15 +457,13 @@ void OpenGLShaderRenderer::setStippleData(byte *data) {
 	if (!data)
 		return;
 
-	for (int i = 0; i < 8; i++) {
-		byte b = data[i];
-		for (int j = 0; j < 8; j++) {
-			//debug("%d", 8*i + j);
-			_variableStippleArray[i + 8*j] = b & 0x1;
-			b = b >> 1;
-		}
+	int stippleData[128];
+
+	for (int i = 0; i < 128; i++) {
+		stippleData[i] = 0;
+		stippleData[i] = data[i];
 	}
-	_triangleShader->setUniform("stipple", 64, (const int*)&_variableStippleArray);
+	_triangleShader->setUniform("stipple", 128, (const int*)&stippleData);
 }
 
 void OpenGLShaderRenderer::useStipple(bool enabled) {
