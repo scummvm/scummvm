@@ -8740,7 +8740,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("thedwarvendaggerofblitz", "teste2.exe", "06a03fe35791b0578068ab1873455463", 9874658),
 	GAME_ENTRY_EN("thedwarvendaggerofblitzch2", "TDDOB.exe", "82da2565c456dcfb265ded6fe3189c0b", 69210852),
 	GAME_ENTRY_EN("theelevator", "Elevator.exe", "f10516e88ec858700804ee69d041aead", 29506915),  // Windows
-	GAME_ENTRY_EN("theelevator", "Elevator.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 6563864),  // Windows
 	GAME_ENTRY_EN("theelevator", "Elevator.ags", "7b10f25449c5feef532155c7fbe99192", 27064147),  // Linux
 	GAME_ENTRY_EN("theendlessnight", "An Endless Night.exe", "ae8d17427ae4a33be146967054f0fcf1", 7052775),
 	GAME_ENTRY_EN("theenergizer", "TheEnergizer.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 54539625),
