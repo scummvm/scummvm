@@ -2242,8 +2242,10 @@ Actor *ScummEngine::derefActorSafe(int id, const char *errmsg) const {
 void ScummEngine::processActors() {
 	int numactors = 0;
 
+#ifdef ENABLE_HE
 	if (_game.heversion >= 71 && ((ScummEngine_v71he *)this)->_disableActorDrawingFlag)
 		return;
+#endif
 
 	// Make a list of all actors in this room
 	for (int i = 1; i < _numActors; i++) {
@@ -3017,7 +3019,7 @@ void ScummEngine_v70he::resetActorBgs() {
 			// The original also does this test, which
 			// apparently breaks a bunch of other stuff though,
 			// and doesn't help us in any way...
-			// 
+			//
 			// if (!testGfxOtherUsageBits(strip, j))
 			//	continue;
 
@@ -3042,10 +3044,14 @@ void ScummEngine_v70he::resetActorBgs() {
 			}
 
 			if (actorMin != 0x7fffffff && _actors[j]->_needBgReset) {
+#ifdef ENABLE_HE
 				bool disableDrawing = _game.heversion >= 71 && (((ScummEngine_v71he *)this)->_disableActorDrawingFlag);
+#else
+				bool disableDrawing = false;
+#endif
 				if ((actorMax - actorMin) > 0 && !disableDrawing)
 					_gdi->resetBackground(actorMin, actorMax, i);
-			}		
+			}
 		}
 	}
 
@@ -3054,6 +3060,7 @@ void ScummEngine_v70he::resetActorBgs() {
 	}
 }
 
+#ifdef ENABLE_HE
 bool ScummEngine_v95he::prepareForActorErase() {
 	for (int i = 1; i < _numActors; i++) {
 		if (((ActorHE *)_actors[i])->_generalFlags & ACTOR_GENERAL_FLAG_IGNORE_ERASE) {
@@ -3129,6 +3136,7 @@ void ScummEngine_v95he::resetActorBgs() {
 		_actors[i]->_needBgReset = false;
 	}
 }
+#endif
 
 #undef ACTOR_CONTIGUOUS_WITH_STRIP
 
