@@ -23,6 +23,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #define _NO_ZIP_
 #include "common/textconsole.h"
+#include "common/stream.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/system/graphics/gr_font.h"
@@ -114,7 +115,7 @@ bool grFont::load_index(XZipStream &fh) {
 		if (sy > size_y_) size_y_ = sy;
 	}
 
-	delete buf;
+	delete[] buf;
 
 	return true;
 }
@@ -193,5 +194,23 @@ bool grFont::load_alpha(XZipStream &fh) {
 
 	return true;
 }
+
+bool grFont::load_index(Common::SeekableReadStream *fh) {
+	warning("STUB: grFont::load_index()");
+
+	byte buf[256];
+	fh->read(buf, 256);
+
+	Common::hexdump(buf, 256);
+
+	return true;
+}
+
+bool grFont::load_alpha(Common::SeekableReadStream *fh) {
+	warning("STUB: grFont::load_alpha()");
+
+	return true;
+}
+
 
 } // namespace QDEngine
