@@ -1316,8 +1316,13 @@ void Script::ScriptExecutor::ExecuteScript() {
 			if (opcode2 == 0x1) {
 				// l0037_DC8F:
 				shouldSkip = !((v1 == v3) && (v2 == v4));
+			} else if (opcode2 == 0x2) {
+				ScriptUnimplementedOpcode(opcode2);
+				break;
+			} else if (opcode2 == 0x3) {
+				shouldSkip = v1 | v2;
 			} else if (opcode2 <= 0x5) {
-				ScriptUnimplementedOpcode(opcode2)
+				ScriptUnimplementedOpcode(opcode2);
 				break;
 			}
 			// TODO Find the proper place
