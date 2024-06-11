@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-01 10:44+0000\n"
+"POT-Creation-Date: 2024-06-10 20:51+0000\n"
 "PO-Revision-Date: 2024-06-05 08:44+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -7130,6 +7130,16 @@ msgstr "Інвертувати вісь Y миші"
 #: engines/freescape/metaengine.cpp:107
 msgid "Use alternative camera controls"
 msgstr "Використовувати альтернативне управління камерою"
+
+#: engines/freescape/metaengine.cpp:117
+#, fuzzy
+#| msgid "Filter graphics"
+msgid "Authentic graphics"
+msgstr "Фільтрування графіки"
+
+#: engines/freescape/metaengine.cpp:118
+msgid "Keep graphics as close as possible to the original"
+msgstr ""
 
 #: engines/freescape/movement.cpp:47 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-01 10:44+0000\n"
+"POT-Creation-Date: 2024-06-10 20:51+0000\n"
 "PO-Revision-Date: 2024-05-24 03:43+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -6717,6 +6717,16 @@ msgstr "Inverteix l'eix Y en el ratolí"
 #: engines/freescape/metaengine.cpp:107
 msgid "Use alternative camera controls"
 msgstr "Utilitza controls alternatius de càmera"
+
+#: engines/freescape/metaengine.cpp:117
+#, fuzzy
+#| msgid "Filter graphics"
+msgid "Authentic graphics"
+msgstr "Filtres de gràfics"
+
+#: engines/freescape/metaengine.cpp:118
+msgid "Keep graphics as close as possible to the original"
+msgstr ""
 
 #: engines/freescape/movement.cpp:47 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99

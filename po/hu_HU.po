@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-01 10:44+0000\n"
+"POT-Creation-Date: 2024-06-10 20:51+0000\n"
 "PO-Revision-Date: 2023-12-08 17:19+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -6907,6 +6907,16 @@ msgstr ""
 #| msgid "Use an alternative palette"
 msgid "Use alternative camera controls"
 msgstr "Alternatív paletta használat"
+
+#: engines/freescape/metaengine.cpp:117
+#, fuzzy
+#| msgid "Filter graphics"
+msgid "Authentic graphics"
+msgstr "Grafika szûrése"
+
+#: engines/freescape/metaengine.cpp:118
+msgid "Keep graphics as close as possible to the original"
+msgstr ""
 
 #: engines/freescape/movement.cpp:47 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99

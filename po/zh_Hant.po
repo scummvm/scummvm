@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-01 10:44+0000\n"
+"POT-Creation-Date: 2024-06-10 20:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -6406,6 +6406,14 @@ msgstr ""
 
 #: engines/freescape/metaengine.cpp:107
 msgid "Use alternative camera controls"
+msgstr ""
+
+#: engines/freescape/metaengine.cpp:117
+msgid "Authentic graphics"
+msgstr ""
+
+#: engines/freescape/metaengine.cpp:118
+msgid "Keep graphics as close as possible to the original"
 msgstr ""
 
 #: engines/freescape/movement.cpp:47 engines/hpl1/metaengine.cpp:78

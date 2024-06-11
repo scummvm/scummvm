@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-01 10:44+0000\n"
+"POT-Creation-Date: 2024-06-10 20:51+0000\n"
 "PO-Revision-Date: 2024-06-03 19:43+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -6438,6 +6438,16 @@ msgstr ""
 
 #: engines/freescape/metaengine.cpp:107
 msgid "Use alternative camera controls"
+msgstr ""
+
+#: engines/freescape/metaengine.cpp:117
+#, fuzzy
+#| msgid "Filter graphics"
+msgid "Authentic graphics"
+msgstr "გრაფიკის გაფილტვრა"
+
+#: engines/freescape/metaengine.cpp:118
+msgid "Keep graphics as close as possible to the original"
 msgstr ""
 
 #: engines/freescape/movement.cpp:47 engines/hpl1/metaengine.cpp:78

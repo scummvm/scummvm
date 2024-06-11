@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-01 10:44+0000\n"
+"POT-Creation-Date: 2024-06-10 20:51+0000\n"
 "PO-Revision-Date: 2024-06-10 22:43+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -3198,7 +3198,8 @@ msgstr "Erro no Arquivo de Registro"
 
 #: dists/android.strings.xml.cpp:36
 msgid "Unable to read ScummVM log file or create a new one!"
-msgstr "Não foi possível ler o arquivo de registro do ScummVM ou criar um novo!"
+msgstr ""
+"Não foi possível ler o arquivo de registro do ScummVM ou criar um novo!"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Config File Error"
@@ -7196,6 +7197,16 @@ msgstr "Inverter o eixo Y do mouse"
 #: engines/freescape/metaengine.cpp:107
 msgid "Use alternative camera controls"
 msgstr "Utilizar controles de câmera alternativos"
+
+#: engines/freescape/metaengine.cpp:117
+#, fuzzy
+#| msgid "Filter graphics"
+msgid "Authentic graphics"
+msgstr "Gráficos com filtro"
+
+#: engines/freescape/metaengine.cpp:118
+msgid "Keep graphics as close as possible to the original"
+msgstr ""
 
 #: engines/freescape/movement.cpp:47 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99
@@ -11457,7 +11468,8 @@ msgstr "Exibir pontos de acesso"
 #: engines/twp/twp.cpp:829
 msgid ""
 "You selected Ransome *unbeeped* (DLC) but the DLC has not been detected!"
-msgstr "Você selecionou Ransome *desbipado* (DLC), mas o DLC não foi detectado!"
+msgstr ""
+"Você selecionou Ransome *desbipado* (DLC), mas o DLC não foi detectado!"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
