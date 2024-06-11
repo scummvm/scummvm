@@ -21,7 +21,7 @@
 
 #include "common/textconsole.h"
 
-#include "engines/asylum/console.h"
+#include "engines/asylum/detection.h"
 
 #include "engines/asylum/resources/data.h"
 

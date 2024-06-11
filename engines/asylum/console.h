@@ -31,23 +31,6 @@
 
 namespace Asylum {
 
-enum kDebugLevels {
-	kDebugLevelMain      = 1 << 0,
-	kDebugLevelResources = 1 << 1,
-	kDebugLevelSprites   = 1 << 2,
-	kDebugLevelInput     = 1 << 3,
-	kDebugLevelMenu      = 1 << 4,
-	kDebugLevelScripts   = 1 << 5,
-	kDebugLevelSound     = 1 << 6,
-	kDebugLevelSavegame  = 1 << 7,
-	kDebugLevelScene     = 1 << 8,
-	kDebugLevelObjects   = 1 << 9,
-	kDebugLevelActor     = 1 << 10,
-	kDebugLevelEncounter = 1 << 11,
-	kDebugLevelVideo     = 1 << 12,
-	kDebugLevelCommands  = 1 << 13
-};
-
 class AsylumEngine;
 
 struct ActionArea;
