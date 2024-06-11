@@ -337,7 +337,6 @@ bool Scene::handleEvent(const AsylumEvent &evt) {
 
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN:
-	case Common::EVENT_MBUTTONDOWN:
 		return getCursor()->isHidden() ? false : clickDown(evt);
 	}
 
@@ -551,15 +550,6 @@ bool Scene::clickDown(const AsylumEvent &evt) {
 			getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 5));
 		} else if (player->getStatus() != kActorStatusDisabled) {
 			player->changeStatus(kActorStatusWalking);
-		}
-		break;
-
-	case Common::EVENT_MBUTTONDOWN:
-		if (player->getStatus() != kActorStatusDisabled) {
-			if (player->getStatus() == kActorStatusShowingInventory || player->getStatus() == kActorStatus10)
-				player->changeStatus(kActorStatusEnabled);
-			else
-				player->changeStatus(kActorStatusShowingInventory);
 		}
 		break;
 

@@ -427,8 +427,6 @@ void AsylumEngine::handleEvents() {
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONDOWN:
 		case Common::EVENT_RBUTTONUP:
-		case Common::EVENT_MBUTTONUP:
-		case Common::EVENT_MBUTTONDOWN:
 			// Handle mouse events
 			_cursor->setState(ev);
 

@@ -35,7 +35,6 @@ class GraphicResource;
 enum CursorState {
 	kCursorStateLeft = 1,
 	kCursorStateRight = 2,
-	kCursorMiddle = 3
 };
 
 enum CursorAnimation {
