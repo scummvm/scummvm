@@ -1834,7 +1834,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "lemasabachthani", "Lema Sabachthani" },
 	{ "leogravedigger", "Leo the Gravedigger's Adventure" },
 	{ "leopoldkettle", "The Surprisingly Short Adventure of Leopold Kettle" },
-	{ "lesangimmortels", "Les Sang de Immortels" },
+	{ "lesangimmortels", "Le Sang des Immortels" },
 	{ "lesmiserables", "Les Miserables" },
 	{ "lessthanthree", "<3 (Less Than Three)" },
 	{ "letscook", "Let's Cook - School of Cooking with Koala" },
