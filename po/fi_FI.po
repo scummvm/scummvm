@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-10 20:51+0000\n"
+"POT-Creation-Date: 2024-06-11 12:49+0000\n"
 "PO-Revision-Date: 2024-06-01 18:43+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -944,7 +944,7 @@ msgstr "Käytä"
 #: engines/dragons/metaengine.cpp:160 engines/freescape/movement.cpp:35
 #: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:473
 #: engines/grim/grim.cpp:554 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
-#: engines/scumm/metaengine.cpp:860 engines/twine/metaengine.cpp:465
+#: engines/scumm/metaengine.cpp:862 engines/twine/metaengine.cpp:465
 #: engines/twine/metaengine.cpp:532 engines/twp/metaengine.cpp:154
 #: engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
@@ -959,7 +959,7 @@ msgstr "Ylös"
 #: engines/dragons/metaengine.cpp:166 engines/freescape/movement.cpp:41
 #: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:478
 #: engines/grim/grim.cpp:559 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
-#: engines/scumm/metaengine.cpp:827 engines/twine/metaengine.cpp:472
+#: engines/scumm/metaengine.cpp:829 engines/twine/metaengine.cpp:472
 #: engines/twine/metaengine.cpp:540 engines/twp/metaengine.cpp:155
 #: engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
@@ -973,7 +973,7 @@ msgstr "Alas"
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:483 engines/grim/grim.cpp:564 engines/icb/icb.cpp:78
-#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:840
+#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:842
 #: engines/twine/metaengine.cpp:487 engines/twine/metaengine.cpp:555
 #: engines/twp/metaengine.cpp:152 engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
@@ -988,7 +988,7 @@ msgstr "Vasen"
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:488 engines/grim/grim.cpp:569 engines/icb/icb.cpp:83
-#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:847
+#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:849
 #: engines/twine/metaengine.cpp:479 engines/twine/metaengine.cpp:548
 #: engines/twp/metaengine.cpp:153 engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
@@ -6603,7 +6603,7 @@ msgstr "Taistelumoodi päälle / pois"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:886 engines/twp/metaengine.cpp:162
+#: engines/scumm/metaengine.cpp:888 engines/twp/metaengine.cpp:162
 #: engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr "Ohita video"
@@ -6910,7 +6910,7 @@ msgstr "Puhu/Vuorovaikuta"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:873
+#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:875
 msgid "Attack"
 msgstr "Hyökkäys"
 
@@ -9493,7 +9493,7 @@ msgstr ""
 "Aktivoi joitain moderneja mukavuuksia; e.g. poistaa Sam&Max:in tekaistun "
 "äänienlatusruudun sekä tekee varhaisista pelitallennusmenuista nopeampia."
 
-#: engines/scumm/dialogs.cpp:1181 engines/scumm/metaengine.cpp:713
+#: engines/scumm/dialogs.cpp:1181 engines/scumm/metaengine.cpp:715
 msgid "Enable the original GUI and Menu"
 msgstr "Käytä alkuperäistä käyttöliittymää ja valikkoa"
 
@@ -9616,11 +9616,11 @@ msgstr ""
 "Käytä tätä jos musiikki lakkaa ennen aikojaan, tai jos kuulet pätkiä "
 "edellisestä musiikista."
 
-#: engines/scumm/dialogs.cpp:1677 engines/scumm/metaengine.cpp:704
+#: engines/scumm/dialogs.cpp:1677 engines/scumm/metaengine.cpp:706
 msgid "Load modded audio"
 msgstr "Lataa modattuja ääniresursseja"
 
-#: engines/scumm/dialogs.cpp:1677 engines/scumm/metaengine.cpp:705
+#: engines/scumm/dialogs.cpp:1677 engines/scumm/metaengine.cpp:707
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
@@ -10226,35 +10226,35 @@ msgstr ""
 "ehkäisemiseksi.\n"
 "Kokoversion voi ostaa iTunes-kaupasta."
 
-#: engines/scumm/metaengine.cpp:463
+#: engines/scumm/metaengine.cpp:465
 msgid "HE v71+ support is not compiled in"
 msgstr "HE v71+ tukea ei ole käännetty mukaan"
 
-#: engines/scumm/metaengine.cpp:487
+#: engines/scumm/metaengine.cpp:489
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "SCUMM v7-8 tukea ei ole käännetty mukaan"
 
-#: engines/scumm/metaengine.cpp:633
+#: engines/scumm/metaengine.cpp:635
 msgid "Show Object Line"
 msgstr "Näytä esineiden tiedot"
 
-#: engines/scumm/metaengine.cpp:634
+#: engines/scumm/metaengine.cpp:636
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Näytä esineiden nimet näytön alalaidassa"
 
-#: engines/scumm/metaengine.cpp:642
+#: engines/scumm/metaengine.cpp:644
 msgid "Use NES Classic Palette"
 msgstr "Käytä NES Classic-palettia"
 
-#: engines/scumm/metaengine.cpp:643
+#: engines/scumm/metaengine.cpp:645
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr "Käytä neutraalimpaa väripalettia joka emuloi paremmin NES Classic:ia"
 
-#: engines/scumm/metaengine.cpp:651
+#: engines/scumm/metaengine.cpp:653
 msgid "Trim FM-TOWNS games to 200 pixels height"
 msgstr "Trimmaa FM-TOWNS pelit 200 pikselin korkuisiksi"
 
-#: engines/scumm/metaengine.cpp:652
+#: engines/scumm/metaengine.cpp:654
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
@@ -10262,11 +10262,11 @@ msgstr ""
 "Leikkaa ylimääräiset 40 pikseliä näytön alaosasta, jättäen jäljelle 200 "
 "pikseliä, jolloin kuvasuhteen korjaus on mahdollista"
 
-#: engines/scumm/metaengine.cpp:660
+#: engines/scumm/metaengine.cpp:662
 msgid "Run in original 640 x 480 resolution"
 msgstr "Käytä alkuperäistä 640 x 480 resoluutiota"
 
-#: engines/scumm/metaengine.cpp:661
+#: engines/scumm/metaengine.cpp:663
 msgid ""
 "This allows more accurate pause/restart banners, but might impact "
 "performance or shader/scaler usage."
@@ -10274,35 +10274,35 @@ msgstr ""
 "Tämä mahdollistaa tarkemmat pysäytä/uudelleenkäynnistä-bannerit, mutta "
 "saattaa vaikuttaa sävytinten/skaalaajien suorituskykyyn."
 
-#: engines/scumm/metaengine.cpp:668
+#: engines/scumm/metaengine.cpp:670
 msgid "Play simplified music"
 msgstr "Yksinkertaistettu musiikki"
 
-#: engines/scumm/metaengine.cpp:669
+#: engines/scumm/metaengine.cpp:671
 msgid "This music was intended for low-end Macs, and uses only one channel."
 msgstr ""
 "Tämä musiikki oletettavasti tarkoitettu hitaille maceille, ja se käyttää "
 "vain yhtä kanavaa."
 
-#: engines/scumm/metaengine.cpp:677
+#: engines/scumm/metaengine.cpp:679
 msgid "Enable smooth scrolling"
 msgstr "Käytä jatkuvaa vieritystä"
 
-#: engines/scumm/metaengine.cpp:678
+#: engines/scumm/metaengine.cpp:680
 msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr "(sen sijaan että vieritettäisiin 8 pikselin askeleissa)"
 
-#: engines/scumm/metaengine.cpp:686
+#: engines/scumm/metaengine.cpp:688
 msgid "Allow semi-smooth scrolling"
 msgstr "Salli semi-pehmeä vieritys"
 
-#: engines/scumm/metaengine.cpp:687
+#: engines/scumm/metaengine.cpp:689
 msgid ""
 "Allow scrolling to be less smooth during the fast camera movement in the "
 "intro."
 msgstr "Salli vähemmän pehmeä vieritys intron nopeissa kameraliikkeissä."
 
-#: engines/scumm/metaengine.cpp:714
+#: engines/scumm/metaengine.cpp:716
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
@@ -10313,11 +10313,11 @@ msgstr ""
 "peli tai ohjelma halutaan sulkea'-asetuksen kanssa saadaksesi "
 "kokonaisvaltaisemman kokemuksen."
 
-#: engines/scumm/metaengine.cpp:723
+#: engines/scumm/metaengine.cpp:725
 msgid "Enable low latency audio mode"
 msgstr "Matalalatenssinen audio"
 
-#: engines/scumm/metaengine.cpp:724
+#: engines/scumm/metaengine.cpp:726
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy. \t"
 "\tIt is recommended to enable this feature only if you incur in audio "
@@ -10327,11 +10327,11 @@ msgstr ""
 "kustannuksella. \t\tSuosittelemme tätä asetusta vain jos huomaat viivettä "
 "pelin äänissä normaalissa pelitilanteessa."
 
-#: engines/scumm/metaengine.cpp:733
+#: engines/scumm/metaengine.cpp:735
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
 msgstr "Esitä \"A Pirate I Was Meant To Be\"-laulu"
 
-#: engines/scumm/metaengine.cpp:734
+#: engines/scumm/metaengine.cpp:736
 msgid ""
 "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
 "Meant To Be\", \t\twhich was cut in international releases. Beware though: "
@@ -10341,28 +10341,28 @@ msgstr ""
 "Laulu poistettiin kansainvälisistä julkaisuista, tekstitykset saattavat olla "
 "vajavaiset."
 
-#: engines/scumm/metaengine.cpp:821
+#: engines/scumm/metaengine.cpp:823
 msgid "Down Left"
 msgstr "Alavasemmalle"
 
-#: engines/scumm/metaengine.cpp:834
+#: engines/scumm/metaengine.cpp:836
 msgid "Down Right"
 msgstr "Alaoikealle"
 
-#: engines/scumm/metaengine.cpp:854
+#: engines/scumm/metaengine.cpp:856
 msgid "Up Left"
 msgstr "Ylävasemmalle"
 
-#: engines/scumm/metaengine.cpp:867
+#: engines/scumm/metaengine.cpp:869
 msgid "Up Right"
 msgstr "Yläoikealle"
 
-#: engines/scumm/metaengine.cpp:879
+#: engines/scumm/metaengine.cpp:881
 msgid "Switch weapon"
 msgstr "Vaihda asetta"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:893
+#: engines/scumm/metaengine.cpp:895
 msgid "Win the bike fight cheat"
 msgstr "Voita moottoripyörätaistelu-huijaus"
 

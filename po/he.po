@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-10 20:51+0000\n"
+"POT-Creation-Date: 2024-06-11 12:49+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -936,7 +936,7 @@ msgstr "פעולה"
 #: engines/dragons/metaengine.cpp:160 engines/freescape/movement.cpp:35
 #: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:473
 #: engines/grim/grim.cpp:554 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
-#: engines/scumm/metaengine.cpp:860 engines/twine/metaengine.cpp:465
+#: engines/scumm/metaengine.cpp:862 engines/twine/metaengine.cpp:465
 #: engines/twine/metaengine.cpp:532 engines/twp/metaengine.cpp:154
 #: engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
@@ -951,7 +951,7 @@ msgstr "למעלה"
 #: engines/dragons/metaengine.cpp:166 engines/freescape/movement.cpp:41
 #: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:478
 #: engines/grim/grim.cpp:559 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
-#: engines/scumm/metaengine.cpp:827 engines/twine/metaengine.cpp:472
+#: engines/scumm/metaengine.cpp:829 engines/twine/metaengine.cpp:472
 #: engines/twine/metaengine.cpp:540 engines/twp/metaengine.cpp:155
 #: engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
@@ -965,7 +965,7 @@ msgstr "למטה"
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:483 engines/grim/grim.cpp:564 engines/icb/icb.cpp:78
-#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:840
+#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:842
 #: engines/twine/metaengine.cpp:487 engines/twine/metaengine.cpp:555
 #: engines/twp/metaengine.cpp:152 engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
@@ -980,7 +980,7 @@ msgstr "שמאלה"
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:488 engines/grim/grim.cpp:569 engines/icb/icb.cpp:83
-#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:847
+#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:849
 #: engines/twine/metaengine.cpp:479 engines/twine/metaengine.cpp:548
 #: engines/twp/metaengine.cpp:153 engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
@@ -6234,7 +6234,7 @@ msgstr "מיתוג קרבות"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:886 engines/twp/metaengine.cpp:162
+#: engines/scumm/metaengine.cpp:888 engines/twp/metaengine.cpp:162
 #: engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr "דילוג על סרטוני מעבר"
@@ -6546,7 +6546,7 @@ msgstr "אינטראקציה"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:873
+#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:875
 msgid "Attack"
 msgstr "תקיפה"
 
@@ -9130,7 +9130,7 @@ msgid ""
 "in Sam&Max, and makes early save menus snappier."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1181 engines/scumm/metaengine.cpp:713
+#: engines/scumm/dialogs.cpp:1181 engines/scumm/metaengine.cpp:715
 msgid "Enable the original GUI and Menu"
 msgstr "הפעלת ממשק ותפריטים מקוריים"
 
@@ -9246,11 +9246,11 @@ msgstr ""
 "מוזיקת התצפית היא חלק מרצועת ההקדמה. התאמת המיקום בתוך הרצועה שבו היא מתחילה "
 "להתנגן. מומלץ להשתמש אם המוזיקה קטועה, או אם ניתן לשמוע חלק מהמוזיקה הקודמת."
 
-#: engines/scumm/dialogs.cpp:1677 engines/scumm/metaengine.cpp:704
+#: engines/scumm/dialogs.cpp:1677 engines/scumm/metaengine.cpp:706
 msgid "Load modded audio"
 msgstr "טעינת שמע משופר"
 
-#: engines/scumm/dialogs.cpp:1677 engines/scumm/metaengine.cpp:705
+#: engines/scumm/dialogs.cpp:1677 engines/scumm/metaengine.cpp:707
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
@@ -9852,35 +9852,35 @@ msgstr ""
 "פיראטיות.\n"
 "הגרסה המלאה זמינה לרכישה מחנות iTunes."
 
-#: engines/scumm/metaengine.cpp:463
+#: engines/scumm/metaengine.cpp:465
 msgid "HE v71+ support is not compiled in"
 msgstr "תמיכה במנוע HE v71+ לא נבנתה"
 
-#: engines/scumm/metaengine.cpp:487
+#: engines/scumm/metaengine.cpp:489
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "תמיכה במנוע SCUMM v7-8 לא נבנתה"
 
-#: engines/scumm/metaengine.cpp:633
+#: engines/scumm/metaengine.cpp:635
 msgid "Show Object Line"
 msgstr "הצג קו אובייקט"
 
-#: engines/scumm/metaengine.cpp:634
+#: engines/scumm/metaengine.cpp:636
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "הצגת שמות של אובייקטים בתחתית המסך"
 
-#: engines/scumm/metaengine.cpp:642
+#: engines/scumm/metaengine.cpp:644
 msgid "Use NES Classic Palette"
 msgstr "השתמש בערכת צבעים של NES"
 
-#: engines/scumm/metaengine.cpp:643
+#: engines/scumm/metaengine.cpp:645
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr "שימוש בערכת צבעים טבעית יותר שמזכירה את NES Classic"
 
-#: engines/scumm/metaengine.cpp:651
+#: engines/scumm/metaengine.cpp:653
 msgid "Trim FM-TOWNS games to 200 pixels height"
 msgstr "כיווץ משחקי FM-TOWNS לגובה של 200 פיקסלים"
 
-#: engines/scumm/metaengine.cpp:652
+#: engines/scumm/metaengine.cpp:654
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
@@ -9888,21 +9888,21 @@ msgstr ""
 "חיתוך 40 הפיקסלים הנוספים בתחתית המסך, כך שיהיה בגובה סטנדרטי של 200 "
 "פיקסלים, שמאפשר שימוש באפשרות 'תיקון יחס ממדים'"
 
-#: engines/scumm/metaengine.cpp:660
+#: engines/scumm/metaengine.cpp:662
 msgid "Run in original 640 x 480 resolution"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:661
+#: engines/scumm/metaengine.cpp:663
 msgid ""
 "This allows more accurate pause/restart banners, but might impact "
 "performance or shader/scaler usage."
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:668
+#: engines/scumm/metaengine.cpp:670
 msgid "Play simplified music"
 msgstr "ניגון מוזיקה מפושטת"
 
-#: engines/scumm/metaengine.cpp:669
+#: engines/scumm/metaengine.cpp:671
 #, fuzzy
 #| msgid ""
 #| "This music was presumably intended for low-end Macs, and uses only one "
@@ -9911,25 +9911,25 @@ msgid "This music was intended for low-end Macs, and uses only one channel."
 msgstr ""
 "מוזיקה זו נועדה ככל הנראה למחשבי מקינטוש בדגמים הזולים, ומשתמשת רק בערוץ אחד."
 
-#: engines/scumm/metaengine.cpp:677
+#: engines/scumm/metaengine.cpp:679
 msgid "Enable smooth scrolling"
 msgstr "הפעלת גלילה חלקה"
 
-#: engines/scumm/metaengine.cpp:678
+#: engines/scumm/metaengine.cpp:680
 msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr "(במקום גלילה רגילה של צעדים ברוחב 8 פיקסלים)"
 
-#: engines/scumm/metaengine.cpp:686
+#: engines/scumm/metaengine.cpp:688
 msgid "Allow semi-smooth scrolling"
 msgstr "הפעלת גלילה חלקה-למחצה"
 
-#: engines/scumm/metaengine.cpp:687
+#: engines/scumm/metaengine.cpp:689
 msgid ""
 "Allow scrolling to be less smooth during the fast camera movement in the "
 "intro."
 msgstr "הפעלת גלילה פחות חלקה במהלך תנועות המצלמה המהירות במבוא."
 
-#: engines/scumm/metaengine.cpp:714
+#: engines/scumm/metaengine.cpp:716
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
@@ -9938,11 +9938,11 @@ msgstr ""
 "המשחק ישתמש בממשק גרפי פנימי של המנוע ובתפריט שמירה/טעינה המקורי.\t\tהשתמשו "
 "ביחד עם \"בקשה לאישור יציאה\" לחוויה שלמה יותר."
 
-#: engines/scumm/metaengine.cpp:723
+#: engines/scumm/metaengine.cpp:725
 msgid "Enable low latency audio mode"
 msgstr "הפעלת מצב שמע בעיכוב מועט"
 
-#: engines/scumm/metaengine.cpp:724
+#: engines/scumm/metaengine.cpp:726
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy. \t"
 "\tIt is recommended to enable this feature only if you incur in audio "
@@ -9951,43 +9951,43 @@ msgstr ""
 "אפשור למשחק להשתמש בשמע בעיכוב מועט, על חשבון הדיוק בצלילים.\t\tמומלץ להפעיל "
 "תכונה זו רק אם חוויתם בעיות עיכוב בשמע במהלך משחק רגיל."
 
-#: engines/scumm/metaengine.cpp:733
+#: engines/scumm/metaengine.cpp:735
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:734
+#: engines/scumm/metaengine.cpp:736
 msgid ""
 "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
 "Meant To Be\", \t\twhich was cut in international releases. Beware though: "
 "subtitles may not be fully translated."
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:821
+#: engines/scumm/metaengine.cpp:823
 #, fuzzy
 msgid "Down Left"
 msgstr "פונה שמאלה"
 
-#: engines/scumm/metaengine.cpp:834
+#: engines/scumm/metaengine.cpp:836
 #, fuzzy
 msgid "Down Right"
 msgstr "פנה ימינה"
 
-#: engines/scumm/metaengine.cpp:854
+#: engines/scumm/metaengine.cpp:856
 #, fuzzy
 msgid "Up Left"
 msgstr "שמאלה"
 
-#: engines/scumm/metaengine.cpp:867
+#: engines/scumm/metaengine.cpp:869
 #, fuzzy
 msgid "Up Right"
 msgstr "ימינה"
 
-#: engines/scumm/metaengine.cpp:879
+#: engines/scumm/metaengine.cpp:881
 msgid "Switch weapon"
 msgstr "החלפת נשק"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:893
+#: engines/scumm/metaengine.cpp:895
 msgid "Win the bike fight cheat"
 msgstr "רמאות לניצחון בקרב אופנועים"
 
