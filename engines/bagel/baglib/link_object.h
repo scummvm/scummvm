@@ -65,10 +65,10 @@ public:
 	void setSize(const CBofSize &size) override {
 		_size = size;
 	}
-	void setDstLoc(const CBofPoint loc) {
+	void setDstLoc(const CBofPoint &loc) {
 		_destLocation = loc;
 	}
-	void setSrcLoc(const CBofPoint loc) {
+	void setSrcLoc(const CBofPoint &loc) {
 		_srcLocation = loc;
 	}
 };

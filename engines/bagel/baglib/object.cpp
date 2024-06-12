@@ -118,6 +118,34 @@ ErrorCode CBagObject::update(CBofBitmap * /*pBmp*/, CPoint /*pt*/, CRect * /*pSr
 	return ERR_NONE;
 }
 
+bool CBagObject::onObjInteraction(CBagObject *, CBagStorageDev *) {
+	return false;
+}
+
+void CBagObject::setTimeless(bool b) {
+	setProperty(TIMELESS, b);
+}
+
+bool CBagObject::isForeGround() {
+	return isProperty(FOREGROUND);
+}
+
+void CBagObject::setForeGround(bool b) {
+	setProperty(FOREGROUND, b);
+}
+
+int CBagObject::getProperties() {
+	return _nProperties;
+}
+
+void CBagObject::setProperties(int nProperties) {
+	_nProperties = (uint16)nProperties;
+}
+
+const CBofString *CBagObject::getInitInfo() const {
+	return nullptr;
+}
+
 int CBagObject::getProperty(const CBofString &sProp) {
 	if (!sProp.find("STATE"))
 		return getState();
@@ -158,6 +186,25 @@ bool CBagObject::runObject() {
 	g_VarManager->incrementTimers();
 
 	return true;
+}
+
+void CBagObject::setRefId(int id) {
+	assert(id >= 0 && id <= 0xFFFF);
+	_nId = (uint16)id;
+}
+
+void CBagObject::setOverCursor(int curs) {
+	_nOverCursor = (byte)curs;
+}
+
+void CBagObject::setState(int state) {
+	assert(ABS(state) < 0x8000);
+	_nState = (int16)state;
+}
+
+void CBagObject::setPosition(const CBofPoint &pos) {
+	_nX = (int16)pos.x;
+	_nY = (int16)pos.y;
 }
 
 ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
@@ -356,6 +403,38 @@ void CBagObject::onLButtonUp(uint32 nFlags, CBofPoint * /*xPoint*/, void *) {
 
 bool CBagObject::onMouseMove(uint32 /*nFlags*/, CPoint /*xPoint*/, void *) {
 	return false;
+}
+
+bool CBagObject::onMouseOver(uint32, CBofPoint, void *) {
+	return false;
+}
+
+CBofPoint CBagObject::getPosition() {
+	return CBofPoint(_nX, _nY);
+}
+
+int CBagObject::getRefId() {
+	return _nId;
+}
+
+int CBagObject::getOverCursor() {
+	return _nOverCursor;
+}
+
+int CBagObject::getState() {
+	return _nState;
+}
+
+CBofRect CBagObject::getRect() {
+	return CBofRect(_nX, _nY, _nX - 1, _nY - 1);
+}
+
+const CBofString &CBagObject::getFileName() {
+	return _sFileName;
+}
+
+CBagMenu *CBagObject::getMenuPtr() {
+	return _pMenu;
 }
 
 const CBofString &CBagObject::getRefName() {

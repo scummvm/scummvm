@@ -23,7 +23,6 @@
 #ifndef BAGEL_BAGLIB_OBJECT_H
 #define BAGEL_BAGLIB_OBJECT_H
 
-#include "bagel/boflib/stdinc.h"
 #include "bagel/baglib/expression.h"
 #include "bagel/baglib/res.h"
 #include "bagel/boflib/gfx/bitmap.h"
@@ -257,9 +256,8 @@ public:
 	bool isTimeless() {
 		return isProperty(TIMELESS);
 	}
-	void setTimeless(bool b = true) {
-		setProperty(TIMELESS, b);
-	}
+
+	void setTimeless(bool b = true);
 	// Does this objects have a set position/or should the sdev provide one when it is attached
 	bool isFloating() {
 		return isProperty(FLOATING);
@@ -275,32 +273,21 @@ public:
 		setProperty(PRELOAD, b);
 	}
 	// Does this objects have a set position/or should the sdev provide one when it is attached
-	bool isForeGround() {
-		return isProperty(FOREGROUND);
-	}
-	void setForeGround(bool b = true) {
-		setProperty(FOREGROUND, b);
-	}
-
-	int getProperties() {
-		return _nProperties;
-	}
-	void setProperties(int nProperties) {
-		_nProperties = (uint16)nProperties;
-	}
+	bool isForeGround();
+	void setForeGround(bool b = true);
+	int getProperties();
+	void setProperties(int nProperties);
 
 	// Init variables
-	virtual const CBofString *getInitInfo() const {
-		return nullptr;
-	}
+	virtual const CBofString *getInitInfo() const;
 	virtual void setInitInfo(const CBofString &) {}
-
 	virtual int getProperty(const CBofString &sProp);
 	virtual void setProperty(const CBofString &, int nVal);
 
 	bool isDirty() {
 		return _bDirty != 0;
 	}
+	
 	void setDirty(bool b = true) {
 		_bDirty = (byte)b;
 	}
@@ -309,6 +296,7 @@ public:
 	bool isMsgWaiting() {
 		return _bMsgWaiting != 0;
 	}
+	
 	void setMsgWaiting(bool b = true) {
 		_bMsgWaiting = (byte)b;
 	}
@@ -316,6 +304,7 @@ public:
 	bool isAlwaysUpdate() {
 		return _bAlwaysUpdate != 0;
 	}
+	
 	void setAlwaysUpdate(bool b = true) {
 		_bAlwaysUpdate = (byte)b;
 	}
@@ -323,57 +312,27 @@ public:
 	bool isNoMenu() {
 		return _bNoMenu;
 	}
+	
 	void setNoMenu(bool b = true) {
 		_bNoMenu = (byte)b;
 	}
 
-	virtual CBofPoint getPosition() {
-		return CBofPoint(_nX, _nY);
-	}
-	virtual int getRefId() {
-		return _nId;
-	}
-	virtual int getOverCursor() {
-		return _nOverCursor;
-	}
-	virtual int getState() {
-		return _nState;
-	}
-	virtual CBofRect getRect() {
-		return CBofRect(_nX, _nY, _nX - 1, _nY - 1);
-	}
-
-	virtual const CBofString &getFileName() {
-		return _sFileName;
-	}
-	CBagMenu *getMenuPtr() {
-		return _pMenu;
-	}
+	virtual CBofPoint getPosition();
+	virtual int getRefId();
+	virtual int getOverCursor();
+	virtual int getState();
+	virtual CBofRect getRect();
+	virtual const CBofString &getFileName();
+	CBagMenu *getMenuPtr();
 	virtual const CBofString &getRefName();
 	virtual void setRefName(const CBofString &s);
-
-	virtual void setFileName(const CBofString &s) {
-		_sFileName = s;
-	}
+	virtual void setFileName(const CBofString &s);
 	virtual void setSize(const CBofSize &) {}
-	virtual void setRefId(int id) {
-		assert(id >= 0 && id <= 0xFFFF);
-		_nId = (uint16)id;
-	}
-	virtual void setOverCursor(int curs) {
-		_nOverCursor = (byte)curs;
-	}
-	virtual void setState(int state) {
-		assert(ABS(state) < 0x8000);
-		_nState = (int16)state;
-	}
-	virtual void setMenuPtr(CBagMenu *pm) {
-		_pMenu = pm;
-	}
-	virtual void setPosition(const CBofPoint &pos) {
-		_nX = (int16)pos.x;
-		_nY = (int16)pos.y;
-	}
+	virtual void setRefId(int id);
+	virtual void setOverCursor(int curs);
+	virtual void setState(int state);
+	virtual void setMenuPtr(CBagMenu *pm);
+	virtual void setPosition(const CBofPoint &pos);
 
 	/**
 	 * Takes in info and then removes the relative information and returns
@@ -384,18 +343,20 @@ public:
 	ParseCodes setInfo(CBagIfstream &istr) override;
 
 	virtual ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
-
-	virtual bool onObjInteraction(CBagObject * /*pObj*/, CBagStorageDev * /*pSDev*/) {
-		return false;
-	}
-
+	virtual bool onObjInteraction(CBagObject * /*pObj*/, CBagStorageDev * /*pSDev*/);
 	virtual void onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr) {}
 	virtual void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr); // run menu if available
 	virtual bool onMouseMove(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr);
-	virtual bool onMouseOver(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr) {
-		return false;
-	}
+	virtual bool onMouseOver(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr);
 };
+
+inline void CBagObject::setFileName(const CBofString &s) {
+	_sFileName = s;
+}
+
+inline void CBagObject::setMenuPtr(CBagMenu *pm) {
+	_pMenu = pm;
+}
 
 } // namespace Bagel
 
