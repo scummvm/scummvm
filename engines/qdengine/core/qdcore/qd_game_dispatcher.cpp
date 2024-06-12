@@ -586,9 +586,9 @@ bool qdGameDispatcher::save_script(const char *fname) const {
 void qdGameDispatcher::load_script(const char *fname) {
 	xml::parser &pr = qdscr_XML_Parser();
 
-	unsigned int start_clock = xclock();
+	unsigned int start_clock = g_system->getMillis();
 	pr.parse_file(fname);
-	unsigned int end_clock = xclock();
+	unsigned int end_clock =  g_system->getMillis();
 	appLog::default_log() << "Парсинг скрипта: " << end_clock - start_clock << " мс\r\n";
 
 	if (pr.is_script_binary()) {
@@ -596,12 +596,12 @@ void qdGameDispatcher::load_script(const char *fname) {
 		qdFileManager::instance().enable_packages();
 	}
 
-	start_clock = xclock();
+	start_clock = g_system->getMillis();
 
 	if (const xml::tag * tg = pr.root_tag().search_subtag(QDSCR_ROOT))
 		load_script(tg);
 
-	end_clock = xclock();
+	end_clock = g_system->getMillis();
 	appLog::default_log() << "Обработка скрипта: " << end_clock - start_clock << " мс\r\n";
 
 	pr.clear();
