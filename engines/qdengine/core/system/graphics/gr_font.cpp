@@ -196,18 +196,61 @@ bool grFont::load_alpha(XZipStream &fh) {
 }
 
 bool grFont::load_index(Common::SeekableReadStream *fh) {
-	warning("STUB: grFont::load_index()");
+	int64 bufSize = fh->size();
+	byte buf[bufSize];
+	fh->read(buf, bufSize);
 
-	byte buf[256];
-	fh->read(buf, 256);
+	XBuffer XBuf(buf, bufSize);
 
-	Common::hexdump(buf, 256);
+	int num_ch, sx, sy;
+	XBuf >= sx >= sy >= num_ch;
+
+	grFontChar chr;
+	for (int i = 0; i < num_ch; i ++) {
+		int x, y, sx, sy;
+		XBuf >= chr.code_ >= x >= y >= sx >= sy;
+
+		chr.region_ = grScreenRegion(x, y, sx, sy);
+		chars_.push_back(chr);
+
+		if (sx > size_x_) size_x_ = sx;
+		if (sy > size_y_) size_y_ = sy;
+	};
 
 	return true;
 }
 
 bool grFont::load_alpha(Common::SeekableReadStream *fh) {
-	warning("STUB: grFont::load_alpha()");
+	unsigned char header[18];
+	fh->read(header, 18);
+
+	if (header[0])
+		return false;
+
+	if (header[1])
+		return false;
+
+	if (header[2] != 2 && header[2] != 3)
+		return false;
+
+	int sx = alpha_buffer_sx_ = header[12] + (header[13] << 8);
+	int sy = alpha_buffer_sy_ = header[14] + (header[15] << 8);
+
+	int colors = header[16];
+	int flags = header[17];
+
+	int ssx = sx * colors / 8;
+
+	alpha_buffer_ = new unsigned char[sx * sy];
+
+	if (!(flags & 0x20)) {
+		int idx = (sy - 1) * sx;
+		for (int i = 0; i < sy; i ++) {
+			fh->read(alpha_buffer_ + idx, sy*sx);
+			idx -= ssx;
+		}
+	} else
+		fh->read(alpha_buffer_, ssx * sy);
 
 	return true;
 }
