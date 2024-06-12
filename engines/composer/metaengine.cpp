@@ -25,6 +25,12 @@
 #include "common/str-array.h"
 #include "engines/advancedDetector.h"
 
+#include "common/translation.h"
+
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "composer/composer.h"
 #include "composer/detection.h"
 
@@ -73,6 +79,8 @@ public:
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 
+	Common::KeymapArray initKeymaps(const char *target) const override;
+
 	int getMaximumSaveSlot() const override;
 	SaveStateList listSaves(const char* target) const override;
 	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
@@ -94,6 +102,36 @@ bool ComposerMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return ((f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup));
 }
 
+Common::KeymapArray ComposerMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Composer;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "composer-main", "COMPOSER main");
+
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Left Click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Right Click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+	
+	act = new Action(kStandardActionSkip, _("Skip"));
+	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_Y");
+	act->allowKbdRepeats();
+	engineKeyMap->addAction(act);
+					
+	return Keymap::arrayOf(engineKeyMap);
+}					
+					
 Common::String getSaveName(Common::InSaveFile *in) {
 	Common::Serializer ser(in, nullptr);
 	Common::String name;
