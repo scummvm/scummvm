@@ -32,6 +32,9 @@ public:
 	void loadAssetsDOSFullGame() override;
 	void loadAssetsDOSDemo() override;
 	void loadAssetsAmigaDemo() override;
+	void titleScreen() override;
+	void selectCharacterScreen();
+	void drawOption();
 
 	void drawDOSUI(Graphics::Surface *surface) override;
 	void drawEnergyMeter(Graphics::Surface *surface);
@@ -51,6 +54,7 @@ private:
 	void drawFullscreenRiddleAndWait(uint16 riddle);
 	void drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics::Surface *surface);
 	void addGhosts();
+	Texture *_optionTexture;
 };
 
 extern byte kFreescapeCastleFont[];
