@@ -54,6 +54,7 @@ public:
 	tag(int id = 0, tag_data_format data_fmt = TAG_DATA_VOID, int data_sz = 0, int data_offs = 0) : ID_(id), data_format_(data_fmt), data_size_(data_sz), data_offset_(data_offs), data_(NULL) { }
 	tag(const tag &tg) : ID_(tg.ID_), data_format_(tg.data_format_), data_size_(tg.data_size_), data_offset_(tg.data_offset_), data_(tg.data_), subtags_(tg.subtags_) { }
 	~tag() { }
+	bool readTag(Common::SeekableReadStream *ff, tag &tg);
 
 	tag &operator = (const tag &tg) {
 		if (this == &tg) return *this;
