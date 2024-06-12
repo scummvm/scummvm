@@ -20,10 +20,10 @@
  */
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #ifndef _XML_ONLY_BINARY_SCRIPT_
 #endif
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/file.h"
 #include "common/textconsole.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/xml_parser.h"
@@ -350,7 +350,6 @@ XStream &operator > (XStream &ff, tag &tg) {
 
 bool parser::read_binary_script(const char *fname) {
 	XStream ff(fname, XS_IN);
-
 	binary_script_ = true;
 
 	int v = 0;
@@ -391,12 +390,10 @@ bool parser::write_binary_script(const char *fname) const {
 }
 
 bool parser::is_script_binary(const char *fname) const {
-	XStream ff(fname, XS_IN);
+	Common::File ff;
+	ff.open(fname);
 
-	int v = 0;
-	ff.read(reinterpret_cast<char *>(&v), sizeof(int));
-
-	ff.close();
+	uint32 v = ff.readUint32LE();
 
 	if (v == 8383) return true;
 
