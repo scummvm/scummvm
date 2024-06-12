@@ -348,15 +348,33 @@ XStream &operator > (XStream &ff, tag &tg) {
 	return ff;
 }
 
+bool tag::readTag(Common::SeekableReadStream *ff, tag &tg) {
+	uint32 id = ff->readUint32LE();
+	uint32 data_format = ff->readUint32LE();
+	uint32 data_size = ff->readUint32LE();
+	uint32 data_offset = ff->readUint32LE();
+
+	tg = tag(tag(id, tag::tag_data_format(data_format), data_size, data_offset));
+
+	uint32 num_subtags = ff->readUint32LE();
+
+	for (int i = 0; i < num_subtags; i++) {
+		tag stg;
+		readTag(ff, stg);
+
+		tg.add_subtag(stg);
+	}
+
+	return true;
+}
+
 bool parser::read_binary_script(const char *fname) {
-	XStream ff(fname, XS_IN);
-	binary_script_ = true;
+	Common::File ff;
+	ff.open(fname);
 
-	int v = 0;
-	ff.read(reinterpret_cast<char *>(&v), sizeof(int));
+	int v = ff.readUint32LE();
 
-	int size = 0;
-	ff.read(reinterpret_cast<char *>(&size), sizeof(int));
+	int size = ff.readUint32LE();
 
 	if (data_pool_.size() < size)
 		data_pool_.resize(size);
@@ -364,7 +382,7 @@ bool parser::read_binary_script(const char *fname) {
 	ff.read(&*data_pool_.begin(), size);
 
 	root_tag_.clear();
-	ff > root_tag_;
+	root_tag_.readTag(&ff, root_tag_);
 
 	root_tag_.set_data(&data_pool_);
 
