@@ -179,11 +179,11 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 	else if (rec_name = comline_parser.argument_string(COMLINE_RECORDER_PLAY))
 		inputRecorder::instance().open(rec_name, inputRecorder::RECORDER_PLAY);
 
-	gdi_grD -> set_maximize_handler(maximize_window);
-	dd_grD -> set_maximize_handler(maximize_window);
+	gdi_grD->set_maximize_handler(maximize_window);
+	dd_grD->set_maximize_handler(maximize_window);
 
-	gdi_grD -> HideMouse();
-	dd_grD -> HideMouse();
+	gdi_grD->HideMouse();
+	dd_grD->HideMouse();
 
 	qdGameConfig::get_config().load();
 	setlocale(LC_CTYPE, qdGameConfig::get_config().locale());
@@ -199,11 +199,11 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 		if (!qdGameConfig::get_config().fullscreen()) {
 			int sx, sy;
 			grPixelFormat pixel_format;
-			dd_grD -> get_current_mode(sx, sy, pixel_format);
+			dd_grD->get_current_mode(sx, sy, pixel_format);
 
 			qdGameConfig::get_config().set_pixel_format(pixel_format);
 		} else
-			qdGameConfig::get_config().set_pixel_format(dd_grD -> adjust_mode((grPixelFormat)qdGameConfig::get_config().pixel_format()));
+			qdGameConfig::get_config().set_pixel_format(dd_grD->adjust_mode((grPixelFormat)qdGameConfig::get_config().pixel_format()));
 	}
 
 	SplashScreen sp;
@@ -228,9 +228,9 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 	grDispatcher::set_default_font(qdGameDispatcher::create_font(0));
 
 	qd_gameD = new qdGameDispatcher;
-	qd_gameD -> load_script(script_name.c_str());
+	qd_gameD->load_script(script_name.c_str());
 
-	qd_gameD -> set_scene_loading_progress_callback(qd_show_load_progress);
+	qd_gameD->set_scene_loading_progress_callback(qd_show_load_progress);
 
 	if (qdGameConfig::get_config().is_splash_enabled()) {
 		sp.wait(qdGameConfig::get_config().splash_time());
@@ -246,16 +246,16 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 
 	winVideo::init();
 
-	qd_gameD -> load_resources();
+	qd_gameD->load_resources();
 
 	if (const char * scene_name = comline_parser.argument_string(COMLINE_SCENE_NAME)) {
-		if (!qd_gameD -> select_scene(scene_name)) app_errH.show_error("Стартовая сцена не найдена", appErrorHandler::ERR_OTHER);
+		if (!qd_gameD->select_scene(scene_name)) app_errH.show_error("Стартовая сцена не найдена", appErrorHandler::ERR_OTHER);
 	} else {
 		bool music_enabled = mpegPlayer::instance().is_enabled();
 		mpegPlayer::instance().disable();
 
-		qd_gameD -> toggle_main_menu(true);
-		if (!qd_gameD -> start_intro_videos()) {
+		qd_gameD->toggle_main_menu(true);
+		if (!qd_gameD->start_intro_videos()) {
 			if (music_enabled)
 				mpegPlayer::instance().enable(true);
 		} else {
@@ -264,13 +264,13 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 		}
 	}
 
-	qd_gameD -> update_time();
-	qd_gameD -> quant();
+	qd_gameD->update_time();
+	qd_gameD->quant();
 
 	ResourceDispatcher resD;
 	resD.setTimer(qdGameConfig::get_config().logic_synchro_by_clock(), qdGameConfig::get_config().logic_period(), 300);
 	resD.attach(new MemberFunctionCallResourceUser<qdGameDispatcher>(*qd_gameD, &qdGameDispatcher::quant, qdGameConfig::get_config().logic_period()));
-	sndD -> set_frequency_coeff(qdGameConfig::get_config().game_speed());
+	sndD->set_frequency_coeff(qdGameConfig::get_config().game_speed());
 	resD.set_speed(qdGameConfig::get_config().game_speed());
 	resD.start();
 
@@ -278,11 +278,11 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 	bool exit_flag = false;
 	bool was_inactive = false;
 
-	while (!exit_flag && !qd_gameD -> need_exit()) {
+	while (!exit_flag && !qd_gameD->need_exit()) {
 		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
 			switch (msg.message) {
 			case WM_QUIT:
-				if (!grDispatcher::instance() -> is_in_reinit_mode())
+				if (!grDispatcher::instance()->is_in_reinit_mode())
 					exit_flag = true;
 				break;
 			case WM_SYSCOMMAND:
@@ -301,17 +301,17 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 					float speed = qdGameConfig::get_config().game_speed() * 0.9f;
 					if (speed < 0.1f) speed = 0.1f;
 					qdGameConfig::get_config().set_game_speed(speed);
-					sndD -> set_frequency_coeff(speed);
+					sndD->set_frequency_coeff(speed);
 					resD.set_speed(qdGameConfig::get_config().game_speed());
 				} else if (msg.wParam == VK_PRIOR) {
 					float speed = qdGameConfig::get_config().game_speed() * 1.1f;
 					if (speed > 10.0f) speed = 10.0f;
 					qdGameConfig::get_config().set_game_speed(speed);
-					sndD -> set_frequency_coeff(speed);
+					sndD->set_frequency_coeff(speed);
 					resD.set_speed(qdGameConfig::get_config().game_speed());
 				} else if (msg.wParam == VK_HOME) {
 					qdGameConfig::get_config().set_game_speed(1.0f);
-					sndD -> set_frequency_coeff(1.0f);
+					sndD->set_frequency_coeff(1.0f);
 					resD.set_speed(qdGameConfig::get_config().game_speed());
 				} else if (msg.wParam == 'G')
 					qdGameConfig::get_config().toggle_show_grid();
@@ -337,7 +337,7 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 				Sleep(500);
 			}
 			resD.quant();
-			qd_gameD -> redraw();
+			qd_gameD->redraw();
 
 		} else {
 			was_inactive = true;
@@ -348,7 +348,7 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 
 	delete qd_gameD;
 
-	grDispatcher::instance() -> Finit();
+	grDispatcher::instance()->Finit();
 
 	ShowWindow(hmainWnd, SW_HIDE);
 	CloseWindow(hmainWnd);
@@ -369,7 +369,7 @@ namespace qdrt {
 
 void init_graphics() {
 	grDispatcher::set_restore_handler(restore_graphics);
-	grDispatcher::instance() -> Finit();
+	grDispatcher::instance()->Finit();
 
 	if (!qdGameConfig::get_config().driver_ID())
 		grDispatcher::set_instance(gdi_grD);
@@ -380,50 +380,50 @@ void init_graphics() {
 	if (!init_graphics_dispatcher())
 		app_errH.show_error("Ошибка инициализации графики", appErrorHandler::ERR_OTHER);
 
-	grDispatcher::instance() -> resize_window();
+	grDispatcher::instance()->resize_window();
 
-	hmainWnd = (HWND)grDispatcher::instance() -> Get_hWnd();
-	qdGameConfig::get_config().set_pixel_format(grDispatcher::instance() -> pixel_format());
+	hmainWnd = (HWND)grDispatcher::instance()->Get_hWnd();
+	qdGameConfig::get_config().set_pixel_format(grDispatcher::instance()->pixel_format());
 
 	qdGameConfig::get_config().save();
 
 	qdlg::set_icon(hmainWnd);
 	appSetHandle(hmainWnd);
 
-	SendMessage(hmainWnd, WM_SETTEXT, (WPARAM)0, (LPARAM)qd_gameD -> game_title());
+	SendMessage(hmainWnd, WM_SETTEXT, (WPARAM)0, (LPARAM)qd_gameD->game_title());
 
-	grDispatcher::instance() -> SetClip();
-	grDispatcher::instance() -> SetClipMode(1);
-	grDispatcher::instance() -> Fill(0);
+	grDispatcher::instance()->SetClip();
+	grDispatcher::instance()->SetClipMode(1);
+	grDispatcher::instance()->Fill(0);
 
-	if (grDispatcher::instance() -> is_in_fullscreen_mode())
+	if (grDispatcher::instance()->is_in_fullscreen_mode())
 		ShowWindow(hmainWnd, SW_SHOWMAXIMIZED);
 	else
 		ShowWindow(hmainWnd, SW_SHOWNORMAL);
 
 	UpdateWindow(hmainWnd);
 
-	grDispatcher::instance() -> Flush();
+	grDispatcher::instance()->Flush();
 }
 
 bool init_graphics_dispatcher() {
-	if (grDispatcher::instance() -> init(qdGameConfig::get_config().screen_sx(), qdGameConfig::get_config().screen_sy(), (grPixelFormat)qdGameConfig::get_config().pixel_format(), hmainWnd, qdGameConfig::get_config().fullscreen()))
+	if (grDispatcher::instance()->init(qdGameConfig::get_config().screen_sx(), qdGameConfig::get_config().screen_sy(), (grPixelFormat)qdGameConfig::get_config().pixel_format(), hmainWnd, qdGameConfig::get_config().fullscreen()))
 		return true;
 
 	for (int i = 0; i <= GR_ARGB8888; i++) {
-		if (grDispatcher::instance() -> init(qdGameConfig::get_config().screen_sx(), qdGameConfig::get_config().screen_sy(), (grPixelFormat)i, hmainWnd, qdGameConfig::get_config().fullscreen()))
+		if (grDispatcher::instance()->init(qdGameConfig::get_config().screen_sx(), qdGameConfig::get_config().screen_sy(), (grPixelFormat)i, hmainWnd, qdGameConfig::get_config().fullscreen()))
 			return true;
 	}
 
 	qdGameConfig::get_config().toggle_fullscreen();
 
 	for (int i = 0; i <= GR_ARGB8888; i++) {
-		if (grDispatcher::instance() -> init(qdGameConfig::get_config().screen_sx(), qdGameConfig::get_config().screen_sy(), (grPixelFormat)i, hmainWnd, qdGameConfig::get_config().fullscreen()))
+		if (grDispatcher::instance()->init(qdGameConfig::get_config().screen_sx(), qdGameConfig::get_config().screen_sy(), (grPixelFormat)i, hmainWnd, qdGameConfig::get_config().fullscreen()))
 			return true;
 	}
 
 	grDispatcher::set_instance(dd_grD);
-	if (grDispatcher::instance() -> init(qdGameConfig::get_config().screen_sx(), qdGameConfig::get_config().screen_sy(), (grPixelFormat)qdGameConfig::get_config().pixel_format(), hmainWnd, qdGameConfig::get_config().fullscreen()))
+	if (grDispatcher::instance()->init(qdGameConfig::get_config().screen_sx(), qdGameConfig::get_config().screen_sy(), (grPixelFormat)qdGameConfig::get_config().pixel_format(), hmainWnd, qdGameConfig::get_config().fullscreen()))
 		return true;
 
 	return false;
@@ -438,15 +438,15 @@ void qd_show_load_progress(int percents_loaded, void *p) {
 	if (sx > rect_sx) sx = rect_sx;
 
 	int x = 10;
-	int y = grDispatcher::instance() -> Get_SizeY() - rect_sy - 10;
+	int y = grDispatcher::instance()->Get_SizeY() - rect_sy - 10;
 
-	grDispatcher::instance() -> Rectangle(x, y, rect_sx, rect_sy, 0xFFFFFF, 0, GR_OUTLINED);
-	grDispatcher::instance() -> Rectangle(x, y, sx, rect_sy, 0xFFFFFF, 0xFFFFFF, GR_FILLED);
-	grDispatcher::instance() -> Flush(x, y, rect_sx, rect_sy);
+	grDispatcher::instance()->Rectangle(x, y, rect_sx, rect_sy, 0xFFFFFF, 0, GR_OUTLINED);
+	grDispatcher::instance()->Rectangle(x, y, sx, rect_sy, 0xFFFFFF, 0xFFFFFF, GR_FILLED);
+	grDispatcher::instance()->Flush(x, y, rect_sx, rect_sy);
 }
 
 bool is_graphics_reinit_needed() {
-	if (qdGameConfig::get_config().pixel_format() != (int)grDispatcher::instance() -> pixel_format() || qdGameConfig::get_config().fullscreen() != grDispatcher::instance() -> is_in_fullscreen_mode())
+	if (qdGameConfig::get_config().pixel_format() != (int)grDispatcher::instance()->pixel_format() || qdGameConfig::get_config().fullscreen() != grDispatcher::instance()->is_in_fullscreen_mode())
 		return true;
 
 	if (qdGameConfig::get_config().driver_ID() && grDispatcher::instance() == gdi_grD)
@@ -460,10 +460,10 @@ bool is_graphics_reinit_needed() {
 
 void restore_graphics() {
 	if (sndDispatcher * dp = sndDispatcher::get_dispatcher())
-		dp -> set_volume(dp -> volume());
+		dp->set_volume(dp->volume());
 
 	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher())
-		dp -> set_flag(qdGameDispatcher::FULLSCREEN_REDRAW_FLAG);
+		dp->set_flag(qdGameDispatcher::FULLSCREEN_REDRAW_FLAG);
 }
 
 void restore() {
@@ -476,21 +476,21 @@ void toggle_fullscreen(bool force_fullscreen) {
 	qdGameConfig::get_config().toggle_fullscreen();
 	qdGameConfig::get_config().set_driver_ID(1);
 
-	grDispatcher::instance() -> toggle_reinit();
-	grDispatcher::instance() -> Finit();
-	grDispatcher::instance() -> destroy_window();
+	grDispatcher::instance()->toggle_reinit();
+	grDispatcher::instance()->Finit();
+	grDispatcher::instance()->destroy_window();
 
 	hmainWnd = NULL;
 
 	init_graphics();
 
-	qdGameDispatcher::get_dispatcher() -> toggle_full_redraw();
-//	qdGameDispatcher::get_dispatcher() -> convert_graphics();
+	qdGameDispatcher::get_dispatcher()->toggle_full_redraw();
+//	qdGameDispatcher::get_dispatcher()->convert_graphics();
 }
 
 bool request_CD_handler(int cd_id) {
 	if (qdGameDispatcher * p = qdGameDispatcher::get_dispatcher())
-		p -> request_CD(cd_id);
+		p->request_CD(cd_id);
 
 	return true;
 }
