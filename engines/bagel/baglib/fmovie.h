@@ -47,7 +47,6 @@ protected:
 	CBofPalette *_smackerPal;
 	char *_bufferStart;
 	int _bufferLength;
-	uint32 _reversedFl;
 	CBofRect _bounds;
 	bool _useNewPaletteFl;
 	bool _blackOutWindowFl;

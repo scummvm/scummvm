@@ -125,8 +125,7 @@ bool CBagFMovie::openMovie(const char *sFilename) {
 		_bmpBuf->lock();
 		_bmpBuf->fillRect(nullptr, _smackerPal->getNearestIndex(CTEXT_WHITE));
 
-		_reversedFl = !(_bmpBuf->isTopDown());
-		_bufferStart = (char *)_bmpBuf->getPixelAddress(0, _reversedFl * (_bmpBuf->height() - 1));
+		_bufferStart = (char *)_bmpBuf->getPixelAddress(0, _bmpBuf->isTopDown() ? 0 : (_bmpBuf->height() - 1));
 		_bufferLength = ABS(_bmpBuf->height() * _bmpBuf->width());
 
 		const Graphics::Surface *frame = _smk->decodeNextFrame();
