@@ -707,7 +707,7 @@ static void exit_to_frontend(void) {
 }
 
 static void close_emu_thread(void) {
-	while (!retro_emu_thread_exited()) {
+	while (retro_emu_thread_started() && !retro_emu_thread_exited()) {
 		LIBRETRO_G_SYSTEM->requestQuit();
 		retro_switch_to_emu_thread();
 	}

@@ -21,7 +21,8 @@
 
 #define EMU_WAITING    (1 << 0)
 #define MAIN_WAITING   (1 << 1)
-#define EMU_EXITED     (1 << 2)
+#define EMU_STARTED    (1 << 2)
+#define EMU_EXITED     (1 << 3)
 static uint8 status = EMU_WAITING | MAIN_WAITING;
 static int scummvm_res = -1;
 
@@ -71,8 +72,10 @@ static int retro_run_emulator(void) {
 static void retro_wrap_emulator(void) {
 
 	status &= ~EMU_EXITED;
+	status |= EMU_STARTED;
 	scummvm_res = retro_run_emulator();
 	status |= EMU_EXITED;
+	status &= ~EMU_STARTED;
 	retro_exit_to_main_thread();
 }
 
@@ -154,7 +157,7 @@ bool retro_init_emu_thread(void) {
 	if (!success)
 		retro_free_emu_thread();
 	else
-		status &= ~EMU_EXITED;
+		status &= ~(EMU_EXITED | EMU_STARTED);
 
 	return success;
 }
@@ -166,4 +169,8 @@ void retro_deinit_emu_thread() {
 
 int retro_get_scummvm_res() {
 	return scummvm_res;
+}
+
+bool retro_emu_thread_started(void){
+	return (bool)(status & EMU_STARTED);
 }
