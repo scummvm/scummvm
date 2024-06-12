@@ -57,16 +57,9 @@ public:
 
 	~CBagCursor();
 
-	void setHotspot(int x, int y) {
-		_x = x;
-		_y = y;
-	}
-	void setHotspot(const CBofPoint point) {
-		setHotspot(point.x, point.y);
-	}
-	CBofPoint getHotspot() const {
-		return CBofPoint(_x, _y);
-	}
+	void setHotspot(int x, int y);
+
+	CBofPoint getHotspot() const;
 
 	int getX() const {
 		return _x;

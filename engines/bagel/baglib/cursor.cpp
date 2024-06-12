@@ -108,6 +108,15 @@ CBagCursor::~CBagCursor() {
 	unLoad();
 }
 
+void CBagCursor::setHotspot(int x, int y) {
+	_x = x;
+	_y = y;
+}
+
+CBofPoint CBagCursor::getHotspot() const {
+	return CBofPoint(_x, _y);
+}
+
 ErrorCode CBagCursor::load(CBofBitmap *bmp) {
 	assert(isValidObject(this));
 	assert(bmp != nullptr);
