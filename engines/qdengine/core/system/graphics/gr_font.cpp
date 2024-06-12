@@ -241,12 +241,12 @@ bool grFont::load_alpha(Common::SeekableReadStream *fh) {
 
 	int ssx = sx * colors / 8;
 
-	alpha_buffer_ = new unsigned char[sx * sy];
+	alpha_buffer_ = new unsigned char[ssx * sy];
 
 	if (!(flags & 0x20)) {
-		int idx = (sy - 1) * sx;
+		int idx = (sy - 1) * ssx;
 		for (int i = 0; i < sy; i ++) {
-			fh->read(alpha_buffer_ + idx, sy*sx);
+			fh->read(alpha_buffer_ + idx, ssx);
 			idx -= ssx;
 		}
 	} else
