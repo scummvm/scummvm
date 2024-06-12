@@ -228,7 +228,7 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 	grDispatcher::set_default_font(qdGameDispatcher::create_font(0));
 
 	qd_gameD = new qdGameDispatcher;
-	qd_gameD -> load_script(app_io::strip_path(script_name.c_str()));
+	qd_gameD -> load_script(script_name.c_str());
 
 	qd_gameD -> set_scene_loading_progress_callback(qd_show_load_progress);
 
