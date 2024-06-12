@@ -209,16 +209,6 @@ Common::Error ComposerEngine::run() {
 				break;
 
 			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_q:
-					if (event.kbd.hasFlags(Common::KBD_CTRL))
-						quitGame();
-					break;
-
-				default:
-					break;
-				}
-
 				onKeyDown(event.kbd.keycode);
 				break;
 
