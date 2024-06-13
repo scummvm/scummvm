@@ -246,7 +246,7 @@ DWORD WINAPI MpegThreadProc(LPVOID lpParameter) {
 #endif MPP_STAT
 		}
 
-		Sleep(10);
+		g_system->delayMillis(10);
 	}
 
 	b_thread_must_stop = 2;
@@ -284,7 +284,7 @@ void MpegDeinitLibrary() {
 	if (hThread != INVALID_HANDLE_VALUE) {
 		b_thread_must_stop = 1;
 		while (b_thread_must_stop == 1)
-			Sleep(10);
+			g_system->delayMillis(10);
 	}
 
 	if (hWaitEvent != INVALID_HANDLE_VALUE)
@@ -453,7 +453,7 @@ bool MpegSound::InternalMpegOpenToPlay(const char *_fname, bool cycled) {
 
 	if (!InitSoundBuffer())return false;
 	InternalMpegStop();
-	Sleep(20);
+	g_system->delayMillis(20);
 
 	OldWraps = Wraps = 0;
 	BeginBufferOffset = OldBeginBufferOffset = 0;

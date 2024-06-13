@@ -334,14 +334,14 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 				was_inactive = false;
 				// При активации ждем, чтобы звукововая система успела настроиться
 				// на наше приложение (предположение)
-				Sleep(500);
+				g_system->delayMillis(500);
 			}
 			resD.quant();
 			qd_gameD->redraw();
 
 		} else {
 			was_inactive = true;
-			Sleep(100);
+			g_system->delayMillis(100);
 			resD.skip_time();
 		}
 	}
