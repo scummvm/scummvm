@@ -29,6 +29,9 @@
 namespace Freescape {
 
 CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
+	if (isSpectrum())
+		initZX();
+
 	_playerHeightNumber = 1;
 	_playerHeights.push_back(16);
 	_playerHeights.push_back(48);
@@ -152,10 +155,12 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	_gfx->_keyColor = 0;
 	_gfx->clearColorPairArray();
 
-	_gfx->_colorPair[_currentArea->_underFireBackgroundColor] = _currentArea->_extraColor[0];
-	_gfx->_colorPair[_currentArea->_usualBackgroundColor] = _currentArea->_extraColor[1];
-	_gfx->_colorPair[_currentArea->_paperColor] = _currentArea->_extraColor[2];
-	_gfx->_colorPair[_currentArea->_inkColor] = _currentArea->_extraColor[3];
+	if (isDOS()) {
+		_gfx->_colorPair[_currentArea->_underFireBackgroundColor] = _currentArea->_extraColor[0];
+		_gfx->_colorPair[_currentArea->_usualBackgroundColor] = _currentArea->_extraColor[1];
+		_gfx->_colorPair[_currentArea->_paperColor] = _currentArea->_extraColor[2];
+		_gfx->_colorPair[_currentArea->_inkColor] = _currentArea->_extraColor[3];
+	}
 
 	swapPalette(areaID);
 	resetInput();

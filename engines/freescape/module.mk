@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	games/castle/castle.o \
 	games/castle/amiga.o \
 	games/castle/dos.o \
+	games/castle/zx.o \
 	games/dark/amiga.o \
 	games/dark/atari.o \
 	games/dark/cpc.o \

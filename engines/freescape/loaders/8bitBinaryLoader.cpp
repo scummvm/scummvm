@@ -530,22 +530,29 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	if (groundColor == 0)
 		groundColor = 255;
 
-	uint8 usualBackgroundColor = readField(file, 8);
-	uint8 underFireBackgroundColor = readField(file, 8);
-	uint8 paperColor = readField(file, 8);
-	uint8 inkColor = readField(file, 8);
+	uint8 usualBackgroundColor = 0;
+	uint8 underFireBackgroundColor = 0;
+	uint8 paperColor = 0;
+	uint8 inkColor = 0;
+
+	if (!(isCastle() && isSpectrum())) {
+		usualBackgroundColor = readField(file, 8);
+		underFireBackgroundColor = readField(file, 8);
+		paperColor = readField(file, 8);
+		inkColor = readField(file, 8);
+	} else {
+		uint8 attribute = readField(file, 8);
+		debugC(1, kFreescapeDebugParser, "Attribute: %x", attribute);
+		paperColor = attribute > 4;
+		inkColor = attribute & 0xf;
+		skyColor = 0;
+	}
+
 	debugC(1, kFreescapeDebugParser, "Colors usual background: %d", usualBackgroundColor);
 	debugC(1, kFreescapeDebugParser, "Colors under fire background: %d", underFireBackgroundColor);
 	debugC(1, kFreescapeDebugParser, "Color Paper: %d", paperColor);
 	debugC(1, kFreescapeDebugParser, "Color Ink: %d", inkColor);
-
 	debugC(1, kFreescapeDebugParser, "Additional colors: %d %d", skyColor, groundColor);
-	// CPC
-	// groundColor = file->readByte() & 15;
-	// skyColor = file->readByte() & 15;
-	// debugC(1, kFreescapeDebugParser, "Colors: %d %d", skyColor, groundColor);
-
-	// Graphics::PixelBuffer *palette = getPalette(areaNumber, ci1, ci2, skyColor, groundColor, ncolors);
 
 	debugC(1, kFreescapeDebugParser, "Area %d", areaNumber);
 	debugC(1, kFreescapeDebugParser, "Flags: %d Objects: %d", areaFlags, numberOfObjects);
@@ -593,12 +600,17 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		byte idx = readField(file, 8);
 		if (isAmiga())
 			name = _messagesList[idx + 51];
+		if (isSpectrum())
+			name = areaNumber == 255 ? "GLOBAL" : _messagesList[idx + 17];
 		else
 			name = _messagesList[idx + 41];
-		extraColor[0] = readField(file, 8);
-		extraColor[1] = readField(file, 8);
-		extraColor[2] = readField(file, 8);
-		extraColor[3] = readField(file, 8);
+
+		if (isDOS()) {
+			extraColor[0] = readField(file, 8);
+			extraColor[1] = readField(file, 8);
+			extraColor[2] = readField(file, 8);
+			extraColor[3] = readField(file, 8);
+		}
 
 		if (isAmiga()) {
 			// TODO
@@ -711,17 +723,29 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	debugC(1, kFreescapeDebugParser, "Start area: %d", startArea);
 	uint8 startEntrance = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "Entrace area: %d", startEntrance);
-	readField(file, 8); // Unknown
 
-	uint8 initialEnergy1 = readField(file, 8);
-	uint8 initialShield1 = readField(file, 8);
-	uint8 initialEnergy2 = readField(file, 8);
-	uint8 initialShield2 = readField(file, 8);
+	uint8 initialEnergy1 = 0;
+	uint8 initialShield1 = 0;
+	uint8 initialEnergy2 = 0;
+	uint8 initialShield2 = 0;
+
+	if (isCastle() && isSpectrum()) {
+		initialShield1 = readField(file, 8);
+	} else {
+		readField(file, 8); // Unknown
+
+		initialEnergy1 = readField(file, 8);
+		initialShield1 = readField(file, 8);
+		initialEnergy2 = readField(file, 8);
+		initialShield2 = readField(file, 8);
+	}
 
 	debugC(1, kFreescapeDebugParser, "Initial levels of energy: %d and shield: %d", initialEnergy1, initialShield1);
 	debugC(1, kFreescapeDebugParser, "Initial levels of energy: %d and shield: %d", initialEnergy2, initialShield2);
 
-	if (isAmiga() || isAtariST())
+	if (isCastle() && isSpectrum())
+		file->seek(offset + 0x6);
+	else if (isAmiga() || isAtariST())
 		file->seek(offset + 0x14);
 	else
 		file->seek(offset + 0xa);
@@ -749,7 +773,9 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		_colorMap.push_back(entry - 3);
 	}
 
-	if (isAmiga() || isAtariST())
+	if (isCastle() && isSpectrum())
+		file->seek(offset + 0x42);
+	else if (isAmiga() || isAtariST())
 		file->seek(offset + 0x8c);
 	else
 		file->seek(offset + 0x46);
@@ -822,11 +848,12 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	else if (isEclipse())
 		_initialCountdown = 7200; // 02:00:00
 
-	if (isAmiga() || isAtariST())
+	if (isCastle() && isSpectrum())
+		file->seek(offset + 0x4f);
+	else if (isAmiga() || isAtariST())
 		file->seek(offset + 0x190);
 	else
 		file->seek(offset + 0xc8);
-	// file->seek(offset + 0x4f); //CPC
 
 	debugC(1, kFreescapeDebugParser, "areas index at: %lx", long(file->pos()));
 	uint16 *fileOffsetForArea = new uint16[numberOfAreas];

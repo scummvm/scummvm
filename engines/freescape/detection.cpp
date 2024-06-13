@@ -469,7 +469,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAmstradCPC,
-		ADGF_TESTING | ADGF_DEMO,
+		ADGF_DEMO,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -483,7 +483,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformZX,
-		ADGF_TESTING | ADGF_DEMO | GF_ZX_DEMO_MICROHOBBY,
+		ADGF_DEMO | GF_ZX_DEMO_MICROHOBBY,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -497,7 +497,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformZX,
-		ADGF_TESTING | ADGF_DEMO | GF_ZX_DEMO_CRASH,
+		ADGF_DEMO | GF_ZX_DEMO_CRASH,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -509,7 +509,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformZX,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -659,6 +659,18 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformAtariST,
 		GF_ATARI_BUDGET,
 		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
+		"castlemaster",
+		"",
+		{
+			{"castlemaster.zx.data", 0, "e2ed83c30cd0ed7119e349d0f677ae91", 36096},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformZX,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"castlemaster",
