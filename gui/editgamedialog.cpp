@@ -285,7 +285,8 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	// in the small version of the GUI.
 
 	// GUI: Check integrity button
-	_checkIntegrityButton = new ButtonWidget(tab, "GameOptions_Paths.Checkintegrity", _("Check Integrity"), _("Perform integrity check for all game files"), kCmdCheckIntegrity);
+	if (ConfMan.hasKey("enable_integrity_checking", Common::ConfigManager::kApplicationDomain))
+		new ButtonWidget(tab, "GameOptions_Paths.Checkintegrity", _("Check Integrity"), _("Perform integrity check for all game files"), kCmdCheckIntegrity);
 
 	// GUI:  Button + Label for the game path
 	if (!g_gui.useLowResGUI())

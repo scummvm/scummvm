@@ -77,7 +77,6 @@ protected:
 	PathWidget *_savePathWidget;
 	ButtonWidget *_extraPathClearButton;
 	ButtonWidget *_savePathClearButton;
-	ButtonWidget *_checkIntegrityButton;
 
 	StaticTextWidget *_langPopUpDesc;
 	PopUpWidget *_langPopUp;
