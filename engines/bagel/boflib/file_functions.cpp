@@ -23,19 +23,36 @@
 #include "common/savefile.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/macresman.h"
 #include "bagel/boflib/file_functions.h"
 #include "bagel/boflib/string.h"
 #include "bagel/baglib/bagel.h"
+#include "bagel/bagel.h"
 
 namespace Bagel {
 
 bool fileExists(const char *pszFileName) {
-	return Common::File::exists(pszFileName);
+	if (g_engine->getPlatform() == Common::kPlatformMacintosh) {
+		return Common::MacResManager::exists(pszFileName);
+	} else {
+		return Common::File::exists(pszFileName);
+	}
 }
 
 int32 fileLength(const char *pszFileName) {
-	Common::File f;
-	return f.open(pszFileName) ? f.size() : -1;
+	Common::SeekableReadStream *stream = nullptr;
+	if (g_engine->getPlatform() == Common::kPlatformMacintosh) {
+		stream = Common::MacResManager::openFileOrDataFork(pszFileName);
+	} else {
+		stream = SearchMan.createReadStreamForMember(pszFileName);
+	}
+
+	int32 length = -1;
+	if (stream) {
+		length = stream->size();
+		delete stream;
+	}
+	return length;
 }
 
 char *fileGetFullPath(char *pszDstBuf, const char *pszSrcBuf) {

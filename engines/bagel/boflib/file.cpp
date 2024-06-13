@@ -19,10 +19,13 @@
  *
  */
 
-#include "common/file.h"
+#include "common/macresman.h"
+#include "common/stream.h"
 #include "common/system.h"
 #include "common/savefile.h"
+#include "bagel/bagel.h"
 #include "bagel/boflib/file.h"
+#include "bagel/boflib/file_functions.h"
 #include "bagel/boflib/debug.h"
 #include "bagel/boflib/log.h"
 
@@ -102,7 +105,7 @@ ErrorCode CBofFile::open(const char *pszFileName, uint32 lFlags) {
 		return _errCode;
 
 	if ((lFlags & CBF_CREATE) && ((lFlags & CBF_SAVEFILE) ||
-			!Common::File::exists(pszFileName))) {
+			!fileExists(pszFileName))) {
 		create(pszFileName, lFlags);
 
 	} else {
@@ -116,16 +119,17 @@ ErrorCode CBofFile::open(const char *pszFileName, uint32 lFlags) {
 				reportError(ERR_FOPEN, "Could not open %s", pszFileName);
 
 		} else {
-			Common::File *f = new Common::File();
+			if (g_engine->getPlatform() == Common::kPlatformMacintosh) {
+				_stream = Common::MacResManager::openFileOrDataFork(pszFileName);
+			} else {
+				_stream = SearchMan.createReadStreamForMember(pszFileName);
+			}
 
-			if (f->open(pszFileName)) {
-				_stream = f;
-
+			if (_stream) {
 				if (g_pDebugOptions != nullptr && g_pDebugOptions->_bShowIO) {
 					logInfo(buildString("Opened file '%s'", _szFileName));
 				}
 			} else {
-				delete f;
 				reportError(ERR_FOPEN, "Could not open %s", pszFileName);
 			}
 		}
