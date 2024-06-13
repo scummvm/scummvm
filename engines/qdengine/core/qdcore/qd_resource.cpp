@@ -60,7 +60,12 @@ qdResource::~qdResource() {
 
 qdResource::file_format_t qdResource::file_format(const char *file_name) {
 	char ext[_MAX_EXT];
-	_splitpath(file_name, NULL, NULL, NULL, ext);
+	uint len = strlen(file_name);
+
+	if (len < 4)
+	return RES_UNKNOWN;
+
+	Common::strlcpy(ext, &file_name[len - 4], _MAX_EXT);
 
 	if (!scumm_stricmp(ext, ".qda")) return RES_ANIMATION;
 	if (!scumm_stricmp(ext, ".tga")) return RES_SPRITE;
