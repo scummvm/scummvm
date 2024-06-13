@@ -218,16 +218,16 @@ bool qdMiniGame::load_config() {
 		return false;
 
 	config_.clear();
-	std::list<std::string> section_list;
+	Common::INIFile::SectionList section_list;
 	enumerateIniSections(config_file_name(), section_list);
 
 #ifndef _QUEST_EDITOR
 	config_.reserve(section_list.size());
 #endif
 
-	for (std::list<std::string>::const_iterator it = section_list.begin(); it != section_list.end(); ++it) {
+	for (auto &it : section_list) {
 		qdMinigameConfigParameter prm;
-		prm.load_ini(config_file_name(), it -> c_str());
+		prm.load_ini(config_file_name(), it.name.c_str());
 		config_.push_back(prm);
 	}
 

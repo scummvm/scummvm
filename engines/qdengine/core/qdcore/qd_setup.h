@@ -22,6 +22,7 @@
 #ifndef __QD_SETUP_H__
 #define __QD_SETUP_H__
 
+#include "common/formats/ini-file.h"
 
 namespace QDEngine {
 
@@ -225,7 +226,7 @@ private:
 char *getIniKey(const char *fname, const char *section, const char *key);
 void putIniKey(const char *fname, const char *section, const char *key, int val);
 void putIniKey(const char *fname, const char *section, const char *key, const char *val);
-bool enumerateIniSections(const char *fname, std::list<std::string> &section_list);
+bool enumerateIniSections(const char *fname, Common::INIFile::SectionList &section_list);
 
 } // namespace QDEngine
 
