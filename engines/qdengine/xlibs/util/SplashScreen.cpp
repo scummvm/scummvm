@@ -91,12 +91,12 @@ void SplashScreen::show() {
 	ShowWindow((HWND)splash_hwnd_, SW_SHOWNORMAL);
 	UpdateWindow((HWND)splash_hwnd_);
 
-	start_time_ = xclock();
+	start_time_ = g_system->getMillis();
 }
 
 void SplashScreen::wait(int time) {
-	if (xclock() - start_time_ < time)
-		Sleep(time - (xclock() - start_time_));
+	if (g_system->getMillis() - start_time_ < time)
+		Sleep(time - (g_system->getMillis() - start_time_));
 }
 
 void SplashScreen::hide() {

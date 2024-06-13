@@ -54,7 +54,7 @@ public:
 		time_prev = time;
 
 		if (syncro_by_clock) {
-			float t = float(xclock());
+			float t = float(g_system->getMillis());
 			float dt = (t - time - time_offset) * time_speed;
 			if (dt > max_time_interval)
 				dt = max_time_interval;
@@ -76,12 +76,12 @@ public:
 
 	void skip() {
 		if (syncro_by_clock)
-			time_offset = xclock() - time;
+			time_offset = g_system->getMillis() - time;
 	}
 
 	void setTime(time_type t) {
 		time_prev = time = t;
-		time_offset = syncro_by_clock ? xclock() - time : 0;
+		time_offset = syncro_by_clock ? g_system->getMillis() - time : 0;
 	}
 
 	void setSpeed(float speed) {

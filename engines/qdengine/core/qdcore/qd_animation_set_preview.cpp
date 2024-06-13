@@ -71,14 +71,14 @@ void qdAnimationSetPreview::set_graph_dispatcher(grDispatcher *p) {
 }
 
 void qdAnimationSetPreview::start() {
-	start_time_ = xclock();
+	start_time_ = g_system->getMillis();
 
 	animation_ -> start();
 	cell_offset_ = 0.0f;
 }
 
 void qdAnimationSetPreview::quant() {
-	int time = xclock();
+	int time = g_system->getMillis();
 	float tm = float(time - start_time_) / 1000.0f;
 	start_time_ = time;
 

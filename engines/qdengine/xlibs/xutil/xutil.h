@@ -566,7 +566,6 @@ inline int BitSR(int x) {
 	return return_var;
 }
 
-int xclock();
 
 void xtDeleteFile(char *fname);
 
