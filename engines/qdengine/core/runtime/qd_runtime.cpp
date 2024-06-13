@@ -144,11 +144,15 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 		SearchMan.listMatchingMembers(files, "*.qml");
 		Common::ArchiveMemberPtr p = files.front();
 		Common::String firstFileName;
-		if (p)
+
+		if (p) {
 			firstFileName = p->getFileName();
 			script_name = firstFileName.c_str();
+		}
 
-		if (script_name.empty()) return 0;
+		if (script_name.empty()) {
+			return 0;
+		}
 	}
 
 	gdi_grD = new GDI_grDispatcher;
@@ -211,8 +215,6 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 		sp.create(IDB_SPLASH);
 		sp.set_mask(IDB_SPLASH_MASK);
 		sp.show();
-
-		sp.wait(3000); // FIXME STUB
 	}
 
 	SetErrorMode(SEM_FAILCRITICALERRORS);
