@@ -151,9 +151,6 @@ unsigned int XClock::clockGlobalPrev_ = timeGetTime();
 
 XClock XClock::clocks_[PROCESSORS_MAX] = { XClock(0), XClock(1), XClock(2), XClock(3), XClock(4), XClock(5), XClock(6), XClock(7) };
 
-int xclock() {
-	return XClock::clocks_[getCPUID() & (PROCESSORS_MAX - 1)].time();
-}
 
 
 

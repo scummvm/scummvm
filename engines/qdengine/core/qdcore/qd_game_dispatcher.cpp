@@ -162,7 +162,7 @@ qdGameDispatcher::~qdGameDispatcher() {
 }
 
 void qdGameDispatcher::update_time() {
-	timer_ = xclock();
+	timer_ = g_system->getMillis();
 }
 
 void qdGameDispatcher::quant() {
@@ -2185,7 +2185,7 @@ qdVideo *qdGameDispatcher::get_video(const char *name) {
 }
 
 bool qdGameDispatcher::select_scene(qdGameScene *sp, bool resources_flag) {
-	int tm = xclock();
+	int tm = g_system->getMillis();
 
 	toggle_full_redraw();
 
@@ -2243,7 +2243,7 @@ bool qdGameDispatcher::select_scene(qdGameScene *sp, bool resources_flag) {
 			(*it) -> load_resources();
 	}
 
-	tm = xclock() - tm;
+	tm = g_system->getMillis() - tm;
 	__QDBG(if (cur_scene_) appLog::default_log() << "Загрузка сцены \"" << cur_scene_->name() << "\" " << tm << " мс\r\n");
 
 	return true;

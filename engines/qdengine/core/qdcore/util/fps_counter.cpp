@@ -44,7 +44,7 @@ fpsCounter::fpsCounter(int period) : start_time_(0.0f),
 }
 
 bool fpsCounter::quant() {
-	float time = float(xclock());
+	float time = float(g_system->getMillis());
 
 	if (min_frame_time_ > time - prev_time_)
 		min_frame_time_ = time - prev_time_;
@@ -72,13 +72,13 @@ bool fpsCounter::quant() {
 		}
 		return false;
 	} else {
-		value_ = float(frame_count_) / (float(xclock()) - start_time_) * 1000.0f;
+		value_ = float(frame_count_) / (float(g_system->getMillis()) - start_time_) * 1000.0f;
 		return true;
 	}
 }
 
 void fpsCounter::reset() {
-	prev_time_ = start_time_ = float(xclock());
+	prev_time_ = start_time_ = float(g_system->getMillis());
 	frame_count_ = 0;
 	value_ = -1.0f;
 	value_min_ = value_max_ = 0.0f;
