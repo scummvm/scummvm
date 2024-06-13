@@ -20,7 +20,8 @@
  */
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/file.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/xml_parser.h"
 
@@ -477,8 +478,8 @@ void qdGameDispatcher::load_script(const xml::tag *p) {
 #endif
 
 	if (!texts_database_.empty()) {
-		XZipStream fh;
-		if (qdFileManager::instance().open_file(fh, texts_database_.c_str(), false))
+		Common::SeekableReadStream *fh;
+		if (qdFileManager::instance().open_file(&fh, texts_database_.c_str(), false))
 			qdTextDB::instance().load(fh);
 	} else
 		qdTextDB::instance().clear();

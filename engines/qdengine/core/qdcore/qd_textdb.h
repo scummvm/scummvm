@@ -22,6 +22,9 @@
 #ifndef __QD_TEXTDB_H__
 #define __QD_TEXTDB_H__
 
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace QDEngine {
 
@@ -56,6 +59,7 @@ public:
 	bool load(const char *file_name, const char *comments_file_name = NULL, bool clear_old_texts = true);
 	bool load(XStream &fh, const char *comments_file_name = NULL, bool clear_old_texts = true);
 	bool load(XZipStream &fh, const char *comments_file_name = NULL, bool clear_old_texts = true);
+	bool load(Common::SeekableReadStream *fh, const char *comments_file_name = NULL, bool clear_old_texts = true);
 
 	typedef std::list<std::string> IdList;
 	void getIdList(const char *mask, IdList &idList) const;
