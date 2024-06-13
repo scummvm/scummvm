@@ -111,7 +111,7 @@ void OpenGLRenderer::setTransformMatrix(TransformMatrix which, const Matrix4x4 &
 	glLoadMatrixf(matrix.data);
 	glScalef(1.0f, 1.0f, -1.0f);
 	glMatrixMode(oldMatrixMode);
-};
+}
 
 void OpenGLRenderer::pushModelView() {
 	GLint oldMatrixMode;
