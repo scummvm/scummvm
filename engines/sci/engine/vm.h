@@ -375,12 +375,6 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj,
 void run_vm(EngineState *s);
 
 /**
- * Debugger functionality
- * @param[in] s					The state at which debugging should take place
- */
-void script_debug(EngineState *s);
-
-/**
  * Looks up a selector and returns its type and value
  * varindex is written to iff it is non-NULL and the selector indicates a property of the object.
  * @param[in] segMan		The Segment Manager
