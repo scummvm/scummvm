@@ -242,9 +242,25 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 		debugC(kDebugLevelSound, "kDoAudio: resume");
 		g_sci->_audio->resumeAudio();
 		break;
-	case kSciAudioPosition:
-		//debugC(kDebugLevelSound, "kDoAudio: get position");	// too verbose
-		return make_reg(0, g_sci->_audio->getAudioPosition());
+	case kSciAudioPosition: {
+		// SSCI queried the audio driver's AudioLoc function and returned the result.
+		// The driver returned the location in ticks if audio was playing, otherwise -1.
+		// The driver could only play one piece of audio at a time, and it could have
+		// been playing either a digital sample from kDoSound or speech from kDoAudio.
+		// We have two separate components for these interfaces, so we must check both.
+		int audioPosition = g_sci->_audio->getAudioPosition();
+		if (audioPosition == -1) {
+			// kDoAudio is not playing speech, so now we check the kDoSound interface.
+			// SoundCommandParser does not keep track of the audio position in ticks
+			// for digital samples, so we can't return the real position. Scripts only
+			// care about the exact tick value for speech, otherwise it only matters
+			// if the result is -1 or not, so just return 1 if a sample is playing.
+			if (g_sci->_soundCmd->isDigitalSamplePlaying()) {
+				audioPosition = 1;
+			}
+		}
+		return make_reg(0, audioPosition);
+	}
 	case kSciAudioRate:
 		debugC(kDebugLevelSound, "kDoAudio: set audio rate to %d", argv[1].toUint16());
 		g_sci->_audio->setAudioRate(argv[1].toUint16());

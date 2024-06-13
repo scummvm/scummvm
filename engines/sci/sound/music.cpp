@@ -642,7 +642,7 @@ void SciMusic::soundPlay(MusicEntry *pSnd, bool restoring) {
 			return;
 		}
 #endif
-		if (_currentlyPlayingSample && _pMixer->isSoundHandleActive(_currentlyPlayingSample->hCurrentAud)) {
+		if (isDigitalSamplePlaying()) {
 			// Another sample is already playing, we have to stop that one
 			// SSCI is only able to play 1 sample at a time
 			// In Space Quest 5 room 250 the player is able to open the air-hatch and kill himself.
@@ -1590,6 +1590,9 @@ void SciMusic::resetDeviceChannel(int devChannel, bool mainThread) {
 	}
 }
 
-
+bool SciMusic::isDigitalSamplePlaying() const {
+	return _currentlyPlayingSample != nullptr &&
+		   _pMixer->isSoundHandleActive(_currentlyPlayingSample->hCurrentAud);
+}
 
 } // End of namespace Sci

@@ -81,6 +81,8 @@ public:
 	 */
 	void updateSci0Cues();
 
+	bool isDigitalSamplePlaying() const;
+
 	reg_t kDoSoundInit(EngineState *s, int argc, reg_t *argv);
 	reg_t kDoSoundPlay(EngineState *s, int argc, reg_t *argv);
 	reg_t kDoSoundMute(EngineState *s, int argc, reg_t *argv);

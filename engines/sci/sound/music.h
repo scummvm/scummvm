@@ -217,7 +217,7 @@ public:
 	uint32 soundGetTempo() const { return _dwTempo; }
 	MusicType soundGetMusicType() const { return _musicType; }
 
-	bool soundIsActive(MusicEntry *pSnd) {
+	bool isSoundActive(MusicEntry *pSnd) {
 		assert(pSnd->pStreamAud != 0);
 		return _pMixer->isSoundHandleActive(pSnd->hCurrentAud);
 	}
@@ -283,6 +283,8 @@ protected:
 public:
 	// The parsers need to know this for the dontMap channels...
 	bool isDeviceChannelMapped(int devChannel) const;
+
+	bool isDigitalSamplePlaying() const;
 
 private:
 	MusicList _playList;

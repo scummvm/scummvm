@@ -587,6 +587,26 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 			return;
 		}
 #endif
+		// SCI1.1 stopped the sample if the audio driver reported that no audio was playing.
+		// We have two separate components that could be playing digital audio instead of
+		// one driver, so we must check them both. This behavior is necessary to handle cases
+		// where scripts played a sample with kDoSound and speech with kDoAudio at the same
+		// time, and relied on them both signaling even though one interrupts the other.
+		// Fixes LSL6 CD Electroshock scene from freezing in room 380, sHookUpLarry state 5.
+		// This script only worked by accident, and these lines were rewritten for SCI32.
+		// LB2 CD's "Ra Ra Amon Ra" chant in room 710 also accidentally relies on this.
+		if (getSciVersion() == SCI_VERSION_1_1) {
+			// SSCI queried the audio driver's AudioLoc function. If it returned -1 then
+			// it stopped the sound, but it could have been playing any sample or speech.
+			int audioPosition = _audio->getAudioPosition();
+			if (audioPosition == -1) {
+				if (!isDigitalSamplePlaying()) {
+					processStopSound(obj, true);
+					return;
+				}
+			}
+		}
+
 		// Update digital sound effect slots
 		uint currentLoopCounter = 0;
 
@@ -599,7 +619,7 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 			musicSlot->sampleLoopCounter = currentLoopCounter;
 		}
 		if (musicSlot->status == kSoundPlaying) {
-			if (!_music->soundIsActive(musicSlot)) {
+			if (!_music->isSoundActive(musicSlot)) {
 				processStopSound(obj, true);
 			} else {
 				_music->updateAudioStreamTicker(musicSlot);
@@ -894,6 +914,10 @@ void SoundCommandParser::updateSci0Cues() {
 		if ((*i)->status == kSoundPlaying || (*i)->signal)
 			processUpdateCues((*i)->soundObj);
 	}
+}
+
+bool SoundCommandParser::isDigitalSamplePlaying() const {
+	return _music->isDigitalSamplePlaying();
 }
 
 void SoundCommandParser::clearPlayList() {
