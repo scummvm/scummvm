@@ -501,7 +501,6 @@ const int CP_UTF8 = 65001;
 void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext);
 int MessageBox(HWND hWnd, const char *lpText, const char *lpCaption, UINT uType);
 void ShellExecute(HWND hwnd, const char *lpOperation, const char *lpFile, const char *lpParameters, const char *lpDirectory, int nShowCmd);
-void Sleep(int dwMilliseconds);
 int GetLogicalDrives();
 uint GetDriveType(LPCSTR lpRootPathName);
 FARPROC GetProcAddress(HMODULE hModule, LPCSTR lpProcName);

@@ -42,11 +42,6 @@ void ShellExecute(HWND hwnd, const char *lpOperation, const char *lpFile, const 
 	return;
 }
 
-void Sleep(int dwMilliseconds) {
-	warning("STUB: Sleep");
-	return;
-}
-
 int GetLogicalDrives() {
 	warning("STUB: GetLogicalDrives");
 	return 0;
