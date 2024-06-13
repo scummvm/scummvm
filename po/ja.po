@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-11 12:49+0000\n"
-"PO-Revision-Date: 2024-06-11 08:41+0000\n"
+"PO-Revision-Date: 2024-06-13 12:35+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -10942,26 +10942,26 @@ msgid "Voices: German"
 msgstr "音声：独語"
 
 #: engines/twp/dialogs.cpp:32
-#, fuzzy
-#| msgid "Video"
 msgid "Video:"
-msgstr "ビデオ"
+msgstr "映像："
 
 #. I18N: Setting to switch toiled paper to be shown as "over".
 #: engines/twp/dialogs.cpp:37
 msgid "Toilet paper over"
-msgstr ""
+msgstr "紙詰まりの表示"
 
 #: engines/twp/dialogs.cpp:38
 msgid ""
 "The toilet paper in some toilets will be shown \"over\".\n"
 "It's a joke option that has no effects on the gameplay."
 msgstr ""
+"一部のトイレのペーパーが「over」表示になる。\n"
+"ゲームに影響の無いジョークオプションです。"
 
 #. I18N: Setting to enable or disable additional jokes in the game.
 #: engines/twp/dialogs.cpp:41
 msgid "Annoying in-jokes"
-msgstr ""
+msgstr "ウザいジョーク"
 
 #: engines/twp/dialogs.cpp:42
 msgid ""
@@ -10970,37 +10970,37 @@ msgid ""
 "There is a game achievement that can be obtained only if the in-jokes option "
 "is switched on."
 msgstr ""
+"このゲームは、過去のAVGに関するネタが台詞やオブジェクトの形で含まれています。\n"
+"このオプションを有効化した場合のみ開放される実績があります。"
 
 #: engines/twp/dialogs.cpp:44
-#, fuzzy
-#| msgid "Control"
 msgid "Controls:"
-msgstr "操作"
+msgstr "操作："
 
 #. I18N: Setting to invert verb colors or keep the original verb colors.
 #: engines/twp/dialogs.cpp:48
 msgid "Invert verb colors"
-msgstr ""
+msgstr "動詞の色の反転"
 
 #. I18N: Setting to use retro or modern fonts.
 #: engines/twp/dialogs.cpp:50
 msgid "Retro Fonts"
-msgstr ""
+msgstr "レトロフォント"
 
 #. I18N: Setting to use retro or modern verbs.
 #: engines/twp/dialogs.cpp:52
 msgid "Retro Verbs"
-msgstr ""
+msgstr "古の動詞"
 
 #. I18N: Setting to use classic sentence or modern sentence.
 #: engines/twp/dialogs.cpp:54
 msgid "Classic Sentence"
-msgstr ""
+msgstr "古典的な文"
 
 #. I18N: Settings to enable or disable Ransome unbeeped DLC.
 #: engines/twp/dialogs.cpp:57
 msgid "Ransome *unbeeped* (DLC)"
-msgstr ""
+msgstr "*ピー音*なし(DLC)"
 
 #: engines/twp/metaengine.cpp:151
 #, fuzzy
@@ -11039,34 +11039,24 @@ msgid "Select verb/item Down"
 msgstr ""
 
 #: engines/twp/metaengine.cpp:163
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 1"
-msgstr "グループを選択"
+msgstr "役者1を選択"
 
 #: engines/twp/metaengine.cpp:164
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 2"
-msgstr "グループを選択"
+msgstr "役者2を選択"
 
 #: engines/twp/metaengine.cpp:165
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 3"
-msgstr "グループを選択"
+msgstr "役者3を選択"
 
 #: engines/twp/metaengine.cpp:166
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 4"
-msgstr "グループを選択"
+msgstr "役者4を選択"
 
 #: engines/twp/metaengine.cpp:167
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 5"
-msgstr "グループを選択"
+msgstr "役者5を選択"
 
 #: engines/twp/metaengine.cpp:168
 #, fuzzy
@@ -11219,10 +11209,8 @@ msgid "Original Save"
 msgstr "オリジナルセーブ"
 
 #: engines/ultima/nuvie/metaengine.cpp:206
-#, fuzzy
-#| msgid "Ultima VIII"
 msgid "Ultima VI"
-msgstr "ウルティマ VIII"
+msgstr "ウルティマVI"
 
 #: engines/ultima/nuvie/metaengine.cpp:208
 msgid "Martian Dreams"
@@ -11230,7 +11218,7 @@ msgstr ""
 
 #: engines/ultima/nuvie/metaengine.cpp:210
 msgid "The Savage Empire"
-msgstr ""
+msgstr "恐竜帝国"
 
 #: engines/ultima/nuvie/save/save_game.cpp:207
 msgid "Transfer Character"
