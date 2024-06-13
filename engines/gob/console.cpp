@@ -89,17 +89,16 @@ bool GobConsole::cmd_dumpVars(int argc, const char **argv) {
 
 	Common::DumpFile file;
 
-	const char *variablesdmp = "variables.dmp";
-    if (!file.open("variables.dmp")) {
+	const char *outFile = "variables.dmp";
+    if (!file.open(outFile))
         return true;
-    }
 
 	file.write(_vm->_inter->_variables->getAddressOff8(0), _vm->_inter->_variables->getSize());
 
 	file.flush();
 	file.close();
 
-	debugPrintf("Dumped %s successfully to ScummVM directory\n", variablesdmp);
+	debugPrintf("Dumped %s successfully to ScummVM directory\n", outFile);
 	return true;
 }
 
