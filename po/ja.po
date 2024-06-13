@@ -10970,7 +10970,8 @@ msgid ""
 "There is a game achievement that can be obtained only if the in-jokes option "
 "is switched on."
 msgstr ""
-"このゲームは、過去のAVGに関するネタが台詞やオブジェクトの形で含まれています。\n"
+"このゲームは、過去のAVGに関するネタが台詞やオブジェクトの形で含まれていま"
+"す。\n"
 "このオプションを有効化した場合のみ開放される実績があります。"
 
 #: engines/twp/dialogs.cpp:44
