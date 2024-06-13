@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-11 12:49+0000\n"
+"POT-Creation-Date: 2024-06-13 23:15+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -79,9 +79,9 @@ msgstr "למעלה"
 
 #: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:64
 #: gui/downloaddlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:271
-#: gui/downloadpacksdialog.cpp:464 gui/editgamedialog.cpp:362
+#: gui/downloadpacksdialog.cpp:464 gui/editgamedialog.cpp:331
 #: gui/editrecorddialog.cpp:66 gui/filebrowser-dialog.cpp:68
-#: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2352
+#: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2360
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
 #: gui/recorderdialog.cpp:212 gui/remotebrowser.cpp:59
 #: gui/saveload-dialog.cpp:64 gui/saveload-dialog.cpp:456
@@ -150,23 +150,23 @@ msgstr ""
 "במצב זה, על השרת המקומי לרוץ,\n"
 "כך שהדפדפן יוכל להעביר נתונים אל ScummVM"
 
-#: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:3737
+#: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:3743
 msgid "Stop server"
 msgstr "עצירת השרת"
 
-#: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:2779
+#: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:2787
 msgid "Run server"
 msgstr "הפעלת שרת"
 
-#: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:3738
+#: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:3744
 msgid "Stop local webserver"
 msgstr "עצירת שרת האינטרנט המקומי"
 
-#: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:2779
+#: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:2787
 msgid "Run local webserver"
 msgstr "הפעלת שרת אינטרנט מקומי"
 
-#: gui/cloudconnectionwizard.cpp:248 gui/options.cpp:2780 gui/options.cpp:3745
+#: gui/cloudconnectionwizard.cpp:248 gui/options.cpp:2788 gui/options.cpp:3751
 msgid "Not running"
 msgstr "לא רץ"
 
@@ -296,7 +296,7 @@ msgstr "אחסון אחר עובד כעת. האם להפריע לו?"
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:420 gui/launcher.cpp:449
-#: gui/launcher.cpp:501 gui/options.cpp:3440 gui/options.cpp:3821
+#: gui/launcher.cpp:501 gui/options.cpp:3448 gui/options.cpp:3827
 #: base/main.cpp:604 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
@@ -310,7 +310,7 @@ msgstr "כן"
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:420 gui/launcher.cpp:449
-#: gui/launcher.cpp:501 gui/options.cpp:3440 gui/options.cpp:3821
+#: gui/launcher.cpp:501 gui/options.cpp:3448 gui/options.cpp:3827
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
@@ -330,9 +330,9 @@ msgid "JSON code contents are malformed."
 msgstr "תוכן קוד JSON משובש."
 
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
-#: gui/editgamedialog.cpp:363 gui/editrecorddialog.cpp:67
+#: gui/editgamedialog.cpp:332 gui/editrecorddialog.cpp:67
 #: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:557 gui/launcher.cpp:561
-#: gui/massadd.cpp:90 gui/options.cpp:2354 gui/predictivedialog.cpp:69
+#: gui/massadd.cpp:90 gui/options.cpp:2362 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1221 dists/android.strings.xml.cpp:33
 #: engines/engine.cpp:567 engines/engine.cpp:590
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
@@ -364,7 +364,7 @@ msgstr "קובץ JSON שגוי."
 msgid "Interrupted."
 msgstr "נקטע."
 
-#: gui/cloudconnectionwizard.cpp:615 gui/options.cpp:3431
+#: gui/cloudconnectionwizard.cpp:615 gui/options.cpp:3439
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -403,7 +403,7 @@ msgid "Select directory where to download game data"
 msgstr "בחירת תיקיה להורדת נתוני משחק"
 
 #: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:99
-#: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:543 gui/launcher.cpp:313
+#: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:556 gui/launcher.cpp:313
 msgid "Select directory with game data"
 msgstr "בחירת תיקיה עם נתוני משחק"
 
@@ -536,11 +536,11 @@ msgstr "יוסרו %s%S של נתונים, ואיתם יימחקו כל %S שכ�
 msgid "Proceed"
 msgstr "המשך"
 
-#: gui/dump-all-dialogs.cpp:103 gui/options.cpp:3275
+#: gui/dump-all-dialogs.cpp:103 gui/options.cpp:3283
 msgid "icon packs"
 msgstr "חבילות צלמיות"
 
-#: gui/dump-all-dialogs.cpp:107 gui/options.cpp:3286
+#: gui/dump-all-dialogs.cpp:107 gui/options.cpp:3294
 msgid "shader packs"
 msgstr "חבילות סוככים"
 
@@ -552,53 +552,212 @@ msgstr "בחר משחק:"
 msgid "Game"
 msgstr "משחק"
 
-#: gui/editgamedialog.cpp:141
+#: gui/editgamedialog.cpp:161 gui/options.cpp:2023 gui/options.cpp:2197
+msgid "GFX"
+msgstr "תצוגה"
+
+#: gui/editgamedialog.cpp:161 gui/options.cpp:2023 gui/options.cpp:2197
+#: backends/graphics/atari/atari-graphics.cpp:955
+#: backends/graphics/sdl/sdl-graphics.cpp:436
+msgid "Graphics"
+msgstr "תצוגה"
+
+#: gui/editgamedialog.cpp:167
+msgid "Override global graphic settings"
+msgstr "ביטול הגדרות תצוגה מקיפות"
+
+#: gui/editgamedialog.cpp:169
+msgctxt "lowres"
+msgid "Override global graphic settings"
+msgstr "ביטול הגדרות תצוגה מקיפות"
+
+#: gui/editgamedialog.cpp:182 gui/options.cpp:2231 engines/dialogs.cpp:346
+msgid "Keymaps"
+msgstr "מיפוי מקשים"
+
+#: gui/editgamedialog.cpp:194 gui/options.cpp:2243 engines/dialogs.cpp:358
+msgid "Backend"
+msgstr "תשתית"
+
+#: gui/editgamedialog.cpp:201
+msgid "Override global backend settings"
+msgstr "ביטול הגדרות תשתית מקיפות"
+
+#: gui/editgamedialog.cpp:203
+msgctxt "lowres"
+msgid "Override global backend settings"
+msgstr "ביטול הגדרות תשתית מקיפות"
+
+#: gui/editgamedialog.cpp:217 gui/options.cpp:2261 engines/dialogs.cpp:321
+msgid "Audio"
+msgstr "שמע"
+
+#: gui/editgamedialog.cpp:220
+msgid "Override global audio settings"
+msgstr "ביטול הגדרות שמע מקיפות"
+
+#: gui/editgamedialog.cpp:222
+msgctxt "lowres"
+msgid "Override global audio settings"
+msgstr "ביטול הגדרות שמע מקיפות"
+
+#: gui/editgamedialog.cpp:231 gui/options.cpp:2266
+msgid "Volume"
+msgstr "עוצמה"
+
+#: gui/editgamedialog.cpp:233 gui/options.cpp:2268
+msgctxt "lowres"
+msgid "Volume"
+msgstr "עוצמה"
+
+#: gui/editgamedialog.cpp:236
+msgid "Override global volume settings"
+msgstr "ביטול הגדרות עוצמה מקיפות"
+
+#: gui/editgamedialog.cpp:238
+msgctxt "lowres"
+msgid "Override global volume settings"
+msgstr "ביטול הגדרות עוצמה מקיפות"
+
+#: gui/editgamedialog.cpp:249 gui/options.cpp:2276
+msgid "MIDI"
+msgstr "MIDI"
+
+#: gui/editgamedialog.cpp:252
+msgid "Override global MIDI settings"
+msgstr "ביטול הגדרות MIDI מקיפות"
+
+#: gui/editgamedialog.cpp:254
+msgctxt "lowres"
+msgid "Override global MIDI settings"
+msgstr "ביטול הגדרות MIDI מקיפות"
+
+#: gui/editgamedialog.cpp:264 gui/options.cpp:2282
+msgid "MT-32"
+msgstr "MT-32"
+
+#: gui/editgamedialog.cpp:267
+msgid "Override global MT-32 settings"
+msgstr "ביטול הגדרות MT-32 מקיפות"
+
+#: gui/editgamedialog.cpp:269
+msgctxt "lowres"
+msgid "Override global MT-32 settings"
+msgstr "ביטול הגדרות MT-32 מקיפות"
+
+#: gui/editgamedialog.cpp:278 gui/options.cpp:2289
+msgid "Paths"
+msgstr "נתיבים"
+
+#: gui/editgamedialog.cpp:280 gui/options.cpp:2291
+msgctxt "lowres"
+msgid "Paths"
+msgstr "נתיבים"
+
+#: gui/editgamedialog.cpp:287
+msgid "Game Path:"
+msgstr "נתיב משחק:"
+
+#: gui/editgamedialog.cpp:289
+msgctxt "lowres"
+msgid "Game Path:"
+msgstr "נתיב משחק:"
+
+#: gui/editgamedialog.cpp:294 gui/options.cpp:2499
+msgid "Extra Path:"
+msgstr "נתיב תוספות:"
+
+#: gui/editgamedialog.cpp:294 gui/editgamedialog.cpp:296
+#: gui/editgamedialog.cpp:297
+msgid "Specifies path to additional data used by the game"
+msgstr "נתיב שבו נמצאים נתונים נוספים לשימוש על ידי המשחק"
+
+#: gui/editgamedialog.cpp:296 gui/options.cpp:2501
+msgctxt "lowres"
+msgid "Extra Path:"
+msgstr "נתיב תוספות:"
+
+#: gui/editgamedialog.cpp:297 gui/options.cpp:2474 gui/options.cpp:2502
+#: gui/options.cpp:2511 gui/options.cpp:2795
+#: backends/platform/libretro/src/libretro-options-widget.cpp:244
+msgctxt "path"
+msgid "None"
+msgstr "לא נבחר"
+
+#: gui/editgamedialog.cpp:303 gui/options.cpp:2463
+msgid "Save Path:"
+msgstr "נתיב שמירה:"
+
+#: gui/editgamedialog.cpp:303 gui/editgamedialog.cpp:305
+#: gui/editgamedialog.cpp:306 gui/options.cpp:2463 gui/options.cpp:2465
+msgid "Specifies where your saved games are put"
+msgstr "נתיב שבו ישמרו המשחקים שנשמרו"
+
+#: gui/editgamedialog.cpp:305 gui/options.cpp:2465
+msgctxt "lowres"
+msgid "Save Path:"
+msgstr "נתיב שמירה:"
+
+#: gui/editgamedialog.cpp:306 gui/options.cpp:1792 gui/options.cpp:2466
+#: backends/platform/wii/options.cpp:55
+msgid "Default"
+msgstr "ברירת מחדל"
+
+#: gui/editgamedialog.cpp:317 engines/dialogs.cpp:377
+msgid "Achievements"
+msgstr "הישגים"
+
+#: gui/editgamedialog.cpp:321 engines/dialogs.cpp:381
+msgid "Statistics"
+msgstr "סטטיסטיקה"
+
+#: gui/editgamedialog.cpp:338
 msgid "ID:"
 msgstr "מזהה:"
 
-#: gui/editgamedialog.cpp:141 gui/editgamedialog.cpp:143
-#: gui/editgamedialog.cpp:144
+#: gui/editgamedialog.cpp:338 gui/editgamedialog.cpp:340
+#: gui/editgamedialog.cpp:341
 msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
 msgstr ""
 "תיאור קצר של המשחק המשמש להפניה למשחקים שמורים ולהרצת המשחק משורת הפקודה"
 
-#: gui/editgamedialog.cpp:143
+#: gui/editgamedialog.cpp:340
 msgctxt "lowres"
 msgid "ID:"
 msgstr "מזהה:"
 
-#: gui/editgamedialog.cpp:148 gui/editrecorddialog.cpp:58
+#: gui/editgamedialog.cpp:345 gui/editrecorddialog.cpp:58
 msgid "Name:"
 msgstr "שם:"
 
-#: gui/editgamedialog.cpp:148 gui/editgamedialog.cpp:150
-#: gui/editgamedialog.cpp:151
+#: gui/editgamedialog.cpp:345 gui/editgamedialog.cpp:347
+#: gui/editgamedialog.cpp:348
 msgid "Full title of the game"
 msgstr "כותרת מלאה של המשחק"
 
-#: gui/editgamedialog.cpp:150
+#: gui/editgamedialog.cpp:347
 msgctxt "lowres"
 msgid "Name:"
 msgstr "שם:"
 
-#: gui/editgamedialog.cpp:157 engines/mohawk/dialogs.cpp:158
+#: gui/editgamedialog.cpp:354 engines/mohawk/dialogs.cpp:158
 #: engines/mohawk/dialogs.cpp:377
 msgid "Language:"
 msgstr "שפה:"
 
-#: gui/editgamedialog.cpp:157 gui/editgamedialog.cpp:158
+#: gui/editgamedialog.cpp:354 gui/editgamedialog.cpp:355
 msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
 msgstr "שפת המשחק. אפשרות זו לא תהפוך משחק בטורקית למשחק בעברית"
 
-#: gui/editgamedialog.cpp:159 gui/editgamedialog.cpp:174 gui/options.cpp:1574
+#: gui/editgamedialog.cpp:356 gui/editgamedialog.cpp:371 gui/options.cpp:1574
 #: gui/options.cpp:1589 gui/options.cpp:1606 gui/options.cpp:1620
 #: gui/options.cpp:1660 gui/options.cpp:1676 gui/options.cpp:2086
-#: gui/options.cpp:2536 gui/options.cpp:2610 gui/options.cpp:2828
-#: gui/options.cpp:3318 audio/null.cpp:45
+#: gui/options.cpp:2544 gui/options.cpp:2618 gui/options.cpp:2836
+#: gui/options.cpp:3326 audio/null.cpp:45
 #: backends/platform/android/options.cpp:150
 #: backends/platform/android/options.cpp:151
 #: backends/platform/android/options.cpp:179
@@ -608,196 +767,37 @@ msgstr "שפת המשחק. אפשרות זו לא תהפוך משחק בטורק
 msgid "<default>"
 msgstr "<ברירת מחדל>"
 
-#: gui/editgamedialog.cpp:170
+#: gui/editgamedialog.cpp:367
 msgid "Platform:"
 msgstr "פלטפורמה:"
 
-#: gui/editgamedialog.cpp:170 gui/editgamedialog.cpp:172
-#: gui/editgamedialog.cpp:173
+#: gui/editgamedialog.cpp:367 gui/editgamedialog.cpp:369
+#: gui/editgamedialog.cpp:370
 msgid "Platform the game was originally designed for"
 msgstr "הפלטפורמה עבורה תכננו את המשחק במקור"
 
-#: gui/editgamedialog.cpp:172
+#: gui/editgamedialog.cpp:369
 msgctxt "lowres"
 msgid "Platform:"
 msgstr "פלטפורמה:"
 
-#: gui/editgamedialog.cpp:197 gui/options.cpp:2023 gui/options.cpp:2197
-msgid "GFX"
-msgstr "תצוגה"
-
-#: gui/editgamedialog.cpp:197 gui/options.cpp:2023 gui/options.cpp:2197
-#: backends/graphics/atari/atari-graphics.cpp:955
-#: backends/graphics/sdl/sdl-graphics.cpp:436
-msgid "Graphics"
-msgstr "תצוגה"
-
-#: gui/editgamedialog.cpp:203
-msgid "Override global graphic settings"
-msgstr "ביטול הגדרות תצוגה מקיפות"
-
-#: gui/editgamedialog.cpp:205
-msgctxt "lowres"
-msgid "Override global graphic settings"
-msgstr "ביטול הגדרות תצוגה מקיפות"
-
-#: gui/editgamedialog.cpp:218 gui/options.cpp:2231 engines/dialogs.cpp:342
-msgid "Keymaps"
-msgstr "מיפוי מקשים"
-
-#: gui/editgamedialog.cpp:225 gui/options.cpp:2238 engines/dialogs.cpp:349
-msgid "Backend"
-msgstr "תשתית"
-
-#: gui/editgamedialog.cpp:232
-msgid "Override global backend settings"
-msgstr "ביטול הגדרות תשתית מקיפות"
-
-#: gui/editgamedialog.cpp:234
-msgctxt "lowres"
-msgid "Override global backend settings"
-msgstr "ביטול הגדרות תשתית מקיפות"
-
-#: gui/editgamedialog.cpp:248 gui/options.cpp:2256 engines/dialogs.cpp:317
-msgid "Audio"
-msgstr "שמע"
-
-#: gui/editgamedialog.cpp:251
-msgid "Override global audio settings"
-msgstr "ביטול הגדרות שמע מקיפות"
-
-#: gui/editgamedialog.cpp:253
-msgctxt "lowres"
-msgid "Override global audio settings"
-msgstr "ביטול הגדרות שמע מקיפות"
-
-#: gui/editgamedialog.cpp:262 gui/options.cpp:2261
-msgid "Volume"
-msgstr "עוצמה"
-
-#: gui/editgamedialog.cpp:264 gui/options.cpp:2263
-msgctxt "lowres"
-msgid "Volume"
-msgstr "עוצמה"
-
-#: gui/editgamedialog.cpp:267
-msgid "Override global volume settings"
-msgstr "ביטול הגדרות עוצמה מקיפות"
-
-#: gui/editgamedialog.cpp:269
-msgctxt "lowres"
-msgid "Override global volume settings"
-msgstr "ביטול הגדרות עוצמה מקיפות"
-
-#: gui/editgamedialog.cpp:280 gui/options.cpp:2271
-msgid "MIDI"
-msgstr "MIDI"
-
-#: gui/editgamedialog.cpp:283
-msgid "Override global MIDI settings"
-msgstr "ביטול הגדרות MIDI מקיפות"
-
-#: gui/editgamedialog.cpp:285
-msgctxt "lowres"
-msgid "Override global MIDI settings"
-msgstr "ביטול הגדרות MIDI מקיפות"
-
-#: gui/editgamedialog.cpp:295 gui/options.cpp:2277
-msgid "MT-32"
-msgstr "MT-32"
-
-#: gui/editgamedialog.cpp:298
-msgid "Override global MT-32 settings"
-msgstr "ביטול הגדרות MT-32 מקיפות"
-
-#: gui/editgamedialog.cpp:300
-msgctxt "lowres"
-msgid "Override global MT-32 settings"
-msgstr "ביטול הגדרות MT-32 מקיפות"
-
-#: gui/editgamedialog.cpp:309 gui/options.cpp:2284
-msgid "Paths"
-msgstr "נתיבים"
-
-#: gui/editgamedialog.cpp:311 gui/options.cpp:2286
-msgctxt "lowres"
-msgid "Paths"
-msgstr "נתיבים"
-
-#: gui/editgamedialog.cpp:318
-msgid "Game Path:"
-msgstr "נתיב משחק:"
-
-#: gui/editgamedialog.cpp:320
-msgctxt "lowres"
-msgid "Game Path:"
-msgstr "נתיב משחק:"
-
-#: gui/editgamedialog.cpp:325 gui/options.cpp:2491
-msgid "Extra Path:"
-msgstr "נתיב תוספות:"
-
-#: gui/editgamedialog.cpp:325 gui/editgamedialog.cpp:327
-#: gui/editgamedialog.cpp:328
-msgid "Specifies path to additional data used by the game"
-msgstr "נתיב שבו נמצאים נתונים נוספים לשימוש על ידי המשחק"
-
-#: gui/editgamedialog.cpp:327 gui/options.cpp:2493
-msgctxt "lowres"
-msgid "Extra Path:"
-msgstr "נתיב תוספות:"
-
-#: gui/editgamedialog.cpp:328 gui/options.cpp:2466 gui/options.cpp:2494
-#: gui/options.cpp:2503 gui/options.cpp:2787
-#: backends/platform/libretro/src/libretro-options-widget.cpp:244
-msgctxt "path"
-msgid "None"
-msgstr "לא נבחר"
-
-#: gui/editgamedialog.cpp:334 gui/options.cpp:2455
-msgid "Save Path:"
-msgstr "נתיב שמירה:"
-
-#: gui/editgamedialog.cpp:334 gui/editgamedialog.cpp:336
-#: gui/editgamedialog.cpp:337 gui/options.cpp:2455 gui/options.cpp:2457
-msgid "Specifies where your saved games are put"
-msgstr "נתיב שבו ישמרו המשחקים שנשמרו"
-
-#: gui/editgamedialog.cpp:336 gui/options.cpp:2457
-msgctxt "lowres"
-msgid "Save Path:"
-msgstr "נתיב שמירה:"
-
-#: gui/editgamedialog.cpp:337 gui/options.cpp:1792 gui/options.cpp:2458
-#: backends/platform/wii/options.cpp:55
-msgid "Default"
-msgstr "ברירת מחדל"
-
-#: gui/editgamedialog.cpp:348 engines/dialogs.cpp:368
-msgid "Achievements"
-msgstr "הישגים"
-
-#: gui/editgamedialog.cpp:352 engines/dialogs.cpp:372
-msgid "Statistics"
-msgstr "סטטיסטיקה"
-
-#: gui/editgamedialog.cpp:523 gui/options.cpp:3342
+#: gui/editgamedialog.cpp:536 gui/options.cpp:3350
 msgid "Select SoundFont"
 msgstr "בחירת SoundFont"
 
-#: gui/editgamedialog.cpp:562
+#: gui/editgamedialog.cpp:575
 msgid "Select additional game directory"
 msgstr "בחירת תיקית משחק נוספת"
 
-#: gui/editgamedialog.cpp:575 gui/options.cpp:3189
+#: gui/editgamedialog.cpp:588 gui/options.cpp:3197
 msgid "Select directory for saved games"
 msgstr "בחירת תיקיה לשמירת משחקים"
 
-#: gui/editgamedialog.cpp:582 gui/options.cpp:3196
+#: gui/editgamedialog.cpp:595 gui/options.cpp:3204
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "לא ניתן לכתוב אל התיקיה שנבחרה. נא לבחור תיקיה אחרת."
 
-#: gui/editgamedialog.cpp:587
+#: gui/editgamedialog.cpp:600
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
@@ -805,7 +805,7 @@ msgstr ""
 "סנכרון משחקים שנשמרו לא עובד עם תיקיות שאינן ברירת המחדל. יש להשתמש בתיקית "
 "ברירת המחדל כדי לסנכרן את המשחקים שנשמרו."
 
-#: gui/editgamedialog.cpp:613
+#: gui/editgamedialog.cpp:626
 msgid "This game ID is already taken. Please choose another one."
 msgstr "מזהה המשחק כבר תפוס. נא לבחור מזהה אחר."
 
@@ -882,7 +882,7 @@ msgstr "סינוס"
 msgid "Triangle"
 msgstr "משולש"
 
-#: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:2301
+#: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:2309
 msgid "Misc"
 msgstr "אחר"
 
@@ -907,7 +907,7 @@ msgid "Seventh-order"
 msgstr "סדר-שביעי"
 
 #. I18N: Button to reset keymap mappings to defaults
-#: gui/fluidsynth-dialog.cpp:150 backends/keymapper/remap-widget.cpp:324
+#: gui/fluidsynth-dialog.cpp:150 backends/keymapper/remap-widget.cpp:327
 msgid "Reset"
 msgstr "איפוס"
 
@@ -920,7 +920,7 @@ msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr "האם לאפס את הגדרות FluidSynth למצבם המקורי?"
 
-#: gui/gui-manager.cpp:161 gui/options.cpp:2292
+#: gui/gui-manager.cpp:161 gui/options.cpp:2300
 msgid "GUI"
 msgstr "ממשק משתמש"
 
@@ -1097,7 +1097,7 @@ msgid ""
 "and illegal game copies.\n"
 msgstr ""
 
-#: gui/helpdialog.cpp:68 gui/options.cpp:2313
+#: gui/helpdialog.cpp:68 gui/options.cpp:2321
 msgid "Cloud"
 msgstr "ענן"
 
@@ -1941,139 +1941,139 @@ msgstr "עוצמת דיבור:"
 msgid "Control"
 msgstr "שליטה"
 
-#: gui/options.cpp:2315
+#: gui/options.cpp:2323
 msgctxt "lowres"
 msgid "Cloud"
 msgstr "ענן"
 
-#: gui/options.cpp:2329
+#: gui/options.cpp:2337
 msgid "LAN"
 msgstr "LAN"
 
-#: gui/options.cpp:2331
+#: gui/options.cpp:2339
 msgctxt "lowres"
 msgid "LAN"
 msgstr "LAN"
 
-#: gui/options.cpp:2341
+#: gui/options.cpp:2349
 msgid "Accessibility"
 msgstr "נגישות"
 
-#: gui/options.cpp:2343
+#: gui/options.cpp:2351
 msgctxt "lowres"
 msgid "Accessibility"
 msgstr "נגישות"
 
-#: gui/options.cpp:2352
+#: gui/options.cpp:2360
 msgid "Discard changes and close the dialog"
 msgstr "ביטול השינויים וסגירת תיבת הדו-שיח"
 
-#: gui/options.cpp:2353
+#: gui/options.cpp:2361
 msgid "Apply"
 msgstr "החלת הגדרות"
 
-#: gui/options.cpp:2353
+#: gui/options.cpp:2361
 msgid "Apply changes without closing the dialog"
 msgstr "הפעלת השינויים מבלי לסגור את תיבת הדו-שיח"
 
-#: gui/options.cpp:2354
+#: gui/options.cpp:2362
 msgid "Apply changes and close the dialog"
 msgstr "הפעלת השינויים וסגירת תיבת הדו-שיח"
 
-#: gui/options.cpp:2444
+#: gui/options.cpp:2452
 msgid "FluidSynth Settings"
 msgstr "הגדרות FluidSynth"
 
-#: gui/options.cpp:2458
+#: gui/options.cpp:2466
 msgid ""
 "Specifies where your saved games are put. A red coloring indicates the value "
 "is temporary and will not get saved"
 msgstr "היכן לשמור את המשחקים שנשמרו. צבע אדום מסמל שהערך זמני ולא יישמר"
 
-#: gui/options.cpp:2463
-msgid "Theme Path:"
-msgstr "נתיב ערכת נושא:"
-
-#: gui/options.cpp:2465
-msgctxt "lowres"
-msgid "Theme Path:"
-msgstr "נתיב ערכת נושא:"
-
 #: gui/options.cpp:2471
-msgid "Icon Path:"
-msgstr "נתיב צלמיות:"
+msgid "Theme Path:"
+msgstr "נתיב ערכת נושא:"
 
 #: gui/options.cpp:2473
 msgctxt "lowres"
+msgid "Theme Path:"
+msgstr "נתיב ערכת נושא:"
+
+#: gui/options.cpp:2479
 msgid "Icon Path:"
 msgstr "נתיב צלמיות:"
 
-#: gui/options.cpp:2474 gui/options.cpp:2484
+#: gui/options.cpp:2481
+msgctxt "lowres"
+msgid "Icon Path:"
+msgstr "נתיב צלמיות:"
+
+#: gui/options.cpp:2482 gui/options.cpp:2492
 msgctxt "path"
 msgid "Default"
 msgstr "ברירת מחדל"
 
-#: gui/options.cpp:2481
+#: gui/options.cpp:2489
 msgid "DLC Path:"
 msgstr "נתיב הורדות:"
 
-#: gui/options.cpp:2483
+#: gui/options.cpp:2491
 msgctxt "lowres"
 msgid "DLC Path:"
 msgstr "נתיב הורדות:"
 
-#: gui/options.cpp:2491 gui/options.cpp:2493 gui/options.cpp:2494
+#: gui/options.cpp:2499 gui/options.cpp:2501 gui/options.cpp:2502
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr "נתיב לנתונים נוספים המשמשים את כל המשחקים או את ScummVM"
 
-#: gui/options.cpp:2500
+#: gui/options.cpp:2508
 msgid "Plugins Path:"
 msgstr "נתיב תוספים:"
 
-#: gui/options.cpp:2502
+#: gui/options.cpp:2510
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "נתיב תוספים:"
 
-#: gui/options.cpp:2512
+#: gui/options.cpp:2520
 msgid "ScummVM config path: "
 msgstr "נתיב תצורת ScummVM "
 
-#: gui/options.cpp:2526
+#: gui/options.cpp:2534
 msgid "ScummVM log path: "
 msgstr "נתיב יומן ScummVM "
 
-#: gui/options.cpp:2531
+#: gui/options.cpp:2539
 msgid "View"
 msgstr "תצוגה"
 
 #. I18N: Referring to the last path memorized when adding a game
-#: gui/options.cpp:2541 gui/options.cpp:3318
+#: gui/options.cpp:2549 gui/options.cpp:3326
 msgid "Last browser path: "
 msgstr "נתיב דפדפן אחרון: "
 
-#: gui/options.cpp:2546
+#: gui/options.cpp:2554
 msgid "Theme:"
 msgstr "נושא:"
 
-#: gui/options.cpp:2551
+#: gui/options.cpp:2559
 msgid "GUI scale:"
 msgstr "קנה מידה של GUI:"
 
-#: gui/options.cpp:2568
+#: gui/options.cpp:2576
 #, c-format
 msgid "%d%% - Custom"
 msgstr ""
 
-#: gui/options.cpp:2572
+#: gui/options.cpp:2580
 msgid "GUI renderer:"
 msgstr "מעבד GUI:"
 
-#: gui/options.cpp:2585
+#: gui/options.cpp:2593
 msgid "Return to the launcher when leaving a game"
 msgstr "חזרה למסך הרצת המשחקים בעת יציאה ממשחק"
 
-#: gui/options.cpp:2586
+#: gui/options.cpp:2594
 msgid ""
 "Return to the launcher when leaving a game instead of closing ScummVM\n"
 "(this feature is not supported by all games)."
@@ -2081,37 +2081,37 @@ msgstr ""
 "חזרה למסך הרצת המשחקים בעת יציאה ממשחק במקום לסגור את ScummVM\n"
 "(תכונה זו אינה נתמכת בכל המשחקים)."
 
-#: gui/options.cpp:2593
+#: gui/options.cpp:2601
 msgid "Ask for confirmation on exit"
 msgstr "בקשה לאישור יציאה"
 
-#: gui/options.cpp:2594
+#: gui/options.cpp:2602
 msgid "Ask for permission when closing ScummVM or leaving a game."
 msgstr "בקשת רשות בעת סגירת ScummVM או יציאה מהמשחק."
 
-#: gui/options.cpp:2600
+#: gui/options.cpp:2608
 msgid "Disable fixed font scaling"
 msgstr "כיבוי שינוי קנה מידה מתוקן עבור גופנים"
 
-#: gui/options.cpp:2601
+#: gui/options.cpp:2609
 msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
 msgstr ""
 
-#: gui/options.cpp:2607
+#: gui/options.cpp:2615
 msgid "GUI language:"
 msgstr "שפת GUI:"
 
-#: gui/options.cpp:2607
+#: gui/options.cpp:2615
 msgid "Language of ScummVM GUI"
 msgstr "שפת GUI של ScummVM"
 
-#: gui/options.cpp:2633
+#: gui/options.cpp:2641
 msgid "Switch the ScummVM GUI language to the game language"
 msgstr "העברת את שפת הממשק של ScummVM לשפת המשחק"
 
-#: gui/options.cpp:2634
+#: gui/options.cpp:2642
 msgid ""
 "When starting a game, change the ScummVM GUI language to the game language. "
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
@@ -2120,11 +2120,11 @@ msgstr ""
 "שינוי שפץ הממשק של ScummVM לשפת המשחק כאשר מתחילים משחק. כך, אם משחק משתמש "
 "בתיבות דו-שיח של ScummVM עבור שמירה וטעינה, הן תהיינה באותה שפה כמו המשחק."
 
-#: gui/options.cpp:2646
+#: gui/options.cpp:2654
 msgid "Use native system file browser"
 msgstr "שימוש בדפדפן הקבצים של המערכת"
 
-#: gui/options.cpp:2647
+#: gui/options.cpp:2655
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
@@ -2132,250 +2132,250 @@ msgstr ""
 "שימוש בדפדפן הקבצים של המערכת במקום בדפדפן של ScummVM כדי לבחור קובץ או "
 "תיקיה."
 
-#: gui/options.cpp:2655
+#: gui/options.cpp:2663
 msgid "Download Icons"
 msgstr "הורדת צלמיות"
 
-#: gui/options.cpp:2655
+#: gui/options.cpp:2663
 msgid "Check on the scummvm.org website for updates of icon packs"
 msgstr "בדיקת עדכונים עבור חבילות צלמיות באתר scummvm.org"
 
-#: gui/options.cpp:2662
+#: gui/options.cpp:2670
 msgid "Autosave:"
 msgstr "שמירה אוטומטית:"
 
-#: gui/options.cpp:2664
+#: gui/options.cpp:2672
 msgctxt "lowres"
 msgid "Autosave:"
 msgstr "שמירה אוטומטית:"
 
-#: gui/options.cpp:2675
+#: gui/options.cpp:2683
 msgid "Random seed:"
 msgstr "גרעין אקראי:"
 
-#: gui/options.cpp:2675
+#: gui/options.cpp:2683
 msgid "Seed for initializing all random number generators"
 msgstr "גרעין לאתחול כל מחוללי המספרים האקראיים"
 
-#: gui/options.cpp:2683
+#: gui/options.cpp:2691
 msgid "Debug level:"
 msgstr "רמת ניפוי תקלים:"
 
 #. I18N: Debug level -1, no messages
-#: gui/options.cpp:2687 gui/options.cpp:2826
+#: gui/options.cpp:2695 gui/options.cpp:2834
 msgid "None"
 msgstr "ללא"
 
 #. I18N: Debug level 11, all messages
-#: gui/options.cpp:2693
+#: gui/options.cpp:2701
 msgid "11 (all)"
 msgstr "11 (כולם)"
 
-#: gui/options.cpp:2697
+#: gui/options.cpp:2705
 msgid "Enable Discord integration"
 msgstr "הפעלת שילוב עם Discord"
 
-#: gui/options.cpp:2698
+#: gui/options.cpp:2706
 msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
 msgstr "הצגת מידע על המשחקים הפעילים ב-Discord כאשר לקוח Discord מופעל."
 
-#: gui/options.cpp:2708 gui/updates-dialog.cpp:85
+#: gui/options.cpp:2716 gui/updates-dialog.cpp:85
 msgid "Update check:"
 msgstr "בדיקת עדכונים:"
 
-#: gui/options.cpp:2708
+#: gui/options.cpp:2716
 msgid "How often to check ScummVM updates"
 msgstr "באיזו תדירות לבדוק עדכוני ScummVM"
 
-#: gui/options.cpp:2719
+#: gui/options.cpp:2727
 msgid "Check now"
 msgstr "בדיקה עכשיו"
 
-#: gui/options.cpp:2727
+#: gui/options.cpp:2735
 msgid "Active storage:"
 msgstr "אחסון פעיל:"
 
-#: gui/options.cpp:2727
+#: gui/options.cpp:2735
 msgid "Active cloud storage"
 msgstr "אחסון ענן פעיל"
 
-#: gui/options.cpp:2736
+#: gui/options.cpp:2744
 msgctxt "lowres"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr "האחסון עדיין לא מופעל. יש לודא כי שם המשתמש נכון ולהפעיל אותו:"
 
-#: gui/options.cpp:2738
+#: gui/options.cpp:2746
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr "האחסון עדיין לא מופעל. יש לודא כי שם המשתמש נכון ולהפעיל אותו:"
 
-#: gui/options.cpp:2739
+#: gui/options.cpp:2747
 msgid "Enable storage"
 msgstr "הפעלת אחסון"
 
-#: gui/options.cpp:2739
+#: gui/options.cpp:2747
 msgid "Confirm you want to use this account for this storage"
 msgstr "יש לאשר את השימוש בחשבון זה לאחסון זה"
 
-#: gui/options.cpp:2741 backends/platform/wii/options.cpp:113
+#: gui/options.cpp:2749 backends/platform/wii/options.cpp:113
 msgid "Username:"
 msgstr "שם משתמש:"
 
-#: gui/options.cpp:2741
+#: gui/options.cpp:2749
 msgid "Username used by this storage"
 msgstr "שם משתמש בשימוש באחסון זה"
 
-#: gui/options.cpp:2742
+#: gui/options.cpp:2750
 msgid "<none>"
 msgstr "<אין>"
 
-#: gui/options.cpp:2744
+#: gui/options.cpp:2752
 msgid "Used space:"
 msgstr "מקום שנוצל:"
 
-#: gui/options.cpp:2744
+#: gui/options.cpp:2752
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr "שטח שמשמש את המשחקים השמורים של ScummVM באחסון זה"
 
-#: gui/options.cpp:2747
+#: gui/options.cpp:2755
 msgid "Last sync:"
 msgstr "סנכרון אחרון:"
 
-#: gui/options.cpp:2747
+#: gui/options.cpp:2755
 msgid "When was the last time saved games were synced with this storage"
 msgstr "מתי הייתה הפעם האחרונה שסונכרנו משחקים עם אחסון זה"
 
-#: gui/options.cpp:2748 gui/options.cpp:3654
+#: gui/options.cpp:2756 gui/options.cpp:3660
 msgid "<never>"
 msgstr "<אף פעם>"
 
-#: gui/options.cpp:2750
+#: gui/options.cpp:2758
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr "משחקים שנשמרו מסתנכרנים אוטומטית בעת ההפעלה, לאחר שמירה ובעת טעינה."
 
-#: gui/options.cpp:2752
+#: gui/options.cpp:2760
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr "משחקים שנשמרו מסתנכרנים אוטומטית בעת ההפעלה, לאחר שמירה ובעת טעינה."
 
-#: gui/options.cpp:2753
+#: gui/options.cpp:2761
 msgid "Sync now"
 msgstr "סנכרון כעת"
 
-#: gui/options.cpp:2753
+#: gui/options.cpp:2761
 msgid "Start saved games sync"
 msgstr "התחלת סנכרון משחקים שנשמרו"
 
-#: gui/options.cpp:2756
+#: gui/options.cpp:2764
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "ניתן להוריד קבצי משחק מתיקיית ScummVM בענן האישי:"
 
-#: gui/options.cpp:2758
+#: gui/options.cpp:2766
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "ניתן להוריד קבצי משחק מתיקיית ScummVM בענן האישי:"
 
-#: gui/options.cpp:2759
+#: gui/options.cpp:2767
 msgid "Download game files"
 msgstr "הורדת קבצי משחק"
 
-#: gui/options.cpp:2759
+#: gui/options.cpp:2767
 msgid "Open downloads manager dialog"
 msgstr "פתיחת תיבת דו-שיח של מנהל ההורדות"
 
-#: gui/options.cpp:2762
+#: gui/options.cpp:2770
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr "לשינוי חשבון לאחסון זה, יש להתנתק ולהתחבר מחדש:"
 
-#: gui/options.cpp:2764
+#: gui/options.cpp:2772
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr "לשינוי חשבון לאחסון זה, יש להתנתק ולהתחבר מחדש:"
 
-#: gui/options.cpp:2765
+#: gui/options.cpp:2773
 msgid "Disconnect"
 msgstr "ניתוק"
 
-#: gui/options.cpp:2765
+#: gui/options.cpp:2773
 msgid "Stop using this storage on this device"
 msgstr "הפסק לת השימוש באחסון זה במכשיר זה"
 
-#: gui/options.cpp:2768
+#: gui/options.cpp:2776
 msgctxt "lowres"
 msgid "This storage is not connected yet!"
 msgstr "אחסון זה עדיין לא מחובר!"
 
-#: gui/options.cpp:2770
+#: gui/options.cpp:2778
 msgid "This storage is not connected yet!"
 msgstr "אחסון זה עדיין לא מחובר!"
 
-#: gui/options.cpp:2771
+#: gui/options.cpp:2779
 msgid "Connect"
 msgstr "התחברות"
 
-#: gui/options.cpp:2771
+#: gui/options.cpp:2779
 msgid "Connect your cloud storage account"
 msgstr "התחברו לחשבון האחסון בענן האישי"
 
-#: gui/options.cpp:2784
+#: gui/options.cpp:2792
 msgctxt "lowres"
 msgid "/root/ Path:"
 msgstr "נתיב /root/:"
 
-#: gui/options.cpp:2784 gui/options.cpp:2786 gui/options.cpp:2787
+#: gui/options.cpp:2792 gui/options.cpp:2794 gui/options.cpp:2795
 msgid "Select which directory will be shown as /root/ in the Files Manager"
 msgstr "איזו ספרייה תוצג כ / root / במנהל הקבצים"
 
-#: gui/options.cpp:2786
+#: gui/options.cpp:2794
 msgid "/root/ Path:"
 msgstr "נתיב /root/:"
 
-#: gui/options.cpp:2792
+#: gui/options.cpp:2800
 msgid "Server's port:"
 msgstr "יציאת השרת:"
 
-#: gui/options.cpp:2792
+#: gui/options.cpp:2800
 msgid "Port for server to use"
 msgstr "יציאה לשימוש בשרת"
 
-#: gui/options.cpp:2797
+#: gui/options.cpp:2805
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr "הפעלת שרת לניהול קבצים באמצעות הדפדפן (באותה רשת)."
 
-#: gui/options.cpp:2798
+#: gui/options.cpp:2806
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
 msgstr "סגירת תיבת האפשרויות תעצור את השרת."
 
-#: gui/options.cpp:2800
+#: gui/options.cpp:2808
 msgid "Run server to manage files with browser (in the same network)."
 msgstr "הפעלת שרת לניהול קבצים באמצעות הדפדפן (באותה רשת)."
 
-#: gui/options.cpp:2801
+#: gui/options.cpp:2809
 msgid "Closing options dialog will stop the server."
 msgstr "סגירת תיבת האפשרויות תעצור את השרת."
 
-#: gui/options.cpp:2813
+#: gui/options.cpp:2821
 msgid "Use Text to speech"
 msgstr "השתמש בהמרת טקסט לדיבור"
 
-#: gui/options.cpp:2813
+#: gui/options.cpp:2821
 msgid "Will read text in gui on mouse over."
 msgstr "קריאת טקסט בממשק כאשר סמן העכבר מעליו."
 
-#: gui/options.cpp:2887
+#: gui/options.cpp:2895
 msgid "Ignore"
 msgstr "התעלמות"
 
-#: gui/options.cpp:2888
+#: gui/options.cpp:2896
 msgid "Disable autosave"
 msgstr "כיבוי שמירה אוטומטית"
 
-#: gui/options.cpp:2889
+#: gui/options.cpp:2897
 msgid ""
 "WARNING: Autosave was enabled. Some of your games have existing saved games "
 "on the autosave slot. You can either move the existing saves to new slots, "
@@ -2389,7 +2389,7 @@ msgstr ""
 "קיימת).\n"
 "רשימת משחקים:\n"
 
-#: gui/options.cpp:2898
+#: gui/options.cpp:2906
 msgid ""
 "\n"
 "And more..."
@@ -2397,31 +2397,31 @@ msgstr ""
 "\n"
 "ועוד..."
 
-#: gui/options.cpp:2899 engines/engine.cpp:619
+#: gui/options.cpp:2907 engines/engine.cpp:619
 msgid "Move"
 msgstr "העברה"
 
-#: gui/options.cpp:2912
+#: gui/options.cpp:2920
 msgid "ERROR: Failed to move the following saved games:\n"
 msgstr "שגיאה: העברת השמירות הבאות נכשלה:\n"
 
-#: gui/options.cpp:3007
+#: gui/options.cpp:3015
 msgid "Failed to change cloud storage!"
 msgstr "שינוי האחסון בענן נכשל!"
 
-#: gui/options.cpp:3010
+#: gui/options.cpp:3018
 msgid "Another cloud storage is already active."
 msgstr "אחסון ענן נוסף כבר פעיל."
 
-#: gui/options.cpp:3127
+#: gui/options.cpp:3135
 msgid "Theme does not support selected language!"
 msgstr "ערכת הנושא אינה תומכת בשפה שנבחרה!"
 
-#: gui/options.cpp:3130
+#: gui/options.cpp:3138
 msgid "Theme cannot be loaded!"
 msgstr "לא ניתן לטעון את ערכת הנושא!"
 
-#: gui/options.cpp:3133
+#: gui/options.cpp:3141
 msgid ""
 "\n"
 "Misc settings will be restored."
@@ -2429,43 +2429,43 @@ msgstr ""
 "\n"
 "הגדרות שונות ישוחזרו."
 
-#: gui/options.cpp:3205
+#: gui/options.cpp:3213
 msgid "Select directory for GUI themes"
 msgstr "בחירת תיקיה עבור ערכות נושא של GUI"
 
-#: gui/options.cpp:3215
+#: gui/options.cpp:3223
 msgid "Select directory for GUI launcher thumbnails"
 msgstr "בחירת תיקיה עבור ערכות נושא של GUI"
 
-#: gui/options.cpp:3226
+#: gui/options.cpp:3234
 msgid "Select directory for DLC downloads"
 msgstr "בחירת תיקיה עבור הורדות"
 
-#: gui/options.cpp:3237
+#: gui/options.cpp:3245
 msgid "Select directory for extra files"
 msgstr "בחירת תיקיה עבור קבצים נוספים"
 
-#: gui/options.cpp:3248
+#: gui/options.cpp:3256
 msgid "Select directory for plugins"
 msgstr "בחירת תיקיה עבור תוספים"
 
-#: gui/options.cpp:3261
+#: gui/options.cpp:3269
 msgid "Select directory for Files Manager /root/"
 msgstr "בחר תיקיה עבור שורש מנהל הקבצים"
 
-#: gui/options.cpp:3440
+#: gui/options.cpp:3448
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "אחסון זה עובד כעת. האם להפריע לו?"
 
-#: gui/options.cpp:3449
+#: gui/options.cpp:3457
 msgid "Wait until current Storage finishes up and try again."
 msgstr "יש להמתין עד לסיום פעולת האחסון הנוכחי ולנסות שוב."
 
-#: gui/options.cpp:3652 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:3658 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<עכשיו>"
 
-#: gui/options.cpp:3795
+#: gui/options.cpp:3801
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -2473,7 +2473,7 @@ msgstr ""
 "בקשה נכשלה.\n"
 "יש לבדוק את חיבור האינטרנט."
 
-#: gui/options.cpp:3819
+#: gui/options.cpp:3825
 msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scaler settings?"
@@ -2481,7 +2481,7 @@ msgstr ""
 "אמורה להיות מוצגת תבנית בדיקה.\n"
 "האם לשמור את הגדרות סוכך והתאמת קנה מידה אלה?"
 
-#: gui/options.cpp:3822
+#: gui/options.cpp:3828
 #, c-format
 msgid "Reverting automatically in %d seconds"
 msgstr "חזרה למצב הקודם בעוד %d שניות"
@@ -3363,11 +3363,11 @@ msgstr "המשחק שנבחר אינו תומך בטעינת משחקים מתו
 msgid "This game cannot be loaded at this time. Please try again later"
 msgstr ""
 
-#: engines/dialogs.cpp:383
+#: engines/dialogs.cpp:392
 msgid "~O~K"
 msgstr "~א~ישור"
 
-#: engines/dialogs.cpp:384
+#: engines/dialogs.cpp:393
 msgid "~C~ancel"
 msgstr "~ב~יטול"
 
@@ -4168,12 +4168,12 @@ msgstr ""
 msgid "Hat Y"
 msgstr ""
 
-#: backends/keymapper/remap-widget.cpp:295
-#: backends/keymapper/remap-widget.cpp:325
+#: backends/keymapper/remap-widget.cpp:298
+#: backends/keymapper/remap-widget.cpp:328
 msgid "Reset to defaults"
 msgstr "איפוס לברירות המחדל"
 
-#: backends/keymapper/remap-widget.cpp:296
+#: backends/keymapper/remap-widget.cpp:299
 msgid "Clear mapping"
 msgstr "ניקוי מיפוי המקשים"
 
