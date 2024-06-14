@@ -112,8 +112,6 @@ protected:
 private:
 	typedef Common::Array<CheckboxWidget *> CheckboxWidgetList;
 
-	static Common::String dialogLayout(const Common::String &domain);
-
 	ExtraGuiOptions _options;
 	CheckboxWidgetList _checkboxes;
 };

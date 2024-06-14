@@ -414,7 +414,7 @@ void ConfigDialog::apply() {
 }
 
 ExtraGuiOptionsWidget::ExtraGuiOptionsWidget(GuiObject *containerBoss, const Common::String &name, const Common::String &domain, const ExtraGuiOptions &options) :
-		OptionsContainerWidget(containerBoss, name, dialogLayout(domain), domain),
+		OptionsContainerWidget(containerBoss, name, "ExtraGuiOptionsDialog", domain),
 		_options(options) {
 
 	for (uint i = 0; i < _options.size(); i++) {
@@ -458,14 +458,6 @@ void ExtraGuiOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd
 	default:
 		OptionsContainerWidget::handleCommand(sender, cmd, data);
 		break;
-	}
-}
-
-Common::String ExtraGuiOptionsWidget::dialogLayout(const Common::String &domain) {
-	if (ConfMan.getActiveDomainName().equals(domain)) {
-		return "GlobalConfig_Engine_Container";
-	} else {
-		return "GameOptions_Game_Container";
 	}
 }
 
