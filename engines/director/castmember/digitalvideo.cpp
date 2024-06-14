@@ -368,8 +368,14 @@ void DigitalVideoCastMember::setMovieRate(double rate) {
 
 	if (rate < 0.0)
 		warning("STUB: DigitalVideoCastMember::setMovieRate(%g)", rate);
-	else
+	else {
+		if (_getFirstFrame && rate != 0.0) {
+			// playback got started before we rendered the first
+			// frame in pause mode, keep going
+			_getFirstFrame = false;
+		}
 		_video->setRate(Common::Rational((int)(rate * 100.0), 100));
+	}
 
 	if (_video->endOfVideo())
 		_video->rewind();
