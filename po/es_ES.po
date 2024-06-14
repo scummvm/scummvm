@@ -841,7 +841,8 @@ msgstr "Notas:"
 #: gui/integrity-dialog.cpp:96
 msgid ""
 "Verifying file integrity may take a long time to complete. Please wait...\n"
-msgstr "La verificación de integridad puede llevar bastante tiempo. Espera...\n"
+msgstr ""
+"La verificación de integridad puede llevar bastante tiempo. Espera...\n"
 
 #: gui/integrity-dialog.cpp:103 gui/integrity-dialog.cpp:166
 msgid "Calculating file checksums..."
