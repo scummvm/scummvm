@@ -22,7 +22,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/archive.h"
-#include "common/list.h"
 #include "common/formats/ini-file.h"
 #include "qdengine/core/qd_precomp.h"
 
@@ -46,14 +45,15 @@ namespace QDEngine {
 const char *const qdGameConfig::ini_name_ = "qd_game.ini";
 qdGameConfig qdGameConfig::config_;
 
-bool enumerateIniSections(const char *fname, Common::INIFile::SectionList &section_list) {
+bool enumerateIniSections(const char *fname, Common::INIFile::SectionList &sectionList) {
 
 	Common::INIFile ini;
-	ini.loadFromFile(fname);
-	section_list = ini.getSections();
-	int sz = section_list.size();
+	Common::Path iniFilePath(fname);
+	ini.loadFromFile(iniFilePath);
+	sectionList = ini.getSections();
+	int size = sectionList.size();
 
-	if (!sz) {
+	if (!size) {
 		return false;
 	}
 

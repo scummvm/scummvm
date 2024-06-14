@@ -332,10 +332,6 @@ void qdGameDispatcher::load_script(const xml::tag *p) {
 	qdGameScene *scn;
 	qdCounter *cnt;
 
-//#ifdef _QUEST_EDITOR
-//	qdConditionalObject::toggle_global_list(true);
-//#endif
-
 	bool text_fmt_flag = false;
 
 	qdGameDispatcherBase::load_script_body(p);
@@ -349,7 +345,7 @@ void qdGameDispatcher::load_script(const xml::tag *p) {
 			game_title_ = it -> data();
 			break;
 		case QDSCR_TEXT_DB:
-			texts_database_ = it -> data();
+			texts_database_ = it->data();
 			break;
 		case QDSCR_CD_KEY:
 			cd_key_ = it -> data();
@@ -485,10 +481,6 @@ void qdGameDispatcher::load_script(const xml::tag *p) {
 		qdTextDB::instance().clear();
 
 	init();
-//#ifdef _QUEST_EDITOR
-//	qdConditionalObject::global_init();
-//	qdConditionalObject::toggle_global_list(false);
-//#endif
 }
 
 bool qdGameDispatcher::save_script(XStream &fh) const {
@@ -599,8 +591,9 @@ void qdGameDispatcher::load_script(const char *fname) {
 
 	start_clock = g_system->getMillis();
 
-	if (const xml::tag * tg = pr.root_tag().search_subtag(QDSCR_ROOT))
+	if (const xml::tag * tg = pr.root_tag().search_subtag(QDSCR_ROOT)) {
 		load_script(tg);
+	}
 
 	end_clock = g_system->getMillis();
 	appLog::default_log() << "Обработка скрипта: " << end_clock - start_clock << " мс\r\n";

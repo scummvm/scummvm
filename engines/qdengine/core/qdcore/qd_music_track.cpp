@@ -77,7 +77,7 @@ bool qdMusicTrack::load_script(const xml::tag *p) {
 				toggle_cycle(false);
 			break;
 		case QDSCR_FILE:
-			set_file_name(it -> data());
+			set_file_name(Common::Path(it->data(), '\\').toString().c_str());
 			break;
 		case QDSCR_SOUND_VOLUME:
 			set_volume(xml::tag_buffer(*it).get_int());

@@ -80,7 +80,7 @@ bool qdVideo::load_script(const xml::tag *p) {
 			set_CD_info(xml::tag_buffer(*it).get_uint());
 			break;
 		case QDSCR_FILE:
-			set_file_name(it -> data());
+			set_file_name(Common::Path(it->data(), '\\').toString().c_str());
 			break;
 		case QDSCR_VIDEO_POSITION:
 			xml::tag_buffer(*it) > v.x > v.y;

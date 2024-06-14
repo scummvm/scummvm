@@ -397,7 +397,7 @@ void qdAnimation::load_script(const xml::tag *p) {
 			set_name(it -> data());
 			break;
 		case QDSCR_ANIMATION_FILE:
-			qda_set_file((it) -> data());
+			qda_set_file(Common::Path(it->data(), '\\').toString().c_str());
 			break;
 		case QDSCR_FLAG:
 			set_flag(xml::tag_buffer(*it).get_int());
