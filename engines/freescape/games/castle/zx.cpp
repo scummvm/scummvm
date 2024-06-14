@@ -54,13 +54,17 @@ void CastleEngine::loadAssetsZXFullGame() {
 
 	//loadMessagesFixedSize(&file, 0x4bc + 1, 16, 27);
     loadFonts(kFreescapeCastleFont, 59);
-    loadMessagesVariableSize(&file, 0x4bc, 84 - 13);
+    loadMessagesVariableSize(&file, 0x4bd, 71);
 
     load8bitBinary(&file, 0x6a3b, 16);
 	loadSpeakerFxZX(&file, 0xc91, 0xccd);
 
-	for (auto &it : _areaMap)
+	for (auto &it : _areaMap) {
 		it._value->addStructure(_areaMap[255]);
+		for (int16 id = 214; id < 228; id++) {
+			it._value->addObjectFromArea(id, _areaMap[255]);
+		}
+	}
 
 	_areaMap[1]->addFloor();
 	_areaMap[2]->addFloor();

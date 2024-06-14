@@ -425,10 +425,17 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 	case kEntranceType: {
 		debugC(1, kFreescapeDebugParser, "rotation: %f %f %f", v.x(), v.y(), v.z());
 		if (byteSizeOfObject > 0) {
-			// TODO: there is something here
-			debugC(1, kFreescapeDebugParser, "Warning: extra %d bytes in entrance", byteSizeOfObject);
-			while (byteSizeOfObject--) {
-				debugC(1, kFreescapeDebugParser, "b: %x", readField(file, 8));
+			if (!isCastle()) {
+				debugC(1, kFreescapeDebugParser, "Warning: extra %d bytes in entrance", byteSizeOfObject);
+				while (byteSizeOfObject--)
+					debugC(1, kFreescapeDebugParser, "b: %x", readField(file, 8));
+			} else {
+				FCLInstructionVector instructions;
+				Common::String conditionSource;
+				Common::Array<uint16> conditionArray = readArray(file, byteSizeOfObject);
+				conditionSource = detokenise8bitCondition(conditionArray, instructions, isAmiga() || isAtariST());
+				debugC(1, kFreescapeDebugParser, "Entrance condition:");
+				debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
 			}
 			byteSizeOfObject = 0;
 		}
@@ -601,7 +608,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		if (isAmiga())
 			name = _messagesList[idx + 51];
 		if (isSpectrum())
-			name = areaNumber == 255 ? "GLOBAL" : _messagesList[idx + 17];
+			name = areaNumber == 255 ? "GLOBAL" : _messagesList[idx + 16];
 		else
 			name = _messagesList[idx + 41];
 
