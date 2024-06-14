@@ -4,6 +4,8 @@
 # Lubomyr Lisen, 2010.
 # Eugene Sandulenko <sev@scummvm.org>, 2010-2017
 #
+#: gui/integrity-dialog.cpp:488 gui/integrity-dialog.cpp:490
+#: gui/integrity-dialog.cpp:492 gui/integrity-dialog.cpp:495
 #: engines/twp/dialogs.cpp:48 engines/twp/dialogs.cpp:50
 #: engines/twp/dialogs.cpp:52 engines/twp/dialogs.cpp:54
 #: engines/twp/dialogs.cpp:57
@@ -11,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-13 23:15+0000\n"
+"POT-Creation-Date: 2024-06-13 23:22+0000\n"
 "PO-Revision-Date: 2024-06-05 08:44+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -80,8 +82,9 @@ msgstr "Вгору"
 
 #: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:64
 #: gui/downloaddlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:271
-#: gui/downloadpacksdialog.cpp:464 gui/editgamedialog.cpp:331
-#: gui/editrecorddialog.cpp:66 gui/filebrowser-dialog.cpp:68
+#: gui/downloadpacksdialog.cpp:464 gui/editgamedialog.cpp:337
+#: gui/editrecorddialog.cpp:66 gui/integrity-dialog.cpp:114
+#: gui/integrity-dialog.cpp:167 gui/filebrowser-dialog.cpp:68
 #: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2360
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
 #: gui/recorderdialog.cpp:212 gui/remotebrowser.cpp:59
@@ -243,7 +246,7 @@ msgstr "Вставити"
 msgid "Paste code from clipboard"
 msgstr "Вставити код з буфера обміну"
 
-#: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:316
+#: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:317
 #: engines/dialogs.cpp:94 engines/engine.cpp:932 engines/mm/xeen/saves.cpp:259
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:388
@@ -296,8 +299,8 @@ msgstr "Інше хмарне сховище вже є активним. Чи в
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:420 gui/launcher.cpp:449
-#: gui/launcher.cpp:501 gui/options.cpp:3448 gui/options.cpp:3827
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:450
+#: gui/launcher.cpp:502 gui/options.cpp:3448 gui/options.cpp:3827
 #: base/main.cpp:604 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
@@ -310,8 +313,8 @@ msgstr "Так"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:420 gui/launcher.cpp:449
-#: gui/launcher.cpp:501 gui/options.cpp:3448 gui/options.cpp:3827
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:450
+#: gui/launcher.cpp:502 gui/options.cpp:3448 gui/options.cpp:3827
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
@@ -331,9 +334,10 @@ msgid "JSON code contents are malformed."
 msgstr "Невірний формат JSON-коду."
 
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
-#: gui/editgamedialog.cpp:332 gui/editrecorddialog.cpp:67
-#: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:557 gui/launcher.cpp:561
-#: gui/massadd.cpp:90 gui/options.cpp:2362 gui/predictivedialog.cpp:69
+#: gui/editgamedialog.cpp:338 gui/editrecorddialog.cpp:67
+#: gui/integrity-dialog.cpp:174 gui/fluidsynth-dialog.cpp:153
+#: gui/launcher.cpp:558 gui/launcher.cpp:562 gui/massadd.cpp:90
+#: gui/options.cpp:2362 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1221 dists/android.strings.xml.cpp:33
 #: engines/engine.cpp:567 engines/engine.cpp:590
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
@@ -404,7 +408,7 @@ msgid "Select directory where to download game data"
 msgstr "Виберіть папку куди завантажувати файли гри"
 
 #: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:99
-#: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:556 gui/launcher.cpp:313
+#: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:562 gui/launcher.cpp:314
 msgid "Select directory with game data"
 msgstr "Виберіть папку з файлами гри"
 
@@ -440,7 +444,7 @@ msgstr ""
 "Виглядає, що ваше поточне з'єднання лімітовано. Ви насправді хочете зараз "
 "завантажувати файли на цьому з'єднанні?"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:659
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:660
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM не може відкрити вказану папку!"
 
@@ -512,7 +516,8 @@ msgstr "Завантаження закінчено, завантажено %d �
 
 #. I18N: Close dialog button
 #: gui/downloadpacksdialog.cpp:297 gui/downloadpacksdialog.cpp:388
-#: gui/gui-manager.cpp:170 gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:53
+#: gui/integrity-dialog.cpp:266 gui/gui-manager.cpp:170
+#: gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:53
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:492
 #: engines/scumm/help.cpp:127 engines/scumm/help.cpp:142
 #: engines/scumm/help.cpp:167 engines/scumm/help.cpp:195
@@ -551,179 +556,187 @@ msgstr "пакетів іконок"
 msgid "shader packs"
 msgstr "пакетів шейдерів"
 
-#: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:710
+#: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:711
 msgid "Pick the game:"
 msgstr "Виберіть гру:"
 
-#: gui/editgamedialog.cpp:137 engines/dialogs.cpp:301
+#: gui/editgamedialog.cpp:139 engines/dialogs.cpp:301
 msgid "Game"
 msgstr "Гра"
 
-#: gui/editgamedialog.cpp:161 gui/options.cpp:2023 gui/options.cpp:2197
+#: gui/editgamedialog.cpp:163 gui/options.cpp:2023 gui/options.cpp:2197
 msgid "GFX"
 msgstr "Грф"
 
-#: gui/editgamedialog.cpp:161 gui/options.cpp:2023 gui/options.cpp:2197
+#: gui/editgamedialog.cpp:163 gui/options.cpp:2023 gui/options.cpp:2197
 #: backends/graphics/atari/atari-graphics.cpp:955
 #: backends/graphics/sdl/sdl-graphics.cpp:436
 msgid "Graphics"
 msgstr "Графіка"
 
-#: gui/editgamedialog.cpp:167
+#: gui/editgamedialog.cpp:169
 msgid "Override global graphic settings"
 msgstr "Перекрити глобальні налаштування графіки"
 
-#: gui/editgamedialog.cpp:169
+#: gui/editgamedialog.cpp:171
 msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "Перекрити глобальні налаштування графіки"
 
-#: gui/editgamedialog.cpp:182 gui/options.cpp:2231 engines/dialogs.cpp:346
+#: gui/editgamedialog.cpp:184 gui/options.cpp:2231 engines/dialogs.cpp:346
 msgid "Keymaps"
 msgstr "Мапа клавіш"
 
-#: gui/editgamedialog.cpp:194 gui/options.cpp:2243 engines/dialogs.cpp:358
+#: gui/editgamedialog.cpp:196 gui/options.cpp:2243 engines/dialogs.cpp:358
 msgid "Backend"
 msgstr "Бекенд"
 
-#: gui/editgamedialog.cpp:201
+#: gui/editgamedialog.cpp:203
 msgid "Override global backend settings"
 msgstr "Перекрити глобальні налаштування бекенду"
 
-#: gui/editgamedialog.cpp:203
+#: gui/editgamedialog.cpp:205
 msgctxt "lowres"
 msgid "Override global backend settings"
 msgstr "Перекрити глобальні налаштування бекенду"
 
-#: gui/editgamedialog.cpp:217 gui/options.cpp:2261 engines/dialogs.cpp:321
+#: gui/editgamedialog.cpp:219 gui/options.cpp:2261 engines/dialogs.cpp:321
 msgid "Audio"
 msgstr "Аудіо"
 
-#: gui/editgamedialog.cpp:220
+#: gui/editgamedialog.cpp:222
 msgid "Override global audio settings"
 msgstr "Перекрити глобальні налаштування аудіо"
 
-#: gui/editgamedialog.cpp:222
+#: gui/editgamedialog.cpp:224
 msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "Перекрити глобальні налаштування аудіо"
 
-#: gui/editgamedialog.cpp:231 gui/options.cpp:2266
+#: gui/editgamedialog.cpp:233 gui/options.cpp:2266
 msgid "Volume"
 msgstr "Гучність"
 
-#: gui/editgamedialog.cpp:233 gui/options.cpp:2268
+#: gui/editgamedialog.cpp:235 gui/options.cpp:2268
 msgctxt "lowres"
 msgid "Volume"
 msgstr "Гучн"
 
-#: gui/editgamedialog.cpp:236
+#: gui/editgamedialog.cpp:238
 msgid "Override global volume settings"
 msgstr "Перекрити глобальні налаштування гучності"
 
-#: gui/editgamedialog.cpp:238
+#: gui/editgamedialog.cpp:240
 msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "Перекрити глобальні налаштування гучності"
 
-#: gui/editgamedialog.cpp:249 gui/options.cpp:2276
+#: gui/editgamedialog.cpp:251 gui/options.cpp:2276
 msgid "MIDI"
 msgstr "MIDI"
 
-#: gui/editgamedialog.cpp:252
+#: gui/editgamedialog.cpp:254
 msgid "Override global MIDI settings"
 msgstr "Перекрити глобальні налаштування MIDI"
 
-#: gui/editgamedialog.cpp:254
+#: gui/editgamedialog.cpp:256
 msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "Перекрити глобальні налаштування MIDI"
 
-#: gui/editgamedialog.cpp:264 gui/options.cpp:2282
+#: gui/editgamedialog.cpp:266 gui/options.cpp:2282
 msgid "MT-32"
 msgstr "MT-32"
 
-#: gui/editgamedialog.cpp:267
-msgid "Override global MT-32 settings"
-msgstr "Перекрити глобальні налаштування MT-32"
-
 #: gui/editgamedialog.cpp:269
+msgid "Override global MT-32 settings"
+msgstr "Перекрити глобальні налаштування MT-32"
+
+#: gui/editgamedialog.cpp:271
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "Перекрити глобальні налаштування MT-32"
 
-#: gui/editgamedialog.cpp:278 gui/options.cpp:2289
+#: gui/editgamedialog.cpp:280 gui/options.cpp:2289
 msgid "Paths"
 msgstr "Шляхи"
 
-#: gui/editgamedialog.cpp:280 gui/options.cpp:2291
+#: gui/editgamedialog.cpp:282 gui/options.cpp:2291
 msgctxt "lowres"
 msgid "Paths"
 msgstr "Шляхи"
-
-#: gui/editgamedialog.cpp:287
-msgid "Game Path:"
-msgstr "Шлях до гри:"
 
 #: gui/editgamedialog.cpp:289
+msgid "Check Integrity"
+msgstr ""
+
+#: gui/editgamedialog.cpp:289
+msgid "Perform integrity check for all game files"
+msgstr ""
+
+#: gui/editgamedialog.cpp:293
+msgid "Game Path:"
+msgstr "Шлях до гри:"
+
+#: gui/editgamedialog.cpp:295
 msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Шлях до гри:"
 
-#: gui/editgamedialog.cpp:294 gui/options.cpp:2499
+#: gui/editgamedialog.cpp:300 gui/options.cpp:2499
 msgid "Extra Path:"
 msgstr "Додатк. шлях:"
 
-#: gui/editgamedialog.cpp:294 gui/editgamedialog.cpp:296
-#: gui/editgamedialog.cpp:297
+#: gui/editgamedialog.cpp:300 gui/editgamedialog.cpp:302
+#: gui/editgamedialog.cpp:303
 msgid "Specifies path to additional data used by the game"
 msgstr "Вказує шлях до додаткових файлів даних для гри"
 
-#: gui/editgamedialog.cpp:296 gui/options.cpp:2501
+#: gui/editgamedialog.cpp:302 gui/options.cpp:2501
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Дод. шлях:"
 
-#: gui/editgamedialog.cpp:297 gui/options.cpp:2474 gui/options.cpp:2502
+#: gui/editgamedialog.cpp:303 gui/options.cpp:2474 gui/options.cpp:2502
 #: gui/options.cpp:2511 gui/options.cpp:2795
 #: backends/platform/libretro/src/libretro-options-widget.cpp:244
 msgctxt "path"
 msgid "None"
 msgstr "Не завдано"
 
-#: gui/editgamedialog.cpp:303 gui/options.cpp:2463
+#: gui/editgamedialog.cpp:309 gui/options.cpp:2463
 msgid "Save Path:"
 msgstr "Шлях збер.:"
 
-#: gui/editgamedialog.cpp:303 gui/editgamedialog.cpp:305
-#: gui/editgamedialog.cpp:306 gui/options.cpp:2463 gui/options.cpp:2465
+#: gui/editgamedialog.cpp:309 gui/editgamedialog.cpp:311
+#: gui/editgamedialog.cpp:312 gui/options.cpp:2463 gui/options.cpp:2465
 msgid "Specifies where your saved games are put"
 msgstr "Вказує шлях до збережених ігор"
 
-#: gui/editgamedialog.cpp:305 gui/options.cpp:2465
+#: gui/editgamedialog.cpp:311 gui/options.cpp:2465
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Шлях збер.:"
 
-#: gui/editgamedialog.cpp:306 gui/options.cpp:1792 gui/options.cpp:2466
+#: gui/editgamedialog.cpp:312 gui/options.cpp:1792 gui/options.cpp:2466
 #: backends/platform/wii/options.cpp:55
 msgid "Default"
 msgstr "За умовчанням"
 
-#: gui/editgamedialog.cpp:317 engines/dialogs.cpp:377
+#: gui/editgamedialog.cpp:323 engines/dialogs.cpp:377
 msgid "Achievements"
 msgstr "Досягнення"
 
-#: gui/editgamedialog.cpp:321 engines/dialogs.cpp:381
+#: gui/editgamedialog.cpp:327 engines/dialogs.cpp:381
 msgid "Statistics"
 msgstr "Статистика"
 
-#: gui/editgamedialog.cpp:338
+#: gui/editgamedialog.cpp:344
 msgid "ID:"
 msgstr "ID:"
 
-#: gui/editgamedialog.cpp:338 gui/editgamedialog.cpp:340
-#: gui/editgamedialog.cpp:341
+#: gui/editgamedialog.cpp:344 gui/editgamedialog.cpp:346
+#: gui/editgamedialog.cpp:347
 msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
@@ -731,31 +744,31 @@ msgstr ""
 "Короткий ідентифікатор, який використовується для назв збережених ігор і для "
 "запуску з командної стрічки"
 
-#: gui/editgamedialog.cpp:340
+#: gui/editgamedialog.cpp:346
 msgctxt "lowres"
 msgid "ID:"
 msgstr "ID:"
 
-#: gui/editgamedialog.cpp:345 gui/editrecorddialog.cpp:58
+#: gui/editgamedialog.cpp:351 gui/editrecorddialog.cpp:58
 msgid "Name:"
 msgstr "Назва:"
 
-#: gui/editgamedialog.cpp:345 gui/editgamedialog.cpp:347
-#: gui/editgamedialog.cpp:348
+#: gui/editgamedialog.cpp:351 gui/editgamedialog.cpp:353
+#: gui/editgamedialog.cpp:354
 msgid "Full title of the game"
 msgstr "Повна назва гри"
 
-#: gui/editgamedialog.cpp:347
+#: gui/editgamedialog.cpp:353
 msgctxt "lowres"
 msgid "Name:"
 msgstr "Назва:"
 
-#: gui/editgamedialog.cpp:354 engines/mohawk/dialogs.cpp:158
+#: gui/editgamedialog.cpp:360 engines/mohawk/dialogs.cpp:158
 #: engines/mohawk/dialogs.cpp:377
 msgid "Language:"
 msgstr "Мова:"
 
-#: gui/editgamedialog.cpp:354 gui/editgamedialog.cpp:355
+#: gui/editgamedialog.cpp:360 gui/editgamedialog.cpp:361
 msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
@@ -763,7 +776,7 @@ msgstr ""
 "Мова гри. Зміна цього налаштування не перетворить гру англійською на "
 "українську"
 
-#: gui/editgamedialog.cpp:356 gui/editgamedialog.cpp:371 gui/options.cpp:1574
+#: gui/editgamedialog.cpp:362 gui/editgamedialog.cpp:377 gui/options.cpp:1574
 #: gui/options.cpp:1589 gui/options.cpp:1606 gui/options.cpp:1620
 #: gui/options.cpp:1660 gui/options.cpp:1676 gui/options.cpp:2086
 #: gui/options.cpp:2544 gui/options.cpp:2618 gui/options.cpp:2836
@@ -777,37 +790,37 @@ msgstr ""
 msgid "<default>"
 msgstr "<за умовчанням>"
 
-#: gui/editgamedialog.cpp:367
+#: gui/editgamedialog.cpp:373
 msgid "Platform:"
 msgstr "Платформа:"
 
-#: gui/editgamedialog.cpp:367 gui/editgamedialog.cpp:369
-#: gui/editgamedialog.cpp:370
+#: gui/editgamedialog.cpp:373 gui/editgamedialog.cpp:375
+#: gui/editgamedialog.cpp:376
 msgid "Platform the game was originally designed for"
 msgstr "Платформа, для якої гру було розроблено початково"
 
-#: gui/editgamedialog.cpp:369
+#: gui/editgamedialog.cpp:375
 msgctxt "lowres"
 msgid "Platform:"
 msgstr "Платформа:"
 
-#: gui/editgamedialog.cpp:536 gui/options.cpp:3350
+#: gui/editgamedialog.cpp:542 gui/options.cpp:3350
 msgid "Select SoundFont"
 msgstr "Виберіть SoundFont"
 
-#: gui/editgamedialog.cpp:575
+#: gui/editgamedialog.cpp:581
 msgid "Select additional game directory"
 msgstr "Виберіть додаткову папку гри"
 
-#: gui/editgamedialog.cpp:588 gui/options.cpp:3197
+#: gui/editgamedialog.cpp:594 gui/options.cpp:3197
 msgid "Select directory for saved games"
 msgstr "Виберіть папку для збережених ігор"
 
-#: gui/editgamedialog.cpp:595 gui/options.cpp:3204
+#: gui/editgamedialog.cpp:601 gui/options.cpp:3204
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Не можу писати у вибрану папку. Будь ласка, вкажіть іншу."
 
-#: gui/editgamedialog.cpp:600
+#: gui/editgamedialog.cpp:606
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
@@ -816,7 +829,7 @@ msgstr ""
 "хочете, щоб ваші збережені ігри синхронізувалися, використовуйте папку за "
 "замовченням."
 
-#: gui/editgamedialog.cpp:626
+#: gui/editgamedialog.cpp:638
 msgid "This game ID is already taken. Please choose another one."
 msgstr "Цей ID гри вже використовується. Будь ласка, виберіть інший."
 
@@ -827,6 +840,58 @@ msgstr "Автор:"
 #: gui/editrecorddialog.cpp:59
 msgid "Notes:"
 msgstr "Примітки:"
+
+#: gui/integrity-dialog.cpp:96
+msgid ""
+"Verifying file integrity may take a long time to complete. Please wait...\n"
+msgstr ""
+
+#: gui/integrity-dialog.cpp:103 gui/integrity-dialog.cpp:166
+msgid "Calculating file checksums..."
+msgstr ""
+
+#: gui/integrity-dialog.cpp:116
+msgid "Launch Email Client"
+msgstr ""
+
+#: gui/integrity-dialog.cpp:172
+#, fuzzy
+#| msgid "Scan complete!"
+msgid "Calculation complete"
+msgstr "Пошук закінчено!"
+
+#: gui/integrity-dialog.cpp:253
+#, fuzzy, c-format
+#| msgid "Downloaded %s %S / %s %S"
+msgid "Calculated %s %S / %s %S"
+msgstr "Завантажено %s %S з %s %S"
+
+#: gui/integrity-dialog.cpp:486
+#, fuzzy
+#| msgid "The game in '%s' seems to be unknown."
+msgid "Your set of game files seems to be unknown to us."
+msgstr "Гра у '%s' невідома."
+
+#: gui/integrity-dialog.cpp:487
+msgid ""
+"If you are sure that this is a valid unknown variant, please send the "
+"following e-mail to integrity@scummvm.org"
+msgstr ""
+
+#: gui/integrity-dialog.cpp:503
+msgid ""
+"The game doesn't seem to have any files. Are you sure the path is correct?"
+msgstr ""
+
+#: gui/integrity-dialog.cpp:508
+msgid ""
+"The game doesn't seem to have any metadata associated with it, so it is "
+"unable to be matched. Please fill in the correct metadata for the game."
+msgstr ""
+
+#: gui/integrity-dialog.cpp:535
+msgid "Files all OK"
+msgstr ""
 
 #: gui/filebrowser-dialog.cpp:53
 msgid "Choose file for loading"
@@ -1270,175 +1335,175 @@ msgid "Save Image"
 msgstr "Зберегти зображ"
 
 #. I18N: Group name for the game list
-#: gui/launcher.cpp:105
+#: gui/launcher.cpp:106
 msgctxt "group"
 msgid "None"
 msgstr "Не завдано"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
-#: gui/launcher.cpp:107
+#: gui/launcher.cpp:108
 msgctxt "group"
 msgid "First letter"
 msgstr "Перша літера"
 
-#: gui/launcher.cpp:107
+#: gui/launcher.cpp:108
 msgctxt "group"
 msgid "Initial"
 msgstr "Літера"
 
 #. I18N: Group name for the game list, grouped by game engine
-#: gui/launcher.cpp:109
+#: gui/launcher.cpp:110
 msgctxt "group"
 msgid "Engine"
 msgstr "Движок"
 
 #. I18N: Group name for the game list, grouped by game series
-#: gui/launcher.cpp:111
+#: gui/launcher.cpp:112
 msgctxt "group"
 msgid "Series"
 msgstr "Серія"
 
 #. I18N: Group name for the game list, grouped by game publisher
-#: gui/launcher.cpp:113
+#: gui/launcher.cpp:114
 msgctxt "group"
 msgid "Publisher"
 msgstr "Видавник"
 
 #. I18N: Group name for the game list, grouped by language
-#: gui/launcher.cpp:115
+#: gui/launcher.cpp:116
 msgctxt "group"
 msgid "Language"
 msgstr "Мова"
 
 #. I18N: Group name for the game list, grouped by game platform
-#: gui/launcher.cpp:117
+#: gui/launcher.cpp:118
 msgctxt "group"
 msgid "Platform"
 msgstr "Платформа"
 
 #. I18N: Group name for the game list, grouped by year
-#: gui/launcher.cpp:119
+#: gui/launcher.cpp:120
 msgctxt "year"
 msgid "Year"
 msgstr "Рік"
 
-#: gui/launcher.cpp:229
+#: gui/launcher.cpp:230
 msgid "Select Group by"
 msgstr "Обрати сортировку за групами"
 
-#: gui/launcher.cpp:233 gui/launcher.cpp:895
+#: gui/launcher.cpp:234 gui/launcher.cpp:896
 msgid "Group:"
 msgstr "Група:"
 
-#: gui/launcher.cpp:235
+#: gui/launcher.cpp:236
 msgid "Select a criteria to group the entries"
 msgstr "Оберіть критерій для групування"
 
-#: gui/launcher.cpp:262
+#: gui/launcher.cpp:263
 msgid "Click here to see Help"
 msgstr "Натисніть тут, щоб переглянути довідку"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
-#: gui/launcher.cpp:266 engines/dialogs.cpp:91
+#: gui/launcher.cpp:267 engines/dialogs.cpp:91
 msgid "~Q~uit"
 msgstr "~В~ихід"
 
-#: gui/launcher.cpp:266 backends/platform/sdl/macosx/appmenu_osx.mm:302
+#: gui/launcher.cpp:267 backends/platform/sdl/macosx/appmenu_osx.mm:302
 msgid "Quit ScummVM"
 msgstr "Вихід зі ScummVM"
 
 #. I18N: Button About ScummVM program. b is the shortcut, Ctrl+b, put it in parens for non-latin (~b~)
-#: gui/launcher.cpp:270
+#: gui/launcher.cpp:271
 msgid "A~b~out"
 msgstr "Про п~р~ограму"
 
-#: gui/launcher.cpp:270 backends/platform/sdl/macosx/appmenu_osx.mm:296
+#: gui/launcher.cpp:271 backends/platform/sdl/macosx/appmenu_osx.mm:296
 msgid "About ScummVM"
 msgstr "Про ScummVM"
 
 #. I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
-#: gui/launcher.cpp:272
+#: gui/launcher.cpp:273
 msgid "Global ~O~ptions..."
 msgstr "~Н~алаштування..."
 
-#: gui/launcher.cpp:272
+#: gui/launcher.cpp:273
 msgid "Change global ScummVM options"
 msgstr "Змінити глобальні налаштування ScummVM"
 
-#: gui/launcher.cpp:272
+#: gui/launcher.cpp:273
 msgctxt "lowres"
 msgid "Global ~O~pts..."
 msgstr "~Н~алашт..."
 
-#: gui/launcher.cpp:276
+#: gui/launcher.cpp:277
 msgid "Download Games"
 msgstr "Завантажити ігри"
 
-#: gui/launcher.cpp:276
+#: gui/launcher.cpp:277
 msgid "Download freeware games for ScummVM"
 msgstr "Завантажити безкогтовні ігри для ScummVM"
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
-#: gui/launcher.cpp:283
+#: gui/launcher.cpp:284
 msgid "~A~dd Game..."
 msgstr "~Д~одати гру..."
 
-#: gui/launcher.cpp:283
+#: gui/launcher.cpp:284
 msgid "Add games to the list"
 msgstr "Додати гри до списку"
 
-#: gui/launcher.cpp:283
+#: gui/launcher.cpp:284
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "~Д~одати гру..."
 
 #. I18N: Button caption. R is the shortcut, Ctrl+R, put it in parens for non-latin (~R~)
-#: gui/launcher.cpp:287
+#: gui/launcher.cpp:288
 msgid "~R~emove Game"
 msgstr "~В~идалити гру"
 
-#: gui/launcher.cpp:287
+#: gui/launcher.cpp:288
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "Видалити гру зі списку. Не видаляє гру з жорсткого диску"
 
-#: gui/launcher.cpp:287
+#: gui/launcher.cpp:288
 msgctxt "lowres"
 msgid "~R~emove Game"
 msgstr "~В~идалити гру"
 
 #. I18N: Button caption. Mass add games
-#: gui/launcher.cpp:290
+#: gui/launcher.cpp:291
 msgid "Mass Add..."
 msgstr "Дод. багато..."
 
 #. I18N: Button caption for lower resolution GUI. Mass add games
-#: gui/launcher.cpp:293
+#: gui/launcher.cpp:294
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Дод. багато..."
 
-#: gui/launcher.cpp:301 gui/launcher.cpp:865 gui/shaderbrowser-dialog.cpp:61
+#: gui/launcher.cpp:302 gui/launcher.cpp:866 gui/shaderbrowser-dialog.cpp:61
 #: gui/shaderbrowser-dialog.cpp:97
 msgid "Search in game list"
 msgstr "Пошук у списку ігор"
 
-#: gui/launcher.cpp:305 gui/launcher.cpp:886 gui/shaderbrowser-dialog.cpp:65
+#: gui/launcher.cpp:306 gui/launcher.cpp:887 gui/shaderbrowser-dialog.cpp:65
 #: gui/shaderbrowser-dialog.cpp:107
 msgid "Search:"
 msgstr "Пошук:"
 
-#: gui/launcher.cpp:316 engines/dialogs.cpp:94 engines/engine.cpp:932
+#: gui/launcher.cpp:317 engines/dialogs.cpp:94 engines/engine.cpp:932
 #: engines/mm/xeen/saves.cpp:259 engines/pegasus/pegasus.cpp:388
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:638
 #: engines/wage/saveload.cpp:736
 msgid "Load game:"
 msgstr "Завантажити гру:"
 
-#: gui/launcher.cpp:408
+#: gui/launcher.cpp:409
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr "Цю папку ще не можна використовувати, в неї іде завантаження!"
 
-#: gui/launcher.cpp:419
+#: gui/launcher.cpp:420
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
@@ -1446,23 +1511,23 @@ msgstr ""
 "Чи ви дійсно хочете запустити пошук усіх ігор? Це потенційно може додати "
 "велику кількість ігор."
 
-#: gui/launcher.cpp:449
+#: gui/launcher.cpp:450
 msgid "Do you really want to remove this game configuration?"
 msgstr "Ви дійсно хочете видалити налаштування для цієї гри?"
 
-#: gui/launcher.cpp:500
+#: gui/launcher.cpp:501
 msgid "Do you want to load saved game?"
 msgstr "Ви хочете завантажити збережений стан гри?"
 
-#: gui/launcher.cpp:557
+#: gui/launcher.cpp:558
 msgid "This game does not support loading games from the launcher."
 msgstr "Ця гра не підтримує завантаження збережених ігор через головне меню."
 
-#: gui/launcher.cpp:561
+#: gui/launcher.cpp:562
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM не може знайти движок для запуску вибраної гри!"
 
-#: gui/launcher.cpp:662 gui/launcher.cpp:686
+#: gui/launcher.cpp:663 gui/launcher.cpp:687
 msgid ""
 "Did you add this directory to the SAF? Press the help button [?] on the top "
 "for detailed instructions"
@@ -1470,96 +1535,96 @@ msgstr ""
 "Чи ви додали папку у SAF? Натисніть кнопку допомоги [?] наверху екрану для "
 "докладних вказівок"
 
-#: gui/launcher.cpp:683
+#: gui/launcher.cpp:684
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM не може знайти гру у вказаній папці!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:704
+#: gui/launcher.cpp:705
 msgid "Unknown variant"
 msgstr "Невідомий варіант"
 
-#: gui/launcher.cpp:935 gui/saveload-dialog.cpp:381
+#: gui/launcher.cpp:936 gui/saveload-dialog.cpp:381
 msgid "List view"
 msgstr "Вигляд списку"
 
-#: gui/launcher.cpp:936 gui/saveload-dialog.cpp:382
+#: gui/launcher.cpp:937 gui/saveload-dialog.cpp:382
 msgid "Grid view"
 msgstr "Вигляд сітки"
 
-#: gui/launcher.cpp:1100
+#: gui/launcher.cpp:1101
 msgid "~S~tart"
 msgstr "З~а~пуск"
 
-#: gui/launcher.cpp:1100
+#: gui/launcher.cpp:1101
 msgid "Start selected game"
 msgstr "Запустити вибрану гру"
 
-#: gui/launcher.cpp:1103
+#: gui/launcher.cpp:1104
 msgid "~L~oad..."
 msgstr "~З~авантажити..."
 
-#: gui/launcher.cpp:1103
+#: gui/launcher.cpp:1104
 msgid "Load saved game for selected game"
 msgstr "Завантажити збережений стан для вибраної гри"
 
-#: gui/launcher.cpp:1105
+#: gui/launcher.cpp:1106
 msgid "Record..."
 msgstr "Запис..."
 
-#: gui/launcher.cpp:1111
+#: gui/launcher.cpp:1112
 msgid "~G~ame Options..."
 msgstr "Налашт. ~г~ри..."
 
-#: gui/launcher.cpp:1111
+#: gui/launcher.cpp:1112
 msgid "Change game options"
 msgstr "Змінити налаштування гри"
 
-#: gui/launcher.cpp:1111
+#: gui/launcher.cpp:1112
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "Нал. ~г~ри..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1209 gui/launcher.cpp:1405
+#: gui/launcher.cpp:1210 gui/launcher.cpp:1406
 msgid "Unknown Engine"
 msgstr "Невідомий движок"
 
 #. I18N: List grouping when no publisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1226 gui/launcher.cpp:1422
+#: gui/launcher.cpp:1227 gui/launcher.cpp:1423
 msgid "Unknown Publisher"
 msgstr "Невідомий видавник"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1243 gui/launcher.cpp:1439
+#: gui/launcher.cpp:1244 gui/launcher.cpp:1440
 msgid "No Series"
 msgstr "Без серії"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1257 gui/launcher.cpp:1453
+#: gui/launcher.cpp:1258 gui/launcher.cpp:1454
 msgid "Language not detected"
 msgstr "Мова не визначена"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1271 gui/launcher.cpp:1467
+#: gui/launcher.cpp:1272 gui/launcher.cpp:1468
 msgid "Platform not detected"
 msgstr "Платформа не визначена"
 
 #. I18N: List group when no year is specified
-#: gui/launcher.cpp:1288 gui/launcher.cpp:1484
+#: gui/launcher.cpp:1289 gui/launcher.cpp:1485
 msgid "Unknown Year"
 msgstr "Рік невідомий"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1491 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1492 gui/widgets/groupedlist.cpp:81
 msgid "All"
 msgstr "Усі"
 
-#: gui/launcher.cpp:1646
+#: gui/launcher.cpp:1647
 msgid "Icons per row:"
 msgstr "Іконок на рядок:"
 
@@ -13494,9 +13559,6 @@ msgstr ""
 #~ msgstr ""
 #~ "Кнопка \"Файли\" у грі показуватиме оригінальний екран збереження замість "
 #~ "меню ScummVM"
-
-#~ msgid "The game in '%s' seems to be unknown."
-#~ msgstr "Гра у '%s' невідома."
 
 #~ msgid ""
 #~ "Please, report the following data to the ScummVM team along with name"
