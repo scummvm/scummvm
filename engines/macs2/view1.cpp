@@ -771,7 +771,18 @@ void Character::SetPosition(const Common::Point &newPosition) {
 }
 
 Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
-	int blobIndex = 0x2;
+	// We choose looking towards the screen first
+	int blobIndex = 0x0;
+	// If we don't have this direction, try others until we find one that we have
+	if (GameObject->Blobs[blobIndex].size() == 0) {
+		for (int i = 0; i < 0x11; i++) {
+			if (GameObject->Blobs[i].size() != 0) {
+				blobIndex = i;
+				break;
+			}
+		}
+	}
+	/*
 	// int offset = 0x1C;
 
 	// TODO: Need to figure out the access pattern more systematically
@@ -786,6 +797,7 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	} else if (GameObject->Index == 0x10) {
 		blobIndex = 0x0c;
 	}
+	*/
 	Common::MemoryReadStream stream(this->GameObject->Blobs[blobIndex].data(), this->GameObject->Blobs[blobIndex].size());
 	stream.seek(0xA, SEEK_SET);
 	uint16 offset = stream.readUint16LE();
