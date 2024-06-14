@@ -132,7 +132,7 @@ ErrorCode CBagCharacterObject::attach() {
 
 		// If the state is not the default(0) then move to the correct frame
 		if (nState != 0)
-			setFrame(nState + 1);
+			setFrame(nState);
 	}
 
 	if (_numOfLoops != 0) {
@@ -285,14 +285,16 @@ bool CBagCharacterObject::doAdvance() {
 						_smacker->rewind();
 						_smacker->start();
 					}
-				} else if ((_smacker->getCurFrame() == _endFrame) || (_smacker->getCurFrame() == 1)) {
-					if (_numOfLoops > 0)
-						_numOfLoops--; // decrement num of loops
-
-					// Get next frame, will loop to beginning
-					setFrame(_startFrame);
 				} else {
-					setFrame(_smacker->getCurFrame() - 2); // HACK: Reverse playback
+					if (_smacker->getCurFrame() == _endFrame || _smacker->getCurFrame() == 1) {
+						if (_numOfLoops > 0)
+							_numOfLoops--; // decrement num of loops
+
+						// Get next frame, will loop to beginning
+						setFrame(_startFrame);
+					} else {
+						setFrame(_smacker->getCurFrame() - 1); // HACK: Reverse playback
+					}
 				}
 			}
 		} else if (_firstFrame) {
@@ -558,7 +560,12 @@ void CBagCharacterObject::setPlaybackSpeed(int n) {
 
 		_playbackSpeed = n;
 		arrangeFrames();
-		setCurrentFrame(getStartFrame());
+
+		int frame = getStartFrame();
+		if (n < 0 && frame == (int)_smacker->getFrameCount()) {
+			frame--; // HACK: Reverse rewind
+		}
+		setCurrentFrame(frame);
 	}
 }
 
@@ -587,17 +594,22 @@ void CBagCharacterObject::setCurrentFrame(int n) {
 	// a .BIN file, then it would not have worked.
 	updatePosition();
 
-	refreshCurrentFrame();
+	//refreshCurrentFrame();
 }
 
 void CBagCharacterObject::setFrame(int n) {
 	// Make sure that it is within specified values?
 	if (_smacker != nullptr) {
-		if (n == (int)_smacker->getFrameCount()) {
-			n -= 3; // HACK: Reverse rewind
-		}
+		n--;
 		n = CLIP<int>(n, 0, _smacker->getFrameCount() - 1);
-		_smacker->forceSeekToFrame(n);
+		const Graphics::Surface *surf = _smacker->forceSeekToFrame(n);
+		if (surf) {
+			Graphics::ManagedSurface &destSurf = *_bmpBuf;
+
+			// Copy the decoded frame into the offscreen bitmap
+			destSurf.setPalette(_smacker->getPalette(), 0, 256);
+			destSurf.blitFrom(*surf);
+		}
 	}
 }
 

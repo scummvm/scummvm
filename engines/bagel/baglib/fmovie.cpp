@@ -201,14 +201,16 @@ void CBagFMovie::onMainLoop() {
 				_smk->start();
 			}
 		}
-	} else if ((_movieStatus == MOVIE_REVERSE) && ((_smk->getCurFrame() == 0) || (_smk->getCurFrame() == 1))) {
-		if (_loopFl == false) {
-			onMovieDone();
+	} else if (_movieStatus == MOVIE_REVERSE) {
+		if (_smk->getCurFrame() == 0 || _smk->getCurFrame() == 1) {
+			if (_loopFl == false) {
+				onMovieDone();
+			} else {
+				seekToEnd();
+			}
 		} else {
-			seekToEnd();
+			setFrame(_smk->getCurFrame() - 2); // HACK: Reverse playback
 		}
-	} else {
-		setFrame(_smk->getCurFrame() - 2); // HACK: Reverse playback
 	}
 }
 
