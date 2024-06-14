@@ -371,6 +371,7 @@ protected:
 	void storageSavesSyncedCallback(const Cloud::Storage::BoolResponse &response);
 	void storageErrorCallback(const Networking::ErrorResponse &response);
 #endif // USE_LIBCURL
+#endif // USE_CLOUD
 
 #ifdef USE_SDL_NET
 	//
@@ -392,7 +393,6 @@ protected:
 	void reflowNetworkTabLayout();
 #endif // USE_SDL_NET
 
-#endif // USE_CLOUD
 	//
 	// Accessibility controls
 	//

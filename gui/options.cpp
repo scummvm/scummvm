@@ -60,12 +60,15 @@
 #include "backends/cloud/cloudmanager.h"
 #include "gui/cloudconnectionwizard.h"
 #include "gui/downloaddialog.h"
+#endif
+#endif
+
+#ifdef USE_LIBCURL
 #include "gui/downloadpacksdialog.h"
 #endif
 
 #ifdef USE_SDL_NET
 #include "backends/networking/sdl_net/localwebserver.h"
-#endif
 #endif
 
 #include "graphics/paletteman.h"
@@ -125,7 +128,6 @@ enum {
 };
 #endif
 
-#ifdef USE_CLOUD
 enum {
 	kStoragePopUpCmd = 'sPup',
 	kSyncSavesStorageCmd = 'ssst',
@@ -140,7 +142,6 @@ enum {
 	kDisconnectStorageCmd = 'DcSt',
 	kEnableStorageCmd = 'EnSt'
 };
-#endif
 
 enum {
 	kApplyCmd = 'appl'
@@ -1635,10 +1636,8 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 
 	_shaderClearButton = addClearButton(boss, prefix + "grShaderClearButton", kClearShaderCmd);
 
-#ifdef USE_CLOUD
 #ifdef USE_LIBCURL
 	_updateShadersButton = new ButtonWidget(boss, prefix + "UpdateShadersButton", _("Download Shaders"), _("Check on the scummvm.org website for updates of shader packs"), kUpdateShadersCmd);
-#endif
 #endif
 
 	enableShaderControls(g_system->hasFeature(OSystem::kFeatureShaders));
@@ -2157,6 +2156,8 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_storageWizardConnectButton = nullptr;
 	_redrawCloudTab = false;
 #endif
+#endif
+
 #ifdef USE_SDL_NET
 	_runServerButton = nullptr;
 	_serverInfoLabel = nullptr;
@@ -2169,7 +2170,6 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_featureDescriptionLine1 = nullptr;
 	_featureDescriptionLine2 = nullptr;
 	_serverWasRunning = false;
-#endif
 #endif
 #ifdef USE_TTS
 	_enableTTS = false;
@@ -2329,6 +2329,8 @@ void GlobalOptionsDialog::build() {
 
 	addCloudControls(container, "GlobalOptions_Cloud_Container.", g_gui.useLowResGUI());
 #endif // USE_LIBCURL
+#endif // USE_CLOUD
+
 #ifdef USE_SDL_NET
 	//
 	// 9) The LAN tab (local "cloud" webserver)
@@ -2339,7 +2341,6 @@ void GlobalOptionsDialog::build() {
 		tab->addTab(_c("LAN", "lowres"), "GlobalOptions_Network");
 	addNetworkControls(tab, "GlobalOptions_Network.", g_gui.useLowResGUI());
 #endif // USE_SDL_NET
-#endif // USE_CLOUD
 
 	//
 	// 10) Accessibility
@@ -2428,11 +2429,9 @@ void GlobalOptionsDialog::build() {
 		mode = ThemeEngine::_defaultRendererMode;
 	_rendererPopUp->setSelectedTag(mode);
 
-#ifdef USE_CLOUD
 #ifdef USE_SDL_NET
 	Common::Path rootPath(ConfMan.getPath("rootpath", "cloud"));
 	_rootPath->setLabel(rootPath);
-#endif
 #endif
 }
 
@@ -2658,10 +2657,8 @@ void GlobalOptionsDialog::addGUIControls(GuiObject *boss, const Common::String &
 		_useSystemDialogsCheckbox->setState(ConfMan.getBool("gui_browser_native", _domain));
 	}
 
-#ifdef USE_CLOUD
 #ifdef USE_LIBCURL
 	new ButtonWidget(boss, prefix + "UpdateIconsButton", _("Download Icons"),  _("Check on the scummvm.org website for updates of icon packs"), kUpdateIconsCmd);
-#endif
 #endif
 }
 
@@ -2781,6 +2778,7 @@ void GlobalOptionsDialog::addCloudControls(GuiObject *boss, const Common::String
 	setupCloudTab();
 }
 #endif // USE_LIBCURL
+#endif // USE_CLOUD
 
 #ifdef USE_SDL_NET
 void GlobalOptionsDialog::addNetworkControls(GuiObject *boss, const Common::String &prefix, bool lowres) {
@@ -2813,7 +2811,6 @@ void GlobalOptionsDialog::addNetworkControls(GuiObject *boss, const Common::Stri
 
 }
 #endif // USE_SDL_NET
-#endif // USE_CLOUD
 
 #ifdef USE_TTS
 void GlobalOptionsDialog::addAccessibilityControls(GuiObject *boss, const Common::String &prefix) {
@@ -2967,7 +2964,6 @@ void GlobalOptionsDialog::apply() {
 		ConfMan.removeKey("pluginspath", _domain);
 #endif // DYNAMIC_MODULES
 
-#ifdef USE_CLOUD
 #ifdef USE_SDL_NET
 	Common::Path rootPath(_rootPath->getLabel());
 	if (!rootPath.empty())
@@ -2975,7 +2971,6 @@ void GlobalOptionsDialog::apply() {
 	else
 		ConfMan.removeKey("rootpath", "cloud");
 #endif // USE_SDL_NET
-#endif // USE_CLOUD
 
 	int oldGuiScale = ConfMan.getInt("gui_scale");
 	ConfMan.setInt("gui_scale", _guiBasePopUp->getSelectedTag(), _domain);
@@ -3022,6 +3017,7 @@ void GlobalOptionsDialog::apply() {
 		}
 	}
 #endif // USE_LIBCURL
+#endif
 
 #ifdef USE_SDL_NET
 #ifdef NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
@@ -3035,7 +3031,6 @@ void GlobalOptionsDialog::apply() {
 	ConfMan.setInt("local_server_port", port);
 #endif // NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
 #endif // USE_SDL_NET
-#endif // USE_CLOUD
 
 	Common::String oldThemeId = g_gui.theme()->getThemeId();
 	Common::String oldThemeName = g_gui.theme()->getThemeName();
@@ -3073,7 +3068,6 @@ void GlobalOptionsDialog::apply() {
 	if (_guiDisableBDFScaling) {
 		ConfMan.setBool("gui_disable_fixed_font_scaling", _guiDisableBDFScaling->getState(), _domain);
 	}
-
 
 #ifdef USE_DISCORD
 	if (_discordRpcCheckbox) {
@@ -3527,13 +3521,14 @@ void GlobalOptionsDialog::handleTickle() {
 		_redrawCloudTab = false;
 	}
 #endif // USE_LIBCURL
+#endif // USE_CLOUD
+
 #ifdef USE_SDL_NET
 	if (LocalServer.isRunning() != _serverWasRunning) {
 		_serverWasRunning = !_serverWasRunning;
 		reflowNetworkTabLayout();
 	}
 #endif // USE_SDL_NET
-#endif // USE_CLOUD
 }
 
 void GlobalOptionsDialog::reflowLayout() {
@@ -3593,10 +3588,11 @@ void GlobalOptionsDialog::reflowLayout() {
 #ifdef USE_LIBCURL
 	setupCloudTab();
 #endif // USE_LIBCURL
+#endif // USE_CLOUD
+
 #ifdef USE_SDL_NET
 	reflowNetworkTabLayout();
 #endif // USE_SDL_NET
-#endif // USE_CLOUD
 }
 
 #ifdef USE_CLOUD
@@ -3733,6 +3729,7 @@ void GlobalOptionsDialog::shiftWidget(Widget *widget, const char *widgetName, in
 	widget->setPos(x + xOffset, y + yOffset);
 }
 #endif // USE_LIBCURL
+#endif // USE_CLOUD
 
 #ifdef USE_SDL_NET
 void GlobalOptionsDialog::reflowNetworkTabLayout() {
@@ -3788,6 +3785,7 @@ void GlobalOptionsDialog::reflowNetworkTabLayout() {
 }
 #endif // USE_SDL_NET
 
+#ifdef USE_CLOUD
 #ifdef USE_LIBCURL
 void GlobalOptionsDialog::storageSavesSyncedCallback(const Cloud::Storage::BoolResponse &response) {
 	_redrawCloudTab = true;
