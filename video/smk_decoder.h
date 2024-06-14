@@ -64,6 +64,7 @@ typedef Common::BitStreamImpl<Common::BitStreamMemoryStream, uint32, 8, false, f
  *
  * Video decoder used in engines:
  *  - agos
+ *  - bagel
  *  - saga
  *  - scumm (he)
  *  - sword1
@@ -79,7 +80,7 @@ public:
 
 	virtual bool loadStream(Common::SeekableReadStream *stream);
 	void close();
-	void forceSeekToFrame(uint frame);
+	const Graphics::Surface *forceSeekToFrame(uint frame);
 	bool rewind();
 
 	Common::Rational getFrameRate() const;
