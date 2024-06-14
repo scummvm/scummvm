@@ -2288,6 +2288,7 @@ void LB::b_installMenu(int nargs) {
 
 	CastMemberID memberID = d.asMemberID(kCastText);
 	if (memberID.member == 0) {
+		debugC(3, kDebugLoading, "LB::b_installMenu(): removing menu");
 		g_director->_wm->removeMenu();
 		return;
 	}
@@ -2315,15 +2316,22 @@ void LB::b_installMenu(int nargs) {
 
 	menu->setCommandsCallback(menuCommandsCallback, g_director);
 
-	debugC(3, kDebugLingoExec, "installMenu: '%s'", Common::toPrintable(menuStxt).c_str());
+	debugC(3, kDebugLoading, "LB::b_installMenu(): installing menu - '%s'", Common::toPrintable(menuStxt).c_str());
 
 	LingoArchive *mainArchive = movie->getMainLingoArch();
 
 	// STXT sections use Mac-style carriage returns for line breaks.
 	const char LINE_BREAK_CHAR = '\x0D';
 	// Menu definitions use the character 0xc5 to denote a code separator.
-	// For Mac, this is ≈. For Windows, this is Å.
-	const char CODE_SEPARATOR_CHAR = '\xC5';
+	// For Mac D4 and below, this is ≈. For Windows D4 and below, this is Å.
+	char CODE_SEPARATOR_CHAR = '\xC5';
+	char CODE_SEPARATOR_CHAR_2 = '\xC5';
+	if (g_director->getVersion() >= 500) {
+		// D5 changed this to be the pipe | character, the same in Windows and Mac.
+		CODE_SEPARATOR_CHAR = '\x7C';
+		// FIXME: For some reason there are games which use º (Mac) or ¼ (Win) and it works too?
+		CODE_SEPARATOR_CHAR_2 = '\xBC';
+	}
 	// Continuation character is 0xac to denote a line running over.
 	// For Mac, this is ¨. For Windows, this is ¬.
 	const char CONTINUATION_CHAR = '\xAC';
@@ -2385,6 +2393,8 @@ void LB::b_installMenu(int nargs) {
 
 		// Split the line at the code separator
 		size_t sepOffset = line.find(CODE_SEPARATOR_CHAR);
+		if (sepOffset == Common::String::npos)
+			sepOffset = line.find(CODE_SEPARATOR_CHAR_2);
 
 		Common::String text;
 
