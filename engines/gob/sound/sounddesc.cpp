@@ -161,9 +161,10 @@ bool SoundDesc::loadWAV(byte *data, uint32 dSize) {
 
 	int wavSize, wavRate;
 	byte wavFlags;
-	uint16 wavtype;
+	uint16 wavType;
+	int numChannels; 
 
-	if (!Audio::loadWAVFromStream(stream, wavSize, wavRate, wavFlags, &wavtype, nullptr))
+	if (!Audio::loadWAVFromStream(stream, wavSize, wavRate, wavFlags, &wavType, &numChannels))
 		return false;
 
 	if (wavFlags & Audio::FLAG_16BITS) {
@@ -171,8 +172,10 @@ bool SoundDesc::loadWAV(byte *data, uint32 dSize) {
 		wavSize >>= 1;
 	}
 
-	if (wavFlags & Audio::FLAG_STEREO) {
-		warning("TODO: SoundDesc::loadWAV() - stereo");
+	if (numChannels == 2) {
+		_mixerFlags |= Audio::FLAG_STEREO;
+	} else if (numChannels != 1) {
+		warning("SoundDesc::loadWAV unsupported number of channels %d", numChannels);
 		return false;
 	}
 
